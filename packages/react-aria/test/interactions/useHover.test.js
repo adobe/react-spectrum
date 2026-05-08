@@ -10,7 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, installMouseEvent, installPointerEvent, render} from '@react-spectrum/test-utils-internal';
+import {
+  act,
+  fireEvent,
+  installMouseEvent,
+  installPointerEvent,
+  render
+} from '@react-spectrum/test-utils-internal';
 import {ActionButton} from '@adobe/react-spectrum/ActionButton';
 import {Dialog} from '@adobe/react-spectrum/Dialog';
 import {DialogTrigger} from '@adobe/react-spectrum/DialogTrigger';
@@ -22,17 +28,26 @@ import {useHover} from '../../src/interactions/useHover';
 
 function Example(props) {
   let {hoverProps, isHovered} = useHover(props);
-  return <div {...hoverProps}>test{isHovered && '-hovered'}<div data-testid="inner-target" /></div>;
+  return (
+    <div {...hoverProps}>
+      test{isHovered && '-hovered'}
+      <div data-testid="inner-target" />
+    </div>
+  );
 }
 
 function pointerEvent(type, opts) {
   let evt = new Event(type, {bubbles: true, cancelable: true});
-  Object.assign(evt, {
-    ctrlKey: false,
-    metaKey: false,
-    shiftKey: false,
-    button: opts.button || 0
-  }, opts);
+  Object.assign(
+    evt,
+    {
+      ctrlKey: false,
+      metaKey: false,
+      shiftKey: false,
+      button: opts.button || 0
+    },
+    opts
+  );
   return evt;
 }
 
@@ -43,13 +58,14 @@ describe('useHover', function () {
 
   it('does not handle hover events if disabled', function () {
     let events = [];
-    let addEvent = (e) => events.push(e);
+    let addEvent = e => events.push(e);
     let res = render(
       <Example
         isDisabled
         onHoverEnd={addEvent}
         onHoverChange={isHovering => addEvent({type: 'hoverchange', isHovering})}
-        onHoverStart={addEvent} />
+        onHoverStart={addEvent}
+      />
     );
 
     let el = res.getByText('test');
@@ -64,12 +80,13 @@ describe('useHover', function () {
 
     it('should fire hover events based on pointer events', function () {
       let events = [];
-      let addEvent = (e) => events.push(e);
+      let addEvent = e => events.push(e);
       let res = render(
         <Example
           onHoverStart={addEvent}
           onHoverEnd={addEvent}
-          onHoverChange={isHovering => addEvent({type: 'hoverchange', isHovering})} />
+          onHoverChange={isHovering => addEvent({type: 'hoverchange', isHovering})}
+        />
       );
 
       let el = res.getByText('test');
@@ -100,12 +117,13 @@ describe('useHover', function () {
 
     it('hover event target should be the same element we attached listeners to even if we hover over inner elements', function () {
       let events = [];
-      let addEvent = (e) => events.push(e);
+      let addEvent = e => events.push(e);
       let res = render(
         <Example
           onHoverStart={addEvent}
           onHoverEnd={addEvent}
-          onHoverChange={isHovering => addEvent({type: 'hoverchange', isHovering})} />
+          onHoverChange={isHovering => addEvent({type: 'hoverchange', isHovering})}
+        />
       );
 
       let el = res.getByText('test');
@@ -137,12 +155,13 @@ describe('useHover', function () {
 
     it('should not fire hover events when pointerType is touch', function () {
       let events = [];
-      let addEvent = (e) => events.push(e);
+      let addEvent = e => events.push(e);
       let res = render(
         <Example
           onHoverStart={addEvent}
           onHoverEnd={addEvent}
-          onHoverChange={isHovering => addEvent({type: 'hoverchange', isHovering})} />
+          onHoverChange={isHovering => addEvent({type: 'hoverchange', isHovering})}
+        />
       );
 
       let el = res.getByText('test');
@@ -154,12 +173,13 @@ describe('useHover', function () {
 
     it('ignores emulated mouse events following touch events', function () {
       let events = [];
-      let addEvent = (e) => events.push(e);
+      let addEvent = e => events.push(e);
       let res = render(
         <Example
           onHoverStart={addEvent}
           onHoverEnd={addEvent}
-          onHoverChange={isHovering => addEvent({type: 'hoverchange', isHovering})} />
+          onHoverChange={isHovering => addEvent({type: 'hoverchange', isHovering})}
+        />
       );
 
       let el = res.getByText('test');
@@ -178,12 +198,13 @@ describe('useHover', function () {
 
     it('ignores supports mouse events following touch events after a delay', function () {
       let events = [];
-      let addEvent = (e) => events.push(e);
+      let addEvent = e => events.push(e);
       let res = render(
         <Example
           onHoverStart={addEvent}
           onHoverEnd={addEvent}
-          onHoverChange={isHovering => addEvent({type: 'hoverchange', isHovering})} />
+          onHoverChange={isHovering => addEvent({type: 'hoverchange', isHovering})}
+        />
       );
 
       let el = res.getByText('test');
@@ -192,7 +213,9 @@ describe('useHover', function () {
       fireEvent(el, pointerEvent('pointerout', {pointerType: 'touch'}));
       fireEvent(el, pointerEvent('pointerup', {pointerType: 'touch'}));
 
-      act(() => {jest.advanceTimersByTime(600);});
+      act(() => {
+        jest.advanceTimersByTime(600);
+      });
 
       // Safari on iOS has a bug that fires a pointer event with pointerType="mouse" on focus.
       // See https://bugs.webkit.org/show_bug.cgi?id=214609.
@@ -222,9 +245,7 @@ describe('useHover', function () {
     });
 
     it('should visually change component with pointer events', function () {
-      let res = render(
-        <Example />
-      );
+      let res = render(<Example />);
       let el = res.getByText('test');
 
       fireEvent(el, pointerEvent('pointerover', {pointerType: 'mouse'}));
@@ -235,9 +256,7 @@ describe('useHover', function () {
     });
 
     it('should not visually change component when pointerType is touch', function () {
-      let res = render(
-        <Example />
-      );
+      let res = render(<Example />);
       let el = res.getByText('test');
 
       fireEvent(el, pointerEvent('pointerover', {pointerType: 'touch'}));
@@ -249,12 +268,13 @@ describe('useHover', function () {
 
     it('should end hover when disabled', function () {
       let events = [];
-      let addEvent = (e) => events.push(e);
+      let addEvent = e => events.push(e);
       let res = render(
         <Example
           onHoverStart={addEvent}
           onHoverEnd={addEvent}
-          onHoverChange={isHovering => addEvent({type: 'hoverchange', isHovering})} />
+          onHoverChange={isHovering => addEvent({type: 'hoverchange', isHovering})}
+        />
       );
       let el = res.getByText('test');
 
@@ -279,7 +299,8 @@ describe('useHover', function () {
           isDisabled
           onHoverStart={addEvent}
           onHoverEnd={addEvent}
-          onHoverChange={isHovering => addEvent({type: 'hoverchange', isHovering})} />
+          onHoverChange={isHovering => addEvent({type: 'hoverchange', isHovering})}
+        />
       );
       el = res.getByText('test');
       expect(el.textContent).toBe('test');
@@ -300,7 +321,11 @@ describe('useHover', function () {
     it('should trigger onHoverEnd after an element is removed', async function () {
       function Test(props) {
         let {hoverProps, isHovered} = useHover(props);
-        return <div {...hoverProps} data-testid="test" data-hovered={isHovered || undefined}>{props.children}</div>;
+        return (
+          <div {...hoverProps} data-testid="test" data-hovered={isHovered || undefined}>
+            {props.children}
+          </div>
+        );
       }
 
       function Inner() {
@@ -309,7 +334,7 @@ describe('useHover', function () {
       }
 
       let events = [];
-      let addEvent = (e) => events.push(e);
+      let addEvent = e => events.push(e);
       let res = render(
         <Test
           onHoverStart={addEvent}
@@ -358,12 +383,13 @@ describe('useHover', function () {
   describe('mouse events', function () {
     it('should fire hover events based on mouse events', function () {
       let events = [];
-      let addEvent = (e) => events.push(e);
+      let addEvent = e => events.push(e);
       let res = render(
         <Example
           onHoverEnd={addEvent}
           onHoverChange={isHovering => addEvent({type: 'hoverchange', isHovering})}
-          onHoverStart={addEvent} />
+          onHoverStart={addEvent}
+        />
       );
 
       let el = res.getByText('test');
@@ -393,9 +419,7 @@ describe('useHover', function () {
     });
 
     it('should visually change component with mouse events', function () {
-      let res = render(
-        <Example />
-      );
+      let res = render(<Example />);
       let el = res.getByText('test');
 
       fireEvent.mouseEnter(el);
@@ -407,12 +431,13 @@ describe('useHover', function () {
 
     it('ignores emulated mouse events following touch events', function () {
       let events = [];
-      let addEvent = (e) => events.push(e);
+      let addEvent = e => events.push(e);
       let res = render(
         <Example
           onHoverStart={addEvent}
           onHoverEnd={addEvent}
-          onHoverChange={isHovering => addEvent({type: 'hoverchange', isHovering})} />
+          onHoverChange={isHovering => addEvent({type: 'hoverchange', isHovering})}
+        />
       );
 
       let el = res.getByText('test');
@@ -431,12 +456,13 @@ describe('useHover', function () {
 
     it('ignores supports mouse events following touch events after a delay', function () {
       let events = [];
-      let addEvent = (e) => events.push(e);
+      let addEvent = e => events.push(e);
       let res = render(
         <Example
           onHoverStart={addEvent}
           onHoverEnd={addEvent}
-          onHoverChange={isHovering => addEvent({type: 'hoverchange', isHovering})} />
+          onHoverChange={isHovering => addEvent({type: 'hoverchange', isHovering})}
+        />
       );
 
       let el = res.getByText('test');
@@ -445,7 +471,9 @@ describe('useHover', function () {
       fireEvent.mouseLeave(el);
       fireEvent.touchEnd(el);
 
-      act(() => {jest.advanceTimersByTime(600);});
+      act(() => {
+        jest.advanceTimersByTime(600);
+      });
 
       // Safari on iOS has a bug that fires a mouse event on focus.
       // See https://bugs.webkit.org/show_bug.cgi?id=214609.
@@ -476,12 +504,13 @@ describe('useHover', function () {
 
     it('should end hover when disabled', function () {
       let events = [];
-      let addEvent = (e) => events.push(e);
+      let addEvent = e => events.push(e);
       let res = render(
         <Example
           onHoverStart={addEvent}
           onHoverEnd={addEvent}
-          onHoverChange={isHovering => addEvent({type: 'hoverchange', isHovering})} />
+          onHoverChange={isHovering => addEvent({type: 'hoverchange', isHovering})}
+        />
       );
       let el = res.getByText('test');
 
@@ -506,7 +535,8 @@ describe('useHover', function () {
           isDisabled
           onHoverStart={addEvent}
           onHoverEnd={addEvent}
-          onHoverChange={isHovering => addEvent({type: 'hoverchange', isHovering})} />
+          onHoverChange={isHovering => addEvent({type: 'hoverchange', isHovering})}
+        />
       );
       el = res.getByText('test');
       expect(el.textContent).toBe('test');
@@ -528,12 +558,13 @@ describe('useHover', function () {
   describe('touch events', function () {
     it('should not fire hover events based on touch events', function () {
       let events = [];
-      let addEvent = (e) => events.push(e);
+      let addEvent = e => events.push(e);
       let res = render(
         <Example
           onHoverEnd={addEvent}
           onHoverChange={isHovering => addEvent({type: 'hoverchange', isHovering})}
-          onHoverStart={addEvent} />
+          onHoverStart={addEvent}
+        />
       );
 
       let el = res.getByText('test');
@@ -547,9 +578,7 @@ describe('useHover', function () {
     });
 
     it('should not visually change component with touch events', function () {
-      let res = render(
-        <Example />
-      );
+      let res = render(<Example />);
       let el = res.getByText('test');
 
       fireEvent.touchStart(el);
@@ -578,9 +607,7 @@ describe('useHover', function () {
           <ElementType {...hoverProps} tabIndex="0">
             <DialogTrigger>
               <ActionButton>open</ActionButton>
-              <Dialog aria-label="Test dialog">
-                test
-              </Dialog>
+              <Dialog aria-label="Test dialog">test</Dialog>
             </DialogTrigger>
           </ElementType>
         </Provider>
@@ -595,7 +622,9 @@ describe('useHover', function () {
     beforeEach(() => {
       matchMedia = new MatchMediaMock();
       // this needs to be a setTimeout so that the dialog can be removed from the dom before the callback is invoked
-      jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => setTimeout(() => cb(), 0));
+      jest
+        .spyOn(window, 'requestAnimationFrame')
+        .mockImplementation(cb => setTimeout(() => cb(), 0));
     });
 
     afterEach(() => {
@@ -614,15 +643,9 @@ describe('useHover', function () {
     });
 
     describe.each`
-      type                | prepare               | actions
-      ${'Mouse Events'}   | ${installMouseEvent}  | ${[
-        (el) => fireEvent.mouseEnter(el, {button: 0}),
-        (el) => fireEvent.mouseLeave(el, {button: 0})
-      ]}
-      ${'Pointer Events'} | ${installPointerEvent}| ${[
-        (el) => fireEvent(el, pointerEvent('pointerover', {button: 0})),
-        (el) => fireEvent(el, pointerEvent('pointerout', {button: 0}))
-      ]}
+      type                | prepare                | actions
+      ${'Mouse Events'}   | ${installMouseEvent}   | ${[el => fireEvent.mouseEnter(el, {button: 0}), el => fireEvent.mouseLeave(el, {button: 0})]}
+      ${'Pointer Events'} | ${installPointerEvent} | ${[el => fireEvent(el, pointerEvent('pointerover', {button: 0})), el => fireEvent(el, pointerEvent('pointerout', {button: 0}))]}
     `('$type', ({actions: [start, end], prepare}) => {
       prepare();
       it('stop event bubbling through portal', () => {
@@ -631,7 +654,8 @@ describe('useHover', function () {
           <PortalExample
             onHoverStart={hoverMock}
             onHoverEnd={hoverMock}
-            onHoverChange={hoverMock} />
+            onHoverChange={hoverMock}
+          />
         );
 
         fireEvent.click(res.getByText('open'));

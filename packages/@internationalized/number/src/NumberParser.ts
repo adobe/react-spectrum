@@ -13,15 +13,15 @@
 import {NumberFormatter} from './NumberFormatter';
 
 interface Symbols {
-  minusSign?: string,
-  plusSign?: string,
-  decimal?: string,
-  group?: string,
-  literals: RegExp,
-  numeral: RegExp,
-  numerals: string[],
-  index: (v: string) => string,
-  noNumeralUnits: Array<{unit: string, value: number}>
+  minusSign?: string;
+  plusSign?: string;
+  decimal?: string;
+  group?: string;
+  literals: RegExp;
+  numeral: RegExp;
+  numerals: string[];
+  index: (v: string) => string;
+  noNumeralUnits: Array<{unit: string; value: number}>;
 }
 
 const CURRENCY_SIGN_REGEX = new RegExp('^.*\\(.*\\).*$');
@@ -55,7 +55,11 @@ export class NumberParser {
    * of the minus/plus sign characters can be checked.
    */
   isValidPartialNumber(value: string, minValue?: number, maxValue?: number): boolean {
-    return getNumberParserImpl(this.locale, this.options, value).isValidPartialNumber(value, minValue, maxValue);
+    return getNumberParserImpl(this.locale, this.options, value).isValidPartialNumber(
+      value,
+      minValue,
+      maxValue
+    );
   }
 
   /**
@@ -78,7 +82,10 @@ function getNumberParserImpl(locale: string, options: Intl.NumberFormatOptions, 
   if (!locale.includes('-nu-') && !defaultParser.isValidPartialNumber(value)) {
     for (let numberingSystem of NUMBERING_SYSTEMS) {
       if (numberingSystem !== defaultParser.options.numberingSystem) {
-        let parser = getCachedNumberParser(locale + (locale.includes('-u-') ? '-nu-' : '-u-nu-') + numberingSystem, options);
+        let parser = getCachedNumberParser(
+          locale + (locale.includes('-u-') ? '-nu-' : '-u-nu-') + numberingSystem,
+          options
+        );
         if (parser.isValidPartialNumber(value)) {
           return parser;
         }
@@ -90,7 +97,13 @@ function getNumberParserImpl(locale: string, options: Intl.NumberFormatOptions, 
 }
 
 function getCachedNumberParser(locale: string, options: Intl.NumberFormatOptions) {
-  let cacheKey = locale + (options ? Object.entries(options).sort((a, b) => a[0] < b[0] ? -1 : 1).join() : '');
+  let cacheKey =
+    locale +
+    (options
+      ? Object.entries(options)
+          .sort((a, b) => (a[0] < b[0] ? -1 : 1))
+          .join()
+      : '');
   let parser = numberParserCache.get(cacheKey);
   if (!parser) {
     parser = new NumberParserImpl(locale, options);
@@ -126,8 +139,14 @@ class NumberParserImpl {
     this.formatter = new Intl.NumberFormat(locale, options);
     this.options = this.formatter.resolvedOptions();
     this.symbols = getSymbols(locale, this.formatter, this.options, options);
-    if (this.options.style === 'percent' && ((this.options.minimumFractionDigits ?? 0) > 18 || (this.options.maximumFractionDigits ?? 0) > 18)) {
-      console.warn('NumberParser cannot handle percentages with greater than 18 decimal places, please reduce the number in your options.');
+    if (
+      this.options.style === 'percent' &&
+      ((this.options.minimumFractionDigits ?? 0) > 18 ||
+        (this.options.maximumFractionDigits ?? 0) > 18)
+    ) {
+      console.warn(
+        'NumberParser cannot handle percentages with greater than 18 decimal places, please reduce the number in your options.'
+      );
     }
   }
 
@@ -137,7 +156,11 @@ class NumberParserImpl {
     let fullySanitizedValue = this.sanitize(value);
 
     // Return NaN if there is a group symbol but useGrouping is false
-    if (!isGroupSymbolAllowed && this.symbols.group && fullySanitizedValue.includes(this.symbols.group)) {
+    if (
+      !isGroupSymbolAllowed &&
+      this.symbols.group &&
+      fullySanitizedValue.includes(this.symbols.group)
+    ) {
       return NaN;
     } else if (this.symbols.group) {
       fullySanitizedValue = fullySanitizedValue.replaceAll(this.symbols.group!, '');
@@ -188,7 +211,9 @@ class NumberParserImpl {
         minimumFractionDigits: Math.min((this.options.minimumFractionDigits ?? 0) + 2, 20),
         maximumFractionDigits: Math.min((this.options.maximumFractionDigits ?? 0) + 2, 20)
       };
-      return (new NumberParser(this.locale, options)).parse(new NumberFormatter(this.locale, options).format(newValue));
+      return new NumberParser(this.locale, options).parse(
+        new NumberFormatter(this.locale, options).format(newValue)
+      );
     }
 
     // accounting will always be stripped to a positive number, so if it's accounting and has a () around everything, then we need to make it negative again
@@ -202,7 +227,10 @@ class NumberParserImpl {
     let isGroupSymbolAllowed = this.formatter.resolvedOptions().useGrouping;
     // If the value is only a unit and it matches one of the formatted numbers where the value is part of the unit and doesn't have any numerals, then
     // return the known value for that case.
-    if (this.symbols.noNumeralUnits.length > 0 && this.symbols.noNumeralUnits.find(obj => obj.unit === value)) {
+    if (
+      this.symbols.noNumeralUnits.length > 0 &&
+      this.symbols.noNumeralUnits.find(obj => obj.unit === value)
+    ) {
       return this.symbols.noNumeralUnits.find(obj => obj.unit === value)!.value.toString();
     }
 
@@ -247,7 +275,11 @@ class NumberParserImpl {
     return value;
   }
 
-  isValidPartialNumber(value: string, minValue: number = -Infinity, maxValue: number = Infinity): boolean {
+  isValidPartialNumber(
+    value: string,
+    minValue: number = -Infinity,
+    maxValue: number = Infinity
+  ): boolean {
     let isGroupSymbolAllowed = this.formatter.resolvedOptions().useGrouping;
     value = this.sanitize(value);
 
@@ -259,7 +291,11 @@ class NumberParserImpl {
     }
 
     // Numbers that can't have any decimal values fail if a decimal character is typed
-    if (this.symbols.decimal && value.indexOf(this.symbols.decimal) > -1 && this.options.maximumFractionDigits === 0) {
+    if (
+      this.symbols.decimal &&
+      value.indexOf(this.symbols.decimal) > -1 &&
+      this.options.maximumFractionDigits === 0
+    ) {
       return false;
     }
 
@@ -277,18 +313,29 @@ class NumberParserImpl {
   }
 }
 
-const nonLiteralParts = new Set(['decimal', 'fraction', 'integer', 'minusSign', 'plusSign', 'group']);
+const nonLiteralParts = new Set([
+  'decimal',
+  'fraction',
+  'integer',
+  'minusSign',
+  'plusSign',
+  'group'
+]);
 
 // This list is derived from https://www.unicode.org/cldr/charts/49/supplemental/language_plural_rules.html#comparison and includes
 // all unique numbers which we need to check in order to determine all the plural forms for a given locale.
 // Run scripts/generateAllPlurals.mjs to generate this list.
-const pluralNumbers = [
-  0, 4, 2, 1, 11, 20, 3, 7, 100, 21, 0.1, 1.1
-];
+const pluralNumbers = [0, 4, 2, 1, 11, 20, 3, 7, 100, 21, 0.1, 1.1];
 
-function getSymbols(locale: string, formatter: Intl.NumberFormat, intlOptions: Intl.ResolvedNumberFormatOptions, originalOptions: Intl.NumberFormatOptions): Symbols {
+function getSymbols(
+  locale: string,
+  formatter: Intl.NumberFormat,
+  intlOptions: Intl.ResolvedNumberFormatOptions,
+  originalOptions: Intl.NumberFormatOptions
+): Symbols {
   // formatter needs access to all decimal places in order to generate the correct literal strings for the plural set
-  let symbolFormatter = new Intl.NumberFormat(locale, {...intlOptions,
+  let symbolFormatter = new Intl.NumberFormat(locale, {
+    ...intlOptions,
     // Resets so we get the full range of symbols
     minimumSignificantDigits: 1,
     maximumSignificantDigits: 21,
@@ -302,43 +349,61 @@ function getSymbols(locale: string, formatter: Intl.NumberFormat, intlOptions: I
   let posAllParts = symbolFormatter.formatToParts(10000.111);
   let pluralParts = pluralNumbers.map(n => symbolFormatter.formatToParts(n));
   // if the plural parts include a unit but no integer or fraction, then we need to add the unit to the special set
-  let noNumeralUnits = pluralParts.map((p, i) => {
-    let unit = p.find(p => p.type === 'unit');
-    if (unit && !p.some(p => p.type === 'integer' || p.type === 'fraction')) {
-      return {unit: unit.value, value: pluralNumbers[i]};
-    }
-    return null;
-  }).filter(p => !!p);
+  let noNumeralUnits = pluralParts
+    .map((p, i) => {
+      let unit = p.find(p => p.type === 'unit');
+      if (unit && !p.some(p => p.type === 'integer' || p.type === 'fraction')) {
+        return {unit: unit.value, value: pluralNumbers[i]};
+      }
+      return null;
+    })
+    .filter(p => !!p);
 
   let minusSign = allParts.find(p => p.type === 'minusSign')?.value ?? '-';
   let plusSign = posAllParts.find(p => p.type === 'plusSign')?.value;
 
   // Safari does not support the signDisplay option, but our number parser polyfills it.
   // If no plus sign was returned, but the original options contained signDisplay, default to the '+' character.
-  if (!plusSign && (originalOptions?.signDisplay === 'exceptZero' || originalOptions?.signDisplay === 'always')) {
+  if (
+    !plusSign &&
+    (originalOptions?.signDisplay === 'exceptZero' || originalOptions?.signDisplay === 'always')
+  ) {
     plusSign = '+';
   }
 
   // If maximumSignificantDigits is 1 (the minimum) then we won't get decimal characters out of the above formatters
   // Percent also defaults to 0 fractionDigits, so we need to make a new one that isn't percent to get an accurate decimal
-  let decimalParts = new Intl.NumberFormat(locale, {...intlOptions, minimumFractionDigits: 2, maximumFractionDigits: 2}).formatToParts(0.001);
+  let decimalParts = new Intl.NumberFormat(locale, {
+    ...intlOptions,
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  }).formatToParts(0.001);
 
   let decimal = decimalParts.find(p => p.type === 'decimal')?.value;
   let group = allParts.find(p => p.type === 'group')?.value;
 
   // this set is also for a regex, it's all literals that might be in the string we want to eventually parse that
   // don't contribute to the numerical value
-  let allPartsLiterals = allParts.filter(p => !nonLiteralParts.has(p.type)).map(p => escapeRegex(p.value));
-  let pluralPartsLiterals = pluralParts.flatMap(p => p.filter(p => !nonLiteralParts.has(p.type)).map(p => escapeRegex(p.value)));
-  let sortedLiterals = [...new Set([...allPartsLiterals, ...pluralPartsLiterals])].sort((a, b) => b.length - a.length);
+  let allPartsLiterals = allParts
+    .filter(p => !nonLiteralParts.has(p.type))
+    .map(p => escapeRegex(p.value));
+  let pluralPartsLiterals = pluralParts.flatMap(p =>
+    p.filter(p => !nonLiteralParts.has(p.type)).map(p => escapeRegex(p.value))
+  );
+  let sortedLiterals = [...new Set([...allPartsLiterals, ...pluralPartsLiterals])].sort(
+    (a, b) => b.length - a.length
+  );
 
   // Match both whitespace and formatting characters
-  let literals = sortedLiterals.length === 0 ?
-      new RegExp('\\p{White_Space}|\\p{Cf}', 'gu') :
-      new RegExp(`${sortedLiterals.join('|')}|\\p{White_Space}|\\p{Cf}`, 'gu');
+  let literals =
+    sortedLiterals.length === 0
+      ? new RegExp('\\p{White_Space}|\\p{Cf}', 'gu')
+      : new RegExp(`${sortedLiterals.join('|')}|\\p{White_Space}|\\p{Cf}`, 'gu');
 
   // These are for replacing non-latn characters with the latn equivalent
-  let numerals = [...new Intl.NumberFormat(intlOptions.locale, {useGrouping: false}).format(9876543210)].reverse();
+  let numerals = [
+    ...new Intl.NumberFormat(intlOptions.locale, {useGrouping: false}).format(9876543210)
+  ].reverse();
   let indexes = new Map(numerals.map((d, i) => [d, i]));
   let numeral = new RegExp(`[${numerals.join('')}]`, 'g');
   let index = d => String(indexes.get(d));

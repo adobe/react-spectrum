@@ -16,23 +16,54 @@ import React from 'react';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
 
 const GROUPS = {
-  Events: [
-    /^on[A-Z]/
-  ],
+  Events: [/^on[A-Z]/],
   Layout: [
-    'flex', 'flexGrow', 'flexShrink', 'flexBasis', 'alignSelf', 'justifySelf', 'order', 'flexOrder',
-    'gridArea', 'gridColumn', 'gridRow', 'gridColumnStart', 'gridColumnEnd', 'gridRowStart', 'gridRowEnd', 'slot',
+    'flex',
+    'flexGrow',
+    'flexShrink',
+    'flexBasis',
+    'alignSelf',
+    'justifySelf',
+    'order',
+    'flexOrder',
+    'gridArea',
+    'gridColumn',
+    'gridRow',
+    'gridColumnStart',
+    'gridColumnEnd',
+    'gridRowStart',
+    'gridRowEnd',
+    'slot',
     'overflow'
   ],
   Spacing: [
-    'margin', 'marginTop', 'marginLeft', 'marginRight', 'marginBottom', 'marginStart', 'marginEnd', 'marginX', 'marginY',
-    'padding', 'paddingTop', 'paddingLeft', 'paddingRight', 'paddingBottom', 'paddingStart', 'paddingEnd', 'paddingX', 'paddingY'
+    'margin',
+    'marginTop',
+    'marginLeft',
+    'marginRight',
+    'marginBottom',
+    'marginStart',
+    'marginEnd',
+    'marginX',
+    'marginY',
+    'padding',
+    'paddingTop',
+    'paddingLeft',
+    'paddingRight',
+    'paddingBottom',
+    'paddingStart',
+    'paddingEnd',
+    'paddingX',
+    'paddingY'
   ],
-  Sizing: [
-    'width', 'minWidth', 'maxWidth', 'height', 'minHeight', 'maxHeight', 'defaultWidth'
-  ],
+  Sizing: ['width', 'minWidth', 'maxWidth', 'height', 'minHeight', 'maxHeight', 'defaultWidth'],
   Background: [
-    'background', 'backgroundColor', 'backgroundImage', 'backgroundSize', 'backgroundPosition', 'backgroundRepeat',
+    'background',
+    'backgroundColor',
+    'backgroundImage',
+    'backgroundSize',
+    'backgroundPosition',
+    'backgroundRepeat',
     'opacity' // ???
   ],
   Borders: [
@@ -45,16 +76,47 @@ const GROUPS = {
     'borderRight',
     'borderTop',
     'borderBottom',
-    'borderWidth', 'borderStartWidth', 'borderEndWidth', 'borderLeftWidth', 'borderRightWidth', 'borderTopWidth', 'borderBottomWidth', 'borderXWidth', 'borderYWidth',
-    'borderColor', 'borderStartColor', 'borderEndColor', 'borderLeftColor', 'borderRightColor', 'borderTopColor', 'borderBottomColor', 'borderXColor', 'borderYColor',
-    'borderRadius', 'borderTopStartRadius', 'borderTopEndRadius', 'borderBottomStartRadius', 'borderBottomEndRadius', 'borderTopLeftRadius', 'borderTopRightRadius', 'borderBottomLeftRadius', 'borderBottomRightRadius'
+    'borderWidth',
+    'borderStartWidth',
+    'borderEndWidth',
+    'borderLeftWidth',
+    'borderRightWidth',
+    'borderTopWidth',
+    'borderBottomWidth',
+    'borderXWidth',
+    'borderYWidth',
+    'borderColor',
+    'borderStartColor',
+    'borderEndColor',
+    'borderLeftColor',
+    'borderRightColor',
+    'borderTopColor',
+    'borderBottomColor',
+    'borderXColor',
+    'borderYColor',
+    'borderRadius',
+    'borderTopStartRadius',
+    'borderTopEndRadius',
+    'borderBottomStartRadius',
+    'borderBottomEndRadius',
+    'borderTopLeftRadius',
+    'borderTopRightRadius',
+    'borderBottomLeftRadius',
+    'borderBottomRightRadius'
   ],
-  Shadows: [
-    'boxShadow',
-    'textShadow'
-  ],
+  Shadows: ['boxShadow', 'textShadow'],
   Positioning: [
-    'position', 'top', 'bottom', 'left', 'right', 'start', 'end', 'zIndex', 'isHidden', 'hidden', 'display'
+    'position',
+    'top',
+    'bottom',
+    'left',
+    'right',
+    'start',
+    'end',
+    'zIndex',
+    'isHidden',
+    'hidden',
+    'display'
   ],
   Typography: [
     'font',
@@ -66,12 +128,8 @@ const GROUPS = {
     'lineHeight',
     'letterSpacing'
   ],
-  Accessibility: [
-    'role', 'id', 'tabIndex', 'excludeFromTabOrder', 'preventFocusOnPress', /^aria-/
-  ],
-  Advanced: [
-    'UNSAFE_className', 'UNSAFE_style'
-  ]
+  Accessibility: ['role', 'id', 'tabIndex', 'excludeFromTabOrder', 'preventFocusOnPress', /^aria-/],
+  Advanced: ['UNSAFE_className', 'UNSAFE_style']
 };
 
 export function PropTable({component, links, style}) {
@@ -87,7 +145,12 @@ export function PropTable({component, links, style}) {
               <ChevronRight size="S" />
               {group}
             </summary>
-            <InterfaceType properties={groups[group]} showRequired isComponent name={component.name} />
+            <InterfaceType
+              properties={groups[group]}
+              showRequired
+              isComponent
+              name={component.name}
+            />
           </details>
         ))}
       </TypeContext.Provider>

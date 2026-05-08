@@ -1,16 +1,16 @@
-import { lightDark, size, style } from "@react-spectrum/s2/style" with {type: 'macro'};
-import { getColorScale } from "@react-spectrum/s2-docs/src//color.macro" with {type: 'macro'};
-import { Code } from "@react-spectrum/s2-docs/src//Code";
-import { Pre } from "@react-spectrum/s2-docs/src/CodePlatter";
-import { ObjectStyles } from "./ObjectStyles";
-import { DarkMode } from "./DarkMode";
-import { AppFrame, ExampleApp } from "./ExampleApp";
-import { Button, Divider, Provider } from "@react-spectrum/s2";
+import {lightDark, size, style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {getColorScale} from '@react-spectrum/s2-docs/src//color.macro' with {type: 'macro'};
+import {Code} from '@react-spectrum/s2-docs/src//Code';
+import {Pre} from '@react-spectrum/s2-docs/src/CodePlatter';
+import {ObjectStyles} from './ObjectStyles';
+import {DarkMode} from './DarkMode';
+import {AppFrame, ExampleApp} from './ExampleApp';
+import {Button, Divider, Provider} from '@react-spectrum/s2';
 import {Link, LinkButton} from '@react-spectrum/s2-docs/src/Link';
-import { Mobile } from "./Mobile";
-import { Rems } from "./Rems";
+import {Mobile} from './Mobile';
+import {Rems} from './Rems';
 // import { PressAnimation } from "./Press";
-import { HCM } from "./HCM";
+import {HCM} from './HCM';
 import Lightbulb from '@react-spectrum/s2/illustrations/gradient/generic2/Lightbulb';
 import Phone from '@react-spectrum/s2/illustrations/gradient/generic2/Phone';
 import Translate from '@react-spectrum/s2/illustrations/gradient/generic2/Translate';
@@ -29,29 +29,29 @@ import Server from '@react-spectrum/s2/illustrations/gradient/generic2/Server';
 import SpeedFast from '@react-spectrum/s2/illustrations/gradient/generic2/SpeedFast';
 import VectorDraw from '@react-spectrum/s2/illustrations/gradient/generic2/VectorDraw';
 import Layers from '@react-spectrum/s2/illustrations/gradient/generic2/Layers';
-import { Icons, Illustrations } from "./Icons";
-import { Typography } from "./Typography";
-import { States } from "./States";
-import { useId } from "react";
-import { Responsive } from "./Responsive";
+import {Icons, Illustrations} from './Icons';
+import {Typography} from './Typography';
+import {States} from './States';
+import {useId} from 'react';
+import {Responsive} from './Responsive';
 // @ts-ignore
-import { mergeStyles } from "../../../../../@react-spectrum/s2/style/runtime";
-import { ReduceMotion } from "./ReduceMotion";
-import { Colors } from "./Colors";
+import {mergeStyles} from '../../../../../@react-spectrum/s2/style/runtime';
+import {ReduceMotion} from './ReduceMotion';
+import {Colors} from './Colors';
 import '@react-spectrum/s2-docs/src/footer.css';
 // @ts-ignore
 import bg from 'data-url:./bg.svg';
 // import { SubmenuAnimation } from "./SubmenuAnimation";
 // @ts-ignore
-import { keyframes } from "../../../../../@react-spectrum/s2/style/style-macro" with {type: 'macro'};
-import SearchMenuWrapperServer from "@react-spectrum/s2-docs/src/SearchMenuWrapperServer";
-import type {Page} from "@parcel/rsc";
+import {keyframes} from '../../../../../@react-spectrum/s2/style/style-macro' with {type: 'macro'};
+import SearchMenuWrapperServer from '@react-spectrum/s2-docs/src/SearchMenuWrapperServer';
+import type {Page} from '@parcel/rsc';
 // @ts-ignore
-import { fontSizeToken } from "../../../../../@react-spectrum/s2/style/tokens" with {type: 'macro'};
+import {fontSizeToken} from '../../../../../@react-spectrum/s2/style/tokens' with {type: 'macro'};
 // @ts-ignore
-import { letters } from "../../../src/textWidth";
-import HomeHeader from "./Header";
-import {ReleaseLink} from "./ReleaseLink";
+import {letters} from '../../../src/textWidth';
+import HomeHeader from './Header';
+import {ReleaseLink} from './ReleaseLink';
 
 const container = style({
   backgroundColor: 'layer-2/80',
@@ -174,7 +174,15 @@ export function Home({currentPage}: {currentPage: Page}) {
         backgroundSize: '100%'
       }}>
       <HomeHeader />
-      <header aria-labelledby={headingId} className={style({marginX: 'auto', paddingX: {default: 16, sm: 40}, paddingY: 96, maxWidth: 1024, isolation: 'isolate'})}>
+      <header
+        aria-labelledby={headingId}
+        className={style({
+          marginX: 'auto',
+          paddingX: {default: 16, sm: 40},
+          paddingY: 96,
+          maxWidth: 1024,
+          isolation: 'isolate'
+        })}>
         <ReleaseLink />
         <HomeH1 id={headingId}>
           <span className={swapWrapper}>Build apps with&nbsp;</span>
@@ -186,23 +194,55 @@ export function Home({currentPage}: {currentPage: Page}) {
               <span className={swapRow}>accessibility</span>
               <span className={swapRow}>consistency</span>
               <span className={swapRow}>React Spectrum</span>
-              <span className={swapRow} aria-hidden>polish</span>
+              <span className={swapRow} aria-hidden>
+                polish
+              </span>
             </div>
-            <span className={swapSizer} aria-hidden>React Spectrum</span>
+            <span className={swapSizer} aria-hidden>
+              React Spectrum
+            </span>
           </span>
         </HomeH1>
-        <p className={style({font: {default: 'body-2xl', md: 'body-3xl'}, marginY: 0, color: 'white', textWrap: 'balance'})}>React Spectrum empowers you to build high quality, accessible, cohesive apps with Adobe's signature design.</p>
-        <div className={style({display: 'flex', gap: 16, flexDirection: {default: 'column', sm: 'row'}, marginTop: 32, marginBottom: 96})}>
-          <LinkButton size="XL" staticColor="white" href="getting-started">Get started</LinkButton>
+        <p
+          className={style({
+            font: {default: 'body-2xl', md: 'body-3xl'},
+            marginY: 0,
+            color: 'white',
+            textWrap: 'balance'
+          })}>
+          React Spectrum empowers you to build high quality, accessible, cohesive apps with Adobe's
+          signature design.
+        </p>
+        <div
+          className={style({
+            display: 'flex',
+            gap: 16,
+            flexDirection: {default: 'column', sm: 'row'},
+            marginTop: 32,
+            marginBottom: 96
+          })}>
+          <LinkButton size="XL" staticColor="white" href="getting-started">
+            Get started
+          </LinkButton>
           <SearchMenuWrapperServer currentPage={currentPage}>
-            <Button size="XL" staticColor="white" variant="secondary">Explore components</Button>
+            <Button size="XL" staticColor="white" variant="secondary">
+              Explore components
+            </Button>
           </SearchMenuWrapperServer>
         </div>
-        <section aria-label="Example app" className={style({height: 'calc(100svh - 24px)', maxHeight: size(600)})}>
+        <section
+          aria-label="Example app"
+          className={style({height: 'calc(100svh - 24px)', maxHeight: size(600)})}>
           <ExampleApp showArrows />
         </section>
       </header>
-      <main className={style({marginX: 'auto', paddingX: {default: 16, sm: 40}, maxWidth: 1600, isolation: 'isolate'})}>
+      <main
+        className={style({
+          marginX: 'auto',
+          paddingX: {default: 16, sm: 40},
+          maxWidth: 1600,
+          isolation: 'isolate'
+        })}>
         <Section
           title="Build Once. Adapt Everywhere."
           description="React Spectrum makes interfaces more accessible, flexible, and maintainable, giving users a seamless experience no matter where they are.">
@@ -293,17 +333,35 @@ export function Home({currentPage}: {currentPage: Page}) {
             <SubmenuAnimation />
           </Feature>
         </Section> */}
-        <Section title="Everything you need to build beautiful apps." description="Bring your interface to life with expressive icons, Spectrum colors, and rich illustrations. Every detail works together to make your product look polished and on-brand.">
+        <Section
+          title="Everything you need to build beautiful apps."
+          description="Bring your interface to life with expressive icons, Spectrum colors, and rich illustrations. Every detail works together to make your product look polished and on-brand.">
           <Feature
             title="Icons"
-            description={<>With hundreds of Spectrum icons to choose from, use our <Link href="icons" variant="secondary">icon search</Link> to find the right icon for the right experience.</>}
+            description={
+              <>
+                With hundreds of Spectrum icons to choose from, use our{' '}
+                <Link href="icons" variant="secondary">
+                  icon search
+                </Link>{' '}
+                to find the right icon for the right experience.
+              </>
+            }
             illustration={<VectorDraw />}
             styles={style({gridColumnStart: {default: 'span 6', lg: 'span 3'}})}>
             <Icons />
           </Feature>
           <Feature
             title="Illustrations"
-            description={<>Rich illustrations help bring your interface to life. Use our <Link href="illustrations" variant="secondary">illustration search</Link> to find the right illustration for your product.</>}
+            description={
+              <>
+                Rich illustrations help bring your interface to life. Use our{' '}
+                <Link href="illustrations" variant="secondary">
+                  illustration search
+                </Link>{' '}
+                to find the right illustration for your product.
+              </>
+            }
             illustration={<IllustrationIcon />}
             styles={style({gridColumnStart: {default: 'span 6', lg: 'span 3'}})}>
             <Illustrations />
@@ -311,7 +369,16 @@ export function Home({currentPage}: {currentPage: Page}) {
         </Section>
         <Section
           title={<>Rapidly style custom components with Style Macros.</>}
-          description={<>Easily use Spectrum tokens like colors, spacing, and typography in your own custom components with style macros. Styles are <strong>colocated</strong> with your component code, allowing you to <strong>develop more efficiently</strong> and <strong>refactor with confidence</strong> – no more CSS conflicts or specificity issues. Style macros generate atomic CSS at build time, so you get tiny bundle sizes and fast runtime performance.</>}>
+          description={
+            <>
+              Easily use Spectrum tokens like colors, spacing, and typography in your own custom
+              components with style macros. Styles are <strong>colocated</strong> with your
+              component code, allowing you to <strong>develop more efficiently</strong> and{' '}
+              <strong>refactor with confidence</strong> – no more CSS conflicts or specificity
+              issues. Style macros generate atomic CSS at build time, so you get tiny bundle sizes
+              and fast runtime performance.
+            </>
+          }>
           <Feature
             title="Colors"
             description="Convenient access to the full range of Spectrum color tokens."
@@ -345,63 +412,74 @@ export function Home({currentPage}: {currentPage: Page}) {
             description="Use macros to create reusable style utilities for your own components."
             illustration={<CodeBrackets />}
             styles={style({gridColumnStart: {default: 'span 6', xl: 'span 3'}})}>
-            <div className={style({display: 'flex', flexDirection: 'column', gap: 16, flexGrow: 1, justifyContent: 'space-between'})}>
             <div
               className={style({
-                backgroundColor: 'layer-2',
-                boxShadow: 'elevated',
-                padding: {
-                  default: 16,
-                  sm: 24
-                },
-                borderRadius: {
-                  default: 'none',
-                  sm: 'lg'
-                },
-                overflow: 'auto',
-                marginX: {
-                  default: -16,
-                  sm: 0
-                }
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 16,
+                flexGrow: 1,
+                justifyContent: 'space-between'
               })}>
-              <h4 className={style({font: 'title', marginTop: 0})}>Button.tsx</h4>
-              <Pre><Code lang="tsx">{`import {style, focusRing} from '@react-spectrum/s2/style' with {type: 'macro'};
+              <div
+                className={style({
+                  backgroundColor: 'layer-2',
+                  boxShadow: 'elevated',
+                  padding: {
+                    default: 16,
+                    sm: 24
+                  },
+                  borderRadius: {
+                    default: 'none',
+                    sm: 'lg'
+                  },
+                  overflow: 'auto',
+                  marginX: {
+                    default: -16,
+                    sm: 0
+                  }
+                })}>
+                <h4 className={style({font: 'title', marginTop: 0})}>Button.tsx</h4>
+                <Pre>
+                  <Code lang="tsx">{`import {style, focusRing} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {hstack} from './style-utils' with {type: 'macro'};
 
 const buttonStyle = style({
   ...focusRing(),
   ...hstack(4)
-});`}</Code></Pre>
-            </div>
-            <div
-              className={style({
-                backgroundColor: 'layer-2',
-                boxShadow: 'elevated',
-                padding: {
-                  default: 16,
-                  sm: 24
-                },
-                borderRadius: {
-                  default: 'none',
-                  sm: 'lg'
-                },
-                overflow: 'auto',
-                margin: {
-                  default: -16,
-                  sm: 0
-                },
-                marginTop: 0
-              })}>
-              <h4 className={style({font: 'title', marginTop: 0})}>style-utils.ts</h4>
-              <Pre><Code lang="tsx">{`export function hstack(gap: number) {
+});`}</Code>
+                </Pre>
+              </div>
+              <div
+                className={style({
+                  backgroundColor: 'layer-2',
+                  boxShadow: 'elevated',
+                  padding: {
+                    default: 16,
+                    sm: 24
+                  },
+                  borderRadius: {
+                    default: 'none',
+                    sm: 'lg'
+                  },
+                  overflow: 'auto',
+                  margin: {
+                    default: -16,
+                    sm: 0
+                  },
+                  marginTop: 0
+                })}>
+                <h4 className={style({font: 'title', marginTop: 0})}>style-utils.ts</h4>
+                <Pre>
+                  <Code lang="tsx">{`export function hstack(gap: number) {
   return {
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
     gap
   };
-}`}</Code></Pre>
-            </div>
+}`}</Code>
+                </Pre>
+              </div>
             </div>
           </Feature>
           <Feature
@@ -419,30 +497,33 @@ const buttonStyle = style({
             title="AI-ready"
             description="Comprehensive markdown docs, llms.txt, and an agent-friendly MCP server."
             illustration={<Sparkles />}
-            styles={style({gridColumnStart: {default: 'span 6', lg: 'span 2'}})}>
-
-          </Feature>
+            styles={style({gridColumnStart: {default: 'span 6', lg: 'span 2'}})}></Feature>
           <Feature
             title="SSR"
             description="Server-side rendering and React Server Components support maximize Core Web Vitals."
             illustration={<Server />}
-            styles={style({gridColumnStart: {default: 'span 6', lg: 'span 2'}})}>
-
-          </Feature>
+            styles={style({gridColumnStart: {default: 'span 6', lg: 'span 2'}})}></Feature>
           <Feature
             title="Small bundle"
             description="Aggressive tree-shaking and atomic CSS produce smaller bundles and faster runtime performance."
             illustration={<SpeedFast />}
-            styles={style({gridColumnStart: {default: 'span 6', lg: 'span 2'}})}>
-
-          </Feature>
+            styles={style({gridColumnStart: {default: 'span 6', lg: 'span 2'}})}></Feature>
         </Section>
         <section className={style({paddingY: 64})}>
           <h2 className={style({font: 'heading-2xl', color: 'white'})}>Ready to get started?</h2>
-          <div className={style({display: 'flex', gap: 16, flexDirection: {default: 'column', sm: 'row'}})}>
-            <LinkButton size="XL" staticColor="white" href="getting-started">Install and setup</LinkButton>
+          <div
+            className={style({
+              display: 'flex',
+              gap: 16,
+              flexDirection: {default: 'column', sm: 'row'}
+            })}>
+            <LinkButton size="XL" staticColor="white" href="getting-started">
+              Install and setup
+            </LinkButton>
             <SearchMenuWrapperServer currentPage={currentPage}>
-              <Button size="XL" staticColor="white">Explore components</Button>
+              <Button size="XL" staticColor="white">
+                Explore components
+              </Button>
             </SearchMenuWrapperServer>
           </div>
         </section>
@@ -468,10 +549,38 @@ const buttonStyle = style({
             color: 'white'
           })}>
           <li>Copyright © {new Date().getFullYear()} Adobe. All rights reserved.</li>
-          <li><Link isQuiet staticColor="white" href="//www.adobe.com/privacy.html" target="_blank">Privacy</Link></li>
-          <li><Link isQuiet staticColor="white" href="//www.adobe.com/legal/terms.html" target="_blank">Terms of Use</Link></li>
-          <li><Link isQuiet staticColor="white" href="//www.adobe.com/privacy/cookies.html" target="_blank">Cookies</Link></li>
-          <li><Link isQuiet staticColor="white" href="//www.adobe.com/privacy/ca-rights.html" target="_blank">Do not sell my personal information</Link></li>
+          <li>
+            <Link isQuiet staticColor="white" href="//www.adobe.com/privacy.html" target="_blank">
+              Privacy
+            </Link>
+          </li>
+          <li>
+            <Link
+              isQuiet
+              staticColor="white"
+              href="//www.adobe.com/legal/terms.html"
+              target="_blank">
+              Terms of Use
+            </Link>
+          </li>
+          <li>
+            <Link
+              isQuiet
+              staticColor="white"
+              href="//www.adobe.com/privacy/cookies.html"
+              target="_blank">
+              Cookies
+            </Link>
+          </li>
+          <li>
+            <Link
+              isQuiet
+              staticColor="white"
+              href="//www.adobe.com/privacy/ca-rights.html"
+              target="_blank">
+              Do not sell my personal information
+            </Link>
+          </li>
         </ul>
       </footer>
     </body>
@@ -515,15 +624,28 @@ function HomeH1(props) {
       })}>
       {children}
     </h1>
-  )
+  );
 }
 
 function Section({title, description, children}: any) {
   let headingId = useId();
   return (
     <section aria-labelledby={headingId} className={style({paddingY: 64})}>
-      <h2 id={headingId} className={style({font: {default: 'heading-xl', sm: 'heading-2xl'}, color: 'white'})}>{title}</h2>
-      <p className={style({font: {default: 'body-xl', sm: 'body-2xl'}, color: 'white', maxWidth: {default: 'full', lg: '75%'}, marginBottom: 64, textWrap: 'balance'})}>{description}</p>
+      <h2
+        id={headingId}
+        className={style({font: {default: 'heading-xl', sm: 'heading-2xl'}, color: 'white'})}>
+        {title}
+      </h2>
+      <p
+        className={style({
+          font: {default: 'body-xl', sm: 'body-2xl'},
+          color: 'white',
+          maxWidth: {default: 'full', lg: '75%'},
+          marginBottom: 64,
+          textWrap: 'balance'
+        })}>
+        {description}
+      </p>
       <div className={style({display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 16})}>
         {children}
       </div>
@@ -534,13 +656,22 @@ function Section({title, description, children}: any) {
 function Feature({title, description, illustration, children, style: styleProp, styles = ''}: any) {
   let headingId = useId();
   return (
-    <section aria-labelledby={headingId} className={mergeStyles(container, styles)} style={styleProp}>
-      <div className={style({display: 'flex', flexDirection: {default: 'column', sm: 'row'}, gap: 12, alignItems: 'start'})}>
-        <div style={{marginTop: -12, marginInlineStart: -12}}>
-          {illustration}
-        </div>
+    <section
+      aria-labelledby={headingId}
+      className={mergeStyles(container, styles)}
+      style={styleProp}>
+      <div
+        className={style({
+          display: 'flex',
+          flexDirection: {default: 'column', sm: 'row'},
+          gap: 12,
+          alignItems: 'start'
+        })}>
+        <div style={{marginTop: -12, marginInlineStart: -12}}>{illustration}</div>
         <div className={style({display: 'flex', flexDirection: 'column', rowGap: 4})}>
-          <h3 id={headingId} className={style({font: 'heading', marginY: 0})}>{title}</h3>
+          <h3 id={headingId} className={style({font: 'heading', marginY: 0})}>
+            {title}
+          </h3>
           <p className={style({font: 'body-lg', marginY: 0})}>{description}</p>
         </div>
       </div>
@@ -566,6 +697,21 @@ function ColorScales() {
   let magenta = getColorScale('magenta', size);
   let pink = getColorScale('pink', size);
 
-  let scales = [red, orange, yellow, celery, green, seafoam, turquoise, cyan, blue, indigo, purple, fuchsia, magenta, pink];
-  return <Colors scales={scales} />
+  let scales = [
+    red,
+    orange,
+    yellow,
+    celery,
+    green,
+    seafoam,
+    turquoise,
+    cyan,
+    blue,
+    indigo,
+    purple,
+    fuchsia,
+    magenta,
+    pink
+  ];
+  return <Colors scales={scales} />;
 }

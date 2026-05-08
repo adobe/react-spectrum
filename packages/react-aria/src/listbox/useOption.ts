@@ -26,19 +26,19 @@ import {useSlotId} from '../utils/useId';
 
 export interface OptionAria extends SelectableItemStates {
   /** Props for the option element. */
-  optionProps: DOMAttributes,
+  optionProps: DOMAttributes;
 
   /** Props for the main text element inside the option. */
-  labelProps: DOMAttributes,
+  labelProps: DOMAttributes;
 
   /** Props for the description text element inside the option, if any. */
-  descriptionProps: DOMAttributes,
+  descriptionProps: DOMAttributes;
 
   /** Whether the option is currently focused. */
-  isFocused: boolean,
+  isFocused: boolean;
 
   /** Whether the option is keyboard focused. */
-  isFocusVisible: boolean
+  isFocusVisible: boolean;
 }
 
 export interface AriaOptionProps {
@@ -46,43 +46,43 @@ export interface AriaOptionProps {
    * Whether the option is disabled.
    * @deprecated
    */
-  isDisabled?: boolean,
+  isDisabled?: boolean;
 
   /**
    * Whether the option is selected.
    * @deprecated
    */
-  isSelected?: boolean,
+  isSelected?: boolean;
 
   /** A screen reader only label for the option. */
-  'aria-label'?: string,
+  'aria-label'?: string;
 
   /** The unique key for the option. */
-  key: Key,
+  key: Key;
 
   /**
    * Whether selection should occur on press up instead of press down.
    * @deprecated
    */
-  shouldSelectOnPressUp?: boolean,
+  shouldSelectOnPressUp?: boolean;
 
   /**
    * Whether the option should be focused when the user hovers over it.
    * @deprecated
    */
-  shouldFocusOnHover?: boolean,
+  shouldFocusOnHover?: boolean;
 
   /**
    * Whether the option is contained in a virtual scrolling listbox.
    * @deprecated
    */
-  isVirtualized?: boolean,
+  isVirtualized?: boolean;
 
   /**
    * Whether the option should use virtual focus instead of being focused directly.
    * @deprecated
    */
-  shouldUseVirtualFocus?: boolean
+  shouldUseVirtualFocus?: boolean;
 }
 
 /**
@@ -91,10 +91,12 @@ export interface AriaOptionProps {
  * @param props - Props for the option.
  * @param state - State for the listbox, as returned by `useListState`.
  */
-export function useOption<T>(props: AriaOptionProps, state: ListState<T>, ref: RefObject<FocusableElement | null>): OptionAria {
-  let {
-    key
-  } = props;
+export function useOption<T>(
+  props: AriaOptionProps,
+  state: ListState<T>,
+  ref: RefObject<FocusableElement | null>
+): OptionAria {
+  let {key} = props;
 
   let data = listData.get(state);
 
@@ -135,7 +137,8 @@ export function useOption<T>(props: AriaOptionProps, state: ListState<T>, ref: R
     isVirtualized,
     shouldUseVirtualFocus,
     isDisabled,
-    onAction: onAction || item?.props?.onAction ? chain(item?.props?.onAction, onAction) : undefined,
+    onAction:
+      onAction || item?.props?.onAction ? chain(item?.props?.onAction, onAction) : undefined,
     linkBehavior: data?.linkBehavior,
     // @ts-ignore
     UNSTABLE_itemBehavior: data?.['UNSTABLE_itemBehavior'],

@@ -10,7 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, createEvent, fireEvent, mockImplementation, pointerMap, render, waitFor, within} from '@react-spectrum/test-utils-internal';
+import {
+  act,
+  createEvent,
+  fireEvent,
+  mockImplementation,
+  pointerMap,
+  render,
+  waitFor,
+  within
+} from '@react-spectrum/test-utils-internal';
 import {Item} from 'react-stately/Item';
 import {Links as LinksExample} from '../../stories/tabs/Tabs.stories';
 import {Provider} from '../../src/provider/Provider';
@@ -32,9 +41,7 @@ function renderComponent(props = {}, itemProps) {
     <Provider theme={theme} {...providerProps}>
       <Tabs aria-label="Tab Sample" {...props} items={items}>
         <TabList>
-          {item => (
-            <Item {...itemProps} key={item.name} title={item.name || item.children} />
-          )}
+          {item => <Item {...itemProps} key={item.name} title={item.name || item.children} />}
         </TabList>
         <TabPanels>
           {item => (
@@ -120,13 +127,19 @@ describe('Tabs', function () {
     expect(tablist).toHaveAttribute('aria-orientation', 'horizontal');
 
     expect(selectedItem).toHaveAttribute('aria-selected', 'true');
-    act(() => {selectedItem.focus();});
+    act(() => {
+      selectedItem.focus();
+    });
     let arrowRight = createEvent.keyDown(selectedItem, {key: 'ArrowRight', code: 39, charCode: 39});
     fireEvent(selectedItem, arrowRight);
     let nextSelectedItem = tabs[1];
     expect(nextSelectedItem).toHaveAttribute('aria-selected', 'true');
     expect(arrowRight.defaultPrevented).toBe(true);
-    let arrowLeft = createEvent.keyDown(nextSelectedItem, {key: 'ArrowLeft', code: 37, charCode: 37});
+    let arrowLeft = createEvent.keyDown(nextSelectedItem, {
+      key: 'ArrowLeft',
+      code: 37,
+      charCode: 37
+    });
     fireEvent(nextSelectedItem, arrowLeft);
     expect(selectedItem).toHaveAttribute('aria-selected', 'true');
     expect(arrowLeft.defaultPrevented).toBe(true);
@@ -145,7 +158,11 @@ describe('Tabs', function () {
   it('allows user to change tab item select via arrow keys with horizontal tabs (rtl)', async function () {
     let onKeyDown = jest.fn();
     let container = renderComponent({orientation: 'horizontal', providerProps: {locale: 'ar-AE'}});
-    let tabsTester = testUtilUser.createTester('Tabs', {root: container.getByRole('tablist'), interactionType: 'keyboard', direction: 'rtl'});
+    let tabsTester = testUtilUser.createTester('Tabs', {
+      root: container.getByRole('tablist'),
+      interactionType: 'keyboard',
+      direction: 'rtl'
+    });
     let tabs = tabsTester.tabs;
     window.addEventListener('keydown', onKeyDown);
 
@@ -174,7 +191,9 @@ describe('Tabs', function () {
     let tablist = container.getByRole('tablist');
     let tabs = within(tablist).getAllByRole('tab');
     let selectedItem = tabs[0];
-    act(() => {selectedItem.focus();});
+    act(() => {
+      selectedItem.focus();
+    });
 
     expect(tablist).toHaveAttribute('aria-orientation', 'vertical');
 
@@ -198,7 +217,9 @@ describe('Tabs', function () {
     let tablist = container.getByRole('tablist');
     let tabs = within(tablist).getAllByRole('tab');
     let firstItem = tabs[0];
-    act(() => {firstItem.focus();});
+    act(() => {
+      firstItem.focus();
+    });
 
     expect(tablist).toHaveAttribute('aria-orientation', 'horizontal');
 
@@ -215,7 +236,9 @@ describe('Tabs', function () {
     let tablist = container.getByRole('tablist');
     let tabs = within(tablist).getAllByRole('tab');
     let firstItem = tabs[0];
-    act(() => {firstItem.focus();});
+    act(() => {
+      firstItem.focus();
+    });
 
     expect(tablist).toHaveAttribute('aria-orientation', 'vertical');
 
@@ -228,13 +251,19 @@ describe('Tabs', function () {
   });
 
   it('not select via left / right keys if keyboardActivation is manual, select on enter / spacebar', function () {
-    let container = renderComponent({keyboardActivation: 'manual', defaultSelectedKey: defaultItems[0].name, onSelectionChange});
+    let container = renderComponent({
+      keyboardActivation: 'manual',
+      defaultSelectedKey: defaultItems[0].name,
+      onSelectionChange
+    });
     let tablist = container.getByRole('tablist');
     let tabs = within(tablist).getAllByRole('tab');
     let firstItem = tabs[0];
     let secondItem = tabs[1];
     let thirdItem = tabs[2];
-    act(() => {firstItem.focus();});
+    act(() => {
+      firstItem.focus();
+    });
     expect(firstItem).toHaveAttribute('aria-selected', 'true');
     fireEvent.keyDown(firstItem, {key: 'ArrowRight', code: 39, charCode: 39});
     fireEvent.keyUp(document.activeElement, {key: 'ArrowRight', code: 39, charCode: 39});
@@ -254,7 +283,11 @@ describe('Tabs', function () {
   });
 
   it('supports using click to change tab', async function () {
-    let container = renderComponent({keyboardActivation: 'manual', defaultSelectedKey: defaultItems[0].name, onSelectionChange});
+    let container = renderComponent({
+      keyboardActivation: 'manual',
+      defaultSelectedKey: defaultItems[0].name,
+      onSelectionChange
+    });
     let tablist = container.getByRole('tablist');
     let tabs = within(tablist).getAllByRole('tab');
     let firstItem = tabs[0];
@@ -283,9 +316,7 @@ describe('Tabs', function () {
           </TabList>
           <TabPanels>
             {defaultItems.map(item => (
-              <Item key={item.name}>
-                {item.children}
-              </Item>
+              <Item key={item.name}>{item.children}</Item>
             ))}
           </TabPanels>
         </Tabs>
@@ -297,9 +328,7 @@ describe('Tabs', function () {
           </TabList>
           <TabPanels>
             {defaultItems.map(item => (
-              <Item key={item.name}>
-                {item.children}
-              </Item>
+              <Item key={item.name}>{item.children}</Item>
             ))}
           </TabPanels>
         </Tabs>
@@ -337,7 +366,11 @@ describe('Tabs', function () {
   });
 
   it('disabled tabs cannot be keyboard navigated to', async function () {
-    let tree = renderComponent({defaultSelectedKey: defaultItems[0].name, disabledKeys: [defaultItems[1].name], onSelectionChange});
+    let tree = renderComponent({
+      defaultSelectedKey: defaultItems[0].name,
+      disabledKeys: [defaultItems[1].name],
+      onSelectionChange
+    });
     await user.tab();
 
     let tablist = tree.getByRole('tablist');
@@ -349,7 +382,11 @@ describe('Tabs', function () {
   });
 
   it('disabled tabs cannot be pressed', async function () {
-    let tree = renderComponent({defaultSelectedKey: defaultItems[0].name, disabledKeys: [defaultItems[1].name], onSelectionChange});
+    let tree = renderComponent({
+      defaultSelectedKey: defaultItems[0].name,
+      disabledKeys: [defaultItems[1].name],
+      onSelectionChange
+    });
     await user.tab();
 
     let tablist = tree.getByRole('tablist');
@@ -360,7 +397,11 @@ describe('Tabs', function () {
   });
 
   it('finds the first non-disabled tab if the currently selected one is removed', async function () {
-    let tree = renderComponent({disabledKeys: [defaultItems[0].name], onSelectionChange, items: defaultItems});
+    let tree = renderComponent({
+      disabledKeys: [defaultItems[0].name],
+      onSelectionChange,
+      items: defaultItems
+    });
     await user.tab();
 
     let tablist = tree.getByRole('tablist');
@@ -372,12 +413,12 @@ describe('Tabs', function () {
 
     tree.rerender(
       <Provider theme={theme}>
-        <Tabs aria-label="Tab Example" disabledKeys={[defaultItems[0].name]} onSelectionChange={onSelectionChange} items={defaultItems.slice(0, 1)}>
-          <TabList>
-            {item => (
-              <Item key={item.name} title={item.name || item.children} />
-            )}
-          </TabList>
+        <Tabs
+          aria-label="Tab Example"
+          disabledKeys={[defaultItems[0].name]}
+          onSelectionChange={onSelectionChange}
+          items={defaultItems.slice(0, 1)}>
+          <TabList>{item => <Item key={item.name} title={item.name || item.children} />}</TabList>
           <TabPanels>
             {item => (
               <Item key={item.name} title={item.name}>
@@ -392,7 +433,11 @@ describe('Tabs', function () {
   });
 
   it('selects first tab if all tabs are disabled', async function () {
-    let tree = renderComponent({disabledKeys: defaultItems.map(item => item.name), onSelectionChange, items: defaultItems});
+    let tree = renderComponent({
+      disabledKeys: defaultItems.map(item => item.name),
+      onSelectionChange,
+      items: defaultItems
+    });
     await user.tab();
 
     let tablist = tree.getByRole('tablist');
@@ -403,7 +448,7 @@ describe('Tabs', function () {
     expect(document.activeElement).toBe(tabpanel);
   });
 
-  it('collapses when it can\'t render all the tabs horizontally', async function () {
+  it("collapses when it can't render all the tabs horizontally", async function () {
     let target = [HTMLDivElement.prototype, 'getBoundingClientRect'];
     let mockCalls = [
       function () {
@@ -448,7 +493,10 @@ describe('Tabs', function () {
     let picker = getByRole('button');
     let pickerLabel = within(picker).getByText('Tab 1');
     expect(picker).toHaveAttribute('aria-label', 'Test Tabs');
-    expect(picker).toHaveAttribute('aria-labelledby', `${pickerLabel.id} ${picker.id} external label`);
+    expect(picker).toHaveAttribute(
+      'aria-labelledby',
+      `${pickerLabel.id} ${picker.id} external label`
+    );
 
     await user.click(picker);
     act(() => jest.runAllTimers());
@@ -465,16 +513,19 @@ describe('Tabs', function () {
     expect(tabpanel).toHaveAttribute('aria-labelledby', `${picker.id}`);
   });
 
-  it('doesn\'t collapse when it can render all the tabs horizontally', function () {
-    jest.spyOn(HTMLDivElement.prototype, 'getBoundingClientRect').mockImplementationOnce(function () {
-      return {
-        right: 500
-      };
-    }).mockImplementationOnce(function () {
-      return {
-        right: 400
-      };
-    });
+  it("doesn't collapse when it can render all the tabs horizontally", function () {
+    jest
+      .spyOn(HTMLDivElement.prototype, 'getBoundingClientRect')
+      .mockImplementationOnce(function () {
+        return {
+          right: 500
+        };
+      })
+      .mockImplementationOnce(function () {
+        return {
+          right: 400
+        };
+      });
 
     let {getByRole, queryByRole} = renderComponent();
     let tablist = getByRole('tablist');
@@ -515,18 +566,8 @@ describe('Tabs', function () {
     let {getByRole, queryByRole, rerender} = render(
       <Provider theme={theme}>
         <Tabs aria-label="Test Tabs" items={defaultItems}>
-          <TabList>
-            {item => (
-              <Item key={item.name} title={item.name || item.children} />
-            )}
-          </TabList>
-          <TabPanels>
-            {item => (
-              <Item key={item.name}>
-                {item.children}
-              </Item>
-            )}
-          </TabPanels>
+          <TabList>{item => <Item key={item.name} title={item.name || item.children} />}</TabList>
+          <TabPanels>{item => <Item key={item.name}>{item.children}</Item>}</TabPanels>
         </Tabs>
       </Provider>
     );
@@ -534,49 +575,44 @@ describe('Tabs', function () {
     expect(tablist).toBeTruthy();
     expect(queryByRole('button')).toBeNull();
 
-    spy.mockImplementationOnce(function () {
-      return {
-        left: 0,
-        right: 200
-      };
-    }).mockImplementationOnce(function () {
-      return {
-        left: 200,
-        right: 300
-      };
-    }).mockImplementationOnce(function () {
-      return {
-        left: 300,
-        right: 400
-      };
-    }).mockImplementationOnce(function () {
-      return {
-        left: 400,
-        right: 700
-      };
-    }).mockImplementationOnce(function () {
-      return {
-        right: 500
-      };
-    });
+    spy
+      .mockImplementationOnce(function () {
+        return {
+          left: 0,
+          right: 200
+        };
+      })
+      .mockImplementationOnce(function () {
+        return {
+          left: 200,
+          right: 300
+        };
+      })
+      .mockImplementationOnce(function () {
+        return {
+          left: 300,
+          right: 400
+        };
+      })
+      .mockImplementationOnce(function () {
+        return {
+          left: 400,
+          right: 700
+        };
+      })
+      .mockImplementationOnce(function () {
+        return {
+          right: 500
+        };
+      });
 
     let newItems = [...defaultItems];
     newItems.push({name: 'Tab 4', children: 'Tab 4 body'});
     rerender(
       <Provider theme={theme}>
         <Tabs aria-label="Test Tabs" items={newItems}>
-          <TabList>
-            {item => (
-              <Item key={item.name} title={item.name || item.children} />
-            )}
-          </TabList>
-          <TabPanels>
-            {item => (
-              <Item key={item.name}>
-                {item.children}
-              </Item>
-            )}
-          </TabPanels>
+          <TabList>{item => <Item key={item.name} title={item.name || item.children} />}</TabList>
+          <TabPanels>{item => <Item key={item.name}>{item.children}</Item>}</TabPanels>
         </Tabs>
       </Provider>
     );
@@ -590,47 +626,42 @@ describe('Tabs', function () {
     expect(picker).toBeTruthy();
     expect(tabpanel).toHaveAttribute('aria-labelledby', `${picker.id}`);
 
-    spy.mockImplementationOnce(function () {
-      return {
-        left: 0,
-        right: 200
-      };
-    }).mockImplementationOnce(function () {
-      return {
-        left: 200,
-        right: 300
-      };
-    }).mockImplementationOnce(function () {
-      return {
-        left: 300,
-        right: 400
-      };
-    }).mockImplementationOnce(function () {
-      return {
-        left: 400,
-        right: 700
-      };
-    }).mockImplementationOnce(function () {
-      return {
-        right: 500
-      };
-    });
+    spy
+      .mockImplementationOnce(function () {
+        return {
+          left: 0,
+          right: 200
+        };
+      })
+      .mockImplementationOnce(function () {
+        return {
+          left: 200,
+          right: 300
+        };
+      })
+      .mockImplementationOnce(function () {
+        return {
+          left: 300,
+          right: 400
+        };
+      })
+      .mockImplementationOnce(function () {
+        return {
+          left: 400,
+          right: 700
+        };
+      })
+      .mockImplementationOnce(function () {
+        return {
+          right: 500
+        };
+      });
 
     rerender(
       <Provider theme={theme}>
         <Tabs aria-label="Tab Example" items={newItems} orientation="vertical">
-          <TabList>
-            {item => (
-              <Item key={item.name} title={item.name || item.children} />
-            )}
-          </TabList>
-          <TabPanels>
-            {item => (
-              <Item key={item.name}>
-                {item.children}
-              </Item>
-            )}
-          </TabPanels>
+          <TabList>{item => <Item key={item.name} title={item.name || item.children} />}</TabList>
+          <TabPanels>{item => <Item key={item.name}>{item.children}</Item>}</TabPanels>
         </Tabs>
       </Provider>
     );
@@ -644,44 +675,38 @@ describe('Tabs', function () {
     expect(tabpanel).toHaveTextContent(defaultItems[0].children);
     expect(tabpanel).toHaveAttribute('aria-labelledby', defaultItems[0].id);
 
-    spy.mockImplementationOnce(function () {
-      return {
-        left: 0,
-        right: 200
-      };
-    }).mockImplementationOnce(function () {
-      return {
-        left: 200,
-        right: 300
-      };
-    }).mockImplementationOnce(function () {
-      return {
-        left: 300,
-        right: 400
-      };
-    }).mockImplementationOnce(function () {
-      return {
-        right: 500
-      };
-    });
+    spy
+      .mockImplementationOnce(function () {
+        return {
+          left: 0,
+          right: 200
+        };
+      })
+      .mockImplementationOnce(function () {
+        return {
+          left: 200,
+          right: 300
+        };
+      })
+      .mockImplementationOnce(function () {
+        return {
+          left: 300,
+          right: 400
+        };
+      })
+      .mockImplementationOnce(function () {
+        return {
+          right: 500
+        };
+      });
 
     newItems = [...defaultItems];
     newItems.splice(0, 1);
     rerender(
       <Provider theme={theme}>
         <Tabs aria-label="Test Tabs" items={newItems}>
-          <TabList>
-            {item => (
-              <Item key={item.name} title={item.name} />
-            )}
-          </TabList>
-          <TabPanels>
-            {item => (
-              <Item key={item.name}>
-                {item.children}
-              </Item>
-            )}
-          </TabPanels>
+          <TabList>{item => <Item key={item.name} title={item.name} />}</TabList>
+          <TabPanels>{item => <Item key={item.name}>{item.children}</Item>}</TabPanels>
         </Tabs>
       </Provider>
     );
@@ -694,7 +719,6 @@ describe('Tabs', function () {
     tablist = getByRole('tablist');
     expect(tablist).toBeTruthy();
     expect(queryByRole('button')).toBeNull();
-
   });
 
   it('disabled tabs cannot be selected via collapse picker', async function () {
@@ -855,11 +879,14 @@ describe('Tabs', function () {
   });
 
   it('supports custom props for tab items', function () {
-    let {getAllByTestId} = renderComponent({}, {
-      'data-testid': 'tabItems',
-      'data-instance-id': 'instance-id',
-      'id': 'id-1'
-    });
+    let {getAllByTestId} = renderComponent(
+      {},
+      {
+        'data-testid': 'tabItems',
+        'data-instance-id': 'instance-id',
+        id: 'id-1'
+      }
+    );
     let tabItems = getAllByTestId('tabItems');
     expect(tabItems).toHaveLength(3);
     for (let tabItem of tabItems) {
@@ -882,21 +909,11 @@ describe('Tabs', function () {
   });
 
   it('updates the tab index of the selected tab if programmatically changed', function () {
-    let Example = (props) => (
+    let Example = props => (
       <Provider theme={theme}>
         <Tabs aria-label="Test Tabs" items={defaultItems} selectedKey={props.selectedKey}>
-          <TabList>
-            {item => (
-              <Item key={item.name} title={item.name || item.children} />
-            )}
-          </TabList>
-          <TabPanels>
-            {item => (
-              <Item key={item.name}>
-                {item.children}
-              </Item>
-            )}
-          </TabPanels>
+          <TabList>{item => <Item key={item.name} title={item.name || item.children} />}</TabList>
+          <TabPanels>{item => <Item key={item.name}>{item.children}</Item>}</TabPanels>
         </Tabs>
       </Provider>
     );
@@ -915,7 +932,11 @@ describe('Tabs', function () {
   });
 
   it('should support tabs as links', async function () {
-    let {getAllByRole} = render(<Provider theme={theme}><LinksExample /></Provider>);
+    let {getAllByRole} = render(
+      <Provider theme={theme}>
+        <LinksExample />
+      </Provider>
+    );
 
     let tabs = getAllByRole('tab');
     expect(tabs[0].tagName).toBe('A');
@@ -946,12 +967,8 @@ describe('Tabs', function () {
             </TabList>
             <TabPanels>
               <>
-                <Item>
-                  Tab 1 content
-                </Item>
-                <Item>
-                  Tab 2 content
-                </Item>
+                <Item>Tab 1 content</Item>
+                <Item>Tab 2 content</Item>
               </>
             </TabPanels>
           </Tabs>
@@ -993,13 +1010,9 @@ describe('Tabs', function () {
             </TabList>
             <TabPanels>
               <>
-                <Item>
-                  Tab 1 content
-                </Item>
+                <Item>Tab 1 content</Item>
               </>
-              <Item>
-                Tab 2 content
-              </Item>
+              <Item>Tab 2 content</Item>
             </TabPanels>
           </Tabs>
         </Provider>
@@ -1040,17 +1053,11 @@ describe('Tabs', function () {
               <Item>Tab 3</Item>
             </TabList>
             <TabPanels>
-              <Item>
-                Tab 1 content
-              </Item>
+              <Item>Tab 1 content</Item>
               <>
-                <Item>
-                  Tab 2 content
-                </Item>
+                <Item>Tab 2 content</Item>
               </>
-              <Item>
-                Tab 3 content
-              </Item>
+              <Item>Tab 3 content</Item>
             </TabPanels>
           </Tabs>
         </Provider>
@@ -1090,13 +1097,9 @@ describe('Tabs', function () {
               </>
             </TabList>
             <TabPanels>
-              <Item>
-                Tab 1 content
-              </Item>
+              <Item>Tab 1 content</Item>
               <>
-                <Item>
-                  Tab 2 content
-                </Item>
+                <Item>Tab 2 content</Item>
               </>
             </TabPanels>
           </Tabs>
@@ -1137,13 +1140,9 @@ describe('Tabs', function () {
               <Item>Tab 2</Item>
             </TabList>
             <TabPanels>
-              <Item>
-                Tab 1 content
-              </Item>
+              <Item>Tab 1 content</Item>
               <>
-                <Item>
-                  Tab 2 content
-                </Item>
+                <Item>Tab 2 content</Item>
               </>
             </TabPanels>
           </Tabs>
@@ -1185,13 +1184,9 @@ describe('Tabs', function () {
             </TabList>
             <TabPanels>
               <>
-                <Item>
-                  Tab 1 content
-                </Item>
+                <Item>Tab 1 content</Item>
               </>
-              <Item>
-                Tab 2 content
-              </Item>
+              <Item>Tab 2 content</Item>
             </TabPanels>
           </Tabs>
         </Provider>
@@ -1225,11 +1220,7 @@ describe('Tabs', function () {
         <Provider theme={theme}>
           <Tabs aria-label="Tab Sample" items={defaultItems}>
             <TabList>
-              <>
-                {item => (
-                  <Item key={item.name} title={item.name || item.children} />
-                )}
-              </>
+              <>{item => <Item key={item.name} title={item.name || item.children} />}</>
             </TabList>
             <TabPanels>
               <>
@@ -1281,9 +1272,7 @@ describe('Tabs', function () {
             <TabPanels>
               <>
                 {defaultItems.map(item => (
-                  <Item key={item.name}>
-                    {item.children}
-                  </Item>
+                  <Item key={item.name}>{item.children}</Item>
                 ))}
               </>
             </TabPanels>
@@ -1324,33 +1313,41 @@ describe('Tabs', function () {
       {name: 'Tab 5', children: 'Tab 5 body'}
     ];
     it.each`
-      Name                    | props
-      ${'ltr + vertical'}     | ${{locale: 'de-DE', orientation: 'vertical'}}
-      ${'rtl + verfical'}     | ${{locale: 'ar-AE', orientation: 'vertical'}}
-      ${'ltr + horizontal'}   | ${{locale: 'de-DE', orientation: 'horizontal'}}
-      ${'rtl + horizontal'}   | ${{locale: 'ar-AE', orientation: 'horizontal'}}
-    `('$Name should select the correct radio via keyboard regardless of orientation and disabled radios', async function ({props}) {
-      let {getByRole} = renderComponent({items, orientation: props.orientation, disabledKeys: ['Tab 2', 'Tab 3'], providerProps: {locale: props.locale}});
+      Name                  | props
+      ${'ltr + vertical'}   | ${{locale: 'de-DE', orientation: 'vertical'}}
+      ${'rtl + verfical'}   | ${{locale: 'ar-AE', orientation: 'vertical'}}
+      ${'ltr + horizontal'} | ${{locale: 'de-DE', orientation: 'horizontal'}}
+      ${'rtl + horizontal'} | ${{locale: 'ar-AE', orientation: 'horizontal'}}
+    `(
+      '$Name should select the correct radio via keyboard regardless of orientation and disabled radios',
+      async function ({props}) {
+        let {getByRole} = renderComponent({
+          items,
+          orientation: props.orientation,
+          disabledKeys: ['Tab 2', 'Tab 3'],
+          providerProps: {locale: props.locale}
+        });
 
-      let direction = props.locale === 'ar-AE' ? 'rtl' : 'ltr';
-      let tabsTester = testUtilUser.createTester('Tabs', {root: getByRole('tablist'), direction});
-      expect(tabsTester.tablist).toHaveAttribute('aria-orientation', props.orientation);
-      let tabs = tabsTester.tabs;
-      await tabsTester.triggerTab({tab: tabs[0]});
-      expect(tabsTester.selectedTab).toBe(tabs[0]);
+        let direction = props.locale === 'ar-AE' ? 'rtl' : 'ltr';
+        let tabsTester = testUtilUser.createTester('Tabs', {root: getByRole('tablist'), direction});
+        expect(tabsTester.tablist).toHaveAttribute('aria-orientation', props.orientation);
+        let tabs = tabsTester.tabs;
+        await tabsTester.triggerTab({tab: tabs[0]});
+        expect(tabsTester.selectedTab).toBe(tabs[0]);
 
-      await tabsTester.triggerTab({tab: 4, interactionType: 'keyboard'});
-      expect(tabsTester.selectedTab).toBe(tabs[4]);
-      let tab4 = tabsTester.findTab({tabIndexOrText: 3});
-      await tabsTester.triggerTab({tab: tab4, interactionType: 'keyboard'});
-      expect(tabsTester.selectedTab).toBe(tabs[3]);
+        await tabsTester.triggerTab({tab: 4, interactionType: 'keyboard'});
+        expect(tabsTester.selectedTab).toBe(tabs[4]);
+        let tab4 = tabsTester.findTab({tabIndexOrText: 3});
+        await tabsTester.triggerTab({tab: tab4, interactionType: 'keyboard'});
+        expect(tabsTester.selectedTab).toBe(tabs[3]);
 
-      await tabsTester.triggerTab({tab: 'Tab 1', interactionType: 'mouse'});
-      expect(tabsTester.selectedTab).toBe(tabs[0]);
+        await tabsTester.triggerTab({tab: 'Tab 1', interactionType: 'mouse'});
+        expect(tabsTester.selectedTab).toBe(tabs[0]);
 
-      let tab5 = tabsTester.findTab({tabIndexOrText: 'Tab 5'});
-      await tabsTester.triggerTab({tab: tab5, interactionType: 'mouse'});
-      expect(tabsTester.selectedTab).toBe(tabs[4]);
-    });
+        let tab5 = tabsTester.findTab({tabIndexOrText: 'Tab 5'});
+        await tabsTester.triggerTab({tab: tab5, interactionType: 'mouse'});
+        expect(tabsTester.selectedTab).toBe(tabs[4]);
+      }
+    );
   });
 });

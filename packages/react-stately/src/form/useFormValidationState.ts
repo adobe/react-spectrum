@@ -11,7 +11,12 @@
  */
 
 import {Context, createContext, useContext, useEffect, useMemo, useRef, useState} from 'react';
-import {Validation, ValidationErrors, ValidationFunction, ValidationResult} from '@react-types/shared';
+import {
+  Validation,
+  ValidationErrors,
+  ValidationFunction,
+  ValidationResult
+} from '@react-types/shared';
 
 export const VALID_VALIDITY_STATE: ValidityState = {
   badInput: false,
@@ -47,29 +52,41 @@ export const FormValidationContext: Context<ValidationErrors> = createContext<Va
 export const privateValidationStateProp: string = '__reactAriaFormValidationState';
 
 interface FormValidationProps<T> extends Validation<T> {
-  builtinValidation?: ValidationResult,
-  name?: string | string[],
-  value: T | null
+  builtinValidation?: ValidationResult;
+  name?: string | string[];
+  value: T | null;
 }
 
 export interface FormValidationState {
   /** Realtime validation results, updated as the user edits the value. */
-  realtimeValidation: ValidationResult,
+  realtimeValidation: ValidationResult;
   /** Currently displayed validation results, updated when the user commits their changes. */
-  displayValidation: ValidationResult,
+  displayValidation: ValidationResult;
   /** Updates the current validation result. Not displayed to the user until `commitValidation` is called. */
-  updateValidation(result: ValidationResult): void,
+  updateValidation(result: ValidationResult): void;
   /** Resets the displayed validation state to valid when the user resets the form. */
-  resetValidation(): void,
+  resetValidation(): void;
   /** Commits the realtime validation so it is displayed to the user. */
-  commitValidation(): void
+  commitValidation(): void;
 }
 
 export function useFormValidationState<T>(props: FormValidationProps<T>): FormValidationState {
   // Private prop for parent components to pass state to children.
   if (props[privateValidationStateProp]) {
-    let {realtimeValidation, displayValidation, updateValidation, resetValidation, commitValidation} = props[privateValidationStateProp] as FormValidationState;
-    return {realtimeValidation, displayValidation, updateValidation, resetValidation, commitValidation};
+    let {
+      realtimeValidation,
+      displayValidation,
+      updateValidation,
+      resetValidation,
+      commitValidation
+    } = props[privateValidationStateProp] as FormValidationState;
+    return {
+      realtimeValidation,
+      displayValidation,
+      updateValidation,
+      resetValidation,
+      commitValidation
+    };
   }
 
   // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -77,7 +94,15 @@ export function useFormValidationState<T>(props: FormValidationProps<T>): FormVa
 }
 
 function useFormValidationStateImpl<T>(props: FormValidationProps<T>): FormValidationState {
-  let {isInvalid, validationState, name, value, builtinValidation, validate, validationBehavior = 'aria'} = props;
+  let {
+    isInvalid,
+    validationState,
+    name,
+    value,
+    builtinValidation,
+    validate,
+    validationBehavior = 'aria'
+  } = props;
 
   // backward compatibility.
   if (validationState) {
@@ -85,11 +110,14 @@ function useFormValidationStateImpl<T>(props: FormValidationProps<T>): FormValid
   }
 
   // If the isInvalid prop is controlled, update validation result in realtime.
-  let controlledError: ValidationResult | null = isInvalid !== undefined ? {
-    isInvalid,
-    validationErrors: [],
-    validationDetails: CUSTOM_VALIDITY_STATE
-  } : null;
+  let controlledError: ValidationResult | null =
+    isInvalid !== undefined
+      ? {
+          isInvalid,
+          validationErrors: [],
+          validationDetails: CUSTOM_VALIDITY_STATE
+        }
+      : null;
 
   // Perform custom client side validation.
   let clientError: ValidationResult | null = useMemo(() => {
@@ -108,7 +136,9 @@ function useFormValidationStateImpl<T>(props: FormValidationProps<T>): FormValid
   let serverErrors = useContext(FormValidationContext);
   let serverErrorMessages = useMemo(() => {
     if (name) {
-      return Array.isArray(name) ? name.flatMap(name => asArray(serverErrors[name])) : asArray(serverErrors[name]);
+      return Array.isArray(name)
+        ? name.flatMap(name => asArray(serverErrors[name]))
+        : asArray(serverErrors[name]);
     }
     return [];
   }, [serverErrors, name]);
@@ -121,8 +151,8 @@ function useFormValidationStateImpl<T>(props: FormValidationProps<T>): FormValid
     setServerErrorCleared(false);
   }
 
-  let serverError: ValidationResult | null = useMemo(() =>
-    getValidationResult(isServerErrorCleared ? [] : serverErrorMessages),
+  let serverError: ValidationResult | null = useMemo(
+    () => getValidationResult(isServerErrorCleared ? [] : serverErrorMessages),
     [isServerErrorCleared, serverErrorMessages]
   );
 
@@ -150,10 +180,12 @@ function useFormValidationStateImpl<T>(props: FormValidationProps<T>): FormValid
   // realtimeValidation is used to update the native input element's state based on custom validation logic.
   // displayValidation is the currently displayed validation state that the user sees (e.g. on input change/form submit).
   // With validationBehavior="aria", all errors are displayed in realtime rather than on submit.
-  let realtimeValidation = controlledError || serverError || clientError || builtinValidation || DEFAULT_VALIDATION_RESULT;
-  let displayValidation = validationBehavior === 'native'
-    ? controlledError || serverError || currentValidity
-    : controlledError || serverError || clientError || builtinValidation || currentValidity;
+  let realtimeValidation =
+    controlledError || serverError || clientError || builtinValidation || DEFAULT_VALIDATION_RESULT;
+  let displayValidation =
+    validationBehavior === 'native'
+      ? controlledError || serverError || currentValidity
+      : controlledError || serverError || clientError || builtinValidation || currentValidity;
 
   return {
     realtimeValidation,
@@ -214,11 +246,13 @@ function runValidate<T>(validate: ValidationFunction<T>, value: T): string[] {
 }
 
 function getValidationResult(errors: string[]): ValidationResult | null {
-  return errors.length ? {
-    isInvalid: true,
-    validationErrors: errors,
-    validationDetails: CUSTOM_VALIDITY_STATE
-  } : null;
+  return errors.length
+    ? {
+        isInvalid: true,
+        validationErrors: errors,
+        validationDetails: CUSTOM_VALIDITY_STATE
+      }
+    : null;
 }
 
 function isEqualValidation(a: ValidationResult | null, b: ValidationResult | null): boolean {
@@ -226,11 +260,14 @@ function isEqualValidation(a: ValidationResult | null, b: ValidationResult | nul
     return true;
   }
 
-  return !!a && !!b
-    && a.isInvalid === b.isInvalid
-    && a.validationErrors.length === b.validationErrors.length
-    && a.validationErrors.every((a, i) => a === b.validationErrors[i])
-    && Object.entries(a.validationDetails).every(([k, v]) => b.validationDetails[k] === v);
+  return (
+    !!a &&
+    !!b &&
+    a.isInvalid === b.isInvalid &&
+    a.validationErrors.length === b.validationErrors.length &&
+    a.validationErrors.every((a, i) => a === b.validationErrors[i]) &&
+    Object.entries(a.validationDetails).every(([k, v]) => b.validationDetails[k] === v)
+  );
 }
 
 export function mergeValidation(...results: ValidationResult[]): ValidationResult {

@@ -12,11 +12,16 @@
 
 import {ActionButtonGroupContext} from './ActionButtonGroup';
 import {AvatarContext} from './Avatar';
-import {baseColor, focusRing, fontRelative, lightDark, style} from '../style' with { type: 'macro' };
+import {baseColor, focusRing, fontRelative, lightDark, style} from '../style' with {type: 'macro'};
 import {ButtonProps, ButtonRenderProps, Button as RACButton} from 'react-aria-components/Button';
 import {centerBaseline} from './CenterBaseline';
 import {ContextValue, Provider, useSlottedContext} from 'react-aria-components/slots';
-import {control, getAllowedOverrides, staticColor, StyleProps} from './style-utils' with { type: 'macro' };
+import {
+  control,
+  getAllowedOverrides,
+  staticColor,
+  StyleProps
+} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, ReactNode, useContext} from 'react';
 import {FocusableRef, FocusableRefValue, GlobalDOMAttributes} from '@react-types/shared';
 import {IconContext} from './Icon';
@@ -41,29 +46,45 @@ export interface ActionButtonStyleProps {
    *
    * @default 'M'
    */
-  size?: 'XS' | 'S' | 'M' | 'L' | 'XL',
+  size?: 'XS' | 'S' | 'M' | 'L' | 'XL';
   /** The static color style to apply. Useful when the ActionButton appears over a color background. */
-  staticColor?: 'black' | 'white' | 'auto',
+  staticColor?: 'black' | 'white' | 'auto';
   /** Whether the button should be displayed with a [quiet style](https://spectrum.adobe.com/page/action-button/#Quiet). */
-  isQuiet?: boolean
+  isQuiet?: boolean;
 }
 
 interface ToggleButtonStyleProps {
   /** Whether the ActionButton should be selected (controlled). */
-  isSelected?: boolean,
+  isSelected?: boolean;
   /** Whether the button should be displayed with an [emphasized style](https://spectrum.adobe.com/page/action-button/#Emphasis). */
-  isEmphasized?: boolean
+  isEmphasized?: boolean;
 }
 
 interface ActionGroupItemStyleProps {
-  density?: 'regular' | 'compact',
-  orientation?: 'horizontal' | 'vertical',
-  isJustified?: boolean
+  density?: 'regular' | 'compact';
+  orientation?: 'horizontal' | 'vertical';
+  isJustified?: boolean;
 }
 
-export interface ActionButtonProps extends Omit<ButtonProps, 'className' | 'style' | 'render' | 'children' | 'onHover' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange' | 'onClick' | keyof GlobalDOMAttributes>, StyleProps, ActionButtonStyleProps {
+export interface ActionButtonProps
+  extends
+    Omit<
+      ButtonProps,
+      | 'className'
+      | 'style'
+      | 'render'
+      | 'children'
+      | 'onHover'
+      | 'onHoverStart'
+      | 'onHoverEnd'
+      | 'onHoverChange'
+      | 'onClick'
+      | keyof GlobalDOMAttributes
+    >,
+    StyleProps,
+    ActionButtonStyleProps {
   /** The content to display in the ActionButton. */
-  children: ReactNode
+  children: ReactNode;
 }
 
 // These styles handle both ActionButton and ToggleButton
@@ -71,197 +92,205 @@ const iconOnly = ':has([slot=icon], [slot=avatar]):not(:has([data-rsp-slot=text]
 const avatarOnly = ':has([slot=avatar]):not(:has([slot=icon], [data-rsp-slot=text]))';
 const textOnly = ':has([data-rsp-slot=text]):not(:has([slot=icon], [slot=avatar]))';
 const controlStyle = control({shape: 'default', icon: true});
-export const btnStyles = style<ButtonRenderProps & ActionButtonStyleProps & ToggleButtonStyleProps & ActionGroupItemStyleProps & {isInGroup: boolean, isStaticColor: boolean}>({
-  ...focusRing(),
-  ...staticColor(),
-  ...controlStyle,
-  display: 'grid',
-  justifyContent: 'center',
-  flexShrink: {
-    default: 1,
-    isInGroup: 0
-  },
-  flexGrow: {
-    isJustified: 1
-  },
-  flexBasis: {
-    isJustified: 0
-  },
-  fontWeight: 'medium',
-  width: 'fit',
-  userSelect: 'none',
-  transition: 'default',
-  forcedColorAdjust: 'none',
-  position: 'relative',
-  gridTemplateAreas: {
-    default: ['icon text'],
-    [iconOnly]: ['icon'],
-    [textOnly]: ['text']
-  },
-  gridTemplateColumns: {
-    default: ['auto', 'auto'],
-    [iconOnly]: ['auto'],
-    [textOnly]: ['auto']
-  },
-  backgroundColor: {
-    default: {
-      ...baseColor('gray-100'),
-      default: {
-        default: 'gray-100',
-        isQuiet: 'transparent'
-      }
+export const btnStyles = style<
+  ButtonRenderProps &
+    ActionButtonStyleProps &
+    ToggleButtonStyleProps &
+    ActionGroupItemStyleProps & {isInGroup: boolean; isStaticColor: boolean}
+>(
+  {
+    ...focusRing(),
+    ...staticColor(),
+    ...controlStyle,
+    display: 'grid',
+    justifyContent: 'center',
+    flexShrink: {
+      default: 1,
+      isInGroup: 0
     },
-    isSelected: {
-      default: baseColor('neutral'),
-      isEmphasized: {
-        default: lightDark('accent-900', 'accent-700'),
-        isHovered: lightDark('accent-1000', 'accent-600'),
-        isPressed: lightDark('accent-1000', 'accent-600'),
-        isFocusVisible: lightDark('accent-1000', 'accent-600')
-      },
-      isDisabled: {
-        default: 'gray-100',
-        isQuiet: 'transparent'
-      }
+    flexGrow: {
+      isJustified: 1
     },
-    isStaticColor: {
-      ...baseColor('transparent-overlay-100'),
+    flexBasis: {
+      isJustified: 0
+    },
+    fontWeight: 'medium',
+    width: 'fit',
+    userSelect: 'none',
+    transition: 'default',
+    forcedColorAdjust: 'none',
+    position: 'relative',
+    gridTemplateAreas: {
+      default: ['icon text'],
+      [iconOnly]: ['icon'],
+      [textOnly]: ['text']
+    },
+    gridTemplateColumns: {
+      default: ['auto', 'auto'],
+      [iconOnly]: ['auto'],
+      [textOnly]: ['auto']
+    },
+    backgroundColor: {
       default: {
-        default: 'transparent-overlay-100',
-        isQuiet: 'transparent'
-      },
-      isSelected: {
-        default: baseColor('transparent-overlay-800'),
-        isDisabled: {
-          default: 'transparent-overlay-100',
+        ...baseColor('gray-100'),
+        default: {
+          default: 'gray-100',
           isQuiet: 'transparent'
         }
-      }
-    },
-    forcedColors: {
-      default: 'ButtonFace',
+      },
       isSelected: {
-        default: 'Highlight',
-        isDisabled: 'ButtonFace'
+        default: baseColor('neutral'),
+        isEmphasized: {
+          default: lightDark('accent-900', 'accent-700'),
+          isHovered: lightDark('accent-1000', 'accent-600'),
+          isPressed: lightDark('accent-1000', 'accent-600'),
+          isFocusVisible: lightDark('accent-1000', 'accent-600')
+        },
+        isDisabled: {
+          default: 'gray-100',
+          isQuiet: 'transparent'
+        }
+      },
+      isStaticColor: {
+        ...baseColor('transparent-overlay-100'),
+        default: {
+          default: 'transparent-overlay-100',
+          isQuiet: 'transparent'
+        },
+        isSelected: {
+          default: baseColor('transparent-overlay-800'),
+          isDisabled: {
+            default: 'transparent-overlay-100',
+            isQuiet: 'transparent'
+          }
+        }
+      },
+      forcedColors: {
+        default: 'ButtonFace',
+        isSelected: {
+          default: 'Highlight',
+          isDisabled: 'ButtonFace'
+        }
       }
-    }
-  },
-  color: {
-    default: baseColor('neutral'),
-    isSelected: {
-      default: 'gray-25',
-      isEmphasized: 'white'
     },
-    isDisabled: 'disabled',
-    isStaticColor: {
-      default: baseColor('transparent-overlay-800'),
-      isSelected: 'auto',
-      isDisabled: 'transparent-overlay-400'
+    color: {
+      default: baseColor('neutral'),
+      isSelected: {
+        default: 'gray-25',
+        isEmphasized: 'white'
+      },
+      isDisabled: 'disabled',
+      isStaticColor: {
+        default: baseColor('transparent-overlay-800'),
+        isSelected: 'auto',
+        isDisabled: 'transparent-overlay-400'
+      },
+      forcedColors: {
+        default: 'ButtonText',
+        isSelected: 'HighlightText',
+        isDisabled: {
+          default: 'GrayText'
+        }
+      }
     },
-    forcedColors: {
-      default: 'ButtonText',
-      isSelected: 'HighlightText',
-      isDisabled: {
-        default: 'GrayText'
+    '--iconPrimary': {
+      type: 'fill',
+      value: 'currentColor'
+    },
+    outlineColor: {
+      default: 'focus-ring',
+      isStaticColor: 'transparent-overlay-1000',
+      forcedColors: 'Highlight'
+    },
+    borderStyle: 'none',
+    borderTopStartRadius: {
+      default: controlStyle.borderRadius,
+      density: {
+        compact: {
+          default: 'none',
+          ':first-child': controlStyle.borderRadius
+        }
       }
-    }
-  },
-  '--iconPrimary': {
-    type: 'fill',
-    value: 'currentColor'
-  },
-  outlineColor: {
-    default: 'focus-ring',
-    isStaticColor: 'transparent-overlay-1000',
-    forcedColors: 'Highlight'
-  },
-  borderStyle: 'none',
-  borderTopStartRadius: {
-    default: controlStyle.borderRadius,
-    density: {
-      compact: {
-        default: 'none',
-        ':first-child': controlStyle.borderRadius
-      }
-    }
-  },
-  borderTopEndRadius: {
-    default: controlStyle.borderRadius,
-    density: {
-      compact: {
-        default: 'none',
-        orientation: {
-          horizontal: {
-            ':last-child': controlStyle.borderRadius
-          },
-          vertical: {
-            ':first-child': controlStyle.borderRadius
+    },
+    borderTopEndRadius: {
+      default: controlStyle.borderRadius,
+      density: {
+        compact: {
+          default: 'none',
+          orientation: {
+            horizontal: {
+              ':last-child': controlStyle.borderRadius
+            },
+            vertical: {
+              ':first-child': controlStyle.borderRadius
+            }
           }
         }
       }
-    }
-  },
-  borderBottomStartRadius: {
-    default: controlStyle.borderRadius,
-    density: {
-      compact: {
-        default: 'none',
-        orientation: {
-          horizontal: {
-            ':first-child': controlStyle.borderRadius
-          },
-          vertical: {
-            ':last-child': controlStyle.borderRadius
+    },
+    borderBottomStartRadius: {
+      default: controlStyle.borderRadius,
+      density: {
+        compact: {
+          default: 'none',
+          orientation: {
+            horizontal: {
+              ':first-child': controlStyle.borderRadius
+            },
+            vertical: {
+              ':last-child': controlStyle.borderRadius
+            }
           }
         }
       }
-    }
-  },
-  borderBottomEndRadius: {
-    default: controlStyle.borderRadius,
-    density: {
-      compact: {
-        default: 'none',
-        ':last-child': controlStyle.borderRadius
+    },
+    borderBottomEndRadius: {
+      default: controlStyle.borderRadius,
+      density: {
+        compact: {
+          default: 'none',
+          ':last-child': controlStyle.borderRadius
+        }
       }
-    }
-  },
-  zIndex: {
-    isFocusVisible: 2
-  },
-  disableTapHighlight: true,
-  '--badgeTop': {
-    type: 'top',
-    value: {
-      default: 'calc(self(height)/2 - var(--iconWidth)/2)',
-      [textOnly]: 0
-    }
-  },
-  '--iconWidth': {
-    type: 'width',
-    value: fontRelative(20)
-  },
-  '--badgePosition': {
-    type: 'width',
-    value: {
-      default: '--iconWidth',
-      [textOnly]: 'full'
-    }
-  },
-  paddingX: {
-    default: controlStyle.paddingX,
-    [avatarOnly]: 0
-  },
-  // `control` sets this, but we need to override it for avatar only buttons.
-  '--iconMargin': {
-    type: 'marginStart',
-    value: {
-      default: fontRelative(-2),
-      [iconOnly]: 0,
+    },
+    zIndex: {
+      isFocusVisible: 2
+    },
+    disableTapHighlight: true,
+    '--badgeTop': {
+      type: 'top',
+      value: {
+        default: 'calc(self(height)/2 - var(--iconWidth)/2)',
+        [textOnly]: 0
+      }
+    },
+    '--iconWidth': {
+      type: 'width',
+      value: fontRelative(20)
+    },
+    '--badgePosition': {
+      type: 'width',
+      value: {
+        default: '--iconWidth',
+        [textOnly]: 'full'
+      }
+    },
+    paddingX: {
+      default: controlStyle.paddingX,
       [avatarOnly]: 0
+    },
+    // `control` sets this, but we need to override it for avatar only buttons.
+    '--iconMargin': {
+      type: 'marginStart',
+      value: {
+        default: fontRelative(-2),
+        [iconOnly]: 0,
+        [avatarOnly]: 0
+      }
     }
-  }
-}, getAllowedOverrides());
+  },
+  getAllowedOverrides()
+);
 
 // Matching icon sizes. TBD.
 const avatarSize: Record<NonNullable<ActionButtonStyleProps['size']>, number> = {
@@ -272,13 +301,19 @@ const avatarSize: Record<NonNullable<ActionButtonStyleProps['size']>, number> = 
   XL: 26
 } as const;
 
-export const ActionButtonContext = createContext<ContextValue<Partial<ActionButtonProps>, FocusableRefValue<HTMLButtonElement>>>(null);
+export const ActionButtonContext =
+  createContext<ContextValue<Partial<ActionButtonProps>, FocusableRefValue<HTMLButtonElement>>>(
+    null
+  );
 
 /**
  * ActionButtons allow users to perform an action.
  * They're used for similar, task-based options within a workflow, and are ideal for interfaces where buttons aren't meant to draw a lot of attention.
  */
-export const ActionButton = forwardRef(function ActionButton(props: ActionButtonProps, ref: FocusableRef<HTMLButtonElement>) {
+export const ActionButton = forwardRef(function ActionButton(
+  props: ActionButtonProps,
+  ref: FocusableRef<HTMLButtonElement>
+) {
   [props, ref] = useSpectrumContextProps(props, ref, ActionButtonContext);
   props = useFormProps(props as any);
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
@@ -305,77 +340,98 @@ export const ActionButton = forwardRef(function ActionButton(props: ActionButton
       isDisabled={props.isDisabled ?? isDisabled}
       ref={domRef}
       style={pressScale(domRef, props.UNSAFE_style)}
-      className={renderProps => (props.UNSAFE_className || '') + btnStyles({
-        ...renderProps,
-        // Retain hover styles when an overlay is open.
-        isHovered: renderProps.isHovered || overlayTriggerState?.isOpen || false,
-        isDisabled: renderProps.isDisabled || isProgressVisible,
-        staticColor,
-        isStaticColor: !!staticColor,
-        size,
-        isQuiet,
-        density,
-        isJustified,
-        orientation,
-        isInGroup
-      }, props.styles)}>
+      className={renderProps =>
+        (props.UNSAFE_className || '') +
+        btnStyles(
+          {
+            ...renderProps,
+            // Retain hover styles when an overlay is open.
+            isHovered: renderProps.isHovered || overlayTriggerState?.isOpen || false,
+            isDisabled: renderProps.isDisabled || isProgressVisible,
+            staticColor,
+            isStaticColor: !!staticColor,
+            size,
+            isQuiet,
+            density,
+            isJustified,
+            orientation,
+            isInGroup
+          },
+          props.styles
+        )
+      }>
       {({isDisabled}) => (
         <>
           <Provider
             values={[
               [SkeletonContext, null],
-              [TextContext, {styles:
-                style({
-                  gridArea: 'text',
-                  truncate: true,
-                  visibility: {
-                    isProgressVisible: 'hidden'
-                  }
-                })({isProgressVisible})
-              }],
-              [IconContext, {
-                render: centerBaseline({slot: 'icon', styles: style({gridArea: 'icon'})}),
-                styles: style({
-                  size: fontRelative(20),
-                  marginStart: '--iconMargin',
-                  visibility: {
-                    isProgressVisible: 'hidden'
-                  }
-                })({isProgressVisible})
-              }],
-              [AvatarContext, {
-                size: avatarSize[size],
-                styles: style({
-                  marginStart: '--iconMargin',
-                  gridArea: 'icon'
-                })
-              }],
-              [ImageContext, {
-                styles: style({
-                  visibility: {
-                    isProgressVisible: 'hidden'
-                  }
-                })({isProgressVisible})
-              }],
-              [NotificationBadgeContext, {
-                staticColor: staticColor,
-                size: props.size === 'XS' ? undefined : props.size,
-                isDisabled: isDisabled,
-                styles: style({
-                  position: 'absolute',
-                  top: '--badgeTop',
-                  marginTop: 'calc((self(height) * -1)/2)',
-                  marginStart: 'calc(var(--iconMargin) * 2 + (self(height) * -1)/4)',
-                  gridColumnStart: 1,
-                  insetStart: '--badgePosition',
-                  visibility: {
-                    isProgressVisible: 'hidden'
-                  }
-                })({isProgressVisible})
-              }]
+              [
+                TextContext,
+                {
+                  styles: style({
+                    gridArea: 'text',
+                    truncate: true,
+                    visibility: {
+                      isProgressVisible: 'hidden'
+                    }
+                  })({isProgressVisible})
+                }
+              ],
+              [
+                IconContext,
+                {
+                  render: centerBaseline({slot: 'icon', styles: style({gridArea: 'icon'})}),
+                  styles: style({
+                    size: fontRelative(20),
+                    marginStart: '--iconMargin',
+                    visibility: {
+                      isProgressVisible: 'hidden'
+                    }
+                  })({isProgressVisible})
+                }
+              ],
+              [
+                AvatarContext,
+                {
+                  size: avatarSize[size],
+                  styles: style({
+                    marginStart: '--iconMargin',
+                    gridArea: 'icon'
+                  })
+                }
+              ],
+              [
+                ImageContext,
+                {
+                  styles: style({
+                    visibility: {
+                      isProgressVisible: 'hidden'
+                    }
+                  })({isProgressVisible})
+                }
+              ],
+              [
+                NotificationBadgeContext,
+                {
+                  staticColor: staticColor,
+                  size: props.size === 'XS' ? undefined : props.size,
+                  isDisabled: isDisabled,
+                  styles: style({
+                    position: 'absolute',
+                    top: '--badgeTop',
+                    marginTop: 'calc((self(height) * -1)/2)',
+                    marginStart: 'calc(var(--iconMargin) * 2 + (self(height) * -1)/4)',
+                    gridColumnStart: 1,
+                    insetStart: '--badgePosition',
+                    visibility: {
+                      isProgressVisible: 'hidden'
+                    }
+                  })({isProgressVisible})
+                }
+              ]
             ]}>
             {typeof props.children === 'string' ? <Text>{props.children}</Text> : props.children}
-            {isPending &&
+            {isPending && (
               <div
                 className={style({
                   position: 'absolute',
@@ -402,9 +458,10 @@ export const ActionButton = forwardRef(function ActionButton(props: ActionButton
                         XL: 24
                       }
                     }
-                  })({size})} />
+                  })({size})}
+                />
               </div>
-              }
+            )}
           </Provider>
         </>
       )}

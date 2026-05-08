@@ -19,7 +19,10 @@ const currentDocument = typeof document !== 'undefined' ? document : undefined;
 /**
  * Acts as a polyfill for `aria-modal` by watching for added modals and hiding any surrounding DOM elements with `aria-hidden`.
  */
-export function watchModals(selector:string = 'body', {document = currentDocument}: {document?: Document} = {}): Revert {
+export function watchModals(
+  selector: string = 'body',
+  {document = currentDocument}: {document?: Document} = {}
+): Revert {
   /**
    * Listen for additions to the child list of the selected element (defaults to body). This is where providers render modal portals.
    * When one is added, see if there is a modal inside it, if there is, then hide everything else from screen readers.
@@ -39,27 +42,35 @@ export function watchModals(selector:string = 'body', {document = currentDocumen
   let modalContainers: Array<Element> = [];
   let undo: Revert | undefined;
 
-  let observer = new MutationObserver((mutationRecord) => {
-    const liveAnnouncer =  document.querySelector('[data-live-announcer="true"]');
+  let observer = new MutationObserver(mutationRecord => {
+    const liveAnnouncer = document.querySelector('[data-live-announcer="true"]');
     for (let mutation of mutationRecord) {
       if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
-        let addNode: Element = (Array.from(mutation.addedNodes).find((node: any) => node.querySelector?.('[aria-modal="true"], [data-ismodal="true"]')) as HTMLElement);
+        let addNode: Element = Array.from(mutation.addedNodes).find((node: any) =>
+          node.querySelector?.('[aria-modal="true"], [data-ismodal="true"]')
+        ) as HTMLElement;
         if (addNode) {
           modalContainers.push(addNode);
-          let modal = addNode.querySelector('[aria-modal="true"], [data-ismodal="true"]') as HTMLElement;
+          let modal = addNode.querySelector(
+            '[aria-modal="true"], [data-ismodal="true"]'
+          ) as HTMLElement;
           undo?.();
-          let others = [modal, ... liveAnnouncer ? [liveAnnouncer as HTMLElement] : []];
+          let others = [modal, ...(liveAnnouncer ? [liveAnnouncer as HTMLElement] : [])];
           undo = hideOthers(others);
         }
       } else if (mutation.type === 'childList' && mutation.removedNodes.length > 0) {
         let removedNodes = Array.from(mutation.removedNodes);
-        let nodeIndexRemove = modalContainers.findIndex(container => removedNodes.includes(container));
+        let nodeIndexRemove = modalContainers.findIndex(container =>
+          removedNodes.includes(container)
+        );
         if (nodeIndexRemove >= 0) {
           undo?.();
           modalContainers = modalContainers.filter((val, i) => i !== nodeIndexRemove);
           if (modalContainers.length > 0) {
-            let modal = modalContainers[modalContainers.length - 1].querySelector('[aria-modal="true"], [data-ismodal="true"]') as HTMLElement;
-            let others = [modal, ... liveAnnouncer ? [liveAnnouncer as HTMLElement] : []];
+            let modal = modalContainers[modalContainers.length - 1].querySelector(
+              '[aria-modal="true"], [data-ismodal="true"]'
+            ) as HTMLElement;
+            let others = [modal, ...(liveAnnouncer ? [liveAnnouncer as HTMLElement] : [])];
             undo = hideOthers(others);
           } else {
             undo = undefined;

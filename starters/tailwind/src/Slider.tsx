@@ -8,9 +8,9 @@ import {
   SliderTrack,
   SliderFill
 } from 'react-aria-components/Slider';
-import { tv } from 'tailwind-variants';
-import { Label } from './Field';
-import { composeTailwindRenderProps, focusRing } from './utils';
+import {tv} from 'tailwind-variants';
+import {Label} from './Field';
+import {composeTailwindRenderProps, focusRing} from './utils';
 
 const trackStyles = tv({
   base: 'relative rounded-full',
@@ -61,20 +61,37 @@ export interface SliderProps<T> extends AriaSliderProps<T> {
   fillOffset?: number;
 }
 
-export function Slider<T extends number | number[]>(
-  { label, thumbLabels, fillOffset, ...props }: SliderProps<T>
-) {
+export function Slider<T extends number | number[]>({
+  label,
+  thumbLabels,
+  fillOffset,
+  ...props
+}: SliderProps<T>) {
   return (
-    <AriaSlider {...props} className={composeTailwindRenderProps(props.className, 'font-sans orientation-horizontal:grid orientation-vertical:flex grid-cols-[1fr_auto] flex-col items-center gap-2 orientation-horizontal:w-64 orientation-horizontal:max-w-[calc(100%-10px)]')}>
+    <AriaSlider
+      {...props}
+      className={composeTailwindRenderProps(
+        props.className,
+        'font-sans orientation-horizontal:grid orientation-vertical:flex grid-cols-[1fr_auto] flex-col items-center gap-2 orientation-horizontal:w-64 orientation-horizontal:max-w-[calc(100%-10px)]'
+      )}>
       <Label>{label}</Label>
       <SliderOutput className="text-sm text-neutral-500 dark:text-neutral-400 orientation-vertical:hidden" />
       <SliderTrack className="group col-span-2 orientation-horizontal:h-5 orientation-vertical:w-5 orientation-vertical:h-38 flex items-center">
-        {({ state, ...renderProps }) => <>
-          <div className={trackStyles(renderProps)}>
-            <SliderFill offset={fillOffset} className={fillStyles(renderProps)} />
-          </div>
-          {state.values.map((_, i) => <SliderThumb key={i} index={i} aria-label={thumbLabels?.[i]} className={thumbStyles} />)}
-        </>}
+        {({state, ...renderProps}) => (
+          <>
+            <div className={trackStyles(renderProps)}>
+              <SliderFill offset={fillOffset} className={fillStyles(renderProps)} />
+            </div>
+            {state.values.map((_, i) => (
+              <SliderThumb
+                key={i}
+                index={i}
+                aria-label={thumbLabels?.[i]}
+                className={thumbStyles}
+              />
+            ))}
+          </>
+        )}
       </SliderTrack>
     </AriaSlider>
   );

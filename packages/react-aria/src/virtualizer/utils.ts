@@ -12,13 +12,9 @@
 
 import {Direction} from '@react-types/shared';
 
-export type RTLOffsetType =
-  | 'negative'
-  | 'positive-descending'
-  | 'positive-ascending';
+export type RTLOffsetType = 'negative' | 'positive-descending' | 'positive-ascending';
 
 let cachedRTLResult: RTLOffsetType | null = null;
-
 
 // Original licensing for the following methods can be found in the
 // NOTICE file in the root directory of this source tree.

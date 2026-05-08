@@ -10,7 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, CollectionBase, DOMAttributes, DOMProps, FocusStrategy, Key, KeyboardDelegate, KeyboardEvents, MultipleSelection, RefObject} from '@react-types/shared';
+import {
+  AriaLabelingProps,
+  CollectionBase,
+  DOMAttributes,
+  DOMProps,
+  FocusStrategy,
+  Key,
+  KeyboardDelegate,
+  KeyboardEvents,
+  MultipleSelection,
+  RefObject
+} from '@react-types/shared';
 import {filterDOMProps} from '../utils/filterDOMProps';
 import {menuData} from './utils';
 import {mergeProps} from '../utils/mergeProps';
@@ -19,13 +30,13 @@ import {useSelectableList} from '../selection/useSelectableList';
 
 export interface MenuProps<T> extends CollectionBase<T>, MultipleSelection {
   /** Where the focus should be set. */
-  autoFocus?: boolean | FocusStrategy,
+  autoFocus?: boolean | FocusStrategy;
   /** Whether keyboard navigation is circular. */
-  shouldFocusWrap?: boolean,
+  shouldFocusWrap?: boolean;
   /** Handler that is called when an item is selected. */
-  onAction?: (key: Key) => void,
+  onAction?: (key: Key) => void;
   /** Handler that is called when the menu should close after selecting an item. */
-  onClose?: () => void
+  onClose?: () => void;
 }
 
 export interface AriaMenuProps<T> extends MenuProps<T>, DOMProps, AriaLabelingProps {
@@ -37,26 +48,26 @@ export interface AriaMenuProps<T> extends MenuProps<T>, DOMProps, AriaLabelingPr
    * trigger selection clearing contextually.
    * @default 'clearSelection'
    */
-  escapeKeyBehavior?: 'clearSelection' | 'none'
+  escapeKeyBehavior?: 'clearSelection' | 'none';
 }
 
 export interface MenuAria {
   /** Props for the menu element. */
-  menuProps: DOMAttributes
+  menuProps: DOMAttributes;
 }
 
 export interface AriaMenuOptions<T> extends Omit<AriaMenuProps<T>, 'children'>, KeyboardEvents {
   /** Whether the menu uses virtual scrolling. */
-  isVirtualized?: boolean,
+  isVirtualized?: boolean;
   /**
    * An optional keyboard delegate implementation for type to select,
    * to override the default.
    */
-  keyboardDelegate?: KeyboardDelegate,
+  keyboardDelegate?: KeyboardDelegate;
   /**
    * Whether the menu items should use virtual focus instead of being focused directly.
    */
-  shouldUseVirtualFocus?: boolean
+  shouldUseVirtualFocus?: boolean;
 }
 
 /**
@@ -65,13 +76,12 @@ export interface AriaMenuOptions<T> extends Omit<AriaMenuProps<T>, 'children'>, 
  * @param props - Props for the menu.
  * @param state - State for the menu, as returned by `useListState`.
  */
-export function useMenu<T>(props: AriaMenuOptions<T>, state: TreeState<T>, ref: RefObject<HTMLElement | null>): MenuAria {
-  let {
-    shouldFocusWrap = true,
-    onKeyDown,
-    onKeyUp,
-    ...otherProps
-  } = props;
+export function useMenu<T>(
+  props: AriaMenuOptions<T>,
+  state: TreeState<T>,
+  ref: RefObject<HTMLElement | null>
+): MenuAria {
+  let {shouldFocusWrap = true, onKeyDown, onKeyUp, ...otherProps} = props;
 
   if (!props['aria-label'] && !props['aria-labelledby'] && process.env.NODE_ENV !== 'production') {
     console.warn('An aria-label or aria-labelledby prop is required for accessibility.');
@@ -95,15 +105,19 @@ export function useMenu<T>(props: AriaMenuOptions<T>, state: TreeState<T>, ref: 
   });
 
   return {
-    menuProps: mergeProps(domProps, {onKeyDown, onKeyUp}, {
-      role: 'menu',
-      ...listProps,
-      onKeyDown: (e) => {
-        // don't clear the menu selected keys if the user is presses escape since escape closes the menu
-        if (e.key !== 'Escape' || props.shouldUseVirtualFocus) {
-          listProps.onKeyDown?.(e);
+    menuProps: mergeProps(
+      domProps,
+      {onKeyDown, onKeyUp},
+      {
+        role: 'menu',
+        ...listProps,
+        onKeyDown: e => {
+          // don't clear the menu selected keys if the user is presses escape since escape closes the menu
+          if (e.key !== 'Escape' || props.shouldUseVirtualFocus) {
+            listProps.onKeyDown?.(e);
+          }
         }
       }
-    })
+    )
   };
 }

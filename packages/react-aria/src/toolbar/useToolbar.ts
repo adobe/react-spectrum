@@ -23,14 +23,14 @@ export interface AriaToolbarProps extends AriaLabelingProps {
    * The orientation of the entire toolbar.
    * @default 'horizontal'
    */
-  orientation?: Orientation
+  orientation?: Orientation;
 }
 
 export interface ToolbarAria {
   /**
    * Props for the toolbar container.
    */
-  toolbarProps: HTMLAttributes<HTMLElement>
+  toolbarProps: HTMLAttributes<HTMLElement>;
 }
 
 /**
@@ -39,7 +39,10 @@ export interface ToolbarAria {
  * @param props - Props to be applied to the toolbar.
  * @param ref - A ref to a DOM element for the toolbar.
  */
-export function useToolbar(props: AriaToolbarProps, ref: RefObject<HTMLElement | null>): ToolbarAria {
+export function useToolbar(
+  props: AriaToolbarProps,
+  ref: RefObject<HTMLElement | null>
+): ToolbarAria {
   const {
     'aria-label': ariaLabel,
     'aria-labelledby': ariaLabelledBy,
@@ -56,22 +59,24 @@ export function useToolbar(props: AriaToolbarProps, ref: RefObject<HTMLElement |
   const shouldReverse = direction === 'rtl' && orientation === 'horizontal';
   let focusManager = createFocusManager(ref);
 
-  const onKeyDown: KeyboardEventHandler = (e) => {
+  const onKeyDown: KeyboardEventHandler = e => {
     // don't handle portalled events
     if (!nodeContains(e.currentTarget, getEventTarget(e) as HTMLElement)) {
       return;
     }
     if (
-      (orientation === 'horizontal' && e.key === 'ArrowRight')
-      || (orientation === 'vertical' && e.key === 'ArrowDown')) {
+      (orientation === 'horizontal' && e.key === 'ArrowRight') ||
+      (orientation === 'vertical' && e.key === 'ArrowDown')
+    ) {
       if (shouldReverse) {
         focusManager.focusPrevious();
       } else {
         focusManager.focusNext();
       }
     } else if (
-      (orientation === 'horizontal' && e.key === 'ArrowLeft')
-      || (orientation === 'vertical' && e.key === 'ArrowUp')) {
+      (orientation === 'horizontal' && e.key === 'ArrowLeft') ||
+      (orientation === 'vertical' && e.key === 'ArrowUp')
+    ) {
       if (shouldReverse) {
         focusManager.focusNext();
       } else {
@@ -102,7 +107,7 @@ export function useToolbar(props: AriaToolbarProps, ref: RefObject<HTMLElement |
 
   // Record the last focused child when focus moves out of the toolbar.
   const lastFocused = useRef<HTMLElement | null>(null);
-  const onBlur: FocusEventHandler<HTMLElement> = (e) => {
+  const onBlur: FocusEventHandler<HTMLElement> = e => {
     if (!nodeContains(e.currentTarget, e.relatedTarget) && !lastFocused.current) {
       lastFocused.current = getEventTarget(e);
     }
@@ -111,8 +116,12 @@ export function useToolbar(props: AriaToolbarProps, ref: RefObject<HTMLElement |
   // Restore focus to the last focused child when focus returns into the toolbar.
   // If the element was removed, do nothing, either the first item in the first group,
   // or the last item in the last group will be focused, depending on direction.
-  const onFocus: FocusEventHandler<HTMLElement> = (e) => {
-    if (lastFocused.current && !nodeContains(e.currentTarget, e.relatedTarget) && nodeContains(ref.current, getEventTarget(e))) {
+  const onFocus: FocusEventHandler<HTMLElement> = e => {
+    if (
+      lastFocused.current &&
+      !nodeContains(e.currentTarget, e.relatedTarget) &&
+      nodeContains(ref.current, getEventTarget(e))
+    ) {
       lastFocused.current?.focus();
       lastFocused.current = null;
     }

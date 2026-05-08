@@ -65,9 +65,17 @@ const shortNames = {
 
 // Variants we use that are already defined by Tailwind:
 // https://github.com/tailwindlabs/tailwindcss/blob/a2fa6932767ab328515f743d6188c2164ad2a5de/src/corePlugins.js#L84
-const nativeVariants = ['indeterminate', 'required', 'invalid', 'empty', 'focus-visible', 'focus-within', 'disabled'];
+const nativeVariants = [
+  'indeterminate',
+  'required',
+  'invalid',
+  'empty',
+  'focus-visible',
+  'focus-within',
+  'disabled'
+];
 const nativeVariantSelectors = new Map([
-  ...nativeVariants.map((variant) => [variant, `:${variant}`]),
+  ...nativeVariants.map(variant => [variant, `:${variant}`]),
   ['hovered', ':hover'],
   ['focused', ':focus'],
   ['active', ':active'],
@@ -77,13 +85,13 @@ const nativeVariantSelectors = new Map([
 ]);
 
 // Variants where both native and RAC attributes should apply. We don't override these.
-const nativeMergeSelectors = new Map([
-  ['placeholder', ':placeholder-shown']
-]);
+const nativeMergeSelectors = new Map([['placeholder', ':placeholder-shown']]);
 
 // If no prefix is specified, we want to avoid overriding native variants on non-RAC components, so we only target elements with the data-rac attribute for those variants.
 let getSelector = (prefix, attributeName, attributeValue) => {
-  let baseSelector = attributeValue ? `[data-${attributeName}="${attributeValue}"]` : `[data-${attributeName}]`;
+  let baseSelector = attributeValue
+    ? `[data-${attributeName}="${attributeValue}"]`
+    : `[data-${attributeName}]`;
   let nativeSelector = nativeVariantSelectors.get(attributeName);
   if (prefix === '' && nativeSelector) {
     let wrappedNativeSelector = `&:where(:not([data-rac]))${nativeSelector}`;
@@ -116,22 +124,23 @@ let wrapSelector = (selector, wrap) => {
 };
 
 let addVariants = (variantName, selectors, addVariant) => {
-  addVariant(variantName, mapSelector(selectors, selector => wrapSelector(selector, s => s)));
+  addVariant(
+    variantName,
+    mapSelector(selectors, selector => wrapSelector(selector, s => s))
+  );
 };
 
-module.exports = plugin.withOptions((options) => (({addVariant}) => {
+module.exports = plugin.withOptions(options => ({addVariant}) => {
   let prefix = options?.prefix ? `${options.prefix}-` : '';
 
   // Enum attributes go first because currently they are all non-interactive states.
-  Object.keys(attributes.enum).forEach((attributeName) => {
-    attributes.enum[attributeName].forEach(
-      (attributeValue, i) => {
-        let name = shortNames[attributeName] || attributeName;
-        let variantName = `${prefix}${name}-${attributeValue}`;
-        let selectors = getSelector(prefix, attributeName, attributeValue);
-        addVariants(variantName, selectors, addVariant, i);
-      }
-    );
+  Object.keys(attributes.enum).forEach(attributeName => {
+    attributes.enum[attributeName].forEach((attributeValue, i) => {
+      let name = shortNames[attributeName] || attributeName;
+      let variantName = `${prefix}${name}-${attributeValue}`;
+      let selectors = getSelector(prefix, attributeName, attributeValue);
+      addVariants(variantName, selectors, addVariant, i);
+    });
   });
 
   attributes.boolean.forEach((attribute, i) => {
@@ -141,4 +150,4 @@ module.exports = plugin.withOptions((options) => (({addVariant}) => {
     let selectors = getSelector(prefix, attributeName, null);
     addVariants(variantName, selectors, addVariant, i);
   });
-}));
+});

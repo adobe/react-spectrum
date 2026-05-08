@@ -1,5 +1,5 @@
-@import "./theme.css";
-@import "./utilities.css";
+@import './theme.css';
+@import './utilities.css';
 
 .react-aria-DateField {
   display: flex;
@@ -40,7 +40,7 @@
   color: var(--field-text-color);
   -webkit-tap-highlight-color: transparent;
 
-  &[data-type=literal] {
+  &[data-type='literal'] {
     padding: 0;
   }
 

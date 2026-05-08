@@ -14,8 +14,8 @@ import {Collection as ICollection, Key, Node} from '@react-types/shared';
 import {ReactElement, ReactNode} from 'react';
 
 export type Mutable<T> = {
-  -readonly[P in keyof T]: T[P]
-}
+  -readonly [P in keyof T]: T[P];
+};
 
 type FilterFn<T> = (textValue: string, node: Node<T>) => boolean;
 
@@ -71,8 +71,12 @@ export class CollectionNode<T> implements Node<T> {
     return node;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  filter(collection: BaseCollection<T>, newCollection: BaseCollection<T>, filterFn: FilterFn<T>): CollectionNode<T> | null {
+  filter(
+    collection: BaseCollection<T>,
+    newCollection: BaseCollection<T>,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    filterFn: FilterFn<T>
+  ): CollectionNode<T> | null {
     let clone = this.clone();
     newCollection.addDescendants(clone, collection);
     return clone;
@@ -80,8 +84,17 @@ export class CollectionNode<T> implements Node<T> {
 }
 
 export class FilterableNode<T> extends CollectionNode<T> {
-  filter(collection: BaseCollection<T>, newCollection: BaseCollection<T>, filterFn: FilterFn<T>): CollectionNode<T> | null {
-    let [firstKey, lastKey] = filterChildren(collection, newCollection, this.firstChildKey, filterFn);
+  filter(
+    collection: BaseCollection<T>,
+    newCollection: BaseCollection<T>,
+    filterFn: FilterFn<T>
+  ): CollectionNode<T> | null {
+    let [firstKey, lastKey] = filterChildren(
+      collection,
+      newCollection,
+      this.firstChildKey,
+      filterFn
+    );
     let newNode: Mutable<CollectionNode<T>> = this.clone();
     newNode.firstChildKey = firstKey;
     newNode.lastChildKey = lastKey;
@@ -100,7 +113,11 @@ export class LoaderNode extends CollectionNode<unknown> {
 export class ItemNode<T> extends FilterableNode<T> {
   static readonly type = 'item';
 
-  filter(collection: BaseCollection<T>, newCollection: BaseCollection<T>, filterFn: FilterFn<T>): ItemNode<T> | null {
+  filter(
+    collection: BaseCollection<T>,
+    newCollection: BaseCollection<T>,
+    filterFn: FilterFn<T>
+  ): ItemNode<T> | null {
     if (filterFn(this.textValue, this)) {
       let clone = this.clone();
       newCollection.addDescendants(clone, collection);
@@ -114,7 +131,11 @@ export class ItemNode<T> extends FilterableNode<T> {
 export class SectionNode<T> extends FilterableNode<T> {
   static readonly type = 'section';
 
-  filter(collection: BaseCollection<T>, newCollection: BaseCollection<T>, filterFn: FilterFn<T>): SectionNode<T> | null {
+  filter(
+    collection: BaseCollection<T>,
+    newCollection: BaseCollection<T>,
+    filterFn: FilterFn<T>
+  ): SectionNode<T> | null {
     let filteredSection = super.filter(collection, newCollection, filterFn);
     if (filteredSection) {
       if (filteredSection.lastChildKey !== null) {
@@ -150,7 +171,8 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
   }
 
   *[Symbol.iterator](): IterableIterator<Node<T>> {
-    let node: Node<T> | undefined = this.firstKey != null ? this.keyMap.get(this.firstKey) : undefined;
+    let node: Node<T> | undefined =
+      this.firstKey != null ? this.keyMap.get(this.firstKey) : undefined;
     while (node) {
       yield node;
       node = node.nextKey != null ? this.keyMap.get(node.nextKey) : undefined;
@@ -301,7 +323,12 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
   }
 }
 
-function filterChildren<T>(collection: BaseCollection<T>, newCollection: BaseCollection<T>, firstChildKey: Key | null, filterFn: FilterFn<T>): [Key | null, Key | null] {
+function filterChildren<T>(
+  collection: BaseCollection<T>,
+  newCollection: BaseCollection<T>,
+  firstChildKey: Key | null,
+  filterFn: FilterFn<T>
+): [Key | null, Key | null] {
   // loop over the siblings for firstChildKey
   // create new nodes based on calling node.filter for each child
   // if it returns null then don't include it, otherwise update its prev/next keys
@@ -315,7 +342,11 @@ function filterChildren<T>(collection: BaseCollection<T>, newCollection: BaseCol
   let currentNode = collection.getItem(firstChildKey);
 
   while (currentNode != null) {
-    let newNode: Mutable<CollectionNode<T>> | null = (currentNode as CollectionNode<T>).filter(collection, newCollection, filterFn);
+    let newNode: Mutable<CollectionNode<T>> | null = (currentNode as CollectionNode<T>).filter(
+      collection,
+      newCollection,
+      filterFn
+    );
     if (newNode != null) {
       newNode.nextKey = null;
       if (lastNode) {

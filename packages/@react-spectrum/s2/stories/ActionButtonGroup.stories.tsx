@@ -50,18 +50,33 @@ let justifiedStyle = style({
   }
 });
 
-export const Example: StoryFn<typeof ActionButtonGroup> = (args) => (
+export const Example: StoryFn<typeof ActionButtonGroup> = args => (
   <ActionButtonGroup {...args} styles={args.isJustified ? justifiedStyle(args) : undefined}>
-    <ActionButton><Cut /><Text slot="label">Cut</Text></ActionButton>
-    <ActionButton><Copy /><Text slot="label">Copy</Text></ActionButton>
-    <ActionButton><Paste /><Text slot="label">Paste</Text></ActionButton>
+    <ActionButton>
+      <Cut />
+      <Text slot="label">Cut</Text>
+    </ActionButton>
+    <ActionButton>
+      <Copy />
+      <Text slot="label">Copy</Text>
+    </ActionButton>
+    <ActionButton>
+      <Paste />
+      <Text slot="label">Paste</Text>
+    </ActionButton>
   </ActionButtonGroup>
 );
 
-export const IconOnly: StoryFn<typeof ActionButtonGroup> = (args) => (
+export const IconOnly: StoryFn<typeof ActionButtonGroup> = args => (
   <ActionButtonGroup {...args} styles={args.isJustified ? justifiedStyle(args) : undefined}>
-    <ActionButton aria-label="Cut"><Cut /></ActionButton>
-    <ActionButton aria-label="Copy"><Copy /></ActionButton>
-    <ActionButton aria-label="Paste"><Paste /></ActionButton>
+    <ActionButton aria-label="Cut">
+      <Cut />
+    </ActionButton>
+    <ActionButton aria-label="Copy">
+      <Copy />
+    </ActionButton>
+    <ActionButton aria-label="Paste">
+      <Paste />
+    </ActionButton>
   </ActionButtonGroup>
 );

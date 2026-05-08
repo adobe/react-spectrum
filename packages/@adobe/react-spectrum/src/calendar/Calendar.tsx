@@ -22,25 +22,29 @@ import {useCalendarState} from 'react-stately/useCalendarState';
 import {useLocale} from 'react-aria/I18nProvider';
 import {useProviderProps} from '../provider/Provider';
 
-export interface SpectrumCalendarProps<T extends DateValue> extends AriaCalendarProps<T>, StyleProps {
+export interface SpectrumCalendarProps<T extends DateValue>
+  extends AriaCalendarProps<T>, StyleProps {
   /**
    * The number of months to display at once. Up to 3 months are supported.
    * @default 1
    */
-  visibleMonths?: number,
+  visibleMonths?: number;
 
   /**
    * A function to create a new [Calendar](https://react-spectrum.adobe.com/internationalized/date/Calendar.html)
    * object for a given calendar identifier. If not provided, the `createCalendar` function
    * from `@internationalized/date` will be used.
    */
-  createCalendar?: (identifier: CalendarIdentifier) => ICalendar
+  createCalendar?: (identifier: CalendarIdentifier) => ICalendar;
 }
 
 /**
  * Calendars display a grid of days in one or more months and allow users to select a single date.
  */
-export const Calendar = React.forwardRef(function Calendar<T extends DateValue>(props: SpectrumCalendarProps<T>, ref: FocusableRef<HTMLElement>) {
+export const Calendar = React.forwardRef(function Calendar<T extends DateValue>(
+  props: SpectrumCalendarProps<T>,
+  ref: FocusableRef<HTMLElement>
+) {
   props = useProviderProps(props);
   let {visibleMonths = 1} = props;
   visibleMonths = Math.max(visibleMonths, 1);
@@ -61,7 +65,10 @@ export const Calendar = React.forwardRef(function Calendar<T extends DateValue>(
     }
   }));
 
-  let {calendarProps, prevButtonProps, nextButtonProps, errorMessageProps} = useCalendar(props, state);
+  let {calendarProps, prevButtonProps, nextButtonProps, errorMessageProps} = useCalendar(
+    props,
+    state
+  );
 
   return (
     <CalendarBase
@@ -72,6 +79,9 @@ export const Calendar = React.forwardRef(function Calendar<T extends DateValue>(
       calendarProps={calendarProps}
       prevButtonProps={prevButtonProps}
       nextButtonProps={nextButtonProps}
-      errorMessageProps={errorMessageProps} />
+      errorMessageProps={errorMessageProps}
+    />
   );
-}) as <T extends DateValue>(props: SpectrumCalendarProps<T> & {ref?: FocusableRef<HTMLElement>}) => ReactElement;
+}) as <T extends DateValue>(
+  props: SpectrumCalendarProps<T> & {ref?: FocusableRef<HTMLElement>}
+) => ReactElement;

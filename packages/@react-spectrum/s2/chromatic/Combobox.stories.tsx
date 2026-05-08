@@ -10,7 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
-import {AsyncComboBoxStory, AsyncComboBoxStoryType, ContextualHelpExample, CustomWidth, Dynamic, EmptyCombobox, Example, Sections, WithAvatars, WithIcons} from '../stories/ComboBox.stories';
+import {
+  AsyncComboBoxStory,
+  AsyncComboBoxStoryType,
+  ContextualHelpExample,
+  CustomWidth,
+  Dynamic,
+  EmptyCombobox,
+  Example,
+  Sections,
+  WithAvatars,
+  WithIcons
+} from '../stories/ComboBox.stories';
 import {ComboBox} from '../src/ComboBox';
 import {expect} from '@storybook/jest';
 import type {Meta, StoryObj} from '@storybook/react';
@@ -19,7 +30,12 @@ import {userEvent, waitFor, within} from 'storybook/test';
 const meta: Meta<typeof ComboBox<any>> = {
   component: ComboBox,
   parameters: {
-    chromaticProvider: {colorSchemes: ['light'], backgrounds: ['base'], locales: ['en-US'], disableAnimations: true},
+    chromaticProvider: {
+      colorSchemes: ['light'],
+      backgrounds: ['base'],
+      locales: ['en-US'],
+      disableAnimations: true
+    },
     chromatic: {ignoreSelectors: ['[role="progressbar"]']}
   },
   tags: ['autodocs'],
@@ -131,9 +147,12 @@ export const AsyncResults: StoryObj<AsyncComboBoxStoryType> = {
     await userEvent.keyboard('{ArrowDown}');
     let body = canvasElement.ownerDocument.body;
     let listbox = await within(body).findByRole('listbox');
-    await waitFor(() => {
-      expect(within(listbox).getByText('Luke', {exact: false})).toBeInTheDocument();
-    }, {timeout: 5000});
+    await waitFor(
+      () => {
+        expect(within(listbox).getByText('Luke', {exact: false})).toBeInTheDocument();
+      },
+      {timeout: 5000}
+    );
   }
 };
 
@@ -148,19 +167,28 @@ export const Filtering: StoryObj<AsyncComboBoxStoryType> = {
     await userEvent.keyboard('{ArrowDown}');
     let body = canvasElement.ownerDocument.body;
     let listbox = await within(body).findByRole('listbox');
-    await waitFor(() => {
-      expect(within(listbox).getByText('Luke', {exact: false})).toBeInTheDocument();
-    }, {timeout: 5000});
+    await waitFor(
+      () => {
+        expect(within(listbox).getByText('Luke', {exact: false})).toBeInTheDocument();
+      },
+      {timeout: 5000}
+    );
 
     let combobox = await within(body).findByRole('combobox');
     await userEvent.type(combobox, 'R2');
 
-    await waitFor(() => {
-      expect(within(body).getByRole('progressbar', {hidden: true})).toBeInTheDocument();
-    }, {timeout: 5000});
+    await waitFor(
+      () => {
+        expect(within(body).getByRole('progressbar', {hidden: true})).toBeInTheDocument();
+      },
+      {timeout: 5000}
+    );
 
-    await waitFor(() => {
-      expect(within(listbox).queryByRole('progressbar', {hidden: true})).toBeFalsy();
-    }, {timeout: 5000});
+    await waitFor(
+      () => {
+        expect(within(listbox).queryByRole('progressbar', {hidden: true})).toBeFalsy();
+      },
+      {timeout: 5000}
+    );
   }
 };

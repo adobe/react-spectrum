@@ -19,24 +19,28 @@ import {Text} from './Text';
 export const FieldErrorContext = createContext<ValidationResult | null>(null);
 
 export interface FieldErrorRenderProps extends ValidationResult {}
-export interface FieldErrorProps extends RenderProps<FieldErrorRenderProps>, DOMProps, GlobalDOMAttributes<HTMLDivElement> {
+export interface FieldErrorProps
+  extends RenderProps<FieldErrorRenderProps>, DOMProps, GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-FieldError'
    */
-  className?: ClassNameOrFunction<FieldErrorRenderProps>,
+  className?: ClassNameOrFunction<FieldErrorRenderProps>;
   /**
    * The HTML element type to render. Defaults to `'span'`.
    * Set to `'div'` when using block-level children (e.g. `<ul>`) to avoid invalid HTML.
    * @default 'span'
    */
-  elementType?: string
+  elementType?: string;
 }
 
 /**
  * A FieldError displays validation errors for a form field.
  */
-export const FieldError = forwardRef(function FieldError(props: FieldErrorProps, ref: ForwardedRef<HTMLElement>) {
+export const FieldError = forwardRef(function FieldError(
+  props: FieldErrorProps,
+  ref: ForwardedRef<HTMLElement>
+) {
   let validation = useContext(FieldErrorContext);
   if (!validation?.isInvalid) {
     return null;
@@ -52,7 +56,8 @@ const FieldErrorInner = forwardRef((props: FieldErrorProps, ref: ForwardedRef<HT
   let renderProps = useRenderProps({
     ...restProps,
     defaultClassName: 'react-aria-FieldError',
-    defaultChildren: validation.validationErrors.length === 0 ? undefined : validation.validationErrors.join(' '),
+    defaultChildren:
+      validation.validationErrors.length === 0 ? undefined : validation.validationErrors.join(' '),
     values: validation
   });
 
@@ -60,5 +65,7 @@ const FieldErrorInner = forwardRef((props: FieldErrorProps, ref: ForwardedRef<HT
     return null;
   }
 
-  return <Text slot="errorMessage" elementType={elementType} {...domProps} {...renderProps} ref={ref} />;
+  return (
+    <Text slot="errorMessage" elementType={elementType} {...domProps} {...renderProps} ref={ref} />
+  );
 });

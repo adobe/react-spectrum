@@ -10,14 +10,28 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, mockClickDefault, pointerMap, render, setupIntersectionObserverMock, within} from '@react-spectrum/test-utils-internal';
+import {
+  act,
+  fireEvent,
+  mockClickDefault,
+  pointerMap,
+  render,
+  setupIntersectionObserverMock,
+  within
+} from '@react-spectrum/test-utils-internal';
 import {Checkbox as AriaCheckbox, CheckboxButton, CheckboxField} from '../src/Checkbox';
 import {Button} from '../src/Button';
 import {Collection} from 'react-aria/Collection';
 import {Dialog, DialogTrigger} from '../src/Dialog';
 import {DropIndicator, useDragAndDrop} from '../src/useDragAndDrop';
 import {getFocusableTreeWalker} from 'react-aria/private/focus/FocusScope';
-import {GridList, GridListContext, GridListHeader, GridListItem, GridListSection} from '../src/GridList';
+import {
+  GridList,
+  GridListContext,
+  GridListHeader,
+  GridListItem,
+  GridListSection
+} from '../src/GridList';
 import {GridListLoadMoreItem} from '../src/GridList';
 import {installPointerEvent, User} from '@react-aria/test-utils';
 import {Label} from '../src/Label';
@@ -29,21 +43,26 @@ import {Tag, TagGroup, TagList} from '../src/TagGroup';
 import userEvent from '@testing-library/user-event';
 import {Virtualizer} from '../src/Virtualizer';
 
-let Checkbox = ({comp}) => (
-  comp === 'CheckboxField'
-    ? (
-      <CheckboxField slot="selection">
-        <CheckboxButton />
-      </CheckboxField>
-    )
-    : <AriaCheckbox slot="selection" />
-);
+let Checkbox = ({comp}) =>
+  comp === 'CheckboxField' ? (
+    <CheckboxField slot="selection">
+      <CheckboxButton />
+    </CheckboxField>
+  ) : (
+    <AriaCheckbox slot="selection" />
+  );
 
 let TestGridList = ({listBoxProps, itemProps}) => (
   <GridList aria-label="Test" {...listBoxProps}>
-    <GridListItem {...itemProps} id="cat" textValue="Cat"><Checkbox slot="selection" comp={itemProps?.checkboxComponent} /> Cat</GridListItem>
-    <GridListItem {...itemProps} id="dog" textValue="Dog"><Checkbox slot="selection" comp={itemProps?.checkboxComponent} /> Dog</GridListItem>
-    <GridListItem {...itemProps} id="kangaroo" textValue="Kangaroo"><Checkbox slot="selection" comp={itemProps?.checkboxComponent} /> Kangaroo</GridListItem>
+    <GridListItem {...itemProps} id="cat" textValue="Cat">
+      <Checkbox slot="selection" comp={itemProps?.checkboxComponent} /> Cat
+    </GridListItem>
+    <GridListItem {...itemProps} id="dog" textValue="Dog">
+      <Checkbox slot="selection" comp={itemProps?.checkboxComponent} /> Dog
+    </GridListItem>
+    <GridListItem {...itemProps} id="kangaroo" textValue="Kangaroo">
+      <Checkbox slot="selection" comp={itemProps?.checkboxComponent} /> Kangaroo
+    </GridListItem>
   </GridList>
 );
 
@@ -51,35 +70,59 @@ let TestGridListSections = ({listBoxProps, itemProps}) => (
   <GridList aria-label="Test" {...listBoxProps}>
     <GridListSection>
       <GridListHeader>Favorite Animal</GridListHeader>
-      <GridListItem {...itemProps} id="cat" textValue="Cat"><Checkbox slot="selection" /> Cat</GridListItem>
-      <GridListItem {...itemProps} id="dog" textValue="Dog"><Checkbox slot="selection" /> Dog</GridListItem>
-      <GridListItem {...itemProps} id="kangaroo" textValue="Kangaroo"><Checkbox slot="selection" /> Kangaroo</GridListItem>
+      <GridListItem {...itemProps} id="cat" textValue="Cat">
+        <Checkbox slot="selection" /> Cat
+      </GridListItem>
+      <GridListItem {...itemProps} id="dog" textValue="Dog">
+        <Checkbox slot="selection" /> Dog
+      </GridListItem>
+      <GridListItem {...itemProps} id="kangaroo" textValue="Kangaroo">
+        <Checkbox slot="selection" /> Kangaroo
+      </GridListItem>
     </GridListSection>
     <GridListSection aria-label="Favorite Ice Cream">
-      <GridListItem {...itemProps} id="cat" textValue="Vanilla"><Checkbox slot="selection" />Vanilla</GridListItem>
-      <GridListItem {...itemProps} id="dog" textValue="Chocolate"><Checkbox slot="selection" />Chocolate</GridListItem>
-      <GridListItem {...itemProps} id="kangaroo" textValue="Strawberry"><Checkbox slot="selection" />Strawberry</GridListItem>
+      <GridListItem {...itemProps} id="cat" textValue="Vanilla">
+        <Checkbox slot="selection" />
+        Vanilla
+      </GridListItem>
+      <GridListItem {...itemProps} id="dog" textValue="Chocolate">
+        <Checkbox slot="selection" />
+        Chocolate
+      </GridListItem>
+      <GridListItem {...itemProps} id="kangaroo" textValue="Strawberry">
+        <Checkbox slot="selection" />
+        Strawberry
+      </GridListItem>
     </GridListSection>
   </GridList>
 );
 
-
 let DraggableGridList = ({orientation, ...props}) => {
   let {dragAndDropHooks} = useDragAndDrop({
-    getItems: (keys) => [...keys].map((key) => ({'text/plain': key})),
+    getItems: keys => [...keys].map(key => ({'text/plain': key})),
     ...props
   });
 
   return (
     <GridList aria-label="Test" orientation={orientation} dragAndDropHooks={dragAndDropHooks}>
-      <GridListItem id="cat" textValue="Cat"><Button slot="drag">≡</Button><Checkbox slot="selection" /> Cat</GridListItem>
-      <GridListItem id="dog" textValue="Dog"><Button slot="drag">≡</Button><Checkbox slot="selection" /> Dog</GridListItem>
-      <GridListItem id="kangaroo" textValue="Kangaroo"><Button slot="drag">≡</Button><Checkbox slot="selection" /> Kangaroo</GridListItem>
+      <GridListItem id="cat" textValue="Cat">
+        <Button slot="drag">≡</Button>
+        <Checkbox slot="selection" /> Cat
+      </GridListItem>
+      <GridListItem id="dog" textValue="Dog">
+        <Button slot="drag">≡</Button>
+        <Checkbox slot="selection" /> Dog
+      </GridListItem>
+      <GridListItem id="kangaroo" textValue="Kangaroo">
+        <Button slot="drag">≡</Button>
+        <Checkbox slot="selection" /> Kangaroo
+      </GridListItem>
     </GridList>
   );
 };
 
-let renderGridList = (listBoxProps, itemProps) => render(<TestGridList {...{listBoxProps, itemProps}} />);
+let renderGridList = (listBoxProps, itemProps) =>
+  render(<TestGridList {...{listBoxProps, itemProps}} />);
 
 describe('GridList', () => {
   let user;
@@ -92,7 +135,9 @@ describe('GridList', () => {
   });
 
   afterEach(() => {
-    act(() => {jest.runAllTimers();});
+    act(() => {
+      jest.runAllTimers();
+    });
     jest.clearAllMocks();
   });
 
@@ -175,7 +220,15 @@ describe('GridList', () => {
     let onHoverStart = jest.fn();
     let onHoverChange = jest.fn();
     let onHoverEnd = jest.fn();
-    let {getAllByRole} = renderGridList({selectionMode: 'multiple'}, {className: ({isHovered}) => isHovered ? 'hover' : '', onHoverStart, onHoverChange, onHoverEnd});
+    let {getAllByRole} = renderGridList(
+      {selectionMode: 'multiple'},
+      {
+        className: ({isHovered}) => (isHovered ? 'hover' : ''),
+        onHoverStart,
+        onHoverChange,
+        onHoverEnd
+      }
+    );
     let row = getAllByRole('row')[0];
 
     expect(row).not.toHaveAttribute('data-hovered');
@@ -198,7 +251,15 @@ describe('GridList', () => {
     let onHoverStart = jest.fn();
     let onHoverChange = jest.fn();
     let onHoverEnd = jest.fn();
-    let {getAllByRole} = renderGridList({}, {className: ({isHovered}) => isHovered ? 'hover' : '', onHoverStart, onHoverChange, onHoverEnd});
+    let {getAllByRole} = renderGridList(
+      {},
+      {
+        className: ({isHovered}) => (isHovered ? 'hover' : ''),
+        onHoverStart,
+        onHoverChange,
+        onHoverEnd
+      }
+    );
     let row = getAllByRole('row')[0];
 
     expect(row).not.toHaveAttribute('data-hovered');
@@ -216,7 +277,10 @@ describe('GridList', () => {
   });
 
   it('should support focus ring', async () => {
-    let {getAllByRole} = renderGridList({selectionMode: 'multiple'}, {className: ({isFocusVisible}) => isFocusVisible ? 'focus' : ''});
+    let {getAllByRole} = renderGridList(
+      {selectionMode: 'multiple'},
+      {className: ({isFocusVisible}) => (isFocusVisible ? 'focus' : '')}
+    );
     let row = getAllByRole('row')[0];
 
     expect(row).not.toHaveAttribute('data-focus-visible');
@@ -233,7 +297,10 @@ describe('GridList', () => {
   });
 
   it('should support press state', async () => {
-    let {getAllByRole} = renderGridList({selectionMode: 'multiple'}, {className: ({isPressed}) => isPressed ? 'pressed' : ''});
+    let {getAllByRole} = renderGridList(
+      {selectionMode: 'multiple'},
+      {className: ({isPressed}) => (isPressed ? 'pressed' : '')}
+    );
     let row = getAllByRole('row')[0];
 
     expect(row).not.toHaveAttribute('data-pressed');
@@ -249,7 +316,10 @@ describe('GridList', () => {
   });
 
   it('should not show press state when not interactive', async () => {
-    let {getAllByRole} = renderGridList({}, {className: ({isPressed}) => isPressed ? 'pressed' : ''});
+    let {getAllByRole} = renderGridList(
+      {},
+      {className: ({isPressed}) => (isPressed ? 'pressed' : '')}
+    );
     let row = getAllByRole('row')[0];
 
     expect(row).not.toHaveAttribute('data-pressed');
@@ -264,8 +334,11 @@ describe('GridList', () => {
     expect(row).not.toHaveClass('pressed');
   });
 
-  it.each(['Checkbox', 'CheckboxField'])('should support selection state with %s', async (comp) => {
-    let {getByRole} = renderGridList({selectionMode: 'multiple'}, {checkboxComponent: comp, className: ({isSelected}) => isSelected ? 'selected' : ''});
+  it.each(['Checkbox', 'CheckboxField'])('should support selection state with %s', async comp => {
+    let {getByRole} = renderGridList(
+      {selectionMode: 'multiple'},
+      {checkboxComponent: comp, className: ({isSelected}) => (isSelected ? 'selected' : '')}
+    );
     let gridListTester = testUtilUser.createTester('GridList', {root: getByRole('grid')});
 
     let row = gridListTester.rows[0];
@@ -302,7 +375,10 @@ describe('GridList', () => {
   });
 
   it('should support disabled state', () => {
-    let {getAllByRole} = renderGridList({selectionMode: 'multiple', disabledKeys: ['cat']}, {className: ({isDisabled}) => isDisabled ? 'disabled' : ''});
+    let {getAllByRole} = renderGridList(
+      {selectionMode: 'multiple', disabledKeys: ['cat']},
+      {className: ({isDisabled}) => (isDisabled ? 'disabled' : '')}
+    );
     let row = getAllByRole('row')[0];
 
     expect(row).toHaveAttribute('aria-disabled', 'true');
@@ -315,7 +391,9 @@ describe('GridList', () => {
     let {getByRole} = render(
       <GridList aria-label="Test">
         <GridListItem id="cat">Cat</GridListItem>
-        <GridListItem id="dog" textValue="Dog" isDisabled>Dog <Button aria-label="Info">ⓘ</Button></GridListItem>
+        <GridListItem id="dog" textValue="Dog" isDisabled>
+          Dog <Button aria-label="Info">ⓘ</Button>
+        </GridListItem>
         <GridListItem id="kangaroo">Kangaroo</GridListItem>
       </GridList>
     );
@@ -335,7 +413,9 @@ describe('GridList', () => {
     let onAction = jest.fn();
     let {getAllByRole} = render(
       <GridList aria-label="Test">
-        <GridListItem id="cat" onAction={onAction}>Cat</GridListItem>
+        <GridListItem id="cat" onAction={onAction}>
+          Cat
+        </GridListItem>
         <GridListItem id="dog">Dog</GridListItem>
         <GridListItem id="kangaroo">Kangaroo</GridListItem>
       </GridList>
@@ -350,7 +430,9 @@ describe('GridList', () => {
     let itemAction = jest.fn();
     let {getAllByRole} = render(
       <GridList aria-label="Test" onAction={onAction}>
-        <GridListItem id="cat" onAction={itemAction}>Cat</GridListItem>
+        <GridListItem id="cat" onAction={itemAction}>
+          Cat
+        </GridListItem>
         <GridListItem id="dog">Dog</GridListItem>
         <GridListItem id="kangaroo">Kangaroo</GridListItem>
       </GridList>
@@ -380,12 +462,16 @@ describe('GridList', () => {
 
     let {getByRole} = render(
       <GridList aria-label="Test" items={items}>
-        {(item) => <GridListItem id={item.id}>{item.name}</GridListItem>}
+        {item => <GridListItem id={item.id}>{item.name}</GridListItem>}
       </GridList>
     );
 
     let gridList = getByRole('grid');
-    expect(within(gridList).getAllByRole('row').map((r) => r.textContent)).toEqual(['Cat', 'Dog']);
+    expect(
+      within(gridList)
+        .getAllByRole('row')
+        .map(r => r.textContent)
+    ).toEqual(['Cat', 'Dog']);
   });
 
   it('should support onScroll', () => {
@@ -401,7 +487,12 @@ describe('GridList', () => {
     let {getAllByRole} = render(
       <GridList aria-label="Test" layout="grid">
         <GridListItem id="cat">Cat</GridListItem>
-        <GridListItem id="dog" textValue="Dog">Dog <Button aria-label="Info" ref={buttonRef}>ⓘ</Button></GridListItem>
+        <GridListItem id="dog" textValue="Dog">
+          Dog{' '}
+          <Button aria-label="Info" ref={buttonRef}>
+            ⓘ
+          </Button>
+        </GridListItem>
         <GridListItem id="kangaroo">Kangaroo</GridListItem>
       </GridList>
     );
@@ -459,7 +550,12 @@ describe('GridList', () => {
     let {getAllByRole} = render(
       <GridList aria-label="Test" orientation="horizontal" layout="grid">
         <GridListItem id="cat">Cat</GridListItem>
-        <GridListItem id="dog" textValue="Dog">Dog <Button aria-label="Info" ref={buttonRef}>ⓘ</Button></GridListItem>
+        <GridListItem id="dog" textValue="Dog">
+          Dog{' '}
+          <Button aria-label="Info" ref={buttonRef}>
+            ⓘ
+          </Button>
+        </GridListItem>
         <GridListItem id="kangaroo">Kangaroo</GridListItem>
       </GridList>
     );
@@ -513,7 +609,9 @@ describe('GridList', () => {
     expect(groups[1]).toHaveClass('react-aria-GridListSection');
 
     expect(groups[0]).toHaveAttribute('aria-labelledby');
-    expect(document.getElementById(groups[0].getAttribute('aria-labelledby'))).toHaveTextContent('Favorite Animal');
+    expect(document.getElementById(groups[0].getAttribute('aria-labelledby'))).toHaveTextContent(
+      'Favorite Animal'
+    );
     expect(groups[1].getAttribute('aria-label')).toEqual('Favorite Ice Cream');
   });
 
@@ -522,15 +620,27 @@ describe('GridList', () => {
       <GridList aria-label="Test">
         <GridListSection id="veggies">
           <GridListHeader>Veggies</GridListHeader>
-          <GridListItem key="lettuce" id="lettuce">Lettuce</GridListItem>
-          <GridListItem key="tomato" id="tomato">Tomato</GridListItem>
-          <GridListItem key="onion" id="onion">Onion</GridListItem>
+          <GridListItem key="lettuce" id="lettuce">
+            Lettuce
+          </GridListItem>
+          <GridListItem key="tomato" id="tomato">
+            Tomato
+          </GridListItem>
+          <GridListItem key="onion" id="onion">
+            Onion
+          </GridListItem>
         </GridListSection>
         <GridListSection id="meats">
           <GridListHeader>Meats</GridListHeader>
-          <GridListItem key="ham" id="ham">Ham</GridListItem>
-          <GridListItem key="tuna" id="tuna">Tuna</GridListItem>
-          <GridListItem key="tofu" id="tofu">Tofu</GridListItem>
+          <GridListItem key="ham" id="ham">
+            Ham
+          </GridListItem>
+          <GridListItem key="tuna" id="tuna">
+            Tuna
+          </GridListItem>
+          <GridListItem key="tofu" id="tofu">
+            Tofu
+          </GridListItem>
         </GridListSection>
       </GridList>
     );
@@ -545,15 +655,27 @@ describe('GridList', () => {
       <GridList aria-label="Test">
         <GridListSection id="veggies">
           <GridListHeader>Veggies</GridListHeader>
-          <GridListItem key="lettuce" id="lettuce">Lettuce</GridListItem>
-          <GridListItem key="tomato" id="tomato">Tomato</GridListItem>
-          <GridListItem key="onion" id="onion">Onion</GridListItem>
-          <GridListItem key="ham" id="ham">Ham</GridListItem>
+          <GridListItem key="lettuce" id="lettuce">
+            Lettuce
+          </GridListItem>
+          <GridListItem key="tomato" id="tomato">
+            Tomato
+          </GridListItem>
+          <GridListItem key="onion" id="onion">
+            Onion
+          </GridListItem>
+          <GridListItem key="ham" id="ham">
+            Ham
+          </GridListItem>
         </GridListSection>
         <GridListSection id="meats">
           <GridListHeader>Meats</GridListHeader>
-          <GridListItem key="tuna" id="tuna">Tuna</GridListItem>
-          <GridListItem key="tofu" id="tofu">Tofu</GridListItem>
+          <GridListItem key="tuna" id="tuna">
+            Tuna
+          </GridListItem>
+          <GridListItem key="tofu" id="tofu">
+            Tofu
+          </GridListItem>
         </GridListSection>
       </GridList>
     );
@@ -570,16 +692,34 @@ describe('GridList', () => {
     installPointerEvent();
     let GridListNoCheckboxes = ({listBoxProps, itemProps}) => (
       <GridList aria-label="Test" {...listBoxProps}>
-        <GridListItem {...itemProps} id="cat" textValue="Cat">Cat</GridListItem>
-        <GridListItem {...itemProps} id="dog" textValue="Dog">Dog</GridListItem>
-        <GridListItem {...itemProps} id="kangaroo" textValue="Kangaroo">Kangaroo</GridListItem>
+        <GridListItem {...itemProps} id="cat" textValue="Cat">
+          Cat
+        </GridListItem>
+        <GridListItem {...itemProps} id="dog" textValue="Dog">
+          Dog
+        </GridListItem>
+        <GridListItem {...itemProps} id="kangaroo" textValue="Kangaroo">
+          Kangaroo
+        </GridListItem>
       </GridList>
     );
 
-    describe.each(['mouse', 'keyboard', 'touch'])('%s', (type) => {
+    describe.each(['mouse', 'keyboard', 'touch'])('%s', type => {
       it('should perform selection with single selection', async () => {
-        let {getByRole} = render(<GridListNoCheckboxes listBoxProps={{selectionMode: 'single', selectionBehavior: 'replace', onSelectionChange}} />);
-        let gridListTester = testUtilUser.createTester('GridList', {user, root: getByRole('grid'), interactionType: type});
+        let {getByRole} = render(
+          <GridListNoCheckboxes
+            listBoxProps={{
+              selectionMode: 'single',
+              selectionBehavior: 'replace',
+              onSelectionChange
+            }}
+          />
+        );
+        let gridListTester = testUtilUser.createTester('GridList', {
+          user,
+          root: getByRole('grid'),
+          interactionType: type
+        });
         let rows = gridListTester.rows;
 
         for (let row of gridListTester.rows) {
@@ -635,8 +775,20 @@ describe('GridList', () => {
       });
 
       it('should perform toggle selection in highlight mode when using modifier keys', async () => {
-        let {getByRole} = render(<GridListNoCheckboxes listBoxProps={{selectionMode: 'multiple', selectionBehavior: 'replace', onSelectionChange}} />);
-        let gridListTester = testUtilUser.createTester('GridList', {user, root: getByRole('grid'), interactionType: type});
+        let {getByRole} = render(
+          <GridListNoCheckboxes
+            listBoxProps={{
+              selectionMode: 'multiple',
+              selectionBehavior: 'replace',
+              onSelectionChange
+            }}
+          />
+        );
+        let gridListTester = testUtilUser.createTester('GridList', {
+          user,
+          root: getByRole('grid'),
+          interactionType: type
+        });
         let rows = gridListTester.rows;
 
         for (let row of gridListTester.rows) {
@@ -654,7 +806,9 @@ describe('GridList', () => {
         if (type === 'keyboard') {
           // Called twice because initial focus will select the first keyboard focused row, meaning we have two items selected
           expect(onSelectionChange).toHaveBeenCalledTimes(2);
-          expect(new Set(onSelectionChange.mock.calls.at(-1)[0])).toEqual(new Set(['cat', 'kangaroo']));
+          expect(new Set(onSelectionChange.mock.calls.at(-1)[0])).toEqual(
+            new Set(['cat', 'kangaroo'])
+          );
           expect(gridListTester.selectedRows).toHaveLength(2);
           expect(gridListTester.selectedRows[1]).toBe(row2);
         } else {
@@ -672,13 +826,17 @@ describe('GridList', () => {
         expect(row2).toHaveAttribute('data-selected', 'true');
         if (type === 'keyboard') {
           expect(onSelectionChange).toHaveBeenCalledTimes(3);
-          expect(new Set(onSelectionChange.mock.calls.at(-1)[0])).toEqual(new Set(['cat', 'dog', 'kangaroo']));
+          expect(new Set(onSelectionChange.mock.calls.at(-1)[0])).toEqual(
+            new Set(['cat', 'dog', 'kangaroo'])
+          );
           expect(gridListTester.selectedRows).toHaveLength(3);
           expect(gridListTester.selectedRows[1]).toBe(row1);
           expect(gridListTester.selectedRows[2]).toBe(row2);
         } else {
           expect(onSelectionChange).toHaveBeenCalledTimes(2);
-          expect(new Set(onSelectionChange.mock.calls.at(-1)[0])).toEqual(new Set(['dog', 'kangaroo']));
+          expect(new Set(onSelectionChange.mock.calls.at(-1)[0])).toEqual(
+            new Set(['dog', 'kangaroo'])
+          );
           expect(gridListTester.selectedRows).toHaveLength(2);
           expect(gridListTester.selectedRows[0]).toBe(row1);
           expect(gridListTester.selectedRows[1]).toBe(row2);
@@ -692,7 +850,9 @@ describe('GridList', () => {
         expect(row2).toHaveAttribute('data-selected', 'true');
         if (type === 'keyboard') {
           expect(onSelectionChange).toHaveBeenCalledTimes(4);
-          expect(new Set(onSelectionChange.mock.calls.at(-1)[0])).toEqual(new Set(['cat', 'kangaroo']));
+          expect(new Set(onSelectionChange.mock.calls.at(-1)[0])).toEqual(
+            new Set(['cat', 'kangaroo'])
+          );
           expect(gridListTester.selectedRows).toHaveLength(2);
           expect(gridListTester.selectedRows[1]).toBe(row2);
         } else {
@@ -704,8 +864,20 @@ describe('GridList', () => {
       });
 
       it('should perform replace selection in highlight mode when not using modifier keys', async () => {
-        let {getByRole} = render(<GridListNoCheckboxes listBoxProps={{selectionMode: 'multiple', selectionBehavior: 'replace', onSelectionChange}} />);
-        let gridListTester = testUtilUser.createTester('GridList', {user, root: getByRole('grid'), interactionType: type});
+        let {getByRole} = render(
+          <GridListNoCheckboxes
+            listBoxProps={{
+              selectionMode: 'multiple',
+              selectionBehavior: 'replace',
+              onSelectionChange
+            }}
+          />
+        );
+        let gridListTester = testUtilUser.createTester('GridList', {
+          user,
+          root: getByRole('grid'),
+          interactionType: type
+        });
         let rows = gridListTester.rows;
 
         for (let row of gridListTester.rows) {
@@ -798,7 +970,15 @@ describe('GridList', () => {
 
     let rows = getAllByRole('row');
     expect(rows).toHaveLength(7);
-    expect(rows.map(r => r.textContent)).toEqual(['Item 0', 'Item 1', 'Item 2', 'Item 3', 'Item 4', 'Item 5', 'Item 6']);
+    expect(rows.map(r => r.textContent)).toEqual([
+      'Item 0',
+      'Item 1',
+      'Item 2',
+      'Item 3',
+      'Item 4',
+      'Item 5',
+      'Item 6'
+    ]);
     for (let row of rows) {
       expect(row).toHaveAttribute('aria-rowindex');
     }
@@ -809,14 +989,33 @@ describe('GridList', () => {
 
     rows = getAllByRole('row');
     expect(rows).toHaveLength(8);
-    expect(rows.map(r => r.textContent)).toEqual(['Item 7', 'Item 8', 'Item 9', 'Item 10', 'Item 11', 'Item 12', 'Item 13', 'Item 14']);
+    expect(rows.map(r => r.textContent)).toEqual([
+      'Item 7',
+      'Item 8',
+      'Item 9',
+      'Item 10',
+      'Item 11',
+      'Item 12',
+      'Item 13',
+      'Item 14'
+    ]);
 
     await user.tab();
     await user.keyboard('{End}');
 
     rows = getAllByRole('row');
     expect(rows).toHaveLength(9);
-    expect(rows.map(r => r.textContent)).toEqual(['Item 7', 'Item 8', 'Item 9', 'Item 10', 'Item 11', 'Item 12', 'Item 13', 'Item 14', 'Item 49']);
+    expect(rows.map(r => r.textContent)).toEqual([
+      'Item 7',
+      'Item 8',
+      'Item 9',
+      'Item 10',
+      'Item 11',
+      'Item 12',
+      'Item 13',
+      'Item 14',
+      'Item 49'
+    ]);
   });
 
   it('should support rendering a TagGroup inside a GridListItem', async () => {
@@ -832,7 +1031,12 @@ describe('GridList', () => {
             </TagList>
           </TagGroup>
         </GridListItem>
-        <GridListItem id="dog" textValue="Dog">Dog <Button aria-label="Info" ref={buttonRef}>ⓘ</Button></GridListItem>
+        <GridListItem id="dog" textValue="Dog">
+          Dog{' '}
+          <Button aria-label="Info" ref={buttonRef}>
+            ⓘ
+          </Button>
+        </GridListItem>
         <GridListItem id="kangaroo">Kangaroo</GridListItem>
       </GridList>
     );
@@ -864,13 +1068,24 @@ describe('GridList', () => {
         <GridListItem data-test-id="grid-list" id="tags" textValue="tags">
           <TagGroup aria-label="Tag group" onRemove={onRemove}>
             <TagList>
-              <Tag id="1" textValue="Tag 1">Tag 1<Button slot="remove">X</Button></Tag>
-              <Tag id="2" textValue="Tag 2">Tag 2<Button slot="remove">X</Button></Tag>
-              <Tag id="3" textValue="Tag 3">Tag 3<Button slot="remove">X</Button></Tag>
+              <Tag id="1" textValue="Tag 1">
+                Tag 1<Button slot="remove">X</Button>
+              </Tag>
+              <Tag id="2" textValue="Tag 2">
+                Tag 2<Button slot="remove">X</Button>
+              </Tag>
+              <Tag id="3" textValue="Tag 3">
+                Tag 3<Button slot="remove">X</Button>
+              </Tag>
             </TagList>
           </TagGroup>
         </GridListItem>
-        <GridListItem id="dog" textValue="Dog">Dog <Button aria-label="Info" ref={buttonRef}>ⓘ</Button></GridListItem>
+        <GridListItem id="dog" textValue="Dog">
+          Dog{' '}
+          <Button aria-label="Info" ref={buttonRef}>
+            ⓘ
+          </Button>
+        </GridListItem>
         <GridListItem id="kangaroo">Kangaroo</GridListItem>
       </GridList>
     );
@@ -905,7 +1120,9 @@ describe('GridList', () => {
     fireEvent.keyDown(document.activeElement, {key: 'Tab', shiftKey: true});
     let walker = getFocusableTreeWalker(document.body, {tabbable: true});
     walker.currentNode = document.activeElement;
-    act(() => {walker.previousNode().focus();});
+    act(() => {
+      walker.previousNode().focus();
+    });
     fireEvent.keyUp(document.activeElement, {key: 'Tab', shiftKey: true});
     expect(document.activeElement).toBe(items[0]);
   });
@@ -918,12 +1135,16 @@ describe('GridList', () => {
             <Button>Open</Button>
             <Modal>
               <Dialog>
-                <Checkbox><Label>Agree</Label></Checkbox>
+                <Checkbox>
+                  <Label>Agree</Label>
+                </Checkbox>
               </Dialog>
             </Modal>
           </DialogTrigger>
         </GridListItem>
-        <GridListItem id="dog" textValue="Dog">Dog</GridListItem>
+        <GridListItem id="dog" textValue="Dog">
+          Dog
+        </GridListItem>
         <GridListItem id="kangaroo">Kangaroo</GridListItem>
       </GridList>
     );
@@ -965,7 +1186,12 @@ describe('GridList', () => {
 
     it('should render drop indicators', async () => {
       let onReorder = jest.fn();
-      let {getAllByRole} = render(<DraggableGridList onReorder={onReorder} renderDropIndicator={(target) => <DropIndicator target={target}>Test</DropIndicator>} />);
+      let {getAllByRole} = render(
+        <DraggableGridList
+          onReorder={onReorder}
+          renderDropIndicator={target => <DropIndicator target={target}>Test</DropIndicator>}
+        />
+      );
       await user.tab();
       await user.keyboard('{ArrowRight}');
       await user.keyboard('{Enter}');
@@ -976,20 +1202,35 @@ describe('GridList', () => {
       expect(rows[0]).toHaveAttribute('class', 'react-aria-DropIndicator');
       expect(rows[0]).not.toHaveAttribute('data-drop-target', 'true');
       expect(rows[0]).toHaveTextContent('Test');
-      expect(within(rows[0]).getByRole('button')).toHaveAttribute('aria-label', 'Insert before Cat');
+      expect(within(rows[0]).getByRole('button')).toHaveAttribute(
+        'aria-label',
+        'Insert before Cat'
+      );
       expect(rows[2]).toHaveAttribute('class', 'react-aria-DropIndicator');
       expect(rows[2]).toHaveAttribute('data-drop-target');
-      expect(within(rows[2]).getByRole('button')).toHaveAttribute('aria-label', 'Insert between Cat and Dog');
+      expect(within(rows[2]).getByRole('button')).toHaveAttribute(
+        'aria-label',
+        'Insert between Cat and Dog'
+      );
       expect(rows[3]).toHaveAttribute('class', 'react-aria-DropIndicator');
       expect(rows[3]).not.toHaveAttribute('data-drop-target');
-      expect(within(rows[3]).getByRole('button')).toHaveAttribute('aria-label', 'Insert between Dog and Kangaroo');
+      expect(within(rows[3]).getByRole('button')).toHaveAttribute(
+        'aria-label',
+        'Insert between Dog and Kangaroo'
+      );
       expect(rows[4]).toHaveAttribute('class', 'react-aria-DropIndicator');
       expect(rows[4]).not.toHaveAttribute('data-drop-target');
-      expect(within(rows[4]).getByRole('button')).toHaveAttribute('aria-label', 'Insert after Kangaroo');
+      expect(within(rows[4]).getByRole('button')).toHaveAttribute(
+        'aria-label',
+        'Insert after Kangaroo'
+      );
 
       await user.keyboard('{ArrowDown}');
 
-      expect(document.activeElement).toHaveAttribute('aria-label', 'Insert between Dog and Kangaroo');
+      expect(document.activeElement).toHaveAttribute(
+        'aria-label',
+        'Insert between Dog and Kangaroo'
+      );
       expect(rows[0]).not.toHaveAttribute('data-drop-target', 'true');
       expect(rows[2]).not.toHaveAttribute('data-drop-target', 'true');
       expect(rows[3]).toHaveAttribute('data-drop-target', 'true');
@@ -1002,10 +1243,12 @@ describe('GridList', () => {
 
     it('should support dropping on rows', async () => {
       let onItemDrop = jest.fn();
-      let {getAllByRole} = render(<>
-        <DraggableGridList />
-        <DraggableGridList onItemDrop={onItemDrop} />
-      </>);
+      let {getAllByRole} = render(
+        <>
+          <DraggableGridList />
+          <DraggableGridList onItemDrop={onItemDrop} />
+        </>
+      );
 
       await user.tab();
       await user.keyboard('{ArrowRight}');
@@ -1032,10 +1275,12 @@ describe('GridList', () => {
 
     it('should support dropping on the root', async () => {
       let onRootDrop = jest.fn();
-      let {getAllByRole} = render(<>
-        <DraggableGridList />
-        <DraggableGridList onRootDrop={onRootDrop} />
-      </>);
+      let {getAllByRole} = render(
+        <>
+          <DraggableGridList />
+          <DraggableGridList onRootDrop={onRootDrop} />
+        </>
+      );
 
       await user.tab();
       await user.keyboard('{ArrowRight}');
@@ -1057,7 +1302,13 @@ describe('GridList', () => {
 
     it('should support dropping with horizontal arrow keys when orientation is horizontal', async () => {
       let onReorder = jest.fn();
-      let {getAllByRole} = render(<DraggableGridList orientation="horizontal" onReorder={onReorder} renderDropIndicator={(target) => <DropIndicator target={target}>Test</DropIndicator>} />);
+      let {getAllByRole} = render(
+        <DraggableGridList
+          orientation="horizontal"
+          onReorder={onReorder}
+          renderDropIndicator={target => <DropIndicator target={target}>Test</DropIndicator>}
+        />
+      );
 
       await user.tab();
       await user.keyboard('{ArrowRight}');
@@ -1066,11 +1317,17 @@ describe('GridList', () => {
 
       let rows = getAllByRole('row');
       expect(rows[2]).toHaveAttribute('data-drop-target');
-      expect(within(rows[2]).getByRole('button')).toHaveAttribute('aria-label', 'Insert between Cat and Dog');
+      expect(within(rows[2]).getByRole('button')).toHaveAttribute(
+        'aria-label',
+        'Insert between Cat and Dog'
+      );
 
       await user.keyboard('{ArrowRight}');
       expect(rows[3]).toHaveAttribute('data-drop-target', 'true');
-      expect(document.activeElement).toHaveAttribute('aria-label', 'Insert between Dog and Kangaroo');
+      expect(document.activeElement).toHaveAttribute(
+        'aria-label',
+        'Insert between Dog and Kangaroo'
+      );
 
       await user.keyboard('{ArrowLeft}');
       expect(rows[2]).toHaveAttribute('data-drop-target', 'true');
@@ -1083,7 +1340,7 @@ describe('GridList', () => {
   });
 
   describe('links', function () {
-    describe.each(['mouse', 'keyboard'])('%s', (type) => {
+    describe.each(['mouse', 'keyboard'])('%s', type => {
       let trigger = async (item, key = 'Enter') => {
         if (type === 'mouse') {
           await user.click(item);
@@ -1117,78 +1374,90 @@ describe('GridList', () => {
         expect(onClick.mock.calls[0][0].target.href).toBe('https://google.com/');
       });
 
-      it.each(['single', 'multiple'])('should support links with selectionBehavior="toggle" selectionMode="%s"', async function (selectionMode) {
-        let {getAllByRole} = render(
-          <GridList aria-label="listview" selectionMode={selectionMode}>
-            <GridListItem href="https://google.com" textValue="one"><Checkbox slot="selection" /> One</GridListItem>
-            <GridListItem href="https://adobe.com" textValue="two"><Checkbox slot="selection" /> Two</GridListItem>
-          </GridList>
-        );
+      it.each(['single', 'multiple'])(
+        'should support links with selectionBehavior="toggle" selectionMode="%s"',
+        async function (selectionMode) {
+          let {getAllByRole} = render(
+            <GridList aria-label="listview" selectionMode={selectionMode}>
+              <GridListItem href="https://google.com" textValue="one">
+                <Checkbox slot="selection" /> One
+              </GridListItem>
+              <GridListItem href="https://adobe.com" textValue="two">
+                <Checkbox slot="selection" /> Two
+              </GridListItem>
+            </GridList>
+          );
 
-        let items = getAllByRole('row');
-        for (let item of items) {
-          expect(item.tagName).not.toBe('A');
-          expect(item).toHaveAttribute('data-href');
-        }
-
-        let onClick = mockClickDefault();
-        if (type === 'keyboard') {
-          await user.tab();
-        }
-        await trigger(items[0]);
-        expect(onClick).toHaveBeenCalledTimes(1);
-        expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
-        expect(onClick.mock.calls[0][0].target.href).toBe('https://google.com/');
-
-        await user.click(within(items[0]).getByRole('checkbox'));
-        expect(items[0]).toHaveAttribute('aria-selected', 'true');
-
-
-        if (type === 'keyboard') {
-          await user.keyboard('{ArrowDown}');
-        }
-        await trigger(items[1], ' ');
-        expect(onClick).toHaveBeenCalledTimes(1);
-        expect(items[1]).toHaveAttribute('aria-selected', 'true');
-      });
-
-      it.each(['single', 'multiple'])('should support links with selectionBehavior="replace" selectionMode="%s"', async function (selectionMode) {
-        let {getAllByRole} = render(
-          <GridList aria-label="listview" selectionMode={selectionMode} selectionBehavior="replace">
-            <GridListItem href="https://google.com">One</GridListItem>
-            <GridListItem href="https://adobe.com">Two</GridListItem>
-          </GridList>
-        );
-
-        let items = getAllByRole('row');
-        for (let item of items) {
-          expect(item.tagName).not.toBe('A');
-          expect(item).toHaveAttribute('data-href');
-        }
-
-        let onClick = mockClickDefault();
-        if (type === 'mouse') {
-          await user.click(items[0]);
-        } else {
-          await user.tab();
-          await user.keyboard(' ');
-          if (selectionMode === 'single') {
-            // single selection with replace will follow focus
-            await user.keyboard(' ');
+          let items = getAllByRole('row');
+          for (let item of items) {
+            expect(item.tagName).not.toBe('A');
+            expect(item).toHaveAttribute('data-href');
           }
-        }
-        expect(onClick).not.toHaveBeenCalled();
-        expect(items[0]).toHaveAttribute('aria-selected', 'true');
 
-        if (type === 'mouse') {
-          await user.dblClick(items[0], {pointerType: 'mouse'});
-        } else {
-          await user.keyboard('{Enter}');
+          let onClick = mockClickDefault();
+          if (type === 'keyboard') {
+            await user.tab();
+          }
+          await trigger(items[0]);
+          expect(onClick).toHaveBeenCalledTimes(1);
+          expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
+          expect(onClick.mock.calls[0][0].target.href).toBe('https://google.com/');
+
+          await user.click(within(items[0]).getByRole('checkbox'));
+          expect(items[0]).toHaveAttribute('aria-selected', 'true');
+
+          if (type === 'keyboard') {
+            await user.keyboard('{ArrowDown}');
+          }
+          await trigger(items[1], ' ');
+          expect(onClick).toHaveBeenCalledTimes(1);
+          expect(items[1]).toHaveAttribute('aria-selected', 'true');
         }
-        expect(onClick).toHaveBeenCalledTimes(1);
-        expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
-        expect(onClick.mock.calls[0][0].target.href).toBe('https://google.com/');
-      });
+      );
+
+      it.each(['single', 'multiple'])(
+        'should support links with selectionBehavior="replace" selectionMode="%s"',
+        async function (selectionMode) {
+          let {getAllByRole} = render(
+            <GridList
+              aria-label="listview"
+              selectionMode={selectionMode}
+              selectionBehavior="replace">
+              <GridListItem href="https://google.com">One</GridListItem>
+              <GridListItem href="https://adobe.com">Two</GridListItem>
+            </GridList>
+          );
+
+          let items = getAllByRole('row');
+          for (let item of items) {
+            expect(item.tagName).not.toBe('A');
+            expect(item).toHaveAttribute('data-href');
+          }
+
+          let onClick = mockClickDefault();
+          if (type === 'mouse') {
+            await user.click(items[0]);
+          } else {
+            await user.tab();
+            await user.keyboard(' ');
+            if (selectionMode === 'single') {
+              // single selection with replace will follow focus
+              await user.keyboard(' ');
+            }
+          }
+          expect(onClick).not.toHaveBeenCalled();
+          expect(items[0]).toHaveAttribute('aria-selected', 'true');
+
+          if (type === 'mouse') {
+            await user.dblClick(items[0], {pointerType: 'mouse'});
+          } else {
+            await user.keyboard('{Enter}');
+          }
+          expect(onClick).toHaveBeenCalledTimes(1);
+          expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
+          expect(onClick.mock.calls[0][0].target.href).toBe('https://google.com/');
+        }
+      );
 
       it('should work with RouterProvider', async () => {
         let navigate = jest.fn();
@@ -1196,7 +1465,9 @@ describe('GridList', () => {
         let {getAllByRole} = render(
           <RouterProvider navigate={navigate} useHref={useHref}>
             <GridList aria-label="listview">
-              <GridListItem href="/foo" routerOptions={{foo: 'bar'}}>One</GridListItem>
+              <GridListItem href="/foo" routerOptions={{foo: 'bar'}}>
+                One
+              </GridListItem>
             </GridList>
           </RouterProvider>
         );
@@ -1228,7 +1499,11 @@ describe('GridList', () => {
 
     it('should select an item on pressing down when shouldSelectOnPressUp is false', async () => {
       let onSelectionChange = jest.fn();
-      let {getAllByRole} = renderGridList({selectionMode: 'single', onSelectionChange, shouldSelectOnPressUp: false});
+      let {getAllByRole} = renderGridList({
+        selectionMode: 'single',
+        onSelectionChange,
+        shouldSelectOnPressUp: false
+      });
       let items = getAllByRole('row');
 
       await user.pointer({target: items[0], keys: '[MouseLeft>]'});
@@ -1240,7 +1515,11 @@ describe('GridList', () => {
 
     it('should select an item on pressing up when shouldSelectOnPressUp is true', async () => {
       let onSelectionChange = jest.fn();
-      let {getAllByRole} = renderGridList({selectionMode: 'single', onSelectionChange, shouldSelectOnPressUp: true});
+      let {getAllByRole} = renderGridList({
+        selectionMode: 'single',
+        onSelectionChange,
+        shouldSelectOnPressUp: true
+      });
       let items = getAllByRole('row');
 
       await user.pointer({target: items[0], keys: '[MouseLeft>]'});
@@ -1252,17 +1531,11 @@ describe('GridList', () => {
   });
 
   describe('async loading', () => {
-    let items = [
-      {name: 'Foo'},
-      {name: 'Bar'},
-      {name: 'Baz'}
-    ];
-    let renderEmptyState = (loadingState) => {
-      return (
-        loadingState === 'loading' ? <div>loading</div> : <div>empty state</div>
-      );
+    let items = [{name: 'Foo'}, {name: 'Bar'}, {name: 'Baz'}];
+    let renderEmptyState = loadingState => {
+      return loadingState === 'loading' ? <div>loading</div> : <div>empty state</div>;
     };
-    let AsyncGridList = (props) => {
+    let AsyncGridList = props => {
       let {items, isLoading, onLoadMore, ...listBoxProps} = props;
       return (
         <GridList
@@ -1270,9 +1543,7 @@ describe('GridList', () => {
           aria-label="async gridlist"
           renderEmptyState={() => renderEmptyState()}>
           <Collection items={items}>
-            {(item) => (
-              <GridListItem id={item.name}>{item.name}</GridListItem>
-            )}
+            {item => <GridListItem id={item.name}>{item.name}</GridListItem>}
           </Collection>
           <GridListLoadMoreItem isLoading={isLoading} onLoadMore={onLoadMore}>
             Loading...
@@ -1339,7 +1610,9 @@ describe('GridList', () => {
       expect(observe).toHaveBeenLastCalledWith(sentinel);
       expect(onLoadMore).toHaveBeenCalledTimes(0);
 
-      act(() => {observer.instance.triggerCallback([{isIntersecting: true}]);});
+      act(() => {
+        observer.instance.triggerCallback([{isIntersecting: true}]);
+      });
       expect(onLoadMore).toHaveBeenCalledTimes(1);
       observe.mockClear();
 
@@ -1347,7 +1620,9 @@ describe('GridList', () => {
       expect(observe).toHaveBeenLastCalledWith(sentinel);
       expect(onLoadMore).toHaveBeenCalledTimes(1);
 
-      act(() => {observer.instance.triggerCallback([{isIntersecting: true}]);});
+      act(() => {
+        observer.instance.triggerCallback([{isIntersecting: true}]);
+      });
       expect(onLoadMore).toHaveBeenCalledTimes(2);
     });
 
@@ -1359,8 +1634,12 @@ describe('GridList', () => {
       let clientWidth, clientHeight;
 
       beforeAll(() => {
-        clientWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 100);
-        clientHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 100);
+        clientWidth = jest
+          .spyOn(window.HTMLElement.prototype, 'clientWidth', 'get')
+          .mockImplementation(() => 100);
+        clientHeight = jest
+          .spyOn(window.HTMLElement.prototype, 'clientHeight', 'get')
+          .mockImplementation(() => 100);
       });
 
       afterAll(function () {
@@ -1368,7 +1647,7 @@ describe('GridList', () => {
         clientHeight.mockReset();
       });
 
-      let VirtualizedAsyncGridList = (props) => {
+      let VirtualizedAsyncGridList = props => {
         let {items, loadingState, onLoadMore, ...listBoxProps} = props;
         return (
           <Virtualizer
@@ -1382,11 +1661,11 @@ describe('GridList', () => {
               aria-label="async virtualized gridlist"
               renderEmptyState={() => renderEmptyState(loadingState)}>
               <Collection items={items}>
-                {(item) => (
-                  <GridListItem id={item.name}>{item.name}</GridListItem>
-                )}
+                {item => <GridListItem id={item.name}>{item.name}</GridListItem>}
               </Collection>
-              <GridListLoadMoreItem isLoading={loadingState === 'loadingMore'} onLoadMore={onLoadMore}>
+              <GridListLoadMoreItem
+                isLoading={loadingState === 'loadingMore'}
+                onLoadMore={onLoadMore}>
                 Loading...
               </GridListLoadMoreItem>
             </GridList>
@@ -1494,21 +1773,27 @@ describe('GridList', () => {
       interactionType
       ${'mouse'}
       ${'keyboard'}
-    `('should support press events on items when using $interactionType', async function ({interactionType}) {
-      let onAction = jest.fn();
-      let onPressStart = jest.fn();
-      let onPressEnd = jest.fn();
-      let onPress = jest.fn();
-      let onClick = jest.fn();
-      let {getByRole} = renderGridList({}, {onAction, onPressStart, onPressEnd, onPress, onClick});
-      let gridListTester = testUtilUser.createTester('GridList', {root: getByRole('grid')});
-      await gridListTester.triggerRowAction({row: 1, interactionType});
-  
-      expect(onAction).toHaveBeenCalledTimes(1);
-      expect(onPressStart).toHaveBeenCalledTimes(1);
-      expect(onPressEnd).toHaveBeenCalledTimes(1);
-      expect(onPress).toHaveBeenCalledTimes(1);
-      expect(onClick).toHaveBeenCalledTimes(1);
-    });
+    `(
+      'should support press events on items when using $interactionType',
+      async function ({interactionType}) {
+        let onAction = jest.fn();
+        let onPressStart = jest.fn();
+        let onPressEnd = jest.fn();
+        let onPress = jest.fn();
+        let onClick = jest.fn();
+        let {getByRole} = renderGridList(
+          {},
+          {onAction, onPressStart, onPressEnd, onPress, onClick}
+        );
+        let gridListTester = testUtilUser.createTester('GridList', {root: getByRole('grid')});
+        await gridListTester.triggerRowAction({row: 1, interactionType});
+
+        expect(onAction).toHaveBeenCalledTimes(1);
+        expect(onPressStart).toHaveBeenCalledTimes(1);
+        expect(onPressEnd).toHaveBeenCalledTimes(1);
+        expect(onPress).toHaveBeenCalledTimes(1);
+        expect(onClick).toHaveBeenCalledTimes(1);
+      }
+    );
   });
 });

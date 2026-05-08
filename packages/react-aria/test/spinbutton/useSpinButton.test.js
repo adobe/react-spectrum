@@ -19,7 +19,11 @@ import {useSpinButton} from '../../src/spinbutton/useSpinButton';
 
 function Example(props) {
   let {spinButtonProps} = useSpinButton(props);
-  return <div {...spinButtonProps} tabIndex={-1} data-testid="test">{props.children}</div>;
+  return (
+    <div {...spinButtonProps} tabIndex={-1} data-testid="test">
+      {props.children}
+    </div>
+  );
 }
 
 describe('useSpinButton', function () {
@@ -36,13 +40,17 @@ describe('useSpinButton', function () {
   });
 
   it('should have aria-disabled if isDisabled is set', function () {
-    let res = render(<Example value={2} textValue="2 items" minValue={1} maxValue={3} isDisabled />);
+    let res = render(
+      <Example value={2} textValue="2 items" minValue={1} maxValue={3} isDisabled />
+    );
     let el = res.getByTestId('test');
     expect(el).toHaveAttribute('aria-disabled', 'true');
   });
 
   it('should have aria-readonly if isReadOnly is set', function () {
-    let res = render(<Example value={2} textValue="2 items" minValue={1} maxValue={3} isReadOnly />);
+    let res = render(
+      <Example value={2} textValue="2 items" minValue={1} maxValue={3} isReadOnly />
+    );
     let el = res.getByTestId('test');
     expect(el).toHaveAttribute('aria-readonly', 'true');
   });
@@ -122,13 +130,17 @@ describe('useSpinButton', function () {
   it('should announce on value change while focused', function () {
     let res = render(<Example value={2} />);
     let el = res.getByTestId('test');
-    act(() => {el.focus();});
+    act(() => {
+      el.focus();
+    });
 
     res.rerender(<Example value={3} />);
     expect(announce).toHaveBeenCalledTimes(1);
     expect(announce).toHaveBeenCalledWith('3', 'assertive');
 
-    act(() => {el.blur();});
+    act(() => {
+      el.blur();
+    });
 
     res.rerender(<Example value={4} />);
     expect(announce).toHaveBeenCalledTimes(1);
@@ -137,7 +149,9 @@ describe('useSpinButton', function () {
   it('should announce on textValue change while focused', function () {
     let res = render(<Example value={2} textValue="2 items" />);
     let el = res.getByTestId('test');
-    act(() => {el.focus();});
+    act(() => {
+      el.focus();
+    });
 
     res.rerender(<Example value={3} textValue="3 items" />);
     expect(announce).toHaveBeenCalledTimes(1);
@@ -149,7 +163,9 @@ describe('useSpinButton', function () {
     let el = res.getByTestId('test');
     expect(el).toHaveAttribute('aria-valuenow', '-2');
     expect(el).toHaveAttribute('aria-valuetext', '−2 items');
-    act(() => {el.focus();});
+    act(() => {
+      el.focus();
+    });
 
     res.rerender(<Example value={-3} textValue="-3 items" />);
     expect(announce).toHaveBeenCalledTimes(1);

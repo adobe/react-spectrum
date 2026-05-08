@@ -33,42 +33,33 @@ import ViewCardIcon from '@spectrum-icons/workflow/ViewCard';
 import ViewGridIcon from '@spectrum-icons/workflow/ViewGrid';
 import ViewListIcon from '@spectrum-icons/workflow/ViewList';
 
-
 export interface SpectrumToolbarProps extends AriaLabelingProps {
   /** The ActionGroups to display in the toolbar. */
-  children: ReactNode | ReactElement[],
+  children: ReactNode | ReactElement[];
   /**
    * The orientation of the entire toolbar.
    * @default 'horizontal'
    */
-  orientation?: Orientation
+  orientation?: Orientation;
 }
 
-export const Toolbar:
-  React.ForwardRefExoticComponent<SpectrumToolbarProps & React.RefAttributes<HTMLDivElement>> =
-forwardRef((props: SpectrumToolbarProps, ref: ForwardedRef<HTMLDivElement>) => {
+export const Toolbar: React.ForwardRefExoticComponent<
+  SpectrumToolbarProps & React.RefAttributes<HTMLDivElement>
+> = forwardRef((props: SpectrumToolbarProps, ref: ForwardedRef<HTMLDivElement>) => {
   props = useProviderProps(props);
   props = useSlotProps(props, 'toolbar');
-  let {
-    orientation = 'horizontal'
-  } = props;
+  let {orientation = 'horizontal'} = props;
 
-  let slots = useMemo(() => ({
-    actionGroup: {orientation},
-    divider: {orientation: orientation === 'horizontal' ? 'vertical' : 'horizontal', size: 'S'}
-  }), [orientation]);
+  let slots = useMemo(
+    () => ({
+      actionGroup: {orientation},
+      divider: {orientation: orientation === 'horizontal' ? 'vertical' : 'horizontal', size: 'S'}
+    }),
+    [orientation]
+  );
   return (
-    <RACToolbar
-      {...props}
-      ref={ref}
-      className={
-        classNames(
-          styles,
-          'spectrum-Toolbar'
-        )}>
-      <SlotProvider slots={slots}>
-        {props.children}
-      </SlotProvider>
+    <RACToolbar {...props} ref={ref} className={classNames(styles, 'spectrum-Toolbar')}>
+      <SlotProvider slots={slots}>{props.children}</SlotProvider>
     </RACToolbar>
   );
 });
@@ -107,17 +98,18 @@ let items3 = [
   {id: 'info', textValue: 'Info', icon: InfoIcon}
 ];
 
-
 export const Default: ToolbarStory = {
   args: {
     children: (
       <>
         <ActionGroup items={items1} aria-label="manage" selectionMode="single">
-          {(item) => {
+          {item => {
             let Icon = item.icon;
             return (
               <TooltipTrigger>
-                <Item key={item.id} textValue={item.textValue}><Icon aria-label={item.textValue} /></Item>
+                <Item key={item.id} textValue={item.textValue}>
+                  <Icon aria-label={item.textValue} />
+                </Item>
                 <Tooltip>{item.textValue}</Tooltip>
               </TooltipTrigger>
             );
@@ -125,15 +117,19 @@ export const Default: ToolbarStory = {
         </ActionGroup>
         <Divider />
         <ActionGroup items={items2} aria-label="view" selectionMode="single">
-          {(item) => {
+          {item => {
             let Icon = item.icon;
-            return <Item key={item.id} textValue={item.textValue}><Icon aria-label={item.textValue} /></Item>;
+            return (
+              <Item key={item.id} textValue={item.textValue}>
+                <Icon aria-label={item.textValue} />
+              </Item>
+            );
           }}
         </ActionGroup>
       </>
     )
   },
-  render: (args) => <Toolbar {...args} />
+  render: args => <Toolbar {...args} />
 };
 
 export const DisabledKeys: ToolbarStory = {
@@ -141,12 +137,18 @@ export const DisabledKeys: ToolbarStory = {
     'aria-label': 'The big toolbar',
     children: (
       <>
-        <ActionGroup items={items1} disabledKeys={new Set(['copy'])} aria-label="manage" selectionMode="multiple">
-          {(item) => {
+        <ActionGroup
+          items={items1}
+          disabledKeys={new Set(['copy'])}
+          aria-label="manage"
+          selectionMode="multiple">
+          {item => {
             let Icon = item.icon;
             return (
               <TooltipTrigger>
-                <Item key={item.id} textValue={item.textValue}><Icon aria-label={item.textValue} /></Item>
+                <Item key={item.id} textValue={item.textValue}>
+                  <Icon aria-label={item.textValue} />
+                </Item>
                 <Tooltip>{item.textValue}</Tooltip>
               </TooltipTrigger>
             );
@@ -154,16 +156,24 @@ export const DisabledKeys: ToolbarStory = {
         </ActionGroup>
         <Divider />
         <ActionGroup items={items2} isDisabled aria-label="view">
-          {(item) => {
+          {item => {
             let Icon = item.icon;
-            return <Item key={item.id} textValue={item.textValue}><Icon aria-label={item.textValue} /></Item>;
+            return (
+              <Item key={item.id} textValue={item.textValue}>
+                <Icon aria-label={item.textValue} />
+              </Item>
+            );
           }}
         </ActionGroup>
         <Divider />
         <ActionGroup items={items3} aria-label="inspect" selectionMode="single">
-          {(item) => {
+          {item => {
             let Icon = item.icon;
-            return <Item key={item.id} textValue={item.textValue}><Icon aria-label={item.textValue} /></Item>;
+            return (
+              <Item key={item.id} textValue={item.textValue}>
+                <Icon aria-label={item.textValue} />
+              </Item>
+            );
           }}
         </ActionGroup>
       </>

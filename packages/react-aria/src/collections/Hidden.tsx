@@ -11,7 +11,15 @@
  */
 
 import {forwardRefType} from '@react-types/shared';
-import React, {Context, createContext, forwardRef, JSX, ReactElement, ReactNode, useContext} from 'react';
+import React, {
+  Context,
+  createContext,
+  forwardRef,
+  JSX,
+  ReactElement,
+  ReactNode,
+  useContext
+} from 'react';
 
 // React doesn't understand the <template> element, which doesn't have children like a normal element.
 // It will throw an error during hydration when it expects the firstChild to contain content rendered
@@ -63,11 +71,7 @@ export function Hidden(props: {children: ReactNode}): JSX.Element {
     return <>{props.children}</>;
   }
 
-  let children = (
-    <HiddenContext.Provider value>
-      {props.children}
-    </HiddenContext.Provider>
-  );
+  let children = <HiddenContext.Provider value>{props.children}</HiddenContext.Provider>;
 
   // In SSR, portals are not supported by React. Instead, always render into a <template>
   // element, which the browser will never display to the user. In addition, the
@@ -77,7 +81,9 @@ export function Hidden(props: {children: ReactNode}): JSX.Element {
 
 /** Creates a component that forwards its ref and returns null if it is in a hidden subtree. */
 // Note: this function is handled specially in the documentation generator. If you change it, you'll need to update DocsTransformer as well.
-export function createHideableComponent<T, P = {}>(fn: (props: P, ref: React.Ref<T>) => ReactElement | null): (props: P & React.RefAttributes<T>) => ReactElement | null {
+export function createHideableComponent<T, P = {}>(
+  fn: (props: P, ref: React.Ref<T>) => ReactElement | null
+): (props: P & React.RefAttributes<T>) => ReactElement | null {
   let Wrapper = (props: P, ref: React.Ref<T>) => {
     let isHidden = useContext(HiddenContext);
     if (isHidden) {

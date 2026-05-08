@@ -5,10 +5,10 @@ import photos from './photos.json';
 import {flushSync} from 'react-dom';
 import {useEffect, useState} from 'react';
 
-type Photo = typeof photos[0];
+type Photo = (typeof photos)[0];
 interface PhotoDetailProps {
-  photo: Photo,
-  onBack: () => void
+  photo: Photo;
+  onBack: () => void;
 }
 
 export function PhotoDetail({photo, onBack}: PhotoDetailProps) {
@@ -27,16 +27,18 @@ export function PhotoDetail({photo, onBack}: PhotoDetailProps) {
           className="toolbar-Button"
           onPress={() => {
             // Transition back to the grid view
-            document.startViewTransition(async () => {
-              flushSync(() => onBack());
+            document
+              .startViewTransition(async () => {
+                flushSync(() => onBack());
 
-              // Find corresponding photo in grid and mark it as transitioning.
-              let el = document.querySelector('[data-photo-id="' + photo.id + '"]');
-              el?.classList.add('photo-transition');
-            }).ready.then(() => {
-              let el = document.querySelector('[data-photo-id="' + photo.id + '"]');
-              el?.classList.remove('photo-transition');
-            });
+                // Find corresponding photo in grid and mark it as transitioning.
+                let el = document.querySelector('[data-photo-id="' + photo.id + '"]');
+                el?.classList.add('photo-transition');
+              })
+              .ready.then(() => {
+                let el = document.querySelector('[data-photo-id="' + photo.id + '"]');
+                el?.classList.remove('photo-transition');
+              });
           }}>
           <ChevronLeft size={18} style={{display: 'block'}} />
         </Button>
@@ -46,7 +48,11 @@ export function PhotoDetail({photo, onBack}: PhotoDetailProps) {
         </div>
       </div>
       <div className="photo-detail">
-        <img src={src} alt={photo.description || ''} style={{'--width': photo.width, '--height': photo.height} as any} />
+        <img
+          src={src}
+          alt={photo.description || ''}
+          style={{'--width': photo.width, '--height': photo.height} as any}
+        />
       </div>
     </div>
   );

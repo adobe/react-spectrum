@@ -16,23 +16,21 @@ import {visit} from 'unist-util-visit';
 const BASE_URL = {
   dev: {
     'react-aria': 'http://localhost:1234',
-    's2': 'http://localhost:4321'
+    s2: 'http://localhost:4321'
   },
   stage: {
     'react-aria': 'https://d5iwopk28bdhl.cloudfront.net',
-    's2': 'https://d1pzu54gtk2aed.cloudfront.net'
+    s2: 'https://d1pzu54gtk2aed.cloudfront.net'
   },
   prod: {
     'react-aria': 'https://react-aria.adobe.com',
-    's2': 'https://react-spectrum.adobe.com'
+    s2: 'https://react-spectrum.adobe.com'
   }
 };
 
 function getBaseUrl(library) {
   let env = process.env.DOCS_ENV;
-  let base = env
-    ? BASE_URL[env][library]
-    : `http://localhost:1234/${library}`;
+  let base = env ? BASE_URL[env][library] : `http://localhost:1234/${library}`;
   let publicUrl = process.env.PUBLIC_URL;
   if (publicUrl) {
     base += publicUrl.replace(/\/$/, '');
@@ -51,7 +49,10 @@ const S2_DOCS_PAGES_ROOT = path.join(REPO_ROOT, 'packages/dev/s2-docs/pages');
 const DIST_ROOT = path.join(REPO_ROOT, 'packages/dev/s2-docs/dist');
 const LICENSE_COMMENT_REGEX = /^\s*\{\/\*[\s\S]*?Copyright\s+20\d{2}\s+Adobe[\s\S]*?\*\/\}\s*/;
 const S2_ICON_ROOT = path.join(REPO_ROOT, 'packages/@react-spectrum/s2/s2wf-icons');
-const S2_ILLUSTRATION_ROOT = path.join(REPO_ROOT, 'packages/@react-spectrum/s2/spectrum-illustrations');
+const S2_ILLUSTRATION_ROOT = path.join(
+  REPO_ROOT,
+  'packages/@react-spectrum/s2/spectrum-illustrations'
+);
 
 let iconNamesCache = null;
 let illustrationNamesCache = null;
@@ -106,7 +107,13 @@ function getTsFileIndex() {
       const functionMatches = content.matchAll(/(?:export\s+)?function\s+(\w+)/g);
       const constMatches = content.matchAll(/(?:export\s+)?const\s+(\w+)\s*[=:]/g);
 
-      for (const match of [...interfaceMatches, ...typeMatches, ...classMatches, ...functionMatches, ...constMatches]) {
+      for (const match of [
+        ...interfaceMatches,
+        ...typeMatches,
+        ...classMatches,
+        ...functionMatches,
+        ...constMatches
+      ]) {
         const name = match[1];
         if (!tsFileIndex.has(name)) {
           tsFileIndex.set(name, []);
@@ -328,7 +335,7 @@ function loadStyleMacroData() {
 
     // Helper to evaluate and register a variable declaration
     // Example: const colors = ['red', 'blue'] => scope.set('colors', ['red', 'blue'])
-    const registerDeclaration = (decl) => {
+    const registerDeclaration = decl => {
       if (!decl || decl.type !== 'VariableDeclarator') {
         return;
       }
@@ -347,7 +354,10 @@ function loadStyleMacroData() {
         node.declarations.forEach(registerDeclaration);
         continue;
       }
-      if (node.type === 'ExportNamedDeclaration' && node.declaration?.type === 'VariableDeclaration') {
+      if (
+        node.type === 'ExportNamedDeclaration' &&
+        node.declaration?.type === 'VariableDeclaration'
+      ) {
         node.declaration.declarations.forEach(registerDeclaration);
       }
     }
@@ -403,7 +413,7 @@ function getStyleMacroPropertyDefinitions(category) {
 
   // Determine what additional type values a property accepts based on its classification
   // Example: spacing properties accept baseSpacing values like 0, 4, 8, 12, 16, etc.
-  const getAdditionalTypes = (propertyName) => {
+  const getAdditionalTypes = propertyName => {
     const types = [];
     if (data.baseSpacingProperties?.has?.(propertyName)) {
       types.push('baseSpacing');
@@ -442,10 +452,13 @@ function getStyleMacroPropertyDefinitions(category) {
     // Add MDN type documentation links for generic type values (e.g., 'length', 'color')
     for (const value of values) {
       if (links[value]) {
-        continue;  // Already has a link
+        continue; // Already has a link
       }
       // Skip 'number' for sizing properties and 'pill' for non-dimension categories
-      if ((value === 'number' && data.sizingProperties?.has?.(name)) || (value === 'pill' && category !== 'dimensions')) {
+      if (
+        (value === 'number' && data.sizingProperties?.has?.(name)) ||
+        (value === 'pill' && category !== 'dimensions')
+      ) {
         continue;
       }
       if (data.mdnTypeLinks?.[value]) {
@@ -484,7 +497,7 @@ function getStyleMacroPropertyDefinitions(category) {
       values,
       additionalTypes: getAdditionalTypes(shorthandDef.mapping?.[0]),
       links,
-      mapping: shorthandDef.mapping,  // Which full properties this shorthand controls
+      mapping: shorthandDef.mapping, // Which full properties this shorthand controls
       description: data.propertyDescriptions?.[`${shorthandName}Shorthand`]
     };
   }
@@ -532,14 +545,14 @@ function generateStyleMacroTable(category, {sort = true} = {}) {
   const data = loadStyleMacroData();
 
   // Build a row for each property, combining explicit values and type categories
-  const rows = propertyNames.map((propertyName) => {
+  const rows = propertyNames.map(propertyName => {
     const def = definitions[propertyName] || {};
     const values = Array.isArray(def.values) ? def.values : [];
     const additionalTypes = Array.isArray(def.additionalTypes) ? def.additionalTypes : [];
     const tokens = [];
     const seen = new Set();
 
-    const addToken = (token) => {
+    const addToken = token => {
       if (!token || seen.has(token)) {
         return;
       }
@@ -547,10 +560,10 @@ function generateStyleMacroTable(category, {sort = true} = {}) {
       tokens.push(token);
     };
 
-    const formatValue = (value) => `\`${String(value)}\``;
+    const formatValue = value => `\`${String(value)}\``;
 
     // Add explicit allowed values (e.g., '0', '4', '8', 'flex', 'grid')
-    values.forEach((value) => {
+    values.forEach(value => {
       if (value === undefined || value === null) {
         return;
       }
@@ -559,7 +572,7 @@ function generateStyleMacroTable(category, {sort = true} = {}) {
 
     // Add type categories with their full value sets
     // Example: baseSpacing becomes `baseSpacing (0, 4, 8, 12, 16, 20, 24, 28, 32)`
-    additionalTypes.forEach((typeName) => {
+    additionalTypes.forEach(typeName => {
       if (!typeName) {
         return;
       }
@@ -568,7 +581,10 @@ function generateStyleMacroTable(category, {sort = true} = {}) {
         addToken(`\`${typeName} (${list})\``);
         return;
       }
-      if (typeName === 'negativeSpacing' && Array.isArray(data?.spacingTypeValues?.negativeSpacing)) {
+      if (
+        typeName === 'negativeSpacing' &&
+        Array.isArray(data?.spacingTypeValues?.negativeSpacing)
+      ) {
         const list = data.spacingTypeValues.negativeSpacing.map(String).join(', ');
         addToken(`\`${typeName} (${list})\``);
         return;
@@ -592,9 +608,7 @@ function generateStyleMacroTable(category, {sort = true} = {}) {
   // Build the markdown table
   const header = '| Property | Values |';
   const separator = '|---------|--------|';
-  const body = rows
-    .map((row) => `| \`${row.name}\` | ${row.values || '—'} |`)
-    .join('\n');
+  const body = rows.map(row => `| \`${row.name}\` | ${row.values || '—'} |`).join('\n');
 
   const table = `${header}\n${separator}\n${body}`;
   styleMacroTableCache.set(cacheKey, table);
@@ -629,7 +643,13 @@ function getTypeText(decl, fallbackContext) {
  * Preserves query params and hash fragments.
  */
 function transformRelativeUrl(href) {
-  if (!href || href.startsWith('http://') || href.startsWith('https://') || href.startsWith('mailto:') || href.startsWith('#')) {
+  if (
+    !href ||
+    href.startsWith('http://') ||
+    href.startsWith('https://') ||
+    href.startsWith('mailto:') ||
+    href.startsWith('#')
+  ) {
     return href;
   }
 
@@ -779,7 +799,9 @@ function evaluateNode(node, file) {
     case 'MemberExpression': {
       // Handle member expressions like docs.exports.GregorianCalendar.description
       const object = evaluateNode(node.object, file);
-      const property = node.computed ? evaluateNode(node.property, file) : (node.property.name || node.property.value);
+      const property = node.computed
+        ? evaluateNode(node.property, file)
+        : node.property.name || node.property.value;
       return `${object}.${property}`;
     }
 
@@ -825,7 +847,12 @@ function extractDescriptionFromExpression(node, file) {
   const componentName = obj.property?.name;
 
   // Check if the parent is .exports
-  if (obj.object?.type === 'MemberExpression' && obj.object.property?.name === 'exports' && componentName && file) {
+  if (
+    obj.object?.type === 'MemberExpression' &&
+    obj.object.property?.name === 'exports' &&
+    componentName &&
+    file
+  ) {
     const desc = getComponentDescription(componentName, file);
     return desc;
   }
@@ -938,13 +965,15 @@ function getRootsForDocsSource(docsSource, file) {
       path.join(resolved, 'index.d.ts')
     ];
 
-    return getExistingRoots(candidates.map(candidate => {
-      if (!fs.existsSync(candidate)) {
-        return null;
-      }
+    return getExistingRoots(
+      candidates.map(candidate => {
+        if (!fs.existsSync(candidate)) {
+          return null;
+        }
 
-      return fs.statSync(candidate).isDirectory() ? candidate : path.dirname(candidate);
-    }));
+        return fs.statSync(candidate).isDirectory() ? candidate : path.dirname(candidate);
+      })
+    );
   }
 
   const packagePath = path.join(REPO_ROOT, 'packages', docsSource);
@@ -1057,7 +1086,12 @@ function getComponentDescription(componentName, file, docsSource) {
 
   // Try to find an exported declaration named exactly like the component.
   const exportedDecl = source.getExportedDeclarations().get(componentName)?.[0];
-  const possibleNodes = [exportedDecl, source.getVariableDeclaration(componentName), source.getFunction(componentName), source.getClass(componentName)];
+  const possibleNodes = [
+    exportedDecl,
+    source.getVariableDeclaration(componentName),
+    source.getFunction(componentName),
+    source.getClass(componentName)
+  ];
 
   let firstNodeDesc = null;
   for (let node of possibleNodes.filter(Boolean)) {
@@ -1120,9 +1154,8 @@ function getJsDocData(node) {
   const tags = docs.flatMap(doc => doc.getTags());
 
   return {
-    description: docs
-      .map(doc => doc.getDescription().replace(/\n+/g, ' ').trim())
-      .find(Boolean) || '',
+    description:
+      docs.map(doc => doc.getDescription().replace(/\n+/g, ' ').trim()).find(Boolean) || '',
     defaultValue: tags.find(tag => tag.getTagName() === 'default')?.getCommentText() || '',
     selector: tags.find(tag => tag.getTagName() === 'selector')?.getCommentText() || '',
     deprecated: tags.some(tag => tag.getTagName() === 'deprecated'),
@@ -1229,7 +1262,11 @@ function getFunctionExamples(functionName, file, docsSource) {
   }
 
   const exportedDecl = source.getExportedDeclarations().get(functionName)?.[0];
-  const possibleNodes = [exportedDecl, source.getVariableDeclaration(functionName), source.getFunction(functionName)];
+  const possibleNodes = [
+    exportedDecl,
+    source.getVariableDeclaration(functionName),
+    source.getFunction(functionName)
+  ];
 
   let firstNodeExamples = [];
   for (let node of possibleNodes.filter(Boolean)) {
@@ -1322,7 +1359,7 @@ function generatePropTable(componentName, file) {
 
   const propSymbols = iface.getType().getProperties();
 
-  const rows = propSymbols.flatMap((sym) => {
+  const rows = propSymbols.flatMap(sym => {
     if (shouldOmitSymbol(sym)) {
       return [];
     }
@@ -1343,7 +1380,7 @@ function generatePropTable(componentName, file) {
   const header = '| Name | Type | Default | Description |\n|------|------|---------|-------------|';
   const body = rows
     .sort((a, b) => a.name.localeCompare(b.name))
-    .map((r) => {
+    .map(r => {
       const typeStr = `\`${r.type}\``;
       return `| \`${r.name}\` | ${typeStr} | ${r.defVal || '—'} | ${r.description} |`;
     })
@@ -1448,7 +1485,9 @@ function generateInterfaceTable(interfaceName, file) {
     }
   }
 
-  if (!properties.length && !methods.length) {return null;}
+  if (!properties.length && !methods.length) {
+    return null;
+  }
 
   const sections = [];
 
@@ -1527,7 +1566,11 @@ function remarkRemoveImportsExports() {
           });
 
           for (const statement of ast.program.body) {
-            if (statement.type !== 'ImportDeclaration' || typeof statement.source.value !== 'string' || !statement.source.value.startsWith('docs:')) {
+            if (
+              statement.type !== 'ImportDeclaration' ||
+              typeof statement.source.value !== 'string' ||
+              !statement.source.value.startsWith('docs:')
+            ) {
               continue;
             }
 
@@ -1715,7 +1758,9 @@ function remarkDocsComponentsToMarkdown() {
       // Render a text node with the component description.
       if (name === 'PageDescription') {
         // Assume first child is expression "docs.exports.Component.description".
-        const exprNode = node.children?.find((c) => c.type === 'mdxFlowExpression' || c.type === 'mdxTextExpression');
+        const exprNode = node.children?.find(
+          c => c.type === 'mdxFlowExpression' || c.type === 'mdxTextExpression'
+        );
         if (exprNode) {
           const m = exprNode.value.match(/docs\.exports\.([\w$]+)\.description/);
           if (m) {
@@ -1759,7 +1804,7 @@ function remarkDocsComponentsToMarkdown() {
 
       // Render function description + examples from JSDoc.
       if (name === 'FunctionJSDoc') {
-        const functionAttr = node.attributes?.find((a) => a.name === 'function');
+        const functionAttr = node.attributes?.find(a => a.name === 'function');
         let functionName = null;
         let docsSource = null;
         if (functionAttr && functionAttr.value?.type === 'mdxJsxAttributeValueExpression') {
@@ -1792,7 +1837,9 @@ function remarkDocsComponentsToMarkdown() {
           if (examples.length > 1) {
             newNodes.push({
               type: 'paragraph',
-              children: [{type: 'strong', children: [{type: 'text', value: `Example ${exampleIndex + 1}:`}]}]
+              children: [
+                {type: 'strong', children: [{type: 'text', value: `Example ${exampleIndex + 1}:`}]}
+              ]
             });
           }
 
@@ -1816,7 +1863,7 @@ function remarkDocsComponentsToMarkdown() {
 
       // Render a table of props.
       if (name === 'PropTable') {
-        const compAttr = node.attributes?.find((a) => a.name === 'component');
+        const compAttr = node.attributes?.find(a => a.name === 'component');
         if (compAttr && compAttr.value?.type === 'mdxJsxAttributeValueExpression') {
           const m = compAttr.value.value.match(/docs\.exports\.([\w$]+)/);
           if (m) {
@@ -1873,7 +1920,9 @@ function remarkDocsComponentsToMarkdown() {
           exampleTitles = Array.isArray(parsed) ? parsed : [];
         }
 
-        const visualChildren = (node.children || []).filter(c => c.type === 'mdxJsxFlowElement' && c.name === 'VisualExample');
+        const visualChildren = (node.children || []).filter(
+          c => c.type === 'mdxJsxFlowElement' && c.name === 'VisualExample'
+        );
         const codeChildren = (node.children || []).filter(c => c.type === 'code');
 
         // Build replacement markdown nodes.
@@ -1908,7 +1957,9 @@ function remarkDocsComponentsToMarkdown() {
 
             fileList.forEach(fp => {
               const absPath = path.join(REPO_ROOT, fp);
-              if (!fs.existsSync(absPath)) {return;}
+              if (!fs.existsSync(absPath)) {
+                return;
+              }
               const contents = fs.readFileSync(absPath, 'utf8');
               const ext = path.extname(fp).slice(1);
 
@@ -1933,8 +1984,10 @@ function remarkDocsComponentsToMarkdown() {
         // Handle code block children (type="vanilla"|"tailwind" and files=[...])
         if (codeChildren.length > 0) {
           // Parse metadata from code blocks to extract type and files
-          const parseCodeMeta = (meta) => {
-            if (!meta) {return {};}
+          const parseCodeMeta = meta => {
+            if (!meta) {
+              return {};
+            }
             const result = {};
 
             // Extract type
@@ -1960,8 +2013,8 @@ function remarkDocsComponentsToMarkdown() {
           };
 
           const typeToTitle = {
-            'vanilla': 'Vanilla CSS',
-            'tailwind': 'Tailwind'
+            vanilla: 'Vanilla CSS',
+            tailwind: 'Tailwind'
           };
 
           // Check if this is a "component" type ExampleSwitcher (each code block gets its own example title)
@@ -2011,7 +2064,9 @@ function remarkDocsComponentsToMarkdown() {
               if (meta.files && Array.isArray(meta.files)) {
                 meta.files.forEach(fp => {
                   const absPath = path.join(REPO_ROOT, fp);
-                  if (!fs.existsSync(absPath)) {return;}
+                  if (!fs.existsSync(absPath)) {
+                    return;
+                  }
                   const contents = fs.readFileSync(absPath, 'utf8');
                   const ext = path.extname(fp).slice(1);
 
@@ -2035,7 +2090,7 @@ function remarkDocsComponentsToMarkdown() {
           } else {
             // Group code blocks by type (vanilla, tailwind, etc.)
             const codeBlocksByType = new Map();
-            codeChildren.forEach((codeChild) => {
+            codeChildren.forEach(codeChild => {
               const meta = parseCodeMeta(codeChild.meta);
               const type = meta.type || 'vanilla';
               if (!codeBlocksByType.has(type)) {
@@ -2088,7 +2143,9 @@ function remarkDocsComponentsToMarkdown() {
               // Add referenced files
               allFiles.forEach(fp => {
                 const absPath = path.join(REPO_ROOT, fp);
-                if (!fs.existsSync(absPath)) {return;}
+                if (!fs.existsSync(absPath)) {
+                  return;
+                }
                 const contents = fs.readFileSync(absPath, 'utf8');
                 const ext = path.extname(fp).slice(1);
 
@@ -2118,12 +2175,16 @@ function remarkDocsComponentsToMarkdown() {
 
       // Render code for each bundler.
       if (name === 'BundlerSwitcher') {
-        const bundlerItems = (node.children || []).filter(c => c.type === 'mdxJsxFlowElement' && c.name === 'BundlerSwitcherItem');
+        const bundlerItems = (node.children || []).filter(
+          c => c.type === 'mdxJsxFlowElement' && c.name === 'BundlerSwitcherItem'
+        );
         const newNodes = [];
 
-        const extractLabel = (itemNode) => {
+        const extractLabel = itemNode => {
           const labelAttr = itemNode.attributes?.find(a => a.name === 'label');
-          if (!labelAttr) {return null;}
+          if (!labelAttr) {
+            return null;
+          }
 
           if (labelAttr.value?.type === 'mdxJsxAttributeValueExpression') {
             return labelAttr.value.value.replace(/['"`]/g, '').trim();
@@ -2136,7 +2197,7 @@ function remarkDocsComponentsToMarkdown() {
           return null;
         };
 
-        bundlerItems.forEach((itemNode) => {
+        bundlerItems.forEach(itemNode => {
           const label = extractLabel(itemNode) || 'Configuration';
 
           newNodes.push({
@@ -2145,7 +2206,9 @@ function remarkDocsComponentsToMarkdown() {
             children: [{type: 'text', value: label}]
           });
 
-          const itemChildren = (itemNode.children || []).filter(child => child.type !== 'text' || child.value.trim() !== '');
+          const itemChildren = (itemNode.children || []).filter(
+            child => child.type !== 'text' || child.value.trim() !== ''
+          );
           if (itemChildren.length) {
             newNodes.push(...itemChildren);
           }
@@ -2178,7 +2241,8 @@ function remarkDocsComponentsToMarkdown() {
         let initialProps = {};
         if (initialPropsAttr && initialPropsAttr.value?.type === 'mdxJsxAttributeValueExpression') {
           const parsed = parseExpression(initialPropsAttr.value.value, file);
-          initialProps = (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) ? parsed : {};
+          initialProps =
+            parsed && typeof parsed === 'object' && !Array.isArray(parsed) ? parsed : {};
         }
 
         const {children: childrenProp, ...otherProps} = initialProps;
@@ -2282,8 +2346,10 @@ function remarkDocsComponentsToMarkdown() {
         }
 
         // Extract text content from children
-        const extractText = (children) => {
-          if (!children) {return '';}
+        const extractText = children => {
+          if (!children) {
+            return '';
+          }
           return children
             .map(child => {
               if (child.type === 'text' || child.type === 'mdxText') {
@@ -2340,7 +2406,7 @@ function remarkDocsComponentsToMarkdown() {
       }
 
       if (name === 'TypeLink') {
-        const typeAttr = node.attributes?.find((a) => a.name === 'type');
+        const typeAttr = node.attributes?.find(a => a.name === 'type');
         if (typeAttr && typeAttr.value?.type === 'mdxJsxAttributeValueExpression') {
           const expr = typeAttr.value.value.trim();
           // Match anyVar.exports.TypeName or docs.exports.TypeName
@@ -2349,7 +2415,11 @@ function remarkDocsComponentsToMarkdown() {
 
           if (!typeName) {
             // Fall back to the last identifier segment e.g. "PressEvent" in typesDocs.exports.PressEvent or just PressEvent
-            typeName = expr.split('.')?.pop()?.replace(/[^\w$]/g, '') || null;
+            typeName =
+              expr
+                .split('.')
+                ?.pop()
+                ?.replace(/[^\w$]/g, '') || null;
           }
 
           if (typeName) {
@@ -2403,7 +2473,7 @@ function remarkDocsComponentsToMarkdown() {
           const expr = propertiesAttr.value.value.trim();
           const match = expr.match(/getPropertyDefinitions\(\s*['"`]([^'"`]+)['"`]\s*\)/);
           if (match) {
-            category = match[1];  // e.g., 'spacing', 'layout', 'colors'
+            category = match[1]; // e.g., 'spacing', 'layout', 'colors'
           }
         }
 
@@ -2443,42 +2513,120 @@ function remarkDocsComponentsToMarkdown() {
         const colorSections = [
           {
             title: 'Background colors',
-            description: 'The backgroundColor property supports the following values, in addition to the semantic and global colors shown below. These colors are specifically chosen to be used as backgrounds, so prefer them over global colors where possible.',
+            description:
+              'The backgroundColor property supports the following values, in addition to the semantic and global colors shown below. These colors are specifically chosen to be used as backgrounds, so prefer them over global colors where possible.',
             colors: [
-              'base', 'layer-1', 'layer-2', 'pasteboard', 'elevated',
-              'accent', 'accent-subtle', 'neutral', 'neutral-subdued', 'neutral-subtle',
-              'negative', 'negative-subtle', 'informative', 'informative-subtle',
-              'positive', 'positive-subtle', 'notice', 'notice-subtle',
-              'gray', 'gray-subtle', 'red', 'red-subtle', 'orange', 'orange-subtle',
-              'yellow', 'yellow-subtle', 'chartreuse', 'chartreuse-subtle',
-              'celery', 'celery-subtle', 'green', 'green-subtle', 'seafoam', 'seafoam-subtle',
-              'cyan', 'cyan-subtle', 'blue', 'blue-subtle', 'indigo', 'indigo-subtle',
-              'purple', 'purple-subtle', 'fuchsia', 'fuchsia-subtle',
-              'magenta', 'magenta-subtle', 'pink', 'pink-subtle',
-              'turquoise', 'turquoise-subtle', 'cinnamon', 'cinnamon-subtle',
-              'brown', 'brown-subtle', 'silver', 'silver-subtle', 'disabled'
+              'base',
+              'layer-1',
+              'layer-2',
+              'pasteboard',
+              'elevated',
+              'accent',
+              'accent-subtle',
+              'neutral',
+              'neutral-subdued',
+              'neutral-subtle',
+              'negative',
+              'negative-subtle',
+              'informative',
+              'informative-subtle',
+              'positive',
+              'positive-subtle',
+              'notice',
+              'notice-subtle',
+              'gray',
+              'gray-subtle',
+              'red',
+              'red-subtle',
+              'orange',
+              'orange-subtle',
+              'yellow',
+              'yellow-subtle',
+              'chartreuse',
+              'chartreuse-subtle',
+              'celery',
+              'celery-subtle',
+              'green',
+              'green-subtle',
+              'seafoam',
+              'seafoam-subtle',
+              'cyan',
+              'cyan-subtle',
+              'blue',
+              'blue-subtle',
+              'indigo',
+              'indigo-subtle',
+              'purple',
+              'purple-subtle',
+              'fuchsia',
+              'fuchsia-subtle',
+              'magenta',
+              'magenta-subtle',
+              'pink',
+              'pink-subtle',
+              'turquoise',
+              'turquoise-subtle',
+              'cinnamon',
+              'cinnamon-subtle',
+              'brown',
+              'brown-subtle',
+              'silver',
+              'silver-subtle',
+              'disabled'
             ]
           },
           {
             title: 'Text colors',
-            description: 'The color property supports the following values, in addition to the semantic and global colors shown below. These colors are specifically chosen to be used as text colors, so prefer them over global colors where possible.',
+            description:
+              'The color property supports the following values, in addition to the semantic and global colors shown below. These colors are specifically chosen to be used as text colors, so prefer them over global colors where possible.',
             colors: [
-              'accent', 'neutral', 'neutral-subdued', 'negative', 'disabled',
-              'heading', 'title', 'body', 'detail', 'code'
+              'accent',
+              'neutral',
+              'neutral-subdued',
+              'negative',
+              'disabled',
+              'heading',
+              'title',
+              'body',
+              'detail',
+              'code'
             ]
           },
           {
             title: 'Semantic colors',
-            description: 'The following values are available across all color properties. Prefer to use semantic colors over global colors when they represent a specific meaning.',
-            scales: ['accent-color', 'informative-color', 'negative-color', 'notice-color', 'positive-color']
+            description:
+              'The following values are available across all color properties. Prefer to use semantic colors over global colors when they represent a specific meaning.',
+            scales: [
+              'accent-color',
+              'informative-color',
+              'negative-color',
+              'notice-color',
+              'positive-color'
+            ]
           },
           {
             title: 'Global colors',
             description: 'The following values are available across all color properties.',
             scales: [
-              'gray', 'blue', 'red', 'orange', 'yellow', 'chartreuse', 'celery',
-              'green', 'seafoam', 'cyan', 'indigo', 'purple', 'fuchsia',
-              'magenta', 'pink', 'turquoise', 'brown', 'silver', 'cinnamon'
+              'gray',
+              'blue',
+              'red',
+              'orange',
+              'yellow',
+              'chartreuse',
+              'celery',
+              'green',
+              'seafoam',
+              'cyan',
+              'indigo',
+              'purple',
+              'fuchsia',
+              'magenta',
+              'pink',
+              'turquoise',
+              'brown',
+              'silver',
+              'cinnamon'
             ]
           }
         ];
@@ -2505,14 +2653,16 @@ function remarkDocsComponentsToMarkdown() {
             newNodes.push(...listNode.children);
           } else if (section.scales) {
             // For scales, note that they include numbered variants (e.g., gray-100, gray-200, etc.)
-            const scaleNote = section.scales.map(scale => {
-              const baseName = scale.replace(/-color$/, '');
-              // Gray scale includes 25, 50, 75, while others start at 100
-              if (baseName === 'gray') {
-                return `- \`${baseName}\` scale (e.g., \`${baseName}-25\`, \`${baseName}-50\`, \`${baseName}-75\`, \`${baseName}-100\`, ..., \`${baseName}-1600\`)`;
-              }
-              return `- \`${baseName}\` scale (e.g., \`${baseName}-100\`, \`${baseName}-200\`, ..., \`${baseName}-1600\`)`;
-            }).join('\n');
+            const scaleNote = section.scales
+              .map(scale => {
+                const baseName = scale.replace(/-color$/, '');
+                // Gray scale includes 25, 50, 75, while others start at 100
+                if (baseName === 'gray') {
+                  return `- \`${baseName}\` scale (e.g., \`${baseName}-25\`, \`${baseName}-50\`, \`${baseName}-75\`, \`${baseName}-100\`, ..., \`${baseName}-1600\`)`;
+                }
+                return `- \`${baseName}\` scale (e.g., \`${baseName}-100\`, \`${baseName}-200\`, ..., \`${baseName}-1600\`)`;
+              })
+              .join('\n');
             const scaleNode = unified().use(remarkParse).parse(scaleNote);
             newNodes.push(...scaleNode.children);
           }
@@ -2548,7 +2698,7 @@ function remarkDocsComponentsToMarkdown() {
         }
 
         // Helper to extract text content from cell values
-        const extractCellText = (cell) => {
+        const extractCellText = cell => {
           if (cell === null || cell === undefined) {
             return '';
           }
@@ -2577,7 +2727,9 @@ function remarkDocsComponentsToMarkdown() {
           const separator = headers.map(() => '------');
 
           const bodyRows = rows.map(row => {
-            if (!Array.isArray(row)) {return [];}
+            if (!Array.isArray(row)) {
+              return [];
+            }
             return row.map((cell, colIdx) => {
               let text = extractCellText(cell);
               // Apply code formatting if this column is in codeColumns
@@ -2634,7 +2786,9 @@ function remarkDocsComponentsToMarkdown() {
           if (defaultClassAttr.value?.type === 'mdxJsxAttributeValueExpression') {
             // Expression like "'react-aria-ComboBox'"
             const m = defaultClassAttr.value.value.match(/['"]([\w-]+)['"]/);
-            if (m) {defaultClassName = m[1];}
+            if (m) {
+              defaultClassName = m[1];
+            }
           } else if (defaultClassAttr.value?.type === 'mdxJsxAttributeValueLiteral') {
             defaultClassName = defaultClassAttr.value.value;
           } else if (typeof defaultClassAttr.value === 'string') {
@@ -2645,10 +2799,14 @@ function remarkDocsComponentsToMarkdown() {
         const showOptionalAttr = node.attributes?.find(a => a.name === 'showOptional');
         const hideSelectorAttr = node.attributes?.find(a => a.name === 'hideSelector');
 
-        const table = generateStateTable(ifaceName, {
-          showOptional: !!showOptionalAttr,
-          hideSelector: !!hideSelectorAttr
-        }, file);
+        const table = generateStateTable(
+          ifaceName,
+          {
+            showOptional: !!showOptionalAttr,
+            hideSelector: !!hideSelectorAttr
+          },
+          file
+        );
 
         if (table) {
           const nodesToInsert = [];
@@ -2736,7 +2894,7 @@ function remarkDocsComponentsToMarkdown() {
     });
 
     // Clean up code block language specifiers (e.g. "tsx render" -> "tsx").
-    visit(tree, 'code', (node) => {
+    visit(tree, 'code', node => {
       if (node.meta) {
         node.meta = '';
       }
@@ -2752,7 +2910,7 @@ function remarkDocsComponentsToMarkdown() {
     });
 
     // Transform relative links to use .md extension.
-    visit(tree, 'link', (node) => {
+    visit(tree, 'link', node => {
       node.url = transformRelativeUrl(node.url);
     });
 
@@ -2849,7 +3007,9 @@ function generateClassAPITable(className, file) {
 
         const ctorDocs = ctor.getJsDocs();
         if (ctorDocs.length > 0) {
-          const paramTag = ctorDocs[0].getTags().find(t => t.getTagName() === 'param' && t.getName?.() === name);
+          const paramTag = ctorDocs[0]
+            .getTags()
+            .find(t => t.getTagName() === 'param' && t.getName?.() === name);
           if (paramTag) {
             description = paramTag.getCommentText() || '';
           }
@@ -2915,7 +3075,9 @@ function generateClassAPITable(className, file) {
         }
 
         // Document return value
-        const returnTag = methodDocs[0].getTags().find(t => t.getTagName() === 'returns' || t.getTagName() === 'return');
+        const returnTag = methodDocs[0]
+          .getTags()
+          .find(t => t.getTagName() === 'returns' || t.getTagName() === 'return');
         if (returnTag) {
           const returnDesc = returnTag.getCommentText() || '';
           // eslint-disable-next-line max-depth
@@ -2961,7 +3123,11 @@ function generateClassAPITable(className, file) {
 /**
  * Generate a markdown table for render props.
  */
-function generateStateTable(renderPropsName, {showOptional = false, hideSelector = false} = {}, file) {
+function generateStateTable(
+  renderPropsName,
+  {showOptional = false, hideSelector = false} = {},
+  file
+) {
   // Attempt to resolve source file by stripping trailing "RenderProps" to get component name.
   let componentName = renderPropsName.replace(/RenderProps$/, '');
 
@@ -2991,23 +3157,25 @@ function generateStateTable(renderPropsName, {showOptional = false, hideSelector
   }
 
   // Build rows
-  const rows = propSymbols.map(sym => {
-    if (shouldOmitSymbol(sym)) {
-      return null;
-    }
+  const rows = propSymbols
+    .map(sym => {
+      if (shouldOmitSymbol(sym)) {
+        return null;
+      }
 
-    const name = sym.getName();
+      const name = sym.getName();
 
-    const decl = sym.getDeclarations()?.[0];
-    let optional = false;
+      const decl = sym.getDeclarations()?.[0];
+      let optional = false;
 
-    if (decl) {
-      optional = decl.hasQuestionToken?.() || false;
-    }
+      if (decl) {
+        optional = decl.hasQuestionToken?.() || false;
+      }
 
-    const docData = getJsDocData(decl);
-    return {name, selector: docData.selector || '—', description: docData.description, optional};
-  }).filter(Boolean);
+      const docData = getJsDocData(decl);
+      return {name, selector: docData.selector || '—', description: docData.description, optional};
+    })
+    .filter(Boolean);
 
   // Filter optional props if showOptional is false
   const filteredRows = showOptional ? rows : rows.filter(r => !r.optional);
@@ -3016,10 +3184,13 @@ function generateStateTable(renderPropsName, {showOptional = false, hideSelector
     return null;
   }
 
-  const hasSelectorColumn = !hideSelector && filteredRows.some(r => r.selector && r.selector !== '—');
+  const hasSelectorColumn =
+    !hideSelector && filteredRows.some(r => r.selector && r.selector !== '—');
 
   const headerColumns = ['Render Prop'];
-  if (hasSelectorColumn) {headerColumns.push('CSS Selector');}
+  if (hasSelectorColumn) {
+    headerColumns.push('CSS Selector');
+  }
   headerColumns.push('Description');
 
   const header = `| ${headerColumns.join(' | ')} |\n|${headerColumns.map(() => '------').join('|')}|`;
@@ -3058,7 +3229,11 @@ function generateFunctionOptionsTable(functionName, file) {
 
   // Attempt to get an exported declaration for the function.
   const exportedDecl = source.getExportedDeclarations().get(functionName)?.[0];
-  const possibleDecls = [exportedDecl, source.getFunction(functionName), source.getVariableDeclaration(functionName)];
+  const possibleDecls = [
+    exportedDecl,
+    source.getFunction(functionName),
+    source.getVariableDeclaration(functionName)
+  ];
 
   let funcDecl = possibleDecls.find(Boolean);
   if (!funcDecl) {
@@ -3080,7 +3255,9 @@ function generateFunctionOptionsTable(functionName, file) {
   // Inspect the first parameter's declared type.
   for (const paramSym of params) {
     const paramDecl = paramSym.getDeclarations()?.[0];
-    if (!paramDecl) {continue;}
+    if (!paramDecl) {
+      continue;
+    }
 
     // Try to extract a simple type reference name.
     const typeNode = paramDecl.getTypeNode?.();
@@ -3090,7 +3267,10 @@ function generateFunctionOptionsTable(functionName, file) {
       typeName = typeNode.getText().split(/[<\s|&]/)[0];
     } else {
       // Fallback to type text.
-      typeName = paramDecl.getType?.().getText(paramDecl).split(/[<\s|&]/)[0];
+      typeName = paramDecl
+        .getType?.()
+        .getText(paramDecl)
+        .split(/[<\s|&]/)[0];
     }
 
     if (typeName) {
@@ -3122,7 +3302,11 @@ function generateFunctionSignature(functionName, file) {
 
   // Attempt to get an exported declaration for the function.
   const exportedDecl = source.getExportedDeclarations().get(functionName)?.[0];
-  const possibleDecls = [exportedDecl, source.getFunction(functionName), source.getVariableDeclaration(functionName)];
+  const possibleDecls = [
+    exportedDecl,
+    source.getFunction(functionName),
+    source.getVariableDeclaration(functionName)
+  ];
 
   let funcDecl = possibleDecls.find(Boolean);
   if (!funcDecl) {
@@ -3161,15 +3345,16 @@ function generateLibraryLlmsTxt(lib, files) {
   }
 
   const titleMap = {
-    's2': 'React Spectrum (S2) Documentation',
+    s2: 'React Spectrum (S2) Documentation',
     'react-aria': 'React Aria Components Documentation',
-    'internationalized': 'Internationalized Documentation'
+    internationalized: 'Internationalized Documentation'
   };
 
   const summaryMap = {
-    's2': 'Plain-text markdown documentation for React Spectrum S2 components.',
+    s2: 'Plain-text markdown documentation for React Spectrum S2 components.',
     'react-aria': 'Plain-text markdown documentation for React Aria components.',
-    'internationalized': 'Plain-text markdown documentation for internationalized date, time, and number utilities.'
+    internationalized:
+      'Plain-text markdown documentation for internationalized date, time, and number utilities.'
   };
 
   const title = titleMap[lib] || `${lib} documentation`;
@@ -3210,10 +3395,10 @@ async function main() {
 
   // Collect generated markdown filenames and headings for each library so we can build llms.txt files.
   const docsByLibrary = {
-    's2': [],
+    s2: [],
     'react-aria': [],
-    'internationalized': [],
-    'root': []
+    internationalized: [],
+    root: []
   };
 
   for (const filePath of mdxFiles) {
@@ -3293,7 +3478,7 @@ async function main() {
   generateLibraryLlmsTxt('react-aria', docsByLibrary['react-aria']);
 }
 
-main().catch((err) => {
+main().catch(err => {
   console.error(err);
   process.exit(1);
 });

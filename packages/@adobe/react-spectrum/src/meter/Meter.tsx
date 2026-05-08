@@ -18,23 +18,23 @@ import styles from '@adobe/spectrum-css-temp/components/barloader/vars.css';
 import {useMeter} from 'react-aria/useMeter';
 
 export interface SpectrumMeterProps extends SpectrumProgressBarBaseProps {
-  /** 
-   * The [visual style](https://spectrum.adobe.com/page/meter/#Options) of the Meter. 
+  /**
+   * The [visual style](https://spectrum.adobe.com/page/meter/#Options) of the Meter.
    * @default 'informative'
    */
-  variant?: 'informative' | 'positive' | 'warning' | 'critical'
+  variant?: 'informative' | 'positive' | 'warning' | 'critical';
 }
 
 /**
  * Meters are visual representations of a quantity or an achievement.
  * Their progress is determined by user actions, rather than system actions.
  */
-export const Meter = React.forwardRef(function Meter(props: SpectrumMeterProps, ref: DOMRef<HTMLDivElement>) {
+export const Meter = React.forwardRef(function Meter(
+  props: SpectrumMeterProps,
+  ref: DOMRef<HTMLDivElement>
+) {
   let {variant = 'informative', ...otherProps} = props;
-  const {
-    meterProps,
-    labelProps
-  } = useMeter(props);
+  const {meterProps, labelProps} = useMeter(props);
 
   return (
     <ProgressBarBase
@@ -42,15 +42,11 @@ export const Meter = React.forwardRef(function Meter(props: SpectrumMeterProps, 
       ref={ref}
       barProps={meterProps}
       labelProps={labelProps}
-      barClassName={
-        classNames(
-          styles,
-          {
-            'is-positive': variant === 'positive',
-            'is-warning': variant === 'warning',
-            'is-critical': variant === 'critical'
-          }
-        )
-      } />
+      barClassName={classNames(styles, {
+        'is-positive': variant === 'positive',
+        'is-warning': variant === 'warning',
+        'is-critical': variant === 'critical'
+      })}
+    />
   );
 });

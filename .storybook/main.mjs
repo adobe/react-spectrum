@@ -1,6 +1,6 @@
-import { fileURLToPath } from "node:url";
+import {fileURLToPath} from 'node:url';
 
-const localAddon = (rel) => fileURLToPath(import.meta.resolve(rel));
+const localAddon = rel => fileURLToPath(import.meta.resolve(rel));
 
 export default {
   stories: [
@@ -20,7 +20,7 @@ export default {
     localAddon('./custom-addons/descriptions'),
     localAddon('./custom-addons/theme'),
     localAddon('./custom-addons/strictmode'),
-    localAddon('./custom-addons/scrolling'),
+    localAddon('./custom-addons/scrolling')
   ],
 
   typescript: {

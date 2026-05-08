@@ -1,6 +1,11 @@
 import {ActionButton} from './ActionButton';
 import {AriaLabelingProps, DOMProps, FocusableRef, FocusableRefValue} from '@react-types/shared';
-import {ContentContext, FooterContext, HeadingContext, TextContext as SpectrumTextContext} from './Content';
+import {
+  ContentContext,
+  FooterContext,
+  HeadingContext,
+  TextContext as SpectrumTextContext
+} from './Content';
 import {ContextValue, DEFAULT_SLOT, Provider} from 'react-aria-components/slots';
 import {createContext, forwardRef, ReactNode} from 'react';
 import {dialogInner} from './Dialog';
@@ -15,7 +20,7 @@ import {Placement} from 'react-aria-components/Popover';
 // @ts-ignore
 import {Popover, PopoverDialogProps} from './Popover';
 import {space, style} from '../style' with {type: 'macro'};
-import {StyleProps} from './style-utils' with { type: 'macro' };
+import {StyleProps} from './style-utils' with {type: 'macro'};
 import {TextContext} from 'react-aria-components/Text';
 import {useId} from 'react-aria/useId';
 import {useLabels} from 'react-aria/private/utils/useLabels';
@@ -25,7 +30,7 @@ import {useSpectrumContextProps} from './useSpectrumContextProps';
 export interface ContextualHelpPopoverProps extends PopoverDialogProps {
   /**
    * The children of the contextual help popover. Supports Heading, Content, and Footer elements. */
-  children: ReactNode
+  children: ReactNode;
 }
 
 const wrappingDiv = style({
@@ -51,42 +56,55 @@ export function ContextualHelpPopover(props: ContextualHelpPopoverProps) {
   let titleId = useId();
 
   return (
-    <Popover
-      padding="none"
-      hideArrow
-      aria-labelledby={titleId}
-      {...popoverProps}>
-      <div
-        className={wrappingDiv}>
+    <Popover padding="none" hideArrow aria-labelledby={titleId} {...popoverProps}>
+      <div className={wrappingDiv}>
         <div
-
-          className={mergeStyles(dialogInner, style({borderRadius: 'none', margin: 'calc(self(paddingTop) * -1)', padding: 24}))}>
+          className={mergeStyles(
+            dialogInner,
+            style({borderRadius: 'none', margin: 'calc(self(paddingTop) * -1)', padding: 24})
+          )}>
           <Provider
             values={[
-              [TextContext, {
-                slots: {
-                  [DEFAULT_SLOT]: {}
+              [
+                TextContext,
+                {
+                  slots: {
+                    [DEFAULT_SLOT]: {}
+                  }
                 }
-              }],
+              ],
               // Make sure to clear context from above Menu
               [SpectrumTextContext, null],
-              [HeadingContext, {
-                styles: headingStyles,
-                slots: {
-                  // needed so combobox/picker does not need to provide slot="title" to their provided
-                  // ContextualHelp (they get the aria-labelled by from the button)
-                  // otherwise, use the heading if available aka unavaiable menu item
-                  [DEFAULT_SLOT]: {styles: headingStyles},
-                  title: {id: titleId, styles: headingStyles, level: 2}
+              [
+                HeadingContext,
+                {
+                  styles: headingStyles,
+                  slots: {
+                    // needed so combobox/picker does not need to provide slot="title" to their provided
+                    // ContextualHelp (they get the aria-labelled by from the button)
+                    // otherwise, use the heading if available aka unavaiable menu item
+                    [DEFAULT_SLOT]: {styles: headingStyles},
+                    title: {id: titleId, styles: headingStyles, level: 2}
+                  }
                 }
-              }],
-              [ContentContext, {styles: style({
-                font: 'body-sm'
-              })}],
-              [FooterContext, {styles: style({
-                font: 'body-sm',
-                marginTop: 16
-              })}]
+              ],
+              [
+                ContentContext,
+                {
+                  styles: style({
+                    font: 'body-sm'
+                  })
+                }
+              ],
+              [
+                FooterContext,
+                {
+                  styles: style({
+                    font: 'body-sm',
+                    marginTop: 16
+                  })
+                }
+              ]
             ]}>
             {children}
           </Provider>
@@ -102,33 +120,46 @@ export interface ContextualHelpStyleProps {
    *
    * @default 'help'
    */
-  variant?: 'info' | 'help'
+  variant?: 'info' | 'help';
 }
-export interface ContextualHelpProps extends
-  Pick<DialogTriggerProps, 'isOpen' | 'defaultOpen' | 'onOpenChange'>,
-  Pick<PopoverDialogProps, 'shouldFlip' | 'offset' | 'crossOffset' | 'placement' | 'containerPadding'>,
-  ContextualHelpStyleProps, StyleProps, DOMProps, AriaLabelingProps {
+export interface ContextualHelpProps
+  extends
+    Pick<DialogTriggerProps, 'isOpen' | 'defaultOpen' | 'onOpenChange'>,
+    Pick<
+      PopoverDialogProps,
+      'shouldFlip' | 'offset' | 'crossOffset' | 'placement' | 'containerPadding'
+    >,
+    ContextualHelpStyleProps,
+    StyleProps,
+    DOMProps,
+    AriaLabelingProps {
   /**
    * The placement of the popover with respect to the action button.
    * @default 'bottom start'
    */
-  placement?: Placement,
+  placement?: Placement;
   /** Contents of the Contextual Help popover. */
-  children: ReactNode,
+  children: ReactNode;
   /**
    * The size of the ActionButton.
    *
    * @default 'XS'
    */
-  size?: 'XS' | 'S'
+  size?: 'XS' | 'S';
 }
 
-export const ContextualHelpContext = createContext<ContextValue<Partial<ContextualHelpProps>, FocusableRefValue<HTMLButtonElement>>>(null);
+export const ContextualHelpContext =
+  createContext<ContextValue<Partial<ContextualHelpProps>, FocusableRefValue<HTMLButtonElement>>>(
+    null
+  );
 
 /**
  * Contextual help shows a user extra information about the state of an adjacent component, or a total view.
  */
-export const ContextualHelp = forwardRef(function ContextualHelp(props: ContextualHelpProps, ref: FocusableRef<HTMLButtonElement>) {
+export const ContextualHelp = forwardRef(function ContextualHelp(
+  props: ContextualHelpProps,
+  ref: FocusableRef<HTMLButtonElement>
+) {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   [props, ref] = useSpectrumContextProps(props, ref, ContextualHelpContext);
   let {
@@ -152,15 +183,14 @@ export const ContextualHelp = forwardRef(function ContextualHelp(props: Contextu
   // then ContextualHelp variant
   let labelProps = useLabels(props);
   let label = stringFormatter.format(`contextualhelp.${variant}`);
-  labelProps['aria-label'] = labelProps['aria-label'] ? labelProps['aria-label'] + ' ' + label : label;
+  labelProps['aria-label'] = labelProps['aria-label']
+    ? labelProps['aria-label'] + ' ' + label
+    : label;
 
   let buttonProps = filterDOMProps(props, {labelable: true});
 
   return (
-    <DialogTrigger
-      isOpen={isOpen}
-      defaultOpen={defaultOpen}
-      onOpenChange={onOpenChange}>
+    <DialogTrigger isOpen={isOpen} defaultOpen={defaultOpen} onOpenChange={onOpenChange}>
       <ActionButton
         slot={null}
         ref={ref}

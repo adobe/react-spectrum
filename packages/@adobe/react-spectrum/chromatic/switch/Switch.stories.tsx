@@ -65,7 +65,8 @@ LongLabel.story = {
   name: 'long label'
 };
 
-export const NoLabel: SwitchStory = () => renderNoLabel({'aria-label': 'This checkbox has no visible label'});
+export const NoLabel: SwitchStory = () =>
+  renderNoLabel({'aria-label': 'This checkbox has no visible label'});
 
 NoLabel.story = {
   name: 'no label'

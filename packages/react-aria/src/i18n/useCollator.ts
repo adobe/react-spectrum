@@ -22,7 +22,13 @@ let cache = new Map<string, Intl.Collator>();
 export function useCollator(options?: Intl.CollatorOptions): Intl.Collator {
   let {locale} = useLocale();
 
-  let cacheKey = locale + (options ? Object.entries(options).sort((a, b) => a[0] < b[0] ? -1 : 1).join() : '');
+  let cacheKey =
+    locale +
+    (options
+      ? Object.entries(options)
+          .sort((a, b) => (a[0] < b[0] ? -1 : 1))
+          .join()
+      : '');
   if (cache.has(cacheKey)) {
     return cache.get(cacheKey)!;
   }

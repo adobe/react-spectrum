@@ -14,13 +14,17 @@ let formatterCache = new Map<string, Intl.NumberFormat>();
 
 let supportsSignDisplay = false;
 try {
-  supportsSignDisplay = (new Intl.NumberFormat('de-DE', {signDisplay: 'exceptZero'})).resolvedOptions().signDisplay === 'exceptZero';
+  supportsSignDisplay =
+    new Intl.NumberFormat('de-DE', {signDisplay: 'exceptZero'}).resolvedOptions().signDisplay ===
+    'exceptZero';
   // eslint-disable-next-line no-empty
 } catch {}
 
 let supportsUnit = false;
 try {
-  supportsUnit = (new Intl.NumberFormat('de-DE', {style: 'unit', unit: 'degree'})).resolvedOptions().style === 'unit';
+  supportsUnit =
+    new Intl.NumberFormat('de-DE', {style: 'unit', unit: 'degree'}).resolvedOptions().style ===
+    'unit';
   // eslint-disable-next-line no-empty
 } catch {}
 
@@ -42,11 +46,11 @@ const UNITS = {
 
 export interface NumberFormatOptions extends Intl.NumberFormatOptions {
   /** Overrides default numbering system for the current locale. */
-  numberingSystem?: string
+  numberingSystem?: string;
 }
 
 interface NumberRangeFormatPart extends Intl.NumberFormatPart {
-  source: 'startRange' | 'endRange' | 'shared'
+  source: 'startRange' | 'endRange' | 'shared';
 }
 
 /**
@@ -115,9 +119,9 @@ export class NumberFormatter implements Intl.NumberFormat {
     let startParts = this.numberFormatter.formatToParts(start);
     let endParts = this.numberFormatter.formatToParts(end);
     return [
-      ...startParts.map(p => ({...p, source: 'startRange'} as NumberRangeFormatPart)),
+      ...startParts.map(p => ({...p, source: 'startRange'}) as NumberRangeFormatPart),
       {type: 'literal', value: ' – ', source: 'shared'},
-      ...endParts.map(p => ({...p, source: 'endRange'} as NumberRangeFormatPart))
+      ...endParts.map(p => ({...p, source: 'endRange'}) as NumberRangeFormatPart)
     ];
   }
 
@@ -129,14 +133,22 @@ export class NumberFormatter implements Intl.NumberFormat {
     }
 
     if (!supportsUnit && this.options.style === 'unit') {
-      options = {...options, style: 'unit', unit: this.options.unit, unitDisplay: this.options.unitDisplay};
+      options = {
+        ...options,
+        style: 'unit',
+        unit: this.options.unit,
+        unitDisplay: this.options.unitDisplay
+      };
     }
 
     return options;
   }
 }
 
-function getCachedNumberFormatter(locale: string, options: NumberFormatOptions = {}): Intl.NumberFormat {
+function getCachedNumberFormatter(
+  locale: string,
+  options: NumberFormatOptions = {}
+): Intl.NumberFormat {
   let {numberingSystem} = options;
   if (numberingSystem && locale.includes('-nu-')) {
     if (!locale.includes('-u-')) {
@@ -156,7 +168,13 @@ function getCachedNumberFormatter(locale: string, options: NumberFormatOptions =
     options = {...options, style: 'decimal'};
   }
 
-  let cacheKey = locale + (options ? Object.entries(options).sort((a, b) => a[0] < b[0] ? -1 : 1).join() : '');
+  let cacheKey =
+    locale +
+    (options
+      ? Object.entries(options)
+          .sort((a, b) => (a[0] < b[0] ? -1 : 1))
+          .join()
+      : '');
   if (formatterCache.has(cacheKey)) {
     return formatterCache.get(cacheKey)!;
   }
@@ -167,7 +185,11 @@ function getCachedNumberFormatter(locale: string, options: NumberFormatOptions =
 }
 
 /** @private - exported for tests */
-export function numberFormatSignDisplayPolyfill(numberFormat: Intl.NumberFormat, signDisplay: string, num: number): string {
+export function numberFormatSignDisplayPolyfill(
+  numberFormat: Intl.NumberFormat,
+  signDisplay: string,
+  num: number
+): string {
   if (signDisplay === 'auto') {
     return numberFormat.format(num);
   } else if (signDisplay === 'never') {

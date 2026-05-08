@@ -21,9 +21,9 @@ import {useSliderThumb} from '../../src/slider/useSliderThumb';
 import {VisuallyHidden} from '../../src/visually-hidden/VisuallyHidden';
 
 interface StorySliderProps extends AriaSliderProps<number> {
-  origin?: number,
-  showTip?: boolean,
-  formatOptions?: Intl.NumberFormatOptions
+  origin?: number;
+  showTip?: boolean;
+  formatOptions?: Intl.NumberFormatOptions;
 }
 
 export function StorySlider(props: StorySliderProps): JSX.Element {
@@ -33,34 +33,39 @@ export function StorySlider(props: StorySliderProps): JSX.Element {
 
   const multiProps: AriaSliderProps<number[]> = {
     ...props,
-    value: props.value == null ? undefined :  [props.value],
+    value: props.value == null ? undefined : [props.value],
     defaultValue: props.defaultValue == null ? undefined : [props.defaultValue],
     onChange: props.onChange == null ? undefined : (vals: number[]) => props.onChange?.(vals[0]),
-    onChangeEnd: props.onChangeEnd == null ? undefined : (vals: number[]) => props.onChangeEnd?.(vals[0])
+    onChangeEnd:
+      props.onChangeEnd == null ? undefined : (vals: number[]) => props.onChangeEnd?.(vals[0])
   };
   const formatter = useNumberFormatter(props.formatOptions);
   const state = useSliderState({...multiProps, numberFormatter: formatter});
-  const {
-    groupProps,
-    trackProps,
-    labelProps,
-    outputProps
-  } = useSlider(multiProps, state, trackRef);
+  const {groupProps, trackProps, labelProps, outputProps} = useSlider(multiProps, state, trackRef);
 
-  const {thumbProps, inputProps} = useSliderThumb({
-    index: 0,
-    isDisabled: props.isDisabled,
-    trackRef,
-    inputRef
-  }, state);
+  const {thumbProps, inputProps} = useSliderThumb(
+    {
+      index: 0,
+      isDisabled: props.isDisabled,
+      trackRef,
+      inputRef
+    },
+    state
+  );
 
   const value = state.values[0];
 
   return (
     <div className={styles.slider} {...groupProps}>
       <div className={styles.sliderLabel}>
-        {props.label && <label {...labelProps} className={styles.label}>{props.label}</label>}
-        <output {...outputProps} className={styles.value}>{state.getThumbValueLabel(0)}</output>
+        {props.label && (
+          <label {...labelProps} className={styles.label}>
+            {props.label}
+          </label>
+        )}
+        <output {...outputProps} className={styles.value}>
+          {state.getThumbValueLabel(0)}
+        </output>
       </div>
       <div className={styles.trackContainer}>
         {
@@ -73,17 +78,23 @@ export function StorySlider(props: StorySliderProps): JSX.Element {
           style={{
             left: `${state.getValuePercent(Math.min(value, origin)) * 100}%`,
             width: `${(state.getValuePercent(Math.max(value, origin)) - state.getValuePercent(Math.min(value, origin))) * 100}%`
-          }} />
+          }}
+        />
         <div ref={trackRef} className={styles.track} {...trackProps} />
-        <FocusRing within focusRingClass={styles.thumbFocusVisible} focusClass={styles.thumbFocused}>
+        <FocusRing
+          within
+          focusRingClass={styles.thumbFocusVisible}
+          focusClass={styles.thumbFocused}>
           <div
             className={styles.thumb}
             style={{
-              'left': `${state.getThumbPercent(0) * 100}%`
+              left: `${state.getThumbPercent(0) * 100}%`
             }}>
             {/* We put thumbProps on thumbHandle, so that you cannot drag by the tip */}
             <div {...thumbProps} className={styles.thumbHandle}>
-              <VisuallyHidden><input className={styles.input} ref={inputRef} {...inputProps} /></VisuallyHidden>
+              <VisuallyHidden>
+                <input className={styles.input} ref={inputRef} {...inputProps} />
+              </VisuallyHidden>
             </div>
             {props.showTip && <div className={styles.tip}>{state.getThumbValueLabel(0)}</div>}
           </div>

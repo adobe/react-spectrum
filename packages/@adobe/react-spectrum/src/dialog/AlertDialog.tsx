@@ -31,39 +31,40 @@ import {useStyleProps} from '../utils/styleProps';
 
 export interface SpectrumAlertDialogProps extends DOMProps, StyleProps {
   /** The [visual style](https://spectrum.adobe.com/page/alert-dialog/#Options) of the AlertDialog.  */
-  variant?: 'confirmation' | 'information' | 'destructive' | 'error' | 'warning',
+  variant?: 'confirmation' | 'information' | 'destructive' | 'error' | 'warning';
   /** The title of the AlertDialog. */
-  title: string,
+  title: string;
   /** The contents of the AlertDialog. */
-  children: ReactNode,
+  children: ReactNode;
   /** The label to display within the cancel button. */
-  cancelLabel?: string,
+  cancelLabel?: string;
   /** The label to display within the confirm button. */
-  primaryActionLabel: string,
+  primaryActionLabel: string;
   /** The label to display within the secondary button. */
-  secondaryActionLabel?: string,
+  secondaryActionLabel?: string;
   /** Whether the primary button is disabled. */
-  isPrimaryActionDisabled?: boolean,
+  isPrimaryActionDisabled?: boolean;
   /** Whether the secondary button is disabled. */
-  isSecondaryActionDisabled?: boolean,
+  isSecondaryActionDisabled?: boolean;
   /** Handler that is called when the cancel button is pressed. */
-  onCancel?: () => void,
+  onCancel?: () => void;
   /** Handler that is called when the primary button is pressed. */
-  onPrimaryAction?: () => void,
+  onPrimaryAction?: () => void;
   /** Handler that is called when the secondary button is pressed. */
-  onSecondaryAction?: () => void,
+  onSecondaryAction?: () => void;
   /** Button to focus by default when the dialog opens. */
-  autoFocusButton?: 'cancel' | 'primary' | 'secondary'
+  autoFocusButton?: 'cancel' | 'primary' | 'secondary';
   // allowsKeyboardConfirmation?: boolean, // triggers primary action
 }
 
 /**
  * AlertDialogs are a specific type of Dialog. They display important information that users need to acknowledge.
  */
-export const AlertDialog = forwardRef(function AlertDialog(props: SpectrumAlertDialogProps, ref: DOMRef) {
-  let {
-    onClose = () => {}
-  } = useContext(DialogContext) || {} as DialogContextValue;
+export const AlertDialog = forwardRef(function AlertDialog(
+  props: SpectrumAlertDialogProps,
+  ref: DOMRef
+) {
+  let {onClose = () => {}} = useContext(DialogContext) || ({} as DialogContextValue);
 
   let {
     variant,
@@ -95,22 +96,24 @@ export const AlertDialog = forwardRef(function AlertDialog(props: SpectrumAlertD
   return (
     <Dialog
       UNSAFE_style={styleProps.style}
-      UNSAFE_className={classNames(styles, {[`spectrum-Dialog--${variant}`]: variant}, styleProps.className)}
+      UNSAFE_className={classNames(
+        styles,
+        {[`spectrum-Dialog--${variant}`]: variant},
+        styleProps.className
+      )}
       isHidden={styleProps.hidden}
       size="M"
       role="alertdialog"
       ref={ref}
       {...filterDOMProps(props)}>
       <Heading>{title}</Heading>
-      {(variant === 'error' || variant === 'warning') &&
-        <AlertMedium
-          slot="typeIcon"
-          aria-label={stringFormatter.format('alert')} />
-      }
+      {(variant === 'error' || variant === 'warning') && (
+        <AlertMedium slot="typeIcon" aria-label={stringFormatter.format('alert')} />
+      )}
       <Divider />
       <Content>{children}</Content>
       <ButtonGroup align="end">
-        {cancelLabel &&
+        {cancelLabel && (
           <Button
             variant="secondary"
             onPress={() => chain(onClose(), onCancel())}
@@ -118,8 +121,8 @@ export const AlertDialog = forwardRef(function AlertDialog(props: SpectrumAlertD
             data-testid="rsp-AlertDialog-cancelButton">
             {cancelLabel}
           </Button>
-        }
-        {secondaryActionLabel &&
+        )}
+        {secondaryActionLabel && (
           <Button
             variant="secondary"
             onPress={() => chain(onClose(), onSecondaryAction())}
@@ -128,7 +131,7 @@ export const AlertDialog = forwardRef(function AlertDialog(props: SpectrumAlertD
             data-testid="rsp-AlertDialog-secondaryButton">
             {secondaryActionLabel}
           </Button>
-        }
+        )}
         <Button
           variant={confirmVariant}
           onPress={() => chain(onClose(), onPrimaryAction())}

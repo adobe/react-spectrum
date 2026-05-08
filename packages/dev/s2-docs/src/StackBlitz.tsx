@@ -52,38 +52,47 @@ function getFiles(
 ) {
   let entryName = entry.split('/').pop()!.split('.')[0];
   return {
-    'package.json': JSON.stringify({
-      name: 'react-aria-starter',
-      private: true,
-      version: '0.0.0',
-      type: 'module',
-      scripts: {
-        dev: 'vite',
-        build: 'vite build',
-        preview: 'vite preview'
-      },
-      dependencies: {
-        react: '^19',
-        'react-dom': '^19',
-        ...(type === 's2' ? {'@react-spectrum/s2': 'latest'} : {}),
-        ...deps
-      },
-      devDependencies: {
-        '@types/react': '^19',
-        '@types/react-dom': '^19',
-        vite: '^6',
-        '@vitejs/plugin-react': '^4',
-        ...(type === 'tailwind' ? {
-          'tailwindcss': '^4',
-          '@tailwindcss/vite': '^4',
-          'tailwindcss-react-aria-components': '^2',
-          'tailwindcss-animate': '^1'
-        } : {}),
-        ...(type === 's2' ? {
-          'unplugin-parcel-macros': '^0.2.0'
-        } : {})
-      }
-    }, null, 2) + '\n',
+    'package.json':
+      JSON.stringify(
+        {
+          name: 'react-aria-starter',
+          private: true,
+          version: '0.0.0',
+          type: 'module',
+          scripts: {
+            dev: 'vite',
+            build: 'vite build',
+            preview: 'vite preview'
+          },
+          dependencies: {
+            react: '^19',
+            'react-dom': '^19',
+            ...(type === 's2' ? {'@react-spectrum/s2': 'latest'} : {}),
+            ...deps
+          },
+          devDependencies: {
+            '@types/react': '^19',
+            '@types/react-dom': '^19',
+            vite: '^6',
+            '@vitejs/plugin-react': '^4',
+            ...(type === 'tailwind'
+              ? {
+                  tailwindcss: '^4',
+                  '@tailwindcss/vite': '^4',
+                  'tailwindcss-react-aria-components': '^2',
+                  'tailwindcss-animate': '^1'
+                }
+              : {}),
+            ...(type === 's2'
+              ? {
+                  'unplugin-parcel-macros': '^0.2.0'
+                }
+              : {})
+          }
+        },
+        null,
+        2
+      ) + '\n',
     'vite.config.ts': `import {defineConfig} from 'vite';
 import react from '@vitejs/plugin-react';${type === 'tailwind' ? "\nimport tailwindcss from '@tailwindcss/vite';" : ''}${type === 's2' ? "\nimport macros from 'unplugin-parcel-macros';" : ''}
 
@@ -109,32 +118,39 @@ import ${entryName} from './${entryName}';
 
 createRoot(document.getElementById('root')!).render(${type === 's2' ? `\n  <Provider>\n    <${entryName} />\n  </Provider>\n` : `<${entryName} />`});
 `,
-    'tsconfig.json': JSON.stringify({
-      compilerOptions: {
-        'noImplicitAny': false,
-        'target': 'ES2022',
-        'useDefineForClassFields': true,
-        'lib': ['ES2022', 'DOM', 'DOM.Iterable'],
-        'module': 'ESNext',
-        'skipLibCheck': true,
+    'tsconfig.json':
+      JSON.stringify(
+        {
+          compilerOptions: {
+            noImplicitAny: false,
+            target: 'ES2022',
+            useDefineForClassFields: true,
+            lib: ['ES2022', 'DOM', 'DOM.Iterable'],
+            module: 'ESNext',
+            skipLibCheck: true,
 
-        /* Bundler mode */
-        'moduleResolution': 'bundler',
-        'allowImportingTsExtensions': true,
-        'moduleDetection': 'force',
-        'noEmit': true,
-        'jsx': 'react-jsx',
+            /* Bundler mode */
+            moduleResolution: 'bundler',
+            allowImportingTsExtensions: true,
+            moduleDetection: 'force',
+            noEmit: true,
+            jsx: 'react-jsx',
 
-        /* Linting */
-        'strict': true,
-        'noUnusedLocals': true,
-        'noUnusedParameters': true,
-        'erasableSyntaxOnly': true,
-        'noFallthroughCasesInSwitch': true,
-        'noUncheckedSideEffectImports': true
-      },
-      'include': ['src']
-    }, null, 2) + '\n',
-    ...Object.fromEntries(Object.entries(files).map(([name, file]) => ['src/' + name, file.contents]))
+            /* Linting */
+            strict: true,
+            noUnusedLocals: true,
+            noUnusedParameters: true,
+            erasableSyntaxOnly: true,
+            noFallthroughCasesInSwitch: true,
+            noUncheckedSideEffectImports: true
+          },
+          include: ['src']
+        },
+        null,
+        2
+      ) + '\n',
+    ...Object.fromEntries(
+      Object.entries(files).map(([name, file]) => ['src/' + name, file.contents])
+    )
   };
 }

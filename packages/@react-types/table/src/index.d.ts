@@ -10,46 +10,69 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMProps, Key, SpectrumSelectionProps, StyleProps} from '@react-types/shared';
+import {
+  AriaLabelingProps,
+  DOMProps,
+  Key,
+  SpectrumSelectionProps,
+  StyleProps
+} from '@react-types/shared';
 import {ColumnSize, TableProps} from '@react-stately/table';
 import {JSX} from 'react';
 
-export {TableProps, ColumnStaticSize, ColumnDynamicSize, ColumnSize, TableHeaderProps, ColumnElement, ColumnRenderer, ColumnProps, RowElement, TableBodyProps, RowProps, CellProps, CellElement, CellRenderer, ITableCollection as TableCollection} from '@react-stately/table';
+export {
+  TableProps,
+  ColumnStaticSize,
+  ColumnDynamicSize,
+  ColumnSize,
+  TableHeaderProps,
+  ColumnElement,
+  ColumnRenderer,
+  ColumnProps,
+  RowElement,
+  TableBodyProps,
+  RowProps,
+  CellProps,
+  CellElement,
+  CellRenderer,
+  ITableCollection as TableCollection
+} from '@react-stately/table';
 export {SpectrumColumnProps} from '@react-spectrum/table';
 
 /**
  * @deprecated - use SpectrumTableProps from '@adobe/react-spectrum' instead.
  */
-export interface SpectrumTableProps<T> extends TableProps<T>, SpectrumSelectionProps, DOMProps, AriaLabelingProps, StyleProps {
+export interface SpectrumTableProps<T>
+  extends TableProps<T>, SpectrumSelectionProps, DOMProps, AriaLabelingProps, StyleProps {
   /**
    * Sets the amount of vertical padding within each cell.
    * @default 'regular'
    */
-  density?: 'compact' | 'regular' | 'spacious',
+  density?: 'compact' | 'regular' | 'spacious';
   /**
    * Sets the overflow behavior for the cell contents.
    * @default 'truncate'
    */
-  overflowMode?: 'wrap' | 'truncate',
+  overflowMode?: 'wrap' | 'truncate';
   /** Whether the TableView should be displayed with a quiet style. */
-  isQuiet?: boolean,
+  isQuiet?: boolean;
   /** Sets what the TableView should render when there is no content to display. */
-  renderEmptyState?: () => JSX.Element,
+  renderEmptyState?: () => JSX.Element;
   /** Handler that is called when a user performs an action on a row. */
-  onAction?: (key: Key) => void,
+  onAction?: (key: Key) => void;
   /**
    * Handler that is called when a user starts a column resize.
    */
-  onResizeStart?: (widths: Map<Key, ColumnSize>) => void,
+  onResizeStart?: (widths: Map<Key, ColumnSize>) => void;
   /**
    * Handler that is called when a user performs a column resize.
    * Can be used with the width property on columns to put the column widths into
    * a controlled state.
    */
-  onResize?: (widths: Map<Key, ColumnSize>) => void,
+  onResize?: (widths: Map<Key, ColumnSize>) => void;
   /**
    * Handler that is called after a user performs a column resize.
    * Can be used to store the widths of columns for another future session.
    */
-  onResizeEnd?: (widths: Map<Key, ColumnSize>) => void
+  onResizeEnd?: (widths: Map<Key, ColumnSize>) => void;
 }

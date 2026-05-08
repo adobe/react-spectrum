@@ -15,8 +15,25 @@ export {useColorSlider} from 'react-aria/useColorSlider';
 export {useColorWheel} from 'react-aria/useColorWheel';
 export {useColorField, useColorChannelField} from 'react-aria/useColorField';
 export {useColorSwatch} from 'react-aria/useColorSwatch';
-export type {AriaColorAreaProps, AriaColorAreaOptions, ColorAreaAria} from 'react-aria/useColorArea';
-export type {AriaColorSliderProps, AriaColorSliderOptions, ColorSliderAria} from 'react-aria/useColorSlider';
-export type {AriaColorWheelProps, AriaColorWheelOptions, ColorWheelAria} from 'react-aria/useColorWheel';
-export type {AriaColorFieldProps, ColorFieldAria, AriaColorChannelFieldProps, ColorChannelFieldAria} from 'react-aria/useColorField';
+export type {
+  AriaColorAreaProps,
+  AriaColorAreaOptions,
+  ColorAreaAria
+} from 'react-aria/useColorArea';
+export type {
+  AriaColorSliderProps,
+  AriaColorSliderOptions,
+  ColorSliderAria
+} from 'react-aria/useColorSlider';
+export type {
+  AriaColorWheelProps,
+  AriaColorWheelOptions,
+  ColorWheelAria
+} from 'react-aria/useColorWheel';
+export type {
+  AriaColorFieldProps,
+  ColorFieldAria,
+  AriaColorChannelFieldProps,
+  ColorChannelFieldAria
+} from 'react-aria/useColorField';
 export type {AriaColorSwatchProps, ColorSwatchAria} from 'react-aria/useColorSwatch';

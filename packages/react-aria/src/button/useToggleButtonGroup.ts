@@ -28,17 +28,21 @@ export interface AriaToggleButtonGroupProps extends ToggleGroupProps, AriaLabeli
    * The orientation of the the toggle button group.
    * @default 'horizontal'
    */
-  orientation?: Orientation
+  orientation?: Orientation;
 }
 
 export interface ToggleButtonGroupAria {
   /**
    * Props for the toggle button group container.
    */
-  groupProps: DOMAttributes
+  groupProps: DOMAttributes;
 }
 
-export function useToggleButtonGroup(props: AriaToggleButtonGroupProps, state: ToggleGroupState, ref: RefObject<HTMLElement | null>): ToggleButtonGroupAria {
+export function useToggleButtonGroup(
+  props: AriaToggleButtonGroupProps,
+  state: ToggleGroupState,
+  ref: RefObject<HTMLElement | null>
+): ToggleButtonGroupAria {
   let {isDisabled} = props;
   let {toolbarProps} = useToolbar(props, ref);
 
@@ -51,25 +55,59 @@ export function useToggleButtonGroup(props: AriaToggleButtonGroupProps, state: T
   };
 }
 
-export interface AriaToggleButtonGroupItemProps<E extends ElementType = 'button'> extends Omit<AriaToggleButtonProps<E>, 'id' | 'isSelected' | 'defaultSelected' | 'onChange'> {
+export interface AriaToggleButtonGroupItemProps<E extends ElementType = 'button'> extends Omit<
+  AriaToggleButtonProps<E>,
+  'id' | 'isSelected' | 'defaultSelected' | 'onChange'
+> {
   /** An identifier for the item in the `selectedKeys` of a ToggleButtonGroup. */
-  id: Key
+  id: Key;
 }
 
-export interface AriaToggleButtonGroupItemOptions<E extends ElementType> extends Omit<AriaToggleButtonGroupItemProps<E>, 'children'> {}
+export interface AriaToggleButtonGroupItemOptions<E extends ElementType> extends Omit<
+  AriaToggleButtonGroupItemProps<E>,
+  'children'
+> {}
 
 // Order with overrides is important: 'button' should be default
-export function useToggleButtonGroupItem(props: AriaToggleButtonGroupItemOptions<'button'>, state: ToggleGroupState, ref: RefObject<HTMLButtonElement | null>): ToggleButtonAria<ButtonHTMLAttributes<HTMLButtonElement>>;
-export function useToggleButtonGroupItem(props: AriaToggleButtonGroupItemOptions<'a'>, state: ToggleGroupState, ref: RefObject<HTMLAnchorElement | null>): ToggleButtonAria<AnchorHTMLAttributes<HTMLAnchorElement>>;
-export function useToggleButtonGroupItem(props: AriaToggleButtonGroupItemOptions<'div'>, state: ToggleGroupState, ref: RefObject<HTMLDivElement | null>): ToggleButtonAria<HTMLAttributes<HTMLDivElement>>;
-export function useToggleButtonGroupItem(props: AriaToggleButtonGroupItemOptions<'input'>, state: ToggleGroupState, ref: RefObject<HTMLInputElement | null>): ToggleButtonAria<InputHTMLAttributes<HTMLInputElement>>;
-export function useToggleButtonGroupItem(props: AriaToggleButtonGroupItemOptions<'span'>, state: ToggleGroupState, ref: RefObject<HTMLSpanElement | null>): ToggleButtonAria<HTMLAttributes<HTMLSpanElement>>;
-export function useToggleButtonGroupItem(props: AriaToggleButtonGroupItemOptions<ElementType>, state: ToggleGroupState, ref: RefObject<Element | null>): ToggleButtonAria<DOMAttributes>;
+export function useToggleButtonGroupItem(
+  props: AriaToggleButtonGroupItemOptions<'button'>,
+  state: ToggleGroupState,
+  ref: RefObject<HTMLButtonElement | null>
+): ToggleButtonAria<ButtonHTMLAttributes<HTMLButtonElement>>;
+export function useToggleButtonGroupItem(
+  props: AriaToggleButtonGroupItemOptions<'a'>,
+  state: ToggleGroupState,
+  ref: RefObject<HTMLAnchorElement | null>
+): ToggleButtonAria<AnchorHTMLAttributes<HTMLAnchorElement>>;
+export function useToggleButtonGroupItem(
+  props: AriaToggleButtonGroupItemOptions<'div'>,
+  state: ToggleGroupState,
+  ref: RefObject<HTMLDivElement | null>
+): ToggleButtonAria<HTMLAttributes<HTMLDivElement>>;
+export function useToggleButtonGroupItem(
+  props: AriaToggleButtonGroupItemOptions<'input'>,
+  state: ToggleGroupState,
+  ref: RefObject<HTMLInputElement | null>
+): ToggleButtonAria<InputHTMLAttributes<HTMLInputElement>>;
+export function useToggleButtonGroupItem(
+  props: AriaToggleButtonGroupItemOptions<'span'>,
+  state: ToggleGroupState,
+  ref: RefObject<HTMLSpanElement | null>
+): ToggleButtonAria<HTMLAttributes<HTMLSpanElement>>;
+export function useToggleButtonGroupItem(
+  props: AriaToggleButtonGroupItemOptions<ElementType>,
+  state: ToggleGroupState,
+  ref: RefObject<Element | null>
+): ToggleButtonAria<DOMAttributes>;
 /**
  * Provides the behavior and accessibility implementation for a toggle button component.
  * ToggleButtons allow users to toggle a selection on or off, for example switching between two states or modes.
  */
-export function useToggleButtonGroupItem(props: AriaToggleButtonGroupItemOptions<ElementType>, state: ToggleGroupState, ref: RefObject<any>): ToggleButtonAria<HTMLAttributes<any>> {
+export function useToggleButtonGroupItem(
+  props: AriaToggleButtonGroupItemOptions<ElementType>,
+  state: ToggleGroupState,
+  ref: RefObject<any>
+): ToggleButtonAria<HTMLAttributes<any>> {
   let toggleState: ToggleState = {
     isSelected: state.selectedKeys.has(props.id),
     defaultSelected: false,
@@ -81,11 +119,15 @@ export function useToggleButtonGroupItem(props: AriaToggleButtonGroupItemOptions
     }
   };
 
-  let {isPressed, isSelected, isDisabled, buttonProps} = useToggleButton({
-    ...props,
-    id: undefined,
-    isDisabled: props.isDisabled || state.isDisabled
-  }, toggleState, ref);
+  let {isPressed, isSelected, isDisabled, buttonProps} = useToggleButton(
+    {
+      ...props,
+      id: undefined,
+      isDisabled: props.isDisabled || state.isDisabled
+    },
+    toggleState,
+    ref
+  );
   if (state.selectionMode === 'single') {
     buttonProps.role = 'radio';
     buttonProps['aria-checked'] = toggleState.isSelected;

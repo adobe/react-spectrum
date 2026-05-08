@@ -22,25 +22,33 @@ export interface SliderProps<T> extends AriaSliderProps<T> {
   fillOffset?: number;
 }
 
-export function Slider<T extends number | number[]>(
-  { label, thumbLabels, fillOffset, ...props }: SliderProps<T>
-) {
+export function Slider<T extends number | number[]>({
+  label,
+  thumbLabels,
+  fillOffset,
+  ...props
+}: SliderProps<T>) {
   return (
-    (
-      <AriaSlider {...props}>
-        {label && <Label>{label}</Label>}
-        <SliderOutput />
-        <SliderTrack>
-          {({ state, isDisabled }) => (<>
+    <AriaSlider {...props}>
+      {label && <Label>{label}</Label>}
+      <SliderOutput />
+      <SliderTrack>
+        {({state, isDisabled}) => (
+          <>
             <div className="track inset" data-disabled={isDisabled || undefined}>
               <SliderFill offset={fillOffset} />
             </div>
             {state.values.map((_, i) => (
-              <SliderThumb key={i} index={i} aria-label={thumbLabels?.[i]} className="react-aria-SliderThumb indicator" />
+              <SliderThumb
+                key={i}
+                index={i}
+                aria-label={thumbLabels?.[i]}
+                className="react-aria-SliderThumb indicator"
+              />
             ))}
-          </>)}
-        </SliderTrack>
-      </AriaSlider>
-    )
+          </>
+        )}
+      </SliderTrack>
+    </AriaSlider>
   );
 }

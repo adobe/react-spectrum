@@ -9,6 +9,14 @@
   "bin": {
     "transform-icons": "index.js"
   },
+  "files": [
+    "index.js",
+    ".parcelrc",
+    ".parcelrc-library"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
   "dependencies": {
     "@parcel/bundler-library": "^2.16.3",
     "@parcel/compressor-raw": "^2.16.3",
@@ -27,27 +35,19 @@
     "@swc/helpers": "^0.5.0",
     "glob": "^11.0.3"
   },
+  "devDependencies": {
+    "react": "^19.0.0-rc.1",
+    "react-dom": "^19.0.0-rc.1"
+  },
   "peerDependencies": {
     "@react-spectrum/s2": ">=0.8.0",
     "react": "^19.0.0-rc.1",
     "react-dom": "^19.0.0-rc.1"
   },
-  "files": [
-    "index.js",
-    ".parcelrc",
-    ".parcelrc-library"
-  ],
   "engines": {
     "node": ">=20.0.0"
   },
   "rsp": {
     "type": "cli"
-  },
-  "publishConfig": {
-    "access": "public"
-  },
-  "devDependencies": {
-    "react": "^19.0.0-rc.1",
-    "react-dom": "^19.0.0-rc.1"
   }
 }

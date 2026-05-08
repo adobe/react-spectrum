@@ -6,7 +6,9 @@ const test = (name: string, input: string) => {
   defineSnapshotTest(transform, {}, input, name);
 };
 
-test('Remove isDisabled', `
+test(
+  'Remove isDisabled',
+  `
 import {StatusLight} from '@adobe/react-spectrum';
 let isDisabled = true;
 let props = {isDisabled: true};
@@ -17,9 +19,12 @@ let props = {isDisabled: true};
   <StatusLight isDisabled={isDisabled}>Test</StatusLight>
   <StatusLight {...props}>Test</StatusLight>
 </div>
-`);
+`
+);
 
-test('Change variant from info to informative', `
+test(
+  'Change variant from info to informative',
+  `
 import {StatusLight} from '@adobe/react-spectrum';
 let variant = 'info';
 let props = {variant: 'info'};
@@ -31,4 +36,5 @@ let props = {variant: 'info'};
   <StatusLight variant={variant}>Test</StatusLight>
   <StatusLight {...props}>Test</StatusLight>
 </div>
-`);
+`
+);

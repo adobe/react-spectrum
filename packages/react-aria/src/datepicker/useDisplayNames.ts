@@ -19,7 +19,7 @@ import {useMemo} from 'react';
 
 type Field = Intl.DateTimeFormatPartTypes;
 interface DisplayNames {
-  of(field: Field): string | undefined
+  of(field: Field): string | undefined;
 }
 
 /** @private */

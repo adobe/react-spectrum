@@ -17,19 +17,19 @@ interface SelectOpenOpts {
   /**
    * What interaction type to use when opening the select. Defaults to the interaction type set on the tester.
    */
-  interactionType?: UserOpts['interactionType']
+  interactionType?: UserOpts['interactionType'];
 }
 
 interface SelectTriggerOptionOpts extends SelectOpenOpts {
   /**
    * The index, text, or node of the option to select. Option nodes can be sourced via `options()`.
    */
-  option: number | string | HTMLElement,
+  option: number | string | HTMLElement;
   /**
    * Whether or not the select closes on selection. Depends on select implementation and configuration.
    * @default true
    */
-  closesOnSelect?: boolean
+  closesOnSelect?: boolean;
 }
 
 export class SelectTester {
@@ -65,9 +65,7 @@ export class SelectTester {
    * Opens the select. Defaults to using the interaction type set on the select tester.
    */
   async open(opts: SelectOpenOpts = {}): Promise<void> {
-    let {
-      interactionType = this._interactionType
-    } = opts;
+    let {interactionType = this._interactionType} = opts;
     let trigger = this.trigger;
     let isDisabled = trigger.hasAttribute('disabled');
 
@@ -109,14 +107,18 @@ export class SelectTester {
 
     await waitFor(() => {
       if (document.activeElement !== this._trigger) {
-        throw new Error(`Expected the document.activeElement after closing the select dropdown to be the select component trigger but got ${document.activeElement}`);
+        throw new Error(
+          `Expected the document.activeElement after closing the select dropdown to be the select component trigger but got ${document.activeElement}`
+        );
       } else {
         return true;
       }
     });
 
     if (listbox && document.contains(listbox)) {
-      throw new Error('Expected the select element listbox to not be in the document after closing the dropdown.');
+      throw new Error(
+        'Expected the select element listbox to not be in the document after closing the dropdown.'
+      );
     }
   }
 
@@ -124,9 +126,7 @@ export class SelectTester {
    * Returns a option matching the specified index or text content.
    */
   findOption(opts: {optionIndexOrText: number | string}): HTMLElement {
-    let {
-      optionIndexOrText
-    } = opts;
+    let {optionIndexOrText} = opts;
 
     let option;
     let options = this.options();
@@ -135,7 +135,9 @@ export class SelectTester {
     if (typeof optionIndexOrText === 'number') {
       option = options[optionIndexOrText];
     } else if (typeof optionIndexOrText === 'string' && listbox != null) {
-      option = (within(listbox!).getByText(optionIndexOrText).closest('[role=option]'))! as HTMLElement;
+      option = within(listbox!)
+        .getByText(optionIndexOrText)
+        .closest('[role=option]')! as HTMLElement;
     }
 
     return option;
@@ -160,25 +162,21 @@ export class SelectTester {
     for (let i = 0; i < Math.abs(targetIndex - currIndex); i++) {
       await this.user.keyboard(`[${direction === 'down' ? 'ArrowDown' : 'ArrowUp'}]`);
     }
-  };
+  }
 
   /**
    * Selects the desired select option. Defaults to using the interaction type set on the select tester. If necessary, will open the select dropdown beforehand.
    * The desired option can be targeted via the option's node, the option's text, or the option's index.
    */
   async selectOption(opts: SelectTriggerOptionOpts): Promise<void> {
-    let {
-      option,
-      closesOnSelect,
-      interactionType = this._interactionType
-    } = opts || {};
+    let {option, closesOnSelect, interactionType = this._interactionType} = opts || {};
     let trigger = this.trigger;
     if (!trigger.getAttribute('aria-controls')) {
       await this.open();
     }
     let listbox = this.listbox;
     if (!listbox) {
-      throw new Error('Select\'s listbox not found.');
+      throw new Error("Select's listbox not found.");
     }
 
     if (listbox) {
@@ -216,14 +214,18 @@ export class SelectTester {
       if (closesOnSelect && option?.getAttribute('href') == null) {
         await waitFor(() => {
           if (document.activeElement !== this._trigger) {
-            throw new Error(`Expected the document.activeElement after selecting an option to be the select component trigger but got ${document.activeElement}`);
+            throw new Error(
+              `Expected the document.activeElement after selecting an option to be the select component trigger but got ${document.activeElement}`
+            );
           } else {
             return true;
           }
         });
 
         if (document.contains(listbox)) {
-          throw new Error('Expected select element listbox to not be in the document after selecting an option');
+          throw new Error(
+            'Expected select element listbox to not be in the document after selecting an option'
+          );
         }
       }
     }

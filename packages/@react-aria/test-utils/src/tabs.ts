@@ -18,15 +18,15 @@ interface TriggerTabOptions {
   /**
    * What interaction type to use when triggering a tab. Defaults to the interaction type set on the tester.
    */
-  interactionType?: UserOpts['interactionType'],
+  interactionType?: UserOpts['interactionType'];
   /**
    * The index, text, or node of the tab to toggle selection for.
    */
-  tab: number | string | HTMLElement,
+  tab: number | string | HTMLElement;
   /**
    * Whether the tab needs to be activated manually rather than on focus.
    */
-  manualActivation?: boolean
+  manualActivation?: boolean;
 }
 
 export class TabsTester {
@@ -60,28 +60,30 @@ export class TabsTester {
    * Returns a tab matching the specified index or text content.
    */
   findTab(opts: {tabIndexOrText: number | string}): HTMLElement {
-    let {
-      tabIndexOrText
-    } = opts;
+    let {tabIndexOrText} = opts;
 
     let tab;
     let tabs = this.tabs;
     if (typeof tabIndexOrText === 'number') {
       tab = tabs[tabIndexOrText];
     } else if (typeof tabIndexOrText === 'string') {
-      tab = (within(this._tablist).getByText(tabIndexOrText).closest('[role=tab]'))! as HTMLElement;
+      tab = within(this._tablist).getByText(tabIndexOrText).closest('[role=tab]')! as HTMLElement;
     }
 
     return tab;
   }
 
   // TODO: also quite similar across more utils albeit with orientation, refactor to make generic
-  private async keyboardNavigateToTab(opts: {tab: HTMLElement, orientation?: Orientation}) {
+  private async keyboardNavigateToTab(opts: {tab: HTMLElement; orientation?: Orientation}) {
     let {tab, orientation = 'vertical'} = opts;
     let tabs = this.tabs;
-    tabs = tabs.filter(tab => !(tab.hasAttribute('disabled') || tab.getAttribute('aria-disabled') === 'true'));
+    tabs = tabs.filter(
+      tab => !(tab.hasAttribute('disabled') || tab.getAttribute('aria-disabled') === 'true')
+    );
     if (tabs.length === 0) {
-      throw new Error('Tablist doesnt have any non-disabled tabs. Please double check your tabs implementation.');
+      throw new Error(
+        'Tablist doesnt have any non-disabled tabs. Please double check your tabs implementation.'
+      );
     }
 
     let targetIndex = tabs.indexOf(tab);
@@ -119,17 +121,13 @@ export class TabsTester {
     for (let i = 0; i < Math.abs(targetIndex - currIndex); i++) {
       await this.user.keyboard(`[${movementDirection === 'down' ? arrowDown : arrowUp}]`);
     }
-  };
+  }
 
   /**
    * Triggers the specified tab. Defaults to using the interaction type set on the tabs tester.
    */
   async triggerTab(opts: TriggerTabOptions): Promise<void> {
-    let {
-      tab,
-      interactionType = this._interactionType,
-      manualActivation
-    } = opts;
+    let {tab, interactionType = this._interactionType, manualActivation} = opts;
 
     if (typeof tab === 'string' || typeof tab === 'number') {
       tab = this.findTab({tabIndexOrText: tab});
@@ -142,7 +140,10 @@ export class TabsTester {
     }
 
     if (interactionType === 'keyboard') {
-      if (document.activeElement !== this._tablist && !this._tablist.contains(document.activeElement)) {
+      if (
+        document.activeElement !== this._tablist &&
+        !this._tablist.contains(document.activeElement)
+      ) {
         act(() => this._tablist.focus());
       }
 

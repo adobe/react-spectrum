@@ -14,8 +14,29 @@
 // to import it from a React Server Component in a framework like Next.js.
 import 'client-only';
 
-export {Slider, SliderOutput, SliderTrack, SliderThumb, SliderFill, SliderContext, SliderOutputContext, SliderTrackContext, SliderFillContext, SliderStateContext} from '../src/Slider';
-export type {SliderOutputProps, SliderProps, SliderRenderProps, SliderThumbProps, SliderTrackProps, SliderTrackRenderProps, SliderThumbRenderProps, SliderFillProps, SliderFillRenderProps} from '../src/Slider';
+export {
+  Slider,
+  SliderOutput,
+  SliderTrack,
+  SliderThumb,
+  SliderFill,
+  SliderContext,
+  SliderOutputContext,
+  SliderTrackContext,
+  SliderFillContext,
+  SliderStateContext
+} from '../src/Slider';
+export type {
+  SliderOutputProps,
+  SliderProps,
+  SliderRenderProps,
+  SliderThumbProps,
+  SliderTrackProps,
+  SliderTrackRenderProps,
+  SliderThumbRenderProps,
+  SliderFillProps,
+  SliderFillRenderProps
+} from '../src/Slider';
 export type {SliderState} from 'react-stately/useSliderState';
 
 export {Label} from '../src/Label';

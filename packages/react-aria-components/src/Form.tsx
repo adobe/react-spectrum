@@ -15,19 +15,24 @@ import {FormValidationContext} from 'react-stately/private/form/useFormValidatio
 import {GlobalDOMAttributes, FormProps as SharedFormProps} from '@react-types/shared';
 import React, {createContext, ForwardedRef, forwardRef} from 'react';
 
-export interface FormProps extends SharedFormProps, DOMProps, DOMRenderProps<'form', undefined>, GlobalDOMAttributes<HTMLFormElement> {
+export interface FormProps
+  extends
+    SharedFormProps,
+    DOMProps,
+    DOMRenderProps<'form', undefined>,
+    GlobalDOMAttributes<HTMLFormElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element.
    * @default 'react-aria-Form'
    */
-  className?: string,
+  className?: string;
   /**
    * Whether to use native HTML form validation to prevent form submission
    * when a field value is missing or invalid, or mark fields as required
    * or invalid via ARIA.
    * @default 'native'
    */
-  validationBehavior?: 'aria' | 'native'
+  validationBehavior?: 'aria' | 'native';
 }
 
 export const FormContext = createContext<ContextValue<FormProps, HTMLFormElement>>(null);
@@ -40,7 +45,11 @@ export const Form = forwardRef(function Form(props: FormProps, ref: ForwardedRef
   [props, ref] = useContextProps(props, ref, FormContext);
   let {validationErrors, validationBehavior = 'native', children, className, ...domProps} = props;
   return (
-    <dom.form noValidate={validationBehavior !== 'native'} {...domProps} ref={ref} className={className || 'react-aria-Form'}>
+    <dom.form
+      noValidate={validationBehavior !== 'native'}
+      {...domProps}
+      ref={ref}
+      className={className || 'react-aria-Form'}>
       <FormContext.Provider value={{...props, validationBehavior}}>
         <FormValidationContext.Provider value={validationErrors ?? {}}>
           {children}
