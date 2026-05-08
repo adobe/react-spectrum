@@ -82,10 +82,7 @@ const CUSTOM_SKILL_CONTENT = {
         REPO_ROOT,
         'packages/dev/s2-docs/skills/react-spectrum-s2/implementation-guidance.md'
       ),
-      path.join(
-        REPO_ROOT,
-        'packages/dev/s2-docs/skills/react-spectrum-s2/test-utils-guidance.md'
-      )
+      path.join(REPO_ROOT, 'packages/dev/s2-docs/skills/react-spectrum-s2/test-utils-guidance.md')
     ],
     guideEntries: [
       {
@@ -102,10 +99,7 @@ const CUSTOM_SKILL_CONTENT = {
   },
   'react-aria': {
     embeddedMarkdownPaths: [
-      path.join(
-        REPO_ROOT,
-        'packages/dev/s2-docs/skills/react-aria/test-utils-guidance.md'
-      )
+      path.join(REPO_ROOT, 'packages/dev/s2-docs/skills/react-aria/test-utils-guidance.md')
     ]
   }
 };

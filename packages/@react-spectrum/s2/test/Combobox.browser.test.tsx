@@ -31,7 +31,11 @@ let items = [
 function ComboBoxExample() {
   return (
     <ComboBox label="Test combobox" items={items}>
-      {(item) => <ComboBoxItem id={item.id} textValue={item.name}>{item.name}</ComboBoxItem>}
+      {item => (
+        <ComboBoxItem id={item.id} textValue={item.name}>
+          {item.name}
+        </ComboBoxItem>
+      )}
     </ComboBox>
   );
 }

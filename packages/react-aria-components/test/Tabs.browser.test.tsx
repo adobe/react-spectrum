@@ -39,7 +39,10 @@ it.each`
   let testUtilUser = new User();
   let {container} = await render(<TabsExample />);
 
-  let tester = testUtilUser.createTester('Tabs', {root: container.querySelector('[role=tablist]') as HTMLElement, interactionType});
+  let tester = testUtilUser.createTester('Tabs', {
+    root: container.querySelector('[role=tablist]') as HTMLElement,
+    interactionType
+  });
   let tabs = tester.tabs();
   await tester.triggerTab({tab: tabs[1]});
   expect(tester.selectedTab()).toBe(tabs[1]);

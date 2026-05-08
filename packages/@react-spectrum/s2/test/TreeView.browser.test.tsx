@@ -19,16 +19,31 @@ import {TreeView, TreeViewItem, TreeViewItemContent} from '../src/TreeView';
 import {User} from '@react-aria/test-utils';
 
 let items = [
-  {id: 1, title: 'Documents', type: 'directory', children: [
-    {id: 2, title: 'Project', type: 'directory', children: [
-      {id: 3, title: 'Weekly Report', type: 'file', children: []},
-      {id: 4, title: 'Budget', type: 'file', children: []}
-    ]}
-  ]},
-  {id: 5, title: 'Photos', type: 'directory', children: [
-    {id: 6, title: 'Image 1', type: 'file', children: []},
-    {id: 7, title: 'Image 2', type: 'file', children: []}
-  ]}
+  {
+    id: 1,
+    title: 'Documents',
+    type: 'directory',
+    children: [
+      {
+        id: 2,
+        title: 'Project',
+        type: 'directory',
+        children: [
+          {id: 3, title: 'Weekly Report', type: 'file', children: []},
+          {id: 4, title: 'Budget', type: 'file', children: []}
+        ]
+      }
+    ]
+  },
+  {
+    id: 5,
+    title: 'Photos',
+    type: 'directory',
+    children: [
+      {id: 6, title: 'Image 1', type: 'file', children: []},
+      {id: 7, title: 'Image 2', type: 'file', children: []}
+    ]
+  }
 ];
 
 function TreeViewExample() {
@@ -42,9 +57,7 @@ function TreeViewExample() {
         return (
           <TreeViewItem textValue={item.title}>
             <TreeViewItemContent>{item.title}</TreeViewItemContent>
-            <Collection items={item.children}>
-              {renderItem}
-            </Collection>
+            <Collection items={item.children}>{renderItem}</Collection>
           </TreeViewItem>
         );
       }}
@@ -60,7 +73,10 @@ it.each`
   let testUtilUser = new User();
   let {container} = await render(<TreeViewExample />);
 
-  let tester = testUtilUser.createTester('Tree', {root: container.querySelector('[role=treegrid]') as HTMLElement, interactionType});
+  let tester = testUtilUser.createTester('Tree', {
+    root: container.querySelector('[role=treegrid]') as HTMLElement,
+    interactionType
+  });
   await tester.toggleRowExpansion({row: 'Photos'});
   await tester.toggleRowSelection({row: 'Image 2'});
   let selectedRow = tester.findRow({indexOrText: 'Image 2'});

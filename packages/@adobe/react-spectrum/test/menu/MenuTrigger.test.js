@@ -277,27 +277,31 @@ describe('MenuTrigger', function () {
           expect(onOpen).toBeCalledTimes(1);
           expect(onClose).toBeCalledTimes(0);
         }
+
+        await menuTester.toggleOptionSelection({
+          option: 'Foo',
+          menuSelectionMode: 'single',
+          closesOnSelect: false
+        });
+
+        if (Component === MenuTrigger) {
+          expect(onSelectionChange).toBeCalledTimes(1);
+        } else {
+          expect(onSelect).toBeCalledTimes(1);
+        }
+
+        expect(menuTester.menu()).toBeInTheDocument();
+
+        if (Component === MenuTrigger) {
+          expect(menuTester.trigger()).toHaveAttribute('aria-expanded', 'true');
+          expect(onOpenChange).toBeCalledTimes(1);
+        } else {
+          expect(menuTester.trigger()).toHaveAttribute('aria-expanded');
+          expect(onOpen).toBeCalledTimes(1);
+          expect(onClose).toBeCalledTimes(0);
+        }
       }
-
-      await menuTester.toggleOptionSelection({option: 'Foo', menuSelectionMode: 'single', closesOnSelect: false});
-
-      if (Component === MenuTrigger) {
-        expect(onSelectionChange).toBeCalledTimes(1);
-      } else {
-        expect(onSelect).toBeCalledTimes(1);
-      }
-
-      expect(menuTester.menu()).toBeInTheDocument();
-
-      if (Component === MenuTrigger) {
-        expect(menuTester.trigger()).toHaveAttribute('aria-expanded', 'true');
-        expect(onOpenChange).toBeCalledTimes(1);
-      } else {
-        expect(menuTester.trigger()).toHaveAttribute('aria-expanded');
-        expect(onOpen).toBeCalledTimes(1);
-        expect(onClose).toBeCalledTimes(0);
-      }
-    });
+    );
 
     it.each`
       Name             | Component      | props
@@ -310,15 +314,20 @@ describe('MenuTrigger', function () {
         expect(onOpenChange).toBeCalledTimes(0);
         await menuTester.open();
 
-      expect(onOpenChange).toBeCalledTimes(1);
-      expect(onSelectionChange).toBeCalledTimes(0);
-      menuTester.setInteractionType('keyboard');
-      await menuTester.toggleOptionSelection({option: 'Foo', menuSelectionMode: 'single', closesOnSelect: false});
+        expect(onOpenChange).toBeCalledTimes(1);
+        expect(onSelectionChange).toBeCalledTimes(0);
+        menuTester.setInteractionType('keyboard');
+        await menuTester.toggleOptionSelection({
+          option: 'Foo',
+          menuSelectionMode: 'single',
+          closesOnSelect: false
+        });
 
-      expect(menuTester.menu()).toBeInTheDocument();
-      expect(menuTester.trigger()).toHaveAttribute('aria-expanded', 'true');
-      expect(onOpenChange).toBeCalledTimes(1);
-    });
+        expect(menuTester.menu()).toBeInTheDocument();
+        expect(menuTester.trigger()).toHaveAttribute('aria-expanded', 'true');
+        expect(onOpenChange).toBeCalledTimes(1);
+      }
+    );
 
     it.each`
       Name             | Component      | props
@@ -341,17 +350,26 @@ describe('MenuTrigger', function () {
         expect(onOpenChange).toBeCalledTimes(1);
         expect(onSelectionChange).toBeCalledTimes(0);
 
-      await menuTester.toggleOptionSelection({option: 'Foo', menuSelectionMode: 'multiple', keyboardActivation: 'Space'});
-      expect(onSelectionChange).toBeCalledTimes(1);
-      expect(onSelectionChange.mock.calls[0][0].has('Foo')).toBeTruthy();
-      await menuTester.toggleOptionSelection({option: 'Bar', menuSelectionMode: 'multiple', keyboardActivation: 'Space'});
-      expect(onSelectionChange).toBeCalledTimes(2);
-      expect(onSelectionChange.mock.calls[1][0].has('Bar')).toBeTruthy();
+        await menuTester.toggleOptionSelection({
+          option: 'Foo',
+          menuSelectionMode: 'multiple',
+          keyboardActivation: 'Space'
+        });
+        expect(onSelectionChange).toBeCalledTimes(1);
+        expect(onSelectionChange.mock.calls[0][0].has('Foo')).toBeTruthy();
+        await menuTester.toggleOptionSelection({
+          option: 'Bar',
+          menuSelectionMode: 'multiple',
+          keyboardActivation: 'Space'
+        });
+        expect(onSelectionChange).toBeCalledTimes(2);
+        expect(onSelectionChange.mock.calls[1][0].has('Bar')).toBeTruthy();
 
-      await menuTester.close();
-      expect(menuTester.menu()).not.toBeInTheDocument();
-      expect(onOpenChange).toBeCalledTimes(2);
-    });
+        await menuTester.close();
+        expect(menuTester.menu()).not.toBeInTheDocument();
+        expect(onOpenChange).toBeCalledTimes(2);
+      }
+    );
 
     it.each`
       Name                      | Component      | props                    | menuProps

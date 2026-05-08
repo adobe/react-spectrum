@@ -34,7 +34,7 @@ function MenuExample({onAction}) {
     <MenuTrigger>
       <Button>Open</Button>
       <Menu aria-label="Test" items={items} onAction={onAction}>
-        {(item) => <MenuItem id={item.id}>{item.name}</MenuItem>}
+        {item => <MenuItem id={item.id}>{item.name}</MenuItem>}
       </Menu>
     </MenuTrigger>
   );
@@ -49,7 +49,10 @@ it.each`
   let testUtilUser = new User();
   let {container} = await render(<MenuExample onAction={onAction} />);
 
-  let tester = testUtilUser.createTester('Menu', {root: container.querySelector('button') as HTMLElement, interactionType});
+  let tester = testUtilUser.createTester('Menu', {
+    root: container.querySelector('button') as HTMLElement,
+    interactionType
+  });
   await tester.open();
   await tester.toggleOptionSelection({option: 2});
   expect(onAction).toHaveBeenCalledWith(3);

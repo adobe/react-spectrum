@@ -20,19 +20,13 @@ import {User} from '@react-aria/test-utils';
 function CheckboxGroupExample() {
   return (
     <CheckboxGroup>
-      <Checkbox
-        value="product"
-        description="Get notified about new features and improvements">
+      <Checkbox value="product" description="Get notified about new features and improvements">
         Product Updates
       </Checkbox>
-      <Checkbox
-        value="security"
-        description="Important notifications about your account safety">
+      <Checkbox value="security" description="Important notifications about your account safety">
         Security Alerts
       </Checkbox>
-      <Checkbox
-        value="marketing"
-        description="Receive promotions, offers, and newsletters">
+      <Checkbox value="marketing" description="Receive promotions, offers, and newsletters">
         Marketing Emails
       </Checkbox>
     </CheckboxGroup>
@@ -47,7 +41,10 @@ it.each`
   let testUtilUser = new User();
   let {container} = await render(<CheckboxGroupExample />);
 
-  let tester = testUtilUser.createTester('CheckboxGroup', {root: container.querySelector('[role=group]') as HTMLElement, interactionType});
+  let tester = testUtilUser.createTester('CheckboxGroup', {
+    root: container.querySelector('[role=group]') as HTMLElement,
+    interactionType
+  });
   let checkboxes = tester.checkboxes();
   await tester.toggleCheckbox({checkbox: checkboxes[2]});
   expect(tester.selectedCheckboxes()).toContain(checkboxes[2]);

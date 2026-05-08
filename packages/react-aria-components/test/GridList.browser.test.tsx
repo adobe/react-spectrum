@@ -45,7 +45,11 @@ it.each`
   let {container} = await render(<Grid />);
 
   let gridlist = container.querySelector('[role=grid]') as HTMLElement;
-  let tester = testUtilUser.createTester('GridList', {root: gridlist, layout: 'grid', interactionType});
+  let tester = testUtilUser.createTester('GridList', {
+    root: gridlist,
+    layout: 'grid',
+    interactionType
+  });
 
   let rows = tester.rows();
   await tester.toggleRowSelection({row: rows[5]});

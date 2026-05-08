@@ -31,7 +31,7 @@ let items = [
 function PickerExample() {
   return (
     <Picker label="Test picker" items={items}>
-      {(item: typeof items[number]) => <PickerItem id={item.id}>{item.name}</PickerItem>}
+      {(item: (typeof items)[number]) => <PickerItem id={item.id}>{item.name}</PickerItem>}
     </Picker>
   );
 }

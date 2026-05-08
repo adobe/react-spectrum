@@ -1239,7 +1239,9 @@ describe('Menu', () => {
 
       // Open the nested submenu
       let nestedSubmenu = await submenuTester?.openSubmenu({submenuTrigger: 'Email…'});
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
       expect(nestedSubmenu?.menu()).toBeInTheDocument();
       expect(document.activeElement).toBe(nestedSubmenu?.options()[0]);
 
@@ -1565,7 +1567,9 @@ describe('Menu', () => {
 
       // Open the subdialog
       let subDialogTester = await menuTester.openSubmenu({submenuTrigger: triggerItem});
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
       expect(subDialogTester?.menu()).toBeInTheDocument();
 
       let subDialogTriggerItem = subDialogTester?.submenuTriggers()[0];
@@ -1647,7 +1651,9 @@ describe('Menu', () => {
       let triggerItem = menuTester.submenuTriggers()[0];
 
       let subDialogTester = await menuTester.openSubmenu({submenuTrigger: triggerItem});
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
       expect(subDialogTester?.menu()).toBeInTheDocument();
 
       // Open the nested subdialog
@@ -1905,7 +1911,11 @@ describe('Menu', () => {
 
     let menuTester = testUtilUser.createTester('Menu', {user, root: tree.container});
     await menuTester.open();
-    await menuTester.toggleOptionSelection({option: 'Cat', interactionType: 'keyboard', closesOnSelect: false});
+    await menuTester.toggleOptionSelection({
+      option: 'Cat',
+      interactionType: 'keyboard',
+      closesOnSelect: false
+    });
 
     expect(onAction).toHaveBeenCalledTimes(1);
     expect(onPressStart).toHaveBeenCalledTimes(1);
@@ -1976,7 +1986,9 @@ describe('Menu', () => {
       await menuTester.open();
       await findByRole('menu');
       await menuTester.toggleOptionSelection({option: 0});
-      expect(await findByText('Contact your administrator for permissions to delete.')).toBeInTheDocument();
+      expect(
+        await findByText('Contact your administrator for permissions to delete.')
+      ).toBeInTheDocument();
       expect(onAction).not.toHaveBeenCalled();
       let dialogs = getAllByRole('dialog');
       expect(dialogs).toHaveLength(2);
@@ -2092,59 +2104,60 @@ AriaMenuTests({
             </Menu>
           </Popover>
         </MenuTrigger>
-      </>
-    ),
-    submenus: () => render(
-      <MenuTrigger>
-        <Button aria-label="Menu">☰</Button>
-        <Popover>
-          <Menu>
-            <MenuItem id="open">Open</MenuItem>
-            <MenuItem id="rename">Rename…</MenuItem>
-            <MenuItem id="duplicate">Duplicate</MenuItem>
-            <SubmenuTrigger>
-              <MenuItem id="share">Share…</MenuItem>
-              <Popover>
-                <Menu>
-                  <SubmenuTrigger>
-                    <MenuItem id="email">Email…</MenuItem>
-                    <Popover>
-                      <Menu>
-                        <MenuItem id="work">Work</MenuItem>
-                        <MenuItem id="personal">Personal</MenuItem>
-                      </Menu>
-                    </Popover>
-                  </SubmenuTrigger>
-                  <MenuItem id="sms">SMS</MenuItem>
-                  <MenuItem id="x">X</MenuItem>
-                </Menu>
-              </Popover>
-            </SubmenuTrigger>
-            <MenuItem id="delete">Delete…</MenuItem>
-          </Menu>
-        </Popover>
-      </MenuTrigger>
-    ),
-    disabledSubmenuTrigger: () => render(
-      <MenuTrigger>
-        <Button aria-label="Menu">☰</Button>
-        <Popover>
-          <Menu disabledKeys={['share']}>
-            <MenuItem id="open">Open</MenuItem>
-            <SubmenuTrigger>
-              <MenuItem id="share">Share…</MenuItem>
-              <Popover>
-                <Menu>
-                  <MenuItem id="sms">SMS</MenuItem>
-                  <MenuItem id="email">Email</MenuItem>
-                </Menu>
-              </Popover>
-            </SubmenuTrigger>
-            <MenuItem id="delete">Delete…</MenuItem>
-          </Menu>
-        </Popover>
-      </MenuTrigger>
-    )
+      ),
+    submenus: () =>
+      render(
+        <MenuTrigger>
+          <Button aria-label="Menu">☰</Button>
+          <Popover>
+            <Menu>
+              <MenuItem id="open">Open</MenuItem>
+              <MenuItem id="rename">Rename…</MenuItem>
+              <MenuItem id="duplicate">Duplicate</MenuItem>
+              <SubmenuTrigger>
+                <MenuItem id="share">Share…</MenuItem>
+                <Popover>
+                  <Menu>
+                    <SubmenuTrigger>
+                      <MenuItem id="email">Email…</MenuItem>
+                      <Popover>
+                        <Menu>
+                          <MenuItem id="work">Work</MenuItem>
+                          <MenuItem id="personal">Personal</MenuItem>
+                        </Menu>
+                      </Popover>
+                    </SubmenuTrigger>
+                    <MenuItem id="sms">SMS</MenuItem>
+                    <MenuItem id="x">X</MenuItem>
+                  </Menu>
+                </Popover>
+              </SubmenuTrigger>
+              <MenuItem id="delete">Delete…</MenuItem>
+            </Menu>
+          </Popover>
+        </MenuTrigger>
+      ),
+    disabledSubmenuTrigger: () =>
+      render(
+        <MenuTrigger>
+          <Button aria-label="Menu">☰</Button>
+          <Popover>
+            <Menu disabledKeys={['share']}>
+              <MenuItem id="open">Open</MenuItem>
+              <SubmenuTrigger>
+                <MenuItem id="share">Share…</MenuItem>
+                <Popover>
+                  <Menu>
+                    <MenuItem id="sms">SMS</MenuItem>
+                    <MenuItem id="email">Email</MenuItem>
+                  </Menu>
+                </Popover>
+              </SubmenuTrigger>
+              <MenuItem id="delete">Delete…</MenuItem>
+            </Menu>
+          </Popover>
+        </MenuTrigger>
+      )
   }
 });
 

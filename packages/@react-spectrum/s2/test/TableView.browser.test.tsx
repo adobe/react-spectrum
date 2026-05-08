@@ -35,12 +35,12 @@ function TableExample() {
   return (
     <TableView aria-label="Test table" selectionMode="multiple">
       <TableHeader columns={columns}>
-        {(column) => <Column isRowHeader={column.isRowHeader}>{column.name}</Column>}
+        {column => <Column isRowHeader={column.isRowHeader}>{column.name}</Column>}
       </TableHeader>
       <TableBody items={items}>
-        {(item) => (
+        {item => (
           <Row id={item.id} columns={columns}>
-            {(column) => <Cell>{item[column.id]}</Cell>}
+            {column => <Cell>{item[column.id]}</Cell>}
           </Row>
         )}
       </TableBody>
@@ -56,7 +56,10 @@ it.each`
   let testUtilUser = new User();
   let {container} = await render(<TableExample />);
 
-  let tester = testUtilUser.createTester('Table', {root: container.querySelector('[role=grid]') as HTMLElement, interactionType});
+  let tester = testUtilUser.createTester('Table', {
+    root: container.querySelector('[role=grid]') as HTMLElement,
+    interactionType
+  });
   await tester.toggleRowSelection({row: 2});
   expect(tester.rows()[2].getAttribute('aria-selected')).toBe('true');
 });

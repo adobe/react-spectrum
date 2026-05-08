@@ -40,23 +40,30 @@ it.each`
   interactionType
   ${'mouse'}
   ${'keyboard'}
-`('selects an option via $interactionType in real browser grid layout', async ({interactionType}) => {
-  let testUtilUser = new User();
-  let {container} = await render(<GridListBox />);
+`(
+  'selects an option via $interactionType in real browser grid layout',
+  async ({interactionType}) => {
+    let testUtilUser = new User();
+    let {container} = await render(<GridListBox />);
 
-  let listbox = container.querySelector('[role=listbox]') as HTMLElement;
-  let tester = testUtilUser.createTester('ListBox', {root: listbox, layout: 'grid', interactionType});
+    let listbox = container.querySelector('[role=listbox]') as HTMLElement;
+    let tester = testUtilUser.createTester('ListBox', {
+      root: listbox,
+      layout: 'grid',
+      interactionType
+    });
 
-  let options = tester.options();
-  await tester.toggleOptionSelection({option: options[5]});
-  expect(options[5].getAttribute('aria-selected')).toBe('true');
-  expect(document.activeElement).toBe(options[5]);
+    let options = tester.options();
+    await tester.toggleOptionSelection({option: options[5]});
+    expect(options[5].getAttribute('aria-selected')).toBe('true');
+    expect(document.activeElement).toBe(options[5]);
 
-  await tester.toggleOptionSelection({option: options[0]});
-  expect(options[0].getAttribute('aria-selected')).toBe('true');
-  expect(document.activeElement).toBe(options[0]);
+    await tester.toggleOptionSelection({option: options[0]});
+    expect(options[0].getAttribute('aria-selected')).toBe('true');
+    expect(document.activeElement).toBe(options[0]);
 
-  await tester.toggleOptionSelection({option: options[8]});
-  expect(options[8].getAttribute('aria-selected')).toBe('true');
-  expect(document.activeElement).toBe(options[8]);
-});
+    await tester.toggleOptionSelection({option: options[8]});
+    expect(options[8].getAttribute('aria-selected')).toBe('true');
+    expect(document.activeElement).toBe(options[8]);
+  }
+);

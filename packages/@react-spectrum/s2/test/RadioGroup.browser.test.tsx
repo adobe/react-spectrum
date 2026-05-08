@@ -19,19 +19,13 @@ import {User} from '@react-aria/test-utils';
 function RadioGroupExample() {
   return (
     <RadioGroup>
-      <Radio
-        value="standard"
-        description="Delivers in 5–7 business days">
+      <Radio value="standard" description="Delivers in 5–7 business days">
         Standard Shipping (Free)
       </Radio>
-      <Radio
-        value="expedited"
-        description="Delivers in 2–3 business days">
+      <Radio value="expedited" description="Delivers in 2–3 business days">
         Expedited Shipping ($9.99)
       </Radio>
-      <Radio
-        value="dragon"
-        description="Next-day delivery">
+      <Radio value="dragon" description="Next-day delivery">
         Overnight Shipping ($19.99)
       </Radio>
     </RadioGroup>
@@ -46,7 +40,10 @@ it.each`
   let testUtilUser = new User();
   let {container} = await render(<RadioGroupExample />);
 
-  let tester = testUtilUser.createTester('RadioGroup', {root: container.querySelector('[role=radiogroup]') as HTMLElement, interactionType});
+  let tester = testUtilUser.createTester('RadioGroup', {
+    root: container.querySelector('[role=radiogroup]') as HTMLElement,
+    interactionType
+  });
   let radios = tester.radios();
   await tester.triggerRadio({radio: radios[1]});
   expect(tester.selectedRadio()).toBe(radios[1]);

@@ -26,7 +26,9 @@ function DialogExample() {
       <Modal>
         <Dialog>
           <Heading slot="title">Hello</Heading>
-          <Button slot="close" autoFocus>Close</Button>
+          <Button slot="close" autoFocus>
+            Close
+          </Button>
         </Dialog>
       </Modal>
     </DialogTrigger>
@@ -41,7 +43,10 @@ it.each`
   let testUtilUser = new User();
   let {container} = await render(<DialogExample />);
 
-  let tester = testUtilUser.createTester('Dialog', {root: container.querySelector('button') as HTMLElement, interactionType});
+  let tester = testUtilUser.createTester('Dialog', {
+    root: container.querySelector('button') as HTMLElement,
+    interactionType
+  });
 
   await tester.open();
   expect(tester.dialog()).not.toBeNull();
