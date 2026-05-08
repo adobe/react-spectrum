@@ -41,7 +41,7 @@ function Example() {
       placeholder="Enter a color"
       value={value}
       onChange={setValue}
-      prefix={<ColorSwatch size="XS" color={color ? color.toString('hex') : undefined} />} />
+      prefix={<ColorSwatch size="XS" color={value ? value.toString('hex') : undefined} />} />
   );
 }
 ```
