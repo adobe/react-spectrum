@@ -283,6 +283,7 @@ export function useSelectableCollection(
           if (manager.focusedKey === null && e.shiftKey) {
             return;
           }
+          // TODO: should Home and End also be reversed in column reverse aka Home goes to top? Or should Home always to to the "first" (bottom)
           e.preventDefault();
           let firstKey: Key | null = delegate.getFirstKey(manager.focusedKey, isCtrlKeyPressed(e));
           manager.setFocusedKey(firstKey);
