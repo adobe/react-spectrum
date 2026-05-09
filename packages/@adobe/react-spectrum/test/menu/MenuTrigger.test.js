@@ -279,15 +279,15 @@ describe('MenuTrigger', function () {
         }
 
         await menuTester.toggleOptionSelection({
-          option: 'Foo',
+          option: 'Bar',
           menuSelectionMode: 'single',
           closesOnSelect: false
         });
 
         if (Component === MenuTrigger) {
-          expect(onSelectionChange).toBeCalledTimes(1);
+          expect(onSelectionChange).toBeCalledTimes(2);
         } else {
-          expect(onSelect).toBeCalledTimes(1);
+          expect(onSelect).toBeCalledTimes(2);
         }
 
         expect(menuTester.getMenu()).toBeInTheDocument();
