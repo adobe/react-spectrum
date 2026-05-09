@@ -39,6 +39,29 @@ function replaceWithRegex(
   return new TokenSegmentList(segments, {tokenRegex: regex}).replaceRange(start, end, insert);
 }
 
+function replaceSeg(
+  segments: TokenFieldSegment[],
+  start: Position,
+  end: Position,
+  insert: TokenFieldSegment[]
+) {
+  return new TokenSegmentList(segments).replaceRangeWithSegments(start, end, insert);
+}
+
+function replaceSegWithRegex(
+  segments: TokenFieldSegment[],
+  start: Position,
+  end: Position,
+  insert: TokenFieldSegment[],
+  regex: RegExp | null
+) {
+  return new TokenSegmentList(segments, {tokenRegex: regex}).replaceRangeWithSegments(
+    start,
+    end,
+    insert
+  );
+}
+
 describe('TokenSegmentList', () => {
   let graphemeSegmenter: Intl.Segmenter;
   let wordSegmenter: Intl.Segmenter;
@@ -210,8 +233,8 @@ describe('TokenSegmentList', () => {
           {index: 1, offset: 0},
           '@'
         );
-        expect(value).toEqual([text('pre'), text('@'), token('T')]);
-        expect(caret).toEqual({index: 1, offset: 1});
+        expect(value).toEqual([text('pre@'), token('T')]);
+        expect(caret).toEqual({index: 0, offset: 4});
       });
 
       it('inserts text before a lone token when collapsed at token start (implementation order)', () => {
@@ -283,6 +306,69 @@ describe('TokenSegmentList', () => {
         expect(value).toEqual([text('xZy')]);
         expect(caret).toEqual({index: 0, offset: 2});
       });
+    });
+  });
+
+  describe('replaceRangeWithSegments', () => {
+    it('matches replaceRange for a single text insert segment', () => {
+      let start = {index: 0, offset: 2};
+      let end = {index: 0, offset: 2};
+      let segs = [text('hello')];
+      let a = replace(segs, start, end, '__');
+      let b = replaceSeg(segs, start, end, [text('__')]);
+      expect(b).toEqual(a);
+    });
+
+    it('matches replaceRange across a token when insert is one text segment', () => {
+      let start = {index: 0, offset: 0};
+      let end = {index: 2, offset: 1};
+      let segs = [text('a'), token('T'), text('b')];
+      let a = replace(segs, start, end, 'XY');
+      let b = replaceSeg(segs, start, end, [text('XY')]);
+      expect(b).toEqual(a);
+    });
+
+    it('matches replaceRange with tokenRegex when insert is one text segment', () => {
+      const mentionRe = /@\S+(?=\s)/g;
+      let start = {index: 0, offset: 6};
+      let end = {index: 0, offset: 6};
+      let segs = [text('hello  world')];
+      let a = replaceWithRegex(segs, start, end, '@alice ', mentionRe);
+      let b = replaceSegWithRegex(segs, start, end, [text('@alice ')], mentionRe);
+      expect(b).toEqual(a);
+    });
+
+    it('replaceRange delegates to replaceRangeWithSegments (non-empty string)', () => {
+      let list = new TokenSegmentList([text('ab')]);
+      let a = list.replaceRange({index: 0, offset: 1}, {index: 0, offset: 1}, 'Z');
+      let b = list.replaceRangeWithSegments({index: 0, offset: 1}, {index: 0, offset: 1}, [
+        text('Z')
+      ]);
+      expect(b).toEqual(a);
+    });
+
+    it('inserts structured segments in the middle of a text run', () => {
+      let {value, caret} = replaceSeg(
+        [text('hello')],
+        {index: 0, offset: 2},
+        {index: 0, offset: 2},
+        [text('['), token('T'), text(']')]
+      );
+      expect(value).toEqual([text('he['), token('T'), text(']llo')]);
+      expect(caret).toEqual({index: 2, offset: 1});
+    });
+
+    it('does not run tokenRegex on token-only insert', () => {
+      const mentionRe = /@\S+(?=\s)/g;
+      let {value, caret} = replaceSegWithRegex(
+        [text('hello ')],
+        {index: 0, offset: 6},
+        {index: 0, offset: 6},
+        [token('@alice')],
+        mentionRe
+      );
+      expect(value).toEqual([text('hello '), token('@alice')]);
+      expect(caret).toEqual({index: 1, offset: 6});
     });
   });
 

@@ -105,6 +105,14 @@ export class TokenSegmentList {
 
   /** Replace the text between two positions with new text. */
   replaceRange(start: Position, end: Position, text: string): Change {
+    return this.replaceRangeWithSegments(
+      start,
+      end,
+      text.length > 0 ? [this.createTextSegment(text)] : []
+    );
+  }
+
+  replaceRangeWithSegments(start: Position, end: Position, insert: TokenFieldSegment[]): Change {
     start = this.clampPosition(start);
     end = this.clampPosition(end);
     let startSegment = this.segments[start.index];
@@ -114,40 +122,27 @@ export class TokenSegmentList {
 
     let caret = {
       index: start.index,
-      offset: start.offset + text.length
+      offset: start.offset
     };
 
     let newSegments = this.segments.slice(0, start.index);
     if (startSplit) {
-      newSegments.push(startSplit);
-      if (startSplit.type === 'token' && text.length > 0) {
-        newSegments.push(this.createTextSegment(text));
-        caret.index = newSegments.length - 1;
-        caret.offset = text.length;
-      } else {
-        startSplit.text += text;
-      }
-
-      if (endSplit) {
-        if (startSplit.type === 'token' || endSplit.type === 'token') {
-          newSegments.push(endSplit);
-        } else {
-          startSplit.text += endSplit.text;
-        }
-      }
-    } else if (endSplit) {
-      if (endSplit.type === 'token' && text.length > 0) {
-        newSegments.push(this.createTextSegment(text));
-      } else {
-        endSplit.text = text + endSplit.text;
-      }
-      newSegments.push(endSplit);
-    } else if (text.length) {
-      newSegments.push(this.createTextSegment(text));
+      appendSegments(newSegments, [startSplit]);
     }
-    newSegments.push(...this.segments.slice(end.index + 1));
 
-    if (this.tokenRegex && text.length > 0) {
+    if (insert.length) {
+      appendSegments(newSegments, insert);
+      caret.index = newSegments.length - 1;
+      caret.offset = newSegments[newSegments.length - 1].text.length;
+    }
+
+    if (endSplit) {
+      appendSegments(newSegments, [endSplit]);
+    }
+
+    appendSegments(newSegments, this.segments.slice(end.index + 1));
+
+    if (this.tokenRegex && insert.length > 0) {
       let i = caret.index;
       let seg = newSegments[i];
       if (seg?.type === 'text') {
@@ -157,11 +152,7 @@ export class TokenSegmentList {
         caret.index += tokenized.length - 1;
         caret.offset = tokenized[tokenized.length - 1].text.length;
         if (suffix.length > 0) {
-          if (tokenized[tokenized.length - 1].type === 'text') {
-            tokenized[tokenized.length - 1].text += suffix;
-          } else {
-            tokenized.push(this.createTextSegment(suffix));
-          }
+          appendSegments(tokenized, [this.createTextSegment(suffix)]);
         }
         newSegments.splice(i, 1, ...tokenized);
       }
@@ -297,4 +288,38 @@ export class TokenSegmentList {
       caret: position
     };
   }
+
+  slice(start: Position, end: Position): TokenFieldSegment[] {
+    start = this.clampPosition(start);
+    end = this.clampPosition(end);
+    let startSegment = this.segments[start.index];
+    let endSegment = this.segments[end.index];
+    let [, startSplit] = this.splitSegment(startSegment, start.offset);
+    let [endSplit] = this.splitSegment(endSegment, end.offset);
+
+    let result: TokenFieldSegment[] = [];
+    if (startSplit) {
+      result.push(startSplit);
+    }
+    result.push(...this.segments.slice(start.index + 1, end.index));
+    if (endSplit) {
+      result.push(endSplit);
+    }
+    return result;
+  }
+}
+
+function appendSegments(
+  segments: TokenFieldSegment[],
+  insert: TokenFieldSegment[]
+): TokenFieldSegment[] {
+  for (let segment of insert) {
+    let last = segments[segments.length - 1];
+    if (last && last.type === 'text' && segment.type === 'text') {
+      last.text += segment.text;
+    } else {
+      segments.push(segment);
+    }
+  }
+  return segments;
 }

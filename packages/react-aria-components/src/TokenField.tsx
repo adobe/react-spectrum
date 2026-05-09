@@ -24,6 +24,8 @@ export interface TokenFieldProps {
   style?: React.CSSProperties;
 }
 
+export const CLIPBOARD_MIME_TYPE = 'application/vnd.react-aria.tokens+json';
+
 export function TokenField(props: TokenFieldProps) {
   let {
     value: valueProp,
@@ -80,9 +82,13 @@ export function TokenField(props: TokenFieldProps) {
       case 'insertFromPaste':
       case 'insertFromYank':
       case 'insertFromDrop': {
-        let data = e.data ?? '';
+        let data: TokenFieldSegment[] = [{type: 'text', text: e.data ?? ''}];
         if (e.dataTransfer) {
-          data = e.dataTransfer.getData('text/plain') || data;
+          if (e.dataTransfer.types.includes(CLIPBOARD_MIME_TYPE)) {
+            data = JSON.parse(e.dataTransfer.getData(CLIPBOARD_MIME_TYPE));
+          } else if (e.dataTransfer.types.includes('text/plain')) {
+            data[0].text = e.dataTransfer.getData('text/plain');
+          }
         }
 
         if (e.inputType === 'insertFromDrop' && dropPosition.current) {
@@ -90,7 +96,7 @@ export function TokenField(props: TokenFieldProps) {
           dropPosition.current = null;
         }
 
-        apply(tokens => tokens.replaceRange(start, end, data));
+        apply(tokens => tokens.replaceRangeWithSegments(start, end, data));
         break;
       }
       case 'insertLineBreak':
@@ -191,6 +197,27 @@ export function TokenField(props: TokenFieldProps) {
     }
   });
 
+  let writeClipboardData = (e: ClipboardEvent | DragEvent) => {
+    if ('clipboardData' in e) {
+      e.preventDefault();
+    }
+    let selection = window.getSelection();
+    let range = selection?.getRangeAt(0)!;
+    let [start, end] = rangeToPositions(range);
+    let segments = new TokenSegmentList(state).slice(start, end);
+    let dataTransfer = 'clipboardData' in e ? e.clipboardData : e.dataTransfer;
+    dataTransfer?.setData(CLIPBOARD_MIME_TYPE, JSON.stringify(segments));
+    dataTransfer?.setData('text/plain', segments.map(s => s.text).join(''));
+
+    if (e.type === 'cut') {
+      apply(tokens => tokens.replaceRange(start, end, ''));
+    }
+  };
+
+  useEvent(ref, 'copy', writeClipboardData);
+  useEvent(ref, 'cut', writeClipboardData);
+  useEvent(ref, 'dragstart', writeClipboardData);
+
   return (
     <div
       ref={ref}
@@ -219,7 +246,7 @@ function Token({children}) {
         border: '1px solid gray',
         borderRadius: 4,
         padding: '0 2px',
-        marginRight: 4,
+        // marginRight: 4,
         userSelect: 'all',
         WebkitUserSelect: 'all'
       }}>
