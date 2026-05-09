@@ -18,7 +18,7 @@ import {User} from '@react-aria/test-utils';
 
 function RadioGroupExample() {
   return (
-    <RadioGroup>
+    <RadioGroup aria-label="Shipping Method">
       <Radio value="standard" description="Delivers in 5–7 business days">
         Standard Shipping (Free)
       </Radio>

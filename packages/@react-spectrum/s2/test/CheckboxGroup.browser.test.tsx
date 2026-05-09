@@ -19,7 +19,7 @@ import {User} from '@react-aria/test-utils';
 
 function CheckboxGroupExample() {
   return (
-    <CheckboxGroup>
+    <CheckboxGroup aria-label="Email Notification Preferences">
       <Checkbox value="product" description="Get notified about new features and improvements">
         Product Updates
       </Checkbox>
