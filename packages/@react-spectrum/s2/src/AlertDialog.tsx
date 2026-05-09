@@ -19,14 +19,15 @@ import {chain} from 'react-aria/chain';
 import {Content, Heading} from './Content';
 import {Dialog} from './Dialog';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
-import {forwardRef, ReactNode, useId} from 'react';
+import {forwardRef, ReactNode} from 'react';
 import {IconContext} from './Icon';
-// @ts-ignore
 import intlMessages from '../intl/*.json';
+// @ts-ignore
 import NoticeSquare from '../s2wf-icons/S2_Icon_AlertDiamond_20_N.svg';
 import {Provider} from 'react-aria-components/slots';
 import {style} from '../style' with {type: 'macro'};
 import {UnsafeStyles} from './style-utils' with {type: 'macro'};
+import {useId} from 'react-aria/useId';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 
 export interface AlertDialogProps extends AriaLabelingProps, DOMProps, UnsafeStyles {
