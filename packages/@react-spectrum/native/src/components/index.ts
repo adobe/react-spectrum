@@ -27,3 +27,6 @@ export * from './popover';
 export * from './tooltip';
 export * from './tray';
 export * from './tree';
+export * from './color';
+export * from './avatar';
+export * from './taggroup';

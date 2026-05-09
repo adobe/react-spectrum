@@ -95,6 +95,11 @@ export {
   Tooltip,
   Tray,
   TreeView,
+  ColorSwatch,
+  ColorField,
+  Avatar,
+  Tag,
+  TagGroup,
   Text as SpectrumText,
   View as SpectrumView,
   actionButtonTextVariants,
@@ -187,5 +192,12 @@ export type {
   TrayProps,
   TreeViewProps,
   TreeViewSelectionMode,
-  ValidationState
+  ValidationState,
+  ColorSwatchProps,
+  ColorSwatchSize,
+  ColorFieldProps,
+  AvatarProps,
+  AvatarSize,
+  TagProps,
+  TagGroupProps
 } from './components';

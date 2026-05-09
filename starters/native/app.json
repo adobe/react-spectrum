@@ -1,0 +1,20 @@
+{
+  "expo": {
+    "name": "React Spectrum Native Starter",
+    "slug": "react-spectrum-native-starter",
+    "scheme": "rspnative",
+    "version": "0.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "edgeToEdgeEnabled": true
+    },
+    "web": {
+      "bundler": "metro"
+    }
+  }
+}

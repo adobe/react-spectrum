@@ -1,0 +1,93 @@
+{
+  "name": "@react-spectrum/native",
+  "version": "0.0.0",
+  "description": "Expo React Native implementation plan scaffold for React Spectrum components",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adobe/react-spectrum"
+  },
+  "source": "exports/index.ts",
+  "files": [
+    "dist",
+    "src",
+    "exports",
+    "README.md"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "typecheck": "../../../node_modules/.bin/tsc -p tsconfig.json --noEmit",
+    "tsc": "../../../node_modules/.bin/tsc -p tsconfig.json --noEmit",
+    "test": "../../../node_modules/.bin/jest --passWithNoTests --testPathPatterns=packages/@react-spectrum/native"
+  },
+  "main": "./dist/exports/index.cjs",
+  "module": "./dist/exports/index.mjs",
+  "types": "./dist/types/exports/index.d.ts",
+  "exports": {
+    ".": {
+      "source": "./exports/index.ts",
+      "types": "./dist/types/exports/index.d.ts",
+      "module": "./dist/exports/index.mjs",
+      "import": "./dist/exports/index.mjs",
+      "require": "./dist/exports/index.cjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@internationalized/date": "^3.12.1",
+    "@internationalized/number": "^3.6.6",
+    "@react-types/shared": "^3.34.0",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.0.0",
+    "react-stately": "3.46.0",
+    "tailwind-merge": "^2.6.0"
+  },
+  "devDependencies": {
+    "react": "^19.2.0",
+    "react-native": "*",
+    "react-native-reanimated": "*",
+    "react-native-svg": "*",
+    "react-native-worklets": "*",
+    "react-test-renderer": "19.1.0"
+  },
+  "peerDependencies": {
+    "expo": "*",
+    "react": "^19.0.0",
+    "react-native": "*",
+    "react-native-gesture-handler": "*",
+    "react-native-reanimated": "*",
+    "react-native-safe-area-context": "*",
+    "react-native-svg": "*",
+    "uniwind": "*"
+  },
+  "peerDependenciesMeta": {
+    "react-native-gesture-handler": {
+      "optional": true
+    },
+    "react-native-svg": {
+      "optional": true
+    }
+  },
+  "targets": {
+    "module": false,
+    "main": false,
+    "types": false,
+    "exports-module": {
+      "source": "exports/*.ts",
+      "distDir": "dist",
+      "isLibrary": true,
+      "outputFormat": "esmodule",
+      "includeNodeModules": false
+    },
+    "exports-main": {
+      "source": "exports/*.ts",
+      "distDir": "dist",
+      "isLibrary": true,
+      "outputFormat": "commonjs",
+      "includeNodeModules": false
+    }
+  }
+}

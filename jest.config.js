@@ -111,7 +111,7 @@ module.exports = {
   // preset:
 
   // Run tests from one or more projects
-  projects: ['<rootDir>'],
+  projects: ['<rootDir>', '<rootDir>/packages/@react-spectrum/native'],
 
   // Use this configuration option to add custom reporters to Jest
   reporters: [
@@ -173,7 +173,8 @@ module.exports = {
   testPathIgnorePatterns: [
     '/node_modules/',
     '\\.ssr\\.test\\.[tj]sx?$',
-    '\\.browser\\.test\\.[tj]sx?$'
+    '\\.browser\\.test\\.[tj]sx?$',
+    '/packages/@react-spectrum/native/'
   ],
   testTimeout: 20000,
 

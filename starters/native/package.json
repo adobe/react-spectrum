@@ -1,0 +1,26 @@
+{
+  "name": "@react-spectrum/native-starter",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@react-spectrum/native": "workspace:*",
+    "expo": "*",
+    "react": "^19.0.0",
+    "react-native": "*",
+    "react-native-gesture-handler": "*",
+    "react-native-reanimated": "*",
+    "react-native-safe-area-context": "*",
+    "react-native-svg": "*",
+    "uniwind": "*"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.2"
+  }
+}
