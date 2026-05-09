@@ -81,7 +81,9 @@ describe('Combobox', () => {
     expect(options).toHaveLength(1);
     expect(comboboxTester.getListbox()).toBeTruthy();
     expect(options[0]).toHaveTextContent('No results');
-    expect(within(comboboxTester.getListbox()!).getByTestId('loadMoreSentinel')).toBeInTheDocument();
+    expect(
+      within(comboboxTester.getListbox()!).getByTestId('loadMoreSentinel')
+    ).toBeInTheDocument();
   });
 
   it('should only call loadMore whenever intersection is detected', async () => {

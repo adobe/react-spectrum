@@ -65,7 +65,9 @@ export class GridListTester {
     if (typeof indexOrText === 'number') {
       row = this.getRows()[indexOrText];
     } else if (typeof indexOrText === 'string') {
-      row = within(this.getGridlist()!).getByText(indexOrText).closest('[role=row]')! as HTMLElement;
+      row = within(this.getGridlist()!)
+        .getByText(indexOrText)
+        .closest('[role=row]')! as HTMLElement;
     }
 
     return row;

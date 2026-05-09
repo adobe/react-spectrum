@@ -566,7 +566,10 @@ describe('ComboBox', function () {
         expect(comboboxTester.getCombobox().value).toBe('One');
 
         await comboboxTester.open();
-        expect(comboboxTester.getCombobox()).toHaveAttribute('aria-activedescendant', options[0].id);
+        expect(comboboxTester.getCombobox()).toHaveAttribute(
+          'aria-activedescendant',
+          options[0].id
+        );
       });
 
       it('shows all items', async function () {

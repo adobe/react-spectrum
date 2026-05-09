@@ -228,7 +228,10 @@ describe('Treeble', () => {
 
     let button = within(tester.getRowHeaders()[0]).getByRole('button');
     expect(button).toHaveAttribute('aria-label', 'Expand');
-    expect(button).toHaveAttribute('aria-labelledby', `${button.id} ${tester.getRowHeaders()[0].id}`);
+    expect(button).toHaveAttribute(
+      'aria-labelledby',
+      `${button.id} ${tester.getRowHeaders()[0].id}`
+    );
     expect(button).toHaveAttribute('tabindex', '-1');
 
     expect(tester.getRows()[1]).toHaveAttribute('aria-expanded', 'false');

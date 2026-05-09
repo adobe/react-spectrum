@@ -54,7 +54,10 @@ describe('RadioGroup', () => {
         root: getByRole('radiogroup'),
         direction
       });
-      expect(radioGroupTester.getRadioGroup()).toHaveAttribute('aria-orientation', props.orientation);
+      expect(radioGroupTester.getRadioGroup()).toHaveAttribute(
+        'aria-orientation',
+        props.orientation
+      );
       let radios = radioGroupTester.getRadios();
       await radioGroupTester.triggerRadio({radio: radios[0]});
       expect(radios[0]).toBeChecked();

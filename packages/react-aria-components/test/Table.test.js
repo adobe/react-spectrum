@@ -3387,10 +3387,9 @@ describe('Table', () => {
     expect(groups[3].tagName).toBe('TBODY');
     expect(tableTester.getRows()).toHaveLength(11);
 
-    expect(tableTester.getRows({element: 1})).toHaveLength(3);
     expect(tableTester.getRows({element: groups[1]})).toHaveLength(3);
-    expect(tableTester.getRows({element: 2})).toHaveLength(3);
-    expect(tableTester.getRows({element: 3})).toHaveLength(4);
+    expect(tableTester.getRows({element: groups[2]})).toHaveLength(3);
+    expect(tableTester.getRows({element: groups[3]})).toHaveLength(4);
 
     await user.tab();
     for (let row of tableTester.getRows()) {
@@ -3404,7 +3403,7 @@ describe('Table', () => {
     }
 
     expect(tableTester.getFooterRows()).toHaveLength(1);
-    expect(tableTester.getFooterRows()).toHaveTextContent('Blah');
+    expect(tableTester.getFooterRows()[0]).toHaveTextContent('Blah');
   });
 });
 
