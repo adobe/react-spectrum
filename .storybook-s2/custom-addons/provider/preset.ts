@@ -1,5 +1,5 @@
-import path from "node:path";
-import { fileURLToPath } from "node:url";
+import path from 'node:path';
+import {fileURLToPath} from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -13,5 +13,5 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
  */
 export const managerEntries = (existing: string[] = []) => [
   ...existing,
-  path.join(__dirname, "register.tsx"),
+  path.join(__dirname, 'register.tsx')
 ];

@@ -11,12 +11,36 @@
  */
 
 import Add from '../ui-icons/Add';
-import {ButtonProps as AriaButtonProps, ButtonContext, ButtonRenderProps} from 'react-aria-components/Button';
-import {NumberField as AriaNumberField, NumberFieldProps as AriaNumberFieldProps} from 'react-aria-components/NumberField';
+import {
+  ButtonProps as AriaButtonProps,
+  ButtonContext,
+  ButtonRenderProps
+} from 'react-aria-components/Button';
+import {
+  NumberField as AriaNumberField,
+  NumberFieldProps as AriaNumberFieldProps
+} from 'react-aria-components/NumberField';
 import {baseColor, space, style} from '../style' with {type: 'macro'};
 import {ContextValue, useContextProps} from 'react-aria-components/slots';
-import {controlBorderRadius, field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
-import {createContext, CSSProperties, ForwardedRef, forwardRef, ReactNode, Ref, useContext, useImperativeHandle, useMemo, useRef} from 'react';
+import {
+  controlBorderRadius,
+  field,
+  fieldInput,
+  getAllowedOverrides,
+  StyleProps
+} from './style-utils' with {type: 'macro'};
+import {
+  createContext,
+  CSSProperties,
+  ForwardedRef,
+  forwardRef,
+  ReactNode,
+  Ref,
+  useContext,
+  useImperativeHandle,
+  useMemo,
+  useRef
+} from 'react';
 import {createFocusableRef} from './useDOMRef';
 import Dash from '../ui-icons/Dash';
 import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText, Input} from './Field';
@@ -33,29 +57,35 @@ import {useFocusRing} from 'react-aria/useFocusRing';
 import {useHover} from 'react-aria/useHover';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-
-export interface NumberFieldProps extends
-  Omit<AriaNumberFieldProps, 'children' | 'className' | 'style' | 'render' | keyof GlobalDOMAttributes>,
-  StyleProps,
-  SpectrumLabelableProps,
-  HelpTextProps,
-  Pick<InputProps, 'placeholder'> {
+export interface NumberFieldProps
+  extends
+    Omit<
+      AriaNumberFieldProps,
+      'children' | 'className' | 'style' | 'render' | keyof GlobalDOMAttributes
+    >,
+    StyleProps,
+    SpectrumLabelableProps,
+    HelpTextProps,
+    Pick<InputProps, 'placeholder'> {
   /**
    * Whether to hide the increment and decrement buttons.
    * @default false
    */
-  hideStepper?: boolean,
+  hideStepper?: boolean;
   /**
    * The size of the NumberField.
    *
    * @default 'M'
    */
-  size?: 'S' | 'M' | 'L' | 'XL'
+  size?: 'S' | 'M' | 'L' | 'XL';
 }
 
-export const NumberFieldContext = createContext<ContextValue<Partial<NumberFieldProps>, TextFieldRef>>(null);
+export const NumberFieldContext =
+  createContext<ContextValue<Partial<NumberFieldProps>, TextFieldRef>>(null);
 
-const inputButton = style<ButtonRenderProps & {size: 'S' | 'M' | 'L' | 'XL', type: 'decrement' | 'increment'}>({
+const inputButton = style<
+  ButtonRenderProps & {size: 'S' | 'M' | 'L' | 'XL'; type: 'decrement' | 'increment'}
+>({
   ...controlBorderRadius('sm'),
   display: 'flex',
   outlineStyle: 'none',
@@ -136,7 +166,10 @@ const stepperContainerStyles = style({
 /**
  * NumberFields allow users to input number values with a keyboard or increment/decrement with step buttons.
  */
-export const NumberField = forwardRef(function NumberField(props: NumberFieldProps, ref: Ref<TextFieldRef>) {
+export const NumberField = forwardRef(function NumberField(
+  props: NumberFieldProps,
+  ref: Ref<TextFieldRef>
+) {
   [props, ref] = useSpectrumContextProps(props, ref, NumberFieldContext);
   props = useFormProps(props);
   let {
@@ -179,87 +212,106 @@ export const NumberField = forwardRef(function NumberField(props: NumberFieldPro
       isRequired={isRequired}
       {...numberFieldProps}
       style={UNSAFE_style}
-      className={UNSAFE_className + style(field(), getAllowedOverrides())({
-        isInForm: !!formContext,
-        labelPosition,
-        size
-      }, props.styles)}>
-      {
-          ({isDisabled, isInvalid}) => {
-            return  (
-              <>
-                <FieldLabel
-                  isDisabled={isDisabled}
-                  isRequired={isRequired}
-                  size={size}
-                  labelPosition={labelPosition}
-                  labelAlign={labelAlign}
-                  necessityIndicator={necessityIndicator}
-                  contextualHelp={contextualHelp}>
-                  {label}
-                </FieldLabel>
-                <FieldGroup
-                  size={size}
-                  styles={style({
-                    ...fieldInput(),
-                    paddingStart: 'edge-to-text',
-                    paddingEnd: {
-                      default: 0,
-                      isStepperHidden: 'edge-to-text'
-                    }
-                  })({size, isStepperHidden: hideStepper})}>
-                  <InputContext.Consumer>
-                    {ctx => (
-                      <InputContext.Provider value={{...ctx, ref: mergeRefs((ctx as any)?.ref, inputRef)}}>
-                        <Input />
-                      </InputContext.Provider>
-                    )}
-                  </InputContext.Consumer>
-                  {isInvalid && <FieldErrorIcon isDisabled={isDisabled} />}
-                  {!hideStepper && <div className={stepperContainerStyles({size})}>
-                    <StepButton
-                      ref={decrementButtonRef}
-                      slot="decrement"
-                      style={renderProps => pressScale(decrementButtonRef)(renderProps)}
-                      className={renderProps => inputButton({
+      className={
+        UNSAFE_className +
+        style(field(), getAllowedOverrides())(
+          {
+            isInForm: !!formContext,
+            labelPosition,
+            size
+          },
+          props.styles
+        )
+      }>
+      {({isDisabled, isInvalid}) => {
+        return (
+          <>
+            <FieldLabel
+              isDisabled={isDisabled}
+              isRequired={isRequired}
+              size={size}
+              labelPosition={labelPosition}
+              labelAlign={labelAlign}
+              necessityIndicator={necessityIndicator}
+              contextualHelp={contextualHelp}>
+              {label}
+            </FieldLabel>
+            <FieldGroup
+              size={size}
+              styles={style({
+                ...fieldInput(),
+                paddingStart: 'edge-to-text',
+                paddingEnd: {
+                  default: 0,
+                  isStepperHidden: 'edge-to-text'
+                }
+              })({size, isStepperHidden: hideStepper})}>
+              <InputContext.Consumer>
+                {ctx => (
+                  <InputContext.Provider
+                    value={{...ctx, ref: mergeRefs((ctx as any)?.ref, inputRef)}}>
+                    <Input />
+                  </InputContext.Provider>
+                )}
+              </InputContext.Consumer>
+              {isInvalid && <FieldErrorIcon isDisabled={isDisabled} />}
+              {!hideStepper && (
+                <div className={stepperContainerStyles({size})}>
+                  <StepButton
+                    ref={decrementButtonRef}
+                    slot="decrement"
+                    style={renderProps => pressScale(decrementButtonRef)(renderProps)}
+                    className={renderProps =>
+                      inputButton({
                         ...renderProps,
                         type: 'decrement',
                         size
-                      })}>
-                      <Dash size={size} className={iconStyles} />
-                    </StepButton>
-                    <StepButton
-                      ref={incrementButtonRef}
-                      slot="increment"
-                      style={renderProps => pressScale(incrementButtonRef)(renderProps)}
-                      className={renderProps => inputButton({
+                      })
+                    }>
+                    <Dash size={size} className={iconStyles} />
+                  </StepButton>
+                  <StepButton
+                    ref={incrementButtonRef}
+                    slot="increment"
+                    style={renderProps => pressScale(incrementButtonRef)(renderProps)}
+                    className={renderProps =>
+                      inputButton({
                         ...renderProps,
                         type: 'increment',
                         size
-                      })}>
-                      <Add size={size} className={iconStyles} />
-                    </StepButton>
-                  </div>}
-                </FieldGroup>
-                <HelpText
-                  size={size}
-                  isDisabled={isDisabled}
-                  isInvalid={isInvalid}
-                  description={descriptionMessage}>
-                  {errorMessage}
-                </HelpText>
-              </>
-            );
-          }
-        }
+                      })
+                    }>
+                    <Add size={size} className={iconStyles} />
+                  </StepButton>
+                </div>
+              )}
+            </FieldGroup>
+            <HelpText
+              size={size}
+              isDisabled={isDisabled}
+              isInvalid={isInvalid}
+              description={descriptionMessage}>
+              {errorMessage}
+            </HelpText>
+          </>
+        );
+      }}
     </AriaNumberField>
   );
 });
 
-interface StepButtonProps extends AriaButtonProps {
-}
+interface StepButtonProps extends AriaButtonProps {}
 
-const additionalButtonHTMLAttributes = new Set(['form', 'formAction', 'formEncType', 'formMethod', 'formNoValidate', 'formTarget', 'name', 'value']);
+const additionalButtonHTMLAttributes = new Set([
+  'form',
+  'formAction',
+  'formEncType',
+  'formMethod',
+  'formNoValidate',
+  'formTarget',
+  'name',
+  'value'
+]);
 
 let StepButton = forwardRef((props: StepButtonProps, ref: ForwardedRef<HTMLDivElement>) => {
   [props, ref] = useContextProps(props, ref, ButtonContext as any);
@@ -273,7 +325,13 @@ let StepButton = forwardRef((props: StepButtonProps, ref: ForwardedRef<HTMLDivEl
   let {hoverProps, isHovered} = useHover(props);
   let renderProps = useRenderProps({
     ...props,
-    values: {isHovered, isPressed, isFocused, isFocusVisible, isDisabled: props.isDisabled || false},
+    values: {
+      isHovered,
+      isPressed,
+      isFocused,
+      isFocusVisible,
+      isDisabled: props.isDisabled || false
+    },
     defaultClassName: 'react-aria-Button'
   });
   return (
@@ -287,7 +345,8 @@ let StepButton = forwardRef((props: StepButtonProps, ref: ForwardedRef<HTMLDivEl
       data-pressed={ctx.isPressed || isPressed || undefined}
       data-hovered={isHovered || undefined}
       data-focused={isFocused || undefined}
-      data-focus-visible={isFocusVisible || undefined} />
+      data-focus-visible={isFocusVisible || undefined}
+    />
   );
 });
 
@@ -330,7 +389,7 @@ function useRenderProps(props: any) {
 
     return {
       className: computedClassName ?? defaultClassName,
-      style: (computedStyle || defaultStyle) ? {...defaultStyle, ...computedStyle} : undefined,
+      style: computedStyle || defaultStyle ? {...defaultStyle, ...computedStyle} : undefined,
       children: computedChildren ?? defaultChildren,
       'data-rac': ''
     };

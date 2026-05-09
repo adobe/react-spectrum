@@ -1,4 +1,3 @@
-
 import {nodeContains} from '../utils/shadowdom/DOMFunctions';
 import {RefObject} from '@react-types/shared';
 import {useEffect, useRef, useState} from 'react';
@@ -9,13 +8,13 @@ import {useResizeObserver} from '../utils/useResizeObserver';
 
 interface SafelyMouseToSubmenuOptions {
   /** Ref for the parent menu. */
-  menuRef: RefObject<Element | null>,
+  menuRef: RefObject<Element | null>;
   /** Ref for the submenu. */
-  submenuRef: RefObject<Element | null>,
+  submenuRef: RefObject<Element | null>;
   /** Whether the submenu is open. */
-  isOpen: boolean,
+  isOpen: boolean;
   /** Whether this feature is disabled. */
-  isDisabled?: boolean
+  isDisabled?: boolean;
 }
 
 const ALLOWED_INVALID_MOVEMENTS = 2;
@@ -29,7 +28,7 @@ const ANGLE_PADDING = Math.PI / 12; // 15°
  */
 export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions): void {
   let {menuRef, submenuRef, isOpen, isDisabled} = options;
-  let prevPointerPos = useRef<{x: number, y: number} | undefined>(undefined);
+  let prevPointerPos = useRef<{x: number; y: number} | undefined>(undefined);
   let submenuRect = useRef<DOMRect | undefined>(undefined);
   let lastProcessedTime = useRef<number>(0);
   let timeout = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
@@ -110,7 +109,12 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions): v
       }
 
       // Pointer is outside of parent menu
-      if (mouseX < menu.getBoundingClientRect().left || mouseX > menu.getBoundingClientRect().right || mouseY < menu.getBoundingClientRect().top || mouseY > menu.getBoundingClientRect().bottom) {
+      if (
+        mouseX < menu.getBoundingClientRect().left ||
+        mouseX > menu.getBoundingClientRect().right ||
+        mouseY < menu.getBoundingClientRect().top ||
+        mouseY > menu.getBoundingClientRect().bottom
+      ) {
         reset();
         return;
       }
@@ -124,15 +128,22 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions): v
       */
       let prevMouseX = prevPointerPos.current.x;
       let prevMouseY = prevPointerPos.current.y;
-      let toSubmenuX = submenuSide.current === 'right' ? submenuRect.current.left - prevMouseX : prevMouseX - submenuRect.current.right;
+      let toSubmenuX =
+        submenuSide.current === 'right'
+          ? submenuRect.current.left - prevMouseX
+          : prevMouseX - submenuRect.current.right;
       let angleTop = Math.atan2(prevMouseY - submenuRect.current.top, toSubmenuX) + ANGLE_PADDING;
-      let angleBottom = Math.atan2(prevMouseY - submenuRect.current.bottom, toSubmenuX) - ANGLE_PADDING;
-      let anglePointer = Math.atan2(prevMouseY - mouseY, (submenuSide.current === 'left' ? -(mouseX - prevMouseX) : mouseX - prevMouseX));
+      let angleBottom =
+        Math.atan2(prevMouseY - submenuRect.current.bottom, toSubmenuX) - ANGLE_PADDING;
+      let anglePointer = Math.atan2(
+        prevMouseY - mouseY,
+        submenuSide.current === 'left' ? -(mouseX - prevMouseX) : mouseX - prevMouseX
+      );
       let isMovingTowardsSubmenu = anglePointer < angleTop && anglePointer > angleBottom;
 
-      movementsTowardsSubmenuCount.current = isMovingTowardsSubmenu ?
-        Math.min(movementsTowardsSubmenuCount.current + 1, ALLOWED_INVALID_MOVEMENTS) :
-        Math.max(movementsTowardsSubmenuCount.current - 1, 0);
+      movementsTowardsSubmenuCount.current = isMovingTowardsSubmenu
+        ? Math.min(movementsTowardsSubmenuCount.current + 1, ALLOWED_INVALID_MOVEMENTS)
+        : Math.max(movementsTowardsSubmenuCount.current - 1, 0);
 
       if (movementsTowardsSubmenuCount.current >= ALLOWED_INVALID_MOVEMENTS) {
         setPreventPointerEvents(true);
@@ -152,7 +163,9 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions): v
             // Wait until pointer-events:none is no longer applied
             let target = document.elementFromPoint(mouseX, mouseY);
             if (target && nodeContains(menu, target)) {
-              target.dispatchEvent(new PointerEvent('pointerover', {bubbles: true, cancelable: true}));
+              target.dispatchEvent(
+                new PointerEvent('pointerover', {bubbles: true, cancelable: true})
+              );
             }
           }, 100);
         }, TIMEOUT_TIME);
@@ -176,6 +189,5 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions): v
       clearTimeout(autoCloseTimeout.current);
       movementsTowardsSubmenuCount.current = ALLOWED_INVALID_MOVEMENTS;
     };
-
   }, [isDisabled, isOpen, menuRef, modality, setPreventPointerEvents, submenuRef]);
 }

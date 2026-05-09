@@ -17,7 +17,7 @@ import {useEffectEvent} from './useEffectEvent';
 import {useLayoutEffect} from './useLayoutEffect';
 
 export interface LoadMoreSentinelProps extends Omit<AsyncLoadable, 'isLoading'> {
-  collection: Collection<any>,
+  collection: Collection<any>;
   /**
    * The amount of offset from the bottom of your scrollable region that should trigger load more.
    * Uses a percentage value relative to the scroll body's client height. Load more is then triggered
@@ -25,10 +25,13 @@ export interface LoadMoreSentinelProps extends Omit<AsyncLoadable, 'isLoading'> 
    * or equal to the provided value. (e.g. 1 = 100% of the scroll region's height).
    * @default 1
    */
-  scrollOffset?: number
+  scrollOffset?: number;
 }
 
-export function useLoadMoreSentinel(props: LoadMoreSentinelProps, ref: RefObject<HTMLElement | null>): void {
+export function useLoadMoreSentinel(
+  props: LoadMoreSentinelProps,
+  ref: RefObject<HTMLElement | null>
+): void {
   let {collection, onLoadMore, scrollOffset = 1} = props;
 
   let sentinelObserver = useRef<IntersectionObserver>(null);
@@ -50,7 +53,10 @@ export function useLoadMoreSentinel(props: LoadMoreSentinelProps, ref: RefObject
       // Tear down and set up a new IntersectionObserver when the collection changes so that we can properly trigger additional loadMores if there is room for more items
       // Need to do this tear down and set up since using a large rootMargin will mean the observer's callback isn't called even when scrolling the item into view beause its visibility hasn't actually changed
       // https://codesandbox.io/p/sandbox/magical-swanson-dhgp89?file=%2Fsrc%2FApp.js%3A21%2C21
-      sentinelObserver.current = new IntersectionObserver(triggerLoadMore, {root: getScrollParent(ref?.current) as HTMLElement, rootMargin: `0px ${100 * scrollOffset}% ${100 * scrollOffset}% ${100 * scrollOffset}%`});
+      sentinelObserver.current = new IntersectionObserver(triggerLoadMore, {
+        root: getScrollParent(ref?.current) as HTMLElement,
+        rootMargin: `0px ${100 * scrollOffset}% ${100 * scrollOffset}% ${100 * scrollOffset}%`
+      });
       sentinelObserver.current.observe(ref.current);
     }
 

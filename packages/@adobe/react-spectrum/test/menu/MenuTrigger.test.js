@@ -43,26 +43,22 @@ import userEvent from '@testing-library/user-event';
 
 let triggerText = 'Menu Button';
 
-let withSection = [
-  {name: 'Heading 1', children: [
-    {name: 'Foo'},
-    {name: 'Bar'},
-    {name: 'Baz'}
-  ]}
-];
+let withSection = [{name: 'Heading 1', children: [{name: 'Foo'}, {name: 'Bar'}, {name: 'Baz'}]}];
 
 function renderComponent(Component, triggerProps = {}, menuProps = {}, buttonProps = {}) {
   return render(
     <Provider theme={theme}>
       <div data-testid="scrollable">
         <Component {...triggerProps}>
-          <Button {...buttonProps}>
-            {triggerText}
-          </Button>
+          <Button {...buttonProps}>{triggerText}</Button>
           <Menu items={withSection} {...menuProps}>
             {item => (
               <Section key={item.name} items={item.children} title={item.name}>
-                {item => <Item key={item.name} childItems={item.children}>{item.name}</Item>}
+                {item => (
+                  <Item key={item.name} childItems={item.children}>
+                    {item.name}
+                  </Item>
+                )}
               </Section>
             )}
           </Menu>
@@ -86,8 +82,12 @@ describe('MenuTrigger', function () {
 
   beforeAll(function () {
     user = userEvent.setup({delay: null, pointerMap});
-    offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(() => 1000);
-    offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'offsetHeight', 'get').mockImplementation(() => 1000);
+    offsetWidth = jest
+      .spyOn(window.HTMLElement.prototype, 'offsetWidth', 'get')
+      .mockImplementation(() => 1000);
+    offsetHeight = jest
+      .spyOn(window.HTMLElement.prototype, 'offsetHeight', 'get')
+      .mockImplementation(() => 1000);
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
     simulateDesktop();
     jest.useFakeTimers();
@@ -122,7 +122,9 @@ describe('MenuTrigger', function () {
     expect(onOpenChange).toBeCalledTimes(0);
 
     await triggerEvent(triggerButton);
-    act(() => {jest.runAllTimers();});
+    act(() => {
+      jest.runAllTimers();
+    });
 
     let menu = menuTester.menu;
     expect(menu).toBeInTheDocument();
@@ -146,7 +148,9 @@ describe('MenuTrigger', function () {
     }
 
     await triggerEvent(triggerButton, menu);
-    act(() => {jest.runAllTimers();});
+    act(() => {
+      jest.runAllTimers();
+    });
     expect(menu).not.toBeInTheDocument();
 
     if (Component === MenuTrigger) {
@@ -164,7 +168,9 @@ describe('MenuTrigger', function () {
     ${'MenuTrigger'} | ${MenuTrigger} | ${{onOpenChange, isOpen: true}}
   `('$Name supports a controlled open state ', function ({Component, props}) {
     let tree = renderComponent(Component, props);
-    act(() => {jest.runAllTimers();});
+    act(() => {
+      jest.runAllTimers();
+    });
     expect(onOpenChange).toBeCalledTimes(0);
 
     let menu = tree.getByRole('menu');
@@ -173,7 +179,9 @@ describe('MenuTrigger', function () {
     let triggerButton = tree.getByText('Menu Button');
     fireEvent.mouseDown(triggerButton, {button: 0});
     fireEvent.mouseUp(triggerButton, {button: 0});
-    act(() => {jest.runAllTimers();});
+    act(() => {
+      jest.runAllTimers();
+    });
 
     expect(menu).toBeInTheDocument();
     expect(onOpenChange).toBeCalledTimes(1);
@@ -185,7 +193,9 @@ describe('MenuTrigger', function () {
     ${'MenuTrigger'} | ${MenuTrigger} | ${{onOpenChange, defaultOpen: true}}
   `('$Name supports a uncontrolled default open state ', async function ({Component, props}) {
     let tree = renderComponent(Component, props);
-    act(() => {jest.runAllTimers();});
+    act(() => {
+      jest.runAllTimers();
+    });
     expect(onOpenChange).toBeCalledTimes(0);
 
     let menu = tree.getByRole('menu');
@@ -193,7 +203,9 @@ describe('MenuTrigger', function () {
 
     let triggerButton = tree.getByText('Menu Button');
     await user.click(triggerButton);
-    act(() => {jest.runAllTimers();});
+    act(() => {
+      jest.runAllTimers();
+    });
 
     expect(menu).not.toBeInTheDocument();
     expect(onOpenChange).toBeCalledTimes(1);
@@ -214,117 +226,163 @@ describe('MenuTrigger', function () {
       let menuItems = menuTester.options();
       let itemToAction = menuItems[1];
       await triggerEvent(itemToAction);
-      act(() => {jest.runAllTimers();}); // FocusScope useLayoutEffect cleanup
-      act(() => {jest.runAllTimers();}); // FocusScope raf
+      act(() => {
+        jest.runAllTimers();
+      }); // FocusScope useLayoutEffect cleanup
+      act(() => {
+        jest.runAllTimers();
+      }); // FocusScope raf
     }
 
     // TODO: Implement in RAC
     it.each`
       Name             | Component      | props
       ${'MenuTrigger'} | ${MenuTrigger} | ${{onOpenChange, closeOnSelect: false}}
-    `('$Name doesn\'t close on menu item selection if closeOnSelect=false', async function ({Component, props}) {
-      tree = renderComponent(Component, props, {selectionMode: 'single', onSelectionChange});
-      let menuTester = testUtilUser.createTester('Menu', {root: tree.container});
-      expect(onOpenChange).toBeCalledTimes(0);
-      await menuTester.open();
+    `(
+      "$Name doesn't close on menu item selection if closeOnSelect=false",
+      async function ({Component, props}) {
+        tree = renderComponent(Component, props, {selectionMode: 'single', onSelectionChange});
+        let menuTester = testUtilUser.createTester('Menu', {root: tree.container});
+        expect(onOpenChange).toBeCalledTimes(0);
+        await menuTester.open();
 
-      if (Component === MenuTrigger) {
-        expect(onOpenChange).toBeCalledTimes(1);
-        expect(onSelectionChange).toBeCalledTimes(0);
-      } else {
-        expect(onOpen).toBeCalledTimes(1);
-        expect(onClose).toBeCalledTimes(0);
-        expect(onSelect).toBeCalledTimes(0);
+        if (Component === MenuTrigger) {
+          expect(onOpenChange).toBeCalledTimes(1);
+          expect(onSelectionChange).toBeCalledTimes(0);
+        } else {
+          expect(onOpen).toBeCalledTimes(1);
+          expect(onClose).toBeCalledTimes(0);
+          expect(onSelect).toBeCalledTimes(0);
+        }
+
+        await menuTester.selectOption({
+          option: 'Foo',
+          menuSelectionMode: 'single',
+          closesOnSelect: false
+        });
+
+        if (Component === MenuTrigger) {
+          expect(onSelectionChange).toBeCalledTimes(1);
+        } else {
+          expect(onSelect).toBeCalledTimes(1);
+        }
+
+        expect(menuTester.menu).toBeInTheDocument();
+
+        if (Component === MenuTrigger) {
+          expect(menuTester.trigger).toHaveAttribute('aria-expanded', 'true');
+          expect(onOpenChange).toBeCalledTimes(1);
+        } else {
+          expect(menuTester.trigger).toHaveAttribute('aria-expanded');
+          expect(onOpen).toBeCalledTimes(1);
+          expect(onClose).toBeCalledTimes(0);
+        }
       }
-
-      await menuTester.selectOption({option: 'Foo', menuSelectionMode: 'single', closesOnSelect: false});
-
-      if (Component === MenuTrigger) {
-        expect(onSelectionChange).toBeCalledTimes(1);
-      } else {
-        expect(onSelect).toBeCalledTimes(1);
-      }
-
-      expect(menuTester.menu).toBeInTheDocument();
-
-      if (Component === MenuTrigger) {
-        expect(menuTester.trigger).toHaveAttribute('aria-expanded', 'true');
-        expect(onOpenChange).toBeCalledTimes(1);
-      } else {
-        expect(menuTester.trigger).toHaveAttribute('aria-expanded');
-        expect(onOpen).toBeCalledTimes(1);
-        expect(onClose).toBeCalledTimes(0);
-      }
-    });
+    );
 
     it.each`
       Name             | Component      | props
       ${'MenuTrigger'} | ${MenuTrigger} | ${{onOpenChange, closeOnSelect: false}}
-    `('$Name doesn\'t closes menu on item selection via ENTER press if closeOnSelect=false', async function ({Component, props}) {
-      tree = renderComponent(Component, props, {selectionMode: 'single', onSelectionChange});
-      let menuTester = testUtilUser.createTester('Menu', {root: tree.container});
-      expect(onOpenChange).toBeCalledTimes(0);
-      await menuTester.open();
+    `(
+      "$Name doesn't closes menu on item selection via ENTER press if closeOnSelect=false",
+      async function ({Component, props}) {
+        tree = renderComponent(Component, props, {selectionMode: 'single', onSelectionChange});
+        let menuTester = testUtilUser.createTester('Menu', {root: tree.container});
+        expect(onOpenChange).toBeCalledTimes(0);
+        await menuTester.open();
 
-      expect(onOpenChange).toBeCalledTimes(1);
-      expect(onSelectionChange).toBeCalledTimes(0);
-      menuTester.setInteractionType('keyboard');
-      await menuTester.selectOption({option: 'Foo', menuSelectionMode: 'single', closesOnSelect: false});
+        expect(onOpenChange).toBeCalledTimes(1);
+        expect(onSelectionChange).toBeCalledTimes(0);
+        menuTester.setInteractionType('keyboard');
+        await menuTester.selectOption({
+          option: 'Foo',
+          menuSelectionMode: 'single',
+          closesOnSelect: false
+        });
 
-      expect(menuTester.menu).toBeInTheDocument();
-      expect(menuTester.trigger).toHaveAttribute('aria-expanded', 'true');
-      expect(onOpenChange).toBeCalledTimes(1);
-    });
-
-    it.each`
-      Name               | Component        | props
-      ${'MenuTrigger'}   | ${MenuTrigger}   | ${{onOpenChange}}
-    `('$Name should prevent Esc from clearing selection and close the menu if escapeKeyBehavior is "none"', async function ({Component, props}) {
-      tree = renderComponent(Component, props, {selectionMode: 'multiple', escapeKeyBehavior: 'none', onSelectionChange});
-      let menuTester = testUtilUser.createTester('Menu', {root: tree.container, interactionType: 'keyboard'});
-      expect(onOpenChange).toBeCalledTimes(0);
-      await menuTester.open();
-
-      expect(onOpenChange).toBeCalledTimes(1);
-      expect(onSelectionChange).toBeCalledTimes(0);
-
-      await menuTester.selectOption({option: 'Foo', menuSelectionMode: 'multiple', keyboardActivation: 'Space'});
-      expect(onSelectionChange).toBeCalledTimes(1);
-      expect(onSelectionChange.mock.calls[0][0].has('Foo')).toBeTruthy();
-      await menuTester.selectOption({option: 'Bar', menuSelectionMode: 'multiple', keyboardActivation: 'Space'});
-      expect(onSelectionChange).toBeCalledTimes(2);
-      expect(onSelectionChange.mock.calls[1][0].has('Bar')).toBeTruthy();
-
-      await menuTester.close();
-      expect(menuTester.menu).not.toBeInTheDocument();
-      expect(onOpenChange).toBeCalledTimes(2);
-    });
+        expect(menuTester.menu).toBeInTheDocument();
+        expect(menuTester.trigger).toHaveAttribute('aria-expanded', 'true');
+        expect(onOpenChange).toBeCalledTimes(1);
+      }
+    );
 
     it.each`
-      Name                      | Component      | props | menuProps
+      Name             | Component      | props
+      ${'MenuTrigger'} | ${MenuTrigger} | ${{onOpenChange}}
+    `(
+      '$Name should prevent Esc from clearing selection and close the menu if escapeKeyBehavior is "none"',
+      async function ({Component, props}) {
+        tree = renderComponent(Component, props, {
+          selectionMode: 'multiple',
+          escapeKeyBehavior: 'none',
+          onSelectionChange
+        });
+        let menuTester = testUtilUser.createTester('Menu', {
+          root: tree.container,
+          interactionType: 'keyboard'
+        });
+        expect(onOpenChange).toBeCalledTimes(0);
+        await menuTester.open();
+
+        expect(onOpenChange).toBeCalledTimes(1);
+        expect(onSelectionChange).toBeCalledTimes(0);
+
+        await menuTester.selectOption({
+          option: 'Foo',
+          menuSelectionMode: 'multiple',
+          keyboardActivation: 'Space'
+        });
+        expect(onSelectionChange).toBeCalledTimes(1);
+        expect(onSelectionChange.mock.calls[0][0].has('Foo')).toBeTruthy();
+        await menuTester.selectOption({
+          option: 'Bar',
+          menuSelectionMode: 'multiple',
+          keyboardActivation: 'Space'
+        });
+        expect(onSelectionChange).toBeCalledTimes(2);
+        expect(onSelectionChange.mock.calls[1][0].has('Bar')).toBeTruthy();
+
+        await menuTester.close();
+        expect(menuTester.menu).not.toBeInTheDocument();
+        expect(onOpenChange).toBeCalledTimes(2);
+      }
+    );
+
+    it.each`
+      Name                      | Component      | props                    | menuProps
       ${'MenuTrigger multiple'} | ${MenuTrigger} | ${{closeOnSelect: true}} | ${{selectionMode: 'multiple', onClose}}
-    `('$Name closes on menu item selection if toggled by mouse click', async function ({Component, props, menuProps}) {
-      tree = renderComponent(Component, props, menuProps);
-      await openAndTriggerMenuItem(tree, props.role, menuProps.selectionMode, async (item) => await user.click(item));
+    `(
+      '$Name closes on menu item selection if toggled by mouse click',
+      async function ({Component, props, menuProps}) {
+        tree = renderComponent(Component, props, menuProps);
+        await openAndTriggerMenuItem(
+          tree,
+          props.role,
+          menuProps.selectionMode,
+          async item => await user.click(item)
+        );
 
-      let menu = tree.queryByRole('menu');
-      expect(menu).toBeNull();
-      expect(document.activeElement).toBe(tree.getByRole('button'));
-      expect(onClose).toHaveBeenCalledTimes(1);
-    });
+        let menu = tree.queryByRole('menu');
+        expect(menu).toBeNull();
+        expect(document.activeElement).toBe(tree.getByRole('button'));
+        expect(onClose).toHaveBeenCalledTimes(1);
+      }
+    );
 
     it('should forward ref to the button', function () {
       let ref = React.createRef();
       let {getByRole} = render(
         <Provider theme={theme}>
           <MenuTrigger ref={ref}>
-            <Button>
-              {triggerText}
-            </Button>
+            <Button>{triggerText}</Button>
             <Menu items={withSection}>
               {item => (
                 <Section key={item.name} items={item.children} title={item.name}>
-                  {item => <Item key={item.name} childItems={item.children}>{item.name}</Item>}
+                  {item => (
+                    <Item key={item.name} childItems={item.children}>
+                      {item.name}
+                    </Item>
+                  )}
                 </Section>
               )}
             </Menu>
@@ -341,13 +399,15 @@ describe('MenuTrigger', function () {
       let {getByRole} = render(
         <Provider theme={theme}>
           <MenuTrigger ref={menuTriggerRef}>
-            <Button ref={buttonRef}>
-              {triggerText}
-            </Button>
+            <Button ref={buttonRef}>{triggerText}</Button>
             <Menu items={withSection}>
               {item => (
                 <Section key={item.name} items={item.children} title={item.name}>
-                  {item => <Item key={item.name} childItems={item.children}>{item.name}</Item>}
+                  {item => (
+                    <Item key={item.name} childItems={item.children}>
+                      {item.name}
+                    </Item>
+                  )}
                 </Section>
               )}
             </Menu>
@@ -389,7 +449,9 @@ describe('MenuTrigger', function () {
       const props = {onOpenChange, trigger: 'longPress'};
       await verifyMenuToggle(MenuTrigger, props, {}, async (button, menu) => {
         expect(button).toHaveAttribute('aria-describedby');
-        expect(document.getElementById(button.getAttribute('aria-describedby'))).toHaveTextContent('Long press or press Alt + ArrowDown to open menu');
+        expect(document.getElementById(button.getAttribute('aria-describedby'))).toHaveTextContent(
+          'Long press or press Alt + ArrowDown to open menu'
+        );
 
         if (!menu) {
           await triggerLongPress({element: button, advanceTimer: jest.advanceTimersByTime});
@@ -476,7 +538,11 @@ describe('MenuTrigger', function () {
     }
 
     it('should focus the selected item on menu open', async function () {
-      let tree = renderComponent(MenuTrigger, {trigger: 'longPress'}, {selectedKeys: ['Bar'], selectionMode: 'single'});
+      let tree = renderComponent(
+        MenuTrigger,
+        {trigger: 'longPress'},
+        {selectedKeys: ['Bar'], selectionMode: 'single'}
+      );
       let button = tree.getByRole('button');
       await triggerLongPress({element: button, advanceTimer: jest.advanceTimersByTime});
       let menu = expectMenuItemToBeActive(tree, 1, 'single');
@@ -523,12 +589,16 @@ describe('MenuTrigger', function () {
   describe('sub dialogs', function () {
     let tree;
     afterEach(() => {
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
       if (tree) {
         tree.unmount();
       }
       tree = null;
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
     });
 
     describe('unavailable item', function () {
@@ -555,11 +625,15 @@ describe('MenuTrigger', function () {
                 <Item key="3">Three</Item>
                 <Item key="5">Five</Item>
                 <ContextualHelpTrigger isUnavailable>
-                  <Item key="bar" textValue="Choose a college major">Choose a College Major</Item>
+                  <Item key="bar" textValue="Choose a college major">
+                    Choose a College Major
+                  </Item>
                   <Dialog>
                     <Heading>Choosing a College Major</Heading>
                     <Content>What factors should I consider when choosing a college major?</Content>
-                    <Footer>Visit this link before choosing this action. <Link>Learn more</Link></Footer>
+                    <Footer>
+                      Visit this link before choosing this action. <Link>Learn more</Link>
+                    </Footer>
                   </Dialog>
                 </ContextualHelpTrigger>
               </Menu>
@@ -571,7 +645,9 @@ describe('MenuTrigger', function () {
       let openMenu = async () => {
         let triggerButton = tree.getByRole('button');
         await user.click(triggerButton);
-        act(() => {jest.runAllTimers();});
+        act(() => {
+          jest.runAllTimers();
+        });
 
         return tree.getByRole('menu');
       };
@@ -595,13 +671,17 @@ describe('MenuTrigger', function () {
         expect(unavailableItem).toHaveAttribute('aria-haspopup', 'dialog');
 
         fireEvent.mouseEnter(unavailableItem);
-        act(() => {jest.runAllTimers();});
+        act(() => {
+          jest.runAllTimers();
+        });
         let dialog = tree.getByRole('dialog');
         expect(dialog).toBeVisible();
 
         fireEvent.mouseLeave(unavailableItem);
         fireEvent.mouseEnter(menuItems[2]);
-        act(() => {jest.runAllTimers();});
+        act(() => {
+          jest.runAllTimers();
+        });
         expect(menu).toBeVisible();
         expect(dialog).not.toBeInTheDocument();
         expect(document.activeElement).toBe(menuItems[2]);
@@ -617,7 +697,9 @@ describe('MenuTrigger', function () {
         expect(availableItem).not.toHaveAttribute('aria-haspopup', 'dialog');
 
         fireEvent.mouseEnter(availableItem);
-        act(() => {jest.runAllTimers();});
+        act(() => {
+          jest.runAllTimers();
+        });
         expect(tree.queryByRole('dialog')).toBeNull();
 
         expect(document.activeElement).toBe(availableItem);
@@ -648,7 +730,9 @@ describe('MenuTrigger', function () {
           </Provider>
         );
 
-        act(() => {jest.runAllTimers();});
+        act(() => {
+          jest.runAllTimers();
+        });
 
         let menu = screen.getByRole('menu');
         let availableItem = within(menu).getByRole('menuitemradio', {name: 'Hello'});
@@ -656,7 +740,9 @@ describe('MenuTrigger', function () {
         expect(availableItem).toBeVisible();
         expect(availableItem).toHaveAttribute('aria-checked', 'false');
         fireEvent.click(availableItem);
-        act(() => {jest.runAllTimers();});
+        act(() => {
+          jest.runAllTimers();
+        });
 
         expect(availableItem).toHaveAttribute('aria-checked', 'true');
         expect(availableItem).not.toHaveAttribute('aria-haspopup', 'dialog');
@@ -690,21 +776,29 @@ describe('MenuTrigger', function () {
         fireEvent.mouseEnter(unavailableItem);
         fireEvent.mouseDown(unavailableItem);
         fireEvent.mouseUp(unavailableItem);
-        act(() => {jest.runAllTimers();});
+        act(() => {
+          jest.runAllTimers();
+        });
         let dialog = tree.getByRole('dialog');
         expect(dialog).toBeVisible();
 
         fireEvent.mouseLeave(unavailableItem);
         fireEvent.mouseEnter(menuItems[2]);
-        act(() => {jest.runAllTimers();});
+        act(() => {
+          jest.runAllTimers();
+        });
         expect(dialog).not.toBeVisible();
 
         fireEvent.mouseLeave(menuItems[2]);
         fireEvent.mouseEnter(menuItems[3]);
-        act(() => {jest.runAllTimers();});
+        act(() => {
+          jest.runAllTimers();
+        });
         fireEvent.mouseLeave(menuItems[3]);
         fireEvent.mouseEnter(menuItems[4]);
-        act(() => {jest.runAllTimers();});
+        act(() => {
+          jest.runAllTimers();
+        });
 
         expect(menu).toBeVisible();
         dialog = tree.getByRole('dialog');
@@ -712,12 +806,16 @@ describe('MenuTrigger', function () {
         expect(document.activeElement).toBe(dialog);
 
         await user.tab();
-        act(() => {jest.runAllTimers();});
+        act(() => {
+          jest.runAllTimers();
+        });
         let link = screen.getByRole('link');
         expect(document.activeElement).toBe(link);
 
         await user.tab();
-        act(() => {jest.runAllTimers();});
+        act(() => {
+          jest.runAllTimers();
+        });
         expect(dialog).toBeInTheDocument();
         expect(document.activeElement).toBe(link);
       });
@@ -731,15 +829,21 @@ describe('MenuTrigger', function () {
         expect(unavailableItem).toHaveAttribute('aria-haspopup', 'dialog');
 
         fireEvent.mouseEnter(unavailableItem);
-        act(() => {jest.runAllTimers();});
+        act(() => {
+          jest.runAllTimers();
+        });
         let dialog = tree.getByRole('dialog');
         expect(dialog).toBeVisible();
 
         expect(document.activeElement).toBe(dialog);
 
         await user.tab({shift: true});
-        act(() => {jest.runAllTimers();});
-        act(() => {jest.runAllTimers();});
+        act(() => {
+          jest.runAllTimers();
+        });
+        act(() => {
+          jest.runAllTimers();
+        });
         expect(dialog).toBeInTheDocument();
         expect(document.activeElement).toBe(within(dialog).getByRole('link'));
       });
@@ -770,7 +874,9 @@ describe('MenuTrigger', function () {
         expect(unavailableItem).toHaveAttribute('aria-haspopup', 'dialog');
 
         fireEvent.mouseEnter(unavailableItem);
-        act(() => {jest.runAllTimers();});
+        act(() => {
+          jest.runAllTimers();
+        });
         let dialog = tree.getByRole('dialog');
         expect(dialog).toBeVisible();
 
@@ -779,8 +885,12 @@ describe('MenuTrigger', function () {
         let underlay = tree.getByTestId('underlay', {hidden: true});
         fireEvent.mouseDown(underlay);
         fireEvent.mouseUp(underlay);
-        act(() => {jest.runAllTimers();});
-        act(() => {jest.runAllTimers();});
+        act(() => {
+          jest.runAllTimers();
+        });
+        act(() => {
+          jest.runAllTimers();
+        });
         expect(dialog).not.toBeInTheDocument();
         expect(menu).not.toBeInTheDocument();
 
@@ -793,12 +903,16 @@ describe('MenuTrigger', function () {
   describe('portalContainer', () => {
     let tree;
     afterEach(() => {
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
       if (tree) {
         tree.unmount();
       }
       tree = null;
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
     });
 
     function InfoMenu(props) {
@@ -829,28 +943,30 @@ describe('MenuTrigger', function () {
     }
 
     it('should render the menu in the portal container', async () => {
-      tree = render(
-        <App />
-      );
+      tree = render(<App />);
 
       let button = tree.getByRole('button');
       await user.click(button);
 
-      expect(tree.getByRole('menu').closest('[data-testid="custom-container"]')).toBe(tree.getByTestId('custom-container'));
+      expect(tree.getByRole('menu').closest('[data-testid="custom-container"]')).toBe(
+        tree.getByTestId('custom-container')
+      );
       await user.keyboard('{Escape}');
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
     });
 
     it('should render the menu tray in the portal container', async () => {
       windowSpy.mockImplementation(() => 700);
-      tree = render(
-        <App />
-      );
+      tree = render(<App />);
 
       let button = tree.getByRole('button');
       await user.click(button);
 
-      expect(tree.getByRole('menu').closest('[data-testid="custom-container"]')).toBe(tree.getByTestId('custom-container'));
+      expect(tree.getByRole('menu').closest('[data-testid="custom-container"]')).toBe(
+        tree.getByTestId('custom-container')
+      );
     });
   });
 
@@ -858,9 +974,7 @@ describe('MenuTrigger', function () {
     let tree = render(
       <Provider theme={theme}>
         <MenuTrigger>
-          <Button variant="primary">
-            {triggerText}
-          </Button>
+          <Button variant="primary">{triggerText}</Button>
           <Menu>
             <Item id="1">One</Item>
             <Item id="2">Two</Item>
@@ -873,13 +987,19 @@ describe('MenuTrigger', function () {
     menuTester.setInteractionType('keyboard');
 
     await menuTester.open();
-    act(() => {jest.runAllTimers();});
+    act(() => {
+      jest.runAllTimers();
+    });
 
     let menu = menuTester.menu;
 
     await user.tab();
-    act(() => {jest.runAllTimers();});
-    act(() => {jest.runAllTimers();});
+    act(() => {
+      jest.runAllTimers();
+    });
+    act(() => {
+      jest.runAllTimers();
+    });
     expect(menu).toBeInTheDocument();
     expect(document.activeElement).toBe(menuTester.options()[0]);
   });
@@ -914,8 +1034,12 @@ let setup = () => {
   let originalScrollIntoView = window.HTMLElement.prototype.scrollIntoView;
 
   beforeAll(function () {
-    offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(() => 1000);
-    offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'offsetHeight', 'get').mockImplementation(() => 1000);
+    offsetWidth = jest
+      .spyOn(window.HTMLElement.prototype, 'offsetWidth', 'get')
+      .mockImplementation(() => 1000);
+    offsetHeight = jest
+      .spyOn(window.HTMLElement.prototype, 'offsetHeight', 'get')
+      .mockImplementation(() => 1000);
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
     simulateDesktop();
     jest.useFakeTimers();
@@ -941,116 +1065,111 @@ AriaMenuTests({
   prefix: 'rspv3-static',
   setup,
   renderers: {
-    standard: () => render(
-      <Provider theme={theme}>
-        <MenuTrigger>
-          <Button variant="primary">
-            {triggerText}
-          </Button>
-          <Menu>
-            <Item id="1">One</Item>
-            <Item id="2">Two</Item>
-            <Item id="3">Three</Item>
-          </Menu>
-        </MenuTrigger>
-      </Provider>
-    ),
-    disabledTrigger: () => render(
-      <Provider theme={theme}>
-        <MenuTrigger>
-          <Button isDisabled variant="primary">
-            {triggerText}
-          </Button>
-          <Menu>
-            <Item id="1">One</Item>
-            <Item id="2">Two</Item>
-            <Item id="3">Three</Item>
-          </Menu>
-        </MenuTrigger>
-      </Provider>
-    ),
-    singleSelection: () => render(
-      <SelectionStatic />
-    ),
-    multipleSelection: () => render(
-      <SelectionStatic selectionMode="multiple" />
-    ),
-    multipleMenus: () => render(
-      <Provider theme={theme}>
-        <MenuTrigger>
-          <Button variant="primary">
-            Menu Button1
-          </Button>
-          <Menu aria-label="Test1">
-            <Item id="1">One</Item>
-            <Item id="2">Two</Item>
-            <Item id="3">Three</Item>
-          </Menu>
-        </MenuTrigger>
-        <MenuTrigger>
-          <Button variant="primary">
-            Menu Button2
-          </Button>
-          <Menu aria-label="Test2">
-            <Item id="1">One</Item>
-            <Item id="2">Two</Item>
-            <Item id="3">Three</Item>
-          </Menu>
-        </MenuTrigger>
-      </Provider>
-    ),
-    submenus: () => render(
-      <Provider theme={theme}>
-        <MenuTrigger>
-          <Button aria-label="Menu">☰</Button>
-          <Menu>
-            <Item id="open">Open</Item>
-            <Item id="rename">Rename…</Item>
-            <Item id="duplicate">Duplicate</Item>
-            <SubmenuTrigger>
-              <Item id="share">Share…</Item>
-              <Menu>
-                <SubmenuTrigger>
-                  <Item id="email">Email…</Item>
-                  <Menu>
-                    <Item id="work">Work</Item>
-                    <Item id="personal">Personal</Item>
-                  </Menu>
-                </SubmenuTrigger>
-                <Item id="sms">SMS</Item>
-                <Item id="x">X</Item>
-              </Menu>
-            </SubmenuTrigger>
-            <Item id="delete">Delete…</Item>
-          </Menu>
-        </MenuTrigger>
-      </Provider>
-    )
+    standard: () =>
+      render(
+        <Provider theme={theme}>
+          <MenuTrigger>
+            <Button variant="primary">{triggerText}</Button>
+            <Menu>
+              <Item id="1">One</Item>
+              <Item id="2">Two</Item>
+              <Item id="3">Three</Item>
+            </Menu>
+          </MenuTrigger>
+        </Provider>
+      ),
+    disabledTrigger: () =>
+      render(
+        <Provider theme={theme}>
+          <MenuTrigger>
+            <Button isDisabled variant="primary">
+              {triggerText}
+            </Button>
+            <Menu>
+              <Item id="1">One</Item>
+              <Item id="2">Two</Item>
+              <Item id="3">Three</Item>
+            </Menu>
+          </MenuTrigger>
+        </Provider>
+      ),
+    singleSelection: () => render(<SelectionStatic />),
+    multipleSelection: () => render(<SelectionStatic selectionMode="multiple" />),
+    multipleMenus: () =>
+      render(
+        <Provider theme={theme}>
+          <MenuTrigger>
+            <Button variant="primary">Menu Button1</Button>
+            <Menu aria-label="Test1">
+              <Item id="1">One</Item>
+              <Item id="2">Two</Item>
+              <Item id="3">Three</Item>
+            </Menu>
+          </MenuTrigger>
+          <MenuTrigger>
+            <Button variant="primary">Menu Button2</Button>
+            <Menu aria-label="Test2">
+              <Item id="1">One</Item>
+              <Item id="2">Two</Item>
+              <Item id="3">Three</Item>
+            </Menu>
+          </MenuTrigger>
+        </Provider>
+      ),
+    submenus: () =>
+      render(
+        <Provider theme={theme}>
+          <MenuTrigger>
+            <Button aria-label="Menu">☰</Button>
+            <Menu>
+              <Item id="open">Open</Item>
+              <Item id="rename">Rename…</Item>
+              <Item id="duplicate">Duplicate</Item>
+              <SubmenuTrigger>
+                <Item id="share">Share…</Item>
+                <Menu>
+                  <SubmenuTrigger>
+                    <Item id="email">Email…</Item>
+                    <Menu>
+                      <Item id="work">Work</Item>
+                      <Item id="personal">Personal</Item>
+                    </Menu>
+                  </SubmenuTrigger>
+                  <Item id="sms">SMS</Item>
+                  <Item id="x">X</Item>
+                </Menu>
+              </SubmenuTrigger>
+              <Item id="delete">Delete…</Item>
+            </Menu>
+          </MenuTrigger>
+        </Provider>
+      )
   }
 });
 
-
 let dynamicSubmenu = [
   {name: 'Lvl 1 Item 1'},
-  {name: 'Lvl 1 Item 2', children: [
-    {name: 'Lvl 2 Item 1'},
-    {name: 'Lvl 2 Item 2'},
-    {name: 'Lvl 2 Item 3', children: [
-      {name: 'Lvl 3 Item 1'},
-      {name: 'Lvl 3 Item 2'},
-      {name: 'Lvl 3 Item 3'}
-    ]}
-  ]},
+  {
+    name: 'Lvl 1 Item 2',
+    children: [
+      {name: 'Lvl 2 Item 1'},
+      {name: 'Lvl 2 Item 2'},
+      {
+        name: 'Lvl 2 Item 3',
+        children: [{name: 'Lvl 3 Item 1'}, {name: 'Lvl 3 Item 2'}, {name: 'Lvl 3 Item 3'}]
+      }
+    ]
+  },
   {name: 'Lvl 1 Item 3'}
 ];
 
-let dynamicRenderFunc = (item) => {
+let dynamicRenderFunc = item => {
   if (item.children) {
     return (
       <SubmenuTrigger>
         <Item key={item.name}>{item.name}</Item>
         <Menu items={item.children} onAction={action(`${item.name} onAction`)}>
-          {(item) => dynamicRenderFunc(item)}
+          {item => dynamicRenderFunc(item)}
         </Menu>
       </SubmenuTrigger>
     );
@@ -1059,109 +1178,109 @@ let dynamicRenderFunc = (item) => {
   }
 };
 
-
 let ariaWithSection = [
-  {name: 'Heading 1', children: [
-    {name: 'Foo'},
-    {name: 'Bar'},
-    {name: 'Baz'},
-    {name: 'Fizz'}
-  ]}
+  {name: 'Heading 1', children: [{name: 'Foo'}, {name: 'Bar'}, {name: 'Baz'}, {name: 'Fizz'}]}
 ];
 
 AriaMenuTests({
   prefix: 'rspv3-dynamic',
   setup,
   renderers: {
-    standard: () => render(
-      <Provider theme={theme}>
-        <MenuTrigger>
-          <Button variant="primary">
-            {triggerText}
-          </Button>
-          <Menu items={ariaWithSection}>
-            {item => (
-              <Section key={item.name} items={item.children} title={item.name}>
-                {item => <Item key={item.name} childItems={item.children}>{item.name}</Item>}
-              </Section>
-            )}
-          </Menu>
-        </MenuTrigger>
-      </Provider>
-    ),
-    disabledTrigger: () => render(
-      <Provider theme={theme}>
-        <MenuTrigger>
-          <Button isDisabled variant="primary">
-            {triggerText}
-          </Button>
-          <Menu items={ariaWithSection}>
-            {item => (
-              <Section key={item.name} items={item.children} title={item.name}>
-                {item => <Item key={item.name} childItems={item.children}>{item.name}</Item>}
-              </Section>
-            )}
-          </Menu>
-        </MenuTrigger>
-      </Provider>
-    ),
-    singleSelection: () => render(
-      <SelectionStatic />
-    ),
-    multipleSelection: () => render(
-      <SelectionStatic selectionMode="multiple" />
-    ),
-    multipleMenus: () => render(
-      <Provider theme={theme}>
-        <MenuTrigger>
-          <Button variant="primary">
-            Menu Button1
-          </Button>
-          <Menu items={ariaWithSection} aria-label="Test1">
-            {item => (
-              <Section key={item.name} items={item.children} title={item.name}>
-                {item => <Item key={item.name} childItems={item.children}>{item.name}</Item>}
-              </Section>
-            )}
-          </Menu>
-        </MenuTrigger>
-        <MenuTrigger>
-          <Button variant="primary">
-            Menu Button2
-          </Button>
-          <Menu items={ariaWithSection} aria-label="Test2">
-            {item => (
-              <Section key={item.name} items={item.children} title={item.name}>
-                {item => <Item key={item.name} childItems={item.children}>{item.name}</Item>}
-              </Section>
-            )}
-          </Menu>
-        </MenuTrigger>
-      </Provider>
-    ),
-    submenus: () => render(
-      <Provider theme={theme}>
-        <MenuTrigger>
-          <Button aria-label="Menu">☰</Button>
-          <Menu items={dynamicSubmenu}>
-            {(item) => dynamicRenderFunc(item)}
-          </Menu>
-        </MenuTrigger>
-      </Provider>
-    )
+    standard: () =>
+      render(
+        <Provider theme={theme}>
+          <MenuTrigger>
+            <Button variant="primary">{triggerText}</Button>
+            <Menu items={ariaWithSection}>
+              {item => (
+                <Section key={item.name} items={item.children} title={item.name}>
+                  {item => (
+                    <Item key={item.name} childItems={item.children}>
+                      {item.name}
+                    </Item>
+                  )}
+                </Section>
+              )}
+            </Menu>
+          </MenuTrigger>
+        </Provider>
+      ),
+    disabledTrigger: () =>
+      render(
+        <Provider theme={theme}>
+          <MenuTrigger>
+            <Button isDisabled variant="primary">
+              {triggerText}
+            </Button>
+            <Menu items={ariaWithSection}>
+              {item => (
+                <Section key={item.name} items={item.children} title={item.name}>
+                  {item => (
+                    <Item key={item.name} childItems={item.children}>
+                      {item.name}
+                    </Item>
+                  )}
+                </Section>
+              )}
+            </Menu>
+          </MenuTrigger>
+        </Provider>
+      ),
+    singleSelection: () => render(<SelectionStatic />),
+    multipleSelection: () => render(<SelectionStatic selectionMode="multiple" />),
+    multipleMenus: () =>
+      render(
+        <Provider theme={theme}>
+          <MenuTrigger>
+            <Button variant="primary">Menu Button1</Button>
+            <Menu items={ariaWithSection} aria-label="Test1">
+              {item => (
+                <Section key={item.name} items={item.children} title={item.name}>
+                  {item => (
+                    <Item key={item.name} childItems={item.children}>
+                      {item.name}
+                    </Item>
+                  )}
+                </Section>
+              )}
+            </Menu>
+          </MenuTrigger>
+          <MenuTrigger>
+            <Button variant="primary">Menu Button2</Button>
+            <Menu items={ariaWithSection} aria-label="Test2">
+              {item => (
+                <Section key={item.name} items={item.children} title={item.name}>
+                  {item => (
+                    <Item key={item.name} childItems={item.children}>
+                      {item.name}
+                    </Item>
+                  )}
+                </Section>
+              )}
+            </Menu>
+          </MenuTrigger>
+        </Provider>
+      ),
+    submenus: () =>
+      render(
+        <Provider theme={theme}>
+          <MenuTrigger>
+            <Button aria-label="Menu">☰</Button>
+            <Menu items={dynamicSubmenu}>{item => dynamicRenderFunc(item)}</Menu>
+          </MenuTrigger>
+        </Provider>
+      )
   }
 });
 
-let ControlledStandard = (props) => {
+let ControlledStandard = props => {
   let {selectionMode = 'single'} = props;
   let [isOpen, setOpen] = React.useState(false);
   let [selected, setSelected] = React.useState(new Set());
   return (
     <Provider theme={theme}>
       <MenuTrigger isOpen={isOpen} onOpenChange={setOpen}>
-        <Button variant="primary">
-          {triggerText}
-        </Button>
+        <Button variant="primary">{triggerText}</Button>
         <Menu selectedKeys={selected} onSelectionChange={setSelected} selectionMode={selectionMode}>
           <Item id="1">One</Item>
           <Item id="2">Two</Item>
@@ -1177,14 +1296,8 @@ AriaMenuTests({
   prefix: 'rspv3-controlled-open',
   setup,
   renderers: {
-    standard: () => render(
-      <ControlledStandard selectionMode="none" />
-    ),
-    singleSelection: () => render(
-      <ControlledStandard />
-    ),
-    multipleSelection: () => render(
-      <ControlledStandard selectionMode="multiple" />
-    )
+    standard: () => render(<ControlledStandard selectionMode="none" />),
+    singleSelection: () => render(<ControlledStandard />),
+    multipleSelection: () => render(<ControlledStandard selectionMode="multiple" />)
   }
 });

@@ -10,7 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMAttributes, DOMProps, InputDOMProps, RefObject} from '@react-types/shared';
+import {
+  AriaLabelingProps,
+  DOMAttributes,
+  DOMProps,
+  InputDOMProps,
+  RefObject
+} from '@react-types/shared';
 import {ColorWheelProps, ColorWheelState} from 'react-stately/useColorWheelState';
 import {focusWithoutScrolling} from '../utils/focusWithoutScrolling';
 import {getEventTarget} from '../utils/shadowdom/DOMFunctions';
@@ -24,37 +30,35 @@ import {useLocale} from '../i18n/I18nProvider';
 import {useMove} from '../interactions/useMove';
 import {useVisuallyHidden} from '../visually-hidden/VisuallyHidden';
 
-export interface AriaColorWheelProps extends ColorWheelProps, InputDOMProps, DOMProps, AriaLabelingProps {}
+export interface AriaColorWheelProps
+  extends ColorWheelProps, InputDOMProps, DOMProps, AriaLabelingProps {}
 
 export interface AriaColorWheelOptions extends AriaColorWheelProps {
   /** The outer radius of the color wheel. */
-  outerRadius: number,
+  outerRadius: number;
   /** The inner radius of the color wheel. */
-  innerRadius: number
+  innerRadius: number;
 }
 
 export interface ColorWheelAria {
   /** Props for the track element. */
-  trackProps: DOMAttributes,
+  trackProps: DOMAttributes;
   /** Props for the thumb element. */
-  thumbProps: DOMAttributes,
+  thumbProps: DOMAttributes;
   /** Props for the visually hidden range input element. */
-  inputProps: InputHTMLAttributes<HTMLInputElement>
+  inputProps: InputHTMLAttributes<HTMLInputElement>;
 }
 
 /**
  * Provides the behavior and accessibility implementation for a color wheel component.
  * Color wheels allow users to adjust the hue of an HSL or HSB color value on a circular track.
  */
-export function useColorWheel(props: AriaColorWheelOptions, state: ColorWheelState, inputRef: RefObject<HTMLInputElement | null>): ColorWheelAria {
-  let {
-    isDisabled,
-    innerRadius,
-    outerRadius,
-    'aria-label': ariaLabel,
-    name,
-    form
-  } = props;
+export function useColorWheel(
+  props: AriaColorWheelOptions,
+  state: ColorWheelState,
+  inputRef: RefObject<HTMLInputElement | null>
+): ColorWheelAria {
+  let {isDisabled, innerRadius, outerRadius, 'aria-label': ariaLabel, name, form} = props;
 
   let {addGlobalListener, removeGlobalListener} = useGlobalListeners();
 
@@ -68,7 +72,7 @@ export function useColorWheel(props: AriaColorWheelOptions, state: ColorWheelSta
 
   useFormReset(inputRef, state.defaultValue, state.setValue);
 
-  let currentPosition = useRef<{x: number, y: number} | null>(null);
+  let currentPosition = useRef<{x: number; y: number} | null>(null);
 
   let {keyboardProps} = useKeyboard({
     onKeyDown(e) {
@@ -159,7 +163,7 @@ export function useColorWheel(props: AriaColorWheelOptions, state: ColorWheelSta
     }
   };
 
-  let onThumbUp = (e) => {
+  let onThumbUp = e => {
     let id = e.pointerId ?? e.changedTouches?.[0].identifier;
     if (id === currentPointer.current) {
       focusInput();
@@ -176,12 +180,22 @@ export function useColorWheel(props: AriaColorWheelOptions, state: ColorWheelSta
     }
   };
 
-  let onTrackDown = (track: Element, id: number | null | undefined, pageX: number, pageY: number) => {
+  let onTrackDown = (
+    track: Element,
+    id: number | null | undefined,
+    pageX: number,
+    pageY: number
+  ) => {
     let rect = track.getBoundingClientRect();
     let x = pageX - rect.x - rect.width / 2;
     let y = pageY - rect.y - rect.height / 2;
     let radius = Math.sqrt(x * x + y * y);
-    if (innerRadius < radius && radius < outerRadius && !state.isDragging && currentPointer.current === undefined) {
+    if (
+      innerRadius < radius &&
+      radius < outerRadius &&
+      !state.isDragging &&
+      currentPointer.current === undefined
+    ) {
       isOnTrack.current = true;
       currentPointer.current = id;
       state.setHueFromPoint(x, y, radius);
@@ -198,14 +212,13 @@ export function useColorWheel(props: AriaColorWheelOptions, state: ColorWheelSta
     }
   };
 
-  let onTrackUp = (e) => {
+  let onTrackUp = e => {
     let id = e.pointerId ?? e.changedTouches?.[0].identifier;
     if (isOnTrack.current && id === currentPointer.current) {
       isOnTrack.current = false;
       currentPointer.current = undefined;
       state.setDragging(false);
       focusInput();
-
 
       if (typeof PointerEvent !== 'undefined') {
         removeGlobalListener(window, 'pointerup', onTrackUp, false);
@@ -216,45 +229,73 @@ export function useColorWheel(props: AriaColorWheelOptions, state: ColorWheelSta
     }
   };
 
-  let trackInteractions = isDisabled ? {} : mergeProps({
-    ...(typeof PointerEvent !== 'undefined' ? {
-      onPointerDown: (e: React.PointerEvent) => {
-        if (e.pointerType === 'mouse' && (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey)) {
-          return;
-        }
-        onTrackDown(e.currentTarget, e.pointerId, e.clientX, e.clientY);
-      }} : {
-        onMouseDown: (e: React.MouseEvent) => {
-          if (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey) {
-            return;
-          }
-          onTrackDown(e.currentTarget, undefined, e.clientX, e.clientY);
+  let trackInteractions = isDisabled
+    ? {}
+    : mergeProps(
+        {
+          ...(typeof PointerEvent !== 'undefined'
+            ? {
+                onPointerDown: (e: React.PointerEvent) => {
+                  if (
+                    e.pointerType === 'mouse' &&
+                    (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey)
+                  ) {
+                    return;
+                  }
+                  onTrackDown(e.currentTarget, e.pointerId, e.clientX, e.clientY);
+                }
+              }
+            : {
+                onMouseDown: (e: React.MouseEvent) => {
+                  if (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey) {
+                    return;
+                  }
+                  onTrackDown(e.currentTarget, undefined, e.clientX, e.clientY);
+                },
+                onTouchStart: (e: React.TouchEvent) => {
+                  onTrackDown(
+                    e.currentTarget,
+                    e.changedTouches[0].identifier,
+                    e.changedTouches[0].clientX,
+                    e.changedTouches[0].clientY
+                  );
+                }
+              })
         },
-        onTouchStart: (e: React.TouchEvent) => {
-          onTrackDown(e.currentTarget, e.changedTouches[0].identifier, e.changedTouches[0].clientX, e.changedTouches[0].clientY);
-        }
-      })
-  }, movePropsContainer);
+        movePropsContainer
+      );
 
-  let thumbInteractions = isDisabled ? {} : mergeProps({
-    ...(typeof PointerEvent !== 'undefined' ? {
-      onPointerDown: (e: React.PointerEvent) => {
-        if (e.pointerType === 'mouse' && (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey)) {
-          return;
-        }
-        onThumbDown(e.pointerId);
-      }} : {
-        onMouseDown: (e: React.MouseEvent) => {
-          if (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey) {
-            return;
-          }
-          onThumbDown(undefined);
+  let thumbInteractions = isDisabled
+    ? {}
+    : mergeProps(
+        {
+          ...(typeof PointerEvent !== 'undefined'
+            ? {
+                onPointerDown: (e: React.PointerEvent) => {
+                  if (
+                    e.pointerType === 'mouse' &&
+                    (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey)
+                  ) {
+                    return;
+                  }
+                  onThumbDown(e.pointerId);
+                }
+              }
+            : {
+                onMouseDown: (e: React.MouseEvent) => {
+                  if (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey) {
+                    return;
+                  }
+                  onThumbDown(undefined);
+                },
+                onTouchStart: (e: React.TouchEvent) => {
+                  onThumbDown(e.changedTouches[0].identifier);
+                }
+              })
         },
-        onTouchStart: (e: React.TouchEvent) => {
-          onThumbDown(e.changedTouches[0].identifier);
-        }
-      })
-  }, keyboardProps, movePropsThumb);
+        keyboardProps,
+        movePropsThumb
+      );
   let {x, y} = state.getThumbPosition(thumbRadius);
 
   // Provide a default aria-label if none is given
@@ -324,27 +365,24 @@ export function useColorWheel(props: AriaColorWheelOptions, state: ColorWheelSta
         ...forcedColorAdjustNoneStyle
       }
     },
-    inputProps: mergeProps(
-      inputLabellingProps,
-      {
-        type: 'range',
-        min: String(minValue),
-        max: String(maxValue),
-        step: String(step),
-        'aria-valuetext': `${state.value.formatChannelValue('hue', locale)}, ${state.value.getHueName(locale)}`,
-        disabled: isDisabled,
-        value: `${state.value.getChannelValue('hue')}`,
-        name,
-        form,
-        onChange: (e: ChangeEvent<HTMLInputElement>) => {
-          state.setHue(parseFloat(getEventTarget(e).value));
-        },
-        style: visuallyHiddenProps.style,
-        'aria-errormessage': props['aria-errormessage'],
-        'aria-describedby': props['aria-describedby'],
-        'aria-details': props['aria-details']
-      }
-    )
+    inputProps: mergeProps(inputLabellingProps, {
+      type: 'range',
+      min: String(minValue),
+      max: String(maxValue),
+      step: String(step),
+      'aria-valuetext': `${state.value.formatChannelValue('hue', locale)}, ${state.value.getHueName(locale)}`,
+      disabled: isDisabled,
+      value: `${state.value.getChannelValue('hue')}`,
+      name,
+      form,
+      onChange: (e: ChangeEvent<HTMLInputElement>) => {
+        state.setHue(parseFloat(getEventTarget(e).value));
+      },
+      style: visuallyHiddenProps.style,
+      'aria-errormessage': props['aria-errormessage'],
+      'aria-describedby': props['aria-describedby'],
+      'aria-details': props['aria-details']
+    })
   };
 }
 

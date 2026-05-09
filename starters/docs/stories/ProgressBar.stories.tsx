@@ -12,7 +12,7 @@ const meta: Meta<typeof ProgressBar> = {
 export default meta;
 type Story = StoryFn<typeof ProgressBar>;
 
-export const Example: Story = (args) => <ProgressBar {...args} />;
+export const Example: Story = args => <ProgressBar {...args} />;
 
 Example.args = {
   label: 'Loading…',

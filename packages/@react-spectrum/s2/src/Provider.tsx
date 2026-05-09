@@ -24,37 +24,37 @@ import {UnsafeStyles} from './style-utils' with {type: 'macro'};
 
 export type ColorScheme = 'light' | 'dark';
 interface Router {
-  navigate: (path: string, routerOptions: RouterOptions | undefined) => void,
-  useHref?: (href: Href) => string
+  navigate: (path: string, routerOptions: RouterOptions | undefined) => void;
+  useHref?: (href: Href) => string;
 }
 
 export interface ProviderProps extends UnsafeStyles, DOMProps {
   /** The content of the Provider. */
-  children: ReactNode,
+  children: ReactNode;
   /**
    * The locale for your application as a [BCP 47](https://www.ietf.org/rfc/bcp/bcp47.txt) language code.
    * Defaults to the browser/OS language setting.
    * @default 'en-US'
    */
-  locale?: string,
+  locale?: string;
   /**
    * Provides a client side router to all nested React Spectrum links to enable client side navigation.
    */
-  router?: Router,
+  router?: Router;
   /**
    * The color scheme for your application.
    * Defaults to operating system preferences.
    */
-  colorScheme?: ColorScheme,
+  colorScheme?: ColorScheme;
   /** The background for this provider. If not provided, the background is transparent. */
-  background?: 'base' | 'layer-1' | 'layer-2',
+  background?: 'base' | 'layer-1' | 'layer-2';
   /** Spectrum-defined styles, returned by the `style()` macro. */
-  styles?: StyleString,
+  styles?: StyleString;
   /**
    * The DOM element to render.
    * @default div
    */
-  elementType?: keyof JSX.IntrinsicElements
+  elementType?: keyof JSX.IntrinsicElements;
 }
 
 export const ColorSchemeContext = createContext<ColorScheme | 'light dark' | null>(null);
@@ -123,10 +123,7 @@ function ProviderInner(props: ProviderProps) {
       lang={locale}
       dir={direction}
       style={UNSAFE_style}
-      className={UNSAFE_className + mergeStyles(
-        styles,
-        providerStyles({background, colorScheme})
-      )}>
+      className={UNSAFE_className + mergeStyles(styles, providerStyles({background, colorScheme}))}>
       <Fonts />
       {children}
     </Element>

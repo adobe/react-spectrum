@@ -4,14 +4,8 @@ import App from './App';
 
 if (ReactDOM.version.startsWith('18')) {
   let ReactDOMClient = require('react-dom/client');
-  const root = ReactDOMClient.createRoot(
-    document.getElementById('root') as HTMLElement
-  );
-  root.render(
-      <App />
-  );
+  const root = ReactDOMClient.createRoot(document.getElementById('root') as HTMLElement);
+  root.render(<App />);
 } else {
-  ReactDOM.render(
-    <App />, document.getElementById("root")
-  )
+  ReactDOM.render(<App />, document.getElementById('root'));
 }

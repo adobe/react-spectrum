@@ -1,4 +1,4 @@
-@import "./theme.css";
+@import './theme.css';
 
 .react-aria-Menu {
   min-height: 0;
@@ -39,8 +39,9 @@
   display: grid;
   grid-column-start: 1;
   grid-column-end: -1;
-  grid-template-areas: ". check icon label end ."
-                       ". . . desc end .";
+  grid-template-areas:
+    '. check icon label end .'
+    '. . . desc end .';
   grid-template-columns: subgrid;
   align-items: center;
   forced-color-adjust: none;
@@ -99,12 +100,12 @@
   }
 
   .react-aria-Text:not([slot]),
-  [slot=label] {
+  [slot='label'] {
     grid-area: label;
     font-weight: 500;
   }
 
-  [slot=description] {
+  [slot='description'] {
     font-size: var(--font-size-sm);
     grid-area: desc;
   }
@@ -158,7 +159,9 @@
     border-block: 0.5px solid var(--gray-400);
     cursor: default;
     user-select: none;
-    box-shadow: inset 0px 1px 0px white, inset 0px -4px 8px var(--gray-200);
+    box-shadow:
+      inset 0px 1px 0px white,
+      inset 0px -4px 8px var(--gray-200);
 
     @media (prefers-color-scheme: dark) {
       box-shadow: inset 0px 4px 8px var(--gray-200);

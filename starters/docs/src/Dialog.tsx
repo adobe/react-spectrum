@@ -4,7 +4,7 @@ import {
   DialogTrigger as RACDialogTrigger,
   Heading,
   type DialogProps,
-  type DialogTriggerProps,
+  type DialogTriggerProps
 } from 'react-aria-components/Dialog';
 import './Dialog.css';
 

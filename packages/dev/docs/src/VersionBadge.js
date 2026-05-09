@@ -1,4 +1,3 @@
-
 /*
  * Copyright 2020 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
@@ -11,21 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-
 import badgeStyles from '@adobe/spectrum-css-temp/components/badge/vars.css';
 import clsx from 'clsx';
 import React from 'react';
 
 export function VersionBadge(props) {
-  let {
-    version = '',
-    size = 'small'
-  } = props;
+  let {version = '', size = 'small'} = props;
 
   let versionMap = {
-    'alpha': 'spectrum-Badge--info',
-    'beta': 'spectrum-Badge--info',
-    'rc': 'spectrum-Badge--positive'
+    alpha: 'spectrum-Badge--info',
+    beta: 'spectrum-Badge--info',
+    rc: 'spectrum-Badge--positive'
   };
 
   let preRelease = version.match(/(alpha)|(beta)|(rc)/);
@@ -36,6 +31,14 @@ export function VersionBadge(props) {
   }
 
   return (
-    <span style={props.style} className={clsx(badgeStyles['spectrum-Badge'], badgeStyles[sizeClass], badgeStyles[versionMap[preRelease[0]]])}>{preRelease[0]}</span>
+    <span
+      style={props.style}
+      className={clsx(
+        badgeStyles['spectrum-Badge'],
+        badgeStyles[sizeClass],
+        badgeStyles[versionMap[preRelease[0]]]
+      )}>
+      {preRelease[0]}
+    </span>
   );
 }

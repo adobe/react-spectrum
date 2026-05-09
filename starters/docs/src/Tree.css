@@ -1,4 +1,4 @@
-@import "./theme.css";
+@import './theme.css';
 
 .react-aria-Tree {
   display: flex;
@@ -39,7 +39,7 @@
     min-height: 100px;
   }
 
-  &[data-selection-mode=multiple] {
+  &[data-selection-mode='multiple'] {
     --checkbox-width: calc(var(--spacing) * 6.5);
   }
 
@@ -56,7 +56,10 @@
   .react-aria-DropIndicator {
     &[data-drop-target] {
       outline: 1px solid var(--highlight-background);
-      margin-left: calc(var(--spacing-2) + var(--checkbox-width) + var(--drag-button-width) + var(--spacing-5) + (var(--tree-item-level) - 1) * var(--spacing-4));
+      margin-left: calc(
+        var(--spacing-2) + var(--checkbox-width) + var(--drag-button-width) + var(--spacing-5) +
+          (var(--tree-item-level) - 1) * var(--spacing-4)
+      );
     }
   }
 }
@@ -91,7 +94,10 @@
     display: block;
     position: absolute;
     bottom: 0;
-    inset-inline-start: calc(var(--spacing-2) + var(--checkbox-width) + var(--drag-button-width) + var(--chevron-width) + (var(--tree-item-level) - 1) * var(--padding));
+    inset-inline-start: calc(
+      var(--spacing-2) + var(--checkbox-width) + var(--drag-button-width) + var(--chevron-width) +
+        (var(--tree-item-level) - 1) * var(--padding)
+    );
     inset-inline-end: var(--spacing-2);
     border-bottom: 0.5px solid var(--border-color);
   }
@@ -155,7 +161,7 @@
     background: var(--highlight-overlay);
   }
 
-  .react-aria-Button[slot=chevron] {
+  .react-aria-Button[slot='chevron'] {
     all: unset;
     display: flex;
     visibility: hidden;
@@ -174,15 +180,15 @@
     }
   }
 
-  &[data-has-child-items] .react-aria-Button[slot=chevron] {
+  &[data-has-child-items] .react-aria-Button[slot='chevron'] {
     visibility: visible;
   }
 
-  &[data-expanded] .react-aria-Button[slot=chevron] svg {
+  &[data-expanded] .react-aria-Button[slot='chevron'] svg {
     rotate: 90deg;
   }
 
-  .react-aria-Button[slot=drag] {
+  .react-aria-Button[slot='drag'] {
     all: unset;
     display: inline-flex;
     align-items: center;

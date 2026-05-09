@@ -11,24 +11,24 @@ export interface AriaFocusRingProps {
    * only if the container itself has focus (false).
    * @default 'false'
    */
-  within?: boolean,
+  within?: boolean;
 
   /** Whether the element is a text input. */
-  isTextInput?: boolean,
+  isTextInput?: boolean;
 
   /** Whether the element will be auto focused. */
-  autoFocus?: boolean
+  autoFocus?: boolean;
 }
 
 export interface FocusRingAria {
   /** Whether the element is currently focused. */
-  isFocused: boolean,
+  isFocused: boolean;
 
   /** Whether keyboard focus should be visible. */
-  isFocusVisible: boolean,
+  isFocusVisible: boolean;
 
   /** Props to apply to the container element with the focus ring. */
-  focusProps: DOMAttributes
+  focusProps: DOMAttributes;
 }
 
 /**
@@ -37,31 +37,39 @@ export interface FocusRingAria {
  * not with a mouse, touch, or other input methods.
  */
 export function useFocusRing(props: AriaFocusRingProps = {}): FocusRingAria {
-  let {
-    autoFocus = false,
-    isTextInput,
-    within
-  } = props;
+  let {autoFocus = false, isTextInput, within} = props;
   let state = useRef({
     isFocused: false,
     isFocusVisible: autoFocus || isFocusVisible()
   });
   let [isFocused, setFocused] = useState(false);
-  let [isFocusVisibleState, setFocusVisible] = useState(() => state.current.isFocused && state.current.isFocusVisible);
+  let [isFocusVisibleState, setFocusVisible] = useState(
+    () => state.current.isFocused && state.current.isFocusVisible
+  );
 
-  let updateState = useCallback(() => setFocusVisible(state.current.isFocused && state.current.isFocusVisible), []);
+  let updateState = useCallback(
+    () => setFocusVisible(state.current.isFocused && state.current.isFocusVisible),
+    []
+  );
 
-  let onFocusChange = useCallback(isFocused => {
-    state.current.isFocused = isFocused;
-    state.current.isFocusVisible = isFocusVisible();
-    setFocused(isFocused);
-    updateState();
-  }, [updateState]);
+  let onFocusChange = useCallback(
+    isFocused => {
+      state.current.isFocused = isFocused;
+      state.current.isFocusVisible = isFocusVisible();
+      setFocused(isFocused);
+      updateState();
+    },
+    [updateState]
+  );
 
-  useFocusVisibleListener((isFocusVisible) => {
-    state.current.isFocusVisible = isFocusVisible;
-    updateState();
-  }, [isTextInput, isFocused], {enabled: isFocused, isTextInput});
+  useFocusVisibleListener(
+    isFocusVisible => {
+      state.current.isFocusVisible = isFocusVisible;
+      updateState();
+    },
+    [isTextInput, isFocused],
+    {enabled: isFocused, isTextInput}
+  );
 
   let {focusProps} = useFocus({
     isDisabled: within,

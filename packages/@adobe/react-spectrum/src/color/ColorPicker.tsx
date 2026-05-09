@@ -24,34 +24,38 @@ import {style} from '@react-spectrum/style-macro-s1' with {type: 'macro'};
 import {unwrapDOMRef, useFocusableRef} from '../utils/useDOMRef';
 import {useId} from 'react-aria/useId';
 
-export interface SpectrumColorPickerProps extends ValueBase<string | Color, Color>, AriaLabelingProps {
+export interface SpectrumColorPickerProps
+  extends ValueBase<string | Color, Color>, AriaLabelingProps {
   /** A visual label for the color picker. */
-  label?: ReactNode,
+  label?: ReactNode;
   /** The contents of the color picker popover, e.g. `<ColorEditor />`. */
-  children?: ReactNode,
+  children?: ReactNode;
   /**
    * The size of the color swatch.
    * @default "M"
    */
-  size?: 'XS' | 'S' | 'M' | 'L',
+  size?: 'XS' | 'S' | 'M' | 'L';
   /**
    * The corner rounding of the color swatch.
    * @default "default"
    */
-  rounding?: 'default' | 'none' | 'full'
+  rounding?: 'default' | 'none' | 'full';
 }
 
 /**
  * A ColorPicker combines a swatch with a customizable popover for editing a color.
  */
-export const ColorPicker = React.forwardRef(function ColorPicker(props: SpectrumColorPickerProps, ref: FocusableRef<HTMLButtonElement>) {
+export const ColorPicker = React.forwardRef(function ColorPicker(
+  props: SpectrumColorPickerProps,
+  ref: FocusableRef<HTMLButtonElement>
+) {
   let swatchRef = useRef(null);
   let domRef = useFocusableRef(ref);
   let labelId = useId();
   return (
     <AriaColorPicker {...props}>
       <DialogTrigger type="popover" mobileType="tray" targetRef={unwrapDOMRef(swatchRef)}>
-        <Button 
+        <Button
           ref={domRef}
           className={style({
             backgroundColor: 'transparent',
@@ -93,15 +97,14 @@ export const ColorPicker = React.forwardRef(function ColorPicker(props: Spectrum
                   aria-label={props['aria-label']}
                   aria-labelledby={props['aria-labelledby']}
                   aria-describedby={props['aria-describedby']}
-                  aria-details={props['aria-details']} />
+                  aria-details={props['aria-details']}
+                />
               </div>
-              {props.label && 
-                <span id={labelId}>{props.label}</span>
-              }
+              {props.label && <span id={labelId}>{props.label}</span>}
             </>
           )}
         </Button>
-        <Dialog 
+        <Dialog
           aria-labelledby={props.label ? labelId : props['aria-labelledby']}
           aria-label={props['aria-label']}
           UNSAFE_style={{
@@ -109,7 +112,7 @@ export const ColorPicker = React.forwardRef(function ColorPicker(props: Spectrum
             minWidth: 0,
             margin: '0 auto' // Center within tray.
           }}>
-          <Content 
+          <Content
             UNSAFE_style={{
               position: 'relative',
               margin: 'calc(var(--spectrum-dialog-padding) * -1)',

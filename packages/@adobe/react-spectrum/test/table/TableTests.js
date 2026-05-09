@@ -12,7 +12,16 @@
 
 jest.mock('react-aria/src/live-announcer/LiveAnnouncer');
 jest.mock('react-aria/src/utils/scrollIntoView');
-import {act, fireEvent, installPointerEvent, mockClickDefault, pointerMap, render as renderComponent, User, within} from '@react-spectrum/test-utils-internal';
+import {
+  act,
+  fireEvent,
+  installPointerEvent,
+  mockClickDefault,
+  pointerMap,
+  render as renderComponent,
+  User,
+  within
+} from '@react-spectrum/test-utils-internal';
 import {ActionButton} from '../../src/button/ActionButton';
 import Add from '@spectrum-icons/workflow/Add';
 import {announce} from 'react-aria/private/live-announcer/LiveAnnouncer';
@@ -47,7 +56,6 @@ let {
   ColumnHeaderFocusRingTable
 } = composeStories(stories);
 
-
 let columns = [
   {name: 'Foo', key: 'foo'},
   {name: 'Bar', key: 'bar'},
@@ -56,16 +64,22 @@ let columns = [
 
 let nestedColumns = [
   {name: 'Test', key: 'test'},
-  {name: 'Tiered One Header', key: 'tier1', children: [
-    {name: 'Tier Two Header A', key: 'tier2a', children: [
-      {name: 'Foo', key: 'foo'},
-      {name: 'Bar', key: 'bar'}
-    ]},
-    {name: 'Yay', key: 'yay'},
-    {name: 'Tier Two Header B', key: 'tier2b', children: [
-      {name: 'Baz', key: 'baz'}
-    ]}
-  ]}
+  {
+    name: 'Tiered One Header',
+    key: 'tier1',
+    children: [
+      {
+        name: 'Tier Two Header A',
+        key: 'tier2a',
+        children: [
+          {name: 'Foo', key: 'foo'},
+          {name: 'Bar', key: 'bar'}
+        ]
+      },
+      {name: 'Yay', key: 'yay'},
+      {name: 'Tier Two Header B', key: 'tier2b', children: [{name: 'Baz', key: 'baz'}]}
+    ]
+  }
 ];
 
 let items = [
@@ -90,7 +104,7 @@ for (let i = 1; i <= 20; i++) {
 
 // getComputedStyle is very slow in our version of jsdom.
 // These tests only care about direct inline styles. We can avoid parsing other stylesheets.
-window.getComputedStyle = (el) => el.style;
+window.getComputedStyle = el => el.style;
 
 function ExampleSortTable() {
   let [sortDescriptor, setSortDescriptor] = React.useState({column: 'bar', direction: 'ascending'});
@@ -98,8 +112,12 @@ function ExampleSortTable() {
   return (
     <TableView aria-label="Table" sortDescriptor={sortDescriptor} onSortChange={setSortDescriptor}>
       <TableHeader>
-        <Column key="foo" allowsSorting>Foo</Column>
-        <Column key="bar" allowsSorting>Bar</Column>
+        <Column key="foo" allowsSorting>
+          Foo
+        </Column>
+        <Column key="bar" allowsSorting>
+          Bar
+        </Column>
         <Column key="baz">Baz</Column>
       </TableHeader>
       <TableBody>
@@ -134,15 +152,19 @@ let defaultTable = (
 
 function pointerEvent(type, opts) {
   let evt = new Event(type, {bubbles: true, cancelable: true});
-  Object.assign(evt, {
-    ctrlKey: false,
-    metaKey: false,
-    shiftKey: false,
-    altKey: false,
-    button: opts.button || 0,
-    width: opts.width == null ? undefined : opts.width ?? 1,
-    height: opts.height == null ? undefined : opts.height ?? 1
-  }, opts);
+  Object.assign(
+    evt,
+    {
+      ctrlKey: false,
+      metaKey: false,
+      shiftKey: false,
+      altKey: false,
+      button: opts.button || 0,
+      width: opts.width == null ? undefined : (opts.width ?? 1),
+      height: opts.height == null ? undefined : (opts.height ?? 1)
+    },
+    opts
+  );
   return evt;
 }
 
@@ -155,7 +177,7 @@ export let tableTests = () => {
 
   let offsetWidth, offsetHeight;
   let user;
-  let testUtilUser = new User({advanceTimer: (time) => jest.advanceTimersByTime(time)});
+  let testUtilUser = new User({advanceTimer: time => jest.advanceTimersByTime(time)});
 
   let innerHeight, innerWidth;
   beforeAll(function () {
@@ -164,8 +186,12 @@ export let tableTests = () => {
     innerWidth = window.innerWidth;
     Object.defineProperty(window, 'innerHeight', {value: 1000, configurable: true, writable: true});
     Object.defineProperty(window, 'innerWidth', {value: 1000, configurable: true, writable: true});
-    offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 400);
-    offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 200);
+    offsetWidth = jest
+      .spyOn(window.HTMLElement.prototype, 'clientWidth', 'get')
+      .mockImplementation(() => 400);
+    offsetHeight = jest
+      .spyOn(window.HTMLElement.prototype, 'clientHeight', 'get')
+      .mockImplementation(() => 200);
     jest.useFakeTimers();
   });
 
@@ -177,7 +203,9 @@ export let tableTests = () => {
   });
 
   afterEach(() => {
-    act(() => {jest.runAllTimers();});
+    act(() => {
+      jest.runAllTimers();
+    });
   });
 
   let render = (children, scale = 'medium') => {
@@ -187,7 +215,9 @@ export let tableTests = () => {
       </Provider>
     );
     // account for table column resizing to do initial pass due to relayout from useTableColumnResizeState render
-    act(() => {jest.runAllTimers();});
+    act(() => {
+      jest.runAllTimers();
+    });
     return tree;
   };
 
@@ -197,7 +227,9 @@ export let tableTests = () => {
         {children}
       </Provider>
     );
-    act(() => {jest.runAllTimers();});
+    act(() => {
+      jest.runAllTimers();
+    });
     return newTree;
   };
   // I'd use tree.getByRole(role, {name: text}) here, but it's unbearably slow.
@@ -212,7 +244,9 @@ export let tableTests = () => {
   };
 
   let focusCell = (tree, text) => act(() => getCell(tree, text).focus());
-  let moveFocus = (key, opts = {}) => {fireEvent.keyDown(document.activeElement, {key, ...opts});};
+  let moveFocus = (key, opts = {}) => {
+    fireEvent.keyDown(document.activeElement, {key, ...opts});
+  };
 
   it('renders a static table', function () {
     let {getByRole} = render(
@@ -286,7 +320,6 @@ export let tableTests = () => {
 
     expect(rows[1]).not.toHaveAttribute('aria-selected');
     expect(rows[1]).toHaveAttribute('aria-labelledby', cellSpan.id);
-
 
     let cells = within(rowgroups[1]).getAllByRole('gridcell');
     expect(cells).toHaveLength(4);
@@ -379,7 +412,6 @@ export let tableTests = () => {
     expect(rows[1]).toHaveAttribute('aria-selected', 'false');
     expect(rows[1]).toHaveAttribute('aria-labelledby', cellSpan.id);
 
-
     checkbox = within(rows[1]).getByRole('checkbox');
     expect(checkbox).toHaveAttribute('aria-label', 'Select');
     expect(checkbox).toHaveAttribute('aria-labelledby', `${checkbox.id} ${cellSpan.id}`);
@@ -397,7 +429,11 @@ export let tableTests = () => {
 
   it('accepts a UNSAFE_className', function () {
     let {getByRole} = render(
-      <TableView aria-label="Table" data-testid="test" selectionMode="multiple" UNSAFE_className="test-class">
+      <TableView
+        aria-label="Table"
+        data-testid="test"
+        selectionMode="multiple"
+        UNSAFE_className="test-class">
         <TableHeader>
           <Column>Foo</Column>
           <Column>Bar</Column>
@@ -425,15 +461,9 @@ export let tableTests = () => {
   it('renders a dynamic table', function () {
     let {getByRole} = render(
       <TableView aria-label="Table">
-        <TableHeader columns={columns}>
-          {column => <Column>{column.name}</Column>}
-        </TableHeader>
+        <TableHeader columns={columns}>{column => <Column>{column.name}</Column>}</TableHeader>
         <TableBody items={items}>
-          {item =>
-            (<Row key={item.foo}>
-              {key => <Cell>{item[key]}</Cell>}
-            </Row>)
-          }
+          {item => <Row key={item.foo}>{key => <Cell>{item[key]}</Cell>}</Row>}
         </TableBody>
       </TableView>
     );
@@ -490,15 +520,9 @@ export let tableTests = () => {
   it('renders a dynamic table with selection', function () {
     let {getByRole} = render(
       <TableView aria-label="Table" selectionMode="multiple">
-        <TableHeader columns={columns}>
-          {column => <Column>{column.name}</Column>}
-        </TableHeader>
+        <TableHeader columns={columns}>{column => <Column>{column.name}</Column>}</TableHeader>
         <TableBody items={items}>
-          {item =>
-            (<Row key={item.foo}>
-              {key => <Cell>{item[key]}</Cell>}
-            </Row>)
-          }
+          {item => <Row key={item.foo}>{key => <Cell>{item[key]}</Cell>}</Row>}
         </TableBody>
       </TableView>
     );
@@ -553,7 +577,6 @@ export let tableTests = () => {
     expect(rows[1]).toHaveAttribute('aria-selected', 'false');
     expect(rows[1]).toHaveAttribute('aria-labelledby', cellSpan.id);
 
-
     checkbox = within(rows[1]).getByRole('checkbox');
     expect(checkbox).toHaveAttribute('aria-label', 'Select');
     expect(checkbox).toHaveAttribute('aria-labelledby', `${checkbox.id} ${cellSpan.id}`);
@@ -573,15 +596,9 @@ export let tableTests = () => {
     // TODO: doesn't support empty string ids, fix for that to come
     let {getByRole} = render(
       <TableView aria-label="Table">
-        <TableHeader columns={columns}>
-          {column => <Column>{column.name}</Column>}
-        </TableHeader>
+        <TableHeader columns={columns}>{column => <Column>{column.name}</Column>}</TableHeader>
         <TableBody items={itemsWithFalsyId}>
-          {item =>
-            (<Row>
-              {key => <Cell>{item[key]}</Cell>}
-            </Row>)
-          }
+          {item => <Row>{key => <Cell>{item[key]}</Cell>}</Row>}
         </TableBody>
       </TableView>
     );
@@ -613,9 +630,9 @@ export let tableTests = () => {
       <TableView aria-label="Timetable">
         <TableHeader>
           <Column isRowHeader>Col 1</Column>
-          <Column >Col 2</Column>
-          <Column >Col 3</Column>
-          <Column >Col 4</Column>
+          <Column>Col 2</Column>
+          <Column>Col 3</Column>
+          <Column>Col 4</Column>
         </TableHeader>
         <TableBody>
           <Row>
@@ -655,15 +672,20 @@ export let tableTests = () => {
     let columnheaders = within(rows[0]).getAllByRole('columnheader');
     expect(columnheaders).toHaveLength(4);
 
-    let cells1 = [...within(rows[1]).getAllByRole('rowheader'), ...within(rows[1]).getAllByRole('gridcell')];
+    let cells1 = [
+      ...within(rows[1]).getAllByRole('rowheader'),
+      ...within(rows[1]).getAllByRole('gridcell')
+    ];
     expect(cells1).toHaveLength(3);
     expect(cells1[0]).toHaveAttribute('aria-colindex', '1');
     expect(cells1[1]).toHaveAttribute('aria-colindex', '2');
     expect(cells1[1]).toHaveAttribute('aria-colspan', '2');
     expect(cells1[2]).toHaveAttribute('aria-colindex', '4');
 
-
-    let cells2 = [...within(rows[2]).getAllByRole('rowheader'), ...within(rows[2]).getAllByRole('gridcell')];
+    let cells2 = [
+      ...within(rows[2]).getAllByRole('rowheader'),
+      ...within(rows[2]).getAllByRole('gridcell')
+    ];
     expect(cells2).toHaveLength(4);
     expect(cells2[0]).toHaveAttribute('aria-colindex', '1');
     expect(cells2[1]).toHaveAttribute('aria-colindex', '2');
@@ -675,13 +697,19 @@ export let tableTests = () => {
     expect(cells3[0]).toHaveAttribute('aria-colindex', '1');
     expect(cells3[0]).toHaveAttribute('aria-colspan', '4');
 
-    let cells4 = [...within(rows[4]).getAllByRole('rowheader'), ...within(rows[4]).getAllByRole('gridcell')];
+    let cells4 = [
+      ...within(rows[4]).getAllByRole('rowheader'),
+      ...within(rows[4]).getAllByRole('gridcell')
+    ];
     expect(cells4).toHaveLength(2);
     expect(cells4[0]).toHaveAttribute('aria-colindex', '1');
     expect(cells4[0]).toHaveAttribute('aria-colspan', '3');
     expect(cells4[1]).toHaveAttribute('aria-colindex', '4');
 
-    let cells5 = [...within(rows[5]).getAllByRole('rowheader'), ...within(rows[5]).getAllByRole('gridcell')];
+    let cells5 = [
+      ...within(rows[5]).getAllByRole('rowheader'),
+      ...within(rows[5]).getAllByRole('gridcell')
+    ];
     expect(cells5).toHaveLength(2);
     expect(cells5[0]).toHaveAttribute('aria-colindex', '1');
     expect(cells5[1]).toHaveAttribute('aria-colindex', '2');
@@ -695,9 +723,9 @@ export let tableTests = () => {
         <TableView aria-label="Col Span Table with wrong number of cells">
           <TableHeader>
             <Column isRowHeader>Col 1</Column>
-            <Column >Col 2</Column>
-            <Column >Col 3</Column>
-            <Column >Col 4</Column>
+            <Column>Col 2</Column>
+            <Column>Col 3</Column>
+            <Column>Col 4</Column>
           </TableHeader>
           <TableBody>
             <Row>
@@ -713,7 +741,7 @@ export let tableTests = () => {
             </Row>
           </TableBody>
         </TableView>
-        );
+      );
     } catch (e) {
       expect(e.message).toEqual('Cell count must match column count. Found 5 cells and 4 columns.');
     }
@@ -722,7 +750,7 @@ export let tableTests = () => {
         <TableView aria-label="Col Span Table with wrong number of cells">
           <TableHeader>
             <Column isRowHeader>Col 1</Column>
-            <Column >Col 2</Column>
+            <Column>Col 2</Column>
           </TableHeader>
           <TableBody>
             <Row>
@@ -834,7 +862,6 @@ export let tableTests = () => {
     expect(rows[1]).toHaveAttribute('aria-labelledby', cellSpan.id);
     expect(rows[1]).toHaveAttribute('aria-rowindex', '4');
 
-
     checkbox = within(rows[1]).getByRole('checkbox');
     expect(checkbox).toHaveAttribute('aria-label', 'Select');
     expect(checkbox).toHaveAttribute('aria-labelledby', `${checkbox.id} ${cellSpan.id}`);
@@ -847,16 +874,10 @@ export let tableTests = () => {
     let {getByRole} = render(
       <TableView aria-label="Table" selectionMode="multiple">
         <TableHeader columns={nestedColumns}>
-          {column =>
-            <Column childColumns={column.children}>{column.name}</Column>
-          }
+          {column => <Column childColumns={column.children}>{column.name}</Column>}
         </TableHeader>
         <TableBody items={items}>
-          {item =>
-            (<Row key={item.foo}>
-              {key => <Cell>{item[key]}</Cell>}
-            </Row>)
-          }
+          {item => <Row key={item.foo}>{key => <Cell>{item[key]}</Cell>}</Row>}
         </TableBody>
       </TableView>
     );
@@ -939,7 +960,6 @@ export let tableTests = () => {
     expect(rows[1]).toHaveAttribute('aria-labelledby', cellSpan.id);
     expect(rows[1]).toHaveAttribute('aria-rowindex', '5');
 
-
     checkbox = within(rows[1]).getByRole('checkbox');
     expect(checkbox).toHaveAttribute('aria-label', 'Select');
     expect(checkbox).toHaveAttribute('aria-labelledby', `${checkbox.id} ${cellSpan.id}`);
@@ -986,7 +1006,10 @@ export let tableTests = () => {
 
     let checkbox = within(rows[0]).getByRole('checkbox');
     expect(checkbox).toHaveAttribute('aria-label', 'Select');
-    expect(checkbox).toHaveAttribute('aria-labelledby', `${checkbox.id} ${firstCellSpan.id} ${secondCellSpan.id}`);
+    expect(checkbox).toHaveAttribute(
+      'aria-labelledby',
+      `${checkbox.id} ${firstCellSpan.id} ${secondCellSpan.id}`
+    );
 
     rowheaders = within(rows[1]).getAllByRole('rowheader');
     expect(rowheaders).toHaveLength(2);
@@ -999,7 +1022,10 @@ export let tableTests = () => {
 
     checkbox = within(rows[1]).getByRole('checkbox');
     expect(checkbox).toHaveAttribute('aria-label', 'Select');
-    expect(checkbox).toHaveAttribute('aria-labelledby', `${checkbox.id} ${firstCellSpan.id} ${secondCellSpan.id}`);
+    expect(checkbox).toHaveAttribute(
+      'aria-labelledby',
+      `${checkbox.id} ${firstCellSpan.id} ${secondCellSpan.id}`
+    );
   });
 
   describe('keyboard focus', function () {
@@ -1008,20 +1034,16 @@ export let tableTests = () => {
       let tree = renderComponent(
         <Provider locale={locale} theme={theme}>
           <TableView aria-label="Table" {...props}>
-            <TableHeader columns={columns}>
-              {column => <Column>{column.name}</Column>}
-            </TableHeader>
+            <TableHeader columns={columns}>{column => <Column>{column.name}</Column>}</TableHeader>
             <TableBody items={items}>
-              {item =>
-                (<Row key={item.foo}>
-                  {key => <Cell>{item[key]}</Cell>}
-                </Row>)
-              }
+              {item => <Row key={item.foo}>{key => <Cell>{item[key]}</Cell>}</Row>}
             </TableBody>
           </TableView>
         </Provider>
       );
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
       return tree;
     };
 
@@ -1031,57 +1053,41 @@ export let tableTests = () => {
         <Provider locale={locale} theme={theme}>
           <TableView aria-label="Table">
             <TableHeader columns={nestedColumns}>
-              {column =>
-                <Column childColumns={column.children}>{column.name}</Column>
-              }
+              {column => <Column childColumns={column.children}>{column.name}</Column>}
             </TableHeader>
             <TableBody items={items}>
-              {item =>
-                (<Row key={item.foo}>
-                  {key => <Cell>{item[key]}</Cell>}
-                </Row>)
-              }
+              {item => <Row key={item.foo}>{key => <Cell>{item[key]}</Cell>}</Row>}
             </TableBody>
           </TableView>
         </Provider>
       );
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
       return tree;
     };
 
-    let renderMany = () => render(
-      <TableView aria-label="Table">
-        <TableHeader columns={columns}>
-          {column =>
-            <Column>{column.name}</Column>
-          }
-        </TableHeader>
-        <TableBody items={manyItems}>
-          {item =>
-            (<Row key={item.foo}>
-              {key => <Cell>{item[key]}</Cell>}
-            </Row>)
-          }
-        </TableBody>
-      </TableView>
-    );
+    let renderMany = () =>
+      render(
+        <TableView aria-label="Table">
+          <TableHeader columns={columns}>{column => <Column>{column.name}</Column>}</TableHeader>
+          <TableBody items={manyItems}>
+            {item => <Row key={item.foo}>{key => <Cell>{item[key]}</Cell>}</Row>}
+          </TableBody>
+        </TableView>
+      );
 
-    let renderManyColumns = () => render(
-      <TableView aria-label="Table" selectionMode="multiple">
-        <TableHeader columns={manyColumns}>
-          {column =>
-            <Column>{column.name}</Column>
-          }
-        </TableHeader>
-        <TableBody items={manyItems}>
-          {item =>
-            (<Row key={item.foo}>
-              {key => <Cell>{item.foo + ' ' + key}</Cell>}
-            </Row>)
-          }
-        </TableBody>
-      </TableView>
-    );
+    let renderManyColumns = () =>
+      render(
+        <TableView aria-label="Table" selectionMode="multiple">
+          <TableHeader columns={manyColumns}>
+            {column => <Column>{column.name}</Column>}
+          </TableHeader>
+          <TableBody items={manyItems}>
+            {item => <Row key={item.foo}>{key => <Cell>{item.foo + ' ' + key}</Cell>}</Row>}
+          </TableBody>
+        </TableView>
+      );
 
     describe('ArrowRight', function () {
       it('should move focus to the next cell in a row with ArrowRight', async function () {
@@ -1114,14 +1120,18 @@ export let tableTests = () => {
 
       it('should move focus from the row to the first cell with ArrowRight', function () {
         let tree = renderTable();
-        act(() => {tree.getAllByRole('row')[1].focus();});
+        act(() => {
+          tree.getAllByRole('row')[1].focus();
+        });
         moveFocus('ArrowRight');
         expect(document.activeElement).toBe(getCell(tree, 'Foo 1'));
       });
 
       it('should move focus from the row to the last cell with ArrowRight in RTL', function () {
         let tree = renderTable('ar-AE');
-        act(() => {tree.getAllByRole('row')[1].focus();});
+        act(() => {
+          tree.getAllByRole('row')[1].focus();
+        });
         moveFocus('ArrowRight');
         expect(document.activeElement).toBe(getCell(tree, 'Baz 1'));
       });
@@ -1207,14 +1217,18 @@ export let tableTests = () => {
 
       it('should move focus from the row to the last cell with ArrowLeft', function () {
         let tree = renderTable();
-        act(() => {tree.getAllByRole('row')[1].focus();});
+        act(() => {
+          tree.getAllByRole('row')[1].focus();
+        });
         moveFocus('ArrowLeft');
         expect(document.activeElement).toBe(getCell(tree, 'Baz 1'));
       });
 
       it('should move focus from the row to the first cell with ArrowLeft in RTL', function () {
         let tree = renderTable('ar-AE');
-        act(() => {tree.getAllByRole('row')[1].focus();});
+        act(() => {
+          tree.getAllByRole('row')[1].focus();
+        });
         moveFocus('ArrowLeft');
         expect(document.activeElement).toBe(getCell(tree, 'Foo 1'));
       });
@@ -1279,7 +1293,9 @@ export let tableTests = () => {
 
       it('should move focus to the row above with ArrowUp', function () {
         let tree = renderTable();
-        act(() => {tree.getAllByRole('row')[2].focus();});
+        act(() => {
+          tree.getAllByRole('row')[2].focus();
+        });
         moveFocus('ArrowUp');
         expect(document.activeElement).toBe(tree.getAllByRole('row')[1]);
       });
@@ -1293,7 +1309,9 @@ export let tableTests = () => {
 
       it('should move focus to the column header above the first row with ArrowUp', function () {
         let tree = renderTable();
-        act(() => {tree.getAllByRole('row')[1].focus();});
+        act(() => {
+          tree.getAllByRole('row')[1].focus();
+        });
         moveFocus('ArrowUp');
         expect(document.activeElement).toBe(getCell(tree, 'Foo'));
       });
@@ -1328,7 +1346,9 @@ export let tableTests = () => {
 
       it('should move focus to the row below with ArrowDown', function () {
         let tree = renderTable();
-        act(() => {tree.getAllByRole('row')[1].focus();});
+        act(() => {
+          tree.getAllByRole('row')[1].focus();
+        });
         moveFocus('ArrowDown');
         expect(document.activeElement).toBe(tree.getAllByRole('row')[2]);
       });
@@ -1374,7 +1394,9 @@ export let tableTests = () => {
 
       it('should focus the first row with Home', function () {
         let tree = renderTable();
-        act(() => {tree.getAllByRole('row')[2].focus();});
+        act(() => {
+          tree.getAllByRole('row')[2].focus();
+        });
         moveFocus('Home');
         expect(document.activeElement).toBe(tree.getAllByRole('row')[1]);
       });
@@ -1397,7 +1419,9 @@ export let tableTests = () => {
 
       it('should focus the last row with End', function () {
         let tree = renderTable();
-        act(() => {tree.getAllByRole('row')[1].focus();});
+        act(() => {
+          tree.getAllByRole('row')[1].focus();
+        });
         moveFocus('End');
         expect(document.activeElement).toBe(tree.getAllByRole('row')[2]);
       });
@@ -1421,7 +1445,9 @@ export let tableTests = () => {
 
       it('should focus the row a page below', function () {
         let tree = renderMany();
-        act(() => {tree.getAllByRole('row')[1].focus();});
+        act(() => {
+          tree.getAllByRole('row')[1].focus();
+        });
         moveFocus('PageDown');
         expect(document.activeElement).toBe(tree.getByRole('row', {name: 'Foo 5'}));
         moveFocus('PageDown');
@@ -1448,42 +1474,47 @@ export let tableTests = () => {
 
       it('should focus the row a page above', function () {
         let tree = renderMany();
-        act(() => {tree.getAllByRole('row')[5].focus();});
+        act(() => {
+          tree.getAllByRole('row')[5].focus();
+        });
         moveFocus('PageUp');
         expect(document.activeElement).toBe(tree.getAllByRole('row')[1]);
-        act(() => {tree.getAllByRole('row')[4].focus();});
+        act(() => {
+          tree.getAllByRole('row')[4].focus();
+        });
         moveFocus('PageUp');
         expect(document.activeElement).toBe(tree.getAllByRole('row')[1]);
       });
     });
 
     describe('type to select', function () {
-      let renderTypeSelect = () => render(
-        <TableView aria-label="Table" selectionMode="none">
-          <TableHeader>
-            <Column isRowHeader>First Name</Column>
-            <Column isRowHeader>Last Name</Column>
-            <Column>Birthday</Column>
-          </TableHeader>
-          <TableBody>
-            <Row>
-              <Cell>Sam</Cell>
-              <Cell>Smith</Cell>
-              <Cell>May 3</Cell>
-            </Row>
-            <Row>
-              <Cell>Julia</Cell>
-              <Cell>Jones</Cell>
-              <Cell>February 10</Cell>
-            </Row>
-            <Row>
-              <Cell>John</Cell>
-              <Cell>Doe</Cell>
-              <Cell>December 12</Cell>
-            </Row>
-          </TableBody>
-        </TableView>
-      );
+      let renderTypeSelect = () =>
+        render(
+          <TableView aria-label="Table" selectionMode="none">
+            <TableHeader>
+              <Column isRowHeader>First Name</Column>
+              <Column isRowHeader>Last Name</Column>
+              <Column>Birthday</Column>
+            </TableHeader>
+            <TableBody>
+              <Row>
+                <Cell>Sam</Cell>
+                <Cell>Smith</Cell>
+                <Cell>May 3</Cell>
+              </Row>
+              <Row>
+                <Cell>Julia</Cell>
+                <Cell>Jones</Cell>
+                <Cell>February 10</Cell>
+              </Row>
+              <Row>
+                <Cell>John</Cell>
+                <Cell>Doe</Cell>
+                <Cell>December 12</Cell>
+              </Row>
+            </TableBody>
+          </TableView>
+        );
 
       it('focuses cell by typing letters in rapid succession', function () {
         let tree = renderTypeSelect();
@@ -1507,7 +1538,7 @@ export let tableTests = () => {
         expect(document.activeElement).toBe(getCell(tree, 'Doe'));
       });
 
-      it('non row header columns don\'t match', function () {
+      it("non row header columns don't match", function () {
         let tree = renderTypeSelect();
         focusCell(tree, 'Sam');
 
@@ -1517,7 +1548,9 @@ export let tableTests = () => {
 
       it('focuses row by typing letters in rapid succession', function () {
         let tree = renderTypeSelect();
-        act(() => {tree.getAllByRole('row')[1].focus();});
+        act(() => {
+          tree.getAllByRole('row')[1].focus();
+        });
 
         moveFocus('J');
         expect(document.activeElement).toBe(tree.getAllByRole('row')[2]);
@@ -1531,7 +1564,9 @@ export let tableTests = () => {
 
       it('matches row against all row header cells', function () {
         let tree = renderTypeSelect();
-        act(() => {tree.getAllByRole('row')[1].focus();});
+        act(() => {
+          tree.getAllByRole('row')[1].focus();
+        });
 
         moveFocus('D');
         expect(document.activeElement).toBe(tree.getAllByRole('row')[3]);
@@ -1544,7 +1579,9 @@ export let tableTests = () => {
         moveFocus('J');
         expect(document.activeElement).toBe(getCell(tree, 'Julia'));
 
-        act(() => {jest.runAllTimers();});
+        act(() => {
+          jest.runAllTimers();
+        });
 
         moveFocus('J');
         expect(document.activeElement).toBe(getCell(tree, 'Julia'));
@@ -1563,7 +1600,9 @@ export let tableTests = () => {
         moveFocus('h');
         expect(document.activeElement).toBe(getCell(tree, 'John'));
 
-        act(() => {jest.runAllTimers();});
+        act(() => {
+          jest.runAllTimers();
+        });
 
         moveFocus('J');
         expect(document.activeElement).toBe(getCell(tree, 'John'));
@@ -1579,7 +1618,9 @@ export let tableTests = () => {
         moveFocus('J');
         expect(document.activeElement).toBe(getCell(tree, 'Julia'));
 
-        act(() => {jest.runAllTimers();});
+        act(() => {
+          jest.runAllTimers();
+        });
 
         moveFocus('S');
         expect(document.activeElement).toBe(getCell(tree, 'Sam'));
@@ -1588,16 +1629,20 @@ export let tableTests = () => {
       describe('type ahead with dialog triggers', function () {
         beforeEach(function () {
           offsetHeight.mockRestore();
-          offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get')
+          offsetHeight = jest
+            .spyOn(window.HTMLElement.prototype, 'clientHeight', 'get')
             .mockImplementationOnce(() => 20)
             .mockImplementation(() => 100);
         });
         afterEach(function () {
           offsetHeight.mockRestore();
-          offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
+          offsetHeight = jest
+            .spyOn(window.HTMLElement.prototype, 'clientHeight', 'get')
+            .mockImplementation(() => 1000);
         });
         it('does not pick up typeahead from a dialog', async function () {
-          offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get')
+          offsetHeight = jest
+            .spyOn(window.HTMLElement.prototype, 'clientHeight', 'get')
             .mockImplementationOnce(() => 20)
             .mockImplementation(() => 100);
           let tree = render(<TypeaheadWithDialog />);
@@ -1607,7 +1652,9 @@ export let tableTests = () => {
             jest.runAllTimers();
           });
           let textfield = tree.getByLabelText('Enter a J');
-          act(() => {textfield.focus();});
+          act(() => {
+            textfield.focus();
+          });
           fireEvent.keyDown(textfield, {key: 'J'});
           fireEvent.keyUp(textfield, {key: 'J'});
           act(() => {
@@ -1624,56 +1671,81 @@ export let tableTests = () => {
     });
 
     describe('focus marshalling', function () {
-      let renderFocusable = () => render(
-        <>
-          <input data-testid="before" />
-          <TableView aria-label="Table" selectionMode="multiple">
-            <TableHeader>
-              <Column>Foo</Column>
-              <Column>Bar</Column>
-              <Column>baz</Column>
-            </TableHeader>
-            <TableBody>
-              <Row>
-                <Cell textValue="Foo 1"><Switch aria-label="Foo 1" /></Cell>
-                <Cell textValue="Google"><Link><a href="https://google.com" target="_blank">Google</a></Link></Cell>
-                <Cell>Baz 1</Cell>
-              </Row>
-              <Row>
-                <Cell textValue="Foo 2"><Switch aria-label="Foo 2" /><Switch aria-label="Foo 3" /></Cell>
-                <Cell textValue="Yahoo"><Link><a href="https://yahoo.com" target="_blank">Yahoo</a></Link></Cell>
-                <Cell>Baz 2</Cell>
-              </Row>
-            </TableBody>
-          </TableView>
-          <input data-testid="after" />
-        </>
-      );
+      let renderFocusable = () =>
+        render(
+          <>
+            <input data-testid="before" />
+            <TableView aria-label="Table" selectionMode="multiple">
+              <TableHeader>
+                <Column>Foo</Column>
+                <Column>Bar</Column>
+                <Column>baz</Column>
+              </TableHeader>
+              <TableBody>
+                <Row>
+                  <Cell textValue="Foo 1">
+                    <Switch aria-label="Foo 1" />
+                  </Cell>
+                  <Cell textValue="Google">
+                    <Link>
+                      <a href="https://google.com" target="_blank">
+                        Google
+                      </a>
+                    </Link>
+                  </Cell>
+                  <Cell>Baz 1</Cell>
+                </Row>
+                <Row>
+                  <Cell textValue="Foo 2">
+                    <Switch aria-label="Foo 2" />
+                    <Switch aria-label="Foo 3" />
+                  </Cell>
+                  <Cell textValue="Yahoo">
+                    <Link>
+                      <a href="https://yahoo.com" target="_blank">
+                        Yahoo
+                      </a>
+                    </Link>
+                  </Cell>
+                  <Cell>Baz 2</Cell>
+                </Row>
+              </TableBody>
+            </TableView>
+            <input data-testid="after" />
+          </>
+        );
 
-      let renderWithPicker = () => render(
-        <>
-          <TableView aria-label="Table">
-            <TableHeader>
-              <Column>Foo</Column>
-              <Column>Bar</Column>
-              <Column>baz</Column>
-            </TableHeader>
-            <TableBody>
-              <Row>
-                <Cell textValue="Foo 1"><Switch aria-label="Foo 1" /></Cell>
-                <Cell textValue="Search engine">
-                  <Picker aria-label="Search engine" placeholder="Search with:" width={'100%'} isQuiet>
-                    <Item key="Yahoo">Yahoo</Item>
-                    <Item key="Google">Google</Item>
-                    <Item key="DuckDuckGo">DuckDuckGo</Item>
-                  </Picker>
-                </Cell>
-                <Cell>Baz 1</Cell>
-              </Row>
-            </TableBody>
-          </TableView>
-        </>
-      );
+      let renderWithPicker = () =>
+        render(
+          <>
+            <TableView aria-label="Table">
+              <TableHeader>
+                <Column>Foo</Column>
+                <Column>Bar</Column>
+                <Column>baz</Column>
+              </TableHeader>
+              <TableBody>
+                <Row>
+                  <Cell textValue="Foo 1">
+                    <Switch aria-label="Foo 1" />
+                  </Cell>
+                  <Cell textValue="Search engine">
+                    <Picker
+                      aria-label="Search engine"
+                      placeholder="Search with:"
+                      width={'100%'}
+                      isQuiet>
+                      <Item key="Yahoo">Yahoo</Item>
+                      <Item key="Google">Google</Item>
+                      <Item key="DuckDuckGo">DuckDuckGo</Item>
+                    </Picker>
+                  </Cell>
+                  <Cell>Baz 1</Cell>
+                </Row>
+              </TableBody>
+            </TableView>
+          </>
+        );
 
       it('should retain focus on the pressed child', async function () {
         let tree = renderFocusable();
@@ -1736,7 +1808,9 @@ export let tableTests = () => {
 
         // Simulate tabbing to the first "tabbable" item inside the table
         fireEvent.keyDown(before, {key: 'Tab'});
-        act(() => {within(table).getAllByRole('switch')[0].focus();});
+        act(() => {
+          within(table).getAllByRole('switch')[0].focus();
+        });
         fireEvent.keyUp(before, {key: 'Tab'});
 
         expect(document.activeElement).toBe(within(table).getAllByRole('row')[1]);
@@ -1777,7 +1851,9 @@ export let tableTests = () => {
 
         // Simulate tabbing to the first "tabbable" item inside the table
         fireEvent.keyDown(before, {key: 'Tab'});
-        act(() => {within(table).getAllByRole('switch')[0].focus();});
+        act(() => {
+          within(table).getAllByRole('switch')[0].focus();
+        });
         fireEvent.keyUp(before, {key: 'Tab'});
 
         expect(document.activeElement).toBe(baz1);
@@ -1799,7 +1875,9 @@ export let tableTests = () => {
 
         // Simulate tabbing to the last "tabbable" item inside the table
         fireEvent.keyDown(after, {key: 'Tab'});
-        act(() => {within(table).getAllByRole('link')[1].focus();});
+        act(() => {
+          within(table).getAllByRole('link')[1].focus();
+        });
         fireEvent.keyUp(after, {key: 'Tab'});
 
         expect(document.activeElement).toBe(baz1);
@@ -1828,7 +1906,9 @@ export let tableTests = () => {
         fireEvent.keyDown(document.activeElement, {key: 'Tab'});
         let walker = getFocusableTreeWalker(document.body, {tabbable: true});
         walker.currentNode = document.activeElement;
-        act(() => {walker.nextNode().focus();});
+        act(() => {
+          walker.nextNode().focus();
+        });
         fireEvent.keyUp(document.activeElement, {key: 'Tab'});
 
         let after = tree.getByTestId('after');
@@ -1864,7 +1944,9 @@ export let tableTests = () => {
         fireEvent.keyDown(document.activeElement, {key: 'Tab', shiftKey: true});
         let walker = getFocusableTreeWalker(document.body, {tabbable: true});
         walker.currentNode = document.activeElement;
-        act(() => {walker.previousNode().focus();});
+        act(() => {
+          walker.previousNode().focus();
+        });
         fireEvent.keyUp(document.activeElement, {key: 'Tab', shiftKey: true});
 
         let before = tree.getByTestId('before');
@@ -1884,7 +1966,9 @@ export let tableTests = () => {
 
         fireEvent.keyDown(document.activeElement, {key: 'Enter'});
         fireEvent.keyUp(document.activeElement, {key: 'Enter'});
-        act(() => {jest.runAllTimers();});
+        act(() => {
+          jest.runAllTimers();
+        });
 
         rows = tree.getAllByRole('row');
         expect(document.activeElement).toBe(within(rows[1]).getByRole('button'));
@@ -1913,7 +1997,9 @@ export let tableTests = () => {
 
         fireEvent.keyDown(document.activeElement, {key: 'Enter'});
         fireEvent.keyUp(document.activeElement, {key: 'Enter'});
-        act(() => {jest.runAllTimers();});
+        act(() => {
+          jest.runAllTimers();
+        });
 
         rows = tree.getAllByRole('row');
         expect(document.activeElement).toBe(within(rows[1]).getByRole('button'));
@@ -1930,33 +2016,34 @@ export let tableTests = () => {
         let columnsLocal = columns;
         let renderJSX = (props, items = itemsLocal, columns = columnsLocal) => (
           <TableView aria-label="Table" {...props}>
-            <TableHeader columns={columns}>
-              {column => <Column>{column.name}</Column>}
-            </TableHeader>
+            <TableHeader columns={columns}>{column => <Column>{column.name}</Column>}</TableHeader>
             <TableBody items={items}>
-              {item =>
-                (<Row key={item.foo}>
-                  {key => <Cell>{item[key]}</Cell>}
-                </Row>)
-              }
+              {item => <Row key={item.foo}>{key => <Cell>{item[key]}</Cell>}</Row>}
             </TableBody>
           </TableView>
         );
 
-        let renderTable = (props, items = itemsLocal, columns = columnsLocal) => render(renderJSX(props, items, columns));
+        let renderTable = (props, items = itemsLocal, columns = columnsLocal) =>
+          render(renderJSX(props, items, columns));
 
         let tree = renderTable();
         focusCell(tree, 'Baz 1');
 
         rerender(tree, renderJSX({}, [itemsLocal[1], itemsLocal[0]], columnsLocal.slice(0, 2)));
 
-        expect(document.activeElement).toBe(tree.getAllByRole('row')[1], 'If column index with last focus is greater than the new number of columns, focus the row');
+        expect(document.activeElement).toBe(
+          tree.getAllByRole('row')[1],
+          'If column index with last focus is greater than the new number of columns, focus the row'
+        );
 
         focusCell(tree, 'Bar 1');
 
         rerender(tree, renderJSX({}, [itemsLocal[1]], columnsLocal.slice(0, 1)));
 
-        expect(document.activeElement).toBe(tree.getAllByRole('row')[1], 'If column index with last focus is greater than the new number of columns, focus the row');
+        expect(document.activeElement).toBe(
+          tree.getAllByRole('row')[1],
+          'If column index with last focus is greater than the new number of columns, focus the row'
+        );
 
         focusCell(tree, 'Foo 2');
 
@@ -2045,15 +2132,9 @@ export let tableTests = () => {
 
     let renderJSX = (props, items = manyItems) => (
       <TableView aria-label="Table" selectionMode="multiple" {...props}>
-        <TableHeader columns={columns}>
-          {column => <Column>{column.name}</Column>}
-        </TableHeader>
+        <TableHeader columns={columns}>{column => <Column>{column.name}</Column>}</TableHeader>
         <TableBody items={items}>
-          {item =>
-            (<Row key={item.foo}>
-              {key => <Cell>{item[key]}</Cell>}
-            </Row>)
-          }
+          {item => <Row key={item.foo}>{key => <Cell>{item[key]}</Cell>}</Row>}
         </TableBody>
       </TableView>
     );
@@ -2237,10 +2318,13 @@ export let tableTests = () => {
 
       it('should prevent Esc from clearing selection if escapeKeyBehavior is "none"', async function () {
         let onSelectionChange = jest.fn();
-        let tree = renderTable({onSelectionChange, selectionMode: 'multiple', escapeKeyBehavior: 'none'});
+        let tree = renderTable({
+          onSelectionChange,
+          selectionMode: 'multiple',
+          escapeKeyBehavior: 'none'
+        });
         let tableTester = testUtilUser.createTester('Table', {root: tree.getByRole('grid')});
         tableTester.setInteractionType('keyboard');
-
 
         await tableTester.toggleRowSelection({row: 0});
         expect(tableTester.selectedRows).toHaveLength(1);
@@ -2311,11 +2395,19 @@ export let tableTests = () => {
                 {column => <Column>{column.name}</Column>}
               </TableHeader>
               <TableBody items={items}>
-                {item =>
-                  (<Row key={item.foo}>
-                    {key => <Cell><Link><a href={`https://example.com/?id=${item.id}`} target="_blank">{item[key]}</a></Link></Cell>}
-                  </Row>)
-                }
+                {item => (
+                  <Row key={item.foo}>
+                    {key => (
+                      <Cell>
+                        <Link>
+                          <a href={`https://example.com/?id=${item.id}`} target="_blank">
+                            {item[key]}
+                          </a>
+                        </Link>
+                      </Cell>
+                    )}
+                  </Row>
+                )}
               </TableBody>
             </TableView>
           );
@@ -2331,13 +2423,17 @@ export let tableTests = () => {
           await user.keyboard('{ArrowRight}');
           expect(document.activeElement).toBe(link);
           await user.keyboard(' ');
-          act(() => {jest.runAllTimers();});
+          act(() => {
+            jest.runAllTimers();
+          });
 
           row = tree.getAllByRole('row')[1];
           expect(row).toHaveAttribute('aria-selected', 'true');
 
           await user.keyboard(' ');
-          act(() => {jest.runAllTimers();});
+          act(() => {
+            jest.runAllTimers();
+          });
 
           row = tree.getAllByRole('row')[1];
           link = within(row).getAllByRole('link')[0];
@@ -2365,8 +2461,26 @@ export let tableTests = () => {
         await user.keyboard('[/ShiftLeft]');
 
         checkSelection(onSelectionChange, [
-          'Foo 1', 'Foo 2', 'Foo 3', 'Foo 4', 'Foo 5', 'Foo 6', 'Foo 7', 'Foo 8', 'Foo 9', 'Foo 10',
-          'Foo 11', 'Foo 12', 'Foo 13', 'Foo 14', 'Foo 15', 'Foo 16', 'Foo 17', 'Foo 18', 'Foo 19', 'Foo 20'
+          'Foo 1',
+          'Foo 2',
+          'Foo 3',
+          'Foo 4',
+          'Foo 5',
+          'Foo 6',
+          'Foo 7',
+          'Foo 8',
+          'Foo 9',
+          'Foo 10',
+          'Foo 11',
+          'Foo 12',
+          'Foo 13',
+          'Foo 14',
+          'Foo 15',
+          'Foo 16',
+          'Foo 17',
+          'Foo 18',
+          'Foo 19',
+          'Foo 20'
         ]);
 
         checkRowSelection(rows.slice(1, 21), true);
@@ -2389,8 +2503,17 @@ export let tableTests = () => {
         await user.keyboard('[/ShiftLeft]');
 
         checkSelection(onSelectionChange, [
-          'Foo 10', 'Foo 11', 'Foo 12', 'Foo 13', 'Foo 14', 'Foo 15',
-          'Foo 16', 'Foo 17', 'Foo 18', 'Foo 19', 'Foo 20'
+          'Foo 10',
+          'Foo 11',
+          'Foo 12',
+          'Foo 13',
+          'Foo 14',
+          'Foo 15',
+          'Foo 16',
+          'Foo 17',
+          'Foo 18',
+          'Foo 19',
+          'Foo 20'
         ]);
 
         checkRowSelection(rows.slice(11, 21), true);
@@ -2402,8 +2525,16 @@ export let tableTests = () => {
         await user.keyboard('[/ShiftLeft]');
 
         checkSelection(onSelectionChange, [
-          'Foo 1', 'Foo 2', 'Foo 3', 'Foo 4', 'Foo 5',
-          'Foo 6', 'Foo 7', 'Foo 8', 'Foo 9', 'Foo 10'
+          'Foo 1',
+          'Foo 2',
+          'Foo 3',
+          'Foo 4',
+          'Foo 5',
+          'Foo 6',
+          'Foo 7',
+          'Foo 8',
+          'Foo 9',
+          'Foo 10'
         ]);
 
         checkRowSelection(rows.slice(1, 11), true);
@@ -2471,8 +2602,16 @@ export let tableTests = () => {
         await user.keyboard('{Shift>}{Control>}{Home}{/Control}{/Shift}');
 
         checkSelection(onSelectionChange, [
-          'Foo 1', 'Foo 2', 'Foo 3', 'Foo 4', 'Foo 5',
-          'Foo 6', 'Foo 7', 'Foo 8', 'Foo 9', 'Foo 10'
+          'Foo 1',
+          'Foo 2',
+          'Foo 3',
+          'Foo 4',
+          'Foo 5',
+          'Foo 6',
+          'Foo 7',
+          'Foo 8',
+          'Foo 9',
+          'Foo 10'
         ]);
 
         checkRowSelection(rows.slice(1, 11), true);
@@ -2544,8 +2683,16 @@ export let tableTests = () => {
         await user.keyboard('{Shift>}{PageUp}{/Shift}');
 
         checkSelection(onSelectionChange, [
-          'Foo 1', 'Foo 2', 'Foo 3', 'Foo 4', 'Foo 5',
-          'Foo 6', 'Foo 7', 'Foo 8', 'Foo 9', 'Foo 10'
+          'Foo 1',
+          'Foo 2',
+          'Foo 3',
+          'Foo 4',
+          'Foo 5',
+          'Foo 6',
+          'Foo 7',
+          'Foo 8',
+          'Foo 9',
+          'Foo 10'
         ]);
 
         checkRowSelection(rows.slice(1, 11), true);
@@ -2567,8 +2714,24 @@ export let tableTests = () => {
         await user.keyboard('[/ShiftLeft]');
 
         checkSelection(onSelectionChange, [
-          'Foo 1', 'Foo 2', 'Foo 4', 'Foo 5', 'Foo 6', 'Foo 7', 'Foo 8', 'Foo 9', 'Foo 10',
-          'Foo 11', 'Foo 12', 'Foo 13', 'Foo 14', 'Foo 15', 'Foo 17', 'Foo 18', 'Foo 19', 'Foo 20'
+          'Foo 1',
+          'Foo 2',
+          'Foo 4',
+          'Foo 5',
+          'Foo 6',
+          'Foo 7',
+          'Foo 8',
+          'Foo 9',
+          'Foo 10',
+          'Foo 11',
+          'Foo 12',
+          'Foo 13',
+          'Foo 14',
+          'Foo 15',
+          'Foo 17',
+          'Foo 18',
+          'Foo 19',
+          'Foo 20'
         ]);
 
         checkRowSelection(rows.slice(1, 3), true);
@@ -2748,10 +2911,10 @@ export let tableTests = () => {
         checkSelectAll(tree, 'checked');
         checkRowSelection(rows.slice(1), true);
 
-        rerender(tree, renderJSX({onSelectionChange}, [
-          {foo: 'Foo 0', bar: 'Bar 0', baz: 'Baz 0'},
-          ...manyItems
-        ]));
+        rerender(
+          tree,
+          renderJSX({onSelectionChange}, [{foo: 'Foo 0', bar: 'Bar 0', baz: 'Baz 0'}, ...manyItems])
+        );
 
         act(() => jest.runAllTimers());
 
@@ -2774,10 +2937,10 @@ export let tableTests = () => {
         await user.click(rows[2]);
         checkSelectAll(tree, 'checked');
 
-        rerender(tree, renderJSX({onSelectionChange}, [
-          {foo: 'Foo 0', bar: 'Bar 0', baz: 'Baz 0'},
-          ...items
-        ]));
+        rerender(
+          tree,
+          renderJSX({onSelectionChange}, [{foo: 'Foo 0', bar: 'Bar 0', baz: 'Baz 0'}, ...items])
+        );
 
         act(() => jest.runAllTimers());
 
@@ -2899,13 +3062,29 @@ export let tableTests = () => {
         expect(columnheaders).toHaveLength(3);
 
         await user.click(columnheaders[1]);
-        expect(announce).toHaveBeenLastCalledWith('sorted by column Bar in descending order', 'assertive', 500);
+        expect(announce).toHaveBeenLastCalledWith(
+          'sorted by column Bar in descending order',
+          'assertive',
+          500
+        );
         await user.click(columnheaders[1]);
-        expect(announce).toHaveBeenLastCalledWith('sorted by column Bar in ascending order', 'assertive', 500);
+        expect(announce).toHaveBeenLastCalledWith(
+          'sorted by column Bar in ascending order',
+          'assertive',
+          500
+        );
         await user.click(columnheaders[0]);
-        expect(announce).toHaveBeenLastCalledWith('sorted by column Foo in ascending order', 'assertive', 500);
+        expect(announce).toHaveBeenLastCalledWith(
+          'sorted by column Foo in ascending order',
+          'assertive',
+          500
+        );
         await user.click(columnheaders[0]);
-        expect(announce).toHaveBeenLastCalledWith('sorted by column Foo in descending order', 'assertive', 500);
+        expect(announce).toHaveBeenLastCalledWith(
+          'sorted by column Foo in descending order',
+          'assertive',
+          500
+        );
       });
     });
 
@@ -3113,9 +3292,7 @@ export let tableTests = () => {
         expect(announce).toHaveBeenLastCalledWith('Foo 5 selected. 1 item selected.');
         expect(announce).toHaveBeenCalledTimes(3);
 
-        checkSelection(onSelectionChange, [
-          'Foo 5'
-        ]);
+        checkSelection(onSelectionChange, ['Foo 5']);
 
         checkRowSelection(rows.slice(1, 5), false);
         checkRowSelection(rows.slice(5, 6), true);
@@ -3128,9 +3305,7 @@ export let tableTests = () => {
         expect(announce).toHaveBeenLastCalledWith('6 items selected.');
         expect(announce).toHaveBeenCalledTimes(4);
 
-        checkSelection(onSelectionChange, [
-          'Foo 5', 'Foo 6', 'Foo 7', 'Foo 8', 'Foo 9', 'Foo 10'
-        ]);
+        checkSelection(onSelectionChange, ['Foo 5', 'Foo 6', 'Foo 7', 'Foo 8', 'Foo 9', 'Foo 10']);
 
         checkRowSelection(rows.slice(1, 5), false);
         checkRowSelection(rows.slice(5, 11), true);
@@ -3159,8 +3334,18 @@ export let tableTests = () => {
         await user.keyboard('[/MetaLeft]');
 
         checkSelection(onSelectionChange, [
-          'Foo 5', 'Foo 10', 'Foo 11', 'Foo 12', 'Foo 13', 'Foo 14', 'Foo 15',
-          'Foo 16', 'Foo 17', 'Foo 18', 'Foo 19', 'Foo 20'
+          'Foo 5',
+          'Foo 10',
+          'Foo 11',
+          'Foo 12',
+          'Foo 13',
+          'Foo 14',
+          'Foo 15',
+          'Foo 16',
+          'Foo 17',
+          'Foo 18',
+          'Foo 19',
+          'Foo 20'
         ]);
 
         checkRowSelection(rows.slice(1, 5), false);
@@ -3228,7 +3413,7 @@ export let tableTests = () => {
 
       describe('needs pointerEvents', function () {
         installPointerEvent();
-        it('should support single tap to perform row selection with screen reader if onAction isn\'t provided', function () {
+        it("should support single tap to perform row selection with screen reader if onAction isn't provided", function () {
           let onSelectionChange = jest.fn();
           let tree = renderTable({onSelectionChange, selectionStyle: 'highlight'});
 
@@ -3238,56 +3423,62 @@ export let tableTests = () => {
           fireEvent(cell, pointerEvent('pointerup', {width: 0, height: 0, pointerType: 'touch'}));
           fireEvent(cell, pointerEvent('mouseup', {}));
           fireEvent(cell, pointerEvent('click', {}));
-          checkSelection(onSelectionChange, [
-            'Foo 5'
-          ]);
+          checkSelection(onSelectionChange, ['Foo 5']);
           onSelectionChange.mockReset();
 
           cell = getCell(tree, 'Foo 8');
-          fireEvent(cell, pointerEvent('pointerdown', {
-            pointerId: 1,
-            width: 1,
-            height: 1,
-            pressure: 0,
-            detail: 0,
-            pointerType: 'mouse'
-          }));
-          fireEvent(cell, pointerEvent('pointerup', {
-            pointerId: 1,
-            width: 1,
-            height: 1,
-            pressure: 0,
-            detail: 0,
-            pointerType: 'mouse'
-          }));
+          fireEvent(
+            cell,
+            pointerEvent('pointerdown', {
+              pointerId: 1,
+              width: 1,
+              height: 1,
+              pressure: 0,
+              detail: 0,
+              pointerType: 'mouse'
+            })
+          );
+          fireEvent(
+            cell,
+            pointerEvent('pointerup', {
+              pointerId: 1,
+              width: 1,
+              height: 1,
+              pressure: 0,
+              detail: 0,
+              pointerType: 'mouse'
+            })
+          );
           fireEvent.click(cell, {pointerType: 'mouse', width: 1, height: 1, detail: 1});
-          checkSelection(onSelectionChange, [
-            'Foo 5', 'Foo 8'
-          ]);
+          checkSelection(onSelectionChange, ['Foo 5', 'Foo 8']);
           onSelectionChange.mockReset();
 
           // Android TalkBack double tap test, virtual pointer event sets pointerType and onClick handles the rest
           cell = getCell(tree, 'Foo 10');
-          fireEvent(cell, pointerEvent('pointerdown', {
-            pointerId: 1,
-            width: 1,
-            height: 1,
-            pressure: 0,
-            detail: 0,
-            pointerType: 'mouse'
-          }));
-          fireEvent(cell, pointerEvent('pointerup', {
-            pointerId: 1,
-            width: 1,
-            height: 1,
-            pressure: 0,
-            detail: 0,
-            pointerType: 'mouse'
-          }));
+          fireEvent(
+            cell,
+            pointerEvent('pointerdown', {
+              pointerId: 1,
+              width: 1,
+              height: 1,
+              pressure: 0,
+              detail: 0,
+              pointerType: 'mouse'
+            })
+          );
+          fireEvent(
+            cell,
+            pointerEvent('pointerup', {
+              pointerId: 1,
+              width: 1,
+              height: 1,
+              pressure: 0,
+              detail: 0,
+              pointerType: 'mouse'
+            })
+          );
           fireEvent.click(cell, {pointerType: 'mouse', width: 1, height: 1, detail: 1});
-          checkSelection(onSelectionChange, [
-            'Foo 5', 'Foo 8', 'Foo 10'
-          ]);
+          checkSelection(onSelectionChange, ['Foo 5', 'Foo 8', 'Foo 10']);
         });
 
         it('should support single tap to perform onAction with screen reader', function () {
@@ -3303,8 +3494,28 @@ export let tableTests = () => {
 
           // Android TalkBack double tap test, virtual pointer event sets pointerType and onClick handles the rest
           let cell = getCell(tree, 'Foo 10');
-          fireEvent(cell, pointerEvent('pointerdown', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0, pointerType: 'mouse'}));
-          fireEvent(cell, pointerEvent('pointerup', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0, pointerType: 'mouse'}));
+          fireEvent(
+            cell,
+            pointerEvent('pointerdown', {
+              pointerId: 1,
+              width: 1,
+              height: 1,
+              pressure: 0,
+              detail: 0,
+              pointerType: 'mouse'
+            })
+          );
+          fireEvent(
+            cell,
+            pointerEvent('pointerup', {
+              pointerId: 1,
+              width: 1,
+              height: 1,
+              pressure: 0,
+              detail: 0,
+              pointerType: 'mouse'
+            })
+          );
           fireEvent.click(cell, {pointerType: 'mouse', width: 1, height: 1, detail: 1});
           expect(onSelectionChange).not.toHaveBeenCalled();
           expect(onAction).toHaveBeenCalledTimes(2);
@@ -3338,7 +3549,10 @@ export let tableTests = () => {
             // TODO: Not replacing this with util for long press since it tests various things in the middle of the press
             fireEvent.pointerDown(tableTester.findCell({text: 'Baz 5'}), {pointerType: 'touch'});
             let description = tree.getByText('Long press to enter selection mode.');
-            expect(tree.getByRole('grid')).toHaveAttribute('aria-describedby', expect.stringContaining(description.id));
+            expect(tree.getByRole('grid')).toHaveAttribute(
+              'aria-describedby',
+              expect.stringContaining(description.id)
+            );
             expect(announce).not.toHaveBeenCalled();
             expect(onSelectionChange).not.toHaveBeenCalled();
             expect(onAction).not.toHaveBeenCalled();
@@ -3555,15 +3769,9 @@ export let tableTests = () => {
   describe('single selection', function () {
     let renderJSX = (props, items = manyItems) => (
       <TableView aria-label="Table" selectionMode="single" {...props}>
-        <TableHeader columns={columns}>
-          {column => <Column>{column.name}</Column>}
-        </TableHeader>
+        <TableHeader columns={columns}>{column => <Column>{column.name}</Column>}</TableHeader>
         <TableBody items={items}>
-          {item =>
-            (<Row key={item.foo}>
-              {key => <Cell>{item[key]}</Cell>}
-            </Row>)
-          }
+          {item => <Row key={item.foo}>{key => <Cell>{item[key]}</Cell>}</Row>}
         </TableBody>
       </TableView>
     );
@@ -3787,23 +3995,19 @@ export let tableTests = () => {
         expect(columnheader.firstElementChild).toBeVisible();
         expect(checkboxInput).not.toBeVisible();
         expect(checkboxInput.getAttribute('aria-label')).toEqual('Select');
-        expect(columnheader.firstElementChild.textContent).toEqual(checkboxInput.getAttribute('aria-label'));
+        expect(columnheader.firstElementChild.textContent).toEqual(
+          checkboxInput.getAttribute('aria-label')
+        );
       });
     });
   });
 
   describe('press/hover interactions and selection mode', function () {
-    let TableWithBreadcrumbs = (props) => (
+    let TableWithBreadcrumbs = props => (
       <TableView aria-label="Table" {...props}>
-        <TableHeader columns={columns}>
-          {column => <Column>{column.name}</Column>}
-        </TableHeader>
+        <TableHeader columns={columns}>{column => <Column>{column.name}</Column>}</TableHeader>
         <TableBody items={items}>
-          {item =>
-            (<Row key={item.foo}>
-              {key => <Cell>{item[key]}</Cell>}
-            </Row>)
-          }
+          {item => <Row key={item.foo}>{key => <Cell>{item[key]}</Cell>}</Row>}
         </TableBody>
       </TableView>
     );
@@ -3839,7 +4043,13 @@ export let tableTests = () => {
     });
 
     it('shows pressed/hover styles when row is pressed/hovered and selection mode is "none", disabledBehavior="selection" and has a action', async function () {
-      let tree = render(<TableWithBreadcrumbs onAction={jest.fn()} disabledBehavior="selection" selectionMode="none" />);
+      let tree = render(
+        <TableWithBreadcrumbs
+          onAction={jest.fn()}
+          disabledBehavior="selection"
+          selectionMode="none"
+        />
+      );
 
       let row = tree.getAllByRole('row')[1];
       await user.hover(row);
@@ -3850,7 +4060,14 @@ export let tableTests = () => {
     });
 
     it('shows pressed/hover styles when row is pressed/hovered, disabledBehavior="selection", row is disabled and has a action', async function () {
-      let tree = render(<TableWithBreadcrumbs disabledKeys={['Foo 1']} onAction={jest.fn()} disabledBehavior="selection" selectionMode="none" />);
+      let tree = render(
+        <TableWithBreadcrumbs
+          disabledKeys={['Foo 1']}
+          onAction={jest.fn()}
+          disabledBehavior="selection"
+          selectionMode="none"
+        />
+      );
 
       let row = tree.getAllByRole('row')[1];
       await user.hover(row);
@@ -3861,7 +4078,14 @@ export let tableTests = () => {
     });
 
     it('doesn\'t show pressed/hover styles when row is pressed/hovered, has a action, but is disabled and disabledBehavior="all"', async function () {
-      let tree = render(<TableWithBreadcrumbs disabledKeys={['Foo 1']} onAction={jest.fn()} disabledBehavior="all" selectionMode="multiple" />);
+      let tree = render(
+        <TableWithBreadcrumbs
+          disabledKeys={['Foo 1']}
+          onAction={jest.fn()}
+          disabledBehavior="all"
+          selectionMode="multiple"
+        />
+      );
 
       let row = tree.getAllByRole('row')[1];
       await user.hover(row);
@@ -3874,7 +4098,11 @@ export let tableTests = () => {
 
   describe('CRUD', function () {
     it('can add items', async function () {
-      let tree = render(<Provider theme={theme}><CRUDExample /></Provider>);
+      let tree = render(
+        <Provider theme={theme}>
+          <CRUDExample />
+        </Provider>
+      );
 
       let table = tree.getByRole('grid');
       let rows = within(table).getAllByRole('row');
@@ -3884,7 +4112,9 @@ export let tableTests = () => {
 
       let button = tree.getByLabelText('Add item');
       await user.click(button);
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
 
       let dialog = tree.getByRole('dialog');
       expect(dialog).toBeVisible();
@@ -3900,7 +4130,9 @@ export let tableTests = () => {
 
       let createButton = tree.getByText('Create');
       await user.click(createButton);
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
 
       expect(dialog).not.toBeInTheDocument();
 
@@ -3919,7 +4151,11 @@ export let tableTests = () => {
     });
 
     it('can remove items', async function () {
-      let tree = render(<Provider theme={theme}><CRUDExample /></Provider>);
+      let tree = render(
+        <Provider theme={theme}>
+          <CRUDExample />
+        </Provider>
+      );
 
       let table = tree.getByRole('grid');
       let rows = within(table).getAllByRole('row');
@@ -3969,7 +4205,11 @@ export let tableTests = () => {
     });
 
     it('resets row indexes after deleting a row', async function () {
-      let tree = render(<Provider theme={theme}><CRUDExample /></Provider>);
+      let tree = render(
+        <Provider theme={theme}>
+          <CRUDExample />
+        </Provider>
+      );
 
       let table = tree.getByRole('grid');
       let rows = within(table).getAllByRole('row');
@@ -4011,7 +4251,11 @@ export let tableTests = () => {
     });
 
     it('can bulk remove items', async function () {
-      let tree = render(<Provider theme={theme}><CRUDExample /></Provider>);
+      let tree = render(
+        <Provider theme={theme}>
+          <CRUDExample />
+        </Provider>
+      );
 
       let addButton = tree.getAllByRole('button')[0];
       let table = tree.getByRole('grid');
@@ -4049,7 +4293,11 @@ export let tableTests = () => {
     });
 
     it('can edit items', async function () {
-      let tree = render(<Provider theme={theme}><CRUDExample /></Provider>);
+      let tree = render(
+        <Provider theme={theme}>
+          <CRUDExample />
+        </Provider>
+      );
 
       let table = tree.getByRole('grid');
       let rows = within(table).getAllByRole('row');
@@ -4057,7 +4305,9 @@ export let tableTests = () => {
 
       let button = within(rows[2]).getByRole('button');
       await user.click(button);
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
 
       let menu = tree.getByRole('menu');
       expect(document.activeElement).toBe(menu);
@@ -4066,7 +4316,9 @@ export let tableTests = () => {
       expect(menuItems.length).toBe(2);
 
       await user.click(menuItems[0]);
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
       expect(menu).not.toBeInTheDocument();
 
       let dialog = tree.getByRole('dialog');
@@ -4079,8 +4331,12 @@ export let tableTests = () => {
       let saveButton = tree.getByText('Save');
       await user.click(saveButton);
 
-      act(() => {jest.runAllTimers();});
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
+      act(() => {
+        jest.runAllTimers();
+      });
 
       expect(dialog).not.toBeInTheDocument();
 
@@ -4091,14 +4347,20 @@ export let tableTests = () => {
     });
 
     it('keyboard navigation works as expected with menu buttons', async function () {
-      let tree = render(<Provider theme={theme}><CRUDExample /></Provider>);
+      let tree = render(
+        <Provider theme={theme}>
+          <CRUDExample />
+        </Provider>
+      );
 
       let table = tree.getByRole('grid');
       let rows = within(table).getAllByRole('row');
       expect(rows).toHaveLength(3);
 
       act(() => within(rows[1]).getAllByRole('gridcell').pop().focus());
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
       let button = within(rows[1]).getByRole('button');
       expect(document.activeElement).toBe(button);
 
@@ -4117,41 +4379,63 @@ export let tableTests = () => {
 
       fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', altKey: true});
       fireEvent.keyUp(document.activeElement, {key: 'ArrowDown', altKey: true});
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
 
       let menu = tree.getByRole('menu');
       expect(document.activeElement).toBe(within(menu).getAllByRole('menuitem')[0]);
 
       fireEvent.keyDown(document.activeElement, {key: 'Enter'});
       fireEvent.keyUp(document.activeElement, {key: 'Enter'});
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
       await user.tab();
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
       await user.tab();
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
       await user.tab();
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
       await user.tab();
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
       expect(document.activeElement).toBe(tree.getAllByRole('button')[1]);
 
       fireEvent.keyDown(document.activeElement, {key: 'Enter'});
       fireEvent.keyUp(document.activeElement, {key: 'Enter'});
-      act(() => {jest.runAllTimers();});
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
+      act(() => {
+        jest.runAllTimers();
+      });
 
       expect(document.activeElement).toBe(button);
     });
 
     it('menu buttons can be opened with Alt + ArrowDown', function () {
-      let tree = render(<Provider theme={theme}><CRUDExample /></Provider>);
+      let tree = render(
+        <Provider theme={theme}>
+          <CRUDExample />
+        </Provider>
+      );
 
       let table = tree.getByRole('grid');
       let rows = within(table).getAllByRole('row');
       expect(rows).toHaveLength(3);
 
       act(() => within(rows[1]).getAllByRole('gridcell').pop().focus());
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
       expect(document.activeElement).toBe(within(rows[1]).getByRole('button'));
 
       fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', altKey: true});
@@ -4162,14 +4446,20 @@ export let tableTests = () => {
     });
 
     it('menu buttons can be opened with Alt + ArrowUp', function () {
-      let tree = render(<Provider theme={theme}><CRUDExample /></Provider>);
+      let tree = render(
+        <Provider theme={theme}>
+          <CRUDExample />
+        </Provider>
+      );
 
       let table = tree.getByRole('grid');
       let rows = within(table).getAllByRole('row');
       expect(rows).toHaveLength(3);
 
       act(() => within(rows[1]).getAllByRole('gridcell').pop().focus());
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
       expect(document.activeElement).toBe(within(rows[1]).getByRole('button'));
 
       fireEvent.keyDown(document.activeElement, {key: 'ArrowUp', altKey: true});
@@ -4180,14 +4470,20 @@ export let tableTests = () => {
     });
 
     it('menu keyboard navigation does not affect table', function () {
-      let tree = render(<Provider theme={theme}><CRUDExample /></Provider>);
+      let tree = render(
+        <Provider theme={theme}>
+          <CRUDExample />
+        </Provider>
+      );
 
       let table = tree.getByRole('grid');
       let rows = within(table).getAllByRole('row');
       expect(rows).toHaveLength(3);
 
       act(() => within(rows[1]).getAllByRole('gridcell').pop().focus());
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
       expect(document.activeElement).toBe(within(rows[1]).getByRole('button'));
 
       fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', altKey: true});
@@ -4212,8 +4508,13 @@ export let tableTests = () => {
   });
 
   describe('with dialog trigger', function () {
-    let TableWithBreadcrumbs = (props) => (
-      <TableView aria-label="TableView with static contents" selectionMode="multiple" width={300} height={200} {...props}>
+    let TableWithBreadcrumbs = props => (
+      <TableView
+        aria-label="TableView with static contents"
+        selectionMode="multiple"
+        width={300}
+        height={200}
+        {...props}>
         <TableHeader>
           <Column key="foo">Foo</Column>
           <Column key="bar">Bar</Column>
@@ -4225,7 +4526,9 @@ export let tableTests = () => {
             <Cell>Two</Cell>
             <Cell>
               <DialogTrigger>
-                <ActionButton aria-label="Add"><Add /></ActionButton>
+                <ActionButton aria-label="Add">
+                  <Add />
+                </ActionButton>
                 {close => (
                   <Dialog>
                     <Heading>The Heading</Heading>
@@ -4234,8 +4537,12 @@ export let tableTests = () => {
                       <TextField autoFocus label="Last Words" data-testid="input" />
                     </Content>
                     <ButtonGroup>
-                      <Button variant="secondary" onPress={close}>Cancel</Button>
-                      <Button variant="cta" onPress={close}>Confirm</Button>
+                      <Button variant="secondary" onPress={close}>
+                        Cancel
+                      </Button>
+                      <Button variant="cta" onPress={close}>
+                        Confirm
+                      </Button>
                     </ButtonGroup>
                   </Dialog>
                 )}
@@ -4246,7 +4553,7 @@ export let tableTests = () => {
       </TableView>
     );
 
-    it('arrow keys interactions don\'t move the focus away from the textfield in the dialog', async function () {
+    it("arrow keys interactions don't move the focus away from the textfield in the dialog", async function () {
       let tree = render(<TableWithBreadcrumbs />);
       let table = tree.getByRole('grid');
       let rows = within(table).getAllByRole('row');
@@ -4297,9 +4604,7 @@ export let tableTests = () => {
             <Column key="foo">Foo</Column>
             <Column key="bar">Bar</Column>
           </TableHeader>
-          <TableBody loadingState="loading">
-            {[]}
-          </TableBody>
+          <TableBody loadingState="loading">{[]}</TableBody>
         </TableView>
       );
 
@@ -4390,7 +4695,9 @@ export let tableTests = () => {
     });
 
     it('should fire onLoadMore when scrolling near the bottom', function () {
-      let scrollHeightMock = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 4100);
+      let scrollHeightMock = jest
+        .spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get')
+        .mockImplementation(() => 4100);
       let items = [];
       for (let i = 1; i <= 100; i++) {
         items.push({id: i, foo: 'Foo ' + i, bar: 'Bar ' + i});
@@ -4404,11 +4711,7 @@ export let tableTests = () => {
             <Column key="bar">Bar</Column>
           </TableHeader>
           <TableBody items={items} onLoadMore={onLoadMore}>
-            {row => (
-              <Row>
-                {key => <Cell>{row[key]}</Cell>}
-              </Row>
-            )}
+            {row => <Row>{key => <Cell>{row[key]}</Cell>}</Row>}
           </TableBody>
         </TableView>
       );
@@ -4421,39 +4724,45 @@ export let tableTests = () => {
 
       scrollView.scrollTop = 250;
       fireEvent.scroll(scrollView);
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
 
       scrollView.scrollTop = 1500;
       fireEvent.scroll(scrollView);
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
 
       scrollView.scrollTop = 2800;
       fireEvent.scroll(scrollView);
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
 
       expect(onLoadMore).toHaveBeenCalledTimes(1);
       scrollHeightMock.mockReset();
     });
 
-    it('should automatically fire onLoadMore if there aren\'t enough items to fill the Table', function () {
-      let scrollHeightMock = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 1000);
+    it("should automatically fire onLoadMore if there aren't enough items to fill the Table", function () {
+      let scrollHeightMock = jest
+        .spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get')
+        .mockImplementation(() => 1000);
       let items = [{id: 1, foo: 'Foo 1', bar: 'Bar 1'}];
       let onLoadMore = jest.fn(() => {
-        scrollHeightMock = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 2000);
+        scrollHeightMock = jest
+          .spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get')
+          .mockImplementation(() => 2000);
       });
 
-      let TableMock = (props) => (
+      let TableMock = props => (
         <TableView aria-label="Table">
           <TableHeader>
             <Column key="foo">Foo</Column>
             <Column key="bar">Bar</Column>
           </TableHeader>
           <TableBody items={props.items} onLoadMore={onLoadMore}>
-            {row => (
-              <Row>
-                {key => <Cell>{row[key]}</Cell>}
-              </Row>
-            )}
+            {row => <Row>{key => <Cell>{row[key]}</Cell>}</Row>}
           </TableBody>
         </TableView>
       );
@@ -4470,8 +4779,12 @@ export let tableTests = () => {
       let tree = render(
         <TableView aria-label="Table">
           <TableHeader>
-            <Column key="foo" allowsSorting>Foo</Column>
-            <Column key="bar" allowsSorting>Bar</Column>
+            <Column key="foo" allowsSorting>
+              Foo
+            </Column>
+            <Column key="bar" allowsSorting>
+              Bar
+            </Column>
             <Column key="baz">Baz</Column>
           </TableHeader>
           <TableBody>
@@ -4491,9 +4804,13 @@ export let tableTests = () => {
       expect(columnheaders[1]).toHaveAttribute('aria-sort', 'none');
       expect(columnheaders[2]).not.toHaveAttribute('aria-sort');
       expect(columnheaders[0]).toHaveAttribute('aria-describedby');
-      expect(document.getElementById(columnheaders[0].getAttribute('aria-describedby'))).toHaveTextContent('sortable column');
+      expect(
+        document.getElementById(columnheaders[0].getAttribute('aria-describedby'))
+      ).toHaveTextContent('sortable column');
       expect(columnheaders[1]).toHaveAttribute('aria-describedby');
-      expect(document.getElementById(columnheaders[1].getAttribute('aria-describedby'))).toHaveTextContent('sortable column');
+      expect(
+        document.getElementById(columnheaders[1].getAttribute('aria-describedby'))
+      ).toHaveTextContent('sortable column');
       expect(columnheaders[2]).not.toHaveAttribute('aria-describedby');
     });
 
@@ -4501,8 +4818,12 @@ export let tableTests = () => {
       let tree = render(
         <TableView aria-label="Table" sortDescriptor={{column: 'bar', direction: 'ascending'}}>
           <TableHeader>
-            <Column key="foo" allowsSorting>Foo</Column>
-            <Column key="bar" allowsSorting>Bar</Column>
+            <Column key="foo" allowsSorting>
+              Foo
+            </Column>
+            <Column key="bar" allowsSorting>
+              Bar
+            </Column>
             <Column key="baz">Baz</Column>
           </TableHeader>
           <TableBody>
@@ -4522,9 +4843,13 @@ export let tableTests = () => {
       expect(columnheaders[1]).toHaveAttribute('aria-sort', 'ascending');
       expect(columnheaders[2]).not.toHaveAttribute('aria-sort');
       expect(columnheaders[0]).toHaveAttribute('aria-describedby');
-      expect(document.getElementById(columnheaders[0].getAttribute('aria-describedby'))).toHaveTextContent('sortable column');
+      expect(
+        document.getElementById(columnheaders[0].getAttribute('aria-describedby'))
+      ).toHaveTextContent('sortable column');
       expect(columnheaders[1]).toHaveAttribute('aria-describedby');
-      expect(document.getElementById(columnheaders[1].getAttribute('aria-describedby'))).toHaveTextContent('sortable column');
+      expect(
+        document.getElementById(columnheaders[1].getAttribute('aria-describedby'))
+      ).toHaveTextContent('sortable column');
       expect(columnheaders[2]).not.toHaveAttribute('aria-describedby');
     });
 
@@ -4532,8 +4857,12 @@ export let tableTests = () => {
       let tree = render(
         <TableView aria-label="Table" sortDescriptor={{column: 'bar', direction: 'descending'}}>
           <TableHeader>
-            <Column key="foo" allowsSorting>Foo</Column>
-            <Column key="bar" allowsSorting>Bar</Column>
+            <Column key="foo" allowsSorting>
+              Foo
+            </Column>
+            <Column key="bar" allowsSorting>
+              Bar
+            </Column>
             <Column key="baz">Baz</Column>
           </TableHeader>
           <TableBody>
@@ -4553,13 +4882,17 @@ export let tableTests = () => {
       expect(columnheaders[1]).toHaveAttribute('aria-sort', 'descending');
       expect(columnheaders[2]).not.toHaveAttribute('aria-sort');
       expect(columnheaders[0]).toHaveAttribute('aria-describedby');
-      expect(document.getElementById(columnheaders[0].getAttribute('aria-describedby'))).toHaveTextContent('sortable column');
+      expect(
+        document.getElementById(columnheaders[0].getAttribute('aria-describedby'))
+      ).toHaveTextContent('sortable column');
       expect(columnheaders[1]).toHaveAttribute('aria-describedby');
-      expect(document.getElementById(columnheaders[1].getAttribute('aria-describedby'))).toHaveTextContent('sortable column');
+      expect(
+        document.getElementById(columnheaders[1].getAttribute('aria-describedby'))
+      ).toHaveTextContent('sortable column');
       expect(columnheaders[2]).not.toHaveAttribute('aria-describedby');
     });
 
-    it('should add sort direction info to the column header\'s aria-describedby for Android', async function () {
+    it("should add sort direction info to the column header's aria-describedby for Android", async function () {
       let uaMock = jest.spyOn(navigator, 'userAgent', 'get').mockImplementation(() => 'Android');
       let tree = render(<ExampleSortTable />);
       let tableTester = testUtilUser.createTester('Table', {root: tree.getByRole('grid')});
@@ -4570,13 +4903,19 @@ export let tableTests = () => {
       expect(columnheaders[1]).not.toHaveAttribute('aria-sort');
       expect(columnheaders[2]).not.toHaveAttribute('aria-sort');
       expect(columnheaders[0]).toHaveAttribute('aria-describedby');
-      expect(document.getElementById(columnheaders[0].getAttribute('aria-describedby'))).toHaveTextContent('sortable column');
+      expect(
+        document.getElementById(columnheaders[0].getAttribute('aria-describedby'))
+      ).toHaveTextContent('sortable column');
       expect(columnheaders[1]).toHaveAttribute('aria-describedby');
-      expect(document.getElementById(columnheaders[1].getAttribute('aria-describedby'))).toHaveTextContent('sortable column, ascending');
+      expect(
+        document.getElementById(columnheaders[1].getAttribute('aria-describedby'))
+      ).toHaveTextContent('sortable column, ascending');
       expect(columnheaders[2]).not.toHaveAttribute('aria-describedby');
 
       await tableTester.toggleSort({column: 1});
-      expect(document.getElementById(columnheaders[1].getAttribute('aria-describedby'))).toHaveTextContent('sortable column, descending');
+      expect(
+        document.getElementById(columnheaders[1].getAttribute('aria-describedby'))
+      ).toHaveTextContent('sortable column, descending');
 
       uaMock.mockRestore();
     });
@@ -4586,8 +4925,12 @@ export let tableTests = () => {
       let tree = render(
         <TableView aria-label="Table" onSortChange={onSortChange}>
           <TableHeader>
-            <Column key="foo" allowsSorting>Foo</Column>
-            <Column key="bar" allowsSorting>Bar</Column>
+            <Column key="foo" allowsSorting>
+              Foo
+            </Column>
+            <Column key="bar" allowsSorting>
+              Bar
+            </Column>
             <Column key="baz">Baz</Column>
           </TableHeader>
           <TableBody>
@@ -4607,9 +4950,13 @@ export let tableTests = () => {
       expect(columnheaders[1]).toHaveAttribute('aria-sort', 'none');
       expect(columnheaders[2]).not.toHaveAttribute('aria-sort');
       expect(columnheaders[0]).toHaveAttribute('aria-describedby');
-      expect(document.getElementById(columnheaders[0].getAttribute('aria-describedby'))).toHaveTextContent('sortable column');
+      expect(
+        document.getElementById(columnheaders[0].getAttribute('aria-describedby'))
+      ).toHaveTextContent('sortable column');
       expect(columnheaders[1]).toHaveAttribute('aria-describedby');
-      expect(document.getElementById(columnheaders[1].getAttribute('aria-describedby'))).toHaveTextContent('sortable column');
+      expect(
+        document.getElementById(columnheaders[1].getAttribute('aria-describedby'))
+      ).toHaveTextContent('sortable column');
       expect(columnheaders[2]).not.toHaveAttribute('aria-describedby');
 
       await user.click(columnheaders[0]);
@@ -4621,10 +4968,17 @@ export let tableTests = () => {
     it('should toggle the sort direction from ascending to descending', async function () {
       let onSortChange = jest.fn();
       let tree = render(
-        <TableView aria-label="Table" sortDescriptor={{column: 'foo', direction: 'ascending'}} onSortChange={onSortChange}>
+        <TableView
+          aria-label="Table"
+          sortDescriptor={{column: 'foo', direction: 'ascending'}}
+          onSortChange={onSortChange}>
           <TableHeader>
-            <Column key="foo" allowsSorting>Foo</Column>
-            <Column key="bar" allowsSorting>Bar</Column>
+            <Column key="foo" allowsSorting>
+              Foo
+            </Column>
+            <Column key="bar" allowsSorting>
+              Bar
+            </Column>
             <Column key="baz">Baz</Column>
           </TableHeader>
           <TableBody>
@@ -4644,9 +4998,13 @@ export let tableTests = () => {
       expect(columnheaders[1]).toHaveAttribute('aria-sort', 'none');
       expect(columnheaders[2]).not.toHaveAttribute('aria-sort');
       expect(columnheaders[0]).toHaveAttribute('aria-describedby');
-      expect(document.getElementById(columnheaders[0].getAttribute('aria-describedby'))).toHaveTextContent('sortable column');
+      expect(
+        document.getElementById(columnheaders[0].getAttribute('aria-describedby'))
+      ).toHaveTextContent('sortable column');
       expect(columnheaders[1]).toHaveAttribute('aria-describedby');
-      expect(document.getElementById(columnheaders[1].getAttribute('aria-describedby'))).toHaveTextContent('sortable column');
+      expect(
+        document.getElementById(columnheaders[1].getAttribute('aria-describedby'))
+      ).toHaveTextContent('sortable column');
       expect(columnheaders[2]).not.toHaveAttribute('aria-describedby');
 
       await user.click(columnheaders[0]);
@@ -4658,10 +5016,17 @@ export let tableTests = () => {
     it('should toggle the sort direction from descending to ascending', async function () {
       let onSortChange = jest.fn();
       let tree = render(
-        <TableView aria-label="Table" sortDescriptor={{column: 'foo', direction: 'descending'}} onSortChange={onSortChange}>
+        <TableView
+          aria-label="Table"
+          sortDescriptor={{column: 'foo', direction: 'descending'}}
+          onSortChange={onSortChange}>
           <TableHeader>
-            <Column key="foo" allowsSorting>Foo</Column>
-            <Column key="bar" allowsSorting>Bar</Column>
+            <Column key="foo" allowsSorting>
+              Foo
+            </Column>
+            <Column key="bar" allowsSorting>
+              Bar
+            </Column>
             <Column key="baz">Baz</Column>
           </TableHeader>
           <TableBody>
@@ -4681,9 +5046,13 @@ export let tableTests = () => {
       expect(columnheaders[0]).toHaveAttribute('aria-sort', 'descending');
       expect(columnheaders[1]).toHaveAttribute('aria-sort', 'none');
       expect(columnheaders[2]).not.toHaveAttribute('aria-sort');
-      expect(document.getElementById(columnheaders[0].getAttribute('aria-describedby'))).toHaveTextContent('sortable column');
+      expect(
+        document.getElementById(columnheaders[0].getAttribute('aria-describedby'))
+      ).toHaveTextContent('sortable column');
       expect(columnheaders[1]).toHaveAttribute('aria-describedby');
-      expect(document.getElementById(columnheaders[1].getAttribute('aria-describedby'))).toHaveTextContent('sortable column');
+      expect(
+        document.getElementById(columnheaders[1].getAttribute('aria-describedby'))
+      ).toHaveTextContent('sortable column');
       expect(columnheaders[2]).not.toHaveAttribute('aria-describedby');
 
       await user.click(columnheaders[0]);
@@ -4695,10 +5064,17 @@ export let tableTests = () => {
     it('should trigger sorting on a different column', async function () {
       let onSortChange = jest.fn();
       let tree = render(
-        <TableView aria-label="Table" sortDescriptor={{column: 'foo', direction: 'ascending'}} onSortChange={onSortChange}>
+        <TableView
+          aria-label="Table"
+          sortDescriptor={{column: 'foo', direction: 'ascending'}}
+          onSortChange={onSortChange}>
           <TableHeader>
-            <Column key="foo" allowsSorting>Foo</Column>
-            <Column key="bar" allowsSorting>Bar</Column>
+            <Column key="foo" allowsSorting>
+              Foo
+            </Column>
+            <Column key="bar" allowsSorting>
+              Bar
+            </Column>
             <Column key="baz">Baz</Column>
           </TableHeader>
           <TableBody>
@@ -4718,9 +5094,13 @@ export let tableTests = () => {
       expect(columnheaders[1]).toHaveAttribute('aria-sort', 'none');
       expect(columnheaders[2]).not.toHaveAttribute('aria-sort');
       expect(columnheaders[0]).toHaveAttribute('aria-describedby');
-      expect(document.getElementById(columnheaders[0].getAttribute('aria-describedby'))).toHaveTextContent('sortable column');
+      expect(
+        document.getElementById(columnheaders[0].getAttribute('aria-describedby'))
+      ).toHaveTextContent('sortable column');
       expect(columnheaders[1]).toHaveAttribute('aria-describedby');
-      expect(document.getElementById(columnheaders[1].getAttribute('aria-describedby'))).toHaveTextContent('sortable column');
+      expect(
+        document.getElementById(columnheaders[1].getAttribute('aria-describedby'))
+      ).toHaveTextContent('sortable column');
       expect(columnheaders[2]).not.toHaveAttribute('aria-describedby');
 
       await user.click(columnheaders[1]);
@@ -4738,9 +5118,7 @@ export let tableTests = () => {
             <Column key="foo">Foo</Column>
             <Column key="bar">Bar</Column>
           </TableHeader>
-          <TableBody>
-            {[]}
-          </TableBody>
+          <TableBody>{[]}</TableBody>
         </TableView>
       );
 
@@ -4770,14 +5148,16 @@ export let tableTests = () => {
       let onSelectionChange = jest.fn();
       let tree = render(
         <div>
-          <TableView aria-label="Table" selectionMode="multiple" onSelectionChange={onSelectionChange} renderEmptyState={() => <h3>No results</h3>}>
+          <TableView
+            aria-label="Table"
+            selectionMode="multiple"
+            onSelectionChange={onSelectionChange}
+            renderEmptyState={() => <h3>No results</h3>}>
             <TableHeader>
               <Column key="foo">Foo</Column>
               <Column key="bar">Bar</Column>
             </TableHeader>
-            <TableBody>
-              {[]}
-            </TableBody>
+            <TableBody>{[]}</TableBody>
           </TableView>
           <input />
         </div>
@@ -4829,8 +5209,12 @@ export let tableTests = () => {
       let table = tree.getByRole('grid');
       expect(document.activeElement).toBe(table);
       // Run the rest of the timeout and run the transitions
-      act(() => {jest.runAllTimers();});
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
+      act(() => {
+        jest.runAllTimers();
+      });
       rows = tree.getAllByRole('row');
       expect(rows).toHaveLength(2);
     });
@@ -4850,7 +5234,9 @@ export let tableTests = () => {
       expect(document.activeElement).toBe(toggleButton);
       expect(tree.queryByRole('menuitem')).toBeFalsy();
       fireEvent.mouseEnter(headers[2]);
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
       expect(tree.queryByRole('slider')).toBeFalsy();
     });
 
@@ -4864,32 +5250,46 @@ export let tableTests = () => {
       await user.tab();
       expect(document.activeElement).toBe(toggleButton);
       await user.click(toggleButton);
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
 
       expect(selectAll).not.toHaveAttribute('disabled');
       await user.click(selectAll);
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
       expect(selectAll.checked).toBeTruthy();
       expect(document.activeElement).toBe(selectAll);
 
       fireEvent.mouseEnter(headers[2]);
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
       expect(tree.queryAllByRole('slider')).toBeTruthy();
 
       let column1Button = within(headers[1]).getByRole('button');
       let column2Button = within(headers[2]).getByRole('button');
       await user.click(column2Button);
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
       expect(tree.queryAllByRole('menuitem')).toBeTruthy();
       await user.keyboard('{Escape}');
-      act(() => {jest.runAllTimers();});
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
+      act(() => {
+        jest.runAllTimers();
+      });
       expect(document.activeElement).toBe(column2Button);
       await user.keyboard('{ArrowLeft}');
       expect(document.activeElement).toBe(column1Button);
 
       await user.click(toggleButton);
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
       expect(selectAll).toHaveAttribute('disabled');
       await user.click(headers[2]);
       expect(document.activeElement).toBe(toggleButton);
@@ -4900,7 +5300,7 @@ export let tableTests = () => {
   });
 
   describe('links', function () {
-    describe.each(['mouse', 'keyboard'])('%s', (type) => {
+    describe.each(['mouse', 'keyboard'])('%s', type => {
       let trigger = async (item, key = 'Enter') => {
         if (type === 'mouse') {
           await user.click(item);
@@ -4948,99 +5348,108 @@ export let tableTests = () => {
         expect(onClick.mock.calls[0][0].target.href).toBe('https://google.com/');
       });
 
-      it.each(['single', 'multiple'])('should support links with selectionStyle="checkbox" selectionMode="%s"', async function (selectionMode) {
-        let {getAllByRole} = render(
-          <Provider theme={theme}>
-            <TableView aria-label="Table" selectionMode={selectionMode}>
-              <TableHeader>
-                <Column>Foo</Column>
-                <Column>Bar</Column>
-                <Column>Baz</Column>
-              </TableHeader>
-              <TableBody>
-                <Row href="https://google.com">
-                  <Cell>Foo 1</Cell>
-                  <Cell>Bar 1</Cell>
-                  <Cell>Baz 1</Cell>
-                </Row>
-                <Row href="https://adobe.com">
-                  <Cell>Foo 2</Cell>
-                  <Cell>Bar 2</Cell>
-                  <Cell>Baz 2</Cell>
-                </Row>
-              </TableBody>
-            </TableView>
-          </Provider>
-        );
+      it.each(['single', 'multiple'])(
+        'should support links with selectionStyle="checkbox" selectionMode="%s"',
+        async function (selectionMode) {
+          let {getAllByRole} = render(
+            <Provider theme={theme}>
+              <TableView aria-label="Table" selectionMode={selectionMode}>
+                <TableHeader>
+                  <Column>Foo</Column>
+                  <Column>Bar</Column>
+                  <Column>Baz</Column>
+                </TableHeader>
+                <TableBody>
+                  <Row href="https://google.com">
+                    <Cell>Foo 1</Cell>
+                    <Cell>Bar 1</Cell>
+                    <Cell>Baz 1</Cell>
+                  </Row>
+                  <Row href="https://adobe.com">
+                    <Cell>Foo 2</Cell>
+                    <Cell>Bar 2</Cell>
+                    <Cell>Baz 2</Cell>
+                  </Row>
+                </TableBody>
+              </TableView>
+            </Provider>
+          );
 
-        let items = getAllByRole('row').slice(1);
-        for (let item of items) {
-          expect(item.tagName).not.toBe('A');
-          expect(item).toHaveAttribute('data-href');
+          let items = getAllByRole('row').slice(1);
+          for (let item of items) {
+            expect(item.tagName).not.toBe('A');
+            expect(item).toHaveAttribute('data-href');
+          }
+
+          let onClick = mockClickDefault();
+          await trigger(items[0]);
+          expect(onClick).toHaveBeenCalledTimes(1);
+          expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
+          expect(onClick.mock.calls[0][0].target.href).toBe('https://google.com/');
+
+          await user.click(within(items[0]).getByRole('checkbox'));
+          expect(items[0]).toHaveAttribute('aria-selected', 'true');
+
+          await trigger(items[1], ' ');
+          expect(onClick).toHaveBeenCalledTimes(1);
+          expect(items[1]).toHaveAttribute('aria-selected', 'true');
+          document.removeEventListener('click', onClick);
         }
+      );
 
-        let onClick = mockClickDefault();
-        await trigger(items[0]);
-        expect(onClick).toHaveBeenCalledTimes(1);
-        expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
-        expect(onClick.mock.calls[0][0].target.href).toBe('https://google.com/');
+      it.each(['single', 'multiple'])(
+        'should support links with selectionStyle="highlight" selectionMode="%s"',
+        async function (selectionMode) {
+          let {getAllByRole} = render(
+            <Provider theme={theme}>
+              <TableView
+                aria-label="Table"
+                selectionMode={selectionMode}
+                selectionStyle="highlight">
+                <TableHeader>
+                  <Column>Foo</Column>
+                  <Column>Bar</Column>
+                  <Column>Baz</Column>
+                </TableHeader>
+                <TableBody>
+                  <Row href="https://google.com">
+                    <Cell>Foo 1</Cell>
+                    <Cell>Bar 1</Cell>
+                    <Cell>Baz 1</Cell>
+                  </Row>
+                  <Row href="https://adobe.com">
+                    <Cell>Foo 2</Cell>
+                    <Cell>Bar 2</Cell>
+                    <Cell>Baz 2</Cell>
+                  </Row>
+                </TableBody>
+              </TableView>
+            </Provider>
+          );
 
-        await user.click(within(items[0]).getByRole('checkbox'));
-        expect(items[0]).toHaveAttribute('aria-selected', 'true');
+          let items = getAllByRole('row').slice(1);
+          for (let item of items) {
+            expect(item.tagName).not.toBe('A');
+            expect(item).toHaveAttribute('data-href');
+          }
 
-        await trigger(items[1], ' ');
-        expect(onClick).toHaveBeenCalledTimes(1);
-        expect(items[1]).toHaveAttribute('aria-selected', 'true');
-        document.removeEventListener('click', onClick);
-      });
+          let onClick = mockClickDefault();
+          await trigger(items[0], ' ');
+          expect(onClick).not.toHaveBeenCalled();
+          expect(items[0]).toHaveAttribute('aria-selected', 'true');
+          document.removeEventListener('click', onClick);
 
-      it.each(['single', 'multiple'])('should support links with selectionStyle="highlight" selectionMode="%s"', async function (selectionMode) {
-        let {getAllByRole} = render(
-          <Provider theme={theme}>
-            <TableView aria-label="Table" selectionMode={selectionMode} selectionStyle="highlight">
-              <TableHeader>
-                <Column>Foo</Column>
-                <Column>Bar</Column>
-                <Column>Baz</Column>
-              </TableHeader>
-              <TableBody>
-                <Row href="https://google.com">
-                  <Cell>Foo 1</Cell>
-                  <Cell>Bar 1</Cell>
-                  <Cell>Baz 1</Cell>
-                </Row>
-                <Row href="https://adobe.com">
-                  <Cell>Foo 2</Cell>
-                  <Cell>Bar 2</Cell>
-                  <Cell>Baz 2</Cell>
-                </Row>
-              </TableBody>
-            </TableView>
-          </Provider>
-        );
-
-        let items = getAllByRole('row').slice(1);
-        for (let item of items) {
-          expect(item.tagName).not.toBe('A');
-          expect(item).toHaveAttribute('data-href');
+          if (type === 'mouse') {
+            await user.dblClick(items[0], {pointerType: 'mouse'});
+          } else {
+            fireEvent.keyDown(items[0], {key: 'Enter'});
+            fireEvent.keyUp(items[0], {key: 'Enter'});
+          }
+          expect(onClick).toHaveBeenCalledTimes(1);
+          expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
+          expect(onClick.mock.calls[0][0].target.href).toBe('https://google.com/');
         }
-
-        let onClick = mockClickDefault();
-        await trigger(items[0], ' ');
-        expect(onClick).not.toHaveBeenCalled();
-        expect(items[0]).toHaveAttribute('aria-selected', 'true');
-        document.removeEventListener('click', onClick);
-
-        if (type === 'mouse') {
-          await user.dblClick(items[0], {pointerType: 'mouse'});
-        } else {
-          fireEvent.keyDown(items[0], {key: 'Enter'});
-          fireEvent.keyUp(items[0], {key: 'Enter'});
-        }
-        expect(onClick).toHaveBeenCalledTimes(1);
-        expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
-        expect(onClick.mock.calls[0][0].target.href).toBe('https://google.com/');
-      });
+      );
 
       it('should work with RouterProvider', async () => {
         let navigate = jest.fn();

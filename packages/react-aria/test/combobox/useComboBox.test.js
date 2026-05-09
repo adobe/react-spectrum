@@ -21,7 +21,7 @@ describe('useComboBox', function () {
   let stopPropagation = jest.fn();
   let openSpy = jest.fn();
   let toggleSpy = jest.fn();
-  let event = (e) => ({
+  let event = e => ({
     ...e,
     nativeEvent: {
       isComposing: false
@@ -30,7 +30,10 @@ describe('useComboBox', function () {
     stopPropagation
   });
 
-  let defaultProps = {items: [{id: 1, name: 'one'}], children: (props) => <Item>{props.name}</Item>};
+  let defaultProps = {
+    items: [{id: 1, name: 'one'}],
+    children: props => <Item>{props.name}</Item>
+  };
 
   let props = {
     label: 'test label',
@@ -55,8 +58,15 @@ describe('useComboBox', function () {
   it('should not infinite loop when children is an inline function', function () {
     let {result} = renderHook(() => {
       let inlineProps = {
-        items: [{id: 'a', name: 'Option A'}, {id: 'b', name: 'Option B'}],
-        children: (item) => <Item key={item.id} textValue={item.name}>{item.name}</Item>,
+        items: [
+          {id: 'a', name: 'Option A'},
+          {id: 'b', name: 'Option B'}
+        ],
+        children: item => (
+          <Item key={item.id} textValue={item.name}>
+            {item.name}
+          </Item>
+        ),
         placeholder: 'Select...',
         allowsCustomValue: true,
         menuTrigger: 'focus'
@@ -93,13 +103,17 @@ describe('useComboBox', function () {
   });
 
   it('should prevent default on Enter if isOpen', function () {
-    let {result: state} = renderHook((props) => useComboBoxState(props), {initialProps: {...props, allowsEmptyCollection: true}});
+    let {result: state} = renderHook(props => useComboBoxState(props), {
+      initialProps: {...props, allowsEmptyCollection: true}
+    });
     act(() => {
       // set combobox state to open
       state.current.open();
     });
 
-    let {result, rerender} = renderHook((props) => useComboBox(props, state.current), {initialProps: props});
+    let {result, rerender} = renderHook(props => useComboBox(props, state.current), {
+      initialProps: props
+    });
     let {inputProps} = result.current;
 
     act(() => {
@@ -121,15 +135,19 @@ describe('useComboBox', function () {
 
   it('should only call commit on Tab when the menu is open', function () {
     let commitSpy = jest.fn();
-    let {result: state} = renderHook((props) => useComboBoxState(props), {initialProps: props});
+    let {result: state} = renderHook(props => useComboBoxState(props), {initialProps: props});
     let closedState = {...state.current, isOpen: false, commit: commitSpy};
-    let {result: closedResult} = renderHook((props) => useComboBox(props, closedState), {initialProps: props});
+    let {result: closedResult} = renderHook(props => useComboBox(props, closedState), {
+      initialProps: props
+    });
     act(() => {
       closedResult.current.inputProps.onKeyDown(event({key: 'Tab'}));
     });
     expect(commitSpy).toHaveBeenCalledTimes(0);
     let openState = {...state.current, isOpen: true, commit: commitSpy};
-    let {result: openResult} = renderHook((props) => useComboBox(props, openState), {initialProps: props});
+    let {result: openResult} = renderHook(props => useComboBox(props, openState), {
+      initialProps: props
+    });
     act(() => {
       openResult.current.inputProps.onKeyDown(event({key: 'Tab'}));
     });
@@ -137,11 +155,11 @@ describe('useComboBox', function () {
   });
 
   it('calls open and toggle with the expected parameters when arrow down/up/trigger button is pressed', function () {
-    let {result: state} = renderHook((props) => useComboBoxState(props), {initialProps: props});
+    let {result: state} = renderHook(props => useComboBoxState(props), {initialProps: props});
     state.current.open = openSpy;
     state.current.toggle = toggleSpy;
 
-    let {result} = renderHook((props) => useComboBox(props, state.current), {initialProps: props});
+    let {result} = renderHook(props => useComboBox(props, state.current), {initialProps: props});
     let {inputProps, buttonProps} = result.current;
     inputProps.onKeyDown(event({key: 'ArrowDown'}));
     expect(openSpy).toHaveBeenCalledTimes(1);
@@ -164,8 +182,8 @@ describe('useComboBox', function () {
   it('should call onBlur when no button provided and you leave the field', function () {
     let onBlurMock = jest.fn();
     let initialProps = {...props, buttonRef: {current: null}, onBlur: onBlurMock};
-    let {result: state} = renderHook((props) => useComboBoxState(props), {initialProps});
-    let {result} = renderHook((props) => useComboBox(props, state.current), {initialProps});
+    let {result: state} = renderHook(props => useComboBoxState(props), {initialProps});
+    let {result} = renderHook(props => useComboBox(props, state.current), {initialProps});
     let {inputProps} = result.current;
 
     inputProps.onBlur(event({relatedTarget: null}));
@@ -177,24 +195,31 @@ describe('useComboBox', function () {
     Name          | componentProps
     ${'disabled'} | ${{isDisabled: true}}
     ${'readonly'} | ${{isReadOnly: true}}
-  `('press and keyboard events on the button doesn\'t toggle the menu if $Name', function ({componentProps}) {
-    let additionalProps = {
-      ...props,
-      ...componentProps
-    };
+  `(
+    "press and keyboard events on the button doesn't toggle the menu if $Name",
+    function ({componentProps}) {
+      let additionalProps = {
+        ...props,
+        ...componentProps
+      };
 
-    let {result: state} = renderHook((props) => useComboBoxState(props), {initialProps: additionalProps});
-    state.current.open = openSpy;
-    state.current.toggle = toggleSpy;
+      let {result: state} = renderHook(props => useComboBoxState(props), {
+        initialProps: additionalProps
+      });
+      state.current.open = openSpy;
+      state.current.toggle = toggleSpy;
 
-    let {result} = renderHook((props) => useComboBox(props, state.current), {initialProps: additionalProps});
-    let {buttonProps} = result.current;
-    buttonProps.onKeyDown(event({key: 'ArrowDown'}));
-    expect(openSpy).toHaveBeenCalledTimes(0);
-    expect(toggleSpy).toHaveBeenCalledTimes(0);
-    buttonProps.onKeyDown(event({key: 'ArrowUp'}));
-    expect(openSpy).toHaveBeenCalledTimes(0);
-    expect(toggleSpy).toHaveBeenCalledTimes(0);
-    expect(buttonProps.isDisabled).toBeTruthy();
-  });
+      let {result} = renderHook(props => useComboBox(props, state.current), {
+        initialProps: additionalProps
+      });
+      let {buttonProps} = result.current;
+      buttonProps.onKeyDown(event({key: 'ArrowDown'}));
+      expect(openSpy).toHaveBeenCalledTimes(0);
+      expect(toggleSpy).toHaveBeenCalledTimes(0);
+      buttonProps.onKeyDown(event({key: 'ArrowUp'}));
+      expect(openSpy).toHaveBeenCalledTimes(0);
+      expect(toggleSpy).toHaveBeenCalledTimes(0);
+      expect(buttonProps.isDisabled).toBeTruthy();
+    }
+  );
 });

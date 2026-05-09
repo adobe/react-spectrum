@@ -12,7 +12,7 @@ const meta: Meta<typeof DateField> = {
 export default meta;
 type Story = StoryFn<typeof DateField>;
 
-export const Example: Story = (args) => <DateField {...args} />;
+export const Example: Story = args => <DateField {...args} />;
 
 Example.args = {
   label: 'Event date'

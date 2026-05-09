@@ -4,7 +4,7 @@
   left: 0;
   width: var(--page-width);
   height: var(--page-height);
-  background: rgba(0 0 0 / .3);
+  background: rgba(0 0 0 / 0.3);
   backdrop-filter: blur(10px);
   z-index: 100;
   overflow: clip;
@@ -50,7 +50,7 @@
   }
 
   to {
-    background: rgba(0 0 0 / .3);
+    background: rgba(0 0 0 / 0.3);
     backdrop-filter: blur(10px);
   }
 }

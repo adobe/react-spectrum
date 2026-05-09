@@ -193,10 +193,7 @@ describe('Checkbox', function () {
 
     let checkbox = getByRole('checkbox');
     expect(checkbox.value).toBe('on');
-    expect(checkbox).toHaveAttribute(
-      'aria-labelledby',
-      props['aria-labelledby']
-    );
+    expect(checkbox).toHaveAttribute('aria-labelledby', props['aria-labelledby']);
   });
 
   it.each`
@@ -212,10 +209,7 @@ describe('Checkbox', function () {
 
     let checkbox = getByRole('checkbox');
     expect(checkbox.value).toBe('on');
-    expect(checkbox).toHaveAttribute(
-      'aria-describedby',
-      props['aria-describedby']
-    );
+    expect(checkbox).toHaveAttribute('aria-describedby', props['aria-describedby']);
   });
 
   it.each`
@@ -274,7 +268,9 @@ describe('Checkbox', function () {
       let [isSelected, setSelected] = React.useState(false);
       return (
         <form>
-          <Checkbox data-testid="checkbox" isSelected={isSelected} onChange={setSelected}>Checkbox</Checkbox>
+          <Checkbox data-testid="checkbox" isSelected={isSelected} onChange={setSelected}>
+            Checkbox
+          </Checkbox>
           <input type="reset" data-testid="reset" />
         </form>
       );
@@ -294,9 +290,9 @@ describe('Checkbox', function () {
 
   if (parseInt(React.version, 10) >= 19) {
     it('resets to defaultSelected when submitting form action', async () => {
-      function Test() {        
+      function Test() {
         const [value, formAction] = React.useActionState(() => true, false);
-        
+
         return (
           <form action={formAction}>
             <Checkbox defaultSelected={value}>Test</Checkbox>
@@ -321,7 +317,9 @@ describe('Checkbox', function () {
         let {getByRole, getByTestId} = render(
           <Provider theme={theme}>
             <Form data-testid="form">
-              <Checkbox isRequired validationBehavior="native">Terms and conditions</Checkbox>
+              <Checkbox isRequired validationBehavior="native">
+                Terms and conditions
+              </Checkbox>
             </Form>
           </Provider>
         );
@@ -331,7 +329,9 @@ describe('Checkbox', function () {
         expect(checkbox).not.toHaveAttribute('aria-required');
         expect(checkbox.validity.valid).toBe(false);
 
-        act(() => {getByTestId('form').checkValidity();});
+        act(() => {
+          getByTestId('form').checkValidity();
+        });
 
         await user.click(checkbox);
         expect(checkbox.validity.valid).toBe(true);
@@ -341,7 +341,11 @@ describe('Checkbox', function () {
         let {getByRole, getByTestId} = render(
           <Provider theme={theme}>
             <Form data-testid="form">
-              <Checkbox validationBehavior="native" validate={v => !v ? 'You must accept the terms.' : null}>Terms and conditions</Checkbox>
+              <Checkbox
+                validationBehavior="native"
+                validate={v => (!v ? 'You must accept the terms.' : null)}>
+                Terms and conditions
+              </Checkbox>
             </Form>
           </Provider>
         );
@@ -349,7 +353,9 @@ describe('Checkbox', function () {
         let checkbox = getByRole('checkbox');
         expect(checkbox.validity.valid).toBe(false);
 
-        act(() => {getByTestId('form').checkValidity();});
+        act(() => {
+          getByTestId('form').checkValidity();
+        });
 
         await user.click(checkbox);
         expect(checkbox.validity.valid).toBe(true);
@@ -368,7 +374,9 @@ describe('Checkbox', function () {
           return (
             <Provider theme={theme}>
               <Form onSubmit={onSubmit} validationErrors={serverErrors}>
-                <Checkbox name="terms" validationBehavior="native">Terms and conditions</Checkbox>
+                <Checkbox name="terms" validationBehavior="native">
+                  Terms and conditions
+                </Checkbox>
                 <Button type="submit">Submit</Button>
               </Form>
             </Provider>
@@ -390,7 +398,9 @@ describe('Checkbox', function () {
       it('supports validate function', async () => {
         let {getByRole} = render(
           <Provider theme={theme}>
-            <Checkbox value="terms" validate={v => !v ? 'You must accept the terms.' : null}>Terms and conditions</Checkbox>
+            <Checkbox value="terms" validate={v => (!v ? 'You must accept the terms.' : null)}>
+              Terms and conditions
+            </Checkbox>
           </Provider>
         );
 

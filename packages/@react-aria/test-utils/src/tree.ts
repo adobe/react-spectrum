@@ -11,7 +11,13 @@
  */
 
 import {act, within} from '@testing-library/react';
-import {BaseGridRowInteractionOpts, GridRowActionOpts, ToggleGridRowOpts, TreeTesterOpts, UserOpts} from './types';
+import {
+  BaseGridRowInteractionOpts,
+  GridRowActionOpts,
+  ToggleGridRowOpts,
+  TreeTesterOpts,
+  UserOpts
+} from './types';
 import {getAltKey, getMetaKey, pressElement, triggerLongPress} from './events';
 
 interface TreeToggleExpansionOpts extends BaseGridRowInteractionOpts {}
@@ -43,28 +49,29 @@ export class TreeTester {
    */
   setInteractionType(type: UserOpts['interactionType']): void {
     this._interactionType = type;
-  };
+  }
 
   /**
    * Returns a row matching the specified index or text content.
    */
   findRow(opts: {rowIndexOrText: number | string}): HTMLElement {
-    let {
-      rowIndexOrText
-    } = opts;
+    let {rowIndexOrText} = opts;
 
     let row;
     if (typeof rowIndexOrText === 'number') {
       row = this.rows[rowIndexOrText];
     } else if (typeof rowIndexOrText === 'string') {
-      row = (within(this.tree!).getByText(rowIndexOrText).closest('[role=row]'))! as HTMLElement;
+      row = within(this.tree!).getByText(rowIndexOrText).closest('[role=row]')! as HTMLElement;
     }
 
     return row;
   }
 
   // TODO: RTL
-  private async keyboardNavigateToRow(opts: {row: HTMLElement, selectionOnNav?: 'default' | 'none'}) {
+  private async keyboardNavigateToRow(opts: {
+    row: HTMLElement;
+    selectionOnNav?: 'default' | 'none';
+  }) {
     let {row, selectionOnNav = 'default'} = opts;
     let altKey = getAltKey();
     let rows = this.rows;
@@ -78,8 +85,13 @@ export class TreeTester {
     }
 
     if (document.activeElement === this.tree) {
-      await this.user.keyboard(`${selectionOnNav === 'none' ? `[${altKey}>]` : ''}[ArrowDown]${selectionOnNav === 'none' ? `[/${altKey}]` : ''}`);
-    } else if (this._tree.contains(document.activeElement) && document.activeElement!.getAttribute('role') !== 'row') {
+      await this.user.keyboard(
+        `${selectionOnNav === 'none' ? `[${altKey}>]` : ''}[ArrowDown]${selectionOnNav === 'none' ? `[/${altKey}]` : ''}`
+      );
+    } else if (
+      this._tree.contains(document.activeElement) &&
+      document.activeElement!.getAttribute('role') !== 'row'
+    ) {
       do {
         await this.user.keyboard('[ArrowLeft]');
       } while (document.activeElement!.getAttribute('role') !== 'row');
@@ -99,7 +111,7 @@ export class TreeTester {
     if (selectionOnNav === 'none') {
       await this.user.keyboard(`[/${altKey}]`);
     }
-  };
+  }
 
   /**
    * Toggles the selection for the specified tree row. Defaults to using the interaction type set on the tree tester.
@@ -129,14 +141,21 @@ export class TreeTester {
 
     // TODO: we early return here because the checkbox can't be keyboard navigated to if the row is disabled usually
     // but we may to check for disabledBehavior (aka if the disable row gets skipped when keyboard navigating or not)
-    if (interactionType === 'keyboard' && (rowCheckbox?.getAttribute('disabled') === '' || row?.getAttribute('aria-disabled') === 'true')) {
+    if (
+      interactionType === 'keyboard' &&
+      (rowCheckbox?.getAttribute('disabled') === '' ||
+        row?.getAttribute('aria-disabled') === 'true')
+    ) {
       return;
     }
 
     // this would be better than the check to do nothing in events.ts
     // also, it'd be good to be able to trigger selection on the row instead of having to go to the checkbox directly
     if (interactionType === 'keyboard' && (!checkboxSelection || !rowCheckbox)) {
-      await this.keyboardNavigateToRow({row, selectionOnNav: selectionBehavior === 'replace' ? 'none' : 'default'});
+      await this.keyboardNavigateToRow({
+        row,
+        selectionOnNav: selectionBehavior === 'replace' ? 'none' : 'default'
+      });
       if (selectionBehavior === 'replace') {
         await this.user.keyboard(`[${altKey}>]`);
       }
@@ -156,7 +175,11 @@ export class TreeTester {
         }
 
         // Note that long press interactions with rows is strictly touch only for grid rows
-        await triggerLongPress({element: cell, advanceTimer: this._advanceTimer, pointerOpts: {pointerType: 'touch'}});
+        await triggerLongPress({
+          element: cell,
+          advanceTimer: this._advanceTimer,
+          pointerOpts: {pointerType: 'touch'}
+        });
       } else {
         // TODO add modifiers here? Maybe move into pressElement if we get more cases for different types of modifier keys
         if (selectionBehavior === 'replace' && interactionType !== 'touch') {
@@ -168,16 +191,13 @@ export class TreeTester {
         }
       }
     }
-  };
+  }
 
   /**
    * Toggles the expansion for the specified tree row. Defaults to using the interaction type set on the tree tester.
    */
   async toggleRowExpansion(opts: TreeToggleExpansionOpts): Promise<void> {
-    let {
-      row,
-      interactionType = this._interactionType
-    } = opts;
+    let {row, interactionType = this._interactionType} = opts;
     if (!this.tree.contains(document.activeElement)) {
       await act(async () => {
         this.tree.focus();
@@ -212,17 +232,13 @@ export class TreeTester {
         await this.user.keyboard('[ArrowRight]');
       }
     }
-  };
+  }
 
   /**
    * Triggers the action for the specified tree row. Defaults to using the interaction type set on the tree tester.
    */
   async triggerRowAction(opts: TreeRowActionOpts): Promise<void> {
-    let {
-      row,
-      needsDoubleClick,
-      interactionType = this._interactionType
-    } = opts;
+    let {row, needsDoubleClick, interactionType = this._interactionType} = opts;
 
     if (typeof row === 'string' || typeof row === 'number') {
       row = this.findRow({rowIndexOrText: row});
@@ -246,12 +262,12 @@ export class TreeTester {
     } else {
       await pressElement(this.user, row, interactionType);
     }
-  };
+  }
 
   /**
    * Returns the tree.
    */
-  get tree():  HTMLElement {
+  get tree(): HTMLElement {
     return this._tree;
   }
 

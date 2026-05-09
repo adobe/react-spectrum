@@ -44,32 +44,47 @@ export interface TextFieldRenderProps {
    * Whether the text field is disabled.
    * @selector [data-disabled]
    */
-  isDisabled: boolean,
+  isDisabled: boolean;
   /**
    * Whether the value is invalid.
    * @selector [data-invalid]
    */
-  isInvalid: boolean,
+  isInvalid: boolean;
   /**
    * Whether the text field is read only.
    * @selector [data-readonly]
    */
-  isReadOnly: boolean,
+  isReadOnly: boolean;
   /**
    * Whether the text field is required.
    * @selector [data-required]
    */
-  isRequired: boolean
+  isRequired: boolean;
 }
 
-export interface TextFieldProps extends Omit<AriaTextFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, Omit<DOMProps, 'style' | 'className' | 'render' | 'children'>, SlotProps, RenderProps<TextFieldRenderProps>, GlobalDOMAttributes<HTMLDivElement> {
+export interface TextFieldProps
+  extends
+    Omit<
+      AriaTextFieldProps,
+      | 'label'
+      | 'placeholder'
+      | 'description'
+      | 'errorMessage'
+      | 'validationState'
+      | 'validationBehavior'
+    >,
+    RACValidation,
+    Omit<DOMProps, 'style' | 'className' | 'render' | 'children'>,
+    SlotProps,
+    RenderProps<TextFieldRenderProps>,
+    GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-TextField'
    */
-  className?: ClassNameOrFunction<TextFieldRenderProps>,
+  className?: ClassNameOrFunction<TextFieldRenderProps>;
   /** Whether the value is invalid. */
-  isInvalid?: boolean
+  isInvalid?: boolean;
 }
 
 export const TextFieldContext = createContext<ContextValue<TextFieldProps, HTMLDivElement>>(null);
@@ -77,31 +92,39 @@ export const TextFieldContext = createContext<ContextValue<TextFieldProps, HTMLD
 /**
  * A text field allows a user to enter a plain text value with a keyboard.
  */
-export const TextField = /*#__PURE__*/ createHideableComponent(function TextField(props: TextFieldProps, ref: ForwardedRef<HTMLDivElement>) {
+export const TextField = /*#__PURE__*/ createHideableComponent(function TextField(
+  props: TextFieldProps,
+  ref: ForwardedRef<HTMLDivElement>
+) {
   [props, ref] = useContextProps(props, ref, TextFieldContext);
   let {validationBehavior: formValidationBehavior} = useSlottedContext(FormContext) || {};
   let validationBehavior = props.validationBehavior ?? formValidationBehavior ?? 'native';
   let inputRef = useRef<HTMLInputElement>(null);
   [props, inputRef as unknown] = useContextProps(props, inputRef, FieldInputContext);
-  let [labelRef, label] = useSlot(
-    !props['aria-label'] && !props['aria-labelledby']
-  );
+  let [labelRef, label] = useSlot(!props['aria-label'] && !props['aria-labelledby']);
   let [inputElementType, setInputElementType] = useState('input');
-  let {labelProps, inputProps, descriptionProps, errorMessageProps, ...validation} = useTextField<any>({
-    ...removeDataAttributes(props),
-    inputElementType,
-    label,
-    validationBehavior
-  }, inputRef);
+  let {labelProps, inputProps, descriptionProps, errorMessageProps, ...validation} =
+    useTextField<any>(
+      {
+        ...removeDataAttributes(props),
+        inputElementType,
+        label,
+        validationBehavior
+      },
+      inputRef
+    );
 
   // Intercept setting the input ref so we can determine what kind of element we have.
   // useTextField uses this to determine what props to include.
-  let inputOrTextAreaRef = useCallback((el) => {
-    inputRef.current = el;
-    if (el) {
-      setInputElementType(el instanceof HTMLTextAreaElement ? 'textarea' : 'input');
-    }
-  }, [inputRef]);
+  let inputOrTextAreaRef = useCallback(
+    el => {
+      inputRef.current = el;
+      if (el) {
+        setInputElementType(el instanceof HTMLTextAreaElement ? 'textarea' : 'input');
+      }
+    },
+    [inputRef]
+  );
 
   let renderProps = useRenderProps({
     ...props,
@@ -132,13 +155,23 @@ export const TextField = /*#__PURE__*/ createHideableComponent(function TextFiel
           [LabelContext, {...labelProps, ref: labelRef}],
           [InputContext, {...inputProps, ref: inputOrTextAreaRef}],
           [TextAreaContext, {...inputProps, ref: inputOrTextAreaRef}],
-          [GroupContext, {role: 'presentation', isInvalid: validation.isInvalid, isDisabled: props.isDisabled || false}],
-          [TextContext, {
-            slots: {
-              description: descriptionProps,
-              errorMessage: errorMessageProps
+          [
+            GroupContext,
+            {
+              role: 'presentation',
+              isInvalid: validation.isInvalid,
+              isDisabled: props.isDisabled || false
             }
-          }],
+          ],
+          [
+            TextContext,
+            {
+              slots: {
+                description: descriptionProps,
+                errorMessage: errorMessageProps
+              }
+            }
+          ],
           [FieldErrorContext, validation]
         ]}>
         {renderProps.children}

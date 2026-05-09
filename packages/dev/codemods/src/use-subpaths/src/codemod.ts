@@ -6,7 +6,9 @@ import {parse as recastParse} from 'recast';
 import * as t from '@babel/types';
 
 function getImportedName(specifier: t.ImportSpecifier): string {
-  return specifier.imported.type === 'Identifier' ? specifier.imported.name : specifier.imported.value;
+  return specifier.imported.type === 'Identifier'
+    ? specifier.imported.name
+    : specifier.imported.value;
 }
 
 function getImportKey(specifier: t.ImportSpecifier): string {
@@ -66,7 +68,11 @@ function resolveTargetSource(
 
 function moduleAugmentsRouterConfig(body: t.TSModuleBlock): boolean {
   for (let stmt of body.body) {
-    if (stmt.type === 'TSInterfaceDeclaration' && stmt.id.type === 'Identifier' && stmt.id.name === 'RouterConfig') {
+    if (
+      stmt.type === 'TSInterfaceDeclaration' &&
+      stmt.id.type === 'Identifier' &&
+      stmt.id.name === 'RouterConfig'
+    ) {
       return true;
     }
 
@@ -131,7 +137,7 @@ export default function transformer(file: FileInfo, api: API): string {
       }
 
       existingImports.set(getImportDeclarationKey(node), node);
-      
+
       if (source in specifiersByPackage) {
         let sourceMap = specifiersByPackage[source];
         for (let specifier of node.specifiers ?? []) {
@@ -141,7 +147,10 @@ export default function transformer(file: FileInfo, api: API): string {
 
           let importedName = getImportedName(specifier);
           let candidates = sourceMap[importedName];
-          if (candidates && (candidates.length === 1 || candidates[0] === `${source}/${importedName}`)) {
+          if (
+            candidates &&
+            (candidates.length === 1 || candidates[0] === `${source}/${importedName}`)
+          ) {
             let importKind = node.importKind || 'value';
             uniqueSources.add(importKind + ':' + candidates[0]);
           }
@@ -151,7 +160,11 @@ export default function transformer(file: FileInfo, api: API): string {
 
     if (node.type === 'TSModuleDeclaration' && node.declare && node.id.type === 'StringLiteral') {
       let mod = node.id.value;
-      if (!MONOPACKAGE_ROOTS.includes(mod) || node.body?.type !== 'TSModuleBlock' || !moduleAugmentsRouterConfig(node.body)) {
+      if (
+        !MONOPACKAGE_ROOTS.includes(mod) ||
+        node.body?.type !== 'TSModuleBlock' ||
+        !moduleAugmentsRouterConfig(node.body)
+      ) {
         continue;
       }
 
@@ -165,17 +178,17 @@ export default function transformer(file: FileInfo, api: API): string {
       didChange = true;
     }
   }
-  
+
   program.body = program.body.flatMap(node => {
     if (node.type !== 'ImportDeclaration') {
       return [node];
     }
-    
+
     let source = node.source.value;
     if (typeof source !== 'string' || !(source in specifiersByPackage)) {
       return [node];
     }
-    
+
     let importDeclaration = node;
     let sourceMap = specifiersByPackage[node.source.value];
     let movedSpecifiersBySource = new Map<string, any[]>();
@@ -192,9 +205,14 @@ export default function transformer(file: FileInfo, api: API): string {
       }
 
       let importKind = node.importKind || 'value';
-      let targetSource = candidates.length === 1
-        ? importKind + ':' + candidates[0]
-        : resolveTargetSource(candidates.map(c => importKind + ':' + c), uniqueSources, existingImports);
+      let targetSource =
+        candidates.length === 1
+          ? importKind + ':' + candidates[0]
+          : resolveTargetSource(
+              candidates.map(c => importKind + ':' + c),
+              uniqueSources,
+              existingImports
+            );
 
       let movedSpecifiers = movedSpecifiersBySource.get(targetSource) ?? [];
       movedSpecifiers.push(t.cloneNode(specifier, true));
@@ -216,7 +234,11 @@ export default function transformer(file: FileInfo, api: API): string {
       let destinationImport = existingImports.get(targetSource);
 
       if (!destinationImport) {
-        destinationImport = createImportDeclaration(targetSource.slice(targetSource.indexOf(':') + 1), importDeclaration.importKind, []);
+        destinationImport = createImportDeclaration(
+          targetSource.slice(targetSource.indexOf(':') + 1),
+          importDeclaration.importKind,
+          []
+        );
         newDeclarations.push(destinationImport);
         existingImports.set(targetSource, destinationImport);
       }
@@ -235,4 +257,4 @@ export default function transformer(file: FileInfo, api: API): string {
   });
 
   return didChange ? root.toSource({quote: 'single'}) : file.source;
-};
+}

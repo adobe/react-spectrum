@@ -24,9 +24,7 @@ import userEvent from '@testing-library/user-event';
 function renderComponent(props) {
   return render(
     <Provider theme={theme}>
-      <ColorField
-        label="Primary Color"
-        {...props} />
+      <ColorField label="Primary Color" {...props} />
     </Provider>
   );
 }
@@ -38,11 +36,7 @@ describe('ColorField', function () {
   });
 
   it('should handle defaults', function () {
-    let {
-      getByLabelText,
-      getByRole,
-      getByText
-    } = renderComponent({});
+    let {getByLabelText, getByRole, getByText} = renderComponent({});
     let colorField = getByLabelText('Primary Color');
     let label = getByText('Primary Color');
     expect(colorField).toBeInTheDocument();
@@ -73,7 +67,9 @@ describe('ColorField', function () {
     let spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
     let {getByPlaceholderText, getByRole} = renderComponent({placeholder: 'Enter a color'});
     expect(getByRole('textbox')).toBe(getByPlaceholderText('Enter a color'));
-    expect(spyWarn).toHaveBeenCalledWith('Placeholders are deprecated due to accessibility issues. Please use help text instead. See the docs for details: https://react-spectrum.adobe.com/react-spectrum/ColorField.html#help-text');
+    expect(spyWarn).toHaveBeenCalledWith(
+      'Placeholders are deprecated due to accessibility issues. Please use help text instead. See the docs for details: https://react-spectrum.adobe.com/react-spectrum/ColorField.html#help-text'
+    );
   });
 
   it('should show valid validation state', function () {
@@ -112,19 +108,23 @@ describe('ColorField', function () {
     expect(colorField.value).toBe('');
 
     // call commit to re-verify that a colorValue is not set in state
-    act(() => {colorField.focus();});
-    act(() => {colorField.blur();});
+    act(() => {
+      colorField.focus();
+    });
+    act(() => {
+      colorField.blur();
+    });
     expect(colorField.value).toBe('');
   });
 
   it.each`
-    Name                                 | props
-    ${'3-length hex string'}             | ${{defaultValue: '#abc'}}
-    ${'6-length hex string'}             | ${{defaultValue: '#aabbcc'}}
-    ${'Color object'}                    | ${{defaultValue: parseColor('#abc')}}
-    ${'3-length hex string controlled'}  | ${{value: '#abc'}}
-    ${'6-length hex string controlled'}  | ${{value: '#aabbcc'}}
-    ${'Color object controlled'}         | ${{value: parseColor('#abc')}}
+    Name                                | props
+    ${'3-length hex string'}            | ${{defaultValue: '#abc'}}
+    ${'6-length hex string'}            | ${{defaultValue: '#aabbcc'}}
+    ${'Color object'}                   | ${{defaultValue: parseColor('#abc')}}
+    ${'3-length hex string controlled'} | ${{value: '#abc'}}
+    ${'6-length hex string controlled'} | ${{value: '#aabbcc'}}
+    ${'Color object controlled'}        | ${{value: parseColor('#abc')}}
   `('should accept $Name as value', function ({props}) {
     let {getByLabelText} = renderComponent(props);
     let colorField = getByLabelText('Primary Color');
@@ -233,11 +233,14 @@ describe('ColorField', function () {
           {...props}
           label="Primary Color"
           value={color}
-          onChange={chain(setColor, onChange)} />
+          onChange={chain(setColor, onChange)}
+        />
       );
     }
     let onChangeSpy = jest.fn();
-    let {getByLabelText} = render(<ColorFieldControlled value={parseColor('#abc')} onChange={onChangeSpy} />);
+    let {getByLabelText} = render(
+      <ColorFieldControlled value={parseColor('#abc')} onChange={onChangeSpy} />
+    );
 
     let colorField = getByLabelText('Primary Color');
     expect(colorField.value).toBe('#AABBCC');
@@ -258,7 +261,9 @@ describe('ColorField', function () {
       colorField.focus();
     });
     await user.keyboard('cba');
-    act(() => {colorField.blur();});
+    act(() => {
+      colorField.blur();
+    });
     expect(colorField.value).toBe('#CCBBAA');
     expect(onChangeSpy).toHaveBeenCalledTimes(2);
     expect(onChangeSpy).toHaveBeenCalledWith(parseColor('#CCBBAA'));
@@ -270,9 +275,13 @@ describe('ColorField', function () {
     let colorField = getByLabelText('Primary Color');
     expect(colorField.value).toBe('');
 
-    act(() => {colorField.focus();});
+    act(() => {
+      colorField.focus();
+    });
     await user.keyboard('abc');
-    act(() => {colorField.blur();});
+    act(() => {
+      colorField.blur();
+    });
     expect(colorField.value).toBe('#AABBCC');
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(onChangeSpy).toHaveBeenCalledWith(parseColor('#abc'));
@@ -283,16 +292,18 @@ describe('ColorField', function () {
     await user.clear(colorField);
     await user.keyboard('abcxyz8b');
     expect(colorField.value).toBe('abc8b');
-    act(() => {colorField.blur();});
+    act(() => {
+      colorField.blur();
+    });
     /* is this really what we expect?? */
     expect(colorField.value).toBe('#AABBCC');
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
   });
 
   it.each`
-    Name                                | expected                 | key
-    ${'increment with arrow up key'}    | ${parseColor('#AAAAAB')}  | ${'ArrowUp'}
-    ${'decrement with arrow down key'}  | ${parseColor('#AAAAA9')}  | ${'ArrowDown'}
+    Name                               | expected                 | key
+    ${'increment with arrow up key'}   | ${parseColor('#AAAAAB')} | ${'ArrowUp'}
+    ${'decrement with arrow down key'} | ${parseColor('#AAAAA9')} | ${'ArrowDown'}
   `('should handle $Name event', async function ({expected, key}) {
     let onChangeSpy = jest.fn();
     let {getByLabelText} = renderComponent({
@@ -309,9 +320,9 @@ describe('ColorField', function () {
   });
 
   it.each`
-    Name                                | expected                        | deltaY
-    ${'increment with mouse wheel'}     | ${parseColor('#AAAAAB')}  | ${10}
-    ${'decrement with mouse wheel'}     | ${parseColor('#AAAAA9')}  | ${-10}
+    Name                            | expected                 | deltaY
+    ${'increment with mouse wheel'} | ${parseColor('#AAAAAB')} | ${10}
+    ${'decrement with mouse wheel'} | ${parseColor('#AAAAA9')} | ${-10}
   `('should handle $Name event', function ({expected, deltaY}) {
     let onChangeSpy = jest.fn();
     let {getByLabelText} = renderComponent({
@@ -321,7 +332,9 @@ describe('ColorField', function () {
     let colorField = getByLabelText('Primary Color');
     expect(colorField.value).toBe('#AAAAAA');
 
-    act(() => {colorField.focus();});
+    act(() => {
+      colorField.focus();
+    });
     fireEvent.wheel(colorField, {deltaY});
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(onChangeSpy).toHaveBeenCalledWith(expected);
@@ -329,9 +342,9 @@ describe('ColorField', function () {
   });
 
   it.each`
-    Name                                 | props                                   | initExpected  | key
-    ${'not increment beyond max value'}  | ${{defaultValue: '#fffffe'}}            | ${'#FFFFFE'}  | ${'ArrowUp'}
-    ${'increment to max value'}          | ${{defaultValue: '#aabbcc'}}            | ${'#AABBCC'}  | ${'End'}
+    Name                                | props                        | initExpected | key
+    ${'not increment beyond max value'} | ${{defaultValue: '#fffffe'}} | ${'#FFFFFE'} | ${'ArrowUp'}
+    ${'increment to max value'}         | ${{defaultValue: '#aabbcc'}} | ${'#AABBCC'} | ${'End'}
   `('should $Name', async function ({props, initExpected, key}) {
     let onChangeSpy = jest.fn();
     let {getByLabelText} = renderComponent({...props, onChange: onChangeSpy});
@@ -352,9 +365,9 @@ describe('ColorField', function () {
   });
 
   it.each`
-    Name                                 | props                                   | initExpected  | key
-    ${'not decrement beyond min value'}  | ${{defaultValue: '#000001'}}            | ${'#000001'}  | ${'ArrowDown'}
-    ${'decrement to min value'}          | ${{defaultValue: '#aabbcc'}}            | ${'#AABBCC'}  | ${'Home'}
+    Name                                | props                        | initExpected | key
+    ${'not decrement beyond min value'} | ${{defaultValue: '#000001'}} | ${'#000001'} | ${'ArrowDown'}
+    ${'decrement to min value'}         | ${{defaultValue: '#aabbcc'}} | ${'#AABBCC'} | ${'Home'}
   `('should $Name', async function ({props, initExpected, key}) {
     let onChangeSpy = jest.fn();
     let {getByLabelText} = renderComponent({...props, onChange: onChangeSpy});
@@ -401,9 +414,9 @@ describe('ColorField', function () {
 
   if (parseInt(React.version, 10) >= 19) {
     it('resets to defaultValue when submitting form action', async () => {
-      function Test() {        
+      function Test() {
         const [value, formAction] = React.useActionState(() => '#f00', '#000');
-        
+
         return (
           <form action={formAction}>
             <ColorField defaultValue={value} />
@@ -425,7 +438,13 @@ describe('ColorField', function () {
   describe('channel', function () {
     it('should support the channel prop', async function () {
       let onChange = jest.fn();
-      let {getByRole} = renderComponent({label: null, value: '#abc', colorSpace: 'hsl', channel: 'hue', onChange});
+      let {getByRole} = renderComponent({
+        label: null,
+        value: '#abc',
+        colorSpace: 'hsl',
+        channel: 'hue',
+        onChange
+      });
       let colorField = getByRole('textbox');
       expect(colorField.value).toBe('210°');
       expect(colorField).toHaveAttribute('aria-label', 'Hue');
@@ -443,14 +462,25 @@ describe('ColorField', function () {
     });
 
     it('should support null value', function () {
-      let {getByRole} = renderComponent({label: null, value: null, colorSpace: 'hsl', channel: 'hue'});
+      let {getByRole} = renderComponent({
+        label: null,
+        value: null,
+        colorSpace: 'hsl',
+        channel: 'hue'
+      });
       let colorField = getByRole('textbox');
       expect(colorField).toHaveValue('');
     });
 
     it('should support clearing value', async function () {
       let onChange = jest.fn();
-      let {getByRole} = renderComponent({label: null, defaultValue: '#abc', colorSpace: 'hsl', channel: 'hue', onChange});
+      let {getByRole} = renderComponent({
+        label: null,
+        defaultValue: '#abc',
+        colorSpace: 'hsl',
+        channel: 'hue',
+        onChange
+      });
       let colorField = getByRole('textbox');
       expect(colorField).toHaveValue('210°');
 
@@ -489,9 +519,9 @@ describe('ColorField', function () {
 
     if (parseInt(React.version, 10) >= 19) {
       it('resets to defaultValue when submitting form action', async () => {
-        function Test() {        
+        function Test() {
           const [value, formAction] = React.useActionState(() => '#f00', '#000');
-          
+
           return (
             <form action={formAction}>
               <ColorField channel="red" defaultValue={value} />
@@ -517,7 +547,12 @@ describe('ColorField', function () {
         let {getByTestId} = render(
           <Provider theme={theme}>
             <Form data-testid="form">
-              <ColorField data-testid="input" label="Color" isRequired validationBehavior="native"  />
+              <ColorField
+                data-testid="input"
+                label="Color"
+                isRequired
+                validationBehavior="native"
+              />
             </Form>
           </Provider>
         );
@@ -528,10 +563,14 @@ describe('ColorField', function () {
         expect(input).not.toHaveAttribute('aria-describedby');
         expect(input.validity.valid).toBe(false);
 
-        act(() => {getByTestId('form').checkValidity();});
+        act(() => {
+          getByTestId('form').checkValidity();
+        });
 
         expect(input).toHaveAttribute('aria-describedby');
-        expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
+        expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent(
+          'Constraints not satisfied'
+        );
         expect(document.activeElement).toBe(input);
 
         await user.keyboard('#000');
@@ -548,7 +587,14 @@ describe('ColorField', function () {
         let {getByTestId} = render(
           <Provider theme={theme}>
             <Form data-testid="form">
-              <ColorField data-testid="input" label="Color" defaultValue="#000" step={2} validationBehavior="native" validate={v => v.red === 0 ? 'Invalid value' : null} />
+              <ColorField
+                data-testid="input"
+                label="Color"
+                defaultValue="#000"
+                step={2}
+                validationBehavior="native"
+                validate={v => (v.red === 0 ? 'Invalid value' : null)}
+              />
             </Form>
           </Provider>
         );
@@ -557,10 +603,14 @@ describe('ColorField', function () {
         expect(input).not.toHaveAttribute('aria-describedby');
         expect(input.validity.valid).toBe(false);
 
-        act(() => {getByTestId('form').checkValidity();});
+        act(() => {
+          getByTestId('form').checkValidity();
+        });
 
         expect(input).toHaveAttribute('aria-describedby');
-        expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Invalid value');
+        expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent(
+          'Invalid value'
+        );
         expect(document.activeElement).toBe(input);
 
         await user.clear(input);
@@ -588,8 +638,15 @@ describe('ColorField', function () {
           return (
             <Provider theme={theme}>
               <Form onSubmit={onSubmit} validationErrors={serverErrors}>
-                <ColorField data-testid="input" label="Color" name="value" validationBehavior="native" />
-                <Button type="submit" data-testid="submit">Submit</Button>
+                <ColorField
+                  data-testid="input"
+                  label="Color"
+                  name="value"
+                  validationBehavior="native"
+                />
+                <Button type="submit" data-testid="submit">
+                  Submit
+                </Button>
               </Form>
             </Provider>
           );
@@ -603,7 +660,9 @@ describe('ColorField', function () {
         await user.click(getByTestId('submit'));
 
         expect(input).toHaveAttribute('aria-describedby');
-        expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Invalid value.');
+        expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent(
+          'Invalid value.'
+        );
         expect(input.validity.valid).toBe(false);
 
         await user.tab({shift: true});
@@ -618,7 +677,15 @@ describe('ColorField', function () {
         let {getByTestId} = render(
           <Provider theme={theme}>
             <Form data-testid="form">
-              <ColorField data-testid="input" label="Color" isRequired validationBehavior="native" errorMessage={e => e.validationDetails.valueMissing ? 'Please enter a value' : null} />
+              <ColorField
+                data-testid="input"
+                label="Color"
+                isRequired
+                validationBehavior="native"
+                errorMessage={e =>
+                  e.validationDetails.valueMissing ? 'Please enter a value' : null
+                }
+              />
             </Form>
           </Provider>
         );
@@ -626,16 +693,25 @@ describe('ColorField', function () {
         let input = getByTestId('input');
         expect(input).not.toHaveAttribute('aria-describedby');
 
-        act(() => {getByTestId('form').checkValidity();});
+        act(() => {
+          getByTestId('form').checkValidity();
+        });
         expect(input).toHaveAttribute('aria-describedby');
-        expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Please enter a value');
+        expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent(
+          'Please enter a value'
+        );
       });
 
       it('only commits on blur if the value changed', async () => {
         let {getByTestId} = render(
           <Provider theme={theme}>
             <Form data-testid="form">
-              <ColorField data-testid="input" label="Value" isRequired validationBehavior="native" />
+              <ColorField
+                data-testid="input"
+                label="Value"
+                isRequired
+                validationBehavior="native"
+              />
             </Form>
           </Provider>
         );
@@ -650,7 +726,9 @@ describe('ColorField', function () {
         await user.tab({shift: true});
         expect(input).not.toHaveAttribute('aria-describedby');
 
-        act(() => {getByTestId('form').checkValidity();});
+        act(() => {
+          getByTestId('form').checkValidity();
+        });
 
         expect(input).toHaveAttribute('aria-describedby');
         expect(document.activeElement).toBe(input);
@@ -670,7 +748,12 @@ describe('ColorField', function () {
         let {getByTestId} = render(
           <Provider theme={theme}>
             <Form data-testid="form">
-              <ColorField data-testid="input" label="Color" defaultValue="#000" validate={v => v.red === 0 ? 'Invalid value' : null} />
+              <ColorField
+                data-testid="input"
+                label="Color"
+                defaultValue="#000"
+                validate={v => (v.red === 0 ? 'Invalid value' : null)}
+              />
             </Form>
           </Provider>
         );
@@ -678,7 +761,9 @@ describe('ColorField', function () {
         let input = getByTestId('input');
         expect(input).toHaveAttribute('aria-describedby');
         expect(input).toHaveAttribute('aria-invalid', 'true');
-        expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Invalid value');
+        expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent(
+          'Invalid value'
+        );
         expect(input.validity.valid).toBe(true);
 
         await user.tab();
@@ -692,7 +777,12 @@ describe('ColorField', function () {
         let {getByTestId} = render(
           <Provider theme={theme}>
             <Form validationErrors={{value: 'Invalid value'}}>
-              <ColorField data-testid="input" label="Color" name="value" validationBehavior="native" />
+              <ColorField
+                data-testid="input"
+                label="Color"
+                name="value"
+                validationBehavior="native"
+              />
             </Form>
           </Provider>
         );
@@ -700,7 +790,9 @@ describe('ColorField', function () {
         let input = getByTestId('input');
         expect(input).toHaveAttribute('aria-describedby');
         expect(input).toHaveAttribute('aria-invalid', 'true');
-        expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Invalid value');
+        expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent(
+          'Invalid value'
+        );
 
         await user.tab();
         await user.keyboard('#fff');

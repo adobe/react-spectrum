@@ -16,7 +16,12 @@ import {FocusableRef, RangeValue} from '@react-types/shared';
 // @ts-ignore
 import intlMessages from '../../intl/slider/*.json';
 import React from 'react';
-import {SliderBase, SliderBaseChildArguments, SliderBaseProps, SpectrumBarSliderBase} from './SliderBase';
+import {
+  SliderBase,
+  SliderBaseChildArguments,
+  SliderBaseProps,
+  SpectrumBarSliderBase
+} from './SliderBase';
 import {SliderThumb} from './SliderThumb';
 import styles from '@adobe/spectrum-css-temp/components/slider/vars.css';
 import {useLocale} from 'react-aria/I18nProvider';
@@ -26,23 +31,26 @@ export interface SpectrumRangeSliderProps extends SpectrumBarSliderBase<RangeVal
   /**
    * The name of the start input element, used when submitting an HTML form. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefname).
    */
-  startName?: string,
+  startName?: string;
   /**
    * The name of the end input element, used when submitting an HTML form. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefname).
    */
-  endName?: string,
+  endName?: string;
   /**
    * The `<form>` element to associate the slider with.
    * The value of this attribute must be the id of a `<form>` in the same document.
    * See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input#form).
    */
-  form?: string
+  form?: string;
 }
 
 /**
  * RangeSliders allow users to quickly select a subset range. They should be used when the upper and lower bounds to the range are invariable.
  */
-export const RangeSlider = React.forwardRef(function RangeSlider(props: SpectrumRangeSliderProps, ref: FocusableRef<HTMLDivElement>) {
+export const RangeSlider = React.forwardRef(function RangeSlider(
+  props: SpectrumRangeSliderProps,
+  ref: FocusableRef<HTMLDivElement>
+) {
   let {onChange, onChangeEnd, value, defaultValue, getValueLabel, ...otherProps} = props;
   let defaultThumbValues: number[] | undefined = undefined;
   if (defaultValue != null) {
@@ -76,7 +84,8 @@ export const RangeSlider = React.forwardRef(function RangeSlider(props: Spectrum
           <>
             <div
               className={classNames(styles, 'spectrum-Slider-track')}
-              style={{width: `${state.getThumbPercent(0) * 100}%`}} />
+              style={{width: `${state.getThumbPercent(0) * 100}%`}}
+            />
             <SliderThumb
               index={0}
               aria-label={stringFormatter.format('minimum')}
@@ -85,13 +94,15 @@ export const RangeSlider = React.forwardRef(function RangeSlider(props: Spectrum
               inputRef={inputRef}
               state={state}
               name={props.startName}
-              form={props.form} />
+              form={props.form}
+            />
             <div
               className={classNames(styles, 'spectrum-Slider-track')}
               style={{
                 [cssDirection]: `${state.getThumbPercent(0) * 100}%`,
                 width: `${Math.abs(state.getThumbPercent(0) - state.getThumbPercent(1)) * 100}%`
-              }} />
+              }}
+            />
             <SliderThumb
               index={1}
               aria-label={stringFormatter.format('maximum')}
@@ -99,12 +110,14 @@ export const RangeSlider = React.forwardRef(function RangeSlider(props: Spectrum
               trackRef={trackRef}
               state={state}
               name={props.endName}
-              form={props.form} />
+              form={props.form}
+            />
             <div
               className={classNames(styles, 'spectrum-Slider-track')}
               style={{
                 width: `${(1 - state.getThumbPercent(1)) * 100}%`
-              }} />
+              }}
+            />
           </>
         );
       }}

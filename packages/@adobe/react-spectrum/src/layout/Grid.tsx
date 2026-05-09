@@ -25,7 +25,7 @@ import {useDOMRef} from '../utils/useDOMRef';
 
 export interface GridProps extends DOMProps, GridStyleProps {
   /** Children of the grid container. */
-  children: ReactNode
+  children: ReactNode;
 }
 
 const gridStyleProps: StyleHandlers = {
@@ -50,10 +50,7 @@ const gridStyleProps: StyleHandlers = {
  * ensure consistent and adaptive sizing and spacing.
  */
 export const Grid = forwardRef(function Grid(props: GridProps, ref: DOMRef<HTMLDivElement>) {
-  let {
-    children,
-    ...otherProps
-  } = props;
+  let {children, ...otherProps} = props;
   let {styleProps} = useStyleProps(otherProps, gridStyleProps);
   if (styleProps.style) {
     styleProps.style.display = 'grid'; // inline-grid?
@@ -73,7 +70,10 @@ export const Grid = forwardRef(function Grid(props: GridProps, ref: DOMRef<HTMLD
  * @param count - The number of times to repeat the fragment.
  * @param repeat - The fragment to repeat.
  */
-export function repeat(count: number | 'auto-fill' | 'auto-fit', repeat: DimensionValue | DimensionValue[]): string {
+export function repeat(
+  count: number | 'auto-fill' | 'auto-fit',
+  repeat: DimensionValue | DimensionValue[]
+): string {
   return `repeat(${count}, ${gridTemplateValue(repeat)})`;
 }
 

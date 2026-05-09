@@ -14,11 +14,14 @@ import {PartialNode} from './types';
 import React, {JSX, ReactElement} from 'react';
 import {SectionProps} from '@react-types/shared';
 
-function Section<T>(props: SectionProps<T>): ReactElement | null { // eslint-disable-line @typescript-eslint/no-unused-vars
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function Section<T>(props: SectionProps<T>): ReactElement | null {
   return null;
 }
 
-Section.getCollectionNode = function* getCollectionNode<T>(props: SectionProps<T>): Generator<PartialNode<T>> {
+Section.getCollectionNode = function* getCollectionNode<T>(
+  props: SectionProps<T>
+): Generator<PartialNode<T>> {
   let {children, title, items} = props;
   yield {
     type: 'section',

@@ -24,19 +24,19 @@ export interface SpectrumDividerProps extends DOMProps, AriaLabelingProps, Style
    * How thick the Divider should be.
    * @default 'L'
    */
-  size?: 'S' | 'M' | 'L',
+  size?: 'S' | 'M' | 'L';
 
   /**
    * The axis the Divider should align with.
    * @default 'horizontal'
    */
-  orientation?: Orientation,
+  orientation?: Orientation;
 
   /**
    * A slot to place the divider in.
    * @default 'divider'
    */
-  slot?: string
+  slot?: string;
 }
 
 let sizeMap = {
@@ -51,11 +51,7 @@ let sizeMap = {
  */
 export const Divider = React.forwardRef(function Divider(props: SpectrumDividerProps, ref: DOMRef) {
   props = useSlotProps(props, 'divider');
-  let {
-    size = 'L',
-    orientation = 'horizontal',
-    ...otherProps
-  } = props;
+  let {size = 'L', orientation = 'horizontal', ...otherProps} = props;
   let domRef = useDOMRef(ref);
   let {styleProps} = useStyleProps(otherProps);
   let weight = sizeMap[size];
@@ -73,20 +69,19 @@ export const Divider = React.forwardRef(function Divider(props: SpectrumDividerP
   return (
     <Element
       {...styleProps}
-      className={
-        classNames(
-          styles,
-          'spectrum-Rule',
-          `spectrum-Rule--${weight}`,
-          {
-            'spectrum-Rule--vertical': orientation === 'vertical',
-            'spectrum-Rule--horizontal': orientation === 'horizontal'
-          },
-          styleProps.className
-        )
-      }
+      className={classNames(
+        styles,
+        'spectrum-Rule',
+        `spectrum-Rule--${weight}`,
+        {
+          'spectrum-Rule--vertical': orientation === 'vertical',
+          'spectrum-Rule--horizontal': orientation === 'horizontal'
+        },
+        styleProps.className
+      )}
       // @ts-ignore https://github.com/Microsoft/TypeScript/issues/28892
       ref={domRef}
-      {...separatorProps} />
+      {...separatorProps}
+    />
   );
 });

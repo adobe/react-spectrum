@@ -17,15 +17,15 @@ import {useIsSSR} from '../ssr/SSRProvider';
 import {willOpenKeyboard} from './keyboard';
 
 interface ViewportSize {
-  width: number,
-  height: number
+  width: number;
+  height: number;
 }
 
 let visualViewport = typeof document !== 'undefined' && window.visualViewport;
 
 export function useViewportSize(): ViewportSize {
   let isSSR = useIsSSR();
-  let [size, setSize] = useState(() => isSSR ? {width: 0, height: 0} : getViewportSize());
+  let [size, setSize] = useState(() => (isSSR ? {width: 0, height: 0} : getViewportSize()));
 
   useEffect(() => {
     let updateSize = (newSize: ViewportSize) => {
@@ -60,7 +60,10 @@ export function useViewportSize(): ViewportSize {
         frame = requestAnimationFrame(() => {
           let activeElement = getActiveElement();
           if (!activeElement || !willOpenKeyboard(activeElement)) {
-            updateSize({width: document.documentElement.clientWidth, height: document.documentElement.clientHeight});
+            updateSize({
+              width: document.documentElement.clientWidth,
+              height: document.documentElement.clientHeight
+            });
           }
         });
       }
@@ -101,10 +104,10 @@ function getViewportSize(): ViewportSize {
   return {
     // Multiply by the visualViewport scale to get the "natural" size, unaffected by pinch zooming.
     width: visualViewport
-      // The visual viewport width may include the scrollbar gutter. We should use the minimum width between
-      // the visual viewport and the document element to ensure that the scrollbar width is always excluded.
-      // See: https://github.com/w3c/csswg-drafts/issues/8099
-      ? Math.min(visualViewport.width * visualViewport.scale, document.documentElement.clientWidth)
+      ? // The visual viewport width may include the scrollbar gutter. We should use the minimum width between
+        // the visual viewport and the document element to ensure that the scrollbar width is always excluded.
+        // See: https://github.com/w3c/csswg-drafts/issues/8099
+        Math.min(visualViewport.width * visualViewport.scale, document.documentElement.clientWidth)
       : document.documentElement.clientWidth,
     height: visualViewport
       ? visualViewport.height * visualViewport.scale

@@ -23,27 +23,31 @@ import {useLocalizedStringFormatter} from '../i18n/useLocalizedStringFormatter';
 
 export interface DropIndicatorProps {
   /** The drop target that the drop indicator represents. */
-  target: DropTarget,
+  target: DropTarget;
   /** The ref to the activate button. */
-  activateButtonRef?: RefObject<FocusableElement | null>
+  activateButtonRef?: RefObject<FocusableElement | null>;
 }
 
 export interface DropIndicatorAria {
   /** Props for the drop indicator element. */
-  dropIndicatorProps: HTMLAttributes<HTMLElement>,
+  dropIndicatorProps: HTMLAttributes<HTMLElement>;
   /** Whether the drop indicator is currently the active drop target. */
-  isDropTarget: boolean,
+  isDropTarget: boolean;
   /**
    * Whether the drop indicator is hidden, both visually and from assistive technology.
    * Use this to determine whether to omit the element from the DOM entirely.
    */
-  isHidden: boolean
+  isHidden: boolean;
 }
 
 /**
  * Handles drop interactions for a target within a droppable collection.
  */
-export function useDropIndicator(props: DropIndicatorProps, state: DroppableCollectionState, ref: RefObject<HTMLElement | null>): DropIndicatorAria {
+export function useDropIndicator(
+  props: DropIndicatorProps,
+  state: DroppableCollectionState,
+  ref: RefObject<HTMLElement | null>
+): DropIndicatorAria {
   let {target} = props;
   let {collection} = state;
 

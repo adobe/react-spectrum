@@ -12,19 +12,29 @@
 
 import {dom, RenderProps, useRenderProps} from './utils';
 import {flushSync} from 'react-dom';
-import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, ReactNode, RefObject, useContext, useRef, useState} from 'react';
+import React, {
+  createContext,
+  ForwardedRef,
+  forwardRef,
+  HTMLAttributes,
+  ReactNode,
+  RefObject,
+  useContext,
+  useRef,
+  useState
+} from 'react';
 import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
 import {useObjectRef} from 'react-aria/useObjectRef';
 
 interface Snapshot {
-  rect: DOMRect,
-  style: [string, string][]
+  rect: DOMRect;
+  style: [string, string][];
 }
 
 const SharedElementContext = createContext<RefObject<{[name: string]: Snapshot}> | null>(null);
 
 export interface SharedElementTransitionProps {
-  children: ReactNode
+  children: ReactNode;
 }
 
 /**
@@ -33,9 +43,7 @@ export interface SharedElementTransitionProps {
 export function SharedElementTransition(props: SharedElementTransitionProps) {
   let ref = useRef({});
   return (
-    <SharedElementContext.Provider value={ref}>
-      {props.children}
-    </SharedElementContext.Provider>
+    <SharedElementContext.Provider value={ref}>{props.children}</SharedElementContext.Provider>
   );
 }
 
@@ -44,25 +52,31 @@ export interface SharedElementRenderProps {
    * Whether the element is currently entering.
    * @selector [data-entering]
    */
-  isEntering: boolean,
+  isEntering: boolean;
   /**
    * Whether the element is currently exiting.
    * @selector [data-exiting]
    */
-  isExiting: boolean
+  isExiting: boolean;
 }
 
-export interface SharedElementPropsBase extends Omit<HTMLAttributes<HTMLDivElement>, 'children' | 'className' | 'style'>, RenderProps<SharedElementRenderProps> {}
+export interface SharedElementPropsBase
+  extends
+    Omit<HTMLAttributes<HTMLDivElement>, 'children' | 'className' | 'style'>,
+    RenderProps<SharedElementRenderProps> {}
 
 export interface SharedElementProps extends SharedElementPropsBase {
-  name: string,
-  isVisible?: boolean
+  name: string;
+  isVisible?: boolean;
 }
 
 /**
  * An element that animates between its old and new position when moving between parents.
  */
-export const SharedElement = forwardRef(function SharedElement(props: SharedElementProps, ref: ForwardedRef<HTMLDivElement>) {
+export const SharedElement = forwardRef(function SharedElement(
+  props: SharedElementProps,
+  ref: ForwardedRef<HTMLDivElement>
+) {
   let {name, isVisible = true, children, className, style, render, ...divProps} = props;
   let [state, setState] = useState(isVisible ? 'visible' : 'hidden');
   let scopeRef = useContext(SharedElementContext);
@@ -181,6 +195,7 @@ export const SharedElement = forwardRef(function SharedElement(props: SharedElem
       {...renderProps}
       ref={ref}
       data-entering={state === 'entering' || undefined}
-      data-exiting={state === 'exiting' || undefined} />
+      data-exiting={state === 'exiting' || undefined}
+    />
   );
 });

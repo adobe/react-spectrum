@@ -21,7 +21,12 @@ module.exports = new Resolver({
     }
   },
   resolve({specifier, dependency, config}) {
-    if (!Array.isArray(config) || !/[/\\](@react-stately|@react-aria|@react-spectrum|react-aria-components)[/\\]/.test(dependency.sourcePath)) {
+    if (
+      !Array.isArray(config) ||
+      !/[/\\](@react-stately|@react-aria|@react-spectrum|react-aria-components)[/\\]/.test(
+        dependency.sourcePath
+      )
+    ) {
       return;
     }
 
@@ -36,6 +41,8 @@ module.exports = new Resolver({
 });
 
 function localeMatches(localeToMatch, includedLocale) {
-  return localeToMatch.language === includedLocale.language
-    && (!includedLocale.region || localeToMatch.region === includedLocale.region);
+  return (
+    localeToMatch.language === includedLocale.language &&
+    (!includedLocale.region || localeToMatch.region === includedLocale.region)
+  );
 }

@@ -11,12 +11,12 @@ import {
   type TabPanelProps,
   type TabPanelsProps,
   type TabProps,
-  type TabsProps,
+  type TabsProps
 } from 'react-aria-components/Tabs';
-import { composeRenderProps } from 'react-aria-components/composeRenderProps';
-import { tv } from 'tailwind-variants';
-import { focusRing } from './utils';
-import { twMerge } from 'tailwind-merge';
+import {composeRenderProps} from 'react-aria-components/composeRenderProps';
+import {tv} from 'tailwind-variants';
+import {focusRing} from './utils';
+import {twMerge} from 'tailwind-merge';
 
 const tabsStyles = tv({
   base: 'flex gap-4 font-sans max-w-full',
@@ -32,10 +32,10 @@ export function Tabs(props: TabsProps) {
   return (
     <RACTabs
       {...props}
-      className={composeRenderProps(
-        props.className,
-        (className, renderProps) => tabsStyles({...renderProps, className})
-      )} />
+      className={composeRenderProps(props.className, (className, renderProps) =>
+        tabsStyles({...renderProps, className})
+      )}
+    />
   );
 }
 
@@ -53,10 +53,10 @@ export function TabList<T extends object>(props: TabListProps<T>) {
   return (
     <RACTabList
       {...props}
-      className={composeRenderProps(
-        props.className,
-        (className, renderProps) => tabListStyles({...renderProps, className})
-      )} />
+      className={composeRenderProps(props.className, (className, renderProps) =>
+        tabListStyles({...renderProps, className})
+      )}
+    />
   );
 }
 
@@ -74,14 +74,15 @@ export function Tab(props: TabProps) {
   return (
     <RACTab
       {...props}
-      className={composeRenderProps(
-        props.className,
-        (className, renderProps) => tabProps({...renderProps, className})
+      className={composeRenderProps(props.className, (className, renderProps) =>
+        tabProps({...renderProps, className})
       )}>
-      {composeRenderProps(props.children, children => (<>
-        {children}
-        <SelectionIndicator className="absolute top-0 left-0 w-full h-full z-10 bg-white rounded-full mix-blend-difference group-disabled:bg-neutral-400 group-disabled:mix-blend-normal group-disabled:dark:bg-neutral-600 group-disabled:-z-1 motion-safe:transition-[translate,width,height] " />
-      </>))}
+      {composeRenderProps(props.children, children => (
+        <>
+          {children}
+          <SelectionIndicator className="absolute top-0 left-0 w-full h-full z-10 bg-white rounded-full mix-blend-difference group-disabled:bg-neutral-400 group-disabled:mix-blend-normal group-disabled:dark:bg-neutral-600 group-disabled:-z-1 motion-safe:transition-[translate,width,height] " />
+        </>
+      ))}
     </RACTab>
   );
 }
@@ -90,7 +91,11 @@ export function TabPanels<T extends object>(props: TabPanelsProps<T>) {
   return (
     <RACTabPanels
       {...props}
-      className={twMerge('relative h-(--tab-panel-height) motion-safe:transition-[height] overflow-clip', props.className)} />
+      className={twMerge(
+        'relative h-(--tab-panel-height) motion-safe:transition-[height] overflow-clip',
+        props.className
+      )}
+    />
   );
 }
 
@@ -103,9 +108,9 @@ export function TabPanel(props: TabPanelProps) {
   return (
     <RACTabPanel
       {...props}
-      className={composeRenderProps(
-        props.className,
-        (className, renderProps) => tabPanelStyles({...renderProps, className})
-      )} />
+      className={composeRenderProps(props.className, (className, renderProps) =>
+        tabPanelStyles({...renderProps, className})
+      )}
+    />
   );
 }

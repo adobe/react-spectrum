@@ -10,7 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMAttributes, DOMProps, GroupDOMAttributes, InputDOMProps, KeyboardEvent, RefObject, ValidationResult} from '@react-types/shared';
+import {
+  AriaLabelingProps,
+  DOMAttributes,
+  DOMProps,
+  GroupDOMAttributes,
+  InputDOMProps,
+  KeyboardEvent,
+  RefObject,
+  ValidationResult
+} from '@react-types/shared';
 import {createFocusManager, FocusManager} from '../focus/FocusScope';
 import {DateFieldProps, DateFieldState, DateValue} from 'react-stately/useDateFieldState';
 import {filterDOMProps} from '../utils/filterDOMProps';
@@ -27,38 +36,42 @@ import {useFormReset} from '../utils/useFormReset';
 import {useFormValidation} from '../form/useFormValidation';
 import {useLocalizedStringFormatter} from '../i18n/useLocalizedStringFormatter';
 
-export interface AriaDateFieldProps<T extends DateValue> extends DateFieldProps<T>, AriaLabelingProps, DOMProps, InputDOMProps {
+export interface AriaDateFieldProps<T extends DateValue>
+  extends DateFieldProps<T>, AriaLabelingProps, DOMProps, InputDOMProps {
   /**
    * Describes the type of autocomplete functionality the input should provide if any. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefautocomplete).
    */
-  autoComplete?: string
+  autoComplete?: string;
 }
 
 // Allows this hook to also be used with TimeField
-export interface AriaDateFieldOptions<T extends DateValue> extends Omit<AriaDateFieldProps<T>, 'value' | 'defaultValue' | 'onChange' | 'minValue' | 'maxValue' | 'placeholderValue' | 'validate'> {
+export interface AriaDateFieldOptions<T extends DateValue> extends Omit<
+  AriaDateFieldProps<T>,
+  'value' | 'defaultValue' | 'onChange' | 'minValue' | 'maxValue' | 'placeholderValue' | 'validate'
+> {
   /** A ref for the hidden input element for HTML form submission. */
-  inputRef?: RefObject<HTMLInputElement | null>
+  inputRef?: RefObject<HTMLInputElement | null>;
 }
 
 export interface DateFieldAria extends ValidationResult {
-   /** Props for the field's visible label element, if any. */
-  labelProps: DOMAttributes,
-   /** Props for the field grouping element. */
-  fieldProps: GroupDOMAttributes,
+  /** Props for the field's visible label element, if any. */
+  labelProps: DOMAttributes;
+  /** Props for the field grouping element. */
+  fieldProps: GroupDOMAttributes;
   /** Props for the hidden input element for HTML form submission. */
-  inputProps: InputHTMLAttributes<HTMLInputElement>,
+  inputProps: InputHTMLAttributes<HTMLInputElement>;
   /** Props for the description element, if any. */
-  descriptionProps: DOMAttributes,
+  descriptionProps: DOMAttributes;
   /** Props for the error message element, if any. */
-  errorMessageProps: DOMAttributes
+  errorMessageProps: DOMAttributes;
 }
 
 // Data that is passed between useDateField and useDateSegment.
 interface HookData {
-  ariaLabel?: string,
-  ariaLabelledBy?: string,
-  ariaDescribedBy?: string,
-  focusManager: FocusManager
+  ariaLabel?: string;
+  ariaLabelledBy?: string;
+  ariaDescribedBy?: string;
+  focusManager: FocusManager;
 }
 
 export const hookData: WeakMap<DateFieldState, HookData> = new WeakMap<DateFieldState, HookData>();
@@ -74,7 +87,11 @@ export const focusManagerSymbol: string = '__reactAriaDateFieldFocusManager';
  * A date field allows users to enter and edit date and time values using a keyboard.
  * Each part of a date value is displayed in an individually editable segment.
  */
-export function useDateField<T extends DateValue>(props: AriaDateFieldOptions<T>, state: DateFieldState, ref: RefObject<Element | null>): DateFieldAria {
+export function useDateField<T extends DateValue>(
+  props: AriaDateFieldOptions<T>,
+  state: DateFieldState,
+  ref: RefObject<Element | null>
+): DateFieldAria {
   let {isInvalid, validationErrors, validationDetails} = state.displayValidation;
   let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
     ...props,
@@ -90,7 +107,7 @@ export function useDateField<T extends DateValue>(props: AriaDateFieldOptions<T>
       valueOnFocus.current = state.value;
       props.onFocus?.(e);
     },
-    onBlurWithin: (e) => {
+    onBlurWithin: e => {
       state.confirmPlaceholder();
       if (state.value !== valueOnFocus.current) {
         state.commitValidation();
@@ -101,24 +118,33 @@ export function useDateField<T extends DateValue>(props: AriaDateFieldOptions<T>
   });
 
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/datepicker');
-  let message = state.maxGranularity === 'hour' ? 'selectedTimeDescription' : 'selectedDateDescription';
+  let message =
+    state.maxGranularity === 'hour' ? 'selectedTimeDescription' : 'selectedDateDescription';
   let field = state.maxGranularity === 'hour' ? 'time' : 'date';
-  let description = state.value ? stringFormatter.format(message, {[field]: state.formatValue({month: 'long'})}) : '';
+  let description = state.value
+    ? stringFormatter.format(message, {[field]: state.formatValue({month: 'long'})})
+    : '';
   let descProps = useDescription(description);
 
   // If within a date picker or date range picker, the date field will have role="presentation" and an aria-describedby
   // will be passed in that references the value (e.g. entire range). Otherwise, add the field's value description.
-  let describedBy = props[roleSymbol] === 'presentation'
-    ? fieldProps['aria-describedby']
-    : [descProps['aria-describedby'], fieldProps['aria-describedby']].filter(Boolean).join(' ') || undefined;
+  let describedBy =
+    props[roleSymbol] === 'presentation'
+      ? fieldProps['aria-describedby']
+      : [descProps['aria-describedby'], fieldProps['aria-describedby']].filter(Boolean).join(' ') ||
+        undefined;
   let propsFocusManager = props[focusManagerSymbol];
-  let focusManager = useMemo(() => propsFocusManager || createFocusManager(ref), [propsFocusManager, ref]);
+  let focusManager = useMemo(
+    () => propsFocusManager || createFocusManager(ref),
+    [propsFocusManager, ref]
+  );
   let groupProps = useDatePickerGroup(state, ref, props[roleSymbol] === 'presentation');
 
   // Pass labels and other information to segments.
   hookData.set(state, {
     ariaLabel: props['aria-label'],
-    ariaLabelledBy: [labelProps.id, props['aria-labelledby']].filter(Boolean).join(' ') || undefined,
+    ariaLabelledBy:
+      [labelProps.id, props['aria-labelledby']].filter(Boolean).join(' ') || undefined,
     ariaDescribedBy: describedBy,
     focusManager
   });
@@ -150,12 +176,16 @@ export function useDateField<T extends DateValue>(props: AriaDateFieldOptions<T>
   }, [focusManager]);
 
   useFormReset(props.inputRef, state.defaultValue, state.setValue);
-  useFormValidation({
-    ...props,
-    focus() {
-      focusManager.focusFirst();
-    }
-  }, state, props.inputRef);
+  useFormValidation(
+    {
+      ...props,
+      focus() {
+        focusManager.focusFirst();
+      }
+    },
+    state,
+    props.inputRef
+  );
 
   let inputProps: InputHTMLAttributes<HTMLInputElement> = {
     type: 'hidden',
@@ -207,11 +237,12 @@ export function useDateField<T extends DateValue>(props: AriaDateFieldOptions<T>
   };
 }
 
-export interface AriaTimeFieldProps<T extends TimeValue> extends TimePickerProps<T>, AriaLabelingProps, DOMProps, InputDOMProps {}
+export interface AriaTimeFieldProps<T extends TimeValue>
+  extends TimePickerProps<T>, AriaLabelingProps, DOMProps, InputDOMProps {}
 
 export interface AriaTimeFieldOptions<T extends TimeValue> extends AriaTimeFieldProps<T> {
   /** A ref for the hidden input element for HTML form submission. */
-  inputRef?: RefObject<HTMLInputElement | null>
+  inputRef?: RefObject<HTMLInputElement | null>;
 }
 
 /**
@@ -219,7 +250,11 @@ export interface AriaTimeFieldOptions<T extends TimeValue> extends AriaTimeField
  * A time field allows users to enter and edit time values using a keyboard.
  * Each part of a time value is displayed in an individually editable segment.
  */
-export function useTimeField<T extends TimeValue>(props: AriaTimeFieldOptions<T>, state: TimeFieldState, ref: RefObject<Element | null>): DateFieldAria {
+export function useTimeField<T extends TimeValue>(
+  props: AriaTimeFieldOptions<T>,
+  state: TimeFieldState,
+  ref: RefObject<Element | null>
+): DateFieldAria {
   let res = useDateField(props, state, ref);
   res.inputProps.value = state.timeValue?.toString() || '';
   return res;

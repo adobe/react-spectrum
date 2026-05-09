@@ -21,44 +21,51 @@ export interface ColorAreaRenderProps {
    * Whether the color area is disabled.
    * @selector [data-disabled]
    */
-  isDisabled: boolean,
+  isDisabled: boolean;
   /**
    * State of the color area.
    */
-  state: ColorAreaState
+  state: ColorAreaState;
 }
 
-export interface ColorAreaProps extends AriaColorAreaProps, RenderProps<ColorAreaRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
+export interface ColorAreaProps
+  extends
+    AriaColorAreaProps,
+    RenderProps<ColorAreaRenderProps>,
+    SlotProps,
+    GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-ColorArea'
    */
-  className?: ClassNameOrFunction<ColorAreaRenderProps>
+  className?: ClassNameOrFunction<ColorAreaRenderProps>;
 }
 
-export const ColorAreaContext = createContext<ContextValue<Partial<ColorAreaProps>, HTMLDivElement>>(null);
+export const ColorAreaContext =
+  createContext<ContextValue<Partial<ColorAreaProps>, HTMLDivElement>>(null);
 export const ColorAreaStateContext = createContext<ColorAreaState | null>(null);
 
 /**
  * A color area allows users to adjust two channels of an RGB, HSL or HSB color value against a two-dimensional gradient background.
  */
-export const ColorArea = forwardRef(function ColorArea(props: ColorAreaProps, ref: ForwardedRef<HTMLDivElement>) {
+export const ColorArea = forwardRef(function ColorArea(
+  props: ColorAreaProps,
+  ref: ForwardedRef<HTMLDivElement>
+) {
   [props, ref] = useContextProps(props, ref, ColorAreaContext);
   let inputXRef = useRef(null);
   let inputYRef = useRef(null);
 
   let state = useColorAreaState(props);
-  let {
-    colorAreaProps,
-    xInputProps,
-    yInputProps,
-    thumbProps
-  } = useColorArea({
-    ...props,
-    inputXRef,
-    inputYRef,
-    containerRef: ref
-  }, state);
+  let {colorAreaProps, xInputProps, yInputProps, thumbProps} = useColorArea(
+    {
+      ...props,
+      inputXRef,
+      inputYRef,
+      containerRef: ref
+    },
+    state
+  );
 
   let renderProps = useRenderProps({
     ...props,
@@ -82,7 +89,18 @@ export const ColorArea = forwardRef(function ColorArea(props: ColorAreaProps, re
       <Provider
         values={[
           [ColorAreaStateContext, state],
-          [InternalColorThumbContext, {state, thumbProps, inputXRef, xInputProps, inputYRef, yInputProps, isDisabled: props.isDisabled}]
+          [
+            InternalColorThumbContext,
+            {
+              state,
+              thumbProps,
+              inputXRef,
+              xInputProps,
+              inputYRef,
+              yInputProps,
+              isDisabled: props.isDisabled
+            }
+          ]
         ]}>
         {renderProps.children}
       </Provider>

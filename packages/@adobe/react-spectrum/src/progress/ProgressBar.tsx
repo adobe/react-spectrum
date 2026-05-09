@@ -21,12 +21,12 @@ import {useProgressBar} from 'react-aria/useProgressBar';
  * ProgressBars show the progression of a system operation: downloading, uploading, processing, etc., in a visual way.
  * They can represent either determinate or indeterminate progress.
  */
-export const ProgressBar = React.forwardRef(function ProgressBar(props: SpectrumProgressBarProps, ref: DOMRef<HTMLDivElement>) {
+export const ProgressBar = React.forwardRef(function ProgressBar(
+  props: SpectrumProgressBarProps,
+  ref: DOMRef<HTMLDivElement>
+) {
   let {staticColor, variant, ...otherProps} = props;
-  const {
-    progressBarProps,
-    labelProps
-  } = useProgressBar(props);
+  const {progressBarProps, labelProps} = useProgressBar(props);
 
   return (
     <ProgressBarBase
@@ -34,15 +34,11 @@ export const ProgressBar = React.forwardRef(function ProgressBar(props: Spectrum
       ref={ref}
       barProps={progressBarProps}
       labelProps={labelProps}
-      barClassName={
-        classNames(
-          styles,
-          {
-            'spectrum-BarLoader--overBackground': variant === 'overBackground',
-            'spectrum-BarLoader--staticWhite': staticColor === 'white',
-            'spectrum-BarLoader--staticBlack': staticColor === 'black'
-          }
-        )
-      } />
+      barClassName={classNames(styles, {
+        'spectrum-BarLoader--overBackground': variant === 'overBackground',
+        'spectrum-BarLoader--staticWhite': staticColor === 'white',
+        'spectrum-BarLoader--staticBlack': staticColor === 'black'
+      })}
+    />
   );
 });

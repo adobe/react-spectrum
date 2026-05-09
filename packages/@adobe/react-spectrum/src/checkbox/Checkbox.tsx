@@ -34,20 +34,23 @@ export interface SpectrumCheckboxProps extends Omit<AriaCheckboxProps, 'onClick'
   /**
    * This prop sets the emphasized style which provides visual prominence.
    */
-  isEmphasized?: boolean,
+  isEmphasized?: boolean;
   /**
    * A slot name for the component. Slots allow the component to receive props from a parent component.
    * An explicit `null` value indicates that the local props completely override all props received from a parent.
    * @private
    */
-  slot?: string | null
+  slot?: string | null;
 }
 
 /**
  * Checkboxes allow users to select multiple items from a list of individual items,
  * or to mark one individual item as selected.
  */
-export const Checkbox = forwardRef(function Checkbox(props: SpectrumCheckboxProps, ref: FocusableRef<HTMLLabelElement>) {
+export const Checkbox = forwardRef(function Checkbox(
+  props: SpectrumCheckboxProps,
+  ref: FocusableRef<HTMLLabelElement>
+) {
   let originalProps = props;
   let inputRef = useRef<HTMLInputElement>(null);
   let domRef = useFocusableRef(ref, inputRef);
@@ -55,13 +58,7 @@ export const Checkbox = forwardRef(function Checkbox(props: SpectrumCheckboxProp
   [props, domRef] = useContextProps(props, domRef, CheckboxContext);
   props = useProviderProps(props);
   props = useFormProps(props);
-  let {
-    isIndeterminate = false,
-    isEmphasized = false,
-    autoFocus,
-    children,
-    ...otherProps
-  } = props;
+  let {isIndeterminate = false, isEmphasized = false, autoFocus, children, ...otherProps} = props;
   let {styleProps} = useStyleProps(otherProps);
 
   // Swap hooks depending on whether this checkbox is inside a CheckboxGroup.
@@ -69,32 +66,40 @@ export const Checkbox = forwardRef(function Checkbox(props: SpectrumCheckboxProp
   // but since the checkbox won't move in and out of a group, it should be safe.
   let groupState = useContext(CheckboxGroupContext);
   let {labelProps, inputProps, isInvalid, isDisabled} = groupState
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    ? useCheckboxGroupItem({
-      ...props,
-      // Value is optional for standalone checkboxes, but required for CheckboxGroup items;
-      // it's passed explicitly here to avoid typescript error (requires ignore).
-      // @ts-ignore
-      value: props.value,
-      // Only pass isRequired and validationState to react-aria if they came from
-      // the props for this individual checkbox, and not from the group via context.
-      isRequired: originalProps.isRequired,
-      validationState: originalProps.validationState,
-      isInvalid: originalProps.isInvalid
-    }, groupState, inputRef)
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    : useCheckbox(props, useToggleState(props), inputRef);
+    ? // eslint-disable-next-line react-hooks/rules-of-hooks
+      useCheckboxGroupItem(
+        {
+          ...props,
+          // Value is optional for standalone checkboxes, but required for CheckboxGroup items;
+          // it's passed explicitly here to avoid typescript error (requires ignore).
+          // @ts-ignore
+          value: props.value,
+          // Only pass isRequired and validationState to react-aria if they came from
+          // the props for this individual checkbox, and not from the group via context.
+          isRequired: originalProps.isRequired,
+          validationState: originalProps.validationState,
+          isInvalid: originalProps.isInvalid
+        },
+        groupState,
+        inputRef
+      )
+    : // eslint-disable-next-line react-hooks/rules-of-hooks
+      useCheckbox(props, useToggleState(props), inputRef);
 
   let {hoverProps, isHovered} = useHover({isDisabled});
 
-  let markIcon = isIndeterminate
-    ? <DashSmall UNSAFE_className={classNames(styles, 'spectrum-Checkbox-partialCheckmark')} />
-    : <CheckmarkSmall UNSAFE_className={classNames(styles, 'spectrum-Checkbox-checkmark')} />;
+  let markIcon = isIndeterminate ? (
+    <DashSmall UNSAFE_className={classNames(styles, 'spectrum-Checkbox-partialCheckmark')} />
+  ) : (
+    <CheckmarkSmall UNSAFE_className={classNames(styles, 'spectrum-Checkbox-checkmark')} />
+  );
 
   if (groupState && process.env.NODE_ENV !== 'production') {
     for (let key of ['isSelected', 'defaultSelected', 'isEmphasized']) {
       if (originalProps[key] != null) {
-        console.warn(`${key} is unsupported on individual <Checkbox> elements within a <CheckboxGroup>. Please apply these props to the group instead.`);
+        console.warn(
+          `${key} is unsupported on individual <Checkbox> elements within a <CheckboxGroup>. Please apply these props to the group instead.`
+        );
       }
     }
     if (props.value == null) {
@@ -108,32 +113,29 @@ export const Checkbox = forwardRef(function Checkbox(props: SpectrumCheckboxProp
       {...styleProps}
       {...hoverProps}
       ref={domRef}
-      className={
-        classNames(
-          styles,
-          'spectrum-Checkbox',
-          {
-            'is-checked': inputProps.checked,
-            'is-indeterminate': isIndeterminate,
-            'spectrum-Checkbox--quiet': !isEmphasized,
-            'is-invalid': isInvalid,
-            'is-disabled': isDisabled,
-            'is-hovered': isHovered
-          },
-          styleProps.className
-        )
-      }>
+      className={classNames(
+        styles,
+        'spectrum-Checkbox',
+        {
+          'is-checked': inputProps.checked,
+          'is-indeterminate': isIndeterminate,
+          'spectrum-Checkbox--quiet': !isEmphasized,
+          'is-invalid': isInvalid,
+          'is-disabled': isDisabled,
+          'is-hovered': isHovered
+        },
+        styleProps.className
+      )}>
       <FocusRing focusRingClass={classNames(styles, 'focus-ring')} autoFocus={autoFocus}>
         <input
           {...inputProps}
           ref={inputRef}
-          className={classNames(styles, 'spectrum-Checkbox-input')} />
+          className={classNames(styles, 'spectrum-Checkbox-input')}
+        />
       </FocusRing>
       <span className={classNames(styles, 'spectrum-Checkbox-box')}>{markIcon}</span>
       {children && (
-        <span className={classNames(styles, 'spectrum-Checkbox-label')}>
-          {children}
-        </span>
+        <span className={classNames(styles, 'spectrum-Checkbox-label')}>{children}</span>
       )}
     </label>
   );

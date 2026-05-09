@@ -12,7 +12,12 @@
 
 import {action} from 'storybook/actions';
 import {Collection} from 'react-aria/Collection';
-import {DragAndDropHooks, DropIndicator, isTextDropItem, useDragAndDrop} from '../exports/useDragAndDrop';
+import {
+  DragAndDropHooks,
+  DropIndicator,
+  isTextDropItem,
+  useDragAndDrop
+} from '../exports/useDragAndDrop';
 import {GridLayout, ListLayout, Size, WaterfallLayout} from 'react-stately/useVirtualizerState';
 import {Header} from '../src/Header';
 import {ListBox, ListBoxItem, ListBoxProps, ListBoxSection} from '../src/ListBox';
@@ -37,7 +42,7 @@ export default {
 export type ListBoxStory = StoryFn<typeof ListBox>;
 export type ListBoxStoryObj = StoryObj<typeof ListBox>;
 
-export const ListBoxExample: ListBoxStory = (args) => (
+export const ListBoxExample: ListBoxStory = args => (
   <ListBox className={styles.menu} {...args} aria-label="test listbox">
     <MyListBoxItem>Foo</MyListBoxItem>
     <MyListBoxItem>Bar</MyListBoxItem>
@@ -77,7 +82,11 @@ ListBoxExample.story = {
 // Known accessibility false positive: https://github.com/adobe/react-spectrum/wiki/Known-accessibility-false-positives#listbox
 // also has a aXe landmark error, not sure what it means
 export const ListBoxSections: ListBoxStory = () => (
-  <ListBox className={styles.menu} selectionMode="multiple" selectionBehavior="replace" aria-label="test listbox with section">
+  <ListBox
+    className={styles.menu}
+    selectionMode="multiple"
+    selectionBehavior="replace"
+    aria-label="test listbox with section">
     <ListBoxSection className={styles.group}>
       <Header style={{fontSize: '1.2em'}}>Section 1</Header>
       <MyListBoxItem>Foo</MyListBoxItem>
@@ -94,7 +103,11 @@ export const ListBoxSections: ListBoxStory = () => (
 );
 
 export const ListBoxComplex: ListBoxStory = () => (
-  <ListBox className={styles.menu} selectionMode="multiple" selectionBehavior="replace" aria-label="listbox complex">
+  <ListBox
+    className={styles.menu}
+    selectionMode="multiple"
+    selectionBehavior="replace"
+    aria-label="listbox complex">
     <MyListBoxItem>
       <Text slot="label">Item 1</Text>
       <Text slot="description">Description</Text>
@@ -111,47 +124,52 @@ export const ListBoxComplex: ListBoxStory = () => (
 );
 
 interface Album {
-  id: number,
-  image: string,
-  title: string,
-  artist: string
+  id: number;
+  image: string;
+  title: string;
+  artist: string;
 }
 
 let albums: Album[] = [
   {
     id: 1,
-    image: 'https://images.unsplash.com/photo-1593958812614-2db6a598c71c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8ZGlzY298ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=900&q=60',
+    image:
+      'https://images.unsplash.com/photo-1593958812614-2db6a598c71c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8ZGlzY298ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=900&q=60',
     title: 'Euphoric Echoes',
     artist: 'Luna Solstice'
   },
   {
     id: 2,
-    image: 'https://images.unsplash.com/photo-1601042879364-f3947d3f9c16?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8bmVvbnxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=900&q=60',
+    image:
+      'https://images.unsplash.com/photo-1601042879364-f3947d3f9c16?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8bmVvbnxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=900&q=60',
     title: 'Neon Dreamscape',
     artist: 'Electra Skyline'
   },
   {
     id: 3,
-    image: 'https://images.unsplash.com/photo-1528722828814-77b9b83aafb2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fHNwYWNlfGVufDB8fDB8fHww&auto=format&fit=crop&w=900&q=60',
+    image:
+      'https://images.unsplash.com/photo-1528722828814-77b9b83aafb2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fHNwYWNlfGVufDB8fDB8fHww&auto=format&fit=crop&w=900&q=60',
     title: 'Cosmic Serenade',
-    artist: 'Orion\'s Symphony'
+    artist: "Orion's Symphony"
   },
   {
     id: 4,
-    image: 'https://images.unsplash.com/photo-1511379938547-c1f69419868d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8bXVzaWN8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=900&q=60',
+    image:
+      'https://images.unsplash.com/photo-1511379938547-c1f69419868d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8bXVzaWN8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=900&q=60',
     title: 'Melancholy Melodies',
     artist: 'Violet Mistral'
   },
   {
     id: 5,
-    image: 'https://images.unsplash.com/photo-1608433319511-dfe8ea4cbd3c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fGJlYXR8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=900&q=60',
+    image:
+      'https://images.unsplash.com/photo-1608433319511-dfe8ea4cbd3c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fGJlYXR8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=900&q=60',
     title: 'Rhythmic Illusions',
     artist: 'Mirage Beats'
   }
 ];
 
 type AlbumListBoxStory = StoryFn<typeof ListBox<Album>>;
-export const ListBoxDnd: AlbumListBoxStory = (props) => {
+export const ListBoxDnd: AlbumListBoxStory = props => {
   let list = useListData({
     initialItems: albums
   });
@@ -204,20 +222,25 @@ ListBoxDnd.story = {
 
 interface PreviewOffsetArgs {
   /** Strategy for positioning the preview. */
-  mode: 'default' | 'custom',
+  mode: 'default' | 'custom';
   /** X offset in pixels (only used when mode = custom). */
-  offsetX: number,
+  offsetX: number;
   /** Y offset in pixels (only used when mode = custom). */
-  offsetY: number
+  offsetY: number;
 }
 
-function ListBoxDndWithPreview({mode, offsetX, offsetY, ...props}: PreviewOffsetArgs & ListBoxProps<typeof albums[0]>) {
+function ListBoxDndWithPreview({
+  mode,
+  offsetX,
+  offsetY,
+  ...props
+}: PreviewOffsetArgs & ListBoxProps<(typeof albums)[0]>) {
   let list = useListData({
     initialItems: albums
   });
 
   let {dragAndDropHooks} = useDragAndDrop({
-    getItems: (keys) => [...keys].map(key => ({'text/plain': list.getItem(key)?.title ?? ''})),
+    getItems: keys => [...keys].map(key => ({'text/plain': list.getItem(key)?.title ?? ''})),
     onReorder(e) {
       if (e.target.dropPosition === 'before') {
         list.moveBefore(e.target.key, e.keys);
@@ -227,9 +250,18 @@ function ListBoxDndWithPreview({mode, offsetX, offsetY, ...props}: PreviewOffset
     },
     renderDragPreview(items) {
       let element = (
-        <div style={{display: 'flex', alignItems: 'center', padding: 4, background: 'white', border: '1px solid gray'}}>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            padding: 4,
+            background: 'white',
+            border: '1px solid gray'
+          }}>
           <Text>{items[0]['text/plain']}</Text>
-          {items.length > 1 && <span style={{marginLeft: 4, fontSize: 12}}>+{items.length - 1}</span>}
+          {items.length > 1 && (
+            <span style={{marginLeft: 4, fontSize: 12}}>+{items.length - 1}</span>
+          )}
         </div>
       );
 
@@ -292,15 +324,20 @@ export const ListBoxPreviewOffset = {
 };
 
 export const ListBoxHover: ListBoxStory = () => (
-  <ListBox className={styles.menu} aria-label="test listbox" onAction={action('onAction')} >
-    <MyListBoxItem onHoverStart={action('onHoverStart')} onHoverChange={action('onHoverChange')} onHoverEnd={action('onHoverEnd')}>Hover</MyListBoxItem>
+  <ListBox className={styles.menu} aria-label="test listbox" onAction={action('onAction')}>
+    <MyListBoxItem
+      onHoverStart={action('onHoverStart')}
+      onHoverChange={action('onHoverChange')}
+      onHoverEnd={action('onHoverEnd')}>
+      Hover
+    </MyListBoxItem>
     <MyListBoxItem>Bar</MyListBoxItem>
     <MyListBoxItem>Baz</MyListBoxItem>
     <MyListBoxItem href="http://google.com">Google</MyListBoxItem>
   </ListBox>
 );
 
-export const ListBoxGrid: ListBoxStory = (args) => (
+export const ListBoxGrid: ListBoxStory = args => (
   <ListBox
     {...args}
     className={styles.menu}
@@ -312,15 +349,33 @@ export const ListBoxGrid: ListBoxStory = (args) => (
       gridTemplate: 'repeat(3, 1fr) / repeat(3, 1fr)',
       gridAutoFlow: args.orientation === 'vertical' ? 'row' : 'column'
     }}>
-    <MyListBoxItem style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>1,1</MyListBoxItem>
-    <MyListBoxItem style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>1,2</MyListBoxItem>
-    <MyListBoxItem style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>1,3</MyListBoxItem>
-    <MyListBoxItem style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>2,1</MyListBoxItem>
-    <MyListBoxItem style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>2,2</MyListBoxItem>
-    <MyListBoxItem style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>2,3</MyListBoxItem>
-    <MyListBoxItem style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>3,1</MyListBoxItem>
-    <MyListBoxItem style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>3,2</MyListBoxItem>
-    <MyListBoxItem style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>3,3</MyListBoxItem>
+    <MyListBoxItem style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+      1,1
+    </MyListBoxItem>
+    <MyListBoxItem style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+      1,2
+    </MyListBoxItem>
+    <MyListBoxItem style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+      1,3
+    </MyListBoxItem>
+    <MyListBoxItem style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+      2,1
+    </MyListBoxItem>
+    <MyListBoxItem style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+      2,2
+    </MyListBoxItem>
+    <MyListBoxItem style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+      2,3
+    </MyListBoxItem>
+    <MyListBoxItem style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+      3,1
+    </MyListBoxItem>
+    <MyListBoxItem style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+      3,2
+    </MyListBoxItem>
+    <MyListBoxItem style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+      3,3
+    </MyListBoxItem>
   </ListBox>
 );
 
@@ -357,25 +412,34 @@ function VirtualizedListBoxRender(args): JSX.Element {
   let estimatedHeadingHeight = orientation === 'horizontal' ? 63 : 26;
   let heightProperty = orientation === 'horizontal' ? 'width' : 'height';
   let widthProperty = orientation === 'horizontal' ? 'height' : 'width';
-  let sections: {id: string, name: string, children: {id: string, name: string}[]}[] = [];
+  let sections: {id: string; name: string; children: {id: string; name: string}[]}[] = [];
   for (let s = 0; s < 10; s++) {
-    let items: {id: string, name: string}[] = [];
+    let items: {id: string; name: string}[] = [];
     for (let i = 0; i < 100; i++) {
-      const l = (s * 5) + i + 10;
-      items.push({id: `item_${s}_${i}`, name: `Section ${s}, Item ${i}${variableHeight ? ' ' + generateRandomString(l, l) : ''}`});
+      const l = s * 5 + i + 10;
+      items.push({
+        id: `item_${s}_${i}`,
+        name: `Section ${s}, Item ${i}${variableHeight ? ' ' + generateRandomString(l, l) : ''}`
+      });
     }
     sections.push({id: `section_${s}`, name: `Section ${s}`, children: items});
   }
 
   return (
     <Virtualizer
-      layout={new ListLayout({
-        orientation,
-        estimatedRowHeight,
-        estimatedHeadingHeight,
-        loaderHeight: 30
-      })}>
-      <ListBox orientation={orientation} className={styles.menu} style={{[heightProperty]: 400, [widthProperty]: 200}} aria-label="virtualized listbox">
+      layout={
+        new ListLayout({
+          orientation,
+          estimatedRowHeight,
+          estimatedHeadingHeight,
+          loaderHeight: 30
+        })
+      }>
+      <ListBox
+        orientation={orientation}
+        className={styles.menu}
+        style={{[heightProperty]: 400, [widthProperty]: 200}}
+        aria-label="virtualized listbox">
         <Collection items={sections}>
           {section => (
             <ListBoxSection className={styles.group}>
@@ -393,7 +457,7 @@ function VirtualizedListBoxRender(args): JSX.Element {
 }
 
 export const VirtualizedListBox: StoryObj<typeof VirtualizedListBoxRender> = {
-  render: (args) => <VirtualizedListBoxRender {...args} />,
+  render: args => <VirtualizedListBoxRender {...args} />,
   args: {
     variableHeight: false,
     isLoading: false
@@ -414,7 +478,11 @@ export let VirtualizedListBoxEmpty: ListBoxStoryObj = {
         rowHeight: 25,
         estimatedHeadingHeight: 26
       }}>
-      <ListBox className={styles.menu} style={{height: 400}} aria-label="virtualized listbox" renderEmptyState={() => 'Empty'}>
+      <ListBox
+        className={styles.menu}
+        style={{height: 400}}
+        aria-label="virtualized listbox"
+        renderEmptyState={() => 'Empty'}>
         <MyListBoxLoaderIndicator />
       </ListBox>
     </Virtualizer>
@@ -423,7 +491,7 @@ export let VirtualizedListBoxEmpty: ListBoxStoryObj = {
 
 function VirtualizedListBoxDndRender(args): JSX.Element {
   let {orientation} = args;
-  let items: {id: number, name: string}[] = [];
+  let items: {id: number; name: string}[] = [];
   for (let i = 0; i < 10000; i++) {
     items.push({id: i, name: `Item ${i}`});
   }
@@ -433,7 +501,7 @@ function VirtualizedListBoxDndRender(args): JSX.Element {
   });
 
   let {dragAndDropHooks} = useDragAndDrop({
-    getItems: (keys) => {
+    getItems: keys => {
       return [...keys].map(key => ({'text/plain': list.getItem(key)?.name ?? ''}));
     },
     onReorder(e) {
@@ -444,7 +512,16 @@ function VirtualizedListBoxDndRender(args): JSX.Element {
       }
     },
     renderDropIndicator(target) {
-      return <DropIndicator target={target} style={({isDropTarget}) => ({width: '100%', height: '100%', background: isDropTarget ? 'blue' : 'transparent'})} />;
+      return (
+        <DropIndicator
+          target={target}
+          style={({isDropTarget}) => ({
+            width: '100%',
+            height: '100%',
+            background: isDropTarget ? 'blue' : 'transparent'
+          })}
+        />
+      );
     }
   });
 
@@ -474,7 +551,7 @@ function VirtualizedListBoxDndRender(args): JSX.Element {
 }
 
 export const VirtualizedListBoxDnd: StoryObj<typeof VirtualizedListBoxDndRender> = {
-  render: (args) => <VirtualizedListBoxDndRender {...args} />,
+  render: args => <VirtualizedListBoxDndRender {...args} />,
   args: {
     orientation: 'vertical'
   },
@@ -486,8 +563,16 @@ export const VirtualizedListBoxDnd: StoryObj<typeof VirtualizedListBoxDndRender>
   }
 };
 
-function VirtualizedListBoxGridExample({minSize = 80, maxSize = 100, preserveAspectRatio = false}: {minSize: number, maxSize: number, preserveAspectRatio: boolean}): JSX.Element {
-  let items: {id: number, name: string}[] = [];
+function VirtualizedListBoxGridExample({
+  minSize = 80,
+  maxSize = 100,
+  preserveAspectRatio = false
+}: {
+  minSize: number;
+  maxSize: number;
+  preserveAspectRatio: boolean;
+}): JSX.Element {
+  let items: {id: number; name: string}[] = [];
   for (let i = 0; i < 10000; i++) {
     items.push({id: i, name: `Item ${i}`});
   }
@@ -497,7 +582,7 @@ function VirtualizedListBoxGridExample({minSize = 80, maxSize = 100, preserveAsp
   });
 
   let {dragAndDropHooks} = useDragAndDrop({
-    getItems: (keys) => {
+    getItems: keys => {
       return [...keys].map(key => ({'text/plain': list.getItem(key)?.name ?? ''}));
     },
     onReorder(e) {
@@ -508,7 +593,16 @@ function VirtualizedListBoxGridExample({minSize = 80, maxSize = 100, preserveAsp
       }
     },
     renderDropIndicator(target) {
-      return <DropIndicator target={target} style={({isDropTarget}) => ({width: '100%', height: '100%', background: isDropTarget ? 'blue' : 'transparent'})} />;
+      return (
+        <DropIndicator
+          target={target}
+          style={({isDropTarget}) => ({
+            width: '100%',
+            height: '100%',
+            background: isDropTarget ? 'blue' : 'transparent'
+          })}
+        />
+      );
     }
   });
 
@@ -530,7 +624,11 @@ function VirtualizedListBoxGridExample({minSize = 80, maxSize = 100, preserveAsp
           aria-label="virtualized listbox"
           items={list.items}
           dragAndDropHooks={dragAndDropHooks}>
-          {item => <MyListBoxItem style={{height: '100%', border: '1px solid', boxSizing: 'border-box'}}>{item.name}</MyListBoxItem>}
+          {item => (
+            <MyListBoxItem style={{height: '100%', border: '1px solid', boxSizing: 'border-box'}}>
+              {item.name}
+            </MyListBoxItem>
+          )}
         </ListBox>
       </Virtualizer>
     </div>
@@ -538,7 +636,7 @@ function VirtualizedListBoxGridExample({minSize = 80, maxSize = 100, preserveAsp
 }
 
 export const VirtualizedListBoxGrid: StoryObj<typeof VirtualizedListBoxGridExample> = {
-  render: (args) => {
+  render: args => {
     return <VirtualizedListBoxGridExample {...args} />;
   },
   args: {
@@ -549,13 +647,25 @@ export const VirtualizedListBoxGrid: StoryObj<typeof VirtualizedListBoxGridExamp
 };
 
 let lorem = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'.split(' ');
-let defaultItems: {id: number, name: string}[] = [];
+let defaultItems: {id: number; name: string}[] = [];
 for (let i = 0; i < 1000; i++) {
   let words = Math.max(2, Math.floor(Math.random() * 25));
   let name = lorem.slice(0, words).join(' ');
   defaultItems.push({id: i, name});
 }
-function VirtualizedListBoxWaterfallExample({minSize = 40, maxSize = 65, maxColumns = undefined, minSpace = undefined, maxSpace = undefined}: {minSize: number, maxSize: number, maxColumns?: number, minSpace?: number, maxSpace?: number}): JSX.Element {
+function VirtualizedListBoxWaterfallExample({
+  minSize = 40,
+  maxSize = 65,
+  maxColumns = undefined,
+  minSpace = undefined,
+  maxSpace = undefined
+}: {
+  minSize: number;
+  maxSize: number;
+  maxColumns?: number;
+  minSpace?: number;
+  maxSpace?: number;
+}): JSX.Element {
   let [items] = useState(defaultItems);
 
   return (
@@ -577,7 +687,11 @@ function VirtualizedListBoxWaterfallExample({minSize = 40, maxSize = 65, maxColu
           style={{width: '100%', height: '100%'}}
           aria-label="virtualized listbox"
           items={items}>
-          {item => <MyListBoxItem style={{height: '100%', border: '1px solid', boxSizing: 'border-box'}}>{item.name}</MyListBoxItem>}
+          {item => (
+            <MyListBoxItem style={{height: '100%', border: '1px solid', boxSizing: 'border-box'}}>
+              {item.name}
+            </MyListBoxItem>
+          )}
         </ListBox>
       </Virtualizer>
     </div>
@@ -585,7 +699,7 @@ function VirtualizedListBoxWaterfallExample({minSize = 40, maxSize = 65, maxColu
 }
 
 export const VirtualizedListBoxWaterfall: StoryObj<typeof VirtualizedListBoxWaterfallExample> = {
-  render: (args) => {
+  render: args => {
     return <VirtualizedListBoxWaterfallExample {...args} />;
   },
   args: {
@@ -624,23 +738,26 @@ export const VirtualizedListBoxWaterfall: StoryObj<typeof VirtualizedListBoxWate
   }
 };
 
-
 let renderEmptyState = ({isLoading}) => {
-  return  (
+  return (
     <div style={{height: 30, width: '100%'}}>
-      {isLoading ? <LoadingSpinner style={{height: 20, width: 20, transform: 'translate(-50%, -50%)'}} /> : 'No results'}
+      {isLoading ? (
+        <LoadingSpinner style={{height: 20, width: 20, transform: 'translate(-50%, -50%)'}} />
+      ) : (
+        'No results'
+      )}
     </div>
   );
 };
 
 interface Character {
-  name: string,
-  height: number,
-  mass: number,
-  birth_year: number
+  name: string;
+  height: number;
+  mass: number;
+  birth_year: number;
 }
 
-export const MyListBoxLoaderIndicator = (props) => {
+export const MyListBoxLoaderIndicator = props => {
   let {orientation, ...otherProps} = props;
   return (
     <ListBoxLoadMoreItem
@@ -658,7 +775,10 @@ export const MyListBoxLoaderIndicator = (props) => {
   );
 };
 
-function AsyncListBoxRender(args: {delay: number, orientation: 'horizontal' | 'vertical'}): JSX.Element {
+function AsyncListBoxRender(args: {
+  delay: number;
+  orientation: 'horizontal' | 'vertical';
+}): JSX.Element {
   let list = useAsyncList<Character>({
     async load({signal, cursor, filterText}) {
       if (cursor) {
@@ -666,7 +786,9 @@ function AsyncListBoxRender(args: {delay: number, orientation: 'horizontal' | 'v
       }
 
       await new Promise(resolve => setTimeout(resolve, args.delay));
-      let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search=${filterText}`, {signal});
+      let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search=${filterText}`, {
+        signal
+      });
       let json = await res.json();
       return {
         items: json.results,
@@ -700,13 +822,17 @@ function AsyncListBoxRender(args: {delay: number, orientation: 'horizontal' | 'v
           </MyListBoxItem>
         )}
       </Collection>
-      <MyListBoxLoaderIndicator orientation={args.orientation} isLoading={list.loadingState === 'loadingMore'} onLoadMore={list.loadMore} />
+      <MyListBoxLoaderIndicator
+        orientation={args.orientation}
+        isLoading={list.loadingState === 'loadingMore'}
+        onLoadMore={list.loadMore}
+      />
     </ListBox>
   );
 }
 
 export const AsyncListBox: StoryObj<typeof AsyncListBoxRender> = {
-  render: (args) => <AsyncListBoxRender {...args} />,
+  render: args => <AsyncListBoxRender {...args} />,
   args: {
     orientation: 'horizontal',
     delay: 50
@@ -719,7 +845,7 @@ export const AsyncListBox: StoryObj<typeof AsyncListBoxRender> = {
   }
 };
 
-export const AsyncListBoxVirtualized: StoryFn<typeof AsyncListBoxRender> = (args) => {
+export const AsyncListBoxVirtualized: StoryFn<typeof AsyncListBoxRender> = args => {
   let list = useAsyncList<Character>({
     async load({signal, cursor, filterText}) {
       if (cursor) {
@@ -727,7 +853,9 @@ export const AsyncListBoxVirtualized: StoryFn<typeof AsyncListBoxRender> = (args
       }
 
       await new Promise(resolve => setTimeout(resolve, args.delay));
-      let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search=${filterText}`, {signal});
+      let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search=${filterText}`, {
+        signal
+      });
       let json = await res.json();
       return {
         items: json.results,
@@ -772,14 +900,17 @@ export const AsyncListBoxVirtualized: StoryFn<typeof AsyncListBoxRender> = (args
             </MyListBoxItem>
           )}
         </Collection>
-        <MyListBoxLoaderIndicator isLoading={list.loadingState === 'loadingMore'} onLoadMore={list.loadMore} />
+        <MyListBoxLoaderIndicator
+          isLoading={list.loadingState === 'loadingMore'}
+          onLoadMore={list.loadMore}
+        />
       </ListBox>
     </Virtualizer>
   );
 };
 
-export const ListBoxScrollMargin: ListBoxStory = (args) => {
-  let items: {id: number, name: string, description: string}[] = [];
+export const ListBoxScrollMargin: ListBoxStory = args => {
+  let items: {id: number; name: string; description: string}[] = [];
   for (let i = 0; i < 100; i++) {
     items.push({id: i, name: `Item ${i}`, description: `Description ${i}`});
   }
@@ -791,7 +922,14 @@ export const ListBoxScrollMargin: ListBoxStory = (args) => {
       style={{height: 200, width: 100, overflow: 'scroll'}}
       items={items}>
       {item => (
-        <MyListBoxItem style={{scrollMargin: 10, width: 150, display: 'flex', padding: '2px 20px', justifyContent: 'space-between'}}>
+        <MyListBoxItem
+          style={{
+            scrollMargin: 10,
+            width: 150,
+            display: 'flex',
+            padding: '2px 20px',
+            justifyContent: 'space-between'
+          }}>
           <span>{item.name}</span>
           <span>{item.description}</span>
         </MyListBoxItem>
@@ -800,8 +938,8 @@ export const ListBoxScrollMargin: ListBoxStory = (args) => {
   );
 };
 
-export const ListBoxSmoothScroll: ListBoxStory = (args) => {
-  let items: {id: number, name: string}[] = [];
+export const ListBoxSmoothScroll: ListBoxStory = args => {
+  let items: {id: number; name: string}[] = [];
   for (let i = 0; i < 100; i++) {
     items.push({id: i, name: `Item ${i}`});
   }
@@ -810,7 +948,14 @@ export const ListBoxSmoothScroll: ListBoxStory = (args) => {
       className={styles.menu}
       {...args}
       aria-label="test listbox"
-      style={{height: 200, width: 200, overflow: 'scroll', display: 'grid', gridTemplateColumns: 'repeat(4, 80px)', scrollBehavior: 'smooth'}}
+      style={{
+        height: 200,
+        width: 200,
+        overflow: 'scroll',
+        display: 'grid',
+        gridTemplateColumns: 'repeat(4, 80px)',
+        scrollBehavior: 'smooth'
+      }}
       items={items}
       layout="grid">
       {item => <MyListBoxItem style={{minHeight: 32}}>{item.name}</MyListBoxItem>}
@@ -825,7 +970,7 @@ AsyncListBoxVirtualized.story = {
 };
 
 export let VirtualizedListBoxDndOnAction: ListBoxStory = () => {
-  let items: {id: number, name: string}[] = [];
+  let items: {id: number; name: string}[] = [];
   for (let i = 0; i < 100; i++) {
     items.push({id: i, name: `Item ${i}`});
   }
@@ -835,7 +980,7 @@ export let VirtualizedListBoxDndOnAction: ListBoxStory = () => {
   });
 
   let {dragAndDropHooks} = useDragAndDrop({
-    getItems: (keys) => {
+    getItems: keys => {
       return [...keys].map(key => ({'text/plain': list.getItem(key)?.name ?? ''}));
     },
     onReorder(e) {
@@ -846,7 +991,17 @@ export let VirtualizedListBoxDndOnAction: ListBoxStory = () => {
       }
     },
     renderDropIndicator(target) {
-      return <DropIndicator target={target} style={({isDropTarget}) => ({width: '100%', height: 2, background: isDropTarget ? 'blue' : 'gray', margin: '2px 0'})} />;
+      return (
+        <DropIndicator
+          target={target}
+          style={({isDropTarget}) => ({
+            width: '100%',
+            height: 2,
+            background: isDropTarget ? 'blue' : 'gray',
+            margin: '2px 0'
+          })}
+        />
+      );
     }
   });
 
@@ -855,12 +1010,27 @@ export let VirtualizedListBoxDndOnAction: ListBoxStory = () => {
       <div style={{padding: 20, background: '#f0f0f0', borderRadius: 8, maxWidth: 600}}>
         <h3 style={{margin: '0 0 10px 0'}}>Instructions:</h3>
         <ul style={{margin: 0, paddingLeft: 20}}>
-          <li><strong>Enter:</strong> Triggers onAction</li>
-          <li><strong>Alt+Enter:</strong> Starts drag mode</li>
-          <li><strong>Space:</strong> Toggles selection</li>
+          <li>
+            <strong>Enter:</strong> Triggers onAction
+          </li>
+          <li>
+            <strong>Alt+Enter:</strong> Starts drag mode
+          </li>
+          <li>
+            <strong>Space:</strong> Toggles selection
+          </li>
         </ul>
       </div>
-      <div style={{height: 400, width: 300, resize: 'both', padding: 20, overflow: 'hidden', border: '2px solid #ccc', borderRadius: 8}}>
+      <div
+        style={{
+          height: 400,
+          width: 300,
+          resize: 'both',
+          padding: 20,
+          overflow: 'hidden',
+          border: '2px solid #ccc',
+          borderRadius: 8
+        }}>
         <Virtualizer
           layout={ListLayout}
           layoutOptions={{
@@ -884,8 +1054,8 @@ export let VirtualizedListBoxDndOnAction: ListBoxStory = () => {
 };
 
 interface AlbumListBoxProps {
-  items?: Album[],
-  dragAndDropHooks?: DragAndDropHooks<Album>
+  items?: Album[];
+  dragAndDropHooks?: DragAndDropHooks<Album>;
 }
 
 function AlbumListBox(props: AlbumListBoxProps) {
@@ -899,7 +1069,7 @@ function AlbumListBox(props: AlbumListBoxProps) {
       renderEmptyState={() => 'Drop items here'}
       selectionMode="multiple">
       <Collection items={items}>
-        {(item) => (
+        {item => (
           <ListBoxItem textValue={item.title}>
             <img alt="" src={item.image} />
             <Text slot="label">{item.title}</Text>
@@ -919,7 +1089,7 @@ function DraggableListBox() {
 
   const {dragAndDropHooks} = useDragAndDrop<Album>({
     getItems(keys, items) {
-      return items.map((item) => {
+      return items.map(item => {
         return {
           album: JSON.stringify(item)
         };
@@ -943,9 +1113,7 @@ function DroppableListBox() {
     acceptedDragTypes: ['album'],
     async onRootDrop(e) {
       const items = await Promise.all(
-        e.items
-          .filter(isTextDropItem)
-          .map(async (item) => JSON.parse(await item.getText('album')))
+        e.items.filter(isTextDropItem).map(async item => JSON.parse(await item.getText('album')))
       );
       list.append(...items);
     }

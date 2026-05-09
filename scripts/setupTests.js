@@ -38,15 +38,15 @@ const ERROR_PATTERNS_WE_SHOULD_FIX_BUT_ALLOW = [
   '`ReactDOMTestUtils.act` is deprecated in favor of `React.act`'
 ];
 
-const WARNING_PATTERNS_WE_SHOULD_FIX_BUT_ALLOW = [
-  'Browserslist: caniuse-lite is outdated'
-];
+const WARNING_PATTERNS_WE_SHOULD_FIX_BUT_ALLOW = ['Browserslist: caniuse-lite is outdated'];
 
 function failTestOnConsoleError() {
   const error = console.error;
 
   console.error = function (message) {
-    const allowedPattern = typeof message === 'string' && ERROR_PATTERNS_WE_SHOULD_FIX_BUT_ALLOW.find(pattern => message.indexOf(pattern) > -1);
+    const allowedPattern =
+      typeof message === 'string' &&
+      ERROR_PATTERNS_WE_SHOULD_FIX_BUT_ALLOW.find(pattern => message.indexOf(pattern) > -1);
     if (allowedPattern) {
       return;
     }
@@ -60,7 +60,9 @@ function failTestOnConsoleWarn() {
   const warn = console.warn;
 
   console.warn = function (message) {
-    const allowedPattern = typeof message === 'string' && WARNING_PATTERNS_WE_SHOULD_FIX_BUT_ALLOW.find(pattern => message.indexOf(pattern) > -1);
+    const allowedPattern =
+      typeof message === 'string' &&
+      WARNING_PATTERNS_WE_SHOULD_FIX_BUT_ALLOW.find(pattern => message.indexOf(pattern) > -1);
 
     if (allowedPattern) {
       return;
@@ -73,20 +75,18 @@ function failTestOnConsoleWarn() {
 
 expect.extend({
   toContainObject(received, argument) {
-    const pass = this.equals(received,
-      expect.arrayContaining([
-        expect.objectContaining(argument)
-      ])
-    );
+    const pass = this.equals(received, expect.arrayContaining([expect.objectContaining(argument)]));
 
     if (pass) {
       return {
-        message: () => (`expected ${this.utils.printReceived(received)} not to contain object ${this.utils.printExpected(argument)}`),
+        message: () =>
+          `expected ${this.utils.printReceived(received)} not to contain object ${this.utils.printExpected(argument)}`,
         pass: true
       };
     } else {
       return {
-        message: () => (`expected ${this.utils.printReceived(received)} to contain object ${this.utils.printExpected(argument)}`),
+        message: () =>
+          `expected ${this.utils.printReceived(received)} to contain object ${this.utils.printExpected(argument)}`,
         pass: false
       };
     }
