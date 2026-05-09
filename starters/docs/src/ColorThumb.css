@@ -1,8 +1,10 @@
-@import "./theme.css";
+@import './theme.css';
 
 .react-aria-ColorThumb {
   border: 2px solid white;
-  box-shadow: 0 0 0 1px black, inset 0 0 0 1px black;
+  box-shadow:
+    0 0 0 1px black,
+    inset 0 0 0 1px black;
   width: calc(var(--spacing) * 4.5);
   height: calc(var(--spacing) * 4.5);
   border-radius: 50%;

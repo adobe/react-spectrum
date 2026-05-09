@@ -10,7 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-import {Alignment, DOMProps, DOMRef, FormProps, LabelPosition, SpectrumLabelableProps, StyleProps, ValidationState} from '@react-types/shared';
+import {
+  Alignment,
+  DOMProps,
+  DOMRef,
+  FormProps,
+  LabelPosition,
+  SpectrumLabelableProps,
+  StyleProps,
+  ValidationState
+} from '@react-types/shared';
 import {classNames} from '../utils/classNames';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {FormValidationContext} from 'react-stately/private/form/useFormValidationState';
@@ -20,35 +29,40 @@ import styles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {useDOMRef} from '../utils/useDOMRef';
 import {useStyleProps} from '../utils/styleProps';
 
-export interface SpectrumFormProps extends FormProps, DOMProps, StyleProps, Omit<SpectrumLabelableProps, 'contextualHelp' | 'label'> {
+export interface SpectrumFormProps
+  extends
+    FormProps,
+    DOMProps,
+    StyleProps,
+    Omit<SpectrumLabelableProps, 'contextualHelp' | 'label'> {
   /** The contents of the Form. */
-  children: ReactElement<SpectrumLabelableProps> | ReactElement<SpectrumLabelableProps>[],
+  children: ReactElement<SpectrumLabelableProps> | ReactElement<SpectrumLabelableProps>[];
   /** Whether the Form elements are displayed with their quiet style. */
-  isQuiet?: boolean,
+  isQuiet?: boolean;
   /** Whether the Form elements are rendered with their emphasized style. */
-  isEmphasized?: boolean,
+  isEmphasized?: boolean;
   /** Whether the Form elements are disabled. */
-  isDisabled?: boolean,
+  isDisabled?: boolean;
   /** Whether user input is required on each of the Form elements before Form submission. */
-  isRequired?: boolean,
+  isRequired?: boolean;
   /** Whether the Form elements can be selected but not changed by the user. */
-  isReadOnly?: boolean,
+  isReadOnly?: boolean;
   /**
    * Whether the Form elements should display their "valid" or "invalid" visual styling.
    * @default 'valid'
    */
-  validationState?: ValidationState,
+  validationState?: ValidationState;
   /**
    * Whether to use native HTML form validation to prevent form submission
    * when a field value is missing or invalid, or mark fields as required
    * or invalid via ARIA.
    * @default 'aria'
    */
-  validationBehavior?: 'aria' | 'native'
+  validationBehavior?: 'aria' | 'native';
 }
 
 interface FormContextValue extends SpectrumLabelableProps {
-  validationBehavior?: 'aria' | 'native'
+  validationBehavior?: 'aria' | 'native';
 }
 
 let FormContext = React.createContext<FormContextValue | null>(null);
@@ -75,7 +89,10 @@ const formPropNames = new Set([
 /**
  * Forms allow users to enter data that can be submitted while providing alignment and styling for form fields.
  */
-export const Form = React.forwardRef(function Form(props: SpectrumFormProps, ref: DOMRef<HTMLFormElement>) {
+export const Form = React.forwardRef(function Form(
+  props: SpectrumFormProps,
+  ref: DOMRef<HTMLFormElement>
+) {
   props = useProviderProps(props);
   let {
     children,
@@ -109,17 +126,15 @@ export const Form = React.forwardRef(function Form(props: SpectrumFormProps, ref
       {...styleProps}
       noValidate={validationBehavior !== 'native'}
       ref={domRef}
-      className={
-        classNames(
-          styles,
-          'spectrum-Form',
-          {
-            'spectrum-Form--positionSide': labelPosition === 'side',
-            'spectrum-Form--positionTop': labelPosition === 'top'
-          },
-          styleProps.className
-        )
-      }>
+      className={classNames(
+        styles,
+        'spectrum-Form',
+        {
+          'spectrum-Form--positionSide': labelPosition === 'side',
+          'spectrum-Form--positionTop': labelPosition === 'top'
+        },
+        styleProps.className
+      )}>
       <FormContext.Provider value={ctx}>
         <Provider
           isQuiet={isQuiet}

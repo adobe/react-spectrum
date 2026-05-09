@@ -36,7 +36,7 @@ export default meta;
 type Story = StoryObj<typeof TextField>;
 
 export const Example: Story = {
-  render: (args) => <TextField {...args} />,
+  render: args => <TextField {...args} />,
   args: {
     label: 'Name',
     placeholder: 'Enter your name'
@@ -44,7 +44,7 @@ export const Example: Story = {
 };
 
 export const ExampleWithPrefixText: Story = {
-  render: (args) => <TextField {...args} prefix="#" />,
+  render: args => <TextField {...args} prefix="#" />,
   args: {
     label: 'Name',
     placeholder: 'Enter your name'
@@ -52,17 +52,19 @@ export const ExampleWithPrefixText: Story = {
 };
 
 export const ExampleWithPrefixIcon: Story = {
-  render: (args) => <TextField {...args} prefix={<Magnifier />} />,
+  render: args => <TextField {...args} prefix={<Magnifier />} />,
   args: {
     label: 'Name',
     placeholder: 'Enter your name'
   }
 };
 export const Validation: Story = {
-  render: (args) => (
+  render: args => (
     <Form>
       <TextField {...args} />
-      <Button type="submit" variant="primary">Submit</Button>
+      <Button type="submit" variant="primary">
+        Submit
+      </Button>
     </Form>
   ),
   args: {
@@ -72,9 +74,7 @@ export const Validation: Story = {
 };
 
 export const ContextualHelpExample: Story = {
-  render: (args) => (
-    <TextField {...args} />
-  ),
+  render: args => <TextField {...args} />,
   args: {
     label: 'Segment',
     placeholder: 'Enter your name',
@@ -83,15 +83,17 @@ export const ContextualHelpExample: Story = {
         <Heading>What is a segment?</Heading>
         <Content>
           <Text>
-            Segments identify who your visitors are, what devices and services they
-            use, where they navigated from, and much more.
+            Segments identify who your visitors are, what devices and services they use, where they
+            navigated from, and much more.
           </Text>
         </Content>
         <Footer>
           <Link
             isStandalone
             href="https://experienceleague.adobe.com/en/docs/experience-manager-65/content/sites/administering/personalization/campaign-segmentation"
-            target="_blank">Learn more about segments</Link>
+            target="_blank">
+            Learn more about segments
+          </Link>
         </Footer>
       </ContextualHelp>
     )
@@ -99,7 +101,7 @@ export const ContextualHelpExample: Story = {
 };
 
 export const TextAreaExample: StoryObj<typeof TextArea> = {
-  render: (args) => <TextArea {...args} />,
+  render: args => <TextArea {...args} />,
   args: {
     label: 'Comment',
     placeholder: 'Enter your name'
@@ -107,7 +109,7 @@ export const TextAreaExample: StoryObj<typeof TextArea> = {
 };
 
 export const TextAreaExampleWithPrefixText: StoryObj<typeof TextArea> = {
-  render: (args) => <TextArea {...args} prefix="#" />,
+  render: args => <TextArea {...args} prefix="#" />,
   args: {
     label: 'Comment',
     placeholder: 'Enter your name'
@@ -115,7 +117,7 @@ export const TextAreaExampleWithPrefixText: StoryObj<typeof TextArea> = {
 };
 
 export const TextAreaExampleWithPrefixIcon: StoryObj<typeof TextArea> = {
-  render: (args) => <TextArea {...args} prefix={<Magnifier />} />,
+  render: args => <TextArea {...args} prefix={<Magnifier />} />,
   args: {
     label: 'Comment',
     placeholder: 'Enter your name'
@@ -123,7 +125,7 @@ export const TextAreaExampleWithPrefixIcon: StoryObj<typeof TextArea> = {
 };
 
 export const CustomWidth: Story = {
-  render: (args) => <TextField {...args} styles={style({width: 384})} />,
+  render: args => <TextField {...args} styles={style({width: 384})} />,
   args: {
     label: 'Name',
     placeholder: 'Enter your name'
@@ -136,7 +138,7 @@ export const CustomWidth: Story = {
 };
 
 export const SmallWidth: Story = {
-  render: (args) => <TextField {...args} styles={style({width: 48})} />,
+  render: args => <TextField {...args} styles={style({width: 48})} />,
   args: {
     label: 'Name',
     placeholder: 'Enter your name'
@@ -149,7 +151,7 @@ export const SmallWidth: Story = {
 };
 
 export const UNSAFEWidth: Story = {
-  render: (args) => <TextField {...args} UNSAFE_style={{width: 384}} />,
+  render: args => <TextField {...args} UNSAFE_style={{width: 384}} />,
   args: {
     label: 'Name',
     placeholder: 'Enter your name'
@@ -162,10 +164,12 @@ export const UNSAFEWidth: Story = {
 };
 
 export const InForm: Story = {
-  render: (args) => (
+  render: args => (
     <Form>
       <TextField {...args} />
-      <Button type="submit" variant="primary">Submit</Button>
+      <Button type="submit" variant="primary">
+        Submit
+      </Button>
     </Form>
   ),
   args: {
@@ -180,10 +184,12 @@ export const InForm: Story = {
 };
 
 export const FormCustomWidth: Story = {
-  render: (args) => (
+  render: args => (
     <Form styles={style({width: 384})} labelPosition={args.labelPosition}>
       <TextField {...args} />
-      <Button type="submit" variant="primary">Submit</Button>
+      <Button type="submit" variant="primary">
+        Submit
+      </Button>
     </Form>
   ),
   args: {

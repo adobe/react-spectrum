@@ -17,7 +17,9 @@ import {ReactNode} from 'react';
 import {IconProps, IllustrationContext} from '../../src/Icon';
 import {useContextProps} from 'react-aria-components/slots';
 
-export default function ConfettiCelebration(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
+export default function ConfettiCelebration(
+  props: IconProps & {size?: 'L' | 'S' | 'M'}
+): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);
   let {size = 'M', ...otherProps} = props;
   switch (size) {

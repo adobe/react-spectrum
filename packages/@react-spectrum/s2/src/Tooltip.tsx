@@ -20,26 +20,61 @@ import {
 } from 'react-aria-components/Tooltip';
 import {centerPadding, setColorScheme, style} from '../style' with {type: 'macro'};
 import {ColorScheme, ColorSchemeContext} from './Provider';
-import {createContext, forwardRef, MutableRefObject, ReactNode, useCallback, useContext, useState} from 'react';
+import {
+  createContext,
+  forwardRef,
+  MutableRefObject,
+  ReactNode,
+  useCallback,
+  useContext,
+  useState
+} from 'react';
 import {DOMProps, DOMRef, GlobalDOMAttributes} from '@react-types/shared';
 import {UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {useDOMRef} from './useDOMRef';
 import {useLocale} from 'react-aria/I18nProvider';
 
-export interface TooltipTriggerProps extends Omit<AriaTooltipTriggerComponentProps, 'children' | 'closeDelay' | keyof GlobalDOMAttributes>, Pick<AriaTooltipProps, 'shouldFlip' | 'containerPadding' | 'crossOffset'> {
+export interface TooltipTriggerProps
+  extends
+    Omit<AriaTooltipTriggerComponentProps, 'children' | 'closeDelay' | keyof GlobalDOMAttributes>,
+    Pick<AriaTooltipProps, 'shouldFlip' | 'containerPadding' | 'crossOffset'> {
   /** The content of the tooltip. */
-  children: ReactNode,
+  children: ReactNode;
   /**
    * The placement of the element with respect to its anchor element.
    *
    * @default 'top'
    */
-  placement?: 'start' | 'end' | 'right' | 'left' | 'top' | 'bottom'
+  placement?: 'start' | 'end' | 'right' | 'left' | 'top' | 'bottom';
 }
 
-export interface TooltipProps extends Omit<AriaTooltipProps, 'children' | 'className' | 'style' | 'render' | 'triggerRef' | 'UNSTABLE_portalContainer' | 'isEntering' | 'isExiting' | 'placement' | 'containerPadding' |  'offset' | 'crossOffset' |  'shouldFlip' | 'arrowBoundaryOffset' | 'isOpen' | 'defaultOpen' | 'onOpenChange' | keyof GlobalDOMAttributes>, DOMProps, UnsafeStyles {
+export interface TooltipProps
+  extends
+    Omit<
+      AriaTooltipProps,
+      | 'children'
+      | 'className'
+      | 'style'
+      | 'render'
+      | 'triggerRef'
+      | 'UNSTABLE_portalContainer'
+      | 'isEntering'
+      | 'isExiting'
+      | 'placement'
+      | 'containerPadding'
+      | 'offset'
+      | 'crossOffset'
+      | 'shouldFlip'
+      | 'arrowBoundaryOffset'
+      | 'isOpen'
+      | 'defaultOpen'
+      | 'onOpenChange'
+      | keyof GlobalDOMAttributes
+    >,
+    DOMProps,
+    UnsafeStyles {
   /** The content of the tooltip. */
-  children: ReactNode
+  children: ReactNode;
 }
 
 const tooltip = style<TooltipRenderProps & {colorScheme: ColorScheme | 'light dark' | null}>({
@@ -131,7 +166,10 @@ let InternalTooltipTriggerContext = createContext<Partial<TooltipTriggerProps>>(
 /**
  * Display container for Tooltip content. Has a directional arrow dependent on its placement.
  */
-export const Tooltip = forwardRef(function Tooltip(props: TooltipProps, ref: DOMRef<HTMLDivElement>) {
+export const Tooltip = forwardRef(function Tooltip(
+  props: TooltipProps,
+  ref: DOMRef<HTMLDivElement>
+) {
   let {children, UNSAFE_style, UNSAFE_className = ''} = props;
   let domRef = useDOMRef(ref);
   let {
@@ -145,17 +183,21 @@ export const Tooltip = forwardRef(function Tooltip(props: TooltipProps, ref: DOM
   let [borderRadius, setBorderRadius] = useState(0);
 
   // TODO: should we pass through lang and dir props in RAC?
-  let tooltipRef = useCallback((el: HTMLDivElement) => {
-    (domRef as MutableRefObject<HTMLDivElement>).current = el;
-    if (el) {
-      el.lang = locale;
-      el.dir = direction;
-      let spectrumBorderRadius = typeof window !== 'undefined' ? window.getComputedStyle(el).borderRadius : '';
-      if (spectrumBorderRadius !== '') {
-        setBorderRadius(parseInt(spectrumBorderRadius, 10));
+  let tooltipRef = useCallback(
+    (el: HTMLDivElement) => {
+      (domRef as MutableRefObject<HTMLDivElement>).current = el;
+      if (el) {
+        el.lang = locale;
+        el.dir = direction;
+        let spectrumBorderRadius =
+          typeof window !== 'undefined' ? window.getComputedStyle(el).borderRadius : '';
+        if (spectrumBorderRadius !== '') {
+          setBorderRadius(parseInt(spectrumBorderRadius, 10));
+        }
       }
-    }
-  }, [locale, direction, domRef]);
+    },
+    [locale, direction, domRef]
+  );
 
   return (
     <AriaTooltip
@@ -172,7 +214,10 @@ export const Tooltip = forwardRef(function Tooltip(props: TooltipProps, ref: DOM
       {renderProps => (
         <>
           <OverlayArrow className="">
-            <svg className={arrowStyles(renderProps)} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 5">
+            <svg
+              className={arrowStyles(renderProps)}
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 10 5">
               <path d="M4.29289 4.29289L0 0H10L5.70711 4.29289C5.31658 4.68342 4.68342 4.68342 4.29289 4.29289Z" />
             </svg>
           </OverlayArrow>
@@ -189,13 +234,7 @@ export const Tooltip = forwardRef(function Tooltip(props: TooltipProps, ref: DOM
  * relative to the trigger.
  */
 export function TooltipTrigger(props: TooltipTriggerProps): ReactNode {
-  let {
-    containerPadding,
-    crossOffset,
-    placement,
-    shouldFlip,
-    ...triggerProps
-  } = props;
+  let {containerPadding, crossOffset, placement, shouldFlip, ...triggerProps} = props;
 
   return (
     <AriaTooltipTrigger {...triggerProps}>
@@ -211,7 +250,6 @@ export function TooltipTrigger(props: TooltipTriggerProps): ReactNode {
     </AriaTooltipTrigger>
   );
 }
-
 
 // This is purely so that storybook generates the types for both Menu and MenuTrigger
 interface ICombined extends Omit<TooltipProps, 'placement'>, TooltipTriggerProps {}

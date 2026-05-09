@@ -1,5 +1,5 @@
-import type { StorybookConfig } from "storybook/internal/types";
-import { fileURLToPath } from "node:url";
+import type {StorybookConfig} from 'storybook/internal/types';
+import {fileURLToPath} from 'node:url';
 
 // const excludedProps = new Set([
 //   'id',
@@ -20,18 +20,18 @@ const localAddon = (rel: string) => fileURLToPath(import.meta.resolve(rel));
 const config: StorybookConfig = {
   stories: [
     './docs/*.mdx',
-    "../packages/@react-spectrum/s2/stories/*.stories.@(js|jsx|mjs|ts|tsx)",
+    '../packages/@react-spectrum/s2/stories/*.stories.@(js|jsx|mjs|ts|tsx)'
   ],
   addons: [
     localAddon('./custom-addons/provider/preset.ts'),
     // "@storybook/addon-styling-webpack",
-    "@storybook/addon-docs",
-    "@vueless/storybook-dark-mode",
-    "@storybook/addon-a11y",
+    '@storybook/addon-docs',
+    '@vueless/storybook-dark-mode',
+    '@storybook/addon-a11y'
   ],
   framework: {
-    name: "storybook-react-parcel",
-    options: {},
+    name: 'storybook-react-parcel',
+    options: {}
   },
   core: {
     disableWhatsNewNotifications: true

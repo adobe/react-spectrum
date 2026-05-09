@@ -21,12 +21,12 @@ export interface TextProps extends DOMProps, StyleProps {
   /**
    * Text content.
    */
-  children: ReactNode,
+  children: ReactNode;
   /**
    * A slot to place the text in.
    * @default 'text'
    */
-  slot?: string
+  slot?: string;
 }
 
 /**
@@ -34,10 +34,7 @@ export interface TextProps extends DOMProps, StyleProps {
  */
 export const Text = forwardRef(function Text(props: TextProps, ref: DOMRef) {
   props = useSlotProps(props, 'text');
-  let {
-    children,
-    ...otherProps
-  } = props;
+  let {children, ...otherProps} = props;
   let {styleProps} = useStyleProps(otherProps);
   let domRef = useDOMRef(ref);
 

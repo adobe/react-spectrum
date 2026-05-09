@@ -14,7 +14,7 @@ import {ColorField, ColorFieldProps} from '../src/ColorField';
 import {generateComboChunks, shortName} from './utils';
 import type {Meta, StoryObj} from '@storybook/react';
 import {ReactElement} from 'react';
-import {style} from '../style' with { type: 'macro' };
+import {style} from '../style' with {type: 'macro'};
 
 const meta: Meta<typeof ColorField> = {
   component: ColorField,
@@ -37,15 +37,36 @@ let states = [
 
 const Template = ({combos, ...args}: ColorFieldProps & {combos: any[]}): ReactElement => {
   return (
-    <div className={style({display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 450px))', gridAutoFlow: 'row', justifyItems: 'start', gap: 24, width: '100vw'})}>
+    <div
+      className={style({
+        display: 'grid',
+        gridTemplateColumns: 'repeat(3, minmax(0, 450px))',
+        gridAutoFlow: 'row',
+        justifyItems: 'start',
+        gap: 24,
+        width: '100vw'
+      })}>
       {combos.map(c => {
-        let fullComboName = Object.keys(c).map(k => `${k}: ${c[k]}`).join(' ');
-        let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
+        let fullComboName = Object.keys(c)
+          .map(k => `${k}: ${c[k]}`)
+          .join(' ');
+        let key = Object.keys(c)
+          .map(k => shortName(k, c[k]))
+          .join(' ');
         if (!key) {
           key = 'default';
         }
         return (
-          <ColorField data-testid={fullComboName} defaultValue="#e21" label={key} description="test description" errorMessage="test error" placeholder="######" {...c} {...args}  />
+          <ColorField
+            data-testid={fullComboName}
+            defaultValue="#e21"
+            label={key}
+            description="test description"
+            errorMessage="test error"
+            placeholder="######"
+            {...c}
+            {...args}
+          />
         );
       })}
     </div>
@@ -55,7 +76,7 @@ const Template = ({combos, ...args}: ColorFieldProps & {combos: any[]}): ReactEl
 let sideChunks = generateComboChunks({states, numChunks: 3});
 
 export const LabelPositionSide: StoryObj<typeof Template> = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   args: {
     combos: sideChunks[0],
     labelPosition: 'side'
@@ -63,7 +84,7 @@ export const LabelPositionSide: StoryObj<typeof Template> = {
 };
 
 export const LabelPositionSidePt2: StoryObj<typeof Template> = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   args: {
     ...LabelPositionSide.args,
     combos: sideChunks[1]
@@ -71,22 +92,19 @@ export const LabelPositionSidePt2: StoryObj<typeof Template> = {
 };
 
 export const LabelPositionSidePt3: StoryObj<typeof Template> = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   args: {
     ...LabelPositionSide.args,
     combos: sideChunks[2]
   }
 };
 
-let topState = [
-  ...states,
-  {labelAlign: ['start', 'end']}
-];
+let topState = [...states, {labelAlign: ['start', 'end']}];
 
 let topChunks = generateComboChunks({states: topState, numChunks: 5});
 
 export const LabelPositionTop: StoryObj<typeof Template> = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   args: {
     combos: topChunks[0],
     labelPosition: 'top'
@@ -94,7 +112,7 @@ export const LabelPositionTop: StoryObj<typeof Template> = {
 };
 
 export const LabelPositionTopPt2: StoryObj<typeof Template> = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   args: {
     ...LabelPositionTop.args,
     combos: topChunks[1]
@@ -102,7 +120,7 @@ export const LabelPositionTopPt2: StoryObj<typeof Template> = {
 };
 
 export const LabelPositionTopPt3: StoryObj<typeof Template> = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   args: {
     ...LabelPositionTop.args,
     combos: topChunks[2]
@@ -110,7 +128,7 @@ export const LabelPositionTopPt3: StoryObj<typeof Template> = {
 };
 
 export const LabelPositionTopPt4: StoryObj<typeof Template> = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   args: {
     ...LabelPositionTop.args,
     combos: topChunks[3]
@@ -118,7 +136,7 @@ export const LabelPositionTopPt4: StoryObj<typeof Template> = {
 };
 
 export const LabelPositionTopPt5: StoryObj<typeof Template> = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   args: {
     ...LabelPositionTop.args,
     combos: topChunks[4]

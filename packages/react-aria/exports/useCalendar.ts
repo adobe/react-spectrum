@@ -21,7 +21,15 @@ export type {AriaCalendarProps} from '../src/calendar/useCalendar';
 export type {AriaCalendarGridProps, CalendarGridAria} from '../src/calendar/useCalendarGrid';
 export type {AriaCalendarCellProps, CalendarCellAria} from '../src/calendar/useCalendarCell';
 export type {CalendarAria} from '../src/calendar/useCalendarBase';
-export type {CalendarMonthPickerAria, CalendarMonthPickerItem, CalendarMonthPickerProps} from '../src/calendar/useCalendarMonthPicker';
-export type {CalendarYearPickerAria, CalendarYearPickerItem, CalendarYearPickerProps} from '../src/calendar/useCalendarYearPicker';
+export type {
+  CalendarMonthPickerAria,
+  CalendarMonthPickerItem,
+  CalendarMonthPickerProps
+} from '../src/calendar/useCalendarMonthPicker';
+export type {
+  CalendarYearPickerAria,
+  CalendarYearPickerItem,
+  CalendarYearPickerProps
+} from '../src/calendar/useCalendarYearPicker';
 export type {CalendarHeadingProps} from '../src/calendar/useCalendarHeading';
 export type {CalendarProps, DateValue} from 'react-stately/useCalendarState';

@@ -33,35 +33,35 @@ export interface AlertDialogProps extends DOMProps, UnsafeStyles {
    * The [visual style](https://spectrum.adobe.com/page/alert-dialog/#Options) of the AlertDialog.
    * @default 'confirmation'
    */
-  variant?: 'confirmation' | 'information' | 'destructive' | 'error' | 'warning',
+  variant?: 'confirmation' | 'information' | 'destructive' | 'error' | 'warning';
   /** The title of the AlertDialog. */
-  title: string,
+  title: string;
   /** The contents of the AlertDialog. */
-  children: ReactNode,
+  children: ReactNode;
   /** The label to display within the cancel button. */
-  cancelLabel?: string,
+  cancelLabel?: string;
   /** The label to display within the confirm button. */
-  primaryActionLabel: string,
+  primaryActionLabel: string;
   /** The label to display within the secondary button. */
-  secondaryActionLabel?: string,
+  secondaryActionLabel?: string;
   /** Whether the primary button is disabled. */
-  isPrimaryActionDisabled?: boolean,
+  isPrimaryActionDisabled?: boolean;
   /** Whether the secondary button is disabled. */
-  isSecondaryActionDisabled?: boolean,
+  isSecondaryActionDisabled?: boolean;
   /** Handler that is called when the cancel button is pressed. */
-  onCancel?: () => void,
+  onCancel?: () => void;
   /** Handler that is called when the primary button is pressed. */
-  onPrimaryAction?: () => void,
+  onPrimaryAction?: () => void;
   /** Handler that is called when the secondary button is pressed. */
-  onSecondaryAction?: () => void,
+  onSecondaryAction?: () => void;
   /** Button to focus by default when the dialog opens. */
-  autoFocusButton?: 'cancel' | 'primary' | 'secondary',
+  autoFocusButton?: 'cancel' | 'primary' | 'secondary';
   /**
    * The size of the Dialog.
    *
    * @default 'M'
    */
-    size?: 'S' | 'M' | 'L'
+  size?: 'S' | 'M' | 'L';
 }
 
 const icon = style({
@@ -110,24 +110,25 @@ export const AlertDialog = forwardRef(function AlertDialog(props: AlertDialogPro
       ref={ref}
       size={props.size}
       UNSAFE_style={props.UNSAFE_style}
-      UNSAFE_className={(props.UNSAFE_className || '')}>
+      UNSAFE_className={props.UNSAFE_className || ''}>
       {({close}) => (
         <>
-          <Provider
-            values={[
-              [IconContext, {styles: icon({variant})}]
-            ]}>
+          <Provider values={[[IconContext, {styles: icon({variant})}]]}>
             <Heading slot="title">
               <CenterBaseline>
-                {variant === 'error' && <AlertTriangle aria-label={stringFormatter.format('dialog.alert')} />}
-                {variant === 'warning' && <NoticeSquare aria-label={stringFormatter.format('dialog.alert')} />}
+                {variant === 'error' && (
+                  <AlertTriangle aria-label={stringFormatter.format('dialog.alert')} />
+                )}
+                {variant === 'warning' && (
+                  <NoticeSquare aria-label={stringFormatter.format('dialog.alert')} />
+                )}
                 {title}
               </CenterBaseline>
             </Heading>
           </Provider>
           <Content>{children}</Content>
           <ButtonGroup>
-            {cancelLabel &&
+            {cancelLabel && (
               <Button
                 onPress={() => chain(close(), onCancel())}
                 variant="secondary"
@@ -136,8 +137,8 @@ export const AlertDialog = forwardRef(function AlertDialog(props: AlertDialogPro
                 data-testid="rsp-AlertDialog-cancelButton">
                 {cancelLabel}
               </Button>
-            }
-            {secondaryActionLabel &&
+            )}
+            {secondaryActionLabel && (
               <Button
                 onPress={() => chain(close(), onSecondaryAction())}
                 variant="secondary"
@@ -147,7 +148,7 @@ export const AlertDialog = forwardRef(function AlertDialog(props: AlertDialogPro
                 data-testid="rsp-AlertDialog-secondaryButton">
                 {secondaryActionLabel}
               </Button>
-            }
+            )}
             <Button
               variant={buttonVariant as 'primary' | 'accent' | 'negative'}
               isDisabled={isPrimaryActionDisabled}

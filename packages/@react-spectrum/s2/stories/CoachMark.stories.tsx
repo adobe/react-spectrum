@@ -43,7 +43,7 @@ export default meta;
 type Story = StoryObj<typeof CoachMark>;
 
 export const CoachMarkExample: Story = {
-  render: (args) => (
+  render: args => (
     <div className={style({display: 'flex', flexDirection: 'column', gap: 16})}>
       <Button>Before</Button>
       <CoachMarkTrigger defaultOpen>
@@ -63,7 +63,9 @@ export const CoachMarkExample: Story = {
           </Content>
           <Footer>
             <Text slot="steps">1 of 10</Text>
-            <Button fillStyle="outline" variant="secondary">Previous</Button>
+            <Button fillStyle="outline" variant="secondary">
+              Previous
+            </Button>
             <Button variant="primary">Next</Button>
           </Footer>
         </CoachMark>
@@ -101,7 +103,9 @@ function ControlledCoachMark(args) {
           </Content>
           <Footer>
             <Text slot="steps">1 of 10</Text>
-            <Button fillStyle="outline" variant="secondary">Previous</Button>
+            <Button fillStyle="outline" variant="secondary">
+              Previous
+            </Button>
             <Button variant="primary">Next</Button>
           </Footer>
         </CoachMark>
@@ -112,9 +116,7 @@ function ControlledCoachMark(args) {
 }
 
 export const CoachMarkRestartable: Story = {
-  render: (args) => (
-    <ControlledCoachMark {...args} />
-  ),
+  render: args => <ControlledCoachMark {...args} />,
   parameters: {
     docs: {
       disable: true
@@ -123,7 +125,7 @@ export const CoachMarkRestartable: Story = {
 };
 
 export const CoachMarkSlider: Story = {
-  render: (args) => (
+  render: args => (
     <div className={style({display: 'flex', flexDirection: 'column', gap: 16})}>
       <Button>Before</Button>
       <CoachMarkTrigger defaultOpen>
@@ -143,7 +145,9 @@ export const CoachMarkSlider: Story = {
           </Content>
           <Footer>
             <Text slot="steps">1 of 10</Text>
-            <Button fillStyle="outline" variant="secondary">Previous</Button>
+            <Button fillStyle="outline" variant="secondary">
+              Previous
+            </Button>
             <Button variant="primary">Next</Button>
           </Footer>
         </CoachMark>
@@ -159,7 +163,7 @@ export const CoachMarkSlider: Story = {
 };
 
 export const CoachMarkButton: Story = {
-  render: (args) => (
+  render: args => (
     <div className={style({display: 'flex', flexDirection: 'column', gap: 16})}>
       <Button>Before</Button>
       <CoachMarkTrigger defaultOpen>
@@ -181,7 +185,9 @@ export const CoachMarkButton: Story = {
           </Content>
           <Footer>
             <Text slot="steps">1 of 10</Text>
-            <Button fillStyle="outline" variant="secondary">Previous</Button>
+            <Button fillStyle="outline" variant="secondary">
+              Previous
+            </Button>
             <Button variant="primary">Next</Button>
           </Footer>
         </CoachMark>

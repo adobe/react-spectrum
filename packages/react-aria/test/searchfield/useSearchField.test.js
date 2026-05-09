@@ -26,7 +26,10 @@ describe('useSearchField hook', () => {
   let onClear = jest.fn();
 
   let renderSearchHook = (props, wrapper) => {
-    let {result} = renderHook(() => useSearchField({...props, 'aria-label': 'testLabel'}, state, ref), {wrapper});
+    let {result} = renderHook(
+      () => useSearchField({...props, 'aria-label': 'testLabel'}, state, ref),
+      {wrapper}
+    );
     return result.current;
   };
 
@@ -56,7 +59,7 @@ describe('useSearchField hook', () => {
       let stopPropagation = jest.fn();
       let onSubmit = jest.fn();
       let onKeyDown = jest.fn();
-      let event = (key) => ({
+      let event = key => ({
         key,
         preventDefault,
         stopPropagation
@@ -129,7 +132,11 @@ describe('useSearchField hook', () => {
   describe('should return clearButtonProps', () => {
     it('with a localized aria-label', () => {
       let locale = 'de-DE';
-      let wrapper = ({children}) => <Provider locale={locale} theme={theme}>{children}</Provider>;
+      let wrapper = ({children}) => (
+        <Provider locale={locale} theme={theme}>
+          {children}
+        </Provider>
+      );
       let expectedIntl = intlMessages[locale]['Clear search'];
       let {clearButtonProps} = renderSearchHook({}, wrapper);
       expect(clearButtonProps['aria-label']).toBe(expectedIntl);

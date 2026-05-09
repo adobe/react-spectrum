@@ -61,7 +61,9 @@ export const ModalExample: ModalStory = () => (
         <Dialog>
           {({close}) => (
             <form style={{display: 'flex', flexDirection: 'column'}}>
-              <Heading slot="title" style={{marginTop: 0}}>Sign up</Heading>
+              <Heading slot="title" style={{marginTop: 0}}>
+                Sign up
+              </Heading>
               <label>
                 First Name: <input placeholder="John" />
               </label>
@@ -115,7 +117,9 @@ export const SheetExample: ModalStory = () => (
             <Dialog>
               {({close}) => (
                 <form style={{display: 'flex', flexDirection: 'column'}}>
-                  <Heading slot="title" style={{marginTop: 0}}>Sign up</Heading>
+                  <Heading slot="title" style={{marginTop: 0}}>
+                    Sign up
+                  </Heading>
                   <label>
                     First Name: <input placeholder="John" />
                   </label>
@@ -183,11 +187,12 @@ function InertTest() {
                           <div style={{display: 'flex'}}>
                             <Input />
                             <Button>
-                              <span aria-hidden="true" style={{padding: '0 2px'}}>▼</span>
+                              <span aria-hidden="true" style={{padding: '0 2px'}}>
+                                ▼
+                              </span>
                             </Button>
                           </div>
-                          <ListBox
-                            className={styles.menu}>
+                          <ListBox className={styles.menu}>
                             <MyListBoxItem>Foo</MyListBoxItem>
                             <MyListBoxItem>Bar</MyListBoxItem>
                             <MyListBoxItem>Baz</MyListBoxItem>

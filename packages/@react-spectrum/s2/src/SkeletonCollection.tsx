@@ -16,7 +16,7 @@ import {ReactNode} from 'react';
 import {Skeleton} from './Skeleton';
 
 export interface SkeletonCollectionProps {
-  children: () => ReactNode
+  children: () => ReactNode;
 }
 
 let cache = new WeakMap();
@@ -28,18 +28,17 @@ class SkeletonNode extends CollectionNode<unknown> {
 /**
  * A SkeletonCollection generates placeholder content within a collection component such as CardView.
  */
-export const SkeletonCollection = createLeafComponent(SkeletonNode, (props: SkeletonCollectionProps, ref, node) => {
-  // Cache rendering based on node object identity. This allows the children function to randomize
-  // its content (e.g. heights) and preserve on re-renders.
-  // TODO: do we need a `dependencies` prop here?
-  let cached = cache.get(node);
-  if (!cached) {
-    cached = (
-      <Skeleton isLoading>
-        {props.children()}
-      </Skeleton>
-    );
-    cache.set(node, cached);
+export const SkeletonCollection = createLeafComponent(
+  SkeletonNode,
+  (props: SkeletonCollectionProps, ref, node) => {
+    // Cache rendering based on node object identity. This allows the children function to randomize
+    // its content (e.g. heights) and preserve on re-renders.
+    // TODO: do we need a `dependencies` prop here?
+    let cached = cache.get(node);
+    if (!cached) {
+      cached = <Skeleton isLoading>{props.children()}</Skeleton>;
+      cache.set(node, cached);
+    }
+    return cached;
   }
-  return cached;
-});
+);

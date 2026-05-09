@@ -29,12 +29,10 @@ import userEvent from '@testing-library/user-event';
 import {Virtualizer} from '../src/Virtualizer';
 
 let renderEmptyState = () => {
-  return  (
-    <div>No results</div>
-  );
+  return <div>No results</div>;
 };
 
-let TestComboBox = (props) => (
+let TestComboBox = props => (
   <ComboBox name="test-combobox" defaultInputValue="C" data-foo="bar" {...props}>
     <Label>Favorite Animal</Label>
     <Input />
@@ -47,9 +45,7 @@ let TestComboBox = (props) => (
         <ListBoxItem id="1">Cat</ListBoxItem>
         <ListBoxItem id="2">Dog</ListBoxItem>
         <ListBoxItem id="3">Kangaroo</ListBoxItem>
-        <ListBoxLoadMoreItem>
-          loading
-        </ListBoxLoadMoreItem>
+        <ListBoxLoadMoreItem>loading</ListBoxLoadMoreItem>
       </ListBox>
     </Popover>
   </ComboBox>
@@ -83,7 +79,13 @@ describe('ComboBox', () => {
     expect(label).toHaveTextContent('Favorite Animal');
 
     expect(input).toHaveAttribute('aria-describedby');
-    expect(input.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ')).toBe('Description Error');
+    expect(
+      input
+        .getAttribute('aria-describedby')
+        .split(' ')
+        .map(id => document.getElementById(id).textContent)
+        .join(' ')
+    ).toBe('Description Error');
 
     let button = getByRole('button');
     await user.click(button);
@@ -113,7 +115,9 @@ describe('ComboBox', () => {
   });
 
   it('should support custom render function', () => {
-    let {getByRole} =  render(<TestComboBox render={props => <div {...props} data-custom="true" />} />);
+    let {getByRole} = render(
+      <TestComboBox render={props => <div {...props} data-custom="true" />} />
+    );
     let field = getByRole('combobox').closest('.react-aria-ComboBox');
     expect(field).toHaveAttribute('data-custom', 'true');
   });
@@ -159,7 +163,9 @@ describe('ComboBox', () => {
     let groups = comboboxTester.sections;
     expect(groups).toHaveLength(1);
     expect(groups[0]).toHaveAttribute('aria-labelledby');
-    expect(document.getElementById(groups[0].getAttribute('aria-labelledby'))).toHaveTextContent('Fruit');
+    expect(document.getElementById(groups[0].getAttribute('aria-labelledby'))).toHaveTextContent(
+      'Fruit'
+    );
 
     let options = within(groups[0]).getAllByRole('option');
     expect(options).toHaveLength(1);
@@ -197,7 +203,9 @@ describe('ComboBox', () => {
     let groups = comboboxTester.sections;
     expect(groups).toHaveLength(1);
     expect(groups[0]).toHaveAttribute('aria-labelledby');
-    expect(document.getElementById(groups[0].getAttribute('aria-labelledby'))).toHaveTextContent('Fruit');
+    expect(document.getElementById(groups[0].getAttribute('aria-labelledby'))).toHaveTextContent(
+      'Fruit'
+    );
 
     let options = within(groups[0]).getAllByRole('option');
     expect(options).toHaveLength(1);
@@ -217,9 +225,7 @@ describe('ComboBox', () => {
         <Text slot="description">Description</Text>
         <Text slot="errorMessage">Error</Text>
         <Popover>
-          <ListBox>
-            {item => <ListBoxItem>{item.name}</ListBoxItem>}
-          </ListBox>
+          <ListBox>{item => <ListBoxItem>{item.name}</ListBoxItem>}</ListBox>
         </Popover>
       </ComboBox>
     );
@@ -274,62 +280,65 @@ describe('ComboBox', () => {
     expect(document.querySelector('input[type=hidden]')).toBeNull();
   });
 
-  it.each(['click', 'tab'])('should not fire extra onSelectionChange calls after focus moves away in fully controlled mode via %s', async (focusMove) => {
-    let onSelectionChange = jest.fn();
-    let keyToText = {
-      '1': 'Cat',
-      '2': 'Dog',
-      '3': 'Kangaroo'
-    };
+  it.each(['click', 'tab'])(
+    'should not fire extra onSelectionChange calls after focus moves away in fully controlled mode via %s',
+    async focusMove => {
+      let onSelectionChange = jest.fn();
+      let keyToText = {
+        1: 'Cat',
+        2: 'Dog',
+        3: 'Kangaroo'
+      };
 
-    function ControlledComboBox() {
-      let [selectedKey, setSelectedKey] = useState(null);
-      let [inputValue, setInputValue] = useState('');
+      function ControlledComboBox() {
+        let [selectedKey, setSelectedKey] = useState(null);
+        let [inputValue, setInputValue] = useState('');
 
-      return (
-        <>
-          <ComboBox
-            value={selectedKey}
-            inputValue={inputValue}
-            onChange={(key) => {
-              onSelectionChange(key);
-              setSelectedKey(key);
-              setInputValue(key != null ? keyToText[key] : '');
-            }}
-            onInputChange={setInputValue}>
-            <Label>Favorite Animal</Label>
-            <Input />
-            <Button />
-            <Popover>
-              <ListBox>
-                <ListBoxItem id="1">Cat</ListBoxItem>
-                <ListBoxItem id="2">Dog</ListBoxItem>
-                <ListBoxItem id="3">Kangaroo</ListBoxItem>
-              </ListBox>
-            </Popover>
-          </ComboBox>
-          <button type="button">Next</button>
-        </>
-      );
+        return (
+          <>
+            <ComboBox
+              value={selectedKey}
+              inputValue={inputValue}
+              onChange={key => {
+                onSelectionChange(key);
+                setSelectedKey(key);
+                setInputValue(key != null ? keyToText[key] : '');
+              }}
+              onInputChange={setInputValue}>
+              <Label>Favorite Animal</Label>
+              <Input />
+              <Button />
+              <Popover>
+                <ListBox>
+                  <ListBoxItem id="1">Cat</ListBoxItem>
+                  <ListBoxItem id="2">Dog</ListBoxItem>
+                  <ListBoxItem id="3">Kangaroo</ListBoxItem>
+                </ListBox>
+              </Popover>
+            </ComboBox>
+            <button type="button">Next</button>
+          </>
+        );
+      }
+
+      let tree = render(<ControlledComboBox />);
+      let comboboxTester = testUtilUser.createTester('ComboBox', {root: tree.container});
+
+      await comboboxTester.selectOption({option: 'Dog'});
+      expect(onSelectionChange).toHaveBeenCalledTimes(1);
+
+      if (focusMove === 'click') {
+        await user.click(tree.getByRole('button', {name: 'Next'}));
+      } else {
+        act(() => {
+          comboboxTester.combobox.focus();
+        });
+        await user.tab();
+      }
+
+      expect(onSelectionChange).toHaveBeenCalledTimes(1);
     }
-
-    let tree = render(<ControlledComboBox />);
-    let comboboxTester = testUtilUser.createTester('ComboBox', {root: tree.container});
-
-    await comboboxTester.selectOption({option: 'Dog'});
-    expect(onSelectionChange).toHaveBeenCalledTimes(1);
-
-    if (focusMove === 'click') {
-      await user.click(tree.getByRole('button', {name: 'Next'}));
-    } else {
-      act(() => {
-        comboboxTester.combobox.focus();
-      });
-      await user.tab();
-    }
-
-    expect(onSelectionChange).toHaveBeenCalledTimes(1);
-  });
+  );
 
   it('should support form reset', async () => {
     const tree = render(
@@ -367,9 +376,7 @@ describe('ComboBox', () => {
   });
 
   it('should render data- attributes on outer element', () => {
-    let {getAllByTestId} = render(
-      <TestComboBox data-testid="combo-box" />
-    );
+    let {getAllByTestId} = render(<TestComboBox data-testid="combo-box" />);
     let outerEl = getAllByTestId('combo-box');
     expect(outerEl).toHaveLength(1);
     expect(outerEl[0]).toHaveClass('react-aria-ComboBox');
@@ -403,11 +410,15 @@ describe('ComboBox', () => {
     expect(combobox.validity.valid).toBe(false);
     expect(combobox).not.toHaveAttribute('data-invalid');
 
-    act(() => {tree.getByTestId('form').checkValidity();});
+    act(() => {
+      tree.getByTestId('form').checkValidity();
+    });
 
     expect(document.activeElement).toBe(combobox);
     expect(combobox).toHaveAttribute('aria-describedby');
-    expect(document.getElementById(combobox.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
+    expect(document.getElementById(combobox.getAttribute('aria-describedby'))).toHaveTextContent(
+      'Constraints not satisfied'
+    );
     let comboboxWrapper = combobox.closest('.react-aria-ComboBox');
     expect(comboboxWrapper).toHaveAttribute('data-invalid');
 
@@ -471,24 +482,23 @@ describe('ComboBox', () => {
     jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 100);
 
     let tree = render(
-      <ComboBox >
+      <ComboBox>
         <Label style={{display: 'block'}}>Test</Label>
         <div style={{display: 'flex'}}>
           <Input />
           <Button>
-            <span aria-hidden="true" style={{padding: '0 2px'}}>▼</span>
+            <span aria-hidden="true" style={{padding: '0 2px'}}>
+              ▼
+            </span>
           </Button>
         </div>
         <Popover>
           <Virtualizer layout={ListLayout} layoutOptions={{rowHeight: 25}}>
-            <ListBox items={items}>
-              {(item) => <ListBoxItem>{item.name}</ListBoxItem>}
-            </ListBox>
+            <ListBox items={items}>{item => <ListBoxItem>{item.name}</ListBoxItem>}</ListBox>
           </Virtualizer>
         </Popover>
       </ComboBox>
     );
-
 
     let comboboxTester = testUtilUser.createTester('ComboBox', {root: tree.container});
     expect(comboboxTester.listbox).toBeFalsy();
@@ -557,29 +567,26 @@ describe('ComboBox', () => {
     expect(options[0]).toHaveTextContent('No results');
   });
 
-  it.each(['keyboard', 'mouse'])('should support onAction with %s', async (interactionType) => {
+  it.each(['keyboard', 'mouse'])('should support onAction with %s', async interactionType => {
     let onAction = jest.fn();
     function WithCreateOption() {
       let [inputValue, setInputValue] = useState('');
 
       return (
-        <ComboBox
-          allowsEmptyCollection
-          inputValue={inputValue}
-          onInputChange={setInputValue}>
+        <ComboBox allowsEmptyCollection inputValue={inputValue} onInputChange={setInputValue}>
           <Label style={{display: 'block'}}>Favorite Animal</Label>
           <div style={{display: 'flex'}}>
             <Input />
             <Button>
-              <span aria-hidden="true" style={{padding: '0 2px'}}>▼</span>
+              <span aria-hidden="true" style={{padding: '0 2px'}}>
+                ▼
+              </span>
             </Button>
           </div>
           <Popover placement="bottom end">
             <ListBox>
               {inputValue.length > 0 && (
-                <ListBoxItem onAction={onAction}>
-                  {`Create "${inputValue}"`}
-                </ListBoxItem>
+                <ListBoxItem onAction={onAction}>{`Create "${inputValue}"`}</ListBoxItem>
               )}
               <ListBoxItem>Aardvark</ListBoxItem>
               <ListBoxItem>Cat</ListBoxItem>
@@ -701,7 +708,12 @@ describe('ComboBox', () => {
     let onChange = jest.fn();
     let {container, getByTestId} = render(
       <Form data-testid="form">
-        <TestComboBox name="combobox" selectionMode="multiple" defaultInputValue="" onChange={onChange} />
+        <TestComboBox
+          name="combobox"
+          selectionMode="multiple"
+          defaultInputValue=""
+          onChange={onChange}
+        />
         <input type="reset" />
       </Form>
     );
@@ -745,7 +757,9 @@ describe('ComboBox', () => {
   });
 
   it('should support controlled multi-selection', async () => {
-    let {container} = render(<TestComboBox selectionMode="multiple" defaultInputValue={undefined} value={['2', '3']} />);
+    let {container} = render(
+      <TestComboBox selectionMode="multiple" defaultInputValue={undefined} value={['2', '3']} />
+    );
 
     let comboboxTester = testUtilUser.createTester('ComboBox', {root: container});
     expect(comboboxTester.combobox).toHaveValue('');
@@ -760,7 +774,16 @@ describe('ComboBox', () => {
   it('should support controlled multi-selection with both inputValue and value controlled', async () => {
     let onChange = jest.fn();
     let onInputChange = jest.fn();
-    let {container} = render(<TestComboBox selectionMode="multiple" defaultInputValue={undefined} inputValue="C" onInputChange={onInputChange} value={['2', '3']} onChange={onChange} />);
+    let {container} = render(
+      <TestComboBox
+        selectionMode="multiple"
+        defaultInputValue={undefined}
+        inputValue="C"
+        onInputChange={onInputChange}
+        value={['2', '3']}
+        onChange={onChange}
+      />
+    );
 
     let comboboxTester = testUtilUser.createTester('ComboBox', {root: container});
     let combobox = comboboxTester.combobox;
@@ -798,33 +821,39 @@ describe('ComboBox', () => {
     expect(comboboxTester.combobox).toHaveValue('Test');
   });
 
-  it.each(['{Escape}', '{Enter}', '{Tab}'])('should preserve multi-select value with custom input on %s', async (key) => {
-    let {container, queryByRole} = render(
-      <TestComboBox
-        selectionMode="multiple"
-        allowsCustomValue
-        defaultValue={['1', '2']}
-        defaultInputValue="" />
-    );
-    let comboboxTester = testUtilUser.createTester('ComboBox', {root: container});
-    let value = container.querySelector('.react-aria-ComboBoxValue');
+  it.each(['{Escape}', '{Enter}', '{Tab}'])(
+    'should preserve multi-select value with custom input on %s',
+    async key => {
+      let {container, queryByRole} = render(
+        <TestComboBox
+          selectionMode="multiple"
+          allowsCustomValue
+          defaultValue={['1', '2']}
+          defaultInputValue=""
+        />
+      );
+      let comboboxTester = testUtilUser.createTester('ComboBox', {root: container});
+      let value = container.querySelector('.react-aria-ComboBoxValue');
 
-    expect(value).toHaveTextContent('Cat and Dog');
+      expect(value).toHaveTextContent('Cat and Dog');
 
-    await user.tab();
-    await user.keyboard('Den');
-    expect(comboboxTester.combobox).toHaveValue('Den');
+      await user.tab();
+      await user.keyboard('Den');
+      expect(comboboxTester.combobox).toHaveValue('Den');
 
-    await user.keyboard(key);
+      await user.keyboard(key);
 
-    expect(queryByRole('listbox')).toBeNull();
-    expect(comboboxTester.combobox).toHaveValue('Den');
-    expect(value).toHaveTextContent('Cat and Dog');
-  });
+      expect(queryByRole('listbox')).toBeNull();
+      expect(comboboxTester.combobox).toHaveValue('Den');
+      expect(value).toHaveTextContent('Cat and Dog');
+    }
+  );
 
   it('should allow the user to deselect items with keyboard when multiselect (uncontrolled)', async () => {
     let onChange = jest.fn();
-    let {container} = render(<TestComboBox defaultValue={['1', '2']} selectionMode="multiple" onChange={onChange} />);
+    let {container} = render(
+      <TestComboBox defaultValue={['1', '2']} selectionMode="multiple" onChange={onChange} />
+    );
 
     let comboboxTester = testUtilUser.createTester('ComboBox', {root: container});
     await comboboxTester.open();
@@ -840,7 +869,9 @@ describe('ComboBox', () => {
 
   it('should allow the user to deselect items with keyboard when multiselect (controlled)', async () => {
     let onChange = jest.fn();
-    let {container} = render(<TestComboBox value={['1', '2']} selectionMode="multiple" onChange={onChange} />);
+    let {container} = render(
+      <TestComboBox value={['1', '2']} selectionMode="multiple" onChange={onChange} />
+    );
 
     let comboboxTester = testUtilUser.createTester('ComboBox', {root: container});
     await comboboxTester.open();
@@ -878,14 +909,16 @@ describe('ComboBox', () => {
     expect(combobox).toHaveAttribute('required');
     expect(combobox.validity.valid).toBe(false);
 
-    act(() => {getByTestId('form').checkValidity();});
+    act(() => {
+      getByTestId('form').checkValidity();
+    });
     expect(combobox).toHaveAttribute('aria-describedby');
     expect(container.querySelector('.react-aria-ComboBox')).toHaveAttribute('data-invalid');
-    
+
     await comboboxTester.open();
     let options = comboboxTester.options();
     await user.click(options[0]);
-    
+
     act(() => combobox.blur());
     expect(combobox).not.toHaveAttribute('required');
     expect(combobox.validity.valid).toBe(true);
@@ -963,9 +996,7 @@ describe('ComboBox', () => {
   });
 
   it('should support read-only state', async () => {
-    let {getByRole, rerender} = render(
-      <TestComboBox />
-    );
+    let {getByRole, rerender} = render(<TestComboBox />);
 
     let input = getByRole('combobox');
 

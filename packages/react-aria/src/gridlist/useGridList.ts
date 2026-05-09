@@ -35,19 +35,19 @@ import {useSelectableList} from '../selection/useSelectableList';
 
 export interface GridListProps<T> extends CollectionBase<T>, MultipleSelection {
   /** Whether to auto focus the gridlist or an option. */
-  autoFocus?: boolean | FocusStrategy,
+  autoFocus?: boolean | FocusStrategy;
   /**
    * Handler that is called when a user performs an action on an item. The exact user event depends on
    * the collection's `selectionBehavior` prop and the interaction modality.
    */
-  onAction?: (key: Key) => void,
+  onAction?: (key: Key) => void;
   /**
    * Whether `disabledKeys` applies to all interactions, or only selection.
    * @default "all"
    */
-  disabledBehavior?: DisabledBehavior,
+  disabledBehavior?: DisabledBehavior;
   /** Whether selection should occur on press up instead of press down. */
-  shouldSelectOnPressUp?: boolean
+  shouldSelectOnPressUp?: boolean;
 }
 
 export interface AriaGridListProps<T> extends GridListProps<T>, DOMProps, AriaLabelingProps {
@@ -56,7 +56,7 @@ export interface AriaGridListProps<T> extends GridListProps<T>, DOMProps, AriaLa
    * via the left/right arrow keys or the tab key.
    * @default 'arrow'
    */
-  keyboardNavigationBehavior?: 'arrow' | 'tab',
+  keyboardNavigationBehavior?: 'arrow' | 'tab';
   /**
    * Whether pressing the escape key should clear selection in the grid list or not.
    *
@@ -65,33 +65,33 @@ export interface AriaGridListProps<T> extends GridListProps<T>, DOMProps, AriaLa
    * trigger selection clearing contextually.
    * @default 'clearSelection'
    */
-  escapeKeyBehavior?: 'clearSelection' | 'none'
+  escapeKeyBehavior?: 'clearSelection' | 'none';
 }
 
 export interface AriaGridListOptions<T> extends Omit<AriaGridListProps<T>, 'children'> {
   /** Whether the list uses virtual scrolling. */
-  isVirtualized?: boolean,
+  isVirtualized?: boolean;
   /**
    * Whether typeahead navigation is disabled.
    * @default false
    */
-  disallowTypeAhead?: boolean,
+  disallowTypeAhead?: boolean;
   /**
    * An optional keyboard delegate implementation for type to select,
    * to override the default.
    */
-  keyboardDelegate?: KeyboardDelegate,
+  keyboardDelegate?: KeyboardDelegate;
   /**
    * A delegate object that provides layout information for items in the collection.
    * By default this uses the DOM, but this can be overridden to implement things like
    * virtualized scrolling.
    */
-  layoutDelegate?: LayoutDelegate,
+  layoutDelegate?: LayoutDelegate;
   /**
    * Whether focus should wrap around when the end/start is reached.
    * @default false
    */
-  shouldFocusWrap?: boolean,
+  shouldFocusWrap?: boolean;
   /**
    * The behavior of links in the collection.
    * - 'action': link behaves like onAction.
@@ -99,12 +99,12 @@ export interface AriaGridListOptions<T> extends Omit<AriaGridListProps<T>, 'chil
    * - 'override': links override all other interactions (link items are not selectable).
    * @default 'action'
    */
-  linkBehavior?: 'action' | 'selection' | 'override'
+  linkBehavior?: 'action' | 'selection' | 'override';
 }
 
 export interface GridListAria {
   /** Props for the grid element. */
-  gridProps: DOMAttributes
+  gridProps: DOMAttributes;
 }
 
 /**
@@ -114,7 +114,11 @@ export interface GridListAria {
  * @param state - State for the list, as returned by `useListState`.
  * @param ref - The ref attached to the list element.
  */
-export function useGridList<T>(props: AriaGridListOptions<T>, state: ListState<T>, ref: RefObject<HTMLElement | null>): GridListAria {
+export function useGridList<T>(
+  props: AriaGridListOptions<T>,
+  state: ListState<T>,
+  ref: RefObject<HTMLElement | null>
+): GridListAria {
   let {
     isVirtualized,
     keyboardDelegate,
@@ -148,7 +152,13 @@ export function useGridList<T>(props: AriaGridListOptions<T>, state: ListState<T
   });
 
   let id = useId(props.id);
-  listMap.set(state, {id, onAction, linkBehavior, keyboardNavigationBehavior, shouldSelectOnPressUp});
+  listMap.set(state, {
+    id,
+    onAction,
+    linkBehavior,
+    keyboardNavigationBehavior,
+    shouldSelectOnPressUp
+  });
 
   let descriptionProps = useHighlightSelectionDescription({
     selectionManager: state.selectionManager,
@@ -165,7 +175,8 @@ export function useGridList<T>(props: AriaGridListOptions<T>, state: ListState<T
     {
       role: 'grid',
       id,
-      'aria-multiselectable': state.selectionManager.selectionMode === 'multiple' ? 'true' : undefined
+      'aria-multiselectable':
+        state.selectionManager.selectionMode === 'multiple' ? 'true' : undefined
     },
     // If collection is empty, make sure the grid is tabbable unless there is a child tabbable element.
     state.collection.size === 0 ? {tabIndex: hasTabbableChild ? -1 : 0} : listProps,

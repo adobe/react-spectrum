@@ -1,0 +1,160 @@
+name: Weekly API Diff
+
+on:
+  schedule:
+    - cron: '0 17 * * 1' # Monday 9am PST / 10am PDT (GH Actions cron is UTC)
+  workflow_dispatch: # manual trigger for testing
+
+jobs:
+  weekly-api-diff:
+    runs-on: ubuntu-latest
+    env:
+      SNAPSHOTS_REPO: LFDanLu/react-spectrum-api-snapshots
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # required for build:api-published to find the last Publish commit
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'yarn'
+
+      - run: yarn --immutable
+
+      # Build current main API (~2 min, always fresh)
+      - name: Build current API snapshot
+        run: yarn build:api-branch
+
+      # Build release baseline using the last Publish commit (~2 min, always fresh)
+      - name: Build release baseline
+        run: yarn build:api-published
+
+      - name: Generate diff
+        run: yarn compare:apis --isCI > /tmp/diff-current.txt || true
+
+      # Check out snapshots repo so we can read the previous diff and commit the new one
+      - uses: actions/checkout@v4
+        with:
+          repository: ${{ env.SNAPSHOTS_REPO }}
+          path: snapshots
+          token: ${{ secrets.SNAPSHOTS_REPO_TOKEN }}
+
+      # Compute week-to-week delta and commit new diff
+      - name: Save diff and compute delta
+        run: |
+          TODAY=$(date +%Y-%m-%d)
+          echo "TODAY=$TODAY" >> $GITHUB_ENV
+
+          CURRENT_PUBLISH=$(git log --grep='^Publish$' --oneline -1 | awk '{print $1}')
+          PREV_PUBLISH=$(cat snapshots/last-publish-hash.txt 2>/dev/null || echo "")
+
+          if [ -n "$PREV_PUBLISH" ] && [ "$CURRENT_PUBLISH" != "$PREV_PUBLISH" ]; then
+            # New release landed so skip comparing to last week, commit fresh as new baseline
+            echo "NEW_RELEASE=true" >> $GITHUB_ENV
+          else
+            # Compare against the last diff in the snapshots repo
+            PREV=$(ls snapshots/diffs/*.txt 2>/dev/null | sort -r | head -1)
+            if [ -n "$PREV" ]; then
+              diff "$PREV" /tmp/diff-current.txt > /tmp/weekly-delta.txt || true
+            else
+              echo "(first run — no previous diff to compare against)" > /tmp/weekly-delta.txt
+            fi
+          fi
+
+          # Commit a diff if there is a new release (fresh baseline), or diff changed from last week
+          # Skip if no difference from last diff (aka no change from last week/last run), or if the diff against the release code is empty
+          NEW_RELEASE="${NEW_RELEASE:-false}"
+          if [ -s /tmp/diff-current.txt ] && ([ "$NEW_RELEASE" = "true" ] || [ -s /tmp/weekly-delta.txt ]); then
+            cp /tmp/diff-current.txt snapshots/diffs/$TODAY.txt
+            cd snapshots
+            git config user.email "github-actions@github.com"
+            git config user.name "GitHub Actions"
+            git add diffs/$TODAY.txt
+            echo "$CURRENT_PUBLISH" > last-publish-hash.txt
+            git add last-publish-hash.txt
+            git diff --cached --quiet || (git commit -m "weekly api diff $TODAY" && git push)
+          fi
+
+      # Summarize with GitHub Models (free via GITHUB_TOKEN) and post to Slack
+      - name: Summarize and post to Slack
+        env:
+          SLACK_TSDIFF_CHROMATIC_BOT_TOKEN: ${{ secrets.SLACK_TSDIFF_CHROMATIC_BOT_TOKEN }}
+          SLACK_CHANNEL_ID: ${{ secrets.SLACK_CHANNEL_ID }}
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          python3 << 'PYEOF'
+          import glob, json, os, urllib.request
+
+          required = ['SLACK_TSDIFF_CHROMATIC_BOT_TOKEN', 'SLACK_CHANNEL_ID', 'GITHUB_TOKEN', 'TODAY', 'SNAPSHOTS_REPO', 'GITHUB_WORKSPACE']
+          missing = [k for k in required if not os.environ.get(k)]
+          if missing:
+            raise SystemExit(f"Missing required environment variables: {', '.join(missing)}")
+
+          today = os.environ['TODAY']
+          channel = os.environ['SLACK_CHANNEL_ID']
+          snapshots_repo = os.environ['SNAPSHOTS_REPO']
+          slack_token = os.environ['SLACK_TSDIFF_CHROMATIC_BOT_TOKEN']
+          github_token = os.environ['GITHUB_TOKEN']
+          workspace = os.environ['GITHUB_WORKSPACE']
+          diff_url = f"https://github.com/{snapshots_repo}/blob/main/diffs/{today}.txt"
+
+          vs_release_size = os.path.getsize('/tmp/diff-current.txt')
+          vs_last_week_size = os.path.getsize('/tmp/weekly-delta.txt') if os.path.exists('/tmp/weekly-delta.txt') else 0
+
+          prev_files = sorted(glob.glob(f"{workspace}/snapshots/diffs/*.txt"), reverse=True)
+          prev_date = os.path.basename(prev_files[0]).replace('.txt', '') if prev_files else None
+          prev_url = f"https://github.com/{snapshots_repo}/blob/main/diffs/{prev_date}.txt" if prev_date else None
+
+          new_release = os.environ.get('NEW_RELEASE') == 'true'
+
+          if vs_release_size == 0:
+            message = f"📊 Weekly API Diff — {today}\n\nNo API changes detected vs last release — all pending changes have been included in a release."
+          elif vs_last_week_size == 0 and not new_release:
+            prev_ref = f"last diff ({prev_date}): {prev_url}" if prev_date else "last diff"
+            message = f"📊 Weekly API Diff — {today}\n\nNo new API changes since {prev_ref}."
+          elif new_release:
+            message = f"📊 Weekly API Diff — {today}\n\nNew release since last diff — resetting baseline. Full diff vs release: {diff_url}\n\nReact ✅ if changes look expected, or 🚨 if something looks wrong."
+          else:
+            delta = open('/tmp/weekly-delta.txt').read()[:4000]
+
+            # Extract classification rules from prompt.md (single source of truth)
+            prompt_md = open(f"{workspace}/scripts/weekly-api-diff/prompt.md").read()
+            rules_start = prompt_md.find("Apply these grouping and classification rules")
+            rules_end = prompt_md.find("\n## Step 9", rules_start)
+            rules = prompt_md[rules_start:rules_end].strip() if rules_start != -1 else ""
+
+            payload = {
+              "model": "gpt-4o-mini",
+              "max_tokens": 600,
+              "messages": [{
+                "role": "user",
+                "content": f"Summarize this week-to-week react-spectrum API diff in under 200 words using bullet points.\n\n{rules}\n\nDelta (changes from last week):\n{delta}"
+              }]
+            }
+
+            req = urllib.request.Request(
+              'https://models.inference.ai.azure.com/chat/completions',
+              data=json.dumps(payload).encode(),
+              headers={
+                'Authorization': f'Bearer {github_token}',
+                'Content-Type': 'application/json'
+              }
+            )
+            summary = json.loads(urllib.request.urlopen(req).read())['choices'][0]['message']['content']
+            message = f"📊 Weekly API Diff — {today}\n\n{summary}\n\nFull diff vs release: {diff_url}\n\nReact ✅ if changes look expected, or 🚨 if something looks wrong."
+
+          req = urllib.request.Request(
+            'https://slack.com/api/chat.postMessage',
+            data=json.dumps({"channel": channel, "text": message}).encode(),
+            headers={
+              'Authorization': f'Bearer {slack_token}',
+              'Content-Type': 'application/json'
+            }
+          )
+          resp = json.loads(urllib.request.urlopen(req).read())
+          print("Slack response:", resp.get('ok'), resp.get('error', ''))
+          if not resp.get('ok'):
+            raise SystemExit(f"Slack error: {resp.get('error')}")
+          PYEOF

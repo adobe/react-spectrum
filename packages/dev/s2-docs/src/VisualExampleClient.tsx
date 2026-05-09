@@ -1,8 +1,37 @@
 'use client';
 
-import {ActionButton, Avatar, Collection, ComboBox, ComboBoxItem, Content, ContextualHelp, Footer, Header, Heading, NotificationBadge, NumberField, Picker, PickerItem, PickerSection, RangeSlider, Slider, Switch, Text, TextField, ToggleButton, ToggleButtonGroup} from '@react-spectrum/s2';
+import {
+  ActionButton,
+  Avatar,
+  Collection,
+  ComboBox,
+  ComboBoxItem,
+  Content,
+  ContextualHelp,
+  Footer,
+  Header,
+  Heading,
+  NotificationBadge,
+  NumberField,
+  Picker,
+  PickerItem,
+  PickerSection,
+  RangeSlider,
+  Slider,
+  Switch,
+  Text,
+  TextField,
+  ToggleButton,
+  ToggleButtonGroup
+} from '@react-spectrum/s2';
 import AddCircle from '@react-spectrum/s2/icons/AddCircle';
-import {baseColor, focusRing, size, style, StyleString} from '@react-spectrum/s2/style' with { type: 'macro' };
+import {
+  baseColor,
+  focusRing,
+  size,
+  style,
+  StyleString
+} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {CenterBaseline} from '../../../@react-spectrum/s2/src/CenterBaseline';
 import {CodePlatter, Pre, ShareUrlProvider} from './CodePlatter';
 import {ExampleOutput} from './ExampleOutput';
@@ -12,24 +41,39 @@ import {getColorChannels, parseColor} from 'react-stately';
 import {ListBox, ListBoxItem, Size} from 'react-aria-components';
 import {mergeStyles} from '../../../@react-spectrum/s2/style/runtime';
 import type {PropControl} from './VisualExample';
-import React, {createContext, Fragment, isValidElement, lazy, ReactNode, Ref, Suspense, useContext, useEffect, useMemo, useRef, useState} from 'react';
+import React, {
+  createContext,
+  Fragment,
+  isValidElement,
+  lazy,
+  ReactNode,
+  Ref,
+  Suspense,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState
+} from 'react';
 import RemoveCircle from '@react-spectrum/s2/icons/RemoveCircle';
 import {TabLink} from './FileTabs';
 import {useLocale} from 'react-aria';
 
-export const IconPicker = lazy(() => import('./IconPicker').then(({IconPicker}) => ({default: IconPicker})));
+export const IconPicker = lazy(() =>
+  import('./IconPicker').then(({IconPicker}) => ({default: IconPicker}))
+);
 let LazyIcon = lazy(() => import('./IconPicker').then(({Icon}) => ({default: Icon})));
 
 type Props = {[name: string]: any};
 type Controls = {[name: string]: PropControl};
 interface ContextValue {
-  component: any,
-  name: string,
-  importSource?: string,
-  controls: Controls,
-  props: Props,
-  setProps(v: Props): void,
-  propsObject?: string
+  component: any;
+  name: string;
+  importSource?: string;
+  controls: Controls;
+  props: Props;
+  setProps(v: Props): void;
+  propsObject?: string;
 }
 
 const Context = createContext<ContextValue>({
@@ -41,16 +85,24 @@ const Context = createContext<ContextValue>({
 });
 
 interface VisualExampleClientProps {
-  component: any,
-  name: string,
-  importSource?: string,
-  controls: Controls,
-  children: ReactNode,
-  initialProps?: {[prop: string]: any},
-  propsObject?: string
+  component: any;
+  name: string;
+  importSource?: string;
+  controls: Controls;
+  children: ReactNode;
+  initialProps?: {[prop: string]: any};
+  propsObject?: string;
 }
 
-export function VisualExampleClient({component, name, importSource, controls, children, initialProps = {}, propsObject}: VisualExampleClientProps) {
+export function VisualExampleClient({
+  component,
+  name,
+  importSource,
+  controls,
+  children,
+  initialProps = {},
+  propsObject
+}: VisualExampleClientProps) {
   let [props, setProps] = useState(() => {
     let props = {...initialProps};
     for (let name in controls) {
@@ -74,7 +126,7 @@ export function VisualExampleClient({component, name, importSource, controls, ch
   useEffect(() => {
     // Find previous heading element.
     let node: Element | null = ref.current;
-    
+
     // Search for the nearest heading by walking up the tree and checking previous siblings
     while (node && node.tagName !== 'ARTICLE') {
       // Check previous siblings
@@ -92,11 +144,11 @@ export function VisualExampleClient({component, name, importSource, controls, ch
         }
         sibling = sibling.previousElementSibling;
       }
-      
+
       if (node instanceof HTMLHeadingElement) {
         break;
       }
-      
+
       // Move up to parent
       node = node.parentElement;
     }
@@ -116,7 +168,7 @@ export function VisualExampleClient({component, name, importSource, controls, ch
       }
       setProps(newProps);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   let searchParams = new URLSearchParams();
@@ -139,16 +191,21 @@ export function VisualExampleClient({component, name, importSource, controls, ch
   let url = '?' + searchParams.toString();
 
   return (
-    <Context.Provider value={{component, name, importSource, controls, props, setProps, propsObject}}>
+    <Context.Provider
+      value={{component, name, importSource, controls, props, setProps, propsObject}}>
       <div hidden ref={ref} />
-      <ShareUrlProvider value={url}>
-        {children}
-      </ShareUrlProvider>
+      <ShareUrlProvider value={url}>{children}</ShareUrlProvider>
     </Context.Provider>
   );
 }
 
-export function Output({align = 'center', acceptOrientation}: {align?: 'center' | 'start' | 'end', acceptOrientation?: boolean}) {
+export function Output({
+  align = 'center',
+  acceptOrientation
+}: {
+  align?: 'center' | 'start' | 'end';
+  acceptOrientation?: boolean;
+}) {
   let {component, props, propsObject} = useContext(Context);
 
   if (!isValidElement(component)) {
@@ -158,7 +215,7 @@ export function Output({align = 'center', acceptOrientation}: {align?: 'center' 
       if (children.avatar) {
         iconElement = <Avatar src="https://i.imgur.com/xIe7Wlb.png" />;
       } else if (children.icon) {
-        iconElement = (<LazyIcon icon={children.icon} />);
+        iconElement = <LazyIcon icon={children.icon} />;
       }
 
       children = (
@@ -178,7 +235,12 @@ export function Output({align = 'center', acceptOrientation}: {align?: 'center' 
   if (props.contextualHelp) {
     props = {
       ...props,
-      contextualHelp: <ContextualHelp><Heading>Heading</Heading><Content>Content</Content></ContextualHelp>
+      contextualHelp: (
+        <ContextualHelp>
+          <Heading>Heading</Heading>
+          <Content>Content</Content>
+        </ContextualHelp>
+      )
     };
   }
 
@@ -191,14 +253,15 @@ export function Output({align = 'center', acceptOrientation}: {align?: 'center' 
       component={component}
       props={props}
       align={align}
-      orientation={acceptOrientation ? props.orientation : undefined} />
+      orientation={acceptOrientation ? props.orientation : undefined}
+    />
   );
 }
 
 interface CodeOutputProps {
-  code?: ReactNode,
-  type?: 'vanilla' | 'tailwind' | 's2',
-  showCoachMark?: boolean
+  code?: ReactNode;
+  type?: 'vanilla' | 'tailwind' | 's2';
+  showCoachMark?: boolean;
 }
 
 export function CodeOutput({code, type, showCoachMark}: CodeOutputProps) {
@@ -239,15 +302,23 @@ export function CodeProps({indent = ''}) {
     props = {[propsObject]: props};
   }
 
-  let renderedProps: ReactNode[] = Object.keys(props).filter(prop => prop !== 'children').map(prop => renderProp(prop, props[prop], controls[prop], indent)).filter(Boolean);
+  let renderedProps: ReactNode[] = Object.keys(props)
+    .filter(prop => prop !== 'children')
+    .map(prop => renderProp(prop, props[prop], controls[prop], indent))
+    .filter(Boolean);
   let newlines = indent.length > 0 || countChars(renderedProps) > 40;
-  let separator = newlines ? (indent || '  ') : ' ';
+  let separator = newlines ? indent || '  ' : ' ';
   renderedProps = renderedProps.map((p, i) => {
     let sep = separator;
     if (newlines) {
       sep = (indent && i === 0 ? '' : '\n') + separator;
     }
-    return <Fragment key={i}>{sep}{p}</Fragment>;
+    return (
+      <Fragment key={i}>
+        {sep}
+        {p}
+      </Fragment>
+    );
   });
   if (newlines && indent && renderedProps.length) {
     renderedProps.push('\n');
@@ -256,20 +327,49 @@ export function CodeProps({indent = ''}) {
 }
 
 function renderElement(name: string, props: Props, controls?: Controls, indent = '') {
-  let start = <>&lt;<span className={style({color: 'red-1000'})}>{name}</span></>;
-  let renderedProps = Object.keys(props).filter(prop => prop !== 'children').map(prop => renderProp(prop, props[prop], controls?.[prop], '  ' + indent)).filter(Boolean);
+  let start = (
+    <>
+      &lt;<span className={style({color: 'red-1000'})}>{name}</span>
+    </>
+  );
+  let renderedProps = Object.keys(props)
+    .filter(prop => prop !== 'children')
+    .map(prop => renderProp(prop, props[prop], controls?.[prop], '  ' + indent))
+    .filter(Boolean);
   let newlines = name.length + countChars(renderedProps) > 40;
-  renderedProps = renderedProps.map((p, i) => <Fragment key={i}>{newlines ? '\n  ' + indent : ' '}{p}</Fragment>);
+  renderedProps = renderedProps.map((p, i) => (
+    <Fragment key={i}>
+      {newlines ? '\n  ' + indent : ' '}
+      {p}
+    </Fragment>
+  ));
   if (props.children) {
-    let end = <>&lt;/<span className={style({color: 'red-1000'})}>{name}</span>&gt;</>;
+    let end = (
+      <>
+        &lt;/<span className={style({color: 'red-1000'})}>{name}</span>&gt;
+      </>
+    );
     let children = renderChildren(props.children, indent);
     if (typeof children !== 'string') {
       newlines = true;
     }
-    return <>{start}{renderedProps}&gt;{newlines ? '\n  ' + indent : null}{children}{newlines ? '\n' + indent : null}{end}</>;
+    return (
+      <>
+        {start}
+        {renderedProps}&gt;{newlines ? '\n  ' + indent : null}
+        {children}
+        {newlines ? '\n' + indent : null}
+        {end}
+      </>
+    );
   }
 
-  return <>{start}{renderedProps} /&gt;</>;
+  return (
+    <>
+      {start}
+      {renderedProps} /&gt;
+    </>
+  );
 }
 
 function renderChildren(children, indent = '') {
@@ -283,19 +383,36 @@ function renderChildren(children, indent = '') {
 
     if (children.text) {
       let text = renderElement('Text', {children: children.text}, undefined, indent);
-      result = <>{result}{result ? '\n  ' + indent : null}{text}</>;
+      result = (
+        <>
+          {result}
+          {result ? '\n  ' + indent : null}
+          {text}
+        </>
+      );
     }
 
     if (children.badge) {
       let badge = renderElement('NotificationBadge', {value: 12}, undefined, indent);
-      result = <>{result}{result ? '\n  ' + indent : null}{badge}</>;
+      result = (
+        <>
+          {result}
+          {result ? '\n  ' + indent : null}
+          {badge}
+        </>
+      );
     }
 
     return result;
   } else if (children?.text != null) {
     return children.text;
   } else if (Array.isArray(children)) {
-    return children.map((c, i) => <React.Fragment key={i}>{i > 0 ? '\n  ' + indent : null}{c}</React.Fragment>);
+    return children.map((c, i) => (
+      <React.Fragment key={i}>
+        {i > 0 ? '\n  ' + indent : null}
+        {c}
+      </React.Fragment>
+    ));
   }
 
   return children;
@@ -322,33 +439,68 @@ function renderProp(name: string, value: any, control?: PropControl, indent = ''
   if (typeof value === 'string') {
     propValue = <span className={style({color: 'green-1000'})}>"{value}"</span>;
   } else if (typeof value === 'number') {
-    propValue = <>{'{'}<span className={style({color: 'pink-1000'})}>{String(value)}</span>{'}'}</>;
+    propValue = (
+      <>
+        {'{'}
+        <span className={style({color: 'pink-1000'})}>{String(value)}</span>
+        {'}'}
+      </>
+    );
   } else if (typeof value === 'boolean') {
     if (value === false && control?.optional) {
       return null;
     }
     if (name === 'contextualHelp') {
-      let res = renderElement('ContextualHelp', {
-        children: [
-          renderElement('Heading', {children: 'Heading'}),
-          renderElement('Content', {children: 'Content'})
-        ]
-      }, undefined, indent + '    ');
-      propValue = <>{`{\n    ${indent}`}{res}{`\n  ${indent}}`}</>;
+      let res = renderElement(
+        'ContextualHelp',
+        {
+          children: [
+            renderElement('Heading', {children: 'Heading'}),
+            renderElement('Content', {children: 'Content'})
+          ]
+        },
+        undefined,
+        indent + '    '
+      );
+      propValue = (
+        <>
+          {`{\n    ${indent}`}
+          {res}
+          {`\n  ${indent}}`}
+        </>
+      );
     } else {
-      propValue = value === false ? <>{'{'}<span className={style({color: 'magenta-1000'})}>{String(value)}</span>{'}'}</> : null;
+      propValue =
+        value === false ? (
+          <>
+            {'{'}
+            <span className={style({color: 'magenta-1000'})}>{String(value)}</span>
+            {'}'}
+          </>
+        ) : null;
     }
   } else if (value == null) {
     return null;
   } else if (typeof value === 'object') {
-    propValue = <>{'{'}{renderValue(value, indent)}{'}'}</>;
+    propValue = (
+      <>
+        {'{'}
+        {renderValue(value, indent)}
+        {'}'}
+      </>
+    );
   }
 
   if (propValue) {
     propValue = <>={propValue}</>;
   }
 
-  return <Fragment key={name}>{propName}{propValue}</Fragment>;
+  return (
+    <Fragment key={name}>
+      {propName}
+      {propValue}
+    </Fragment>
+  );
 }
 
 function renderValue(value: any, indent = '') {
@@ -373,24 +525,55 @@ function renderValue(value: any, indent = '') {
         });
 
         if (countChars(res) > 40) {
-          res = res.map((p, i) => <Fragment key={i}>{'\n  ' + indent}{p}</Fragment>);
+          res = res.map((p, i) => (
+            <Fragment key={i}>
+              {'\n  ' + indent}
+              {p}
+            </Fragment>
+          ));
           res.push('\n  ');
         }
 
-        return <>{'['}{res}{']'}</>;
+        return (
+          <>
+            {'['}
+            {res}
+            {']'}
+          </>
+        );
       }
 
       if (value instanceof Size) {
-        return <><span className={style({color: 'magenta-1000'})}>new</span> <span className={style({color: 'red-1000'})}>Size</span>(<span className={style({color: 'pink-1000'})}>{value.width}</span>, <span className={style({color: 'pink-1000'})}>{value.height}</span>)</>;
+        return (
+          <>
+            <span className={style({color: 'magenta-1000'})}>new</span>{' '}
+            <span className={style({color: 'red-1000'})}>Size</span>(
+            <span className={style({color: 'pink-1000'})}>{value.width}</span>,{' '}
+            <span className={style({color: 'pink-1000'})}>{value.height}</span>)
+          </>
+        );
       }
 
       if (value instanceof Date) {
-        return <><span className={style({color: 'magenta-1000'})}>new</span> <span className={style({color: 'red-1000'})}>Date</span>(<span className={style({color: 'pink-1000'})}>{value.getFullYear()}</span>, <span className={style({color: 'pink-1000'})}>{value.getMonth()}</span>, <span className={style({color: 'pink-1000'})}>{value.getDate()}</span>)</>;
+        return (
+          <>
+            <span className={style({color: 'magenta-1000'})}>new</span>{' '}
+            <span className={style({color: 'red-1000'})}>Date</span>(
+            <span className={style({color: 'pink-1000'})}>{value.getFullYear()}</span>,{' '}
+            <span className={style({color: 'pink-1000'})}>{value.getMonth()}</span>,{' '}
+            <span className={style({color: 'pink-1000'})}>{value.getDate()}</span>)
+          </>
+        );
       }
 
       let entries = Object.entries(value);
       let res: ReactNode[] = entries.map(([name, value], i) => {
-        let result = <><span className={style({color: 'indigo-1000'})}>{name}</span>: {renderValue(value, indent)}</>;
+        let result = (
+          <>
+            <span className={style({color: 'indigo-1000'})}>{name}</span>:{' '}
+            {renderValue(value, indent)}
+          </>
+        );
         if (i < entries.length - 1) {
           result = <>{result}, </>;
         }
@@ -398,11 +581,22 @@ function renderValue(value: any, indent = '') {
       });
 
       if (countChars(res) > 40) {
-        res = res.map((p, i) => <Fragment key={i}>{'\n  ' + indent}{p}</Fragment>);
+        res = res.map((p, i) => (
+          <Fragment key={i}>
+            {'\n  ' + indent}
+            {p}
+          </Fragment>
+        ));
         res.push('\n' + indent);
       }
 
-      return <>{'{'}{res}{'}'}</>;
+      return (
+        <>
+          {'{'}
+          {res}
+          {'}'}
+        </>
+      );
     }
   }
 }
@@ -414,7 +608,10 @@ function renderImports(name: string, importSource: string, props: Props) {
     components.push('NotificationBadge');
   }
 
-  if (components.length > 1 || ((props.children?.icon || props.children?.avatar) && props.children?.text)) {
+  if (
+    components.length > 1 ||
+    ((props.children?.icon || props.children?.avatar) && props.children?.text)
+  ) {
     components.push('Text');
   }
 
@@ -425,11 +622,21 @@ function renderImports(name: string, importSource: string, props: Props) {
   }
 
   if (props.contextualHelp) {
-    imports.push('\n', renderImport('ContextualHelp, Heading, Content', '@react-spectrum/s2/ContextualHelp'));
+    imports.push(
+      '\n',
+      renderImport('ContextualHelp, Heading, Content', '@react-spectrum/s2/ContextualHelp')
+    );
   }
 
   if (props.children?.icon && !props.children?.avatar) {
-    imports.push('\n', renderImport(props.children.icon.replace(/^(\d)/, '_$1'), `@react-spectrum/s2/icons/${props.children.icon}`, true));
+    imports.push(
+      '\n',
+      renderImport(
+        props.children.icon.replace(/^(\d)/, '_$1'),
+        `@react-spectrum/s2/icons/${props.children.icon}`,
+        true
+      )
+    );
   }
 
   imports.push('\n\n');
@@ -439,18 +646,16 @@ function renderImports(name: string, importSource: string, props: Props) {
 function renderImport(name, from, isDefault = false) {
   return (
     <Fragment key={from}>
-      <span className={style({color: 'magenta-1000'})}>import</span>
-      {' '}
-      {isDefault ? null : '{'}
+      <span className={style({color: 'magenta-1000'})}>import</span> {isDefault ? null : '{'}
       {name}
-      {isDefault ? null : '}'}
-      {' '}
-      <span className={style({color: 'magenta-1000'})}>from</span>
-      {' '}
-      {from.startsWith('./')
-        ? <TabLink className={style({color: 'green-1000'})} name={from.slice(2)}>'{from}'</TabLink>
-        : <span className={style({color: 'green-1000'})}>'{from}'</span>
-      }
+      {isDefault ? null : '}'} <span className={style({color: 'magenta-1000'})}>from</span>{' '}
+      {from.startsWith('./') ? (
+        <TabLink className={style({color: 'green-1000'})} name={from.slice(2)}>
+          '{from}'
+        </TabLink>
+      ) : (
+        <span className={style({color: 'green-1000'})}>'{from}'</span>
+      )}
       {';'}
     </Fragment>
   );
@@ -460,7 +665,7 @@ export function Control({name}: {name: string}) {
   let {controls, props, setProps} = useContext(Context);
   let control = controls[name];
   let value = props[name];
-  let onChange = (value) => {
+  let onChange = value => {
     setProps(props => ({...props, [name]: value}));
   };
 
@@ -514,10 +719,27 @@ export function Control({name}: {name: string}) {
       }
       break;
     case 'array':
-      return <ArrayControl control={control} valueType={control.value.elementType} value={value} onChange={onChange} />;
+      return (
+        <ArrayControl
+          control={control}
+          valueType={control.value.elementType}
+          value={value}
+          onChange={onChange}
+        />
+      );
     case 'application':
-      if (control.value.base.type === 'identifier' && (control.value.base.name === 'ReadonlyArray' || control.value.base.name === 'Array')) {
-        return <ArrayControl control={control} value={value} valueType={control.value.typeParameters[0]} onChange={onChange} />;
+      if (
+        control.value.base.type === 'identifier' &&
+        (control.value.base.name === 'ReadonlyArray' || control.value.base.name === 'Array')
+      ) {
+        return (
+          <ArrayControl
+            control={control}
+            value={value}
+            valueType={control.value.typeParameters[0]}
+            onChange={onChange}
+          />
+        );
       }
     default:
       if (name === 'children') {
@@ -528,15 +750,20 @@ export function Control({name}: {name: string}) {
 }
 
 interface ControlProps {
-  control: PropControl,
-  value: any,
-  onChange: (v: any) => void
+  control: PropControl;
+  value: any;
+  onChange: (v: any) => void;
 }
 
 function BooleanControl({control, value, onChange}: ControlProps) {
   return (
     <Wrapper control={control}>
-      <div className={style({display: {default: 'flex', lg: 'contents'}, minHeight: 32, alignItems: 'center'})}>
+      <div
+        className={style({
+          display: {default: 'flex', lg: 'contents'},
+          minHeight: 32,
+          alignItems: 'center'
+        })}>
         <Switch isSelected={value || false} onChange={onChange} aria-label={control.name} />
       </div>
     </Wrapper>
@@ -556,9 +783,13 @@ function UnionControl({control, value, onChange, isPicker = false}) {
         onChange={v => onChange(v === '__none' ? null : v)}
         styles={style({width: controlWidth})}>
         {control.optional && !control.default ? <PickerItem id="__none">Default</PickerItem> : null}
-        {control.value.elements.filter(e => e.value).map(element => (
-          <PickerItem key={element.value} id={element.value}>{String(element.value)}</PickerItem>
-        ))}
+        {control.value.elements
+          .filter(e => e.value)
+          .map(element => (
+            <PickerItem key={element.value} id={element.value}>
+              {String(element.value)}
+            </PickerItem>
+          ))}
       </Picker>
     );
   }
@@ -598,13 +829,32 @@ function UnionControl({control, value, onChange, isPicker = false}) {
   );
 }
 
-function Wrapper({control, children, styles, ref}: {control: PropControl, children: ReactNode, styles?: StyleString, ref?: Ref<HTMLDivElement>}) {
+function Wrapper({
+  control,
+  children,
+  styles,
+  ref
+}: {
+  control: PropControl;
+  children: ReactNode;
+  styles?: StyleString;
+  ref?: Ref<HTMLDivElement>;
+}) {
   return (
-    <div ref={ref} className={mergeStyles(style({display: 'flex', flexDirection: 'column', justifyContent: 'space-between'}), styles)}>
-      <span className={style({font: 'ui', color: 'neutral-subdued', display: 'flex', paddingBottom: `calc((${size(32)} - 1lh) / 2)`})}>
-        <span className={style({truncate: true})}>
-          {control.name}
-        </span>
+    <div
+      ref={ref}
+      className={mergeStyles(
+        style({display: 'flex', flexDirection: 'column', justifyContent: 'space-between'}),
+        styles
+      )}>
+      <span
+        className={style({
+          font: 'ui',
+          color: 'neutral-subdued',
+          display: 'flex',
+          paddingBottom: `calc((${size(32)} - 1lh) / 2)`
+        })}>
+        <span className={style({truncate: true})}>{control.name}</span>
         <span className={style({whiteSpace: 'nowrap'})}>
           &nbsp;
           {control.description ? (
@@ -632,7 +882,9 @@ function PropContextualHelp({control}) {
     <ContextualHelp variant="info" size="XS">
       <Heading>{control.name}</Heading>
       <Content>{control.description}</Content>
-      <Footer><code className={style({font: 'code-xs'})}>{control.valueType}</code></Footer>
+      <Footer>
+        <code className={style({font: 'code-xs'})}>{control.valueType}</code>
+      </Footer>
     </ContextualHelp>
   );
 }
@@ -645,7 +897,8 @@ function NumberControl({control, value, onChange}: ControlProps) {
         contextualHelp={<PropContextualHelp control={control} />}
         value={value}
         onChange={onChange}
-        styles={style({width: controlWidth})} />
+        styles={style({width: controlWidth})}
+      />
     );
   }
 
@@ -659,10 +912,15 @@ function NumberControl({control, value, onChange}: ControlProps) {
       styles={style({width: controlWidth})}
       minValue={control.options?.minValue}
       maxValue={control.options?.maxValue}
-      formatOptions={control.name === 'delay' || control.name === 'closeDelay' ? {
-        style: 'unit',
-        unit: 'millisecond'
-      } : undefined} />
+      formatOptions={
+        control.name === 'delay' || control.name === 'closeDelay'
+          ? {
+              style: 'unit',
+              unit: 'millisecond'
+            }
+          : undefined
+      }
+    />
   );
 }
 
@@ -695,77 +953,95 @@ function NumberFormatControl({control, value, onChange}: ControlProps) {
         <PickerItem id="currency">Currency</PickerItem>
         <PickerItem id="unit">Unit</PickerItem>
       </Picker>
-      {control.options?.showDetails && <>
-        <RangeSlider
-          label="Decimals"
-          value={{start: value?.minimumFractionDigits ?? 0, end: value?.maximumFractionDigits ?? 5}}
-          minValue={0}
-          maxValue={5}
-          onChange={v => onChange({...value, minimumFractionDigits: v.start, maximumFractionDigits: v.end})}
-          styles={style({width: controlWidth})} />
-        {value?.style === 'decimal' && (
-          <Picker
-            label="Sign Display"
-            value={value?.signDisplay ?? 'auto'}
-            onChange={signDisplay => onChange({...value, signDisplay})}
-            styles={style({width: controlWidth})}>
-            <PickerItem id="auto">Auto</PickerItem>
-            <PickerItem id="always">Always</PickerItem>
-            <PickerItem id="exceptZero">Except zero</PickerItem>
-            <PickerItem id="negative">Negative</PickerItem>
-            <PickerItem id="never">Never</PickerItem>
-          </Picker>
-        )}
-        {value?.style === 'currency' && <>
-          <ComboBox
-            label="Currency"
-            selectedKey={value.currency}
-            onSelectionChange={currency => onChange({...value, currency})}
-            styles={style({width: controlWidth})}>
-            {Intl.supportedValuesOf('currency').map(c => <ComboBoxItem key={c} id={c}>{c}</ComboBoxItem>)}
-          </ComboBox>
-          <UnionControl
-            control={{
-              name: 'Currency Display',
-              optional: true,
-              default: 'symbol',
-              value: {
-                elements: [
-                  {value: 'code'},
-                  {value: 'symbol'},
-                  {value: 'narrowSymbol'},
-                  {value: 'name'}
-                ]
-              }
+      {control.options?.showDetails && (
+        <>
+          <RangeSlider
+            label="Decimals"
+            value={{
+              start: value?.minimumFractionDigits ?? 0,
+              end: value?.maximumFractionDigits ?? 5
             }}
-            value={value.currencyDisplay ?? 'symbol'}
-            onChange={currencyDisplay => onChange({...value, currencyDisplay})} />
-        </>}
-        {value?.style === 'unit' && <>
-          <ComboBox
-            label="Unit"
-            selectedKey={value.unit}
-            onSelectionChange={unit => onChange({...value, unit})}
-            styles={style({width: controlWidth})}>
-            {Intl.supportedValuesOf('unit').map(c => <ComboBoxItem key={c} id={c}>{c}</ComboBoxItem>)}
-          </ComboBox>
-          <UnionControl
-            control={{
-              name: 'Unit Display',
-              optional: true,
-              default: 'short',
-              value: {
-                elements: [
-                  {value: 'narrow'},
-                  {value: 'short'},
-                  {value: 'long'}
-                ]
-              }
-            }}
-            value={value.unitDisplay ?? 'short'}
-            onChange={unitDisplay => onChange({...value, unitDisplay})} />
-        </>}
-      </>}
+            minValue={0}
+            maxValue={5}
+            onChange={v =>
+              onChange({...value, minimumFractionDigits: v.start, maximumFractionDigits: v.end})
+            }
+            styles={style({width: controlWidth})}
+          />
+          {value?.style === 'decimal' && (
+            <Picker
+              label="Sign Display"
+              value={value?.signDisplay ?? 'auto'}
+              onChange={signDisplay => onChange({...value, signDisplay})}
+              styles={style({width: controlWidth})}>
+              <PickerItem id="auto">Auto</PickerItem>
+              <PickerItem id="always">Always</PickerItem>
+              <PickerItem id="exceptZero">Except zero</PickerItem>
+              <PickerItem id="negative">Negative</PickerItem>
+              <PickerItem id="never">Never</PickerItem>
+            </Picker>
+          )}
+          {value?.style === 'currency' && (
+            <>
+              <ComboBox
+                label="Currency"
+                selectedKey={value.currency}
+                onSelectionChange={currency => onChange({...value, currency})}
+                styles={style({width: controlWidth})}>
+                {Intl.supportedValuesOf('currency').map(c => (
+                  <ComboBoxItem key={c} id={c}>
+                    {c}
+                  </ComboBoxItem>
+                ))}
+              </ComboBox>
+              <UnionControl
+                control={{
+                  name: 'Currency Display',
+                  optional: true,
+                  default: 'symbol',
+                  value: {
+                    elements: [
+                      {value: 'code'},
+                      {value: 'symbol'},
+                      {value: 'narrowSymbol'},
+                      {value: 'name'}
+                    ]
+                  }
+                }}
+                value={value.currencyDisplay ?? 'symbol'}
+                onChange={currencyDisplay => onChange({...value, currencyDisplay})}
+              />
+            </>
+          )}
+          {value?.style === 'unit' && (
+            <>
+              <ComboBox
+                label="Unit"
+                selectedKey={value.unit}
+                onSelectionChange={unit => onChange({...value, unit})}
+                styles={style({width: controlWidth})}>
+                {Intl.supportedValuesOf('unit').map(c => (
+                  <ComboBoxItem key={c} id={c}>
+                    {c}
+                  </ComboBoxItem>
+                ))}
+              </ComboBox>
+              <UnionControl
+                control={{
+                  name: 'Unit Display',
+                  optional: true,
+                  default: 'short',
+                  value: {
+                    elements: [{value: 'narrow'}, {value: 'short'}, {value: 'long'}]
+                  }
+                }}
+                value={value.unitDisplay ?? 'short'}
+                onChange={unitDisplay => onChange({...value, unitDisplay})}
+              />
+            </>
+          )}
+        </>
+      )}
     </>
   );
 }
@@ -786,7 +1062,7 @@ function ListFormatControl({control, value, onChange}: ControlProps) {
 }
 
 function DateTimeFormatControl({control, value, onChange}: ControlProps) {
-  let clear = (v: any) => v === 'short' ? undefined : v;
+  let clear = (v: any) => (v === 'short' ? undefined : v);
   return (
     <Picker
       label={control.name}
@@ -810,7 +1086,8 @@ function StringControl({control, value, onChange}: ControlProps) {
       contextualHelp={<PropContextualHelp control={control} />}
       value={value || ''}
       onChange={onChange}
-      styles={style({width: controlWidth})} />
+      styles={style({width: controlWidth})}
+    />
   );
 }
 
@@ -827,32 +1104,31 @@ function ChildrenControl({control, value, onChange}: ControlProps) {
                 placeholder="–"
                 value={objectValue?.text || ''}
                 onChange={text => onChange({...objectValue, text})}
-                styles={style({width: 80, flexGrow: 1})} />
+                styles={style({width: 80, flexGrow: 1})}
+              />
               <Suspense fallback={<ActionButton isPending>No icon</ActionButton>}>
-                <IconPicker
-                  value={value}
-                  onChange={onChange} />
+                <IconPicker value={value} onChange={onChange} />
               </Suspense>
             </div>
           )}
-          {(control.slots.avatar || control.slots.badge) &&
+          {(control.slots.avatar || control.slots.badge) && (
             <ToggleButtonGroup density="compact" isJustified>
-              {control.slots.avatar &&
+              {control.slots.avatar && (
                 <ToggleButton
                   isSelected={objectValue?.avatar ?? false}
                   onChange={avatar => onChange({...objectValue, avatar})}>
                   Avatar
                 </ToggleButton>
-              }
-              {control.slots.badge &&
+              )}
+              {control.slots.badge && (
                 <ToggleButton
                   isSelected={objectValue?.badge ?? false}
                   onChange={badge => onChange({...objectValue, badge})}>
                   Badge
                 </ToggleButton>
-              }
+              )}
             </ToggleButtonGroup>
-          }
+          )}
         </div>
       </Wrapper>
     );
@@ -860,7 +1136,6 @@ function ChildrenControl({control, value, onChange}: ControlProps) {
 
   return <StringControl control={control} value={value} onChange={onChange} />;
 }
-
 
 // https://github.com/unicode-org/cldr/blob/22af90ae3bb04263f651323ce3d9a71747a75ffb/common/supplemental/supplementalData.xml#L4649-L4664
 const preferences = [
@@ -943,30 +1218,52 @@ function matchLocale(defaultLocale: string) {
   let locales = preferences.map(p => new Intl.Locale(p.value));
 
   // Try with both language and region first, and if that fails, try again with just language
-  let p = locales.find(locale => locale.language === parsed.language && locale.region === parsed.region) || locales.find(locale => locale.language === parsed.language);
+  let p =
+    locales.find(
+      locale => locale.language === parsed.language && locale.region === parsed.region
+    ) || locales.find(locale => locale.language === parsed.language);
   return p?.toString() || 'en-US';
 }
 
-
 function LocaleControl({control, value, onChange}: ControlProps) {
   let {locale: defaultLocale} = useLocale();
-  let langDisplay = useMemo(() => new Intl.DisplayNames(defaultLocale, {type: 'language'}), [defaultLocale]);
-  let regionDisplay = useMemo(() => new Intl.DisplayNames(defaultLocale, {type: 'region'}), [defaultLocale]);
+  let langDisplay = useMemo(
+    () => new Intl.DisplayNames(defaultLocale, {type: 'language'}),
+    [defaultLocale]
+  );
+  let regionDisplay = useMemo(
+    () => new Intl.DisplayNames(defaultLocale, {type: 'region'}),
+    [defaultLocale]
+  );
   let locales = useMemo(() => {
-    return preferences.map(item => {
-      let locale = new Intl.Locale(item.value);
-      return {
-        ...item,
-        label: `${langDisplay.of(locale.language)} (${regionDisplay.of(locale.region!)})`
-      };
-    }).sort((a, b) => a.label.localeCompare(b.label));
+    return preferences
+      .map(item => {
+        let locale = new Intl.Locale(item.value);
+        return {
+          ...item,
+          label: `${langDisplay.of(locale.language)} (${regionDisplay.of(locale.region!)})`
+        };
+      })
+      .sort((a, b) => a.label.localeCompare(b.label));
   }, [langDisplay, regionDisplay]);
 
   let matched = useMemo(() => matchLocale(value), [value]);
   let pref = preferences.find(p => p.value === matched);
   // @ts-ignore there cannot be any undefined values in the array
-  let preferredCalendars: Array<{key: string, name: string}> = useMemo(() => pref ? (pref.ordering || 'gregory').split(' ').map(p => calendars.find(c => c.key === p)).filter(Boolean) : [calendars[0]], [pref]);
-  let otherCalendars = useMemo(() => calendars.filter(c => !preferredCalendars.some(p => p?.key === c.key)), [preferredCalendars]);
+  let preferredCalendars: Array<{key: string; name: string}> = useMemo(
+    () =>
+      pref
+        ? (pref.ordering || 'gregory')
+            .split(' ')
+            .map(p => calendars.find(c => c.key === p))
+            .filter(Boolean)
+        : [calendars[0]],
+    [pref]
+  );
+  let otherCalendars = useMemo(
+    () => calendars.filter(c => !preferredCalendars.some(p => p?.key === c.key)),
+    [preferredCalendars]
+  );
 
   let extension = control.options ?? 'calendar';
   let updateLocale = locale => {
@@ -1023,7 +1320,7 @@ function LocaleControl({control, value, onChange}: ControlProps) {
               <Heading>Preferred</Heading>
             </Header>
             <Collection items={preferredCalendars}>
-              {(item: { key: string, name: string }) => <PickerItem>{item.name}</PickerItem>}
+              {(item: {key: string; name: string}) => <PickerItem>{item.name}</PickerItem>}
             </Collection>
           </PickerSection>
           <PickerSection>
@@ -1031,7 +1328,7 @@ function LocaleControl({control, value, onChange}: ControlProps) {
               <Heading>Other</Heading>
             </Header>
             <Collection items={otherCalendars}>
-              {(item: { key: string, name: string }) => <PickerItem>{item.name}</PickerItem>}
+              {(item: {key: string; name: string}) => <PickerItem>{item.name}</PickerItem>}
             </Collection>
           </PickerSection>
         </Picker>
@@ -1053,14 +1350,16 @@ function DurationControl({control, value, onChange}: ControlProps) {
   let key = Object.keys(value)[0];
   return (
     <Wrapper control={control} styles={style({gridColumnStart: 1, gridColumnEnd: -1})}>
-      <div className={style({display: 'flex', flexDirection: 'column', gap: 4, width: controlWidth})}>
+      <div
+        className={style({display: 'flex', flexDirection: 'column', gap: 4, width: controlWidth})}>
         <NumberField
           aria-label={control.name}
           placeholder="–"
           contextualHelp={<PropContextualHelp control={control} />}
           value={value[key]}
           minValue={1}
-          onChange={value => onChange({[key]: value})} />
+          onChange={value => onChange({[key]: value})}
+        />
         <Picker
           aria-label={`${control.name} unit`}
           value={key}
@@ -1078,7 +1377,8 @@ function ChannelControl({control, value, onChange}) {
   let {props} = useContext(Context);
   let colorSpace = props.colorSpace;
   if (!colorSpace && props.defaultValue) {
-    let color = typeof props.defaultValue === 'string' ? parseColor(props.defaultValue) : props.defaultValue;
+    let color =
+      typeof props.defaultValue === 'string' ? parseColor(props.defaultValue) : props.defaultValue;
     colorSpace = color.getColorSpace();
   }
   return (
@@ -1095,7 +1395,8 @@ function ChannelControl({control, value, onChange}) {
         }
       }}
       value={value}
-      onChange={onChange} />
+      onChange={onChange}
+    />
   );
 }
 
@@ -1119,7 +1420,8 @@ function ColorSpaceControl({control, value}) {
           delete props.yChannel;
           return props;
         });
-      }} />
+      }}
+    />
   );
 }
 
@@ -1193,7 +1495,8 @@ function PlacementControlItem(props) {
           outlineStyle: 'solid',
           outlineColor: 'gray-600',
           outlineWidth: 1
-        })} />
+        })}
+      />
     </ListBoxItem>
   );
 }
@@ -1201,8 +1504,11 @@ function PlacementControlItem(props) {
 function ArrayControl({control, valueType, value = [], onChange}) {
   let ref = useRef<HTMLDivElement | null>(null);
   return (
-    <Wrapper ref={ref} control={control} styles={style({gridColumnStart: 1, gridColumnEnd: -1, width: 150})}>
-      {value.length === 0 &&
+    <Wrapper
+      ref={ref}
+      control={control}
+      styles={style({gridColumnStart: 1, gridColumnEnd: -1, width: 150})}>
+      {value.length === 0 && (
         <ActionButton
           size="S"
           aria-label="Add item"
@@ -1213,7 +1519,7 @@ function ArrayControl({control, valueType, value = [], onChange}) {
           }}>
           <AddCircle />
         </ActionButton>
-      }
+      )}
       {value.map((item, index) => {
         let rendered;
         switch (valueType.type) {
@@ -1228,7 +1534,8 @@ function ArrayControl({control, valueType, value = [], onChange}) {
                   let arr: any[] = [...value];
                   arr[index] = newValue;
                   onChange(arr);
-                }} />
+                }}
+              />
             );
             break;
           default:
@@ -1282,14 +1589,16 @@ function SizeControl({control, value, onChange}: ControlProps) {
           value={value?.width}
           onChange={width => onChange(new Size(width, value?.height ?? 0))}
           styles={style({flexShrink: 1, flexGrow: 1})}
-          hideStepper />
+          hideStepper
+        />
         <NumberField
           aria-label="Height"
           placeholder="–"
           value={value?.height}
           onChange={height => onChange(new Size(value?.width ?? 0, height))}
           styles={style({flexShrink: 1, flexGrow: 1})}
-          hideStepper />
+          hideStepper
+        />
       </div>
     </Wrapper>
   );

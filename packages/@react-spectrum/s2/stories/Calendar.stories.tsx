@@ -42,7 +42,7 @@ const meta: Meta<typeof Calendar> = {
   args: {...getActionArgs(events)},
   title: 'Calendar',
   decorators: [
-    (Story) => (
+    Story => (
       <CalendarSwitcher>
         <Story />
       </CalendarSwitcher>
@@ -62,8 +62,17 @@ export const Example: Story = {
 export const DateUnavailable: Story = {
   args: {
     isDateUnavailable: (date: DateValue) => {
-      const disabledIntervals = [[today(getLocalTimeZone()).subtract({days: 13}), today(getLocalTimeZone()), today(getLocalTimeZone()).add({weeks: 1})], [today(getLocalTimeZone()).add({weeks: 2}), today(getLocalTimeZone()).add({weeks: 3})]];
-      return disabledIntervals.some((interval) => date.compare(interval[0]) > 0 && date.compare(interval[1]) < 0);
+      const disabledIntervals = [
+        [
+          today(getLocalTimeZone()).subtract({days: 13}),
+          today(getLocalTimeZone()),
+          today(getLocalTimeZone()).add({weeks: 1})
+        ],
+        [today(getLocalTimeZone()).add({weeks: 2}), today(getLocalTimeZone()).add({weeks: 3})]
+      ];
+      return disabledIntervals.some(
+        interval => date.compare(interval[0]) > 0 && date.compare(interval[1]) < 0
+      );
     },
     'aria-label': 'Birthday'
   }
@@ -87,7 +96,9 @@ function ControlledFocus(props: CalendarProps<DateValue, CalendarSelectionMode>)
         alignItems: 'start',
         gap: 16
       })}>
-      <ActionButton onPress={() => setFocusedDate(defaultFocusedDate)}>Reset focused date</ActionButton>
+      <ActionButton onPress={() => setFocusedDate(defaultFocusedDate)}>
+        Reset focused date
+      </ActionButton>
       <Calendar {...props} focusedValue={focusedDate} onFocusChange={setFocusedDate} />
     </div>
   );
@@ -95,12 +106,16 @@ function ControlledFocus(props: CalendarProps<DateValue, CalendarSelectionMode>)
 
 function CustomCalendar(props: CalendarProps<DateValue, CalendarSelectionMode>): ReactElement {
   return (
-    <ControlledFocus {...props} createCalendar={() => new Custom454Calendar()} focusedValue={new CalendarDate(2023, 2, 5)} />
+    <ControlledFocus
+      {...props}
+      createCalendar={() => new Custom454Calendar()}
+      focusedValue={new CalendarDate(2023, 2, 5)}
+    />
   );
 }
 
 export const Custom454Example: Story = {
-  render: (args) => <CustomCalendar {...args} />,
+  render: args => <CustomCalendar {...args} />,
   args: {
     'aria-label': 'Birthday'
   }

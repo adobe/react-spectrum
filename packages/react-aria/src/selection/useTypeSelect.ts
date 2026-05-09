@@ -24,22 +24,22 @@ export interface AriaTypeSelectOptions {
   /**
    * A delegate that returns collection item keys with respect to visual layout.
    */
-  keyboardDelegate: KeyboardDelegate,
+  keyboardDelegate: KeyboardDelegate;
   /**
    * An interface for reading and updating multiple selection state.
    */
-  selectionManager: MultipleSelectionManager,
+  selectionManager: MultipleSelectionManager;
   /**
    * Called when an item is focused by typing.
    */
-  onTypeSelect?: (key: Key) => void
+  onTypeSelect?: (key: Key) => void;
 }
 
 export interface TypeSelectAria {
   /**
    * Props to be spread on the owner of the options.
    */
-  typeSelectProps: DOMAttributes
+  typeSelectProps: DOMAttributes;
 }
 
 /**
@@ -59,7 +59,13 @@ export function useTypeSelect(options: AriaTypeSelectOptions): TypeSelectAria {
 
   let onKeyDown = (e: KeyboardEvent) => {
     let character = getStringForKey(e.key);
-    if (!character || e.ctrlKey || e.metaKey || !nodeContains(e.currentTarget, getEventTarget(e) as HTMLElement) || (state.search.length === 0 && character === ' ')) {
+    if (
+      !character ||
+      e.ctrlKey ||
+      e.metaKey ||
+      !nodeContains(e.currentTarget, getEventTarget(e) as HTMLElement) ||
+      (state.search.length === 0 && character === ' ')
+    ) {
       return;
     }
 

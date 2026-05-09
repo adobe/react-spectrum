@@ -11,7 +11,12 @@
  */
 
 import {AriaToggleProps, useToggle} from '../toggle/useToggle';
-import {DOMAttributesWithRef, InputDOMProps, RefObject, ValidationResult} from '@react-types/shared';
+import {
+  DOMAttributesWithRef,
+  InputDOMProps,
+  RefObject,
+  ValidationResult
+} from '@react-types/shared';
 import {InputHTMLAttributes, LabelHTMLAttributes} from 'react';
 import {ToggleProps, ToggleState} from 'react-stately/useToggleState';
 
@@ -21,26 +26,26 @@ export interface AriaSwitchProps extends SwitchProps, InputDOMProps, AriaToggleP
   /**
    * Identifies the element (or elements) whose contents or presence are controlled by the current element.
    */
-  'aria-controls'?: string
+  'aria-controls'?: string;
 }
 
 export interface SwitchAria extends ValidationResult {
   /** Props for the label wrapper element. */
-  labelProps: LabelHTMLAttributes<HTMLLabelElement>,
+  labelProps: LabelHTMLAttributes<HTMLLabelElement>;
   /** Props for the input element. */
-  inputProps: InputHTMLAttributes<HTMLInputElement>,
+  inputProps: InputHTMLAttributes<HTMLInputElement>;
   /** Props for the switch description element, if any. */
-  descriptionProps: DOMAttributesWithRef<HTMLElement>,
+  descriptionProps: DOMAttributesWithRef<HTMLElement>;
   /** Props for the switch error message element, if any. */
-  errorMessageProps: DOMAttributesWithRef<HTMLElement>,
+  errorMessageProps: DOMAttributesWithRef<HTMLElement>;
   /** Whether the switch is selected. */
-  isSelected: boolean,
+  isSelected: boolean;
   /** Whether the switch is in a pressed state. */
-  isPressed: boolean,
+  isPressed: boolean;
   /** Whether the switch is disabled. */
-  isDisabled: boolean,
+  isDisabled: boolean;
   /** Whether the switch is read only. */
-  isReadOnly: boolean
+  isReadOnly: boolean;
 }
 
 /**
@@ -50,7 +55,11 @@ export interface SwitchAria extends ValidationResult {
  * @param state - State for the switch, as returned by `useToggleState`.
  * @param ref - Ref to the HTML input element.
  */
-export function useSwitch(props: AriaSwitchProps, state: ToggleState, ref: RefObject<HTMLInputElement | null>): SwitchAria {
+export function useSwitch(
+  props: AriaSwitchProps,
+  state: ToggleState,
+  ref: RefObject<HTMLInputElement | null>
+): SwitchAria {
   let {labelProps, inputProps, isSelected, ...states} = useToggle(props, state, ref);
 
   return {

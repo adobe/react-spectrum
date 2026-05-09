@@ -58,12 +58,7 @@ module.exports = new Namer({
 
       // // For @internationalized, group by package name.
       if (parts[1] === '@internationalized') {
-        return path.join(
-          parts[1].replace(/^@/, ''),
-          parts[2],
-          ...parts.slice(4, -1),
-          basename
-        );
+        return path.join(parts[1].replace(/^@/, ''), parts[2], ...parts.slice(4, -1), basename);
       }
 
       if (parts[1] === 'react-aria-components') {
@@ -80,19 +75,33 @@ module.exports = new Namer({
       }
 
       if (namespace === 'react-aria') {
-        if (/use(Clipboard|Collator|.*Formatter|Drag.*|Drop.*|Field|Filter|Focus.*|Hover|Id|IsSSR|Keyboard|Label|Landmark|Locale|.*Press|Move|ObjectRef)\.html$/.test(basename)) {
+        if (
+          /use(Clipboard|Collator|.*Formatter|Drag.*|Drop.*|Field|Filter|Focus.*|Hover|Id|IsSSR|Keyboard|Label|Landmark|Locale|.*Press|Move|ObjectRef)\.html$/.test(
+            basename
+          )
+        ) {
           return path.join(...parts.slice(4, -1), basename);
         }
 
         if (/use(.+?)\.html$/.test(basename)) {
-          return path.join(...parts.slice(4, -1), basename.replace(/use(.*?)\.html$/, (_, name) => `${mappings[name] || name}/use${name}.html`));
+          return path.join(
+            ...parts.slice(4, -1),
+            basename.replace(
+              /use(.*?)\.html$/,
+              (_, name) => `${mappings[name] || name}/use${name}.html`
+            )
+          );
         }
 
         return path.join(...parts.slice(4, -1), basename);
       }
 
       if (namespace === 'react-stately') {
-        if (/use(MultipleSelection|List|SingleSelectList|Drag.*|Drop.*|Overlay.*|Toggle)State\.html$/.test(basename)) {
+        if (
+          /use(MultipleSelection|List|SingleSelectList|Drag.*|Drop.*|Overlay.*|Toggle)State\.html$/.test(
+            basename
+          )
+        ) {
           return path.join(...parts.slice(4, -1), basename);
         }
 
@@ -101,27 +110,30 @@ module.exports = new Namer({
         }
 
         if (/use(.+?)(Trigger)?State\.html$/.test(basename)) {
-          return path.join(...parts.slice(4, -1), basename.replace(/use(.*?)(Trigger)?State\.html$/, '$1/use$1$2State.html'));
+          return path.join(
+            ...parts.slice(4, -1),
+            basename.replace(/use(.*?)(Trigger)?State\.html$/, '$1/use$1$2State.html')
+          );
         }
 
         return path.join(...parts.slice(4, -1), basename);
       }
 
-      return path.join(
-        namespace,
-        ...parts.slice(4, -1),
-        basename
-      );
+      return path.join(namespace, ...parts.slice(4, -1), basename);
     } else if (!bundle.target || !bundle.target.distEntry) {
       // An asset. Should end up hashed in the root.
       let bundleGroup = bundleGraph.getBundleGroupsContainingBundle(bundle)[0];
       let bundleGroupBundles = bundleGraph.getBundlesInBundleGroup(bundleGroup);
-      let mainBundle =  bundleGroupBundles.find(b => b.getEntryAssets().some(a => a.id === bundleGroup.entryAssetId));
+      let mainBundle = bundleGroupBundles.find(b =>
+        b.getEntryAssets().some(a => a.id === bundleGroup.entryAssetId)
+      );
       if (!mainBundle) {
         return null;
       }
       let entry = mainBundle.getEntryAssets().find(a => a.id === bundleGroup.entryAssetId).filePath;
-      return path.basename(entry, path.extname(entry)) + '.' + bundle.hashReference + '.' + bundle.type;
+      return (
+        path.basename(entry, path.extname(entry)) + '.' + bundle.hashReference + '.' + bundle.type
+      );
     } else {
       // Let the default namer handle it.
       return null;

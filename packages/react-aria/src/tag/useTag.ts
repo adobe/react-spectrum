@@ -29,21 +29,20 @@ import {useInteractionModality} from '../interactions/useFocusVisible';
 import {useLocalizedStringFormatter} from '../i18n/useLocalizedStringFormatter';
 import {useSyntheticLinkProps} from '../utils/openLink';
 
-
 export interface TagAria extends SelectableItemStates {
   /** Props for the tag row element. */
-  rowProps: DOMAttributes,
+  rowProps: DOMAttributes;
   /** Props for the tag cell element. */
-  gridCellProps: DOMAttributes,
+  gridCellProps: DOMAttributes;
   /** Props for the tag remove button. */
-  removeButtonProps: AriaButtonProps,
+  removeButtonProps: AriaButtonProps;
   /** Whether the tag can be removed. */
-  allowsRemoving: boolean
+  allowsRemoving: boolean;
 }
 
 export interface AriaTagProps<T> {
   /** An object representing the tag. Contains all the relevant information that makes up the tag. */
-  item: Node<T>
+  item: Node<T>;
 }
 
 /**
@@ -52,15 +51,23 @@ export interface AriaTagProps<T> {
  * @param state - State for the tag group, as returned by `useListState`.
  * @param ref - A ref to a DOM element for the tag.
  */
-export function useTag<T>(props: AriaTagProps<T>, state: ListState<T>, ref: RefObject<FocusableElement | null>): TagAria {
+export function useTag<T>(
+  props: AriaTagProps<T>,
+  state: ListState<T>,
+  ref: RefObject<FocusableElement | null>
+): TagAria {
   let {item} = props;
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/tag');
   let buttonId = useId();
 
   let {onRemove} = hookData.get(state) || {};
-  let {rowProps, gridCellProps, ...states} = useGridListItem({
-    node: item
-  }, state, ref);
+  let {rowProps, gridCellProps, ...states} = useGridListItem(
+    {
+      node: item
+    },
+    state,
+    ref
+  );
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let {descriptionProps: _, ...stateWithoutDescription} = states;
@@ -82,10 +89,13 @@ export function useTag<T>(props: AriaTagProps<T>, state: ListState<T>, ref: RefO
   };
 
   let modality = useInteractionModality();
-  if (modality === 'virtual' &&  (typeof window !== 'undefined' && 'ontouchstart' in window)) {
+  if (modality === 'virtual' && typeof window !== 'undefined' && 'ontouchstart' in window) {
     modality = 'pointer';
   }
-  let description = onRemove && (modality === 'keyboard' || modality === 'virtual') ? stringFormatter.format('removeDescription') : '';
+  let description =
+    onRemove && (modality === 'keyboard' || modality === 'virtual')
+      ? stringFormatter.format('removeDescription')
+      : '';
   let descProps = useDescription(description);
 
   let isItemFocused = item.key === state.selectionManager.focusedKey;
@@ -97,10 +107,13 @@ export function useTag<T>(props: AriaTagProps<T>, state: ListState<T>, ref: RefO
 
   let domProps = filterDOMProps(item.props);
   let linkProps = useSyntheticLinkProps(item.props);
-  let {focusableProps} = useFocusable({
-    ...item.props,
-    isDisabled
-  }, ref);
+  let {focusableProps} = useFocusable(
+    {
+      ...item.props,
+      isDisabled
+    },
+    ref
+  );
 
   return {
     removeButtonProps: {
@@ -108,7 +121,7 @@ export function useTag<T>(props: AriaTagProps<T>, state: ListState<T>, ref: RefO
       'aria-labelledby': `${buttonId} ${rowProps.id}`,
       isDisabled,
       id: buttonId,
-      onPress: () => onRemove ? onRemove(new Set([item.key])) : null
+      onPress: () => (onRemove ? onRemove(new Set([item.key])) : null)
     },
     rowProps: mergeProps(focusableProps, rowProps, domProps, linkProps, {
       tabIndex,

@@ -16,13 +16,13 @@ import {useCallback} from 'react';
 import {useLayoutEffect} from '../utils/useLayoutEffect';
 
 interface IVirtualizer {
-  updateItemSize(key: Key, size: Size): void
+  updateItemSize(key: Key, size: Size): void;
 }
 
 export interface VirtualizerItemOptions {
-  layoutInfo: LayoutInfo | null,
-  virtualizer: IVirtualizer,
-  ref: RefObject<HTMLElement | null>
+  layoutInfo: LayoutInfo | null;
+  virtualizer: IVirtualizer;
+  ref: RefObject<HTMLElement | null>;
 }
 
 export function useVirtualizerItem(options: VirtualizerItemOptions): {updateSize: () => void} {

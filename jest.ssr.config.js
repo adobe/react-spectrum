@@ -20,7 +20,8 @@ module.exports = {
 
   // A map from regular expressions to module names that allow to stub out resources with a single module
   moduleNameMapper: {
-    '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$': '<rootDir>/__mocks__/fileMock.js',
+    '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$':
+      '<rootDir>/__mocks__/fileMock.js',
     '\\.(css|styl)$': 'identity-obj-proxy'
   },
 
@@ -30,9 +31,7 @@ module.exports = {
   projects: ['<rootDir>'],
 
   // A list of paths to directories that Jest should use to search for files in
-  roots: [
-    'packages/'
-  ],
+  roots: ['packages/'],
 
   testTimeout: 30000,
 
@@ -45,9 +44,7 @@ module.exports = {
   setupFilesAfterEnv: ['<rootDir>scripts/setupTests.js'],
 
   // The glob patterns Jest uses to detect test files
-  testMatch: [
-    '**/packages/**/*.ssr.test.[tj]s?(x)'
-  ],
+  testMatch: ['**/packages/**/*.ssr.test.[tj]s?(x)'],
 
   transform: {
     '^.+\\.(t|j)sx?$': [
@@ -72,8 +69,5 @@ module.exports = {
 
   // Storybook 10 ships pure ESM in `storybook` and `@storybook/*`, so we need
   // to let @swc/jest transform them instead of skipping all of node_modules.
-  transformIgnorePatterns: [
-    '/node_modules/(?!(?:storybook|@storybook)/)',
-    '\\.pnp\\.[^\\/]+$'
-  ]
+  transformIgnorePatterns: ['/node_modules/(?!(?:storybook|@storybook)/)', '\\.pnp\\.[^\\/]+$']
 };

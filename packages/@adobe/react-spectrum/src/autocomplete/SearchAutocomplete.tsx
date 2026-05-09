@@ -11,8 +11,21 @@
  */
 import {AriaButtonProps} from 'react-aria/useButton';
 
-import {AriaSearchAutocompleteProps, useSearchAutocomplete} from 'react-aria/private/autocomplete/useSearchAutocomplete';
-import {AsyncLoadable, DimensionValue, DOMRefValue, FocusableRef, LoadingState, SpectrumFieldValidation, SpectrumLabelableProps, SpectrumTextInputBase, StyleProps} from '@react-types/shared';
+import {
+  AriaSearchAutocompleteProps,
+  useSearchAutocomplete
+} from 'react-aria/private/autocomplete/useSearchAutocomplete';
+import {
+  AsyncLoadable,
+  DimensionValue,
+  DOMRefValue,
+  FocusableRef,
+  LoadingState,
+  SpectrumFieldValidation,
+  SpectrumLabelableProps,
+  SpectrumTextInputBase,
+  StyleProps
+} from '@react-types/shared';
 import {classNames} from '../utils/classNames';
 import {ClearButton} from '../button/ClearButton';
 import {dimensionValue} from '../utils/styleProps';
@@ -52,45 +65,60 @@ import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatte
 import {useProvider, useProviderProps} from '../provider/Provider';
 import {useResizeObserver} from 'react-aria/private/utils/useResizeObserver';
 
-export interface SpectrumSearchAutocompleteProps<T> extends SpectrumTextInputBase, Omit<AriaSearchAutocompleteProps<T>, 'menuTrigger' | 'isInvalid' | 'validationState' | 'validate'>, SpectrumFieldValidation<string>, SpectrumLabelableProps, StyleProps, Omit<AsyncLoadable, 'isLoading'> {
+export interface SpectrumSearchAutocompleteProps<T>
+  extends
+    SpectrumTextInputBase,
+    Omit<
+      AriaSearchAutocompleteProps<T>,
+      'menuTrigger' | 'isInvalid' | 'validationState' | 'validate'
+    >,
+    SpectrumFieldValidation<string>,
+    SpectrumLabelableProps,
+    StyleProps,
+    Omit<AsyncLoadable, 'isLoading'> {
   /**
    * The interaction required to display the SearchAutocomplete menu. Note that this prop has no effect on the mobile SearchAutocomplete experience.
    * @default 'input'
    */
-  menuTrigger?: MenuTriggerAction,
+  menuTrigger?: MenuTriggerAction;
   /** Whether the SearchAutocomplete should be displayed with a quiet style. */
-  isQuiet?: boolean,
+  isQuiet?: boolean;
   /** Alignment of the menu relative to the input target.
    * @default 'start'
    */
-  align?: 'start' | 'end',
+  align?: 'start' | 'end';
   /**
    * Direction the menu will render relative to the SearchAutocomplete.
    * @default 'bottom'
    */
-  direction?: 'bottom' | 'top',
+  direction?: 'bottom' | 'top';
   /** The current loading state of the SearchAutocomplete. Determines whether or not the progress circle should be shown. */
-  loadingState?: LoadingState,
+  loadingState?: LoadingState;
   /**
    * Whether the menu should automatically flip direction when space is limited.
    * @default true
    */
-  shouldFlip?: boolean,
+  shouldFlip?: boolean;
   /** Width of the menu. By default, matches width of the trigger. Note that the minimum width of the dropdown is always equal to the trigger's width. */
-  menuWidth?: DimensionValue,
-  onLoadMore?: () => void,
+  menuWidth?: DimensionValue;
+  onLoadMore?: () => void;
   /** An icon to display at the start of the input. */
-  icon?: ReactElement | null
+  icon?: ReactElement | null;
 }
 
-function SearchAutocomplete<T extends object>(props: SpectrumSearchAutocompleteProps<T>, ref: FocusableRef<HTMLElement>) {
+function SearchAutocomplete<T extends object>(
+  props: SpectrumSearchAutocompleteProps<T>,
+  ref: FocusableRef<HTMLElement>
+) {
   props = useProviderProps(props);
   props = useFormProps(props);
 
   let hasWarned = useRef(false);
   useEffect(() => {
     if (props.placeholder && !hasWarned.current && process.env.NODE_ENV !== 'production') {
-      console.warn('Placeholders are deprecated due to accessibility issues. Please use help text instead.');
+      console.warn(
+        'Placeholders are deprecated due to accessibility issues. Please use help text instead.'
+      );
       hasWarned.current = true;
     }
   }, [props.placeholder]);
@@ -104,7 +132,10 @@ function SearchAutocomplete<T extends object>(props: SpectrumSearchAutocompleteP
   }
 }
 
-function ForwardSearchAutocompleteBase<T extends object>(props: SpectrumSearchAutocompleteProps<T>, ref: FocusableRef<HTMLElement>) {
+function ForwardSearchAutocompleteBase<T extends object>(
+  props: SpectrumSearchAutocompleteProps<T>,
+  ref: FocusableRef<HTMLElement>
+) {
   props = useProviderProps(props);
 
   let {
@@ -129,21 +160,29 @@ function ForwardSearchAutocompleteBase<T extends object>(props: SpectrumSearchAu
   let domRef = useFocusableRef(ref, inputRef);
 
   let {contains} = useFilter({sensitivity: 'base'});
-  let state = useComboBoxState(
-    {
-      ...props,
-      defaultFilter: contains,
-      allowsEmptyCollection: isAsync,
-      allowsCustomValue: true,
-      onSelectionChange: (key) => key !== null && onSubmit(null, key),
-      selectedKey: undefined,
-      defaultSelectedKey: undefined,
-      validate: useCallback(v => validate?.(v.inputValue), [validate])
-    }
-  );
+  let state = useComboBoxState({
+    ...props,
+    defaultFilter: contains,
+    allowsEmptyCollection: isAsync,
+    allowsCustomValue: true,
+    onSelectionChange: key => key !== null && onSubmit(null, key),
+    selectedKey: undefined,
+    defaultSelectedKey: undefined,
+    validate: useCallback(v => validate?.(v.inputValue), [validate])
+  });
   let layout = useListBoxLayout();
 
-  let {inputProps, listBoxProps, labelProps, clearButtonProps, descriptionProps, errorMessageProps, isInvalid, validationErrors, validationDetails} = useSearchAutocomplete(
+  let {
+    inputProps,
+    listBoxProps,
+    labelProps,
+    clearButtonProps,
+    descriptionProps,
+    errorMessageProps,
+    isInvalid,
+    validationErrors,
+    validationDetails
+  } = useSearchAutocomplete(
     {
       ...props,
       layoutDelegate: layout,
@@ -176,7 +215,9 @@ function ForwardSearchAutocompleteBase<T extends object>(props: SpectrumSearchAu
   let width = isQuiet ? undefined : menuWidth;
   let style = {
     width: customMenuWidth ? dimensionValue(customMenuWidth) : width,
-    minWidth: isQuiet ? `calc(${menuWidth}px + calc(2 * var(--spectrum-dropdown-quiet-offset)))` : menuWidth
+    minWidth: isQuiet
+      ? `calc(${menuWidth}px + calc(2 * var(--spectrum-dropdown-quiet-offset)))`
+      : menuWidth
   };
 
   return (
@@ -197,12 +238,15 @@ function ForwardSearchAutocompleteBase<T extends object>(props: SpectrumSearchAu
           inputProps={inputProps}
           inputRef={inputRef}
           clearButtonProps={clearButtonProps}
-          validationState={props.validationState || (isInvalid ? 'invalid' : undefined)} />
+          validationState={props.validationState || (isInvalid ? 'invalid' : undefined)}
+        />
       </Field>
       <Popover
         state={state}
         UNSAFE_style={style}
-        UNSAFE_className={classNames(styles, 'spectrum-InputGroup-popover', {'spectrum-InputGroup-popover--quiet': isQuiet})}
+        UNSAFE_className={classNames(styles, 'spectrum-InputGroup-popover', {
+          'spectrum-InputGroup-popover--quiet': isQuiet
+        })}
         ref={popoverRef}
         triggerRef={inputRef}
         placement={`${direction} ${align}`}
@@ -222,34 +266,36 @@ function ForwardSearchAutocompleteBase<T extends object>(props: SpectrumSearchAu
           isLoading={loadingState === 'loading' || loadingState === 'loadingMore'}
           showLoadingSpinner={loadingState === 'loadingMore'}
           onLoadMore={onLoadMore}
-          renderEmptyState={() => isAsync && (
-            <span className={classNames(searchAutocompleteStyles, 'no-results')}>
-              {stringFormatter.format('noResults')}
-            </span>
-          )} />
+          renderEmptyState={() =>
+            isAsync && (
+              <span className={classNames(searchAutocompleteStyles, 'no-results')}>
+                {stringFormatter.format('noResults')}
+              </span>
+            )
+          }
+        />
       </Popover>
     </>
   );
 }
 
-let SearchAutocompleteBase = React.forwardRef(ForwardSearchAutocompleteBase) as <T>(props: SpectrumSearchAutocompleteProps<T> & {ref?: FocusableRef<HTMLElement>}) => ReactElement;
-
+let SearchAutocompleteBase = React.forwardRef(ForwardSearchAutocompleteBase) as <T>(
+  props: SpectrumSearchAutocompleteProps<T> & {ref?: FocusableRef<HTMLElement>}
+) => ReactElement;
 
 interface SearchAutocompleteInputProps<T> extends SpectrumSearchAutocompleteProps<T> {
-  inputProps: InputHTMLAttributes<HTMLInputElement>,
-  inputRef: RefObject<HTMLInputElement | null>,
-  style?: React.CSSProperties,
-  className?: string,
-  isOpen?: boolean,
-  clearButtonProps: AriaButtonProps
+  inputProps: InputHTMLAttributes<HTMLInputElement>;
+  inputRef: RefObject<HTMLInputElement | null>;
+  style?: React.CSSProperties;
+  className?: string;
+  isOpen?: boolean;
+  clearButtonProps: AriaButtonProps;
 }
 
 // any type is because we don't want to call useObjectRef because this is an internal component and we know
 // we are always passing an object ref
 function ForwardSearchAutocompleteInput<T>(props: SearchAutocompleteInputProps<T>, ref: any) {
-  let searchIcon = (
-    <Magnifier data-testid="searchicon" />
-  );
+  let searchIcon = <Magnifier data-testid="searchicon" />;
 
   let {
     icon = searchIcon,
@@ -281,28 +327,19 @@ function ForwardSearchAutocompleteInput<T>(props: SearchAutocompleteInputProps<T
       UNSAFE_className={classNames(
         textfieldStyles,
         'spectrum-Textfield-circleLoader',
-        classNames(
-          styles,
-          'spectrum-InputGroup-input-circleLoader'
-        ),
-        classNames(
-          searchStyles,
-          'spectrum-Search-circleLoader'
-        )
-      )} />
+        classNames(styles, 'spectrum-InputGroup-input-circleLoader'),
+        classNames(searchStyles, 'spectrum-Search-circleLoader')
+      )}
+    />
   );
 
   let clearButton = (
     <ClearButton
       {...clearButtonProps}
       preventFocus
-      UNSAFE_className={
-        classNames(
-          searchStyles,
-          'spectrum-ClearButton'
-        )
-      }
-      isDisabled={isDisabled} />
+      UNSAFE_className={classNames(searchStyles, 'spectrum-ClearButton')}
+      isDisabled={isDisabled}
+    />
   );
 
   let isLoading = loadingState === 'loading' || loadingState === 'filtering';
@@ -340,7 +377,7 @@ function ForwardSearchAutocompleteInput<T>(props: SearchAutocompleteInputProps<T
   }
 
   return (
-    (<FocusRing
+    <FocusRing
       within
       isTextInput
       focusClass={classNames(styles, 'is-focused')}
@@ -350,70 +387,66 @@ function ForwardSearchAutocompleteInput<T>(props: SearchAutocompleteInputProps<T
         {...hoverProps}
         ref={ref as RefObject<HTMLDivElement | null>}
         style={style}
-        className={
-          classNames(
-            styles,
-            'spectrum-InputGroup',
-            {
-              'spectrum-InputGroup--quiet': isQuiet,
-              'is-disabled': isDisabled,
-              'spectrum-InputGroup--invalid': validationState === 'invalid' && !isDisabled,
-              'is-hovered': isHovered
-            },
-            classNames(
-              searchAutocompleteStyles,
-              'searchautocomplete'
-            ),
-            className
-          )
-        }>
+        className={classNames(
+          styles,
+          'spectrum-InputGroup',
+          {
+            'spectrum-InputGroup--quiet': isQuiet,
+            'is-disabled': isDisabled,
+            'spectrum-InputGroup--invalid': validationState === 'invalid' && !isDisabled,
+            'is-hovered': isHovered
+          },
+          classNames(searchAutocompleteStyles, 'searchautocomplete'),
+          className
+        )}>
         <TextFieldBase
           {...domProps}
           inputProps={inputProps}
           inputRef={inputRef}
-          UNSAFE_className={
-            classNames(
-              searchStyles,
-              'spectrum-Search',
-              'spectrum-Search--loadable',
-              'spectrum-Textfield',
-              {
-                'is-disabled': isDisabled,
-                'is-quiet': isQuiet,
-                'spectrum-Search--invalid': validationState === 'invalid' && !isDisabled,
-                'spectrum-Search--valid': validationState === 'valid' && !isDisabled
-              },
-              classNames(
-                styles,
-                'spectrum-InputGroup-field'
-              )
-            )
-          }
+          UNSAFE_className={classNames(
+            searchStyles,
+            'spectrum-Search',
+            'spectrum-Search--loadable',
+            'spectrum-Textfield',
+            {
+              'is-disabled': isDisabled,
+              'is-quiet': isQuiet,
+              'spectrum-Search--invalid': validationState === 'invalid' && !isDisabled,
+              'spectrum-Search--valid': validationState === 'valid' && !isDisabled
+            },
+            classNames(styles, 'spectrum-InputGroup-field')
+          )}
           inputClassName={classNames(searchStyles, 'spectrum-Search-input')}
-          validationIconClassName={
-            classNames(
-              searchStyles,
-              'spectrum-Search-validationIcon'
-            )
-          }
+          validationIconClassName={classNames(searchStyles, 'spectrum-Search-validationIcon')}
           isDisabled={isDisabled}
           isQuiet={isQuiet}
           validationState={validationState}
-          isLoading={showLoading && (isOpen || menuTrigger === 'manual' || loadingState === 'loading')}
+          isLoading={
+            showLoading && (isOpen || menuTrigger === 'manual' || loadingState === 'loading')
+          }
           loadingIndicator={loadingState != null ? loadingCircle : undefined}
           icon={icon}
-          wrapperChildren={(inputValue !== '' || loadingState === 'filtering' || validationState != null) && !isReadOnly ? clearButton : undefined}
-          disableFocusRing />
+          wrapperChildren={
+            (inputValue !== '' || loadingState === 'filtering' || validationState != null) &&
+            !isReadOnly
+              ? clearButton
+              : undefined
+          }
+          disableFocusRing
+        />
       </div>
-    </FocusRing>)
+    </FocusRing>
   );
 }
 
-let SearchAutocompleteInput = React.forwardRef(ForwardSearchAutocompleteInput) as <T>(props: SearchAutocompleteInputProps<T> & {ref?: any}) => ReactElement;
-
+let SearchAutocompleteInput = React.forwardRef(ForwardSearchAutocompleteInput) as <T>(
+  props: SearchAutocompleteInputProps<T> & {ref?: any}
+) => ReactElement;
 
 /**
  * A SearchAutocomplete is a searchfield that supports a dynamic list of suggestions.
  */
-let ForwardSearchAutocomplete = forwardRef(SearchAutocomplete) as <T>(props: SpectrumSearchAutocompleteProps<T> & {ref?: FocusableRef<HTMLElement>}) => ReactElement;
+let ForwardSearchAutocomplete = forwardRef(SearchAutocomplete) as <T>(
+  props: SpectrumSearchAutocompleteProps<T> & {ref?: FocusableRef<HTMLElement>}
+) => ReactElement;
 export {ForwardSearchAutocomplete as SearchAutocomplete};

@@ -33,16 +33,16 @@ import {useStyleProps} from '../utils/styleProps';
 import {useToast} from 'react-aria/useToast';
 
 export interface SpectrumToastValue extends DOMProps {
-  children: string,
-  variant: 'positive' | 'negative' | 'info' | 'neutral',
-  actionLabel?: string,
-  onAction?: () => void,
-  shouldCloseOnAction?: boolean
+  children: string;
+  variant: 'positive' | 'negative' | 'info' | 'neutral';
+  actionLabel?: string;
+  onAction?: () => void;
+  shouldCloseOnAction?: boolean;
 }
 
 export interface SpectrumToastProps {
-  toast: QueuedToast<SpectrumToastValue>,
-  state: ToastState<SpectrumToastValue>
+  toast: QueuedToast<SpectrumToastValue>;
+  state: ToastState<SpectrumToastValue>;
 }
 
 // TODO: express should use filled icons...
@@ -52,28 +52,20 @@ export const ICONS = {
   positive: SuccessMedium
 };
 
-export const Toast = React.forwardRef(function Toast(props: SpectrumToastProps, ref: DOMRef<HTMLDivElement>) {
+export const Toast = React.forwardRef(function Toast(
+  props: SpectrumToastProps,
+  ref: DOMRef<HTMLDivElement>
+) {
   let {
     toast: {
       key,
-      content: {
-        children,
-        variant,
-        actionLabel,
-        onAction,
-        shouldCloseOnAction
-      }
+      content: {children, variant, actionLabel, onAction, shouldCloseOnAction}
     },
     state,
     ...otherProps
   } = props;
   let domRef = useDOMRef(ref);
-  let {
-    closeButtonProps,
-    titleProps,
-    toastProps,
-    contentProps
-  } = useToast(props, state, domRef);
+  let {closeButtonProps, titleProps, toastProps, contentProps} = useToast(props, state, domRef);
   let {styleProps} = useStyleProps(otherProps);
 
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/toast');
@@ -97,27 +89,30 @@ export const Toast = React.forwardRef(function Toast(props: SpectrumToastProps, 
       {...mergeProps(toastProps, focusProps)}
       {...filterDOMProps(props.toast.content)}
       ref={domRef}
-      className={classNames(styles,
+      className={classNames(
+        styles,
         'spectrum-Toast',
         {['spectrum-Toast--' + variant]: variant},
         styleProps.className,
-        classNames(
-          toastContainerStyles,
-          'spectrum-Toast',
-          {'focus-ring': isFocusVisible}
-        )
+        classNames(toastContainerStyles, 'spectrum-Toast', {'focus-ring': isFocusVisible})
       )}>
       <div
         {...contentProps}
         className={classNames(toastContainerStyles, 'spectrum-Toast-contentWrapper')}>
-        {Icon &&
+        {Icon && (
           <Icon
             aria-label={iconLabel}
-            UNSAFE_className={classNames(styles, 'spectrum-Toast-typeIcon')} />
-        }
+            UNSAFE_className={classNames(styles, 'spectrum-Toast-typeIcon')}
+          />
+        )}
         <div className={classNames(styles, 'spectrum-Toast-body')} role="presentation">
-          <div className={classNames(styles, 'spectrum-Toast-content')} role="presentation" {...titleProps}>{children}</div>
-          {actionLabel &&
+          <div
+            className={classNames(styles, 'spectrum-Toast-content')}
+            role="presentation"
+            {...titleProps}>
+            {children}
+          </div>
+          {actionLabel && (
             <Button
               onPress={handleAction}
               UNSAFE_className={classNames(styles, 'spectrum-Button')}
@@ -126,11 +121,14 @@ export const Toast = React.forwardRef(function Toast(props: SpectrumToastProps, 
               data-testid="rsp-Toast-secondaryButton">
               {actionLabel}
             </Button>
-          }
+          )}
         </div>
       </div>
       <div className={classNames(styles, 'spectrum-Toast-buttons')}>
-        <ClearButton {...closeButtonProps} variant="overBackground" data-testid="rsp-Toast-closeButton">
+        <ClearButton
+          {...closeButtonProps}
+          variant="overBackground"
+          data-testid="rsp-Toast-closeButton">
           <CrossMedium />
         </ClearButton>
       </div>

@@ -22,25 +22,29 @@ import {useLocale} from 'react-aria/I18nProvider';
 import {useProviderProps} from '../provider/Provider';
 import {useRangeCalendarState} from 'react-stately/useRangeCalendarState';
 
-export interface SpectrumRangeCalendarProps<T extends DateValue> extends AriaRangeCalendarProps<T>, StyleProps {
+export interface SpectrumRangeCalendarProps<T extends DateValue>
+  extends AriaRangeCalendarProps<T>, StyleProps {
   /**
    * The number of months to display at once. Up to 3 months are supported.
    * @default 1
    */
-  visibleMonths?: number,
+  visibleMonths?: number;
 
   /**
    * A function to create a new [Calendar](https://react-spectrum.adobe.com/internationalized/date/Calendar.html)
    * object for a given calendar identifier. If not provided, the `createCalendar` function
    * from `@internationalized/date` will be used.
    */
-  createCalendar?: (identifier: CalendarIdentifier) => ICalendar
+  createCalendar?: (identifier: CalendarIdentifier) => ICalendar;
 }
 
 /**
  * RangeCalendars display a grid of days in one or more months and allow users to select a contiguous range of dates.
  */
-export const RangeCalendar = React.forwardRef(function RangeCalendar<T extends DateValue>(props: SpectrumRangeCalendarProps<T>, ref: FocusableRef<HTMLElement>) {
+export const RangeCalendar = React.forwardRef(function RangeCalendar<T extends DateValue>(
+  props: SpectrumRangeCalendarProps<T>,
+  ref: FocusableRef<HTMLElement>
+) {
   props = useProviderProps(props);
   let {visibleMonths = 1} = props;
   visibleMonths = Math.max(visibleMonths, 1);
@@ -61,7 +65,11 @@ export const RangeCalendar = React.forwardRef(function RangeCalendar<T extends D
     }
   }));
 
-  let {calendarProps, prevButtonProps, nextButtonProps, errorMessageProps} = useRangeCalendar(props, state, domRef);
+  let {calendarProps, prevButtonProps, nextButtonProps, errorMessageProps} = useRangeCalendar(
+    props,
+    state,
+    domRef
+  );
 
   return (
     <CalendarBase
@@ -72,6 +80,9 @@ export const RangeCalendar = React.forwardRef(function RangeCalendar<T extends D
       calendarProps={calendarProps}
       prevButtonProps={prevButtonProps}
       nextButtonProps={nextButtonProps}
-      errorMessageProps={errorMessageProps} />
+      errorMessageProps={errorMessageProps}
+    />
   );
-}) as <T extends DateValue>(props: SpectrumRangeCalendarProps<T> & {ref?: FocusableRef<HTMLElement>}) => ReactElement;
+}) as <T extends DateValue>(
+  props: SpectrumRangeCalendarProps<T> & {ref?: FocusableRef<HTMLElement>}
+) => ReactElement;

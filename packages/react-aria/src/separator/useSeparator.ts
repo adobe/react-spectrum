@@ -18,14 +18,14 @@ export interface SeparatorProps extends DOMProps, AriaLabelingProps {
    * The orientation of the separator.
    * @default 'horizontal'
    */
-  orientation?: Orientation,
+  orientation?: Orientation;
   /** The HTML element type that will be used to render the separator. */
-  elementType?: string
+  elementType?: string;
 }
 
 export interface SeparatorAria {
   /** Props for the separator element. */
-  separatorProps: DOMAttributes
+  separatorProps: DOMAttributes;
 }
 
 /**

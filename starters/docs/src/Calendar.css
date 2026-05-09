@@ -1,5 +1,5 @@
-@import "./theme.css";
-@import "./utilities.css";
+@import './theme.css';
+@import './utilities.css';
 
 .react-aria-Calendar {
   display: flex;
@@ -40,12 +40,11 @@
     border-spacing: 0;
   }
 
-  [slot=errorMessage] {
+  [slot='errorMessage'] {
     font: var(--font-size-sm) system-ui;
     color: var(--invalid-color);
   }
 }
-
 
 .react-aria-CalendarHeaderCell {
   font-size: var(--font-size-sm);

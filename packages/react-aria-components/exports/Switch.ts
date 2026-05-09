@@ -15,7 +15,14 @@
 import 'client-only';
 
 export {Switch, SwitchField, SwitchButton, SwitchContext} from '../src/Switch';
-export type {SwitchProps, SwitchFieldProps, SwitchButtonProps, SwitchRenderProps, SwitchFieldRenderProps, SwitchButtonRenderProps} from '../src/Switch';
+export type {
+  SwitchProps,
+  SwitchFieldProps,
+  SwitchButtonProps,
+  SwitchRenderProps,
+  SwitchFieldRenderProps,
+  SwitchButtonRenderProps
+} from '../src/Switch';
 export type {ToggleState} from 'react-stately/useToggleState';
 
 export {Text} from '../src/Text';

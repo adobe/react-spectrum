@@ -14,10 +14,13 @@ import {testSSR} from '@react-spectrum/test-utils-internal';
 
 describe('SearchField SSR', function () {
   it('should render without errors', async function () {
-    await testSSR(__filename, `
+    await testSSR(
+      __filename,
+      `
       import {SearchField} from '../../exports/index.ts';
 
       <SearchField label="search" />
-    `);
+    `
+    );
   });
 });

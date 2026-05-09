@@ -17,17 +17,17 @@ export const getOwnerWindow = (
  * Type guard that checks if a value is a Node. Verifies the presence and type of the nodeType property.
  */
 function isNode(value: unknown): value is Node {
-  return value !== null &&
+  return (
+    value !== null &&
     typeof value === 'object' &&
     'nodeType' in value &&
-    typeof (value as Node).nodeType === 'number';
+    typeof (value as Node).nodeType === 'number'
+  );
 }
 /**
  * Type guard that checks if a node is a ShadowRoot. Uses nodeType and host property checks to
  * distinguish ShadowRoot from other DocumentFragments.
  */
 export function isShadowRoot(node: Node | null): node is ShadowRoot {
-  return isNode(node) &&
-    node.nodeType === Node.DOCUMENT_FRAGMENT_NODE &&
-    'host' in node;
+  return isNode(node) && node.nodeType === Node.DOCUMENT_FRAGMENT_NODE && 'host' in node;
 }

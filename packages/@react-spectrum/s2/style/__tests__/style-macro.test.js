@@ -125,7 +125,9 @@ describe('style-macro', () => {
 "
 `);
 
-    expect(js).toMatchInlineSnapshot('" _kc131 hc131 mCPFGYc131 lc131 SMBFGYc131 Rv131 ZjUQgKd131 -m_-mc131 -S_-Sv131 -macro-static-uhFF5b"');
+    expect(js).toMatchInlineSnapshot(
+      '" _kc131 hc131 mCPFGYc131 lc131 SMBFGYc131 Rv131 ZjUQgKd131 -m_-mc131 -S_-Sv131 -macro-static-uhFF5b"'
+    );
   });
 
   it('should support allowed overrides', () => {
@@ -161,7 +163,9 @@ describe('style-macro', () => {
 
     expect(js()).toMatchInlineSnapshot('"  -_7PloMd-B131 __Ya131 -macro-dynamic-4f51mn"');
     expect(overrides).toMatchInlineSnapshot('" -_7PloMd-D131 __Ya131 -macro-static-nMoh6b"');
-    expect(js({}, overrides)).toMatchInlineSnapshot('"  -_7PloMd-D131 __Ya131 -macro-dynamic-f33ipt"');
+    expect(js({}, overrides)).toMatchInlineSnapshot(
+      '"  -_7PloMd-D131 __Ya131 -macro-dynamic-f33ipt"'
+    );
   });
 
   it('should support allowed overrides for shorthands', () => {
@@ -178,7 +182,9 @@ describe('style-macro', () => {
 
     expect(js()).toMatchInlineSnapshot('"  Tk131 Qk131 Sk131 Rk131 -macro-dynamic-efgw2h"');
     expect(overrides).toMatchInlineSnapshot('" Tm131 Qm131 Sm131 Rm131 -macro-static-9GxvHb"');
-    expect(js({}, overrides)).toMatchInlineSnapshot('"  Tm131 Qm131 Sm131 Rm131 -macro-dynamic-15z7wbl"');
+    expect(js({}, overrides)).toMatchInlineSnapshot(
+      '"  Tm131 Qm131 Sm131 Rm131 -macro-dynamic-15z7wbl"'
+    );
   });
 
   it('should support allowed overrides for fontSize', () => {
@@ -195,7 +201,9 @@ describe('style-macro', () => {
 
     expect(js()).toMatchInlineSnapshot('"  -_6BNtrc-woabcc131 vx131 -macro-dynamic-zj2kbi"');
     expect(overrides).toMatchInlineSnapshot('" -_6BNtrc-a131 vx131 -macro-static-EPvKFd"');
-    expect(js({}, overrides)).toMatchInlineSnapshot('"  -_6BNtrc-a131 vx131 -macro-dynamic-jkg234"');
+    expect(js({}, overrides)).toMatchInlineSnapshot(
+      '"  -_6BNtrc-a131 vx131 -macro-dynamic-jkg234"'
+    );
   });
 
   it("should support allowed overrides for values that aren't defined", () => {
@@ -312,7 +320,9 @@ describe('style-macro', () => {
     expect(js({})).toMatchInlineSnapshot('"  gH131 -macro-dynamic-43fbrn"');
     expect(js({isHovered: true})).toMatchInlineSnapshot('"  gF131 -macro-dynamic-1tkkitt"');
     expect(js({isSelected: true})).toMatchInlineSnapshot('"  g_h131 -macro-dynamic-zzf86q"');
-    expect(js({isSelected: true, isHovered: true})).toMatchInlineSnapshot('"  g3131 -macro-dynamic-19tzf3y"');
+    expect(js({isSelected: true, isHovered: true})).toMatchInlineSnapshot(
+      '"  g3131 -macro-dynamic-19tzf3y"'
+    );
   });
 
   it('should support variant runtime conditions', () => {
@@ -380,7 +390,9 @@ describe('style-macro', () => {
     // forcedColors.default should apply when variant=highlight but !isSelected
     expect(css).toContain('ButtonText');
     expect(js({variant: 'highlight'})).toMatchInlineSnapshot('"  plb131 -macro-dynamic-a7vfaa"');
-    expect(js({variant: 'highlight', isSelected: true})).toMatchInlineSnapshot('"  ple131 -macro-dynamic-ojtpnp"');
+    expect(js({variant: 'highlight', isSelected: true})).toMatchInlineSnapshot(
+      '"  ple131 -macro-dynamic-ojtpnp"'
+    );
   });
 
   it('should expand shorthand properties to longhands', () => {

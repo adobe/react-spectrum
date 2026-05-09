@@ -18,40 +18,40 @@ export interface ToggleStateOptions extends InputBase {
   /**
    * Whether the element should be selected (uncontrolled).
    */
-  defaultSelected?: boolean,
+  defaultSelected?: boolean;
   /**
    * Whether the element should be selected (controlled).
    */
-  isSelected?: boolean,
+  isSelected?: boolean;
   /**
    * Handler that is called when the element's selection state changes.
    */
-  onChange?: (isSelected: boolean) => void
+  onChange?: (isSelected: boolean) => void;
 }
 
 export interface ToggleProps extends ToggleStateOptions, Validation<boolean>, FocusableProps {
   /**
    * The label for the element.
    */
-  children?: ReactNode,
+  children?: ReactNode;
   /**
    * The value of the input element, used when submitting an HTML form. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefvalue).
    */
-  value?: string
+  value?: string;
 }
 
 export interface ToggleState {
   /** Whether the toggle is selected. */
-  readonly isSelected: boolean,
+  readonly isSelected: boolean;
 
   /** Whether the toggle is selected by default. */
-  readonly defaultSelected: boolean,
+  readonly defaultSelected: boolean;
 
   /** Updates selection state. */
-  setSelected(isSelected: boolean): void,
+  setSelected(isSelected: boolean): void;
 
   /** Toggle the selection state. */
-  toggle(): void
+  toggle(): void;
 }
 
 /**
@@ -62,7 +62,11 @@ export function useToggleState(props: ToggleStateOptions = {}): ToggleState {
 
   // have to provide an empty function so useControlledState doesn't throw a fit
   // can't use useControlledState's prop calling because we need the event object from the change
-  let [isSelected, setSelected] = useControlledState(props.isSelected, props.defaultSelected || false, props.onChange);
+  let [isSelected, setSelected] = useControlledState(
+    props.isSelected,
+    props.defaultSelected || false,
+    props.onChange
+  );
   let [initialValue] = useState(isSelected);
 
   function updateSelected(value) {

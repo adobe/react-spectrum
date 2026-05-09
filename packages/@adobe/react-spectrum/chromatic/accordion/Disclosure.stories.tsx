@@ -10,7 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {Disclosure, DisclosurePanel, DisclosureTitle, SpectrumDisclosureProps} from '../../src/accordion/Accordion';
+import {
+  Disclosure,
+  DisclosurePanel,
+  DisclosureTitle,
+  SpectrumDisclosureProps
+} from '../../src/accordion/Accordion';
 import {Meta, StoryObj} from '@storybook/react';
 import React, {JSX} from 'react';
 
@@ -26,38 +31,33 @@ export type DisclosureStory = StoryObj<SpectrumDisclosureProps>;
 
 export const Template = (args: SpectrumDisclosureProps): JSX.Element => (
   <Disclosure {...args}>
-    <DisclosureTitle>
-      Your files
-    </DisclosureTitle>
-    <DisclosurePanel>
-      files
-    </DisclosurePanel>
+    <DisclosureTitle>Your files</DisclosureTitle>
+    <DisclosurePanel>files</DisclosurePanel>
   </Disclosure>
 );
 
 export const Default: DisclosureStory = {
-  render: (args) => <Template {...args} />
+  render: args => <Template {...args} />
 };
 
 export const Disabled: DisclosureStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   args: {isDisabled: true}
 };
 
 export const Quiet: DisclosureStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   args: {isQuiet: true}
 };
 
 export const WrappingTitle: DisclosureStory = {
-  render: (args) => (
+  render: args => (
     <Disclosure maxWidth="size-3000" {...args}>
       <DisclosureTitle>
-        Long long long long long long long long long long long long long  long long long wrapping title
+        Long long long long long long long long long long long long long long long long wrapping
+        title
       </DisclosureTitle>
-      <DisclosurePanel>
-        Files content
-      </DisclosurePanel>
+      <DisclosurePanel>Files content</DisclosurePanel>
     </Disclosure>
   )
 };

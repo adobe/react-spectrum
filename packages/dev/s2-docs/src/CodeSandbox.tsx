@@ -29,9 +29,11 @@ export function createCodeSandbox(
   input.type = 'hidden';
   input.name = 'parameters';
 
-  input.value = LZString.compressToBase64(JSON.stringify({
-    files: getCodeSandboxFiles(files, deps, type, entry)
-  }));
+  input.value = LZString.compressToBase64(
+    JSON.stringify({
+      files: getCodeSandboxFiles(files, deps, type, entry)
+    })
+  );
   form.appendChild(input);
 
   document.body.appendChild(form);
@@ -51,7 +53,7 @@ const devDependencies = {
     '@types/react-dom': '^19',
     parcel: '^2',
     typescript: '^5',
-    'tailwindcss': '^4',
+    tailwindcss: '^4',
     '@tailwindcss/postcss': '^4',
     postcss: '^8',
     'tailwindcss-react-aria-components': '^2',
@@ -74,61 +76,84 @@ export function getCodeSandboxFiles(
   let entryName = entry.split('/').pop()!.split('.')[0];
   return {
     '.codesandbox/tasks.json': {
-      content: JSON.stringify({
-        setupTasks: [
+      content:
+        JSON.stringify(
           {
-            name: 'Installing Dependencies',
-            command: 'pnpm install'
-          }
-        ],
-        tasks: {
-          start: {
-            name: 'start',
-            command: 'pnpm start',
-            runAtStart: true,
-            preview: {
-              port: 5173
+            setupTasks: [
+              {
+                name: 'Installing Dependencies',
+                command: 'pnpm install'
+              }
+            ],
+            tasks: {
+              start: {
+                name: 'start',
+                command: 'pnpm start',
+                runAtStart: true,
+                preview: {
+                  port: 5173
+                }
+              },
+              build: {
+                name: 'build',
+                command: 'pnpm build',
+                runAtStart: false
+              }
             }
           },
-          build: {
-            name: 'build',
-            command: 'pnpm build',
-            runAtStart: false
-          }
-        }
-      }, null, 2) + '\n'
+          null,
+          2
+        ) + '\n'
     },
     '.devcontainer/devcontainer.json': {
-      content: JSON.stringify({
-        'name': 'Devcontainer',
-        'image': 'ghcr.io/codesandbox/devcontainers/typescript-node:latest'
-      }, null, 2) + '\n'
+      content:
+        JSON.stringify(
+          {
+            name: 'Devcontainer',
+            image: 'ghcr.io/codesandbox/devcontainers/typescript-node:latest'
+          },
+          null,
+          2
+        ) + '\n'
     },
     'package.json': {
-      content: JSON.stringify({
-        name: type === 's2' ? 's2-starter' : 'react-aria-starter',
-        private: true,
-        version: '0.0.0',
-        source: 'src/index.html',
-        scripts: {
-          start: 'parcel',
-          build: 'parcel build'
-        },
-        dependencies: {
-          react: '^19',
-          'react-dom': '^19',
-          ...deps
-        },
-        devDependencies: devDependencies[type]
-      }, null, 2) + '\n'
+      content:
+        JSON.stringify(
+          {
+            name: type === 's2' ? 's2-starter' : 'react-aria-starter',
+            private: true,
+            version: '0.0.0',
+            source: 'src/index.html',
+            scripts: {
+              start: 'parcel',
+              build: 'parcel build'
+            },
+            dependencies: {
+              react: '^19',
+              'react-dom': '^19',
+              ...deps
+            },
+            devDependencies: devDependencies[type]
+          },
+          null,
+          2
+        ) + '\n'
     },
-    '.postcssrc': type === 'tailwind' ? {
-      content: JSON.stringify({
-        plugins: {
-          '@tailwindcss/postcss': {}
-        }
-      }, null, 2) + '\n'
-    } : undefined,
+    '.postcssrc':
+      type === 'tailwind'
+        ? {
+            content:
+              JSON.stringify(
+                {
+                  plugins: {
+                    '@tailwindcss/postcss': {}
+                  }
+                },
+                null,
+                2
+              ) + '\n'
+          }
+        : undefined,
     'src/index.html': {
       content: `<!doctype html>
 <html lang="en">
@@ -152,19 +177,26 @@ createRoot(document.getElementById('root')!).render(<${entryName} />);
 `
     },
     'tsconfig.json': {
-      content: JSON.stringify({
-        compilerOptions: {
-          'target': 'ES2022',
-          'lib': ['ES2022', 'DOM', 'DOM.Iterable'],
-          'module': 'ESNext',
-          strict: true,
-          'moduleResolution': 'bundler',
-          'noEmit': true,
-          'jsx': 'react-jsx'
-        },
-        'include': ['src']
-      }, null, 2) + '\n'
+      content:
+        JSON.stringify(
+          {
+            compilerOptions: {
+              target: 'ES2022',
+              lib: ['ES2022', 'DOM', 'DOM.Iterable'],
+              module: 'ESNext',
+              strict: true,
+              moduleResolution: 'bundler',
+              noEmit: true,
+              jsx: 'react-jsx'
+            },
+            include: ['src']
+          },
+          null,
+          2
+        ) + '\n'
     },
-    ...Object.fromEntries(Object.entries(files).map(([name, file]) => ['src/' + name, {content: file.contents}]))
+    ...Object.fromEntries(
+      Object.entries(files).map(([name, file]) => ['src/' + name, {content: file.contents}])
+    )
   };
 }

@@ -7,7 +7,11 @@ export function BackgroundColorsDisclosure() {
     <Disclosure isQuiet>
       <DisclosureTitle>Background colors</DisclosureTitle>
       <DisclosurePanel>
-        <p>The backgroundColor property supports the following values, in addition to the semantic and global colors. These colors are specifically chosen to be used as backgrounds, so prefer them over global colors where possible.</p>
+        <p>
+          The backgroundColor property supports the following values, in addition to the semantic
+          and global colors. These colors are specifically chosen to be used as backgrounds, so
+          prefer them over global colors where possible.
+        </p>
         <div className="sb-unstyled" style={{columnWidth: 120}}>
           <Color name="base" className={colorSwatch('base')} />
           <Color name="layer-1" className={colorSwatch('layer-1')} />
@@ -77,7 +81,11 @@ export function TextColorsDisclosure() {
     <Disclosure isQuiet>
       <DisclosureTitle>Text colors</DisclosureTitle>
       <DisclosurePanel>
-        <p>The color property supports the following values, in addition to the semantic and global colors. These colors are specifically chosen to be used as text colors, so prefer them over global colors where possible.</p>
+        <p>
+          The color property supports the following values, in addition to the semantic and global
+          colors. These colors are specifically chosen to be used as text colors, so prefer them
+          over global colors where possible.
+        </p>
         <div className="sb-unstyled" style={{columnWidth: 120}}>
           <Color name="accent" className={colorSwatch('accent', 'color')} />
           <Color name="neutral" className={colorSwatch('neutral', 'color')} />
@@ -100,7 +108,10 @@ export function SemanticColorsDisclosure() {
     <Disclosure isQuiet>
       <DisclosureTitle>Semantic colors</DisclosureTitle>
       <DisclosurePanel>
-        <p>The following values are available across all color properties. Prefer to use semantic colors over global colors when they represent a specific meaning.</p>
+        <p>
+          The following values are available across all color properties. Prefer to use semantic
+          colors over global colors when they represent a specific meaning.
+        </p>
         <div className="sb-unstyled" style={{columnWidth: 120}}>
           <ColorScale scale={getColorScale('accent-color')} />
           <ColorScale scale={getColorScale('informative-color')} />
@@ -182,16 +193,46 @@ export function TransparentColorsDisclosure() {
           <Color name="transparent-overlay-25" className={colorSwatch('transparent-overlay-25')} />
           <Color name="transparent-overlay-50" className={colorSwatch('transparent-overlay-50')} />
           <Color name="transparent-overlay-75" className={colorSwatch('transparent-overlay-75')} />
-          <Color name="transparent-overlay-100" className={colorSwatch('transparent-overlay-100')} />
-          <Color name="transparent-overlay-200" className={colorSwatch('transparent-overlay-200')} />
-          <Color name="transparent-overlay-300" className={colorSwatch('transparent-overlay-300')} />
-          <Color name="transparent-overlay-400" className={colorSwatch('transparent-overlay-400')} />
-          <Color name="transparent-overlay-500" className={colorSwatch('transparent-overlay-500')} />
-          <Color name="transparent-overlay-600" className={colorSwatch('transparent-overlay-600')} />
-          <Color name="transparent-overlay-700" className={colorSwatch('transparent-overlay-700')} />
-          <Color name="transparent-overlay-800" className={colorSwatch('transparent-overlay-800')} />
-          <Color name="transparent-overlay-900" className={colorSwatch('transparent-overlay-900')} />
-          <Color name="transparent-overlay-1000" className={colorSwatch('transparent-overlay-1000')} />
+          <Color
+            name="transparent-overlay-100"
+            className={colorSwatch('transparent-overlay-100')}
+          />
+          <Color
+            name="transparent-overlay-200"
+            className={colorSwatch('transparent-overlay-200')}
+          />
+          <Color
+            name="transparent-overlay-300"
+            className={colorSwatch('transparent-overlay-300')}
+          />
+          <Color
+            name="transparent-overlay-400"
+            className={colorSwatch('transparent-overlay-400')}
+          />
+          <Color
+            name="transparent-overlay-500"
+            className={colorSwatch('transparent-overlay-500')}
+          />
+          <Color
+            name="transparent-overlay-600"
+            className={colorSwatch('transparent-overlay-600')}
+          />
+          <Color
+            name="transparent-overlay-700"
+            className={colorSwatch('transparent-overlay-700')}
+          />
+          <Color
+            name="transparent-overlay-800"
+            className={colorSwatch('transparent-overlay-800')}
+          />
+          <Color
+            name="transparent-overlay-900"
+            className={colorSwatch('transparent-overlay-900')}
+          />
+          <Color
+            name="transparent-overlay-1000"
+            className={colorSwatch('transparent-overlay-1000')}
+          />
         </div>
       </DisclosurePanel>
     </Disclosure>
@@ -204,17 +245,47 @@ export function HCMColorsDisclosure() {
       <DisclosureTitle>High contrast mode colors</DisclosureTitle>
       <DisclosurePanel>
         <p>These colors map to system colors when forced colors mode is active.</p>
-        <ul className={style({marginStart: 24, marginTop: 8, display: 'flex', flexDirection: 'column', gap: 12, paddingStart: 0})}>
-          <li className={style({font: 'body'})}><code className={style({font: {default: 'code-xs', lg: 'code-sm'}})}>Background</code></li>
-          <li className={style({font: 'body'})}><code className={style({font: {default: 'code-xs', lg: 'code-sm'}})}>ButtonBorder</code></li>
-          <li className={style({font: 'body'})}><code className={style({font: {default: 'code-xs', lg: 'code-sm'}})}>ButtonFace</code></li>
-          <li className={style({font: 'body'})}><code className={style({font: {default: 'code-xs', lg: 'code-sm'}})}>ButtonText</code></li>
-          <li className={style({font: 'body'})}><code className={style({font: {default: 'code-xs', lg: 'code-sm'}})}>Field</code></li>
-          <li className={style({font: 'body'})}><code className={style({font: {default: 'code-xs', lg: 'code-sm'}})}>Highlight</code></li>
-          <li className={style({font: 'body'})}><code className={style({font: {default: 'code-xs', lg: 'code-sm'}})}>HighlightText</code></li>
-          <li className={style({font: 'body'})}><code className={style({font: {default: 'code-xs', lg: 'code-sm'}})}>GrayText</code></li>
-          <li className={style({font: 'body'})}><code className={style({font: {default: 'code-xs', lg: 'code-sm'}})}>Mark</code></li>
-          <li className={style({font: 'body'})}><code className={style({font: {default: 'code-xs', lg: 'code-sm'}})}>LinkText</code></li>
+        <ul
+          className={style({
+            marginStart: 24,
+            marginTop: 8,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 12,
+            paddingStart: 0
+          })}>
+          <li className={style({font: 'body'})}>
+            <code className={style({font: {default: 'code-xs', lg: 'code-sm'}})}>Background</code>
+          </li>
+          <li className={style({font: 'body'})}>
+            <code className={style({font: {default: 'code-xs', lg: 'code-sm'}})}>ButtonBorder</code>
+          </li>
+          <li className={style({font: 'body'})}>
+            <code className={style({font: {default: 'code-xs', lg: 'code-sm'}})}>ButtonFace</code>
+          </li>
+          <li className={style({font: 'body'})}>
+            <code className={style({font: {default: 'code-xs', lg: 'code-sm'}})}>ButtonText</code>
+          </li>
+          <li className={style({font: 'body'})}>
+            <code className={style({font: {default: 'code-xs', lg: 'code-sm'}})}>Field</code>
+          </li>
+          <li className={style({font: 'body'})}>
+            <code className={style({font: {default: 'code-xs', lg: 'code-sm'}})}>Highlight</code>
+          </li>
+          <li className={style({font: 'body'})}>
+            <code className={style({font: {default: 'code-xs', lg: 'code-sm'}})}>
+              HighlightText
+            </code>
+          </li>
+          <li className={style({font: 'body'})}>
+            <code className={style({font: {default: 'code-xs', lg: 'code-sm'}})}>GrayText</code>
+          </li>
+          <li className={style({font: 'body'})}>
+            <code className={style({font: {default: 'code-xs', lg: 'code-sm'}})}>Mark</code>
+          </li>
+          <li className={style({font: 'body'})}>
+            <code className={style({font: {default: 'code-xs', lg: 'code-sm'}})}>LinkText</code>
+          </li>
         </ul>
       </DisclosurePanel>
     </Disclosure>
@@ -222,14 +293,20 @@ export function HCMColorsDisclosure() {
 }
 
 function ColorScale({scale}) {
-  return scale.map(([name, className]) => (
-    <Color key={name} name={name} className={className} />
-  ));
+  return scale.map(([name, className]) => <Color key={name} name={name} className={className} />);
 }
 
 export function Color({name, className}) {
   return (
-    <div className={style({display: 'flex', gap: 8, marginBottom: 4, font: 'ui', alignItems: 'center', breakInside: 'avoid'})}>
+    <div
+      className={style({
+        display: 'flex',
+        gap: 8,
+        marginBottom: 4,
+        font: 'ui',
+        alignItems: 'center',
+        breakInside: 'avoid'
+      })}>
       <div className={typeof className === 'function' ? className({}) : className} />
       <div className="sb-unstyled">{name}</div>
     </div>

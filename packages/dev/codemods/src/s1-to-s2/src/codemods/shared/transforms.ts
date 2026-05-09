@@ -18,23 +18,25 @@ export function updatePropNameAndValue(
   path: NodePath<t.JSXElement>,
   options: {
     /** Prop name to replace. */
-    oldPropName: string,
+    oldPropName: string;
     /** Prop value to replace. */
-    oldPropValue: ReactNode,
+    oldPropValue: ReactNode;
     /** Updated prop name. */
-    newPropName: string,
+    newPropName: string;
     /** Updated prop value. */
-    newPropValue: ReactNode
+    newPropValue: ReactNode;
   }
 ): void {
   const {oldPropName, oldPropValue, newPropName, newPropValue} = options;
 
-  let attrPath = path.get('openingElement').get('attributes').find((attr) => t.isJSXAttribute(attr.node) && attr.node.name.name === oldPropName) as NodePath<t.JSXAttribute>;
+  let attrPath = path
+    .get('openingElement')
+    .get('attributes')
+    .find(
+      attr => t.isJSXAttribute(attr.node) && attr.node.name.name === oldPropName
+    ) as NodePath<t.JSXAttribute>;
   if (attrPath && t.isJSXAttribute(attrPath.node) && attrPath.node.name.name === oldPropName) {
-    if (
-      t.isStringLiteral(attrPath.node.value) &&
-      attrPath.node.value.value === oldPropValue
-    ) {
+    if (t.isStringLiteral(attrPath.node.value) && attrPath.node.value.value === oldPropValue) {
       // Update old prop name to new prop name
       attrPath.node.name.name = newPropName;
 
@@ -50,19 +52,25 @@ export function updatePropNameAndValue(
       }
     } else if (t.isJSXExpressionContainer(attrPath.node.value)) {
       if (t.isIdentifier(attrPath.node.value.expression)) {
-        // @ts-ignore
-        if (attrPath.node.comments && [...attrPath.node.comments].some((comment) => comment.value.includes('could not be automatically'))) {
+        if (
+          // @ts-ignore
+          attrPath.node.comments &&
+          // @ts-ignore
+          [...attrPath.node.comments].some(comment =>
+            comment.value.includes('could not be automatically')
+          )
+        ) {
           return;
         }
-        addComment(attrPath.node, ` TODO(S2-upgrade): Prop ${oldPropName} could not be automatically updated because ${attrPath.node.value.expression.name} could not be followed.`);
+        addComment(
+          attrPath.node,
+          ` TODO(S2-upgrade): Prop ${oldPropName} could not be automatically updated because ${attrPath.node.value.expression.name} could not be followed.`
+        );
       } else {
         // If prop value is an expression, traverse to find a string literal that matches the old and replace it with the new value
         attrPath.traverse({
           StringLiteral(stringPath) {
-            if (
-              t.isStringLiteral(stringPath.node) &&
-              stringPath.node.value === oldPropValue
-            ) {
+            if (t.isStringLiteral(stringPath.node) && stringPath.node.value === oldPropValue) {
               // Update old prop name to new prop name
               attrPath.node.name.name = newPropName;
 
@@ -93,17 +101,17 @@ export function updatePropValueAndAddNewPropName(
   path: NodePath<t.JSXElement>,
   options: {
     /** Prop name to replace. */
-    oldPropName: string,
+    oldPropName: string;
     /** Prop value to replace. */
-    oldPropValue: ReactNode,
+    oldPropValue: ReactNode;
     /** Updated prop name. */
-    newPropName: string,
+    newPropName: string;
     /** Updated prop value. */
-    newPropValue: ReactNode,
+    newPropValue: ReactNode;
     /** Additional new prop name to add. */
-    additionalPropName: string,
+    additionalPropName: string;
     /** Additional new prop value to use. */
-    additionalPropValue: string
+    additionalPropValue: string;
   }
 ): void {
   const {
@@ -115,8 +123,17 @@ export function updatePropValueAndAddNewPropName(
     additionalPropValue
   } = options;
 
-  let attrPath = path.get('openingElement').get('attributes').find((attr) => t.isJSXAttribute(attr.node) && attr.node.name.name === oldPropName) as NodePath<t.JSXAttribute>;
-  if (attrPath && t.isStringLiteral(attrPath.node.value) && attrPath.node.value.value === oldPropValue) {
+  let attrPath = path
+    .get('openingElement')
+    .get('attributes')
+    .find(
+      attr => t.isJSXAttribute(attr.node) && attr.node.name.name === oldPropName
+    ) as NodePath<t.JSXAttribute>;
+  if (
+    attrPath &&
+    t.isStringLiteral(attrPath.node.value) &&
+    attrPath.node.value.value === oldPropValue
+  ) {
     // Update old prop name to new prop name
     attrPath.node.name.name = newPropName;
 
@@ -129,17 +146,17 @@ export function updatePropValueAndAddNewPropName(
 
     if (additionalPropName && additionalPropValue) {
       attrPath.insertAfter(
-        t.jsxAttribute(t.jsxIdentifier(additionalPropName), t.stringLiteral(additionalPropValue as string))
+        t.jsxAttribute(
+          t.jsxIdentifier(additionalPropName),
+          t.stringLiteral(additionalPropValue as string)
+        )
       );
     }
   } else if (attrPath && t.isJSXExpressionContainer(attrPath.node.value)) {
     // If prop value is an expression, traverse to find a string literal that matches the old and replace it with the new value
     attrPath.traverse({
       StringLiteral(stringPath) {
-        if (
-          t.isStringLiteral(stringPath.node) &&
-          stringPath.node.value === oldPropValue
-        ) {
+        if (t.isStringLiteral(stringPath.node) && stringPath.node.value === oldPropValue) {
           // Update old prop name to new prop name
           attrPath.node.name.name = newPropName;
 
@@ -151,7 +168,10 @@ export function updatePropValueAndAddNewPropName(
 
           if (additionalPropName && additionalPropValue) {
             attrPath.insertAfter(
-              t.jsxAttribute(t.jsxIdentifier(additionalPropName), t.stringLiteral(additionalPropValue as string))
+              t.jsxAttribute(
+                t.jsxIdentifier(additionalPropName),
+                t.stringLiteral(additionalPropValue as string)
+              )
             );
           }
         }
@@ -170,16 +190,21 @@ export function updatePropName(
   path: NodePath<t.JSXElement>,
   options: {
     /** Prop name to replace. */
-    oldPropName: string,
+    oldPropName: string;
     /** Updated prop name. */
-    newPropName: string,
+    newPropName: string;
     /** Optional string to add to component if prop name is replaced. */
-    comment?: string
+    comment?: string;
   }
 ): void {
   const {oldPropName, newPropName, comment} = options;
 
-  let attrPath = path.get('openingElement').get('attributes').find((attr) => t.isJSXAttribute(attr.node) && attr.node.name.name === oldPropName) as NodePath<t.JSXAttribute>;
+  let attrPath = path
+    .get('openingElement')
+    .get('attributes')
+    .find(
+      attr => t.isJSXAttribute(attr.node) && attr.node.name.name === oldPropName
+    ) as NodePath<t.JSXAttribute>;
   if (attrPath && t.isJSXAttribute(attrPath.node) && attrPath.node.name.name === oldPropName) {
     attrPath.node.name.name = newPropName;
     if (comment) {
@@ -198,38 +223,50 @@ export function removeProp(
   path: NodePath<t.JSXElement>,
   options: {
     /** Prop name to remove. */
-    propName: string,
+    propName: string;
     /** If provided, prop will only be removed if set to this value. */
-    propValue?: string
+    propValue?: string;
   }
 ): void {
   const {propName, propValue} = options;
 
-  let attrPath = path.get('openingElement').get('attributes').find((attr) => t.isJSXAttribute(attr.node) && attr.node.name.name === propName) as NodePath<t.JSXAttribute>;
+  let attrPath = path
+    .get('openingElement')
+    .get('attributes')
+    .find(
+      attr => t.isJSXAttribute(attr.node) && attr.node.name.name === propName
+    ) as NodePath<t.JSXAttribute>;
   if (attrPath && t.isJSXAttribute(attrPath.node) && attrPath.node.name.name === propName) {
     if (propValue) {
       // If prop value is provided, remove prop only if it matches the value
       if (t.isStringLiteral(attrPath.node.value) && attrPath.node.value.value === propValue) {
         attrPath.remove();
-      } else if (
-        t.isJSXExpressionContainer(attrPath.node.value)
-      ) {
+      } else if (t.isJSXExpressionContainer(attrPath.node.value)) {
         if (t.isIdentifier(attrPath.node.value.expression)) {
-          // @ts-ignore
           // eslint-disable-next-line max-depth
-          if (attrPath.node.comments && [...attrPath.node.comments].some((comment) => comment.value.includes('could not be automatically'))) {
+          if (
+            // @ts-ignore
+            attrPath.node.comments &&
+            // @ts-ignore
+            [...attrPath.node.comments].some(comment =>
+              comment.value.includes('could not be automatically')
+            )
+          ) {
             return;
           }
-          addComment(attrPath.node, ` TODO(S2-upgrade): Prop ${propName} could not be automatically removed because ${attrPath.node.value.expression.name} could not be followed.`);
+          addComment(
+            attrPath.node,
+            ` TODO(S2-upgrade): Prop ${propName} could not be automatically removed because ${attrPath.node.value.expression.name} could not be followed.`
+          );
         } else {
           attrPath.traverse({
             StringLiteral(stringPath) {
-              if (
-                t.isStringLiteral(stringPath.node) &&
-                stringPath.node.value === propValue
-              ) {
+              if (t.isStringLiteral(stringPath.node) && stringPath.node.value === propValue) {
                 // Invalid prop value was found inside expression.
-                addComment(attrPath.node, ` TODO(S2-upgrade): ${propName}="${propValue}" is no longer supported. You'll need to update this manually.`);
+                addComment(
+                  attrPath.node,
+                  ` TODO(S2-upgrade): ${propName}="${propValue}" is no longer supported. You'll need to update this manually.`
+                );
               }
             }
           });
@@ -252,35 +289,46 @@ export function commentOutProp(
   path: NodePath<t.JSXElement>,
   options: {
     /** Prop to comment out. */
-    propName: string,
+    propName: string;
     /** If provided, prop will only be commented out if set to this value. */
-    propValue?: string
+    propValue?: string;
   }
 ): void {
   const {propName, propValue} = options;
 
-  let attrPath = path.get('openingElement').get('attributes').find((attr) => t.isJSXAttribute(attr.node) && attr.node.name.name === propName) as NodePath<t.JSXAttribute>;
+  let attrPath = path
+    .get('openingElement')
+    .get('attributes')
+    .find(
+      attr => t.isJSXAttribute(attr.node) && attr.node.name.name === propName
+    ) as NodePath<t.JSXAttribute>;
   if (attrPath && t.isJSXAttribute(attrPath.node) && attrPath.node.name.name === propName) {
     if (propValue) {
       // If prop value is provided, comment out prop only if it matches the value
       if (t.isStringLiteral(attrPath.node.value) && attrPath.node.value.value === propValue) {
-        addComment(attrPath.parentPath.node, ` TODO(S2-upgrade): ${propName}="${propValue}" has not been implemented yet.`);
+        addComment(
+          attrPath.parentPath.node,
+          ` TODO(S2-upgrade): ${propName}="${propValue}" has not been implemented yet.`
+        );
         attrPath.remove();
       } else {
         attrPath.traverse({
           StringLiteral(stringPath) {
-            if (
-              t.isStringLiteral(stringPath.node) &&
-              stringPath.node.value === propValue
-            ) {
-              addComment(attrPath.parentPath.node, ` TODO(S2-upgrade): ${propName}="${propValue}" has not been implemented yet.`);
+            if (t.isStringLiteral(stringPath.node) && stringPath.node.value === propValue) {
+              addComment(
+                attrPath.parentPath.node,
+                ` TODO(S2-upgrade): ${propName}="${propValue}" has not been implemented yet.`
+              );
               attrPath.remove();
             }
           }
         });
       }
     } else {
-      addComment(attrPath.parentPath.node, ` TODO(S2-upgrade): ${propName} has not been implemented yet.`);
+      addComment(
+        attrPath.parentPath.node,
+        ` TODO(S2-upgrade): ${propName} has not been implemented yet.`
+      );
       attrPath.remove();
     }
   }
@@ -296,7 +344,7 @@ export function addCommentToElement(
   path: NodePath<t.JSXElement>,
   options: {
     /** Comment to leave. */
-    comment: string
+    comment: string;
   }
 ): void {
   const {comment} = options;
@@ -313,20 +361,25 @@ export function updateComponentIfPropPresent(
   path: NodePath<t.JSXElement>,
   options: {
     /** Updated component to use. */
-    newComponentName: string,
+    newComponentName: string;
     /** Will update component if this prop is present. */
-    propName: string
+    propName: string;
   }
 ): void {
   const {newComponentName, propName} = options;
 
-  let attrPath = path.get('openingElement').get('attributes').find((attr) => t.isJSXAttribute(attr.node) && attr.node.name.name === propName) as NodePath<t.JSXAttribute>;
+  let attrPath = path
+    .get('openingElement')
+    .get('attributes')
+    .find(
+      attr => t.isJSXAttribute(attr.node) && attr.node.name.name === propName
+    ) as NodePath<t.JSXAttribute>;
   if (attrPath && t.isJSXAttribute(attrPath.node) && attrPath.node.name.name === propName) {
-    let node = attrPath.findParent((p) => t.isJSXElement(p.node))?.node;
+    let node = attrPath.findParent(p => t.isJSXElement(p.node))?.node;
     if (node && t.isJSXElement(node)) {
       let localName = newComponentName;
       if (availableComponents.has(newComponentName)) {
-        let program = path.findParent((p) => t.isProgram(p.node)) as NodePath<t.Program>;
+        let program = path.findParent(p => t.isProgram(p.node)) as NodePath<t.Program>;
         localName = addComponentImport(program, newComponentName);
       }
       node.openingElement.name = t.jsxIdentifier(localName);
@@ -337,7 +390,6 @@ export function updateComponentIfPropPresent(
   }
 }
 
-
 /**
  * Remove render props, and move usage to a child component.
  *
@@ -347,17 +399,18 @@ export function updateComponentIfPropPresent(
 export function moveRenderPropsToChild(
   path: NodePath<t.JSXElement>,
   options: {
-    newChildComponentName: string
+    newChildComponentName: string;
   }
 ): void {
   const {newChildComponentName} = options;
 
   const renderFunctionIndex = path.node.children.findIndex(
-    (child) =>
+    child =>
       t.isJSXExpressionContainer(child) &&
       t.isArrowFunctionExpression(child.expression) &&
       t.isJSXElement(child.expression.body) &&
-      t.isJSXIdentifier(child.expression.body.openingElement.name));
+      t.isJSXIdentifier(child.expression.body.openingElement.name)
+  );
 
   const renderFunction = path.node.children[renderFunctionIndex] as t.JSXExpressionContainer;
 
@@ -368,7 +421,10 @@ export function moveRenderPropsToChild(
     t.isJSXIdentifier(renderFunction.expression.body.openingElement.name) &&
     getName(path, renderFunction.expression.body.openingElement.name) !== newChildComponentName
   ) {
-    addComment(renderFunction, ' TODO(S2-upgrade): update this dialog to move the close function inside');
+    addComment(
+      renderFunction,
+      ' TODO(S2-upgrade): update this dialog to move the close function inside'
+    );
     return;
   }
 
@@ -381,31 +437,26 @@ export function moveRenderPropsToChild(
 
     const originalParam = renderFunction.expression.params[0];
     if (!t.isIdentifier(originalParam)) {
-      addComment(path.node.children[renderFunctionIndex], ' TODO(S2-upgrade): Could not automatically move the render props. You\'ll need to update this manually.');
+      addComment(
+        path.node.children[renderFunctionIndex],
+        " TODO(S2-upgrade): Could not automatically move the render props. You'll need to update this manually."
+      );
       return;
     }
     const paramName = originalParam.name;
     const objectPattern = t.objectPattern([
-      t.objectProperty(t.identifier(paramName),
-        t.identifier(paramName),
-        false,
-        true
-      )
+      t.objectProperty(t.identifier(paramName), t.identifier(paramName), false, true)
     ]);
 
     const newRenderFunction = t.jsxExpressionContainer(
       t.arrowFunctionExpression(
         [objectPattern],
-        t.jsxFragment(
-          t.jsxOpeningFragment(),
-          t.jsxClosingFragment(),
-          dialogElement.children
-        )
+        t.jsxFragment(t.jsxOpeningFragment(), t.jsxClosingFragment(), dialogElement.children)
       )
     );
 
     let removedOnDismiss = false;
-    const attributes = dialogElement.openingElement.attributes.filter((attr) => {
+    const attributes = dialogElement.openingElement.attributes.filter(attr => {
       if (t.isJSXAttribute(attr) && attr.name.name === 'onDismiss') {
         removedOnDismiss = true;
         return false;
@@ -420,11 +471,13 @@ export function moveRenderPropsToChild(
     );
 
     if (removedOnDismiss) {
-      addComment(path.node.children[renderFunctionIndex], ' onDismiss was removed from Dialog. Use onOpenChange on the DialogTrigger, or onDismiss on the DialogContainer instead');
+      addComment(
+        path.node.children[renderFunctionIndex],
+        ' onDismiss was removed from Dialog. Use onOpenChange on the DialogTrigger, or onDismiss on the DialogContainer instead'
+      );
     }
   }
 }
-
 
 /**
  * If within a collection component, updates to use a new component.
@@ -435,25 +488,36 @@ export function moveRenderPropsToChild(
 export function updateComponentWithinCollection(
   path: NodePath<t.JSXElement>,
   options: {
-    parentComponentName: string,
-    newComponentName: string
+    parentComponentName: string;
+    newComponentName: string;
   }
 ): void {
   const {parentComponentName, newComponentName} = options;
 
   // Collections currently implemented.
   // TODO: Add 'ActionGroup', 'ListBox' once implemented
-  const collectionItemParents = new Set(['Menu', 'ActionMenu', 'TagGroup', 'Breadcrumbs', 'Picker', 'ComboBox', 'ListBox', 'ListView', 'TabList', 'TabPanels', 'Collection', 'ContextualHelpTrigger']);
+  const collectionItemParents = new Set([
+    'Menu',
+    'ActionMenu',
+    'TagGroup',
+    'Breadcrumbs',
+    'Picker',
+    'ComboBox',
+    'ListBox',
+    'ListView',
+    'TabList',
+    'TabPanels',
+    'Collection',
+    'ContextualHelpTrigger'
+  ]);
 
-  if (
-    t.isJSXElement(path.node) &&
-    t.isJSXIdentifier(path.node.openingElement.name)
-  ) {
+  if (t.isJSXElement(path.node) && t.isJSXIdentifier(path.node.openingElement.name)) {
     // Find closest parent collection component
-    let closestParentCollection = path.findParent((p) =>
-      t.isJSXElement(p.node) &&
-      t.isJSXIdentifier(p.node.openingElement.name) &&
-      collectionItemParents.has(getName(path, p.node.openingElement.name))
+    let closestParentCollection = path.findParent(
+      p =>
+        t.isJSXElement(p.node) &&
+        t.isJSXIdentifier(p.node.openingElement.name) &&
+        collectionItemParents.has(getName(path, p.node.openingElement.name))
     );
     if (
       closestParentCollection &&
@@ -467,7 +531,7 @@ export function updateComponentWithinCollection(
 
       let localName = newComponentName;
       if (availableComponents.has(newComponentName)) {
-        let program = path.findParent((p) => t.isProgram(p.node)) as NodePath<t.Program>;
+        let program = path.findParent(p => t.isProgram(p.node)) as NodePath<t.Program>;
         localName = addComponentImport(program, newComponentName);
       }
 
@@ -486,22 +550,43 @@ export function updateComponentWithinCollection(
  *
  * Example: If they're declaring declaring Items somewhere above the collection.
  */
-export function commentIfParentCollectionNotDetected(
-  path: NodePath<t.JSXElement>
-): void {
-  const collectionItemParents = new Set(['Menu', 'ActionMenu', 'TagGroup', 'Breadcrumbs', 'Picker', 'ComboBox', 'ListBox', 'TabList', 'TabPanels', 'ActionGroup', 'ActionButtonGroup', 'ToggleButtonGroup', 'ListBox', 'ListView', 'Collection', 'SearchAutocomplete', 'Accordion', 'ActionBar', 'StepList', 'ContextualHelpTrigger']);
-  if (
-    t.isJSXElement(path.node)
-  ) {
+export function commentIfParentCollectionNotDetected(path: NodePath<t.JSXElement>): void {
+  const collectionItemParents = new Set([
+    'Menu',
+    'ActionMenu',
+    'TagGroup',
+    'Breadcrumbs',
+    'Picker',
+    'ComboBox',
+    'ListBox',
+    'TabList',
+    'TabPanels',
+    'ActionGroup',
+    'ActionButtonGroup',
+    'ToggleButtonGroup',
+    'ListBox',
+    'ListView',
+    'Collection',
+    'SearchAutocomplete',
+    'Accordion',
+    'ActionBar',
+    'StepList',
+    'ContextualHelpTrigger'
+  ]);
+  if (t.isJSXElement(path.node)) {
     // Find closest parent collection component
-    let closestParentCollection = path.findParent((p) =>
-      t.isJSXElement(p.node) &&
-      t.isJSXIdentifier(p.node.openingElement.name) &&
-      collectionItemParents.has(getName(path, p.node.openingElement.name))
+    let closestParentCollection = path.findParent(
+      p =>
+        t.isJSXElement(p.node) &&
+        t.isJSXIdentifier(p.node.openingElement.name) &&
+        collectionItemParents.has(getName(path, p.node.openingElement.name))
     );
     if (!closestParentCollection) {
       // If we couldn't find a parent collection parent, leave a comment for them to check manually
-      addComment(path.node, ' TODO(S2-upgrade): Couldn\'t automatically detect what type of collection component this is rendered in. You\'ll need to update this manually.');
+      addComment(
+        path.node,
+        " TODO(S2-upgrade): Couldn't automatically detect what type of collection component this is rendered in. You'll need to update this manually."
+      );
     }
   }
 }
@@ -515,14 +600,13 @@ export function commentIfParentCollectionNotDetected(
 export function movePropToNewChildComponentName(
   path: NodePath<t.JSXElement>,
   options: {
-    parentComponentName: string,
-    childComponentName: string,
-    propName: string,
-    newChildComponentName: string
+    parentComponentName: string;
+    childComponentName: string;
+    propName: string;
+    newChildComponentName: string;
   }
 ): void {
-  const {parentComponentName, childComponentName, propName, newChildComponentName} =
-    options;
+  const {parentComponentName, childComponentName, propName, newChildComponentName} = options;
 
   if (
     t.isJSXElement(path.node) &&
@@ -534,18 +618,17 @@ export function movePropToNewChildComponentName(
   ) {
     let propValue: t.JSXAttribute['value'] | void;
     let localName = newChildComponentName;
-    path.node.openingElement.attributes =
-      path.node.openingElement.attributes.filter((attr) => {
-        if (t.isJSXAttribute(attr) && attr.name.name === propName) {
-          propValue = attr.value;
-          return false;
-        }
-        return true;
-      });
+    path.node.openingElement.attributes = path.node.openingElement.attributes.filter(attr => {
+      if (t.isJSXAttribute(attr) && attr.name.name === propName) {
+        propValue = attr.value;
+        return false;
+      }
+      return true;
+    });
 
     if (propValue) {
       if (availableComponents.has(newChildComponentName)) {
-        let program = path.findParent((p) => t.isProgram(p.node)) as NodePath<t.Program>;
+        let program = path.findParent(p => t.isProgram(p.node)) as NodePath<t.Program>;
         localName = addComponentImport(program, newChildComponentName);
       }
       path.node.children.unshift(
@@ -569,11 +652,11 @@ export function movePropToNewChildComponentName(
 export function movePropToParentComponent(
   path: NodePath<t.JSXElement>,
   options: {
-    parentComponentName: string,
-    childComponentName: string,
-    propName: string
+    parentComponentName: string;
+    childComponentName: string;
+    propName: string;
   }
-): void  {
+): void {
   const {parentComponentName, childComponentName, propName} = options;
 
   path.traverse({
@@ -604,9 +687,9 @@ export function movePropToParentComponent(
 export function movePropToChildComponent(
   path: NodePath<t.JSXElement>,
   options: {
-    parentComponentName: string,
-    childComponentName: string,
-    propName: string
+    parentComponentName: string;
+    childComponentName: string;
+    propName: string;
   }
 ): void {
   const {parentComponentName, childComponentName, propName} = options;
@@ -626,12 +709,14 @@ export function movePropToChildComponent(
     return;
   }
 
-  let childPath = path.get('children').find(
-    (child) =>
-      child.isJSXElement() &&
-      t.isJSXIdentifier(child.node.openingElement.name) &&
-      getName(path, child.node.openingElement.name) === childComponentName
-  );
+  let childPath = path
+    .get('children')
+    .find(
+      child =>
+        child.isJSXElement() &&
+        t.isJSXIdentifier(child.node.openingElement.name) &&
+        getName(path, child.node.openingElement.name) === childComponentName
+    );
 
   if (!childPath?.isJSXElement()) {
     return;
@@ -655,14 +740,14 @@ export function movePropToChildComponent(
 export function updateToNewComponentName(
   path: NodePath<t.JSXElement>,
   options: {
-    newComponentName: string
+    newComponentName: string;
   }
 ): void {
   const {newComponentName} = options;
 
   let localName = newComponentName;
   if (availableComponents.has(newComponentName)) {
-    let program = path.findParent((p) => t.isProgram(p.node)) as NodePath<t.Program>;
+    let program = path.findParent(p => t.isProgram(p.node)) as NodePath<t.Program>;
     localName = addComponentImport(program, newComponentName);
   }
 
@@ -673,11 +758,11 @@ export function updateToNewComponentName(
 }
 
 const conversions = {
-  'cm': 37.8,
-  'mm': 3.78,
-  'in': 96,
-  'pt': 1.33,
-  'pc': 16
+  cm: 37.8,
+  mm: 3.78,
+  in: 96,
+  pt: 1.33,
+  pc: 16
 };
 
 /**
@@ -689,12 +774,17 @@ const conversions = {
 export function convertDimensionValueToPx(
   path: NodePath<t.JSXElement>,
   options: {
-    propName: string
+    propName: string;
   }
 ): void {
   const {propName} = options;
 
-  let attrPath = path.get('openingElement').get('attributes').find((attr) => t.isJSXAttribute(attr.node) && attr.node.name.name === propName) as NodePath<t.JSXAttribute>;
+  let attrPath = path
+    .get('openingElement')
+    .get('attributes')
+    .find(
+      attr => t.isJSXAttribute(attr.node) && attr.node.name.name === propName
+    ) as NodePath<t.JSXAttribute>;
   if (attrPath && t.isJSXAttribute(attrPath.node) && attrPath.node.name.name === propName) {
     if (t.isStringLiteral(attrPath.node.value)) {
       try {
@@ -703,9 +793,12 @@ export function convertDimensionValueToPx(
           attrPath.node.value = t.jsxExpressionContainer(t.numericLiteral(value));
         } else if (value && typeof value === 'string') {
           // eslint-disable-next-line max-depth
-          if ((/%|vw|vh|auto|ex|ch|rem|vmin|vmax/).test(value)) {
-            addComment(attrPath.node, ' TODO(S2-upgrade): Unable to convert CSS unit to a pixel value');
-          } else if ((/cm|mm|in|pt|pc/).test(value)) {
+          if (/%|vw|vh|auto|ex|ch|rem|vmin|vmax/.test(value)) {
+            addComment(
+              attrPath.node,
+              ' TODO(S2-upgrade): Unable to convert CSS unit to a pixel value'
+            );
+          } else if (/cm|mm|in|pt|pc/.test(value)) {
             let unit = value.replace(/\[|\]|\d+/g, '');
             let conversion = conversions[unit as keyof typeof conversions];
             value = Number(value.replace(/\[|\]|cm|mm|in|pt|pc/g, ''));
@@ -714,7 +807,7 @@ export function convertDimensionValueToPx(
               let pixelValue = Math.round(conversion * value);
               attrPath.node.value = t.jsxExpressionContainer(t.numericLiteral(pixelValue));
             }
-          } else if ((/px/).test(value)) {
+          } else if (/px/.test(value)) {
             let pixelValue = Number(value.replace(/\[|\]|px/g, ''));
             // eslint-disable-next-line max-depth
             if (!isNaN(pixelValue)) {
@@ -723,11 +816,17 @@ export function convertDimensionValueToPx(
           }
         }
       } catch (error) {
-        addComment(attrPath.node, ` TODO(S2-upgrade): Prop ${propName} could not be automatically updated due to error: ${error}`);
+        addComment(
+          attrPath.node,
+          ` TODO(S2-upgrade): Prop ${propName} could not be automatically updated due to error: ${error}`
+        );
       }
     } else if (t.isJSXExpressionContainer(attrPath.node.value)) {
       if (t.isIdentifier(attrPath.node.value.expression)) {
-        addComment(attrPath.node, ` TODO(S2-upgrade): Prop ${propName} could not be automatically updated because ${attrPath.node.value.expression.name} could not be followed.`);
+        addComment(
+          attrPath.node,
+          ` TODO(S2-upgrade): Prop ${propName} could not be automatically updated because ${attrPath.node.value.expression.name} could not be followed.`
+        );
       }
     }
   }
@@ -742,9 +841,9 @@ export function convertDimensionValueToPx(
 export function updatePlacementToSingleValue(
   path: NodePath<t.JSXElement>,
   options: {
-    propToUpdateName: string,
+    propToUpdateName: string;
     /* If provided, updates the prop on the specified child component */
-    childComponentName?: string
+    childComponentName?: string;
   }
 ): void {
   const {propToUpdateName, childComponentName} = options;
@@ -768,16 +867,33 @@ export function updatePlacementToSingleValue(
     'end bottom'
   ]);
 
-  let elementPath = childComponentName ?
-    path.get('children').find(
-      (child) => t.isJSXElement(child.node) &&
-      t.isJSXIdentifier(child.node.openingElement.name) &&
-      getName(path, child.node.openingElement.name) === childComponentName
-    ) as NodePath<t.JSXElement> : path;
-  let attrPath = elementPath.get('openingElement').get('attributes').find((attr) => t.isJSXAttribute(attr.node) && attr.node.name.name === propToUpdateName) as NodePath<t.JSXAttribute>;
+  let elementPath = childComponentName
+    ? (path
+        .get('children')
+        .find(
+          child =>
+            t.isJSXElement(child.node) &&
+            t.isJSXIdentifier(child.node.openingElement.name) &&
+            getName(path, child.node.openingElement.name) === childComponentName
+        ) as NodePath<t.JSXElement>)
+    : path;
+  let attrPath = elementPath
+    .get('openingElement')
+    .get('attributes')
+    .find(
+      attr => t.isJSXAttribute(attr.node) && attr.node.name.name === propToUpdateName
+    ) as NodePath<t.JSXAttribute>;
   if (attrPath && t.isJSXAttribute(attrPath.node) && attrPath.node.name.name === propToUpdateName) {
-    if (t.isStringLiteral(attrPath.node.value) && doublePlacementValues.has(attrPath.node.value.value)) {
-      attrPath.replaceWith(t.jsxAttribute(t.jsxIdentifier(propToUpdateName), t.stringLiteral(attrPath.node.value.value.split(' ')[0])));
+    if (
+      t.isStringLiteral(attrPath.node.value) &&
+      doublePlacementValues.has(attrPath.node.value.value)
+    ) {
+      attrPath.replaceWith(
+        t.jsxAttribute(
+          t.jsxIdentifier(propToUpdateName),
+          t.stringLiteral(attrPath.node.value.value.split(' ')[0])
+        )
+      );
       return;
     } else if (t.isJSXExpressionContainer(attrPath.node.value)) {
       attrPath.traverse({
@@ -804,7 +920,7 @@ export function updatePlacementToSingleValue(
 export function removeComponentIfWithinParent(
   path: NodePath<t.JSXElement>,
   options: {
-    parentComponentName: string
+    parentComponentName: string;
   }
 ): void {
   const {parentComponentName} = options;
@@ -822,15 +938,10 @@ export function removeComponentIfWithinParent(
 /**
  * Updates the key prop to id. Keeps the key prop if it's used in an array.map function.
  */
-export function updateKeyToId(
-  path: NodePath<t.JSXElement>
-): void {
+export function updateKeyToId(path: NodePath<t.JSXElement>): void {
   let attributes = path.node.openingElement.attributes;
-  let keyProp = attributes.find((attr) => t.isJSXAttribute(attr) && attr.name.name === 'key');
-  if (
-    keyProp &&
-    t.isJSXAttribute(keyProp)
-  ) {
+  let keyProp = attributes.find(attr => t.isJSXAttribute(attr) && attr.name.name === 'key');
+  if (keyProp && t.isJSXAttribute(keyProp)) {
     // Update key prop to be id
     keyProp.name = t.jsxIdentifier('id');
   }
@@ -844,10 +955,7 @@ export function updateKeyToId(
     path.parentPath.parentPath.node.callee.property.name === 'map'
   ) {
     // If Array.map is used, keep the key prop
-    if (
-      keyProp &&
-      t.isJSXAttribute(keyProp)
-    ) {
+    if (keyProp && t.isJSXAttribute(keyProp)) {
       let newKeyProp = t.jsxAttribute(t.jsxIdentifier('key'), keyProp.value);
       attributes.push(newKeyProp);
     }

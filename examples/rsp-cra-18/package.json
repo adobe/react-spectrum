@@ -3,7 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "homepage": ".",
-  "packageManager": "yarn@4.2.2",
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "install-17": "yarn add -W react@^17 react-dom@^17"
+  },
   "dependencies": {
     "@adobe/react-spectrum": "latest",
     "@babel/plugin-proposal-private-property-in-object": "^7.16.7",
@@ -26,19 +32,6 @@
     "typescript": "5.8.2",
     "web-vitals": "^2.1.4"
   },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "install-17": "yarn add -W react@^17 react-dom@^17"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
-  },
   "browserslist": {
     "production": [
       ">0.2%",
@@ -50,5 +43,12 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  }
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "packageManager": "yarn@4.2.2"
 }

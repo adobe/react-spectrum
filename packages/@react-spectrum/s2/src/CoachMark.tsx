@@ -1,4 +1,3 @@
-
 /*
  * Copyright 2024 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
@@ -25,14 +24,7 @@ import {CheckboxContext} from './Checkbox';
 import {ColorSchemeContext} from './Provider';
 import {ContentContext, FooterContext, KeyboardContext, TextContext} from './Content';
 import {ContextValue, DEFAULT_SLOT, Provider, useContextProps} from 'react-aria-components/slots';
-import {
-  createContext,
-  ForwardedRef,
-  forwardRef,
-  ReactNode,
-  useContext,
-  useRef
-} from 'react';
+import {createContext, ForwardedRef, forwardRef, ReactNode, useContext, useRef} from 'react';
 import {css, keyframes} from '../style/style-macro' with {type: 'macro'};
 import {DividerContext} from './Divider';
 import {forwardRefType} from './types';
@@ -51,11 +43,21 @@ import {useMenuTriggerState} from 'react-stately/useMenuTriggerState';
 import {useObjectRef} from 'react-aria/useObjectRef';
 import {useOverlayTrigger} from 'react-aria/useOverlayTrigger';
 
-export interface CoachMarkProps extends Omit<PopoverProps, 'children' | 'arrowBoundaryOffset' | 'isKeyboardDismissDisabled' | 'isNonModal' | keyof GlobalDOMAttributes>, StyleProps {
+export interface CoachMarkProps
+  extends
+    Omit<
+      PopoverProps,
+      | 'children'
+      | 'arrowBoundaryOffset'
+      | 'isKeyboardDismissDisabled'
+      | 'isNonModal'
+      | keyof GlobalDOMAttributes
+    >,
+    StyleProps {
   /** The children of the coach mark. */
-  children: ReactNode,
+  children: ReactNode;
 
-  size?: 'S' | 'M' | 'L' | 'XL'
+  size?: 'S' | 'M' | 'L' | 'XL';
 }
 
 const fadeKeyframes = keyframes(`
@@ -104,102 +106,105 @@ const slideLeftKeyframes = keyframes(`
   }
 `);
 
-let popover = style({
-  ...setColorScheme(),
-  '--s2-container-bg': {
-    type: 'backgroundColor',
-    value: 'layer-2'
-  },
-  backgroundColor: '--s2-container-bg',
-  borderRadius: 'lg',
-  filter: {
-    isArrowShown: 'elevated'
-  },
-  // Use box-shadow instead of filter when an arrow is not shown.
-  // This fixes the shadow stacking problem with submenus.
-  boxShadow: {
-    default: 'elevated',
-    isArrowShown: 'none'
-  },
-  borderStyle: 'solid',
-  borderWidth: 1,
-  borderColor: {
-    default: 'gray-200',
-    forcedColors: 'ButtonBorder'
-  },
-  width: {
-    size: {
-      // Copied from designs, not sure if correct.
-      S: 336,
-      M: 416,
-      L: 576
-    }
-  },
-  // Don't be larger than full screen minus 2 * containerPadding
-  maxWidth: 'calc(100vw - 24px)',
-  boxSizing: 'border-box',
-  translateY: {
-    placement: {
-      bottom: {
-        isArrowShown: 8 // TODO: not defined yet should this change with font size? need boolean support for 'hideArrow' prop
-      },
-      top: {
-        isArrowShown: -8
-      }
-    }
-  },
-  translateX: {
-    placement: {
-      left: {
-        isArrowShown: -8
-      },
-      right: {
-        isArrowShown: 8
-      }
-    }
-  },
-  animation: {
-    placement: {
-      top: {
-        isEntering: `${slideDownKeyframes}, ${fadeKeyframes}`,
-        isExiting: `${slideDownKeyframes}, ${fadeKeyframes}`
-      },
-      bottom: {
-        isEntering: `${slideUpKeyframes}, ${fadeKeyframes}`,
-        isExiting: `${slideUpKeyframes}, ${fadeKeyframes}`
-      },
-      left: {
-        isEntering: `${slideRightKeyframes}, ${fadeKeyframes}`,
-        isExiting: `${slideRightKeyframes}, ${fadeKeyframes}`
-      },
-      right: {
-        isEntering: `${slideLeftKeyframes}, ${fadeKeyframes}`,
-        isExiting: `${slideLeftKeyframes}, ${fadeKeyframes}`
+let popover = style(
+  {
+    ...setColorScheme(),
+    '--s2-container-bg': {
+      type: 'backgroundColor',
+      value: 'layer-2'
+    },
+    backgroundColor: '--s2-container-bg',
+    borderRadius: 'lg',
+    filter: {
+      isArrowShown: 'elevated'
+    },
+    // Use box-shadow instead of filter when an arrow is not shown.
+    // This fixes the shadow stacking problem with submenus.
+    boxShadow: {
+      default: 'elevated',
+      isArrowShown: 'none'
+    },
+    borderStyle: 'solid',
+    borderWidth: 1,
+    borderColor: {
+      default: 'gray-200',
+      forcedColors: 'ButtonBorder'
+    },
+    width: {
+      size: {
+        // Copied from designs, not sure if correct.
+        S: 336,
+        M: 416,
+        L: 576
       }
     },
-    isSubmenu: {
-      isEntering: fadeKeyframes,
-      isExiting: fadeKeyframes
+    // Don't be larger than full screen minus 2 * containerPadding
+    maxWidth: 'calc(100vw - 24px)',
+    boxSizing: 'border-box',
+    translateY: {
+      placement: {
+        bottom: {
+          isArrowShown: 8 // TODO: not defined yet should this change with font size? need boolean support for 'hideArrow' prop
+        },
+        top: {
+          isArrowShown: -8
+        }
+      }
+    },
+    translateX: {
+      placement: {
+        left: {
+          isArrowShown: -8
+        },
+        right: {
+          isArrowShown: 8
+        }
+      }
+    },
+    animation: {
+      placement: {
+        top: {
+          isEntering: `${slideDownKeyframes}, ${fadeKeyframes}`,
+          isExiting: `${slideDownKeyframes}, ${fadeKeyframes}`
+        },
+        bottom: {
+          isEntering: `${slideUpKeyframes}, ${fadeKeyframes}`,
+          isExiting: `${slideUpKeyframes}, ${fadeKeyframes}`
+        },
+        left: {
+          isEntering: `${slideRightKeyframes}, ${fadeKeyframes}`,
+          isExiting: `${slideRightKeyframes}, ${fadeKeyframes}`
+        },
+        right: {
+          isEntering: `${slideLeftKeyframes}, ${fadeKeyframes}`,
+          isExiting: `${slideLeftKeyframes}, ${fadeKeyframes}`
+        }
+      },
+      isSubmenu: {
+        isEntering: fadeKeyframes,
+        isExiting: fadeKeyframes
+      }
+    },
+    animationDuration: {
+      isEntering: 200,
+      isExiting: 200
+    },
+    animationDirection: {
+      isEntering: 'normal',
+      isExiting: 'reverse'
+    },
+    animationTimingFunction: {
+      isExiting: 'in'
+    },
+    transition: '[opacity, transform]',
+    willChange: '[opacity, transform]',
+    isolation: 'isolate',
+    pointerEvents: {
+      isExiting: 'none'
     }
   },
-  animationDuration: {
-    isEntering: 200,
-    isExiting: 200
-  },
-  animationDirection: {
-    isEntering: 'normal',
-    isExiting: 'reverse'
-  },
-  animationTimingFunction: {
-    isExiting: 'in'
-  },
-  transition: '[opacity, transform]',
-  willChange: '[opacity, transform]',
-  isolation: 'isolate',
-  pointerEvents: {
-    isExiting: 'none'
-  }
-}, getAllowedOverrides());
+  getAllowedOverrides()
+);
 
 const image = style({
   width: 'full',
@@ -262,15 +267,8 @@ let content = style({
     ':has([data-slot=menu])': ['minmax(0, 1fr)', 'auto']
   },
   gridTemplateAreas: {
-    default: [
-      'title keyboard',
-      'description keyboard'
-    ],
-    ':has([data-slot=menu])': [
-      'title menu',
-      'keyboard keyboard',
-      'description description'
-    ]
+    default: ['title keyboard', 'description keyboard'],
+    ':has([data-slot=menu])': ['title menu', 'keyboard keyboard', 'description description']
   },
   columnGap: 4,
   flexGrow: 1,
@@ -319,7 +317,9 @@ const actionButtonSize = {
   XL: 'L'
 } as const;
 
-export const CoachMarkContext = createContext<ContextValue<Partial<CoachMarkProps>, HTMLElement>>({});
+export const CoachMarkContext = createContext<ContextValue<Partial<CoachMarkProps>, HTMLElement>>(
+  {}
+);
 
 export const CoachMark = forwardRef((props: CoachMarkProps, ref: ForwardedRef<HTMLElement>) => {
   let colorScheme = useContext(ColorSchemeContext);
@@ -332,29 +332,33 @@ export const CoachMark = forwardRef((props: CoachMarkProps, ref: ForwardedRef<HT
     <Provider
       values={[
         [ImageContext, {alt: '', styles: image}],
-        [TextContext, {
-          slots: {
-            [DEFAULT_SLOT]: {},
-            title: {styles: title({size})},
-            description: {styles: description({size})},
-            steps: {styles: steps}
+        [
+          TextContext,
+          {
+            slots: {
+              [DEFAULT_SLOT]: {},
+              title: {styles: title({size})},
+              description: {styles: description({size})},
+              steps: {styles: steps}
+            }
           }
-        }],
+        ],
         [KeyboardContext, {styles: keyboard}],
         [ContentContext, {styles: content({size})}],
         [DividerContext, {size: 'S'}],
         [FooterContext, {styles: footer}],
-        [ActionMenuContext, {
-          isQuiet: true,
-          size: actionButtonSize[size],
-          // @ts-ignore
-          'data-slot': 'menu',
-          styles: actionMenu
-        }]
+        [
+          ActionMenuContext,
+          {
+            isQuiet: true,
+            size: actionButtonSize[size],
+            // @ts-ignore
+            'data-slot': 'menu',
+            styles: actionMenu
+          }
+        ]
       ]}>
-      <ImageCoordinator>
-        {props.children}
-      </ImageCoordinator>
+      <ImageCoordinator>{props.children}</ImageCoordinator>
     </Provider>
   );
 
@@ -367,7 +371,7 @@ export const CoachMark = forwardRef((props: CoachMarkProps, ref: ForwardedRef<HT
         // Override default z-index from useOverlayPosition. We use isolation: isolate instead.
         zIndex: undefined
       }}
-      className={(renderProps) =>  mergeStyles(popover({...renderProps, colorScheme}))}>
+      className={renderProps => mergeStyles(popover({...renderProps, colorScheme}))}>
       <Card>
         {/* }// Reset OverlayTriggerStateContext so the buttons inside the dialog don't retain their hover state. */}
         <OverlayTriggerStateContext.Provider value={null}>
@@ -378,9 +382,7 @@ export const CoachMark = forwardRef((props: CoachMarkProps, ref: ForwardedRef<HT
   );
 });
 
-
-export interface CoachMarkTriggerProps extends AriaDialogTriggerProps {
-}
+export interface CoachMarkTriggerProps extends AriaDialogTriggerProps {}
 
 /**
  * DialogTrigger serves as a wrapper around a Dialog and its associated trigger, linking the Dialog's
@@ -402,14 +404,13 @@ export function CoachMarkTrigger(props: CoachMarkTriggerProps): ReactNode {
   triggerProps.id = useId();
   overlayProps['aria-labelledby'] = triggerProps.id;
 
-
   return (
     <Provider
       values={[
-          [OverlayTriggerStateContext, state],
-          [RootMenuTriggerStateContext, state],
-          [DialogContext, overlayProps],
-          [PopoverContext, {trigger: 'DialogTrigger', triggerRef, isNonModal: true}] // valid to pass triggerRef?
+        [OverlayTriggerStateContext, state],
+        [RootMenuTriggerStateContext, state],
+        [DialogContext, overlayProps],
+        [PopoverContext, {trigger: 'DialogTrigger', triggerRef, isNonModal: true}] // valid to pass triggerRef?
       ]}>
       <PressResponder {...triggerProps} isPressed={state.isOpen}>
         <CoachMarkIndicator ref={triggerRef} isActive={state.isOpen}>
@@ -419,7 +420,6 @@ export function CoachMarkTrigger(props: CoachMarkTriggerProps): ReactNode {
     </Provider>
   );
 }
-
 
 // TODO better way to calculate 4px transform? (not 4%?)
 const pulseAnimation = keyframes(`
@@ -436,7 +436,6 @@ const pulseAnimation = keyframes(`
      transform: scale(calc(100%));
   }
 `);
-
 
 const indicator = style({
   animationDuration: 1000,
@@ -473,58 +472,71 @@ const indicator = style({
   }
 });
 
-const pulse = css(`&:before { content: ""; display: inline-block; position: absolute; top: var(--borderOffset); bottom:  var(--borderOffset); left: var(--borderOffset); right: var(--borderOffset); border-radius: var(--ringRadius); outline-style: solid; outline-color: var(--activeElement); outline-width: 4px; animation-duration: 2s; animation-iteration-count: infinite; animation-timing-function: ease-in-out; animation-fill-mode: forwards; animation-name: ${pulseAnimation}}`);
+const pulse = css(
+  `&:before { content: ""; display: inline-block; position: absolute; top: var(--borderOffset); bottom:  var(--borderOffset); left: var(--borderOffset); right: var(--borderOffset); border-radius: var(--ringRadius); outline-style: solid; outline-color: var(--activeElement); outline-width: 4px; animation-duration: 2s; animation-iteration-count: infinite; animation-timing-function: ease-in-out; animation-fill-mode: forwards; animation-name: ${pulseAnimation}}`
+);
 
 interface CoachMarkIndicatorProps {
-  children: ReactNode,
-  isActive?: boolean
+  children: ReactNode;
+  isActive?: boolean;
 }
-export const CoachMarkIndicator = /*#__PURE__*/ (forwardRef as forwardRefType)(function CoachMarkIndicator(props: CoachMarkIndicatorProps, ref: ForwardedRef<HTMLDivElement>) {
-  const {children, isActive} = props;
-  let objRef = useObjectRef(ref);
+export const CoachMarkIndicator = /*#__PURE__*/ (forwardRef as forwardRefType)(
+  function CoachMarkIndicator(props: CoachMarkIndicatorProps, ref: ForwardedRef<HTMLDivElement>) {
+    const {children, isActive} = props;
+    let objRef = useObjectRef(ref);
 
     // This is very silly... better ways? can't use display: contents because it breaks positioning
-  // this will break if there is a resize or different styles
-  useLayoutEffect(() => {
-    if (objRef.current) {
-      let styles = getComputedStyle(objRef.current.children[0]);
-      let childDisplay = styles.getPropertyValue('display');
-      let childMaxWidth = styles.getPropertyValue('max-width');
-      let childMaxHeight = styles.getPropertyValue('max-height');
-      let childWidth = styles.getPropertyValue('width');
-      let childHeight = styles.getPropertyValue('height');
-      let childMinWidth = styles.getPropertyValue('min-width');
-      let childMinHeight = styles.getPropertyValue('min-height');
-      objRef.current.style.display = childDisplay;
-      objRef.current.style.maxWidth = childMaxWidth;
-      objRef.current.style.maxHeight = childMaxHeight;
-      objRef.current.style.width = childWidth;
-      objRef.current.style.height = childHeight;
-      objRef.current.style.minWidth = childMinWidth;
-      objRef.current.style.minHeight = childMinHeight;
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [children]);
+    // this will break if there is a resize or different styles
+    useLayoutEffect(() => {
+      if (objRef.current) {
+        let styles = getComputedStyle(objRef.current.children[0]);
+        let childDisplay = styles.getPropertyValue('display');
+        let childMaxWidth = styles.getPropertyValue('max-width');
+        let childMaxHeight = styles.getPropertyValue('max-height');
+        let childWidth = styles.getPropertyValue('width');
+        let childHeight = styles.getPropertyValue('height');
+        let childMinWidth = styles.getPropertyValue('min-width');
+        let childMinHeight = styles.getPropertyValue('min-height');
+        objRef.current.style.display = childDisplay;
+        objRef.current.style.maxWidth = childMaxWidth;
+        objRef.current.style.maxHeight = childMaxHeight;
+        objRef.current.style.width = childWidth;
+        objRef.current.style.height = childHeight;
+        objRef.current.style.minWidth = childMinWidth;
+        objRef.current.style.minHeight = childMinHeight;
+      }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [children]);
 
-  return (
-    <div ref={objRef} className={indicator({isActive}) + ' ' + (isActive ? pulse : '')}>
-      <Provider
-        values={[
-          [ButtonContext, {
-            // @ts-ignore
-            'data-trigger': 'button'
-          }],
-          [CheckboxContext, {
-            // @ts-ignore
-            'data-trigger': 'checkbox'
-          }],
-          [SliderContext, {
-            // @ts-ignore
-            'data-trigger': 'slider'
-          }]
-        ]}>
-        {children}
-      </Provider>
-    </div>
-  );
-});
+    return (
+      <div ref={objRef} className={indicator({isActive}) + ' ' + (isActive ? pulse : '')}>
+        <Provider
+          values={[
+            [
+              ButtonContext,
+              {
+                // @ts-ignore
+                'data-trigger': 'button'
+              }
+            ],
+            [
+              CheckboxContext,
+              {
+                // @ts-ignore
+                'data-trigger': 'checkbox'
+              }
+            ],
+            [
+              SliderContext,
+              {
+                // @ts-ignore
+                'data-trigger': 'slider'
+              }
+            ]
+          ]}>
+          {children}
+        </Provider>
+      </div>
+    );
+  }
+);

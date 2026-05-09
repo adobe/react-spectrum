@@ -31,7 +31,9 @@ describe('Toolbar', () => {
     jest.useFakeTimers();
   });
   afterEach(() => {
-    act(() => {jest.runAllTimers();});
+    act(() => {
+      jest.runAllTimers();
+    });
   });
 
   it('renders', async () => {
@@ -190,7 +192,7 @@ describe('Toolbar', () => {
     expect(screen.getByLabelText('Toolbar aria-label 2')).not.toHaveAttribute('aria-labelledby');
   });
 
-  it('supports keyboard navigation', async() => {
+  it('supports keyboard navigation', async () => {
     render(
       <>
         <Button>Before</Button>
@@ -299,7 +301,7 @@ describe('Toolbar', () => {
     expect(zoomOut).toHaveFocus();
   });
 
-  it('supports keyboard navigation with orientation vertical', async() => {
+  it('supports keyboard navigation with orientation vertical', async () => {
     render(
       <>
         <Button>Before</Button>

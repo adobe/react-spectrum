@@ -24,28 +24,28 @@ export interface IconProps extends DOMProps, AriaLabelingProps, StyleProps {
   /**
    * A screen reader only label for the Icon.
    */
-  'aria-label'?: string,
+  'aria-label'?: string;
   /**
    * The content to display. Should be an SVG.
    */
-  children: ReactElement<any>,
+  children: ReactElement<any>;
   /**
    * Size of Icon (changes based on scale).
    */
-  size?: 'XXS' | 'XS' | 'S' | 'M' | 'L' |'XL' | 'XXL',
+  size?: 'XXS' | 'XS' | 'S' | 'M' | 'L' | 'XL' | 'XXL';
   /**
    * A slot to place the icon in.
    * @default 'icon'
    */
-  slot?: string,
+  slot?: string;
   /**
    * Indicates whether the element is exposed to an accessibility API.
    */
-  'aria-hidden'?: boolean | 'false' | 'true',
+  'aria-hidden'?: boolean | 'false' | 'true';
   /**
    * Color of the Icon.
    */
-  color?: IconColorValue
+  color?: IconColorValue;
 }
 
 export type IconPropsWithoutChildren = Omit<IconProps, 'children'>;
@@ -64,13 +64,7 @@ const iconStyleProps: StyleHandlers = {
  */
 export function Icon(props: IconProps): JSX.Element {
   props = useSlotProps(props, 'icon');
-  let {
-    children,
-    size,
-    'aria-label': ariaLabel,
-    'aria-hidden': ariaHidden,
-    ...otherProps
-  } = props;
+  let {children, size, 'aria-label': ariaLabel, 'aria-hidden': ariaHidden, ...otherProps} = props;
   let {styleProps} = useStyleProps(otherProps, iconStyleProps);
 
   let provider: undefined | ProviderContext;
@@ -96,13 +90,14 @@ export function Icon(props: IconProps): JSX.Element {
     ...styleProps,
     focusable: 'false',
     'aria-label': ariaLabel,
-    'aria-hidden': (ariaLabel ? (ariaHidden || undefined) : true),
+    'aria-hidden': ariaLabel ? ariaHidden || undefined : true,
     role: 'img',
     className: classNames(
       styles,
       children.props.className,
       'spectrum-Icon',
       `spectrum-Icon--size${iconSize}`,
-      styleProps.className)
+      styleProps.className
+    )
   });
 }

@@ -19,7 +19,7 @@ import {server, userEvent} from 'vitest/browser';
  * attached to untrusted (dispatched) DragEvents. This proxy intercepts those writes and
  * stores them in a local overlay, while forwarding everything else to the real DataTransfer.
  */
-function createWritableDataTransfer(): {dataTransfer: DataTransfer, proxy: DataTransfer} {
+function createWritableDataTransfer(): {dataTransfer: DataTransfer; proxy: DataTransfer} {
   let dataTransfer = new DataTransfer();
   let overrides: Record<string, string> = {};
 
@@ -37,7 +37,11 @@ function createWritableDataTransfer(): {dataTransfer: DataTransfer, proxy: DataT
     set(target, prop, value) {
       if (prop === 'effectAllowed' || prop === 'dropEffect') {
         overrides[prop] = value;
-        try { (target as any)[prop] = value; } catch { /* noop - Chromium rejects this */ }
+        try {
+          (target as any)[prop] = value;
+        } catch {
+          /* noop - Chromium rejects this */
+        }
         return true;
       }
       (target as any)[prop] = value;
@@ -50,13 +54,16 @@ function createWritableDataTransfer(): {dataTransfer: DataTransfer, proxy: DataT
 
 interface DragAndDropOptions {
   /** Clicks on the source element at this point relative to the top-left corner of the element's padding box. */
-  sourcePosition?: {x: number, y: number},
+  sourcePosition?: {x: number; y: number};
   /** Drops on the target element at this point relative to the top-left corner of the element's padding box. */
-  targetPosition?: {x: number, y: number}
+  targetPosition?: {x: number; y: number};
 }
 
 /** Returns the clientX/clientY for a position relative to an element's padding box, or the element's center if no position is given. */
-function resolveClientPosition(element: Element, position?: {x: number, y: number}): {clientX: number, clientY: number} {
+function resolveClientPosition(
+  element: Element,
+  position?: {x: number; y: number}
+): {clientX: number; clientY: number} {
   let rect = element.getBoundingClientRect();
   if (position) {
     return {clientX: rect.left + position.x, clientY: rect.top + position.y};
@@ -74,7 +81,11 @@ function resolveClientPosition(element: Element, position?: {x: number, y: numbe
  * which prevents useDrag from populating the DataTransfer. We fall back to
  * dispatching the full DragEvent lifecycle with synthetic events instead.
  */
-export async function dragAndDrop(source: Element, target: Element, options?: DragAndDropOptions): Promise<void> {
+export async function dragAndDrop(
+  source: Element,
+  target: Element,
+  options?: DragAndDropOptions
+): Promise<void> {
   if (server.browser !== 'chromium') {
     await userEvent.dragAndDrop(source, target, options);
     return;
@@ -99,21 +110,31 @@ export async function dragAndDrop(source: Element, target: Element, options?: Dr
 
   try {
     // Dispatch dragstart so useDrag populates the DataTransfer with items and sets effectAllowed.
-    source.dispatchEvent(new DragEvent('dragstart', {dataTransfer, bubbles: true, cancelable: true, ...sourcePos}));
+    source.dispatchEvent(
+      new DragEvent('dragstart', {dataTransfer, bubbles: true, cancelable: true, ...sourcePos})
+    );
 
     // Allow React state updates from the dragstart handler to flush.
     await new Promise(resolve => requestAnimationFrame(resolve));
 
-    target.dispatchEvent(new DragEvent('dragenter', {dataTransfer, bubbles: true, cancelable: true, ...targetPos}));
-    target.dispatchEvent(new DragEvent('dragover', {dataTransfer, bubbles: true, cancelable: true, ...targetPos}));
+    target.dispatchEvent(
+      new DragEvent('dragenter', {dataTransfer, bubbles: true, cancelable: true, ...targetPos})
+    );
+    target.dispatchEvent(
+      new DragEvent('dragover', {dataTransfer, bubbles: true, cancelable: true, ...targetPos})
+    );
 
     // In a real browser drag, the drop event only fires when dropEffect is not 'none'.
     // useDrop sets dropEffect during dragenter/dragover based on getDropOperation.
     if (proxy.dropEffect !== 'none') {
-      target.dispatchEvent(new DragEvent('drop', {dataTransfer, bubbles: true, cancelable: true, ...targetPos}));
+      target.dispatchEvent(
+        new DragEvent('drop', {dataTransfer, bubbles: true, cancelable: true, ...targetPos})
+      );
     }
 
-    source.dispatchEvent(new DragEvent('dragend', {dataTransfer, bubbles: true, cancelable: true, ...targetPos}));
+    source.dispatchEvent(
+      new DragEvent('dragend', {dataTransfer, bubbles: true, cancelable: true, ...targetPos})
+    );
   } finally {
     // Restore the original dataTransfer getter.
     Object.defineProperty(DragEvent.prototype, 'dataTransfer', origDesc);

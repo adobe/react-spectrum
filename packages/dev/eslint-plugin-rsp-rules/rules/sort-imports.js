@@ -34,18 +34,26 @@ const plugin = {
         let lastImportDeclaration = null;
         node.body.forEach((statement, i) => {
           if (statement.type === 'ImportDeclaration') {
-            const importSpecifiers = statement.specifiers.filter(specifier => specifier.type === 'ImportSpecifier');
+            const importSpecifiers = statement.specifiers.filter(
+              specifier => specifier.type === 'ImportSpecifier'
+            );
             const getSortableName = specifier => specifier.local.name.toLowerCase();
-            const firstUnsortedIndex = importSpecifiers.map(getSortableName).findIndex((name, index, array) => array[index - 1] > name);
+            const firstUnsortedIndex = importSpecifiers
+              .map(getSortableName)
+              .findIndex((name, index, array) => array[index - 1] > name);
 
             if (firstUnsortedIndex !== -1) {
               context.report({
                 node: importSpecifiers[firstUnsortedIndex],
-                message: "Member '{{memberName}}' of the import declaration should be sorted alphabetically.",
+                message:
+                  "Member '{{memberName}}' of the import declaration should be sorted alphabetically.",
                 data: {memberName: importSpecifiers[firstUnsortedIndex].local.name},
                 fix(fixer) {
                   return fixer.replaceTextRange(
-                    [importSpecifiers[0].range[0], importSpecifiers[importSpecifiers.length - 1].range[1]],
+                    [
+                      importSpecifiers[0].range[0],
+                      importSpecifiers[importSpecifiers.length - 1].range[1]
+                    ],
                     importSpecifiers
                       // Clone the importSpecifiers array to avoid mutating it
                       .slice()
@@ -59,9 +67,15 @@ const plugin = {
 
                       // Build a string out of the sorted list of import specifiers and the text between the originals
                       .reduce((sourceText, specifier, index) => {
-                        const textAfterSpecifier = index === importSpecifiers.length - 1
-                          ? ''
-                          : sourceCode.getText().slice(importSpecifiers[index].range[1], importSpecifiers[index + 1].range[0]);
+                        const textAfterSpecifier =
+                          index === importSpecifiers.length - 1
+                            ? ''
+                            : sourceCode
+                                .getText()
+                                .slice(
+                                  importSpecifiers[index].range[1],
+                                  importSpecifiers[index + 1].range[0]
+                                );
 
                         return sourceText + sourceCode.getText(specifier) + textAfterSpecifier;
                       }, '')
@@ -71,7 +85,8 @@ const plugin = {
             } else if (lastImportDeclaration) {
               let currentLocalMemberName = getFirstLocalMemberName(statement);
               let previousLocalMemberName = getFirstLocalMemberName(lastImportDeclaration);
-              if (previousLocalMemberName &&
+              if (
+                previousLocalMemberName &&
                 currentLocalMemberName &&
                 currentLocalMemberName < previousLocalMemberName
               ) {
@@ -101,9 +116,12 @@ const plugin = {
                     return fixer.replaceTextRange(
                       [allImports[0].range[0], allImports[allImports.length - 1].range[1]],
                       sortedImports.reduce((sourceText, statement, index) => {
-                        const textAfterStatement = index === allImports.length - 1
-                          ? ''
-                          : sourceCode.getText().slice(allImports[index].range[1], allImports[index + 1].range[0]);
+                        const textAfterStatement =
+                          index === allImports.length - 1
+                            ? ''
+                            : sourceCode
+                                .getText()
+                                .slice(allImports[index].range[1], allImports[index + 1].range[0]);
                         return sourceText + sourceCode.getText(statement) + textAfterStatement;
                       }, '')
                     );

@@ -1,16 +1,13 @@
 /** @type { import('@storybook/react-vite').StorybookConfig } */
 const config = {
-  stories: [
-    "../stories/**/*.mdx",
-    "../stories/**/*.stories.@(js|jsx|mjs|ts|tsx)",
-  ],
-  addons: ["@storybook/addon-docs"],
+  stories: ['../stories/**/*.mdx', '../stories/**/*.stories.@(js|jsx|mjs|ts|tsx)'],
+  addons: ['@storybook/addon-docs'],
   framework: {
-    name: "@storybook/react-vite",
-    options: {},
+    name: '@storybook/react-vite',
+    options: {}
   },
   docs: {
-    autodocs: "tag",
+    autodocs: 'tag'
   },
   typescript: {
     reactDocgen: 'react-docgen-typescript',
@@ -18,10 +15,10 @@ const config = {
       shouldExtractLiteralValuesFromEnum: true,
       compilerOptions: {
         allowSyntheticDefaultImports: false,
-        esModuleInterop: false,
+        esModuleInterop: false
       },
-      propFilter: (prop) => !/^aria-|on[A-Z]/.test(prop.name)
-    },
+      propFilter: prop => !/^aria-|on[A-Z]/.test(prop.name)
+    }
   }
 };
 export default config;

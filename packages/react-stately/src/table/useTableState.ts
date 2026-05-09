@@ -10,7 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-import {Expandable, Key, MultipleSelection, Node, SelectionMode, Sortable, SortDescriptor, SortDirection} from '@react-types/shared';
+import {
+  Expandable,
+  Key,
+  MultipleSelection,
+  Node,
+  SelectionMode,
+  Sortable,
+  SortDescriptor,
+  SortDirection
+} from '@react-types/shared';
 import {GridState, useGridState} from '../grid/useGridState';
 import {ITableCollection, TableCollection} from './TableCollection';
 import {MultipleSelectionState} from '../selection/types';
@@ -23,9 +32,9 @@ import {useControlledState} from '../utils/useControlledState';
 
 export interface TableProps<T> extends MultipleSelection, Sortable, Expandable {
   /** The elements that make up the table. Includes the TableHeader, TableBody, Columns, and Rows. */
-  children: [ReactElement<TableHeaderProps<T>>, ReactElement<TableBodyProps<T>>],
+  children: [ReactElement<TableHeaderProps<T>>, ReactElement<TableBodyProps<T>>];
   /** A list of row keys to disable. */
-  disabledKeys?: Iterable<Key>,
+  disabledKeys?: Iterable<Key>;
   /**
    * Whether pressing the escape key should clear selection in the table or not.
    *
@@ -34,56 +43,56 @@ export interface TableProps<T> extends MultipleSelection, Sortable, Expandable {
    * trigger selection clearing contextually.
    * @default 'clearSelection'
    */
-  escapeKeyBehavior?: 'clearSelection' | 'none',
+  escapeKeyBehavior?: 'clearSelection' | 'none';
   /** Whether selection should occur on press up instead of press down. */
-  shouldSelectOnPressUp?: boolean,
+  shouldSelectOnPressUp?: boolean;
   /** The id of the column that displays hierarchical data. */
-  treeColumn?: Key
+  treeColumn?: Key;
 }
 
 export interface TableState<T> extends GridState<T, ITableCollection<T>> {
   /** A collection of rows and columns in the table. */
-  collection: ITableCollection<T>,
+  collection: ITableCollection<T>;
   /** Whether the row selection checkboxes should be displayed. */
-  showSelectionCheckboxes: boolean,
+  showSelectionCheckboxes: boolean;
   /** The current sorted column and direction. */
-  sortDescriptor: SortDescriptor | null,
+  sortDescriptor: SortDescriptor | null;
   /** Calls the provided onSortChange handler with the provided column key and sort direction. */
-  sort(columnKey: Key, direction?: 'ascending' | 'descending'): void,
+  sort(columnKey: Key, direction?: 'ascending' | 'descending'): void;
   /** Whether keyboard navigation is disabled, such as when the arrow keys should be handled by a component within a cell. */
-  isKeyboardNavigationDisabled: boolean,
+  isKeyboardNavigationDisabled: boolean;
   /** Set whether keyboard navigation is disabled, such as when the arrow keys should be handled by a component within a cell. */
-  setKeyboardNavigationDisabled: (val: boolean) => void,
+  setKeyboardNavigationDisabled: (val: boolean) => void;
   /** A set of keys for items that are expanded. */
-  expandedKeys: Set<Key>,
+  expandedKeys: Set<Key>;
   /** Toggles the expanded state for a row by its key. */
-  toggleKey(key: Key): void,
+  toggleKey(key: Key): void;
   /** The id of the column that displays hierarchical data. */
-  treeColumn: Key | null
+  treeColumn: Key | null;
 }
 
 export interface CollectionBuilderContext<T> {
-  showSelectionCheckboxes: boolean,
-  showDragButtons: boolean,
-  selectionMode: SelectionMode,
-  columns: Node<T>[]
+  showSelectionCheckboxes: boolean;
+  showDragButtons: boolean;
+  selectionMode: SelectionMode;
+  columns: Node<T>[];
 }
 
 export interface TableStateProps<T> extends MultipleSelectionStateProps, Expandable, Sortable {
   /** The elements that make up the table. Includes the TableHeader, TableBody, Columns, and Rows. */
-  children?: [ReactElement<TableHeaderProps<T>>, ReactElement<TableBodyProps<T>>],
+  children?: [ReactElement<TableHeaderProps<T>>, ReactElement<TableBodyProps<T>>];
   /** A pre-constructed collection to use instead of building one from items and children. */
-  collection?: ITableCollection<T>,
+  collection?: ITableCollection<T>;
   /** Whether the row selection checkboxes should be displayed. */
-  showSelectionCheckboxes?: boolean,
+  showSelectionCheckboxes?: boolean;
   /** Whether the row drag button should be displayed.
    * @private
    */
-  showDragButtons?: boolean,
+  showDragButtons?: boolean;
   /** @private - do not use unless you know what you're doing. */
-  UNSAFE_selectionState?: MultipleSelectionState,
+  UNSAFE_selectionState?: MultipleSelectionState;
   /** The id of the column that displays hierarchical data. */
-  treeColumn?: Key
+  treeColumn?: Key;
 }
 
 const OPPOSITE_SORT_DIRECTION = {
@@ -99,17 +108,20 @@ export function useTableState<T extends object>(props: TableStateProps<T>): Tabl
   let [isKeyboardNavigationDisabled, setKeyboardNavigationDisabled] = useState(false);
   let {selectionMode = 'none', showSelectionCheckboxes, showDragButtons, treeColumn = null} = props;
 
-  let context = useMemo(() => ({
-    showSelectionCheckboxes: showSelectionCheckboxes && selectionMode !== 'none',
-    showDragButtons: showDragButtons,
-    selectionMode,
-    columns: []
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }), [props.children, showSelectionCheckboxes, selectionMode, showDragButtons]);
+  let context = useMemo(
+    () => ({
+      showSelectionCheckboxes: showSelectionCheckboxes && selectionMode !== 'none',
+      showDragButtons: showDragButtons,
+      selectionMode,
+      columns: []
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }),
+    [props.children, showSelectionCheckboxes, selectionMode, showDragButtons]
+  );
 
   let collection = useCollection<T, ITableCollection<T>>(
     props,
-    useCallback((nodes) => new TableCollection(nodes, null, context), [context]),
+    useCallback(nodes => new TableCollection(nodes, null, context), [context]),
     context
   );
   let {disabledKeys, selectionManager} = useGridState({
@@ -135,9 +147,11 @@ export function useTableState<T extends object>(props: TableStateProps<T>): Tabl
     sort(columnKey: Key, direction?: 'ascending' | 'descending') {
       props.onSortChange?.({
         column: columnKey,
-        direction: direction ?? (props.sortDescriptor?.column === columnKey
-          ? OPPOSITE_SORT_DIRECTION[props.sortDescriptor.direction]
-          : 'ascending')
+        direction:
+          direction ??
+          (props.sortDescriptor?.column === columnKey
+            ? OPPOSITE_SORT_DIRECTION[props.sortDescriptor.direction]
+            : 'ascending')
       });
     },
     expandedKeys,
@@ -160,8 +174,14 @@ export function useTableState<T extends object>(props: TableStateProps<T>): Tabl
 /**
  * Filters a collection using the provided filter function and returns a new TableState.
  */
-export function UNSTABLE_useFilteredTableState<T extends object>(state: TableState<T>, filterFn: ((nodeValue: string, node: Node<T>) => boolean) | null | undefined): TableState<T> {
-  let collection = useMemo(() => filterFn ? state.collection.filter!(filterFn) : state.collection, [state.collection, filterFn]) as ITableCollection<T>;
+export function UNSTABLE_useFilteredTableState<T extends object>(
+  state: TableState<T>,
+  filterFn: ((nodeValue: string, node: Node<T>) => boolean) | null | undefined
+): TableState<T> {
+  let collection = useMemo(
+    () => (filterFn ? state.collection.filter!(filterFn) : state.collection),
+    [state.collection, filterFn]
+  ) as ITableCollection<T>;
   let selectionManager = state.selectionManager.withCollection(collection);
   // TODO: handle focus key reset? That logic is in useGridState
 

@@ -9,21 +9,23 @@ import {useLocalizedStringFormatter} from '../i18n/useLocalizedStringFormatter';
 
 export interface AriaGridSelectionCheckboxProps {
   /** A unique key for the checkbox. */
-  key: Key
+  key: Key;
 }
 
 export interface GridSelectionCheckboxAria {
   /** Props for the row selection checkbox element. */
-  checkboxProps: AriaCheckboxProps
+  checkboxProps: AriaCheckboxProps;
 }
-
 
 /**
  * Provides the behavior and accessibility implementation for a selection checkbox in a grid.
  * @param props - Props for the selection checkbox.
  * @param state - State of the grid, as returned by `useGridState`.
  */
-export function useGridSelectionCheckbox<T, C extends GridCollection<T>>(props: AriaGridSelectionCheckboxProps, state: GridState<T, C>): GridSelectionCheckboxAria {
+export function useGridSelectionCheckbox<T, C extends GridCollection<T>>(
+  props: AriaGridSelectionCheckboxProps,
+  state: GridState<T, C>
+): GridSelectionCheckboxAria {
   let {key} = props;
 
   let manager = state.selectionManager;

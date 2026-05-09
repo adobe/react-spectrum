@@ -11,9 +11,9 @@ export function TabPanel(props: TabPanelProps) {
   return (
     <RACTabPanel
       {...props}
-      className={composeRenderProps(
-        props.className,
-        (className, renderProps) => tabPanelStyles({...renderProps, className})
-      )} />
+      className={composeRenderProps(props.className, (className, renderProps) =>
+        tabPanelStyles({...renderProps, className})
+      )}
+    />
   );
 }

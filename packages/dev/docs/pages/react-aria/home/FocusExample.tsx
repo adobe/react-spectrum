@@ -21,11 +21,19 @@ export function FocusExample() {
   return (
     <div className="flex items-center justify-center h-full">
       <DialogTrigger>
-        <Button variant="secondary" aria-label="Account"><CircleUser aria-hidden className="inline w-5 h-5" /></Button>
+        <Button variant="secondary" aria-label="Account">
+          <CircleUser aria-hidden className="inline w-5 h-5" />
+        </Button>
         <Popover showArrow className="w-[250px]">
           <Dialog className="outline outline-0 p-4 overflow-auto flex flex-col gap-2">
-            <Heading slot="title" className="text-lg font-semibold m-0 mb-2">Your Account</Heading>
-            <TextField label="First Name" defaultValue="Devon" autoFocus={navigator.maxTouchPoints === 0} />
+            <Heading slot="title" className="text-lg font-semibold m-0 mb-2">
+              Your Account
+            </Heading>
+            <TextField
+              label="First Name"
+              defaultValue="Devon"
+              autoFocus={navigator.maxTouchPoints === 0}
+            />
             <TextField label="Last Name" defaultValue="Govett" />
           </Dialog>
         </Popover>
