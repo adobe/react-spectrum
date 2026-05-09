@@ -1095,9 +1095,9 @@ export const TableHeader = /*#__PURE__*/ (forwardRef as forwardRefType)(function
       className={tableHeader}>
       {/* Add extra columns for selection. */}
       {selectionBehavior === 'toggle' && selectionStyle === 'checkbox' && (
-        // Also isSticky prop is applied just for the layout, will decide what the RAC api should be later
-        // @ts-ignore
         <RACColumn
+          // Also isSticky prop is applied just for the layout, will decide what the RAC api should be later
+          // @ts-ignore
           isSticky
           width={scale === 'medium' ? 40 : 52}
           minWidth={scale === 'medium' ? 40 : 52}
