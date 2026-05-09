@@ -166,12 +166,12 @@ interface S2TableProps {
   /** Handler that is called when more items should be loaded, e.g. while scrolling near the bottom. */
   onLoadMore?: () => any;
   /** Provides the ActionBar to display when rows are selected in the TableView. */
-  renderActionBar?: (selectedKeys: 'all' | Set<Key>) => ReactElement,
+  renderActionBar?: (selectedKeys: 'all' | Set<Key>) => ReactElement;
   /**
    * How selection should be displayed.
    * @default 'checkbox'
    */
-  selectionStyle?: 'checkbox' | 'highlight'
+  selectionStyle?: 'checkbox' | 'highlight';
 }
 
 // TODO: Note that loadMore and loadingState are now on the Table instead of on the TableBody
@@ -196,7 +196,15 @@ export interface TableViewProps
   styles?: StylesPropWithHeight;
 }
 
-let InternalTableContext = createContext<TableViewProps & {layout?: S2TableLayout<unknown>, setIsInResizeMode?:(val: boolean) => void, isInResizeMode?: boolean, selectionMode?: 'none' | 'single' | 'multiple', selectionStyle?: 'checkbox' | 'highlight'}>({});
+let InternalTableContext = createContext<
+  TableViewProps & {
+    layout?: S2TableLayout<unknown>;
+    setIsInResizeMode?: (val: boolean) => void;
+    isInResizeMode?: boolean;
+    selectionMode?: 'none' | 'single' | 'multiple';
+    selectionStyle?: 'checkbox' | 'highlight';
+  }
+>({});
 
 const tableWrapper = style(
   {
@@ -401,17 +409,30 @@ export const TableView = forwardRef(function TableView(
     [propsOnResizeEnd, setIsInResizeMode]
   );
 
-  let context = useMemo(() => ({
-    isQuiet,
-    density,
-    overflowMode,
-    loadingState,
-    onLoadMore,
-    isInResizeMode,
-    setIsInResizeMode,
-    selectionMode,
-    selectionStyle
-  }), [isQuiet, density, overflowMode, loadingState, onLoadMore, isInResizeMode, setIsInResizeMode, selectionMode, selectionStyle]);
+  let context = useMemo(
+    () => ({
+      isQuiet,
+      density,
+      overflowMode,
+      loadingState,
+      onLoadMore,
+      isInResizeMode,
+      setIsInResizeMode,
+      selectionMode,
+      selectionStyle
+    }),
+    [
+      isQuiet,
+      density,
+      overflowMode,
+      loadingState,
+      onLoadMore,
+      isInResizeMode,
+      setIsInResizeMode,
+      selectionMode,
+      selectionStyle
+    ]
+  );
 
   let scrollRef = useRef<HTMLElement | null>(null);
   let isCheckboxSelection = selectionMode === 'multiple' || selectionMode === 'single';
@@ -450,11 +471,13 @@ export const TableView = forwardRef(function TableView(
               paddingBottom: actionBarHeight > 0 ? actionBarHeight + 8 : 0,
               scrollPaddingBottom: actionBarHeight > 0 ? actionBarHeight + 8 : 0
             }}
-            className={renderProps => table({
-              ...renderProps,
-              isCheckboxSelection,
-              isQuiet
-            })}
+            className={renderProps =>
+              table({
+                ...renderProps,
+                isCheckboxSelection,
+                isQuiet
+              })
+            }
             selectionBehavior={selectionStyle === 'highlight' ? 'replace' : 'toggle'}
             selectionMode={selectionMode}
             onRowAction={onAction}
@@ -464,12 +487,23 @@ export const TableView = forwardRef(function TableView(
             onSelectionChange={onSelectionChange}
           />
         </InternalTableContext.Provider>
+      </Virtualizer>
       {actionBar}
     </ResizableTableContainer>
   );
 });
 
 const centeredWrapper = style({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  width: 'full',
+  height: 'full'
+});
+
+export interface TableBodyProps<T> extends Omit<
+  RACTableBodyProps<T>,
+  'style' | 'className' | 'render' | keyof GlobalDOMAttributes
 > {}
 
 /**
@@ -649,10 +683,24 @@ export const Column = forwardRef(function Column(props: ColumnProps, ref: DOMRef
   let isMenu = allowsResizing || !!props.menuItems;
 
   return (
-    <RACColumn {...props} ref={domRef} style={{borderInlineEndColor: 'transparent'}} className={renderProps => columnStyles({...renderProps, isMenu, align, isQuiet, selectionStyle})}>
+    <RACColumn
+      {...props}
+      ref={domRef}
+      style={{borderInlineEndColor: 'transparent'}}
+      className={renderProps =>
+        columnStyles({...renderProps, isMenu, align, isQuiet, selectionStyle})
+      }>
       {({allowsSorting, sortDirection, isFocusVisible, sort, startResize}) => (
         <>
+          {/* Note this is mainly for column's without a dropdown menu. If there is a dropdown menu, the button is styled to have a focus ring for simplicity
           (no need to juggle showing this focus ring if focus is on the menu button and not if it is on the resizer) */}
+          {/* Separate absolutely positioned element because appyling the ring on the column directly via outline means the ring's required borderRadius will cause the bottom gray border to curve as well */}
+          {isFocusVisible && <CellFocusRing />}
+          {isMenu ? (
+            <ColumnWithMenu
+              isColumnResizable={allowsResizing}
+              menuItems={props.menuItems}
+              allowsSorting={allowsSorting}
               sortDirection={sortDirection}
               sort={sort}
               startResize={startResize}
@@ -1046,10 +1094,10 @@ export const TableHeader = /*#__PURE__*/ (forwardRef as forwardRefType)(function
       ref={domRef}
       className={tableHeader}>
       {/* Add extra columns for selection. */}
-      {selectionBehavior === 'toggle' && selectionStyle === 'checkbox' &&  (
+      {selectionBehavior === 'toggle' && selectionStyle === 'checkbox' && (
         // Also isSticky prop is applied just for the layout, will decide what the RAC api should be later
+        // @ts-ignore
         <RACColumn
-          // @ts-ignore
           isSticky
           width={scale === 'medium' ? 40 : 52}
           minWidth={scale === 'medium' ? 40 : 52}
@@ -1140,7 +1188,6 @@ const divider = style({
   insetEnd: 0,
   backgroundColor: 'var(--borderColorGray)'
 });
-
 
 const stickyCell = {
   backgroundColor: 'gray-25'
@@ -1235,7 +1282,7 @@ export const Cell = forwardRef(function Cell(props: CellProps, ref: DOMRef<HTMLD
       {({id, isFocusVisible, hasChildItems, isTreeColumn, isExpanded, isDisabled}) => (
         <>
           {showDivider && <div className={divider} />}
-          {hasChildItems && isTreeColumn &&
+          {hasChildItems && isTreeColumn && (
             <ExpandableRowChevron key={id} isDisabled={isDisabled} isExpanded={isExpanded} />
           )}
           <span className={cellContent({...tableVisualOptions, isSticky, align: align || 'start'})}>
@@ -1249,8 +1296,12 @@ export const Cell = forwardRef(function Cell(props: CellProps, ref: DOMRef<HTMLD
 });
 
 interface ExpandableRowChevronProps {
+  isExpanded?: boolean;
   isDisabled?: boolean;
   isRTL?: boolean;
+  isHidden?: boolean;
+}
+
 const expandButton = style<ExpandableRowChevronProps>({
   gridArea: 'expand-button',
   color: {
@@ -1334,7 +1385,7 @@ const editableCell = style<
       default: 'disabled',
       forcedColors: 'GrayText'
     },
-    forcedColors: 'ButtonText'    
+    forcedColors: 'ButtonText'
   },
   paddingY: centerPadding(),
   boxSizing: 'border-box',
@@ -1737,7 +1788,10 @@ const rowTextColor = {
   forcedColors: 'ButtonText'
 } as const;
 
-const row = style<RowRenderProps & S2TableProps & {isInFooter?: boolean, isNextSelected?: boolean, isPrevSelected?: boolean}>({
+const row = style<
+  RowRenderProps &
+    S2TableProps & {isInFooter?: boolean; isNextSelected?: boolean; isPrevSelected?: boolean}
+>({
   height: 'full',
   position: 'relative',
   boxSizing: 'border-box',
@@ -1988,16 +2042,21 @@ export const Row = /*#__PURE__*/ (forwardRef as forwardRefType)(function Row<T e
       dependencies={[...dependencies, columns]}
       isDisabled={isInFooter}
       disabledBehavior="selection"
-      className={renderProps => row({
-        ...renderProps,
-        ...tableVisualOptions,
-        isInFooter,
-        isNextSelected: isNextSelected(renderProps.id, renderProps.state),
-        isPrevSelected: isPrevSelected(renderProps.id, renderProps.state)
-      }) + (renderProps.isFocusVisible ? ' ' + focusIndicator : '') + (selectionStyle === 'highlight' ? ' ' + highlightSelectionBorder : '')
       className={renderProps =>
         row({
           ...renderProps,
+          ...tableVisualOptions,
+          selectionStyle,
+          isInFooter,
+          isNextSelected: isNextSelected(renderProps.id, renderProps.state),
+          isPrevSelected: isPrevSelected(renderProps.id, renderProps.state)
+        }) +
+        (renderProps.isFocusVisible ? ' ' + focusIndicator : '') +
+        (selectionStyle === 'highlight' ? ' ' + highlightSelectionBorder : '')
+      }
+      {...otherProps}>
+      {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
+        // Not sure what we want to do with this className, in Cell it currently overrides the className that would have been applied.
         // The `spread` otherProps must be after className in Cell.
         // @ts-ignore
         <Cell isSticky className={checkboxCellStyle}>
