@@ -29,6 +29,16 @@ function replace(segments: TokenFieldSegment[], start: Position, end: Position, 
   return new TokenSegmentList(segments).replaceRange(start, end, insert);
 }
 
+function replaceWithRegex(
+  segments: TokenFieldSegment[],
+  start: Position,
+  end: Position,
+  insert: string,
+  regex: RegExp | null
+) {
+  return new TokenSegmentList(segments, {tokenRegex: regex}).replaceRange(start, end, insert);
+}
+
 describe('TokenSegmentList', () => {
   let graphemeSegmenter: Intl.Segmenter;
   let wordSegmenter: Intl.Segmenter;
@@ -115,6 +125,12 @@ describe('TokenSegmentList', () => {
         );
         expect(value).toEqual([text('ac')]);
         expect(caret).toEqual({index: 0, offset: 1});
+      });
+
+      it('inserts text when empty', () => {
+        let {value, caret} = replace([], {index: 0, offset: 0}, {index: 0, offset: 0}, 'hello');
+        expect(value).toEqual([text('hello')]);
+        expect(caret).toEqual({index: 0, offset: 5});
       });
     });
 
@@ -619,6 +635,73 @@ describe('TokenSegmentList', () => {
       let {value, caret} = list.insertToken({index: 5, offset: 0});
       expect(value).toEqual(segs);
       expect(caret).toEqual({index: 5, offset: 0});
+    });
+  });
+
+  describe('tokenRegex', () => {
+    const mentionRe = /@\S+(?=\s)/g;
+
+    it('tokenizes mention when trailing space is part of the insert (lookahead in window)', () => {
+      let {value, caret} = replaceWithRegex(
+        [text('hello  world')],
+        {index: 0, offset: 6},
+        {index: 0, offset: 6},
+        '@alice ',
+        mentionRe
+      );
+      expect(value).toEqual([text('hello '), token('@alice'), text('  world')]);
+      expect(caret).toEqual({index: 2, offset: 1});
+    });
+
+    it('does not tokenize when space after mention exists only in suffix (outside window)', () => {
+      let {value, caret} = replaceWithRegex(
+        [text('hello  world')],
+        {index: 0, offset: 6},
+        {index: 0, offset: 6},
+        '@alice',
+        mentionRe
+      );
+      expect(value).toEqual([text('hello @alice world')]);
+      expect(caret).toEqual({index: 0, offset: 12});
+    });
+
+    it('tokenizes multiple mentions in one insert', () => {
+      let {value, caret} = replaceWithRegex(
+        [text('')],
+        {index: 0, offset: 0},
+        {index: 0, offset: 0},
+        '@a @b ',
+        mentionRe
+      );
+      expect(value).toEqual([token('@a'), text(' '), token('@b'), text(' ')]);
+      expect(caret).toEqual({index: 3, offset: 1});
+    });
+
+    it('with tokenRegex null, behaves like replace without tokenization', () => {
+      let withRegex = replaceWithRegex(
+        [text('hello  world')],
+        {index: 0, offset: 6},
+        {index: 0, offset: 6},
+        '@alice ',
+        mentionRe
+      );
+      let withNull = replaceWithRegex(
+        [text('hello  world')],
+        {index: 0, offset: 6},
+        {index: 0, offset: 6},
+        '@alice ',
+        null
+      );
+      expect(withRegex.value).not.toEqual(withNull.value);
+      expect(withNull.value).toEqual([text('hello @alice  world')]);
+      expect(withNull.caret).toEqual({index: 0, offset: 13});
+    });
+
+    it('does not run tokenization on empty insert even when pattern would match full string', () => {
+      let list = new TokenSegmentList([text('@alice  ')], {tokenRegex: mentionRe});
+      let {value, caret} = list.replaceRange({index: 0, offset: 7}, {index: 0, offset: 8}, '');
+      expect(value).toEqual([text('@alice ')]);
+      expect(caret).toEqual({index: 0, offset: 7});
     });
   });
 });

@@ -22,20 +22,33 @@ export enum Direction {
   Backward = -1
 }
 
+export interface TokenSegmentListOptions {
+  tokenRegex?: RegExp | null;
+}
+
 /**
  * A list of segments containing editable text and non-editable tokens.
  */
 export class TokenSegmentList {
   segments: TokenFieldSegment[];
+  tokenRegex: RegExp | null = null;
 
-  constructor(tokens: TokenFieldSegment[]) {
+  constructor(tokens: TokenFieldSegment[], options?: TokenSegmentListOptions) {
     this.segments = tokens;
+    if (options && 'tokenRegex' in options) {
+      this.tokenRegex = options.tokenRegex ?? null;
+    }
   }
 
   private splitSegment(
-    segment: TokenFieldSegment,
+    segment: TokenFieldSegment | undefined,
     offset: number
   ): [TokenFieldSegment | null, TokenFieldSegment | null] {
+    if (!segment) {
+      let empty = this.createTextSegment('');
+      return [offset > 0 ? empty : null, offset > 0 ? null : empty];
+    }
+
     if (segment.type === 'token') {
       return [offset > 0 ? {...segment} : null, offset > 0 ? null : {...segment}];
     }
@@ -48,6 +61,32 @@ export class TokenSegmentList {
 
   private createTextSegment(text: string): TokenFieldSegment {
     return {type: 'text', text};
+  }
+
+  private tokenize(text: string): TokenFieldSegment[] {
+    let tokenRegex = this.tokenRegex;
+    if (!tokenRegex || text.length === 0) {
+      return [this.createTextSegment(text)];
+    }
+
+    tokenRegex.lastIndex = 0;
+
+    let match: RegExpExecArray | null = null;
+    let start = 0;
+    let segments: TokenFieldSegment[] = [];
+    while ((match = tokenRegex.exec(text))) {
+      if (match.index > start) {
+        segments.push({type: 'text', text: text.slice(start, match.index)});
+      }
+      segments.push({type: 'token', text: match[0]});
+      start = match.index + match[0].length;
+    }
+
+    if (start < text.length) {
+      segments.push({type: 'text', text: text.slice(start)});
+    }
+
+    return segments;
   }
 
   private clampPosition(position: Position): Position {
@@ -107,6 +146,27 @@ export class TokenSegmentList {
       newSegments.push(this.createTextSegment(text));
     }
     newSegments.push(...this.segments.slice(end.index + 1));
+
+    if (this.tokenRegex && text.length > 0) {
+      let i = caret.index;
+      let seg = newSegments[i];
+      if (seg?.type === 'text') {
+        let window = seg.text.slice(0, caret.offset);
+        let suffix = seg.text.slice(caret.offset);
+        let tokenized = this.tokenize(window);
+        caret.index += tokenized.length - 1;
+        caret.offset = tokenized[tokenized.length - 1].text.length;
+        if (suffix.length > 0) {
+          if (tokenized[tokenized.length - 1].type === 'text') {
+            tokenized[tokenized.length - 1].text += suffix;
+          } else {
+            tokenized.push(this.createTextSegment(suffix));
+          }
+        }
+        newSegments.splice(i, 1, ...tokenized);
+      }
+    }
+
     return {
       value: newSegments,
       caret

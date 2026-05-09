@@ -11,6 +11,7 @@ export interface TokenFieldProps {
   value?: TokenFieldSegment[];
   defaultValue?: TokenFieldSegment[];
   onChange?: (value: TokenFieldSegment[]) => void;
+  tokenRegex?: RegExp | null;
   /** When false (default), newline insertion is blocked. */
   multiline?: boolean;
   isReadOnly?: boolean;
@@ -28,6 +29,7 @@ export function TokenField(props: TokenFieldProps) {
     value: valueProp,
     defaultValue: defaultValueProp = [],
     onChange,
+    tokenRegex = null,
     multiline = false,
     isReadOnly = false,
     isDisabled = false,
@@ -49,7 +51,7 @@ export function TokenField(props: TokenFieldProps) {
 
   let apply = (fn: (value: TokenSegmentList) => Change) => {
     setState(value => {
-      let tokens = new TokenSegmentList(value);
+      let tokens = new TokenSegmentList(value, {tokenRegex});
       let result = fn(tokens);
       nextCaretPosition.current = result.caret;
       return result.value;

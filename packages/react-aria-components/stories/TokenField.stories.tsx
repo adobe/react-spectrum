@@ -11,8 +11,7 @@
  */
 
 import {Meta, StoryFn} from '@storybook/react';
-import React, {useState} from 'react';
-import styles from '../example/index.css';
+import React from 'react';
 import './styles.css';
 import {TokenField, type TokenFieldSegment} from '../src/TokenField';
 
@@ -29,6 +28,8 @@ const sample: TokenFieldSegment[] = [
   {type: 'text', text: ' tokens testing'}
 ];
 
+const mentionTokenRegex = /(?<=\s|^)@\S+(?=\s)/g;
+
 export const TokenFieldExample: TokenFieldStory = () => {
-  return <TokenField defaultValue={sample} aria-label="Message" />;
+  return <TokenField defaultValue={sample} aria-label="Message" tokenRegex={mentionTokenRegex} />;
 };
