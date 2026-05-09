@@ -10,7 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMAttributesWithRef, DOMProps, FocusableProps, PressEvents, RefObject} from '@react-types/shared';
+import {
+  AriaLabelingProps,
+  DOMAttributesWithRef,
+  DOMProps,
+  FocusableProps,
+  PressEvents,
+  RefObject
+} from '@react-types/shared';
 import {filterDOMProps} from '../utils/filterDOMProps';
 import {InputHTMLAttributes, LabelHTMLAttributes, ReactNode, useMemo} from 'react';
 import {mergeProps} from '../utils/mergeProps';
@@ -27,33 +34,33 @@ export interface RadioProps extends FocusableProps {
    * The value of the radio button, used when submitting an HTML form.
    * See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/radio#Value).
    */
-  value: string,
+  value: string;
   /**
    * The label for the Radio. Accepts any renderable node.
    */
-  children?: ReactNode,
+  children?: ReactNode;
   /**
    * Whether the radio button is disabled or not.
    * Shows that a selection exists, but is not available in that circumstance.
    */
-  isDisabled?: boolean
+  isDisabled?: boolean;
 }
 
 export interface AriaRadioProps extends RadioProps, DOMProps, AriaLabelingProps, PressEvents {}
 
 export interface RadioAria {
   /** Props for the label wrapper element. */
-  labelProps: LabelHTMLAttributes<HTMLLabelElement>,
+  labelProps: LabelHTMLAttributes<HTMLLabelElement>;
   /** Props for the input element. */
-  inputProps: InputHTMLAttributes<HTMLInputElement>,
+  inputProps: InputHTMLAttributes<HTMLInputElement>;
   /** Props for the checkbox description element, if any. */
-  descriptionProps: DOMAttributesWithRef<HTMLElement>,
+  descriptionProps: DOMAttributesWithRef<HTMLElement>;
   /** Whether the radio is disabled. */
-  isDisabled: boolean,
+  isDisabled: boolean;
   /** Whether the radio is currently selected. */
-  isSelected: boolean,
+  isSelected: boolean;
   /** Whether the radio is in a pressed state. */
-  isPressed: boolean
+  isPressed: boolean;
 }
 
 /**
@@ -63,7 +70,11 @@ export interface RadioAria {
  * @param state - State for the radio group, as returned by `useRadioGroupState`.
  * @param ref - Ref to the HTML input element.
  */
-export function useRadio(props: AriaRadioProps, state: RadioGroupState, ref: RefObject<HTMLInputElement | null>): RadioAria {
+export function useRadio(
+  props: AriaRadioProps,
+  state: RadioGroupState,
+  ref: RefObject<HTMLInputElement | null>
+): RadioAria {
   let {
     value,
     children,
@@ -82,12 +93,14 @@ export function useRadio(props: AriaRadioProps, state: RadioGroupState, ref: Ref
   let hasChildren = children != null;
   let hasAriaLabel = ariaLabel != null || ariaLabelledby != null;
   if (!hasChildren && !hasAriaLabel && process.env.NODE_ENV !== 'production') {
-    console.warn('If you do not provide children, you must specify an aria-label for accessibility');
+    console.warn(
+      'If you do not provide children, you must specify an aria-label for accessibility'
+    );
   }
 
   let checked = state.selectedValue === value;
 
-  let onChange = (e) => {
+  let onChange = e => {
     e.stopPropagation();
     state.setSelectedValue(value);
   };
@@ -118,9 +131,12 @@ export function useRadio(props: AriaRadioProps, state: RadioGroupState, ref: Ref
     }
   });
 
-  let {focusableProps} = useFocusable(mergeProps(props, {
-    onFocus: () => state.setLastFocusedValue(value)
-  }), ref);
+  let {focusableProps} = useFocusable(
+    mergeProps(props, {
+      onFocus: () => state.setLastFocusedValue(value)
+    }),
+    ref
+  );
   let interactions = mergeProps(pressProps, focusableProps);
   let domProps = filterDOMProps(props, {labelable: true});
   let tabIndex: number | undefined = -1;
@@ -144,13 +160,17 @@ export function useRadio(props: AriaRadioProps, state: RadioGroupState, ref: Ref
   return {
     labelProps: mergeProps(
       labelProps,
-      useMemo(() => ({
-        onClick: e => e.preventDefault(),
+      useMemo(
+        () => ({
+          onClick: e => e.preventDefault(),
 
-        // Prevent label from being focused when mouse down on it.
-        // Note, this does not prevent the input from being focused in the `click` event.
-        onMouseDown: e => e.preventDefault()
-      }), [])),
+          // Prevent label from being focused when mouse down on it.
+          // Note, this does not prevent the input from being focused in the `click` event.
+          onMouseDown: e => e.preventDefault()
+        }),
+        []
+      )
+    ),
     inputProps: mergeProps(domProps, {
       ...interactions,
       type: 'radio',
@@ -162,12 +182,15 @@ export function useRadio(props: AriaRadioProps, state: RadioGroupState, ref: Ref
       checked,
       value,
       onChange,
-      'aria-describedby': [
-        props['aria-describedby'],
-        descriptionProps.id,
-        state.isInvalid ? errorMessageId : null,
-        descriptionId
-      ].filter(Boolean).join(' ') || undefined
+      'aria-describedby':
+        [
+          props['aria-describedby'],
+          descriptionProps.id,
+          state.isInvalid ? errorMessageId : null,
+          descriptionId
+        ]
+          .filter(Boolean)
+          .join(' ') || undefined
     }),
     descriptionProps,
     isDisabled,

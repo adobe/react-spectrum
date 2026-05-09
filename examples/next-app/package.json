@@ -2,7 +2,12 @@
   "name": "next-app",
   "version": "0.1.0",
   "private": true,
-  "packageManager": "yarn@4.2.2",
+  "workspaces": [
+    "../../packages/react-aria-components",
+    "../../packages/react-aria",
+    "../../packages/react-stately",
+    "../../packages/*/*"
+  ],
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -21,14 +26,9 @@
     "glob": "^11.0.3",
     "typescript": "^5"
   },
-  "workspaces": [
-    "../../packages/react-aria-components",
-    "../../packages/react-aria",
-    "../../packages/react-stately",
-    "../../packages/*/*"
-  ],
   "resolutions": {
     "react": "link:../../node_modules/react",
     "react-dom": "link:../../node_modules/react-dom"
-  }
+  },
+  "packageManager": "yarn@4.2.2"
 }

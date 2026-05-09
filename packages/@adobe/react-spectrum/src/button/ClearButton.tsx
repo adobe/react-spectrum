@@ -23,15 +23,19 @@ import {useFocusableRef} from '../utils/useDOMRef';
 import {useHover} from 'react-aria/useHover';
 import {useStyleProps} from '../utils/styleProps';
 
-interface ClearButtonProps<T extends ElementType = 'button'> extends AriaButtonProps<T>, DOMProps, StyleProps {
-  focusClassName?: string,
-  variant?: 'overBackground',
-  excludeFromTabOrder?: boolean,
-  preventFocus?: boolean,
-  inset?: boolean
+interface ClearButtonProps<T extends ElementType = 'button'>
+  extends AriaButtonProps<T>, DOMProps, StyleProps {
+  focusClassName?: string;
+  variant?: 'overBackground';
+  excludeFromTabOrder?: boolean;
+  preventFocus?: boolean;
+  inset?: boolean;
 }
 
-export const ClearButton = React.forwardRef(function ClearButton(props: ClearButtonProps, ref: FocusableRef<HTMLButtonElement>) {
+export const ClearButton = React.forwardRef(function ClearButton(
+  props: ClearButtonProps,
+  ref: FocusableRef<HTMLButtonElement>
+) {
   let {
     children = <CrossSmall UNSAFE_className={styles['spectrum-Icon']} />,
     focusClassName,
@@ -39,7 +43,7 @@ export const ClearButton = React.forwardRef(function ClearButton(props: ClearBut
     autoFocus,
     isDisabled,
     preventFocus,
-    elementType = preventFocus ? 'div' : 'button' as ElementType,
+    elementType = preventFocus ? 'div' : ('button' as ElementType),
     inset = false,
     ...otherProps
   } = props;
@@ -57,25 +61,25 @@ export const ClearButton = React.forwardRef(function ClearButton(props: ClearBut
 
   let ElementType = elementType;
   return (
-    <FocusRing focusRingClass={classNames(styles, 'focus-ring', focusClassName)} autoFocus={autoFocus}>
+    <FocusRing
+      focusRingClass={classNames(styles, 'focus-ring', focusClassName)}
+      autoFocus={autoFocus}>
       <ElementType
         {...styleProps}
         {...mergeProps(buttonProps, hoverProps)}
         ref={domRef}
-        className={
-          classNames(
-            styles,
-            'spectrum-ClearButton',
-            {
-              [`spectrum-ClearButton--${variant}`]: variant,
-              'is-disabled': isDisabled,
-              'is-active': isPressed,
-              'is-hovered': isHovered,
-              'spectrum-ClearButton--inset': inset
-            },
-            styleProps.className
-          )
-        }>
+        className={classNames(
+          styles,
+          'spectrum-ClearButton',
+          {
+            [`spectrum-ClearButton--${variant}`]: variant,
+            'is-disabled': isDisabled,
+            'is-active': isPressed,
+            'is-hovered': isHovered,
+            'spectrum-ClearButton--inset': inset
+          },
+          styleProps.className
+        )}>
         {children}
       </ElementType>
     </FocusRing>

@@ -45,13 +45,15 @@ export const flightStatusVariant: Record<
 };
 
 const getData = (rowNumber: number, columnNumber: number) => {
-  const columns = columnDefinitions.concat([...Array(columnNumber - columnDefinitions.length)].map(() =>
-    faker.helpers.arrayElement(columnDefinitions)
-  ));
+  const columns = columnDefinitions.concat(
+    [...Array(columnNumber - columnDefinitions.length)].map(() =>
+      faker.helpers.arrayElement(columnDefinitions)
+    )
+  );
   return {
     columns,
     data: [...Array(rowNumber)].map(() => {
-      return columns.map((column) => {
+      return columns.map(column => {
         switch (column.type) {
           case 'TEXT':
             return {rawValue: faker.airline.airline().name};
@@ -64,12 +66,11 @@ const getData = (rowNumber: number, columnNumber: number) => {
               .multiple(faker.airline.airport, {
                 count: {min: 1, max: 7}
               })
-              .map((airport) => airport.iataCode);
+              .map(airport => airport.iataCode);
             return {rawValue: airports.join(', '), data: airports};
           }
           case 'STATUS': {
-            const [flightKey, flightStatus] =
-              faker.helpers.objectEntry(flightStatuses);
+            const [flightKey, flightStatus] = faker.helpers.objectEntry(flightStatuses);
             return {
               rawValue: flightStatus,
               variant: flightStatusVariant[flightKey]
@@ -117,9 +118,7 @@ export function Performance(): JSX.Element {
                 case 'TEXT':
                   return <Cell key={cellId}>{cell.rawValue as string}</Cell>;
                 case 'DATETIME':
-                  return (
-                    <Cell key={cellId}>{cell.rawValue.toLocaleString()}</Cell>
-                  );
+                  return <Cell key={cellId}>{cell.rawValue.toLocaleString()}</Cell>;
                 case 'STATUS':
                   return (
                     <Cell key={cellId}>
@@ -146,7 +145,11 @@ export function Performance(): JSX.Element {
                 case 'CHECKBOX':
                   return (
                     <Cell key={cellId}>
-                      <Checkbox isEmphasized defaultSelected={cell.rawValue as boolean} aria-label="checkbox" />
+                      <Checkbox
+                        isEmphasized
+                        defaultSelected={cell.rawValue as boolean}
+                        aria-label="checkbox"
+                      />
                     </Cell>
                   );
                 case 'TAGS':
@@ -186,7 +189,7 @@ export function Performance(): JSX.Element {
   );
 }
 
-const CircleIcon = (props) => (
+const CircleIcon = props => (
   <Icon {...props}>
     <svg viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg">
       <circle r="18" cx="18" cy="18" />
@@ -194,7 +197,7 @@ const CircleIcon = (props) => (
   </Icon>
 );
 
-const StarIcon = (props) => {
+const StarIcon = props => {
   return (
     <Icon {...props}>
       <svg viewBox="0 0 36 36">

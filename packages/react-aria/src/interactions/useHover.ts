@@ -23,13 +23,13 @@ import {useGlobalListeners} from '../utils/useGlobalListeners';
 
 export interface HoverProps extends HoverEvents {
   /** Whether the hover events should be disabled. */
-  isDisabled?: boolean
+  isDisabled?: boolean;
 }
 
 export interface HoverResult {
   /** Props to spread on the target element. */
-  hoverProps: DOMAttributes,
-  isHovered: boolean
+  hoverProps: DOMAttributes;
+  isHovered: boolean;
 }
 
 // iOS fires onPointerEnter twice: once with pointerType="touch" and again with pointerType="mouse".
@@ -90,12 +90,7 @@ function setupGlobalTouchEvents() {
  * across browsers and platforms, and ignores emulated mouse events on touch devices.
  */
 export function useHover(props: HoverProps): HoverResult {
-  let {
-    onHoverStart,
-    onHoverChange,
-    onHoverEnd,
-    isDisabled
-  } = props;
+  let {onHoverStart, onHoverChange, onHoverEnd, isDisabled} = props;
 
   let [isHovered, setHovered] = useState(false);
   let state = useRef({
@@ -111,7 +106,12 @@ export function useHover(props: HoverProps): HoverResult {
   let {hoverProps, triggerHoverEnd} = useMemo(() => {
     let triggerHoverStart = (event, pointerType) => {
       state.pointerType = pointerType;
-      if (isDisabled || pointerType === 'touch' || state.isHovered || !nodeContains(event.currentTarget, getEventTarget(event) as Element)) {
+      if (
+        isDisabled ||
+        pointerType === 'touch' ||
+        state.isHovered ||
+        !nodeContains(event.currentTarget, getEventTarget(event) as Element)
+      ) {
         return;
       }
 
@@ -123,11 +123,20 @@ export function useHover(props: HoverProps): HoverResult {
       // even though the originally hovered target may have shrunk in size so it is no longer hovered.
       // However, a pointerover event will be fired on the new target the mouse is over.
       // In Chrome this happens immediately. In Safari and Firefox, it happens upon moving the mouse one pixel.
-      addGlobalListener(getOwnerDocument(getEventTarget(event) as Element), 'pointerover', e => {
-        if (state.isHovered && state.target && !nodeContains(state.target, getEventTarget(e) as Element)) {
-          triggerHoverEnd(e, e.pointerType);
-        }
-      }, {capture: true});
+      addGlobalListener(
+        getOwnerDocument(getEventTarget(event) as Element),
+        'pointerover',
+        e => {
+          if (
+            state.isHovered &&
+            state.target &&
+            !nodeContains(state.target, getEventTarget(e) as Element)
+          ) {
+            triggerHoverEnd(e, e.pointerType);
+          }
+        },
+        {capture: true}
+      );
 
       if (onHoverStart) {
         onHoverStart({
@@ -174,7 +183,7 @@ export function useHover(props: HoverProps): HoverResult {
     let hoverProps: DOMAttributes = {};
 
     if (typeof PointerEvent !== 'undefined') {
-      hoverProps.onPointerEnter = (e) => {
+      hoverProps.onPointerEnter = e => {
         if (globalIgnoreEmulatedMouseEvents && e.pointerType === 'mouse') {
           return;
         }
@@ -182,7 +191,7 @@ export function useHover(props: HoverProps): HoverResult {
         triggerHoverStart(e, e.pointerType);
       };
 
-      hoverProps.onPointerLeave = (e) => {
+      hoverProps.onPointerLeave = e => {
         if (!isDisabled && nodeContains(e.currentTarget, getEventTarget(e) as Element)) {
           triggerHoverEnd(e, e.pointerType);
         }
@@ -192,7 +201,7 @@ export function useHover(props: HoverProps): HoverResult {
         state.ignoreEmulatedMouseEvents = true;
       };
 
-      hoverProps.onMouseEnter = (e) => {
+      hoverProps.onMouseEnter = e => {
         if (!state.ignoreEmulatedMouseEvents && !globalIgnoreEmulatedMouseEvents) {
           triggerHoverStart(e, 'mouse');
         }
@@ -200,14 +209,22 @@ export function useHover(props: HoverProps): HoverResult {
         state.ignoreEmulatedMouseEvents = false;
       };
 
-      hoverProps.onMouseLeave = (e) => {
+      hoverProps.onMouseLeave = e => {
         if (!isDisabled && nodeContains(e.currentTarget, getEventTarget(e) as Element)) {
           triggerHoverEnd(e, 'mouse');
         }
       };
     }
     return {hoverProps, triggerHoverEnd};
-  }, [onHoverStart, onHoverChange, onHoverEnd, isDisabled, state, addGlobalListener, removeAllGlobalListeners]);
+  }, [
+    onHoverStart,
+    onHoverChange,
+    onHoverEnd,
+    isDisabled,
+    state,
+    addGlobalListener,
+    removeAllGlobalListeners
+  ]);
 
   useEffect(() => {
     // Call the triggerHoverEnd as soon as isDisabled changes to true
@@ -215,7 +232,7 @@ export function useHover(props: HoverProps): HoverResult {
     if (isDisabled) {
       triggerHoverEnd({currentTarget: state.target}, state.pointerType);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isDisabled]);
 
   return {

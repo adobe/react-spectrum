@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
- /* eslint-disable rulesdir/pure-render */
+/* eslint-disable rulesdir/pure-render */
 
 import {getEventTarget, nodeContains} from './shadowdom/DOMFunctions';
 import {getOffset} from './getOffset';
@@ -18,17 +18,17 @@ import {Orientation} from '@react-types/shared';
 import React, {HTMLAttributes, MutableRefObject, useRef} from 'react';
 
 interface UseDrag1DProps {
-  containerRef: MutableRefObject<HTMLElement>,
-  reverse?: boolean,
-  orientation?: Orientation,
-  onHover?: (hovered: boolean) => void,
-  onDrag?: (dragging: boolean) => void,
-  onPositionChange?: (position: number) => void,
-  onIncrement?: () => void,
-  onDecrement?: () => void,
-  onIncrementToMax?: () => void,
-  onDecrementToMin?: () => void,
-  onCollapseToggle?: () => void
+  containerRef: MutableRefObject<HTMLElement>;
+  reverse?: boolean;
+  orientation?: Orientation;
+  onHover?: (hovered: boolean) => void;
+  onDrag?: (dragging: boolean) => void;
+  onPositionChange?: (position: number) => void;
+  onIncrement?: () => void;
+  onDecrement?: () => void;
+  onIncrementToMax?: () => void;
+  onDecrementToMin?: () => void;
+  onCollapseToggle?: () => void;
 }
 
 // Keep track of elements that we are currently handling dragging for via useDrag1D.
@@ -42,9 +42,23 @@ const draggingElements: HTMLElement[] = [];
 // It can also handle either a vertical or horizontal movement, but not both at the same time
 
 export function useDrag1D(props: UseDrag1DProps): HTMLAttributes<HTMLElement> {
-  console.warn('useDrag1D is deprecated, please use `useMove` instead https://react-spectrum.adobe.com/react-aria/useMove.html');
-  let {containerRef, reverse, orientation, onHover, onDrag, onPositionChange, onIncrement, onDecrement, onIncrementToMax, onDecrementToMin, onCollapseToggle} = props;
-  let getPosition = (e) => orientation === 'horizontal' ? e.clientX : e.clientY;
+  console.warn(
+    'useDrag1D is deprecated, please use `useMove` instead https://react-spectrum.adobe.com/react-aria/useMove.html'
+  );
+  let {
+    containerRef,
+    reverse,
+    orientation,
+    onHover,
+    onDrag,
+    onPositionChange,
+    onIncrement,
+    onDecrement,
+    onIncrementToMax,
+    onDecrementToMin,
+    onCollapseToggle
+  } = props;
+  let getPosition = e => (orientation === 'horizontal' ? e.clientX : e.clientY);
   let getNextOffset = (e: MouseEvent) => {
     let containerOffset = getOffset(containerRef.current, reverse, orientation);
     let mouseOffset = getPosition(e);
@@ -120,7 +134,7 @@ export function useDrag1D(props: UseDrag1DProps): HTMLAttributes<HTMLElement> {
     }
   };
 
-  let onKeyDown = (e) => {
+  let onKeyDown = e => {
     switch (e.key) {
       case 'Left':
       case 'ArrowLeft':

@@ -12,7 +12,16 @@
 
 import {chain} from '../utils/chain';
 
-import {DOMAttributes, DOMProps, FocusableElement, Key, LongPressEvent, PointerType, PressEvent, RefObject} from '@react-types/shared';
+import {
+  DOMAttributes,
+  DOMProps,
+  FocusableElement,
+  Key,
+  LongPressEvent,
+  PointerType,
+  PressEvent,
+  RefObject
+} from '@react-types/shared';
 import {focusSafely} from '../interactions/focusSafely';
 import {getActiveElement, getEventTarget} from '../utils/shadowdom/DOMFunctions';
 import {getCollectionId, isNonContiguousSelectionModifier} from './utils';
@@ -30,44 +39,44 @@ export interface SelectableItemOptions extends DOMProps {
   /**
    * An interface for reading and updating multiple selection state.
    */
-  selectionManager: MultipleSelectionManager,
+  selectionManager: MultipleSelectionManager;
   /**
    * A unique key for the item.
    */
-  key: Key,
+  key: Key;
   /**
    * Ref to the item.
    */
-  ref: RefObject<FocusableElement | null>,
+  ref: RefObject<FocusableElement | null>;
   /**
    * By default, selection occurs on pointer down. This can be strange if selecting an
    * item causes the UI to disappear immediately (e.g. menus).
    */
-  shouldSelectOnPressUp?: boolean,
+  shouldSelectOnPressUp?: boolean;
   /**
    * Whether selection requires the pointer/mouse down and up events to occur on the same target or triggers selection on
    * the target of the pointer/mouse up event.
    */
-  allowsDifferentPressOrigin?: boolean,
+  allowsDifferentPressOrigin?: boolean;
   /**
    * Whether the option is contained in a virtual scroller.
    */
-  isVirtualized?: boolean,
+  isVirtualized?: boolean;
   /**
    * Function to focus the item.
    */
-  focus?: () => void,
+  focus?: () => void;
   /**
    * Whether the option should use virtual focus instead of being focused directly.
    */
-  shouldUseVirtualFocus?: boolean,
+  shouldUseVirtualFocus?: boolean;
   /** Whether the item is disabled. */
-  isDisabled?: boolean,
+  isDisabled?: boolean;
   /**
    * Handler that is called when a user performs an action on the item. The exact user event depends on
    * the collection's `selectionBehavior` prop and the interaction modality.
    */
-  onAction?: () => void,
+  onAction?: () => void;
   /**
    * The behavior of links in the collection.
    * - 'action': link behaves like onAction.
@@ -76,39 +85,39 @@ export interface SelectableItemOptions extends DOMProps {
    * - 'none': links are disabled for both selection and actions (e.g. handled elsewhere).
    * @default 'action'
    */
-  linkBehavior?: 'action' | 'selection' | 'override' | 'none'
+  linkBehavior?: 'action' | 'selection' | 'override' | 'none';
 }
 
 export interface SelectableItemStates {
   /** Whether the item is currently in a pressed state. */
-  isPressed: boolean,
+  isPressed: boolean;
   /** Whether the item is currently selected. */
-  isSelected: boolean,
+  isSelected: boolean;
   /** Whether the item is currently focused. */
-  isFocused: boolean,
+  isFocused: boolean;
   /**
    * Whether the item is non-interactive, i.e. both selection and actions are disabled and the item may
    * not be focused. Dependent on `disabledKeys` and `disabledBehavior`.
    */
-  isDisabled: boolean,
+  isDisabled: boolean;
   /**
    * Whether the item may be selected, dependent on `selectionMode`, `disabledKeys`, and `disabledBehavior`.
    */
-  allowsSelection: boolean,
+  allowsSelection: boolean;
   /**
    * Whether the item has an action, dependent on `onAction`, `disabledKeys`,
    * and `disabledBehavior`. It may also change depending on the current selection state
    * of the list (e.g. when selection is primary). This can be used to enable or disable hover
    * styles or other visual indications of interactivity.
    */
-  hasAction: boolean
+  hasAction: boolean;
 }
 
 export interface SelectableItemAria extends SelectableItemStates {
   /**
    * Props to be spread on the item root node.
    */
-  itemProps: DOMAttributes
+  itemProps: DOMAttributes;
 }
 
 /**
@@ -158,7 +167,10 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
         }
       } else if (e && e.shiftKey) {
         manager.extendSelection(key);
-      } else if (manager.selectionBehavior === 'toggle' || (e && (isCtrlKeyPressed(e) || e.pointerType === 'touch' || e.pointerType === 'virtual'))) {
+      } else if (
+        manager.selectionBehavior === 'toggle' ||
+        (e && (isCtrlKeyPressed(e) || e.pointerType === 'touch' || e.pointerType === 'virtual'))
+      ) {
         // if touch or virtual (VO) then we just want to toggle, otherwise it's impossible to multi select because they don't have modifier keys
         manager.toggleSelection(key);
       } else {
@@ -184,8 +196,15 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
         moveVirtualFocus(ref.current);
       }
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ref, key, manager.focusedKey, manager.childFocusStrategy, manager.isFocused, shouldUseVirtualFocus]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    ref,
+    key,
+    manager.focusedKey,
+    manager.childFocusStrategy,
+    manager.isFocused,
+    shouldUseVirtualFocus
+  ]);
 
   isDisabled = isDisabled || manager.isDisabled(key);
   // Set tabIndex to 0 if the element is focused, or -1 otherwise so that only the last focused
@@ -202,7 +221,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
       }
     };
   } else if (isDisabled) {
-    itemProps.onMouseDown = (e) => {
+    itemProps.onMouseDown = e => {
       // Prevent focus going to the body when clicking on a disabled item.
       e.preventDefault();
     };
@@ -220,15 +239,18 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
   // With touch, onAction occurs on single tap, and long press enters selection mode.
   let isLinkOverride = manager.isLink(key) && linkBehavior === 'override';
   let isActionOverride = onAction && options['UNSTABLE_itemBehavior'] === 'action';
-  let hasLinkAction = manager.isLink(key) && linkBehavior !== 'selection' && linkBehavior !== 'none';
-  let allowsSelection = !isDisabled && manager.canSelectItem(key) && !isLinkOverride && !isActionOverride;
+  let hasLinkAction =
+    manager.isLink(key) && linkBehavior !== 'selection' && linkBehavior !== 'none';
+  let allowsSelection =
+    !isDisabled && manager.canSelectItem(key) && !isLinkOverride && !isActionOverride;
   let allowsActions = (onAction || hasLinkAction) && !isDisabled;
-  let hasPrimaryAction = allowsActions && (
-    manager.selectionBehavior === 'replace'
+  let hasPrimaryAction =
+    allowsActions &&
+    (manager.selectionBehavior === 'replace'
       ? !allowsSelection
-      : !allowsSelection || manager.isEmpty
-  );
-  let hasSecondaryAction = allowsActions && allowsSelection && manager.selectionBehavior === 'replace';
+      : !allowsSelection || manager.isEmpty);
+  let hasSecondaryAction =
+    allowsActions && allowsSelection && manager.selectionBehavior === 'replace';
   let hasAction = hasPrimaryAction || hasSecondaryAction;
   let modality = useRef<PointerType | null>(null);
 
@@ -237,7 +259,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
   let hadPrimaryActionOnPressStart = useRef(false);
   let collectionItemProps = manager.getItemProps(key);
 
-  let performAction = (e) => {
+  let performAction = e => {
     if (onAction) {
       onAction();
       ref.current?.dispatchEvent(new CustomEvent('react-aria-item-action', {bubbles: true}));
@@ -257,7 +279,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
   // For keyboard events, selection still occurs on key down.
   let itemPressProps: PressHookProps = {ref};
   if (shouldSelectOnPressUp) {
-    itemPressProps.onPressStart = (e) => {
+    itemPressProps.onPressStart = e => {
       modality.current = e.pointerType;
       longPressEnabledOnPressStart.current = longPressEnabled;
       if (e.pointerType === 'keyboard' && (!hasAction || isSelectionKey(e.key))) {
@@ -268,7 +290,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     // If allowsDifferentPressOrigin and interacting with mouse, make selection happen on pressUp (e.g. open menu on press down, selection on menu item happens on press up.)
     // Otherwise, have selection happen onPress (prevents listview row selection when clicking on interactable elements in the row)
     if (!allowsDifferentPressOrigin) {
-      itemPressProps.onPress = (e) => {
+      itemPressProps.onPress = e => {
         if (hasPrimaryAction || (hasSecondaryAction && e.pointerType !== 'mouse')) {
           if (e.pointerType === 'keyboard' && !isActionKey(e.key)) {
             return;
@@ -280,20 +302,24 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
         }
       };
     } else {
-      itemPressProps.onPressUp = hasPrimaryAction ? undefined : (e) => {
-        if (e.pointerType === 'mouse' && allowsSelection) {
-          onSelect(e);
-        }
-      };
+      itemPressProps.onPressUp = hasPrimaryAction
+        ? undefined
+        : e => {
+            if (e.pointerType === 'mouse' && allowsSelection) {
+              onSelect(e);
+            }
+          };
 
-      itemPressProps.onPress = hasPrimaryAction ? performAction : (e) => {
-        if (e.pointerType !== 'keyboard' && e.pointerType !== 'mouse' && allowsSelection) {
-          onSelect(e);
-        }
-      };
+      itemPressProps.onPress = hasPrimaryAction
+        ? performAction
+        : e => {
+            if (e.pointerType !== 'keyboard' && e.pointerType !== 'mouse' && allowsSelection) {
+              onSelect(e);
+            }
+          };
     }
   } else {
-    itemPressProps.onPressStart = (e) => {
+    itemPressProps.onPressStart = e => {
       modality.current = e.pointerType;
       longPressEnabledOnPressStart.current = longPressEnabled;
       hadPrimaryActionOnPressStart.current = hasPrimaryAction;
@@ -302,16 +328,15 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
       // For keyboard, select on key down. If there is an action, the Space key selects on key down,
       // and the Enter key performs onAction on key up.
       if (
-        allowsSelection && (
-          (e.pointerType === 'mouse' && !hasPrimaryAction) ||
-          (e.pointerType === 'keyboard' && (!allowsActions || isSelectionKey(e.key)))
-        )
+        allowsSelection &&
+        ((e.pointerType === 'mouse' && !hasPrimaryAction) ||
+          (e.pointerType === 'keyboard' && (!allowsActions || isSelectionKey(e.key))))
       ) {
         onSelect(e);
       }
     };
 
-    itemPressProps.onPress = (e) => {
+    itemPressProps.onPress = e => {
       // Selection occurs on touch up. Primary actions always occur on pointer up.
       // Both primary and secondary actions occur on Enter key up. The only exception
       // is secondary actions, which occur on double click with a mouse.
@@ -354,7 +379,14 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
   }
 
   if (collectionItemProps) {
-    for (let key of ['onPressStart', 'onPressEnd', 'onPressChange', 'onPress', 'onPressUp', 'onClick']) {
+    for (let key of [
+      'onPressStart',
+      'onPressEnd',
+      'onPressChange',
+      'onPress',
+      'onPressUp',
+      'onClick'
+    ]) {
       if (collectionItemProps[key]) {
         itemPressProps[key] = chain(itemPressProps[key], collectionItemProps[key]);
       }
@@ -364,13 +396,15 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
   let {pressProps, isPressed} = usePress(itemPressProps);
 
   // Double clicking with a mouse with selectionBehavior = 'replace' performs an action.
-  let onDoubleClick = hasSecondaryAction ? (e) => {
-    if (modality.current === 'mouse') {
-      e.stopPropagation();
-      e.preventDefault();
-      performAction(e);
-    }
-  } : undefined;
+  let onDoubleClick = hasSecondaryAction
+    ? e => {
+        if (modality.current === 'mouse') {
+          e.stopPropagation();
+          e.preventDefault();
+          performAction(e);
+        }
+      }
+    : undefined;
 
   // Long pressing an item with touch when selectionBehavior = 'replace' switches the selection behavior
   // to 'toggle'. This changes the single tap behavior from performing an action (i.e. navigating) to
@@ -397,16 +431,21 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
 
   // Prevent default on link clicks so that we control exactly
   // when they open (to match selection behavior).
-  let onClick = linkBehavior !== 'none' && manager.isLink(key) ? e => {
-    if (!(openLink as any).isOpening) {
-      e.preventDefault();
-    }
-  } : undefined;
+  let onClick =
+    linkBehavior !== 'none' && manager.isLink(key)
+      ? e => {
+          if (!(openLink as any).isOpening) {
+            e.preventDefault();
+          }
+        }
+      : undefined;
 
   return {
     itemProps: mergeProps(
       itemProps,
-      allowsSelection || hasPrimaryAction || (shouldUseVirtualFocus && !isDisabled) ? pressProps : {},
+      allowsSelection || hasPrimaryAction || (shouldUseVirtualFocus && !isDisabled)
+        ? pressProps
+        : {},
       longPressEnabled ? longPressProps : {},
       {onDoubleClick, onDragStartCapture, onClick, id},
       // Prevent DOM focus from moving on mouse down when using virtual focus

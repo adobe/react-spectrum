@@ -15,7 +15,9 @@ import {MutableRefObject, Ref} from 'react';
 /**
  * Merges multiple refs into one. Works with either callback or object refs.
  */
-export function mergeRefs<T>(...refs: Array<Ref<T> | MutableRefObject<T> | null | undefined>): Ref<T> {
+export function mergeRefs<T>(
+  ...refs: Array<Ref<T> | MutableRefObject<T> | null | undefined>
+): Ref<T> {
   if (refs.length === 1 && refs[0]) {
     return refs[0];
   }

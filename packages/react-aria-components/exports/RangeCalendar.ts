@@ -14,8 +14,33 @@
 // to import it from a React Server Component in a framework like Next.js.
 import 'client-only';
 
-export {CalendarGrid, CalendarGridHeader, CalendarGridBody, CalendarHeaderCell, CalendarCell, RangeCalendar, RangeCalendarContext, RangeCalendarStateContext, CalendarMonthPicker, CalendarYearPicker, CalendarHeading} from '../src/Calendar';
-export type {CalendarCellProps, CalendarRenderProps, CalendarGridProps, CalendarGridHeaderProps, CalendarGridBodyProps, CalendarHeaderCellProps, CalendarCellRenderProps, RangeCalendarProps, RangeCalendarRenderProps, CalendarMonthPickerProps, CalendarYearPickerProps, CalendarHeadingProps} from '../src/Calendar';
+export {
+  CalendarGrid,
+  CalendarGridHeader,
+  CalendarGridBody,
+  CalendarHeaderCell,
+  CalendarCell,
+  RangeCalendar,
+  RangeCalendarContext,
+  RangeCalendarStateContext,
+  CalendarMonthPicker,
+  CalendarYearPicker,
+  CalendarHeading
+} from '../src/Calendar';
+export type {
+  CalendarCellProps,
+  CalendarRenderProps,
+  CalendarGridProps,
+  CalendarGridHeaderProps,
+  CalendarGridBodyProps,
+  CalendarHeaderCellProps,
+  CalendarCellRenderProps,
+  RangeCalendarProps,
+  RangeCalendarRenderProps,
+  CalendarMonthPickerProps,
+  CalendarYearPickerProps,
+  CalendarHeadingProps
+} from '../src/Calendar';
 export type {DateRange, DateValue, RangeCalendarState} from 'react-stately/useRangeCalendarState';
 export type {CalendarMonthPickerAria, CalendarYearPickerAria} from 'react-aria/useRangeCalendar';
 export type {RangeValue} from '@react-types/shared';

@@ -16,24 +16,28 @@ import {PartialNode} from '../collections/types';
 
 export interface CellProps {
   /** The contents of the cell. */
-  children: ReactNode,
+  children: ReactNode;
   /** A string representation of the cell's contents, used for features like typeahead. */
-  textValue?: string,
+  textValue?: string;
   /** Indicates how many columns the data cell spans. */
-  colSpan?: number
+  colSpan?: number;
 }
 
 export type CellElement = ReactElement<CellProps>;
 export type CellRenderer = (columnKey: Key) => CellElement;
 
-function Cell(props: CellProps): ReactElement | null { // eslint-disable-line @typescript-eslint/no-unused-vars
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function Cell(props: CellProps): ReactElement | null {
   return null;
 }
 
-Cell.getCollectionNode = function* getCollectionNode<T>(props: CellProps): Generator<PartialNode<T>> {
+Cell.getCollectionNode = function* getCollectionNode<T>(
+  props: CellProps
+): Generator<PartialNode<T>> {
   let {children} = props;
 
-  let textValue = props.textValue || (typeof children === 'string' ? children : '') || props['aria-label'] || '';
+  let textValue =
+    props.textValue || (typeof children === 'string' ? children : '') || props['aria-label'] || '';
   yield {
     type: 'cell',
     props: props,

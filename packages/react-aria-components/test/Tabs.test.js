@@ -10,7 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, pointerMap, render, waitFor, within} from '@react-spectrum/test-utils-internal';
+import {
+  act,
+  fireEvent,
+  pointerMap,
+  render,
+  waitFor,
+  within
+} from '@react-spectrum/test-utils-internal';
 import {Button} from '../src/Button';
 import {ComboBox} from '../src/ComboBox';
 import {Input} from '../src/Input';
@@ -27,18 +34,31 @@ import {Tooltip, TooltipTrigger} from '../src/Tooltip';
 import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
 
-let renderTabs = (tabsProps, tablistProps, tabProps, tabpanelProps) => render(
-  <Tabs {...tabsProps} data-testid="tabs-wrapper">
-    <TabList {...tablistProps} aria-label="Test">
-      <Tab {...tabProps} id="a">A</Tab>
-      <Tab {...tabProps} id="b">B</Tab>
-      <Tab {...tabProps} id="c">C</Tab>
-    </TabList>
-    <TabPanel {...tabpanelProps} id="a">A</TabPanel>
-    <TabPanel {...tabpanelProps} id="b">B</TabPanel>
-    <TabPanel {...tabpanelProps} id="c">C</TabPanel>
-  </Tabs>
-);
+let renderTabs = (tabsProps, tablistProps, tabProps, tabpanelProps) =>
+  render(
+    <Tabs {...tabsProps} data-testid="tabs-wrapper">
+      <TabList {...tablistProps} aria-label="Test">
+        <Tab {...tabProps} id="a">
+          A
+        </Tab>
+        <Tab {...tabProps} id="b">
+          B
+        </Tab>
+        <Tab {...tabProps} id="c">
+          C
+        </Tab>
+      </TabList>
+      <TabPanel {...tabpanelProps} id="a">
+        A
+      </TabPanel>
+      <TabPanel {...tabpanelProps} id="b">
+        B
+      </TabPanel>
+      <TabPanel {...tabpanelProps} id="c">
+        C
+      </TabPanel>
+    </Tabs>
+  );
 
 describe('Tabs', () => {
   let user;
@@ -66,7 +86,12 @@ describe('Tabs', () => {
   });
 
   it('should render tabs with custom classes', () => {
-    let {getByRole, getAllByRole} = renderTabs({className: 'tabs'}, {className: 'tablist'}, {className: 'tab'}, {className: 'tabpanel'});
+    let {getByRole, getAllByRole} = renderTabs(
+      {className: 'tabs'},
+      {className: 'tablist'},
+      {className: 'tab'},
+      {className: 'tabpanel'}
+    );
     let tablist = getByRole('tablist');
     let tabs = tablist.closest('.tabs');
     expect(tabs).toBeInTheDocument();
@@ -80,7 +105,12 @@ describe('Tabs', () => {
   });
 
   it('should support DOM props', () => {
-    let {getByRole, getAllByRole} = renderTabs({'data-test': 'tabs'}, {'data-test': 'tablist'}, {'data-test': 'tab'}, {'data-test': 'tabpanel'});
+    let {getByRole, getAllByRole} = renderTabs(
+      {'data-test': 'tabs'},
+      {'data-test': 'tablist'},
+      {'data-test': 'tab'},
+      {'data-test': 'tabpanel'}
+    );
     let tablist = getByRole('tablist');
     let tabs = tablist.closest('.react-aria-Tabs');
     expect(tabs).toHaveAttribute('data-test', 'tabs');
@@ -94,12 +124,17 @@ describe('Tabs', () => {
   });
 
   it('should support aria props on the tabs', () => {
-    let {getAllByRole} = renderTabs({}, {}, {
-      'aria-label': 'label',
-      'aria-labelledby': 'labelledby',
-      'aria-describedby': 'describedby',
-      'aria-details': 'details'
-    }, {});
+    let {getAllByRole} = renderTabs(
+      {},
+      {},
+      {
+        'aria-label': 'label',
+        'aria-labelledby': 'labelledby',
+        'aria-describedby': 'describedby',
+        'aria-details': 'details'
+      },
+      {}
+    );
     for (let tab of getAllByRole('tab')) {
       expect(tab).toHaveAttribute('aria-label', 'label');
       expect(tab).toHaveAttribute('aria-labelledby', 'labelledby');
@@ -173,7 +208,16 @@ describe('Tabs', () => {
     let onHoverStart = jest.fn();
     let onHoverChange = jest.fn();
     let onHoverEnd = jest.fn();
-    let {getAllByRole} = renderTabs({}, {}, {className: ({isHovered}) => isHovered ? 'hover' : '', onHoverStart, onHoverChange, onHoverEnd});
+    let {getAllByRole} = renderTabs(
+      {},
+      {},
+      {
+        className: ({isHovered}) => (isHovered ? 'hover' : ''),
+        onHoverStart,
+        onHoverChange,
+        onHoverEnd
+      }
+    );
     let tab = getAllByRole('tab')[0];
 
     expect(tab).not.toHaveAttribute('data-hovered');
@@ -196,7 +240,16 @@ describe('Tabs', () => {
     let onHoverStart = jest.fn();
     let onHoverChange = jest.fn();
     let onHoverEnd = jest.fn();
-    let {getAllByRole} = renderTabs({disabledKeys: ['a', 'b', 'c']}, {}, {className: ({isHovered}) => isHovered ? 'hover' : '', onHoverStart, onHoverChange, onHoverEnd});
+    let {getAllByRole} = renderTabs(
+      {disabledKeys: ['a', 'b', 'c']},
+      {},
+      {
+        className: ({isHovered}) => (isHovered ? 'hover' : ''),
+        onHoverStart,
+        onHoverChange,
+        onHoverEnd
+      }
+    );
     let tab = getAllByRole('tab')[0];
 
     expect(tab).not.toHaveAttribute('data-hovered');
@@ -217,7 +270,16 @@ describe('Tabs', () => {
     let onFocus = jest.fn();
     let onFocusChange = jest.fn();
     let onBlur = jest.fn();
-    let {getAllByRole} = renderTabs({}, {}, {className: ({isFocusVisible}) => isFocusVisible ? 'focus' : '', onFocus, onFocusChange, onBlur});
+    let {getAllByRole} = renderTabs(
+      {},
+      {},
+      {
+        className: ({isFocusVisible}) => (isFocusVisible ? 'focus' : ''),
+        onFocus,
+        onFocusChange,
+        onBlur
+      }
+    );
     let tab = getAllByRole('tab')[0];
 
     expect(tab).not.toHaveAttribute('data-focus-visible');
@@ -244,7 +306,11 @@ describe('Tabs', () => {
   });
 
   it('should support press state', async () => {
-    let {getAllByRole} = renderTabs({}, {}, {className: ({isPressed}) => isPressed ? 'pressed' : ''});
+    let {getAllByRole} = renderTabs(
+      {},
+      {},
+      {className: ({isPressed}) => (isPressed ? 'pressed' : '')}
+    );
     let tab = getAllByRole('tab')[0];
 
     expect(tab).not.toHaveAttribute('data-pressed');
@@ -260,7 +326,11 @@ describe('Tabs', () => {
   });
 
   it('should support disabled state on all tabs', () => {
-    let {getAllByRole} = renderTabs({isDisabled: true}, {}, {className: ({isDisabled}) => isDisabled ? 'disabled' : ''});
+    let {getAllByRole} = renderTabs(
+      {isDisabled: true},
+      {},
+      {className: ({isDisabled}) => (isDisabled ? 'disabled' : '')}
+    );
     let tab = getAllByRole('tab')[0];
 
     expect(tab).toHaveAttribute('aria-disabled', 'true');
@@ -268,7 +338,7 @@ describe('Tabs', () => {
   });
 
   it('should support disabled state on tab', () => {
-    let className = ({isDisabled}) => isDisabled ? 'disabled' : '';
+    let className = ({isDisabled}) => (isDisabled ? 'disabled' : '');
     let {getAllByRole} = renderTabs({disabledKeys: ['a']}, {className}, {className});
     let tab = getAllByRole('tab')[0];
 
@@ -281,7 +351,9 @@ describe('Tabs', () => {
       <Tabs>
         <TabList aria-label="Test">
           <Tab id="a">A</Tab>
-          <Tab id="b" isDisabled>B</Tab>
+          <Tab id="b" isDisabled>
+            B
+          </Tab>
           <Tab id="c">C</Tab>
         </TabList>
         <TabPanel id="a">A</TabPanel>
@@ -302,7 +374,9 @@ describe('Tabs', () => {
     let {getAllByRole} = render(
       <Tabs>
         <TabList aria-label="Test">
-          <Tab id="a" isDisabled>A</Tab>
+          <Tab id="a" isDisabled>
+            A
+          </Tab>
           <Tab id="b">B</Tab>
           <Tab id="c">C</Tab>
         </TabList>
@@ -331,7 +405,11 @@ describe('Tabs', () => {
 
   it('should support selected state', async () => {
     let onSelectionChange = jest.fn();
-    let {getByRole} = renderTabs({onSelectionChange}, {}, {className: ({isSelected}) => isSelected ? 'selected' : ''});
+    let {getByRole} = renderTabs(
+      {onSelectionChange},
+      {},
+      {className: ({isSelected}) => (isSelected ? 'selected' : '')}
+    );
     let tabsTester = testUtilUser.createTester('Tabs', {root: getByRole('tablist')});
     let tabs = tabsTester.tabs;
 
@@ -396,27 +474,33 @@ describe('Tabs', () => {
     ${'mouse'}
     ${'keyboard'}
     ${'touch'}
-  `('should support changing the selected tab regardless of interaction type, interactionType: $interactionType ', async ({interactionType}) => {
-    let {getByRole} = renderTabs({orientation: 'vertical'});
-    let tabsTester = testUtilUser.createTester('Tabs', {root: getByRole('tablist'), interactionType});
-    let tabs = tabsTester.tabs;
+  `(
+    'should support changing the selected tab regardless of interaction type, interactionType: $interactionType ',
+    async ({interactionType}) => {
+      let {getByRole} = renderTabs({orientation: 'vertical'});
+      let tabsTester = testUtilUser.createTester('Tabs', {
+        root: getByRole('tablist'),
+        interactionType
+      });
+      let tabs = tabsTester.tabs;
 
-    await tabsTester.triggerTab({tab: 0});
-    expect(tabsTester.selectedTab).toBe(tabs[0]);
-    expect(tabsTester.activeTabpanel.getAttribute('aria-labelledby')).toBe(tabs[0].id);
+      await tabsTester.triggerTab({tab: 0});
+      expect(tabsTester.selectedTab).toBe(tabs[0]);
+      expect(tabsTester.activeTabpanel.getAttribute('aria-labelledby')).toBe(tabs[0].id);
 
-    await tabsTester.triggerTab({tab: 1});
-    expect(tabsTester.selectedTab).toBe(tabs[1]);
-    expect(tabsTester.activeTabpanel.getAttribute('aria-labelledby')).toBe(tabs[1].id);
+      await tabsTester.triggerTab({tab: 1});
+      expect(tabsTester.selectedTab).toBe(tabs[1]);
+      expect(tabsTester.activeTabpanel.getAttribute('aria-labelledby')).toBe(tabs[1].id);
 
-    await tabsTester.triggerTab({tab: 2});
-    expect(tabsTester.selectedTab).toBe(tabs[2]);
-    expect(tabsTester.activeTabpanel.getAttribute('aria-labelledby')).toBe(tabs[2].id);
+      await tabsTester.triggerTab({tab: 2});
+      expect(tabsTester.selectedTab).toBe(tabs[2]);
+      expect(tabsTester.activeTabpanel.getAttribute('aria-labelledby')).toBe(tabs[2].id);
 
-    await tabsTester.triggerTab({tab: 1});
-    expect(tabsTester.selectedTab).toBe(tabs[1]);
-    expect(tabsTester.activeTabpanel.getAttribute('aria-labelledby')).toBe(tabs[1].id);
-  });
+      await tabsTester.triggerTab({tab: 1});
+      expect(tabsTester.selectedTab).toBe(tabs[1]);
+      expect(tabsTester.activeTabpanel.getAttribute('aria-labelledby')).toBe(tabs[1].id);
+    }
+  );
 
   it('should support refs', () => {
     let tabsRef = React.createRef();
@@ -426,11 +510,15 @@ describe('Tabs', () => {
     render(
       <Tabs ref={tabsRef}>
         <TabList ref={tabListRef}>
-          <Tab id="a" ref={tabRef}>A</Tab>
+          <Tab id="a" ref={tabRef}>
+            A
+          </Tab>
           <Tab id="b">B</Tab>
           <Tab id="c">C</Tab>
         </TabList>
-        <TabPanel id="a" ref={tabPanelRef}>A</TabPanel>
+        <TabPanel id="a" ref={tabPanelRef}>
+          A
+        </TabPanel>
         <TabPanel id="b">B</TabPanel>
         <TabPanel id="c">C</TabPanel>
       </Tabs>
@@ -465,8 +553,15 @@ describe('Tabs', () => {
 
   it('should support keyboardActivation=manual', async () => {
     let onSelectionChange = jest.fn();
-    let {getByRole} = renderTabs({keyboardActivation: 'manual', onSelectionChange, defaultSelectedKey: 'a'});
-    let tabsTester = testUtilUser.createTester('Tabs', {root: getByRole('tablist'), interactionType: 'keyboard'});
+    let {getByRole} = renderTabs({
+      keyboardActivation: 'manual',
+      onSelectionChange,
+      defaultSelectedKey: 'a'
+    });
+    let tabsTester = testUtilUser.createTester('Tabs', {
+      root: getByRole('tablist'),
+      interactionType: 'keyboard'
+    });
 
     let tabs = tabsTester.tabs;
     await tabsTester.triggerTab({tab: 0});
@@ -511,8 +606,12 @@ describe('Tabs', () => {
       <RouterProvider navigate={navigate}>
         <Tabs selectedKey="/a">
           <TabList aria-label="Test">
-            <Tab id="/a" href="/a">A</Tab>
-            <Tab id="/b" href="/b">B</Tab>
+            <Tab id="/a" href="/a">
+              A
+            </Tab>
+            <Tab id="/b" href="/b">
+              B
+            </Tab>
           </TabList>
           <TabPanel id="/a">A</TabPanel>
           <TabPanel id="/b">B</TabPanel>
@@ -538,9 +637,15 @@ describe('Tabs', () => {
     let {getAllByRole} = render(
       <Tabs>
         <TabList>
-          <Tab id="a" aria-label="Tab A">A</Tab>
-          <Tab id="b" aria-label="Tab B">B</Tab>
-          <Tab id="c" aria-label="Tab C">C</Tab>
+          <Tab id="a" aria-label="Tab A">
+            A
+          </Tab>
+          <Tab id="b" aria-label="Tab B">
+            B
+          </Tab>
+          <Tab id="c" aria-label="Tab C">
+            C
+          </Tab>
         </TabList>
         <TabPanel id="a">A</TabPanel>
         <TabPanel id="b">B</TabPanel>
@@ -604,7 +709,7 @@ describe('Tabs', () => {
       let addTab = () => {
         const tabId = tabs.length + 1;
 
-        setTabs((prevTabs) => [
+        setTabs(prevTabs => [
           ...prevTabs,
           {
             id: tabId,
@@ -619,7 +724,7 @@ describe('Tabs', () => {
 
       let removeTab = () => {
         if (tabs.length > 1) {
-          setTabs((prevTabs) => {
+          setTabs(prevTabs => {
             const updatedTabs = prevTabs.slice(0, -1);
             // Update selectedTabId to the last remaining tab's ID if the current selected tab is removed
             const newSelectedTabId = updatedTabs[updatedTabs.length - 1].id;
@@ -629,7 +734,7 @@ describe('Tabs', () => {
         }
       };
 
-      const onSelectionChange = (value) => {
+      const onSelectionChange = value => {
         setSelectedTabId(value);
         props.onSelectionChange(value);
       };
@@ -638,7 +743,7 @@ describe('Tabs', () => {
         <Tabs selectedKey={selectedTabId} onSelectionChange={onSelectionChange}>
           <div style={{display: 'flex'}}>
             <TabList aria-label="Dynamic tabs" items={tabs} style={{flex: 1}}>
-              {(item) => (
+              {item => (
                 <Tab>
                   {({isSelected}) => (
                     <p
@@ -657,7 +762,7 @@ describe('Tabs', () => {
             </div>
           </div>
           <TabPanels items={tabs}>
-            {(item) => (
+            {item => (
               <TabPanel
                 style={{
                   borderTop: '2px solid black'
@@ -726,7 +831,10 @@ describe('Tabs', () => {
 
   it('should detect block-size in transition for TabPanels', async () => {
     let originalGetComputedStyle = window.getComputedStyle;
-    window.getComputedStyle = (el) => ({...originalGetComputedStyle(el), transition: 'block-size 400ms ease'});
+    window.getComputedStyle = el => ({
+      ...originalGetComputedStyle(el),
+      transition: 'block-size 400ms ease'
+    });
 
     let {getByTestId} = render(
       <Tabs>
@@ -750,7 +858,10 @@ describe('Tabs', () => {
 
   it('should detect inline-size in transition for TabPanels', async () => {
     let originalGetComputedStyle = window.getComputedStyle;
-    window.getComputedStyle = (el) => ({...originalGetComputedStyle(el), transition: 'inline-size 400ms ease'});
+    window.getComputedStyle = el => ({
+      ...originalGetComputedStyle(el),
+      transition: 'inline-size 400ms ease'
+    });
 
     let {getByTestId} = render(
       <Tabs>
@@ -801,20 +912,27 @@ describe('Tabs', () => {
       interactionType
       ${'mouse'}
       ${'keyboard'}
-    `('should support press events on items when using $interactionType', async function ({interactionType}) {
-      let onPressStart = jest.fn();
-      let onPressEnd = jest.fn();
-      let onPress = jest.fn();
-      let onClick = jest.fn();
-      let {getByRole} = renderTabs({keyboardActivation: 'manual'}, {}, {onPressStart, onPressEnd, onPress, onClick});
-      let tester = testUtilUser.createTester('Tabs', {root: getByRole('tablist')});
-      await tester.triggerTab({tab: 1, interactionType, manualActivation: true});
+    `(
+      'should support press events on items when using $interactionType',
+      async function ({interactionType}) {
+        let onPressStart = jest.fn();
+        let onPressEnd = jest.fn();
+        let onPress = jest.fn();
+        let onClick = jest.fn();
+        let {getByRole} = renderTabs(
+          {keyboardActivation: 'manual'},
+          {},
+          {onPressStart, onPressEnd, onPress, onClick}
+        );
+        let tester = testUtilUser.createTester('Tabs', {root: getByRole('tablist')});
+        await tester.triggerTab({tab: 1, interactionType, manualActivation: true});
 
-      expect(onPressStart).toHaveBeenCalledTimes(1);
-      expect(onPressEnd).toHaveBeenCalledTimes(1);
-      expect(onPress).toHaveBeenCalledTimes(1);
-      expect(onClick).toHaveBeenCalledTimes(1);
-    });
+        expect(onPressStart).toHaveBeenCalledTimes(1);
+        expect(onPressEnd).toHaveBeenCalledTimes(1);
+        expect(onPress).toHaveBeenCalledTimes(1);
+        expect(onClick).toHaveBeenCalledTimes(1);
+      }
+    );
   });
 
   if (React.version.startsWith('19')) {
@@ -873,12 +991,8 @@ describe('Tabs', () => {
             </Popover>
           </MenuTrigger>
         </div>
-        <TabPanel id="key1">
-          First Tab content
-        </TabPanel>
-        <TabPanel id="key2">
-          Second Tab content
-        </TabPanel>
+        <TabPanel id="key1">First Tab content</TabPanel>
+        <TabPanel id="key2">Second Tab content</TabPanel>
       </Tabs>
     );
 
@@ -914,12 +1028,8 @@ describe('Tabs', () => {
             </Popover>
           </Select>
         </div>
-        <TabPanel id="key1">
-          First Tab content
-        </TabPanel>
-        <TabPanel id="key2">
-          Second Tab content
-        </TabPanel>
+        <TabPanel id="key1">First Tab content</TabPanel>
+        <TabPanel id="key2">Second Tab content</TabPanel>
       </Tabs>
     );
 
@@ -953,19 +1063,18 @@ describe('Tabs', () => {
             </Popover>
           </ComboBox>
         </div>
-        <TabPanel id="key1">
-          First Tab content
-        </TabPanel>
-        <TabPanel id="key2">
-          Second Tab content
-        </TabPanel>
+        <TabPanel id="key1">First Tab content</TabPanel>
+        <TabPanel id="key2">Second Tab content</TabPanel>
       </Tabs>
     );
 
     let tester = testUtilUser.createTester('Tabs', {root: tree.getByRole('tablist')});
     expect(tester.tabs.length).toBe(2);
 
-    let menu = testUtilUser.createTester('ComboBox', {interactionType: 'keyboard', root: tree.container.querySelector('.react-aria-ComboBox')});
+    let menu = testUtilUser.createTester('ComboBox', {
+      interactionType: 'keyboard',
+      root: tree.container.querySelector('.react-aria-ComboBox')
+    });
     await menu.open();
     expect(menu.options()).toHaveLength(3);
     await menu.close();

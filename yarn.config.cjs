@@ -23,7 +23,10 @@ function enforceConsistentDependenciesAcrossTheProject({Yarn}) {
         }
         if (dependency.workspace.ident === 'storybook-builder-parcel') {
           dependency.update('*');
-        } else if (dependency.workspace.ident === '@react-spectrum/s2' || dependency.workspace.ident === '@react-spectrum/s2-icon-builder') {
+        } else if (
+          dependency.workspace.ident === '@react-spectrum/s2' ||
+          dependency.workspace.ident === '@react-spectrum/s2-icon-builder'
+        ) {
           dependency.update('^19.0.0-rc.1');
         } else if (dependency.workspace.ident === '@react-spectrum/codemods') {
           dependency.update('^18.0.0 || ^19.0.0-rc.1');
@@ -44,17 +47,17 @@ function enforceConsistentDependenciesAcrossTheProject({Yarn}) {
 
   // enforce swc helpers version, spectrum-css-temp, and where they are placed in the package.json
   for (const workspace of Yarn.workspaces()) {
-    if (isPublishing(workspace)
+    if (
+      isPublishing(workspace) &&
       // should these be included in the requirement?
-      && workspace.ident !== '@adobe/react-spectrum'
-      && workspace.ident !== 'react-aria'
-      && workspace.ident !== 'react-stately'
-      && workspace.ident !== '@internationalized/string-compiler'
-      && workspace.ident !== 'tailwindcss-react-aria-components'
-      && workspace.ident !== '@react-spectrum/s2'
-      && workspace.manifest.rsp?.type !== 'cli'
+      workspace.ident !== '@adobe/react-spectrum' &&
+      workspace.ident !== 'react-aria' &&
+      workspace.ident !== 'react-stately' &&
+      workspace.ident !== '@internationalized/string-compiler' &&
+      workspace.ident !== 'tailwindcss-react-aria-components' &&
+      workspace.ident !== '@react-spectrum/s2' &&
+      workspace.manifest.rsp?.type !== 'cli'
     ) {
-
       workspace.set('dependencies.@swc/helpers', '^0.5.0');
       // these should not be in dependencies, but should be in dev or peer
       // can't change the error message, but the package knows if it even needs it
@@ -92,7 +95,9 @@ function enforceNoCircularDependencies({Yarn}) {
       // ok for pkg to depend on itself
       if (arr.slice(index).length > 1) {
         // better to error the constraints early for this for a more meaningful error message
-        throw new Error(`Circular dependency detected: ${arr.slice(index).join(' -> ')} -> ${workspace.ident}`);
+        throw new Error(
+          `Circular dependency detected: ${arr.slice(index).join(' -> ')} -> ${workspace.ident}`
+        );
       } else {
         return;
       }
@@ -101,13 +106,14 @@ function enforceNoCircularDependencies({Yarn}) {
     seen.add(workspace.ident);
 
     for (let d of Yarn.dependencies({ident: workspace.ident})) {
-      if (d.type === 'peerDependencies') {continue;}
+      if (d.type === 'peerDependencies') {
+        continue;
+      }
       addDep(d.workspace, seen);
     }
 
     seen.delete(workspace.ident);
   }
-
 
   for (const workspace of Yarn.workspaces()) {
     addDep(workspace);
@@ -117,22 +123,26 @@ function enforceNoCircularDependencies({Yarn}) {
 /** @param {Dependency} dependency */
 function isOurPackage(dependency) {
   let name = dependency.ident;
-  return name.includes('@react-spectrum')
-    || name.includes('@react-aria')
-    || name.includes('@react-stately')
-    || name.includes('@react-types')
-    || name.includes('@internationalized')
-    || name.includes('@spectrum-icons')
-    || name.startsWith('react-aria-components')
-    || name.startsWith('tailwindcss-react-aria-components')
-    || name.startsWith('react-aria')
-    || name.startsWith('react-stately');
+  return (
+    name.includes('@react-spectrum') ||
+    name.includes('@react-aria') ||
+    name.includes('@react-stately') ||
+    name.includes('@react-types') ||
+    name.includes('@internationalized') ||
+    name.includes('@spectrum-icons') ||
+    name.startsWith('react-aria-components') ||
+    name.startsWith('tailwindcss-react-aria-components') ||
+    name.startsWith('react-aria') ||
+    name.startsWith('react-stately')
+  );
 }
 
 /** @param {Context} context */
 function enforceWorkspaceDependencies({Yarn}) {
   for (const dependency of Yarn.dependencies()) {
-    if (dependency.type === 'peerDependencies') {continue;}
+    if (dependency.type === 'peerDependencies') {
+      continue;
+    }
 
     for (const otherDependency of Yarn.dependencies({ident: dependency.ident})) {
       if (otherDependency.type === 'peerDependencies') {
@@ -156,9 +166,9 @@ function enforceWorkspaceDependencies({Yarn}) {
         if (
           // must check in manifest because yarn is reporting all peer in workspace.pkg.dependencies
           // and doesn't differentiate between peer and dependencies
-          workspace.manifest.dependencies?.[dependency.workspace?.ident]
-          && !workspace.manifest.peerDependencies?.[dependency.ident]
-          && !workspace.manifest.dependencies?.[dependency.ident]
+          workspace.manifest.dependencies?.[dependency.workspace?.ident] &&
+          !workspace.manifest.peerDependencies?.[dependency.ident] &&
+          !workspace.manifest.dependencies?.[dependency.ident]
         ) {
           // eslint-disable-next-line max-depth
           if (seen.has(workspace.ident) && !seen.get(workspace.ident).includes(dependency.ident)) {
@@ -184,18 +194,20 @@ function enforceWorkspaceDependencies({Yarn}) {
 function isPublishing(workspace) {
   let name = workspace.ident;
   // should allowlist instead? workspace.manifest.private?
-  return !name.includes('@react-types')
-    && !name.includes('@spectrum-icons')
-    && !name.includes('@react-aria/example-theme')
-    && !name.includes('@react-spectrum/style-macro-s1')
-    && !name.includes('@react-spectrum/docs')
-    && !name.includes('@react-spectrum/s2-docs')
-    && !name.includes('parcel')
-    && !name.includes('@adobe/spectrum-css-temp')
-    && !name.includes('css-module-types')
-    && !name.includes('eslint')
-    && !name.includes('optimize-locales-plugin')
-    && name !== 'react-spectrum-monorepo';
+  return (
+    !name.includes('@react-types') &&
+    !name.includes('@spectrum-icons') &&
+    !name.includes('@react-aria/example-theme') &&
+    !name.includes('@react-spectrum/style-macro-s1') &&
+    !name.includes('@react-spectrum/docs') &&
+    !name.includes('@react-spectrum/s2-docs') &&
+    !name.includes('parcel') &&
+    !name.includes('@adobe/spectrum-css-temp') &&
+    !name.includes('css-module-types') &&
+    !name.includes('eslint') &&
+    !name.includes('optimize-locales-plugin') &&
+    name !== 'react-spectrum-monorepo'
+  );
 }
 
 /** @param {Context} context */
@@ -203,7 +215,10 @@ function enforcePublishing({Yarn}) {
   // make sure fields required for publishing have been set
   for (const workspace of Yarn.workspaces()) {
     let name = workspace.ident;
-    if (isPublishing(workspace) || (workspace.manifest.rsp?.type === 'cli' && !workspace.manifest.private)) {
+    if (
+      isPublishing(workspace) ||
+      (workspace.manifest.rsp?.type === 'cli' && !workspace.manifest.private)
+    ) {
       if (name.startsWith('@react-spectrum')) {
         workspace.set('license', 'Apache-2.0');
       }
@@ -212,8 +227,8 @@ function enforcePublishing({Yarn}) {
       }
       workspace.set('repository', {
         type: 'git',
-        url: name.startsWith('@internationalized/date') ?
-          'https://github.com/adobe/react-spectrum/tree/main/packages/@internationalized/date'
+        url: name.startsWith('@internationalized/date')
+          ? 'https://github.com/adobe/react-spectrum/tree/main/packages/@internationalized/date'
           : 'https://github.com/adobe/react-spectrum'
       });
     }
@@ -228,7 +243,11 @@ function enforceExports({Yarn}) {
     if (isPublishing(workspace) && workspace.manifest.rsp?.type !== 'cli') {
       // better to do in enforceCSS? it doesn't match the set of packages handled
       if (name !== 'react-aria-components') {
-        if (name.includes('@react-spectrum') || name.includes('@adobe/react-spectrum') || name.includes('@react-aria/visually-hidden')) {
+        if (
+          name.includes('@react-spectrum') ||
+          name.includes('@adobe/react-spectrum') ||
+          name.includes('@react-aria/visually-hidden')
+        ) {
           workspace.set('sideEffects', ['*.css']);
         } else {
           workspace.set('sideEffects', false);

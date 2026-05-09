@@ -1,11 +1,12 @@
-@import "./theme.css";
-@import "./TextField.css";
+@import './theme.css';
+@import './TextField.css';
 
 .react-aria-SearchField {
   display: grid;
-  grid-template-areas: "label label label"
-                       "icon input button"
-                       "help help  help";
+  grid-template-areas:
+    'label label label'
+    'icon input button'
+    'help help  help';
   grid-template-columns: 0px 1fr auto;
   align-items: center;
   width: auto;
@@ -68,7 +69,7 @@
   }
 
   .react-aria-FieldError,
-  [slot=description] {
+  [slot='description'] {
     grid-area: help;
   }
 }

@@ -23,38 +23,38 @@ export interface WaterfallLayoutOptions {
    * The minimum item size.
    * @default 200 x 200
    */
-  minItemSize?: Size,
+  minItemSize?: Size;
   /**
    * The maximum item size.
    * @default Infinity
    */
-  maxItemSize?: Size,
+  maxItemSize?: Size;
   /**
    * The minimum space required between items.
    * @default 18 x 18
    */
-  minSpace?: Size,
+  minSpace?: Size;
   /**
    * The maximum allowed horizontal space between items.
    * @default Infinity
    */
-  maxHorizontalSpace?: number,
+  maxHorizontalSpace?: number;
   /**
    * The maximum number of columns.
    * @default Infinity
    */
-  maxColumns?: number,
+  maxColumns?: number;
   /**
    * The thickness of the drop indicator.
    * @default 2
    */
-  dropIndicatorThickness?: number,
+  dropIndicatorThickness?: number;
   /**
    * The fixed height of a loader element in px. This loader is specifically for
    * "load more" elements rendered when loading more rows at the root level or inside nested row/sections.
    * @default 48
    */
-  loaderHeight?: number
+  loaderHeight?: number;
 }
 
 class WaterfallLayoutInfo extends LayoutInfo {
@@ -79,7 +79,13 @@ const DEFAULT_OPTIONS = {
   loaderHeight: 48
 };
 
-export class WaterfallLayout<T extends object, O extends WaterfallLayoutOptions = WaterfallLayoutOptions> extends Layout<Node<T>, O> implements LayoutDelegate, DropTargetDelegate {
+export class WaterfallLayout<
+  T extends object,
+  O extends WaterfallLayoutOptions = WaterfallLayoutOptions
+>
+  extends Layout<Node<T>, O>
+  implements LayoutDelegate, DropTargetDelegate
+{
   private contentSize: Size = new Size();
   private layoutInfos: Map<Key, WaterfallLayoutInfo> = new Map();
   protected numColumns = 0;
@@ -87,13 +93,21 @@ export class WaterfallLayout<T extends object, O extends WaterfallLayoutOptions 
   private margin: number = 0;
 
   shouldInvalidateLayoutOptions(newOptions: O, oldOptions: O): boolean {
-    return newOptions.maxColumns !== oldOptions.maxColumns
-      || newOptions.dropIndicatorThickness !== oldOptions.dropIndicatorThickness
-      || (!(newOptions.minItemSize || DEFAULT_OPTIONS.minItemSize).equals(oldOptions.minItemSize || DEFAULT_OPTIONS.minItemSize))
-      || (!(newOptions.maxItemSize || DEFAULT_OPTIONS.maxItemSize).equals(oldOptions.maxItemSize || DEFAULT_OPTIONS.maxItemSize))
-      || (!(newOptions.minSpace || DEFAULT_OPTIONS.minSpace).equals(oldOptions.minSpace || DEFAULT_OPTIONS.minSpace))
-      || (newOptions.maxHorizontalSpace !== oldOptions.maxHorizontalSpace)
-      || newOptions.loaderHeight !== oldOptions.loaderHeight;
+    return (
+      newOptions.maxColumns !== oldOptions.maxColumns ||
+      newOptions.dropIndicatorThickness !== oldOptions.dropIndicatorThickness ||
+      !(newOptions.minItemSize || DEFAULT_OPTIONS.minItemSize).equals(
+        oldOptions.minItemSize || DEFAULT_OPTIONS.minItemSize
+      ) ||
+      !(newOptions.maxItemSize || DEFAULT_OPTIONS.maxItemSize).equals(
+        oldOptions.maxItemSize || DEFAULT_OPTIONS.maxItemSize
+      ) ||
+      !(newOptions.minSpace || DEFAULT_OPTIONS.minSpace).equals(
+        oldOptions.minSpace || DEFAULT_OPTIONS.minSpace
+      ) ||
+      newOptions.maxHorizontalSpace !== oldOptions.maxHorizontalSpace ||
+      newOptions.loaderHeight !== oldOptions.loaderHeight
+    );
   }
 
   update(invalidationContext: InvalidationContext<O>): void {
@@ -121,20 +135,25 @@ export class WaterfallLayout<T extends object, O extends WaterfallLayoutOptions 
     let numColumns = Math.max(1, Math.min(maxColumns, columns));
 
     // Compute the available width (minus the space between items)
-    let width = virtualizerWidth - (minSpace.width * Math.max(0, numColumns));
+    let width = virtualizerWidth - minSpace.width * Math.max(0, numColumns);
 
     // Compute the item width based on the space available
     let itemWidth = Math.floor(width / numColumns);
     itemWidth = Math.max(minItemSize.width, Math.min(maxItemWidth, itemWidth));
 
     // Compute the item height, which is proportional to the item width
-    let t = ((itemWidth - minItemSize.width) / Math.max(1, maxItemWidth - minItemSize.width));
-    let itemHeight = minItemSize.height +  Math.floor((maxItemHeight - minItemSize.height) * t);
+    let t = (itemWidth - minItemSize.width) / Math.max(1, maxItemWidth - minItemSize.width);
+    let itemHeight = minItemSize.height + Math.floor((maxItemHeight - minItemSize.height) * t);
     itemHeight = Math.max(minItemSize.height, Math.min(maxItemHeight, itemHeight));
 
     // Compute the horizontal spacing, content height and horizontal margin
-    let horizontalSpacing = Math.min(Math.max(maxHorizontalSpace, minSpace.width), Math.floor((virtualizerWidth - numColumns * itemWidth) / (numColumns + 1)));
-    this.margin = Math.floor((virtualizerWidth - numColumns * itemWidth - horizontalSpacing * (numColumns + 1)) / 2);
+    let horizontalSpacing = Math.min(
+      Math.max(maxHorizontalSpace, minSpace.width),
+      Math.floor((virtualizerWidth - numColumns * itemWidth) / (numColumns + 1))
+    );
+    this.margin = Math.floor(
+      (virtualizerWidth - numColumns * itemWidth - horizontalSpacing * (numColumns + 1)) / 2
+    );
 
     // Setup an array of column heights
     let columnHeights = Array(numColumns).fill(minSpace.height);
@@ -145,14 +164,25 @@ export class WaterfallLayout<T extends object, O extends WaterfallLayoutOptions 
       let height = itemHeight;
       let estimatedSize = true;
       if (oldLayoutInfo) {
-        height = oldLayoutInfo.rect.height / oldLayoutInfo.rect.width * itemWidth;
-        estimatedSize = invalidationContext.sizeChanged || oldLayoutInfo.estimatedSize || oldLayoutInfo.content !== node;
+        height = (oldLayoutInfo.rect.height / oldLayoutInfo.rect.width) * itemWidth;
+        estimatedSize =
+          invalidationContext.sizeChanged ||
+          oldLayoutInfo.estimatedSize ||
+          oldLayoutInfo.content !== node;
       }
 
       // Figure out which column to place the item in, and compute its position.
       // Preserve the previous column index so items don't jump around during resizing unless the number of columns changed.
-      let prevColumn = numColumns === this.numColumns && oldLayoutInfo && oldLayoutInfo.index === index && oldLayoutInfo.rect.y < this.virtualizer!.visibleRect.maxY ? oldLayoutInfo.column : undefined;
-      let column = prevColumn ?? columnHeights.reduce((minIndex, h, i) => h < columnHeights[minIndex] ? i : minIndex, 0);
+      let prevColumn =
+        numColumns === this.numColumns &&
+        oldLayoutInfo &&
+        oldLayoutInfo.index === index &&
+        oldLayoutInfo.rect.y < this.virtualizer!.visibleRect.maxY
+          ? oldLayoutInfo.column
+          : undefined;
+      let column =
+        prevColumn ??
+        columnHeights.reduce((minIndex, h, i) => (h < columnHeights[minIndex] ? i : minIndex), 0);
       let x = horizontalSpacing + column * (itemWidth + horizontalSpacing) + this.margin;
       let y = columnHeights[column];
 
@@ -190,7 +220,8 @@ export class WaterfallLayout<T extends object, O extends WaterfallLayoutOptions 
 
     // Reset all columns to the maximum for the next section. If loading, set to 0 so virtualizer doesn't render its body since there aren't items to render,
     // except if we are performing skeleton loading
-    let isEmptyOrLoading = collection?.size === 0 && collection.getItem(collection.getFirstKey()!)?.type !== 'skeleton';
+    let isEmptyOrLoading =
+      collection?.size === 0 && collection.getItem(collection.getFirstKey()!)?.type !== 'skeleton';
     let maxHeight = isEmptyOrLoading ? 0 : Math.max(...columnHeights);
 
     // Always add the loader sentinel if present in the collection so we can make sure it is never virtualized out.
@@ -225,7 +256,11 @@ export class WaterfallLayout<T extends object, O extends WaterfallLayoutOptions 
   getVisibleLayoutInfos(rect: Rect): LayoutInfo[] {
     let layoutInfos: LayoutInfo[] = [];
     for (let layoutInfo of this.layoutInfos.values()) {
-      if (layoutInfo.rect.intersects(rect) || this.virtualizer!.isPersistedKey(layoutInfo.key) || layoutInfo.type === 'loader') {
+      if (
+        layoutInfo.rect.intersects(rect) ||
+        this.virtualizer!.isPersistedKey(layoutInfo.key) ||
+        layoutInfo.type === 'loader'
+      ) {
         layoutInfos.push(layoutInfo);
       }
     }
@@ -256,7 +291,12 @@ export class WaterfallLayout<T extends object, O extends WaterfallLayoutOptions 
       return null;
     }
 
-    let rect = new Rect(layoutInfo.rect.maxX, layoutInfo.rect.y, this.virtualizer!.visibleRect.maxX - layoutInfo.rect.maxX, layoutInfo.rect.height);
+    let rect = new Rect(
+      layoutInfo.rect.maxX,
+      layoutInfo.rect.y,
+      this.virtualizer!.visibleRect.maxX - layoutInfo.rect.maxX,
+      layoutInfo.rect.height
+    );
     let layoutInfos = this.getVisibleLayoutInfos(rect);
     let bestKey: Key | null = null;
     let bestDistance = Infinity;

@@ -13,7 +13,7 @@
 let formatterCache = new Map<string, Intl.DateTimeFormat>();
 
 interface DateRangeFormatPart extends Intl.DateTimeFormatPart {
-  source: 'startRange' | 'endRange' | 'shared'
+  source: 'startRange' | 'endRange' | 'shared';
 }
 
 /** A wrapper around Intl.DateTimeFormat that fixes various browser bugs, and polyfills new features. */
@@ -68,9 +68,9 @@ export class DateFormatter implements Intl.DateTimeFormat {
     let startParts = this.formatter.formatToParts(start);
     let endParts = this.formatter.formatToParts(end);
     return [
-      ...startParts.map(p => ({...p, source: 'startRange'} as DateRangeFormatPart)),
+      ...startParts.map(p => ({...p, source: 'startRange'}) as DateRangeFormatPart),
       {type: 'literal', value: ' – ', source: 'shared'},
-      ...endParts.map(p => ({...p, source: 'endRange'} as DateRangeFormatPart))
+      ...endParts.map(p => ({...p, source: 'endRange'}) as DateRangeFormatPart)
     ];
   }
 
@@ -116,7 +116,10 @@ const hour12Preferences = {
   }
 };
 
-function getCachedDateFormatter(locale: string, options: Intl.DateTimeFormatOptions = {}): Intl.DateTimeFormat {
+function getCachedDateFormatter(
+  locale: string,
+  options: Intl.DateTimeFormatOptions = {}
+): Intl.DateTimeFormat {
   // Work around buggy hour12 behavior in Chrome / ECMA 402 spec by using hourCycle instead.
   // Only apply the workaround if the issue is detected, because the hourCycle option is buggy in Safari.
   if (typeof options.hour12 === 'boolean' && hasBuggyHour12Behavior()) {
@@ -127,7 +130,13 @@ function getCachedDateFormatter(locale: string, options: Intl.DateTimeFormatOpti
     delete options.hour12;
   }
 
-  let cacheKey = locale + (options ? Object.entries(options).sort((a, b) => a[0] < b[0] ? -1 : 1).join() : '');
+  let cacheKey =
+    locale +
+    (options
+      ? Object.entries(options)
+          .sort((a, b) => (a[0] < b[0] ? -1 : 1))
+          .join()
+      : '');
   if (formatterCache.has(cacheKey)) {
     return formatterCache.get(cacheKey)!;
   }
@@ -140,10 +149,11 @@ function getCachedDateFormatter(locale: string, options: Intl.DateTimeFormatOpti
 let _hasBuggyHour12Behavior: boolean | null = null;
 function hasBuggyHour12Behavior() {
   if (_hasBuggyHour12Behavior == null) {
-    _hasBuggyHour12Behavior = new Intl.DateTimeFormat('en-US', {
-      hour: 'numeric',
-      hour12: false
-    }).format(new Date(2020, 2, 3, 0)) === '24';
+    _hasBuggyHour12Behavior =
+      new Intl.DateTimeFormat('en-US', {
+        hour: 'numeric',
+        hour12: false
+      }).format(new Date(2020, 2, 3, 0)) === '24';
   }
 
   return _hasBuggyHour12Behavior;
@@ -152,10 +162,11 @@ function hasBuggyHour12Behavior() {
 let _hasBuggyResolvedHourCycle: boolean | null = null;
 function hasBuggyResolvedHourCycle() {
   if (_hasBuggyResolvedHourCycle == null) {
-    _hasBuggyResolvedHourCycle = new Intl.DateTimeFormat('fr', {
-      hour: 'numeric',
-      hour12: false
-    }).resolvedOptions().hourCycle === 'h12';
+    _hasBuggyResolvedHourCycle =
+      new Intl.DateTimeFormat('fr', {
+        hour: 'numeric',
+        hour12: false
+      }).resolvedOptions().hourCycle === 'h12';
   }
 
   return _hasBuggyResolvedHourCycle;
@@ -175,8 +186,14 @@ function getResolvedHourCycle(locale: string, options: Intl.DateTimeFormatOption
     timeZone: undefined // use local timezone
   });
 
-  let min = parseInt(formatter.formatToParts(new Date(2020, 2, 3, 0)).find(p => p.type === 'hour')!.value, 10);
-  let max = parseInt(formatter.formatToParts(new Date(2020, 2, 3, 23)).find(p => p.type === 'hour')!.value, 10);
+  let min = parseInt(
+    formatter.formatToParts(new Date(2020, 2, 3, 0)).find(p => p.type === 'hour')!.value,
+    10
+  );
+  let max = parseInt(
+    formatter.formatToParts(new Date(2020, 2, 3, 23)).find(p => p.type === 'hour')!.value,
+    10
+  );
 
   if (min === 0 && max === 23) {
     return 'h23';

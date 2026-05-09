@@ -41,7 +41,10 @@ import {VirtualizerItem} from 'react-aria/private/virtualizer/VirtualizerItem';
 /**
  * TODO: Add description of component here.
  */
-export const CardView = React.forwardRef(function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef<HTMLDivElement>) {
+export const CardView = React.forwardRef(function CardView<T extends object>(
+  props: SpectrumCardViewProps<T>,
+  ref: DOMRef<HTMLDivElement>
+) {
   let {scale} = useProvider();
   let {styleProps} = useStyleProps(props);
   let domRef = useDOMRef(ref);
@@ -56,34 +59,44 @@ export const CardView = React.forwardRef(function CardView<T extends object>(pro
 
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
-  let cardViewLayout = useMemo(() => typeof layout === 'function' ? new layout({collator, cardOrientation, scale}) : layout, [layout, collator, cardOrientation, scale]);
+  let cardViewLayout = useMemo(
+    () => (typeof layout === 'function' ? new layout({collator, cardOrientation, scale}) : layout),
+    [layout, collator, cardOrientation, scale]
+  );
   let layoutType = cardViewLayout.layoutType;
 
   let {direction} = useLocale();
   let {collection} = useListState(props);
 
-  let gridCollection = useMemo(() => new GridCollection<T>({
-    columnCount: 1,
-    items: [...collection].map(item => ({
-      // Makes the Grid row use the keys the user provides to the cards so that selection change via interactions returns the card keys
-      ...item,
-      hasChildNodes: true,
-      childNodes: [{
-        key: `cell-${item.key}`,
-        type: 'cell',
-        value: null,
-        level: 0,
-        rendered: null,
-        textValue: item.textValue,
-        hasChildNodes: false,
-        childNodes: []
-      }]
-    }))
-  }), [collection]);
+  let gridCollection = useMemo(
+    () =>
+      new GridCollection<T>({
+        columnCount: 1,
+        items: [...collection].map(item => ({
+          // Makes the Grid row use the keys the user provides to the cards so that selection change via interactions returns the card keys
+          ...item,
+          hasChildNodes: true,
+          childNodes: [
+            {
+              key: `cell-${item.key}`,
+              type: 'cell',
+              value: null,
+              level: 0,
+              rendered: null,
+              textValue: item.textValue,
+              hasChildNodes: false,
+              childNodes: []
+            }
+          ]
+        }))
+      }),
+    [collection]
+  );
 
   let state = useGridState({
     ...props,
-    selectionMode: cardOrientation === 'horizontal' && layoutType === 'grid' ? 'none' : props.selectionMode,
+    selectionMode:
+      cardOrientation === 'horizontal' && layoutType === 'grid' ? 'none' : props.selectionMode,
     collection: gridCollection,
     focusMode: 'cell'
   });
@@ -91,22 +104,29 @@ export const CardView = React.forwardRef(function CardView<T extends object>(pro
   cardViewLayout.collection = gridCollection;
   cardViewLayout.disabledKeys = state.disabledKeys;
 
-  let {gridProps} = useGrid({
-    ...props,
-    isVirtualized: true,
-    keyboardDelegate: cardViewLayout
-  }, state, domRef);
+  let {gridProps} = useGrid(
+    {
+      ...props,
+      isVirtualized: true,
+      keyboardDelegate: cardViewLayout
+    },
+    state,
+    domRef
+  );
 
   type View = ReusableView<Node<T>, ReactNode>;
-  let renderWrapper = useCallback((parent: View, reusableView: View) => (
-    <VirtualizerItem
-      key={reusableView.key}
-      layoutInfo={reusableView.layoutInfo}
-      virtualizer={reusableView.virtualizer}
-      parent={parent?.layoutInfo}>
-      {reusableView.rendered}
-    </VirtualizerItem>
-  ), []);
+  let renderWrapper = useCallback(
+    (parent: View, reusableView: View) => (
+      <VirtualizerItem
+        key={reusableView.key}
+        layoutInfo={reusableView.layoutInfo}
+        virtualizer={reusableView.virtualizer}
+        parent={parent?.layoutInfo}>
+        {reusableView.rendered}
+      </VirtualizerItem>
+    ),
+    []
+  );
 
   let focusedKey = state.selectionManager.focusedKey;
   let focusedItem = gridCollection.getItem(state.selectionManager.focusedKey);
@@ -114,11 +134,15 @@ export const CardView = React.forwardRef(function CardView<T extends object>(pro
     focusedKey = focusedItem.parentKey;
   }
 
-  let persistedKeys = useMemo(() => focusedKey != null ? new Set([focusedKey]) : null, [focusedKey]);
+  let persistedKeys = useMemo(
+    () => (focusedKey != null ? new Set([focusedKey]) : null),
+    [focusedKey]
+  );
 
   // TODO: does aria-row count and aria-col count need to be modified? Perhaps aria-col count needs to be omitted
   return (
-    <CardViewContext.Provider value={{state, isQuiet, layout: cardViewLayout, cardOrientation, renderEmptyState}}>
+    <CardViewContext.Provider
+      value={{state, isQuiet, layout: cardViewLayout, cardOrientation, renderEmptyState}}>
       <Virtualizer
         {...gridProps}
         {...styleProps}
@@ -138,9 +162,7 @@ export const CardView = React.forwardRef(function CardView<T extends object>(pro
         }}>
         {useCallback((type, item) => {
           if (type === 'item') {
-            return (
-              <InternalCard item={item} />
-            );
+            return <InternalCard item={item} />;
           } else if (type === 'loader') {
             return <LoadingState />;
           } else if (type === 'placeholder') {
@@ -149,7 +171,6 @@ export const CardView = React.forwardRef(function CardView<T extends object>(pro
         }, [])}
       </Virtualizer>
     </CardViewContext.Provider>
-
   );
 }) as <T>(props: SpectrumCardViewProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
 
@@ -160,7 +181,12 @@ function LoadingState() {
     <CenteredWrapper>
       <ProgressCircle
         isIndeterminate
-        aria-label={state.collection.size > 0 ? stringFormatter.format('loadingMore') : stringFormatter.format('loading')} />
+        aria-label={
+          state.collection.size > 0
+            ? stringFormatter.format('loadingMore')
+            : stringFormatter.format('loading')
+        }
+      />
     </CenteredWrapper>
   );
 }
@@ -172,11 +198,7 @@ function EmptyState() {
     return null;
   }
 
-  return (
-    <CenteredWrapper>
-      {emptyState}
-    </CenteredWrapper>
-  );
+  return <CenteredWrapper>{emptyState}</CenteredWrapper>;
 }
 
 function CenteredWrapper({children}) {
@@ -186,17 +208,13 @@ function CenteredWrapper({children}) {
       role="row"
       aria-rowindex={state.collection.size + 1}
       className={classNames(styles, 'spectrum-CardView-centeredWrapper')}>
-      <div role="gridcell">
-        {children}
-      </div>
+      <div role="gridcell">{children}</div>
     </div>
   );
 }
 
 function InternalCard(props) {
-  let {
-    item
-  } = props;
+  let {item} = props;
   let cellNode = [...item.childNodes][0];
   let {state, cardOrientation, isQuiet, layout} = useCardViewContext();
 
@@ -205,30 +223,35 @@ function InternalCard(props) {
   let cellRef = useRef<DOMRefValue<HTMLDivElement>>(undefined);
   let unwrappedRef = useUnwrapDOMRef(cellRef);
 
-  let {rowProps: gridRowProps} = useGridRow({
-    node: item,
-    isVirtualized: true
-  }, state, rowRef);
+  let {rowProps: gridRowProps} = useGridRow(
+    {
+      node: item,
+      isVirtualized: true
+    },
+    state,
+    rowRef
+  );
 
-  let {gridCellProps} = useGridCell({
-    node: cellNode,
-    focusMode: 'cell'
-  }, state, unwrappedRef);
+  let {gridCellProps} = useGridCell(
+    {
+      node: cellNode,
+      focusMode: 'cell'
+    },
+    state,
+    unwrappedRef
+  );
 
   // Prevent space key from scrolling the CardView if triggered on a disabled item or on a Card in a selectionMode="none" CardView.
   let allowsInteraction = state.selectionManager.selectionMode !== 'none';
   let isDisabled = !allowsInteraction || state.disabledKeys.has(item.key);
 
-  let onKeyDown = (e) => {
+  let onKeyDown = e => {
     if (e.key === ' ' && isDisabled) {
       e.preventDefault();
     }
   };
 
-  let rowProps = mergeProps(
-    gridRowProps,
-    {onKeyDown}
-  );
+  let rowProps = mergeProps(gridRowProps, {onKeyDown});
 
   if (layoutType === 'grid' || layoutType === 'gallery') {
     isQuiet = true;

@@ -18,8 +18,19 @@ import {CalendarDate} from '../CalendarDate';
 import {GregorianCalendar} from './GregorianCalendar';
 import {Mutable} from '../utils';
 
-const ERA_START_DATES = [[1868, 9, 8], [1912, 7, 30], [1926, 12, 25], [1989, 1, 8], [2019, 5, 1]];
-const ERA_END_DATES = [[1912, 7, 29], [1926, 12, 24], [1989, 1, 7], [2019, 4, 30]];
+const ERA_START_DATES = [
+  [1868, 9, 8],
+  [1912, 7, 30],
+  [1926, 12, 25],
+  [1989, 1, 8],
+  [2019, 5, 1]
+];
+const ERA_END_DATES = [
+  [1912, 7, 29],
+  [1926, 12, 24],
+  [1989, 1, 7],
+  [2019, 4, 30]
+];
 const ERA_ADDENDS = [1867, 1911, 1925, 1988, 2018];
 const ERA_NAMES = ['meiji', 'taisho', 'showa', 'heisei', 'reiwa'];
 
@@ -57,11 +68,7 @@ function toGregorian(date: AnyCalendarDate) {
     throw new Error('Unknown era: ' + date.era);
   }
 
-  return new CalendarDate(
-    date.year + eraAddend,
-    date.month,
-    date.day
-  );
+  return new CalendarDate(date.year + eraAddend, date.month, date.day);
 }
 
 /**

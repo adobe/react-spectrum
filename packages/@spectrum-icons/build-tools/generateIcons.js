@@ -30,7 +30,9 @@ export function generateIcons(iconDir, outputDir, nameRegex, template) {
   fs.readdir(iconDir, (err, items) => {
     let ignoreList = ['index.js', 'util.js'];
     // get all icon files
-    let iconFiles = items.filter(item => !!item.endsWith('.js')).filter(item => !ignoreList.includes(item));
+    let iconFiles = items
+      .filter(item => !!item.endsWith('.js'))
+      .filter(item => !ignoreList.includes(item));
 
     // generate all icon files
     iconFiles.forEach(icon => {
@@ -46,10 +48,12 @@ export function generateIcons(iconDir, outputDir, nameRegex, template) {
     });
 
     // generate index barrel
-    let indexFile = iconFiles.map(icon => {
-      let iconName = icon.substring(0, icon.length - 3);
-      return `export * as ${isNaN(Number(iconName[0])) ? iconName : `_${iconName}`} from './${iconName}';\n`;
-    }).join('');
+    let indexFile = iconFiles
+      .map(icon => {
+        let iconName = icon.substring(0, icon.length - 3);
+        return `export * as ${isNaN(Number(iconName[0])) ? iconName : `_${iconName}`} from './${iconName}';\n`;
+      })
+      .join('');
 
     let indexFilepath = `${outputDir}/index.ts`;
     writeToFile(indexFilepath, indexFile);

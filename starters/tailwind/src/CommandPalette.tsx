@@ -2,18 +2,19 @@
 import {
   Autocomplete as AriaAutocomplete,
   type AutocompleteProps as AriaAutocompleteProps,
-  useFilter,
+  useFilter
 } from 'react-aria-components/Autocomplete';
-import { type MenuProps as AriaMenuProps } from 'react-aria-components/Menu';
-import { Dialog } from 'react-aria-components/Dialog';
+import {type MenuProps as AriaMenuProps} from 'react-aria-components/Menu';
+import {Dialog} from 'react-aria-components/Dialog';
 import {Menu} from './Menu';
 import {SearchField} from './SearchField';
 import {Modal} from './Modal';
 import React, {useEffect} from 'react';
 
-export interface CommandPaletteProps<T extends object> extends Omit<AriaAutocompleteProps, 'children'>, AriaMenuProps<T> {
-  isOpen: boolean,
-  onOpenChange: (isOpen?: boolean) => void
+export interface CommandPaletteProps<T extends object>
+  extends Omit<AriaAutocompleteProps, 'children'>, AriaMenuProps<T> {
+  isOpen: boolean;
+  onOpenChange: (isOpen?: boolean) => void;
 }
 
 export function CommandPalette<T extends object>(props: CommandPaletteProps<T>) {
@@ -44,11 +45,13 @@ export function CommandPalette<T extends object>(props: CommandPaletteProps<T>) 
             autoFocus
             aria-label="Search commands"
             placeholder="Search commands"
-            className="m-2" />
+            className="m-2"
+          />
           <Menu
             {...props}
             className="flex-1 min-h-0"
-            renderEmptyState={() => 'No results found.'} />
+            renderEmptyState={() => 'No results found.'}
+          />
         </AriaAutocomplete>
       </Dialog>
     </Modal>

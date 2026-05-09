@@ -11,7 +11,8 @@
  */
 
 import {
-  Collection, DisabledBehavior,
+  Collection,
+  DisabledBehavior,
   FocusStrategy,
   Selection as ISelection,
   Key,
@@ -27,9 +28,9 @@ import {MultipleSelectionManager, MultipleSelectionState} from './types';
 import {Selection} from './Selection';
 
 interface SelectionManagerOptions {
-  allowsCellSelection?: boolean,
-  layoutDelegate?: LayoutDelegate,
-  fullCollection?: Collection<Node<unknown>>
+  allowsCellSelection?: boolean;
+  layoutDelegate?: LayoutDelegate;
+  fullCollection?: Collection<Node<unknown>>;
 }
 
 /**
@@ -43,7 +44,11 @@ export class SelectionManager implements MultipleSelectionManager {
   private layoutDelegate: LayoutDelegate | null;
   private fullCollection: Collection<Node<unknown>> | null;
 
-  constructor(collection: Collection<Node<unknown>>, state: MultipleSelectionState, options?: SelectionManagerOptions) {
+  constructor(
+    collection: Collection<Node<unknown>>,
+    state: MultipleSelectionState,
+    options?: SelectionManagerOptions
+  ) {
     this.collection = collection;
     this.state = state;
     this.allowsCellSelection = options?.allowsCellSelection ?? false;
@@ -330,7 +335,9 @@ export class SelectionManager implements MultipleSelectionManager {
       return;
     }
 
-    let keys = new Selection(this.state.selectedKeys === 'all' ? this.getSelectAllKeys() : this.state.selectedKeys);
+    let keys = new Selection(
+      this.state.selectedKeys === 'all' ? this.getSelectAllKeys() : this.state.selectedKeys
+    );
     if (keys.has(mappedKey)) {
       keys.delete(mappedKey);
       // TODO: move anchor to last selected key...
@@ -430,7 +437,10 @@ export class SelectionManager implements MultipleSelectionManager {
    * Removes all keys from the selection.
    */
   clearSelection(): void {
-    if (!this.disallowEmptySelection && (this.state.selectedKeys === 'all' || this.state.selectedKeys.size > 0)) {
+    if (
+      !this.disallowEmptySelection &&
+      (this.state.selectedKeys === 'all' || this.state.selectedKeys.size > 0)
+    ) {
       this.state.setSelectedKeys(new Selection());
     }
   }
@@ -457,7 +467,10 @@ export class SelectionManager implements MultipleSelectionManager {
       } else {
         this.replaceSelection(key);
       }
-    } else if (this.selectionBehavior === 'toggle' || (e && (e.pointerType === 'touch' || e.pointerType === 'virtual'))) {
+    } else if (
+      this.selectionBehavior === 'toggle' ||
+      (e && (e.pointerType === 'touch' || e.pointerType === 'virtual'))
+    ) {
       // if touch or virtual (VO) then we just want to toggle, otherwise it's impossible to multi select because they don't have modifier keys
       this.toggleSelection(key);
     } else {
@@ -513,7 +526,11 @@ export class SelectionManager implements MultipleSelectionManager {
 
   isDisabled(key: Key): boolean {
     let item = this.collection.getItem(key);
-    return this.state.disabledBehavior === 'all' && (this.state.disabledKeys.has(key) || !!item?.props?.isDisabled) && item?.props?.disabledBehavior !== 'selection';
+    return (
+      this.state.disabledBehavior === 'all' &&
+      (this.state.disabledKeys.has(key) || !!item?.props?.isDisabled) &&
+      item?.props?.disabledBehavior !== 'selection'
+    );
   }
 
   isLink(key: Key): boolean {

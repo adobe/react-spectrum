@@ -29,57 +29,56 @@ import {LabelContext} from './Label';
 import {mergeProps} from 'react-aria/mergeProps';
 import React, {createContext, ForwardedRef, forwardRef} from 'react';
 
-export interface ProgressBarProps extends Omit<AriaProgressBarProps, 'label'>, RenderProps<ProgressBarRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
+export interface ProgressBarProps
+  extends
+    Omit<AriaProgressBarProps, 'label'>,
+    RenderProps<ProgressBarRenderProps>,
+    SlotProps,
+    GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-ProgressBar'
    */
-  className?: ClassNameOrFunction<ProgressBarRenderProps>
+  className?: ClassNameOrFunction<ProgressBarRenderProps>;
 }
 
 export interface ProgressBarRenderProps {
   /**
    * The value as a percentage between the minimum and maximum.
    */
-  percentage: number | undefined,
+  percentage: number | undefined;
   /**
    * A formatted version of the value.
    * @selector [aria-valuetext]
    */
-  valueText: string | undefined,
+  valueText: string | undefined;
   /**
    * Whether the progress bar is indeterminate.
    * @selector :not([aria-valuenow])
    */
-  isIndeterminate: boolean
+  isIndeterminate: boolean;
 }
 
-export const ProgressBarContext = createContext<ContextValue<ProgressBarProps, HTMLDivElement>>(null);
+export const ProgressBarContext =
+  createContext<ContextValue<ProgressBarProps, HTMLDivElement>>(null);
 
 /**
  * Progress bars show either determinate or indeterminate progress of an operation
  * over time.
  */
-export const ProgressBar = forwardRef(function ProgressBar(props: ProgressBarProps, ref: ForwardedRef<HTMLDivElement>) {
+export const ProgressBar = forwardRef(function ProgressBar(
+  props: ProgressBarProps,
+  ref: ForwardedRef<HTMLDivElement>
+) {
   [props, ref] = useContextProps(props, ref, ProgressBarContext);
-  let {
-    value = 0,
-    minValue = 0,
-    maxValue = 100,
-    isIndeterminate = false
-  } = props;
+  let {value = 0, minValue = 0, maxValue = 100, isIndeterminate = false} = props;
   value = clamp(value, minValue, maxValue);
 
-  let [labelRef, label] = useSlot(
-    !props['aria-label'] && !props['aria-labelledby']
-  );
-  let {
-    progressBarProps,
-    labelProps
-  } = useProgressBar({...props, label});
+  let [labelRef, label] = useSlot(!props['aria-label'] && !props['aria-labelledby']);
+  let {progressBarProps, labelProps} = useProgressBar({...props, label});
 
   // Calculate the width of the progress bar as a percentage
-  let percentage = isIndeterminate ? undefined : (value - minValue) / (maxValue - minValue) * 100;
+  let percentage = isIndeterminate ? undefined : ((value - minValue) / (maxValue - minValue)) * 100;
 
   let renderProps = useRenderProps({
     ...props,
@@ -94,7 +93,10 @@ export const ProgressBar = forwardRef(function ProgressBar(props: ProgressBarPro
   let DOMProps = filterDOMProps(props, {global: true});
 
   return (
-    <dom.div {...mergeProps(DOMProps, renderProps, progressBarProps)} ref={ref} slot={props.slot || undefined}>
+    <dom.div
+      {...mergeProps(DOMProps, renderProps, progressBarProps)}
+      ref={ref}
+      slot={props.slot || undefined}>
       <LabelContext.Provider value={{...labelProps, ref: labelRef, elementType: 'span'}}>
         {renderProps.children}
       </LabelContext.Provider>

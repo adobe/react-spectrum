@@ -2,16 +2,16 @@ version: 2.1
 parameters:
   GHA_Event:
     type: string
-    default: ""
+    default: ''
   GHA_Actor:
     type: string
-    default: ""
+    default: ''
   GHA_Action:
     type: string
-    default: ""
+    default: ''
   GHA_Meta:
     type: string
-    default: ""
+    default: ''
 
 orbs:
   aws-cli: circleci/aws-cli@5.4.1
@@ -70,7 +70,7 @@ commands:
       - aws-cli/setup:
           role_arn: $AWS_ROLE_ARN
           region: $AWS_DEFAULT_REGION
-          role_session_name: "CircleCI-Deploy-Session"
+          role_session_name: 'CircleCI-Deploy-Session'
       - run:
           name: Verify AWS CLI setup
           command: aws sts get-caller-identity
@@ -962,7 +962,7 @@ workflows:
             - install
           filters:
             branches:
-              ignore: 
+              ignore:
                 - /main$/
                 - /gh-readonly-queue\/.*$/
       - ts-build-branch:
@@ -970,7 +970,7 @@ workflows:
             - install
           filters:
             branches:
-              ignore: 
+              ignore:
                 - /main$/
                 - /gh-readonly-queue\/.*$/
       - ts-diff:
@@ -979,7 +979,7 @@ workflows:
             - ts-build-branch
           filters:
             branches:
-              ignore: 
+              ignore:
                 - /main$/
                 - /gh-readonly-queue\/.*$/
       - typecheck-docs:
@@ -1101,10 +1101,10 @@ workflows:
   prod-docs:
     when:
       and:
-        - equal: [ "prod-docs", << pipeline.parameters.GHA_Action >> ]
+        - equal: ['prod-docs', << pipeline.parameters.GHA_Action >>]
         - or:
-          - equal: [ "release", << pipeline.parameters.GHA_Event >>]
-          - equal: [ "workflow_dispatch", << pipeline.parameters.GHA_Event >>]
+            - equal: ['release', << pipeline.parameters.GHA_Event >>]
+            - equal: ['workflow_dispatch', << pipeline.parameters.GHA_Event >>]
     jobs:
       - install
       - s2-docs-production:
@@ -1123,7 +1123,7 @@ workflows:
   nightly:
     triggers:
       - schedule:
-          cron: "0 9 * * *" # 02:00 PDT
+          cron: '0 9 * * *' # 02:00 PDT
           filters:
             branches:
               only:
@@ -1135,8 +1135,8 @@ workflows:
   nightly-manual:
     when:
       and:
-        - equal: [ "nightly", << pipeline.parameters.GHA_Action >> ]
-        - equal: [ "workflow_dispatch", << pipeline.parameters.GHA_Event >>]
+        - equal: ['nightly', << pipeline.parameters.GHA_Action >>]
+        - equal: ['workflow_dispatch', << pipeline.parameters.GHA_Event >>]
     jobs:
       - install
       - publish-nightly

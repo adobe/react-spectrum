@@ -15,9 +15,7 @@ import {TextArea, TextField} from '../src/TextField';
 
 describe('TextField', () => {
   it('should focus textarea when tapping invalid icon', async () => {
-    let {getByRole} = render(
-      <TextArea label="Description" isInvalid  />
-    );
+    let {getByRole} = render(<TextArea label="Description" isInvalid />);
 
     let textarea = getByRole('textbox');
     // svg doesn't have a role so grab it via queryselector
@@ -31,9 +29,7 @@ describe('TextField', () => {
   });
 
   it('should label the input with the prefix', () => {
-    let {getByRole} = render(
-      <TextField label="Description" prefix="Prefix" />
-    );
+    let {getByRole} = render(<TextField label="Description" prefix="Prefix" />);
 
     let input = getByRole('textbox');
     let labels = input.getAttribute('aria-labelledby')?.split(' ');

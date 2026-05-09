@@ -12,10 +12,18 @@
 
 import {DOMAttributes, FocusableElement, Key, RefObject} from '@react-types/shared';
 import {focusSafely} from '../interactions/focusSafely';
-import {getActiveElement, getEventTarget, isFocusWithin, nodeContains} from '../utils/shadowdom/DOMFunctions';
+import {
+  getActiveElement,
+  getEventTarget,
+  isFocusWithin,
+  nodeContains
+} from '../utils/shadowdom/DOMFunctions';
 import {getFocusableTreeWalker} from '../focus/FocusScope';
 import {getScrollParent} from '../utils/getScrollParent';
-import {IGridCollection as GridCollection, GridNode} from 'react-stately/private/grid/GridCollection';
+import {
+  IGridCollection as GridCollection,
+  GridNode
+} from 'react-stately/private/grid/GridCollection';
 import {gridMap} from './utils';
 import {GridState} from 'react-stately/private/grid/useGridState';
 import {isFocusVisible} from '../interactions/useFocusVisible';
@@ -27,28 +35,28 @@ import {useSelectableItem} from '../selection/useSelectableItem';
 
 export interface GridCellProps {
   /** An object representing the grid cell. Contains all the relevant information that makes up the grid cell. */
-  node: GridNode<unknown>,
+  node: GridNode<unknown>;
   /** Whether the grid cell is contained in a virtual scroller. */
-  isVirtualized?: boolean,
+  isVirtualized?: boolean;
   /** Whether the cell or its first focusable child element should be focused when the grid cell is focused. */
-  focusMode?: 'child' | 'cell',
+  focusMode?: 'child' | 'cell';
   /** Whether selection should occur on press up instead of press down. */
-  shouldSelectOnPressUp?: boolean,
+  shouldSelectOnPressUp?: boolean;
   /** Indicates how many columns the data cell spans. */
-  colSpan?: number,
+  colSpan?: number;
   /**
    * Handler that is called when a user performs an action on the cell.
    * Please use onCellAction at the collection level instead.
    * @deprecated
    **/
-  onAction?: () => void
+  onAction?: () => void;
 }
 
 export interface GridCellAria {
   /** Props for the grid cell element. */
-  gridCellProps: DOMAttributes,
+  gridCellProps: DOMAttributes;
   /** Whether the cell is currently in a pressed state. */
-  isPressed: boolean
+  isPressed: boolean;
 }
 
 /**
@@ -56,17 +64,18 @@ export interface GridCellAria {
  * @param props - Props for the cell.
  * @param state - State of the parent grid, as returned by `useGridState`.
  */
-export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps, state: GridState<T, C>, ref: RefObject<FocusableElement | null>): GridCellAria {
-  let {
-    node,
-    isVirtualized,
-    focusMode = 'child',
-    shouldSelectOnPressUp,
-    onAction
-  } = props;
+export function useGridCell<T, C extends GridCollection<T>>(
+  props: GridCellProps,
+  state: GridState<T, C>,
+  ref: RefObject<FocusableElement | null>
+): GridCellAria {
+  let {node, isVirtualized, focusMode = 'child', shouldSelectOnPressUp, onAction} = props;
 
   let {direction} = useLocale();
-  let {keyboardDelegate, actions: {onCellAction}} = gridMap.get(state)!;
+  let {
+    keyboardDelegate,
+    actions: {onCellAction}
+  } = gridMap.get(state)!;
 
   // We need to track the key of the item at the time it was last focused so that we force
   // focus to go to the item when the DOM node is reused for a different item in a virtualizer.
@@ -83,9 +92,10 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
           return;
         }
 
-        let focusable = state.selectionManager.childFocusStrategy === 'last'
-          ? last(treeWalker)
-          : treeWalker.firstChild() as FocusableElement;
+        let focusable =
+          state.selectionManager.childFocusStrategy === 'last'
+            ? last(treeWalker)
+            : (treeWalker.firstChild() as FocusableElement);
         if (focusable) {
           focusSafely(focusable);
           return;
@@ -114,7 +124,12 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
 
   let onKeyDownCapture = (e: ReactKeyboardEvent) => {
     let activeElement = getActiveElement();
-    if (!nodeContains(e.currentTarget, getEventTarget(e) as Element) || state.isKeyboardNavigationDisabled || !ref.current || !activeElement) {
+    if (
+      !nodeContains(e.currentTarget, getEventTarget(e) as Element) ||
+      state.isKeyboardNavigationDisabled ||
+      !ref.current ||
+      !activeElement
+    ) {
       return;
     }
 
@@ -124,9 +139,10 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
     switch (e.key) {
       case 'ArrowLeft': {
         // Find the next focusable element within the cell.
-        let focusable: FocusableElement | null = direction === 'rtl'
-          ? walker.nextNode() as FocusableElement
-          : walker.previousNode() as FocusableElement;
+        let focusable: FocusableElement | null =
+          direction === 'rtl'
+            ? (walker.nextNode() as FocusableElement)
+            : (walker.previousNode() as FocusableElement);
 
         // Don't focus the cell itself if focusMode is "child"
         if (focusMode === 'child' && focusable === ref.current) {
@@ -160,9 +176,8 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
             scrollIntoViewport(ref.current, {containingElement: getScrollParent(ref.current)});
           } else {
             walker.currentNode = ref.current;
-            focusable = direction === 'rtl'
-              ? walker.firstChild() as FocusableElement
-              : last(walker);
+            focusable =
+              direction === 'rtl' ? (walker.firstChild() as FocusableElement) : last(walker);
             if (focusable) {
               focusSafely(focusable);
               scrollIntoViewport(focusable, {containingElement: getScrollParent(ref.current)});
@@ -172,9 +187,10 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
         break;
       }
       case 'ArrowRight': {
-        let focusable: FocusableElement | null = direction === 'rtl'
-          ? walker.previousNode() as FocusableElement
-          : walker.nextNode() as FocusableElement;
+        let focusable: FocusableElement | null =
+          direction === 'rtl'
+            ? (walker.previousNode() as FocusableElement)
+            : (walker.nextNode() as FocusableElement);
 
         if (focusMode === 'child' && focusable === ref.current) {
           focusable = null;
@@ -202,9 +218,8 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
             scrollIntoViewport(ref.current, {containingElement: getScrollParent(ref.current)});
           } else {
             walker.currentNode = ref.current;
-            focusable = direction === 'rtl'
-              ? last(walker)
-              : walker.firstChild() as FocusableElement;
+            focusable =
+              direction === 'rtl' ? last(walker) : (walker.firstChild() as FocusableElement);
             if (focusable) {
               focusSafely(focusable);
               scrollIntoViewport(focusable, {containingElement: getScrollParent(ref.current)});
@@ -231,7 +246,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
 
   // Grid cells can have focusable elements inside them. In this case, focus should
   // be marshalled to that element rather than focusing the cell itself.
-  let onFocus = (e) => {
+  let onFocus = e => {
     keyWhenFocused.current = node.key;
     if (getEventTarget(e) !== ref.current) {
       // useSelectableItem only handles setting the focused key when
@@ -272,8 +287,12 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
   // row rather than the cell. However, when the row is draggable, usePress cannot preventDefault
   // on pointer down, so the browser will try to focus the cell which has a tabIndex applied.
   // To avoid this, remove the tabIndex from the cell briefly on pointer down.
-  if (shouldSelectOnPressUp && gridCellProps.tabIndex != null && gridCellProps.onPointerDown == null) {
-    gridCellProps.onPointerDown = (e) => {
+  if (
+    shouldSelectOnPressUp &&
+    gridCellProps.tabIndex != null &&
+    gridCellProps.onPointerDown == null
+  ) {
+    gridCellProps.onPointerDown = e => {
       let el = e.currentTarget;
       let tabindex = el.getAttribute('tabindex');
       el.removeAttribute('tabindex');

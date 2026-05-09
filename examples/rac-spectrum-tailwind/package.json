@@ -1,7 +1,6 @@
 {
   "name": "rac-spectrum-tailwind-example",
   "private": true,
-  "packageManager": "yarn@4.2.2",
   "scripts": {
     "start": "parcel src/index.html",
     "build": "PARCEL_WORKER_BACKEND=process parcel build src/index.html",
@@ -24,5 +23,6 @@
   },
   "devDependencies": {
     "process": "^0.11.10"
-  }
+  },
+  "packageManager": "yarn@4.2.2"
 }

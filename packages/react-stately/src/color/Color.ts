@@ -11,7 +11,14 @@
  */
 
 import {clamp, toFixedNumber} from '../utils/number';
-import {ColorAxes, ColorChannel, ColorChannelRange, ColorFormat, ColorSpace, Color as IColor} from './types';
+import {
+  ColorAxes,
+  ColorChannel,
+  ColorChannelRange,
+  ColorFormat,
+  ColorSpace,
+  Color as IColor
+} from './types';
 // @ts-ignore
 import intlMessages from '../../intl/color/*.json';
 import {LocalizedStringDictionary, LocalizedStringFormatter} from '@internationalized/string';
@@ -38,7 +45,9 @@ export function normalizeColor(v: string | IColor): IColor {
 }
 
 /** Returns a list of color channels for a given color space. */
-export function getColorChannels(colorSpace: ColorSpace): [ColorChannel, ColorChannel, ColorChannel] {
+export function getColorChannels(
+  colorSpace: ColorSpace
+): [ColorChannel, ColorChannel, ColorChannel] {
   switch (colorSpace) {
     case 'rgb':
       return RGBColor.colorChannels;
@@ -112,13 +121,14 @@ abstract class Color implements IColor {
   }
 
   getChannelName(channel: ColorChannel, locale: string) {
-    let strings = LocalizedStringDictionary.getGlobalDictionaryForPackage('@react-stately/color') || dictionary;
+    let strings =
+      LocalizedStringDictionary.getGlobalDictionaryForPackage('@react-stately/color') || dictionary;
     return strings.getStringForLocale(channel, locale);
   }
 
   abstract getColorSpace(): ColorSpace;
 
-  getColorSpaceAxes(xyChannels: {xChannel?: ColorChannel, yChannel?: ColorChannel}): ColorAxes {
+  getColorSpaceAxes(xyChannels: {xChannel?: ColorChannel; yChannel?: ColorChannel}): ColorAxes {
     let {xChannel, yChannel} = xyChannels;
     let xCh = xChannel || this.getColorChannels().find(c => c !== yChannel)!;
     let yCh = yChannel || this.getColorChannels().find(c => c !== xCh)!;
@@ -127,13 +137,14 @@ abstract class Color implements IColor {
     return {xChannel: xCh, yChannel: yCh, zChannel: zCh};
   }
 
-  abstract getColorChannels(): [ColorChannel, ColorChannel, ColorChannel]
+  abstract getColorChannels(): [ColorChannel, ColorChannel, ColorChannel];
 
   getColorName(locale: string): string {
     // Convert to oklch color space, which has perceptually uniform lightness across all hues.
     let [l, c, h] = toOKLCH(this);
 
-    let strings = LocalizedStringDictionary.getGlobalDictionaryForPackage('@react-stately/color') || dictionary;
+    let strings =
+      LocalizedStringDictionary.getGlobalDictionaryForPackage('@react-stately/color') || dictionary;
     if (l > 0.999) {
       return strings.getStringForLocale('white', locale);
     }
@@ -181,23 +192,30 @@ abstract class Color implements IColor {
     let formatter = new LocalizedStringFormatter(locale, strings);
     if (alpha < 1) {
       let percentTransparent = new NumberFormatter(locale, {style: 'percent'}).format(1 - alpha);
-      return formatter.format('transparentColorName', {
-        lightness,
-        chroma,
-        hue,
-        percentTransparent
-      }).replace(/\s+/g, ' ').trim();
+      return formatter
+        .format('transparentColorName', {
+          lightness,
+          chroma,
+          hue,
+          percentTransparent
+        })
+        .replace(/\s+/g, ' ')
+        .trim();
     } else {
-      return formatter.format('colorName', {
-        lightness,
-        chroma,
-        hue
-      }).replace(/\s+/g, ' ').trim();
+      return formatter
+        .format('colorName', {
+          lightness,
+          chroma,
+          hue
+        })
+        .replace(/\s+/g, ' ')
+        .trim();
     }
   }
 
   private getOklchHue(l: number, c: number, h: number, locale: string): [string, number] {
-    let strings = LocalizedStringDictionary.getGlobalDictionaryForPackage('@react-stately/color') || dictionary;
+    let strings =
+      LocalizedStringDictionary.getGlobalDictionaryForPackage('@react-stately/color') || dictionary;
     if (c < GRAY_THRESHOLD) {
       return [strings.getStringForLocale('gray', locale), l];
     }
@@ -212,7 +230,7 @@ abstract class Color implements IColor {
             hueName = 'brown';
           } else {
             // Adjust lightness.
-            l = (l - ORANGE_LIGHTNESS_THRESHOLD) + MAX_DARK_LIGHTNESS;
+            l = l - ORANGE_LIGHTNESS_THRESHOLD + MAX_DARK_LIGHTNESS;
           }
         }
 
@@ -240,7 +258,12 @@ abstract class Color implements IColor {
 }
 
 class RGBColor extends Color {
-  constructor(private red: number, private green: number, private blue: number, private alpha: number) {
+  constructor(
+    private red: number,
+    private green: number,
+    private blue: number,
+    private alpha: number
+  ) {
     super();
   }
 
@@ -248,7 +271,9 @@ class RGBColor extends Color {
     let colors: Array<number | undefined> = [];
     // matching #rgb, #rgba, #rrggbb, #rrggbbaa
     if (/^#[\da-f]+$/i.test(value) && [4, 5, 7, 9].includes(value.length)) {
-      const values = (value.length < 6 ? value.replace(/[^#]/gi, '$&$&') : value).slice(1).split('');
+      const values = (value.length < 6 ? value.replace(/[^#]/gi, '$&$&') : value)
+        .slice(1)
+        .split('');
       while (values.length > 0) {
         colors.push(parseInt(values.splice(0, 2).join(''), 16));
       }
@@ -267,15 +292,34 @@ class RGBColor extends Color {
       return undefined;
     }
 
-    return colors.length < 3 ? undefined : new RGBColor(colors[0], colors[1], colors[2], colors[3] ?? 1);
+    return colors.length < 3
+      ? undefined
+      : new RGBColor(colors[0], colors[1], colors[2], colors[3] ?? 1);
   }
 
   toString(format: ColorFormat | 'css' = 'css') {
     switch (format) {
       case 'hex':
-        return '#' + (this.red.toString(16).padStart(2, '0') + this.green.toString(16).padStart(2, '0') + this.blue.toString(16).padStart(2, '0')).toUpperCase();
+        return (
+          '#' +
+          (
+            this.red.toString(16).padStart(2, '0') +
+            this.green.toString(16).padStart(2, '0') +
+            this.blue.toString(16).padStart(2, '0')
+          ).toUpperCase()
+        );
       case 'hexa':
-        return '#' + (this.red.toString(16).padStart(2, '0') + this.green.toString(16).padStart(2, '0') + this.blue.toString(16).padStart(2, '0') + Math.round(this.alpha * 255).toString(16).padStart(2, '0')).toUpperCase();
+        return (
+          '#' +
+          (
+            this.red.toString(16).padStart(2, '0') +
+            this.green.toString(16).padStart(2, '0') +
+            this.blue.toString(16).padStart(2, '0') +
+            Math.round(this.alpha * 255)
+              .toString(16)
+              .padStart(2, '0')
+          ).toUpperCase()
+        );
       case 'rgb':
         return `rgb(${this.red}, ${this.green}, ${this.blue})`;
       case 'css':
@@ -305,7 +349,7 @@ class RGBColor extends Color {
   }
 
   toHexInt(): number {
-    return this.red << 16 | this.green << 8 | this.blue;
+    return (this.red << 16) | (this.green << 8) | this.blue;
   }
 
   /**
@@ -366,7 +410,7 @@ class RGBColor extends Color {
     if (chroma === 0) {
       hue = saturation = 0; // achromatic
     } else {
-      saturation = chroma / (lightness < .5 ? max + min : 2 - max - min);
+      saturation = chroma / (lightness < 0.5 ? max + min : 2 - max - min);
 
       switch (max) {
         case red:
@@ -388,7 +432,8 @@ class RGBColor extends Color {
       toFixedNumber(hue * 360, 2),
       toFixedNumber(saturation * 100, 2),
       toFixedNumber(lightness * 100, 2),
-      this.alpha);
+      this.alpha
+    );
   }
 
   clone(): IColor {
@@ -400,7 +445,7 @@ class RGBColor extends Color {
       case 'red':
       case 'green':
       case 'blue':
-        return {minValue: 0x0, maxValue: 0xFF, step: 0x1, pageSize: 0x11};
+        return {minValue: 0x0, maxValue: 0xff, step: 0x1, pageSize: 0x11};
       case 'alpha':
         return {minValue: 0, maxValue: 1, step: 0.01, pageSize: 0.1};
       default:
@@ -441,10 +486,16 @@ class RGBColor extends Color {
 // before/after a comma, 0 or more whitespaces are allowed
 // - hsb(X, X%, X%)
 // - hsba(X, X%, X%, X)
-const HSB_REGEX = /hsb\(([-+]?\d+(?:.\d+)?\s*,\s*[-+]?\d+(?:.\d+)?%\s*,\s*[-+]?\d+(?:.\d+)?%)\)|hsba\(([-+]?\d+(?:.\d+)?\s*,\s*[-+]?\d+(?:.\d+)?%\s*,\s*[-+]?\d+(?:.\d+)?%\s*,\s*[-+]?\d(.\d+)?)\)/;
+const HSB_REGEX =
+  /hsb\(([-+]?\d+(?:.\d+)?\s*,\s*[-+]?\d+(?:.\d+)?%\s*,\s*[-+]?\d+(?:.\d+)?%)\)|hsba\(([-+]?\d+(?:.\d+)?\s*,\s*[-+]?\d+(?:.\d+)?%\s*,\s*[-+]?\d+(?:.\d+)?%\s*,\s*[-+]?\d(.\d+)?)\)/;
 
 class HSBColor extends Color {
-  constructor(private hue: number, private saturation: number, private brightness: number, private alpha: number) {
+  constructor(
+    private hue: number,
+    private saturation: number,
+    private brightness: number,
+    private alpha: number
+  ) {
     super();
   }
 
@@ -498,12 +549,15 @@ class HSBColor extends Color {
     let saturation = this.saturation / 100;
     let brightness = this.brightness / 100;
     let lightness = brightness * (1 - saturation / 2);
-    saturation = lightness === 0 || lightness === 1 ? 0 : (brightness - lightness) / Math.min(lightness, 1 - lightness);
+    saturation =
+      lightness === 0 || lightness === 1
+        ? 0
+        : (brightness - lightness) / Math.min(lightness, 1 - lightness);
 
     return new HSLColor(
       toFixedNumber(this.hue, 2),
       toFixedNumber(saturation * 100, 2),
-        toFixedNumber(lightness * 100, 2),
+      toFixedNumber(lightness * 100, 2),
       this.alpha
     );
   }
@@ -517,7 +571,8 @@ class HSBColor extends Color {
     let hue = this.hue;
     let saturation = this.saturation / 100;
     let brightness = this.brightness / 100;
-    let fn = (n: number, k = (n + hue / 60) % 6) => brightness - saturation * brightness * Math.max(Math.min(k, 4 - k, 1), 0);
+    let fn = (n: number, k = (n + hue / 60) % 6) =>
+      brightness - saturation * brightness * Math.max(Math.min(k, 4 - k, 1), 0);
     return new RGBColor(
       Math.round(fn(5) * 255),
       Math.round(fn(3) * 255),
@@ -570,7 +625,11 @@ class HSBColor extends Color {
     return 'hsb';
   }
 
-  static colorChannels: [ColorChannel, ColorChannel, ColorChannel] = ['hue', 'saturation', 'brightness'];
+  static colorChannels: [ColorChannel, ColorChannel, ColorChannel] = [
+    'hue',
+    'saturation',
+    'brightness'
+  ];
   getColorChannels(): [ColorChannel, ColorChannel, ColorChannel] {
     return HSBColor.colorChannels;
   }
@@ -580,10 +639,16 @@ class HSBColor extends Color {
 // before/after a comma, 0 or more whitespaces are allowed
 // - hsl(X, X%, X%)
 // - hsla(X, X%, X%, X)
-const HSL_REGEX = /hsl\(([-+]?\d+(?:.\d+)?\s*,\s*[-+]?\d+(?:.\d+)?%\s*,\s*[-+]?\d+(?:.\d+)?%)\)|hsla\(([-+]?\d+(?:.\d+)?\s*,\s*[-+]?\d+(?:.\d+)?%\s*,\s*[-+]?\d+(?:.\d+)?%\s*,\s*[-+]?\d(.\d+)?)\)/;
+const HSL_REGEX =
+  /hsl\(([-+]?\d+(?:.\d+)?\s*,\s*[-+]?\d+(?:.\d+)?%\s*,\s*[-+]?\d+(?:.\d+)?%)\)|hsla\(([-+]?\d+(?:.\d+)?\s*,\s*[-+]?\d+(?:.\d+)?%\s*,\s*[-+]?\d+(?:.\d+)?%\s*,\s*[-+]?\d(.\d+)?)\)/;
 
 class HSLColor extends Color {
-  constructor(private hue: number, private saturation: number, private lightness: number, private alpha: number) {
+  constructor(
+    private hue: number,
+    private saturation: number,
+    private lightness: number,
+    private alpha: number
+  ) {
     super();
   }
 
@@ -654,7 +719,8 @@ class HSLColor extends Color {
     let saturation = this.saturation / 100;
     let lightness = this.lightness / 100;
     let a = saturation * Math.min(lightness, 1 - lightness);
-    let fn = (n: number, k = (n + hue / 30) % 12) => lightness - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
+    let fn = (n: number, k = (n + hue / 30) % 12) =>
+      lightness - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
     return new RGBColor(
       Math.round(fn(0) * 255),
       Math.round(fn(8) * 255),
@@ -707,7 +773,11 @@ class HSLColor extends Color {
     return 'hsl';
   }
 
-  static colorChannels: [ColorChannel, ColorChannel, ColorChannel] = ['hue', 'saturation', 'lightness'];
+  static colorChannels: [ColorChannel, ColorChannel, ColorChannel] = [
+    'hue',
+    'saturation',
+    'lightness'
+  ];
   getColorChannels(): [ColorChannel, ColorChannel, ColorChannel] {
     return HSLColor.colorChannels;
   }
@@ -726,7 +796,7 @@ function toOKLCH(color: Color) {
 }
 
 function OKLab_to_OKLCH(l: number, a: number, b: number): [number, number, number] {
-  var hue = Math.atan2(b, a) * 180 / Math.PI;
+  var hue = (Math.atan2(b, a) * 180) / Math.PI;
   return [
     l,
     Math.sqrt(a ** 2 + b ** 2), // Chroma
@@ -753,16 +823,22 @@ function lin_sRGB_component(val: number) {
     return val / 12.92;
   }
 
-  return sign * (Math.pow((abs + 0.055) / 1.055, 2.4));
+  return sign * Math.pow((abs + 0.055) / 1.055, 2.4);
 }
 
 function lin_sRGB_to_XYZ(r: number, g: number, b: number) {
   // convert an array of linear-light sRGB values to CIE XYZ
   // using sRGB's own white, D65 (no chromatic adaptation)
   const M = [
-    506752 / 1228815, 87881 / 245763,  12673 / 70218,
-    87098 / 409605,   175762 / 245763, 12673 / 175545,
-    7918 / 409605,    87881 / 737289,  1001167 / 1053270
+    506752 / 1228815,
+    87881 / 245763,
+    12673 / 70218,
+    87098 / 409605,
+    175762 / 245763,
+    12673 / 175545,
+    7918 / 409605,
+    87881 / 737289,
+    1001167 / 1053270
   ];
   return multiplyMatrix(M, r, g, b);
 }
@@ -770,14 +846,14 @@ function lin_sRGB_to_XYZ(r: number, g: number, b: number) {
 function XYZ_to_OKLab(x: number, y: number, z: number) {
   // Given XYZ relative to D65, convert to OKLab
   const XYZtoLMS = [
-    0.8190224379967030, 0.3619062600528904, -0.1288737815209879,
-    0.0329836539323885, 0.9292868615863434,  0.0361446663506424,
-    0.0481771893596242, 0.2642395317527308,  0.6335478284694309
+    0.819022437996703, 0.3619062600528904, -0.1288737815209879, 0.0329836539323885,
+    0.9292868615863434, 0.0361446663506424, 0.0481771893596242, 0.2642395317527308,
+    0.6335478284694309
   ];
   const LMStoOKLab = [
-    0.2104542683093140,  0.7936177747023054, -0.0040720430116193,
-    1.9779985324311684, -2.4285922420485799,  0.4505937096174110,
-    0.0259040424655478,  0.7827717124575296, -0.8086757549230774
+    0.210454268309314, 0.7936177747023054, -0.0040720430116193, 1.9779985324311684,
+    -2.4285922420485799, 0.450593709617411, 0.0259040424655478, 0.7827717124575296,
+    -0.8086757549230774
   ];
 
   let [a, b, c] = multiplyMatrix(XYZtoLMS, x, y, z);

@@ -1,16 +1,15 @@
-
 import {addons, types} from 'storybook/manager-api';
 import {locales} from '../../constants';
 import React, {useEffect, useState} from 'react';
 
 function ProviderFieldSetter({api}) {
   let [values, setValues] = useState(() => ({
-    locale: api.getQueryParam('providerSwitcher-locale') || undefined,
+    locale: api.getQueryParam('providerSwitcher-locale') || undefined
   }));
   let channel = addons.getChannel();
-  let onLocaleChange = (e) => {
+  let onLocaleChange = e => {
     let newValue = e.target.value || undefined;
-    setValues((old) => {
+    setValues(old => {
       let next = {...old, locale: newValue};
       channel.emit('provider/updated', next);
       return next;
@@ -37,20 +36,24 @@ function ProviderFieldSetter({api}) {
       <div style={{marginRight: '10px'}}>
         <label htmlFor="locale">Locale: </label>
         <select id="locale" name="locale" onChange={onLocaleChange} value={values.locale || ''}>
-          {locales.map(locale => <option key={locale.label} value={locale.value}>{locale.label}</option>)}
+          {locales.map(locale => (
+            <option key={locale.label} value={locale.value}>
+              {locale.label}
+            </option>
+          ))}
         </select>
       </div>
     </div>
-  )
+  );
 }
 
-addons.register('ProviderSwitcher', (api) => {
+addons.register('ProviderSwitcher', api => {
   addons.add('ProviderSwitcher', {
     title: 'viewport',
     type: types.TOOL,
-    match: ({ viewMode }) => {
-      return viewMode === 'story' || viewMode === 'docs'
+    match: ({viewMode}) => {
+      return viewMode === 'story' || viewMode === 'docs';
     },
-    render: () => <ProviderFieldSetter api={api} />,
+    render: () => <ProviderFieldSetter api={api} />
   });
 });

@@ -75,12 +75,12 @@ export class TreeCollection<T> implements Collection<Node<T>> {
 
   getKeyBefore(key: Key): Key | null {
     let node = this.keyMap.get(key);
-    return node ? node.prevKey ?? null : null;
+    return node ? (node.prevKey ?? null) : null;
   }
 
   getKeyAfter(key: Key): Key | null {
     let node = this.keyMap.get(key);
-    return node ? node.nextKey ?? null : null;
+    return node ? (node.nextKey ?? null) : null;
   }
 
   getFirstKey(): Key | null {

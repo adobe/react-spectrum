@@ -15,7 +15,7 @@ const plugin = {
     type: 'suggestion',
     fixable: 'code'
   },
-  create: (context) => ({
+  create: context => ({
     /**
      * expect(() => tree.getByRole('separator')).toThrow();
      */
@@ -25,13 +25,11 @@ const plugin = {
     ) {
       context.report({
         node: node.parent,
-        message: 'Use queryByRole and toBeNull instead getByRole which takes a long time to generate an error message.',
-        fix: (fixer) => [
+        message:
+          'Use queryByRole and toBeNull instead getByRole which takes a long time to generate an error message.',
+        fix: fixer => [
           fixer.removeRange([node.parent.range[0], node.range[0]]),
-          fixer.replaceText(
-            node.callee.property,
-            'queryByRole'
-          ),
+          fixer.replaceText(node.callee.property, 'queryByRole'),
           fixer.replaceText(node.parent.parent.parent.property, 'toBeNull')
         ]
       });
@@ -46,7 +44,8 @@ const plugin = {
     ) {
       context.report({
         node: node.parent,
-        message: 'Use queryByRole and toBeNull instead getByRole which takes a long time to generate an error message.'
+        message:
+          'Use queryByRole and toBeNull instead getByRole which takes a long time to generate an error message.'
         // can't fix this one as easily because the getByRole function is defined elsewhere
       });
     },
@@ -60,14 +59,12 @@ const plugin = {
     ) {
       context.report({
         node: node.parent,
-        message: 'Use queryByRole and toBeNull instead getByRole which takes a long time to generate an error message.',
-        fix: (fixer) => [
+        message:
+          'Use queryByRole and toBeNull instead getByRole which takes a long time to generate an error message.',
+        fix: fixer => [
           fixer.removeRange([node.range[1], node.parent.parent.parent.range[1]]),
           fixer.removeRange([node.parent.parent.parent.range[0], node.range[0]]),
-          fixer.replaceText(
-            node.callee.property,
-            'queryByRole'
-          ),
+          fixer.replaceText(node.callee.property, 'queryByRole'),
           fixer.replaceText(node.parent.parent.parent.parent.parent.property, 'toBeNull')
         ]
       });
@@ -82,7 +79,8 @@ const plugin = {
     ) {
       context.report({
         node: node.parent,
-        message: 'Use queryByRole and toBeNull instead getByRole which takes a long time to generate an error message.'
+        message:
+          'Use queryByRole and toBeNull instead getByRole which takes a long time to generate an error message.'
         // can't fix this one as easily because the getByRole function is defined elsewhere
       });
     }

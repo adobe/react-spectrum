@@ -18,7 +18,8 @@ import {RangeCalendarProps} from 'react-stately/useRangeCalendarState';
 import {useEvent} from '../utils/useEvent';
 import {useRef} from 'react';
 
-export interface AriaRangeCalendarProps<T extends DateValue> extends RangeCalendarProps<T>, DOMProps, AriaLabelingProps {
+export interface AriaRangeCalendarProps<T extends DateValue>
+  extends RangeCalendarProps<T>, DOMProps, AriaLabelingProps {
   /**
    * Controls the behavior when a pointer is released outside the calendar or a blur occurs mid selection:
    *
@@ -29,14 +30,18 @@ export interface AriaRangeCalendarProps<T extends DateValue> extends RangeCalend
    * - `select`: select the currently hovered range of dates.
    * @default 'select'
    */
-  commitBehavior?: 'clear' | 'reset' | 'select'
+  commitBehavior?: 'clear' | 'reset' | 'select';
 }
 
 /**
  * Provides the behavior and accessibility implementation for a range calendar component.
  * A range calendar displays one or more date grids and allows users to select a contiguous range of dates.
  */
-export function useRangeCalendar<T extends DateValue>(props: AriaRangeCalendarProps<T>, state: RangeCalendarState, ref: RefObject<FocusableElement | null>): CalendarAria {
+export function useRangeCalendar<T extends DateValue>(
+  props: AriaRangeCalendarProps<T>,
+  state: RangeCalendarState,
+  ref: RefObject<FocusableElement | null>
+): CalendarAria {
   let {commitBehavior = 'select', ...otherProps} = props;
   let res = useCalendarBase(otherProps, state);
 
@@ -96,11 +101,16 @@ export function useRangeCalendar<T extends DateValue>(props: AriaRangeCalendarPr
   };
 
   // Prevent touch scrolling while dragging
-  useEvent(ref, 'touchmove', e => {
-    if (state.isDragging) {
-      e.preventDefault();
-    }
-  }, {passive: false, capture: true});
+  useEvent(
+    ref,
+    'touchmove',
+    e => {
+      if (state.isDragging) {
+        e.preventDefault();
+      }
+    },
+    {passive: false, capture: true}
+  );
 
   return res;
 }

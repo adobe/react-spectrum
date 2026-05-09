@@ -25,10 +25,9 @@ describe('useDisclosureState', () => {
   });
 
   it('should allow controlled isExpanded prop', () => {
-    const {result, rerender} = renderHook(
-      ({isExpanded}) => useDisclosureState({isExpanded}),
-      {initialProps: {isExpanded: true}}
-    );
+    const {result, rerender} = renderHook(({isExpanded}) => useDisclosureState({isExpanded}), {
+      initialProps: {isExpanded: true}
+    });
     expect(result.current.isExpanded).toBe(true);
 
     rerender({isExpanded: false});
@@ -37,9 +36,7 @@ describe('useDisclosureState', () => {
 
   it('should call onExpandedChange when expanded state changes', () => {
     const onExpandedChange = jest.fn();
-    const {result} = renderHook(() =>
-      useDisclosureState({onExpandedChange})
-    );
+    const {result} = renderHook(() => useDisclosureState({onExpandedChange}));
 
     act(() => {
       result.current.expand();
@@ -68,9 +65,7 @@ describe('useDisclosureState', () => {
 
   it('should not change state when controlled', () => {
     const onExpandedChange = jest.fn();
-    const {result} = renderHook(() =>
-      useDisclosureState({isExpanded: false, onExpandedChange})
-    );
+    const {result} = renderHook(() => useDisclosureState({isExpanded: false, onExpandedChange}));
 
     act(() => {
       result.current.expand();

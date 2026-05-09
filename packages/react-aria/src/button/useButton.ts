@@ -20,7 +20,13 @@ import {
   ReactNode,
   RefObject
 } from 'react';
-import {AriaLabelingProps, DOMAttributes, FocusableDOMProps, FocusableProps, PressEvents} from '@react-types/shared';
+import {
+  AriaLabelingProps,
+  DOMAttributes,
+  FocusableDOMProps,
+  FocusableProps,
+  PressEvents
+} from '@react-types/shared';
 import {filterDOMProps} from '../utils/filterDOMProps';
 import {mergeProps} from '../utils/mergeProps';
 import {useFocusable} from '../interactions/useFocusable';
@@ -28,59 +34,59 @@ import {usePress} from '../interactions/usePress';
 
 export interface ButtonProps extends PressEvents, FocusableProps {
   /** Whether the button is disabled. */
-  isDisabled?: boolean,
+  isDisabled?: boolean;
   /** The content to display in the button. */
-  children?: ReactNode
+  children?: ReactNode;
 }
 
 export interface AriaBaseButtonProps extends FocusableDOMProps, AriaLabelingProps {
   /** Indicates whether the element is disabled to users of assistive technology. */
-  'aria-disabled'?: boolean | 'true' | 'false',
+  'aria-disabled'?: boolean | 'true' | 'false';
   /** Indicates whether the element, or another grouping element it controls, is currently expanded or collapsed. */
-  'aria-expanded'?: boolean | 'true' | 'false',
+  'aria-expanded'?: boolean | 'true' | 'false';
   /** Indicates the availability and type of interactive popup element, such as menu or dialog, that can be triggered by an element. */
-  'aria-haspopup'?: boolean | 'menu' | 'listbox' | 'tree' | 'grid' | 'dialog' | 'true' | 'false',
+  'aria-haspopup'?: boolean | 'menu' | 'listbox' | 'tree' | 'grid' | 'dialog' | 'true' | 'false';
   /** Identifies the element (or elements) whose contents or presence are controlled by the current element. */
-  'aria-controls'?: string,
+  'aria-controls'?: string;
   /** Indicates the current "pressed" state of toggle buttons. */
-  'aria-pressed'?: boolean | 'true' | 'false' | 'mixed',
+  'aria-pressed'?: boolean | 'true' | 'false' | 'mixed';
   /** Indicates whether this element represents the current item within a container or set of related elements. */
-  'aria-current'?: boolean | 'true' | 'false' | 'page' | 'step' | 'location' | 'date' | 'time',
+  'aria-current'?: boolean | 'true' | 'false' | 'page' | 'step' | 'location' | 'date' | 'time';
   /**
    * The behavior of the button when used in an HTML form.
    * @default 'button'
    */
-  type?: 'button' | 'submit' | 'reset',
+  type?: 'button' | 'submit' | 'reset';
   /**
    * Whether to prevent focus from moving to the button when pressing it.
    *
    * Caution, this can make the button inaccessible and should only be used when alternative keyboard interaction is provided,
    * such as ComboBox's MenuTrigger or a NumberField's increment/decrement control.
    */
-  preventFocusOnPress?: boolean,
+  preventFocusOnPress?: boolean;
   /**
    * The `<form>` element to associate the button with.
    * The value of this attribute must be the id of a `<form>` in the same document.
    * See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/button#form).
    */
-  form?: string,
+  form?: string;
   /**
    * The URL that processes the information submitted by the button.
    * Overrides the action attribute of the button's form owner.
    */
-  formAction?: ButtonHTMLAttributes<HTMLButtonElement>['formAction'],
+  formAction?: ButtonHTMLAttributes<HTMLButtonElement>['formAction'];
   /** Indicates how to encode the form data that is submitted. */
-  formEncType?: string,
+  formEncType?: string;
   /** Indicates the HTTP method used to submit the form. */
-  formMethod?: string,
+  formMethod?: string;
   /** Indicates that the form is not to be validated when it is submitted. */
-  formNoValidate?: boolean,
+  formNoValidate?: boolean;
   /** Overrides the target attribute of the button's form owner. */
-  formTarget?: string,
+  formTarget?: string;
   /** Submitted as a pair with the button's value as part of the form data. */
-  name?: string,
+  name?: string;
   /** The value associated with the button's name when it's submitted with the form data. */
-  value?: string
+  value?: string;
 }
 
 export interface AriaButtonElementTypeProps<T extends ElementType = 'button'> {
@@ -88,43 +94,70 @@ export interface AriaButtonElementTypeProps<T extends ElementType = 'button'> {
    * The HTML element or React element used to render the button, e.g. 'div', 'a', or `RouterLink`.
    * @default 'button'
    */
-  elementType?: T | JSXElementConstructor<any>
+  elementType?: T | JSXElementConstructor<any>;
 }
 
-export interface LinkButtonProps<T extends ElementType = 'button'> extends AriaButtonElementTypeProps<T> {
+export interface LinkButtonProps<
+  T extends ElementType = 'button'
+> extends AriaButtonElementTypeProps<T> {
   /** A URL to link to if elementType="a". */
-  href?: string,
+  href?: string;
   /** The target window for the link. */
-  target?: string,
+  target?: string;
   /** The relationship between the linked resource and the current page. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/rel). */
-  rel?: string
+  rel?: string;
 }
 
-export interface AriaButtonProps<T extends ElementType = 'button'> extends ButtonProps, LinkButtonProps<T>, AriaBaseButtonProps {}
+export interface AriaButtonProps<T extends ElementType = 'button'>
+  extends ButtonProps, LinkButtonProps<T>, AriaBaseButtonProps {}
 
-export interface AriaButtonOptions<E extends ElementType> extends Omit<AriaButtonProps<E>, 'children'> {}
+export interface AriaButtonOptions<E extends ElementType> extends Omit<
+  AriaButtonProps<E>,
+  'children'
+> {}
 
 export interface ButtonAria<T> {
   /** Props for the button element. */
-  buttonProps: T,
+  buttonProps: T;
   /** Whether the button is currently pressed. */
-  isPressed: boolean
+  isPressed: boolean;
 }
 
 // Order with overrides is important: 'button' should be default
-export function useButton(props: AriaButtonOptions<'button'>, ref: RefObject<HTMLButtonElement | null>): ButtonAria<ButtonHTMLAttributes<HTMLButtonElement>>;
-export function useButton(props: AriaButtonOptions<'a'>, ref: RefObject<HTMLAnchorElement | null>): ButtonAria<AnchorHTMLAttributes<HTMLAnchorElement>>;
-export function useButton(props: AriaButtonOptions<'div'>, ref: RefObject<HTMLDivElement | null>): ButtonAria<HTMLAttributes<HTMLDivElement>>;
-export function useButton(props: AriaButtonOptions<'input'>, ref: RefObject<HTMLInputElement | null>): ButtonAria<InputHTMLAttributes<HTMLInputElement>>;
-export function useButton(props: AriaButtonOptions<'span'>, ref: RefObject<HTMLSpanElement | null>): ButtonAria<HTMLAttributes<HTMLSpanElement>>;
-export function useButton(props: AriaButtonOptions<ElementType>, ref: RefObject<Element | null>): ButtonAria<DOMAttributes>;
+export function useButton(
+  props: AriaButtonOptions<'button'>,
+  ref: RefObject<HTMLButtonElement | null>
+): ButtonAria<ButtonHTMLAttributes<HTMLButtonElement>>;
+export function useButton(
+  props: AriaButtonOptions<'a'>,
+  ref: RefObject<HTMLAnchorElement | null>
+): ButtonAria<AnchorHTMLAttributes<HTMLAnchorElement>>;
+export function useButton(
+  props: AriaButtonOptions<'div'>,
+  ref: RefObject<HTMLDivElement | null>
+): ButtonAria<HTMLAttributes<HTMLDivElement>>;
+export function useButton(
+  props: AriaButtonOptions<'input'>,
+  ref: RefObject<HTMLInputElement | null>
+): ButtonAria<InputHTMLAttributes<HTMLInputElement>>;
+export function useButton(
+  props: AriaButtonOptions<'span'>,
+  ref: RefObject<HTMLSpanElement | null>
+): ButtonAria<HTMLAttributes<HTMLSpanElement>>;
+export function useButton(
+  props: AriaButtonOptions<ElementType>,
+  ref: RefObject<Element | null>
+): ButtonAria<DOMAttributes>;
 /**
  * Provides the behavior and accessibility implementation for a button component. Handles mouse, keyboard, and touch interactions,
  * focus behavior, and ARIA props for both native button elements and custom element types.
  * @param props - Props to be applied to the button.
  * @param ref - A ref to a DOM element for the button.
  */
-export function useButton(props: AriaButtonOptions<ElementType>, ref: RefObject<any>): ButtonAria<HTMLAttributes<any>> {
+export function useButton(
+  props: AriaButtonOptions<ElementType>,
+  ref: RefObject<any>
+): ButtonAria<HTMLAttributes<any>> {
   let {
     elementType = 'button',
     isDisabled,
@@ -184,7 +217,11 @@ export function useButton(props: AriaButtonOptions<ElementType>, ref: RefObject<
   if (allowFocusWhenDisabled) {
     focusableProps.tabIndex = isDisabled ? -1 : focusableProps.tabIndex;
   }
-  let buttonProps = mergeProps(focusableProps, pressProps, filterDOMProps(props, {labelable: true}));
+  let buttonProps = mergeProps(
+    focusableProps,
+    pressProps,
+    filterDOMProps(props, {labelable: true})
+  );
 
   return {
     isPressed, // Used to indicate press state for visual

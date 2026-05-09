@@ -1,5 +1,18 @@
-import {AriaLabelingProps, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, PressEvents, RefObject} from '@react-types/shared';
-import {BaseCollection, CollectionNode, FilterableNode, LoaderNode} from 'react-aria/private/collections/BaseCollection';
+import {
+  AriaLabelingProps,
+  GlobalDOMAttributes,
+  HoverEvents,
+  Key,
+  LinkDOMProps,
+  PressEvents,
+  RefObject
+} from '@react-types/shared';
+import {
+  BaseCollection,
+  CollectionNode,
+  FilterableNode,
+  LoaderNode
+} from 'react-aria/private/collections/BaseCollection';
 import {buildHeaderRows} from 'react-stately/private/table/TableCollection';
 import {ButtonContext} from './Button';
 import {CheckboxContext, CheckboxFieldContext} from './Checkbox';
@@ -19,18 +32,43 @@ import {
   useRenderProps
 } from './utils';
 import {Collection} from 'react-aria/Collection';
-import {CollectionBuilder, createBranchComponent, createLeafComponent} from 'react-aria/CollectionBuilder';
-import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps} from './Collection';
+import {
+  CollectionBuilder,
+  createBranchComponent,
+  createLeafComponent
+} from 'react-aria/CollectionBuilder';
+import {
+  CollectionProps,
+  CollectionRendererContext,
+  DefaultCollectionRenderer,
+  ItemRenderProps
+} from './Collection';
 import {ColumnSize, ColumnStaticSize} from 'react-stately/useTableState';
-import {DisabledBehavior, Node, SelectionBehavior, SelectionMode, SortDirection} from '@react-types/shared';
-import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
+import {
+  DisabledBehavior,
+  Node,
+  SelectionBehavior,
+  SelectionMode,
+  SortDirection
+} from '@react-types/shared';
+import {
+  DragAndDropContext,
+  DropIndicatorContext,
+  DropIndicatorProps,
+  useDndPersistedKeys,
+  useRenderDropIndicator
+} from './DragAndDrop';
 import {DragAndDropHooks} from './useDragAndDrop';
 import {DraggableCollectionState} from 'react-stately/useDraggableCollectionState';
 import {DraggableItemResult} from 'react-aria/useDraggableCollection';
 import {DragPreviewRenderer} from '@react-types/shared';
 import {DropIndicatorAria, DroppableCollectionResult} from 'react-aria/useDroppableCollection';
 import {DroppableCollectionState} from 'react-stately/useDroppableCollectionState';
-import {FieldInputContext, SelectableCollectionContext, SelectableCollectionContextValue} from './Autocomplete';
+import {
+  FieldInputContext,
+  SelectableCollectionContext,
+  SelectableCollectionContextValue
+} from './Autocomplete';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {FocusScope} from 'react-aria/FocusScope';
 import {GridNode} from 'react-stately/private/grid/GridCollection';
@@ -39,11 +77,27 @@ import intlMessages from '../intl/*.json';
 import {isScrollable} from 'react-aria/private/utils/isScrollable';
 import {ITableCollection} from 'react-stately/private/table/TableCollection';
 import {ListKeyboardDelegate} from 'react-aria/ListKeyboardDelegate';
-import {LoadMoreSentinelProps, useLoadMoreSentinel} from 'react-aria/private/utils/useLoadMoreSentinel';
+import {
+  LoadMoreSentinelProps,
+  useLoadMoreSentinel
+} from 'react-aria/private/utils/useLoadMoreSentinel';
 import {mergeProps} from 'react-aria/mergeProps';
 import {mergeRefs} from 'react-aria/mergeRefs';
 import {MultipleSelectionState} from 'react-stately/useMultipleSelectionState';
-import React, {createContext, ForwardedRef, forwardRef, JSX, ReactElement, ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
+import React, {
+  createContext,
+  ForwardedRef,
+  forwardRef,
+  JSX,
+  ReactElement,
+  ReactNode,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState
+} from 'react';
 import ReactDOM from 'react-dom';
 import {SelectionIndicatorContext} from './SelectionIndicator';
 import {SharedElementTransition} from './SharedElementTransition';
@@ -137,12 +191,17 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
       if (lastChildKey != null) {
         let lastCell = this.getItem(lastChildKey) as GridNode<T> | null;
         while (lastCell && lastCell.type !== 'cell') {
-          lastCell = lastCell.prevKey != null ? this.getItem(lastCell.prevKey) as GridNode<T> | null : null;
+          lastCell =
+            lastCell.prevKey != null
+              ? (this.getItem(lastCell.prevKey) as GridNode<T> | null)
+              : null;
         }
         if (lastCell) {
           let numberOfCellsInRow = (lastCell.colIndex ?? lastCell.index) + (lastCell.colSpan ?? 1);
           if (numberOfCellsInRow !== this.columns.length && !isSSR) {
-            throw new Error(`Cell count must match column count. Found ${numberOfCellsInRow} cells and ${this.columns.length} columns.`);
+            throw new Error(
+              `Cell count must match column count. Found ${numberOfCellsInRow} cells and ${this.columns.length} columns.`
+            );
           }
         }
       }
@@ -186,7 +245,9 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
     this.headerRows = buildHeaderRows(columnKeyMap, this.columns);
     this.columnsDirty = false;
     if (this.rowHeaderColumnKeys.size === 0 && this.columns.length > 0 && !isSSR) {
-      throw new Error('A table must have at least one Column with the isRowHeader prop set to true');
+      throw new Error(
+        'A table must have at least one Column with the isRowHeader prop set to true'
+      );
     }
   }
 
@@ -222,7 +283,10 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
 
     let node = this.getItem(key) as CollectionNode<T>;
 
-    while (node?.lastChildKey != null && (node.type !== 'item' || this.expandedKeys.has(node.key))) {
+    while (
+      node?.lastChildKey != null &&
+      (node.type !== 'item' || this.expandedKeys.has(node.key))
+    ) {
       node = this.getItem(node.lastChildKey) as CollectionNode<T>;
     }
 
@@ -247,7 +311,7 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
           return child.key;
         }
 
-        child = child.nextKey != null ? this.getItem(child.nextKey) as CollectionNode<T> : null;
+        child = child.nextKey != null ? (this.getItem(child.nextKey) as CollectionNode<T>) : null;
       }
     }
 
@@ -269,7 +333,11 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
       node = this.getItem(node.prevKey) as CollectionNode<T>;
 
       // Traverse to the deepest expanded child.
-      while (node && (node.type !== 'item' || this.expandedKeys.has(node.key)) && node.lastChildKey != null) {
+      while (
+        node &&
+        (node.type !== 'item' || this.expandedKeys.has(node.key)) &&
+        node.lastChildKey != null
+      ) {
         node = this.getItem(node.lastChildKey) as CollectionNode<T>;
       }
 
@@ -320,10 +388,14 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
     return {
       *[Symbol.iterator]() {
         let parent = self.getItem(key) as CollectionNode<T> | null;
-        let node = parent?.firstChildKey != null ? self.getItem(parent.firstChildKey) as CollectionNode<T> | null : null;
+        let node =
+          parent?.firstChildKey != null
+            ? (self.getItem(parent.firstChildKey) as CollectionNode<T> | null)
+            : null;
         while (node) {
           yield node as Node<T>;
-          node = node.nextKey != null ? self.getItem(node.nextKey) as CollectionNode<T> | null : null;
+          node =
+            node.nextKey != null ? (self.getItem(node.nextKey) as CollectionNode<T> | null) : null;
 
           // Return only cells as children of rows (nested rows are flattened into the body).
           if (parent?.type === 'item' && node?.type !== 'cell') {
@@ -374,42 +446,48 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
 }
 
 interface ResizableTableContainerContextValue {
-  tableWidth: number,
-  tableRef: RefObject<HTMLTableElement | null>,
-  scrollRef: RefObject<HTMLElement | null>,
+  tableWidth: number;
+  tableRef: RefObject<HTMLTableElement | null>;
+  scrollRef: RefObject<HTMLElement | null>;
   // Dependency inject useTableColumnResizeState so it doesn't affect bundle size unless you're using ResizableTableContainer.
-  useTableColumnResizeState: typeof useTableColumnResizeState,
-  onResizeStart?: (widths: Map<Key, ColumnSize>) => void,
-  onResize?: (widths: Map<Key, ColumnSize>) => void,
-  onResizeEnd?: (widths: Map<Key, ColumnSize>) => void
+  useTableColumnResizeState: typeof useTableColumnResizeState;
+  onResizeStart?: (widths: Map<Key, ColumnSize>) => void;
+  onResize?: (widths: Map<Key, ColumnSize>) => void;
+  onResizeEnd?: (widths: Map<Key, ColumnSize>) => void;
 }
 
-const ResizableTableContainerContext = createContext<ResizableTableContainerContextValue | null>(null);
+const ResizableTableContainerContext = createContext<ResizableTableContainerContextValue | null>(
+  null
+);
 
-export interface ResizableTableContainerProps extends DOMProps, DOMRenderProps<'div', undefined>, GlobalDOMAttributes<HTMLDivElement> {
+export interface ResizableTableContainerProps
+  extends DOMProps, DOMRenderProps<'div', undefined>, GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element.
    * @default 'react-aria-ResizableTableContainer'
    */
-  className?: string,
+  className?: string;
   /**
    * Handler that is called when a user starts a column resize.
    */
-  onResizeStart?: (widths: Map<Key, ColumnSize>) => void,
+  onResizeStart?: (widths: Map<Key, ColumnSize>) => void;
   /**
    * Handler that is called when a user performs a column resize.
    * Can be used with the width property on columns to put the column widths into
    * a controlled state.
    */
-  onResize?: (widths: Map<Key, ColumnSize>) => void,
+  onResize?: (widths: Map<Key, ColumnSize>) => void;
   /**
    * Handler that is called after a user performs a column resize.
    * Can be used to store the widths of columns for another future session.
    */
-  onResizeEnd?: (widths: Map<Key, ColumnSize>) => void
+  onResizeEnd?: (widths: Map<Key, ColumnSize>) => void;
 }
 
-export const ResizableTableContainer = forwardRef(function ResizableTableContainer(props: ResizableTableContainerProps, ref: ForwardedRef<HTMLDivElement>) {
+export const ResizableTableContainer = forwardRef(function ResizableTableContainer(
+  props: ResizableTableContainerProps,
+  ref: ForwardedRef<HTMLDivElement>
+) {
   let containerRef = useObjectRef(ref);
   let tableRef = useRef<HTMLTableElement>(null);
   let scrollRef = useRef<HTMLElement | null>(null);
@@ -440,15 +518,18 @@ export const ResizableTableContainer = forwardRef(function ResizableTableContain
     setWidth(scrollRef.current?.clientWidth ?? 0);
   }, []);
 
-  let ctx = useMemo(() => ({
-    tableRef,
-    scrollRef,
-    tableWidth: width,
-    useTableColumnResizeState,
-    onResizeStart: props.onResizeStart,
-    onResize: props.onResize,
-    onResizeEnd: props.onResizeEnd
-  }), [tableRef, width, props.onResizeStart, props.onResize, props.onResizeEnd]);
+  let ctx = useMemo(
+    () => ({
+      tableRef,
+      scrollRef,
+      tableWidth: width,
+      useTableColumnResizeState,
+      onResizeStart: props.onResizeStart,
+      onResize: props.onResize,
+      onResizeEnd: props.onResizeEnd
+    }),
+    [tableRef, width, props.onResizeStart, props.onResize, props.onResizeEnd]
+  );
 
   return (
     <dom.div
@@ -465,73 +546,88 @@ export const ResizableTableContainer = forwardRef(function ResizableTableContain
   );
 });
 
-export const TableContext = createContext<ContextValue<TableProps, HTMLTableElement | HTMLDivElement>>(null);
+export const TableContext =
+  createContext<ContextValue<TableProps, HTMLTableElement | HTMLDivElement>>(null);
 export const TableStateContext = createContext<TableState<any> | null>(null);
-export const TableColumnResizeStateContext = createContext<TableColumnResizeState<unknown> | null>(null);
+export const TableColumnResizeStateContext = createContext<TableColumnResizeState<unknown> | null>(
+  null
+);
 
 export interface TableRenderProps {
   /**
    * Whether the table is currently focused.
    * @selector [data-focused]
    */
-  isFocused: boolean,
+  isFocused: boolean;
   /**
    * Whether the table is currently keyboard focused.
    * @selector [data-focus-visible]
    */
-  isFocusVisible: boolean,
+  isFocusVisible: boolean;
   /**
    * Whether the table is currently the active drop target.
    * @selector [data-drop-target]
    */
-  isDropTarget: boolean,
+  isDropTarget: boolean;
   /**
    * State of the table.
    */
-  state: TableState<unknown>
+  state: TableState<unknown>;
 }
 
-export interface TableProps extends Omit<SharedTableProps<any>, 'children'>, StyleRenderProps<TableRenderProps, 'table' | 'div'>, SlotProps, AriaLabelingProps, GlobalDOMAttributes<HTMLTableElement> {
+export interface TableProps
+  extends
+    Omit<SharedTableProps<any>, 'children'>,
+    StyleRenderProps<TableRenderProps, 'table' | 'div'>,
+    SlotProps,
+    AriaLabelingProps,
+    GlobalDOMAttributes<HTMLTableElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-Table'
    */
-  className?: ClassNameOrFunction<TableRenderProps>,
+  className?: ClassNameOrFunction<TableRenderProps>;
   /** The elements that make up the table. Includes the TableHeader, TableBody, Columns, and Rows. */
-  children?: ReactNode,
+  children?: ReactNode;
   /**
    * How multiple selection should behave in the collection.
    * @default "toggle"
    */
-  selectionBehavior?: SelectionBehavior,
+  selectionBehavior?: SelectionBehavior;
   /**
    * Whether `disabledKeys` applies to all interactions, or only selection.
    * @default "all"
    */
-  disabledBehavior?: DisabledBehavior,
+  disabledBehavior?: DisabledBehavior;
   /** Handler that is called when a user performs an action on the row. */
-  onRowAction?: (key: Key) => void,
+  onRowAction?: (key: Key) => void;
   /** The drag and drop hooks returned by `useDragAndDrop` used to enable drag and drop behavior for the Table. */
-  dragAndDropHooks?: DragAndDropHooks
+  dragAndDropHooks?: DragAndDropHooks;
 }
 
 /**
  * A table displays data in rows and columns and enables a user to navigate its contents via directional navigation keys,
  * and optionally supports row selection and sorting.
  */
-export const Table = forwardRef(function Table(props: TableProps, ref: ForwardedRef<HTMLTableElement | HTMLDivElement>) {
+export const Table = forwardRef(function Table(
+  props: TableProps,
+  ref: ForwardedRef<HTMLTableElement | HTMLDivElement>
+) {
   [props, ref] = useContextProps(props, ref, TableContext);
 
   // Separate selection state so we have access to it from collection components via useTableOptions.
   let selectionState = useMultipleSelectionState(props);
   let {selectionBehavior, selectionMode, disallowEmptySelection} = selectionState;
   let hasDragHooks = !!props.dragAndDropHooks?.useDraggableCollectionState;
-  let ctx = useMemo(() => ({
-    selectionBehavior: selectionMode === 'none' ? null : selectionBehavior,
-    selectionMode,
-    disallowEmptySelection,
-    allowsDragging: hasDragHooks
-  }), [selectionBehavior, selectionMode, disallowEmptySelection, hasDragHooks]);
+  let ctx = useMemo(
+    () => ({
+      selectionBehavior: selectionMode === 'none' ? null : selectionBehavior,
+      selectionMode,
+      disallowEmptySelection,
+      allowsDragging: hasDragHooks
+    }),
+    [selectionBehavior, selectionMode, disallowEmptySelection, hasDragHooks]
+  );
 
   let content = (
     <TableOptionsContext.Provider value={ctx}>
@@ -541,19 +637,29 @@ export const Table = forwardRef(function Table(props: TableProps, ref: Forwarded
 
   return (
     <CollectionBuilder content={content} createCollection={() => new TableCollection<any>()}>
-      {collection => <TableInner props={props} forwardedRef={ref as any} selectionState={selectionState} collection={collection} />}
+      {collection => (
+        <TableInner
+          props={props}
+          forwardedRef={ref as any}
+          selectionState={selectionState}
+          collection={collection}
+        />
+      )}
     </CollectionBuilder>
   );
 });
 
 interface TableInnerProps {
-  props: TableProps & SelectableCollectionContextValue<unknown>,
-  forwardedRef: ForwardedRef<HTMLElement>,
-  selectionState: MultipleSelectionState,
-  collection: TableCollection<Node<object>>
+  props: TableProps & SelectableCollectionContextValue<unknown>;
+  forwardedRef: ForwardedRef<HTMLElement>;
+  selectionState: MultipleSelectionState;
+  collection: TableCollection<Node<object>>;
 }
 
-let TableElementType = forwardRef(function TableElementType(props: any, ref: ForwardedRef<Element>) {
+let TableElementType = forwardRef(function TableElementType(
+  props: any,
+  ref: ForwardedRef<Element>
+) {
   let {isVirtualized} = useContext(CollectionRendererContext);
   if (isVirtualized) {
     return <dom.div {...props} ref={ref} />;
@@ -562,11 +668,11 @@ let TableElementType = forwardRef(function TableElementType(props: any, ref: For
 });
 
 const EXPANSION_KEYS = {
-  'expand': {
+  expand: {
     ltr: 'ArrowRight',
     rtl: 'ArrowLeft'
   },
-  'collapse': {
+  collapse: {
     ltr: 'ArrowLeft',
     rtl: 'ArrowRight'
   }
@@ -577,7 +683,12 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let {shouldUseVirtualFocus, disallowTypeAhead, filter, ...DOMCollectionProps} = props;
   let tableContainerContext = useContext(ResizableTableContainerContext);
-  ref = useObjectRef(useMemo(() => mergeRefs(ref, tableContainerContext?.tableRef), [ref, tableContainerContext?.tableRef]));
+  ref = useObjectRef(
+    useMemo(
+      () => mergeRefs(ref, tableContainerContext?.tableRef),
+      [ref, tableContainerContext?.tableRef]
+    )
+  );
   let [expandedKeys, setExpandedKeys] = useControlledState(
     props.expandedKeys ? new Set(props.expandedKeys) : undefined,
     props.defaultExpandedKeys ? new Set(props.defaultExpandedKeys) : new Set(),
@@ -595,13 +706,22 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
   });
 
   let filteredState = UNSTABLE_useFilteredTableState(tableState, filter);
-  let {isVirtualized, layoutDelegate, dropTargetDelegate: ctxDropTargetDelegate, CollectionRoot} = useContext(CollectionRendererContext);
-  let {dragAndDropHooks} = props;
-  let {gridProps} = useTable({
-    ...DOMCollectionProps,
+  let {
+    isVirtualized,
     layoutDelegate,
-    isVirtualized
-  }, filteredState, ref);
+    dropTargetDelegate: ctxDropTargetDelegate,
+    CollectionRoot
+  } = useContext(CollectionRendererContext);
+  let {dragAndDropHooks} = props;
+  let {gridProps} = useTable(
+    {
+      ...DOMCollectionProps,
+      layoutDelegate,
+      isVirtualized
+    },
+    filteredState,
+    ref
+  );
   let selectionManager = filteredState.selectionManager;
   let hasDragHooks = !!dragAndDropHooks?.useDraggableCollectionState;
   let hasDropHooks = !!dragAndDropHooks?.useDroppableCollectionState;
@@ -612,10 +732,14 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
       return;
     }
     if (dragHooksProvided.current !== hasDragHooks) {
-      console.warn('Drag hooks were provided during one render, but not another. This should be avoided as it may produce unexpected behavior.');
+      console.warn(
+        'Drag hooks were provided during one render, but not another. This should be avoided as it may produce unexpected behavior.'
+      );
     }
     if (dropHooksProvided.current !== hasDropHooks) {
-      console.warn('Drop hooks were provided during one render, but not another. This should be avoided as it may produce unexpected behavior.');
+      console.warn(
+        'Drop hooks were provided during one render, but not another. This should be avoided as it may produce unexpected behavior.'
+      );
     }
   }, [hasDragHooks, hasDropHooks]);
 
@@ -637,9 +761,9 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
     dragAndDropHooks.useDraggableCollection!({}, dragState, ref);
 
     let DragPreview = dragAndDropHooks.DragPreview!;
-    dragPreview = dragAndDropHooks.renderDragPreview
-      ? <DragPreview ref={preview}>{dragAndDropHooks.renderDragPreview}</DragPreview>
-      : null;
+    dragPreview = dragAndDropHooks.renderDragPreview ? (
+      <DragPreview ref={preview}>{dragAndDropHooks.renderDragPreview}</DragPreview>
+    ) : null;
   }
 
   if (hasDropHooks && dragAndDropHooks) {
@@ -655,34 +779,53 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
       ref,
       layoutDelegate
     });
-    let dropTargetDelegate = dragAndDropHooks.dropTargetDelegate || ctxDropTargetDelegate || new dragAndDropHooks.ListDropTargetDelegate(collection.rows, ref);
+    let dropTargetDelegate =
+      dragAndDropHooks.dropTargetDelegate ||
+      ctxDropTargetDelegate ||
+      new dragAndDropHooks.ListDropTargetDelegate(collection.rows, ref);
     treeDropTargetDelegate.setup(dropTargetDelegate, tableState, direction);
-    droppableCollection = dragAndDropHooks.useDroppableCollection!({
-      keyboardDelegate,
-      dropTargetDelegate: treeDropTargetDelegate,
-      onDropActivate: (e) => {
-        // Expand collapsed item when dragging over. For keyboard, allow collapsing.
-        if (e.target.type === 'item') {
-          let key = e.target.key;
-          let item = tableState.collection.getItem(key);
-          let isExpanded = expandedKeys.has(key);
-          if (item && item.hasChildNodes && (!isExpanded || dragAndDropHooks?.isVirtualDragging?.())) {
-            tableState.toggleKey(key);
+    droppableCollection = dragAndDropHooks.useDroppableCollection!(
+      {
+        keyboardDelegate,
+        dropTargetDelegate: treeDropTargetDelegate,
+        onDropActivate: e => {
+          // Expand collapsed item when dragging over. For keyboard, allow collapsing.
+          if (e.target.type === 'item') {
+            let key = e.target.key;
+            let item = tableState.collection.getItem(key);
+            let isExpanded = expandedKeys.has(key);
+            if (
+              item &&
+              item.hasChildNodes &&
+              (!isExpanded || dragAndDropHooks?.isVirtualDragging?.())
+            ) {
+              tableState.toggleKey(key);
+            }
+          }
+        },
+        onKeyDown: e => {
+          let target = dropState?.target;
+          if (target && target.type === 'item' && target.dropPosition === 'on') {
+            let item = tableState.collection.getItem(target.key);
+            if (
+              e.key === EXPANSION_KEYS['expand'][direction] &&
+              item?.hasChildNodes &&
+              !tableState.expandedKeys.has(target.key)
+            ) {
+              tableState.toggleKey(target.key);
+            } else if (
+              e.key === EXPANSION_KEYS['collapse'][direction] &&
+              item?.hasChildNodes &&
+              tableState.expandedKeys.has(target.key)
+            ) {
+              tableState.toggleKey(target.key);
+            }
           }
         }
       },
-      onKeyDown: e => {
-        let target = dropState?.target;
-        if (target && target.type === 'item' && target.dropPosition === 'on') {
-          let item = tableState.collection.getItem(target.key);
-          if ((e.key === EXPANSION_KEYS['expand'][direction]) && item?.hasChildNodes && !tableState.expandedKeys.has(target.key)) {
-            tableState.toggleKey(target.key);
-          } else if ((e.key === EXPANSION_KEYS['collapse'][direction]) && item?.hasChildNodes && tableState.expandedKeys.has(target.key)) {
-            tableState.toggleKey(target.key);
-          }
-        }
-      }
-    }, dropState, ref);
+      dropState,
+      ref
+    );
 
     isRootDropTarget = dropState.isDropTarget({type: 'root'});
   }
@@ -705,9 +848,12 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
   let style = renderProps.style;
   let layoutState: TableColumnResizeState<unknown> | null = null;
   if (tableContainerContext) {
-    layoutState = tableContainerContext.useTableColumnResizeState({
-      tableWidth: tableContainerContext.tableWidth
-    }, filteredState);
+    layoutState = tableContainerContext.useTableColumnResizeState(
+      {
+        tableWidth: tableContainerContext.tableWidth
+      },
+      filteredState
+    );
     if (!isVirtualized) {
       style = {
         ...style,
@@ -733,7 +879,13 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
       ]}>
       <FocusScope>
         <TableElementType
-          {...mergeProps(DOMProps, renderProps, gridProps, focusProps, droppableCollection?.collectionProps)}
+          {...mergeProps(
+            DOMProps,
+            renderProps,
+            gridProps,
+            focusProps,
+            droppableCollection?.collectionProps
+          )}
           style={style}
           ref={ref as RefObject<HTMLTableElement>}
           slot={props.slot || undefined}
@@ -746,7 +898,8 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
             <CollectionRoot
               collection={filteredState.collection}
               scrollRef={tableContainerContext?.scrollRef ?? ref}
-              persistedKeys={useDndPersistedKeys(selectionManager, dragAndDropHooks, dropState)} />
+              persistedKeys={useDndPersistedKeys(selectionManager, dragAndDropHooks, dropState)}
+            />
           </SharedElementTransition>
         </TableElementType>
       </FocusScope>
@@ -757,13 +910,13 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
 
 export interface TableOptionsContextValue {
   /** The type of selection that is allowed in the table. */
-  selectionMode: SelectionMode,
+  selectionMode: SelectionMode;
   /** The selection behavior for the table. If selectionMode is `"none"`, this will be `null`. */
-  selectionBehavior: SelectionBehavior | null,
+  selectionBehavior: SelectionBehavior | null;
   /** Whether the table allows empty selection. */
-  disallowEmptySelection: boolean,
+  disallowEmptySelection: boolean;
   /** Whether the table allows rows to be dragged. */
-  allowsDragging: boolean
+  allowsDragging: boolean;
 }
 
 const TableOptionsContext = createContext<TableOptionsContextValue | null>(null);
@@ -780,28 +933,35 @@ export interface TableHeaderRenderProps {
    * Whether the table header is currently hovered with a mouse.
    * @selector [data-hovered]
    */
-  isHovered: boolean
+  isHovered: boolean;
 }
 
-export interface TableHeaderProps<T> extends StyleRenderProps<TableHeaderRenderProps, 'thead' | 'div'>, HoverEvents, GlobalDOMAttributes<HTMLTableSectionElement> {
+export interface TableHeaderProps<T>
+  extends
+    StyleRenderProps<TableHeaderRenderProps, 'thead' | 'div'>,
+    HoverEvents,
+    GlobalDOMAttributes<HTMLTableSectionElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-TableHeader'
    */
-  className?: ClassNameOrFunction<TableHeaderRenderProps>,
+  className?: ClassNameOrFunction<TableHeaderRenderProps>;
   /** A list of table columns. */
-  columns?: Iterable<T>,
+  columns?: Iterable<T>;
   /** A list of `Column(s)` or a function. If the latter, a list of columns must be provided using the `columns` prop. */
-  children?: ReactNode | ((item: T) => ReactElement),
+  children?: ReactNode | ((item: T) => ReactElement);
   /** Values that should invalidate the column cache when using dynamic collections. */
-  dependencies?: ReadonlyArray<any>
+  dependencies?: ReadonlyArray<any>;
 }
 
 class TableHeaderNode<T> extends CollectionNode<T> {
   static readonly type = 'tableheader';
 }
 
-let THeadElementType = forwardRef(function THeadElementType(props: any, ref: ForwardedRef<Element>) {
+let THeadElementType = forwardRef(function THeadElementType(
+  props: any,
+  ref: ForwardedRef<Element>
+) {
   let {isVirtualized} = useContext(CollectionRendererContext);
   if (isVirtualized) {
     return <dom.div {...props} ref={ref} />;
@@ -812,9 +972,12 @@ let THeadElementType = forwardRef(function THeadElementType(props: any, ref: For
 /**
  * A header within a `<Table>`, containing the table columns.
  */
-export const TableHeader =  /*#__PURE__*/ createBranchComponent(
+export const TableHeader = /*#__PURE__*/ createBranchComponent(
   TableHeaderNode,
-  <T extends object>(props: TableHeaderProps<T>, ref: ForwardedRef<HTMLTableSectionElement | HTMLDivElement>) => {
+  <T extends object>(
+    props: TableHeaderProps<T>,
+    ref: ForwardedRef<HTMLTableSectionElement | HTMLDivElement>
+  ) => {
     let collection = useContext(TableStateContext)!.collection as TableCollection<unknown>;
     let headerRows = useCachedChildren({
       items: collection.headerRows,
@@ -861,7 +1024,10 @@ export const TableHeader =  /*#__PURE__*/ createBranchComponent(
   )
 );
 
-let TableHeaderRowElementType = forwardRef(function TableHeaderRowElementType(props: any, ref: ForwardedRef<Element>) {
+let TableHeaderRowElementType = forwardRef(function TableHeaderRowElementType(
+  props: any,
+  ref: ForwardedRef<Element>
+) {
   let {isVirtualized} = useContext(CollectionRendererContext);
   if (isVirtualized) {
     return <div {...props} ref={ref} />;
@@ -880,16 +1046,22 @@ function TableHeaderRow({item}: {item: GridNode<any>}) {
     <TableHeaderRowElementType {...rowProps} ref={ref}>
       <Provider
         values={[
-          [CheckboxContext, {
-            slots: {
-              selection: checkboxProps
+          [
+            CheckboxContext,
+            {
+              slots: {
+                selection: checkboxProps
+              }
             }
-          }],
-          [CheckboxFieldContext, {
-            slots: {
-              selection: checkboxProps
+          ],
+          [
+            CheckboxFieldContext,
+            {
+              slots: {
+                selection: checkboxProps
+              }
             }
-          }]
+          ]
         ]}>
         <CollectionBranch collection={state.collection} parent={item} />
       </Provider>
@@ -902,76 +1074,82 @@ export interface ColumnRenderProps {
    * Whether the column is currently hovered with a mouse.
    * @selector [data-hovered]
    */
-  isHovered: boolean,
+  isHovered: boolean;
   /**
    * Whether the column is currently in a pressed state.
    * @selector [data-pressed]
    */
-  isPressed: boolean,
+  isPressed: boolean;
   /**
    * Whether the column is currently focused.
    * @selector [data-focused]
    */
-  isFocused: boolean,
+  isFocused: boolean;
   /**
    * Whether the column is currently keyboard focused.
    * @selector [data-focus-visible]
    */
-  isFocusVisible: boolean,
+  isFocusVisible: boolean;
   /**
    * Whether the column allows sorting.
    * @selector [data-allows-sorting]
    */
-  allowsSorting: boolean,
+  allowsSorting: boolean;
   /**
    * The current sort direction.
    * @selector [data-sort-direction="ascending | descending"]
    */
-  sortDirection: SortDirection | undefined,
+  sortDirection: SortDirection | undefined;
   /**
    * Whether the column is currently being resized.
    * @selector [data-resizing]
    */
-  isResizing: boolean,
+  isResizing: boolean;
   /**
    * Triggers sorting for this column in the given direction.
    */
-  sort(direction: SortDirection): void,
+  sort(direction: SortDirection): void;
   /**
    * Starts column resizing if the table is contained in a `<ResizableTableContainer>` element.
    */
-  startResize(): void
+  startResize(): void;
 }
 
-export interface ColumnProps extends RenderProps<ColumnRenderProps, 'th' | 'div'>, GlobalDOMAttributes<HTMLTableHeaderCellElement> {
+export interface ColumnProps
+  extends
+    RenderProps<ColumnRenderProps, 'th' | 'div'>,
+    GlobalDOMAttributes<HTMLTableHeaderCellElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-Column'
    */
-  className?: ClassNameOrFunction<ColumnRenderProps>,
+  className?: ClassNameOrFunction<ColumnRenderProps>;
   /** The unique id of the column. */
-  id?: Key,
+  id?: Key;
   /** Whether the column allows sorting. */
-  allowsSorting?: boolean,
+  allowsSorting?: boolean;
   /** Whether a column is a [row header](https://www.w3.org/TR/wai-aria-1.1/#rowheader) and should be announced by assistive technology during row navigation. */
-  isRowHeader?: boolean,
+  isRowHeader?: boolean;
   /** A string representation of the column's contents, used for accessibility announcements. */
-  textValue?: string,
+  textValue?: string;
   /** The width of the column. This prop only applies when the `<Table>` is wrapped in a `<ResizableTableContainer>`. */
-  width?: ColumnSize | null,
+  width?: ColumnSize | null;
   /** The default width of the column. This prop only applies when the `<Table>` is wrapped in a `<ResizableTableContainer>`. */
-  defaultWidth?: ColumnSize | null,
+  defaultWidth?: ColumnSize | null;
   /** The minimum width of the column. This prop only applies when the `<Table>` is wrapped in a `<ResizableTableContainer>`. */
-  minWidth?: ColumnStaticSize | null,
+  minWidth?: ColumnStaticSize | null;
   /** The maximum width of the column. This prop only applies when the `<Table>` is wrapped in a `<ResizableTableContainer>`. */
-  maxWidth?: ColumnStaticSize | null
+  maxWidth?: ColumnStaticSize | null;
 }
 
 class TableColumnNode extends CollectionNode<unknown> {
   static readonly type = 'column';
 }
 
-let ColumnElementType = forwardRef(function ColumnElementType(props: any, ref: ForwardedRef<Element>) {
+let ColumnElementType = forwardRef(function ColumnElementType(
+  props: any,
+  ref: ForwardedRef<Element>
+) {
   let {isVirtualized} = useContext(CollectionRendererContext);
   if (isVirtualized) {
     return <dom.div {...props} ref={ref} />;
@@ -982,137 +1160,153 @@ let ColumnElementType = forwardRef(function ColumnElementType(props: any, ref: F
 /**
  * A column within a `<Table>`.
  */
-export const Column = /*#__PURE__*/ createLeafComponent(TableColumnNode, (props: ColumnProps, forwardedRef: ForwardedRef<HTMLTableCellElement | HTMLDivElement>, column: GridNode<unknown>) => {
-  let ref = useObjectRef<HTMLTableCellElement | HTMLDivElement>(forwardedRef);
-  let state = useContext(TableStateContext)!;
-  let {isVirtualized} = useContext(CollectionRendererContext);
-  let {columnHeaderProps, isPressed} = useTableColumnHeader(
-    {node: column, isVirtualized},
-    state,
-    ref
-  );
-  let {isFocused, isFocusVisible, focusProps} = useFocusRing();
+export const Column = /*#__PURE__*/ createLeafComponent(
+  TableColumnNode,
+  (
+    props: ColumnProps,
+    forwardedRef: ForwardedRef<HTMLTableCellElement | HTMLDivElement>,
+    column: GridNode<unknown>
+  ) => {
+    let ref = useObjectRef<HTMLTableCellElement | HTMLDivElement>(forwardedRef);
+    let state = useContext(TableStateContext)!;
+    let {isVirtualized} = useContext(CollectionRendererContext);
+    let {columnHeaderProps, isPressed} = useTableColumnHeader(
+      {node: column, isVirtualized},
+      state,
+      ref
+    );
+    let {isFocused, isFocusVisible, focusProps} = useFocusRing();
 
-  let layoutState = useContext(TableColumnResizeStateContext);
-  let isResizing = false;
-  if (layoutState) {
-    isResizing = layoutState.resizingColumn === column.key;
-  } else if (process.env.NODE_ENV !== 'production') {
-    for (let prop in ['width', 'defaultWidth', 'minWidth', 'maxWidth']) {
-      if (prop in column.props) {
-        console.warn(`The ${prop} prop on a <Column> only applies when a <Table> is wrapped in a <ResizableTableContainer>. If you aren't using column resizing, you can set the width of a column with CSS.`);
-      }
-    }
-  }
-
-  let {hoverProps, isHovered} = useHover({isDisabled: !props.allowsSorting});
-  let renderProps = useRenderProps({
-    ...props,
-    id: undefined,
-    children: column.rendered,
-    defaultClassName: 'react-aria-Column',
-    values: {
-      isHovered,
-      isPressed,
-      isFocused,
-      isFocusVisible,
-      allowsSorting: column.props.allowsSorting,
-      sortDirection: state.sortDescriptor?.column === column.key
-        ? state.sortDescriptor.direction
-        : undefined,
-      isResizing,
-      startResize: () => {
-        if (layoutState) {
-          layoutState.startResize(column.key);
-          state.setKeyboardNavigationDisabled(true);
-        } else {
-          throw new Error('Wrap your <Table> in a <ResizableTableContainer> to enable column resizing');
+    let layoutState = useContext(TableColumnResizeStateContext);
+    let isResizing = false;
+    if (layoutState) {
+      isResizing = layoutState.resizingColumn === column.key;
+    } else if (process.env.NODE_ENV !== 'production') {
+      for (let prop in ['width', 'defaultWidth', 'minWidth', 'maxWidth']) {
+        if (prop in column.props) {
+          console.warn(
+            `The ${prop} prop on a <Column> only applies when a <Table> is wrapped in a <ResizableTableContainer>. If you aren't using column resizing, you can set the width of a column with CSS.`
+          );
         }
-      },
-      sort: (direction) => {
-        state.sort(column.key, direction);
       }
     }
-  });
 
-  let style = renderProps.style;
-  if (layoutState) {
-    style = {...style, width: layoutState.getColumnWidth(column.key)};
+    let {hoverProps, isHovered} = useHover({isDisabled: !props.allowsSorting});
+    let renderProps = useRenderProps({
+      ...props,
+      id: undefined,
+      children: column.rendered,
+      defaultClassName: 'react-aria-Column',
+      values: {
+        isHovered,
+        isPressed,
+        isFocused,
+        isFocusVisible,
+        allowsSorting: column.props.allowsSorting,
+        sortDirection:
+          state.sortDescriptor?.column === column.key ? state.sortDescriptor.direction : undefined,
+        isResizing,
+        startResize: () => {
+          if (layoutState) {
+            layoutState.startResize(column.key);
+            state.setKeyboardNavigationDisabled(true);
+          } else {
+            throw new Error(
+              'Wrap your <Table> in a <ResizableTableContainer> to enable column resizing'
+            );
+          }
+        },
+        sort: direction => {
+          state.sort(column.key, direction);
+        }
+      }
+    });
+
+    let style = renderProps.style;
+    if (layoutState) {
+      style = {...style, width: layoutState.getColumnWidth(column.key)};
+    }
+
+    let DOMProps = filterDOMProps(props as any, {global: true});
+    delete DOMProps.id;
+
+    return (
+      <ColumnElementType
+        {...mergeProps(DOMProps, columnHeaderProps, focusProps, hoverProps)}
+        {...renderProps}
+        style={style}
+        ref={ref as any}
+        data-hovered={isHovered || undefined}
+        data-pressed={isPressed || undefined}
+        data-focused={isFocused || undefined}
+        data-focus-visible={isFocusVisible || undefined}
+        data-resizing={isResizing || undefined}
+        data-allows-sorting={column.props.allowsSorting || undefined}
+        data-sort-direction={
+          state.sortDescriptor?.column === column.key ? state.sortDescriptor.direction : undefined
+        }>
+        <Provider
+          values={[
+            [ColumnResizerContext, {column, triggerRef: ref}],
+            [CollectionRendererContext, DefaultCollectionRenderer]
+          ]}>
+          {renderProps.children}
+        </Provider>
+      </ColumnElementType>
+    );
   }
-
-  let DOMProps = filterDOMProps(props as any, {global: true});
-  delete DOMProps.id;
-
-  return (
-    <ColumnElementType
-      {...mergeProps(DOMProps, columnHeaderProps, focusProps, hoverProps)}
-      {...renderProps}
-      style={style}
-      ref={ref as any}
-      data-hovered={isHovered || undefined}
-      data-pressed={isPressed || undefined}
-      data-focused={isFocused || undefined}
-      data-focus-visible={isFocusVisible || undefined}
-      data-resizing={isResizing || undefined}
-      data-allows-sorting={column.props.allowsSorting || undefined}
-      data-sort-direction={state.sortDescriptor?.column === column.key ? state.sortDescriptor.direction : undefined}>
-      <Provider
-        values={[
-          [ColumnResizerContext, {column, triggerRef: ref}],
-          [CollectionRendererContext, DefaultCollectionRenderer]
-        ]}>
-        {renderProps.children}
-      </Provider>
-    </ColumnElementType>
-  );
-});
+);
 
 export interface ColumnResizerRenderProps {
   /**
    * Whether the resizer is currently hovered with a mouse.
    * @selector [data-hovered]
    */
-  isHovered: boolean,
+  isHovered: boolean;
   /**
    * Whether the resizer is currently focused.
    * @selector [data-focused]
    */
-  isFocused: boolean,
+  isFocused: boolean;
   /**
    * Whether the resizer is currently keyboard focused.
    * @selector [data-focus-visible]
    */
-  isFocusVisible: boolean,
+  isFocusVisible: boolean;
   /**
    * Whether the resizer is currently being resized.
    * @selector [data-resizing]
    */
-  isResizing: boolean,
+  isResizing: boolean;
   /**
    * The direction that the column is currently resizable.
    * @selector [data-resizable-direction="right | left | both"]
    */
-  resizableDirection: 'right' | 'left' | 'both'
+  resizableDirection: 'right' | 'left' | 'both';
 }
 
-export interface ColumnResizerProps extends HoverEvents, RenderProps<ColumnResizerRenderProps>, GlobalDOMAttributes<HTMLDivElement> {
+export interface ColumnResizerProps
+  extends HoverEvents, RenderProps<ColumnResizerRenderProps>, GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-ColumnResizer'
    */
-  className?: ClassNameOrFunction<ColumnResizerRenderProps>,
+  className?: ClassNameOrFunction<ColumnResizerRenderProps>;
   /** A custom accessibility label for the resizer. */
-  'aria-label'?: string
+  'aria-label'?: string;
 }
 
 interface ColumnResizerContextValue {
-  column: GridNode<unknown>,
-  triggerRef: RefObject<HTMLDivElement | null>
+  column: GridNode<unknown>;
+  triggerRef: RefObject<HTMLDivElement | null>;
 }
 
 const ColumnResizerContext = createContext<ColumnResizerContextValue | null>(null);
 
-export const ColumnResizer = forwardRef(function ColumnResizer(props: ColumnResizerProps, ref: ForwardedRef<HTMLDivElement>) {
+export const ColumnResizer = forwardRef(function ColumnResizer(
+  props: ColumnResizerProps,
+  ref: ForwardedRef<HTMLDivElement>
+) {
   let layoutState = useContext(TableColumnResizeStateContext);
   if (!layoutState) {
     throw new Error('Wrap your <Table> in a <ResizableTableContainer> to enable column resizing');
@@ -1137,8 +1331,10 @@ export const ColumnResizer = forwardRef(function ColumnResizer(props: ColumnResi
   let {focusProps, isFocused, isFocusVisible} = useFocusRing();
   let {hoverProps, isHovered} = useHover(props);
 
-  let isEResizable = layoutState.getColumnMinWidth(column.key) >= layoutState.getColumnWidth(column.key);
-  let isWResizable = layoutState.getColumnMaxWidth(column.key) <= layoutState.getColumnWidth(column.key);
+  let isEResizable =
+    layoutState.getColumnMinWidth(column.key) >= layoutState.getColumnWidth(column.key);
+  let isWResizable =
+    layoutState.getColumnMaxWidth(column.key) <= layoutState.getColumnWidth(column.key);
   let {direction} = useLocale();
   let resizableDirection: ColumnResizerRenderProps['resizableDirection'] = 'both';
   if (isEResizable) {
@@ -1195,10 +1391,13 @@ export const ColumnResizer = forwardRef(function ColumnResizer(props: ColumnResi
       data-resizing={isResizing || undefined}
       data-resizable-direction={resizableDirection}>
       {renderProps.children}
-      <input
-        ref={inputRef}
-        {...mergeProps(inputProps, focusProps)} />
-      {isResizing && isMouseDown && ReactDOM.createPortal(<div style={{position: 'fixed', top: 0, left: 0, bottom: 0, right: 0, cursor}} />, document.body)}
+      <input ref={inputRef} {...mergeProps(inputProps, focusProps)} />
+      {isResizing &&
+        isMouseDown &&
+        ReactDOM.createPortal(
+          <div style={{position: 'fixed', top: 0, left: 0, bottom: 0, right: 0, cursor}} />,
+          document.body
+        )}
     </dom.div>
   );
 });
@@ -1208,29 +1407,36 @@ export interface TableBodyRenderProps {
    * Whether the table body has no rows and should display its empty state.
    * @selector [data-empty]
    */
-  isEmpty: boolean,
+  isEmpty: boolean;
   /**
    * Whether the Table is currently the active drop target.
    * @selector [data-drop-target]
    */
-  isDropTarget: boolean
+  isDropTarget: boolean;
 }
 
-export interface TableBodyProps<T> extends Omit<CollectionProps<T>, 'disabledKeys'>, StyleRenderProps<TableBodyRenderProps, 'tbody' | 'div'>, GlobalDOMAttributes<HTMLTableSectionElement> {
+export interface TableBodyProps<T>
+  extends
+    Omit<CollectionProps<T>, 'disabledKeys'>,
+    StyleRenderProps<TableBodyRenderProps, 'tbody' | 'div'>,
+    GlobalDOMAttributes<HTMLTableSectionElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-TableBody'
    */
-  className?: ClassNameOrFunction<TableBodyRenderProps>,
+  className?: ClassNameOrFunction<TableBodyRenderProps>;
   /** Provides content to display when there are no rows in the table. */
-  renderEmptyState?: (props: TableBodyRenderProps) => ReactNode
+  renderEmptyState?: (props: TableBodyRenderProps) => ReactNode;
 }
 
 class TableBodyNode<T> extends FilterableNode<T> {
   static readonly type = 'tablebody';
 }
 
-let TableBodyElementType = forwardRef(function TableBodyElementType(props: any, ref: ForwardedRef<Element>) {
+let TableBodyElementType = forwardRef(function TableBodyElementType(
+  props: any,
+  ref: ForwardedRef<Element>
+) {
   let {isVirtualized} = useContext(CollectionRendererContext);
   if (isVirtualized) {
     return <dom.div {...props} ref={ref} />;
@@ -1241,85 +1447,101 @@ let TableBodyElementType = forwardRef(function TableBodyElementType(props: any, 
 /**
  * The body of a `<Table>`, containing the table rows.
  */
-export const TableBody = /*#__PURE__*/ createBranchComponent(TableBodyNode, <T extends object>(props: TableBodyProps<T>, ref: ForwardedRef<HTMLTableSectionElement | HTMLDivElement>, node: Node<T>) => {
-  let state = useContext(TableStateContext)!;
-  let {isVirtualized} = useContext(CollectionRendererContext);
-  let collection = state.collection;
-  let {CollectionBranch} = useContext(CollectionRendererContext);
-  let {dragAndDropHooks, dropState} = useContext(DragAndDropContext);
-  let isDroppable = !!dragAndDropHooks?.useDroppableCollectionState && !dropState?.isDisabled;
-  let isRootDropTarget = isDroppable && !!dropState && (dropState.isDropTarget({type: 'root'}) ?? false);
+export const TableBody = /*#__PURE__*/ createBranchComponent(
+  TableBodyNode,
+  <T extends object>(
+    props: TableBodyProps<T>,
+    ref: ForwardedRef<HTMLTableSectionElement | HTMLDivElement>,
+    node: Node<T>
+  ) => {
+    let state = useContext(TableStateContext)!;
+    let {isVirtualized} = useContext(CollectionRendererContext);
+    let collection = state.collection;
+    let {CollectionBranch} = useContext(CollectionRendererContext);
+    let {dragAndDropHooks, dropState} = useContext(DragAndDropContext);
+    let isDroppable = !!dragAndDropHooks?.useDroppableCollectionState && !dropState?.isDisabled;
+    let isRootDropTarget =
+      isDroppable && !!dropState && (dropState.isDropTarget({type: 'root'}) ?? false);
 
-  let isEmpty = collection.size === 0;
-  let renderValues = {
-    isDropTarget: isRootDropTarget,
-    isEmpty
-  };
-  let renderProps = useRenderProps({
-    ...props,
-    id: undefined,
-    children: undefined,
-    defaultClassName: 'react-aria-TableBody',
-    values: renderValues
-  });
+    let isEmpty = collection.size === 0;
+    let renderValues = {
+      isDropTarget: isRootDropTarget,
+      isEmpty
+    };
+    let renderProps = useRenderProps({
+      ...props,
+      id: undefined,
+      children: undefined,
+      defaultClassName: 'react-aria-TableBody',
+      values: renderValues
+    });
 
-  let emptyState;
-  let numColumns = collection.columnCount;
+    let emptyState;
+    let numColumns = collection.columnCount;
 
-  if (isEmpty && props.renderEmptyState && state) {
-    let rowProps = {};
-    let rowHeaderProps = {};
-    let style = {};
-    if (isVirtualized) {
-      rowHeaderProps['aria-colspan'] = numColumns;
-      style = {display: 'contents'};
-    } else {
-      rowHeaderProps['colSpan'] = numColumns;
+    if (isEmpty && props.renderEmptyState && state) {
+      let rowProps = {};
+      let rowHeaderProps = {};
+      let style = {};
+      if (isVirtualized) {
+        rowHeaderProps['aria-colspan'] = numColumns;
+        style = {display: 'contents'};
+      } else {
+        rowHeaderProps['colSpan'] = numColumns;
+      }
+
+      emptyState = (
+        <TableRowElementType role="row" {...rowProps} style={style}>
+          <TableCellElementType role="rowheader" {...rowHeaderProps} style={style}>
+            {props.renderEmptyState(renderValues)}
+          </TableCellElementType>
+        </TableRowElementType>
+      );
     }
 
-    emptyState = (
-      <TableRowElementType role="row" {...rowProps} style={style}>
-        <TableCellElementType role="rowheader" {...rowHeaderProps} style={style}>
-          {props.renderEmptyState(renderValues)}
-        </TableCellElementType>
-      </TableRowElementType>
+    let {rowGroupProps} = useTableRowGroup();
+
+    let DOMProps = filterDOMProps(props, {global: true});
+
+    // TODO: TableBody doesn't support being the scrollable body of the table yet, to revisit if needed. Would need to
+    // call useLoadMore here and walk up the DOM to the nearest scrollable element to set scrollRef
+    return (
+      <TableBodyElementType
+        {...mergeProps(DOMProps, renderProps, rowGroupProps)}
+        ref={ref as any}
+        data-empty={isEmpty || undefined}>
+        {isDroppable && <RootDropIndicator />}
+        <CollectionBranch
+          collection={collection}
+          parent={node}
+          renderDropIndicator={useRenderDropIndicator(dragAndDropHooks, dropState)}
+        />
+        {emptyState}
+      </TableBodyElementType>
     );
   }
-
-  let {rowGroupProps} = useTableRowGroup();
-
-  let DOMProps = filterDOMProps(props, {global: true});
-
-  // TODO: TableBody doesn't support being the scrollable body of the table yet, to revisit if needed. Would need to
-  // call useLoadMore here and walk up the DOM to the nearest scrollable element to set scrollRef
-  return (
-    <TableBodyElementType
-      {...mergeProps(DOMProps, renderProps, rowGroupProps)}
-      ref={ref as any}
-      data-empty={isEmpty || undefined}>
-      {isDroppable && <RootDropIndicator />}
-      <CollectionBranch
-        collection={collection}
-        parent={node}
-        renderDropIndicator={useRenderDropIndicator(dragAndDropHooks, dropState)} />
-      {emptyState}
-    </TableBodyElementType>
-  );
-});
+);
 
 class TableFooterNode<T> extends FilterableNode<T> {
   static readonly type = 'tablefooter';
 }
 
-export interface TableFooterProps<T> extends Omit<CollectionProps<T>, 'disabledKeys'>, StyleProps, GlobalDOMAttributes<HTMLTableSectionElement> {
+export interface TableFooterProps<T>
+  extends
+    Omit<CollectionProps<T>, 'disabledKeys'>,
+    StyleProps,
+    GlobalDOMAttributes<HTMLTableSectionElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element.
    * @default 'react-aria-TableFooter'
    */
-  className?: string
+  className?: string;
 }
 
-let TableFooterElementType = forwardRef(function TableFooterElementType(props: any, ref: ForwardedRef<Element>) {
+let TableFooterElementType = forwardRef(function TableFooterElementType(
+  props: any,
+  ref: ForwardedRef<Element>
+) {
   let {isVirtualized} = useContext(CollectionRendererContext);
   if (isVirtualized) {
     return <dom.div {...props} ref={ref} />;
@@ -1330,90 +1552,108 @@ let TableFooterElementType = forwardRef(function TableFooterElementType(props: a
 /**
  * The footer of a `<Table>`, containing table rows.
  */
-export const TableFooter = /*#__PURE__*/ createBranchComponent(TableFooterNode, <T extends object>(props: TableFooterProps<T>, ref: ForwardedRef<HTMLTableSectionElement | HTMLDivElement>, node: Node<T>) => {
-  let state = useContext(TableStateContext)!;
-  let collection = state.collection as TableCollection<T>;
-  let {CollectionBranch} = useContext(CollectionRendererContext);
-  let {dragAndDropHooks, dropState} = useContext(DragAndDropContext);
+export const TableFooter = /*#__PURE__*/ createBranchComponent(
+  TableFooterNode,
+  <T extends object>(
+    props: TableFooterProps<T>,
+    ref: ForwardedRef<HTMLTableSectionElement | HTMLDivElement>,
+    node: Node<T>
+  ) => {
+    let state = useContext(TableStateContext)!;
+    let collection = state.collection as TableCollection<T>;
+    let {CollectionBranch} = useContext(CollectionRendererContext);
+    let {dragAndDropHooks, dropState} = useContext(DragAndDropContext);
 
-  let {rowGroupProps} = useTableRowGroup();
-  let DOMProps = filterDOMProps(props, {global: true});
-  let renderProps = useRenderProps({
-    style: props.style,
-    className: props.className,
-    defaultClassName: 'react-aria-TableFooter',
-    values: {}
-  });
+    let {rowGroupProps} = useTableRowGroup();
+    let DOMProps = filterDOMProps(props, {global: true});
+    let renderProps = useRenderProps({
+      style: props.style,
+      className: props.className,
+      defaultClassName: 'react-aria-TableFooter',
+      values: {}
+    });
 
-  return (
-    <TableFooterElementType
-      {...mergeProps(DOMProps, renderProps, rowGroupProps)}
-      ref={ref as any}>
-      <CollectionBranch
-        collection={collection}
-        parent={node}
-        renderDropIndicator={useRenderDropIndicator(dragAndDropHooks, dropState)} />
-    </TableFooterElementType>
-  );
-});
+    return (
+      <TableFooterElementType
+        {...mergeProps(DOMProps, renderProps, rowGroupProps)}
+        ref={ref as any}>
+        <CollectionBranch
+          collection={collection}
+          parent={node}
+          renderDropIndicator={useRenderDropIndicator(dragAndDropHooks, dropState)}
+        />
+      </TableFooterElementType>
+    );
+  }
+);
 
 export interface RowRenderProps extends ItemRenderProps {
   /** Whether the row's children have keyboard focus. */
-  isFocusVisibleWithin: boolean,
+  isFocusVisibleWithin: boolean;
   /** The unique id of the row. */
-  id?: Key,
+  id?: Key;
   /**
    * Whether the row is expanded.
    * @selector [data-expanded]
    */
-  isExpanded: boolean,
+  isExpanded: boolean;
   /**
    * Whether the row has child rows.
    * @selector [data-has-child-items]
    */
-  hasChildItems: boolean,
+  hasChildItems: boolean;
   /**
    * What level the row has within the table.
    * @selector [data-level]
    */
-  level: number
+  level: number;
 }
 
-export interface RowProps<T> extends StyleRenderProps<RowRenderProps, 'tr' | 'div'>, LinkDOMProps, HoverEvents, PressEvents, Omit<GlobalDOMAttributes<HTMLTableRowElement>, 'onClick'> {
+export interface RowProps<T>
+  extends
+    StyleRenderProps<RowRenderProps, 'tr' | 'div'>,
+    LinkDOMProps,
+    HoverEvents,
+    PressEvents,
+    Omit<GlobalDOMAttributes<HTMLTableRowElement>, 'onClick'> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-Row'
    */
-  className?: ClassNameOrFunction<RowRenderProps>,
+  className?: ClassNameOrFunction<RowRenderProps>;
   /** A list of columns used when dynamically rendering cells. */
-  columns?: Iterable<T>,
+  columns?: Iterable<T>;
   /** The cells within the row. Supports static items or a function for dynamic rendering. */
-  children?: ReactNode | ((item: T) => ReactElement),
+  children?: ReactNode | ((item: T) => ReactElement);
   /** The object value that this row represents. When using dynamic collections, this is set automatically. */
-  value?: T,
+  value?: T;
   /** Values that should invalidate the cell cache when using dynamic collections. */
-  dependencies?: ReadonlyArray<any>,
+  dependencies?: ReadonlyArray<any>;
   /** A string representation of the row's contents, used for features like typeahead. */
-  textValue?: string,
+  textValue?: string;
   /** Whether the row is disabled. */
-  isDisabled?: boolean,
+  isDisabled?: boolean;
   /** Whether `disabledKeys` applies to all interactions, or only selection. */
-  disabledBehavior?: DisabledBehavior,
+  disabledBehavior?: DisabledBehavior;
   /**
    * Handler that is called when a user performs an action on the row. The exact user event depends on
    * the collection's `selectionBehavior` prop and the interaction modality.
    */
-  onAction?: () => void,
+  onAction?: () => void;
   /** The unique id of the row. */
-  id?: Key,
+  id?: Key;
   /** Whether this row has children, even if not loaded yet. */
-  hasChildItems?: boolean
+  hasChildItems?: boolean;
 }
 
 class TableRowNode<T> extends CollectionNode<T> {
   static readonly type = 'item';
 
-  filter(collection: BaseCollection<T>, newCollection: BaseCollection<T>, filterFn: (textValue: string, node: Node<T>) => boolean): TableRowNode<T> | null {
+  filter(
+    collection: BaseCollection<T>,
+    newCollection: BaseCollection<T>,
+    filterFn: (textValue: string, node: Node<T>) => boolean
+  ): TableRowNode<T> | null {
     let cells = collection.getChildren(this.key);
     for (let cell of cells) {
       if (filterFn(cell.textValue, cell)) {
@@ -1427,7 +1667,10 @@ class TableRowNode<T> extends CollectionNode<T> {
   }
 }
 
-let TableRowElementType = forwardRef(function TableRowElementType(props: any, ref: ForwardedRef<Element>) {
+let TableRowElementType = forwardRef(function TableRowElementType(
+  props: any,
+  ref: ForwardedRef<Element>
+) {
   let {isVirtualized} = useContext(CollectionRendererContext);
   if (isVirtualized) {
     return <dom.div {...props} ref={ref} />;
@@ -1440,7 +1683,11 @@ let TableRowElementType = forwardRef(function TableRowElementType(props: any, re
  */
 export const Row = /*#__PURE__*/ createBranchComponent(
   TableRowNode,
-  <T extends object>(props: RowProps<T>, forwardedRef: ForwardedRef<HTMLTableRowElement | HTMLDivElement>, item: GridNode<T>) => {
+  <T extends object>(
+    props: RowProps<T>,
+    forwardedRef: ForwardedRef<HTMLTableRowElement | HTMLDivElement>,
+    item: GridNode<T>
+  ) => {
     let ref = useObjectRef<HTMLTableRowElement | HTMLDivElement>(forwardedRef);
     let state = useContext(TableStateContext)!;
     let {dragAndDropHooks, dragState, dropState} = useContext(DragAndDropContext);
@@ -1455,10 +1702,9 @@ export const Row = /*#__PURE__*/ createBranchComponent(
       ref
     );
     let {isFocused, isFocusVisible, focusProps} = useFocusRing();
-    let {
-      isFocusVisible: isFocusVisibleWithin,
-      focusProps: focusWithinProps
-    } = useFocusRing({within: true});
+    let {isFocusVisible: isFocusVisibleWithin, focusProps: focusWithinProps} = useFocusRing({
+      within: true
+    });
     let {hoverProps, isHovered} = useHover({
       isDisabled: !states.allowsSelection && !states.hasAction,
       onHoverStart: props.onHoverStart,
@@ -1466,37 +1712,44 @@ export const Row = /*#__PURE__*/ createBranchComponent(
       onHoverEnd: props.onHoverEnd
     });
 
-    let {checkboxProps} = useTableSelectionCheckbox(
-      {key: item.key},
-      state
-    );
+    let {checkboxProps} = useTableSelectionCheckbox({key: item.key}, state);
 
     let draggableItem: DraggableItemResult | undefined = undefined;
     if (dragState && dragAndDropHooks) {
-      draggableItem = dragAndDropHooks.useDraggableItem!({key: item.key, hasDragButton: true}, dragState);
+      draggableItem = dragAndDropHooks.useDraggableItem!(
+        {key: item.key, hasDragButton: true},
+        dragState
+      );
     }
 
     let dropIndicator: DropIndicatorAria | undefined = undefined;
     let dropIndicatorRef = useRef<HTMLDivElement>(null);
     let {visuallyHiddenProps} = useVisuallyHidden();
     if (dropState && dragAndDropHooks) {
-      dropIndicator = dragAndDropHooks.useDropIndicator!({
-        target: {type: 'item', key: item.key, dropPosition: 'on'}
-      }, dropState, dropIndicatorRef);
+      dropIndicator = dragAndDropHooks.useDropIndicator!(
+        {
+          target: {type: 'item', key: item.key, dropPosition: 'on'}
+        },
+        dropState,
+        dropIndicatorRef
+      );
     }
 
     let dragButtonRef = useRef<HTMLButtonElement>(null);
     useEffect(() => {
       if (dragState && !dragButtonRef.current && process.env.NODE_ENV !== 'production') {
-        console.warn('Draggable items in a Table must contain a <Button slot="drag"> element so that keyboard and screen reader users can drag them.');
+        console.warn(
+          'Draggable items in a Table must contain a <Button slot="drag"> element so that keyboard and screen reader users can drag them.'
+        );
       }
-    // eslint-disable-next-line
+      // eslint-disable-next-line
     }, []);
 
     let isDragging = dragState && dragState.isDragging(item.key);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     let {children: _, ...restProps} = props;
-    let hasChildItems = props.hasChildItems || state.collection.getItem(item.lastChildKey!)?.type !== 'cell';
+    let hasChildItems =
+      props.hasChildItems || state.collection.getItem(item.lastChildKey!)?.type !== 'cell';
     let isExpanded = hasChildItems && state.expandedKeys.has(item.key);
     let renderProps = useRenderProps({
       ...restProps,
@@ -1531,13 +1784,29 @@ export const Row = /*#__PURE__*/ createBranchComponent(
       <>
         {dropIndicator && !dropIndicator.isHidden && (
           <TableRowElementType role="row" style={{height: 0}}>
-            <TableCellElementType role="gridcell" colSpan={state.collection.columnCount} style={{padding: 0}}>
-              <div role="button" {...visuallyHiddenProps} {...dropIndicator.dropIndicatorProps} ref={dropIndicatorRef} />
+            <TableCellElementType
+              role="gridcell"
+              colSpan={state.collection.columnCount}
+              style={{padding: 0}}>
+              <div
+                role="button"
+                {...visuallyHiddenProps}
+                {...dropIndicator.dropIndicatorProps}
+                ref={dropIndicatorRef}
+              />
             </TableCellElementType>
           </TableRowElementType>
         )}
         <TableRowElementType
-          {...mergeProps(DOMProps, renderProps, rowProps, focusProps, hoverProps, draggableItem?.dragProps, focusWithinProps)}
+          {...mergeProps(
+            DOMProps,
+            renderProps,
+            rowProps,
+            focusProps,
+            hoverProps,
+            draggableItem?.dragProps,
+            focusWithinProps
+          )}
           ref={ref as any}
           data-disabled={states.isDisabled || undefined}
           data-selected={states.isSelected || undefined}
@@ -1547,38 +1816,51 @@ export const Row = /*#__PURE__*/ createBranchComponent(
           data-pressed={states.isPressed || undefined}
           data-dragging={isDragging || undefined}
           data-drop-target={dropIndicator?.isDropTarget || undefined}
-          data-selection-mode={state.selectionManager.selectionMode === 'none' ? undefined : state.selectionManager.selectionMode}
+          data-selection-mode={
+            state.selectionManager.selectionMode === 'none'
+              ? undefined
+              : state.selectionManager.selectionMode
+          }
           data-focus-visible-within={isFocusVisibleWithin || undefined}
           data-expanded={isExpanded || undefined}
           data-has-child-items={hasChildItems || undefined}
           data-level={item.level + 1}>
           <Provider
             values={[
-              [CheckboxContext, {
-                slots: {
-                  [DEFAULT_SLOT]: {},
-                  selection: checkboxProps
+              [
+                CheckboxContext,
+                {
+                  slots: {
+                    [DEFAULT_SLOT]: {},
+                    selection: checkboxProps
+                  }
                 }
-              }],
-              [CheckboxFieldContext, {
-                slots: {
-                  [DEFAULT_SLOT]: {},
-                  selection: checkboxProps
+              ],
+              [
+                CheckboxFieldContext,
+                {
+                  slots: {
+                    [DEFAULT_SLOT]: {},
+                    selection: checkboxProps
+                  }
                 }
-              }],
-              [ButtonContext, {
-                slots: {
-                  [DEFAULT_SLOT]: {},
-                  chevron: expandButtonProps,
-                  drag: {
-                    ...draggableItem?.dragButtonProps,
-                    ref: dragButtonRef,
-                    style: {
-                      pointerEvents: 'none'
+              ],
+              [
+                ButtonContext,
+                {
+                  slots: {
+                    [DEFAULT_SLOT]: {},
+                    chevron: expandButtonProps,
+                    drag: {
+                      ...draggableItem?.dragButtonProps,
+                      ref: dragButtonRef,
+                      style: {
+                        pointerEvents: 'none'
+                      }
                     }
                   }
                 }
-              }],
+              ],
               [SelectionIndicatorContext, {isSelected: states.isSelected}]
             ]}>
             <CollectionBranch collection={state.collection} parent={item} />
@@ -1589,7 +1871,9 @@ export const Row = /*#__PURE__*/ createBranchComponent(
   },
   props => {
     if (props.id == null && typeof props.children === 'function') {
-      throw new Error('No id detected for the Row element. The Row element requires a id to be provided to it when the cells are rendered dynamically.');
+      throw new Error(
+        'No id detected for the Row element. The Row element requires a id to be provided to it when the cells are rendered dynamically.'
+      );
     }
 
     let dependencies = [props.value].concat(props.dependencies);
@@ -1606,82 +1890,86 @@ export interface CellRenderProps {
    * Whether the cell is currently in a pressed state.
    * @selector [data-pressed]
    */
-  isPressed: boolean,
+  isPressed: boolean;
   /**
    * Whether the cell is currently focused.
    * @selector [data-focused]
    */
-  isFocused: boolean,
+  isFocused: boolean;
   /**
    * Whether the cell is currently keyboard focused.
    * @selector [data-focus-visible]
    */
-  isFocusVisible: boolean,
+  isFocusVisible: boolean;
   /**
    * Whether the cell is currently hovered with a mouse.
    * @selector [data-hovered]
    */
-  isHovered: boolean,
+  isHovered: boolean;
   /**
    * Whether the parent row is currently selected.
    * @selector [data-selected]
    */
-  isSelected: boolean,
+  isSelected: boolean;
   /**
    * Whether the parent row is non-interactive, i.e. both selection and actions are disabled and the item may
    * not be focused. Dependent on `disabledKeys` and `disabledBehavior`.
    * @selector [data-disabled]
    */
-  isDisabled: boolean,
+  isDisabled: boolean;
   /**
    * The unique id of the cell.
    **/
-  id?: Key,
+  id?: Key;
   /**
    * The index of the column that this cell belongs to. Respects col spanning.
    */
-  columnIndex?: number | null,
+  columnIndex?: number | null;
   /**
    * Whether the column displays hierarchical data.
    * @selector [data-tree-column]
    */
-  isTreeColumn: boolean,
+  isTreeColumn: boolean;
   /**
    * Whether the parent row is expanded.
    * @selector [data-expanded]
    */
-  isExpanded: boolean,
+  isExpanded: boolean;
   /**
    * Whether the parent row has child rows.
    * @selector [data-has-child-items]
    */
-  hasChildItems: boolean,
+  hasChildItems: boolean;
   /**
    * What level the parent row has within the table.
    * @selector [data-level]
    */
-  level: number
+  level: number;
 }
 
-export interface CellProps extends RenderProps<CellRenderProps, 'td' | 'div'>, GlobalDOMAttributes<HTMLTableCellElement> {
+export interface CellProps
+  extends RenderProps<CellRenderProps, 'td' | 'div'>, GlobalDOMAttributes<HTMLTableCellElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-Cell'
    */
-  className?: ClassNameOrFunction<CellRenderProps>,
+  className?: ClassNameOrFunction<CellRenderProps>;
   /** The unique id of the cell. */
-  id?: Key,
+  id?: Key;
   /** A string representation of the cell's contents, used for features like typeahead. */
-  textValue?: string,
+  textValue?: string;
   /** Indicates how many columns the data cell spans. */
-  colSpan?: number
+  colSpan?: number;
 }
 
 class TableCellNode extends CollectionNode<unknown> {
   static readonly type = 'cell';
 }
 
-let TableCellElementType = forwardRef(function TableCellElementType(props: any, ref: ForwardedRef<Element>) {
+let TableCellElementType = forwardRef(function TableCellElementType(
+  props: any,
+  ref: ForwardedRef<Element>
+) {
   let {isVirtualized} = useContext(CollectionRendererContext);
   if (isVirtualized) {
     return <dom.div {...props} ref={ref} />;
@@ -1692,72 +1980,85 @@ let TableCellElementType = forwardRef(function TableCellElementType(props: any, 
 /**
  * A cell within a table row.
  */
-export const Cell = /*#__PURE__*/ createLeafComponent(TableCellNode, (props: CellProps, forwardedRef: ForwardedRef<HTMLTableCellElement | HTMLDivElement>, cell: GridNode<unknown>) => {
-  let ref = useObjectRef<HTMLTableCellElement | HTMLDivElement>(forwardedRef);
-  let state = useContext(TableStateContext)!;
-  let {dragState} = useContext(DragAndDropContext);
-  let {isVirtualized} = useContext(CollectionRendererContext);
+export const Cell = /*#__PURE__*/ createLeafComponent(
+  TableCellNode,
+  (
+    props: CellProps,
+    forwardedRef: ForwardedRef<HTMLTableCellElement | HTMLDivElement>,
+    cell: GridNode<unknown>
+  ) => {
+    let ref = useObjectRef<HTMLTableCellElement | HTMLDivElement>(forwardedRef);
+    let state = useContext(TableStateContext)!;
+    let {dragState} = useContext(DragAndDropContext);
+    let {isVirtualized} = useContext(CollectionRendererContext);
 
-  cell.column = state.collection.columns[cell.index];
+    cell.column = state.collection.columns[cell.index];
 
-  let {gridCellProps, isPressed} = useTableCell({
-    node: cell,
-    shouldSelectOnPressUp: !!dragState,
-    isVirtualized
-  }, state, ref);
-  let {isFocused, isFocusVisible, focusProps} = useFocusRing();
-  let {hoverProps, isHovered} = useHover({});
-  let isSelected = cell.parentKey != null ? state.selectionManager.isSelected(cell.parentKey) : false;
-  // colIndex is null, when there is so span, falling back to using the index
-  let columnIndex = cell.colIndex || cell.index;
+    let {gridCellProps, isPressed} = useTableCell(
+      {
+        node: cell,
+        shouldSelectOnPressUp: !!dragState,
+        isVirtualized
+      },
+      state,
+      ref
+    );
+    let {isFocused, isFocusVisible, focusProps} = useFocusRing();
+    let {hoverProps, isHovered} = useHover({});
+    let isSelected =
+      cell.parentKey != null ? state.selectionManager.isSelected(cell.parentKey) : false;
+    // colIndex is null, when there is so span, falling back to using the index
+    let columnIndex = cell.colIndex || cell.index;
 
-  let row = state.collection.getItem(cell.parentKey!)!;
-  let hasChildItems = row.props.hasChildItems || state.collection.getItem(row.lastChildKey!)?.type !== 'cell';
-  let isExpanded = hasChildItems && state.expandedKeys.has(cell.parentKey!);
-  let isDisabled = state.selectionManager.isDisabled(cell.parentKey!);
-  let renderProps = useRenderProps({
-    ...props,
-    id: undefined,
-    defaultClassName: 'react-aria-Cell',
-    values: {
-      isFocused,
-      isFocusVisible,
-      isPressed,
-      isHovered,
-      isSelected,
-      id: cell.key,
-      columnIndex,
-      hasChildItems,
-      isExpanded,
-      isDisabled,
-      level: row.level + 1,
-      isTreeColumn: cell.column.key === state.treeColumn
-    }
-  });
+    let row = state.collection.getItem(cell.parentKey!)!;
+    let hasChildItems =
+      row.props.hasChildItems || state.collection.getItem(row.lastChildKey!)?.type !== 'cell';
+    let isExpanded = hasChildItems && state.expandedKeys.has(cell.parentKey!);
+    let isDisabled = state.selectionManager.isDisabled(cell.parentKey!);
+    let renderProps = useRenderProps({
+      ...props,
+      id: undefined,
+      defaultClassName: 'react-aria-Cell',
+      values: {
+        isFocused,
+        isFocusVisible,
+        isPressed,
+        isHovered,
+        isSelected,
+        id: cell.key,
+        columnIndex,
+        hasChildItems,
+        isExpanded,
+        isDisabled,
+        level: row.level + 1,
+        isTreeColumn: cell.column.key === state.treeColumn
+      }
+    });
 
-  let DOMProps = filterDOMProps(props as any, {global: true});
-  delete DOMProps.id;
+    let DOMProps = filterDOMProps(props as any, {global: true});
+    delete DOMProps.id;
 
-  return (
-    <TableCellElementType
-      {...mergeProps(DOMProps, renderProps, gridCellProps, focusProps, hoverProps)}
-      ref={ref as any}
-      data-focused={isFocused || undefined}
-      data-focus-visible={isFocusVisible || undefined}
-      data-pressed={isPressed || undefined}
-      data-selected={isSelected || undefined}
-      data-column-index={columnIndex}
-      data-expanded={isExpanded || undefined}
-      data-has-child-items={hasChildItems || undefined}
-      data-level={row.level + 1}
-      data-tree-column={cell.column.key === state.treeColumn || undefined}
-      data-disabled={isDisabled || undefined}>
-      <CollectionRendererContext.Provider value={DefaultCollectionRenderer}>
-        {renderProps.children}
-      </CollectionRendererContext.Provider>
-    </TableCellElementType>
-  );
-});
+    return (
+      <TableCellElementType
+        {...mergeProps(DOMProps, renderProps, gridCellProps, focusProps, hoverProps)}
+        ref={ref as any}
+        data-focused={isFocused || undefined}
+        data-focus-visible={isFocusVisible || undefined}
+        data-pressed={isPressed || undefined}
+        data-selected={isSelected || undefined}
+        data-column-index={columnIndex}
+        data-expanded={isExpanded || undefined}
+        data-has-child-items={hasChildItems || undefined}
+        data-level={row.level + 1}
+        data-tree-column={cell.column.key === state.treeColumn || undefined}
+        data-disabled={isDisabled || undefined}>
+        <CollectionRendererContext.Provider value={DefaultCollectionRenderer}>
+          {renderProps.children}
+        </CollectionRendererContext.Provider>
+      </TableCellElementType>
+    );
+  }
+);
 
 function TableDropIndicatorWrapper(props: DropIndicatorProps, ref: ForwardedRef<HTMLElement>) {
   ref = useObjectRef(ref);
@@ -1773,27 +2074,44 @@ function TableDropIndicatorWrapper(props: DropIndicatorProps, ref: ForwardedRef<
     return null;
   }
 
-  let level = dropState && props.target.type === 'item' ? (dropState.collection.getItem(props.target.key)?.level || 0) + 1 : 1;
+  let level =
+    dropState && props.target.type === 'item'
+      ? (dropState.collection.getItem(props.target.key)?.level || 0) + 1
+      : 1;
   return (
-    <TableDropIndicatorForwardRef {...props} dropIndicatorProps={dropIndicatorProps} isDropTarget={isDropTarget} buttonRef={buttonRef} level={level} ref={ref} />
+    <TableDropIndicatorForwardRef
+      {...props}
+      dropIndicatorProps={dropIndicatorProps}
+      isDropTarget={isDropTarget}
+      buttonRef={buttonRef}
+      level={level}
+      ref={ref}
+    />
   );
 }
 
-interface TableDropIndicatorProps extends DropIndicatorProps, GlobalDOMAttributes<HTMLTableRowElement> {
-  dropIndicatorProps: React.HTMLAttributes<HTMLElement>,
-  isDropTarget: boolean,
-  buttonRef: RefObject<HTMLDivElement | null>,
-  level: number
+interface TableDropIndicatorProps
+  extends DropIndicatorProps, GlobalDOMAttributes<HTMLTableRowElement> {
+  dropIndicatorProps: React.HTMLAttributes<HTMLElement>;
+  isDropTarget: boolean;
+  buttonRef: RefObject<HTMLDivElement | null>;
+  level: number;
 }
 
-let TableDropIndicatorRowElementType = forwardRef(function TableDropIndicatorRowElementType(props: any, ref: ForwardedRef<Element>) {
+let TableDropIndicatorRowElementType = forwardRef(function TableDropIndicatorRowElementType(
+  props: any,
+  ref: ForwardedRef<Element>
+) {
   let {isVirtualized} = useContext(CollectionRendererContext);
   if (isVirtualized) {
     return <dom.div {...props} ref={ref} />;
   }
   return <dom.tr {...props} ref={ref} />;
 });
-let TableDropIndicatorTDElementType = forwardRef(function TableDropIndicatorTDElementType(props: any, ref: ForwardedRef<Element>) {
+let TableDropIndicatorTDElementType = forwardRef(function TableDropIndicatorTDElementType(
+  props: any,
+  ref: ForwardedRef<Element>
+) {
   let {isVirtualized} = useContext(CollectionRendererContext);
   if (isVirtualized) {
     return <dom.div {...props} ref={ref} />;
@@ -1802,13 +2120,7 @@ let TableDropIndicatorTDElementType = forwardRef(function TableDropIndicatorTDEl
 });
 
 function TableDropIndicator(props: TableDropIndicatorProps, ref: ForwardedRef<HTMLElement>) {
-  let {
-    dropIndicatorProps,
-    isDropTarget,
-    buttonRef,
-    level,
-    ...otherProps
-  } = props;
+  let {dropIndicatorProps, isDropTarget, buttonRef, level, ...otherProps} = props;
 
   let state = useContext(TableStateContext)!;
   let {visuallyHiddenProps} = useVisuallyHidden();
@@ -1849,9 +2161,13 @@ function RootDropIndicator() {
   let state = useContext(TableStateContext)!;
   let {dragAndDropHooks, dropState} = useContext(DragAndDropContext);
   let ref = useRef<HTMLDivElement>(null);
-  let {dropIndicatorProps} = dragAndDropHooks!.useDropIndicator!({
-    target: {type: 'root'}
-  }, dropState!, ref);
+  let {dropIndicatorProps} = dragAndDropHooks!.useDropIndicator!(
+    {
+      target: {type: 'root'}
+    },
+    dropState!,
+    ref
+  );
   let isDropTarget = dropState!.isDropTarget({type: 'root'});
   let {visuallyHiddenProps} = useVisuallyHidden();
 
@@ -1874,84 +2190,103 @@ function RootDropIndicator() {
   );
 }
 
-export interface TableLoadMoreItemProps extends Omit<LoadMoreSentinelProps, 'collection'>, StyleProps, DOMRenderProps<'tr' | 'div', undefined>, GlobalDOMAttributes<HTMLTableRowElement> {
+export interface TableLoadMoreItemProps
+  extends
+    Omit<LoadMoreSentinelProps, 'collection'>,
+    StyleProps,
+    DOMRenderProps<'tr' | 'div', undefined>,
+    GlobalDOMAttributes<HTMLTableRowElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element.
    * @default 'react-aria-TableLoadMoreItem'
    */
-  className?: string,
+  className?: string;
   /**
    * The load more spinner to render when loading additional items.
    */
-  children?: ReactNode,
+  children?: ReactNode;
   /**
    * Whether or not the loading spinner should be rendered or not.
    */
-  isLoading?: boolean
+  isLoading?: boolean;
 }
 
-export const TableLoadMoreItem = createLeafComponent(LoaderNode, function TableLoadingIndicator(props: TableLoadMoreItemProps, ref: ForwardedRef<HTMLTableRowElement>, item: Node<object>) {
-  let state = useContext(TableStateContext)!;
-  let {isVirtualized} = useContext(CollectionRendererContext);
-  let {isLoading, onLoadMore, scrollOffset, ...otherProps} = props;
-  let numColumns = state.collection.columns.length;
+export const TableLoadMoreItem = createLeafComponent(
+  LoaderNode,
+  function TableLoadingIndicator(
+    props: TableLoadMoreItemProps,
+    ref: ForwardedRef<HTMLTableRowElement>,
+    item: Node<object>
+  ) {
+    let state = useContext(TableStateContext)!;
+    let {isVirtualized} = useContext(CollectionRendererContext);
+    let {isLoading, onLoadMore, scrollOffset, ...otherProps} = props;
+    let numColumns = state.collection.columns.length;
 
-  let sentinelRef = useRef(null);
-  let memoedLoadMoreProps = useMemo(() => ({
-    onLoadMore,
-    collection: state?.collection,
-    sentinelRef,
-    scrollOffset
-  }), [onLoadMore, scrollOffset, state?.collection]);
-  useLoadMoreSentinel(memoedLoadMoreProps, sentinelRef);
+    let sentinelRef = useRef(null);
+    let memoedLoadMoreProps = useMemo(
+      () => ({
+        onLoadMore,
+        collection: state?.collection,
+        sentinelRef,
+        scrollOffset
+      }),
+      [onLoadMore, scrollOffset, state?.collection]
+    );
+    useLoadMoreSentinel(memoedLoadMoreProps, sentinelRef);
 
-  let renderProps = useRenderProps({
-    ...otherProps,
-    id: undefined,
-    children: item.rendered,
-    defaultClassName: 'react-aria-TableLoadingIndicator',
-    defaultStyle: {
-      // @ts-ignore
-      '--table-row-level': item.level + 1
-    },
-    values: undefined
-  });
-  let rowProps = {};
-  let rowHeaderProps = {};
-  let style = {};
+    let renderProps = useRenderProps({
+      ...otherProps,
+      id: undefined,
+      children: item.rendered,
+      defaultClassName: 'react-aria-TableLoadingIndicator',
+      defaultStyle: {
+        // @ts-ignore
+        '--table-row-level': item.level + 1
+      },
+      values: undefined
+    });
+    let rowProps = {};
+    let rowHeaderProps = {};
+    let style = {};
 
-  if (isVirtualized) {
-    // For now don't include aria-rowindex on loader since they aren't keyboard focusable
-    // Arguably shouldn't include them ever since it might be confusing to the user to include the loaders as part of the
-    // row count
-    rowHeaderProps['aria-colspan'] = numColumns;
-    style = {display: 'contents'};
-  } else {
-    rowHeaderProps['colSpan'] = numColumns;
-  }
+    if (isVirtualized) {
+      // For now don't include aria-rowindex on loader since they aren't keyboard focusable
+      // Arguably shouldn't include them ever since it might be confusing to the user to include the loaders as part of the
+      // row count
+      rowHeaderProps['aria-colspan'] = numColumns;
+      style = {display: 'contents'};
+    } else {
+      rowHeaderProps['colSpan'] = numColumns;
+    }
 
-  return (
-    <>
-      {/* Alway render the sentinel. For now onus is on the user for styling when using flex + gap (this would introduce a gap even though it doesn't take room) */}
-      {/* @ts-ignore - compatibility with React < 19 */}
-      <TableRowElementType style={{height: 0}} inert={inertValue(true)}>
-        <TableCellElementType style={{padding: 0, border: 0}}>
-          <div data-testid="loadMoreSentinel" ref={sentinelRef} style={{position: 'relative', height: 1, width: 1}} />
-        </TableCellElementType>
-      </TableRowElementType>
-      {isLoading && renderProps.children && (
-        <TableRowElementType
-          {...mergeProps(filterDOMProps(props, {global: true}), rowProps)}
-          {...renderProps}
-          role="row"
-          ref={ref as ForwardedRef<HTMLTableRowElement>}
-          aria-level={item.level + 1}
-          data-level={item.level + 1}>
-          <TableCellElementType role="rowheader" {...rowHeaderProps} style={style}>
-            {renderProps.children}
+    return (
+      <>
+        {/* Alway render the sentinel. For now onus is on the user for styling when using flex + gap (this would introduce a gap even though it doesn't take room) */}
+        {/* @ts-ignore - compatibility with React < 19 */}
+        <TableRowElementType style={{height: 0}} inert={inertValue(true)}>
+          <TableCellElementType style={{padding: 0, border: 0}}>
+            <div
+              data-testid="loadMoreSentinel"
+              ref={sentinelRef}
+              style={{position: 'relative', height: 1, width: 1}}
+            />
           </TableCellElementType>
         </TableRowElementType>
-      )}
-    </>
-  );
-});
+        {isLoading && renderProps.children && (
+          <TableRowElementType
+            {...mergeProps(filterDOMProps(props, {global: true}), rowProps)}
+            {...renderProps}
+            role="row"
+            ref={ref as ForwardedRef<HTMLTableRowElement>}
+            aria-level={item.level + 1}
+            data-level={item.level + 1}>
+            <TableCellElementType role="rowheader" {...rowHeaderProps} style={style}>
+              {renderProps.children}
+            </TableCellElementType>
+          </TableRowElementType>
+        )}
+      </>
+    );
+  }
+);

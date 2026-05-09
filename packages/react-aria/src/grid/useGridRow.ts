@@ -13,31 +13,34 @@
 import {chain} from '../utils/chain';
 
 import {DOMAttributes, FocusableElement, RefObject} from '@react-types/shared';
-import {IGridCollection as GridCollection, GridNode} from 'react-stately/private/grid/GridCollection';
+import {
+  IGridCollection as GridCollection,
+  GridNode
+} from 'react-stately/private/grid/GridCollection';
 import {gridMap} from './utils';
 import {GridState} from 'react-stately/private/grid/useGridState';
 import {SelectableItemStates, useSelectableItem} from '../selection/useSelectableItem';
 
 export interface GridRowProps<T> {
   /** An object representing the grid row. Contains all the relevant information that makes up the grid row. */
-  node: GridNode<T>,
+  node: GridNode<T>;
   /** Whether the grid row is contained in a virtual scroller. */
-  isVirtualized?: boolean,
+  isVirtualized?: boolean;
   /** Whether selection should occur on press up instead of press down. */
-  shouldSelectOnPressUp?: boolean,
+  shouldSelectOnPressUp?: boolean;
   /**
    * Handler that is called when a user performs an action on the row.
    * Please use onCellAction at the collection level instead.
    * @deprecated
    **/
-  onAction?: () => void
+  onAction?: () => void;
 }
 
 export interface GridRowAria extends SelectableItemStates {
   /** Props for the grid row element. */
-  rowProps: DOMAttributes,
+  rowProps: DOMAttributes;
   /** Whether the row is currently in a pressed state. */
-  isPressed: boolean
+  isPressed: boolean;
 }
 
 /**
@@ -45,13 +48,12 @@ export interface GridRowAria extends SelectableItemStates {
  * @param props - Props for the row.
  * @param state - State of the parent grid, as returned by `useGridState`.
  */
-export function useGridRow<T, C extends GridCollection<T>, S extends GridState<T, C>>(props: GridRowProps<T>, state: S, ref: RefObject<FocusableElement | null>): GridRowAria {
-  let {
-    node,
-    isVirtualized,
-    shouldSelectOnPressUp,
-    onAction
-  } = props;
+export function useGridRow<T, C extends GridCollection<T>, S extends GridState<T, C>>(
+  props: GridRowProps<T>,
+  state: S,
+  ref: RefObject<FocusableElement | null>
+): GridRowAria {
+  let {node, isVirtualized, shouldSelectOnPressUp, onAction} = props;
 
   let {actions, shouldSelectOnPressUp: gridShouldSelectOnPressUp} = gridMap.get(state)!;
   let onRowAction = actions.onRowAction ? () => actions.onRowAction?.(node.key) : onAction;
@@ -61,7 +63,8 @@ export function useGridRow<T, C extends GridCollection<T>, S extends GridState<T
     ref,
     isVirtualized,
     shouldSelectOnPressUp: gridShouldSelectOnPressUp || shouldSelectOnPressUp,
-    onAction: onRowAction || node?.props?.onAction ? chain(node?.props?.onAction, onRowAction) : undefined,
+    onAction:
+      onRowAction || node?.props?.onAction ? chain(node?.props?.onAction, onRowAction) : undefined,
     isDisabled: state.collection.size === 0
   });
 

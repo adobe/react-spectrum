@@ -27,34 +27,34 @@ export interface AriaCalendarGridProps {
    * Defaults to the first visible date in the calendar.
    * Override this to display multiple date grids in a calendar.
    */
-  startDate?: CalendarDate,
+  startDate?: CalendarDate;
   /**
    * The last date displayed in the calendar grid.
    * Defaults to the last visible date in the calendar.
    * Override this to display multiple date grids in a calendar.
    */
-  endDate?: CalendarDate,
+  endDate?: CalendarDate;
   /**
    * The style of weekday names to display in the calendar grid header,
    * e.g. single letter, abbreviation, or full day name.
    * @default "narrow"
    */
-  weekdayStyle?: 'narrow' | 'short' | 'long',
+  weekdayStyle?: 'narrow' | 'short' | 'long';
   /**
    * The day that starts the week.
    */
-  firstDayOfWeek?: 'sun' | 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat'
+  firstDayOfWeek?: 'sun' | 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat';
 }
 
 export interface CalendarGridAria {
   /** Props for the date grid element (e.g. `<table>`). */
-  gridProps: DOMAttributes,
+  gridProps: DOMAttributes;
   /** Props for the grid header element (e.g. `<thead>`). */
-  headerProps: DOMAttributes,
+  headerProps: DOMAttributes;
   /** A list of week day abbreviations formatted for the current locale, typically used in column headers. */
-  weekDays: string[],
+  weekDays: string[];
   /** The number of weeks in the month. */
-  weeksInMonth: number
+  weeksInMonth: number;
 }
 
 /**
@@ -62,7 +62,10 @@ export interface CalendarGridAria {
  * A calendar grid displays a single grid of days within a calendar or range calendar which
  * can be keyboard navigated and selected by the user.
  */
-export function useCalendarGrid(props: AriaCalendarGridProps, state: CalendarState<CalendarSelectionMode> | RangeCalendarState): CalendarGridAria {
+export function useCalendarGrid(
+  props: AriaCalendarGridProps,
+  state: CalendarState<CalendarSelectionMode> | RangeCalendarState
+): CalendarGridAria {
   let {
     startDate = state.visibleRange.start,
     endDate = state.visibleRange.end,
@@ -136,7 +139,12 @@ export function useCalendarGrid(props: AriaCalendarGridProps, state: CalendarSta
     }
   };
 
-  let visibleRangeDescription = useVisibleRangeDescription(startDate, endDate, state.timeZone, true);
+  let visibleRangeDescription = useVisibleRangeDescription(
+    startDate,
+    endDate,
+    state.timeZone,
+    true
+  );
 
   let {ariaLabel, ariaLabelledBy} = hookData.get(state)!;
   let labelProps = useLabels({
@@ -144,13 +152,18 @@ export function useCalendarGrid(props: AriaCalendarGridProps, state: CalendarSta
     'aria-labelledby': ariaLabelledBy
   });
 
-  let dayFormatter = useDateFormatter({weekday: props.weekdayStyle || 'narrow', timeZone: state.timeZone});
+  let dayFormatter = useDateFormatter({
+    weekday: props.weekdayStyle || 'narrow',
+    timeZone: state.timeZone
+  });
   let {locale} = useLocale();
   let weekDays = useMemo(() => {
     let isDayView = state.visibleDuration.days && state.visibleDuration.days < 7;
-    let weekStart = isDayView ? startDate : startOfWeek(today(state.timeZone), locale, firstDayOfWeek);
+    let weekStart = isDayView
+      ? startDate
+      : startOfWeek(today(state.timeZone), locale, firstDayOfWeek);
     let days = isDayView ? state.visibleDuration.days! : 7;
-    return [...new Array(days).keys()].map((index) => {
+    return [...new Array(days).keys()].map(index => {
       let date = weekStart.add({days: index});
       let dateDay = date.toDate(state.timeZone);
       return dayFormatter.format(dateDay);
@@ -163,7 +176,8 @@ export function useCalendarGrid(props: AriaCalendarGridProps, state: CalendarSta
       role: 'grid',
       'aria-readonly': state.isReadOnly || undefined,
       'aria-disabled': state.isDisabled || undefined,
-      'aria-multiselectable': ('highlightedRange' in state) || state.selectionMode === 'multiple' || undefined,
+      'aria-multiselectable':
+        'highlightedRange' in state || state.selectionMode === 'multiple' || undefined,
       onKeyDown,
       onFocus: () => state.setFocused(true),
       onBlur: () => state.setFocused(false)

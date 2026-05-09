@@ -24,14 +24,14 @@ const meta: Meta<typeof ColorWheel> = {
 export default meta;
 
 export const Example: StoryObj<typeof ColorWheel> = {
-  render: (args) => <ColorWheel {...args} onChange={undefined} />,
+  render: args => <ColorWheel {...args} onChange={undefined} />,
   args: {
     defaultValue: 'hsl(30, 100%, 50%)'
   }
 };
 
 export const InContainer: StoryObj<typeof ColorWheel> = {
-  render: (args) => (
+  render: args => (
     <div style={{width: 600, border: '1px solid gray', padding: 16}}>
       <ColorWheel {...args} onChange={undefined} />
     </div>

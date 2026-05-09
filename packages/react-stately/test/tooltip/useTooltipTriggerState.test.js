@@ -23,11 +23,7 @@ const TOOLTIP_DELAY = 1500;
 function Tooltip({state, ...props}) {
   let {tooltipProps} = useTooltip(props, state);
 
-  return (
-    <span {...mergeProps(props, tooltipProps)}>
-      {props.children}
-    </span>
-  );
+  return <span {...mergeProps(props, tooltipProps)}>{props.children}</span>;
 }
 
 function TooltipTrigger(props) {
@@ -41,8 +37,11 @@ function TooltipTrigger(props) {
       <button aria-label={props.label ?? 'trigger'} ref={ref} {...triggerProps}>
         {props.children}
       </button>
-      {state.isOpen &&
-        <Tooltip state={state} {...tooltipProps}>{props.tooltip}</Tooltip>}
+      {state.isOpen && (
+        <Tooltip state={state} {...tooltipProps}>
+          {props.tooltip}
+        </Tooltip>
+      )}
     </span>
   );
 }
@@ -50,7 +49,7 @@ function TooltipTrigger(props) {
 function ManualTooltipTrigger(props) {
   let [isOpen, setOpen] = React.useState(false);
 
-  const onOpenChange = (isOpen) => {
+  const onOpenChange = isOpen => {
     props.onOpenChange(isOpen);
     setOpen(isOpen);
   };
@@ -60,7 +59,8 @@ function ManualTooltipTrigger(props) {
       label={props.label}
       onOpenChange={onOpenChange}
       isOpen={isOpen}
-      tooltip={props.tooltip} />
+      tooltip={props.tooltip}
+    />
   );
 }
 
@@ -81,7 +81,9 @@ describe('useTooltipTriggerState', function () {
     fireEvent.keyDown(document.activeElement, {key: 'Escape'});
     fireEvent.keyUp(document.activeElement, {key: 'Escape'});
     // there's global state, so we need to make sure to run out the cooldown for every test
-    act(() => {jest.runAllTimers();});
+    act(() => {
+      jest.runAllTimers();
+    });
   });
 
   describe('custom close delay', () => {
@@ -89,7 +91,10 @@ describe('useTooltipTriggerState', function () {
       let closeDelay = 100;
 
       let {getByRole, queryByRole, getByLabelText} = render(
-        <TooltipTrigger onOpenChange={onOpenChange} closeDelay={closeDelay} tooltip="Helpful information">
+        <TooltipTrigger
+          onOpenChange={onOpenChange}
+          closeDelay={closeDelay}
+          tooltip="Helpful information">
           Trigger
         </TooltipTrigger>
       );
@@ -127,7 +132,11 @@ describe('useTooltipTriggerState', function () {
       let delay = 350;
 
       let {getByRole, queryByRole, getByLabelText} = render(
-        <TooltipTrigger onOpenChange={onOpenChange} closeDelay={closeDelay} delay={delay} tooltip="Helpful information">
+        <TooltipTrigger
+          onOpenChange={onOpenChange}
+          closeDelay={closeDelay}
+          delay={delay}
+          tooltip="Helpful information">
           Trigger
         </TooltipTrigger>
       );
@@ -164,7 +173,10 @@ describe('useTooltipTriggerState', function () {
       let closeDelay = -50;
 
       let {getByRole, queryByRole, getByLabelText} = render(
-        <TooltipTrigger onOpenChange={onOpenChange} closeDelay={closeDelay}  tooltip="Helpful information">
+        <TooltipTrigger
+          onOpenChange={onOpenChange}
+          closeDelay={closeDelay}
+          tooltip="Helpful information">
           Trigger
         </TooltipTrigger>
       );
@@ -192,7 +204,10 @@ describe('useTooltipTriggerState', function () {
       let closeDelay = 0;
 
       let {getByRole, queryByRole, getByLabelText} = render(
-        <TooltipTrigger onOpenChange={onOpenChange} closeDelay={closeDelay}  tooltip="Helpful information">
+        <TooltipTrigger
+          onOpenChange={onOpenChange}
+          closeDelay={closeDelay}
+          tooltip="Helpful information">
           Trigger
         </TooltipTrigger>
       );
@@ -229,30 +244,29 @@ describe('useTooltipTriggerState', function () {
 
         return (
           <span>
-            <button
-              ref={ref}
-              {...triggerProps}
-              data-testid="trigger-button">
+            <button ref={ref} {...triggerProps} data-testid="trigger-button">
               {props.children}
             </button>
-            <button
-              data-testid="manual-open"
-              onClick={() => state.open(false)}>
+            <button data-testid="manual-open" onClick={() => state.open(false)}>
               Manual Open
             </button>
-            <button
-              data-testid="manual-close"
-              onClick={() => state.close(true)}>
+            <button data-testid="manual-close" onClick={() => state.close(true)}>
               Manual Close
             </button>
-            {state.isOpen &&
-              <span role="tooltip" {...tooltipProps}>{props.tooltip}</span>}
+            {state.isOpen && (
+              <span role="tooltip" {...tooltipProps}>
+                {props.tooltip}
+              </span>
+            )}
           </span>
         );
       }
 
       let {queryByRole, getByTestId} = render(
-        <ManualTriggerComponent onOpenChange={onOpenChange} delay={delay} tooltip="Helpful information">
+        <ManualTriggerComponent
+          onOpenChange={onOpenChange}
+          delay={delay}
+          tooltip="Helpful information">
           Trigger
         </ManualTriggerComponent>
       );
@@ -292,16 +306,21 @@ describe('useTooltipTriggerState', function () {
 
         let {triggerProps, tooltipProps} = useTooltipTrigger(props, state, ref);
 
-        let onMouseEnter = (e) => {
+        let onMouseEnter = e => {
           triggerProps.onMouseEnter?.(e);
           state.open(false);
         };
 
         return (
           <span>
-            <button ref={ref} {...triggerProps} onMouseEnter={onMouseEnter}>{props.children}</button>
-            {state.isOpen &&
-              <span role="tooltip" {...tooltipProps}>{props.tooltip}</span>}
+            <button ref={ref} {...triggerProps} onMouseEnter={onMouseEnter}>
+              {props.children}
+            </button>
+            {state.isOpen && (
+              <span role="tooltip" {...tooltipProps}>
+                {props.tooltip}
+              </span>
+            )}
           </span>
         );
       }
@@ -309,7 +328,10 @@ describe('useTooltipTriggerState', function () {
       let delay = 1000;
 
       let {queryByRole, getByRole} = render(
-        <TooltipTriggerWithDoubleOpen onOpenChange={onOpenChange} delay={delay} tooltip="Helpful information">
+        <TooltipTriggerWithDoubleOpen
+          onOpenChange={onOpenChange}
+          delay={delay}
+          tooltip="Helpful information">
           Trigger
         </TooltipTriggerWithDoubleOpen>
       );
@@ -342,11 +364,17 @@ describe('useTooltipTriggerState', function () {
 
       let {queryByRole, getByLabelText} = render(
         <>
-          <ManualTooltipTrigger onOpenChange={onOpenChange} tooltip="First tooltip" label="trigger1">
+          <ManualTooltipTrigger
+            onOpenChange={onOpenChange}
+            tooltip="First tooltip"
+            label="trigger1">
             Trigger 1
           </ManualTooltipTrigger>
 
-          <ManualTooltipTrigger onOpenChange={secondOnOpenChange} tooltip="Second tooltip" label="trigger2">
+          <ManualTooltipTrigger
+            onOpenChange={secondOnOpenChange}
+            tooltip="Second tooltip"
+            label="trigger2">
             Trigger 2
           </ManualTooltipTrigger>
         </>

@@ -19,10 +19,10 @@ import {style} from '../style' with {type: 'macro'};
 import {StyleString} from '../style/types';
 
 interface CenterBaselineProps extends DOMAttributes {
-  style?: CSSProperties,
-  styles?: StyleString,
-  children: ReactNode,
-  slot?: string
+  style?: CSSProperties;
+  styles?: StyleString;
+  children: ReactNode;
+  slot?: string;
 }
 
 const styles = style({
@@ -43,8 +43,12 @@ export function CenterBaseline(props: CenterBaselineProps): ReactNode {
   );
 }
 
-export const centerBaselineBefore = css('&::before { content: "\u00a0"; width: 0; visibility: hidden }');
+export const centerBaselineBefore = css(
+  '&::before { content: "\u00a0"; width: 0; visibility: hidden }'
+);
 
-export function centerBaseline(props: Omit<CenterBaselineProps, 'children'> = {}): (icon: ReactNode) => ReactNode {
+export function centerBaseline(
+  props: Omit<CenterBaselineProps, 'children'> = {}
+): (icon: ReactNode) => ReactNode {
   return (icon: ReactNode) => <CenterBaseline {...props}>{icon}</CenterBaseline>;
 }

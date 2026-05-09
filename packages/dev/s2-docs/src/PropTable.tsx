@@ -9,62 +9,136 @@ import {Table, TableBody, TableCell, TableColumn, TableHeader, TableRow} from '.
 
 const GROUPS = {
   Content: [
-    'children', 'items', 'defaultItems', 'columns', 'loadingState', 'onLoadMore', 'renderEmptyState', 'dependencies'
+    'children',
+    'items',
+    'defaultItems',
+    'columns',
+    'loadingState',
+    'onLoadMore',
+    'renderEmptyState',
+    'dependencies'
   ],
   Selection: [
-    'selectionMode', 'selectionBehavior', 'selectedKeys', 'defaultSelectedKeys', 'selectedKey', 'defaultSelectedKey', 'onSelectionChange', 'disabledKeys', 'disabledBehavior', 'disallowEmptySelection', 'shouldSelectOnPressUp', 'shouldFocusWrap', 'shouldFocusOnHover', 'escapeKeyBehavior'
+    'selectionMode',
+    'selectionBehavior',
+    'selectedKeys',
+    'defaultSelectedKeys',
+    'selectedKey',
+    'defaultSelectedKey',
+    'onSelectionChange',
+    'disabledKeys',
+    'disabledBehavior',
+    'disallowEmptySelection',
+    'shouldSelectOnPressUp',
+    'shouldFocusWrap',
+    'shouldFocusOnHover',
+    'escapeKeyBehavior'
   ],
   Value: [
-    'value', 'defaultValue', 'onChange', 'onChangeEnd', 'inputValue', 'defaultInputValue', 'onInputChange', 'formatOptions'
+    'value',
+    'defaultValue',
+    'onChange',
+    'onChangeEnd',
+    'inputValue',
+    'defaultInputValue',
+    'onInputChange',
+    'formatOptions'
   ],
-  Labeling: [
-    'label', 'labelPosition', 'labelAlign', 'contextualHelp'
-  ],
+  Labeling: ['label', 'labelPosition', 'labelAlign', 'contextualHelp'],
   Validation: [
-    'minValue', 'maxValue', 'step', 'minLength', 'maxLength', 'pattern', 'isRequired', 'isInvalid', 'validate', 'validationBehavior', 'validationErrors', 'necessityIndicator', 'description', 'errorMessage'
+    'minValue',
+    'maxValue',
+    'step',
+    'minLength',
+    'maxLength',
+    'pattern',
+    'isRequired',
+    'isInvalid',
+    'validate',
+    'validationBehavior',
+    'validationErrors',
+    'necessityIndicator',
+    'description',
+    'errorMessage'
   ],
   Overlay: [
-    'isOpen', 'defaultOpen', 'onOpenChange', 'shouldCloseOnSelect', 'placement', 'direction', 'align', 'shouldFlip', 'offset', 'crossOffset', 'containerPadding', 'menuWidth'
+    'isOpen',
+    'defaultOpen',
+    'onOpenChange',
+    'shouldCloseOnSelect',
+    'placement',
+    'direction',
+    'align',
+    'shouldFlip',
+    'offset',
+    'crossOffset',
+    'containerPadding',
+    'menuWidth'
   ],
-  Events: [
-    /^on[A-Z]/
-  ],
+  Events: [/^on[A-Z]/],
   Links: [
-    'href', 'hrefLang', 'target', 'rel', 'download', 'ping', 'referrerPolicy', 'itemProp', 'routerOptions'
+    'href',
+    'hrefLang',
+    'target',
+    'rel',
+    'download',
+    'ping',
+    'referrerPolicy',
+    'itemProp',
+    'routerOptions'
   ],
-  Styling: [
-    'style', 'className'
-  ],
+  Styling: ['style', 'className'],
   Forms: [
-    'name', 'startName', 'endName', 'value', 'formValue', 'type', 'autoComplete', 'form', 'formTarget', 'formNoValidate', 'formMethod', 'formMethod', 'formEncType', 'formAction'
+    'name',
+    'startName',
+    'endName',
+    'value',
+    'formValue',
+    'type',
+    'autoComplete',
+    'form',
+    'formTarget',
+    'formNoValidate',
+    'formMethod',
+    'formMethod',
+    'formEncType',
+    'formAction'
   ],
   Accessibility: [
-    'autoFocus', 'role', 'id', 'tabIndex', 'excludeFromTabOrder', 'preventFocusOnPress', /^aria-/
+    'autoFocus',
+    'role',
+    'id',
+    'tabIndex',
+    'excludeFromTabOrder',
+    'preventFocusOnPress',
+    /^aria-/
   ],
-  Advanced: [
-    'UNSAFE_className', 'UNSAFE_style', 'slot', 'render'
-  ]
+  Advanced: ['UNSAFE_className', 'UNSAFE_style', 'slot', 'render']
 };
 
-const DEFAULT_EXPANDED = new Set([
-  'Content',
-  'Selection',
-  'Value'
-]);
+const DEFAULT_EXPANDED = new Set(['Content', 'Selection', 'Value']);
 
 const codeStyle = style({font: {default: 'code-xs', lg: 'code-sm'}, wordBreak: 'break-word'});
 
 interface PropTableProps {
-  component: TComponent,
-  links: any,
-  showDescription?: boolean,
-  hideRenderProps?: boolean,
-  showOptionalRenderProps?: boolean,
-  hideSelector?: boolean,
-  cssVariables?: {[name: string]: string}
+  component: TComponent;
+  links: any;
+  showDescription?: boolean;
+  hideRenderProps?: boolean;
+  showOptionalRenderProps?: boolean;
+  hideSelector?: boolean;
+  cssVariables?: {[name: string]: string};
 }
 
-export function PropTable({component, links, showDescription, hideRenderProps, showOptionalRenderProps, hideSelector, cssVariables}: PropTableProps) {
+export function PropTable({
+  component,
+  links,
+  showDescription,
+  hideRenderProps,
+  showOptionalRenderProps,
+  hideSelector,
+  cssVariables
+}: PropTableProps) {
   let properties = component?.props?.type === 'interface' ? component.props.properties : null;
   if (!properties) {
     return null;
@@ -81,7 +155,10 @@ export function PropTable({component, links, showDescription, hideRenderProps, s
       }
     } else if (renderPropProperty.value.type === 'application') {
       let application = renderPropProperty.value;
-      if (application.base.type === 'link' && /ClassNameOrFunction|ChildrenOrFunction/.test(links[application.base.id]?.name)) {
+      if (
+        application.base.type === 'link' &&
+        /ClassNameOrFunction|ChildrenOrFunction/.test(links[application.base.id]?.name)
+      ) {
         renderProps = application.typeParameters[0];
       }
     }
@@ -93,19 +170,25 @@ export function PropTable({component, links, showDescription, hideRenderProps, s
 
   return (
     <>
-      {component.description && showDescription && <div className={style({font: 'body', marginBottom: 16})}>{renderHTMLfromMarkdown(component.description, {forceInline: false, forceBlock: true})}</div>}
+      {component.description && showDescription && (
+        <div className={style({font: 'body', marginBottom: 16})}>
+          {renderHTMLfromMarkdown(component.description, {forceInline: false, forceBlock: true})}
+        </div>
+      )}
       <GroupedPropTable
         properties={properties}
         links={links}
         propGroups={GROUPS}
-        defaultExpanded={DEFAULT_EXPANDED} />
+        defaultExpanded={DEFAULT_EXPANDED}
+      />
       {defaultClassName ? <DefaultClassName defaultClassName={defaultClassName} /> : null}
       {renderProps && renderProps.type === 'interface' ? (
         <StateTable
           style={!defaultClassName ? {marginTop: 16} : undefined}
           properties={renderProps.properties}
           showOptional={showOptionalRenderProps}
-          hideSelector={hideSelector} />
+          hideSelector={hideSelector}
+        />
       ) : null}
       {cssVariables && <CSSVariables cssVariables={cssVariables} />}
     </>
@@ -113,13 +196,18 @@ export function PropTable({component, links, showDescription, hideRenderProps, s
 }
 
 interface GroupedPropTableProps {
-  properties: TInterface['properties'],
-  links: any,
-  propGroups?: {[name: string]: (string | RegExp)[]},
-  defaultExpanded?: Set<string>
+  properties: TInterface['properties'];
+  links: any;
+  propGroups?: {[name: string]: (string | RegExp)[]};
+  defaultExpanded?: Set<string>;
 }
 
-export function GroupedPropTable({properties, links, propGroups = GROUPS, defaultExpanded = DEFAULT_EXPANDED}: GroupedPropTableProps) {
+export function GroupedPropTable({
+  properties,
+  links,
+  propGroups = GROUPS,
+  defaultExpanded = DEFAULT_EXPANDED
+}: GroupedPropTableProps) {
   setLinks(links);
 
   let [props, groups] = groupProps(properties, propGroups);
@@ -147,7 +235,7 @@ export function GroupedPropTable({properties, links, propGroups = GROUPS, defaul
       <TableBody>
         <Rows props={props} showDefault={showDefault} showRequired={showRequired} />
       </TableBody>
-      {Object.keys(groups).map((group) => (
+      {Object.keys(groups).map(group => (
         <DisclosureRow key={group} title={group} defaultExpanded={defaultExpanded?.has(group)}>
           <Rows props={groups[group]} showDefault={showDefault} showRequired={showRequired} />
         </DisclosureRow>
@@ -156,48 +244,74 @@ export function GroupedPropTable({properties, links, propGroups = GROUPS, defaul
   );
 }
 
-function Rows({props, showDefault, showRequired}: {props: TInterface['properties'], showDefault?: boolean, showRequired?: boolean}) {
+function Rows({
+  props,
+  showDefault,
+  showRequired
+}: {
+  props: TInterface['properties'];
+  showDefault?: boolean;
+  showRequired?: boolean;
+}) {
   let properties = Object.values(props);
 
   return properties.map((prop, index) => (
     <React.Fragment key={index}>
       <TableRow>
-        <TableCell role="rowheader" hideBorder={!!prop.description} styles={style({whiteSpace: 'nowrap'})}>
+        <TableCell
+          role="rowheader"
+          hideBorder={!!prop.description}
+          styles={style({whiteSpace: 'nowrap'})}>
           <code className={codeStyle}>
             <span className={codeStyles.attribute}>{prop.name}</span>
           </code>
-          {!prop.optional && showRequired
-            ? <Asterisk
-                size="M"
-                className={style({
-                  marginStart: 4,
-                  '--iconPrimary': {
-                    type: 'fill',
-                    value: 'currentColor'
-                  }
-                })}
-                aria-label="Required" />
-            : null
-          }
+          {!prop.optional && showRequired ? (
+            <Asterisk
+              size="M"
+              className={style({
+                marginStart: 4,
+                '--iconPrimary': {
+                  type: 'fill',
+                  value: 'currentColor'
+                }
+              })}
+              aria-label="Required"
+            />
+          ) : null}
         </TableCell>
         <TableCell hideBorder={!!prop.description}>
           <code className={codeStyle}>
             <Type type={prop.value} />
           </code>
         </TableCell>
-        {showDefault &&
-          <TableCell hideBorder={!!prop.description} styles={prop.default ? undefined : style({display: {default: 'none', sm: '[table-cell]'}, whiteSpace: 'nowrap'})}>
-            <strong className={style({font: 'ui', fontWeight: 'bold', display: {sm: 'none'}})}>Default: </strong>
-            {prop.default
-              ? <span className={codeStyle}><Code lang="tsx">{prop.default}</Code></span>
-              : '—'
-            }
+        {showDefault && (
+          <TableCell
+            hideBorder={!!prop.description}
+            styles={
+              prop.default
+                ? undefined
+                : style({display: {default: 'none', sm: '[table-cell]'}, whiteSpace: 'nowrap'})
+            }>
+            <strong className={style({font: 'ui', fontWeight: 'bold', display: {sm: 'none'}})}>
+              Default:{' '}
+            </strong>
+            {prop.default ? (
+              <span className={codeStyle}>
+                <Code lang="tsx">{prop.default}</Code>
+              </span>
+            ) : (
+              '—'
+            )}
           </TableCell>
-        }
+        )}
       </TableRow>
-      {prop.description && <TableRow>
-        <TableCell colSpan={3}>{renderHTMLfromMarkdown(prop.description, {forceInline: false, forceBlock: true})}</TableCell>
-      </TableRow>}
+      {prop.description && (
+        <TableRow>
+          <TableCell colSpan={3}>
+            {renderHTMLfromMarkdown(prop.description, {forceInline: false, forceBlock: true})}
+          </TableCell>
+        </TableRow>
+      )}
     </React.Fragment>
   ));
 }
@@ -206,7 +320,12 @@ function groupProps(
   props: TInterface['properties'],
   propGroups: {[name: string]: (string | RegExp)[]} = GROUPS
 ): [TInterface['properties'], {[name: string]: TInterface['properties']}] {
-  props = Object.fromEntries(Object.entries(props).filter(([, prop]) => prop.type === 'property' && prop.access !== 'private' && prop.access !== 'protected'));
+  props = Object.fromEntries(
+    Object.entries(props).filter(
+      ([, prop]) =>
+        prop.type === 'property' && prop.access !== 'private' && prop.access !== 'protected'
+    )
+  );
   let groups = {};
 
   // Default groups
@@ -230,11 +349,19 @@ function groupProps(
           continue;
         }
 
-        if (propName === 'value' && ((group === 'Value' && !props.defaultValue) || (group === 'Forms' && props[propName].value.type !== 'string'))) {
+        if (
+          propName === 'value' &&
+          ((group === 'Value' && !props.defaultValue) ||
+            (group === 'Forms' && props[propName].value.type !== 'string'))
+        ) {
           continue;
         }
 
-        if (propName === 'type' && group === 'Forms' && !props[propName].description?.includes('form')) {
+        if (
+          propName === 'type' &&
+          group === 'Forms' &&
+          !props[propName].description?.includes('form')
+        ) {
           continue;
         }
 
@@ -246,7 +373,10 @@ function groupProps(
           continue;
         }
 
-        if (propName === 'placement' && (props[propName].value.type !== 'union' || props[propName].value.elements.length !== 22)) {
+        if (
+          propName === 'placement' &&
+          (props[propName].value.type !== 'union' || props[propName].value.elements.length !== 22)
+        ) {
           continue;
         }
 
@@ -271,7 +401,18 @@ function DefaultClassName({defaultClassName}: {defaultClassName: string}) {
   return (
     <p className={style({font: 'ui'})}>
       <span className={style({fontWeight: 'bold'})}>Default className: </span>
-      <span className={style({font: 'code-xs', backgroundColor: 'layer-1', paddingX: 4, borderWidth: 1, borderColor: 'gray-100', borderStyle: 'solid', borderRadius: 'sm'})}>{defaultClassName}</span>
+      <span
+        className={style({
+          font: 'code-xs',
+          backgroundColor: 'layer-1',
+          paddingX: 4,
+          borderWidth: 1,
+          borderColor: 'gray-100',
+          borderStyle: 'solid',
+          borderRadius: 'sm'
+        })}>
+        {defaultClassName}
+      </span>
     </p>
   );
 }

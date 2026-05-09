@@ -11,7 +11,11 @@
  */
 
 import {FocusStrategy, Key} from '@react-types/shared';
-import {OverlayTriggerProps, OverlayTriggerState, useOverlayTriggerState} from '../overlays/useOverlayTriggerState';
+import {
+  OverlayTriggerProps,
+  OverlayTriggerState,
+  useOverlayTriggerState
+} from '../overlays/useOverlayTriggerState';
 import {useState} from 'react';
 
 export type MenuTriggerType = 'press' | 'longPress';
@@ -21,34 +25,34 @@ export interface MenuTriggerProps extends OverlayTriggerProps {
    * How the menu is triggered.
    * @default 'press'
    */
-  trigger?: MenuTriggerType
+  trigger?: MenuTriggerType;
 }
 
 export interface MenuTriggerState extends OverlayTriggerState {
   /** Controls which item will be auto focused when the menu opens. */
-  readonly focusStrategy: FocusStrategy | null,
+  readonly focusStrategy: FocusStrategy | null;
 
   /** Opens the menu. */
-  open(focusStrategy?: FocusStrategy | null): void,
+  open(focusStrategy?: FocusStrategy | null): void;
 
   /** Toggles the menu. */
-  toggle(focusStrategy?: FocusStrategy | null): void
+  toggle(focusStrategy?: FocusStrategy | null): void;
 }
 
 export interface RootMenuTriggerState extends MenuTriggerState {
   /** Opens a specific submenu tied to a specific menu item at a specific level. */
-  openSubmenu: (triggerKey: Key, level: number) => void,
+  openSubmenu: (triggerKey: Key, level: number) => void;
 
   /** Closes a specific submenu tied to a specific menu item at a specific level. */
-  closeSubmenu: (triggerKey: Key, level: number) => void,
+  closeSubmenu: (triggerKey: Key, level: number) => void;
 
   /** An array of open submenu trigger keys within the menu tree.
    * The index of key within array matches the submenu level in the tree.
    */
-  expandedKeysStack: Key[],
+  expandedKeysStack: Key[];
 
   /** Closes the menu and all submenus in the menu tree. */
-  close: () => void
+  close: () => void;
 }
 
 /**
@@ -56,7 +60,7 @@ export interface RootMenuTriggerState extends MenuTriggerState {
  * and controls which item will receive focus when it opens. Also tracks the open submenus within
  * the menu tree via their trigger keys.
  */
-export function useMenuTriggerState(props: MenuTriggerProps): RootMenuTriggerState  {
+export function useMenuTriggerState(props: MenuTriggerProps): RootMenuTriggerState {
   let overlayTriggerState = useOverlayTriggerState(props);
   let [focusStrategy, setFocusStrategy] = useState<FocusStrategy | null>(null);
   let [expandedKeysStack, setExpandedKeysStack] = useState<Key[]>([]);

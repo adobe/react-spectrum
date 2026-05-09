@@ -14,7 +14,7 @@ import {
   TabRenderProps
 } from 'react-aria-components';
 // import {centerBaseline} from './CenterBaseline';
-import {baseColor, focusRing, style}  from '@react-spectrum/s2/style' with {type: 'macro'};
+import {baseColor, focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {DOMRef} from '@react-types/shared';
 import {forwardRef, ReactNode, useCallback, useContext, useRef, useState} from 'react';
 import {IconContext, TextContext} from '@react-spectrum/s2';
@@ -22,24 +22,36 @@ import {useDOMRef} from '@react-spectrum/utils';
 import {useId, useLayoutEffect} from '@react-aria/utils';
 import {useLocale} from '@react-aria/i18n';
 
-export interface TabsProps extends Omit<AriaTabsProps, 'className' | 'style' | 'render' | 'children'> {
+export interface TabsProps extends Omit<
+  AriaTabsProps,
+  'className' | 'style' | 'render' | 'children'
+> {
   /** The content to display in the tabs. */
-  children: ReactNode
+  children: ReactNode;
 }
 
-export interface TabProps extends Omit<AriaTabProps, 'children' | 'style' | 'className' | 'render'> {
+export interface TabProps extends Omit<
+  AriaTabProps,
+  'children' | 'style' | 'className' | 'render'
+> {
   /** The content to display in the tab. */
-  children: ReactNode
+  children: ReactNode;
 }
 
-export interface TabListProps<T> extends Omit<AriaTabListProps<T>, 'style' | 'className' | 'render' | 'aria-label' | 'aria-labelledby'> {
+export interface TabListProps<T> extends Omit<
+  AriaTabListProps<T>,
+  'style' | 'className' | 'render' | 'aria-label' | 'aria-labelledby'
+> {
   /** The content to display in the tablist. */
-  children: ReactNode | ((item: T) => ReactNode)
+  children: ReactNode | ((item: T) => ReactNode);
 }
 
-export interface TabPanelProps extends Omit<AriaTabPanelProps, 'children' | 'style' | 'className' | 'render'> {
+export interface TabPanelProps extends Omit<
+  AriaTabPanelProps,
+  'children' | 'style' | 'className' | 'render'
+> {
   /** The content to display in the tab panels. */
-  children: ReactNode
+  children: ReactNode;
 }
 
 const tabs = style({
@@ -58,9 +70,7 @@ export const Tabs = forwardRef(function Tabs(props: TabsProps, ref: DOMRef<HTMLD
   let domRef = useDOMRef(ref);
   return (
     <div className={tabs} ref={domRef}>
-      <RACTabs
-        {...props}
-        style={{display: 'contents'}}>
+      <RACTabs {...props} style={{display: 'contents'}}>
         {props.children}
       </RACTabs>
     </div>
@@ -87,7 +97,9 @@ export function TabList<T extends object>(props: TabListProps<T>) {
 
   useLayoutEffect(() => {
     if (tablistRef?.current) {
-      let tab: HTMLElement | null = tablistRef.current.querySelector('[role=tab][data-selected=true]');
+      let tab: HTMLElement | null = tablistRef.current.querySelector(
+        '[role=tab][data-selected=true]'
+      );
 
       if (tab != null) {
         setSelectedTab(tab);
@@ -96,19 +108,15 @@ export function TabList<T extends object>(props: TabListProps<T>) {
   }, [tablistRef, state?.selectedItem?.key]);
 
   return (
-    <div
-      className={style({position: 'relative'})}>
+    <div className={style({position: 'relative'})}>
       <TabLine selectedTab={selectedTab} />
-      <RACTabList
-        {...props}
-        ref={tablistRef}
-        className={tablist} />
+      <RACTabList {...props} ref={tablistRef} className={tablist} />
     </div>
   );
 }
 
 interface TabLineProps {
-  selectedTab: HTMLElement | undefined
+  selectedTab: HTMLElement | undefined;
 }
 
 const selectedIndicator = style({
@@ -125,13 +133,15 @@ const selectedIndicator = style({
 });
 
 function TabLine(props: TabLineProps) {
-  let {
-    selectedTab
-  } = props;
+  let {selectedTab} = props;
   let {direction} = useLocale();
   let state = useContext(TabListStateContext);
 
-  let [style, setStyle] = useState<{transform: string | undefined, width: string | undefined, height: string | undefined}>({
+  let [style, setStyle] = useState<{
+    transform: string | undefined;
+    width: string | undefined;
+    height: string | undefined;
+  }>({
     transform: undefined,
     width: undefined,
     height: undefined
@@ -139,7 +149,11 @@ function TabLine(props: TabLineProps) {
 
   let onResize = useCallback(() => {
     if (selectedTab) {
-      let styleObj: { transform: string | undefined, width: string | undefined, height: string | undefined } = {
+      let styleObj: {
+        transform: string | undefined;
+        width: string | undefined;
+        height: string | undefined;
+      } = {
         transform: undefined,
         width: undefined,
         height: undefined
@@ -156,12 +170,16 @@ function TabLine(props: TabLineProps) {
     onResize();
   }, [onResize, state?.selectedItem?.key, direction]);
 
-  return (
-    <div style={{...style}} className={selectedIndicator} />
-  );
+  return <div style={{...style}} className={selectedIndicator} />;
 }
 
-const tab = style<TabRenderProps & {density?: 'compact' | 'regular', orientation?: 'vertical' | 'horizontal', labelBehavior?: 'show' | 'hide'}>({
+const tab = style<
+  TabRenderProps & {
+    density?: 'compact' | 'regular';
+    orientation?: 'vertical' | 'horizontal';
+    labelBehavior?: 'show' | 'hide';
+  }
+>({
   ...focusRing(),
   display: 'flex',
   color: {
@@ -222,14 +240,20 @@ export function Tab(props: TabProps): ReactNode {
       className={renderProps => tab({...renderProps})}>
       <Provider
         values={[
-          [TextContext, {
-            id: contentId,
-            styles: style({order: 1})
-          }],
-          [IconContext, {
-            // render: centerBaseline({slot: 'icon', styles: style({order: 0})}),
-            styles: icon
-          }]
+          [
+            TextContext,
+            {
+              id: contentId,
+              styles: style({order: 1})
+            }
+          ],
+          [
+            IconContext,
+            {
+              // render: centerBaseline({slot: 'icon', styles: style({order: 0})}),
+              styles: icon
+            }
+          ]
         ]}>
         {props.children}
       </Provider>
@@ -250,9 +274,5 @@ const tabPanel = style({
 });
 
 export function TabPanel(props: TabPanelProps): ReactNode | null {
-  return (
-    <AriaTabPanel
-      {...props}
-      className={renderProps => tabPanel(renderProps)} />
-  );
+  return <AriaTabPanel {...props} className={renderProps => tabPanel(renderProps)} />;
 }

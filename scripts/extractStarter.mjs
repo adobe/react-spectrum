@@ -61,7 +61,12 @@ for (let file of globSync('packages/react-aria-components/docs/*.mdx')) {
       }
     }
 
-    if (node.type === 'code' && node.lang === 'css' && !node.meta?.includes('render=false') && heading !== 'Advanced customization') {
+    if (
+      node.type === 'code' &&
+      node.lang === 'css' &&
+      !node.meta?.includes('render=false') &&
+      heading !== 'Advanced customization'
+    ) {
       css += node.value + '\n\n';
     }
   });
@@ -71,36 +76,53 @@ for (let file of globSync('packages/react-aria-components/docs/*.mdx')) {
     // Special case for Table which doesn't have a wrapper component in the docs.
     // We need one for the Storybook auto-generated docs to work.
     reusableWrapper = reusableWrapper
-      .replace('<Table ', '<MyTable ').replace('/Table>', '/MyTable>')
-      .replace('function MyColumn', `function MyTable(props: TableProps) {
+      .replace('<Table ', '<MyTable ')
+      .replace('/Table>', '/MyTable>')
+      .replace(
+        'function MyColumn',
+        `function MyTable(props: TableProps) {
   return <Table {...props} />
 }
 
-function MyColumn`);
+function MyColumn`
+      );
   }
 
   if (name === 'Tree') {
     // Special case for Tree which doesn't have a wrapper component in the docs.
     // We need one for the Storybook auto-generated docs to work.
     reusableWrapper = reusableWrapper
-      .replace('<Tree ', '<MyTree ').replace('/Tree>', '/MyTree>')
-      .replace('function MyTreeItemContent', `function MyTree<T extends object>(props: TreeProps<T>) {
+      .replace('<Tree ', '<MyTree ')
+      .replace('/Tree>', '/MyTree>')
+      .replace(
+        'function MyTreeItemContent',
+        `function MyTree<T extends object>(props: TreeProps<T>) {
   return <Tree {...props} />
 }
 
-function MyTreeItemContent`);
+function MyTreeItemContent`
+      );
   }
 
   let usedClasses = new Set();
   if (reusableWrapper) {
-    fs.writeFileSync(`starters/docs/src/${name}.tsx`, processJS(file, "'use client';\n" + imports + reusableWrapper, usedClasses));
-    fs.writeFileSync(`starters/docs/stories/${name}.stories.tsx`, generateStory(file, imports, reusableWrapper));
+    fs.writeFileSync(
+      `starters/docs/src/${name}.tsx`,
+      processJS(file, "'use client';\n" + imports + reusableWrapper, usedClasses)
+    );
+    fs.writeFileSync(
+      `starters/docs/stories/${name}.stories.tsx`,
+      generateStory(file, imports, reusableWrapper)
+    );
   } else {
     console.log('No reusable wrapper section in ' + file);
     // A couple special cases to handle later.
     if (name !== 'DropZone' && name !== 'FileTrigger' && name !== 'Group') {
       fs.writeFileSync(`starters/docs/src/${name}.tsx`, generateWrapper(name));
-      fs.writeFileSync(`starters/docs/stories/${name}.stories.tsx`, generateStory(file, imports, firstExample, true));
+      fs.writeFileSync(
+        `starters/docs/stories/${name}.stories.tsx`,
+        generateStory(file, imports, firstExample, true)
+      );
     }
   }
 
@@ -175,7 +197,12 @@ function processJS(sourceFilename, code, usedClasses) {
           path.scope.getBinding('CheckboxProps')?.path.remove();
           path.scope.rename('MyCheckbox', 'Checkbox');
           if (path.scope.getBinding('Checkbox').referencePaths.length > 0) {
-            importsToAppend.unshift(t.importDeclaration([t.importSpecifier(t.identifier('Checkbox'), t.identifier('Checkbox'))], t.stringLiteral('./Checkbox')));
+            importsToAppend.unshift(
+              t.importDeclaration(
+                [t.importSpecifier(t.identifier('Checkbox'), t.identifier('Checkbox'))],
+                t.stringLiteral('./Checkbox')
+              )
+            );
           }
           path.remove();
           return;
@@ -220,7 +247,10 @@ function processJS(sourceFilename, code, usedClasses) {
     Program: {
       exit(path) {
         // Add import for the CSS file.
-        let lastImport = path.get('body').filter(p => p.isImportDeclaration()).pop();
+        let lastImport = path
+          .get('body')
+          .filter(p => p.isImportDeclaration())
+          .pop();
         lastImport.insertAfter(importsToAppend);
       }
     }
@@ -248,16 +278,23 @@ function processCSS(css, usedClasses) {
         rule.nodes[0].raws.before = '\n' + rule.nodes[0].raws.before;
         prev.nodes.push(...rule.nodes);
         rule.remove();
-      } else if (rule.selectors.every(s => !s.startsWith('.react-aria-') && s[0] === '.' && !usedClasses.has(s.slice(1).split(' ')[0]))) {
+      } else if (
+        rule.selectors.every(
+          s =>
+            !s.startsWith('.react-aria-') &&
+            s[0] === '.' &&
+            !usedClasses.has(s.slice(1).split(' ')[0])
+        )
+      ) {
         console.log('Removing unused rule ' + rule.selector);
         rule.remove();
       } else {
         // Convert rems to use the standard 16px base font size instead of Spectrum's 14px
-        rule.walkDecls((decl) => {
+        rule.walkDecls(decl => {
           if (decl.updated) return;
           decl.value = decl.value.replace(/([\d+.]+)rem/g, (_, v) => {
             let px = Number(v) * 14;
-            return (px / 16) + 'rem';
+            return px / 16 + 'rem';
           });
           decl.updated = true;
         });
@@ -279,7 +316,7 @@ function processCSS(css, usedClasses) {
     if (rule.nodes.length === 0 || rule.nodes.every(node => node.type === 'comment')) {
       rule.remove();
     }
-  })
+  });
 
   return ast.toString().trim() + '\n';
 }
@@ -293,7 +330,9 @@ function generateStory(filename, imports, code, skipImports = false) {
   }
 
   let name = basename(filename, '.mdx');
-  code = imports + `
+  code =
+    imports +
+    `
 import type {Meta} from '@storybook/react';
 
 const meta: Meta<typeof ${name}> = {
@@ -342,7 +381,10 @@ export const Example = () => (
   traverse.default(ast, {
     'ImportSpecifier|ImportDefaultSpecifier'(specifier) {
       let binding = specifier.scope.getBinding(specifier.node.local.name);
-      if (binding?.referencePaths.length === 0 || (skipImports && specifier.node.local.name === name)) {
+      if (
+        binding?.referencePaths.length === 0 ||
+        (skipImports && specifier.node.local.name === name)
+      ) {
         specifier.remove();
       }
     },
@@ -368,7 +410,10 @@ export const Example = () => (
     },
     JSXAttribute(path) {
       if (path.parent.name.name === name && !path.node.name.name.includes('-')) {
-        args.set(path.node.name.name, t.isJSXExpressionContainer(path.node.value) ? path.node.value.expression : path.node.value);
+        args.set(
+          path.node.name.name,
+          t.isJSXExpressionContainer(path.node.value) ? path.node.value.expression : path.node.value
+        );
         path.remove();
       }
     },
@@ -387,13 +432,17 @@ export const Example = () => (
           path.get('declaration.declarations.0.init').pushContainer('params', param);
 
           if (args.size > 0) {
-            path.insertAfter(t.expressionStatement(t.assignmentExpression(
-              '=',
-              t.memberExpression(t.identifier('Example'), t.identifier('args')),
-              t.objectExpression([...args].map(([key, value]) =>
-                t.objectProperty(t.identifier(key), value)
-              ))
-            )));
+            path.insertAfter(
+              t.expressionStatement(
+                t.assignmentExpression(
+                  '=',
+                  t.memberExpression(t.identifier('Example'), t.identifier('args')),
+                  t.objectExpression(
+                    [...args].map(([key, value]) => t.objectProperty(t.identifier(key), value))
+                  )
+                )
+              )
+            );
           }
         }
       }
@@ -504,5 +553,5 @@ import './${name}.css';
 export function ${name}${typeParams}(props: ${typeName}${generic}) {
   return <RAC${name} {...props} />;
 }
-`
+`;
 }

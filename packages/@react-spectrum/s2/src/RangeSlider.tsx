@@ -13,7 +13,16 @@
 import {ContextValue} from 'react-aria-components/slots';
 
 import {createContext, forwardRef, useContext, useRef} from 'react';
-import {filledTrack, SliderBase, SliderBaseProps, thumb, thumbContainer, thumbHitArea, track, upperTrack} from './Slider';
+import {
+  filledTrack,
+  SliderBase,
+  SliderBaseProps,
+  thumb,
+  thumbContainer,
+  thumbHitArea,
+  track,
+  upperTrack
+} from './Slider';
 import {FocusableRef, FocusableRefValue, RangeValue} from '@react-types/shared';
 import {FormContext, useFormProps} from './Form';
 import intlMessages from '../intl/*.json';
@@ -29,25 +38,29 @@ export interface RangeSliderProps extends Omit<SliderBaseProps<RangeValue<number
   /**
    * The name of the start input element, used when submitting an HTML form. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefname).
    */
-  startName?: string,
+  startName?: string;
   /**
    * The name of the end input element, used when submitting an HTML form. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefname).
    */
-  endName?: string,
+  endName?: string;
   /**
    * The `<form>` element to associate the input with.
    * The value of this attribute must be the id of a `<form>` in the same document.
    * See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input#form).
    */
-  form?: string
+  form?: string;
 }
 
-export const RangeSliderContext = createContext<ContextValue<Partial<RangeSliderProps>, FocusableRefValue<HTMLDivElement>>>(null);
+export const RangeSliderContext =
+  createContext<ContextValue<Partial<RangeSliderProps>, FocusableRefValue<HTMLDivElement>>>(null);
 
 /**
  * RangeSliders allow users to quickly select a subset range. They should be used when the upper and lower bounds to the range are invariable.
  */
-export const RangeSlider = /*#__PURE__*/ forwardRef(function RangeSlider(props: RangeSliderProps, ref: FocusableRef<HTMLDivElement>) {
+export const RangeSlider = /*#__PURE__*/ forwardRef(function RangeSlider(
+  props: RangeSliderProps,
+  ref: FocusableRef<HTMLDivElement>
+) {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   [props, ref] = useSpectrumContextProps(props, ref, RangeSliderContext);
   let formContext = useContext(FormContext);
@@ -82,8 +95,7 @@ export const RangeSlider = /*#__PURE__*/ forwardRef(function RangeSlider(props: 
       onChange={v => props.onChange?.({start: v[0], end: v[1]})}
       onChangeEnd={v => props.onChangeEnd?.({start: v[0], end: v[1]})}
       sliderRef={domRef}>
-      <SliderTrack
-        className={track({size, labelPosition, isInForm: !!formContext})}>
+      <SliderTrack className={track({size, labelPosition, isInForm: !!formContext})}>
         {({state, isDisabled}) => (
           <>
             <div className={upperTrack({isDisabled, trackStyle})} />
@@ -92,7 +104,8 @@ export const RangeSlider = /*#__PURE__*/ forwardRef(function RangeSlider(props: 
                 width: `${Math.abs(state.getThumbPercent(0) - state.getThumbPercent(1)) * 100}%`,
                 [cssDirection]: `${state.getThumbPercent(0) * 100}%`
               }}
-              className={filledTrack({isDisabled, isEmphasized, trackStyle})} />
+              className={filledTrack({isDisabled, isEmphasized, trackStyle})}
+            />
             <SliderThumb
               className={thumbContainer}
               index={0}
@@ -100,18 +113,21 @@ export const RangeSlider = /*#__PURE__*/ forwardRef(function RangeSlider(props: 
               form={props.form}
               aria-label={stringFormatter.format('slider.minimum')}
               ref={lowerThumbRef}
-              style={(renderProps) => pressScale(lowerThumbRef, {
-                transform: 'translate(-50%, -50%)',
-                zIndex: state.getThumbPercent(0) === 1 ? 1 : undefined
-              })({...renderProps, isPressed: renderProps.isDragging})}>
-              {(renderProps) => (
+              style={renderProps =>
+                pressScale(lowerThumbRef, {
+                  transform: 'translate(-50%, -50%)',
+                  zIndex: state.getThumbPercent(0) === 1 ? 1 : undefined
+                })({...renderProps, isPressed: renderProps.isDragging})
+              }>
+              {renderProps => (
                 <div className={thumbHitArea({size})}>
                   <div
                     className={thumb({
                       ...renderProps,
                       size,
                       thumbStyle
-                    })} />
+                    })}
+                  />
                 </div>
               )}
             </SliderThumb>
@@ -122,17 +138,20 @@ export const RangeSlider = /*#__PURE__*/ forwardRef(function RangeSlider(props: 
               form={props.form}
               aria-label={stringFormatter.format('slider.maximum')}
               ref={upperThumbRef}
-              style={(renderProps) => pressScale(upperThumbRef, {
-                transform: 'translate(-50%, -50%)'
-              })({...renderProps, isPressed: renderProps.isDragging})}>
-              {(renderProps) => (
+              style={renderProps =>
+                pressScale(upperThumbRef, {
+                  transform: 'translate(-50%, -50%)'
+                })({...renderProps, isPressed: renderProps.isDragging})
+              }>
+              {renderProps => (
                 <div className={thumbHitArea({size})}>
                   <div
                     className={thumb({
                       ...renderProps,
                       size,
                       thumbStyle
-                    })} />
+                    })}
+                  />
                 </div>
               )}
             </SliderThumb>

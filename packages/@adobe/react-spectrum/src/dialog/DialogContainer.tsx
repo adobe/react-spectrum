@@ -17,18 +17,18 @@ import {useOverlayTriggerState} from 'react-stately/useOverlayTriggerState';
 
 export interface SpectrumDialogContainerProps {
   /** The Dialog to display, if any. */
-  children: ReactNode,
+  children: ReactNode;
   /** Handler that is called when the 'x' button of a dismissable Dialog is clicked. */
-  onDismiss: () => void,
+  onDismiss: () => void;
   /**
    * The type of Dialog that should be rendered. See the visual options below for examples of each.
    * @default 'modal'
    */
-  type?: 'modal' | 'fullscreen' | 'fullscreenTakeover',
+  type?: 'modal' | 'fullscreen' | 'fullscreenTakeover';
   /** Whether the Dialog is dismissable. See the [Dialog docs](Dialog.html#dismissable-dialogs) for more details. */
-  isDismissable?: boolean,
+  isDismissable?: boolean;
   /** Whether pressing the escape key to close the dialog should be disabled. */
-  isKeyboardDismissDisabled?: boolean
+  isKeyboardDismissDisabled?: boolean;
 }
 
 /**
@@ -37,13 +37,7 @@ export interface SpectrumDialogContainerProps {
  * or when the trigger unmounts while the dialog is open.
  */
 export function DialogContainer(props: SpectrumDialogContainerProps): JSX.Element {
-  let {
-    children,
-    type = 'modal',
-    onDismiss,
-    isDismissable,
-    isKeyboardDismissDisabled
-  } = props;
+  let {children, type = 'modal', onDismiss, isDismissable, isKeyboardDismissDisabled} = props;
 
   let childArray = React.Children.toArray(children);
   if (childArray.length > 1) {
@@ -86,9 +80,7 @@ export function DialogContainer(props: SpectrumDialogContainerProps): JSX.Elemen
       type={type}
       isDismissable={isDismissable}
       isKeyboardDismissDisabled={isKeyboardDismissDisabled}>
-      <DialogContext.Provider value={context}>
-        {lastChild}
-      </DialogContext.Provider>
+      <DialogContext.Provider value={context}>{lastChild}</DialogContext.Provider>
     </Modal>
   );
 }

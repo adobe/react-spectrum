@@ -19,17 +19,14 @@ export interface S2RenderOptions {
   /**
    * Options to pass to the Provider.
    */
-  providerOptions?: Omit<ProviderProps, 'children'>
+  providerOptions?: Omit<ProviderProps, 'children'>;
 }
 
 /**
  * Custom render function that wraps components in the S2 Provider.
  * Uses vitest-browser-react for browser mode testing.
  */
-export async function render(
-  ui: ReactElement,
-  options: S2RenderOptions = {}
-) {
+export async function render(ui: ReactElement, options: S2RenderOptions = {}) {
   const {providerOptions = {}} = options;
   const {locale = 'en-US', colorScheme = 'light', ...restProviderOptions} = providerOptions;
 

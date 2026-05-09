@@ -14,31 +14,40 @@
 import {Direction, Key, KeyboardDelegate, Node} from '@react-types/shared';
 import {getChildNodes, getFirstItem} from 'react-stately/private/collections/getChildNodes';
 import {GridCollection} from 'react-stately/private/grid/GridCollection';
-import {InvalidationContext, Layout, LayoutInfo, Rect, Size} from 'react-stately/useVirtualizerState';
+import {
+  InvalidationContext,
+  Layout,
+  LayoutInfo,
+  Rect,
+  Size
+} from 'react-stately/useVirtualizerState';
 import {Scale} from '../provider/types';
 
 export interface BaseLayoutOptions {
-  collator?: Intl.Collator,
+  collator?: Intl.Collator;
   // TODO: is this valid or is scale a spectrum specific thing that should be left out of the layouts?
-  scale?: Scale,
+  scale?: Scale;
   /**
    * The margin around the grid view between the edges and the items.
    * @default 24
    */
-  margin?: number
+  margin?: number;
 }
 
 interface CardViewLayoutOptions {
-  isLoading: boolean,
-  direction: Direction
+  isLoading: boolean;
+  direction: Direction;
 }
 
-export class BaseLayout<T> extends Layout<Node<T>, CardViewLayoutOptions> implements KeyboardDelegate {
+export class BaseLayout<T>
+  extends Layout<Node<T>, CardViewLayoutOptions>
+  implements KeyboardDelegate
+{
   protected contentSize: Size;
   protected layoutInfos: Map<Key, LayoutInfo>;
   protected collator: Intl.Collator;
   protected lastCollection: GridCollection<T>;
-  collection:  GridCollection<T>;
+  collection: GridCollection<T>;
   isLoading: boolean;
   disabledKeys: Set<Key> = new Set();
   direction: Direction;
@@ -148,7 +157,12 @@ export class BaseLayout<T> extends Layout<Node<T>, CardViewLayoutOptions> implem
     // Expected key is the currently focused cell so we need the parent row key
     let parentRowKey = this.collection.getItem(key).parentKey;
     let layoutInfo = this.getLayoutInfo(parentRowKey);
-    let rect = new Rect(layoutInfo.rect.x, layoutInfo.rect.maxY + 1, layoutInfo.rect.width, this.virtualizer.visibleRect.height);
+    let rect = new Rect(
+      layoutInfo.rect.x,
+      layoutInfo.rect.maxY + 1,
+      layoutInfo.rect.width,
+      this.virtualizer.visibleRect.height
+    );
     let closestRow = this.collection.getItem(this._findClosest(layoutInfo.rect, rect)?.key);
     return getFirstItem(getChildNodes(closestRow, this.collection))?.key;
   }
@@ -165,7 +179,10 @@ export class BaseLayout<T> extends Layout<Node<T>, CardViewLayoutOptions> implem
   getKeyRightOf(key: Key): Node<T> | undefined {
     // Expected key is the currently focused cell so we need the parent row key
     let parentRowKey = this.collection.getItem(key).parentKey;
-    key = this.direction === 'rtl' ?  this.collection.getKeyBefore(parentRowKey) : this.collection.getKeyAfter(parentRowKey);
+    key =
+      this.direction === 'rtl'
+        ? this.collection.getKeyBefore(parentRowKey)
+        : this.collection.getKeyAfter(parentRowKey);
 
     while (key != null) {
       let item = this.collection.getItem(key);
@@ -173,14 +190,20 @@ export class BaseLayout<T> extends Layout<Node<T>, CardViewLayoutOptions> implem
       if (item.type === 'item') {
         return getFirstItem(getChildNodes(item, this.collection))?.key;
       }
-      key = this.direction === 'rtl' ?  this.collection.getKeyBefore(key) : this.collection.getKeyAfter(key);
+      key =
+        this.direction === 'rtl'
+          ? this.collection.getKeyBefore(key)
+          : this.collection.getKeyAfter(key);
     }
   }
 
   getKeyLeftOf(key: Key): Node<T> | undefined {
     // Expected key is the currently focused cell so we need the parent row key
     let parentRowKey = this.collection.getItem(key).parentKey;
-    key = this.direction === 'rtl' ?  this.collection.getKeyAfter(parentRowKey) : this.collection.getKeyBefore(parentRowKey);
+    key =
+      this.direction === 'rtl'
+        ? this.collection.getKeyAfter(parentRowKey)
+        : this.collection.getKeyBefore(parentRowKey);
     while (key != null) {
       let item = this.collection.getItem(key);
       // Don't check if item is disabled because we want to be able to focus disabled items in a grid (double check this)
@@ -188,7 +211,10 @@ export class BaseLayout<T> extends Layout<Node<T>, CardViewLayoutOptions> implem
         return getFirstItem(getChildNodes(item, this.collection))?.key;
       }
 
-      key = this.direction === 'rtl' ?  this.collection.getKeyAfter(key) : this.collection.getKeyBefore(key);
+      key =
+        this.direction === 'rtl'
+          ? this.collection.getKeyAfter(key)
+          : this.collection.getKeyBefore(key);
     }
   }
 
@@ -210,7 +236,10 @@ export class BaseLayout<T> extends Layout<Node<T>, CardViewLayoutOptions> implem
     let layoutInfo = this.getLayoutInfo(parentRowKey);
 
     if (layoutInfo) {
-      let pageY = Math.max(0, layoutInfo.rect.y + layoutInfo.rect.height - this.virtualizer.visibleRect.height);
+      let pageY = Math.max(
+        0,
+        layoutInfo.rect.y + layoutInfo.rect.height - this.virtualizer.visibleRect.height
+      );
       // If the node is so large that it spans multiple page heights, return the key of the item immediately above
       // Otherwise keep going up until we exceed a single page height worth of nodes
       let keyAbove = this.collection.getItem(this.getKeyAbove(key))?.parentKey;
@@ -218,14 +247,18 @@ export class BaseLayout<T> extends Layout<Node<T>, CardViewLayoutOptions> implem
 
       if (layoutInfo && layoutInfo.rect.y > pageY) {
         while (layoutInfo && layoutInfo.rect.y > pageY) {
-          let childKey = getFirstItem(getChildNodes(this.collection.getItem(layoutInfo.key), this.collection))?.key;
+          let childKey = getFirstItem(
+            getChildNodes(this.collection.getItem(layoutInfo.key), this.collection)
+          )?.key;
           let keyAbove = this.collection.getItem(this.getKeyAbove(childKey))?.parentKey;
           layoutInfo = this.getLayoutInfo(keyAbove);
         }
       }
 
       if (layoutInfo) {
-        let childKey = getFirstItem(getChildNodes(this.collection.getItem(layoutInfo.key), this.collection))?.key;
+        let childKey = getFirstItem(
+          getChildNodes(this.collection.getItem(layoutInfo.key), this.collection)
+        )?.key;
         return childKey;
       }
     }
@@ -240,21 +273,28 @@ export class BaseLayout<T> extends Layout<Node<T>, CardViewLayoutOptions> implem
     let parentRowKey = this.collection.getItem(key).parentKey;
     let layoutInfo = this.getLayoutInfo(parentRowKey);
     if (layoutInfo) {
-      let pageY = Math.min(this.virtualizer.contentSize.height, layoutInfo.rect.y - layoutInfo.rect.height + this.virtualizer.visibleRect.height);
+      let pageY = Math.min(
+        this.virtualizer.contentSize.height,
+        layoutInfo.rect.y - layoutInfo.rect.height + this.virtualizer.visibleRect.height
+      );
       // If the node is so large that it spans multiple page heights, return the key of the item immediately below
       // Otherwise keep going up until we exceed a single page height worth of nodes
-      let keyBelow =  this.collection.getItem(this.getKeyBelow(key))?.parentKey;
+      let keyBelow = this.collection.getItem(this.getKeyBelow(key))?.parentKey;
       layoutInfo = this.getLayoutInfo(keyBelow);
       if (layoutInfo && layoutInfo.rect.y < pageY) {
         while (layoutInfo && layoutInfo.rect.y < pageY) {
-          let childKey = getFirstItem(getChildNodes(this.collection.getItem(layoutInfo.key), this.collection))?.key;
+          let childKey = getFirstItem(
+            getChildNodes(this.collection.getItem(layoutInfo.key), this.collection)
+          )?.key;
           let keyBelow = this.collection.getItem(this.getKeyBelow(childKey))?.parentKey;
           layoutInfo = this.getLayoutInfo(keyBelow);
         }
       }
 
       if (layoutInfo) {
-        let childKey = getFirstItem(getChildNodes(this.collection.getItem(layoutInfo.key), this.collection))?.key;
+        let childKey = getFirstItem(
+          getChildNodes(this.collection.getItem(layoutInfo.key), this.collection)
+        )?.key;
         return childKey;
       }
     }

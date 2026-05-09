@@ -2,8 +2,27 @@
   "name": "@react-spectrum/mcp",
   "version": "1.1.0",
   "description": "MCP server for React Spectrum (S2) documentation",
-  "type": "module",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adobe/react-spectrum"
+  },
   "bin": "dist/s2/src/index.js",
+  "source": "src/index.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "type": "module",
+  "sideEffects": [
+    "*.css"
+  ],
+  "main": "dist/main.js",
+  "module": "dist/module.js",
+  "types": "dist/types.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "prepublishOnly": "yarn build",
     "build": "node ./scripts/build-data.mjs && tsc -p tsconfig.json",
@@ -21,24 +40,5 @@
   },
   "engines": {
     "node": ">=18"
-  },
-  "license": "Apache-2.0",
-  "publishConfig": {
-    "access": "public"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/adobe/react-spectrum"
-  },
-  "files": [
-    "dist",
-    "src"
-  ],
-  "sideEffects": [
-    "*.css"
-  ],
-  "main": "dist/main.js",
-  "module": "dist/module.js",
-  "types": "dist/types.d.ts",
-  "source": "src/index.ts"
+  }
 }

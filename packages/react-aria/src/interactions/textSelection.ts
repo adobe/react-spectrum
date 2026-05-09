@@ -39,7 +39,6 @@ let modifiedElementMap = new WeakMap<Element, string>();
 export function disableTextSelection(target?: Element): void {
   if (isIOS()) {
     if (state === 'default') {
-
       const documentObject = getOwnerDocument(target);
       savedUserSelect = documentObject.documentElement.style.webkitUserSelect;
       documentObject.documentElement.style.webkitUserSelect = 'none';
@@ -73,7 +72,6 @@ export function restoreTextSelection(target?: Element): void {
       runAfterTransition(() => {
         // Avoid race conditions
         if (state === 'restoring') {
-
           const documentObject = getOwnerDocument(target);
           if (documentObject.documentElement.style.webkitUserSelect === 'none') {
             documentObject.documentElement.style.webkitUserSelect = savedUserSelect || '';

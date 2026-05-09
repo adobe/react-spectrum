@@ -18,11 +18,11 @@ interface TriggerRadioOptions {
   /**
    * What interaction type to use when triggering a radio. Defaults to the interaction type set on the tester.
    */
-  interactionType?: UserOpts['interactionType'],
+  interactionType?: UserOpts['interactionType'];
   /**
    * The index, text, or node of the radio to toggle selection for.
    */
-  radio: number | string | HTMLElement
+  radio: number | string | HTMLElement;
 }
 
 export class RadioGroupTester {
@@ -55,9 +55,7 @@ export class RadioGroupTester {
    * Returns a radio matching the specified index or text content.
    */
   findRadio(opts: {radioIndexOrText: number | string}): HTMLElement {
-    let {
-      radioIndexOrText
-    } = opts;
+    let {radioIndexOrText} = opts;
 
     let radio;
     if (typeof radioIndexOrText === 'number') {
@@ -81,12 +79,16 @@ export class RadioGroupTester {
     return radio;
   }
 
-  private async keyboardNavigateToRadio(opts: {radio: HTMLElement, orientation?: Orientation}) {
+  private async keyboardNavigateToRadio(opts: {radio: HTMLElement; orientation?: Orientation}) {
     let {radio, orientation = 'vertical'} = opts;
     let radios = this.radios;
-    radios = radios.filter(radio => !(radio.hasAttribute('disabled') || radio.getAttribute('aria-disabled') === 'true'));
+    radios = radios.filter(
+      radio => !(radio.hasAttribute('disabled') || radio.getAttribute('aria-disabled') === 'true')
+    );
     if (radios.length === 0) {
-      throw new Error('Radio group doesnt have any non-disabled radios. Please double check your radio group.');
+      throw new Error(
+        'Radio group doesnt have any non-disabled radios. Please double check your radio group.'
+      );
     }
 
     let targetIndex = radios.indexOf(radio);
@@ -124,16 +126,13 @@ export class RadioGroupTester {
     for (let i = 0; i < Math.abs(targetIndex - currIndex); i++) {
       await this.user.keyboard(`[${movementDirection === 'down' ? arrowDown : arrowUp}]`);
     }
-  };
+  }
 
   /**
    * Triggers the specified radio. Defaults to using the interaction type set on the radio tester.
    */
   async triggerRadio(opts: TriggerRadioOptions): Promise<void> {
-    let {
-      radio,
-      interactionType = this._interactionType
-    } = opts;
+    let {radio, interactionType = this._interactionType} = opts;
 
     if (typeof radio === 'string' || typeof radio === 'number') {
       radio = this.findRadio({radioIndexOrText: radio});

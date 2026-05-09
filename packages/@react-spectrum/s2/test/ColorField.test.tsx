@@ -15,9 +15,7 @@ import {render} from '@react-spectrum/test-utils-internal';
 
 describe('ColorField', () => {
   it('should label the input with the prefix', () => {
-    let {getByRole} = render(
-      <ColorField label="Description" prefix="Prefix" />
-    );
+    let {getByRole} = render(<ColorField label="Description" prefix="Prefix" />);
 
     let input = getByRole('textbox');
     let labels = input.getAttribute('aria-labelledby')?.split(' ');

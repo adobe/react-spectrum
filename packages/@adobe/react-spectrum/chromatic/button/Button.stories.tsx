@@ -33,7 +33,13 @@ let states = [
   {isDisabled: true}
 ];
 
-let combinations = generatePowerset(states, v => (v.UNSAFE_className && v.isDisabled) || (v['data-focus'] && (v['data-hover'] || v['data-active'])) || (v['data-hover'] && v['data-active']));
+let combinations = generatePowerset(
+  states,
+  v =>
+    (v.UNSAFE_className && v.isDisabled) ||
+    (v['data-focus'] && (v['data-hover'] || v['data-active'])) ||
+    (v['data-hover'] && v['data-active'])
+);
 
 export default {
   title: 'Button',
@@ -81,9 +87,7 @@ export const WithIcon: ButtonStory = () => (
       <Bell />
       <Text>Default</Text>
     </Button>
-    <Button
-      isDisabled
-      variant="primary">
+    <Button isDisabled variant="primary">
       <Text>Disabled</Text>
       <Bell />
     </Button>
@@ -100,10 +104,7 @@ export const IconOnly: ButtonStory = () => (
     <Button variant="primary" aria-label="Notifications">
       <Bell />
     </Button>
-    <Button
-      isDisabled
-      variant="primary"
-      aria-label="Notifications">
+    <Button isDisabled variant="primary" aria-label="Notifications">
       <Bell />
     </Button>
   </Flex>
@@ -116,13 +117,8 @@ IconOnly.story = {
 
 export const DoubleTextNode: ButtonStory = () => (
   <Flex gap="size-200">
-    <Button
-      variant="primary">
-      {0} Dogs
-    </Button>
-    <Button
-      isDisabled
-      variant="primary">
+    <Button variant="primary">{0} Dogs</Button>
+    <Button isDisabled variant="primary">
       {0} Dogs
     </Button>
   </Flex>
@@ -132,36 +128,54 @@ DoubleTextNode.story = {
   name: 'double text node'
 };
 
-export function Render<T extends ElementType = 'button'>(props: SpectrumButtonProps<T> = {variant: 'accent'}): JSX.Element {
+export function Render<T extends ElementType = 'button'>(
+  props: SpectrumButtonProps<T> = {variant: 'accent'}
+): JSX.Element {
   return (
-    (<Grid columns={repeat(4, '1fr')} autoFlow="row" justifyItems="start" gap="size-300">
+    <Grid columns={repeat(4, '1fr')} autoFlow="row" justifyItems="start" gap="size-300">
       {combinations.map(c => {
-        let key = Object.keys(c).map(k => {
-          if (k === 'UNSAFE_className') {
-            return '';
-          }
-          return typeof c[k] === 'boolean' ? k.replace(/^data-/, '') : `${k}: ${c[k]}`;
-        }).filter(Boolean).reverse().join(', ');
+        let key = Object.keys(c)
+          .map(k => {
+            if (k === 'UNSAFE_className') {
+              return '';
+            }
+            return typeof c[k] === 'boolean' ? k.replace(/^data-/, '') : `${k}: ${c[k]}`;
+          })
+          .filter(Boolean)
+          .reverse()
+          .join(', ');
         if (!key) {
           key = 'default';
         }
-        let button = <Button key={key} {...props} {...c}>{key}</Button>;
+        let button = (
+          <Button key={key} {...props} {...c}>
+            {key}
+          </Button>
+        );
         if (props.variant === 'overBackground' || c.staticColor === 'white') {
           return (
-            <View backgroundColor="static-blue-700" UNSAFE_style={{padding: '15px 20px', display: 'inline-block'}}>
+            <View
+              backgroundColor="static-blue-700"
+              UNSAFE_style={{padding: '15px 20px', display: 'inline-block'}}>
               {button}
             </View>
           );
         }
         if (c.staticColor === 'black') {
           return (
-            <div style={{backgroundColor: 'rgb(206, 247, 243)', color: 'rgb(15, 121, 125)', padding: '15px 20px', display: 'inline-block'}}>
+            <div
+              style={{
+                backgroundColor: 'rgb(206, 247, 243)',
+                color: 'rgb(15, 121, 125)',
+                padding: '15px 20px',
+                display: 'inline-block'
+              }}>
               {button}
             </div>
           );
         }
         return button;
       })}
-    </Grid>)
+    </Grid>
   );
 }

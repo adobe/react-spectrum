@@ -22,15 +22,24 @@ import React, {JSX, useCallback, useMemo, useState} from 'react';
 import {SpectrumStepListProps, StepList} from '../../src/steplist/StepList';
 import {View} from '../../src/view/View';
 
-const options = [{
-  key: 'details', value: 'Details'
-}, {
-  key: 'select-offers', value: 'Select offers'
-}, {
-  key: 'fallback-offer', value: 'Fallback offer'
-}, {
-  key: 'summary', value: 'Summary'
-}];
+const options = [
+  {
+    key: 'details',
+    value: 'Details'
+  },
+  {
+    key: 'select-offers',
+    value: 'Select offers'
+  },
+  {
+    key: 'fallback-offer',
+    value: 'Fallback offer'
+  },
+  {
+    key: 'summary',
+    value: 'Summary'
+  }
+];
 
 export default {
   title: 'StepList',
@@ -79,7 +88,9 @@ export default {
 function DefaultStepList(props: SpectrumStepListProps<object>): JSX.Element {
   return (
     <StepList {...props}>
-      {options.map((o) => <Item key={o.key}>{o.value}</Item>)}
+      {options.map(o => (
+        <Item key={o.key}>{o.value}</Item>
+      ))}
     </StepList>
   );
 }
@@ -88,17 +99,17 @@ export type DefaultStory = StoryObj<typeof DefaultStepList>;
 export type StepListStory = StoryObj<typeof StepList>;
 
 export const Default: DefaultStory = {
-  render: (args) => <DefaultStepList {...args} />
+  render: args => <DefaultStepList {...args} />
 };
 
 export const DefaultCompleted: DefaultStory = {
-  render: (args) => <DefaultStepList {...args} defaultLastCompletedStep="summary" />,
+  render: args => <DefaultStepList {...args} defaultLastCompletedStep="summary" />,
   name: 'Default - Completed'
 };
 
 export const DisabledAllKeys: StepListStory = {
   args: {
-    children: options.map((o) => <Item key={o.key}>{o.value}</Item>),
+    children: options.map(o => <Item key={o.key}>{o.value}</Item>),
     defaultSelectedKey: options[1].key,
     defaultLastCompletedStep: options[1].key,
     disabledKeys: options.map(o => o.key)
@@ -108,7 +119,7 @@ export const DisabledAllKeys: StepListStory = {
 
 export const DisabledKey: StepListStory = {
   args: {
-    children: options.map((o) => <Item key={o.key}>{o.value}</Item>),
+    children: options.map(o => <Item key={o.key}>{o.value}</Item>),
     defaultSelectedKey: options[1].key,
     defaultLastCompletedStep: options[1].key,
     disabledKeys: new Set(['select-offers'])
@@ -119,7 +130,7 @@ export const DisabledKey: StepListStory = {
 export const Disabled: StepListStory = {
   args: {
     isDisabled: true,
-    children: options.map((o) => <Item key={o.key}>{o.value}</Item>),
+    children: options.map(o => <Item key={o.key}>{o.value}</Item>),
     defaultSelectedKey: options[1].key,
     defaultLastCompletedStep: options[1].key
   },
@@ -129,7 +140,7 @@ export const Disabled: StepListStory = {
 export const ReadOnly: StepListStory = {
   args: {
     isReadOnly: true,
-    children: options.map((o) => <Item key={o.key}>{o.value}</Item>),
+    children: options.map(o => <Item key={o.key}>{o.value}</Item>),
     defaultSelectedKey: options[1].key,
     defaultLastCompletedStep: options[1].key
   },
@@ -137,7 +148,7 @@ export const ReadOnly: StepListStory = {
 };
 
 export const WithButtonsDefault: StepListStory = {
-  render: (args) => <WithButtons {...args} />,
+  render: args => <WithButtons {...args} />,
   name: 'Control Selected Key'
 };
 
@@ -145,7 +156,7 @@ export const VerticalWithOddLengths: StepListStory = {
   args: {
     orientation: 'vertical',
     width: 75,
-    children: options.map((o) => <Item key={o.key}>{`${o.value} ${o.value} ${o.value}`}</Item>),
+    children: options.map(o => <Item key={o.key}>{`${o.value} ${o.value} ${o.value}`}</Item>),
     defaultSelectedKey: options[1].key,
     defaultLastCompletedStep: options[1].key
   },
@@ -155,7 +166,7 @@ export const VerticalWithOddLengths: StepListStory = {
 export const HorizontalWithOddLengths: StepListStory = {
   args: {
     width: 600,
-    children: options.map((o) => <Item key={o.key}>{`${o.value} ${o.value} ${o.value}`}</Item>),
+    children: options.map(o => <Item key={o.key}>{`${o.value} ${o.value} ${o.value}`}</Item>),
     defaultSelectedKey: options[1].key,
     defaultLastCompletedStep: options[1].key
   },
@@ -163,35 +174,40 @@ export const HorizontalWithOddLengths: StepListStory = {
 };
 
 export const WithButtonsDefaultCompletedStep: StepListStory = {
-  render: (args) => (
+  render: args => (
     <WithButtons
       defaultLastCompletedStep="select-offers"
       defaultSelectedKey="fallback-offer"
-      {...args} />
+      {...args}
+    />
   ),
   name: 'Control Selected Key with Default Completed Step'
 };
 
 function WithButtons(args) {
   const keys = useMemo(() => options.map(o => o.key), []);
-  let [stepNumber, setStepNumber] = useState(keys.indexOf(args.selectedKey || args.defaultSelectedKey) + 1);
+  let [stepNumber, setStepNumber] = useState(
+    keys.indexOf(args.selectedKey || args.defaultSelectedKey) + 1
+  );
 
   const selectedKey = useMemo(() => {
     return keys[stepNumber - 1];
   }, [keys, stepNumber]);
 
-  const handleSelectionChange = useCallback((key) => {
-    setStepNumber(keys.indexOf(key) + 1);
-    args.onSelectionChange(key);
-  }, [keys, args]);
+  const handleSelectionChange = useCallback(
+    key => {
+      setStepNumber(keys.indexOf(key) + 1);
+      args.onSelectionChange(key);
+    },
+    [keys, args]
+  );
 
   return (
     <View>
-      <StepList
-        {...args}
-        onSelectionChange={handleSelectionChange}
-        selectedKey={selectedKey}>
-        {options.map((o) => <Item key={o.key}>{o.value}</Item>)}
+      <StepList {...args} onSelectionChange={handleSelectionChange} selectedKey={selectedKey}>
+        {options.map(o => (
+          <Item key={o.key}>{o.value}</Item>
+        ))}
       </StepList>
       <Flex marginTop="size-300">
         <ButtonGroup>
@@ -214,7 +230,7 @@ function WithButtons(args) {
 }
 
 export const ControlledStory: StepListStory = {
-  render: (args) => <Controlled {...args} selectedKey="details" />,
+  render: args => <Controlled {...args} selectedKey="details" />,
   name: 'Controlled'
 };
 
@@ -224,18 +240,24 @@ function Controlled(args) {
 
   return (
     <View>
-      <StepList
-        {...args}
-        lastCompletedStep={lastCompletedStep}
-        selectedKey={selectedKey}>
-        {options.map((o) => <Item key={o.key}>{o.value}</Item>)}
+      <StepList {...args} lastCompletedStep={lastCompletedStep} selectedKey={selectedKey}>
+        {options.map(o => (
+          <Item key={o.key}>{o.value}</Item>
+        ))}
       </StepList>
       <Flex marginTop="size-300">
-        <Picker label="lastCompletedStep" onSelectionChange={setLastCompletedStep} selectedKey={lastCompletedStep}>
-          {options.map((o) => <Item key={o.key}>{o.value}</Item>)}
+        <Picker
+          label="lastCompletedStep"
+          onSelectionChange={setLastCompletedStep}
+          selectedKey={lastCompletedStep}>
+          {options.map(o => (
+            <Item key={o.key}>{o.value}</Item>
+          ))}
         </Picker>
         <Picker label="selectedKey" onSelectionChange={setSelectedKey} selectedKey={selectedKey}>
-          {options.map((o) => <Item key={o.key}>{o.value}</Item>)}
+          {options.map(o => (
+            <Item key={o.key}>{o.value}</Item>
+          ))}
         </Picker>
       </Flex>
     </View>

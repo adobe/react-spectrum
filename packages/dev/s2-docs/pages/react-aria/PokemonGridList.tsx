@@ -3,15 +3,15 @@ import {GridList, GridListItem} from 'vanilla-starter/GridList';
 import {DragAndDropHooks, Text} from 'react-aria-components';
 
 export interface Pokemon {
-  id: number,
-  name: string,
-  type: string,
-  level?: number
+  id: number;
+  name: string;
+  type: string;
+  level?: number;
 }
 
 interface PokemonGridListProps {
-  items?: Pokemon[],
-  dragAndDropHooks?: DragAndDropHooks<Pokemon>
+  items?: Pokemon[];
+  dragAndDropHooks?: DragAndDropHooks<Pokemon>;
 }
 
 ///- begin collapse -///
@@ -35,9 +35,11 @@ export function PokemonGridList(props: PokemonGridListProps) {
       dragAndDropHooks={dragAndDropHooks}
       data-size="small"
       style={{border: '1px solid var(--border-color'}}>
-      {(item) => (
+      {item => (
         <GridListItem textValue={item.name}>
-          <img src={`https://img.pokemondb.net/sprites/home/normal/2x/avif/${item.name.toLowerCase()}.avif`} />
+          <img
+            src={`https://img.pokemondb.net/sprites/home/normal/2x/avif/${item.name.toLowerCase()}.avif`}
+          />
           <Text>{item.name}</Text>
           <Text slot="description">{item.type}</Text>
         </GridListItem>

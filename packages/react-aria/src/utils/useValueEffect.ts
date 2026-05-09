@@ -59,10 +59,13 @@ export function useValueEffect<S>(defaultValue: S | (() => S)): [S, Dispatch<Set
     }
   });
 
-  let queue = useCallback(fn => {
-    effect.current = fn(currValue.current);
-    nextRef.current();
-  }, [nextRef]);
+  let queue = useCallback(
+    fn => {
+      effect.current = fn(currValue.current);
+      nextRef.current();
+    },
+    [nextRef]
+  );
 
   return [value, queue];
 }

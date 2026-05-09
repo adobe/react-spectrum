@@ -34,6 +34,7 @@ import {ComboBox, ComboBoxItem} from '@react-spectrum/s2/ComboBox';
 ```tsx render
 "use client";
 import {ComboBox, ComboBoxItem} from '@react-spectrum/s2/ComboBox';
+import Binoculars from '@react-spectrum/s2/icons/Binoculars';
 
 function Example() {
   let options = [
@@ -50,7 +51,7 @@ function Example() {
 
   return (
     /*- begin highlight -*/
-    <ComboBox label="Animals" defaultItems={options} placeholder="Select an animal">
+    <ComboBox label="Animals" defaultItems={options} placeholder="Select an animal" prefix={<Binoculars />}>
       {(item) => <ComboBoxItem>{item.name}</ComboBoxItem>}
     </ComboBox>
     /*- end highlight -*/
@@ -386,33 +387,6 @@ function ControlledComboBox() {
         Current input text: {fieldState.inputValue}
       </pre>
     </div>
-  );
-}
-```
-
-## Prefix
-
-Use the `prefix` prop to display an additional element before the input in the combo box.
-
-```tsx render
-"use client";
-import {ComboBox, ComboBoxItem} from '@react-spectrum/s2/ComboBox';
-import {Avatar} from '@react-spectrum/s2/Avatar';
-
-function Example() {
-  return (
-    <ComboBox
-      label="User Email"
-      /*- begin highlight -*/
-      prefix={<Avatar size={20} src="https://i.imgur.com/xIe7Wlb.png" />}
-      /*- end highlight -*/
-      placeholder="contact@example.com">
-      <ComboBoxItem>example@example.com</ComboBoxItem>
-      <ComboBoxItem>test@example.com</ComboBoxItem>
-      <ComboBoxItem>info@example.com</ComboBoxItem>
-      <ComboBoxItem>support@example.com</ComboBoxItem>
-      <ComboBoxItem>sales@example.com</ComboBoxItem>
-    </ComboBox>
   );
 }
 ```
