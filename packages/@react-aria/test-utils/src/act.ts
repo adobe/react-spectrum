@@ -25,8 +25,8 @@ export const act: typeof actImpl = ((fn: any) => {
   if (
     // @ts-ignore
     typeof IS_REACT_ACT_ENVIRONMENT === 'boolean'
-      // @ts-ignore
-      ? IS_REACT_ACT_ENVIRONMENT
+      ? // @ts-ignore
+        IS_REACT_ACT_ENVIRONMENT
       : typeof jest !== 'undefined'
   ) {
     return actImpl(fn);
