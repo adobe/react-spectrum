@@ -37,8 +37,4 @@ const meta = {
   version: '1.0.0'
 };
 
-
-export {
-  meta,
-  rules
-};
+export {meta, rules};

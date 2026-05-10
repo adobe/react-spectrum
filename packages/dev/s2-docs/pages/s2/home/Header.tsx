@@ -8,11 +8,11 @@ import {Divider, pressScale} from '@react-spectrum/s2';
 import SearchMenuTrigger, {preloadSearchMenu} from '@react-spectrum/s2-docs/src/SearchMenuTrigger';
 import {useLayoutEffect} from '@react-aria/utils';
 import {useSettings} from '@react-spectrum/s2-docs/src/SettingsContext';
-import { HeaderLink, Link } from '@react-spectrum/s2-docs/src/Link';
-import { focusRing, iconStyle, space, style } from '@react-spectrum/s2/style' with {type: 'macro'};
-import { getBaseUrl } from '@react-spectrum/s2-docs/src/pageUtils';
+import {HeaderLink, Link} from '@react-spectrum/s2-docs/src/Link';
+import {focusRing, iconStyle, space, style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {getBaseUrl} from '@react-spectrum/s2-docs/src/pageUtils';
 import GithubLogo from '@react-spectrum/s2-docs/src/icons/GithubLogo';
-import { NpmLogo } from '@react-spectrum/s2-docs/src/icons/NpmLogo';
+import {NpmLogo} from '@react-spectrum/s2-docs/src/icons/NpmLogo';
 
 const colorSchemeToggleStyles = style({
   ...focusRing(),
@@ -68,7 +68,8 @@ function ColorSchemeToggle() {
             opacity: isDark ? 0 : 1,
             transform: isDark ? 'rotate(-90deg) scale(0.5)' : 'rotate(0deg) scale(1)',
             transition: 'opacity 200ms ease-out, transform 200ms ease-out'
-          }} />
+          }}
+        />
         <Lighten
           styles={whiteIconStyle}
           UNSAFE_style={{
@@ -77,7 +78,8 @@ function ColorSchemeToggle() {
             opacity: isDark ? 1 : 0,
             transform: isDark ? 'rotate(0deg) scale(1)' : 'rotate(90deg) scale(0.5)',
             transition: 'opacity 200ms ease-out, transform 200ms ease-out'
-          }} />
+          }}
+        />
       </span>
     </Button>
   );
@@ -93,7 +95,7 @@ export default function HomeHeader() {
 
   let openSearchMenu = async () => {
     if (!document.startViewTransition) {
-      setSearchOpen((prev) => !prev);
+      setSearchOpen(prev => !prev);
       return;
     }
 
@@ -115,7 +117,7 @@ export default function HomeHeader() {
         labelRef.current!.style.viewTransitionName = '';
         searchRef.current!.style.viewTransitionName = '';
         renderCallback.current = resolve;
-        setSearchOpen((prev) => !prev);
+        setSearchOpen(prev => !prev);
       });
     });
 
@@ -185,7 +187,7 @@ export default function HomeHeader() {
             '@media (width >= 1440px)': space(38)
           }
         })}>
-        <span 
+        <span
           className={style({
             display: 'inline-flex',
             alignItems: 'center',
@@ -203,27 +205,71 @@ export default function HomeHeader() {
             viewBox="0 0 501.71 444.05">
             <path
               d="m297.58 444.05-36.45-101.4h-91.46l76.87-193.53 116.65 294.93h138.52L316.8 0H186.23L0 444.05h297.58z"
-              fill="#fff" />
+              fill="#fff"
+            />
           </svg>
-          <span ref={labelRef} className={style({font: 'heading-sm', fontWeight: 'extra-bold', color: 'white'})} style={{display: searchOpen ? 'none' : undefined} as CSSProperties}>React Spectrum</span>
+          <span
+            ref={labelRef}
+            className={style({font: 'heading-sm', fontWeight: 'extra-bold', color: 'white'})}
+            style={{display: searchOpen ? 'none' : undefined} as CSSProperties}>
+            React Spectrum
+          </span>
         </span>
       </Link>
-      <div className={style({position: 'absolute', insetStart: 0, width: 'full', display: {default: 'none', xl: 'flex'}, justifyContent: 'center'})}>
+      <div
+        className={style({
+          position: 'absolute',
+          insetStart: 0,
+          width: 'full',
+          display: {default: 'none', xl: 'flex'},
+          justifyContent: 'center'
+        })}>
         <div ref={searchRef}>
           <SearchMenuTrigger
             onOpen={openSearchMenu}
             onClose={closeSearchMenu}
             isSearchOpen={searchOpen}
             overlayId={searchMenuId}
-            staticColor="white" />
+            staticColor="white"
+          />
         </div>
       </div>
       <div className={style({display: 'flex', alignItems: 'center', gap: 4, justifySelf: 'end'})}>
-        <HeaderLink staticColor="white" href="getting-started" styles={style({display: {default: 'none', sm: 'flex'}})}>Docs</HeaderLink>
-        <HeaderLink staticColor="white" href="releases/" styles={style({display: {default: 'none', sm: 'flex'}})}>Releases</HeaderLink>
-        <HeaderLink staticColor="white" href={getBaseUrl('react-aria') + '/blog/'} rel="noopener noreferrer" styles={style({display: {default: 'none', sm: 'flex'}})}>Blog</HeaderLink>
-        <HeaderLink staticColor="white" aria-label="GitHub" href="https://github.com/adobe/react-spectrum" target="_blank" rel="noopener noreferrer"><GithubLogo /></HeaderLink>
-        <HeaderLink staticColor="white" aria-label="npm" href="https://npmjs.com/@react-spectrum/s2" target="_blank" rel="noopener noreferrer"><NpmLogo /></HeaderLink>
+        <HeaderLink
+          staticColor="white"
+          href="getting-started"
+          styles={style({display: {default: 'none', sm: 'flex'}})}>
+          Docs
+        </HeaderLink>
+        <HeaderLink
+          staticColor="white"
+          href="releases/"
+          styles={style({display: {default: 'none', sm: 'flex'}})}>
+          Releases
+        </HeaderLink>
+        <HeaderLink
+          staticColor="white"
+          href={getBaseUrl('react-aria') + '/blog/'}
+          rel="noopener noreferrer"
+          styles={style({display: {default: 'none', sm: 'flex'}})}>
+          Blog
+        </HeaderLink>
+        <HeaderLink
+          staticColor="white"
+          aria-label="GitHub"
+          href="https://github.com/adobe/react-spectrum"
+          target="_blank"
+          rel="noopener noreferrer">
+          <GithubLogo />
+        </HeaderLink>
+        <HeaderLink
+          staticColor="white"
+          aria-label="npm"
+          href="https://npmjs.com/@react-spectrum/s2"
+          target="_blank"
+          rel="noopener noreferrer">
+          <NpmLogo />
+        </HeaderLink>
         <Divider orientation="vertical" staticColor="white" UNSAFE_style={{marginBlock: 4}} />
         <ColorSchemeToggle />
       </div>

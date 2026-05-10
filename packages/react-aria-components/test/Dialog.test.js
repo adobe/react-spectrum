@@ -188,7 +188,9 @@ describe('Dialog', () => {
         <Button aria-label="Help">?⃝</Button>
         <Popover data-test="popover">
           <OverlayArrow data-test="arrow">
-            <svg width={12} height={12}><path d="M0 0,L6 6,L12 0" /></svg>
+            <svg width={12} height={12}>
+              <path d="M0 0,L6 6,L12 0" />
+            </svg>
           </OverlayArrow>
           <Dialog data-test="dialog">
             <Heading slot="title">Help</Heading>
@@ -294,14 +296,16 @@ describe('Dialog', () => {
 
   it('isOpen and defaultOpen should override state from context', async () => {
     let onOpenChange = jest.fn();
-    let {getByRole} = render(<>
-      <DialogTrigger>
-        <Button />
-        <Modal isDismissable isOpen onOpenChange={onOpenChange}>
-          <Dialog aria-label="Modal">A modal</Dialog>
-        </Modal>
-      </DialogTrigger>
-    </>);
+    let {getByRole} = render(
+      <>
+        <DialogTrigger>
+          <Button />
+          <Modal isDismissable isOpen onOpenChange={onOpenChange}>
+            <Dialog aria-label="Modal">A modal</Dialog>
+          </Modal>
+        </DialogTrigger>
+      </>
+    );
 
     let dialog = getByRole('dialog');
     expect(dialog).toHaveTextContent('A modal');
@@ -379,7 +383,9 @@ describe('Dialog', () => {
       let button = getByRole('button');
       await user.click(button);
 
-      expect(getByRole('alertdialog').closest('[data-testid="custom-container"]')).toBe(getByTestId('custom-container'));
+      expect(getByRole('alertdialog').closest('[data-testid="custom-container"]')).toBe(
+        getByTestId('custom-container')
+      );
       await user.click(document.body);
     });
   });
@@ -418,7 +424,9 @@ describe('Dialog', () => {
       let button = getByRole('button');
       await user.click(button);
 
-      expect(getByRole('alertdialog').closest('[data-testid="custom-container"]')).toBe(getByTestId('custom-container'));
+      expect(getByRole('alertdialog').closest('[data-testid="custom-container"]')).toBe(
+        getByTestId('custom-container')
+      );
       await user.click(document.body);
     });
   });

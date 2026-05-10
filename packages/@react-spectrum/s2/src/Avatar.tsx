@@ -15,54 +15,65 @@ import {ContextValue, SlotProps} from 'react-aria-components/slots';
 import {createContext, forwardRef} from 'react';
 import {DOMProps, DOMRef, DOMRefValue} from '@react-types/shared';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
-import {getAllowedOverrides, StylesPropWithoutWidth, UnsafeStyles} from './style-utils' with {type: 'macro'};
+import {
+  getAllowedOverrides,
+  StylesPropWithoutWidth,
+  UnsafeStyles
+} from './style-utils' with {type: 'macro'};
 import {Image} from './Image';
 import {isDocsEnv} from './macros' with {type: 'macro'};
-import {style} from '../style' with { type: 'macro' };
+import {style} from '../style' with {type: 'macro'};
 import {useDOMRef} from './useDOMRef';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface AvatarProps extends UnsafeStyles, DOMProps, SlotProps {
   /** Text description of the avatar. */
-  alt?: string,
+  alt?: string;
   /** The image URL for the avatar. */
-  src?: string,
+  src?: string;
   /** Spectrum-defined styles, returned by the `style()` macro. */
-  styles?: StylesPropWithoutWidth,
+  styles?: StylesPropWithoutWidth;
   /**
    * The size of the avatar.
    * @default 24
    */
-  size?: 16 | 20 | 24 | 28 | 32 | 36 | 40 | 44 | 48 | 56 | 64 | 80 | 96 | 112 | (number & {}),
+  size?: 16 | 20 | 24 | 28 | 32 | 36 | 40 | 44 | 48 | 56 | 64 | 80 | 96 | 112 | (number & {});
   /** Whether the avatar is over a color background. */
-  isOverBackground?: boolean
+  isOverBackground?: boolean;
 }
 
-const imageStyles = style({
-  display: 'flex',
-  alignItems: 'center',
-  borderRadius: 'full',
-  size: 20,
-  flexShrink: 0,
-  flexGrow: 0,
-  disableTapHighlight: true,
-  outlineStyle: {
-    default: 'none',
-    isOverBackground: 'solid'
+const imageStyles = style(
+  {
+    display: 'flex',
+    alignItems: 'center',
+    borderRadius: 'full',
+    size: 20,
+    flexShrink: 0,
+    flexGrow: 0,
+    disableTapHighlight: true,
+    outlineStyle: {
+      default: 'none',
+      isOverBackground: 'solid'
+    },
+    outlineColor: '--s2-container-bg',
+    outlineWidth: {
+      default: 1,
+      isLarge: 2
+    }
   },
-  outlineColor: '--s2-container-bg',
-  outlineWidth: {
-    default: 1,
-    isLarge: 2
-  }
-}, getAllowedOverrides({width: false}));
+  getAllowedOverrides({width: false})
+);
 
-export const AvatarContext = createContext<ContextValue<Partial<AvatarProps>, DOMRefValue<HTMLImageElement>>>(null);
+export const AvatarContext =
+  createContext<ContextValue<Partial<AvatarProps>, DOMRefValue<HTMLImageElement>>>(null);
 
 /**
  * An avatar is a thumbnail representation of an entity, such as a user or an organization.
  */
-export const Avatar = forwardRef(function Avatar(props: AvatarProps, ref: DOMRef<HTMLImageElement>) {
+export const Avatar = forwardRef(function Avatar(
+  props: AvatarProps,
+  ref: DOMRef<HTMLImageElement>
+) {
   [props, ref] = useSpectrumContextProps(props, ref, AvatarContext);
   let domRef = useDOMRef(ref);
   let {
@@ -91,8 +102,9 @@ export const Avatar = forwardRef(function Avatar(props: AvatarProps, ref: DOMRef
         width: remSize,
         height: remSize
       }}
-      UNSAFE_className={UNSAFE_className + ' ' +  centerBaselineBefore}
+      UNSAFE_className={UNSAFE_className + ' ' + centerBaselineBefore}
       styles={imageStyles({isOverBackground, isLarge}, props.styles)}
-      src={src} />
+      src={src}
+    />
   );
 });

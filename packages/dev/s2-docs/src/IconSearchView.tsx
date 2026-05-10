@@ -1,38 +1,62 @@
 /* eslint-disable rulesdir/imports */
 'use client';
 
-import {Autocomplete, GridLayout, ListBox, ListBoxItem, Size, useFilter, Virtualizer} from 'react-aria-components';
+import {
+  Autocomplete,
+  GridLayout,
+  ListBox,
+  ListBoxItem,
+  Size,
+  useFilter,
+  Virtualizer
+} from 'react-aria-components';
 import CheckmarkCircle from '@react-spectrum/s2/icons/CheckmarkCircle';
 import Close from '@react-spectrum/s2/icons/Close';
-import {Content, Heading, IllustratedMessage, Link, pressScale, SearchField, Skeleton, Text, ToastQueue} from '@react-spectrum/s2';
+import {
+  Content,
+  Heading,
+  IllustratedMessage,
+  Link,
+  pressScale,
+  SearchField,
+  Skeleton,
+  Text,
+  ToastQueue
+} from '@react-spectrum/s2';
 import {focusRing, iconStyle, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {iconAliases} from './iconAliases.js';
 // @ts-ignore
 import icons from '/packages/@react-spectrum/s2/s2wf-icons/*.svg';
 import {InfoMessage} from './colorSearchData';
- 
+
 import NoSearchResults from '@react-spectrum/s2/illustrations/linear/NoSearchResults';
 import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 
-export const iconList = Object.keys(icons).map(name => ({id: name.replace(/^S2_Icon_(.*?)(Size\d+)?_2.*/, '$1'), icon: icons[name].default}));
+export const iconList = Object.keys(icons).map(name => ({
+  id: name.replace(/^S2_Icon_(.*?)(Size\d+)?_2.*/, '$1'),
+  icon: icons[name].default
+}));
 
 export function useIconFilter() {
   let {contains} = useFilter({sensitivity: 'base'});
-  return useCallback((textValue: string, inputValue: string) => {
-    const trimmedInput = inputValue.trim();
-    // If input is empty after trimming, show all items
-    if (!trimmedInput) {
-      return true;
-    }
-    // Check for alias matches
-    for (const alias of Object.keys(iconAliases)) {
-      if (contains(alias, trimmedInput) && iconAliases[alias].includes(textValue)) {
+  return useCallback(
+    (textValue: string, inputValue: string) => {
+      const trimmedInput = inputValue.trim();
+      // If input is empty after trimming, show all items
+      if (!trimmedInput) {
         return true;
       }
-    }
-    // Also compare for substrings in the icon's actual name
-    return textValue != null && contains(textValue, trimmedInput);
-  }, [contains]);
+      // Check for alias matches
+      for (const alias of Object.keys(iconAliases)) {
+        if (contains(alias, trimmedInput) && iconAliases[alias].includes(textValue)) {
+          return true;
+        }
+      }
+      // Also compare for substrings in the icon's actual name
+      return textValue != null && contains(textValue, trimmedInput);
+    },
+    [contains]
+  );
 }
 
 export function useCopyImport() {
@@ -53,29 +77,39 @@ export function useCopyImport() {
     }
     // Use underscore prefix for names starting with a number (invalid JS identifier)
     let importName = id.replace(/^(\d)/, '_$1');
-    navigator.clipboard.writeText(`import ${importName} from '@react-spectrum/s2/icons/${id}';`).then(() => {
-      setCopiedId(id);
-      timeout.current = setTimeout(() => setCopiedId(null), 2000);
-    }).catch(() => {
-      ToastQueue.negative('Failed to copy import statement.');
-    });
+    navigator.clipboard
+      .writeText(`import ${importName} from '@react-spectrum/s2/icons/${id}';`)
+      .then(() => {
+        setCopiedId(id);
+        timeout.current = setTimeout(() => setCopiedId(null), 2000);
+      })
+      .catch(() => {
+        ToastQueue.negative('Failed to copy import statement.');
+      });
   }, []);
 
   return {copiedId, handleCopyImport};
 }
 
 interface IconListBoxProps {
-  items: typeof iconList,
-  copiedId: string | null,
-  onAction: (item: string) => void,
-  listBoxClassName?: string
+  items: typeof iconList;
+  copiedId: string | null;
+  onAction: (item: string) => void;
+  listBoxClassName?: string;
 }
 
 function IconListBox({items, copiedId, onAction, listBoxClassName}: IconListBoxProps) {
   return (
-    <Virtualizer layout={GridLayout} layoutOptions={{minItemSize: new Size(64, 64), maxItemSize: new Size(64, 64), minSpace: new Size(12, 12), preserveAspectRatio: true}}>
+    <Virtualizer
+      layout={GridLayout}
+      layoutOptions={{
+        minItemSize: new Size(64, 64),
+        maxItemSize: new Size(64, 64),
+        minSpace: new Size(12, 12),
+        preserveAspectRatio: true
+      }}>
       <ListBox
-        onAction={(item) => onAction(item.toString())}
+        onAction={item => onAction(item.toString())}
         items={items}
         layout="grid"
         className={listBoxClassName || style({width: '100%', scrollPaddingY: 4, padding: 8})}
@@ -122,8 +156,8 @@ const itemStyle = style({
 });
 
 interface IconSearchViewProps {
-  filteredItems: typeof iconList,
-  listBoxClassName?: string
+  filteredItems: typeof iconList;
+  listBoxClassName?: string;
 }
 
 export function IconSearchView({filteredItems, listBoxClassName}: IconSearchViewProps) {
@@ -131,18 +165,36 @@ export function IconSearchView({filteredItems, listBoxClassName}: IconSearchView
 
   return (
     <>
-      <InfoMessage>Press an item to copy its import statement. See <Link href="icons">Icons</Link> for more information.</InfoMessage>
-      <IconListBox items={filteredItems} copiedId={copiedId} onAction={handleCopyImport} listBoxClassName={listBoxClassName} />
+      <InfoMessage>
+        Press an item to copy its import statement. See <Link href="icons">Icons</Link> for more
+        information.
+      </InfoMessage>
+      <IconListBox
+        items={filteredItems}
+        copiedId={copiedId}
+        onAction={handleCopyImport}
+        listBoxClassName={listBoxClassName}
+      />
     </>
   );
 }
 
-function IconItem({item, isCopied = false}: {item: typeof iconList[number], isCopied?: boolean}) {
+function IconItem({item, isCopied = false}: {item: (typeof iconList)[number]; isCopied?: boolean}) {
   let Icon = item.icon;
   let ref = useRef(null);
   return (
-    <ListBoxItem id={item.id} value={item} textValue={item.id} className={itemStyle} ref={ref} style={pressScale(ref)}>
-      {isCopied ? <CheckmarkCircle styles={iconStyle({size: 'XL'})} /> : <Icon styles={iconStyle({size: 'XL'})} />}
+    <ListBoxItem
+      id={item.id}
+      value={item}
+      textValue={item.id}
+      className={itemStyle}
+      ref={ref}
+      style={pressScale(ref)}>
+      {isCopied ? (
+        <CheckmarkCircle styles={iconStyle({size: 'XL'})} />
+      ) : (
+        <Icon styles={iconStyle({size: 'XL'})} />
+      )}
       <div
         className={style({
           maxWidth: '100%',
@@ -188,12 +240,7 @@ export function SkeletonIconItem({item}: {item: {id: string}}) {
   });
 
   return (
-    <ListBoxItem
-      id={item.id}
-      value={item}
-      textValue="skeleton"
-      className={itemStyle}
-      ref={ref}>
+    <ListBoxItem id={item.id} value={item} textValue="skeleton" className={itemStyle} ref={ref}>
       <PlaceholderIcon styles={iconStyle({size: 'XL'})} />
       <div
         className={style({
@@ -213,12 +260,19 @@ export function IconSearchSkeleton() {
 
   return (
     <Skeleton isLoading>
-      <Virtualizer layout={GridLayout} layoutOptions={{minItemSize: new Size(64, 64), maxItemSize: new Size(64, 64), minSpace: new Size(12, 12), preserveAspectRatio: true}}>
+      <Virtualizer
+        layout={GridLayout}
+        layoutOptions={{
+          minItemSize: new Size(64, 64),
+          maxItemSize: new Size(64, 64),
+          minSpace: new Size(12, 12),
+          preserveAspectRatio: true
+        }}>
         <ListBox
           items={mockItems}
           layout="grid"
           className={style({flexGrow: 1, overflow: 'auto', width: '100%', scrollPaddingY: 4})}>
-          {(item) => <SkeletonIconItem item={item} />}
+          {item => <SkeletonIconItem item={item} />}
         </ListBox>
       </Virtualizer>
     </Skeleton>
@@ -234,12 +288,22 @@ export function IconsPageSearch() {
       <Autocomplete filter={filter}>
         <div className={style({display: 'flex', flexDirection: 'column', gap: 8})}>
           <SearchField size="L" aria-label="Search icons" placeholder="Search icons" />
-          <InfoMessage>Press an item to copy its import statement. See <Link href="icons">Icons</Link> for more information.</InfoMessage>
+          <InfoMessage>
+            Press an item to copy its import statement. See <Link href="icons">Icons</Link> for more
+            information.
+          </InfoMessage>
           <IconListBox
             items={iconList}
             copiedId={copiedId}
             onAction={handleCopyImport}
-            listBoxClassName={style({height: 440, width: '100%', maxHeight: '100%', overflow: 'auto', scrollPaddingY: 4})} />
+            listBoxClassName={style({
+              height: 440,
+              width: '100%',
+              maxHeight: '100%',
+              overflow: 'auto',
+              scrollPaddingY: 4
+            })}
+          />
         </div>
       </Autocomplete>
     </>

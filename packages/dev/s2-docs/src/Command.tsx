@@ -38,16 +38,18 @@ const preStyle = style({
 
 export interface CommandProps {
   /** The command to display. */
-  command: string,
+  command: string;
   /** Optional label preceding the code block. */
-  label?: string
+  label?: string;
 }
 
 export function Command({command, label}: CommandProps) {
   return (
     <div className={container} data-example-switcher>
       <div className={codeWrap}>
-        {label && <div className={style({font: 'body-sm', marginBottom: 8, color: 'body'})}>{label}</div>}
+        {label && (
+          <div className={style({font: 'body-sm', marginBottom: 8, color: 'body'})}>{label}</div>
+        )}
         <div className={codeContainer}>
           <Prompt styles={iconStyle({size: 'L'})} />
           <pre className={preStyle}>{command}</pre>

@@ -17,11 +17,11 @@ import {useLocale} from '../i18n/I18nProvider';
 import {useVirtualizerItem, VirtualizerItemOptions} from './useVirtualizerItem';
 
 interface VirtualizerItemProps extends Omit<VirtualizerItemOptions, 'ref'> {
-  layoutInfo: LayoutInfo,
-  parent?: LayoutInfo | null,
-  style?: CSSProperties,
-  className?: string,
-  children: ReactNode
+  layoutInfo: LayoutInfo;
+  parent?: LayoutInfo | null;
+  style?: CSSProperties;
+  className?: string;
+  children: ReactNode;
 }
 
 export function VirtualizerItem(props: VirtualizerItemProps): JSX.Element {
@@ -35,14 +35,22 @@ export function VirtualizerItem(props: VirtualizerItemProps): JSX.Element {
   });
 
   return (
-    <div role="presentation" ref={ref} className={className} style={{...layoutInfoToStyle(layoutInfo, direction, parent), ...style}}>
+    <div
+      role="presentation"
+      ref={ref}
+      className={className}
+      style={{...layoutInfoToStyle(layoutInfo, direction, parent), ...style}}>
       {children}
     </div>
   );
 }
 
 let cache = new WeakMap();
-export function layoutInfoToStyle(layoutInfo: LayoutInfo, dir: Direction, parent?: LayoutInfo | null): CSSProperties {
+export function layoutInfoToStyle(
+  layoutInfo: LayoutInfo,
+  dir: Direction,
+  parent?: LayoutInfo | null
+): CSSProperties {
   let xProperty = dir === 'rtl' ? 'right' : 'left';
   let cached = cache.get(layoutInfo);
   if (cached && cached[xProperty] != null) {
@@ -63,8 +71,12 @@ export function layoutInfoToStyle(layoutInfo: LayoutInfo, dir: Direction, parent
     // which WON'T be the parent since the parent has overflow visible. This means we shouldn't offset the height by the parent's position
     // Not 100% about this change here since it is quite ambigious what the scrolling container maybe and how its top is positioned with respect to the
     // calculated layoutInfo.y here
-    top: layoutInfo.rect.y - (parent && !(parent.allowOverflow && layoutInfo.isSticky) ? parent.rect.y : 0),
-    [xProperty]: layoutInfo.rect.x - (parent && !(parent.allowOverflow && layoutInfo.isSticky) ? parent.rect.x : 0),
+    top:
+      layoutInfo.rect.y -
+      (parent && !(parent.allowOverflow && layoutInfo.isSticky) ? parent.rect.y : 0),
+    [xProperty]:
+      layoutInfo.rect.x -
+      (parent && !(parent.allowOverflow && layoutInfo.isSticky) ? parent.rect.x : 0),
     width: layoutInfo.rect.width,
     height: layoutInfo.rect.height
   };

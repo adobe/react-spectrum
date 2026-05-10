@@ -38,7 +38,9 @@ export const _NotFound: IllustratedMessageStory = {
       <>
         <NotFound />
         <Heading>Error 404: Page not found</Heading>
-        <Content>This page isn’t available. Try checking the URL or visit a different page.</Content>
+        <Content>
+          This page isn’t available. Try checking the URL or visit a different page.
+        </Content>
       </>
     )
   },
@@ -62,7 +64,9 @@ export const _Unauthorized: IllustratedMessageStory = {
   args: {
     children: (
       <>
-        <Content>You don’t have access to this page. Try checking the URL or visit a different page.</Content>
+        <Content>
+          You don’t have access to this page. Try checking the URL or visit a different page.
+        </Content>
         <Unauthorized />
         <Heading>Error 401: Unauthorized</Heading>
       </>
@@ -124,7 +128,7 @@ export const _Upload: IllustratedMessageStory = {
 
 export const NoHeadingOrDescription: IllustratedMessageStory = {
   args: {
-    children: (<NotFound aria-label="No Results" />)
+    children: <NotFound aria-label="No Results" />
   },
   name: 'No heading or description'
 };

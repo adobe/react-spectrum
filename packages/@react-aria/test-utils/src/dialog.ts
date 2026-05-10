@@ -17,7 +17,7 @@ interface DialogOpenOpts {
   /**
    * What interaction type to use when opening the dialog. Defaults to the interaction type set on the tester.
    */
-  interactionType?: UserOpts['interactionType']
+  interactionType?: UserOpts['interactionType'];
 }
 
 export class DialogTester {
@@ -53,9 +53,7 @@ export class DialogTester {
    * Opens the dialog. Defaults to using the interaction type set on the dialog tester.
    */
   async open(opts: DialogOpenOpts = {}): Promise<void> {
-    let {
-      interactionType = this._interactionType
-    } = opts;
+    let {interactionType = this._interactionType} = opts;
     let trigger = this.trigger;
     if (!trigger.hasAttribute('disabled')) {
       if (interactionType === 'mouse') {
@@ -90,16 +88,24 @@ export class DialogTester {
         await waitFor(() => {
           dialog = document.querySelector('[role=dialog], [role=alertdialog]');
           if (dialog == null) {
-            throw new Error('No dialog of type role="dialog" or role="alertdialog" found after pressing the trigger.');
+            throw new Error(
+              'No dialog of type role="dialog" or role="alertdialog" found after pressing the trigger.'
+            );
           } else {
             return true;
           }
         });
 
-        if (dialog && document.activeElement !== this._trigger && dialog.contains(document.activeElement)) {
+        if (
+          dialog &&
+          document.activeElement !== this._trigger &&
+          dialog.contains(document.activeElement)
+        ) {
           this._dialog = dialog;
         } else {
-          throw new Error('New modal dialog doesnt contain the active element OR the active element is still the trigger. Uncertain if the proper modal dialog was found');
+          throw new Error(
+            'New modal dialog doesnt contain the active element OR the active element is still the trigger. Uncertain if the proper modal dialog was found'
+          );
         }
       }
     }

@@ -46,13 +46,17 @@ describe('StandardDialog', () => {
             <>
               <Heading slot="title">Dialog title</Heading>
               <Header>Header</Header>
-              <Content>
-                This is the content of the dialog.
-              </Content>
-              <Footer><Checkbox>Don't show this again</Checkbox></Footer>
+              <Content>This is the content of the dialog.</Content>
+              <Footer>
+                <Checkbox>Don't show this again</Checkbox>
+              </Footer>
               <ButtonGroup>
-                <Button onPress={close} variant="secondary">Cancel</Button>
-                <Button onPress={close} variant="accent">Save</Button>
+                <Button onPress={close} variant="secondary">
+                  Cancel
+                </Button>
+                <Button onPress={close} variant="accent">
+                  Save
+                </Button>
               </ButtonGroup>
             </>
           )}
@@ -62,8 +66,10 @@ describe('StandardDialog', () => {
 
     let trigger = getByRole('button');
     await user.click(trigger);
-    act(() => {jest.runAllTimers();});
-    let dialog = getByRole('dialog');  
+    act(() => {
+      jest.runAllTimers();
+    });
+    let dialog = getByRole('dialog');
     expect(dialog).toBeVisible();
     let description = dialog.getAttribute('aria-describedby');
     expect(description).toBeNull();
@@ -82,10 +88,16 @@ describe('StandardDialog', () => {
                 <p id="content-id">This is the content of the dialog.</p>
                 <p>Extra content</p>
               </Content>
-              <Footer><Checkbox>Don't show this again</Checkbox></Footer>
+              <Footer>
+                <Checkbox>Don't show this again</Checkbox>
+              </Footer>
               <ButtonGroup>
-                <Button onPress={close} variant="secondary">Cancel</Button>
-                <Button onPress={close} variant="accent">Save</Button>
+                <Button onPress={close} variant="secondary">
+                  Cancel
+                </Button>
+                <Button onPress={close} variant="accent">
+                  Save
+                </Button>
               </ButtonGroup>
             </>
           )}
@@ -95,8 +107,10 @@ describe('StandardDialog', () => {
 
     let trigger = getByRole('button');
     await user.click(trigger);
-    act(() => {jest.runAllTimers();});
-    let dialog = getByRole('dialog');  
+    act(() => {
+      jest.runAllTimers();
+    });
+    let dialog = getByRole('dialog');
     expect(dialog).toBeVisible();
     let description = dialog.getAttribute('aria-describedby');
     expect(description).toBeDefined();

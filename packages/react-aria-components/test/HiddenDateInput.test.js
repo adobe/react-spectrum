@@ -18,7 +18,7 @@ import {useDateFieldState} from 'react-stately/useDateFieldState';
 import {useLocale} from 'react-aria/I18nProvider';
 import userEvent from '@testing-library/user-event';
 
-const HiddenDateInputExample = (props) => {
+const HiddenDateInputExample = props => {
   let {locale} = useLocale();
   const state = useDateFieldState({
     ...props,
@@ -31,7 +31,8 @@ const HiddenDateInputExample = (props) => {
       autoComplete={props.autoComplete}
       name={props.name}
       isDisabled={props.isDisabled}
-      state={props.state || state} />
+      state={props.state || state}
+    />
   );
 };
 
@@ -43,10 +44,7 @@ describe('<HiddenDateInput />', () => {
 
   it('should trigger onChange when input onchange is triggered (autofill)', async () => {
     const onChange = jest.fn();
-    render(
-      <HiddenDateInputExample
-        onChange={onChange} />
-    );
+    render(<HiddenDateInputExample onChange={onChange} />);
 
     let input = document.querySelector('input[type=date]');
     await user.type(input, '2000-05-30');
@@ -55,18 +53,19 @@ describe('<HiddenDateInput />', () => {
   });
 
   it('should always add a data attribute data-a11y-ignore="aria-hidden-focus"', () => {
-    let {getByTestId} = render(
-      <HiddenDateInputExample autoComplete="bday" name="bday" />
-    );
+    let {getByTestId} = render(<HiddenDateInputExample autoComplete="bday" name="bday" />);
 
-    expect(getByTestId('hidden-dateinput-container')).toHaveAttribute('data-a11y-ignore', 'aria-hidden-focus');
+    expect(getByTestId('hidden-dateinput-container')).toHaveAttribute(
+      'data-a11y-ignore',
+      'aria-hidden-focus'
+    );
   });
 
   it('should always add a data attribute data-react-aria-prevent-focus', () => {
-    let {getByTestId} = render(
-      <HiddenDateInputExample autoComplete="bday" name="bday" />
-    );
+    let {getByTestId} = render(<HiddenDateInputExample autoComplete="bday" name="bday" />);
 
-    expect(getByTestId('hidden-dateinput-container')).toHaveAttribute('data-react-aria-prevent-focus');
+    expect(getByTestId('hidden-dateinput-container')).toHaveAttribute(
+      'data-react-aria-prevent-focus'
+    );
   });
 });

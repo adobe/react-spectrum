@@ -53,7 +53,7 @@ module.exports = {
             node.test.type === 'BinaryExpression' &&
             (node.test.operator === '==' || node.test.operator === '===') &&
             (isMemberExpressionEqual(node.test.left, member) ||
-            isMemberExpressionEqual(node.test.right, member))
+              isMemberExpressionEqual(node.test.right, member))
           ) {
             conditional = node.test;
           }
@@ -80,8 +80,7 @@ module.exports = {
 
           return (
             init.type === 'CallExpression' &&
-            ((init.callee.type === 'Identifier' &&
-              init.callee.name === 'useRef') ||
+            ((init.callee.type === 'Identifier' && init.callee.name === 'useRef') ||
               (init.callee.type === 'MemberExpression' &&
                 init.callee.object.type === 'Identifier' &&
                 init.callee.object.name === 'React' &&
@@ -99,7 +98,10 @@ module.exports = {
               type: 'Identifier',
               name: 'undefined'
             };
-            if (isLiteralEqual(conditional.operator, init, conditional.right) || isLiteralEqual(conditional.operator, init, conditional.left)) {
+            if (
+              isLiteralEqual(conditional.operator, init, conditional.right) ||
+              isLiteralEqual(conditional.operator, init, conditional.left)
+            ) {
               return;
             }
           }
@@ -108,8 +110,7 @@ module.exports = {
           context.report({
             node: member,
             message:
-              member.parent.type === 'AssignmentExpression' &&
-              member.parent.left === member
+              member.parent.type === 'AssignmentExpression' && member.parent.left === member
                 ? 'Writing to refs during rendering is not allowed. Move this into a useEffect or useLayoutEffect. See https://beta.reactjs.org/apis/useref'
                 : 'Reading from refs during rendering is not allowed. See https://beta.reactjs.org/apis/useref'
           });

@@ -40,7 +40,9 @@ describe('NumberParser', function () {
 
     it('should support signDisplay', function () {
       expect(new NumberParser('en-US', {style: 'decimal'}).parse('+10')).toBe(10);
-      expect(new NumberParser('en-US', {style: 'decimal', signDisplay: 'always'}).parse('+10')).toBe(10);
+      expect(
+        new NumberParser('en-US', {style: 'decimal', signDisplay: 'always'}).parse('+10')
+      ).toBe(10);
     });
 
     it('should support negative numbers with different minus signs', function () {
@@ -63,73 +65,169 @@ describe('NumberParser', function () {
 
     describe('currency', function () {
       it('should parse without the currency symbol', function () {
-        expect(new NumberParser('en-US', {currency: 'USD', style: 'currency'}).parse('10.50')).toBe(10.5);
+        expect(new NumberParser('en-US', {currency: 'USD', style: 'currency'}).parse('10.50')).toBe(
+          10.5
+        );
       });
 
       it('should ignore currency symbols', function () {
-        expect(new NumberParser('en-US', {currency: 'USD', style: 'currency'}).parse('$10.50')).toBe(10.5);
+        expect(
+          new NumberParser('en-US', {currency: 'USD', style: 'currency'}).parse('$10.50')
+        ).toBe(10.5);
       });
 
       it('should ignore currency codes', function () {
-        expect(new NumberParser('en-US', {currency: 'USD', style: 'currency', currencyDisplay: 'code'}).parse('USD 10.50')).toBe(10.5);
+        expect(
+          new NumberParser('en-US', {
+            currency: 'USD',
+            style: 'currency',
+            currencyDisplay: 'code'
+          }).parse('USD 10.50')
+        ).toBe(10.5);
       });
 
       it('should ignore currency names', function () {
-        expect(new NumberParser('en-US', {currency: 'USD', style: 'currency', currencyDisplay: 'name'}).parse('10.50 US dollars')).toBe(10.5);
+        expect(
+          new NumberParser('en-US', {
+            currency: 'USD',
+            style: 'currency',
+            currencyDisplay: 'name'
+          }).parse('10.50 US dollars')
+        ).toBe(10.5);
       });
 
       it('should handle when the currency symbol contains valid number characters', function () {
-        expect(new NumberParser('ar-AE', {currency: 'SAR', style: 'currency'}).parse('ر.س.‏ 10.50')).toBe(10.5);
+        expect(
+          new NumberParser('ar-AE', {currency: 'SAR', style: 'currency'}).parse('ر.س.‏ 10.50')
+        ).toBe(10.5);
       });
 
       it('should support accounting format', function () {
-        expect(new NumberParser('en-US', {currency: 'USD', style: 'currency', currencySign: 'accounting'}).parse('(1.50)')).toBe(-1.5);
-        expect(new NumberParser('en-US', {currency: 'USD', style: 'currency', currencySign: 'accounting'}).parse('($1.50)')).toBe(-1.5);
-        expect(new NumberParser('en-US', {currency: 'USD', style: 'currency', currencyDisplay: 'code', currencySign: 'accounting'}).parse('(USD 1.50)')).toBe(-1.5);
+        expect(
+          new NumberParser('en-US', {
+            currency: 'USD',
+            style: 'currency',
+            currencySign: 'accounting'
+          }).parse('(1.50)')
+        ).toBe(-1.5);
+        expect(
+          new NumberParser('en-US', {
+            currency: 'USD',
+            style: 'currency',
+            currencySign: 'accounting'
+          }).parse('($1.50)')
+        ).toBe(-1.5);
+        expect(
+          new NumberParser('en-US', {
+            currency: 'USD',
+            style: 'currency',
+            currencyDisplay: 'code',
+            currencySign: 'accounting'
+          }).parse('(USD 1.50)')
+        ).toBe(-1.5);
       });
 
       it('should support normal negative numbers in accounting format', function () {
-        expect(new NumberParser('en-US', {currency: 'USD', style: 'currency', currencySign: 'accounting'}).parse('-1.5')).toBe(-1.5);
-        expect(new NumberParser('en-US', {currency: 'USD', style: 'currency', currencySign: 'accounting'}).parse('-$1.50')).toBe(-1.5);
-        expect(new NumberParser('en-US', {currency: 'USD', style: 'currency', currencyDisplay: 'code', currencySign: 'accounting'}).parse('USD -1.50')).toBe(-1.5);
+        expect(
+          new NumberParser('en-US', {
+            currency: 'USD',
+            style: 'currency',
+            currencySign: 'accounting'
+          }).parse('-1.5')
+        ).toBe(-1.5);
+        expect(
+          new NumberParser('en-US', {
+            currency: 'USD',
+            style: 'currency',
+            currencySign: 'accounting'
+          }).parse('-$1.50')
+        ).toBe(-1.5);
+        expect(
+          new NumberParser('en-US', {
+            currency: 'USD',
+            style: 'currency',
+            currencyDisplay: 'code',
+            currencySign: 'accounting'
+          }).parse('USD -1.50')
+        ).toBe(-1.5);
       });
 
       it('should return NaN for unknown currency symbols', function () {
-        expect(new NumberParser('en-US', {currency: 'USD', style: 'currency'}).parse('€10.50')).toBe(NaN);
+        expect(
+          new NumberParser('en-US', {currency: 'USD', style: 'currency'}).parse('€10.50')
+        ).toBe(NaN);
       });
 
       it('should return NaN for unknown currency codes', function () {
-        expect(new NumberParser('en-US', {currency: 'USD', style: 'currency', currencyDisplay: 'code'}).parse('EUR 10.50')).toBe(NaN);
+        expect(
+          new NumberParser('en-US', {
+            currency: 'USD',
+            style: 'currency',
+            currencyDisplay: 'code'
+          }).parse('EUR 10.50')
+        ).toBe(NaN);
       });
 
       it('should return NaN for unknown currency names', function () {
-        expect(new NumberParser('en-US', {currency: 'USD', style: 'currency', currencyDisplay: 'name'}).parse('10.50 euros')).toBe(NaN);
+        expect(
+          new NumberParser('en-US', {
+            currency: 'USD',
+            style: 'currency',
+            currencyDisplay: 'name'
+          }).parse('10.50 euros')
+        ).toBe(NaN);
       });
 
       it('should return NaN for partial currency codes', function () {
-        expect(new NumberParser('en-US', {currency: 'USD', style: 'currency', currencyDisplay: 'code'}).parse('EU 10.50')).toBe(NaN);
+        expect(
+          new NumberParser('en-US', {
+            currency: 'USD',
+            style: 'currency',
+            currencyDisplay: 'code'
+          }).parse('EU 10.50')
+        ).toBe(NaN);
       });
 
       it('should return NaN for partial currency names', function () {
-        expect(new NumberParser('en-US', {currency: 'USD', style: 'currency', currencyDisplay: 'name'}).parse('10.50 eur')).toBe(NaN);
+        expect(
+          new NumberParser('en-US', {
+            currency: 'USD',
+            style: 'currency',
+            currencyDisplay: 'name'
+          }).parse('10.50 eur')
+        ).toBe(NaN);
       });
     });
 
     describe('units', function () {
       it('should parse with units', function () {
-        expect(new NumberParser('en-US', {style: 'unit', unit: 'inch'}).parse('23.5 in')).toBe(23.5);
+        expect(new NumberParser('en-US', {style: 'unit', unit: 'inch'}).parse('23.5 in')).toBe(
+          23.5
+        );
       });
 
       it('should parse with narrow units', function () {
-        expect(new NumberParser('en-US', {style: 'unit', unit: 'inch', unitDisplay: 'narrow'}).parse('23.5″')).toBe(23.5);
+        expect(
+          new NumberParser('en-US', {style: 'unit', unit: 'inch', unitDisplay: 'narrow'}).parse(
+            '23.5″'
+          )
+        ).toBe(23.5);
       });
 
       it('should parse with long units', function () {
-        expect(new NumberParser('en-US', {style: 'unit', unit: 'inch', unitDisplay: 'long'}).parse('23.5 inches')).toBe(23.5);
+        expect(
+          new NumberParser('en-US', {style: 'unit', unit: 'inch', unitDisplay: 'long'}).parse(
+            '23.5 inches'
+          )
+        ).toBe(23.5);
       });
 
       it('should parse with singular long units', function () {
-        expect(new NumberParser('en-US', {style: 'unit', unit: 'inch', unitDisplay: 'long'}).parse('1 inch')).toBe(1);
+        expect(
+          new NumberParser('en-US', {style: 'unit', unit: 'inch', unitDisplay: 'long'}).parse(
+            '1 inch'
+          )
+        ).toBe(1);
       });
 
       it('should return NaN for unknown units', function () {
@@ -141,21 +239,73 @@ describe('NumberParser', function () {
       });
 
       it('should support plural forms', function () {
-        expect(new NumberParser('en-US', {style: 'unit', unit: 'year', unitDisplay: 'long'}).parse('0 years')).toBe(0);
-        expect(new NumberParser('en-US', {style: 'unit', unit: 'year', unitDisplay: 'long'}).parse('1 year')).toBe(1);
-        expect(new NumberParser('en-US', {style: 'unit', unit: 'year', unitDisplay: 'long'}).parse('2 years')).toBe(2);
-        expect(new NumberParser('en-US', {style: 'unit', unit: 'year', unitDisplay: 'long'}).parse('1.1 years')).toBe(1.1);
+        expect(
+          new NumberParser('en-US', {style: 'unit', unit: 'year', unitDisplay: 'long'}).parse(
+            '0 years'
+          )
+        ).toBe(0);
+        expect(
+          new NumberParser('en-US', {style: 'unit', unit: 'year', unitDisplay: 'long'}).parse(
+            '1 year'
+          )
+        ).toBe(1);
+        expect(
+          new NumberParser('en-US', {style: 'unit', unit: 'year', unitDisplay: 'long'}).parse(
+            '2 years'
+          )
+        ).toBe(2);
+        expect(
+          new NumberParser('en-US', {style: 'unit', unit: 'year', unitDisplay: 'long'}).parse(
+            '1.1 years'
+          )
+        ).toBe(1.1);
 
-        expect(new NumberParser('pl-PL', {style: 'unit', unit: 'year', unitDisplay: 'long'}).parse('0 rok')).toBe(0);
-        expect(new NumberParser('pl-PL', {style: 'unit', unit: 'year', unitDisplay: 'long'}).parse('1 lat')).toBe(1);
-        expect(new NumberParser('pl-PL', {style: 'unit', unit: 'year', unitDisplay: 'long'}).parse('2 lata')).toBe(2);
-        expect(new NumberParser('pl-PL', {style: 'unit', unit: 'year', unitDisplay: 'long'}).parse('37 lata')).toBe(37);
-        expect(new NumberParser('pl-PL', {style: 'unit', unit: 'year', unitDisplay: 'long'}).parse('1.1 roku')).toBe(1.1);
+        expect(
+          new NumberParser('pl-PL', {style: 'unit', unit: 'year', unitDisplay: 'long'}).parse(
+            '0 rok'
+          )
+        ).toBe(0);
+        expect(
+          new NumberParser('pl-PL', {style: 'unit', unit: 'year', unitDisplay: 'long'}).parse(
+            '1 lat'
+          )
+        ).toBe(1);
+        expect(
+          new NumberParser('pl-PL', {style: 'unit', unit: 'year', unitDisplay: 'long'}).parse(
+            '2 lata'
+          )
+        ).toBe(2);
+        expect(
+          new NumberParser('pl-PL', {style: 'unit', unit: 'year', unitDisplay: 'long'}).parse(
+            '37 lata'
+          )
+        ).toBe(37);
+        expect(
+          new NumberParser('pl-PL', {style: 'unit', unit: 'year', unitDisplay: 'long'}).parse(
+            '1.1 roku'
+          )
+        ).toBe(1.1);
 
-        expect(new NumberParser('fr-FR', {style: 'unit', unit: 'year', unitDisplay: 'long'}).parse('1 an')).toBe(1);
-        expect(new NumberParser('fr-FR', {style: 'unit', unit: 'year', unitDisplay: 'long'}).parse('8 ans')).toBe(8);
-        expect(new NumberParser('fr-FR', {style: 'unit', unit: 'year', unitDisplay: 'long'}).parse('1,3 an')).toBe(1.3);
-        expect(new NumberParser('fr-FR', {style: 'unit', unit: 'year', unitDisplay: 'long'}).parse('2,4 ans')).toBe(2.4);
+        expect(
+          new NumberParser('fr-FR', {style: 'unit', unit: 'year', unitDisplay: 'long'}).parse(
+            '1 an'
+          )
+        ).toBe(1);
+        expect(
+          new NumberParser('fr-FR', {style: 'unit', unit: 'year', unitDisplay: 'long'}).parse(
+            '8 ans'
+          )
+        ).toBe(8);
+        expect(
+          new NumberParser('fr-FR', {style: 'unit', unit: 'year', unitDisplay: 'long'}).parse(
+            '1,3 an'
+          )
+        ).toBe(1.3);
+        expect(
+          new NumberParser('fr-FR', {style: 'unit', unit: 'year', unitDisplay: 'long'}).parse(
+            '2,4 ans'
+          )
+        ).toBe(2.4);
       });
     });
 
@@ -166,42 +316,82 @@ describe('NumberParser', function () {
 
       it('should parse a percent with decimals', function () {
         expect(new NumberParser('en-US', {style: 'percent'}).parse('10.5%')).toBe(0.11);
-        expect(new NumberParser('en-US', {style: 'percent', minimumFractionDigits: 2}).parse('10.5%')).toBe(0.105);
+        expect(
+          new NumberParser('en-US', {style: 'percent', minimumFractionDigits: 2}).parse('10.5%')
+        ).toBe(0.105);
       });
     });
 
     it('should parse a percent with signs', function () {
-      expect(new NumberParser('en-GB', {style: 'percent', signDisplay: 'always'}).parse('+10%')).toBe(0.1);
-      expect(new NumberParser('en-GB', {style: 'percent', signDisplay: 'always'}).parse('+0%')).toBe(0);
-      expect(new NumberParser('en-GB', {style: 'percent', signDisplay: 'always'}).parse('-10%')).toBe(-0.1);
-      expect(new NumberParser('en-GB', {style: 'percent', signDisplay: 'always'}).parse('-0%')).toBe(-0);
-      expect(new NumberParser('en-US', {style: 'percent', signDisplay: 'exceptZero', minimumFractionDigits: 2}).parse('+0.50%')).toBe(0.005);
+      expect(
+        new NumberParser('en-GB', {style: 'percent', signDisplay: 'always'}).parse('+10%')
+      ).toBe(0.1);
+      expect(
+        new NumberParser('en-GB', {style: 'percent', signDisplay: 'always'}).parse('+0%')
+      ).toBe(0);
+      expect(
+        new NumberParser('en-GB', {style: 'percent', signDisplay: 'always'}).parse('-10%')
+      ).toBe(-0.1);
+      expect(
+        new NumberParser('en-GB', {style: 'percent', signDisplay: 'always'}).parse('-0%')
+      ).toBe(-0);
+      expect(
+        new NumberParser('en-US', {
+          style: 'percent',
+          signDisplay: 'exceptZero',
+          minimumFractionDigits: 2
+        }).parse('+0.50%')
+      ).toBe(0.005);
     });
 
     it('should parse a percent with decimals and exceptZero', function () {
-      expect(new NumberParser('en-GB', {style: 'percent', signDisplay: 'exceptZero'}).parse('+0.532%')).toBe(0.01);
-      expect(new NumberParser('en-GB', {style: 'percent', signDisplay: 'exceptZero'}).parse('+0%')).toBe(0);
-      expect(new NumberParser('en-GB', {style: 'percent', signDisplay: 'exceptZero'}).parse('0.532%')).toBe(0.01);
-      expect(new NumberParser('en-GB', {style: 'percent', signDisplay: 'exceptZero'}).parse('-0.532%')).toBe(-0.01);
+      expect(
+        new NumberParser('en-GB', {style: 'percent', signDisplay: 'exceptZero'}).parse('+0.532%')
+      ).toBe(0.01);
+      expect(
+        new NumberParser('en-GB', {style: 'percent', signDisplay: 'exceptZero'}).parse('+0%')
+      ).toBe(0);
+      expect(
+        new NumberParser('en-GB', {style: 'percent', signDisplay: 'exceptZero'}).parse('0.532%')
+      ).toBe(0.01);
+      expect(
+        new NumberParser('en-GB', {style: 'percent', signDisplay: 'exceptZero'}).parse('-0.532%')
+      ).toBe(-0.01);
     });
 
     describe('NumberFormat options', function () {
       it('supports roundingIncrement', function () {
         expect(new NumberParser('en-US', {roundingIncrement: 2}).parse('10')).toBe(10);
         // This doesn't fail in Node 18 because roundingIncrement isn't on the resolved options. Hopefully later versions of Node this test will be meaningful.
-        expect(new NumberParser('en-US', {roundingIncrement: 2, minimumFractionDigits: 2, maximumFractionDigits: 2}).parse('10.00')).toBe(10.00);
+        expect(
+          new NumberParser('en-US', {
+            roundingIncrement: 2,
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+          }).parse('10.00')
+        ).toBe(10.0);
       });
     });
 
     it('should parse a swiss currency number', () => {
-      expect(new NumberParser('de-CH', {style: 'currency', currency: 'CHF'}).parse('CHF 1’000.00')).toBe(1000);
-      expect(new NumberParser('de-CH', {style: 'currency', currency: 'CHF'}).parse("CHF 1'000.00")).toBe(1000);
-      expect(new NumberParser('de-CH', {style: 'currency', currency: 'CHF'}).parse("CHF 1'000.00")).toBe(1000);
+      expect(
+        new NumberParser('de-CH', {style: 'currency', currency: 'CHF'}).parse('CHF 1’000.00')
+      ).toBe(1000);
+      expect(
+        new NumberParser('de-CH', {style: 'currency', currency: 'CHF'}).parse("CHF 1'000.00")
+      ).toBe(1000);
+      expect(
+        new NumberParser('de-CH', {style: 'currency', currency: 'CHF'}).parse("CHF 1'000.00")
+      ).toBe(1000);
     });
 
     it('should parse arabic singular and dual counts', () => {
-      expect(new NumberParser('ar-AE', {style: 'unit', unit: 'day', unitDisplay: 'long'}).parse('يومان')).toBe(2);
-      expect(new NumberParser('ar-AE', {style: 'unit', unit: 'day', unitDisplay: 'long'}).parse('يوم')).toBe(1);
+      expect(
+        new NumberParser('ar-AE', {style: 'unit', unit: 'day', unitDisplay: 'long'}).parse('يومان')
+      ).toBe(2);
+      expect(
+        new NumberParser('ar-AE', {style: 'unit', unit: 'day', unitDisplay: 'long'}).parse('يوم')
+      ).toBe(1);
     });
 
     describe('round trips', function () {
@@ -216,50 +406,84 @@ describe('NumberParser', function () {
         // 'percent' should be part of the possible options, but for the moment it fails for some tests
         fc.record({style: fc.constant('percent')}),
         fc.record(
-          {style: fc.constant('currency'), currency: fc.constantFrom('USD', 'EUR', 'CNY', 'JPY'), currencyDisplay: fc.constantFrom('symbol', 'code', 'name')},
+          {
+            style: fc.constant('currency'),
+            currency: fc.constantFrom('USD', 'EUR', 'CNY', 'JPY'),
+            currencyDisplay: fc.constantFrom('symbol', 'code', 'name')
+          },
           {requiredKeys: ['style', 'currency']}
         ),
         fc.record(
-          {style: fc.constant('unit'), unit: fc.constantFrom('inch', 'liter', 'kilometer-per-hour')},
+          {
+            style: fc.constant('unit'),
+            unit: fc.constantFrom('inch', 'liter', 'kilometer-per-hour')
+          },
           {requiredKeys: ['style', 'unit']}
         )
       );
-      const genericOptsArb = fc.record({
-        localeMatcher: fc.constantFrom('best fit', 'lookup'),
-        unitDisplay: fc.constantFrom('narrow', 'short', 'long'),
-        useGrouping: fc.boolean(),
-        minimumIntegerDigits: fc.integer({min: 1, max: 21}),
-        minimumFractionDigits: fc.integer({min: 0, max: 20}),
-        maximumFractionDigits: fc.integer({min: 0, max: 20}),
-        minimumSignificantDigits: fc.integer({min: 1, max: 21}),
-        maximumSignificantDigits: fc.integer({min: 1, max: 21})
-      }, {requiredKeys: []});
+      const genericOptsArb = fc.record(
+        {
+          localeMatcher: fc.constantFrom('best fit', 'lookup'),
+          unitDisplay: fc.constantFrom('narrow', 'short', 'long'),
+          useGrouping: fc.boolean(),
+          minimumIntegerDigits: fc.integer({min: 1, max: 21}),
+          minimumFractionDigits: fc.integer({min: 0, max: 20}),
+          maximumFractionDigits: fc.integer({min: 0, max: 20}),
+          minimumSignificantDigits: fc.integer({min: 1, max: 21}),
+          maximumSignificantDigits: fc.integer({min: 1, max: 21})
+        },
+        {requiredKeys: []}
+      );
 
       // We restricted the set of possible values to avoid unwanted overflows to infinity and underflows to zero
       // and stay in the domain of legit values.
       const DOUBLE_MIN = Number.EPSILON;
-      const valueArb = fc.tuple(
-        fc.constantFrom(1, -1),
-        fc.double({next: true, noNaN: true, min: DOUBLE_MIN, max: 1 / DOUBLE_MIN})
-      ).map(([sign, value]) => sign * value);
+      const valueArb = fc
+        .tuple(
+          fc.constantFrom(1, -1),
+          fc.double({next: true, noNaN: true, min: DOUBLE_MIN, max: 1 / DOUBLE_MIN})
+        )
+        .map(([sign, value]) => sign * value);
 
-      const inputsArb = fc.tuple(valueArb, localesArb, styleOptsArb, genericOptsArb, numeralArb)
-        .map(([d, locale, styleOpts, genericOpts, numerals]) => ({d, opts: {...styleOpts, ...genericOpts}, locale, numerals}))
-        .filter(({opts}) => opts.minimumFractionDigits === undefined || opts.maximumFractionDigits === undefined || opts.minimumFractionDigits <= opts.maximumFractionDigits)
-        .filter(({opts}) => opts.minimumSignificantDigits === undefined || opts.maximumSignificantDigits === undefined || opts.minimumSignificantDigits <= opts.maximumSignificantDigits)
+      const inputsArb = fc
+        .tuple(valueArb, localesArb, styleOptsArb, genericOptsArb, numeralArb)
+        .map(([d, locale, styleOpts, genericOpts, numerals]) => ({
+          d,
+          opts: {...styleOpts, ...genericOpts},
+          locale,
+          numerals
+        }))
+        .filter(
+          ({opts}) =>
+            opts.minimumFractionDigits === undefined ||
+            opts.maximumFractionDigits === undefined ||
+            opts.minimumFractionDigits <= opts.maximumFractionDigits
+        )
+        .filter(
+          ({opts}) =>
+            opts.minimumSignificantDigits === undefined ||
+            opts.maximumSignificantDigits === undefined ||
+            opts.minimumSignificantDigits <= opts.maximumSignificantDigits
+        )
         .map(({d, opts, locale, numerals}) => {
           if (opts.style === 'percent') {
-            opts.minimumFractionDigits = opts.minimumFractionDigits > 18 ? 18 : opts.minimumFractionDigits;
-            opts.maximumFractionDigits = opts.maximumFractionDigits > 18 ? 18 : opts.maximumFractionDigits;
+            opts.minimumFractionDigits =
+              opts.minimumFractionDigits > 18 ? 18 : opts.minimumFractionDigits;
+            opts.maximumFractionDigits =
+              opts.maximumFractionDigits > 18 ? 18 : opts.maximumFractionDigits;
           }
           return {d, opts, locale, numerals};
         })
         .map(({d, opts, locale, numerals}) => {
           let adjustedNumberForFractions = d;
           if (Math.abs(d) < 1 && opts.minimumFractionDigits && opts.minimumFractionDigits > 1) {
-            adjustedNumberForFractions = d * (10 ** (opts.minimumFractionDigits || 2));
-          } else if (Math.abs(d) > 1 && opts.minimumFractionDigits && opts.minimumFractionDigits > 1) {
-            adjustedNumberForFractions = d / (10 ** (opts.minimumFractionDigits || 2));
+            adjustedNumberForFractions = d * 10 ** (opts.minimumFractionDigits || 2);
+          } else if (
+            Math.abs(d) > 1 &&
+            opts.minimumFractionDigits &&
+            opts.minimumFractionDigits > 1
+          ) {
+            adjustedNumberForFractions = d / 10 ** (opts.minimumFractionDigits || 2);
           }
           return {adjustedNumberForFractions, opts, locale, numerals};
         });
@@ -268,16 +492,13 @@ describe('NumberParser', function () {
       // track counter examples below
       it('should fully reverse NumberFormat', function () {
         fc.assert(
-          fc.property(
-            inputsArb,
-            function ({adjustedNumberForFractions, locale, opts, numerals}) {
-              const formatter = new Intl.NumberFormat(`${locale}-u-nu-${numerals}`, opts);
-              const parser = new NumberParser(locale, opts);
+          fc.property(inputsArb, function ({adjustedNumberForFractions, locale, opts, numerals}) {
+            const formatter = new Intl.NumberFormat(`${locale}-u-nu-${numerals}`, opts);
+            const parser = new NumberParser(locale, opts);
 
-              const formattedOnce = formatter.format(adjustedNumberForFractions);
-              expect(formatter.format(parser.parse(formattedOnce))).toBe(formattedOnce);
-            }
-          )
+            const formattedOnce = formatter.format(adjustedNumberForFractions);
+            expect(formatter.format(parser.parse(formattedOnce))).toBe(formattedOnce);
+          })
         );
       });
     });
@@ -395,7 +616,9 @@ describe('NumberParser', function () {
 
     it('should support decimals', function () {
       expect(new NumberParser('en-US', {style: 'decimal'}).isValidPartialNumber('10.5')).toBe(true);
-      expect(new NumberParser('en-US', {style: 'decimal'}).isValidPartialNumber('-10.5')).toBe(true);
+      expect(new NumberParser('en-US', {style: 'decimal'}).isValidPartialNumber('-10.5')).toBe(
+        true
+      );
       expect(new NumberParser('en-US', {style: 'decimal'}).isValidPartialNumber('.')).toBe(true);
       expect(new NumberParser('en-US', {style: 'decimal'}).isValidPartialNumber('.5')).toBe(true);
 
@@ -412,102 +635,296 @@ describe('NumberParser', function () {
       // starting with arabic decimal point
       expect(new NumberParser('en-US', {style: 'decimal'}).isValidPartialNumber(',')).toBe(true);
       expect(new NumberParser('en-US', {style: 'decimal'}).isValidPartialNumber(',000')).toBe(true);
-      expect(new NumberParser('en-US', {style: 'decimal'}).isValidPartialNumber('000,000')).toBe(true);
-      expect(new NumberParser('en-US', {style: 'decimal'}).isValidPartialNumber('1,000')).toBe(true);
-      expect(new NumberParser('en-US', {style: 'decimal'}).isValidPartialNumber('-1,000')).toBe(true);
-      expect(new NumberParser('en-US', {style: 'decimal'}).isValidPartialNumber('1,000,000')).toBe(true);
-      expect(new NumberParser('en-US', {style: 'decimal'}).isValidPartialNumber('-1,000,000')).toBe(true);
+      expect(new NumberParser('en-US', {style: 'decimal'}).isValidPartialNumber('000,000')).toBe(
+        true
+      );
+      expect(new NumberParser('en-US', {style: 'decimal'}).isValidPartialNumber('1,000')).toBe(
+        true
+      );
+      expect(new NumberParser('en-US', {style: 'decimal'}).isValidPartialNumber('-1,000')).toBe(
+        true
+      );
+      expect(new NumberParser('en-US', {style: 'decimal'}).isValidPartialNumber('1,000,000')).toBe(
+        true
+      );
+      expect(new NumberParser('en-US', {style: 'decimal'}).isValidPartialNumber('-1,000,000')).toBe(
+        true
+      );
     });
 
     it('should return false for invalid grouping', function () {
-      expect(new NumberParser('en-US', {useGrouping: false}).isValidPartialNumber('1234,7')).toBe(false);
-      expect(new NumberParser('de-DE', {useGrouping: false}).isValidPartialNumber('1234.7')).toBe(false);
+      expect(new NumberParser('en-US', {useGrouping: false}).isValidPartialNumber('1234,7')).toBe(
+        false
+      );
+      expect(new NumberParser('de-DE', {useGrouping: false}).isValidPartialNumber('1234.7')).toBe(
+        false
+      );
     });
 
     it('should reject random characters', function () {
       expect(new NumberParser('en-US', {style: 'decimal'}).isValidPartialNumber('g')).toBe(false);
-      expect(new NumberParser('en-US', {style: 'decimal'}).isValidPartialNumber('1abc')).toBe(false);
+      expect(new NumberParser('en-US', {style: 'decimal'}).isValidPartialNumber('1abc')).toBe(
+        false
+      );
     });
 
     it('should support signDisplay', function () {
       expect(new NumberParser('en-US', {style: 'decimal'}).isValidPartialNumber('+')).toBe(false);
       expect(new NumberParser('en-US', {style: 'decimal'}).isValidPartialNumber('+10')).toBe(false);
-      expect(new NumberParser('en-US', {style: 'decimal', signDisplay: 'always'}).isValidPartialNumber('+')).toBe(true);
-      expect(new NumberParser('en-US', {style: 'decimal', signDisplay: 'always'}).isValidPartialNumber('+10')).toBe(true);
+      expect(
+        new NumberParser('en-US', {style: 'decimal', signDisplay: 'always'}).isValidPartialNumber(
+          '+'
+        )
+      ).toBe(true);
+      expect(
+        new NumberParser('en-US', {style: 'decimal', signDisplay: 'always'}).isValidPartialNumber(
+          '+10'
+        )
+      ).toBe(true);
     });
 
     it('should support negative numbers with different minus signs', function () {
       expect(new NumberParser('en-US', {style: 'decimal'}).isValidPartialNumber('-')).toBe(true);
       expect(new NumberParser('en-US', {style: 'decimal'}).isValidPartialNumber('-10')).toBe(true);
-      expect(new NumberParser('en-US', {style: 'decimal'}).isValidPartialNumber('\u2212')).toBe(false);
-      expect(new NumberParser('en-US', {style: 'decimal'}).isValidPartialNumber('\u221210')).toBe(false);
+      expect(new NumberParser('en-US', {style: 'decimal'}).isValidPartialNumber('\u2212')).toBe(
+        false
+      );
+      expect(new NumberParser('en-US', {style: 'decimal'}).isValidPartialNumber('\u221210')).toBe(
+        false
+      );
 
       expect(new NumberParser('fi-FI', {style: 'decimal'}).isValidPartialNumber('-')).toBe(true);
       expect(new NumberParser('fi-FI', {style: 'decimal'}).isValidPartialNumber('-10')).toBe(true);
-      expect(new NumberParser('fi-FI', {style: 'decimal'}).isValidPartialNumber('\u2212')).toBe(true);
-      expect(new NumberParser('fi-FI', {style: 'decimal'}).isValidPartialNumber('\u221210')).toBe(true);
+      expect(new NumberParser('fi-FI', {style: 'decimal'}).isValidPartialNumber('\u2212')).toBe(
+        true
+      );
+      expect(new NumberParser('fi-FI', {style: 'decimal'}).isValidPartialNumber('\u221210')).toBe(
+        true
+      );
     });
 
     it('should return false for negative numbers if minValue >= 0', function () {
-      expect(new NumberParser('en-US', {style: 'decimal'}).isValidPartialNumber('-', 0)).toBe(false);
-      expect(new NumberParser('en-US', {style: 'decimal'}).isValidPartialNumber('-', 10)).toBe(false);
-      expect(new NumberParser('en-US', {style: 'decimal'}).isValidPartialNumber('-10', 0)).toBe(false);
-      expect(new NumberParser('en-US', {style: 'currency', currency: 'USD'}).isValidPartialNumber('-$', 0)).toBe(false);
-      expect(new NumberParser('en-US', {style: 'currency', currency: 'USD'}).isValidPartialNumber('-$1', 0)).toBe(false);
+      expect(new NumberParser('en-US', {style: 'decimal'}).isValidPartialNumber('-', 0)).toBe(
+        false
+      );
+      expect(new NumberParser('en-US', {style: 'decimal'}).isValidPartialNumber('-', 10)).toBe(
+        false
+      );
+      expect(new NumberParser('en-US', {style: 'decimal'}).isValidPartialNumber('-10', 0)).toBe(
+        false
+      );
+      expect(
+        new NumberParser('en-US', {style: 'currency', currency: 'USD'}).isValidPartialNumber(
+          '-$',
+          0
+        )
+      ).toBe(false);
+      expect(
+        new NumberParser('en-US', {style: 'currency', currency: 'USD'}).isValidPartialNumber(
+          '-$1',
+          0
+        )
+      ).toBe(false);
     });
 
     it('should return false for positive numbers and signDisplay if maxValue < 0', function () {
-      expect(new NumberParser('en-US', {style: 'decimal'}).isValidPartialNumber('+', -10, -5)).toBe(false);
-      expect(new NumberParser('en-US', {style: 'decimal'}).isValidPartialNumber('+', -10, 0)).toBe(false);
-      expect(new NumberParser('en-US', {style: 'decimal'}).isValidPartialNumber('+10', -10, -5)).toBe(false);
-      expect(new NumberParser('en-US', {style: 'currency', currency: 'USD', signDisplay: 'always'}).isValidPartialNumber('+$', -10, -5)).toBe(false);
-      expect(new NumberParser('en-US', {style: 'currency', currency: 'USD', signDisplay: 'always'}).isValidPartialNumber('+$1', -10, -5)).toBe(false);
+      expect(new NumberParser('en-US', {style: 'decimal'}).isValidPartialNumber('+', -10, -5)).toBe(
+        false
+      );
+      expect(new NumberParser('en-US', {style: 'decimal'}).isValidPartialNumber('+', -10, 0)).toBe(
+        false
+      );
+      expect(
+        new NumberParser('en-US', {style: 'decimal'}).isValidPartialNumber('+10', -10, -5)
+      ).toBe(false);
+      expect(
+        new NumberParser('en-US', {
+          style: 'currency',
+          currency: 'USD',
+          signDisplay: 'always'
+        }).isValidPartialNumber('+$', -10, -5)
+      ).toBe(false);
+      expect(
+        new NumberParser('en-US', {
+          style: 'currency',
+          currency: 'USD',
+          signDisplay: 'always'
+        }).isValidPartialNumber('+$1', -10, -5)
+      ).toBe(false);
     });
 
     it('should support currency', function () {
-      expect(new NumberParser('en-US', {style: 'currency', currency: 'USD'}).isValidPartialNumber('10')).toBe(true);
-      expect(new NumberParser('en-US', {style: 'currency', currency: 'USD'}).isValidPartialNumber('10.5')).toBe(true);
-      expect(new NumberParser('en-US', {style: 'currency', currency: 'USD'}).isValidPartialNumber('$10')).toBe(true);
-      expect(new NumberParser('en-US', {style: 'currency', currency: 'USD'}).isValidPartialNumber('$10.5')).toBe(true);
-      expect(new NumberParser('en-US', {style: 'currency', currency: 'USD'}).isValidPartialNumber('10')).toBe(true);
-      expect(new NumberParser('en-US', {style: 'currency', currency: 'USD', currencyDisplay: 'code'}).isValidPartialNumber('USD 10')).toBe(true);
-      expect(new NumberParser('en-US', {style: 'currency', currency: 'USD', currencyDisplay: 'code'}).isValidPartialNumber('US 10')).toBe(false);
-      expect(new NumberParser('en-US', {style: 'currency', currency: 'USD', currencyDisplay: 'name'}).isValidPartialNumber('10 US dollars')).toBe(true);
-      expect(new NumberParser('en-US', {style: 'currency', currency: 'USD', currencyDisplay: 'name'}).isValidPartialNumber('10 US d')).toBe(false);
-      expect(new NumberParser('en-US', {style: 'currency', currency: 'USD'}).isValidPartialNumber('(')).toBe(false);
-      expect(new NumberParser('en-US', {style: 'currency', currency: 'USD', currencySign: 'accounting'}).isValidPartialNumber('(')).toBe(true);
-      expect(new NumberParser('en-US', {style: 'currency', currency: 'USD', currencySign: 'accounting'}).isValidPartialNumber('($10)')).toBe(true);
-      expect(new NumberParser('en-US', {style: 'currency', currency: 'USD', currencySign: 'accounting'}).isValidPartialNumber('-')).toBe(true);
-      expect(new NumberParser('en-US', {style: 'currency', currency: 'USD', currencySign: 'accounting'}).isValidPartialNumber('-10')).toBe(true);
-      expect(new NumberParser('en-US', {style: 'currency', currency: 'USD', currencySign: 'accounting'}).isValidPartialNumber('-$10')).toBe(true);
+      expect(
+        new NumberParser('en-US', {style: 'currency', currency: 'USD'}).isValidPartialNumber('10')
+      ).toBe(true);
+      expect(
+        new NumberParser('en-US', {style: 'currency', currency: 'USD'}).isValidPartialNumber('10.5')
+      ).toBe(true);
+      expect(
+        new NumberParser('en-US', {style: 'currency', currency: 'USD'}).isValidPartialNumber('$10')
+      ).toBe(true);
+      expect(
+        new NumberParser('en-US', {style: 'currency', currency: 'USD'}).isValidPartialNumber(
+          '$10.5'
+        )
+      ).toBe(true);
+      expect(
+        new NumberParser('en-US', {style: 'currency', currency: 'USD'}).isValidPartialNumber('10')
+      ).toBe(true);
+      expect(
+        new NumberParser('en-US', {
+          style: 'currency',
+          currency: 'USD',
+          currencyDisplay: 'code'
+        }).isValidPartialNumber('USD 10')
+      ).toBe(true);
+      expect(
+        new NumberParser('en-US', {
+          style: 'currency',
+          currency: 'USD',
+          currencyDisplay: 'code'
+        }).isValidPartialNumber('US 10')
+      ).toBe(false);
+      expect(
+        new NumberParser('en-US', {
+          style: 'currency',
+          currency: 'USD',
+          currencyDisplay: 'name'
+        }).isValidPartialNumber('10 US dollars')
+      ).toBe(true);
+      expect(
+        new NumberParser('en-US', {
+          style: 'currency',
+          currency: 'USD',
+          currencyDisplay: 'name'
+        }).isValidPartialNumber('10 US d')
+      ).toBe(false);
+      expect(
+        new NumberParser('en-US', {style: 'currency', currency: 'USD'}).isValidPartialNumber('(')
+      ).toBe(false);
+      expect(
+        new NumberParser('en-US', {
+          style: 'currency',
+          currency: 'USD',
+          currencySign: 'accounting'
+        }).isValidPartialNumber('(')
+      ).toBe(true);
+      expect(
+        new NumberParser('en-US', {
+          style: 'currency',
+          currency: 'USD',
+          currencySign: 'accounting'
+        }).isValidPartialNumber('($10)')
+      ).toBe(true);
+      expect(
+        new NumberParser('en-US', {
+          style: 'currency',
+          currency: 'USD',
+          currencySign: 'accounting'
+        }).isValidPartialNumber('-')
+      ).toBe(true);
+      expect(
+        new NumberParser('en-US', {
+          style: 'currency',
+          currency: 'USD',
+          currencySign: 'accounting'
+        }).isValidPartialNumber('-10')
+      ).toBe(true);
+      expect(
+        new NumberParser('en-US', {
+          style: 'currency',
+          currency: 'USD',
+          currencySign: 'accounting'
+        }).isValidPartialNumber('-$10')
+      ).toBe(true);
 
       // typing latin characters in arabic locale should work
       // 1564 is the character code for the arabic letter mark, an invisible character that marks bidi text for printing, you can find this included in chrome too
       // TODO: we should still support just typing the '(' character, but this isn't a regression
-      expect(new NumberParser('ar-AE', {style: 'currency', currency: 'USD', currencySign: 'accounting'}).isValidPartialNumber(`(${String.fromCharCode(1564)}`)).toBe(true);
-      expect(new NumberParser('ar-AE', {style: 'currency', currency: 'USD', currencySign: 'accounting'}).isValidPartialNumber(`(${String.fromCharCode(1564)}10)`)).toBe(true);
-      expect(new NumberParser('ar-AE', {style: 'currency', currency: 'USD', currencySign: 'accounting'}).isValidPartialNumber('-')).toBe(true);
-      expect(new NumberParser('ar-AE', {style: 'currency', currency: 'USD', currencySign: 'accounting'}).isValidPartialNumber('-10')).toBe(true);
+      expect(
+        new NumberParser('ar-AE', {
+          style: 'currency',
+          currency: 'USD',
+          currencySign: 'accounting'
+        }).isValidPartialNumber(`(${String.fromCharCode(1564)}`)
+      ).toBe(true);
+      expect(
+        new NumberParser('ar-AE', {
+          style: 'currency',
+          currency: 'USD',
+          currencySign: 'accounting'
+        }).isValidPartialNumber(`(${String.fromCharCode(1564)}10)`)
+      ).toBe(true);
+      expect(
+        new NumberParser('ar-AE', {
+          style: 'currency',
+          currency: 'USD',
+          currencySign: 'accounting'
+        }).isValidPartialNumber('-')
+      ).toBe(true);
+      expect(
+        new NumberParser('ar-AE', {
+          style: 'currency',
+          currency: 'USD',
+          currencySign: 'accounting'
+        }).isValidPartialNumber('-10')
+      ).toBe(true);
     });
 
     it('should support units', function () {
-      expect(new NumberParser('en-US', {style: 'unit', unit: 'inch'}).isValidPartialNumber('10')).toBe(true);
-      expect(new NumberParser('en-US', {style: 'unit', unit: 'inch'}).isValidPartialNumber('10.5')).toBe(true);
-      expect(new NumberParser('en-US', {style: 'unit', unit: 'inch'}).isValidPartialNumber('10 in')).toBe(true);
-      expect(new NumberParser('en-US', {style: 'unit', unit: 'inch'}).isValidPartialNumber('10.5 in')).toBe(true);
-      expect(new NumberParser('en-US', {style: 'unit', unit: 'inch'}).isValidPartialNumber('10 i')).toBe(false);
-      expect(new NumberParser('en-US', {style: 'unit', unit: 'inch'}).isValidPartialNumber('10.5 i')).toBe(false);
+      expect(
+        new NumberParser('en-US', {style: 'unit', unit: 'inch'}).isValidPartialNumber('10')
+      ).toBe(true);
+      expect(
+        new NumberParser('en-US', {style: 'unit', unit: 'inch'}).isValidPartialNumber('10.5')
+      ).toBe(true);
+      expect(
+        new NumberParser('en-US', {style: 'unit', unit: 'inch'}).isValidPartialNumber('10 in')
+      ).toBe(true);
+      expect(
+        new NumberParser('en-US', {style: 'unit', unit: 'inch'}).isValidPartialNumber('10.5 in')
+      ).toBe(true);
+      expect(
+        new NumberParser('en-US', {style: 'unit', unit: 'inch'}).isValidPartialNumber('10 i')
+      ).toBe(false);
+      expect(
+        new NumberParser('en-US', {style: 'unit', unit: 'inch'}).isValidPartialNumber('10.5 i')
+      ).toBe(false);
     });
 
     it('should support percents', function () {
       expect(new NumberParser('en-US', {style: 'percent'}).isValidPartialNumber('10')).toBe(true);
-      expect(new NumberParser('en-US', {style: 'percent'}).isValidPartialNumber('10.5')).toBe(false);
-      expect(new NumberParser('en-US', {style: 'percent', minimumFractionDigits: 2}).isValidPartialNumber('10.5')).toBe(true);
-      expect(new NumberParser('en-US', {style: 'percent', maximumFractionDigits: 2}).isValidPartialNumber('10.5')).toBe(true);
+      expect(new NumberParser('en-US', {style: 'percent'}).isValidPartialNumber('10.5')).toBe(
+        false
+      );
+      expect(
+        new NumberParser('en-US', {
+          style: 'percent',
+          minimumFractionDigits: 2
+        }).isValidPartialNumber('10.5')
+      ).toBe(true);
+      expect(
+        new NumberParser('en-US', {
+          style: 'percent',
+          maximumFractionDigits: 2
+        }).isValidPartialNumber('10.5')
+      ).toBe(true);
       expect(new NumberParser('en-US', {style: 'percent'}).isValidPartialNumber('10%')).toBe(true);
-      expect(new NumberParser('en-US', {style: 'percent'}).isValidPartialNumber('10.5%')).toBe(false);
-      expect(new NumberParser('en-US', {style: 'percent', minimumFractionDigits: 2}).isValidPartialNumber('10.5%')).toBe(true);
-      expect(new NumberParser('en-US', {style: 'percent', maximumFractionDigits: 2}).isValidPartialNumber('10.5%')).toBe(true);
+      expect(new NumberParser('en-US', {style: 'percent'}).isValidPartialNumber('10.5%')).toBe(
+        false
+      );
+      expect(
+        new NumberParser('en-US', {
+          style: 'percent',
+          minimumFractionDigits: 2
+        }).isValidPartialNumber('10.5%')
+      ).toBe(true);
+      expect(
+        new NumberParser('en-US', {
+          style: 'percent',
+          maximumFractionDigits: 2
+        }).isValidPartialNumber('10.5%')
+      ).toBe(true);
       expect(new NumberParser('en-US', {style: 'percent'}).isValidPartialNumber('%')).toBe(true);
       expect(new NumberParser('en-US', {style: 'percent'}).isValidPartialNumber('10 %')).toBe(true);
     });
@@ -534,16 +951,28 @@ describe('NumberParser', function () {
       expect(new NumberParser('ar-AE', {style: 'decimal'}).getNumberingSystem('.')).toBe('latn');
       expect(new NumberParser('ar-AE', {style: 'decimal'}).getNumberingSystem('12.5')).toBe('latn');
 
-      expect(new NumberParser('en-US', {style: 'decimal'}).getNumberingSystem('一二')).toBe('hanidec');
-      expect(new NumberParser('en-US', {style: 'decimal'}).getNumberingSystem('一二.五')).toBe('hanidec');
+      expect(new NumberParser('en-US', {style: 'decimal'}).getNumberingSystem('一二')).toBe(
+        'hanidec'
+      );
+      expect(new NumberParser('en-US', {style: 'decimal'}).getNumberingSystem('一二.五')).toBe(
+        'hanidec'
+      );
 
       expect(new NumberParser('en-US', {style: 'decimal'}).getNumberingSystem('१२३४')).toBe('deva');
-      expect(new NumberParser('en-US', {style: 'decimal'}).getNumberingSystem('१२४,२')).toBe('deva');
-      expect(new NumberParser('en-US', {style: 'decimal'}).getNumberingSystem('२.३५१')).toBe('deva');
+      expect(new NumberParser('en-US', {style: 'decimal'}).getNumberingSystem('१२४,२')).toBe(
+        'deva'
+      );
+      expect(new NumberParser('en-US', {style: 'decimal'}).getNumberingSystem('२.३५१')).toBe(
+        'deva'
+      );
 
       expect(new NumberParser('en-US', {style: 'decimal'}).getNumberingSystem('১২৩')).toBe('beng');
-      expect(new NumberParser('en-US', {style: 'decimal'}).getNumberingSystem('১.২৫৩')).toBe('beng');
-      expect(new NumberParser('en-US', {style: 'decimal'}).getNumberingSystem('১২৮,৪')).toBe('beng');
+      expect(new NumberParser('en-US', {style: 'decimal'}).getNumberingSystem('১.২৫৩')).toBe(
+        'beng'
+      );
+      expect(new NumberParser('en-US', {style: 'decimal'}).getNumberingSystem('১২৮,৪')).toBe(
+        'beng'
+      );
     });
   });
 });

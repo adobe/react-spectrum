@@ -14,40 +14,47 @@ import React from 'react';
 import {render} from '@react-spectrum/test-utils-internal';
 import {StatusLight} from '../../src/statuslight/StatusLight';
 
-
 describe('StatusLight', function () {
   it.each`
-    Name               | Component        | props
-    ${'StatusLight'}   | ${StatusLight}   | ${{}}
+    Name             | Component      | props
+    ${'StatusLight'} | ${StatusLight} | ${{}}
   `('$Name default', function ({Component, props}) {
-    let {getByText} = render(<Component {...props} id="status-light">StatusLight of Love</Component>);
+    let {getByText} = render(
+      <Component {...props} id="status-light">
+        StatusLight of Love
+      </Component>
+    );
 
     let statuslight = getByText('StatusLight of Love');
     expect(statuslight).toHaveAttribute('id', 'status-light');
   });
 
   it.each`
-    Name               | Component        | props
-    ${'StatusLight'}   | ${StatusLight}   | ${{variant: 'celery'}}
+    Name             | Component      | props
+    ${'StatusLight'} | ${StatusLight} | ${{variant: 'celery'}}
   `('$Name supports variant and aria-label', function ({Component, props}) {
-    let {getByLabelText} = render(<Component {...props} id="status-light" role="status" aria-label="StatusLight of Love" />);
+    let {getByLabelText} = render(
+      <Component {...props} id="status-light" role="status" aria-label="StatusLight of Love" />
+    );
 
     let statuslight = getByLabelText('StatusLight of Love');
     expect(statuslight).toHaveAttribute('id', 'status-light');
   });
 
   it.each`
-    Name               | Component        | props
-    ${'StatusLight'}   | ${StatusLight}   | ${{variant: 'celery'}}
+    Name             | Component      | props
+    ${'StatusLight'} | ${StatusLight} | ${{variant: 'celery'}}
   `('$Name warns user if no label is provided', function ({Component, props}) {
     let spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
     render(<Component {...props} id="status-light" />);
-    expect(spyWarn).toHaveBeenCalledWith('If no children are provided, an aria-label must be specified');
+    expect(spyWarn).toHaveBeenCalledWith(
+      'If no children are provided, an aria-label must be specified'
+    );
   });
 
   it.each`
-    Name               | Component        | props
-    ${'StatusLight'}   | ${StatusLight}   | ${{variant: 'celery'}}
+    Name             | Component      | props
+    ${'StatusLight'} | ${StatusLight} | ${{variant: 'celery'}}
   `('$Name warns user if label is provided without a role', function ({Component, props}) {
     let spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
     render(<Component {...props} aria-label="test" id="status-light" />);
@@ -55,21 +62,32 @@ describe('StatusLight', function () {
   });
 
   it.each`
-    Name               | Component        | props
-    ${'StatusLight'}   | ${StatusLight}   | ${{isDisabled: true}}
-  `('$Name disabled, its css only, so this just makes sure it does not blow up', function ({Component, props}) {
-    let {getByText} = render(<Component {...props} id="status-light">StatusLight of Love</Component>);
+    Name             | Component      | props
+    ${'StatusLight'} | ${StatusLight} | ${{isDisabled: true}}
+  `(
+    '$Name disabled, its css only, so this just makes sure it does not blow up',
+    function ({Component, props}) {
+      let {getByText} = render(
+        <Component {...props} id="status-light">
+          StatusLight of Love
+        </Component>
+      );
 
-    let statuslight = getByText('StatusLight of Love');
-    expect(statuslight).toHaveAttribute('id', 'status-light');
-  });
+      let statuslight = getByText('StatusLight of Love');
+      expect(statuslight).toHaveAttribute('id', 'status-light');
+    }
+  );
 
   it.each`
-    Name               | Component        | props
-    ${'StatusLight'}   | ${StatusLight}   | ${{}}
+    Name             | Component      | props
+    ${'StatusLight'} | ${StatusLight} | ${{}}
   `('$Name forwards ref', function ({Component, props}) {
     let ref = React.createRef();
-    let {getByText} = render(<Component {...props} ref={ref}>StatusLight of Love</Component>);
+    let {getByText} = render(
+      <Component {...props} ref={ref}>
+        StatusLight of Love
+      </Component>
+    );
 
     let statuslight = getByText('StatusLight of Love');
     expect(statuslight).toBe(ref.current.UNSAFE_getDOMNode());

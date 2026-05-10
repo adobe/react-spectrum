@@ -23,15 +23,19 @@ interface FormStyleProps extends Omit<SpectrumLabelableProps, 'label' | 'context
    * Size of the Form elements.
    * @default 'M'
    */
-  size?: 'S' | 'M' | 'L' | 'XL',
+  size?: 'S' | 'M' | 'L' | 'XL';
   /** Whether the Form elements are disabled. */
-  isDisabled?: boolean,
+  isDisabled?: boolean;
   /** Whether the Form elements are rendered with their emphasized style. */
-  isEmphasized?: boolean
+  isEmphasized?: boolean;
 }
 
-export interface FormProps extends FormStyleProps, Omit<RACFormProps, 'className' | 'style' | 'render' | 'children' | keyof GlobalDOMAttributes>, StyleProps {
-  children: ReactNode
+export interface FormProps
+  extends
+    FormStyleProps,
+    Omit<RACFormProps, 'className' | 'style' | 'render' | 'children' | keyof GlobalDOMAttributes>,
+    StyleProps {
+  children: ReactNode;
 }
 
 export const FormContext = createContext<Partial<FormStyleProps | null>>(null);
@@ -65,7 +69,10 @@ export function useFormProps<T extends FormStyleProps>(props: T): T {
 /**
  * Forms allow users to enter data that can be submitted while providing alignment and styling for form fields.
  */
-export const Form = /*#__PURE__*/ forwardRef(function Form(props: FormProps, ref: DOMRef<HTMLFormElement>) {
+export const Form = /*#__PURE__*/ forwardRef(function Form(
+  props: FormProps,
+  ref: DOMRef<HTMLFormElement>
+) {
   let {
     labelPosition = 'top',
     labelAlign,
@@ -85,26 +92,32 @@ export const Form = /*#__PURE__*/ forwardRef(function Form(props: FormProps, ref
       {...formProps}
       ref={domRef}
       style={UNSAFE_style}
-      className={UNSAFE_className + style({
-        display: 'grid',
-        gridTemplateColumns: {
-          labelPosition: {
-            top: ['[field] 1fr'],
-            side: ['[label] auto', '[field] 1fr']
-          }
-        },
-        // TODO: confirm when we have tokens
-        rowGap: {
-          size: {
-            XS: 16,
-            S: 20,
-            M: 24,
-            L: 32,
-            XL: 40
-          }
-        },
-        columnGap: 'text-to-control'
-      }, getAllowedOverrides())({labelPosition, size}, props.styles)}>
+      className={
+        UNSAFE_className +
+        style(
+          {
+            display: 'grid',
+            gridTemplateColumns: {
+              labelPosition: {
+                top: ['[field] 1fr'],
+                side: ['[label] auto', '[field] 1fr']
+              }
+            },
+            // TODO: confirm when we have tokens
+            rowGap: {
+              size: {
+                XS: 16,
+                S: 20,
+                M: 24,
+                L: 32,
+                XL: 40
+              }
+            },
+            columnGap: 'text-to-control'
+          },
+          getAllowedOverrides()
+        )({labelPosition, size}, props.styles)
+      }>
       <FormContext.Provider
         value={{
           labelPosition,

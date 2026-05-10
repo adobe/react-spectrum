@@ -23,15 +23,32 @@ import {
   TagRenderProps
 } from 'react-aria-components/TagGroup';
 import {AvatarContext} from './Avatar';
-import {baseColor, focusRing, fontRelative, lightDark, style} from '../style' with { type: 'macro' };
+import {baseColor, focusRing, fontRelative, lightDark, style} from '../style' with {type: 'macro'};
 import {CenterBaseline, centerBaseline} from './CenterBaseline';
 import {ClearButton} from './ClearButton';
 import {CollectionBuilder} from 'react-aria/CollectionBuilder';
 import {composeRenderProps} from 'react-aria-components/composeRenderProps';
 import {ContextValue, Provider, useSlottedContext} from 'react-aria-components/slots';
 import {control, field, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
-import {createContext, forwardRef, ReactNode, useContext, useEffect, useMemo, useRef, useState} from 'react';
-import {DOMRef, DOMRefValue, GlobalDOMAttributes, HelpTextProps, LabelableProps, Node, SpectrumLabelableProps} from '@react-types/shared';
+import {
+  createContext,
+  forwardRef,
+  ReactNode,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState
+} from 'react';
+import {
+  DOMRef,
+  DOMRefValue,
+  GlobalDOMAttributes,
+  HelpTextProps,
+  LabelableProps,
+  Node,
+  SpectrumLabelableProps
+} from '@react-types/shared';
 import {FieldLabel, helpTextStyles} from './Field';
 import {flushSync} from 'react-dom';
 import {FormContext, useFormProps} from './Form';
@@ -55,42 +72,60 @@ import {useResizeObserver} from 'react-aria/private/utils/useResizeObserver';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 // Get types from RSP and extend those?
-export interface TagProps extends Omit<AriaTagProps, 'children' | 'style' | 'className' | 'render' | 'onClick' | keyof GlobalDOMAttributes>, LabelableProps {
+export interface TagProps
+  extends
+    Omit<
+      AriaTagProps,
+      'children' | 'style' | 'className' | 'render' | 'onClick' | keyof GlobalDOMAttributes
+    >,
+    LabelableProps {
   /** The children of the tag. */
-  children: ReactNode
+  children: ReactNode;
 }
 
-export interface TagGroupProps<T> extends Omit<AriaTagGroupProps, 'children' | 'style' | 'className' | 'render' | keyof GlobalDOMAttributes>, Pick<TagListProps<T>, 'items' | 'children' | 'renderEmptyState'>, Omit<SpectrumLabelableProps, 'isRequired' | 'necessityIndicator'>, StyleProps, Omit<HelpTextProps, 'errorMessage'> {
+export interface TagGroupProps<T>
+  extends
+    Omit<
+      AriaTagGroupProps,
+      'children' | 'style' | 'className' | 'render' | keyof GlobalDOMAttributes
+    >,
+    Pick<TagListProps<T>, 'items' | 'children' | 'renderEmptyState'>,
+    Omit<SpectrumLabelableProps, 'isRequired' | 'necessityIndicator'>,
+    StyleProps,
+    Omit<HelpTextProps, 'errorMessage'> {
   /** A description for the tag group. */
-  description?: ReactNode,
+  description?: ReactNode;
   /**
    * The size of the tag group.
    *
    * @default 'M'
    */
-  size?: 'S' | 'M' | 'L',
+  size?: 'S' | 'M' | 'L';
   /** Whether the tags are displayed in an emphasized style. */
-  isEmphasized?: boolean,
+  isEmphasized?: boolean;
   /** Provides content to display when there are no items in the tag group. */
-  renderEmptyState?: () => ReactNode,
+  renderEmptyState?: () => ReactNode;
   /** Whether the tags are displayed in a error state. */
-  isInvalid?: boolean,
+  isInvalid?: boolean;
   /** An error message for the field. */
-  errorMessage?: ReactNode,
+  errorMessage?: ReactNode;
   /** Limit the number of rows initially shown. This will render a button that allows the user to expand to show all tags. */
-  maxRows?: number,
+  maxRows?: number;
   /** The label to display on the action button.  */
-  groupActionLabel?: string,
+  groupActionLabel?: string;
   /** Handler that is called when the action button is pressed. */
-  onGroupAction?: () => void
+  onGroupAction?: () => void;
 }
 
-export const TagGroupContext = createContext<ContextValue<Partial<TagGroupProps<any>>, DOMRefValue<HTMLDivElement>>>(null);
+export const TagGroupContext =
+  createContext<ContextValue<Partial<TagGroupProps<any>>, DOMRefValue<HTMLDivElement>>>(null);
 
 const InternalTagGroupContext = createContext<TagGroupProps<any>>({});
 
 /** Tags allow users to categorize content. They can represent keywords or people, and are grouped to describe an item or a search request. */
-export const TagGroup = /*#__PURE__*/ (forwardRef as forwardRefType)(function TagGroup<T extends object>(props: TagGroupProps<T>, ref: DOMRef<HTMLDivElement>) {
+export const TagGroup = /*#__PURE__*/ (forwardRef as forwardRefType)(function TagGroup<
+  T extends object
+>(props: TagGroupProps<T>, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, TagGroupContext);
   props = useFormProps(props);
   let {onRemove} = props;
@@ -119,7 +154,11 @@ function TagGroupInner<T>({
   },
   forwardedRef: ref,
   collection
-}: {props: TagGroupProps<T>, forwardedRef: DOMRef<HTMLDivElement>, collection: any}) {
+}: {
+  props: TagGroupProps<T>;
+  forwardedRef: DOMRef<HTMLDivElement>;
+  collection: any;
+}) {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   let {
     maxRows,
@@ -133,20 +172,25 @@ function TagGroupInner<T>({
   let tagsRef = useRef<HTMLDivElement | null>(null);
   let actionsRef = useRef<HTMLDivElement | null>(null);
   let hiddenTagsRef = useRef<HTMLDivElement | null>(null);
-  let [tagState, setTagState] = useState({visibleTagCount: collection.size, showCollapseButton: false});
+  let [tagState, setTagState] = useState({
+    visibleTagCount: collection.size,
+    showCollapseButton: false
+  });
   let [isCollapsed, setIsCollapsed] = useState(maxRows != null);
   let {onRemove} = useContext(InternalTagGroupContext);
   let isEmpty = collection.size === 0;
-  let showCollapseToggleButton = tagState.showCollapseButton || tagState.visibleTagCount < collection.size;
+  let showCollapseToggleButton =
+    tagState.showCollapseButton || tagState.visibleTagCount < collection.size;
   let formContext = useContext(FormContext);
   let domRef = useDOMRef(ref);
 
-  let allItems = useMemo(
-    () => Array.from(collection) as Array<Node<T>>,
-    [collection]
-  );
+  let allItems = useMemo(() => Array.from(collection) as Array<Node<T>>, [collection]);
   let items = useMemo(
-    () => Array.from(collection).slice(0, !isCollapsed ? collection.size : tagState.visibleTagCount) as Array<Node<T>>,
+    () =>
+      Array.from(collection).slice(
+        0,
+        !isCollapsed ? collection.size : tagState.visibleTagCount
+      ) as Array<Node<T>>,
     [collection, tagState.visibleTagCount, isCollapsed]
   );
 
@@ -160,7 +204,12 @@ function TagGroupInner<T>({
         let currContainerRef: HTMLDivElement | null = hiddenTagsRef.current;
         let currTagsRef: HTMLDivElement | null = hiddenTagsRef.current;
         let currActionsRef: HTMLDivElement | null = actionsRef.current;
-        if (!currContainerRef || !currTagsRef || collection.size === 0 || currContainerRef.parentElement == null) {
+        if (
+          !currContainerRef ||
+          !currTagsRef ||
+          collection.size === 0 ||
+          currContainerRef.parentElement == null
+        ) {
           return {
             visibleTagCount: 0,
             showCollapseButton: false
@@ -192,7 +241,10 @@ function TagGroupInner<T>({
         // Remove tags until there is space for the collapse button and action button (if present) on the last row.
         let buttons = currActionsRef ? [...currActionsRef.children] : [];
         if (buttons.length > 0 && rowCount >= maxRows) {
-          let buttonsWidth = buttons.reduce((acc, curr) => acc += curr.getBoundingClientRect().width, 0);
+          let buttonsWidth = buttons.reduce(
+            (acc, curr) => (acc += curr.getBoundingClientRect().width),
+            0
+          );
           let margins = parseFloat(getComputedStyle(buttons[0]).marginInlineStart);
           buttonsWidth += margins * 2;
           let end = direction === 'ltr' ? 'right' : 'left';
@@ -224,10 +276,13 @@ function TagGroupInner<T>({
 
   let updateVisibleTagCountEffect = useEffectEvent(updateVisibleTagCount);
 
-  useResizeObserver({ref: maxRows != null ? containerRef : undefined, onResize: updateVisibleTagCount});
+  useResizeObserver({
+    ref: maxRows != null ? containerRef : undefined,
+    onResize: updateVisibleTagCount
+  });
 
   useLayoutEffect(() => {
-    if (collection.size > 0 && (maxRows != null && maxRows > 0)) {
+    if (collection.size > 0 && maxRows != null && maxRows > 0) {
       queueMicrotask(updateVisibleTagCountEffect);
     }
   }, [collection.size, maxRows]);
@@ -243,23 +298,18 @@ function TagGroupInner<T>({
 
   let helpText: ReactNode = null;
   if (!isInvalid && description) {
-    helpText =  (
-      <Text
-        slot="description"
-        styles={helpTextStyles({size})}>
+    helpText = (
+      <Text slot="description" styles={helpTextStyles({size})}>
         {description}
       </Text>
     );
   } else if (isInvalid) {
     helpText = (
-      <div
-        className={helpTextStyles({size, isInvalid})}>
+      <div className={helpTextStyles({size, isInvalid})}>
         <CenterBaseline>
           <AlertIcon />
         </CenterBaseline>
-        <Text slot="errorMessage">
-          {errorMessage}
-        </Text>
+        <Text slot="errorMessage">{errorMessage}</Text>
       </div>
     );
   }
@@ -269,11 +319,17 @@ function TagGroupInner<T>({
       {...otherProps}
       ref={domRef}
       style={UNSAFE_style}
-      className={UNSAFE_className + style(field(), getAllowedOverrides())({
-        size,
-        labelPosition: labelPosition,
-        isInForm: !!formContext
-      }, props.styles)}>
+      className={
+        UNSAFE_className +
+        style(field(), getAllowedOverrides())(
+          {
+            size,
+            labelPosition: labelPosition,
+            isInForm: !!formContext
+          },
+          props.styles
+        )
+      }>
       <FieldLabel
         size={size}
         labelPosition={labelPosition}
@@ -339,7 +395,12 @@ function TagGroupInner<T>({
                         size={size}
                         allowsRemoving={!!onRemove}
                         {...itemProps}
-                        children={itemProps.children({size, allowsRemoving: Boolean(onRemove), isInCtx: true})} />
+                        children={itemProps.children({
+                          size,
+                          allowsRemoving: Boolean(onRemove),
+                          isInCtx: true
+                        })}
+                      />
                     </div>
                   );
                 })}
@@ -357,7 +418,7 @@ function TagGroupInner<T>({
               })}>
               {item => <Tag {...item.props} id={item.key} textValue={item.textValue} />}
             </TagList>
-            {!isEmpty && (showCollapseToggleButton || groupActionLabel) &&
+            {!isEmpty && (showCollapseToggleButton || groupActionLabel) && (
               <ActionGroup
                 collection={collection}
                 aria-label={props['aria-label']}
@@ -368,8 +429,9 @@ function TagGroupInner<T>({
                 isCollapsed={isCollapsed}
                 handlePressCollapse={handlePressCollapse}
                 onGroupAction={onGroupAction}
-                groupActionLabel={groupActionLabel} />
-            }
+                groupActionLabel={groupActionLabel}
+              />
+            )}
           </Provider>
         </FormContext.Provider>
       </div>
@@ -409,19 +471,19 @@ function ActionGroup(props) {
       className={style({
         display: 'inline'
       })}>
-      {tagState.showCollapseButton &&
+      {tagState.showCollapseButton && (
         <ActionButton
           isQuiet
           size={size}
           styles={style({margin: 4})}
           UNSAFE_style={{display: 'inline-flex'}}
           onPress={handlePressCollapse}>
-          {isCollapsed ?
-            stringFormatter.format('tag.showAllButtonLabel', {tagCount: collection.size}) :
-            stringFormatter.format('tag.hideButtonLabel')}
+          {isCollapsed
+            ? stringFormatter.format('tag.showAllButtonLabel', {tagCount: collection.size})
+            : stringFormatter.format('tag.hideButtonLabel')}
         </ActionButton>
-      }
-      {groupActionLabel && onGroupAction &&
+      )}
+      {groupActionLabel && onGroupAction && (
         <ActionButton
           isQuiet
           size={size}
@@ -430,12 +492,19 @@ function ActionGroup(props) {
           onPress={() => onGroupAction?.()}>
           {groupActionLabel}
         </ActionButton>
-      }
+      )}
     </div>
   );
 }
 
-const tagStyles = style<TagRenderProps & {size?: 'S' | 'M' | 'L', isEmphasized?: boolean, isLink?: boolean, allowsRemoving?: boolean}>({
+const tagStyles = style<
+  TagRenderProps & {
+    size?: 'S' | 'M' | 'L';
+    isEmphasized?: boolean;
+    isLink?: boolean;
+    allowsRemoving?: boolean;
+  }
+>({
   ...focusRing(),
   ...control({shape: 'default', icon: true}),
   display: 'inline-flex',
@@ -503,7 +572,10 @@ const avatarSize = {
 } as const;
 
 /** An individual Tag for TagGroups. */
-export const Tag = /*#__PURE__*/ (forwardRef as forwardRefType)(function Tag({children, textValue, ...props}: TagProps, ref: DOMRef<HTMLDivElement>) {
+export const Tag = /*#__PURE__*/ (forwardRef as forwardRefType)(function Tag(
+  {children, textValue, ...props}: TagProps,
+  ref: DOMRef<HTMLDivElement>
+) {
   textValue ||= typeof children === 'string' ? children : undefined;
   let ctx = useSlottedContext(TagGroupContext);
   let isInRealDOM = Boolean(ctx?.size);
@@ -519,9 +591,11 @@ export const Tag = /*#__PURE__*/ (forwardRef as forwardRefType)(function Tag({ch
       {...props}
       ref={domRef}
       style={pressScale(domRef)}
-      className={renderProps => tagStyles({size, isEmphasized, isLink, ...renderProps})} >
+      className={renderProps => tagStyles({size, isEmphasized, isLink, ...renderProps})}>
       {composeRenderProps(children, (children, renderProps) => (
-        <TagWrapper isInRealDOM={isInRealDOM} isEmphasized={isEmphasized} {...renderProps}>{typeof children === 'string' ? <Text>{children}</Text> : children}</TagWrapper>
+        <TagWrapper isInRealDOM={isInRealDOM} isEmphasized={isEmphasized} {...renderProps}>
+          {typeof children === 'string' ? <Text>{children}</Text> : children}
+        </TagWrapper>
       ))}
     </AriaTag>
   );
@@ -545,24 +619,37 @@ function TagWrapper({children, isDisabled, allowsRemoving, isInRealDOM, isEmphas
           <Provider
             values={[
               [TextContext, {styles: style({order: 1, truncate: true})}],
-              [IconContext, {
-                render: centerBaseline({slot: 'icon', styles: style({order: 0})}),
-                styles: style({size: fontRelative(20), marginStart: '--iconMargin', flexShrink: 0})
-              }],
-              [AvatarContext, {
-                size: avatarSize[size],
-                styles: style({order: 0})
-              }],
-              [ImageContext, {
-                styles: style({
-                  size: fontRelative(20),
-                  flexShrink: 0,
-                  order: 0,
-                  aspectRatio: 'square',
-                  objectFit: 'contain',
-                  borderRadius: 'sm'
-                })
-              }]
+              [
+                IconContext,
+                {
+                  render: centerBaseline({slot: 'icon', styles: style({order: 0})}),
+                  styles: style({
+                    size: fontRelative(20),
+                    marginStart: '--iconMargin',
+                    flexShrink: 0
+                  })
+                }
+              ],
+              [
+                AvatarContext,
+                {
+                  size: avatarSize[size],
+                  styles: style({order: 0})
+                }
+              ],
+              [
+                ImageContext,
+                {
+                  styles: style({
+                    size: fontRelative(20),
+                    flexShrink: 0,
+                    order: 0,
+                    aspectRatio: 'square',
+                    objectFit: 'contain',
+                    borderRadius: 'sm'
+                  })
+                }
+              ]
             ]}>
             {children}
           </Provider>
@@ -574,7 +661,8 @@ function TagWrapper({children, isDisabled, allowsRemoving, isInRealDOM, isEmphas
           slot="remove"
           size={size}
           isStaticColor={isEmphasized && isSelected}
-          isDisabled={isDisabled} />
+          isDisabled={isDisabled}
+        />
       )}
     </>
   );

@@ -68,12 +68,8 @@ export let TranslateMenu = (props: Omit<SpectrumMenuTriggerProps, 'children'>): 
 
   return (
     <MenuTrigger {...props}>
-      <ActionButton>
-        {strings.format('button')}
-      </ActionButton>
-      <Menu items={menuItems}>
-        {item => customMenuItem(item, strings)}
-      </Menu>
+      <ActionButton>{strings.format('button')}</ActionButton>
+      <Menu items={menuItems}>{item => customMenuItem(item, strings)}</Menu>
     </MenuTrigger>
   );
 };

@@ -23,7 +23,7 @@ import {Text} from '../src/Text';
 import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
 
-let TestSelect = (props) => (
+let TestSelect = props => (
   <Select data-testid="select" data-foo="bar" {...props}>
     <Label>Favorite Animal</Label>
     <Button>
@@ -65,12 +65,20 @@ describe('Select', () => {
     expect(label).toHaveAttribute('class', 'react-aria-Label');
     expect(label).toHaveTextContent('Favorite Animal');
 
-    let valueOrPlaceholder = document.getElementById(trigger.getAttribute('aria-labelledby').split(' ')[0]);
+    let valueOrPlaceholder = document.getElementById(
+      trigger.getAttribute('aria-labelledby').split(' ')[0]
+    );
     expect(valueOrPlaceholder).toHaveAttribute('class', 'react-aria-SelectValue');
     expect(valueOrPlaceholder).toHaveTextContent('Select an item');
 
     expect(trigger).toHaveAttribute('aria-describedby');
-    expect(trigger.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ')).toBe('Description Error');
+    expect(
+      trigger
+        .getAttribute('aria-describedby')
+        .split(' ')
+        .map(id => document.getElementById(id).textContent)
+        .join(' ')
+    ).toBe('Description Error');
 
     await selectTester.open();
 
@@ -101,13 +109,15 @@ describe('Select', () => {
   });
 
   it('should support custom render function', () => {
-    let {getByTestId} =  render(<TestSelect render={props => <div {...props} data-custom="true" />} />);
+    let {getByTestId} = render(
+      <TestSelect render={props => <div {...props} data-custom="true" />} />
+    );
     let field = getByTestId('select');
     expect(field).toHaveAttribute('data-custom', 'true');
   });
 
   it('supports items with render props', () => {
-    let MyItem = (props) => (
+    let MyItem = props => (
       <ListBoxItem {...props}>
         {({isSelected}) => (
           <>
@@ -156,9 +166,7 @@ describe('Select', () => {
           </SelectValue>
         </Button>
         <Popover>
-          <ListBox items={items}>
-            {item => <ListBoxItem>{item.name}</ListBoxItem>}
-          </ListBox>
+          <ListBox items={items}>{item => <ListBoxItem>{item.name}</ListBoxItem>}</ListBox>
         </Popover>
       </Select>
     );
@@ -286,9 +294,7 @@ describe('Select', () => {
   });
 
   it('should send disabled prop to the hidden field', () => {
-    render(
-      <TestSelect name="select" isDisabled />
-    );
+    render(<TestSelect name="select" isDisabled />);
 
     let input = document.querySelector('[name=select]');
     expect(input).toBeDisabled();
@@ -331,16 +337,48 @@ describe('Select', () => {
     expect(input.validity.valid).toBe(false);
     expect(select).not.toHaveAttribute('data-invalid');
 
-    act(() => {getByTestId('form').checkValidity();});
+    act(() => {
+      getByTestId('form').checkValidity();
+    });
 
     expect(trigger).toHaveAttribute('aria-describedby');
-    expect(document.getElementById(trigger.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
+    expect(document.getElementById(trigger.getAttribute('aria-describedby'))).toHaveTextContent(
+      'Constraints not satisfied'
+    );
     expect(select).toHaveAttribute('data-invalid');
     expect(document.activeElement).toBe(trigger);
 
     await selectTester.selectOption({option: 'Cat'});
     expect(selectTester.trigger).not.toHaveAttribute('aria-describedby');
     expect(select).not.toHaveAttribute('data-invalid');
+  });
+
+  it('should support arrow key navigation to a falsy key', async () => {
+    let onSelectionChange = jest.fn();
+    let {getByRole} = render(
+      <Select onSelectionChange={onSelectionChange} aria-label="Pick a number">
+        <Button>
+          <SelectValue />
+        </Button>
+        <Popover>
+          <ListBox items={Array.from({length: 3}).map((_, i) => ({id: i, label: `${i}`}))}>
+            {item => (
+              <ListBoxItem id={item.id} textValue={item.label}>
+                {item.label}
+              </ListBoxItem>
+            )}
+          </ListBox>
+        </Popover>
+      </Select>
+    );
+
+    let button = getByRole('button');
+    act(() => button.focus());
+
+    await user.keyboard('{ArrowRight}');
+    expect(onSelectionChange).toHaveBeenCalledTimes(1);
+    expect(onSelectionChange).toHaveBeenLastCalledWith(0);
+    expect(button).toHaveTextContent('0');
   });
 
   it('should support falsy (0) as a valid default value', async () => {
@@ -356,7 +394,11 @@ describe('Select', () => {
               id: i,
               label: i
             }))}>
-            {(item) => <ListBoxItem id={item.id} textValue={`${item.label}`}>{item.label}</ListBoxItem>}
+            {item => (
+              <ListBoxItem id={item.id} textValue={`${item.label}`}>
+                {item.label}
+              </ListBoxItem>
+            )}
           </ListBox>
         </Popover>
       </Select>
@@ -448,12 +490,13 @@ describe('Select', () => {
   });
 
   it('select can select an option via keyboard', async function () {
-    let {getByTestId} = render(
-      <TestSelect name="select" />
-    );
+    let {getByTestId} = render(<TestSelect name="select" />);
 
     let wrapper = getByTestId('select');
-    let selectTester = testUtilUser.createTester('Select', {root: wrapper, interactionType: 'keyboard'});
+    let selectTester = testUtilUser.createTester('Select', {
+      root: wrapper,
+      interactionType: 'keyboard'
+    });
     let trigger = selectTester.trigger;
     expect(trigger).toHaveTextContent('Select an item');
     expect(trigger).not.toHaveAttribute('data-pressed');
@@ -498,7 +541,10 @@ describe('Select', () => {
       let wrapper = getByTestId('select');
       await user.tab();
       await user.keyboard('Northern Terr');
-      let selectTester = testUtilUser.createTester('Select', {root: wrapper, interactionType: 'keyboard'});
+      let selectTester = testUtilUser.createTester('Select', {
+        root: wrapper,
+        interactionType: 'keyboard'
+      });
       let trigger = selectTester.trigger;
       expect(trigger).toHaveTextContent('Northern Territory');
       expect(trigger).not.toHaveAttribute('data-pressed');
@@ -550,7 +596,7 @@ describe('Select', () => {
     expect(text).not.toHaveAttribute('id');
   });
 
-  it('shouldn\'t allow the user to open the select if there are no items', async function () {
+  it("shouldn't allow the user to open the select if there are no items", async function () {
     let {getByTestId, queryByTestId, rerender} = render(
       <Select data-testid="select" defaultSelectedKey="cat">
         <Label>Favorite Animal</Label>
@@ -561,9 +607,7 @@ describe('Select', () => {
           <Label>Hello</Label>
           <Button>Yo</Button>
           <Text>hi</Text>
-          <ListBox>
-            {[]}
-          </ListBox>
+          <ListBox>{[]}</ListBox>
         </Popover>
       </Select>
     );
@@ -586,9 +630,7 @@ describe('Select', () => {
           <Button>Yo</Button>
           <Text>hi</Text>
           <ListBox>
-            <ListBoxLoadMoreItem isLoading>
-              Loading more
-            </ListBoxLoadMoreItem>
+            <ListBoxLoadMoreItem isLoading>Loading more</ListBoxLoadMoreItem>
           </ListBox>
         </Popover>
       </Select>
@@ -600,9 +642,7 @@ describe('Select', () => {
   });
 
   it('should support form prop', () => {
-    render(
-      <TestSelect name="select" form="test" />
-    );
+    render(<TestSelect name="select" form="test" />);
 
     let input = document.querySelector('[name=select]');
     expect(input).toHaveAttribute('form', 'test');
@@ -619,7 +659,8 @@ describe('Select', () => {
             isRequired
             name="select"
             selectedKey={selectedKey}
-            onSelectionChange={setSelectedKey} />
+            onSelectionChange={setSelectedKey}
+          />
           <Button data-testid="submit" type="submit">
             Submit
           </Button>
@@ -696,12 +737,12 @@ describe('Select', () => {
           </Button>
           <FieldError />
           <Popover>
-            <ListBox items={items}>
-              {item => <ListBoxItem>{item.name}</ListBoxItem>}
-            </ListBox>
+            <ListBox items={items}>{item => <ListBoxItem>{item.name}</ListBoxItem>}</ListBox>
           </Popover>
         </Select>
-        <Button data-testid="submit" type="submit">Submit</Button>
+        <Button data-testid="submit" type="submit">
+          Submit
+        </Button>
       </Form>
     );
     let wrapper = getByTestId('select');
@@ -760,15 +801,15 @@ describe('Select', () => {
         <Label>Favorite Animal</Label>
         <Button>
           <SelectValue>
-            {({selectedItems}) => (
-              selectedItems.length === 1 ? selectedItems[0]?.name : `${selectedItems.length} selected items`
-            )}
+            {({selectedItems}) =>
+              selectedItems.length === 1
+                ? selectedItems[0]?.name
+                : `${selectedItems.length} selected items`
+            }
           </SelectValue>
         </Button>
         <Popover>
-          <ListBox items={items}>
-            {item => <ListBoxItem>{item.name}</ListBoxItem>}
-          </ListBox>
+          <ListBox items={items}>{item => <ListBoxItem>{item.name}</ListBoxItem>}</ListBox>
         </Popover>
       </Select>
     );

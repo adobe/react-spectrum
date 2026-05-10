@@ -46,8 +46,10 @@ describe('AlertDialog', () => {
 
     let trigger = getByRole('button');
     await user.click(trigger);
-    act(() => {jest.runAllTimers();});
-    let dialog = getByRole('alertdialog');  
+    act(() => {
+      jest.runAllTimers();
+    });
+    let dialog = getByRole('alertdialog');
     expect(dialog).toBeVisible();
     let description = dialog.getAttribute('aria-describedby');
     expect(description).toBeDefined();
@@ -60,15 +62,20 @@ describe('AlertDialog', () => {
       <DialogTrigger>
         <ActionButton>Open dialog</ActionButton>
         <AlertDialog aria-describedby="content-id" title="Test" primaryActionLabel="Test">
-          <Content><p id="content-id">Test content</p><p>Extra content</p></Content>
+          <Content>
+            <p id="content-id">Test content</p>
+            <p>Extra content</p>
+          </Content>
         </AlertDialog>
       </DialogTrigger>
     );
 
     let trigger = getByRole('button');
     await user.click(trigger);
-    act(() => {jest.runAllTimers();});
-    let dialog = getByRole('alertdialog');  
+    act(() => {
+      jest.runAllTimers();
+    });
+    let dialog = getByRole('alertdialog');
     expect(dialog).toBeVisible();
     let description = dialog.getAttribute('aria-describedby');
     expect(description).toBeDefined();

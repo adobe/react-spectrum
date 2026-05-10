@@ -30,7 +30,6 @@ export default {
 
 export type FormStory = StoryFn<typeof Form>;
 
-
 export const FormAutoFillExample: FormStory = () => {
   return (
     <Form
@@ -41,7 +40,12 @@ export const FormAutoFillExample: FormStory = () => {
       }}>
       <TextField>
         <Label>Address</Label>
-        <Input name="streetAddress" type="text" id="streetAddress" autoComplete="shipping street-address" />
+        <Input
+          name="streetAddress"
+          type="text"
+          id="streetAddress"
+          autoComplete="shipping street-address"
+        />
       </TextField>
       <TextField>
         <Label>City</Label>
@@ -76,4 +80,3 @@ export const FormAutoFillExample: FormStory = () => {
     </Form>
   );
 };
-

@@ -53,7 +53,10 @@ function nextDropTarget(
   if (target.type === 'item') {
     let nextKey: Key | null | undefined = null;
     if (horizontal) {
-      nextKey = horizontal === 'right' ? keyboardDelegate.getKeyRightOf?.(target.key) : keyboardDelegate.getKeyLeftOf?.(target.key);
+      nextKey =
+        horizontal === 'right'
+          ? keyboardDelegate.getKeyRightOf?.(target.key)
+          : keyboardDelegate.getKeyLeftOf?.(target.key);
     } else {
       nextKey = keyboardDelegate.getKeyBelow?.(target.key);
     }
@@ -100,15 +103,20 @@ function nextDropTarget(
       case 'after': {
         // If this is the last sibling in a level, traverse to the parent.
         let targetNode = collection.getItem(target.key);
-        let nextItemInSameLevel = targetNode?.nextKey != null ? collection.getItem(targetNode.nextKey) : null;
+        let nextItemInSameLevel =
+          targetNode?.nextKey != null ? collection.getItem(targetNode.nextKey) : null;
         while (nextItemInSameLevel != null && nextItemInSameLevel.type !== 'item') {
-          nextItemInSameLevel = nextItemInSameLevel.nextKey != null ? collection.getItem(nextItemInSameLevel.nextKey) : null;
+          nextItemInSameLevel =
+            nextItemInSameLevel.nextKey != null
+              ? collection.getItem(nextItemInSameLevel.nextKey)
+              : null;
         }
 
         if (targetNode && nextItemInSameLevel == null && targetNode.parentKey != null) {
           // If the parent item has an item after it, use the "before" position.
           let parentNode = collection.getItem(targetNode.parentKey);
-          const nextNode = parentNode?.nextKey != null ? collection.getItem(parentNode.nextKey) : null;
+          const nextNode =
+            parentNode?.nextKey != null ? collection.getItem(parentNode.nextKey) : null;
           if (nextNode?.type === 'item') {
             return {
               type: 'item',
@@ -181,11 +189,16 @@ function previousDropTarget(
   if (target.type === 'item') {
     let prevKey: Key | null | undefined = null;
     if (horizontal) {
-      prevKey = horizontal === 'left' ? keyboardDelegate.getKeyLeftOf?.(target.key) : keyboardDelegate.getKeyRightOf?.(target.key);
+      prevKey =
+        horizontal === 'left'
+          ? keyboardDelegate.getKeyLeftOf?.(target.key)
+          : keyboardDelegate.getKeyRightOf?.(target.key);
     } else {
       prevKey = keyboardDelegate.getKeyAbove?.(target.key);
     }
-    let prevCollectionKey = getNextItem(collection, target.key, key => collection.getKeyBefore(key));
+    let prevCollectionKey = getNextItem(collection, target.key, key =>
+      collection.getKeyBefore(key)
+    );
 
     // If the keyboard delegate did not move to the next key in the collection,
     // jump to that key with the same drop position. Otherwise, try the other
@@ -262,7 +275,8 @@ function getLastChild(collection: Collection<Node<unknown>>, key: Key): DropTarg
   if (targetNode && nextNode && nextNode.level > targetNode.level) {
     let lastChild: Node<unknown> | null = null;
     if ('lastChildKey' in targetNode) {
-      lastChild = targetNode.lastChildKey != null ? collection.getItem(targetNode.lastChildKey) : null;
+      lastChild =
+        targetNode.lastChildKey != null ? collection.getItem(targetNode.lastChildKey) : null;
       while (lastChild && lastChild.type !== 'item' && lastChild.prevKey != null) {
         lastChild = collection.getItem(lastChild.prevKey)!;
       }
@@ -283,7 +297,11 @@ function getLastChild(collection: Collection<Node<unknown>>, key: Key): DropTarg
 }
 
 // Find the next or previous item in a collection, skipping over other types of nodes (e.g. content).
-function getNextItem(collection: Collection<Node<unknown>>, key: Key, getNextKey: (key: Key) => Key | null): Key | null {
+function getNextItem(
+  collection: Collection<Node<unknown>>,
+  key: Key,
+  getNextKey: (key: Key) => Key | null
+): Key | null {
   let nextCollectionKey = getNextKey(key);
   let nextCollectionNode = nextCollectionKey != null ? collection.getItem(nextCollectionKey) : null;
   while (nextCollectionNode && nextCollectionNode.type !== 'item') {

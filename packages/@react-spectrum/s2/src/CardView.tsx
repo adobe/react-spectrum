@@ -21,10 +21,29 @@ import {
 import {CardContext, InternalCardViewContext} from './Card';
 import {Collection} from 'react-aria/Collection';
 import {ContextValue} from 'react-aria-components/slots';
-import {createContext, forwardRef, ReactElement, useCallback, useMemo, useRef, useState} from 'react';
-import {DOMRef, DOMRefValue, forwardRefType, GlobalDOMAttributes, Key, LoadingState} from '@react-types/shared';
+import {
+  createContext,
+  forwardRef,
+  ReactElement,
+  useCallback,
+  useMemo,
+  useRef,
+  useState
+} from 'react';
+import {
+  DOMRef,
+  DOMRefValue,
+  forwardRefType,
+  GlobalDOMAttributes,
+  Key,
+  LoadingState
+} from '@react-types/shared';
 import {focusRing, style} from '../style' with {type: 'macro'};
-import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
+import {
+  getAllowedOverrides,
+  StylesPropWithHeight,
+  UnsafeStyles
+} from './style-utils' with {type: 'macro'};
 import {GridLayout, Size, Virtualizer, WaterfallLayout} from 'react-aria-components/Virtualizer';
 import {ImageCoordinator} from './ImageCoordinator';
 import {useActionBarContainer} from './ActionBar';
@@ -34,40 +53,53 @@ import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
 import {useResizeObserver} from 'react-aria/private/utils/useResizeObserver';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface CardViewProps<T> extends Omit<GridListProps<T>, 'layout' | 'keyboardNavigationBehavior' | 'selectionBehavior' | 'className' | 'style' | 'render' | 'isLoading' | keyof GlobalDOMAttributes>, UnsafeStyles {
+export interface CardViewProps<T>
+  extends
+    Omit<
+      GridListProps<T>,
+      | 'layout'
+      | 'keyboardNavigationBehavior'
+      | 'selectionBehavior'
+      | 'className'
+      | 'style'
+      | 'render'
+      | 'isLoading'
+      | keyof GlobalDOMAttributes
+    >,
+    UnsafeStyles {
   /**
    * The layout of the cards.
    * @default 'grid'
    */
-  layout?: 'grid' | 'waterfall',
+  layout?: 'grid' | 'waterfall';
   /**
    * The size of the cards.
    * @default 'M'
    */
-  size?: 'XS' | 'S' | 'M' | 'L' | 'XL',
+  size?: 'XS' | 'S' | 'M' | 'L' | 'XL';
   /**
    * The amount of space between the cards.
    * @default 'regular'
    */
-  density?: 'compact' | 'regular' | 'spacious',
+  density?: 'compact' | 'regular' | 'spacious';
   /**
    * The visual style of the cards.
    * @default 'primary'
    */
-  variant?: 'primary' | 'secondary' | 'tertiary' | 'quiet',
+  variant?: 'primary' | 'secondary' | 'tertiary' | 'quiet';
   /**
    * How selection should be displayed.
    * @default 'checkbox'
    */
-  selectionStyle?: 'checkbox' | 'highlight',
+  selectionStyle?: 'checkbox' | 'highlight';
   /** The loading state of the CardView. */
-  loadingState?: LoadingState,
+  loadingState?: LoadingState;
   /** Handler that is called when more items should be loaded, e.g. while scrolling near the bottom. */
-  onLoadMore?: () => void,
+  onLoadMore?: () => void;
   /** Spectrum-defined styles, returned by the `style()` macro. */
-  styles?: StylesPropWithHeight,
+  styles?: StylesPropWithHeight;
   /** Provides the ActionBar to render when cards are selected in the CardView. */
-  renderActionBar?: (selectedKeys: 'all' | Set<Key>) => ReactElement
+  renderActionBar?: (selectedKeys: 'all' | Set<Key>) => ReactElement;
 }
 
 const layoutOptions = {
@@ -160,42 +192,51 @@ const layoutOptions = {
 
 const SIZES = ['XS', 'S', 'M', 'L', 'XL'] as const;
 
-const cardViewStyles = style({
-  overflowY: {
-    default: 'auto',
-    isLoading: 'hidden'
-  },
-  display: {
-    isEmpty: 'flex'
-  },
-  boxSizing: 'border-box',
-  flexDirection: 'column',
-  alignItems: 'center',
-  justifyContent: 'center',
-  ...focusRing(),
-  outlineStyle: {
-    default: 'none',
-    isEmpty: {
-      isFocusVisible: 'solid'
+const cardViewStyles = style(
+  {
+    overflowY: {
+      default: 'auto',
+      isLoading: 'hidden'
+    },
+    display: {
+      isEmpty: 'flex'
+    },
+    boxSizing: 'border-box',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    ...focusRing(),
+    outlineStyle: {
+      default: 'none',
+      isEmpty: {
+        isFocusVisible: 'solid'
+      }
+    },
+    outlineOffset: -2,
+    height: {
+      isActionBar: 'full'
     }
   },
-  outlineOffset: -2,
-  height: {
-    isActionBar: 'full'
-  }
-}, getAllowedOverrides({height: true}));
+  getAllowedOverrides({height: true})
+);
 
-const wrapperStyles = style({
-  position: 'relative',
-  overflow: 'clip'
-}, getAllowedOverrides({height: true}));
+const wrapperStyles = style(
+  {
+    position: 'relative',
+    overflow: 'clip'
+  },
+  getAllowedOverrides({height: true})
+);
 
-export const CardViewContext = createContext<ContextValue<Partial<CardViewProps<any>>, DOMRefValue<HTMLDivElement>>>(null);
+export const CardViewContext =
+  createContext<ContextValue<Partial<CardViewProps<any>>, DOMRefValue<HTMLDivElement>>>(null);
 
 /**
  * A CardView displays a group of related objects, with support for selection and bulk actions.
  */
-export const CardView = /*#__PURE__*/ (forwardRef as forwardRefType)(function CardView<T extends object>(props: CardViewProps<T>, ref: DOMRef<HTMLDivElement>) {
+export const CardView = /*#__PURE__*/ (forwardRef as forwardRefType)(function CardView<
+  T extends object
+>(props: CardViewProps<T>, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, CardViewContext);
   let {
     children,
@@ -211,7 +252,8 @@ export const CardView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ca
     onLoadMore,
     items,
     renderEmptyState: renderEmptyStateProp,
-    ...otherProps} = props;
+    ...otherProps
+  } = props;
   let domRef = useDOMRef(ref);
   let innerRef = useRef(null);
   let scrollRef = props.renderActionBar ? innerRef : domRef;
@@ -249,15 +291,14 @@ export const CardView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ca
 
   let ctx = useMemo(() => ({size, variant}), [size, variant]);
 
-  let {selectedKeys, onSelectionChange, actionBar, actionBarHeight} = useActionBarContainer({...props, scrollRef});
+  let {selectedKeys, onSelectionChange, actionBar, actionBarHeight} = useActionBarContainer({
+    ...props,
+    scrollRef
+  });
 
   let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
   let renderer;
-  let cardLoadingSentinel = (
-    <GridListLoadMoreItem
-      isLoading={isLoading}
-      onLoadMore={onLoadMore} />
-  );
+  let cardLoadingSentinel = <GridListLoadMoreItem isLoading={isLoading} onLoadMore={onLoadMore} />;
 
   if (typeof children === 'function' && items) {
     renderer = (
@@ -278,18 +319,23 @@ export const CardView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ca
   }
 
   // Wrap the renderEmptyState function so that it is not called when there is a skeleton loader.
-  let renderEmptyState = renderEmptyStateProp ? (renderProps: GridListRenderProps) => {
-    let collection = renderProps.state.collection;
-    let firstKey = collection.getFirstKey();
-    if (firstKey == null || collection.getItem(firstKey)?.type !== 'skeleton') {
-      return renderEmptyStateProp(renderProps);
-    }
-  } : undefined;
+  let renderEmptyState = renderEmptyStateProp
+    ? (renderProps: GridListRenderProps) => {
+        let collection = renderProps.state.collection;
+        let firstKey = collection.getFirstKey();
+        if (firstKey == null || collection.getItem(firstKey)?.type !== 'skeleton') {
+          return renderEmptyStateProp(renderProps);
+        }
+      }
+    : undefined;
 
-  let cardViewCtx = useMemo(() => ({
-    layout: layoutName,
-    ElementType: GridListItem
-  }), [layoutName]);
+  let cardViewCtx = useMemo(
+    () => ({
+      layout: layoutName,
+      ElementType: GridListItem
+    }),
+    [layoutName]
+  );
 
   let cardView = (
     <Virtualizer layout={layout} layoutOptions={options}>
@@ -314,7 +360,17 @@ export const CardView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ca
                 scrollPadding: options.minSpace.height,
                 scrollPaddingBottom: actionBarHeight + options.minSpace.height
               }}
-              className={renderProps => (!props.renderActionBar ? UNSAFE_className : '') + cardViewStyles({...renderProps, isLoading: props.loadingState === 'loading', isActionBar: !!props.renderActionBar}, !props.renderActionBar ? styles : undefined)}>
+              className={renderProps =>
+                (!props.renderActionBar ? UNSAFE_className : '') +
+                cardViewStyles(
+                  {
+                    ...renderProps,
+                    isLoading: props.loadingState === 'loading',
+                    isActionBar: !!props.renderActionBar
+                  },
+                  !props.renderActionBar ? styles : undefined
+                )
+              }>
               {renderer}
             </AriaGridList>
           </ImageCoordinator>
@@ -327,7 +383,10 @@ export const CardView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ca
   // ActionBar cannot be inside the GridList due to ARIA and focus management requirements.
   if (props.renderActionBar) {
     return (
-      <div ref={domRef} className={UNSAFE_className + wrapperStyles(null, styles)} style={UNSAFE_style}>
+      <div
+        ref={domRef}
+        className={UNSAFE_className + wrapperStyles(null, styles)}
+        style={UNSAFE_style}>
         {cardView}
         {actionBar}
       </div>

@@ -15,17 +15,22 @@ import React from 'react';
 import {Tag, TagGroup} from '../src/TagGroup';
 import userEvent from '@testing-library/user-event';
 
-
 let TestTagGroup = ({tagGroupProps, itemProps}) => (
   <TagGroup data-testid="group" {...tagGroupProps}>
-    <Tag {...itemProps} id="cat">Cat</Tag>
-    <Tag {...itemProps} id="dog">Dog</Tag>
-    <Tag {...itemProps} id="kangaroo">Kangaroo</Tag>
+    <Tag {...itemProps} id="cat">
+      Cat
+    </Tag>
+    <Tag {...itemProps} id="dog">
+      Dog
+    </Tag>
+    <Tag {...itemProps} id="kangaroo">
+      Kangaroo
+    </Tag>
   </TagGroup>
 );
 
-let renderTagGroup = (tagGroupProps = {}, itemProps = {}) => render(<TestTagGroup {...{tagGroupProps, itemProps}} />);
-
+let renderTagGroup = (tagGroupProps = {}, itemProps = {}) =>
+  render(<TestTagGroup {...{tagGroupProps, itemProps}} />);
 
 describe('TagGroup', () => {
   let user;
@@ -46,10 +51,7 @@ describe('TagGroup', () => {
   it('remove button should work', async () => {
     let onRemove = jest.fn();
     let {getAllByLabelText} = render(
-      <TagGroup
-        label="Ice cream categories"
-        size="M"
-        onRemove={onRemove}>
+      <TagGroup label="Ice cream categories" size="M" onRemove={onRemove}>
         <Tag id="chocolate">Chocolate</Tag>
         <Tag id="mint">Mint</Tag>
         <Tag id="strawberry">Strawberry</Tag>
@@ -60,7 +62,9 @@ describe('TagGroup', () => {
     let removeButtons = getAllByLabelText('Remove');
     expect(removeButtons).toHaveLength(4);
     await user.click(removeButtons[0]);
-    act(() => {jest.runAllTimers();});
+    act(() => {
+      jest.runAllTimers();
+    });
     expect(onRemove).toHaveBeenCalledTimes(1);
     expect(onRemove).toHaveBeenCalledWith(new Set(['chocolate']));
   });

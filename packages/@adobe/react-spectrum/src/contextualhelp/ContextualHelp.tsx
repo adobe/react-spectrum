@@ -29,31 +29,30 @@ import React, {ReactNode} from 'react';
 import {useLabels} from 'react-aria/private/utils/useLabels';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 
-export interface SpectrumContextualHelpProps extends OverlayTriggerProps, PositionProps, StyleProps, DOMProps, AriaLabelingProps {
+export interface SpectrumContextualHelpProps
+  extends OverlayTriggerProps, PositionProps, StyleProps, DOMProps, AriaLabelingProps {
   /** Contents of the Contextual Help popover. */
-  children: ReactNode,
+  children: ReactNode;
   /**
    * Indicates whether contents are informative or provides helpful guidance.
    * @default 'help'
    */
-  variant?: 'help' | 'info',
+  variant?: 'help' | 'info';
   /**
    * The placement of the popover with respect to the action button.
    * @default 'bottom start'
    */
-  placement?: Placement
+  placement?: Placement;
 }
 
 /**
  * Contextual help shows a user extra information about the state of an adjacent component, or a total view.
  */
-export const ContextualHelp = React.forwardRef(function ContextualHelp(props: SpectrumContextualHelpProps, ref: FocusableRef<HTMLButtonElement>) {
-  let {
-    variant = 'help',
-    placement = 'bottom start',
-    children,
-    ...otherProps
-  } = props;
+export const ContextualHelp = React.forwardRef(function ContextualHelp(
+  props: SpectrumContextualHelpProps,
+  ref: FocusableRef<HTMLButtonElement>
+) {
+  let {variant = 'help', placement = 'bottom start', children, ...otherProps} = props;
 
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/contextualhelp');
 
@@ -71,7 +70,11 @@ export const ContextualHelp = React.forwardRef(function ContextualHelp(props: Sp
       <ActionButton
         {...mergeProps(otherProps, labelProps, {isDisabled: false})}
         ref={ref}
-        UNSAFE_className={classNames(helpStyles, 'react-spectrum-ContextualHelp-button', otherProps.UNSAFE_className)}
+        UNSAFE_className={classNames(
+          helpStyles,
+          'react-spectrum-ContextualHelp-button',
+          otherProps.UNSAFE_className
+        )}
         isQuiet>
         {icon}
       </ActionButton>

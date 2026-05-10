@@ -44,65 +44,92 @@ export interface SearchFieldRenderProps {
    * Whether the search field is empty.
    * @selector [data-empty]
    */
-  isEmpty: boolean,
+  isEmpty: boolean;
   /**
    * Whether the search field is disabled.
    * @selector [data-disabled]
    */
-  isDisabled: boolean,
+  isDisabled: boolean;
   /**
    * Whether the search field is invalid.
    * @selector [data-invalid]
    */
-  isInvalid: boolean,
+  isInvalid: boolean;
   /**
    * Whether the search field is read only.
    * @selector [data-readonly]
    */
-  isReadOnly: boolean,
+  isReadOnly: boolean;
   /**
    * Whether the search field is required.
    * @selector [data-required]
    */
-  isRequired: boolean,
+  isRequired: boolean;
   /**
    * State of the search field.
    */
-  state: SearchFieldState
+  state: SearchFieldState;
 }
 
-export interface SearchFieldProps extends Omit<AriaSearchFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<SearchFieldRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
+export interface SearchFieldProps
+  extends
+    Omit<
+      AriaSearchFieldProps,
+      | 'label'
+      | 'placeholder'
+      | 'description'
+      | 'errorMessage'
+      | 'validationState'
+      | 'validationBehavior'
+    >,
+    RACValidation,
+    RenderProps<SearchFieldRenderProps>,
+    SlotProps,
+    GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-SearchField'
    */
-  className?: ClassNameOrFunction<SearchFieldRenderProps>
+  className?: ClassNameOrFunction<SearchFieldRenderProps>;
 }
 
-export const SearchFieldContext = createContext<ContextValue<SearchFieldProps, HTMLDivElement>>(null);
+export const SearchFieldContext =
+  createContext<ContextValue<SearchFieldProps, HTMLDivElement>>(null);
 
 /**
  * A search field allows a user to enter and clear a search query.
  */
-export const SearchField = /*#__PURE__*/ createHideableComponent(function SearchField(props: SearchFieldProps, ref: ForwardedRef<HTMLDivElement>) {
+export const SearchField = /*#__PURE__*/ createHideableComponent(function SearchField(
+  props: SearchFieldProps,
+  ref: ForwardedRef<HTMLDivElement>
+) {
   [props, ref] = useContextProps(props, ref, SearchFieldContext);
   let {validationBehavior: formValidationBehavior} = useSlottedContext(FormContext) || {};
   let validationBehavior = props.validationBehavior ?? formValidationBehavior ?? 'native';
   let inputRef = useRef<HTMLInputElement>(null);
   [props, inputRef as unknown] = useContextProps(props, inputRef, FieldInputContext);
-  let [labelRef, label] = useSlot(
-    !props['aria-label'] && !props['aria-labelledby']
-  );
+  let [labelRef, label] = useSlot(!props['aria-label'] && !props['aria-labelledby']);
   let state = useSearchFieldState({
     ...props,
     validationBehavior
   });
 
-  let {labelProps, inputProps, clearButtonProps, descriptionProps, errorMessageProps, ...validation} = useSearchField({
-    ...removeDataAttributes(props),
-    label,
-    validationBehavior
-  }, state, inputRef);
+  let {
+    labelProps,
+    inputProps,
+    clearButtonProps,
+    descriptionProps,
+    errorMessageProps,
+    ...validation
+  } = useSearchField(
+    {
+      ...removeDataAttributes(props),
+      label,
+      validationBehavior
+    },
+    state,
+    inputRef
+  );
 
   let renderProps = useRenderProps({
     ...props,
@@ -136,12 +163,15 @@ export const SearchField = /*#__PURE__*/ createHideableComponent(function Search
           [LabelContext, {...labelProps, ref: labelRef}],
           [InputContext, {...inputProps, ref: inputRef}],
           [ButtonContext, clearButtonProps],
-          [TextContext, {
-            slots: {
-              description: descriptionProps,
-              errorMessage: errorMessageProps
+          [
+            TextContext,
+            {
+              slots: {
+                description: descriptionProps,
+                errorMessage: errorMessageProps
+              }
             }
-          }],
+          ],
           [GroupContext, {isInvalid: validation.isInvalid, isDisabled: props.isDisabled || false}],
           [FieldErrorContext, validation]
         ]}>

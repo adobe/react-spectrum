@@ -30,10 +30,29 @@ export default {
   argTypes: {
     placement: {
       control: 'select',
-      options: ['bottom', 'bottom left', 'bottom right', 'bottom start', 'bottom end',
-        'top', 'top left', 'top right', 'top start', 'top end',
-        'left', 'left top', 'left bottom', 'start', 'start top', 'start bottom',
-        'right', 'right top', 'right bottom', 'end', 'end top', 'end bottom'
+      options: [
+        'bottom',
+        'bottom left',
+        'bottom right',
+        'bottom start',
+        'bottom end',
+        'top',
+        'top left',
+        'top right',
+        'top start',
+        'top end',
+        'left',
+        'left top',
+        'left bottom',
+        'start',
+        'start top',
+        'start bottom',
+        'right',
+        'right top',
+        'right bottom',
+        'end',
+        'end top',
+        'end bottom'
       ]
     },
     animation: {
@@ -45,7 +64,7 @@ export default {
 
 export type PopoverStory = StoryFn<typeof Popover>;
 
-export const PopoverExample: PopoverStory = (args) => (
+export const PopoverExample: PopoverStory = args => (
   <DialogTrigger>
     <Button>Open popover</Button>
     <Popover
@@ -58,11 +77,13 @@ export const PopoverExample: PopoverStory = (args) => (
         padding: 30,
         zIndex: 5
       }}>
-      {!(args as any).hideArrow && <OverlayArrow style={{display: 'flex'}}>
-        <svg width="12" height="12" viewBox="0 0 12 12" style={{display: 'block'}}>
-          <path d="M0 0L6 6L12 0" fill="white" strokeWidth={1} stroke="gray" />
-        </svg>
-      </OverlayArrow>}
+      {!(args as any).hideArrow && (
+        <OverlayArrow style={{display: 'flex'}}>
+          <svg width="12" height="12" viewBox="0 0 12 12" style={{display: 'block'}}>
+            <path d="M0 0L6 6L12 0" fill="white" strokeWidth={1} stroke="gray" />
+          </svg>
+        </OverlayArrow>
+      )}
       <Dialog>
         {({close}) => (
           <form style={{display: 'flex', flexDirection: 'column'}}>
@@ -77,12 +98,11 @@ export const PopoverExample: PopoverStory = (args) => (
               Submit
             </Button>
           </form>
-          )}
+        )}
       </Dialog>
     </Popover>
   </DialogTrigger>
 );
-
 
 const COUNTDOWN = 5000;
 
@@ -114,9 +134,13 @@ function PopoverTriggerObserver(): JSX.Element {
   }, []);
 
   return (
-    <div style={{marginBottom: 100, display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+    <div
+      style={{marginBottom: 100, display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
       <div>
-        <p>The trigger button below will change size in <strong>{Math.floor(countdown / 1000)}s</strong></p>
+        <p>
+          The trigger button below will change size in{' '}
+          <strong>{Math.floor(countdown / 1000)}s</strong>
+        </p>
       </div>
       <DialogTrigger defaultOpen>
         <Button ref={buttonRef}>Open popover</Button>
@@ -143,7 +167,7 @@ function PopoverTriggerObserver(): JSX.Element {
                   Submit
                 </Button>
               </form>
-              )}
+            )}
           </Dialog>
         </Popover>
       </DialogTrigger>
@@ -151,13 +175,29 @@ function PopoverTriggerObserver(): JSX.Element {
   );
 }
 
-
 export const PopoverTriggerObserverExample: StoryObj<typeof PopoverTriggerObserver> = {
   render: () => <PopoverTriggerObserver />
 };
 
-function PopoverArrowBoundaryOffsetExampleRender({topLeft, topRight, leftTop, leftBottom, rightTop, rightBottom, bottomLeft, bottomRight}:
-  {topLeft: number, topRight: number, leftTop: number, leftBottom: number, rightTop: number, rightBottom: number, bottomLeft: number, bottomRight: number}): JSX.Element {
+function PopoverArrowBoundaryOffsetExampleRender({
+  topLeft,
+  topRight,
+  leftTop,
+  leftBottom,
+  rightTop,
+  rightBottom,
+  bottomLeft,
+  bottomRight
+}: {
+  topLeft: number;
+  topRight: number;
+  leftTop: number;
+  leftBottom: number;
+  rightTop: number;
+  rightBottom: number;
+  bottomLeft: number;
+  bottomRight: number;
+}): JSX.Element {
   return (
     <div style={{display: 'flex', flexDirection: 'column'}}>
       <div style={{display: 'flex'}}>
@@ -231,7 +271,11 @@ function PopoverArrowBoundaryOffsetExampleRender({topLeft, topRight, leftTop, le
                 borderRadius: '30px'
               }}>
               <OverlayArrow style={{display: 'flex'}}>
-                <svg width="12" height="12" viewBox="0 0 12 12" style={{display: 'block', transform: 'rotate(-90deg)'}}>
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 12 12"
+                  style={{display: 'block', transform: 'rotate(-90deg)'}}>
                   <path d="M0 0L6 6L12 0" fill="white" strokeWidth={1} stroke="gray" />
                 </svg>
               </OverlayArrow>
@@ -257,7 +301,11 @@ function PopoverArrowBoundaryOffsetExampleRender({topLeft, topRight, leftTop, le
                 borderRadius: '30px'
               }}>
               <OverlayArrow style={{display: 'flex'}}>
-                <svg width="12" height="12" viewBox="0 0 12 12" style={{display: 'block', transform: 'rotate(-90deg)'}}>
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 12 12"
+                  style={{display: 'block', transform: 'rotate(-90deg)'}}>
                   <path d="M0 0L6 6L12 0" fill="white" strokeWidth={1} stroke="gray" />
                 </svg>
               </OverlayArrow>
@@ -285,7 +333,11 @@ function PopoverArrowBoundaryOffsetExampleRender({topLeft, topRight, leftTop, le
                 borderRadius: '30px'
               }}>
               <OverlayArrow style={{display: 'flex'}}>
-                <svg width="12" height="12" viewBox="0 0 12 12" style={{display: 'block', transform: 'rotate(90deg)'}}>
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 12 12"
+                  style={{display: 'block', transform: 'rotate(90deg)'}}>
                   <path d="M0 0L6 6L12 0" fill="white" strokeWidth={1} stroke="gray" />
                 </svg>
               </OverlayArrow>
@@ -311,7 +363,11 @@ function PopoverArrowBoundaryOffsetExampleRender({topLeft, topRight, leftTop, le
                 borderRadius: '30px'
               }}>
               <OverlayArrow style={{display: 'flex'}}>
-                <svg width="12" height="12" viewBox="0 0 12 12" style={{display: 'block', transform: 'rotate(90deg)'}}>
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 12 12"
+                  style={{display: 'block', transform: 'rotate(90deg)'}}>
                   <path d="M0 0L6 6L12 0" fill="white" strokeWidth={1} stroke="gray" />
                 </svg>
               </OverlayArrow>
@@ -339,7 +395,11 @@ function PopoverArrowBoundaryOffsetExampleRender({topLeft, topRight, leftTop, le
                 borderRadius: '30px'
               }}>
               <OverlayArrow style={{display: 'flex'}}>
-                <svg width="12" height="12" viewBox="0 0 12 12" style={{display: 'block', transform: 'rotate(180deg)'}}>
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 12 12"
+                  style={{display: 'block', transform: 'rotate(180deg)'}}>
                   <path d="M0 0L6 6L12 0" fill="white" strokeWidth={1} stroke="gray" />
                 </svg>
               </OverlayArrow>
@@ -365,7 +425,11 @@ function PopoverArrowBoundaryOffsetExampleRender({topLeft, topRight, leftTop, le
                 borderRadius: '30px'
               }}>
               <OverlayArrow style={{display: 'flex'}}>
-                <svg width="12" height="12" viewBox="0 0 12 12" style={{display: 'block', transform: 'rotate(180deg)'}}>
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 12 12"
+                  style={{display: 'block', transform: 'rotate(180deg)'}}>
                   <path d="M0 0L6 6L12 0" fill="white" strokeWidth={1} stroke="gray" />
                 </svg>
               </OverlayArrow>
@@ -380,7 +444,9 @@ function PopoverArrowBoundaryOffsetExampleRender({topLeft, topRight, leftTop, le
   );
 }
 
-export const PopoverArrowBoundaryOffsetExample: StoryObj<typeof PopoverArrowBoundaryOffsetExampleRender> = {
+export const PopoverArrowBoundaryOffsetExample: StoryObj<
+  typeof PopoverArrowBoundaryOffsetExampleRender
+> = {
   args: {
     topLeft: 25,
     topRight: 25,
@@ -449,7 +515,7 @@ export const PopoverArrowBoundaryOffsetExample: StoryObj<typeof PopoverArrowBoun
       }
     }
   },
-  render: (args) => <PopoverArrowBoundaryOffsetExampleRender {...args} />
+  render: args => <PopoverArrowBoundaryOffsetExampleRender {...args} />
 };
 
 export const PopoverTriggerWidthExample: PopoverStory = () => (
@@ -464,9 +530,7 @@ export const PopoverTriggerWidthExample: PopoverStory = () => (
         zIndex: 5,
         width: 'var(--trigger-width)'
       }}>
-      <Dialog>
-        Should match the width of the trigger button
-      </Dialog>
+      <Dialog>Should match the width of the trigger button</Dialog>
     </Popover>
   </DialogTrigger>
 );
@@ -474,10 +538,34 @@ export const PopoverTriggerWidthExample: PopoverStory = () => (
 function ScrollingBoundaryContainerExample(args) {
   let [boundaryElem, setBoundaryElem] = useState<HTMLDivElement | null>(null);
   return (
-    <div id="scrolling-boundary" ref={setBoundaryElem} style={{height: 300, width: 300, overflow: 'auto', border: '1px solid light-dark(black, white)'}}>
-      <div style={{width: 600, height: 600, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+    <div
+      id="scrolling-boundary"
+      ref={setBoundaryElem}
+      style={{
+        height: 300,
+        width: 300,
+        overflow: 'auto',
+        border: '1px solid light-dark(black, white)'
+      }}>
+      <div
+        style={{
+          width: 600,
+          height: 600,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}>
         <DialogTrigger>
-          <Button style={{width: 200, height: 200, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>Open popover</Button>
+          <Button
+            style={{
+              width: 200,
+              height: 200,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}>
+            Open popover
+          </Button>
           <Popover
             {...args}
             boundaryElement={boundaryElem ?? undefined}
@@ -487,9 +575,7 @@ function ScrollingBoundaryContainerExample(args) {
               border: '1px solid gray',
               zIndex: 5
             }}>
-            <Dialog>
-              This is some dummy content for the popover
-            </Dialog>
+            <Dialog>This is some dummy content for the popover</Dialog>
           </Popover>
         </DialogTrigger>
       </div>
@@ -498,7 +584,7 @@ function ScrollingBoundaryContainerExample(args) {
 }
 
 export const ScrollingBoundaryContainer: StoryObj<typeof ScrollingBoundaryContainerExample> = {
-  render: (args) => <ScrollingBoundaryContainerExample {...args} />,
+  render: args => <ScrollingBoundaryContainerExample {...args} />,
   args: {
     containerPadding: 0,
     placement: 'bottom'

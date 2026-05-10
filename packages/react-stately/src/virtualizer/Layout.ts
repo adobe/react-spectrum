@@ -48,7 +48,7 @@ export abstract class Layout<T extends object = Node<any>, O = any> implements L
   /**
    * Returns size of the content. By default, it returns virtualizer's size.
    */
-  abstract getContentSize(): Size;  
+  abstract getContentSize(): Size;
 
   /**
    * Returns whether the layout should invalidate in response to
@@ -58,8 +58,7 @@ export abstract class Layout<T extends object = Node<any>, O = any> implements L
    */
   shouldInvalidate(newRect: Rect, oldRect: Rect): boolean {
     // By default, invalidate when the size changes
-    return newRect.width !== oldRect.width
-        || newRect.height !== oldRect.height;
+    return newRect.width !== oldRect.width || newRect.height !== oldRect.height;
   }
 
   /**

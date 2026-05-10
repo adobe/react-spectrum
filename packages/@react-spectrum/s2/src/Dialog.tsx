@@ -30,19 +30,22 @@ import {Text} from 'react-aria-components/Text';
 import {useDOMRef} from './useDOMRef';
 
 // TODO: what style overrides should be allowed?
-export interface DialogProps extends Omit<RACDialogProps, 'className' | 'style' | 'render' | keyof GlobalDOMAttributes>, StyleProps {
+export interface DialogProps
+  extends
+    Omit<RACDialogProps, 'className' | 'style' | 'render' | keyof GlobalDOMAttributes>,
+    StyleProps {
   /**
    * Whether the Dialog is dismissible.
    */
-  isDismissible?: boolean,
+  isDismissible?: boolean;
   /**
    * The size of the Dialog.
    *
    * @default 'M'
    */
-  size?: 'S' | 'M' | 'L' | 'XL',
+  size?: 'S' | 'M' | 'L' | 'XL';
   /** Whether pressing the escape key to close the dialog should be disabled. */
-  isKeyboardDismissDisabled?: boolean
+  isKeyboardDismissDisabled?: boolean;
 }
 
 const image = style({
@@ -62,7 +65,7 @@ const header = style({
   font: 'body'
 });
 
-const content =  style({
+const content = style({
   flexGrow: 1,
   flexShrink: {
     [`@container (height < ${500 / 16}rem)`]: 0
@@ -110,17 +113,20 @@ export const Dialog = forwardRef(function Dialog(props: DialogProps, ref: DOMRef
   let domRef = useDOMRef(ref);
 
   return (
-    (<Modal size={size} isDismissable={isDismissible} isKeyboardDismissDisabled={isKeyboardDismissDisabled}>
+    <Modal
+      size={size}
+      isDismissable={isDismissible}
+      isKeyboardDismissDisabled={isKeyboardDismissDisabled}>
       <RACDialog
         {...props}
         ref={domRef}
         style={props.UNSAFE_style}
         className={(props.UNSAFE_className || '') + dialogInner}>
-        {composeRenderProps(props.children, (children) => (
+        {composeRenderProps(props.children, children => (
           // Render the children multiple times inside the wrappers we need to implement the layout.
           // Each instance hides certain children so that they are all rendered in the correct locations.
           // Reset OverlayTriggerStateContext so the buttons inside the dialog don't retain their hover state.
-          (<OverlayTriggerStateContext.Provider value={null}>
+          <OverlayTriggerStateContext.Provider value={null}>
             {/* Hero image */}
             <Provider
               values={[
@@ -188,20 +194,18 @@ export const Dialog = forwardRef(function Dialog(props: DialogProps, ref: DOMRef
                   {children}
                 </Provider>
               </div>
-              {props.isDismissible &&
-                <CloseButton styles={style({marginBottom: 12})} />
-              }
+              {props.isDismissible && <CloseButton styles={style({marginBottom: 12})} />}
             </div>
             {/* Main content */}
             <Text slot="description" style={{display: 'contents'}}>
               <Provider
                 values={[
-                    [ImageContext, {hidden: true}],
-                    [HeadingContext, {isHidden: true}],
-                    [HeaderContext, {isHidden: true}],
-                    [ContentContext, {styles: content}],
-                    [FooterContext, {isHidden: true}],
-                    [ButtonGroupContext, {isHidden: true}]
+                  [ImageContext, {hidden: true}],
+                  [HeadingContext, {isHidden: true}],
+                  [HeaderContext, {isHidden: true}],
+                  [ContentContext, {styles: content}],
+                  [FooterContext, {isHidden: true}],
+                  [ButtonGroupContext, {isHidden: true}]
                 ]}>
                 {children}
               </Provider>
@@ -231,14 +235,17 @@ export const Dialog = forwardRef(function Dialog(props: DialogProps, ref: DOMRef
                   [HeaderContext, {isHidden: true}],
                   [ContentContext, {isHidden: true}],
                   [FooterContext, {styles: footer}],
-                  [ButtonGroupContext, {isHidden: props.isDismissible, styles: buttonGroup, align: 'end'}]
+                  [
+                    ButtonGroupContext,
+                    {isHidden: props.isDismissible, styles: buttonGroup, align: 'end'}
+                  ]
                 ]}>
                 {children}
               </Provider>
             </div>
-          </OverlayTriggerStateContext.Provider>)
+          </OverlayTriggerStateContext.Provider>
         ))}
       </RACDialog>
-    </Modal>)
+    </Modal>
   );
 });

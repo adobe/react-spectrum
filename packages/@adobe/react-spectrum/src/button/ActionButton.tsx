@@ -26,21 +26,28 @@ import {useHover} from 'react-aria/useHover';
 import {useProviderProps} from '../provider/Provider';
 import {useStyleProps} from '../utils/styleProps';
 
-export interface SpectrumActionButtonProps extends AriaBaseButtonProps, Omit<ButtonProps, 'onClick'>, StyleProps {
+export interface SpectrumActionButtonProps
+  extends AriaBaseButtonProps, Omit<ButtonProps, 'onClick'>, StyleProps {
   /** Whether the button should be displayed with a [quiet style](https://spectrum.adobe.com/page/action-button/#Quiet). */
-  isQuiet?: boolean,
+  isQuiet?: boolean;
   /** The static color style to apply. Useful when the button appears over a color background. */
-  staticColor?: 'white' | 'black'
+  staticColor?: 'white' | 'black';
 }
 
 /**
  * ActionButtons allow users to perform an action.
  * They’re used for similar, task-based options within a workflow, and are ideal for interfaces where buttons aren’t meant to draw a lot of attention.
  */
-export const ActionButton = React.forwardRef(function ActionButton(props: SpectrumActionButtonProps, ref: FocusableRef<HTMLButtonElement>) {
+export const ActionButton = React.forwardRef(function ActionButton(
+  props: SpectrumActionButtonProps,
+  ref: FocusableRef<HTMLButtonElement>
+) {
   props = useProviderProps(props);
   props = useSlotProps(props, 'actionButton');
-  let textProps = useSlotProps({UNSAFE_className: classNames(styles, 'spectrum-ActionButton-label')}, 'text');
+  let textProps = useSlotProps(
+    {UNSAFE_className: classNames(styles, 'spectrum-ActionButton-label')},
+    'text'
+  );
 
   let {
     isQuiet,
@@ -67,45 +74,37 @@ export const ActionButton = React.forwardRef(function ActionButton(props: Spectr
         {...styleProps}
         {...mergeProps(buttonProps, hoverProps)}
         ref={domRef}
-        className={
-          classNames(
-            styles,
-            'spectrum-ActionButton',
-            {
-              'spectrum-ActionButton--quiet': isQuiet,
-              'spectrum-ActionButton--staticColor': !!staticColor,
-              'spectrum-ActionButton--staticWhite': staticColor === 'white',
-              'spectrum-ActionButton--staticBlack': staticColor === 'black',
-              'is-active': isPressed,
-              'is-disabled': isDisabled,
-              'is-hovered': isHovered
-            },
-            styleProps.className
-          )
-        }>
-        {holdAffordance &&
+        className={classNames(
+          styles,
+          'spectrum-ActionButton',
+          {
+            'spectrum-ActionButton--quiet': isQuiet,
+            'spectrum-ActionButton--staticColor': !!staticColor,
+            'spectrum-ActionButton--staticWhite': staticColor === 'white',
+            'spectrum-ActionButton--staticBlack': staticColor === 'black',
+            'is-active': isPressed,
+            'is-disabled': isDisabled,
+            'is-hovered': isHovered
+          },
+          styleProps.className
+        )}>
+        {holdAffordance && (
           <CornerTriangle UNSAFE_className={classNames(styles, 'spectrum-ActionButton-hold')} />
-        }
+        )}
         <ClearSlots>
           <SlotProvider
             slots={{
               icon: {
                 size: 'S',
-                UNSAFE_className: classNames(
-                  styles,
-                  'spectrum-Icon',
-                  {
-                    'spectrum-ActionGroup-itemIcon': hideButtonText
-                  }
-                )
+                UNSAFE_className: classNames(styles, 'spectrum-Icon', {
+                  'spectrum-ActionGroup-itemIcon': hideButtonText
+                })
               },
               text: {
                 ...textProps
               }
             }}>
-            {typeof children === 'string' || isTextOnly
-              ? <Text>{children}</Text>
-              : children}
+            {typeof children === 'string' || isTextOnly ? <Text>{children}</Text> : children}
           </SlotProvider>
         </ClearSlots>
       </button>

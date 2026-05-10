@@ -33,16 +33,16 @@ import {useObjectRef} from '../utils/useObjectRef';
 import {useResizeObserver} from '../utils/useResizeObserver';
 
 interface ScrollViewProps extends Omit<HTMLAttributes<HTMLElement>, 'onScroll'> {
-  contentSize: Size,
-  onVisibleRectChange: (rect: Rect) => void,
-  onSizeChange?: (size: Size) => void,
-  children?: ReactNode,
-  innerStyle?: CSSProperties,
-  onScrollStart?: () => void,
-  onScrollEnd?: () => void,
-  scrollDirection?: 'horizontal' | 'vertical' | 'both',
-  onScroll?: (e: Event) => void,
-  allowsWindowScrolling?: boolean
+  contentSize: Size;
+  onVisibleRectChange: (rect: Rect) => void;
+  onSizeChange?: (size: Size) => void;
+  children?: ReactNode;
+  innerStyle?: CSSProperties;
+  onScrollStart?: () => void;
+  onScrollEnd?: () => void;
+  scrollDirection?: 'horizontal' | 'vertical' | 'both';
+  onScroll?: (e: Event) => void;
+  allowsWindowScrolling?: boolean;
 }
 
 function ScrollView(props: ScrollViewProps, ref: ForwardedRef<HTMLDivElement | null>) {
@@ -51,25 +51,26 @@ function ScrollView(props: ScrollViewProps, ref: ForwardedRef<HTMLDivElement | n
 
   return (
     <div role="presentation" {...scrollViewProps} ref={ref}>
-      <div {...contentProps}>
-        {props.children}
-      </div>
+      <div {...contentProps}>{props.children}</div>
     </div>
   );
 }
 
-const ScrollViewForwardRef:
-  React.ForwardRefExoticComponent<ScrollViewProps & React.RefAttributes<HTMLDivElement | null>> =
-React.forwardRef(ScrollView);
+const ScrollViewForwardRef: React.ForwardRefExoticComponent<
+  ScrollViewProps & React.RefAttributes<HTMLDivElement | null>
+> = React.forwardRef(ScrollView);
 export {ScrollViewForwardRef as ScrollView};
 
 interface ScrollViewAria {
-  isScrolling: boolean,
-  scrollViewProps: HTMLAttributes<HTMLElement>,
-  contentProps: HTMLAttributes<HTMLElement>
+  isScrolling: boolean;
+  scrollViewProps: HTMLAttributes<HTMLElement>;
+  contentProps: HTMLAttributes<HTMLElement>;
 }
 
-export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement | null>): ScrollViewAria {
+export function useScrollView(
+  props: ScrollViewProps,
+  ref: RefObject<HTMLElement | null>
+): ScrollViewAria {
   let {
     contentSize,
     onVisibleRectChange,
@@ -108,12 +109,23 @@ export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement
     // but no more than the entire height of the viewport which is good enough for virtualization use cases.
     let visibleRect = allowsWindowScrolling
       ? new Rect(
-        state.viewportOffset.x + state.scrollPosition.x,
-        state.viewportOffset.y + state.scrollPosition.y,
-        Math.max(0, Math.min(state.size.width - state.viewportOffset.x, state.viewportSize.width)),
-        Math.max(0, Math.min(state.size.height - state.viewportOffset.y, state.viewportSize.height))
-      )
-      : new Rect(state.scrollPosition.x, state.scrollPosition.y, state.size.width, state.size.height);
+          state.viewportOffset.x + state.scrollPosition.x,
+          state.viewportOffset.y + state.scrollPosition.y,
+          Math.max(
+            0,
+            Math.min(state.size.width - state.viewportOffset.x, state.viewportSize.width)
+          ),
+          Math.max(
+            0,
+            Math.min(state.size.height - state.viewportOffset.y, state.viewportSize.height)
+          )
+        )
+      : new Rect(
+          state.scrollPosition.x,
+          state.scrollPosition.y,
+          state.size.width,
+          state.size.height
+        );
     // Don't emit updates if the visible area is zero and the last emitted area was also zero.
     if (visibleRect.area > 0 || state.lastVisibleRect.area > 0) {
       onVisibleRectChange(visibleRect);
@@ -123,75 +135,87 @@ export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement
 
   let [isScrolling, setScrolling] = useState(false);
 
-  let onScroll = useCallback((e: Event) => {
-    let target = getEventTarget(e) as Element;
-    if (!nodeContains(target, ref.current!)) {
-      return;
-    }
-
-    if (onScrollProp && target === ref.current) {
-      onScrollProp(e);
-    }
-
-    if (target !== ref.current) {
-      // An ancestor element or the window was scrolled. Update the position of the scroll view relative to the viewport.
-      let boundingRect = ref.current!.getBoundingClientRect();
-      let x = boundingRect.x < 0 ? -boundingRect.x : 0;
-      let y = boundingRect.y < 0 ? -boundingRect.y : 0;
-      if (x === state.viewportOffset.x && y === state.viewportOffset.y) {
+  let onScroll = useCallback(
+    (e: Event) => {
+      let target = getEventTarget(e) as Element;
+      if (!nodeContains(target, ref.current!)) {
         return;
       }
 
-      state.viewportOffset = new Point(x, y);
-    } else {
-      // The scroll view itself was scrolled. Update the local scroll position.
-      // Prevent rubber band scrolling from shaking when scrolling out of bounds
-      let scrollTop = target.scrollTop;
-      let scrollLeft = getScrollLeft(target, direction);
-      state.scrollPosition = new Point(
-        Math.max(0, Math.min(scrollLeft, contentSize.width - state.size.width)),
-        Math.max(0, Math.min(scrollTop, contentSize.height - state.size.height))
-      );
-    }
-
-    flushSync(() => {
-      updateVisibleRect();
-
-      if (!state.isScrolling) {
-        state.isScrolling = true;
-        setScrolling(true);
-
-        // Pause typekit MutationObserver during scrolling.
-        window.dispatchEvent(new Event('tk.disconnect-observer'));
-        if (onScrollStart) {
-          onScrollStart();
-        }
+      if (onScrollProp && target === ref.current) {
+        onScrollProp(e);
       }
 
-      // So we don't constantly call clearTimeout and setTimeout,
-      // keep track of the current timeout time and only reschedule
-      // the timer when it is getting close.
-      let now = Date.now();
-      if (state.scrollEndTime <= now + 50) {
-        state.scrollEndTime = now + 300;
-
-        if (state.scrollTimeout != null) {
-          clearTimeout(state.scrollTimeout);
+      if (target !== ref.current) {
+        // An ancestor element or the window was scrolled. Update the position of the scroll view relative to the viewport.
+        let boundingRect = ref.current!.getBoundingClientRect();
+        let x = boundingRect.x < 0 ? -boundingRect.x : 0;
+        let y = boundingRect.y < 0 ? -boundingRect.y : 0;
+        if (x === state.viewportOffset.x && y === state.viewportOffset.y) {
+          return;
         }
 
-        state.scrollTimeout = setTimeout(() => {
-          state.isScrolling = false;
-          setScrolling(false);
-          state.scrollTimeout = null;
+        state.viewportOffset = new Point(x, y);
+      } else {
+        // The scroll view itself was scrolled. Update the local scroll position.
+        // Prevent rubber band scrolling from shaking when scrolling out of bounds
+        let scrollTop = target.scrollTop;
+        let scrollLeft = getScrollLeft(target, direction);
+        state.scrollPosition = new Point(
+          Math.max(0, Math.min(scrollLeft, contentSize.width - state.size.width)),
+          Math.max(0, Math.min(scrollTop, contentSize.height - state.size.height))
+        );
+      }
 
-          window.dispatchEvent(new Event('tk.connect-observer'));
-          if (onScrollEnd) {
-            onScrollEnd();
+      flushSync(() => {
+        updateVisibleRect();
+
+        if (!state.isScrolling) {
+          state.isScrolling = true;
+          setScrolling(true);
+
+          // Pause typekit MutationObserver during scrolling.
+          window.dispatchEvent(new Event('tk.disconnect-observer'));
+          if (onScrollStart) {
+            onScrollStart();
           }
-        }, 300);
-      }
-    });
-  }, [onScrollProp, ref, direction, state, contentSize, updateVisibleRect, onScrollStart, onScrollEnd]);
+        }
+
+        // So we don't constantly call clearTimeout and setTimeout,
+        // keep track of the current timeout time and only reschedule
+        // the timer when it is getting close.
+        let now = Date.now();
+        if (state.scrollEndTime <= now + 50) {
+          state.scrollEndTime = now + 300;
+
+          if (state.scrollTimeout != null) {
+            clearTimeout(state.scrollTimeout);
+          }
+
+          state.scrollTimeout = setTimeout(() => {
+            state.isScrolling = false;
+            setScrolling(false);
+            state.scrollTimeout = null;
+
+            window.dispatchEvent(new Event('tk.connect-observer'));
+            if (onScrollEnd) {
+              onScrollEnd();
+            }
+          }, 300);
+        }
+      });
+    },
+    [
+      onScrollProp,
+      ref,
+      direction,
+      state,
+      contentSize,
+      updateVisibleRect,
+      onScrollStart,
+      onScrollEnd
+    ]
+  );
 
   // Attach a document-level capturing scroll listener so we can account for scrollable ancestors.
   useEffect(() => {
@@ -209,59 +233,67 @@ export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement
         window.dispatchEvent(new Event('tk.connect-observer'));
       }
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   let isUpdatingSize = useRef(false);
-  let updateSize = useCallback((flush: typeof flushSync) => {
-    let dom = ref.current;
-    if (!dom || isUpdatingSize.current) {
-      return;
-    }
+  let updateSize = useCallback(
+    (flush: typeof flushSync) => {
+      let dom = ref.current;
+      if (!dom || isUpdatingSize.current) {
+        return;
+      }
 
-    // Prevent reentrancy when resize observer fires, triggers re-layout that results in
-    // content size update, causing below layout effect to fire. This avoids infinite loops.
-    isUpdatingSize.current = true;
+      // Prevent reentrancy when resize observer fires, triggers re-layout that results in
+      // content size update, causing below layout effect to fire. This avoids infinite loops.
+      isUpdatingSize.current = true;
 
-    let isTestEnv = process.env.NODE_ENV === 'test' && !process.env.VIRT_ON;
-    let isClientWidthMocked = Object.getOwnPropertyNames(window.HTMLElement.prototype).includes('clientWidth');
-    let isClientHeightMocked = Object.getOwnPropertyNames(window.HTMLElement.prototype).includes('clientHeight');
-    let clientWidth = dom.clientWidth;
-    let clientHeight = dom.clientHeight;
-    let w = isTestEnv && !isClientWidthMocked ? Infinity : clientWidth;
-    let h = isTestEnv && !isClientHeightMocked ? Infinity : clientHeight;
+      let isTestEnv = process.env.NODE_ENV === 'test' && !process.env.VIRT_ON;
+      let isClientWidthMocked = Object.getOwnPropertyNames(window.HTMLElement.prototype).includes(
+        'clientWidth'
+      );
+      let isClientHeightMocked = Object.getOwnPropertyNames(window.HTMLElement.prototype).includes(
+        'clientHeight'
+      );
+      let clientWidth = dom.clientWidth;
+      let clientHeight = dom.clientHeight;
+      let w = isTestEnv && !isClientWidthMocked ? Infinity : clientWidth;
+      let h = isTestEnv && !isClientHeightMocked ? Infinity : clientHeight;
 
-    // Update the window viewport size.
-    let viewportWidth = window.innerWidth;
-    let viewportHeight = window.innerHeight;
-    let viewportSizeChanged = state.viewportSize.width !== viewportWidth || state.viewportSize.height !== viewportHeight;
-    if (viewportSizeChanged) {
-      state.viewportSize = new Size(viewportWidth, viewportHeight);
-    }
+      // Update the window viewport size.
+      let viewportWidth = window.innerWidth;
+      let viewportHeight = window.innerHeight;
+      let viewportSizeChanged =
+        state.viewportSize.width !== viewportWidth || state.viewportSize.height !== viewportHeight;
+      if (viewportSizeChanged) {
+        state.viewportSize = new Size(viewportWidth, viewportHeight);
+      }
 
-    if (state.size.width !== w || state.size.height !== h || viewportSizeChanged) {
-      state.size = new Size(w, h);
-      flush(() => {
-        updateVisibleRect();
-        onSizeChange?.(state.size);
-      });
-
-      // If the clientWidth or clientHeight changed, scrollbars appeared or disappeared as
-      // a result of the layout update. In this case, re-layout again to account for the
-      // adjusted space. In very specific cases this might result in the scrollbars disappearing
-      // again, resulting in extra padding. We stop after a maximum of two layout passes to avoid
-      // an infinite loop. This matches how browsers behavior with native CSS grid layout.
-      if (!isTestEnv && clientWidth !== dom.clientWidth || clientHeight !== dom.clientHeight) {
-        state.size = new Size(dom.clientWidth, dom.clientHeight);
+      if (state.size.width !== w || state.size.height !== h || viewportSizeChanged) {
+        state.size = new Size(w, h);
         flush(() => {
           updateVisibleRect();
           onSizeChange?.(state.size);
         });
-      }
-    }
 
-    isUpdatingSize.current = false;
-  }, [ref, state, updateVisibleRect, onSizeChange]);
+        // If the clientWidth or clientHeight changed, scrollbars appeared or disappeared as
+        // a result of the layout update. In this case, re-layout again to account for the
+        // adjusted space. In very specific cases this might result in the scrollbars disappearing
+        // again, resulting in extra padding. We stop after a maximum of two layout passes to avoid
+        // an infinite loop. This matches how browsers behavior with native CSS grid layout.
+        if ((!isTestEnv && clientWidth !== dom.clientWidth) || clientHeight !== dom.clientHeight) {
+          state.size = new Size(dom.clientWidth, dom.clientHeight);
+          flush(() => {
+            updateVisibleRect();
+            onSizeChange?.(state.size);
+          });
+        }
+      }
+
+      isUpdatingSize.current = false;
+    },
+    [ref, state, updateVisibleRect, onSizeChange]
+  );
   let updateSizeEvent = useEffectEvent(updateSize);
 
   // Track the size of the entire window viewport, which is used to bound the size of the virtualizer's visible rectangle.
@@ -283,15 +315,23 @@ export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement
   // We only contain a call to setState in here for testing environments.
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useLayoutEffect(() => {
-    if (!isUpdatingSize.current && (lastContentSize.current == null || !contentSize.equals(lastContentSize.current))) {
+    if (
+      !isUpdatingSize.current &&
+      (lastContentSize.current == null || !contentSize.equals(lastContentSize.current))
+    ) {
       // React doesn't allow flushSync inside effects, so queue a microtask.
       // We also need to wait until all refs are set (e.g. when passing a ref down from a parent).
       // If we are in an `act` environment, update immediately without a microtask so you don't need
       // to mock timers in tests. In this case, the update is synchronous already.
       // IS_REACT_ACT_ENVIRONMENT is used by React 18. Previous versions checked for the `jest` global.
       // https://github.com/reactwg/react-18/discussions/102
-      // @ts-ignore
-      if (typeof IS_REACT_ACT_ENVIRONMENT === 'boolean' ? IS_REACT_ACT_ENVIRONMENT : typeof jest !== 'undefined') {
+      if (
+        // @ts-ignore
+        typeof IS_REACT_ACT_ENVIRONMENT === 'boolean'
+          ? // @ts-ignore
+            IS_REACT_ACT_ENVIRONMENT
+          : typeof jest !== 'undefined'
+      ) {
         // This is so we update size in a separate render but within the same act. Needs to be setState instead of refs
         // due to strict mode.
         setUpdate({});

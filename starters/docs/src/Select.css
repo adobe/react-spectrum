@@ -1,4 +1,4 @@
-@import "./theme.css";
+@import './theme.css';
 
 .react-aria-Select {
   color: var(--text-color);
@@ -34,13 +34,13 @@
   }
 
   .react-aria-SelectValue {
-    [slot=description] {
+    [slot='description'] {
       display: none;
     }
   }
 }
 
-.select-popover[data-trigger=Select] {
+.select-popover[data-trigger='Select'] {
   width: var(--trigger-width);
   padding: 0;
 }

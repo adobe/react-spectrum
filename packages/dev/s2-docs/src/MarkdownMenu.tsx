@@ -9,8 +9,8 @@ import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 interface MarkdownMenuProps {
-  name: string,
-  url: string | undefined
+  name: string;
+  url: string | undefined;
 }
 
 export function MarkdownMenu({name, url}: MarkdownMenuProps) {
@@ -18,9 +18,11 @@ export function MarkdownMenu({name, url}: MarkdownMenuProps) {
   let [isCopied, setIsCopied] = useState(false);
   let [isPending, setPending] = useState(false);
   let timeout = useRef<ReturnType<typeof setTimeout> | null>(null);
-  
-  let pageUrl = typeof window !== 'undefined' && url ? new URL(url, window.location.origin).href : url ?? '';
-  let fullMdUrl = typeof window !== 'undefined' && mdUrl ? new URL(mdUrl, window.location.origin).href : mdUrl;
+
+  let pageUrl =
+    typeof window !== 'undefined' && url ? new URL(url, window.location.origin).href : (url ?? '');
+  let fullMdUrl =
+    typeof window !== 'undefined' && mdUrl ? new URL(mdUrl, window.location.origin).href : mdUrl;
   let library = url ? getLibraryLabel(getLibraryFromUrl(name)) : '';
   let aiPrompt = `Answer questions about the following ${library} documentation page: ${pageUrl}\nMarkdown source: ${fullMdUrl}`;
   let chatGptUrl = `https://chatgpt.com/?q=${encodeURIComponent(aiPrompt)}`;
@@ -57,7 +59,13 @@ export function MarkdownMenu({name, url}: MarkdownMenuProps) {
   }, [mdUrl]);
 
   return (
-    <div className={style({display: 'flex', justifyContent: 'space-between', paddingX: 4, paddingBottom: 16})}>
+    <div
+      className={style({
+        display: 'flex',
+        justifyContent: 'space-between',
+        paddingX: 4,
+        paddingBottom: 16
+      })}>
       <ActionButton isQuiet size="M" onPress={handleCopy} isPending={isPending}>
         {isCopied ? <CheckmarkCircle /> : <Copy />}
         <Text>Copy for LLM</Text>
@@ -80,4 +88,4 @@ export function MarkdownMenu({name, url}: MarkdownMenuProps) {
       </MenuTrigger>
     </div>
   );
-} 
+}

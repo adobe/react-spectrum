@@ -20,7 +20,11 @@ import {
   DropZone as RACDropZone,
   DropZoneProps as RACDropZoneProps
 } from 'react-aria-components/DropZone';
-import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
+import {
+  getAllowedOverrides,
+  StylesPropWithHeight,
+  UnsafeStyles
+} from './style-utils' with {type: 'macro'};
 import {IllustratedMessageContext} from './IllustratedMessage';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -29,52 +33,72 @@ import {useDOMRef} from './useDOMRef';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface DropZoneProps extends Omit<RACDropZoneProps, 'className' | 'style' | 'render' | 'children' | 'isDisabled' | 'onHover' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange' | keyof GlobalDOMAttributes>, UnsafeStyles, DOMProps {
+export interface DropZoneProps
+  extends
+    Omit<
+      RACDropZoneProps,
+      | 'className'
+      | 'style'
+      | 'render'
+      | 'children'
+      | 'isDisabled'
+      | 'onHover'
+      | 'onHoverStart'
+      | 'onHoverEnd'
+      | 'onHoverChange'
+      | keyof GlobalDOMAttributes
+    >,
+    UnsafeStyles,
+    DOMProps {
   /** Spectrum-defined styles, returned by the `style()` macro. */
-  styles?: StylesPropWithHeight,
+  styles?: StylesPropWithHeight;
   /** The content to display in the drop zone. */
-  children: ReactNode,
+  children: ReactNode;
   /** Whether the drop zone has been filled. */
-  isFilled?: boolean,
+  isFilled?: boolean;
   /**
    * The message to replace the default banner message that is shown when the drop zone is filled.
    * @default 'Drop file to replace'
    */
-  replaceMessage?: string,
+  replaceMessage?: string;
   /**
    * The size of the DropZone.
    *
    * @default 'M'
    */
-  size?: 'S' | 'M' | 'L'
+  size?: 'S' | 'M' | 'L';
 }
 
-export const DropZoneContext = createContext<ContextValue<Partial<DropZoneProps>, DOMRefValue<HTMLDivElement>>>(null);
+export const DropZoneContext =
+  createContext<ContextValue<Partial<DropZoneProps>, DOMRefValue<HTMLDivElement>>>(null);
 
-const dropzone = style<DropZoneRenderProps>({
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-  position: 'relative',
-  fontFamily: 'sans',
-  color: 'gray-900',
-  borderStyle: {
-    default: 'dashed',
-    isDropTarget: 'solid'
+const dropzone = style<DropZoneRenderProps>(
+  {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'relative',
+    fontFamily: 'sans',
+    color: 'gray-900',
+    borderStyle: {
+      default: 'dashed',
+      isDropTarget: 'solid'
+    },
+    backgroundColor: {
+      isDropTarget: 'blue-200'
+    },
+    borderWidth: 2,
+    borderColor: {
+      default: 'gray-300',
+      isDropTarget: 'blue-800',
+      isFocusVisible: 'blue-800'
+    },
+    borderRadius: 'lg',
+    padding: 24,
+    boxSizing: 'border-box'
   },
-  backgroundColor: {
-    isDropTarget: 'blue-200'
-  },
-  borderWidth: 2,
-  borderColor: {
-    default: 'gray-300',
-    isDropTarget: 'blue-800',
-    isFocusVisible: 'blue-800'
-  },
-  borderRadius: 'lg',
-  padding: 24,
-  boxSizing: 'border-box'
-}, getAllowedOverrides({height: true}));
+  getAllowedOverrides({height: true})
+);
 
 const banner = style({
   position: 'absolute',
@@ -103,12 +127,13 @@ const banner = style({
 /**
  * A drop zone is an area into which one or multiple objects can be dragged and dropped.
  */
-export const DropZone = /*#__PURE__*/ forwardRef(function DropZone(props: DropZoneProps, ref: DOMRef<HTMLDivElement>) {
+export const DropZone = /*#__PURE__*/ forwardRef(function DropZone(
+  props: DropZoneProps,
+  ref: DOMRef<HTMLDivElement>
+) {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   [props, ref] = useSpectrumContextProps(props, ref, DropZoneContext);
-  let {
-    size = 'M'
-  } = props;
+  let {size = 'M'} = props;
   let domRef = useDOMRef(ref);
 
   return (
@@ -116,19 +141,24 @@ export const DropZone = /*#__PURE__*/ forwardRef(function DropZone(props: DropZo
       {...props}
       ref={domRef}
       style={props.UNSAFE_style}
-      className={renderProps => (props.UNSAFE_className || '') + dropzone(renderProps, props.styles)}>
+      className={renderProps =>
+        (props.UNSAFE_className || '') + dropzone(renderProps, props.styles)
+      }>
       {renderProps => (
         <>
-          <IllustratedMessageContext.Provider value={{isInDropZone: true, isDropTarget: renderProps.isDropTarget, size}}>
+          <IllustratedMessageContext.Provider
+            value={{isInDropZone: true, isDropTarget: renderProps.isDropTarget, size}}>
             {props.children}
           </IllustratedMessageContext.Provider>
-          {(renderProps.isDropTarget && props.isFilled) &&
+          {renderProps.isDropTarget && props.isFilled && (
             <div className={banner({size})}>
               <span>
-                {props.replaceMessage ? props.replaceMessage : stringFormatter.format('dropzone.replaceMessage')}
+                {props.replaceMessage
+                  ? props.replaceMessage
+                  : stringFormatter.format('dropzone.replaceMessage')}
               </span>
             </div>
-          }
+          )}
         </>
       )}
     </RACDropZone>

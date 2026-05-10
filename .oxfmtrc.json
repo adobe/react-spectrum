@@ -1,0 +1,13 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "ignorePatterns": [
+    "**/*.mdx",
+    "**/*.md",
+    "packages/dev/codemods/src/s1-to-s2/__testfixtures__/**"
+  ],
+  "singleQuote": true,
+  "bracketSpacing": false,
+  "trailingComma": "none",
+  "bracketSameLine": true,
+  "arrowParens": "avoid"
+}

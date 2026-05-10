@@ -14,9 +14,12 @@ import {Key} from '@react-types/shared';
 import {TreeState} from 'react-stately/useTreeState';
 
 interface MenuData {
-  onClose?: () => void,
-  onAction?: (key: Key) => void,
-  shouldUseVirtualFocus?: boolean
+  onClose?: () => void;
+  onAction?: (key: Key) => void;
+  shouldUseVirtualFocus?: boolean;
 }
 
-export const menuData: WeakMap<TreeState<unknown>, MenuData> = new WeakMap<TreeState<unknown>, MenuData>();
+export const menuData: WeakMap<TreeState<unknown>, MenuData> = new WeakMap<
+  TreeState<unknown>,
+  MenuData
+>();

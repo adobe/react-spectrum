@@ -12,25 +12,39 @@
 
 import AlertMedium from '@spectrum-icons/ui/AlertMedium';
 import {classNames} from '../utils/classNames';
-import {DOMRef, SpectrumFieldValidation, SpectrumHelpTextProps, StyleProps, Validation} from '@react-types/shared';
+import {
+  DOMRef,
+  SpectrumFieldValidation,
+  SpectrumHelpTextProps,
+  StyleProps,
+  Validation
+} from '@react-types/shared';
 import React, {HTMLAttributes, ReactNode} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/helptext/vars.css';
 import {useDOMRef} from '../utils/useDOMRef';
 import {useStyleProps} from '../utils/styleProps';
 
-interface HelpTextProps extends Omit<SpectrumHelpTextProps, 'errorMessage'>, Omit<Validation<any>, 'validationState'>, SpectrumFieldValidation<any>, StyleProps {
+interface HelpTextProps
+  extends
+    Omit<SpectrumHelpTextProps, 'errorMessage'>,
+    Omit<Validation<any>, 'validationState'>,
+    SpectrumFieldValidation<any>,
+    StyleProps {
   /** Props for the help text description element. */
-  descriptionProps?: HTMLAttributes<HTMLElement>,
+  descriptionProps?: HTMLAttributes<HTMLElement>;
   /** Props for the help text error message element. */
-  errorMessageProps?: HTMLAttributes<HTMLElement>,
+  errorMessageProps?: HTMLAttributes<HTMLElement>;
   /** An error message for the field. */
-  errorMessage?: ReactNode
+  errorMessage?: ReactNode;
 }
 
 /**
  * Help text provides either an informative description or an error message that gives more context about what a user needs to input. It's commonly used in forms.
  */
-export const HelpText = React.forwardRef(function HelpText(props: HelpTextProps, ref: DOMRef<HTMLDivElement>) {
+export const HelpText = React.forwardRef(function HelpText(
+  props: HelpTextProps,
+  ref: DOMRef<HTMLDivElement>
+) {
   let {
     description,
     errorMessage,
@@ -58,7 +72,11 @@ export const HelpText = React.forwardRef(function HelpText(props: HelpTextProps,
       ref={domRef}>
       {isErrorMessage ? (
         <>
-          {showErrorIcon && <AlertMedium UNSAFE_className={classNames(styles, 'spectrum-HelpText-validationIcon')} />}
+          {showErrorIcon && (
+            <AlertMedium
+              UNSAFE_className={classNames(styles, 'spectrum-HelpText-validationIcon')}
+            />
+          )}
           <div {...errorMessageProps} className={classNames(styles, 'spectrum-HelpText-text')}>
             {errorMessage}
           </div>

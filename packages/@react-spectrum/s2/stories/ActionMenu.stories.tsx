@@ -37,7 +37,7 @@ export default meta;
 type Story = StoryObj<typeof ActionMenu<any>>;
 
 export const Example: Story = {
-  render: (args) => {
+  render: args => {
     return (
       <ActionMenu {...args}>
         <MenuItem>Cut</MenuItem>
@@ -49,8 +49,8 @@ export const Example: Story = {
 };
 
 interface IExampleItem {
-  id: string,
-  label: string
+  id: string;
+  label: string;
 }
 let items: IExampleItem[] = [
   {id: 'cut', label: 'Cut'},
@@ -58,10 +58,10 @@ let items: IExampleItem[] = [
   {id: 'paste', label: 'Paste'}
 ];
 export const DynamicExample: Story = {
-  render: (args) => {
+  render: args => {
     return (
       <ActionMenu {...args}>
-        {(item) => <MenuItem id={(item as IExampleItem).id}>{(item as IExampleItem).label}</MenuItem>}
+        {item => <MenuItem id={(item as IExampleItem).id}>{(item as IExampleItem).label}</MenuItem>}
       </ActionMenu>
     );
   },

@@ -37,9 +37,7 @@ LogicVariantOr.story = {
 export function Render(props: SpectrumLogicButtonProps = {variant: 'and'}): JSX.Element {
   return (
     <Flex gap="size-100">
-      <LogicButton {...props}>
-        Default
-      </LogicButton>
+      <LogicButton {...props}>Default</LogicButton>
       <LogicButton isDisabled {...props}>
         Disabled
       </LogicButton>

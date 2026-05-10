@@ -10,7 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, pointerMap, render, waitFor, within} from '@react-spectrum/test-utils-internal';
+import {
+  act,
+  fireEvent,
+  pointerMap,
+  render,
+  waitFor,
+  within
+} from '@react-spectrum/test-utils-internal';
 import {DataTransfer, DragEvent} from './mocks';
 import {Draggable} from './examples';
 import {DroppableGridExample} from '../../stories/dnd/DroppableGrid';
@@ -84,10 +91,12 @@ describe('useDroppableCollection', () => {
       let onDropEnter = jest.fn();
       let onDragExit = jest.fn();
       let onDrop = jest.fn();
-      let tree = render(<>
-        <Draggable />
-        <DroppableGridExample onDropEnter={onDropEnter} onDropExit={onDragExit} onDrop={onDrop} />
-      </>);
+      let tree = render(
+        <>
+          <Draggable />
+          <DroppableGridExample onDropEnter={onDropEnter} onDropExit={onDragExit} onDrop={onDrop} />
+        </>
+      );
 
       let draggable = tree.getByText('Drag me');
       let grid = tree.getByRole('grid');
@@ -195,7 +204,9 @@ describe('useDroppableCollection', () => {
         ]
       });
 
-      await waitFor(() => expect(within(grid).getAllByRole('gridcell')).toHaveLength(4), {interval: 10});
+      await waitFor(() => expect(within(grid).getAllByRole('gridcell')).toHaveLength(4), {
+        interval: 10
+      });
       cells = within(grid).getAllByRole('gridcell');
       expect(cells.map(cell => cell.textContent)).toEqual(['One', 'Two', 'hello world', 'Three']);
 
@@ -214,10 +225,18 @@ describe('useDroppableCollection', () => {
       for (let i = 0; i < 6; i++) {
         items.push({id: '' + i, type: 'item', text: `Item ${i}`});
       }
-      let tree = render(<>
-        <Draggable />
-        <DroppableGridExample style={{overflowY: 'scroll'}} items={items} onDropEnter={onDropEnter} onDropExit={onDragExit} onDrop={onDrop} />
-      </>);
+      let tree = render(
+        <>
+          <Draggable />
+          <DroppableGridExample
+            style={{overflowY: 'scroll'}}
+            items={items}
+            onDropEnter={onDropEnter}
+            onDropExit={onDragExit}
+            onDrop={onDrop}
+          />
+        </>
+      );
 
       let draggable = tree.getByText('Drag me');
       let grid = tree.getByRole('grid');
@@ -266,10 +285,12 @@ describe('useDroppableCollection', () => {
       let onDropEnter = jest.fn();
       let onDragExit = jest.fn();
       let onDrop = jest.fn();
-      let tree = render(<>
-        <Draggable />
-        <DroppableGridExample onDropEnter={onDropEnter} onDropExit={onDragExit} onDrop={onDrop} />
-      </>);
+      let tree = render(
+        <>
+          <Draggable />
+          <DroppableGridExample onDropEnter={onDropEnter} onDropExit={onDragExit} onDrop={onDrop} />
+        </>
+      );
 
       let draggable = tree.getByText('Drag me');
       let grid = tree.getByRole('grid');
@@ -310,7 +331,9 @@ describe('useDroppableCollection', () => {
         ]
       });
 
-      await waitFor(() => expect(within(grid).getAllByRole('gridcell')).toHaveLength(3), {interval: 10});
+      await waitFor(() => expect(within(grid).getAllByRole('gridcell')).toHaveLength(3), {
+        interval: 10
+      });
       cells = within(grid).getAllByRole('gridcell');
       expect(cells.map(cell => cell.textContent)).toEqual(['One', 'Two', 'Three']);
 
@@ -321,7 +344,7 @@ describe('useDroppableCollection', () => {
   });
 
   describe('keyboard', () => {
-    let pressKey = async (key) => {
+    let pressKey = async key => {
       await user.keyboard(`[${key}]`);
     };
 
@@ -331,10 +354,12 @@ describe('useDroppableCollection', () => {
 
     it('should perform basic drag and drop', async () => {
       let onDrop = jest.fn();
-      let tree = render(<>
-        <Draggable />
-        <DroppableGridExample onDrop={onDrop} />
-      </>);
+      let tree = render(
+        <>
+          <Draggable />
+          <DroppableGridExample onDrop={onDrop} />
+        </>
+      );
 
       let draggable = tree.getByText('Drag me');
       let grid = tree.getByRole('grid');
@@ -378,7 +403,9 @@ describe('useDroppableCollection', () => {
         ]
       });
 
-      await waitFor(() => expect(within(grid).getAllByRole('gridcell')).toHaveLength(4), {interval: 10});
+      await waitFor(() => expect(within(grid).getAllByRole('gridcell')).toHaveLength(4), {
+        interval: 10
+      });
       cells = within(grid).getAllByRole('gridcell');
       expect(cells.map(cell => cell.textContent)).toEqual(['One', 'hello world', 'Two', 'Three']);
 
@@ -392,10 +419,12 @@ describe('useDroppableCollection', () => {
     it('should support arrow key navigation', async () => {
       let onDropEnter = jest.fn();
       let onDragExit = jest.fn();
-      let tree = render(<>
-        <Draggable />
-        <DroppableGridExample onDropEnter={onDropEnter} onDropExit={onDragExit} />
-      </>);
+      let tree = render(
+        <>
+          <Draggable />
+          <DroppableGridExample onDropEnter={onDropEnter} onDropExit={onDragExit} />
+        </>
+      );
 
       let draggable = tree.getByText('Drag me');
       let grid = tree.getByRole('grid');
@@ -508,10 +537,12 @@ describe('useDroppableCollection', () => {
       let onDropEnter = jest.fn();
       let onDragExit = jest.fn();
       let onDrop = jest.fn();
-      let tree = render(<>
-        <Draggable />
-        <DroppableGridExample onDropEnter={onDropEnter} onDropExit={onDragExit} onDrop={onDrop} />
-      </>);
+      let tree = render(
+        <>
+          <Draggable />
+          <DroppableGridExample onDropEnter={onDropEnter} onDropExit={onDragExit} onDrop={onDrop} />
+        </>
+      );
 
       let draggable = tree.getByText('Drag me');
       let grid = tree.getByRole('grid');
@@ -578,10 +609,18 @@ describe('useDroppableCollection', () => {
       for (let i = 0; i < 6; i++) {
         items.push({id: '' + i, type: 'item', text: `Item ${i}`});
       }
-      let tree = render(<>
-        <Draggable />
-        <DroppableGridExample style={{overflow: 'auto'}} items={items} onDropEnter={onDropEnter} onDropExit={onDragExit} onDrop={onDrop} />
-      </>);
+      let tree = render(
+        <>
+          <Draggable />
+          <DroppableGridExample
+            style={{overflow: 'auto'}}
+            items={items}
+            onDropEnter={onDropEnter}
+            onDropExit={onDragExit}
+            onDrop={onDrop}
+          />
+        </>
+      );
 
       let draggable = tree.getByText('Drag me');
       let grid = tree.getByRole('grid');
@@ -661,11 +700,26 @@ describe('useDroppableCollection', () => {
       for (let i = 0; i < 6; i++) {
         items.push({id: '' + i, type: 'item', text: `Item ${i}`});
       }
-      let getDropOperation = (target) => target.type === 'item' && target.dropPosition === 'on' && target.key !== '4' && target.key !== '1' ? 'move' : 'cancel';
-      let tree = render(<>
-        <Draggable />
-        <DroppableGridExample style={{overflow: 'auto'}} items={items} getDropOperation={getDropOperation} onDropEnter={onDropEnter} onDropExit={onDragExit} onDrop={onDrop} />
-      </>);
+      let getDropOperation = target =>
+        target.type === 'item' &&
+        target.dropPosition === 'on' &&
+        target.key !== '4' &&
+        target.key !== '1'
+          ? 'move'
+          : 'cancel';
+      let tree = render(
+        <>
+          <Draggable />
+          <DroppableGridExample
+            style={{overflow: 'auto'}}
+            items={items}
+            getDropOperation={getDropOperation}
+            onDropEnter={onDropEnter}
+            onDropExit={onDragExit}
+            onDrop={onDrop}
+          />
+        </>
+      );
 
       let draggable = tree.getByText('Drag me');
       let grid = tree.getByRole('grid');
@@ -744,11 +798,26 @@ describe('useDroppableCollection', () => {
       for (let i = 0; i < 6; i++) {
         items.push({id: '' + i, type: 'item', text: `Item ${i}`});
       }
-      let getDropOperation = (target) => target.type === 'item' && target.dropPosition === 'on' && target.key !== '0' && target.key !== '5' ? 'move' : 'cancel';
-      let tree = render(<>
-        <Draggable />
-        <DroppableGridExample style={{overflow: 'auto'}} items={items} getDropOperation={getDropOperation} onDropEnter={onDropEnter} onDropExit={onDragExit} onDrop={onDrop} />
-      </>);
+      let getDropOperation = target =>
+        target.type === 'item' &&
+        target.dropPosition === 'on' &&
+        target.key !== '0' &&
+        target.key !== '5'
+          ? 'move'
+          : 'cancel';
+      let tree = render(
+        <>
+          <Draggable />
+          <DroppableGridExample
+            style={{overflow: 'auto'}}
+            items={items}
+            getDropOperation={getDropOperation}
+            onDropEnter={onDropEnter}
+            onDropExit={onDragExit}
+            onDrop={onDrop}
+          />
+        </>
+      );
 
       let draggable = tree.getByText('Drag me');
       let grid = tree.getByRole('grid');
@@ -821,10 +890,12 @@ describe('useDroppableCollection', () => {
 
     it('should default to dropping after the last focused item if any', async () => {
       let onDrop = jest.fn();
-      let tree = render(<>
-        <Draggable />
-        <DroppableGridExample onDrop={onDrop} />
-      </>);
+      let tree = render(
+        <>
+          <Draggable />
+          <DroppableGridExample onDrop={onDrop} />
+        </>
+      );
 
       let draggable = tree.getByText('Drag me');
       let grid = tree.getByRole('grid');
@@ -849,10 +920,12 @@ describe('useDroppableCollection', () => {
 
     it('should default to dropping after the selected items if any', async () => {
       let onDrop = jest.fn();
-      let tree = render(<>
-        <Draggable />
-        <DroppableGridExample onDrop={onDrop} />
-      </>);
+      let tree = render(
+        <>
+          <Draggable />
+          <DroppableGridExample onDrop={onDrop} />
+        </>
+      );
 
       let draggable = tree.getByText('Drag me');
       let grid = tree.getByRole('grid');
@@ -888,10 +961,12 @@ describe('useDroppableCollection', () => {
 
     it('should default to before the selected items if the last focused item is the first selected item', async () => {
       let onDrop = jest.fn();
-      let tree = render(<>
-        <Draggable />
-        <DroppableGridExample onDrop={onDrop} />
-      </>);
+      let tree = render(
+        <>
+          <Draggable />
+          <DroppableGridExample onDrop={onDrop} />
+        </>
+      );
 
       let draggable = tree.getByText('Drag me');
       let grid = tree.getByRole('grid');
@@ -926,11 +1001,13 @@ describe('useDroppableCollection', () => {
 
     it('should default to on the first selected item if the last focused item is the first selected item and only dropping on items is allowed', async () => {
       let onDrop = jest.fn();
-      let getDropOperation = (target) => target.dropPosition !== 'on' ? 'cancel' : 'move';
-      let tree = render(<>
-        <Draggable />
-        <DroppableGridExample onDrop={onDrop} getDropOperation={getDropOperation} />
-      </>);
+      let getDropOperation = target => (target.dropPosition !== 'on' ? 'cancel' : 'move');
+      let tree = render(
+        <>
+          <Draggable />
+          <DroppableGridExample onDrop={onDrop} getDropOperation={getDropOperation} />
+        </>
+      );
 
       let draggable = tree.getByText('Drag me');
       let grid = tree.getByRole('grid');
@@ -965,11 +1042,13 @@ describe('useDroppableCollection', () => {
 
     it('should default to on the last selected item when only dropping on items is allowed', async () => {
       let onDrop = jest.fn();
-      let getDropOperation = (target) => target.dropPosition !== 'on' ? 'cancel' : 'move';
-      let tree = render(<>
-        <Draggable />
-        <DroppableGridExample onDrop={onDrop} getDropOperation={getDropOperation} />
-      </>);
+      let getDropOperation = target => (target.dropPosition !== 'on' ? 'cancel' : 'move');
+      let tree = render(
+        <>
+          <Draggable />
+          <DroppableGridExample onDrop={onDrop} getDropOperation={getDropOperation} />
+        </>
+      );
 
       let draggable = tree.getByText('Drag me');
       let grid = tree.getByRole('grid');
@@ -1016,10 +1095,12 @@ describe('useDroppableCollection', () => {
 
     it('should perform basic drag and drop', async () => {
       let onDrop = jest.fn();
-      let tree = render(<>
-        <Draggable />
-        <DroppableGridExample onDrop={onDrop} />
-      </>);
+      let tree = render(
+        <>
+          <Draggable />
+          <DroppableGridExample onDrop={onDrop} />
+        </>
+      );
 
       let draggable = tree.getByText('Drag me');
       let grid = tree.getByRole('grid');
@@ -1054,7 +1135,9 @@ describe('useDroppableCollection', () => {
         ]
       });
 
-      await waitFor(() => expect(within(grid).getAllByRole('gridcell')).toHaveLength(4), {interval: 10});
+      await waitFor(() => expect(within(grid).getAllByRole('gridcell')).toHaveLength(4), {
+        interval: 10
+      });
       cells = within(grid).getAllByRole('gridcell');
       expect(cells.map(cell => cell.textContent)).toEqual(['One', 'hello world', 'Two', 'Three']);
 
@@ -1066,10 +1149,12 @@ describe('useDroppableCollection', () => {
     });
 
     it('should add descriptions to each item', () => {
-      let tree = render(<>
-        <Draggable />
-        <DroppableGridExample />
-      </>);
+      let tree = render(
+        <>
+          <Draggable />
+          <DroppableGridExample />
+        </>
+      );
 
       let draggable = tree.getByText('Drag me');
       let grid = tree.getByRole('grid');
@@ -1091,15 +1176,19 @@ describe('useDroppableCollection', () => {
         }
 
         expect(cell).toHaveAttribute('aria-describedby');
-        expect(document.getElementById(cell.getAttribute('aria-describedby'))).toHaveTextContent('Click to drop.');
+        expect(document.getElementById(cell.getAttribute('aria-describedby'))).toHaveTextContent(
+          'Click to drop.'
+        );
       }
     });
 
     it('should show insertion indicators', () => {
-      let tree = render(<>
-        <Draggable />
-        <DroppableGridExample />
-      </>);
+      let tree = render(
+        <>
+          <Draggable />
+          <DroppableGridExample />
+        </>
+      );
 
       let draggable = tree.getByText('Drag me');
       let grid = tree.getByRole('grid');
@@ -1121,7 +1210,9 @@ describe('useDroppableCollection', () => {
       expect(dropIndicator).toHaveAttribute('aria-labelledby', `${dropIndicator.id} ${grid.id}`);
       expect(dropIndicator).toHaveAttribute('tabIndex', '-1');
       expect(dropIndicator).toHaveAttribute('aria-describedby');
-      expect(document.getElementById(dropIndicator.getAttribute('aria-describedby'))).toHaveTextContent('Click to drop.');
+      expect(
+        document.getElementById(dropIndicator.getAttribute('aria-describedby'))
+      ).toHaveTextContent('Click to drop.');
 
       dropIndicator = within(cells[1]).getByRole('button', {hidden: true});
       expect(dropIndicator).toHaveAttribute('aria-roledescription', 'drop indicator');
@@ -1129,7 +1220,9 @@ describe('useDroppableCollection', () => {
       expect(dropIndicator).not.toHaveAttribute('aria-labelledby');
       expect(dropIndicator).toHaveAttribute('tabIndex', '-1');
       expect(dropIndicator).toHaveAttribute('aria-describedby');
-      expect(document.getElementById(dropIndicator.getAttribute('aria-describedby'))).toHaveTextContent('Click to drop.');
+      expect(
+        document.getElementById(dropIndicator.getAttribute('aria-describedby'))
+      ).toHaveTextContent('Click to drop.');
 
       expect(cells[2]).toHaveTextContent('One');
 
@@ -1139,7 +1232,9 @@ describe('useDroppableCollection', () => {
       expect(dropIndicator).not.toHaveAttribute('aria-labelledby');
       expect(dropIndicator).toHaveAttribute('tabIndex', '-1');
       expect(dropIndicator).toHaveAttribute('aria-describedby');
-      expect(document.getElementById(dropIndicator.getAttribute('aria-describedby'))).toHaveTextContent('Click to drop.');
+      expect(
+        document.getElementById(dropIndicator.getAttribute('aria-describedby'))
+      ).toHaveTextContent('Click to drop.');
 
       dropIndicator = within(cells[4]).getByRole('button', {hidden: true});
       expect(dropIndicator).toHaveAttribute('aria-roledescription', 'drop indicator');
@@ -1147,7 +1242,9 @@ describe('useDroppableCollection', () => {
       expect(dropIndicator).not.toHaveAttribute('aria-labelledby');
       expect(dropIndicator).toHaveAttribute('tabIndex', '-1');
       expect(dropIndicator).toHaveAttribute('aria-describedby');
-      expect(document.getElementById(dropIndicator.getAttribute('aria-describedby'))).toHaveTextContent('Click to drop.');
+      expect(
+        document.getElementById(dropIndicator.getAttribute('aria-describedby'))
+      ).toHaveTextContent('Click to drop.');
 
       expect(cells[5]).toHaveTextContent('Three');
 
@@ -1157,14 +1254,18 @@ describe('useDroppableCollection', () => {
       expect(dropIndicator).not.toHaveAttribute('aria-labelledby');
       expect(dropIndicator).toHaveAttribute('tabIndex', '-1');
       expect(dropIndicator).toHaveAttribute('aria-describedby');
-      expect(document.getElementById(dropIndicator.getAttribute('aria-describedby'))).toHaveTextContent('Click to drop.');
+      expect(
+        document.getElementById(dropIndicator.getAttribute('aria-describedby'))
+      ).toHaveTextContent('Click to drop.');
     });
 
     it('should hide items that do not accept the drop', () => {
-      let tree = render(<>
-        <Draggable />
-        <DroppableGridExample />
-      </>);
+      let tree = render(
+        <>
+          <Draggable />
+          <DroppableGridExample />
+        </>
+      );
 
       let draggable = tree.getByText('Drag me');
       let grid = tree.getByRole('grid');

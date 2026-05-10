@@ -25,8 +25,8 @@ let currentNavigationId = 0;
 let currentAbortController: AbortController | null = null;
 
 interface HistoryState {
-  scrollTop?: number,
-  windowScrollTop?: number
+  scrollTop?: number;
+  windowScrollTop?: number;
 }
 
 function getScrollContainer(): HTMLElement | null {
@@ -68,17 +68,17 @@ async function navigate(pathname: string, push = false, popstateState: HistorySt
   let pathAnchor = url.hash.slice(1);
   let currentPath = location.pathname;
   let isSamePageAnchor = (!basePath || basePath === currentPath) && pathAnchor;
-  
+
   // Save scroll position to current history entry before navigating away
   if (push) {
     saveScrollPosition();
   }
-  
+
   if (isSamePageAnchor) {
     if (push) {
       history.pushState(null, '', pathname);
     }
-    
+
     // Scroll to the anchor
     let element = document.getElementById(pathAnchor);
     if (element) {
@@ -86,45 +86,45 @@ async function navigate(pathname: string, push = false, popstateState: HistorySt
     }
     return;
   }
-  
+
   let rscPath = getRSCUrl(pathname);
-  
+
   // Cancel any in-flight navigation
   if (currentAbortController) {
     currentAbortController.abort('Aborting due to new navigation');
   }
-  
+
   // Create a new abort controller for this navigation
   const abortController = new AbortController();
   currentAbortController = abortController;
   const navigationId = ++currentNavigationId;
-  
+
   const navigationPromise = (async () => {
     window.dispatchEvent(new CustomEvent('rsc-navigation-start'));
-    
+
     // Use prefetched result if available, otherwise fetch
     const prefetchedPromise = getPrefetchedPromise(rscPath);
     const fetchPromise = prefetchedPromise ?? fetchRSC<ReactElement>(rscPath);
-    
+
     try {
       let res = await fetchPromise;
-      
+
       // Check if this navigation is still current before updating
       if (navigationId !== currentNavigationId) {
         // A newer navigation has started, ignore this result
         return;
       }
-      
+
       // Check if this navigation was aborted
       if (abortController.signal.aborted) {
         return;
       }
-      
+
       let currentPath = location.pathname;
       let [newBasePath, newPathAnchor] = pathname.split('#');
 
       // Return a promise that resolves after updateRoot callback completes
-      await new Promise<void>((resolve) => {
+      await new Promise<void>(resolve => {
         updateRoot(res, () => {
           if (push) {
             history.pushState(null, '', pathname);
@@ -161,21 +161,21 @@ async function navigate(pathname: string, push = false, popstateState: HistorySt
       if (abortController.signal.aborted) {
         return;
       }
-      
+
       // Check if this navigation is still current
       if (navigationId !== currentNavigationId) {
         return;
       }
-      
+
       try {
         let errorRes = await fetchRSC<ReactElement>('/error.rsc');
-        
+
         // Check again if still current after error fetch
         if (navigationId !== currentNavigationId || abortController.signal.aborted) {
           return;
         }
-        
-        await new Promise<void>((resolve) => {
+
+        await new Promise<void>(resolve => {
           updateRoot(errorRes, () => {
             if (push) {
               history.pushState(null, '', '/error.html');
@@ -192,7 +192,7 @@ async function navigate(pathname: string, push = false, popstateState: HistorySt
       }
     }
   })();
-  
+
   url.hash = '';
   url.search = '';
   setNavigationPromise(navigationPromise, url.href);
@@ -212,72 +212,92 @@ function clearPrefetchTimeout() {
   currentPrefetchLink = null;
 }
 
-document.addEventListener('pointerenter', e => {
-  if (e.pointerType !== 'mouse') {
-    return;
-  }
+document.addEventListener(
+  'pointerenter',
+  e => {
+    if (e.pointerType !== 'mouse') {
+      return;
+    }
 
-  let link = e.target instanceof Element ? e.target.closest('a') : null;
-  
-  // Clear any pending prefetch
-  clearPrefetchTimeout();
-  
-  if (link && isClientLink(link) && link.pathname !== location.pathname) {
-    currentPrefetchLink = link;
-    prefetchTimeout = setTimeout(() => {
-      prefetchRoute(link.pathname + link.search + link.hash);
-      prefetchTimeout = null;
-    }, PREFETCH_DELAY_MS);
-  }
-}, true);
+    let link = e.target instanceof Element ? e.target.closest('a') : null;
+
+    // Clear any pending prefetch
+    clearPrefetchTimeout();
+
+    if (link && isClientLink(link) && link.pathname !== location.pathname) {
+      currentPrefetchLink = link;
+      prefetchTimeout = setTimeout(() => {
+        prefetchRoute(link.pathname + link.search + link.hash);
+        prefetchTimeout = null;
+      }, PREFETCH_DELAY_MS);
+    }
+  },
+  true
+);
 
 // Prefetch immediately on pointer down, with high priority.
-document.addEventListener('pointerdown', e => {
-  let link = e.target instanceof Element ? e.target.closest('a') : null;
+document.addEventListener(
+  'pointerdown',
+  e => {
+    let link = e.target instanceof Element ? e.target.closest('a') : null;
 
-  // Clear any pending prefetch
-  clearPrefetchTimeout();
+    // Clear any pending prefetch
+    clearPrefetchTimeout();
 
-  if (link && isClientLink(link) && link.pathname !== location.pathname) {
-    currentPrefetchLink = link;
-    prefetchRoute(link.pathname + link.search + link.hash, 'high');
-  }
-}, true);
+    if (link && isClientLink(link) && link.pathname !== location.pathname) {
+      currentPrefetchLink = link;
+      prefetchRoute(link.pathname + link.search + link.hash, 'high');
+    }
+  },
+  true
+);
 
 // Clear prefetch timeout when pointer leaves a link
-document.addEventListener('pointerleave', e => {
-  if (e.pointerType !== 'mouse') {
-    return;
-  }
+document.addEventListener(
+  'pointerleave',
+  e => {
+    if (e.pointerType !== 'mouse') {
+      return;
+    }
 
-  let link = e.target instanceof Element ? e.target.closest('a') : null;
-  if (link && link === currentPrefetchLink) {
+    let link = e.target instanceof Element ? e.target.closest('a') : null;
+    if (link && link === currentPrefetchLink) {
+      clearPrefetchTimeout();
+    }
+  },
+  true
+);
+
+document.addEventListener(
+  'focus',
+  e => {
+    let link = e.target instanceof Element ? e.target.closest('a') : null;
+
+    // Clear any pending prefetch
     clearPrefetchTimeout();
-  }
-}, true);
 
-document.addEventListener('focus', e => {
-  let link = e.target instanceof Element ? e.target.closest('a') : null;
-  
-  // Clear any pending prefetch
-  clearPrefetchTimeout();
-  
-  if (link && isClientLink(link) && link.pathname !== location.pathname) {
-    currentPrefetchLink = link;
-    prefetchTimeout = setTimeout(() => {
-      prefetchRoute(link.pathname + link.search + link.hash);
-      prefetchTimeout = null;
-    }, PREFETCH_DELAY_MS);
-  }
-}, true);
+    if (link && isClientLink(link) && link.pathname !== location.pathname) {
+      currentPrefetchLink = link;
+      prefetchTimeout = setTimeout(() => {
+        prefetchRoute(link.pathname + link.search + link.hash);
+        prefetchTimeout = null;
+      }, PREFETCH_DELAY_MS);
+    }
+  },
+  true
+);
 
 // Clear prefetch timeout when focus leaves a link
-document.addEventListener('blur', e => {
-  let link = e.target instanceof Element ? e.target.closest('a') : null;
-  if (link && link === currentPrefetchLink) {
-    clearPrefetchTimeout();
-  }
-}, true);
+document.addEventListener(
+  'blur',
+  e => {
+    let link = e.target instanceof Element ? e.target.closest('a') : null;
+    if (link && link === currentPrefetchLink) {
+      clearPrefetchTimeout();
+    }
+  },
+  true
+);
 
 // Intercept link clicks to perform RSC navigation.
 document.addEventListener('click', e => {
@@ -299,8 +319,12 @@ document.addEventListener('click', e => {
 });
 
 // When the user clicks the back/forward button, navigate with RSC.
-window.addEventListener('popstate', (e) => {
-  navigate(location.pathname + location.search + location.hash, false, e.state as HistoryState | null);
+window.addEventListener('popstate', e => {
+  navigate(
+    location.pathname + location.search + location.hash,
+    false,
+    e.state as HistoryState | null
+  );
 });
 
 // Save scroll position to history state when scrolling stops.

@@ -9,7 +9,15 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {CollectionBase, DropTargetDelegate, GlobalDOMAttributes, ItemDropTarget, Key, LayoutDelegate, RefObject} from '@react-types/shared';
+import {
+  CollectionBase,
+  DropTargetDelegate,
+  GlobalDOMAttributes,
+  ItemDropTarget,
+  Key,
+  LayoutDelegate,
+  RefObject
+} from '@react-types/shared';
 import {createBranchComponent} from 'react-aria/CollectionBuilder';
 import {
   Collection as ICollection,
@@ -19,16 +27,27 @@ import {
   SectionProps as SharedSectionProps
 } from '@react-types/shared';
 
-import React, {cloneElement, createContext, ForwardedRef, HTMLAttributes, isValidElement, JSX, ReactElement, ReactNode, useContext, useMemo} from 'react';
+import React, {
+  cloneElement,
+  createContext,
+  ForwardedRef,
+  HTMLAttributes,
+  isValidElement,
+  JSX,
+  ReactElement,
+  ReactNode,
+  useContext,
+  useMemo
+} from 'react';
 
 import {StyleProps} from './utils';
 import {useCachedChildren} from 'react-aria/private/collections/useCachedChildren';
 
 export interface CollectionProps<T> extends Omit<CollectionBase<T>, 'children'> {
   /** The contents of the collection. */
-  children?: ReactNode | ((item: T) => ReactNode),
+  children?: ReactNode | ((item: T) => ReactNode);
   /** Values that should invalidate the item cache when using dynamic collections. */
-  dependencies?: ReadonlyArray<any>
+  dependencies?: ReadonlyArray<any>;
 }
 
 export interface ItemRenderProps {
@@ -36,118 +55,134 @@ export interface ItemRenderProps {
    * Whether the item is currently hovered with a mouse.
    * @selector [data-hovered]
    */
-  isHovered: boolean,
+  isHovered: boolean;
   /**
    * Whether the item is currently in a pressed state.
    * @selector [data-pressed]
    */
-  isPressed: boolean,
+  isPressed: boolean;
   /**
    * Whether the item is currently selected.
    * @selector [data-selected]
    */
-  isSelected: boolean,
+  isSelected: boolean;
   /**
    * Whether the item is currently focused.
    * @selector [data-focused]
    */
-  isFocused: boolean,
+  isFocused: boolean;
   /**
    * Whether the item is currently keyboard focused.
    * @selector [data-focus-visible]
    */
-  isFocusVisible: boolean,
+  isFocusVisible: boolean;
   /**
    * Whether the item is non-interactive, i.e. both selection and actions are disabled and the item may
    * not be focused. Dependent on `disabledKeys` and `disabledBehavior`.
    * @selector [data-disabled]
    */
-  isDisabled: boolean,
+  isDisabled: boolean;
   /**
    * The type of selection that is allowed in the collection.
    * @selector [data-selection-mode="single | multiple"]
    */
-  selectionMode: SelectionMode,
+  selectionMode: SelectionMode;
   /** The selection behavior for the collection. */
-  selectionBehavior: SelectionBehavior,
+  selectionBehavior: SelectionBehavior;
   /**
    * Whether the item allows dragging.
    * @note This property is only available in collection components that support drag and drop.
    * @selector [data-allows-dragging]
    */
-  allowsDragging?: boolean,
+  allowsDragging?: boolean;
   /**
    * Whether the item is currently being dragged.
    * @note This property is only available in collection components that support drag and drop.
    * @selector [data-dragging]
    */
-  isDragging?: boolean,
+  isDragging?: boolean;
   /**
    * Whether the item is currently an active drop target.
    * @note This property is only available in collection components that support drag and drop.
    * @selector [data-drop-target]
    */
-  isDropTarget?: boolean
+  isDropTarget?: boolean;
 }
 
-export interface SectionProps<T> extends Omit<SharedSectionProps<T>, 'children' | 'title'>, StyleProps, GlobalDOMAttributes<HTMLElement> {
+export interface SectionProps<T>
+  extends
+    Omit<SharedSectionProps<T>, 'children' | 'title'>,
+    StyleProps,
+    GlobalDOMAttributes<HTMLElement> {
   /** The unique id of the section. */
-  id?: Key,
+  id?: Key;
   /** The object value that this section represents. When using dynamic collections, this is set automatically. */
-  value?: T,
+  value?: T;
   /** Static child items or a function to render children. */
-  children?: ReactNode | ((item: T) => ReactElement),
+  children?: ReactNode | ((item: T) => ReactElement);
   /** Values that should invalidate the item cache when using dynamic collections. */
-  dependencies?: ReadonlyArray<any>
+  dependencies?: ReadonlyArray<any>;
 }
 
 interface SectionContextValue {
-  name: string,
-  render: (props: SectionProps<any>, ref: ForwardedRef<HTMLElement>, section: Node<any>, className?: string) => ReactElement
+  name: string;
+  render: (
+    props: SectionProps<any>,
+    ref: ForwardedRef<HTMLElement>,
+    section: Node<any>,
+    className?: string
+  ) => ReactElement;
 }
 
 export const SectionContext = createContext<SectionContextValue | null>(null);
 
 /** @deprecated */
-export const Section = /*#__PURE__*/ createBranchComponent('section', <T extends object>(props: SectionProps<T>, ref: ForwardedRef<HTMLElement>, section: Node<T>): JSX.Element => {
-  let {name, render} = useContext(SectionContext)!;
-  if (process.env.NODE_ENV !== 'production') {
-    console.warn(`<Section> is deprecated. Please use <${name}> instead.`);
+export const Section = /*#__PURE__*/ createBranchComponent(
+  'section',
+  <T extends object>(
+    props: SectionProps<T>,
+    ref: ForwardedRef<HTMLElement>,
+    section: Node<T>
+  ): JSX.Element => {
+    let {name, render} = useContext(SectionContext)!;
+    if (process.env.NODE_ENV !== 'production') {
+      console.warn(`<Section> is deprecated. Please use <${name}> instead.`);
+    }
+    return render(props, ref, section, 'react-aria-Section');
   }
-  return render(props, ref, section, 'react-aria-Section');
-});
+);
 
 export interface CollectionBranchProps {
   /** The collection of items to render. */
-  collection: ICollection<Node<unknown>>,
+  collection: ICollection<Node<unknown>>;
   /** The parent node of the items to render. */
-  parent: Node<unknown>,
+  parent: Node<unknown>;
   /** A function that renders a drop indicator between items. */
-  renderDropIndicator?: (target: ItemDropTarget) => ReactNode
+  renderDropIndicator?: (target: ItemDropTarget) => ReactNode;
 }
 
 export interface CollectionRootProps extends HTMLAttributes<HTMLElement> {
   /** The collection of items to render. */
-  collection: ICollection<Node<unknown>>,
+  collection: ICollection<Node<unknown>>;
   /** A set of keys for items that should always be persisted in the DOM. */
-  persistedKeys?: Set<Key> | null,
+  persistedKeys?: Set<Key> | null;
   /** A ref to the scroll container for the collection. */
-  scrollRef?: RefObject<HTMLElement | null>,
+  scrollRef?: RefObject<HTMLElement | null>;
   /** A function that renders a drop indicator between items. */
-  renderDropIndicator?: (target: ItemDropTarget) => ReactNode
+  renderDropIndicator?: (target: ItemDropTarget) => ReactNode;
 }
 
 export interface CollectionRenderer {
   /** Whether this is a virtualized collection. */
-  isVirtualized?: boolean,
+  isVirtualized?: boolean;
   /** A delegate object that provides layout information for items in the collection. */
-  layoutDelegate?: LayoutDelegate,
+  layoutDelegate?: LayoutDelegate;
   /** A delegate object that provides drop targets for pointer coordinates within the collection. */
-  dropTargetDelegate?: DropTargetDelegate,
+  dropTargetDelegate?: DropTargetDelegate;
   /** A component that renders the root collection items. */
-  CollectionRoot: React.ComponentType<CollectionRootProps>,
-   /** A component that renders the child collection items. */
-  CollectionBranch: React.ComponentType<CollectionBranchProps>
+  CollectionRoot: React.ComponentType<CollectionRootProps>;
+  /** A component that renders the child collection items. */
+  CollectionBranch: React.ComponentType<CollectionBranchProps>;
 }
 
 export const DefaultCollectionRenderer: CollectionRenderer = {
@@ -190,7 +225,11 @@ function useCollectionRender(
   });
 }
 
-export function renderAfterDropIndicators(collection: ICollection<Node<unknown>>, node: Node<unknown>, renderDropIndicator: (target: ItemDropTarget) => ReactNode): ReactNode {
+export function renderAfterDropIndicators(
+  collection: ICollection<Node<unknown>>,
+  node: Node<unknown>,
+  renderDropIndicator: (target: ItemDropTarget) => ReactNode
+): ReactNode {
   let key = node.key;
   let keyAfter = collection.getKeyAfter(key);
   let nextItemInFlattenedCollection = keyAfter != null ? collection.getItem(keyAfter) : null;
@@ -201,7 +240,8 @@ export function renderAfterDropIndicators(collection: ICollection<Node<unknown>>
 
   let nextItemInSameLevel = node.nextKey != null ? collection.getItem(node.nextKey) : null;
   while (nextItemInSameLevel != null && nextItemInSameLevel.type !== 'item') {
-    nextItemInSameLevel = nextItemInSameLevel.nextKey != null ? collection.getItem(nextItemInSameLevel.nextKey) : null;
+    nextItemInSameLevel =
+      nextItemInSameLevel.nextKey != null ? collection.getItem(nextItemInSameLevel.nextKey) : null;
   }
 
   // Render one or more "after" drop indicators when the next item in the flattened collection
@@ -210,7 +250,12 @@ export function renderAfterDropIndicators(collection: ICollection<Node<unknown>>
   let afterIndicators: ReactNode[] = [];
   if (nextItemInSameLevel == null) {
     let current: Node<unknown> | null = node;
-    while (current?.type === 'item' && (!nextItemInFlattenedCollection || (current.parentKey !== nextItemInFlattenedCollection.parentKey && nextItemInFlattenedCollection.level < current.level))) {
+    while (
+      current?.type === 'item' &&
+      (!nextItemInFlattenedCollection ||
+        (current.parentKey !== nextItemInFlattenedCollection.parentKey &&
+          nextItemInFlattenedCollection.level < current.level))
+    ) {
       let indicator = renderDropIndicator({
         type: 'item',
         key: current.key,
@@ -226,9 +271,10 @@ export function renderAfterDropIndicators(collection: ICollection<Node<unknown>>
   return afterIndicators;
 }
 
-export const CollectionRendererContext = createContext<CollectionRenderer>(DefaultCollectionRenderer);
+export const CollectionRendererContext =
+  createContext<CollectionRenderer>(DefaultCollectionRenderer);
 
 type PersistedKeysReturnValue = Set<Key> | null;
 export function usePersistedKeys(focusedKey: Key | null): PersistedKeysReturnValue {
-  return useMemo(() => focusedKey != null ? new Set([focusedKey]) : null, [focusedKey]);
+  return useMemo(() => (focusedKey != null ? new Set([focusedKey]) : null), [focusedKey]);
 }
