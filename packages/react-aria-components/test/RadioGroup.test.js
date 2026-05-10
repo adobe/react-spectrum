@@ -140,12 +140,12 @@ describe.each(['RadioGroup', 'RadioField'])('%s', comp => {
   it('should support custom render function', () => {
     let {getAllByRole, getByRole} = renderGroup(
       {render: props => <div {...props} data-custom="true" />},
-      // eslint-disable-next-line jsx-a11y/label-has-associated-control
       {
         render: props =>
           comp === 'RadioField' ? (
             <div {...props} data-custom="true" />
           ) : (
+            // eslint-disable-next-line jsx-a11y/label-has-associated-control
             <label {...props} data-custom="true" />
           )
       }
