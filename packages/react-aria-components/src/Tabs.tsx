@@ -504,13 +504,13 @@ export const TabPanels = /*#__PURE__*/ createHideableComponent(function TabPanel
   // This breaks the rules of hooks because there is no effect that runs _before_ DOM updates.
   if (
     state.selectedKey != null &&
-    // eslint-disable-next-line rulesdir/pure-render
+    // eslint-disable-next-line rsp-rules/pure-render
     state.selectedKey !== selectedKeyRef.current &&
     ref.current &&
-    // eslint-disable-next-line rulesdir/pure-render
+    // eslint-disable-next-line rsp-rules/pure-render
     hasTransition.current
   ) {
-    // eslint-disable-next-line rulesdir/pure-render
+    // eslint-disable-next-line rsp-rules/pure-render
     prevSize.current = ref.current.getBoundingClientRect();
   }
 

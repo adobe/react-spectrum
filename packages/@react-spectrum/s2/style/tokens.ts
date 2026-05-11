@@ -12,7 +12,7 @@
 
 // package.json in this directory is not the real package.json. Lint rule not smart enough.
 import assert from 'assert';
-// eslint-disable-next-line rulesdir/imports
+// eslint-disable-next-line rsp-rules/imports
 import * as originalTokens from '@adobe/spectrum-tokens/dist/json/variables.json';
 
 // This forces TSC to inline the token keys instead of leaving a dependency on it.

@@ -672,13 +672,17 @@ function ListBoxDropIndicator(props: ListBoxDropIndicatorProps, ref: ForwardedRe
   });
 
   return (
-    <dom.div
-      {...dropIndicatorProps}
-      {...renderProps}
-      role="option"
-      ref={ref as RefObject<HTMLDivElement | null>}
-      data-drop-target={isDropTarget || undefined}
-    />
+    <>
+      {/* oxlint-disable jsx-a11y/role-has-required-aria-props -- drop indicator is not selectable */}
+      <dom.div
+        {...dropIndicatorProps}
+        {...renderProps}
+        role="option"
+        ref={ref as RefObject<HTMLDivElement | null>}
+        data-drop-target={isDropTarget || undefined}
+      />
+      {/* oxlint-enable jsx-a11y/role-has-required-aria-props */}
+    </>
   );
 }
 
@@ -754,14 +758,18 @@ export const ListBoxLoadMoreItem = createLeafComponent(
           />
         </div>
         {isLoading && renderProps.children && (
-          <dom.div
-            {...mergeProps(filterDOMProps(props, {global: true}), optionProps)}
-            {...renderProps}
-            // aria-selected isn't needed here since this option is not selectable.
-            role="option"
-            ref={ref as ForwardedRef<HTMLDivElement>}>
-            {renderProps.children}
-          </dom.div>
+          <>
+            {/* oxlint-disable jsx-a11y/role-has-required-aria-props -- loader row is not selectable */}
+            <dom.div
+              {...mergeProps(filterDOMProps(props, {global: true}), optionProps)}
+              {...renderProps}
+              // aria-selected isn't needed here since this option is not selectable.
+              role="option"
+              ref={ref as ForwardedRef<HTMLDivElement>}>
+              {renderProps.children}
+            </dom.div>
+            {/* oxlint-enable jsx-a11y/role-has-required-aria-props */}
+          </>
         )}
       </>
     );
