@@ -16,7 +16,6 @@ import {ITableCollection} from 'react-stately/private/table/TableCollection';
 import {Key, Node} from '@react-types/shared';
 
 export class TableKeyboardDelegate<T> extends GridKeyboardDelegate<T, ITableCollection<T>> {
-
   protected isCell(node: Node<T>): boolean {
     return node.type === 'cell' || node.type === 'rowheader' || node.type === 'column';
   }
@@ -59,7 +58,8 @@ export class TableKeyboardDelegate<T> extends GridKeyboardDelegate<T, ITableColl
 
     // If focus was on a column, focus the parent column if any
     if (startItem.type === 'column') {
-      let parent = startItem.parentKey != null ? this.collection.getItem(startItem.parentKey) : null;
+      let parent =
+        startItem.parentKey != null ? this.collection.getItem(startItem.parentKey) : null;
       if (parent && parent.type === 'column') {
         return parent.key;
       }
@@ -193,9 +193,7 @@ export class TableKeyboardDelegate<T> extends GridKeyboardDelegate<T, ITableColl
           if (this.collator.compare(substring, search) === 0) {
             // If we started on a cell, end on the matching cell. Otherwise, end on the row.
             let fromItem = fromKey != null ? collection.getItem(fromKey) : startItem;
-            return fromItem?.type === 'cell'
-              ? cell.key
-              : item.key;
+            return fromItem?.type === 'cell' ? cell.key : item.key;
           }
         }
       }

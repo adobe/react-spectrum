@@ -18,16 +18,16 @@ module.exports = {
         if (source !== 'react') {
           return;
         }
-        const importSpecifiers = node.specifiers.filter(specifier => specifier.type === 'ImportSpecifier');
-        const getName = specifier => specifier.local.name;
-        importSpecifiers.map(
-          (item) => {
-            let itemName = getName(item);
-            if (itemName === 'useLayoutEffect') {
-              context.report(node, 'Please use useLayoutEffect from @react-aria/utils instead.');
-            }
-          }
+        const importSpecifiers = node.specifiers.filter(
+          specifier => specifier.type === 'ImportSpecifier'
         );
+        const getName = specifier => specifier.local.name;
+        importSpecifiers.map(item => {
+          let itemName = getName(item);
+          if (itemName === 'useLayoutEffect') {
+            context.report(node, 'Please use useLayoutEffect from @react-aria/utils instead.');
+          }
+        });
       }
     };
   }

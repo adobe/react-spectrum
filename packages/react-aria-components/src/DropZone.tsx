@@ -45,35 +45,42 @@ export interface DropZoneRenderProps {
    * Whether the dropzone is currently hovered with a mouse.
    * @selector [data-hovered]
    */
-  isHovered: boolean,
+  isHovered: boolean;
   /**
    * Whether the dropzone is focused, either via a mouse or keyboard.
    * @selector [data-focused]
    */
-  isFocused: boolean,
+  isFocused: boolean;
   /**
    * Whether the dropzone is keyboard focused.
    * @selector [data-focus-visible]
    */
-  isFocusVisible: boolean,
+  isFocusVisible: boolean;
   /**
    * Whether the dropzone is the drop target.
    * @selector [data-drop-target]
    */
-  isDropTarget: boolean,
+  isDropTarget: boolean;
   /**
    * Whether the dropzone is disabled.
    * @selector [data-disabled]
    */
-  isDisabled: boolean
+  isDisabled: boolean;
 }
 
-export interface DropZoneProps extends Omit<DropOptions, 'getDropOperationForPoint' | 'ref' | 'hasDropButton'>, HoverEvents, RenderProps<DropZoneRenderProps>, SlotProps, AriaLabelingProps, GlobalDOMAttributes<HTMLDivElement> {
+export interface DropZoneProps
+  extends
+    Omit<DropOptions, 'getDropOperationForPoint' | 'ref' | 'hasDropButton'>,
+    HoverEvents,
+    RenderProps<DropZoneRenderProps>,
+    SlotProps,
+    AriaLabelingProps,
+    GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-DropZone'
    */
-  className?: ClassNameOrFunction<DropZoneRenderProps>
+  className?: ClassNameOrFunction<DropZoneRenderProps>;
 }
 
 export const DropZoneContext = createContext<ContextValue<DropZoneProps, HTMLDivElement>>(null);
@@ -81,12 +88,19 @@ export const DropZoneContext = createContext<ContextValue<DropZoneProps, HTMLDiv
 /**
  * A drop zone is an area into which one or multiple objects can be dragged and dropped.
  */
-export const DropZone = forwardRef(function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
+export const DropZone = forwardRef(function DropZone(
+  props: DropZoneProps,
+  ref: ForwardedRef<HTMLDivElement>
+) {
   let {isDisabled = false} = props;
   [props, ref] = useContextProps(props, ref, DropZoneContext);
   let dropzoneRef = useObjectRef(ref);
   let buttonRef = useRef<HTMLButtonElement>(null);
-  let {dropProps, dropButtonProps, isDropTarget} = useDrop({...props, ref: buttonRef, hasDropButton: true});
+  let {dropProps, dropButtonProps, isDropTarget} = useDrop({
+    ...props,
+    ref: buttonRef,
+    hasDropButton: true
+  });
   let {buttonProps} = useButton(dropButtonProps || {}, buttonRef);
   let {hoverProps, isHovered} = useHover(props);
   let {focusProps, isFocused, isFocusVisible} = useFocusRing();
@@ -98,16 +112,16 @@ export const DropZone = forwardRef(function DropZone(props: DropZoneProps, ref: 
   let ariaLabelledby = [textId, messageId].filter(Boolean).join(' ');
   let labelProps = useLabels({'aria-label': ariaLabel, 'aria-labelledby': ariaLabelledby});
 
-
   let {clipboardProps} = useClipboard({
     isDisabled,
-    onPaste: (items) => props.onDrop?.({
-      type: 'drop',
-      items,
-      x: 0,
-      y: 0,
-      dropOperation: 'copy'
-    })
+    onPaste: items =>
+      props.onDrop?.({
+        type: 'drop',
+        items,
+        x: 0,
+        y: 0,
+        dropOperation: 'copy'
+      })
   });
 
   let renderProps = useRenderProps({
@@ -119,15 +133,12 @@ export const DropZone = forwardRef(function DropZone(props: DropZoneProps, ref: 
   delete DOMProps.id;
 
   return (
-    <Provider
-      values={[
-        [TextContext, {id: textId, slot: 'label'}]
-      ]}>
+    <Provider values={[[TextContext, {id: textId, slot: 'label'}]]}>
       <dom.div
         {...mergeProps(DOMProps, renderProps, dropProps, hoverProps)}
         slot={props.slot || undefined}
         ref={dropzoneRef}
-        onClick={(e) => {
+        onClick={e => {
           let target = getEventTarget(e) as HTMLElement | null;
           while (target && nodeContains(dropzoneRef.current, target)) {
             if (isFocusable(target)) {
@@ -148,7 +159,8 @@ export const DropZone = forwardRef(function DropZone(props: DropZoneProps, ref: 
         <VisuallyHidden>
           <button
             {...mergeProps(buttonProps, focusProps, clipboardProps, labelProps)}
-            ref={buttonRef} />
+            ref={buttonRef}
+          />
         </VisuallyHidden>
         {renderProps.children}
       </dom.div>

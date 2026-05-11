@@ -14,44 +14,56 @@ import {ContextValue} from 'react-aria-components/slots';
 
 import {createContext, forwardRef} from 'react';
 import {DOMRef, DOMRefValue, GlobalDOMAttributes} from '@react-types/shared';
-import {getAllowedOverrides, staticColor, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
+import {
+  getAllowedOverrides,
+  staticColor,
+  StylesPropWithHeight,
+  UnsafeStyles
+} from './style-utils' with {type: 'macro'};
 import {keyframes} from '../style/style-macro' with {type: 'macro'};
 import {pxToRem} from './progress-utils' with {type: 'macro'};
-import {ProgressBar as RACProgressBar, ProgressBarProps as RACProgressBarProps} from 'react-aria-components/ProgressBar';
+import {
+  ProgressBar as RACProgressBar,
+  ProgressBarProps as RACProgressBarProps
+} from 'react-aria-components/ProgressBar';
 import {style} from '../style' with {type: 'macro'};
 import {useDOMRef} from './useDOMRef';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-const pxToRemDynamic = (px: number): string => (px / 16) + 'rem';
+const pxToRemDynamic = (px: number): string => px / 16 + 'rem';
 export interface ProgressCircleStyleProps {
   /**
    * The size of the ProgressCircle.
    *
    * @default 'M'
    */
-  size?: 'S' | 'M' | 'L',
+  size?: 'S' | 'M' | 'L';
   /** The static color style to apply. Useful when the button appears over a color background. */
-  staticColor?: 'black' | 'white' | 'auto',
+  staticColor?: 'black' | 'white' | 'auto';
   /**
    * Whether presentation is indeterminate when progress isn't known.
    */
-  isIndeterminate?: boolean
+  isIndeterminate?: boolean;
 }
 
-export const ProgressCircleContext = createContext<ContextValue<Partial<ProgressCircleProps>, DOMRefValue<HTMLDivElement>>>(null);
+export const ProgressCircleContext =
+  createContext<ContextValue<Partial<ProgressCircleProps>, DOMRefValue<HTMLDivElement>>>(null);
 
 // Double check the types passed to each style, may not need all for each
-const wrapper = style<ProgressCircleStyleProps>({
-  ...staticColor(),
-  size: {
-    default: 32,
+const wrapper = style<ProgressCircleStyleProps>(
+  {
+    ...staticColor(),
     size: {
-      S: 16,
-      L: 64
-    }
+      default: 32,
+      size: {
+        S: 16,
+        L: 64
+      }
+    },
+    aspectRatio: 'square'
   },
-  aspectRatio: 'square'
-}, getAllowedOverrides({height: true}));
+  getAllowedOverrides({height: true})
+);
 
 const track = style({
   stroke: {
@@ -106,9 +118,23 @@ const hcmStroke = style({
   }
 });
 
-export interface ProgressCircleProps extends Omit<RACProgressBarProps, 'children' | 'style' | 'valueLabel' | 'formatOptions' | 'label' | 'className' | 'render' | keyof GlobalDOMAttributes>, ProgressCircleStyleProps, UnsafeStyles {
+export interface ProgressCircleProps
+  extends
+    Omit<
+      RACProgressBarProps,
+      | 'children'
+      | 'style'
+      | 'valueLabel'
+      | 'formatOptions'
+      | 'label'
+      | 'className'
+      | 'render'
+      | keyof GlobalDOMAttributes
+    >,
+    ProgressCircleStyleProps,
+    UnsafeStyles {
   /** Spectrum-defined styles, returned by the `style()` macro. */
-  styles?: StylesPropWithHeight
+  styles?: StylesPropWithHeight;
 }
 
 const rotationAnimation = keyframes(`
@@ -136,14 +162,12 @@ const dashoffsetAnimation = keyframes(`
  * ProgressCircles show the progression of a system operation such as downloading, uploading, or processing, in a visual way.
  * They can represent determinate or indeterminate progress.
  */
-export const ProgressCircle = /*#__PURE__*/ forwardRef(function ProgressCircle(props: ProgressCircleProps, ref: DOMRef<HTMLDivElement>) {
+export const ProgressCircle = /*#__PURE__*/ forwardRef(function ProgressCircle(
+  props: ProgressCircleProps,
+  ref: DOMRef<HTMLDivElement>
+) {
   [props, ref] = useSpectrumContextProps(props, ref, ProgressCircleContext);
-  let {
-    size = 'M',
-    staticColor,
-    UNSAFE_style,
-    UNSAFE_className = ''
-  } = props;
+  let {size = 'M', staticColor, UNSAFE_style, UNSAFE_className = ''} = props;
   let domRef = useDOMRef(ref);
 
   let strokeWidth = 3;
@@ -162,26 +186,21 @@ export const ProgressCircle = /*#__PURE__*/ forwardRef(function ProgressCircle(p
       {...props}
       ref={domRef}
       style={UNSAFE_style}
-      className={renderProps => UNSAFE_className + wrapper({
-        ...renderProps,
-        size,
-        staticColor
-      }, props.styles)}>
+      className={renderProps =>
+        UNSAFE_className +
+        wrapper(
+          {
+            ...renderProps,
+            size,
+            staticColor
+          },
+          props.styles
+        )
+      }>
       {({percentage, isIndeterminate}) => (
-        <svg
-          fill="none"
-          width="100%"
-          height="100%">
-          <circle
-            cx="50%"
-            cy="50%"
-            r={radius}
-            className={hcmStroke({size})} />
-          <circle
-            cx="50%"
-            cy="50%"
-            r={radius}
-            className={track({isStaticColor, size})} />
+        <svg fill="none" width="100%" height="100%">
+          <circle cx="50%" cy="50%" r={radius} className={hcmStroke({size})} />
+          <circle cx="50%" cy="50%" r={radius} className={track({isStaticColor, size})} />
           <circle
             cx="50%"
             cy="50%"
@@ -190,14 +209,17 @@ export const ProgressCircle = /*#__PURE__*/ forwardRef(function ProgressCircle(p
             style={{
               // These cubic-bezier timing functions were derived from the previous animation keyframes
               // using a best fit algorithm, and then manually adjusted to approximate the original animation.
-              animation: isIndeterminate ? `${rotationAnimation} 1s cubic-bezier(.6, .1, .3, .9) infinite, ${dashoffsetAnimation} 1s cubic-bezier(.25, .1, .25, 1.3) infinite` : undefined
+              animation: isIndeterminate
+                ? `${rotationAnimation} 1s cubic-bezier(.6, .1, .3, .9) infinite, ${dashoffsetAnimation} 1s cubic-bezier(.25, .1, .25, 1.3) infinite`
+                : undefined
             }}
             // Normalize the path length to 100 so we can easily set stroke-dashoffset to a percentage.
             pathLength="100"
             // Add extra gap between dashes so 0% works in Chrome.
             strokeDasharray="100 200"
             strokeDashoffset={isIndeterminate || percentage == null ? undefined : 100 - percentage}
-            strokeLinecap="round" />
+            strokeLinecap="round"
+          />
         </svg>
       )}
     </RACProgressBar>

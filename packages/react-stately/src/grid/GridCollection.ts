@@ -14,36 +14,36 @@ import {Collection, Key, Node} from '@react-types/shared';
 
 export interface IGridCollection<T> extends Collection<GridNode<T>> {
   /** The number of columns in the grid. */
-  columnCount: number,
+  columnCount: number;
   /** A list of rows in the grid. */
-  rows: GridNode<T>[]
+  rows: GridNode<T>[];
 }
 
 export interface GridRow<T> extends Partial<GridNode<T>> {
-  key?: Key,
-  type: string,
-  childNodes: Iterable<Node<T>>
+  key?: Key;
+  type: string;
+  childNodes: Iterable<Node<T>>;
 }
 
 export interface GridNode<T> extends Node<T> {
-  column?: GridNode<T>,
+  column?: GridNode<T>;
   /**
    * The number of columns spanned by this cell. Use `colSpan` instead.
    * @deprecated
    */
-  colspan?: number,
+  colspan?: number;
   /** The number of columns spanned by this cell.  */
-  colSpan?: number | null,
+  colSpan?: number | null;
   /** The column index of this cell, accounting for any colSpans. */
-  colIndex?: number | null,
+  colIndex?: number | null;
   /** The index of this node within its parent, ignoring sibling nodes that aren't of the same type. */
-  indexOfType?: number
+  indexOfType?: number;
 }
 
 interface GridCollectionOptions<T> {
-  columnCount: number,
-  items: GridRow<T>[],
-  visitNode?: (cell: GridNode<T>) => GridNode<T>
+  columnCount: number;
+  items: GridRow<T>[];
+  visitNode?: (cell: GridNode<T>) => GridNode<T>;
 }
 
 export class GridCollection<T> implements IGridCollection<T> {
@@ -84,7 +84,9 @@ export class GridCollection<T> implements IGridCollection<T> {
         if (child.type === 'cell' && rowHasCellWithColSpan) {
           child.colspan = child.props?.colSpan;
           child.colSpan = child.props?.colSpan;
-          child.colIndex = !last ? child.index : (last.colIndex ?? last.index) + (last.colSpan ?? 1);
+          child.colIndex = !last
+            ? child.index
+            : (last.colIndex ?? last.index) + (last.colSpan ?? 1);
         }
 
         if (child.type === 'cell' && child.parentKey == null) {
@@ -174,12 +176,12 @@ export class GridCollection<T> implements IGridCollection<T> {
 
   getKeyBefore(key: Key): Key | null {
     let node = this.keyMap.get(key);
-    return node ? node.prevKey ?? null : null;
+    return node ? (node.prevKey ?? null) : null;
   }
 
   getKeyAfter(key: Key): Key | null {
     let node = this.keyMap.get(key);
-    return node ? node.nextKey ?? null : null;
+    return node ? (node.nextKey ?? null) : null;
   }
 
   getFirstKey(): Key | null {

@@ -2,19 +2,18 @@ import {addons, types} from 'storybook/manager-api';
 import {locales} from '../../constants';
 import React, {useEffect, useState} from 'react';
 
-
 let THEMES = [
   {label: 'Auto', value: ''},
-  {label: "Light", value: "light"},
-  {label: "Lightest", value: "lightest"},
-  {label: "Dark", value: "dark"},
-  {label: "Darkest", value: "darkest"}
+  {label: 'Light', value: 'light'},
+  {label: 'Lightest', value: 'lightest'},
+  {label: 'Dark', value: 'dark'},
+  {label: 'Darkest', value: 'darkest'}
 ];
 
 let SCALES = [
   {label: 'Auto', value: ''},
-  {label: "Medium", value: "medium"},
-  {label: "Large", value: "large"}
+  {label: 'Medium', value: 'medium'},
+  {label: 'Large', value: 'large'}
 ];
 
 let TOAST_POSITIONS = [
@@ -41,33 +40,33 @@ function ProviderFieldSetter({api}) {
     express: expressParam === 'true'
   });
   let channel = addons.getChannel();
-  let onLocaleChange = (e) => {
+  let onLocaleChange = e => {
     let newValue = e.target.value || undefined;
-    setValues((old) => {
+    setValues(old => {
       let next = {...old, locale: newValue};
       channel.emit('provider/updated', next);
       return next;
     });
   };
-  let onThemeChange = (e) => {
+  let onThemeChange = e => {
     let newValue = e.target.value || undefined;
-    setValues((old) => {
+    setValues(old => {
       let next = {...old, theme: newValue};
       channel.emit('provider/updated', next);
       return next;
     });
   };
-  let onScaleChange = (e) => {
+  let onScaleChange = e => {
     let newValue = e.target.value || undefined;
-    setValues((old) => {
+    setValues(old => {
       let next = {...old, scale: newValue};
       channel.emit('provider/updated', next);
       return next;
     });
   };
-  let onExpressChange = (e) => {
+  let onExpressChange = e => {
     let newValue = e.target.checked;
-    setValues((old) => {
+    setValues(old => {
       let next = {...old, express: newValue};
       channel.emit('provider/updated', next);
       return next;
@@ -88,7 +87,7 @@ function ProviderFieldSetter({api}) {
       'providerSwitcher-locale': values.locale || '',
       'providerSwitcher-theme': values.theme || '',
       'providerSwitcher-scale': values.scale || '',
-      'providerSwitcher-express': String(values.express),
+      'providerSwitcher-express': String(values.express)
     });
   });
 
@@ -97,34 +96,52 @@ function ProviderFieldSetter({api}) {
       <div style={{marginRight: '10px'}}>
         <label htmlFor="locale">Locale: </label>
         <select id="locale" name="locale" onChange={onLocaleChange} value={values.locale}>
-          {locales.map(locale => <option key={locale.label} value={locale.value}>{locale.label}</option>)}
+          {locales.map(locale => (
+            <option key={locale.label} value={locale.value}>
+              {locale.label}
+            </option>
+          ))}
         </select>
       </div>
       <div style={{marginRight: '10px'}}>
         <label htmlFor="theme">Theme: </label>
         <select id="theme" name="theme" onChange={onThemeChange} value={values.theme}>
-          {THEMES.map(theme => <option key={theme.label} value={theme.value}>{theme.label}</option>)}
+          {THEMES.map(theme => (
+            <option key={theme.label} value={theme.value}>
+              {theme.label}
+            </option>
+          ))}
         </select>
       </div>
       <div style={{marginRight: '10px'}}>
         <label htmlFor="scale">Scale: </label>
         <select id="scale" name="scale" onChange={onScaleChange} value={values.scale}>
-          {SCALES.map(scale => <option key={scale.label} value={scale.value}>{scale.label}</option>)}
+          {SCALES.map(scale => (
+            <option key={scale.label} value={scale.value}>
+              {scale.label}
+            </option>
+          ))}
         </select>
       </div>
       <div style={{marginRight: '10px'}}>
         <label htmlFor="express">Express: </label>
-        <input type="checkbox" id="express" name="express" onChange={onExpressChange} checked={values.express} />
+        <input
+          type="checkbox"
+          id="express"
+          name="express"
+          onChange={onExpressChange}
+          checked={values.express}
+        />
       </div>
     </div>
-  )
+  );
 }
 
-addons.register('ProviderSwitcher', (api) => {
+addons.register('ProviderSwitcher', api => {
   addons.add('ProviderSwitcher', {
     title: 'viewport',
     type: types.TOOL,
-    match: ({ viewMode }) => viewMode === 'story',
-    render: () => <ProviderFieldSetter api={api} />,
+    match: ({viewMode}) => viewMode === 'story',
+    render: () => <ProviderFieldSetter api={api} />
   });
 });

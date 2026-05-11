@@ -27,7 +27,9 @@ createFeed('react-aria', 'releases', 'React Aria Releases');
 createFeed('s2', 'releases', 'React Spectrum Releases');
 
 function createFeed(library, type, title) {
-  let files = globSync(`packages/dev/s2-docs/pages/${library}/${type}/*.mdx`, {ignore: [`packages/dev/s2-docs/pages/${library}/${type}/index.mdx`]});
+  let files = globSync(`packages/dev/s2-docs/pages/${library}/${type}/*.mdx`, {
+    ignore: [`packages/dev/s2-docs/pages/${library}/${type}/index.mdx`]
+  });
   let posts = [];
 
   for (let file of files) {
@@ -59,12 +61,21 @@ function createFeed(library, type, title) {
       .use(remarkMdx)
       .use(remarkRehype)
       .use(rehypeStringify)
-      .processSync({value: exports.description})
-      .value;
+      .processSync({value: exports.description}).value;
 
     let entry = [
       {title},
-      {link: [{_attr: {rel: 'alternate', type: 'text/html', href: `${getBaseUrl(library)}/${type}/${basename(file, '.mdx')}.html`}}]},
+      {
+        link: [
+          {
+            _attr: {
+              rel: 'alternate',
+              type: 'text/html',
+              href: `${getBaseUrl(library)}/${type}/${basename(file, '.mdx')}.html`
+            }
+          }
+        ]
+      },
       {id: basename(file, '.mdx')},
       {updated: new Date(exports.date).toISOString()},
       {published: new Date(exports.date).toISOString()},
@@ -73,10 +84,7 @@ function createFeed(library, type, title) {
 
     if (exports.author) {
       entry.push({
-        author: [
-          {name: exports.author},
-          {uri: exports.authorLink}
-        ]
+        author: [{name: exports.author}, {uri: exports.authorLink}]
       });
     }
 
@@ -85,7 +93,7 @@ function createFeed(library, type, title) {
     });
   }
 
-  posts = posts.sort((a, b) => a.entry[3].updated < b.entry[3].updated ? 1 : -1);
+  posts = posts.sort((a, b) => (a.entry[3].updated < b.entry[3].updated ? 1 : -1));
   let feed = xml({
     feed: [
       {_attr: {xmlns: 'http://www.w3.org/2005/Atom'}},

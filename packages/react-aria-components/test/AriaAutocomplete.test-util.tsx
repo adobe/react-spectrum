@@ -30,42 +30,49 @@ import userEvent from '@testing-library/user-event';
 interface AriaAutocompleteTestProps extends AriaBaseTestProps {
   renderers: {
     // needs to wrap a menu with at three items, all enabled. The items should be Foo, Bar, and Baz with ids 1, 2, and 3 respectively
-    standard?: () => ReturnType<typeof render>,
+    standard?: () => ReturnType<typeof render>;
     // needs 3 items with content Foo, Bar Baz and needs to be a component that doesn't support virtual focus with the Autocomplete (e.g. GridList, Table, TagGroup, collection components that have left/right navigation).
-    noVirtualFocus?: () => ReturnType<typeof render>,
+    noVirtualFocus?: () => ReturnType<typeof render>;
     // needs at two sections with titles containing Section 1 and Section 2. The first section should have Foo, Bar, Baz with ids 1, 2, and 3. The second section
     // should have Copy, Cut, Paste with ids 4, 5, 6
-    sections?: () => ReturnType<typeof render>,
+    sections?: () => ReturnType<typeof render>;
     // needs a 3 items, Foo, Bar, and Google with ids 1, 2, 3. The Google item should have a href of https://google.com
-    links?: () => ReturnType<typeof render>,
+    links?: () => ReturnType<typeof render>;
     // needs a controlled input element and the same collection items as the standard renderer. Should default to an empty string for the input
-    controlled?: () => ReturnType<typeof render>,
+    controlled?: () => ReturnType<typeof render>;
     // needs the collection to have item actions enabled and a mock listener for the action provided. Uses the same collection items as the standard renderer
-    itemActions?: () => ReturnType<typeof render>,
+    itemActions?: () => ReturnType<typeof render>;
     // needs the collection to have multiple item selection enabled and a mock listener for the selection provided. Uses the same collection items as the standard renderer
-    multipleSelection?: () => ReturnType<typeof render>,
+    multipleSelection?: () => ReturnType<typeof render>;
     // needs the collection to have the item with key 2 disabled. Should include a item action mock listener. Uses the same collection items as the standard renderer
-    disabledItems?: () => ReturnType<typeof render>,
+    disabledItems?: () => ReturnType<typeof render>;
     // should set a default value of "Ba" on the autocomplete. Uses the same collection items as the standard renderer
-    defaultValue?: () => ReturnType<typeof render>,
+    defaultValue?: () => ReturnType<typeof render>;
     // should allow the user to filter the items themselves in a async manner. The items should be Foo, Bar, and Baz with ids 1, 2, and 3 respectively.
     // The filtering can take any amount of time but should be standard non-case sensitive contains matching
-    asyncFiltering?: () => ReturnType<typeof render>,
+    asyncFiltering?: () => ReturnType<typeof render>;
     // Should have a menu with three items, and two levels of submenus. Tree should be roughly: Foo Bar Baz -> (branch off Bar) Lvl 1 Bar 1, Lvl 1 Bar 2, Lvl 1 Bar 3 ->
     // (branch off Lvl 1 Bar 2) ->  Lvl 2 Bar 1, Lvl 2 Bar 2, Lvl 2 Bar 3
-    submenus?: () => ReturnType<typeof render>,
+    submenus?: () => ReturnType<typeof render>;
     // Should have a menu with three items, and two levels of subdialog. Tree should be roughly: Foo Bar Baz -> (branch off Bar) Lvl 1 Bar 1, Lvl 1 Bar 2, Lvl 1 Bar 3 ->
     // (branch off Lvl 1 Bar 2) ->  Lvl 2 Bar 1, Lvl 2 Bar 2, Lvl 2 Bar 3
-    subdialogs?: () => ReturnType<typeof render>,
+    subdialogs?: () => ReturnType<typeof render>;
     // Should have a menu with items -> a subdialog -> submenu -> subdialog. Tree should be roughly: Foo Bar Baz -> (branch off Bar) Lvl 1 Bar 1, Lvl 1 Bar 2, Lvl 1 Bar 3 ->
     // (branch off Lvl 1 Bar 2) ->  Lvl 2 Bar 1, Lvl 2 Bar 2, Lvl 2 Bar 3 -> (branch off Lvl 2 Bar 2) ->  Lvl 3 Bar 1, Lvl 3 Bar 2, Lvl 3 Bar 3
-    subdialogAndMenu?: () => ReturnType<typeof render>
-  },
-  ariaPattern?: 'menu' | 'listbox' | 'grid',
-  selectionListener?: jest.Mock<any, any>,
-  actionListener?: jest.Mock<any, any>
+    subdialogAndMenu?: () => ReturnType<typeof render>;
+  };
+  ariaPattern?: 'menu' | 'listbox' | 'grid';
+  selectionListener?: jest.Mock<any, any>;
+  actionListener?: jest.Mock<any, any>;
 }
-export const AriaAutocompleteTests = ({renderers, setup, prefix, ariaPattern = 'menu', selectionListener, actionListener}: AriaAutocompleteTestProps): void => {
+export const AriaAutocompleteTests = ({
+  renderers,
+  setup,
+  prefix,
+  ariaPattern = 'menu',
+  selectionListener,
+  actionListener
+}: AriaAutocompleteTestProps): void => {
   describe(prefix ? prefix + ' AriaAutocomplete' : 'AriaAutocomplete', function () {
     let user;
     let collectionNodeRole;
@@ -95,7 +102,7 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix, ariaPattern = '
       act(() => jest.runAllTimers());
     });
 
-    let filterTests = (renderer) => {
+    let filterTests = renderer => {
       describe('default text filtering', function () {
         it('should support filtering', async function () {
           let {getByRole} = renderer();
@@ -398,7 +405,7 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix, ariaPattern = '
     if (renderers.defaultValue) {
       describe('default text value', function () {
         it('should support default value', async function () {
-          let {getByRole} = (renderers.defaultValue!)();
+          let {getByRole} = renderers.defaultValue!();
           let input = getByRole('searchbox');
           expect(input).toHaveValue('Ba');
           let menu = getByRole(collectionNodeRole);
@@ -420,8 +427,8 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix, ariaPattern = '
 
     if (ariaPattern === 'menu' && renderers.itemActions) {
       describe('item actions', function () {
-        it('should trigger the wrapped element\'s actionListener when hitting Enter', async function () {
-          let {getByRole} = (renderers.itemActions!)();
+        it("should trigger the wrapped element's actionListener when hitting Enter", async function () {
+          let {getByRole} = renderers.itemActions!();
           let input = getByRole('searchbox');
           let menu = getByRole(collectionNodeRole);
           expect(input).not.toHaveAttribute('aria-activedescendant');
@@ -442,7 +449,7 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix, ariaPattern = '
           expect(actionListener).toHaveBeenLastCalledWith('2');
         });
 
-        it('should not trigger the wrapped element\'s actionListener when hitting Space', async function () {
+        it("should not trigger the wrapped element's actionListener when hitting Space", async function () {
           let {getByRole} = renderers.standard!();
           let input = getByRole('searchbox');
           let menu = getByRole(collectionNodeRole);
@@ -465,8 +472,8 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix, ariaPattern = '
 
     if (renderers.multipleSelection) {
       describe('supports multiple selection', function () {
-        it('should trigger the wrapped element\'s onSelectionChange when hitting Enter', async function () {
-          let {getByRole} = (renderers.multipleSelection!)();
+        it("should trigger the wrapped element's onSelectionChange when hitting Enter", async function () {
+          let {getByRole} = renderers.multipleSelection!();
           let input = getByRole('searchbox');
           let menu = getByRole(collectionNodeRole);
           expect(input).not.toHaveAttribute('aria-activedescendant');
@@ -498,8 +505,8 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix, ariaPattern = '
           }
         });
 
-        it('should clear the wrapped element\'s selection when hitting Escape', async function () {
-          let {getByRole} = (renderers.multipleSelection!)();
+        it("should clear the wrapped element's selection when hitting Escape", async function () {
+          let {getByRole} = renderers.multipleSelection!();
           let input = getByRole('searchbox');
           let menu = getByRole(collectionNodeRole);
           expect(input).not.toHaveAttribute('aria-activedescendant');
@@ -535,7 +542,7 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix, ariaPattern = '
     if (renderers.disabledItems) {
       describe('disabled items', function () {
         it('should properly skip over disabled items', async function () {
-          let {getByRole} =  (renderers.disabledItems!)();
+          let {getByRole} = renderers.disabledItems!();
           let input = getByRole('searchbox');
           let menu = getByRole(collectionNodeRole);
           let options = within(menu).getAllByRole(collectionItemRole);
@@ -567,7 +574,7 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix, ariaPattern = '
       });
 
       it('should not autofocus the first item if backspacing from a list state where there are only disabled items', async function () {
-        let {getByRole} =  (renderers.disabledItems!)();
+        let {getByRole} = renderers.disabledItems!();
         let input = getByRole('searchbox');
         let menu = getByRole(collectionNodeRole);
         let options = within(menu).getAllByRole(collectionItemRole);
@@ -601,7 +608,7 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix, ariaPattern = '
     if (renderers.asyncFiltering) {
       describe('async filtering performed outside the autocomplete', function () {
         it('should properly filter and autofocus the first item when typing forward', async function () {
-          let {getByRole} = (renderers.asyncFiltering!)();
+          let {getByRole} = renderers.asyncFiltering!();
           await act(async () => {
             jest.runAllTimers();
           });
@@ -637,7 +644,7 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix, ariaPattern = '
     if (renderers.sections) {
       describe('with sections', function () {
         it('should properly skip over sections when keyboard navigating', async function () {
-          let {getByRole} = (renderers.sections!)();
+          let {getByRole} = renderers.sections!();
           let input = getByRole('searchbox');
           let menu = getByRole(collectionNodeRole);
           let sections = within(menu).getAllByRole('group');
@@ -663,7 +670,7 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix, ariaPattern = '
         });
 
         it('should omit section titles and dividers when filtering', async function () {
-          let {getByRole} = (renderers.sections!)();
+          let {getByRole} = renderers.sections!();
           let input = getByRole('searchbox');
           let menu = getByRole(collectionNodeRole);
           let sections = within(menu).getAllByRole('group');
@@ -681,7 +688,9 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix, ariaPattern = '
           sections = within(menu).getAllByRole('group');
           expect(sections).toHaveLength(1);
           expect(sections[0]).toHaveAttribute('aria-labelledby');
-          expect(document.getElementById(sections[0].getAttribute('aria-labelledby')!)).toHaveTextContent('Section 1');
+          expect(
+            document.getElementById(sections[0].getAttribute('aria-labelledby')!)
+          ).toHaveTextContent('Section 1');
           options = within(sections[0]).getAllByRole(collectionItemRole);
           expect(options).toHaveLength(1);
           divider = within(menu).queryAllByRole('separator');
@@ -710,7 +719,9 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix, ariaPattern = '
           sections = within(menu).getAllByRole('group');
           expect(sections).toHaveLength(1);
           expect(sections[0]).toHaveAttribute('aria-labelledby');
-          expect(document.getElementById(sections[0].getAttribute('aria-labelledby')!)).toHaveTextContent('Section 2');
+          expect(
+            document.getElementById(sections[0].getAttribute('aria-labelledby')!)
+          ).toHaveTextContent('Section 2');
           options = within(sections[0]).getAllByRole(collectionItemRole);
           expect(options).toHaveLength(1);
           divider = within(menu).queryAllByRole('separator');
@@ -754,7 +765,7 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix, ariaPattern = '
       describe('with links', function () {
         installPointerEvent();
         it('should trigger the link option when hitting Enter', async function () {
-          let {getByRole} = (renderers.links!)();
+          let {getByRole} = renderers.links!();
           let input = getByRole('searchbox');
           let menu = getByRole(collectionNodeRole);
           expect(input).not.toHaveAttribute('aria-activedescendant');
@@ -782,7 +793,7 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix, ariaPattern = '
       // TODO: wrap all of these within a DialogTrigger?
       describe('with submenus', function () {
         it('should open a submenu when pressing the autocomplete wrapped submenu trigger', async function () {
-          let {getByRole, getAllByRole} = (renderers.submenus!)();
+          let {getByRole, getAllByRole} = renderers.submenus!();
           let menu = getByRole('menu');
           let options = within(menu).getAllByRole('menuitem');
           expect(options[1]).toHaveAttribute('aria-haspopup', 'menu');
@@ -800,7 +811,7 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix, ariaPattern = '
           installPointerEvent();
 
           it('should close the menu when hovering an adjacent menu item in the virtual focus list', async function () {
-            let {getByRole, getAllByRole} = (renderers.submenus!)();
+            let {getByRole, getAllByRole} = renderers.submenus!();
             let menu = getByRole('menu');
             let options = within(menu).getAllByRole('menuitem');
             expect(options[1]).toHaveAttribute('aria-haspopup', 'menu');
@@ -822,7 +833,7 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix, ariaPattern = '
         });
 
         it('should not clear the focused key when using arrowRight to open a submenu', async function () {
-          let {getByRole, getAllByRole} = (renderers.submenus!)();
+          let {getByRole, getAllByRole} = renderers.submenus!();
           let input = getByRole('searchbox');
           let menu = getByRole('menu');
           expect(input).not.toHaveAttribute('aria-activedescendant');
@@ -862,7 +873,7 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix, ariaPattern = '
         });
 
         it('should only close a single level when hitting Escape and focus should be moved back to the input', async function () {
-          let {getByRole, getAllByRole} = (renderers.submenus!)();
+          let {getByRole, getAllByRole} = renderers.submenus!();
           let input = getByRole('searchbox');
           let menu = getByRole('menu');
 
@@ -905,7 +916,7 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix, ariaPattern = '
         });
 
         it('should close all menus when clicking on the body', async function () {
-          let {getByRole, getAllByRole} = (renderers.submenus!)();
+          let {getByRole, getAllByRole} = renderers.submenus!();
           let menu = getByRole('menu');
           let options = within(menu).getAllByRole('menuitem');
           expect(options[1]).toHaveAttribute('aria-haspopup', 'menu');
@@ -934,7 +945,7 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix, ariaPattern = '
 
         // TODO: not sure why this is causing the "statndard interactions -> should support keyboard navigation" test to fail...
         it.skip('should close the current submenu when clicking the dismiss button', function () {
-          let {getByRole, getAllByRole} = (renderers.submenus!)();
+          let {getByRole, getAllByRole} = renderers.submenus!();
           let input = getByRole('searchbox');
           let menu = getByRole('menu');
 
@@ -951,10 +962,17 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix, ariaPattern = '
           expect(menus).toHaveLength(2);
 
           let popover = menus[1].closest('.react-aria-Popover');
-          let dismissButtons = within(popover as HTMLElement).getAllByRole('button', {hidden: true});
+          let dismissButtons = within(popover as HTMLElement).getAllByRole('button', {
+            hidden: true
+          });
           expect(dismissButtons.length).toBe(1);
           act(() => dismissButtons[0].focus());
-          fireEvent.click(dismissButtons[0], {pointerType: 'mouse', width: 1, height: 1, detail: 0});
+          fireEvent.click(dismissButtons[0], {
+            pointerType: 'mouse',
+            width: 1,
+            height: 1,
+            detail: 0
+          });
           act(() => jest.runAllTimers());
 
           menus = getAllByRole('menu');
@@ -967,19 +985,23 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix, ariaPattern = '
     if (renderers.subdialogs) {
       describe('with subdialogs', function () {
         it('should open a subdialog when pressing the autocomplete wrapped subdialog triggers', async function () {
-          let {getByRole, getAllByRole} = (renderers.subdialogs!)();
+          let {getByRole, getAllByRole} = renderers.subdialogs!();
           let menu = getByRole('menu');
           let options = within(menu).getAllByRole('menuitem');
           expect(options[1]).toHaveAttribute('aria-haspopup', 'menu');
 
           await user.click(options[1]);
-          act(() => {jest.runAllTimers();});
+          act(() => {
+            jest.runAllTimers();
+          });
 
           let dialogs = getAllByRole('dialog');
           expect(dialogs).toHaveLength(1);
 
           await user.click(within(dialogs[0]).getAllByRole('menuitem')[1]);
-          act(() => {jest.runAllTimers();});
+          act(() => {
+            jest.runAllTimers();
+          });
 
           dialogs = getAllByRole('dialog');
           expect(dialogs).toHaveLength(2);
@@ -987,7 +1009,7 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix, ariaPattern = '
 
         it('should close the subdialog when hovering an adjacent menu item in the virtual focus list', async function () {
           document.elementFromPoint = jest.fn().mockImplementation(query => query);
-          let {getByRole, getAllByRole} = (renderers.subdialogs!)();
+          let {getByRole, getAllByRole} = renderers.subdialogs!();
           let menu = getByRole('menu');
           let options = within(menu).getAllByRole('menuitem');
           expect(options[1]).toHaveAttribute('aria-haspopup', 'menu');
@@ -1016,7 +1038,7 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix, ariaPattern = '
         });
 
         it('should contain focus even for virtual focus', async function () {
-          let {getByRole, getAllByRole} = (renderers.subdialogs!)();
+          let {getByRole, getAllByRole} = renderers.subdialogs!();
           let input = getByRole('searchbox');
           let menu = getByRole('menu');
           let options = within(menu).getAllByRole('menuitem');
@@ -1042,7 +1064,7 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix, ariaPattern = '
         });
 
         it('should only close a single level when hitting Escape and focus should be moved back to the input', async function () {
-          let {getByRole, getAllByRole, queryAllByRole} = (renderers.subdialogs!)();
+          let {getByRole, getAllByRole, queryAllByRole} = renderers.subdialogs!();
           let input = getByRole('searchbox');
           let menu = getByRole('menu');
 
@@ -1089,7 +1111,7 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix, ariaPattern = '
 
         // TODO: not sure why this is causing other tests to fail... Something with calling fireEvent?
         it.skip('should close the current subdialog when clicking the dismiss button', function () {
-          let {getByRole, getAllByRole, queryAllByRole} = (renderers.subdialogs!)();
+          let {getByRole, getAllByRole, queryAllByRole} = renderers.subdialogs!();
           let input = getByRole('searchbox');
           let menu = getByRole('menu');
 
@@ -1106,10 +1128,17 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix, ariaPattern = '
           expect(dialogs).toHaveLength(1);
 
           let popover = dialogs[0].closest('.react-aria-Popover');
-          let dismissButtons = within(popover as HTMLElement).getAllByRole('button', {hidden: true});
+          let dismissButtons = within(popover as HTMLElement).getAllByRole('button', {
+            hidden: true
+          });
           expect(dismissButtons.length).toBe(2);
           act(() => dismissButtons[1].focus());
-          fireEvent.click(dismissButtons[1], {pointerType: 'mouse', width: 1, height: 1, detail: 0});
+          fireEvent.click(dismissButtons[1], {
+            pointerType: 'mouse',
+            width: 1,
+            height: 1,
+            detail: 0
+          });
           act(() => jest.runAllTimers());
 
           dialogs = queryAllByRole('dialog');
@@ -1124,7 +1153,7 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix, ariaPattern = '
       describe('with subdialogs and menus mixed', function () {
         it('should allow opening a subdialog from menu and vice versa', async function () {
           // Tests a mix of virtual focus and non virtual focus
-          let {getByRole, getAllByRole, queryAllByRole} = (renderers.subdialogAndMenu!)();
+          let {getByRole, getAllByRole, queryAllByRole} = renderers.subdialogAndMenu!();
           let input = getByRole('searchbox');
           let menus = getAllByRole('menu');
 
@@ -1138,7 +1167,9 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix, ariaPattern = '
 
           // Open subdialog
           await user.keyboard('{ArrowRight}');
-          act(() => {jest.runAllTimers();});
+          act(() => {
+            jest.runAllTimers();
+          });
 
           let dialogs = getAllByRole('dialog');
           expect(dialogs).toHaveLength(1);
@@ -1150,7 +1181,9 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix, ariaPattern = '
           // Open submenu
           await user.keyboard('{ArrowDown}');
           await user.keyboard('{ArrowRight}');
-          act(() => {jest.runAllTimers();});
+          act(() => {
+            jest.runAllTimers();
+          });
           menus = getAllByRole('menu');
           // 3 menus, 2 from autocomplete dialogs and one from submenu
           expect(menus).toHaveLength(3);
@@ -1161,7 +1194,9 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix, ariaPattern = '
           // Open last subdialog
           await user.keyboard('{ArrowDown}');
           await user.keyboard('{ArrowRight}');
-          act(() => {jest.runAllTimers();});
+          act(() => {
+            jest.runAllTimers();
+          });
           dialogs = getAllByRole('dialog');
           expect(dialogs).toHaveLength(3);
           let subDialogInput2 = within(dialogs[2]).getByRole('searchbox');

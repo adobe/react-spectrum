@@ -13,5 +13,10 @@
 export {useLandmark} from 'react-aria/useLandmark';
 
 export {UNSTABLE_createLandmarkController} from 'react-aria/private/landmark/useLandmark';
-export type {AriaLandmarkRole, AriaLandmarkProps, LandmarkAria, LandmarkController} from 'react-aria/useLandmark';
+export type {
+  AriaLandmarkRole,
+  AriaLandmarkProps,
+  LandmarkAria,
+  LandmarkController
+} from 'react-aria/useLandmark';
 export type {LandmarkControllerOptions} from 'react-aria/private/landmark/useLandmark';

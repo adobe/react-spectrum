@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "homepage": ".",
-  "packageManager": "yarn@4.2.2",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -40,5 +39,6 @@
     "strip-ansi": "6.0.1",
     "wrap-ansi": "7.0.0"
   },
-  "browserslist": "defaults"
+  "browserslist": "defaults",
+  "packageManager": "yarn@4.2.2"
 }

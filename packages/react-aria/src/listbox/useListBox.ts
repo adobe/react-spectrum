@@ -10,7 +10,21 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, CollectionBase, DOMAttributes, DOMProps, FocusEvents, FocusStrategy, Key, KeyboardDelegate, LayoutDelegate, MultipleSelection, Orientation, RefObject, SelectionBehavior} from '@react-types/shared';
+import {
+  AriaLabelingProps,
+  CollectionBase,
+  DOMAttributes,
+  DOMProps,
+  FocusEvents,
+  FocusStrategy,
+  Key,
+  KeyboardDelegate,
+  LayoutDelegate,
+  MultipleSelection,
+  Orientation,
+  RefObject,
+  SelectionBehavior
+} from '@react-types/shared';
 import {filterDOMProps} from '../utils/filterDOMProps';
 import {listData} from './utils';
 import {ListState} from 'react-stately/useListState';
@@ -23,9 +37,9 @@ import {useSelectableList} from '../selection/useSelectableList';
 
 export interface ListBoxProps<T> extends CollectionBase<T>, MultipleSelection, FocusEvents {
   /** Whether to auto focus the listbox or an option. */
-  autoFocus?: boolean | FocusStrategy,
+  autoFocus?: boolean | FocusStrategy;
   /** Whether focus should wrap around when the end/start is reached. */
-  shouldFocusWrap?: boolean
+  shouldFocusWrap?: boolean;
 }
 
 export interface AriaListBoxPropsBase<T> extends ListBoxProps<T>, DOMProps, AriaLabelingProps {
@@ -37,54 +51,54 @@ export interface AriaListBoxPropsBase<T> extends ListBoxProps<T>, DOMProps, Aria
    * trigger selection clearing contextually.
    * @default 'clearSelection'
    */
-  escapeKeyBehavior?: 'clearSelection' | 'none'
+  escapeKeyBehavior?: 'clearSelection' | 'none';
 }
 export interface AriaListBoxProps<T> extends AriaListBoxPropsBase<T> {
   /**
    * An optional visual label for the listbox.
    */
-  label?: ReactNode,
+  label?: ReactNode;
   /** How multiple selection should behave in the collection. */
-  selectionBehavior?: SelectionBehavior,
+  selectionBehavior?: SelectionBehavior;
   /** Whether selection should occur on press up instead of press down. */
-  shouldSelectOnPressUp?: boolean,
+  shouldSelectOnPressUp?: boolean;
   /** Whether options should be focused when the user hovers over them. */
-  shouldFocusOnHover?: boolean,
+  shouldFocusOnHover?: boolean;
   /**
    * Handler that is called when a user performs an action on an item. The exact user event depends on
    * the collection's `selectionBehavior` prop and the interaction modality.
    */
-  onAction?: (key: Key) => void
+  onAction?: (key: Key) => void;
 }
 
 export interface ListBoxAria {
   /** Props for the listbox element. */
-  listBoxProps: DOMAttributes,
+  listBoxProps: DOMAttributes;
   /** Props for the listbox's visual label element (if any). */
-  labelProps: DOMAttributes
+  labelProps: DOMAttributes;
 }
 
 export interface AriaListBoxOptions<T> extends Omit<AriaListBoxProps<T>, 'children'> {
   /** Whether the listbox uses virtual scrolling. */
-  isVirtualized?: boolean,
+  isVirtualized?: boolean;
 
   /**
    * An optional keyboard delegate implementation for type to select,
    * to override the default.
    */
-  keyboardDelegate?: KeyboardDelegate,
+  keyboardDelegate?: KeyboardDelegate;
 
   /**
    * A delegate object that provides layout information for items in the collection.
    * By default this uses the DOM, but this can be overridden to implement things like
    * virtualized scrolling.
    */
-  layoutDelegate?: LayoutDelegate,
+  layoutDelegate?: LayoutDelegate;
 
   /**
    * Whether the listbox items should use virtual focus instead of being focused directly.
    */
-  shouldUseVirtualFocus?: boolean,
+  shouldUseVirtualFocus?: boolean;
 
   /**
    * The behavior of links in the collection.
@@ -93,13 +107,13 @@ export interface AriaListBoxOptions<T> extends Omit<AriaListBoxProps<T>, 'childr
    * - 'override': links override all other interactions (link items are not selectable).
    * @default 'override'
    */
-  linkBehavior?: 'action' | 'selection' | 'override',
+  linkBehavior?: 'action' | 'selection' | 'override';
 
   /**
    * The primary orientation of the items. Usually this is the direction that the collection scrolls.
    * @default 'vertical'
    */
-  orientation?: Orientation
+  orientation?: Orientation;
 }
 
 /**
@@ -108,12 +122,17 @@ export interface AriaListBoxOptions<T> extends Omit<AriaListBoxProps<T>, 'childr
  * @param props - Props for the listbox.
  * @param state - State for the listbox, as returned by `useListState`.
  */
-export function useListBox<T>(props: AriaListBoxOptions<T>, state: ListState<T>, ref: RefObject<HTMLElement | null>): ListBoxAria {
+export function useListBox<T>(
+  props: AriaListBoxOptions<T>,
+  state: ListState<T>,
+  ref: RefObject<HTMLElement | null>
+): ListBoxAria {
   let domProps = filterDOMProps(props, {labelable: true});
   // Use props instead of state here. We don't want this to change due to long press.
   let selectionBehavior = props.selectionBehavior || 'toggle';
   let orientation = props.orientation || 'vertical';
-  let linkBehavior = props.linkBehavior || (selectionBehavior === 'replace' ? 'action' : 'override');
+  let linkBehavior =
+    props.linkBehavior || (selectionBehavior === 'replace' ? 'action' : 'override');
   if (selectionBehavior === 'toggle' && linkBehavior === 'action') {
     // linkBehavior="action" does not work with selectionBehavior="toggle" because there is no way
     // to initiate selection (checkboxes are not allowed inside a listbox). Link items will not be
@@ -160,12 +179,19 @@ export function useListBox<T>(props: AriaListBoxOptions<T>, state: ListState<T>,
 
   return {
     labelProps,
-    listBoxProps: mergeProps(domProps, focusWithinProps, state.selectionManager.selectionMode === 'multiple' ? {
-      'aria-multiselectable': 'true'
-    } : {}, {
-      role: 'listbox',
-      'aria-orientation': orientation,
-      ...mergeProps(fieldProps, listProps)
-    })
+    listBoxProps: mergeProps(
+      domProps,
+      focusWithinProps,
+      state.selectionManager.selectionMode === 'multiple'
+        ? {
+            'aria-multiselectable': 'true'
+          }
+        : {},
+      {
+        role: 'listbox',
+        'aria-orientation': orientation,
+        ...mergeProps(fieldProps, listProps)
+      }
+    )
   };
 }

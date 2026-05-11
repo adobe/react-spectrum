@@ -12,8 +12,8 @@
 
 jest.mock('react-aria/src/live-announcer/LiveAnnouncer');
 jest.mock('react-aria/src/utils/scrollIntoView');
-import {act, render} from '@react-spectrum/test-utils-internal';
-import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../src/TableView';
+import {act, render, within} from '@react-spectrum/test-utils-internal';
+import {Cell, Column, Row, TableBody, TableFooter, TableHeader, TableView} from '../src/TableView';
 import {DisabledBehavior} from '@react-types/shared';
 import Filter from '../s2wf-icons/S2_Icon_Filter_20_N.svg';
 import {MenuItem, MenuSection} from '../src/Menu';
@@ -24,7 +24,7 @@ import {Text} from '../src/Content';
 import userEvent from '@testing-library/user-event';
 
 // @ts-ignore
-window.getComputedStyle = (el) => el.style;
+window.getComputedStyle = el => el.style;
 
 describe('TableView', () => {
   let offsetWidth, offsetHeight;
@@ -32,8 +32,12 @@ describe('TableView', () => {
   let testUtilUser = new User({advanceTimer: jest.advanceTimersByTime});
   beforeAll(function () {
     user = userEvent.setup({delay: null, pointerMap});
-    offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 400);
-    offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 200);
+    offsetWidth = jest
+      .spyOn(window.HTMLElement.prototype, 'clientWidth', 'get')
+      .mockImplementation(() => 400);
+    offsetHeight = jest
+      .spyOn(window.HTMLElement.prototype, 'clientHeight', 'get')
+      .mockImplementation(() => 1000);
     window.CSSTransition = jest.fn(({children}) => children);
 
     // Mock the getAnimations method
@@ -58,7 +62,9 @@ describe('TableView', () => {
   });
 
   afterEach(() => {
-    act(() => {jest.runAllTimers();});
+    act(() => {
+      jest.runAllTimers();
+    });
   });
 
   let columns = [
@@ -86,7 +92,7 @@ describe('TableView', () => {
     let {getByRole} = render(
       <TableView aria-label="Dynamic table">
         <TableHeader columns={columns}>
-          {(column) => (
+          {column => (
             <Column
               width={150}
               minWidth={150}
@@ -94,20 +100,29 @@ describe('TableView', () => {
               menuItems={
                 <>
                   <MenuSection>
-                    <MenuItem onAction={onAction}><Filter /><Text slot="label">Filter</Text></MenuItem>
+                    <MenuItem onAction={onAction}>
+                      <Filter />
+                      <Text slot="label">Filter</Text>
+                    </MenuItem>
                   </MenuSection>
                   <MenuSection>
-                    <MenuItem><Text slot="label">Hide column</Text></MenuItem>
-                    <MenuItem><Text slot="label">Manage columns</Text></MenuItem>
+                    <MenuItem>
+                      <Text slot="label">Hide column</Text>
+                    </MenuItem>
+                    <MenuItem>
+                      <Text slot="label">Manage columns</Text>
+                    </MenuItem>
                   </MenuSection>
                 </>
-              }>{column.name}</Column>
+              }>
+              {column.name}
+            </Column>
           )}
         </TableHeader>
         <TableBody items={items}>
           {item => (
             <Row id={item.id} columns={columns}>
-              {(column) => {
+              {column => {
                 return <Cell>{item[column.id]}</Cell>;
               }}
             </Row>
@@ -117,24 +132,46 @@ describe('TableView', () => {
     );
 
     let tableTester = testUtilUser.createTester('Table', {root: getByRole('grid')});
-    await tableTester.triggerColumnHeaderAction({column: 1, action: 0, interactionType: 'keyboard'});
+    await tableTester.triggerColumnHeaderAction({
+      column: 1,
+      action: 0,
+      interactionType: 'keyboard'
+    });
     expect(onAction).toHaveBeenCalledTimes(1);
   });
 
-  it('if the previously focused cell\'s row is disabled, the focus should still be restored to the cell when the disabled behavior is changed and the user navigates to the collection', async () => {
+  it("if the previously focused cell's row is disabled, the focus should still be restored to the cell when the disabled behavior is changed and the user navigates to the collection", async () => {
     function Example() {
       let [disabledBehavior, setDisabledBehavior] = useState<DisabledBehavior>('selection');
       return (
         <>
           <button>Before</button>
-          <TableView aria-label="Dynamic table" disabledBehavior={disabledBehavior} disabledKeys={['2']}>
+          <TableView
+            aria-label="Dynamic table"
+            disabledBehavior={disabledBehavior}
+            disabledKeys={['2']}>
             <TableHeader columns={columns}>
-              {(column) => <Column {...column}>{column.name}</Column>}
+              {column => <Column {...column}>{column.name}</Column>}
             </TableHeader>
             <TableBody>
-              <Row id="1"><Cell>Foo 1</Cell><Cell>Bar 1</Cell><Cell>Baz 1</Cell><Cell>Yah 1</Cell></Row>
-              <Row id="2"><Cell>Foo 2</Cell><Cell>Bar 2</Cell><Cell>Baz 2</Cell><Cell>Yah 2</Cell></Row>
-              <Row id="3"><Cell>Foo 3</Cell><Cell>Bar 3</Cell><Cell>Baz 3</Cell><Cell>Yah 3</Cell></Row>
+              <Row id="1">
+                <Cell>Foo 1</Cell>
+                <Cell>Bar 1</Cell>
+                <Cell>Baz 1</Cell>
+                <Cell>Yah 1</Cell>
+              </Row>
+              <Row id="2">
+                <Cell>Foo 2</Cell>
+                <Cell>Bar 2</Cell>
+                <Cell>Baz 2</Cell>
+                <Cell>Yah 2</Cell>
+              </Row>
+              <Row id="3">
+                <Cell>Foo 3</Cell>
+                <Cell>Bar 3</Cell>
+                <Cell>Baz 3</Cell>
+                <Cell>Yah 3</Cell>
+              </Row>
             </TableBody>
           </TableView>
           <button onClick={() => setDisabledBehavior('all')}>After</button>
@@ -164,25 +201,13 @@ describe('TableView', () => {
     ];
     const renderEmptyState = () => (
       <Tabs aria-label="Settings">
-        <TabList items={tabItems}>
-          {(item) => (
-            <Tab>
-              {item.label}
-            </Tab>
-          )}
-        </TabList>
+        <TabList items={tabItems}>{item => <Tab>{item.label}</Tab>}</TabList>
       </Tabs>
     );
 
     let {getAllByRole} = render(
       <TableView aria-label="Debug table" selectionMode="none">
-        <TableHeader columns={columns}>
-          {(column) => (
-            <Column>
-              {column.name}
-            </Column>
-          )}
-        </TableHeader>
+        <TableHeader columns={columns}>{column => <Column>{column.name}</Column>}</TableHeader>
         <TableBody items={[]} renderEmptyState={renderEmptyState} />
       </TableView>
     );
@@ -195,5 +220,76 @@ describe('TableView', () => {
     await user.click(tabs[1]);
     expect(tabs[0]).toHaveAttribute('aria-selected', 'false');
     expect(tabs[1]).toHaveAttribute('aria-selected', 'true');
+  });
+
+  it('should support table footer', async () => {
+    const invoices = [
+      {title: 'Website Design', status: 'Paid', paymentMethod: 'Credit Card', price: '$1,200'},
+      {title: 'Logo Creation', status: 'Pending', paymentMethod: 'PayPal', price: '$350'},
+      {title: 'SEO Optimization', status: 'Overdue', paymentMethod: 'Bank Transfer', price: '$800'},
+      {title: 'Social Media Setup', status: 'Paid', paymentMethod: 'Debit Card', price: '$450'},
+      {title: 'Content Writing', status: 'Pending', paymentMethod: 'Credit Card', price: '$600'},
+      {title: 'App Development', status: 'Paid', paymentMethod: 'Wire Transfer', price: '$5,000'},
+      {title: 'Maintenance Plan', status: 'Overdue', paymentMethod: 'PayPal', price: '$200'}
+    ];
+
+    let onSelectionChange = jest.fn();
+    let {container: root} = render(
+      <TableView aria-label="Files" selectionMode="multiple" onSelectionChange={onSelectionChange}>
+        <TableHeader>
+          <Column isRowHeader>Title</Column>
+          <Column>Status</Column>
+          <Column>Payment Method</Column>
+          <Column>Price</Column>
+        </TableHeader>
+        <TableBody items={invoices}>
+          {item => (
+            <Row id={item.title}>
+              <Cell>{item.title}</Cell>
+              <Cell>{item.status}</Cell>
+              <Cell>{item.paymentMethod}</Cell>
+              <Cell>{item.price}</Cell>
+            </Row>
+          )}
+        </TableBody>
+        <TableFooter>
+          <Row>
+            <Cell colSpan={3}>Total:</Cell>
+            <Cell>
+              {invoices
+                .reduce((p, item) => p + Number(item.price.replace(/[$,]/g, '')), 0)
+                .toLocaleString('en-US', {
+                  style: 'currency',
+                  currency: 'USD',
+                  maximumFractionDigits: 0
+                })}
+            </Cell>
+          </Row>
+        </TableFooter>
+      </TableView>
+    );
+
+    let tableTester = testUtilUser.createTester('Table', {root});
+
+    let groups = tableTester.rowGroups;
+    expect(groups).toHaveLength(3);
+
+    await user.tab();
+    for (let row of tableTester.rows) {
+      expect(document.activeElement).toBe(row);
+      await user.keyboard('{ArrowDown}');
+    }
+
+    for (let row of tableTester.rows.toReversed().slice(1)) {
+      await user.keyboard('{ArrowUp}');
+      expect(document.activeElement).toBe(row);
+    }
+
+    let footerRows = within(groups[2]).getAllByRole('row');
+    await user.click(footerRows[0]);
+    expect(onSelectionChange).not.toHaveBeenCalled();
+
+    await user.click(tableTester.rows[0]);
+    expect(onSelectionChange).toHaveBeenCalled();
   });
 });

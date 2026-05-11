@@ -1,5 +1,5 @@
-@import "./theme.css";
-@import "./utilities.css";
+@import './theme.css';
+@import './utilities.css';
 
 .react-aria-TagGroup {
   display: flex;
@@ -7,7 +7,7 @@
   font: var(--font-size) system-ui;
   color: var(--text-color);
 
-  [slot=errorMessage] {
+  [slot='errorMessage'] {
     margin-top: var(--spacing);
     font-size: var(--font-size-sm);
     color: var(--invalid-color);
@@ -34,7 +34,7 @@
   align-items: center;
   gap: var(--spacing-1);
   transition-property: scale, background, border-color, box-shadow, text-shadow;
-  transition-duration: 200ms;;
+  transition-duration: 200ms;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

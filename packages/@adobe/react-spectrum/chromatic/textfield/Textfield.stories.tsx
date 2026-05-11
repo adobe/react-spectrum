@@ -55,7 +55,8 @@ IsReadOnlyTrue.story = {
   name: 'isReadOnly: true'
 };
 
-export const IsReadOnlyTrueWithValue: TextFieldStory = () => render({value: 'Read only value', isReadOnly: true});
+export const IsReadOnlyTrueWithValue: TextFieldStory = () =>
+  render({value: 'Read only value', isReadOnly: true});
 
 IsReadOnlyTrueWithValue.story = {
   name: 'isReadOnly: true, with value'
@@ -67,13 +68,15 @@ IsRequiredTrue.story = {
   name: 'isRequired: true'
 };
 
-export const IsRequiredTrueNecessityIndicatorLabel: TextFieldStory = () => render({isRequired: true, necessityIndicator: 'label'}, false);
+export const IsRequiredTrueNecessityIndicatorLabel: TextFieldStory = () =>
+  render({isRequired: true, necessityIndicator: 'label'}, false);
 
 IsRequiredTrueNecessityIndicatorLabel.story = {
   name: 'isRequired: true, necessityIndicator: label'
 };
 
-export const IsRequiredFalseNecessityIndicatorLabel: TextFieldStory = () => render({isRequired: false, necessityIndicator: 'label'}, false);
+export const IsRequiredFalseNecessityIndicatorLabel: TextFieldStory = () =>
+  render({isRequired: false, necessityIndicator: 'label'}, false);
 
 IsRequiredFalseNecessityIndicatorLabel.story = {
   name: 'isRequired: false, necessityIndicator: label'
@@ -85,7 +88,8 @@ IconInfo.story = {
   name: 'icon: Info'
 };
 
-export const IconInfoValidationStateInvalid: TextFieldStory = () => render({icon: <Info />, validationState: 'invalid'});
+export const IconInfoValidationStateInvalid: TextFieldStory = () =>
+  render({icon: <Info />, validationState: 'invalid'});
 
 IconInfoValidationStateInvalid.story = {
   name: 'icon: Info, validationState: invalid'
@@ -103,52 +107,87 @@ LabelPositionSide.story = {
   name: 'labelPosition: side'
 };
 
-export const LabelAlignEndLabelPositionSide: TextFieldStory = () => render({labelAlign: 'end', labelPosition: 'side'}, false);
+export const LabelAlignEndLabelPositionSide: TextFieldStory = () =>
+  render({labelAlign: 'end', labelPosition: 'side'}, false);
 
 LabelAlignEndLabelPositionSide.story = {
   name: 'labelAlign: end, labelPosition: side'
 };
 
-export const NoVisibleLabel: TextFieldStory = () => render({label: null, 'aria-label': 'Street address'}, false);
+export const NoVisibleLabel: TextFieldStory = () =>
+  render({label: null, 'aria-label': 'Street address'}, false);
 
 NoVisibleLabel.story = {
   name: 'no visible label'
 };
 
-export const CustomWidth: TextFieldStory = () => render({icon: <Info />, validationState: 'invalid', width: 275});
+export const CustomWidth: TextFieldStory = () =>
+  render({icon: <Info />, validationState: 'invalid', width: 275});
 
 CustomWidth.story = {
   name: 'custom width'
 };
 
-export const _ContextualHelp: TextFieldStory = (args) => render({...args, contextualHelp: (
-  <ContextualHelp>
-    <Heading>What is a segment?</Heading>
-    <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
-  </ContextualHelp>
-)}, false);
+export const _ContextualHelp: TextFieldStory = args =>
+  render(
+    {
+      ...args,
+      contextualHelp: (
+        <ContextualHelp>
+          <Heading>What is a segment?</Heading>
+          <Content>
+            Segments identify who your visitors are, what devices and services they use, where they
+            navigated from, and much more.
+          </Content>
+        </ContextualHelp>
+      )
+    },
+    false
+  );
 
 _ContextualHelp.story = {
   name: 'contextual help'
 };
 
-export const ContextualHelpLabelAlignEnd: TextFieldStory = (args) => render({...args, labelAlign: 'end', contextualHelp: (
-  <ContextualHelp>
-    <Heading>What is a segment?</Heading>
-    <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
-  </ContextualHelp>
-)}, false);
+export const ContextualHelpLabelAlignEnd: TextFieldStory = args =>
+  render(
+    {
+      ...args,
+      labelAlign: 'end',
+      contextualHelp: (
+        <ContextualHelp>
+          <Heading>What is a segment?</Heading>
+          <Content>
+            Segments identify who your visitors are, what devices and services they use, where they
+            navigated from, and much more.
+          </Content>
+        </ContextualHelp>
+      )
+    },
+    false
+  );
 
 ContextualHelpLabelAlignEnd.story = {
   name: 'contextual help, labelAlign: end'
 };
 
-export const ContextualHelpLabelPositionSide: TextFieldStory = (args) => render({...args, labelPosition: 'side', contextualHelp: (
-  <ContextualHelp>
-    <Heading>What is a segment?</Heading>
-    <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
-  </ContextualHelp>
-)}, false);
+export const ContextualHelpLabelPositionSide: TextFieldStory = args =>
+  render(
+    {
+      ...args,
+      labelPosition: 'side',
+      contextualHelp: (
+        <ContextualHelp>
+          <Heading>What is a segment?</Heading>
+          <Content>
+            Segments identify who your visitors are, what devices and services they use, where they
+            navigated from, and much more.
+          </Content>
+        </ContextualHelp>
+      )
+    },
+    false
+  );
 
 ContextualHelpLabelPositionSide.story = {
   name: 'contextual help, labelPosition: side'
@@ -158,28 +197,12 @@ ContextualHelpLabelPositionSide.story = {
 export function render(props = {}, disabled = true): JSX.Element {
   return (
     <Flex gap="size-100" wrap>
-      <TextField
-        label="Default"
-        placeholder="React"
-        {...props} />
-      <TextField
-        label="Quiet"
-        placeholder="React"
-        isQuiet
-        {...props} />
+      <TextField label="Default" placeholder="React" {...props} />
+      <TextField label="Quiet" placeholder="React" isQuiet {...props} />
       {disabled && (
         <>
-          <TextField
-            label="Disabled"
-            placeholder="React"
-            isDisabled
-            {...props} />
-          <TextField
-            label="Quiet + Disabled"
-            placeholder="React"
-            isQuiet
-            isDisabled
-            {...props} />
+          <TextField label="Disabled" placeholder="React" isDisabled {...props} />
+          <TextField label="Quiet + Disabled" placeholder="React" isQuiet isDisabled {...props} />
         </>
       )}
     </Flex>

@@ -2,19 +2,20 @@
 import {
   Autocomplete as AriaAutocomplete,
   type AutocompleteProps as AriaAutocompleteProps,
-  useFilter,
+  useFilter
 } from 'react-aria-components/Autocomplete';
-import { type MenuProps as AriaMenuProps } from 'react-aria-components/Menu';
-import { Dialog } from 'react-aria-components/Dialog';
+import {type MenuProps as AriaMenuProps} from 'react-aria-components/Menu';
+import {Dialog} from 'react-aria-components/Dialog';
 import {Menu} from './Menu';
 import {SearchField} from './SearchField';
-import { Modal } from './Modal';
-import { useEffect } from 'react';
+import {Modal} from './Modal';
+import {useEffect} from 'react';
 import './CommandPalette.css';
 
-export interface CommandPaletteProps<T extends object> extends Omit<AriaAutocompleteProps, 'children'>, AriaMenuProps<T> {
-  isOpen: boolean,
-  onOpenChange: (isOpen?: boolean) => void
+export interface CommandPaletteProps<T extends object>
+  extends Omit<AriaAutocompleteProps, 'children'>, AriaMenuProps<T> {
+  isOpen: boolean;
+  onOpenChange: (isOpen?: boolean) => void;
 }
 
 export function CommandPalette<T extends object>(props: CommandPaletteProps<T>) {
@@ -41,13 +42,8 @@ export function CommandPalette<T extends object>(props: CommandPaletteProps<T>) 
     <Modal isDismissable isOpen={isOpen} onOpenChange={onOpenChange}>
       <Dialog className="command-palette-dialog">
         <AriaAutocomplete filter={contains} {...props}>
-          <SearchField
-            autoFocus
-            aria-label="Search commands"
-            placeholder="Search commands" />
-          <Menu
-            {...props}
-            renderEmptyState={() => 'No results found.'} />
+          <SearchField autoFocus aria-label="Search commands" placeholder="Search commands" />
+          <Menu {...props} renderEmptyState={() => 'No results found.'} />
         </AriaAutocomplete>
       </Dialog>
     </Modal>

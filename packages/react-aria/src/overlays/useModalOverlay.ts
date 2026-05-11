@@ -19,36 +19,46 @@ import {useEffect} from 'react';
 import {useOverlayFocusContain} from './Overlay';
 import {usePreventScroll} from './usePreventScroll';
 
-export interface AriaModalOverlayProps extends Pick<AriaOverlayProps, 'shouldCloseOnInteractOutside'> {
+export interface AriaModalOverlayProps extends Pick<
+  AriaOverlayProps,
+  'shouldCloseOnInteractOutside'
+> {
   /**
    * Whether to close the modal when the user interacts outside it.
    * @default false
    */
-  isDismissable?: boolean,
+  isDismissable?: boolean;
   /**
    * Whether pressing the escape key to close the modal should be disabled.
    * @default false
    */
-  isKeyboardDismissDisabled?: boolean
+  isKeyboardDismissDisabled?: boolean;
 }
 
 export interface ModalOverlayAria {
   /** Props for the modal element. */
-  modalProps: DOMAttributes,
+  modalProps: DOMAttributes;
   /** Props for the underlay element. */
-  underlayProps: DOMAttributes
+  underlayProps: DOMAttributes;
 }
 
 /**
  * Provides the behavior and accessibility implementation for a modal component.
  * A modal is an overlay element which blocks interaction with elements outside it.
  */
-export function useModalOverlay(props: AriaModalOverlayProps, state: OverlayTriggerState, ref: RefObject<HTMLElement | null>): ModalOverlayAria {
-  let {overlayProps, underlayProps} = useOverlay({
-    ...props,
-    isOpen: state.isOpen,
-    onClose: state.close
-  }, ref);
+export function useModalOverlay(
+  props: AriaModalOverlayProps,
+  state: OverlayTriggerState,
+  ref: RefObject<HTMLElement | null>
+): ModalOverlayAria {
+  let {overlayProps, underlayProps} = useOverlay(
+    {
+      ...props,
+      isOpen: state.isOpen,
+      onClose: state.close
+    },
+    ref
+  );
 
   usePreventScroll({
     isDisabled: !state.isOpen

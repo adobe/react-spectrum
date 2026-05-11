@@ -10,15 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, AriaValidationProps, DOMAttributes, FocusableDOMProps, TextInputDOMProps, ValidationResult} from '@react-types/shared';
-import {ColorFieldProps, ColorFieldState} from 'react-stately/useColorFieldState';
 import {
-  InputHTMLAttributes,
-  LabelHTMLAttributes,
-  RefObject,
-  useCallback,
-  useState
-} from 'react';
+  AriaLabelingProps,
+  AriaValidationProps,
+  DOMAttributes,
+  FocusableDOMProps,
+  TextInputDOMProps,
+  ValidationResult
+} from '@react-types/shared';
+import {ColorFieldProps, ColorFieldState} from 'react-stately/useColorFieldState';
+import {InputHTMLAttributes, LabelHTMLAttributes, RefObject, useCallback, useState} from 'react';
 import {mergeProps} from '../utils/mergeProps';
 import {privateValidationStateProp} from 'react-stately/private/form/useFormValidationState';
 import {useFocusWithin} from '../interactions/useFocusWithin';
@@ -28,20 +29,36 @@ import {useId} from '../utils/useId';
 import {useScrollWheel} from '../interactions/useScrollWheel';
 import {useSpinButton} from '../spinbutton/useSpinButton';
 
-export interface AriaColorFieldProps extends ColorFieldProps, AriaLabelingProps, FocusableDOMProps, Omit<TextInputDOMProps, 'minLength' | 'maxLength' | 'pattern' | 'type' | 'inputMode' | 'autoComplete' | 'autoCorrect' | 'spellCheck'>, AriaValidationProps {
+export interface AriaColorFieldProps
+  extends
+    ColorFieldProps,
+    AriaLabelingProps,
+    FocusableDOMProps,
+    Omit<
+      TextInputDOMProps,
+      | 'minLength'
+      | 'maxLength'
+      | 'pattern'
+      | 'type'
+      | 'inputMode'
+      | 'autoComplete'
+      | 'autoCorrect'
+      | 'spellCheck'
+    >,
+    AriaValidationProps {
   /** Enables or disables changing the value with scroll. */
-  isWheelDisabled?: boolean
+  isWheelDisabled?: boolean;
 }
 
 export interface ColorFieldAria extends ValidationResult {
   /** Props for the label element. */
-  labelProps: LabelHTMLAttributes<HTMLLabelElement>,
+  labelProps: LabelHTMLAttributes<HTMLLabelElement>;
   /** Props for the input element. */
-  inputProps: InputHTMLAttributes<HTMLInputElement>,
+  inputProps: InputHTMLAttributes<HTMLInputElement>;
   /** Props for the text field's description element, if any. */
-  descriptionProps: DOMAttributes,
+  descriptionProps: DOMAttributes;
   /** Props for the text field's error message element, if any. */
-  errorMessageProps: DOMAttributes
+  errorMessageProps: DOMAttributes;
 }
 
 /**
@@ -53,54 +70,42 @@ export function useColorField(
   state: ColorFieldState,
   ref: RefObject<HTMLInputElement | null>
 ): ColorFieldAria {
-  let {
+  let {isDisabled, isReadOnly, isRequired, isWheelDisabled, validationBehavior = 'aria'} = props;
+
+  let {colorValue, inputValue, increment, decrement, incrementToMax, decrementToMin, commit} =
+    state;
+
+  let inputId = useId();
+  let {spinButtonProps} = useSpinButton({
     isDisabled,
     isReadOnly,
     isRequired,
-    isWheelDisabled,
-    validationBehavior = 'aria'
-  } = props;
-
-  let {
-    colorValue,
-    inputValue,
-    increment,
-    decrement,
-    incrementToMax,
-    decrementToMin,
-    commit
-  } = state;
-
-  let inputId = useId();
-  let {spinButtonProps} = useSpinButton(
-    {
-      isDisabled,
-      isReadOnly,
-      isRequired,
-      maxValue: 0xFFFFFF,
-      minValue: 0,
-      onIncrement: increment,
-      onIncrementToMax: incrementToMax,
-      onDecrement: decrement,
-      onDecrementToMin: decrementToMin,
-      value: colorValue ? colorValue.toHexInt() : undefined,
-      textValue: colorValue ? colorValue.toString('hex') : undefined
-    }
-  );
+    maxValue: 0xffffff,
+    minValue: 0,
+    onIncrement: increment,
+    onIncrementToMax: incrementToMax,
+    onDecrement: decrement,
+    onDecrementToMin: decrementToMin,
+    value: colorValue ? colorValue.toHexInt() : undefined,
+    textValue: colorValue ? colorValue.toString('hex') : undefined
+  });
 
   let [focusWithin, setFocusWithin] = useState(false);
   let {focusWithinProps} = useFocusWithin({isDisabled, onFocusWithinChange: setFocusWithin});
 
-  let onWheel = useCallback((e) => {
-    if (Math.abs(e.deltaY) <= Math.abs(e.deltaX)) {
-      return;
-    }
-    if (e.deltaY > 0) {
-      increment();
-    } else if (e.deltaY < 0) {
-      decrement();
-    }
-  }, [decrement, increment]);
+  let onWheel = useCallback(
+    e => {
+      if (Math.abs(e.deltaY) <= Math.abs(e.deltaX)) {
+        return;
+      }
+      if (e.deltaY > 0) {
+        increment();
+      } else if (e.deltaY < 0) {
+        decrement();
+      }
+    },
+    [decrement, increment]
+  );
   // If the input isn't supposed to receive input, disable scrolling.
   let scrollingDisabled = isWheelDisabled || isDisabled || isReadOnly || !focusWithin;
   useScrollWheel({onScroll: onWheel, isDisabled: scrollingDisabled}, ref);
@@ -111,19 +116,23 @@ export function useColorField(
     }
   };
 
-  let {inputProps, ...otherProps} = useFormattedTextField({
-    ...props,
-    id: inputId,
-    value: inputValue,
-    // Intentionally invalid value that will be ignored by onChange during form reset
-    // This is handled separately below.
-    defaultValue: '!',
-    validate: undefined,
-    [privateValidationStateProp]: state,
-    type: 'text',
-    autoComplete: 'off',
-    onChange
-  }, state, ref);
+  let {inputProps, ...otherProps} = useFormattedTextField(
+    {
+      ...props,
+      id: inputId,
+      value: inputValue,
+      // Intentionally invalid value that will be ignored by onChange during form reset
+      // This is handled separately below.
+      defaultValue: '!',
+      validate: undefined,
+      [privateValidationStateProp]: state,
+      type: 'text',
+      autoComplete: 'off',
+      onChange
+    },
+    state,
+    ref
+  );
 
   useFormReset(ref, state.defaultColorValue, state.setColorValue);
 

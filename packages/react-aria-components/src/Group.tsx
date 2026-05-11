@@ -30,49 +30,59 @@ export interface GroupRenderProps {
    * Whether the group is currently hovered with a mouse.
    * @selector [data-hovered]
    */
-  isHovered: boolean,
+  isHovered: boolean;
   /**
    * Whether an element within the group is focused, either via a mouse or keyboard.
    * @selector [data-focus-within]
    */
-  isFocusWithin: boolean,
+  isFocusWithin: boolean;
   /**
    * Whether an element within the group is keyboard focused.
    * @selector [data-focus-visible]
    */
-  isFocusVisible: boolean,
+  isFocusVisible: boolean;
   /**
    * Whether the group is disabled.
    * @selector [data-disabled]
    */
-  isDisabled: boolean,
+  isDisabled: boolean;
   /**
    * Whether the group is invalid.
    * @selector [data-invalid]
    */
-  isInvalid: boolean
+  isInvalid: boolean;
 }
 
-export interface GroupProps extends AriaLabelingProps, Omit<HTMLAttributes<HTMLElement>, 'children' | 'className' | 'style' | 'render' | 'role' | 'slot'>, DOMProps, HoverProps, RenderProps<GroupRenderProps>, SlotProps {
- /**
-  * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
-  * @default 'react-aria-Group'
-  */
- className?: ClassNameOrFunction<GroupRenderProps>,
- /** Whether the group is disabled. */
- isDisabled?: boolean,
- /** Whether the group is invalid. */
- isInvalid?: boolean,
- /** Whether the group is read only. */
- isReadOnly?: boolean,
- /**
-  * An accessibility role for the group. By default, this is set to `'group'`.
-  * Use `'region'` when the contents of the group is important enough to be
-  * included in the page table of contents. Use `'presentation'` if the group
-  * is visual only and does not represent a semantic grouping of controls.
-  * @default 'group'
-  */
- role?: 'group' | 'region' | 'presentation'
+export interface GroupProps
+  extends
+    AriaLabelingProps,
+    Omit<
+      HTMLAttributes<HTMLElement>,
+      'children' | 'className' | 'style' | 'render' | 'role' | 'slot'
+    >,
+    DOMProps,
+    HoverProps,
+    RenderProps<GroupRenderProps>,
+    SlotProps {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-Group'
+   */
+  className?: ClassNameOrFunction<GroupRenderProps>;
+  /** Whether the group is disabled. */
+  isDisabled?: boolean;
+  /** Whether the group is invalid. */
+  isInvalid?: boolean;
+  /** Whether the group is read only. */
+  isReadOnly?: boolean;
+  /**
+   * An accessibility role for the group. By default, this is set to `'group'`.
+   * Use `'region'` when the contents of the group is important enough to be
+   * included in the page table of contents. Use `'presentation'` if the group
+   * is visual only and does not represent a semantic grouping of controls.
+   * @default 'group'
+   */
+  role?: 'group' | 'region' | 'presentation';
 }
 
 export const GroupContext = createContext<ContextValue<GroupProps, HTMLDivElement>>({});
@@ -80,9 +90,13 @@ export const GroupContext = createContext<ContextValue<GroupProps, HTMLDivElemen
 /**
  * A group represents a set of related UI controls, and supports interactive states for styling.
  */
-export const Group = /*#__PURE__*/ (forwardRef as forwardRefType)(function Group(props: GroupProps, ref: ForwardedRef<HTMLDivElement>) {
+export const Group = /*#__PURE__*/ (forwardRef as forwardRefType)(function Group(
+  props: GroupProps,
+  ref: ForwardedRef<HTMLDivElement>
+) {
   [props, ref] = useContextProps(props, ref, GroupContext);
-  let {isDisabled, isInvalid, isReadOnly, onHoverStart, onHoverChange, onHoverEnd, ...otherProps} = props;
+  let {isDisabled, isInvalid, isReadOnly, onHoverStart, onHoverChange, onHoverEnd, ...otherProps} =
+    props;
   isDisabled ??= !!props['aria-disabled'] && props['aria-disabled'] !== 'false';
   isInvalid ??= !!props['aria-invalid'] && props['aria-invalid'] !== 'false';
 

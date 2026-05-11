@@ -24,25 +24,25 @@ export interface AriaSearchFieldProps extends SearchFieldProps, Omit<AriaTextFie
   /**
    * An enumerated attribute that defines what action label or icon to preset for the enter key on virtual keyboards. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/enterkeyhint).
    */
-  enterKeyHint?: 'enter' | 'done' | 'go' | 'next' | 'previous' | 'search' | 'send',
+  enterKeyHint?: 'enter' | 'done' | 'go' | 'next' | 'previous' | 'search' | 'send';
   /**
    * The type of input to render. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdeftype).
    * @default 'search'
    */
-  type?: 'text' | 'search' | 'url' | 'tel' | 'email' | 'password' | (string & {})
+  type?: 'text' | 'search' | 'url' | 'tel' | 'email' | 'password' | (string & {});
 }
 
 export interface SearchFieldAria extends ValidationResult {
   /** Props for the text field's visible label element (if any). */
-  labelProps: LabelHTMLAttributes<HTMLLabelElement>,
+  labelProps: LabelHTMLAttributes<HTMLLabelElement>;
   /** Props for the input element. */
-  inputProps: InputHTMLAttributes<HTMLInputElement>,
+  inputProps: InputHTMLAttributes<HTMLInputElement>;
   /** Props for the clear button. */
-  clearButtonProps: AriaButtonProps,
+  clearButtonProps: AriaButtonProps;
   /** Props for the searchfield's description element, if any. */
-  descriptionProps: DOMAttributes,
+  descriptionProps: DOMAttributes;
   /** Props for the searchfield's error message element, if any. */
-  errorMessageProps: DOMAttributes
+  errorMessageProps: DOMAttributes;
 }
 
 /**
@@ -57,15 +57,9 @@ export function useSearchField(
   inputRef: RefObject<HTMLInputElement | null>
 ): SearchFieldAria {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/searchfield');
-  let {
-    isDisabled,
-    isReadOnly,
-    onSubmit,
-    onClear,
-    type = 'search'
-  } = props;
+  let {isDisabled, isReadOnly, onSubmit, onClear, type = 'search'} = props;
 
-  let onKeyDown = (e) => {
+  let onKeyDown = e => {
     const key = e.key;
 
     if (key === 'Enter' && (isDisabled || isReadOnly)) {
@@ -112,13 +106,16 @@ export function useSearchField(
     inputRef.current?.focus();
   };
 
-  let {labelProps, inputProps, descriptionProps, errorMessageProps, ...validation} = useTextField({
-    ...props,
-    value: state.value,
-    onChange: state.setValue,
-    onKeyDown: !isReadOnly ? chain(onKeyDown, props.onKeyDown) : props.onKeyDown,
-    type
-  }, inputRef);
+  let {labelProps, inputProps, descriptionProps, errorMessageProps, ...validation} = useTextField(
+    {
+      ...props,
+      value: state.value,
+      onChange: state.setValue,
+      onKeyDown: !isReadOnly ? chain(onKeyDown, props.onKeyDown) : props.onKeyDown,
+      type
+    },
+    inputRef
+  );
 
   return {
     labelProps,

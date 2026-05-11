@@ -15,9 +15,7 @@ import {TextArea} from '../src/TextField';
 
 describe('TextField', () => {
   it('should focus textarea when tapping invalid icon', async () => {
-    let {getByRole} = render(
-      <TextArea label="Description" isInvalid  />
-    );
+    let {getByRole} = render(<TextArea label="Description" isInvalid />);
 
     let textarea = getByRole('textbox');
     // svg doesn't have a role so grab it via queryselector

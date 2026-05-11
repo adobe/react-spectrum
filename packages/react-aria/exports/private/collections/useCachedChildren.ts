@@ -1,1 +1,4 @@
-export {useCachedChildren, type CachedChildrenOptions} from '../../../src/collections/useCachedChildren';
+export {
+  useCachedChildren,
+  type CachedChildrenOptions
+} from '../../../src/collections/useCachedChildren';

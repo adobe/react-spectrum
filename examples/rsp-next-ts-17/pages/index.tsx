@@ -1,6 +1,6 @@
-import Head from "next/head";
-import styles from "../styles/Home.module.css";
-import React, { useState } from "react";
+import Head from 'next/head';
+import styles from '../styles/Home.module.css';
+import React, {useState} from 'react';
 import {
   ActionMenu,
   Item,
@@ -87,22 +87,30 @@ import {
   TreeViewItemContent,
   ToastQueue,
   SubmenuTrigger
-} from "@adobe/react-spectrum";
-import Edit from "@spectrum-icons/workflow/Edit";
-import NotFound from "@spectrum-icons/illustrations/NotFound";
-import Section from "../components/Section";
-import ReorderableListView from "../components/ReorderableListView";
+} from '@adobe/react-spectrum';
+import Edit from '@spectrum-icons/workflow/Edit';
+import NotFound from '@spectrum-icons/illustrations/NotFound';
+import Section from '../components/Section';
+import ReorderableListView from '../components/ReorderableListView';
 
 import FileTxt from '@spectrum-icons/workflow/FileTxt';
 import Folder from '@spectrum-icons/workflow/Folder';
 
 let nestedItems = [
-  {foo: 'Lvl 1 Foo 1', bar: 'Lvl 1 Bar 1', baz: 'Lvl 1 Baz 1', childRows: [
-    {foo: 'Lvl 2 Foo 1', bar: 'Lvl 2 Bar 1', baz: 'Lvl 2 Baz 1', childRows: [
-      {foo: 'Lvl 3 Foo 1', bar: 'Lvl 3 Bar 1', baz: 'Lvl 3 Baz 1'}
-    ]},
-    {foo: 'Lvl 2 Foo 2', bar: 'Lvl 2 Bar 2', baz: 'Lvl 2 Baz 2'}
-  ]}
+  {
+    foo: 'Lvl 1 Foo 1',
+    bar: 'Lvl 1 Bar 1',
+    baz: 'Lvl 1 Baz 1',
+    childRows: [
+      {
+        foo: 'Lvl 2 Foo 1',
+        bar: 'Lvl 2 Bar 1',
+        baz: 'Lvl 2 Baz 1',
+        childRows: [{foo: 'Lvl 3 Foo 1', bar: 'Lvl 3 Bar 1', baz: 'Lvl 3 Baz 1'}]
+      },
+      {foo: 'Lvl 2 Foo 2', bar: 'Lvl 2 Bar 2', baz: 'Lvl 2 Baz 2'}
+    ]
+  }
 ];
 
 let columns = [
@@ -123,7 +131,7 @@ export default function Home() {
 
       <main className={styles.main}>
         <Heading level={1}>
-          React Spectrum +{" "}
+          React Spectrum +{' '}
           <Link>
             <a href="https://nextjs.org">Next.js</a>
           </Link>
@@ -157,8 +165,7 @@ export default function Home() {
             <ListView
               selectionMode="multiple"
               aria-label="Static ListView items example"
-              maxWidth="size-6000"
-            >
+              maxWidth="size-6000">
               <Item>Adobe Photoshop</Item>
               <Item>Adobe InDesign</Item>
               <Item>Adobe AfterEffects</Item>
@@ -168,18 +175,18 @@ export default function Home() {
             <ReorderableListView />
             <MenuTrigger>
               <ActionButton>Menu</ActionButton>
-              <Menu onAction={(key) => ToastQueue.positive(key.toString())}>
+              <Menu onAction={key => ToastQueue.positive(key.toString())}>
                 <Item key="cut">Cut</Item>
                 <Item key="copy">Copy</Item>
                 <Item key="paste">Paste</Item>
                 <Item key="replace">Replace</Item>
                 <SubmenuTrigger>
                   <Item key="share">Share</Item>
-                  <Menu onAction={(key) => ToastQueue.positive(key.toString())}>
+                  <Menu onAction={key => ToastQueue.positive(key.toString())}>
                     <Item key="copy-ink">Copy Link</Item>
                     <SubmenuTrigger>
                       <Item key="email">Email</Item>
-                      <Menu onAction={(key) => ToastQueue.positive(key.toString())}>
+                      <Menu onAction={key => ToastQueue.positive(key.toString())}>
                         <Item key="attachment">Email as Attachment</Item>
                         <Item key="link">Email as Link</Item>
                       </Menu>
@@ -198,10 +205,7 @@ export default function Home() {
                 <Item>Paste</Item>
               </Menu>
             </MenuTrigger>
-            <TableView
-              aria-label="Example table with static contents"
-              selectionMode="multiple"
-            >
+            <TableView aria-label="Example table with static contents" selectionMode="multiple">
               <TableHeader>
                 <Column>Name</Column>
                 <Column>Type</Column>
@@ -230,18 +234,22 @@ export default function Home() {
                 </Row>
               </TableBody>
             </TableView>
-            <TableView aria-label="example table with nested rows" UNSTABLE_allowsExpandableRows width={500} height={200} >
+            <TableView
+              aria-label="example table with nested rows"
+              UNSTABLE_allowsExpandableRows
+              width={500}
+              height={200}>
               <TableHeader columns={columns}>
                 {column => <Column>{column.name}</Column>}
               </TableHeader>
               <TableBody items={nestedItems}>
-                {(item: any) =>
-                  (<Row key={item.foo} UNSTABLE_childItems={item.childRows}>
-                    {(key) => {
+                {(item: any) => (
+                  <Row key={item.foo} UNSTABLE_childItems={item.childRows}>
+                    {key => {
                       return <Cell>{item[key.toString()]}</Cell>;
                     }}
-                  </Row>)
-                }
+                  </Row>
+                )}
               </TableBody>
             </TableView>
             <div style={{width: '300px', height: '150px', overflow: 'auto'}}>
@@ -335,11 +343,7 @@ export default function Home() {
             </Breadcrumbs>
 
             <Link>
-              <a
-                href="https://www.imdb.com/title/tt6348138/"
-                target="_blank"
-                rel="noreferrer"
-              >
+              <a href="https://www.imdb.com/title/tt6348138/" target="_blank" rel="noreferrer">
                 The missing link.
               </a>
             </Link>
@@ -351,9 +355,7 @@ export default function Home() {
                 <Item key="Emp">Empire</Item>
               </TabList>
               <TabPanels>
-                <Item key="FoR">
-                  Arma virumque cano, Troiae qui primus ab oris.
-                </Item>
+                <Item key="FoR">Arma virumque cano, Troiae qui primus ab oris.</Item>
                 <Item key="MaR">Senatus Populusque Romanus.</Item>
                 <Item key="Emp">Alea jacta est.</Item>
               </TabPanels>
@@ -362,17 +364,13 @@ export default function Home() {
             <h3>Accordion</h3>
             <Accordion>
               <Disclosure id="files">
-                <DisclosureTitle>
-                  Files
-                </DisclosureTitle>
+                <DisclosureTitle>Files</DisclosureTitle>
                 <DisclosurePanel>
                   <p>Files content</p>
                 </DisclosurePanel>
               </Disclosure>
               <Disclosure id="people">
-                <DisclosureTitle>
-                  People
-                </DisclosureTitle>
+                <DisclosureTitle>People</DisclosureTitle>
                 <DisclosurePanel>
                   <p>People content</p>
                 </DisclosurePanel>
@@ -391,13 +389,8 @@ export default function Home() {
           <Section title="Overlays">
             <DialogTrigger>
               <ActionButton>Save</ActionButton>
-              <AlertDialog
-                title="Low Disk Space"
-                variant="warning"
-                primaryActionLabel="Confirm"
-              >
-                You are running low on disk space. Delete unnecessary files to
-                free up space.
+              <AlertDialog title="Low Disk Space" variant="warning" primaryActionLabel="Confirm">
+                You are running low on disk space. Delete unnecessary files to free up space.
               </AlertDialog>
             </DialogTrigger>
 
@@ -405,22 +398,16 @@ export default function Home() {
               <Heading>Need help?</Heading>
               <Content>
                 <Text>
-                  If you are having issues accessing your account, contact our
-                  customer support team for help.
+                  If you are having issues accessing your account, contact our customer support team
+                  for help.
                 </Text>
               </Content>
             </ContextualHelp>
 
-            <ActionButton onPress={() => setIsDialogOpen(true)}>
-              Show Dialog
-            </ActionButton>
+            <ActionButton onPress={() => setIsDialogOpen(true)}>Show Dialog</ActionButton>
             <DialogContainer onDismiss={() => setIsDialogOpen(false)}>
               {isDialogOpen && (
-                <AlertDialog
-                  title="Delete"
-                  variant="destructive"
-                  primaryActionLabel="Delete"
-                >
+                <AlertDialog title="Delete" variant="destructive" primaryActionLabel="Delete">
                   Are you sure you want to delete this item?
                 </AlertDialog>
               )}
@@ -428,7 +415,7 @@ export default function Home() {
 
             <DialogTrigger>
               <ActionButton>Check connectivity</ActionButton>
-              {(close) => (
+              {close => (
                 <Dialog>
                   <Heading>Internet Speed Test</Heading>
                   <Header>Connection status: Connected</Header>
@@ -486,7 +473,7 @@ export default function Home() {
           </Section>
 
           <Section title="Sliders">
-            <RangeSlider label="Range" defaultValue={{ start: 12, end: 36 }} />
+            <RangeSlider label="Range" defaultValue={{start: 12, end: 36}} />
 
             <Slider label="Cookies to buy" defaultValue={12} />
           </Section>
@@ -516,7 +503,10 @@ export default function Home() {
             </TagGroup>
             <InlineAlert>
               <Heading>Payment Information</Heading>
-              <Content>Enter your billing address, shipping address, and payment method to complete your purchase.</Content>
+              <Content>
+                Enter your billing address, shipping address, and payment method to complete your
+                purchase.
+              </Content>
             </InlineAlert>
           </Section>
 
@@ -549,18 +539,11 @@ export default function Home() {
 
             <Text>Paste</Text>
 
-            <View
-              borderWidth="thin"
-              borderColor="dark"
-              borderRadius="medium"
-              padding="size-250"
-            >
+            <View borderWidth="thin" borderColor="dark" borderRadius="medium" padding="size-250">
               <TextField label="Name" />
             </View>
 
-            <Well>
-              Better a little which is well done, than a great deal imperfectly.
-            </Well>
+            <Well>Better a little which is well done, than a great deal imperfectly.</Well>
           </Section>
         </Flex>
       </main>

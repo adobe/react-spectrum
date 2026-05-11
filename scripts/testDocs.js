@@ -8,7 +8,9 @@ function parseArgs() {
   const args = process.argv.slice(2);
   const browser = args[0] || 'chromium';
   if (!['chromium', 'firefox', 'webkit'].includes(browser)) {
-    console.error('Invalid browser specified. Must be "chromium", "firefox", or "webkit". Using "chromium" as default.');
+    console.error(
+      'Invalid browser specified. Must be "chromium", "firefox", or "webkit". Using "chromium" as default.'
+    );
     return 'chromium';
   }
   return browser;
@@ -20,14 +22,14 @@ async function startServer() {
     const child = exec('yarn start:docs', {
       env: {...process.env, DOCS_ENV: 'dev'}
     });
-    child.stdout.on('data', (data) => {
+    child.stdout.on('data', data => {
       console.log(`Server output: ${data}`);
       if (data.includes('Server running at')) {
         console.log('Documentation server is running');
         resolve({process: child, baseUrl: data.split(' ')[3].trim()});
       }
     });
-    child.stderr.on('data', (data) => {
+    child.stderr.on('data', data => {
       console.error(`Server error: ${data}`);
     });
   });
@@ -37,13 +39,15 @@ function waitForServer(url, timeout = 30000, interval = 1000) {
   return new Promise((resolve, reject) => {
     const startTime = Date.now();
     const checkServer = () => {
-      http.get(url, (res) => {
-        if (res.statusCode === 200) {
-          resolve();
-        } else {
-          retryOrFail();
-        }
-      }).on('error', retryOrFail);
+      http
+        .get(url, res => {
+          if (res.statusCode === 200) {
+            resolve();
+          } else {
+            retryOrFail();
+          }
+        })
+        .on('error', retryOrFail);
     };
 
     const retryOrFail = () => {
@@ -102,7 +106,9 @@ async function testDocs() {
     server = await startServer();
     await waitForServer(server.baseUrl);
 
-    const pageLinks = await getPageLinks().then((links) => links.map((link) => `${server.baseUrl}${link}`));
+    const pageLinks = await getPageLinks().then(links =>
+      links.map(link => `${server.baseUrl}${link}`)
+    );
     console.log(`Found ${pageLinks.length} pages to test`);
 
     switch (browserType) {
@@ -118,9 +124,12 @@ async function testDocs() {
 
     const context = await browser.newContext();
 
-    context.on('console', (msg) => {
+    context.on('console', msg => {
       const msgUrl = msg.location().url;
-      if (msgUrl.startsWith(server.baseUrl) && (msg.type() === 'error' || msg.type() === 'warning')) {
+      if (
+        msgUrl.startsWith(server.baseUrl) &&
+        (msg.type() === 'error' || msg.type() === 'warning')
+      ) {
         console.log(`${msg.type().toUpperCase()} on ${currentPage}: ${msg.text()}`);
         messages.push({type: msg.type(), path: currentPage, text: msg.text()});
       }
@@ -155,9 +164,9 @@ async function testDocs() {
 
     console.log('All pages tested successfully');
     console.log(`Total pages visited: ${pageLinks.length}`);
-    console.log(`Total errors: ${messages.filter((msg) => msg.type === 'error').length}`);
-    console.log(`Total warnings: ${messages.filter((msg) => msg.type === 'warning').length}`);
-    messages.forEach((msg) => {
+    console.log(`Total errors: ${messages.filter(msg => msg.type === 'error').length}`);
+    console.log(`Total warnings: ${messages.filter(msg => msg.type === 'warning').length}`);
+    messages.forEach(msg => {
       console.log(`${msg.type.toUpperCase()} on ${msg.path}: ${msg.text}`);
     });
   } catch (error) {

@@ -1,16 +1,22 @@
 /*
-* Copyright 2020 Adobe. All rights reserved.
-* This file is licensed to you under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License. You may obtain a copy
-* of the License at http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software distributed under
-* the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
-* OF ANY KIND, either express or implied. See the License for the specific language
-* governing permissions and limitations under the License.
-*/
+ * Copyright 2020 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
 
-import {AriaLabelingProps, DOMAttributes, DOMProps, Orientation, RefObject} from '@react-types/shared';
+import {
+  AriaLabelingProps,
+  DOMAttributes,
+  DOMProps,
+  Orientation,
+  RefObject
+} from '@react-types/shared';
 import {mergeProps} from '../utils/mergeProps';
 import {TabListProps, TabListState} from 'react-stately/useTabListState';
 import {tabsIds} from './utils';
@@ -26,41 +32,37 @@ export interface AriaTabListProps<T> extends TabListProps<T>, DOMProps, AriaLabe
    * Whether tabs are activated automatically on focus or manually.
    * @default 'automatic'
    */
-  keyboardActivation?: 'automatic' | 'manual',
+  keyboardActivation?: 'automatic' | 'manual';
   /**
    * The orientation of the tabs.
    * @default 'horizontal'
    */
-  orientation?: Orientation
+  orientation?: Orientation;
 }
 
 export interface AriaTabListOptions<T> extends Omit<AriaTabListProps<T>, 'children'> {}
 
 export interface TabListAria {
   /** Props for the tablist container. */
-  tabListProps: DOMAttributes
+  tabListProps: DOMAttributes;
 }
 
 /**
  * Provides the behavior and accessibility implementation for a tab list.
  * Tabs organize content into multiple sections and allow users to navigate between them.
  */
-export function useTabList<T>(props: AriaTabListOptions<T>, state: TabListState<T>, ref: RefObject<HTMLElement | null>): TabListAria {
-  let {
-    orientation = 'horizontal',
-    keyboardActivation = 'automatic'
-  } = props;
-  let {
-    collection,
-    selectionManager: manager,
-    disabledKeys
-  } = state;
+export function useTabList<T>(
+  props: AriaTabListOptions<T>,
+  state: TabListState<T>,
+  ref: RefObject<HTMLElement | null>
+): TabListAria {
+  let {orientation = 'horizontal', keyboardActivation = 'automatic'} = props;
+  let {collection, selectionManager: manager, disabledKeys} = state;
   let {direction} = useLocale();
-  let delegate = useMemo(() => new TabsKeyboardDelegate(
-    collection,
-    direction,
-    orientation,
-    disabledKeys), [collection, disabledKeys, orientation, direction]);
+  let delegate = useMemo(
+    () => new TabsKeyboardDelegate(collection, direction, orientation, disabledKeys),
+    [collection, disabledKeys, orientation, direction]
+  );
 
   let {collectionProps} = useSelectableCollection({
     ref,

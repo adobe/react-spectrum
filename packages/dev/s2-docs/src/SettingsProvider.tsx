@@ -6,9 +6,9 @@ import React, {JSX, ReactNode, useCallback, useSyncExternalStore} from 'react';
 import {useLocalStorage} from './useLocalStorage';
 
 interface SettingsProviderProps {
-  children: ReactNode,
-  elementType?: keyof JSX.IntrinsicElements,
-  locale?: string
+  children: ReactNode;
+  elementType?: keyof JSX.IntrinsicElements;
+  locale?: string;
 }
 
 function subscribeToColorScheme(callback: () => void) {
@@ -28,10 +28,15 @@ function getServerSnapshot(): ColorScheme {
 export function useSettingsState() {
   // Store the "override" color scheme ('light', 'dark', or 'system')
   let [storedColorScheme, setStoredColorScheme] = useLocalStorage('colorScheme', 'system');
-  let systemColorScheme = useSyncExternalStore(subscribeToColorScheme, getSystemColorScheme, getServerSnapshot);
+  let systemColorScheme = useSyncExternalStore(
+    subscribeToColorScheme,
+    getSystemColorScheme,
+    getServerSnapshot
+  );
 
   // Resolve the actual color scheme being used
-  let colorScheme: ColorScheme = storedColorScheme === 'system' ? systemColorScheme : storedColorScheme as ColorScheme;
+  let colorScheme: ColorScheme =
+    storedColorScheme === 'system' ? systemColorScheme : (storedColorScheme as ColorScheme);
 
   // Toggle between system preference and the "other" one
   let toggleColorScheme = useCallback(() => {
@@ -44,8 +49,8 @@ export function useSettingsState() {
     }
   }, [storedColorScheme, systemColorScheme, setStoredColorScheme]);
 
-
-  let providerColorScheme: ColorScheme | undefined = storedColorScheme === 'system' ? undefined : storedColorScheme as ColorScheme;
+  let providerColorScheme: ColorScheme | undefined =
+    storedColorScheme === 'system' ? undefined : (storedColorScheme as ColorScheme);
 
   return {
     colorScheme,

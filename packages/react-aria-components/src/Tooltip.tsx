@@ -10,7 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, FocusableElement, forwardRefType, GlobalDOMAttributes, RefObject} from '@react-types/shared';
+import {
+  AriaLabelingProps,
+  FocusableElement,
+  forwardRefType,
+  GlobalDOMAttributes,
+  RefObject
+} from '@react-types/shared';
 import {
   AriaPositionProps,
   Placement,
@@ -33,46 +39,66 @@ import {mergeProps} from 'react-aria/mergeProps';
 import {OverlayArrowContext} from './OverlayArrow';
 import {OverlayContainer} from 'react-aria/private/overlays/useModal';
 import {OverlayTriggerProps} from 'react-stately/useOverlayTriggerState';
-import React, {createContext, CSSProperties, ForwardedRef, forwardRef, JSX, ReactNode, useContext, useRef} from 'react';
-import {TooltipTriggerProps, TooltipTriggerState, useTooltipTriggerState} from 'react-stately/useTooltipTriggerState';
+import React, {
+  createContext,
+  CSSProperties,
+  ForwardedRef,
+  forwardRef,
+  JSX,
+  ReactNode,
+  useContext,
+  useRef
+} from 'react';
+import {
+  TooltipTriggerProps,
+  TooltipTriggerState,
+  useTooltipTriggerState
+} from 'react-stately/useTooltipTriggerState';
 import {useEnterAnimation, useExitAnimation} from 'react-aria/private/utils/animation';
 import {useTooltip, useTooltipTrigger} from 'react-aria/useTooltipTrigger';
 
 export interface TooltipTriggerComponentProps extends TooltipTriggerProps {
-  children: ReactNode
+  children: ReactNode;
 }
 
-export interface TooltipProps extends PositionProps, Pick<AriaPositionProps, 'arrowBoundaryOffset'>, OverlayTriggerProps, AriaLabelingProps, RenderProps<TooltipRenderProps>, GlobalDOMAttributes<HTMLDivElement> {
+export interface TooltipProps
+  extends
+    PositionProps,
+    Pick<AriaPositionProps, 'arrowBoundaryOffset'>,
+    OverlayTriggerProps,
+    AriaLabelingProps,
+    RenderProps<TooltipRenderProps>,
+    GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-Tooltip'
    */
-  className?: ClassNameOrFunction<TooltipRenderProps>,
+  className?: ClassNameOrFunction<TooltipRenderProps>;
   /**
    * The ref for the element which the tooltip positions itself with respect to.
    *
    * When used within a TooltipTrigger this is set automatically. It is only required when used standalone.
    */
-  triggerRef?: RefObject<Element | null>,
+  triggerRef?: RefObject<Element | null>;
   /**
    * Whether the tooltip is currently performing an entry animation.
    */
-  isEntering?: boolean,
+  isEntering?: boolean;
   /**
    * Whether the tooltip is currently performing an exit animation.
    */
-  isExiting?: boolean,
+  isExiting?: boolean;
   /**
    * The container element in which the overlay portal will be placed. This may have unknown behavior depending on where it is portalled to.
    * @default document.body
    * @deprecated - Use a parent UNSAFE_PortalProvider to set your portal container instead.
    */
-  UNSTABLE_portalContainer?: Element,
+  UNSTABLE_portalContainer?: Element;
   /**
    * The placement of the tooltip with respect to the trigger.
    * @default 'top'
    */
-  placement?: Placement
+  placement?: Placement;
 }
 
 export interface TooltipRenderProps {
@@ -80,21 +106,21 @@ export interface TooltipRenderProps {
    * The placement of the tooltip relative to the trigger.
    * @selector [data-placement="left | right | top | bottom"]
    */
-  placement: PlacementAxis | null,
+  placement: PlacementAxis | null;
   /**
    * Whether the tooltip is currently entering. Use this to apply animations.
    * @selector [data-entering]
    */
-  isEntering: boolean,
+  isEntering: boolean;
   /**
    * Whether the tooltip is currently exiting. Use this to apply animations.
    * @selector [data-exiting]
    */
-  isExiting: boolean,
+  isExiting: boolean;
   /**
    * State of the tooltip.
    */
-  state: TooltipTriggerState
+  state: TooltipTriggerState;
 }
 
 export const TooltipTriggerStateContext = createContext<TooltipTriggerState | null>(null);
@@ -126,11 +152,15 @@ export function TooltipTrigger(props: TooltipTriggerComponentProps): JSX.Element
 /**
  * A tooltip displays a description of an element on hover or focus.
  */
-export const Tooltip = /*#__PURE__*/ (forwardRef as forwardRefType)(function Tooltip({UNSTABLE_portalContainer, ...props}: TooltipProps, ref: ForwardedRef<HTMLDivElement>) {
+export const Tooltip = /*#__PURE__*/ (forwardRef as forwardRefType)(function Tooltip(
+  {UNSTABLE_portalContainer, ...props}: TooltipProps,
+  ref: ForwardedRef<HTMLDivElement>
+) {
   [props, ref] = useContextProps(props, ref, TooltipContext);
   let contextState = useContext(TooltipTriggerStateContext);
   let localState = useTooltipTriggerState(props);
-  let state = props.isOpen != null || props.defaultOpen != null || !contextState ? localState : contextState;
+  let state =
+    props.isOpen != null || props.defaultOpen != null || !contextState ? localState : contextState;
   let isExiting = useExitAnimation(ref, state.isOpen) || props.isExiting || false;
   if (!state.isOpen && !isExiting) {
     return null;
@@ -143,7 +173,9 @@ export const Tooltip = /*#__PURE__*/ (forwardRef as forwardRefType)(function Too
   );
 });
 
-function TooltipInner(props: TooltipProps & {isExiting: boolean, tooltipRef: RefObject<HTMLDivElement | null>}) {
+function TooltipInner(
+  props: TooltipProps & {isExiting: boolean; tooltipRef: RefObject<HTMLDivElement | null>}
+) {
   let state = useContext(TooltipTriggerStateContext)!;
   let arrowRef = useRef<HTMLDivElement>(null);
 
@@ -182,11 +214,15 @@ function TooltipInner(props: TooltipProps & {isExiting: boolean, tooltipRef: Ref
     <dom.div
       {...mergeProps(DOMProps, renderProps, tooltipProps)}
       ref={props.tooltipRef}
-      style={{
-        ...overlayProps.style,
-        '--trigger-anchor-point': triggerAnchorPoint ? `${triggerAnchorPoint.x}px ${triggerAnchorPoint.y}px` : undefined,
-        ...renderProps.style
-      } as CSSProperties}
+      style={
+        {
+          ...overlayProps.style,
+          '--trigger-anchor-point': triggerAnchorPoint
+            ? `${triggerAnchorPoint.x}px ${triggerAnchorPoint.y}px`
+            : undefined,
+          ...renderProps.style
+        } as CSSProperties
+      }
       data-placement={placement ?? undefined}
       data-entering={isEntering || undefined}
       data-exiting={props.isExiting || undefined}>

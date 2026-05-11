@@ -22,51 +22,55 @@ import {Virtualizer} from './Virtualizer';
 // During SSR, React emits a warning when calling useLayoutEffect.
 // Since neither useLayoutEffect nor useEffect run on the server,
 // we can suppress this by replace it with a noop on the server.
-export const useLayoutEffect: typeof React.useLayoutEffect = typeof document !== 'undefined'
-  ? React.useLayoutEffect
-  : () => {};
+export const useLayoutEffect: typeof React.useLayoutEffect =
+  typeof document !== 'undefined' ? React.useLayoutEffect : () => {};
 
 interface VirtualizerProps<T extends object, V, O> {
-  renderView(type: string, content: T | null): V,
-  layout: Layout<T>,
-  collection: Collection<T>,
-  onVisibleRectChange(rect: Rect): void,
-  persistedKeys?: Set<Key> | null,
-  layoutOptions?: O,
-  allowsWindowScrolling?: boolean
+  renderView(type: string, content: T | null): V;
+  layout: Layout<T>;
+  collection: Collection<T>;
+  onVisibleRectChange(rect: Rect): void;
+  persistedKeys?: Set<Key> | null;
+  layoutOptions?: O;
+  allowsWindowScrolling?: boolean;
 }
 
 export interface VirtualizerState<T extends object, V> {
-  visibleViews: ReusableView<T, V>[],
-  setVisibleRect: (rect: Rect) => void,
-  size: Size,
-  setSize: (size: Size) => void,
-  contentSize: Size,
-  virtualizer: Virtualizer<T, V>,
-  isScrolling: boolean,
-  startScrolling: () => void,
-  endScrolling: () => void
+  visibleViews: ReusableView<T, V>[];
+  setVisibleRect: (rect: Rect) => void;
+  size: Size;
+  setSize: (size: Size) => void;
+  contentSize: Size;
+  virtualizer: Virtualizer<T, V>;
+  isScrolling: boolean;
+  startScrolling: () => void;
+  endScrolling: () => void;
 }
 
-export function useVirtualizerState<T extends object, V, O = any>(opts: VirtualizerProps<T, V, O>): VirtualizerState<T, V> {
+export function useVirtualizerState<T extends object, V, O = any>(
+  opts: VirtualizerProps<T, V, O>
+): VirtualizerState<T, V> {
   let [visibleRect, setVisibleRect] = useState(new Rect(0, 0, 0, 0));
   let [size, setSize] = useState(new Size());
   let [isScrolling, setScrolling] = useState(false);
   let [invalidationContext, setInvalidationContext] = useState<InvalidationContext>({});
   let visibleRectChanged = useRef(false);
-  let [virtualizer] = useState(() => new Virtualizer<T, V>({
-    collection: opts.collection,
-    layout: opts.layout,
-    delegate: {
-      setVisibleRect(rect) {
-        setVisibleRect(rect);
-        visibleRectChanged.current = true;
-      },
-      // TODO: should changing these invalidate the entire cache?
-      renderView: opts.renderView,
-      invalidate: setInvalidationContext
-    }
-  }));
+  let [virtualizer] = useState(
+    () =>
+      new Virtualizer<T, V>({
+        collection: opts.collection,
+        layout: opts.layout,
+        delegate: {
+          setVisibleRect(rect) {
+            setVisibleRect(rect);
+            visibleRectChanged.current = true;
+          },
+          // TODO: should changing these invalidate the entire cache?
+          renderView: opts.renderView,
+          invalidate: setInvalidationContext
+        }
+      })
+  );
 
   // onVisibleRectChange must be called from an effect, not during render.
   useLayoutEffect(() => {
@@ -103,27 +107,30 @@ export function useVirtualizerState<T extends object, V, O = any>(opts: Virtuali
     setScrolling(false);
   }, []);
 
-  let state = useMemo(() => ({
-    virtualizer,
-    visibleViews,
-    setVisibleRect,
-    size,
-    setSize,
-    contentSize,
-    isScrolling,
-    startScrolling,
-    endScrolling
-  }), [
-    virtualizer,
-    visibleViews,
-    setVisibleRect,
-    size,
-    setSize,
-    contentSize,
-    isScrolling,
-    startScrolling,
-    endScrolling
-  ]);
+  let state = useMemo(
+    () => ({
+      virtualizer,
+      visibleViews,
+      setVisibleRect,
+      size,
+      setSize,
+      contentSize,
+      isScrolling,
+      startScrolling,
+      endScrolling
+    }),
+    [
+      virtualizer,
+      visibleViews,
+      setVisibleRect,
+      size,
+      setSize,
+      contentSize,
+      isScrolling,
+      startScrolling,
+      endScrolling
+    ]
+  );
 
   return state;
 }

@@ -14,5 +14,5 @@ governing permissions and limitations under the License.
   background-color: var(--spectrum-alias-background-color-default);
 
   /* Prevent tap highlights */
-  -webkit-tap-highlight-color: rgba(0,0,0,0);
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }

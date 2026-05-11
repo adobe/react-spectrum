@@ -28,8 +28,8 @@ export default meta;
 type Story = StoryObj<typeof ProgressCircle>;
 
 export const Example: Story = {
-  render: (args) => (
-    <div className={style({display: 'flex', alignItems: 'center', gap: 24})} >
+  render: args => (
+    <div className={style({display: 'flex', alignItems: 'center', gap: 24})}>
       <ProgressCircle aria-label="Test Progress Circle S" size="S" {...args} />
       <ProgressCircle aria-label="Test Progress Circle M" size="M" {...args} />
       <ProgressCircle aria-label="Test Progress Circle L" size="L" {...args} />
@@ -41,7 +41,7 @@ export const Example: Story = {
 };
 
 export const StaticColorWhite: Story = {
-  render: (args) => <ProgressCircle aria-label="Test Progress Circle" {...args} />,
+  render: args => <ProgressCircle aria-label="Test Progress Circle" {...args} />,
   args: {
     staticColor: 'white',
     value: 80
@@ -49,7 +49,7 @@ export const StaticColorWhite: Story = {
 };
 
 export const StaticColorBlack: Story = {
-  render: (args) => <ProgressCircle aria-label="Test Progress Circle" {...args} />,
+  render: args => <ProgressCircle aria-label="Test Progress Circle" {...args} />,
   args: {
     staticColor: 'black',
     value: 80

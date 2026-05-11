@@ -11,12 +11,7 @@
  */
 
 import {FocusableElement} from './dom';
-import {
-  FocusEvent,
-  MouseEvent,
-  KeyboardEvent as ReactKeyboardEvent,
-  SyntheticEvent
-} from 'react';
+import {FocusEvent, MouseEvent, KeyboardEvent as ReactKeyboardEvent, SyntheticEvent} from 'react';
 
 // Event bubbling can be problematic in real-world applications, so the default for React Spectrum components
 // is not to propagate. This can be overridden by calling continuePropagation() on the event.
@@ -24,9 +19,9 @@ export type BaseEvent<T extends SyntheticEvent> = T & {
   /**
    * Use continuePropagation.
    * @deprecated */
-  stopPropagation(): void,
-  continuePropagation(): void
-}
+  stopPropagation(): void;
+  continuePropagation(): void;
+};
 
 export type KeyboardEvent = BaseEvent<ReactKeyboardEvent<any>>;
 
@@ -34,157 +29,156 @@ export type PointerType = 'mouse' | 'pen' | 'touch' | 'keyboard' | 'virtual';
 
 export interface PressEvent {
   /** The type of press event being fired. */
-  type: 'pressstart' | 'pressend' | 'pressup' | 'press',
+  type: 'pressstart' | 'pressend' | 'pressup' | 'press';
   /** The pointer type that triggered the press event. */
-  pointerType: PointerType,
+  pointerType: PointerType;
   /** The target element of the press event. */
-  target: Element,
+  target: Element;
   /** Whether the shift keyboard modifier was held during the press event. */
-  shiftKey: boolean,
+  shiftKey: boolean;
   /** Whether the ctrl keyboard modifier was held during the press event. */
-  ctrlKey: boolean,
+  ctrlKey: boolean;
   /** Whether the meta keyboard modifier was held during the press event. */
-  metaKey: boolean,
+  metaKey: boolean;
   /** Whether the alt keyboard modifier was held during the press event. */
-  altKey: boolean,
+  altKey: boolean;
   /** X position relative to the target. */
-  x: number,
+  x: number;
   /** Y position relative to the target. */
-  y: number,
+  y: number;
   /**
    * The key that triggered the press event, if it was triggered by a keyboard interaction.
    * This is useful for differentiating between Space and Enter key presses.
    */
-  key?: string,
+  key?: string;
   /**
    * By default, press events stop propagation to parent elements.
    * In cases where a handler decides not to handle a specific event,
    * it can call `continuePropagation()` to allow a parent to handle it.
    */
-  continuePropagation(): void
+  continuePropagation(): void;
 }
 
 export interface LongPressEvent extends Omit<PressEvent, 'type' | 'continuePropagation'> {
   /** The type of long press event being fired. */
-  type: 'longpressstart' | 'longpressend' | 'longpress'
+  type: 'longpressstart' | 'longpressend' | 'longpress';
 }
 
 export interface HoverEvent {
   /** The type of hover event being fired. */
-  type: 'hoverstart' | 'hoverend',
+  type: 'hoverstart' | 'hoverend';
   /** The pointer type that triggered the hover event. */
-  pointerType: 'mouse' | 'pen',
+  pointerType: 'mouse' | 'pen';
   /** The target element of the hover event. */
-  target: HTMLElement
+  target: HTMLElement;
 }
 
 export interface KeyboardEvents {
   /** Handler that is called when a key is pressed. */
-  onKeyDown?: (e: KeyboardEvent) => void,
+  onKeyDown?: (e: KeyboardEvent) => void;
   /** Handler that is called when a key is released. */
-  onKeyUp?: (e: KeyboardEvent) => void
+  onKeyUp?: (e: KeyboardEvent) => void;
 }
 
 export interface FocusEvents<Target = Element> {
   /** Handler that is called when the element receives focus. */
-  onFocus?: (e: FocusEvent<Target>) => void,
+  onFocus?: (e: FocusEvent<Target>) => void;
   /** Handler that is called when the element loses focus. */
-  onBlur?: (e: FocusEvent<Target>) => void,
+  onBlur?: (e: FocusEvent<Target>) => void;
   /** Handler that is called when the element's focus status changes. */
-  onFocusChange?: (isFocused: boolean) => void
+  onFocusChange?: (isFocused: boolean) => void;
 }
 
 export interface HoverEvents {
   /** Handler that is called when a hover interaction starts. */
-  onHoverStart?: (e: HoverEvent) => void,
+  onHoverStart?: (e: HoverEvent) => void;
   /** Handler that is called when a hover interaction ends. */
-  onHoverEnd?: (e: HoverEvent) => void,
+  onHoverEnd?: (e: HoverEvent) => void;
   /** Handler that is called when the hover state changes. */
-  onHoverChange?: (isHovering: boolean) => void
+  onHoverChange?: (isHovering: boolean) => void;
 }
 
 export interface PressEvents {
   /** Handler that is called when the press is released over the target. */
-  onPress?: (e: PressEvent) => void,
+  onPress?: (e: PressEvent) => void;
   /** Handler that is called when a press interaction starts. */
-  onPressStart?: (e: PressEvent) => void,
+  onPressStart?: (e: PressEvent) => void;
   /**
    * Handler that is called when a press interaction ends, either
    * over the target or when the pointer leaves the target.
    */
-  onPressEnd?: (e: PressEvent) => void,
+  onPressEnd?: (e: PressEvent) => void;
   /** Handler that is called when the press state changes. */
-  onPressChange?: (isPressed: boolean) => void,
+  onPressChange?: (isPressed: boolean) => void;
   /**
    * Handler that is called when a press is released over the target, regardless of
    * whether it started on the target or not.
    */
-  onPressUp?: (e: PressEvent) => void,
+  onPressUp?: (e: PressEvent) => void;
   /**
    * **Not recommended – use `onPress` instead.** `onClick` is an alias for `onPress`
-   * provided for compatibility with other libraries. `onPress` provides 
+   * provided for compatibility with other libraries. `onPress` provides
    * additional event details for non-mouse interactions.
    */
-  onClick?: (e: MouseEvent<FocusableElement>) => void
+  onClick?: (e: MouseEvent<FocusableElement>) => void;
 }
 
 export interface FocusableProps<Target = Element> extends FocusEvents<Target>, KeyboardEvents {
   /** Whether the element should receive focus on render. */
-  autoFocus?: boolean
+  autoFocus?: boolean;
 }
 
 interface BaseMoveEvent {
   /** The pointer type that triggered the move event. */
-  pointerType: PointerType,
+  pointerType: PointerType;
   /** Whether the shift keyboard modifier was held during the move event. */
-  shiftKey: boolean,
+  shiftKey: boolean;
   /** Whether the ctrl keyboard modifier was held during the move event. */
-  ctrlKey: boolean,
+  ctrlKey: boolean;
   /** Whether the meta keyboard modifier was held during the move event. */
-  metaKey: boolean,
+  metaKey: boolean;
   /** Whether the alt keyboard modifier was held during the move event. */
-  altKey: boolean
+  altKey: boolean;
 }
 
 export interface MoveStartEvent extends BaseMoveEvent {
   /** The type of move event being fired. */
-  type: 'movestart'
+  type: 'movestart';
 }
 
 export interface MoveMoveEvent extends BaseMoveEvent {
   /** The type of move event being fired. */
-  type: 'move',
+  type: 'move';
   /** The amount moved in the X direction since the last event. */
-  deltaX: number,
+  deltaX: number;
   /** The amount moved in the Y direction since the last event. */
-  deltaY: number
-
+  deltaY: number;
 }
 
 export interface MoveEndEvent extends BaseMoveEvent {
   /** The type of move event being fired. */
-  type: 'moveend'
+  type: 'moveend';
 }
 
 export type MoveEvent = MoveStartEvent | MoveMoveEvent | MoveEndEvent;
 
 export interface MoveEvents {
   /** Handler that is called when a move interaction starts. */
-  onMoveStart?: (e: MoveStartEvent) => void,
+  onMoveStart?: (e: MoveStartEvent) => void;
   /** Handler that is called when the element is moved. */
-  onMove?: (e: MoveMoveEvent) => void,
+  onMove?: (e: MoveMoveEvent) => void;
   /** Handler that is called when a move interaction ends. */
-  onMoveEnd?: (e: MoveEndEvent) => void
+  onMoveEnd?: (e: MoveEndEvent) => void;
 }
 
 export interface ScrollEvent {
   /** The amount moved in the X direction since the last event. */
-  deltaX: number,
+  deltaX: number;
   /** The amount moved in the Y direction since the last event. */
-  deltaY: number
+  deltaY: number;
 }
 
 export interface ScrollEvents {
   /** Handler that is called when the scroll wheel moves. */
-  onScroll?: (e: ScrollEvent) => void
+  onScroll?: (e: ScrollEvent) => void;
 }

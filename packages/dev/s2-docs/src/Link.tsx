@@ -1,8 +1,20 @@
 'use client';
 
-import {baseColor, focusRing, space, style, StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {
+  baseColor,
+  focusRing,
+  space,
+  style,
+  StyleString
+} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {getBaseUrl} from './pageUtils';
-import {LinkButtonProps, LinkProps, pressScale, Link as S2Link, LinkButton as S2LinkButton} from '@react-spectrum/s2';
+import {
+  LinkButtonProps,
+  LinkProps,
+  pressScale,
+  Link as S2Link,
+  LinkButton as S2LinkButton
+} from '@react-spectrum/s2';
 import {mergeRefs} from '@react-aria/utils';
 import {mergeStyles} from '../../../@react-spectrum/s2/style/runtime';
 import {Link as RACLink, LinkProps as RACLinkProps} from 'react-aria-components';
@@ -10,11 +22,7 @@ import React, {Ref, useMemo, useRef} from 'react';
 import {registerLink, registerSpectrumLink} from './prefetch';
 
 export function BaseLink({ref, ...props}: RACLinkProps & {ref?: Ref<HTMLAnchorElement>}) {
-  return (
-    <RACLink
-      {...props}
-      ref={useMemo(() => mergeRefs(ref, registerLink), [ref])} />
-  );
+  return <RACLink {...props} ref={useMemo(() => mergeRefs(ref, registerLink), [ref])} />;
 }
 
 export function Link({href, ...props}: LinkProps) {
@@ -23,9 +31,7 @@ export function Link({href, ...props}: LinkProps) {
     href = getBaseUrl(url.protocol.slice(0, -1) as any) + '/' + url.pathname;
   }
 
-  return (
-    <S2Link {...props} ref={registerSpectrumLink} href={href} {...getAnchorProps(href)} />
-  );
+  return <S2Link {...props} ref={registerSpectrumLink} href={href} {...getAnchorProps(href)} />;
 }
 
 export function LinkButton({href, ...props}: LinkButtonProps) {
@@ -70,7 +76,16 @@ export function ColorLink({type, ...props}: RACLinkProps & {type?: 'keyword' | '
 }
 
 export function CodeLink(props: RACLinkProps) {
-  return <RACLink {...props} style={({isHovered}) => ({cursor: 'pointer', textDecoration: 'underline', textDecorationStyle: isHovered ? 'solid' : 'dotted'})} />;
+  return (
+    <RACLink
+      {...props}
+      style={({isHovered}) => ({
+        cursor: 'pointer',
+        textDecoration: 'underline',
+        textDecorationStyle: isHovered ? 'solid' : 'dotted'
+      })}
+    />
+  );
 }
 
 const titleLink = style({
@@ -132,7 +147,9 @@ const linkStyle = style({
   borderRadius: 'lg'
 });
 
-export function HeaderLink(props: RACLinkProps & {staticColor?: 'auto' | 'white', styles?: StyleString}) {
+export function HeaderLink(
+  props: RACLinkProps & {staticColor?: 'auto' | 'white'; styles?: StyleString}
+) {
   let {staticColor, styles, ...otherProps} = props;
   let ref = useRef(null);
   return (
@@ -140,6 +157,7 @@ export function HeaderLink(props: RACLinkProps & {staticColor?: 'auto' | 'white'
       {...otherProps}
       ref={ref}
       className={renderProps => mergeStyles(linkStyle({...renderProps, staticColor}), styles)}
-      style={pressScale(ref)} />
+      style={pressScale(ref)}
+    />
   );
 }

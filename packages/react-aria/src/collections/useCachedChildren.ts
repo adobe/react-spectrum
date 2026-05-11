@@ -15,15 +15,15 @@ import {Key} from '@react-types/shared';
 
 export interface CachedChildrenOptions<T> {
   /** Item objects in the collection. */
-  items?: Iterable<T>,
+  items?: Iterable<T>;
   /** The contents of the collection. */
-  children?: ReactNode | ((item: T) => ReactNode),
+  children?: ReactNode | ((item: T) => ReactNode);
   /** Values that should invalidate the item cache when using dynamic collections. */
-  dependencies?: ReadonlyArray<any>,
+  dependencies?: ReadonlyArray<any>;
   /** A scope to prepend to all child item ids to ensure they are unique. */
-  idScope?: Key,
+  idScope?: Key;
   /** Whether to add `id` and `value` props to all child items. */
-  addIdAndValue?: boolean
+  addIdAndValue?: boolean;
 }
 
 /**
@@ -54,10 +54,7 @@ export function useCachedChildren<T extends object>(props: CachedChildrenOptions
             key = idScope + ':' + key;
           }
           // Note: only works if wrapped Item passes through id...
-          rendered = cloneElement(
-            rendered,
-            addIdAndValue ? {key, id: key, value: item} : {key}
-          );
+          rendered = cloneElement(rendered, addIdAndValue ? {key, id: key, value: item} : {key});
           cache.set(item, rendered);
         }
         res.push(rendered);

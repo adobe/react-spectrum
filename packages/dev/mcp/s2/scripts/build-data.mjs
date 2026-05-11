@@ -13,9 +13,15 @@ const REPO_ROOT = path.resolve(__dirname, '../../../../..');
 const OUT_DIR = path.resolve(__dirname, '../dist/data');
 
 const ICONS_DIR = path.resolve(REPO_ROOT, 'packages/@react-spectrum/s2/s2wf-icons');
-const ILLUSTRATIONS_DIR = path.resolve(REPO_ROOT, 'packages/@react-spectrum/s2/spectrum-illustrations/linear');
+const ILLUSTRATIONS_DIR = path.resolve(
+  REPO_ROOT,
+  'packages/@react-spectrum/s2/spectrum-illustrations/linear'
+);
 const ICON_ALIASES_JS = path.resolve(REPO_ROOT, 'packages/dev/s2-docs/src/iconAliases.js');
-const ILLUSTRATION_ALIASES_JS = path.resolve(REPO_ROOT, 'packages/dev/s2-docs/src/illustrationAliases.js');
+const ILLUSTRATION_ALIASES_JS = path.resolve(
+  REPO_ROOT,
+  'packages/dev/s2-docs/src/illustrationAliases.js'
+);
 const STYLE_PROPERTIES_TS = path.resolve(REPO_ROOT, 'packages/dev/s2-docs/src/styleProperties.ts');
 
 function ensureDir(p) {
@@ -53,9 +59,9 @@ function buildIconNames() {
   if (files.length === 0) {
     throw new Error(`No icon SVG files found in: ${ICONS_DIR}`);
   }
-  const ids = Array.from(new Set(
-    files.map(f => f.replace(/\.svg$/i, '').replace(/^S2_Icon_(.*?)(Size\d+)?_2.*/, '$1'))
-  )).sort((a, b) => a.localeCompare(b));
+  const ids = Array.from(
+    new Set(files.map(f => f.replace(/\.svg$/i, '').replace(/^S2_Icon_(.*?)(Size\d+)?_2.*/, '$1')))
+  ).sort((a, b) => a.localeCompare(b));
   return ids;
 }
 
@@ -63,21 +69,29 @@ function buildIllustrationNames() {
   if (!fs.existsSync(ILLUSTRATIONS_DIR)) {
     throw new Error(`Illustrations directory not found: ${ILLUSTRATIONS_DIR}`);
   }
-  const files = fg.sync('**/*.svg', {cwd: ILLUSTRATIONS_DIR, absolute: false, suppressErrors: true});
+  const files = fg.sync('**/*.svg', {
+    cwd: ILLUSTRATIONS_DIR,
+    absolute: false,
+    suppressErrors: true
+  });
   if (files.length === 0) {
     throw new Error(`No illustration SVG files found in: ${ILLUSTRATIONS_DIR}`);
   }
-  const ids = Array.from(new Set(
-    files.map(f => {
-      const base = f.replace(/\.svg$/i, '').replace(/^S2_lin_(.*)_\d+$/, '$1');
-      return base ? (base.charAt(0).toUpperCase() + base.slice(1)) : base;
-    })
-  )).sort((a, b) => a.localeCompare(b));
+  const ids = Array.from(
+    new Set(
+      files.map(f => {
+        const base = f.replace(/\.svg$/i, '').replace(/^S2_lin_(.*)_\d+$/, '$1');
+        return base ? base.charAt(0).toUpperCase() + base.slice(1) : base;
+      })
+    )
+  ).sort((a, b) => a.localeCompare(b));
   return ids;
 }
 
 async function loadAliases(modPath, exportName) {
-  if (!fs.existsSync(modPath)) {return {};}
+  if (!fs.existsSync(modPath)) {
+    return {};
+  }
   const mod = await import(pathToFileURL(modPath).href);
   return mod[exportName] ?? {};
 }
@@ -90,7 +104,7 @@ function buildBaseColorKeysFromSpectrumTokens(tokens) {
   keys.add('black');
   keys.add('white');
 
-  const addScale = (scale) => {
+  const addScale = scale => {
     const re = new RegExp(`^${scale}-\\d+$`);
     for (const tokenName of Object.keys(tokens)) {
       if (re.test(tokenName)) {
@@ -102,15 +116,37 @@ function buildBaseColorKeysFromSpectrumTokens(tokens) {
 
   // Global color scales
   for (const scale of [
-    'gray', 'blue', 'red', 'orange', 'yellow', 'chartreuse', 'celery', 'green',
-    'seafoam', 'cyan', 'indigo', 'purple', 'fuchsia', 'magenta', 'pink',
-    'turquoise', 'brown', 'silver', 'cinnamon'
+    'gray',
+    'blue',
+    'red',
+    'orange',
+    'yellow',
+    'chartreuse',
+    'celery',
+    'green',
+    'seafoam',
+    'cyan',
+    'indigo',
+    'purple',
+    'fuchsia',
+    'magenta',
+    'pink',
+    'turquoise',
+    'brown',
+    'silver',
+    'cinnamon'
   ]) {
     addScale(scale);
   }
 
   // Semantic color scales
-  for (const scale of ['accent-color', 'informative-color', 'negative-color', 'notice-color', 'positive-color']) {
+  for (const scale of [
+    'accent-color',
+    'informative-color',
+    'negative-color',
+    'notice-color',
+    'positive-color'
+  ]) {
     addScale(scale);
   }
 
@@ -130,7 +166,18 @@ function buildBaseColorKeysFromSpectrumTokens(tokens) {
   }
 
   // High contrast keywords (matches spectrum-theme.ts)
-  for (const k of ['Background', 'ButtonBorder', 'ButtonFace', 'ButtonText', 'Field', 'Highlight', 'HighlightText', 'GrayText', 'Mark', 'LinkText']) {
+  for (const k of [
+    'Background',
+    'ButtonBorder',
+    'ButtonFace',
+    'ButtonText',
+    'Field',
+    'Highlight',
+    'HighlightText',
+    'GrayText',
+    'Mark',
+    'LinkText'
+  ]) {
     keys.add(k);
   }
 
@@ -144,7 +191,7 @@ function buildExpandedStyleMacroPropertyValues(styleProperties, spacingTypeValue
     const values = [];
     const seen = new Set();
 
-    const pushUnique = (items) => {
+    const pushUnique = items => {
       for (const v of items) {
         const s = String(v);
         if (!seen.has(s)) {
@@ -196,7 +243,15 @@ async function main() {
 
   // Style macro property definitions
   const stylePropsMod = await importTsModule(STYLE_PROPERTIES_TS);
-  const propertyCategories = ['color', 'dimensions', 'text', 'effects', 'layout', 'misc', 'conditions'];
+  const propertyCategories = [
+    'color',
+    'dimensions',
+    'text',
+    'effects',
+    'layout',
+    'misc',
+    'conditions'
+  ];
   const styleProperties = {};
   for (const category of propertyCategories) {
     Object.assign(styleProperties, stylePropsMod.getPropertyDefinitions(category));
@@ -206,11 +261,15 @@ async function main() {
   const require = createRequire(import.meta.url);
   const spectrumTokens = require('@adobe/spectrum-tokens/dist/json/variables.json');
   const baseColorKeys = buildBaseColorKeysFromSpectrumTokens(spectrumTokens);
-  const expanded = buildExpandedStyleMacroPropertyValues(styleProperties, stylePropsMod.spacingTypeValues, baseColorKeys);
+  const expanded = buildExpandedStyleMacroPropertyValues(
+    styleProperties,
+    stylePropsMod.spacingTypeValues,
+    baseColorKeys
+  );
   writeJson(path.join(OUT_DIR, 'styleMacroPropertyValues.json'), expanded);
 }
 
-main().catch((err) => {
+main().catch(err => {
   console.error(err?.stack || String(err));
   process.exit(1);
 });

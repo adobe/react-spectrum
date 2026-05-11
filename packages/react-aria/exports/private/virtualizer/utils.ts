@@ -1,1 +1,6 @@
-export {getRTLOffsetType, getScrollLeft, setScrollLeft, type RTLOffsetType} from '../../../src/virtualizer/utils';
+export {
+  getRTLOffsetType,
+  getScrollLeft,
+  setScrollLeft,
+  type RTLOffsetType
+} from '../../../src/virtualizer/utils';

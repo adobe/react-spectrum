@@ -26,33 +26,42 @@ export interface SpectrumColorSwatchProps extends AriaColorSwatchProps, StylePro
    * The size of the ColorSwatch.
    * @default "M"
    */
-  size?: 'XS' | 'S' | 'M' | 'L',
+  size?: 'XS' | 'S' | 'M' | 'L';
   /**
    * The corner rounding of the ColorSwatch.
    * @default "default"
    */
-  rounding?: 'default' | 'none' | 'full'
+  rounding?: 'default' | 'none' | 'full';
 }
 
-interface SpectrumColorSwatchContextValue extends Pick<SpectrumColorSwatchProps, 'size' | 'rounding'> {
-  useWrapper: (swatch: ReactElement, color: Color, rounding: SpectrumColorSwatchProps['rounding']) => JSX.Element
+interface SpectrumColorSwatchContextValue extends Pick<
+  SpectrumColorSwatchProps,
+  'size' | 'rounding'
+> {
+  useWrapper: (
+    swatch: ReactElement,
+    color: Color,
+    rounding: SpectrumColorSwatchProps['rounding']
+  ) => JSX.Element;
 }
 
-export const SpectrumColorSwatchContext = createContext<SpectrumColorSwatchContextValue | null>(null);
+export const SpectrumColorSwatchContext = createContext<SpectrumColorSwatchContextValue | null>(
+  null
+);
 
 /**
  * A ColorSwatch displays a preview of a selected color.
  */
-export const ColorSwatch = forwardRef(function ColorSwatch(props: SpectrumColorSwatchProps, ref: DOMRef<HTMLDivElement>): JSX.Element {
+export const ColorSwatch = forwardRef(function ColorSwatch(
+  props: SpectrumColorSwatchProps,
+  ref: DOMRef<HTMLDivElement>
+): JSX.Element {
   let domRef = useDOMRef(ref);
   [props, domRef] = useContextProps(props, domRef, ColorSwatchContext);
   let {colorSwatchProps, color} = useColorSwatch(props);
   let {styleProps} = useStyleProps(props);
   let ctx = useContext(SpectrumColorSwatchContext);
-  let {
-    size = ctx?.size || 'M',
-    rounding = ctx?.rounding || 'default'
-  } = props;
+  let {size = ctx?.size || 'M', rounding = ctx?.rounding || 'default'} = props;
 
   let swatch = (
     <div
@@ -62,35 +71,40 @@ export const ColorSwatch = forwardRef(function ColorSwatch(props: SpectrumColorS
       style={{
         ...styleProps.style,
         // TODO: should there be a distinction between transparent and no value (e.g. null)?
-        background: color.getChannelValue('alpha') > 0
-          ? `linear-gradient(${color}, ${color}), repeating-conic-gradient(#e6e6e6 0% 25%, white 0% 50%) 0% 50% / 16px 16px`
-          // Red slash to indicate there is no selected color.
-          : 'linear-gradient(to bottom right, transparent calc(50% - 2px), var(--spectrum-red-900) calc(50% - 2px) calc(50% + 2px), transparent calc(50% + 2px)) no-repeat'
+        background:
+          color.getChannelValue('alpha') > 0
+            ? `linear-gradient(${color}, ${color}), repeating-conic-gradient(#e6e6e6 0% 25%, white 0% 50%) 0% 50% / 16px 16px`
+            : // Red slash to indicate there is no selected color.
+              'linear-gradient(to bottom right, transparent calc(50% - 2px), var(--spectrum-red-900) calc(50% - 2px) calc(50% + 2px), transparent calc(50% + 2px)) no-repeat'
       }}
-      className={styleProps.className + style({
-        size: {
+      className={
+        styleProps.className +
+        style({
           size: {
-            XS: 4,
-            S: 6,
-            M: 8,
-            L: 10
-          }
-        },
-        borderRadius: {
-          rounding: {
-            default: 'default',
-            none: 'none',
-            full: 'full'
-          }
-        },
-        // Trick to create a partially transparent color from a variable.
-        // Ideally we'd use relative color syntax for this but it's not in Firefox yet.
-        borderColor: '[color-mix(in srgb, var(--spectrum-gray-900), transparent 49%)]',
-        borderWidth: 1,
-        borderStyle: 'solid',
-        boxSizing: 'border-box',
-        forcedColorAdjust: 'none'
-      })({size, rounding})} />
+            size: {
+              XS: 4,
+              S: 6,
+              M: 8,
+              L: 10
+            }
+          },
+          borderRadius: {
+            rounding: {
+              default: 'default',
+              none: 'none',
+              full: 'full'
+            }
+          },
+          // Trick to create a partially transparent color from a variable.
+          // Ideally we'd use relative color syntax for this but it's not in Firefox yet.
+          borderColor: '[color-mix(in srgb, var(--spectrum-gray-900), transparent 49%)]',
+          borderWidth: 1,
+          borderStyle: 'solid',
+          boxSizing: 'border-box',
+          forcedColorAdjust: 'none'
+        })({size, rounding})
+      }
+    />
   );
 
   // ColorSwatchPicker needs to wrap the swatch in a ListBoxItem.

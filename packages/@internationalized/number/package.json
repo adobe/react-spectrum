@@ -3,32 +3,32 @@
   "version": "3.6.6",
   "description": "Internationalized number formatting and parsing utilities",
   "license": "Apache-2.0",
-  "main": "dist/index.cjs",
-  "module": "dist/index.js",
-  "import": "dist/index.mjs",
-  "exports": {
-    "source": "./src/index.ts",
-    "types": "./dist/types/src/index.d.ts",
-    "import": "./dist/index.mjs",
-    "require": "./dist/index.cjs"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adobe/react-spectrum"
   },
-  "types": "./dist/types/src/index.d.ts",
   "source": "src/index.ts",
   "files": [
     "dist",
     "src"
   ],
   "sideEffects": false,
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/adobe/react-spectrum"
-  },
-  "dependencies": {
-    "@swc/helpers": "^0.5.0"
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
+  "types": "./dist/types/src/index.d.ts",
+  "exports": {
+    "source": "./src/index.ts",
+    "types": "./dist/types/src/index.d.ts",
+    "import": "./dist/index.mjs",
+    "require": "./dist/index.cjs"
   },
   "publishConfig": {
     "access": "public"
   },
+  "dependencies": {
+    "@swc/helpers": "^0.5.0"
+  },
+  "import": "dist/index.mjs",
   "targets": {
     "types": false,
     "module": {

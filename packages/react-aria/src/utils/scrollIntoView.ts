@@ -15,15 +15,14 @@ import {isIOS} from './platform';
 
 interface ScrollIntoViewOpts {
   /** The position to align items along the block axis in. */
-  block?: ScrollLogicalPosition,
+  block?: ScrollLogicalPosition;
   /** The position to align items along the inline axis in. */
-  inline?: ScrollLogicalPosition
+  inline?: ScrollLogicalPosition;
 }
-
 
 interface ScrollIntoViewportOpts {
   /** The optional containing element of the target to be centered in the viewport. */
-  containingElement?: Element | null
+  containingElement?: Element | null;
 }
 
 /**
@@ -31,10 +30,16 @@ interface ScrollIntoViewportOpts {
  * Similar to `element.scrollIntoView({block: 'nearest'})` (not supported in Edge),
  * but doesn't affect parents above `scrollView`.
  */
-export function scrollIntoView(scrollView: HTMLElement, element: HTMLElement, opts: ScrollIntoViewOpts = {}): void {
+export function scrollIntoView(
+  scrollView: HTMLElement,
+  element: HTMLElement,
+  opts: ScrollIntoViewOpts = {}
+): void {
   let {block = 'nearest', inline = 'nearest'} = opts;
 
-  if (scrollView === element) { return; }
+  if (scrollView === element) {
+    return;
+  }
 
   let y = scrollView.scrollTop;
   let x = scrollView.scrollLeft;
@@ -128,7 +133,10 @@ export function scrollIntoView(scrollView: HTMLElement, element: HTMLElement, op
  * that will be centered in the viewport prior to scrolling the targetElement into view. If scrolling is prevented on
  * the body (e.g. targetElement is in a popover), this will only scroll the scroll parents of the targetElement up to but not including the body itself.
  */
-export function scrollIntoViewport(targetElement: Element | null, opts: ScrollIntoViewportOpts = {}): void {
+export function scrollIntoViewport(
+  targetElement: Element | null,
+  opts: ScrollIntoViewportOpts = {}
+): void {
   let {containingElement} = opts;
   if (targetElement && targetElement.isConnected) {
     let root = document.scrollingElement || document.documentElement;
@@ -141,7 +149,7 @@ export function scrollIntoViewport(targetElement: Element | null, opts: ScrollIn
       targetElement?.scrollIntoView?.({block: 'nearest'});
       let {left: newLeft, top: newTop} = targetElement.getBoundingClientRect();
       // Account for sub pixel differences from rounding
-      if ((Math.abs(originalLeft - newLeft) > 1) || (Math.abs(originalTop - newTop) > 1)) {
+      if (Math.abs(originalLeft - newLeft) > 1 || Math.abs(originalTop - newTop) > 1) {
         containingElement?.scrollIntoView?.({block: 'center', inline: 'center'});
         targetElement.scrollIntoView?.({block: 'nearest'});
       }
@@ -155,10 +163,13 @@ export function scrollIntoViewport(targetElement: Element | null, opts: ScrollIn
       }
       let {left: newLeft, top: newTop} = targetElement.getBoundingClientRect();
       // Account for sub pixel differences from rounding
-      if ((Math.abs(originalLeft - newLeft) > 1) || (Math.abs(originalTop - newTop) > 1)) {
+      if (Math.abs(originalLeft - newLeft) > 1 || Math.abs(originalTop - newTop) > 1) {
         scrollParents = containingElement ? getScrollParents(containingElement, true) : [];
         for (let scrollParent of scrollParents) {
-          scrollIntoView(scrollParent as HTMLElement, containingElement as HTMLElement, {block: 'center', inline: 'center'});
+          scrollIntoView(scrollParent as HTMLElement, containingElement as HTMLElement, {
+            block: 'center',
+            inline: 'center'
+          });
         }
       }
     }

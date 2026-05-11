@@ -66,7 +66,9 @@ describe('Tray', function () {
     await waitFor(() => {
       expect(getByRole('dialog')).toBeVisible();
     }); // wait for animation
-    act(() => {jest.runAllTimers();});
+    act(() => {
+      jest.runAllTimers();
+    });
 
     let dialog = await getByRole('dialog');
     fireEvent.keyDown(dialog, {key: 'Escape'});
@@ -87,7 +89,9 @@ describe('Tray', function () {
     await waitFor(() => {
       expect(getByRole('dialog')).toBeVisible();
     }); // wait for animation
-    act(() => {jest.runAllTimers();});
+    act(() => {
+      jest.runAllTimers();
+    });
 
     fireEvent.mouseDown(document.body);
     fireEvent.mouseUp(document.body);
@@ -107,13 +111,17 @@ describe('Tray', function () {
     await waitFor(() => {
       expect(getByRole('dialog')).toBeVisible();
     }); // wait for animation
-    act(() => {jest.runAllTimers();});
+    act(() => {
+      jest.runAllTimers();
+    });
 
     let dialog = await getByRole('dialog');
     expect(document.activeElement).toBe(dialog);
     expect(onOpenChange).toHaveBeenCalledTimes(0);
 
-    act(() => {dialog.blur();});
+    act(() => {
+      dialog.blur();
+    });
     expect(onOpenChange).toHaveBeenCalledTimes(1);
   });
 

@@ -27,26 +27,36 @@ import {useProviderProps} from '../provider/Provider';
 import {useStyleProps} from '../utils/styleProps';
 import {useToggleState} from 'react-stately/useToggleState';
 
-export interface SpectrumToggleButtonProps extends Omit<ToggleButtonProps, 'onClick'>, Omit<SpectrumActionButtonProps, 'aria-current' | 'type' | 'form' | 'formAction' | 'formEncType' | 'formMethod' | 'formNoValidate' | 'formTarget' | 'name' | 'value'> {
+export interface SpectrumToggleButtonProps
+  extends
+    Omit<ToggleButtonProps, 'onClick'>,
+    Omit<
+      SpectrumActionButtonProps,
+      | 'aria-current'
+      | 'type'
+      | 'form'
+      | 'formAction'
+      | 'formEncType'
+      | 'formMethod'
+      | 'formNoValidate'
+      | 'formTarget'
+      | 'name'
+      | 'value'
+    > {
   /** Whether the button should be displayed with an [emphasized style](https://spectrum.adobe.com/page/action-button/#Emphasis). */
-  isEmphasized?: boolean
+  isEmphasized?: boolean;
 }
 
 /**
  * ToggleButtons allow users to toggle a selection on or off, for example
  * switching between two states or modes.
  */
-export const ToggleButton = React.forwardRef(function ToggleButton(props: SpectrumToggleButtonProps, ref: FocusableRef<HTMLButtonElement>) {
+export const ToggleButton = React.forwardRef(function ToggleButton(
+  props: SpectrumToggleButtonProps,
+  ref: FocusableRef<HTMLButtonElement>
+) {
   props = useProviderProps(props);
-  let {
-    isQuiet,
-    isDisabled,
-    isEmphasized,
-    staticColor,
-    children,
-    autoFocus,
-    ...otherProps
-  } = props;
+  let {isQuiet, isDisabled, isEmphasized, staticColor, children, autoFocus, ...otherProps} = props;
 
   let domRef = useFocusableRef(ref);
   let state = useToggleState(props);
@@ -61,24 +71,22 @@ export const ToggleButton = React.forwardRef(function ToggleButton(props: Spectr
         {...styleProps}
         {...mergeProps(buttonProps, hoverProps)}
         ref={domRef}
-        className={
-          classNames(
-            styles,
-            'spectrum-ActionButton',
-            {
-              'spectrum-ActionButton--quiet': isQuiet,
-              'spectrum-ActionButton--emphasized': isEmphasized,
-              'spectrum-ActionButton--staticColor': !!staticColor,
-              'spectrum-ActionButton--staticWhite': staticColor === 'white',
-              'spectrum-ActionButton--staticBlack': staticColor === 'black',
-              'is-active': isPressed,
-              'is-disabled': isDisabled,
-              'is-hovered': isHovered,
-              'is-selected': state.isSelected
-            },
-            styleProps.className
-          )
-        }>
+        className={classNames(
+          styles,
+          'spectrum-ActionButton',
+          {
+            'spectrum-ActionButton--quiet': isQuiet,
+            'spectrum-ActionButton--emphasized': isEmphasized,
+            'spectrum-ActionButton--staticColor': !!staticColor,
+            'spectrum-ActionButton--staticWhite': staticColor === 'white',
+            'spectrum-ActionButton--staticBlack': staticColor === 'black',
+            'is-active': isPressed,
+            'is-disabled': isDisabled,
+            'is-hovered': isHovered,
+            'is-selected': state.isSelected
+          },
+          styleProps.className
+        )}>
         <SlotProvider
           slots={{
             icon: {
@@ -89,9 +97,7 @@ export const ToggleButton = React.forwardRef(function ToggleButton(props: Spectr
               UNSAFE_className: classNames(styles, 'spectrum-ActionButton-label')
             }
           }}>
-          {typeof children === 'string' || isTextOnly
-            ? <Text>{children}</Text>
-            : children}
+          {typeof children === 'string' || isTextOnly ? <Text>{children}</Text> : children}
         </SlotProvider>
       </button>
     </FocusRing>

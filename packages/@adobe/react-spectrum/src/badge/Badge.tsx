@@ -23,23 +23,32 @@ import {useStyleProps} from '../utils/styleProps';
 
 export interface SpectrumBadgeProps extends DOMProps, StyleProps, AriaLabelingProps {
   /** The content to display in the badge. */
-  children: ReactNode,
+  children: ReactNode;
   /**
    * The variant changes the background color of the badge.
    * When badge has a semantic meaning, they should use the variant for semantic colors.
    */
-  variant: 'neutral' | 'info' | 'positive' | 'negative' | 'indigo' | 'yellow' | 'magenta' | 'fuchsia' | 'purple' | 'seafoam'
+  variant:
+    | 'neutral'
+    | 'info'
+    | 'positive'
+    | 'negative'
+    | 'indigo'
+    | 'yellow'
+    | 'magenta'
+    | 'fuchsia'
+    | 'purple'
+    | 'seafoam';
 }
 
 /**
  * Badges are used for showing a small amount of color-categorized metadata, ideal for getting a user's attention.
  */
-export const Badge = forwardRef(function Badge(props: SpectrumBadgeProps, ref: DOMRef<HTMLDivElement>) {
-  let {
-    children,
-    variant,
-    ...otherProps
-  } = useProviderProps(props);
+export const Badge = forwardRef(function Badge(
+  props: SpectrumBadgeProps,
+  ref: DOMRef<HTMLDivElement>
+) {
+  let {children, variant, ...otherProps} = useProviderProps(props);
   let domRef = useDOMRef(ref);
   let {styleProps} = useStyleProps(otherProps);
   let isTextOnly = React.Children.toArray(props.children).every(c => !React.isValidElement(c));
@@ -69,12 +78,7 @@ export const Badge = forwardRef(function Badge(props: SpectrumBadgeProps, ref: D
               UNSAFE_className: classNames(styles, 'spectrum-Badge-label')
             }
           }}>
-
-          {
-            typeof children === 'string' || isTextOnly
-              ? <Text>{children}</Text>
-              : children
-          }
+          {typeof children === 'string' || isTextOnly ? <Text>{children}</Text> : children}
         </SlotProvider>
       </ClearSlots>
     </span>

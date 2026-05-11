@@ -26,19 +26,19 @@ import {useOverlayTrigger} from '../overlays/useOverlayTrigger';
 
 export interface AriaMenuTriggerProps {
   /** The type of menu that the menu trigger opens. */
-  type?: 'menu' | 'listbox',
+  type?: 'menu' | 'listbox';
   /** Whether menu trigger is disabled. */
-  isDisabled?: boolean,
+  isDisabled?: boolean;
   /** How menu is triggered. */
-  trigger?: MenuTriggerType
+  trigger?: MenuTriggerType;
 }
 
 export interface MenuTriggerAria<T> {
   /** Props for the menu trigger element. */
-  menuTriggerProps: AriaButtonProps,
+  menuTriggerProps: AriaButtonProps;
 
   /** Props for the menu. */
-  menuProps: AriaMenuOptions<T>
+  menuProps: AriaMenuOptions<T>;
 }
 
 /**
@@ -47,17 +47,17 @@ export interface MenuTriggerAria<T> {
  * @param state - State for the menu trigger.
  * @param ref - Ref to the HTML element trigger for the menu.
  */
-export function useMenuTrigger<T>(props: AriaMenuTriggerProps, state: MenuTriggerState, ref: RefObject<Element | null>): MenuTriggerAria<T> {
-  let {
-    type = 'menu',
-    isDisabled,
-    trigger = 'press'
-  } = props;
+export function useMenuTrigger<T>(
+  props: AriaMenuTriggerProps,
+  state: MenuTriggerState,
+  ref: RefObject<Element | null>
+): MenuTriggerAria<T> {
+  let {type = 'menu', isDisabled, trigger = 'press'} = props;
 
   let menuTriggerId = useId();
   let {triggerProps, overlayProps} = useOverlayTrigger({type}, state, ref);
 
-  let onKeyDown = (e) => {
+  let onKeyDown = e => {
     if (isDisabled) {
       return;
     }
@@ -77,7 +77,7 @@ export function useMenuTrigger<T>(props: AriaMenuTriggerProps, state: MenuTrigge
           if (trigger === 'longPress' || e.isDefaultPrevented()) {
             return;
           }
-          // fallthrough
+        // fallthrough
         case 'ArrowDown':
           // Stop propagation, unless it would already be handled by useKeyboard.
           if (!('continuePropagation' in e)) {
@@ -114,7 +114,7 @@ export function useMenuTrigger<T>(props: AriaMenuTriggerProps, state: MenuTrigge
     }
   });
 
-  let pressProps: PressProps =  {
+  let pressProps: PressProps = {
     preventFocusOnPress: true,
     onPressStart(e) {
       // For consistency with native, open the menu on mouse/key down, but touch up.

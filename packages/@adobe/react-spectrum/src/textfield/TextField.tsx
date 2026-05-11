@@ -11,22 +11,36 @@
  */
 
 import {AriaTextFieldProps, useTextField} from 'react-aria/useTextField';
-import {FocusableRefValue, SpectrumFieldValidation, SpectrumLabelableProps, SpectrumTextInputBase, StyleProps} from '@react-types/shared';
+import {
+  FocusableRefValue,
+  SpectrumFieldValidation,
+  SpectrumLabelableProps,
+  SpectrumTextInputBase,
+  StyleProps
+} from '@react-types/shared';
 import React, {forwardRef, ReactElement, Ref, useEffect, useRef} from 'react';
 import {TextFieldBase} from './TextFieldBase';
 import {useFormProps} from '../form/Form';
 import {useProviderProps} from '../provider/Provider';
 
-export interface SpectrumTextFieldProps extends SpectrumTextInputBase, Omit<AriaTextFieldProps, 'isInvalid' | 'validationState'>, SpectrumFieldValidation<string>, SpectrumLabelableProps, StyleProps {
+export interface SpectrumTextFieldProps
+  extends
+    SpectrumTextInputBase,
+    Omit<AriaTextFieldProps, 'isInvalid' | 'validationState'>,
+    SpectrumFieldValidation<string>,
+    SpectrumLabelableProps,
+    StyleProps {
   /** An icon to display at the start of the input. */
-  icon?: ReactElement | null,
+  icon?: ReactElement | null;
   /** Whether the input should be displayed with a quiet style. */
-  isQuiet?: boolean
+  isQuiet?: boolean;
 }
 
-export interface TextFieldRef<T extends HTMLInputElement | HTMLTextAreaElement = HTMLInputElement> extends FocusableRefValue<T, HTMLDivElement> {
-  select(): void,
-  getInputElement(): T | null
+export interface TextFieldRef<
+  T extends HTMLInputElement | HTMLTextAreaElement = HTMLInputElement
+> extends FocusableRefValue<T, HTMLDivElement> {
+  select(): void;
+  getInputElement(): T | null;
 }
 
 /**
@@ -34,7 +48,10 @@ export interface TextFieldRef<T extends HTMLInputElement | HTMLTextAreaElement =
  * with a keyboard. Various decorations can be displayed around the field to
  * communicate the entry requirements.
  */
-export const TextField = forwardRef(function TextField(props: SpectrumTextFieldProps, ref: Ref<TextFieldRef>) {
+export const TextField = forwardRef(function TextField(
+  props: SpectrumTextFieldProps,
+  ref: Ref<TextFieldRef>
+) {
   props = useProviderProps(props);
   props = useFormProps(props);
 
@@ -44,16 +61,12 @@ export const TextField = forwardRef(function TextField(props: SpectrumTextFieldP
   let hasWarned = useRef(false);
   useEffect(() => {
     if (props.placeholder && !hasWarned.current && process.env.NODE_ENV !== 'production') {
-      console.warn('Placeholders are deprecated due to accessibility issues. Please use help text instead. See the docs for details: https://react-spectrum.adobe.com/react-spectrum/TextField.html#help-text');
+      console.warn(
+        'Placeholders are deprecated due to accessibility issues. Please use help text instead. See the docs for details: https://react-spectrum.adobe.com/react-spectrum/TextField.html#help-text'
+      );
       hasWarned.current = true;
     }
   }, [props.placeholder]);
 
-  return (
-    <TextFieldBase
-      {...props}
-      {...result}
-      ref={ref}
-      inputRef={inputRef} />
-  );
+  return <TextFieldBase {...props} {...result} ref={ref} inputRef={inputRef} />;
 });

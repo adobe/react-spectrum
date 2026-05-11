@@ -23,9 +23,15 @@ import userEvent from '@testing-library/user-event';
 function renderRadioGroup(ComponentGroup, Component, groupProps, radioProps) {
   return render(
     <ComponentGroup aria-label="favorite pet" {...groupProps}>
-      <Component {...radioProps[0]} value="dogs">Dogs</Component>
-      <Component {...radioProps[1]} value="cats">Cats</Component>
-      <Component {...radioProps[2]} value="dragons">Dragons</Component>
+      <Component {...radioProps[0]} value="dogs">
+        Dogs
+      </Component>
+      <Component {...radioProps[1]} value="cats">
+        Cats
+      </Component>
+      <Component {...radioProps[2]} value="dragons">
+        Dragons
+      </Component>
     </ComponentGroup>
   );
 }
@@ -33,9 +39,15 @@ function renderRadioGroup(ComponentGroup, Component, groupProps, radioProps) {
 function renderRadioGroupNoLabel(ComponentGroup, Component, groupProps, radioProps) {
   return render(
     <ComponentGroup {...groupProps}>
-      <Component {...radioProps[0]} value="dogs">Dogs</Component>
-      <Component {...radioProps[1]} value="cats">Cats</Component>
-      <Component {...radioProps[2]} value="dragons">Dragons</Component>
+      <Component {...radioProps[0]} value="dogs">
+        Dogs
+      </Component>
+      <Component {...radioProps[1]} value="cats">
+        Cats
+      </Component>
+      <Component {...radioProps[2]} value="dragons">
+        Dragons
+      </Component>
     </ComponentGroup>
   );
 }
@@ -73,7 +85,6 @@ class RadioBehavior {
 }
 let radioBehavior = new RadioBehavior();
 
-
 function verifyResult(radios, values, index) {
   expect(radios).checkRadioIndex(values, index);
 }
@@ -89,7 +100,8 @@ expect.extend({
 
     if (index !== -1) {
       return {
-        message: () => `expected radio index configuration "radio${i + 1}Focused": got (${received.map((radio) => radio.getAttribute('tabIndex'))}) but expected ${tabIndices}`,
+        message: () =>
+          `expected radio index configuration "radio${i + 1}Focused": got (${received.map(radio => radio.getAttribute('tabIndex'))}) but expected ${tabIndices}`,
         pass: false
       };
     } else {
@@ -119,132 +131,168 @@ describe('Radios', function () {
   let pressArrowDown = async () => await user.keyboard('{ArrowDown}');
 
   it.each`
-    Name         | ComponentGroup  | Component  | groupProps                 | radioProps
-    ${'Radio'}   | ${RadioGroup}   | ${Radio}   | ${{onChange: onChangeSpy}} | ${[{}, {}, {}]}
-  `('$Name handles defaults', async function ({Name, ComponentGroup, Component, groupProps, radioProps}) {
-    let {getByRole, getAllByRole, getByLabelText} = renderRadioGroup(ComponentGroup, Component, groupProps, radioProps);
+    Name       | ComponentGroup | Component | groupProps                 | radioProps
+    ${'Radio'} | ${RadioGroup}  | ${Radio}  | ${{onChange: onChangeSpy}} | ${[{}, {}, {}]}
+  `(
+    '$Name handles defaults',
+    async function ({Name, ComponentGroup, Component, groupProps, radioProps}) {
+      let {getByRole, getAllByRole, getByLabelText} = renderRadioGroup(
+        ComponentGroup,
+        Component,
+        groupProps,
+        radioProps
+      );
 
-    let radioGroup = getByRole('radiogroup');
-    let radios = getAllByRole('radio');
-    expect(radioGroup).toBeTruthy();
-    expect(radios.length).toBe(3);
+      let radioGroup = getByRole('radiogroup');
+      let radios = getAllByRole('radio');
+      expect(radioGroup).toBeTruthy();
+      expect(radios.length).toBe(3);
 
-    let groupName = radios[0].getAttribute('name');
-    radios.forEach(radio => {
-      expect(radio).toHaveAttribute('name', groupName);
-    });
+      let groupName = radios[0].getAttribute('name');
+      radios.forEach(radio => {
+        expect(radio).toHaveAttribute('name', groupName);
+      });
 
-    expect(radios[0].value).toBe('dogs');
-    expect(radios[1].value).toBe('cats');
-    expect(radios[2].value).toBe('dragons');
+      expect(radios[0].value).toBe('dogs');
+      expect(radios[1].value).toBe('cats');
+      expect(radios[2].value).toBe('dragons');
 
-    expect(radios[0].checked).toBe(false);
-    expect(radios[1].checked).toBe(false);
-    expect(radios[2].checked).toBe(false);
+      expect(radios[0].checked).toBe(false);
+      expect(radios[1].checked).toBe(false);
+      expect(radios[2].checked).toBe(false);
 
-    let dogs = getByLabelText('Dogs');
-    await user.click(dogs);
-    expect(onChangeSpy).toHaveBeenCalledTimes(1);
-    expect(onChangeSpy).toHaveBeenCalledWith('dogs');
+      let dogs = getByLabelText('Dogs');
+      await user.click(dogs);
+      expect(onChangeSpy).toHaveBeenCalledTimes(1);
+      expect(onChangeSpy).toHaveBeenCalledWith('dogs');
 
-    expect(radios[0].checked).toBe(true);
-    expect(radios[1].checked).toBe(false);
-    expect(radios[2].checked).toBe(false);
-  });
-
-  it.each`
-    Name         | ComponentGroup  | Component  | groupProps | radioProps
-    ${'Radio'}   | ${RadioGroup}   | ${Radio}   | ${{}}      | ${[{}, {}, {}]}
-  `('$Name renders without labels', function ({Name, ComponentGroup, Component, groupProps, radioProps}) {
-    let {getByRole, getAllByRole} = render(
-      <ComponentGroup aria-label="favorite pet" {...groupProps}>
-        <Component {...radioProps[0]} value="dogs" aria-label="dogs" />
-        <Component {...radioProps[1]} value="cats" aria-label="cats" />
-        <Component {...radioProps[2]} value="dragons" aria-label="dragons" />
-      </ComponentGroup>
-    );
-
-    let radioGroup = getByRole('radiogroup');
-    let radios = getAllByRole('radio');
-    expect(radioGroup).toBeTruthy();
-    expect(radios.length).toBe(3);
-
-    let groupName = radios[0].getAttribute('name');
-    radios.forEach(radio => {
-      expect(radio).toHaveAttribute('name', groupName);
-    });
-  });
+      expect(radios[0].checked).toBe(true);
+      expect(radios[1].checked).toBe(false);
+      expect(radios[2].checked).toBe(false);
+    }
+  );
 
   it.each`
-    Name         | ComponentGroup  | Component  | groupProps              | radioProps
-    ${'Radio'}   | ${RadioGroup}   | ${Radio}   | ${{name: 'customName'}} | ${[{}, {}, {}]}
-  `('$Name can be given a group name', function ({ComponentGroup, Component, groupProps, radioProps}) {
-    let {getAllByRole} = renderRadioGroup(ComponentGroup, Component, groupProps, radioProps);
-
-    let radios = getAllByRole('radio');
-    radios.forEach(radio => {
-      expect(radio).toHaveAttribute('name', groupProps.name);
-    });
-  });
-
-  it.each`
-    Name         | ComponentGroup  | Component  | groupProps | radioProps
-    ${'Radio'}   | ${RadioGroup}   | ${Radio}   | ${{}}      | ${[{}, {}, {}]}
-  `('$Name can be disabled via the Provider', function ({ComponentGroup, Component, groupProps, radioProps}) {
-    let {getByRole, getAllByRole} = render(
-      <Provider theme={theme} isDisabled>
+    Name       | ComponentGroup | Component | groupProps | radioProps
+    ${'Radio'} | ${RadioGroup}  | ${Radio}  | ${{}}      | ${[{}, {}, {}]}
+  `(
+    '$Name renders without labels',
+    function ({Name, ComponentGroup, Component, groupProps, radioProps}) {
+      let {getByRole, getAllByRole} = render(
         <ComponentGroup aria-label="favorite pet" {...groupProps}>
-          <Component {...radioProps[0]} value="dogs">Dogs</Component>
-          <Component {...radioProps[1]} value="cats">Cats</Component>
-          <Component {...radioProps[2]} value="dragons">Dragons</Component>
+          <Component {...radioProps[0]} value="dogs" aria-label="dogs" />
+          <Component {...radioProps[1]} value="cats" aria-label="cats" />
+          <Component {...radioProps[2]} value="dragons" aria-label="dragons" />
         </ComponentGroup>
-      </Provider>
-    );
+      );
 
-    let radioGroup = getByRole('radiogroup');
-    let radios = getAllByRole('radio');
-    expect(radioGroup).toBeTruthy();
-    expect(radios.length).toBe(3);
-    expect(radios[0]).toHaveAttribute('disabled');
-    expect(radios[1]).toHaveAttribute('disabled');
-    expect(radios[2]).toHaveAttribute('disabled');
-  });
+      let radioGroup = getByRole('radiogroup');
+      let radios = getAllByRole('radio');
+      expect(radioGroup).toBeTruthy();
+      expect(radios.length).toBe(3);
 
-  it.each`
-    Name         | ComponentGroup  | Component  | groupProps                 | radioProps
-    ${'Radio'}   | ${RadioGroup}   | ${Radio}   | ${{onChange: onChangeSpy}} | ${[{}, {isDisabled: true}, {}]}
-  `('$Name can have a single disabled radio', async function ({ComponentGroup, Component, groupProps, radioProps}) {
-    let {getByRole, getByLabelText, getAllByRole} = renderRadioGroup(ComponentGroup, Component, groupProps, radioProps);
-
-    let radioGroup = getByRole('radiogroup');
-    let radios = getAllByRole('radio');
-    expect(radioGroup).toBeTruthy();
-    expect(radios.length).toBe(3);
-    expect(radios[0]).not.toHaveAttribute('disabled');
-    expect(radios[1]).toHaveAttribute('disabled');
-    expect(radios[2]).not.toHaveAttribute('disabled');
-
-    // have to click label or it won't work
-    let dogs = getByLabelText('Dogs');
-    let cats = getByLabelText('Cats');
-    await user.click(cats);
-    expect(onChangeSpy).not.toHaveBeenCalled();
-    expect(radios[0].checked).toBe(false);
-    expect(radios[1].checked).toBe(false);
-    expect(radios[2].checked).toBe(false);
-    await user.click(dogs);
-    expect(onChangeSpy).toHaveBeenCalledTimes(1);
-    expect(onChangeSpy).toHaveBeenCalledWith('dogs');
-    expect(radios[0].checked).toBe(true);
-    expect(radios[1].checked).toBe(false);
-    expect(radios[2].checked).toBe(false);
-  });
+      let groupName = radios[0].getAttribute('name');
+      radios.forEach(radio => {
+        expect(radio).toHaveAttribute('name', groupName);
+      });
+    }
+  );
 
   it.each`
-    Name         | ComponentGroup  | Component  | groupProps                                   | radioProps
-    ${'Radio'}   | ${RadioGroup}   | ${Radio}   | ${{isReadOnly: true, onChange: onChangeSpy}} | ${[{}, {}, {}]}
+    Name       | ComponentGroup | Component | groupProps              | radioProps
+    ${'Radio'} | ${RadioGroup}  | ${Radio}  | ${{name: 'customName'}} | ${[{}, {}, {}]}
+  `(
+    '$Name can be given a group name',
+    function ({ComponentGroup, Component, groupProps, radioProps}) {
+      let {getAllByRole} = renderRadioGroup(ComponentGroup, Component, groupProps, radioProps);
+
+      let radios = getAllByRole('radio');
+      radios.forEach(radio => {
+        expect(radio).toHaveAttribute('name', groupProps.name);
+      });
+    }
+  );
+
+  it.each`
+    Name       | ComponentGroup | Component | groupProps | radioProps
+    ${'Radio'} | ${RadioGroup}  | ${Radio}  | ${{}}      | ${[{}, {}, {}]}
+  `(
+    '$Name can be disabled via the Provider',
+    function ({ComponentGroup, Component, groupProps, radioProps}) {
+      let {getByRole, getAllByRole} = render(
+        <Provider theme={theme} isDisabled>
+          <ComponentGroup aria-label="favorite pet" {...groupProps}>
+            <Component {...radioProps[0]} value="dogs">
+              Dogs
+            </Component>
+            <Component {...radioProps[1]} value="cats">
+              Cats
+            </Component>
+            <Component {...radioProps[2]} value="dragons">
+              Dragons
+            </Component>
+          </ComponentGroup>
+        </Provider>
+      );
+
+      let radioGroup = getByRole('radiogroup');
+      let radios = getAllByRole('radio');
+      expect(radioGroup).toBeTruthy();
+      expect(radios.length).toBe(3);
+      expect(radios[0]).toHaveAttribute('disabled');
+      expect(radios[1]).toHaveAttribute('disabled');
+      expect(radios[2]).toHaveAttribute('disabled');
+    }
+  );
+
+  it.each`
+    Name       | ComponentGroup | Component | groupProps                 | radioProps
+    ${'Radio'} | ${RadioGroup}  | ${Radio}  | ${{onChange: onChangeSpy}} | ${[{}, {isDisabled: true}, {}]}
+  `(
+    '$Name can have a single disabled radio',
+    async function ({ComponentGroup, Component, groupProps, radioProps}) {
+      let {getByRole, getByLabelText, getAllByRole} = renderRadioGroup(
+        ComponentGroup,
+        Component,
+        groupProps,
+        radioProps
+      );
+
+      let radioGroup = getByRole('radiogroup');
+      let radios = getAllByRole('radio');
+      expect(radioGroup).toBeTruthy();
+      expect(radios.length).toBe(3);
+      expect(radios[0]).not.toHaveAttribute('disabled');
+      expect(radios[1]).toHaveAttribute('disabled');
+      expect(radios[2]).not.toHaveAttribute('disabled');
+
+      // have to click label or it won't work
+      let dogs = getByLabelText('Dogs');
+      let cats = getByLabelText('Cats');
+      await user.click(cats);
+      expect(onChangeSpy).not.toHaveBeenCalled();
+      expect(radios[0].checked).toBe(false);
+      expect(radios[1].checked).toBe(false);
+      expect(radios[2].checked).toBe(false);
+      await user.click(dogs);
+      expect(onChangeSpy).toHaveBeenCalledTimes(1);
+      expect(onChangeSpy).toHaveBeenCalledWith('dogs');
+      expect(radios[0].checked).toBe(true);
+      expect(radios[1].checked).toBe(false);
+      expect(radios[2].checked).toBe(false);
+    }
+  );
+
+  it.each`
+    Name       | ComponentGroup | Component | groupProps                                   | radioProps
+    ${'Radio'} | ${RadioGroup}  | ${Radio}  | ${{isReadOnly: true, onChange: onChangeSpy}} | ${[{}, {}, {}]}
   `('$Name can be readonly', async function ({ComponentGroup, Component, groupProps, radioProps}) {
-    let {getByRole, getAllByRole, getByLabelText} = renderRadioGroup(ComponentGroup, Component, groupProps, radioProps);
+    let {getByRole, getAllByRole, getByLabelText} = renderRadioGroup(
+      ComponentGroup,
+      Component,
+      groupProps,
+      radioProps
+    );
 
     let radioGroup = getByRole('radiogroup');
     let radios = getAllByRole('radio');
@@ -261,72 +309,96 @@ describe('Radios', function () {
   });
 
   it.each`
-    Name         | ComponentGroup  | Component  | groupProps                 | radioProps
-    ${'Radio'}   | ${RadioGroup}   | ${Radio}   | ${{onChange: onChangeSpy}} | ${[{isReadOnly: true}, {}, {}]}
-  `('$Name individual radios cannot be readonly', async function ({ComponentGroup, Component, groupProps, radioProps}) {
-    let {getByRole, getAllByRole, getByLabelText} = renderRadioGroup(ComponentGroup, Component, groupProps, radioProps);
+    Name       | ComponentGroup | Component | groupProps                 | radioProps
+    ${'Radio'} | ${RadioGroup}  | ${Radio}  | ${{onChange: onChangeSpy}} | ${[{isReadOnly: true}, {}, {}]}
+  `(
+    '$Name individual radios cannot be readonly',
+    async function ({ComponentGroup, Component, groupProps, radioProps}) {
+      let {getByRole, getAllByRole, getByLabelText} = renderRadioGroup(
+        ComponentGroup,
+        Component,
+        groupProps,
+        radioProps
+      );
 
-    let radioGroup = getByRole('radiogroup');
-    let radios = getAllByRole('radio');
-    expect(radioGroup).toBeTruthy();
-    expect(radios.length).toBe(3);
-    expect(radios[0]).not.toHaveAttribute('readonly');
-    expect(radios[1]).not.toHaveAttribute('readonly');
-    expect(radios[2]).not.toHaveAttribute('readonly');
+      let radioGroup = getByRole('radiogroup');
+      let radios = getAllByRole('radio');
+      expect(radioGroup).toBeTruthy();
+      expect(radios.length).toBe(3);
+      expect(radios[0]).not.toHaveAttribute('readonly');
+      expect(radios[1]).not.toHaveAttribute('readonly');
+      expect(radios[2]).not.toHaveAttribute('readonly');
 
-    let dogs = getByLabelText('Dogs');
-    await user.click(dogs);
-    expect(onChangeSpy).toHaveBeenCalledTimes(1);
-  });
-
-  it.each`
-    Name         | ComponentGroup  | Component  | groupProps                                                  | radioProps
-    ${'Radio'}   | ${RadioGroup}   | ${Radio}   | ${{defaultValue: 'dragons', onChange: onChangeSpy}}         | ${[{}, {}, {}]}
-  `('$Name can have a default value', async function ({ComponentGroup, Component, groupProps, radioProps}) {
-    let {getByRole, getByLabelText, getAllByRole} = renderRadioGroup(ComponentGroup, Component, groupProps, radioProps);
-
-    let radioGroup = getByRole('radiogroup');
-    let radios = getAllByRole('radio');
-    expect(radioGroup).toBeTruthy();
-    expect(radios.length).toBe(3);
-    expect(onChangeSpy).not.toHaveBeenCalled();
-    expect(radios[0].checked).toBe(false);
-    expect(radios[1].checked).toBe(false);
-    expect(radios[2].checked).toBe(true);
-
-    // have to click label or it won't work
-    let dogs = getByLabelText('Dogs');
-    await user.click(dogs);
-    expect(onChangeSpy).toHaveBeenCalledTimes(1);
-    expect(onChangeSpy).toHaveBeenCalledWith('dogs');
-    expect(radios[0].checked).toBe(true);
-    expect(radios[1].checked).toBe(false);
-    expect(radios[2].checked).toBe(false);
-  });
+      let dogs = getByLabelText('Dogs');
+      await user.click(dogs);
+      expect(onChangeSpy).toHaveBeenCalledTimes(1);
+    }
+  );
 
   it.each`
-    Name         | ComponentGroup  | Component  | groupProps                                           | radioProps
-    ${'Radio'}   | ${RadioGroup}   | ${Radio}   | ${{value: 'dragons', onChange: onChangeSpy}}         | ${[{}, {}, {}]}
-  `('$Name can be controlled', async function ({ComponentGroup, Component, groupProps, radioProps}) {
-    let {getByRole, getByLabelText, getAllByRole} = renderRadioGroup(ComponentGroup, Component, groupProps, radioProps);
+    Name       | ComponentGroup | Component | groupProps                                          | radioProps
+    ${'Radio'} | ${RadioGroup}  | ${Radio}  | ${{defaultValue: 'dragons', onChange: onChangeSpy}} | ${[{}, {}, {}]}
+  `(
+    '$Name can have a default value',
+    async function ({ComponentGroup, Component, groupProps, radioProps}) {
+      let {getByRole, getByLabelText, getAllByRole} = renderRadioGroup(
+        ComponentGroup,
+        Component,
+        groupProps,
+        radioProps
+      );
 
-    let radioGroup = getByRole('radiogroup');
-    let radios = getAllByRole('radio');
-    expect(radioGroup).toBeTruthy();
-    expect(radios.length).toBe(3);
-    expect(onChangeSpy).not.toHaveBeenCalled();
-    expect(radios[0].checked).toBe(false);
-    expect(radios[1].checked).toBe(false);
-    expect(radios[2].checked).toBe(true);
+      let radioGroup = getByRole('radiogroup');
+      let radios = getAllByRole('radio');
+      expect(radioGroup).toBeTruthy();
+      expect(radios.length).toBe(3);
+      expect(onChangeSpy).not.toHaveBeenCalled();
+      expect(radios[0].checked).toBe(false);
+      expect(radios[1].checked).toBe(false);
+      expect(radios[2].checked).toBe(true);
 
-    let dogs = getByLabelText('Dogs');
-    await user.click(dogs);
-    expect(onChangeSpy).toHaveBeenCalledTimes(1);
-    expect(onChangeSpy).toHaveBeenCalledWith('dogs');
-    expect(radios[0].checked).toBe(false);
-    expect(radios[1].checked).toBe(false);
-    expect(radios[2].checked).toBe(true);
-  });
+      // have to click label or it won't work
+      let dogs = getByLabelText('Dogs');
+      await user.click(dogs);
+      expect(onChangeSpy).toHaveBeenCalledTimes(1);
+      expect(onChangeSpy).toHaveBeenCalledWith('dogs');
+      expect(radios[0].checked).toBe(true);
+      expect(radios[1].checked).toBe(false);
+      expect(radios[2].checked).toBe(false);
+    }
+  );
+
+  it.each`
+    Name       | ComponentGroup | Component | groupProps                                   | radioProps
+    ${'Radio'} | ${RadioGroup}  | ${Radio}  | ${{value: 'dragons', onChange: onChangeSpy}} | ${[{}, {}, {}]}
+  `(
+    '$Name can be controlled',
+    async function ({ComponentGroup, Component, groupProps, radioProps}) {
+      let {getByRole, getByLabelText, getAllByRole} = renderRadioGroup(
+        ComponentGroup,
+        Component,
+        groupProps,
+        radioProps
+      );
+
+      let radioGroup = getByRole('radiogroup');
+      let radios = getAllByRole('radio');
+      expect(radioGroup).toBeTruthy();
+      expect(radios.length).toBe(3);
+      expect(onChangeSpy).not.toHaveBeenCalled();
+      expect(radios[0].checked).toBe(false);
+      expect(radios[1].checked).toBe(false);
+      expect(radios[2].checked).toBe(true);
+
+      let dogs = getByLabelText('Dogs');
+      await user.click(dogs);
+      expect(onChangeSpy).toHaveBeenCalledTimes(1);
+      expect(onChangeSpy).toHaveBeenCalledWith('dogs');
+      expect(radios[0].checked).toBe(false);
+      expect(radios[1].checked).toBe(false);
+      expect(radios[2].checked).toBe(true);
+    }
+  );
 
   // don't need to test keyboard interactions, the above tests ensure that all the right things are in place
   // for the browser to handle it for us
@@ -354,13 +426,17 @@ describe('Radios', function () {
   });
 
   it('v3 Radio supports aria-label', () => {
-    let {getAllByRole} = renderRadioGroup(RadioGroup, Radio, {label: 'Favorite Pet'}, [{'aria-label': 'Favorite Pet'}]);
+    let {getAllByRole} = renderRadioGroup(RadioGroup, Radio, {label: 'Favorite Pet'}, [
+      {'aria-label': 'Favorite Pet'}
+    ]);
     let radios = getAllByRole('radio');
     expect(radios[0]).toHaveAttribute('aria-label', 'Favorite Pet');
   });
 
   it('v3 Radios supports custom props', () => {
-    let {getAllByRole} = renderRadioGroup(RadioGroup, Radio, {label: 'Favorite Pet'}, [{'data-testid': 'test'}]);
+    let {getAllByRole} = renderRadioGroup(RadioGroup, Radio, {label: 'Favorite Pet'}, [
+      {'data-testid': 'test'}
+    ]);
     let radios = getAllByRole('radio');
     expect(radios[0]).toHaveAttribute('data-testid', 'test');
   });
@@ -372,26 +448,46 @@ describe('Radios', function () {
   });
 
   it('v3 RadioGroup sets aria-orientation based on the orientation prop', () => {
-    let {getByRole} = renderRadioGroup(RadioGroup, Radio, {label: 'Favorite Pet', orientation: 'horizontal'}, []);
+    let {getByRole} = renderRadioGroup(
+      RadioGroup,
+      Radio,
+      {label: 'Favorite Pet', orientation: 'horizontal'},
+      []
+    );
     let radioGroup = getByRole('radiogroup');
     expect(radioGroup).toHaveAttribute('aria-orientation', 'horizontal');
   });
 
   it('v3 RadioGroup sets aria-invalid when isInvalid', () => {
-    let {getByRole} = renderRadioGroup(RadioGroup, Radio, {label: 'Favorite Pet', isInvalid: true}, []);
+    let {getByRole} = renderRadioGroup(
+      RadioGroup,
+      Radio,
+      {label: 'Favorite Pet', isInvalid: true},
+      []
+    );
     let radioGroup = getByRole('radiogroup');
     expect(radioGroup).toHaveAttribute('aria-invalid', 'true');
   });
 
   it('v3 RadioGroup passes through aria-errormessage', () => {
-    let {getByRole} = renderRadioGroup(RadioGroup, Radio, {label: 'Favorite Pet', isInvalid: true, 'aria-errormessage': 'test'}, []);
+    let {getByRole} = renderRadioGroup(
+      RadioGroup,
+      Radio,
+      {label: 'Favorite Pet', isInvalid: true, 'aria-errormessage': 'test'},
+      []
+    );
     let radioGroup = getByRole('radiogroup');
     expect(radioGroup).toHaveAttribute('aria-invalid', 'true');
     expect(radioGroup).toHaveAttribute('aria-errormessage', 'test');
   });
 
   it('v3 RadioGroup sets aria-required when isRequired is true', () => {
-    let {getByRole, getAllByRole} = renderRadioGroup(RadioGroup, Radio, {label: 'Favorite Pet', isRequired: true}, []);
+    let {getByRole, getAllByRole} = renderRadioGroup(
+      RadioGroup,
+      Radio,
+      {label: 'Favorite Pet', isRequired: true},
+      []
+    );
     let radioGroup = getByRole('radiogroup');
     expect(radioGroup).toHaveAttribute('aria-required', 'true');
 
@@ -402,23 +498,42 @@ describe('Radios', function () {
   });
 
   it('v3 RadioGroup sets aria-disabled when isDisabled is true', () => {
-    let {getByRole} = renderRadioGroup(RadioGroup, Radio, {label: 'Favorite Pet', isDisabled: true}, []);
+    let {getByRole} = renderRadioGroup(
+      RadioGroup,
+      Radio,
+      {label: 'Favorite Pet', isDisabled: true},
+      []
+    );
     let radioGroup = getByRole('radiogroup');
     expect(radioGroup).toHaveAttribute('aria-disabled', 'true');
   });
 
   it('should support help text description', function () {
-    let {getByRole} = renderRadioGroup(RadioGroup, Radio, {label: 'Favorite Pet', description: 'Help text'}, []);
+    let {getByRole} = renderRadioGroup(
+      RadioGroup,
+      Radio,
+      {label: 'Favorite Pet', description: 'Help text'},
+      []
+    );
 
     let group = getByRole('radiogroup');
     expect(group).toHaveAttribute('aria-describedby');
 
-    let description = group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+    let description = group
+      .getAttribute('aria-describedby')
+      .split(' ')
+      .map(d => document.getElementById(d).textContent)
+      .join(' ');
     expect(description).toBe('Help text');
   });
 
   it('should support error message', function () {
-    let {getByRole} = renderRadioGroup(RadioGroup, Radio, {label: 'Favorite Pet', errorMessage: 'Error message', isInvalid: true}, []);
+    let {getByRole} = renderRadioGroup(
+      RadioGroup,
+      Radio,
+      {label: 'Favorite Pet', errorMessage: 'Error message', isInvalid: true},
+      []
+    );
 
     let group = getByRole('radiogroup');
     expect(group).toHaveAttribute('aria-describedby');
@@ -501,7 +616,6 @@ describe('Radios', function () {
       radioBehavior.reset();
     });
 
-
     it('does not tab through individual radios', async () => {
       // this test gives a false sense of security, it doesn't catch the problem
       // where all keydown events were being stopped in the radio group
@@ -550,7 +664,9 @@ describe('Radios', function () {
       expect(radios[1]).toHaveAttribute('tabIndex', '0');
       expect(radios[2]).toHaveAttribute('tabIndex', '0');
 
-      act(() => {radios[0].focus();});
+      act(() => {
+        radios[0].focus();
+      });
       expect(document.activeElement).toBe(radios[0]);
 
       await user.click(radios[1]);
@@ -588,9 +704,7 @@ describe('Radios', function () {
           );
         }
 
-        let {getAllByRole} = render(
-          <ControlledRadioGroup />
-        );
+        let {getAllByRole} = render(<ControlledRadioGroup />);
         let radios = getAllByRole('radio');
         let buttons = getAllByRole('button');
         expect(radios[0]).toHaveAttribute('tabIndex', '0');
@@ -599,14 +713,20 @@ describe('Radios', function () {
         expect(radios[3]).toHaveAttribute('tabIndex', '0');
 
         await user.tab();
-        act(() => {jest.runAllTimers();});
+        act(() => {
+          jest.runAllTimers();
+        });
         expect(document.activeElement).toBe(buttons[0]);
         await user.keyboard('{Enter}');
         await user.tab();
-        act(() => {jest.runAllTimers();});
+        act(() => {
+          jest.runAllTimers();
+        });
         expect(document.activeElement).toBe(radios[1]);
         await user.tab();
-        act(() => {jest.runAllTimers();});
+        act(() => {
+          jest.runAllTimers();
+        });
         expect(document.activeElement).toBe(buttons[1]);
         await user.keyboard('{Enter}');
 
@@ -619,7 +739,9 @@ describe('Radios', function () {
       it('RadioGroup roving tabIndex for autoFocus', async () => {
         let {getAllByRole} = renderRadioGroup(RadioGroup, Radio, {}, [{}, {autoFocus: true}, {}]);
         let radios = getAllByRole('radio');
-        act(() => {jest.runAllTimers();});
+        act(() => {
+          jest.runAllTimers();
+        });
         expect(radios[0]).toHaveAttribute('tabIndex', '-1');
         expect(radios[1]).toHaveAttribute('tabIndex', '0');
         expect(radios[2]).toHaveAttribute('tabIndex', '-1');
@@ -659,22 +781,28 @@ describe('Radios', function () {
 
     let und = null;
     it.each`
-      Name                     | props                | disabledKeys  | orders
-      ${'middle disabled'}     | ${{locale: 'de-DE'}} | ${[1]}        | ${[{action: tab, result: () => ['0', und, '-1']}, {action: pressArrowRight, result: () => ['-1', und, '0']}, {action: pressArrowRight, result: () => ['0', und, '-1']}, {action: pressArrowLeft, result: () => ['-1', und, '0']}, {action: pressArrowLeft, result: () => ['0', und, '-1']}]}
-      ${'first disabled'}      | ${{locale: 'de-DE'}} | ${[0]}        | ${[{action: tab, result: () => [und, '0', '-1']}, {action: pressArrowRight, result: () => [und, '-1', '0']}, {action: pressArrowRight, result: () => [und, '0', '-1']}, {action: pressArrowLeft, result: () => [und, '-1', '0']}, {action: pressArrowLeft, result: () => [und, '0', '-1']}]}
-      ${'last disabled'}       | ${{locale: 'de-DE'}} | ${[2]}        | ${[{action: tab, result: () => ['0', '-1', und]}, {action: pressArrowRight, result: () => ['-1', '0', und]}, {action: pressArrowRight, result: () => ['0', '-1', und]}, {action: pressArrowLeft, result: () => ['-1', '0', und]}, {action: pressArrowLeft, result: () => ['0', '-1', und]}]}
-      ${'1&2 disabled'}        | ${{locale: 'de-DE'}} | ${[0, 1]}     | ${[{action: tab, result: () => [und, und, '0']}, {action: pressArrowRight, result: () => [und, und, '0']}, {action: pressArrowRight, result: () => [und, und, '0']}, {action: pressArrowLeft, result: () => [und, und, '0']}, {action: pressArrowLeft, result: () => [und, und, '0']}]}
-      ${'rtl middle disabled'} | ${{locale: 'ar-AE'}} | ${[1]}        | ${[{action: tab, result: () => ['0', und, '-1']}, {action: pressArrowRight, result: () => ['-1', und, '0']}, {action: pressArrowRight, result: () => ['0', und, '-1']}, {action: pressArrowLeft, result: () => ['-1', und, '0']}, {action: pressArrowLeft, result: () => ['0', und, '-1']}]}
-      ${'rtl first disabled'}  | ${{locale: 'ar-AE'}} | ${[0]}        | ${[{action: tab, result: () => [und, '0', '-1']}, {action: pressArrowRight, result: () => [und, '-1', '0']}, {action: pressArrowRight, result: () => [und, '0', '-1']}, {action: pressArrowLeft, result: () => [und, '-1', '0']}, {action: pressArrowLeft, result: () => [und, '0', '-1']}]}
-      ${'rtl last disabled'}   | ${{locale: 'ar-AE'}} | ${[2]}        | ${[{action: tab, result: () => ['0', '-1', und]}, {action: pressArrowRight, result: () => ['-1', '0', und]}, {action: pressArrowRight, result: () => ['0', '-1', und]}, {action: pressArrowLeft, result: () => ['-1', '0', und]}, {action: pressArrowLeft, result: () => ['0', '-1', und]}]}
-      ${'rtl 1&2 disabled'}    | ${{locale: 'ar-AE'}} | ${[0, 1]}     | ${[{action: tab, result: () => [und, und, '0']}, {action: pressArrowRight, result: () => [und, und, '0']}, {action: pressArrowRight, result: () => [und, und, '0']}, {action: pressArrowLeft, result: () => [und, und, '0']}, {action: pressArrowLeft, result: () => [und, und, '0']}]}
+      Name                     | props                | disabledKeys | orders
+      ${'middle disabled'}     | ${{locale: 'de-DE'}} | ${[1]}       | ${[{action: tab, result: () => ['0', und, '-1']}, {action: pressArrowRight, result: () => ['-1', und, '0']}, {action: pressArrowRight, result: () => ['0', und, '-1']}, {action: pressArrowLeft, result: () => ['-1', und, '0']}, {action: pressArrowLeft, result: () => ['0', und, '-1']}]}
+      ${'first disabled'}      | ${{locale: 'de-DE'}} | ${[0]}       | ${[{action: tab, result: () => [und, '0', '-1']}, {action: pressArrowRight, result: () => [und, '-1', '0']}, {action: pressArrowRight, result: () => [und, '0', '-1']}, {action: pressArrowLeft, result: () => [und, '-1', '0']}, {action: pressArrowLeft, result: () => [und, '0', '-1']}]}
+      ${'last disabled'}       | ${{locale: 'de-DE'}} | ${[2]}       | ${[{action: tab, result: () => ['0', '-1', und]}, {action: pressArrowRight, result: () => ['-1', '0', und]}, {action: pressArrowRight, result: () => ['0', '-1', und]}, {action: pressArrowLeft, result: () => ['-1', '0', und]}, {action: pressArrowLeft, result: () => ['0', '-1', und]}]}
+      ${'1&2 disabled'}        | ${{locale: 'de-DE'}} | ${[0, 1]}    | ${[{action: tab, result: () => [und, und, '0']}, {action: pressArrowRight, result: () => [und, und, '0']}, {action: pressArrowRight, result: () => [und, und, '0']}, {action: pressArrowLeft, result: () => [und, und, '0']}, {action: pressArrowLeft, result: () => [und, und, '0']}]}
+      ${'rtl middle disabled'} | ${{locale: 'ar-AE'}} | ${[1]}       | ${[{action: tab, result: () => ['0', und, '-1']}, {action: pressArrowRight, result: () => ['-1', und, '0']}, {action: pressArrowRight, result: () => ['0', und, '-1']}, {action: pressArrowLeft, result: () => ['-1', und, '0']}, {action: pressArrowLeft, result: () => ['0', und, '-1']}]}
+      ${'rtl first disabled'}  | ${{locale: 'ar-AE'}} | ${[0]}       | ${[{action: tab, result: () => [und, '0', '-1']}, {action: pressArrowRight, result: () => [und, '-1', '0']}, {action: pressArrowRight, result: () => [und, '0', '-1']}, {action: pressArrowLeft, result: () => [und, '-1', '0']}, {action: pressArrowLeft, result: () => [und, '0', '-1']}]}
+      ${'rtl last disabled'}   | ${{locale: 'ar-AE'}} | ${[2]}       | ${[{action: tab, result: () => ['0', '-1', und]}, {action: pressArrowRight, result: () => ['-1', '0', und]}, {action: pressArrowRight, result: () => ['0', '-1', und]}, {action: pressArrowLeft, result: () => ['-1', '0', und]}, {action: pressArrowLeft, result: () => ['0', '-1', und]}]}
+      ${'rtl 1&2 disabled'}    | ${{locale: 'ar-AE'}} | ${[0, 1]}    | ${[{action: tab, result: () => [und, und, '0']}, {action: pressArrowRight, result: () => [und, und, '0']}, {action: pressArrowRight, result: () => [und, und, '0']}, {action: pressArrowLeft, result: () => [und, und, '0']}, {action: pressArrowLeft, result: () => [und, und, '0']}]}
     `('$Name skips disabled radios', async function ({Name, props, disabledKeys, orders}) {
       let tree = render(
         <Provider theme={theme} locale={props.locale}>
           <RadioGroup aria-label="favorite pet" orientation="horizontal">
-            <Radio value="dogs" isDisabled={disabledKeys.includes(0)}>Dogs</Radio>
-            <Radio value="cats" isDisabled={disabledKeys.includes(1)}>Cats</Radio>
-            <Radio value="dragons" isDisabled={disabledKeys.includes(2)}>Dragons</Radio>
+            <Radio value="dogs" isDisabled={disabledKeys.includes(0)}>
+              Dogs
+            </Radio>
+            <Radio value="cats" isDisabled={disabledKeys.includes(1)}>
+              Cats
+            </Radio>
+            <Radio value="dragons" isDisabled={disabledKeys.includes(2)}>
+              Dragons
+            </Radio>
           </RadioGroup>
         </Provider>
       );
@@ -697,10 +825,18 @@ describe('Radios', function () {
       let tree = render(
         <Provider theme={theme} locale={props.locale}>
           <RadioGroup aria-label="favorite pet" orientation="horizontal">
-            <Radio value="dogs" isDisabled={disabledKeys.includes(0)}>Dogs</Radio>
-            <Radio value="cats" isDisabled={disabledKeys.includes(1)}>Cats</Radio>
-            <Radio value="dragons" isDisabled={disabledKeys.includes(2)}>Dragons</Radio>
-            <Radio value="unicorns" isDisabled={disabledKeys.includes(3)}>Unicorns</Radio>
+            <Radio value="dogs" isDisabled={disabledKeys.includes(0)}>
+              Dogs
+            </Radio>
+            <Radio value="cats" isDisabled={disabledKeys.includes(1)}>
+              Cats
+            </Radio>
+            <Radio value="dragons" isDisabled={disabledKeys.includes(2)}>
+              Dragons
+            </Radio>
+            <Radio value="unicorns" isDisabled={disabledKeys.includes(3)}>
+              Unicorns
+            </Radio>
           </RadioGroup>
         </Provider>
       );
@@ -741,10 +877,14 @@ describe('Radios', function () {
           expect(input.validity.valid).toBe(false);
         }
 
-        act(() => {getByTestId('form').checkValidity();});
+        act(() => {
+          getByTestId('form').checkValidity();
+        });
 
         expect(group).toHaveAttribute('aria-describedby');
-        expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
+        expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent(
+          'Constraints not satisfied'
+        );
         expect(document.activeElement).toBe(radios[0]);
 
         await user.click(radios[0]);
@@ -778,10 +918,14 @@ describe('Radios', function () {
           expect(input.validity.valid).toBe(false);
         }
 
-        act(() => {getByTestId('form').checkValidity();});
+        act(() => {
+          getByTestId('form').checkValidity();
+        });
 
         expect(group).toHaveAttribute('aria-describedby');
-        expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
+        expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent(
+          'Constraints not satisfied'
+        );
         expect(document.activeElement).toBe(radios[0]);
 
         await user.keyboard('[ArrowDown]');
@@ -796,7 +940,11 @@ describe('Radios', function () {
         let {getAllByRole, getByRole, getByTestId} = render(
           <Provider theme={theme}>
             <Form data-testid="form">
-              <RadioGroup aria-label="favorite pet" defaultValue="dragons" validationBehavior="native" validate={v => v === 'dragons' ? 'Too scary' : null}>
+              <RadioGroup
+                aria-label="favorite pet"
+                defaultValue="dragons"
+                validationBehavior="native"
+                validate={v => (v === 'dragons' ? 'Too scary' : null)}>
                 <Radio value="dogs">Dogs</Radio>
                 <Radio value="cats">Cats</Radio>
                 <Radio value="dragons">Dragons</Radio>
@@ -815,10 +963,14 @@ describe('Radios', function () {
           expect(input.validity.valid).toBe(false);
         }
 
-        act(() => {getByTestId('form').checkValidity();});
+        act(() => {
+          getByTestId('form').checkValidity();
+        });
 
         expect(group).toHaveAttribute('aria-describedby');
-        expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent(['Too scary']);
+        expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent([
+          'Too scary'
+        ]);
         expect(document.activeElement).toBe(radios[0]);
 
         await user.click(radios[0]);
@@ -860,7 +1012,9 @@ describe('Radios', function () {
         await user.click(getByRole('button'));
 
         expect(group).toHaveAttribute('aria-describedby');
-        expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent('You must choose a pet.');
+        expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent(
+          'You must choose a pet.'
+        );
 
         let radios = getAllByRole('radio');
         for (let input of radios) {
@@ -878,7 +1032,14 @@ describe('Radios', function () {
         let {getByRole, getByTestId} = render(
           <Provider theme={theme}>
             <Form data-testid="form">
-              <RadioGroup aria-label="favorite pet" name="pet" isRequired validationBehavior="native" errorMessage={e => e.validationDetails.valueMissing ? 'Please select a pet' : null}>
+              <RadioGroup
+                aria-label="favorite pet"
+                name="pet"
+                isRequired
+                validationBehavior="native"
+                errorMessage={e =>
+                  e.validationDetails.valueMissing ? 'Please select a pet' : null
+                }>
                 <Radio value="dogs">Dogs</Radio>
                 <Radio value="cats">Cats</Radio>
                 <Radio value="dragons">Dragons</Radio>
@@ -890,9 +1051,13 @@ describe('Radios', function () {
         let group = getByRole('radiogroup');
         expect(group).not.toHaveAttribute('aria-describedby');
 
-        act(() => {getByTestId('form').checkValidity();});
+        act(() => {
+          getByTestId('form').checkValidity();
+        });
         expect(group).toHaveAttribute('aria-describedby');
-        expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent('Please select a pet');
+        expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent(
+          'Please select a pet'
+        );
       });
     });
 
@@ -900,7 +1065,10 @@ describe('Radios', function () {
       it('supports validate function', async () => {
         let {getAllByRole, getByRole} = render(
           <Provider theme={theme}>
-            <RadioGroup aria-label="favorite pet" defaultValue="dragons" validate={v => v === 'dragons' ? 'Too scary' : null}>
+            <RadioGroup
+              aria-label="favorite pet"
+              defaultValue="dragons"
+              validate={v => (v === 'dragons' ? 'Too scary' : null)}>
               <Radio value="dogs">Dogs</Radio>
               <Radio value="cats">Cats</Radio>
               <Radio value="dragons">Dragons</Radio>
@@ -911,7 +1079,9 @@ describe('Radios', function () {
         let group = getByRole('radiogroup');
         expect(group).toHaveAttribute('aria-describedby');
         expect(group).toHaveAttribute('aria-invalid', 'true');
-        expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent('Too scary');
+        expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent(
+          'Too scary'
+        );
 
         let radios = getAllByRole('radio');
         for (let input of radios) {
@@ -939,7 +1109,9 @@ describe('Radios', function () {
         let group = getByRole('radiogroup');
         expect(group).toHaveAttribute('aria-describedby');
         expect(group).toHaveAttribute('aria-invalid', 'true');
-        expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent('You must choose a pet');
+        expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent(
+          'You must choose a pet'
+        );
 
         let radios = getAllByRole('radio');
 
@@ -952,42 +1124,52 @@ describe('Radios', function () {
 
   describe('test util tests', () => {
     it.each`
-      Name                    | props
-      ${'ltr + vertical'}     | ${{locale: 'de-DE', orientation: 'vertical'}}
-      ${'rtl + verfical'}     | ${{locale: 'ar-AE', orientation: 'vertical'}}
-      ${'ltr + horizontal'}   | ${{locale: 'de-DE', orientation: 'horizontal'}}
-      ${'rtl + horizontal'}   | ${{locale: 'ar-AE', orientation: 'horizontal'}}
-    `('$Name should select the correct radio via keyboard regardless of orientation and disabled radios', async function ({Name, props}) {
-      let {getByRole} = render(
-        <Provider theme={theme} locale={props.locale}>
-          <RadioGroup aria-label="favorite pet" orientation={props.orientation}>
-            <Radio value="dogs">Dogs</Radio>
-            <Radio value="cats" isDisabled>Cats</Radio>
-            <Radio value="dragons" isDisabled>Dragons</Radio>
-            <Radio value="unicorns">Unicorns</Radio>
-            <Radio value="chocobo">Chocobo</Radio>
-          </RadioGroup>
-        </Provider>
-      );
-      let direction = props.locale === 'ar-AE' ? 'rtl' : 'ltr';
-      let radioGroupTester = testUtilUser.createTester('RadioGroup', {root: getByRole('radiogroup'), direction});
-      let radios = radioGroupTester.radios;
-      await radioGroupTester.triggerRadio({radio: radios[0]});
-      expect(radios[0]).toBeChecked();
+      Name                  | props
+      ${'ltr + vertical'}   | ${{locale: 'de-DE', orientation: 'vertical'}}
+      ${'rtl + verfical'}   | ${{locale: 'ar-AE', orientation: 'vertical'}}
+      ${'ltr + horizontal'} | ${{locale: 'de-DE', orientation: 'horizontal'}}
+      ${'rtl + horizontal'} | ${{locale: 'ar-AE', orientation: 'horizontal'}}
+    `(
+      '$Name should select the correct radio via keyboard regardless of orientation and disabled radios',
+      async function ({Name, props}) {
+        let {getByRole} = render(
+          <Provider theme={theme} locale={props.locale}>
+            <RadioGroup aria-label="favorite pet" orientation={props.orientation}>
+              <Radio value="dogs">Dogs</Radio>
+              <Radio value="cats" isDisabled>
+                Cats
+              </Radio>
+              <Radio value="dragons" isDisabled>
+                Dragons
+              </Radio>
+              <Radio value="unicorns">Unicorns</Radio>
+              <Radio value="chocobo">Chocobo</Radio>
+            </RadioGroup>
+          </Provider>
+        );
+        let direction = props.locale === 'ar-AE' ? 'rtl' : 'ltr';
+        let radioGroupTester = testUtilUser.createTester('RadioGroup', {
+          root: getByRole('radiogroup'),
+          direction
+        });
+        let radios = radioGroupTester.radios;
+        await radioGroupTester.triggerRadio({radio: radios[0]});
+        expect(radios[0]).toBeChecked();
 
-      await radioGroupTester.triggerRadio({radio: 4, interactionType: 'keyboard'});
-      expect(radios[4]).toBeChecked();
+        await radioGroupTester.triggerRadio({radio: 4, interactionType: 'keyboard'});
+        expect(radios[4]).toBeChecked();
 
-      let radio4 = radioGroupTester.findRadio({radioIndexOrText: 3});
-      await radioGroupTester.triggerRadio({radio: radio4, interactionType: 'keyboard'});
-      expect(radios[3]).toBeChecked();
+        let radio4 = radioGroupTester.findRadio({radioIndexOrText: 3});
+        await radioGroupTester.triggerRadio({radio: radio4, interactionType: 'keyboard'});
+        expect(radios[3]).toBeChecked();
 
-      await radioGroupTester.triggerRadio({radio: 'Dogs', interactionType: 'mouse'});
-      expect(radios[0]).toBeChecked();
+        await radioGroupTester.triggerRadio({radio: 'Dogs', interactionType: 'mouse'});
+        expect(radios[0]).toBeChecked();
 
-      let radio5 = radioGroupTester.findRadio({radioIndexOrText: 'Chocobo'});
-      await radioGroupTester.triggerRadio({radio: radio5, interactionType: 'mouse'});
-      expect(radios[4]).toBeChecked();
-    });
+        let radio5 = radioGroupTester.findRadio({radioIndexOrText: 'Chocobo'});
+        await radioGroupTester.triggerRadio({radio: radio5, interactionType: 'mouse'});
+        expect(radios[4]).toBeChecked();
+      }
+    );
   });
 });
