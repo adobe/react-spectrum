@@ -17,12 +17,21 @@ import type {DraggableCollectionState} from 'react-stately/useDraggableCollectio
 import type {DroppableCollectionState} from 'react-stately/useDroppableCollectionState';
 import type {ItemDropTarget, Key} from '@react-types/shared';
 import type {MultipleSelectionManager} from 'react-stately/useMultipleSelectionState';
-import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, useCallback, useContext, useMemo} from 'react';
+import React, {
+  createContext,
+  ForwardedRef,
+  forwardRef,
+  JSX,
+  ReactNode,
+  useCallback,
+  useContext,
+  useMemo
+} from 'react';
 
 export interface DragAndDropContextValue {
-  dragAndDropHooks?: DragAndDropHooks,
-  dragState?: DraggableCollectionState,
-  dropState?: DroppableCollectionState
+  dragAndDropHooks?: DragAndDropHooks;
+  dragState?: DraggableCollectionState;
+  dropState?: DroppableCollectionState;
 }
 
 export const DragAndDropContext = createContext<DragAndDropContextValue>({});
@@ -33,45 +42,63 @@ export interface DropIndicatorRenderProps {
    * Whether the drop indicator is currently the active drop target.
    * @selector [data-drop-target]
    */
-  isDropTarget: boolean
+  isDropTarget: boolean;
 }
 
-export interface DropIndicatorProps extends Omit<AriaDropIndicatorProps, 'activateButtonRef'>, RenderProps<DropIndicatorRenderProps> {
+export interface DropIndicatorProps
+  extends Omit<AriaDropIndicatorProps, 'activateButtonRef'>, RenderProps<DropIndicatorRenderProps> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-DropIndicator'
    */
-  className?: ClassNameOrFunction<DropIndicatorRenderProps>
+  className?: ClassNameOrFunction<DropIndicatorRenderProps>;
 }
 interface DropIndicatorContextValue {
-  render: (props: DropIndicatorProps, ref: ForwardedRef<HTMLElement>) => ReactNode
+  render: (props: DropIndicatorProps, ref: ForwardedRef<HTMLElement>) => ReactNode;
 }
 
 /**
  * A DropIndicator is rendered between items in a collection to indicate where dropped data will be inserted.
  */
-export const DropIndicator = forwardRef(function DropIndicator(props: DropIndicatorProps, ref: ForwardedRef<HTMLElement>): JSX.Element {
+export const DropIndicator = forwardRef(function DropIndicator(
+  props: DropIndicatorProps,
+  ref: ForwardedRef<HTMLElement>
+): JSX.Element {
   let {render} = useContext(DropIndicatorContext)!;
   return <>{render(props, ref)}</>;
 });
 
-type RenderDropIndicatorRetValue = ((target: ItemDropTarget) => ReactNode | undefined) | undefined
+type RenderDropIndicatorRetValue = ((target: ItemDropTarget) => ReactNode | undefined) | undefined;
 
-export function useRenderDropIndicator(dragAndDropHooks?: DragAndDropHooks, dropState?: DroppableCollectionState): RenderDropIndicatorRetValue {
+export function useRenderDropIndicator(
+  dragAndDropHooks?: DragAndDropHooks,
+  dropState?: DroppableCollectionState
+): RenderDropIndicatorRetValue {
   let renderDropIndicator = dragAndDropHooks?.renderDropIndicator;
   let isVirtualDragging = dragAndDropHooks?.isVirtualDragging?.();
-  let fn = useCallback((target: ItemDropTarget) => {
-    // Only show drop indicators when virtual dragging or this is the current drop target.
-    if (isVirtualDragging || dropState?.isDropTarget(target)) {
-      return renderDropIndicator ? renderDropIndicator(target) : <DropIndicator target={target} />;
-    }
-    // We invalidate whenever the target changes.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dropState?.target, isVirtualDragging, renderDropIndicator]);
+  let fn = useCallback(
+    (target: ItemDropTarget) => {
+      // Only show drop indicators when virtual dragging or this is the current drop target.
+      if (isVirtualDragging || dropState?.isDropTarget(target)) {
+        return renderDropIndicator ? (
+          renderDropIndicator(target)
+        ) : (
+          <DropIndicator target={target} />
+        );
+      }
+      // We invalidate whenever the target changes.
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    },
+    [dropState?.target, isVirtualDragging, renderDropIndicator]
+  );
   return dragAndDropHooks?.useDropIndicator ? fn : undefined;
 }
 
-export function useDndPersistedKeys(selectionManager: MultipleSelectionManager, dragAndDropHooks?: DragAndDropHooks, dropState?: DroppableCollectionState): Set<Key> {
+export function useDndPersistedKeys(
+  selectionManager: MultipleSelectionManager,
+  dragAndDropHooks?: DragAndDropHooks,
+  dropState?: DroppableCollectionState
+): Set<Key> {
   // Persist the focused key and the drop target key.
   let focusedKey = selectionManager.focusedKey;
   let dropTargetKey: Key | null | undefined = null;
@@ -102,7 +129,7 @@ export function useDndPersistedKeys(selectionManager: MultipleSelectionManager, 
           if ((node.level ?? 0) <= targetLevel) {
             break;
           }
-          
+
           lastDescendantKey = nextKey;
           nextKey = dropState.collection.getKeyAfter(nextKey);
         }

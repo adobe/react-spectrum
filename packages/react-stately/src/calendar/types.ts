@@ -15,110 +15,112 @@ import {RangeValue, ValidationState} from '@react-types/shared';
 import {ReactNode} from 'react';
 
 export type DateValue = CalendarDate | CalendarDateTime | ZonedDateTime;
-export type MappedDateValue<T> =
-  T extends ZonedDateTime ? ZonedDateTime :
-  T extends CalendarDateTime ? CalendarDateTime :
-  T extends CalendarDate ? CalendarDate :
-  never;
+export type MappedDateValue<T> = T extends ZonedDateTime
+  ? ZonedDateTime
+  : T extends CalendarDateTime
+    ? CalendarDateTime
+    : T extends CalendarDate
+      ? CalendarDate
+      : never;
 
 export type PageBehavior = 'single' | 'visible';
 export interface CalendarPropsBase {
   /** The minimum allowed date that a user may select. */
-  minValue?: DateValue | null,
+  minValue?: DateValue | null;
   /** The maximum allowed date that a user may select. */
-  maxValue?: DateValue | null,
+  maxValue?: DateValue | null;
   /**
    * Whether the calendar is disabled.
    * @default false
    */
-  isDisabled?: boolean,
+  isDisabled?: boolean;
   /**
    * Whether the calendar value is immutable.
    * @default false
    */
-  isReadOnly?: boolean,
+  isReadOnly?: boolean;
   /**
    * Whether to automatically focus the calendar when it mounts.
    * @default false
    */
-  autoFocus?: boolean,
+  autoFocus?: boolean;
   /** Controls the currently focused date within the calendar. */
-  focusedValue?: DateValue | null,
+  focusedValue?: DateValue | null;
   /** The date that is focused when the calendar first mounts (uncontrolled). */
-  defaultFocusedValue?: DateValue | null,
+  defaultFocusedValue?: DateValue | null;
   /** Handler that is called when the focused date changes. */
-  onFocusChange?: (date: CalendarDate) => void,
+  onFocusChange?: (date: CalendarDate) => void;
   /**
    * Whether the current selection is valid or invalid according to application logic.
    * @deprecated Use `isInvalid` instead.
    */
-  validationState?: ValidationState,
+  validationState?: ValidationState;
   /** Whether the current selection is invalid according to application logic. */
-  isInvalid?: boolean,
+  isInvalid?: boolean;
   /** An error message to display when the selected value is invalid. */
-  errorMessage?: ReactNode,
+  errorMessage?: ReactNode;
   /**
    * Controls the behavior of paging. Pagination either works by advancing the visible page by visibleDuration (default) or one unit of visibleDuration.
    * @default visible
    */
-  pageBehavior?: PageBehavior,
+  pageBehavior?: PageBehavior;
   /**
    * The day that starts the week.
    */
-  firstDayOfWeek?: 'sun' | 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat',
-  /** 
-   * Determines the alignment of the visible months on initial render based on the current selection or current date if there is no selection. 
+  firstDayOfWeek?: 'sun' | 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat';
+  /**
+   * Determines the alignment of the visible months on initial render based on the current selection or current date if there is no selection.
    * @default 'center'
    */
-  selectionAlignment?: 'start' | 'center' | 'end',
+  selectionAlignment?: 'start' | 'center' | 'end';
   /**
    * The number of weeks in a month. This overrides the default set by the locale.
    */
-  weeksInMonth?: number
+  weeksInMonth?: number;
 }
 
 interface CalendarStateBase {
   /** Whether the calendar is disabled. */
-  readonly isDisabled: boolean,
+  readonly isDisabled: boolean;
   /** Whether the calendar is in a read only state. */
-  readonly isReadOnly: boolean,
+  readonly isReadOnly: boolean;
   /** The visible duration in the calendar. */
-  readonly visibleDuration: DateDuration,
+  readonly visibleDuration: DateDuration;
   /** The date range that is currently visible in the calendar. */
-  readonly visibleRange: RangeValue<CalendarDate>,
+  readonly visibleRange: RangeValue<CalendarDate>;
   /** The minimum allowed date that a user may select. */
-  readonly minValue?: DateValue | null,
+  readonly minValue?: DateValue | null;
   /** The maximum allowed date that a user may select. */
-  readonly maxValue?: DateValue | null,
+  readonly maxValue?: DateValue | null;
   /** The time zone of the dates currently being displayed. */
-  readonly timeZone: string,
+  readonly timeZone: string;
   /**
    * The current validation state of the selected value.
    * @deprecated Use `isValueInvalid` instead.
    */
-  readonly validationState: ValidationState | null,
+  readonly validationState: ValidationState | null;
   /** Whether the calendar is invalid. */
-  readonly isValueInvalid: boolean,
+  readonly isValueInvalid: boolean;
   /** The currently focused date. */
-  readonly focusedDate: CalendarDate,
+  readonly focusedDate: CalendarDate;
   /** Sets the focused date. */
-  setFocusedDate(value: CalendarDate): void,
+  setFocusedDate(value: CalendarDate): void;
   /** Moves focus to the next calendar date. */
-  focusNextDay(): void,
+  focusNextDay(): void;
   /** Moves focus to the previous calendar date. */
-  focusPreviousDay(): void,
+  focusPreviousDay(): void;
   /** Moves focus to the next row of dates, e.g. the next week. */
-  focusNextRow(): void,
+  focusNextRow(): void;
   /** Moves focus to the previous row of dates, e.g. the previous work. */
-  focusPreviousRow(): void,
+  focusPreviousRow(): void;
   /** Moves focus to the next page of dates, e.g. the next month if one month is visible. */
-  focusNextPage(): void,
+  focusNextPage(): void;
   /** Moves focus to the previous page of dates, e.g. the previous month if one month is visible. */
-  focusPreviousPage(): void,
+  focusPreviousPage(): void;
   /** Moves focus to the start of the current section of dates, e.g. the start of the current month. */
-  focusSectionStart(): void,
+  focusSectionStart(): void;
   /** Moves focus to the end of the current section of dates, e.g. the end of the current month month. */
-  focusSectionEnd(): void,
+  focusSectionEnd(): void;
   /**
    * Moves focus to the next section of dates based on what is currently displayed.
    * By default, focus is moved by one of the currently displayed unit. For example, if
@@ -126,7 +128,7 @@ interface CalendarStateBase {
    * If the `larger` option is `true`, the focus is moved by the next larger unit than
    * the one displayed. For example, if months are displayed, then focus moves to the next year.
    */
-  focusNextSection(larger?: boolean): void,
+  focusNextSection(larger?: boolean): void;
   /**
    * Moves focus to the previous section of dates based on what is currently displayed.
    * By default, focus is moved by one of the currently displayed unit. For example, if
@@ -134,71 +136,75 @@ interface CalendarStateBase {
    * If the `larger` option is `true`, the focus is moved by the next larger unit than
    * the one displayed. For example, if months are displayed, then focus moves to the previous year.
    */
-  focusPreviousSection(larger?: boolean): void,
+  focusPreviousSection(larger?: boolean): void;
   /** Selects the currently focused date. */
-  selectFocusedDate(): void,
+  selectFocusedDate(): void;
   /** Selects the given date. */
-  selectDate(date: CalendarDate): void,
+  selectDate(date: CalendarDate): void;
   /** Whether focus is currently within the calendar. */
-  readonly isFocused: boolean,
+  readonly isFocused: boolean;
   /** Sets whether focus is currently within the calendar. */
-  setFocused(value: boolean): void,
+  setFocused(value: boolean): void;
   /** Returns whether the given date is invalid according to the `minValue` and `maxValue` props. */
-  isInvalid(date: CalendarDate): boolean,
+  isInvalid(date: CalendarDate): boolean;
   /** Returns whether the given date is currently selected. */
-  isSelected(date: CalendarDate): boolean,
+  isSelected(date: CalendarDate): boolean;
   /** Returns whether the given date is currently focused. */
-  isCellFocused(date: CalendarDate): boolean,
+  isCellFocused(date: CalendarDate): boolean;
   /** Returns whether the given date is disabled according to the `minValue, `maxValue`, and `isDisabled` props. */
-  isCellDisabled(date: CalendarDate): boolean,
+  isCellDisabled(date: CalendarDate): boolean;
   /** Returns whether the given date is unavailable according to the `isDateUnavailable` prop. */
-  isCellUnavailable(date: CalendarDate): boolean,
+  isCellUnavailable(date: CalendarDate): boolean;
   /** Returns whether the previous visible date range is allowed to be selected according to the `minValue` prop. */
-  isPreviousVisibleRangeInvalid(): boolean,
+  isPreviousVisibleRangeInvalid(): boolean;
   /** Returns whether the next visible date range is allowed to be selected according to the `maxValue` prop. */
-  isNextVisibleRangeInvalid(): boolean,
+  isNextVisibleRangeInvalid(): boolean;
   /**
    * Returns an array of dates in the week index counted from the provided start date, or the first visible date if not given.
    * The returned array always has 7 elements, but may include null if the date does not exist according to the calendar system.
    */
-  getDatesInWeek(weekIndex: number, startDate?: CalendarDate): Array<CalendarDate | null>,
+  getDatesInWeek(weekIndex: number, startDate?: CalendarDate): Array<CalendarDate | null>;
   /** Returns the number of weeks in a month. */
-  getWeeksInMonth(startDate?: CalendarDate): number
+  getWeeksInMonth(startDate?: CalendarDate): number;
 }
 
 export type CalendarSelectionMode = 'single' | 'multiple';
-export type CalendarValueType<T, M extends CalendarSelectionMode> = M extends 'single' ? T : readonly T[];
+export type CalendarValueType<T, M extends CalendarSelectionMode> = M extends 'single'
+  ? T
+  : readonly T[];
 
-export interface CalendarState<M extends CalendarSelectionMode = 'single'> extends CalendarStateBase {
+export interface CalendarState<
+  M extends CalendarSelectionMode = 'single'
+> extends CalendarStateBase {
   /** Whether single or multiple selection is enabled. */
-  readonly selectionMode: M,
+  readonly selectionMode: M;
   /** The currently selected date. */
-  readonly value: CalendarValueType<CalendarDate | null, M>,
+  readonly value: CalendarValueType<CalendarDate | null, M>;
   /** Sets the currently selected date. */
-  setValue(value: CalendarValueType<CalendarDate | null, M>): void
+  setValue(value: CalendarValueType<CalendarDate | null, M>): void;
 }
 
 export interface RangeCalendarState<T extends DateValue = DateValue> extends CalendarStateBase {
   /** The currently selected date range. */
-  readonly value: RangeValue<T> | null,
+  readonly value: RangeValue<T> | null;
   /** Sets the currently selected date range. */
-  setValue(value: RangeValue<T> | null): void,
+  setValue(value: RangeValue<T> | null): void;
   /** Highlights the given date during selection, e.g. by hovering or dragging. */
-  highlightDate(date: CalendarDate): void,
+  highlightDate(date: CalendarDate): void;
   /** The current anchor date that the user clicked on to begin range selection. */
-  readonly anchorDate: CalendarDate | null,
+  readonly anchorDate: CalendarDate | null;
   /** Sets the anchor date that the user clicked on to begin range selection. */
-  setAnchorDate(date: CalendarDate | null): void,
+  setAnchorDate(date: CalendarDate | null): void;
   /** The currently highlighted date range. */
-  readonly highlightedRange: RangeValue<CalendarDate> | null,
+  readonly highlightedRange: RangeValue<CalendarDate> | null;
   /** Whether the user is currently dragging over the calendar. */
-  readonly isDragging: boolean,
+  readonly isDragging: boolean;
   /** Sets whether the user is dragging over the calendar. */
-  setDragging(isDragging: boolean): void,
+  setDragging(isDragging: boolean): void;
   /** Clears the current selection. */
-  clearSelection(): void,
+  clearSelection(): void;
   /** Commits the current selection. */
-  commitSelection(): void,
+  commitSelection(): void;
   /** Focuses the next available day before or after the anchor date. */
-  focusNearestAvailableDate(anchorDate: CalendarDate): void
+  focusNearestAvailableDate(anchorDate: CalendarDate): void;
 }

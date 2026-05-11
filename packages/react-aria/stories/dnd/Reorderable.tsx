@@ -81,23 +81,29 @@ function ReorderableGrid(props) {
   let keyboardDelegate = new ListKeyboardDelegate(state.collection, new Set(), ref);
   let gridState = useGridState({
     selectionMode: 'multiple',
-    collection: React.useMemo(() => new GridCollection<object>({
-      columnCount: 1,
-      items: [...state.collection].map(item => ({
-        ...item,
-        childNodes: [{
-          key: `cell-${item.key}`,
-          type: 'cell',
-          index: 0,
-          value: null,
-          level: 0,
-          rendered: null,
-          textValue: item.textValue,
-          hasChildNodes: false,
-          childNodes: []
-        }]
-      }))
-    }), [state.collection])
+    collection: React.useMemo(
+      () =>
+        new GridCollection<object>({
+          columnCount: 1,
+          items: [...state.collection].map(item => ({
+            ...item,
+            childNodes: [
+              {
+                key: `cell-${item.key}`,
+                type: 'cell',
+                index: 0,
+                value: null,
+                level: 0,
+                rendered: null,
+                textValue: item.textValue,
+                hasChildNodes: false,
+                childNodes: []
+              }
+            ]
+          }))
+        }),
+      [state.collection]
+    )
   });
 
   // Use a random drag type so the items can only be reordered within this list and not dragged elsewhere.
@@ -117,7 +123,7 @@ function ReorderableGrid(props) {
   });
   useDraggableCollection({}, dragState, ref);
 
-  let onDrop = async (e) => {
+  let onDrop = async e => {
     if (e.target.type !== 'root' && e.target.dropPosition !== 'on' && props.onMove) {
       let keys: Array<Key> = [];
       for (let item of e.items) {
@@ -144,24 +150,36 @@ function ReorderableGrid(props) {
     onDrop
   });
 
-  let {collectionProps} = useDroppableCollection({
-    keyboardDelegate,
-    dropTargetDelegate: new ListDropTargetDelegate(state.collection, ref),
-    onDropActivate: chain(action('onDropActivate'), console.log),
-    onDrop
-  }, dropState, ref);
+  let {collectionProps} = useDroppableCollection(
+    {
+      keyboardDelegate,
+      dropTargetDelegate: new ListDropTargetDelegate(state.collection, ref),
+      onDropActivate: chain(action('onDropActivate'), console.log),
+      onDrop
+    },
+    dropState,
+    ref
+  );
 
-  let {gridProps} = useGrid({
-    ...props,
-    'aria-label': 'Reorderable list',
-    focusMode: 'cell'
-  }, gridState, ref);
+  let {gridProps} = useGrid(
+    {
+      ...props,
+      'aria-label': 'Reorderable list',
+      focusMode: 'cell'
+    },
+    gridState,
+    ref
+  );
 
   let isDropTarget = dropState.isDropTarget({type: 'root'});
   let dropRef = React.useRef<HTMLDivElement | null>(null);
-  let {dropIndicatorProps} = useDropIndicator({
-    target: {type: 'root'}
-  }, dropState, dropRef);
+  let {dropIndicatorProps} = useDropIndicator(
+    {
+      target: {type: 'root'}
+    },
+    dropState,
+    dropRef
+  );
   let {visuallyHiddenProps} = useVisuallyHidden();
 
   return (
@@ -169,49 +187,60 @@ function ReorderableGrid(props) {
       {...mergeProps(collectionProps, gridProps)}
       ref={ref}
       className={classNames(dndStyles, 'droppable-collection', {'is-drop-target': isDropTarget})}>
-      {!dropIndicatorProps['aria-hidden'] &&
+      {!dropIndicatorProps['aria-hidden'] && (
         <div role="row" aria-hidden={dropIndicatorProps['aria-hidden']}>
-          <div
-            role="gridcell"
-            aria-selected="false">
-            <div {...visuallyHiddenProps} role="button" tabIndex={-1} {...dropIndicatorProps} ref={dropRef} />
+          <div role="gridcell" aria-selected="false">
+            <div
+              {...visuallyHiddenProps}
+              role="button"
+              tabIndex={-1}
+              {...dropIndicatorProps}
+              ref={dropRef}
+            />
           </div>
         </div>
-      }
+      )}
       {[...gridState.collection].map(item => (
         <>
           <InsertionIndicator
             key={item.key + '-before'}
             collectionRef={ref}
             target={{type: 'item', key: item.key, dropPosition: 'before'}}
-            dropState={dropState} />
+            dropState={dropState}
+          />
           <CollectionItem
             key={item.key}
             item={item}
             state={gridState}
             dragState={dragState}
-            dropState={dropState} />
-          {gridState.collection.getKeyAfter(item.key) == null &&
+            dropState={dropState}
+          />
+          {gridState.collection.getKeyAfter(item.key) == null && (
             <InsertionIndicator
               key={item.key + '-after'}
               target={{type: 'item', key: item.key, dropPosition: 'after'}}
               collectionRef={ref}
-              dropState={dropState} />
-          }
+              dropState={dropState}
+            />
+          )}
         </>
       ))}
       <DragPreview ref={preview}>
         {() => {
-          let item = dragState.draggedKey == null ? null : state.collection.getItem(dragState.draggedKey);
+          let item =
+            dragState.draggedKey == null ? null : state.collection.getItem(dragState.draggedKey);
           return (
-            <div className={classNames(dndStyles, 'draggable', 'is-drag-preview', {'is-dragging-multiple': dragState.draggingKeys.size > 1})}>
+            <div
+              className={classNames(dndStyles, 'draggable', 'is-drag-preview', {
+                'is-dragging-multiple': dragState.draggingKeys.size > 1
+              })}>
               <div className={classNames(dndStyles, 'drag-handle')}>
                 <ShowMenu size="XS" />
               </div>
               {item && <span>{item.rendered}</span>}
-              {dragState.draggingKeys.size > 1 &&
+              {dragState.draggingKeys.size > 1 && (
                 <div className={classNames(dndStyles, 'badge')}>{dragState.draggingKeys.size}</div>
-              }
+              )}
             </div>
           );
         }}
@@ -226,29 +255,47 @@ function CollectionItem({item, state, dragState, dropState}) {
   let cellNode = [...item.childNodes][0];
 
   let {rowProps} = useGridRow({node: item}, state, rowRef);
-  let {gridCellProps} = useGridCell({
-    node: cellNode,
-    focusMode: 'cell',
-    shouldSelectOnPressUp: true
-  }, state, cellRef);
+  let {gridCellProps} = useGridCell(
+    {
+      node: cellNode,
+      focusMode: 'cell',
+      shouldSelectOnPressUp: true
+    },
+    state,
+    cellRef
+  );
 
-  let {dragProps, dragButtonProps} = useDraggableItem({key: item.key, hasDragButton: true}, dragState);
+  let {dragProps, dragButtonProps} = useDraggableItem(
+    {key: item.key, hasDragButton: true},
+    dragState
+  );
 
   let dragButtonRef = React.useRef<HTMLDivElement | null>(null);
-  let {buttonProps} = useButton({
-    ...dragButtonProps,
-    elementType: 'div'
-  }, dragButtonRef);
+  let {buttonProps} = useButton(
+    {
+      ...dragButtonProps,
+      elementType: 'div'
+    },
+    dragButtonRef
+  );
 
   let dropIndicatorRef = React.useRef<HTMLDivElement | null>(null);
-  let {dropIndicatorProps} = useDropIndicator({
-    target: {type: 'item', key: item.key, dropPosition: 'on'}
-  }, dropState, dropIndicatorRef);
+  let {dropIndicatorProps} = useDropIndicator(
+    {
+      target: {type: 'item', key: item.key, dropPosition: 'on'}
+    },
+    dropState,
+    dropIndicatorRef
+  );
   let {visuallyHiddenProps} = useVisuallyHidden();
   let id = useId();
 
   return (
-    <div {...mergeProps(rowProps, dragProps)} ref={rowRef} style={{outline: 'none'}} aria-labelledby={id}>
+    <div
+      {...mergeProps(rowProps, dragProps)}
+      ref={rowRef}
+      style={{outline: 'none'}}
+      aria-labelledby={id}>
       <FocusRing focusRingClass={classNames(dndStyles, 'focus-ring')}>
         <div
           {...gridCellProps}
@@ -256,21 +303,30 @@ function CollectionItem({item, state, dragState, dropState}) {
           ref={cellRef}
           className={classNames(dndStyles, 'draggable', 'droppable', {
             'is-dragging': dragState.isDragging(item.key),
-            'is-drop-target': dropState.isDropTarget({type: 'item', key: item.key, dropPosition: 'on'}),
+            'is-drop-target': dropState.isDropTarget({
+              type: 'item',
+              key: item.key,
+              dropPosition: 'on'
+            }),
             'is-selected': state.selectionManager.isSelected(item.key)
           })}>
           <FocusRing focusRingClass={classNames(dndStyles, 'focus-ring')}>
             <div
-              {...buttonProps as React.HTMLAttributes<HTMLElement>}
+              {...(buttonProps as React.HTMLAttributes<HTMLElement>)}
               ref={dragButtonRef}
               className={classNames(dndStyles, 'drag-handle')}>
               <ShowMenu size="XS" />
             </div>
           </FocusRing>
           <span id={id}>{item.rendered}</span>
-          {!dropIndicatorProps['aria-hidden'] &&
-            <div {...visuallyHiddenProps} role="button" {...dropIndicatorProps} ref={dropIndicatorRef} />
-          }
+          {!dropIndicatorProps['aria-hidden'] && (
+            <div
+              {...visuallyHiddenProps}
+              role="button"
+              {...dropIndicatorProps}
+              ref={dropIndicatorRef}
+            />
+          )}
         </div>
       </FocusRing>
     </div>
@@ -294,10 +350,15 @@ function InsertionIndicator(props) {
       <div
         role="gridcell"
         aria-selected="false"
-        className={props.dropState.isDropTarget(props.target)
-        ? classNames(dropIndicatorStyles, 'spectrum-DropIndicator', 'spectrum-DropIndicator--horizontal')
-        : undefined
-      }
+        className={
+          props.dropState.isDropTarget(props.target)
+            ? classNames(
+                dropIndicatorStyles,
+                'spectrum-DropIndicator',
+                'spectrum-DropIndicator--horizontal'
+              )
+            : undefined
+        }
         style={{
           width: '100%',
           marginLeft: 0,

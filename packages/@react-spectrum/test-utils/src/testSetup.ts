@@ -15,7 +15,9 @@
  * @param width Optional width to apply. Automatically clamped to the maximum value allowed for mobile rendering.
  */
 export function simulateMobile(width: number = 700): void {
-  jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => Math.min(Math.max(width, 0), 700));
+  jest
+    .spyOn(window.screen, 'width', 'get')
+    .mockImplementation(() => Math.min(Math.max(width, 0), 700));
 }
 
 /**

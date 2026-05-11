@@ -1,13 +1,21 @@
 'use client';
 
-import {Badge, Content, Heading, IllustratedMessage, Link, pressScale, Text} from '@react-spectrum/s2';
+import {
+  Badge,
+  Content,
+  Heading,
+  IllustratedMessage,
+  Link,
+  pressScale,
+  Text
+} from '@react-spectrum/s2';
 import Checkmark from '@react-spectrum/s2/icons/Checkmark';
 import CheckmarkCircle from '@react-spectrum/s2/icons/CheckmarkCircle';
 import {colorSwatch, getColorScale} from './color.macro' with {type: 'macro'};
 import {focusRing, iconStyle, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Header, ListBox, ListBoxItem, ListBoxSection} from 'react-aria-components';
 import {InfoMessage} from './colorSearchData';
- 
+
 import NoSearchResults from '@react-spectrum/s2/illustrations/linear/NoSearchResults';
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import Similar from '@react-spectrum/s2/icons/Similar';
@@ -63,80 +71,80 @@ const headerStyle = style({
 });
 
 const backgroundSwatches: Record<string, string> = {
-  'black': colorSwatch('black'),
-  'white': colorSwatch('white'),
-  'base': colorSwatch('base'),
+  black: colorSwatch('black'),
+  white: colorSwatch('white'),
+  base: colorSwatch('base'),
   'layer-1': colorSwatch('layer-1'),
   'layer-2': colorSwatch('layer-2'),
-  'pasteboard': colorSwatch('pasteboard'),
-  'elevated': colorSwatch('elevated'),
-  'accent': colorSwatch('accent'),
+  pasteboard: colorSwatch('pasteboard'),
+  elevated: colorSwatch('elevated'),
+  accent: colorSwatch('accent'),
   'accent-subtle': colorSwatch('accent-subtle'),
-  'neutral': colorSwatch('neutral'),
+  neutral: colorSwatch('neutral'),
   'neutral-subdued': colorSwatch('neutral-subdued'),
   'neutral-subtle': colorSwatch('neutral-subtle'),
-  'negative': colorSwatch('negative'),
+  negative: colorSwatch('negative'),
   'negative-subtle': colorSwatch('negative-subtle'),
-  'informative': colorSwatch('informative'),
+  informative: colorSwatch('informative'),
   'informative-subtle': colorSwatch('informative-subtle'),
-  'positive': colorSwatch('positive'),
+  positive: colorSwatch('positive'),
   'positive-subtle': colorSwatch('positive-subtle'),
-  'notice': colorSwatch('notice'),
+  notice: colorSwatch('notice'),
   'notice-subtle': colorSwatch('notice-subtle'),
-  'gray': colorSwatch('gray'),
+  gray: colorSwatch('gray'),
   'gray-subtle': colorSwatch('gray-subtle'),
-  'red': colorSwatch('red'),
+  red: colorSwatch('red'),
   'red-subtle': colorSwatch('red-subtle'),
-  'orange': colorSwatch('orange'),
+  orange: colorSwatch('orange'),
   'orange-subtle': colorSwatch('orange-subtle'),
-  'yellow': colorSwatch('yellow'),
+  yellow: colorSwatch('yellow'),
   'yellow-subtle': colorSwatch('yellow-subtle'),
-  'chartreuse': colorSwatch('chartreuse'),
+  chartreuse: colorSwatch('chartreuse'),
   'chartreuse-subtle': colorSwatch('chartreuse-subtle'),
-  'celery': colorSwatch('celery'),
+  celery: colorSwatch('celery'),
   'celery-subtle': colorSwatch('celery-subtle'),
-  'green': colorSwatch('green'),
+  green: colorSwatch('green'),
   'green-subtle': colorSwatch('green-subtle'),
-  'seafoam': colorSwatch('seafoam'),
+  seafoam: colorSwatch('seafoam'),
   'seafoam-subtle': colorSwatch('seafoam-subtle'),
-  'cyan': colorSwatch('cyan'),
+  cyan: colorSwatch('cyan'),
   'cyan-subtle': colorSwatch('cyan-subtle'),
-  'blue': colorSwatch('blue'),
+  blue: colorSwatch('blue'),
   'blue-subtle': colorSwatch('blue-subtle'),
-  'indigo': colorSwatch('indigo'),
+  indigo: colorSwatch('indigo'),
   'indigo-subtle': colorSwatch('indigo-subtle'),
-  'purple': colorSwatch('purple'),
+  purple: colorSwatch('purple'),
   'purple-subtle': colorSwatch('purple-subtle'),
-  'fuchsia': colorSwatch('fuchsia'),
+  fuchsia: colorSwatch('fuchsia'),
   'fuchsia-subtle': colorSwatch('fuchsia-subtle'),
-  'magenta': colorSwatch('magenta'),
+  magenta: colorSwatch('magenta'),
   'magenta-subtle': colorSwatch('magenta-subtle'),
-  'pink': colorSwatch('pink'),
+  pink: colorSwatch('pink'),
   'pink-subtle': colorSwatch('pink-subtle'),
-  'turquoise': colorSwatch('turquoise'),
+  turquoise: colorSwatch('turquoise'),
   'turquoise-subtle': colorSwatch('turquoise-subtle'),
-  'cinnamon': colorSwatch('cinnamon'),
+  cinnamon: colorSwatch('cinnamon'),
   'cinnamon-subtle': colorSwatch('cinnamon-subtle'),
-  'brown': colorSwatch('brown'),
+  brown: colorSwatch('brown'),
   'brown-subtle': colorSwatch('brown-subtle'),
-  'silver': colorSwatch('silver'),
+  silver: colorSwatch('silver'),
   'silver-subtle': colorSwatch('silver-subtle'),
-  'disabled': colorSwatch('disabled')
+  disabled: colorSwatch('disabled')
 };
 
 const textSwatches: Record<string, string> = {
-  'black': colorSwatch('black', 'color'),
-  'white': colorSwatch('white', 'color'),
-  'accent': colorSwatch('accent', 'color'),
-  'neutral': colorSwatch('neutral', 'color'),
+  black: colorSwatch('black', 'color'),
+  white: colorSwatch('white', 'color'),
+  accent: colorSwatch('accent', 'color'),
+  neutral: colorSwatch('neutral', 'color'),
   'neutral-subdued': colorSwatch('neutral-subdued', 'color'),
-  'negative': colorSwatch('negative', 'color'),
-  'disabled': colorSwatch('disabled', 'color'),
-  'heading': colorSwatch('heading', 'color'),
-  'title': colorSwatch('title', 'color'),
-  'body': colorSwatch('body', 'color'),
-  'detail': colorSwatch('detail', 'color'),
-  'code': colorSwatch('code', 'color')
+  negative: colorSwatch('negative', 'color'),
+  disabled: colorSwatch('disabled', 'color'),
+  heading: colorSwatch('heading', 'color'),
+  title: colorSwatch('title', 'color'),
+  body: colorSwatch('body', 'color'),
+  detail: colorSwatch('detail', 'color'),
+  code: colorSwatch('code', 'color')
 };
 
 const accentScale = getColorScale('accent-color');
@@ -191,21 +199,25 @@ const scaleSwatches: Record<string, string> = {
   ...Object.fromEntries(cinnamonScale)
 };
 
-
 interface ColorSearchViewProps {
   filteredItems: Array<{
-    id: string,
-    name: string,
-    items: Array<{name: string, section: string, type: string}>
-  }>,
+    id: string;
+    name: string;
+    items: Array<{name: string; section: string; type: string}>;
+  }>;
   /** Names of colors that exactly match the searched hex value. */
-  exactMatches?: Set<string>,
+  exactMatches?: Set<string>;
   /** Names of the closest matching colors when no exact matches exist. */
-  closestMatches?: Set<string>,
-  listBoxClassName?: string
+  closestMatches?: Set<string>;
+  listBoxClassName?: string;
 }
 
-export function ColorSearchView({filteredItems, exactMatches = new Set(), closestMatches = new Set(), listBoxClassName}: ColorSearchViewProps) {
+export function ColorSearchView({
+  filteredItems,
+  exactMatches = new Set(),
+  closestMatches = new Set(),
+  listBoxClassName
+}: ColorSearchViewProps) {
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const timeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -221,21 +233,26 @@ export function ColorSearchView({filteredItems, exactMatches = new Set(), closes
     if (timeout.current) {
       clearTimeout(timeout.current);
     }
-    navigator.clipboard.writeText(colorName).then(() => {
-      setCopiedId(itemId);
-      timeout.current = setTimeout(() => setCopiedId(null), 2000);
-    }).catch(() => {
-      // noop
-    });
+    navigator.clipboard
+      .writeText(colorName)
+      .then(() => {
+        setCopiedId(itemId);
+        timeout.current = setTimeout(() => setCopiedId(null), 2000);
+      })
+      .catch(() => {
+        // noop
+      });
   }, []);
 
-  const sections = filteredItems.map(section => ({
-    ...section,
-    items: section.items.map(item => ({
-      ...item,
-      id: `${section.id}-${item.name}`
+  const sections = filteredItems
+    .map(section => ({
+      ...section,
+      items: section.items.map(item => ({
+        ...item,
+        id: `${section.id}-${item.name}`
+      }))
     }))
-  })).filter(section => section.items.length > 0);
+    .filter(section => section.items.length > 0);
 
   if (sections.length === 0) {
     return (
@@ -249,10 +266,13 @@ export function ColorSearchView({filteredItems, exactMatches = new Set(), closes
 
   return (
     <>
-      <InfoMessage>Press a color to copy its name. See <Link href="styling">styling</Link> for more information.</InfoMessage>
+      <InfoMessage>
+        Press a color to copy its name. See <Link href="styling">styling</Link> for more
+        information.
+      </InfoMessage>
       <ListBox
         aria-label="Colors"
-        onAction={(key) => {
+        onAction={key => {
           for (const section of sections) {
             const item = section.items.find(item => item.id === key.toString());
             if (item) {
@@ -262,28 +282,32 @@ export function ColorSearchView({filteredItems, exactMatches = new Set(), closes
           }
         }}
         layout="grid"
-        className={listBoxClassName || style({
-          width: 'full',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 24,
-          flexGrow: 1,
-          overflow: 'auto',
-          scrollPaddingY: 4
-        })}
+        className={
+          listBoxClassName ||
+          style({
+            width: 'full',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 24,
+            flexGrow: 1,
+            overflow: 'auto',
+            scrollPaddingY: 4
+          })
+        }
         dependencies={[copiedId, exactMatches, closestMatches]}
         items={sections}>
         {section => (
           <ListBoxSection id={section.id} className={sectionStyle}>
             <Header className={headerStyle}>{section.name}</Header>
             {section.items.map(item => (
-              <ColorItem 
+              <ColorItem
                 key={item.id}
-                item={item} 
+                item={item}
                 sectionId={section.id}
                 isCopied={copiedId === item.id}
                 isBestMatch={exactMatches.has(item.name) || closestMatches.has(item.name)}
-                isExactMatch={exactMatches.has(item.name)} />
+                isExactMatch={exactMatches.has(item.name)}
+              />
             ))}
           </ListBoxSection>
         )}
@@ -293,35 +317,44 @@ export function ColorSearchView({filteredItems, exactMatches = new Set(), closes
 }
 
 interface ColorItemProps {
-  item: {id: string, name: string, type?: string, scale?: string},
-  sectionId: string,
-  isCopied?: boolean,
-  isBestMatch?: boolean,
-  isExactMatch?: boolean
+  item: {id: string; name: string; type?: string; scale?: string};
+  sectionId: string;
+  isCopied?: boolean;
+  isBestMatch?: boolean;
+  isExactMatch?: boolean;
 }
 
-function ColorItem({item, sectionId, isCopied = false, isBestMatch = false, isExactMatch = false}: ColorItemProps) {
+function ColorItem({
+  item,
+  sectionId,
+  isCopied = false,
+  isBestMatch = false,
+  isExactMatch = false
+}: ColorItemProps) {
   let ref = useRef(null);
-  
+
   // Look up the pre-generated swatch class for this color
-  const swatchClass = sectionId === 'text' 
-    ? textSwatches[item.name] 
-    : backgroundSwatches[item.name] || scaleSwatches[item.name] || '';
-  
+  const swatchClass =
+    sectionId === 'text'
+      ? textSwatches[item.name]
+      : backgroundSwatches[item.name] || scaleSwatches[item.name] || '';
+
   return (
-    <ListBoxItem 
+    <ListBoxItem
       id={item.id}
-      textValue={item.name} 
-      className={itemStyle} 
-      ref={ref} 
+      textValue={item.name}
+      className={itemStyle}
+      ref={ref}
       style={pressScale(ref)}>
       <div
         className={`${swatchClass || swatchStyle} ${style({position: 'relative'})}`}
-        style={{
-          width: '48px',
-          height: '48px',
-          '--s2-container-bg': 'var(--v)'
-        } as React.CSSProperties}>
+        style={
+          {
+            width: '48px',
+            height: '48px',
+            '--s2-container-bg': 'var(--v)'
+          } as React.CSSProperties
+        }>
         <div
           className={style({
             position: 'absolute',
@@ -345,8 +378,8 @@ function ColorItem({item, sectionId, isCopied = false, isBestMatch = false, isEx
         </div>
       </div>
       {isBestMatch && !isCopied ? (
-        <Badge 
-          size="S" 
+        <Badge
+          size="S"
           variant={isExactMatch ? 'positive' : 'informative'}
           UNSAFE_style={{width: 'max-content'}}>
           {isExactMatch ? <Checkmark /> : <Similar />}
@@ -372,7 +405,13 @@ function ColorItem({item, sectionId, isCopied = false, isBestMatch = false, isEx
             style={{
               opacity: isCopied ? 0 : 1
             }}>
-            <span className={style({textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap', maxWidth: 'full'})}>
+            <span
+              className={style({
+                textOverflow: 'ellipsis',
+                overflow: 'hidden',
+                whiteSpace: 'nowrap',
+                maxWidth: 'full'
+              })}>
               {item.name}
             </span>
           </span>

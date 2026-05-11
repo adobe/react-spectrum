@@ -12,7 +12,7 @@ const meta: Meta<typeof DateRangePicker> = {
 export default meta;
 type Story = StoryFn<typeof DateRangePicker>;
 
-export const Example: Story = (args) => <DateRangePicker {...args} />;
+export const Example: Story = args => <DateRangePicker {...args} />;
 
 Example.args = {
   label: 'Event date'

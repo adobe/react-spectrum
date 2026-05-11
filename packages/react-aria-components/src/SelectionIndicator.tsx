@@ -12,27 +12,35 @@
 
 import {ClassNameOrFunction, ContextValue, useContextProps} from './utils';
 import React, {createContext, ForwardedRef, forwardRef} from 'react';
-import {SharedElement, SharedElementPropsBase, SharedElementRenderProps} from './SharedElementTransition';
+import {
+  SharedElement,
+  SharedElementPropsBase,
+  SharedElementRenderProps
+} from './SharedElementTransition';
 
 export interface SelectionIndicatorProps extends SharedElementPropsBase {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-SelectionIndicator'
    */
-  className?: ClassNameOrFunction<SharedElementRenderProps>,
+  className?: ClassNameOrFunction<SharedElementRenderProps>;
   /** Whether the SelectionIndicator is visible. This is usually set automatically by the parent component. */
-  isSelected?: boolean
+  isSelected?: boolean;
 }
 
-export const SelectionIndicatorContext = createContext<ContextValue<SelectionIndicatorProps, HTMLDivElement>>({
+export const SelectionIndicatorContext = createContext<
+  ContextValue<SelectionIndicatorProps, HTMLDivElement>
+>({
   isSelected: false
 });
-
 
 /**
  * An animated indicator of selection state within a group of items.
  */
-export const SelectionIndicator = forwardRef(function SelectionIndicator(props: SelectionIndicatorProps, ref: ForwardedRef<HTMLDivElement>) {
+export const SelectionIndicator = forwardRef(function SelectionIndicator(
+  props: SelectionIndicatorProps,
+  ref: ForwardedRef<HTMLDivElement>
+) {
   [props, ref] = useContextProps(props, ref, SelectionIndicatorContext);
   let {isSelected, ...otherProps} = props;
   return (
@@ -41,6 +49,7 @@ export const SelectionIndicator = forwardRef(function SelectionIndicator(props: 
       ref={ref}
       className={props.className || 'react-aria-SelectionIndicator'}
       name="SelectionIndicator"
-      isVisible={isSelected} />
+      isVisible={isSelected}
+    />
   );
 });

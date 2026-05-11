@@ -11,7 +11,15 @@
  */
 
 import {action} from 'storybook/actions';
-import {Cell, Column, Row, TableBody, TableHeader, TableView, TableViewProps} from '../src/TableView';
+import {
+  Cell,
+  Column,
+  Row,
+  TableBody,
+  TableHeader,
+  TableView,
+  TableViewProps
+} from '../src/TableView';
 import {Content, Heading} from '../src/Content';
 import {FixedColumnWidths} from '../../../react-aria-components/stories/Table.stories';
 import FolderOpen from '../spectrum-illustrations/linear/FolderOpen';
@@ -110,14 +118,16 @@ let items = [
 const DynamicTable = (args: TableViewProps): ReactElement => (
   <TableView aria-label="Dynamic table" {...args} styles={style({width: 320, height: 208})}>
     <TableHeader columns={columns}>
-      {(column) => (
-        <Column width={150} minWidth={150} isRowHeader={column.isRowHeader}>{column.name}</Column>
+      {column => (
+        <Column width={150} minWidth={150} isRowHeader={column.isRowHeader}>
+          {column.name}
+        </Column>
       )}
     </TableHeader>
     <TableBody items={items}>
       {item => (
         <Row id={item.id} columns={columns}>
-          {(column) => {
+          {column => {
             return <Cell>{item[column.id]}</Cell>;
           }}
         </Row>
@@ -138,11 +148,15 @@ function renderEmptyState() {
   return (
     <IllustratedMessage>
       <FolderOpen />
-      <Heading>
-        No results
-      </Heading>
+      <Heading>No results</Heading>
       <Content>
-        <Content>No results found, press <Link href="https://adobe.com" onPress={action('linkPress')}>here</Link> for more info.</Content>
+        <Content>
+          No results found, press{' '}
+          <Link href="https://adobe.com" onPress={action('linkPress')}>
+            here
+          </Link>{' '}
+          for more info.
+        </Content>
       </Content>
     </IllustratedMessage>
   );
@@ -151,8 +165,10 @@ function renderEmptyState() {
 const EmptyStateTable = (args: TableViewProps): ReactElement => (
   <TableView aria-label="Empty state" {...args} styles={style({height: 320, width: 320})}>
     <TableHeader columns={columns}>
-      {(column) => (
-        <Column minWidth={200} width={200} isRowHeader={column.isRowHeader}>{column.name}</Column>
+      {column => (
+        <Column minWidth={200} width={200} isRowHeader={column.isRowHeader}>
+          {column.name}
+        </Column>
       )}
     </TableHeader>
     <TableBody items={[]} renderEmptyState={renderEmptyState}>
@@ -179,14 +195,16 @@ const ShowDividers = (args: TableViewProps): ReactElement => {
   return (
     <TableView aria-label="Show Dividers table" {...args} styles={style({width: 320, height: 208})}>
       <TableHeader columns={dividerColumns}>
-        {(column) => (
-          <Column width={150} minWidth={150} isRowHeader={column.isRowHeader}>{column.name}</Column>
+        {column => (
+          <Column width={150} minWidth={150} isRowHeader={column.isRowHeader}>
+            {column.name}
+          </Column>
         )}
       </TableHeader>
       <TableBody items={items}>
         {item => (
           <Row id={item.id} columns={dividerColumns}>
-            {(column) => {
+            {column => {
               return <Cell showDivider={column.showDivider}>{item[column.id]}</Cell>;
             }}
           </Row>
@@ -215,15 +233,25 @@ const TextAlign = (args: TableViewProps): ReactElement => {
   return (
     <TableView aria-label="Show Dividers table" {...args} styles={style({width: 320, height: 208})}>
       <TableHeader columns={alignColumns}>
-        {(column) => (
-          <Column width={150} minWidth={150} isRowHeader={column.isRowHeader} align={column?.align as 'start' | 'center' | 'end'}>{column.name}</Column>
+        {column => (
+          <Column
+            width={150}
+            minWidth={150}
+            isRowHeader={column.isRowHeader}
+            align={column?.align as 'start' | 'center' | 'end'}>
+            {column.name}
+          </Column>
         )}
       </TableHeader>
       <TableBody items={items}>
         {item => (
           <Row id={item.id} columns={alignColumns}>
-            {(column) => {
-              return <Cell showDivider align={column?.align as 'start' | 'center' | 'end'}>{item[column.id]}</Cell>;
+            {column => {
+              return (
+                <Cell showDivider align={column?.align as 'start' | 'center' | 'end'}>
+                  {item[column.id]}
+                </Cell>
+              );
             }}
           </Row>
         )}
@@ -241,10 +269,10 @@ export const TextAlignStory: StoryObj<typeof TextAlign> = {
 };
 
 interface Character {
-  name: string,
-  height: number,
-  mass: number,
-  birth_year: number
+  name: string;
+  height: number;
+  mass: number;
+  birth_year: number;
 }
 
 const OnLoadMoreTable = (args: TableViewProps): ReactElement => {
@@ -266,16 +294,22 @@ const OnLoadMoreTable = (args: TableViewProps): ReactElement => {
   });
 
   return (
-    <TableView {...args} aria-label="Load more table" loadingState={list.loadingState} onLoadMore={list.loadMore} styles={style({width: 320, height: 320})}>
+    <TableView
+      {...args}
+      aria-label="Load more table"
+      loadingState={list.loadingState}
+      onLoadMore={list.loadMore}
+      styles={style({width: 320, height: 320})}>
       <TableHeader>
-        <Column id="name" isRowHeader>Name</Column>
+        <Column id="name" isRowHeader>
+          Name
+        </Column>
         <Column id="height">Height</Column>
         <Column id="mass">Mass</Column>
         <Column id="birth_year">Birth Year</Column>
       </TableHeader>
-      <TableBody
-        items={list.items}>
-        {(item) => (
+      <TableBody items={list.items}>
+        {item => (
           <Row id={item.name}>
             <Cell>{item.name}</Cell>
             <Cell>{item.height}</Cell>
@@ -344,16 +378,23 @@ const SortableTable = (args: TableViewProps): ReactElement => {
   };
 
   return (
-    <TableView aria-label="sortable table" {...args} sortDescriptor={sortDescriptor} onSortChange={onSortChange} styles={style({height: 320})}>
+    <TableView
+      aria-label="sortable table"
+      {...args}
+      sortDescriptor={sortDescriptor}
+      onSortChange={onSortChange}
+      styles={style({height: 320})}>
       <TableHeader columns={sortcolumns}>
-        {(column) => (
-          <Column isRowHeader={column.isRowHeader} allowsSorting>{column.name}</Column>
+        {column => (
+          <Column isRowHeader={column.isRowHeader} allowsSorting>
+            {column.name}
+          </Column>
         )}
       </TableHeader>
       <TableBody items={items}>
         {item => (
           <Row id={item.id} columns={sortcolumns}>
-            {(column) => {
+            {column => {
               return <Cell>{item[column.id]}</Cell>;
             }}
           </Row>
@@ -370,21 +411,30 @@ export const Sorting: StoryObj<typeof SortableTable> = {
 };
 
 type ColumnType = {
-  name: string,
-  id: string,
-  isRowHeader?: boolean,
-  showDivider?: boolean,
-  align?: 'start' | 'center' | 'end',
-  allowsResizing?: boolean
+  name: string;
+  id: string;
+  isRowHeader?: boolean;
+  showDivider?: boolean;
+  align?: 'start' | 'center' | 'end';
+  allowsResizing?: boolean;
 };
 
 let resizeColumn: ColumnType[] = [
-  {name: 'Name', id: 'name', isRowHeader: true, allowsResizing: true, showDivider: true, align: 'end'},
+  {
+    name: 'Name',
+    id: 'name',
+    isRowHeader: true,
+    allowsResizing: true,
+    showDivider: true,
+    align: 'end'
+  },
   {name: 'Height', id: 'height', align: 'center'},
   {name: 'Weight', id: 'weight', allowsResizing: true, align: 'center'}
 ];
 
-const SortableResizableTable = (args: TableViewProps & {isSortable?: boolean, columns: ColumnType[]}): ReactElement => {
+const SortableResizableTable = (
+  args: TableViewProps & {isSortable?: boolean; columns: ColumnType[]}
+): ReactElement => {
   let {isSortable = false} = args;
   let [items, setItems] = useState(sortitems);
   let [sortDescriptor, setSortDescriptor] = useState<SortDescriptor | undefined>(undefined);
@@ -404,17 +454,32 @@ const SortableResizableTable = (args: TableViewProps & {isSortable?: boolean, co
   };
 
   return (
-    <TableView aria-label="sortable table" {...args} sortDescriptor={isSortable ? sortDescriptor : undefined} onSortChange={isSortable ? onSortChange : undefined} styles={style({width: 384, height: 320})}>
+    <TableView
+      aria-label="sortable table"
+      {...args}
+      sortDescriptor={isSortable ? sortDescriptor : undefined}
+      onSortChange={isSortable ? onSortChange : undefined}
+      styles={style({width: 384, height: 320})}>
       <TableHeader columns={args.columns}>
         {(column: any) => (
-          <Column isRowHeader={column.isRowHeader} allowsSorting={column.isSortable} allowsResizing={column.allowsResizing} align={column.align}>{column.name}</Column>
+          <Column
+            isRowHeader={column.isRowHeader}
+            allowsSorting={column.isSortable}
+            allowsResizing={column.allowsResizing}
+            align={column.align}>
+            {column.name}
+          </Column>
         )}
       </TableHeader>
       <TableBody items={items}>
         {item => (
           <Row id={item.id} columns={args.columns}>
             {(column: any) => {
-              return <Cell showDivider={column.showDivider} align={column.align}>{item[column.id]}</Cell>;
+              return (
+                <Cell showDivider={column.showDivider} align={column.align}>
+                  {item[column.id]}
+                </Cell>
+              );
             }}
           </Row>
         )}
@@ -436,10 +501,16 @@ export const ResizingTable: StoryObj<typeof SortableResizableTable> = {
 };
 
 export const TableWithNestedRows: StoryObj<typeof TableView> = {
-  render: (args) => (
-    <TableView aria-label="Files" treeColumn="name" {...args} styles={style({width: 700, height: 320})}>
+  render: args => (
+    <TableView
+      aria-label="Files"
+      treeColumn="name"
+      {...args}
+      styles={style({width: 700, height: 320})}>
       <TableHeader>
-        <Column id="name" isRowHeader>Name</Column>
+        <Column id="name" isRowHeader>
+          Name
+        </Column>
         <Column id="type">Type</Column>
         <Column id="date">Date Modified</Column>
       </TableHeader>

@@ -24,7 +24,10 @@ function childrenToString(children: ReactNode) {
 }
 
 function anchorId(children: ReactNode) {
-  return childrenToString(children).replace(/\s/g, '-').replace(/[^a-zA-Z0-9-_]/g, '').toLowerCase();
+  return childrenToString(children)
+    .replace(/\s/g, '-')
+    .replace(/[^a-zA-Z0-9-_]/g, '')
+    .toLowerCase();
 }
 
 function AnchorLink({anchorId, isHovered, level, headingText}) {
@@ -51,8 +54,9 @@ function AnchorLink({anchorId, isHovered, level, headingText}) {
       })({isHovered, isFocusVisible, level})}>
       <Link href={href} aria-label={`Link to ${headingText}`}>
         <LinkIcon
-          styles={iconStyle({size: 'S', marginBottom: 4})} 
-          UNSAFE_style={{marginBottom: (level === 3 || level === 4) ? 0 : undefined}} />
+          styles={iconStyle({size: 'S', marginBottom: 4})}
+          UNSAFE_style={{marginBottom: level === 3 || level === 4 ? 0 : undefined}}
+        />
       </Link>
     </span>
   );
@@ -89,7 +93,12 @@ const h1 = style({
 
 export function H1({children, isLongForm, ...props}) {
   return (
-    <h1 {...props} data-anchor-link id="top" style={{'--width-per-em': getTextWidth(children)} as any} className={h1({isLongForm})}>
+    <h1
+      {...props}
+      data-anchor-link
+      id="top"
+      style={{'--width-per-em': getTextWidth(children)} as any}
+      className={h1({isLongForm})}>
       {children}
     </h1>
   );
@@ -99,7 +108,21 @@ export function H2({children, ...props}) {
   let {hoverProps, isHovered} = useHover({});
   let id = anchorId(children);
   return (
-    <h2 {...props} data-anchor-link id={id} className={style({font: 'heading-lg', marginTop: 48, marginBottom: 24, maxWidth: '--text-width', marginX: 'auto', textWrap: 'balance', position: 'relative', overflowX: 'clip'})} {...hoverProps}>
+    <h2
+      {...props}
+      data-anchor-link
+      id={id}
+      className={style({
+        font: 'heading-lg',
+        marginTop: 48,
+        marginBottom: 24,
+        maxWidth: '--text-width',
+        marginX: 'auto',
+        textWrap: 'balance',
+        position: 'relative',
+        overflowX: 'clip'
+      })}
+      {...hoverProps}>
       {children}
       <AnchorLink anchorId={id} isHovered={isHovered} level={2} headingText={children} />
     </h2>
@@ -110,7 +133,21 @@ export function H3({children, ...props}) {
   let {hoverProps, isHovered} = useHover({});
   let id = anchorId(children);
   return (
-    <h3 {...props} data-anchor-link id={id} className={style({font: 'heading', marginTop: 36, marginBottom: 24, maxWidth: '--text-width', marginX: 'auto', textWrap: 'balance', position: 'relative', overflowX: {default: 'clip', ':has([data-step])': 'visible'}})} {...hoverProps}>
+    <h3
+      {...props}
+      data-anchor-link
+      id={id}
+      className={style({
+        font: 'heading',
+        marginTop: 36,
+        marginBottom: 24,
+        maxWidth: '--text-width',
+        marginX: 'auto',
+        textWrap: 'balance',
+        position: 'relative',
+        overflowX: {default: 'clip', ':has([data-step])': 'visible'}
+      })}
+      {...hoverProps}>
       {children}
       <AnchorLink anchorId={id} isHovered={isHovered} level={3} headingText={children} />
     </h3>
@@ -121,7 +158,19 @@ export function H4({children, ...props}) {
   let {hoverProps, isHovered} = useHover({});
   let id = anchorId(children);
   return (
-    <h4 {...props} data-anchor-link id={id} className={style({font: 'heading-sm', maxWidth: '--text-width', marginX: 'auto', textWrap: 'balance', position: 'relative', overflowX: 'clip'})} {...hoverProps}>
+    <h4
+      {...props}
+      data-anchor-link
+      id={id}
+      className={style({
+        font: 'heading-sm',
+        maxWidth: '--text-width',
+        marginX: 'auto',
+        textWrap: 'balance',
+        position: 'relative',
+        overflowX: 'clip'
+      })}
+      {...hoverProps}>
       {children}
       <AnchorLink anchorId={id} isHovered={isHovered} level={4} headingText={children} />
     </h4>
@@ -138,11 +187,15 @@ export function PageDescription(props: HTMLAttributes<HTMLParagraphElement>) {
         marginX: 'auto',
         marginTop: 8,
         marginBottom: 24
-      })} />
+      })}
+    />
   );
 }
 
-export function P({isLongForm, ...props}: HTMLAttributes<HTMLParagraphElement> & {isLongForm?: boolean}) {
+export function P({
+  isLongForm,
+  ...props
+}: HTMLAttributes<HTMLParagraphElement> & {isLongForm?: boolean}) {
   return (
     <p
       {...props}
@@ -156,7 +209,8 @@ export function P({isLongForm, ...props}: HTMLAttributes<HTMLParagraphElement> &
         marginY: '[1lh]',
         maxWidth: '--text-width',
         marginX: 'auto'
-      })({isLongForm})} />
+      })({isLongForm})}
+    />
   );
 }
 
@@ -177,54 +231,106 @@ export function LI({isLongForm, ...props}: HTMLAttributes<HTMLLIElement> & {isLo
         },
         maxWidth: '--text-width',
         marginX: 'auto'
-      })({isLongForm})} />
+      })({isLongForm})}
+    />
   );
 }
 
 interface SubpageHeaderProps {
-  currentPage: Page,
-  parentPage?: Page,
-  isLongForm?: boolean
+  currentPage: Page;
+  parentPage?: Page;
+  isLongForm?: boolean;
 }
 
 export function SubpageHeader({currentPage, parentPage, isLongForm}: SubpageHeaderProps) {
   return (
-    <div className={style({display: 'flex', flexDirection: 'column', gap: 4, maxWidth: '--text-width', marginX: 'auto', marginBottom: 40})}>
+    <div
+      className={style({
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 4,
+        maxWidth: '--text-width',
+        marginX: 'auto',
+        marginBottom: 40
+      })}>
       <div className={style({display: 'flex', alignItems: 'center', gap: 2})}>
-        <TitleLink href={parentPage?.url}>{parentPage?.exports?.title ?? parentPage?.tableOfContents?.[0]?.title ?? parentPage?.name}</TitleLink>
+        <TitleLink href={parentPage?.url}>
+          {parentPage?.exports?.title ??
+            parentPage?.tableOfContents?.[0]?.title ??
+            parentPage?.name}
+        </TitleLink>
         <ChevronRightIcon styles={iconStyle({size: 'XS'})} />
       </div>
-      <H1 itemProp="headline" isLongForm={isLongForm}>{currentPage.tableOfContents?.[0].title}</H1>
-      {currentPage.exports?.author && <Byline author={currentPage.exports.author} authorLink={currentPage.exports.authorLink} date={currentPage.exports.date} />}
-      {currentPage.exports?.date && !currentPage.exports?.author && <Time date={currentPage.exports.date} />}
+      <H1 itemProp="headline" isLongForm={isLongForm}>
+        {currentPage.tableOfContents?.[0].title}
+      </H1>
+      {currentPage.exports?.author && (
+        <Byline
+          author={currentPage.exports.author}
+          authorLink={currentPage.exports.authorLink}
+          date={currentPage.exports.date}
+        />
+      )}
+      {currentPage.exports?.date && !currentPage.exports?.author && (
+        <Time date={currentPage.exports.date} />
+      )}
     </div>
   );
 }
 
-export function Byline({author, authorLink, date}: {author?: string, authorLink?: string, date: string}) {
-  let formattedDate = new Date(date).toLocaleDateString('en-US', {year: 'numeric', month: 'long', day: 'numeric'});
+export function Byline({
+  author,
+  authorLink,
+  date
+}: {
+  author?: string;
+  authorLink?: string;
+  date: string;
+}) {
+  let formattedDate = new Date(date).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
 
   return (
-    <div className={style({font: 'detail', width: 'full', maxWidth: '--text-width', marginX: 'auto', marginTop: 4})}>
+    <div
+      className={style({
+        font: 'detail',
+        width: 'full',
+        maxWidth: '--text-width',
+        marginX: 'auto',
+        marginTop: 4
+      })}>
       {author && (
         <>
           {'By '}
           <span itemProp="author" itemScope itemType="https://schema.org/Person">
-            {authorLink ? (<>
-              <meta itemProp="url" content={authorLink} />
-              <Link href={authorLink} isQuiet rel="author" target="_blank">
-                <span itemProp="name">{author}</span>
-              </Link>
-            </>) : <span itemProp="name">{author}</span>}
+            {authorLink ? (
+              <>
+                <meta itemProp="url" content={authorLink} />
+                <Link href={authorLink} isQuiet rel="author" target="_blank">
+                  <span itemProp="name">{author}</span>
+                </Link>
+              </>
+            ) : (
+              <span itemProp="name">{author}</span>
+            )}
           </span>
           {' · '}
         </>
       )}
-      <time itemProp="datePublished" dateTime={date}>{formattedDate}</time>
+      <time itemProp="datePublished" dateTime={date}>
+        {formattedDate}
+      </time>
     </div>
   );
 }
 
 export function Time({date}: {date: string}) {
-  return <time itemProp="datePublished" dateTime={date} className={style({font: 'detail'})}>{new Date(date).toLocaleDateString('en-US', {year: 'numeric', month: 'long', day: 'numeric'})}</time>;
+  return (
+    <time itemProp="datePublished" dateTime={date} className={style({font: 'detail'})}>
+      {new Date(date).toLocaleDateString('en-US', {year: 'numeric', month: 'long', day: 'numeric'})}
+    </time>
+  );
 }

@@ -6,7 +6,9 @@ const test = (name: string, input: string) => {
   defineSnapshotTest(transform, {}, input, name);
 };
 
-test('Updates size prop to pixel value', `
+test(
+  'Updates size prop to pixel value',
+  `
 import {Avatar} from '@adobe/react-spectrum';
 let size = 75;
 let props = {size: 100};
@@ -33,4 +35,5 @@ let props = {size: 100};
     alt="avatar with custom size"
     {...props} />
 </div>
-`);
+`
+);

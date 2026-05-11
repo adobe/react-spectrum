@@ -1,22 +1,44 @@
 'use client';
 
-import {Autocomplete, GridLayout, ListBox, ListBoxItem, Size, useFilter, Virtualizer} from 'react-aria-components';
- 
+import {
+  Autocomplete,
+  GridLayout,
+  ListBox,
+  ListBoxItem,
+  Size,
+  useFilter,
+  Virtualizer
+} from 'react-aria-components';
+
 import Checkmark from '@react-spectrum/s2/illustrations/gradient/generic1/Checkmark';
-import {Content, Heading, IllustratedMessage, Link, pressScale, ProgressCircle, Radio, RadioGroup, SearchField, SegmentedControl, SegmentedControlItem, Text, ToastQueue} from '@react-spectrum/s2';
+import {
+  Content,
+  Heading,
+  IllustratedMessage,
+  Link,
+  pressScale,
+  ProgressCircle,
+  Radio,
+  RadioGroup,
+  SearchField,
+  SegmentedControl,
+  SegmentedControlItem,
+  Text,
+  ToastQueue
+} from '@react-spectrum/s2';
 import {focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 // @ts-ignore
 import Gradient from '@react-spectrum/s2/icons/Gradient';
-import {illustrationAliases} from './illustrationAliases.js'; 
+import {illustrationAliases} from './illustrationAliases.js';
 import {InfoMessage} from './colorSearchData';
- 
+
 import NoSearchResults from '@react-spectrum/s2/illustrations/linear/NoSearchResults';
 import Polygon4 from '@react-spectrum/s2/icons/Polygon4';
 import React, {Suspense, use, useCallback, useEffect, useRef, useState} from 'react';
 
 type IllustrationItemType = {
-  id: string,
-  Component: React.ComponentType<any>
+  id: string;
+  Component: React.ComponentType<any>;
 };
 
 const itemStyle = style({
@@ -43,21 +65,24 @@ export function IllustrationCards() {
   let [gradientStyle, setGradientStyle] = useState<'generic1' | 'generic2'>('generic1');
 
   let {contains} = useFilter({sensitivity: 'base'});
-  let filter = useCallback((textValue: string, inputValue: string) => {
-    const trimmedInput = inputValue.trim();
-    // If input is empty after trimming, show all items
-    if (!trimmedInput) {
-      return true;
-    }
-    // Check if input matches an alias that maps to this illustration name
-    for (const alias of Object.keys(illustrationAliases)) {
-      if (contains(alias, trimmedInput) && illustrationAliases[alias].includes(textValue)) {
+  let filter = useCallback(
+    (textValue: string, inputValue: string) => {
+      const trimmedInput = inputValue.trim();
+      // If input is empty after trimming, show all items
+      if (!trimmedInput) {
         return true;
       }
-    }
-    // Also compare for substrings in the illustration's actual name
-    return textValue != null && contains(textValue, trimmedInput);
-  }, [contains]);
+      // Check if input matches an alias that maps to this illustration name
+      for (const alias of Object.keys(illustrationAliases)) {
+        if (contains(alias, trimmedInput) && illustrationAliases[alias].includes(textValue)) {
+          return true;
+        }
+      }
+      // Also compare for substrings in the illustration's actual name
+      return textValue != null && contains(textValue, trimmedInput);
+    },
+    [contains]
+  );
 
   return (
     <Autocomplete filter={filter}>
@@ -65,19 +90,29 @@ export function IllustrationCards() {
         <div className={style({display: 'flex', justifyContent: 'center'})}>
           <SegmentedControl
             aria-label="Illustration type"
-            onSelectionChange={(value) => setVariant(value as 'linear' | 'gradient')}
+            onSelectionChange={value => setVariant(value as 'linear' | 'gradient')}
             selectedKey={variant}>
-            <SegmentedControlItem id="gradient"><Gradient /><Text>Gradient</Text></SegmentedControlItem>
-            <SegmentedControlItem id="linear"><Polygon4 /><Text>Linear</Text></SegmentedControlItem>
+            <SegmentedControlItem id="gradient">
+              <Gradient />
+              <Text>Gradient</Text>
+            </SegmentedControlItem>
+            <SegmentedControlItem id="linear">
+              <Polygon4 />
+              <Text>Linear</Text>
+            </SegmentedControlItem>
           </SegmentedControl>
         </div>
-        <SearchField size="L" aria-label="Search illustrations" placeholder="Search illustrations" />
+        <SearchField
+          size="L"
+          aria-label="Search illustrations"
+          placeholder="Search illustrations"
+        />
         {variant === 'gradient' && (
           <RadioGroup
             labelPosition="side"
             orientation="horizontal"
             value={gradientStyle}
-            onChange={(value) => setGradientStyle(value as 'generic1' | 'generic2')}
+            onChange={value => setGradientStyle(value as 'generic1' | 'generic2')}
             aria-label="Gradient Style"
             UNSAFE_style={{display: 'flex', justifyContent: 'center'}}
             styles={style({marginTop: 16})}>
@@ -85,7 +120,10 @@ export function IllustrationCards() {
             <Radio value="generic2">Generic 2</Radio>
           </RadioGroup>
         )}
-        <InfoMessage>Press an item to copy its import statement. See <Link href="illustrations">Illustrations</Link> for more information.</InfoMessage>
+        <InfoMessage>
+          Press an item to copy its import statement. See{' '}
+          <Link href="illustrations">Illustrations</Link> for more information.
+        </InfoMessage>
         <Suspense fallback={<Loading />}>
           <IllustrationList variant={variant} gradientStyle={gradientStyle} />
         </Suspense>
@@ -96,12 +134,18 @@ export function IllustrationCards() {
 
 function Loading() {
   return (
-    <div className={style({height: 560, width: 'full', display: 'flex', alignItems: 'center', justifyContent: 'center'})}>
+    <div
+      className={style({
+        height: 560,
+        width: 'full',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      })}>
       <ProgressCircle isIndeterminate aria-label="Loading" />
     </div>
   );
 }
-
 
 function useCopyImport(variant: string, gradientStyle: string) {
   let [copiedId, setCopiedId] = useState<string | null>(null);
@@ -115,22 +159,29 @@ function useCopyImport(variant: string, gradientStyle: string) {
     };
   }, []);
 
-  let handleCopyImport = useCallback((id: string) => {
-    if (timeout.current) {
-      clearTimeout(timeout.current);
-    }
-    // Use underscore prefix for names starting with a number (invalid JS identifier)
-    let importName = id.replace(/^(\d)/, '_$1');
-    let importText = variant === 'gradient' ?
-      `import ${importName} from '@react-spectrum/s2/illustrations/gradient/${gradientStyle}/${id}';` :
-      `import ${importName} from '@react-spectrum/s2/illustrations/linear/${id}';`;
-    navigator.clipboard.writeText(importText).then(() => {
-      setCopiedId(id);
-      timeout.current = setTimeout(() => setCopiedId(null), 2000);
-    }).catch(() => {
-      ToastQueue.negative('Failed to copy import statement.');
-    });
-  }, [variant, gradientStyle]);
+  let handleCopyImport = useCallback(
+    (id: string) => {
+      if (timeout.current) {
+        clearTimeout(timeout.current);
+      }
+      // Use underscore prefix for names starting with a number (invalid JS identifier)
+      let importName = id.replace(/^(\d)/, '_$1');
+      let importText =
+        variant === 'gradient'
+          ? `import ${importName} from '@react-spectrum/s2/illustrations/gradient/${gradientStyle}/${id}';`
+          : `import ${importName} from '@react-spectrum/s2/illustrations/linear/${id}';`;
+      navigator.clipboard
+        .writeText(importText)
+        .then(() => {
+          setCopiedId(id);
+          timeout.current = setTimeout(() => setCopiedId(null), 2000);
+        })
+        .catch(() => {
+          ToastQueue.negative('Failed to copy import statement.');
+        });
+    },
+    [variant, gradientStyle]
+  );
 
   return {copiedId, handleCopyImport};
 }
@@ -151,31 +202,47 @@ function IllustrationList({variant, gradientStyle}) {
         aria-label="Illustrations"
         items={items}
         layout="grid"
-        onAction={(item) => handleCopyImport(item.toString())}
+        onAction={item => handleCopyImport(item.toString())}
         dependencies={[copiedId]}
-        className={style({height: 560, width: '100%', maxHeight: '100%', overflow: 'auto', scrollPaddingY: 4})}
+        className={style({
+          height: 560,
+          width: '100%',
+          maxHeight: '100%',
+          overflow: 'auto',
+          scrollPaddingY: 4
+        })}
         renderEmptyState={() => (
           <IllustratedMessage styles={style({marginX: 'auto', marginY: 32})}>
             <NoSearchResults />
-            <Heading>
-              No results
-            </Heading>
-            <Content>
-              Try a different search term.
-            </Content>
+            <Heading>No results</Heading>
+            <Content>Try a different search term.</Content>
           </IllustratedMessage>
-          )}>
-        {(item: IllustrationItemType) => <IllustrationItem item={item} isCopied={copiedId === item.id} />}
+        )}>
+        {(item: IllustrationItemType) => (
+          <IllustrationItem item={item} isCopied={copiedId === item.id} />
+        )}
       </ListBox>
     </Virtualizer>
   );
 }
 
-function IllustrationItem({item, isCopied = false}: {item: IllustrationItemType, isCopied?: boolean}) {
+function IllustrationItem({
+  item,
+  isCopied = false
+}: {
+  item: IllustrationItemType;
+  isCopied?: boolean;
+}) {
   let Illustration = item.Component;
   let ref = useRef(null);
   return (
-    <ListBoxItem id={item.id} value={item} textValue={item.id} className={itemStyle} ref={ref} style={pressScale(ref)}>
+    <ListBoxItem
+      id={item.id}
+      value={item}
+      textValue={item.id}
+      className={itemStyle}
+      ref={ref}
+      style={pressScale(ref)}>
       {isCopied ? <Checkmark /> : <Illustration />}
       <div
         className={style({
@@ -201,9 +268,10 @@ function loadIllustrations(variant: string, style: string): Promise<Illustration
   if (variant === 'linear') {
     promise = import('./illustrations/linear').then(m => m.default);
   } else {
-    promise = style === 'generic1'
-      ? import('./illustrations/generic1').then(m => m.default)
-      : import('./illustrations/generic2').then(m => m.default);
+    promise =
+      style === 'generic1'
+        ? import('./illustrations/generic1').then(m => m.default)
+        : import('./illustrations/generic2').then(m => m.default);
   }
 
   cache.set(key, promise);

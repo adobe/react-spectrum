@@ -7,7 +7,9 @@ const test = (name: string, input: string) => {
   defineSnapshotTest(transform, {}, input, name);
 };
 
-test('Static - Renames Item to Breadcrumb and adds import', `
+test(
+  'Static - Renames Item to Breadcrumb and adds import',
+  `
 import {Breadcrumbs, Item} from '@adobe/react-spectrum';
 
 <div>
@@ -17,9 +19,12 @@ import {Breadcrumbs, Item} from '@adobe/react-spectrum';
     <Item key="march 2020 assets">March 2020 Assets</Item>
   </Breadcrumbs>
 </div>
-`);
+`
+);
 
-test('Static - Renames key to id', `
+test(
+  'Static - Renames key to id',
+  `
 import {Breadcrumbs, Item} from '@adobe/react-spectrum';
 let externalKey = 'travel';
 <div>
@@ -30,9 +35,12 @@ let externalKey = 'travel';
     <Item>Shopping</Item>
   </Breadcrumbs>
 </div>
-`);
+`
+);
 
-test('Dynamic - Renames Item to Breadcrumb', `
+test(
+  'Dynamic - Renames Item to Breadcrumb',
+  `
 import {Breadcrumbs, Item} from '@adobe/react-spectrum';
 let folders = [
   {id: 1, label: 'Home'},
@@ -44,9 +52,12 @@ let folders = [
     {folders.map(f => <Item key={f.id}>{f.label}</Item>)}
   </Breadcrumbs>
 </div>
-`);
+`
+);
 
-test('Dynamic - Renames key to id', `
+test(
+  'Dynamic - Renames key to id',
+  `
 import {Breadcrumbs, Item} from '@adobe/react-spectrum';
 const items = [
   {id: 1, name: 'News'},
@@ -65,9 +76,12 @@ const items = [
     {item => <Item>{item.name}</Item>}
   </Breadcrumbs>
 </div>
-`);
+`
+);
 
-test('Comments out showRoot', `
+test(
+  'Comments out showRoot',
+  `
 import {Breadcrumbs, Item} from '@adobe/react-spectrum';
 
 <Breadcrumbs showRoot>
@@ -77,9 +91,12 @@ import {Breadcrumbs, Item} from '@adobe/react-spectrum';
   <Item key="winter">Winter</Item>
   <Item key="holiday">Holiday</Item>
 </Breadcrumbs>
-`);
+`
+);
 
-test('Comments out autoFocusCurrent', `
+test(
+  'Comments out autoFocusCurrent',
+  `
 import {Breadcrumbs, Item} from '@adobe/react-spectrum';
 
 <Breadcrumbs autoFocusCurrent>
@@ -87,9 +104,12 @@ import {Breadcrumbs, Item} from '@adobe/react-spectrum';
   <Item key="trendy">Trendy</Item>
   <Item key="march 2020 assets">March 2020 Assets</Item>
 </Breadcrumbs>
-`);
+`
+);
 
-test('Comments out isMultiline', `
+test(
+  'Comments out isMultiline',
+  `
 import {Breadcrumbs, Item} from '@adobe/react-spectrum';
 
 <Breadcrumbs isMultiline>
@@ -97,22 +117,29 @@ import {Breadcrumbs, Item} from '@adobe/react-spectrum';
   <Item key="trendy">Trendy</Item>
   <Item key="march 2020 assets">March 2020 Assets</Item>
 </Breadcrumbs>
-`);
+`
+);
 
-test('Removes size="S"', `
+test(
+  'Removes size="S"',
+  `
 import {Breadcrumbs, Item} from '@adobe/react-spectrum';
 
 <Breadcrumbs size="S">
   <Item key="home">Home</Item>
   <Item key="trendy">Trendy</Item>
 </Breadcrumbs>
-`);
+`
+);
 
-test('Leaves a comment if size prop contains "S"', `
+test(
+  'Leaves a comment if size prop contains "S"',
+  `
 import {Breadcrumbs, Item} from '@adobe/react-spectrum';
 
 <Breadcrumbs size={true ? 'M' : 'S'}>
   <Item key="home">Home</Item>
   <Item key="trendy">Trendy</Item>
 </Breadcrumbs>
-`);
+`
+);

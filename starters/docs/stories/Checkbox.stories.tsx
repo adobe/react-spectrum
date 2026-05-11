@@ -12,5 +12,4 @@ const meta: Meta<typeof Checkbox> = {
 export default meta;
 type Story = StoryFn<typeof Checkbox>;
 
-export const Example: Story = (args) => <Checkbox {...args}>Unsubscribe
-</Checkbox>;
+export const Example: Story = args => <Checkbox {...args}>Unsubscribe</Checkbox>;

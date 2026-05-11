@@ -47,8 +47,8 @@ describe('ButtonGroup', function () {
   });
 
   it.each`
-    Name               | Component        | props
-    ${'ButtonGroup'}   | ${ButtonGroup}   | ${{}}
+    Name             | Component      | props
+    ${'ButtonGroup'} | ${ButtonGroup} | ${{}}
   `('$Name renders multiple buttons', async function ({Component, props}) {
     let user = userEvent.setup({delay: null, pointerMap});
     let tree = renderComponent(Component, props);
@@ -73,8 +73,8 @@ describe('ButtonGroup', function () {
   });
 
   it.each`
-    Name               | Component        | props
-    ${'ButtonGroup'}   | ${ButtonGroup}   | ${{UNSAFE_className: 'custom class'}}
+    Name             | Component      | props
+    ${'ButtonGroup'} | ${ButtonGroup} | ${{UNSAFE_className: 'custom class'}}
   `('$Name supports UNSAFE_className', function ({Component, props}) {
     let tree = renderComponent(Component, props);
     let buttonGroup = tree.getByTestId(buttonGroupId);
@@ -83,8 +83,8 @@ describe('ButtonGroup', function () {
   });
 
   it.each`
-    Name               | Component        | props
-    ${'ButtonGroup'}   | ${ButtonGroup}   | ${{}}
+    Name             | Component      | props
+    ${'ButtonGroup'} | ${ButtonGroup} | ${{}}
   `('$Name supports attaching a ref to the button group', function ({Component}) {
     let ref = React.createRef();
     let tree = renderComponent(Component, {ref});
@@ -93,64 +93,82 @@ describe('ButtonGroup', function () {
   });
 
   it.each`
-    Name               | Component        | props
-    ${'ButtonGroup'}   | ${ButtonGroup}   | ${{isDisabled: true}}
-  `('$Name supports disabling all buttons within via isDisabled', async function ({Component, props}) {
-    let user = userEvent.setup({delay: null, pointerMap});
-    let tree = renderComponent(Component, props);
-    let buttonGroup = tree.getByTestId(buttonGroupId);
-    expect(buttonGroup).toBeTruthy();
+    Name             | Component      | props
+    ${'ButtonGroup'} | ${ButtonGroup} | ${{isDisabled: true}}
+  `(
+    '$Name supports disabling all buttons within via isDisabled',
+    async function ({Component, props}) {
+      let user = userEvent.setup({delay: null, pointerMap});
+      let tree = renderComponent(Component, props);
+      let buttonGroup = tree.getByTestId(buttonGroupId);
+      expect(buttonGroup).toBeTruthy();
 
-    let button1 = within(buttonGroup).getByText('Button1');
-    let button2 = within(buttonGroup).getByText('Button2');
-    let button3 = within(buttonGroup).getByText('Button3');
+      let button1 = within(buttonGroup).getByText('Button1');
+      let button2 = within(buttonGroup).getByText('Button2');
+      let button3 = within(buttonGroup).getByText('Button3');
 
-    await user.click(button1);
-    await user.click(button2);
-    await user.click(button3);
+      await user.click(button1);
+      await user.click(button2);
+      await user.click(button3);
 
-    expect(onPressSpy1).toHaveBeenCalledTimes(0);
-    expect(onPressSpy2).toHaveBeenCalledTimes(0);
-    expect(onPressSpy3).toHaveBeenCalledTimes(0);
-  });
+      expect(onPressSpy1).toHaveBeenCalledTimes(0);
+      expect(onPressSpy2).toHaveBeenCalledTimes(0);
+      expect(onPressSpy3).toHaveBeenCalledTimes(0);
+    }
+  );
 
   // TODO: Retool this one to check for aria-orientation when ButtonGroup is finalized
   it.each`
-    Name               | Component        | props
-    ${'ButtonGroup'}   | ${ButtonGroup}   | ${{orientation: 'vertical'}}
+    Name             | Component      | props
+    ${'ButtonGroup'} | ${ButtonGroup} | ${{orientation: 'vertical'}}
   `('$Name supports vertical orientation', function ({Component, props}) {
     let tree = renderComponent(Component, props);
     let buttonGroup = tree.getByTestId(buttonGroupId);
     expect(buttonGroup).toBeTruthy();
-    expect(buttonGroup).toHaveAttribute('class', expect.stringContaining('spectrum-ButtonGroup--vertical'));
+    expect(buttonGroup).toHaveAttribute(
+      'class',
+      expect.stringContaining('spectrum-ButtonGroup--vertical')
+    );
   });
 
   describe('resizing', () => {
     it('goes vertical if there is not enough room after buttongroup gets a new size', () => {
       let setUp = ({buttonGroup, button1, button2, button3}) => {
-        jest.spyOn(buttonGroup, 'offsetWidth', 'get').mockImplementationOnce(() => 88).mockImplementation(() => 90);
+        jest
+          .spyOn(buttonGroup, 'offsetWidth', 'get')
+          .mockImplementationOnce(() => 88)
+          .mockImplementation(() => 90);
         jest.spyOn(button1, 'offsetLeft', 'get').mockImplementation(() => 0);
         jest.spyOn(button1, 'offsetWidth', 'get').mockImplementation(() => 30);
         jest.spyOn(button2, 'offsetLeft', 'get').mockImplementation(() => 30);
         jest.spyOn(button2, 'offsetWidth', 'get').mockImplementation(() => 30);
         jest.spyOn(button3, 'offsetLeft', 'get').mockImplementation(() => 60);
         jest.spyOn(button3, 'offsetWidth', 'get').mockImplementation(() => 30);
-
       };
       let {getByTestId} = render(<ButtonGroupWithRefs setUp={setUp} />);
       let buttonGroup = getByTestId(buttonGroupId);
 
       // ResizeObserver not actually implemented in jsdom, so rely on the fallback to window resize listener
-      act(() => {window.dispatchEvent(new Event('resize'));});
-      expect(buttonGroup).toHaveAttribute('class', expect.stringContaining('spectrum-ButtonGroup--vertical'));
+      act(() => {
+        window.dispatchEvent(new Event('resize'));
+      });
+      expect(buttonGroup).toHaveAttribute(
+        'class',
+        expect.stringContaining('spectrum-ButtonGroup--vertical')
+      );
 
-      act(() => {window.dispatchEvent(new Event('resize'));});
-      expect(buttonGroup).not.toHaveAttribute('class', expect.stringContaining('spectrum-ButtonGroup--vertical'));
+      act(() => {
+        window.dispatchEvent(new Event('resize'));
+      });
+      expect(buttonGroup).not.toHaveAttribute(
+        'class',
+        expect.stringContaining('spectrum-ButtonGroup--vertical')
+      );
     });
     // can't test children being added because i don't have access to the ref in time
   });
 
-// Test that it handles the useEffect wrapping?
+  // Test that it handles the useEffect wrapping?
 });
 
 function ButtonGroupWithRefs(props) {
@@ -165,7 +183,7 @@ function ButtonGroupWithRefs(props) {
       button2: button2.current.UNSAFE_getDOMNode(),
       button3: button3.current.UNSAFE_getDOMNode()
     });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
     <Provider theme={theme}>

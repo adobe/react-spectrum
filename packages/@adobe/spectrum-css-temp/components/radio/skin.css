@@ -11,8 +11,9 @@ governing permissions and limitations under the License.
 
 :root {
   /* todo: fix in DNA */
-  --spectrum-radio-emphasized-circle-border-color-selected-key-focus: var(--spectrum-radio-emphasized-circle-border-color-selected-hover);
-
+  --spectrum-radio-emphasized-circle-border-color-selected-key-focus: var(
+    --spectrum-radio-emphasized-circle-border-color-selected-hover
+  );
 }
 
 .spectrum-Radio .spectrum-Radio-input {
@@ -111,8 +112,8 @@ governing permissions and limitations under the License.
   }
 }
 
-
-.spectrum-Radio, .spectrum-Radio--quiet {
+.spectrum-Radio,
+.spectrum-Radio--quiet {
   &.is-invalid {
     .spectrum-Radio-button,
     .spectrum-Radio-input:checked + .spectrum-Radio-button {
@@ -184,7 +185,8 @@ governing permissions and limitations under the License.
     }
     & + .spectrum-Radio-button {
       &:after {
-        box-shadow: 0 0 0 var(--spectrum-radio-focus-ring-size-key-focus) var(--spectrum-radio-focus-ring-color-key-focus);
+        box-shadow: 0 0 0 var(--spectrum-radio-focus-ring-size-key-focus)
+          var(--spectrum-radio-focus-ring-color-key-focus);
       }
     }
   }

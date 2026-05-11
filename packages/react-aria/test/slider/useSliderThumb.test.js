@@ -1,4 +1,12 @@
-import {fireEvent, installMouseEvent, installPointerEvent, pointerMap, render, renderHook, screen} from '@react-spectrum/test-utils-internal';
+import {
+  fireEvent,
+  installMouseEvent,
+  installPointerEvent,
+  pointerMap,
+  render,
+  renderHook,
+  screen
+} from '@react-spectrum/test-utils-internal';
 import * as React from 'react';
 import {useRef} from 'react';
 import userEvent from '@testing-library/user-event';
@@ -22,17 +30,27 @@ describe('useSliderThumb', () => {
         };
         let state = useSliderState({...sliderProps, numberFormatter});
         let {labelProps, groupProps} = useSlider(sliderProps, state, trackRef);
-        let props = useSliderThumb({
-          index: 0,
-          trackRef,
-          inputRef
-        }, state);
+        let props = useSliderThumb(
+          {
+            index: 0,
+            trackRef,
+            inputRef
+          },
+          state
+        );
         return {props, labelProps, groupProps};
       }).result;
 
       let {inputProps} = result.current.props;
       let labelId = result.current.labelProps.id;
-      expect(inputProps).toMatchObject({type: 'range', step: 2, value: 50, min: 10, max: 200, 'aria-labelledby': `${labelId}`});
+      expect(inputProps).toMatchObject({
+        type: 'range',
+        step: 2,
+        value: 50,
+        min: 10,
+        max: 200,
+        'aria-labelledby': `${labelId}`
+      });
     });
     it('should have the right labels with Slider thumb label', () => {
       let result = renderHook(() => {
@@ -47,18 +65,29 @@ describe('useSliderThumb', () => {
         };
         let state = useSliderState({...sliderProps, numberFormatter});
         let {labelProps, groupProps} = useSlider(sliderProps, state, trackRef);
-        let props = useSliderThumb({
-          index: 0,
-          label: 'thumb',
-          trackRef,
-          inputRef
-        }, state);
+        let props = useSliderThumb(
+          {
+            index: 0,
+            label: 'thumb',
+            trackRef,
+            inputRef
+          },
+          state
+        );
         return {props, labelProps, groupProps};
       }).result;
 
       let {inputProps, labelProps} = result.current.props;
       let labelId = result.current.groupProps.id;
-      expect(inputProps).toMatchObject({type: 'range', step: 2, value: 50, min: 10, max: 200, 'aria-labelledby': `${labelProps.id} ${labelId}`, id: labelProps.htmlFor});
+      expect(inputProps).toMatchObject({
+        type: 'range',
+        step: 2,
+        value: 50,
+        min: 10,
+        max: 200,
+        'aria-labelledby': `${labelProps.id} ${labelId}`,
+        id: labelProps.htmlFor
+      });
     });
     it('should have the right labels with Slider thumb aria-label', () => {
       let result = renderHook(() => {
@@ -73,33 +102,57 @@ describe('useSliderThumb', () => {
         };
         let state = useSliderState({...sliderProps, numberFormatter});
         let {labelProps, groupProps} = useSlider(sliderProps, state, trackRef);
-        let props0 = useSliderThumb({
-          index: 0,
-          'aria-label': 'thumb0',
-          trackRef,
-          inputRef
-        }, state);
-        let props1 = useSliderThumb({
-          index: 1,
-          'aria-label': 'thumb1',
-          trackRef,
-          inputRef
-        }, state);
+        let props0 = useSliderThumb(
+          {
+            index: 0,
+            'aria-label': 'thumb0',
+            trackRef,
+            inputRef
+          },
+          state
+        );
+        let props1 = useSliderThumb(
+          {
+            index: 1,
+            'aria-label': 'thumb1',
+            trackRef,
+            inputRef
+          },
+          state
+        );
         return {props0, props1, labelProps, groupProps};
       }).result;
 
       let {inputProps: inputProps0} = result.current.props0;
       let {inputProps: inputProps1} = result.current.props1;
       let labelId = result.current.groupProps.id;
-      expect(inputProps0).toMatchObject({type: 'range', step: 2, value: 50, min: 10, max: 70, 'aria-label': 'thumb0',  'aria-labelledby': `${inputProps0.id} ${labelId}`});
-      expect(inputProps1).toMatchObject({type: 'range', step: 2, value: 70, min: 50, max: 200, 'aria-label': 'thumb1', 'aria-labelledby': `${inputProps1.id} ${labelId}`});
+      expect(inputProps0).toMatchObject({
+        type: 'range',
+        step: 2,
+        value: 50,
+        min: 10,
+        max: 70,
+        'aria-label': 'thumb0',
+        'aria-labelledby': `${inputProps0.id} ${labelId}`
+      });
+      expect(inputProps1).toMatchObject({
+        type: 'range',
+        step: 2,
+        value: 70,
+        min: 50,
+        max: 200,
+        'aria-label': 'thumb1',
+        'aria-labelledby': `${inputProps1.id} ${labelId}`
+      });
     });
   });
 
   describe('interactions on thumbs, where track does not contain thumbs', () => {
     let widthStub;
     beforeAll(() => {
-      widthStub = jest.spyOn(window.HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(() => ({top: 0, left: 0, width: 100}));
+      widthStub = jest
+        .spyOn(window.HTMLElement.prototype, 'getBoundingClientRect')
+        .mockImplementation(() => ({top: 0, left: 0, width: 100}));
     });
     afterAll(() => {
       widthStub.mockReset();
@@ -116,20 +169,26 @@ describe('useSliderThumb', () => {
       let state = useSliderState({...props, numberFormatter});
       stateRef.current = state;
       let {trackProps, thumbProps: commonThumbProps} = useSlider(props, state, trackRef);
-      let {inputProps: input0Props, thumbProps: thumb0Props} = useSliderThumb({
-        ...commonThumbProps,
-        'aria-label': 'Min',
-        index: 0,
-        trackRef,
-        inputRef: input0Ref
-      }, state);
-      let {inputProps: input1Props, thumbProps: thumb1Props} = useSliderThumb({
-        ...commonThumbProps,
-        'aria-label': 'Max',
-        index: 1,
-        trackRef,
-        inputRef: input1Ref
-      }, state);
+      let {inputProps: input0Props, thumbProps: thumb0Props} = useSliderThumb(
+        {
+          ...commonThumbProps,
+          'aria-label': 'Min',
+          index: 0,
+          trackRef,
+          inputRef: input0Ref
+        },
+        state
+      );
+      let {inputProps: input1Props, thumbProps: thumb1Props} = useSliderThumb(
+        {
+          ...commonThumbProps,
+          'aria-label': 'Max',
+          index: 1,
+          trackRef,
+          inputRef: input1Ref
+        },
+        state
+      );
       return (
         <div>
           <div data-testid="track" ref={trackRef} {...trackProps} />
@@ -149,7 +208,14 @@ describe('useSliderThumb', () => {
       it('can be moved by dragging', () => {
         let onChangeSpy = jest.fn();
         let onChangeEndSpy = jest.fn();
-        render(<RangeExample onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={[10, 80]} />);
+        render(
+          <RangeExample
+            onChange={onChangeSpy}
+            onChangeEnd={onChangeEndSpy}
+            aria-label="Slider"
+            defaultValue={[10, 80]}
+          />
+        );
 
         // Drag thumb0
         let thumb0 = screen.getByTestId('thumb0');
@@ -204,7 +270,14 @@ describe('useSliderThumb', () => {
       it('can be moved by dragging', () => {
         let onChangeSpy = jest.fn();
         let onChangeEndSpy = jest.fn();
-        render(<RangeExample onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={[10, 80]} />);
+        render(
+          <RangeExample
+            onChange={onChangeSpy}
+            onChangeEnd={onChangeEndSpy}
+            aria-label="Slider"
+            defaultValue={[10, 80]}
+          />
+        );
 
         // Drag thumb0
         let thumb0 = screen.getByTestId('thumb0');
@@ -255,13 +328,14 @@ describe('useSliderThumb', () => {
         expect(stateRef.current.values).toEqual([40, 40]);
       });
     });
-
   });
 
   describe('interactions on thumbs, where track contains thumbs', () => {
     let widthStub;
     beforeAll(() => {
-      widthStub = jest.spyOn(window.HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(() => ({top: 0, left: 0, width: 100, height: 100}));
+      widthStub = jest
+        .spyOn(window.HTMLElement.prototype, 'getBoundingClientRect')
+        .mockImplementation(() => ({top: 0, left: 0, width: 100, height: 100}));
     });
     afterAll(() => {
       widthStub.mockReset();
@@ -276,13 +350,16 @@ describe('useSliderThumb', () => {
       let state = useSliderState({...props, numberFormatter});
       stateRef.current = state;
       let {trackProps} = useSlider(props, state, trackRef);
-      let {inputProps, thumbProps} = useSliderThumb({
-        ...props,
-        'aria-label': 'Min',
-        index: 0,
-        trackRef,
-        inputRef: inputRef
-      }, state);
+      let {inputProps, thumbProps} = useSliderThumb(
+        {
+          ...props,
+          'aria-label': 'Min',
+          index: 0,
+          trackRef,
+          inputRef: inputRef
+        },
+        state
+      );
       return (
         <div data-testid="track" ref={trackRef} {...trackProps}>
           <div data-testid="thumb" {...thumbProps}>
@@ -298,7 +375,14 @@ describe('useSliderThumb', () => {
       it('can be moved by dragging', () => {
         let onChangeSpy = jest.fn();
         let onChangeEndSpy = jest.fn();
-        render(<Example onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={[10]} />);
+        render(
+          <Example
+            onChange={onChangeSpy}
+            onChangeEnd={onChangeEndSpy}
+            aria-label="Slider"
+            defaultValue={[10]}
+          />
+        );
 
         // Drag thumb
         let thumb0 = screen.getByTestId('thumb');
@@ -325,7 +409,14 @@ describe('useSliderThumb', () => {
       it('can be moved by dragging', () => {
         let onChangeSpy = jest.fn();
         let onChangeEndSpy = jest.fn();
-        render(<Example onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={[10]} />);
+        render(
+          <Example
+            onChange={onChangeSpy}
+            onChangeEnd={onChangeEndSpy}
+            aria-label="Slider"
+            defaultValue={[10]}
+          />
+        );
 
         // Drag thumb
         let thumb0 = screen.getByTestId('thumb');
@@ -350,7 +441,15 @@ describe('useSliderThumb', () => {
       it('can be moved by dragging (vertical)', () => {
         let onChangeSpy = jest.fn();
         let onChangeEndSpy = jest.fn();
-        render(<Example onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={[10]} orientation="vertical" />);
+        render(
+          <Example
+            onChange={onChangeSpy}
+            onChangeEnd={onChangeEndSpy}
+            aria-label="Slider"
+            defaultValue={[10]}
+            orientation="vertical"
+          />
+        );
 
         // Drag thumb
         let thumb0 = screen.getByTestId('thumb');
@@ -378,7 +477,14 @@ describe('useSliderThumb', () => {
         let user = userEvent.setup({delay: null, pointerMap});
         let onChangeSpy = jest.fn();
         let onChangeEndSpy = jest.fn();
-        render(<Example onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={[10]} />);
+        render(
+          <Example
+            onChange={onChangeSpy}
+            onChangeEnd={onChangeEndSpy}
+            aria-label="Slider"
+            defaultValue={[10]}
+          />
+        );
 
         // Drag thumb
         await user.tab();
@@ -401,7 +507,14 @@ describe('useSliderThumb', () => {
         let user = userEvent.setup({delay: null, pointerMap});
         let onChangeSpy = jest.fn();
         let onChangeEndSpy = jest.fn();
-        render(<Example onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={[0]} />);
+        render(
+          <Example
+            onChange={onChangeSpy}
+            onChangeEnd={onChangeEndSpy}
+            aria-label="Slider"
+            defaultValue={[0]}
+          />
+        );
 
         await user.tab();
         await user.keyboard('{ArrowLeft}');
@@ -420,7 +533,14 @@ describe('useSliderThumb', () => {
         let user = userEvent.setup({delay: null, pointerMap});
         let onChangeSpy = jest.fn();
         let onChangeEndSpy = jest.fn();
-        render(<Example onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={[100]} />);
+        render(
+          <Example
+            onChange={onChangeSpy}
+            onChangeEnd={onChangeEndSpy}
+            aria-label="Slider"
+            defaultValue={[100]}
+          />
+        );
 
         await user.tab();
         await user.keyboard('{ArrowRight}');
@@ -439,7 +559,15 @@ describe('useSliderThumb', () => {
         let user = userEvent.setup({delay: null, pointerMap});
         let onChangeSpy = jest.fn();
         let onChangeEndSpy = jest.fn();
-        render(<Example onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={[10]} orientation="vertical" />);
+        render(
+          <Example
+            onChange={onChangeSpy}
+            onChangeEnd={onChangeEndSpy}
+            aria-label="Slider"
+            defaultValue={[10]}
+            orientation="vertical"
+          />
+        );
 
         // Drag thumb
         await user.tab();
@@ -461,7 +589,15 @@ describe('useSliderThumb', () => {
         let user = userEvent.setup({delay: null, pointerMap});
         let onChangeSpy = jest.fn();
         let onChangeEndSpy = jest.fn();
-        render(<Example onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={[0]} orientation="vertical" />);
+        render(
+          <Example
+            onChange={onChangeSpy}
+            onChangeEnd={onChangeEndSpy}
+            aria-label="Slider"
+            defaultValue={[0]}
+            orientation="vertical"
+          />
+        );
 
         // Drag thumb
         await user.tab();
@@ -481,7 +617,15 @@ describe('useSliderThumb', () => {
         let user = userEvent.setup({delay: null, pointerMap});
         let onChangeSpy = jest.fn();
         let onChangeEndSpy = jest.fn();
-        render(<Example onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={[100]} orientation="vertical" />);
+        render(
+          <Example
+            onChange={onChangeSpy}
+            onChangeEnd={onChangeEndSpy}
+            aria-label="Slider"
+            defaultValue={[100]}
+            orientation="vertical"
+          />
+        );
 
         // Drag thumb
         await user.tab();

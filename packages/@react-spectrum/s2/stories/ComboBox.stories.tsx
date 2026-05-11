@@ -72,7 +72,7 @@ export const Example: Story = {
 };
 
 export const Sections: Story = {
-  render: (args) => (
+  render: args => (
     <ComboBox {...args}>
       <ComboBoxSection id="neopolitan">
         <Header>
@@ -99,8 +99,8 @@ export const Sections: Story = {
 };
 
 interface IExampleItem {
-  id: string,
-  label: string
+  id: string;
+  label: string;
 }
 let items: IExampleItem[] = [
   {id: 'chocolate', label: 'Chocolate'},
@@ -110,9 +110,13 @@ let items: IExampleItem[] = [
   {id: 'cookie-dough', label: 'Chocolate Chip Cookie Dough'}
 ];
 export const Dynamic: Story = {
-  render: (args) => (
+  render: args => (
     <ComboBox {...args}>
-      {(item) => <ComboBoxItem id={(item as IExampleItem).id} textValue={(item as IExampleItem).label}>{(item as IExampleItem).label}</ComboBoxItem>}
+      {item => (
+        <ComboBoxItem id={(item as IExampleItem).id} textValue={(item as IExampleItem).label}>
+          {(item as IExampleItem).label}
+        </ComboBoxItem>
+      )}
     </ComboBox>
   ),
   args: {
@@ -129,22 +133,24 @@ function VirtualizedCombobox(props) {
 
   return (
     <ComboBox {...props} defaultItems={items}>
-      {(item) => <ComboBoxItem id={(item as IExampleItem).id} textValue={(item as IExampleItem).label}>{(item as IExampleItem).label}</ComboBoxItem>}
+      {item => (
+        <ComboBoxItem id={(item as IExampleItem).id} textValue={(item as IExampleItem).label}>
+          {(item as IExampleItem).label}
+        </ComboBoxItem>
+      )}
     </ComboBox>
   );
 }
 
 export const ManyItems: Story = {
-  render: (args) => (
-    <VirtualizedCombobox {...args} />
-  ),
+  render: args => <VirtualizedCombobox {...args} />,
   args: {
     label: 'Many items'
   }
 };
 
 export const WithIcons: Story = {
-  render: (args) => (
+  render: args => (
     <ComboBox {...args}>
       <ComboBoxItem textValue="Illustrator for iPad">
         <DeviceTabletIcon />
@@ -164,10 +170,11 @@ export const WithIcons: Story = {
 };
 
 const SRC_URL_1 = 'https://i.imgur.com/xIe7Wlb.png';
-const SRC_URL_2 = 'https://mir-s3-cdn-cf.behance.net/project_modules/disp/690bc6105945313.5f84bfc9de488.png';
+const SRC_URL_2 =
+  'https://mir-s3-cdn-cf.behance.net/project_modules/disp/690bc6105945313.5f84bfc9de488.png';
 
 export const WithAvatars: Story = {
-  render: (args) => (
+  render: args => (
     <ComboBox {...args}>
       <ComboBoxItem textValue="User One">
         <Avatar slot="avatar" src={SRC_URL_1} />
@@ -177,7 +184,11 @@ export const WithAvatars: Story = {
       <ComboBoxItem textValue="User Two">
         <Avatar slot="avatar" src={SRC_URL_2} />
         <Text slot="label">User Two</Text>
-        <Text slot="description">user.two@example.com<br />123-456-7890</Text>
+        <Text slot="description">
+          user.two@example.com
+          <br />
+          123-456-7890
+        </Text>
       </ComboBoxItem>
       <ComboBoxItem textValue="User Three">
         <Avatar slot="avatar" src={SRC_URL_2} />
@@ -191,12 +202,18 @@ export const WithAvatars: Story = {
 };
 
 export const Validation: Story = {
-  render: (args) => (
+  render: args => (
     <Form>
       <ComboBox {...args}>
-        {(item) => <ComboBoxItem id={(item as IExampleItem).id} textValue={(item as IExampleItem).label}>{(item as IExampleItem).label}</ComboBoxItem>}
+        {item => (
+          <ComboBoxItem id={(item as IExampleItem).id} textValue={(item as IExampleItem).label}>
+            {(item as IExampleItem).label}
+          </ComboBoxItem>
+        )}
       </ComboBox>
-      <Button type="submit" variant="primary">Submit</Button>
+      <Button type="submit" variant="primary">
+        Submit
+      </Button>
     </Form>
   ),
   args: {
@@ -206,7 +223,7 @@ export const Validation: Story = {
 };
 
 export const ContextualHelpExample: Story = {
-  render: (args) => (
+  render: args => (
     <ComboBox
       {...args}
       contextualHelp={
@@ -214,16 +231,15 @@ export const ContextualHelpExample: Story = {
           <Heading>What is a ice cream?</Heading>
           <Content>
             <Text>
-              A combination of sugar, eggs, milk, and cream is cooked to make
-              a custard base. Then, flavorings are added, and this flavored
-              mixture is carefully churned and frozen to make ice cream.
+              A combination of sugar, eggs, milk, and cream is cooked to make a custard base. Then,
+              flavorings are added, and this flavored mixture is carefully churned and frozen to
+              make ice cream.
             </Text>
           </Content>
           <Footer>
-            <Link
-              isStandalone
-              href="https://en.wikipedia.org/wiki/Ice_cream"
-              target="_blank">Learn more about ice cream</Link>
+            <Link isStandalone href="https://en.wikipedia.org/wiki/Ice_cream" target="_blank">
+              Learn more about ice cream
+            </Link>
           </Footer>
         </ContextualHelp>
       }>
@@ -240,7 +256,7 @@ export const ContextualHelpExample: Story = {
 };
 
 export const CustomWidth: Story = {
-  render: (args) => (
+  render: args => (
     <ComboBox {...args} styles={style({width: 384})}>
       <ComboBoxItem>Chocolate</ComboBoxItem>
       <ComboBoxItem>Mint</ComboBoxItem>
@@ -258,13 +274,15 @@ export const CustomWidth: Story = {
 };
 
 interface Character {
-  name: string,
-  height: number,
-  mass: number,
-  birth_year: number
+  name: string;
+  height: number;
+  mass: number;
+  birth_year: number;
 }
 
-const AsyncComboBox = (args: ComboBoxProps<Character> & {delay: number, label: string}): ReactElement => {
+const AsyncComboBox = (
+  args: ComboBoxProps<Character> & {delay: number; label: string}
+): ReactElement => {
   let list = useAsyncList<Character>({
     async load({signal, cursor, filterText}) {
       if (cursor) {
@@ -273,7 +291,9 @@ const AsyncComboBox = (args: ComboBoxProps<Character> & {delay: number, label: s
 
       // Slow down load so progress circle can appear
       await new Promise(resolve => setTimeout(resolve, args.delay));
-      let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search=${filterText}`, {signal});
+      let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search=${filterText}`, {
+        signal
+      });
       let json = await res.json();
 
       return {
@@ -292,7 +312,11 @@ const AsyncComboBox = (args: ComboBoxProps<Character> & {delay: number, label: s
       onInputChange={list.setFilterText}
       loadingState={list.loadingState}
       onLoadMore={list.loadMore}>
-      {(item: Character) => <ComboBoxItem id={item.name} textValue={item.name}>{item.name}</ComboBoxItem>}
+      {(item: Character) => (
+        <ComboBoxItem id={item.name} textValue={item.name}>
+          {item.name}
+        </ComboBoxItem>
+      )}
     </ComboBox>
   );
 };
@@ -335,11 +359,7 @@ return (
 };
 
 export const EmptyCombobox: Story = {
-  render: (args) => (
-    <ComboBox {...args}>
-      {[]}
-    </ComboBox>
-  ),
+  render: args => <ComboBox {...args}>{[]}</ComboBox>,
   args: Example.args,
   parameters: {
     docs: {
@@ -358,9 +378,7 @@ export function WithCreateOption() {
       inputValue={inputValue}
       onInputChange={setInputValue}>
       {inputValue.length > 0 && (
-        <ComboBoxItem onAction={() => alert('hi')}>
-          {`Create "${inputValue}"`}
-        </ComboBoxItem>
+        <ComboBoxItem onAction={() => alert('hi')}>{`Create "${inputValue}"`}</ComboBoxItem>
       )}
       <ComboBoxItem>Aardvark</ComboBoxItem>
       <ComboBoxItem>Cat</ComboBoxItem>
@@ -373,7 +391,7 @@ export function WithCreateOption() {
 }
 
 export const ComboboxInsideDialog: Story = {
-  render: (args) => (
+  render: args => (
     <DialogTrigger>
       <Button>Open</Button>
       <Dialog isDismissible>

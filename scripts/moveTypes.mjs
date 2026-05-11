@@ -12,7 +12,10 @@ for (let file of fs.globSync('dist/types/**/*.d.ts')) {
 
   // TypeScript generates absolute paths that don't work when published to npm. Fix that.
   contents = contents.replace(/import\(['"]\/(packages\/.+?)['"]\)/g, (_, p) => {
-    let relative = path.relative(path.dirname(dest), p.replace(/packages\/((?:@[^/]+\/[^/]+)|[^/]+)/, 'packages/$1/dist/types'));
+    let relative = path.relative(
+      path.dirname(dest),
+      p.replace(/packages\/((?:@[^/]+\/[^/]+)|[^/]+)/, 'packages/$1/dist/types')
+    );
     return `import("${relative}")`;
   });
 

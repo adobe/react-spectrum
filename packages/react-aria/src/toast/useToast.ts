@@ -24,33 +24,33 @@ import {useLocalizedStringFormatter} from '../i18n/useLocalizedStringFormatter';
 
 export interface AriaToastProps<T> extends AriaLabelingProps {
   /** The toast object. */
-  toast: QueuedToast<T>
+  toast: QueuedToast<T>;
 }
 
 export interface ToastAria {
   /** Props for the toast container, non-modal dialog element. */
-  toastProps: DOMAttributes,
+  toastProps: DOMAttributes;
   /** Props for the toast content alert message. */
-  contentProps: DOMAttributes,
+  contentProps: DOMAttributes;
   /** Props for the toast title element. */
-  titleProps: DOMAttributes,
+  titleProps: DOMAttributes;
   /** Props for the toast description element, if any. */
-  descriptionProps: DOMAttributes,
+  descriptionProps: DOMAttributes;
   /** Props for the toast close button. */
-  closeButtonProps: AriaButtonProps
+  closeButtonProps: AriaButtonProps;
 }
 
 /**
  * Provides the behavior and accessibility implementation for a toast component.
  * Toasts display brief, temporary notifications of actions, errors, or other events in an application.
  */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function useToast<T>(props: AriaToastProps<T>, state: ToastState<T>, ref: RefObject<FocusableElement | null>): ToastAria {
-  let {
-    key,
-    timer,
-    timeout
-  } = props.toast;
+export function useToast<T>(
+  props: AriaToastProps<T>,
+  state: ToastState<T>,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  ref: RefObject<FocusableElement | null>
+): ToastAria {
+  let {key, timer, timeout} = props.toast;
 
   useEffect(() => {
     if (timer == null || timeout == null) {

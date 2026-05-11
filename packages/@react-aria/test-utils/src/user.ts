@@ -39,62 +39,83 @@ import {TreeTester} from './tree';
 import userEvent from '@testing-library/user-event';
 
 let keyToUtil: {
-  'CheckboxGroup': typeof CheckboxGroupTester,
-  'ComboBox': typeof ComboBoxTester,
-  'Dialog': typeof DialogTester,
-  'GridList': typeof GridListTester,
-  'ListBox': typeof ListBoxTester,
-  'Menu': typeof MenuTester,
-  'RadioGroup': typeof RadioGroupTester,
-  'Select': typeof SelectTester,
-  'Table': typeof TableTester,
-  'Tabs': typeof TabsTester,
-  'Tree': typeof TreeTester
+  CheckboxGroup: typeof CheckboxGroupTester;
+  ComboBox: typeof ComboBoxTester;
+  Dialog: typeof DialogTester;
+  GridList: typeof GridListTester;
+  ListBox: typeof ListBoxTester;
+  Menu: typeof MenuTester;
+  RadioGroup: typeof RadioGroupTester;
+  Select: typeof SelectTester;
+  Table: typeof TableTester;
+  Tabs: typeof TabsTester;
+  Tree: typeof TreeTester;
 } = {
-  'CheckboxGroup': CheckboxGroupTester,
-  'ComboBox': ComboBoxTester,
-  'Dialog': DialogTester,
-  'GridList': GridListTester,
-  'ListBox': ListBoxTester,
-  'Menu': MenuTester,
-  'RadioGroup': RadioGroupTester,
-  'Select': SelectTester,
-  'Table': TableTester,
-  'Tabs': TabsTester,
-  'Tree': TreeTester
+  CheckboxGroup: CheckboxGroupTester,
+  ComboBox: ComboBoxTester,
+  Dialog: DialogTester,
+  GridList: GridListTester,
+  ListBox: ListBoxTester,
+  Menu: MenuTester,
+  RadioGroup: RadioGroupTester,
+  Select: SelectTester,
+  Table: TableTester,
+  Tabs: TabsTester,
+  Tree: TreeTester
 } as const;
 export type PatternNames = keyof typeof keyToUtil;
 
 // Conditional type: https://www.typescriptlang.org/docs/handbook/2/conditional-types.html
-type Tester<T> =
-  T extends 'CheckboxGroup' ? CheckboxGroupTester :
-  T extends 'ComboBox' ? ComboBoxTester :
-  T extends 'Dialog' ? DialogTester :
-  T extends 'GridList' ? GridListTester :
-  T extends 'ListBox' ? ListBoxTester :
-  T extends 'Menu' ? MenuTester :
-  T extends 'RadioGroup' ? RadioGroupTester :
-  T extends 'Select' ? SelectTester :
-  T extends 'Table' ? TableTester :
-  T extends 'Tabs' ? TabsTester :
-  T extends 'Tree' ? TreeTester :
-  never;
+type Tester<T> = T extends 'CheckboxGroup'
+  ? CheckboxGroupTester
+  : T extends 'ComboBox'
+    ? ComboBoxTester
+    : T extends 'Dialog'
+      ? DialogTester
+      : T extends 'GridList'
+        ? GridListTester
+        : T extends 'ListBox'
+          ? ListBoxTester
+          : T extends 'Menu'
+            ? MenuTester
+            : T extends 'RadioGroup'
+              ? RadioGroupTester
+              : T extends 'Select'
+                ? SelectTester
+                : T extends 'Table'
+                  ? TableTester
+                  : T extends 'Tabs'
+                    ? TabsTester
+                    : T extends 'Tree'
+                      ? TreeTester
+                      : never;
 
-type TesterOpts<T> =
-  T extends 'CheckboxGroup' ? CheckboxGroupTesterOpts :
-  T extends 'ComboBox' ? ComboBoxTesterOpts :
-  T extends 'Dialog' ? DialogTesterOpts :
-  T extends 'GridList' ? GridListTesterOpts :
-  T extends 'ListBox' ? ListBoxTesterOpts :
-  T extends 'Menu' ? MenuTesterOpts :
-  T extends 'RadioGroup' ? RadioGroupTesterOpts :
-  T extends 'Select' ? SelectTesterOpts :
-  T extends 'Table' ? TableTesterOpts :
-  T extends 'Tabs' ? TabsTesterOpts :
-  T extends 'Tree' ? TreeTesterOpts :
-  never;
+type TesterOpts<T> = T extends 'CheckboxGroup'
+  ? CheckboxGroupTesterOpts
+  : T extends 'ComboBox'
+    ? ComboBoxTesterOpts
+    : T extends 'Dialog'
+      ? DialogTesterOpts
+      : T extends 'GridList'
+        ? GridListTesterOpts
+        : T extends 'ListBox'
+          ? ListBoxTesterOpts
+          : T extends 'Menu'
+            ? MenuTesterOpts
+            : T extends 'RadioGroup'
+              ? RadioGroupTesterOpts
+              : T extends 'Select'
+                ? SelectTesterOpts
+                : T extends 'Table'
+                  ? TableTesterOpts
+                  : T extends 'Tabs'
+                    ? TabsTesterOpts
+                    : T extends 'Tree'
+                      ? TreeTesterOpts
+                      : never;
 
-let defaultAdvanceTimer = (waitTime: number | undefined) => new Promise((resolve) => setTimeout(resolve, waitTime));
+let defaultAdvanceTimer = (waitTime: number | undefined) =>
+  new Promise(resolve => setTimeout(resolve, waitTime));
 
 export class User {
   private user;
@@ -120,6 +141,11 @@ export class User {
    * Creates an aria pattern tester, inheriting the options provided to the original user.
    */
   createTester<T extends PatternNames>(patternName: T, opts: TesterOpts<T>): Tester<T> {
-    return new (keyToUtil)[patternName]({interactionType: this.interactionType, advanceTimer: this.advanceTimer, ...opts, user: this.user}) as Tester<T>;
+    return new keyToUtil[patternName]({
+      interactionType: this.interactionType,
+      advanceTimer: this.advanceTimer,
+      ...opts,
+      user: this.user
+    }) as Tester<T>;
   }
 }

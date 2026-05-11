@@ -10,13 +10,30 @@
  * governing permissions and limitations under the License.
  */
 
-import type {Condition, CSSProperties, CSSValue, CustomValue, Property, PropertyValueDefinition, PropertyValueMap, RenderProps, ShorthandProperty, StyleFunction, StyleValue, Theme, ThemeProperties, Value} from './types';
+import type {
+  Condition,
+  CSSProperties,
+  CSSValue,
+  CustomValue,
+  Property,
+  PropertyValueDefinition,
+  PropertyValueMap,
+  RenderProps,
+  ShorthandProperty,
+  StyleFunction,
+  StyleValue,
+  Theme,
+  ThemeProperties,
+  Value
+} from './types';
 import fs from 'fs';
 import * as propertyInfo from './properties.json';
 
 // Postfix all class names with version for now.
 const json = JSON.parse(fs.readFileSync(__dirname + '/../package.json', 'utf8'));
-const POSTFIX = json.version.includes('nightly') ? json.version.match(/-nightly-(.*)/)[1] : json.version.replace(/[0.]/g, '');
+const POSTFIX = json.version.includes('nightly')
+  ? json.version.match(/-nightly-(.*)/)[1]
+  : json.version.replace(/[0.]/g, '');
 
 export class ArbitraryProperty<T extends Value> implements Property<T> {
   property: string;
@@ -24,7 +41,7 @@ export class ArbitraryProperty<T extends Value> implements Property<T> {
 
   constructor(property: string, toCSS?: (value: T) => CSSValue) {
     this.property = property;
-    this.toCSS = toCSS || ((value) => String(value));
+    this.toCSS = toCSS || (value => String(value));
   }
 
   get cssProperties(): string[] {
@@ -35,12 +52,20 @@ export class ArbitraryProperty<T extends Value> implements Property<T> {
     return this.toCSS(value);
   }
 
-  toCSSProperties(customProperty: string | null, value: PropertyValueDefinition<Value>): PropertyValueDefinition<[CSSProperties]> {
-    return mapConditionalValue(value, value => [{[customProperty || this.property]: String(value)}]);
+  toCSSProperties(
+    customProperty: string | null,
+    value: PropertyValueDefinition<Value>
+  ): PropertyValueDefinition<[CSSProperties]> {
+    return mapConditionalValue(value, value => [
+      {[customProperty || this.property]: String(value)}
+    ]);
   }
 }
 
-export class MappedProperty<T extends CSSValue> extends ArbitraryProperty<T> implements Property<T> {
+export class MappedProperty<T extends CSSValue>
+  extends ArbitraryProperty<T>
+  implements Property<T>
+{
   mapping: PropertyValueMap<T> | string[];
 
   constructor(property: string, mapping: PropertyValueMap<T> | string[]) {
@@ -65,7 +90,10 @@ export class MappedProperty<T extends CSSValue> extends ArbitraryProperty<T> imp
 }
 
 export type Color<C extends string> = C | `${string}/${number}`;
-export class ColorProperty<C extends string> extends MappedProperty<C> implements Property<Color<C>> {
+export class ColorProperty<C extends string>
+  extends MappedProperty<C>
+  implements Property<Color<C>>
+{
   toCSSValue(value: Color<C>): PropertyValueDefinition<Value> {
     let [color, opacity] = value.split('/');
     return mapConditionalValue(this.mapping[color], value => {
@@ -74,16 +102,41 @@ export class ColorProperty<C extends string> extends MappedProperty<C> implement
   }
 }
 
-export type LengthPercentageUnit = '%' | 'vw' | 'svw' | 'dvw' | 'vh' | 'svh' | 'dvh' | 'vmin' | 'svmin' | 'dvmin' | 'vmax' | 'svmax' | 'dvmax' | 'cqw' | 'cqh' | 'cqmin' | 'cqmax';
+export type LengthPercentageUnit =
+  | '%'
+  | 'vw'
+  | 'svw'
+  | 'dvw'
+  | 'vh'
+  | 'svh'
+  | 'dvh'
+  | 'vmin'
+  | 'svmin'
+  | 'dvmin'
+  | 'vmax'
+  | 'svmax'
+  | 'dvmax'
+  | 'cqw'
+  | 'cqh'
+  | 'cqmin'
+  | 'cqmax';
 export type LengthPercentage = `${number}${LengthPercentageUnit}`;
 
-export class PercentageProperty<T extends CSSValue> extends MappedProperty<T> implements Property<T | LengthPercentage> {
+export class PercentageProperty<T extends CSSValue>
+  extends MappedProperty<T>
+  implements Property<T | LengthPercentage>
+{
   constructor(property: string, mapping: PropertyValueMap<T> | string[]) {
     super(property, mapping);
   }
 
   toCSSValue(value: T | LengthPercentage): PropertyValueDefinition<Value> {
-    if (typeof value === 'string' && /^-?\d+(?:\.\d+)?(%|vw|svw|dvw|vh|svh|dvh|vmin|svmin|dvmin|vmax|svmax|dvmax|cqw|cqh|cqmin|cqmax)$/.test(value)) {
+    if (
+      typeof value === 'string' &&
+      /^-?\d+(?:\.\d+)?(%|vw|svw|dvw|vh|svh|dvh|vmin|svmin|dvmin|vmax|svmax|dvmax|cqw|cqh|cqmin|cqmax)$/.test(
+        value
+      )
+    ) {
       return value;
     }
 
@@ -91,10 +144,17 @@ export class PercentageProperty<T extends CSSValue> extends MappedProperty<T> im
   }
 }
 
-export class SizingProperty<T extends CSSValue> extends PercentageProperty<T> implements Property<T | number | LengthPercentage> {
+export class SizingProperty<T extends CSSValue>
+  extends PercentageProperty<T>
+  implements Property<T | number | LengthPercentage>
+{
   numberToCSS: (value: number) => string;
 
-  constructor(property: string, mapping: PropertyValueMap<T> | string[], numberToCSS: (value: number) => string) {
+  constructor(
+    property: string,
+    mapping: PropertyValueMap<T> | string[],
+    numberToCSS: (value: number) => string
+  ) {
     super(property, mapping);
     this.numberToCSS = numberToCSS;
   }
@@ -113,7 +173,11 @@ export class ExpandedProperty<T extends Value> implements Property<T> {
   mapping: Property<T> | null;
   expand: (v: T | CSSValue) => CSSProperties;
 
-  constructor(properties: string[], expand: (v: T | CSSValue) => CSSProperties, mapping?: Property<T> | PropertyValueMap<CSSValue>) {
+  constructor(
+    properties: string[],
+    expand: (v: T | CSSValue) => CSSProperties,
+    mapping?: Property<T> | PropertyValueMap<CSSValue>
+  ) {
     this.cssProperties = properties;
     this.expand = expand;
     if (mapping instanceof MappedProperty) {
@@ -133,15 +197,23 @@ export class ExpandedProperty<T extends Value> implements Property<T> {
     return this.mapping.toCSSValue(value);
   }
 
-  toCSSProperties(customProperty: string | null, value: PropertyValueDefinition<T>): PropertyValueDefinition<[CSSProperties]> {
+  toCSSProperties(
+    customProperty: string | null,
+    value: PropertyValueDefinition<T>
+  ): PropertyValueDefinition<[CSSProperties]> {
     if (customProperty) {
-      throw new Error('Style properties that expand into multiple CSS properties cannot be set as CSS variables.');
+      throw new Error(
+        'Style properties that expand into multiple CSS properties cannot be set as CSS variables.'
+      );
     }
     return mapConditionalValue(value, value => [this.expand(value)]);
   }
 }
 
-function mapConditionalValue<T, U>(value: PropertyValueDefinition<T>, fn: (value: T) => U): PropertyValueDefinition<U> {
+function mapConditionalValue<T, U>(
+  value: PropertyValueDefinition<T>,
+  fn: (value: T) => U
+): PropertyValueDefinition<U> {
   if (typeof value === 'object' && !Array.isArray(value)) {
     let res: PropertyValueDefinition<U> = {};
     for (let condition in value) {
@@ -153,7 +225,10 @@ function mapConditionalValue<T, U>(value: PropertyValueDefinition<T>, fn: (value
   }
 }
 
-function mapConditionalShorthand<T, C extends string, R extends RenderProps<string>>(value: PropertyValueDefinition<T>, fn: ShorthandProperty<T>): {[property: string]: StyleValue<Value, C, R>} {
+function mapConditionalShorthand<T, C extends string, R extends RenderProps<string>>(
+  value: PropertyValueDefinition<T>,
+  fn: ShorthandProperty<T>
+): {[property: string]: StyleValue<Value, C, R>} {
   if (typeof value === 'object') {
     let res = {};
     for (let condition in value) {
@@ -175,10 +250,11 @@ export function parseArbitraryValue(value: Value): string | undefined {
   } else if (typeof value === 'string' && value[0] === '[' && value[value.length - 1] === ']') {
     return value.slice(1, -1);
   } else if (
-    typeof value === 'string' && (
-      /^(var|calc|min|max|clamp|round|mod|rem|sin|cos|tan|asin|acos|atan|atan2|pow|sqrt|hypot|log|exp|abs|sign)\(.+\)$/.test(value) ||
-      /^(inherit|initial|unset)$/.test(value)
-    )
+    typeof value === 'string' &&
+    (/^(var|calc|min|max|clamp|round|mod|rem|sin|cos|tan|asin|acos|atan|atan2|pow|sqrt|hypot|log|exp|abs|sign)\(.+\)$/.test(
+      value
+    ) ||
+      /^(inherit|initial|unset)$/.test(value))
   ) {
     return value;
   }
@@ -202,19 +278,23 @@ function classNamePrefix(property: string, cssProperty: string) {
 }
 
 interface MacroContext {
-  addAsset(asset: {type: string, content: string}): void
+  addAsset(asset: {type: string; content: string}): void;
 }
 
 let isCompilingDependencies: boolean | null | string = false;
 
-export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemeProperties<T>, 'default' | Extract<keyof T['conditions'], string>> {
-  let properties = new Map<string, Property<any>>(Object.entries(theme.properties).map(([k, v]) => {
-    if (!Array.isArray(v) && v.cssProperties) {
-      return [k, v as Property<any>];
-    }
+export function createTheme<T extends Theme>(
+  theme: T
+): StyleFunction<ThemeProperties<T>, 'default' | Extract<keyof T['conditions'], string>> {
+  let properties = new Map<string, Property<any>>(
+    Object.entries(theme.properties).map(([k, v]) => {
+      if (!Array.isArray(v) && v.cssProperties) {
+        return [k, v as Property<any>];
+      }
 
-    return [k, new MappedProperty(k, v as any)];
-  }));
+      return [k, new MappedProperty(k, v as any)];
+    })
+  );
 
   let dependencies = new Set<string>();
   let hasConditions = false;
@@ -230,7 +310,7 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
 
     // Generate rules for each property.
     let rules = new Map<string, Rule>();
-    let values =  new Map();
+    let values = new Map();
     dependencies.clear();
     let usedPriorities = 0;
     let setRules = (key: string, value: [number, Rule[]]) => {
@@ -310,9 +390,10 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
     // Also generate a variable for each overridable property that overlaps with the style definition. If those are defined,
     // the defaults from the style definition are omitted.
     let allowedOverridesSet = new Set<string>();
-    let js = process.env.NODE_ENV !== 'production'
-      ? 'let rules = " ", currentRules = {};\n'
-      : 'let rules = " ";\n';
+    let js =
+      process.env.NODE_ENV !== 'production'
+        ? 'let rules = " ", currentRules = {};\n'
+        : 'let rules = " ";\n';
     if (allowedOverrides?.length) {
       for (let property of allowedOverrides) {
         let shorthand = theme.shorthands[property];
@@ -406,7 +487,8 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
 
     if (process.env.NODE_ENV !== 'production') {
       js += `let targetRules = rules + ${JSON.stringify(loc)};\n`;
-      js += 'let hash = 5381;for (let i = 0; i < targetRules.length; i++) { hash = ((hash << 5) + hash) + targetRules.charCodeAt(i) >>> 0; }\n';
+      js +=
+        'let hash = 5381;for (let i = 0; i < targetRules.length; i++) { hash = ((hash << 5) + hash) + targetRules.charCodeAt(i) >>> 0; }\n';
       js += 'let hashStr = hash.toString(36);\n';
       js += 'rules += " -macro-dynamic-" + hashStr;\n';
       // Skip global __styleMacroDynamic__ in Jest so we dont' pollute the test environment and don't cause issues with timer advancement.
@@ -417,7 +499,8 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
         js += '    g = window.__styleMacroDynamic__ = { map: {}, _timer: null };\n';
         js += '    g._timer = setInterval(function() {\n';
         js += '      for (let k in g.map) {\n';
-        js += '        try { if (!document.querySelector("." + CSS.escape(k))) delete g.map[k]; } catch (e) {}\n';
+        js +=
+          '        try { if (!document.querySelector("." + CSS.escape(k))) delete g.map[k]; } catch (e) {}\n';
         js += '      }\n';
         js += '    }, 300000);\n';
         js += '  }\n';
@@ -432,10 +515,20 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
     return new Function('props', js) as any;
   };
 
-  function compileValue(property: string, themeProperty: string, value: StyleValue<Value, Condition<T>, any>) {
-    return conditionalToRules(value as any, 0, new Set(), new Set(), (value, priority, conditions, skipConditions) => {
-      return compileRule(property, themeProperty, value, priority, conditions, skipConditions);
-    });
+  function compileValue(
+    property: string,
+    themeProperty: string,
+    value: StyleValue<Value, Condition<T>, any>
+  ) {
+    return conditionalToRules(
+      value as any,
+      0,
+      new Set(),
+      new Set(),
+      (value, priority, conditions, skipConditions) => {
+        return compileRule(property, themeProperty, value, priority, conditions, skipConditions);
+      }
+    );
   }
 
   function conditionalToRules<P extends CustomValue | any[]>(
@@ -443,7 +536,12 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
     parentPriority: number,
     currentConditions: Set<string>,
     skipConditions: Set<string>,
-    fn: (value: P, priority: number, conditions: Set<string>, skipConditions: Set<string>) => [number, Rule[]]
+    fn: (
+      value: P,
+      priority: number,
+      conditions: Set<string>,
+      skipConditions: Set<string>
+    ) => [number, Rule[]]
   ): [number, Rule[]] {
     if (value && typeof value === 'object' && !Array.isArray(value)) {
       let rules: Rule[] = [];
@@ -483,12 +581,23 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
         // Otherwise, use the current maximum of the parent and current priorities.
         let rulePriority = isCSSCondition ? priority : parentPriority;
 
-        if (condition === 'default' || isCSSCondition || /^is[A-Z]/.test(condition) || /^allows[A-Z]/.test(condition)) {
+        if (
+          condition === 'default' ||
+          isCSSCondition ||
+          /^is[A-Z]/.test(condition) ||
+          /^allows[A-Z]/.test(condition)
+        ) {
           let subConditions = currentConditions;
           if (isCSSCondition) {
             subConditions = new Set([...currentConditions, condition]);
           }
-          let [subPriority, subRules] = conditionalToRules(val, rulePriority, subConditions, subSkipConditions, fn);
+          let [subPriority, subRules] = conditionalToRules(
+            val,
+            rulePriority,
+            subConditions,
+            subSkipConditions,
+            fn
+          );
           rules.push(...compileCondition(currentConditions, condition, priority, subRules));
           priority = Math.max(priority, subPriority);
         } else if (val && typeof val === 'object' && !Array.isArray(val)) {
@@ -497,11 +606,30 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
             // If this branch has no default, inherit the parent's default so e.g. forcedColors.default
             // applies when selectionStyle.highlight doesn't define its own default.
             // eslint-disable-next-line max-depth
-            if (value.default !== undefined && branchValue && typeof branchValue === 'object' && !Array.isArray(branchValue) && !('default' in branchValue)) {
+            if (
+              value.default !== undefined &&
+              branchValue &&
+              typeof branchValue === 'object' &&
+              !Array.isArray(branchValue) &&
+              !('default' in branchValue)
+            ) {
               branchValue = {default: value.default, ...branchValue};
             }
-            let [subPriority, subRules] = conditionalToRules(branchValue, rulePriority, currentConditions, subSkipConditions, fn);
-            rules.push(...compileCondition(currentConditions, `${condition} === ${JSON.stringify(key)}`, priority, subRules));
+            let [subPriority, subRules] = conditionalToRules(
+              branchValue,
+              rulePriority,
+              currentConditions,
+              subSkipConditions,
+              fn
+            );
+            rules.push(
+              ...compileCondition(
+                currentConditions,
+                `${condition} === ${JSON.stringify(key)}`,
+                priority,
+                subRules
+              )
+            );
             priority = Math.max(priority, subPriority);
           }
         }
@@ -513,7 +641,12 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
     }
   }
 
-  function compileCondition(conditions: Set<string>, condition: string, priority: number, rules: Rule[]): Rule[] {
+  function compileCondition(
+    conditions: Set<string>,
+    condition: string,
+    priority: number,
+    rules: Rule[]
+  ): Rule[] {
     if (condition === 'default' || conditions.has(condition)) {
       return [new GroupRule(rules)];
     }
@@ -545,68 +678,97 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
     return [new ConditionalRule(rules, condition)];
   }
 
-  function compileRule(property: string, themeProperty: string, value: Value, priority: number, conditions: Set<string>, skipConditions: Set<string>): [number, Rule[]] {
+  function compileRule(
+    property: string,
+    themeProperty: string,
+    value: Value,
+    priority: number,
+    conditions: Set<string>,
+    skipConditions: Set<string>
+  ): [number, Rule[]] {
     let propertyFunction = properties.get(themeProperty);
     if (propertyFunction) {
       // Expand value to conditional CSS values, and then to rules.
       let propertyValue = value;
       let arbitrary = parseArbitraryValue(value);
       let cssValue = arbitrary ? arbitrary : propertyFunction.toCSSValue(value);
-      let cssProperties = propertyFunction.toCSSProperties(property.startsWith('--') ? property : null, cssValue);
+      let cssProperties = propertyFunction.toCSSProperties(
+        property.startsWith('--') ? property : null,
+        cssValue
+      );
 
-      return conditionalToRules(cssProperties, priority, conditions, skipConditions, (value, priority, conditions) => {
-        let [obj] = value;
-        let rules: Rule[] = [];
-        for (let key in obj) {
-          let k = key as any;
-          let value = obj[k];
-          if (value === undefined) {
-            continue;
-          }
-          if (typeof value === 'string') {
-            // Replace self() references with variables and track the dependencies.
-            value = value.replace(/self\(([a-zA-Z]+)/g, (_, v) => {
-              let prop = properties.get(v);
-              if (!prop) {
-                throw new Error(`self(${v}) is invalid. ${v} is not a known property.`);
-              }
-              let cssProperties = prop.cssProperties;
-              if (cssProperties.length !== 1) {
-                throw new Error(`self(${v}) is not supported. ${v} expands to multiple CSS properties.`);
-              }
-              dependencies.add(v);
-              return `var(--${shortCSSPropertyName(cssProperties[0])}`;
-            });
-          }
+      return conditionalToRules(
+        cssProperties,
+        priority,
+        conditions,
+        skipConditions,
+        (value, priority, conditions) => {
+          let [obj] = value;
+          let rules: Rule[] = [];
+          for (let key in obj) {
+            let k = key as any;
+            let value = obj[k];
+            if (value === undefined) {
+              continue;
+            }
+            if (typeof value === 'string') {
+              // Replace self() references with variables and track the dependencies.
+              value = value.replace(/self\(([a-zA-Z]+)/g, (_, v) => {
+                let prop = properties.get(v);
+                if (!prop) {
+                  throw new Error(`self(${v}) is invalid. ${v} is not a known property.`);
+                }
+                let cssProperties = prop.cssProperties;
+                if (cssProperties.length !== 1) {
+                  throw new Error(
+                    `self(${v}) is not supported. ${v} expands to multiple CSS properties.`
+                  );
+                }
+                dependencies.add(v);
+                return `var(--${shortCSSPropertyName(cssProperties[0])}`;
+              });
+            }
 
-          // Generate selector. This consists of three parts: property, conditions, value.
-          let cssProperty = key;
-          if (property.startsWith('--')) {
-            cssProperty = propertyFunction.cssProperties[0];
-          }
+            // Generate selector. This consists of three parts: property, conditions, value.
+            let cssProperty = key;
+            if (property.startsWith('--')) {
+              cssProperty = propertyFunction.cssProperties[0];
+            }
 
-          let className = classNamePrefix(key, cssProperty);
-          if (conditions.size > 0) {
-            for (let condition of conditions) {
-              let prelude = theme.conditions[condition] || condition;
-              let preludes = Array.isArray(prelude) ? prelude : [prelude];
-              for (let prelude of preludes) {
-                className += propertyInfo.conditions[prelude] || generateArbitraryValueSelector(condition);
+            let className = classNamePrefix(key, cssProperty);
+            if (conditions.size > 0) {
+              for (let condition of conditions) {
+                let prelude = theme.conditions[condition] || condition;
+                let preludes = Array.isArray(prelude) ? prelude : [prelude];
+                for (let prelude of preludes) {
+                  className +=
+                    propertyInfo.conditions[prelude] || generateArbitraryValueSelector(condition);
+                }
               }
             }
+
+            if (cssProperty !== key) {
+              className += shortCSSPropertyName(cssProperty);
+            }
+
+            className +=
+              propertyInfo.values[cssProperty]?.[String(value)] ??
+              generateArbitraryValueSelector(String(value));
+            className += POSTFIX;
+            rules.push(
+              new StyleRule(
+                className,
+                key,
+                String(value),
+                isCompilingDependencies ? themeProperty : property,
+                propertyValue
+              )
+            );
           }
 
-          if (cssProperty !== key) {
-            className += shortCSSPropertyName(cssProperty);
-          }
-
-          className += propertyInfo.values[cssProperty]?.[String(value)] ?? generateArbitraryValueSelector(String(value));
-          className += POSTFIX;
-          rules.push(new StyleRule(className, key, String(value), isCompilingDependencies ? themeProperty : property, propertyValue));
+          return [0, rules];
         }
-
-        return [0, rules];
-      });
+      );
     } else {
       throw new Error('Unknown property ' + themeProperty);
     }
@@ -632,12 +794,12 @@ function generateName(index: number, atStart = false): string {
 
   if (index < 52) {
     // upper case letters
-    return String.fromCharCode((index - 26) + 65);
+    return String.fromCharCode(index - 26 + 65);
   }
 
   if (index < 62 && !atStart) {
     // numbers
-    return String.fromCharCode((index - 52) + 48);
+    return String.fromCharCode(index - 52 + 48);
   }
 
   return '_' + generateName(index - (atStart ? 52 : 62));
@@ -672,7 +834,7 @@ function toBase62(value: number) {
 function hash(v: string) {
   let hash = 5381;
   for (let i = 0; i < v.length; i++) {
-    hash = ((hash << 5) + hash) + v.charCodeAt(i) >>> 0;
+    hash = ((hash << 5) + hash + v.charCodeAt(i)) >>> 0;
   }
   return hash;
 }
@@ -684,11 +846,11 @@ function layerName(name: string) {
 }
 
 interface Rule {
-  addPseudo(prelude: string): void,
-  getStaticClassName(): string,
-  toCSS(rulesByLayer: Map<string, string[]>, preludes?: string[], layer?: string): void,
-  toJS(allowedOverridesSet: Set<string>, indent?: string): string,
-  copy(): Rule
+  addPseudo(prelude: string): void;
+  getStaticClassName(): string;
+  toCSS(rulesByLayer: Map<string, string[]>, preludes?: string[], layer?: string): void;
+  toJS(allowedOverridesSet: Set<string>, indent?: string): string;
+  copy(): Rule;
 }
 
 let conditionStack: string[] = [];
@@ -702,7 +864,13 @@ class StyleRule implements Rule {
   themeProperty: string | undefined;
   themeValue: Value | undefined;
 
-  constructor(className: string, property: string, value: string, themeProperty: string | undefined, themeValue: Value | undefined) {
+  constructor(
+    className: string,
+    property: string,
+    value: string,
+    themeProperty: string | undefined,
+    themeValue: Value | undefined
+  ) {
     this.className = className;
     this.pseudos = '';
     this.property = property;
@@ -714,7 +882,13 @@ class StyleRule implements Rule {
   }
 
   copy(): Rule {
-    let rule = new StyleRule(this.className, this.property, this.value, this.themeProperty, this.themeValue);
+    let rule = new StyleRule(
+      this.className,
+      this.property,
+      this.value,
+      this.themeProperty,
+      this.themeValue
+    );
     rule.pseudos = this.pseudos;
     return rule;
   }
@@ -756,7 +930,7 @@ class StyleRule implements Rule {
     if (allowedOverridesSet.has(this.property)) {
       res += `${indent}if (!${this.property.replace('--', '__')}) `;
     }
-    res +=  `${indent}rules += ' ${this.className}';`;
+    res += `${indent}rules += ' ${this.className}';`;
     if (process.env.NODE_ENV !== 'production' && this.themeProperty) {
       let name = this.themeProperty;
       if (this.pseudos) {
@@ -793,7 +967,10 @@ class GroupRule implements Rule {
   }
 
   copy(): Rule {
-    return new GroupRule(this.rules.map(rule => rule.copy()), this.layer);
+    return new GroupRule(
+      this.rules.map(rule => rule.copy()),
+      this.layer
+    );
   }
 
   addPseudo(prelude: string) {
@@ -814,11 +991,16 @@ class GroupRule implements Rule {
 
   toJS(allowedOverridesSet: Set<string>, indent = ''): string {
     let rules = this.rules.slice();
-    let conditional = rules.filter(rule => rule instanceof ConditionalRule).reverse().map((rule, i) => {
-      return `${i > 0 ? ' else ' : ''}${rule.toJS(allowedOverridesSet, indent)}`;
-    });
+    let conditional = rules
+      .filter(rule => rule instanceof ConditionalRule)
+      .reverse()
+      .map((rule, i) => {
+        return `${i > 0 ? ' else ' : ''}${rule.toJS(allowedOverridesSet, indent)}`;
+      });
 
-    let elseCases = rules.filter(rule => !(rule instanceof ConditionalRule)).map(rule => rule.toJS(allowedOverridesSet, indent));
+    let elseCases = rules
+      .filter(rule => !(rule instanceof ConditionalRule))
+      .map(rule => rule.toJS(allowedOverridesSet, indent));
     if (conditional.length && elseCases.length) {
       return `${conditional.join('')} else {\n${indent}  ${elseCases.join('\n' + indent + '  ')}\n${indent}}`;
     }
@@ -843,7 +1025,12 @@ class AtRule extends GroupRule {
   }
 
   copy(): Rule {
-    return new AtRule(this.rules.map(rule => rule.copy()), this.prelude, this.layer, this.themeCondition);
+    return new AtRule(
+      this.rules.map(rule => rule.copy()),
+      this.prelude,
+      this.layer,
+      this.themeCondition
+    );
   }
 
   toCSS(rulesByLayer: Map<string, string[]>, preludes: string[] = [], layer?: string): void {
@@ -870,7 +1057,10 @@ class ConditionalRule extends GroupRule {
   }
 
   copy(): Rule {
-    return new ConditionalRule(this.rules.map(rule => rule.copy()), this.condition);
+    return new ConditionalRule(
+      this.rules.map(rule => rule.copy()),
+      this.condition
+    );
   }
 
   getStaticClassName(): string {

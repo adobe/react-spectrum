@@ -39,8 +39,7 @@ const SKILLS = {
       'Build accessible UI components with React Spectrum S2 (Spectrum 2). Use when developers mention React Spectrum, Spectrum 2, S2, @react-spectrum/s2, or Adobe design system components. Provides documentation for buttons, forms, dialogs, tables, date/time pickers, color pickers, and other accessible components.',
     license: 'Apache-2.0',
     sourceDir: 's2',
-    compatibility:
-      'Requires a React project with @react-spectrum/s2 installed.',
+    compatibility: 'Requires a React project with @react-spectrum/s2 installed.',
     metadata: {
       author: 'Adobe',
       website: 'https://react-spectrum.adobe.com/'
@@ -66,8 +65,7 @@ const SKILLS = {
       'Build accessible UI components with React Aria Components. Use when developers mention React Aria, react-aria-components, accessible components, or need unstyled accessible primitives. Provides documentation for building custom accessible UI with hooks and components.',
     license: 'Apache-2.0',
     sourceDir: 'react-aria',
-    compatibility:
-      'Requires React project with react-aria-components installed.',
+    compatibility: 'Requires React project with react-aria-components installed.',
     metadata: {
       author: 'Adobe',
       website: 'https://react-aria.adobe.com/'
@@ -117,12 +115,7 @@ function ensureMarkdownDocs() {
 }
 
 function getWellKnownRootForLibrary(sourceDir) {
-  return path.join(
-    MARKDOWN_DOCS_DIST,
-    sourceDir,
-    WELL_KNOWN_DIR,
-    WELL_KNOWN_SKILLS_DIR
-  );
+  return path.join(MARKDOWN_DOCS_DIST, sourceDir, WELL_KNOWN_DIR, WELL_KNOWN_SKILLS_DIR);
 }
 
 function getCustomSkillContent(skillName) {
@@ -144,7 +137,7 @@ function readCustomEmbeddedMarkdown(skillName, replacements = {}) {
   }
 
   return customContent.embeddedMarkdownPaths
-    .flatMap((markdownPath) => {
+    .flatMap(markdownPath => {
       if (!fs.existsSync(markdownPath)) {
         console.warn(`Custom skill content not found at ${markdownPath}`);
         return [];
@@ -172,7 +165,7 @@ function parseLlmsTxt(llmsTxtPath) {
   const entries = [];
   const tree = unified().use(remarkParse).parse(content);
 
-  const toText = (node) => {
+  const toText = node => {
     if (!node) {
       return '';
     }
@@ -185,13 +178,13 @@ function parseLlmsTxt(llmsTxtPath) {
     return '';
   };
 
-  const extractEntry = (listItem) => {
-    const paragraph = listItem.children?.find((child) => child.type === 'paragraph');
+  const extractEntry = listItem => {
+    const paragraph = listItem.children?.find(child => child.type === 'paragraph');
     if (!paragraph || !Array.isArray(paragraph.children)) {
       return null;
     }
 
-    const linkIndex = paragraph.children.findIndex((child) => child.type === 'link');
+    const linkIndex = paragraph.children.findIndex(child => child.type === 'link');
     if (linkIndex === -1) {
       return null;
     }
@@ -220,7 +213,7 @@ function parseLlmsTxt(llmsTxtPath) {
     };
   };
 
-  const walk = (node) => {
+  const walk = node => {
     if (!node || !Array.isArray(node.children)) {
       return;
     }
@@ -251,9 +244,7 @@ function extractSectionFromMdx(mdxPath) {
   }
 
   const content = fs.readFileSync(mdxPath, 'utf8');
-  const sectionMatch = content.match(
-    /export\s+const\s+section\s*=\s*['"]([^'"]+)['"]/
-  );
+  const sectionMatch = content.match(/export\s+const\s+section\s*=\s*['"]([^'"]+)['"]/);
   return sectionMatch ? sectionMatch[1] : null;
 }
 
@@ -348,9 +339,7 @@ function categorizeEntries(entries, sourceDir) {
         categories[categoryKey].push(entry);
       } else {
         // Unknown section, default to components
-        console.warn(
-          `Unknown section "${section}" for ${entry.path}, defaulting to components`
-        );
+        console.warn(`Unknown section "${section}" for ${entry.path}, defaulting to components`);
         categories.components.push(entry);
       }
     } else {
@@ -482,7 +471,8 @@ The \`references/\` directory contains detailed documentation organized as follo
 }
 
 function generateMigrationSkillMd(skillConfig) {
-  return `${generateFrontmatter(skillConfig)}# React Spectrum v3 to S2 migration
+  return (
+    `${generateFrontmatter(skillConfig)}# React Spectrum v3 to S2 migration
 
 Upgrade React Spectrum v3 codebases to S2 by following these eight steps in order.
 
@@ -593,7 +583,8 @@ Use these when you need more component-by-component or API-level detail:
 - [Styling](references/docs-styling.md): style macro overview including runtime conditions, CSS variables, CSS optimization, and CSS resets.
 - [Style macro](references/docs-style-macro.md): exact style macro syntax and constraints.
 - [Toast](references/docs-toast.md): full S2 toast API and examples.
-`.trimEnd() + '\n';
+`.trimEnd() + '\n'
+  );
 }
 
 /**
@@ -642,9 +633,7 @@ function copyDocsDocumentation(skillConfig, categories, skillDir) {
   for (const entry of customGuideEntries) {
     const sourcePath =
       entry.sourcePath ||
-      customContent?.embeddedMarkdownPaths?.find((markdownPath) =>
-        markdownPath.endsWith(entry.path)
-      );
+      customContent?.embeddedMarkdownPaths?.find(markdownPath => markdownPath.endsWith(entry.path));
     if (!sourcePath || !fs.existsSync(sourcePath)) {
       continue;
     }
@@ -712,10 +701,7 @@ function copyFocusedDocs(sourceDir, skillDir, docs) {
 
 function writeMigrationReferences(skillDir, sourceDir) {
   // Copy focused reference docs from source files
-  const focusedRefs = [
-    'focused-prerequisites.md',
-    'focused-manual-fixes.md'
-  ];
+  const focusedRefs = ['focused-prerequisites.md', 'focused-manual-fixes.md'];
 
   for (const filename of focusedRefs) {
     const sourcePath = path.join(MIGRATION_REFS_DIR, filename);
@@ -742,7 +728,7 @@ function writeMigrationReferences(skillDir, sourceDir) {
 function collectSkillFiles(skillDir) {
   const files = [];
 
-  const walk = (currentDir) => {
+  const walk = currentDir => {
     const entries = fs.readdirSync(currentDir, {withFileTypes: true});
     for (const entry of entries) {
       const entryPath = path.join(currentDir, entry.name);
@@ -759,13 +745,17 @@ function collectSkillFiles(skillDir) {
   walk(skillDir);
 
   return files
-    .map((filePath) => {
+    .map(filePath => {
       const relativePath = path.relative(skillDir, filePath);
       return relativePath.split(path.sep).join('/');
     })
     .sort((a, b) => {
-      if (a === 'SKILL.md') {return b === 'SKILL.md' ? 0 : -1;}
-      if (b === 'SKILL.md') {return 1;}
+      if (a === 'SKILL.md') {
+        return b === 'SKILL.md' ? 0 : -1;
+      }
+      if (b === 'SKILL.md') {
+        return 1;
+      }
       return a.localeCompare(b);
     });
 }
@@ -820,9 +810,7 @@ function generateSkill(skillConfig, wellKnownRoot) {
   if (skillConfig.kind === 'migration') {
     const skillMdContent = generateMigrationSkillMd(skillConfig);
     fs.writeFileSync(path.join(skillDir, 'SKILL.md'), skillMdContent);
-    console.log(
-      `Generated ${path.relative(REPO_ROOT, path.join(skillDir, 'SKILL.md'))}`
-    );
+    console.log(`Generated ${path.relative(REPO_ROOT, path.join(skillDir, 'SKILL.md'))}`);
 
     writeMigrationReferences(skillDir, skillConfig.sourceDir);
     console.log(
@@ -835,11 +823,7 @@ function generateSkill(skillConfig, wellKnownRoot) {
   const isS2 = skillConfig.name === 'react-spectrum-s2';
 
   // Parse documentation entries
-  const llmsTxtPath = path.join(
-    MARKDOWN_DOCS_DIST,
-    skillConfig.sourceDir,
-    'llms.txt'
-  );
+  const llmsTxtPath = path.join(MARKDOWN_DOCS_DIST, skillConfig.sourceDir, 'llms.txt');
   if (!fs.existsSync(llmsTxtPath)) {
     console.error(`llms.txt not found at ${llmsTxtPath}`);
     return;
@@ -851,9 +835,7 @@ function generateSkill(skillConfig, wellKnownRoot) {
   // Generate SKILL.md
   const skillMdContent = generateDocsSkillMd(skillConfig, categories, isS2);
   fs.writeFileSync(path.join(skillDir, 'SKILL.md'), skillMdContent);
-  console.log(
-    `Generated ${path.relative(REPO_ROOT, path.join(skillDir, 'SKILL.md'))}`
-  );
+  console.log(`Generated ${path.relative(REPO_ROOT, path.join(skillDir, 'SKILL.md'))}`);
 
   // Copy documentation to references
   copyDocsDocumentation(skillConfig, categories, skillDir);
@@ -864,11 +846,8 @@ function generateSkill(skillConfig, wellKnownRoot) {
   return skillDir;
 }
 
-
 function main() {
-  console.log(
-    'Generating Agent Skills for React Spectrum (S2) and React Aria...\n'
-  );
+  console.log('Generating Agent Skills for React Spectrum (S2) and React Aria...\n');
 
   // Ensure markdown docs exist
   ensureMarkdownDocs();
@@ -906,9 +885,7 @@ function main() {
     }
 
     writeIndexJson(wellKnownRoot, indexEntries);
-    console.log(
-      `Skills directory: ${path.relative(REPO_ROOT, wellKnownRoot)}`
-    );
+    console.log(`Skills directory: ${path.relative(REPO_ROOT, wellKnownRoot)}`);
   }
 
   console.log('\nAgent Skills generation complete!');

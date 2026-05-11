@@ -22,20 +22,21 @@ import {useLabel} from '../label/useLabel';
 import {useLocale} from '../i18n/I18nProvider';
 import {useMove} from '../interactions/useMove';
 
-export interface AriaSliderProps<T = number | number[]> extends SliderProps<T>, DOMProps, AriaLabelingProps {}
+export interface AriaSliderProps<T = number | number[]>
+  extends SliderProps<T>, DOMProps, AriaLabelingProps {}
 
 export interface SliderAria {
   /** Props for the label element. */
-  labelProps: LabelHTMLAttributes<HTMLLabelElement>,
+  labelProps: LabelHTMLAttributes<HTMLLabelElement>;
 
   /** Props for the root element of the slider component; groups slider inputs. */
-  groupProps: DOMAttributes,
+  groupProps: DOMAttributes;
 
   /** Props for the track element. */
-  trackProps: DOMAttributes,
+  trackProps: DOMAttributes;
 
   /** Props for the output element, displaying the value of the slider thumbs. */
-  outputProps: OutputHTMLAttributes<HTMLOutputElement>
+  outputProps: OutputHTMLAttributes<HTMLOutputElement>;
 }
 
 /**
@@ -112,9 +113,18 @@ export function useSlider<T extends number | number[]>(
   });
 
   let currentPointer = useRef<number | null | undefined>(undefined);
-  let onDownTrack = (e: React.UIEvent, id: number | undefined, clientX: number, clientY: number) => {
+  let onDownTrack = (
+    e: React.UIEvent,
+    id: number | undefined,
+    clientX: number,
+    clientY: number
+  ) => {
     // We only trigger track-dragging if the user clicks on the track itself and nothing is currently being dragged.
-    if (trackRef.current && !props.isDisabled && state.values.every((_, i) => !state.isThumbDragging(i))) {
+    if (
+      trackRef.current &&
+      !props.isDisabled &&
+      state.values.every((_, i) => !state.isThumbDragging(i))
+    ) {
       let {height, width, top, left} = trackRef.current.getBoundingClientRect();
       let size = isVertical ? height : width;
       // Find the closest thumb
@@ -130,9 +140,11 @@ export function useSlider<T extends number | number[]>(
       // to find the closet thumb we split the array based on the first thumb position to the "right/end" of the click.
       let closestThumb;
       let split = state.values.findIndex(v => value - v < 0);
-      if (split === 0) { // If the index is zero then the closetThumb is the first one
+      if (split === 0) {
+        // If the index is zero then the closetThumb is the first one
         closestThumb = split;
-      } else if (split === -1) { // If no index is found they've clicked past all the thumbs
+      } else if (split === -1) {
+        // If no index is found they've clicked past all the thumbs
         closestThumb = state.values.length - 1;
       } else {
         let lastLeft = state.values[split - 1];
@@ -166,7 +178,7 @@ export function useSlider<T extends number | number[]>(
     }
   };
 
-  let onUpTrack = (e) => {
+  let onUpTrack = e => {
     let id = e.pointerId ?? e.changedTouches?.[0].identifier;
     if (id === currentPointer.current) {
       if (realTimeTrackDraggingIndex.current != null) {
@@ -203,25 +215,35 @@ export function useSlider<T extends number | number[]>(
       role: 'group',
       ...fieldProps
     },
-    trackProps: mergeProps({
-      onMouseDown(e: React.MouseEvent) {
-        if (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey) {
-          return;
+    trackProps: mergeProps(
+      {
+        onMouseDown(e: React.MouseEvent) {
+          if (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey) {
+            return;
+          }
+          onDownTrack(e, undefined, e.clientX, e.clientY);
+        },
+        onPointerDown(e: React.PointerEvent) {
+          if (e.pointerType === 'mouse' && (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey)) {
+            return;
+          }
+          onDownTrack(e, e.pointerId, e.clientX, e.clientY);
+        },
+        onTouchStart(e: React.TouchEvent) {
+          onDownTrack(
+            e,
+            e.changedTouches[0].identifier,
+            e.changedTouches[0].clientX,
+            e.changedTouches[0].clientY
+          );
+        },
+        style: {
+          position: 'relative',
+          touchAction: 'none'
         }
-        onDownTrack(e, undefined, e.clientX, e.clientY);
       },
-      onPointerDown(e: React.PointerEvent) {
-        if (e.pointerType === 'mouse' && (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey)) {
-          return;
-        }
-        onDownTrack(e, e.pointerId, e.clientX, e.clientY);
-      },
-      onTouchStart(e: React.TouchEvent) { onDownTrack(e, e.changedTouches[0].identifier, e.changedTouches[0].clientX, e.changedTouches[0].clientY); },
-      style: {
-        position: 'relative',
-        touchAction: 'none'
-      }
-    }, moveProps),
+      moveProps
+    ),
     outputProps: {
       htmlFor: state.values.map((_, index) => getSliderThumbId(state, index)).join(' '),
       'aria-live': 'off'

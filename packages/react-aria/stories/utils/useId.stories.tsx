@@ -19,11 +19,10 @@ export default {
   title: 'useId'
 };
 
-
 let count = 0;
 function AsyncComponent() {
   if (count < 5) {
-    throw new Promise((resolve) => {
+    throw new Promise(resolve => {
       return setTimeout(() => {
         console.log('resolving', count, Date.now());
         count++;
@@ -48,23 +47,23 @@ function TestUseId(): JSX.Element {
       <button
         onClick={() => {
           count = 0;
-          setShow((prev) => !prev);
-        }}>toggle</button>
+          setShow(prev => !prev);
+        }}>
+        toggle
+      </button>
       <button
         onClick={() => {
           console.log(idsUpdaterMap);
-        }}>See ids held</button>
+        }}>
+        See ids held
+      </button>
     </div>
   );
 }
 
 function Box() {
   const id = useId();
-  return (
-    <div data-id={id}>
-      {id}
-    </div>
-  );
+  return <div data-id={id}>{id}</div>;
 }
 
 export const GCuseId: StoryObj<typeof TestUseId> = {

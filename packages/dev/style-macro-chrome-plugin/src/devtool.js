@@ -1,5 +1,4 @@
-
-chrome.devtools.panels.elements.createSidebarPane('Style Macros', (sidebar) => {
+chrome.devtools.panels.elements.createSidebarPane('Style Macros', sidebar => {
   sidebar.setObject({});
 
   // Helper function to log to both DevTools-for-DevTools console and inspected page console
@@ -33,7 +32,7 @@ chrome.devtools.panels.elements.createSidebarPane('Style Macros', (sidebar) => {
   let currentElementId = null;
 
   // Listen for messages from content script (via background script)
-  backgroundPageConnection.onMessage.addListener((message) => {
+  backgroundPageConnection.onMessage.addListener(message => {
     debugLog('Message from background:', message);
 
     if (message.action === 'stylemacro-class-changed') {
@@ -52,7 +51,7 @@ chrome.devtools.panels.elements.createSidebarPane('Style Macros', (sidebar) => {
     if (hashes.length === 0) {
       return Promise.resolve([]);
     }
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       const hashesJson = JSON.stringify(hashes);
       const staticEval = `
 (function () {
@@ -72,7 +71,7 @@ chrome.devtools.panels.elements.createSidebarPane('Style Macros', (sidebar) => {
   });
 })();
       `.trim();
-      chrome.devtools.inspectedWindow.eval(staticEval, (results) => {
+      chrome.devtools.inspectedWindow.eval(staticEval, results => {
         resolve(Array.isArray(results) ? results : []);
       });
     });
@@ -84,7 +83,7 @@ chrome.devtools.panels.elements.createSidebarPane('Style Macros', (sidebar) => {
     if (hashes.length === 0) {
       return Promise.resolve([]);
     }
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       const hashesJson = JSON.stringify(hashes);
       const dynamicEval = `
 (function () {
@@ -98,7 +97,7 @@ chrome.devtools.panels.elements.createSidebarPane('Style Macros', (sidebar) => {
   });
 })();
       `.trim();
-      chrome.devtools.inspectedWindow.eval(dynamicEval, (results) => {
+      chrome.devtools.inspectedWindow.eval(dynamicEval, results => {
         resolve(Array.isArray(results) ? results : []);
       });
     });
@@ -125,7 +124,8 @@ chrome.devtools.panels.elements.createSidebarPane('Style Macros', (sidebar) => {
     disconnectObserver();
 
     // Generate a unique ID for the current element
-    chrome.devtools.inspectedWindow.eval(`
+    chrome.devtools.inspectedWindow.eval(
+      `
       (function() {
         const element = $0;
         if (!element || !element.classList) {
@@ -165,20 +165,22 @@ chrome.devtools.panels.elements.createSidebarPane('Style Macros', (sidebar) => {
 
         return elementId;
       })();
-    `, (result, isException) => {
-      if (isException) {
-        debugLog('Error setting up mutation observer:', result);
-      } else if (result) {
-        currentElementId = result;
-        currentObserver = true; // Just track that we have an observer
-        debugLog('Started observing element:', currentElementId);
+    `,
+      (result, isException) => {
+        if (isException) {
+          debugLog('Error setting up mutation observer:', result);
+        } else if (result) {
+          currentElementId = result;
+          currentObserver = true; // Just track that we have an observer
+          debugLog('Started observing element:', currentElementId);
+        }
       }
-    });
+    );
   };
 
   let update = () => {
     debugLog('Starting update...');
-    chrome.devtools.inspectedWindow.eval('$0.getAttribute("class")', (className) => {
+    chrome.devtools.inspectedWindow.eval('$0.getAttribute("class")', className => {
       debugLog('Got className:', className);
 
       // Handle the async operations outside the eval callback
@@ -194,7 +196,13 @@ chrome.devtools.panels.elements.createSidebarPane('Style Macros', (sidebar) => {
         debugLog('Dynamic macro hashes:', dynamicMacroHashes);
 
         // Get macro data: static from CSS custom properties on $0, dynamic from element's window.__styleMacroDynamic__.map
-        debugLog('Waiting for', staticMacroHashes.length, 'static +', dynamicMacroHashes.length, 'dynamic macros...');
+        debugLog(
+          'Waiting for',
+          staticMacroHashes.length,
+          'static +',
+          dynamicMacroHashes.length,
+          'dynamic macros...'
+        );
         let [staticResults, dynamicResults] = await Promise.all([
           getMacroDataStaticBatch(staticMacroHashes),
           getMacroDataDynamicBatch(dynamicMacroHashes)

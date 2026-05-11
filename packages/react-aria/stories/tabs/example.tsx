@@ -18,7 +18,7 @@ import {useTabListState} from 'react-stately/useTabListState';
 import {useTabPanel} from '../../src/tabs/useTabPanel';
 
 export interface TabProps extends AriaTabListProps<any> {
-  shouldSelectOnPressUp?: boolean
+  shouldSelectOnPressUp?: boolean;
 }
 
 export function Tabs({shouldSelectOnPressUp, ...props}: TabProps): JSX.Element {
@@ -38,12 +38,13 @@ export function Tabs({shouldSelectOnPressUp, ...props}: TabProps): JSX.Element {
           maxWidth: '400px',
           overflow: 'auto'
         }}>
-        {[...state.collection].map((item) => (
+        {[...state.collection].map(item => (
           <Tab
             key={item.key}
             item={item}
             state={state}
-            shouldSelectOnPressUp={shouldSelectOnPressUp} />
+            shouldSelectOnPressUp={shouldSelectOnPressUp}
+          />
         ))}
       </div>
       <TabPanel key={state.selectedItem?.key} state={state} />

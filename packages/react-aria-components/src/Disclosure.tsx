@@ -37,16 +37,28 @@ import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {LabelAriaProps} from 'react-aria/useLabel';
 import {mergeProps} from 'react-aria/mergeProps';
 import {mergeRefs} from 'react-aria/mergeRefs';
-import React, {createContext, DOMAttributes, ForwardedRef, forwardRef, ReactNode, useContext} from 'react';
+import React, {
+  createContext,
+  DOMAttributes,
+  ForwardedRef,
+  forwardRef,
+  ReactNode,
+  useContext
+} from 'react';
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {useId} from 'react-aria/useId';
 
-export interface DisclosureGroupProps extends StatelyDisclosureGroupProps, RenderProps<DisclosureGroupRenderProps>, DOMProps, GlobalDOMAttributes<HTMLDivElement> {
+export interface DisclosureGroupProps
+  extends
+    StatelyDisclosureGroupProps,
+    RenderProps<DisclosureGroupRenderProps>,
+    DOMProps,
+    GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-DisclosureGroup'
    */
-  className?: ClassNameOrFunction<DisclosureGroupRenderProps>
+  className?: ClassNameOrFunction<DisclosureGroupRenderProps>;
 }
 
 export interface DisclosureGroupRenderProps {
@@ -54,11 +66,11 @@ export interface DisclosureGroupRenderProps {
    * Whether the disclosure group is disabled.
    * @selector [data-disabled]
    */
-  isDisabled: boolean,
+  isDisabled: boolean;
   /**
    * State of the disclosure group.
    */
-  state: DisclosureGroupState
+  state: DisclosureGroupState;
 }
 
 export const DisclosureGroupStateContext = createContext<DisclosureGroupState | null>(null);
@@ -67,7 +79,10 @@ export const DisclosureGroupStateContext = createContext<DisclosureGroupState | 
  * A DisclosureGroup is a grouping of related disclosures, sometimes called an accordion.
  * It supports both single and multiple expanded items.
  */
-export const DisclosureGroup = forwardRef(function DisclosureGroup(props: DisclosureGroupProps, ref: ForwardedRef<HTMLDivElement>) {
+export const DisclosureGroup = forwardRef(function DisclosureGroup(
+  props: DisclosureGroupProps,
+  ref: ForwardedRef<HTMLDivElement>
+) {
   let state = useDisclosureGroupState(props);
 
   let renderProps = useRenderProps({
@@ -82,11 +97,7 @@ export const DisclosureGroup = forwardRef(function DisclosureGroup(props: Disclo
   let domProps = filterDOMProps(props, {global: true});
 
   return (
-    <dom.div
-      {...domProps}
-      {...renderProps}
-      ref={ref}
-      data-disabled={props.isDisabled || undefined}>
+    <dom.div {...domProps} {...renderProps} ref={ref} data-disabled={props.isDisabled || undefined}>
       <DisclosureGroupStateContext.Provider value={state}>
         {renderProps.children}
       </DisclosureGroupStateContext.Provider>
@@ -94,14 +105,19 @@ export const DisclosureGroup = forwardRef(function DisclosureGroup(props: Disclo
   );
 });
 
-export interface DisclosureProps extends Omit<AriaDisclosureProps, 'children'>, RenderProps<DisclosureRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
+export interface DisclosureProps
+  extends
+    Omit<AriaDisclosureProps, 'children'>,
+    RenderProps<DisclosureRenderProps>,
+    SlotProps,
+    GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-Disclosure'
    */
-  className?: ClassNameOrFunction<DisclosureRenderProps>,
+  className?: ClassNameOrFunction<DisclosureRenderProps>;
   /** An id for the disclosure when used within a DisclosureGroup, matching the id used in `expandedKeys`. */
-  id?: Key
+  id?: Key;
 }
 
 export interface DisclosureRenderProps {
@@ -109,29 +125,29 @@ export interface DisclosureRenderProps {
    * Whether the disclosure is expanded.
    * @selector [data-expanded]
    */
-  isExpanded: boolean,
+  isExpanded: boolean;
   /**
    * Whether the disclosure has keyboard focus.
    * @selector [data-focus-visible-within]
    */
-  isFocusVisibleWithin: boolean,
+  isFocusVisibleWithin: boolean;
   /**
    * Whether the disclosure is disabled.
    * @selector [data-disabled]
    */
-  isDisabled: boolean,
+  isDisabled: boolean;
   /**
    * State of the disclosure.
    */
-  state: DisclosureState
+  state: DisclosureState;
 }
 
 export const DisclosureContext = createContext<ContextValue<DisclosureProps, HTMLDivElement>>(null);
 export const DisclosureStateContext = createContext<DisclosureState | null>(null);
 
 interface InternalDisclosureContextValue {
-  panelProps: DOMAttributes<HTMLElement>,
-  panelRef: React.RefObject<HTMLDivElement | null>
+  panelProps: DOMAttributes<HTMLElement>;
+  panelRef: React.RefObject<HTMLDivElement | null>;
 }
 
 const InternalDisclosureContext = createContext<InternalDisclosureContextValue | null>(null);
@@ -139,7 +155,10 @@ const InternalDisclosureContext = createContext<InternalDisclosureContextValue |
 /**
  * A disclosure is a collapsible section of content. It is composed of a a header with a heading and trigger button, and a panel that contains the content.
  */
-export const Disclosure = /*#__PURE__*/ (forwardRef as forwardRefType)(function Disclosure(props: DisclosureProps, ref: ForwardedRef<HTMLDivElement>) {
+export const Disclosure = /*#__PURE__*/ (forwardRef as forwardRefType)(function Disclosure(
+  props: DisclosureProps,
+  ref: ForwardedRef<HTMLDivElement>
+) {
   [props, ref] = useContextProps(props, ref, DisclosureContext);
   let groupState = useContext(DisclosureGroupStateContext)!;
   let {id, ...otherProps} = props;
@@ -164,15 +183,18 @@ export const Disclosure = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
 
   let panelRef = React.useRef<HTMLDivElement | null>(null);
   let isDisabled = props.isDisabled || groupState?.isDisabled || false;
-  let {buttonProps, panelProps} = useDisclosure({
-    ...props,
-    isExpanded,
-    isDisabled
-  }, state, panelRef);
-  let {
-    isFocusVisible: isFocusVisibleWithin,
-    focusProps: focusWithinProps
-  } = useFocusRing({within: true});
+  let {buttonProps, panelProps} = useDisclosure(
+    {
+      ...props,
+      isExpanded,
+      isDisabled
+    },
+    state,
+    panelRef
+  );
+  let {isFocusVisible: isFocusVisibleWithin, focusProps: focusWithinProps} = useFocusRing({
+    within: true
+  });
 
   let renderProps = useRenderProps({
     ...props,
@@ -191,12 +213,15 @@ export const Disclosure = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
   return (
     <Provider
       values={[
-        [ButtonContext, {
-          slots: {
-            [DEFAULT_SLOT]: {},
-            trigger: buttonProps
+        [
+          ButtonContext,
+          {
+            slots: {
+              [DEFAULT_SLOT]: {},
+              trigger: buttonProps
+            }
           }
-        }],
+        ],
         [InternalDisclosureContext, {panelProps, panelRef}],
         [DisclosureStateContext, state]
       ]}>
@@ -217,56 +242,57 @@ export interface DisclosurePanelRenderProps {
    * Whether keyboard focus is within the disclosure panel.
    * @selector [data-focus-visible-within]
    */
-  isFocusVisibleWithin: boolean
+  isFocusVisibleWithin: boolean;
 }
 
-export interface DisclosurePanelProps extends RenderProps<DisclosurePanelRenderProps>, DOMProps, LabelAriaProps, GlobalDOMAttributes<HTMLDivElement> {
+export interface DisclosurePanelProps
+  extends
+    RenderProps<DisclosurePanelRenderProps>,
+    DOMProps,
+    LabelAriaProps,
+    GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-DisclosurePanel'
    */
-  className?: ClassNameOrFunction<DisclosurePanelRenderProps>,
+  className?: ClassNameOrFunction<DisclosurePanelRenderProps>;
   /**
    * The accessibility role for the disclosure's panel.
    * @default 'group'
    */
-  role?: 'group' | 'region',
+  role?: 'group' | 'region';
   /**
    * The children of the component.
    */
-  children: ReactNode
+  children: ReactNode;
 }
 
 /**
  * A DisclosurePanel provides the content for a disclosure.
  */
-export const DisclosurePanel = /*#__PURE__*/ (forwardRef as forwardRefType)(function DisclosurePanel(props: DisclosurePanelProps, ref: ForwardedRef<HTMLDivElement>) {
-  let {role = 'group'} = props;
-  let {panelProps, panelRef} = useContext(InternalDisclosureContext)!;
-  let {
-    isFocusVisible: isFocusVisibleWithin,
-    focusProps: focusWithinProps
-  } = useFocusRing({within: true});
-  let renderProps = useRenderProps({
-    ...props,
-    defaultClassName: 'react-aria-DisclosurePanel',
-    values: {
-      isFocusVisibleWithin
-    }
-  });
-  let DOMProps = filterDOMProps(props, {global: true, labelable: true});
-  return (
-    <dom.div
-      {...mergeProps(DOMProps, renderProps, panelProps, focusWithinProps)}
-      ref={mergeRefs(ref, panelRef)}
-      role={role}
-      data-focus-visible-within={isFocusVisibleWithin || undefined}>
-      <Provider
-        values={[
-          [ButtonContext, null]
-        ]}>
-        {props.children}
-      </Provider>
-    </dom.div>
-  );
-});
+export const DisclosurePanel = /*#__PURE__*/ (forwardRef as forwardRefType)(
+  function DisclosurePanel(props: DisclosurePanelProps, ref: ForwardedRef<HTMLDivElement>) {
+    let {role = 'group'} = props;
+    let {panelProps, panelRef} = useContext(InternalDisclosureContext)!;
+    let {isFocusVisible: isFocusVisibleWithin, focusProps: focusWithinProps} = useFocusRing({
+      within: true
+    });
+    let renderProps = useRenderProps({
+      ...props,
+      defaultClassName: 'react-aria-DisclosurePanel',
+      values: {
+        isFocusVisibleWithin
+      }
+    });
+    let DOMProps = filterDOMProps(props, {global: true, labelable: true});
+    return (
+      <dom.div
+        {...mergeProps(DOMProps, renderProps, panelProps, focusWithinProps)}
+        ref={mergeRefs(ref, panelRef)}
+        role={role}
+        data-focus-visible-within={isFocusVisibleWithin || undefined}>
+        <Provider values={[[ButtonContext, null]]}>{props.children}</Provider>
+      </dom.div>
+    );
+  }
+);

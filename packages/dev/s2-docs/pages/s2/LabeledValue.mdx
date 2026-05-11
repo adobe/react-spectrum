@@ -1,0 +1,139 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import {LabeledValue} from '@react-spectrum/s2';
+import docs from 'docs:@react-spectrum/s2';
+import types from 'docs:../../src/LabeledValueTypes.ts'
+import {CalendarDateTime} from '@internationalized/date';
+
+export const tags = ['form'];
+export const description = 'Displays a non-editable value with a label';
+
+# LabeledValue
+
+<PageDescription>{docs.exports.LabeledValue.description}</PageDescription>
+
+<VisualExample
+  component={LabeledValue}
+  docs={types.exports.LabeledValueProps}
+  links={types.links}
+  props={['label', 'size', 'labelPosition', 'labelAlign', 'contextualHelp']}
+  initialProps={{
+    label: 'File name',
+    value: 'Budget.pdf'
+  }}
+  importSource="@react-spectrum/s2/LabeledValue"
+  type="s2" />
+
+
+## Value
+
+In addition to a string as shown above, a `LabeledValue` accepts numbers, dates, times, and lists of strings in the `value` prop.
+
+### Numbers
+
+When the `value` prop is set to a number, `LabeledValue` formats it according to the user's locale. Custom `formatOptions` can also be provided to format the value as a percentage, unit, currency, etc. This prop is compatible
+with the option parameter of [Intl.NumberFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/NumberFormat).
+
+<VisualExample
+  name="LabeledValue"
+  component={LabeledValue}
+  docs={types.exports.LabeledValueNumberProps}
+  links={types.links}
+  props={['formatOptions']}
+  initialProps={{
+    label: 'Value',
+    value: 5,
+    formatOptions: {style: 'decimal'}
+  }}
+  controlOptions={{
+    formatOptions: {showDetails: true}
+  }}
+  type="s2" />
+
+An object with `start` and `end` properties may also be provided to format a numeric range.
+
+```tsx render
+"use client"
+import {LabeledValue} from '@react-spectrum/s2/LabeledValue';
+
+<LabeledValue 
+  label="Price range"
+  value={{start: 150, end: 400}}
+  formatOptions={{style: 'currency', currency: 'USD', minimumFractionDigits: 0}} />
+```
+
+### Dates and times
+
+The `value` prop may be set to a JavaScript [Date](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date) object, or one of the types from [@internationalized/date](react-aria:internationalized/date/) to display a date or time, which is formatted according to the user's locale. Custom `formatOptions` can also be provided control the exact date format. This prop is compatible
+with the option parameter of [Intl.DateTimeFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat).
+
+<VisualExample
+  name="LabeledValue"
+  component={LabeledValue}
+  docs={types.exports.LabeledValueDateTimeProps}
+  links={types.links}
+  props={['formatOptions']}
+  initialProps={{
+    label: 'Birthday',
+    value: new Date(2022, 6, 5),
+    formatOptions: {dateStyle: 'short'}
+  }}
+  type="s2" />
+
+By default, the formatting depends on the type of value provided. Above, a [CalendarDate](react-aria:internationalized/date/CalendarDate) is provided, so only the date is displayed. To display a time, pass a [Time](react-aria:internationalized/date/Time) object. You can also provide a [CalendarDateTime](react-aria:internationalized/date/CalendarDateTime) or [ZonedDateTime](react-aria:internationalized/date/ZonedDateTime) to display a date with a time.
+
+```tsx render
+"use client"
+import {LabeledValue} from '@react-spectrum/s2/LabeledValue';
+import {CalendarDateTime} from '@internationalized/date';
+
+<LabeledValue label="Page load time" value={new CalendarDateTime(2022, 7, 5, 14, 30)} />
+```
+
+An object with `start` and `end` properties may also be provided to format a date or time range.
+
+```tsx render
+"use client"
+import {LabeledValue} from '@react-spectrum/s2/LabeledValue';
+import {Time} from '@internationalized/date';
+
+<LabeledValue label="Business hours" value={{start: new Time(8, 30), end: new Time(18)}} />
+```
+
+### Lists
+
+When the `value` prop is set to an array of strings, they are rendered as a comma-separated list according to the user's locale. 
+
+By default, the list is displayed as a conjunction (an "and"-based grouping of items). This may be changed to a disjunction (an "or"-based grouping), or a pure comma-separated list using the `formatOptions` prop. This is compatible with the option parameter of [Intl.ListFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/ListFormat/ListFormat).
+
+<VisualExample
+  name="LabeledValue"
+  component={LabeledValue}
+  docs={types.exports.LabeledValueListProps}
+  links={types.links}
+  props={['formatOptions']}
+  initialProps={{
+    label: 'Value',
+    value: ['Pepperoni', 'Pineapple','Mushroom', 'Garlic'],
+    formatOptions: {type: 'conjunction'}
+  }}
+  type="s2" />
+
+
+### Components
+
+The value can be a component and will be rendered as provided. Components cannot be editable.
+
+```tsx render
+"use client"
+import {LabeledValue} from '@react-spectrum/s2/LabeledValue';
+import {Link} from '@react-spectrum/s2/Link';
+
+<LabeledValue label="Website" value={<Link href="https://www.adobe.com/">Adobe.com</Link>} />
+```
+
+
+## API
+
+<PropTable component={{props: types.exports.LabeledValueProps}} links={types.links} />

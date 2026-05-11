@@ -33,9 +33,13 @@ let count = 0;
 
 let ToastStory = (props: ToastStateProps & {timeout?: number}): JSX.Element => (
   <ToastContainer {...props}>
-    {state => (<>
-      <button onClick={() => state.add('Mmmmm toast ' + ++count, {timeout: props.timeout})}>Add toast</button>
-    </>)}
+    {state => (
+      <>
+        <button onClick={() => state.add('Mmmmm toast ' + ++count, {timeout: props.timeout})}>
+          Add toast
+        </button>
+      </>
+    )}
   </ToastContainer>
 );
 

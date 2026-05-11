@@ -19,37 +19,37 @@ export interface ToggleGroupProps {
    * Whether single or multiple selection is enabled.
    * @default 'single'
    */
-  selectionMode?: 'single' | 'multiple',
+  selectionMode?: 'single' | 'multiple';
   /** Whether the collection allows empty selection. */
-  disallowEmptySelection?: boolean,
+  disallowEmptySelection?: boolean;
   /** The currently selected keys in the collection (controlled). */
-  selectedKeys?: Iterable<Key>,
+  selectedKeys?: Iterable<Key>;
   /** The initial selected keys in the collection (uncontrolled). */
-  defaultSelectedKeys?: Iterable<Key>,
+  defaultSelectedKeys?: Iterable<Key>;
   /** Handler that is called when the selection changes. */
-  onSelectionChange?: (keys: Set<Key>) => void,
+  onSelectionChange?: (keys: Set<Key>) => void;
   /** Whether all items are disabled. */
-  isDisabled?: boolean
+  isDisabled?: boolean;
 }
 
 export interface ToggleGroupState {
   /** Whether single or multiple selection is enabled. */
-  readonly selectionMode: 'single' | 'multiple',
+  readonly selectionMode: 'single' | 'multiple';
 
   /** Whether all items are disabled. */
-  readonly isDisabled: boolean,
-  
+  readonly isDisabled: boolean;
+
   /** A set of keys for items that are selected. */
-  readonly selectedKeys: Set<Key>,
+  readonly selectedKeys: Set<Key>;
 
   /** Toggles the selected state for an item by its key. */
-  toggleKey(key: Key): void,
+  toggleKey(key: Key): void;
 
   /** Sets whether the given key is selected. */
-  setSelected(key: Key, isSelected: boolean): void,
+  setSelected(key: Key, isSelected: boolean): void;
 
   /** Replaces the set of selected keys. */
-  setSelectedKeys(keys: Set<Key>): void
+  setSelectedKeys(keys: Set<Key>): void;
 }
 
 /**
@@ -59,8 +59,14 @@ export interface ToggleGroupState {
 export function useToggleGroupState(props: ToggleGroupProps): ToggleGroupState {
   let {selectionMode = 'single', disallowEmptySelection, isDisabled = false} = props;
   let [selectedKeys, setSelectedKeys] = useControlledState(
-    useMemo(() => props.selectedKeys ? new Set(props.selectedKeys) : undefined, [props.selectedKeys]),
-    useMemo(() => props.defaultSelectedKeys ? new Set(props.defaultSelectedKeys) : new Set(), [props.defaultSelectedKeys]),
+    useMemo(
+      () => (props.selectedKeys ? new Set(props.selectedKeys) : undefined),
+      [props.selectedKeys]
+    ),
+    useMemo(
+      () => (props.defaultSelectedKeys ? new Set(props.defaultSelectedKeys) : new Set()),
+      [props.defaultSelectedKeys]
+    ),
     props.onSelectionChange
   );
 
@@ -81,7 +87,7 @@ export function useToggleGroupState(props: ToggleGroupProps): ToggleGroupState {
       } else {
         keys = new Set(selectedKeys.has(key) && !disallowEmptySelection ? [] : [key]);
       }
-  
+
       setSelectedKeys(keys);
     },
     setSelected(key, isSelected) {

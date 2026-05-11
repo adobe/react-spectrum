@@ -22,23 +22,26 @@ export interface CalendarMonthPickerProps {
   /**
    * The format of the month.
    */
-  format?: 'numeric' | '2-digit' | 'long' | 'short' | 'narrow'
+  format?: 'numeric' | '2-digit' | 'long' | 'short' | 'narrow';
 }
 
 export interface CalendarMonthPickerAria {
-  'aria-label': string,
-  value: Key,
-  onChange: (key: Key | null) => void,
-  items: CalendarMonthPickerItem[]
+  'aria-label': string;
+  value: Key;
+  onChange: (key: Key | null) => void;
+  items: CalendarMonthPickerItem[];
 }
 
 export interface CalendarMonthPickerItem {
-  id: number,
-  date: CalendarDate,
-  formatted: string
+  id: number;
+  date: CalendarDate;
+  formatted: string;
 }
 
-export function useCalendarMonthPicker(props: CalendarMonthPickerProps, state: CalendarState<CalendarSelectionMode> | RangeCalendarState): CalendarMonthPickerAria {
+export function useCalendarMonthPicker(
+  props: CalendarMonthPickerProps,
+  state: CalendarState<CalendarSelectionMode> | RangeCalendarState
+): CalendarMonthPickerAria {
   let formatter = useDateFormatter({
     month: props.format || 'short',
     calendar: state.focusedDate.calendar.identifier,
@@ -61,7 +64,10 @@ export function useCalendarMonthPicker(props: CalendarMonthPickerProps, state: C
   }
 
   let {locale} = useLocale();
-  let ariaLabel = useMemo(() => new Intl.DisplayNames(locale, {type: 'dateTimeField'}).of('month')!, [locale]);
+  let ariaLabel = useMemo(
+    () => new Intl.DisplayNames(locale, {type: 'dateTimeField'}).of('month')!,
+    [locale]
+  );
 
   return {
     'aria-label': ariaLabel,

@@ -19,13 +19,41 @@ import {
   Breadcrumbs as RACBreadcrumbs
 } from 'react-aria-components/Breadcrumbs';
 
-import {baseColor, focusRing, size, style} from '../style' with { type: 'macro' };
+import {baseColor, focusRing, size, style} from '../style' with {type: 'macro'};
 import ChevronIcon from '../ui-icons/Chevron';
-import {Collection, DOMRef, DOMRefValue, GlobalDOMAttributes, LinkDOMProps, Node} from '@react-types/shared';
-import {CollectionRenderer, CollectionRendererContext, DefaultCollectionRenderer} from 'react-aria-components/CollectionBuilder';
+import {
+  Collection,
+  DOMRef,
+  DOMRefValue,
+  GlobalDOMAttributes,
+  LinkDOMProps,
+  Node
+} from '@react-types/shared';
+import {
+  CollectionRenderer,
+  CollectionRendererContext,
+  DefaultCollectionRenderer
+} from 'react-aria-components/CollectionBuilder';
 import {ContextValue, Provider} from 'react-aria-components/slots';
-import {controlFont, controlSize, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
-import {createContext, forwardRef, Fragment, ReactNode, RefObject, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
+import {
+  controlFont,
+  controlSize,
+  getAllowedOverrides,
+  StyleProps
+} from './style-utils' with {type: 'macro'};
+import {
+  createContext,
+  forwardRef,
+  Fragment,
+  ReactNode,
+  RefObject,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState
+} from 'react';
 import FolderIcon from '../s2wf-icons/S2_Icon_FolderBreadcrumb_20_N.svg';
 import {forwardRefType} from './types';
 // @ts-ignore
@@ -52,9 +80,9 @@ interface BreadcrumbsStyleProps {
    *
    * @default 'M'
    */
-  size?: 'M' | 'L',
+  size?: 'M' | 'L';
   /** Whether the breadcrumbs are disabled. */
-  isDisabled?: boolean
+  isDisabled?: boolean;
   /**
    * Whether to place the last Breadcrumb item onto a new line.
    */
@@ -63,45 +91,58 @@ interface BreadcrumbsStyleProps {
   // TODO: showRoot?: boolean,
 }
 
-export interface BreadcrumbsProps<T> extends Omit<AriaBreadcrumbsProps<T>, 'children' | 'style' | 'className' | 'render' | keyof GlobalDOMAttributes>, BreadcrumbsStyleProps, StyleProps {
+export interface BreadcrumbsProps<T>
+  extends
+    Omit<
+      AriaBreadcrumbsProps<T>,
+      'children' | 'style' | 'className' | 'render' | keyof GlobalDOMAttributes
+    >,
+    BreadcrumbsStyleProps,
+    StyleProps {
   /** The children of the Breadcrumbs. */
-  children: ReactNode | ((item: T) => ReactNode)
+  children: ReactNode | ((item: T) => ReactNode);
 }
 
-export const BreadcrumbsContext = createContext<ContextValue<Partial<BreadcrumbsProps<any>>, DOMRefValue<HTMLOListElement>>>(null);
+export const BreadcrumbsContext =
+  createContext<ContextValue<Partial<BreadcrumbsProps<any>>, DOMRefValue<HTMLOListElement>>>(null);
 
-const wrapper = style<BreadcrumbsStyleProps>({
-  position: 'relative',
-  display: 'flex',
-  justifyContent: 'start',
-  listStyleType: 'none',
-  flexWrap: 'nowrap',
-  flexGrow: 1,
-  flexShrink: 0,
-  flexBasis: 0,
-  gap: {
-    size: {
-      // TODO: why do these scale but other spacings don't?
-      M: size(6), // breadcrumbs-text-to-separator-medium
-      L: size(9) // breadcrumbs-text-to-separator-large
+const wrapper = style<BreadcrumbsStyleProps>(
+  {
+    position: 'relative',
+    display: 'flex',
+    justifyContent: 'start',
+    listStyleType: 'none',
+    flexWrap: 'nowrap',
+    flexGrow: 1,
+    flexShrink: 0,
+    flexBasis: 0,
+    gap: {
+      size: {
+        // TODO: why do these scale but other spacings don't?
+        M: size(6), // breadcrumbs-text-to-separator-medium
+        L: size(9) // breadcrumbs-text-to-separator-large
+      }
+    },
+    padding: 0,
+    transition: 'default',
+    marginTop: 0,
+    marginBottom: 0,
+    marginStart: {
+      size: {
+        M: size(6),
+        L: size(9)
+      }
     }
   },
-  padding: 0,
-  transition: 'default',
-  marginTop: 0,
-  marginBottom: 0,
-  marginStart: {
-    size: {
-      M: size(6),
-      L: size(9)
-    }
-  }
-}, getAllowedOverrides());
+  getAllowedOverrides()
+);
 
 const InternalBreadcrumbsContext = createContext<Partial<BreadcrumbsProps<any>>>({});
 
 /** Breadcrumbs show hierarchy and navigational context for a user's location within an application. */
-export const Breadcrumbs = /*#__PURE__*/ (forwardRef as forwardRefType)(function Breadcrumbs<T extends object>(props: BreadcrumbsProps<T>, ref: DOMRef<HTMLOListElement>) {
+export const Breadcrumbs = /*#__PURE__*/ (forwardRef as forwardRefType)(function Breadcrumbs<
+  T extends object
+>(props: BreadcrumbsProps<T>, ref: DOMRef<HTMLOListElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, BreadcrumbsContext);
   let domRef = useDOMRef(ref);
   let {
@@ -115,19 +156,22 @@ export const Breadcrumbs = /*#__PURE__*/ (forwardRef as forwardRefType)(function
   } = props;
 
   return (
-    <Provider
-      values={[
-        [InternalBreadcrumbsContext, {size, isDisabled}]
-      ]}>
+    <Provider values={[[InternalBreadcrumbsContext, {size, isDisabled}]]}>
       <CollapsingCollection containerRef={domRef} onAction={props.onAction}>
         <RACBreadcrumbs
           {...otherProps}
           isDisabled={isDisabled}
           ref={domRef}
           style={UNSAFE_style}
-          className={UNSAFE_className + wrapper({
-            size
-          }, styles)}>
+          className={
+            UNSAFE_className +
+            wrapper(
+              {
+                size
+              },
+              styles
+            )
+          }>
           {children}
         </RACBreadcrumbs>
       </CollapsingCollection>
@@ -135,7 +179,10 @@ export const Breadcrumbs = /*#__PURE__*/ (forwardRef as forwardRefType)(function
   );
 });
 
-let BreadcrumbMenu = (props: {items: Array<Node<any>>, onAction: BreadcrumbsProps<unknown>['onAction']}) => {
+let BreadcrumbMenu = (props: {
+  items: Array<Node<any>>;
+  onAction: BreadcrumbsProps<unknown>['onAction'];
+}) => {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   let {items, onAction} = props;
   let {direction} = useLocale();
@@ -145,12 +192,12 @@ let BreadcrumbMenu = (props: {items: Array<Node<any>>, onAction: BreadcrumbsProp
     <CollectionRendererContext.Provider value={DefaultCollectionRenderer}>
       <li className={breadcrumbStyles({size, isDisabled, isMenu: true})}>
         <MenuTrigger>
-          <ActionButton isDisabled={isDisabled} isQuiet aria-label={label}><FolderIcon /></ActionButton>
+          <ActionButton isDisabled={isDisabled} isQuiet aria-label={label}>
+            <FolderIcon />
+          </ActionButton>
           <Menu items={items} onAction={onAction}>
             {(item: Node<any>) => (
-              <MenuItem
-                {...item.props.originalProps}
-                key={item.key}>
+              <MenuItem {...item.props.originalProps} key={item.key}>
                 <Text slot="label">
                   {item.props.children({size, isCurrent: false, isMenu: true})}
                 </Text>
@@ -158,15 +205,17 @@ let BreadcrumbMenu = (props: {items: Array<Node<any>>, onAction: BreadcrumbsProp
             )}
           </Menu>
         </MenuTrigger>
-        <ChevronIcon
-          size={size}
-          className={chevronStyles({direction, isMenu: true})} />
+        <ChevronIcon size={size} className={chevronStyles({direction, isMenu: true})} />
       </li>
     </CollectionRendererContext.Provider>
   );
 };
 
-let HiddenBreadcrumbs = function (props: {listRef: RefObject<HTMLDivElement | null>, items: Array<Node<any>>, size: string}) {
+let HiddenBreadcrumbs = function (props: {
+  listRef: RefObject<HTMLDivElement | null>;
+  items: Array<Node<any>>;
+  size: string;
+}) {
   let {listRef, items, size} = props;
   return (
     <div
@@ -198,12 +247,14 @@ let HiddenBreadcrumbs = function (props: {listRef: RefObject<HTMLDivElement | nu
           </div>
         );
       })}
-      <ActionButton data-hidden-button isQuiet><FolderIcon /></ActionButton>
+      <ActionButton data-hidden-button isQuiet>
+        <FolderIcon />
+      </ActionButton>
     </div>
   );
 };
 
-const breadcrumbStyles = style<BreadcrumbsStyleProps & {isMenu?: boolean, isCurrent?: boolean}>({
+const breadcrumbStyles = style<BreadcrumbsStyleProps & {isMenu?: boolean; isCurrent?: boolean}>({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'start',
@@ -248,7 +299,7 @@ const chevronStyles = style({
   }
 });
 
-const linkStyles = style<LinkRenderProps & {size?: 'M' | 'L', isCurrent?: boolean}>({
+const linkStyles = style<LinkRenderProps & {size?: 'M' | 'L'; isCurrent?: boolean}>({
   ...focusRing(),
   borderRadius: 'sm',
   font: controlFont(),
@@ -296,13 +347,28 @@ const heading = style({
   fontWeight: 'extra-bold'
 });
 
-export interface BreadcrumbProps extends Omit<AriaBreadcrumbItemProps, 'children' | 'style' | 'className' | 'render' | 'autoFocus' | 'onClick' | keyof GlobalDOMAttributes>, LinkDOMProps {
+export interface BreadcrumbProps
+  extends
+    Omit<
+      AriaBreadcrumbItemProps,
+      | 'children'
+      | 'style'
+      | 'className'
+      | 'render'
+      | 'autoFocus'
+      | 'onClick'
+      | keyof GlobalDOMAttributes
+    >,
+    LinkDOMProps {
   /** The children of the breadcrumb item. */
-  children: ReactNode
+  children: ReactNode;
 }
 
 /** An individual Breadcrumb for Breadcrumbs. */
-export const Breadcrumb = /*#__PURE__*/ (forwardRef as forwardRefType)(function Breadcrumb({children, ...props}: BreadcrumbProps, ref: DOMRef<HTMLLIElement>) {
+export const Breadcrumb = /*#__PURE__*/ (forwardRef as forwardRefType)(function Breadcrumb(
+  {children, ...props}: BreadcrumbProps,
+  ref: DOMRef<HTMLLIElement>
+) {
   let {href, target, rel, download, ping, referrerPolicy} = props;
   let {size = 'M'} = useContext(InternalBreadcrumbsContext) ?? {};
   let domRef = useDOMRef(ref);
@@ -323,36 +389,36 @@ export const Breadcrumb = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
         if (isMenu) {
           return children;
         }
-        return (
-          isCurrent ?
-            <div
-              className={currentStyles({size})}>
-              <Provider
-                values={[
-                  [HeadingContext, {className: heading}]
-                ]}>
-                {children}
-              </Provider>
-            </div>
-            : (
-              <>
-                <Link
-                  style={({isFocusVisible}) => ({clipPath: isFocusVisible ? 'none' : 'margin-box'})}
-                  href={href}
-                  target={target}
-                  rel={rel}
-                  download={download}
-                  ping={ping}
-                  referrerPolicy={referrerPolicy}
-                  isDisabled={isDisabled || isCurrent}
-                  className={({isFocused, isFocusVisible, isHovered, isDisabled, isPressed}) => linkStyles({isFocused, isFocusVisible, isHovered, isDisabled, size, isPressed, isCurrent})}>
-                  {children}
-                </Link>
-                <ChevronIcon
-                  size="M"
-                  className={chevronStyles({direction})} />
-              </>
-            )
+        return isCurrent ? (
+          <div className={currentStyles({size})}>
+            <Provider values={[[HeadingContext, {className: heading}]]}>{children}</Provider>
+          </div>
+        ) : (
+          <>
+            <Link
+              style={({isFocusVisible}) => ({clipPath: isFocusVisible ? 'none' : 'margin-box'})}
+              href={href}
+              target={target}
+              rel={rel}
+              download={download}
+              ping={ping}
+              referrerPolicy={referrerPolicy}
+              isDisabled={isDisabled || isCurrent}
+              className={({isFocused, isFocusVisible, isHovered, isDisabled, isPressed}) =>
+                linkStyles({
+                  isFocused,
+                  isFocusVisible,
+                  isHovered,
+                  isDisabled,
+                  size,
+                  isPressed,
+                  isCurrent
+                })
+              }>
+              {children}
+            </Link>
+            <ChevronIcon size="M" className={chevronStyles({direction})} />
+          </>
         );
       }}
     </AriaBreadcrumb>
@@ -361,8 +427,8 @@ export const Breadcrumb = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
 
 // Context for passing the count for the custom renderer
 let CollapseContext = createContext<{
-  containerRef: RefObject<HTMLOListElement | null>,
-  onAction: BreadcrumbsProps<unknown>['onAction']
+  containerRef: RefObject<HTMLOListElement | null>;
+  onAction: BreadcrumbsProps<unknown>['onAction'];
 } | null>(null);
 
 function CollapsingCollection({children, containerRef, onAction}) {
@@ -410,7 +476,9 @@ let useCollectionRender = (collection: Collection<Node<unknown>>) => {
       return;
     }
 
-    let listItems = Array.from(currListRef.querySelectorAll('[data-hidden-breadcrumb]')) as HTMLLIElement[];
+    let listItems = Array.from(
+      currListRef.querySelectorAll('[data-hidden-breadcrumb]')
+    ) as HTMLLIElement[];
     let folder = currListRef.querySelector('button') as HTMLButtonElement;
     if (listItems.length <= 0) {
       setVisibleItems(collection.size);
@@ -431,14 +499,18 @@ let useCollectionRender = (collection: Collection<Node<unknown>>) => {
     }
 
     // can we fit all the items without collapsing
-    if (totalWidth <= containerWidth - (collection.size * containerGap) && collection.size <= MAX_VISIBLE_ITEMS) {
+    if (
+      totalWidth <= containerWidth - collection.size * containerGap &&
+      collection.size <= MAX_VISIBLE_ITEMS
+    ) {
       setVisibleItems(collection.size);
       return;
     }
 
     // we know there is always at least one item because of the listItems.length check up above
     let widthOfFirst = widths.shift()!;
-    let availableWidth = containerWidth - widthOfFirst - folderGap - folder.offsetWidth - containerGap;
+    let availableWidth =
+      containerWidth - widthOfFirst - folderGap - folder.offsetWidth - containerGap;
     maxVisibleItems -= 2; // account for the first item and folder
     for (let width of widths.reverse()) {
       availableWidth -= width;
@@ -475,11 +547,15 @@ let useCollectionRender = (collection: Collection<Node<unknown>>) => {
         <>
           {children[0].render?.(children[0])}
           <BreadcrumbMenu items={children.slice(1, sliceIndex)} onAction={onAction} />
-          {children.slice(sliceIndex).map(node => <Fragment key={node.key}>{node.render?.(node)}</Fragment >)}
+          {children.slice(sliceIndex).map(node => (
+            <Fragment key={node.key}>{node.render?.(node)}</Fragment>
+          ))}
         </>
       ) : (
         <>
-          {children.map(node => <Fragment key={node.key}>{node.render?.(node)}</Fragment>)}
+          {children.map(node => (
+            <Fragment key={node.key}>{node.render?.(node)}</Fragment>
+          ))}
         </>
       )}
     </>

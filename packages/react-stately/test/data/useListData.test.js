@@ -14,11 +14,7 @@ import {actHook as act, renderHook} from '@react-spectrum/test-utils-internal';
 import React from 'react';
 import {useListData} from '../../src/data/useListData';
 
-const initial = [
-  {name: 'David'},
-  {name: 'Sam'},
-  {name: 'Julia'}
-];
+const initial = [{name: 'David'}, {name: 'Sam'}, {name: 'Julia'}];
 
 const many = [
   {name: 'One'},
@@ -34,19 +30,23 @@ const many = [
   {name: 'Eleven'}
 ];
 
-let getKey = (item) => item.name;
+let getKey = item => item.name;
 let filter = (item, text) => item.name.includes(text);
 
 describe('useListData', function () {
   it('should construct a list using initial data', function () {
-    let {result} = renderHook(() => useListData({initialItems: initial, getKey, initialSelectedKeys: ['Sam', 'Julia']}));
+    let {result} = renderHook(() =>
+      useListData({initialItems: initial, getKey, initialSelectedKeys: ['Sam', 'Julia']})
+    );
     expect(result.current.items).toBe(initial);
     expect(result.current.selectedKeys).toEqual(new Set(['Sam', 'Julia']));
   });
 
   describe('addKeysToSelection', function () {
     it('should add selected keys', function () {
-      let {result} = renderHook(() => useListData({initialItems: initial, getKey, initialSelectedKeys: ['Sam']}));
+      let {result} = renderHook(() =>
+        useListData({initialItems: initial, getKey, initialSelectedKeys: ['Sam']})
+      );
       let initialResult = result.current;
 
       act(() => {
@@ -57,7 +57,9 @@ describe('useListData', function () {
     });
 
     it('should support adding "all" to selected keys', function () {
-      let {result} = renderHook(() => useListData({initialItems: initial, getKey, initialSelectedKeys: ['Sam']}));
+      let {result} = renderHook(() =>
+        useListData({initialItems: initial, getKey, initialSelectedKeys: ['Sam']})
+      );
       let initialResult = result.current;
 
       act(() => {
@@ -68,7 +70,9 @@ describe('useListData', function () {
     });
 
     it('should still return "all" if selected keys was already "all"', function () {
-      let {result} = renderHook(() => useListData({initialItems: initial, getKey, initialSelectedKeys: 'all'}));
+      let {result} = renderHook(() =>
+        useListData({initialItems: initial, getKey, initialSelectedKeys: 'all'})
+      );
 
       act(() => {
         result.current.addKeysToSelection(['Same']);
@@ -79,7 +83,9 @@ describe('useListData', function () {
 
   describe('removeKeysFromSelection', function () {
     it('should remove all keys', function () {
-      let {result} = renderHook(() => useListData({initialItems: initial, getKey, initialSelectedKeys: ['Sam', 'Julia']}));
+      let {result} = renderHook(() =>
+        useListData({initialItems: initial, getKey, initialSelectedKeys: ['Sam', 'Julia']})
+      );
       let initialResult = result.current;
 
       act(() => {
@@ -90,7 +96,9 @@ describe('useListData', function () {
     });
 
     it('should remove the selected keys', function () {
-      let {result} = renderHook(() => useListData({initialItems: initial, getKey, initialSelectedKeys: ['Sam', 'Julia']}));
+      let {result} = renderHook(() =>
+        useListData({initialItems: initial, getKey, initialSelectedKeys: ['Sam', 'Julia']})
+      );
       let initialResult = result.current;
 
       act(() => {
@@ -101,7 +109,9 @@ describe('useListData', function () {
     });
 
     it('should remove the selected keys from an "all" set', function () {
-      let {result} = renderHook(() => useListData({initialItems: initial, getKey, initialSelectedKeys: 'all'}));
+      let {result} = renderHook(() =>
+        useListData({initialItems: initial, getKey, initialSelectedKeys: 'all'})
+      );
       let initialResult = result.current;
 
       act(() => {
@@ -112,7 +122,9 @@ describe('useListData', function () {
     });
 
     it('should support removing "all"', function () {
-      let {result} = renderHook(() => useListData({initialItems: initial, getKey, initialSelectedKeys: ['Sam', 'Julia']}));
+      let {result} = renderHook(() =>
+        useListData({initialItems: initial, getKey, initialSelectedKeys: ['Sam', 'Julia']})
+      );
       let initialResult = result.current;
 
       act(() => {
@@ -293,8 +305,15 @@ describe('useListData', function () {
     expect(result.current.items[4]).toEqual({name: 'Danni'});
   });
 
-  it('should not wipe the list state when inserting before with a target key that doesn\'t exist', function () {
-    let {result} = renderHook(() => useListData({initialItems: initial, getKey, initialSelectedKeys: ['Sam', 'Julia'], initialFilterText: 'test'}));
+  it("should not wipe the list state when inserting before with a target key that doesn't exist", function () {
+    let {result} = renderHook(() =>
+      useListData({
+        initialItems: initial,
+        getKey,
+        initialSelectedKeys: ['Sam', 'Julia'],
+        initialFilterText: 'test'
+      })
+    );
     let initialResult = result.current;
     expect(initialResult.items).toBe(initial);
     expect(initialResult.selectedKeys).toEqual(new Set(['Sam', 'Julia']));
@@ -309,8 +328,15 @@ describe('useListData', function () {
     expect(result.current.filterText).toBe(initialResult.filterText);
   });
 
-  it('should not wipe the list state when inserting before with a target key that doesn\'t exist', function () {
-    let {result} = renderHook(() => useListData({initialItems: initial, getKey, initialSelectedKeys: ['Sam', 'Julia'], initialFilterText: 'test'}));
+  it("should not wipe the list state when inserting before with a target key that doesn't exist", function () {
+    let {result} = renderHook(() =>
+      useListData({
+        initialItems: initial,
+        getKey,
+        initialSelectedKeys: ['Sam', 'Julia'],
+        initialFilterText: 'test'
+      })
+    );
     let initialResult = result.current;
     expect(initialResult.items).toBe(initial);
     expect(initialResult.selectedKeys).toEqual(new Set(['Sam', 'Julia']));
@@ -352,7 +378,9 @@ describe('useListData', function () {
   });
 
   it('should remove an item', function () {
-    let {result} = renderHook(() => useListData({initialItems: initial, getKey, initialSelectedKeys: ['Sam', 'Julia']}));
+    let {result} = renderHook(() =>
+      useListData({initialItems: initial, getKey, initialSelectedKeys: ['Sam', 'Julia']})
+    );
     let initialResult = result.current;
 
     act(() => {
@@ -368,7 +396,9 @@ describe('useListData', function () {
   });
 
   it('should preserve all selected value through a remove call', function () {
-    let {result} = renderHook(() => useListData({initialItems: initial, getKey, initialSelectedKeys: 'all'}));
+    let {result} = renderHook(() =>
+      useListData({initialItems: initial, getKey, initialSelectedKeys: 'all'})
+    );
 
     act(() => {
       result.current.remove('Sam');
@@ -378,7 +408,9 @@ describe('useListData', function () {
   });
 
   it('should change all selection to empty set if last item is removed', function () {
-    let {result} = renderHook(() => useListData({initialItems: initial, getKey, initialSelectedKeys: 'all'}));
+    let {result} = renderHook(() =>
+      useListData({initialItems: initial, getKey, initialSelectedKeys: 'all'})
+    );
 
     act(() => {
       result.current.remove('Sam');
@@ -390,7 +422,9 @@ describe('useListData', function () {
   });
 
   it('should remove multiple items', function () {
-    let {result} = renderHook(() => useListData({initialItems: initial, getKey, initialSelectedKeys: ['Sam', 'David', 'Julia']}));
+    let {result} = renderHook(() =>
+      useListData({initialItems: initial, getKey, initialSelectedKeys: ['Sam', 'David', 'Julia']})
+    );
     let initialResult = result.current;
 
     act(() => {
@@ -405,7 +439,9 @@ describe('useListData', function () {
   });
 
   it('should remove the selected items', function () {
-    let {result} = renderHook(() => useListData({initialItems: initial, getKey, initialSelectedKeys: ['Sam', 'Julia']}));
+    let {result} = renderHook(() =>
+      useListData({initialItems: initial, getKey, initialSelectedKeys: ['Sam', 'Julia']})
+    );
     let initialResult = result.current;
 
     act(() => {
@@ -420,7 +456,9 @@ describe('useListData', function () {
   });
 
   it('should remove the selected items with select all', function () {
-    let {result} = renderHook(() => useListData({initialItems: initial, getKey, initialSelectedKeys: 'all'}));
+    let {result} = renderHook(() =>
+      useListData({initialItems: initial, getKey, initialSelectedKeys: 'all'})
+    );
     let initialResult = result.current;
 
     act(() => {
@@ -500,11 +538,7 @@ describe('useListData', function () {
 
       expect(result.current.items).not.toBe(initialResult.items);
       expect(result.current.items).toHaveLength(3);
-      expect(result.current.items).toEqual([
-        initial[0],
-        initial[2],
-        initial[1]
-      ]);
+      expect(result.current.items).toEqual([initial[0], initial[2], initial[1]]);
     });
 
     it('should move multiple subsequent items before another item from before', function () {
@@ -861,7 +895,9 @@ describe('useListData', function () {
   });
 
   it('should support filtering', function () {
-    let {result} = renderHook(() => useListData({initialItems: initial, filter, initialFilterText: 'Sa'}));
+    let {result} = renderHook(() =>
+      useListData({initialItems: initial, filter, initialFilterText: 'Sa'})
+    );
 
     expect(result.current.items).toHaveLength(1);
     expect(result.current.items[0]).toEqual({name: 'Sam'});

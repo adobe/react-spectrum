@@ -11,42 +11,53 @@
  */
 
 import {AriaSelectableCollectionOptions, useSelectableCollection} from './useSelectableCollection';
-import {Collection, DOMAttributes, Key, KeyboardDelegate, LayoutDelegate, Node, Orientation} from '@react-types/shared';
+import {
+  Collection,
+  DOMAttributes,
+  Key,
+  KeyboardDelegate,
+  LayoutDelegate,
+  Node,
+  Orientation
+} from '@react-types/shared';
 import {ListKeyboardDelegate} from './ListKeyboardDelegate';
 import {useCollator} from '../i18n/useCollator';
 import {useMemo} from 'react';
 
-export interface AriaSelectableListOptions extends Omit<AriaSelectableCollectionOptions, 'keyboardDelegate'> {
+export interface AriaSelectableListOptions extends Omit<
+  AriaSelectableCollectionOptions,
+  'keyboardDelegate'
+> {
   /**
    * State of the collection.
    */
-  collection: Collection<Node<unknown>>,
+  collection: Collection<Node<unknown>>;
   /**
    * A delegate object that implements behavior for keyboard focus movement.
    */
-  keyboardDelegate?: KeyboardDelegate,
+  keyboardDelegate?: KeyboardDelegate;
   /**
    * A delegate object that provides layout information for items in the collection.
    * By default this uses the DOM, but this can be overridden to implement things like
    * virtualized scrolling.
    */
-  layoutDelegate?: LayoutDelegate,
+  layoutDelegate?: LayoutDelegate;
   /**
    * The item keys that are disabled. These items cannot be selected, focused, or otherwise interacted with.
    */
-  disabledKeys: Set<Key>,
+  disabledKeys: Set<Key>;
   /**
    * The primary orientation of the items. Usually this is the direction that the collection scrolls.
    * @default 'vertical'
    */
-  orientation?: Orientation
+  orientation?: Orientation;
 }
 
 export interface SelectableListAria {
   /**
    * Props for the option element.
    */
-  listProps: DOMAttributes
+  listProps: DOMAttributes;
 }
 
 /**
@@ -67,17 +78,29 @@ export function useSelectableList(props: AriaSelectableListOptions): SelectableL
   // When virtualized, the layout object will be passed in as a prop and override this.
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let disabledBehavior = selectionManager.disabledBehavior;
-  let delegate = useMemo(() => (
-    keyboardDelegate || new ListKeyboardDelegate({
+  let delegate = useMemo(
+    () =>
+      keyboardDelegate ||
+      new ListKeyboardDelegate({
+        collection,
+        disabledKeys,
+        disabledBehavior,
+        ref,
+        collator,
+        layoutDelegate,
+        orientation
+      }),
+    [
+      keyboardDelegate,
+      layoutDelegate,
       collection,
       disabledKeys,
-      disabledBehavior,
       ref,
       collator,
-      layoutDelegate,
+      disabledBehavior,
       orientation
-    })
-  ), [keyboardDelegate, layoutDelegate, collection, disabledKeys, ref, collator, disabledBehavior, orientation]);
+    ]
+  );
 
   let {collectionProps} = useSelectableCollection({
     ...props,

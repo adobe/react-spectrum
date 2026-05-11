@@ -25,25 +25,27 @@ import {useSyncExternalStore} from 'use-sync-external-store/shim/index.js';
 export type ToastPlacement = 'top' | 'top end' | 'bottom' | 'bottom end';
 
 export interface SpectrumToastContainerProps extends AriaToastRegionProps {
-  placement?: ToastPlacement
+  placement?: ToastPlacement;
 }
 
 export interface SpectrumToastOptions extends ToastOptions, DOMProps {
   /** A label for the action button within the toast. */
-  actionLabel?: string,
+  actionLabel?: string;
   /** Handler that is called when the action button is pressed. */
-  onAction?: () => void,
+  onAction?: () => void;
   /** Whether the toast should automatically close when an action is performed. */
-  shouldCloseOnAction?: boolean
+  shouldCloseOnAction?: boolean;
 }
 
 export type CloseFunction = () => void;
 
 function wrapInViewTransition(fn: () => void): void {
   if ('startViewTransition' in document) {
-    document.startViewTransition(() => {
-      flushSync(fn);
-    }).ready.catch(() => {});
+    document
+      .startViewTransition(() => {
+        flushSync(fn);
+      })
+      .ready.catch(() => {});
   } else {
     fn();
   }
@@ -99,7 +101,6 @@ export function ToastContainer(props: SpectrumToastContainerProps): ReactElement
   // over the lifetime of the component.
   let ref = useRef(null);
 
-
   useEffect(() => {
     toastProviders.add(ref);
     triggerSubscriptions();
@@ -136,16 +137,11 @@ export function ToastContainer(props: SpectrumToastContainerProps): ReactElement
                 className={classNames(toastContainerStyles, 'spectrum-ToastContainer-listitem')}
                 style={{
                   viewTransitionName: toast.key,
-                  viewTransitionClass: classNames(
-                    toastContainerStyles,
-                    'toast',
-                    placement,
-                    {'fadeOnly': shouldFade}
-                  )
+                  viewTransitionClass: classNames(toastContainerStyles, 'toast', placement, {
+                    fadeOnly: shouldFade
+                  })
                 }}>
-                <Toast
-                  toast={toast}
-                  state={state} />
+                <Toast toast={toast} state={state} />
               </li>
             );
           })}
@@ -157,7 +153,11 @@ export function ToastContainer(props: SpectrumToastContainerProps): ReactElement
   return null;
 }
 
-function addToast(children: string, variant: SpectrumToastValue['variant'], options: SpectrumToastOptions = {}) {
+function addToast(
+  children: string,
+  variant: SpectrumToastValue['variant'],
+  options: SpectrumToastOptions = {}
+) {
   // Dispatch a custom event so that toasts can be intercepted and re-targeted, e.g. when inside an iframe.
   if (typeof CustomEvent !== 'undefined' && typeof window !== 'undefined') {
     let event = new CustomEvent('react-spectrum-toast', {

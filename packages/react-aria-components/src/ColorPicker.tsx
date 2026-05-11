@@ -10,7 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {ChildrenOrFunction, Provider, SlotProps, SlottedContextValue, useRenderProps, useSlottedContext} from './utils';
+import {
+  ChildrenOrFunction,
+  Provider,
+  SlotProps,
+  SlottedContextValue,
+  useRenderProps,
+  useSlottedContext
+} from './utils';
 import {Color} from 'react-stately/Color';
 
 import {ColorAreaContext} from './ColorArea';
@@ -30,12 +37,12 @@ import React, {createContext, JSX} from 'react';
 
 export interface ColorPickerRenderProps {
   /** The currently selected color. */
-  color: Color
+  color: Color;
 }
 
 export interface ColorPickerProps extends StatelyColorPickerProps, SlotProps {
   /** The children of the component. A function may be provided to alter the children based on component state. */
-  children: ChildrenOrFunction<ColorPickerRenderProps>
+  children: ChildrenOrFunction<ColorPickerRenderProps>;
 }
 
 export const ColorPickerContext = createContext<SlottedContextValue<ColorPickerProps>>(null);

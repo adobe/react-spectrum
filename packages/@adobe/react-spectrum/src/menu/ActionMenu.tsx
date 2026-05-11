@@ -11,7 +11,14 @@
  */
 
 import {ActionButton} from '../button/ActionButton';
-import {AriaLabelingProps, CollectionBase, DOMProps, FocusableRef, Key, StyleProps} from '@react-types/shared';
+import {
+  AriaLabelingProps,
+  CollectionBase,
+  DOMProps,
+  FocusableRef,
+  Key,
+  StyleProps
+} from '@react-types/shared';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 // @ts-ignore
 import intlMessages from '../../intl/menu/*.json';
@@ -22,21 +29,30 @@ import React, {forwardRef, ReactElement} from 'react';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useSlotProps} from '../utils/Slots';
 
-export interface SpectrumActionMenuProps<T> extends CollectionBase<T>, Omit<SpectrumMenuTriggerProps, 'children'>, StyleProps, DOMProps, AriaLabelingProps {
+export interface SpectrumActionMenuProps<T>
+  extends
+    CollectionBase<T>,
+    Omit<SpectrumMenuTriggerProps, 'children'>,
+    StyleProps,
+    DOMProps,
+    AriaLabelingProps {
   /** Whether the button is disabled. */
-  isDisabled?: boolean,
+  isDisabled?: boolean;
   /** Whether the button should be displayed with a [quiet style](https://spectrum.adobe.com/page/action-button/#Quiet). */
-  isQuiet?: boolean,
+  isQuiet?: boolean;
   /** Whether the element should receive focus on render. */
-  autoFocus?: boolean,
+  autoFocus?: boolean;
   /** Handler that is called when an item is selected. */
-  onAction?: (key: Key) => void
+  onAction?: (key: Key) => void;
 }
 
 /**
  * ActionMenu combines an ActionButton with a Menu for simple "more actions" use cases.
  */
-export const ActionMenu = forwardRef(function ActionMenu<T extends object>(props: SpectrumActionMenuProps<T>, ref: FocusableRef<HTMLButtonElement>) {
+export const ActionMenu = forwardRef(function ActionMenu<T extends object>(
+  props: SpectrumActionMenuProps<T>,
+  ref: FocusableRef<HTMLButtonElement>
+) {
   props = useSlotProps(props, 'actionMenu');
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/menu');
   let buttonProps = filterDOMProps(props, {labelable: true});
@@ -52,17 +68,17 @@ export const ActionMenu = forwardRef(function ActionMenu<T extends object>(props
       align={props.align}
       direction={props.direction}
       shouldFlip={props.shouldFlip}>
-      <ActionButton
-        ref={ref}
-        {...props}
-        {...buttonProps}>
+      <ActionButton ref={ref} {...props} {...buttonProps}>
         <More />
       </ActionButton>
       <Menu
         children={props.children}
         items={props.items}
         disabledKeys={props.disabledKeys}
-        onAction={props.onAction} />
+        onAction={props.onAction}
+      />
     </MenuTrigger>
   );
-}) as <T>(props: SpectrumActionMenuProps<T> & {ref?: FocusableRef<HTMLButtonElement>}) => ReactElement;
+}) as <T>(
+  props: SpectrumActionMenuProps<T> & {ref?: FocusableRef<HTMLButtonElement>}
+) => ReactElement;

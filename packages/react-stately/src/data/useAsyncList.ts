@@ -16,99 +16,110 @@ import {useEffect, useReducer, useRef} from 'react';
 
 export interface AsyncListOptions<T, C> {
   /** The keys for the initially selected items. */
-  initialSelectedKeys?: Iterable<Key>,
+  initialSelectedKeys?: Iterable<Key>;
   /** The initial sort descriptor. */
-  initialSortDescriptor?: SortDescriptor,
+  initialSortDescriptor?: SortDescriptor;
   /** The initial filter text. */
-  initialFilterText?: string,
+  initialFilterText?: string;
   /** A function that returns a unique key for an item object. */
-  getKey?: (item: T) => Key,
+  getKey?: (item: T) => Key;
   /** A function that loads the data for the items in the list. */
-  load: AsyncListLoadFunction<T, C>,
+  load: AsyncListLoadFunction<T, C>;
   /**
    * An optional function that performs sorting. If not provided,
    * then `sortDescriptor` is passed to the `load` function.
    */
-  sort?: AsyncListLoadFunction<T, C, AsyncListLoadOptions<T, C> & {sortDescriptor: SortDescriptor}>
+  sort?: AsyncListLoadFunction<T, C, AsyncListLoadOptions<T, C> & {sortDescriptor: SortDescriptor}>;
 }
 
-export type AsyncListLoadFunction<T, C, S extends AsyncListLoadOptions<T, C> = AsyncListLoadOptions<T, C>> = (state: S) => AsyncListStateUpdate<T, C> | Promise<AsyncListStateUpdate<T, C>>;
+export type AsyncListLoadFunction<
+  T,
+  C,
+  S extends AsyncListLoadOptions<T, C> = AsyncListLoadOptions<T, C>
+> = (state: S) => AsyncListStateUpdate<T, C> | Promise<AsyncListStateUpdate<T, C>>;
 
 export interface AsyncListLoadOptions<T, C> {
   /** The items currently in the list. */
-  items: T[],
+  items: T[];
   /** The keys of the currently selected items in the list. */
-  selectedKeys: Selection,
+  selectedKeys: Selection;
   /** The current sort descriptor for the list. */
-  sortDescriptor?: SortDescriptor,
+  sortDescriptor?: SortDescriptor;
   /** An abort signal used to notify the load function that the request has been aborted. */
-  signal: AbortSignal,
+  signal: AbortSignal;
   /** The pagination cursor returned from the last page load. */
-  cursor?: C,
+  cursor?: C;
   /** The current filter text used to perform server side filtering. */
-  filterText?: string,
+  filterText?: string;
   /** The current loading state of the list. */
-  loadingState?: LoadingState
+  loadingState?: LoadingState;
 }
 
 export interface AsyncListStateUpdate<T, C> {
   /** The new items to append to the list. */
-  items: Iterable<T>,
+  items: Iterable<T>;
   /** The keys to add to the selection. */
-  selectedKeys?: Iterable<Key>,
+  selectedKeys?: Iterable<Key>;
   /** The sort descriptor to set. */
-  sortDescriptor?: SortDescriptor,
+  sortDescriptor?: SortDescriptor;
   /** The pagination cursor to be used for the next page load. */
-  cursor?: C,
+  cursor?: C;
   /** The updated filter text for the list. */
-  filterText?: string
+  filterText?: string;
 }
 
 interface AsyncListState<T, C> extends ListState<T> {
-  state: LoadingState,
-  items: T[],
+  state: LoadingState;
+  items: T[];
   // disabledKeys?: Iterable<Key>,
-  selectedKeys: Selection,
+  selectedKeys: Selection;
   // selectedKey?: Key,
   // expandedKeys?: Iterable<Key>,
-  sortDescriptor?: SortDescriptor,
-  error?: Error,
-  abortController?: AbortController,
-  cursor?: C
+  sortDescriptor?: SortDescriptor;
+  error?: Error;
+  abortController?: AbortController;
+  cursor?: C;
 }
 
-type ActionType = 'success' | 'error' | 'loading' | 'loadingMore' | 'sorting' | 'update' | 'filtering';
+type ActionType =
+  | 'success'
+  | 'error'
+  | 'loading'
+  | 'loadingMore'
+  | 'sorting'
+  | 'update'
+  | 'filtering';
 interface Action<T, C> {
-  type: ActionType,
-  items?: Iterable<T>,
-  selectedKeys?: Iterable<Key>,
-  sortDescriptor?: SortDescriptor,
-  error?: Error,
-  abortController?: AbortController,
-  updater?: (state: ListState<T>) => ListState<T>,
-  cursor?: C,
-  filterText?: string
+  type: ActionType;
+  items?: Iterable<T>;
+  selectedKeys?: Iterable<Key>;
+  sortDescriptor?: SortDescriptor;
+  error?: Error;
+  abortController?: AbortController;
+  updater?: (state: ListState<T>) => ListState<T>;
+  cursor?: C;
+  filterText?: string;
 }
 
 export interface AsyncListData<T> extends ListData<T> {
   /** Whether data is currently being loaded. */
-  isLoading: boolean,
+  isLoading: boolean;
   /** If loading data failed, then this contains the error that occurred. */
-  error?: Error,
+  error?: Error;
   // disabledKeys?: Set<Key>,
   // selectedKey?: Key,
   // expandedKeys?: Set<Key>,
   /** The current sort descriptor for the list. */
-  sortDescriptor?: SortDescriptor,
+  sortDescriptor?: SortDescriptor;
 
   /** Reloads the data in the list. */
-  reload(): void,
+  reload(): void;
   /** Loads the next page of data in the list. */
-  loadMore(): void,
+  loadMore(): void;
   /** Triggers sorting for the list. */
-  sort(descriptor: SortDescriptor): void,
+  sort(descriptor: SortDescriptor): void;
   /** The current loading state for the list. */
-  loadingState: LoadingState
+  loadingState: LoadingState;
 }
 
 function reducer<T, C>(data: AsyncListState<T, C>, action: Action<T, C>): AsyncListState<T, C> {
@@ -158,7 +169,7 @@ function reducer<T, C>(data: AsyncListState<T, C>, action: Action<T, C>): AsyncL
             ...data,
             filterText: action.filterText ?? data.filterText,
             state: 'idle',
-            items: [...((action.items) ?? [])],
+            items: [...(action.items ?? [])],
             selectedKeys: selectedKeys === 'all' ? 'all' : new Set(selectedKeys),
             sortDescriptor: action.sortDescriptor ?? data.sortDescriptor,
             abortController: undefined,
@@ -203,9 +214,10 @@ function reducer<T, C>(data: AsyncListState<T, C>, action: Action<T, C>): AsyncL
     case 'loadingMore':
       switch (action.type) {
         case 'success':
-          selectedKeys = (data.selectedKeys === 'all' || action.selectedKeys === 'all')
-            ? 'all'
-            : new Set([...data.selectedKeys, ...(action.selectedKeys ?? [])]);
+          selectedKeys =
+            data.selectedKeys === 'all' || action.selectedKeys === 'all'
+              ? 'all'
+              : new Set([...data.selectedKeys, ...(action.selectedKeys ?? [])]);
           // Append the new items
           return {
             ...data,
@@ -306,7 +318,7 @@ export function useAsyncList<T, C = string>(options: AsyncListOptions<T, C>): As
 
       // Fetch a new filtered list if filterText is updated via `load` response func rather than list.setFilterText
       // Only do this if not aborted (e.g. user triggers another filter action before load completes)
-      if (filterText && (filterText !== previousFilterText) && !abortController.signal.aborted) {
+      if (filterText && filterText !== previousFilterText && !abortController.signal.aborted) {
         dispatchFetch({type: 'filtering', filterText}, load);
       }
     } catch (e) {
@@ -320,14 +332,18 @@ export function useAsyncList<T, C = string>(options: AsyncListOptions<T, C>): As
       dispatchFetch({type: 'loading'}, load);
       didDispatchInitialFetch.current = true;
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return {
     items: data.items,
     selectedKeys: data.selectedKeys,
     sortDescriptor: data.sortDescriptor,
-    isLoading: data.state === 'loading' || data.state === 'loadingMore' || data.state === 'sorting' || data.state === 'filtering',
+    isLoading:
+      data.state === 'loading' ||
+      data.state === 'loadingMore' ||
+      data.state === 'sorting' ||
+      data.state === 'filtering',
     loadingState: data.state,
     error: data.error,
     filterText: data.filterText,
@@ -339,14 +355,22 @@ export function useAsyncList<T, C = string>(options: AsyncListOptions<T, C>): As
     },
     loadMore() {
       // Ignore if already loading more or if performing server side filtering.
-      if (data.state === 'loading' || data.state === 'loadingMore' || data.state === 'filtering' || data.cursor == null) {
+      if (
+        data.state === 'loading' ||
+        data.state === 'loadingMore' ||
+        data.state === 'filtering' ||
+        data.cursor == null
+      ) {
         return;
       }
 
       dispatchFetch({type: 'loadingMore'}, load);
     },
     sort(sortDescriptor: SortDescriptor) {
-      dispatchFetch({type: 'sorting', sortDescriptor}, (sort || load) as AsyncListLoadFunction<T, C>);
+      dispatchFetch(
+        {type: 'sorting', sortDescriptor},
+        (sort || load) as AsyncListLoadFunction<T, C>
+      );
     },
     ...createListActions({...options, getKey, cursor: data.cursor}, fn => {
       dispatch({type: 'update', updater: fn});

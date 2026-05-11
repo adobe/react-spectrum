@@ -38,7 +38,7 @@ module.exports = {
     fixable: 'code'
   },
   create: function (context) {
-    let processNode = (node) => {
+    let processNode = node => {
       if (!node.source || node.importKind === 'type') {
         return;
       }
@@ -70,7 +70,11 @@ module.exports = {
         return;
       }
 
-      if (!exists(pkg.dependencies, pkgName) && !exists(pkg.peerDependencies, pkgName) && pkgName !== pkg.name) {
+      if (
+        !exists(pkg.dependencies, pkgName) &&
+        !exists(pkg.peerDependencies, pkgName) &&
+        pkgName !== pkg.name
+      ) {
         context.report({
           node,
           message: `Missing dependency on ${pkgName}.`,
@@ -83,7 +87,9 @@ module.exports = {
             }
 
             let depPkg = JSON.parse(fs.readFileSync(depPath, 'utf8'));
-            let pkgVersion = substrings.some(v => depPkg.version.includes(v)) ?  depPkg.version : `^${depPkg.version}`;
+            let pkgVersion = substrings.some(v => depPkg.version.includes(v))
+              ? depPkg.version
+              : `^${depPkg.version}`;
 
             if (pkgName === '@react-spectrum/provider') {
               pkg.peerDependencies = insertObject(pkg.peerDependencies, pkgName, pkgVersion);

@@ -93,11 +93,13 @@ export class Rect {
    */
   intersects(rect: Rect): boolean {
     let isTestEnv = process.env.NODE_ENV === 'test' && !process.env.VIRT_ON;
-    return (isTestEnv || this.area > 0 && rect.area > 0)
-      && this.x <= rect.x + rect.width
-      && rect.x <= this.x + this.width
-      && this.y <= rect.y + rect.height
-      && rect.y <= this.y + this.height;
+    return (
+      (isTestEnv || (this.area > 0 && rect.area > 0)) &&
+      this.x <= rect.x + rect.width &&
+      rect.x <= this.x + this.width &&
+      this.y <= rect.y + rect.height &&
+      rect.y <= this.y + this.height
+    );
   }
 
   /**
@@ -105,10 +107,7 @@ export class Rect {
    * @param rect - The rectangle to check.
    */
   containsRect(rect: Rect): boolean {
-    return this.x <= rect.x
-        && this.y <= rect.y
-        && this.maxX >= rect.maxX
-        && this.maxY >= rect.maxY;
+    return this.x <= rect.x && this.y <= rect.y && this.maxX >= rect.maxX && this.maxY >= rect.maxY;
   }
 
   /**
@@ -116,10 +115,7 @@ export class Rect {
    * @param point - The point to check.
    */
   containsPoint(point: Point): boolean {
-    return this.x <= point.x
-        && this.y <= point.y
-        && this.maxX >= point.x
-        && this.maxY >= point.y;
+    return this.x <= point.x && this.y <= point.y && this.maxX >= point.x && this.maxY >= point.y;
   }
 
   /**
@@ -138,20 +134,20 @@ export class Rect {
   }
 
   equals(rect: Rect): boolean {
-    return rect.x === this.x
-        && rect.y === this.y
-        && rect.width === this.width
-        && rect.height === this.height;
+    return (
+      rect.x === this.x &&
+      rect.y === this.y &&
+      rect.width === this.width &&
+      rect.height === this.height
+    );
   }
 
   pointEquals(point: Point | Rect): boolean {
-    return this.x === point.x
-        && this.y === point.y;
+    return this.x === point.x && this.y === point.y;
   }
 
   sizeEquals(size: Size | Rect): boolean {
-    return this.width === size.width
-        && this.height === size.height;
+    return this.width === size.width && this.height === size.height;
   }
 
   /**
@@ -176,12 +172,7 @@ export class Rect {
 
     let x = Math.max(this.x, other.x);
     let y = Math.max(this.y, other.y);
-    return new Rect(
-      x,
-      y,
-      Math.min(this.maxX, other.maxX) - x,
-      Math.min(this.maxY, other.maxY) - y
-    );
+    return new Rect(x, y, Math.min(this.maxX, other.maxX) - x, Math.min(this.maxY, other.maxY) - y);
   }
 
   /**

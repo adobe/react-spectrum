@@ -28,14 +28,16 @@ export function getToken(name: TokenName): string {
 }
 
 export interface ColorToken {
-  type: 'color',
-  light: string,
-  dark: string,
-  forcedColors?: string
+  type: 'color';
+  light: string;
+  dark: string;
+  forcedColors?: string;
 }
 
 export function colorToken(name: TokenName): ColorToken | ColorRef {
-  let token = tokens[name] as typeof tokens['gray-25'] | typeof tokens['neutral-content-color-default'];
+  let token = tokens[name] as
+    | (typeof tokens)['gray-25']
+    | (typeof tokens)['neutral-content-color-default'];
   if ('ref' in token) {
     return {
       type: 'ref',
@@ -52,19 +54,19 @@ export function colorToken(name: TokenName): ColorToken | ColorRef {
 }
 
 export function rawColorToken(name: TokenName): string {
-  let token = tokens[name] as typeof tokens['gray-25'];
+  let token = tokens[name] as (typeof tokens)['gray-25'];
   return `light-dark(${token.sets.light.value}, ${token.sets.dark.value})`;
 }
 
 export interface ColorRef {
-  type: 'ref',
-  light: string,
-  dark: string,
-  forcedColors?: string
+  type: 'ref';
+  light: string;
+  dark: string;
+  forcedColors?: string;
 }
 
 export function weirdColorToken(name: TokenName): ColorRef {
-  let token = tokens[name] as typeof tokens['accent-background-color-default'];
+  let token = tokens[name] as (typeof tokens)['accent-background-color-default'];
   return {
     type: 'ref',
     light: token.sets.light.ref.slice(1, -1).replace('-color', ''),
@@ -74,7 +76,9 @@ export function weirdColorToken(name: TokenName): ColorRef {
 
 type ReplaceColor<S extends string> = S extends `${infer S}-color-${infer N}` ? `${S}-${N}` : S;
 
-export function colorScale<S extends string>(scale: S): Record<ReplaceColor<Extract<TokenName, `${S}-${number}`>>, ReturnType<typeof colorToken>> {
+export function colorScale<S extends string>(
+  scale: S
+): Record<ReplaceColor<Extract<TokenName, `${S}-${number}`>>, ReturnType<typeof colorToken>> {
   let res: any = {};
   let re = new RegExp(`^${scale}-\\d+$`);
   for (let token in tokens) {
@@ -85,7 +89,9 @@ export function colorScale<S extends string>(scale: S): Record<ReplaceColor<Extr
   return res;
 }
 
-export function simpleColorScale<S extends string>(scale: S): Record<Extract<TokenName, `${S}-${number}`>, string> {
+export function simpleColorScale<S extends string>(
+  scale: S
+): Record<Extract<TokenName, `${S}-${number}`>, string> {
   let res: any = {};
   let re = new RegExp(`^${scale}-\\d+$`);
   for (let token in tokens) {
@@ -109,19 +115,19 @@ export function autoStaticColor(bg = 'var(--s2-container-bg)', alpha = 1): strin
 }
 
 interface ColorScaleValues {
-    'transparent-overlay-25': string,
-    'transparent-overlay-50': string,
-    'transparent-overlay-75': string,
-    'transparent-overlay-100': string,
-    'transparent-overlay-200': string,
-    'transparent-overlay-300': string,
-    'transparent-overlay-400': string,
-    'transparent-overlay-500': string,
-    'transparent-overlay-600': string,
-    'transparent-overlay-700': string,
-    'transparent-overlay-800': string,
-    'transparent-overlay-900': string,
-    'transparent-overlay-1000': string
+  'transparent-overlay-25': string;
+  'transparent-overlay-50': string;
+  'transparent-overlay-75': string;
+  'transparent-overlay-100': string;
+  'transparent-overlay-200': string;
+  'transparent-overlay-300': string;
+  'transparent-overlay-400': string;
+  'transparent-overlay-500': string;
+  'transparent-overlay-600': string;
+  'transparent-overlay-700': string;
+  'transparent-overlay-800': string;
+  'transparent-overlay-900': string;
+  'transparent-overlay-1000': string;
 }
 
 export function generateOverlayColorScale(bg = 'var(--s2-container-bg)'): ColorScaleValues {
@@ -129,16 +135,46 @@ export function generateOverlayColorScale(bg = 'var(--s2-container-bg)'): ColorS
     'transparent-overlay-25': autoStaticColor(bg, extractOpacity(getToken('transparent-white-25'))),
     'transparent-overlay-50': autoStaticColor(bg, extractOpacity(getToken('transparent-white-50'))),
     'transparent-overlay-75': autoStaticColor(bg, extractOpacity(getToken('transparent-white-75'))),
-    'transparent-overlay-100': autoStaticColor(bg, extractOpacity(getToken('transparent-white-100'))),
-    'transparent-overlay-200': autoStaticColor(bg, extractOpacity(getToken('transparent-white-200'))),
-    'transparent-overlay-300': autoStaticColor(bg, extractOpacity(getToken('transparent-white-300'))),
-    'transparent-overlay-400': autoStaticColor(bg, extractOpacity(getToken('transparent-white-400'))),
-    'transparent-overlay-500': autoStaticColor(bg, extractOpacity(getToken('transparent-white-500'))),
-    'transparent-overlay-600': autoStaticColor(bg, extractOpacity(getToken('transparent-white-600'))),
-    'transparent-overlay-700': autoStaticColor(bg, extractOpacity(getToken('transparent-white-700'))),
-    'transparent-overlay-800': autoStaticColor(bg, extractOpacity(getToken('transparent-white-800'))),
-    'transparent-overlay-900': autoStaticColor(bg, extractOpacity(getToken('transparent-white-900'))),
-    'transparent-overlay-1000': autoStaticColor(bg, extractOpacity(getToken('transparent-white-1000')))
+    'transparent-overlay-100': autoStaticColor(
+      bg,
+      extractOpacity(getToken('transparent-white-100'))
+    ),
+    'transparent-overlay-200': autoStaticColor(
+      bg,
+      extractOpacity(getToken('transparent-white-200'))
+    ),
+    'transparent-overlay-300': autoStaticColor(
+      bg,
+      extractOpacity(getToken('transparent-white-300'))
+    ),
+    'transparent-overlay-400': autoStaticColor(
+      bg,
+      extractOpacity(getToken('transparent-white-400'))
+    ),
+    'transparent-overlay-500': autoStaticColor(
+      bg,
+      extractOpacity(getToken('transparent-white-500'))
+    ),
+    'transparent-overlay-600': autoStaticColor(
+      bg,
+      extractOpacity(getToken('transparent-white-600'))
+    ),
+    'transparent-overlay-700': autoStaticColor(
+      bg,
+      extractOpacity(getToken('transparent-white-700'))
+    ),
+    'transparent-overlay-800': autoStaticColor(
+      bg,
+      extractOpacity(getToken('transparent-white-800'))
+    ),
+    'transparent-overlay-900': autoStaticColor(
+      bg,
+      extractOpacity(getToken('transparent-white-900'))
+    ),
+    'transparent-overlay-1000': autoStaticColor(
+      bg,
+      extractOpacity(getToken('transparent-white-1000'))
+    )
   };
 }
 
@@ -165,7 +201,7 @@ const indexes = {
 
 /** Returns the index of a font token relative to font-size-100 (which is index 0). */
 export function fontSizeToken(name: TokenName): number {
-  let token = tokens[name] as typeof tokens['font-size-100'] | typeof tokens['heading-size-m'];
+  let token = tokens[name] as (typeof tokens)['font-size-100'] | (typeof tokens)['heading-size-m'];
   if ('ref' in token) {
     name = token.ref.slice(1, -1) as TokenName;
   }
@@ -178,7 +214,9 @@ export function fontSizeToken(name: TokenName): number {
   return index;
 }
 
-export function shadowToken(name: 'drop-shadow-emphasized' | 'drop-shadow-elevated' | 'drop-shadow-dragged'): string[] {
+export function shadowToken(
+  name: 'drop-shadow-emphasized' | 'drop-shadow-elevated' | 'drop-shadow-dragged'
+): string[] {
   let token = tokens[name];
   return token.value.map(layer => {
     // Spread must also be zero, since filter: drop-shadow() does not support it.

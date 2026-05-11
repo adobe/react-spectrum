@@ -13,7 +13,15 @@
 // Portions of the code in this file are based on code from the TC39 Temporal proposal.
 // Original licensing can be found in the NOTICE file in the root directory of this source tree.
 
-import {AnyCalendarDate, AnyDateTime, AnyTime, Calendar, DateFields, Disambiguation, TimeFields} from './types';
+import {
+  AnyCalendarDate,
+  AnyDateTime,
+  AnyTime,
+  Calendar,
+  DateFields,
+  Disambiguation,
+  TimeFields
+} from './types';
 import {CalendarDate, CalendarDateTime, Time, ZonedDateTime} from './CalendarDate';
 import {constrain} from './manipulation';
 import {getExtendedYear, GregorianCalendar} from './calendars/GregorianCalendar';
@@ -23,10 +31,26 @@ import {Mutable} from './utils';
 export function epochFromDate(date: AnyDateTime): number {
   date = toCalendar(date, new GregorianCalendar());
   let year = getExtendedYear(date.era, date.year);
-  return epochFromParts(year, date.month, date.day, date.hour, date.minute, date.second, date.millisecond);
+  return epochFromParts(
+    year,
+    date.month,
+    date.day,
+    date.hour,
+    date.minute,
+    date.second,
+    date.millisecond
+  );
 }
 
-function epochFromParts(year: number, month: number, day: number, hour: number, minute: number, second: number, millisecond: number): number {
+function epochFromParts(
+  year: number,
+  month: number,
+  day: number,
+  hour: number,
+  minute: number,
+  second: number,
+  millisecond: number
+): number {
   // Note: Date.UTC() interprets one and two-digit years as being in the
   // 20th century, so don't use it
   let date = new Date();
@@ -81,10 +105,10 @@ function getTimeZoneParts(ms: number, timeZone: string) {
     }
   }
 
-
   return {
     // Firefox returns B instead of BC... https://bugzilla.mozilla.org/show_bug.cgi?id=1752253
-    year: namedParts.era === 'BC' || namedParts.era === 'B' ? -namedParts.year + 1 : +namedParts.year,
+    year:
+      namedParts.era === 'BC' || namedParts.era === 'B' ? -namedParts.year + 1 : +namedParts.year,
     month: +namedParts.month,
     day: +namedParts.day,
     hour: namedParts.hour === '24' ? 0 : +namedParts.hour, // bugs.chromium.org/p/chromium/issues/detail?id=1045791
@@ -102,22 +126,33 @@ export function possibleAbsolutes(date: CalendarDateTime, timeZone: string): num
   return getValidWallTimes(date, timeZone, earlier, later);
 }
 
-function getValidWallTimes(date: CalendarDateTime, timeZone: string, earlier: number, later: number): number[] {
+function getValidWallTimes(
+  date: CalendarDateTime,
+  timeZone: string,
+  earlier: number,
+  later: number
+): number[] {
   let found = earlier === later ? [earlier] : [earlier, later];
   return found.filter(absolute => isValidWallTime(date, timeZone, absolute));
 }
 
 function isValidWallTime(date: CalendarDateTime, timeZone: string, absolute: number) {
   let parts = getTimeZoneParts(absolute, timeZone);
-  return date.year === parts.year
-    && date.month === parts.month
-    && date.day === parts.day
-    && date.hour === parts.hour
-    && date.minute === parts.minute
-    && date.second === parts.second;
+  return (
+    date.year === parts.year &&
+    date.month === parts.month &&
+    date.day === parts.day &&
+    date.hour === parts.hour &&
+    date.minute === parts.minute &&
+    date.second === parts.second
+  );
 }
 
-export function toAbsolute(date: CalendarDate | CalendarDateTime, timeZone: string, disambiguation: Disambiguation = 'compatible'): number {
+export function toAbsolute(
+  date: CalendarDate | CalendarDateTime,
+  timeZone: string,
+  disambiguation: Disambiguation = 'compatible'
+): number {
   let dateTime = toCalendarDateTime(date);
 
   // Fast path: if the time zone is UTC, use native Date.
@@ -128,7 +163,11 @@ export function toAbsolute(date: CalendarDate | CalendarDateTime, timeZone: stri
   // Fast path: if the time zone is the local timezone and disambiguation is compatible, use native Date.
   // Skip this fast path if the local timezone was explicitly overridden via setLocalTimeZone,
   // since native Date always uses the browser's timezone, not the overridden one.
-  if (timeZone === getLocalTimeZone() && disambiguation === 'compatible' && !isLocalTimeZoneOverridden()) {
+  if (
+    timeZone === getLocalTimeZone() &&
+    disambiguation === 'compatible' &&
+    !isLocalTimeZoneOverridden()
+  ) {
     dateTime = toCalendar(dateTime, new GregorianCalendar());
 
     // Don't use Date constructor here because two-digit years are interpreted in the 20th century.
@@ -173,7 +212,11 @@ export function toAbsolute(date: CalendarDate | CalendarDateTime, timeZone: stri
   }
 }
 
-export function toDate(dateTime: CalendarDate | CalendarDateTime, timeZone: string, disambiguation: Disambiguation = 'compatible'): Date {
+export function toDate(
+  dateTime: CalendarDate | CalendarDateTime,
+  timeZone: string,
+  disambiguation: Disambiguation = 'compatible'
+): Date {
   return new Date(toAbsolute(dateTime, timeZone, disambiguation));
 }
 
@@ -191,7 +234,18 @@ export function fromAbsolute(ms: number, timeZone: string): ZonedDateTime {
   let second = date.getUTCSeconds();
   let millisecond = date.getUTCMilliseconds();
 
-  return new ZonedDateTime(year < 1 ? 'BC' : 'AD', year < 1 ? -year + 1 : year, month, day, timeZone, offset, hour, minute, second, millisecond);
+  return new ZonedDateTime(
+    year < 1 ? 'BC' : 'AD',
+    year < 1 ? -year + 1 : year,
+    month,
+    day,
+    timeZone,
+    offset,
+    hour,
+    minute,
+    second,
+    millisecond
+  );
 }
 
 /**
@@ -210,7 +264,13 @@ export function fromDateToLocal(date: Date): ZonedDateTime {
 
 /** Converts a value with date components such as a `CalendarDateTime` or `ZonedDateTime` into a `CalendarDate`. */
 export function toCalendarDate(dateTime: AnyCalendarDate): CalendarDate {
-  return new CalendarDate(dateTime.calendar, dateTime.era, dateTime.year, dateTime.month, dateTime.day);
+  return new CalendarDate(
+    dateTime.calendar,
+    dateTime.era,
+    dateTime.year,
+    dateTime.month,
+    dateTime.day
+  );
 }
 
 export function toDateFields(date: AnyCalendarDate): DateFields {
@@ -235,8 +295,14 @@ export function toTimeFields(date: AnyTime): TimeFields {
  * Converts a date value to a `CalendarDateTime`. An optional `Time` value can be passed to set the time
  * of the resulting value, otherwise it will default to midnight.
  */
-export function toCalendarDateTime(date: CalendarDate | CalendarDateTime | ZonedDateTime, time?: AnyTime): CalendarDateTime {
-  let hour = 0, minute = 0, second = 0, millisecond = 0;
+export function toCalendarDateTime(
+  date: CalendarDate | CalendarDateTime | ZonedDateTime,
+  time?: AnyTime
+): CalendarDateTime {
+  let hour = 0,
+    minute = 0,
+    second = 0,
+    millisecond = 0;
   if ('timeZone' in date) {
     ({hour, minute, second, millisecond} = date);
   } else if ('hour' in date && !time) {
@@ -286,7 +352,11 @@ export function toCalendar<T extends AnyCalendarDate>(date: T, calendar: Calenda
  * Converts a date value to a `ZonedDateTime` in the provided time zone. The `disambiguation` option can be set
  * to control how values that fall on daylight saving time changes are interpreted.
  */
-export function toZoned(date: CalendarDate | CalendarDateTime | ZonedDateTime, timeZone: string, disambiguation?: Disambiguation): ZonedDateTime {
+export function toZoned(
+  date: CalendarDate | CalendarDateTime | ZonedDateTime,
+  timeZone: string,
+  disambiguation?: Disambiguation
+): ZonedDateTime {
   if (date instanceof ZonedDateTime) {
     if (date.timeZone === timeZone) {
       return date;

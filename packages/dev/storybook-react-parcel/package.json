@@ -8,6 +8,10 @@
     ".": "./preset.mjs",
     "./preset": "./preset.mjs"
   },
+  "scripts": {
+    "build": "true",
+    "clean": "true"
+  },
   "dependencies": {
     "@storybook/react": "^10.0.0",
     "storybook-builder-parcel": ">=0.0.1"
@@ -22,9 +26,5 @@
     "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0",
     "react-dom": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0",
     "storybook": "^10.0.0"
-  },
-  "scripts": {
-    "build": "true",
-    "clean": "true"
   }
 }

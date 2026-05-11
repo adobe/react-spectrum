@@ -18,18 +18,18 @@ interface ComboBoxOpenOpts {
    * Whether the combobox opens on focus or needs to be manually opened via user action.
    * @default 'manual'
    */
-  triggerBehavior?: 'focus' | 'manual',
+  triggerBehavior?: 'focus' | 'manual';
   /**
    * What interaction type to use when opening the combobox. Defaults to the interaction type set on the tester.
    */
-  interactionType?: UserOpts['interactionType']
+  interactionType?: UserOpts['interactionType'];
 }
 
 interface ComboBoxSelectOpts extends ComboBoxOpenOpts {
   /**
    * The index, text, or node of the option to select. Option nodes can be sourced via `options()`.
    */
-  option: number | string | HTMLElement
+  option: number | string | HTMLElement;
 }
 
 export class ComboBoxTester {
@@ -125,9 +125,7 @@ export class ComboBoxTester {
    * Returns an option matching the specified index or text content.
    */
   findOption(opts: {optionIndexOrText: number | string}): HTMLElement {
-    let {
-      optionIndexOrText
-    } = opts;
+    let {optionIndexOrText} = opts;
 
     let option;
     let options = this.options();
@@ -136,7 +134,9 @@ export class ComboBoxTester {
     if (typeof optionIndexOrText === 'number') {
       option = options[optionIndexOrText];
     } else if (typeof optionIndexOrText === 'string' && listbox != null) {
-      option = (within(listbox!).getByText(optionIndexOrText).closest('[role=option]'))! as HTMLElement;
+      option = within(listbox!)
+        .getByText(optionIndexOrText)
+        .closest('[role=option]')! as HTMLElement;
     }
 
     return option;
@@ -154,7 +154,7 @@ export class ComboBoxTester {
 
     let listbox = this.listbox;
     if (!listbox) {
-      throw new Error('Combobox\'s listbox not found.');
+      throw new Error("Combobox's listbox not found.");
     }
 
     if (listbox) {
@@ -177,14 +177,18 @@ export class ComboBoxTester {
       if (option.getAttribute('href') == null) {
         await waitFor(() => {
           if (document.contains(listbox)) {
-            throw new Error('Expected listbox element to not be in the document after selecting an option');
+            throw new Error(
+              'Expected listbox element to not be in the document after selecting an option'
+            );
           } else {
             return true;
           }
         });
       }
     } else {
-      throw new Error("Attempted to select a option in the combobox, but the listbox wasn't found.");
+      throw new Error(
+        "Attempted to select a option in the combobox, but the listbox wasn't found."
+      );
     }
   }
 
@@ -199,7 +203,9 @@ export class ComboBoxTester {
 
       await waitFor(() => {
         if (document.contains(listbox)) {
-          throw new Error('Expected listbox element to not be in the document after selecting an option');
+          throw new Error(
+            'Expected listbox element to not be in the document after selecting an option'
+          );
         } else {
           return true;
         }

@@ -14,7 +14,13 @@ jest.mock('../../src/live-announcer/LiveAnnouncer');
 import {act, fireEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import {announce} from '../../src/live-announcer/LiveAnnouncer';
 import {CUSTOM_DRAG_TYPE} from '../../src/dnd/constants';
-import {DataTransfer, DataTransferItem, DragEvent, FileSystemDirectoryEntry, FileSystemFileEntry} from './mocks';
+import {
+  DataTransfer,
+  DataTransferItem,
+  DragEvent,
+  FileSystemDirectoryEntry,
+  FileSystemFileEntry
+} from './mocks';
 import {Draggable, Droppable} from './examples';
 import {DragTypes} from '../../src/dnd/utils';
 import React, {useEffect} from 'react';
@@ -23,15 +29,19 @@ import userEvent from '@testing-library/user-event';
 
 function pointerEvent(type, opts) {
   let evt = new Event(type, {bubbles: true, cancelable: true});
-  Object.assign(evt, {
-    ctrlKey: false,
-    metaKey: false,
-    shiftKey: false,
-    altKey: false,
-    button: opts.button || 0,
-    width: 1,
-    height: 1
-  }, opts);
+  Object.assign(
+    evt,
+    {
+      ctrlKey: false,
+      metaKey: false,
+      shiftKey: false,
+      altKey: false,
+      button: opts.button || 0,
+      width: 1,
+      height: 1
+    },
+    opts
+  );
   return evt;
 }
 
@@ -66,10 +76,12 @@ describe('useDrag and useDrop', function () {
       let onDropEnter = jest.fn();
       let onDropMove = jest.fn();
       let onDrop = jest.fn();
-      let tree = render(<>
-        <Draggable onDragStart={onDragStart} onDragMove={onDragMove} onDragEnd={onDragEnd} />
-        <Droppable onDropEnter={onDropEnter} onDropMove={onDropMove} onDrop={onDrop} />
-      </>);
+      let tree = render(
+        <>
+          <Draggable onDragStart={onDragStart} onDragMove={onDragMove} onDragEnd={onDragEnd} />
+          <Droppable onDropEnter={onDropEnter} onDropMove={onDropMove} onDrop={onDrop} />
+        </>
+      );
 
       let draggable = tree.getByText('Drag me');
       let droppable = tree.getByText('Drop here');
@@ -160,10 +172,17 @@ describe('useDrag and useDrop', function () {
       let onDropEnter = jest.fn();
       let onDropMove = jest.fn();
       let onDrop = jest.fn();
-      let tree = render(<>
-        <Draggable isDisabled onDragStart={onDragStart} onDragMove={onDragMove} onDragEnd={onDragEnd} />
-        <Droppable onDropEnter={onDropEnter} onDropMove={onDropMove} onDrop={onDrop} />
-      </>);
+      let tree = render(
+        <>
+          <Draggable
+            isDisabled
+            onDragStart={onDragStart}
+            onDragMove={onDragMove}
+            onDragEnd={onDragEnd}
+          />
+          <Droppable onDropEnter={onDropEnter} onDropMove={onDropMove} onDrop={onDrop} />
+        </>
+      );
       let draggable = tree.getByText('Drag me');
       let droppable = tree.getByText('Drop here');
       expect(draggable).toHaveAttribute('draggable', 'false');
@@ -189,10 +208,12 @@ describe('useDrag and useDrop', function () {
       let onDropEnter = jest.fn();
       let onDropMove = jest.fn();
       let onDrop = jest.fn();
-      let tree = render(<>
-        <Draggable onDragStart={onDragStart} onDragMove={onDragMove} onDragEnd={onDragEnd} />
-        <Droppable isDisabled onDropEnter={onDropEnter} onDropMove={onDropMove} onDrop={onDrop} />
-      </>);
+      let tree = render(
+        <>
+          <Draggable onDragStart={onDragStart} onDragMove={onDragMove} onDragEnd={onDragEnd} />
+          <Droppable isDisabled onDropEnter={onDropEnter} onDropMove={onDropMove} onDrop={onDrop} />
+        </>
+      );
       let draggable = tree.getByText('Drag me');
       let droppable = tree.getByText('Drop here');
       expect(droppable).toHaveAttribute('data-droptarget', 'false');
@@ -345,7 +366,13 @@ describe('useDrag and useDrop', function () {
         let onDropEnter = jest.fn();
         let onDropActivate = jest.fn();
         let onDropExit = jest.fn();
-        let tree = render(<Droppable onDropEnter={onDropEnter} onDropActivate={onDropActivate} onDropExit={onDropExit} />);
+        let tree = render(
+          <Droppable
+            onDropEnter={onDropEnter}
+            onDropActivate={onDropActivate}
+            onDropExit={onDropExit}
+          />
+        );
 
         let droppable = tree.getByText('Drop here');
 
@@ -385,11 +412,27 @@ describe('useDrag and useDrop', function () {
         expect(onDropEnter).toHaveBeenCalledTimes(1);
         expect(onDropExit).not.toHaveBeenCalled();
 
-        fireEvent(child, new DragEvent('dragenter', {dataTransfer, clientX: 1, clientY: 1, relatedTarget: droppable}));
+        fireEvent(
+          child,
+          new DragEvent('dragenter', {
+            dataTransfer,
+            clientX: 1,
+            clientY: 1,
+            relatedTarget: droppable
+          })
+        );
         expect(onDropEnter).toHaveBeenCalledTimes(1);
         expect(onDropExit).not.toHaveBeenCalled();
 
-        fireEvent(child, new DragEvent('dragleave', {dataTransfer, clientX: 1, clientY: 1, relatedTarget: droppable}));
+        fireEvent(
+          child,
+          new DragEvent('dragleave', {
+            dataTransfer,
+            clientX: 1,
+            clientY: 1,
+            relatedTarget: droppable
+          })
+        );
         expect(onDropEnter).toHaveBeenCalledTimes(1);
         expect(onDropExit).not.toHaveBeenCalled();
 
@@ -424,21 +467,59 @@ describe('useDrag and useDrop', function () {
           let portalChild2 = tree.getByText('Portal child 2');
 
           let dataTransfer = new DataTransfer();
-          fireEvent(portalChild1, new DragEvent('dragenter', {dataTransfer, clientX: 1, clientY: 1}));
+          fireEvent(
+            portalChild1,
+            new DragEvent('dragenter', {dataTransfer, clientX: 1, clientY: 1})
+          );
           expect(onDropEnter).toHaveBeenCalledTimes(1);
           expect(onDropExit).not.toHaveBeenCalled();
 
-          fireEvent(portalChild2, new DragEvent('dragenter', {dataTransfer, clientX: 1, clientY: 1, relatedTarget: portalChild1}));
-          fireEvent(portalChild1, new DragEvent('dragleave', {dataTransfer, clientX: 1, clientY: 1, relatedTarget: portalChild2}));
+          fireEvent(
+            portalChild2,
+            new DragEvent('dragenter', {
+              dataTransfer,
+              clientX: 1,
+              clientY: 1,
+              relatedTarget: portalChild1
+            })
+          );
+          fireEvent(
+            portalChild1,
+            new DragEvent('dragleave', {
+              dataTransfer,
+              clientX: 1,
+              clientY: 1,
+              relatedTarget: portalChild2
+            })
+          );
           expect(onDropEnter).toHaveBeenCalledTimes(1);
           expect(onDropExit).not.toHaveBeenCalled();
 
-          fireEvent(portalChild1, new DragEvent('dragenter', {dataTransfer, clientX: 1, clientY: 1, relatedTarget: portalChild2}));
-          fireEvent(portalChild2, new DragEvent('dragleave', {dataTransfer, clientX: 1, clientY: 1, relatedTarget: portalChild1}));
+          fireEvent(
+            portalChild1,
+            new DragEvent('dragenter', {
+              dataTransfer,
+              clientX: 1,
+              clientY: 1,
+              relatedTarget: portalChild2
+            })
+          );
+          fireEvent(
+            portalChild2,
+            new DragEvent('dragleave', {
+              dataTransfer,
+              clientX: 1,
+              clientY: 1,
+              relatedTarget: portalChild1
+            })
+          );
           expect(onDropEnter).toHaveBeenCalledTimes(1);
           expect(onDropExit).not.toHaveBeenCalled();
 
-          fireEvent(portalChild1, new DragEvent('dragleave', {dataTransfer, clientX: 1, clientY: 1}));
+          fireEvent(
+            portalChild1,
+            new DragEvent('dragleave', {dataTransfer, clientX: 1, clientY: 1})
+          );
           expect(onDropExit).toHaveBeenCalledTimes(1);
         } finally {
           portalContainer.remove();
@@ -455,8 +536,14 @@ describe('useDrag and useDrop', function () {
 
         function renderNestedDrag() {
           return render(
-            <Draggable onDragStart={onDragStartParent} onDragMove={onDragMoveParent} onDragEnd={onDragEndParent}>
-              <Draggable onDragStart={onDragStartChild} onDragMove={onDragMoveChild} onDragEnd={onDragEndChild}>
+            <Draggable
+              onDragStart={onDragStartParent}
+              onDragMove={onDragMoveParent}
+              onDragEnd={onDragEndParent}>
+              <Draggable
+                onDragStart={onDragStartChild}
+                onDragMove={onDragMoveChild}
+                onDragEnd={onDragEndChild}>
                 Drag me child
               </Draggable>
             </Draggable>
@@ -494,8 +581,19 @@ describe('useDrag and useDrop', function () {
 
         function renderNestedDrop() {
           return render(
-            <Droppable onDrop={onDropParent} onDropExit={onDropExitParent} onDropEnter={onDropEnterParent} onDropActivate={onDropActivateParent} onDropMove={onDropMoveParent}>
-              <Droppable onDrop={onDropChild} onDropExit={onDropExitChild} onDropEnter={onDropEnterChild} onDropActivate={onDropActivateChild} onDropMove={onDropMoveChild} />
+            <Droppable
+              onDrop={onDropParent}
+              onDropExit={onDropExitParent}
+              onDropEnter={onDropEnterParent}
+              onDropActivate={onDropActivateParent}
+              onDropMove={onDropMoveParent}>
+              <Droppable
+                onDrop={onDropChild}
+                onDropExit={onDropExitChild}
+                onDropEnter={onDropEnterChild}
+                onDropActivate={onDropActivateChild}
+                onDropMove={onDropMoveChild}
+              />
             </Droppable>
           );
         }
@@ -525,7 +623,10 @@ describe('useDrag and useDrop', function () {
           let droppableChild = droppableParent.firstChild;
 
           let dataTransfer = new DataTransfer();
-          fireEvent(droppableChild, new DragEvent('dragenter', {dataTransfer, clientX: 1, clientY: 1}));
+          fireEvent(
+            droppableChild,
+            new DragEvent('dragenter', {dataTransfer, clientX: 1, clientY: 1})
+          );
           expect(onDropEnterChild).toHaveBeenCalledTimes(1);
           expect(onDropEnterParent).not.toHaveBeenCalled();
         });
@@ -536,8 +637,14 @@ describe('useDrag and useDrop', function () {
           let droppableChild = droppableParent.firstChild;
 
           let dataTransfer = new DataTransfer();
-          fireEvent(droppableChild, new DragEvent('dragenter', {dataTransfer, clientX: 1, clientY: 1}));
-          fireEvent(droppableChild, new DragEvent('dragleave', {dataTransfer, clientX: 1, clientY: 1}));
+          fireEvent(
+            droppableChild,
+            new DragEvent('dragenter', {dataTransfer, clientX: 1, clientY: 1})
+          );
+          fireEvent(
+            droppableChild,
+            new DragEvent('dragleave', {dataTransfer, clientX: 1, clientY: 1})
+          );
           expect(onDropExitChild).toHaveBeenCalledTimes(1);
           expect(onDropExitParent).not.toHaveBeenCalled();
         });
@@ -548,8 +655,14 @@ describe('useDrag and useDrop', function () {
           let droppableChild = droppableParent.firstChild;
 
           let dataTransfer = new DataTransfer();
-          fireEvent(droppableChild, new DragEvent('dragenter', {dataTransfer, clientX: 1, clientY: 1}));
-          fireEvent(droppableChild, new DragEvent('dragover', {dataTransfer, clientX: 2, clientY: 2}));
+          fireEvent(
+            droppableChild,
+            new DragEvent('dragenter', {dataTransfer, clientX: 1, clientY: 1})
+          );
+          fireEvent(
+            droppableChild,
+            new DragEvent('dragover', {dataTransfer, clientX: 2, clientY: 2})
+          );
           expect(onDropActivateChild).not.toHaveBeenCalled();
           expect(onDropActivateParent).not.toHaveBeenCalled();
 
@@ -573,8 +686,14 @@ describe('useDrag and useDrop', function () {
           let droppableChild = droppableParent.firstChild;
 
           let dataTransfer = new DataTransfer();
-          fireEvent(droppableChild, new DragEvent('dragenter', {dataTransfer, clientX: 1, clientY: 1}));
-          fireEvent(droppableChild, new DragEvent('dragover', {dataTransfer, clientX: 2, clientY: 2}));
+          fireEvent(
+            droppableChild,
+            new DragEvent('dragenter', {dataTransfer, clientX: 1, clientY: 1})
+          );
+          fireEvent(
+            droppableChild,
+            new DragEvent('dragover', {dataTransfer, clientX: 2, clientY: 2})
+          );
           expect(onDropMoveChild).toHaveBeenCalledTimes(1);
           expect(onDropMoveChild).toHaveBeenCalledWith({
             type: 'dropmove',
@@ -588,15 +707,19 @@ describe('useDrag and useDrop', function () {
 
     describe('drag data', () => {
       it('should work with custom data types', async () => {
-        let getItems = () => [{
-          test: 'test data'
-        }];
+        let getItems = () => [
+          {
+            test: 'test data'
+          }
+        ];
 
         let onDrop = jest.fn();
-        let tree = render(<>
-          <Draggable getItems={getItems} />
-          <Droppable onDrop={onDrop} />
-        </>);
+        let tree = render(
+          <>
+            <Draggable getItems={getItems} />
+            <Droppable onDrop={onDrop} />
+          </>
+        );
 
         let draggable = tree.getByText('Drag me');
         let droppable = tree.getByText('Drop here');
@@ -627,17 +750,22 @@ describe('useDrag and useDrop', function () {
       });
 
       it('should work with multiple items of the same custom type', async () => {
-        let getItems = () => [{
-          test: 'item 1'
-        }, {
-          test: 'item 2'
-        }];
+        let getItems = () => [
+          {
+            test: 'item 1'
+          },
+          {
+            test: 'item 2'
+          }
+        ];
 
         let onDrop = jest.fn();
-        let tree = render(<>
-          <Draggable getItems={getItems} />
-          <Droppable onDrop={onDrop} />
-        </>);
+        let tree = render(
+          <>
+            <Draggable getItems={getItems} />
+            <Droppable onDrop={onDrop} />
+          </>
+        );
 
         let draggable = tree.getByText('Drag me');
         let droppable = tree.getByText('Drop here');
@@ -648,8 +776,8 @@ describe('useDrag and useDrop', function () {
           new DataTransferItem('test', 'item 1'),
           new DataTransferItem(
             CUSTOM_DRAG_TYPE,
-            JSON.stringify([{test: 'item 1'}, {test: 'item 2'}]
-          ))
+            JSON.stringify([{test: 'item 1'}, {test: 'item 2'}])
+          )
         ]);
 
         fireEvent(droppable, new DragEvent('dragenter', {dataTransfer, clientX: 1, clientY: 1}));
@@ -680,16 +808,20 @@ describe('useDrag and useDrop', function () {
       });
 
       it('should work with items of multiple types', async () => {
-        let getItems = () => [{
-          test: 'test data',
-          'text/plain': 'test data'
-        }];
+        let getItems = () => [
+          {
+            test: 'test data',
+            'text/plain': 'test data'
+          }
+        ];
 
         let onDrop = jest.fn();
-        let tree = render(<>
-          <Draggable getItems={getItems} />
-          <Droppable onDrop={onDrop} />
-        </>);
+        let tree = render(
+          <>
+            <Draggable getItems={getItems} />
+            <Droppable onDrop={onDrop} />
+          </>
+        );
 
         let draggable = tree.getByText('Drag me');
         let droppable = tree.getByText('Drop here');
@@ -701,8 +833,8 @@ describe('useDrag and useDrop', function () {
           new DataTransferItem('text/plain', 'test data'),
           new DataTransferItem(
             CUSTOM_DRAG_TYPE,
-            JSON.stringify([{test: 'test data', 'text/plain': 'test data'}]
-          ))
+            JSON.stringify([{test: 'test data', 'text/plain': 'test data'}])
+          )
         ]);
 
         fireEvent(droppable, new DragEvent('dragenter', {dataTransfer, clientX: 1, clientY: 1}));
@@ -728,19 +860,24 @@ describe('useDrag and useDrop', function () {
       });
 
       it('should work with multiple items of multiple types', async () => {
-        let getItems = () => [{
-          test: 'item 1',
-          'text/plain': 'item 1'
-        }, {
-          test: 'item 2',
-          'text/plain': 'item 2'
-        }];
+        let getItems = () => [
+          {
+            test: 'item 1',
+            'text/plain': 'item 1'
+          },
+          {
+            test: 'item 2',
+            'text/plain': 'item 2'
+          }
+        ];
 
         let onDrop = jest.fn();
-        let tree = render(<>
-          <Draggable getItems={getItems} />
-          <Droppable onDrop={onDrop} />
-        </>);
+        let tree = render(
+          <>
+            <Draggable getItems={getItems} />
+            <Droppable onDrop={onDrop} />
+          </>
+        );
 
         let draggable = tree.getByText('Drag me');
         let droppable = tree.getByText('Drop here');
@@ -755,8 +892,8 @@ describe('useDrag and useDrop', function () {
             JSON.stringify([
               {test: 'item 1', 'text/plain': 'item 1'},
               {test: 'item 2', 'text/plain': 'item 2'}
-            ]
-          ))
+            ])
+          )
         ]);
 
         fireEvent(droppable, new DragEvent('dragenter', {dataTransfer, clientX: 1, clientY: 1}));
@@ -816,7 +953,9 @@ describe('useDrag and useDrop', function () {
         });
 
         expect(await onDrop.mock.calls[0][0].items[0].getText('text/plain')).toBe('hello world');
-        expect(await onDrop.mock.calls[0][0].items[0].getText('text/html')).toBe('<p>hello world</p>');
+        expect(await onDrop.mock.calls[0][0].items[0].getText('text/html')).toBe(
+          '<p>hello world</p>'
+        );
       });
 
       describe('files', () => {
@@ -934,7 +1073,9 @@ describe('useDrag and useDrop', function () {
 
           expect(await onDrop.mock.calls[0][0].items[0].getText()).toBe('hello world');
           expect(await onDrop.mock.calls[0][0].items[0].getFile()).toBe(file);
-          expect(await onDrop.mock.calls[0][0].items[1].getText('text/html')).toBe('<p>hello world</p>');
+          expect(await onDrop.mock.calls[0][0].items[1].getText('text/html')).toBe(
+            '<p>hello world</p>'
+          );
         });
 
         it('should support dropping directories', async () => {
@@ -969,7 +1110,7 @@ describe('useDrag and useDrop', function () {
             ]
           });
 
-          let collect = async (dir) => {
+          let collect = async dir => {
             let entries = [];
             for await (let entry of dir.getEntries()) {
               entries.push(entry);
@@ -1045,10 +1186,12 @@ describe('useDrag and useDrop', function () {
         let onDragEnd = jest.fn();
         let onDrop = jest.fn();
         let getDropOperation = jest.fn().mockImplementation(() => 'copy');
-        let tree = render(<>
-          <Draggable onDragEnd={onDragEnd} />
-          <Droppable getDropOperation={getDropOperation} onDrop={onDrop} />
-        </>);
+        let tree = render(
+          <>
+            <Draggable onDragEnd={onDragEnd} />
+            <Droppable getDropOperation={getDropOperation} onDrop={onDrop} />
+          </>
+        );
 
         let draggable = tree.getByText('Drag me');
         let droppable = tree.getByText('Drop here');
@@ -1058,7 +1201,11 @@ describe('useDrag and useDrop', function () {
         expect(dataTransfer.dropEffect).toBe('none');
 
         fireEvent(droppable, new DragEvent('dragenter', {dataTransfer, clientX: 0, clientY: 0}));
-        expect(getDropOperation).toHaveBeenCalledWith(new DragTypes(dataTransfer), ['move', 'copy', 'link']);
+        expect(getDropOperation).toHaveBeenCalledWith(new DragTypes(dataTransfer), [
+          'move',
+          'copy',
+          'link'
+        ]);
         expect(dataTransfer.dropEffect).toBe('copy');
         expect(droppable).toHaveAttribute('data-droptarget', 'true');
 
@@ -1093,10 +1240,12 @@ describe('useDrag and useDrop', function () {
         let onDrop = jest.fn();
         let getDropOperation = jest.fn().mockImplementation(() => 'copy');
         let getAllowedDropOperations = jest.fn().mockImplementation(() => ['copy']);
-        let tree = render(<>
-          <Draggable getAllowedDropOperations={getAllowedDropOperations} onDragEnd={onDragEnd} />
-          <Droppable onDrop={onDrop} getDropOperation={getDropOperation} />
-        </>);
+        let tree = render(
+          <>
+            <Draggable getAllowedDropOperations={getAllowedDropOperations} onDragEnd={onDragEnd} />
+            <Droppable onDrop={onDrop} getDropOperation={getDropOperation} />
+          </>
+        );
 
         let draggable = tree.getByText('Drag me');
         let droppable = tree.getByText('Drop here');
@@ -1142,10 +1291,16 @@ describe('useDrag and useDrop', function () {
         let onDragEnd = jest.fn();
         let onDrop = jest.fn();
         let getDropOperation = jest.fn().mockImplementation(() => 'cancel');
-        let tree = render(<>
-          <Draggable onDragEnd={onDragEnd} />
-          <Droppable getDropOperation={getDropOperation} onDropEnter={onDropEnter} onDrop={onDrop} />
-        </>);
+        let tree = render(
+          <>
+            <Draggable onDragEnd={onDragEnd} />
+            <Droppable
+              getDropOperation={getDropOperation}
+              onDropEnter={onDropEnter}
+              onDrop={onDrop}
+            />
+          </>
+        );
 
         let draggable = tree.getByText('Drag me');
         let droppable = tree.getByText('Drop here');
@@ -1165,10 +1320,12 @@ describe('useDrag and useDrop', function () {
         let onDropExit = jest.fn();
         let onDragEnd = jest.fn();
         let onDrop = jest.fn();
-        let tree = render(<>
-          <Draggable onDragEnd={onDragEnd} />
-          <Droppable onDropEnter={onDropEnter} onDropExit={onDropExit} onDrop={onDrop} />
-        </>);
+        let tree = render(
+          <>
+            <Draggable onDragEnd={onDragEnd} />
+            <Droppable onDropEnter={onDropEnter} onDropExit={onDropExit} onDrop={onDrop} />
+          </>
+        );
 
         let draggable = tree.getByText('Drag me');
         let droppable = tree.getByText('Drop here');
@@ -1198,10 +1355,17 @@ describe('useDrag and useDrop', function () {
         let onDragEnd = jest.fn();
         let onDrop = jest.fn();
         let getDropOperation = jest.fn().mockImplementation(() => 'move');
-        let tree = render(<>
-          <Draggable onDragEnd={onDragEnd} />
-          <Droppable getDropOperation={getDropOperation} onDropEnter={onDropEnter} onDropExit={onDropExit} onDrop={onDrop} />
-        </>);
+        let tree = render(
+          <>
+            <Draggable onDragEnd={onDragEnd} />
+            <Droppable
+              getDropOperation={getDropOperation}
+              onDropEnter={onDropEnter}
+              onDropExit={onDropExit}
+              onDrop={onDrop}
+            />
+          </>
+        );
 
         let draggable = tree.getByText('Drag me');
         let droppable = tree.getByText('Drop here');
@@ -1229,10 +1393,12 @@ describe('useDrag and useDrop', function () {
         let onDropExit = jest.fn();
         let onDragEnd = jest.fn();
         let onDrop = jest.fn();
-        let tree = render(<>
-          <Draggable onDragEnd={onDragEnd} />
-          <Droppable onDropEnter={onDropEnter} onDropExit={onDropExit} onDrop={onDrop} />
-        </>);
+        let tree = render(
+          <>
+            <Draggable onDragEnd={onDragEnd} />
+            <Droppable onDropEnter={onDropEnter} onDropExit={onDropExit} onDrop={onDrop} />
+          </>
+        );
 
         let draggable = tree.getByText('Drag me');
         let droppable = tree.getByText('Drop here');
@@ -1246,7 +1412,10 @@ describe('useDrag and useDrop', function () {
         expect(droppable).toHaveAttribute('data-droptarget', 'true');
         expect(onDropEnter).toHaveBeenCalledTimes(1);
 
-        fireEvent(droppable, new DragEvent('dragover', {dataTransfer, clientX: 0, clientY: 0, altKey: true}));
+        fireEvent(
+          droppable,
+          new DragEvent('dragover', {dataTransfer, clientX: 0, clientY: 0, altKey: true})
+        );
         expect(dataTransfer.dropEffect).toBe('link');
         expect(droppable).toHaveAttribute('data-droptarget', 'true');
         expect(onDropExit).not.toHaveBeenCalled();
@@ -1259,10 +1428,12 @@ describe('useDrag and useDrop', function () {
         let onDragEnd = jest.fn();
         let onDrop = jest.fn();
         let getAllowedDropOperations = jest.fn().mockImplementation(() => ['copy']);
-        let tree = render(<>
-          <Draggable onDragEnd={onDragEnd} getAllowedDropOperations={getAllowedDropOperations} />
-          <Droppable onDropEnter={onDropEnter} onDropExit={onDropExit} onDrop={onDrop} />
-        </>);
+        let tree = render(
+          <>
+            <Draggable onDragEnd={onDragEnd} getAllowedDropOperations={getAllowedDropOperations} />
+            <Droppable onDropEnter={onDropEnter} onDropExit={onDropExit} onDrop={onDrop} />
+          </>
+        );
 
         let draggable = tree.getByText('Drag me');
         let droppable = tree.getByText('Drop here');
@@ -1279,7 +1450,10 @@ describe('useDrag and useDrop', function () {
         expect(onDropEnter).toHaveBeenCalledTimes(1);
 
         dataTransfer.effectAllowed = 'copyMove';
-        fireEvent(droppable, new DragEvent('dragover', {dataTransfer, clientX: 0, clientY: 0, altKey: true}));
+        fireEvent(
+          droppable,
+          new DragEvent('dragover', {dataTransfer, clientX: 0, clientY: 0, altKey: true})
+        );
         expect(dataTransfer.dropEffect).toBe('none');
         expect(droppable).toHaveAttribute('data-droptarget', 'false');
         expect(onDropExit).toHaveBeenCalledTimes(1);
@@ -1333,15 +1507,20 @@ describe('useDrag and useDrop', function () {
 
       it('should not include react-aria custom type in list of types passed to getDropOperation', async () => {
         let getDropOperation = jest.fn().mockImplementation(() => 'move');
-        let getItems = () => [{
-          test: 'item 1'
-        }, {
-          test: 'item 2'
-        }];
-        let tree = render(<>
-          <Draggable getItems={getItems} />
-          <Droppable getDropOperation={getDropOperation} />
-        </>);
+        let getItems = () => [
+          {
+            test: 'item 1'
+          },
+          {
+            test: 'item 2'
+          }
+        ];
+        let tree = render(
+          <>
+            <Draggable getItems={getItems} />
+            <Droppable getDropOperation={getDropOperation} />
+          </>
+        );
 
         let draggable = tree.getByText('Drag me');
         let droppable = tree.getByText('Drop here');
@@ -1400,7 +1579,9 @@ describe('useDrag and useDrop', function () {
       });
 
       it('should use the offset returned from renderPreview', () => {
-        let renderPreview = jest.fn().mockImplementation(() => ({element: <div>Drag preview</div>, x: 12, y: 15}));
+        let renderPreview = jest
+          .fn()
+          .mockImplementation(() => ({element: <div>Drag preview</div>, x: 12, y: 15}));
         let tree = render(<Draggable renderPreview={renderPreview} />);
 
         let draggable = tree.getByText('Drag me');
@@ -1427,7 +1608,9 @@ describe('useDrag and useDrop', function () {
       });
 
       it('should clamp the offset returned from renderPreview to the preview bounds', () => {
-        let renderPreview = jest.fn().mockImplementation(() => ({element: <div>Drag preview</div>, x: 50, y: -10}));
+        let renderPreview = jest
+          .fn()
+          .mockImplementation(() => ({element: <div>Drag preview</div>, x: 50, y: -10}));
         // Return values outside of the preview bounds to verify clamping logic.
         let tree = render(<Draggable renderPreview={renderPreview} />);
 
@@ -1472,11 +1655,24 @@ describe('useDrag and useDrop', function () {
       let onDropMove2 = jest.fn();
       let onDropExit2 = jest.fn();
       let onDrop2 = jest.fn();
-      let tree = render(<>
-        <Draggable onDragStart={onDragStart} onDragMove={onDragMove} onDragEnd={onDragEnd} />
-        <Droppable onDropEnter={onDropEnter} onDropMove={onDropMove} onDrop={onDrop} onDropExit={onDropExit} />
-        <Droppable onDropEnter={onDropEnter2} onDropMove={onDropMove2} onDrop={onDrop2} onDropExit={onDropExit2}>Drop here 2</Droppable>
-      </>);
+      let tree = render(
+        <>
+          <Draggable onDragStart={onDragStart} onDragMove={onDragMove} onDragEnd={onDragEnd} />
+          <Droppable
+            onDropEnter={onDropEnter}
+            onDropMove={onDropMove}
+            onDrop={onDrop}
+            onDropExit={onDropExit}
+          />
+          <Droppable
+            onDropEnter={onDropEnter2}
+            onDropMove={onDropMove2}
+            onDrop={onDrop2}
+            onDropExit={onDropExit2}>
+            Drop here 2
+          </Droppable>
+        </>
+      );
 
       let draggable = tree.getByText('Drag me');
       let droppable = tree.getByText('Drop here');
@@ -1490,7 +1686,9 @@ describe('useDrag and useDrop', function () {
 
       expect(document.activeElement).toBe(draggable);
       expect(draggable).toHaveAttribute('aria-describedby');
-      expect(document.getElementById(draggable.getAttribute('aria-describedby'))).toHaveTextContent('Press Enter to start dragging');
+      expect(document.getElementById(draggable.getAttribute('aria-describedby'))).toHaveTextContent(
+        'Press Enter to start dragging'
+      );
 
       await user.keyboard('{Enter}');
 
@@ -1505,8 +1703,12 @@ describe('useDrag and useDrop', function () {
       act(() => jest.runAllTimers());
       expect(document.activeElement).toBe(droppable);
       expect(droppable).toHaveAttribute('aria-describedby');
-      expect(document.getElementById(droppable.getAttribute('aria-describedby'))).toHaveTextContent('Press Enter to drop');
-      expect(announce).toHaveBeenCalledWith('Started dragging. Press Tab to navigate to a drop target, then press Enter to drop, or press Escape to cancel.');
+      expect(document.getElementById(droppable.getAttribute('aria-describedby'))).toHaveTextContent(
+        'Press Enter to drop'
+      );
+      expect(announce).toHaveBeenCalledWith(
+        'Started dragging. Press Tab to navigate to a drop target, then press Enter to drop, or press Escape to cancel.'
+      );
 
       expect(onDropEnter).toHaveBeenCalledTimes(1);
       expect(onDropEnter2).toHaveBeenCalledTimes(0);
@@ -1524,7 +1726,9 @@ describe('useDrag and useDrop', function () {
 
       expect(document.activeElement).toBe(droppable2);
       expect(droppable2).toHaveAttribute('aria-describedby');
-      expect(document.getElementById(droppable2.getAttribute('aria-describedby'))).toHaveTextContent('Press Enter to drop');
+      expect(
+        document.getElementById(droppable2.getAttribute('aria-describedby'))
+      ).toHaveTextContent('Press Enter to drop');
 
       expect(onDropExit).toHaveBeenCalledTimes(1);
       expect(onDropExit2).not.toHaveBeenCalled();
@@ -1600,10 +1804,22 @@ describe('useDrag and useDrop', function () {
       let onDropMove = jest.fn();
       let onDropExit = jest.fn();
       let onDrop = jest.fn();
-      let tree = render(<>
-        <Draggable isDisabled onDragStart={onDragStart} onDragMove={onDragMove} onDragEnd={onDragEnd} />
-        <Droppable onDropEnter={onDropEnter} onDropMove={onDropMove} onDrop={onDrop} onDropExit={onDropExit} />
-      </>);
+      let tree = render(
+        <>
+          <Draggable
+            isDisabled
+            onDragStart={onDragStart}
+            onDragMove={onDragMove}
+            onDragEnd={onDragEnd}
+          />
+          <Droppable
+            onDropEnter={onDropEnter}
+            onDropMove={onDropMove}
+            onDrop={onDrop}
+            onDropExit={onDropExit}
+          />
+        </>
+      );
       let draggable = tree.getByText('Drag me');
       let droppable = tree.getByText('Drop here');
       expect(draggable).toHaveAttribute('draggable', 'false');
@@ -1636,10 +1852,18 @@ describe('useDrag and useDrop', function () {
       let onDropMove = jest.fn();
       let onDropExit = jest.fn();
       let onDrop = jest.fn();
-      let tree = render(<>
-        <Draggable onDragStart={onDragStart} onDragMove={onDragMove} onDragEnd={onDragEnd} />
-        <Droppable isDisabled onDropEnter={onDropEnter} onDropMove={onDropMove} onDrop={onDrop} onDropExit={onDropExit} />
-      </>);
+      let tree = render(
+        <>
+          <Draggable onDragStart={onDragStart} onDragMove={onDragMove} onDragEnd={onDragEnd} />
+          <Droppable
+            isDisabled
+            onDropEnter={onDropEnter}
+            onDropMove={onDropMove}
+            onDrop={onDrop}
+            onDropExit={onDropExit}
+          />
+        </>
+      );
       let draggable = tree.getByText('Drag me');
       let droppable = tree.getByText('Drop here');
       expect(droppable).toHaveAttribute('data-droptarget', 'false');
@@ -1664,14 +1888,16 @@ describe('useDrag and useDrop', function () {
 
     describe('keyboard navigation', () => {
       it('should Tab forward and skip non drop target elements', async () => {
-        let tree = render(<>
-          <Draggable />
-          <input />
-          <Droppable />
-          <input />
-          <Droppable>Drop here 2</Droppable>
-          <input />
-        </>);
+        let tree = render(
+          <>
+            <Draggable />
+            <input />
+            <Droppable />
+            <input />
+            <Droppable>Drop here 2</Droppable>
+            <input />
+          </>
+        );
 
         let draggable = tree.getByText('Drag me');
         let droppable = tree.getByText('Drop here');
@@ -1692,14 +1918,16 @@ describe('useDrag and useDrop', function () {
       });
 
       it('should Tab backward and skip non drop target elements', async () => {
-        let tree = render(<>
-          <Draggable />
-          <input />
-          <Droppable />
-          <input />
-          <Droppable>Drop here 2</Droppable>
-          <input />
-        </>);
+        let tree = render(
+          <>
+            <Draggable />
+            <input />
+            <Droppable />
+            <input />
+            <Droppable>Drop here 2</Droppable>
+            <input />
+          </>
+        );
 
         let draggable = tree.getByText('Drag me');
         let droppable = tree.getByText('Drop here');
@@ -1723,10 +1951,12 @@ describe('useDrag and useDrop', function () {
       });
 
       it('should cancel the drag when pressing the escape key', async () => {
-        let tree = render(<>
-          <Draggable />
-          <Droppable />
-        </>);
+        let tree = render(
+          <>
+            <Draggable />
+            <Droppable />
+          </>
+        );
 
         let draggable = tree.getByText('Drag me');
         let droppable = tree.getByText('Drop here');
@@ -1747,10 +1977,12 @@ describe('useDrag and useDrop', function () {
       it('should cancel the drag when pressing Enter on the original drag target', async () => {
         let onDragStart = jest.fn();
         let onDragEnd = jest.fn();
-        let tree = render(<>
-          <Draggable onDragStart={onDragStart} onDragEnd={onDragEnd} />
-          <Droppable />
-        </>);
+        let tree = render(
+          <>
+            <Draggable onDragStart={onDragStart} onDragEnd={onDragEnd} />
+            <Droppable />
+          </>
+        );
 
         let draggable = tree.getByText('Drag me');
         let droppable = tree.getByText('Drop here');
@@ -1775,11 +2007,13 @@ describe('useDrag and useDrop', function () {
       });
 
       it('should handle when a drop target is removed', async () => {
-        let tree = render(<>
-          <Draggable />
-          <Droppable />
-          <Droppable>Drop here 2</Droppable>
-        </>);
+        let tree = render(
+          <>
+            <Draggable />
+            <Droppable />
+            <Droppable>Drop here 2</Droppable>
+          </>
+        );
 
         let draggable = tree.getByText('Drag me');
         let droppable = tree.getByText('Drop here');
@@ -1791,22 +2025,26 @@ describe('useDrag and useDrop', function () {
         act(() => jest.runAllTimers());
         expect(document.activeElement).toBe(droppable);
 
-        tree.rerender(<>
-          <Draggable />
-          <Droppable>Drop here 2</Droppable>
-        </>);
+        tree.rerender(
+          <>
+            <Draggable />
+            <Droppable>Drop here 2</Droppable>
+          </>
+        );
 
         expect(document.activeElement).toBe(tree.getByText('Drop here 2'));
       });
 
       it('should ignore drop targets in aria-hidden trees', async () => {
-        let tree = render(<>
-          <Draggable />
-          <div aria-hidden="true">
-            <Droppable />
-          </div>
-          <Droppable>Drop here 2</Droppable>
-        </>);
+        let tree = render(
+          <>
+            <Draggable />
+            <div aria-hidden="true">
+              <Droppable />
+            </div>
+            <Droppable>Drop here 2</Droppable>
+          </>
+        );
 
         let draggable = tree.getByText('Drag me');
         let droppable2 = tree.getByText('Drop here 2');
@@ -1815,12 +2053,14 @@ describe('useDrag and useDrop', function () {
         expect(document.activeElement).toBe(draggable);
 
         await user.keyboard('{Enter}');
-        act(() => {jest.runAllTimers();});
+        act(() => {
+          jest.runAllTimers();
+        });
         expect(document.activeElement).toBe(droppable2);
       });
 
       it('should handle when a drop target is hidden with aria-hidden', async () => {
-        let Test = (props) => (
+        let Test = props => (
           <>
             <Draggable />
             <Droppable />
@@ -1846,9 +2086,7 @@ describe('useDrag and useDrop', function () {
         await user.tab();
         expect(document.activeElement).toBe(droppable2);
         // wait for the mutation observer I believe
-        await act(async () =>
-          tree.rerender(<Test />)
-        );
+        await act(async () => tree.rerender(<Test />));
         expect(tree.getAllByRole('button')).toHaveLength(2);
         expect(document.activeElement).toBe(droppable);
 
@@ -1859,13 +2097,15 @@ describe('useDrag and useDrop', function () {
       it('should not tab to the original draggable element if it is in an aria-hidden tree', async () => {
         let Test = () => {
           let [hidden, setHidden] = React.useState(false);
-          return (<>
-            <div aria-hidden={hidden}>
-              <Draggable onDragStart={() => setHidden(true)} />
-            </div>
-            <Droppable />
-            <Droppable>Drop here 2</Droppable>
-          </>);
+          return (
+            <>
+              <div aria-hidden={hidden}>
+                <Draggable onDragStart={() => setHidden(true)} />
+              </div>
+              <Droppable />
+              <Droppable>Drop here 2</Droppable>
+            </>
+          );
         };
 
         let tree = render(<Test />);
@@ -1897,12 +2137,14 @@ describe('useDrag and useDrop', function () {
       it('should not restore focus to the original draggable element on Escape if it is in an aria-hidden tree', async () => {
         let Test = () => {
           let [hidden, setHidden] = React.useState(false);
-          return (<>
-            <div aria-hidden={hidden}>
-              <Draggable onDragStart={() => setHidden(true)} />
-            </div>
-            <Droppable />
-          </>);
+          return (
+            <>
+              <div aria-hidden={hidden}>
+                <Draggable onDragStart={() => setHidden(true)} />
+              </div>
+              <Droppable />
+            </>
+          );
         };
 
         let tree = render(<Test />);
@@ -1926,15 +2168,19 @@ describe('useDrag and useDrop', function () {
 
     describe('drag data', () => {
       it('should work with custom data types', async () => {
-        let getItems = () => [{
-          'test': 'test data'
-        }];
+        let getItems = () => [
+          {
+            test: 'test data'
+          }
+        ];
 
         let onDrop = jest.fn();
-        let tree = render(<>
-          <Draggable getItems={getItems} />
-          <Droppable onDrop={onDrop} />
-        </>);
+        let tree = render(
+          <>
+            <Draggable getItems={getItems} />
+            <Droppable onDrop={onDrop} />
+          </>
+        );
 
         let draggable = tree.getByText('Drag me');
         let droppable = tree.getByText('Drop here');
@@ -1966,17 +2212,22 @@ describe('useDrag and useDrop', function () {
       });
 
       it('should work with multiple items of the same custom type', async () => {
-        let getItems = () => [{
-          test: 'item 1'
-        }, {
-          test: 'item 2'
-        }];
+        let getItems = () => [
+          {
+            test: 'item 1'
+          },
+          {
+            test: 'item 2'
+          }
+        ];
 
         let onDrop = jest.fn();
-        let tree = render(<>
-          <Draggable getItems={getItems} />
-          <Droppable onDrop={onDrop} />
-        </>);
+        let tree = render(
+          <>
+            <Draggable getItems={getItems} />
+            <Droppable onDrop={onDrop} />
+          </>
+        );
 
         let draggable = tree.getByText('Drag me');
         let droppable = tree.getByText('Drop here');
@@ -2014,16 +2265,20 @@ describe('useDrag and useDrop', function () {
       });
 
       it('should work with items of multiple types', async () => {
-        let getItems = () => [{
-          test: 'test data',
-          'text/plain': 'test data'
-        }];
+        let getItems = () => [
+          {
+            test: 'test data',
+            'text/plain': 'test data'
+          }
+        ];
 
         let onDrop = jest.fn();
-        let tree = render(<>
-          <Draggable getItems={getItems} />
-          <Droppable onDrop={onDrop} />
-        </>);
+        let tree = render(
+          <>
+            <Draggable getItems={getItems} />
+            <Droppable onDrop={onDrop} />
+          </>
+        );
 
         let draggable = tree.getByText('Drag me');
         let droppable = tree.getByText('Drop here');
@@ -2056,19 +2311,24 @@ describe('useDrag and useDrop', function () {
       });
 
       it('should work with multiple items of multiple types', async () => {
-        let getItems = () => [{
-          test: 'item 1',
-          'text/plain': 'item 1'
-        }, {
-          test: 'item 2',
-          'text/plain': 'item 2'
-        }];
+        let getItems = () => [
+          {
+            test: 'item 1',
+            'text/plain': 'item 1'
+          },
+          {
+            test: 'item 2',
+            'text/plain': 'item 2'
+          }
+        ];
 
         let onDrop = jest.fn();
-        let tree = render(<>
-          <Draggable getItems={getItems} />
-          <Droppable onDrop={onDrop} />
-        </>);
+        let tree = render(
+          <>
+            <Draggable getItems={getItems} />
+            <Droppable onDrop={onDrop} />
+          </>
+        );
 
         let draggable = tree.getByText('Drag me');
         let droppable = tree.getByText('Drop here');
@@ -2113,10 +2373,12 @@ describe('useDrag and useDrop', function () {
         let onDragEnd = jest.fn();
         let onDrop = jest.fn();
         let getDropOperation = jest.fn().mockImplementation(() => 'copy');
-        let tree = render(<>
-          <Draggable onDragEnd={onDragEnd} />
-          <Droppable getDropOperation={getDropOperation} onDrop={onDrop} />
-        </>);
+        let tree = render(
+          <>
+            <Draggable onDragEnd={onDragEnd} />
+            <Droppable getDropOperation={getDropOperation} onDrop={onDrop} />
+          </>
+        );
 
         let draggable = tree.getByText('Drag me');
         let droppable = tree.getByText('Drop here');
@@ -2128,7 +2390,11 @@ describe('useDrag and useDrop', function () {
         act(() => jest.runAllTimers());
         expect(document.activeElement).toBe(droppable);
 
-        expect(getDropOperation).toHaveBeenCalledWith(new Set(['text/plain']), ['move', 'copy', 'link']);
+        expect(getDropOperation).toHaveBeenCalledWith(new Set(['text/plain']), [
+          'move',
+          'copy',
+          'link'
+        ]);
         expect(droppable).toHaveAttribute('data-droptarget', 'true');
 
         await user.keyboard('{Enter}');
@@ -2160,10 +2426,12 @@ describe('useDrag and useDrop', function () {
         let onDrop = jest.fn();
         let getDropOperation = jest.fn().mockImplementation(() => 'copy');
         let getAllowedDropOperations = jest.fn().mockImplementation(() => ['copy']);
-        let tree = render(<>
-          <Draggable getAllowedDropOperations={getAllowedDropOperations} onDragEnd={onDragEnd} />
-          <Droppable onDrop={onDrop} getDropOperation={getDropOperation} />
-        </>);
+        let tree = render(
+          <>
+            <Draggable getAllowedDropOperations={getAllowedDropOperations} onDragEnd={onDragEnd} />
+            <Droppable onDrop={onDrop} getDropOperation={getDropOperation} />
+          </>
+        );
 
         let draggable = tree.getByText('Drag me');
         let droppable = tree.getByText('Drop here');
@@ -2207,11 +2475,13 @@ describe('useDrag and useDrop', function () {
         let onDragEnd = jest.fn();
         let onDropEnter2 = jest.fn();
         let getDropOperation = jest.fn().mockImplementation(() => 'cancel');
-        let tree = render(<>
-          <Draggable onDragEnd={onDragEnd} />
-          <Droppable getDropOperation={getDropOperation} onDropEnter={onDropEnter} />
-          <Droppable onDropEnter={onDropEnter2}>Drop here 2</Droppable>
-        </>);
+        let tree = render(
+          <>
+            <Draggable onDragEnd={onDragEnd} />
+            <Droppable getDropOperation={getDropOperation} onDropEnter={onDropEnter} />
+            <Droppable onDropEnter={onDropEnter2}>Drop here 2</Droppable>
+          </>
+        );
 
         let draggable = tree.getByText('Drag me');
         let droppable = tree.getByText('Drop here');
@@ -2245,13 +2515,25 @@ describe('useDrag and useDrop', function () {
       let onDropMove2 = jest.fn();
       let onDropExit2 = jest.fn();
       let onDrop2 = jest.fn();
-      let tree = render(<>
-        <Draggable onDragStart={onDragStart} onDragMove={onDragMove} onDragEnd={onDragEnd} />
-        <Droppable onDropEnter={onDropEnter} onDropMove={onDropMove} onDrop={onDrop} onDropExit={onDropExit}>
-          Drop here 1
-          <Droppable onDropEnter={onDropEnter2} onDropMove={onDropMove2} onDrop={onDrop2} onDropExit={onDropExit2}>Drop here 2</Droppable>
-        </Droppable>
-      </>);
+      let tree = render(
+        <>
+          <Draggable onDragStart={onDragStart} onDragMove={onDragMove} onDragEnd={onDragEnd} />
+          <Droppable
+            onDropEnter={onDropEnter}
+            onDropMove={onDropMove}
+            onDrop={onDrop}
+            onDropExit={onDropExit}>
+            Drop here 1
+            <Droppable
+              onDropEnter={onDropEnter2}
+              onDropMove={onDropMove2}
+              onDrop={onDrop2}
+              onDropExit={onDropExit2}>
+              Drop here 2
+            </Droppable>
+          </Droppable>
+        </>
+      );
 
       let buttons = tree.getAllByRole('button');
       let draggable = buttons[0];
@@ -2266,7 +2548,9 @@ describe('useDrag and useDrop', function () {
 
       expect(document.activeElement).toBe(draggable);
       expect(draggable).toHaveAttribute('aria-describedby');
-      expect(document.getElementById(draggable.getAttribute('aria-describedby'))).toHaveTextContent('Press Enter to start dragging');
+      expect(document.getElementById(draggable.getAttribute('aria-describedby'))).toHaveTextContent(
+        'Press Enter to start dragging'
+      );
 
       await user.keyboard('{Enter}');
 
@@ -2281,8 +2565,12 @@ describe('useDrag and useDrop', function () {
       act(() => jest.runAllTimers());
       expect(document.activeElement).toBe(droppable2);
       expect(droppable2).toHaveAttribute('aria-describedby');
-      expect(document.getElementById(droppable2.getAttribute('aria-describedby'))).toHaveTextContent('Press Enter to drop');
-      expect(announce).toHaveBeenCalledWith('Started dragging. Press Tab to navigate to a drop target, then press Enter to drop, or press Escape to cancel.');
+      expect(
+        document.getElementById(droppable2.getAttribute('aria-describedby'))
+      ).toHaveTextContent('Press Enter to drop');
+      expect(announce).toHaveBeenCalledWith(
+        'Started dragging. Press Tab to navigate to a drop target, then press Enter to drop, or press Escape to cancel.'
+      );
 
       expect(onDropEnter2).toHaveBeenCalledTimes(1);
       expect(onDropEnter).toHaveBeenCalledTimes(0);
@@ -2300,7 +2588,9 @@ describe('useDrag and useDrop', function () {
 
       expect(document.activeElement).toBe(droppable);
       expect(droppable).toHaveAttribute('aria-describedby');
-      expect(document.getElementById(droppable.getAttribute('aria-describedby'))).toHaveTextContent('Press Enter to drop');
+      expect(document.getElementById(droppable.getAttribute('aria-describedby'))).toHaveTextContent(
+        'Press Enter to drop'
+      );
 
       expect(onDropExit2).toHaveBeenCalledTimes(1);
       expect(onDropExit).not.toHaveBeenCalled();
@@ -2391,11 +2681,24 @@ describe('useDrag and useDrop', function () {
       let onDropMove2 = jest.fn();
       let onDropExit2 = jest.fn();
       let onDrop2 = jest.fn();
-      let tree = render(<>
-        <Draggable onDragStart={onDragStart} onDragMove={onDragMove} onDragEnd={onDragEnd} />
-        <Droppable onDropEnter={onDropEnter} onDropMove={onDropMove} onDrop={onDrop} onDropExit={onDropExit} />
-        <Droppable onDropEnter={onDropEnter2} onDropMove={onDropMove2} onDrop={onDrop2} onDropExit={onDropExit2}>Drop here 2</Droppable>
-      </>);
+      let tree = render(
+        <>
+          <Draggable onDragStart={onDragStart} onDragMove={onDragMove} onDragEnd={onDragEnd} />
+          <Droppable
+            onDropEnter={onDropEnter}
+            onDropMove={onDropMove}
+            onDrop={onDrop}
+            onDropExit={onDropExit}
+          />
+          <Droppable
+            onDropEnter={onDropEnter2}
+            onDropMove={onDropMove2}
+            onDrop={onDrop2}
+            onDropExit={onDropExit2}>
+            Drop here 2
+          </Droppable>
+        </>
+      );
 
       let draggable = tree.getByText('Drag me');
       let droppable = tree.getByText('Drop here');
@@ -2404,14 +2707,18 @@ describe('useDrag and useDrop', function () {
       act(() => draggable.focus());
       fireEvent.focus(draggable);
       expect(draggable).toHaveAttribute('aria-describedby');
-      expect(document.getElementById(draggable.getAttribute('aria-describedby'))).toHaveTextContent('Click to start dragging');
+      expect(document.getElementById(draggable.getAttribute('aria-describedby'))).toHaveTextContent(
+        'Click to start dragging'
+      );
       expect(draggable).toHaveAttribute('data-dragging', 'false');
 
       await user.pointer({target: draggable, keys: '[MouseLeft]', coords: {width: 0, height: 0}});
       act(() => jest.runAllTimers());
       expect(document.activeElement).toBe(draggable);
       expect(draggable).toHaveAttribute('aria-describedby');
-      expect(document.getElementById(draggable.getAttribute('aria-describedby'))).toHaveTextContent('Dragging. Click to cancel drag.');
+      expect(document.getElementById(draggable.getAttribute('aria-describedby'))).toHaveTextContent(
+        'Dragging. Click to cancel drag.'
+      );
 
       expect(draggable).toHaveAttribute('data-dragging', 'true');
       expect(droppable).toHaveAttribute('data-droptarget', 'false');
@@ -2424,12 +2731,16 @@ describe('useDrag and useDrop', function () {
         y: 25
       });
 
-      expect(announce).toHaveBeenCalledWith('Started dragging. Navigate to a drop target, then click or press Enter to drop.');
+      expect(announce).toHaveBeenCalledWith(
+        'Started dragging. Navigate to a drop target, then click or press Enter to drop.'
+      );
 
       act(() => droppable.focus());
       expect(document.activeElement).toBe(droppable);
       expect(droppable).toHaveAttribute('aria-describedby');
-      expect(document.getElementById(droppable.getAttribute('aria-describedby'))).toHaveTextContent('Click to drop.');
+      expect(document.getElementById(droppable.getAttribute('aria-describedby'))).toHaveTextContent(
+        'Click to drop.'
+      );
       expect(onDropEnter).toHaveBeenCalledTimes(1);
       expect(onDropEnter2).toHaveBeenCalledTimes(0);
       expect(onDropEnter).toHaveBeenCalledWith({
@@ -2441,7 +2752,9 @@ describe('useDrag and useDrop', function () {
       act(() => droppable2.focus());
       expect(document.activeElement).toBe(droppable2);
       expect(droppable2).toHaveAttribute('aria-describedby');
-      expect(document.getElementById(droppable2.getAttribute('aria-describedby'))).toHaveTextContent('Click to drop.');
+      expect(
+        document.getElementById(droppable2.getAttribute('aria-describedby'))
+      ).toHaveTextContent('Click to drop.');
 
       expect(onDropExit).toHaveBeenCalledTimes(1);
       expect(onDropExit2).not.toHaveBeenCalled();
@@ -2510,14 +2823,16 @@ describe('useDrag and useDrop', function () {
     });
 
     it('should hide all non drop target elements from screen readers while dragging', async () => {
-      let tree = render(<>
-        <Draggable />
-        <input />
-        <Droppable />
-        <button>Test</button>
-        <Droppable>Drop here 2</Droppable>
-        <span>Text</span>
-      </>);
+      let tree = render(
+        <>
+          <Draggable />
+          <input />
+          <Droppable />
+          <button>Test</button>
+          <Droppable>Drop here 2</Droppable>
+          <span>Text</span>
+        </>
+      );
 
       let draggable = tree.getByText('Drag me');
       let droppable = tree.getByText('Drop here');
@@ -2537,10 +2852,12 @@ describe('useDrag and useDrop', function () {
     });
 
     it('should support clicking the original drag target to cancel drag', async () => {
-      let tree = render(<>
-        <Draggable />
-        <Droppable />
-      </>);
+      let tree = render(
+        <>
+          <Draggable />
+          <Droppable />
+        </>
+      );
 
       let draggable = tree.getByText('Drag me');
 
@@ -2549,70 +2866,135 @@ describe('useDrag and useDrop', function () {
       act(() => jest.runAllTimers());
       expect(draggable).toHaveAttribute('data-dragging', 'true');
       expect(draggable).toHaveAttribute('aria-describedby');
-      expect(document.getElementById(draggable.getAttribute('aria-describedby'))).toHaveTextContent('Dragging. Click to cancel drag.');
+      expect(document.getElementById(draggable.getAttribute('aria-describedby'))).toHaveTextContent(
+        'Dragging. Click to cancel drag.'
+      );
 
       fireEvent.click(draggable);
       expect(draggable).toHaveAttribute('data-dragging', 'false');
       expect(draggable).toHaveAttribute('aria-describedby');
-      expect(document.getElementById(draggable.getAttribute('aria-describedby'))).toHaveTextContent('Click to start dragging');
+      expect(document.getElementById(draggable.getAttribute('aria-describedby'))).toHaveTextContent(
+        'Click to start dragging'
+      );
 
       expect(announce).toHaveBeenCalledWith('Drop canceled.');
     });
 
     it('should support clicking the original drag target to cancel drag (virtual pointer event)', async () => {
-      let tree = render(<>
-        <Draggable />
-        <Droppable />
-      </>);
+      let tree = render(
+        <>
+          <Draggable />
+          <Droppable />
+        </>
+      );
 
       let draggable = tree.getByText('Drag me');
 
       act(() => draggable.focus());
-      fireEvent(draggable, pointerEvent('pointerdown', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
-      fireEvent(draggable, pointerEvent('pointerup', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
+      fireEvent(
+        draggable,
+        pointerEvent('pointerdown', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0})
+      );
+      fireEvent(
+        draggable,
+        pointerEvent('pointerup', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0})
+      );
       await user.pointer({target: draggable, keys: '[MouseLeft]', coords: {width: 0, height: 0}});
       act(() => jest.runAllTimers());
       expect(draggable).toHaveAttribute('data-dragging', 'true');
       expect(draggable).toHaveAttribute('aria-describedby');
-      expect(document.getElementById(draggable.getAttribute('aria-describedby'))).toHaveTextContent('Dragging. Click to cancel drag.');
+      expect(document.getElementById(draggable.getAttribute('aria-describedby'))).toHaveTextContent(
+        'Dragging. Click to cancel drag.'
+      );
 
       // Android Talkback fires with click event of detail = 1, test that our onPointerDown listener detects that it is a virtual click
-      fireEvent(draggable, pointerEvent('pointerdown', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0, pointerType: 'mouse'}));
-      fireEvent(draggable, pointerEvent('pointerup', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0, pointerType: 'mouse'}));
+      fireEvent(
+        draggable,
+        pointerEvent('pointerdown', {
+          pointerId: 1,
+          width: 1,
+          height: 1,
+          pressure: 0,
+          detail: 0,
+          pointerType: 'mouse'
+        })
+      );
+      fireEvent(
+        draggable,
+        pointerEvent('pointerup', {
+          pointerId: 1,
+          width: 1,
+          height: 1,
+          pressure: 0,
+          detail: 0,
+          pointerType: 'mouse'
+        })
+      );
       fireEvent.click(draggable, {detail: 1});
       expect(draggable).toHaveAttribute('data-dragging', 'false');
       expect(draggable).toHaveAttribute('aria-describedby');
-      expect(document.getElementById(draggable.getAttribute('aria-describedby'))).toHaveTextContent('Click to start dragging');
+      expect(document.getElementById(draggable.getAttribute('aria-describedby'))).toHaveTextContent(
+        'Click to start dragging'
+      );
 
       expect(announce).toHaveBeenCalledWith('Drop canceled.');
     });
 
     it('should support double tapping the drop target to complete drag (virtual pointer event)', async () => {
       let onDrop = jest.fn();
-      let tree = render(<>
-        <Draggable />
-        <Droppable onDrop={onDrop} />
-      </>);
+      let tree = render(
+        <>
+          <Draggable />
+          <Droppable onDrop={onDrop} />
+        </>
+      );
 
       let draggable = tree.getByText('Drag me');
       let droppable = tree.getByText('Drop here');
 
       act(() => draggable.focus());
-      fireEvent(draggable, pointerEvent('pointerdown', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
-      fireEvent(draggable, pointerEvent('pointerup', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
+      fireEvent(
+        draggable,
+        pointerEvent('pointerdown', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0})
+      );
+      fireEvent(
+        draggable,
+        pointerEvent('pointerup', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0})
+      );
       await user.pointer({target: draggable, keys: '[MouseLeft]', coords: {width: 0, height: 0}});
       act(() => jest.runAllTimers());
       expect(draggable).toHaveAttribute('data-dragging', 'true');
 
-
       // Android Talkback fires with click event of detail = 1, test that our onPointerDown listener detects that it is a virtual click
       act(() => droppable.focus());
-      fireEvent(droppable, pointerEvent('pointerdown', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0, pointerType: 'mouse'}));
-      fireEvent(droppable, pointerEvent('pointerup', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0, pointerType: 'mouse'}));
+      fireEvent(
+        droppable,
+        pointerEvent('pointerdown', {
+          pointerId: 1,
+          width: 1,
+          height: 1,
+          pressure: 0,
+          detail: 0,
+          pointerType: 'mouse'
+        })
+      );
+      fireEvent(
+        droppable,
+        pointerEvent('pointerup', {
+          pointerId: 1,
+          width: 1,
+          height: 1,
+          pressure: 0,
+          detail: 0,
+          pointerType: 'mouse'
+        })
+      );
       fireEvent.click(droppable, {detail: 1});
       expect(draggable).toHaveAttribute('data-dragging', 'false');
       expect(draggable).toHaveAttribute('aria-describedby');
-      expect(document.getElementById(draggable.getAttribute('aria-describedby'))).toHaveTextContent('Click to start dragging');
+      expect(document.getElementById(draggable.getAttribute('aria-describedby'))).toHaveTextContent(
+        'Click to start dragging'
+      );
 
       expect(announce).toHaveBeenCalledWith('Drop complete.');
       expect(onDrop).toHaveBeenCalledTimes(1);
@@ -2625,13 +3007,13 @@ describe('useDrag and useDrop', function () {
         useEffect(() => {
           setShowTarget2 = _setShowTarget2;
         }, [_setShowTarget2]);
-        return (<>
-          <Draggable />
-          <Droppable />
-          {showTarget2 &&
-            <Droppable>Drop here 2</Droppable>
-          }
-        </>);
+        return (
+          <>
+            <Draggable />
+            <Droppable />
+            {showTarget2 && <Droppable>Drop here 2</Droppable>}
+          </>
+        );
       };
 
       let tree = render(<Test />);
@@ -2649,14 +3031,12 @@ describe('useDrag and useDrop', function () {
     });
 
     it('should handle when a non drop target element is added', async () => {
-      let Test = (props) => (
+      let Test = props => (
         <>
           <Draggable />
           <input />
           <Droppable />
-          {props.showInput2 &&
-            <input />
-          }
+          {props.showInput2 && <input />}
         </>
       );
 
@@ -2688,13 +3068,13 @@ describe('useDrag and useDrop', function () {
         useEffect(() => {
           setShowTarget2 = _setShowTarget2;
         }, [_setShowTarget2]);
-        return (<>
-          <Draggable />
-          <Droppable />
-          {showTarget2 &&
-            <Droppable>Drop here 2</Droppable>
-          }
-        </>);
+        return (
+          <>
+            <Draggable />
+            <Droppable />
+            {showTarget2 && <Droppable>Drop here 2</Droppable>}
+          </>
+        );
       };
 
       let tree = render(<Test />);
@@ -2712,7 +3092,7 @@ describe('useDrag and useDrop', function () {
     });
 
     it('should handle when a drop target is hidden with aria-hidden', async () => {
-      let Test = (props) => (
+      let Test = props => (
         <>
           <Draggable />
           <Droppable />
@@ -2739,11 +3119,13 @@ describe('useDrag and useDrop', function () {
     });
 
     it('should restore focus to the current drop target when focusing a non drop target element', async () => {
-      let tree = render(<>
-        <Draggable />
-        <input />
-        <Droppable />
-      </>);
+      let tree = render(
+        <>
+          <Draggable />
+          <input />
+          <Droppable />
+        </>
+      );
 
       let draggable = tree.getByText('Drag me');
       let droppable = tree.getByText('Drop here');
@@ -2760,11 +3142,13 @@ describe('useDrag and useDrop', function () {
     });
 
     it('should restore focus to the drag target when focusing a non drop target element and there is no current drop target', async () => {
-      let tree = render(<>
-        <Draggable />
-        <input />
-        <Droppable />
-      </>);
+      let tree = render(
+        <>
+          <Draggable />
+          <input />
+          <Droppable />
+        </>
+      );
 
       let draggable = tree.getByText('Drag me');
       let input = tree.getByRole('textbox');
@@ -2778,10 +3162,12 @@ describe('useDrag and useDrop', function () {
     });
 
     it('should restore focus to the current drop target when blurring all elements', async () => {
-      let tree = render(<>
-        <Draggable />
-        <Droppable />
-      </>);
+      let tree = render(
+        <>
+          <Draggable />
+          <Droppable />
+        </>
+      );
 
       let draggable = tree.getByText('Drag me');
       let droppable = tree.getByText('Drop here');
@@ -2797,10 +3183,12 @@ describe('useDrag and useDrop', function () {
     });
 
     it('should restore focus to the drag target when blurring all elements and there is no current drop target', async () => {
-      let tree = render(<>
-        <Draggable />
-        <Droppable />
-      </>);
+      let tree = render(
+        <>
+          <Draggable />
+          <Droppable />
+        </>
+      );
 
       let draggable = tree.getByText('Drag me');
 
@@ -2813,10 +3201,12 @@ describe('useDrag and useDrop', function () {
     });
 
     it('should ignore clicks not from screen readers to start dragging', () => {
-      let tree = render(<>
-        <Draggable />
-        <Droppable />
-      </>);
+      let tree = render(
+        <>
+          <Draggable />
+          <Droppable />
+        </>
+      );
 
       let draggable = tree.getByText('Drag me');
 
@@ -2828,10 +3218,12 @@ describe('useDrag and useDrop', function () {
     });
 
     it('should ignore clicks not from screen readers during dragging', async () => {
-      let tree = render(<>
-        <Draggable />
-        <Droppable />
-      </>);
+      let tree = render(
+        <>
+          <Draggable />
+          <Droppable />
+        </>
+      );
 
       let draggable = tree.getByText('Drag me');
       let droppable = tree.getByText('Drop here');
@@ -2849,10 +3241,12 @@ describe('useDrag and useDrop', function () {
     it('should use touch specific aria descriptions when available', async () => {
       window.ontouchstart = () => {};
 
-      let tree = render(<>
-        <Draggable />
-        <Droppable />
-      </>);
+      let tree = render(
+        <>
+          <Draggable />
+          <Droppable />
+        </>
+      );
 
       let draggable = tree.getByText('Drag me');
       let droppable = tree.getByText('Drop here');
@@ -2860,17 +3254,25 @@ describe('useDrag and useDrop', function () {
       act(() => draggable.focus());
       fireEvent.focus(draggable);
       expect(draggable).toHaveAttribute('aria-describedby');
-      expect(document.getElementById(draggable.getAttribute('aria-describedby'))).toHaveTextContent('Double tap to start dragging');
+      expect(document.getElementById(draggable.getAttribute('aria-describedby'))).toHaveTextContent(
+        'Double tap to start dragging'
+      );
 
       await user.pointer({target: draggable, keys: '[MouseLeft]', coords: {width: 0, height: 0}});
       act(() => jest.runAllTimers());
       expect(document.activeElement).toBe(draggable);
       expect(draggable).toHaveAttribute('aria-describedby');
-      expect(document.getElementById(draggable.getAttribute('aria-describedby'))).toHaveTextContent('Dragging. Double tap to cancel drag.');
-      expect(announce).toHaveBeenCalledWith('Started dragging. Navigate to a drop target, then double tap to drop.');
+      expect(document.getElementById(draggable.getAttribute('aria-describedby'))).toHaveTextContent(
+        'Dragging. Double tap to cancel drag.'
+      );
+      expect(announce).toHaveBeenCalledWith(
+        'Started dragging. Navigate to a drop target, then double tap to drop.'
+      );
 
       expect(droppable).toHaveAttribute('aria-describedby');
-      expect(document.getElementById(droppable.getAttribute('aria-describedby'))).toHaveTextContent('Double tap to drop.');
+      expect(document.getElementById(droppable.getAttribute('aria-describedby'))).toHaveTextContent(
+        'Double tap to drop.'
+      );
 
       delete window.ontouchstart;
     });

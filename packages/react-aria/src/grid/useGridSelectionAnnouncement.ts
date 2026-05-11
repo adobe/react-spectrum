@@ -24,21 +24,25 @@ export interface GridSelectionAnnouncementProps {
    * A function that returns the text that should be announced by assistive technology when a row is added or removed from selection.
    * @default (key) => state.collection.getItem(key)?.textValue
    */
-  getRowText?: (key: Key) => string
+  getRowText?: (key: Key) => string;
 }
 
 interface GridSelectionState<T> {
   /** A collection of items in the grid. */
-  collection: Collection<Node<T>>,
+  collection: Collection<Node<T>>;
   /** A set of items that are disabled. */
-  disabledKeys: Set<Key>,
+  disabledKeys: Set<Key>;
   /** A selection manager to read and update multiple selection state. */
-  selectionManager: SelectionManager
+  selectionManager: SelectionManager;
 }
 
-export function useGridSelectionAnnouncement<T>(props: GridSelectionAnnouncementProps, state: GridSelectionState<T>): void {
+export function useGridSelectionAnnouncement<T>(
+  props: GridSelectionAnnouncementProps,
+  state: GridSelectionState<T>
+): void {
   let {
-    getRowText = (key) => state.collection.getTextValue?.(key) ?? state.collection.getItem(key)?.textValue
+    getRowText = key =>
+      state.collection.getTextValue?.(key) ?? state.collection.getItem(key)?.textValue
   } = props;
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/grid');
 
@@ -60,7 +64,7 @@ export function useGridSelectionAnnouncement<T>(props: GridSelectionAnnouncement
     let isReplace = state.selectionManager.selectionBehavior === 'replace';
     let messages: string[] = [];
 
-    if ((state.selectionManager.selectedKeys.size === 1 && isReplace)) {
+    if (state.selectionManager.selectedKeys.size === 1 && isReplace) {
       let firstKey = state.selectionManager.selectedKeys.keys().next().value;
       if (firstKey != null && state.collection.getItem(firstKey)) {
         let currentSelectionText = getRowText(firstKey);
@@ -88,10 +92,17 @@ export function useGridSelectionAnnouncement<T>(props: GridSelectionAnnouncement
 
     // Announce how many items are selected, except when selecting the first item.
     if (state.selectionManager.selectionMode === 'multiple') {
-      if (messages.length === 0 || selection === 'all' || selection.size > 1 || lastSelection.current === 'all' || lastSelection.current?.size > 1) {
-        messages.push(selection === 'all'
-          ? stringFormatter.format('selectedAll')
-          : stringFormatter.format('selectedCount', {count: selection.size})
+      if (
+        messages.length === 0 ||
+        selection === 'all' ||
+        selection.size > 1 ||
+        lastSelection.current === 'all' ||
+        lastSelection.current?.size > 1
+      ) {
+        messages.push(
+          selection === 'all'
+            ? stringFormatter.format('selectedAll')
+            : stringFormatter.format('selectedCount', {count: selection.size})
         );
       }
     }
