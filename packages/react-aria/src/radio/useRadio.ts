@@ -66,6 +66,7 @@ export interface RadioAria {
 /**
  * Provides the behavior and accessibility implementation for an individual
  * radio button in a radio group.
+ *
  * @param props - Props for the radio.
  * @param state - State for the radio group, as returned by `useRadioGroupState`.
  * @param ref - Ref to the HTML input element.

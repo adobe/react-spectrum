@@ -142,9 +142,15 @@ export interface ComboBoxProps<T extends object>
    * @default 'start'
    */
   align?: 'start' | 'end';
-  /** Width of the menu. By default, matches width of the trigger. Note that the minimum width of the dropdown is always equal to the trigger's width. */
+  /**
+   * Width of the menu. By default, matches width of the trigger. Note that the minimum width of the
+   * dropdown is always equal to the trigger's width.
+   */
   menuWidth?: number;
-  /** The current loading state of the ComboBox. Determines whether or not the progress circle should be shown. */
+  /**
+   * The current loading state of the ComboBox. Determines whether or not the progress circle should
+   * be shown.
+   */
   loadingState?: LoadingState;
 }
 
@@ -377,7 +383,8 @@ export const LOADER_ROW_HEIGHTS = {
 let InternalComboboxContext = createContext<{size: 'S' | 'M' | 'L' | 'XL'}>({size: 'M'});
 
 /**
- * ComboBox allow users to choose a single option from a collapsible list of options when space is limited.
+ * ComboBox allow users to choose a single option from a collapsible list of options when space is
+ * limited.
  */
 export const ComboBox = /*#__PURE__*/ (forwardRef as forwardRefType)(function ComboBox<
   T extends object

@@ -40,6 +40,7 @@ export interface DisclosureAria {
 
 /**
  * Provides the behavior and accessibility implementation for a disclosure component.
+ *
  * @param props - Props for the disclosure.
  * @param state - State for the disclosure, as returned by `useDisclosureState`.
  * @param ref - A ref for the disclosure panel.

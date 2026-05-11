@@ -30,7 +30,10 @@ import {useProviderProps} from '../provider/Provider';
 import {useStyleProps} from '../utils/styleProps';
 
 export interface SpectrumColorSliderProps extends AriaColorSliderProps, StyleProps {
-  /** Whether the value label is displayed. True by default if there is a label, false by default if not. */
+  /**
+   * Whether the value label is displayed. True by default if there is a label, false by default if
+   * not.
+   */
   showValueLabel?: boolean;
   /** A ContextualHelp element to place next to the label. */
   contextualHelp?: ReactNode;

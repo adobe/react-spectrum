@@ -639,7 +639,8 @@ export function calculatePositionInternal(
 }
 
 /**
- * Determines where to place the overlay with regards to the target and the position of an optional indicator.
+ * Determines where to place the overlay with regards to the target and the position of an optional
+ * indicator.
  */
 export function calculatePosition(opts: PositionOpts): PositionResult {
   let {

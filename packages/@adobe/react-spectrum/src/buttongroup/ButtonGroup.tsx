@@ -29,6 +29,7 @@ export interface SpectrumButtonGroupProps extends DOMProps, StyleProps {
   /**
    * The axis the ButtonGroup should align with. Setting this to 'vertical' will prevent
    * any switching behaviors between 'vertical' and 'horizontal'.
+   *
    * @default 'horizontal'
    */
   orientation?: Orientation;
@@ -36,6 +37,7 @@ export interface SpectrumButtonGroupProps extends DOMProps, StyleProps {
   children: ReactNode;
   /**
    * The alignment of the buttons within the ButtonGroup.
+   *
    * @default 'start'
    */
   align?: Alignment | 'center';

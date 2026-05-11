@@ -37,6 +37,7 @@ export function colorSwatch(
 
 /**
  * Gets the RGB values for a color token.
+ *
  * @param tokenName - The token name to look up.
  * @param mode - 'light' or 'dark' mode.
  * @returns [r, g, b] or null if not found.

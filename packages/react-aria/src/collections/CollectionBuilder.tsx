@@ -43,7 +43,8 @@ export interface CollectionBuilderProps<C extends BaseCollection<object>> {
 }
 
 /**
- * Builds a `Collection` from the children provided to the `content` prop, and passes it to the child render prop function.
+ * Builds a `Collection` from the children provided to the `content` prop, and passes it to the
+ * child render prop function.
  */
 export function CollectionBuilder<C extends BaseCollection<object>>(
   props: CollectionBuilderProps<C>

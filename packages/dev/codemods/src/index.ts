@@ -6,15 +6,17 @@ import {use_subpaths} from './use-subpaths/src';
 
 interface JSCodeshiftOptions {
   /**
-   * The parser for jscodeshift to use for parsing the source files: https://github.com/facebook/jscodeshift?tab=readme-ov-file#parser.
+   * The parser for jscodeshift to use for parsing the source files:
+   * https://github.com/facebook/jscodeshift?tab=readme-ov-file#parser.
    *
    * @default 'tsx'
    */
   parser?: 'babel' | 'babylon' | 'flow' | 'ts' | ' tsx';
   /**
-   * A glob pattern of files to ignore: https://github.com/facebook/jscodeshift?tab=readme-ov-file#ignoring-files-and-directories.
+   * A glob pattern of files to ignore:
+   * https://github.com/facebook/jscodeshift?tab=readme-ov-file#ignoring-files-and-directories.
    *
-   * @default '*\*\/node_modules/*\*\'
+   * @default '_\_\/node_modules/_\_\'
    */
   ignorePattern?: string;
   /**

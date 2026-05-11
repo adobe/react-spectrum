@@ -40,6 +40,7 @@ export const DropIndicatorContext = createContext<DropIndicatorContextValue | nu
 export interface DropIndicatorRenderProps {
   /**
    * Whether the drop indicator is currently the active drop target.
+   *
    * @selector [data-drop-target]
    */
   isDropTarget: boolean;
@@ -48,7 +49,9 @@ export interface DropIndicatorRenderProps {
 export interface DropIndicatorProps
   extends Omit<AriaDropIndicatorProps, 'activateButtonRef'>, RenderProps<DropIndicatorRenderProps> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-DropIndicator'
    */
   className?: ClassNameOrFunction<DropIndicatorRenderProps>;
@@ -58,7 +61,8 @@ interface DropIndicatorContextValue {
 }
 
 /**
- * A DropIndicator is rendered between items in a collection to indicate where dropped data will be inserted.
+ * A DropIndicator is rendered between items in a collection to indicate where dropped data will be
+ * inserted.
  */
 export const DropIndicator = forwardRef(function DropIndicator(
   props: DropIndicatorProps,

@@ -118,31 +118,37 @@ import {useVisuallyHidden} from 'react-aria/VisuallyHidden';
 export interface GridListRenderProps {
   /**
    * Whether the list has no items and should display its empty state.
+   *
    * @selector [data-empty]
    */
   isEmpty: boolean;
   /**
    * Whether the grid list is currently focused.
+   *
    * @selector [data-focused]
    */
   isFocused: boolean;
   /**
    * Whether the grid list is currently keyboard focused.
+   *
    * @selector [data-focus-visible]
    */
   isFocusVisible: boolean;
   /**
    * Whether the grid list is currently the active drop target.
+   *
    * @selector [data-drop-target]
    */
   isDropTarget: boolean;
   /**
    * Whether the items are arranged in a stack or grid.
+   *
    * @selector [data-layout="stack | grid"]
    */
   layout: 'stack' | 'grid';
   /**
    * The primary orientation of the items.
+   *
    * @selector [data-orientation="vertical | horizontal"]
    */
   orientation: Orientation;
@@ -160,31 +166,41 @@ export interface GridListProps<T>
     SlotProps,
     GlobalDOMAttributes<HTMLDivElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-GridList'
    */
   className?: ClassNameOrFunction<GridListRenderProps>;
   /**
    * Whether typeahead navigation is disabled.
+   *
    * @default false
    */
   disallowTypeAhead?: boolean;
   /**
    * How multiple selection should behave in the collection.
-   * @default "toggle"
+   *
+   * @default 'toggle'
    */
   selectionBehavior?: SelectionBehavior;
-  /** The drag and drop hooks returned by `useDragAndDrop` used to enable drag and drop behavior for the GridList. */
+  /**
+   * The drag and drop hooks returned by `useDragAndDrop` used to enable drag and drop behavior for
+   * the GridList.
+   */
   dragAndDropHooks?: DragAndDropHooks<NoInfer<T>>;
   /** Provides content to display when there are no items in the list. */
   renderEmptyState?: (props: GridListRenderProps) => ReactNode;
   /**
    * Whether the items are arranged in a stack or grid.
+   *
    * @default 'stack'
    */
   layout?: 'stack' | 'grid';
   /**
-   * The primary orientation of the items. Usually this is the direction that the collection scrolls.
+   * The primary orientation of the items. Usually this is the direction that the collection
+   * scrolls.
+   *
    * @default 'vertical'
    */
   orientation?: Orientation;
@@ -449,21 +465,26 @@ export interface GridListItemProps<T = object>
     PressEvents,
     Omit<GlobalDOMAttributes<HTMLDivElement>, 'onClick'> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-GridListItem'
    */
   className?: ClassNameOrFunction<GridListItemRenderProps>;
   /** The unique id of the item. */
   id?: Key;
-  /** The object value that this item represents. When using dynamic collections, this is set automatically. */
+  /**
+   * The object value that this item represents. When using dynamic collections, this is set
+   * automatically.
+   */
   value?: T;
   /** A string representation of the item's contents, used for features like typeahead. */
   textValue?: string;
   /** Whether the item is disabled. */
   isDisabled?: boolean;
   /**
-   * Handler that is called when a user performs an action on the item. The exact user event depends on
-   * the collection's `selectionBehavior` prop and the interaction modality.
+   * Handler that is called when a user performs an action on the item. The exact user event depends
+   * on the collection's `selectionBehavior` prop and the interaction modality.
    */
   onAction?: () => void;
 }
@@ -755,7 +776,9 @@ export interface GridListLoadMoreItemProps
     DOMRenderProps<'div', undefined>,
     GlobalDOMAttributes<HTMLDivElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element.
+   *
    * @default 'react-aria-GridListLoadMoreItem'
    */
   className?: string;
@@ -828,7 +851,9 @@ export const GridListLoadMoreItem = createLeafComponent(
 
 export interface GridListSectionProps<T> extends SectionProps<T>, DOMRenderProps<'div', undefined> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element.
+   *
    * @default 'react-aria-GridListSection'
    */
   className?: string;

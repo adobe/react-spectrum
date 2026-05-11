@@ -22,11 +22,15 @@ import {useLocalizedStringFormatter} from '../i18n/useLocalizedStringFormatter';
 
 export interface AriaSearchFieldProps extends SearchFieldProps, Omit<AriaTextFieldProps, 'type'> {
   /**
-   * An enumerated attribute that defines what action label or icon to preset for the enter key on virtual keyboards. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/enterkeyhint).
+   * An enumerated attribute that defines what action label or icon to preset for the enter key on
+   * virtual keyboards. See
+   * [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/enterkeyhint).
    */
   enterKeyHint?: 'enter' | 'done' | 'go' | 'next' | 'previous' | 'search' | 'send';
   /**
-   * The type of input to render. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdeftype).
+   * The type of input to render. See
+   * [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdeftype).
+   *
    * @default 'search'
    */
   type?: 'text' | 'search' | 'url' | 'tel' | 'email' | 'password' | (string & {});
@@ -47,6 +51,7 @@ export interface SearchFieldAria extends ValidationResult {
 
 /**
  * Provides the behavior and accessibility implementation for a search field.
+ *
  * @param props - Props for the search field.
  * @param state - State for the search field, as returned by `useSearchFieldState`.
  * @param inputRef - A ref to the input element.

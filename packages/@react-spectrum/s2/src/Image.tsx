@@ -30,7 +30,8 @@ export interface ImageSource {
    */
   srcSet?: string | undefined;
   /**
-   * The color scheme for this image source. Unlike `media`, this respects the `Provider` color scheme setting.
+   * The color scheme for this image source. Unlike `media`, this respects the `Provider` color
+   * scheme setting.
    */
   colorScheme?: 'light' | 'dark';
   /**
@@ -108,13 +109,13 @@ export interface ImageProps extends UnsafeStyles, SlotProps {
   /** A function that is called to render a fallback when the image fails to load. */
   renderError?: () => ReactNode;
   /**
-   * A group of images to coordinate between, matching the group passed to the `<ImageCoordinator>` component.
-   * If not provided, the default image group is used.
+   * A group of images to coordinate between, matching the group passed to the `<ImageCoordinator>`
+   * component. If not provided, the default image group is used.
    */
   group?: ImageGroup;
   /**
-   * Associates the image with a microdata object.
-   * See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Global_attributes/itemprop).
+   * Associates the image with a microdata object. See
+   * [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Global_attributes/itemprop).
    */
   itemProp?: string;
 }

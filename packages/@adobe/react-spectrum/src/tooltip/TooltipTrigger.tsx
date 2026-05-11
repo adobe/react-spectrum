@@ -26,11 +26,13 @@ export interface SpectrumTooltipTriggerProps
   /**
    * The additional offset applied along the main axis between the element and its
    * anchor element.
+   *
    * @default 7
    */
   offset?: number;
   /**
    * The placement of the tooltip with respect to the trigger.
+   *
    * @default 'top'
    */
   placement?: Placement;

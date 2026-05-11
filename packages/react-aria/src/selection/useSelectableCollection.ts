@@ -60,36 +60,43 @@ export interface AriaSelectableCollectionOptions {
   ref: RefObject<HTMLElement | null>;
   /**
    * Whether the collection or one of its items should be automatically focused upon render.
+   *
    * @default false
    */
   autoFocus?: boolean | FocusStrategy;
   /**
    * Whether focus should wrap around when the end/start is reached.
+   *
    * @default false
    */
   shouldFocusWrap?: boolean;
   /**
    * Whether the collection allows empty selection.
+   *
    * @default false
    */
   disallowEmptySelection?: boolean;
   /**
    * Whether the collection allows the user to select all items via keyboard shortcut.
+   *
    * @default false
    */
   disallowSelectAll?: boolean;
   /**
    * Whether pressing the Escape should clear selection in the collection or not.
+   *
    * @default 'clearSelection'
    */
   escapeKeyBehavior?: 'clearSelection' | 'none';
   /**
    * Whether selection should occur automatically on focus.
+   *
    * @default false
    */
   selectOnFocus?: boolean;
   /**
    * Whether typeahead is disabled.
+   *
    * @default false
    */
   disallowTypeAhead?: boolean;
@@ -106,8 +113,8 @@ export interface AriaSelectableCollectionOptions {
    */
   isVirtualized?: boolean;
   /**
-   * The ref attached to the scrollable body. Used to provide automatic scrolling on item focus for non-virtualized collections.
-   * If not provided, defaults to the collection ref.
+   * The ref attached to the scrollable body. Used to provide automatic scrolling on item focus for
+   * non-virtualized collections. If not provided, defaults to the collection ref.
    */
   scrollRef?: RefObject<HTMLElement | null>;
   /**
@@ -115,6 +122,7 @@ export interface AriaSelectableCollectionOptions {
    * - 'action': link behaves like onAction.
    * - 'selection': link follows selection interactions (e.g. if URL drives selection).
    * - 'override': links override all other interactions (link items are not selectable).
+   *
    * @default 'action'
    */
   linkBehavior?: 'action' | 'selection' | 'override';

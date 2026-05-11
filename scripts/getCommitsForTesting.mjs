@@ -9,7 +9,8 @@ import {unified} from 'unified';
  * Instructions:
  *
  * 1. Run the following script: node scripts/getCommitsForTesting.mjs 2026-10-07 2026-10-18
- * 2. Go to output.csv, copy it to Google sheets, highlight the rows, go to "Data" in the toolbar -> split text to columns -> separator: comma
+ * 2. Go to output.csv, copy it to Google sheets, highlight the rows, go to "Data" in the toolbar ->
+ *    split text to columns -> separator: comma
  */
 
 const octokit = new Octokit({

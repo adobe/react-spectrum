@@ -159,8 +159,8 @@ const dashoffsetAnimation = keyframes(`
 `);
 
 /**
- * ProgressCircles show the progression of a system operation such as downloading, uploading, or processing, in a visual way.
- * They can represent determinate or indeterminate progress.
+ * ProgressCircles show the progression of a system operation such as downloading, uploading, or
+ * processing, in a visual way. They can represent determinate or indeterminate progress.
  */
 export const ProgressCircle = /*#__PURE__*/ forwardRef(function ProgressCircle(
   props: ProgressCircleProps,

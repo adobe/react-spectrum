@@ -26,7 +26,8 @@ class SkeletonNode extends CollectionNode<unknown> {
 }
 
 /**
- * A SkeletonCollection generates placeholder content within a collection component such as CardView.
+ * A SkeletonCollection generates placeholder content within a collection component such as
+ * CardView.
  */
 export const SkeletonCollection = createLeafComponent(
   SkeletonNode,

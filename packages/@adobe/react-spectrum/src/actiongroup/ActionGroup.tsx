@@ -54,16 +54,23 @@ import {useStyleProps} from '../utils/styleProps';
 import {useValueEffect} from 'react-aria/private/utils/useValueEffect';
 
 export interface SpectrumActionGroupProps<T> extends AriaActionGroupProps<T>, StyleProps {
-  /** Whether the ActionButtons should be displayed with a [emphasized style](https://spectrum.adobe.com/page/action-button/#Emphasis). */
+  /**
+   * Whether the ActionButtons should be displayed with a [emphasized
+   * style](https://spectrum.adobe.com/page/action-button/#Emphasis).
+   */
   isEmphasized?: boolean;
   /**
    * Sets the amount of space between buttons.
+   *
    * @default 'regular'
    */
   density?: 'compact' | 'regular';
   /** Whether the ActionButtons should be justified in their container. */
   isJustified?: boolean;
-  /** Whether ActionButtons should use the [quiet style](https://spectrum.adobe.com/page/action-button/#Quiet). */
+  /**
+   * Whether ActionButtons should use the [quiet
+   * style](https://spectrum.adobe.com/page/action-button/#Quiet).
+   */
   isQuiet?: boolean;
   /** The static color style to apply. Useful when the ActionGroup appears over a color background. */
   staticColor?: 'white' | 'black';
@@ -71,14 +78,16 @@ export interface SpectrumActionGroupProps<T> extends AriaActionGroupProps<T>, St
    * Defines the behavior of the ActionGroup when the buttons do not fit in the available space.
    * When set to 'wrap', the items wrap to form a new line. When set to 'collapse', the items that
    * do not fit are collapsed into a dropdown menu.
+   *
    * @default 'wrap'
    */
   overflowMode?: 'wrap' | 'collapse';
   /**
    * Defines when the text within the buttons should be hidden and only the icon should be shown.
-   * When set to 'hide', the text is always shown in a tooltip. When set to 'collapse', the text is visible
-   * if space is available, and hidden when space is limited. The text is always visible when the item
-   * is collapsed into a menu.
+   * When set to 'hide', the text is always shown in a tooltip. When set to 'collapse', the text is
+   * visible if space is available, and hidden when space is limited. The text is always visible
+   * when the item is collapsed into a menu.
+   *
    * @default 'show'
    */
   buttonLabelBehavior?: 'show' | 'collapse' | 'hide';

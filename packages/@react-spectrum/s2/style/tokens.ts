@@ -107,8 +107,8 @@ function extractOpacity(color: string): number {
 }
 
 /**
- * This swaps between white or black based on the background color.
- * After testing against all RGB background colors, 49.44 minimizes the number of WCAG 4.5:1 contrast failures.
+ * This swaps between white or black based on the background color. After testing against all RGB
+ * background colors, 49.44 minimizes the number of WCAG 4.5:1 contrast failures.
  */
 export function autoStaticColor(bg = 'var(--s2-container-bg)', alpha = 1): string {
   return `lch(from ${bg} calc((49.44 - l) * infinity) 0 0 / ${alpha})`;

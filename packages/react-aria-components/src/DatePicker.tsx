@@ -56,36 +56,43 @@ import {useFocusRing} from 'react-aria/useFocusRing';
 export interface DatePickerRenderProps {
   /**
    * Whether an element within the date picker is focused, either via a mouse or keyboard.
+   *
    * @selector [data-focus-within]
    */
   isFocusWithin: boolean;
   /**
    * Whether an element within the date picker is keyboard focused.
+   *
    * @selector [data-focus-visible]
    */
   isFocusVisible: boolean;
   /**
    * Whether the date picker is disabled.
+   *
    * @selector [data-disabled]
    */
   isDisabled: boolean;
   /**
    * Whether the date picker is read only.
+   *
    * @selector [data-readonly]
    */
   isReadOnly: boolean;
   /**
    * Whether the date picker is invalid.
+   *
    * @selector [data-invalid]
    */
   isInvalid: boolean;
   /**
    * Whether the date picker is required.
+   *
    * @selector [data-required]
    */
   isRequired: boolean;
   /**
    * Whether the date picker's popover is currently open.
+   *
    * @selector [data-open]
    */
   isOpen: boolean;
@@ -113,7 +120,9 @@ export interface DatePickerProps<T extends DateValue>
     SlotProps,
     GlobalDOMAttributes<HTMLDivElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-DatePicker'
    */
   className?: ClassNameOrFunction<DatePickerRenderProps>;
@@ -130,7 +139,9 @@ export interface DateRangePickerProps<T extends DateValue>
     SlotProps,
     GlobalDOMAttributes<HTMLDivElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-DateRangePicker'
    */
   className?: ClassNameOrFunction<DateRangePickerRenderProps>;
@@ -147,7 +158,8 @@ export const DateRangePickerStateContext = createContext<DateRangePickerState | 
 const CLEAR_CONTEXTS = [GroupContext, ButtonContext, LabelContext, TextContext];
 
 /**
- * A date picker combines a DateField and a Calendar popover to allow users to enter or select a date and time value.
+ * A date picker combines a DateField and a Calendar popover to allow users to enter or select a
+ * date and time value.
  */
 export const DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function DatePicker<
   T extends DateValue

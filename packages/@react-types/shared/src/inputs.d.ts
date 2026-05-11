@@ -29,6 +29,7 @@ export interface Validation<T = unknown> {
    * Whether to use native HTML form validation to prevent form submission
    * when the value is missing or invalid, or mark the field as required
    * or invalid via ARIA.
+   *
    * @default 'aria'
    */
   validationBehavior?: 'aria' | 'native';
@@ -83,8 +84,9 @@ export interface SpectrumTextInputBase {
   /**
    * Temporary text that occupies the text input when it is empty.
    * Please use help text instead.
+   *
    * @deprecated
-   **/
+   */
   placeholder?: string;
 }
 

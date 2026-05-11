@@ -1,11 +1,12 @@
 #!/usr/bin/env node
 /**
  * Script to validate s2-docs build output.
+ *
  * - Confirms the build directory exists and contains files.
  * - Checks for duplicate </script></body></html> occurrences in HTML files.
  *
  * Usage: node scripts/validateS2DocsBuild.mjs [directory]
- * Default directory: ./dist
+ * Default directory: ./dist.
  */
 
 import {dirname, join} from 'path';

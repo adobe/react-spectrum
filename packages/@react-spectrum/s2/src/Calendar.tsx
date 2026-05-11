@@ -81,6 +81,7 @@ export interface CalendarProps<T extends DateValue, M extends CalendarSelectionM
   errorMessage?: ReactNode;
   /**
    * The number of months to display at once.
+   *
    * @default 1
    */
   visibleMonths?: number;
@@ -754,10 +755,13 @@ const CalendarCellInner = (
 type DayOfWeek = 'sun' | 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat';
 
 /**
- * Calculate the week index (0-based) and day index (0-based) for a given date within a month in a calendar.
+ * Calculate the week index (0-based) and day index (0-based) for a given date within a month in a
+ * calendar.
+ *
  * @param date - The date to calculate indices for.
  * @param locale - The locale string (e.g., 'en-US', 'fr-FR', 'hi-IN-u-ca-indian').
- * @param firstDayOfWeek - Optional override for the first day of the week ('sun', 'mon', 'tue', etc.).
+ * @param firstDayOfWeek - Optional override for the first day of the week ('sun', 'mon', 'tue',
+ *   etc.).
  * @returns Object with weekIndex and dayIndex.
  */
 function useWeekAndDayIndices(date: CalendarDate, locale: string, firstDayOfWeek?: DayOfWeek) {

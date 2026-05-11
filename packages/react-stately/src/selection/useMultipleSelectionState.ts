@@ -40,6 +40,7 @@ function equalSets(setA, setB) {
 export interface MultipleSelectionStateProps extends MultipleSelection {
   /**
    * How multiple selection should behave in the collection.
+   *
    * @default 'toggle'
    */
   selectionBehavior?: SelectionBehavior;
@@ -47,6 +48,7 @@ export interface MultipleSelectionStateProps extends MultipleSelection {
   allowDuplicateSelectionEvents?: boolean;
   /**
    * Whether `disabledKeys` applies to all interactions, or only selection.
+   *
    * @default 'all'
    */
   disabledBehavior?: DisabledBehavior;

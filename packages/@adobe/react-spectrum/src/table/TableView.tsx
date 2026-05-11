@@ -45,11 +45,13 @@ export interface SpectrumTableProps<T>
     StyleProps {
   /**
    * Sets the amount of vertical padding within each cell.
+   *
    * @default 'regular'
    */
   density?: 'compact' | 'regular' | 'spacious';
   /**
    * Sets the overflow behavior for the cell contents.
+   *
    * @default 'truncate'
    */
   overflowMode?: 'wrap' | 'truncate';
@@ -59,7 +61,8 @@ export interface SpectrumTableProps<T>
   renderEmptyState?: () => JSX.Element;
   /**
    * Whether `disabledKeys` applies to all interactions, or only selection.
-   * @default "selection"
+   *
+   * @default 'selection'
    */
   disabledBehavior?: DisabledBehavior;
   /** Handler that is called when a user performs an action on a row. */
@@ -80,41 +83,52 @@ export interface SpectrumTableProps<T>
    */
   onResizeEnd?: (widths: Map<Key, ColumnSize>) => void;
   /**
-   * The drag and drop hooks returned by `useDragAndDrop` used to enable drag and drop behavior for the TableView.
+   * The drag and drop hooks returned by `useDragAndDrop` used to enable drag and drop behavior for
+   * the TableView.
+   *
    * @version beta
    */
   dragAndDropHooks?: DragAndDropHooks<NoInfer<T>>['dragAndDropHooks'];
   /**
-   * Whether the TableView should support expandable rows. Requires the feature flag to be enabled first, see https://react-spectrum.adobe.com/react-spectrum/TableView.html#expandable-rows.
-   * @version alpha
+   * Whether the TableView should support expandable rows. Requires the feature flag to be enabled
+   * first, see https://react-spectrum.adobe.com/react-spectrum/TableView.html#expandable-rows.
+   *
    * @private
+   * @version alpha
    */
   UNSTABLE_allowsExpandableRows?: boolean;
   /**
    * The currently expanded keys in the collection (controlled). Requires the feature flag to be
-   * enabled along with UNSTABLE_allowsExpandableRows, see https://react-spectrum.adobe.com/react-spectrum/TableView.html#expandable-rows.
-   * @version alpha
+   * enabled along with UNSTABLE_allowsExpandableRows, see
+   * https://react-spectrum.adobe.com/react-spectrum/TableView.html#expandable-rows.
+   *
    * @private
+   * @version alpha
    */
   UNSTABLE_expandedKeys?: 'all' | Iterable<Key>;
   /**
    * The initial expanded keys in the collection (uncontrolled). Requires the feature flag to be
-   * enabled along with UNSTABLE_allowsExpandableRows, see https://react-spectrum.adobe.com/react-spectrum/TableView.html#expandable-rows.
-   * @version alpha
+   * enabled along with UNSTABLE_allowsExpandableRows, see
+   * https://react-spectrum.adobe.com/react-spectrum/TableView.html#expandable-rows.
+   *
    * @private
+   * @version alpha
    */
   UNSTABLE_defaultExpandedKeys?: 'all' | Iterable<Key>;
   /**
    * Handler that is called when items are expanded or collapsed. Requires the feature flag to be
-   * enabled along with UNSTABLE_allowsExpandableRows, see https://react-spectrum.adobe.com/react-spectrum/TableView.html#expandable-rows.
-   * @version alpha
+   * enabled along with UNSTABLE_allowsExpandableRows, see
+   * https://react-spectrum.adobe.com/react-spectrum/TableView.html#expandable-rows.
+   *
    * @private
+   * @version alpha
    */
   UNSTABLE_onExpandedChange?: (keys: Set<Key>) => any;
 }
 
 /**
- * Tables are containers for displaying information. They allow users to quickly scan, sort, compare, and take action on large amounts of data.
+ * Tables are containers for displaying information. They allow users to quickly scan, sort,
+ * compare, and take action on large amounts of data.
  */
 const TableView = React.forwardRef(function TableView<T extends object>(
   props: SpectrumTableProps<T>,

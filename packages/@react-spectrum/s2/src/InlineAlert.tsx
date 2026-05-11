@@ -43,11 +43,13 @@ export interface InlineAlertProps extends DOMProps, StyleProps, InlineStylesProp
 interface InlineStylesProps {
   /**
    * The semantic tone of a Inline Alert.
+   *
    * @default neutral
    */
   variant?: 'informative' | 'positive' | 'notice' | 'negative' | 'neutral';
   /**
    * The visual style of the Inline Alert.
+   *
    * @default border
    */
   fillStyle?: 'border' | 'subtleFill' | 'boldFill';
@@ -199,8 +201,8 @@ const content = style({
 });
 
 /**
- * Inline alerts display a non-modal message associated with objects in a view.
- * These are often used in form validation, providing a place to aggregate feedback related to multiple fields.
+ * Inline alerts display a non-modal message associated with objects in a view. These are often used
+ * in form validation, providing a place to aggregate feedback related to multiple fields.
  */
 export const InlineAlert = /*#__PURE__*/ forwardRef(function InlineAlert(
   props: InlineAlertProps,

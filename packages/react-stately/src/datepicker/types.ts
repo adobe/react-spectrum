@@ -49,16 +49,29 @@ interface DateFieldBase<T extends DateValue>
   minValue?: DateValue | null;
   /** The maximum allowed date that a user may select. */
   maxValue?: DateValue | null;
-  /** Callback that is called for each date of the calendar. If it returns true, then the date is unavailable. */
+  /**
+   * Callback that is called for each date of the calendar. If it returns true, then the date is
+   * unavailable.
+   */
   isDateUnavailable?: (date: DateValue) => boolean;
-  /** A placeholder date that influences the format of the placeholder shown when no value is selected. Defaults to today's date at midnight. */
+  /**
+   * A placeholder date that influences the format of the placeholder shown when no value is
+   * selected. Defaults to today's date at midnight.
+   */
   placeholderValue?: T | null;
-  /** Whether to display the time in 12 or 24 hour format. By default, this is determined by the user's locale. */
+  /**
+   * Whether to display the time in 12 or 24 hour format. By default, this is determined by the
+   * user's locale.
+   */
   hourCycle?: 12 | 24;
-  /** Determines the smallest unit that is displayed in the date picker. By default, this is `"day"` for dates, and `"minute"` for times. */
+  /**
+   * Determines the smallest unit that is displayed in the date picker. By default, this is `"day"`
+   * for dates, and `"minute"` for times.
+   */
   granularity?: Granularity;
   /**
    * Whether to hide the time zone abbreviation.
+   *
    * @default false
    */
   hideTimeZone?: boolean;
@@ -74,7 +87,9 @@ export interface DateFieldProps<T extends DateValue>
 
 interface DatePickerBase<T extends DateValue> extends DateFieldBase<T>, OverlayTriggerProps {
   /**
-   * Controls the behavior of paging. Pagination either works by advancing the visible page by visibleDuration (default) or one unit of visibleDuration.
+   * Controls the behavior of paging. Pagination either works by advancing the visible page by
+   * visibleDuration (default) or one unit of visibleDuration.
+   *
    * @default visible
    */
   pageBehavior?: PageBehavior;
@@ -97,14 +112,19 @@ export interface DateRangePickerProps<T extends DateValue>
    * i.e. ranges containing unavailable dates, may be selected.
    */
   allowsNonContiguousRanges?: boolean;
-  /** Callback that is called for each date of the calendar. If it returns true, then the date is unavailable. */
+  /**
+   * Callback that is called for each date of the calendar. If it returns true, then the date is
+   * unavailable.
+   */
   isDateUnavailable?: (date: DateValue, anchorDate: CalendarDate | null) => boolean;
   /**
-   * The name of the start date input element, used when submitting an HTML form. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefname).
+   * The name of the start date input element, used when submitting an HTML form. See
+   * [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefname).
    */
   startName?: string;
   /**
-   * The name of the end date input element, used when submitting an HTML form. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefname).
+   * The name of the end date input element, used when submitting an HTML form. See
+   * [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefname).
    */
   endName?: string;
 }
@@ -117,10 +137,14 @@ export interface TimePickerProps<T extends TimeValue>
     LabelableProps,
     HelpTextProps,
     ValueBase<T | null, MappedTimeValue<T> | null> {
-  /** Whether to display the time in 12 or 24 hour format. By default, this is determined by the user's locale. */
+  /**
+   * Whether to display the time in 12 or 24 hour format. By default, this is determined by the
+   * user's locale.
+   */
   hourCycle?: 12 | 24;
   /**
    * Determines the smallest unit that is displayed in the time picker.
+   *
    * @default 'minute'
    */
   granularity?: 'hour' | 'minute' | 'second';
@@ -132,8 +156,8 @@ export interface TimePickerProps<T extends TimeValue>
    */
   shouldForceLeadingZeros?: boolean;
   /**
-   * A placeholder time that influences the format of the placeholder shown when no value is selected.
-   * Defaults to 12:00 AM or 00:00 depending on the hour cycle.
+   * A placeholder time that influences the format of the placeholder shown when no value is
+   * selected. Defaults to 12:00 AM or 00:00 depending on the hour cycle.
    */
   placeholderValue?: T;
   /** The minimum allowed time that a user may select. */

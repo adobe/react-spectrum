@@ -34,11 +34,13 @@ import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface RangeSliderProps extends Omit<SliderBaseProps<RangeValue<number>>, 'children'> {
   /**
-   * The name of the start input element, used when submitting an HTML form. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefname).
+   * The name of the start input element, used when submitting an HTML form. See
+   * [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefname).
    */
   startName?: string;
   /**
-   * The name of the end input element, used when submitting an HTML form. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefname).
+   * The name of the end input element, used when submitting an HTML form. See
+   * [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefname).
    */
   endName?: string;
   /**
@@ -53,7 +55,8 @@ export const RangeSliderContext =
   createContext<ContextValue<Partial<RangeSliderProps>, FocusableRefValue<HTMLDivElement>>>(null);
 
 /**
- * RangeSliders allow users to quickly select a subset range. They should be used when the upper and lower bounds to the range are invariable.
+ * RangeSliders allow users to quickly select a subset range. They should be used when the upper and
+ * lower bounds to the range are invariable.
  */
 export const RangeSlider = /*#__PURE__*/ forwardRef(function RangeSlider(
   props: RangeSliderProps,

@@ -22,13 +22,16 @@ export interface FieldErrorRenderProps extends ValidationResult {}
 export interface FieldErrorProps
   extends RenderProps<FieldErrorRenderProps>, DOMProps, GlobalDOMAttributes<HTMLDivElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-FieldError'
    */
   className?: ClassNameOrFunction<FieldErrorRenderProps>;
   /**
    * The HTML element type to render. Defaults to `'span'`.
    * Set to `'div'` when using block-level children (e.g. `<ul>`) to avoid invalid HTML.
+   *
    * @default 'span'
    */
   elementType?: string;

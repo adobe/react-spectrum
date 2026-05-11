@@ -378,7 +378,7 @@ module.exports = {
         error: 'var(--spectrum-alias-icon-color-error)'
       }
     },
-    /** https://spectrum.adobe.com/page/states/#Keyboard-focus */
+    /** https://spectrum.adobe.com/page/states/#Keyboard-focus. */
     ringColor: {
       DEFAULT: 'var(--spectrum-alias-focus-ring-color)'
     },
@@ -390,12 +390,12 @@ module.exports = {
       /** For use when next to existing blue border. */
       half: 'calc(var(--spectrum-alias-focus-ring-size) / 2)'
     },
-    /** https://spectrum.adobe.com/page/object-styles/#Drop-shadow */
+    /** https://spectrum.adobe.com/page/object-styles/#Drop-shadow. */
     dropShadow: {
       DEFAULT:
         '0 var(--spectrum-alias-dropshadow-offset-y) var(--spectrum-alias-dropshadow-blur) var(--spectrum-alias-dropshadow-color)'
     },
-    /** https://spectrum.adobe.com/page/object-styles/#Border-width */
+    /** https://spectrum.adobe.com/page/object-styles/#Border-width. */
     borderWidth: {
       DEFAULT: 'var(--spectrum-alias-border-size-thin)',
       none: '0',
@@ -404,7 +404,7 @@ module.exports = {
       thicker: 'var(--spectrum-alias-border-size-thicker)',
       thickest: 'var(--spectrum-alias-border-size-thickest)'
     },
-    /** https://spectrum.adobe.com/page/object-styles/#Rounding */
+    /** https://spectrum.adobe.com/page/object-styles/#Rounding. */
     borderRadius: {
       DEFAULT: 'var(--spectrum-alias-border-radius-regular)',
       xsmall: 'var(--spectrum-alias-border-radius-xsmall)',
@@ -414,7 +414,7 @@ module.exports = {
       large: 'var(--spectrum-alias-border-radius-large)',
       full: '9999px'
     },
-    /** https://spectrum.adobe.com/page/typography/#Font-sizes */
+    /** https://spectrum.adobe.com/page/typography/#Font-sizes. */
     fontSize: {
       DEFAULT: 'var(--spectrum-alias-font-size-default)',
       xs: 'var(--spectrum-global-dimension-font-size-50)',
