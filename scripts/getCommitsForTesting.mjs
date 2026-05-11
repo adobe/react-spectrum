@@ -43,10 +43,7 @@ async function writeTestingCSV() {
 }
 
 export async function generateData(startDate, endDate) {
-  let [data, openOffPRs] = await Promise.all([
-    listCommits(startDate, endDate),
-    listOpenOffPRs()
-  ]);
+  let [data, openOffPRs] = await Promise.all([listCommits(startDate, endDate), listOpenOffPRs()]);
 
   // First pass: extract PR numbers from commit messages
   let commitsWithPRs = [];
@@ -75,7 +72,7 @@ export async function generateData(startDate, endDate) {
     let component = '';
     if (matches.length > 0) {
       if (matches.includes('documentation')) {
-        component = 'Docs'
+        component = 'Docs';
       } else {
         component = matches.sort().join('/');
       }
@@ -128,11 +125,7 @@ export async function generateData(startDate, endDate) {
     row.push(info.data.html_url);
     row.push(removePRNumber(title));
 
-    if (
-      !labels.has('S2') &&
-      !labels.has('RAC') &&
-      !labels.has('v3')
-    ) {
+    if (!labels.has('S2') && !labels.has('RAC') && !labels.has('v3')) {
       otherPRs.push(row);
     } else {
       if (labels.has('S2')) {
