@@ -11,11 +11,11 @@
  */
 
 import {ColorField, ColorFieldProps} from '../src/ColorField';
+import {ColorSwatch} from '../exports';
 import {generateComboChunks, shortName} from './utils';
 import type {Meta, StoryObj} from '@storybook/react';
 import {ReactElement} from 'react';
 import {style} from '../style' with {type: 'macro'};
-import {ColorSwatch} from '../exports';
 
 const meta: Meta<typeof ColorField> = {
   component: ColorField,

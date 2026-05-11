@@ -22,11 +22,11 @@ import {
   WithAvatars,
   WithIcons
 } from '../stories/ComboBox.stories';
+import {Avatar} from '../exports';
 import {ComboBox} from '../src/ComboBox';
 import {expect} from '@storybook/jest';
 import type {Meta, StoryObj} from '@storybook/react';
 import {userEvent, waitFor, within} from 'storybook/test';
-import {Avatar} from '../exports';
 
 const meta: Meta<typeof ComboBox<any>> = {
   component: ComboBox,
