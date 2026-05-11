@@ -1083,13 +1083,11 @@ class ConditionalRule extends GroupRule {
  * Must be imported with `{type: 'macro'}`.
  *
  * @example
- *   ```tsx
  *   import {css} from '@react-spectrum/s2/style' with {type: 'macro'};
  *
  *   const styles = css(`
  *   backdrop-filter: blur(8px);
- * `);
- *   ```
+ *   `);
  *
  * @param content - The CSS declarations to inject.
  * @param layer - The CSS `@layer` to place the styles in. Defaults to `'_.a'`.

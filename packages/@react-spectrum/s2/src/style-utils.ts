@@ -21,13 +21,11 @@ import {StyleString} from '../style/types';
  * layout to the container.
  *
  * @example
- *   ```tsx
  *   import {centerPadding, style} from '@react-spectrum/s2/style' with {type: 'macro'};
  *
  *   const styles = style({
  *     paddingY: centerPadding()
  *   });
- *   ```
  *
  * @param minHeight - A CSS expression for the minimum height to center within. Defaults to
  *   `'self(minHeight)'`.
@@ -140,14 +138,12 @@ export const fieldInput = () =>
  * not needed for individual components.
  *
  * @example
- *   ```tsx
  *   import {setColorScheme, style} from '@react-spectrum/s2/style' with {type: 'macro'};
  *
  *   const styles = style({
  *     ...setColorScheme(),
  *     backgroundColor: 'layer-1'
  *   });
- *   ```
  */
 export const setColorScheme = () =>
   ({

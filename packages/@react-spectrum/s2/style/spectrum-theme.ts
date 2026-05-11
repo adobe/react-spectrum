@@ -228,13 +228,11 @@ type BaseColor = keyof typeof baseColors;
  * and pressed states of a component.
  *
  * @example
- *   ```tsx
  *   import {baseColor, style} from '@react-spectrum/s2/style' with {type: 'macro'};
  *
  *   const styles = style({
  *     backgroundColor: baseColor('gray-100')
  *   });
- *   ```
  *
  * @param base - A Spectrum base color token name (e.g. `'gray-100'`, `'accent-900'`).
  * @returns An object with `default`, `isHovered`, `isFocusVisible`, and `isPressed` color token
@@ -258,14 +256,12 @@ type SpectrumColor = Color<BaseColor> | ArbitraryValue;
  * Supports opacity modifiers via the `color/opacity` syntax.
  *
  * @example
- *   ```tsx
  *   import {color, style} from '@react-spectrum/s2/style' with {type: 'macro'};
  *
  *   const styles = style({
  *     color: color('gray-800'),
  *     borderColor: color('accent-900/50')
  *   });
- *   ```
  *
  * @param value - A Spectrum color token (e.g. `'gray-800'`, `'accent-900/50'`) or an arbitrary CSS
  *   color value.
@@ -285,13 +281,11 @@ export function color(value: SpectrumColor): string {
  * depending on the current color scheme.
  *
  * @example
- *   ```tsx
  *   import {lightDark, style} from '@react-spectrum/s2/style' with {type: 'macro'};
  *
  *   const styles = style({
  *     backgroundColor: lightDark('gray-25', 'gray-900')
  *   });
- *   ```
  *
  * @param light - The color to use in light mode.
  * @param dark - The color to use in dark mode.
@@ -305,13 +299,11 @@ export function lightDark(light: SpectrumColor, dark: SpectrumColor): `[${string
  * Mixes two Spectrum colors by a given percentage using CSS `color-mix()` in sRGB color space.
  *
  * @example
- *   ```tsx
  *   import {colorMix, style} from '@react-spectrum/s2/style' with {type: 'macro'};
  *
  *   const styles = style({
  *     backgroundColor: colorMix('accent-900', 'gray-25', 50)
  *   });
- *   ```
  *
  * @param a - The first color.
  * @param b - The second color.
@@ -461,14 +453,12 @@ const padding = {
  * factor. The scale factor differs between touch and non-touch devices.
  *
  * @example
- *   ```tsx
  *   import {size, style} from '@react-spectrum/s2/style' with {type: 'macro'};
  *
  *   const styles = style({
  *     width: size(200),
  *     height: size(48)
  *   });
- *   ```
  *
  * @param px - The size in pixels.
  * @returns A CSS `calc()` expression.

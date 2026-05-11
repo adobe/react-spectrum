@@ -145,5 +145,5 @@ module.exports = {fragmentUnWrap, fragmentWrap};
  *   }
  *   }
  *   }
- *   ```
+ *   ```;
  */

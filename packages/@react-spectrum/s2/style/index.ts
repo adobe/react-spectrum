@@ -30,13 +30,11 @@ export type {StyleString} from './types';
  * Converts a pixel value to a Spectrum spacing token in `rem` units.
  *
  * @example
- *   ```tsx
  *   import {space, style} from '@react-spectrum/s2/style' with {type: 'macro'};
  *
  *   const styles = style({
  *     gap: space(12) // 12/16 = 0.75rem
  *   });
- *   ```
  *
  * @param px - The spacing in pixels.
  * @returns A `rem` value wrapped as an arbitrary style value.
@@ -50,13 +48,11 @@ export function space(px: number): `[${string}]` {
  * relative to the current font size. Defaults to a 14px base.
  *
  * @example
- *   ```tsx
  *   import {fontRelative, style} from '@react-spectrum/s2/style' with {type: 'macro'};
  *
  *   const styles = style({
  *     gap: fontRelative(2) // 2/14 = ~0.143em
  *   });
- *   ```
  *
  * @param base - The pixel value to convert.
  * @param baseFontSize - The base font size in pixels to divide by. Defaults to `14`.
@@ -70,14 +66,12 @@ export function fontRelative(base: number, baseFontSize = 14): `[${string}]` {
  * Returns consistent Spectrum focus ring outline styles for interactive components.
  *
  * @example
- *   ```tsx
  *   import {focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
  *
  *   const styles = style({
  *     ...focusRing(),
  *     borderRadius: 'lg'
  *   });
- *   ```
  */
 export const focusRing = () =>
   ({
@@ -163,12 +157,10 @@ const iconSizes = {
  * Must be imported with `{type: 'macro'}`.
  *
  * @example
- *   ```tsx
  *   import {iconStyle} from '@react-spectrum/s2/style' with {type: 'macro'};
  *   import Edit from '@react-spectrum/s2/icons/Edit';
  *
  *   <Edit styles={iconStyle({size: 'XL', color: 'positive'})} />;
- *   ```
  *
  * @param options - Icon styling options including `size` (XS–XL), `color`, and layout properties.
  * @returns A `StyleString` that can be applied to an icon element.

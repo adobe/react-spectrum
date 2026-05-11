@@ -42,7 +42,6 @@ import {StyleString} from './types';
  * Useful for composing styles from multiple `style()` macro calls.
  *
  * @example
- *   ```tsx
  *   import {mergeStyles} from '@react-spectrum/s2';
  *   import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
  *
@@ -50,7 +49,6 @@ import {StyleString} from './types';
  *   const overrideStyles = style({padding: 16, color: 'heading'});
  *   const merged = mergeStyles(baseStyles, overrideStyles);
  *   // merged has `padding: 16` and `color: heading`.
- *   ```
  */
 export function mergeStyles(...styles: (StyleString | null | undefined)[]): StyleString {
   let definedStyles = styles.filter(Boolean) as StyleString[];
