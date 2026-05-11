@@ -12,18 +12,29 @@
 
 import {AnyDateTime, DateTimeDuration, Disambiguation} from './types';
 import {CalendarDate, CalendarDateTime, Time, ZonedDateTime} from './CalendarDate';
-import {epochFromDate, fromAbsolute, possibleAbsolutes, toAbsolute, toCalendar, toCalendarDateTime, toTimeZone} from './conversion';
+import {
+  epochFromDate,
+  fromAbsolute,
+  possibleAbsolutes,
+  toAbsolute,
+  toCalendar,
+  toCalendarDateTime,
+  toTimeZone
+} from './conversion';
 import {getLocalTimeZone} from './queries';
 import {GregorianCalendar} from './calendars/GregorianCalendar';
 import {Mutable} from './utils';
 
 const TIME_RE = /^(\d{2})(?::(\d{2}))?(?::(\d{2}))?(\.\d+)?$/;
 const DATE_RE = /^([+-]\d{6}|\d{4})-(\d{2})-(\d{2})$/;
-const DATE_TIME_RE = /^([+-]\d{6}|\d{4})-(\d{2})-(\d{2})(?:T(\d{2}))?(?::(\d{2}))?(?::(\d{2}))?(\.\d+)?$/;
-const ZONED_DATE_TIME_RE = /^([+-]\d{6}|\d{4})-(\d{2})-(\d{2})(?:T(\d{2}))?(?::(\d{2}))?(?::(\d{2}))?(\.\d+)?(?:([+-]\d{2})(?::?(\d{2}))?(?::?(\d{2}))?)?\[(.*?)\]$/;
-const ABSOLUTE_RE = /^([+-]\d{6}|\d{4})-(\d{2})-(\d{2})(?:T(\d{2}))?(?::(\d{2}))?(?::(\d{2}))?(\.\d+)?(?:(?:([+-]\d{2})(?::?(\d{2}))?)|Z)$/;
+const DATE_TIME_RE =
+  /^([+-]\d{6}|\d{4})-(\d{2})-(\d{2})(?:T(\d{2}))?(?::(\d{2}))?(?::(\d{2}))?(\.\d+)?$/;
+const ZONED_DATE_TIME_RE =
+  /^([+-]\d{6}|\d{4})-(\d{2})-(\d{2})(?:T(\d{2}))?(?::(\d{2}))?(?::(\d{2}))?(\.\d+)?(?:([+-]\d{2})(?::?(\d{2}))?(?::?(\d{2}))?)?\[(.*?)\]$/;
+const ABSOLUTE_RE =
+  /^([+-]\d{6}|\d{4})-(\d{2})-(\d{2})(?:T(\d{2}))?(?::(\d{2}))?(?::(\d{2}))?(\.\d+)?(?:(?:([+-]\d{2})(?::?(\d{2}))?)|Z)$/;
 const DATE_TIME_DURATION_RE =
-    /^((?<negative>-)|\+)?P((?<years>\d*)Y)?((?<months>\d*)M)?((?<weeks>\d*)W)?((?<days>\d*)D)?((?<time>T)((?<hours>\d*[.,]?\d{1,9})H)?((?<minutes>\d*[.,]?\d{1,9})M)?((?<seconds>\d*[.,]?\d{1,9})S)?)?$/;
+  /^((?<negative>-)|\+)?P((?<years>\d*)Y)?((?<months>\d*)M)?((?<weeks>\d*)W)?((?<days>\d*)D)?((?<time>T)((?<hours>\d*[.,]?\d{1,9})H)?((?<minutes>\d*[.,]?\d{1,9})M)?((?<seconds>\d*[.,]?\d{1,9})S)?)?$/;
 const requiredDurationTimeGroups = ['hours', 'minutes', 'seconds'];
 const requiredDurationGroups = ['years', 'months', 'weeks', 'days', ...requiredDurationTimeGroups];
 
@@ -125,13 +136,19 @@ export function parseZonedDateTime(value: string, disambiguation?: Disambiguatio
   let ms: number;
   if (m[8]) {
     let hourOffset = parseNumber(m[8], -23, 23);
-    date.offset = Math.sign(hourOffset) * (Math.abs(hourOffset) * 60 * 60 * 1000 + parseNumber(m[9] ?? '0', 0, 59) * 60 * 1000 + parseNumber(m[10] ?? '0', 0, 59) * 1000);
+    date.offset =
+      Math.sign(hourOffset) *
+      (Math.abs(hourOffset) * 60 * 60 * 1000 +
+        parseNumber(m[9] ?? '0', 0, 59) * 60 * 1000 +
+        parseNumber(m[10] ?? '0', 0, 59) * 1000);
     ms = epochFromDate(date as ZonedDateTime) - date.offset;
 
     // Validate offset against parsed date.
     let absolutes = possibleAbsolutes(plainDateTime, date.timeZone);
     if (!absolutes.includes(ms)) {
-      throw new Error(`Offset ${offsetToString(date.offset)} is invalid for ${dateTimeToString(date)} in ${date.timeZone}`);
+      throw new Error(
+        `Offset ${offsetToString(date.offset)} is invalid for ${dateTimeToString(date)} in ${date.timeZone}`
+      );
     }
   } else {
     // Convert to absolute and back to fix invalid times due to DST.
@@ -170,7 +187,8 @@ export function parseAbsolute(value: string, timeZone: string): ZonedDateTime {
   date.day = parseNumber(m[3], 0, date.calendar.getDaysInMonth(date));
 
   if (m[8]) {
-    date.offset = parseNumber(m[8], -23, 23) * 60 * 60 * 1000 + parseNumber(m[9] ?? '0', 0, 59) * 60 * 1000;
+    date.offset =
+      parseNumber(m[8], -23, 23) * 60 * 60 * 1000 + parseNumber(m[9] ?? '0', 0, 59) * 60 * 1000;
   }
 
   return toTimeZone(date as ZonedDateTime, timeZone);
@@ -201,9 +219,10 @@ export function dateToString(date: CalendarDate): string {
   let gregorianDate = toCalendar(date, new GregorianCalendar());
   let year: string;
   if (gregorianDate.era === 'BC') {
-    year = gregorianDate.year === 1
-      ? '0000'
-      : '-' + String(Math.abs(1 - gregorianDate.year)).padStart(6, '00');
+    year =
+      gregorianDate.year === 1
+        ? '0000'
+        : '-' + String(Math.abs(1 - gregorianDate.year)).padStart(6, '00');
   } else {
     year = String(gregorianDate.year).padStart(4, '0');
   }
@@ -220,7 +239,7 @@ function offsetToString(offset: number) {
   offset = Math.abs(offset);
   let offsetHours = Math.floor(offset / (60 * 60 * 1000));
   let offsetMinutes = Math.floor((offset % (60 * 60 * 1000)) / (60 * 1000));
-  let offsetSeconds = Math.floor((offset % (60 * 60 * 1000)) % (60 * 1000) / 1000);
+  let offsetSeconds = Math.floor(((offset % (60 * 60 * 1000)) % (60 * 1000)) / 1000);
   let stringOffset = `${sign}${String(offsetHours).padStart(2, '0')}:${String(offsetMinutes).padStart(2, '0')}`;
   if (offsetSeconds !== 0) {
     stringOffset += `:${String(offsetSeconds).padStart(2, '0')}`;
@@ -245,10 +264,7 @@ export function parseDuration(value: string): Required<DateTimeDuration> {
     throw new Error(`Invalid ISO 8601 Duration string: ${value}`);
   }
 
-  const parseDurationGroup = (
-    group: string | undefined,
-    isNegative: boolean
-  ): number => {
+  const parseDurationGroup = (group: string | undefined, isNegative: boolean): number => {
     if (!group) {
       return 0;
     }
@@ -271,7 +287,9 @@ export function parseDuration(value: string): Required<DateTimeDuration> {
   const durationStringIncludesTime = match.groups?.time;
 
   if (durationStringIncludesTime) {
-    const hasRequiredDurationTimeGroups = requiredDurationTimeGroups.some(group => match.groups?.[group]);
+    const hasRequiredDurationTimeGroups = requiredDurationTimeGroups.some(
+      group => match.groups?.[group]
+    );
     if (!hasRequiredDurationTimeGroups) {
       throw new Error(`Invalid ISO 8601 Duration string: ${value}`);
     }
@@ -287,12 +305,20 @@ export function parseDuration(value: string): Required<DateTimeDuration> {
     seconds: parseDurationGroup(match.groups?.seconds, isNegative)
   };
 
-  if (duration.hours !== undefined && ((duration.hours % 1) !== 0) && (duration.minutes || duration.seconds)) {
-    throw new Error(`Invalid ISO 8601 Duration string: ${value} - only the smallest unit can be fractional`);
+  if (
+    duration.hours !== undefined &&
+    duration.hours % 1 !== 0 &&
+    (duration.minutes || duration.seconds)
+  ) {
+    throw new Error(
+      `Invalid ISO 8601 Duration string: ${value} - only the smallest unit can be fractional`
+    );
   }
 
-  if (duration.minutes !== undefined && ((duration.minutes % 1) !== 0) && duration.seconds) {
-    throw new Error(`Invalid ISO 8601 Duration string: ${value} - only the smallest unit can be fractional`);
+  if (duration.minutes !== undefined && duration.minutes % 1 !== 0 && duration.seconds) {
+    throw new Error(
+      `Invalid ISO 8601 Duration string: ${value} - only the smallest unit can be fractional`
+    );
   }
 
   return duration as Required<DateTimeDuration>;

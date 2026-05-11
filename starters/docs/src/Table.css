@@ -1,5 +1,5 @@
-@import "./theme.css";
-@import "./utilities.css";
+@import './theme.css';
+@import './utilities.css';
 
 .react-aria-Table {
   border: 0.5px solid var(--border-color);
@@ -24,7 +24,7 @@
 
   &[data-drop-target] {
     outline: 2px solid var(--highlight-background);
-    background: var(--highlight-overlay)
+    background: var(--highlight-overlay);
   }
 
   &:has(.react-aria-TableBody[data-empty]) {
@@ -238,15 +238,15 @@
   box-sizing: content-box;
   background-clip: content-box;
 
-  &[data-resizable-direction=both] {
+  &[data-resizable-direction='both'] {
     cursor: ew-resize;
   }
 
-  &[data-resizable-direction=left] {
+  &[data-resizable-direction='left'] {
     cursor: e-resize;
   }
 
-  &[data-resizable-direction=right] {
+  &[data-resizable-direction='right'] {
     cursor: w-resize;
   }
 
@@ -279,14 +279,17 @@
 
   &[data-tree-column] {
     --chevron-placeholder: var(--spacing-5);
-    padding-inline-start: calc(var(--spacing-2) + (var(--table-row-level) - 1) * var(--spacing-4) + var(--chevron-placeholder));
+    padding-inline-start: calc(
+      var(--spacing-2) + (var(--table-row-level) - 1) * var(--spacing-4) +
+        var(--chevron-placeholder)
+    );
 
     &[data-has-child-items] {
       --chevron-placeholder: 0px;
     }
   }
 
-  .react-aria-Button[slot=chevron] {
+  .react-aria-Button[slot='chevron'] {
     all: unset;
     vertical-align: middle;
     margin-inline-end: var(--spacing-1);
@@ -302,7 +305,7 @@
     }
   }
 
-  &[data-expanded] .react-aria-Button[slot=chevron] svg {
+  &[data-expanded] .react-aria-Button[slot='chevron'] svg {
     rotate: 90deg;
   }
 }

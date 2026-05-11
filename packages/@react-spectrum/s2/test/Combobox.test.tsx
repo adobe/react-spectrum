@@ -11,7 +11,14 @@
  */
 
 jest.mock('react-aria/src/live-announcer/LiveAnnouncer');
-import {act, pointerMap, render, setupIntersectionObserverMock, waitFor, within} from '@react-spectrum/test-utils-internal';
+import {
+  act,
+  pointerMap,
+  render,
+  setupIntersectionObserverMock,
+  waitFor,
+  within
+} from '@react-spectrum/test-utils-internal';
 import {announce} from 'react-aria/private/live-announcer/LiveAnnouncer';
 import {Button} from '../src/Button';
 import {ComboBox, ComboBoxItem} from '../src/ComboBox';
@@ -36,7 +43,11 @@ describe('Combobox', () => {
         items={items}
         loadingState={loadingState}
         onLoadMore={onLoadMore}>
-        {(item: any) => <ComboBoxItem id={item.name} textValue={item.name}>{item.name}</ComboBoxItem>}
+        {(item: any) => (
+          <ComboBoxItem id={item.name} textValue={item.name}>
+            {item.name}
+          </ComboBoxItem>
+        )}
       </ComboBox>
     );
   }
@@ -59,11 +70,7 @@ describe('Combobox', () => {
   });
 
   it('should render the sentinel when the combobox is empty', async () => {
-    let tree = render(
-      <ComboBox label="test">
-        {[]}
-      </ComboBox>
-    );
+    let tree = render(<ComboBox label="test">{[]}</ComboBox>);
 
     let comboboxTester = testUtilUser.createTester('ComboBox', {root: tree.container});
     expect(comboboxTester.listbox).toBeFalsy();
@@ -103,9 +110,12 @@ describe('Combobox', () => {
     let sentinel = tree.getByTestId('loadMoreSentinel');
     expect(observe).toHaveBeenLastCalledWith(sentinel);
 
-
-    act(() => {observer.instance.triggerCallback([{isIntersecting: true}]);});
-    act(() => {jest.runAllTimers();});
+    act(() => {
+      observer.instance.triggerCallback([{isIntersecting: true}]);
+    });
+    act(() => {
+      jest.runAllTimers();
+    });
 
     tree.rerender(
       <ComboBox label="test" loadingState="idle" onLoadMore={onLoadMore}>
@@ -117,8 +127,12 @@ describe('Combobox', () => {
       </ComboBox>
     );
 
-    act(() => {observer.instance.triggerCallback([{isIntersecting: true}]);});
-    act(() => {jest.runAllTimers();});
+    act(() => {
+      observer.instance.triggerCallback([{isIntersecting: true}]);
+    });
+    act(() => {
+      jest.runAllTimers();
+    });
     // Note that if this was using useAsyncList, we'd be shielded from extranous onLoadMore calls but
     // we want to leave that to user discretion
     expect(onLoadMore).toHaveBeenCalledTimes(2);
@@ -136,11 +150,16 @@ describe('Combobox', () => {
       </ComboBox>
     );
 
-    let comboboxTester = testUtilUser.createTester('ComboBox', {root: tree.container, interactionType: 'mouse'});
+    let comboboxTester = testUtilUser.createTester('ComboBox', {
+      root: tree.container,
+      interactionType: 'mouse'
+    });
     await comboboxTester.open();
 
     expect(announce).toHaveBeenLastCalledWith('5 options available.');
-    expect(within(comboboxTester.listbox!).getByRole('progressbar', {hidden: true})).toBeInTheDocument();
+    expect(
+      within(comboboxTester.listbox!).getByRole('progressbar', {hidden: true})
+    ).toBeInTheDocument();
 
     await user.keyboard('C');
     expect(announce).toHaveBeenLastCalledWith('2 options available.');
@@ -150,7 +169,10 @@ describe('Combobox', () => {
     let items = [{name: 'Chocolate'}, {name: 'Mint'}, {name: 'Chocolate Chip'}];
     let tree = render(<DynamicCombobox items={items} />);
 
-    let comboboxTester = testUtilUser.createTester('ComboBox', {root: tree.container, interactionType: 'mouse'});
+    let comboboxTester = testUtilUser.createTester('ComboBox', {
+      root: tree.container,
+      interactionType: 'mouse'
+    });
     await comboboxTester.open();
     let options = comboboxTester.options();
     for (let [index, option] of options.entries()) {
@@ -164,7 +186,12 @@ describe('Combobox', () => {
     }
 
     // A bit contrived, but essentially testing a combinaiton of insertions/deletions along side some of the old entries remaining
-    let newItems = [{name: 'Chocolate'}, {name: 'Chocolate Mint'}, {name: 'Chocolate Chip Cookie Dough'}, {name: 'Chocolate Chip'}];
+    let newItems = [
+      {name: 'Chocolate'},
+      {name: 'Chocolate Mint'},
+      {name: 'Chocolate Chip Cookie Dough'},
+      {name: 'Chocolate Chip'}
+    ];
     tree.rerender(<DynamicCombobox items={newItems} loadingState="idle" />);
 
     options = comboboxTester.options();
@@ -184,9 +211,7 @@ describe('Combobox', () => {
           <ContextualHelp>
             <Heading>Title here</Heading>
             <Content>
-              <Text>
-                Contents
-              </Text>
+              <Text>Contents</Text>
             </Content>
           </ContextualHelp>
         }
@@ -199,7 +224,9 @@ describe('Combobox', () => {
       </ComboBox>
     );
 
-    let comboboxTester = testUtilUser.createTester('ComboBox', {root: tree.getByTestId('testcombobox')});
+    let comboboxTester = testUtilUser.createTester('ComboBox', {
+      root: tree.getByTestId('testcombobox')
+    });
     let buttons = tree.getAllByRole('button');
     expect(buttons).toHaveLength(2);
     expect(buttons[1]).toBe(comboboxTester.trigger);
@@ -239,13 +266,19 @@ describe('Combobox', () => {
       </DialogTrigger>
     );
 
-    let dialogTester = testUtilUser.createTester('Dialog', {root: tree.container, interactionType: 'mouse'});
+    let dialogTester = testUtilUser.createTester('Dialog', {
+      root: tree.container,
+      interactionType: 'mouse'
+    });
     await dialogTester.open();
     expect(dialogTester.dialog).toBeVisible();
     act(() => {
       jest.runAllTimers();
     });
-    let comboboxTester = testUtilUser.createTester('ComboBox', {root: dialogTester.dialog!, interactionType: 'mouse'});
+    let comboboxTester = testUtilUser.createTester('ComboBox', {
+      root: dialogTester.dialog!,
+      interactionType: 'mouse'
+    });
     await comboboxTester.open();
 
     expect(comboboxTester.listbox).toBeVisible();

@@ -64,7 +64,7 @@ governing permissions and limitations under the License.
   inline-size: calc(100% + var(--spectrum-checkbox-cursor-hit-x));
   block-size: 100%;
 
-  opacity: .0001;
+  opacity: 0.0001;
   z-index: 1;
 
   /* prevent double click event due to browser waiting to fire double tap */
@@ -109,7 +109,6 @@ governing permissions and limitations under the License.
       border-width: calc(var(--spectrum-checkbox-box-size) / 2);
     }
 
-
     .spectrum-Checkbox-checkmark {
       transform: scale(1);
       opacity: 1;
@@ -153,11 +152,15 @@ governing permissions and limitations under the License.
     border-width: var(--spectrum-checkbox-box-border-size);
     border-style: solid;
 
-    transition: border var(--spectrum-global-animation-duration-100) ease-in-out, box-shadow var(--spectrum-global-animation-duration-100) ease-in-out;
+    transition:
+      border var(--spectrum-global-animation-duration-100) ease-in-out,
+      box-shadow var(--spectrum-global-animation-duration-100) ease-in-out;
   }
 
   &:after {
-    border-radius: calc(var(--spectrum-checkbox-box-border-radius) + var(--spectrum-alias-focus-ring-gap));
+    border-radius: calc(
+      var(--spectrum-checkbox-box-border-radius) + var(--spectrum-alias-focus-ring-gap)
+    );
     content: '';
     display: block;
     position: absolute;
@@ -168,8 +171,9 @@ governing permissions and limitations under the License.
     margin: var(--spectrum-alias-focus-ring-gap);
     transform: translateX(0); /* Forces FF to render on the pixel grid */
 
-    transition: opacity var(--spectrum-global-animation-duration-100) ease-out,
-                margin var(--spectrum-global-animation-duration-100) ease-out;
+    transition:
+      opacity var(--spectrum-global-animation-duration-100) ease-out,
+      margin var(--spectrum-global-animation-duration-100) ease-out;
   }
 }
 
@@ -185,7 +189,9 @@ governing permissions and limitations under the License.
   opacity: 0;
   transform: scale(0);
 
-  transition: opacity var(--spectrum-global-animation-duration-100) ease-in-out, transform var(--spectrum-global-animation-duration-100) ease-in-out;
+  transition:
+    opacity var(--spectrum-global-animation-duration-100) ease-in-out,
+    transform var(--spectrum-global-animation-duration-100) ease-in-out;
 }
 
 .spectrum-Checkbox-partialCheckmark {

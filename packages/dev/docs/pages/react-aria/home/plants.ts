@@ -31,16 +31,16 @@ import xmas from 'url:./plants/xmas.jpg?as=webp';
 import zz from 'url:./plants/zz.jpg?as=webp';
 
 export interface Plant {
-  id: number,
-  common_name: string,
-  scientific_name: string[],
-  watering: string,
-  sunlight: string[],
-  cycle: string,
+  id: number;
+  common_name: string;
+  scientific_name: string[];
+  watering: string;
+  sunlight: string[];
+  cycle: string;
   default_image: {
-    thumbnail: string
-  },
-  isFavorite?: boolean
+    thumbnail: string;
+  };
+  isFavorite?: boolean;
 }
 
 export default [

@@ -13,7 +13,7 @@
 import {RefObject} from '@react-types/shared';
 import {useEffect} from 'react';
 
-async function *createAnimationQueue() {
+async function* createAnimationQueue() {
   while (true) {
     let {isCanceled, run} = yield;
     if (!isCanceled) {
@@ -22,13 +22,17 @@ async function *createAnimationQueue() {
   }
 }
 
-export let animationQueue: AsyncGenerator<undefined, void, {
-  isCanceled: boolean,
-  run: () => Promise<void>
-}> = createAnimationQueue();
+export let animationQueue: AsyncGenerator<
+  undefined,
+  void,
+  {
+    isCanceled: boolean;
+    run: () => Promise<void>;
+  }
+> = createAnimationQueue();
 animationQueue.next(); // advance to first yield
 
-export function animate(steps: {time: number, perform: () => void}[]): () => void {
+export function animate(steps: {time: number; perform: () => void}[]): () => void {
   let cancelCurrentStep;
   async function run() {
     for (let step of steps) {
@@ -71,7 +75,10 @@ function sleep(ms: number) {
   };
 }
 
-export function useIntersectionObserver(ref: RefObject<HTMLElement | null>, onIntersect: () => Function | void): void {
+export function useIntersectionObserver(
+  ref: RefObject<HTMLElement | null>,
+  onIntersect: () => Function | void
+): void {
   useEffect(() => {
     let element = ref.current;
     if (!element) {
@@ -79,14 +86,17 @@ export function useIntersectionObserver(ref: RefObject<HTMLElement | null>, onIn
     }
 
     let cancel: Function | void = undefined;
-    let observer = new IntersectionObserver((entries) => {
-      if (entries[0].isIntersecting) {
-        cancel = onIntersect();
-      } else if (typeof cancel === 'function') {
-        cancel();
-        cancel = undefined;
-      }
-    }, {threshold: 1});
+    let observer = new IntersectionObserver(
+      entries => {
+        if (entries[0].isIntersecting) {
+          cancel = onIntersect();
+        } else if (typeof cancel === 'function') {
+          cancel();
+          cancel = undefined;
+        }
+      },
+      {threshold: 1}
+    );
 
     observer.observe(element);
     return () => {

@@ -1,4 +1,19 @@
-import {Flex, Divider, Avatar, Content, Footer, Header, Heading, IllustratedMessage, Image, Keyboard, Text, View, TextField, Well} from '@adobe/react-spectrum';
+import {
+  Flex,
+  Divider,
+  Avatar,
+  Content,
+  Footer,
+  Header,
+  Heading,
+  IllustratedMessage,
+  Image,
+  Keyboard,
+  Text,
+  View,
+  TextField,
+  Well
+} from '@adobe/react-spectrum';
 import NotFound from '@spectrum-icons/illustrations/NotFound';
 
 export default function ContentExamples() {
@@ -20,7 +35,12 @@ export default function ContentExamples() {
           <Heading>No results</Heading>
           <Content>Try another search</Content>
         </IllustratedMessage>
-        <Image src="https://i.imgur.com/Z7AzH2c.png" alt="Sky and roof" width="500px" height="250"/>
+        <Image
+          src="https://i.imgur.com/Z7AzH2c.png"
+          alt="Sky and roof"
+          width="500px"
+          height="250"
+        />
         <Keyboard>⌘V</Keyboard>
         <Text>Paste</Text>
         <View
@@ -36,5 +56,5 @@ export default function ContentExamples() {
         </Well>
       </Flex>
     </>
-  )
+  );
 }

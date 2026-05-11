@@ -28,16 +28,16 @@ export default meta;
 export type FileTriggerStory = StoryObj<typeof FileTrigger>;
 
 export const DefaultWithButton: FileTriggerStory = {
-  render: (args) => (
-    <FileTrigger {...args} >
+  render: args => (
+    <FileTrigger {...args}>
       <Button variant={'accent'}>Upload</Button>
     </FileTrigger>
   )
 };
 
 export const DefaultWithLink: FileTriggerStory = {
-  render: (args) => (
-    <FileTrigger {...args} >
+  render: args => (
+    <FileTrigger {...args}>
       <Link>Upload</Link>
     </FileTrigger>
   )

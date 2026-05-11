@@ -32,7 +32,7 @@ export default {
 
 export type MeterStory = StoryFn<typeof Meter>;
 
-export const MeterExample: MeterStory = (args) => {
+export const MeterExample: MeterStory = args => {
   return (
     <Meter {...args}>
       {({percentage, valueText}) => (

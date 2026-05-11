@@ -1,1 +1,5 @@
-export {useTypeSelect, type AriaTypeSelectOptions, type TypeSelectAria} from '../../../src/selection/useTypeSelect';
+export {
+  useTypeSelect,
+  type AriaTypeSelectOptions,
+  type TypeSelectAria
+} from '../../../src/selection/useTypeSelect';

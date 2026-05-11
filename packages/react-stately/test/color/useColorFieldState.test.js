@@ -16,9 +16,9 @@ import {useColorFieldState} from '../../src/color/useColorFieldState';
 
 describe('useColorFieldState tests', function () {
   it.each`
-    Name                        | props
-    ${'no initial value'}       | ${{}}
-    ${'invalid initial value'}  | ${{defaultValue: 'invalidColor'}}
+    Name                       | props
+    ${'no initial value'}      | ${{}}
+    ${'invalid initial value'} | ${{defaultValue: 'invalidColor'}}
   `('should be in empty state if $Name is provided', function ({props}) {
     let {result} = renderHook(() => useColorFieldState(props));
     expect(result.current.colorValue).toBeUndefined();
@@ -26,13 +26,13 @@ describe('useColorFieldState tests', function () {
   });
 
   it.each`
-    Name                                   | props
-    ${'6-length hex string'}               | ${{defaultValue: '#aabbcc'}}
-    ${'3-length hex string'}               | ${{defaultValue: '#abc'}}
-    ${'Color object'}                      | ${{defaultValue: parseColor('#aabbcc')}}
-    ${'6-length hex string (controlled)'}  | ${{value: '#aabbcc'}}
-    ${'3-length hex string (controlled)'}  | ${{value: '#abc'}}
-    ${'Color object (controlled)'}         | ${{value: parseColor('#aabbcc')}}
+    Name                                  | props
+    ${'6-length hex string'}              | ${{defaultValue: '#aabbcc'}}
+    ${'3-length hex string'}              | ${{defaultValue: '#abc'}}
+    ${'Color object'}                     | ${{defaultValue: parseColor('#aabbcc')}}
+    ${'6-length hex string (controlled)'} | ${{value: '#aabbcc'}}
+    ${'3-length hex string (controlled)'} | ${{value: '#abc'}}
+    ${'Color object (controlled)'}        | ${{value: parseColor('#aabbcc')}}
   `('should accept $Name as value', function ({props}) {
     let {result} = renderHook(() => useColorFieldState(props));
     expect(result.current.colorValue.getChannelValue('red')).toBe(170);
@@ -43,9 +43,9 @@ describe('useColorFieldState tests', function () {
   });
 
   it.each`
-    name                                 | action               | props
-    ${'not increment beyond max value'}  | ${'increment'}       | ${{defaultValue: '#ffffff'}}
-    ${'increment to max value'}          | ${'incrementToMax'}  | ${{defaultValue: '#aabbcc'}}
+    name                                | action              | props
+    ${'not increment beyond max value'} | ${'increment'}      | ${{defaultValue: '#ffffff'}}
+    ${'increment to max value'}         | ${'incrementToMax'} | ${{defaultValue: '#aabbcc'}}
   `('should $action $name', function ({action, props}) {
     let {result} = renderHook(() => useColorFieldState(props));
     act(() => result.current[action]());
@@ -57,9 +57,9 @@ describe('useColorFieldState tests', function () {
   });
 
   it.each`
-    name                                 | action               | props
-    ${'not decrement beyond min value'}  | ${'decrement'}       | ${{defaultValue: '#000000'}}
-    ${'decrement to min value'}          | ${'decrementToMin'}  | ${{defaultValue: '#aabbcc'}}
+    name                                | action              | props
+    ${'not decrement beyond min value'} | ${'decrement'}      | ${{defaultValue: '#000000'}}
+    ${'decrement to min value'}         | ${'decrementToMin'} | ${{defaultValue: '#aabbcc'}}
   `('should $action $name', function ({action, props}) {
     let {result} = renderHook(() => useColorFieldState(props));
     act(() => result.current[action]());

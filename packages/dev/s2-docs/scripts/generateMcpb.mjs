@@ -32,8 +32,9 @@ const libraries = {
     serverEntryPoint: 'server/s2/src/index.js',
     displayName: 'React Spectrum (S2)',
     extensionName: 'react-spectrum-s2',
-    description: 'Build apps with Adobe\'s React Spectrum component library.',
-    longDescription: 'Provides tools for browsing the React Spectrum (S2) documentation, including listing and reading pages, searching for available icons and illustrations, and looking up available styling token values. Uses the React Spectrum documentation content available at https://react-spectrum.adobe.com.',
+    description: "Build apps with Adobe's React Spectrum component library.",
+    longDescription:
+      'Provides tools for browsing the React Spectrum (S2) documentation, including listing and reading pages, searching for available icons and illustrations, and looking up available styling token values. Uses the React Spectrum documentation content available at https://react-spectrum.adobe.com.',
     homepage: 'https://react-spectrum.adobe.com/',
     documentation: 'https://react-spectrum.adobe.com/ai.html',
     iconSvg: path.join(assetsDir, 'rsp-favicon.svg'),
@@ -42,15 +43,18 @@ const libraries = {
       ...sharedPageTools('React Spectrum (S2)', 's2'),
       {
         name: 'search_s2_icons',
-        description: 'Searches the S2 workflow icon set by one or more terms; returns matching icon names.'
+        description:
+          'Searches the S2 workflow icon set by one or more terms; returns matching icon names.'
       },
       {
         name: 'search_s2_illustrations',
-        description: 'Searches the S2 illustrations set by one or more terms; returns matching illustration names.'
+        description:
+          'Searches the S2 illustrations set by one or more terms; returns matching illustration names.'
       },
       {
         name: 'get_style_macro_property_values',
-        description: 'Returns the allowed values for a given S2 style macro property (including expanded color/spacing value lists where applicable).'
+        description:
+          'Returns the allowed values for a given S2 style macro property (including expanded color/spacing value lists where applicable).'
       }
     ],
     srcDirs: [
@@ -77,11 +81,20 @@ const libraries = {
     displayName: 'React Aria',
     extensionName: 'react-aria',
     description: 'Build accessible UI components with React Aria.',
-    longDescription: 'Provides tools for browsing the React Aria documentation. Uses the React Aria documentation content available at https://react-aria.adobe.com.',
+    longDescription:
+      'Provides tools for browsing the React Aria documentation. Uses the React Aria documentation content available at https://react-aria.adobe.com.',
     homepage: 'https://react-aria.adobe.com/',
     documentation: 'https://react-aria.adobe.com/ai.html',
     iconSvg: path.join(assetsDir, 'react-aria-favicon.svg'),
-    keywords: ['react', 'react-aria', 'adobe', 'accessibility', 'aria', 'design-system', 'components'],
+    keywords: [
+      'react',
+      'react-aria',
+      'adobe',
+      'accessibility',
+      'aria',
+      'design-system',
+      'components'
+    ],
     tools: sharedPageTools('React Aria', 'react_aria'),
     srcDirs: [
       {
@@ -112,7 +125,9 @@ async function generateBundle(libraryName, config) {
 
   for (const dir of config.srcDirs) {
     if (!fs.existsSync(dir.from)) {
-      throw new Error(`Missing built MCP output at ${dir.from}. Build ${config.packageName} first.`);
+      throw new Error(
+        `Missing built MCP output at ${dir.from}. Build ${config.packageName} first.`
+      );
     }
     copyDirectory(dir.from, path.join(stagingDir, dir.to));
   }
@@ -131,53 +146,68 @@ async function generateBundle(libraryName, config) {
   await sharp(Buffer.from(svg))
     .resize(448, 448, {fit: 'contain', background: {r: 0, g: 0, b: 0, alpha: 0}})
     .extend({top: 32, bottom: 32, left: 32, right: 32, background: {r: 0, g: 0, b: 0, alpha: 0}})
-    .png().toFile(path.join(stagingDir, iconFile));
+    .png()
+    .toFile(path.join(stagingDir, iconFile));
 
-  fs.writeFileSync(path.join(stagingDir, 'package.json'), JSON.stringify({
-    name: config.extensionName,
-    version: packageJson.version,
-    private: true,
-    type: 'module'
-  }, null, 2) + '\n');
+  fs.writeFileSync(
+    path.join(stagingDir, 'package.json'),
+    JSON.stringify(
+      {
+        name: config.extensionName,
+        version: packageJson.version,
+        private: true,
+        type: 'module'
+      },
+      null,
+      2
+    ) + '\n'
+  );
 
-  fs.writeFileSync(path.join(stagingDir, 'manifest.json'), JSON.stringify({
-    manifest_version: '0.3',
-    name: config.extensionName,
-    display_name: config.displayName,
-    version: packageJson.version,
-    description: config.description,
-    long_description: config.longDescription,
-    author: {
-      name: 'Adobe',
-      url: 'https://www.adobe.com'
-    },
-    repository: {
-      type: 'git',
-      url: 'https://github.com/adobe/react-spectrum'
-    },
-    homepage: config.homepage,
-    documentation: config.documentation,
-    support: 'https://github.com/adobe/react-spectrum/issues',
-    icon: iconFile,
-    license: 'Apache-2.0',
-    keywords: config.keywords,
-    privacy_policies: ['https://www.adobe.com/privacy/policy.html'],
-    tools: config.tools,
-    compatibility: {
-      platforms: ['darwin', 'win32', 'linux'],
-      runtimes: {
-        node: '>=18'
-      }
-    },
-    server: {
-      type: 'node',
-      entry_point: config.serverEntryPoint,
-      mcp_config: {
-        command: 'node',
-        args: [`\${__dirname}/${config.serverEntryPoint}`]
-      }
-    }
-  }, null, 2) + '\n');
+  fs.writeFileSync(
+    path.join(stagingDir, 'manifest.json'),
+    JSON.stringify(
+      {
+        manifest_version: '0.3',
+        name: config.extensionName,
+        display_name: config.displayName,
+        version: packageJson.version,
+        description: config.description,
+        long_description: config.longDescription,
+        author: {
+          name: 'Adobe',
+          url: 'https://www.adobe.com'
+        },
+        repository: {
+          type: 'git',
+          url: 'https://github.com/adobe/react-spectrum'
+        },
+        homepage: config.homepage,
+        documentation: config.documentation,
+        support: 'https://github.com/adobe/react-spectrum/issues',
+        icon: iconFile,
+        license: 'Apache-2.0',
+        keywords: config.keywords,
+        privacy_policies: ['https://www.adobe.com/privacy/policy.html'],
+        tools: config.tools,
+        compatibility: {
+          platforms: ['darwin', 'win32', 'linux'],
+          runtimes: {
+            node: '>=18'
+          }
+        },
+        server: {
+          type: 'node',
+          entry_point: config.serverEntryPoint,
+          mcp_config: {
+            command: 'node',
+            args: [`\${__dirname}/${config.serverEntryPoint}`]
+          }
+        }
+      },
+      null,
+      2
+    ) + '\n'
+  );
 
   fs.copyFileSync(path.join(config.packageDir, 'README.md'), path.join(stagingDir, 'README.md'));
   fs.copyFileSync(path.join(repoRoot, 'LICENSE'), path.join(stagingDir, 'LICENSE'));
@@ -189,7 +219,12 @@ async function generateBundle(libraryName, config) {
   console.log(`  npx @anthropic-ai/mcpb pack ${stagingDir} ${outputPath}`);
 }
 
-function copyDependencyTree(packageName, outputNodeModulesDir, bundledPackages, fromDir = repoRoot) {
+function copyDependencyTree(
+  packageName,
+  outputNodeModulesDir,
+  bundledPackages,
+  fromDir = repoRoot
+) {
   if (bundledPackages.has(packageName)) {
     return;
   }
@@ -244,7 +279,9 @@ const targets = requestedLibraries.length > 0 ? requestedLibraries : Object.keys
 
 for (const name of targets) {
   if (!(name in libraries)) {
-    throw new Error(`Unknown MCP bundle target '${name}'. Expected one of: ${Object.keys(libraries).join(', ')}`);
+    throw new Error(
+      `Unknown MCP bundle target '${name}'. Expected one of: ${Object.keys(libraries).join(', ')}`
+    );
   }
 }
 

@@ -1,17 +1,14 @@
-import path from "node:path";
-import { Buffer } from "node:buffer";
-import { createRequire } from "node:module";
-import {
-  loadPreviewOrConfigFile,
-  normalizeStories,
-} from "storybook/internal/common";
+import path from 'node:path';
+import {Buffer} from 'node:buffer';
+import {createRequire} from 'node:module';
+import {loadPreviewOrConfigFile, normalizeStories} from 'storybook/internal/common';
 
 // @parcel/utils is CJS-only; use createRequire to load it from ESM
 const _require = createRequire(import.meta.url);
-const { relativePath } = _require("@parcel/utils");
+const {relativePath} = _require('@parcel/utils');
 
 // base64 helper for story: pipeline specifiers (globalThis.btoa exists in Node >=18)
-const btoa = (s) => Buffer.from(s, "utf8").toString("base64");
+const btoa = s => Buffer.from(s, 'utf8').toString('base64');
 
 /**
  * Strip the absolute path prefix up to and including `node_modules`, returning
@@ -29,7 +26,7 @@ function stripAbsNodeModulesPath(absPath) {
   const sep = path.sep;
   const splits = absPath.split(`node_modules${sep}`);
   const last = splits[splits.length - 1];
-  return path.posix.normalize(last.replace(/\\/g, "/"));
+  return path.posix.normalize(last.replace(/\\/g, '/'));
 }
 
 /**
@@ -39,13 +36,13 @@ function stripAbsNodeModulesPath(absPath) {
  * Paths like package/dist/index.js become package (main export), not package/index.
  */
 function toPackageExportSpecifier(barePath) {
-  const normalized = barePath.replace(/\\/g, "/");
+  const normalized = barePath.replace(/\\/g, '/');
   const distMatch = normalized.match(/^(@?[^/]+(?:\/[^/]+)?)\/dist\/(.+)\.js$/);
   if (distMatch) {
     const pkg = distMatch[1];
     const subpath = distMatch[2];
     // package/dist/index.js -> package (main export), not package/index
-    if (subpath === "index") {
+    if (subpath === 'index') {
       return pkg;
     }
     return `${pkg}/${subpath}`;
@@ -72,23 +69,13 @@ if (window.CONFIG_TYPE === 'DEVELOPMENT') {
 `.trim();
 }
 
-async function generatePreviewModern(
-  options,
-  generatedEntries
-) {
-  const { presets, configDir } = options;
+async function generatePreviewModern(options, generatedEntries) {
+  const {presets, configDir} = options;
 
-  const previewAnnotations = await presets.apply(
-    "previewAnnotations",
-    [],
-    options
-  );
+  const previewAnnotations = await presets.apply('previewAnnotations', [], options);
   const relativePreviewAnnotations = [
     ...previewAnnotations.map(processPreviewAnnotation),
-    relativePath(
-      generatedEntries,
-      loadPreviewOrConfigFile({ configDir })
-    ),
+    relativePath(generatedEntries, loadPreviewOrConfigFile({configDir}))
   ].filter(Boolean);
 
   const importFnCode = await generateImportFnScriptCode(options, generatedEntries);
@@ -122,8 +109,8 @@ ${importFnCode}
 
 const getProjectAnnotations = async () => {
   const configs = await Promise.all([${relativePreviewAnnotations
-    .map((previewAnnotation) => `import('${previewAnnotation}')`)
-    .join(",\n")}]);
+    .map(previewAnnotation => `import('${previewAnnotation}')`)
+    .join(',\n')}]);
   return composeConfigs(configs);
 };
 
@@ -147,23 +134,23 @@ function processPreviewAnnotation(annotationPath) {
   // continue supporting super-addons in pnp/pnpm without
   // requiring them to re-export their sub-addons as we do
   // in addon-essentials.
-  if (typeof annotationPath === "object") {
+  if (typeof annotationPath === 'object') {
     return toPackageExportSpecifier(annotationPath.bare);
   }
   // resolve relative paths into absolute paths, but don't resolve "bare" imports
-  if (annotationPath?.startsWith("./") || annotationPath?.startsWith("../")) {
+  if (annotationPath?.startsWith('./') || annotationPath?.startsWith('../')) {
     return annotationPath;
   }
   // This should not occur, since we use `.filter(Boolean)` prior to
   // calling this function, but this makes typescript happy
   if (!annotationPath) {
-    throw new Error("Could not determine path for previewAnnotation");
+    throw new Error('Could not determine path for previewAnnotation');
   }
 
   // For addon dependencies that use require.resolve(), we need to convert to a bare path
   // so that the bundler can resolve it. Use package export subpaths (e.g. @storybook/react/entry-preview-argtypes)
   // so package.json "exports" are respected (required in Storybook 10).
-  if (annotationPath.includes("node_modules")) {
+  if (annotationPath.includes('node_modules')) {
     const bare = stripAbsNodeModulesPath(annotationPath);
     return toPackageExportSpecifier(bare);
   }
@@ -209,20 +196,15 @@ async function generateImportFnScriptCode(options, generatedEntries) {
 async function listStories(options) {
   return (
     await Promise.all(
-      normalizeStories(await options.presets.apply("stories", [], options), {
+      normalizeStories(await options.presets.apply('stories', [], options), {
         configDir: options.configDir,
-        workingDir: options.configDir,
-      }).map(({ directory, files }) => {
+        workingDir: options.configDir
+      }).map(({directory, files}) => {
         let pattern = path.join(directory, files);
-        return path.isAbsolute(pattern)
-          ? pattern
-          : path.join(options.configDir, pattern);
+        return path.isAbsolute(pattern) ? pattern : path.join(options.configDir, pattern);
       })
     )
   ).reduce((carry, stories) => carry.concat(stories), []);
 }
 
-export {
-  generateSetupAddons,
-  generatePreviewModern,
-};
+export {generateSetupAddons, generatePreviewModern};

@@ -39,10 +39,15 @@ export const TextfieldExample: TextFieldStory = () => {
   );
 };
 
-export const TextFieldSubmitExample: TextFieldStory = (args) => {
+export const TextFieldSubmitExample: TextFieldStory = args => {
   return (
     <Form>
-      <TextField className={classNames(styles, 'textfieldExample')} name="email" type="email" isRequired {...args}>
+      <TextField
+        className={classNames(styles, 'textfieldExample')}
+        name="email"
+        type="email"
+        isRequired
+        {...args}>
         <Label>Email</Label>
         <Input />
         <FieldError className={classNames(styles, 'errorMessage')} />

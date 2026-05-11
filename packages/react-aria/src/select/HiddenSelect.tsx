@@ -23,47 +23,50 @@ export interface AriaHiddenSelectProps {
   /**
    * Describes the type of autocomplete functionality the input should provide if any. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefautocomplete).
    */
-  autoComplete?: string,
+  autoComplete?: string;
 
   /** The text label for the select. */
-  label?: ReactNode,
+  label?: ReactNode;
 
   /** HTML form input name. */
-  name?: string,
+  name?: string;
 
   /**
    * The `<form>` element to associate the input with.
    * The value of this attribute must be the id of a `<form>` in the same document.
    * See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input#form).
    */
-  form?: string,
+  form?: string;
 
   /** Sets the disabled state of the select and input. */
-  isDisabled?: boolean
+  isDisabled?: boolean;
 }
 
-export interface HiddenSelectProps<T, M extends SelectionMode = 'single'> extends AriaHiddenSelectProps {
+export interface HiddenSelectProps<
+  T,
+  M extends SelectionMode = 'single'
+> extends AriaHiddenSelectProps {
   /** State for the select. */
-  state: SelectState<T, M>,
+  state: SelectState<T, M>;
 
   /** A ref to the trigger element. */
-  triggerRef: RefObject<FocusableElement | null>
+  triggerRef: RefObject<FocusableElement | null>;
 }
 
 export interface AriaHiddenSelectOptions extends AriaHiddenSelectProps {
   /** A ref to the hidden `<select>` element. */
-  selectRef?: RefObject<HTMLSelectElement | HTMLInputElement | null>
+  selectRef?: RefObject<HTMLSelectElement | HTMLInputElement | null>;
 }
 
 export interface HiddenSelectAria {
   /** Props for the container element. */
-  containerProps: React.HTMLAttributes<FocusableElement>,
+  containerProps: React.HTMLAttributes<FocusableElement>;
 
   /** Props for the hidden input element. */
-  inputProps: React.InputHTMLAttributes<HTMLInputElement>,
+  inputProps: React.InputHTMLAttributes<HTMLInputElement>;
 
   /** Props for the hidden select element. */
-  selectProps: React.SelectHTMLAttributes<HTMLSelectElement>
+  selectProps: React.SelectHTMLAttributes<HTMLSelectElement>;
 }
 
 /**
@@ -71,7 +74,11 @@ export interface HiddenSelectAria {
  * can be used in combination with `useSelect` to support browser form autofill, mobile form
  * navigation, and native HTML form submission.
  */
-export function useHiddenSelect<T, M extends SelectionMode = 'single'>(props: AriaHiddenSelectOptions, state: SelectState<T, M>, triggerRef: RefObject<FocusableElement | null>): HiddenSelectAria {
+export function useHiddenSelect<T, M extends SelectionMode = 'single'>(
+  props: AriaHiddenSelectOptions,
+  state: SelectState<T, M>,
+  triggerRef: RefObject<FocusableElement | null>
+): HiddenSelectAria {
   let data = selectData.get(state) || {};
   let {autoComplete, name = data.name, form = data.form, isDisabled = data.isDisabled} = props;
   let {validationBehavior, isRequired} = data;
@@ -85,23 +92,27 @@ export function useHiddenSelect<T, M extends SelectionMode = 'single'>(props: Ar
   });
 
   useFormReset(props.selectRef, state.defaultValue, state.setValue);
-  useFormValidation({
-    validationBehavior,
-    focus: () => triggerRef.current?.focus()
-  }, state, props.selectRef);
+  useFormValidation(
+    {
+      validationBehavior,
+      focus: () => triggerRef.current?.focus()
+    },
+    state,
+    props.selectRef
+  );
 
   let setValue = state.setValue;
-  let onChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
-    let eventTarget = getEventTarget(e);
-    if (eventTarget.multiple) {
-      setValue(Array.from(
-        eventTarget.selectedOptions,
-        (option) => option.value
-      ) as any);
-    } else {
-      setValue(e.currentTarget.value as any);
-    }
-  }, [setValue]);
+  let onChange = useCallback(
+    (e: React.ChangeEvent<HTMLSelectElement>) => {
+      let eventTarget = getEventTarget(e);
+      if (eventTarget.multiple) {
+        setValue(Array.from(eventTarget.selectedOptions, option => option.value) as any);
+      } else {
+        setValue(e.currentTarget.value as any);
+      }
+    },
+    [setValue]
+  );
 
   // In Safari, the <select> cannot have `display: none` or `hidden` for autofill to work.
   // In Firefox, there must be a <label> to identify the <select> whereas other browsers
@@ -140,11 +151,17 @@ export function useHiddenSelect<T, M extends SelectionMode = 'single'>(props: Ar
  * Renders a hidden native `<select>` element, which can be used to support browser
  * form autofill, mobile form navigation, and native form submission.
  */
-export function HiddenSelect<T, M extends SelectionMode = 'single'>(props: HiddenSelectProps<T, M>): JSX.Element | null {
+export function HiddenSelect<T, M extends SelectionMode = 'single'>(
+  props: HiddenSelectProps<T, M>
+): JSX.Element | null {
   let {state, triggerRef, label, name, form, isDisabled} = props;
   let selectRef = useRef(null);
   let inputRef = useRef(null);
-  let {containerProps, selectProps} = useHiddenSelect({...props, selectRef: state.collection.size <= 300 ? selectRef : inputRef}, state, triggerRef);
+  let {containerProps, selectProps} = useHiddenSelect(
+    {...props, selectRef: state.collection.size <= 300 ? selectRef : inputRef},
+    state,
+    triggerRef
+  );
 
   let values: (Key | null)[] = Array.isArray(state.value) ? state.value : [state.value];
 
@@ -157,14 +174,14 @@ export function HiddenSelect<T, M extends SelectionMode = 'single'>(props: Hidde
         <label>
           {label}
           <select {...selectProps} ref={selectRef}>
-            <option value="" label={'\u00A0'}>{'\u00A0'}</option>
+            <option value="" label={'\u00A0'}>
+              {'\u00A0'}
+            </option>
             {[...state.collection.getKeys()].map(key => {
               let item = state.collection.getItem(key);
               if (item && item.type === 'item') {
                 return (
-                  <option
-                    key={item.key}
-                    value={item.key}>
+                  <option key={item.key} value={item.key}>
                     {item.textValue}
                   </option>
                 );
@@ -173,7 +190,9 @@ export function HiddenSelect<T, M extends SelectionMode = 'single'>(props: Hidde
             {/* The collection may be empty during the initial render. */}
             {/* Rendering options for the current values ensures the select has a value immediately, */}
             {/* making FormData reads consistent. */}
-            {state.collection.size === 0 && name && values.map((value, i) => <option key={i} value={value ?? ''} />)}
+            {state.collection.size === 0 &&
+              name &&
+              values.map((value, i) => <option key={i} value={value ?? ''} />)}
           </select>
         </label>
       </div>
@@ -208,13 +227,14 @@ export function HiddenSelect<T, M extends SelectionMode = 'single'>(props: Hidde
             style={{display: 'none'}}
             type="text"
             required={i === 0 ? selectProps.required : false}
-            onChange={() => {/** Ignore react warning. */}} />
+            onChange={() => {
+              /** Ignore react warning. */
+            }}
+          />
         );
       }
 
-      return (
-        <input key={i} {...inputProps} ref={i === 0 ? inputRef : null} />
-      );
+      return <input key={i} {...inputProps} ref={i === 0 ? inputRef : null} />;
     });
 
     return <>{res}</>;

@@ -42,22 +42,23 @@ export class GridListTester {
    * Returns a row matching the specified index or text content.
    */
   findRow(opts: {rowIndexOrText: number | string}): HTMLElement {
-    let {
-      rowIndexOrText
-    } = opts;
+    let {rowIndexOrText} = opts;
 
     let row;
     if (typeof rowIndexOrText === 'number') {
       row = this.rows[rowIndexOrText];
     } else if (typeof rowIndexOrText === 'string') {
-      row = (within(this.gridlist!).getByText(rowIndexOrText).closest('[role=row]'))! as HTMLElement;
+      row = within(this.gridlist!).getByText(rowIndexOrText).closest('[role=row]')! as HTMLElement;
     }
 
     return row;
   }
 
   // TODO: RTL
-  private async keyboardNavigateToRow(opts: {row: HTMLElement, selectionOnNav?: 'default' | 'none'}) {
+  private async keyboardNavigateToRow(opts: {
+    row: HTMLElement;
+    selectionOnNav?: 'default' | 'none';
+  }) {
     let {row, selectionOnNav = 'default'} = opts;
     let altKey = getAltKey();
     let rows = this.rows;
@@ -66,13 +67,21 @@ export class GridListTester {
       throw new Error('Option provided is not in the gridlist');
     }
 
-    if (document.activeElement !== this._gridlist && !this._gridlist.contains(document.activeElement)) {
+    if (
+      document.activeElement !== this._gridlist &&
+      !this._gridlist.contains(document.activeElement)
+    ) {
       act(() => this._gridlist.focus());
     }
 
     if (document.activeElement === this._gridlist) {
-      await this.user.keyboard(`${selectionOnNav === 'none' ? `[${altKey}>]` : ''}[ArrowDown]${selectionOnNav === 'none' ? `[/${altKey}]` : ''}`);
-    } else if (this._gridlist.contains(document.activeElement) && document.activeElement!.getAttribute('role') !== 'row') {
+      await this.user.keyboard(
+        `${selectionOnNav === 'none' ? `[${altKey}>]` : ''}[ArrowDown]${selectionOnNav === 'none' ? `[/${altKey}]` : ''}`
+      );
+    } else if (
+      this._gridlist.contains(document.activeElement) &&
+      document.activeElement!.getAttribute('role') !== 'row'
+    ) {
       do {
         await this.user.keyboard('[ArrowLeft]');
       } while (document.activeElement!.getAttribute('role') !== 'row');
@@ -92,7 +101,7 @@ export class GridListTester {
     if (selectionOnNav === 'none') {
       await this.user.keyboard(`[/${altKey}]`);
     }
-  };
+  }
 
   /**
    * Toggles the selection for the specified gridlist row. Defaults to using the interaction type set on the gridlist tester.
@@ -122,14 +131,21 @@ export class GridListTester {
 
     // TODO: we early return here because the checkbox/row can't be keyboard navigated to if the row is disabled usually
     // but we may to check for disabledBehavior (aka if the disable row gets skipped when keyboard navigating or not)
-    if (interactionType === 'keyboard' && (rowCheckbox?.getAttribute('disabled') === '' || row?.getAttribute('aria-disabled') === 'true')) {
+    if (
+      interactionType === 'keyboard' &&
+      (rowCheckbox?.getAttribute('disabled') === '' ||
+        row?.getAttribute('aria-disabled') === 'true')
+    ) {
       return;
     }
 
     // this would be better than the check to do nothing in events.ts
     // also, it'd be good to be able to trigger selection on the row instead of having to go to the checkbox directly
     if (interactionType === 'keyboard' && (!checkboxSelection || !rowCheckbox)) {
-      await this.keyboardNavigateToRow({row, selectionOnNav: selectionBehavior === 'replace' ? 'none' : 'default'});
+      await this.keyboardNavigateToRow({
+        row,
+        selectionOnNav: selectionBehavior === 'replace' ? 'none' : 'default'
+      });
       if (selectionBehavior === 'replace') {
         await this.user.keyboard(`[${altKey}>]`);
       }
@@ -149,7 +165,11 @@ export class GridListTester {
         }
 
         // Note that long press interactions with rows is strictly touch only for grid rows
-        await triggerLongPress({element: cell, advanceTimer: this._advanceTimer, pointerOpts: {pointerType: 'touch'}});
+        await triggerLongPress({
+          element: cell,
+          advanceTimer: this._advanceTimer,
+          pointerOpts: {pointerType: 'touch'}
+        });
       } else {
         if (selectionBehavior === 'replace' && interactionType !== 'touch') {
           await this.user.keyboard(`[${metaKey}>]`);
@@ -168,11 +188,7 @@ export class GridListTester {
    * Triggers the action for the specified gridlist row. Defaults to using the interaction type set on the gridlist tester.
    */
   async triggerRowAction(opts: GridListRowActionOpts): Promise<void> {
-    let {
-      row,
-      needsDoubleClick,
-      interactionType = this._interactionType
-    } = opts;
+    let {row, needsDoubleClick, interactionType = this._interactionType} = opts;
 
     if (typeof row === 'string' || typeof row === 'number') {
       row = this.findRow({rowIndexOrText: row});

@@ -1,4 +1,4 @@
-@import "./theme.css";
+@import './theme.css';
 
 .react-aria-Form {
   display: flex;
@@ -10,7 +10,7 @@
   }
 }
 
-.react-aria-Form [role=alert] {
+.react-aria-Form [role='alert'] {
   border: 2px solid var(--invalid-color);
   background: var(--overlay-background);
   border-radius: 6px;

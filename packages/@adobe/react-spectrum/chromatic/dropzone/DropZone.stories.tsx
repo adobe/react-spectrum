@@ -37,9 +37,7 @@ export const Default: DropZoneStory = {
         <IllustratedMessage>
           <Upload />
           <Heading>
-            <Text slot="label">
-              Drag and drop here
-            </Text>
+            <Text slot="label">Drag and drop here</Text>
           </Heading>
         </IllustratedMessage>
       </>
@@ -54,9 +52,7 @@ export const WithFileTrigger: DropZoneStory = {
         <IllustratedMessage>
           <Upload />
           <Heading>
-            <Text slot="label">
-              Drag and drop here
-            </Text>
+            <Text slot="label">Drag and drop here</Text>
           </Heading>
           <FileTrigger>
             <Button variant="primary">Select a file</Button>

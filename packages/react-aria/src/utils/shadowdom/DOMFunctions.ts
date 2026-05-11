@@ -27,8 +27,10 @@ export function nodeContains(
       return true;
     }
 
-    if ((currentNode as HTMLSlotElement).tagName === 'SLOT' &&
-      (currentNode as HTMLSlotElement).assignedSlot) {
+    if (
+      (currentNode as HTMLSlotElement).tagName === 'SLOT' &&
+      (currentNode as HTMLSlotElement).assignedSlot
+    ) {
       // Element is slotted
       currentNode = (currentNode as HTMLSlotElement).assignedSlot!.parentNode;
     } else if (isShadowRoot(currentNode)) {
@@ -51,8 +53,11 @@ export const getActiveElement = (doc: Document = document): Element | null => {
   }
   let activeElement: Element | null = doc.activeElement;
 
-  while (activeElement && 'shadowRoot' in activeElement &&
-  activeElement.shadowRoot?.activeElement) {
+  while (
+    activeElement &&
+    'shadowRoot' in activeElement &&
+    activeElement.shadowRoot?.activeElement
+  ) {
     activeElement = activeElement.shadowRoot.activeElement;
   }
 
@@ -68,7 +73,7 @@ type EventTargetType<T> = T extends SyntheticEvent<infer E, any> ? E : EventTarg
  * ShadowDOM safe version of event.target.
  */
 export function getEventTarget<T extends Event | SyntheticEvent>(event: T): EventTargetType<T> {
-  if (shadowDOM() && (event.target instanceof Element) && event.target.shadowRoot) {
+  if (shadowDOM() && event.target instanceof Element && event.target.shadowRoot) {
     if ('composedPath' in event) {
       return (event.composedPath()[0] ?? null) as EventTargetType<T>;
     } else if ('composedPath' in event.nativeEvent) {

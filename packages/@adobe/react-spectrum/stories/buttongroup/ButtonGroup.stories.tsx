@@ -39,15 +39,22 @@ export default {
 } as Meta<typeof ButtonGroup>;
 
 export const Default: ButtonGroupStory = {
-  render: (args) => (
-    <div style={{minWidth: '100px', padding: '10px', resize: 'horizontal', overflow: 'auto', backgroundColor: 'var(--spectrum-global-color-gray-50)'}}>
+  render: args => (
+    <div
+      style={{
+        minWidth: '100px',
+        padding: '10px',
+        resize: 'horizontal',
+        overflow: 'auto',
+        backgroundColor: 'var(--spectrum-global-color-gray-50)'
+      }}>
       {render(args)}
     </div>
   )
 };
 
 export const ConstantContainer: ButtonGroupStory = {
-  render: (args) => <ExpandingSibling {...args} />,
+  render: args => <ExpandingSibling {...args} />,
   name: 'constant container, changing siblings'
 };
 
@@ -58,22 +65,38 @@ function render(props) {
 let ExpandingSibling = (props = {}) => {
   let [isExpanded, setIsExpanded] = useState(false);
   return (
-    <div style={{display: 'flex', flexWrap: 'nowrap', width: '800px', overflow: 'hidden', padding: '10px', backgroundColor: 'var(--spectrum-global-color-gray-50)'}}>
+    <div
+      style={{
+        display: 'flex',
+        flexWrap: 'nowrap',
+        width: '800px',
+        overflow: 'hidden',
+        padding: '10px',
+        backgroundColor: 'var(--spectrum-global-color-gray-50)'
+      }}>
       <div style={{paddingRight: isExpanded ? '200px' : '10px'}}>
-        <Button variant="secondary" onPress={() => setIsExpanded(prev => !prev)}>{isExpanded ? 'Shrink' : 'Expand'}</Button>
+        <Button variant="secondary" onPress={() => setIsExpanded(prev => !prev)}>
+          {isExpanded ? 'Shrink' : 'Expand'}
+        </Button>
       </div>
       {render(props)}
     </div>
   );
 };
 
-let Component = (props) => {
+let Component = props => {
   let [show, setShow] = useState(false);
   return (
     <ButtonGroup maxWidth="100vw" {...props}>
-      <Button variant="primary" onPress={action('press')}>Button 1</Button>
-      <Button variant="negative" onPress={action('press')}>Button long long long name</Button>
-      <Button variant="primary" isDisabled onPress={action('press')}>Disabled button</Button>
+      <Button variant="primary" onPress={action('press')}>
+        Button 1
+      </Button>
+      <Button variant="negative" onPress={action('press')}>
+        Button long long long name
+      </Button>
+      <Button variant="primary" isDisabled onPress={action('press')}>
+        Disabled button
+      </Button>
       <Button variant="secondary" onPress={() => setShow(show => !show)}>
         <Bell />
         <Text>Click me to make Button larger</Text>

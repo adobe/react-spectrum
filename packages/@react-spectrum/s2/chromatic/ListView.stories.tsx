@@ -49,7 +49,7 @@ const items = [
 ];
 
 export const Example: Story = {
-  render: (args) => (
+  render: args => (
     <ListView {...args} aria-label="Files" styles={listViewStyles}>
       <ListViewItem id="utilities" textValue="Utilities" hasChildItems>
         <Folder />
@@ -85,9 +85,9 @@ export const Quiet: Story = {
 };
 
 export const WithImages: Story = {
-  render: (args) => (
+  render: args => (
     <ListView {...args} aria-label="Images" styles={listViewStyles} items={items}>
-      {(item) => (
+      {item => (
         <ListViewItem textValue={item.name}>
           <Text>{item.name}</Text>
           <Image src={checkers} alt={item.name} />
@@ -98,18 +98,22 @@ export const WithImages: Story = {
 };
 
 export const OverflowTruncate: Story = {
-  render: (args) => (
+  render: args => (
     <ListView {...args} aria-label="Long text examples" styles={listViewStyles}>
       <ListViewItem id="a">
         This is a very very very very very very very very long title.
       </ListViewItem>
       <ListViewItem id="b" textValue="Short title, long description">
         <Text>Short title</Text>
-        <Text slot="description">This is a very very very very very very very very long description.</Text>
+        <Text slot="description">
+          This is a very very very very very very very very long description.
+        </Text>
       </ListViewItem>
       <ListViewItem id="c" textValue="Long title, long description">
         <Text>This is a very very very very very very very very long title.</Text>
-        <Text slot="description">This is a very very very very very very very very long description.</Text>
+        <Text slot="description">
+          This is a very very very very very very very very long description.
+        </Text>
       </ListViewItem>
     </ListView>
   ),
@@ -120,18 +124,22 @@ export const OverflowTruncate: Story = {
 };
 
 export const OverflowWrap: Story = {
-  render: (args) => (
+  render: args => (
     <ListView {...args} aria-label="Long text examples" styles={listViewStyles}>
       <ListViewItem id="a">
         This is a very very very very very very very very long title.
       </ListViewItem>
       <ListViewItem id="b" textValue="Short title, long description">
         <Text>Short title</Text>
-        <Text slot="description">This is a very very very very very very very very long description.</Text>
+        <Text slot="description">
+          This is a very very very very very very very very long description.
+        </Text>
       </ListViewItem>
       <ListViewItem id="c" textValue="Long title, long description">
         <Text>This is a very very very very very very very very long title.</Text>
-        <Text slot="description">This is a very very very very very very very very long description.</Text>
+        <Text slot="description">
+          This is a very very very very very very very very long description.
+        </Text>
       </ListViewItem>
     </ListView>
   ),
@@ -142,9 +150,15 @@ export const OverflowWrap: Story = {
 };
 
 export const DisabledItems: Story = {
-  render: (args) => (
-    <ListView {...args} aria-label="Files" items={items} styles={listViewStyles} selectionMode="multiple" disabledKeys={['utilities', 'illustrator']}>
-      {(item) => (
+  render: args => (
+    <ListView
+      {...args}
+      aria-label="Files"
+      items={items}
+      styles={listViewStyles}
+      selectionMode="multiple"
+      disabledKeys={['utilities', 'illustrator']}>
+      {item => (
         <ListViewItem textValue={item.name} hasChildItems={item.type === 'folder'}>
           {item.type === 'folder' ? <Folder /> : <File />}
           <Text>{item.name}</Text>
@@ -172,12 +186,20 @@ export const CheckboxSelection: Story = {
 };
 
 export const Links: Story = {
-  render: (args) => (
+  render: args => (
     <ListView {...args} aria-label="Bookmarks" styles={listViewStyles}>
-      <ListViewItem id="https://adobe.com/" href="https://adobe.com/" target="_blank">Adobe</ListViewItem>
-      <ListViewItem id="https://google.com/" href="https://google.com/" target="_blank">Google</ListViewItem>
-      <ListViewItem id="https://apple.com/" href="https://apple.com/" target="_blank">Apple</ListViewItem>
-      <ListViewItem id="https://nytimes.com/" href="https://nytimes.com/" target="_blank">New York Times</ListViewItem>
+      <ListViewItem id="https://adobe.com/" href="https://adobe.com/" target="_blank">
+        Adobe
+      </ListViewItem>
+      <ListViewItem id="https://google.com/" href="https://google.com/" target="_blank">
+        Google
+      </ListViewItem>
+      <ListViewItem id="https://apple.com/" href="https://apple.com/" target="_blank">
+        Apple
+      </ListViewItem>
+      <ListViewItem id="https://nytimes.com/" href="https://nytimes.com/" target="_blank">
+        New York Times
+      </ListViewItem>
     </ListView>
   ),
   args: {
@@ -186,29 +208,45 @@ export const Links: Story = {
 };
 
 export const WithActions: Story = {
-  render: (args) => (
+  render: args => (
     <ListView {...args} aria-label="Files" styles={listViewStyles}>
       <ListViewItem id="utilities" textValue="Utilities" hasChildItems>
         <Folder />
         <Text>Utilities</Text>
         <Text slot="description">16 items</Text>
         <ActionButtonGroup>
-          <ActionButton aria-label="Edit"><Edit /></ActionButton>
+          <ActionButton aria-label="Edit">
+            <Edit />
+          </ActionButton>
         </ActionButtonGroup>
         <ActionMenu>
-          <MenuItem id="edit"><Edit /><Text>Edit</Text></MenuItem>
-          <MenuItem id="delete"><Delete /><Text>Delete</Text></MenuItem>
+          <MenuItem id="edit">
+            <Edit />
+            <Text>Edit</Text>
+          </MenuItem>
+          <MenuItem id="delete">
+            <Delete />
+            <Text>Delete</Text>
+          </MenuItem>
         </ActionMenu>
       </ListViewItem>
       <ListViewItem id="photoshop" textValue="Adobe Photoshop">
         <Text>Adobe Photoshop</Text>
         <Text slot="description">Application</Text>
         <ActionButtonGroup>
-          <ActionButton aria-label="Edit"><Edit /></ActionButton>
+          <ActionButton aria-label="Edit">
+            <Edit />
+          </ActionButton>
         </ActionButtonGroup>
         <ActionMenu>
-          <MenuItem id="edit"><Edit /><Text>Edit</Text></MenuItem>
-          <MenuItem id="delete"><Delete /><Text>Delete</Text></MenuItem>
+          <MenuItem id="edit">
+            <Edit />
+            <Text>Edit</Text>
+          </MenuItem>
+          <MenuItem id="delete">
+            <Delete />
+            <Text>Delete</Text>
+          </MenuItem>
         </ActionMenu>
       </ListViewItem>
     </ListView>
@@ -219,7 +257,7 @@ export const WithActions: Story = {
 };
 
 export const Loading: Story = {
-  render: (args) => (
+  render: args => (
     <ListView {...args} aria-label="Loading list" styles={listViewStyles}>
       {[]}
     </ListView>
@@ -230,13 +268,14 @@ export const Loading: Story = {
 };
 
 export const LoadingMore: Story = {
-  render: (args) => (
-    <ListView {...args} aria-label="Loading more list" styles={listViewStyles} items={items} onLoadMore={() => {}}>
-      {(item) => (
-        <ListViewItem textValue={item.name}>
-          {item.name}
-        </ListViewItem>
-      )}
+  render: args => (
+    <ListView
+      {...args}
+      aria-label="Loading more list"
+      styles={listViewStyles}
+      items={items}
+      onLoadMore={() => {}}>
+      {item => <ListViewItem textValue={item.name}>{item.name}</ListViewItem>}
     </ListView>
   ),
   args: {
@@ -245,7 +284,7 @@ export const LoadingMore: Story = {
 };
 
 export const EmptyState: Story = {
-  render: (args) => (
+  render: args => (
     <ListView
       {...args}
       aria-label="Empty list"

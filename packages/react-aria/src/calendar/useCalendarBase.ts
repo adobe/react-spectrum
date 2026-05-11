@@ -13,7 +13,11 @@
 import {announce} from '../live-announcer/LiveAnnouncer';
 import {AriaButtonProps} from '../button/useButton';
 import {AriaLabelingProps, DOMAttributes, DOMProps} from '@react-types/shared';
-import {CalendarPropsBase, CalendarSelectionMode, CalendarState} from 'react-stately/useCalendarState';
+import {
+  CalendarPropsBase,
+  CalendarSelectionMode,
+  CalendarState
+} from 'react-stately/useCalendarState';
 import {filterDOMProps} from '../utils/filterDOMProps';
 import {hookData, useSelectedDateDescription, useVisibleRangeDescription} from './utils';
 // @ts-ignore
@@ -28,23 +32,36 @@ import {useUpdateEffect} from '../utils/useUpdateEffect';
 
 export interface CalendarAria {
   /** Props for the calendar grouping element. */
-  calendarProps: DOMAttributes,
+  calendarProps: DOMAttributes;
   /** Props for the next button. */
-  nextButtonProps: AriaButtonProps,
+  nextButtonProps: AriaButtonProps;
   /** Props for the previous button. */
-  prevButtonProps: AriaButtonProps,
+  prevButtonProps: AriaButtonProps;
   /** Props for the error message element, if any. */
-  errorMessageProps: DOMAttributes,
+  errorMessageProps: DOMAttributes;
   /** A description of the visible date range, for use in the calendar title. */
-  title: string
+  title: string;
 }
 
-export function useCalendarBase(props: CalendarPropsBase & DOMProps & AriaLabelingProps, state: CalendarState<CalendarSelectionMode> | RangeCalendarState): CalendarAria {
+export function useCalendarBase(
+  props: CalendarPropsBase & DOMProps & AriaLabelingProps,
+  state: CalendarState<CalendarSelectionMode> | RangeCalendarState
+): CalendarAria {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/calendar');
   let domProps = filterDOMProps(props);
 
-  let title = useVisibleRangeDescription(state.visibleRange.start, state.visibleRange.end, state.timeZone, false);
-  let visibleRangeDescription = useVisibleRangeDescription(state.visibleRange.start, state.visibleRange.end, state.timeZone, true);
+  let title = useVisibleRangeDescription(
+    state.visibleRange.start,
+    state.visibleRange.end,
+    state.timeZone,
+    false
+  );
+  let visibleRangeDescription = useVisibleRangeDescription(
+    state.visibleRange.start,
+    state.visibleRange.end,
+    state.timeZone,
+    true
+  );
 
   // Announce when the visible date range changes
   useUpdateEffect(() => {
@@ -63,7 +80,11 @@ export function useCalendarBase(props: CalendarPropsBase & DOMProps & AriaLabeli
     // handle an update to the caption that describes the currently selected range, to announce the new value
   }, [selectedDateDescription]);
 
-  let errorMessageId = useSlotId([Boolean(props.errorMessage), props.isInvalid, props.validationState]);
+  let errorMessageId = useSlotId([
+    Boolean(props.errorMessage),
+    props.isInvalid,
+    props.validationState
+  ]);
 
   // Pass the label to the child grid elements.
   hookData.set(state, {

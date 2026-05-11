@@ -54,7 +54,15 @@ describe('FieldError', function () {
       <TextField isInvalid>
         <Label>Email</Label>
         <Input />
-        <FieldError elementType="div" render={(props) => <div {...props}><ul><li>Error</li></ul></div>}>
+        <FieldError
+          elementType="div"
+          render={props => (
+            <div {...props}>
+              <ul>
+                <li>Error</li>
+              </ul>
+            </div>
+          )}>
           Error
         </FieldError>
       </TextField>
@@ -71,9 +79,7 @@ describe('FieldError', function () {
       <TextField isInvalid>
         <Label>Email</Label>
         <Input />
-        <FieldError render={(props) => <div {...props} />}>
-          Error
-        </FieldError>
+        <FieldError render={props => <div {...props} />}>Error</FieldError>
       </TextField>
     );
 

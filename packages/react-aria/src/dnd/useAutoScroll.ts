@@ -20,8 +20,8 @@ import {useCallback, useEffect, useRef} from 'react';
 const AUTOSCROLL_AREA_SIZE = 20;
 
 interface AutoScrollAria {
-    move(x: number, y: number): void,
-    stop(): void
+  move(x: number, y: number): void;
+  stop(): void;
 }
 
 export function useAutoScroll(ref: RefObject<Element | null>): AutoScrollAria {
@@ -30,14 +30,20 @@ export function useAutoScroll(ref: RefObject<Element | null>): AutoScrollAria {
   let scrollableY = useRef(true);
   useEffect(() => {
     if (ref.current) {
-      scrollableRef.current = isScrollable(ref.current) ? ref.current : getScrollParent(ref.current);
+      scrollableRef.current = isScrollable(ref.current)
+        ? ref.current
+        : getScrollParent(ref.current);
       let style = window.getComputedStyle(scrollableRef.current);
       scrollableX.current = /(auto|scroll)/.test(style.overflowX);
       scrollableY.current = /(auto|scroll)/.test(style.overflowY);
     }
   }, [ref]);
 
-  let state = useRef<{timer: ReturnType<typeof requestAnimationFrame> | undefined, dx: number, dy: number}>({
+  let state = useRef<{
+    timer: ReturnType<typeof requestAnimationFrame> | undefined;
+    dx: number;
+    dy: number;
+  }>({
     timer: undefined,
     dx: 0,
     dy: 0
@@ -50,7 +56,7 @@ export function useAutoScroll(ref: RefObject<Element | null>): AutoScrollAria {
         state.timer = undefined;
       }
     };
-  // state will become a new object, so it's ok to use in the dependency array for unmount
+    // state will become a new object, so it's ok to use in the dependency array for unmount
   }, [state]);
 
   let scroll = useCallback(() => {

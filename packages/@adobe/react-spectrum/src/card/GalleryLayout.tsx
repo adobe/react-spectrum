@@ -23,28 +23,28 @@ export interface GalleryLayoutOptions extends BaseLayoutOptions {
    * The the default row height. Note this must be larger than the min item height.
    * @default 208
    */
-  idealRowHeight?: number,
+  idealRowHeight?: number;
   /**
    * The spacing between items.
    * @default 18 x 18
    */
-  itemSpacing?: Size,
+  itemSpacing?: Size;
   /**
    * The vertical padding for an item.
    * @default 78
    */
-  itemPadding?: number,
+  itemPadding?: number;
   /**
    * Minimum size for a item in the grid.
    * @default 136 x 136
    */
-  minItemSize?: Size,
+  minItemSize?: Size;
   /**
    * Target for adding extra weight to elements during linear partitioning. Anything with an aspect ratio smaler than this value
    * will be targeted.
    * @type {number}
    */
-  threshold?: number
+  threshold?: number;
 }
 
 const DEFAULT_OPTIONS = {
@@ -61,8 +61,8 @@ const DEFAULT_OPTIONS = {
     minItemSize: new Size(136, 136),
     itemSpacing: new Size(18, 18),
     itemPadding: {
-      'medium': 78,
-      'large': 99
+      medium: 78,
+      large: 99
     },
     dropSpacing: 100,
     margin: 24
@@ -81,7 +81,10 @@ export class GalleryLayout<T> extends BaseLayout<T> {
     let cardSize = 'L';
     this.idealRowHeight = options.idealRowHeight || DEFAULT_OPTIONS[cardSize].idealRowHeight;
     this.itemSpacing = options.itemSpacing || DEFAULT_OPTIONS[cardSize].itemSpacing;
-    this.itemPadding = options.itemPadding != null ? options.itemPadding : DEFAULT_OPTIONS[cardSize].itemPadding[this.scale];
+    this.itemPadding =
+      options.itemPadding != null
+        ? options.itemPadding
+        : DEFAULT_OPTIONS[cardSize].itemPadding[this.scale];
     this.minItemSize = options.minItemSize || DEFAULT_OPTIONS[cardSize].minItemSize;
     this.threshold = options.threshold || 1;
     this.margin = options.margin != null ? options.margin : DEFAULT_OPTIONS[cardSize].margin;
@@ -98,7 +101,7 @@ export class GalleryLayout<T> extends BaseLayout<T> {
    * */
   _distributeWidths(widths: number[]): boolean {
     // create a copy of the widths array and sort it largest to smallest
-    let sortedWidths = widths.concat().sort((a, b) => a[1] > b[1] ? -1 : 1);
+    let sortedWidths = widths.concat().sort((a, b) => (a[1] > b[1] ? -1 : 1));
     for (let width of widths) {
       // for each width, if it's smaller than the min width
       if (width[1] < this.minItemSize.width) {
@@ -168,11 +171,13 @@ export class GalleryLayout<T> extends BaseLayout<T> {
       let rows = Math.max(1, Math.ceil(totalWidth / availableWidth));
       // if the available width can't hold two items, then every item will get its own row
       // this leads to a faster run through linear partition and more dependable output for small row widths
-      if (availableWidth <= (this.minItemSize.width * 2) + (this.itemPadding * 2)) {
+      if (availableWidth <= this.minItemSize.width * 2 + this.itemPadding * 2) {
         rows = this.collection.size;
       }
 
-      let weightedRatios = ratios.map(ratio => ratio < this.threshold ? ratio + (0.5 * (1 / ratio)) : ratio);
+      let weightedRatios = ratios.map(ratio =>
+        ratio < this.threshold ? ratio + 0.5 * (1 / ratio) : ratio
+      );
       let partition = linearPartition(weightedRatios, rows);
 
       let index = 0;
@@ -184,7 +189,8 @@ export class GalleryLayout<T> extends BaseLayout<T> {
         }
 
         // Determine the row height based on the total available width and weight of this row.
-        let bestRowHeight = (availableWidth - (row.length - 1) * this.itemSpacing.width) / totalWeight;
+        let bestRowHeight =
+          (availableWidth - (row.length - 1) * this.itemSpacing.width) / totalWeight;
 
         // if this is the last row and the row height is >2x the ideal row height, then cap to the ideal height
         // probably doing this because if the last row has one extremely tall image, then the row becomes huge
@@ -260,8 +266,12 @@ function linearPartition(seq, k) {
     return [seq];
   }
 
-  let table = Array(n).fill(0).map(() => Array(k).fill(0));
-  let solution = Array(n - 1).fill(0).map(() => Array(k - 1).fill(0));
+  let table = Array(n)
+    .fill(0)
+    .map(() => Array(k).fill(0));
+  let solution = Array(n - 1)
+    .fill(0)
+    .map(() => Array(k - 1).fill(0));
 
   for (let i = 0; i < n; i++) {
     table[i][0] = seq[i] + (i > 0 ? table[i - 1][0] : 0);

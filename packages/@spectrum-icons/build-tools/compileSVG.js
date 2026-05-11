@@ -17,10 +17,7 @@ export function compileSVG(file, componentName = 'IconComponent') {
   return transform.sync(
     code,
     {
-      plugins: [
-        '@svgr/plugin-svgo',
-        '@svgr/plugin-jsx'
-      ],
+      plugins: ['@svgr/plugin-svgo', '@svgr/plugin-jsx'],
       jsx: {
         babelConfig: {
           plugins: [

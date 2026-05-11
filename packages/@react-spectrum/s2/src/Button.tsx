@@ -11,10 +11,19 @@
  */
 
 import {baseColor, focusRing, fontRelative, lightDark, style} from '../style' with {type: 'macro'};
-import {ButtonRenderProps, Button as RACButton, ButtonProps as RACButtonProps} from 'react-aria-components/Button';
+import {
+  ButtonRenderProps,
+  Button as RACButton,
+  ButtonProps as RACButtonProps
+} from 'react-aria-components/Button';
 import {centerBaseline} from './CenterBaseline';
 import {ContextValue, Provider} from 'react-aria-components/slots';
-import {control, getAllowedOverrides, staticColor, StyleProps} from './style-utils' with {type: 'macro'};
+import {
+  control,
+  getAllowedOverrides,
+  staticColor,
+  StyleProps
+} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, ReactNode, useContext, useEffect, useState} from 'react';
 import {FocusableRef, FocusableRefValue, GlobalDOMAttributes} from '@react-types/shared';
 import {IconContext} from './Icon';
@@ -38,227 +47,255 @@ interface ButtonStyleProps {
    *
    * @default 'primary'
    */
-  variant?: 'primary' | 'secondary' | 'accent' | 'negative' | 'premium' | 'genai',
+  variant?: 'primary' | 'secondary' | 'accent' | 'negative' | 'premium' | 'genai';
   /**
    * The background style of the Button.
    *
    * @default 'fill'
    */
-  fillStyle?: 'fill' | 'outline',
+  fillStyle?: 'fill' | 'outline';
   /**
    * The size of the Button.
    *
    * @default 'M'
    */
-  size?: 'S' | 'M' | 'L' | 'XL',
+  size?: 'S' | 'M' | 'L' | 'XL';
   /** The static color style to apply. Useful when the Button appears over a color background. */
-  staticColor?: 'white' | 'black' | 'auto'
+  staticColor?: 'white' | 'black' | 'auto';
 }
 
-export interface ButtonProps extends Omit<RACButtonProps, 'className' | 'style' | 'render' | 'children' | 'onHover' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange' | 'onClick' | keyof GlobalDOMAttributes>, StyleProps, ButtonStyleProps {
+export interface ButtonProps
+  extends
+    Omit<
+      RACButtonProps,
+      | 'className'
+      | 'style'
+      | 'render'
+      | 'children'
+      | 'onHover'
+      | 'onHoverStart'
+      | 'onHoverEnd'
+      | 'onHoverChange'
+      | 'onClick'
+      | keyof GlobalDOMAttributes
+    >,
+    StyleProps,
+    ButtonStyleProps {
   /** The content to display in the Button. */
-  children: ReactNode
+  children: ReactNode;
 }
 
-export interface LinkButtonProps extends Omit<LinkProps, 'className' | 'style' | 'render' | 'children' | 'onClick' | keyof GlobalDOMAttributes>, StyleProps, ButtonStyleProps {
+export interface LinkButtonProps
+  extends
+    Omit<
+      LinkProps,
+      'className' | 'style' | 'render' | 'children' | 'onClick' | keyof GlobalDOMAttributes
+    >,
+    StyleProps,
+    ButtonStyleProps {
   /** The content to display in the Button. */
-  children: ReactNode
+  children: ReactNode;
 }
 
-export const ButtonContext = createContext<ContextValue<Partial<ButtonProps>, FocusableRefValue<HTMLButtonElement>>>(null);
-export const LinkButtonContext = createContext<ContextValue<Partial<ButtonProps>, FocusableRefValue<HTMLAnchorElement>>>(null);
+export const ButtonContext =
+  createContext<ContextValue<Partial<ButtonProps>, FocusableRefValue<HTMLButtonElement>>>(null);
+export const LinkButtonContext =
+  createContext<ContextValue<Partial<ButtonProps>, FocusableRefValue<HTMLAnchorElement>>>(null);
 
-const button = style<ButtonRenderProps & ButtonStyleProps & {isStaticColor: boolean}>({
-  ...focusRing(),
-  ...staticColor(),
-  ...control({shape: 'pill', wrap: true, icon: true}),
-  position: 'relative',
-  justifyContent: 'center',
-  textAlign: 'start',
-  fontWeight: 'bold',
-  userSelect: 'none',
-  width: 'fit',
-  textDecoration: 'none', // for link buttons
-  transition: 'default',
-  borderStyle: 'solid',
-  borderWidth: {
-    fillStyle: {
-      fill: 0,
-      outline: 2
-    },
-    variant: {
-      premium: 0,
-      genai: 0
-    }
-  },
-  borderColor: {
-    variant: {
-      primary: baseColor('gray-800'),
-      secondary: baseColor('gray-300')
-    },
-    isDisabled: 'disabled',
-    isStaticColor: {
+const button = style<ButtonRenderProps & ButtonStyleProps & {isStaticColor: boolean}>(
+  {
+    ...focusRing(),
+    ...staticColor(),
+    ...control({shape: 'pill', wrap: true, icon: true}),
+    position: 'relative',
+    justifyContent: 'center',
+    textAlign: 'start',
+    fontWeight: 'bold',
+    userSelect: 'none',
+    width: 'fit',
+    textDecoration: 'none', // for link buttons
+    transition: 'default',
+    borderStyle: 'solid',
+    borderWidth: {
+      fillStyle: {
+        fill: 0,
+        outline: 2
+      },
       variant: {
-        primary: baseColor('transparent-overlay-800'),
-        secondary: baseColor('transparent-overlay-300')
-      },
-      isDisabled: 'transparent-overlay-300'
+        premium: 0,
+        genai: 0
+      }
     },
-    forcedColors: {
-      default: 'ButtonBorder',
-      isHovered: 'Highlight',
-      isDisabled: 'GrayText'
-    }
-  },
-  backgroundColor: {
-    fillStyle: {
-      fill: {
-        variant: {
-          primary: baseColor('neutral'),
-          secondary: baseColor('gray-100'),
-          accent: {
-            default: lightDark('accent-900', 'accent-700'),
-            isHovered: lightDark('accent-1000', 'accent-600'),
-            isPressed: lightDark('accent-1000', 'accent-600'),
-            isFocusVisible: lightDark('accent-1000', 'accent-600')
-          },
-          negative: {
-            default: lightDark('negative-900', 'negative-700'),
-            isHovered: lightDark('negative-1000', 'negative-600'),
-            isPressed: lightDark('negative-1000', 'negative-600'),
-            isFocusVisible: lightDark('negative-1000', 'negative-600')
-          },
-          premium: 'gray-100',
-          genai: 'gray-100'
-        },
-        isDisabled: 'disabled'
+    borderColor: {
+      variant: {
+        primary: baseColor('gray-800'),
+        secondary: baseColor('gray-300')
       },
-      outline: {
+      isDisabled: 'disabled',
+      isStaticColor: {
         variant: {
-          premium: 'gray-100',
-          genai: 'gray-100'
+          primary: baseColor('transparent-overlay-800'),
+          secondary: baseColor('transparent-overlay-300')
         },
-        default: 'transparent',
-        isHovered: 'gray-100',
-        isPressed: 'gray-100',
-        isFocusVisible: 'gray-100',
-        isDisabled: {
-          default: 'transparent',
+        isDisabled: 'transparent-overlay-300'
+      },
+      forcedColors: {
+        default: 'ButtonBorder',
+        isHovered: 'Highlight',
+        isDisabled: 'GrayText'
+      }
+    },
+    backgroundColor: {
+      fillStyle: {
+        fill: {
+          variant: {
+            primary: baseColor('neutral'),
+            secondary: baseColor('gray-100'),
+            accent: {
+              default: lightDark('accent-900', 'accent-700'),
+              isHovered: lightDark('accent-1000', 'accent-600'),
+              isPressed: lightDark('accent-1000', 'accent-600'),
+              isFocusVisible: lightDark('accent-1000', 'accent-600')
+            },
+            negative: {
+              default: lightDark('negative-900', 'negative-700'),
+              isHovered: lightDark('negative-1000', 'negative-600'),
+              isPressed: lightDark('negative-1000', 'negative-600'),
+              isFocusVisible: lightDark('negative-1000', 'negative-600')
+            },
+            premium: 'gray-100',
+            genai: 'gray-100'
+          },
+          isDisabled: 'disabled'
+        },
+        outline: {
           variant: {
             premium: 'gray-100',
             genai: 'gray-100'
-          }
-        }
-      }
-    },
-    isStaticColor: {
-      fillStyle: {
-        fill: {
-          variant: {
-            primary: baseColor('transparent-overlay-800'),
-            secondary: baseColor('transparent-overlay-100'),
-            premium: 'transparent-overlay-100',
-            genai: 'transparent-overlay-100'
-          },
-          isDisabled: 'transparent-overlay-100'
-        },
-        outline: {
-          variant: {
-            premium: 'transparent-overlay-100',
-            genai: 'transparent-overlay-100'
           },
           default: 'transparent',
-          isHovered: 'transparent-overlay-100',
-          isPressed: 'transparent-overlay-100',
-          isFocusVisible: 'transparent-overlay-100',
+          isHovered: 'gray-100',
+          isPressed: 'gray-100',
+          isFocusVisible: 'gray-100',
           isDisabled: {
             default: 'transparent',
             variant: {
-              premium: 'transparent-overlay-100',
-              genai: 'transparent-overlay-100'
+              premium: 'gray-100',
+              genai: 'gray-100'
             }
           }
         }
-      }
-    },
-    forcedColors: {
-      fillStyle: {
-        fill: {
-          default: 'ButtonText',
-          isHovered: 'Highlight',
-          isDisabled: 'GrayText'
-        },
-        outline: 'ButtonFace'
-      }
-    }
-  },
-  color: {
-    fillStyle: {
-      fill: {
-        variant: {
-          primary: 'gray-25',
-          secondary: baseColor('neutral'),
-          accent: 'white',
-          negative: 'white',
-          premium: 'white',
-          genai: 'white'
-        },
-        isDisabled: 'disabled'
       },
-      outline: {
-        default: baseColor('neutral'),
-        variant: {
-          premium: 'white',
-          genai: 'white'
-        },
-        isDisabled: 'disabled'
+      isStaticColor: {
+        fillStyle: {
+          fill: {
+            variant: {
+              primary: baseColor('transparent-overlay-800'),
+              secondary: baseColor('transparent-overlay-100'),
+              premium: 'transparent-overlay-100',
+              genai: 'transparent-overlay-100'
+            },
+            isDisabled: 'transparent-overlay-100'
+          },
+          outline: {
+            variant: {
+              premium: 'transparent-overlay-100',
+              genai: 'transparent-overlay-100'
+            },
+            default: 'transparent',
+            isHovered: 'transparent-overlay-100',
+            isPressed: 'transparent-overlay-100',
+            isFocusVisible: 'transparent-overlay-100',
+            isDisabled: {
+              default: 'transparent',
+              variant: {
+                premium: 'transparent-overlay-100',
+                genai: 'transparent-overlay-100'
+              }
+            }
+          }
+        }
+      },
+      forcedColors: {
+        fillStyle: {
+          fill: {
+            default: 'ButtonText',
+            isHovered: 'Highlight',
+            isDisabled: 'GrayText'
+          },
+          outline: 'ButtonFace'
+        }
       }
     },
-    isStaticColor: {
+    color: {
       fillStyle: {
         fill: {
           variant: {
-            primary: 'auto',
-            secondary: baseColor('transparent-overlay-800'),
+            primary: 'gray-25',
+            secondary: baseColor('neutral'),
+            accent: 'white',
+            negative: 'white',
             premium: 'white',
             genai: 'white'
-          }
+          },
+          isDisabled: 'disabled'
         },
         outline: {
+          default: baseColor('neutral'),
           variant: {
             premium: 'white',
             genai: 'white'
           },
-          default: baseColor('transparent-overlay-800')
+          isDisabled: 'disabled'
         }
       },
-      isDisabled: 'transparent-overlay-400'
-    },
-    forcedColors: {
-      fillStyle: {
-        fill: {
-          default: 'ButtonFace',
-          isDisabled: 'HighlightText'
+      isStaticColor: {
+        fillStyle: {
+          fill: {
+            variant: {
+              primary: 'auto',
+              secondary: baseColor('transparent-overlay-800'),
+              premium: 'white',
+              genai: 'white'
+            }
+          },
+          outline: {
+            variant: {
+              premium: 'white',
+              genai: 'white'
+            },
+            default: baseColor('transparent-overlay-800')
+          }
         },
-        outline: {
-          default: 'ButtonText',
-          isDisabled: 'GrayText'
+        isDisabled: 'transparent-overlay-400'
+      },
+      forcedColors: {
+        fillStyle: {
+          fill: {
+            default: 'ButtonFace',
+            isDisabled: 'HighlightText'
+          },
+          outline: {
+            default: 'ButtonText',
+            isDisabled: 'GrayText'
+          }
         }
       }
-    }
+    },
+    '--iconPrimary': {
+      type: 'fill',
+      value: 'currentColor'
+    },
+    outlineColor: {
+      default: 'focus-ring',
+      isStaticColor: 'transparent-overlay-1000',
+      forcedColors: 'Highlight'
+    },
+    forcedColorAdjust: 'none',
+    disableTapHighlight: true
   },
-  '--iconPrimary': {
-    type: 'fill',
-    value: 'currentColor'
-  },
-  outlineColor: {
-    default: 'focus-ring',
-    isStaticColor: 'transparent-overlay-1000',
-    forcedColors: 'Highlight'
-  },
-  forcedColorAdjust: 'none',
-  disableTapHighlight: true
-}, getAllowedOverrides());
+  getAllowedOverrides()
+);
 
 // Put the gradient background on a separate element from the button to work around a Safari
 // bug where transitions of custom properties cause layout flickering if any properties use rems. 🤣
@@ -272,16 +309,56 @@ const gradient = style({
   backgroundImage: {
     variant: {
       premium: {
-        default: linearGradient('to bottom right', ['fuchsia-900', 0], ['indigo-900', 66], ['blue-900', 100]),
-        isHovered: linearGradient('to bottom right', ['fuchsia-1000', 0], ['indigo-1000', 66], ['blue-1000', 100]),
-        isPressed: linearGradient('to bottom right', ['fuchsia-1000', 0], ['indigo-1000', 66], ['blue-1000', 100]),
-        isFocusVisible: linearGradient('to bottom right', ['fuchsia-1000', 0], ['indigo-1000', 66], ['blue-1000', 100])
+        default: linearGradient(
+          'to bottom right',
+          ['fuchsia-900', 0],
+          ['indigo-900', 66],
+          ['blue-900', 100]
+        ),
+        isHovered: linearGradient(
+          'to bottom right',
+          ['fuchsia-1000', 0],
+          ['indigo-1000', 66],
+          ['blue-1000', 100]
+        ),
+        isPressed: linearGradient(
+          'to bottom right',
+          ['fuchsia-1000', 0],
+          ['indigo-1000', 66],
+          ['blue-1000', 100]
+        ),
+        isFocusVisible: linearGradient(
+          'to bottom right',
+          ['fuchsia-1000', 0],
+          ['indigo-1000', 66],
+          ['blue-1000', 100]
+        )
       },
       genai: {
-        default: linearGradient('to bottom right', ['red-900', 0], ['magenta-900', 33], ['indigo-900', 100]),
-        isHovered: linearGradient('to bottom right', ['red-1000', 0], ['magenta-1000', 33], ['indigo-1000', 100]),
-        isPressed: linearGradient('to bottom right', ['red-1000', 0], ['magenta-1000', 33], ['indigo-1000', 100]),
-        isFocusVisible: linearGradient('to bottom right', ['red-1000', 0], ['magenta-1000', 33], ['indigo-1000', 100])
+        default: linearGradient(
+          'to bottom right',
+          ['red-900', 0],
+          ['magenta-900', 33],
+          ['indigo-900', 100]
+        ),
+        isHovered: linearGradient(
+          'to bottom right',
+          ['red-1000', 0],
+          ['magenta-1000', 33],
+          ['indigo-1000', 100]
+        ),
+        isPressed: linearGradient(
+          'to bottom right',
+          ['red-1000', 0],
+          ['magenta-1000', 33],
+          ['indigo-1000', 100]
+        ),
+        isFocusVisible: linearGradient(
+          'to bottom right',
+          ['red-1000', 0],
+          ['magenta-1000', 33],
+          ['indigo-1000', 100]
+        )
       }
     },
     isDisabled: 'none',
@@ -319,17 +396,14 @@ export function usePendingState(isPending: boolean) {
  * They have multiple styles for various needs, and are ideal for calling attention to
  * where a user needs to do something in order to move forward in a flow.
  */
-export const Button = forwardRef(function Button(props: ButtonProps, ref: FocusableRef<HTMLButtonElement>) {
+export const Button = forwardRef(function Button(
+  props: ButtonProps,
+  ref: FocusableRef<HTMLButtonElement>
+) {
   [props, ref] = useSpectrumContextProps(props, ref, ButtonContext);
   props = useFormProps(props);
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
-  let {
-    isPending = false,
-    variant = 'primary',
-    fillStyle = 'fill',
-    size = 'M',
-    staticColor
-  } = props;
+  let {isPending = false, variant = 'primary', fillStyle = 'fill', size = 'M', staticColor} = props;
   let domRef = useFocusableRef(ref);
   let overlayTriggerState = useContext(OverlayTriggerStateContext);
 
@@ -340,20 +414,26 @@ export const Button = forwardRef(function Button(props: ButtonProps, ref: Focusa
       {...props}
       ref={domRef}
       style={pressScale(domRef, props.UNSAFE_style)}
-      className={renderProps => (props.UNSAFE_className || '') + button({
-        ...renderProps,
-        // Retain hover styles when an overlay is open.
-        isHovered: renderProps.isHovered || overlayTriggerState?.isOpen || false,
-        isDisabled: renderProps.isDisabled || isProgressVisible,
-        variant,
-        fillStyle,
-        size,
-        staticColor,
-        isStaticColor: !!staticColor
-      }, props.styles)}>
-      {(renderProps) => (<>
-        {variant === 'genai' || variant === 'premium'
-          ? (
+      className={renderProps =>
+        (props.UNSAFE_className || '') +
+        button(
+          {
+            ...renderProps,
+            // Retain hover styles when an overlay is open.
+            isHovered: renderProps.isHovered || overlayTriggerState?.isOpen || false,
+            isDisabled: renderProps.isDisabled || isProgressVisible,
+            variant,
+            fillStyle,
+            size,
+            staticColor,
+            isStaticColor: !!staticColor
+          },
+          props.styles
+        )
+      }>
+      {renderProps => (
+        <>
+          {variant === 'genai' || variant === 'premium' ? (
             <span
               className={gradient({
                 ...renderProps,
@@ -361,67 +441,75 @@ export const Button = forwardRef(function Button(props: ButtonProps, ref: Focusa
                 isHovered: renderProps.isHovered || overlayTriggerState?.isOpen || false,
                 isDisabled: renderProps.isDisabled || isProgressVisible,
                 variant
-              })} />
-             )
-          : null}
-        <Provider
-          values={[
-            [SkeletonContext, null],
-            [TextContext, {
-              styles: style({
-                paddingY: '--labelPadding',
-                order: 1,
-                visibility: {
-                  isProgressVisible: 'hidden'
-                }
-              })({isProgressVisible}),
-              // @ts-ignore data-attributes allowed on all JSX elements, but adding to DOMProps has been problematic in the past
-              'data-rsp-slot': 'text'
-            }],
-            [IconContext, {
-              render: centerBaseline({slot: 'icon', styles: style({order: 0})}),
-              styles: style({
-                size: fontRelative(20),
-                marginStart: '--iconMargin',
-                flexShrink: 0,
-                visibility: {
-                  isProgressVisible: 'hidden'
-                }
-              })({isProgressVisible})
-            }]
-          ]}>
-          {typeof props.children === 'string' ? <Text>{props.children}</Text> : props.children}
-          {isPending &&
-            <div
-              className={style({
-                position: 'absolute',
-                top: '50%',
-                left: '50%',
-                transform: 'translate(-50%, -50%)',
-                visibility: {
-                  default: 'hidden',
-                  isProgressVisible: 'visible'
-                }
-              })({isProgressVisible, isPending})}>
-              <ProgressCircle
-                isIndeterminate
-                aria-label={stringFormatter.format('button.pending')}
-                size="S"
-                staticColor={staticColor}
-                styles={style({
-                  size: {
-                    size: {
-                      S: 14,
-                      M: 18,
-                      L: 20,
-                      XL: 24
+              })}
+            />
+          ) : null}
+          <Provider
+            values={[
+              [SkeletonContext, null],
+              [
+                TextContext,
+                {
+                  styles: style({
+                    paddingY: '--labelPadding',
+                    order: 1,
+                    visibility: {
+                      isProgressVisible: 'hidden'
                     }
+                  })({isProgressVisible}),
+                  // @ts-ignore data-attributes allowed on all JSX elements, but adding to DOMProps has been problematic in the past
+                  'data-rsp-slot': 'text'
+                }
+              ],
+              [
+                IconContext,
+                {
+                  render: centerBaseline({slot: 'icon', styles: style({order: 0})}),
+                  styles: style({
+                    size: fontRelative(20),
+                    marginStart: '--iconMargin',
+                    flexShrink: 0,
+                    visibility: {
+                      isProgressVisible: 'hidden'
+                    }
+                  })({isProgressVisible})
+                }
+              ]
+            ]}>
+            {typeof props.children === 'string' ? <Text>{props.children}</Text> : props.children}
+            {isPending && (
+              <div
+                className={style({
+                  position: 'absolute',
+                  top: '50%',
+                  left: '50%',
+                  transform: 'translate(-50%, -50%)',
+                  visibility: {
+                    default: 'hidden',
+                    isProgressVisible: 'visible'
                   }
-                })({size})} />
-            </div>
-          }
-        </Provider>
-      </>)}
+                })({isProgressVisible, isPending})}>
+                <ProgressCircle
+                  isIndeterminate
+                  aria-label={stringFormatter.format('button.pending')}
+                  size="S"
+                  staticColor={staticColor}
+                  styles={style({
+                    size: {
+                      size: {
+                        S: 14,
+                        M: 18,
+                        L: 20,
+                        XL: 24
+                      }
+                    }
+                  })({size})}
+                />
+              </div>
+            )}
+          </Provider>
+        </>
+      )}
     </RACButton>
   );
 });
@@ -429,64 +517,77 @@ export const Button = forwardRef(function Button(props: ButtonProps, ref: Focusa
 /**
  * A LinkButton combines the functionality of a link with the appearance of a button. Useful for allowing users to navigate to another page.
  */
-export const LinkButton = forwardRef(function LinkButton(props: LinkButtonProps, ref: FocusableRef<HTMLAnchorElement>) {
+export const LinkButton = forwardRef(function LinkButton(
+  props: LinkButtonProps,
+  ref: FocusableRef<HTMLAnchorElement>
+) {
   [props, ref] = useSpectrumContextProps(props, ref, LinkButtonContext);
   props = useFormProps(props);
   let domRef = useFocusableRef(ref);
   let overlayTriggerState = useContext(OverlayTriggerStateContext);
-  let {
-    fillStyle = 'fill',
-    size = 'M',
-    variant = 'primary',
-    staticColor,
-    styles,
-    children
-  } = props;
+  let {fillStyle = 'fill', size = 'M', variant = 'primary', staticColor, styles, children} = props;
 
   return (
     <Link
       {...props}
       ref={domRef}
       style={pressScale(domRef, props.UNSAFE_style)}
-      className={renderProps => (props.UNSAFE_className || '') + button({
-        ...renderProps,
-        // Retain hover styles when an overlay is open.
-        isHovered: renderProps.isHovered || overlayTriggerState?.isOpen || false,
-        variant,
-        fillStyle,
-        size,
-        staticColor,
-        isStaticColor: !!staticColor,
-        isPending: false
-      }, styles)}>
-      {(renderProps) => (<>
-        {variant === 'genai' || variant === 'premium'
-          ? (
+      className={renderProps =>
+        (props.UNSAFE_className || '') +
+        button(
+          {
+            ...renderProps,
+            // Retain hover styles when an overlay is open.
+            isHovered: renderProps.isHovered || overlayTriggerState?.isOpen || false,
+            variant,
+            fillStyle,
+            size,
+            staticColor,
+            isStaticColor: !!staticColor,
+            isPending: false
+          },
+          styles
+        )
+      }>
+      {renderProps => (
+        <>
+          {variant === 'genai' || variant === 'premium' ? (
             <span
               className={gradient({
                 ...renderProps,
                 // Retain hover styles when an overlay is open.
                 isHovered: renderProps.isHovered || overlayTriggerState?.isOpen || false,
                 variant
-              })} />
-             )
-          : null}
-        <Provider
-          values={[
-            [SkeletonContext, null],
-            [TextContext, {
-              styles: style({paddingY: '--labelPadding', order: 1}),
-              // @ts-ignore data-attributes allowed on all JSX elements, but adding to DOMProps has been problematic in the past
-              'data-rsp-slot': 'text'
-            }],
-            [IconContext, {
-              render: centerBaseline({slot: 'icon', styles: style({order: 0})}),
-              styles: style({size: fontRelative(20), marginStart: '--iconMargin', flexShrink: 0})
-            }]
-          ]}>
-          {typeof children === 'string' ? <Text>{children}</Text> : children}
-        </Provider>
-      </>)}
+              })}
+            />
+          ) : null}
+          <Provider
+            values={[
+              [SkeletonContext, null],
+              [
+                TextContext,
+                {
+                  styles: style({paddingY: '--labelPadding', order: 1}),
+                  // @ts-ignore data-attributes allowed on all JSX elements, but adding to DOMProps has been problematic in the past
+                  'data-rsp-slot': 'text'
+                }
+              ],
+              [
+                IconContext,
+                {
+                  render: centerBaseline({slot: 'icon', styles: style({order: 0})}),
+                  styles: style({
+                    size: fontRelative(20),
+                    marginStart: '--iconMargin',
+                    flexShrink: 0
+                  })
+                }
+              ]
+            ]}>
+            {typeof children === 'string' ? <Text>{children}</Text> : children}
+          </Provider>
+        </>
+      )}
     </Link>
   );
 });

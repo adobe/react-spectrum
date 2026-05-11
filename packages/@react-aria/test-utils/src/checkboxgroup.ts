@@ -18,18 +18,17 @@ interface TriggerCheckboxOptions {
   /**
    * What interaction type to use when triggering a checkbox. Defaults to the interaction type set on the tester.
    */
-  interactionType?: UserOpts['interactionType'],
+  interactionType?: UserOpts['interactionType'];
   /**
    * The index, text, or node of the checkbox to toggle selection for.
    */
-  checkbox: number | string | HTMLElement
+  checkbox: number | string | HTMLElement;
 }
 
 export class CheckboxGroupTester {
   private user;
   private _interactionType: UserOpts['interactionType'];
   private _checkboxgroup: HTMLElement;
-
 
   constructor(opts: CheckboxGroupTesterOpts) {
     let {root, user, interactionType} = opts;
@@ -54,9 +53,7 @@ export class CheckboxGroupTester {
    * Returns a checkbox matching the specified index or text content.
    */
   findCheckbox(opts: {checkboxIndexOrText: number | string}): HTMLElement {
-    let {
-      checkboxIndexOrText
-    } = opts;
+    let {checkboxIndexOrText} = opts;
 
     let checkbox;
     if (typeof checkboxIndexOrText === 'number') {
@@ -84,9 +81,14 @@ export class CheckboxGroupTester {
   private async keyboardNavigateToCheckbox(opts: {checkbox: HTMLElement}) {
     let {checkbox} = opts;
     let checkboxes = this.checkboxes;
-    checkboxes = checkboxes.filter(checkbox => !(checkbox.hasAttribute('disabled') || checkbox.getAttribute('aria-disabled') === 'true'));
+    checkboxes = checkboxes.filter(
+      checkbox =>
+        !(checkbox.hasAttribute('disabled') || checkbox.getAttribute('aria-disabled') === 'true')
+    );
     if (checkboxes.length === 0) {
-      throw new Error('Checkbox group doesnt have any non-disabled checkboxes. Please double check your checkbox group.');
+      throw new Error(
+        'Checkbox group doesnt have any non-disabled checkboxes. Please double check your checkbox group.'
+      );
     }
 
     let targetIndex = checkboxes.indexOf(checkbox);
@@ -106,16 +108,13 @@ export class CheckboxGroupTester {
     for (let i = 0; i < Math.abs(targetIndex - currIndex); i++) {
       await this.user.tab({shift: targetIndex < currIndex});
     }
-  };
+  }
 
   /**
    * Toggles the specified checkbox. Defaults to using the interaction type set on the checkbox tester.
    */
   async toggleCheckbox(opts: TriggerCheckboxOptions): Promise<void> {
-    let {
-      checkbox,
-      interactionType = this._interactionType
-    } = opts;
+    let {checkbox, interactionType = this._interactionType} = opts;
 
     if (typeof checkbox === 'string' || typeof checkbox === 'number') {
       checkbox = this.findCheckbox({checkboxIndexOrText: checkbox});
@@ -153,6 +152,9 @@ export class CheckboxGroupTester {
    * Returns the currently selected checkboxes in the checkboxgroup if any.
    */
   get selectedCheckboxes(): HTMLElement[] {
-    return this.checkboxes.filter(checkbox => (checkbox as HTMLInputElement).checked || checkbox.getAttribute('aria-checked') === 'true');
+    return this.checkboxes.filter(
+      checkbox =>
+        (checkbox as HTMLInputElement).checked || checkbox.getAttribute('aria-checked') === 'true'
+    );
   }
 }

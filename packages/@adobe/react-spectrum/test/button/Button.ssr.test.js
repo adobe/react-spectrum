@@ -19,16 +19,22 @@ describe('Button SSR', function () {
     ${'Button'}       | ${{}}
     ${'LogicButton'}  | ${{}}
   `('$Name should render without errors', async function ({Name, props}) {
-    await testSSR(__filename, `
+    await testSSR(
+      __filename,
+      `
       import {${Name}} from '../../exports/index.ts';
       <${Name}>Button</${Name}>
-    `);
+    `
+    );
   });
 
   it('FieldButton', async function () {
-    await testSSR(__filename, `
+    await testSSR(
+      __filename,
+      `
       import {FieldButton} from '../../exports/private/button/FieldButton.ts';
       <FieldButton>Button</FieldButton>
-    `);
+    `
+    );
   });
 });

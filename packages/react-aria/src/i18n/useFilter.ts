@@ -15,11 +15,11 @@ import {useCollator} from './useCollator';
 
 export interface Filter {
   /** Returns whether a string starts with a given substring. */
-  startsWith: (string: string, substring: string) => boolean,
+  startsWith: (string: string, substring: string) => boolean;
   /** Returns whether a string ends with a given substring. */
-  endsWith: (string: string, substring: string) => boolean,
+  endsWith: (string: string, substring: string) => boolean;
   /** Returns whether a string contains a given substring. */
-  contains: (string: string, substring: string) => boolean
+  contains: (string: string, substring: string) => boolean;
 }
 
 /**
@@ -33,51 +33,63 @@ export function useFilter(options?: Intl.CollatorOptions): Filter {
   });
 
   // TODO(later): these methods don't currently support the ignorePunctuation option.
-  let startsWith = useCallback((string, substring) => {
-    if (substring.length === 0) {
-      return true;
-    }
-
-    // Normalize both strings so we can slice safely
-    // TODO: take into account the ignorePunctuation option as well...
-    string = string.normalize('NFC');
-    substring = substring.normalize('NFC');
-    return collator.compare(string.slice(0, substring.length), substring) === 0;
-  }, [collator]);
-
-  let endsWith = useCallback((string, substring) => {
-    if (substring.length === 0) {
-      return true;
-    }
-
-    string = string.normalize('NFC');
-    substring = substring.normalize('NFC');
-    return collator.compare(string.slice(-substring.length), substring) === 0;
-  }, [collator]);
-
-  let contains = useCallback((string, substring) => {
-    if (substring.length === 0) {
-      return true;
-    }
-
-    string = string.normalize('NFC');
-    substring = substring.normalize('NFC');
-
-    let scan = 0;
-    let sliceLen = substring.length;
-    for (; scan + sliceLen <= string.length; scan++) {
-      let slice = string.slice(scan, scan + sliceLen);
-      if (collator.compare(substring, slice) === 0) {
+  let startsWith = useCallback(
+    (string, substring) => {
+      if (substring.length === 0) {
         return true;
       }
-    }
 
-    return false;
-  }, [collator]);
+      // Normalize both strings so we can slice safely
+      // TODO: take into account the ignorePunctuation option as well...
+      string = string.normalize('NFC');
+      substring = substring.normalize('NFC');
+      return collator.compare(string.slice(0, substring.length), substring) === 0;
+    },
+    [collator]
+  );
 
-  return useMemo(() => ({
-    startsWith,
-    endsWith,
-    contains
-  }), [startsWith, endsWith, contains]);
+  let endsWith = useCallback(
+    (string, substring) => {
+      if (substring.length === 0) {
+        return true;
+      }
+
+      string = string.normalize('NFC');
+      substring = substring.normalize('NFC');
+      return collator.compare(string.slice(-substring.length), substring) === 0;
+    },
+    [collator]
+  );
+
+  let contains = useCallback(
+    (string, substring) => {
+      if (substring.length === 0) {
+        return true;
+      }
+
+      string = string.normalize('NFC');
+      substring = substring.normalize('NFC');
+
+      let scan = 0;
+      let sliceLen = substring.length;
+      for (; scan + sliceLen <= string.length; scan++) {
+        let slice = string.slice(scan, scan + sliceLen);
+        if (collator.compare(substring, slice) === 0) {
+          return true;
+        }
+      }
+
+      return false;
+    },
+    [collator]
+  );
+
+  return useMemo(
+    () => ({
+      startsWith,
+      endsWith,
+      contains
+    }),
+    [startsWith, endsWith, contains]
+  );
 }

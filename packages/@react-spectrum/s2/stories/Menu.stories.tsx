@@ -70,10 +70,12 @@ export default meta;
 type Story = StoryObj<typeof CombinedMenu>;
 
 export const Example: Story = {
-  render: (args) => {
+  render: args => {
     return (
       <MenuTrigger {...args}>
-        <Button aria-label="Actions for selected resource"><NewIcon /></Button>
+        <Button aria-label="Actions for selected resource">
+          <NewIcon />
+        </Button>
         <Menu {...args}>
           <MenuItem>Favorite</MenuItem>
           <MenuItem>Edit</MenuItem>
@@ -92,14 +94,25 @@ export const Example: Story = {
 };
 
 export const KeyboardShortcuts: Story = {
-  render: (args) => {
+  render: args => {
     return (
       <MenuTrigger {...args}>
-        <Button aria-label="Help"><NewIcon /></Button>
+        <Button aria-label="Help">
+          <NewIcon />
+        </Button>
         <Menu {...args} disabledKeys={['copy']}>
-          <MenuItem id="cut" textValue="Cut"><Text slot="label">Cut</Text><Keyboard>⌘ Cmd + X</Keyboard></MenuItem>
-          <MenuItem id="copy" textValue="Copy"><Text slot="label">Copy</Text><Keyboard>⌘ Cmd + C</Keyboard></MenuItem>
-          <MenuItem id="paste" textValue="Paste"><Text slot="label">Paste</Text><Keyboard>⌘ Cmd + V</Keyboard></MenuItem>
+          <MenuItem id="cut" textValue="Cut">
+            <Text slot="label">Cut</Text>
+            <Keyboard>⌘ Cmd + X</Keyboard>
+          </MenuItem>
+          <MenuItem id="copy" textValue="Copy">
+            <Text slot="label">Copy</Text>
+            <Keyboard>⌘ Cmd + C</Keyboard>
+          </MenuItem>
+          <MenuItem id="paste" textValue="Paste">
+            <Text slot="label">Paste</Text>
+            <Keyboard>⌘ Cmd + V</Keyboard>
+          </MenuItem>
         </Menu>
       </MenuTrigger>
     );
@@ -107,7 +120,7 @@ export const KeyboardShortcuts: Story = {
 };
 
 export const PublishAndExport: Story = {
-  render: (args) => {
+  render: args => {
     return (
       <MenuTrigger {...args}>
         <Button variant="accent">Publish</Button>
@@ -176,26 +189,19 @@ export const PublishAndExport: Story = {
   }
 };
 
-const normalUrl = new URL(
-  './assets/normal.png?as=png',
-  import.meta.url
-);
+const normalUrl = new URL('./assets/normal.png?as=png', import.meta.url);
 
-const multiplyUrl = new URL(
-  './assets/multiply.png?as=png',
-  import.meta.url
-);
+const multiplyUrl = new URL('./assets/multiply.png?as=png', import.meta.url);
 
-const screenUrl = new URL(
-  './assets/screen.png?as=png',
-  import.meta.url
-);
+const screenUrl = new URL('./assets/screen.png?as=png', import.meta.url);
 
 export const BlendModes: Story = {
-  render: (args) => {
+  render: args => {
     return (
       <MenuTrigger {...args}>
-        <Button aria-label="Choose blend mode"><NewIcon /></Button>
+        <Button aria-label="Choose blend mode">
+          <NewIcon />
+        </Button>
         <Menu {...args}>
           <MenuItem id="normal" textValue="normal">
             <Image src={normalUrl.href} alt="normal hot airballoon photo" />
@@ -205,7 +211,9 @@ export const BlendModes: Story = {
           <MenuItem id="multiply" textValue="multiply">
             <Image src={multiplyUrl.href} alt="hot airballoon photo blend mode multiply" />
             <Text slot="label">Multiply</Text>
-            <Text slot="description"><div style={{maxWidth: '150px'}}>Add contrast, detail, and darken shadows.</div></Text>
+            <Text slot="description">
+              <div style={{maxWidth: '150px'}}>Add contrast, detail, and darken shadows.</div>
+            </Text>
           </MenuItem>
           <MenuItem id="screen" textValue="screen">
             <Image src={screenUrl.href} alt="hot airballoon photo blend mode screen" />
@@ -219,25 +227,31 @@ export const BlendModes: Story = {
 };
 
 interface IExampleItem {
-  id: string,
-  label: string,
-  children?: IExampleItem[]
+  id: string;
+  label: string;
+  children?: IExampleItem[];
 }
 let items: IExampleItem[] = [
-  {id: 'view', label: 'View', children: [
-    {id: 'grid', label: 'Grid'},
-    {id: 'rulers', label: 'Rulers'},
-    {id: 'tasks', label: 'Contextual task bar'},
-    {id: 'snap', label: 'Snap'}
-  ]},
+  {
+    id: 'view',
+    label: 'View',
+    children: [
+      {id: 'grid', label: 'Grid'},
+      {id: 'rulers', label: 'Rulers'},
+      {id: 'tasks', label: 'Contextual task bar'},
+      {id: 'snap', label: 'Snap'}
+    ]
+  },
   {id: 'export', label: 'Export as...'},
   {id: 'import', label: 'Import...'}
 ];
 export const DynamicExample: Story = {
-  render: (args) => {
+  render: args => {
     return (
       <MenuTrigger {...args}>
-        <Button aria-label="Actions"><More /></Button>
+        <Button aria-label="Actions">
+          <More />
+        </Button>
         <Menu {...args}>
           {function renderItem(arg) {
             let item = arg as IExampleItem;
@@ -245,7 +259,9 @@ export const DynamicExample: Story = {
               return (
                 <SubmenuTrigger>
                   <MenuItem>{item.label}</MenuItem>
-                  <Menu items={item.children} selectionMode="multiple">{renderItem}</Menu>
+                  <Menu items={item.children} selectionMode="multiple">
+                    {renderItem}
+                  </Menu>
                 </SubmenuTrigger>
               );
             } else {
@@ -266,7 +282,9 @@ const SelectionGroupsRender = (args: MenuProps<IExampleItem>): ReactElement => {
   let [group2, setGroup2] = useState<Selection>(new Set());
   return (
     <MenuTrigger {...args}>
-      <Button aria-label="Text actions"><TextIcon /></Button>
+      <Button aria-label="Text actions">
+        <TextIcon />
+      </Button>
       <Menu {...args}>
         <MenuSection>
           <Header>
@@ -325,17 +343,19 @@ const SelectionGroupsRender = (args: MenuProps<IExampleItem>): ReactElement => {
 };
 
 export const SelectionGroups: StoryObj<typeof SelectionGroupsRender> = {
-  render: (args) => <SelectionGroupsRender {...args} />,
+  render: args => <SelectionGroupsRender {...args} />,
   parameters: {
     layout: 'padded'
   }
 };
 
 export const UnavailableMenuItem: Story = {
-  render: (args) => {
+  render: args => {
     return (
       <MenuTrigger {...args}>
-        <Button aria-label="Actions for selected resource"><NewIcon /></Button>
+        <Button aria-label="Actions for selected resource">
+          <NewIcon />
+        </Button>
         <Menu {...args}>
           <MenuItem>Favorite</MenuItem>
           <UnavailableMenuItemTrigger>
@@ -343,12 +363,12 @@ export const UnavailableMenuItem: Story = {
             <ContextualHelpPopover>
               <Heading slot="title">Permission Denied</Heading>
               <Content>
-                <Text>
-                  Contact your administrator for permissions to edit this item.
-                </Text>
+                <Text>Contact your administrator for permissions to edit this item.</Text>
               </Content>
               <Footer>
-                <Link isStandalone href="https://google.com" target="_blank">Learn more</Link>
+                <Link isStandalone href="https://google.com" target="_blank">
+                  Learn more
+                </Link>
               </Footer>
             </ContextualHelpPopover>
           </UnavailableMenuItemTrigger>
@@ -357,12 +377,12 @@ export const UnavailableMenuItem: Story = {
             <ContextualHelpPopover>
               <Heading slot="title">Permission Denied</Heading>
               <Content>
-                <Text>
-                  Contact your administrator for permissions to delete this item.
-                </Text>
+                <Text>Contact your administrator for permissions to delete this item.</Text>
               </Content>
               <Footer>
-                <Link isStandalone href="https://google.com" target="_blank">Learn more</Link>
+                <Link isStandalone href="https://google.com" target="_blank">
+                  Learn more
+                </Link>
               </Footer>
             </ContextualHelpPopover>
           </UnavailableMenuItemTrigger>

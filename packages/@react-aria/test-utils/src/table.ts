@@ -11,7 +11,13 @@
  */
 
 import {act, waitFor, within} from '@testing-library/react';
-import {BaseGridRowInteractionOpts, GridRowActionOpts, TableTesterOpts, ToggleGridRowOpts, UserOpts} from './types';
+import {
+  BaseGridRowInteractionOpts,
+  GridRowActionOpts,
+  TableTesterOpts,
+  ToggleGridRowOpts,
+  UserOpts
+} from './types';
 import {getAltKey, getMetaKey, pressElement, triggerLongPress} from './events';
 
 interface TableToggleRowOpts extends ToggleGridRowOpts {}
@@ -20,17 +26,17 @@ interface TableToggleSortOpts {
   /**
    * The index, text, or node of the column to toggle selection for.
    */
-  column: number | string | HTMLElement,
+  column: number | string | HTMLElement;
   /**
    * What interaction type to use when sorting the column. Defaults to the interaction type set on the tester.
    */
-  interactionType?: UserOpts['interactionType']
+  interactionType?: UserOpts['interactionType'];
 }
 interface TableColumnHeaderActionOpts extends TableToggleSortOpts {
   /**
    * The index of the column header action to trigger.
    */
-  action: number
+  action: number;
 }
 interface TableRowActionOpts extends GridRowActionOpts {}
 
@@ -56,7 +62,10 @@ export class TableTester {
   }
 
   // TODO: RTL
-  private async keyboardNavigateToRow(opts: {row: HTMLElement, selectionOnNav?: 'default' | 'none'}) {
+  private async keyboardNavigateToRow(opts: {
+    row: HTMLElement;
+    selectionOnNav?: 'default' | 'none';
+  }) {
     let {row, selectionOnNav = 'default'} = opts;
     let altKey = getAltKey();
     let rows = this.rows;
@@ -82,7 +91,10 @@ export class TableTester {
     }
 
     // Move focus onto the row itself
-    if (this.rowGroups[1].contains(document.activeElement) && document.activeElement!.getAttribute('role') !== 'row') {
+    if (
+      this.rowGroups[1].contains(document.activeElement) &&
+      document.activeElement!.getAttribute('role') !== 'row'
+    ) {
       do {
         await this.user.keyboard('[ArrowLeft]');
       } while (document.activeElement!.getAttribute('role') !== 'row');
@@ -102,7 +114,7 @@ export class TableTester {
     if (selectionOnNav === 'none') {
       await this.user.keyboard(`[/${altKey}]`);
     }
-  };
+  }
 
   /**
    * Toggles the selection for the specified table row. Defaults to using the interaction type set on the table tester.
@@ -130,7 +142,10 @@ export class TableTester {
     let rowCheckbox = within(row).queryByRole('checkbox');
 
     if (interactionType === 'keyboard' && (!checkboxSelection || !rowCheckbox)) {
-      await this.keyboardNavigateToRow({row, selectionOnNav: selectionBehavior === 'replace' ? 'none' : 'default'});
+      await this.keyboardNavigateToRow({
+        row,
+        selectionOnNav: selectionBehavior === 'replace' ? 'none' : 'default'
+      });
       if (selectionBehavior === 'replace') {
         await this.user.keyboard(`[${altKey}>]`);
       }
@@ -150,7 +165,11 @@ export class TableTester {
         }
 
         // Note that long press interactions with rows is strictly touch only for grid rows
-        await triggerLongPress({element: cell, advanceTimer: this._advanceTimer, pointerOpts: {pointerType: 'touch'}});
+        await triggerLongPress({
+          element: cell,
+          advanceTimer: this._advanceTimer,
+          pointerOpts: {pointerType: 'touch'}
+        });
       } else {
         if (selectionBehavior === 'replace' && interactionType !== 'touch') {
           await this.user.keyboard(`[${metaKey}>]`);
@@ -161,16 +180,13 @@ export class TableTester {
         }
       }
     }
-  };
+  }
 
   /**
    * Toggles the expansion for the specified tree row. Defaults to using the interaction type set on the tree tester.
    */
   async toggleRowExpansion(opts: TableToggleExpansionOpts): Promise<void> {
-    let {
-      row,
-      interactionType = this._interactionType
-    } = opts;
+    let {row, interactionType = this._interactionType} = opts;
     if (!this.table.contains(document.activeElement)) {
       await act(async () => {
         this.table.focus();
@@ -205,16 +221,13 @@ export class TableTester {
         await this.user.keyboard('[ArrowRight]');
       }
     }
-  };
+  }
 
   /**
    * Toggles the sort order for the specified table column. Defaults to using the interaction type set on the table tester.
    */
   async toggleSort(opts: TableToggleSortOpts): Promise<void> {
-    let {
-      column,
-      interactionType = this._interactionType
-    } = opts;
+    let {column, interactionType = this._interactionType} = opts;
 
     let columnheader;
     if (typeof column === 'number') {
@@ -261,14 +274,24 @@ export class TableTester {
         let menu = document.getElementById(menuId);
         if (menu) {
           if (currentSort === 'ascending') {
-            await pressElement(this.user, within(menu).getAllByRole('menuitem')[1], interactionType);
+            await pressElement(
+              this.user,
+              within(menu).getAllByRole('menuitem')[1],
+              interactionType
+            );
           } else {
-            await pressElement(this.user, within(menu).getAllByRole('menuitem')[0], interactionType);
+            await pressElement(
+              this.user,
+              within(menu).getAllByRole('menuitem')[0],
+              interactionType
+            );
           }
 
           await waitFor(() => {
             if (document.contains(menu)) {
-              throw new Error('Expected table column menu listbox to not be in the document after selecting an option');
+              throw new Error(
+                'Expected table column menu listbox to not be in the document after selecting an option'
+              );
             } else {
               return true;
             }
@@ -287,7 +310,9 @@ export class TableTester {
 
       await waitFor(() => {
         if (document.activeElement !== menuButton) {
-          throw new Error(`Expected the document.activeElement to be the table column menu button but got ${document.activeElement}`);
+          throw new Error(
+            `Expected the document.activeElement to be the table column menu button but got ${document.activeElement}`
+          );
         } else {
           return true;
         }
@@ -301,11 +326,7 @@ export class TableTester {
    * Triggers an action for the specified table column menu. Defaults to using the interaction type set on the table tester.
    */
   async triggerColumnHeaderAction(opts: TableColumnHeaderActionOpts): Promise<void> {
-    let {
-      column,
-      interactionType = this._interactionType,
-      action
-    } = opts;
+    let {column, interactionType = this._interactionType, action} = opts;
 
     let columnheader;
     if (typeof column === 'number') {
@@ -350,11 +371,17 @@ export class TableTester {
       if (menuId) {
         let menu = document.getElementById(menuId);
         if (menu) {
-          await pressElement(this.user, within(menu).getAllByRole('menuitem')[action], interactionType);
+          await pressElement(
+            this.user,
+            within(menu).getAllByRole('menuitem')[action],
+            interactionType
+          );
 
           await waitFor(() => {
             if (document.contains(menu)) {
-              throw new Error('Expected table column menu listbox to not be in the document after selecting an option');
+              throw new Error(
+                'Expected table column menu listbox to not be in the document after selecting an option'
+              );
             } else {
               return true;
             }
@@ -373,7 +400,9 @@ export class TableTester {
 
       await waitFor(() => {
         if (document.activeElement !== menuButton) {
-          throw new Error(`Expected the document.activeElement to be the table column menu button but got ${document.activeElement}`);
+          throw new Error(
+            `Expected the document.activeElement to be the table column menu button but got ${document.activeElement}`
+          );
         } else {
           return true;
         }
@@ -387,11 +416,7 @@ export class TableTester {
    * Triggers the action for the specified table row. Defaults to using the interaction type set on the table tester.
    */
   async triggerRowAction(opts: TableRowActionOpts): Promise<void> {
-    let {
-      row,
-      needsDoubleClick,
-      interactionType = this._interactionType
-    } = opts;
+    let {row, needsDoubleClick, interactionType = this._interactionType} = opts;
 
     if (typeof row === 'string' || typeof row === 'number') {
       row = this.findRow({rowIndexOrText: row});
@@ -420,9 +445,7 @@ export class TableTester {
    * Toggle selection for all rows in the table. Defaults to using the interaction type set on the table tester.
    */
   async toggleSelectAll(opts: {interactionType?: UserOpts['interactionType']} = {}): Promise<void> {
-    let {
-      interactionType = this._interactionType
-    } = opts;
+    let {interactionType = this._interactionType} = opts;
     let checkbox = within(this.table).getByLabelText('Select All');
     if (interactionType === 'keyboard') {
       // TODO: using the .focus -> trigger keyboard Enter approach doesn't work for some reason, for now just trigger select all with click.
@@ -436,9 +459,7 @@ export class TableTester {
    * Returns a row matching the specified index or text content.
    */
   findRow(opts: {rowIndexOrText: number | string}): HTMLElement {
-    let {
-      rowIndexOrText
-    } = opts;
+    let {rowIndexOrText} = opts;
 
     let row;
     let rows = this.rows;
@@ -459,9 +480,7 @@ export class TableTester {
    * Returns a cell matching the specified text content.
    */
   findCell(opts: {text: string}): HTMLElement {
-    let {
-      text
-    } = opts;
+    let {text} = opts;
 
     let cell = within(this.table).getByText(text);
     if (cell) {

@@ -24,180 +24,194 @@ import {TextContext} from './Content';
 import {useFocusVisible} from 'react-aria/useFocusVisible';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface SelectBoxGroupProps<T> extends StyleProps, Omit<ListBoxProps<T>, keyof GlobalDOMAttributes | 'layout' | 'dragAndDropHooks' | 'dependencies' | 'renderEmptyState' | 'children' | 'onAction' | 'shouldFocusOnHover' | 'selectionBehavior' | 'shouldSelectOnPressUp' | 'shouldFocusWrap' | 'style' | 'className' | 'render'> {
+export interface SelectBoxGroupProps<T>
+  extends
+    StyleProps,
+    Omit<
+      ListBoxProps<T>,
+      | keyof GlobalDOMAttributes
+      | 'layout'
+      | 'dragAndDropHooks'
+      | 'dependencies'
+      | 'renderEmptyState'
+      | 'children'
+      | 'onAction'
+      | 'shouldFocusOnHover'
+      | 'selectionBehavior'
+      | 'shouldSelectOnPressUp'
+      | 'shouldFocusWrap'
+      | 'style'
+      | 'className'
+      | 'render'
+    > {
   /**
    * The SelectBox elements contained within the SelectBoxGroup.
    */
-  children: ReactNode | ((item: T) => ReactNode),
+  children: ReactNode | ((item: T) => ReactNode);
   /**
    * The layout direction of the content in each SelectBox.
    * @default 'vertical'
    */
-  orientation?: Orientation,
+  orientation?: Orientation;
   /**
    * The selection mode for the SelectBoxGroup.
    * @default 'single'
    */
-  selectionMode?: 'single' | 'multiple',
+  selectionMode?: 'single' | 'multiple';
   /**
    * Whether the SelectBoxGroup is disabled.
    */
-  isDisabled?: boolean
+  isDisabled?: boolean;
 }
 
 export interface SelectBoxProps extends StyleProps {
   /** The unique id of the SelectBox. */
-  id?: Key,
+  id?: Key;
   /** A string representation of the SelectBox's contents, used for features like typeahead. */
-  textValue?: string,
+  textValue?: string;
   /** An accessibility label for this item. */
-  'aria-label'?: string,
+  'aria-label'?: string;
   /**
    * The contents of the SelectBox.
    */
-  children: ReactNode,
+  children: ReactNode;
   /**
    * Whether the SelectBox is disabled.
    */
-  isDisabled?: boolean
+  isDisabled?: boolean;
 }
 
 interface SelectBoxContextValue {
-  allowMultiSelect?: boolean,
-  orientation?: Orientation,
-  isDisabled?: boolean
+  allowMultiSelect?: boolean;
+  orientation?: Orientation;
+  isDisabled?: boolean;
 }
 
 const SelectBoxContext = createContext<SelectBoxContextValue>({orientation: 'vertical'});
-export const SelectBoxGroupContext = createContext<ContextValue<Partial<SelectBoxGroupProps<any>>, DOMRefValue<HTMLDivElement>>>(null);
+export const SelectBoxGroupContext =
+  createContext<ContextValue<Partial<SelectBoxGroupProps<any>>, DOMRefValue<HTMLDivElement>>>(null);
 
 const labelOnly = ':has([slot=label]):not(:has([slot=description]))';
 const noIllustration = ':not(:has([slot=illustration]))';
-const selectBoxStyles = style({
-  ...focusRing(),
-  display: 'grid',
-  gridAutoRows: '1fr',
-  position: 'relative',
-  font: 'ui',
-  cursor: 'default',
-  boxSizing: 'border-box',
-  overflow: 'hidden',
-  width: {
-    default: 170,
-    orientation: {
-      horizontal: 368
-    }
-  },
-  height: {
-    default: 170,
-    orientation: {
-      horizontal: 'auto'
-    }
-  },
-  minWidth: {
-    default: 144,
-    orientation: {
-      horizontal: 188
-    }
-  },
-  '--select-box-max-width': {
-    type: 'width',
-    value: {
+const selectBoxStyles = style(
+  {
+    ...focusRing(),
+    display: 'grid',
+    gridAutoRows: '1fr',
+    position: 'relative',
+    font: 'ui',
+    cursor: 'default',
+    boxSizing: 'border-box',
+    overflow: 'hidden',
+    width: {
       default: 170,
       orientation: {
-        horizontal: 480
+        horizontal: 368
       }
-    }
-  },
-  maxWidth: 'min(100%, var(--select-box-max-width))',
-  minHeight: {
-    default: 144,
-    orientation: {
-      horizontal: 80
-    }
-  },
-  maxHeight: {
-    default: 170,
-    orientation: {
-      horizontal: 240
-    }
-  },
-  padding: {
-    default: 24,
-    orientation: {
-      horizontal: 16
-    }
-  },
-  paddingStart: {
-    orientation: {
-      horizontal: 32
-    }
-  },
-  paddingEnd: {
-    orientation: {
-      horizontal: 24
-    }
-  },
-  gridTemplateAreas: {
-    orientation: {
-      vertical: [
-        'illustration',
-        '.',
-        'label'
-      ],
-      horizontal: {
-        default: [
-          'illustration . label',
-          'illustration . description'
-        ],
-        [labelOnly]: [
-          'illustration . label'
-        ]
+    },
+    height: {
+      default: 170,
+      orientation: {
+        horizontal: 'auto'
       }
-    }
-  },
-  gridTemplateRows: {
-    orientation: {
-      vertical: ['min-content', 8, 'min-content'],
-      horizontal: {
-        default: ['min-content', 2, 'min-content'],
-        [noIllustration]: ['min-content']
+    },
+    minWidth: {
+      default: 144,
+      orientation: {
+        horizontal: 188
       }
-    }
+    },
+    '--select-box-max-width': {
+      type: 'width',
+      value: {
+        default: 170,
+        orientation: {
+          horizontal: 480
+        }
+      }
+    },
+    maxWidth: 'min(100%, var(--select-box-max-width))',
+    minHeight: {
+      default: 144,
+      orientation: {
+        horizontal: 80
+      }
+    },
+    maxHeight: {
+      default: 170,
+      orientation: {
+        horizontal: 240
+      }
+    },
+    padding: {
+      default: 24,
+      orientation: {
+        horizontal: 16
+      }
+    },
+    paddingStart: {
+      orientation: {
+        horizontal: 32
+      }
+    },
+    paddingEnd: {
+      orientation: {
+        horizontal: 24
+      }
+    },
+    gridTemplateAreas: {
+      orientation: {
+        vertical: ['illustration', '.', 'label'],
+        horizontal: {
+          default: ['illustration . label', 'illustration . description'],
+          [labelOnly]: ['illustration . label']
+        }
+      }
+    },
+    gridTemplateRows: {
+      orientation: {
+        vertical: ['min-content', 8, 'min-content'],
+        horizontal: {
+          default: ['min-content', 2, 'min-content'],
+          [noIllustration]: ['min-content']
+        }
+      }
+    },
+    gridTemplateColumns: {
+      orientation: {
+        horizontal: 'min-content 10px 1fr'
+      }
+    },
+    alignContent: {
+      orientation: {
+        vertical: 'center'
+      }
+    },
+    borderRadius: 'lg',
+    borderStyle: 'solid',
+    borderColor: {
+      default: 'transparent',
+      isSelected: 'gray-900',
+      isDisabled: 'transparent'
+    },
+    backgroundColor: {
+      default: 'layer-2',
+      isDisabled: 'disabled'
+    },
+    color: {
+      isDisabled: 'disabled'
+    },
+    boxShadow: {
+      default: 'emphasized',
+      isHovered: 'elevated',
+      isSelected: 'elevated',
+      isDisabled: 'none'
+    },
+    borderWidth: 2,
+    transition: 'default'
   },
-  gridTemplateColumns: {
-    orientation: {
-      horizontal: 'min-content 10px 1fr'
-    }
-  },
-  alignContent: {
-    orientation: {
-      vertical: 'center'
-    }
-  },
-  borderRadius: 'lg',
-  borderStyle: 'solid',
-  borderColor: {
-    default: 'transparent',
-    isSelected: 'gray-900',
-    isDisabled: 'transparent'
-  },
-  backgroundColor: {
-    default: 'layer-2',
-    isDisabled: 'disabled'
-  },
-  color: {
-    isDisabled: 'disabled'
-  },
-  boxShadow: {
-    default: 'emphasized',
-    isHovered: 'elevated',
-    isSelected: 'elevated',
-    isDisabled: 'none'
-  },
-  borderWidth: 2,
-  transition: 'default'
-}, getAllowedOverrides());
+  getAllowedOverrides()
+);
 
 const illustrationContainer = style({
   gridArea: 'illustration',
@@ -266,47 +280,56 @@ const labelText = style({
   }
 });
 
-const gridStyles = style<{orientation?: Orientation}>({
-  display: 'grid',
-  gridAutoRows: '1fr',
-  gap: 24,
-  justifyContent: 'center',
-  '--select-box-group-width': {
-    type: 'width',
-    value: {
+const gridStyles = style<{orientation?: Orientation}>(
+  {
+    display: 'grid',
+    gridAutoRows: '1fr',
+    gap: 24,
+    justifyContent: 'center',
+    '--select-box-group-width': {
+      type: 'width',
+      value: {
+        orientation: {
+          horizontal: 368,
+          vertical: 170
+        }
+      }
+    },
+    '--select-box-group-min-width': {
+      type: 'width',
+      value: {
+        orientation: {
+          horizontal: 188,
+          vertical: 144
+        }
+      }
+    },
+    gridTemplateColumns: {
       orientation: {
-        horizontal: 368,
-        vertical: 170
+        horizontal:
+          'repeat(auto-fit, minmax(var(--select-box-group-min-width), min(var(--select-box-group-width), 100%)))',
+        vertical:
+          'repeat(auto-fit, minmax(var(--select-box-group-min-width), min(var(--select-box-group-width), 100%)))'
       }
     }
   },
-  '--select-box-group-min-width': {
-    type: 'width',
-    value: {
-      orientation: {
-        horizontal: 188,
-        vertical: 144
-      }
-    }
-  },
-  gridTemplateColumns: {
-    orientation: {
-      horizontal: 'repeat(auto-fit, minmax(var(--select-box-group-min-width), min(var(--select-box-group-width), 100%)))',
-      vertical: 'repeat(auto-fit, minmax(var(--select-box-group-min-width), min(var(--select-box-group-width), 100%)))'
-    }
-  }
-}, getAllowedOverrides());
+  getAllowedOverrides()
+);
 
 /**
  * SelectBox is a single selectable item in a SelectBoxGroup.
  */
 export function SelectBox(props: SelectBoxProps): ReactNode {
-  let {children, isDisabled: individualDisabled = false, UNSAFE_style, UNSAFE_className, styles, ...otherProps} = props;
-
   let {
-    orientation = 'vertical',
-    isDisabled: groupDisabled = false
-  } = useContext(SelectBoxContext);
+    children,
+    isDisabled: individualDisabled = false,
+    UNSAFE_style,
+    UNSAFE_className,
+    styles,
+    ...otherProps
+  } = props;
+
+  let {orientation = 'vertical', isDisabled: groupDisabled = false} = useContext(SelectBoxContext);
 
   const isDisabled = individualDisabled || groupDisabled;
   const ref = useRef<HTMLDivElement>(null);
@@ -316,11 +339,17 @@ export function SelectBox(props: SelectBoxProps): ReactNode {
     <ListBoxItem
       isDisabled={isDisabled}
       ref={ref}
-      className={renderProps => (UNSAFE_className || '') + selectBoxStyles({
-        ...renderProps,
-        isFocusVisible: isFocusVisible && renderProps.isFocused,
-        orientation
-      }, styles)}
+      className={renderProps =>
+        (UNSAFE_className || '') +
+        selectBoxStyles(
+          {
+            ...renderProps,
+            isFocusVisible: isFocusVisible && renderProps.isFocused,
+            orientation
+          },
+          styles
+        )
+      }
       style={pressScale(ref, UNSAFE_style)}
       {...otherProps}>
       {({isSelected, isDisabled, isHovered, selectionMode}) => {
@@ -341,31 +370,35 @@ export function SelectBox(props: SelectBoxProps): ReactNode {
                     isDisabled,
                     size: 'M'
                   } as any)}>
-                  <Checkmark
-                    size="S"
-                    className={iconStyles} />
+                  <Checkmark size="S" className={iconStyles} />
                 </div>
               )}
             </div>
             <Provider
               values={[
-                [IllustrationContext, {
-                  size: 'S',
-                  styles: illustrationContainer({size: 'S', orientation, isDisabled, isHovered})
-                }],
-                [TextContext, {
-                  slots: {
-                    [DEFAULT_SLOT]: {
-                      styles: labelText({orientation, isDisabled, isHovered})
-                    },
-                    label: {
-                      styles: labelText({orientation, isDisabled, isHovered})
-                    },
-                    description: {
-                      styles: descriptionText({orientation, isDisabled, isHovered})
+                [
+                  IllustrationContext,
+                  {
+                    size: 'S',
+                    styles: illustrationContainer({size: 'S', orientation, isDisabled, isHovered})
+                  }
+                ],
+                [
+                  TextContext,
+                  {
+                    slots: {
+                      [DEFAULT_SLOT]: {
+                        styles: labelText({orientation, isDisabled, isHovered})
+                      },
+                      label: {
+                        styles: labelText({orientation, isDisabled, isHovered})
+                      },
+                      description: {
+                        styles: descriptionText({orientation, isDisabled, isHovered})
+                      }
                     }
                   }
-                }]
+                ]
               ]}>
               {children}
             </Provider>
@@ -379,7 +412,9 @@ export function SelectBox(props: SelectBoxProps): ReactNode {
 /**
  * SelectBoxGroup allows users to select one or more options from a list.
  */
-export const SelectBoxGroup = /*#__PURE__*/ (forwardRef as forwardRefType)(function SelectBoxGroup<T extends object>(props: SelectBoxGroupProps<T>, ref: DOMRef<HTMLDivElement>) {
+export const SelectBoxGroup = /*#__PURE__*/ (forwardRef as forwardRefType)(function SelectBoxGroup<
+  T extends object
+>(props: SelectBoxGroupProps<T>, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, SelectBoxGroupContext);
 
   let {
@@ -393,10 +428,13 @@ export const SelectBoxGroup = /*#__PURE__*/ (forwardRef as forwardRefType)(funct
     ...otherProps
   } = props;
 
-  const selectBoxContextValue = useMemo(() => ({
-    orientation,
-    isDisabled
-  }), [orientation, isDisabled]);
+  const selectBoxContextValue = useMemo(
+    () => ({
+      orientation,
+      isDisabled
+    }),
+    [orientation, isDisabled]
+  );
 
   return (
     <SelectBoxContext.Provider value={selectBoxContextValue}>

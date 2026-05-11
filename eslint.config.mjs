@@ -1,534 +1,505 @@
-import react from "eslint-plugin-react";
-import rulesdir from "eslint-plugin-rulesdir";
-import jsxA11Y from "eslint-plugin-jsx-a11y";
-import reactHooks from "eslint-plugin-react-hooks";
-import jest from "eslint-plugin-jest";
-import monorepo from "@jdb8/eslint-plugin-monorepo";
-import * as rspRules from "eslint-plugin-rsp-rules";
-import globals from "globals";
-import babelParser from "@babel/eslint-parser";
-import typescriptEslint from "@typescript-eslint/eslint-plugin";
-import jsdoc from "eslint-plugin-jsdoc";
+import react from 'eslint-plugin-react';
+import rulesdir from 'eslint-plugin-rulesdir';
+import jsxA11Y from 'eslint-plugin-jsx-a11y';
+import reactHooks from 'eslint-plugin-react-hooks';
+import jest from 'eslint-plugin-jest';
+import monorepo from '@jdb8/eslint-plugin-monorepo';
+import * as rspRules from 'eslint-plugin-rsp-rules';
+import globals from 'globals';
+import babelParser from '@babel/eslint-parser';
+import typescriptEslint from '@typescript-eslint/eslint-plugin';
+import jsdoc from 'eslint-plugin-jsdoc';
 import tseslint from 'typescript-eslint';
-import path from "node:path";
-import { fileURLToPath } from "node:url";
-import js from "@eslint/js";
-import { FlatCompat } from "@eslint/eslintrc";
-import stylistic from "@stylistic/eslint-plugin-ts";
+import path from 'node:path';
+import {fileURLToPath} from 'node:url';
+import js from '@eslint/js';
+import {FlatCompat} from '@eslint/eslintrc';
 
-import rulesDirPlugin from "eslint-plugin-rulesdir";
+import rulesDirPlugin from 'eslint-plugin-rulesdir';
 rulesDirPlugin.RULES_DIR = './bin';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const compat = new FlatCompat({
-    baseDirectory: __dirname,
-    recommendedConfig: js.configs.recommended,
-    allConfig: js.configs.all
+  baseDirectory: __dirname,
+  recommendedConfig: js.configs.recommended,
+  allConfig: js.configs.all
 });
 
 const OFF = 0;
 const WARN = 1;
 const ERROR = 2;
 
-export default [{
+export default [
+  {
     ignores: [
-        "packages/@react-aria/i18n/server",
-        "packages/@spectrum-icons/color/**/*",
-        "packages/@spectrum-icons/ui/**/*",
-        "packages/@spectrum-icons/workflow/**/*",
-        "packages/@spectrum-icons/illustrations/**/*",
-        "packages/@spectrum-icons/express/**/*",
-        "**/node_modules",
-        "packages/*/*/dist",
-        "packages/*/*/i18n",
-        "packages/react-aria/dist",
-        "packages/react-aria/i18n",
-        "packages/react-aria-components/dist",
-        "packages/react-aria-components/i18n",
-        "packages/react-stately/dist",
-        "packages/dev/storybook-builder-parcel/preview.js",
-        "packages/dev/optimize-locales-plugin/LocalesPlugin.d.ts",
-        "examples/**/*",
-        "starters/**/*",
-        "scripts/icon-builder-fixture/**/*",
-        "packages/@react-spectrum/s2/icon.d.ts",
-        "packages/@react-spectrum/s2/spectrum-illustrations",
-        "packages/dev/parcel-config-storybook/*",
-        "packages/dev/parcel-resolver-storybook/*",
-        "packages/dev/parcel-transformer-storybook/*",
-        "packages/dev/storybook-builder-parcel/*",
-        "packages/dev/storybook-react-parcel/*",
-        "packages/dev/s2-docs/pages/**",
-        "packages/dev/mcp/*/dist",
-        "packages/dev/codemods/src/s1-to-s2/__testfixtures__/cli/**"
-    ],
-}, ...compat.extends("eslint:recommended"), {
+      'packages/@react-aria/i18n/server',
+      'packages/@spectrum-icons/color/**/*',
+      'packages/@spectrum-icons/ui/**/*',
+      'packages/@spectrum-icons/workflow/**/*',
+      'packages/@spectrum-icons/illustrations/**/*',
+      'packages/@spectrum-icons/express/**/*',
+      '**/node_modules',
+      'packages/*/*/dist',
+      'packages/*/*/i18n',
+      'packages/react-aria/dist',
+      'packages/react-aria/i18n',
+      'packages/react-aria-components/dist',
+      'packages/react-aria-components/i18n',
+      'packages/react-stately/dist',
+      'packages/dev/storybook-builder-parcel/preview.js',
+      'packages/dev/optimize-locales-plugin/LocalesPlugin.d.ts',
+      'examples/**/*',
+      'starters/**/*',
+      'scripts/icon-builder-fixture/**/*',
+      'packages/@react-spectrum/s2/icon.d.ts',
+      'packages/@react-spectrum/s2/spectrum-illustrations',
+      'packages/dev/parcel-config-storybook/*',
+      'packages/dev/parcel-resolver-storybook/*',
+      'packages/dev/parcel-transformer-storybook/*',
+      'packages/dev/storybook-builder-parcel/*',
+      'packages/dev/storybook-react-parcel/*',
+      'packages/dev/s2-docs/pages/**',
+      'packages/dev/mcp/*/dist',
+      'packages/dev/codemods/src/s1-to-s2/__testfixtures__/cli/**'
+    ]
+  },
+  ...compat.extends('eslint:recommended'),
+  {
     plugins: {
-        react,
-        rulesdir,
-        "jsx-a11y": jsxA11Y,
-        "react-hooks": reactHooks,
-        jest,
-        monorepo,
-        "rsp-rules": rspRules,
+      react,
+      rulesdir,
+      'jsx-a11y': jsxA11Y,
+      'react-hooks': reactHooks,
+      jest,
+      monorepo,
+      'rsp-rules': rspRules
     },
 
     languageOptions: {
-        globals: {
-            ...globals.browser,
-            ...globals.node,
-            ...globals.mocha,
-            ...globals.jest,
-            importSpectrumCSS: "readonly",
-            jest: true,
-            expect: true,
-            JSX: "readonly",
-            NodeJS: "readonly",
-            AsyncIterable: "readonly",
-            FileSystemFileEntry: "readonly",
-            FileSystemDirectoryEntry: "readonly",
-            FileSystemEntry: "readonly",
-            IS_REACT_ACT_ENVIRONMENT: "readonly",
-        },
+      globals: {
+        ...globals.browser,
+        ...globals.node,
+        ...globals.mocha,
+        ...globals.jest,
+        importSpectrumCSS: 'readonly',
+        jest: true,
+        expect: true,
+        JSX: 'readonly',
+        NodeJS: 'readonly',
+        AsyncIterable: 'readonly',
+        FileSystemFileEntry: 'readonly',
+        FileSystemDirectoryEntry: 'readonly',
+        FileSystemEntry: 'readonly',
+        IS_REACT_ACT_ENVIRONMENT: 'readonly'
+      },
 
-        parser: babelParser,
-        ecmaVersion: 6,
-        sourceType: "module",
+      parser: babelParser,
+      ecmaVersion: 6,
+      sourceType: 'module',
 
-        parserOptions: {
-            ecmaFeatures: {
-                legacyDecorators: true,
-            },
-        },
+      parserOptions: {
+        ecmaFeatures: {
+          legacyDecorators: true
+        }
+      }
     },
 
     settings: {
-        jsdoc: {
-            ignorePrivate: true,
-            publicFunctionsOnly: true,
-        },
+      jsdoc: {
+        ignorePrivate: true,
+        publicFunctionsOnly: true
+      },
 
-        react: {
-            version: "detect",
-        },
+      react: {
+        version: 'detect'
+      }
     },
 
     rules: {
-        "comma-dangle": ERROR,
-        indent: OFF,
+      'no-fallthrough': OFF,
+      'no-irregular-whitespace': [ERROR],
+      eqeqeq: [ERROR, 'smart'],
 
-        "indent-legacy": [ERROR, ERROR, {
-            SwitchCase: WARN,
-        }],
+      'no-console': OFF,
 
-        quotes: [ERROR, "single", "avoid-escape"],
-        "linebreak-style": [ERROR, "unix"],
-        semi: [ERROR, "always"],
+      'no-unused-vars': [
+        ERROR,
+        {
+          args: 'none',
+          vars: 'all',
+          varsIgnorePattern: '[rR]eact'
+        }
+      ],
+      'no-unused-private-class-members': OFF,
 
-        "space-before-function-paren": [ERROR, {
-            anonymous: "always",
-            named: "never",
-            asyncArrow: "ignore",
-        }],
+      'spaced-comment': [
+        ERROR,
+        'always',
+        {
+          exceptions: ['*', '#__PURE__'],
+          markers: ['/']
+        }
+      ],
 
-        "keyword-spacing": [ERROR, {
-            after: true,
-        }],
+      'max-depth': [WARN, 4],
+      radix: [ERROR, 'always'],
+      'react/jsx-uses-react': WARN,
+      'eol-last': ERROR,
+      'arrow-spacing': ERROR,
+      'space-before-blocks': [ERROR, 'always'],
+      'space-infix-ops': ERROR,
+      'no-new-wrappers': ERROR,
+      'no-self-compare': ERROR,
+      'no-nested-ternary': ERROR,
+      'no-multiple-empty-lines': ERROR,
+      'no-unneeded-ternary': ERROR,
+      // "no-duplicate-imports": ERROR,
+      'react/display-name': OFF,
+      'react/jsx-curly-spacing': [ERROR, 'never'],
+      'react/jsx-indent-props': [ERROR, ERROR],
+      'react/jsx-no-duplicate-props': ERROR,
+      'react/jsx-no-literals': OFF,
+      'react/jsx-no-undef': ERROR,
+      'react/jsx-quotes': OFF,
+      'react/jsx-sort-prop-types': OFF,
+      'react/jsx-sort-props': OFF,
+      'react/jsx-uses-vars': ERROR,
+      'react/no-danger': OFF,
+      'react/no-did-mount-set-state': OFF,
+      'react/no-did-update-set-state': ERROR,
+      'react/no-multi-comp': OFF,
+      'react/no-set-state': OFF,
 
-        "jsx-quotes": [ERROR, "prefer-double"],
+      'react/no-unknown-property': [
+        ERROR,
+        {
+          ignore: ['prefix']
+        }
+      ],
 
-        "brace-style": [ERROR, "1tbs", {
-            allowSingleLine: true,
-        }],
+      'react/react-in-jsx-scope': ERROR,
+      'react/require-extension': OFF,
 
-        "object-curly-spacing": [ERROR, "never"],
-        curly: ERROR,
-        "no-fallthrough": OFF,
-        "comma-spacing": ERROR,
-        "comma-style": [ERROR, "last"],
-        "no-irregular-whitespace": [ERROR],
-        eqeqeq: [ERROR, "smart"],
-        "no-spaced-func": ERROR,
-        "array-bracket-spacing": [ERROR, "never"],
+      'react/jsx-max-props-per-line': [
+        ERROR,
+        {
+          when: 'multiline'
+        }
+      ],
 
-        "key-spacing": [ERROR, {
-            beforeColon: false,
-            afterColon: true,
-        }],
+      'react/jsx-boolean-value': ERROR,
+      'react/self-closing-comp': ERROR,
 
-        "no-console": OFF,
+      // Core hooks rules
+      'react-hooks/rules-of-hooks': ERROR, // https://github.com/facebook/react/blob/main/packages/eslint-plugin-react-hooks/CHANGELOG.md
+      'react-hooks/exhaustive-deps': WARN,
 
-        "no-unused-vars": [ERROR, {
-            args: "none",
-            vars: "all",
-            varsIgnorePattern: "[rR]eact",
-        }],
-        "no-unused-private-class-members": OFF,
+      // React Compiler rules
+      'react-hooks/config': ERROR,
+      'react-hooks/error-boundaries': ERROR,
+      'react-hooks/component-hook-factories': ERROR,
+      'react-hooks/gating': ERROR,
+      'react-hooks/globals': ERROR,
+      // 'react-hooks/immutability': ERROR,
+      // 'react-hooks/preserve-manual-memoization': ERROR, // No idea how to turn this one on yet
+      'react-hooks/purity': ERROR,
+      // 'react-hooks/refs': ERROR, // can't turn on until https://github.com/facebook/react/issues/34775 is fixed
+      'react-hooks/set-state-in-effect': ERROR,
+      'react-hooks/set-state-in-render': ERROR,
+      'react-hooks/static-components': ERROR,
+      'react-hooks/unsupported-syntax': WARN,
+      'react-hooks/use-memo': ERROR,
+      'react-hooks/incompatible-library': WARN,
 
-        "space-in-parens": [ERROR, "never"],
+      'rsp-rules/no-react-key': [ERROR],
+      'rsp-rules/sort-imports': [ERROR],
+      'rsp-rules/no-non-shadow-contains': [ERROR],
+      'rsp-rules/safe-event-target': [ERROR],
+      'rsp-rules/shadow-safe-active-element': [ERROR],
+      'rsp-rules/faster-node-contains': [ERROR],
+      'rulesdir/imports': [ERROR],
+      'rulesdir/useLayoutEffectRule': [ERROR],
+      'rulesdir/pure-render': [ERROR],
+      'jsx-a11y/accessible-emoji': ERROR,
+      'jsx-a11y/alt-text': ERROR,
+      'jsx-a11y/anchor-has-content': ERROR,
+      'jsx-a11y/anchor-is-valid': ERROR,
+      'jsx-a11y/aria-activedescendant-has-tabindex': ERROR,
+      'jsx-a11y/aria-props': ERROR,
+      'jsx-a11y/aria-proptypes': ERROR,
+      'jsx-a11y/aria-role': ERROR,
+      'jsx-a11y/aria-unsupported-elements': ERROR,
+      'jsx-a11y/click-events-have-key-events': ERROR,
+      'jsx-a11y/heading-has-content': ERROR,
+      'jsx-a11y/html-has-lang': ERROR,
+      'jsx-a11y/iframe-has-title': ERROR,
+      'jsx-a11y/img-redundant-alt': ERROR,
 
-        "space-unary-ops": [ERROR, {
-            words: true,
-            nonwords: false,
-        }],
+      'jsx-a11y/interactive-supports-focus': [
+        ERROR,
+        {
+          tabbable: ['button', 'checkbox', 'link', 'searchbox', 'spinbutton', 'switch', 'textbox']
+        }
+      ],
 
-        "spaced-comment": [ERROR, "always", {
-            exceptions: ["*", "#__PURE__"],
-            markers: ["/"],
-        }],
+      'jsx-a11y/label-has-associated-control': [
+        ERROR,
+        {
+          assert: 'either',
+          depth: 3
+        }
+      ],
 
-        "max-depth": [WARN, 4],
-        radix: [ERROR, "always"],
-        "react/jsx-uses-react": WARN,
-        "eol-last": ERROR,
-        "arrow-spacing": ERROR,
-        "space-before-blocks": [ERROR, "always"],
-        "space-infix-ops": ERROR,
-        "no-new-wrappers": ERROR,
-        "no-self-compare": ERROR,
-        "no-nested-ternary": ERROR,
-        "no-multiple-empty-lines": ERROR,
-        "no-unneeded-ternary": ERROR,
-        // "no-duplicate-imports": ERROR,
-        "react/display-name": OFF,
-        "react/jsx-curly-spacing": [ERROR, "never"],
-        "react/jsx-indent-props": [ERROR, ERROR],
-        "react/jsx-no-duplicate-props": ERROR,
-        "react/jsx-no-literals": OFF,
-        "react/jsx-no-undef": ERROR,
-        "react/jsx-quotes": OFF,
-        "react/jsx-sort-prop-types": OFF,
-        "react/jsx-sort-props": OFF,
-        "react/jsx-uses-vars": ERROR,
-        "react/no-danger": OFF,
-        "react/no-did-mount-set-state": OFF,
-        "react/no-did-update-set-state": ERROR,
-        "react/no-multi-comp": OFF,
-        "react/no-set-state": OFF,
+      'jsx-a11y/media-has-caption': ERROR,
+      'jsx-a11y/mouse-events-have-key-events': ERROR,
+      'jsx-a11y/no-access-key': ERROR,
+      'jsx-a11y/no-distracting-elements': ERROR,
+      'jsx-a11y/no-interactive-element-to-noninteractive-role': ERROR,
 
-        "react/no-unknown-property": [ERROR, {
-            ignore: ["prefix"],
-        }],
+      'jsx-a11y/no-noninteractive-element-interactions': [
+        WARN,
+        {
+          handlers: ['onClick', 'onMouseDown', 'onMouseUp', 'onKeyPress', 'onKeyDown', 'onKeyUp']
+        }
+      ],
 
-        "react/react-in-jsx-scope": ERROR,
-        "react/require-extension": OFF,
-        "react/jsx-equals-spacing": ERROR,
+      'jsx-a11y/no-noninteractive-element-to-interactive-role': [
+        ERROR,
+        {
+          ul: ['listbox', 'menu', 'menubar', 'radiogroup', 'tablist', 'tree', 'treegrid'],
+          ol: ['listbox', 'menu', 'menubar', 'radiogroup', 'tablist', 'tree', 'treegrid'],
+          li: ['menuitem', 'option', 'row', 'tab', 'treeitem'],
+          table: ['grid'],
+          td: ['gridcell', 'columnheader', 'rowheader'],
+          th: ['columnheader', 'rowheader']
+        }
+      ],
 
-        "react/jsx-max-props-per-line": [ERROR, {
-            when: "multiline",
-        }],
+      'jsx-a11y/no-noninteractive-tabindex': [
+        ERROR,
+        {
+          tags: [],
+          roles: ['alertdialog', 'dialog', 'tabpanel']
+        }
+      ],
 
-        "react/jsx-closing-bracket-location": [ERROR, "after-props"],
-        "react/jsx-tag-spacing": ERROR,
-        "react/jsx-indent": [ERROR, ERROR],
-        "react/jsx-wrap-multilines": ERROR,
-        "react/jsx-boolean-value": ERROR,
-        "react/jsx-first-prop-new-line": [ERROR, "multiline"],
-        "react/self-closing-comp": ERROR,
+      'jsx-a11y/no-redundant-roles': ERROR,
 
-        // Core hooks rules
-        "react-hooks/rules-of-hooks": ERROR, // https://github.com/facebook/react/blob/main/packages/eslint-plugin-react-hooks/CHANGELOG.md
-        "react-hooks/exhaustive-deps": WARN,
+      'jsx-a11y/no-static-element-interactions': [
+        ERROR,
+        {
+          handlers: ['onClick', 'onMouseDown', 'onMouseUp', 'onKeyPress', 'onKeyDown', 'onKeyUp']
+        }
+      ],
 
-        // React Compiler rules
-        'react-hooks/config': ERROR,
-        'react-hooks/error-boundaries': ERROR,
-        'react-hooks/component-hook-factories': ERROR,
-        'react-hooks/gating': ERROR,
-        'react-hooks/globals': ERROR,
-        // 'react-hooks/immutability': ERROR,
-        // 'react-hooks/preserve-manual-memoization': ERROR, // No idea how to turn this one on yet
-        'react-hooks/purity': ERROR,
-        // 'react-hooks/refs': ERROR, // can't turn on until https://github.com/facebook/react/issues/34775 is fixed
-        'react-hooks/set-state-in-effect': ERROR,
-        'react-hooks/set-state-in-render': ERROR,
-        'react-hooks/static-components': ERROR,
-        'react-hooks/unsupported-syntax': WARN,
-        'react-hooks/use-memo': ERROR,
-        'react-hooks/incompatible-library': WARN,
+      'jsx-a11y/role-has-required-aria-props': ERROR,
+      'jsx-a11y/role-supports-aria-props': ERROR,
+      'jsx-a11y/scope': ERROR,
+      'jsx-a11y/tabindex-no-positive': ERROR,
 
-        "rsp-rules/no-react-key": [ERROR],
-        "rsp-rules/sort-imports": [ERROR],
-        "rsp-rules/no-non-shadow-contains": [ERROR],
-        "rsp-rules/safe-event-target": [ERROR],
-        "rsp-rules/shadow-safe-active-element": [ERROR],
-        "rsp-rules/faster-node-contains": [ERROR],
-        "rulesdir/imports": [ERROR],
-        "rulesdir/useLayoutEffectRule": [ERROR],
-        "rulesdir/pure-render": [ERROR],
-        "jsx-a11y/accessible-emoji": ERROR,
-        "jsx-a11y/alt-text": ERROR,
-        "jsx-a11y/anchor-has-content": ERROR,
-        "jsx-a11y/anchor-is-valid": ERROR,
-        "jsx-a11y/aria-activedescendant-has-tabindex": ERROR,
-        "jsx-a11y/aria-props": ERROR,
-        "jsx-a11y/aria-proptypes": ERROR,
-        "jsx-a11y/aria-role": ERROR,
-        "jsx-a11y/aria-unsupported-elements": ERROR,
-        "jsx-a11y/click-events-have-key-events": ERROR,
-        "jsx-a11y/heading-has-content": ERROR,
-        "jsx-a11y/html-has-lang": ERROR,
-        "jsx-a11y/iframe-has-title": ERROR,
-        "jsx-a11y/img-redundant-alt": ERROR,
-
-        "jsx-a11y/interactive-supports-focus": [ERROR, {
-            tabbable: [
-                "button",
-                "checkbox",
-                "link",
-                "searchbox",
-                "spinbutton",
-                "switch",
-                "textbox",
-            ],
-        }],
-
-        "jsx-a11y/label-has-associated-control": [ERROR, {
-            assert: "either",
-            depth: 3,
-        }],
-
-        "jsx-a11y/media-has-caption": ERROR,
-        "jsx-a11y/mouse-events-have-key-events": ERROR,
-        "jsx-a11y/no-access-key": ERROR,
-        "jsx-a11y/no-distracting-elements": ERROR,
-        "jsx-a11y/no-interactive-element-to-noninteractive-role": ERROR,
-
-        "jsx-a11y/no-noninteractive-element-interactions": [WARN, {
-            handlers: [
-                "onClick",
-                "onMouseDown",
-                "onMouseUp",
-                "onKeyPress",
-                "onKeyDown",
-                "onKeyUp",
-            ],
-        }],
-
-        "jsx-a11y/no-noninteractive-element-to-interactive-role": [ERROR, {
-            ul: ["listbox", "menu", "menubar", "radiogroup", "tablist", "tree", "treegrid"],
-            ol: ["listbox", "menu", "menubar", "radiogroup", "tablist", "tree", "treegrid"],
-            li: ["menuitem", "option", "row", "tab", "treeitem"],
-            table: ["grid"],
-            td: ["gridcell", "columnheader", "rowheader"],
-            th: ["columnheader", "rowheader"],
-        }],
-
-        "jsx-a11y/no-noninteractive-tabindex": [ERROR, {
-            tags: [],
-            roles: ["alertdialog", "dialog", "tabpanel"],
-        }],
-
-        "jsx-a11y/no-redundant-roles": ERROR,
-
-        "jsx-a11y/no-static-element-interactions": [ERROR, {
-            handlers: [
-                "onClick",
-                "onMouseDown",
-                "onMouseUp",
-                "onKeyPress",
-                "onKeyDown",
-                "onKeyUp",
-            ],
-        }],
-
-        "jsx-a11y/role-has-required-aria-props": ERROR,
-        "jsx-a11y/role-supports-aria-props": ERROR,
-        "jsx-a11y/scope": ERROR,
-        "jsx-a11y/tabindex-no-positive": ERROR,
-
-        "monorepo/no-relative-import": ERROR,
-    },
-}, {
-    files: ["packages/**/*.ts", "packages/**/*.tsx"],
+      'monorepo/no-relative-import': ERROR
+    }
+  },
+  {
+    files: ['packages/**/*.ts', 'packages/**/*.tsx'],
 
     plugins: {
-        react,
-        rulesdir,
-        "jsx-a11y": jsxA11Y,
-        "react-hooks": reactHooks,
-        jest,
-        "@typescript-eslint": typescriptEslint,
-        monorepo,
-        jsdoc,
-        "@stylistic": stylistic,
+      react,
+      rulesdir,
+      'jsx-a11y': jsxA11Y,
+      'react-hooks': reactHooks,
+      jest,
+      '@typescript-eslint': typescriptEslint,
+      monorepo,
+      jsdoc
     },
 
     languageOptions: {
-        globals: {
-          globalThis: "readonly",
+      globals: {
+        globalThis: 'readonly'
+      },
+
+      parser: tseslint.parser,
+      ecmaVersion: 6,
+      sourceType: 'module',
+
+      parserOptions: {
+        ecmaFeatures: {
+          jsx: true,
+          legacyDecorators: true
         },
 
-        parser: tseslint.parser,
-        ecmaVersion: 6,
-        sourceType: "module",
-
-        parserOptions: {
-            ecmaFeatures: {
-                jsx: true,
-                legacyDecorators: true,
-            },
-
-            useJSXTextNode: true,
-            project: "./tsconfig.json",
-        },
+        useJSXTextNode: true,
+        project: './tsconfig.json'
+      }
     },
 
     rules: {
-        "jsdoc/require-description-complete-sentence": [ERROR, {
-            abbreviations: ["e.g", "i.e"],
-        }],
-
-        "jsdoc/check-alignment": ERROR,
-        "jsdoc/check-indentation": ERROR,
-
-        "jsdoc/check-tag-names": [ERROR, {
-            definedTags: ["selector", "note"],
-        }],
-
-        "jsdoc/require-description": [ERROR, {
-            exemptedBy: ["deprecated"],
-            checkConstructors: false,
-        }],
-
-        "no-redeclare": OFF,
-        "@typescript-eslint/no-redeclare": ERROR,
-        "no-unused-vars": OFF,
-        "@typescript-eslint/no-unused-vars": ERROR,
-
-        "@stylistic/member-delimiter-style": [ERROR, {
-            multiline: {
-                delimiter: "comma",
-                requireLast: false,
-            },
-
-            singleline: {
-                delimiter: "comma",
-                requireLast: false,
-            },
-        }],
-    },
-}, {
-    files: ["packages/**/src/**/*.ts", "packages/**/src/**/*.tsx"],
-    ignores: ["packages/dev/**"],
-    rules: {
-        "rsp-rules/no-package-root-imports": ERROR,
-    },
-}, {
-    files: [
-        "**/test/**",
-        "**/stories/**",
-        "**/docs/**",
-        "**/chromatic/**",
-        "**/chromatic-fc/**",
-        "**/__tests__/**",
-    ],
-
-    rules: {
-        "rsp-rules/no-react-key": [ERROR],
-        "rsp-rules/act-events-test": ERROR,
-        "rsp-rules/no-getByRole-toThrow": ERROR,
-        "rsp-rules/no-non-shadow-contains": OFF,
-        "rsp-rules/safe-event-target": OFF,
-        "rsp-rules/shadow-safe-active-element": OFF,
-        "rsp-rules/faster-node-contains": OFF,
-        "rulesdir/imports": OFF,
-        "monorepo/no-internal-import": OFF,
-        "jsdoc/require-jsdoc": OFF
-    },
-
-    languageOptions: {
-        globals: {
-            ...globals.browser,
-            ...globals.node,
-            ...globals.mocha,
-            ...globals.jest,
-            importSpectrumCSS: "readonly",
-            jest: true,
-            expect: true,
-            JSX: "readonly",
-            NodeJS: "readonly",
-            AsyncIterable: "readonly",
-            FileSystemFileEntry: "readonly",
-            FileSystemDirectoryEntry: "readonly",
-            FileSystemEntry: "readonly",
-            IS_REACT_ACT_ENVIRONMENT: "readonly",
-            globalThis: "readonly",
-        },
-
-        parser: tseslint.parser,
-        ecmaVersion: 6,
-        sourceType: "module",
-
-        parserOptions: {
-            // eventually move to projectService for faster linting
-            ecmaFeatures: {
-                legacyDecorators: true,
-            },
-        },
-    },
-}, {
-    files: ["**/dev/**", "**/scripts/**"],
-
-    rules: {
-        "jsdoc/require-jsdoc": OFF,
-        "jsdoc/require-description": OFF,
-        "rsp-rules/safe-event-target": OFF,
-    },
-}, {
-    files: [
-        "packages/@react-aria/focus/src/**/*.ts",
-        "packages/@react-aria/focus/src/**/*.tsx",
-    ],
-
-    rules: {
-        "no-restricted-globals": [ERROR, {
-            name: "window",
-            message: "Use getOwnerWindow from @react-aria/utils instead.",
-        }, {
-            name: "document",
-            message: "Use getOwnerDocument from @react-aria/utils instead.",
-        }],
-    },
-}, {
-    files: [
-        "packages/react-aria/src/interactions/**/*.ts",
-        "packages/react-aria/src/interactions/**/*.tsx",
-    ],
-
-    rules: {
-        "no-restricted-globals": [WARN, {
-            name: "window",
-            message: "Use getOwnerWindow from @react-aria/utils instead.",
-        }, {
-            name: "document",
-            message: "Use getOwnerDocument from @react-aria/utils instead.",
-        }],
-    },
-}, {
-    files: [
-        "packages/@react-aria/test-utils/src/**/*.ts",
-        "packages/@react-aria/test-utils/src/**/*.tsx",
-    ],
-
-    rules: {
-        "rsp-rules/faster-node-contains": OFF,
-        "rsp-rules/no-non-shadow-contains": OFF,
-        "rsp-rules/shadow-safe-active-element": OFF,
-    },
-}, {
-    files: ["packages/@react-spectrum/s2/**", "packages/dev/s2-docs/**"],
-
-    rules: {
-        "react/react-in-jsx-scope": OFF,
-    },
-}, {
-    files: ["packages/dev/style-macro-chrome-plugin/**"],
-    languageOptions: {
-        globals: {
-            ...globals.webextensions,
-            ...globals.browser
+      'jsdoc/require-description-complete-sentence': [
+        ERROR,
+        {
+          abbreviations: ['e.g', 'i.e']
         }
+      ],
+
+      'jsdoc/check-alignment': ERROR,
+      'jsdoc/check-indentation': ERROR,
+
+      'jsdoc/check-tag-names': [
+        ERROR,
+        {
+          definedTags: ['selector', 'note']
+        }
+      ],
+
+      'jsdoc/require-description': [
+        ERROR,
+        {
+          exemptedBy: ['deprecated'],
+          checkConstructors: false
+        }
+      ],
+
+      'no-redeclare': OFF,
+      '@typescript-eslint/no-redeclare': ERROR,
+      'no-unused-vars': OFF,
+      '@typescript-eslint/no-unused-vars': ERROR
     }
-}];
+  },
+  {
+    files: ['packages/**/src/**/*.ts', 'packages/**/src/**/*.tsx'],
+    ignores: ['packages/dev/**'],
+    rules: {
+      'rsp-rules/no-package-root-imports': ERROR
+    }
+  },
+  {
+    files: [
+      '**/test/**',
+      '**/stories/**',
+      '**/docs/**',
+      '**/chromatic/**',
+      '**/chromatic-fc/**',
+      '**/__tests__/**'
+    ],
+
+    rules: {
+      'rsp-rules/no-react-key': [ERROR],
+      'rsp-rules/act-events-test': ERROR,
+      'rsp-rules/no-getByRole-toThrow': ERROR,
+      'rsp-rules/no-non-shadow-contains': OFF,
+      'rsp-rules/safe-event-target': OFF,
+      'rsp-rules/shadow-safe-active-element': OFF,
+      'rsp-rules/faster-node-contains': OFF,
+      'rulesdir/imports': OFF,
+      'monorepo/no-internal-import': OFF,
+      'jsdoc/require-jsdoc': OFF
+    },
+
+    languageOptions: {
+      globals: {
+        ...globals.browser,
+        ...globals.node,
+        ...globals.mocha,
+        ...globals.jest,
+        importSpectrumCSS: 'readonly',
+        jest: true,
+        expect: true,
+        JSX: 'readonly',
+        NodeJS: 'readonly',
+        AsyncIterable: 'readonly',
+        FileSystemFileEntry: 'readonly',
+        FileSystemDirectoryEntry: 'readonly',
+        FileSystemEntry: 'readonly',
+        IS_REACT_ACT_ENVIRONMENT: 'readonly',
+        globalThis: 'readonly'
+      },
+
+      parser: tseslint.parser,
+      ecmaVersion: 6,
+      sourceType: 'module',
+
+      parserOptions: {
+        // eventually move to projectService for faster linting
+        ecmaFeatures: {
+          legacyDecorators: true
+        }
+      }
+    }
+  },
+  {
+    files: ['**/dev/**', '**/scripts/**'],
+
+    rules: {
+      'jsdoc/require-jsdoc': OFF,
+      'jsdoc/require-description': OFF,
+      'rsp-rules/safe-event-target': OFF
+    }
+  },
+  {
+    files: ['packages/@react-aria/focus/src/**/*.ts', 'packages/@react-aria/focus/src/**/*.tsx'],
+
+    rules: {
+      'no-restricted-globals': [
+        ERROR,
+        {
+          name: 'window',
+          message: 'Use getOwnerWindow from @react-aria/utils instead.'
+        },
+        {
+          name: 'document',
+          message: 'Use getOwnerDocument from @react-aria/utils instead.'
+        }
+      ]
+    }
+  },
+  {
+    files: [
+      'packages/react-aria/src/interactions/**/*.ts',
+      'packages/react-aria/src/interactions/**/*.tsx'
+    ],
+
+    rules: {
+      'no-restricted-globals': [
+        WARN,
+        {
+          name: 'window',
+          message: 'Use getOwnerWindow from @react-aria/utils instead.'
+        },
+        {
+          name: 'document',
+          message: 'Use getOwnerDocument from @react-aria/utils instead.'
+        }
+      ]
+    }
+  },
+  {
+    files: [
+      'packages/@react-aria/test-utils/src/**/*.ts',
+      'packages/@react-aria/test-utils/src/**/*.tsx'
+    ],
+
+    rules: {
+      'rsp-rules/faster-node-contains': OFF,
+      'rsp-rules/no-non-shadow-contains': OFF,
+      'rsp-rules/shadow-safe-active-element': OFF
+    }
+  },
+  {
+    files: ['packages/@react-spectrum/s2/**', 'packages/dev/s2-docs/**'],
+
+    rules: {
+      'react/react-in-jsx-scope': OFF
+    }
+  },
+  {
+    files: ['packages/dev/style-macro-chrome-plugin/**'],
+    languageOptions: {
+      globals: {
+        ...globals.webextensions,
+        ...globals.browser
+      }
+    }
+  }
+];

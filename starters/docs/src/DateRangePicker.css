@@ -1,5 +1,5 @@
-@import "./theme.css";
-@import "./utilities.css";
+@import './theme.css';
+@import './utilities.css';
 
 .react-aria-DateRangePicker {
   color: var(--text-color);
@@ -46,11 +46,11 @@
     margin-left: auto;
   }
 
-  [slot=start] ~ span {
+  [slot='start'] ~ span {
     padding: 0 4px;
   }
 
-  [slot=end] {
+  [slot='end'] {
     margin-right: 1.75rem;
     flex: 1;
   }

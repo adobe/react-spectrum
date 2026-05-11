@@ -25,28 +25,28 @@ export interface ImageProps {
   /**
    * The URL of the image.
    */
-  src: string,
+  src: string;
   /**
    * Text description of the image.
    */
-  alt?: string,
+  alt?: string;
   /**
    * Sets the Image [object-fit](https://developer.mozilla.org/en-US/docs/Web/CSS/object-fit) style.
    */
-  objectFit?: any, // move to styleProps for images and type better
+  objectFit?: any; // move to styleProps for images and type better
   /**
    * Called if an error occurs while loading or rendering an image, see [Image loading errors](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img#image_loading_errors).
    */
-  onError?: ReactEventHandler<HTMLImageElement>,
+  onError?: ReactEventHandler<HTMLImageElement>;
   /**
    * Called when the image has successfully loaded, see [load event](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/load_event).
    */
-  onLoad?: ReactEventHandler<HTMLImageElement>,
+  onLoad?: ReactEventHandler<HTMLImageElement>;
   /**
    * Indicates if the fetching of the image must be done using a CORS request.
    * [See MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/crossorigin).
    */
-  crossOrigin?: 'anonymous' | 'use-credentials'
+  crossOrigin?: 'anonymous' | 'use-credentials';
 }
 
 export interface SpectrumImageProps extends ImageProps, DOMProps, StyleProps {
@@ -54,54 +54,52 @@ export interface SpectrumImageProps extends ImageProps, DOMProps, StyleProps {
    * A slot to place the image in.
    * @default 'image'
    */
-  slot?: string
+  slot?: string;
 }
 
 /**
  * Image is used to insert and display an image within a component.
  */
-export const Image = React.forwardRef(// incomplete component for show right now
+export const Image = React.forwardRef(
+  // incomplete component for show right now
 
-function Image(props: SpectrumImageProps, ref: DOMRef<HTMLDivElement>) {
-  /* Slots should be able to pass an alt for default behavior, but in Images, the child may know better. */
-  let userProvidedAlt = props.alt;
-  props = useSlotProps(props, 'image');
-  props = useProviderProps(props);
-  let {
-    objectFit,
-    src,
-    alt,
-    ...otherProps
-  } = props;
-  let {styleProps} = useStyleProps(otherProps);
-  let domRef = useDOMRef(ref);
+  function Image(props: SpectrumImageProps, ref: DOMRef<HTMLDivElement>) {
+    /* Slots should be able to pass an alt for default behavior, but in Images, the child may know better. */
+    let userProvidedAlt = props.alt;
+    props = useSlotProps(props, 'image');
+    props = useProviderProps(props);
+    let {objectFit, src, alt, ...otherProps} = props;
+    let {styleProps} = useStyleProps(otherProps);
+    let domRef = useDOMRef(ref);
 
-  if (alt == null && process.env.NODE_ENV !== 'production') {
-    console.warn(
-      'The `alt` prop was not provided to an image. ' +
-      'Add `alt` text for screen readers, or set `alt=""` prop to indicate that the image ' +
-      'is decorative or redundant with displayed text and should not be announced by screen readers.'
+    if (alt == null && process.env.NODE_ENV !== 'production') {
+      console.warn(
+        'The `alt` prop was not provided to an image. ' +
+          'Add `alt` text for screen readers, or set `alt=""` prop to indicate that the image ' +
+          'is decorative or redundant with displayed text and should not be announced by screen readers.'
+      );
+    }
+
+    return (
+      <div
+        {...filterDOMProps(props)}
+        {...styleProps}
+        className={classNames(styles, styleProps.className)}
+        style={{
+          ...styleProps.style,
+          overflow: 'hidden'
+        }}
+        ref={domRef}>
+        <img
+          src={src}
+          alt={userProvidedAlt || alt}
+          style={{objectFit}}
+          className={classNames(styles, 'spectrum-Image-img')}
+          onError={props?.onError}
+          onLoad={props?.onLoad}
+          crossOrigin={props?.crossOrigin}
+        />
+      </div>
     );
   }
-
-  return (
-    <div
-      {...filterDOMProps(props)}
-      {...styleProps}
-      className={classNames(styles, styleProps.className)}
-      style={{
-        ...styleProps.style,
-        overflow: 'hidden'
-      }}
-      ref={domRef}>
-      <img
-        src={src}
-        alt={userProvidedAlt || alt}
-        style={{objectFit}}
-        className={classNames(styles, 'spectrum-Image-img')} 
-        onError={props?.onError}
-        onLoad={props?.onLoad} 
-        crossOrigin={props?.crossOrigin} />
-    </div>
-  );
-});
+);

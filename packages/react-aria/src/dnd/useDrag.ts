@@ -12,12 +12,34 @@
 
 import {AriaButtonProps} from '../button/useButton';
 
-import {DragEndEvent, DragItem, DragMoveEvent, DragPreviewRenderer, DragStartEvent, DropOperation, PressEvent, RefObject} from '@react-types/shared';
-import {DragEvent, HTMLAttributes, version as ReactVersion, useEffect, useRef, useState} from 'react';
+import {
+  DragEndEvent,
+  DragItem,
+  DragMoveEvent,
+  DragPreviewRenderer,
+  DragStartEvent,
+  DropOperation,
+  PressEvent,
+  RefObject
+} from '@react-types/shared';
+import {
+  DragEvent,
+  HTMLAttributes,
+  version as ReactVersion,
+  useEffect,
+  useRef,
+  useState
+} from 'react';
 import * as DragManager from './DragManager';
 import {DROP_EFFECT_TO_DROP_OPERATION, DROP_OPERATION, EFFECT_ALLOWED} from './constants';
 import {getEventTarget} from '../utils/shadowdom/DOMFunctions';
-import {globalDropEffect, setGlobalAllowedDropOperations, setGlobalDropEffect, useDragModality, writeToDataTransfer} from './utils';
+import {
+  globalDropEffect,
+  setGlobalAllowedDropOperations,
+  setGlobalDropEffect,
+  useDragModality,
+  writeToDataTransfer
+} from './utils';
 import intlMessages from '../../intl/dnd/*.json';
 import {isVirtualClick, isVirtualPointerEvent} from '../utils/isVirtualEvent';
 import {useDescription} from '../utils/useDescription';
@@ -27,35 +49,35 @@ import {useLocalizedStringFormatter} from '../i18n/useLocalizedStringFormatter';
 
 export interface DragOptions {
   /** Handler that is called when a drag operation is started. */
-  onDragStart?: (e: DragStartEvent) => void,
+  onDragStart?: (e: DragStartEvent) => void;
   /** Handler that is called when the drag is moved. */
-  onDragMove?: (e: DragMoveEvent) => void,
+  onDragMove?: (e: DragMoveEvent) => void;
   /** Handler that is called when the drag operation is ended, either as a result of a drop or a cancellation. */
-  onDragEnd?: (e: DragEndEvent) => void,
+  onDragEnd?: (e: DragEndEvent) => void;
   /** A function that returns the items being dragged. */
-  getItems: () => DragItem[],
+  getItems: () => DragItem[];
   /** The ref of the element that will be rendered as the drag preview while dragging. */
-  preview?: RefObject<DragPreviewRenderer | null>,
+  preview?: RefObject<DragPreviewRenderer | null>;
   /** Function that returns the drop operations that are allowed for the dragged items. If not provided, all drop operations are allowed. */
-  getAllowedDropOperations?: () => DropOperation[],
+  getAllowedDropOperations?: () => DropOperation[];
   /**
    * Whether the item has an explicit focusable drag affordance to initiate accessible drag and drop mode.
    * If true, the dragProps will omit these event handlers, and they will be applied to dragButtonProps instead.
    */
-  hasDragButton?: boolean,
+  hasDragButton?: boolean;
   /**
    * Whether the drag operation is disabled. If true, the element will not be draggable.
    */
-  isDisabled?: boolean
+  isDisabled?: boolean;
 }
 
 export interface DragResult {
   /** Props for the draggable element. */
-  dragProps: HTMLAttributes<HTMLElement>,
+  dragProps: HTMLAttributes<HTMLElement>;
   /** Props for the explicit drag button affordance, if any. */
-  dragButtonProps: AriaButtonProps,
+  dragButtonProps: AriaButtonProps;
   /** Whether the element is currently being dragged. */
-  isDragging: boolean
+  isDragging: boolean;
 }
 
 const MESSAGES = {
@@ -182,11 +204,18 @@ export function useDrag(options: DragOptions): DragResult {
     }
 
     // Enforce that drops are handled by useDrop.
-    addGlobalListener(window, 'drop', e => {
-      e.preventDefault();
-      e.stopPropagation();
-      console.warn('Drags initiated from the React Aria useDrag hook may only be dropped on a target created with useDrop. This ensures that a keyboard and screen reader accessible alternative is available.');
-    }, {once: true});
+    addGlobalListener(
+      window,
+      'drop',
+      e => {
+        e.preventDefault();
+        e.stopPropagation();
+        console.warn(
+          'Drags initiated from the React Aria useDrag hook may only be dropped on a target created with useDrop. This ensures that a keyboard and screen reader accessible alternative is available.'
+        );
+      },
+      {once: true}
+    );
     state.x = e.clientX;
     state.y = e.clientY;
 
@@ -252,7 +281,10 @@ export function useDrag(options: DragOptions): DragResult {
       // Check that the dragged element has actually unmounted from the DOM and not a React Strict Mode false positive.
       // https://github.com/facebook/react/issues/29585
       // React 16 ran effect cleanups before removing elements from the DOM but did not have this issue.
-      if (isDraggingRef.current && (!isDraggingRef.current.isConnected || parseInt(ReactVersion, 10) < 17)) {
+      if (
+        isDraggingRef.current &&
+        (!isDraggingRef.current.isConnected || parseInt(ReactVersion, 10) < 17)
+      ) {
         if (typeof state.options.onDragEnd === 'function') {
           let event: DragEndEvent = {
             type: 'dragend',
@@ -283,24 +315,28 @@ export function useDrag(options: DragOptions): DragResult {
       let rect = target.getBoundingClientRect();
       state.options.onDragStart({
         type: 'dragstart',
-        x: rect.x + (rect.width / 2),
-        y: rect.y + (rect.height / 2)
+        x: rect.x + rect.width / 2,
+        y: rect.y + rect.height / 2
       });
     }
 
-    DragManager.beginDragging({
-      element: target,
-      items: state.options.getItems(),
-      allowedDropOperations: typeof state.options.getAllowedDropOperations === 'function'
-        ? state.options.getAllowedDropOperations()
-        : ['move', 'copy', 'link'],
-      onDragEnd(e) {
-        setDragging(null);
-        if (typeof state.options.onDragEnd === 'function') {
-          state.options.onDragEnd(e);
+    DragManager.beginDragging(
+      {
+        element: target,
+        items: state.options.getItems(),
+        allowedDropOperations:
+          typeof state.options.getAllowedDropOperations === 'function'
+            ? state.options.getAllowedDropOperations()
+            : ['move', 'copy', 'link'],
+        onDragEnd(e) {
+          setDragging(null);
+          if (typeof state.options.onDragEnd === 'function') {
+            state.options.onDragEnd(e);
+          }
         }
-      }
-    }, stringFormatter);
+      },
+      stringFormatter
+    );
 
     setDragging(target);
   };
@@ -322,7 +358,9 @@ export function useDrag(options: DragOptions): DragResult {
     interactions = {
       ...descriptionProps,
       onPointerDown(e) {
-        modalityOnPointerDown.current = isVirtualPointerEvent(e.nativeEvent) ? 'virtual' : e.pointerType;
+        modalityOnPointerDown.current = isVirtualPointerEvent(e.nativeEvent)
+          ? 'virtual'
+          : e.pointerType;
 
         // Try to detect virtual drag passthrough gestures.
         if (e.width < 1 && e.height < 1) {

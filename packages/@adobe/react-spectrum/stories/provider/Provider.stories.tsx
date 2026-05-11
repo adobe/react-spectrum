@@ -135,7 +135,8 @@ export const ResponsiveStyleProps: ProviderStory = () => (
     <div>
       <TextField
         label="A text field"
-        width={{base: 'size-800', S: 'size-1000', M: 'size-2000', L: 'size-3000'}} />
+        width={{base: 'size-800', S: 'size-1000', M: 'size-2000', L: 'size-3000'}}
+      />
     </div>
     <Button
       isHidden={{base: false, S: false, M: false, L: true}}
@@ -225,7 +226,9 @@ function render(props = {}) {
   return (
     <Provider {...props} UNSAFE_style={{padding: 50}}>
       <Form>
-        <Flex> {/* Extra div via Flex so that the button does not expand to 100% width */}
+        <Flex>
+          {' '}
+          {/* Extra div via Flex so that the button does not expand to 100% width */}
           <Button variant="primary">I am a button</Button>
         </Flex>
         <CheckboxGroup defaultValue={['dragons']} label="Pets">
@@ -251,7 +254,8 @@ function render(props = {}) {
           label="A text field"
           marginTop="size-100"
           necessityIndicator="label"
-          value="dummy value" />
+          value="dummy value"
+        />
       </Form>
     </Provider>
   );

@@ -10,9 +10,20 @@
  * governing permissions and limitations under the License.
  */
 
-import {CollectionBranchProps, CollectionRenderer, CollectionRendererContext, CollectionRootProps, renderAfterDropIndicators} from './Collection';
+import {
+  CollectionBranchProps,
+  CollectionRenderer,
+  CollectionRendererContext,
+  CollectionRootProps,
+  renderAfterDropIndicators
+} from './Collection';
 import {DropTargetDelegate, ItemDropTarget, Node} from '@react-types/shared';
-import {Layout, ReusableView, useVirtualizerState, VirtualizerState} from 'react-stately/useVirtualizerState';
+import {
+  Layout,
+  ReusableView,
+  useVirtualizerState,
+  VirtualizerState
+} from 'react-stately/useVirtualizerState';
 import React, {createContext, JSX, ReactNode, useContext, useMemo} from 'react';
 import {useScrollView} from 'react-aria/private/virtualizer/ScrollView';
 import {VirtualizerItem} from 'react-aria/private/virtualizer/VirtualizerItem';
@@ -20,27 +31,28 @@ import {VirtualizerItem} from 'react-aria/private/virtualizer/VirtualizerItem';
 type View = ReusableView<Node<unknown>, ReactNode>;
 
 export interface LayoutOptionsDelegate<O> {
-  useLayoutOptions?(): O
+  useLayoutOptions?(): O;
 }
 
-interface ILayout<O> extends Layout<Node<unknown>, O>, Partial<DropTargetDelegate>, LayoutOptionsDelegate<O> {}
+interface ILayout<O>
+  extends Layout<Node<unknown>, O>, Partial<DropTargetDelegate>, LayoutOptionsDelegate<O> {}
 
 interface LayoutClass<O> {
-  new(): ILayout<O>
+  new (): ILayout<O>;
 }
 
 export interface VirtualizerProps<O> {
   /** The child collection to virtualize (e.g. ListBox, GridList, or Table). */
-  children: ReactNode,
+  children: ReactNode;
   /** The layout object that determines the position and size of the visible elements. */
-  layout: LayoutClass<O> | ILayout<O>,
+  layout: LayoutClass<O> | ILayout<O>;
   /** Options for the layout. */
-  layoutOptions?: O
+  layoutOptions?: O;
 }
 
 interface LayoutContextValue {
-  layout: ILayout<any>,
-  layoutOptions?: any
+  layout: ILayout<any>;
+  layoutOptions?: any;
 }
 
 const VirtualizerContext = createContext<VirtualizerState<any, any> | null>(null);
@@ -53,25 +65,36 @@ const LayoutContext = createContext<LayoutContextValue | null>(null);
  */
 export function Virtualizer<O>(props: VirtualizerProps<O>): JSX.Element {
   let {children, layout: layoutProp, layoutOptions} = props;
-  let layout = useMemo(() => typeof layoutProp === 'function' ? new layoutProp() : layoutProp, [layoutProp]);
-  let renderer: CollectionRenderer = useMemo(() => ({
-    isVirtualized: true,
-    layoutDelegate: layout,
-    dropTargetDelegate: layout.getDropTargetFromPoint ? layout as DropTargetDelegate : undefined,
-    CollectionRoot,
-    CollectionBranch
-  }), [layout]);
+  let layout = useMemo(
+    () => (typeof layoutProp === 'function' ? new layoutProp() : layoutProp),
+    [layoutProp]
+  );
+  let renderer: CollectionRenderer = useMemo(
+    () => ({
+      isVirtualized: true,
+      layoutDelegate: layout,
+      dropTargetDelegate: layout.getDropTargetFromPoint
+        ? (layout as DropTargetDelegate)
+        : undefined,
+      CollectionRoot,
+      CollectionBranch
+    }),
+    [layout]
+  );
 
   return (
     <CollectionRendererContext.Provider value={renderer}>
-      <LayoutContext.Provider value={{layout, layoutOptions}}>
-        {children}
-      </LayoutContext.Provider>
+      <LayoutContext.Provider value={{layout, layoutOptions}}>{children}</LayoutContext.Provider>
     </CollectionRendererContext.Provider>
   );
 }
 
-function CollectionRoot({collection, persistedKeys, scrollRef, renderDropIndicator}: CollectionRootProps) {
+function CollectionRoot({
+  collection,
+  persistedKeys,
+  scrollRef,
+  renderDropIndicator
+}: CollectionRootProps) {
   let {layout, layoutOptions} = useContext(LayoutContext)!;
   let layoutOptions2 = layout.useLayoutOptions?.();
   let state = useVirtualizerState({
@@ -97,14 +120,17 @@ function CollectionRoot({collection, persistedKeys, scrollRef, renderDropIndicat
     }, [layoutOptions, layoutOptions2])
   });
 
-  let {contentProps} = useScrollView({
-    onVisibleRectChange: state.setVisibleRect,
-    onSizeChange: state.setSize,
-    contentSize: state.contentSize,
-    onScrollStart: state.startScrolling,
-    onScrollEnd: state.endScrolling,
-    allowsWindowScrolling: true
-  }, scrollRef!);
+  let {contentProps} = useScrollView(
+    {
+      onVisibleRectChange: state.setVisibleRect,
+      onSizeChange: state.setSize,
+      contentSize: state.contentSize,
+      onScrollStart: state.startScrolling,
+      onScrollEnd: state.endScrolling,
+      allowsWindowScrolling: true
+    },
+    scrollRef!
+  );
 
   return (
     <div {...contentProps}>
@@ -121,7 +147,11 @@ function CollectionBranch({parent, renderDropIndicator}: CollectionBranchProps) 
   return renderChildren(parentView, Array.from(parentView.children), renderDropIndicator);
 }
 
-function renderChildren(parent: View | null, children: View[], renderDropIndicator?: (target: ItemDropTarget) => ReactNode) {
+function renderChildren(
+  parent: View | null,
+  children: View[],
+  renderDropIndicator?: (target: ItemDropTarget) => ReactNode
+) {
   return children.map(view => renderWrapper(parent, view, renderDropIndicator));
 }
 
@@ -145,9 +175,16 @@ function renderWrapper(
   if (node?.type === 'item' && renderDropIndicator && layout.getDropTargetLayoutInfo) {
     rendered = (
       <React.Fragment key={reusableView.key}>
-        {renderDropIndicatorWrapper(parent, reusableView, {type: 'item', key: reusableView.content!.key, dropPosition: 'before'}, renderDropIndicator)}
+        {renderDropIndicatorWrapper(
+          parent,
+          reusableView,
+          {type: 'item', key: reusableView.content!.key, dropPosition: 'before'},
+          renderDropIndicator
+        )}
         {rendered}
-        {renderAfterDropIndicators(collection, node, target => renderDropIndicatorWrapper(parent, reusableView, target, renderDropIndicator))}
+        {renderAfterDropIndicators(collection, node, target =>
+          renderDropIndicatorWrapper(parent, reusableView, target, renderDropIndicator)
+        )}
       </React.Fragment>
     );
   }

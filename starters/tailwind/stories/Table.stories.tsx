@@ -1,7 +1,7 @@
-import { type Meta } from '@storybook/react';
-import React, { useMemo, useState } from 'react';
-import { TableBody } from 'react-aria-components/Table';
-import { Cell, Column, Row, Table, TableHeader } from '../src/Table';
+import {type Meta} from '@storybook/react';
+import React, {useMemo, useState} from 'react';
+import {TableBody} from 'react-aria-components/Table';
+import {Cell, Column, Row, Table, TableHeader} from '../src/Table';
 
 const meta: Meta<typeof Table> = {
   component: Table,
@@ -33,7 +33,9 @@ export const Example = (args: any) => {
 
   let items = useMemo(() => {
     // @ts-ignore
-    let items = rows.slice().sort((a, b) => a[sortDescriptor.column].localeCompare(b[sortDescriptor.column]));
+    let items = rows
+      .slice()
+      .sort((a, b) => a[sortDescriptor.column].localeCompare(b[sortDescriptor.column]));
     if (sortDescriptor.direction === 'descending') {
       items.reverse();
     }
@@ -41,11 +43,22 @@ export const Example = (args: any) => {
   }, [sortDescriptor]);
 
   return (
-    <Table aria-label="Files" {...args} sortDescriptor={sortDescriptor} onSortChange={setSortDescriptor} className="w-100 max-w-full">
+    <Table
+      aria-label="Files"
+      {...args}
+      sortDescriptor={sortDescriptor}
+      onSortChange={setSortDescriptor}
+      className="w-100 max-w-full">
       <TableHeader>
-        <Column id="name" isRowHeader allowsSorting>Name</Column>
-        <Column id="type" allowsSorting>Type</Column>
-        <Column id="date" allowsSorting>Date Modified</Column>
+        <Column id="name" isRowHeader allowsSorting>
+          Name
+        </Column>
+        <Column id="type" allowsSorting>
+          Type
+        </Column>
+        <Column id="date" allowsSorting>
+          Date Modified
+        </Column>
       </TableHeader>
       <TableBody items={items}>
         {row => (
@@ -58,7 +71,7 @@ export const Example = (args: any) => {
       </TableBody>
     </Table>
   );
-}
+};
 
 Example.args = {
   onRowAction: null,

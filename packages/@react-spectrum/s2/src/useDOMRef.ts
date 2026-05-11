@@ -13,7 +13,9 @@
 import {DOMRef, DOMRefValue, FocusableRef, FocusableRefValue, RefObject} from '@react-types/shared';
 import {useImperativeHandle, useMemo, useRef} from 'react';
 
-export function createDOMRef<T extends HTMLElement = HTMLElement>(ref: RefObject<T | null>): DOMRefValue<T> {
+export function createDOMRef<T extends HTMLElement = HTMLElement>(
+  ref: RefObject<T | null>
+): DOMRefValue<T> {
   return {
     UNSAFE_getDOMNode() {
       return ref.current;
@@ -21,7 +23,10 @@ export function createDOMRef<T extends HTMLElement = HTMLElement>(ref: RefObject
   };
 }
 
-export function createFocusableRef<T extends HTMLElement = HTMLElement, D extends HTMLElement = T>(domRef: RefObject<D | null>, focusableRef?: RefObject<T | null>): FocusableRefValue<T, D> {
+export function createFocusableRef<T extends HTMLElement = HTMLElement, D extends HTMLElement = T>(
+  domRef: RefObject<D | null>,
+  focusableRef?: RefObject<T | null>
+): FocusableRefValue<T, D> {
   let resolvedFocusableRef = focusableRef || domRef;
   return {
     ...createDOMRef(domRef),
@@ -33,19 +38,26 @@ export function createFocusableRef<T extends HTMLElement = HTMLElement, D extend
   };
 }
 
-export function useDOMRef<T extends HTMLElement = HTMLElement>(ref: DOMRef<T>): RefObject<T | null> {
+export function useDOMRef<T extends HTMLElement = HTMLElement>(
+  ref: DOMRef<T>
+): RefObject<T | null> {
   let domRef = useRef<T>(null);
   useImperativeHandle(ref, () => createDOMRef(domRef));
   return domRef;
 }
 
-export function useFocusableRef<T extends HTMLElement = HTMLElement, D extends HTMLElement = T>(ref: FocusableRef<T, D>, focusableRef?: RefObject<T | null>): RefObject<D | null> {
+export function useFocusableRef<T extends HTMLElement = HTMLElement, D extends HTMLElement = T>(
+  ref: FocusableRef<T, D>,
+  focusableRef?: RefObject<T | null>
+): RefObject<D | null> {
   let domRef = useRef<D>(null);
   useImperativeHandle(ref, () => createFocusableRef<T, D>(domRef, focusableRef));
   return domRef;
 }
 
-export function unwrapDOMRef<T extends HTMLElement>(ref: RefObject<DOMRefValue<T> | null>): RefObject<T | null> {
+export function unwrapDOMRef<T extends HTMLElement>(
+  ref: RefObject<DOMRefValue<T> | null>
+): RefObject<T | null> {
   return {
     get current() {
       return ref.current && ref.current.UNSAFE_getDOMNode();
@@ -53,6 +65,8 @@ export function unwrapDOMRef<T extends HTMLElement>(ref: RefObject<DOMRefValue<T
   };
 }
 
-export function useUnwrapDOMRef<T extends HTMLElement>(ref: RefObject<DOMRefValue<T> | null>) : RefObject<T | null> {
+export function useUnwrapDOMRef<T extends HTMLElement>(
+  ref: RefObject<DOMRefValue<T> | null>
+): RefObject<T | null> {
   return useMemo(() => unwrapDOMRef(ref), [ref]);
 }

@@ -29,26 +29,26 @@ import {useValueEffect} from 'react-aria/private/utils/useValueEffect';
 
 export interface SpectrumBreadcrumbsProps<T> extends AriaBreadcrumbsProps, StyleProps {
   /** The breadcrumb items. */
-  children: ReactElement<ItemProps<T>> | ReactElement<ItemProps<T>>[],
+  children: ReactElement<ItemProps<T>> | ReactElement<ItemProps<T>>[];
   /** Whether the Breadcrumbs are disabled. */
-  isDisabled?: boolean,
+  isDisabled?: boolean;
   /** Called when an item is acted upon (usually selection via press). */
-  onAction?: (key: Key) => void,
+  onAction?: (key: Key) => void;
   /**
    * Size of the Breadcrumbs including spacing and layout.
    * @default 'L'
    */
-  size?: 'S' | 'M' | 'L',
+  size?: 'S' | 'M' | 'L';
   /** Whether to always show the root item if the items are collapsed. */
-  showRoot?: boolean,
+  showRoot?: boolean;
   /**
    * Whether to place the last Breadcrumb item onto a new line.
    */
-  isMultiline?: boolean,
+  isMultiline?: boolean;
   /**
    * Whether to autoFocus the last Breadcrumb item when the Breadcrumbs render.
    */
-  autoFocusCurrent?: boolean
+  autoFocusCurrent?: boolean;
 }
 
 const MIN_VISIBLE_ITEMS = 1;
@@ -57,7 +57,10 @@ const MAX_VISIBLE_ITEMS = 4;
 /**
  * Breadcrumbs show hierarchy and navigational context for a user’s location within an application.
  */
-export const Breadcrumbs = React.forwardRef(function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
+export const Breadcrumbs = React.forwardRef(function Breadcrumbs<T>(
+  props: SpectrumBreadcrumbsProps<T>,
+  ref: DOMRef
+) {
   props = useProviderProps(props);
   let {
     size = 'L',
@@ -128,7 +131,7 @@ export const Breadcrumbs = React.forwardRef(function Breadcrumbs<T>(props: Spect
       } else {
         if (listItems.length > 0) {
           // Ensure the last breadcrumb isn't truncated when we measure it.
-          let last = (listItems.pop() as HTMLLIElement);
+          let last = listItems.pop() as HTMLLIElement;
           last.style.overflow = 'visible';
 
           calculatedWidth += last.offsetWidth;
@@ -150,7 +153,7 @@ export const Breadcrumbs = React.forwardRef(function Breadcrumbs<T>(props: Spect
       return Math.max(MIN_VISIBLE_ITEMS, Math.min(maxVisibleItems, newVisibleItems));
     };
 
-    setVisibleItems(function *() {
+    setVisibleItems(function* () {
       // Update to show all items.
       yield childArray.length;
 
@@ -228,14 +231,7 @@ export const Breadcrumbs = React.forwardRef(function Breadcrumbs<T>(props: Spect
     };
 
     return (
-      <li
-        key={index}
-        className={
-          classNames(
-            styles,
-            'spectrum-Breadcrumbs-item'
-          )
-        }>
+      <li key={index} className={classNames(styles, 'spectrum-Breadcrumbs-item')}>
         <BreadcrumbItem
           {...child.props}
           key={key}
@@ -250,26 +246,21 @@ export const Breadcrumbs = React.forwardRef(function Breadcrumbs<T>(props: Spect
   });
 
   return (
-    <nav
-      {...styleProps}
-      {...navProps}
-      ref={domRef}>
+    <nav {...styleProps} {...navProps} ref={domRef}>
       <ul
         ref={listRef}
-        className={
-          classNames(
-            styles,
-            'spectrum-Breadcrumbs',
-            {
-              'spectrum-Breadcrumbs--small': size === 'S',
-              'spectrum-Breadcrumbs--medium': size === 'M',
-              'spectrum-Breadcrumbs--multiline': isMultiline,
-              'spectrum-Breadcrumbs--showRoot': showRoot,
-              'is-disabled': isDisabled
-            },
-            styleProps.className
-          )
-        }>
+        className={classNames(
+          styles,
+          'spectrum-Breadcrumbs',
+          {
+            'spectrum-Breadcrumbs--small': size === 'S',
+            'spectrum-Breadcrumbs--medium': size === 'M',
+            'spectrum-Breadcrumbs--multiline': isMultiline,
+            'spectrum-Breadcrumbs--showRoot': showRoot,
+            'is-disabled': isDisabled
+          },
+          styleProps.className
+        )}>
         {breadcrumbItems}
       </ul>
     </nav>

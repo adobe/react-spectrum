@@ -19,8 +19,8 @@ import {useLocale} from '../i18n/I18nProvider';
 import {useMemo} from 'react';
 
 export interface CalendarYearPickerFormatOptions {
-  year?: 'numeric' | '2-digit',
-  era?: 'long' | 'short' | 'narrow'
+  year?: 'numeric' | '2-digit';
+  era?: 'long' | 'short' | 'narrow';
 }
 
 export interface CalendarYearPickerProps {
@@ -28,34 +28,41 @@ export interface CalendarYearPickerProps {
    * The number of years to display.
    * @default 20
    */
-  visibleYears?: number,
+  visibleYears?: number;
   /**
    * The format to display.
    */
-  format?: CalendarYearPickerFormatOptions
+  format?: CalendarYearPickerFormatOptions;
 }
 
 export interface CalendarYearPickerAria {
-  'aria-label': string,
-  value: Key,
-  onChange: (key: Key | null) => void,
-  items: CalendarYearPickerItem[]
+  'aria-label': string;
+  value: Key;
+  onChange: (key: Key | null) => void;
+  items: CalendarYearPickerItem[];
 }
 
 export interface CalendarYearPickerItem {
-  id: number,
-  date: CalendarDate,
-  formatted: string
+  id: number;
+  date: CalendarDate;
+  formatted: string;
 }
 
-export function useCalendarYearPicker(props: CalendarYearPickerProps, state: CalendarState<CalendarSelectionMode> | RangeCalendarState): CalendarYearPickerAria {
+export function useCalendarYearPicker(
+  props: CalendarYearPickerProps,
+  state: CalendarState<CalendarSelectionMode> | RangeCalendarState
+): CalendarYearPickerAria {
   let formatter = useDateFormatter({
     year: props.format?.year || 'numeric',
-    era: props.format?.era || (state.focusedDate.calendar.identifier === 'gregory' && state.focusedDate.era === 'BC' ? 'short' : undefined),
+    era:
+      props.format?.era ||
+      (state.focusedDate.calendar.identifier === 'gregory' && state.focusedDate.era === 'BC'
+        ? 'short'
+        : undefined),
     calendar: state.focusedDate.calendar.identifier,
     timeZone: state.timeZone
   });
-  
+
   // Determine the minimum and maximum date. By default, show an equal number of years on each side of the current year.
   // However, this can be constrained by the calendar's minimum and maximum date.
   let visibleYears = props.visibleYears || 20;
@@ -96,7 +103,10 @@ export function useCalendarYearPicker(props: CalendarYearPickerProps, state: Cal
   }
 
   let {locale} = useLocale();
-  let ariaLabel = useMemo(() => new Intl.DisplayNames(locale, {type: 'dateTimeField'}).of('year')!, [locale]);
+  let ariaLabel = useMemo(
+    () => new Intl.DisplayNames(locale, {type: 'dateTimeField'}).of('year')!,
+    [locale]
+  );
 
   return {
     'aria-label': ariaLabel,

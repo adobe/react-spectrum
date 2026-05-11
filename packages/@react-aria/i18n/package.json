@@ -3,8 +3,20 @@
   "version": "3.13.0",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adobe/react-spectrum"
+  },
+  "source": "src/index.ts",
+  "files": [
+    "dist",
+    "src",
+    "server"
+  ],
+  "sideEffects": false,
   "main": "dist/main.js",
   "module": "dist/module.js",
+  "types": "dist/types/src/index.d.ts",
   "exports": {
     ".": {
       "source": "./src/index.ts",
@@ -19,10 +31,26 @@
     },
     "./package.json": "./package.json"
   },
-  "server-module": "server/index.mjs",
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@internationalized/date": "^3.12.1",
+    "@internationalized/message": "^3.1.9",
+    "@internationalized/string": "^3.2.8",
+    "@swc/helpers": "^0.5.0",
+    "react-aria": "3.48.0"
+  },
+  "devDependencies": {
+    "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1",
+    "react-dom": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
+  },
+  "peerDependencies": {
+    "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1",
+    "react-dom": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
+  },
   "server-main": "server/index.js",
-  "types": "dist/types/src/index.d.ts",
-  "source": "src/index.ts",
+  "server-module": "server/index.mjs",
   "targets": {
     "types": false,
     "server-module": {
@@ -37,33 +65,5 @@
       "isLibrary": true,
       "includeNodeModules": false
     }
-  },
-  "files": [
-    "dist",
-    "src",
-    "server"
-  ],
-  "sideEffects": false,
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/adobe/react-spectrum"
-  },
-  "dependencies": {
-    "@internationalized/date": "^3.12.1",
-    "@internationalized/message": "^3.1.9",
-    "@internationalized/string": "^3.2.8",
-    "@swc/helpers": "^0.5.0",
-    "react-aria": "3.48.0"
-  },
-  "peerDependencies": {
-    "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1",
-    "react-dom": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
-  },
-  "publishConfig": {
-    "access": "public"
-  },
-  "devDependencies": {
-    "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1",
-    "react-dom": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
   }
 }

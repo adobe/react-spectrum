@@ -27,22 +27,19 @@ export interface SpectrumSwitchProps extends AriaSwitchProps, StyleProps {
   /**
    * This prop sets the emphasized style which provides visual prominence.
    */
-  isEmphasized?: boolean
+  isEmphasized?: boolean;
 }
 
 /**
  * Switches allow users to turn an individual option on or off.
  * They are usually used to activate or deactivate a specific setting.
  */
-export const Switch = forwardRef(function Switch(props: SpectrumSwitchProps, ref: FocusableRef<HTMLLabelElement>) {
+export const Switch = forwardRef(function Switch(
+  props: SpectrumSwitchProps,
+  ref: FocusableRef<HTMLLabelElement>
+) {
   props = useProviderProps(props);
-  let {
-    isEmphasized = false,
-    isDisabled = false,
-    autoFocus,
-    children,
-    ...otherProps
-  } = props;
+  let {isEmphasized = false, isDisabled = false, autoFocus, children, ...otherProps} = props;
   let {styleProps} = useStyleProps(otherProps);
   let {hoverProps, isHovered} = useHover({isDisabled});
 
@@ -51,36 +48,32 @@ export const Switch = forwardRef(function Switch(props: SpectrumSwitchProps, ref
   let state = useToggleState(props);
   let {labelProps, inputProps} = useSwitch(props, state, inputRef);
 
-
   return (
     <label
       {...labelProps}
       {...styleProps}
       {...hoverProps}
       ref={domRef}
-      className={
-        classNames(
-          styles,
-          'spectrum-ToggleSwitch',
-          {
-            'spectrum-ToggleSwitch--quiet': !isEmphasized,
-            'is-disabled': isDisabled,
-            'is-hovered': isHovered
-          },
-          styleProps.className
-        )
-      }>
+      className={classNames(
+        styles,
+        'spectrum-ToggleSwitch',
+        {
+          'spectrum-ToggleSwitch--quiet': !isEmphasized,
+          'is-disabled': isDisabled,
+          'is-hovered': isHovered
+        },
+        styleProps.className
+      )}>
       <FocusRing focusRingClass={classNames(styles, 'focus-ring')} autoFocus={autoFocus}>
         <input
           {...inputProps}
           ref={inputRef}
-          className={classNames(styles, 'spectrum-ToggleSwitch-input')} />
+          className={classNames(styles, 'spectrum-ToggleSwitch-input')}
+        />
       </FocusRing>
       <span className={classNames(styles, 'spectrum-ToggleSwitch-switch')} />
       {children && (
-        <span className={classNames(styles, 'spectrum-ToggleSwitch-label')}>
-          {children}
-        </span>
+        <span className={classNames(styles, 'spectrum-ToggleSwitch-label')}>{children}</span>
       )}
     </label>
   );

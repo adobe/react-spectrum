@@ -10,13 +10,41 @@
  * governing permissions and limitations under the License.
  */
 
-import {ArbitraryProperty, Color, createTheme, ExpandedProperty, MappedProperty, parseArbitraryValue, PercentageProperty, SizingProperty} from './style-macro';
-import {ArbitraryValue, CSSProperties, CSSValue, PropertyValueDefinition, PropertyValueMap, Value} from './types';
-import {autoStaticColor, ColorRef, colorScale, ColorToken, colorToken, fontSizeToken, generateOverlayColorScale, getToken, shadowToken, simpleColorScale, weirdColorToken} from './tokens' with {type: 'macro'};
+import {
+  ArbitraryProperty,
+  Color,
+  createTheme,
+  ExpandedProperty,
+  MappedProperty,
+  parseArbitraryValue,
+  PercentageProperty,
+  SizingProperty
+} from './style-macro';
+import {
+  ArbitraryValue,
+  CSSProperties,
+  CSSValue,
+  PropertyValueDefinition,
+  PropertyValueMap,
+  Value
+} from './types';
+import {
+  autoStaticColor,
+  ColorRef,
+  colorScale,
+  ColorToken,
+  colorToken,
+  fontSizeToken,
+  generateOverlayColorScale,
+  getToken,
+  shadowToken,
+  simpleColorScale,
+  weirdColorToken
+} from './tokens' with {type: 'macro'};
 import type * as CSS from 'csstype';
 
 interface MacroContext {
-  addAsset(asset: {type: string, content: string}): void
+  addAsset(asset: {type: string; content: string}): void;
 }
 
 function pxToRem(px: string | number) {
@@ -123,7 +151,8 @@ function resolveColorToken(token: string | ColorToken | ColorRef): ColorToken {
 }
 
 function colorTokenToString(token: ColorToken, opacity?: string | number) {
-  let result = token.light === token.dark ? token.light : `light-dark(${token.light}, ${token.dark})`;
+  let result =
+    token.light === token.dark ? token.light : `light-dark(${token.light}, ${token.dark})`;
   if (opacity) {
     result = `rgb(from ${result} r g b / ${opacity}%)`;
   }
@@ -210,7 +239,9 @@ type BaseColor = keyof typeof baseColors;
  * });
  * ```
  */
-export function baseColor<C extends string = BaseColor>(base: BaseColor | C): {default: C, isHovered: C, isFocusVisible: C, isPressed: C} {
+export function baseColor<C extends string = BaseColor>(
+  base: BaseColor | C
+): {default: C; isHovered: C; isFocusVisible: C; isPressed: C} {
   return {
     default: base as C,
     isHovered: `${base}:hovered` as C,
@@ -290,12 +321,16 @@ export function colorMix(a: SpectrumColor, b: SpectrumColor, percent: number): `
 }
 
 interface LinearGradient {
-  type: 'linear-gradient',
-  angle: string,
-  stops: [SpectrumColor, number][]
+  type: 'linear-gradient';
+  angle: string;
+  stops: [SpectrumColor, number][];
 }
 
-export function linearGradient(this: MacroContext | void, angle: string, ...tokens: [SpectrumColor, number][]): [LinearGradient] {
+export function linearGradient(
+  this: MacroContext | void,
+  angle: string,
+  ...tokens: [SpectrumColor, number][]
+): [LinearGradient] {
   // Generate @property rules for each gradient stop color. This allows the gradient to be animated.
   let propertyDefinitions: string[] = [];
   for (let i = 0; i < tokens.length; i++) {
@@ -313,15 +348,19 @@ export function linearGradient(this: MacroContext | void, angle: string, ...toke
     });
   }
 
-  return [{
-    type: 'linear-gradient',
-    angle,
-    stops: tokens
-  }];
+  return [
+    {
+      type: 'linear-gradient',
+      angle,
+      stops: tokens
+    }
+  ];
 }
 
 // Spacing uses rems, padding does not.
-function generateSpacing<K extends number[]>(px: K): {spacing: {[P in K[number]]: string}, padding: {[P in K[number]]: string}} {
+function generateSpacing<K extends number[]>(
+  px: K
+): {spacing: {[P in K[number]]: string}; padding: {[P in K[number]]: string}} {
   let spacing: any = {};
   let padding: any = {};
   for (let p of px) {
@@ -381,7 +420,7 @@ export type NegativeSpacing = keyof typeof negativeSpacing;
 export type Spacing = PositiveSpacing | NegativeSpacing;
 
 export function fontRelative(this: MacroContext | void, base: number, baseFontSize = 14): string {
-  return (base / baseFontSize) + 'em';
+  return base / baseFontSize + 'em';
 }
 
 export function edgeToText(this: MacroContext | void, height: keyof typeof baseSpacing): string {
@@ -401,7 +440,7 @@ const relativeSpacing = {
   },
   // height relative values
   'edge-to-text': 'calc(self(height, self(minHeight)) * 3 / 8)',
-  'pill': 'calc(self(height, self(minHeight)) / 2)'
+  pill: 'calc(self(height, self(minHeight)) / 2)'
 } as const;
 
 const spacing = {
@@ -454,7 +493,10 @@ const width = {
   screen: '100vw'
 };
 
-function createSpectrumSizingProperty<T extends CSSValue>(property: string, values: PropertyValueMap<T>) {
+function createSpectrumSizingProperty<T extends CSSValue>(
+  property: string,
+  values: PropertyValueMap<T>
+) {
   return new SizingProperty(property, values, px => `calc(${pxToRem(px)} * var(--s2-scale))`);
 }
 
@@ -497,7 +539,14 @@ const radius = {
 };
 
 type GridTrack = 'none' | 'subgrid' | (string & {}) | readonly GridTrackSize[];
-type GridTrackSize = 'auto' | 'min-content' | 'max-content' | `${number}fr` | `minmax(${string}, ${string})` | number | (string & {});
+type GridTrackSize =
+  | 'auto'
+  | 'min-content'
+  | 'max-content'
+  | `${number}fr`
+  | `minmax(${string}, ${string})`
+  | number
+  | (string & {});
 
 let gridTrack = (value: GridTrack) => {
   if (typeof value === 'string') {
@@ -513,8 +562,10 @@ let gridTrackSize = (value: GridTrackSize) => {
 const transitionProperty = {
   // var(--gp) is generated by the backgroundImage property when setting a gradient.
   // It includes a list of all of the custom properties used for each color stop.
-  default: 'color, background-color, var(--gp, color), border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, translate, scale, rotate, filter, backdrop-filter',
-  colors: 'color, background-color, var(--gp, color), border-color, text-decoration-color, fill, stroke',
+  default:
+    'color, background-color, var(--gp, color), border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, translate, scale, rotate, filter, backdrop-filter',
+  colors:
+    'color, background-color, var(--gp, color), border-color, text-decoration-color, fill, stroke',
   opacity: 'opacity',
   shadow: 'box-shadow',
   transform: 'transform, translate, scale, rotate',
@@ -531,7 +582,7 @@ const timingFunction = {
   'in-out': 'cubic-bezier(0.45, 0, 0.4, 1)'
 };
 
-let durationValue = (value: number | string) => typeof value === 'number' ? value + 'ms' : value;
+let durationValue = (value: number | string) => (typeof value === 'number' ? value + 'ms' : value);
 
 const fontWeightBase = {
   normal: '400',
@@ -552,29 +603,41 @@ const fontWeightBase = {
 const fontWeight = {
   ...fontWeightBase,
   heading: {
-    default: fontWeightBase[getToken('heading-sans-serif-font-weight') as keyof typeof fontWeightBase],
-    ':lang(ja, ko, zh, zh-Hant, zh-Hans)': fontWeightBase[getToken('heading-cjk-font-weight') as keyof typeof fontWeightBase]
+    default:
+      fontWeightBase[getToken('heading-sans-serif-font-weight') as keyof typeof fontWeightBase],
+    ':lang(ja, ko, zh, zh-Hant, zh-Hans)':
+      fontWeightBase[getToken('heading-cjk-font-weight') as keyof typeof fontWeightBase]
   },
   title: {
-    default: fontWeightBase[getToken('title-sans-serif-font-weight') as keyof typeof fontWeightBase],
-    ':lang(ja, ko, zh, zh-Hant, zh-Hans)': fontWeightBase[getToken('title-cjk-font-weight') as keyof typeof fontWeightBase]
+    default:
+      fontWeightBase[getToken('title-sans-serif-font-weight') as keyof typeof fontWeightBase],
+    ':lang(ja, ko, zh, zh-Hant, zh-Hans)':
+      fontWeightBase[getToken('title-cjk-font-weight') as keyof typeof fontWeightBase]
   },
   detail: {
-    default: fontWeightBase[getToken('detail-sans-serif-font-weight') as keyof typeof fontWeightBase],
-    ':lang(ja, ko, zh, zh-Hant, zh-Hans)': fontWeightBase[getToken('detail-cjk-font-weight') as keyof typeof fontWeightBase]
+    default:
+      fontWeightBase[getToken('detail-sans-serif-font-weight') as keyof typeof fontWeightBase],
+    ':lang(ja, ko, zh, zh-Hant, zh-Hans)':
+      fontWeightBase[getToken('detail-cjk-font-weight') as keyof typeof fontWeightBase]
   }
 } as const;
 
 const i18nFonts = {
   ':lang(ar)': 'adobe-clean-arabic, myriad-arabic, ui-sans-serif, system-ui, sans-serif',
   ':lang(he)': 'adobe-clean-hebrew, myriad-hebrew, ui-sans-serif, system-ui, sans-serif',
-  ':lang(ja)': "adobe-clean-han-japanese, 'Hiragino Kaku Gothic ProN', 'ヒラギノ角ゴ ProN W3', Osaka, YuGothic, 'Yu Gothic', 'メイリオ', Meiryo, 'ＭＳ Ｐゴシック', 'MS PGothic', sans-serif",
-  ':lang(ko)': "adobe-clean-han-korean, source-han-korean, 'Malgun Gothic', 'Apple Gothic', sans-serif",
-  ':lang(zh)': "adobe-clean-han-traditional, source-han-traditional, 'MingLiu', 'Heiti TC Light', sans-serif",
+  ':lang(ja)':
+    "adobe-clean-han-japanese, 'Hiragino Kaku Gothic ProN', 'ヒラギノ角ゴ ProN W3', Osaka, YuGothic, 'Yu Gothic', 'メイリオ', Meiryo, 'ＭＳ Ｐゴシック', 'MS PGothic', sans-serif",
+  ':lang(ko)':
+    "adobe-clean-han-korean, source-han-korean, 'Malgun Gothic', 'Apple Gothic', sans-serif",
+  ':lang(zh)':
+    "adobe-clean-han-traditional, source-han-traditional, 'MingLiu', 'Heiti TC Light', sans-serif",
   // TODO: are these fallbacks supposed to be different than above?
-  ':lang(zh-hant)': "adobe-clean-han-traditional, source-han-traditional, 'MingLiu', 'Microsoft JhengHei UI', 'Microsoft JhengHei', 'Heiti TC Light', sans-serif",
-  ':lang(zh-HK)': "adobe-clean-han-hong-kong, source-han-hong-kong, 'MingLiu', 'Microsoft JhengHei UI', 'Microsoft JhengHei', 'Heiti TC Light', sans-serif",
-  ':lang(zh-Hans, zh-CN, zh-SG)': "adobe-clean-han-simplified-c, source-han-simplified-c, 'SimSun', 'Heiti SC Light', sans-serif"
+  ':lang(zh-hant)':
+    "adobe-clean-han-traditional, source-han-traditional, 'MingLiu', 'Microsoft JhengHei UI', 'Microsoft JhengHei', 'Heiti TC Light', sans-serif",
+  ':lang(zh-HK)':
+    "adobe-clean-han-hong-kong, source-han-hong-kong, 'MingLiu', 'Microsoft JhengHei UI', 'Microsoft JhengHei', 'Heiti TC Light', sans-serif",
+  ':lang(zh-Hans, zh-CN, zh-SG)':
+    "adobe-clean-han-simplified-c, source-han-simplified-c, 'SimSun', 'Heiti SC Light', sans-serif"
 } as const;
 
 const fontSize = {
@@ -773,19 +836,25 @@ export const style = createTheme({
     containIntrinsicWidth: createSpectrumSizingProperty('containIntrinsicWidth', width),
     containIntrinsicHeight: createSpectrumSizingProperty('containIntrinsicHeight', height),
     minHeight: createSpectrumSizingProperty('minHeight', height),
-    maxHeight: createSpectrumSizingProperty('maxHeight', (() => {
-      // auto is not a valid value for maxHeight
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const {auto, ...rest} = height;
-      return {...rest, none: 'none'};
-    })()),
+    maxHeight: createSpectrumSizingProperty(
+      'maxHeight',
+      (() => {
+        // auto is not a valid value for maxHeight
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const {auto, ...rest} = height;
+        return {...rest, none: 'none'};
+      })()
+    ),
     minWidth: createSpectrumSizingProperty('minWidth', width),
-    maxWidth: createSpectrumSizingProperty('maxWidth', (() => {
-      // auto is not a valid value for maxWidth
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const {auto, ...rest} = width;
-      return {...rest, none: 'none'};
-    })()),
+    maxWidth: createSpectrumSizingProperty(
+      'maxWidth',
+      (() => {
+        // auto is not a valid value for maxWidth
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const {auto, ...rest} = width;
+        return {...rest, none: 'none'};
+      })()
+    ),
     borderStartWidth: new MappedProperty('borderInlineStartWidth', borderWidth),
     borderEndWidth: new MappedProperty('borderInlineEndWidth', borderWidth),
     borderTopWidth: borderWidth,
@@ -814,15 +883,27 @@ export const style = createTheme({
     scrollPaddingTop: baseSpacing,
     scrollPaddingBottom: baseSpacing,
     textIndent: new PercentageProperty('textIndent', baseSpacing),
-    translateX: new ExpandedProperty(['--translateX', 'translate'], value => ({
-      '--translateX': String(value),
-      translate: 'var(--translateX, 0) var(--translateY, 0)'
-    }), new PercentageProperty('--translateX', translate)),
-    translateY: new ExpandedProperty(['--translateY', 'translate'], value => ({
-      '--translateY': String(value),
-      translate: 'var(--translateX, 0) var(--translateY, 0)'
-    }), new PercentageProperty('--translateY', translate)),
-    rotate: new ArbitraryProperty('rotate', (value: number | `${number}deg` | `${number}rad` | `${number}grad` | `${number}turn`) => typeof value === 'number' ? `${value}deg` : value),
+    translateX: new ExpandedProperty(
+      ['--translateX', 'translate'],
+      value => ({
+        '--translateX': String(value),
+        translate: 'var(--translateX, 0) var(--translateY, 0)'
+      }),
+      new PercentageProperty('--translateX', translate)
+    ),
+    translateY: new ExpandedProperty(
+      ['--translateY', 'translate'],
+      value => ({
+        '--translateY': String(value),
+        translate: 'var(--translateX, 0) var(--translateY, 0)'
+      }),
+      new PercentageProperty('--translateY', translate)
+    ),
+    rotate: new ArbitraryProperty(
+      'rotate',
+      (value: number | `${number}deg` | `${number}rad` | `${number}grad` | `${number}turn`) =>
+        typeof value === 'number' ? `${value}deg` : value
+    ),
     scaleX: new ExpandedProperty<number | `${number}%`>(['--scaleX', 'scale'], value => ({
       '--scaleX': String(value),
       scale: 'var(--scaleX, 1) var(--scaleY, 1)'
@@ -839,46 +920,59 @@ export const style = createTheme({
     left: new PercentageProperty('left', inset),
     bottom: new PercentageProperty('bottom', inset),
     right: new PercentageProperty('right', inset),
-    aspectRatio: new ArbitraryProperty<'auto' | 'square' | 'video' | `${number}/${number}`>('aspectRatio', value => {
-      if (value === 'square') {
-        return '1/1';
-      }
+    aspectRatio: new ArbitraryProperty<'auto' | 'square' | 'video' | `${number}/${number}`>(
+      'aspectRatio',
+      value => {
+        if (value === 'square') {
+          return '1/1';
+        }
 
-      if (value === 'video') {
-        return '16/9';
-      }
+        if (value === 'video') {
+          return '16/9';
+        }
 
-      return value;
-    }),
+        return value;
+      }
+    ),
 
     // text
     fontFamily: {
       sans: {
-        default: 'var(--s2-font-family-sans, adobe-clean-spectrum-vf), adobe-clean-variable, adobe-clean, ui-sans-serif, system-ui, sans-serif',
+        default:
+          'var(--s2-font-family-sans, adobe-clean-spectrum-vf), adobe-clean-variable, adobe-clean, ui-sans-serif, system-ui, sans-serif',
         ...i18nFonts
       },
       serif: {
-        default: 'var(--s2-font-family-serif, adobe-clean-spectrum-srf-vf), adobe-clean-serif, "Source Serif", Georgia, serif',
+        default:
+          'var(--s2-font-family-serif, adobe-clean-spectrum-srf-vf), adobe-clean-serif, "Source Serif", Georgia, serif',
         ...i18nFonts
       },
       code: 'source-code-pro, "Source Code Pro", Monaco, monospace'
     },
-    fontSize: new ExpandedProperty<keyof typeof fontSize>(['--fs', 'fontSize'], (value) => {
-      if (typeof value === 'number') {
-        return {
-          '--fs': `pow(1.125, ${value})`,
-          fontSize: `round(${fontSizeCalc} / 16 * ${process.env.DOCS_ENV ? 'var(--rem, 1rem)' : '1rem'}, 1px)`
-        } as CSSProperties;
-      }
+    fontSize: new ExpandedProperty<keyof typeof fontSize>(
+      ['--fs', 'fontSize'],
+      value => {
+        if (typeof value === 'number') {
+          return {
+            '--fs': `pow(1.125, ${value})`,
+            fontSize: `round(${fontSizeCalc} / 16 * ${process.env.DOCS_ENV ? 'var(--rem, 1rem)' : '1rem'}, 1px)`
+          } as CSSProperties;
+        }
 
-      return {fontSize: value};
-    }, fontSize),
-    fontWeight: new ExpandedProperty<keyof typeof fontWeight>(['fontWeight', 'fontVariationSettings', 'fontSynthesisWeight'], (value) => {
-      return {
-        fontWeight: value as any,
-        fontSynthesisWeight: 'none'
-      };
-    }, fontWeight),
+        return {fontSize: value};
+      },
+      fontSize
+    ),
+    fontWeight: new ExpandedProperty<keyof typeof fontWeight>(
+      ['fontWeight', 'fontVariationSettings', 'fontSynthesisWeight'],
+      value => {
+        return {
+          fontWeight: value as any,
+          fontSynthesisWeight: 'none'
+        };
+      },
+      fontWeight
+    ),
     lineHeight: {
       // See https://spectrum.corp.adobe.com/page/typography/#Line-height
       ui: {
@@ -913,18 +1007,34 @@ export const style = createTheme({
     listStylePosition: ['inside', 'outside'] as const,
     textTransform: ['uppercase', 'lowercase', 'capitalize', 'none'] as const,
     textAlign: ['start', 'center', 'end', 'justify'] as const,
-    verticalAlign: ['baseline', 'top', 'middle', 'bottom', 'text-top', 'text-bottom', 'sub', 'super'] as const,
-    textDecoration: new ExpandedProperty<'underline' | 'overline' | 'line-through' | 'none'>(['textDecoration', 'textUnderlineOffset'], (value) => ({
-      textDecoration: value === 'none' ? 'none' : `${value} ${getToken('text-underline-thickness')}`,
-      textUnderlineOffset: value === 'underline' ? getToken('text-underline-gap') : undefined
-    })),
+    verticalAlign: [
+      'baseline',
+      'top',
+      'middle',
+      'bottom',
+      'text-top',
+      'text-bottom',
+      'sub',
+      'super'
+    ] as const,
+    textDecoration: new ExpandedProperty<'underline' | 'overline' | 'line-through' | 'none'>(
+      ['textDecoration', 'textUnderlineOffset'],
+      value => ({
+        textDecoration:
+          value === 'none' ? 'none' : `${value} ${getToken('text-underline-thickness')}`,
+        textUnderlineOffset: value === 'underline' ? getToken('text-underline-gap') : undefined
+      })
+    ),
     textOverflow: ['ellipsis', 'clip'] as const,
-    lineClamp: new ExpandedProperty<number>(['overflow', 'display', '-webkit-box-orient', '-webkit-line-clamp'], (value) => ({
-      overflow: 'hidden',
-      display: '-webkit-box',
-      '-webkit-box-orient': 'vertical',
-      '-webkit-line-clamp': String(value)
-    })),
+    lineClamp: new ExpandedProperty<number>(
+      ['overflow', 'display', '-webkit-box-orient', '-webkit-line-clamp'],
+      value => ({
+        overflow: 'hidden',
+        display: '-webkit-box',
+        '-webkit-box-orient': 'vertical',
+        '-webkit-line-clamp': String(value)
+      })
+    ),
     hyphens: ['none', 'manual', 'auto'] as const,
     whiteSpace: ['normal', 'nowrap', 'pre', 'pre-line', 'pre-wrap', 'break-spaces'] as const,
     textWrap: ['wrap', 'nowrap', 'balance', 'pretty'] as const,
@@ -941,9 +1051,18 @@ export const style = createTheme({
     },
     filter: {
       // layer order is reversed for filter property. filters are applied in the order they are specified.
-      emphasized: shadowToken('drop-shadow-emphasized').reverse().map(s => `drop-shadow(${s})`).join(' '),
-      elevated: shadowToken('drop-shadow-elevated').reverse().map(s => `drop-shadow(${s})`).join(' '),
-      dragged: shadowToken('drop-shadow-dragged').reverse().map(s => `drop-shadow(${s})`).join(' '),
+      emphasized: shadowToken('drop-shadow-emphasized')
+        .reverse()
+        .map(s => `drop-shadow(${s})`)
+        .join(' '),
+      elevated: shadowToken('drop-shadow-elevated')
+        .reverse()
+        .map(s => `drop-shadow(${s})`)
+        .join(' '),
+      dragged: shadowToken('drop-shadow-dragged')
+        .reverse()
+        .map(s => `drop-shadow(${s})`)
+        .join(' '),
       none: 'none'
     },
     borderTopStartRadius: new MappedProperty('borderStartStartRadius', radius),
@@ -952,38 +1071,87 @@ export const style = createTheme({
     borderBottomEndRadius: new MappedProperty('borderEndEndRadius', radius),
     forcedColorAdjust: ['auto', 'none'] as const,
     colorScheme: ['light', 'dark', 'light dark'] as const,
-    backgroundImage: new ExpandedProperty<string | [LinearGradient]>(['backgroundImage', '--g0', '--g1', '--g2', '--gp'], (value) => {
-      if (typeof value === 'string') {
-        return {backgroundImage: value};
-      } else if (Array.isArray(value) && value[0]?.type === 'linear-gradient') {
-        let values: CSSProperties = {
-          backgroundImage: `linear-gradient(${value[0].angle}, ${value[0].stops.map(([, stop], i) => `var(--g${i}) ${stop}%`)})`
-        };
+    backgroundImage: new ExpandedProperty<string | [LinearGradient]>(
+      ['backgroundImage', '--g0', '--g1', '--g2', '--gp'],
+      value => {
+        if (typeof value === 'string') {
+          return {backgroundImage: value};
+        } else if (Array.isArray(value) && value[0]?.type === 'linear-gradient') {
+          let values: CSSProperties = {
+            backgroundImage: `linear-gradient(${value[0].angle}, ${value[0].stops.map(([, stop], i) => `var(--g${i}) ${stop}%`)})`
+          };
 
-        // Create a CSS var for each color stop so the gradient can be transitioned.
-        // These are registered via @property in the `linearGradient` macro.
-        let properties: string[] = [];
-        value[0].stops.forEach(([colorValue], i) => {
-          properties.push(`--g${i}`);
-          values[`--g${i}`] = color(colorValue);
-        });
+          // Create a CSS var for each color stop so the gradient can be transitioned.
+          // These are registered via @property in the `linearGradient` macro.
+          let properties: string[] = [];
+          value[0].stops.forEach(([colorValue], i) => {
+            properties.push(`--g${i}`);
+            values[`--g${i}`] = color(colorValue);
+          });
 
-        // This is used by transition-property so we automatically transition all of the color stops.
-        values['--gp'] = properties.join(', ');
-        return values;
-      } else {
-        throw new Error('Unexpected backgroundImage value: ' + JSON.stringify(value));
+          // This is used by transition-property so we automatically transition all of the color stops.
+          values['--gp'] = properties.join(', ');
+          return values;
+        } else {
+          throw new Error('Unexpected backgroundImage value: ' + JSON.stringify(value));
+        }
       }
-    }),
+    ),
     // TODO: do we need separate x and y properties?
-    backgroundPosition: ['bottom', 'center', 'left', 'left bottom', 'left top', 'right', 'right bottom', 'right top', 'top'] as const,
+    backgroundPosition: [
+      'bottom',
+      'center',
+      'left',
+      'left bottom',
+      'left top',
+      'right',
+      'right bottom',
+      'right top',
+      'top'
+    ] as const,
     backgroundSize: ['auto', 'cover', 'contain'] as const,
     backgroundAttachment: ['fixed', 'local', 'scroll'] as const,
     backgroundClip: ['border-box', 'padding-box', 'content-box', 'text'] as const,
     backgroundRepeat: ['repeat', 'no-repeat', 'repeat-x', 'repeat-y', 'round', 'space'] as const,
     backgroundOrigin: ['border-box', 'padding-box', 'content-box'] as const,
-    backgroundBlendMode: ['normal', 'multiply', 'screen', 'overlay', 'darken', 'lighten', 'color-dodge', 'color-burn', 'hard-light', 'soft-light', 'difference', 'exclusion', 'hue', 'saturation', 'color', 'luminosity'] as const,
-    mixBlendMode: ['normal', 'multiply', 'screen', 'overlay', 'darken', 'lighten', 'color-dodge', 'color-burn', 'hard-light', 'soft-light', 'difference', 'exclusion', 'hue', 'saturation', 'color', 'luminosity', 'plus-darker', 'plus-lighter'] as const,
+    backgroundBlendMode: [
+      'normal',
+      'multiply',
+      'screen',
+      'overlay',
+      'darken',
+      'lighten',
+      'color-dodge',
+      'color-burn',
+      'hard-light',
+      'soft-light',
+      'difference',
+      'exclusion',
+      'hue',
+      'saturation',
+      'color',
+      'luminosity'
+    ] as const,
+    mixBlendMode: [
+      'normal',
+      'multiply',
+      'screen',
+      'overlay',
+      'darken',
+      'lighten',
+      'color-dodge',
+      'color-burn',
+      'hard-light',
+      'soft-light',
+      'difference',
+      'exclusion',
+      'hue',
+      'saturation',
+      'color',
+      'luminosity',
+      'plus-darker',
+      'plus-lighter'
+    ] as const,
     opacity: new ArbitraryProperty<number>('opacity'),
 
     outlineStyle: ['none', 'solid', 'dashed', 'dotted', 'double', 'inset'] as const,
@@ -1004,10 +1172,40 @@ export const style = createTheme({
     animationPlayState: ['paused', 'running'] as const,
 
     // layout
-    display: ['block', 'inline-block', 'inline', 'flex', 'inline-flex', 'grid', 'inline-grid', 'contents', 'list-item', 'none'] as const, // tables?
-    alignContent: ['normal', 'center', 'start', 'end', 'space-between', 'space-around', 'space-evenly', 'baseline', 'stretch'] as const,
+    display: [
+      'block',
+      'inline-block',
+      'inline',
+      'flex',
+      'inline-flex',
+      'grid',
+      'inline-grid',
+      'contents',
+      'list-item',
+      'none'
+    ] as const, // tables?
+    alignContent: [
+      'normal',
+      'center',
+      'start',
+      'end',
+      'space-between',
+      'space-around',
+      'space-evenly',
+      'baseline',
+      'stretch'
+    ] as const,
     alignItems: ['start', 'end', 'center', 'baseline', 'stretch'] as const,
-    justifyContent: ['normal', 'start', 'end', 'center', 'space-between', 'space-around', 'space-evenly', 'stretch'] as const,
+    justifyContent: [
+      'normal',
+      'start',
+      'end',
+      'center',
+      'space-between',
+      'space-around',
+      'space-evenly',
+      'stretch'
+    ] as const,
     justifyItems: ['start', 'end', 'center', 'stretch'] as const,
     alignSelf: ['auto', 'start', 'end', 'center', 'stretch', 'baseline'] as const,
     justifySelf: ['auto', 'start', 'end', 'center', 'stretch'] as const,
@@ -1024,10 +1222,21 @@ export const style = createTheme({
     gridAutoColumns: new ArbitraryProperty('gridAutoColumns', gridTrackSize),
     gridTemplateColumns: new ArbitraryProperty('gridTemplateColumns', gridTrack),
     gridTemplateRows: new ArbitraryProperty('gridTemplateRows', gridTrack),
-    gridTemplateAreas: new ArbitraryProperty('gridTemplateAreas', (value: readonly string[]) => value.map(v => `"${v}"`).join('')),
+    gridTemplateAreas: new ArbitraryProperty('gridTemplateAreas', (value: readonly string[]) =>
+      value.map(v => `"${v}"`).join('')
+    ),
     float: ['inline-start', 'inline-end', 'right', 'left', 'none'] as const,
     clear: ['inline-start', 'inline-end', 'left', 'right', 'both', 'none'] as const,
-    contain: ['none', 'strict', 'content', 'size', 'inline-size', 'layout', 'style', 'paint'] as const,
+    contain: [
+      'none',
+      'strict',
+      'content',
+      'size',
+      'inline-size',
+      'layout',
+      'style',
+      'paint'
+    ] as const,
     containerType: ['normal', 'size', 'inline-size', 'scroll-state'] as const,
     containerName: new ArbitraryProperty<string>('containerName'),
     boxSizing: ['border-box', 'content-box'] as const,
@@ -1050,20 +1259,86 @@ export const style = createTheme({
     userSelect: ['none', 'text', 'all', 'auto'] as const,
     visibility: ['visible', 'hidden', 'collapse'] as const,
     isolation: ['isolate', 'auto'] as const,
-    transformOrigin: ['center', 'top', 'top right', 'right', 'bottom right', 'bottom', 'bottom left', 'left', 'top right'] as const,
-    cursor: ['auto', 'default', 'pointer', 'wait', 'text', 'move', 'help', 'not-allowed', 'none', 'context-menu', 'progress', 'cell', 'crosshair', 'vertical-text', 'alias', 'copy', 'no-drop', 'grab', 'grabbing', 'all-scroll', 'col-resize', 'row-resize', 'n-resize', 'e-resize', 's-resize', 'w-resize', 'ne-resize', 'nw-resize', 'se-resize', 'ew-resize', 'ns-resize', 'nesw-resize', 'nwse-resize', 'zoom-in', 'zoom-out'] as const,
+    transformOrigin: [
+      'center',
+      'top',
+      'top right',
+      'right',
+      'bottom right',
+      'bottom',
+      'bottom left',
+      'left',
+      'top right'
+    ] as const,
+    cursor: [
+      'auto',
+      'default',
+      'pointer',
+      'wait',
+      'text',
+      'move',
+      'help',
+      'not-allowed',
+      'none',
+      'context-menu',
+      'progress',
+      'cell',
+      'crosshair',
+      'vertical-text',
+      'alias',
+      'copy',
+      'no-drop',
+      'grab',
+      'grabbing',
+      'all-scroll',
+      'col-resize',
+      'row-resize',
+      'n-resize',
+      'e-resize',
+      's-resize',
+      'w-resize',
+      'ne-resize',
+      'nw-resize',
+      'se-resize',
+      'ew-resize',
+      'ns-resize',
+      'nesw-resize',
+      'nwse-resize',
+      'zoom-in',
+      'zoom-out'
+    ] as const,
     resize: ['none', 'vertical', 'horizontal', 'both'] as const,
     scrollSnapType: ['x', 'y', 'both', 'x mandatory', 'y mandatory', 'both mandatory'] as const,
     scrollSnapAlign: ['start', 'end', 'center', 'none'] as const,
     scrollSnapStop: ['normal', 'always'] as const,
     appearance: ['none', 'auto'] as const,
     objectFit: ['contain', 'cover', 'fill', 'none', 'scale-down'] as const,
-    objectPosition: ['bottom', 'center', 'left', 'left bottom', 'left top', 'right', 'right bottom', 'right top', 'top'] as const,
+    objectPosition: [
+      'bottom',
+      'center',
+      'left',
+      'left bottom',
+      'left top',
+      'right',
+      'right bottom',
+      'right top',
+      'top'
+    ] as const,
     willChange: ['auto', 'scroll-position', 'contents', 'transform'] as const,
     zIndex: new ArbitraryProperty<number>('zIndex'),
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    disableTapHighlight: new ArbitraryProperty('-webkit-tap-highlight-color', (_value: true) => 'rgba(0,0,0,0)'),
-    unicodeBidi: ['normal', 'embed', 'bidi-override', 'isolate', 'isolate-override', 'plaintext'] as const,
+    disableTapHighlight: new ArbitraryProperty(
+      '-webkit-tap-highlight-color',
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      (_value: true) => 'rgba(0,0,0,0)'
+    ),
+    unicodeBidi: [
+      'normal',
+      'embed',
+      'bidi-override',
+      'isolate',
+      'isolate-override',
+      'plaintext'
+    ] as const,
     caretColor: ['auto', 'transparent'] as const
   },
   shorthands: {
@@ -1073,16 +1348,36 @@ export const style = createTheme({
     margin: ['marginTop', 'marginBottom', 'marginStart', 'marginEnd'] as const,
     marginX: ['marginStart', 'marginEnd'] as const,
     marginY: ['marginTop', 'marginBottom'] as const,
-    scrollPadding: ['scrollPaddingTop', 'scrollPaddingBottom', 'scrollPaddingStart', 'scrollPaddingEnd'] as const,
+    scrollPadding: [
+      'scrollPaddingTop',
+      'scrollPaddingBottom',
+      'scrollPaddingStart',
+      'scrollPaddingEnd'
+    ] as const,
     scrollPaddingX: ['scrollPaddingStart', 'scrollPaddingEnd'] as const,
     scrollPaddingY: ['scrollPaddingTop', 'scrollPaddingBottom'] as const,
-    scrollMargin: ['scrollMarginTop', 'scrollMarginBottom', 'scrollMarginStart', 'scrollMarginEnd'] as const,
+    scrollMargin: [
+      'scrollMarginTop',
+      'scrollMarginBottom',
+      'scrollMarginStart',
+      'scrollMarginEnd'
+    ] as const,
     scrollMarginX: ['scrollMarginStart', 'scrollMarginEnd'] as const,
     scrollMarginY: ['scrollMarginTop', 'scrollMarginBottom'] as const,
-    borderWidth: ['borderTopWidth', 'borderBottomWidth', 'borderStartWidth', 'borderEndWidth'] as const,
+    borderWidth: [
+      'borderTopWidth',
+      'borderBottomWidth',
+      'borderStartWidth',
+      'borderEndWidth'
+    ] as const,
     borderXWidth: ['borderStartWidth', 'borderEndWidth'] as const,
     borderYWidth: ['borderTopWidth', 'borderBottomWidth'] as const,
-    borderRadius: ['borderTopStartRadius', 'borderTopEndRadius', 'borderBottomStartRadius', 'borderBottomEndRadius'] as const,
+    borderRadius: [
+      'borderTopStartRadius',
+      'borderTopEndRadius',
+      'borderBottomStartRadius',
+      'borderBottomEndRadius'
+    ] as const,
     borderTopRadius: ['borderTopStartRadius', 'borderTopEndRadius'] as const,
     borderBottomRadius: ['borderBottomStartRadius', 'borderBottomEndRadius'] as const,
     borderStartRadius: ['borderTopStartRadius', 'borderBottomStartRadius'] as const,
@@ -1131,7 +1426,9 @@ export const style = createTheme({
   },
   conditions: {
     // In the docs we need to be able to simulate HCM.
-    forcedColors: process.env.DOCS_ENV ? ['@media (forced-colors: active)', ':is([data-hcm], [data-hcm] *)'] : '@media (forced-colors: active)',
+    forcedColors: process.env.DOCS_ENV
+      ? ['@media (forced-colors: active)', ':is([data-hcm], [data-hcm] *)']
+      : '@media (forced-colors: active)',
     // This detects touch primary devices as best as we can.
     // Ideally we'd use (pointer: course) but browser/device support is inconsistent.
     // Samsung Android devices claim to be mice at the hardware/OS level: (any-pointer: fine), (any-hover: hover), (hover: hover), and nothing for pointer.
@@ -1141,11 +1438,11 @@ export const style = createTheme({
     // Windows tablet matches the same as iPhone. No difference when a mouse is connected.
     // Windows touch laptop matches same as macOS: (any-pointer: fine), (pointer: fine), (any-hover: hover), (hover: hover).
     touch: '@media not ((hover: hover) and (pointer: fine))',
-    xs: `@media (min-width: ${(480 / 16)}rem)`,
-    sm: `@media (min-width: ${(640 / 16)}rem)`,
-    md: `@media (min-width: ${(768 / 16)}rem)`,
-    lg: `@media (min-width: ${(1024 / 16)}rem)`,
-    xl: `@media (min-width: ${(1280 / 16)}rem)`,
-    '2xl': `@media (min-width: ${(1536 / 16)}rem)`
+    xs: `@media (min-width: ${480 / 16}rem)`,
+    sm: `@media (min-width: ${640 / 16}rem)`,
+    md: `@media (min-width: ${768 / 16}rem)`,
+    lg: `@media (min-width: ${1024 / 16}rem)`,
+    xl: `@media (min-width: ${1280 / 16}rem)`,
+    '2xl': `@media (min-width: ${1536 / 16}rem)`
   }
 });

@@ -21,34 +21,34 @@ import {useRef} from 'react';
 
 export interface LongPressProps {
   /** Whether long press events should be disabled. */
-  isDisabled?: boolean,
+  isDisabled?: boolean;
   /** Handler that is called when a long press interaction starts. */
-  onLongPressStart?: (e: LongPressEvent) => void,
+  onLongPressStart?: (e: LongPressEvent) => void;
   /**
    * Handler that is called when a long press interaction ends, either
    * over the target or when the pointer leaves the target.
    */
-  onLongPressEnd?: (e: LongPressEvent) => void,
+  onLongPressEnd?: (e: LongPressEvent) => void;
   /**
    * Handler that is called when the threshold time is met while
    * the press is over the target.
    */
-  onLongPress?: (e: LongPressEvent) => void,
+  onLongPress?: (e: LongPressEvent) => void;
   /**
    * The amount of time in milliseconds to wait before triggering a long press.
    * @default 500ms
    */
-  threshold?: number,
+  threshold?: number;
   /**
    * A description for assistive techology users indicating that a long press
    * action is available, e.g. "Long press to open menu".
    */
-  accessibilityDescription?: string
+  accessibilityDescription?: string;
 }
 
 export interface LongPressResult {
   /** Props to spread on the target element. */
-  longPressProps: DOMAttributes
+  longPressProps: DOMAttributes;
 }
 
 const DEFAULT_THRESHOLD = 500;
@@ -108,13 +108,18 @@ export function useLongPress(props: LongPressProps): LongPressResult {
 
           let ownerWindow = getOwnerWindow(e.target);
           addGlobalListener(e.target, 'contextmenu', onContextMenu, {once: true});
-          addGlobalListener(ownerWindow, 'pointerup', () => {
-            // If no contextmenu event is fired quickly after pointerup, remove the handler
-            // so future context menu events outside a long press are not prevented.
-            setTimeout(() => {
-              removeGlobalListener(e.target, 'contextmenu', onContextMenu);
-            }, 30);
-          }, {once: true});
+          addGlobalListener(
+            ownerWindow,
+            'pointerup',
+            () => {
+              // If no contextmenu event is fired quickly after pointerup, remove the handler
+              // so future context menu events outside a long press are not prevented.
+              setTimeout(() => {
+                removeGlobalListener(e.target, 'contextmenu', onContextMenu);
+              }, 30);
+            },
+            {once: true}
+          );
         }
       }
     },
@@ -132,7 +137,9 @@ export function useLongPress(props: LongPressProps): LongPressResult {
     }
   });
 
-  let descriptionProps = useDescription(onLongPress && !isDisabled ? accessibilityDescription : undefined);
+  let descriptionProps = useDescription(
+    onLongPress && !isDisabled ? accessibilityDescription : undefined
+  );
 
   return {
     longPressProps: mergeProps(pressProps, descriptionProps)

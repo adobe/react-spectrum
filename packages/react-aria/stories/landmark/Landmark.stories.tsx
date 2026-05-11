@@ -12,8 +12,19 @@
 
 import {ActionGroup} from '@adobe/react-spectrum/ActionGroup';
 
-import {AriaLandmarkProps, UNSTABLE_createLandmarkController, useLandmark} from '../../src/landmark/useLandmark';
-import {Cell, Column, Row, TableBody, TableHeader, TableView} from '@adobe/react-spectrum/TableView';
+import {
+  AriaLandmarkProps,
+  UNSTABLE_createLandmarkController,
+  useLandmark
+} from '../../src/landmark/useLandmark';
+import {
+  Cell,
+  Column,
+  Row,
+  TableBody,
+  TableHeader,
+  TableView
+} from '@adobe/react-spectrum/TableView';
 import {Checkbox} from '@adobe/react-spectrum/Checkbox';
 import {classNames} from '@adobe/react-spectrum/private/utils/classNames';
 import {Flex} from '@adobe/react-spectrum/Flex';
@@ -38,29 +49,52 @@ const meta: Meta<StoryProps> = {
 export default meta;
 
 const Template = (props: AriaLandmarkProps & StyleProps): JSX.Element => <Example {...props} />;
-const NestedTemplate = (props: AriaLandmarkProps & StyleProps): JSX.Element => <NestedExample {...props} />;
-const TableTemplate = (props: AriaLandmarkProps & StyleProps): JSX.Element => <TableExample {...props} />;
-const ApplicationTemplate = (props: AriaLandmarkProps & StyleProps): JSX.Element => <ApplicationExample {...props} />;
+const NestedTemplate = (props: AriaLandmarkProps & StyleProps): JSX.Element => (
+  <NestedExample {...props} />
+);
+const TableTemplate = (props: AriaLandmarkProps & StyleProps): JSX.Element => (
+  <TableExample {...props} />
+);
+const ApplicationTemplate = (props: AriaLandmarkProps & StyleProps): JSX.Element => (
+  <ApplicationExample {...props} />
+);
 
 function Main(props) {
   let ref = useFocusableRef(null);
   let {styleProps} = useStyleProps(props);
   let {landmarkProps} = useLandmark({...props, role: 'main'}, ref);
-  return <main aria-label="Danni's unicorn corral" ref={ref} {...props} {...landmarkProps} {...styleProps}>{props.children}</main>;
+  return (
+    <main
+      aria-label="Danni's unicorn corral"
+      ref={ref}
+      {...props}
+      {...landmarkProps}
+      {...styleProps}>
+      {props.children}
+    </main>
+  );
 }
 
 function Navigation(props) {
   let ref = useFocusableRef(null);
   let {styleProps} = useStyleProps(props);
   let {landmarkProps} = useLandmark({...props, role: 'navigation'}, ref);
-  return <nav aria-label="Rainbow lookout"  ref={ref} {...props} {...landmarkProps} {...styleProps}>{props.children}</nav>;
+  return (
+    <nav aria-label="Rainbow lookout" ref={ref} {...props} {...landmarkProps} {...styleProps}>
+      {props.children}
+    </nav>
+  );
 }
 
 function Region(props) {
   let ref = useFocusableRef(null);
   let {styleProps} = useStyleProps(props);
   let {landmarkProps} = useLandmark({...props, role: 'region'}, ref);
-  return <article aria-label="The greens" ref={ref} {...props} {...landmarkProps} {...styleProps}>{props.children}</article>;
+  return (
+    <article aria-label="The greens" ref={ref} {...props} {...landmarkProps} {...styleProps}>
+      {props.children}
+    </article>
+  );
 }
 
 function Search(props) {
@@ -68,7 +102,13 @@ function Search(props) {
   let {styleProps} = useStyleProps(props);
   let {landmarkProps} = useLandmark({...props, role: 'search'}, ref);
   return (
-    <form aria-label="Magic seeing eye" ref={ref} {...props} {...landmarkProps} {...styleProps} className={classNames(styles, 'landmark')}>
+    <form
+      aria-label="Magic seeing eye"
+      ref={ref}
+      {...props}
+      {...landmarkProps}
+      {...styleProps}
+      className={classNames(styles, 'landmark')}>
       <SearchField label="Search" />
     </form>
   );
@@ -80,9 +120,15 @@ function Example() {
       <Navigation>
         <div>Navigation Landmark</div>
         <ul>
-          <li><a href="/home">Home</a></li>
-          <li><a href="/about">About</a></li>
-          <li><a href="/contact">Contact</a></li>
+          <li>
+            <a href="/home">Home</a>
+          </li>
+          <li>
+            <a href="/about">About</a>
+          </li>
+          <li>
+            <a href="/contact">Contact</a>
+          </li>
         </ul>
       </Navigation>
       <Main>
@@ -99,17 +145,29 @@ function DuplicateRolesWithLabelsExample() {
       <Navigation aria-label="First Nav">
         <div>Navigation Landmark with 'First Nav' label</div>
         <ul>
-          <li><a href="/home">Home</a></li>
-          <li><a href="/about">About</a></li>
-          <li><a href="/contact">Contact</a></li>
+          <li>
+            <a href="/home">Home</a>
+          </li>
+          <li>
+            <a href="/about">About</a>
+          </li>
+          <li>
+            <a href="/contact">Contact</a>
+          </li>
         </ul>
       </Navigation>
       <Navigation aria-label="Second Nav">
         <div>Navigation Landmark with 'Second Nav' label</div>
         <ul>
-          <li><a href="/home">Home</a></li>
-          <li><a href="/about">About</a></li>
-          <li><a href="/contact">Contact</a></li>
+          <li>
+            <a href="/home">Home</a>
+          </li>
+          <li>
+            <a href="/about">About</a>
+          </li>
+          <li>
+            <a href="/contact">Contact</a>
+          </li>
         </ul>
       </Navigation>
       <Main>
@@ -126,17 +184,29 @@ function DuplicateRolesWithSameLabelsExample() {
       <Navigation aria-label="First Nav">
         <div>Navigation Landmark with 'First Nav' label</div>
         <ul>
-          <li><a href="/home">Home</a></li>
-          <li><a href="/about">About</a></li>
-          <li><a href="/contact">Contact</a></li>
+          <li>
+            <a href="/home">Home</a>
+          </li>
+          <li>
+            <a href="/about">About</a>
+          </li>
+          <li>
+            <a href="/contact">Contact</a>
+          </li>
         </ul>
       </Navigation>
       <Navigation aria-label="First Nav">
         <div>Navigation Landmark with 'First Nav' label</div>
         <ul>
-          <li><a href="/home">Home</a></li>
-          <li><a href="/about">About</a></li>
-          <li><a href="/contact">Contact</a></li>
+          <li>
+            <a href="/home">Home</a>
+          </li>
+          <li>
+            <a href="/about">About</a>
+          </li>
+          <li>
+            <a href="/contact">Contact</a>
+          </li>
         </ul>
       </Navigation>
       <Main>
@@ -153,17 +223,29 @@ function DuplicateRolesNoLabelExample() {
       <Navigation aria-label={undefined}>
         <div>Navigation Landmark with no label</div>
         <ul>
-          <li><a href="/home">Home</a></li>
-          <li><a href="/about">About</a></li>
-          <li><a href="/contact">Contact</a></li>
+          <li>
+            <a href="/home">Home</a>
+          </li>
+          <li>
+            <a href="/about">About</a>
+          </li>
+          <li>
+            <a href="/contact">Contact</a>
+          </li>
         </ul>
       </Navigation>
       <Navigation aria-label={undefined}>
         <div>Navigation Landmark with no label</div>
         <ul>
-          <li><a href="/home">Home</a></li>
-          <li><a href="/about">About</a></li>
-          <li><a href="/contact">Contact</a></li>
+          <li>
+            <a href="/home">Home</a>
+          </li>
+          <li>
+            <a href="/about">About</a>
+          </li>
+          <li>
+            <a href="/contact">Contact</a>
+          </li>
         </ul>
       </Navigation>
       <Main aria-label={undefined}>
@@ -233,8 +315,12 @@ function TableExample() {
       <Main>
         <TableView aria-label="Table">
           <TableHeader>
-            <Column key="foo" allowsSorting>Foo</Column>
-            <Column key="bar" allowsSorting>Bar</Column>
+            <Column key="foo" allowsSorting>
+              Foo
+            </Column>
+            <Column key="bar" allowsSorting>
+              Bar
+            </Column>
             <Column key="baz">Baz</Column>
           </TableHeader>
           <TableBody>
@@ -265,7 +351,9 @@ function ApplicationExample() {
     <div className={classNames(styles, 'application')}>
       <Region UNSAFE_className={classNames(styles, 'globalnav')}>
         <Flex justifyContent="space-between">
-          <Link><a href="//react-spectrum.com">React Spectrum</a></Link>
+          <Link>
+            <a href="//react-spectrum.com">React Spectrum</a>
+          </Link>
           <Search />
         </Flex>
       </Region>
@@ -279,8 +367,12 @@ function ApplicationExample() {
       <Main UNSAFE_className={classNames(styles, 'main')}>
         <TableView aria-label="Table" justifySelf="stretch">
           <TableHeader>
-            <Column key="foo" allowsSorting>Foo</Column>
-            <Column key="bar" allowsSorting>Bar</Column>
+            <Column key="foo" allowsSorting>
+              Foo
+            </Column>
+            <Column key="bar" allowsSorting>
+              Bar
+            </Column>
             <Column key="baz">Baz</Column>
           </TableHeader>
           <TableBody>
@@ -302,7 +394,9 @@ function ApplicationExample() {
           </TableBody>
         </TableView>
       </Main>
-      <Navigation UNSAFE_className={classNames(styles, 'navigation-content')} aria-label="Content Nav">
+      <Navigation
+        UNSAFE_className={classNames(styles, 'navigation-content')}
+        aria-label="Content Nav">
         <ActionGroup orientation="vertical">
           <Item>One</Item>
           <Item>Two</Item>
@@ -360,7 +454,13 @@ function IframeExample(): JSX.Element {
     window.addEventListener('message', e => {
       if (e.data.type === 'landmark-navigation') {
         // (Can't use LandmarkController in this example because we need the controller instance inside the iframe)
-        document?.body.dispatchEvent(new KeyboardEvent('keydown', {key: 'F6', shiftKey: e.data.direction === 'backward', bubbles: true}));
+        document?.body.dispatchEvent(
+          new KeyboardEvent('keydown', {
+            key: 'F6',
+            shiftKey: e.data.direction === 'backward',
+            bubbles: true
+          })
+        );
       }
     });
   };
@@ -382,22 +482,27 @@ function IframeExample(): JSX.Element {
     return () => window.removeEventListener('message', onMessage);
   }, [controller]);
 
-  let {landmarkProps} = useLandmark({
-    role: 'main',
-    focus(direction) {
-      // when iframe landmark receives focus via landmark navigation, go to first/last landmark inside iframe.
-      ref.current?.contentWindow?.postMessage({
-        type: 'landmark-navigation',
-        direction
-      });
-    }
-  }, ref);
+  let {landmarkProps} = useLandmark(
+    {
+      role: 'main',
+      focus(direction) {
+        // when iframe landmark receives focus via landmark navigation, go to first/last landmark inside iframe.
+        ref.current?.contentWindow?.postMessage({
+          type: 'landmark-navigation',
+          direction
+        });
+      }
+    },
+    ref
+  );
 
   return (
     <div className={classNames(styles, 'application')}>
       <Region UNSAFE_className={classNames(styles, 'globalnav')}>
         <Flex justifyContent="space-between">
-          <Link><a href="//react-spectrum.com">React Spectrum</a></Link>
+          <Link>
+            <a href="//react-spectrum.com">React Spectrum</a>
+          </Link>
           <Search />
         </Flex>
       </Region>
@@ -415,7 +520,8 @@ function IframeExample(): JSX.Element {
         style={{width: '100%', height: '100%'}}
         src="iframe.html?providerSwitcher-express=false&providerSwitcher-toastPosition=bottom&providerSwitcher-locale=&providerSwitcher-theme=&providerSwitcher-scale=&args=&id=landmark--application-with-landmarks&viewMode=story"
         onLoad={onLoad}
-        tabIndex={-1} />
+        tabIndex={-1}
+      />
     </div>
   );
 }
@@ -423,15 +529,15 @@ function IframeExample(): JSX.Element {
 export type TemplateStory = StoryObj<typeof Template>;
 
 export const FlatLandmarks: TemplateStory = {
-  render: (args) => <Template {...args} />
+  render: args => <Template {...args} />
 };
 
 export const NestedLandmarks: TemplateStory = {
-  render: (args) => <NestedTemplate {...args} />
+  render: args => <NestedTemplate {...args} />
 };
 
 export const TableLandmark: TemplateStory = {
-  render: (args) => <TableTemplate {...args} />,
+  render: args => <TableTemplate {...args} />,
   parameters: {
     a11y: {
       config: {
@@ -443,7 +549,7 @@ export const TableLandmark: TemplateStory = {
 };
 
 export const ApplicationWithLandmarks: TemplateStory = {
-  render: (args) => <ApplicationTemplate {...args} />,
+  render: args => <ApplicationTemplate {...args} />,
   parameters: {
     a11y: {
       config: {
@@ -455,11 +561,11 @@ export const ApplicationWithLandmarks: TemplateStory = {
 };
 
 export const DuplicateRolesWithLabels: TemplateStory = {
-  render: (args) => <DuplicateRolesWithLabelsExample {...args} />
+  render: args => <DuplicateRolesWithLabelsExample {...args} />
 };
 
 export const DuplicateRolesWithNoLabels: TemplateStory = {
-  render: (args) => <DuplicateRolesNoLabelExample {...args} />,
+  render: args => <DuplicateRolesNoLabelExample {...args} />,
   parameters: {
     a11y: {
       config: {
@@ -470,7 +576,7 @@ export const DuplicateRolesWithNoLabels: TemplateStory = {
 };
 
 export const DuplicateRolesWithSameLabels: TemplateStory = {
-  render: (args) => <DuplicateRolesWithSameLabelsExample {...args} />,
+  render: args => <DuplicateRolesWithSameLabelsExample {...args} />,
   parameters: {
     a11y: {
       config: {
@@ -481,15 +587,15 @@ export const DuplicateRolesWithSameLabels: TemplateStory = {
 };
 
 export const OneWithNoFocusableChildren: TemplateStory = {
-  render: (args) => <OneWithNoFocusableChildrenExample {...args} />
+  render: args => <OneWithNoFocusableChildrenExample {...args} />
 };
 
 export const AllWithNoFocusableChildren: TemplateStory = {
-  render: (args) => <AllWithNoFocusableChildrenExample {...args} />
+  render: args => <AllWithNoFocusableChildrenExample {...args} />
 };
 
 export const IframeExampleStory: TemplateStory = {
-  render: (args) => <IframeExample {...args} />,
+  render: args => <IframeExample {...args} />,
   parameters: {
     a11y: {
       config: {

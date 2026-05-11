@@ -19,7 +19,7 @@ for (let pkg of fs.globSync(['packages/@react-{spectrum,aria,stately}/*/'])) {
     js = js.replace(regex, '.js$1');
     fs.writeFileSync(modulePath, js);
   }
-  
+
   // Create .js versions.
   for (let file of glob.sync(`${pkg}/dist/**/*.mjs`)) {
     if (file === `${pkg}/dist/import.mjs`) {
@@ -46,10 +46,20 @@ for (let pkg of ['@adobe/react-spectrum', 'react-aria', 'react-stately', 'react-
 
     let dir = shim.replace('.js', '');
     fs.mkdirSync(dir, {recursive: true});
-    fs.writeFileSync(dir + '/package.json', JSON.stringify({
-      main: specifier.replace('.js', '.cjs'),
-      module: specifier,
-      types: path.relative(shim, file.replace('/dist/exports/', '/dist/types/exports/').replace('.js', '.d.ts'))
-    }, null, 2) + '\n');
+    fs.writeFileSync(
+      dir + '/package.json',
+      JSON.stringify(
+        {
+          main: specifier.replace('.js', '.cjs'),
+          module: specifier,
+          types: path.relative(
+            shim,
+            file.replace('/dist/exports/', '/dist/types/exports/').replace('.js', '.d.ts')
+          )
+        },
+        null,
+        2
+      ) + '\n'
+    );
   }
 }

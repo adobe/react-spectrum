@@ -55,10 +55,5 @@ export class BuddhistCalendar extends GregorianCalendar {
 
 function toGregorian(date: AnyCalendarDate) {
   let [era, year] = fromExtendedYear(date.year + BUDDHIST_ERA_START);
-  return new CalendarDate(
-    era,
-    year,
-    date.month,
-    date.day
-  );
+  return new CalendarDate(era, year, date.month, date.day);
 }

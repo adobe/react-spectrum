@@ -1,4 +1,4 @@
-@import "./theme.css";
+@import './theme.css';
 
 .react-aria-ListBox {
   max-height: inherit;
@@ -12,7 +12,7 @@
   font: var(--font-size) system-ui;
   color: var(--text-color);
 
-  &:has(.react-aria-ListBoxSection){
+  &:has(.react-aria-ListBoxSection) {
     scroll-padding: 24px;
   }
 
@@ -30,7 +30,7 @@
   &[data-drop-target] {
     outline: 2px solid var(--highlight-background);
     outline-offset: -1px;
-    background: var(--highlight-overlay)
+    background: var(--highlight-overlay);
   }
 
   .react-aria-DropIndicator[data-drop-target] {
@@ -52,7 +52,9 @@
     border-block: 0.5px solid var(--gray-400);
     cursor: default;
     user-select: none;
-    box-shadow: inset 0px 1px 0px white, inset 0px -4px 8px var(--gray-200);
+    box-shadow:
+      inset 0px 1px 0px white,
+      inset 0px -4px 8px var(--gray-200);
 
     @media (prefers-color-scheme: dark) {
       box-shadow: inset 0px 4px 8px var(--gray-200);
@@ -120,11 +122,11 @@
     }
   }
 
-  [slot=label] {
+  [slot='label'] {
     font-weight: 500;
   }
 
-  [slot=description] {
+  [slot='description'] {
     font-size: var(--font-size-sm);
   }
 
@@ -144,15 +146,15 @@
 
   &[data-drop-target] {
     outline: 2px solid var(--highlight-background);
-    background: var(--highlight-overlay)
+    background: var(--highlight-overlay);
   }
 }
 
 .react-aria-ListBox {
-  &[data-layout=stack] {
+  &[data-layout='stack'] {
     display: flex;
 
-    &[data-orientation=vertical] {
+    &[data-orientation='vertical'] {
       flex-direction: column;
       width: 250px;
       max-height: 300px;
@@ -169,7 +171,7 @@
           margin-bottom: var(--spacing);
         }
 
-        [role=presentation] > & {
+        [role='presentation'] > & {
           margin: 0; /* virtualizer */
         }
 
@@ -195,7 +197,7 @@
       }
     }
 
-    &[data-orientation=horizontal] {
+    &[data-orientation='horizontal'] {
       flex-direction: row;
       width: 100%;
 
@@ -234,18 +236,18 @@
     }
   }
 
-  &[data-layout=grid] {
+  &[data-layout='grid'] {
     display: grid;
     gap: var(--spacing-1);
     width: fit-content;
     max-width: 100%;
     padding: var(--spacing-1);
 
-    &[data-orientation=vertical] {
+    &[data-orientation='vertical'] {
       grid-template-columns: 1fr 1fr;
     }
 
-    &[data-orientation=horizontal] {
+    &[data-orientation='horizontal'] {
       grid-auto-flow: column;
       grid-template-rows: auto auto;
       grid-template-columns: none;
@@ -284,7 +286,8 @@
 }
 
 .dropdown-item {
-  padding: calc((var(--spacing-8) - 1lh) / 2) var(--spacing-3) calc((var(--spacing-8) - 1lh) / 2) var(--spacing-6);
+  padding: calc((var(--spacing-8) - 1lh) / 2) var(--spacing-3) calc((var(--spacing-8) - 1lh) / 2)
+    var(--spacing-6);
   box-sizing: border-box;
   border-radius: var(--radius);
   outline: none;
@@ -332,11 +335,11 @@
     color: var(--highlight-foreground);
   }
 
-  [slot=label] {
+  [slot='label'] {
     font-weight: 500;
   }
 
-  [slot=description] {
+  [slot='description'] {
     font-size: var(--font-size-sm);
   }
 

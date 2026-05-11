@@ -25,39 +25,39 @@ export interface GridLayoutOptions extends BaseLayoutOptions {
    * The minimum item size.
    * @default 208 x 208 for horizontal card orientation. 102 x 102 for vertical card orientation.
    */
-  minItemSize?: Size,
+  minItemSize?: Size;
   /**
    * The maximum item size.
    * @default Infinity
    */
-  maxItemSize?: Size,
+  maxItemSize?: Size;
   /**
    * The minimum space required between items.
    * @default 18 x 18
    */
-  minSpace?: Size,
+  minSpace?: Size;
   /**
    * The maximum number of columns.
    * @default Infinity
    */
-  maxColumns?: number,
+  maxColumns?: number;
   /**
    * The additional padding along the card's main axis. Affects the sizing of the content area following the card image.
    * @default 95
    */
-  itemPadding?: number,
+  itemPadding?: number;
   /**
    * The orientation of the cards withn the grid.
    * @default vertical
    */
-  cardOrientation?: Orientation
+  cardOrientation?: Orientation;
 }
 
 const DEFAULT_OPTIONS = {
   S: {
     itemPadding: 20,
     minItemSize: {
-      'vertical': new Size(96, 96)
+      vertical: new Size(96, 96)
     },
     maxItemSize: new Size(Infinity, Infinity),
     margin: 8,
@@ -67,18 +67,18 @@ const DEFAULT_OPTIONS = {
   },
   L: {
     itemPadding: {
-      'vertical': {
-        'medium': 78,
-        'large': 98
+      vertical: {
+        medium: 78,
+        large: 98
       },
-      'horizontal': {
-        'medium': 150,
-        'large': 170
+      horizontal: {
+        medium: 150,
+        large: 170
       }
     },
     minItemSize: {
-      'vertical': new Size(208, 208),
-      'horizontal': new Size(102, 102)
+      vertical: new Size(208, 208),
+      horizontal: new Size(102, 102)
     },
     maxItemSize: new Size(Infinity, Infinity),
     margin: 24,
@@ -104,12 +104,16 @@ export class GridLayout<T> extends BaseLayout<T> {
     super(options);
     let cardSize = 'L';
     this.cardOrientation = options.cardOrientation || 'vertical';
-    this.minItemSize = options.minItemSize || DEFAULT_OPTIONS[cardSize].minItemSize[this.cardOrientation];
+    this.minItemSize =
+      options.minItemSize || DEFAULT_OPTIONS[cardSize].minItemSize[this.cardOrientation];
     this.maxItemSize = options.maxItemSize || DEFAULT_OPTIONS[cardSize].maxItemSize;
     this.margin = options.margin != null ? options.margin : DEFAULT_OPTIONS[cardSize].margin;
     this.minSpace = options.minSpace || DEFAULT_OPTIONS[cardSize].minSpace;
     this.maxColumns = options.maxColumns || DEFAULT_OPTIONS[cardSize].maxColumns;
-    this.itemPadding = options.itemPadding != null ? options.itemPadding : DEFAULT_OPTIONS[cardSize].itemPadding[this.cardOrientation][this.scale];
+    this.itemPadding =
+      options.itemPadding != null
+        ? options.itemPadding
+        : DEFAULT_OPTIONS[cardSize].itemPadding[this.cardOrientation][this.scale];
     this.itemSize = null;
     this.numColumns = 0;
     this.numRows = 0;
@@ -123,10 +127,12 @@ export class GridLayout<T> extends BaseLayout<T> {
   getIndexAtPoint(x: number, y: number, allowInsertingAtEnd = false): number {
     let itemHeight = this.itemSize.height + this.minSpace.height;
     let itemWidth = this.itemSize.width + this.horizontalSpacing;
-    return Math.max(0,
+    return Math.max(
+      0,
       Math.min(
         this.collection.size - (allowInsertingAtEnd ? 0 : 1),
-        Math.floor(y / itemHeight) * this.numColumns + Math.floor((x - this.horizontalSpacing) / itemWidth)
+        Math.floor(y / itemHeight) * this.numColumns +
+          Math.floor((x - this.horizontalSpacing) / itemWidth)
       )
     );
   }
@@ -140,24 +146,33 @@ export class GridLayout<T> extends BaseLayout<T> {
 
     // Compute the number of rows and columns needed to display the content
     let availableWidth = visibleWidth - this.margin * 2;
-    let columns = Math.floor((availableWidth + this.minSpace.width) / (minCardWidth + this.minSpace.width));
+    let columns = Math.floor(
+      (availableWidth + this.minSpace.width) / (minCardWidth + this.minSpace.width)
+    );
     this.numColumns = Math.max(1, Math.min(this.maxColumns, columns));
     this.numRows = Math.ceil(this.collection.size / this.numColumns);
 
     // Compute the available width (minus the space between items)
-    let width = availableWidth - (this.minSpace.width * Math.max(0, this.numColumns - 1));
+    let width = availableWidth - this.minSpace.width * Math.max(0, this.numColumns - 1);
 
     // Compute the item width based on the space available
     let itemWidth = Math.floor(width / this.numColumns);
     itemWidth = Math.max(minCardWidth, Math.min(this.maxItemSize.width, itemWidth));
     // Compute the item height, which is proportional to the item width
-    let t = ((itemWidth - minCardWidth) / minCardWidth);
+    let t = (itemWidth - minCardWidth) / minCardWidth;
     let itemHeight = Math.floor(this.minItemSize.height + this.minItemSize.height * t);
-    itemHeight = Math.max(this.minItemSize.height, Math.min(this.maxItemSize.height, itemHeight)) + verticalItemPadding;
+    itemHeight =
+      Math.max(this.minItemSize.height, Math.min(this.maxItemSize.height, itemHeight)) +
+      verticalItemPadding;
     this.itemSize = new Size(itemWidth, itemHeight);
 
     // Compute the horizontal spacing and content height
-    this.horizontalSpacing = this.numColumns < 2 ? 0 : Math.floor((availableWidth - this.numColumns * this.itemSize.width) / (this.numColumns - 1));
+    this.horizontalSpacing =
+      this.numColumns < 2
+        ? 0
+        : Math.floor(
+            (availableWidth - this.numColumns * this.itemSize.width) / (this.numColumns - 1)
+          );
 
     let y = this.margin;
     let index = 0;
