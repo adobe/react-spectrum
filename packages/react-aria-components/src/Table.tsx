@@ -1395,7 +1395,7 @@ export const ColumnResizer = forwardRef(function ColumnResizer(
       {isResizing &&
         isMouseDown &&
         ReactDOM.createPortal(
-          <div style={{position: 'fixed', top: 0, left: 0, bottom: 0, right: 0, cursor}} />,
+          <div style={{position: 'fixed', top: 0, left: 0, bottom: 0, right: 0, cursor, pointerEvents: 'none'}} />,
           document.body
         )}
     </dom.div>
