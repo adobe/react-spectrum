@@ -291,8 +291,8 @@ export function Collection<T extends object>(props: CollectionProps<T>): JSX.Ele
     () => ({
       dependencies,
       idScope
-      // eslint-disable-next-line react-hooks/exhaustive-deps
     }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [idScope, ...dependencies]
   );
 

@@ -86,9 +86,9 @@ export function useRenderDropIndicator(
           <DropIndicator target={target} />
         );
       }
-      // We invalidate whenever the target changes.
-      // eslint-disable-next-line react-hooks/exhaustive-deps
     },
+    // We invalidate whenever the target changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [dropState?.target, isVirtualDragging, renderDropIndicator]
   );
   return dragAndDropHooks?.useDropIndicator ? fn : undefined;

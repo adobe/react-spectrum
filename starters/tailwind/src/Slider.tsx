@@ -5,14 +5,15 @@ import {
   type SliderProps as AriaSliderProps,
   SliderOutput,
   SliderThumb,
-  SliderTrack
+  SliderTrack,
+  SliderFill
 } from 'react-aria-components/Slider';
 import {tv} from 'tailwind-variants';
 import {Label} from './Field';
 import {composeTailwindRenderProps, focusRing} from './utils';
 
 const trackStyles = tv({
-  base: 'rounded-full',
+  base: 'relative rounded-full',
   variants: {
     orientation: {
       horizontal: 'w-full h-[6px]',
@@ -26,12 +27,8 @@ const trackStyles = tv({
 });
 
 const fillStyles = tv({
-  base: 'absolute rounded-full',
+  base: 'rounded-full',
   variants: {
-    orientation: {
-      horizontal: 'w-(--size) h-[6px] start-(--start,0)',
-      vertical: 'h-(--size) w-[6px] bottom-(--start,0) ml-[50%] -translate-x-[50%]'
-    },
     isDisabled: {
       false: 'bg-blue-500 forced-colors:bg-[Highlight]',
       true: 'bg-neutral-300 dark:bg-neutral-600 forced-colors:bg-[GrayText]'
@@ -53,13 +50,21 @@ const thumbStyles = tv({
 });
 
 export interface SliderProps<T> extends AriaSliderProps<T> {
+  /** Label for the slider. */
   label?: string;
+  /** Aria labels for each thumb. */
   thumbLabels?: string[];
+  /**
+   * The offset from which to start the fill.
+   * @default 0
+   */
+  fillOffset?: number;
 }
 
 export function Slider<T extends number | number[]>({
   label,
   thumbLabels,
+  fillOffset,
   ...props
 }: SliderProps<T>) {
   return (
@@ -70,31 +75,13 @@ export function Slider<T extends number | number[]>({
         'font-sans orientation-horizontal:grid orientation-vertical:flex grid-cols-[1fr_auto] flex-col items-center gap-2 orientation-horizontal:w-64 orientation-horizontal:max-w-[calc(100%-10px)]'
       )}>
       <Label>{label}</Label>
-      <SliderOutput className="text-sm text-neutral-500 dark:text-neutral-400 orientation-vertical:hidden">
-        {({state}) => state.values.map((_, i) => state.getThumbValueLabel(i)).join(' – ')}
-      </SliderOutput>
+      <SliderOutput className="text-sm text-neutral-500 dark:text-neutral-400 orientation-vertical:hidden" />
       <SliderTrack className="group col-span-2 orientation-horizontal:h-5 orientation-vertical:w-5 orientation-vertical:h-38 flex items-center">
         {({state, ...renderProps}) => (
           <>
-            <div className={trackStyles(renderProps)} />
-            {state.values.length === 1 ? (
-              // Single thumb, render fill from the end
-              <div
-                className={fillStyles(renderProps)}
-                style={{'--size': state.getThumbPercent(0) * 100 + '%'} as any}
-              />
-            ) : state.values.length === 2 ? (
-              // Range slider, render fill between the thumbs
-              <div
-                className={fillStyles(renderProps)}
-                style={
-                  {
-                    '--start': state.getThumbPercent(0) * 100 + '%',
-                    '--size': (state.getThumbPercent(1) - state.getThumbPercent(0)) * 100 + '%'
-                  } as any
-                }
-              />
-            ) : null}
+            <div className={trackStyles(renderProps)}>
+              <SliderFill offset={fillOffset} className={fillStyles(renderProps)} />
+            </div>
             {state.values.map((_, i) => (
               <SliderThumb
                 key={i}

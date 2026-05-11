@@ -82,12 +82,11 @@ export function useColorSliderState(props: ColorSliderStateOptions): ColorSlider
       colorSpace && defaultColorValue ? defaultColorValue.toFormat(colorSpace) : defaultColorValue,
     [defaultColorValue, colorSpace]
   );
+  let numberFormatter = useMemo(() => new Intl.NumberFormat(), []);
   let sliderState = useSliderState({
     ...color.getChannelRange(channel),
     ...otherProps,
-    // Unused except in getThumbValueLabel, which is overridden below. null to localize the TypeScript error for ignoring.
-    // @ts-ignore
-    numberFormatter: null,
+    numberFormatter,
     value: color.getChannelValue(channel),
     defaultValue: defaultColor.getChannelValue(channel),
     onChange(v) {
@@ -127,6 +126,9 @@ export function useColorSliderState(props: ColorSliderStateOptions): ColorSlider
       }
     },
     getThumbValueLabel() {
+      return color.formatChannelValue(channel, locale);
+    },
+    getFormattedValue() {
       return color.formatChannelValue(channel, locale);
     },
     step,

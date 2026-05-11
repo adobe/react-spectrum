@@ -118,9 +118,9 @@ export interface SliderState {
 
   /**
    * Returns the string label for the value, per props.formatOptions.
-   * @param index
+   * @param value
    */
-  getFormattedValue(value: number): string;
+  getFormattedValue(value?: number | number[]): string;
 
   /**
    * Returns the min allowed value for the specified thumb.
@@ -304,8 +304,35 @@ export function useSliderState<T extends number | number[]>(
     }
   }
 
-  function getFormattedValue(value: number) {
-    return formatter.format(value);
+  let listFormatRef = useRef<Intl.ListFormat | null>(null);
+
+  function getFormattedValue(valueParam: number | number[] = values) {
+    if (typeof valueParam === 'number') {
+      valueParam = [valueParam];
+    }
+
+    switch (valueParam.length) {
+      case 0:
+        return '';
+      case 1:
+        return formatter.format(valueParam[0]);
+      case 2:
+        return formatter.formatRange(valueParam[0], valueParam[1]);
+      default: {
+        let formatted = valueParam.map(value => formatter.format(value));
+        let listFormat = listFormatRef.current;
+        if (
+          !listFormat ||
+          listFormat.resolvedOptions().locale !== formatter.resolvedOptions().locale
+        ) {
+          listFormat = listFormatRef.current = new Intl.ListFormat(
+            formatter.resolvedOptions().locale,
+            {type: 'unit'}
+          );
+        }
+        return listFormat.format(formatted);
+      }
+    }
   }
 
   function setThumbPercent(index: number, percent: number) {

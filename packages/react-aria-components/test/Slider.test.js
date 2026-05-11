@@ -13,14 +13,22 @@
 import {fireEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import {Label} from '../src/Label';
 import React, {useState} from 'react';
-import {Slider, SliderContext, SliderOutput, SliderThumb, SliderTrack} from '../src/Slider';
+import {
+  Slider,
+  SliderContext,
+  SliderFill,
+  SliderOutput,
+  SliderThumb,
+  SliderTrack
+} from '../src/Slider';
 import userEvent from '@testing-library/user-event';
 
-let TestSlider = ({sliderProps, thumbProps, trackProps, outputProps}) => (
+let TestSlider = ({sliderProps, thumbProps, trackProps, outputProps, fillProps}) => (
   <Slider {...sliderProps}>
     <Label>Opacity</Label>
     <SliderOutput {...outputProps} />
     <SliderTrack {...trackProps}>
+      <SliderFill {...fillProps} />
       <SliderThumb {...thumbProps} />
     </SliderTrack>
   </Slider>
@@ -46,6 +54,7 @@ describe('Slider', () => {
     expect(getByRole('status')).toHaveTextContent('0');
     expect(group.querySelector('.react-aria-SliderTrack')).toBeInTheDocument();
     expect(group.querySelector('.react-aria-SliderThumb')).toBeInTheDocument();
+    expect(group.querySelector('.react-aria-SliderFill')).toBeInTheDocument();
   });
 
   it('should render a slider with custom class', () => {
@@ -239,13 +248,11 @@ describe('Slider', () => {
     expect(slider).toHaveAttribute('aria-orientation', 'vertical');
   });
 
-  it('should support multiple thumbs', () => {
+  it('should support two thumbs', () => {
     let {getByRole, getAllByRole} = render(
       <Slider defaultValue={[30, 60]}>
         <Label>Test</Label>
-        <SliderOutput>
-          {({state}) => state.values.map((_, i) => state.getThumbValueLabel(i)).join(' – ')}
-        </SliderOutput>
+        <SliderOutput />
         <SliderTrack>
           {({state}) => state.values.map((_, i) => <SliderThumb key={i} index={i} />)}
         </SliderTrack>
@@ -258,7 +265,28 @@ describe('Slider', () => {
     expect(sliders[1]).toHaveValue('60');
 
     let output = getByRole('status');
-    expect(output).toHaveTextContent('30 – 60');
+    expect(output).toHaveTextContent('30–60');
+  });
+
+  it('should support three thumbs', () => {
+    let {getByRole, getAllByRole} = render(
+      <Slider defaultValue={[30, 60, 80]}>
+        <Label>Test</Label>
+        <SliderOutput />
+        <SliderTrack>
+          {({state}) => state.values.map((_, i) => <SliderThumb key={i} index={i} />)}
+        </SliderTrack>
+      </Slider>
+    );
+
+    let sliders = getAllByRole('slider');
+    expect(sliders).toHaveLength(3);
+    expect(sliders[0]).toHaveValue('30');
+    expect(sliders[1]).toHaveValue('60');
+    expect(sliders[2]).toHaveValue('80');
+
+    let output = getByRole('status');
+    expect(output).toHaveTextContent('30, 60, 80');
   });
 
   it('should support multiple thumbs (controlled)', async () => {
@@ -268,9 +296,7 @@ describe('Slider', () => {
         <div>
           <Slider value={value} onChange={setValue}>
             <Label>Test</Label>
-            <SliderOutput>
-              {({state}) => state.values.map((_, i) => state.getThumbValueLabel(i)).join(' – ')}
-            </SliderOutput>
+            <SliderOutput />
             <SliderTrack>
               {({state}) =>
                 state.values.map((_, i) => <SliderThumb key={i} index={i} className="thumb" />)
@@ -355,5 +381,64 @@ describe('Slider', () => {
     let {getByRole} = renderSlider({}, {form: 'test'});
     let input = getByRole('slider');
     expect(input).toHaveAttribute('form', 'test');
+  });
+
+  it('should support horizontal SliderFill', () => {
+    let {getByRole} = render(<TestSlider sliderProps={{value: 30}} />);
+    let group = getByRole('group');
+    let fill = group.querySelector('.react-aria-SliderFill');
+    expect(fill).toHaveAttribute('data-orientation', 'horizontal');
+    expect(fill).toHaveStyle({
+      position: 'absolute',
+      insetInlineStart: '0%',
+      width: '30%',
+      height: '100%'
+    });
+  });
+
+  it('should support horizontal SliderFill with offset', () => {
+    let {getByRole, rerender} = render(
+      <TestSlider sliderProps={{value: 30}} fillProps={{offset: 50}} />
+    );
+    let group = getByRole('group');
+    let fill = group.querySelector('.react-aria-SliderFill');
+    expect(fill).toHaveAttribute('data-orientation', 'horizontal');
+    expect(fill).toHaveStyle({
+      position: 'absolute',
+      insetInlineStart: '30%',
+      width: '20%',
+      height: '100%'
+    });
+
+    rerender(<TestSlider sliderProps={{value: 80}} fillProps={{offset: 50}} />);
+    expect(fill).toHaveStyle({
+      position: 'absolute',
+      insetInlineStart: '50%',
+      width: '30%',
+      height: '100%'
+    });
+  });
+
+  it('should support vertical SliderFill', () => {
+    let {getByRole} = render(<TestSlider sliderProps={{value: 30, orientation: 'vertical'}} />);
+    let group = getByRole('group');
+    let fill = group.querySelector('.react-aria-SliderFill');
+    expect(fill).toHaveAttribute('data-orientation', 'vertical');
+    expect(fill).toHaveStyle({position: 'absolute', bottom: '0%', height: '30%', width: '100%'});
+  });
+
+  it('should support vertical SliderFill with offset', () => {
+    let {getByRole, rerender} = render(
+      <TestSlider sliderProps={{value: 30, orientation: 'vertical'}} fillProps={{offset: 50}} />
+    );
+    let group = getByRole('group');
+    let fill = group.querySelector('.react-aria-SliderFill');
+    expect(fill).toHaveAttribute('data-orientation', 'vertical');
+    expect(fill).toHaveStyle({position: 'absolute', bottom: '30%', height: '20%', width: '100%'});
+
+    rerender(
+      <TestSlider sliderProps={{value: 80, orientation: 'vertical'}} fillProps={{offset: 50}} />
+    );
+    expect(fill).toHaveStyle({position: 'absolute', bottom: '50%', height: '30%', width: '100%'});
   });
 });
