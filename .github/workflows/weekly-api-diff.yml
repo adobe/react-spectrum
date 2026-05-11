@@ -165,11 +165,11 @@ jobs:
 
             payload = {
               "model": "gpt-4o-mini",
-              "max_tokens": 600,
+              "max_tokens": 800,
               "messages": [{
                 "role": "user",
                 "content": (
-                  f"Summarize what API changes are NEW this week in react-spectrum, in under 200 words using bullet points.\n\n"
+                  f"Summarize what API changes are NEW this week in react-spectrum, in under 350 words using bullet points.\n\n"
                   f"{rules}\n\n"
                   f"LAST WEEK's pending API changes (anything missing from this week was released — do NOT report it as a new change):\n{prev_content}\n\n"
                   f"THIS WEEK's pending API changes (report only what is new or different vs last week):\n{curr_content}"
