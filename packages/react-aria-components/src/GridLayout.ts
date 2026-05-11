@@ -15,7 +15,10 @@ import {LayoutOptionsDelegate} from './Virtualizer';
 import {useLocale} from 'react-aria/I18nProvider';
 import {useMemo} from 'react';
 
-export class GridLayout<T, O extends GridLayoutOptions = GridLayoutOptions> extends BaseGridLayout<T, O> implements LayoutOptionsDelegate<GridLayoutOptions> {
+export class GridLayout<T, O extends GridLayoutOptions = GridLayoutOptions>
+  extends BaseGridLayout<T, O>
+  implements LayoutOptionsDelegate<GridLayoutOptions>
+{
   // Automatically determine the layout direction from the current locale.
   useLayoutOptions(): GridLayoutOptions {
     /* eslint-disable react-hooks/rules-of-hooks */

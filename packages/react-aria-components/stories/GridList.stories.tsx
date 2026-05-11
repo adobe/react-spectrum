@@ -492,14 +492,14 @@ VirtualizedGridListGrid.story = {
 };
 
 function VirtualizedGridDnD() {
-  let initialItems: {id: number, name: string}[] = [];
+  let initialItems: {id: number; name: string}[] = [];
   for (let i = 0; i < 50; i++) {
     initialItems.push({id: i, name: `Item ${i}`});
   }
   let list = useListData({initialItems});
 
   let {dragAndDropHooks} = useDragAndDrop({
-    getItems: (keys) => [...keys].map(key => ({'text/plain': list.getItem(key)?.name ?? ''})),
+    getItems: keys => [...keys].map(key => ({'text/plain': list.getItem(key)?.name ?? ''})),
     onReorder(e) {
       if (e.target.dropPosition === 'before') {
         list.moveBefore(e.target.key, e.keys);
@@ -515,7 +515,8 @@ function VirtualizedGridDnD() {
             width: '100%',
             height: '100%',
             background: isDropTarget ? 'red' : 'transparent'
-          })} />
+          })}
+        />
       );
     }
   });
@@ -537,10 +538,16 @@ function VirtualizedGridDnD() {
         style={{height: 500, width: 600, border: '1px solid gray'}}
         aria-label="grid layout dnd"
         items={list.items}>
-        {(item) => (
+        {item => (
           <GridListItem
             textValue={item.name}
-            style={{display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid blue', background: 'white'}}>
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              border: '1px solid blue',
+              background: 'white'
+            }}>
             {item.name}
           </GridListItem>
         )}
