@@ -16651,6 +16651,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"eslint-import-resolver-node@npm:^0.3.10":
+  version: 0.3.10
+  resolution: "eslint-import-resolver-node@npm:0.3.10"
+  dependencies:
+    debug: "npm:^3.2.7"
+    is-core-module: "npm:^2.16.1"
+    resolve: "npm:^2.0.0-next.6"
+  checksum: 10c0/2e05bdb148fe10a25b9a6fec3c4986a2e09e98bb99208491df82a9df7725f7bb312482d585404c440d42e58ab60debe7a48d9c992191851385b18d33a146e3c3
+  languageName: node
+  linkType: hard
+
 "eslint-module-utils@npm:^2.1.1":
   version: 2.12.0
   resolution: "eslint-module-utils@npm:2.12.0"
@@ -26863,6 +26874,7 @@ __metadata:
     cross-spawn: "npm:^7.0.5"
     delta-e: "npm:^0.0.8"
     diff: "npm:^5.1.0"
+    eslint-import-resolver-node: "npm:^0.3.10"
     eslint-plugin-react-hooks: "npm:^7.0.0"
     exceljs: "npm:^4.4.0"
     fast-check: "npm:^2.19.0"

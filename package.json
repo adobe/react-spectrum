@@ -150,6 +150,7 @@
     "cross-spawn": "^7.0.5",
     "delta-e": "^0.0.8",
     "diff": "^5.1.0",
+    "eslint-import-resolver-node": "^0.3.10",
     "eslint-plugin-react-hooks": "^7.0.0",
     "exceljs": "^4.4.0",
     "fast-check": "^2.19.0",
