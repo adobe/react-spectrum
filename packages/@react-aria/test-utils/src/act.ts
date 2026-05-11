@@ -20,7 +20,7 @@ if (typeof React.act === 'function') {
   actImpl = ReactDOMTestUtils.act;
 }
 
-export const act: typeof actImpl = ((fn: any) => {
+export const act: typeof actImpl = ((fn) => {
   // only wrap in act if in test environment, breaks vite browser test if test utils are used otherwise
   if (
     // @ts-ignore
@@ -32,4 +32,4 @@ export const act: typeof actImpl = ((fn: any) => {
     return actImpl(fn);
   }
   return fn();
-}) as typeof actImpl;
+});
