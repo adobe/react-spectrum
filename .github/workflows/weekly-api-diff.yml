@@ -153,7 +153,9 @@ jobs:
           elif new_release:
             message = f"📊 Weekly API Diff — {today}\n\nNew release since last diff — resetting baseline. Full diff vs release: {diff_url}\n\nReact ✅ if changes look expected, or 🚨 if something looks wrong."
           else:
-            delta = open('/tmp/weekly-delta.txt').read()[:4000]
+            prev_file = prev_files[0] if prev_files else None
+            prev_content = open(prev_file).read()[:2000] if prev_file else "(none — first run)"
+            curr_content = open('/tmp/diff-current.txt').read()[:2000]
 
             # Extract classification rules from prompt.md (single source of truth)
             prompt_md = open(f"{workspace}/scripts/weekly-api-diff/prompt.md").read()
@@ -166,7 +168,12 @@ jobs:
               "max_tokens": 600,
               "messages": [{
                 "role": "user",
-                "content": f"Summarize this week-to-week react-spectrum API diff in under 200 words using bullet points.\n\n{rules}\n\nDelta (changes from last week):\n{delta}"
+                "content": (
+                  f"Summarize what API changes are NEW this week in react-spectrum, in under 200 words using bullet points.\n\n"
+                  f"{rules}\n\n"
+                  f"LAST WEEK's pending API changes (anything missing from this week was released — do NOT report it as a new change):\n{prev_content}\n\n"
+                  f"THIS WEEK's pending API changes (report only what is new or different vs last week):\n{curr_content}"
+                )
               }]
             }
 
