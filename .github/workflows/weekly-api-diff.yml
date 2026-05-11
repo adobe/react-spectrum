@@ -27,7 +27,7 @@ jobs:
       - name: Build current API snapshot
         run: yarn build:api-branch
 
-      # Build release baseline using the last Publish commit (~2 min, always fresh)
+      # Build release baseline using the last minor/major release commit (skips patch-only releases)
       - name: Build release baseline
         run: yarn build:api-published
 
@@ -170,9 +170,10 @@ jobs:
                 "role": "user",
                 "content": (
                   f"Summarize what API changes are NEW this week in react-spectrum, in under 350 words using bullet points.\n\n"
+                  f"IMPORTANT: Only report changes that are explicitly stated in the THIS WEEK section below. Do not infer, extrapolate, or add any changes from your training knowledge — if a method or prop is not explicitly mentioned in the text, do not include it.\n\n"
                   f"{rules}\n\n"
                   f"LAST WEEK's pending API changes (anything missing from this week was released — do NOT report it as a new change):\n{prev_content}\n\n"
-                  f"THIS WEEK's pending API changes (report only what is new or different vs last week):\n{curr_content}"
+                  f"THIS WEEK's pending API changes (report only what is new or different vs last week, and only what is explicitly listed):\n{curr_content}"
                 )
               }]
             }

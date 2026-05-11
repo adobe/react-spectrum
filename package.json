@@ -68,7 +68,7 @@
     "release": "lerna publish from-package --yes",
     "version:nightly": "yarn workspaces foreach --all --no-private -t version -d 3.0.0-nightly-$(git rev-parse --short HEAD)-$(date +'%y%m%d') && yarn apply-nightly --all",
     "publish:nightly": "yarn workspaces foreach --all --no-private -t npm publish --tag nightly --access public",
-    "build:api-published": "node scripts/buildBranchAPI.js --githash=$(git log --grep='^Publish$' --oneline -1 | awk '{print $1}') --output=base-api",
+    "build:api-published": "node scripts/buildBranchAPI.js --githash=$(git rev-list -n 1 $(git tag -l 'react-aria-components@*' | grep -E '@[0-9]+\\.[0-9]+\\.0$' | sort -V | tail -1)) --output=base-api",
     "build:api-branch": "node scripts/buildBranchAPI.js",
     "compare:apis": "node scripts/compareAPIs.js",
     "check-apis": "yarn build:api-branch --githash=\"origin/main\" --output=\"base-api\" && yarn build:api-branch && yarn compare:apis",
