@@ -5,6 +5,7 @@
   "type": "module",
   "main": "./index.js",
   "dependencies": {
+    "eslint": "^9.12.0",
     "find-up": "^4.1.0"
   }
 }
