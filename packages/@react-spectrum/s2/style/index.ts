@@ -68,7 +68,7 @@ export function fontRelative(base: number, baseFontSize = 14): `[${string}]` {
 
 /**
  * Returns consistent Spectrum focus ring outline styles for interactive components.
- * 
+ *
  * Note: Requires `isFocusVisible` to be passed into the style call that uses this.
  *
  * @example

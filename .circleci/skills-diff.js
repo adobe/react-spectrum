@@ -116,17 +116,23 @@ function countChanges(mainPath, branchPath) {
   }
   if (mainPath && !branchPath) {
     const a = readMaybeText(mainPath);
-    if (a === null) {return null;}
+    if (a === null) {
+      return null;
+    }
     return {added: 0, removed: countLines(a)};
   }
   if (!mainPath && branchPath) {
     const b = readMaybeText(branchPath);
-    if (b === null) {return null;}
+    if (b === null) {
+      return null;
+    }
     return {added: countLines(b), removed: 0};
   }
   const a = readMaybeText(mainPath);
   const b = readMaybeText(branchPath);
-  if (a === null || b === null) {return null;}
+  if (a === null || b === null) {
+    return null;
+  }
   return changeStats(diffLines(a, b));
 }
 
@@ -149,7 +155,9 @@ function colorCounts(counts) {
 // Map "s2/skills/<rest>" / "react-aria/skills/<rest>" (the layout produced
 // by build-skills.sh) to a cloudfront URL on the branch build.
 function fileUrl(relPath, sha) {
-  if (!sha) {return null;}
+  if (!sha) {
+    return null;
+  }
   const parts = relPath.split(path.sep);
   const lib = parts[0];
   const rest = parts.slice(1).join('/');
@@ -197,7 +205,9 @@ function renderSummary({added, removed, modified, mainFiles, branchFiles, sha}) 
   const parts = [];
 
   const listSection = (label, files, linkable, getCounts) => {
-    if (!files.length) {return;}
+    if (!files.length) {
+      return;
+    }
     parts.push(`<details><summary>${label} (${files.length})</summary>`);
     parts.push('');
     for (const f of files) {
@@ -236,7 +246,8 @@ function renderSummary({added, removed, modified, mainFiles, branchFiles, sha}) 
 
   let out = parts.join('\n');
   if (out.length > MAX_SUMMARY_CHARS) {
-    out = out.slice(0, MAX_SUMMARY_CHARS) +
+    out =
+      out.slice(0, MAX_SUMMARY_CHARS) +
       '\n\n_… output truncated to fit GitHub comment size limit._\n';
   }
   return out;
@@ -259,9 +270,16 @@ function main() {
   }
 
   const sha = process.env.CIRCLE_SHA1 || '';
-  process.stdout.write(renderSummary({
-    added, removed, modified, mainFiles, branchFiles, sha
-  }));
+  process.stdout.write(
+    renderSummary({
+      added,
+      removed,
+      modified,
+      mainFiles,
+      branchFiles,
+      sha
+    })
+  );
 }
 
 main();

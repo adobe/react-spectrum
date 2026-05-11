@@ -580,7 +580,7 @@ function generateStyleMacroTable(category, {sort = true} = {}) {
   // Build the token list for a single property, combining explicit values and type aliases.
   // Type categories like `baseSpacing` are emitted as aliases; their full value sets
   // are documented once in the Value Sets section at the top of the page.
-  const buildTokens = (propertyName) => {
+  const buildTokens = propertyName => {
     const def = definitions[propertyName] || {};
     const values = Array.isArray(def.values) ? def.values : [];
     const additionalTypes = Array.isArray(def.additionalTypes) ? def.additionalTypes : [];
@@ -595,7 +595,7 @@ function generateStyleMacroTable(category, {sort = true} = {}) {
       tokens.push(token);
     };
 
-    const formatValue = (value) => {
+    const formatValue = value => {
       if (typeof value === 'number') {
         return `\`${value}\``;
       }
@@ -606,14 +606,14 @@ function generateStyleMacroTable(category, {sort = true} = {}) {
       return `\`'${str}'\``;
     };
 
-    values.forEach((value) => {
+    values.forEach(value => {
       if (value === undefined || value === null) {
         return;
       }
       addToken(formatValue(value));
     });
 
-    additionalTypes.forEach((typeName) => {
+    additionalTypes.forEach(typeName => {
       if (!typeName) {
         return;
       }
@@ -637,8 +637,8 @@ function generateStyleMacroTable(category, {sort = true} = {}) {
     group.names.push(name);
   }
 
-  const rows = [...groups.values()].map((group) => {
-    const nameCell = group.names.map((n) => `\`${n}\``).join(', ');
+  const rows = [...groups.values()].map(group => {
+    const nameCell = group.names.map(n => `\`${n}\``).join(', ');
     const valueText = (group.tokens.length ? group.tokens.join(', ') : '—').replace(/\|/g, '\\|');
     return `| ${nameCell} | ${valueText} |`;
   });
@@ -671,7 +671,7 @@ function generateValueSetsMarkdown() {
     return null;
   }
 
-  const formatSetValue = (v) => (typeof v === 'number' ? `\`${v}\`` : `\`'${v}'\``);
+  const formatSetValue = v => (typeof v === 'number' ? `\`${v}\`` : `\`'${v}'\``);
   const baseSpacing = Array.isArray(data.spacingTypeValues?.baseSpacing)
     ? data.spacingTypeValues.baseSpacing.map(formatSetValue).join(', ')
     : '';
@@ -688,9 +688,9 @@ function generateValueSetsMarkdown() {
     `- **\`baseSpacing\`** — ${baseSpacing}`,
     `- **\`negativeSpacing\`** — negative counterparts of \`baseSpacing\` (${negativeSpacing})`,
     '- **`baseColors`** — every Spectrum 2 color token. Includes `transparent`, `black`, `white`; the numeric scales `gray-25`–`gray-1000` and `blue`/`red`/`orange`/`yellow`/`chartreuse`/`celery`/`green`/`seafoam`/`cyan`/`indigo`/`purple`/`fuchsia`/`magenta`/`pink`/`turquoise`/`brown`/`silver`/`cinnamon` at steps `100`–`1600`; the semantic scales `accent-100`–`accent-1600`, `informative-*`, `negative-*`, `notice-*`, `positive-*`; the `transparent-white-*` and `transparent-black-*` scales; overlay colors; and high-contrast-mode system colors (`ButtonFace`, `ButtonText`, `Field`, `Highlight`, `HighlightText`, `GrayText`, `Mark`, `LinkText`, `Background`, `ButtonBorder`).',
-    '- **`lengthPercentage`** — a CSS `<length-percentage>` string, e.g. `\'100px\'`, `\'50%\'`, `\'1.25rem\'`.',
+    "- **`lengthPercentage`** — a CSS `<length-percentage>` string, e.g. `'100px'`, `'50%'`, `'1.25rem'`.",
     '- **`number`** — a unitless numeric value. Meaning is context-dependent: for sizing / inset / margin / padding properties it is a pixel count (scaled via the Spectrum size factor); for `opacity`, `flexGrow`, `flexShrink`, `order`, `zIndex`, `lineClamp`, etc. it is passed through as-is.',
-    '- **`LinearGradient`** — the object produced by the `linearGradient` helper, e.g. `linearGradient(\'to bottom\', [\'gray-25\', 0], [\'gray-200\', 100])`. Used by `backgroundImage`.'
+    "- **`LinearGradient`** — the object produced by the `linearGradient` helper, e.g. `linearGradient('to bottom', ['gray-25', 0], ['gray-200', 100])`. Used by `backgroundImage`."
   ];
 
   // Append shared value-set aliases (e.g. positionKeywords) used by more than one property.
@@ -1700,7 +1700,9 @@ function remarkDocsComponentsToMarkdown() {
       styleMacroValueSetsInjected.add(file);
       const valueSets = generateValueSetsMarkdown();
       if (valueSets) {
-        const firstH2Index = tree.children.findIndex((child) => child.type === 'heading' && child.depth === 2);
+        const firstH2Index = tree.children.findIndex(
+          child => child.type === 'heading' && child.depth === 2
+        );
         if (firstH2Index !== -1) {
           const valueSetsTree = unified().use(remarkParse).parse(valueSets);
           tree.children.splice(firstH2Index, 0, ...valueSetsTree.children);

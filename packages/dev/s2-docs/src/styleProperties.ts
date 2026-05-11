@@ -104,7 +104,17 @@ const negativeBaseSpacingValues = [
 const relativeSpacingValues = ['text-to-control', 'text-to-visual', 'edge-to-text', 'pill'];
 const heightBaseValues = ['auto', 'full', 'min', 'max', 'fit', 'screen'];
 // Position keyword set shared by `backgroundPosition` and `objectPosition`.
-const positionKeywordValues = ['bottom', 'center', 'left', 'left bottom', 'left top', 'right', 'right bottom', 'right top', 'top'];
+const positionKeywordValues = [
+  'bottom',
+  'center',
+  'left',
+  'left bottom',
+  'left top',
+  'right',
+  'right bottom',
+  'right top',
+  'top'
+];
 const fontSize = [
   'ui-xs',
   'ui-sm',
