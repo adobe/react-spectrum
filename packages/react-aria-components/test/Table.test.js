@@ -1852,7 +1852,12 @@ describe('Table', () => {
         // Fire events against the cursor overlay. It can't be pointer events none otherwise
         // it will stop styling the cursor against the entire screen.
         let cursorOverlay = screen.getByTestId('cursor-overlay');
-        fireEvent.pointerUp(cursorOverlay, {pointerType: 'mouse', pointerId: 1, pageX: 0, pageY: 30});
+        fireEvent.pointerUp(cursorOverlay, {
+          pointerType: 'mouse',
+          pointerId: 1,
+          pageX: 0,
+          pageY: 30
+        });
         fireEvent.click(cursorOverlay);
         act(() => jest.runAllTimers());
         expect(resizer).not.toHaveAttribute('data-resizing', 'true');
