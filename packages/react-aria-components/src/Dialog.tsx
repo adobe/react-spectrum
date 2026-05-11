@@ -144,14 +144,6 @@ export const Dialog = /*#__PURE__*/ (forwardRef as forwardRefType)(function Dial
     }
   }
 
-  if (!dialogProps['aria-describedby'] && dialogProps['role'] === 'alertdialog') {
-    if (process.env.NODE_ENV !== 'production') {
-      console.warn(
-        'If a Dialog does not contain a <Text slot="description">, it must have an aria-describedby for accessibility'
-      );
-    }
-  }
-
   let renderProps = useRenderProps({
     defaultClassName: 'react-aria-Dialog',
     className: props.className,

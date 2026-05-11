@@ -21,13 +21,12 @@ import {Dialog} from './Dialog';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {forwardRef, ReactNode} from 'react';
 import {IconContext} from './Icon';
-import intlMessages from '../intl/*.json';
 // @ts-ignore
+import intlMessages from '../intl/*.json';
 import NoticeSquare from '../s2wf-icons/S2_Icon_AlertDiamond_20_N.svg';
 import {Provider} from 'react-aria-components/slots';
 import {style} from '../style' with {type: 'macro'};
 import {UnsafeStyles} from './style-utils' with {type: 'macro'};
-import {useId} from 'react-aria/useId';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 
 export interface AlertDialogProps extends AriaLabelingProps, DOMProps, UnsafeStyles {
@@ -107,14 +106,10 @@ export const AlertDialog = forwardRef(function AlertDialog(props: AlertDialogPro
   }
 
   let domProps = filterDOMProps(props, {labelable: true});
-  let generatedContentId = useId();
-  let userDescribedBy = props['aria-describedby'];
-  let contentId = userDescribedBy ? undefined : generatedContentId;
 
   return (
     <Dialog
       {...domProps}
-      aria-describedby={userDescribedBy ?? generatedContentId}
       role="alertdialog"
       ref={ref}
       size={props.size}
@@ -135,7 +130,7 @@ export const AlertDialog = forwardRef(function AlertDialog(props: AlertDialogPro
               </CenterBaseline>
             </Heading>
           </Provider>
-          <Content id={contentId}>{children}</Content>
+          <Content>{children}</Content>
           <ButtonGroup>
             {cancelLabel && (
               <Button

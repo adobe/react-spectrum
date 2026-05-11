@@ -110,6 +110,19 @@ export function useDialog(
     }
   });
 
+  let ariaDescribedby = props['aria-describedby'] ?? contentId;
+  let hasAriaDescribedbyWarn = useRef(false);
+  useEffect(() => {
+    if (!ariaDescribedby && props['role'] === 'alertdialog') {
+      if (process.env.NODE_ENV !== 'production' && !hasAriaDescribedbyWarn.current) {
+        console.warn(
+          'If a Dialog does not contain a <Text slot="description">, it must have an aria-describedby for accessibility'
+        );
+        hasAriaDescribedbyWarn.current = true;
+      }
+    }
+  });
+
   // We do not use aria-modal due to a Safari bug which forces the first focusable element to be focused
   // on mount when inside an iframe, no matter which element we programmatically focus.
   // See https://bugs.webkit.org/show_bug.cgi?id=211934.
@@ -121,7 +134,7 @@ export function useDialog(
       role,
       tabIndex: -1,
       'aria-labelledby': props['aria-labelledby'] ?? titleId,
-      'aria-describedby': props['aria-describedby'] ?? contentId,
+      'aria-describedby': ariaDescribedby,
       // Prevent blur events from reaching useOverlay, which may cause
       // popovers to close. Since focus is contained within the dialog,
       // we don't want this to occur due to the above useEffect.

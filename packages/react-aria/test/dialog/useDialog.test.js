@@ -33,7 +33,9 @@ describe('useDialog', function () {
   });
 
   it('should accept role="alertdialog"', function () {
-    let res = render(<Example role="alertdialog" aria-label="Test dialog" />);
+    let res = render(
+      <Example role="alertdialog" aria-label="Test dialog" aria-describedby="content-id" />
+    );
     let el = res.getByTestId('test');
     expect(el).toHaveAttribute('role', 'alertdialog');
   });

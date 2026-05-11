@@ -24,9 +24,9 @@ import {
   DialogProps as RACDialogProps
 } from 'react-aria-components/Dialog';
 import {Provider} from 'react-aria-components/slots';
+import {TextContext as RACTextContext} from 'react-aria-components/Text';
 import {style} from '../style' with {type: 'macro'};
 import {StyleProps} from './style-utils';
-import {Text} from 'react-aria-components/Text';
 import {useDOMRef} from './useDOMRef';
 
 // TODO: what style overrides should be allowed?
@@ -197,19 +197,27 @@ export const Dialog = forwardRef(function Dialog(props: DialogProps, ref: DOMRef
               {props.isDismissible && <CloseButton styles={style({marginBottom: 12})} />}
             </div>
             {/* Main content */}
-            <Text slot="description" style={{display: 'contents'}}>
-              <Provider
-                values={[
-                  [ImageContext, {hidden: true}],
-                  [HeadingContext, {isHidden: true}],
-                  [HeaderContext, {isHidden: true}],
-                  [ContentContext, {styles: content}],
-                  [FooterContext, {isHidden: true}],
-                  [ButtonGroupContext, {isHidden: true}]
-                ]}>
-                {children}
-              </Provider>
-            </Text>
+            <RACTextContext.Consumer>
+              {value => {
+                let contentValue = {};
+                if (value && 'slots' in value && value.slots?.description) {
+                  contentValue = value.slots.description;
+                }
+                return (
+                  <Provider
+                    values={[
+                      [ImageContext, {hidden: true}],
+                      [HeadingContext, {isHidden: true}],
+                      [HeaderContext, {isHidden: true}],
+                      [ContentContext, {styles: content, ...contentValue}],
+                      [FooterContext, {isHidden: true}],
+                      [ButtonGroupContext, {isHidden: true}]
+                    ]}>
+                    {children}
+                  </Provider>
+                );
+              }}
+            </RACTextContext.Consumer>
             {/* Footer and button group */}
             <div
               className={style({
