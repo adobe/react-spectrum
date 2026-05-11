@@ -151,6 +151,7 @@ jobs:
           github_token = os.environ['GITHUB_TOKEN']
           workspace = os.environ['GITHUB_WORKSPACE']
           diff_url = f"https://github.com/{snapshots_repo}/blob/main/diffs/{today}.txt"
+          delta_url = f"https://github.com/{snapshots_repo}/blob/main/deltas/{today}.txt"
 
           vs_release_size = os.path.getsize('/tmp/diff-current.txt')
           vs_last_week_size = os.path.getsize('/tmp/weekly-delta.txt') if os.path.exists('/tmp/weekly-delta.txt') else 0
@@ -185,7 +186,11 @@ jobs:
               "messages": [{
                 "role": "user",
                 "content": (
-                  f"Summarize this week's react-spectrum API changes using bullet points, one per component or interface. Keep each bullet to one short sentence — name the component/prop/interface and what kind of change it is (added, removed, changed signature), but do NOT spell out type signatures or parameter details. Aim for breadth over depth.\n\n"
+                  f"Summarize this week's react-spectrum API changes using grouped bullet points. Group related changes together (e.g. multiple layout classes losing the same method = one bullet). For each group or item:\n"
+                  f"- Name the component(s) or interface(s)\n"
+                  f"- Say what changed (added, removed, signature changed)\n"
+                  f"- Add a short insight where meaningful: flag net-new components, flag breaking changes (signature changes that affect callers), or note if a whole category of methods was removed\n"
+                  f"Don't spell out full type signatures. Aim for a knowledgeable teammate skimming Slack.\n\n"
                   f"IMPORTANT: Only report what is explicitly listed below. Do not infer or add anything from your training knowledge.\n\n"
                   f"{rules}\n\n"
                   f"{model_input}"
@@ -202,7 +207,7 @@ jobs:
               }
             )
             summary = json.loads(urllib.request.urlopen(req).read())['choices'][0]['message']['content']
-            message = f"📊 Weekly API Diff — {today}\n\n{summary}\n\nFull diff vs release: {diff_url}\n\nReact ✅ if changes look expected, or 🚨 if something looks wrong."
+            message = f"📊 Weekly API Diff — {today}\n\n{summary}\n\nWhat's new this week: {delta_url}\nFull diff vs release: {diff_url}\n\nReact ✅ if changes look expected, or 🚨 if something looks wrong."
 
           req = urllib.request.Request(
             'https://slack.com/api/chat.postMessage',
