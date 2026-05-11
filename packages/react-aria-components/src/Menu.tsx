@@ -79,10 +79,10 @@ import {
 } from '@react-types/shared';
 import {FocusScope} from 'react-aria/FocusScope';
 import {HeaderContext} from './Header';
-import {Collection as ICollection, Node} from '@react-types/shared';
 import {KeyboardContext} from './Keyboard';
 import {mergeProps} from 'react-aria/mergeProps';
 import {MultipleSelectionState} from 'react-stately/useMultipleSelectionState';
+import {Node} from '@react-types/shared';
 import {OverlayTriggerStateContext} from './Dialog';
 import {PopoverContext} from './Popover';
 import {PressResponder} from 'react-aria/private/interactions/PressResponder';
@@ -284,7 +284,7 @@ export interface MenuProps<T>
 /**
  * A menu displays a list of actions or options that a user can choose.
  */
-export const Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(function Menu<T extends object>(
+export const Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(function Menu<T>(
   props: MenuProps<T>,
   ref: ForwardedRef<HTMLDivElement>
 ) {
@@ -305,11 +305,11 @@ interface MenuInnerProps<T> {
     filter?: SelectableCollectionContextValue<object>['filter'];
     shouldUseVirtualFocus?: boolean;
   };
-  collection: BaseCollection<object>;
+  collection: BaseCollection<any>;
   menuRef: RefObject<HTMLElement | null>;
 }
 
-function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInnerProps<T>) {
+function MenuInner<T>({props, collection, menuRef: ref}: MenuInnerProps<T>) {
   [props, ref] = useContextProps(props, ref, SelectableCollectionContext);
   let {filter, ...autocompleteMenuProps} = props;
   let filteredCollection = useMemo(
@@ -318,7 +318,7 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
   );
   let state = useTreeState({
     ...props,
-    collection: filteredCollection as ICollection<Node<object>>,
+    collection: filteredCollection,
     children: undefined
   });
   let triggerState = useContext(RootMenuTriggerStateContext);
@@ -436,7 +436,7 @@ class GroupSelectionManager extends SelectionManager {
   }
 }
 
-function MenuSectionInner<T extends object>(
+function MenuSectionInner<T>(
   props: MenuSectionProps<T>,
   ref: ForwardedRef<HTMLElement>,
   section: Node<T>,
@@ -539,7 +539,7 @@ const MenuItemContext = createContext<ContextValue<MenuItemProps, HTMLDivElement
  * A MenuItem represents an individual action in a Menu.
  */
 export const MenuItem = /*#__PURE__*/ createLeafComponent(ItemNode, function MenuItem<
-  T extends object
+  T
 >(props: MenuItemProps<T>, forwardedRef: ForwardedRef<HTMLDivElement>, item: Node<T>) {
   [props, forwardedRef] = useContextProps(props, forwardedRef, MenuItemContext);
   let id = useSlottedContext(MenuItemContext)?.id as string;

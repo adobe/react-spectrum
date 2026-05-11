@@ -28,7 +28,7 @@ const styles = tv({
   }
 });
 
-export interface SelectProps<T extends object, M extends 'single' | 'multiple'> extends Omit<
+export interface SelectProps<T, M extends 'single' | 'multiple'> extends Omit<
   AriaSelectProps<T, M>,
   'children'
 > {
@@ -39,7 +39,7 @@ export interface SelectProps<T extends object, M extends 'single' | 'multiple'> 
   children: React.ReactNode | ((item: T) => React.ReactNode);
 }
 
-export function Select<T extends object, M extends 'single' | 'multiple' = 'single'>({
+export function Select<T, M extends 'single' | 'multiple' = 'single'>({
   label,
   description,
   errorMessage,
@@ -81,6 +81,6 @@ export function SelectItem(props: ListBoxItemProps) {
   return <DropdownItem {...props} />;
 }
 
-export function SelectSection<T extends object>(props: DropdownSectionProps<T>) {
+export function SelectSection<T>(props: DropdownSectionProps<T>) {
   return <DropdownSection {...props} />;
 }

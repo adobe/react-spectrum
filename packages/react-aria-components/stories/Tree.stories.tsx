@@ -184,7 +184,7 @@ const StaticTreeItemNoActions = (props: StaticTreeItemProps) => {
   );
 };
 
-export function TreeExampleStaticRender<T extends object>(props: TreeProps<T>) {
+export function TreeExampleStaticRender<T>(props: TreeProps<T>) {
   return (
     <Tree
       className={styles.tree}
@@ -239,7 +239,7 @@ export function TreeExampleStaticRender<T extends object>(props: TreeProps<T>) {
   );
 }
 
-const TreeExampleStaticNoActionsRender = <T extends object>(args: TreeProps<T>): JSX.Element => (
+const TreeExampleStaticNoActionsRender = <T extends any>(args: TreeProps<T>): JSX.Element => (
   <Tree
     className={styles.tree}
     {...args}
@@ -686,7 +686,7 @@ let defaultExpandedKeys = new Set([
   'reports-1AB'
 ]);
 
-const TreeExampleDynamicRender = <T extends object>(args: TreeProps<T>): JSX.Element => {
+const TreeExampleDynamicRender = <T extends any>(args: TreeProps<T>): JSX.Element => {
   let treeData = useTreeData<any>({
     initialItems: (args.items as any) ?? rows,
     getKey: item => item.id,
@@ -712,7 +712,7 @@ const TreeExampleDynamicRender = <T extends object>(args: TreeProps<T>): JSX.Ele
   );
 };
 
-const TreeSectionExampleDynamicRender = <T extends object>(args: TreeProps<T>): JSX.Element => {
+const TreeSectionExampleDynamicRender = <T extends any>(args: TreeProps<T>): JSX.Element => {
   let treeData = useTreeData<any>({
     initialItems: (args.items as any) ?? rowsWithSections,
     getKey: item => item.id,
@@ -770,7 +770,7 @@ export const WithActions: StoryObj<typeof TreeExampleDynamicRender> = {
   name: 'Tree with actions'
 };
 
-const WithLinksRender = <T extends object>(args: TreeProps<T>): JSX.Element => {
+const WithLinksRender = <T extends any>(args: TreeProps<T>): JSX.Element => {
   let treeData = useTreeData<any>({
     initialItems: rows,
     getKey: item => item.id,
@@ -812,9 +812,7 @@ function renderEmptyLoader({isLoading}) {
   return isLoading ? 'Root level loading spinner' : 'Nothing in tree';
 }
 
-const EmptyTreeStatic = <T extends object>(
-  args: TreeProps<T> & {isLoading: boolean}
-): JSX.Element => (
+const EmptyTreeStatic = <T extends any>(args: TreeProps<T> & {isLoading: boolean}): JSX.Element => (
   <Tree
     {...args}
     className={styles.tree}
@@ -843,7 +841,7 @@ export const EmptyTreeStaticStory: StoryObj<typeof EmptyTreeStatic> = {
   name: 'Empty/Loading Tree rendered with TreeLoader collection element'
 };
 
-function LoadingStoryDepOnCollection<T extends object>(
+function LoadingStoryDepOnCollection<T extends any>(
   props: TreeProps<T> & {isLoading: boolean}
 ): JSX.Element {
   let {isLoading, ...args} = props;
@@ -892,9 +890,7 @@ export const LoadingStoryDepOnCollectionStory: StoryObj<typeof LoadingStoryDepOn
   }
 };
 
-function LoadingStoryDepOnTop<T extends object>(
-  args: TreeProps<T> & {isLoading: boolean}
-): JSX.Element {
+function LoadingStoryDepOnTop<T>(args: TreeProps<T> & {isLoading: boolean}): JSX.Element {
   let treeData = useTreeData<any>({
     initialItems: rows,
     getKey: item => item.id,
@@ -1019,9 +1015,7 @@ const DynamicTreeItemWithButtonLoader = (props: DynamicTreeItemProps) => {
   );
 };
 
-function ButtonLoadingIndicator<T extends object>(
-  args: TreeProps<T> & {isLoading: boolean}
-): JSX.Element {
+function ButtonLoadingIndicator<T>(args: TreeProps<T> & {isLoading: boolean}): JSX.Element {
   let treeData = useTreeData<any>({
     initialItems: rows,
     getKey: item => item.id,
@@ -1065,7 +1059,7 @@ export const ButtonLoadingIndicatorStory: StoryObj<typeof ButtonLoadingIndicator
   }
 };
 
-function VirtualizedTreeRender<T extends object>(args: TreeProps<T>): JSX.Element {
+function VirtualizedTreeRender<T>(args: TreeProps<T>): JSX.Element {
   return (
     <Virtualizer layout={ListLayout} layoutOptions={{rowHeight: 30}}>
       <TreeExampleDynamicRender {...args} />
@@ -1377,7 +1371,7 @@ dependencies={[isRootLoading]}>
 }} */
 }
 
-function TreeDragAndDropExample<T extends object>(
+function TreeDragAndDropExample<T>(
   args: TreeProps<T> & {
     shouldAcceptItemDrop: 'folders' | 'all';
     dropFunction: 'onMove' | 'onInsert' | 'onRootDrop';
@@ -1777,7 +1771,7 @@ function generateTreeData(): Array<ITreeItem> {
 
 const treeData = generateTreeData();
 
-function HugeVirtualizedTreeRender<T extends object>(args: TreeProps<T>): JSX.Element {
+function HugeVirtualizedTreeRender<T>(args: TreeProps<T>): JSX.Element {
   let [expandedKeys, setExpandedKeys] = useState(new Set<Key>());
   let expandAll = () => {
     setExpandedKeys(itemKeys);

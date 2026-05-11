@@ -226,7 +226,7 @@ export interface TabPanelRenderProps {
 }
 
 export const TabsContext = createContext<ContextValue<TabsProps, HTMLDivElement>>(null);
-export const TabListStateContext = createContext<TabListState<object> | null>(null);
+export const TabListStateContext = createContext<TabListState<any> | null>(null);
 
 /**
  * Tabs organize content into multiple sections and allow users to navigate between them.
@@ -304,9 +304,10 @@ function TabsInner({props, tabsRef: ref, collection}: TabsInnerProps) {
  * A TabList is used within Tabs to group tabs that a user can switch between.
  * The ids of the items within the <TabList> must match up with a corresponding item inside the <TabPanels>.
  */
-export const TabList = /*#__PURE__*/ (forwardRef as forwardRefType)(function TabList<
-  T extends object
->(props: TabListProps<T>, ref: ForwardedRef<HTMLDivElement>): JSX.Element {
+export const TabList = /*#__PURE__*/ (forwardRef as forwardRefType)(function TabList<T>(
+  props: TabListProps<T>,
+  ref: ForwardedRef<HTMLDivElement>
+): JSX.Element {
   let state = useContext(TabListStateContext);
   return state ? <TabListInner props={props} forwardedRef={ref} /> : <Collection {...props} />;
 });
@@ -316,7 +317,7 @@ interface TabListInnerProps<T> {
   forwardedRef: ForwardedRef<HTMLDivElement>;
 }
 
-function TabListInner<T extends object>({props, forwardedRef: ref}: TabListInnerProps<T>) {
+function TabListInner<T>({props, forwardedRef: ref}: TabListInnerProps<T>) {
   let state = useContext(TabListStateContext)!;
   let {CollectionRoot} = useContext(CollectionRendererContext);
   let {orientation = 'horizontal', keyboardActivation = 'automatic'} =
@@ -440,7 +441,7 @@ export interface TabPanelsProps<T>
 /**
  * Groups multiple `<TabPanel>` elements, and provides CSS variables for animated transitions.
  */
-export const TabPanels = /*#__PURE__*/ createHideableComponent(function TabPanels<T extends object>(
+export const TabPanels = /*#__PURE__*/ createHideableComponent(function TabPanels<T>(
   props: TabPanelsProps<T>,
   forwardedRef: ForwardedRef<HTMLDivElement>
 ) {

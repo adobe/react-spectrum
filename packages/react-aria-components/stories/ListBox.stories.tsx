@@ -123,6 +123,16 @@ export const ListBoxComplex: ListBoxStory = () => (
   </ListBox>
 );
 
+export const ListBoxDynamicStrings: ListBoxStory = args => (
+  <ListBox
+    className={styles.menu}
+    {...args}
+    aria-label="test listbox"
+    items={['Foo', 'Bar', 'Baz']}>
+    {item => <MyListBoxItem>{item}</MyListBoxItem>}
+  </ListBox>
+);
+
 interface Album {
   id: number;
   image: string;

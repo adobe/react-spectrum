@@ -56,11 +56,7 @@ export function Column(props: Omit<ColumnProps, 'children'> & {children?: React.
   );
 }
 
-export function TableHeader<T extends object>({
-  columns,
-  children,
-  ...otherProps
-}: TableHeaderProps<T>) {
+export function TableHeader<T>({columns, children, ...otherProps}: TableHeaderProps<T>) {
   let {selectionBehavior, selectionMode, allowsDragging} = useTableOptions();
 
   return (
@@ -88,7 +84,7 @@ export function TableHeader<T extends object>({
   );
 }
 
-export function Row<T extends object>({id, columns, children, ...otherProps}: RowProps<T>) {
+export function Row<T>({id, columns, children, ...otherProps}: RowProps<T>) {
   let {selectionBehavior, allowsDragging} = useTableOptions();
 
   return (
@@ -110,11 +106,11 @@ export function Row<T extends object>({id, columns, children, ...otherProps}: Ro
   );
 }
 
-export function TableBody<T extends object>(props: TableBodyProps<T>) {
+export function TableBody<T>(props: TableBodyProps<T>) {
   return <AriaTableBody {...props} />;
 }
 
-export function TableFooter<T extends object>(props: TableFooterProps<T>) {
+export function TableFooter<T>(props: TableFooterProps<T>) {
   return <AriaTableFooter {...props} />;
 }
 

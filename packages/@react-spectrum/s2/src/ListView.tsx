@@ -208,9 +208,10 @@ const listView = style<GridListRenderProps & {isQuiet?: boolean}>({
 /**
  * A ListView displays a list of interactive items, and allows a user to navigate, select, or perform an action.
  */
-export const ListView = /*#__PURE__*/ (forwardRef as forwardRefType)(function ListView<
-  T extends object
->(props: ListViewProps<T>, ref: DOMRef<HTMLDivElement>) {
+export const ListView = /*#__PURE__*/ (forwardRef as forwardRefType)(function ListView<T>(
+  props: ListViewProps<T>,
+  ref: DOMRef<HTMLDivElement>
+) {
   [props, ref] = useSpectrumContextProps(props, ref, ListViewContext);
   let {
     children,

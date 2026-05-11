@@ -54,7 +54,7 @@ export interface TreeState<T> {
  * Provides state management for tree-like components. Handles building a collection
  * of items from props, item expanded state, and manages multiple selection state.
  */
-export function useTreeState<T extends object>(props: TreeProps<T>): TreeState<T> {
+export function useTreeState<T>(props: TreeProps<T>): TreeState<T> {
   let {onExpandedChange} = props;
 
   let [expandedKeys, setExpandedKeys] = useControlledState(

@@ -139,7 +139,7 @@ export const SectionContext = createContext<SectionContextValue | null>(null);
 /** @deprecated */
 export const Section = /*#__PURE__*/ createBranchComponent(
   'section',
-  <T extends object>(
+  <T extends any>(
     props: SectionProps<T>,
     ref: ForwardedRef<HTMLElement>,
     section: Node<T>

@@ -41,7 +41,7 @@ import {useFormProps} from './Form';
 import {useLocale} from 'react-aria/I18nProvider';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 export interface PickerStyleProps {}
-export interface PickerProps<T extends object>
+export interface PickerProps<T>
   extends
     Omit<AriaSelectProps<T>, 'children' | 'style' | 'className' | 'render' | 'placeholder'>,
     PickerStyleProps,
@@ -159,7 +159,7 @@ const iconCenterWrapper = style({
   }
 });
 let InsideSelectValueContext = createContext(false);
-function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLButtonElement>) {
+function Picker<T>(props: PickerProps<T>, ref: FocusableRef<HTMLButtonElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, PickerContext);
   let domRef = useFocusableRef(ref);
   props = useFormProps(props);

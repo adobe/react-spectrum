@@ -178,7 +178,7 @@ export interface ComboBoxStateOptions<T, M extends SelectionMode = 'single'>
  * of items from props and manages the option selection state of the combo box. In addition, it tracks the input value,
  * focus state, and other properties of the combo box.
  */
-export function useComboBoxState<T extends object, M extends SelectionMode = 'single'>(
+export function useComboBoxState<T, M extends SelectionMode = 'single'>(
   props: ComboBoxStateOptions<T, M>
 ): ComboBoxState<T, M> {
   let {
@@ -627,7 +627,7 @@ export function useComboBoxState<T extends object, M extends SelectionMode = 'si
   };
 }
 
-function filterCollection<T extends object>(
+function filterCollection<T>(
   collection: Collection<Node<T>>,
   inputValue: string,
   filter: FilterFn

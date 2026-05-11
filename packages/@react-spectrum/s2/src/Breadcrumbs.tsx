@@ -140,9 +140,10 @@ const wrapper = style<BreadcrumbsStyleProps>(
 const InternalBreadcrumbsContext = createContext<Partial<BreadcrumbsProps<any>>>({});
 
 /** Breadcrumbs show hierarchy and navigational context for a user's location within an application. */
-export const Breadcrumbs = /*#__PURE__*/ (forwardRef as forwardRefType)(function Breadcrumbs<
-  T extends object
->(props: BreadcrumbsProps<T>, ref: DOMRef<HTMLOListElement>) {
+export const Breadcrumbs = /*#__PURE__*/ (forwardRef as forwardRefType)(function Breadcrumbs<T>(
+  props: BreadcrumbsProps<T>,
+  ref: DOMRef<HTMLOListElement>
+) {
   [props, ref] = useSpectrumContextProps(props, ref, BreadcrumbsContext);
   let domRef = useDOMRef(ref);
   let {

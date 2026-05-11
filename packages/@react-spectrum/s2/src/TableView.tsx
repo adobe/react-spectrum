@@ -500,9 +500,10 @@ export interface TableBodyProps<T> extends Omit<
 /**
  * The body of a `<Table>`, containing the table rows.
  */
-export const TableBody = /*#__PURE__*/ (forwardRef as forwardRefType)(function TableBody<
-  T extends object
->(props: TableBodyProps<T>, ref: DOMRef<HTMLDivElement>) {
+export const TableBody = /*#__PURE__*/ (forwardRef as forwardRefType)(function TableBody<T>(
+  props: TableBodyProps<T>,
+  ref: DOMRef<HTMLDivElement>
+) {
   let {items, renderEmptyState, children, dependencies = []} = props;
   let domRef = useDOMRef(ref);
   let {loadingState, onLoadMore} = useContext(InternalTableContext);
@@ -1066,9 +1067,10 @@ export interface TableHeaderProps<T> extends Omit<
 /**
  * A header within a `<Table>`, containing the table columns.
  */
-export const TableHeader = /*#__PURE__*/ (forwardRef as forwardRefType)(function TableHeader<
-  T extends object
->({columns, dependencies, children}: TableHeaderProps<T>, ref: DOMRef<HTMLDivElement>) {
+export const TableHeader = /*#__PURE__*/ (forwardRef as forwardRefType)(function TableHeader<T>(
+  {columns, dependencies, children}: TableHeaderProps<T>,
+  ref: DOMRef<HTMLDivElement>
+) {
   let scale = useScale();
   let {selectionBehavior, selectionMode} = useTableOptions();
   let {isQuiet} = useContext(InternalTableContext);
@@ -1843,7 +1845,7 @@ export interface RowProps<T>
 /**
  * A row within a `<Table>`.
  */
-export const Row = /*#__PURE__*/ (forwardRef as forwardRefType)(function Row<T extends object>(
+export const Row = /*#__PURE__*/ (forwardRef as forwardRefType)(function Row<T>(
   {id, columns, children, dependencies = [], ...otherProps}: RowProps<T>,
   ref: DOMRef<HTMLDivElement>
 ) {
@@ -1905,9 +1907,10 @@ const FooterContext = createContext(false);
 /**
  * A footer within a `<Table>`, containing summary rows.
  */
-export const TableFooter = /*#__PURE__*/ (forwardRef as forwardRefType)(function TableFooter<
-  T extends object
->(props: TableFooterProps<T>, ref: DOMRef<HTMLDivElement>) {
+export const TableFooter = /*#__PURE__*/ (forwardRef as forwardRefType)(function TableFooter<T>(
+  props: TableFooterProps<T>,
+  ref: DOMRef<HTMLDivElement>
+) {
   let domRef = useDOMRef(ref);
 
   return (

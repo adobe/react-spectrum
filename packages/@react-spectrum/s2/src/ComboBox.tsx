@@ -100,7 +100,7 @@ export interface ComboboxStyleProps {
    */
   size?: 'S' | 'M' | 'L' | 'XL';
 }
-export interface ComboBoxProps<T extends object>
+export interface ComboBoxProps<T>
   extends
     Omit<
       AriaComboBoxProps<T>,
@@ -379,9 +379,10 @@ let InternalComboboxContext = createContext<{size: 'S' | 'M' | 'L' | 'XL'}>({siz
 /**
  * ComboBox allow users to choose a single option from a collapsible list of options when space is limited.
  */
-export const ComboBox = /*#__PURE__*/ (forwardRef as forwardRefType)(function ComboBox<
-  T extends object
->(props: ComboBoxProps<T>, ref: Ref<TextFieldRef>) {
+export const ComboBox = /*#__PURE__*/ (forwardRef as forwardRefType)(function ComboBox<T>(
+  props: ComboBoxProps<T>,
+  ref: Ref<TextFieldRef>
+) {
   [props, ref] = useSpectrumContextProps(props, ref, ComboBoxContext);
 
   let formContext = useContext(FormContext);
@@ -521,11 +522,11 @@ export function ComboBoxItem(props: ComboBoxItemProps): ReactNode {
   );
 }
 
-export interface ComboBoxSectionProps<T extends object> extends Omit<
+export interface ComboBoxSectionProps<T> extends Omit<
   ListBoxSectionProps<T>,
   'style' | 'className' | 'render' | keyof GlobalDOMAttributes
 > {}
-export function ComboBoxSection<T extends object>(props: ComboBoxSectionProps<T>): ReactNode {
+export function ComboBoxSection<T>(props: ComboBoxSectionProps<T>): ReactNode {
   let {size} = useContext(InternalComboboxContext);
   return (
     <>

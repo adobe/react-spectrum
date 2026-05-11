@@ -28,7 +28,7 @@ const itemStyles = tv({
   }
 });
 
-export function Tree<T extends object>({children, ...props}: TreeProps<T>) {
+export function Tree<T>({children, ...props}: TreeProps<T>) {
   return (
     <AriaTree
       {...props}

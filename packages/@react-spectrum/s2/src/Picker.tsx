@@ -119,7 +119,7 @@ export interface PickerStyleProps {
 }
 
 type SelectionMode = 'single' | 'multiple';
-export interface PickerProps<T extends object, M extends SelectionMode = 'single'>
+export interface PickerProps<T, M extends SelectionMode = 'single'>
   extends
     Omit<
       AriaSelectProps<T, M>,
@@ -315,7 +315,7 @@ let InsideSelectValueContext = createContext(false);
  * Pickers allow users to choose a single option from a collapsible list of options when space is limited.
  */
 export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Picker<
-  T extends object,
+  T,
   M extends SelectionMode = 'single'
 >(props: PickerProps<T, M>, ref: FocusableRef<HTMLButtonElement>) {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
@@ -565,7 +565,7 @@ let INTERACTIVE_ARIA_ROLES = new Set([
   'treeitem'
 ]);
 
-interface PickerButtonInnerProps<T extends object>
+interface PickerButtonInnerProps<T>
   extends
     PickerStyleProps,
     Omit<AriaSelectRenderProps, 'isRequired' | 'isFocused'>,
@@ -575,7 +575,7 @@ interface PickerButtonInnerProps<T extends object>
 }
 
 // Needs to be hidable component or otherwise the PressResponder throws a warning when rendered in the fake DOM and tries to register
-const PickerButton = createHideableComponent(function PickerButton<T extends object>(
+const PickerButton = createHideableComponent(function PickerButton<T>(
   props: PickerButtonInnerProps<T>
 ) {
   let {
@@ -875,11 +875,11 @@ function DefaultProvider({
   return <context.Provider value={value}>{children}</context.Provider>;
 }
 
-export interface PickerSectionProps<T extends object> extends Omit<
+export interface PickerSectionProps<T> extends Omit<
   ListBoxSectionProps<T>,
   'style' | 'className' | 'render' | keyof GlobalDOMAttributes
 > {}
-export function PickerSection<T extends object>(props: PickerSectionProps<T>): ReactNode {
+export function PickerSection<T>(props: PickerSectionProps<T>): ReactNode {
   let {size} = useContext(InternalPickerContext);
   return (
     <>

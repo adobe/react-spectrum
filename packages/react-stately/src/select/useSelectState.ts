@@ -140,7 +140,7 @@ export interface SelectState<T, M extends SelectionMode = 'single'>
  * of items from props, handles the open state for the popup menu, and manages
  * multiple selection state.
  */
-export function useSelectState<T extends object, M extends SelectionMode = 'single'>(
+export function useSelectState<T, M extends SelectionMode = 'single'>(
   props: SelectStateOptions<T, M>
 ): SelectState<T, M> {
   let {selectionMode = 'single' as M, shouldCloseOnSelect = selectionMode === 'single'} = props;

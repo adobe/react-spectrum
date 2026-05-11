@@ -150,11 +150,7 @@ interface TagGroupInnerProps<T> {
   collection: any;
 }
 
-function TagGroupInner<T extends object>({
-  props,
-  forwardedRef: ref,
-  collection
-}: TagGroupInnerProps<T>) {
+function TagGroupInner<T>({props, forwardedRef: ref, collection}: TagGroupInnerProps<T>) {
   let tagListRef = useRef<HTMLElement>(null);
   // Extract the user provided id so it doesn't clash with the collection id provided by Autocomplete
   let {id, ...otherProps} = props;
@@ -218,9 +214,10 @@ function TagGroupInner<T extends object>({
 /**
  * A tag list is a container for tags within a TagGroup.
  */
-export const TagList = /*#__PURE__*/ (forwardRef as forwardRefType)(function TagList<
-  T extends object
->(props: TagListProps<T>, ref: ForwardedRef<HTMLDivElement>): JSX.Element {
+export const TagList = /*#__PURE__*/ (forwardRef as forwardRefType)(function TagList<T>(
+  props: TagListProps<T>,
+  ref: ForwardedRef<HTMLDivElement>
+): JSX.Element {
   let state = useContext(ListStateContext);
   return state ? <TagListInner props={props} forwardedRef={ref} /> : <Collection {...props} />;
 });
@@ -230,7 +227,7 @@ interface TagListInnerProps<T> {
   forwardedRef: ForwardedRef<HTMLDivElement>;
 }
 
-function TagListInner<T extends object>({props, forwardedRef}: TagListInnerProps<T>) {
+function TagListInner<T>({props, forwardedRef}: TagListInnerProps<T>) {
   let state = useContext(ListStateContext)!;
   let {CollectionRoot} = useContext(CollectionRendererContext);
   let [gridProps, ref] = useContextProps({}, forwardedRef, TagListContext);

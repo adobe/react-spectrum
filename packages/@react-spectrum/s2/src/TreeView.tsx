@@ -158,9 +158,10 @@ let InternalTreeViewContext = createContext<{selectionStyle?: 'highlight' | 'che
 /**
  * A tree view provides users with a way to navigate nested hierarchical information.
  */
-export const TreeView = /*#__PURE__*/ (forwardRef as forwardRefType)(function TreeView<
-  T extends object
->(props: TreeViewProps<T>, ref: DOMRef<HTMLDivElement>) {
+export const TreeView = /*#__PURE__*/ (forwardRef as forwardRefType)(function TreeView<T>(
+  props: TreeViewProps<T>,
+  ref: DOMRef<HTMLDivElement>
+) {
   let {children, selectionStyle = 'checkbox', UNSAFE_className, UNSAFE_style} = props;
   let scale = useScale();
 
