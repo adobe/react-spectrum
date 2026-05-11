@@ -99,10 +99,26 @@ jobs:
           if [ -s /tmp/diff-current.txt ] && ([ "$NEW_RELEASE" = "true" ] || [ -s /tmp/weekly-delta.txt ]); then
             echo "Committing diff to snapshots repo"
             cp /tmp/diff-current.txt snapshots/diffs/$TODAY.txt
+            mkdir -p snapshots/deltas
+            if [ -s /tmp/weekly-delta.txt ]; then
+              # Save processed delta: strip > / < markers and line-number markers,
+              # split into two labeled sections so it can be passed directly to the model
+              {
+                echo "=== NEW API CHANGES THIS WEEK (not in last week's diff) ==="
+                grep '^> ' /tmp/weekly-delta.txt | sed 's/^> //'
+                RELEASED=$(grep '^< ' /tmp/weekly-delta.txt | sed 's/^< //')
+                if [ -n "$RELEASED" ]; then
+                  echo ""
+                  echo "=== API CHANGES RELEASED SINCE LAST WEEK (were in last week's diff, now gone) ==="
+                  echo "$RELEASED"
+                fi
+              } > snapshots/deltas/$TODAY.txt
+            fi
             cd snapshots
             git config user.email "github-actions@github.com"
             git config user.name "GitHub Actions"
             git add diffs/$TODAY.txt
+            [ -f deltas/$TODAY.txt ] && git add deltas/$TODAY.txt
             echo "$CURRENT_PUBLISH" > last-publish-hash.txt
             git add last-publish-hash.txt
             echo "=== Staged changes ==="
@@ -153,9 +169,9 @@ jobs:
           elif new_release:
             message = f"📊 Weekly API Diff — {today}\n\nNew release since last diff — resetting baseline. Full diff vs release: {diff_url}\n\nReact ✅ if changes look expected, or 🚨 if something looks wrong."
           else:
-            prev_file = prev_files[0] if prev_files else None
-            prev_content = open(prev_file).read()[:2000] if prev_file else "(none — first run)"
-            curr_content = open('/tmp/diff-current.txt').read()[:2000]
+            # Read the already-processed delta saved by the shell step
+            delta_path = f"{workspace}/snapshots/deltas/{today}.txt"
+            model_input = open(delta_path).read() if os.path.exists(delta_path) else ""
 
             # Extract classification rules from prompt.md (single source of truth)
             prompt_md = open(f"{workspace}/scripts/weekly-api-diff/prompt.md").read()
@@ -169,11 +185,10 @@ jobs:
               "messages": [{
                 "role": "user",
                 "content": (
-                  f"Summarize what API changes are NEW this week in react-spectrum. Use bullet points, one per component or interface. Keep each bullet to one short sentence — name the component/prop/interface and what kind of change it is (added, removed, changed), but do NOT list type signatures, parameter details, or specifics. Aim for breadth over depth: cover everything new, briefly.\n\n"
-                  f"IMPORTANT: Only report changes that are explicitly stated in the THIS WEEK section below. Do not infer, extrapolate, or add any changes from your training knowledge — if a component or prop is not explicitly mentioned in the text, do not include it.\n\n"
+                  f"Summarize this week's react-spectrum API changes using bullet points, one per component or interface. Keep each bullet to one short sentence — name the component/prop/interface and what kind of change it is (added, removed, changed signature), but do NOT spell out type signatures or parameter details. Aim for breadth over depth.\n\n"
+                  f"IMPORTANT: Only report what is explicitly listed below. Do not infer or add anything from your training knowledge.\n\n"
                   f"{rules}\n\n"
-                  f"LAST WEEK's pending API changes (anything missing from this week was released — do NOT report it as a new change):\n{prev_content}\n\n"
-                  f"THIS WEEK's pending API changes (report only what is new or different vs last week, and only what is explicitly listed):\n{curr_content}"
+                  f"{model_input}"
                 )
               }]
             }
