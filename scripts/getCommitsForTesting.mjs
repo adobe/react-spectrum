@@ -43,7 +43,10 @@ async function writeTestingCSV() {
 }
 
 export async function generateData(startDate, endDate) {
-  let data = await listCommits(startDate, endDate);
+  let [data, openOffPRs] = await Promise.all([
+    listCommits(startDate, endDate),
+    listOpenOffPRs()
+  ]);
 
   // First pass: extract PR numbers from commit messages
   let commitsWithPRs = [];
@@ -63,7 +66,33 @@ export async function generateData(startDate, endDate) {
   let racPRs = [];
   let v3PRs = [];
   let otherPRs = [];
-  let offPRs = [];
+
+  // Off PRs are currently open PRs with the 'test off PR' label
+  let offPRs = openOffPRs.map(pr => {
+    let labels = new Set(pr.labels.map(l => l.name));
+    let matches = [...validLabels].filter(name => labels.has(name));
+
+    let component = '';
+    if (matches.length > 0) {
+      if (matches.includes('documentation')) {
+        component = 'Docs'
+      } else {
+        component = matches.sort().join('/');
+      }
+    }
+
+    if (matches.length === 0) {
+      component = removePRNumber(pr.title);
+    }
+
+    let testInstructions = extractTestInstructions(pr.body);
+    return [
+      component,
+      testInstructions.length > 300 ? 'See PR for testing instructions' : testInstructions,
+      pr.html_url,
+      removePRNumber(pr.title)
+    ];
+  });
 
   for (let i = 0; i < commitsWithPRs.length; i++) {
     let {title, num} = commitsWithPRs[i];
@@ -102,12 +131,9 @@ export async function generateData(startDate, endDate) {
     if (
       !labels.has('S2') &&
       !labels.has('RAC') &&
-      !labels.has('v3') &&
-      !labels.has('test off PR')
+      !labels.has('v3')
     ) {
       otherPRs.push(row);
-    } else if (labels.has('test off PR')) {
-      offPRs.push(row);
     } else {
       if (labels.has('S2')) {
         s2PRs.push(row);
@@ -151,6 +177,26 @@ export async function generateCSV(startDate, endDate) {
   let csv = `V3 \n${formatRows(v3PRs)}\n\nRainbow \n${formatRows(s2PRs)}\n\nRAC \n${formatRows(racPRs)}\n\nOff PR \n${formatRows(offPRs)}\n\nOther \n${formatRows(otherPRs)}\n`;
 
   return {csv, counts};
+}
+
+async function listOpenOffPRs() {
+  let allPRs = [];
+  let page = 1;
+  let lastPageSize;
+  do {
+    let res = await octokit.issues.listForRepo({
+      owner: 'adobe',
+      repo: 'react-spectrum',
+      state: 'open',
+      labels: 'test off PR',
+      per_page: 100,
+      page
+    });
+    allPRs.push(...res.data.filter(issue => issue.pull_request));
+    lastPageSize = res.data.length;
+    page++;
+  } while (lastPageSize === 100);
+  return allPRs;
 }
 
 async function listCommits(startDate, endDate) {
@@ -300,6 +346,7 @@ let validLabels = new Set([
   'IllustratedMessage',
   'Image',
   'InlineAlert',
+  'LabeledValue',
   'Link',
   'LinkButton',
   'ListBox',
