@@ -166,11 +166,22 @@ function setupGlobalFocusEvents(element?: HTMLElement | null) {
   // However, we need to detect other cases when a focus event occurs without
   // a preceding user event (e.g. screen reader focus). Overriding the focus
   // method on HTMLElement.prototype is a bit hacky, but works.
+  // defineProperty (not assignment) so this works even if `focus` is currently
+  // a getter-only accessor — e.g. when @testing-library/user-event's setup()
+  // has instrumented it. Plain assignment throws in that case.
   let focus = windowObject.HTMLElement.prototype.focus;
-  windowObject.HTMLElement.prototype.focus = function () {
-    hasEventBeforeFocus = true;
-    focus.apply(this, arguments as unknown as [options?: FocusOptions | undefined]);
-  };
+  try {
+    Object.defineProperty(windowObject.HTMLElement.prototype, 'focus', {
+      configurable: true,
+      writable: true,
+      value: function () {
+        hasEventBeforeFocus = true;
+        focus.apply(this, arguments as unknown as [options?: FocusOptions | undefined]);
+      }
+    });
+  } catch {
+    // Non-configurable accessor: can't wrap. Other listeners still cover most cases.
+  }
 
   documentObject.addEventListener('keydown', handleKeyboardEvent, true);
   documentObject.addEventListener('keyup', handleKeyboardEvent, true);
@@ -212,7 +223,15 @@ const tearDownWindowFocusTracking = (element, loadListener?: () => void) => {
   if (!hasSetupGlobalListeners.has(windowObject)) {
     return;
   }
-  windowObject.HTMLElement.prototype.focus = hasSetupGlobalListeners.get(windowObject)!.focus;
+  try {
+    Object.defineProperty(windowObject.HTMLElement.prototype, 'focus', {
+      configurable: true,
+      writable: true,
+      value: hasSetupGlobalListeners.get(windowObject)!.focus
+    });
+  } catch {
+    // See setupGlobalFocusEvents.
+  }
 
   documentObject.removeEventListener('keydown', handleKeyboardEvent, true);
   documentObject.removeEventListener('keyup', handleKeyboardEvent, true);
