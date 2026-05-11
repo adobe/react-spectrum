@@ -294,6 +294,11 @@ export function useTableColumnResize<T>(
       ) {
         endResize(item);
       }
+    },
+    onPressEnd: e => {
+      if (state.resizingColumn != null) {
+        endResize(item);
+      }
     }
   });
   let {visuallyHiddenProps} = useVisuallyHidden();

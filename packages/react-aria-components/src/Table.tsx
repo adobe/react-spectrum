@@ -1379,7 +1379,10 @@ export const ColumnResizer = forwardRef(function ColumnResizer(
   }
 
   let DOMProps = filterDOMProps(props, {global: true});
+  
 
+  // Cursor overlay is used to style the cursor against the entire screen.
+  // Do not turn off pointer events or the cursor will no longer be styled.
   return (
     <dom.div
       ref={objectRef}
@@ -1395,7 +1398,7 @@ export const ColumnResizer = forwardRef(function ColumnResizer(
       {isResizing &&
         isMouseDown &&
         ReactDOM.createPortal(
-          <div style={{position: 'fixed', top: 0, left: 0, bottom: 0, right: 0, cursor, pointerEvents: 'none'}} />,
+          <div style={{position: 'fixed', top: 0, left: 0, bottom: 0, right: 0, cursor}} data-testid="cursor-overlay" />,
           document.body
         )}
     </dom.div>
