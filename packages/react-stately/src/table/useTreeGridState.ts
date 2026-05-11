@@ -72,7 +72,7 @@ export function UNSTABLE_useTreeGridState<T extends object>(
       showDragButtons: showDragButtons,
       selectionMode,
       columns: []
-      // eslint-disable-next-line react-hooks/exhaustive-deps
+       
     }),
     [children, showSelectionCheckboxes, selectionMode, showDragButtons]
   );

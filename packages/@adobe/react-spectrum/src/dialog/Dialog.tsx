@@ -104,7 +104,7 @@ export const Dialog = React.forwardRef(function Dialog(props: SpectrumDialogProp
         }),
         align: 'end'
       }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
+       
     }),
     [hasFooter, hasHeader, titleProps]
   );

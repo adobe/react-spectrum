@@ -87,7 +87,7 @@ export function useRenderDropIndicator(
         );
       }
       // We invalidate whenever the target changes.
-      // eslint-disable-next-line react-hooks/exhaustive-deps
+       
     },
     [dropState?.target, isVirtualDragging, renderDropIndicator]
   );
