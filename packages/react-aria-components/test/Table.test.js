@@ -1842,7 +1842,7 @@ describe('Table', () => {
     describe('clicking directly on the resizer, no movement', () => {
       installPointerEvent();
       it('should end resize when clicking directly on the resizer, no movement', async () => {
-        let {getAllByTestId, debug} = render(<ControlledResizableTable />);
+        let {getAllByTestId} = render(<ControlledResizableTable />);
         act(() => {
           setInteractionModality('pointer');
         });

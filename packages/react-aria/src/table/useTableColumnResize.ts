@@ -295,7 +295,7 @@ export function useTableColumnResize<T>(
         endResize(item);
       }
     },
-    onPressEnd: e => {
+    onPressEnd: () => {
       if (state.resizingColumn != null) {
         endResize(item);
       }
