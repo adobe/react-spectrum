@@ -1381,11 +1381,11 @@ const editableCell = style<
   color: {
     default: baseColor('neutral'),
     isSaving: baseColor('neutral-subdued'),
+    forcedColors: 'ButtonText',
     isDisabled: {
       default: 'disabled',
       forcedColors: 'GrayText'
-    },
-    forcedColors: 'ButtonText'
+    }
   },
   paddingY: centerPadding(),
   boxSizing: 'border-box',
@@ -1748,7 +1748,6 @@ const rowBackgroundColor = {
     default: 'gray-25',
     isQuiet: '--s2-container-bg'
   },
-  isFocusVisibleWithin: colorMix('gray-25', 'gray-900', 7), // table-row-hover-color
   isHovered: colorMix('gray-25', 'gray-900', 7), // table-row-hover-color
   isPressed: colorMix('gray-25', 'gray-900', 10), // table-row-hover-color
   isSelected: {
@@ -1760,7 +1759,6 @@ const rowBackgroundColor = {
   selectionStyle: {
     highlight: {
       default: 'gray-25',
-      isFocusVisibleWithin: colorMix('gray-25', 'gray-900', 7), // table-row-hover-color
       isHovered: colorMix('gray-25', 'gray-900', 7), // table-row-hover-color
       isPressed: colorMix('gray-25', 'gray-900', 10), // table-row-hover-color
       isSelected: {
@@ -1780,12 +1778,12 @@ const rowBackgroundColor = {
 const rowTextColor = {
   default: baseColor('neutral-subdued'),
   isSelected: baseColor('neutral'),
+  forcedColors: 'ButtonText',
   isDisabled: {
     default: 'disabled',
     forcedColors: 'GrayText'
   },
-  isInFooter: 'neutral',
-  forcedColors: 'ButtonText'
+  isInFooter: 'neutral'
 } as const;
 
 const row = style<
@@ -1941,10 +1939,11 @@ const row = style<
     selectionStyle: {
       highlight: {
         default: '[inset 0 -1px 0px var(--borderColorGray)]',
-        isNextSelected: '[inset 0 0 0 var(--borderColorGray)]',
-        isSelected: {
-          isNextSelected: '[inset 0 -1px 0px var(--borderColorGray)]'
-        }
+        isNextSelected: '[inset 0 0 0 var(--borderColorGray)]'
+        // TODO: Determine if we want to support gray dividers between selected grouped rows
+        // isSelected: {
+        //   isNextSelected: '[inset 0 -1px 0px var(--borderColorGray)]'
+        // }
       }
     }
   },
@@ -2041,7 +2040,7 @@ export const Row = /*#__PURE__*/ (forwardRef as forwardRefType)(function Row<T e
       id={id}
       dependencies={[...dependencies, columns]}
       isDisabled={isInFooter}
-      disabledBehavior="selection"
+      disabledBehavior={isInFooter ? 'selection' : undefined}
       className={renderProps =>
         row({
           ...renderProps,
