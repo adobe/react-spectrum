@@ -953,10 +953,7 @@ export function ListViewItem(props: ListViewItemProps): ReactNode {
   );
 }
 
-function isNextSelected(
-  id: Key | undefined,
-  state: ListState<unknown>
-) {
+function isNextSelected(id: Key | undefined, state: ListState<unknown>) {
   if (id == null || !state) {
     return false;
   }
@@ -964,10 +961,7 @@ function isNextSelected(
   return keyAfter != null && state.selectionManager.isSelected(keyAfter);
 }
 
-function isPrevSelected(
-  id: Key | undefined,
-  state: ListState<unknown>
-) {
+function isPrevSelected(id: Key | undefined, state: ListState<unknown>) {
   if (id == null || !state) {
     return false;
   }
@@ -975,20 +969,14 @@ function isPrevSelected(
   return keyBefore != null && state.selectionManager.isSelected(keyBefore);
 }
 
-function isFirstItem(
-  id: Key | undefined,
-  state: ListState<unknown>
-) {
+function isFirstItem(id: Key | undefined, state: ListState<unknown>) {
   if (id == null || !state) {
     return false;
   }
   return state.collection.getFirstKey() === id;
 }
 
-function isLastItem(
-  id: Key | undefined,
-  state: ListState<unknown>
-) {
+function isLastItem(id: Key | undefined, state: ListState<unknown>) {
   if (id == null || !state) {
     return false;
   }

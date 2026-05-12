@@ -598,7 +598,7 @@ const cellFocus = {
       default: 'Highlight'
     }
   },
-  borderRadius: '[5px]',
+  borderRadius: '[5px]'
 } as const;
 
 function CellFocusRing() {
@@ -1182,7 +1182,7 @@ const divider = style({
   height: 'full',
   insetEnd: 0,
   backgroundColor: 'var(--borderColorGray)',
-  // set a z index on the divider so the highlight selection border and focus ring can override it 
+  // set a z index on the divider so the highlight selection border and focus ring can override it
   zIndex: 1
 });
 
@@ -2093,10 +2093,7 @@ export const TableFooter = /*#__PURE__*/ (forwardRef as forwardRefType)(function
   );
 });
 
-export function isNextSelected(
-  id: Key | undefined,
-  state: TableState<unknown> 
-) {
+export function isNextSelected(id: Key | undefined, state: TableState<unknown>) {
   if (id == null || !state) {
     return false;
   }
@@ -2104,14 +2101,10 @@ export function isNextSelected(
   return keyAfter != null && state.selectionManager.isSelected(keyAfter);
 }
 
-export function isPrevSelected(
-  id: Key | undefined,
-  state: TableState<unknown>
-) {
+export function isPrevSelected(id: Key | undefined, state: TableState<unknown>) {
   if (id == null || !state) {
     return false;
   }
   let keyBefore = state.collection.getKeyBefore(id);
   return keyBefore != null && state.selectionManager.isSelected(keyBefore);
 }
-

@@ -702,10 +702,7 @@ function isNextSelected(id: Key | undefined, state: TreeState<unknown>) {
   return keyAfter != null && state.selectionManager.isSelected(keyAfter);
 }
 
-function isPrevSelected(
-  id: Key | undefined,
-  state: TreeState<unknown>
-) {
+function isPrevSelected(id: Key | undefined, state: TreeState<unknown>) {
   if (id == null || !state) {
     return false;
   }
@@ -713,10 +710,7 @@ function isPrevSelected(
   return keyBefore != null && state.selectionManager.isSelected(keyBefore);
 }
 
-function isFirstItem(
-  id: Key | undefined,
-  state: TreeState<unknown>
-) {
+function isFirstItem(id: Key | undefined, state: TreeState<unknown>) {
   if (id == null || !state) {
     return false;
   }
