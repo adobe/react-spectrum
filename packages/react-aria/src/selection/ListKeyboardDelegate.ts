@@ -10,20 +10,31 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, Direction, DisabledBehavior, Key, KeyboardDelegate, LayoutDelegate, Node, Orientation, Rect, RefObject} from '@react-types/shared';
+import {
+  Collection,
+  Direction,
+  DisabledBehavior,
+  Key,
+  KeyboardDelegate,
+  LayoutDelegate,
+  Node,
+  Orientation,
+  Rect,
+  RefObject
+} from '@react-types/shared';
 import {DOMLayoutDelegate} from './DOMLayoutDelegate';
 import {isScrollable} from '../utils/isScrollable';
 
 interface ListKeyboardDelegateOptions<T> {
-  collection: Collection<Node<T>>,
-  ref: RefObject<HTMLElement | null>,
-  collator?: Intl.Collator,
-  layout?: 'stack' | 'grid',
-  orientation?: Orientation,
-  direction?: Direction,
-  disabledKeys?: Set<Key>,
-  disabledBehavior?: DisabledBehavior,
-  layoutDelegate?: LayoutDelegate
+  collection: Collection<Node<T>>;
+  ref: RefObject<HTMLElement | null>;
+  collator?: Intl.Collator;
+  layout?: 'stack' | 'grid';
+  orientation?: Orientation;
+  direction?: Direction;
+  disabledKeys?: Set<Key>;
+  disabledBehavior?: DisabledBehavior;
+  layoutDelegate?: LayoutDelegate;
 }
 
 export class ListKeyboardDelegate<T> implements KeyboardDelegate {
@@ -37,7 +48,13 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
   private direction?: Direction;
   private layoutDelegate: LayoutDelegate;
 
-  constructor(collection: Collection<Node<T>>, disabledKeys: Set<Key>, ref: RefObject<HTMLElement | null>, collator?: Intl.Collator, expandedKeys?: Set<Key>);
+  constructor(
+    collection: Collection<Node<T>>,
+    disabledKeys: Set<Key>,
+    ref: RefObject<HTMLElement | null>,
+    collator?: Intl.Collator,
+    expandedKeys?: Set<Key>
+  );
   constructor(options: ListKeyboardDelegateOptions<T>);
   constructor(...args: any[]) {
     if (args.length === 1) {
@@ -71,10 +88,18 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
   }
 
   private isDisabled(item: Node<unknown>) {
-    return this.disabledBehavior === 'all' && (item.props?.isDisabled || this.disabledKeys.has(item.key)) && item.props?.disabledBehavior !== 'selection';
+    return (
+      this.disabledBehavior === 'all' &&
+      (item.props?.isDisabled || this.disabledKeys.has(item.key)) &&
+      item.props?.disabledBehavior !== 'selection'
+    );
   }
 
-  private findNextNonDisabled(key: Key | null, getNext: (key: Key) => Key | null, includeDisabled = false): Key | null {
+  private findNextNonDisabled(
+    key: Key | null,
+    getNext: (key: Key) => Key | null,
+    includeDisabled = false
+  ): Key | null {
     let nextKey = key;
     while (nextKey != null) {
       let item = this.collection.getItem(nextKey);
@@ -91,13 +116,21 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
   getNextKey(key: Key, options?: {includeDisabled?: boolean}): Key | null {
     let nextKey: Key | null = key;
     nextKey = this.collection.getKeyAfter(nextKey);
-    return this.findNextNonDisabled(nextKey, key => this.collection.getKeyAfter(key), options?.includeDisabled);
+    return this.findNextNonDisabled(
+      nextKey,
+      key => this.collection.getKeyAfter(key),
+      options?.includeDisabled
+    );
   }
 
   getPreviousKey(key: Key, options?: {includeDisabled?: boolean}): Key | null {
     let nextKey: Key | null = key;
     nextKey = this.collection.getKeyBefore(nextKey);
-    return this.findNextNonDisabled(nextKey, key => this.collection.getKeyBefore(key), options?.includeDisabled);
+    return this.findNextNonDisabled(
+      nextKey,
+      key => this.collection.getKeyBefore(key),
+      options?.includeDisabled
+    );
   }
 
   private findKey(
@@ -134,7 +167,7 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
 
   getKeyBelow(key: Key, options?: {includeDisabled?: boolean}): Key | null {
     if (this.layout === 'grid' && this.orientation === 'vertical') {
-      return this.findKey(key, (key) => this.getNextKey(key, options), this.isSameRow);
+      return this.findKey(key, key => this.getNextKey(key, options), this.isSameRow);
     } else {
       return this.getNextKey(key, options);
     }
@@ -142,7 +175,7 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
 
   getKeyAbove(key: Key, options?: {includeDisabled?: boolean}): Key | null {
     if (this.layout === 'grid' && this.orientation === 'vertical') {
-      return this.findKey(key, (key) => this.getPreviousKey(key, options), this.isSameRow);
+      return this.findKey(key, key => this.getPreviousKey(key, options), this.isSameRow);
     } else {
       return this.getPreviousKey(key, options);
     }
@@ -158,14 +191,22 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
     let layoutDelegateMethod = this.direction === 'ltr' ? 'getKeyRightOf' : 'getKeyLeftOf';
     if (this.layoutDelegate[layoutDelegateMethod]) {
       key = this.layoutDelegate[layoutDelegateMethod](key);
-      return this.findNextNonDisabled(key, key => this.layoutDelegate[layoutDelegateMethod](key), options?.includeDisabled);
+      return this.findNextNonDisabled(
+        key,
+        key => this.layoutDelegate[layoutDelegateMethod](key),
+        options?.includeDisabled
+      );
     }
 
     if (this.layout === 'grid') {
       if (this.orientation === 'vertical') {
         return this.getNextColumn(key, this.direction === 'rtl', options);
       } else {
-        return this.findKey(key, (key) => this.getNextColumn(key, this.direction === 'rtl', options), this.isSameColumn);
+        return this.findKey(
+          key,
+          key => this.getNextColumn(key, this.direction === 'rtl', options),
+          this.isSameColumn
+        );
       }
     } else if (this.orientation === 'horizontal') {
       return this.getNextColumn(key, this.direction === 'rtl', options);
@@ -178,14 +219,22 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
     let layoutDelegateMethod = this.direction === 'ltr' ? 'getKeyLeftOf' : 'getKeyRightOf';
     if (this.layoutDelegate[layoutDelegateMethod]) {
       key = this.layoutDelegate[layoutDelegateMethod](key);
-      return this.findNextNonDisabled(key, key => this.layoutDelegate[layoutDelegateMethod](key), options?.includeDisabled);
+      return this.findNextNonDisabled(
+        key,
+        key => this.layoutDelegate[layoutDelegateMethod](key),
+        options?.includeDisabled
+      );
     }
 
     if (this.layout === 'grid') {
       if (this.orientation === 'vertical') {
         return this.getNextColumn(key, this.direction === 'ltr', options);
       } else {
-        return this.findKey(key, (key) => this.getNextColumn(key, this.direction === 'ltr', options), this.isSameColumn);
+        return this.findKey(
+          key,
+          key => this.getNextColumn(key, this.direction === 'ltr', options),
+          this.isSameColumn
+        );
       }
     } else if (this.orientation === 'horizontal') {
       return this.getNextColumn(key, this.direction === 'ltr', options);
@@ -217,14 +266,20 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
 
     let nextKey: Key | null = key;
     if (this.orientation === 'horizontal') {
-      let pageX = Math.max(0, itemRect.x + itemRect.width - this.layoutDelegate.getVisibleRect().width);
+      let pageX = Math.max(
+        0,
+        itemRect.x + itemRect.width - this.layoutDelegate.getVisibleRect().width
+      );
 
       while (itemRect && itemRect.x > pageX && nextKey != null) {
         nextKey = this.getKeyAbove(nextKey);
         itemRect = nextKey == null ? null : this.layoutDelegate.getItemRect(nextKey);
       }
     } else {
-      let pageY = Math.max(0, itemRect.y + itemRect.height - this.layoutDelegate.getVisibleRect().height);
+      let pageY = Math.max(
+        0,
+        itemRect.y + itemRect.height - this.layoutDelegate.getVisibleRect().height
+      );
 
       while (itemRect && itemRect.y > pageY && nextKey != null) {
         nextKey = this.getKeyAbove(nextKey);
@@ -248,14 +303,20 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
 
     let nextKey: Key | null = key;
     if (this.orientation === 'horizontal') {
-      let pageX = Math.min(this.layoutDelegate.getContentSize().width, itemRect.x - itemRect.width + this.layoutDelegate.getVisibleRect().width);
+      let pageX = Math.min(
+        this.layoutDelegate.getContentSize().width,
+        itemRect.x - itemRect.width + this.layoutDelegate.getVisibleRect().width
+      );
 
       while (itemRect && itemRect.x < pageX && nextKey != null) {
         nextKey = this.getKeyBelow(nextKey);
         itemRect = nextKey == null ? null : this.layoutDelegate.getItemRect(nextKey);
       }
     } else {
-      let pageY = Math.min(this.layoutDelegate.getContentSize().height, itemRect.y - itemRect.height + this.layoutDelegate.getVisibleRect().height);
+      let pageY = Math.min(
+        this.layoutDelegate.getContentSize().height,
+        itemRect.y - itemRect.height + this.layoutDelegate.getVisibleRect().height
+      );
 
       while (itemRect && itemRect.y < pageY && nextKey != null) {
         nextKey = this.getKeyBelow(nextKey);

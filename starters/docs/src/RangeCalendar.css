@@ -1,18 +1,33 @@
-@import "./theme.css";
+@import './theme.css';
 
 .react-aria-RangeCalendar {
-  width: calc(var(--spacing-9) * 7);
-  max-width: 100%;
-  container-type: inline-size;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+  overflow: auto;
+  width: 100%;
+  max-width: fit-content;
   font: var(--font-size) system-ui;
   color: var(--text-color);
+
+  .months {
+    display: flex;
+    gap: var(--spacing-3);
+  }
+
+  .month {
+    width: calc(var(--spacing-9) * 7);
+    min-width: calc(var(--spacing-7) * 7);
+    container-type: inline-size;
+  }
 
   header {
     display: flex;
     align-items: center;
     margin: 0 var(--spacing-1) var(--spacing-4) var(--spacing-1);
+    min-height: var(--spacing-8);
 
-    .react-aria-Heading {
+    .react-aria-CalendarHeading {
       flex: 1;
       margin: 0;
       text-align: center;
@@ -25,7 +40,7 @@
     border-spacing: 0;
   }
 
-  [slot=errorMessage] {
+  [slot='errorMessage'] {
     font-size: var(--font-size-sm);
     color: var(--invalid-color);
   }
@@ -62,7 +77,7 @@
       }
 
       &[data-selection-start],
-      &:is(td:first-child > *, [aria-disabled] + td > *)  {
+      &:is(td:first-child > *, [aria-disabled] + td > *) {
         border-start-start-radius: 9999px;
         border-end-start-radius: 9999px;
         border-inline-start-width: 0.5px;

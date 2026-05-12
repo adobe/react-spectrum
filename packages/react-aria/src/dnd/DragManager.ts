@@ -13,7 +13,18 @@
 import {announce} from '../live-announcer/LiveAnnouncer';
 
 import {ariaHideOutside} from '../overlays/ariaHideOutside';
-import {DragEndEvent, DragItem, DropActivateEvent, DropEnterEvent, DropEvent, DropExitEvent, DropItem, DropOperation, DropTarget as DroppableCollectionTarget, FocusableElement} from '@react-types/shared';
+import {
+  DragEndEvent,
+  DragItem,
+  DropActivateEvent,
+  DropEnterEvent,
+  DropEvent,
+  DropExitEvent,
+  DropItem,
+  DropOperation,
+  DropTarget as DroppableCollectionTarget,
+  FocusableElement
+} from '@react-types/shared';
 import {getActiveElement, getEventTarget, nodeContains} from '../utils/shadowdom/DOMFunctions';
 import {getDragModality, getTypes} from './utils';
 import {isVirtualClick, isVirtualPointerEvent} from '../utils/isVirtualEvent';
@@ -26,16 +37,16 @@ let dragSession: DragSession | null = null;
 let subscriptions = new Set<() => void>();
 
 interface DropTarget {
-  element: FocusableElement,
-  preventFocusOnDrop?: boolean,
-  getDropOperation?: (types: Set<string>, allowedOperations: DropOperation[]) => DropOperation,
-  onDropEnter?: (e: DropEnterEvent, dragTarget: DragTarget) => void,
-  onDropExit?: (e: DropExitEvent) => void,
-  onDropTargetEnter?: (target: DroppableCollectionTarget | null) => void,
-  onDropActivate?: (e: DropActivateEvent, target: DroppableCollectionTarget | null) => void,
-  onDrop?: (e: DropEvent, target: DroppableCollectionTarget | null) => void,
-  onKeyDown?: (e: KeyboardEvent, dragTarget: DragTarget) => void,
-  activateButtonRef?: RefObject<FocusableElement | null>
+  element: FocusableElement;
+  preventFocusOnDrop?: boolean;
+  getDropOperation?: (types: Set<string>, allowedOperations: DropOperation[]) => DropOperation;
+  onDropEnter?: (e: DropEnterEvent, dragTarget: DragTarget) => void;
+  onDropExit?: (e: DropExitEvent) => void;
+  onDropTargetEnter?: (target: DroppableCollectionTarget | null) => void;
+  onDropActivate?: (e: DropActivateEvent, target: DroppableCollectionTarget | null) => void;
+  onDrop?: (e: DropEvent, target: DroppableCollectionTarget | null) => void;
+  onKeyDown?: (e: KeyboardEvent, dragTarget: DragTarget) => void;
+  activateButtonRef?: RefObject<FocusableElement | null>;
 }
 
 export function registerDropTarget(target: DropTarget) {
@@ -48,10 +59,10 @@ export function registerDropTarget(target: DropTarget) {
 }
 
 interface DroppableItem {
-  element: FocusableElement,
-  target: DroppableCollectionTarget,
-  getDropOperation?: (types: Set<string>, allowedOperations: DropOperation[]) => DropOperation,
-  activateButtonRef?: RefObject<FocusableElement | null>
+  element: FocusableElement;
+  target: DroppableCollectionTarget;
+  getDropOperation?: (types: Set<string>, allowedOperations: DropOperation[]) => DropOperation;
+  activateButtonRef?: RefObject<FocusableElement | null>;
 }
 
 export function registerDropItem(item: DroppableItem) {
@@ -62,10 +73,10 @@ export function registerDropItem(item: DroppableItem) {
 }
 
 interface DragTarget {
-  element: FocusableElement,
-  items: DragItem[],
-  allowedDropOperations: DropOperation[],
-  onDragEnd?: (e: DragEndEvent) => void
+  element: FocusableElement;
+  items: DragItem[];
+  allowedDropOperations: DropOperation[];
+  onDragEnd?: (e: DragEndEvent) => void;
 }
 
 export function beginDragging(target: DragTarget, stringFormatter: LocalizedStringFormatter): void {
@@ -146,11 +157,7 @@ const CANCELED_EVENTS = [
   'focusout'
 ];
 
-const CLICK_EVENTS = [
-  'pointerup',
-  'mouseup',
-  'touchend'
-];
+const CLICK_EVENTS = ['pointerup', 'mouseup', 'touchend'];
 
 const MESSAGES = {
   keyboard: 'dragStartedKeyboard',
@@ -196,9 +203,7 @@ class DragSession {
       document.addEventListener(event, this.cancelEvent, true);
     }
 
-    this.mutationObserver = new MutationObserver(() =>
-      this.updateValidDropTargets()
-    );
+    this.mutationObserver = new MutationObserver(() => this.updateValidDropTargets());
     this.updateValidDropTargets();
 
     announce(this.stringFormatter.format(MESSAGES[getDragModality()]));
@@ -254,7 +259,11 @@ class DragSession {
   }
 
   getCurrentActivateButton(): FocusableElement | null {
-    return this.currentDropItem?.activateButtonRef?.current ?? this.currentDropTarget?.activateButtonRef?.current ?? null;
+    return (
+      this.currentDropItem?.activateButtonRef?.current ??
+      this.currentDropTarget?.activateButtonRef?.current ??
+      null
+    );
   }
 
   onFocus(e: FocusEvent): void {
@@ -325,9 +334,15 @@ class DragSession {
     if (isVirtualClick(e) || this.isVirtualClick) {
       let dropElements = dropItems.values();
       let eventTarget = getEventTarget(e) as HTMLElement;
-      let item = [...dropElements].find(item => item.element === eventTarget || nodeContains(item.activateButtonRef?.current, eventTarget));
-      let dropTarget = this.validDropTargets.find(target => nodeContains(target.element, eventTarget));
-      let activateButton = item?.activateButtonRef?.current ?? dropTarget?.activateButtonRef?.current;
+      let item = [...dropElements].find(
+        item =>
+          item.element === eventTarget || nodeContains(item.activateButtonRef?.current, eventTarget)
+      );
+      let dropTarget = this.validDropTargets.find(target =>
+        nodeContains(target.element, eventTarget)
+      );
+      let activateButton =
+        item?.activateButtonRef?.current ?? dropTarget?.activateButtonRef?.current;
       if (nodeContains(activateButton, eventTarget) && dropTarget) {
         this.activate(dropTarget, item);
         return;
@@ -355,7 +370,10 @@ class DragSession {
   cancelEvent(e: Event): void {
     // Allow focusin and focusout on the drag target so focus ring works properly.
     let eventTarget = getEventTarget(e);
-    if ((e.type === 'focusin' || e.type === 'focusout') && (eventTarget === this.dragTarget?.element || eventTarget === this.getCurrentActivateButton())) {
+    if (
+      (e.type === 'focusin' || e.type === 'focusout') &&
+      (eventTarget === this.dragTarget?.element || eventTarget === this.getCurrentActivateButton())
+    ) {
       return;
     }
 
@@ -405,17 +423,32 @@ class DragSession {
 
     // Filter out drop targets that contain valid items. We don't want to stop hiding elements
     // other than the drop items that exist inside the collection.
-    let visibleDropTargets = this.validDropTargets.filter(target =>
-      !validDropItems.some(item => nodeContains(target.element, item.element))
+    let visibleDropTargets = this.validDropTargets.filter(
+      target => !validDropItems.some(item => nodeContains(target.element, item.element))
     );
 
-    this.restoreAriaHidden = ariaHideOutside([
-      this.dragTarget.element,
-      ...validDropItems.flatMap(item => item.activateButtonRef?.current ? [item.element, item.activateButtonRef?.current] : [item.element]),
-      ...visibleDropTargets.flatMap(target => target.activateButtonRef?.current ? [target.element, target.activateButtonRef?.current] : [target.element])
-    ], {shouldUseInert: true});
+    this.restoreAriaHidden = ariaHideOutside(
+      [
+        this.dragTarget.element,
+        ...validDropItems.flatMap(item =>
+          item.activateButtonRef?.current
+            ? [item.element, item.activateButtonRef?.current]
+            : [item.element]
+        ),
+        ...visibleDropTargets.flatMap(target =>
+          target.activateButtonRef?.current
+            ? [target.element, target.activateButtonRef?.current]
+            : [target.element]
+        )
+      ],
+      {shouldUseInert: true}
+    );
 
-    this.mutationObserver.observe(document.body, {subtree: true, attributes: true, attributeFilter: ['aria-hidden', 'inert']});
+    this.mutationObserver.observe(document.body, {
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['aria-hidden', 'inert']
+    });
   }
 
   next(): void {
@@ -498,7 +531,7 @@ class DragSession {
       let rect = dropTarget.element.getBoundingClientRect();
       let dx = rect.left - dragTargetRect.left;
       let dy = rect.top - dragTargetRect.top;
-      let dist = (dx * dx) + (dy * dy);
+      let dist = dx * dx + dy * dy;
       if (dist < minDistance) {
         minDistance = dist;
         nearest = i;
@@ -514,8 +547,8 @@ class DragSession {
         let rect = this.currentDropTarget.element.getBoundingClientRect();
         this.currentDropTarget.onDropExit({
           type: 'dropexit',
-          x: rect.left + (rect.width / 2),
-          y: rect.top + (rect.height / 2)
+          x: rect.left + rect.width / 2,
+          y: rect.top + rect.height / 2
         });
       }
 
@@ -524,11 +557,14 @@ class DragSession {
       if (dropTarget) {
         if (typeof dropTarget.onDropEnter === 'function') {
           let rect = dropTarget.element.getBoundingClientRect();
-          dropTarget.onDropEnter({
-            type: 'dropenter',
-            x: rect.left + (rect.width / 2),
-            y: rect.top + (rect.height / 2)
-          }, this.dragTarget);
+          dropTarget.onDropEnter(
+            {
+              type: 'dropenter',
+              x: rect.left + rect.width / 2,
+              y: rect.top + rect.height / 2
+            },
+            this.dragTarget
+          );
         }
 
         if (!item) {
@@ -538,7 +574,10 @@ class DragSession {
     }
 
     if (item != null && item !== this.currentDropItem) {
-      if (this.currentDropTarget && typeof this.currentDropTarget.onDropTargetEnter === 'function') {
+      if (
+        this.currentDropTarget &&
+        typeof this.currentDropTarget.onDropTargetEnter === 'function'
+      ) {
         this.currentDropTarget.onDropTargetEnter(item.target);
       }
       item.element.focus();
@@ -561,12 +600,15 @@ class DragSession {
     endDragging();
 
     if (typeof this.dragTarget.onDragEnd === 'function') {
-      let target = this.currentDropTarget && this.dropOperation !== 'cancel' ? this.currentDropTarget : this.dragTarget;
+      let target =
+        this.currentDropTarget && this.dropOperation !== 'cancel'
+          ? this.currentDropTarget
+          : this.dragTarget;
       let rect = target.element.getBoundingClientRect();
       this.dragTarget.onDragEnd({
         type: 'dragend',
-        x: rect.x + (rect.width / 2),
-        y: rect.y + (rect.height / 2),
+        x: rect.x + rect.width / 2,
+        y: rect.y + rect.height / 2,
         dropOperation: this.dropOperation || 'cancel'
       });
     }
@@ -605,7 +647,10 @@ class DragSession {
       this.dropOperation = item.getDropOperation(types, this.dragTarget.allowedDropOperations);
     } else if (typeof this.currentDropTarget.getDropOperation === 'function') {
       let types = getTypes(this.dragTarget.items);
-      this.dropOperation = this.currentDropTarget.getDropOperation(types, this.dragTarget.allowedDropOperations);
+      this.dropOperation = this.currentDropTarget.getDropOperation(
+        types,
+        this.dragTarget.allowedDropOperations
+      );
     } else {
       // TODO: show menu ??
       this.dropOperation = this.dragTarget.allowedDropOperations[0];
@@ -619,13 +664,16 @@ class DragSession {
       }));
 
       let rect = this.currentDropTarget.element.getBoundingClientRect();
-      this.currentDropTarget.onDrop({
-        type: 'drop',
-        x: rect.left + (rect.width / 2),
-        y: rect.top + (rect.height / 2),
-        items,
-        dropOperation: this.dropOperation
-      }, item?.target ?? null);
+      this.currentDropTarget.onDrop(
+        {
+          type: 'drop',
+          x: rect.left + rect.width / 2,
+          y: rect.top + rect.height / 2,
+          items,
+          dropOperation: this.dropOperation
+        },
+        item?.target ?? null
+      );
     }
 
     this.end();
@@ -636,11 +684,14 @@ class DragSession {
     if (dropTarget && typeof dropTarget.onDropActivate === 'function') {
       let target = dropItem?.target ?? null;
       let rect = dropTarget.element.getBoundingClientRect();
-      dropTarget.onDropActivate({
-        type: 'dropactivate',
-        x: rect.left + (rect.width / 2),
-        y: rect.top + (rect.height / 2)
-      }, target);
+      dropTarget.onDropActivate(
+        {
+          type: 'dropactivate',
+          x: rect.left + rect.width / 2,
+          y: rect.top + rect.height / 2
+        },
+        target
+      );
     }
   }
 }

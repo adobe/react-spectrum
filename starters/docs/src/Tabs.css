@@ -1,4 +1,4 @@
-@import "./theme.css";
+@import './theme.css';
 
 .react-aria-Tabs {
   display: flex;
@@ -6,11 +6,11 @@
   color: var(--text-color);
   max-width: 100%;
 
-  &[data-orientation=horizontal] {
+  &[data-orientation='horizontal'] {
     flex-direction: column;
   }
 
-  &[data-orientation=vertical] {
+  &[data-orientation='vertical'] {
     flex-direction: row;
     width: 100%;
     .react-aria-TabPanels {
@@ -26,7 +26,7 @@
     background: var(--border-color);
   }
 
-  &[data-orientation=horizontal] {
+  &[data-orientation='horizontal'] {
     border-bottom: 0.5px solid var(--border-color);
     max-width: 100%;
     overflow-x: auto;
@@ -42,7 +42,7 @@
     }
   }
 
-  &[data-orientation=vertical] {
+  &[data-orientation='vertical'] {
     flex-direction: column;
     border-inline-end: 1px solid var(--border-color);
 

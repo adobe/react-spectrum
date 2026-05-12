@@ -7,16 +7,16 @@
   /* theme colors */
   /* lightness channel is only used as a multiplier for chroma (see below) */
   --gray: oklch(0.5 0 0);
-  --red: oklch(0.6 .181447 27.0726);
-  --orange: oklch(0.7 .150492 54);
-  --yellow: oklch(0.8 .128516 73.8032);
-  --turquoise: oklch(0.5 .081146 205.114);
-  --cyan: oklch(0.4 .142107 243.926);
-  --green: oklch(0.5 .121276 155.372);
-  --blue: oklch(0.5 .22049 266.315);
-  --indigo: oklch(1 .25049 284.23);
-  --purple: oklch(0.7 .223324 302);
-  --pink: oklch(0.6 .177717 347.813);
+  --red: oklch(0.6 0.181447 27.0726);
+  --orange: oklch(0.7 0.150492 54);
+  --yellow: oklch(0.8 0.128516 73.8032);
+  --turquoise: oklch(0.5 0.081146 205.114);
+  --cyan: oklch(0.4 0.142107 243.926);
+  --green: oklch(0.5 0.121276 155.372);
+  --blue: oklch(0.5 0.22049 266.315);
+  --indigo: oklch(1 0.25049 284.23);
+  --purple: oklch(0.7 0.223324 302);
+  --pink: oklch(0.6 0.177717 347.813);
 
   /** tint color scale */
   --tint-100: oklch(from var(--tint) var(--lightness-100) var(--chroma-100) h);

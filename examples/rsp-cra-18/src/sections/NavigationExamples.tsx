@@ -1,4 +1,17 @@
-import {Accordion, Disclosure, DisclosureTitle, DisclosurePanel, Flex, Divider, Breadcrumbs, Item, Link, Tabs, TabList, TabPanels} from '@adobe/react-spectrum';
+import {
+  Accordion,
+  Disclosure,
+  DisclosureTitle,
+  DisclosurePanel,
+  Flex,
+  Divider,
+  Breadcrumbs,
+  Item,
+  Link,
+  Tabs,
+  TabList,
+  TabPanels
+} from '@adobe/react-spectrum';
 
 export default function NavigationExamples() {
   return (
@@ -21,31 +34,21 @@ export default function NavigationExamples() {
             <Item key="Emp">Empire</Item>
           </TabList>
           <TabPanels>
-            <Item key="FoR">
-              Arma virumque cano, Troiae qui primus ab oris.
-            </Item>
-            <Item key="MaR">
-              Senatus Populusque Romanus.
-            </Item>
-            <Item key="Emp">
-              Alea jacta est.
-            </Item>
+            <Item key="FoR">Arma virumque cano, Troiae qui primus ab oris.</Item>
+            <Item key="MaR">Senatus Populusque Romanus.</Item>
+            <Item key="Emp">Alea jacta est.</Item>
           </TabPanels>
         </Tabs>
         <h3>Accordion</h3>
         <Accordion maxWidth="size-3600">
           <Disclosure id="files">
-            <DisclosureTitle>
-              Files
-            </DisclosureTitle>
+            <DisclosureTitle>Files</DisclosureTitle>
             <DisclosurePanel>
               <p>Files content</p>
             </DisclosurePanel>
           </Disclosure>
           <Disclosure id="people">
-            <DisclosureTitle>
-              People
-            </DisclosureTitle>
+            <DisclosureTitle>People</DisclosureTitle>
             <DisclosurePanel>
               <p>People content</p>
             </DisclosurePanel>

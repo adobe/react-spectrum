@@ -88,7 +88,8 @@ governing permissions and limitations under the License.
       border-color: var(--spectrum-textfield-border-color-key-focus);
     }
 
-    &:focus-visible { /* might break things due to pre-defined focus-ring */
+    &:focus-visible {
+      /* might break things due to pre-defined focus-ring */
       &:not(:active) {
         border-color: var(--spectrum-textfield-border-color-key-focus);
         box-shadow: 0 0 0 1px var(--spectrum-textfield-border-color-key-focus);
@@ -123,7 +124,7 @@ governing permissions and limitations under the License.
     &:disabled,
     &.is-disabled {
       background-color: var(--spectrum-textfield-quiet-background-color-disabled);
-      border-color:  var(--spectrum-textfield-quiet-border-color-disabled);
+      border-color: var(--spectrum-textfield-quiet-border-color-disabled);
     }
   }
 
@@ -143,7 +144,8 @@ governing permissions and limitations under the License.
       border-color: var(--spectrum-textfield-border-color-key-focus);
     }
 
-    &:focus-visible { /* might break things due to pre-defined focus-ring */
+    &:focus-visible {
+      /* might break things due to pre-defined focus-ring */
       &:not(:active) {
         border-color: var(--spectrum-textfield-border-color-key-focus);
         box-shadow: 0 0 0 1px var(--spectrum-textfield-border-color-key-focus);
@@ -152,13 +154,13 @@ governing permissions and limitations under the License.
   }
 
   .spectrum-Textfield--quiet.spectrum-Textfield--invalid & {
-    &:focus-visible { /* might break things due to pre-defined focus-ring */
+    &:focus-visible {
+      /* might break things due to pre-defined focus-ring */
       &:not(:active) {
         box-shadow: 0 1px 0 var(--spectrum-textfield-quiet-border-color-key-focus);
       }
     }
   }
-
 }
 
 .spectrum-Textfield-validationIcon {
@@ -196,7 +198,5 @@ governing permissions and limitations under the License.
         }
       }
     }
-
-
   }
 }

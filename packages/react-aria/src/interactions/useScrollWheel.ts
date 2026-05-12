@@ -16,26 +16,29 @@ import {useEvent} from '../utils/useEvent';
 
 export interface ScrollWheelProps extends ScrollEvents {
   /** Whether the scroll listener should be disabled. */
-  isDisabled?: boolean
+  isDisabled?: boolean;
 }
 
 // scroll wheel needs to be added not passively so it's cancelable, small helper hook to remember that
 export function useScrollWheel(props: ScrollWheelProps, ref: RefObject<HTMLElement | null>): void {
   let {onScroll, isDisabled} = props;
-  let onScrollHandler = useCallback((e) => {
-    // If the ctrlKey is pressed, this is a zoom event, do nothing.
-    if (e.ctrlKey) {
-      return;
-    }
+  let onScrollHandler = useCallback(
+    e => {
+      // If the ctrlKey is pressed, this is a zoom event, do nothing.
+      if (e.ctrlKey) {
+        return;
+      }
 
-    // stop scrolling the page
-    e.preventDefault();
-    e.stopPropagation();
+      // stop scrolling the page
+      e.preventDefault();
+      e.stopPropagation();
 
-    if (onScroll) {
-      onScroll({deltaX: e.deltaX, deltaY: e.deltaY});
-    }
-  }, [onScroll]);
+      if (onScroll) {
+        onScroll({deltaX: e.deltaX, deltaY: e.deltaY});
+      }
+    },
+    [onScroll]
+  );
 
   useEvent(ref, 'wheel', isDisabled ? undefined : onScrollHandler);
 }

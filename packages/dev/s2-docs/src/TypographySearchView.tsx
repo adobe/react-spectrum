@@ -3,10 +3,21 @@
 import {ActionButton, Content, Heading, IllustratedMessage, Link} from '@react-spectrum/s2';
 import {CopyButton} from './CopyButton';
 import Edit from '@react-spectrum/s2/icons/Edit';
-import {FieldInputContext, Header, Input, InputRenderProps, Key, ListBox, ListBoxItem, ListBoxSection, OverlayTriggerStateContext, TextField} from 'react-aria-components';
+import {
+  FieldInputContext,
+  Header,
+  Input,
+  InputRenderProps,
+  Key,
+  ListBox,
+  ListBoxItem,
+  ListBoxSection,
+  OverlayTriggerStateContext,
+  TextField
+} from 'react-aria-components';
 import {focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {InfoMessage} from './colorSearchData';
- 
+
 import NoSearchResults from '@react-spectrum/s2/illustrations/linear/NoSearchResults';
 import React, {useMemo, useRef, useState} from 'react';
 
@@ -39,7 +50,16 @@ const typographySections = [
     id: 'heading',
     name: 'Heading',
     description: 'Use for headings in content pages',
-    items: ['heading-2xs', 'heading-xs', 'heading-sm', 'heading', 'heading-lg', 'heading-xl', 'heading-2xl', 'heading-3xl']
+    items: [
+      'heading-2xs',
+      'heading-xs',
+      'heading-sm',
+      'heading',
+      'heading-lg',
+      'heading-xl',
+      'heading-2xl',
+      'heading-3xl'
+    ]
   },
   {
     id: 'body',
@@ -98,7 +118,7 @@ const fontStyles = {
   // UI
   'ui-xs': style({font: 'ui-xs', color: 'inherit'}),
   'ui-sm': style({font: 'ui-sm', color: 'inherit'}),
-  'ui': style({font: 'ui', color: 'inherit'}),
+  ui: style({font: 'ui', color: 'inherit'}),
   'ui-lg': style({font: 'ui-lg', color: 'inherit'}),
   'ui-xl': style({font: 'ui-xl', color: 'inherit'}),
   'ui-2xl': style({font: 'ui-2xl', color: 'inherit'}),
@@ -107,7 +127,7 @@ const fontStyles = {
   'body-2xs': style({font: 'body-2xs', color: 'inherit'}),
   'body-xs': style({font: 'body-xs', color: 'inherit'}),
   'body-sm': style({font: 'body-sm', color: 'inherit'}),
-  'body': style({font: 'body', color: 'inherit'}),
+  body: style({font: 'body', color: 'inherit'}),
   'body-lg': style({font: 'body-lg', color: 'inherit'}),
   'body-xl': style({font: 'body-xl', color: 'inherit'}),
   'body-2xl': style({font: 'body-2xl', color: 'inherit'}),
@@ -116,7 +136,7 @@ const fontStyles = {
   'heading-2xs': style({font: 'heading-2xs', color: 'inherit'}),
   'heading-xs': style({font: 'heading-xs', color: 'inherit'}),
   'heading-sm': style({font: 'heading-sm', color: 'inherit'}),
-  'heading': style({font: 'heading', color: 'inherit'}),
+  heading: style({font: 'heading', color: 'inherit'}),
   'heading-lg': style({font: 'heading-lg', color: 'inherit'}),
   'heading-xl': style({font: 'heading-xl', color: 'inherit'}),
   'heading-2xl': style({font: 'heading-2xl', color: 'inherit'}),
@@ -124,19 +144,19 @@ const fontStyles = {
   // Title
   'title-xs': style({font: 'title-xs', color: 'inherit'}),
   'title-sm': style({font: 'title-sm', color: 'inherit'}),
-  'title': style({font: 'title', color: 'inherit'}),
+  title: style({font: 'title', color: 'inherit'}),
   'title-lg': style({font: 'title-lg', color: 'inherit'}),
   'title-xl': style({font: 'title-xl', color: 'inherit'}),
   'title-2xl': style({font: 'title-2xl', color: 'inherit'}),
   'title-3xl': style({font: 'title-3xl', color: 'inherit'}),
   // Detail
   'detail-sm': style({font: 'detail-sm', color: 'inherit'}),
-  'detail': style({font: 'detail', color: 'inherit'}),
+  detail: style({font: 'detail', color: 'inherit'}),
   'detail-lg': style({font: 'detail-lg', color: 'inherit'}),
   'detail-xl': style({font: 'detail-xl', color: 'inherit'}),
   // Code
   'code-sm': style({font: 'code-sm', color: 'inherit'}),
-  'code': style({font: 'code', color: 'inherit'}),
+  code: style({font: 'code', color: 'inherit'}),
   'code-lg': style({font: 'code-lg', color: 'inherit'}),
   'code-xl': style({font: 'code-xl', color: 'inherit'})
 } as const;
@@ -176,7 +196,7 @@ const editButtonStyle = style({
 });
 
 interface TypographySearchViewProps {
-  searchValue?: string
+  searchValue?: string;
 }
 
 export function TypographySearchView({searchValue = ''}: TypographySearchViewProps) {
@@ -186,23 +206,27 @@ export function TypographySearchView({searchValue = ''}: TypographySearchViewPro
   const inputRef = useRef<HTMLInputElement>(null);
 
   const codeSnippet = `<div className={style({font: '${selectedFont}'})}>${previewText}</div>`;
-  const fontStyleClass = selectedFont in fontStyles ? fontStyles[selectedFont as FontStyleKey] : undefined;
-  const previewInputStyle = (renderProps: InputRenderProps) => `${defaultPreviewInputStyle(renderProps)} ${fontStyleClass || ''}`;
+  const fontStyleClass =
+    selectedFont in fontStyles ? fontStyles[selectedFont as FontStyleKey] : undefined;
+  const previewInputStyle = (renderProps: InputRenderProps) =>
+    `${defaultPreviewInputStyle(renderProps)} ${fontStyleClass || ''}`;
 
   const sections = useMemo(() => {
     const searchLower = searchValue.toLowerCase();
-    
-    return typographySections.map(section => ({
-      id: section.id,
-      name: section.name,
-      description: section.description,
-      items: section.items
-        .filter(name => name.toLowerCase().includes(searchLower))
-        .map(name => ({
-          id: `${section.id}-${name}`,
-          name
-        }))
-    })).filter(section => section.items.length > 0);
+
+    return typographySections
+      .map(section => ({
+        id: section.id,
+        name: section.name,
+        description: section.description,
+        items: section.items
+          .filter(name => name.toLowerCase().includes(searchLower))
+          .map(name => ({
+            id: `${section.id}-${name}`,
+            name
+          }))
+      }))
+      .filter(section => section.items.length > 0);
   }, [searchValue]);
 
   const handleSelectionChange = (keys: Set<Key>) => {
@@ -229,7 +253,10 @@ export function TypographySearchView({searchValue = ''}: TypographySearchViewPro
 
   return (
     <>
-      <InfoMessage>Select a typography style and customize the sample text to preview its rendered output and code snippet. See <Link href="styling">styling</Link> for more information.</InfoMessage>
+      <InfoMessage>
+        Select a typography style and customize the sample text to preview its rendered output and
+        code snippet. See <Link href="styling">styling</Link> for more information.
+      </InfoMessage>
       <div className={style({flexShrink: 1, minHeight: 0, overflow: 'auto', padding: 8})}>
         <ListBox
           aria-label="Typography styles"
@@ -247,16 +274,13 @@ export function TypographySearchView({searchValue = ''}: TypographySearchViewPro
           )}>
           {section => (
             <ListBoxSection id={section.id} className={sectionStyle}>
-              <Header className={headerStyle}>
-                {section.name}
-              </Header>
+              <Header className={headerStyle}>{section.name}</Header>
               {section.items.map(item => (
-                <ListBoxItem
-                  key={item.id}
-                  id={item.id}
-                  textValue={item.name}
-                  className={itemStyle}>
-                  <span className={item.name in fontStyles ? fontStyles[item.name as FontStyleKey] : undefined}>
+                <ListBoxItem key={item.id} id={item.id} textValue={item.name} className={itemStyle}>
+                  <span
+                    className={
+                      item.name in fontStyles ? fontStyles[item.name as FontStyleKey] : undefined
+                    }>
                     {item.name}
                   </span>
                 </ListBoxItem>
@@ -290,7 +314,13 @@ export function TypographySearchView({searchValue = ''}: TypographySearchViewPro
             justifyContent: 'center',
             minHeight: 80
           })}>
-          <div className={style({position: 'relative', display: 'inline-flex', alignItems: 'center', maxWidth: 'full'})}>
+          <div
+            className={style({
+              position: 'relative',
+              display: 'inline-flex',
+              alignItems: 'center',
+              maxWidth: 'full'
+            })}>
             <FieldInputContext.Provider value={null}>
               <TextField
                 aria-label="Editable preview text"
@@ -310,7 +340,8 @@ export function TypographySearchView({searchValue = ''}: TypographySearchViewPro
                   style={{
                     /* @ts-ignore - https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/field-sizing */
                     fieldSizing: 'content'
-                  }} />
+                  }}
+                />
               </TextField>
             </FieldInputContext.Provider>
             <OverlayTriggerStateContext.Provider value={null}>
@@ -331,7 +362,7 @@ export function TypographySearchView({searchValue = ''}: TypographySearchViewPro
             </OverlayTriggerStateContext.Provider>
           </div>
         </div>
-        
+
         <div className={style({display: 'flex', flexDirection: 'column', gap: 12})}>
           <div
             className={style({
@@ -346,17 +377,12 @@ export function TypographySearchView({searchValue = ''}: TypographySearchViewPro
             })}>
             <code className={style({flexGrow: 1, overflow: 'auto', whiteSpace: 'nowrap'})}>
               &lt;
-              <span className={syntaxStyles.tag}>div</span>
-              {' '}
-              <span className={syntaxStyles.attribute}>className</span>
-              =
-              {'{'}
+              <span className={syntaxStyles.tag}>div</span>{' '}
+              <span className={syntaxStyles.attribute}>className</span>={'{'}
               <span className={syntaxStyles.tag}>style</span>
               {'('}
               {'{'}
-              <span className={syntaxStyles.attribute}>font</span>
-              :
-              {' '}
+              <span className={syntaxStyles.attribute}>font</span>:{' '}
               <span className={syntaxStyles.string}>'{selectedFont}'</span>
               {'}'}
               {')'}
@@ -367,7 +393,12 @@ export function TypographySearchView({searchValue = ''}: TypographySearchViewPro
               <span className={syntaxStyles.tag}>div</span>
               &gt;
             </code>
-            <CopyButton size="M" text={codeSnippet} tooltip="Copy code snippet" ariaLabel="Copy code snippet" />
+            <CopyButton
+              size="M"
+              text={codeSnippet}
+              tooltip="Copy code snippet"
+              ariaLabel="Copy code snippet"
+            />
           </div>
         </div>
       </div>

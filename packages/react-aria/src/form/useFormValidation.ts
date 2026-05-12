@@ -22,16 +22,22 @@ import {useLayoutEffect} from '../utils/useLayoutEffect';
 type ValidatableElement = HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement;
 
 interface FormValidationProps<T> extends Validation<T> {
-  focus?: () => void
+  focus?: () => void;
 }
 
-export function useFormValidation<T>(props: FormValidationProps<T>, state: FormValidationState, ref: RefObject<ValidatableElement | null> | undefined): void {
+export function useFormValidation<T>(
+  props: FormValidationProps<T>,
+  state: FormValidationState,
+  ref: RefObject<ValidatableElement | null> | undefined
+): void {
   let {validationBehavior, focus} = props;
 
   // This is a useLayoutEffect so that it runs before the useEffect in useFormValidationState, which commits the validation change.
   useLayoutEffect(() => {
     if (validationBehavior === 'native' && ref?.current && !ref.current.disabled) {
-      let errorMessage = state.realtimeValidation.isInvalid ? state.realtimeValidation.validationErrors.join(' ') || 'Invalid value.' : '';
+      let errorMessage = state.realtimeValidation.isInvalid
+        ? state.realtimeValidation.validationErrors.join(' ') || 'Invalid value.'
+        : '';
       ref.current.setCustomValidity(errorMessage);
 
       // Prevent default tooltip for validation message.
@@ -97,7 +103,9 @@ export function useFormValidation<T>(props: FormValidationProps<T>, state: FormV
       // This is best-effort. There may be false positives, e.g. setTimeout.
       form.reset = () => {
         // React uses MessageChannel for scheduling, so ignore 'message' events.
-        isIgnoredReset.current = !window.event || (window.event.type === 'message' && getEventTarget(window.event) instanceof MessagePort);
+        isIgnoredReset.current =
+          !window.event ||
+          (window.event.type === 'message' && getEventTarget(window.event) instanceof MessagePort);
         reset?.call(form);
         isIgnoredReset.current = false;
       };

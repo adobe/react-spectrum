@@ -3,10 +3,10 @@
   "version": "1.2.0",
   "main": "LocalesPlugin.js",
   "types": "LocalesPlugin.d.ts",
-  "dependencies": {
-    "unplugin": "^1.4.0"
-  },
   "publishConfig": {
     "access": "public"
+  },
+  "dependencies": {
+    "unplugin": "^1.4.0"
   }
 }

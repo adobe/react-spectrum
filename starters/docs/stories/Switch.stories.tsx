@@ -12,4 +12,4 @@ const meta: Meta<typeof Switch> = {
 export default meta;
 type Story = StoryFn<typeof Switch>;
 
-export const Example: Story = (args) => <Switch {...args}>Wi-Fi</Switch>;
+export const Example: Story = args => <Switch {...args}>Wi-Fi</Switch>;

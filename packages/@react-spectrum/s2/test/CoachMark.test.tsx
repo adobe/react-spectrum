@@ -36,7 +36,9 @@ describe('CoachMark', () => {
     user = userEvent.setup({delay: null, pointerMap});
   });
   afterAll(() => {
-    act(() => {jest.runAllTimers();});
+    act(() => {
+      jest.runAllTimers();
+    });
   });
 
   it('renders a coachmark', async () => {
@@ -59,13 +61,19 @@ describe('CoachMark', () => {
           </Content>
           <Footer>
             <Text slot="steps">1 of 10</Text>
-            <Button fillStyle="outline" variant="secondary">Previous</Button>
-            <Button variant="primary" onPress={onPress}>Next</Button>
+            <Button fillStyle="outline" variant="secondary">
+              Previous
+            </Button>
+            <Button variant="primary" onPress={onPress}>
+              Next
+            </Button>
           </Footer>
         </CoachMark>
       </CoachMarkTrigger>
     );
-    act(() => {jest.runAllTimers();});
+    act(() => {
+      jest.runAllTimers();
+    });
     expect(getAllByRole('button').length).toBe(4); // 2 Dismiss + 2 actions
     await user?.click(getAllByRole('button')[2]);
     expect(onPress).toHaveBeenCalled();

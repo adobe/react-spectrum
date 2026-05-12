@@ -1,4 +1,4 @@
-'use client';;
+'use client';
 import {
   ListBox as AriaListBox,
   ListBoxItem as AriaListBoxItem,
@@ -8,33 +8,26 @@ import {
   type ListBoxItemProps,
   type ListBoxLoadMoreItemProps,
   type ListBoxProps,
-  type ListBoxSectionProps,
+  type ListBoxSectionProps
 } from 'react-aria-components/ListBox';
-import { composeRenderProps } from 'react-aria-components/composeRenderProps';
+import {composeRenderProps} from 'react-aria-components/composeRenderProps';
 import {Check} from 'lucide-react';
 import {Text} from './Content';
 import {ProgressCircle} from './ProgressCircle';
 import './ListBox.css';
 
-export function ListBox<T extends object>(
-  { children, ...props }: ListBoxProps<T>
-) {
-  return (
-    (
-      <AriaListBox {...props}>
-        {children}
-      </AriaListBox>
-    )
-  );
+export function ListBox<T extends object>({children, ...props}: ListBoxProps<T>) {
+  return <AriaListBox {...props}>{children}</AriaListBox>;
 }
 
 export function ListBoxItem(props: ListBoxItemProps) {
-  let textValue = props.textValue || (typeof props.children === 'string' ? props.children : undefined);
+  let textValue =
+    props.textValue || (typeof props.children === 'string' ? props.children : undefined);
   return (
     <AriaListBoxItem {...props} textValue={textValue}>
-      {composeRenderProps(props.children, (children) => (
+      {composeRenderProps(props.children, children =>
         typeof children === 'string' ? <Text slot="label">{children}</Text> : children
-      ))}
+      )}
     </AriaListBoxItem>
   );
 }
@@ -42,7 +35,6 @@ export function ListBoxItem(props: ListBoxItemProps) {
 export function ListBoxSection<T extends object>(props: ListBoxSectionProps<T>) {
   return <AriaListBoxSection {...props} />;
 }
-
 
 export function ListBoxLoadMoreItem(props: ListBoxLoadMoreItemProps) {
   return (
@@ -53,17 +45,20 @@ export function ListBoxLoadMoreItem(props: ListBoxLoadMoreItemProps) {
 }
 
 export function DropdownListBox<T extends object>(props: ListBoxProps<T>) {
-  return <AriaListBox {...props} className="dropdown-listbox" />
+  return <AriaListBox {...props} className="dropdown-listbox" />;
 }
 
 export function DropdownItem(props: ListBoxItemProps) {
-  let textValue = props.textValue || (typeof props.children === 'string' ? props.children : undefined);
+  let textValue =
+    props.textValue || (typeof props.children === 'string' ? props.children : undefined);
   return (
     <ListBoxItem {...props} textValue={textValue} className="dropdown-item">
-      {composeRenderProps(props.children, (children, {isSelected}) => (<>
-        {isSelected && <Check />}
-        {typeof children === 'string' ? <Text slot="label">{children}</Text> : children}
-      </>))}
+      {composeRenderProps(props.children, (children, {isSelected}) => (
+        <>
+          {isSelected && <Check />}
+          {typeof children === 'string' ? <Text slot="label">{children}</Text> : children}
+        </>
+      ))}
     </ListBoxItem>
   );
 }

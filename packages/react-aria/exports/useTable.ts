@@ -15,16 +15,29 @@ export {useTableColumnHeader} from '../src/table/useTableColumnHeader';
 export {useTableRow} from '../src/table/useTableRow';
 export {useTableHeaderRow} from '../src/table/useTableHeaderRow';
 export {useTableCell} from '../src/table/useTableCell';
-export {useTableSelectionCheckbox, useTableSelectAllCheckbox} from '../src/table/useTableSelectionCheckbox';
+export {
+  useTableSelectionCheckbox,
+  useTableSelectAllCheckbox
+} from '../src/table/useTableSelectionCheckbox';
 export {useTableColumnResize} from '../src/table/useTableColumnResize';
 
 export {useTableRowGroup} from '../src/table/useTableRowGroup';
 
 export type {AriaTableProps} from '../src/table/useTable';
-export type {AriaTableColumnHeaderProps, TableColumnHeaderAria} from '../src/table/useTableColumnHeader';
+export type {
+  AriaTableColumnHeaderProps,
+  TableColumnHeaderAria
+} from '../src/table/useTableColumnHeader';
 export type {AriaTableCellProps, TableCellAria} from '../src/table/useTableCell';
 export type {TableHeaderRowAria} from '../src/table/useTableHeaderRow';
-export type {AriaTableSelectionCheckboxProps, TableSelectionCheckboxAria, TableSelectAllCheckboxAria} from '../src/table/useTableSelectionCheckbox';
-export type {AriaTableColumnResizeProps, TableColumnResizeAria} from '../src/table/useTableColumnResize';
+export type {
+  AriaTableSelectionCheckboxProps,
+  TableSelectionCheckboxAria,
+  TableSelectAllCheckboxAria
+} from '../src/table/useTableSelectionCheckbox';
+export type {
+  AriaTableColumnResizeProps,
+  TableColumnResizeAria
+} from '../src/table/useTableColumnResize';
 export type {GridAria} from '../src/grid/useGrid';
 export type {GridRowAria, GridRowProps} from '../src/grid/useGridRow';

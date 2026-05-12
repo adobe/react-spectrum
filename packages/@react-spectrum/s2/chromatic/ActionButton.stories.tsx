@@ -23,7 +23,7 @@ import {NotificationBadge} from '../src/NotificationBadge';
 import {ReactElement} from 'react';
 import {shortName} from './utils';
 import {StaticColorProvider} from '../stories/utils';
-import {style} from '../style' with { type: 'macro' };
+import {style} from '../style' with {type: 'macro'};
 import {Text} from '../src/Content';
 
 const meta: Meta<typeof ActionButton> = {
@@ -50,15 +50,31 @@ let combinations = generatePowerset(states);
 const Template = (args: ActionButtonProps): ReactElement => {
   let {children, ...otherArgs} = args;
   return (
-    <div className={style({display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 250px))', gridAutoFlow: 'row', justifyItems: 'start', gap: 24, width: '100vw'})}>
+    <div
+      className={style({
+        display: 'grid',
+        gridTemplateColumns: 'repeat(4, minmax(0, 250px))',
+        gridAutoFlow: 'row',
+        justifyItems: 'start',
+        gap: 24,
+        width: '100vw'
+      })}>
       {combinations.map(c => {
-        let fullComboName = Object.keys(c).map(k => `${k}: ${c[k]}`).join(' ');
-        let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
+        let fullComboName = Object.keys(c)
+          .map(k => `${k}: ${c[k]}`)
+          .join(' ');
+        let key = Object.keys(c)
+          .map(k => shortName(k, c[k]))
+          .join(' ');
         if (!key) {
           key = 'default';
         }
 
-        let button = <ActionButton key={key} data-testid={fullComboName} {...otherArgs} {...c}>{children ? children : key}</ActionButton>;
+        let button = (
+          <ActionButton key={key} data-testid={fullComboName} {...otherArgs} {...c}>
+            {children ? children : key}
+          </ActionButton>
+        );
         if (c.staticColor != null) {
           return (
             <StaticColorProvider key={`static-${key}`} staticColor={c.staticColor}>
@@ -74,32 +90,42 @@ const Template = (args: ActionButtonProps): ReactElement => {
 };
 
 export const Default: ActionButtonStory = {
-  render: (args) => <Template {...args} />
+  render: args => <Template {...args} />
 };
 
 export const WithIcon: ActionButtonStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   args: {
-    children: <><NewIcon /><Text>Press me</Text></>
+    children: (
+      <>
+        <NewIcon />
+        <Text>Press me</Text>
+      </>
+    )
   }
 };
 
 export const IconOnly: ActionButtonStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   args: {
     children: <NewIcon />
   }
 };
 
 export const WithAvatar: ActionButtonStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   args: {
-    children: <><Avatar src="https://i.imgur.com/xIe7Wlb.png" /><Text>Press me</Text></>
+    children: (
+      <>
+        <Avatar src="https://i.imgur.com/xIe7Wlb.png" />
+        <Text>Press me</Text>
+      </>
+    )
   }
 };
 
 export const AvatarOnly: ActionButtonStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   args: {
     children: <Avatar src="https://i.imgur.com/xIe7Wlb.png" />
   }
@@ -108,11 +134,25 @@ export const AvatarOnly: ActionButtonStory = {
 export {Fonts, UnsafeClassName, NotificationBadges};
 
 export const NotificationBadgesCustomWidth: ActionButtonStory = {
-  render: (args) => (
+  render: args => (
     <div className={style({display: 'flex', flexDirection: 'column', gap: 8})}>
-      <ActionButton aria-label="Messages has new activity" styles={style({width: 200})} {...args}><CommentIcon /><NotificationBadge /></ActionButton>
-      <ActionButton styles={style({width: 200})} {...args}><BellIcon /><NotificationBadge value={10} /></ActionButton>
-      <ActionButton styles={style({width: 200})} {...args}><CommentIcon /><Text>Messages</Text><NotificationBadge value={5} /></ActionButton>
-      <ActionButton styles={style({width: 200})} {...args}><Text>Notifications</Text><NotificationBadge value={105} /></ActionButton>
-    </div>)
+      <ActionButton aria-label="Messages has new activity" styles={style({width: 200})} {...args}>
+        <CommentIcon />
+        <NotificationBadge />
+      </ActionButton>
+      <ActionButton styles={style({width: 200})} {...args}>
+        <BellIcon />
+        <NotificationBadge value={10} />
+      </ActionButton>
+      <ActionButton styles={style({width: 200})} {...args}>
+        <CommentIcon />
+        <Text>Messages</Text>
+        <NotificationBadge value={5} />
+      </ActionButton>
+      <ActionButton styles={style({width: 200})} {...args}>
+        <Text>Notifications</Text>
+        <NotificationBadge value={105} />
+      </ActionButton>
+    </div>
+  )
 };

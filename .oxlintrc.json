@@ -1,0 +1,391 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["react", "jsx-a11y"],
+  "jsPlugins": [
+    "eslint-plugin-rsp-rules",
+    {
+      "name": "monorepo",
+      "specifier": "@jdb8/eslint-plugin-monorepo"
+    },
+    {
+      "name": "react-hooks-js",
+      "specifier": "eslint-plugin-react-hooks"
+    }
+  ],
+  "categories": {
+    "correctness": "off"
+  },
+  "env": {
+    "builtin": true,
+    "browser": true,
+    "node": true,
+    "es6": true,
+    "commonjs": true,
+    "mocha": true,
+    "jest": true
+  },
+  "globals": {
+    "importSpectrumCSS": "readonly",
+    "JSX": "readonly",
+    "NodeJS": "readonly",
+    "AsyncIterable": "readonly",
+    "FileSystemFileEntry": "readonly",
+    "FileSystemDirectoryEntry": "readonly",
+    "FileSystemEntry": "readonly",
+    "IS_REACT_ACT_ENVIRONMENT": "readonly"
+  },
+  "settings": {
+    "jsdoc": {
+      "ignorePrivate": true,
+      "publicFunctionsOnly": true
+    },
+    "react": {
+      "version": "18.3.1"
+    }
+  },
+  "ignorePatterns": [
+    "packages/@react-aria/i18n/server",
+    "packages/@spectrum-icons/color/**/*",
+    "packages/@spectrum-icons/ui/**/*",
+    "packages/@spectrum-icons/workflow/**/*",
+    "packages/@spectrum-icons/illustrations/**/*",
+    "packages/@spectrum-icons/express/**/*",
+    "**/node_modules",
+    "packages/*/*/dist",
+    "packages/*/*/i18n",
+    "packages/react-aria/dist",
+    "packages/react-aria/i18n",
+    "packages/react-aria-components/dist",
+    "packages/react-aria-components/i18n",
+    "packages/react-stately/dist",
+    "packages/dev/storybook-builder-parcel/preview.js",
+    "packages/dev/optimize-locales-plugin/LocalesPlugin.d.ts",
+    "examples/**/*",
+    "starters/**/*",
+    "scripts/icon-builder-fixture/**/*",
+    "packages/@react-spectrum/s2/icon.d.ts",
+    "packages/@react-spectrum/s2/spectrum-illustrations",
+    "packages/dev/parcel-config-storybook/*",
+    "packages/dev/parcel-resolver-storybook/*",
+    "packages/dev/parcel-transformer-storybook/*",
+    "packages/dev/storybook-builder-parcel/*",
+    "packages/dev/storybook-react-parcel/*",
+    "packages/dev/s2-docs/pages/**",
+    "packages/dev/mcp/*/dist",
+    "packages/dev/codemods/src/s1-to-s2/__testfixtures__/cli/**"
+  ],
+  "rules": {
+    // eslint recommended rules
+    "constructor-super": "error",
+    "for-direction": "error",
+    "getter-return": "error",
+    "no-async-promise-executor": "error",
+    "no-case-declarations": "error",
+    "no-class-assign": "error",
+    "no-compare-neg-zero": "error",
+    "no-cond-assign": "error",
+    "no-const-assign": "error",
+    "no-constant-binary-expression": "error",
+    "no-constant-condition": "error",
+    "no-control-regex": "error",
+    "no-debugger": "error",
+    "no-delete-var": "error",
+    "no-dupe-class-members": "error",
+    "no-dupe-else-if": "error",
+    "no-dupe-keys": "error",
+    "no-duplicate-case": "error",
+    "no-empty": "error",
+    "no-empty-character-class": "error",
+    "no-empty-pattern": "error",
+    "no-empty-static-block": "error",
+    "no-ex-assign": "error",
+    "no-extra-boolean-cast": "error",
+    "no-func-assign": "error",
+    "no-global-assign": "error",
+    "no-import-assign": "error",
+    "no-invalid-regexp": "error",
+    "no-irregular-whitespace": ["error"],
+    "no-loss-of-precision": "error",
+    "no-misleading-character-class": "error",
+    "no-new-native-nonconstructor": "error",
+    "no-nonoctal-decimal-escape": "error",
+    "no-obj-calls": "error",
+    "no-prototype-builtins": "error",
+    "no-redeclare": [
+      "error",
+      {
+        "builtinGlobals": false
+      }
+    ],
+    "no-regex-spaces": "error",
+    "no-self-assign": "error",
+    "no-setter-return": "error",
+    "no-shadow-restricted-names": "error",
+    "no-sparse-arrays": "error",
+    "no-this-before-super": "error",
+    "no-unexpected-multiline": "error",
+    "no-unreachable": "error",
+    "no-unsafe-finally": "error",
+    "no-unsafe-negation": "error",
+    "no-unsafe-optional-chaining": "error",
+    "no-unused-labels": "error",
+    "no-unused-vars": [
+      "error",
+      {
+        "args": "none",
+        "vars": "all",
+        "varsIgnorePattern": "[rR]eact"
+      }
+    ],
+    "no-useless-backreference": "error",
+    "no-useless-catch": "error",
+    "no-useless-escape": "error",
+    "no-with": "error",
+    "require-yield": "error",
+    "use-isnan": "error",
+    "valid-typeof": "error",
+    // custom rules
+    "eqeqeq": ["error", "smart"],
+    "max-depth": ["warn", 4],
+    "radix": ["error", "always"],
+    "no-new-wrappers": "error",
+    "no-self-compare": "error",
+    "no-nested-ternary": "off",
+    "no-unneeded-ternary": "error",
+    "react/jsx-no-duplicate-props": "error",
+    "react/jsx-no-undef": "error",
+    "react/no-did-update-set-state": "error",
+    "react/no-unknown-property": [
+      "error",
+      {
+        "ignore": ["prefix"]
+      }
+    ],
+    "react/react-in-jsx-scope": "error",
+    "react/jsx-boolean-value": "error",
+    "react/self-closing-comp": "error",
+
+    // Core hooks rules
+    "react/rules-of-hooks": "error",
+    "react/exhaustive-deps": "warn",
+
+    // React Compiler rules
+    "react-hooks-js/config": "error",
+    "react-hooks-js/error-boundaries": "error",
+    "react-hooks-js/component-hook-factories": "error",
+    "react-hooks-js/gating": "error",
+    "react-hooks-js/globals": "error",
+    "react-hooks-js/purity": "error",
+    "react-hooks-js/set-state-in-effect": "warn",
+    "react-hooks-js/set-state-in-render": "error",
+    "react-hooks-js/static-components": "error",
+    "react-hooks-js/unsupported-syntax": "warn",
+    "react-hooks-js/use-memo": "error",
+    "react-hooks-js/incompatible-library": "warn",
+
+    "rsp-rules/no-react-key": ["error"],
+    "rsp-rules/sort-imports": ["error"],
+    "rsp-rules/no-non-shadow-contains": ["error"],
+    "rsp-rules/safe-event-target": ["error"],
+    "rsp-rules/shadow-safe-active-element": ["error"],
+    "rsp-rules/faster-node-contains": ["error"],
+    "rsp-rules/imports": ["error"],
+    "rsp-rules/use-layout-effect-rule": ["error"],
+    "rsp-rules/pure-render": ["error"],
+    "jsx-a11y/alt-text": "error",
+    "jsx-a11y/anchor-has-content": "error",
+    "jsx-a11y/anchor-is-valid": "error",
+    "jsx-a11y/aria-activedescendant-has-tabindex": "error",
+    "jsx-a11y/aria-props": "error",
+    "jsx-a11y/aria-proptypes": "error",
+    "jsx-a11y/aria-role": "error",
+    "jsx-a11y/aria-unsupported-elements": "error",
+    "jsx-a11y/click-events-have-key-events": "error",
+    "jsx-a11y/heading-has-content": "error",
+    "jsx-a11y/html-has-lang": "error",
+    "jsx-a11y/iframe-has-title": "error",
+    "jsx-a11y/img-redundant-alt": "error",
+    "jsx-a11y/interactive-supports-focus": [
+      "error",
+      {
+        "tabbable": ["button", "checkbox", "link", "searchbox", "spinbutton", "switch", "textbox"]
+      }
+    ],
+    "jsx-a11y/label-has-associated-control": [
+      "error",
+      {
+        "assert": "either",
+        "depth": 3
+      }
+    ],
+    "jsx-a11y/media-has-caption": "error",
+    "jsx-a11y/mouse-events-have-key-events": "error",
+    "jsx-a11y/no-access-key": "error",
+    "jsx-a11y/no-distracting-elements": "error",
+    "jsx-a11y/no-noninteractive-tabindex": [
+      "error",
+      {
+        "tags": [],
+        "roles": ["alertdialog", "dialog", "tabpanel"]
+      }
+    ],
+    "jsx-a11y/no-redundant-roles": "error",
+    "jsx-a11y/no-static-element-interactions": [
+      "error",
+      {
+        "handlers": ["onClick", "onMouseDown", "onMouseUp", "onKeyPress", "onKeyDown", "onKeyUp"]
+      }
+    ],
+    "jsx-a11y/role-has-required-aria-props": "error",
+    "jsx-a11y/role-supports-aria-props": "error",
+    "jsx-a11y/scope": "error",
+    "jsx-a11y/tabindex-no-positive": "error",
+    "monorepo/no-relative-import": "error"
+  },
+  "overrides": [
+    {
+      "files": ["packages/**/*.ts", "packages/**/*.tsx"],
+      "rules": {
+        "jsdoc/check-tag-names": [
+          "error",
+          {
+            "definedTags": ["selector", "note"]
+          }
+        ],
+        "no-unused-vars": "error"
+      },
+      "globals": {
+        "globalThis": "readonly"
+      },
+      "plugins": ["jsdoc", "typescript"]
+    },
+    {
+      "files": [
+        "packages/@*/**/src/**/*.ts",
+        "packages/@*/**/src/**/*.tsx",
+        "packages/react-*/**/src/**/*.ts",
+        "packages/react-*/**/src/**/*.tsx",
+        "packages/tailwindcss-react-aria-components/**/*.ts",
+        "packages/tailwindcss-react-aria-components/**/*.tsx"
+      ],
+      "rules": {
+        "rsp-rules/no-package-root-imports": "error"
+      }
+    },
+    {
+      "files": [
+        "**/test/**",
+        "**/stories/**",
+        "**/docs/**",
+        "**/chromatic/**",
+        "**/chromatic-fc/**",
+        "**/__tests__/**"
+      ],
+      "rules": {
+        "rsp-rules/no-react-key": ["error"],
+        "rsp-rules/act-events-test": "error",
+        "rsp-rules/no-getByRole-toThrow": "error",
+        "rsp-rules/no-non-shadow-contains": "off",
+        "rsp-rules/safe-event-target": "off",
+        "rsp-rules/shadow-safe-active-element": "off",
+        "rsp-rules/faster-node-contains": "off",
+        "rsp-rules/imports": "off",
+        "monorepo/no-internal-import": "off",
+        "react/react-in-jsx-scope": "off",
+        "jsx-a11y/interactive-supports-focus": "off"
+      },
+      "globals": {
+        "importSpectrumCSS": "readonly",
+        "JSX": "readonly",
+        "NodeJS": "readonly",
+        "AsyncIterable": "readonly",
+        "FileSystemFileEntry": "readonly",
+        "FileSystemDirectoryEntry": "readonly",
+        "FileSystemEntry": "readonly",
+        "IS_REACT_ACT_ENVIRONMENT": "readonly",
+        "globalThis": "readonly"
+      },
+      "env": {
+        "builtin": true,
+        "browser": true,
+        "node": true,
+        "es6": true,
+        "commonjs": true,
+        "mocha": true,
+        "jest": true
+      }
+    },
+    {
+      "files": ["**/dev/**", "**/scripts/**"],
+      "rules": {
+        "rsp-rules/safe-event-target": "off"
+      }
+    },
+    {
+      "files": [
+        "packages/@react-aria/focus/src/**/*.ts",
+        "packages/@react-aria/focus/src/**/*.tsx"
+      ],
+      "rules": {
+        "no-restricted-globals": [
+          "error",
+          {
+            "name": "window",
+            "message": "Use getOwnerWindow from @react-aria/utils instead."
+          },
+          {
+            "name": "document",
+            "message": "Use getOwnerDocument from @react-aria/utils instead."
+          }
+        ]
+      }
+    },
+    {
+      "files": [
+        "packages/react-aria/src/interactions/**/*.ts",
+        "packages/react-aria/src/interactions/**/*.tsx"
+      ],
+      "rules": {
+        "no-restricted-globals": [
+          "warn",
+          {
+            "name": "window",
+            "message": "Use getOwnerWindow from @react-aria/utils instead."
+          },
+          {
+            "name": "document",
+            "message": "Use getOwnerDocument from @react-aria/utils instead."
+          }
+        ]
+      }
+    },
+    {
+      "files": [
+        "packages/@react-aria/test-utils/src/**/*.ts",
+        "packages/@react-aria/test-utils/src/**/*.tsx"
+      ],
+      "rules": {
+        "rsp-rules/faster-node-contains": "off",
+        "rsp-rules/no-non-shadow-contains": "off",
+        "rsp-rules/shadow-safe-active-element": "off"
+      }
+    },
+    {
+      "files": ["packages/@react-spectrum/s2/**", "packages/dev/s2-docs/**"],
+      "rules": {
+        "react/react-in-jsx-scope": "off"
+      }
+    },
+    {
+      "files": ["packages/dev/style-macro-chrome-plugin/**"],
+      "env": {
+        "builtin": true,
+        "browser": true,
+        "webextensions": true,
+        "node": true,
+        "es6": true,
+        "commonjs": true
+      }
+    }
+  ]
+}

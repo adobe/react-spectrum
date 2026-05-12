@@ -12,19 +12,50 @@
 
 import {ActionButtonGroupContext} from './ActionButtonGroup';
 import {ActionMenuContext} from './ActionMenu';
-import {baseColor, color, colorMix, focusRing, fontRelative, space, style} from '../style' with {type: 'macro'};
+import {
+  baseColor,
+  color,
+  colorMix,
+  focusRing,
+  fontRelative,
+  space,
+  style
+} from '../style' with {type: 'macro'};
 import {Button} from 'react-aria-components/Button';
 import {centerBaseline} from './CenterBaseline';
 import {Checkbox} from './Checkbox';
 import {CheckboxContext} from 'react-aria-components/Checkbox';
 import Chevron from '../ui-icons/Chevron';
 import {Collection} from 'react-aria/Collection';
-import {CollectionRendererContext, DefaultCollectionRenderer} from 'react-aria-components/CollectionBuilder';
-import {ContextValue, DEFAULT_SLOT, Provider, SlotProps, useSlottedContext} from 'react-aria-components/slots';
-import {controlFont, getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
+import {
+  CollectionRendererContext,
+  DefaultCollectionRenderer
+} from 'react-aria-components/CollectionBuilder';
+import {
+  ContextValue,
+  DEFAULT_SLOT,
+  Provider,
+  SlotProps,
+  useSlottedContext
+} from 'react-aria-components/slots';
+import {
+  controlFont,
+  getAllowedOverrides,
+  StylesPropWithHeight,
+  UnsafeStyles
+} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, ReactElement, ReactNode, useContext, useRef} from 'react';
 import {css} from '../style/style-macro' with {type: 'macro'};
-import {DOMProps, DOMRef, DOMRefValue, DragItem, forwardRefType, GlobalDOMAttributes, ItemDropTarget, LoadingState} from '@react-types/shared';
+import {
+  DOMProps,
+  DOMRef,
+  DOMRefValue,
+  DragItem,
+  forwardRefType,
+  GlobalDOMAttributes,
+  ItemDropTarget,
+  LoadingState
+} from '@react-types/shared';
 import DragHandle from '../ui-icons/DragHandle';
 import {DropIndicator} from 'react-aria-components/useDragAndDrop';
 import {
@@ -57,63 +88,95 @@ import {useScale} from './utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 import {useVisuallyHidden} from 'react-aria/VisuallyHidden';
 
-export interface ListViewProps<T> extends Omit<GridListProps<T>, 'className' | 'style' | 'children' | 'selectionBehavior' | 'layout' | 'render' | 'keyboardNavigationBehavior' | 'orientation' | keyof GlobalDOMAttributes>, DOMProps, UnsafeStyles, ListViewStylesProps, SlotProps {
+export interface ListViewProps<T>
+  extends
+    Omit<
+      GridListProps<T>,
+      | 'className'
+      | 'style'
+      | 'children'
+      | 'selectionBehavior'
+      | 'layout'
+      | 'render'
+      | 'keyboardNavigationBehavior'
+      | 'orientation'
+      | keyof GlobalDOMAttributes
+    >,
+    DOMProps,
+    UnsafeStyles,
+    ListViewStylesProps,
+    SlotProps {
   /** Spectrum-defined styles, returned by the `style()` macro. */
-  styles?: StylesPropWithHeight,
+  styles?: StylesPropWithHeight;
   /** The current loading state of the ListView. */
-  loadingState?: LoadingState,
+  loadingState?: LoadingState;
   /** Handler that is called when more items should be loaded, e.g. while scrolling near the bottom. */
-  onLoadMore?: () => void,
+  onLoadMore?: () => void;
   /** The children of the ListView. */
-  children: ReactNode | ((item: T) => ReactNode),
+  children: ReactNode | ((item: T) => ReactNode);
   /** Provides the ActionBar to display when items are selected in the ListView. */
-  renderActionBar?: (selectedKeys: 'all' | Set<Key>) => ReactElement,
+  renderActionBar?: (selectedKeys: 'all' | Set<Key>) => ReactElement;
   /** Hides the default link out icons on items that open links in a new tab. */
-  hideLinkOutIcon?: boolean
+  hideLinkOutIcon?: boolean;
 }
 
 interface ListViewStylesProps {
   /** Whether the ListView should be displayed with a quiet style. */
-  isQuiet?: boolean,
+  isQuiet?: boolean;
   /**
    * How selection should be displayed.
+   *
    * @default 'checkbox'
    */
-  selectionStyle?: 'highlight' | 'checkbox',
+  selectionStyle?: 'highlight' | 'checkbox';
   /**
    * Sets the overflow behavior for item contents.
+   *
    * @default 'truncate'
    */
-  overflowMode?: 'wrap' | 'truncate'
+  overflowMode?: 'wrap' | 'truncate';
 }
 
-export interface ListViewItemProps extends Omit<GridListItemProps, 'children' | 'className' | 'style' | 'render' | 'onClick' | keyof GlobalDOMAttributes> {
+export interface ListViewItemProps extends Omit<
+  GridListItemProps,
+  'children' | 'className' | 'style' | 'render' | 'onClick' | keyof GlobalDOMAttributes
+> {
   /**
    * The contents of the item.
    */
-  children: ReactNode,
+  children: ReactNode;
   /** Whether the item has child items (renders a chevron indicator). */
-  hasChildItems?: boolean
+  hasChildItems?: boolean;
 }
 
-export const ListViewContext = createContext<ContextValue<Partial<ListViewProps<any>>, DOMRefValue<HTMLDivElement>>>(null);
+export const ListViewContext =
+  createContext<ContextValue<Partial<ListViewProps<any>>, DOMRefValue<HTMLDivElement>>>(null);
 
-let InternalListViewContext = createContext<{isQuiet?: boolean, selectionStyle?: 'highlight' | 'checkbox', overflowMode?: 'wrap' | 'truncate', scale?: 'medium' | 'large', hideLinkOutIcon?: boolean}>({});
+let InternalListViewContext = createContext<{
+  isQuiet?: boolean;
+  selectionStyle?: 'highlight' | 'checkbox';
+  overflowMode?: 'wrap' | 'truncate';
+  scale?: 'medium' | 'large';
+  hideLinkOutIcon?: boolean;
+}>({});
 
-const listViewWrapper = style({
-  minHeight: 0,
-  minWidth: 200,
-  display: 'flex',
-  isolation: 'isolate',
-  disableTapHighlight: true,
-  position: 'relative',
-  // Clip ActionBar animation.
-  overflow: 'clip',
-  '--root-drop-radius': {
-    type: 'borderTopStartRadius',
-    value: 'default'
-  }
-}, getAllowedOverrides({height: true}));
+const listViewWrapper = style(
+  {
+    minHeight: 0,
+    minWidth: 200,
+    display: 'flex',
+    isolation: 'isolate',
+    disableTapHighlight: true,
+    position: 'relative',
+    // Clip ActionBar animation.
+    overflow: 'clip',
+    '--root-drop-radius': {
+      type: 'borderTopStartRadius',
+      value: 'default'
+    }
+  },
+  getAllowedOverrides({height: true})
+);
 
 // similar to tableview, use this approach so we can actually have a 2px outline when root dropping.
 // cant do a external box shadow due to the clipping that is applied on the wrapper element...
@@ -139,7 +202,7 @@ const rootDropOutline = css(`
 const hasTrailingIconRows = ':has([data-has-trailing-icon]) [role="row"]';
 
 const dropTargetBackground = colorMix('gray-25', 'blue-900', 10);
-const listView = style<GridListRenderProps & {isQuiet?: boolean, isDropTarget?: boolean}>({
+const listView = style<GridListRenderProps & {isQuiet?: boolean; isDropTarget?: boolean}>({
   ...focusRing(),
   outlineOffset: {
     default: -2,
@@ -191,22 +254,37 @@ export class S2ListLayout<T> extends ListLayout<T> {
 }
 
 /**
- * A ListView displays a list of interactive items, and allows a user to navigate, select, or perform an action.
+ * A ListView displays a list of interactive items, and allows a user to navigate, select, or
+ * perform an action.
  */
-export const ListView = /*#__PURE__*/ (forwardRef as forwardRefType)(function ListView<T extends object>(
-  props: ListViewProps<T>,
-  ref: DOMRef<HTMLDivElement>
-) {
+export const ListView = /*#__PURE__*/ (forwardRef as forwardRefType)(function ListView<
+  T extends object
+>(props: ListViewProps<T>, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, ListViewContext);
-  let {children, isQuiet, selectionStyle = 'checkbox', overflowMode = 'truncate', loadingState, onLoadMore, renderEmptyState: userRenderEmptyState, hideLinkOutIcon = false, dragAndDropHooks, ...otherProps} = props;
+  let {
+    children,
+    isQuiet,
+    selectionStyle = 'checkbox',
+    overflowMode = 'truncate',
+    loadingState,
+    onLoadMore,
+    renderEmptyState: userRenderEmptyState,
+    hideLinkOutIcon = false,
+    dragAndDropHooks,
+    ...otherProps
+  } = props;
   let scale = useScale();
 
-  if (dragAndDropHooks && dragAndDropHooks.renderDragPreview == null)  {
-    dragAndDropHooks.renderDragPreview = (items) => <ListViewDragPreview items={items} overflowMode={overflowMode} />;
+  if (dragAndDropHooks && dragAndDropHooks.renderDragPreview == null) {
+    dragAndDropHooks.renderDragPreview = items => (
+      <ListViewDragPreview items={items} overflowMode={overflowMode} />
+    );
   }
 
   if (dragAndDropHooks) {
-    dragAndDropHooks.renderDropIndicator = (target) => <InsertionIndicator target={target as ItemDropTarget} />;
+    dragAndDropHooks.renderDropIndicator = target => (
+      <InsertionIndicator target={target as ItemDropTarget} />
+    );
   }
 
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
@@ -218,7 +296,7 @@ export const ListView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Li
   let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
   let renderEmptyState: ListViewProps<T>['renderEmptyState'] | undefined;
   if (userRenderEmptyState != null && !isLoading) {
-    renderEmptyState = (renderProps) => (
+    renderEmptyState = renderProps => (
       <div className={emptyStateWrapper}>
         <CollectionRendererContext.Provider value={DefaultCollectionRenderer}>
           {userRenderEmptyState!(renderProps)}
@@ -229,21 +307,23 @@ export const ListView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Li
     renderEmptyState = () => (
       <div className={centeredWrapper}>
         <div className={loadingSpinnerWrapper}>
-          <ProgressCircle
-            isIndeterminate
-            aria-label={stringFormatter.format('table.loading')} />
+          <ProgressCircle isIndeterminate aria-label={stringFormatter.format('table.loading')} />
         </div>
       </div>
     );
   }
 
   let loadMoreSpinner = onLoadMore ? (
-    <GridListLoadMoreItem isLoading={loadingState === 'loadingMore'} onLoadMore={onLoadMore} className={style({height: 'full', width: 'full', paddingY: 8})}>
+    <GridListLoadMoreItem
+      isLoading={loadingState === 'loadingMore'}
+      onLoadMore={onLoadMore}
+      className={style({height: 'full', width: 'full', paddingY: 8})}>
       <div className={centeredWrapper}>
         <div className={loadingSpinnerWrapper}>
           <ProgressCircle
             isIndeterminate
-            aria-label={stringFormatter.format('table.loadingMore')} />
+            aria-label={stringFormatter.format('table.loadingMore')}
+          />
         </div>
       </div>
     </GridListLoadMoreItem>
@@ -271,12 +351,17 @@ export const ListView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Li
     );
   }
 
-  let {selectedKeys, onSelectionChange, actionBar, actionBarHeight} = useActionBarContainer({...props, scrollRef});
+  let {selectedKeys, onSelectionChange, actionBar, actionBarHeight} = useActionBarContainer({
+    ...props,
+    scrollRef
+  });
 
   return (
     <div
       ref={domRef}
-      className={(props.UNSAFE_className || '') + listViewWrapper(null, props.styles) + ' ' + rootDropOutline}
+      className={
+        (props.UNSAFE_className || '') + listViewWrapper(null, props.styles) + ' ' + rootDropOutline
+      }
       style={props.UNSAFE_style}>
       <Virtualizer
         layout={S2ListLayout}
@@ -285,7 +370,8 @@ export const ListView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Li
           loaderHeight: 60,
           dropIndicatorThickness: 0
         }}>
-        <InternalListViewContext.Provider value={{isQuiet, selectionStyle, overflowMode, scale, hideLinkOutIcon}}>
+        <InternalListViewContext.Provider
+          value={{isQuiet, selectionStyle, overflowMode, scale, hideLinkOutIcon}}>
           <GridList
             ref={scrollRef as any}
             {...gridListProps}
@@ -297,11 +383,13 @@ export const ListView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Li
               paddingBottom: actionBarHeight > 0 ? actionBarHeight + 8 : 0,
               scrollPaddingBottom: actionBarHeight > 0 ? actionBarHeight + 8 : 0
             }}
-            className={(renderProps) => listView({
-              ...renderProps,
-              isQuiet,
-              isDropTarget: renderProps.isDropTarget
-            })}
+            className={renderProps =>
+              listView({
+                ...renderProps,
+                isQuiet,
+                isDropTarget: renderProps.isDropTarget
+              })
+            }
             selectedKeys={selectedKeys}
             defaultSelectedKeys={undefined}
             onSelectionChange={onSelectionChange}>
@@ -319,22 +407,24 @@ const selectedActiveBackground = colorMix('gray-25', 'gray-900', 10);
 
 // TODO: removed the background color in HCM for highlight selection since it made it hard to see the focus
 // ring of the drag button, this matches v3 anyways. thoughts?
-const listitem = style<GridListItemRenderProps & {
-  isFocused: boolean,
-  isLink?: boolean,
-  isQuiet?: boolean,
-  isFirstItem?: boolean,
-  isLastItem?: boolean,
-  isSelected?: boolean,
-  isDisabled?: boolean,
-  isNextSelected?: boolean,
-  isPrevSelected?: boolean,
-  isPrevNotSelected?: boolean,
-  isNextNotSelected?: boolean,
-  selectionStyle?: 'highlight' | 'checkbox',
-  scale?: 'medium' | 'large',
-  isDropTarget?: boolean
-}>({
+const listitem = style<
+  GridListItemRenderProps & {
+    isFocused: boolean;
+    isLink?: boolean;
+    isQuiet?: boolean;
+    isFirstItem?: boolean;
+    isLastItem?: boolean;
+    isSelected?: boolean;
+    isDisabled?: boolean;
+    isNextSelected?: boolean;
+    isPrevSelected?: boolean;
+    isPrevNotSelected?: boolean;
+    isNextNotSelected?: boolean;
+    selectionStyle?: 'highlight' | 'checkbox';
+    scale?: 'medium' | 'large';
+    isDropTarget?: boolean;
+  }
+>({
   outlineStyle: {
     default: 'none',
     isDropTarget: 'solid'
@@ -373,7 +463,18 @@ const listitem = style<GridListItemRenderProps & {
     '. dragbutton . checkmark icon label       actions actionmenu trailing-icon .',
     '. .          . .         .    description actions actionmenu trailing-icon .'
   ],
-  gridTemplateColumns: [4, 'auto', 8, 'auto', 'auto', 'minmax(0, 1fr)', 'auto', 'auto', 'var(--trailing-icon-width)', 6],
+  gridTemplateColumns: [
+    4,
+    'auto',
+    8,
+    'auto',
+    'auto',
+    'minmax(0, 1fr)',
+    'auto',
+    'auto',
+    'var(--trailing-icon-width)',
+    6
+  ],
   gridTemplateRows: '1fr auto',
   rowGap: {
     ':has([slot=description])': space(1)
@@ -454,17 +555,19 @@ const rowDropStyles = {
   forcedColors: 'Background'
 } as const;
 
-const listRowBackground = style<GridListItemRenderProps & {
-  isFirstItem?: boolean,
-  isLastItem?: boolean,
-  isQuiet?: boolean,
-  isPrevSelected?: boolean,
-  isNextSelected?: boolean,
-  isPrevNotSelected?: boolean,
-  isNextNotSelected?: boolean,
-  selectionStyle?: 'highlight' | 'checkbox',
-  isDropTarget?: boolean
-}>({
+const listRowBackground = style<
+  GridListItemRenderProps & {
+    isFirstItem?: boolean;
+    isLastItem?: boolean;
+    isQuiet?: boolean;
+    isPrevSelected?: boolean;
+    isNextSelected?: boolean;
+    isPrevNotSelected?: boolean;
+    isNextNotSelected?: boolean;
+    selectionStyle?: 'highlight' | 'checkbox';
+    isDropTarget?: boolean;
+  }
+>({
   position: 'absolute',
   zIndex: -1,
   top: {
@@ -613,16 +716,18 @@ const listRowBackground = style<GridListItemRenderProps & {
   }
 });
 
-let listRowFocusRing = style<GridListItemRenderProps & {
-  selectionStyle?: 'highlight' | 'checkbox',
-  isFirstItem?: boolean,
-  isPrevSelected?: boolean,
-  isPrevNotSelected?: boolean,
-  isNextSelected?: boolean,
-  isNextNotSelected?: boolean,
-  isLastItem?: boolean,
-  isQuiet?: boolean
-}>({
+let listRowFocusRing = style<
+  GridListItemRenderProps & {
+    selectionStyle?: 'highlight' | 'checkbox';
+    isFirstItem?: boolean;
+    isPrevSelected?: boolean;
+    isPrevNotSelected?: boolean;
+    isNextSelected?: boolean;
+    isNextNotSelected?: boolean;
+    isLastItem?: boolean;
+    isQuiet?: boolean;
+  }
+>({
   ...focusRing(),
   outlineOffset: {
     default: -2,
@@ -831,10 +936,7 @@ export let dragPreviewCard = style<{scale?: 'medium' | 'large'}>({
   color: baseColor('neutral'),
   position: 'relative',
   display: 'grid',
-  gridTemplateAreas: [
-    '. icon label       . badge .',
-    '. .    description . badge .'
-  ],
+  gridTemplateAreas: ['. icon label       . badge .', '. .    description . badge .'],
   gridTemplateColumns: [12, 'auto', 'minmax(0, 1fr)', 4, 'auto', 6],
   gridTemplateRows: '1fr auto',
   alignItems: 'baseline',
@@ -1007,14 +1109,14 @@ function isLastItem(id: Key | undefined, state: ListState<unknown>) {
 
 export interface ListViewDragPreviewProps {
   /** The currently dragged items, sourced from renderDragPreview. */
-  items: DragItem[],
+  items: DragItem[];
   /** The overflow mode to be applied on the drag preview. */
-  overflowMode?: ListViewStylesProps['overflowMode'],
+  overflowMode?: ListViewStylesProps['overflowMode'];
   /**
    * The contents of the drag preview. Supports the "label", "description", and "icon" slots.
    * If no children are provided, defaults to the first drag item's plain text content.
    */
-  children?: ReactNode
+  children?: ReactNode;
 }
 
 /**
@@ -1029,29 +1131,35 @@ export function ListViewDragPreview(props: ListViewDragPreviewProps) {
   let scale = useScale();
 
   return (
-    <div
-      className={dragPreviewWrapper}>
+    <div className={dragPreviewWrapper}>
       {isDraggingMultiple && <div className={dragPreviewCardBack} />}
       <div className={dragPreviewCard({scale})}>
         <Provider
           values={[
-            [TextContext, {
-              slots: {
-                [DEFAULT_SLOT]: {styles: label({overflowMode})},
-                label: {styles: label({overflowMode})},
-                description: {styles: description({overflowMode})}
+            [
+              TextContext,
+              {
+                slots: {
+                  [DEFAULT_SLOT]: {styles: label({overflowMode})},
+                  label: {styles: label({overflowMode})},
+                  description: {styles: description({overflowMode})}
+                }
               }
-            }],
-            [IconContext, {
-              slots: {
-                icon: {render: centerBaseline({slot: 'icon', styles: iconCenterWrapper}), styles: icon}
+            ],
+            [
+              IconContext,
+              {
+                slots: {
+                  icon: {
+                    render: centerBaseline({slot: 'icon', styles: iconCenterWrapper}),
+                    styles: icon
+                  }
+                }
               }
-            }]
+            ]
           ]}>
           {props.children ?? <Text>{itemLabel}</Text>}
-          {isDraggingMultiple && (
-            <div className={dragPreviewBadge}>{items.length}</div>
-          )}
+          {isDraggingMultiple && <div className={dragPreviewBadge}>{items.length}</div>}
         </Provider>
       </div>
     </div>
@@ -1063,15 +1171,21 @@ export function ListViewItem(props: ListViewItemProps): ReactNode {
   let {hasChildItems, ...otherProps} = props;
   let isLink = props.href != null;
   let isLinkOut = isLink && props.target === '_blank';
-  let {isQuiet, selectionStyle, overflowMode, scale, hideLinkOutIcon = false} = useContext(InternalListViewContext);
-  let textValue = props.textValue || (typeof props.children === 'string' ? props.children : undefined);
+  let {
+    isQuiet,
+    selectionStyle,
+    overflowMode,
+    scale,
+    hideLinkOutIcon = false
+  } = useContext(InternalListViewContext);
+  let textValue =
+    props.textValue || (typeof props.children === 'string' ? props.children : undefined);
   let {direction} = useLocale();
   let hasTrailingIcon = hasChildItems || (isLinkOut && !hideLinkOutIcon);
   let {visuallyHiddenProps} = useVisuallyHidden();
-  let {
-    isFocusVisible: isFocusVisibleWithin,
-    focusProps: focusWithinProps
-  } = useFocusRing({within: true});
+  let {isFocusVisible: isFocusVisibleWithin, focusProps: focusWithinProps} = useFocusRing({
+    within: true
+  });
 
   return (
     <GridListItem
@@ -1079,66 +1193,90 @@ export function ListViewItem(props: ListViewItemProps): ReactNode {
       textValue={textValue}
       ref={ref}
       {...(hasTrailingIcon ? {'data-has-trailing-icon': ''} : {})}
-      className={renderProps => listitem({
-        ...renderProps,
-        isLink,
-        isQuiet,
-        scale,
-        selectionStyle,
-        isPrevNotSelected: !isPrevSelected(renderProps.id, renderProps.state),
-        isNextSelected: isNextSelected(renderProps.id, renderProps.state),
-        isNextNotSelected: !isNextSelected(renderProps.id, renderProps.state),
-        isFirstItem: isFirstItem(renderProps.id, renderProps.state),
-        isLastItem: isLastItem(renderProps.id, renderProps.state)
-      })}>
-      {(renderProps) => {
+      className={renderProps =>
+        listitem({
+          ...renderProps,
+          isLink,
+          isQuiet,
+          scale,
+          selectionStyle,
+          isPrevNotSelected: !isPrevSelected(renderProps.id, renderProps.state),
+          isNextSelected: isNextSelected(renderProps.id, renderProps.state),
+          isNextNotSelected: !isNextSelected(renderProps.id, renderProps.state),
+          isFirstItem: isFirstItem(renderProps.id, renderProps.state),
+          isLastItem: isLastItem(renderProps.id, renderProps.state)
+        })
+      }>
+      {renderProps => {
         let {children} = props;
-        let {selectionMode, selectionBehavior, isDisabled, id, state, allowsDragging, isFocusVisible} = renderProps;
+        let {
+          selectionMode,
+          selectionBehavior,
+          isDisabled,
+          id,
+          state,
+          allowsDragging,
+          isFocusVisible
+        } = renderProps;
         return (
           <Provider
             values={[
-              [TextContext, {
-                slots: {
-                  [DEFAULT_SLOT]: {styles: label({...renderProps, overflowMode})},
-                  label: {styles: label({...renderProps, overflowMode})},
-                  description: {styles: description({...renderProps, overflowMode})}
+              [
+                TextContext,
+                {
+                  slots: {
+                    [DEFAULT_SLOT]: {styles: label({...renderProps, overflowMode})},
+                    label: {styles: label({...renderProps, overflowMode})},
+                    description: {styles: description({...renderProps, overflowMode})}
+                  }
                 }
-              }],
-              [IconContext, {
-                slots: {
-                  icon: {render: centerBaseline({slot: 'icon', styles: iconCenterWrapper}), styles: icon}
+              ],
+              [
+                IconContext,
+                {
+                  slots: {
+                    icon: {
+                      render: centerBaseline({slot: 'icon', styles: iconCenterWrapper}),
+                      styles: icon
+                    }
+                  }
                 }
-              }],
+              ],
               [ImageContext, {styles: image}],
-              [ActionButtonGroupContext, {
-                styles: actionButtonGroup,
-                size: 'S',
-                isQuiet: true
-              }],
-              [ActionMenuContext, {
-                styles: listActionMenu,
-                isQuiet: true,
-                size: 'S',
-                isDisabled
-              }]
+              [
+                ActionButtonGroupContext,
+                {
+                  styles: actionButtonGroup,
+                  size: 'S',
+                  isQuiet: true
+                }
+              ],
+              [
+                ActionMenuContext,
+                {
+                  styles: listActionMenu,
+                  isQuiet: true,
+                  size: 'S',
+                  isDisabled
+                }
+              ]
             ]}>
             <div className={rowWrapper} {...focusWithinProps}>
               <div
-                className={
-                  listRowBackground({
-                    ...renderProps,
-                    selectionStyle,
-                    isQuiet,
-                    isDropTarget: renderProps.isDropTarget,
-                    isPrevSelected: isPrevSelected(id, state),
-                    isNextSelected: isNextSelected(id, state),
-                    isPrevNotSelected: !isPrevSelected(id, state),
-                    isNextNotSelected: !isNextSelected(id, state),
-                    isFirstItem: isFirstItem(id, state),
-                    isLastItem: isLastItem(id, state)
-                  })
-                } />
-              {renderProps.isFocusVisible &&
+                className={listRowBackground({
+                  ...renderProps,
+                  selectionStyle,
+                  isQuiet,
+                  isDropTarget: renderProps.isDropTarget,
+                  isPrevSelected: isPrevSelected(id, state),
+                  isNextSelected: isNextSelected(id, state),
+                  isPrevNotSelected: !isPrevSelected(id, state),
+                  isNextNotSelected: !isNextSelected(id, state),
+                  isFirstItem: isFirstItem(id, state),
+                  isLastItem: isLastItem(id, state)
+                })}
+              />
+              {renderProps.isFocusVisible && (
                 <div
                   className={listRowFocusRing({
                     ...renderProps,
@@ -1150,14 +1288,19 @@ export function ListViewItem(props: ListViewItemProps): ReactNode {
                     isNextNotSelected: !isNextSelected(id, state),
                     isFirstItem: isFirstItem(id, state),
                     isLastItem: isLastItem(id, state)
-                  })} />
-              }
+                  })}
+                />
+              )}
               {allowsDragging && (
                 <div className={dragButtonContainer}>
                   {!isDisabled && (
                     <Button
                       slot="drag"
-                      style={!isFocusVisibleWithin && !isFocusVisible ? {...visuallyHiddenProps.style} : {}}
+                      style={
+                        !isFocusVisibleWithin && !isFocusVisible
+                          ? {...visuallyHiddenProps.style}
+                          : {}
+                      }
                       className={dragButton}>
                       <DragHandle size="M" />
                     </Button>
@@ -1182,7 +1325,8 @@ export function ListViewItem(props: ListViewItemProps): ReactNode {
                         type: 'fill',
                         value: 'currentColor'
                       }
-                    })({direction})} />
+                    })({direction})}
+                  />
                 </div>
               )}
               {hasChildItems && !isLinkOut && (
@@ -1199,7 +1343,8 @@ export function ListViewItem(props: ListViewItemProps): ReactNode {
                         type: 'fill',
                         value: 'currentColor'
                       }
-                    })({direction})} />
+                    })({direction})}
+                  />
                 </div>
               )}
             </div>

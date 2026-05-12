@@ -12,4 +12,8 @@
 
 export {useNumberFieldState} from 'react-stately/useNumberFieldState';
 
-export type {NumberFieldStateOptions, NumberFieldProps, NumberFieldState} from 'react-stately/useNumberFieldState';
+export type {
+  NumberFieldStateOptions,
+  NumberFieldProps,
+  NumberFieldState
+} from 'react-stately/useNumberFieldState';

@@ -17,17 +17,28 @@ import {baseColor, focusRing, fontRelative, style} from '../style' with {type: '
 import {CenterBaseline, centerBaseline, centerBaselineBefore} from './CenterBaseline';
 import {composeRenderProps} from 'react-aria-components/composeRenderProps';
 import {ContextualHelpContext} from './ContextualHelp';
-import {control, controlFont, fieldInput, fieldLabel, StyleProps, UnsafeStyles} from './style-utils' with {type: 'macro'};
+import {
+  control,
+  controlFont,
+  fieldInput,
+  fieldLabel,
+  StyleProps,
+  UnsafeStyles
+} from './style-utils' with {type: 'macro'};
 import {FieldError, FieldErrorProps} from 'react-aria-components/FieldError';
-import {ForwardedRef, forwardRef, ReactNode} from 'react';
+import {ForwardedRef, forwardRef, ReactNode, useContext} from 'react';
 import {getEventTarget} from 'react-aria/private/utils/shadowdom/DOMFunctions';
 import {Group, GroupProps} from 'react-aria-components/Group';
 import {IconContext} from './Icon';
+import {
+  InputContext,
+  Input as RACInput,
+  InputProps as RACInputProps
+} from 'react-aria-components/Input';
 import intlMessages from '../intl/*.json';
 import {Label, LabelProps} from 'react-aria-components/Label';
 import {mergeStyles} from '../style/runtime';
 import {Provider} from 'react-aria-components/slots';
-import {Input as RACInput, InputProps as RACInputProps} from 'react-aria-components/Input';
 // @ts-ignore
 import {StyleString} from '../style/types';
 import {Text} from 'react-aria-components/Text';
@@ -35,21 +46,25 @@ import {useDOMRef} from './useDOMRef';
 import {useId} from 'react-aria/useId';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 
-interface FieldLabelProps extends Omit<LabelProps, 'className' | 'style' | 'render' | 'children'>, StyleProps {
-  isDisabled?: boolean,
-  isRequired?: boolean,
-  size?: 'S' | 'M' | 'L' | 'XL',
-  necessityIndicator?: NecessityIndicator,
-  labelAlign?: Alignment,
-  labelPosition?: 'top' | 'side',
-  includeNecessityIndicatorInAccessibilityName?: boolean,
-  staticColor?: 'white' | 'black' | 'auto',
-  contextualHelp?: ReactNode,
-  isQuiet?: boolean,
-  children?: ReactNode
+interface FieldLabelProps
+  extends Omit<LabelProps, 'className' | 'style' | 'render' | 'children'>, StyleProps {
+  isDisabled?: boolean;
+  isRequired?: boolean;
+  size?: 'S' | 'M' | 'L' | 'XL';
+  necessityIndicator?: NecessityIndicator;
+  labelAlign?: Alignment;
+  labelPosition?: 'top' | 'side';
+  includeNecessityIndicatorInAccessibilityName?: boolean;
+  staticColor?: 'white' | 'black' | 'auto';
+  contextualHelp?: ReactNode;
+  isQuiet?: boolean;
+  children?: ReactNode;
 }
 
-export const FieldLabel = forwardRef(function FieldLabel(props: FieldLabelProps, ref: DOMRef<HTMLLabelElement>) {
+export const FieldLabel = forwardRef(function FieldLabel(
+  props: FieldLabelProps,
+  ref: DOMRef<HTMLLabelElement>
+) {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   let {
     isDisabled,
@@ -105,12 +120,18 @@ export const FieldLabel = forwardRef(function FieldLabel(props: FieldLabelProps,
         {...labelProps}
         ref={domRef}
         style={UNSAFE_style}
-        className={UNSAFE_className + mergeStyles(style(fieldLabel())({labelPosition, isDisabled, size, isStaticColor: !!staticColor}), props.styles)}>
+        className={
+          UNSAFE_className +
+          mergeStyles(
+            style(fieldLabel())({labelPosition, isDisabled, size, isStaticColor: !!staticColor}),
+            props.styles
+          )
+        }>
         {props.children}
         {(isRequired || necessityIndicator === 'label') && (
           <span className={style({whiteSpace: 'nowrap'})}>
             &nbsp;
-            {necessityIndicator === 'icon' &&
+            {necessityIndicator === 'icon' && (
               <AsteriskIcon
                 size={size === 'S' ? 'M' : size}
                 className={style({
@@ -119,18 +140,28 @@ export const FieldLabel = forwardRef(function FieldLabel(props: FieldLabelProps,
                     value: 'currentColor'
                   }
                 })}
-                aria-label={includeNecessityIndicatorInAccessibilityName ? stringFormatter.format('label.(required)') : undefined}
-                aria-hidden={!includeNecessityIndicatorInAccessibilityName} />
-            }
-            {necessityIndicator === 'label' &&
+                aria-label={
+                  includeNecessityIndicatorInAccessibilityName
+                    ? stringFormatter.format('label.(required)')
+                    : undefined
+                }
+                aria-hidden={!includeNecessityIndicatorInAccessibilityName}
+              />
+            )}
+            {necessityIndicator === 'label' && (
               /* The necessity label is hidden to screen readers if the field is required because
-              * aria-required is set on the field in that case. That will already be announced,
-              * so no need to duplicate it here. If optional, we do want it to be announced here.
-              */
-              <span aria-hidden={!includeNecessityIndicatorInAccessibilityName ? isRequired : undefined}>
-                {isRequired ? stringFormatter.format('label.(required)') : stringFormatter.format('label.(optional)')}
+               * aria-required is set on the field in that case. That will already be announced,
+               * so no need to duplicate it here. If optional, we do want it to be announced here.
+               */
+              <span
+                aria-hidden={
+                  !includeNecessityIndicatorInAccessibilityName ? isRequired : undefined
+                }>
+                {isRequired
+                  ? stringFormatter.format('label.(required)')
+                  : stringFormatter.format('label.(optional)')}
               </span>
-            }
+            )}
           </span>
         )}
       </Label>
@@ -145,8 +176,10 @@ export const FieldLabel = forwardRef(function FieldLabel(props: FieldLabelProps,
             <ContextualHelpContext.Provider
               value={{
                 id: contextualHelpId,
-                'aria-labelledby': labelProps?.id ? `${labelProps.id} ${contextualHelpId}` : undefined,
-                size: (size === 'L' || size === 'XL') ? 'S' : 'XS'
+                'aria-labelledby': labelProps?.id
+                  ? `${labelProps.id} ${contextualHelpId}`
+                  : undefined,
+                size: size === 'L' || size === 'XL' ? 'S' : 'XS'
               }}>
               {contextualHelp}
             </ContextualHelpContext.Provider>
@@ -157,11 +190,13 @@ export const FieldLabel = forwardRef(function FieldLabel(props: FieldLabelProps,
   );
 });
 
-interface FieldGroupProps extends Omit<GroupProps, 'className' | 'style' | 'render' | 'children'>, UnsafeStyles {
-  size?: 'S' | 'M' | 'L' | 'XL',
-  children: ReactNode,
-  styles?: StyleString,
-  shouldTurnOffFocusRing?: boolean
+interface FieldGroupProps
+  extends Omit<GroupProps, 'className' | 'style' | 'render' | 'children' | 'prefix'>, UnsafeStyles {
+  size?: 'S' | 'M' | 'L' | 'XL';
+  children: ReactNode;
+  styles?: StyleString;
+  shouldTurnOffFocusRing?: boolean;
+  prefix?: ReactNode;
 }
 
 const fieldGroupStyles = style({
@@ -206,15 +241,27 @@ const fieldGroupStyles = style({
   }
 });
 
-export const FieldGroup = forwardRef(function FieldGroup(props: FieldGroupProps, ref: ForwardedRef<HTMLDivElement>) {
-  let {shouldTurnOffFocusRing, ...otherProps} = props;
+export const FieldGroup = forwardRef(function FieldGroup(
+  props: FieldGroupProps,
+  ref: ForwardedRef<HTMLDivElement>
+) {
+  let {children, prefix, shouldTurnOffFocusRing, ...otherProps} = props;
+  let ctx = useContext(InputContext);
+  let prefixId = useId();
+  let newAriaLabelledby = ctx?.['aria-labelledby'];
+  if (prefix) {
+    newAriaLabelledby = newAriaLabelledby ? `${newAriaLabelledby} ${prefixId}` : prefixId;
+  }
   return (
     <Group
       ref={ref}
       {...otherProps}
-      onPointerDown={(e) => {
+      onPointerDown={e => {
         // Forward focus to input element when clicking on a non-interactive child (e.g. icon or padding)
-        if (e.pointerType === 'mouse' && !(getEventTarget(e) as Element).closest('button,input,textarea,[role="button"]')) {
+        if (
+          e.pointerType === 'mouse' &&
+          !(getEventTarget(e) as Element).closest('button,input,textarea,[role="button"]')
+        ) {
           e.preventDefault();
           (e.currentTarget.querySelector('input, textarea') as HTMLElement)?.focus();
         }
@@ -227,58 +274,107 @@ export const FieldGroup = forwardRef(function FieldGroup(props: FieldGroupProps,
         }
       }}
       style={props.UNSAFE_style}
-      className={renderProps => (props.UNSAFE_className || '') + ' ' + centerBaselineBefore + mergeStyles(
-        fieldGroupStyles({
-          ...renderProps,
-          isFocusWithin: shouldTurnOffFocusRing ? false : renderProps.isFocusWithin,
-          isFocusVisible: shouldTurnOffFocusRing ? false : renderProps.isFocusVisible,
-          size: props.size || 'M'
-        }),
-        props.styles
-      )} />
+      className={renderProps =>
+        (props.UNSAFE_className || '') +
+        ' ' +
+        centerBaselineBefore +
+        mergeStyles(
+          fieldGroupStyles({
+            ...renderProps,
+            isFocusWithin: shouldTurnOffFocusRing ? false : renderProps.isFocusWithin,
+            isFocusVisible: shouldTurnOffFocusRing ? false : renderProps.isFocusVisible,
+            size: props.size || 'M'
+          }),
+          props.styles
+        )
+      }>
+      {props.prefix ? (
+        <Provider
+          values={[
+            [
+              IconContext,
+              {
+                styles: style({
+                  size: fontRelative(20),
+                  '--iconPrimary': {type: 'fill', value: 'currentColor'}
+                })
+              }
+            ]
+          ]}>
+          <CenterBaseline
+            id={prefixId}
+            styles={style({
+              minWidth: 20,
+              color: 'gray-600',
+              flexShrink: 0,
+              marginEnd: 'text-to-visual'
+            })}>
+            {props.prefix}
+          </CenterBaseline>
+        </Provider>
+      ) : null}
+      <InputContext.Consumer>
+        {ctx => (
+          <InputContext.Provider value={{...ctx, 'aria-labelledby': newAriaLabelledby}}>
+            {children}
+          </InputContext.Provider>
+        )}
+      </InputContext.Consumer>
+    </Group>
   );
 });
 
-export interface InputProps extends Omit<RACInputProps, 'className' | 'style' | 'render'>, StyleProps {}
+export interface InputProps
+  extends Omit<RACInputProps, 'className' | 'style' | 'render'>, StyleProps {}
 
-export const Input = forwardRef(function Input(props: InputProps, ref: ForwardedRef<HTMLInputElement>) {
+export const Input = forwardRef(function Input(
+  props: InputProps,
+  ref: ForwardedRef<HTMLInputElement>
+) {
   let {UNSAFE_className = '', UNSAFE_style, styles, ...otherProps} = props;
   return (
     <RACInput
       {...otherProps}
       ref={ref}
       style={UNSAFE_style}
-      className={UNSAFE_className + mergeStyles(style({
-        padding: 0,
-        backgroundColor: 'transparent',
-        color: {
-          default: 'inherit',
-          '::placeholder': {
-            default: 'gray-600',
-            forcedColors: 'GrayText'
-          }
-        },
-        fontFamily: 'inherit',
-        fontSize: 'inherit',
-        fontWeight: 'inherit',
-        flexGrow: 1,
-        flexShrink: 1,
-        minWidth: 0,
-        width: 'full',
-        outlineStyle: 'none',
-        borderStyle: 'none',
-        truncate: true
-      }), styles)} />
+      className={
+        UNSAFE_className +
+        mergeStyles(
+          style({
+            padding: 0,
+            backgroundColor: 'transparent',
+            color: {
+              default: 'inherit',
+              '::placeholder': {
+                default: 'gray-600',
+                forcedColors: 'GrayText'
+              }
+            },
+            fontFamily: 'inherit',
+            fontSize: 'inherit',
+            fontWeight: 'inherit',
+            flexGrow: 1,
+            flexShrink: 1,
+            minWidth: 0,
+            width: 'full',
+            outlineStyle: 'none',
+            borderStyle: 'none',
+            truncate: true
+          }),
+          styles
+        )
+      }
+    />
   );
 });
 
 interface HelpTextProps extends FieldErrorProps {
-  size?: 'XS' | 'S' | 'M' | 'L' | 'XL',
-  isDisabled?: boolean,
-  isInvalid?: boolean, // TODO: export FieldErrorContext from RAC to get this.
-  description?: ReactNode,
-  showErrorIcon?: boolean,
-  styles?: StyleString
+  size?: 'XS' | 'S' | 'M' | 'L' | 'XL';
+  isDisabled?: boolean;
+  isInvalid?: boolean; // TODO: export FieldErrorContext from RAC to get this.
+  description?: ReactNode;
+  showErrorIcon?: boolean;
+  styles?: StyleString;
 }
 
 export const helpTextStyles = style({
@@ -310,7 +406,12 @@ export const helpTextStyles = style({
   }
 });
 
-export function HelpText(props: HelpTextProps & {descriptionRef?: DOMRef<HTMLDivElement>, errorRef?: DOMRef<HTMLDivElement>}): ReactNode {
+export function HelpText(
+  props: HelpTextProps & {
+    descriptionRef?: DOMRef<HTMLDivElement>;
+    errorRef?: DOMRef<HTMLDivElement>;
+  }
+): ReactNode {
   let domDescriptionRef = useDOMRef(props.descriptionRef || null);
   let domErrorRef = useDOMRef(props.errorRef || null);
 
@@ -319,7 +420,10 @@ export function HelpText(props: HelpTextProps & {descriptionRef?: DOMRef<HTMLDiv
       <Text
         slot="description"
         ref={domDescriptionRef}
-        className={mergeStyles(helpTextStyles({size: props.size || 'M', isDisabled: props.isDisabled}), props.styles)}>
+        className={mergeStyles(
+          helpTextStyles({size: props.size || 'M', isDisabled: props.isDisabled}),
+          props.styles
+        )}>
         {props.description}
       </Text>
     );
@@ -333,27 +437,35 @@ export function HelpText(props: HelpTextProps & {descriptionRef?: DOMRef<HTMLDiv
     <FieldError
       {...props}
       ref={domErrorRef}
-      className={renderProps => mergeStyles(helpTextStyles({...renderProps, size: props.size || 'M', isDisabled: props.isDisabled}), props.styles)}>
-      {composeRenderProps(props.children, (children, {validationErrors}) => (<>
-        {props.showErrorIcon &&
-          <CenterBaseline>
-            <AlertIcon
-              // @ts-ignore - ts doesn't know that AlertIcon is an icon and not a raw SVG
-              styles={style({
-                size: {
+      className={renderProps =>
+        mergeStyles(
+          helpTextStyles({...renderProps, size: props.size || 'M', isDisabled: props.isDisabled}),
+          props.styles
+        )
+      }>
+      {composeRenderProps(props.children, (children, {validationErrors}) => (
+        <>
+          {props.showErrorIcon && (
+            <CenterBaseline>
+              <AlertIcon
+                // @ts-ignore - ts doesn't know that AlertIcon is an icon and not a raw SVG
+                styles={style({
                   size: {
-                    XS: 14,
-                    S: 16,
-                    M: 20,
-                    L: 22,
-                    XL: 26
+                    size: {
+                      XS: 14,
+                      S: 16,
+                      M: 20,
+                      L: 22,
+                      XL: 26
+                    }
                   }
-                }
-              })({size: props.size || 'M'})} />
-          </CenterBaseline>
-        }
-        <span>{children || validationErrors.join(' ')}</span>
-      </>))}
+                })({size: props.size || 'M'})}
+              />
+            </CenterBaseline>
+          )}
+          <span>{children || validationErrors.join(' ')}</span>
+        </>
+      ))}
     </FieldError>
   );
 }
@@ -362,27 +474,31 @@ export function FieldErrorIcon(props: {isDisabled?: boolean}): ReactNode {
   return (
     <Provider
       values={[
-        [IconContext, {
-          render: centerBaseline({
-            slot: 'icon',
-            styles: style({
-              order: 0,
-              flexShrink: 0,
-              '--iconPrimary': {
-                type: 'fill',
-                value: {
-                  default: 'negative',
-                  forcedColors: 'Mark'
+        [
+          IconContext,
+          {
+            render: centerBaseline({
+              slot: 'icon',
+              styles: style({
+                order: 0,
+                flexShrink: 0,
+                '--iconPrimary': {
+                  type: 'fill',
+                  value: {
+                    default: 'negative',
+                    forcedColors: 'Mark'
+                  }
                 }
-              }
-            })}),
-          styles: style({
-            size: fontRelative(20),
-            marginStart: 'text-to-visual',
-            marginEnd: fontRelative(-2),
-            flexShrink: 0
-          })
-        }]
+              })
+            }),
+            styles: style({
+              size: fontRelative(20),
+              marginStart: 'text-to-visual',
+              marginEnd: fontRelative(-2),
+              flexShrink: 0
+            })
+          }
+        ]
       ]}>
       {!props.isDisabled && <AlertIcon />}
     </Provider>

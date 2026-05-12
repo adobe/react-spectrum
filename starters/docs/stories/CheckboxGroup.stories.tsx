@@ -13,7 +13,7 @@ const meta: Meta<typeof CheckboxGroup> = {
 export default meta;
 type Story = StoryFn<typeof CheckboxGroup>;
 
-export const Example: Story = (args) => (
+export const Example: Story = args => (
   <CheckboxGroup {...args}>
     <Checkbox value="soccer">Soccer</Checkbox>
     <Checkbox value="baseball">Baseball</Checkbox>

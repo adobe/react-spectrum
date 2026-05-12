@@ -74,9 +74,10 @@ governing permissions and limitations under the License.
 
   &:where(.spectrum-Field--positionTop) {
     display: inline-grid;
-    grid-template-areas: "label contextualHelp ."
-                         "field field field"
-                         "helpText helpText helpText";
+    grid-template-areas:
+      'label contextualHelp .'
+      'field field field'
+      'helpText helpText helpText';
     grid-template-columns: auto auto minmax(0, 1fr);
     grid-template-rows: auto 1fr auto;
     align-content: start;
@@ -213,7 +214,6 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-LabeledValue {
-
   &.spectrum-Field--positionSide {
     align-items: first baseline;
 

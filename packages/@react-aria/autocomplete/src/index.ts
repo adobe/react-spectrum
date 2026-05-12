@@ -12,5 +12,16 @@
 export {useSearchAutocomplete} from 'react-aria/private/autocomplete/useSearchAutocomplete';
 
 export {useAutocomplete} from 'react-aria/useAutocomplete';
-export type {SearchAutocompleteProps, AriaSearchAutocompleteProps, AriaSearchAutocompleteOptions, SearchAutocompleteAria} from 'react-aria/private/autocomplete/useSearchAutocomplete';
-export type {AriaAutocompleteProps, AriaAutocompleteOptions, AutocompleteAria, CollectionOptions, InputProps} from 'react-aria/useAutocomplete';
+export type {
+  SearchAutocompleteProps,
+  AriaSearchAutocompleteProps,
+  AriaSearchAutocompleteOptions,
+  SearchAutocompleteAria
+} from 'react-aria/private/autocomplete/useSearchAutocomplete';
+export type {
+  AriaAutocompleteProps,
+  AriaAutocompleteOptions,
+  AutocompleteAria,
+  CollectionOptions,
+  InputProps
+} from 'react-aria/useAutocomplete';

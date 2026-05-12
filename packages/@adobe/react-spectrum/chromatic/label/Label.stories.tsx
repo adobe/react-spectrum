@@ -24,12 +24,14 @@ export default {
     htmlFor: 'test',
     children: 'Test'
   },
-  decorators: [(Story, Context) => (
-    <div style={{whiteSpace: 'nowrap'}}>
-      <Story htmlFor="test" />
-      <TextField id="test" isRequired={Context.args.isRequired} />
-    </div>
-  )]
+  decorators: [
+    (Story, Context) => (
+      <div style={{whiteSpace: 'nowrap'}}>
+        <Story htmlFor="test" />
+        <TextField id="test" isRequired={Context.args.isRequired} />
+      </div>
+    )
+  ]
 } as Meta<typeof Label>;
 
 export let Default: LabelStory = {};

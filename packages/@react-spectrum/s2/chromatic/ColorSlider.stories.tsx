@@ -18,7 +18,7 @@ import {generatePowerset} from '@react-spectrum/story-utils';
 import type {Meta, StoryObj} from '@storybook/react';
 import {ReactElement} from 'react';
 import {shortName} from './utils';
-import {style} from '../style' with { type: 'macro' };
+import {style} from '../style' with {type: 'macro'};
 
 const meta: Meta<typeof ColorSlider> = {
   component: ColorSlider,
@@ -34,74 +34,123 @@ export default meta;
 let states = [
   {isDisabled: true},
   {label: [null, 'custom label']},
-  {contextualHelp: (
-    <ContextualHelp>
-      <Heading>What is a segment?</Heading>
-      <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
-    </ContextualHelp>
-  )}
+  {
+    contextualHelp: (
+      <ContextualHelp>
+        <Heading>What is a segment?</Heading>
+        <Content>
+          Segments identify who your visitors are, what devices and services they use, where they
+          navigated from, and much more.
+        </Content>
+      </ContextualHelp>
+    )
+  }
 ];
 
-let combinations = generatePowerset(states, (merged) => merged.label === null && (merged.showValueLabel === false || merged.contextualHelp));
+let combinations = generatePowerset(
+  states,
+  merged => merged.label === null && (merged.showValueLabel === false || merged.contextualHelp)
+);
 
 const Template = (args: ColorSliderProps): ReactElement => (
-  <div className={style({display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gridAutoFlow: 'row', justifyItems: 'start', gap: 24, width: '100vw'})}>
+  <div
+    className={style({
+      display: 'grid',
+      gridTemplateColumns: 'repeat(3, 1fr)',
+      gridAutoFlow: 'row',
+      justifyItems: 'start',
+      gap: 24,
+      width: '100vw'
+    })}>
     {combinations.map(c => {
-      let fullComboName = Object.keys(c).map(k => `${k}: ${c[k]}`).join(' ');
-      let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
+      let fullComboName = Object.keys(c)
+        .map(k => `${k}: ${c[k]}`)
+        .join(' ');
+      let key = Object.keys(c)
+        .map(k => shortName(k, c[k]))
+        .join(' ');
       if (!key) {
         key = 'empty';
       }
-      return <ColorSlider data-testid={fullComboName} key={key} {...args} {...c} label={c.label === 'custom label' ? key : c.label} />;
+      return (
+        <ColorSlider
+          data-testid={fullComboName}
+          key={key}
+          {...args}
+          {...c}
+          label={c.label === 'custom label' ? key : c.label}
+        />
+      );
     })}
   </div>
 );
 
 const VerticalTemplate = (args: ColorSliderProps): ReactElement => (
-  <div className={style({display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gridAutoFlow: 'row', justifyItems: 'start', gap: 24, width: '100vw'})}>
+  <div
+    className={style({
+      display: 'grid',
+      gridTemplateColumns: 'repeat(5, 1fr)',
+      gridAutoFlow: 'row',
+      justifyItems: 'start',
+      gap: 24,
+      width: '100vw'
+    })}>
     {combinations.map(c => {
-      let fullComboName = Object.keys(c).map(k => `${k}: ${c[k]}`).join(' ');
-      let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
+      let fullComboName = Object.keys(c)
+        .map(k => `${k}: ${c[k]}`)
+        .join(' ');
+      let key = Object.keys(c)
+        .map(k => shortName(k, c[k]))
+        .join(' ');
       if (!key) {
         key = 'empty';
       }
-      return <ColorSlider data-testid={fullComboName} key={key} {...args} {...c} label={c.label === 'custom label' ? key : c.label} orientation="vertical" />;
+      return (
+        <ColorSlider
+          data-testid={fullComboName}
+          key={key}
+          {...args}
+          {...c}
+          label={c.label === 'custom label' ? key : c.label}
+          orientation="vertical"
+        />
+      );
     })}
   </div>
 );
 
 export const PropChannelRed: StoryObj<typeof Template> = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'channel: red',
   args: {channel: 'red', defaultValue: '#7f0000'}
 };
 
 export const PropChannelAlpha: StoryObj<typeof Template> = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'channel: alpha',
   args: {channel: 'alpha', defaultValue: '#7f0000'}
 };
 
 export const PropChannelLightness: StoryObj<typeof Template> = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'channel: lightness',
   args: {channel: 'lightness', defaultValue: 'hsla(0, 100%, 50%, 0.5)'}
 };
 
 export const PropChannelBrightness: StoryObj<typeof Template> = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'channel: brightness',
   args: {channel: 'brightness', defaultValue: 'hsba(0, 100%, 50%, 0.5)'}
 };
 
 export const PropVertical: StoryObj<typeof VerticalTemplate> = {
-  render: (args) => <VerticalTemplate {...args} />,
+  render: args => <VerticalTemplate {...args} />,
   name: 'orientation: vertical',
   args: {channel: 'red', defaultValue: '#7f0000'}
 };
 
 export const PropCustomWidth: StoryObj<typeof Template> = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'custom width',
   args: {channel: 'red', defaultValue: '#7f0000', styles: style({width: 384})}
 };
