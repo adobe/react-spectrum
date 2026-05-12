@@ -64,16 +64,17 @@ import {
 import {IconContext} from './Icon';
 import {ImageContext} from './Image';
 import intlMessages from '../intl/*.json';
-import {isFirstItem, isLastItem, isNextSelected, isPrevSelected, useScale} from './utils';
 import {Key} from '@react-types/shared';
 import LinkOutIcon from '../ui-icons/LinkOut';
 import {ListLayout} from 'react-stately/useVirtualizerState';
+import type {ListState} from 'react-stately/useListState';
 import {ProgressCircle} from './ProgressCircle';
 import {Text, TextContext} from './Content';
 import {useActionBarContainer} from './ActionBar';
 import {useDOMRef} from './useDOMRef';
 import {useLocale} from 'react-aria/I18nProvider';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
+import {useScale} from './utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 import {Virtualizer} from 'react-aria-components/Virtualizer';
 
@@ -950,4 +951,56 @@ export function ListViewItem(props: ListViewItemProps): ReactNode {
       }}
     </GridListItem>
   );
+}
+
+function isNextSelected(
+  id: Key | undefined,
+  state: ListState<unknown>
+) {
+  if (id == null || !state) {
+    return false;
+  }
+  let keyAfter = state.collection.getKeyAfter(id);
+  return keyAfter != null && state.selectionManager.isSelected(keyAfter);
+}
+
+function isPrevSelected(
+  id: Key | undefined,
+  state: ListState<unknown>
+) {
+  if (id == null || !state) {
+    return false;
+  }
+  let keyBefore = state.collection.getKeyBefore(id);
+  return keyBefore != null && state.selectionManager.isSelected(keyBefore);
+}
+
+function isFirstItem(
+  id: Key | undefined,
+  state: ListState<unknown>
+) {
+  if (id == null || !state) {
+    return false;
+  }
+  return state.collection.getFirstKey() === id;
+}
+
+function isLastItem(
+  id: Key | undefined,
+  state: ListState<unknown>
+) {
+  if (id == null || !state) {
+    return false;
+  }
+
+  let key = state.collection.getLastKey();
+  let node = key ? state.collection.getItem(key) : null;
+
+  // Sometimes the last key is a loader node, so we check the previous nodes
+  while (node && node.type !== 'item') {
+    let prevKey = node.prevKey;
+    node = prevKey ? state.collection.getItem(prevKey) : null;
+  }
+
+  return node ? node.key === id : false;
 }

@@ -10,10 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-import type {Key} from '@react-types/shared';
-import type {ListState} from 'react-stately/useListState';
-import type {TableState} from 'react-stately/useTableState';
-import type {TreeState} from 'react-stately/useTreeState';
 import {useMediaQuery} from './useMediaQuery';
 
 export type Scale = 'large' | 'medium';
@@ -29,55 +25,4 @@ export function useScale(): Scale {
   }
 
   return 'medium';
-}
-
-export function isNextSelected(
-  id: Key | undefined,
-  state: ListState<unknown> | TableState<unknown> | TreeState<unknown>
-) {
-  if (id == null || !state) {
-    return false;
-  }
-  let keyAfter = state.collection.getKeyAfter(id);
-  return keyAfter != null && state.selectionManager.isSelected(keyAfter);
-}
-
-export function isPrevSelected(
-  id: Key | undefined,
-  state: ListState<unknown> | TableState<unknown> | TreeState<unknown>
-) {
-  if (id == null || !state) {
-    return false;
-  }
-  let keyBefore = state.collection.getKeyBefore(id);
-  return keyBefore != null && state.selectionManager.isSelected(keyBefore);
-}
-
-export function isFirstItem(
-  id: Key | undefined,
-  state: ListState<unknown> | TableState<unknown> | TreeState<unknown>
-) {
-  if (id == null || !state) {
-    return false;
-  }
-  return state.collection.getFirstKey() === id;
-}
-export function isLastItem(
-  id: Key | undefined,
-  state: ListState<unknown> | TableState<unknown> | TreeState<unknown>
-) {
-  if (id == null || !state) {
-    return false;
-  }
-
-  let key = state.collection.getLastKey();
-  let node = key ? state.collection.getItem(key) : null;
-
-  // Sometimes the last key is a loader node, so we check the previous nodes
-  while (node && node.type !== 'item') {
-    let prevKey = node.prevKey;
-    node = prevKey ? state.collection.getItem(prevKey) : null;
-  }
-
-  return node ? node.key === id : false;
 }

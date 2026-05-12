@@ -89,7 +89,6 @@ import {getOwnerDocument} from 'react-aria/private/utils/domHelpers';
 import {GridNode} from 'react-stately/private/grid/GridCollection';
 import {IconContext} from './Icon';
 import intlMessages from '../intl/*.json';
-import {isNextSelected, isPrevSelected, useScale} from './utils';
 import {Key} from '@react-types/shared';
 import {LayoutNode} from 'react-stately/useVirtualizerState';
 import {Menu, MenuItem, MenuSection, MenuTrigger} from './Menu';
@@ -120,6 +119,7 @@ import {Rect, TableLayout, Virtualizer} from 'react-aria-components/Virtualizer'
 import SortDownArrow from '../s2wf-icons/S2_Icon_SortDown_20_N.svg';
 import SortUpArrow from '../s2wf-icons/S2_Icon_SortUp_20_N.svg';
 import {Button as SpectrumButton} from './Button';
+import type {TableState} from 'react-stately/useTableState';
 import {useActionBarContainer} from './ActionBar';
 import {useDOMRef} from './useDOMRef';
 import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
@@ -127,6 +127,7 @@ import {useLocale} from 'react-aria/I18nProvider';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useMediaQuery} from './useMediaQuery';
 import {useObjectRef} from 'react-aria/useObjectRef';
+import {useScale} from './utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 import {VisuallyHidden} from 'react-aria/VisuallyHidden';
 
@@ -2091,3 +2092,26 @@ export const TableFooter = /*#__PURE__*/ (forwardRef as forwardRefType)(function
     </FooterContext.Provider>
   );
 });
+
+export function isNextSelected(
+  id: Key | undefined,
+  state: TableState<unknown> 
+) {
+  if (id == null || !state) {
+    return false;
+  }
+  let keyAfter = state.collection.getKeyAfter(id);
+  return keyAfter != null && state.selectionManager.isSelected(keyAfter);
+}
+
+export function isPrevSelected(
+  id: Key | undefined,
+  state: TableState<unknown>
+) {
+  if (id == null || !state) {
+    return false;
+  }
+  let keyBefore = state.collection.getKeyBefore(id);
+  return keyBefore != null && state.selectionManager.isSelected(keyBefore);
+}
+

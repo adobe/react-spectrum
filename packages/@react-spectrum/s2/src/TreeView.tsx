@@ -27,7 +27,6 @@ import {
 } from './style-utils' with {type: 'macro'};
 import {IconContext} from './Icon';
 import intlMessages from '../intl/*.json';
-import {isFirstItem, isPrevSelected, useScale} from './utils';
 import {ListLayout} from 'react-stately/useVirtualizerState';
 import {ProgressCircle} from './ProgressCircle';
 import {Provider, useContextProps} from 'react-aria-components/slots';
@@ -57,6 +56,7 @@ import {useActionBarContainer} from './ActionBar';
 import {useDOMRef} from './useDOMRef';
 import {useLocale} from 'react-aria/I18nProvider';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
+import {useScale} from './utils';
 import {Virtualizer} from 'react-aria-components/Virtualizer';
 
 interface S2TreeProps {
@@ -700,4 +700,25 @@ function isNextSelected(id: Key | undefined, state: TreeState<unknown>) {
   }
 
   return keyAfter != null && state.selectionManager.isSelected(keyAfter);
+}
+
+function isPrevSelected(
+  id: Key | undefined,
+  state: TreeState<unknown>
+) {
+  if (id == null || !state) {
+    return false;
+  }
+  let keyBefore = state.collection.getKeyBefore(id);
+  return keyBefore != null && state.selectionManager.isSelected(keyBefore);
+}
+
+function isFirstItem(
+  id: Key | undefined,
+  state: TreeState<unknown>
+) {
+  if (id == null || !state) {
+    return false;
+  }
+  return state.collection.getFirstKey() === id;
 }
