@@ -3,6 +3,8 @@ import {useControlledState} from 'react-stately/useControlledState';
 import {useEvent} from 'react-aria/private/utils/useEvent';
 import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
 import {Change, Direction, Position, TokenFieldSegment, TokenSegmentList} from './TokenSegmentList';
+import {isCtrlKeyPressed} from 'react-aria/private/utils/keyboard';
+import {isMac} from 'react-aria/private/utils/platform';
 
 export type {TokenFieldSegment};
 
@@ -43,7 +45,7 @@ export function TokenField(props: TokenFieldProps) {
     'aria-describedby': ariaDescribedBy
   } = props;
 
-  let ref = useRef(null);
+  let ref = useRef<HTMLDivElement | null>(null);
   let [state, setState] = useControlledState(valueProp, defaultValueProp, onChange);
   let graphemeSegmenter = useMemo(() => new Intl.Segmenter('en-US', {granularity: 'grapheme'}), []);
   let wordSegmenter = useMemo(() => new Intl.Segmenter('en-US', {granularity: 'word'}), []);
@@ -51,12 +53,19 @@ export function TokenField(props: TokenFieldProps) {
   let nextCaretPosition = useRef<Position | null>(null);
   let dropPosition = useRef<Position | null>(null);
 
-  let apply = (fn: (value: TokenSegmentList) => Change) => {
+  let undoManager = useRef(new UndoManager());
+
+  let apply = (fn: (value: TokenSegmentList) => Change, coalesce = true) => {
     setState(value => {
       let tokens = new TokenSegmentList(value, {tokenRegex});
-      let result = fn(tokens);
-      nextCaretPosition.current = result.caret;
-      return result.value;
+      let {value: newValue, caret, undo} = fn(tokens);
+      nextCaretPosition.current = caret;
+
+      if (undo) {
+        undoManager.current.push(() => apply(undo), coalesce);
+      }
+
+      return newValue;
     });
   };
 
@@ -96,7 +105,11 @@ export function TokenField(props: TokenFieldProps) {
           dropPosition.current = null;
         }
 
-        apply(tokens => tokens.replaceRangeWithSegments(start, end, data));
+        apply(
+          tokens => tokens.replaceRangeWithSegments(start, end, data),
+          // Don't coalesce paste/drop events with other edits.
+          e.inputType === 'insertText'
+        );
         break;
       }
       case 'insertLineBreak':
@@ -217,6 +230,17 @@ export function TokenField(props: TokenFieldProps) {
   useEvent(ref, 'copy', writeClipboardData);
   useEvent(ref, 'cut', writeClipboardData);
   useEvent(ref, 'dragstart', writeClipboardData);
+  useSelectionChange(ref, () => undoManager.current.endCoalescing());
+
+  useEvent(ref, 'keydown', e => {
+    if (e.key === 'z' && isCtrlKeyPressed(e) && !e.shiftKey) {
+      e.preventDefault();
+      undoManager.current.undo();
+    } else if (isMac() ? e.key === 'z' && e.metaKey && e.shiftKey : e.key === 'y' && e.ctrlKey) {
+      e.preventDefault();
+      undoManager.current.redo();
+    }
+  });
 
   return (
     <div
@@ -279,6 +303,8 @@ function getPosition(node: Node, offset: number): Position {
   return {index, offset};
 }
 
+let isProgrammaticSelectionChange = false;
+
 function setSelection(root: Element, pos: Position) {
   let selection = window.getSelection();
   if (selection) {
@@ -291,7 +317,79 @@ function setSelection(root: Element, pos: Position) {
     }
     range.collapse(true);
 
+    isProgrammaticSelectionChange = true;
     selection.removeAllRanges();
     selection.addRange(range);
+  }
+}
+
+function useSelectionChange(ref: React.RefObject<Element | null>, handler: () => void) {
+  useEvent(useRef(document), 'selectionchange', () => {
+    if (isProgrammaticSelectionChange) {
+      isProgrammaticSelectionChange = false;
+      return;
+    }
+
+    let selection = window.getSelection();
+    let range = selection?.getRangeAt(0)!;
+    if (ref.current && ref.current.contains(range?.commonAncestorContainer)) {
+      handler();
+    }
+  });
+}
+
+type UndoOp = () => void;
+type UndoGroup = UndoOp[];
+
+class UndoManager {
+  private undoStack: UndoGroup[] = [];
+  private redoStack: UndoGroup[] = [];
+  private state: 'undo' | 'redo' | null = null;
+  private isCoalescing = false;
+
+  private pushToStack(stack: UndoGroup[], op: UndoOp, coalesce = true) {
+    if (this.isCoalescing && coalesce && stack.length > 0) {
+      stack[stack.length - 1].unshift(op);
+    } else {
+      stack.push([op]);
+    }
+    this.isCoalescing = coalesce;
+  }
+
+  endCoalescing() {
+    this.isCoalescing = false;
+  }
+
+  push(op: UndoOp, coalesce = true) {
+    switch (this.state) {
+      case null:
+        this.pushToStack(this.undoStack, op, coalesce);
+        this.redoStack = [];
+        break;
+      case 'undo':
+        this.pushToStack(this.redoStack, op, coalesce);
+        break;
+      case 'redo':
+        this.pushToStack(this.undoStack, op, coalesce);
+        break;
+    }
+  }
+
+  undo() {
+    let group = this.undoStack.pop();
+    if (group) {
+      this.state = 'undo';
+      group.forEach(op => op());
+      this.state = null;
+    }
+  }
+
+  redo() {
+    let group = this.redoStack.pop();
+    if (group) {
+      this.state = 'redo';
+      group.forEach(op => op());
+      this.state = null;
+    }
   }
 }

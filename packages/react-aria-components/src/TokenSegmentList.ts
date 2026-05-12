@@ -13,8 +13,9 @@ export interface Position {
 export interface Change {
   /** The new list of segments. */
   value: TokenFieldSegment[];
-  /** The new */
+  /** The new caret position. */
   caret: Position;
+  undo?: (tokens: TokenSegmentList) => Change;
 }
 
 export enum Direction {
@@ -158,9 +159,11 @@ export class TokenSegmentList {
       }
     }
 
+    let original = this.slice(start, end);
     return {
       value: newSegments,
-      caret
+      caret,
+      undo: tokens => tokens.replaceRangeWithSegments(start, caret, original)
     };
   }
 
@@ -292,6 +295,16 @@ export class TokenSegmentList {
   slice(start: Position, end: Position): TokenFieldSegment[] {
     start = this.clampPosition(start);
     end = this.clampPosition(end);
+    if (start.index === end.index && start.offset === end.offset) {
+      return [];
+    }
+    if (start.index === end.index) {
+      let segment = this.segments[start.index];
+      if (segment.type === 'text') {
+        return [{type: 'text', text: segment.text.slice(start.offset, end.offset)}];
+      }
+      return [segment];
+    }
     let startSegment = this.segments[start.index];
     let endSegment = this.segments[end.index];
     let [, startSplit] = this.splitSegment(startSegment, start.offset);
