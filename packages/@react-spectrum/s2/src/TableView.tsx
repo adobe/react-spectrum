@@ -172,6 +172,7 @@ interface S2TableProps {
   renderActionBar?: (selectedKeys: 'all' | Set<Key>) => ReactElement;
   /**
    * How selection should be displayed.
+   *
    * @default 'checkbox'
    */
   selectionStyle?: 'checkbox' | 'highlight';
