@@ -1,5 +1,5 @@
-@import "./theme.css";
-@import "./TextField.css";
+@import './theme.css';
+@import './TextField.css';
 
 .react-aria-ColorField {
   display: flex;

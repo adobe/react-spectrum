@@ -15,7 +15,7 @@ import {renderHook} from '@react-spectrum/test-utils-internal';
 import {useLabel} from '../../src/label/useLabel';
 
 describe('useLabel hook', () => {
-  let renderLabelHook = (labelProps) => {
+  let renderLabelHook = labelProps => {
     let {result} = renderHook(() => useLabel(labelProps));
     return result.current;
   };
@@ -40,7 +40,11 @@ describe('useLabel hook', () => {
   });
 
   it('should combine aria-labelledby if visible label and aria-label is also provided', () => {
-    let {labelProps, fieldProps} = renderLabelHook({label: 'Test', 'aria-labelledby': 'foo', 'aria-label': 'aria'});
+    let {labelProps, fieldProps} = renderLabelHook({
+      label: 'Test',
+      'aria-labelledby': 'foo',
+      'aria-label': 'aria'
+    });
     expect(labelProps.id).toBeDefined();
     expect(fieldProps.id).toBeDefined();
     expect(fieldProps['aria-label']).toBe('aria');
@@ -59,7 +63,10 @@ describe('useLabel hook', () => {
   });
 
   it('should work without a visible label and both aria-label and aria-labelledby', () => {
-    let {labelProps, fieldProps} = renderLabelHook({'aria-label': 'Label', 'aria-labelledby': 'foo'});
+    let {labelProps, fieldProps} = renderLabelHook({
+      'aria-label': 'Label',
+      'aria-labelledby': 'foo'
+    });
     expect(labelProps.id).toBeUndefined();
     expect(labelProps.htmlFor).toBeUndefined();
     expect(fieldProps.id).toBeDefined();
@@ -70,7 +77,9 @@ describe('useLabel hook', () => {
   it('should warn if no visible label or aria labels are provided', () => {
     let spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
     renderLabelHook({});
-    expect(spyWarn).toHaveBeenCalledWith('If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility');
+    expect(spyWarn).toHaveBeenCalledWith(
+      'If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility'
+    );
   });
 
   it('should not return a `for` attribute when the label element type is not <label>', () => {

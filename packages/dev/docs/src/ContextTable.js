@@ -23,34 +23,58 @@ export function ContextTable({components, docs}) {
     <table className={`${tableStyles['spectrum-Table']} ${styles.propTable}`}>
       <thead>
         <tr>
-          <td role="columnheader" className={tableStyles['spectrum-Table-headCell']}>Component</td>
-          <td role="columnheader" className={tableStyles['spectrum-Table-headCell']}>Context</td>
-          <td role="columnheader" className={tableStyles['spectrum-Table-headCell']}>Props</td>
-          <td role="columnheader" className={tableStyles['spectrum-Table-headCell']}>Ref</td>
+          <td role="columnheader" className={tableStyles['spectrum-Table-headCell']}>
+            Component
+          </td>
+          <td role="columnheader" className={tableStyles['spectrum-Table-headCell']}>
+            Context
+          </td>
+          <td role="columnheader" className={tableStyles['spectrum-Table-headCell']}>
+            Props
+          </td>
+          <td role="columnheader" className={tableStyles['spectrum-Table-headCell']}>
+            Ref
+          </td>
         </tr>
       </thead>
       <tbody className={tableStyles['spectrum-Table-body']}>
         {components.map((comp, index) => (
           <tr key={index} className={clsx(tableStyles['spectrum-Table-row'], styles.tableRow)}>
-            <td role="rowheader" className={clsx(tableStyles['spectrum-Table-cell'], styles.tableCell)} data-column="Component">
+            <td
+              role="rowheader"
+              className={clsx(tableStyles['spectrum-Table-cell'], styles.tableCell)}
+              data-column="Component">
               <code className={`${typographyStyles['spectrum-Code4']}`}>
                 <span className="token hljs-variable">{comp}</span>
               </code>
             </td>
-            <td role="rowheader" className={clsx(tableStyles['spectrum-Table-cell'], styles.tableCell)} data-column="Context">
+            <td
+              role="rowheader"
+              className={clsx(tableStyles['spectrum-Table-cell'], styles.tableCell)}
+              data-column="Context">
               <code className={`${typographyStyles['spectrum-Code4']}`}>
                 <span className="token hljs-variable">{`${comp}Context`}</span>
               </code>
             </td>
-            <td role="rowheader" className={clsx(tableStyles['spectrum-Table-cell'], styles.tableCell)} data-column="Props">
+            <td
+              role="rowheader"
+              className={clsx(tableStyles['spectrum-Table-cell'], styles.tableCell)}
+              data-column="Props">
               <TypeLink links={docs.links} type={docs.exports[comp].props} />
             </td>
-            <td role="rowheader" className={clsx(tableStyles['spectrum-Table-cell'], styles.tableCell)} data-column="Ref">
-              {docs.exports[comp].ref ? <TypeContext.Provider value={docs.links}>
-                <code className={`${typographyStyles['spectrum-Code4']}`}>
-                  <Type type={docs.exports[comp].ref.typeParameters[0]} />
-                </code>
-              </TypeContext.Provider> : '–'}
+            <td
+              role="rowheader"
+              className={clsx(tableStyles['spectrum-Table-cell'], styles.tableCell)}
+              data-column="Ref">
+              {docs.exports[comp].ref ? (
+                <TypeContext.Provider value={docs.links}>
+                  <code className={`${typographyStyles['spectrum-Code4']}`}>
+                    <Type type={docs.exports[comp].ref.typeParameters[0]} />
+                  </code>
+                </TypeContext.Provider>
+              ) : (
+                '–'
+              )}
             </td>
           </tr>
         ))}

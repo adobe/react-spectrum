@@ -15,15 +15,13 @@ import '@testing-library/jest-dom';
 
 // this prints a nice stack like this
 /**
- * TypeError: Converting circular structure to JSON
- * --> starting at object with constructor 'HTMLButtonElement'
- * |     property '__reactFiber$kmjivnwji9j' -> object with constructor 'FiberNode'
- * --- property 'stateNode' closes the circle
- * at stringify (<anonymous>)
- * at writeChannelMessage (internal/child_process/serialization.js:118:20)
- * at process.target._send (internal/child_process.js:784:17)
- * at process.target.send (internal/child_process.js:682:19)
- * at reportSuccess (/Users/rsnow/GitProjects/react-spectrum/node_modules/jest-cli/node_modules/jest-worker/build/workers/processChild.js:67:11)
+ * TypeError: Converting circular structure to JSON --> starting at object with constructor
+ * 'HTMLButtonElement' | property '__reactFiber$kmjivnwji9j' -> object with constructor 'FiberNode'
+ * --- property 'stateNode' closes the circle at stringify (<anonymous>) at writeChannelMessage
+ * (internal/child_process/serialization.js:118:20) at process.target._send
+ * (internal/child_process.js:784:17) at process.target.send (internal/child_process.js:682:19) at
+ * reportSuccess
+ * (/Users/rsnow/GitProjects/react-spectrum/node_modules/jest-cli/node_modules/jest-worker/build/workers/processChild.js:67:11)
  */
 if (!process.env.LISTENING_TO_UNHANDLED_REJECTION) {
   process.on('unhandledRejection', reason => {
@@ -38,15 +36,15 @@ const ERROR_PATTERNS_WE_SHOULD_FIX_BUT_ALLOW = [
   '`ReactDOMTestUtils.act` is deprecated in favor of `React.act`'
 ];
 
-const WARNING_PATTERNS_WE_SHOULD_FIX_BUT_ALLOW = [
-  'Browserslist: caniuse-lite is outdated'
-];
+const WARNING_PATTERNS_WE_SHOULD_FIX_BUT_ALLOW = ['Browserslist: caniuse-lite is outdated'];
 
 function failTestOnConsoleError() {
   const error = console.error;
 
   console.error = function (message) {
-    const allowedPattern = typeof message === 'string' && ERROR_PATTERNS_WE_SHOULD_FIX_BUT_ALLOW.find(pattern => message.indexOf(pattern) > -1);
+    const allowedPattern =
+      typeof message === 'string' &&
+      ERROR_PATTERNS_WE_SHOULD_FIX_BUT_ALLOW.find(pattern => message.indexOf(pattern) > -1);
     if (allowedPattern) {
       return;
     }
@@ -60,7 +58,9 @@ function failTestOnConsoleWarn() {
   const warn = console.warn;
 
   console.warn = function (message) {
-    const allowedPattern = typeof message === 'string' && WARNING_PATTERNS_WE_SHOULD_FIX_BUT_ALLOW.find(pattern => message.indexOf(pattern) > -1);
+    const allowedPattern =
+      typeof message === 'string' &&
+      WARNING_PATTERNS_WE_SHOULD_FIX_BUT_ALLOW.find(pattern => message.indexOf(pattern) > -1);
 
     if (allowedPattern) {
       return;
@@ -73,20 +73,18 @@ function failTestOnConsoleWarn() {
 
 expect.extend({
   toContainObject(received, argument) {
-    const pass = this.equals(received,
-      expect.arrayContaining([
-        expect.objectContaining(argument)
-      ])
-    );
+    const pass = this.equals(received, expect.arrayContaining([expect.objectContaining(argument)]));
 
     if (pass) {
       return {
-        message: () => (`expected ${this.utils.printReceived(received)} not to contain object ${this.utils.printExpected(argument)}`),
+        message: () =>
+          `expected ${this.utils.printReceived(received)} not to contain object ${this.utils.printExpected(argument)}`,
         pass: true
       };
     } else {
       return {
-        message: () => (`expected ${this.utils.printReceived(received)} to contain object ${this.utils.printExpected(argument)}`),
+        message: () =>
+          `expected ${this.utils.printReceived(received)} to contain object ${this.utils.printExpected(argument)}`,
         pass: false
       };
     }

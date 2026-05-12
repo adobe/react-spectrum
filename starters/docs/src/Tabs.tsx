@@ -10,9 +10,9 @@ import {
   type TabPanelProps,
   TabPanel as RACTabPanel,
   SelectionIndicator,
-  type TabPanelsProps,
+  type TabPanelsProps
 } from 'react-aria-components/Tabs';
-import { composeRenderProps } from 'react-aria-components/composeRenderProps';
+import {composeRenderProps} from 'react-aria-components/composeRenderProps';
 import './Tabs.css';
 
 export function Tabs(props: TabsProps) {
@@ -26,10 +26,12 @@ export function TabList<T extends object>(props: TabListProps<T>) {
 export function Tab(props: TabProps) {
   return (
     <RACTab {...props}>
-      {composeRenderProps(props.children, children => (<>
-        {children}
-        <SelectionIndicator />
-      </>))}
+      {composeRenderProps(props.children, children => (
+        <>
+          {children}
+          <SelectionIndicator />
+        </>
+      ))}
     </RACTab>
   );
 }

@@ -60,7 +60,8 @@ OrientationVertical.story = {
   name: 'orientation: vertical'
 };
 
-export const OrientationVerticalWrap: TabsStory = () => renderWithVerticalWrap({maxWidth: 90, wrap: true});
+export const OrientationVerticalWrap: TabsStory = () =>
+  renderWithVerticalWrap({maxWidth: 90, wrap: true});
 
 OrientationVerticalWrap.story = {
   name: 'orientation: vertical, wrap: true'
@@ -154,7 +155,8 @@ MiddleDisabled.story = {
   name: 'middle disabled'
 };
 
-export const AllDisabled: TabsStory = () => render({disabledKeys: ['val1', 'val2', 'val3', 'val4', 'val5']});
+export const AllDisabled: TabsStory = () =>
+  render({disabledKeys: ['val1', 'val2', 'val3', 'val4', 'val5']});
 
 AllDisabled.story = {
   name: 'all disabled'
@@ -383,18 +385,28 @@ ChangingSelectionProgrammatically.story = {
   name: 'changing selection programmatically'
 };
 
-export const Links: StoryFn<SpectrumTabsProps<unknown> & {collapsed?: boolean}> = (args) => {
+export const Links: StoryFn<SpectrumTabsProps<unknown> & {collapsed?: boolean}> = args => {
   let [url, setUrl] = useState('/one');
 
   return (
     <RouterProvider navigate={setUrl}>
       <Tabs selectedKey={url} aria-label="Some tabs" width={args.collapsed ? 200 : 300}>
         <TabList>
-          <Item key="/one" href="/one">Tab 1</Item>
-          <Item key="/two" href="/two">Tab 2</Item>
-          <Item key="/three" href="/three">Tab 3</Item>
-          <Item key="/four" href="/four">Tab 4</Item>
-          <Item key="/five" href="/five">Tab 5</Item>
+          <Item key="/one" href="/one">
+            Tab 1
+          </Item>
+          <Item key="/two" href="/two">
+            Tab 2
+          </Item>
+          <Item key="/three" href="/three">
+            Tab 3
+          </Item>
+          <Item key="/four" href="/four">
+            Tab 4
+          </Item>
+          <Item key="/five" href="/five">
+            Tab 5
+          </Item>
         </TabList>
         <TabPanels>
           <Item key="/one">Foo</Item>
@@ -414,9 +426,9 @@ Links.story = {
   }
 };
 
-export const Nested: TabsStory = (props) => {
+export const Nested: TabsStory = props => {
   return (
-    <Tabs aria-label="Some tabs" width={'500px'} {...props} >
+    <Tabs aria-label="Some tabs" width={'500px'} {...props}>
       <TabList>
         <Item key="one">Tab 1</Item>
         <Item key="two">Tab 2</Item>
@@ -760,8 +772,14 @@ function renderWithVerticalWrap(props = {}) {
       onSelectionChange={action('onSelectionChange')}>
       <TabList {...props}>
         <Item key="val1">User Profile Settings</Item>
-        <Item key="val2"><span lang="ja">バナーおよびディスプレイ広告</span></Item>
-        <Item key="val3"><span lang="de" style={{hyphens: 'auto'}}>Rindfleischetikettierungsüberwachungsaufgabenübertragungsgesetz</span></Item>
+        <Item key="val2">
+          <span lang="ja">バナーおよびディスプレイ広告</span>
+        </Item>
+        <Item key="val3">
+          <span lang="de" style={{hyphens: 'auto'}}>
+            Rindfleischetikettierungsüberwachungsaufgabenübertragungsgesetz
+          </span>
+        </Item>
         <Item key="val4">Tab 4</Item>
         <Item key="val5">Tab 5</Item>
       </TabList>
@@ -857,9 +875,9 @@ function renderWithVerticalWrap(props = {}) {
 }
 
 interface DynamicTabItem {
-  name: string,
-  children: ReactNode,
-  icon?: ReactNode
+  name: string;
+  children: ReactNode;
+  icon?: ReactNode;
 }
 
 let items = [
@@ -893,7 +911,11 @@ let DynamicTabs = (props: Omit<SpectrumTabsProps<DynamicTabItem>, 'children'>) =
 
   return (
     <div style={{width: '80%'}}>
-      <Tabs {...props} aria-label="Tab example" items={tabs} onSelectionChange={action('onSelectionChange')}>
+      <Tabs
+        {...props}
+        aria-label="Tab example"
+        items={tabs}
+        onSelectionChange={action('onSelectionChange')}>
         <TabList>
           {(item: DynamicTabItem) => (
             <Item key={item.name}>
@@ -907,9 +929,18 @@ let DynamicTabs = (props: Omit<SpectrumTabsProps<DynamicTabItem>, 'children'>) =
             <Item key={item.name}>
               <Heading>{item.children}</Heading>
               <Text>
-                Dolore ex esse laboris elit magna esse sunt. Pariatur in veniam Lorem est occaecat do magna nisi mollit ipsum sit adipisicing fugiat ex. Pariatur ullamco exercitation ea qui adipisicing.
-                Id cupidatat aute id ut excepteur exercitation magna pariatur. Mollit irure irure reprehenderit pariatur eiusmod proident Lorem deserunt duis cillum mollit. Do reprehenderit sit cupidatat quis laborum in do culpa nisi ipsum. Velit aliquip commodo ea ipsum incididunt culpa nostrud deserunt incididunt exercitation. In quis proident sit ad dolore tempor. Eiusmod pariatur quis commodo labore cupidatat cillum enim eiusmod voluptate laborum culpa. Laborum cupidatat incididunt velit voluptate incididunt occaecat quis do.
-                Consequat adipisicing irure Lorem commodo officia sint id. Velit sit magna aliquip eiusmod non id deserunt. Magna veniam ad consequat dolor cupidatat esse enim Lorem ullamco. Anim excepteur consectetur id in. Mollit laboris duis labore enim duis esse reprehenderit.
+                Dolore ex esse laboris elit magna esse sunt. Pariatur in veniam Lorem est occaecat
+                do magna nisi mollit ipsum sit adipisicing fugiat ex. Pariatur ullamco exercitation
+                ea qui adipisicing. Id cupidatat aute id ut excepteur exercitation magna pariatur.
+                Mollit irure irure reprehenderit pariatur eiusmod proident Lorem deserunt duis
+                cillum mollit. Do reprehenderit sit cupidatat quis laborum in do culpa nisi ipsum.
+                Velit aliquip commodo ea ipsum incididunt culpa nostrud deserunt incididunt
+                exercitation. In quis proident sit ad dolore tempor. Eiusmod pariatur quis commodo
+                labore cupidatat cillum enim eiusmod voluptate laborum culpa. Laborum cupidatat
+                incididunt velit voluptate incididunt occaecat quis do. Consequat adipisicing irure
+                Lorem commodo officia sint id. Velit sit magna aliquip eiusmod non id deserunt.
+                Magna veniam ad consequat dolor cupidatat esse enim Lorem ullamco. Anim excepteur
+                consectetur id in. Mollit laboris duis labore enim duis esse reprehenderit.
               </Text>
             </Item>
           )}
@@ -932,7 +963,12 @@ let OrientationFlip = (props = {}) => {
 
   return (
     <div style={{width: '80%'}}>
-      <Tabs {...props} aria-label="Tab example" items={items} onSelectionChange={action('onSelectionChange')} orientation={flipOrientation ? 'horizontal' : 'vertical'}>
+      <Tabs
+        {...props}
+        aria-label="Tab example"
+        items={items}
+        onSelectionChange={action('onSelectionChange')}
+        orientation={flipOrientation ? 'horizontal' : 'vertical'}>
         <TabList>
           {(item: DynamicTabItem) => (
             <Item key={item.name}>
@@ -946,24 +982,31 @@ let OrientationFlip = (props = {}) => {
             <Item key={item.name}>
               <Heading>{item.children}</Heading>
               <Text>
-                Dolore ex esse laboris elit magna esse sunt. Pariatur in veniam Lorem est occaecat do magna nisi mollit ipsum sit adipisicing fugiat ex. Pariatur ullamco exercitation ea qui adipisicing.
-                Id cupidatat aute id ut excepteur exercitation magna pariatur. Mollit irure irure reprehenderit pariatur eiusmod proident Lorem deserunt duis cillum mollit. Do reprehenderit sit cupidatat quis laborum in do culpa nisi ipsum. Velit aliquip commodo ea ipsum incididunt culpa nostrud deserunt incididunt exercitation. In quis proident sit ad dolore tempor. Eiusmod pariatur quis commodo labore cupidatat cillum enim eiusmod voluptate laborum culpa. Laborum cupidatat incididunt velit voluptate incididunt occaecat quis do.
-                Consequat adipisicing irure Lorem commodo officia sint id. Velit sit magna aliquip eiusmod non id deserunt. Magna veniam ad consequat dolor cupidatat esse enim Lorem ullamco. Anim excepteur consectetur id in. Mollit laboris duis labore enim duis esse reprehenderit.
+                Dolore ex esse laboris elit magna esse sunt. Pariatur in veniam Lorem est occaecat
+                do magna nisi mollit ipsum sit adipisicing fugiat ex. Pariatur ullamco exercitation
+                ea qui adipisicing. Id cupidatat aute id ut excepteur exercitation magna pariatur.
+                Mollit irure irure reprehenderit pariatur eiusmod proident Lorem deserunt duis
+                cillum mollit. Do reprehenderit sit cupidatat quis laborum in do culpa nisi ipsum.
+                Velit aliquip commodo ea ipsum incididunt culpa nostrud deserunt incididunt
+                exercitation. In quis proident sit ad dolore tempor. Eiusmod pariatur quis commodo
+                labore cupidatat cillum enim eiusmod voluptate laborum culpa. Laborum cupidatat
+                incididunt velit voluptate incididunt occaecat quis do. Consequat adipisicing irure
+                Lorem commodo officia sint id. Velit sit magna aliquip eiusmod non id deserunt.
+                Magna veniam ad consequat dolor cupidatat esse enim Lorem ullamco. Anim excepteur
+                consectetur id in. Mollit laboris duis labore enim duis esse reprehenderit.
               </Text>
             </Item>
           )}
         </TabPanels>
       </Tabs>
-      <Button variant="secondary" onPress={() => setFlipOrientation((state) => !state)}>
+      <Button variant="secondary" onPress={() => setFlipOrientation(state => !state)}>
         <Text>Flip Orientation</Text>
       </Button>
     </div>
   );
 };
 
-
 let DynamicTabsWithDecoration = (props = {}) => {
-
   let [tabs, setTabs] = React.useState(items);
   let addTab = () => {
     let newTabs = [...tabs];
@@ -985,7 +1028,11 @@ let DynamicTabsWithDecoration = (props = {}) => {
 
   return (
     <div style={{width: '80%'}}>
-      <Tabs {...props} aria-label="Tab example" items={tabs} onSelectionChange={action('onSelectionChange')}>
+      <Tabs
+        {...props}
+        aria-label="Tab example"
+        items={tabs}
+        onSelectionChange={action('onSelectionChange')}>
         <Flex direction="row" alignItems="center">
           <TabList flex="1 1 auto" UNSAFE_style={{overflow: 'hidden'}}>
             {(item: DynamicTabItem) => (
@@ -995,8 +1042,19 @@ let DynamicTabsWithDecoration = (props = {}) => {
               </Item>
             )}
           </TabList>
-          <Flex alignItems="center" justifyContent="end" flex="0 0 auto" alignSelf="stretch" UNSAFE_style={{borderBottom: 'var(--spectrum-alias-border-size-thick) solid var(--spectrum-global-color-gray-300)'}}>
-            <ActionGroup marginEnd="30px" disabledKeys={tabs.length === 1 ? ['remove'] : undefined} onAction={val => val === 'add' ? addTab() : removeTab()}>
+          <Flex
+            alignItems="center"
+            justifyContent="end"
+            flex="0 0 auto"
+            alignSelf="stretch"
+            UNSAFE_style={{
+              borderBottom:
+                'var(--spectrum-alias-border-size-thick) solid var(--spectrum-global-color-gray-300)'
+            }}>
+            <ActionGroup
+              marginEnd="30px"
+              disabledKeys={tabs.length === 1 ? ['remove'] : undefined}
+              onAction={val => (val === 'add' ? addTab() : removeTab())}>
               <Item key="add">
                 <Text>Add Tab</Text>
               </Item>
@@ -1011,9 +1069,18 @@ let DynamicTabsWithDecoration = (props = {}) => {
             <Item key={item.name}>
               <Heading>{item.children}</Heading>
               <Text>
-                Dolore ex esse laboris elit magna esse sunt. Pariatur in veniam Lorem est occaecat do magna nisi mollit ipsum sit adipisicing fugiat ex. Pariatur ullamco exercitation ea qui adipisicing.
-                Id cupidatat aute id ut excepteur exercitation magna pariatur. Mollit irure irure reprehenderit pariatur eiusmod proident Lorem deserunt duis cillum mollit. Do reprehenderit sit cupidatat quis laborum in do culpa nisi ipsum. Velit aliquip commodo ea ipsum incididunt culpa nostrud deserunt incididunt exercitation. In quis proident sit ad dolore tempor. Eiusmod pariatur quis commodo labore cupidatat cillum enim eiusmod voluptate laborum culpa. Laborum cupidatat incididunt velit voluptate incididunt occaecat quis do.
-                Consequat adipisicing irure Lorem commodo officia sint id. Velit sit magna aliquip eiusmod non id deserunt. Magna veniam ad consequat dolor cupidatat esse enim Lorem ullamco. Anim excepteur consectetur id in. Mollit laboris duis labore enim duis esse reprehenderit.
+                Dolore ex esse laboris elit magna esse sunt. Pariatur in veniam Lorem est occaecat
+                do magna nisi mollit ipsum sit adipisicing fugiat ex. Pariatur ullamco exercitation
+                ea qui adipisicing. Id cupidatat aute id ut excepteur exercitation magna pariatur.
+                Mollit irure irure reprehenderit pariatur eiusmod proident Lorem deserunt duis
+                cillum mollit. Do reprehenderit sit cupidatat quis laborum in do culpa nisi ipsum.
+                Velit aliquip commodo ea ipsum incididunt culpa nostrud deserunt incididunt
+                exercitation. In quis proident sit ad dolore tempor. Eiusmod pariatur quis commodo
+                labore cupidatat cillum enim eiusmod voluptate laborum culpa. Laborum cupidatat
+                incididunt velit voluptate incididunt occaecat quis do. Consequat adipisicing irure
+                Lorem commodo officia sint id. Velit sit magna aliquip eiusmod non id deserunt.
+                Magna veniam ad consequat dolor cupidatat esse enim Lorem ullamco. Anim excepteur
+                consectetur id in. Mollit laboris duis labore enim duis esse reprehenderit.
               </Text>
             </Item>
           )}
@@ -1025,18 +1092,29 @@ let DynamicTabsWithDecoration = (props = {}) => {
 
 let ControlledSelection = () => {
   let [selectedKey, _setSelectedKey] = useState<Key>('Tab 1');
-  let setSelectedKey = useCallback((key: Key | null) => {
-    if (key != null) {
-      _setSelectedKey(key);
-    }
-  }, [_setSelectedKey]);
+  let setSelectedKey = useCallback(
+    (key: Key | null) => {
+      if (key != null) {
+        _setSelectedKey(key);
+      }
+    },
+    [_setSelectedKey]
+  );
 
   return (
     <div style={{width: '80%'}}>
-      <Picker label="Set selected tab" selectedKey={selectedKey} onSelectionChange={setSelectedKey} items={items}>
+      <Picker
+        label="Set selected tab"
+        selectedKey={selectedKey}
+        onSelectionChange={setSelectedKey}
+        items={items}>
         {item => <Item key={item.name}>{item.name}</Item>}
       </Picker>
-      <Tabs aria-label="Tab example" items={items} selectedKey={selectedKey} onSelectionChange={setSelectedKey}>
+      <Tabs
+        aria-label="Tab example"
+        items={items}
+        selectedKey={selectedKey}
+        onSelectionChange={setSelectedKey}>
         <TabList>
           {(item: DynamicTabItem) => (
             <Item key={item.name}>
@@ -1050,9 +1128,18 @@ let ControlledSelection = () => {
             <Item key={item.name}>
               <Heading>{item.children}</Heading>
               <Text>
-                Dolore ex esse laboris elit magna esse sunt. Pariatur in veniam Lorem est occaecat do magna nisi mollit ipsum sit adipisicing fugiat ex. Pariatur ullamco exercitation ea qui adipisicing.
-                Id cupidatat aute id ut excepteur exercitation magna pariatur. Mollit irure irure reprehenderit pariatur eiusmod proident Lorem deserunt duis cillum mollit. Do reprehenderit sit cupidatat quis laborum in do culpa nisi ipsum. Velit aliquip commodo ea ipsum incididunt culpa nostrud deserunt incididunt exercitation. In quis proident sit ad dolore tempor. Eiusmod pariatur quis commodo labore cupidatat cillum enim eiusmod voluptate laborum culpa. Laborum cupidatat incididunt velit voluptate incididunt occaecat quis do.
-                Consequat adipisicing irure Lorem commodo officia sint id. Velit sit magna aliquip eiusmod non id deserunt. Magna veniam ad consequat dolor cupidatat esse enim Lorem ullamco. Anim excepteur consectetur id in. Mollit laboris duis labore enim duis esse reprehenderit.
+                Dolore ex esse laboris elit magna esse sunt. Pariatur in veniam Lorem est occaecat
+                do magna nisi mollit ipsum sit adipisicing fugiat ex. Pariatur ullamco exercitation
+                ea qui adipisicing. Id cupidatat aute id ut excepteur exercitation magna pariatur.
+                Mollit irure irure reprehenderit pariatur eiusmod proident Lorem deserunt duis
+                cillum mollit. Do reprehenderit sit cupidatat quis laborum in do culpa nisi ipsum.
+                Velit aliquip commodo ea ipsum incididunt culpa nostrud deserunt incididunt
+                exercitation. In quis proident sit ad dolore tempor. Eiusmod pariatur quis commodo
+                labore cupidatat cillum enim eiusmod voluptate laborum culpa. Laborum cupidatat
+                incididunt velit voluptate incididunt occaecat quis do. Consequat adipisicing irure
+                Lorem commodo officia sint id. Velit sit magna aliquip eiusmod non id deserunt.
+                Magna veniam ad consequat dolor cupidatat esse enim Lorem ullamco. Anim excepteur
+                consectetur id in. Mollit laboris duis labore enim duis esse reprehenderit.
               </Text>
             </Item>
           )}

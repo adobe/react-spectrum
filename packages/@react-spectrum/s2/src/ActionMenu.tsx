@@ -20,29 +20,40 @@ import {forwardRefType} from './types';
 import intlMessages from '../intl/*.json';
 import {Menu, MenuProps, MenuTrigger, MenuTriggerProps} from './Menu';
 import MoreIcon from '../s2wf-icons/S2_Icon_More_20_N.svg';
-import {StyleProps} from './style-utils' with { type: 'macro' };
+import {StyleProps} from './style-utils' with {type: 'macro'};
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface ActionMenuProps<T> extends
-  Pick<MenuTriggerProps, 'isOpen' | 'defaultOpen' | 'onOpenChange' | 'align' | 'direction' | 'shouldFlip'>,
-  Pick<MenuProps<T>, 'children' | 'items' | 'disabledKeys' | 'onAction' | 'shouldCloseOnSelect'>,
-  Pick<ActionButtonProps, 'isDisabled' | 'isQuiet' | 'autoFocus' | 'size'>,
-  StyleProps, DOMProps, AriaLabelingProps {
+export interface ActionMenuProps<T>
+  extends
+    Pick<
+      MenuTriggerProps,
+      'isOpen' | 'defaultOpen' | 'onOpenChange' | 'align' | 'direction' | 'shouldFlip'
+    >,
+    Pick<MenuProps<T>, 'children' | 'items' | 'disabledKeys' | 'onAction' | 'shouldCloseOnSelect'>,
+    Pick<ActionButtonProps, 'isDisabled' | 'isQuiet' | 'autoFocus' | 'size'>,
+    StyleProps,
+    DOMProps,
+    AriaLabelingProps {
   /**
    * The size of the Menu.
    *
    * @default 'M'
    */
-  menuSize?: 'S' | 'M' | 'L' | 'XL'
+  menuSize?: 'S' | 'M' | 'L' | 'XL';
 }
 
-export const ActionMenuContext = createContext<ContextValue<Partial<ActionMenuProps<any>>, FocusableRefValue<HTMLButtonElement>>>(null);
+export const ActionMenuContext =
+  createContext<ContextValue<Partial<ActionMenuProps<any>>, FocusableRefValue<HTMLButtonElement>>>(
+    null
+  );
 
 /**
  * ActionMenu combines an ActionButton with a Menu for simple "more actions" use cases.
  */
-export const ActionMenu = /*#__PURE__*/(forwardRef as forwardRefType)(function ActionMenu<T extends object>(props: ActionMenuProps<T>, ref: FocusableRef<HTMLButtonElement>) {
+export const ActionMenu = /*#__PURE__*/ (forwardRef as forwardRefType)(function ActionMenu<
+  T extends object
+>(props: ActionMenuProps<T>, ref: FocusableRef<HTMLButtonElement>) {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   [props, ref] = useSpectrumContextProps(props, ref, ActionMenuContext);
   let buttonProps = filterDOMProps(props, {labelable: true});

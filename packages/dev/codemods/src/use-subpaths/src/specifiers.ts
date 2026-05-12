@@ -16,7 +16,7 @@ export const MONOPACKAGE_ROOTS = [
 const specifiersByPackage: Record<string, Record<string, string[]>> = {};
 
 /** Builds a mapping of monopackage -> export -> subpaths that contain the export. */
-export function getSpecifiersByPackage(from: string) {    
+export function getSpecifiersByPackage(from: string) {
   for (let pkg of MONOPACKAGE_ROOTS) {
     if (specifiersByPackage[pkg]) {
       continue;
@@ -24,12 +24,14 @@ export function getSpecifiersByPackage(from: string) {
 
     let dir: string;
     try {
-      let pkgPath = path.dirname(Module.findPackageJSON(pkg, url.pathToFileURL(from || `${process.cwd()}/index`))!);
+      let pkgPath = path.dirname(
+        Module.findPackageJSON(pkg, url.pathToFileURL(from || `${process.cwd()}/index`))!
+      );
       dir = `${pkgPath}/dist/types/exports`;
       if (!fs.existsSync(dir)) {
         dir = `${pkgPath}/exports`;
       }
-      
+
       if (!fs.existsSync(dir)) {
         continue;
       }
@@ -58,7 +60,10 @@ export function getSpecifiersByPackage(from: string) {
               continue;
             }
 
-            let exported = specifier.exported.type === 'Identifier' ? specifier.exported.name : specifier.exported.value;
+            let exported =
+              specifier.exported.type === 'Identifier'
+                ? specifier.exported.name
+                : specifier.exported.value;
             exports[exported] ??= [];
             if (exported.startsWith(subpath)) {
               exports[exported].unshift(importSpecifier);

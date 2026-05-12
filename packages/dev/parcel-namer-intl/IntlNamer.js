@@ -18,7 +18,9 @@ module.exports = new Namer({
     // Name intl bundles with locale in the filename.
     if (!bundle.needsStableName && bundle.type === 'js' && bundle.bundleBehavior !== 'inline') {
       let mainAsset = bundle.getMainEntry();
-      let name = path.basename(mainAsset.filePath, path.extname(mainAsset.filePath)).replace(/\*/g, 'intlStrings');
+      let name = path
+        .basename(mainAsset.filePath, path.extname(mainAsset.filePath))
+        .replace(/\*/g, 'intlStrings');
       if (mainAsset.filePath.includes('@adobe/spectrum-css-temp')) {
         name = mainAsset.filePath.split(path.sep).at(-2) + '_' + name;
       }

@@ -14,11 +14,10 @@ import {ProgressBar} from '../../src/progress/ProgressBar';
 import React from 'react';
 import {render} from '@react-spectrum/test-utils-internal';
 
-
 describe('ProgressBar', function () {
   it.each`
-    Name               | Component
-    ${'ProgressBar'}   | ${ProgressBar}
+    Name             | Component
+    ${'ProgressBar'} | ${ProgressBar}
   `('$Name handles defaults', function ({Component}) {
     let {getByRole} = render(<Component label="Progress Bar" />);
     let progressBar = getByRole('progressbar');
@@ -34,8 +33,8 @@ describe('ProgressBar', function () {
   });
 
   it.each`
-    Name               | Component        | props
-    ${'ProgressBar'}   | ${ProgressBar}   | ${{value: 30}}
+    Name             | Component      | props
+    ${'ProgressBar'} | ${ProgressBar} | ${{value: 30}}
   `('$Name update all fileds by value', function ({Component, props}) {
     let {getByRole} = render(<Component {...props} label="Progress Bar" />);
     let progressBar = getByRole('progressbar');
@@ -46,8 +45,8 @@ describe('ProgressBar', function () {
   });
 
   it.each`
-    Name               | Component        | props
-    ${'ProgressBar'}   | ${ProgressBar}   | ${{value: -1}}
+    Name             | Component      | props
+    ${'ProgressBar'} | ${ProgressBar} | ${{value: -1}}
   `('$Name clamps values to 0', function ({Component, props}) {
     let {getByRole} = render(<Component {...props} label="Progress Bar" />);
     let progressBar = getByRole('progressbar');
@@ -56,8 +55,8 @@ describe('ProgressBar', function () {
   });
 
   it.each`
-    Name               | Component        | props
-    ${'ProgressBar'}   | ${ProgressBar}   | ${{value: 1000}}
+    Name             | Component      | props
+    ${'ProgressBar'} | ${ProgressBar} | ${{value: 1000}}
   `('$Name clamps values to 100', function ({Component, props}) {
     let {getByRole} = render(<Component {...props} label="Progress Bar" />);
     let progressBar = getByRole('progressbar');
@@ -66,8 +65,8 @@ describe('ProgressBar', function () {
   });
 
   it.each`
-    Name               | Component        | props
-    ${'ProgressBar'}   | ${ProgressBar}   | ${{size: 'S', UNSAFE_className: 'testClass'}}
+    Name             | Component      | props
+    ${'ProgressBar'} | ${ProgressBar} | ${{size: 'S', UNSAFE_className: 'testClass'}}
   `('$Name supports UNSAFE_className', function ({Component, props}) {
     let {getByRole} = render(<Component {...props} label="Progress Bar" />);
     let progressBar = getByRole('progressbar');
@@ -75,7 +74,9 @@ describe('ProgressBar', function () {
   });
 
   it('Can handle negative values', () => {
-    let {getByRole} = render(<ProgressBar value={0} minValue={-5} maxValue={5} label="Progress Bar" />);
+    let {getByRole} = render(
+      <ProgressBar value={0} minValue={-5} maxValue={5} label="Progress Bar" />
+    );
     let progressBar = getByRole('progressbar');
     expect(progressBar).toHaveAttribute('aria-valuenow', '0');
     expect(progressBar).toHaveAttribute('aria-valuetext', '50%');
@@ -84,7 +85,9 @@ describe('ProgressBar', function () {
   it('warns user if no aria-label is provided', () => {
     let spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
     render(<ProgressBar value={25} />);
-    expect(spyWarn).toHaveBeenCalledWith('If you do not provide a visible label via children, you must specify an aria-label or aria-labelledby attribute for accessibility');
+    expect(spyWarn).toHaveBeenCalledWith(
+      'If you do not provide a visible label via children, you must specify an aria-label or aria-labelledby attribute for accessibility'
+    );
   });
 
   it('supports custom DOM props', function () {

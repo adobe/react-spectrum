@@ -13,7 +13,12 @@
 import {baseColor, focusRing, style} from '../style' with {type: 'macro'};
 import {Button, ButtonProps} from 'react-aria-components/Button';
 import {ContextValue} from 'react-aria-components/slots';
-import {controlSize, getAllowedOverrides, staticColor, StyleProps} from './style-utils' with {type: 'macro'};
+import {
+  controlSize,
+  getAllowedOverrides,
+  staticColor,
+  StyleProps
+} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef} from 'react';
 import CrossIcon from '../ui-icons/Cross';
 import {FocusableRef, FocusableRefValue} from '@react-types/shared';
@@ -30,9 +35,9 @@ export interface CloseButtonProps extends Pick<ButtonProps, 'isDisabled' | 'onPr
    *
    * @default 'M'
    */
-  size?: 'S' | 'M' | 'L' | 'XL',
+  size?: 'S' | 'M' | 'L' | 'XL';
   /** The static color style to apply. Useful when the Button appears over a color background. */
-  staticColor?: 'white' | 'black' | 'auto'
+  staticColor?: 'white' | 'black' | 'auto';
 }
 
 const hoverBackground = {
@@ -40,53 +45,69 @@ const hoverBackground = {
   isStaticColor: 'transparent-overlay-200'
 } as const;
 
-const styles = style<CloseButtonProps & {isHovered: boolean, isFocusVisible: boolean, isPressed: boolean, isStaticColor: boolean}>({
-  ...focusRing(),
-  ...staticColor(),
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  size: controlSize(),
-  flexShrink: 0,
-  borderRadius: 'full',
-  padding: 0,
-  borderStyle: 'none',
-  transition: 'default',
-  backgroundColor: {
-    default: 'transparent',
-    isHovered: hoverBackground,
-    isFocusVisible: hoverBackground,
-    isPressed: hoverBackground
-  },
-  '--iconPrimary': {
-    type: 'color',
-    value: {
-      default: baseColor('neutral'),
-      isDisabled: 'disabled',
-      isStaticColor: {
-        default: baseColor('transparent-overlay-800'),
-        isDisabled: 'transparent-overlay-400'
-      },
-      forcedColors: {
-        default: 'ButtonText',
-        isDisabled: 'GrayText'
+const styles = style<
+  CloseButtonProps & {
+    isHovered: boolean;
+    isFocusVisible: boolean;
+    isPressed: boolean;
+    isStaticColor: boolean;
+  }
+>(
+  {
+    ...focusRing(),
+    ...staticColor(),
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    size: controlSize(),
+    flexShrink: 0,
+    borderRadius: 'full',
+    padding: 0,
+    borderStyle: 'none',
+    transition: 'default',
+    backgroundColor: {
+      default: 'transparent',
+      isHovered: hoverBackground,
+      isFocusVisible: hoverBackground,
+      isPressed: hoverBackground
+    },
+    '--iconPrimary': {
+      type: 'color',
+      value: {
+        default: baseColor('neutral'),
+        isDisabled: 'disabled',
+        isStaticColor: {
+          default: baseColor('transparent-overlay-800'),
+          isDisabled: 'transparent-overlay-400'
+        },
+        forcedColors: {
+          default: 'ButtonText',
+          isDisabled: 'GrayText'
+        }
       }
-    }
+    },
+    outlineColor: {
+      default: 'focus-ring',
+      isStaticColor: 'transparent-overlay-1000',
+      forcedColors: 'Highlight'
+    },
+    disableTapHighlight: true
   },
-  outlineColor: {
-    default: 'focus-ring',
-    isStaticColor: 'transparent-overlay-1000',
-    forcedColors: 'Highlight'
-  },
-  disableTapHighlight: true
-}, getAllowedOverrides());
+  getAllowedOverrides()
+);
 
-export const CloseButtonContext = createContext<ContextValue<Partial<CloseButtonProps>, FocusableRefValue<HTMLButtonElement>>>(null);
+export const CloseButtonContext =
+  createContext<ContextValue<Partial<CloseButtonProps>, FocusableRefValue<HTMLButtonElement>>>(
+    null
+  );
 
 /**
  * A CloseButton allows a user to dismiss a dialog.
  */
-export const CloseButton = forwardRef(function CloseButton(props: CloseButtonProps, ref: FocusableRef<HTMLButtonElement>) {
+export const CloseButton = forwardRef(function CloseButton(
+  props: CloseButtonProps,
+  ref: FocusableRef<HTMLButtonElement>
+) {
   [props, ref] = useSpectrumContextProps(props, ref, CloseButtonContext);
   let {UNSAFE_style, UNSAFE_className = ''} = props;
   let domRef = useFocusableRef(ref);
@@ -98,7 +119,13 @@ export const CloseButton = forwardRef(function CloseButton(props: CloseButtonPro
       slot="close"
       aria-label={props['aria-label'] || stringFormatter.format('dialog.dismiss')}
       style={pressScale(domRef, UNSAFE_style)}
-      className={renderProps => UNSAFE_className + styles({...renderProps, staticColor: props.staticColor, isStaticColor: !!props.staticColor}, props.styles)}>
+      className={renderProps =>
+        UNSAFE_className +
+        styles(
+          {...renderProps, staticColor: props.staticColor, isStaticColor: !!props.staticColor},
+          props.styles
+        )
+      }>
       <CrossIcon size={({S: 'L', M: 'XL', L: 'XXL', XL: 'XXXL'} as const)[props.size || 'M']} />
     </Button>
   );

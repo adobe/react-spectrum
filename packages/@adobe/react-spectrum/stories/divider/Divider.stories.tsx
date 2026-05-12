@@ -73,9 +73,13 @@ VerticalSmall.story = {
 function renderVertical(props = {}) {
   return (
     <section style={{display: 'flex'}}>
-      <ActionButton aria-label="Properties" isQuiet><Properties /></ActionButton>
+      <ActionButton aria-label="Properties" isQuiet>
+        <Properties />
+      </ActionButton>
       <Divider orientation="vertical" {...props} />
-      <ActionButton aria-label="Select" isQuiet><Select /></ActionButton>
+      <ActionButton aria-label="Select" isQuiet>
+        <Select />
+      </ActionButton>
     </section>
   );
 }

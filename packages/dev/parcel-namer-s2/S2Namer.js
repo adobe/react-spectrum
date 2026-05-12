@@ -21,7 +21,11 @@ module.exports = new Namer({
       return bundle.target.distEntry;
     }
     let ext = '.' + bundle.type;
-    if (bundle.type === 'js' && bundle.target.name !== 'legacy-module' && bundle.target.name !== 'module') {
+    if (
+      bundle.type === 'js' &&
+      bundle.target.name !== 'legacy-module' &&
+      bundle.target.name !== 'module'
+    ) {
       ext = bundle.env.outputFormat === 'esmodule' ? '.mjs' : '.cjs';
     }
     let originalExt = path.extname(mainAsset.filePath);
@@ -36,7 +40,10 @@ module.exports = new Namer({
     } else if (mainAsset.filePath.includes('/exports/')) {
       let index = mainAsset.filePath.indexOf('/exports/');
       name = path.dirname(mainAsset.filePath.slice(index + 1)) + '/' + name;
-    } else if (bundle.target.distDir.endsWith('/dist') && !bundle.target.distDir.includes('/style/')) {
+    } else if (
+      bundle.target.distDir.endsWith('/dist') &&
+      !bundle.target.distDir.includes('/style/')
+    ) {
       let index = mainAsset.filePath.indexOf('/src/');
       if (index >= 0) {
         name = 'private/' + path.dirname(mainAsset.filePath.slice(index + 5)) + '/' + name;
@@ -58,14 +65,15 @@ module.exports = new Namer({
       name += '_css';
     }
 
-    return name
-      .replace(/^S2_Icon_(.*?)(Size\d+)?_\d+(?:x\d+)?_N$/, '$1')
-      .replace(/^S2_(fill|lin)_(.+)_(generic\d)_(\d+)$/, (m, type, name, style) => {
-        name = name[0].toUpperCase() + name.slice(1).replace(/_/g, '');
-        return 'gradient/' + style + '/' + name;
-      })
-      .replace(/\.module$/, '_module')
-      + ext;
+    return (
+      name
+        .replace(/^S2_Icon_(.*?)(Size\d+)?_\d+(?:x\d+)?_N$/, '$1')
+        .replace(/^S2_(fill|lin)_(.+)_(generic\d)_(\d+)$/, (m, type, name, style) => {
+          name = name[0].toUpperCase() + name.slice(1).replace(/_/g, '');
+          return 'gradient/' + style + '/' + name;
+        })
+        .replace(/\.module$/, '_module') + ext
+    );
     // }
   }
 });

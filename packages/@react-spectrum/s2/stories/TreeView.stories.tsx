@@ -365,44 +365,83 @@ export const ExampleNoActions: StoryObj<typeof TreeExampleStaticNoActions> = {
 };
 
 interface TreeViewItemType {
-  id?: string,
-  name: string,
-  icon?: ReactElement,
-  childItems?: TreeViewItemType[]
+  id?: string;
+  name: string;
+  icon?: ReactElement;
+  childItems?: TreeViewItemType[];
 }
 
 let rows: TreeViewItemType[] = [
-  {id: 'projects', name: 'Projects', icon: <Folder />, childItems: [
-    {id: 'project-1', name: 'Project 1 Level 1', icon: <FileTxt />},
-    {id: 'project-2', name: 'Project 2 Level 1', icon: <Folder />, childItems: [
-      {id: 'project-2A', name: 'Project 2A Level 2', icon: <FileTxt />},
-      {id: 'project-2B', name: 'Project 2B Level 2', icon: <FileTxt />},
-      {id: 'project-2C', name: 'Project 2C Level 3', icon: <FileTxt />}
-    ]},
-    {id: 'project-3', name: 'Project 3', icon: <FileTxt />},
-    {id: 'project-4', name: 'Project 4', icon: <FileTxt />},
-    {id: 'project-5', name: 'Project 5', icon: <Folder />, childItems: [
-      {id: 'project-5A', name: 'Project 5A', icon: <FileTxt />},
-      {id: 'project-5B', name: 'Project 5B', icon: <FileTxt />},
-      {id: 'project-5C', name: 'Project 5C', icon: <FileTxt />}
-    ]}
-  ]},
-  {id: 'reports', name: 'Reports', icon: <Folder />, childItems: [
-    {id: 'reports-1', name: 'Reports 1', icon: <Folder />, childItems: [
-      {id: 'reports-1A', name: 'Reports 1A', icon: <Folder />, childItems: [
-        {id: 'reports-1AB', name: 'Reports 1AB', icon: <Folder />, childItems: [
-          {id: 'reports-1ABC', name: 'Reports 1ABC', icon: <FileTxt />}
-        ]}
-      ]},
-      {id: 'reports-1B', name: 'Reports 1B', icon: <FileTxt />},
-      {id: 'reports-1C', name: 'Reports 1C', icon: <FileTxt />}
-    ]},
-    {id: 'reports-2', name: 'Reports 2', icon: <FileTxt />},
-    ...Array.from({length: 100}, (_, i) => ({id: `reports-repeat-${i}`, name: `Reports ${i}`, icon: <FileTxt />}))
-  ]}
+  {
+    id: 'projects',
+    name: 'Projects',
+    icon: <Folder />,
+    childItems: [
+      {id: 'project-1', name: 'Project 1 Level 1', icon: <FileTxt />},
+      {
+        id: 'project-2',
+        name: 'Project 2 Level 1',
+        icon: <Folder />,
+        childItems: [
+          {id: 'project-2A', name: 'Project 2A Level 2', icon: <FileTxt />},
+          {id: 'project-2B', name: 'Project 2B Level 2', icon: <FileTxt />},
+          {id: 'project-2C', name: 'Project 2C Level 3', icon: <FileTxt />}
+        ]
+      },
+      {id: 'project-3', name: 'Project 3', icon: <FileTxt />},
+      {id: 'project-4', name: 'Project 4', icon: <FileTxt />},
+      {
+        id: 'project-5',
+        name: 'Project 5',
+        icon: <Folder />,
+        childItems: [
+          {id: 'project-5A', name: 'Project 5A', icon: <FileTxt />},
+          {id: 'project-5B', name: 'Project 5B', icon: <FileTxt />},
+          {id: 'project-5C', name: 'Project 5C', icon: <FileTxt />}
+        ]
+      }
+    ]
+  },
+  {
+    id: 'reports',
+    name: 'Reports',
+    icon: <Folder />,
+    childItems: [
+      {
+        id: 'reports-1',
+        name: 'Reports 1',
+        icon: <Folder />,
+        childItems: [
+          {
+            id: 'reports-1A',
+            name: 'Reports 1A',
+            icon: <Folder />,
+            childItems: [
+              {
+                id: 'reports-1AB',
+                name: 'Reports 1AB',
+                icon: <Folder />,
+                childItems: [{id: 'reports-1ABC', name: 'Reports 1ABC', icon: <FileTxt />}]
+              }
+            ]
+          },
+          {id: 'reports-1B', name: 'Reports 1B', icon: <FileTxt />},
+          {id: 'reports-1C', name: 'Reports 1C', icon: <FileTxt />}
+        ]
+      },
+      {id: 'reports-2', name: 'Reports 2', icon: <FileTxt />},
+      ...Array.from({length: 100}, (_, i) => ({
+        id: `reports-repeat-${i}`,
+        name: `Reports ${i}`,
+        icon: <FileTxt />
+      }))
+    ]
+  }
 ];
 
-const DynamicTreeItem = (props: Omit<TreeViewItemProps, 'children'> & TreeViewItemType & TreeViewLoadMoreItemProps): ReactElement => {
+const DynamicTreeItem = (
+  props: Omit<TreeViewItemProps, 'children'> & TreeViewItemType & TreeViewLoadMoreItemProps
+): ReactElement => {
   let {childItems, name, icon = <FileTxt />, loadingState, onLoadMore} = props;
   return (
     <>
@@ -422,32 +461,50 @@ const DynamicTreeItem = (props: Omit<TreeViewItemProps, 'children'> & TreeViewIt
           </ActionMenu>
         </TreeViewItemContent>
         <Collection items={childItems}>
-          {(item) => (
+          {item => (
             <DynamicTreeItem
               id={item.id || item.name}
               icon={item.icon}
               childItems={item.childItems}
               textValue={item.name}
               name={item.name}
-              href={props.href} />
+              href={props.href}
+            />
           )}
         </Collection>
-        {onLoadMore && loadingState && <TreeViewLoadMoreItem loadingState={loadingState} onLoadMore={onLoadMore} /> }
+        {onLoadMore && loadingState && (
+          <TreeViewLoadMoreItem loadingState={loadingState} onLoadMore={onLoadMore} />
+        )}
       </TreeViewItem>
     </>
   );
 };
 
 const TreeExampleDynamic = (args: TreeViewProps<TreeViewItemType>): ReactElement => (
-  <div style={{width: '300px', resize: 'both', height: '320px', overflow: 'auto', display: 'flex', flexDirection: 'column'}}>
-    <TreeView disabledKeys={['reports-1AB']} aria-label="test dynamic tree" items={rows} onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')} {...args}>
-      {(item) => (
+  <div
+    style={{
+      width: '300px',
+      resize: 'both',
+      height: '320px',
+      overflow: 'auto',
+      display: 'flex',
+      flexDirection: 'column'
+    }}>
+    <TreeView
+      disabledKeys={['reports-1AB']}
+      aria-label="test dynamic tree"
+      items={rows}
+      onExpandedChange={action('onExpandedChange')}
+      onSelectionChange={action('onSelectionChange')}
+      {...args}>
+      {item => (
         <DynamicTreeItem
           id={item.id}
           icon={item.icon}
           childItems={item.childItems}
           textValue={item.name}
-          name={item.name} />
+          name={item.name}
+        />
       )}
     </TreeView>
   </div>
@@ -523,11 +580,15 @@ function renderEmptyState(): ReactElement {
   return (
     <IllustratedMessage>
       <FolderOpen />
-      <Heading>
-        No results
-      </Heading>
+      <Heading>No results</Heading>
       <Content>
-        <Content>No results found, press <Link href="https://adobe.com" onPress={action('linkPress')}>here</Link> for more info.</Content>
+        <Content>
+          No results found, press{' '}
+          <Link href="https://adobe.com" onPress={action('linkPress')}>
+            here
+          </Link>{' '}
+          for more info.
+        </Content>
       </Content>
     </IllustratedMessage>
   );
@@ -579,15 +640,22 @@ function renderEmptyState(): ReactElement {
 
 const TreeExampleWithLinks = (args: TreeViewProps<TreeViewItemType>): ReactElement => (
   <div style={{width: '300px', resize: 'both', height: '320px', overflow: 'auto'}}>
-    <TreeView {...args} disabledKeys={['reports-1AB']} aria-label="test dynamic tree" items={rows} onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
-      {(item) => (
+    <TreeView
+      {...args}
+      disabledKeys={['reports-1AB']}
+      aria-label="test dynamic tree"
+      items={rows}
+      onExpandedChange={action('onExpandedChange')}
+      onSelectionChange={action('onSelectionChange')}>
+      {item => (
         <DynamicTreeItem
           id={item.id}
           icon={item.icon}
           childItems={item.childItems}
           textValue={item.name}
           name={item.name}
-          href="https://adobe.com/" />
+          href="https://adobe.com/"
+        />
       )}
     </TreeView>
   </div>
@@ -608,10 +676,10 @@ export const WithLinks: StoryObj<typeof TreeExampleWithLinks> = {
 };
 
 interface Character {
-  name: string,
-  height: number,
-  mass: number,
-  birth_year: number
+  name: string;
+  height: number;
+  mass: number;
+  birth_year: number;
 }
 
 const AsyncTree = (args: TreeViewProps<any> & {delay: number}): ReactElement => {
@@ -636,7 +704,9 @@ const AsyncTree = (args: TreeViewProps<any> & {delay: number}): ReactElement => 
 
       action('starwars loading')();
       await new Promise(resolve => setTimeout(resolve, args.delay));
-      let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search=${filterText}`, {signal});
+      let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search=${filterText}`, {
+        signal
+      });
       let json = await res.json();
 
       return {
@@ -652,10 +722,13 @@ const AsyncTree = (args: TreeViewProps<any> & {delay: number}): ReactElement => 
       action('root loading')();
       setRootLoading(true);
       setTimeout(() => {
-        let dataToAppend: {id: string, name: string}[] = [];
+        let dataToAppend: {id: string; name: string}[] = [];
         let rootLength = rootData.items.length;
         for (let i = 0; i < 5; i++) {
-          dataToAppend.push({id: `photos-${i + rootLength + 1}`, name: `Photos-${i + rootLength + 1}`});
+          dataToAppend.push({
+            id: `photos-${i + rootLength + 1}`,
+            name: `Photos-${i + rootLength + 1}`
+          });
         }
         rootData.append(...dataToAppend);
         setRootLoading(false);
@@ -665,7 +738,11 @@ const AsyncTree = (args: TreeViewProps<any> & {delay: number}): ReactElement => 
 
   return (
     <div style={{width: '300px', resize: 'both', height: '320px', overflow: 'auto'}}>
-      <TreeView aria-label="async loading tree" onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')} {...args}>
+      <TreeView
+        aria-label="async loading tree"
+        onExpandedChange={action('onExpandedChange')}
+        onSelectionChange={action('onSelectionChange')}
+        {...args}>
         <DynamicTreeItem
           id="starwars"
           icon={<Folder />}
@@ -673,17 +750,22 @@ const AsyncTree = (args: TreeViewProps<any> & {delay: number}): ReactElement => 
           textValue="Star Wars"
           childItems={starWarsList.items}
           loadingState={starWarsList.loadingState}
-          onLoadMore={starWarsList.loadMore} />
+          onLoadMore={starWarsList.loadMore}
+        />
         <Collection items={rootData.items}>
           {(item: any) => (
             <DynamicTreeItem
               id={item.id}
               icon={<FileTxt />}
               name={item.name}
-              textValue={item.name} />
+              textValue={item.name}
+            />
           )}
         </Collection>
-        <TreeViewLoadMoreItem loadingState={isRootLoading ? 'loading' : 'idle'} onLoadMore={onRootLoadMore} />
+        <TreeViewLoadMoreItem
+          loadingState={isRootLoading ? 'loading' : 'idle'}
+          onLoadMore={onRootLoadMore}
+        />
       </TreeView>
     </div>
   );
@@ -779,7 +861,7 @@ function ActionBarExample(args: TreeViewProps<any>) {
         onSelectionChange={setSelectedKeys as any}
         onExpandedChange={action('onExpandedChange')}
         styles={style({width: 'full', height: 'full'})}
-        renderActionBar={(keys) => {
+        renderActionBar={keys => {
           let selection = keys === 'all' ? 'all' : [...keys].join(', ');
           return (
             <ActionBar>
@@ -860,7 +942,7 @@ function ActionBarEmphasizedExample(args: TreeViewProps<any>) {
         onSelectionChange={setSelectedKeys as any}
         onExpandedChange={action('onExpandedChange')}
         styles={style({width: 'full', height: 'full'})}
-        renderActionBar={(keys) => {
+        renderActionBar={keys => {
           let selection = keys === 'all' ? 'all' : [...keys].join(', ');
           return (
             <ActionBar isEmphasized>

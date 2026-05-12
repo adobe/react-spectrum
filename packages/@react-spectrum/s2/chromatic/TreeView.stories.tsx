@@ -153,9 +153,8 @@ function TreeExample(props: TreeViewProps<any>): ReactElement {
   );
 }
 
-
 export const TreeStatic: StoryObj<typeof TreeExample> = {
-  render: (args) => <TreeExample {...args} />
+  render: args => <TreeExample {...args} />
 };
 
 export const TreeCheckboxSelection: StoryObj<typeof TreeExample> = {
@@ -185,44 +184,87 @@ export const TreeDisableSelection: StoryObj<typeof TreeExample> = {
 };
 
 interface TreeViewItemType {
-  id: string,
-  name: string,
-  icon: ReactElement,
-  childItems?: TreeViewItemType[]
+  id: string;
+  name: string;
+  icon: ReactElement;
+  childItems?: TreeViewItemType[];
 }
 
 let rows: TreeViewItemType[] = [
-  {id: 'projects', name: 'Projects', icon: <Folder />, childItems: [
-    {id: 'project-1', name: 'Project 1 Level 1', icon: <FileTxt />},
-    {id: 'project-2', name: 'Project 2 Level 1', icon: <Folder />, childItems: [
-      {id: 'project-2A', name: 'Project 2A Level 2', icon: <FileTxt />},
-      {id: 'project-2B', name: 'Project 2B Level 2', icon: <FileTxt />},
-      {id: 'project-2C', name: 'Project 2C Level 3', icon: <FileTxt />}
-    ]},
-    {id: 'project-3', name: 'Project 3', icon: <FileTxt />},
-    {id: 'project-4', name: 'Project 4', icon: <FileTxt />},
-    {id: 'project-5', name: 'Project 5', icon: <Folder />, childItems: [
-      {id: 'project-5A', name: 'Project 5A', icon: <FileTxt />},
-      {id: 'project-5B', name: 'Project 5B', icon: <FileTxt />},
-      {id: 'project-5C', name: 'Project 5C', icon: <FileTxt />}
-    ]}
-  ]},
-  {id: 'reports', name: 'Reports', icon: <Folder />, childItems: [
-    {id: 'reports-1', name: 'Reports 1', icon: <Folder />, childItems: [
-      {id: 'reports-1A', name: 'Reports 1A', icon: <Folder />, childItems: [
-        {id: 'reports-1AB', name: 'Reports 1AB', icon: <Folder />, childItems: [
-          {id: 'reports-1ABC', name: 'Reports 1ABC', icon: <FileTxt />}
-        ]}
-      ]},
-      {id: 'reports-1B', name: 'Reports 1B', icon: <FileTxt />},
-      {id: 'reports-1C', name: 'Reports 1C', icon: <FileTxt />}
-    ]},
-    {id: 'reports-2', name: 'Reports 2', icon: <FileTxt />},
-    ...Array.from({length: 100}, (_, i) => ({id: `reports-repeat-${i}`, name: `Reports ${i}`, icon: <FileTxt />}))
-  ]}
+  {
+    id: 'projects',
+    name: 'Projects',
+    icon: <Folder />,
+    childItems: [
+      {id: 'project-1', name: 'Project 1 Level 1', icon: <FileTxt />},
+      {
+        id: 'project-2',
+        name: 'Project 2 Level 1',
+        icon: <Folder />,
+        childItems: [
+          {id: 'project-2A', name: 'Project 2A Level 2', icon: <FileTxt />},
+          {id: 'project-2B', name: 'Project 2B Level 2', icon: <FileTxt />},
+          {id: 'project-2C', name: 'Project 2C Level 3', icon: <FileTxt />}
+        ]
+      },
+      {id: 'project-3', name: 'Project 3', icon: <FileTxt />},
+      {id: 'project-4', name: 'Project 4', icon: <FileTxt />},
+      {
+        id: 'project-5',
+        name: 'Project 5',
+        icon: <Folder />,
+        childItems: [
+          {id: 'project-5A', name: 'Project 5A', icon: <FileTxt />},
+          {id: 'project-5B', name: 'Project 5B', icon: <FileTxt />},
+          {id: 'project-5C', name: 'Project 5C', icon: <FileTxt />}
+        ]
+      }
+    ]
+  },
+  {
+    id: 'reports',
+    name: 'Reports',
+    icon: <Folder />,
+    childItems: [
+      {
+        id: 'reports-1',
+        name: 'Reports 1',
+        icon: <Folder />,
+        childItems: [
+          {
+            id: 'reports-1A',
+            name: 'Reports 1A',
+            icon: <Folder />,
+            childItems: [
+              {
+                id: 'reports-1AB',
+                name: 'Reports 1AB',
+                icon: <Folder />,
+                childItems: [{id: 'reports-1ABC', name: 'Reports 1ABC', icon: <FileTxt />}]
+              }
+            ]
+          },
+          {id: 'reports-1B', name: 'Reports 1B', icon: <FileTxt />},
+          {id: 'reports-1C', name: 'Reports 1C', icon: <FileTxt />}
+        ]
+      },
+      {id: 'reports-2', name: 'Reports 2', icon: <FileTxt />},
+      ...Array.from({length: 100}, (_, i) => ({
+        id: `reports-repeat-${i}`,
+        name: `Reports ${i}`,
+        icon: <FileTxt />
+      }))
+    ]
+  }
 ];
 
-const DynamicTreeItem = (props: Omit<TreeViewItemProps, 'children'> & {icon: ReactElement, childItems?: TreeViewItemType[], name: string}): ReactElement => {
+const DynamicTreeItem = (
+  props: Omit<TreeViewItemProps, 'children'> & {
+    icon: ReactElement;
+    childItems?: TreeViewItemType[];
+    name: string;
+  }
+): ReactElement => {
   let {childItems, name, icon} = props;
   return (
     <>
@@ -242,14 +284,15 @@ const DynamicTreeItem = (props: Omit<TreeViewItemProps, 'children'> & {icon: Rea
           </ActionMenu>
         </TreeViewItemContent>
         <Collection items={childItems}>
-          {(item) => (
+          {item => (
             <DynamicTreeItem
               id={item.id}
               icon={item.icon}
               childItems={item.childItems}
               textValue={item.name}
               name={item.name}
-              href={props.href} />
+              href={props.href}
+            />
           )}
         </Collection>
       </TreeViewItem>
@@ -260,43 +303,43 @@ const DynamicTreeItem = (props: Omit<TreeViewItemProps, 'children'> & {icon: Rea
 const TreeExampleDynamic = (args: TreeViewProps<TreeViewItemType>): ReactElement => (
   <div style={{width: '300px', height: '320px', display: 'flex', flexDirection: 'column'}}>
     <TreeView aria-label="test dynamic tree" items={rows} {...args}>
-      {(item) => (
+      {item => (
         <DynamicTreeItem
           id={item.id}
           icon={item.icon}
           childItems={item.childItems}
           textValue={item.name}
-          name={item.name} />
+          name={item.name}
+        />
       )}
     </TreeView>
   </div>
 );
 
 export const Dynamic: StoryObj<typeof TreeExampleDynamic> = {
-  render: (args) => <TreeExampleDynamic {...args} />,
+  render: args => <TreeExampleDynamic {...args} />,
   args: {
     disabledKeys: ['project-2C', 'project-5'],
     defaultExpandedKeys: ['projects', 'projects-2', 'projects-5']
   }
 };
 
-
 function renderEmptyState(): ReactElement {
   return (
     <IllustratedMessage>
       <FolderOpen />
-      <Heading>
-        No results
-      </Heading>
+      <Heading>No results</Heading>
       <Content>
-        <Content>No results found, press <Link href="https://adobe.com">here</Link> for more info.</Content>
+        <Content>
+          No results found, press <Link href="https://adobe.com">here</Link> for more info.
+        </Content>
       </Content>
     </IllustratedMessage>
   );
 }
 
 export const Empty: StoryObj<typeof TreeExampleDynamic> = {
-  render: (args) => <TreeExampleDynamic {...args} />,
+  render: args => <TreeExampleDynamic {...args} />,
   args: {
     renderEmptyState,
     items: []

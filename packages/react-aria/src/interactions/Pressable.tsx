@@ -21,81 +21,82 @@ import {useFocusable} from './useFocusable';
 import {useObjectRef} from '../utils/useObjectRef';
 
 export interface PressableProps extends PressProps {
-  children: ReactElement<DOMAttributes, string>
+  children: ReactElement<DOMAttributes, string>;
 }
 
-export const Pressable:
-  React.ForwardRefExoticComponent<PressableProps & React.RefAttributes<FocusableElement>> =
-React.forwardRef(({children, ...props}: PressableProps, ref: ForwardedRef<FocusableElement>) => {
-  ref = useObjectRef(ref);
-  let {pressProps} = usePress({...props, ref});
-  let {focusableProps} = useFocusable(props, ref);
-  let child = React.Children.only(children);
+export const Pressable: React.ForwardRefExoticComponent<
+  PressableProps & React.RefAttributes<FocusableElement>
+> = React.forwardRef(
+  ({children, ...props}: PressableProps, ref: ForwardedRef<FocusableElement>) => {
+    ref = useObjectRef(ref);
+    let {pressProps} = usePress({...props, ref});
+    let {focusableProps} = useFocusable(props, ref);
+    let child = React.Children.only(children);
 
-  useEffect(() => {
-    if (process.env.NODE_ENV === 'production') {
-      return;
-    }
-
-    let el = ref.current;
-    if (!el || !(el instanceof getOwnerWindow(el).Element)) {
-      console.error('<Pressable> child must forward its ref to a DOM element.');
-      return;
-    }
-
-    if (!props.isDisabled && !isFocusable(el)) {
-      console.warn('<Pressable> child must be focusable. Please ensure the tabIndex prop is passed through.');
-      return;
-    }
-
-    if (
-      el.localName !== 'button' &&
-      el.localName !== 'input' &&
-      el.localName !== 'select' &&
-      el.localName !== 'textarea' &&
-      el.localName !== 'a' &&
-      el.localName !== 'area' &&
-      el.localName !== 'summary'
-    ) {
-      let role = el.getAttribute('role');
-      if (!role) {
-        console.warn('<Pressable> child must have an interactive ARIA role.');
-      } else if (
-        // https://w3c.github.io/aria/#widget_roles
-        role !== 'application' &&
-        role !== 'button' &&
-        role !== 'checkbox' &&
-        role !== 'combobox' &&
-        role !== 'gridcell' &&
-        role !== 'link' &&
-        role !== 'menuitem' &&
-        role !== 'menuitemcheckbox' &&
-        role !== 'menuitemradio' &&
-        role !== 'option' &&
-        role !== 'radio' &&
-        role !== 'searchbox' &&
-        role !== 'separator' &&
-        role !== 'slider' &&
-        role !== 'spinbutton' &&
-        role !== 'switch' &&
-        role !== 'tab' &&
-        role !== 'textbox' &&
-        role !== 'treeitem'
-      ) {
-        console.warn(`<Pressable> child must have an interactive ARIA role. Got "${role}".`);
+    useEffect(() => {
+      if (process.env.NODE_ENV === 'production') {
+        return;
       }
-    }
-  }, [ref, props.isDisabled]);
 
-  // @ts-ignore
-  let childRef = parseInt(React.version, 10) < 19 ? child.ref : child.props.ref;
+      let el = ref.current;
+      if (!el || !(el instanceof getOwnerWindow(el).Element)) {
+        console.error('<Pressable> child must forward its ref to a DOM element.');
+        return;
+      }
 
-  return React.cloneElement(
-    child,
-    {
+      if (!props.isDisabled && !isFocusable(el)) {
+        console.warn(
+          '<Pressable> child must be focusable. Please ensure the tabIndex prop is passed through.'
+        );
+        return;
+      }
+
+      if (
+        el.localName !== 'button' &&
+        el.localName !== 'input' &&
+        el.localName !== 'select' &&
+        el.localName !== 'textarea' &&
+        el.localName !== 'a' &&
+        el.localName !== 'area' &&
+        el.localName !== 'summary'
+      ) {
+        let role = el.getAttribute('role');
+        if (!role) {
+          console.warn('<Pressable> child must have an interactive ARIA role.');
+        } else if (
+          // https://w3c.github.io/aria/#widget_roles
+          role !== 'application' &&
+          role !== 'button' &&
+          role !== 'checkbox' &&
+          role !== 'combobox' &&
+          role !== 'gridcell' &&
+          role !== 'link' &&
+          role !== 'menuitem' &&
+          role !== 'menuitemcheckbox' &&
+          role !== 'menuitemradio' &&
+          role !== 'option' &&
+          role !== 'radio' &&
+          role !== 'searchbox' &&
+          role !== 'separator' &&
+          role !== 'slider' &&
+          role !== 'spinbutton' &&
+          role !== 'switch' &&
+          role !== 'tab' &&
+          role !== 'textbox' &&
+          role !== 'treeitem'
+        ) {
+          console.warn(`<Pressable> child must have an interactive ARIA role. Got "${role}".`);
+        }
+      }
+    }, [ref, props.isDisabled]);
+
+    // @ts-ignore
+    let childRef = parseInt(React.version, 10) < 19 ? child.ref : child.props.ref;
+
+    return React.cloneElement(child, {
       ...mergeProps(pressProps, focusableProps, child.props),
       // @ts-ignore
       ref: mergeRefs(childRef, ref)
-    }
-  );
-});
+    });
+  }
+);
