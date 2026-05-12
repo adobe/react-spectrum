@@ -281,26 +281,31 @@ class TreeCollection<T> extends BaseCollection<T> {
 export interface TreeRenderProps {
   /**
    * Whether the tree has no items and should display its empty state.
+   *
    * @selector [data-empty]
    */
   isEmpty: boolean;
   /**
    * Whether the tree is currently focused.
+   *
    * @selector [data-focused]
    */
   isFocused: boolean;
   /**
    * Whether the tree is currently keyboard focused.
+   *
    * @selector [data-focus-visible]
    */
   isFocusVisible: boolean;
   /**
    * The type of selection that is allowed in the collection.
+   *
    * @selector [data-selection-mode="single | multiple"]
    */
   selectionMode: SelectionMode;
   /**
    * Whether the tree allows dragging.
+   *
    * @selector [data-allows-dragging]
    */
   allowsDragging: boolean;
@@ -322,23 +327,30 @@ export interface TreeProps<T>
     Expandable,
     GlobalDOMAttributes<HTMLDivElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-Tree'
    */
   className?: ClassNameOrFunction<TreeRenderProps>;
   /**
    * How multiple selection should behave in the tree.
-   * @default "toggle"
+   *
+   * @default 'toggle'
    */
   selectionBehavior?: SelectionBehavior;
   /** Provides content to display when there are no items in the list. */
   renderEmptyState?: (props: TreeEmptyStateRenderProps) => ReactNode;
   /**
    * Whether `disabledKeys` applies to all interactions, or only selection.
+   *
    * @default 'all'
    */
   disabledBehavior?: DisabledBehavior;
-  /** The drag and drop hooks returned by `useDragAndDrop` used to enable drag and drop behavior for the Tree. */
+  /**
+   * The drag and drop hooks returned by `useDragAndDrop` used to enable drag and drop behavior for
+   * the Tree.
+   */
   dragAndDropHooks?: DragAndDropHooks<NoInfer<T>>;
 }
 
@@ -346,8 +358,8 @@ export const TreeContext = createContext<ContextValue<TreeProps<any>, HTMLDivEle
 export const TreeStateContext = createContext<TreeState<any> | null>(null);
 
 /**
- * A tree provides users with a way to navigate nested hierarchical information, with support for keyboard navigation
- * and selection.
+ * A tree provides users with a way to navigate nested hierarchical information, with support for
+ * keyboard navigation and selection.
  */
 export const Tree = /*#__PURE__*/ (forwardRef as forwardRefType)(function Tree<T extends object>(
   props: TreeProps<T>,
@@ -642,21 +654,25 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
 export interface TreeItemRenderProps extends ItemRenderProps {
   /**
    * Whether the tree item is expanded.
+   *
    * @selector [data-expanded]
    */
   isExpanded: boolean;
   /**
    * Whether the tree item has child tree items.
+   *
    * @selector [data-has-child-items]
    */
   hasChildItems: boolean;
   /**
    * What level the tree item has within the tree.
+   *
    * @selector [data-level="number"]
    */
   level: number;
   /**
    * Whether the tree item's children have keyboard focus.
+   *
    * @selector [data-focus-visible-within]
    */
   isFocusVisibleWithin: boolean;
@@ -671,7 +687,10 @@ export interface TreeItemContentRenderProps extends TreeItemRenderProps {}
 // The TreeItemContent is the one that accepts RenderProps because we would get much more complicated logic in TreeItem otherwise since we'd
 // need to do a bunch of check to figure out what is the Content and what are the actual collection elements (aka child rows) of the TreeItem
 export interface TreeItemContentProps {
-  /** The children of the component. A function may be provided to alter the children based on component state. */
+  /**
+   * The children of the component. A function may be provided to alter the children based on
+   * component state.
+   */
   children: ChildrenOrFunction<TreeItemContentRenderProps>;
 }
 
@@ -706,25 +725,33 @@ export interface TreeItemProps<T = object>
     Pick<AriaTreeItemOptions, 'hasChildItems'>,
     Omit<GlobalDOMAttributes<HTMLDivElement>, 'onClick'> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-TreeItem'
    */
   className?: ClassNameOrFunction<TreeItemRenderProps>;
   /** The unique id of the tree row. */
   id?: Key;
-  /** The object value that this tree item represents. When using dynamic collections, this is set automatically. */
+  /**
+   * The object value that this tree item represents. When using dynamic collections, this is set
+   * automatically.
+   */
   value?: T;
   /** A string representation of the tree item's contents, used for features like typeahead. */
   textValue: string;
   /** An accessibility label for this tree item. */
   'aria-label'?: string;
-  /** The content of the tree item along with any nested children. Supports static nested tree items or use of a Collection to dynamically render nested tree items. */
+  /**
+   * The content of the tree item along with any nested children. Supports static nested tree items
+   * or use of a Collection to dynamically render nested tree items.
+   */
   children: ReactNode;
   /** Whether the item is disabled. */
   isDisabled?: boolean;
   /**
-   * Handler that is called when a user performs an action on this tree item. The exact user event depends on
-   * the collection's `selectionBehavior` prop and the interaction modality.
+   * Handler that is called when a user performs an action on this tree item. The exact user event
+   * depends on the collection's `selectionBehavior` prop and the interaction modality.
    */
   onAction?: () => void;
 }
@@ -1016,6 +1043,7 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent(
 export interface TreeLoadMoreItemRenderProps {
   /**
    * What level the tree item has within the tree.
+   *
    * @selector [data-level]
    */
   level: number;
@@ -1024,7 +1052,9 @@ export interface TreeLoadMoreItemRenderProps {
 export interface TreeLoadMoreItemProps
   extends Omit<LoadMoreSentinelProps, 'collection'>, RenderProps<TreeLoadMoreItemRenderProps> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-TreeLoadMoreItem'
    */
   className?: ClassNameOrFunction<TreeLoadMoreItemRenderProps>;

@@ -1737,11 +1737,13 @@ let totalItems = 0;
 let itemKeys = new Set<any>();
 /**
  * Generates a tree data structure with 10 items per level and 6 levels deep.
+ *
  * @returns Array of tree items with the specified structure.
  */
 function generateTreeData(): Array<ITreeItem> {
   /**
    * Recursively generates tree items for a given level.
+   *
    * @param level - Current depth level (1-6).
    * @param parentId - Parent item ID for generating unique child IDs.
    * @returns Array of tree items for this level.

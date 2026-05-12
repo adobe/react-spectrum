@@ -29,6 +29,7 @@ export interface BaseLayoutOptions {
   scale?: Scale;
   /**
    * The margin around the grid view between the edges and the items.
+   *
    * @default 24
    */
   margin?: number;

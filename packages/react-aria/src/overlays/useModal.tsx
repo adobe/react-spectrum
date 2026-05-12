@@ -38,12 +38,12 @@ interface ModalContext {
 const Context = React.createContext<ModalContext | null>(null);
 
 /**
- * Each ModalProvider tracks how many modals are open in its subtree. On mount, the modals
- * trigger `addModal` to increment the count, and trigger `removeModal` on unmount to decrement it.
- * This is done recursively so that all parent providers are incremented and decremented.
- * If the modal count is greater than zero, we add `aria-hidden` to this provider to hide its
- * subtree from screen readers. This is done using React context in order to account for things
- * like portals, which can cause the React tree and the DOM tree to differ significantly in structure.
+ * Each ModalProvider tracks how many modals are open in its subtree. On mount, the modals trigger
+ * `addModal` to increment the count, and trigger `removeModal` on unmount to decrement it. This is
+ * done recursively so that all parent providers are incremented and decremented. If the modal count
+ * is greater than zero, we add `aria-hidden` to this provider to hide its subtree from screen
+ * readers. This is done using React context in order to account for things like portals, which can
+ * cause the React tree and the DOM tree to differ significantly in structure.
  */
 export function ModalProvider(props: ModalProviderProps): JSX.Element {
   let {children} = props;
@@ -119,8 +119,9 @@ export function OverlayProvider(props: ModalProviderProps): JSX.Element {
 export interface OverlayContainerProps extends ModalProviderProps {
   /**
    * The container element in which the overlay portal will be placed.
-   * @default document.body
+   *
    * @deprecated - Use a parent UNSAFE_PortalProvider to set your portal container instead.
+   * @default document.body
    */
   portalContainer?: Element;
 }

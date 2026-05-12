@@ -129,9 +129,11 @@ export function scrollIntoView(
 }
 
 /**
- * Scrolls the `targetElement` so it is visible in the viewport. Accepts an optional `opts.containingElement`
- * that will be centered in the viewport prior to scrolling the targetElement into view. If scrolling is prevented on
- * the body (e.g. targetElement is in a popover), this will only scroll the scroll parents of the targetElement up to but not including the body itself.
+ * Scrolls the `targetElement` so it is visible in the viewport. Accepts an optional
+ * `opts.containingElement` that will be centered in the viewport prior to scrolling the
+ * targetElement into view. If scrolling is prevented on the body (e.g. targetElement is in a
+ * popover), this will only scroll the scroll parents of the targetElement up to but not including
+ * the body itself.
  */
 export function scrollIntoViewport(
   targetElement: Element | null,

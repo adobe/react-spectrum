@@ -40,10 +40,14 @@ const BUTTON_GROUP_ROLES = {
 export interface ActionGroupProps<T> extends MultipleSelection {
   /**
    * The axis the ActionGroup should align with.
+   *
    * @default 'horizontal'
    */
   orientation?: Orientation;
-  /** An list of `Item` elements or a function. If the latter, a list of items must be provided using the `items` prop. */
+  /**
+   * An list of `Item` elements or a function. If the latter, a list of items must be provided using
+   * the `items` prop.
+   */
   children: ItemElement<T> | ItemElement<T>[] | ItemRenderer<T>;
   /** A list of items to display as children. Must be used with a function as the sole child. */
   items?: Iterable<T>;

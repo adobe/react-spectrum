@@ -20,9 +20,9 @@ import {ReactNode} from 'react';
 export interface DialogTriggerProps extends AriaDialogTriggerProps {}
 
 /**
- * DialogTrigger serves as a wrapper around a Dialog and its associated trigger, linking the Dialog's
- * open state with the trigger's press state. Additionally, it allows you to customize the type and
- * positioning of the Dialog.
+ * DialogTrigger serves as a wrapper around a Dialog and its associated trigger, linking the
+ * Dialog's open state with the trigger's press state. Additionally, it allows you to customize the
+ * type and positioning of the Dialog.
  */
 export function DialogTrigger(props: DialogTriggerProps): ReactNode {
   return (

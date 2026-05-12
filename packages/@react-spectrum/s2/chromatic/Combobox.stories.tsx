@@ -22,6 +22,7 @@ import {
   WithAvatars,
   WithIcons
 } from '../stories/ComboBox.stories';
+import {Avatar} from '../exports';
 import {ComboBox} from '../src/ComboBox';
 import {expect} from '@storybook/jest';
 import type {Meta, StoryObj} from '@storybook/react';
@@ -190,5 +191,12 @@ export const Filtering: StoryObj<AsyncComboBoxStoryType> = {
       },
       {timeout: 5000}
     );
+  }
+};
+
+export const WithPrefix: Story = {
+  ...Example,
+  args: {
+    prefix: <Avatar size={20} src="https://i.imgur.com/xIe7Wlb.png" />
   }
 };

@@ -515,7 +515,8 @@ export const Button = forwardRef(function Button(
 });
 
 /**
- * A LinkButton combines the functionality of a link with the appearance of a button. Useful for allowing users to navigate to another page.
+ * A LinkButton combines the functionality of a link with the appearance of a button. Useful for
+ * allowing users to navigate to another page.
  */
 export const LinkButton = forwardRef(function LinkButton(
   props: LinkButtonProps,

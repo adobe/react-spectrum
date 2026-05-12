@@ -49,6 +49,7 @@ export interface SpectrumButtonProps<T extends ElementType = 'button'>
   isPending?: boolean;
   /**
    * Whether the button should be displayed with a quiet style.
+   *
    * @deprecated
    */
   isQuiet?: boolean;

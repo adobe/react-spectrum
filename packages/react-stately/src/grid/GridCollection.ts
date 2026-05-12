@@ -29,10 +29,11 @@ export interface GridNode<T> extends Node<T> {
   column?: GridNode<T>;
   /**
    * The number of columns spanned by this cell. Use `colSpan` instead.
+   *
    * @deprecated
    */
   colspan?: number;
-  /** The number of columns spanned by this cell.  */
+  /** The number of columns spanned by this cell. */
   colSpan?: number | null;
   /** The column index of this cell, accounting for any colSpans. */
   colIndex?: number | null;

@@ -99,3 +99,17 @@ export const ContextualHelpExample: Story = {
     label: 'Quantity'
   }
 };
+
+export const WithPrefix: Story = {
+  render: args => (
+    <NumberField
+      {...args}
+      formatOptions={{style: 'currency', currency: 'USD', currencyDisplay: 'narrowSymbol'}}
+    />
+  ),
+  args: {
+    label: 'Value',
+    placeholder: '0.00',
+    prefix: 'USD'
+  }
+};

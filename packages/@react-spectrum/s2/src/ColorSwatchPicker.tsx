@@ -31,16 +31,19 @@ export interface ColorSwatchPickerProps
   children: ReactNode;
   /**
    * The amount of padding between the swatches.
+   *
    * @default 'regular'
    */
   density?: 'compact' | 'regular' | 'spacious';
   /**
    * The size of the color swatches.
+   *
    * @default 'M'
    */
   size?: 'XS' | 'S' | 'M' | 'L';
   /**
    * The corner rounding of the color swatches.
+   *
    * @default 'none'
    */
   rounding?: 'none' | 'default' | 'full';

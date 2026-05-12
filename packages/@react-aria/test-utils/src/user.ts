@@ -120,13 +120,15 @@ let defaultAdvanceTimer = (waitTime: number | undefined) =>
 export class User {
   private user;
   /**
-   * The interaction type (mouse, touch, keyboard) that the test util user will use when interacting with a component. This can be overridden
-   * at the aria pattern util level if needed.
+   * The interaction type (mouse, touch, keyboard) that the test util user will use when interacting
+   * with a component. This can be overridden at the aria pattern util level if needed.
+   *
    * @default mouse
    */
   interactionType: UserOpts['interactionType'];
   /**
-   * A function used by the test utils to advance timers during interactions. Required for certain aria patterns (e.g. table).
+   * A function used by the test utils to advance timers during interactions. Required for certain
+   * aria patterns (e.g. table).
    */
   advanceTimer: UserOpts['advanceTimer'];
 

@@ -124,8 +124,8 @@ export const CardBase = React.forwardRef(function CardBase<T extends object>(
       heading: {UNSAFE_className: classNames(styles, 'spectrum-Card-heading'), ...titleProps},
       content: {UNSAFE_className: classNames(styles, 'spectrum-Card-content'), ...contentProps},
       detail: {UNSAFE_className: classNames(styles, 'spectrum-Card-detail')}
-      // eslint-disable-next-line react-hooks/exhaustive-deps
     }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [titleProps, contentProps, height, isQuiet, orientation]
   );
 

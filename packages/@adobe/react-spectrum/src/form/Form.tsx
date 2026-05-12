@@ -49,6 +49,7 @@ export interface SpectrumFormProps
   isReadOnly?: boolean;
   /**
    * Whether the Form elements should display their "valid" or "invalid" visual styling.
+   *
    * @default 'valid'
    */
   validationState?: ValidationState;
@@ -56,6 +57,7 @@ export interface SpectrumFormProps
    * Whether to use native HTML form validation to prevent form submission
    * when a field value is missing or invalid, or mark fields as required
    * or invalid via ARIA.
+   *
    * @default 'aria'
    */
   validationBehavior?: 'aria' | 'native';
@@ -87,7 +89,8 @@ const formPropNames = new Set([
 ]);
 
 /**
- * Forms allow users to enter data that can be submitted while providing alignment and styling for form fields.
+ * Forms allow users to enter data that can be submitted while providing alignment and styling for
+ * form fields.
  */
 export const Form = React.forwardRef(function Form(
   props: SpectrumFormProps,

@@ -86,6 +86,7 @@ const placeholders = new LocalizedStringDictionary(
     sk: {year: 'rrrr', month: 'mm', day: 'dd'},
     sl: {year: 'llll', month: 'mm', day: 'dd'},
     sr: {year: 'гггг', month: 'мм', day: 'дд'},
+    'sr-Latn': {year: 'gggg', month: 'mm', day: 'dd'},
     sv: {year: 'åååå', month: 'mm', day: 'dd'},
     szl: {year: 'rrrr', month: 'mm', day: 'dd'},
     tg: {year: 'сссс', month: 'мм', day: 'рр'},

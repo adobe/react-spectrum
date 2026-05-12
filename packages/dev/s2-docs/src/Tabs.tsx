@@ -64,7 +64,8 @@ const tabs = style({
 });
 
 /**
- * Tabs organize content into multiple sections and allow users to navigate between them. The content under the set of tabs should be related and form a coherent unit.
+ * Tabs organize content into multiple sections and allow users to navigate between them. The
+ * content under the set of tabs should be related and form a coherent unit.
  */
 export const Tabs = forwardRef(function Tabs(props: TabsProps, ref: DOMRef<HTMLDivElement>) {
   let domRef = useDOMRef(ref);

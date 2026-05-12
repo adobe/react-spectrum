@@ -23,31 +23,38 @@ export interface GridLayoutOptions extends BaseLayoutOptions {
   // cardSize?: 'S' | 'M' | 'L',
   /**
    * The minimum item size.
+   *
    * @default 208 x 208 for horizontal card orientation. 102 x 102 for vertical card orientation.
    */
   minItemSize?: Size;
   /**
    * The maximum item size.
+   *
    * @default Infinity
    */
   maxItemSize?: Size;
   /**
    * The minimum space required between items.
+   *
    * @default 18 x 18
    */
   minSpace?: Size;
   /**
    * The maximum number of columns.
+   *
    * @default Infinity
    */
   maxColumns?: number;
   /**
-   * The additional padding along the card's main axis. Affects the sizing of the content area following the card image.
+   * The additional padding along the card's main axis. Affects the sizing of the content area
+   * following the card image.
+   *
    * @default 95
    */
   itemPadding?: number;
   /**
    * The orientation of the cards withn the grid.
+   *
    * @default vertical
    */
   cardOrientation?: Orientation;

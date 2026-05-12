@@ -37,7 +37,8 @@ export const ColorAreaContext =
   createContext<ContextValue<Partial<ColorAreaProps>, DOMRefValue<HTMLDivElement>>>(null);
 
 /**
- * A ColorArea allows users to adjust two channels of an RGB, HSL or HSB color value against a two-dimensional gradient background.
+ * A ColorArea allows users to adjust two channels of an RGB, HSL or HSB color value against a
+ * two-dimensional gradient background.
  */
 export const ColorArea = forwardRef(function ColorArea(
   props: ColorAreaProps,

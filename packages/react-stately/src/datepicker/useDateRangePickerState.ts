@@ -38,6 +38,7 @@ export interface DateRangePickerStateOptions<
 > extends DateRangePickerProps<T> {
   /**
    * Determines whether the date picker popover should close automatically when a date is selected.
+   *
    * @default true
    */
   shouldCloseOnSelect?: boolean | (() => boolean);
@@ -73,18 +74,26 @@ export interface DateRangePickerState extends OverlayTriggerState, FormValidatio
   setDateTime(part: 'start' | 'end', value: DateValue | null): void;
   /** The granularity for the field, based on the `granularity` prop and current value. */
   granularity: Granularity;
-  /** Whether the date range picker supports selecting times, according to the `granularity` prop and current value. */
+  /**
+   * Whether the date range picker supports selecting times, according to the `granularity` prop and
+   * current value.
+   */
   hasTime: boolean;
   /** Whether the calendar popover is currently open. */
   isOpen: boolean;
   /** Sets whether the calendar popover is open. */
   setOpen(isOpen: boolean): void;
   /**
-   * The current validation state of the date range picker, based on the `validationState`, `minValue`, and `maxValue` props.
+   * The current validation state of the date range picker, based on the `validationState`,
+   * `minValue`, and `maxValue` props.
+   *
    * @deprecated Use `isInvalid` instead.
    */
   validationState: ValidationState | null;
-  /** Whether the date range picker is invalid, based on the `isInvalid`, `minValue`, and `maxValue` props. */
+  /**
+   * Whether the date range picker is invalid, based on the `isInvalid`, `minValue`, and `maxValue`
+   * props.
+   */
   isInvalid: boolean;
   /** Formats the selected range using the given options. */
   formatValue(locale: string, fieldOptions: FieldOptions): {start: string; end: string} | null;

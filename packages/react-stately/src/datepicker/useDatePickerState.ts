@@ -34,6 +34,7 @@ import {ValidationState} from '@react-types/shared';
 export interface DatePickerStateOptions<T extends DateValue> extends DatePickerProps<T> {
   /**
    * Determines whether the date picker popover should close automatically when a date is selected.
+   *
    * @default true
    */
   shouldCloseOnSelect?: boolean | (() => boolean);
@@ -62,14 +63,19 @@ export interface DatePickerState extends OverlayTriggerState, FormValidationStat
   setTimeValue(value: TimeValue): void;
   /** The granularity for the field, based on the `granularity` prop and current value. */
   granularity: Granularity;
-  /** Whether the date picker supports selecting a time, according to the `granularity` prop and current value. */
+  /**
+   * Whether the date picker supports selecting a time, according to the `granularity` prop and
+   * current value.
+   */
   hasTime: boolean;
   /** Whether the calendar popover is currently open. */
   isOpen: boolean;
   /** Sets whether the calendar popover is open. */
   setOpen(isOpen: boolean): void;
   /**
-   * The current validation state of the date picker, based on the `validationState`, `minValue`, and `maxValue` props.
+   * The current validation state of the date picker, based on the `validationState`, `minValue`,
+   * and `maxValue` props.
+   *
    * @deprecated Use `isInvalid` instead.
    */
   validationState: ValidationState | null;
@@ -82,8 +88,8 @@ export interface DatePickerState extends OverlayTriggerState, FormValidationStat
 }
 
 /**
- * Provides state management for a date picker component.
- * A date picker combines a DateField and a Calendar popover to allow users to enter or select a date and time value.
+ * Provides state management for a date picker component. A date picker combines a DateField and a
+ * Calendar popover to allow users to enter or select a date and time value.
  */
 export function useDatePickerState<T extends DateValue = DateValue>(
   props: DatePickerStateOptions<T>

@@ -30,11 +30,13 @@ import {useSpectrumContextProps} from './useSpectrumContextProps';
 interface DividerSpectrumProps {
   /**
    * How thick the Divider should be.
+   *
    * @default 'M'
    */
   size?: 'S' | 'M' | 'L';
   /**
    * The orientation of the Divider.
+   *
    * @default 'horizontal'
    */
   orientation?: 'horizontal' | 'vertical';

@@ -17,8 +17,9 @@ export type Direction = 'ltr' | 'rtl';
 // curent way is like https://testing-library.com/docs/user-event/options/#advancetimers,
 export interface UserOpts {
   /**
-   * The interaction type (mouse, touch, keyboard) that the test util user will use when interacting with a component. This can be overridden
-   * at the aria pattern tester level if needed.
+   * The interaction type (mouse, touch, keyboard) that the test util user will use when interacting
+   * with a component. This can be overridden at the aria pattern tester level if needed.
+   *
    * @default mouse
    */
   interactionType?: 'mouse' | 'touch' | 'keyboard';
@@ -26,8 +27,8 @@ export interface UserOpts {
   // A real timer user would pass (waitTime) => new Promise((resolve) => setTimeout(resolve, waitTime))
   // Time is in ms.
   /**
-   * A function used by the test utils to advance timers during interactions. Required for certain aria patterns (e.g. table). This can be overridden
-   * at the aria pattern tester level if needed.
+   * A function used by the test utils to advance timers during interactions. Required for certain
+   * aria patterns (e.g. table). This can be overridden at the aria pattern tester level if needed.
    */
   advanceTimer?: (time: number) => unknown | Promise<unknown>;
 }
@@ -43,13 +44,14 @@ export interface CheckboxGroupTesterOpts extends BaseTesterOpts {}
 
 export interface ComboBoxTesterOpts extends BaseTesterOpts {
   /**
-   * The base element for the combobox. If provided the wrapping element around the target combobox (as is the the case with a ref provided to RSP ComboBox),
-   * will automatically search for the combobox element within.
+   * The base element for the combobox. If provided the wrapping element around the target combobox
+   * (as is the the case with a ref provided to RSP ComboBox), will automatically search for the
+   * combobox element within.
    */
   root: HTMLElement;
   /**
-   * The node of the combobox trigger button if any. If not provided, we will try to automatically use any button
-   * within the `root` provided or that the `root` serves as the trigger.
+   * The node of the combobox trigger button if any. If not provided, we will try to automatically
+   * use any button within the `root` provided or that the `root` serves as the trigger.
    */
   trigger?: HTMLElement;
 }
@@ -92,6 +94,7 @@ export interface MenuTesterOpts extends BaseTesterOpts {
 export interface RadioGroupTesterOpts extends BaseTesterOpts {
   /**
    * The horizontal layout direction, typically affected by locale.
+   *
    * @default 'ltr'
    */
   direction?: Direction;
@@ -99,8 +102,9 @@ export interface RadioGroupTesterOpts extends BaseTesterOpts {
 
 export interface SelectTesterOpts extends BaseTesterOpts {
   /**
-   * The trigger element for the select. If provided the wrapping element around the target select (as is the case with a ref provided to RSP Select),
-   * will automatically search for the select's trigger element within.
+   * The trigger element for the select. If provided the wrapping element around the target select
+   * (as is the case with a ref provided to RSP Select), will automatically search for the select's
+   * trigger element within.
    */
   root: HTMLElement;
 }
@@ -115,6 +119,7 @@ export interface TableTesterOpts extends BaseTesterOpts {
 export interface TabsTesterOpts extends BaseTesterOpts {
   /**
    * The horizontal layout direction, typically affected by locale.
+   *
    * @default 'ltr'
    */
   direction?: Direction;
@@ -133,27 +138,34 @@ export interface BaseGridRowInteractionOpts {
    */
   row: number | string | HTMLElement;
   /**
-   * What interaction type to use when interacting with the row. Defaults to the interaction type set on the tester.
+   * What interaction type to use when interacting with the row. Defaults to the interaction type
+   * set on the tester.
    */
   interactionType?: UserOpts['interactionType'];
 }
 
 export interface ToggleGridRowOpts extends BaseGridRowInteractionOpts {
   /**
-   * Whether the row needs to be long pressed to be selected. Depends on the components implementation.
+   * Whether the row needs to be long pressed to be selected. Depends on the components
+   * implementation.
    */
   needsLongPress?: boolean;
   /**
-   * Whether the checkbox should be used to select the row. If false, will attempt to select the row via press.
+   * Whether the checkbox should be used to select the row. If false, will attempt to select the row
+   * via press.
+   *
    * @default 'true'
    */
   checkboxSelection?: boolean;
   // TODO: this api feels a bit confusing tbh...
   /**
-   * Whether the grid has a selectionBehavior of "toggle" or "replace" (aka highlight selection). This affects the user operations
-   * required to toggle row selection by adding modifier keys during user actions, useful when performing multi-row selection in a "selectionBehavior: 'replace'" grid.
-   * If you would like to still simulate user actions (aka press) without these modifiers keys for a "selectionBehavior: replace" grid, simply omit this option.
-   * See the "Selection Behavior" section of the appropriate React Aria Component docs for more information (e.g. https://react-spectrum.adobe.com/react-aria/Tree.html#selection-behavior).
+   * Whether the grid has a selectionBehavior of "toggle" or "replace" (aka highlight selection).
+   * This affects the user operations required to toggle row selection by adding modifier keys
+   * during user actions, useful when performing multi-row selection in a "selectionBehavior:
+   * 'replace'" grid. If you would like to still simulate user actions (aka press) without these
+   * modifiers keys for a "selectionBehavior: replace" grid, simply omit this option. See the
+   * "Selection Behavior" section of the appropriate React Aria Component docs for more information
+   * (e.g. https://react-spectrum.adobe.com/react-aria/Tree.html#selection-behavior).
    *
    * @default 'toggle'
    */
@@ -162,7 +174,8 @@ export interface ToggleGridRowOpts extends BaseGridRowInteractionOpts {
 
 export interface GridRowActionOpts extends BaseGridRowInteractionOpts {
   /**
-   * Whether or not the row needs a double click to trigger the row action. Depends on the components implementation.
+   * Whether or not the row needs a double click to trigger the row action. Depends on the
+   * components implementation.
    */
   needsDoubleClick?: boolean;
 }

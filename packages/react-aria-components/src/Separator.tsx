@@ -28,7 +28,9 @@ export interface SeparatorProps
     DOMRenderProps<'hr' | 'div', undefined>,
     GlobalDOMAttributes<HTMLElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element.
+   *
    * @default 'react-aria-Separator'
    */
   className?: string;
@@ -55,7 +57,8 @@ export class SeparatorNode extends CollectionNode<any> {
 }
 
 /**
- * A separator is a visual divider between two groups of content, e.g. groups of menu items or sections of a page.
+ * A separator is a visual divider between two groups of content, e.g. groups of menu items or
+ * sections of a page.
  */
 export const Separator = /*#__PURE__*/ createLeafComponent(
   SeparatorNode,

@@ -23,6 +23,7 @@ export type MenuTriggerType = 'press' | 'longPress';
 export interface MenuTriggerProps extends OverlayTriggerProps {
   /**
    * How the menu is triggered.
+   *
    * @default 'press'
    */
   trigger?: MenuTriggerType;
@@ -46,7 +47,8 @@ export interface RootMenuTriggerState extends MenuTriggerState {
   /** Closes a specific submenu tied to a specific menu item at a specific level. */
   closeSubmenu: (triggerKey: Key, level: number) => void;
 
-  /** An array of open submenu trigger keys within the menu tree.
+  /**
+   * An array of open submenu trigger keys within the menu tree.
    * The index of key within array matches the submenu level in the tree.
    */
   expandedKeysStack: Key[];

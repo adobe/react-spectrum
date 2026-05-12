@@ -41,6 +41,7 @@ export interface CustomDialogProps
   isKeyboardDismissDisabled?: boolean;
   /**
    * The amount of padding around the contents of the dialog.
+   *
    * @default 'default'
    */
   padding?: 'default' | 'none';

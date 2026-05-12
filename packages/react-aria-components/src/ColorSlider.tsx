@@ -23,11 +23,13 @@ import {useLocale} from 'react-aria/I18nProvider';
 export interface ColorSliderRenderProps {
   /**
    * The orientation of the color slider.
+   *
    * @selector [data-orientation="horizontal | vertical"]
    */
   orientation: Orientation;
   /**
    * Whether the color slider is disabled.
+   *
    * @selector [data-disabled]
    */
   isDisabled: boolean;
@@ -44,7 +46,9 @@ export interface ColorSliderProps
     SlotProps,
     GlobalDOMAttributes<HTMLDivElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-ColorSlider'
    */
   className?: ClassNameOrFunction<ColorSliderRenderProps>;

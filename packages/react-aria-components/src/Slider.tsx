@@ -17,6 +17,7 @@ import {
   useSliderThumb
 } from 'react-aria/useSlider';
 
+import {clamp} from 'react-stately/private/utils/number';
 import {
   ClassNameOrFunction,
   ContextValue,
@@ -56,7 +57,9 @@ export interface SliderProps<T = number | number[]>
     SlotProps,
     GlobalDOMAttributes<HTMLDivElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-Slider'
    */
   className?: ClassNameOrFunction<SliderRenderProps>;
@@ -70,17 +73,20 @@ export const SliderContext = createContext<ContextValue<SliderProps, HTMLDivElem
 export const SliderStateContext = createContext<SliderState | null>(null);
 export const SliderTrackContext =
   createContext<ContextValue<SliderTrackContextValue, HTMLDivElement>>(null);
+export const SliderFillContext = createContext<ContextValue<SliderFillProps, HTMLDivElement>>(null);
 export const SliderOutputContext =
   createContext<ContextValue<SliderOutputContextValue, HTMLOutputElement>>(null);
 
 export interface SliderRenderProps {
   /**
    * The orientation of the slider.
+   *
    * @selector [data-orientation="horizontal | vertical"]
    */
   orientation: Orientation;
   /**
    * Whether the slider is disabled.
+   *
    * @selector [data-disabled]
    */
   isDisabled: boolean;
@@ -142,7 +148,9 @@ export const Slider = /*#__PURE__*/ (forwardRef as forwardRefType)(function Slid
 export interface SliderOutputProps
   extends RenderProps<SliderRenderProps, 'output'>, GlobalDOMAttributes<HTMLOutputElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-SliderOutput'
    */
   className?: ClassNameOrFunction<SliderRenderProps>;
@@ -167,7 +175,7 @@ export const SliderOutput = /*#__PURE__*/ (forwardRef as forwardRefType)(functio
     style,
     children,
     render,
-    defaultChildren: state.getThumbValueLabel(0),
+    defaultChildren: state.getFormattedValue(),
     defaultClassName: 'react-aria-SliderOutput',
     values: {
       orientation: state.orientation,
@@ -190,6 +198,7 @@ export const SliderOutput = /*#__PURE__*/ (forwardRef as forwardRefType)(functio
 export interface SliderTrackRenderProps extends SliderRenderProps {
   /**
    * Whether the slider track is currently hovered with a mouse.
+   *
    * @selector [data-hovered]
    */
   isHovered: boolean;
@@ -198,7 +207,9 @@ export interface SliderTrackRenderProps extends SliderRenderProps {
 export interface SliderTrackProps
   extends HoverEvents, RenderProps<SliderTrackRenderProps>, GlobalDOMAttributes<HTMLDivElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-SliderTrack'
    */
   className?: ClassNameOrFunction<SliderTrackRenderProps>;
@@ -249,26 +260,31 @@ export interface SliderThumbRenderProps {
   state: SliderState;
   /**
    * Whether this thumb is currently being dragged.
+   *
    * @selector [data-dragging]
    */
   isDragging: boolean;
   /**
    * Whether the thumb is currently hovered with a mouse.
+   *
    * @selector [data-hovered]
    */
   isHovered: boolean;
   /**
    * Whether the thumb is currently focused.
+   *
    * @selector [data-focused]
    */
   isFocused: boolean;
   /**
    * Whether the thumb is keyboard focused.
+   *
    * @selector [data-focus-visible]
    */
   isFocusVisible: boolean;
   /**
    * Whether the thumb is disabled.
+   *
    * @selector [data-disabled]
    */
   isDisabled: boolean;
@@ -281,7 +297,9 @@ export interface SliderThumbProps
     RenderProps<SliderThumbRenderProps>,
     GlobalDOMAttributes<HTMLDivElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-SliderThumb'
    */
   className?: ClassNameOrFunction<SliderThumbRenderProps>;
@@ -353,5 +371,91 @@ export const SliderThumb = /*#__PURE__*/ (forwardRef as forwardRefType)(function
         {renderProps.children}
       </Provider>
     </dom.div>
+  );
+});
+
+export interface SliderFillRenderProps extends SliderRenderProps {
+  /**
+   * Whether the slider fill is currently hovered with a mouse.
+   *
+   * @selector [data-hovered]
+   */
+  isHovered: boolean;
+}
+
+export interface SliderFillProps
+  extends HoverEvents, RenderProps<SliderFillRenderProps>, GlobalDOMAttributes<HTMLDivElement> {
+  /**
+   * The offset from which to start the fill.
+   *
+   * @default 0
+   */
+  offset?: number;
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
+   * @default 'react-aria-SliderFill'
+   */
+  className?: ClassNameOrFunction<SliderFillRenderProps>;
+}
+
+/**
+ * Displays the selected range.
+ */
+export const SliderFill = /*#__PURE__*/ (forwardRef as forwardRefType)(function SliderFill(
+  props: SliderFillProps,
+  ref: ForwardedRef<HTMLDivElement>
+) {
+  [props, ref] = useContextProps(props, ref, SliderFillContext);
+  let state = useContext(SliderStateContext)!;
+  let {onHoverStart, onHoverEnd, onHoverChange, ...otherProps} = props;
+  let {hoverProps, isHovered} = useHover({onHoverStart, onHoverEnd, onHoverChange});
+
+  let offset =
+    props.offset != null
+      ? clamp(props.offset, state.getThumbMinValue(0), state.getThumbMaxValue(0))
+      : state.getThumbMinValue(0);
+  let start =
+    state.values.length > 1 ? state.getThumbPercent(0) * 100 : state.getValuePercent(offset) * 100;
+  let end = state.values.length > 0 ? state.getThumbPercent(state.values.length - 1) * 100 : 0;
+  let startPercent = Math.min(start, end);
+  let endPercent = Math.max(start, end);
+  let sizePercent = Math.max(0, endPercent - startPercent);
+
+  let renderProps = useRenderProps({
+    ...props,
+    defaultClassName: 'react-aria-SliderFill',
+    defaultStyle:
+      state.orientation === 'vertical'
+        ? {
+            position: 'absolute',
+            bottom: `${startPercent}%`,
+            height: `${sizePercent}%`,
+            width: '100%'
+          }
+        : {
+            position: 'absolute',
+            insetInlineStart: `${startPercent}%`,
+            width: `${sizePercent}%`,
+            height: '100%'
+          },
+    values: {
+      orientation: state.orientation,
+      isDisabled: state.isDisabled,
+      isHovered,
+      state
+    }
+  });
+
+  return (
+    <dom.div
+      {...mergeProps(otherProps, hoverProps)}
+      {...renderProps}
+      ref={ref}
+      data-hovered={isHovered || undefined}
+      data-orientation={state.orientation || undefined}
+      data-disabled={state.isDisabled || undefined}
+    />
   );
 });

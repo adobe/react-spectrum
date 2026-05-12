@@ -21,7 +21,10 @@ export function isSameDay(a: DateValue, b: DateValue): boolean {
   return a.era === b.era && a.year === b.year && a.month === b.month && a.day === b.day;
 }
 
-/** Returns whether the given dates occur in the same month, using the calendar system of the first date. */
+/**
+ * Returns whether the given dates occur in the same month, using the calendar system of the first
+ * date.
+ */
 export function isSameMonth(a: DateValue, b: DateValue): boolean {
   b = toCalendar(b, a.calendar);
   // In the Japanese calendar, months can span multiple eras/years, so only compare the first of the month.
@@ -30,7 +33,10 @@ export function isSameMonth(a: DateValue, b: DateValue): boolean {
   return a.era === b.era && a.year === b.year && a.month === b.month;
 }
 
-/** Returns whether the given dates occur in the same year, using the calendar system of the first date. */
+/**
+ * Returns whether the given dates occur in the same year, using the calendar system of the first
+ * date.
+ */
 export function isSameYear(a: DateValue, b: DateValue): boolean {
   b = toCalendar(b, a.calendar);
   a = startOfYear(a);

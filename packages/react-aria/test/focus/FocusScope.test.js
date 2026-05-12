@@ -2265,12 +2265,12 @@ describe('FocusScope with Shadow DOM', function () {
   });
 
   /**
-   * document.body
+   * Document.body
    * ├── div#outside-shadow (contains <FocusScope restoreFocus>)
    * │   ├── input (focus can be restored here)
    * │   └── shadow-root
    * │       └── Your custom elements and focusable elements here
-   * └── Other elements
+   * └── Other elements.
    */
   it('should restore focus to the element outside shadow DOM on unmount, with FocusScope outside as well', async () => {
     const App = () => (
@@ -2320,7 +2320,7 @@ describe('FocusScope with Shadow DOM', function () {
   });
 
   /**
-   * Test case: https://github.com/adobe/react-spectrum/issues/1472
+   * Test case: https://github.com/adobe/react-spectrum/issues/1472.
    */
   it('should autofocus and lock tab navigation inside shadow DOM', async function () {
     const {shadowRoot, shadowHost} = createShadowRoot();

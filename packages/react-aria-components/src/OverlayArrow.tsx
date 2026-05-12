@@ -39,7 +39,9 @@ export interface OverlayArrowProps
     RenderProps<OverlayArrowRenderProps>,
     DOMProps {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-OverlayArrow'
    */
   className?: ClassNameOrFunction<OverlayArrowRenderProps>;
@@ -48,6 +50,7 @@ export interface OverlayArrowProps
 export interface OverlayArrowRenderProps {
   /**
    * The placement of the overlay relative to the trigger.
+   *
    * @selector [data-placement="left | right | top | bottom"]
    */
   placement: PlacementAxis | null;

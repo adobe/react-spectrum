@@ -15,8 +15,8 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version: '24'
-          cache: 'npm'
-      - run: npm ci
+          cache: 'yarn'
+      - run: yarn install --frozen-lockfile
       - name: Generate and post Excel testing sheet to Slack
         run: node scripts/sendWeeklyExcelSheet.mjs
         env:

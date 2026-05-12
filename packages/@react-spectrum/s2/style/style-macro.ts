@@ -1082,18 +1082,16 @@ class ConditionalRule extends GroupRule {
  * available in the style macro API), and should be used sparingly.
  * Must be imported with `{type: 'macro'}`.
  *
+ * @example
+ *   import {css} from '@react-spectrum/s2/style' with {type: 'macro'};
+ *
+ *   const styles = css(`
+ *   backdrop-filter: blur(8px);
+ *   `);
+ *
  * @param content - The CSS declarations to inject.
  * @param layer - The CSS `@layer` to place the styles in. Defaults to `'_.a'`.
  * @returns The generated class name that applies the styles.
- *
- * @example
- * ```tsx
- * import {css} from '@react-spectrum/s2/style' with {type: 'macro'};
- *
- * const styles = css(`
- *   backdrop-filter: blur(8px);
- * `);
- * ```
  */
 export function css(this: MacroContext | void, content: string, layer = '_.a'): string {
   // Check if `this` is undefined, which means style was not called as a macro but as a normal function.

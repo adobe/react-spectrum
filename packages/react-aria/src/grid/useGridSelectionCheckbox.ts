@@ -19,6 +19,7 @@ export interface GridSelectionCheckboxAria {
 
 /**
  * Provides the behavior and accessibility implementation for a selection checkbox in a grid.
+ *
  * @param props - Props for the selection checkbox.
  * @param state - State of the grid, as returned by `useGridState`.
  */

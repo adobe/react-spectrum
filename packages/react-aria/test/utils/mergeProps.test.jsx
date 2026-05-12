@@ -11,10 +11,10 @@
  */
 
 import clsx from 'clsx';
+import {createRef} from 'react';
 import {mergeIds, useId} from '../../src/utils/useId';
 import {mergeProps} from '../../src/utils/mergeProps';
 import {render} from '@react-spectrum/test-utils-internal';
-import {createRef} from 'react';
 
 describe('mergeProps', function () {
   it('handles one argument', function () {
@@ -106,8 +106,8 @@ describe('mergeProps', function () {
     render(<Component />);
 
     // We use stringMatching to support optional refs in React 19.
-    expect(Spy).toHaveBeenCalledWith({id: 'id2'}, expect.not.stringMatching(/\A(?!x)x/));
-    expect(Spy).toHaveBeenLastCalledWith({id: 'id1'}, expect.not.stringMatching(/\A(?!x)x/));
+    expect(Spy).toHaveBeenCalledWith({id: 'id2'}, expect.not.stringMatching(/^(?!x)x/));
+    expect(Spy).toHaveBeenLastCalledWith({id: 'id1'}, expect.not.stringMatching(/^(?!x)x/));
   });
 
   it('combines reoccuring ids', function () {
