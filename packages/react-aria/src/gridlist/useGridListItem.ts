@@ -237,6 +237,7 @@ export function useGridListItem<T>(
             } else {
               walker.currentNode = ref.current;
               let lastElement = last(walker);
+              // oxlint-disable-next-line max-depth
               if (lastElement) {
                 focusSafely(lastElement);
                 scrollIntoViewport(lastElement, {containingElement: getScrollParent(ref.current)});
@@ -267,6 +268,7 @@ export function useGridListItem<T>(
             } else {
               walker.currentNode = ref.current;
               let lastElement = last(walker);
+              // oxlint-disable-next-line max-depth
               if (lastElement) {
                 focusSafely(lastElement);
                 scrollIntoViewport(lastElement, {containingElement: getScrollParent(ref.current)});
