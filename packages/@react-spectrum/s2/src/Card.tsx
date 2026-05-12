@@ -59,16 +59,19 @@ export interface CardProps
   children: ReactNode | ((renderProps: CardRenderProps) => ReactNode);
   /**
    * The size of the Card.
+   *
    * @default 'M'
    */
   size?: 'XS' | 'S' | 'M' | 'L' | 'XL';
   /**
    * The amount of internal padding within the Card.
+   *
    * @default 'regular'
    */
   density?: 'compact' | 'regular' | 'spacious';
   /**
    * The visual style of the Card.
+   *
    * @default 'primary'
    */
   variant?: 'primary' | 'secondary' | 'tertiary' | 'quiet';

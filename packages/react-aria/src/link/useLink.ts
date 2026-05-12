@@ -35,6 +35,7 @@ export interface AriaLinkOptions extends AriaLinkProps {
   isDisabled?: boolean;
   /**
    * The HTML element used to render the link, e.g. 'a', or 'span'.
+   *
    * @default 'a'
    */
   elementType?: string;

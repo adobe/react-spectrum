@@ -4,6 +4,7 @@
 const {defineConfig} = require('@yarnpkg/types');
 /**
  * @typedef {import('@yarnpkg/types').Yarn.Constraints.Workspace} Workspace
+ *
  * @typedef {import('@yarnpkg/types').Yarn.Constraints.Dependency} Dependency
  */
 

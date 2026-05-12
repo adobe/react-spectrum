@@ -26,8 +26,9 @@ export interface FieldAria extends LabelAria {
 }
 
 /**
- * Provides the accessibility implementation for input fields.
- * Fields accept user input, gain context from their label, and may display a description or error message.
+ * Provides the accessibility implementation for input fields. Fields accept user input, gain
+ * context from their label, and may display a description or error message.
+ *
  * @param props - Props for the Field.
  */
 export function useField(props: AriaFieldProps): FieldAria {

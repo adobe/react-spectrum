@@ -50,11 +50,13 @@ export interface SelectBoxGroupProps<T>
   children: ReactNode | ((item: T) => ReactNode);
   /**
    * The layout direction of the content in each SelectBox.
+   *
    * @default 'vertical'
    */
   orientation?: Orientation;
   /**
    * The selection mode for the SelectBoxGroup.
+   *
    * @default 'single'
    */
   selectionMode?: 'single' | 'multiple';

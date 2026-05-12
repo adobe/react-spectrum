@@ -62,8 +62,8 @@ export interface SpectrumTreeViewProps<T>
   /** Provides content to display when there are no items in the tree. */
   renderEmptyState?: () => JSX.Element;
   /**
-   * Handler that is called when a user performs an action on an item. The exact user event depends on
-   * the collection's `selectionStyle` prop and the interaction modality.
+   * Handler that is called when a user performs an action on an item. The exact user event depends
+   * on the collection's `selectionStyle` prop and the interaction modality.
    */
   onAction?: (key: Key) => void;
   /**

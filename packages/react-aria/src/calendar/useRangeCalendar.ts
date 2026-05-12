@@ -21,21 +21,21 @@ import {useRef} from 'react';
 export interface AriaRangeCalendarProps<T extends DateValue>
   extends RangeCalendarProps<T>, DOMProps, AriaLabelingProps {
   /**
-   * Controls the behavior when a pointer is released outside the calendar or a blur occurs mid selection:
+   * Controls the behavior when a pointer is released outside the calendar or a blur occurs mid
+   * selection:
    *
    * - `clear`: clear the currently selected range of dates.
-   *
    * - `reset`: reset the selection to the previously selected range of dates.
-   *
    * - `select`: select the currently hovered range of dates.
+   *
    * @default 'select'
    */
   commitBehavior?: 'clear' | 'reset' | 'select';
 }
 
 /**
- * Provides the behavior and accessibility implementation for a range calendar component.
- * A range calendar displays one or more date grids and allows users to select a contiguous range of dates.
+ * Provides the behavior and accessibility implementation for a range calendar component. A range
+ * calendar displays one or more date grids and allows users to select a contiguous range of dates.
  */
 export function useRangeCalendar<T extends DateValue>(
   props: AriaRangeCalendarProps<T>,

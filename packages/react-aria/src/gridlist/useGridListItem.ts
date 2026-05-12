@@ -42,7 +42,10 @@ import {useSlotId} from '../utils/useId';
 import {useSyntheticLinkProps} from '../utils/openLink';
 
 export interface AriaGridListItemOptions {
-  /** An object representing the list item. Contains all the relevant information that makes up the list row. */
+  /**
+   * An object representing the list item. Contains all the relevant information that makes up the
+   * list row.
+   */
   node: RSNode<unknown>;
   /** Whether the list row is contained in a virtual scroller. */
   isVirtualized?: boolean;
@@ -74,6 +77,7 @@ const EXPANSION_KEYS = {
 
 /**
  * Provides the behavior and accessibility implementation for a row in a grid list.
+ *
  * @param props - Props for the row.
  * @param state - State of the parent list, as returned by `useListState`.
  * @param ref - The ref attached to the row element.

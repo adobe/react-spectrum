@@ -63,31 +63,37 @@ type SelectionMode = 'single' | 'multiple';
 export interface SelectRenderProps {
   /**
    * Whether the select is focused, either via a mouse or keyboard.
+   *
    * @selector [data-focused]
    */
   isFocused: boolean;
   /**
    * Whether the select is keyboard focused.
+   *
    * @selector [data-focus-visible]
    */
   isFocusVisible: boolean;
   /**
    * Whether the select is disabled.
+   *
    * @selector [data-disabled]
    */
   isDisabled: boolean;
   /**
    * Whether the select is currently open.
+   *
    * @selector [data-open]
    */
   isOpen: boolean;
   /**
    * Whether the select is invalid.
+   *
    * @selector [data-invalid]
    */
   isInvalid: boolean;
   /**
    * Whether the select is required.
+   *
    * @selector [data-required]
    */
   isRequired: boolean;
@@ -110,12 +116,15 @@ export interface SelectProps<T extends object = {}, M extends SelectionMode = 's
     SlotProps,
     GlobalDOMAttributes<HTMLDivElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-Select'
    */
   className?: ClassNameOrFunction<SelectRenderProps>;
   /**
    * Temporary text that occupies the select when it is empty.
+   *
    * @default 'Select an item' (localized)
    */
   placeholder?: string;
@@ -287,11 +296,13 @@ function SelectInner<T extends object>({props, selectRef: ref, collection}: Sele
 export interface SelectValueRenderProps<T> {
   /**
    * Whether the value is a placeholder.
+   *
    * @selector [data-placeholder]
    */
   isPlaceholder: boolean;
   /**
    * The object value of the first selected item.
+   *
    * @deprecated
    */
   selectedItem: T | null;
@@ -308,7 +319,9 @@ export interface SelectValueProps<T extends object>
     Omit<HTMLAttributes<HTMLElement>, keyof RenderProps<unknown>>,
     RenderProps<SelectValueRenderProps<T>, 'span'> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-SelectValue'
    */
   className?: ClassNameOrFunction<SelectValueRenderProps<T>>;

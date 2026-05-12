@@ -49,8 +49,9 @@ let sizeMap = {
 };
 
 /**
- * Dialogs are windows containing contextual information, tasks, or workflows that appear over the user interface.
- * Depending on the kind of Dialog, further interactions may be blocked until the Dialog is acknowledged.
+ * Dialogs are windows containing contextual information, tasks, or workflows that appear over the
+ * user interface. Depending on the kind of Dialog, further interactions may be blocked until the
+ * Dialog is acknowledged.
  */
 export const Dialog = React.forwardRef(function Dialog(props: SpectrumDialogProps, ref: DOMRef) {
   props = useSlotProps(props, 'dialog');

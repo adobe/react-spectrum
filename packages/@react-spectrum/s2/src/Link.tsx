@@ -28,6 +28,7 @@ import {useSpectrumContextProps} from './useSpectrumContextProps';
 interface LinkStyleProps {
   /**
    * The [visual style](https://spectrum.adobe.com/page/link/#Options) of the link.
+   *
    * @default 'primary'
    */
   variant?: 'primary' | 'secondary';

@@ -35,11 +35,13 @@ export interface ImageProps {
    */
   objectFit?: any; // move to styleProps for images and type better
   /**
-   * Called if an error occurs while loading or rendering an image, see [Image loading errors](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img#image_loading_errors).
+   * Called if an error occurs while loading or rendering an image, see [Image loading
+   * errors](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img#image_loading_errors).
    */
   onError?: ReactEventHandler<HTMLImageElement>;
   /**
-   * Called when the image has successfully loaded, see [load event](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/load_event).
+   * Called when the image has successfully loaded, see [load
+   * event](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/load_event).
    */
   onLoad?: ReactEventHandler<HTMLImageElement>;
   /**
@@ -52,6 +54,7 @@ export interface ImageProps {
 export interface SpectrumImageProps extends ImageProps, DOMProps, StyleProps {
   /**
    * A slot to place the image in.
+   *
    * @default 'image'
    */
   slot?: string;

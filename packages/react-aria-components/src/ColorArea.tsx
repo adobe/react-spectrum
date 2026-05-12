@@ -19,6 +19,7 @@ import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
 export interface ColorAreaRenderProps {
   /**
    * Whether the color area is disabled.
+   *
    * @selector [data-disabled]
    */
   isDisabled: boolean;
@@ -35,7 +36,9 @@ export interface ColorAreaProps
     SlotProps,
     GlobalDOMAttributes<HTMLDivElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-ColorArea'
    */
   className?: ClassNameOrFunction<ColorAreaRenderProps>;
@@ -46,7 +49,8 @@ export const ColorAreaContext =
 export const ColorAreaStateContext = createContext<ColorAreaState | null>(null);
 
 /**
- * A color area allows users to adjust two channels of an RGB, HSL or HSB color value against a two-dimensional gradient background.
+ * A color area allows users to adjust two channels of an RGB, HSL or HSB color value against a
+ * two-dimensional gradient background.
  */
 export const ColorArea = forwardRef(function ColorArea(
   props: ColorAreaProps,

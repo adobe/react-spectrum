@@ -70,14 +70,17 @@ export interface TooltipProps
     RenderProps<TooltipRenderProps>,
     GlobalDOMAttributes<HTMLDivElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-Tooltip'
    */
   className?: ClassNameOrFunction<TooltipRenderProps>;
   /**
    * The ref for the element which the tooltip positions itself with respect to.
    *
-   * When used within a TooltipTrigger this is set automatically. It is only required when used standalone.
+   * When used within a TooltipTrigger this is set automatically. It is only required when used
+   * standalone.
    */
   triggerRef?: RefObject<Element | null>;
   /**
@@ -89,13 +92,16 @@ export interface TooltipProps
    */
   isExiting?: boolean;
   /**
-   * The container element in which the overlay portal will be placed. This may have unknown behavior depending on where it is portalled to.
-   * @default document.body
+   * The container element in which the overlay portal will be placed. This may have unknown
+   * behavior depending on where it is portalled to.
+   *
    * @deprecated - Use a parent UNSAFE_PortalProvider to set your portal container instead.
+   * @default document.body
    */
   UNSTABLE_portalContainer?: Element;
   /**
    * The placement of the tooltip with respect to the trigger.
+   *
    * @default 'top'
    */
   placement?: Placement;
@@ -104,16 +110,19 @@ export interface TooltipProps
 export interface TooltipRenderProps {
   /**
    * The placement of the tooltip relative to the trigger.
+   *
    * @selector [data-placement="left | right | top | bottom"]
    */
   placement: PlacementAxis | null;
   /**
    * Whether the tooltip is currently entering. Use this to apply animations.
+   *
    * @selector [data-entering]
    */
   isEntering: boolean;
   /**
    * Whether the tooltip is currently exiting. Use this to apply animations.
+   *
    * @selector [data-exiting]
    */
   isExiting: boolean;

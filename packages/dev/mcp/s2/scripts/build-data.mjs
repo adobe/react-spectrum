@@ -4,7 +4,7 @@ import fg from 'fast-glob';
 import {fileURLToPath, pathToFileURL} from 'url';
 import fs from 'fs';
 import path from 'path';
-// eslint-disable-next-line rulesdir/imports
+// eslint-disable-next-line rsp-rules/imports
 import * as ts from 'typescript';
 
 const __filename = fileURLToPath(import.meta.url);

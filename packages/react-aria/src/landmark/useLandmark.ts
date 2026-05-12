@@ -64,6 +64,7 @@ interface Landmark {
 export interface LandmarkControllerOptions {
   /**
    * The element from which to start navigating.
+   *
    * @default document.activeElement
    */
   from?: FocusableElement;
@@ -429,7 +430,8 @@ class LandmarkManager implements LandmarkManagerApi {
   }
 
   /**
-   * Track if the focus is lost to the body. If it is, do cleanup on the landmark that last had focus.
+   * Track if the focus is lost to the body. If it is, do cleanup on the landmark that last had
+   * focus.
    */
   private focusoutHandler(e: FocusEvent) {
     let previousFocusedElement = getEventTarget(e) as FocusableElement;
@@ -526,7 +528,9 @@ export function UNSTABLE_createLandmarkController(): LandmarkController {
 }
 
 /**
- * Provides landmark navigation in an application. Call this with a role and label to register a landmark navigable with F6.
+ * Provides landmark navigation in an application. Call this with a role and label to register a
+ * landmark navigable with F6.
+ *
  * @param props - Props for the landmark.
  * @param ref - Ref to the landmark.
  */

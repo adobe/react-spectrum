@@ -69,6 +69,7 @@ export interface NumberFieldProps
     Pick<InputProps, 'placeholder'> {
   /**
    * Whether to hide the increment and decrement buttons.
+   *
    * @default false
    */
   hideStepper?: boolean;
@@ -168,7 +169,8 @@ const stepperContainerStyles = style({
 });
 
 /**
- * NumberFields allow users to input number values with a keyboard or increment/decrement with step buttons.
+ * NumberFields allow users to input number values with a keyboard or increment/decrement with step
+ * buttons.
  */
 export const NumberField = forwardRef(function NumberField(
   props: NumberFieldProps,

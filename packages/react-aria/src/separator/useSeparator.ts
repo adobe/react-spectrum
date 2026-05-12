@@ -16,6 +16,7 @@ import {filterDOMProps} from '../utils/filterDOMProps';
 export interface SeparatorProps extends DOMProps, AriaLabelingProps {
   /**
    * The orientation of the separator.
+   *
    * @default 'horizontal'
    */
   orientation?: Orientation;

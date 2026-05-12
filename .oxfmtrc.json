@@ -9,5 +9,12 @@
   "bracketSpacing": false,
   "trailingComma": "none",
   "bracketSameLine": true,
-  "arrowParens": "avoid"
+  "arrowParens": "avoid",
+  "jsdoc": {
+    "addDefaultToDescription": false,
+    "capitalizeDescriptions": true,
+    "commentLineStrategy": "keep",
+    "descriptionWithDot": true,
+    "lineWrappingStyle": "balance"
+  }
 }

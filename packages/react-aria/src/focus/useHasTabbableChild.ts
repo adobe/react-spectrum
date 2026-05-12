@@ -26,6 +26,7 @@ interface AriaHasTabbableChildOptions {
 
 /**
  * Returns whether an element has a tabbable child, and updates as children change.
+ *
  * @private
  */
 export function useHasTabbableChild(

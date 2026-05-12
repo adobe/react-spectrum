@@ -79,7 +79,7 @@ export interface AriaComboBoxOptions<T, M extends SelectionMode = 'single'> exte
   popoverRef: RefObject<Element | null>;
   /** The ref for the list box. */
   listBoxRef: RefObject<HTMLElement | null>;
-  /** The ref for the optional list box popup trigger button.  */
+  /** The ref for the optional list box popup trigger button. */
   buttonRef?: RefObject<Element | null>;
   /** An optional keyboard delegate implementation, to override the default. */
   keyboardDelegate?: KeyboardDelegate;
@@ -109,8 +109,10 @@ export interface ComboBoxAria<T> extends ValidationResult {
 }
 
 /**
- * Provides the behavior and accessibility implementation for a combo box component.
- * A combo box combines a text input with a listbox, allowing users to filter a list of options to items matching a query.
+ * Provides the behavior and accessibility implementation for a combo box component. A combo box
+ * combines a text input with a listbox, allowing users to filter a list of options to items
+ * matching a query.
+ *
  * @param props - Props for the combo box.
  * @param state - State for the select, as returned by `useComboBoxState`.
  */

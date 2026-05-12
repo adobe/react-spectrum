@@ -65,7 +65,8 @@ function ManualTooltipTrigger(props) {
 }
 
 /**
- * Most of the tests for useTooltipTriggerState are in the React Spectrum package at
+ * Most of the tests for useTooltipTriggerState are in the React Spectrum package at.
+ *
  * @react-spectrum/tooltip/test/TooltipTrigger.test.js. The React Spectrum tooltip
  * does not implement a custom close delay.
  */

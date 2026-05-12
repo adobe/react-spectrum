@@ -11,7 +11,7 @@
  */
 
 // Copied from https://github.com/facebook/react/pull/24506
-module.exports = {
+export default {
   meta: {
     type: 'problem',
     docs: {

@@ -26,20 +26,23 @@ export interface SpectrumRangeCalendarProps<T extends DateValue>
   extends AriaRangeCalendarProps<T>, StyleProps {
   /**
    * The number of months to display at once. Up to 3 months are supported.
+   *
    * @default 1
    */
   visibleMonths?: number;
 
   /**
-   * A function to create a new [Calendar](https://react-spectrum.adobe.com/internationalized/date/Calendar.html)
-   * object for a given calendar identifier. If not provided, the `createCalendar` function
-   * from `@internationalized/date` will be used.
+   * A function to create a new
+   * [Calendar](https://react-spectrum.adobe.com/internationalized/date/Calendar.html) object for a
+   * given calendar identifier. If not provided, the `createCalendar` function from
+   * `@internationalized/date` will be used.
    */
   createCalendar?: (identifier: CalendarIdentifier) => ICalendar;
 }
 
 /**
- * RangeCalendars display a grid of days in one or more months and allow users to select a contiguous range of dates.
+ * RangeCalendars display a grid of days in one or more months and allow users to select a
+ * contiguous range of dates.
  */
 export const RangeCalendar = React.forwardRef(function RangeCalendar<T extends DateValue>(
   props: SpectrumRangeCalendarProps<T>,

@@ -21,7 +21,10 @@ import {useProviderProps} from '../provider/Provider';
 import {useStyleProps} from '../utils/styleProps';
 
 interface ActionBarContainerProps {
-  /** The contents of the ActionBarContainer. Should include a ActionBar and the renderable content it is associated with. */
+  /**
+   * The contents of the ActionBarContainer. Should include a ActionBar and the renderable content
+   * it is associated with.
+   */
   children: ReactNode;
 }
 

@@ -49,14 +49,20 @@ export interface ActionButtonStyleProps {
   size?: 'XS' | 'S' | 'M' | 'L' | 'XL';
   /** The static color style to apply. Useful when the ActionButton appears over a color background. */
   staticColor?: 'black' | 'white' | 'auto';
-  /** Whether the button should be displayed with a [quiet style](https://spectrum.adobe.com/page/action-button/#Quiet). */
+  /**
+   * Whether the button should be displayed with a [quiet
+   * style](https://spectrum.adobe.com/page/action-button/#Quiet).
+   */
   isQuiet?: boolean;
 }
 
 interface ToggleButtonStyleProps {
   /** Whether the ActionButton should be selected (controlled). */
   isSelected?: boolean;
-  /** Whether the button should be displayed with an [emphasized style](https://spectrum.adobe.com/page/action-button/#Emphasis). */
+  /**
+   * Whether the button should be displayed with an [emphasized
+   * style](https://spectrum.adobe.com/page/action-button/#Emphasis).
+   */
   isEmphasized?: boolean;
 }
 
@@ -307,8 +313,9 @@ export const ActionButtonContext =
   );
 
 /**
- * ActionButtons allow users to perform an action.
- * They're used for similar, task-based options within a workflow, and are ideal for interfaces where buttons aren't meant to draw a lot of attention.
+ * ActionButtons allow users to perform an action. They're used for similar, task-based options
+ * within a workflow, and are ideal for interfaces where buttons aren't meant to draw a lot of
+ * attention.
  */
 export const ActionButton = forwardRef(function ActionButton(
   props: ActionButtonProps,

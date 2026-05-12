@@ -117,11 +117,13 @@ interface ListViewStylesProps {
   isQuiet?: boolean;
   /**
    * How selection should be displayed.
+   *
    * @default 'checkbox'
    */
   selectionStyle?: 'highlight' | 'checkbox';
   /**
    * Sets the overflow behavior for item contents.
+   *
    * @default 'truncate'
    */
   overflowMode?: 'wrap' | 'truncate';
@@ -206,7 +208,8 @@ const listView = style<GridListRenderProps & {isQuiet?: boolean}>({
 });
 
 /**
- * A ListView displays a list of interactive items, and allows a user to navigate, select, or perform an action.
+ * A ListView displays a list of interactive items, and allows a user to navigate, select, or
+ * perform an action.
  */
 export const ListView = /*#__PURE__*/ (forwardRef as forwardRefType)(function ListView<
   T extends object
