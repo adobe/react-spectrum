@@ -10,17 +10,20 @@ import {
 interface ListDropTargetDelegateOptions {
   /**
    * Whether the items are arranged in a stack or grid.
+   *
    * @default 'stack'
    */
   layout?: 'stack' | 'grid';
   /**
    * The primary orientation of the items. Usually this is the
    * direction that the collection scrolls.
+   *
    * @default 'vertical'
    */
   orientation?: Orientation;
   /**
    * The horizontal layout direction.
+   *
    * @default 'ltr'
    */
   direction?: Direction;

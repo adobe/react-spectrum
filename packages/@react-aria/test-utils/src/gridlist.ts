@@ -145,8 +145,9 @@ export class GridListTester {
   }
 
   /**
-   * Toggles the selection for the specified gridlist row. Defaults to using the interaction type set on the gridlist tester.
-   * Note that this will endevor to always add/remove JUST the provided row to the set of selected rows.
+   * Toggles the selection for the specified gridlist row. Defaults to using the interaction type
+   * set on the gridlist tester. Note that this will endevor to always add/remove JUST the provided
+   * row to the set of selected rows.
    */
   async toggleRowSelection(opts: GridListToggleRowOpts): Promise<void> {
     let {
@@ -217,7 +218,8 @@ export class GridListTester {
   }
 
   /**
-   * Triggers the action for the specified gridlist row. Defaults to using the interaction type set on the gridlist tester.
+   * Triggers the action for the specified gridlist row. Defaults to using the interaction type set
+   * on the gridlist tester.
    */
   async triggerRowAction(opts: GridListRowActionOpts): Promise<void> {
     let {row, needsDoubleClick, interactionType = this._interactionType} = opts;
@@ -266,7 +268,8 @@ export class GridListTester {
   }
 
   /**
-   * Returns the gridlist's cells if any. Can be filtered against a specific row if provided via `element`.
+   * Returns the gridlist's cells if any. Can be filtered against a specific row if provided via
+   * `element`.
    */
   getCells(opts: {element?: HTMLElement} = {}): HTMLElement[] {
     let {element = this.getGridlist()} = opts;

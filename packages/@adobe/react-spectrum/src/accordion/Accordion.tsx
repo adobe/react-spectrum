@@ -74,7 +74,10 @@ export interface SpectrumDisclosureProps
     StyleProps {
   /** Whether the Disclosure should be displayed with a quiet style. */
   isQuiet?: boolean;
-  /** The contents of the disclosure. The first child should be the header, and the second child should be the panel. */
+  /**
+   * The contents of the disclosure. The first child should be the header, and the second child
+   * should be the panel.
+   */
   children: React.ReactNode;
 }
 
@@ -140,6 +143,7 @@ export const DisclosurePanel = /*#__PURE__*/ (forwardRef as forwardRefType)(
 export interface SpectrumDisclosureTitleProps extends DOMProps, AriaLabelingProps, StyleProps {
   /**
    * The heading level of the disclosure header.
+   *
    * @default 3
    */
   level?: number;

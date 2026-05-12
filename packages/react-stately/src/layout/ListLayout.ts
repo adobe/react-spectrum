@@ -28,70 +28,92 @@ import {Size} from '../virtualizer/Size';
 
 export interface ListLayoutOptions {
   /**
-   * The primary orientation of the items. Usually this is the direction that the collection scrolls.
+   * The primary orientation of the items. Usually this is the direction that the collection
+   * scrolls.
+   *
    * @default 'vertical'
    */
   orientation?: Orientation;
   /**
    * The fixed size of a row in px with respect to the applied orientation.
+   *
    * @default 48
    */
   rowSize?: number;
-  /** The estimated size of a row in px with respect to the applied orientation, when row sizes are variable. */
+  /**
+   * The estimated size of a row in px with respect to the applied orientation, when row sizes are
+   * variable.
+   */
   estimatedRowSize?: number;
   /**
    * The fixed size of a section header in px with respect to the applied orientation.
+   *
    * @default 48
    */
   headingSize?: number;
-  /** The estimated size of a section header in px with respect to the applied orientation, when heading sizes are variable. */
+  /**
+   * The estimated size of a section header in px with respect to the applied orientation, when
+   * heading sizes are variable.
+   */
   estimatedHeadingSize?: number;
   /**
-   * The fixed size of a loader element in px with respect to the applied orientation. This loader is specifically for
-   * "load more" elements rendered when loading more rows at the root level or inside nested row/sections.
+   * The fixed size of a loader element in px with respect to the applied orientation. This loader
+   * is specifically for "load more" elements rendered when loading more rows at the root level or
+   * inside nested row/sections.
+   *
    * @default 48
    */
   loaderSize?: number;
   /**
    * The thickness of the drop indicator.
+   *
    * @default 2
    */
   dropIndicatorThickness?: number;
   /**
    * The gap between items.
+   *
    * @default 0
    */
   gap?: number;
   /**
    * The padding around the list.
+   *
    * @default 0
    */
   padding?: number;
   /**
    * The fixed height of a row in px.
-   * @default 48
+   *
    * @deprecated Use `rowSize` instead.
+   * @default 48
    */
   rowHeight?: number;
-  /** The estimated height of a row, when row heights are variable.
+  /**
+   * The estimated height of a row, when row heights are variable.
+   *
    * @deprecated Use `estimatedRowSize` instead.
    */
   estimatedRowHeight?: number;
   /**
    * The fixed height of a section header in px.
-   * @default 48
+   *
    * @deprecated Use `headingSize` instead.
+   * @default 48
    */
   headingHeight?: number;
-  /** The estimated height of a section header, when the height is variable.
+  /**
+   * The estimated height of a section header, when the height is variable.
+   *
    * @deprecated Use `estimatedHeadingSize` instead.
    */
   estimatedHeadingHeight?: number;
   /**
-   * The fixed height of a loader element in px. This loader is specifically for
-   * "load more" elements rendered when loading more rows at the root level or inside nested row/sections.
-   * @default 48
+   * The fixed height of a loader element in px. This loader is specifically for "load more"
+   * elements rendered when loading more rows at the root level or inside nested row/sections.
+   *
    * @deprecated Use `loaderSize` instead.
+   * @default 48
    */
   loaderHeight?: number;
 }

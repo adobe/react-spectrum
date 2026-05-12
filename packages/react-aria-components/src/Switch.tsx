@@ -56,7 +56,9 @@ export interface SwitchProps
     SlotProps,
     Omit<GlobalDOMAttributes<HTMLLabelElement>, 'onClick'> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-Switch'
    */
   className?: ClassNameOrFunction<SwitchRenderProps>;
@@ -74,7 +76,9 @@ export interface SwitchFieldProps
     SlotProps,
     Omit<GlobalDOMAttributes<HTMLDivElement>, 'onClick'> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-SwitchField'
    */
   className?: ClassNameOrFunction<SwitchFieldRenderProps>;
@@ -91,7 +95,9 @@ export interface SwitchButtonProps
     SlotProps,
     GlobalDOMAttributes<HTMLLabelElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-SwitchButton'
    */
   className?: ClassNameOrFunction<SwitchButtonRenderProps>;
@@ -100,36 +106,43 @@ export interface SwitchButtonProps
 export interface SwitchRenderProps {
   /**
    * Whether the switch is selected.
+   *
    * @selector [data-selected]
    */
   isSelected: boolean;
   /**
    * Whether the switch is currently hovered with a mouse.
+   *
    * @selector [data-hovered]
    */
   isHovered: boolean;
   /**
    * Whether the switch is currently in a pressed state.
+   *
    * @selector [data-pressed]
    */
   isPressed: boolean;
   /**
    * Whether the switch is focused, either via a mouse or keyboard.
+   *
    * @selector [data-focused]
    */
   isFocused: boolean;
   /**
    * Whether the switch is keyboard focused.
+   *
    * @selector [data-focus-visible]
    */
   isFocusVisible: boolean;
   /**
    * Whether the switch is disabled.
+   *
    * @selector [data-disabled]
    */
   isDisabled: boolean;
   /**
    * Whether the switch is read only.
+   *
    * @selector [data-readonly]
    */
   isReadOnly: boolean;
@@ -142,26 +155,31 @@ export interface SwitchRenderProps {
 export interface SwitchFieldRenderProps {
   /**
    * Whether the switch is selected.
+   *
    * @selector [data-selected]
    */
   isSelected: boolean;
   /**
    * Whether the switch is disabled.
+   *
    * @selector [data-disabled]
    */
   isDisabled: boolean;
   /**
    * Whether the switch is read only.
+   *
    * @selector [data-readonly]
    */
   isReadOnly: boolean;
   /**
    * Whether the switch invalid.
+   *
    * @selector [data-invalid]
    */
   isInvalid: boolean;
   /**
    * Whether the switch is required.
+   *
    * @selector [data-required]
    */
   isRequired: boolean;
@@ -174,11 +192,13 @@ export interface SwitchFieldRenderProps {
 export interface SwitchButtonRenderProps extends SwitchRenderProps {
   /**
    * Whether the switch invalid.
+   *
    * @selector [data-invalid]
    */
   isInvalid: boolean;
   /**
    * Whether the switch is required.
+   *
    * @selector [data-required]
    */
   isRequired: boolean;
@@ -195,6 +215,7 @@ export const ToggleStateContext = createContext<ToggleState | null>(null);
 
 /**
  * A switch allows a user to turn a setting on or off.
+ *
  * @deprecated Use SwitchField + SwitchButton instead.
  */
 export const Switch = /*#__PURE__*/ (forwardRef as forwardRefType)(function Switch(

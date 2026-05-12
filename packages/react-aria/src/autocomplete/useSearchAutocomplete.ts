@@ -38,7 +38,10 @@ export interface SearchAutocompleteProps<T>
   defaultItems?: Iterable<T>;
   /** The list of SearchAutocomplete items (controlled). */
   items?: Iterable<T>;
-  /** Method that is called when the open state of the menu changes. Returns the new open state and the action that caused the opening of the menu. */
+  /**
+   * Method that is called when the open state of the menu changes. Returns the new open state and
+   * the action that caused the opening of the menu.
+   */
   onOpenChange?: (isOpen: boolean, menuTrigger?: MenuTriggerAction) => void;
   /** The value of the SearchAutocomplete input (controlled). */
   inputValue?: string;
@@ -48,16 +51,18 @@ export interface SearchAutocompleteProps<T>
   onInputChange?: (value: string) => void;
   /**
    * The interaction required to display the SearchAutocomplete menu.
+   *
    * @default 'input'
    */
   menuTrigger?: MenuTriggerAction;
-  /** Handler that is called when the SearchAutocomplete is submitted.
+  /**
+   * Handler that is called when the SearchAutocomplete is submitted.
    *
-   * A `value` will be passed if the submission is a custom value (e.g. a user types then presses enter).
-   * If the input is a selected item, `value` will be null.
+   * A `value` will be passed if the submission is a custom value (e.g. a user types then presses
+   * enter). If the input is a selected item, `value` will be null.
    *
-   * A `key` will be passed if the submission is a selected item (e.g. a user clicks or presses enter on an option).
-   * If the input is a custom value, `key` will be null.
+   * A `key` will be passed if the submission is a selected item (e.g. a user clicks or presses
+   * enter on an option). If the input is a custom value, `key` will be null.
    */
   onSubmit?: (value: string | null, key: Key | null) => void;
 }
@@ -102,8 +107,10 @@ export interface AriaSearchAutocompleteOptions<T> extends AriaSearchAutocomplete
 }
 
 /**
- * Provides the behavior and accessibility implementation for a search autocomplete component.
- * A search autocomplete combines a combobox with a searchfield, allowing users to filter a list of options to items matching a query.
+ * Provides the behavior and accessibility implementation for a search autocomplete component. A
+ * search autocomplete combines a combobox with a searchfield, allowing users to filter a list of
+ * options to items matching a query.
+ *
  * @param props - Props for the search autocomplete.
  * @param state - State for the search autocomplete, as returned by `useSearchAutocomplete`.
  */

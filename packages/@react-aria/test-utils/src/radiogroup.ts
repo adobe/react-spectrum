@@ -17,7 +17,8 @@ import {within} from '@testing-library/dom';
 
 interface TriggerRadioOptions {
   /**
-   * What interaction type to use when triggering a radio. Defaults to the interaction type set on the tester.
+   * What interaction type to use when triggering a radio. Defaults to the interaction type set on
+   * the tester.
    */
   interactionType?: UserOpts['interactionType'];
   /**

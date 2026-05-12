@@ -36,7 +36,9 @@ export interface ProgressBarProps
     SlotProps,
     GlobalDOMAttributes<HTMLDivElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-ProgressBar'
    */
   className?: ClassNameOrFunction<ProgressBarRenderProps>;
@@ -49,11 +51,13 @@ export interface ProgressBarRenderProps {
   percentage: number | undefined;
   /**
    * A formatted version of the value.
+   *
    * @selector [aria-valuetext]
    */
   valueText: string | undefined;
   /**
    * Whether the progress bar is indeterminate.
+   *
    * @selector :not([aria-valuenow])
    */
   isIndeterminate: boolean;

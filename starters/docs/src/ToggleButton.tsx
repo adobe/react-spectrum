@@ -9,6 +9,7 @@ import './ToggleButton.css';
 interface ToggleButtonProps extends RACToggleButtonProps {
   /**
    * The visual style of the button (Vanilla CSS implementation specific).
+   *
    * @default 'primary'
    */
   variant?: 'primary' | 'secondary' | 'quiet';

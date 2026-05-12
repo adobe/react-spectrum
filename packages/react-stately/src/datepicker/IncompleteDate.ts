@@ -18,9 +18,9 @@ type HourCycle = 'h12' | 'h11' | 'h23' | 'h24';
 
 /**
  * This class represents a date that is incomplete or otherwise invalid as a result of user editing.
- * For example, it can represent temporary dates such as February 31st if the user edits the day before the month.
- * Times are represented according to an hour cycle rather than always in 24 hour time. This enables the user to adjust
- * the day period (e.g. am/pm) independently from the hour.
+ * For example, it can represent temporary dates such as February 31st if the user edits the day
+ * before the month. Times are represented according to an hour cycle rather than always in 24 hour
+ * time. This enables the user to adjust the day period (e.g. am/pm) independently from the hour.
  */
 export class IncompleteDate {
   calendar: Calendar;
@@ -130,7 +130,10 @@ export class IncompleteDate {
     return result;
   }
 
-  /** Increments or decrements the given field. If it is null, then it is set to the placeholder value. */
+  /**
+   * Increments or decrements the given field. If it is null, then it is set to the placeholder
+   * value.
+   */
   cycle(
     field: DateSegmentType,
     amount: number,
@@ -225,7 +228,10 @@ export class IncompleteDate {
     return res;
   }
 
-  /** Converts the incomplete date to a full date value, using the provided value for any unset fields. */
+  /**
+   * Converts the incomplete date to a full date value, using the provided value for any unset
+   * fields.
+   */
   toValue(value: DateValue): DateValue {
     if ('hour' in value) {
       let hour = this.hour;

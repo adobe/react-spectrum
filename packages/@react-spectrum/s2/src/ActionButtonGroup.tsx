@@ -29,22 +29,31 @@ export interface ActionButtonGroupProps extends AriaLabelingProps, UnsafeStyles,
   children: ReactNode;
   /**
    * Size of the buttons.
-   * @default "M"
+   *
+   * @default 'M'
    */
   size?: 'XS' | 'S' | 'M' | 'L' | 'XL';
   /**
    * Spacing between the buttons.
-   * @default "regular"
+   *
+   * @default 'regular'
    */
   density?: 'compact' | 'regular';
-  /** Whether the button should be displayed with a [quiet style](https://spectrum.adobe.com/page/action-button/#Quiet). */
+  /**
+   * Whether the button should be displayed with a [quiet
+   * style](https://spectrum.adobe.com/page/action-button/#Quiet).
+   */
   isQuiet?: boolean;
   /** Whether the buttons should divide the container width equally. */
   isJustified?: boolean;
-  /** The static color style to apply. Useful when the ActionButtonGroup appears over a color background. */
+  /**
+   * The static color style to apply. Useful when the ActionButtonGroup appears over a color
+   * background.
+   */
   staticColor?: 'white' | 'black' | 'auto';
   /**
    * The axis the group should align with.
+   *
    * @default 'horizontal'
    */
   orientation?: 'horizontal' | 'vertical';

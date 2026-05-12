@@ -39,7 +39,8 @@ import {useLocalizedStringFormatter} from '../i18n/useLocalizedStringFormatter';
 export interface AriaDateFieldProps<T extends DateValue>
   extends DateFieldProps<T>, AriaLabelingProps, DOMProps, InputDOMProps {
   /**
-   * Describes the type of autocomplete functionality the input should provide if any. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefautocomplete).
+   * Describes the type of autocomplete functionality the input should provide if any. See
+   * [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefautocomplete).
    */
   autoComplete?: string;
 }

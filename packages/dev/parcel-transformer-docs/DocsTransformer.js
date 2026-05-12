@@ -858,10 +858,6 @@ module.exports = new Transformer({
         let result = {
           description: parsed.description
         };
-        let extractedExamples = extractExamples(comments);
-        if (extractedExamples.length > 0) {
-          result.examples = extractedExamples;
-        }
 
         for (let tag of parsed.tags) {
           if (tag.title === 'default') {
@@ -890,7 +886,12 @@ module.exports = new Transformer({
             }
 
             if (tag.description) {
-              result.examples.push(tag.description);
+              result.examples.push(
+                tag.description
+                  .split('\n')
+                  .map(line => line.replace(/^\s{2}/, ''))
+                  .join('\n')
+              );
             }
           }
         }
@@ -905,52 +906,6 @@ module.exports = new Transformer({
       }
 
       return {};
-    }
-
-    function extractExamples(comments) {
-      let lines = comments.split('\n').map(line => line.replace(/^\s*\*?\s?/, ''));
-      let examples = [];
-      let current = null;
-
-      for (let line of lines) {
-        if (/^@example\b/.test(line)) {
-          if (current) {
-            let prev = current.join('\n').trim();
-            if (prev) {
-              examples.push(prev);
-            }
-          }
-
-          current = [];
-          let inlineExample = line.replace(/^@example\b\s*/, '');
-          if (inlineExample) {
-            current.push(inlineExample);
-          }
-          continue;
-        }
-
-        if (current) {
-          if (/^@\w+/.test(line)) {
-            let example = current.join('\n').trim();
-            if (example) {
-              examples.push(example);
-            }
-            current = null;
-            continue;
-          }
-
-          current.push(line);
-        }
-      }
-
-      if (current) {
-        let example = current.join('\n').trim();
-        if (example) {
-          examples.push(example);
-        }
-      }
-
-      return examples;
     }
 
     function getDocComments(path) {

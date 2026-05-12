@@ -18,23 +18,26 @@ import {waitFor, within} from '@testing-library/dom';
 interface ComboBoxOpenOpts {
   /**
    * Whether the combobox opens on focus or needs to be manually opened via user action.
+   *
    * @default 'manual'
    */
   triggerBehavior?: 'focus' | 'manual';
   /**
-   * What interaction type to use when opening the combobox. Defaults to the interaction type set on the tester.
+   * What interaction type to use when opening the combobox. Defaults to the interaction type set on
+   * the tester.
    */
   interactionType?: UserOpts['interactionType'];
 }
 
 interface ComboBoxSelectOpts extends ComboBoxOpenOpts {
   /**
-   * The index, text, or node of the option to select. Option nodes can be sourced via `getOptions()`.
+   * The index, text, or node of the option to select. Option nodes can be sourced via
+   * `getOptions()`.
    */
   option: number | string | HTMLElement;
   /**
-   * Whether or not the combobox closes on selection. Defaults to `true` for single select comboboxes
-   * and `false` for multi-select comboboxes.
+   * Whether or not the combobox closes on selection. Defaults to `true` for single select
+   * comboboxes and `false` for multi-select comboboxes.
    */
   closesOnSelect?: boolean;
 }
@@ -180,8 +183,10 @@ export class ComboBoxTester {
   }
 
   /**
-   * Toggles the selection of the desired combobox option if possible. Defaults to using the interaction type set on the combobox tester. If necessary, will open the combobox dropdown beforehand.
-   * The desired option can be targeted via the option's node, the option's text, or the option's index.
+   * Toggles the selection of the desired combobox option if possible. Defaults to using the
+   * interaction type set on the combobox tester. If necessary, will open the combobox dropdown
+   * beforehand. The desired option can be targeted via the option's node, the option's text, or the
+   * option's index.
    */
   async toggleOptionSelection(opts: ComboBoxSelectOpts): Promise<void> {
     let {option, triggerBehavior, interactionType = this._interactionType, closesOnSelect} = opts;
@@ -279,7 +284,8 @@ export class ComboBoxTester {
   }
 
   /**
-   * Returns the combobox's options if present. Can be filtered to a subsection of the listbox if provided via `element`.
+   * Returns the combobox's options if present. Can be filtered to a subsection of the listbox if
+   * provided via `element`.
    */
   getOptions(opts: {element?: HTMLElement} = {}): HTMLElement[] {
     let {element = this.getListbox()} = opts;

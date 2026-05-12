@@ -30,11 +30,13 @@ import {useSelectableCollection} from '../selection/useSelectableCollection';
 export interface AriaTabListProps<T> extends TabListProps<T>, DOMProps, AriaLabelingProps {
   /**
    * Whether tabs are activated automatically on focus or manually.
+   *
    * @default 'automatic'
    */
   keyboardActivation?: 'automatic' | 'manual';
   /**
    * The orientation of the tabs.
+   *
    * @default 'horizontal'
    */
   orientation?: Orientation;

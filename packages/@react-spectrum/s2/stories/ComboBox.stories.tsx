@@ -411,3 +411,19 @@ export const ComboboxInsideDialog: Story = {
   ),
   args: Example.args
 };
+
+export const WithPrefix: Story = {
+  render: (args: ComboBoxProps<any>) => (
+    <ComboBox {...args}>
+      <ComboBoxItem>Chocolate</ComboBoxItem>
+      <ComboBoxItem>Mint</ComboBoxItem>
+      <ComboBoxItem>Strawberry</ComboBoxItem>
+      <ComboBoxItem>Vanilla</ComboBoxItem>
+      <ComboBoxItem>Chocolate Chip Cookie Dough</ComboBoxItem>
+    </ComboBox>
+  ),
+  args: {
+    prefix: <Avatar size={20} src="https://i.imgur.com/xIe7Wlb.png" />,
+    label: 'User ice cream flavor'
+  }
+};

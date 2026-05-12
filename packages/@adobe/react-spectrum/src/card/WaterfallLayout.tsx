@@ -19,21 +19,25 @@ import {Key, KeyboardDelegate} from '@react-types/shared';
 export interface WaterfallLayoutOptions extends BaseLayoutOptions {
   /**
    * The minimum item size.
+   *
    * @default 240 x 136
    */
   minItemSize?: Size;
   /**
    * The maximum item size.
+   *
    * @default Infinity
    */
   maxItemSize?: Size;
   /**
    * The minimum space required between items.
+   *
    * @default 18 x 18
    */
   minSpace?: Size;
   /**
    * The maximum number of columns.
+   *
    * @default Infinity
    */
   maxColumns?: number;

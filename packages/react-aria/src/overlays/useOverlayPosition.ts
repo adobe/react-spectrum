@@ -50,30 +50,35 @@ export type PlacementAxis = Axis | 'center';
 export interface PositionProps {
   /**
    * The placement of the element with respect to its anchor element.
+   *
    * @default 'bottom'
    */
   placement?: Placement;
   /**
    * The placement padding that should be applied between the element and its
    * surrounding container.
+   *
    * @default 12
    */
   containerPadding?: number;
   /**
    * The additional offset applied along the main axis between the element and its
    * anchor element.
+   *
    * @default 0
    */
   offset?: number;
   /**
    * The additional offset applied along the cross axis between the element and its
    * anchor element.
+   *
    * @default 0
    */
   crossOffset?: number;
   /**
    * Whether the element should flip its orientation (e.g. top to bottom or left to right) when
    * there is insufficient room for it to render completely.
+   *
    * @default true
    */
   shouldFlip?: boolean;
@@ -89,11 +94,13 @@ export interface PositionProps {
 export interface AriaPositionProps extends PositionProps {
   /**
    * Cross size of the overlay arrow in pixels.
+   *
    * @default 0
    */
   arrowSize?: number;
   /**
    * Element that that serves as the positioning boundary.
+   *
    * @default document.body
    */
   boundaryElement?: Element;
@@ -111,11 +118,13 @@ export interface AriaPositionProps extends PositionProps {
   arrowRef?: RefObject<Element | null>;
   /**
    * A ref for the scrollable region within the overlay.
+   *
    * @default overlayRef
    */
   scrollRef?: RefObject<Element | null>;
   /**
    * Whether the overlay should update its position automatically.
+   *
    * @default true
    */
   shouldUpdatePosition?: boolean;
@@ -128,6 +137,7 @@ export interface AriaPositionProps extends PositionProps {
   maxHeight?: number;
   /**
    * The minimum distance the arrow's edge should be from the edge of the overlay element.
+   *
    * @default 0
    */
   arrowBoundaryOffset?: number;

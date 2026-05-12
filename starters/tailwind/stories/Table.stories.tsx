@@ -32,9 +32,9 @@ export const Example = (args: any) => {
   });
 
   let items = useMemo(() => {
-    // @ts-ignore
     let items = rows
       .slice()
+      // @ts-ignore
       .sort((a, b) => a[sortDescriptor.column].localeCompare(b[sortDescriptor.column]));
     if (sortDescriptor.direction === 'descending') {
       items.reverse();
@@ -61,7 +61,7 @@ export const Example = (args: any) => {
         </Column>
       </TableHeader>
       <TableBody items={items}>
-        {row => (
+        {(row: any) => (
           <Row>
             <Cell>{row.name}</Cell>
             <Cell>{row.type}</Cell>

@@ -19,13 +19,17 @@ interface Transformer {
  * Replaces individual package imports with monopackage imports, where possible.
  *
  * Works for:
+ *
  * - `@react-spectrum/*` -> `@adobe/react-spectrum`.
  * - `@react-aria/*` -> `react-aria`.
  * - `@react-stately/*` -> `react-stately`.
  *
- * By default this will apply to all the above packages, or optionally you can specify which packages to apply this by passing a comma-separated list to the packages option: `--packages=react-aria,react-stately,react-spectrum`.
+ * By default this will apply to all the above packages, or optionally you can specify which
+ * packages to apply this by passing a comma-separated list to the packages option:
+ * `--packages=react-aria,react-stately,react-spectrum`.
  *
- * Run this from a directory where the relevant packages are installed in node_modules so it knows which monopackage exports are available to use (since exports may vary by version).
+ * Run this from a directory where the relevant packages are installed in node_modules so it knows
+ * which monopackage exports are available to use (since exports may vary by version).
  */
 const transformer: Transformer = function transformer(
   file: FileInfo,

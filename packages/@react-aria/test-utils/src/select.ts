@@ -17,18 +17,22 @@ import {waitFor, within} from '@testing-library/dom';
 
 interface SelectOpenOpts {
   /**
-   * What interaction type to use when opening the select. Defaults to the interaction type set on the tester.
+   * What interaction type to use when opening the select. Defaults to the interaction type set on
+   * the tester.
    */
   interactionType?: UserOpts['interactionType'];
 }
 
 interface SelectTriggerOptionOpts extends SelectOpenOpts {
   /**
-   * The index, text, or node of the option to select. Option nodes can be sourced via `getOptions()`.
+   * The index, text, or node of the option to select. Option nodes can be sourced via
+   * `getOptions()`.
    */
   option: number | string | HTMLElement;
   /**
-   * Whether or not the select closes on selection. Depends on select implementation and configuration.
+   * Whether or not the select closes on selection. Depends on select implementation and
+   * configuration.
+   *
    * @default true
    */
   closesOnSelect?: boolean;
@@ -165,8 +169,10 @@ export class SelectTester {
   }
 
   /**
-   * Toggles the selection of the desired select option if possible. Defaults to using the interaction type set on the select tester. If necessary, will open the select dropdown beforehand.
-   * The desired option can be targeted via the option's node, the option's text, or the option's index.
+   * Toggles the selection of the desired select option if possible. Defaults to using the
+   * interaction type set on the select tester. If necessary, will open the select dropdown
+   * beforehand. The desired option can be targeted via the option's node, the option's text, or the
+   * option's index.
    */
   async toggleOptionSelection(opts: SelectTriggerOptionOpts): Promise<void> {
     let {option, closesOnSelect, interactionType = this._interactionType} = opts || {};
@@ -229,7 +235,8 @@ export class SelectTester {
   }
 
   /**
-   * Returns the select's options if present. Can be filtered to a subsection of the listbox if provided via `element`.
+   * Returns the select's options if present. Can be filtered to a subsection of the listbox if
+   * provided via `element`.
    */
   getOptions(opts: {element?: HTMLElement} = {}): HTMLElement[] {
     let {element = this.getListbox()} = opts;

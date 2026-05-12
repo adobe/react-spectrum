@@ -26,6 +26,7 @@ export interface CalendarHeadingFormatOptions {
 export interface CalendarHeadingProps {
   /**
    * The number of months from the start of the visible range to display.
+   *
    * @default 0
    */
   offset?: DateDuration;

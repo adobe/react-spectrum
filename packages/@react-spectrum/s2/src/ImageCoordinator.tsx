@@ -13,7 +13,9 @@ export interface ImageCoordinatorProps {
   /** Children within the ImageCoordinator. */
   children: ReactNode;
   /**
-   * Time in milliseconds after which images are always displayed, even if all images are not yet loaded.
+   * Time in milliseconds after which images are always displayed, even if all images are not yet
+   * loaded.
+   *
    * @default 5000
    */
   timeout?: number;

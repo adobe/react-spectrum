@@ -111,31 +111,37 @@ import {useObjectRef} from 'react-aria/useObjectRef';
 export interface ListBoxRenderProps {
   /**
    * Whether the listbox has no items and should display its empty state.
+   *
    * @selector [data-empty]
    */
   isEmpty: boolean;
   /**
    * Whether the listbox is currently focused.
+   *
    * @selector [data-focused]
    */
   isFocused: boolean;
   /**
    * Whether the listbox is currently keyboard focused.
+   *
    * @selector [data-focus-visible]
    */
   isFocusVisible: boolean;
   /**
    * Whether the listbox is currently the active drop target.
+   *
    * @selector [data-drop-target]
    */
   isDropTarget: boolean;
   /**
    * Whether the items are arranged in a stack or grid.
+   *
    * @selector [data-layout="stack | grid"]
    */
   layout: 'stack' | 'grid';
   /**
    * The primary orientation of the items.
+   *
    * @selector [data-orientation="vertical | horizontal"]
    */
   orientation: Orientation;
@@ -153,27 +159,35 @@ export interface ListBoxProps<T>
     SlotProps,
     GlobalDOMAttributes<HTMLDivElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-ListBox'
    */
   className?: ClassNameOrFunction<ListBoxRenderProps>;
   /**
    * How multiple selection should behave in the collection.
-   * @default "toggle"
+   *
+   * @default 'toggle'
    */
   selectionBehavior?: SelectionBehavior;
-  /** The drag and drop hooks returned by `useDragAndDrop` used to enable drag and drop behavior for the ListBox. */
+  /**
+   * The drag and drop hooks returned by `useDragAndDrop` used to enable drag and drop behavior for
+   * the ListBox.
+   */
   dragAndDropHooks?: DragAndDropHooks<NoInfer<T>>;
   /** Provides content to display when there are no items in the list. */
   renderEmptyState?: (props: ListBoxRenderProps) => ReactNode;
   /**
    * Whether the items are arranged in a stack or grid.
+   *
    * @default 'stack'
    */
   layout?: 'stack' | 'grid';
   /**
    * The primary orientation of the items. Usually this is the
    * direction that the collection scrolls.
+   *
    * @default 'vertical'
    */
   orientation?: Orientation;
@@ -424,7 +438,9 @@ function ListBoxInner<T extends object>({
 export interface ListBoxSectionProps<T>
   extends SectionProps<T>, DOMRenderProps<'section', undefined> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element.
+   *
    * @default 'react-aria-ListBoxSection'
    */
   className?: string;
@@ -486,13 +502,18 @@ export interface ListBoxItemProps<T = object>
     FocusEvents<HTMLDivElement>,
     Omit<GlobalDOMAttributes<HTMLDivElement>, 'onClick'> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-ListBoxItem'
    */
   className?: ClassNameOrFunction<ListBoxItemRenderProps>;
   /** The unique id of the item. */
   id?: Key;
-  /** The object value that this item represents. When using dynamic collections, this is set automatically. */
+  /**
+   * The object value that this item represents. When using dynamic collections, this is set
+   * automatically.
+   */
   value?: T;
   /** A string representation of the item's contents, used for features like typeahead. */
   textValue?: string;
@@ -501,8 +522,8 @@ export interface ListBoxItemProps<T = object>
   /** Whether the item is disabled. */
   isDisabled?: boolean;
   /**
-   * Handler that is called when a user performs an action on the item. The exact user event depends on
-   * the collection's `selectionBehavior` prop and the interaction modality.
+   * Handler that is called when a user performs an action on the item. The exact user event depends
+   * on the collection's `selectionBehavior` prop and the interaction modality.
    */
   onAction?: () => void;
 }
@@ -672,13 +693,17 @@ function ListBoxDropIndicator(props: ListBoxDropIndicatorProps, ref: ForwardedRe
   });
 
   return (
-    <dom.div
-      {...dropIndicatorProps}
-      {...renderProps}
-      role="option"
-      ref={ref as RefObject<HTMLDivElement | null>}
-      data-drop-target={isDropTarget || undefined}
-    />
+    <>
+      {/* oxlint-disable jsx-a11y/role-has-required-aria-props -- drop indicator is not selectable */}
+      <dom.div
+        {...dropIndicatorProps}
+        {...renderProps}
+        role="option"
+        ref={ref as RefObject<HTMLDivElement | null>}
+        data-drop-target={isDropTarget || undefined}
+      />
+      {/* oxlint-enable jsx-a11y/role-has-required-aria-props */}
+    </>
   );
 }
 
@@ -691,7 +716,9 @@ export interface ListBoxLoadMoreItemProps
     DOMRenderProps<'div', undefined>,
     GlobalDOMAttributes<HTMLDivElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element.
+   *
    * @default 'react-aria-ListBoxLoadMoreItem'
    */
   className?: string;
@@ -754,14 +781,18 @@ export const ListBoxLoadMoreItem = createLeafComponent(
           />
         </div>
         {isLoading && renderProps.children && (
-          <dom.div
-            {...mergeProps(filterDOMProps(props, {global: true}), optionProps)}
-            {...renderProps}
-            // aria-selected isn't needed here since this option is not selectable.
-            role="option"
-            ref={ref as ForwardedRef<HTMLDivElement>}>
-            {renderProps.children}
-          </dom.div>
+          <>
+            {/* oxlint-disable jsx-a11y/role-has-required-aria-props -- loader row is not selectable */}
+            <dom.div
+              {...mergeProps(filterDOMProps(props, {global: true}), optionProps)}
+              {...renderProps}
+              // aria-selected isn't needed here since this option is not selectable.
+              role="option"
+              ref={ref as ForwardedRef<HTMLDivElement>}>
+              {renderProps.children}
+            </dom.div>
+            {/* oxlint-enable jsx-a11y/role-has-required-aria-props */}
+          </>
         )}
       </>
     );

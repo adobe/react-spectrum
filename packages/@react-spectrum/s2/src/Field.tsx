@@ -26,15 +26,19 @@ import {
   UnsafeStyles
 } from './style-utils' with {type: 'macro'};
 import {FieldError, FieldErrorProps} from 'react-aria-components/FieldError';
-import {ForwardedRef, forwardRef, ReactNode} from 'react';
+import {ForwardedRef, forwardRef, ReactNode, useContext} from 'react';
 import {getEventTarget} from 'react-aria/private/utils/shadowdom/DOMFunctions';
 import {Group, GroupProps} from 'react-aria-components/Group';
 import {IconContext} from './Icon';
+import {
+  InputContext,
+  Input as RACInput,
+  InputProps as RACInputProps
+} from 'react-aria-components/Input';
 import intlMessages from '../intl/*.json';
 import {Label, LabelProps} from 'react-aria-components/Label';
 import {mergeStyles} from '../style/runtime';
 import {Provider} from 'react-aria-components/slots';
-import {Input as RACInput, InputProps as RACInputProps} from 'react-aria-components/Input';
 // @ts-ignore
 import {StyleString} from '../style/types';
 import {Text} from 'react-aria-components/Text';
@@ -187,11 +191,12 @@ export const FieldLabel = forwardRef(function FieldLabel(
 });
 
 interface FieldGroupProps
-  extends Omit<GroupProps, 'className' | 'style' | 'render' | 'children'>, UnsafeStyles {
+  extends Omit<GroupProps, 'className' | 'style' | 'render' | 'children' | 'prefix'>, UnsafeStyles {
   size?: 'S' | 'M' | 'L' | 'XL';
   children: ReactNode;
   styles?: StyleString;
   shouldTurnOffFocusRing?: boolean;
+  prefix?: ReactNode;
 }
 
 const fieldGroupStyles = style({
@@ -240,7 +245,13 @@ export const FieldGroup = forwardRef(function FieldGroup(
   props: FieldGroupProps,
   ref: ForwardedRef<HTMLDivElement>
 ) {
-  let {shouldTurnOffFocusRing, ...otherProps} = props;
+  let {children, prefix, shouldTurnOffFocusRing, ...otherProps} = props;
+  let ctx = useContext(InputContext);
+  let prefixId = useId();
+  let newAriaLabelledby = ctx?.['aria-labelledby'];
+  if (prefix) {
+    newAriaLabelledby = newAriaLabelledby ? `${newAriaLabelledby} ${prefixId}` : prefixId;
+  }
   return (
     <Group
       ref={ref}
@@ -276,8 +287,40 @@ export const FieldGroup = forwardRef(function FieldGroup(
           }),
           props.styles
         )
-      }
-    />
+      }>
+      {props.prefix ? (
+        <Provider
+          values={[
+            [
+              IconContext,
+              {
+                styles: style({
+                  size: fontRelative(20),
+                  '--iconPrimary': {type: 'fill', value: 'currentColor'}
+                })
+              }
+            ]
+          ]}>
+          <CenterBaseline
+            id={prefixId}
+            styles={style({
+              minWidth: 20,
+              color: 'gray-600',
+              flexShrink: 0,
+              marginEnd: 'text-to-visual'
+            })}>
+            {props.prefix}
+          </CenterBaseline>
+        </Provider>
+      ) : null}
+      <InputContext.Consumer>
+        {ctx => (
+          <InputContext.Provider value={{...ctx, 'aria-labelledby': newAriaLabelledby}}>
+            {children}
+          </InputContext.Provider>
+        )}
+      </InputContext.Consumer>
+    </Group>
   );
 });
 

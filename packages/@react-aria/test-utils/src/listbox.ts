@@ -17,7 +17,8 @@ import {within} from '@testing-library/dom';
 
 interface ListBoxToggleOptionOpts {
   /**
-   * What interaction type to use when toggling selection for an option. Defaults to the interaction type set on the tester.
+   * What interaction type to use when toggling selection for an option. Defaults to the interaction
+   * type set on the tester.
    */
   interactionType?: UserOpts['interactionType'];
   /**
@@ -26,18 +27,23 @@ interface ListBoxToggleOptionOpts {
   option: number | string | HTMLElement;
   /**
    * Whether the option should be triggered by Space or Enter in keyboard modality.
+   *
    * @default 'Enter'
    */
   keyboardActivation?: 'Space' | 'Enter';
   /**
-   * Whether the option needs to be long pressed to be selected. Depends on the listbox's implementation.
+   * Whether the option needs to be long pressed to be selected. Depends on the listbox's
+   * implementation.
    */
   needsLongPress?: boolean;
   /**
-   * Whether the listbox has a selectionBehavior of "toggle" or "replace" (aka highlight selection). This affects the user operations
-   * required to toggle option selection by adding modifier keys during user actions, useful when performing multi-option selection in a "selectionBehavior: 'replace'" listbox.
-   * If you would like to still simulate user actions (aka press) without these modifiers keys for a "selectionBehavior: replace" listbox, simply omit this option.
-   * See the [RAC Listbox docs](https://react-spectrum.adobe.com/react-aria/ListBox.html#selection-behavior) for more info on this behavior.
+   * Whether the listbox has a selectionBehavior of "toggle" or "replace" (aka highlight selection).
+   * This affects the user operations required to toggle option selection by adding modifier keys
+   * during user actions, useful when performing multi-option selection in a "selectionBehavior:
+   * 'replace'" listbox. If you would like to still simulate user actions (aka press) without these
+   * modifiers keys for a "selectionBehavior: replace" listbox, simply omit this option. See the
+   * [RAC Listbox docs](https://react-spectrum.adobe.com/react-aria/ListBox.html#selection-behavior)
+   * for more info on this behavior.
    *
    * @default 'toggle'
    */
@@ -49,7 +55,8 @@ interface ListBoxOptionActionOpts extends Omit<
   'keyboardActivation' | 'needsLongPress'
 > {
   /**
-   * Whether or not the option needs a double click to trigger the option action. Depends on the listbox's implementation.
+   * Whether or not the option needs a double click to trigger the option action. Depends on the
+   * listbox's implementation.
    */
   needsDoubleClick?: boolean;
 }
@@ -165,7 +172,8 @@ export class ListBoxTester {
   }
 
   /**
-   * Toggles the selection for the specified listbox option. Defaults to using the interaction type set on the listbox tester.
+   * Toggles the selection for the specified listbox option. Defaults to using the interaction type
+   * set on the listbox tester.
    */
   async toggleOptionSelection(opts: ListBoxToggleOptionOpts): Promise<void> {
     let {
@@ -223,7 +231,8 @@ export class ListBoxTester {
   }
 
   /**
-   * Triggers the action for the specified listbox option. Defaults to using the interaction type set on the listbox tester.
+   * Triggers the action for the specified listbox option. Defaults to using the interaction type
+   * set on the listbox tester.
    */
   async triggerOptionAction(opts: ListBoxOptionActionOpts): Promise<void> {
     let {option, needsDoubleClick, interactionType = this._interactionType} = opts;
@@ -258,7 +267,8 @@ export class ListBoxTester {
   }
 
   /**
-   * Returns the listbox options. Can be filtered to a subsection of the listbox if provided via `element`.
+   * Returns the listbox options. Can be filtered to a subsection of the listbox if provided via
+   * `element`.
    */
   getOptions(opts: {element?: HTMLElement} = {}): HTMLElement[] {
     let {element = this._listbox} = opts;

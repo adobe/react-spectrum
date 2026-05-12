@@ -44,7 +44,8 @@ export interface AriaToggleProps
     InputDOMProps,
     PressEvents {
   /**
-   * Identifies the element (or elements) whose contents or presence are controlled by the current element.
+   * Identifies the element (or elements) whose contents or presence are controlled by the current
+   * element.
    */
   'aria-controls'?: string;
 }

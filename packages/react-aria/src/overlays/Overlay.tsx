@@ -21,6 +21,7 @@ import {useUNSAFE_PortalContext} from './PortalProvider';
 export interface OverlayProps {
   /**
    * The container element in which the overlay portal will be placed.
+   *
    * @default document.body
    */
   portalContainer?: Element;

@@ -28,7 +28,8 @@ import {useLocalizedStringFormatter} from '../i18n/useLocalizedStringFormatter';
 export interface AriaToastRegionProps extends AriaLabelingProps {
   /**
    * An accessibility label for the toast region.
-   * @default "Notifications"
+   *
+   * @default 'Notifications'
    */
   'aria-label'?: string;
 }
@@ -39,8 +40,9 @@ export interface ToastRegionAria {
 }
 
 /**
- * Provides the behavior and accessibility implementation for a toast region containing one or more toasts.
- * Toasts display brief, temporary notifications of actions, errors, or other events in an application.
+ * Provides the behavior and accessibility implementation for a toast region containing one or more
+ * toasts. Toasts display brief, temporary notifications of actions, errors, or other events in an
+ * application.
  */
 export function useToastRegion<T>(
   props: AriaToastRegionProps,

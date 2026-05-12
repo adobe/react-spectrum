@@ -135,11 +135,13 @@ interface S2TableProps {
   isQuiet?: boolean;
   /**
    * Sets the amount of vertical padding within each cell.
+   *
    * @default 'regular'
    */
   density?: 'compact' | 'spacious' | 'regular';
   /**
    * Sets the overflow behavior for the cell contents.
+   *
    * @default 'truncate'
    */
   overflowMode?: 'wrap' | 'truncate';
@@ -358,7 +360,8 @@ export const TableContext =
   createContext<ContextValue<Partial<TableViewProps>, DOMRefValue<HTMLDivElement>>>(null);
 
 /**
- * Tables are containers for displaying information. They allow users to quickly scan, sort, compare, and take action on large amounts of data.
+ * Tables are containers for displaying information. They allow users to quickly scan, sort,
+ * compare, and take action on large amounts of data.
  */
 export const TableView = forwardRef(function TableView(
   props: TableViewProps,
@@ -652,6 +655,7 @@ export interface ColumnProps extends Omit<
   allowsResizing?: boolean;
   /**
    * The alignment of the column's contents relative to its allotted width.
+   *
    * @default 'start'
    */
   align?: 'start' | 'center' | 'end';

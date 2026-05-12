@@ -118,8 +118,9 @@ export class TreeTester {
   }
 
   /**
-   * Toggles the selection for the specified tree row. Defaults to using the interaction type set on the tree tester.
-   * Note that this will endevor to always add/remove JUST the provided row to the set of selected rows.
+   * Toggles the selection for the specified tree row. Defaults to using the interaction type set on
+   * the tree tester. Note that this will endevor to always add/remove JUST the provided row to the
+   * set of selected rows.
    */
   async toggleRowSelection(opts: TreeToggleRowOpts): Promise<void> {
     let {
@@ -190,7 +191,8 @@ export class TreeTester {
   }
 
   /**
-   * Toggles the expansion for the specified tree row. Defaults to using the interaction type set on the tree tester.
+   * Toggles the expansion for the specified tree row. Defaults to using the interaction type set on
+   * the tree tester.
    */
   async toggleRowExpansion(opts: TreeToggleExpansionOpts): Promise<void> {
     let {row, interactionType = this._interactionType} = opts;
@@ -228,7 +230,8 @@ export class TreeTester {
   }
 
   /**
-   * Triggers the action for the specified tree row. Defaults to using the interaction type set on the tree tester.
+   * Triggers the action for the specified tree row. Defaults to using the interaction type set on
+   * the tree tester.
    */
   async triggerRowAction(opts: TreeRowActionOpts): Promise<void> {
     let {row, needsDoubleClick, interactionType = this._interactionType} = opts;
@@ -277,7 +280,8 @@ export class TreeTester {
   }
 
   /**
-   * Returns the tree's cells if any. Can be filtered against a specific row if provided via `element`.
+   * Returns the tree's cells if any. Can be filtered against a specific row if provided via
+   * `element`.
    */
   getCells(opts: {element?: HTMLElement} = {}): HTMLElement[] {
     let {element = this.getTree()} = opts;

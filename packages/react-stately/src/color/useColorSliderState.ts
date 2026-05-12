@@ -38,7 +38,10 @@ export interface ColorSliderState extends SliderState {
   readonly value: Color;
   /** Sets the current color value. If a string is passed, it will be parsed to a Color. */
   setValue(value: string | Color): void;
-  /** Returns the color that should be displayed in the slider instead of `value` or the optional parameter. */
+  /**
+   * Returns the color that should be displayed in the slider instead of `value` or the optional
+   * parameter.
+   */
   getDisplayColor(): Color;
   /** Whether the color slider is currently being dragged. */
   readonly isDragging: boolean;
@@ -82,12 +85,11 @@ export function useColorSliderState(props: ColorSliderStateOptions): ColorSlider
       colorSpace && defaultColorValue ? defaultColorValue.toFormat(colorSpace) : defaultColorValue,
     [defaultColorValue, colorSpace]
   );
+  let numberFormatter = useMemo(() => new Intl.NumberFormat(), []);
   let sliderState = useSliderState({
     ...color.getChannelRange(channel),
     ...otherProps,
-    // Unused except in getThumbValueLabel, which is overridden below. null to localize the TypeScript error for ignoring.
-    // @ts-ignore
-    numberFormatter: null,
+    numberFormatter,
     value: color.getChannelValue(channel),
     defaultValue: defaultColor.getChannelValue(channel),
     onChange(v) {
@@ -127,6 +129,9 @@ export function useColorSliderState(props: ColorSliderStateOptions): ColorSlider
       }
     },
     getThumbValueLabel() {
+      return color.formatChannelValue(channel, locale);
+    },
+    getFormattedValue() {
       return color.formatChannelValue(channel, locale);
     },
     step,

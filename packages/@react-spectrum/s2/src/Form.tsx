@@ -21,6 +21,7 @@ import {useIsSkeleton} from './Skeleton';
 interface FormStyleProps extends Omit<SpectrumLabelableProps, 'label' | 'contextualHelp'> {
   /**
    * Size of the Form elements.
+   *
    * @default 'M'
    */
   size?: 'S' | 'M' | 'L' | 'XL';
@@ -67,7 +68,8 @@ export function useFormProps<T extends FormStyleProps>(props: T): T {
 }
 
 /**
- * Forms allow users to enter data that can be submitted while providing alignment and styling for form fields.
+ * Forms allow users to enter data that can be submitted while providing alignment and styling for
+ * form fields.
  */
 export const Form = /*#__PURE__*/ forwardRef(function Form(
   props: FormProps,

@@ -186,9 +186,11 @@ export {
   SliderOutput,
   SliderTrack,
   SliderThumb,
+  SliderFill,
   SliderContext,
   SliderOutputContext,
   SliderTrackContext,
+  SliderFillContext,
   SliderStateContext
 } from '../src/Slider';
 export {Switch, SwitchField, SwitchButton, SwitchContext, SwitchFieldContext} from '../src/Switch';
@@ -440,6 +442,8 @@ export type {
   SliderThumbProps,
   SliderTrackProps,
   SliderTrackRenderProps,
+  SliderFillProps,
+  SliderFillRenderProps,
   SliderThumbRenderProps
 } from '../src/Slider';
 export type {

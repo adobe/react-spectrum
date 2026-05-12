@@ -38,26 +38,31 @@ export interface ColorThumbRenderProps {
   color: Color;
   /**
    * Whether this thumb is currently being dragged.
+   *
    * @selector [data-dragging]
    */
   isDragging: boolean;
   /**
    * Whether the thumb is currently hovered with a mouse.
+   *
    * @selector [data-hovered]
    */
   isHovered: boolean;
   /**
    * Whether the thumb is currently focused.
+   *
    * @selector [data-focused]
    */
   isFocused: boolean;
   /**
    * Whether the thumb is keyboard focused.
+   *
    * @selector [data-focus-visible]
    */
   isFocusVisible: boolean;
   /**
    * Whether the thumb is disabled.
+   *
    * @selector [data-disabled]
    */
   isDisabled: boolean;
@@ -66,14 +71,17 @@ export interface ColorThumbRenderProps {
 export interface ColorThumbProps
   extends HoverEvents, RenderProps<ColorThumbRenderProps>, GlobalDOMAttributes<HTMLDivElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-ColorThumb'
    */
   className?: ClassNameOrFunction<ColorThumbRenderProps>;
 }
 
 /**
- * A color thumb appears within a ColorArea, ColorSlider, or ColorWheel and allows a user to drag to adjust the color value.
+ * A color thumb appears within a ColorArea, ColorSlider, or ColorWheel and allows a user to drag to
+ * adjust the color value.
  */
 export const ColorThumb = forwardRef(function ColorThumb(
   props: ColorThumbProps,

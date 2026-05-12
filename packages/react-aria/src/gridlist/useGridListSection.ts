@@ -34,6 +34,7 @@ export interface GridListSectionAria {
 /**
  * Provides the behavior and accessibility implementation for a section in a grid list.
  * See `useGridList` for more details about grid list.
+ *
  * @param props - Props for the section.
  */
 export function useGridListSection<T>(

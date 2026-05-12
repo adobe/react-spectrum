@@ -265,7 +265,10 @@ function processJS(sourceFilename, code, usedClasses) {
   });
 }
 
-/** Processes the docs CSS. Removes empty rules, merges adjacent rules, removes unused selectors, and rewrites imports. */
+/**
+ * Processes the docs CSS. Removes empty rules, merges adjacent rules, removes unused selectors, and
+ * rewrites imports.
+ */
 function processCSS(css, usedClasses) {
   let ast = postcss.parse(css);
 
@@ -532,7 +535,7 @@ function removeCircularDeps(file, seen = new Set()) {
   seen.delete(file);
 }
 
-/** Generates a wrapper component when there is no Reusable wrappers section */
+/** Generates a wrapper component when there is no Reusable wrappers section. */
 function generateWrapper(name) {
   let typeName = `${name}Props`;
   if (name === 'Modal') {
