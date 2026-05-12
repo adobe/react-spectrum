@@ -24,8 +24,7 @@ export default {
   parameters: {
     layout: 'fullscreen',
     description: {
-      data:
-        'Reproduces window scrolling when the document root has a thick border (like a bare HTML page). Uses react-aria scrollIntoView with the document element as the scroll view.'
+      data: 'Reproduces window scrolling when the document root has a thick border (like a bare HTML page). Uses react-aria scrollIntoView with the document element as the scroll view.'
     }
   }
 } as Meta<typeof Button>;
@@ -67,10 +66,18 @@ export function ScrollIntoViewExample() {
       <div ref={redSectionRef} style={sectionStyle('red')}>
         Test 1
         <div style={{display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 8}}>
-          <Button onPress={() => triggerScroll(redSectionRef, 'start')}>Scroll to Red (Start)</Button>
-          <Button onPress={() => triggerScroll(yellowSectionRef, 'start')}>Scroll to Yellow (Start)</Button>
-          <Button onPress={() => triggerScroll(yellowSectionRef, 'end')}>Scroll to Yellow (End)</Button>
-          <Button onPress={() => triggerScroll(blueSectionRef, 'start')}>Scroll to Blue (Start)</Button>
+          <Button onPress={() => triggerScroll(redSectionRef, 'start')}>
+            Scroll to Red (Start)
+          </Button>
+          <Button onPress={() => triggerScroll(yellowSectionRef, 'start')}>
+            Scroll to Yellow (Start)
+          </Button>
+          <Button onPress={() => triggerScroll(yellowSectionRef, 'end')}>
+            Scroll to Yellow (End)
+          </Button>
+          <Button onPress={() => triggerScroll(blueSectionRef, 'start')}>
+            Scroll to Blue (Start)
+          </Button>
           <Button onPress={() => triggerScroll(blueSectionRef, 'end')}>Scroll to Blue (End)</Button>
         </div>
       </div>

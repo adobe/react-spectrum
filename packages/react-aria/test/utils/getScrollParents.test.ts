@@ -36,7 +36,7 @@ describe('getScrollParents', () => {
     let div = document.createElement('div');
     document.body.appendChild(div);
 
-    jest.spyOn(window, 'getComputedStyle').mockImplementation((el) => {
+    jest.spyOn(window, 'getComputedStyle').mockImplementation(el => {
       if (el === root) {
         return {overflow: 'hidden'} as CSSStyleDeclaration;
       }
@@ -53,7 +53,7 @@ describe('getScrollParents', () => {
     document.body.appendChild(scrollable);
     scrollable.appendChild(child);
 
-    jest.spyOn(window, 'getComputedStyle').mockImplementation((el) => {
+    jest.spyOn(window, 'getComputedStyle').mockImplementation(el => {
       if (el === scrollable) {
         return {overflow: 'auto'} as CSSStyleDeclaration;
       }

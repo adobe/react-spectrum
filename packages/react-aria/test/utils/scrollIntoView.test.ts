@@ -39,23 +39,35 @@ describe('scrollIntoView', () => {
       // the target top is at 100, 2100 aka border left of scrolling body, border top + 2000
       // scrollIntoView of block start + inline start should bring us to 100, 2100
       jest.spyOn(target, 'getBoundingClientRect').mockReturnValue({
-        top: 2100, bottom: 3100, left: 100, right: 1100,
-        width: 1000, height: 1000, x: 100, y: 2100
+        top: 2100,
+        bottom: 3100,
+        left: 100,
+        right: 1100,
+        width: 1000,
+        height: 1000,
+        x: 100,
+        y: 2100
       } as DOMRect);
 
-      jest.spyOn(window, 'getComputedStyle').mockImplementation((el) => {
+      jest.spyOn(window, 'getComputedStyle').mockImplementation(el => {
         if (el === scrollView) {
           return {
-            borderTopWidth: '100px', borderBottomWidth: '100px',
-            borderLeftWidth: '100px', borderRightWidth: '100px',
-            scrollPaddingTop: '0px', scrollPaddingBottom: '0px',
-            scrollPaddingLeft: '0px', scrollPaddingRight: '0px',
+            borderTopWidth: '100px',
+            borderBottomWidth: '100px',
+            borderLeftWidth: '100px',
+            borderRightWidth: '100px',
+            scrollPaddingTop: '0px',
+            scrollPaddingBottom: '0px',
+            scrollPaddingLeft: '0px',
+            scrollPaddingRight: '0px',
             direction: 'ltr'
           } as CSSStyleDeclaration;
         }
         return {
-          scrollMarginTop: '0px', scrollMarginBottom: '0px',
-          scrollMarginLeft: '0px', scrollMarginRight: '0px'
+          scrollMarginTop: '0px',
+          scrollMarginBottom: '0px',
+          scrollMarginLeft: '0px',
+          scrollMarginRight: '0px'
         } as CSSStyleDeclaration;
       });
 
@@ -72,23 +84,36 @@ describe('scrollIntoView', () => {
       // the target top is at 100, 2100 aka border left of scrolling body, border top + 2000
       // scrollIntoView of block end + inline end should bring us to 600, 2600
       jest.spyOn(target, 'getBoundingClientRect').mockReturnValue({
-        top: 2100, bottom: 3100, left: 100, right: 1100,
-        width: 1000, height: 1000, x: 100, y: 2100, toJSON: () => {}
+        top: 2100,
+        bottom: 3100,
+        left: 100,
+        right: 1100,
+        width: 1000,
+        height: 1000,
+        x: 100,
+        y: 2100,
+        toJSON: () => {}
       } as DOMRect);
 
-      jest.spyOn(window, 'getComputedStyle').mockImplementation((el) => {
+      jest.spyOn(window, 'getComputedStyle').mockImplementation(el => {
         if (el === scrollView) {
           return {
-            borderTopWidth: '100px', borderBottomWidth: '100px',
-            borderLeftWidth: '100px', borderRightWidth: '100px',
-            scrollPaddingTop: '0px', scrollPaddingBottom: '0px',
-            scrollPaddingLeft: '0px', scrollPaddingRight: '0px',
+            borderTopWidth: '100px',
+            borderBottomWidth: '100px',
+            borderLeftWidth: '100px',
+            borderRightWidth: '100px',
+            scrollPaddingTop: '0px',
+            scrollPaddingBottom: '0px',
+            scrollPaddingLeft: '0px',
+            scrollPaddingRight: '0px',
             direction: 'ltr'
           } as CSSStyleDeclaration;
         }
         return {
-          scrollMarginTop: '0px', scrollMarginBottom: '0px',
-          scrollMarginLeft: '0px', scrollMarginRight: '0px'
+          scrollMarginTop: '0px',
+          scrollMarginBottom: '0px',
+          scrollMarginLeft: '0px',
+          scrollMarginRight: '0px'
         } as CSSStyleDeclaration;
       });
 
