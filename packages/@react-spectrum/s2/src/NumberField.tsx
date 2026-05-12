@@ -80,7 +80,8 @@ export interface NumberFieldProps
    */
   size?: 'S' | 'M' | 'L' | 'XL';
   /**
-   * The prefix to display in the NumberField. A non-interactive element that appears before the input.
+   * The prefix to display in the NumberField. A non-interactive element that appears before the
+   * input.
    */
   prefix?: ReactNode;
 }
