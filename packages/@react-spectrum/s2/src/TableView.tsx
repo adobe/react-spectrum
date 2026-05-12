@@ -598,7 +598,6 @@ const cellFocus = {
     }
   },
   borderRadius: '[5px]',
-  zIndex: 5
 } as const;
 
 function CellFocusRing() {
@@ -1186,7 +1185,9 @@ const divider = style({
   width: '[1px]',
   height: 'full',
   insetEnd: 0,
-  backgroundColor: 'var(--borderColorGray)'
+  backgroundColor: 'var(--borderColorGray)',
+  // set a z index on the divider so the highlight selection border and focus ring can override it 
+  zIndex: 1
 });
 
 const stickyCell = {
@@ -1952,7 +1953,6 @@ const row = style<
     isInFooter: 'bold'
   },
   isolation: 'isolate',
-  zIndex: 3,
   forcedColorAdjust: 'none'
 });
 
@@ -1986,8 +1986,8 @@ const focusIndicator = css(
     width: 100%;
     height: 100%;
     top: 0;
+    z-index: 2 ;
     inset-inline-start: 0;
-    z-index: 4;
     border-radius: 5px;
     position: absolute;
     outline-style: solid;
