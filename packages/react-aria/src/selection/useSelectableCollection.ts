@@ -418,26 +418,29 @@ export function useSelectableCollection(
       return;
     }
 
+    let modality = getInteractionModality();
     manager.setFocused(true);
-    if (manager.focusedKey == null) {
-      let navigateToKey = (key: Key | undefined | null) => {
-        if (key != null) {
-          manager.setFocusedKey(key);
-          if (selectOnFocus && !manager.isSelected(key)) {
-            manager.replaceSelection(key);
-          }
+    let navigateToKey = (key: Key | undefined | null) => {
+      if (key != null) {
+        manager.setFocusedKey(key);
+        if (selectOnFocus && !manager.isSelected(key)) {
+          manager.replaceSelection(key);
         }
-      };
+      }
+    };
+
+    // TODO: we need the "virtual" modality case here because shift tabbing from the prompt field's asset card back into the
+    // thread is a virtual focus event (the tab handler in onKeyDown focuses the ref of the AttachementList aka TagGroup, hence the virtual modality)
+    if (focusOnEntry && (modality === 'keyboard' || modality === 'virtual')) {
+      // TODO: always go to the first item in the Thread when tabbing forwards/backwards into the collection
+      // since it is probably more important to the user to see the new prompt reply rather than go to the last focused key
+      navigateToKey(focusOnEntry === 'first' ? delegate.getFirstKey?.() : delegate.getLastKey?.());
+    } else if (manager.focusedKey == null) {
       // If the user hasn't yet interacted with the collection, there will be no focusedKey set.
       // Attempt to detect whether the user is tabbing forward or backward into the collection
       // and either focus the first or last item accordingly.
       let relatedTarget = e.relatedTarget as Element;
-      // TODO: weird bug where I have to delete the attachment in the prompt field otherwise shift tabbing causes the scroll to go to the very top?
-      if (focusOnEntry === 'first') {
-        navigateToKey(delegate.getFirstKey?.());
-      } else if (focusOnEntry === 'last') {
-        navigateToKey(delegate.getLastKey?.());
-      } else if (
+      if (
         relatedTarget &&
         e.currentTarget.compareDocumentPosition(relatedTarget) & Node.DOCUMENT_POSITION_FOLLOWING
       ) {
@@ -460,8 +463,9 @@ export function useSelectableCollection(
           focusWithoutScrolling(element);
         }
 
-        let modality = getInteractionModality();
-        if (modality === 'keyboard') {
+        // TODO: we also need to scroll if modality is virtual because shift tabbing from the AttachmentList to the Thread as mentioned above
+        // causes the Thread to scroll to the top if we don't call this
+        if (modality === 'keyboard' || modality === 'virtual') {
           scrollIntoViewport(element, {containingElement: ref.current});
         }
       }

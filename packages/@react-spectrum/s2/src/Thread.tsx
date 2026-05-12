@@ -26,13 +26,8 @@ interface ThreadProps<T extends object> extends Pick<GridListProps<T>, 'items' |
 
 
 // TODO: things to figure out/try
-// column reverse layout? is it a problem that the expectation becomes that the first item in the items
-// array is now the most recent item in the stream? Also shift tabbing will move to the top of the list since that is the item
-// closest to the prompt field (or actually might be because of useSelectableCollections tab handling)
-// will need to patch something to handle always moving to the newest item (aka the bottom) regarlsess if you are tabbing forward or
-// backwards into the thread
-// additionally, arrow up and arrow down need to be flipped, other wise arrow down moves you upwards visually and vice versa
-// tabbing is a bit broken as well since we hit the child elements of the gridlist rows in opposite order...
+// tabbing is a bit broken as well since we hit the child elements of the gridlist rows in opposite order... This seems to be due to the
+// tabIndex = 0 of the ToggleButtons in the ToggleButtonGroup
 // also since we track the last focused key of the Gridlist, you get a experience where you might tab in, go to the input field to add some messages
 // and tab back to the Gridlist but get returned to your last focused key instead of to the newest message
 // maybe we could do something like force that the last item is the internal focusedKey, always updating this to the latest last child
@@ -68,6 +63,8 @@ export const Thread = /*#__PURE__*/ (forwardRef as forwardRefType)(function Thre
     // scrolls to bottom on first render cuz we initialize isNearBottomRef to true,
     // otherwise handles scrolling new prompts/etc into view unless you are scrolled up above
     // 100px
+    // TODO: seems like other chat agents will scroll you down regardless of where you are in the chat
+    // however, as it is streaming the response in, it will allow you to scroll where ever and not pull you back down
     if (isNearBottomRef.current) {
       requestAnimationFrame(() => {
         if (domRef.current) {
