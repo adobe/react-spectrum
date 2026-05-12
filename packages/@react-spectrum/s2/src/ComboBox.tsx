@@ -99,6 +99,10 @@ export interface ComboboxStyleProps {
    * @default 'M'
    */
   size?: 'S' | 'M' | 'L' | 'XL';
+  /**
+   * The prefix to display in the ComboBox. A non-interactive element that appears before the input.
+   */
+  prefix?: ReactNode;
 }
 export interface ComboBoxProps<T extends object>
   extends
@@ -702,6 +706,7 @@ const ComboboxInner = forwardRef(function ComboboxInner(
           {label}
         </FieldLabel>
         <FieldGroup
+          prefix={props.prefix}
           role="presentation"
           isDisabled={isDisabled}
           isInvalid={isInvalid}
@@ -715,7 +720,11 @@ const ComboboxInner = forwardRef(function ComboboxInner(
           })({size})}>
           <InputContext.Consumer>
             {ctx => (
-              <InputContext.Provider value={{...ctx, ref: mergeRefs((ctx as any)?.ref, inputRef)}}>
+              <InputContext.Provider
+                value={{
+                  ...ctx,
+                  ref: mergeRefs((ctx as any)?.ref, inputRef)
+                }}>
                 <Input aria-describedby={spinnerId} />
               </InputContext.Provider>
             )}

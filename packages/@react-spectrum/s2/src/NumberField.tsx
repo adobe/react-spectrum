@@ -79,6 +79,11 @@ export interface NumberFieldProps
    * @default 'M'
    */
   size?: 'S' | 'M' | 'L' | 'XL';
+  /**
+   * The prefix to display in the NumberField. A non-interactive element that appears before the
+   * input.
+   */
+  prefix?: ReactNode;
 }
 
 export const NumberFieldContext =
@@ -239,6 +244,7 @@ export const NumberField = forwardRef(function NumberField(
               {label}
             </FieldLabel>
             <FieldGroup
+              prefix={props.prefix}
               size={size}
               styles={style({
                 ...fieldInput(),
@@ -251,7 +257,10 @@ export const NumberField = forwardRef(function NumberField(
               <InputContext.Consumer>
                 {ctx => (
                   <InputContext.Provider
-                    value={{...ctx, ref: mergeRefs((ctx as any)?.ref, inputRef)}}>
+                    value={{
+                      ...ctx,
+                      ref: mergeRefs((ctx as any)?.ref, inputRef)
+                    }}>
                     <Input />
                   </InputContext.Provider>
                 )}

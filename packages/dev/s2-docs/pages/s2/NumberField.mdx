@@ -110,6 +110,27 @@ import {NumberField} from '@react-spectrum/s2/NumberField';
 </Provider>
 ```
 
+## Prefix
+
+Use the `prefix` prop to display an additional element before the input in the number field.
+
+```tsx render
+"use client";
+import {NumberField} from '@react-spectrum/s2/NumberField';
+
+function Example() {
+  return (
+    <NumberField
+      label="Price"
+      /*- begin highlight -*/
+      prefix="USD"
+      /*- end highlight -*/
+      formatOptions={{style: 'currency', currency: 'USD', currencyDisplay: 'narrowSymbol'}}
+      placeholder="0.00" />
+  );
+}
+```
+
 ## Forms
 
 Use the `name` prop to submit the raw number value (not a formatted string) to the server. Set the `isRequired` prop to validate that the user enters a value, or implement custom client or server-side validation. See the [Forms](forms) guide to learn more.

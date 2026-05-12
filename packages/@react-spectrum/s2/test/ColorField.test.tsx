@@ -10,26 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, render} from '@react-spectrum/test-utils-internal';
-import {TextArea, TextField} from '../src/TextField';
+import {ColorField} from '../src/ColorField';
+import {render} from '@react-spectrum/test-utils-internal';
 
-describe('TextField', () => {
-  it('should focus textarea when tapping invalid icon', async () => {
-    let {getByRole} = render(<TextArea label="Description" isInvalid />);
-
-    let textarea = getByRole('textbox');
-    // svg doesn't have a role so grab it via queryselector
-    let icon = getByRole('presentation').querySelector('svg')!;
-    expect(icon).toBeInTheDocument();
-    // user event with touch doesn't cause touchEnd to trigger so using fireEvent
-    fireEvent.touchStart(icon);
-    fireEvent.touchEnd(icon);
-
-    expect(document.activeElement).toBe(textarea);
-  });
-
+describe('ColorField', () => {
   it('should label the input with the prefix', () => {
-    let {getByRole} = render(<TextField label="Description" prefix="Prefix" />);
+    let {getByRole} = render(<ColorField label="Description" prefix="Prefix" />);
 
     let input = getByRole('textbox');
     let labels = input.getAttribute('aria-labelledby')?.split(' ');
