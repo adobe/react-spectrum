@@ -386,21 +386,22 @@ function loadStyleMacroData() {
  * Extracts property definitions for a specific category from the loaded style macro data.
  *
  * Example: For category 'spacing', this returns an object like:
- * {
- * margin: {
- * values: ['0', '4', '8', '12', '16'],
- * additionalTypes: ['baseSpacing', 'number'],
- * links: { '0': {href: 'https://...'} },
- * description: 'Sets the margin on all sides'
- * },
- * marginX: {
- * values: [...],
- * additionalTypes: [...],
- * links: {...},
- * mapping: ['marginLeft', 'marginRight'],  // for shorthands
- * description: 'Sets horizontal margins'
- * }
- * }
+ *
+ *     {
+ *       margin: {
+ *         values: ['0', '4', '8', '12', '16'],
+ *         additionalTypes: ['baseSpacing', 'number'],
+ *         links: { '0': {href: 'https://...'} },
+ *         description: 'Sets the margin on all sides'
+ *       },
+ *       marginX: {
+ *         values: [...],
+ *         additionalTypes: [...],
+ *         links: {...},
+ *         mapping: ['marginLeft', 'marginRight'],  // for shorthands
+ *         description: 'Sets horizontal margins'
+ *       }
+ *     }
  *
  * @param {string} category - The property category (e.g., 'spacing', 'layout', 'colors')
  * @returns {object | null} Property definitions or null if category doesn't exist

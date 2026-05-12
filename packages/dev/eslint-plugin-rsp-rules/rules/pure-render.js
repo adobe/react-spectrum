@@ -11,7 +11,7 @@
  */
 
 // Copied from https://github.com/facebook/react/pull/24506
-const plugin = {
+export default {
   meta: {
     type: 'problem',
     docs: {
@@ -21,9 +21,9 @@ const plugin = {
     }
   },
   create(context) {
-    const sourceCode = context.sourceCode || context.getSourceCode();
     return {
       MemberExpression(member) {
+        // Look for member expressions that look like refs (i.e. `ref.current`).
         if (
           member.object.type !== 'Identifier' ||
           member.computed ||
@@ -33,6 +33,8 @@ const plugin = {
           return;
         }
 
+        // Find the parent function of this node, as well as any if statement matching against the ref value
+        // (i.e. lazy init pattern shown in React docs).
         let node = member;
         let fn;
         let conditional;
@@ -63,11 +65,13 @@ const plugin = {
           return;
         }
 
-        const variable = getVariable(sourceCode.getScope(node), member.object.name);
+        // Find the variable definition for the object.
+        const variable = getVariable(context.sourceCode.getScope(node), member.object.name);
         if (!variable) {
           return;
         }
 
+        // Find the initialization of the variable and see if it's a call to useRef.
         const refDefinition = variable.defs.find(def => {
           const init = def.node.init;
           if (!init) {
@@ -87,6 +91,8 @@ const plugin = {
         });
 
         if (refDefinition) {
+          // If within an if statement, check if comparing with the initial value passed to useRef.
+          // This indicates the lazy init pattern, which is allowed.
           if (conditional) {
             const init = refDefinition.node.init.arguments[0] || {
               type: 'Identifier',
@@ -100,6 +106,7 @@ const plugin = {
             }
           }
 
+          // Otherwise, report an error for either writing or reading to this ref based on parent expression.
           context.report({
             node: member,
             message:
@@ -176,12 +183,9 @@ function isLiteralEqual(operator, a, b) {
   if (operator === '===') {
     return aValue === bValue;
   } else if (operator === '==') {
-    // Mirror `==` semantics from the source binary expression (e.g. null == undefined).
-    // eslint-disable-next-line eqeqeq -- intentional loose equality for `==` branch
+    // eslint-disable-next-line
     return aValue == bValue;
   }
 
   return false;
 }
-
-export default plugin;

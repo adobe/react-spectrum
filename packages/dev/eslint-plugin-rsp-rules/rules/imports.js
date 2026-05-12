@@ -17,7 +17,6 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const PACKAGES_ROOT = path.join(__dirname, '..', '..', '..');
 
 const substrings = ['-', '+'];
 
@@ -53,9 +52,12 @@ const plugin = {
         return;
       }
 
+      // Split the import specifier on slashes. If it starts with an @ then it's
+      // a scoped package, otherwise just take the first part.
       let parts = source.split('/');
       let pkgName = source.startsWith('@') ? parts.slice(0, 2).join('/') : parts[0];
 
+      // Search for a package.json starting from the current filename
       let pkgPath = findUp.sync('package.json', {cwd: path.dirname(context.getFilename())});
       if (!pkgPath) {
         return;
@@ -63,6 +65,7 @@ const plugin = {
 
       let pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
 
+      // The only dev dependency should be spectrum-css.
       if (exists(pkg.devDependencies, pkgName) && devDependencies.has(pkgName)) {
         return;
       }
@@ -80,7 +83,9 @@ const plugin = {
           node,
           message: `Missing dependency on ${pkgName}.`,
           fix(fixer) {
-            let depPath = path.join(PACKAGES_ROOT, pkgName, 'package.json');
+            // Attempt to find a package in the monorepo. If the dep is for an external library,
+            // then we cannot auto fix it because we don't know the version to add.
+            let depPath = __dirname + '/../packages/' + pkgName + '/package.json';
             if (!fs.existsSync(depPath)) {
               return;
             }
@@ -98,6 +103,7 @@ const plugin = {
 
             fs.writeFileSync(pkgPath, JSON.stringify(pkg, false, 2) + '\n');
 
+            // Fake fix so eslint doesn't show the error.
             return {
               range: [0, 0],
               text: ''
@@ -119,6 +125,7 @@ function exists(deps, name) {
   return deps && deps[name];
 }
 
+// Insert a key into an object and sort it.
 function insertObject(obj, key, value) {
   obj[key] = value;
 
