@@ -105,19 +105,30 @@ export interface AriaTextFieldProps<T = HTMLInputElement>
     TextInputDOMProps<T>,
     AriaValidationProps {
   // https://www.w3.org/TR/wai-aria-1.2/#textbox
-  /** Identifies the currently active element when DOM focus is on a composite widget, textbox, group, or application. */
+  /**
+   * Identifies the currently active element when DOM focus is on a composite widget, textbox,
+   * group, or application.
+   */
   'aria-activedescendant'?: string;
   /**
-   * Indicates whether inputting text could trigger display of one or more predictions of the user's intended value for an input and specifies how predictions would be
-   * presented if they are made.
+   * Indicates whether inputting text could trigger display of one or more predictions of the user's
+   * intended value for an input and specifies how predictions would be presented if they are made.
    */
   'aria-autocomplete'?: 'none' | 'inline' | 'list' | 'both';
-  /** Indicates the availability and type of interactive popup element, such as menu or dialog, that can be triggered by an element. */
+  /**
+   * Indicates the availability and type of interactive popup element, such as menu or dialog, that
+   * can be triggered by an element.
+   */
   'aria-haspopup'?: boolean | 'false' | 'true' | 'menu' | 'listbox' | 'tree' | 'grid' | 'dialog';
-  /** Identifies the element (or elements) whose contents or presence are controlled by the current element. */
+  /**
+   * Identifies the element (or elements) whose contents or presence are controlled by the current
+   * element.
+   */
   'aria-controls'?: string;
   /**
-   * An enumerated attribute that defines what action label or icon to preset for the enter key on virtual keyboards. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/enterkeyhint).
+   * An enumerated attribute that defines what action label or icon to preset for the enter key on
+   * virtual keyboards. See
+   * [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/enterkeyhint).
    */
   enterKeyHint?: 'enter' | 'done' | 'go' | 'next' | 'previous' | 'search' | 'send';
 }
@@ -126,9 +137,10 @@ export interface AriaTextFieldOptions<
   T extends TextFieldIntrinsicElements
 > extends AriaTextFieldProps<TextFieldHTMLElementType[T]> {
   /**
-   * The HTML element used to render the input, e.g. 'input', or 'textarea'.
-   * It determines whether certain HTML attributes will be included in `inputProps`.
-   * For example, [`type`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#attr-type).
+   * The HTML element used to render the input, e.g. 'input', or 'textarea'. It determines whether
+   * certain HTML attributes will be included in `inputProps`. For example,
+   * [`type`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#attr-type).
+   *
    * @default 'input'
    */
   inputElementType?: T;
@@ -138,7 +150,9 @@ export interface AriaTextFieldOptions<
    */
   autoCapitalize?: 'off' | 'none' | 'on' | 'sentences' | 'words' | 'characters';
   /**
-   * An enumerated attribute that defines what action label or icon to preset for the enter key on virtual keyboards. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/enterkeyhint).
+   * An enumerated attribute that defines what action label or icon to preset for the enter key on
+   * virtual keyboards. See
+   * [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/enterkeyhint).
    */
   enterKeyHint?: 'enter' | 'done' | 'go' | 'next' | 'previous' | 'search' | 'send';
 }
@@ -167,6 +181,7 @@ export interface TextFieldAria<
 
 /**
  * Provides the behavior and accessibility implementation for a text field.
+ *
  * @param props - Props for the text field.
  * @param ref - Ref to the HTML input or textarea element.
  */

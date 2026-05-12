@@ -15,6 +15,7 @@ import {useId} from './useId';
 
 /**
  * Merges aria-label and aria-labelledby into aria-labelledby when both exist.
+ *
  * @param props - Aria label props.
  * @param defaultLabel - Default value for aria-label when not present.
  */

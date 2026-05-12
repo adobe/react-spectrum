@@ -28,15 +28,19 @@ import {useStyleProps} from '../utils/styleProps';
 
 export interface SpectrumActionButtonProps
   extends AriaBaseButtonProps, Omit<ButtonProps, 'onClick'>, StyleProps {
-  /** Whether the button should be displayed with a [quiet style](https://spectrum.adobe.com/page/action-button/#Quiet). */
+  /**
+   * Whether the button should be displayed with a [quiet
+   * style](https://spectrum.adobe.com/page/action-button/#Quiet).
+   */
   isQuiet?: boolean;
   /** The static color style to apply. Useful when the button appears over a color background. */
   staticColor?: 'white' | 'black';
 }
 
 /**
- * ActionButtons allow users to perform an action.
- * They’re used for similar, task-based options within a workflow, and are ideal for interfaces where buttons aren’t meant to draw a lot of attention.
+ * ActionButtons allow users to perform an action. They’re used for similar, task-based options
+ * within a workflow, and are ideal for interfaces where buttons aren’t meant to draw a lot of
+ * attention.
  */
 export const ActionButton = React.forwardRef(function ActionButton(
   props: SpectrumActionButtonProps,

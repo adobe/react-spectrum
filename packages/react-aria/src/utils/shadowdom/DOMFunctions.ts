@@ -85,6 +85,7 @@ export function getEventTarget<T extends Event | SyntheticEvent>(event: T): Even
 
 /**
  * ShadowDOM safe fast version of node.contains(document.activeElement).
+ *
  * @param node
  * @returns
  */

@@ -55,16 +55,19 @@ export interface ToastRegionRenderProps<T> {
   visibleToasts: QueuedToast<T>[];
   /**
    * Whether the toast region is currently hovered with a mouse.
+   *
    * @selector [data-hovered]
    */
   isHovered: boolean;
   /**
    * Whether the toast region is currently focused.
+   *
    * @selector [data-focused]
    */
   isFocused: boolean;
   /**
    * Whether the toast region is keyboard focused.
+   *
    * @selector [data-focus-visible]
    */
   isFocusVisible: boolean;
@@ -76,7 +79,9 @@ export interface ToastRegionProps<T>
     StyleRenderProps<ToastRegionRenderProps<T>>,
     GlobalDOMAttributes<HTMLDivElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-ToastRegion'
    */
   className?: ClassNameOrFunction<ToastRegionRenderProps<T>>;
@@ -197,11 +202,13 @@ export interface ToastRenderProps<T> {
   toast: QueuedToast<T>;
   /**
    * Whether the toast is currently focused.
+   *
    * @selector [data-focused]
    */
   isFocused: boolean;
   /**
    * Whether the toast is keyboard focused.
+   *
    * @selector [data-focus-visible]
    */
   isFocusVisible: boolean;
@@ -210,14 +217,17 @@ export interface ToastRenderProps<T> {
 export interface ToastProps<T>
   extends AriaToastProps<T>, RenderProps<ToastRenderProps<T>>, GlobalDOMAttributes<HTMLDivElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-Toast'
    */
   className?: ClassNameOrFunction<ToastRenderProps<T>>;
 }
 
 /**
- * A Toast displays a brief, temporary notification of actions, errors, or other events in an application.
+ * A Toast displays a brief, temporary notification of actions, errors, or other events in an
+ * application.
  */
 const Toast = /*#__PURE__*/ (forwardRef as forwardRefType)(function Toast<T>(
   props: ToastProps<T>,

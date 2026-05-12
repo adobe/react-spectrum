@@ -54,7 +54,10 @@ export interface DraggableCollectionState {
   getItems(key: Key): DragItem[];
   /** The ref of the element that will be rendered as the drag preview while dragging. */
   preview?: RefObject<DragPreviewRenderer | null>;
-  /** Function that returns the drop operations that are allowed for the dragged items. If not provided, all drop operations are allowed. */
+  /**
+   * Function that returns the drop operations that are allowed for the dragged items. If not
+   * provided, all drop operations are allowed.
+   */
   getAllowedDropOperations?: () => DropOperation[];
   /** Begins a drag for the given key. This triggers the onDragStart event. */
   startDrag(key: Key, event: DragStartEvent): void;

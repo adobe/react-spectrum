@@ -747,9 +747,10 @@ let customFilterItems = [
 let CustomFilterComboBox = props => {
   let {startsWith} = useFilter({sensitivity: 'base'});
   let [filterValue, setFilterValue] = React.useState('');
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+
   let filteredItems = React.useMemo(
     () => customFilterItems.filter(item => startsWith(item.name, filterValue)),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [props.items, filterValue, startsWith]
   );
 

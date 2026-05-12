@@ -35,7 +35,7 @@ channel.on(DARK_MODE_EVENT_NAME, (isDark: boolean) => {
   document.documentElement.dataset.colorScheme = isDark ? 'dark' : 'light';
 });
 
-/** @type { import('@storybook/react').Preview } */
+/** @type {import('@storybook/react').Preview} */
 const preview = {
   parameters: {
     controls: {

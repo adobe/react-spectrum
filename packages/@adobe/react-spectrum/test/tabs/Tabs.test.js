@@ -144,7 +144,7 @@ describe('Tabs', function () {
     expect(selectedItem).toHaveAttribute('aria-selected', 'true');
     expect(arrowLeft.defaultPrevented).toBe(true);
 
-    /** prevent changing tabs for horizontal orientations in aria-selected */
+    /** Prevent changing tabs for horizontal orientations in aria-selected. */
     let arrowUp = createEvent.keyDown(selectedItem, {key: 'ArrowUp', code: 38, charCode: 38});
     fireEvent(selectedItem, arrowUp);
     expect(selectedItem).toHaveAttribute('aria-selected', 'true');

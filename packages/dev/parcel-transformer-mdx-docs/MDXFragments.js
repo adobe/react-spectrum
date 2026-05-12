@@ -13,8 +13,9 @@
 const flatMap = require('unist-util-flatmap');
 
 /**
- * Takes example code blocks in mdx files that are just React Tags and wraps all of them into
- * a single Fragment shorthand node. This way syntax trees can parse them and return something meaningful.
+ * Takes example code blocks in mdx files that are just React Tags and wraps all of them into a
+ * single Fragment shorthand node. This way syntax trees can parse them and return something
+ * meaningful.
  */
 const fragmentWrap = () => (tree, file) =>
   flatMap(tree, node => {
@@ -85,8 +86,9 @@ const fragmentUnWrap = () => (tree, file) =>
 
 module.exports = {fragmentUnWrap, fragmentWrap};
 
-/**
+/*
  * Example of what the nodes look like.
+ *
  * @example
  * ```
  * {

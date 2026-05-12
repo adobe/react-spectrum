@@ -22,7 +22,9 @@ export interface FormProps
     DOMRenderProps<'form', undefined>,
     GlobalDOMAttributes<HTMLFormElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element.
+   *
    * @default 'react-aria-Form'
    */
   className?: string;
@@ -30,6 +32,7 @@ export interface FormProps
    * Whether to use native HTML form validation to prevent form submission
    * when a field value is missing or invalid, or mark fields as required
    * or invalid via ARIA.
+   *
    * @default 'native'
    */
   validationBehavior?: 'aria' | 'native';

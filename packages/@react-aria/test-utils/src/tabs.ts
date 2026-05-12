@@ -16,7 +16,8 @@ import {pressElement} from './events';
 
 interface TriggerTabOptions {
   /**
-   * What interaction type to use when triggering a tab. Defaults to the interaction type set on the tester.
+   * What interaction type to use when triggering a tab. Defaults to the interaction type set on the
+   * tester.
    */
   interactionType?: UserOpts['interactionType'];
   /**

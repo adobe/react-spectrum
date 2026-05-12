@@ -25,11 +25,13 @@ export interface AriaModalOverlayProps extends Pick<
 > {
   /**
    * Whether to close the modal when the user interacts outside it.
+   *
    * @default false
    */
   isDismissable?: boolean;
   /**
    * Whether pressing the escape key to close the modal should be disabled.
+   *
    * @default false
    */
   isKeyboardDismissDisabled?: boolean;

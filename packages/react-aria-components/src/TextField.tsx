@@ -42,21 +42,25 @@ import {TextContext} from './Text';
 export interface TextFieldRenderProps {
   /**
    * Whether the text field is disabled.
+   *
    * @selector [data-disabled]
    */
   isDisabled: boolean;
   /**
    * Whether the value is invalid.
+   *
    * @selector [data-invalid]
    */
   isInvalid: boolean;
   /**
    * Whether the text field is read only.
+   *
    * @selector [data-readonly]
    */
   isReadOnly: boolean;
   /**
    * Whether the text field is required.
+   *
    * @selector [data-required]
    */
   isRequired: boolean;
@@ -79,7 +83,9 @@ export interface TextFieldProps
     RenderProps<TextFieldRenderProps>,
     GlobalDOMAttributes<HTMLDivElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-TextField'
    */
   className?: ClassNameOrFunction<TextFieldRenderProps>;

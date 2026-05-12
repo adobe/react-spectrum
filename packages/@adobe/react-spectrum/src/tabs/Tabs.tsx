@@ -73,7 +73,10 @@ export interface SpectrumTabsProps<T>
   children: ReactNode;
   /** The item objects for each tab, for dynamic collections. */
   items?: Iterable<T>;
-  /** The keys of the tabs that are disabled. These tabs cannot be selected, focused, or otherwise interacted with. */
+  /**
+   * The keys of the tabs that are disabled. These tabs cannot be selected, focused, or otherwise
+   * interacted with.
+   */
   disabledKeys?: Iterable<Key>;
   /** Whether the Tabs are disabled. */
   isDisabled?: boolean;
@@ -91,11 +94,13 @@ export interface SpectrumTabsProps<T>
   onSelectionChange?: (key: Key) => void;
   /**
    * Whether tabs are activated automatically on focus or manually.
+   *
    * @default 'automatic'
    */
   keyboardActivation?: 'automatic' | 'manual';
   /**
    * The orientation of the tabs.
+   *
    * @default 'horizontal'
    */
   orientation?: Orientation;
@@ -120,7 +125,8 @@ interface TabsContext<T> {
 const TabContext = React.createContext<TabsContext<any> | null>(null);
 
 /**
- * Tabs organize content into multiple sections and allow users to navigate between them. The content under the set of tabs should be related and form a coherent unit.
+ * Tabs organize content into multiple sections and allow users to navigate between them. The
+ * content under the set of tabs should be related and form a coherent unit.
  */
 // forwardRef doesn't support generic parameters, so cast the result to the correct type
 // https://stackoverflow.com/questions/58469229/react-with-typescript-generics-while-using-react-forwardref
@@ -348,13 +354,16 @@ function TabLine(props: TabLineProps) {
 }
 
 export interface SpectrumTabListProps<T> extends DOMProps, StyleProps {
-  /** The tab items to display. Item keys should match the key of the corresponding `<Item>` within the `<TabPanels>` element. */
+  /**
+   * The tab items to display. Item keys should match the key of the corresponding `<Item>` within
+   * the `<TabPanels>` element.
+   */
   children: CollectionChildren<T>;
 }
 
 /**
- * A TabList is used within Tabs to group tabs that a user can switch between.
- * The keys of the items within the <TabList> must match up with a corresponding item inside the <TabPanels>.
+ * A TabList is used within Tabs to group tabs that a user can switch between. The keys of the items
+ * within the <TabList> must match up with a corresponding item inside the <TabPanels>.
  */
 export function TabList<T>(props: SpectrumTabListProps<T>): ReactElement {
   const tabContext = useContext(TabContext)!;
@@ -438,13 +447,16 @@ export function TabList<T>(props: SpectrumTabListProps<T>): ReactElement {
 }
 
 export interface SpectrumTabPanelsProps<T> extends DOMProps, StyleProps {
-  /** The contents of each tab. Item keys should match the key of the corresponding `<Item>` within the `<TabList>` element. */
+  /**
+   * The contents of each tab. Item keys should match the key of the corresponding `<Item>` within
+   * the `<TabList>` element.
+   */
   children: CollectionChildren<T>;
 }
 
 /**
- * TabPanels is used within Tabs as a container for the content of each tab.
- * The keys of the items within the <TabPanels> must match up with a corresponding item inside the <TabList>.
+ * TabPanels is used within Tabs as a container for the content of each tab. The keys of the items
+ * within the <TabPanels> must match up with a corresponding item inside the <TabList>.
  */
 export function TabPanels<T extends object>(props: SpectrumTabPanelsProps<T>): ReactElement {
   const {tabState, tabProps} = useContext(TabContext)!;

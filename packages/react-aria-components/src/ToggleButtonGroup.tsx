@@ -30,11 +30,13 @@ import {ToggleGroupState, useToggleGroupState} from 'react-stately/useToggleGrou
 export interface ToggleButtonGroupRenderProps {
   /**
    * The orientation of the toggle button group.
+   *
    * @selector [data-orientation="horizontal | vertical"]
    */
   orientation: Orientation;
   /**
    * Whether the toggle button group is disabled.
+   *
    * @selector [data-disabled]
    */
   isDisabled: boolean;
@@ -51,7 +53,9 @@ export interface ToggleButtonGroupProps
     SlotProps,
     GlobalDOMAttributes<HTMLDivElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-ToggleButtonGroup'
    */
   className?: ClassNameOrFunction<ToggleButtonGroupRenderProps>;
@@ -63,7 +67,8 @@ export const ToggleButtonGroupContext = createContext<
 export const ToggleGroupStateContext = createContext<ToggleGroupState | null>(null);
 
 /**
- * A toggle button group allows a user to toggle multiple options, with single or multiple selection.
+ * A toggle button group allows a user to toggle multiple options, with single or multiple
+ * selection.
  */
 export const ToggleButtonGroup = /*#__PURE__*/ (forwardRef as forwardRefType)(
   function ToggleButtonGroup(props: ToggleButtonGroupProps, ref: ForwardedRef<HTMLDivElement>) {

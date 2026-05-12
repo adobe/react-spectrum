@@ -20,6 +20,7 @@ function writeToFile(filepath, data) {
 
 /**
  * Takes an icon directory and outputs React Spectrum wrapped icons to the output directory.
+ *
  * @param iconDir Source directory.
  * @param outputDir Output directory.
  * @param nameRegex A regex to pull out the icon name from the filename.

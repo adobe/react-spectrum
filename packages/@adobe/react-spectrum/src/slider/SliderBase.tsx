@@ -30,12 +30,19 @@ export interface SpectrumBarSliderBase<T> extends AriaSliderProps<T>, ValueBase<
   formatOptions?: Intl.NumberFormatOptions;
   /**
    * The label's overall position relative to the element it is labeling.
+   *
    * @default 'top'
    */
   labelPosition?: LabelPosition;
-  /** Whether the value's label is displayed. True by default if there's a `label`, false by default if not. */
+  /**
+   * Whether the value's label is displayed. True by default if there's a `label`, false by default
+   * if not.
+   */
   showValueLabel?: boolean;
-  /** A function that returns the content to display as the value's label. Overrides default formatted number. */
+  /**
+   * A function that returns the content to display as the value's label. Overrides default
+   * formatted number.
+   */
   getValueLabel?: (value: T) => string;
   /**
    * A ContextualHelp element to place next to the label.

@@ -27,7 +27,10 @@ export class DateFormatter implements Intl.DateTimeFormat {
     this.options = options;
   }
 
-  /** Formats a date as a string according to the locale and format options passed to the constructor. */
+  /**
+   * Formats a date as a string according to the locale and format options passed to the
+   * constructor.
+   */
   format(value: Date): string {
     return this.formatter.format(value);
   }

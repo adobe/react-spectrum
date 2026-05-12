@@ -791,11 +791,13 @@ function SubmenuTrigger(props: SubmenuTriggerProps): JSX.Element {
 
 export interface UnavailableMenuItemTriggerProps {
   /**
-   * The contents of the UnavailableMenuItemTrigger. The first child should be a MenuItem and the second child be a ContextualHelpPopover.
+   * The contents of the UnavailableMenuItemTrigger. The first child should be a MenuItem and the
+   * second child be a ContextualHelpPopover.
    */
   children: ReactElement[];
   /**
    * Whether the menu item is currently unavailable.
+   *
    * @default false
    */
   isUnavailable?: boolean;

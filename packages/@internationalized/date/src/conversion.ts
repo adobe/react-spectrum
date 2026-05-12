@@ -262,7 +262,10 @@ export function fromDateToLocal(date: Date): ZonedDateTime {
   return fromDate(date, getLocalTimeZone());
 }
 
-/** Converts a value with date components such as a `CalendarDateTime` or `ZonedDateTime` into a `CalendarDate`. */
+/**
+ * Converts a value with date components such as a `CalendarDateTime` or `ZonedDateTime` into a
+ * `CalendarDate`.
+ */
 export function toCalendarDate(dateTime: AnyCalendarDate): CalendarDate {
   return new CalendarDate(
     dateTime.calendar,
@@ -292,8 +295,8 @@ export function toTimeFields(date: AnyTime): TimeFields {
 }
 
 /**
- * Converts a date value to a `CalendarDateTime`. An optional `Time` value can be passed to set the time
- * of the resulting value, otherwise it will default to midnight.
+ * Converts a date value to a `CalendarDateTime`. An optional `Time` value can be passed to set the
+ * time of the resulting value, otherwise it will default to midnight.
  */
 export function toCalendarDateTime(
   date: CalendarDate | CalendarDateTime | ZonedDateTime,
@@ -349,8 +352,8 @@ export function toCalendar<T extends AnyCalendarDate>(date: T, calendar: Calenda
 }
 
 /**
- * Converts a date value to a `ZonedDateTime` in the provided time zone. The `disambiguation` option can be set
- * to control how values that fall on daylight saving time changes are interpreted.
+ * Converts a date value to a `ZonedDateTime` in the provided time zone. The `disambiguation` option
+ * can be set to control how values that fall on daylight saving time changes are interpreted.
  */
 export function toZoned(
   date: CalendarDate | CalendarDateTime | ZonedDateTime,

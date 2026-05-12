@@ -289,10 +289,12 @@ function getStylePropValue(
         } else if (value.type === 'ArrayExpression') {
           let values: string[] = [];
           for (let element of value.elements) {
+            // oxlint-disable-next-line max-depth
             if (element?.type === 'StringLiteral' || element?.type === 'NumericLiteral') {
               values.push(convertGridTrack(element.value) as string);
             } else if (element?.type === 'CallExpression') {
               // TODO: match to import using scope
+              // oxlint-disable-next-line max-depth
               if (
                 element.callee.type === 'Identifier' &&
                 element.callee.name === 'minmax' &&
@@ -352,6 +354,7 @@ function getStylePropValue(
           if (prop === 'padding' && value.type === 'StringLiteral' && /\s/.test(value.value)) {
             // Check if it has multiple whitespace-separated values
             let expansions = expandSpaceShorthand(prop, value.value, convertDimension);
+            // oxlint-disable-next-line max-depth
             if (!expansions) {
               return null;
             }
@@ -680,11 +683,13 @@ export default function transformStyleProps(
           macroValues.set(val.key, val.value);
         }
         if (value.dynamicValues) {
+          // oxlint-disable-next-line max-depth
           for (let val of value.dynamicValues) {
             dynamicValues.set(val.key, val.value);
           }
         }
         if (value.conditions) {
+          // oxlint-disable-next-line max-depth
           for (let val of value.conditions) {
             conditions.set(val.key, val.value);
           }

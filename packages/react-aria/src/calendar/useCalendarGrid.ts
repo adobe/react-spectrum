@@ -37,7 +37,8 @@ export interface AriaCalendarGridProps {
   /**
    * The style of weekday names to display in the calendar grid header,
    * e.g. single letter, abbreviation, or full day name.
-   * @default "narrow"
+   *
+   * @default 'narrow'
    */
   weekdayStyle?: 'narrow' | 'short' | 'long';
   /**
@@ -51,7 +52,10 @@ export interface CalendarGridAria {
   gridProps: DOMAttributes;
   /** Props for the grid header element (e.g. `<thead>`). */
   headerProps: DOMAttributes;
-  /** A list of week day abbreviations formatted for the current locale, typically used in column headers. */
+  /**
+   * A list of week day abbreviations formatted for the current locale, typically used in column
+   * headers.
+   */
   weekDays: string[];
   /** The number of weeks in the month. */
   weeksInMonth: number;

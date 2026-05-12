@@ -89,6 +89,7 @@ interface ReactElementProps<T extends ReactElement> {
 export interface LabeledValueStyleProps {
   /**
    * The size of the component.
+   *
    * @default 'M'
    */
   size?: 'S' | 'M' | 'L' | 'XL';

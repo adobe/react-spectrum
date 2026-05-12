@@ -36,7 +36,9 @@ export interface MeterProps
     SlotProps,
     GlobalDOMAttributes<HTMLDivElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-Meter'
    */
   className?: ClassNameOrFunction<MeterRenderProps>;
@@ -49,6 +51,7 @@ export interface MeterRenderProps {
   percentage: number;
   /**
    * A formatted version of the value.
+   *
    * @selector [aria-valuetext]
    */
   valueText: string | undefined;

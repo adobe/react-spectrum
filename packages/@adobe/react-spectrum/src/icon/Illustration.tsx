@@ -27,6 +27,7 @@ export interface IllustrationProps extends DOMProps, AriaLabelingProps, StylePro
   children: ReactElement<any>;
   /**
    * A slot to place the illustration in.
+   *
    * @default 'illustration'
    */
   slot?: string;

@@ -1,4 +1,4 @@
-/* eslint-disable rulesdir/imports */
+/* eslint-disable rsp-rules/imports */
 import {ComponentType} from 'react';
 // @ts-ignore
 import illustrations from '/packages/@react-spectrum/s2/spectrum-illustrations/gradient/generic2/*.tsx';

@@ -250,6 +250,7 @@ function handleProperty(element: string, property: string, value: t.ObjectProper
         } else if (value.type === 'StringLiteral') {
           let m = value.value.match(/^var\(--spectrum-global-dimension-font-size-(.+)\)$/);
           if (m) {
+            // oxlint-disable-next-line max-depth
             switch (m[1]) {
               case '25':
                 return `[${10 / 16}rem]`;
@@ -296,6 +297,7 @@ function handleProperty(element: string, property: string, value: t.ObjectProper
         if (value.type === 'StringLiteral') {
           let m = value.value.match(/^var\(--spectrum-global-font-weight-(.+)\)$/);
           if (m) {
+            // oxlint-disable-next-line max-depth
             switch (m[1]) {
               case 'light':
               case 'medium':
@@ -307,6 +309,7 @@ function handleProperty(element: string, property: string, value: t.ObjectProper
                 return 'normal';
             }
           } else {
+            // oxlint-disable-next-line max-depth
             switch (value.value) {
               case 'normal':
               case 'bold':
@@ -443,6 +446,7 @@ function handleProperty(element: string, property: string, value: t.ObjectProper
         if (value.type === 'StringLiteral') {
           let m = value.value.match(/^var\(--spectrum-global-animation-duration-(.+)\)$/);
           if (m) {
+            // oxlint-disable-next-line max-depth
             switch (m[1]) {
               case '0':
                 return 0;

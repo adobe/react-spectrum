@@ -10,10 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-const findUp = require('find-up');
-const path = require('path');
-const fs = require('fs');
-const Module = require('module');
+import {builtinModules} from 'node:module';
+import {fileURLToPath} from 'node:url';
+import findUp from 'find-up';
+import fs from 'node:fs';
+import path from 'node:path';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
 const substrings = ['-', '+'];
 
 const devDependencies = new Set([
@@ -33,7 +37,7 @@ const devDependencies = new Set([
   'vite-plugin-svgr'
 ]);
 
-module.exports = {
+const plugin = {
   meta: {
     fixable: 'code'
   },
@@ -44,7 +48,7 @@ module.exports = {
       }
 
       let source = node.source.value.replace(/^[a-z-]+:/, '');
-      if (source.startsWith('.') || Module.builtinModules.includes(source)) {
+      if (source.startsWith('.') || builtinModules.includes(source)) {
         return;
       }
 
@@ -132,3 +136,5 @@ function insertObject(obj, key, value) {
 
   return res;
 }
+
+export default plugin;

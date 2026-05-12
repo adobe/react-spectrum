@@ -219,6 +219,8 @@ export function useSpinButton(props: SpinButtonProps): SpinbuttonAria {
       onIncrementPressStartEvent(600);
     } else if (isIncrementPressed) {
       onIncrementPressStartEvent(400);
+    } else if (!isIncrementPressed) {
+      clearAsyncEvent();
     }
   }, [isIncrementPressed]);
 
@@ -228,6 +230,8 @@ export function useSpinButton(props: SpinButtonProps): SpinbuttonAria {
       onDecrementPressStartEvent(600);
     } else if (isDecrementPressed) {
       onDecrementPressStartEvent(400);
+    } else if (!isDecrementPressed) {
+      clearAsyncEvent();
     }
   }, [isDecrementPressed]);
 

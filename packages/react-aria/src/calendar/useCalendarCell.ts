@@ -57,15 +57,16 @@ export interface CalendarCellAria {
   /** Whether the cell is focused. */
   isFocused: boolean;
   /**
-   * Whether the cell is disabled, according to the calendar's `minValue`, `maxValue`, and `isDisabled` props.
-   * Disabled dates are not focusable, and cannot be selected by the user. They are typically
-   * displayed with a dimmed appearance.
+   * Whether the cell is disabled, according to the calendar's `minValue`, `maxValue`, and
+   * `isDisabled` props. Disabled dates are not focusable, and cannot be selected by the user. They
+   * are typically displayed with a dimmed appearance.
    */
   isDisabled: boolean;
   /**
-   * Whether the cell is unavailable, according to the calendar's `isDateUnavailable` prop. Unavailable dates remain
-   * focusable, but cannot be selected by the user. They should be displayed with a visual affordance to indicate they
-   * are unavailable, such as a different color or a strikethrough.
+   * Whether the cell is unavailable, according to the calendar's `isDateUnavailable` prop.
+   * Unavailable dates remain focusable, but cannot be selected by the user. They should be
+   * displayed with a visual affordance to indicate they are unavailable, such as a different color
+   * or a strikethrough.
    *
    * Note that because they are focusable, unavailable dates must meet a 4.5:1 color contrast ratio,
    * [as defined by WCAG](https://www.w3.org/WAI/WCAG21/Understanding/contrast-minimum.html).

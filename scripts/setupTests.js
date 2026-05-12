@@ -15,15 +15,13 @@ import '@testing-library/jest-dom';
 
 // this prints a nice stack like this
 /**
- * TypeError: Converting circular structure to JSON
- * --> starting at object with constructor 'HTMLButtonElement'
- * |     property '__reactFiber$kmjivnwji9j' -> object with constructor 'FiberNode'
- * --- property 'stateNode' closes the circle
- * at stringify (<anonymous>)
- * at writeChannelMessage (internal/child_process/serialization.js:118:20)
- * at process.target._send (internal/child_process.js:784:17)
- * at process.target.send (internal/child_process.js:682:19)
- * at reportSuccess (/Users/rsnow/GitProjects/react-spectrum/node_modules/jest-cli/node_modules/jest-worker/build/workers/processChild.js:67:11)
+ * TypeError: Converting circular structure to JSON --> starting at object with constructor
+ * 'HTMLButtonElement' | property '__reactFiber$kmjivnwji9j' -> object with constructor 'FiberNode'
+ * --- property 'stateNode' closes the circle at stringify (<anonymous>) at writeChannelMessage
+ * (internal/child_process/serialization.js:118:20) at process.target._send
+ * (internal/child_process.js:784:17) at process.target.send (internal/child_process.js:682:19) at
+ * reportSuccess
+ * (/Users/rsnow/GitProjects/react-spectrum/node_modules/jest-cli/node_modules/jest-worker/build/workers/processChild.js:67:11)
  */
 if (!process.env.LISTENING_TO_UNHANDLED_REJECTION) {
   process.on('unhandledRejection', reason => {

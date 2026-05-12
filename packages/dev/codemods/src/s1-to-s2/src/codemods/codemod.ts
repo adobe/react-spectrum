@@ -34,7 +34,10 @@ let renamedComponents: Record<string, string> = {
 };
 
 interface Options {
-  /** Comma separated list of components to transform. If not specified, all available components will be transformed. */
+  /**
+   * Comma separated list of components to transform. If not specified, all available components
+   * will be transformed.
+   */
   components?: string;
 }
 

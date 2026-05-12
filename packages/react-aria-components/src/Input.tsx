@@ -28,26 +28,31 @@ import {useHover} from 'react-aria/useHover';
 export interface InputRenderProps {
   /**
    * Whether the input is currently hovered with a mouse.
+   *
    * @selector [data-hovered]
    */
   isHovered: boolean;
   /**
    * Whether the input is focused, either via a mouse or keyboard.
+   *
    * @selector [data-focused]
    */
   isFocused: boolean;
   /**
    * Whether the input is keyboard focused.
+   *
    * @selector [data-focus-visible]
    */
   isFocusVisible: boolean;
   /**
    * Whether the input is disabled.
+   *
    * @selector [data-disabled]
    */
   isDisabled: boolean;
   /**
    * Whether the input is invalid.
+   *
    * @selector [data-invalid]
    */
   isInvalid: boolean;
@@ -59,7 +64,9 @@ export interface InputProps
     HoverEvents,
     StyleRenderProps<InputRenderProps, 'input'> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-Input'
    */
   className?: ClassNameOrFunction<InputRenderProps>;

@@ -24,7 +24,8 @@ export interface SwitchProps extends ToggleProps {}
 
 export interface AriaSwitchProps extends SwitchProps, InputDOMProps, AriaToggleProps {
   /**
-   * Identifies the element (or elements) whose contents or presence are controlled by the current element.
+   * Identifies the element (or elements) whose contents or presence are controlled by the current
+   * element.
    */
   'aria-controls'?: string;
 }
@@ -51,6 +52,7 @@ export interface SwitchAria extends ValidationResult {
 /**
  * Provides the behavior and accessibility implementation for a switch component.
  * A switch is similar to a checkbox, but represents on/off values as opposed to selection.
+ *
  * @param props - Props for the switch.
  * @param state - State for the switch, as returned by `useToggleState`.
  * @param ref - Ref to the HTML input element.

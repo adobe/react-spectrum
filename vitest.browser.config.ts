@@ -78,7 +78,7 @@ function illustrationResolverPlugin(): Plugin {
 }
 
 /**
- * Handle S2 illustrations
+ * Handle S2 illustrations.
  *
  * Resolves the SVG and wraps it with createIllustration from Icon.tsx.
  */
@@ -113,7 +113,7 @@ function illustrationPlugin(): Plugin {
 }
 
 /**
- * Handle S2 workflow icons
+ * Handle S2 workflow icons.
  *
  * Resolves the SVG and wraps it with createIcon from Icon.tsx.
  */

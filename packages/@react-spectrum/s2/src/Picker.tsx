@@ -151,12 +151,16 @@ export interface PickerProps<T extends object, M extends SelectionMode = 'single
    * @default 'start'
    */
   align?: 'start' | 'end';
-  /** Width of the menu. By default, matches width of the trigger. Note that the minimum width of the dropdown is always equal to the trigger's width. */
+  /**
+   * Width of the menu. By default, matches width of the trigger. Note that the minimum width of the
+   * dropdown is always equal to the trigger's width.
+   */
   menuWidth?: number;
   /** The current loading state of the Picker. */
   loadingState?: LoadingState;
   /**
-   * Custom renderer for the picker value. Allows one to provide a custom element to render selected items.
+   * Custom renderer for the picker value. Allows one to provide a custom element to render selected
+   * items.
    *
    * @note The returned ReactNode should not have interactable elements as it will break accessibility.
    */
@@ -312,7 +316,8 @@ let InternalPickerContext = createContext<{size: 'S' | 'M' | 'L' | 'XL'}>({size:
 let InsideSelectValueContext = createContext(false);
 
 /**
- * Pickers allow users to choose a single option from a collapsible list of options when space is limited.
+ * Pickers allow users to choose a single option from a collapsible list of options when space is
+ * limited.
  */
 export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Picker<
   T extends object,

@@ -61,8 +61,8 @@ export type CalendarIdentifier =
  */
 export interface Calendar {
   /**
-   * A string identifier for the calendar, as defined by Unicode CLDR.
-   * See [MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/supportedValuesOf#supported_calendar_types).
+   * A string identifier for the calendar, as defined by Unicode CLDR. See
+   * [MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/supportedValuesOf#supported_calendar_types).
    */
   identifier: CalendarIdentifier;
 
@@ -141,7 +141,10 @@ export interface TimeDuration {
   milliseconds?: number;
 }
 
-/** Represents an amount of time with both date and time components, for use when performing arithmetic. */
+/**
+ * Represents an amount of time with both date and time components, for use when performing
+ * arithmetic.
+ */
 export interface DateTimeDuration extends DateDuration, TimeDuration {}
 
 export interface DateFields {
@@ -173,6 +176,7 @@ export interface CycleTimeOptions extends CycleOptions {
    * Whether to use 12 or 24 hour time. If 12 hour time is chosen, the resulting value
    * will remain in the same day period as the original value (e.g. if the value is AM,
    * the resulting value also be AM).
+   *
    * @default 24
    */
   hourCycle?: 12 | 24;

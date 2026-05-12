@@ -63,7 +63,9 @@ export interface DateRangePickerProps<T extends DateValue>
    */
   size?: 'S' | 'M' | 'L' | 'XL';
   /**
-   * The maximum number of months to display at once in the calendar popover, if screen space permits.
+   * The maximum number of months to display at once in the calendar popover, if screen space
+   * permits.
+   *
    * @default 1
    */
   maxVisibleMonths?: number;

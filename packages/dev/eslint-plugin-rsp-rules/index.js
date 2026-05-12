@@ -12,13 +12,16 @@
 
 import actEventsTest from './rules/act-events-test.js';
 import fasterNodeContains from './rules/faster-node-contains.js';
+import imports from './rules/imports.js';
 import noGetByRoleToThrow from './rules/no-getByRole-toThrow.js';
 import noNonShadowContains from './rules/no-non-shadow-contains.js';
 import noPackageRootImports from './rules/no-package-root-imports.js';
 import noReactKey from './rules/no-react-key.js';
+import pureRender from './rules/pure-render.js';
 import safeEventTarget from './rules/safe-event-target.js';
 import shadowSafeActiveElement from './rules/shadow-safe-active-element.js';
 import sortImports from './rules/sort-imports.js';
+import useLayoutEffectRule from './rules/use-layout-effect-rule.js';
 
 const rules = {
   'act-events-test': actEventsTest,
@@ -29,7 +32,10 @@ const rules = {
   'no-non-shadow-contains': noNonShadowContains,
   'safe-event-target': safeEventTarget,
   'shadow-safe-active-element': shadowSafeActiveElement,
-  'faster-node-contains': fasterNodeContains
+  'faster-node-contains': fasterNodeContains,
+  imports,
+  'use-layout-effect-rule': useLayoutEffectRule,
+  'pure-render': pureRender
 };
 
 const meta = {
@@ -38,3 +44,4 @@ const meta = {
 };
 
 export {meta, rules};
+export default {meta, rules};

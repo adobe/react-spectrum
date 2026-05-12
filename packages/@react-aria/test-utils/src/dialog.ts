@@ -15,7 +15,8 @@ import {DialogTesterOpts, UserOpts} from './types';
 
 interface DialogOpenOpts {
   /**
-   * What interaction type to use when opening the dialog. Defaults to the interaction type set on the tester.
+   * What interaction type to use when opening the dialog. Defaults to the interaction type set on
+   * the tester.
    */
   interactionType?: UserOpts['interactionType'];
 }

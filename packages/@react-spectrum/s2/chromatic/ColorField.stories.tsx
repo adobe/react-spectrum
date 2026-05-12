@@ -11,6 +11,7 @@
  */
 
 import {ColorField, ColorFieldProps} from '../src/ColorField';
+import {ColorSwatch} from '../exports';
 import {generateComboChunks, shortName} from './utils';
 import type {Meta, StoryObj} from '@storybook/react';
 import {ReactElement} from 'react';
@@ -144,3 +145,11 @@ export const LabelPositionTopPt5: StoryObj<typeof Template> = {
 };
 
 // Skipped the contextual help stories from here on out since its all shared
+
+export const ExampleWithPrefix: StoryObj<typeof Template> = {
+  render: args => <ColorField {...args} value="#ff00ff" />,
+  args: {
+    label: 'Color',
+    prefix: <ColorSwatch size="XS" color="#ff00ff" />
+  }
+};

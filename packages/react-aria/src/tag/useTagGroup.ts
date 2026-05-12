@@ -56,12 +56,13 @@ export interface AriaTagGroupProps<T>
     Omit<HelpTextProps, 'errorMessage'> {
   /**
    * How multiple selection should behave in the collection.
+   *
    * @default 'toggle'
    */
   selectionBehavior?: SelectionBehavior;
   /** Whether selection should occur on press up instead of press down. */
   shouldSelectOnPressUp?: boolean;
-  /** Handler that is called when a user deletes a tag.  */
+  /** Handler that is called when a user deletes a tag. */
   onRemove?: (keys: Set<Key>) => void;
   /** An error message for the field. */
   errorMessage?: ReactNode;
@@ -71,6 +72,7 @@ export interface AriaTagGroupProps<T>
    * Most experiences should not modify this option as it eliminates a keyboard user's ability to
    * easily clear selection. Only use if the escape key is being handled externally or should not
    * trigger selection clearing contextually.
+   *
    * @default 'clearSelection'
    */
   escapeKeyBehavior?: 'clearSelection' | 'none';
@@ -91,8 +93,10 @@ interface HookData {
 export const hookData: WeakMap<ListState<any>, HookData> = new WeakMap<ListState<any>, HookData>();
 
 /**
- * Provides the behavior and accessibility implementation for a tag group component.
- * A tag group is a focusable list of labels, categories, keywords, filters, or other items, with support for keyboard navigation, selection, and removal.
+ * Provides the behavior and accessibility implementation for a tag group component. A tag group is
+ * a focusable list of labels, categories, keywords, filters, or other items, with support for
+ * keyboard navigation, selection, and removal.
+ *
  * @param props - Props to be applied to the tag group.
  * @param state - State for the tag group, as returned by `useListState`.
  * @param ref - A ref to a DOM element for the tag group.
