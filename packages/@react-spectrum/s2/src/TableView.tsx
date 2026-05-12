@@ -1130,11 +1130,6 @@ function VisuallyHiddenSelectAllLabel() {
 }
 
 const commonCellStyles = {
-  borderColor: 'transparent',
-  borderBottomWidth: 0,
-  borderTopWidth: 0,
-  borderXWidth: 0,
-  borderStyle: 'solid',
   position: 'relative',
   color: '--rowTextColor',
   outlineStyle: 'none',
