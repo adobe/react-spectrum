@@ -1773,6 +1773,7 @@ function remarkDocsComponentsToMarkdown() {
             const desc = getComponentDescription(m[1], file);
             if (desc) {
               // Replace with normal paragraph node.
+              // oxlint-disable-next-line max-depth
               if (node.type === 'mdxJsxFlowElement') {
                 parent.children[index] = {
                   type: 'paragraph',
