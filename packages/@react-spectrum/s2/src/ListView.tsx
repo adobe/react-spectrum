@@ -1050,11 +1050,6 @@ const emptyStateWrapper = style({
   padding: 16
 });
 
-// TODO new problem with the styling here is that the last insertion indicator wants to have a reduced height
-// so it doesn't cause the collection height to increase when it appears. This however makes the styling of the indicator difficult since
-// it shouldn't have align items center anymore then... We also don't have enough information at this level to know if the drop
-// insertion indicator is for the last one in the list since we don't have access to the whole collection. is it worth it or should
-// we just be fine with the bottom indicator causing a bit of a height increase?
 export function InsertionIndicator({target}: {target: ItemDropTarget}) {
   return (
     <DropIndicator className="" target={target}>

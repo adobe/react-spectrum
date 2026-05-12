@@ -864,20 +864,6 @@ export const TreeViewItemContent = (props: TreeViewItemContentProps): ReactNode 
                   <Checkbox slot="selection" />
                 </div>
               )}
-            {selectionMode !== 'none' &&
-              selectionBehavior === 'toggle' &&
-              selectionStyle !== 'highlight' && (
-                // TODO: add transition?
-                <div
-                  className={treeCheckbox({
-                    isDisabled:
-                      isDisabled ||
-                      !state.selectionManager.canSelectItem(id) ||
-                      state.disabledKeys.has(id)
-                  })}>
-                  <Checkbox slot="selection" />
-                </div>
-              )}
             <div
               className={style({
                 gridArea: 'level-padding',
