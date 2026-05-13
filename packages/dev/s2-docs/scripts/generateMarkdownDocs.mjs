@@ -557,10 +557,11 @@ function getStyleMacroPropertyDefinitions(category) {
  * - Generic types (e.g., 'number', 'lengthPercentage')
  *
  * Example output for a spacing-like category:
- * | Property | Values |
- * |---------|--------|
+ *
+ * | Property                                                                                | Values                                                       |
+ * | --------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
  * | `margin`, `marginTop`, `marginBottom`, `marginStart`, `marginEnd`, `marginX`, `marginY` | `auto`, `baseSpacing`, `negativeSpacing`, `lengthPercentage` |
- * | `padding`, `paddingTop`, `paddingBottom`, ... | `text-to-control`, ..., `baseSpacing`, `lengthPercentage` |
+ * | `padding`, `paddingTop`, `paddingBottom`, ...                                           | `text-to-control`, ..., `baseSpacing`, `lengthPercentage`    |
  *
  * @param {string} category - Property category to generate table for (e.g., 'spacing', 'layout',
  *   'colors')
@@ -671,7 +672,7 @@ function generateStyleMacroTable(category, {sort = true} = {}) {
  * Injected once on the page so the tables below can reference these names
  * by alias instead of repeating their full value lists on every row.
  *
- * @returns {string|null} Markdown section string.
+ * @returns {string | null} Markdown section string.
  */
 function generateValueSetsMarkdown() {
   const data = loadStyleMacroData();
