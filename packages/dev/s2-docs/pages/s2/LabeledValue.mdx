@@ -17,7 +17,7 @@ export const description = 'Displays a non-editable value with a label';
   component={LabeledValue}
   docs={types.exports.LabeledValueProps}
   links={types.links}
-  props={['label', 'size', 'labelPosition', 'labelAlign', 'contextualHelp']}
+  props={['label', 'size', 'labelPosition', 'contextualHelp']}
   initialProps={{
     label: 'File name',
     value: 'Budget.pdf'
@@ -131,6 +131,34 @@ import {LabeledValue} from '@react-spectrum/s2/LabeledValue';
 import {Link} from '@react-spectrum/s2/Link';
 
 <LabeledValue label="Website" value={<Link href="https://www.adobe.com/">Adobe.com</Link>} />
+```
+
+## Form
+
+Use `LabeledValue` within a `Form` to display non-editable information alongside editable fields.
+
+```tsx render docs={docs.exports.Form} links={docs.links} props={['size', 'labelPosition', 'labelAlign', 'necessityIndicator', 'isRequired', 'isDisabled', 'isEmphasized']} type="s2"
+"use client";
+import {Button} from '@react-spectrum/s2/Button';
+import {Form} from '@react-spectrum/s2/Form';
+import {LabeledValue} from '@react-spectrum/s2/LabeledValue';
+import {NumberField} from '@react-spectrum/s2/NumberField';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+<Form/* PROPS */>
+  <NumberField
+    label="Planned hours"
+    placeholder="–"
+    defaultValue={1} />
+  <LabeledValue 
+    label="Actual hours"
+    value={0} />
+  <Button
+    type="submit"
+    variant="primary">
+    Submit
+  </Button>
+</Form>
 ```
 
 
