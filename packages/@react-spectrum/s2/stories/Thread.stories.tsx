@@ -12,6 +12,7 @@
 
 import {ActionButton} from '../src/ActionButton';
 import {ActionMenu} from '../src/ActionMenu';
+import {announce} from 'react-aria/private/live-announcer/LiveAnnouncer';
 import {AssetCard} from '../src/Card';
 import {baseColor, css, focusRing, style} from '../style' with {type: 'macro'};
 import {Button} from '../src/Button';
@@ -31,7 +32,6 @@ import {
 } from 'react-aria-components';
 import {Card, CardPreview} from '../src/Card';
 import CheckmarkCircle from '@react-spectrum/s2/icons/CheckmarkCircle';
-import ChevronDown from '../s2wf-icons/S2_Icon_ChevronDown_20_N.svg';
 import ChevronRight from '@react-spectrum/s2/icons/ArrowCurved';
 import {CloseButton} from '../src/CloseButton';
 import {Content, Text} from '../src/Content';
@@ -43,7 +43,7 @@ import {MenuItem} from '../src/Menu';
 import type {Meta} from '@storybook/react';
 import Plus from '@react-spectrum/s2/icons/Add';
 import {ProgressCircle} from '../src/ProgressCircle';
-import {ReactNode, useEffect, useRef, useState} from 'react';
+import {ReactNode, useCallback, useEffect, useRef, useState} from 'react';
 import Send from '@react-spectrum/s2/icons/ArrowUpSend';
 import {Thread} from '../src/Thread';
 import ThumbDown from '@react-spectrum/s2/icons/ThumbDown';
@@ -247,7 +247,15 @@ export function DynamicThread() {
         gap: 32,
         height: '100%'
       })}>
-      <Thread items={[...messages].reverse()}>
+      <Thread
+        items={[...messages].reverse()}
+        getItemText={msg =>
+          msg.type === 'status'
+            ? msg.status === 'pending'
+              ? 'Generating response…'
+              : ''
+            : msg.content
+        }>
         {msg => {
           if (msg.type === 'user') {
             return <UserMessage textValue={msg.content}>{msg.content}</UserMessage>;
@@ -275,6 +283,16 @@ export function VirtualizedThread() {
   let nextId = useRef(initialResponses.length);
   let lastMessage = messages.at(-1);
   let isPending = lastMessage?.type === 'status' && lastMessage.status === 'pending';
+  let seenKeysRef = useRef<Set<unknown> | null>(null);
+  let getItemText = useCallback(
+    msg =>
+      msg.type === 'status'
+        ? msg.status === 'pending'
+          ? 'Generating response…'
+          : ''
+        : msg.content,
+    []
+  );
 
   function handleSend(text: string) {
     if (!text.trim()) {
@@ -293,6 +311,31 @@ export function VirtualizedThread() {
       ]);
     }, 1500);
   }
+
+  // TODO: this is a copy of what is in thread, merge when we support virtualizer
+  useEffect(() => {
+    if (!messages) {
+      return;
+    }
+    if (seenKeysRef.current === null) {
+      // make sure we don't announce items that are already in the thread, user can navigate though the thread
+      // ideally we would have access to the internal state or something so that we could access the keys/id tied to the
+      // collection items
+      seenKeysRef.current = new Set([...messages]);
+      return;
+    }
+
+    if (!getItemText) {
+      return;
+    }
+
+    for (let item of messages) {
+      if (!seenKeysRef.current.has(item)) {
+        seenKeysRef.current.add(item);
+        announce(getItemText(item), 'polite');
+      }
+    }
+  }, [messages, getItemText]);
 
   return (
     <div
