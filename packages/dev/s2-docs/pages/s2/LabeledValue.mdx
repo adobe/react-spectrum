@@ -137,7 +137,7 @@ import {Link} from '@react-spectrum/s2/Link';
 
 Use `LabeledValue` within a `Form` to display non-editable information alongside editable fields.
 
-```tsx render docs={docs.exports.Form} links={docs.links} props={['size', 'labelPosition', 'labelAlign', 'necessityIndicator', 'isRequired', 'isDisabled']} type="s2"
+```tsx render docs={docs.exports.Form} links={docs.links} props={['size', 'labelAlign', 'necessityIndicator', 'isRequired', 'isDisabled']} type="s2"
 "use client";
 import {Button} from '@react-spectrum/s2/Button';
 import {ComboBox, ComboBoxItem} from '@react-spectrum/s2/ComboBox';
@@ -171,10 +171,12 @@ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
       placeholder="–"
       defaultValue={1} 
       styles={style({width: 120})}/>
+    {/*- begin highlight -*/}
     <LabeledValue 
       label="Actual hours"
       value={0}
       styles={style({width: 120})}/>
+    {/*- end highlight -*/}
   </div>
   <div
     role="group"
