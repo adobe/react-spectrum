@@ -137,21 +137,59 @@ import {Link} from '@react-spectrum/s2/Link';
 
 Use `LabeledValue` within a `Form` to display non-editable information alongside editable fields.
 
-```tsx render docs={docs.exports.Form} links={docs.links} props={['size', 'labelPosition', 'labelAlign', 'necessityIndicator', 'isRequired', 'isDisabled', 'isEmphasized']} type="s2"
+```tsx render docs={docs.exports.Form} links={docs.links} props={['size', 'labelPosition', 'labelAlign', 'necessityIndicator', 'isRequired', 'isDisabled']} type="s2"
 "use client";
 import {Button} from '@react-spectrum/s2/Button';
+import {ComboBox, ComboBoxItem} from '@react-spectrum/s2/ComboBox';
 import {Form} from '@react-spectrum/s2/Form';
 import {LabeledValue} from '@react-spectrum/s2/LabeledValue';
 import {NumberField} from '@react-spectrum/s2/NumberField';
+import {Picker, PickerItem} from '@react-spectrum/s2/Picker';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 <Form/* PROPS */>
-  <NumberField
-    label="Planned hours"
-    placeholder="–"
-    defaultValue={1} />
-  <LabeledValue 
-    label="Actual hours"
-    value={0} />
+  <div
+    role="group"
+    className={style({display: 'flex', alignItems: 'center', gap: 48})}>
+    <ComboBox label="Duration type" styles={style({width: 120})}>
+      <ComboBoxItem>Simple</ComboBoxItem>
+      <ComboBoxItem>Calculated assignment</ComboBoxItem>
+      <ComboBoxItem>Calculated work</ComboBoxItem>
+      <ComboBoxItem>Effort driven</ComboBoxItem>
+    </ComboBox>
+    <NumberField
+    label="Duration days"
+    placeholder="# of days"
+    defaultValue={1} 
+    styles={style({width: 120})}/>
+  </div>
+  <div
+    role="group"
+    aria-labelledby="working hours"
+    className={style({display: 'flex', alignItems: 'center', gap: 48, font: 'ui'})}>
+    <NumberField
+      label="Planned hours"
+      placeholder="–"
+      defaultValue={1} 
+      styles={style({width: 120})}/>
+    <LabeledValue 
+      label="Actual hours"
+      value={0}
+      styles={style({width: 120})}/>
+  </div>
+  <div
+    role="group"
+    aria-labelledby="working hours"
+    className={style({display: 'flex', alignItems: 'center', gap: 48, font: 'ui'})}>
+    <LabeledValue 
+      label="Project duration"
+      value={1}
+      styles={style({width: 120})}/>
+    <LabeledValue 
+      label="Actual duration"
+      value={0}
+      styles={style({width: 120})}/>
+  </div>
   <Button
     type="submit"
     variant="primary">
