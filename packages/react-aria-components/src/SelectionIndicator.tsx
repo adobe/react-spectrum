@@ -20,11 +20,16 @@ import {
 
 export interface SelectionIndicatorProps extends SharedElementPropsBase {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-SelectionIndicator'
    */
   className?: ClassNameOrFunction<SharedElementRenderProps>;
-  /** Whether the SelectionIndicator is visible. This is usually set automatically by the parent component. */
+  /**
+   * Whether the SelectionIndicator is visible. This is usually set automatically by the parent
+   * component.
+   */
   isSelected?: boolean;
 }
 

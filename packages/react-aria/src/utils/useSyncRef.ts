@@ -25,6 +25,7 @@ export function useSyncRef<T>(context?: ContextValue<T> | null, ref?: RefObject<
       context.ref.current = ref.current;
       return () => {
         if (context.ref) {
+          // oxlint-disable-next-line react-hooks/exhaustive-deps
           context.ref.current = null;
         }
       };

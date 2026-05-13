@@ -44,6 +44,7 @@ export interface SpectrumTimeFieldProps<T extends TimeValue>
     InputDOMProps {
   /**
    * Whether the time field should be displayed with a quiet style.
+   *
    * @default false
    */
   isQuiet?: boolean;

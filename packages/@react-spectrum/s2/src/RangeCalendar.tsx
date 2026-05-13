@@ -49,6 +49,7 @@ export interface RangeCalendarProps<T extends DateValue>
   errorMessage?: ReactNode;
   /**
    * The number of months to display at once.
+   *
    * @default 1
    */
   visibleMonths?: number;
@@ -95,7 +96,8 @@ const calendarStyles = style<{isMultiMonth?: boolean}>(
 );
 
 /**
- * RangeCalendars display a grid of days in one or more months and allow users to select a contiguous range of dates.
+ * RangeCalendars display a grid of days in one or more months and allow users to select a
+ * contiguous range of dates.
  */
 export const RangeCalendar = /*#__PURE__*/ (forwardRef as forwardRefType)(function RangeCalendar<
   T extends DateValue

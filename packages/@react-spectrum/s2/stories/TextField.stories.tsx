@@ -10,7 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
+import {Avatar} from '../src/Avatar';
 import {Button} from '../src/Button';
+import {ColorSwatch} from '../src/ColorSwatch';
 import {Content, Footer, Heading, Text} from '../src/Content';
 import {ContextualHelp} from '../src/ContextualHelp';
 import {Form} from '../src/Form';
@@ -190,6 +192,18 @@ export const TextFieldWithAddons: StoryTextField = {
       <TextField {...args} label="Phone Number" prefix="#" placeholder="(000) 000-0000" />
       <TextField {...args} label="URL" prefix="https://" placeholder="example.com" />
       <TextField {...args} label="Mention" prefix={<MentionIcon />} placeholder="username" />
+      <TextField
+        {...args}
+        label="User"
+        prefix={<Avatar size={20} src="https://i.imgur.com/xIe7Wlb.png" />}
+        placeholder="username"
+      />
+      <TextField
+        {...args}
+        label="Color"
+        prefix={<ColorSwatch size="XS" color="rgb(255, 0, 255)" />}
+        placeholder="#FF00FF"
+      />
       <Button type="submit" variant="primary">
         Submit
       </Button>

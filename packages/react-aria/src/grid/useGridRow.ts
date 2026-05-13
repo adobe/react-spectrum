@@ -22,7 +22,10 @@ import {GridState} from 'react-stately/private/grid/useGridState';
 import {SelectableItemStates, useSelectableItem} from '../selection/useSelectableItem';
 
 export interface GridRowProps<T> {
-  /** An object representing the grid row. Contains all the relevant information that makes up the grid row. */
+  /**
+   * An object representing the grid row. Contains all the relevant information that makes up the
+   * grid row.
+   */
   node: GridNode<T>;
   /** Whether the grid row is contained in a virtual scroller. */
   isVirtualized?: boolean;
@@ -31,8 +34,9 @@ export interface GridRowProps<T> {
   /**
    * Handler that is called when a user performs an action on the row.
    * Please use onCellAction at the collection level instead.
+   *
    * @deprecated
-   **/
+   */
   onAction?: () => void;
 }
 
@@ -45,6 +49,7 @@ export interface GridRowAria extends SelectableItemStates {
 
 /**
  * Provides the behavior and accessibility implementation for a row in a grid.
+ *
  * @param props - Props for the row.
  * @param state - State of the parent grid, as returned by `useGridState`.
  */

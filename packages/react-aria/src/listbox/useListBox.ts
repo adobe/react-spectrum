@@ -49,6 +49,7 @@ export interface AriaListBoxPropsBase<T> extends ListBoxProps<T>, DOMProps, Aria
    * Most experiences should not modify this option as it eliminates a keyboard user's ability to
    * easily clear selection. Only use if the escape key is being handled externally or should not
    * trigger selection clearing contextually.
+   *
    * @default 'clearSelection'
    */
   escapeKeyBehavior?: 'clearSelection' | 'none';
@@ -65,8 +66,8 @@ export interface AriaListBoxProps<T> extends AriaListBoxPropsBase<T> {
   /** Whether options should be focused when the user hovers over them. */
   shouldFocusOnHover?: boolean;
   /**
-   * Handler that is called when a user performs an action on an item. The exact user event depends on
-   * the collection's `selectionBehavior` prop and the interaction modality.
+   * Handler that is called when a user performs an action on an item. The exact user event depends
+   * on the collection's `selectionBehavior` prop and the interaction modality.
    */
   onAction?: (key: Key) => void;
 }
@@ -105,12 +106,15 @@ export interface AriaListBoxOptions<T> extends Omit<AriaListBoxProps<T>, 'childr
    * - 'action': link behaves like onAction.
    * - 'selection': link follows selection interactions (e.g. if URL drives selection).
    * - 'override': links override all other interactions (link items are not selectable).
+   *
    * @default 'override'
    */
   linkBehavior?: 'action' | 'selection' | 'override';
 
   /**
-   * The primary orientation of the items. Usually this is the direction that the collection scrolls.
+   * The primary orientation of the items. Usually this is the direction that the collection
+   * scrolls.
+   *
    * @default 'vertical'
    */
   orientation?: Orientation;
@@ -119,6 +123,7 @@ export interface AriaListBoxOptions<T> extends Omit<AriaListBoxProps<T>, 'childr
 /**
  * Provides the behavior and accessibility implementation for a listbox component.
  * A listbox displays a list of options and allows a user to select one or more of them.
+ *
  * @param props - Props for the listbox.
  * @param state - State for the listbox, as returned by `useListState`.
  */

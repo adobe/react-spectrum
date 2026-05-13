@@ -3,8 +3,8 @@ if (window.__macrosLoaded) {
 }
 window.__macrosLoaded = true;
 
-let debugLog = (...args) => {
-  // console.log('[Content Script]', ...args);
+let debugLog = () => {
+  // console.log('[Content Script]', ...arguments);
 };
 
 window.addEventListener('message', function (event) {

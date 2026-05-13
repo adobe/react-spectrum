@@ -18,7 +18,9 @@ import {FocusEvent, MouseEvent, KeyboardEvent as ReactKeyboardEvent, SyntheticEv
 export type BaseEvent<T extends SyntheticEvent> = T & {
   /**
    * Use continuePropagation.
-   * @deprecated */
+   *
+   * @deprecated
+   */
   stopPropagation(): void;
   continuePropagation(): void;
 };

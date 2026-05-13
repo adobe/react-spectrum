@@ -68,7 +68,9 @@ export interface PopoverProps
     AriaLabelingProps,
     GlobalDOMAttributes<HTMLDivElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-Popover'
    */
   className?: ClassNameOrFunction<PopoverRenderProps>;
@@ -94,14 +96,17 @@ export interface PopoverProps
    */
   isExiting?: boolean;
   /**
-   * The container element in which the overlay portal will be placed. This may have unknown behavior depending on where it is portalled to.
-   * @default document.body
+   * The container element in which the overlay portal will be placed. This may have unknown
+   * behavior depending on where it is portalled to.
+   *
    * @deprecated - Use a parent UNSAFE_PortalProvider to set your portal container instead.
+   * @default document.body
    */
   UNSTABLE_portalContainer?: Element;
   /**
    * The additional offset applied along the main axis between the element and its
    * anchor element.
+   *
    * @default 8
    */
   offset?: number;
@@ -110,21 +115,25 @@ export interface PopoverProps
 export interface PopoverRenderProps {
   /**
    * The name of the component that triggered the popover, e.g. "DialogTrigger" or "ComboBox".
+   *
    * @selector [data-trigger="..."]
    */
   trigger: string | null;
   /**
    * The placement of the popover relative to the trigger.
+   *
    * @selector [data-placement="left | right | top | bottom"]
    */
   placement: PlacementAxis | null;
   /**
    * Whether the popover is currently entering. Use this to apply animations.
+   *
    * @selector [data-entering]
    */
   isEntering: boolean;
   /**
    * Whether the popover is currently exiting. Use this to apply animations.
+   *
    * @selector [data-exiting]
    */
   isExiting: boolean;

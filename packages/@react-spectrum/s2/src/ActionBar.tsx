@@ -95,7 +95,10 @@ export interface ActionBarProps extends SlotProps, StyleProps, DOMProps {
   children: ReactNode;
   /** Whether the ActionBar should be displayed with a emphasized style. */
   isEmphasized?: boolean;
-  /** The number of selected items that the ActionBar is currently linked to. If 0, the ActionBar is hidden. */
+  /**
+   * The number of selected items that the ActionBar is currently linked to. If 0, the ActionBar is
+   * hidden.
+   */
   selectedItemCount?: number | 'all';
   /** Handler that is called when the ActionBar clear button is pressed. */
   onClearSelection?: () => void;
@@ -107,7 +110,8 @@ export const ActionBarContext =
   createContext<ContextValue<Partial<ActionBarProps>, DOMRefValue<HTMLDivElement>>>(null);
 
 /**
- * Action bars are used for single and bulk selection patterns when a user needs to perform actions on one or more items at the same time.
+ * Action bars are used for single and bulk selection patterns when a user needs to perform actions
+ * on one or more items at the same time.
  */
 export const ActionBar = forwardRef(function ActionBar(
   props: ActionBarProps,

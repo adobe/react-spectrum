@@ -26,6 +26,7 @@ export interface HighlightSelectionDescriptionProps {
 
 /**
  * Computes the description for a grid selectable collection.
+ *
  * @param props
  */
 export function useHighlightSelectionDescription(

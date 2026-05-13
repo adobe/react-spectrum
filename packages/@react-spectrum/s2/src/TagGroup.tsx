@@ -109,9 +109,12 @@ export interface TagGroupProps<T>
   isInvalid?: boolean;
   /** An error message for the field. */
   errorMessage?: ReactNode;
-  /** Limit the number of rows initially shown. This will render a button that allows the user to expand to show all tags. */
+  /**
+   * Limit the number of rows initially shown. This will render a button that allows the user to
+   * expand to show all tags.
+   */
   maxRows?: number;
-  /** The label to display on the action button.  */
+  /** The label to display on the action button. */
   groupActionLabel?: string;
   /** Handler that is called when the action button is pressed. */
   onGroupAction?: () => void;
@@ -122,7 +125,10 @@ export const TagGroupContext =
 
 const InternalTagGroupContext = createContext<TagGroupProps<any>>({});
 
-/** Tags allow users to categorize content. They can represent keywords or people, and are grouped to describe an item or a search request. */
+/**
+ * Tags allow users to categorize content. They can represent keywords or people, and are grouped to
+ * describe an item or a search request.
+ */
 export const TagGroup = /*#__PURE__*/ (forwardRef as forwardRefType)(function TagGroup<
   T extends object
 >(props: TagGroupProps<T>, ref: DOMRef<HTMLDivElement>) {

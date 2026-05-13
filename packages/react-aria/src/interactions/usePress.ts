@@ -331,6 +331,18 @@ export function usePress(props: PressHookProps): PressResult {
   );
   let cancelEvent = useEffectEvent(cancel);
 
+  useEffect(() => {
+    if (isDisabled && ref.current.isPressed) {
+      cancelEvent({
+        currentTarget: ref.current.target,
+        shiftKey: false,
+        ctrlKey: false,
+        metaKey: false,
+        altKey: false
+      });
+    }
+  }, [isDisabled]);
+
   let cancelOnPointerExit = useCallback(
     (e: EventBase) => {
       if (shouldCancelOnPointerExit) {

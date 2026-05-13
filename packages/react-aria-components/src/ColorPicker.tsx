@@ -41,7 +41,10 @@ export interface ColorPickerRenderProps {
 }
 
 export interface ColorPickerProps extends StatelyColorPickerProps, SlotProps {
-  /** The children of the component. A function may be provided to alter the children based on component state. */
+  /**
+   * The children of the component. A function may be provided to alter the children based on
+   * component state.
+   */
   children: ChildrenOrFunction<ColorPickerRenderProps>;
 }
 

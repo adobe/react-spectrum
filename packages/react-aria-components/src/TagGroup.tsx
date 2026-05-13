@@ -82,7 +82,9 @@ export interface TagGroupProps
     DOMRenderProps<'div', undefined>,
     GlobalDOMAttributes<HTMLDivElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element.
+   *
    * @default 'react-aria-TagGroup'
    */
   className?: string;
@@ -91,16 +93,19 @@ export interface TagGroupProps
 export interface TagListRenderProps {
   /**
    * Whether the tag list has no items and should display its empty state.
+   *
    * @selector [data-empty]
    */
   isEmpty: boolean;
   /**
    * Whether the tag list is currently focused.
+   *
    * @selector [data-focused]
    */
   isFocused: boolean;
   /**
    * Whether the tag list is currently keyboard focused.
+   *
    * @selector [data-focus-visible]
    */
   isFocusVisible: boolean;
@@ -116,7 +121,9 @@ export interface TagListProps<T>
     StyleRenderProps<TagListRenderProps, 'div'>,
     GlobalDOMAttributes<HTMLDivElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-TagList'
    */
   className?: ClassNameOrFunction<TagListRenderProps>;
@@ -128,7 +135,8 @@ export const TagGroupContext = createContext<ContextValue<TagGroupProps, HTMLDiv
 export const TagListContext = createContext<ContextValue<TagListProps<any>, HTMLDivElement>>(null);
 
 /**
- * A tag group is a focusable list of labels, categories, keywords, filters, or other items, with support for keyboard navigation, selection, and removal.
+ * A tag group is a focusable list of labels, categories, keywords, filters, or other items, with
+ * support for keyboard navigation, selection, and removal.
  */
 export const TagGroup = /*#__PURE__*/ (forwardRef as forwardRefType)(function TagGroup(
   props: TagGroupProps,
@@ -276,6 +284,7 @@ export interface TagRenderProps extends Omit<
 > {
   /**
    * Whether the tag group allows items to be removed.
+   *
    * @selector [data-allows-removing]
    */
   allowsRemoving: boolean;
@@ -290,7 +299,9 @@ export interface TagProps
     PressEvents,
     Omit<GlobalDOMAttributes<HTMLDivElement>, 'onClick'> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-Tag'
    */
   className?: ClassNameOrFunction<TagRenderProps>;
@@ -304,8 +315,8 @@ export interface TagProps
   /** Whether the tag is disabled. */
   isDisabled?: boolean;
   /**
-   * Handler that is called when a user performs an action on the item. The exact user event depends on
-   * the collection's `selectionBehavior` prop and the interaction modality.
+   * Handler that is called when a user performs an action on the item. The exact user event depends
+   * on the collection's `selectionBehavior` prop and the interaction modality.
    */
   onAction?: () => void;
 }

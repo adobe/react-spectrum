@@ -175,8 +175,8 @@ function cleanTypeText(t) {
  * defined in scope as ['green', 'blue'].
  *
  * @param {object} node - A Babel AST node (StringLiteral, ArrayExpression, etc.)
- * @param {Map} scope - A Map of variable names to their evaluated values
- * @returns {*} The evaluated value (string, number, array, object, Set, etc.) or undefined
+ * @param {Map} scope - A Map of variable names to their evaluated values.
+ * @returns {any} The evaluated value (string, number, array, object, Set, etc.) or undefined
  */
 function evaluateStylePropertiesNode(node, scope) {
   if (!node) {
@@ -319,10 +319,10 @@ function evaluateStylePropertiesNode(node, scope) {
  * and evaluates all variable declarations to extract style property metadata.
  *
  * The styleProperties.ts file contains definitions like:
- *   const properties = {
- *     spacing: { margin: ['0', '4', '8', '12'], padding: [...] },
- *     layout: { display: ['flex', 'grid', 'block'] }
- *   }
+ * const properties = {
+ * spacing: { margin: ['0', '4', '8', '12'], padding: [...] },
+ * layout: { display: ['flex', 'grid', 'block'] }
+ * }
  *
  * This function evaluates these declarations and returns a structured object with:
  * - properties: categorized style properties and their allowed values
@@ -330,7 +330,7 @@ function evaluateStylePropertiesNode(node, scope) {
  * - mdnTypeLinks/mdnPropertyLinks: documentation URLs
  * - various Sets for property categorization (spacing, sizing, etc.)
  *
- * @returns {object|null} Parsed style macro data or null if file doesn't exist/parse fails
+ * @returns {object | null} Parsed style macro data or null if file doesn't exist/parse fails
  */
 function loadStyleMacroData() {
   if (styleMacroDataCache !== null) {
@@ -410,24 +410,25 @@ function loadStyleMacroData() {
  * Extracts property definitions for a specific category from the loaded style macro data.
  *
  * Example: For category 'spacing', this returns an object like:
- * {
- *   margin: {
- *     values: ['0', '4', '8', '12', '16'],
- *     additionalTypes: ['baseSpacing', 'number'],
- *     links: { '0': {href: 'https://...'} },
- *     description: 'Sets the margin on all sides'
- *   },
- *   marginX: {
- *     values: [...],
- *     additionalTypes: [...],
- *     links: {...},
- *     mapping: ['marginLeft', 'marginRight'],  // for shorthands
- *     description: 'Sets horizontal margins'
- *   }
- * }
+ *
+ *     {
+ *       margin: {
+ *         values: ['0', '4', '8', '12', '16'],
+ *         additionalTypes: ['baseSpacing', 'number'],
+ *         links: { '0': {href: 'https://...'} },
+ *         description: 'Sets the margin on all sides'
+ *       },
+ *       marginX: {
+ *         values: [...],
+ *         additionalTypes: [...],
+ *         links: {...},
+ *         mapping: ['marginLeft', 'marginRight'],  // for shorthands
+ *         description: 'Sets horizontal margins'
+ *       }
+ *     }
  *
  * @param {string} category - The property category (e.g., 'spacing', 'layout', 'colors')
- * @returns {object|null} Property definitions or null if category doesn't exist
+ * @returns {object | null} Property definitions or null if category doesn't exist
  */
 function getStyleMacroPropertyDefinitions(category) {
   const data = loadStyleMacroData();
@@ -549,16 +550,23 @@ function getStyleMacroPropertyDefinitions(category) {
  * property names. Type categories (baseSpacing, negativeSpacing, etc.) are emitted as
  * aliases and defined once in the Value Sets section at the top of the page.
  *
+ * The values column includes:
+ *
+ * - Explicit allowed values (e.g., '0', '4', '8')
+ * - Type categories with their full value sets (e.g., 'baseSpacing (0, 4, 8, ...)')
+ * - Generic types (e.g., 'number', 'lengthPercentage')
+ *
  * Example output for a spacing-like category:
  * | Property | Values |
  * |---------|--------|
  * | `margin`, `marginTop`, `marginBottom`, `marginStart`, `marginEnd`, `marginX`, `marginY` | `auto`, `baseSpacing`, `negativeSpacing`, `lengthPercentage` |
  * | `padding`, `paddingTop`, `paddingBottom`, ... | `text-to-control`, ..., `baseSpacing`, `lengthPercentage` |
  *
- * @param {string} category - Property category to generate table for (e.g., 'spacing', 'layout', 'colors')
+ * @param {string} category - Property category to generate table for (e.g., 'spacing', 'layout',
+ *   'colors')
  * @param {object} options - Configuration options (e.g., {sort: true})
  * @param {boolean} options.sort - Whether to sort properties alphabetically (default: true)
- * @returns {string|null} Markdown table string or null if no properties found
+ * @returns {string | null} Markdown table string or null if no properties found
  */
 function generateStyleMacroTable(category, {sort = true} = {}) {
   const cacheKey = `${category}:${sort ? 'sorted' : 'original'}`;
@@ -1153,7 +1161,8 @@ function resolveComponentPath(componentName, file, docsSource) {
 }
 
 /**
- * Extract the leading JSDoc description comment placed immediately above the export for a component.
+ * Extract the leading JSDoc description comment placed immediately above the export for a
+ * component.
  */
 function getComponentDescription(componentName, file, docsSource) {
   // Check cache first
@@ -1263,6 +1272,7 @@ function shouldOmitSymbol(sym) {
 
 /**
  * Extracts one or more `@example` tag contents from JSDoc comments.
+ *
  * @param {string} text - The text to extract examples from.
  * @returns {string[]} An array of examples.
  */
@@ -1876,6 +1886,7 @@ function remarkDocsComponentsToMarkdown() {
             const desc = getComponentDescription(m[1], file);
             if (desc) {
               // Replace with normal paragraph node.
+              // oxlint-disable-next-line max-depth
               if (node.type === 'mdxJsxFlowElement') {
                 parent.children[index] = {
                   type: 'paragraph',
@@ -3488,9 +3499,9 @@ function generateLibraryLlmsTxt(lib, files) {
 }
 
 /**
- * Scans the MDX pages in packages/dev/s2-docs/pages and produces a text-based markdown variant of each file.
- * React-specific JSX elements such as <PageDescription> and <PropTable> are replaced with plain markdown equivalents so
- * that the resulting *.md files can be consumed by LLMs.
+ * Scans the MDX pages in packages/dev/s2-docs/pages and produces a text-based markdown variant of
+ * each file. React-specific JSX elements such as <PageDescription> and <PropTable> are replaced
+ * with plain markdown equivalents so that the resulting *.md files can be consumed by LLMs.
  */
 async function main() {
   const mdxFiles = await glob('*/**/*.mdx', {

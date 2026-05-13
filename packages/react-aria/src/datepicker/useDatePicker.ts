@@ -45,7 +45,8 @@ import {useMemo, useRef} from 'react';
 export interface AriaDatePickerProps<T extends DateValue>
   extends DatePickerProps<T>, AriaLabelingProps, InputDOMProps, DOMProps, InputDOMProps {
   /**
-   * Describes the type of autocomplete functionality the input should provide if any. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefautocomplete).
+   * Describes the type of autocomplete functionality the input should provide if any. See
+   * [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefautocomplete).
    */
   autoComplete?: string;
 }
@@ -70,8 +71,9 @@ export interface DatePickerAria extends ValidationResult {
 }
 
 /**
- * Provides the behavior and accessibility implementation for a date picker component.
- * A date picker combines a DateField and a Calendar popover to allow users to enter or select a date and time value.
+ * Provides the behavior and accessibility implementation for a date picker component. A date picker
+ * combines a DateField and a Calendar popover to allow users to enter or select a date and time
+ * value.
  */
 export function useDatePicker<T extends DateValue>(
   props: AriaDatePickerProps<T>,

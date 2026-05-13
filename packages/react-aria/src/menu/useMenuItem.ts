@@ -68,12 +68,14 @@ export interface AriaMenuItemProps
   extends DOMProps, PressEvents, HoverEvents, KeyboardEvents, FocusEvents {
   /**
    * Whether the menu item is disabled.
+   *
    * @deprecated - pass disabledKeys to useTreeState instead.
    */
   isDisabled?: boolean;
 
   /**
    * Whether the menu item is selected.
+   *
    * @deprecated - pass selectedKeys to useTreeState instead.
    */
   isSelected?: boolean;
@@ -86,12 +88,14 @@ export interface AriaMenuItemProps
 
   /**
    * Handler that is called when the menu should close after selecting an item.
+   *
    * @deprecated - pass to the menu instead.
    */
   onClose?: () => void;
 
   /**
    * Whether the menu should close when the menu item is selected.
+   *
    * @deprecated - use shouldCloseOnSelect instead.
    */
   closeOnSelect?: boolean;
@@ -104,6 +108,7 @@ export interface AriaMenuItemProps
 
   /**
    * Handler that is called when the user activates the item.
+   *
    * @deprecated - pass to the menu instead.
    */
   onAction?: (key: Key) => void;
@@ -114,7 +119,10 @@ export interface AriaMenuItemProps
   /** Indicates whether the menu item's popup element is expanded or collapsed. */
   'aria-expanded'?: boolean | 'true' | 'false';
 
-  /** Identifies the menu item's popup element whose contents or presence is controlled by the menu item. */
+  /**
+   * Identifies the menu item's popup element whose contents or presence is controlled by the menu
+   * item.
+   */
   'aria-controls'?: string;
 
   /** Identifies the element(s) that describe the menu item. */
@@ -127,6 +135,7 @@ export interface AriaMenuItemProps
 /**
  * Provides the behavior and accessibility implementation for an item in a menu.
  * See `useMenu` for more details about menus.
+ *
  * @param props - Props for the item.
  * @param state - State for the menu, as returned by `useTreeState`.
  */

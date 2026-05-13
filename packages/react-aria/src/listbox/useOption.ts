@@ -44,12 +44,14 @@ export interface OptionAria extends SelectableItemStates {
 export interface AriaOptionProps {
   /**
    * Whether the option is disabled.
+   *
    * @deprecated
    */
   isDisabled?: boolean;
 
   /**
    * Whether the option is selected.
+   *
    * @deprecated
    */
   isSelected?: boolean;
@@ -62,24 +64,28 @@ export interface AriaOptionProps {
 
   /**
    * Whether selection should occur on press up instead of press down.
+   *
    * @deprecated
    */
   shouldSelectOnPressUp?: boolean;
 
   /**
    * Whether the option should be focused when the user hovers over it.
+   *
    * @deprecated
    */
   shouldFocusOnHover?: boolean;
 
   /**
    * Whether the option is contained in a virtual scrolling listbox.
+   *
    * @deprecated
    */
   isVirtualized?: boolean;
 
   /**
    * Whether the option should use virtual focus instead of being focused directly.
+   *
    * @deprecated
    */
   shouldUseVirtualFocus?: boolean;
@@ -88,6 +94,7 @@ export interface AriaOptionProps {
 /**
  * Provides the behavior and accessibility implementation for an option in a listbox.
  * See `useListBox` for more details about listboxes.
+ *
  * @param props - Props for the option.
  * @param state - State for the listbox, as returned by `useListState`.
  */

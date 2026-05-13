@@ -14,6 +14,9 @@ export interface LabeledValueProps extends LabeledValueBaseProps {
     | DateTime
     | RangeValue<DateTime>
     | ReactElement;
-  /** Formatting options for the value. The available options depend on the type passed to the `value` prop. */
+  /**
+   * Formatting options for the value. The available options depend on the type passed to the
+   * `value` prop.
+   */
   formatOptions?: Intl.NumberFormatOptions | Intl.DateTimeFormatOptions | Intl.ListFormatOptions;
 }

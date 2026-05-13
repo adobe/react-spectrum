@@ -36,31 +36,37 @@ import {useId} from 'react-aria/useId';
 export interface ButtonRenderProps {
   /**
    * Whether the button is currently hovered with a mouse.
+   *
    * @selector [data-hovered]
    */
   isHovered: boolean;
   /**
    * Whether the button is currently in a pressed state.
+   *
    * @selector [data-pressed]
    */
   isPressed: boolean;
   /**
    * Whether the button is focused, either via a mouse or keyboard.
+   *
    * @selector [data-focused]
    */
   isFocused: boolean;
   /**
    * Whether the button is keyboard focused.
+   *
    * @selector [data-focus-visible]
    */
   isFocusVisible: boolean;
   /**
    * Whether the button is disabled.
+   *
    * @selector [data-disabled]
    */
   isDisabled: boolean;
   /**
    * Whether the button is currently in a pending state.
+   *
    * @selector [data-pending]
    */
   isPending: boolean;
@@ -74,7 +80,9 @@ export interface ButtonProps
     RenderProps<ButtonRenderProps, 'button'>,
     Omit<GlobalDOMAttributes<HTMLButtonElement>, 'onClick'> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-Button'
    */
   className?: ClassNameOrFunction<ButtonRenderProps>;

@@ -54,7 +54,8 @@ interface NumberRangeFormatPart extends Intl.NumberFormatPart {
 }
 
 /**
- * A wrapper around Intl.NumberFormat providing additional options, polyfills, and caching for performance.
+ * A wrapper around Intl.NumberFormat providing additional options, polyfills, and caching for
+ * performance.
  */
 export class NumberFormatter implements Intl.NumberFormat {
   private numberFormatter: Intl.NumberFormat;
@@ -65,7 +66,10 @@ export class NumberFormatter implements Intl.NumberFormat {
     this.options = options;
   }
 
-  /** Formats a number value as a string, according to the locale and options provided to the constructor. */
+  /**
+   * Formats a number value as a string, according to the locale and options provided to the
+   * constructor.
+   */
   format(value: number): string {
     let res = '';
     if (!supportsSignDisplay && this.options.signDisplay != null) {
@@ -184,7 +188,7 @@ function getCachedNumberFormatter(
   return numberFormatter;
 }
 
-/** @private - exported for tests */
+/** @private - Exported for tests */
 export function numberFormatSignDisplayPolyfill(
   numberFormat: Intl.NumberFormat,
   signDisplay: string,

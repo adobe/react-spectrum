@@ -36,14 +36,16 @@ import {useMove} from '../interactions/useMove';
 export interface SliderThumbProps extends FocusableProps, LabelableProps {
   /**
    * The orientation of the Slider.
-   * @default 'horizontal'
+   *
    * @deprecated - pass to the slider instead.
+   * @default 'horizontal'
    */
   orientation?: Orientation;
   /** Whether the Thumb is disabled. */
   isDisabled?: boolean;
   /**
    * Index of the thumb within the slider.
+   *
    * @default 0
    */
   index?: number;

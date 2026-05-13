@@ -47,6 +47,7 @@ export interface RadioGroupAria extends ValidationResult {
 /**
  * Provides the behavior and accessibility implementation for a radio group component.
  * Radio groups allow users to select a single item from a list of mutually exclusive options.
+ *
  * @param props - Props for the radio group.
  * @param state - State for the radio group, as returned by `useRadioGroupState`.
  */

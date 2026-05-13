@@ -14,7 +14,8 @@ export const getOwnerWindow = (
 };
 
 /**
- * Type guard that checks if a value is a Node. Verifies the presence and type of the nodeType property.
+ * Type guard that checks if a value is a Node. Verifies the presence and type of the nodeType
+ * property.
  */
 function isNode(value: unknown): value is Node {
   return (
