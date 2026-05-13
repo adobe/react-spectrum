@@ -16,6 +16,7 @@ import {
   StaticColorDecorator,
   StaticColorProvider
 } from '../stories/utils';
+import Cut from '../s2wf-icons/S2_Icon_Cut_20_N.svg';
 import {generatePowerset} from '@react-spectrum/story-utils';
 import type {Meta, StoryObj} from '@storybook/react';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
@@ -125,6 +126,39 @@ export const Truncate: StoryObj<typeof Template> = {
         <NewIcon />
         <Text>Press me</Text>
       </ToggleButton>
+    </div>
+  )
+};
+
+const sizes = ['XS', 'S', 'M', 'L', 'XL'] as const;
+
+export const HoldAffordance: StoryObj<typeof Template> = {
+  render: () => (
+    <div className={style({display: 'flex', flexDirection: 'column', gap: 16})}>
+      {sizes.map(size => (
+        <div key={size} className={style({display: 'flex', gap: 8, alignItems: 'center'})}>
+          <ToggleButton size={size} holdAffordance aria-label={`icon only ${size}`}>
+            <Cut />
+          </ToggleButton>
+          <ToggleButton size={size} holdAffordance>
+            <Text>Cut</Text>
+          </ToggleButton>
+          <ToggleButton size={size} holdAffordance>
+            <Cut />
+            <Text>Cut</Text>
+          </ToggleButton>
+          <ToggleButton size={size} holdAffordance isQuiet aria-label={`quiet icon only ${size}`}>
+            <Cut />
+          </ToggleButton>
+          <ToggleButton size={size} holdAffordance isQuiet>
+            <Text>Cut</Text>
+          </ToggleButton>
+          <ToggleButton size={size} holdAffordance isQuiet>
+            <Cut />
+            <Text>Cut</Text>
+          </ToggleButton>
+        </div>
+      ))}
     </div>
   )
 };

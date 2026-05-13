@@ -15,6 +15,7 @@ import {ActionButton, ActionButtonProps} from '../src/ActionButton';
 import {Avatar} from '../src/Avatar';
 import BellIcon from '../s2wf-icons/S2_Icon_Bell_20_N.svg';
 import CommentIcon from '../s2wf-icons/S2_Icon_Comment_20_N.svg';
+import Cut from '../s2wf-icons/S2_Icon_Cut_20_N.svg';
 import {Fonts, NotificationBadges, UnsafeClassName} from '../stories/ActionButton.stories';
 import {generatePowerset} from '@react-spectrum/story-utils';
 import type {Meta, StoryObj} from '@storybook/react';
@@ -132,6 +133,39 @@ export const AvatarOnly: ActionButtonStory = {
 };
 
 export {Fonts, UnsafeClassName, NotificationBadges};
+
+const sizes = ['XS', 'S', 'M', 'L', 'XL'] as const;
+
+export const HoldAffordance: ActionButtonStory = {
+  render: () => (
+    <div className={style({display: 'flex', flexDirection: 'column', gap: 16})}>
+      {sizes.map(size => (
+        <div key={size} className={style({display: 'flex', gap: 8, alignItems: 'center'})}>
+          <ActionButton size={size} holdAffordance aria-label={`icon only ${size}`}>
+            <Cut />
+          </ActionButton>
+          <ActionButton size={size} holdAffordance>
+            <Text>Cut</Text>
+          </ActionButton>
+          <ActionButton size={size} holdAffordance>
+            <Cut />
+            <Text>Cut</Text>
+          </ActionButton>
+          <ActionButton size={size} holdAffordance isQuiet aria-label={`quiet icon only ${size}`}>
+            <Cut />
+          </ActionButton>
+          <ActionButton size={size} holdAffordance isQuiet>
+            <Text>Cut</Text>
+          </ActionButton>
+          <ActionButton size={size} holdAffordance isQuiet>
+            <Cut />
+            <Text>Cut</Text>
+          </ActionButton>
+        </div>
+      ))}
+    </div>
+  )
+};
 
 export const NotificationBadgesCustomWidth: ActionButtonStory = {
   render: args => (
