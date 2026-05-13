@@ -415,6 +415,15 @@ export const HoldAffordance: Story = {
           <MenuItem id="cut">Cut</MenuItem>
         </Menu>
       </MenuTrigger>
+      <MenuTrigger trigger="longPress" {...args}>
+        <ToggleButton size={args.size}>
+          <Cut />
+          <Text>Toggle Button Cut</Text>
+        </ToggleButton>
+        <Menu>
+          <MenuItem id="cut">Cut</MenuItem>
+        </Menu>
+      </MenuTrigger>
     </div>
   )
 };
