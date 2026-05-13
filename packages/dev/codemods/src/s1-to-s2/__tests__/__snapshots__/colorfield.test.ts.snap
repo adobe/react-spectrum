@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Removes isQuiet 1`] = `
 "import { ColorField } from "@react-spectrum/s2";

@@ -73,7 +73,13 @@ function mapModality(modality: string | null) {
     modality = 'virtual';
   }
 
-  if (modality === 'virtual' && typeof window !== 'undefined' && 'ontouchstart' in window) {
+  // JSDOM now defines onTouchStart
+  if (
+    modality === 'virtual' &&
+    typeof window !== 'undefined' &&
+    typeof window.matchMedia === 'function' &&
+    window.matchMedia('(pointer: coarse)').matches
+  ) {
     modality = 'touch';
   }
 

@@ -32,6 +32,7 @@ import {installPointerEvent, pointerMap, User} from '@react-aria/test-utils';
 import {Key} from '@react-types/shared';
 import {Picker, PickerItem} from '../src/Picker';
 import React, {useCallback, useEffect, useRef} from 'react';
+import {setMedia} from 'mock-match-media';
 import {StatusLight} from '../src/StatusLight';
 import {Text} from '../src/Content';
 import {TextField} from '../src/TextField';
@@ -426,6 +427,10 @@ describe('TableView', () => {
     });
 
     it('should be cancellable through Escape key', async () => {
+      // The Escape -> onCancel handler is wired in the mobile CustomDialog path.
+      // Force the mobile media so we exercise that path (jest-matchmedia-mock used
+      // to default every query to false, which made isMobile true implicitly).
+      setMedia({hover: 'none', pointer: 'coarse'});
       let onCancel = jest.fn();
       let {getByRole} = render(<EditableTable onCancel={onCancel} />);
 
@@ -871,6 +876,10 @@ describe('TableView', () => {
         });
 
         it('should be cancellable through Escape key', async () => {
+          // The Escape -> onCancel handler is wired in the mobile CustomDialog path.
+          // Force the mobile media so we exercise that path (jest-matchmedia-mock used
+          // to default every query to false, which made isMobile true implicitly).
+          setMedia({hover: 'none', pointer: 'coarse'});
           let onCancel = jest.fn();
           let {getByRole} = render(<ActionEditableTable onCancel={onCancel} />);
 

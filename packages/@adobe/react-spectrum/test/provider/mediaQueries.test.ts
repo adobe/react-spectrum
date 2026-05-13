@@ -10,9 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-// needs to be imported first
-import MatchMediaMock from 'jest-matchmedia-mock';
 import {renderHook} from '@react-spectrum/test-utils-internal';
+import {setMedia, cleanup} from 'mock-match-media';
 import {useColorScheme} from '../../src/provider/mediaQueries';
 
 let theme = {
@@ -23,27 +22,23 @@ let theme = {
   large: {}
 };
 
-let mediaQueryLight = '(prefers-color-scheme: light)';
-let mediaQueryDark = '(prefers-color-scheme: dark)';
+let mediaQueryLight = {prefersColorScheme: 'light'};
+let mediaQueryDark = {prefersColorScheme: 'dark'};
 
 describe('mediaQueries', () => {
-  let matchMedia;
-  beforeEach(() => {
-    matchMedia = new MatchMediaMock();
-  });
   afterEach(() => {
-    matchMedia.clear();
+    cleanup();
   });
 
   describe('useColorScheme', () => {
     it('uses OS as default - dark', () => {
-      matchMedia.useMediaQuery(mediaQueryDark);
+      setMedia(mediaQueryDark);
       let {result} = renderHook(() => useColorScheme(theme, 'light'));
       expect(result.current).toBe('dark');
     });
 
     it('uses OS as default - light', () => {
-      matchMedia.useMediaQuery(mediaQueryLight);
+      setMedia(mediaQueryLight);
       let {result} = renderHook(() => useColorScheme(theme, 'light'));
       expect(result.current).toBe('light');
     });

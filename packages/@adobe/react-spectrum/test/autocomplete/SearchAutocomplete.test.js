@@ -357,7 +357,7 @@ describe('SearchAutocomplete', function () {
         });
 
         let listbox = getByRole('listbox');
-        expect(onOpenChange).toBeCalledTimes(1);
+        expect(onOpenChange).toHaveBeenCalledTimes(1);
         expect(onOpenChange).toHaveBeenCalledWith(true, 'focus');
         await testSearchAutocompleteOpen(searchAutocomplete, listbox);
       });

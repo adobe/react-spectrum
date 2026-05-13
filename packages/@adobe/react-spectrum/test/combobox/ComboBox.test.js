@@ -472,7 +472,7 @@ describe('ComboBox', function () {
         await comboboxTester.open({triggerBehavior: 'focus'});
 
         let listbox = comboboxTester.listbox;
-        expect(onOpenChange).toBeCalledTimes(1);
+        expect(onOpenChange).toHaveBeenCalledTimes(1);
         expect(onOpenChange).toHaveBeenCalledWith(true, 'focus');
         await testComboBoxOpen(combobox, button, listbox);
       });
@@ -486,7 +486,7 @@ describe('ComboBox', function () {
         await comboboxTester.open({triggerBehavior: 'manual'});
 
         let listbox = comboboxTester.listbox;
-        expect(onOpenChange).toBeCalledTimes(1);
+        expect(onOpenChange).toHaveBeenCalledTimes(1);
         expect(onOpenChange).toHaveBeenCalledWith(true, 'focus');
         await testComboBoxOpen(combobox, button, listbox);
       });
@@ -1271,7 +1271,7 @@ describe('ComboBox', function () {
       await user.keyboard('a');
 
       expect(combobox.value).toBe('blah');
-      expect(onInputChange).toBeCalledTimes(1);
+      expect(onInputChange).toHaveBeenCalledTimes(1);
       expect(onInputChange).toHaveBeenCalledWith('blaha');
     });
 
@@ -1828,7 +1828,7 @@ describe('ComboBox', function () {
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
       expect(onSelectionChange).toHaveBeenCalledWith('1');
       expect(document.activeElement).toBe(combobox);
-      expect(onBlur).not.toBeCalled();
+      expect(onBlur).not.toHaveBeenCalled();
     });
 
     it('tab and shift tab move focus away from the combobox and select the focused item', async function () {
@@ -2773,19 +2773,19 @@ describe('ComboBox', function () {
 
           if (!Name.includes('value') && !Name.includes('all')) {
             // Check that onInputChange is firing appropriately for the comboboxes w/o user defined onInputChange handlers
-            expect(onInputChange).toBeCalledTimes(3);
+            expect(onInputChange).toHaveBeenCalledTimes(3);
             expect(onInputChange).toHaveBeenLastCalledWith('One');
           }
 
           if (Name === 'controlled value and open') {
             // Checking special case, spy is chained with the onSelectionChangeHandler
-            expect(onSelectionChange).toBeCalledTimes(2);
+            expect(onSelectionChange).toHaveBeenCalledTimes(2);
             expect(onSelectionChange).toHaveBeenLastCalledWith('1');
           }
 
           if (!Name.includes('open') && !Name.includes('all')) {
             // Check that onOpenChange is firing appropriately for the comboboxes w/o user defined onOpenChange handlers
-            expect(onOpenChange).toBeCalledTimes(4);
+            expect(onOpenChange).toHaveBeenCalledTimes(4);
             expect(onOpenChange).toHaveBeenLastCalledWith(false, undefined);
           }
 
@@ -2826,19 +2826,19 @@ describe('ComboBox', function () {
 
           if (!Name.includes('value') && !Name.includes('all')) {
             // Check that onInputChange is firing appropriately for the comboboxes w/o user defined onInputChange handlers
-            expect(onInputChange).toBeCalledTimes(3);
+            expect(onInputChange).toHaveBeenCalledTimes(3);
             expect(onInputChange).toHaveBeenLastCalledWith('One');
           }
 
           if (Name === 'controlled value and open') {
             // Checking special case, spy is chained with the onSelectionChangeHandler
-            expect(onSelectionChange).toBeCalledTimes(1);
+            expect(onSelectionChange).toHaveBeenCalledTimes(1);
             expect(onSelectionChange).toHaveBeenLastCalledWith('1');
           }
 
           if (!Name.includes('open') && !Name.includes('all')) {
             // Check that onOpenChange is firing appropriately for the comboboxes w/o user defined onOpenChange handlers
-            expect(onOpenChange).toBeCalledTimes(2);
+            expect(onOpenChange).toHaveBeenCalledTimes(2);
             expect(onOpenChange).toHaveBeenLastCalledWith(false, undefined);
           }
 
@@ -2894,19 +2894,19 @@ describe('ComboBox', function () {
 
           if (!Name.includes('value') && !Name.includes('all')) {
             // Check that onInputChange is firing appropriately for the comboboxes w/o user defined onInputChange handlers
-            expect(onInputChange).toBeCalledTimes(5);
+            expect(onInputChange).toHaveBeenCalledTimes(5);
             expect(onInputChange).toHaveBeenLastCalledWith('One');
           }
 
           if (Name === 'controlled value and open') {
             // Checking special case, spy is chained with the onSelectionChangeHandler
-            expect(onSelectionChange).toBeCalledTimes(2);
+            expect(onSelectionChange).toHaveBeenCalledTimes(2);
             expect(onSelectionChange).toHaveBeenLastCalledWith('1');
           }
 
           if (!Name.includes('open') && !Name.includes('all')) {
             // Check that onOpenChange is firing appropriately for the comboboxes w/o user defined onOpenChange handlers
-            expect(onOpenChange).toBeCalledTimes(4);
+            expect(onOpenChange).toHaveBeenCalledTimes(4);
             expect(onOpenChange).toHaveBeenLastCalledWith(false, undefined);
           }
         });
@@ -2943,19 +2943,19 @@ describe('ComboBox', function () {
 
           if (!Name.includes('value') && !Name.includes('all')) {
             // Check that onInputChange is firing appropriately for the comboboxes w/o user defined onInputChange handlers
-            expect(onInputChange).toBeCalledTimes(5);
+            expect(onInputChange).toHaveBeenCalledTimes(5);
             expect(onInputChange).toHaveBeenLastCalledWith('');
           }
 
           if (Name === 'controlled value and open') {
             // Checking special case, spy is chained with the onSelectionChangeHandler
-            expect(onSelectionChange).toBeCalledTimes(1);
+            expect(onSelectionChange).toHaveBeenCalledTimes(1);
             expect(onSelectionChange).toHaveBeenLastCalledWith(null);
           }
 
           if (!Name.includes('open') && !Name.includes('all')) {
             // Check that onOpenChange is firing appropriately for the comboboxes w/o user defined onOpenChange handlers
-            expect(onOpenChange).toBeCalledTimes(2);
+            expect(onOpenChange).toHaveBeenCalledTimes(2);
             expect(onOpenChange).toHaveBeenLastCalledWith(false, undefined);
           }
         });
@@ -2990,7 +2990,7 @@ describe('ComboBox', function () {
             (!Name.includes('key') && !Name.includes('all')) ||
             Name === 'controlled value and open'
           ) {
-            expect(onSelectionChange).toBeCalledTimes(1);
+            expect(onSelectionChange).toHaveBeenCalledTimes(1);
             expect(onSelectionChange).toHaveBeenLastCalledWith('1');
           }
           expect(queryByRole('listbox')).toBeNull();
@@ -3006,7 +3006,7 @@ describe('ComboBox', function () {
           if (Name === 'controlled value and open') {
             // Checking special case, spy is chained with the onSelectionChangeHandler
             // onSelectionChange is called on blur due to commitSelection (so that input value resets)
-            expect(onSelectionChange).toBeCalledTimes(2);
+            expect(onSelectionChange).toHaveBeenCalledTimes(2);
             expect(onSelectionChange).toHaveBeenLastCalledWith('1');
           }
 
@@ -3027,7 +3027,7 @@ describe('ComboBox', function () {
           expect(queryByRole('listbox')).toBeNull();
 
           if (!Name.includes('value') && !Name.includes('all')) {
-            expect(onInputChange).toBeCalledTimes(5);
+            expect(onInputChange).toHaveBeenCalledTimes(5);
             expect(onInputChange).toHaveBeenLastCalledWith('New Text');
           }
         });
@@ -3060,7 +3060,7 @@ describe('ComboBox', function () {
             (!Name.includes('key') && !Name.includes('all')) ||
             Name === 'controlled value and open'
           ) {
-            expect(onSelectionChange).toBeCalledTimes(1);
+            expect(onSelectionChange).toHaveBeenCalledTimes(1);
             expect(onSelectionChange).toHaveBeenLastCalledWith('1');
           }
           expect(queryByRole('listbox')).toBeNull();

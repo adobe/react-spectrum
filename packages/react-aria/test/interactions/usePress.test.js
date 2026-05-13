@@ -23,7 +23,6 @@ import {ActionButton} from '@adobe/react-spectrum/ActionButton';
 import {Dialog} from '@adobe/react-spectrum/Dialog';
 import {DialogTrigger} from '@adobe/react-spectrum/DialogTrigger';
 import {enableShadowDOM} from 'react-stately/private/flags/flags';
-import MatchMediaMock from 'jest-matchmedia-mock';
 import {Provider} from '@adobe/react-spectrum/Provider';
 import React from 'react';
 import ReactDOM, {createPortal} from 'react-dom';
@@ -3936,11 +3935,6 @@ describe('usePress', function () {
       jest.useFakeTimers();
     });
 
-    let matchMedia;
-    beforeEach(() => {
-      matchMedia = new MatchMediaMock();
-    });
-
     afterEach(() => {
       // Ensure we close any dialogs before unmounting to avoid warning.
       let dialog = document.querySelector('[role="dialog"]');
@@ -3951,8 +3945,6 @@ describe('usePress', function () {
           jest.runAllTimers();
         });
       }
-
-      matchMedia.clear();
     });
 
     describe.each`
@@ -4356,22 +4348,18 @@ describe('usePress', function () {
       const {shadowRoot} = createShadowRoot();
       events = [];
       addEvent = e => events.push(e);
-      const ExampleComponent = () =>
-        ReactDOM.createPortal(
-          <div draggable={isDraggable}>
-            <Example
-              onPressStart={addEvent}
-              onPressEnd={addEvent}
-              onPressChange={pressed => addEvent({type: 'presschange', pressed})}
-              onPress={addEvent}
-              onPressUp={addEvent}
-              {...extraProps}
-            />
-          </div>,
-          shadowRoot
-        );
-
-      const {unmount: _unmount} = render(<ExampleComponent />);
+      const {unmount: _unmount} = render(
+        <Example
+          draggable={isDraggable || undefined}
+          onPressStart={addEvent}
+          onPressEnd={addEvent}
+          onPressChange={pressed => addEvent({type: 'presschange', pressed})}
+          onPress={addEvent}
+          onPressUp={addEvent}
+          {...extraProps}
+        />,
+        {container: shadowRoot}
+      );
       unmount = _unmount;
 
       return shadowRoot;
@@ -5191,7 +5179,8 @@ describe('usePress', function () {
       expect(el).toHaveStyle('user-select: none');
       fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse'}));
       fireEvent.click(el);
-      expect(el).not.toHaveStyle('user-select: none');
+      // checking toHaveStyle leads to a cache issue in jsdom 26, https://github.com/testing-library/jest-dom/issues/673
+      expect(el).not.toHaveAttribute('style', 'user-select: none');
     });
   });
 });

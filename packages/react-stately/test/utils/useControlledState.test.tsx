@@ -111,12 +111,12 @@ describe('useControlledState tests', function () {
     let button = getByRole('button');
     getByTestId('5');
     if (!process.env.STRICT_MODE) {
-      expect(renderSpy).toBeCalledTimes(1);
+      expect(renderSpy).toHaveBeenCalledTimes(1);
     }
     await user.click(button);
     getByTestId('6');
     if (!process.env.STRICT_MODE) {
-      expect(renderSpy).toBeCalledTimes(2);
+      expect(renderSpy).toHaveBeenCalledTimes(2);
     }
   });
 

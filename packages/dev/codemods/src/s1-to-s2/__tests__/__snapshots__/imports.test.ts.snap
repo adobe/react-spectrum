@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`does not leave a comment on dynamic s2 imports 1`] = `"const LazyButton = React.lazy(() => import('@react-spectrum/s2'))"`;
 
