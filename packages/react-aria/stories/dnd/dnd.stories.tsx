@@ -785,6 +785,7 @@ function BlurRestoreBugDemo(): JSX.Element {
     if (countdown <= 0) {
       let el = document.activeElement as HTMLElement | null;
       let label = el?.textContent?.trim() || el?.tagName || 'null';
+      // oxlint-disable-next-line
       setStatus(`Blurring active element: "${label}"`);
       if (el && el !== document.body && typeof el.blur === 'function') {
         el.blur();
