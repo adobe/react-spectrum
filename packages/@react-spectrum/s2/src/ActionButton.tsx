@@ -12,7 +12,14 @@
 
 import {ActionButtonGroupContext} from './ActionButtonGroup';
 import {AvatarContext} from './Avatar';
-import {baseColor, focusRing, fontRelative, lightDark, style} from '../style' with {type: 'macro'};
+import {
+  baseColor,
+  focusRing,
+  fontRelative,
+  lightDark,
+  space,
+  style
+} from '../style' with {type: 'macro'};
 import {ButtonProps, ButtonRenderProps, Button as RACButton} from 'react-aria-components/Button';
 import {centerBaseline} from './CenterBaseline';
 import {ContextValue, Provider, useSlottedContext} from 'react-aria-components/slots';
@@ -22,12 +29,13 @@ import {
   staticColor,
   StyleProps
 } from './style-utils' with {type: 'macro'};
+import CornerTriangle from '../ui-icons/CornerTriangle';
 import {createContext, forwardRef, ReactNode, useContext} from 'react';
 import {FocusableRef, FocusableRefValue, GlobalDOMAttributes} from '@react-types/shared';
 import {IconContext} from './Icon';
 import {ImageContext} from './Image';
-import intlMessages from '../intl/*.json';
 // @ts-ignore
+import intlMessages from '../intl/*.json';
 import {NotificationBadgeContext} from './NotificationBadge';
 import {OverlayTriggerStateContext} from 'react-aria-components/Dialog';
 import {pressScale} from './pressScale';
@@ -36,6 +44,7 @@ import {SkeletonContext} from './Skeleton';
 import {Text, TextContext} from './Content';
 import {useFocusableRef} from './useDOMRef';
 import {useFormProps} from './Form';
+import {useLocale} from 'react-aria/I18nProvider';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {usePendingState} from './Button';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
@@ -54,6 +63,8 @@ export interface ActionButtonStyleProps {
    * style](https://spectrum.adobe.com/page/action-button/#Quiet).
    */
   isQuiet?: boolean;
+  /** @private */
+  holdAffordance?: boolean;
 }
 
 interface ToggleButtonStyleProps {
@@ -340,6 +351,8 @@ export const ActionButton = forwardRef(function ActionButton(
   } = ctx || {};
 
   let {isProgressVisible} = usePendingState(isPending);
+  let {holdAffordance} = props;
+  let {direction} = useLocale();
 
   return (
     <RACButton
@@ -470,6 +483,37 @@ export const ActionButton = forwardRef(function ActionButton(
               </div>
             )}
           </Provider>
+          {holdAffordance && (
+            <CornerTriangle
+              size={size === 'XS' ? 'S' : size}
+              className={style({
+                position: 'absolute',
+                insetEnd: {
+                  size: {
+                    XS: space(3),
+                    S: space(3),
+                    M: 4,
+                    L: space(5),
+                    XL: space(6)
+                  }
+                },
+                bottom: {
+                  size: {
+                    XS: space(3),
+                    S: space(3),
+                    M: 4,
+                    L: space(5),
+                    XL: space(6)
+                  }
+                },
+                scaleX: {
+                  direction: {
+                    rtl: -1
+                  }
+                }
+              })({direction, size})}
+            />
+          )}
         </>
       )}
     </RACButton>
