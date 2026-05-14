@@ -112,8 +112,8 @@ const libraries = {
 const requestedLibraries = process.argv.slice(2);
 
 /**
- * Generate an MCPB bundle for a given library. This makes the MCP servers easier to install in certain MCP clients like Claude Desktop.
- * Reference: https://github.com/modelcontextprotocol/mcpb
+ * Generate an MCPB bundle for a given library. This makes the MCP servers easier to install in
+ * certain MCP clients like Claude Desktop. Reference: https://github.com/modelcontextprotocol/mcpb.
  */
 async function generateBundle(libraryName, config) {
   const packageJsonPath = path.join(config.packageDir, 'package.json');
