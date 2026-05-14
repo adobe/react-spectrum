@@ -182,6 +182,24 @@ S2 components define their own internal DOM and slot structure. Don't inject wra
 
 `Button`/`ActionButton`/`LinkButton` with **both** an icon and a text label require the label to be wrapped in `<Text>` — plain string children next to an icon render incorrectly. Icon-only or text-only children are fine as-is (icon-only needs `aria-label`).
 
+`Text` is re-exported from each button's own subpath — import it alongside the button component:
+
+```tsx
+import {ActionButton, Text} from '@react-spectrum/s2/ActionButton';
+import Download from '@react-spectrum/s2/icons/Download';
+
+// ✅ Icon + text — label in <Text>, no slot attribute.
+<ActionButton>
+  <Download />
+  <Text>Download</Text>
+</ActionButton>
+
+// ✅ Icon only — aria-label required.
+<ActionButton aria-label="Download">
+  <Download />
+</ActionButton>
+```
+
 ### Exceptions: components that accept arbitrary content
 
 A few components are explicitly free-form: `TableView` `Cell`; Dialog/Popover bodies; `Disclosure`/`Accordion` panels. Compose these with native elements + the `style` macro like any page section. For any other component, defer to slot components.
@@ -250,7 +268,11 @@ Every collection (`ListView`, `TableView`, `CardView`, `TreeView`, `Menu`, `List
 ### Empty and loading states are built in
 
 - Empty state: pass `renderEmptyState` returning an `IllustratedMessage`. Don't conditionally swap the whole collection for a custom empty `div`.
-- Async data: use `useAsyncList (or the user's preferred data fetching library) plus the collection's `loadingState`/`onLoadMore` props, and render a `SkeletonCollection` while loading. Don't render a separate spinner above the collection.
+- Async data: use `useAsyncList` (or the user's preferred data fetching library) plus the collection's `loadingState`/`onLoadMore` props. Don't render a separate spinner above the collection.
+
+### Bulk actions with ActionBar
+
+Use the `renderActionBar` prop on a collection to show an `ActionBar` when items are selected. The collection passes the current `selectedKeys` to the callback and wires up count and clear-selection automatically — don't pass `selectedItemCount` or `onClearSelection` to `ActionBar` manually.
 
 ## Typography
 
@@ -285,6 +307,25 @@ Mount a single `Provider` at the application root (inside `body`, around the top
 - Don't add a `Provider` around a Dialog, Popover, Toast, or other portaled overlay — they inherit through context.
 - Don't stack `Provider`s. Nesting is only correct when scoping a different `locale`/`router`/`colorScheme` to a subtree, which is rare.
 - Let the `Provider` manage `colorScheme`. Don't hard-code `colorScheme="light"` or `colorScheme="dark"` to make a screenshot match — for one-off light/dark color differences, use `lightDark()`.
+
+If your app uses `ToastQueue`, place a single `<ToastContainer />` as a sibling of the root layout, inside `Provider`.
+
+```tsx
+import {Provider} from '@react-spectrum/s2/Provider';
+import {ToastContainer, ToastQueue} from '@react-spectrum/s2/Toast';
+
+function App() {
+  return (
+    <Provider>
+      <ToastContainer />
+      <YourApp />
+    </Provider>
+  );
+}
+
+// Anywhere in the tree:
+ToastQueue.positive('Saved!', {timeout: 5000});
+```
 
 ## Form fields
 
