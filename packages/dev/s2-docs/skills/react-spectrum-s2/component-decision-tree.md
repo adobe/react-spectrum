@@ -110,6 +110,24 @@ If the user does not specify which component they would like to use, choose one 
 - Use `DropZone` for drag-and-drop file or object upload targets.
 - Use `Form` to provide layout, submission, and validation structure for grouped fields.
 
+## Quiet vs. full-emphasis variants
+
+Several components expose an `isQuiet` (or `quiet` variant) prop that removes the chrome — borders, fills, and sometimes padding — so the control reads as inline content rather than a discrete object. Pick by *context*, not by visual taste:
+
+- Use **quiet** variants for:
+  - Toolbar and toolbar-like rows (`ActionButton`, `ToggleButton`, `ActionMenu` with `isQuiet`).
+  - Inline editing affordances embedded in dense content (e.g. a `Picker` inside a table cell, an `ActionButton` inline in a paragraph).
+  - Repeated controls in collection rows (`ListView`, `TreeView`, `TableView` row actions) where full button chrome would compete with the row content.
+  - Compact secondary affordances next to body copy (a quiet `Link`, a quiet `Breadcrumbs` trail in a tight header).
+  - Subordinate disclosures inside another container (`Accordion` with `isQuiet`, `Disclosure` with `isQuiet` inside a panel or card).
+- Use the **default (full-emphasis)** variant for:
+  - Standalone primary or secondary actions on a page (`Button`, full-chrome `ActionButton`, `LinkButton`).
+  - Form controls in a Form layout (`Picker`, `ComboBox`, `TextField`, etc.) — quiet form fields are a deliberate inline-editing choice, not the default.
+  - Top-level navigation (`Breadcrumbs`, `Tabs`).
+  - The main content view (`ListView`, `TableView`, `TreeView` displayed as the page's primary surface).
+
+If the design clearly shows borders, fills, or a defined hit target, use the default variant. If the control sits *inside* another bordered/filled surface and the design renders it without chrome, use quiet. Don't apply `isQuiet` just to make something look more compact — adjust spacing instead.
+
 ## Last-resort custom components
 
 - Only create a custom component when no S2 component matches the required interaction pattern, or when the needed layout cannot be achieved by composing existing S2 components.
