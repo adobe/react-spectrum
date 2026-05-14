@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {ActionButtonContext} from './ActionButton';
 import {
   Menu as AriaMenu,
   MenuItem as AriaMenuItem,
@@ -23,7 +24,6 @@ import {
   SubmenuTriggerProps as AriaSubmenuTriggerProps,
   MenuItemRenderProps
 } from 'react-aria-components/Menu';
-
 import {
   baseColor,
   centerPadding,
@@ -61,23 +61,22 @@ import {edgeToText} from '../style/spectrum-theme' with {type: 'macro'};
 import {forwardRefType} from './types';
 import {HeaderContext, HeadingContext, KeyboardContext, Text, TextContext} from './Content';
 import {IconContext} from './Icon';
-import {ImageContext} from './Image';
-import InfoCircleIcon from '../s2wf-icons/S2_Icon_InfoCircle_20_N.svg'; // chevron right removed??
+import {ImageContext} from './Image'; // chevron right removed??
+import InfoCircleIcon from '../s2wf-icons/S2_Icon_InfoCircle_20_N.svg';
 import {InPopoverContext, Popover, PopoverContext} from './Popover';
-import intlMessages from '../intl/*.json';
 // @ts-ignore
+import intlMessages from '../intl/*.json';
 import LinkOutIcon from '../ui-icons/LinkOut';
 import {mergeStyles} from '../style/runtime';
 import {Placement} from 'react-aria/useOverlayPosition';
 import {PressResponder} from 'react-aria/private/interactions/PressResponder';
 import {pressScale} from './pressScale';
 import {Separator, SeparatorProps} from 'react-aria-components/Separator';
+import {ToggleButtonContext} from './ToggleButton';
 import {useGlobalListeners} from 'react-aria/private/utils/useGlobalListeners';
 import {useId} from 'react-aria/useId';
 import {useLocale} from 'react-aria/I18nProvider';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
-import {ActionButtonContext} from './ActionButton';
-import {ToggleButtonContext} from './ToggleButton';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 // viewbox on LinkOut is super weird just because i copied the icon from designs...
 // need to strip id's from icons
@@ -101,12 +100,6 @@ export interface MenuTriggerProps extends AriaMenuTriggerProps {
    * @default true
    */
   shouldFlip?: boolean;
-  /**
-   * How the menu is triggered.
-   *
-   * @default 'press'
-   */
-  trigger?: 'press' | 'longPress';
 }
 
 export interface MenuProps<T>
