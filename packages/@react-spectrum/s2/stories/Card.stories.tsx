@@ -467,44 +467,55 @@ export const Custom: Story = {
   }
 };
 
-
 export const Horizontal: Story = {
-  render: (args) => (
-    <div style={{display: 'flex', gap: 16, flexWrap: 'wrap', alignItems: 'start', justifyContent: 'center'}}>
+  render: args => (
+    <div
+      style={{
+        display: 'flex',
+        gap: 16,
+        flexWrap: 'wrap',
+        alignItems: 'start',
+        justifyContent: 'center'
+      }}>
       <HorizontalCard {...args} styles={style({maxWidth: 600})}>
         <HorizontalCardPreview>
-          <Image
-            slot="preview"
-            src={new URL('assets/preview.png', import.meta.url).toString()} />
+          <Image slot="preview" src={new URL('assets/preview.png', import.meta.url).toString()} />
         </HorizontalCardPreview>
         <Image
           slot="thumbnail"
-          src={new URL('assets/placeholder.png', import.meta.url).toString()} />
+          src={new URL('assets/placeholder.png', import.meta.url).toString()}
+        />
         <Content>
           <Text slot="title">Card title</Text>
-          <Text slot="description">Card description. Give a concise overview of the context or functionality that's mentioned in the card title.</Text>
+          <Text slot="description">
+            Card description. Give a concise overview of the context or functionality that's
+            mentioned in the card title.
+          </Text>
         </Content>
       </HorizontalCard>
       <HorizontalCard {...args} styles={style({maxWidth: 600})}>
         <HorizontalCardPreview>
-          <Image
-            slot="preview"
-            src={new URL('assets/preview.png', import.meta.url).toString()} />
+          <Image slot="preview" src={new URL('assets/preview.png', import.meta.url).toString()} />
         </HorizontalCardPreview>
         <Content>
           <Text slot="title">
             <Image
               slot="thumbnail"
-              src={new URL('assets/placeholder.png', import.meta.url).toString()} />
+              src={new URL('assets/placeholder.png', import.meta.url).toString()}
+            />
             Card title
           </Text>
-          <Text slot="description">Card description. Give a concise overview of the context or functionality that's mentioned in the card title.</Text>
+          <Text slot="description">
+            Card description. Give a concise overview of the context or functionality that's
+            mentioned in the card title.
+          </Text>
         </Content>
       </HorizontalCard>
       <BasicHorizontalCard {...args} styles={style({maxWidth: 400})}>
         <Image
           slot="thumbnail"
-          src={new URL('assets/placeholder.png', import.meta.url).toString()} />
+          src={new URL('assets/placeholder.png', import.meta.url).toString()}
+        />
         <Content>
           <Text slot="title">Card title</Text>
           <Text slot="description">Card description.</Text>
@@ -518,7 +529,8 @@ export const Horizontal: Story = {
       <BasicHorizontalCard {...args} styles={style({maxWidth: 400})}>
         <Image
           slot="thumbnail"
-          src={new URL('assets/placeholder.png', import.meta.url).toString()} />
+          src={new URL('assets/placeholder.png', import.meta.url).toString()}
+        />
         <Content>
           <Text slot="title">Card title</Text>
           <Text slot="description">Card description.</Text>
@@ -532,7 +544,8 @@ export const Horizontal: Story = {
       <BasicHorizontalCard {...args} styles={style({maxWidth: 400})}>
         <Image
           slot="thumbnail"
-          src={new URL('assets/placeholder.png', import.meta.url).toString()} />
+          src={new URL('assets/placeholder.png', import.meta.url).toString()}
+        />
         <Content>
           <Text slot="title">Card title</Text>
           <Text slot="description">Card description.</Text>
@@ -541,7 +554,8 @@ export const Horizontal: Story = {
       <BasicHorizontalCard {...args} styles={style({maxWidth: 400})}>
         <Image
           slot="thumbnail"
-          src={new URL('assets/placeholder.png', import.meta.url).toString()} />
+          src={new URL('assets/placeholder.png', import.meta.url).toString()}
+        />
         <Content>
           <Text slot="title">Card title</Text>
           <Text slot="description">Card description.</Text>
@@ -550,29 +564,33 @@ export const Horizontal: Story = {
       <BasicHorizontalCard {...args} aria-label="Demo file.pdf">
         <Image
           slot="thumbnail"
-          src={new URL('assets/placeholder.png', import.meta.url).toString()} />
+          src={new URL('assets/placeholder.png', import.meta.url).toString()}
+        />
       </BasicHorizontalCard>
     </div>
   )
 };
 
 export const AIAssetList: Story = {
-  render: (args) => (
+  render: args => (
     <AssetList {...args} styles={style({width: 400})}>
       <AssetComponent aria-label="Demo file.pdf">
         <Image
           slot="thumbnail"
-          src={new URL('assets/placeholder.png', import.meta.url).toString()} />
+          src={new URL('assets/placeholder.png', import.meta.url).toString()}
+        />
       </AssetComponent>
       <AssetComponent aria-label="Alligator.pdf">
         <Image
           slot="thumbnail"
-          src={new URL('assets/placeholder.png', import.meta.url).toString()} />
+          src={new URL('assets/placeholder.png', import.meta.url).toString()}
+        />
       </AssetComponent>
       <AssetComponent aria-label="Rules.pdf">
         <Image
           slot="thumbnail"
-          src={new URL('assets/placeholder.png', import.meta.url).toString()} />
+          src={new URL('assets/placeholder.png', import.meta.url).toString()}
+        />
       </AssetComponent>
     </AssetList>
   )
