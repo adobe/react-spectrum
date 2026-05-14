@@ -192,9 +192,9 @@ export interface DragTypes {
 
 export interface DropTargetDelegate {
   /**
-   * Returns a drop target within a collection for the given x and y coordinates.
-   * The point is provided relative to the top left corner of the collection container.
-   * A drop target can be checked to see if it is valid using the provided `isValidDropTarget` function.
+   * Returns a drop target within a collection for the given x and y coordinates. The point is
+   * provided relative to the top left corner of the collection container. A drop target can be
+   * checked to see if it is valid using the provided `isValidDropTarget` function.
    */
   getDropTargetFromPoint(
     x: number,
@@ -205,7 +205,9 @@ export interface DropTargetDelegate {
 
 export interface DroppableCollectionUtilityOptions {
   /**
-   * The drag types that the droppable collection accepts. If the collection accepts directories, include `DIRECTORY_DRAG_TYPE` in your array of allowed types.
+   * The drag types that the droppable collection accepts. If the collection accepts directories,
+   * include `DIRECTORY_DRAG_TYPE` in your array of allowed types.
+   *
    * @default 'all'
    */
   acceptedDragTypes?: 'all' | Array<string | symbol>;
@@ -234,7 +236,8 @@ export interface DroppableCollectionUtilityOptions {
    */
   onMove?: (e: DroppableCollectionReorderEvent) => void;
   /**
-   * A function returning whether a given target in the droppable collection is a valid "on" drop target for the current drag types.
+   * A function returning whether a given target in the droppable collection is a valid "on" drop
+   * target for the current drag types.
    */
   shouldAcceptItemDrop?: (target: ItemDropTarget, types: DragTypes) => boolean;
 }
@@ -249,13 +252,13 @@ export interface DroppableCollectionBaseProps {
   /** Handler that is called when a valid drag exits a drop target. */
   onDropExit?: (e: DroppableCollectionExitEvent) => void;
   /**
-   * Handler that is called when a valid drag is dropped on a drop target. When defined, this overrides other
-   * drop handlers such as `onInsert`, and `onItemDrop`.
+   * Handler that is called when a valid drag is dropped on a drop target. When defined, this
+   * overrides other drop handlers such as `onInsert`, and `onItemDrop`.
    */
   onDrop?: (e: DroppableCollectionDropEvent) => void;
   /**
-   * A function returning the drop operation to be performed when items matching the given types are dropped
-   * on the drop target.
+   * A function returning the drop operation to be performed when items matching the given types are
+   * dropped on the drop target.
    */
   getDropOperation?: (
     target: DropTarget,
@@ -294,12 +297,18 @@ export interface DraggableCollectionProps<T = object> {
   onDragStart?: (e: DraggableCollectionStartEvent) => void;
   /** Handler that is called when the drag is moved. */
   onDragMove?: (e: DraggableCollectionMoveEvent) => void;
-  /** Handler that is called when the drag operation is ended, either as a result of a drop or a cancellation. */
+  /**
+   * Handler that is called when the drag operation is ended, either as a result of a drop or a
+   * cancellation.
+   */
   onDragEnd?: (e: DraggableCollectionEndEvent) => void;
   /** A function that returns the items being dragged. */
   getItems: (keys: Set<Key>, items: T[]) => DragItem[];
   /** The ref of the element that will be rendered as the drag preview while dragging. */
   preview?: RefObject<DragPreviewRenderer | null>;
-  /** Function that returns the drop operations that are allowed for the dragged items. If not provided, all drop operations are allowed. */
+  /**
+   * Function that returns the drop operations that are allowed for the dragged items. If not
+   * provided, all drop operations are allowed.
+   */
   getAllowedDropOperations?: () => DropOperation[];
 }

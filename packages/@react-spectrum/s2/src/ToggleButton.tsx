@@ -49,7 +49,10 @@ export interface ToggleButtonProps
     ActionButtonStyleProps {
   /** The content to display in the button. */
   children: ReactNode;
-  /** Whether the button should be displayed with an [emphasized style](https://spectrum.adobe.com/page/action-button/#Emphasis). */
+  /**
+   * Whether the button should be displayed with an [emphasized
+   * style](https://spectrum.adobe.com/page/action-button/#Emphasis).
+   */
   isEmphasized?: boolean;
 }
 

@@ -36,8 +36,10 @@ export interface SpectrumCheckboxProps extends Omit<AriaCheckboxProps, 'onClick'
    */
   isEmphasized?: boolean;
   /**
-   * A slot name for the component. Slots allow the component to receive props from a parent component.
-   * An explicit `null` value indicates that the local props completely override all props received from a parent.
+   * A slot name for the component. Slots allow the component to receive props from a parent
+   * component. An explicit `null` value indicates that the local props completely override all
+   * props received from a parent.
+   *
    * @private
    */
   slot?: string | null;

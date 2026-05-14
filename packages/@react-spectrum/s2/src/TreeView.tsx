@@ -69,7 +69,10 @@ interface S2TreeProps {
 
 interface TreeViewStyleProps {
   /**
-   * How selection should be displayed. For guidance on when to use which option, refer to the [Spectrum](https://spectrum.adobe.com/page/tree-view/#Checkbox-or-highlight-selection-style) page.
+   * How selection should be displayed. For guidance on when to use which option, refer to the
+   * [Spectrum](https://spectrum.adobe.com/page/tree-view/#Checkbox-or-highlight-selection-style)
+   * page.
+   *
    * @default 'checkbox'
    */
   selectionStyle?: 'highlight' | 'checkbox';

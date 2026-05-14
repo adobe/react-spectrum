@@ -27,7 +27,7 @@ jobs:
       - name: Build current API snapshot
         run: yarn build:api-branch
 
-      # Build release baseline using the last Publish commit (~2 min, always fresh)
+      # Build release baseline using the last minor/major release commit (skips patch-only releases)
       - name: Build release baseline
         run: yarn build:api-published
 
@@ -50,12 +50,33 @@ jobs:
           CURRENT_PUBLISH=$(git log --grep='^Publish$' --oneline -1 | awk '{print $1}')
           PREV_PUBLISH=$(cat snapshots/last-publish-hash.txt 2>/dev/null || echo "")
 
+          echo "=== Release detection ==="
+          echo "CURRENT_PUBLISH=$CURRENT_PUBLISH"
+          echo "PREV_PUBLISH=$PREV_PUBLISH"
+
           if [ -n "$PREV_PUBLISH" ] && [ "$CURRENT_PUBLISH" != "$PREV_PUBLISH" ]; then
-            # New release landed so skip comparing to last week, commit fresh as new baseline
-            echo "NEW_RELEASE=true" >> $GITHUB_ENV
+            # Detect minor/major vs patch: check if s2 or react-aria-components got a x.y.0 tag on this Publish commit
+            IS_MINOR=$(git tag --points-at "$CURRENT_PUBLISH" | grep -E '^(@react-spectrum/s2|react-aria-components)@[0-9]+\.[0-9]+\.0$' | head -1)
+            echo "IS_MINOR_OR_MAJOR=${IS_MINOR:-(none)}"
+            if [ -n "$IS_MINOR" ]; then
+              echo "Minor/major release detected, resetting baseline"
+              echo "NEW_RELEASE=true" >> $GITHUB_ENV
+            else
+              echo "Patch release detected, updating hash, continuing with delta"
+              echo "$CURRENT_PUBLISH" > snapshots/last-publish-hash.txt
+            fi
           else
+            echo "No new release"
+          fi
+
+          NEW_RELEASE="${NEW_RELEASE:-false}"
+
+          if [ "$NEW_RELEASE" != "true" ]; then
             # Compare against the last diff in the snapshots repo
             PREV=$(ls snapshots/diffs/*.txt 2>/dev/null | sort -r | head -1)
+            echo ""
+            echo "=== Delta computation ==="
+            echo "Comparing against: ${PREV:-(none, first run)}"
             if [ -n "$PREV" ]; then
               diff "$PREV" /tmp/diff-current.txt > /tmp/weekly-delta.txt || true
             else
@@ -63,18 +84,48 @@ jobs:
             fi
           fi
 
-          # Commit a diff if there is a new release (fresh baseline), or diff changed from last week
+          echo ""
+          echo "=== File sizes ==="
+          echo "diff-current.txt: $(wc -c < /tmp/diff-current.txt) bytes"
+          ls /tmp/weekly-delta.txt 2>/dev/null && echo "weekly-delta.txt: $(wc -c < /tmp/weekly-delta.txt) bytes" || echo "weekly-delta.txt: not created"
+          echo ""
+          echo "=== Delta content (first 20 lines) ==="
+          head -20 /tmp/weekly-delta.txt 2>/dev/null || echo "(none)"
+
+          # Commit a diff if there is a new minor/major release (fresh baseline), or diff changed from last week
           # Skip if no difference from last diff (aka no change from last week/last run), or if the diff against the release code is empty
-          NEW_RELEASE="${NEW_RELEASE:-false}"
+          echo ""
+          echo "=== Commit decision ==="
           if [ -s /tmp/diff-current.txt ] && ([ "$NEW_RELEASE" = "true" ] || [ -s /tmp/weekly-delta.txt ]); then
+            echo "Committing diff to snapshots repo"
             cp /tmp/diff-current.txt snapshots/diffs/$TODAY.txt
+            mkdir -p snapshots/deltas
+            if [ -s /tmp/weekly-delta.txt ]; then
+              # Save processed delta: strip > / < markers and line-number markers,
+              # split into two labeled sections so it can be passed directly to the model
+              {
+                echo "=== NEW API CHANGES THIS WEEK (not in last week's diff) ==="
+                grep '^> ' /tmp/weekly-delta.txt | sed 's/^> //'
+                RELEASED=$(grep '^< ' /tmp/weekly-delta.txt | sed 's/^< //')
+                if [ -n "$RELEASED" ]; then
+                  echo ""
+                  echo "=== API CHANGES RELEASED SINCE LAST WEEK (were in last week's diff, now gone) ==="
+                  echo "$RELEASED"
+                fi
+              } > snapshots/deltas/$TODAY.txt
+            fi
             cd snapshots
             git config user.email "github-actions@github.com"
             git config user.name "GitHub Actions"
             git add diffs/$TODAY.txt
+            [ -f deltas/$TODAY.txt ] && git add deltas/$TODAY.txt
             echo "$CURRENT_PUBLISH" > last-publish-hash.txt
             git add last-publish-hash.txt
+            echo "=== Staged changes ==="
+            git diff --cached --stat
             git diff --cached --quiet || (git commit -m "weekly api diff $TODAY" && git push)
+          else
+            echo "Skipping commit — diff-current empty=$([ ! -s /tmp/diff-current.txt ] && echo yes || echo no), new_release=$NEW_RELEASE, delta_empty=$([ ! -s /tmp/weekly-delta.txt ] && echo yes || echo no)"
           fi
 
       # Summarize with GitHub Models (free via GITHUB_TOKEN) and post to Slack
@@ -82,6 +133,7 @@ jobs:
         env:
           SLACK_TSDIFF_CHROMATIC_BOT_TOKEN: ${{ secrets.SLACK_TSDIFF_CHROMATIC_BOT_TOKEN }}
           SLACK_CHANNEL_ID: ${{ secrets.SLACK_CHANNEL_ID }}
+          TEST_SLACK_ID: ${{ secrets.TEST_SLACK_ID }}
           GITHUB_TOKEN: ${{ github.token }}
         run: |
           python3 << 'PYEOF'
@@ -99,6 +151,7 @@ jobs:
           github_token = os.environ['GITHUB_TOKEN']
           workspace = os.environ['GITHUB_WORKSPACE']
           diff_url = f"https://github.com/{snapshots_repo}/blob/main/diffs/{today}.txt"
+          delta_url = f"https://github.com/{snapshots_repo}/blob/main/deltas/{today}.txt"
 
           vs_release_size = os.path.getsize('/tmp/diff-current.txt')
           vs_last_week_size = os.path.getsize('/tmp/weekly-delta.txt') if os.path.exists('/tmp/weekly-delta.txt') else 0
@@ -117,7 +170,9 @@ jobs:
           elif new_release:
             message = f"📊 Weekly API Diff — {today}\n\nNew release since last diff — resetting baseline. Full diff vs release: {diff_url}\n\nReact ✅ if changes look expected, or 🚨 if something looks wrong."
           else:
-            delta = open('/tmp/weekly-delta.txt').read()[:4000]
+            # Read the already-processed delta saved by the shell step
+            delta_path = f"{workspace}/snapshots/deltas/{today}.txt"
+            model_input = open(delta_path).read() if os.path.exists(delta_path) else ""
 
             # Extract classification rules from prompt.md (single source of truth)
             prompt_md = open(f"{workspace}/scripts/weekly-api-diff/prompt.md").read()
@@ -127,10 +182,19 @@ jobs:
 
             payload = {
               "model": "gpt-4o-mini",
-              "max_tokens": 600,
+              "max_tokens": 800,
               "messages": [{
                 "role": "user",
-                "content": f"Summarize this week-to-week react-spectrum API diff in under 200 words using bullet points.\n\n{rules}\n\nDelta (changes from last week):\n{delta}"
+                "content": (
+                  f"Summarize this week's react-spectrum API changes using grouped bullet points. Group related changes together (e.g. multiple layout classes losing the same method = one bullet). For each group or item:\n"
+                  f"- Name the component(s) or interface(s)\n"
+                  f"- Say what changed (added, removed, signature changed)\n"
+                  f"- Flag net-new components \n"
+                  f"Don't spell out full type signatures. Aim for a knowledgeable teammate skimming Slack.\n\n"
+                  f"IMPORTANT: Only report what is explicitly listed below. Do not infer or add anything from your training knowledge.\n\n"
+                  f"{rules}\n\n"
+                  f"{model_input}"
+                )
               }]
             }
 
@@ -143,7 +207,7 @@ jobs:
               }
             )
             summary = json.loads(urllib.request.urlopen(req).read())['choices'][0]['message']['content']
-            message = f"📊 Weekly API Diff — {today}\n\n{summary}\n\nFull diff vs release: {diff_url}\n\nReact ✅ if changes look expected, or 🚨 if something looks wrong."
+            message = f"📊 Weekly API Diff — {today}\n\n{summary}\n\nWhat's new this week: {delta_url}\nFull diff vs release: {diff_url}\n\nReact ✅ if changes look expected, or 🚨 if something looks wrong."
 
           req = urllib.request.Request(
             'https://slack.com/api/chat.postMessage',

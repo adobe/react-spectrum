@@ -46,6 +46,7 @@ import {
   Image,
   InlineAlert,
   Keyboard,
+  LabeledValue,
   Link,
   Meter,
   NumberField,
@@ -148,6 +149,7 @@ export default function Lazy() {
           <TextArea label="Description" />
           <TextField label="Email" />
           <TextField label="Password" />
+          <LabeledValue label="Actual hours" value={0} />
           <SelectBoxGroup aria-label="Choose a cloud">
             <SelectBox id="aws" textValue="Amazon Web Services">
               <Server />
@@ -202,7 +204,7 @@ export default function Lazy() {
           The missing link.
         </Link>
         <Link href="/foo">Foo</Link>
-        <SegmentedControl aria-label="Time granularity" styles={style({width: 384})}>
+        <SegmentedControl aria-label="Time granularity" styles={style({width: 384})} isJustified>
           <SegmentedControlItem id="day">Day</SegmentedControlItem>
           <SegmentedControlItem id="week">Week</SegmentedControlItem>
           <SegmentedControlItem id="month">Month</SegmentedControlItem>

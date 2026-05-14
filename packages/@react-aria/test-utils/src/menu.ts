@@ -20,7 +20,8 @@ interface MenuOpenOpts {
    */
   needsLongPress?: boolean;
   /**
-   * What interaction type to use when opening the menu. Defaults to the interaction type set on the tester.
+   * What interaction type to use when opening the menu. Defaults to the interaction type set on the
+   * tester.
    */
   interactionType?: UserOpts['interactionType'];
   /**
@@ -35,17 +36,21 @@ interface MenuSelectOpts extends MenuOpenOpts {
    */
   option: number | string | HTMLElement;
   /**
-   * The menu's selection mode. Will affect whether or not the menu is expected to be closed upon option selection.
+   * The menu's selection mode. Will affect whether or not the menu is expected to be closed upon
+   * option selection.
+   *
    * @default 'single'
    */
   menuSelectionMode?: 'single' | 'multiple';
   /**
    * Whether or not the menu closes on select. Depends on menu implementation and configuration.
+   *
    * @default true
    */
   closesOnSelect?: boolean;
   /**
    * Whether the option should be triggered by Space or Enter in keyboard modality.
+   *
    * @default 'Enter'
    */
   keyboardActivation?: 'Space' | 'Enter';
@@ -53,7 +58,8 @@ interface MenuSelectOpts extends MenuOpenOpts {
 
 interface MenuOpenSubmenuOpts extends MenuOpenOpts {
   /**
-   * The text or node of the submenu trigger to open. Available submenu trigger nodes can be sourced via `submenuTriggers`.
+   * The text or node of the submenu trigger to open. Available submenu trigger nodes can be sourced
+   * via `submenuTriggers`.
    */
   submenuTrigger: string | HTMLElement;
 }
@@ -177,8 +183,9 @@ export class MenuTester {
   // TODO: also very similar to select, barring potential long press support
   // Close on select is also kinda specific?
   /**
-   * Selects the desired menu option. Defaults to using the interaction type set on the menu tester. If necessary, will open the menu dropdown beforehand.
-   * The desired option can be targeted via the option's node, the option's text, or the option's index.
+   * Selects the desired menu option. Defaults to using the interaction type set on the menu tester.
+   * If necessary, will open the menu dropdown beforehand. The desired option can be targeted via
+   * the option's node, the option's text, or the option's index.
    */
   async selectOption(opts: MenuSelectOpts): Promise<void> {
     let {
@@ -300,7 +307,8 @@ export class MenuTester {
 
   // TODO: update this to remove needsLongPress if we wanna make the user call open first always
   /**
-   * Opens the submenu. Defaults to using the interaction type set on the menu tester. The submenu trigger can be targeted via the trigger's node or the trigger's text.
+   * Opens the submenu. Defaults to using the interaction type set on the menu tester. The submenu
+   * trigger can be targeted via the trigger's node or the trigger's text.
    */
   async openSubmenu(opts: MenuOpenSubmenuOpts): Promise<MenuTester | null> {
     let {submenuTrigger, needsLongPress, interactionType = this._interactionType} = opts;
@@ -432,7 +440,8 @@ export class MenuTester {
   }
 
   /**
-   * Returns the menu's options if present. Can be filtered to a subsection of the menu if provided via `element`.
+   * Returns the menu's options if present. Can be filtered to a subsection of the menu if provided
+   * via `element`.
    */
   options(opts: {element?: HTMLElement} = {}): HTMLElement[] {
     let {element = this.menu} = opts;

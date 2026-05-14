@@ -32,12 +32,14 @@ export interface SpectrumColorPickerProps
   children?: ReactNode;
   /**
    * The size of the color swatch.
-   * @default "M"
+   *
+   * @default 'M'
    */
   size?: 'XS' | 'S' | 'M' | 'L';
   /**
    * The corner rounding of the color swatch.
-   * @default "default"
+   *
+   * @default 'default'
    */
   rounding?: 'default' | 'none' | 'full';
 }

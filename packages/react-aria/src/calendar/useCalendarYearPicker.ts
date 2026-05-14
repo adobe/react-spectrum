@@ -26,6 +26,7 @@ export interface CalendarYearPickerFormatOptions {
 export interface CalendarYearPickerProps {
   /**
    * The number of years to display.
+   *
    * @default 20
    */
   visibleYears?: number;

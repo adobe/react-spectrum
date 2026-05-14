@@ -17,7 +17,10 @@ import {TableState} from 'react-stately/useTableState';
 import {useGridCell} from '../grid/useGridCell';
 
 export interface AriaTableCellProps {
-  /** An object representing the table cell. Contains all the relevant information that makes up the row header. */
+  /**
+   * An object representing the table cell. Contains all the relevant information that makes up the
+   * row header.
+   */
   node: GridNode<unknown>;
   /** Whether the cell is contained in a virtual scroller. */
   isVirtualized?: boolean;
@@ -26,8 +29,9 @@ export interface AriaTableCellProps {
   /**
    * Handler that is called when a user performs an action on the cell.
    * Please use onCellAction at the collection level instead.
+   *
    * @deprecated
-   **/
+   */
   onAction?: () => void;
 }
 
@@ -40,6 +44,7 @@ export interface TableCellAria {
 
 /**
  * Provides the behavior and accessibility implementation for a cell in a table.
+ *
  * @param props - Props for the cell.
  * @param state - State of the table, as returned by `useTableState`.
  * @param ref - The ref attached to the cell element.

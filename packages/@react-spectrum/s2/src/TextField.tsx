@@ -14,15 +14,13 @@ import {
   TextArea as AriaTextArea,
   TextAreaContext as AriaTextAreaContext
 } from 'react-aria-components/TextArea';
-import {TextContext as AriaTextContext} from 'react-aria-components/Text';
 import {
   TextField as AriaTextField,
   TextFieldProps as AriaTextFieldProps
 } from 'react-aria-components/TextField';
-import {centerBaseline} from './CenterBaseline';
-import {centerPadding, fontRelative, style} from '../style' with {type: 'macro'};
+import {centerPadding, style} from '../style' with {type: 'macro'};
 import {composeRenderProps} from 'react-aria-components/composeRenderProps';
-import {ContextValue, DEFAULT_SLOT, Provider, useSlottedContext} from 'react-aria-components/slots';
+import {ContextValue, Provider, useSlottedContext} from 'react-aria-components/slots';
 import {
   controlSize,
   field,
@@ -48,11 +46,10 @@ import {
   SpectrumLabelableProps
 } from '@react-types/shared';
 import {FormContext, useFormProps} from './Form';
-import {IconContext} from './Icon';
 import {InputContext, InputProps} from 'react-aria-components/Input';
 import {mergeRefs} from 'react-aria/mergeRefs';
 import {StyleString} from '../style/types';
-import {Text, TextContext} from './Content';
+import {TextContext} from './Content';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface TextFieldRef<
@@ -79,7 +76,8 @@ export interface TextFieldProps
    */
   size?: 'S' | 'M' | 'L' | 'XL';
   /**
-   * The prefix to display in the text field. Either a string or workflow icon.
+   * The prefix to display in the text field.
+   * A non-interactive element that appears before the input.
    */
   prefix?: ReactNode;
 }
@@ -194,55 +192,15 @@ export const TextFieldBase = forwardRef(function TextFieldBase(
             contextualHelp={props.contextualHelp}>
             {label}
           </FieldLabel>
-          <FieldGroup size={props.size} styles={fieldGroupCss}>
+          <FieldGroup prefix={props.prefix} size={props.size} styles={fieldGroupCss}>
             <Provider values={[[TextContext, {}]]}>
-              {props.prefix ? (
-                <Provider
-                  values={[
-                    [
-                      IconContext,
-                      {
-                        render: centerBaseline({}),
-                        styles: style({
-                          size: fontRelative(20),
-                          '--iconPrimary': {
-                            type: 'fill',
-                            value: 'currentColor'
-                          }
-                        })
-                      }
-                    ],
-                    [AriaTextContext, {}],
-                    [
-                      TextContext,
-                      {
-                        slots: {
-                          [DEFAULT_SLOT]: {
-                            styles: style({
-                              minWidth: 20,
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center'
-                            })
-                          }
-                        }
-                      }
-                    ]
-                  ]}>
-                  <div
-                    className={style({
-                      color: 'gray-600',
-                      flexShrink: 0,
-                      marginEnd: 'text-to-visual'
-                    })}>
-                    {typeof props.prefix === 'string' ? <Text>{props.prefix}</Text> : props.prefix}
-                  </div>
-                </Provider>
-              ) : null}
               <InputContext.Consumer>
                 {ctx => (
                   <InputContext.Provider
-                    value={{...ctx, ref: mergeRefs((ctx as any)?.ref, inputRef)}}>
+                    value={{
+                      ...ctx,
+                      ref: mergeRefs((ctx as any)?.ref, inputRef)
+                    }}>
                     {children}
                   </InputContext.Provider>
                 )}

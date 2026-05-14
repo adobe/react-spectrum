@@ -204,8 +204,8 @@ const ProviderWrapper = React.forwardRef(function ProviderWrapper(
 });
 
 /**
- * Returns the various settings and styles applied by the nearest parent Provider.
- * Properties explicitly set by the nearest parent Provider override those provided by preceeding Providers.
+ * Returns the various settings and styles applied by the nearest parent Provider. Properties
+ * explicitly set by the nearest parent Provider override those provided by preceeding Providers.
  */
 export function useProvider(): ProviderContext {
   let context = useContext(Context);

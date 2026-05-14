@@ -66,8 +66,9 @@ TableBody.getCollectionNode = function* getCollectionNode<T>(
 };
 
 /**
- * A TableBody is a container for the Row elements of a Table. Rows can be statically defined
- * as children, or generated dynamically using a function based on the data passed to the `items` prop.
+ * A TableBody is a container for the Row elements of a Table. Rows can be statically defined as
+ * children, or generated dynamically using a function based on the data passed to the `items`
+ * prop.
  */
 // We don't want getCollectionNode to show up in the type definition
 let _TableBody = TableBody as <T>(props: TableBodyProps<T>) => JSX.Element;

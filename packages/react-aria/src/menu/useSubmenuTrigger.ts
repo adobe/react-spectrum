@@ -39,7 +39,9 @@ import {useSafelyMouseToSubmenu} from './useSafelyMouseToSubmenu';
 
 export interface AriaSubmenuTriggerProps {
   /**
-   * An object representing the submenu trigger menu item. Contains all the relevant information that makes up the menu item.
+   * An object representing the submenu trigger menu item. Contains all the relevant information
+   * that makes up the menu item.
+   *
    * @deprecated
    */
   node?: Node<unknown>;
@@ -53,6 +55,7 @@ export interface AriaSubmenuTriggerProps {
   submenuRef: RefObject<HTMLElement | null>;
   /**
    * The delay time in milliseconds for the submenu to appear after hovering over the trigger.
+   *
    * @default 200
    */
   delay?: number;
@@ -81,7 +84,9 @@ export interface SubmenuTriggerAria<T> {
 }
 
 /**
- * Provides the behavior and accessibility implementation for a submenu trigger and its associated submenu.
+ * Provides the behavior and accessibility implementation for a submenu trigger and its associated
+ * submenu.
+ *
  * @param props - Props for the submenu trigger and refs attach to its submenu and parent menu.
  * @param state - State for the submenu trigger.
  * @param ref - Ref to the submenu trigger element.

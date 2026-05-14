@@ -58,6 +58,7 @@ export interface DropZoneProps
   isFilled?: boolean;
   /**
    * The message to replace the default banner message that is shown when the drop zone is filled.
+   *
    * @default 'Drop file to replace'
    */
   replaceMessage?: string;

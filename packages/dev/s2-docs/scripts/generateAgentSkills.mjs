@@ -6,13 +6,13 @@
  * This script creates skills in the Agent Skills format (https://agentskills.io/specification)
  *
  * Usage:
- *   node packages/dev/s2-docs/scripts/generateAgentSkills.mjs
+ * node packages/dev/s2-docs/scripts/generateAgentSkills.mjs.
  *
  * The script will:
- *   1. Run the markdown docs generation if dist doesn't exist
- *   2. Create .well-known/skills directories inside the docs dist output
- *   3. Copy relevant documentation to references/ subdirectories
- *   4. Generate .well-known/skills/index.json for discovery
+ * 1. Run the markdown docs generation if dist doesn't exist
+ * 2. Create .well-known/skills directories inside the docs dist output
+ * 3. Copy relevant documentation to references/ subdirectories
+ * 4. Generate .well-known/skills/index.json for discovery.
  */
 
 import {execSync} from 'child_process';
@@ -99,7 +99,7 @@ const CUSTOM_SKILL_CONTENT = {
 };
 
 /**
- * Ensure markdown docs are generated
+ * Ensure markdown docs are generated.
  */
 function ensureMarkdownDocs() {
   const s2LlmsTxt = path.join(MARKDOWN_DOCS_DIST, 's2', 'llms.txt');
@@ -158,7 +158,7 @@ function getCustomSkillNotesMarkdown(skillName) {
 }
 
 /**
- * Parse llms.txt to get documentation entries
+ * Parse llms.txt to get documentation entries.
  */
 function parseLlmsTxt(llmsTxtPath) {
   const content = fs.readFileSync(llmsTxtPath, 'utf8');
@@ -234,9 +234,10 @@ function parseLlmsTxt(llmsTxtPath) {
 }
 
 /**
- * Extract the section export from an MDX file
- * @param {string} mdxPath - Path to the MDX file
- * @returns {string|null} - The section value or null if not found
+ * Extract the section export from an MDX file.
+ *
+ * @param {string} mdxPath - Path to the MDX file.
+ * @returns {string | null} - The section value or null if not found
  */
 function extractSectionFromMdx(mdxPath) {
   if (!fs.existsSync(mdxPath)) {
@@ -249,7 +250,8 @@ function extractSectionFromMdx(mdxPath) {
 }
 
 /**
- * Get the MDX file path for a given entry
+ * Get the MDX file path for a given entry.
+ *
  * @param {string} sourceDir - The source directory (e.g., "s2" or "react-aria")
  * @param {string} entryPath - The path from llms.txt (e.g., "Button.md")
  * @returns {string} - The full path to the MDX file
@@ -261,7 +263,7 @@ function getMdxPath(sourceDir, entryPath) {
 }
 
 /**
- * Map section names to category keys
+ * Map section names to category keys.
  */
 const SECTION_TO_CATEGORY = {
   // Guides
@@ -287,7 +289,7 @@ const SECTION_TO_CATEGORY = {
 };
 
 /**
- * Files to filter out per source directory
+ * Files to filter out per source directory.
  */
 const FILTERED_FILES = {
   s2: ['index.md', 'error.md'],
@@ -295,7 +297,7 @@ const FILTERED_FILES = {
 };
 
 /**
- * Categorize documentation entries by reading section exports from MDX files
+ * Categorize documentation entries by reading section exports from MDX files.
  */
 function categorizeEntries(entries, sourceDir) {
   const categories = {
@@ -366,7 +368,7 @@ metadata:
 }
 
 /**
- * Generate the SKILL.md content
+ * Generate the SKILL.md content.
  */
 function generateDocsSkillMd(skillConfig, categories, isS2) {
   const customGuideEntries = getCustomGuideEntries(skillConfig.name);
@@ -588,7 +590,7 @@ Use these when you need more component-by-component or API-level detail:
 }
 
 /**
- * Copy documentation files to the skill's references directory
+ * Copy documentation files to the skill's references directory.
  */
 function copyDocsDocumentation(skillConfig, categories, skillDir) {
   const refsDir = path.join(skillDir, 'references');
@@ -799,7 +801,7 @@ function writeIndexJson(wellKnownRoot, skills) {
 }
 
 /**
- * Generate a single skill
+ * Generate a single skill.
  */
 function generateSkill(skillConfig, wellKnownRoot) {
   const skillDir = path.join(wellKnownRoot, skillConfig.name);

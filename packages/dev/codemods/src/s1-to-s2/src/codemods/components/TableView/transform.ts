@@ -93,6 +93,7 @@ function commentIfNestedColumns(path: NodePath<t.JSXElement>) {
 
 /**
  * Adds isRowHeader to the first Column in a table if there isn't already a row header.
+ *
  * @param path
  */
 function addRowHeader(path: NodePath<t.JSXElement>) {
@@ -173,6 +174,7 @@ function addRowHeader(path: NodePath<t.JSXElement>) {
 
 /**
  * Moves loadingState and onLoadMore from TableBody to TableView.
+ *
  * @param path
  */
 function movePropsFromTableBodyToTableView(path: NodePath<t.JSXElement>) {
@@ -208,6 +210,7 @@ function movePropsFromTableBodyToTableView(path: NodePath<t.JSXElement>) {
 
 /**
  * Transforms TableView:
+ *
  * - For Column and Row: Update key to be id (and keep key if rendered inside array.map).
  * - For dynamic tables, pass a columns prop into Row.
  * - For Row: Update dynamic render function to pass in column instead of columnKey.

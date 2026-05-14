@@ -40,7 +40,8 @@ import {useTypeSelect} from '../selection/useTypeSelect';
 export interface AriaSelectProps<T, M extends SelectionMode = 'single'>
   extends SelectProps<T, M>, DOMProps, AriaLabelingProps, FocusableDOMProps {
   /**
-   * Describes the type of autocomplete functionality the input should provide if any. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefautocomplete).
+   * Describes the type of autocomplete functionality the input should provide if any. See
+   * [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefautocomplete).
    */
   autoComplete?: string;
   /**
@@ -105,6 +106,7 @@ export const selectData: WeakMap<SelectState<any, any>, SelectData> = new WeakMa
 /**
  * Provides the behavior and accessibility implementation for a select component.
  * A select displays a collapsible list of options and allows a user to select one of them.
+ *
  * @param props - Props for the select.
  * @param state - State for the select, as returned by `useListState`.
  */

@@ -31,6 +31,7 @@ export interface SpectrumTooltipProps extends AriaTooltipProps, StyleProps {
 
   /**
    * The placement of the element with respect to its anchor element.
+   *
    * @default 'top'
    */
   placement?: 'start' | 'end' | 'right' | 'left' | 'top' | 'bottom';

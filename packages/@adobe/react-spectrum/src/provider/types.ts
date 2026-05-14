@@ -75,6 +75,7 @@ export interface ProviderProps extends ContextProps, DOMProps, StyleProps {
   colorScheme?: ColorScheme;
   /**
    * The default color scheme if no operating system setting is available.
+   *
    * @default 'light'
    */
   defaultColorScheme?: ColorScheme;
@@ -83,19 +84,22 @@ export interface ProviderProps extends ContextProps, DOMProps, StyleProps {
    */
   scale?: Scale;
   /**
-   * The locale for your application as a [BCP 47](https://www.ietf.org/rfc/bcp/bcp47.txt) language code.
-   * Defaults to the browser/OS language setting.
+   * The locale for your application as a [BCP 47](https://www.ietf.org/rfc/bcp/bcp47.txt) language
+   * code. Defaults to the browser/OS language setting.
+   *
    * @default 'en-US'
    */
   locale?: string;
   /**
    * The breakpoints for styleProps.
    * Do not use `base` property.
-   * @default {S:380,M:768,L:1024}
+   *
+   * @default { S: 380, M: 768, L: 1024 }
    */
   breakpoints?: Breakpoints;
   /**
-   * Provides a client side router to all nested React Spectrum links to enable client side navigation.
+   * Provides a client side router to all nested React Spectrum links to enable client side
+   * navigation.
    */
   router?: Router;
 }

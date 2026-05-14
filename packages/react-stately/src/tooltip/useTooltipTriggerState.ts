@@ -20,25 +20,31 @@ export interface TooltipTriggerProps extends OverlayTriggerProps {
   isDisabled?: boolean;
 
   /**
-   * The delay time for the tooltip to show up. [See guidelines](https://spectrum.adobe.com/page/tooltip/#Immediate-or-delayed-appearance).
+   * The delay time for the tooltip to show up. [See
+   * guidelines](https://spectrum.adobe.com/page/tooltip/#Immediate-or-delayed-appearance).
+   *
    * @default 1500
    */
   delay?: number;
 
   /**
-   * The delay time for the tooltip to close. [See guidelines](https://spectrum.adobe.com/page/tooltip/#Warmup-and-cooldown).
+   * The delay time for the tooltip to close. [See
+   * guidelines](https://spectrum.adobe.com/page/tooltip/#Warmup-and-cooldown).
+   *
    * @default 500
    */
   closeDelay?: number;
 
   /**
    * By default, opens for both focus and hover. Can be made to open only for focus.
+   *
    * @default 'hover'
    */
   trigger?: 'hover' | 'focus';
 
   /**
    * Whether the tooltip should close when the trigger is pressed.
+   *
    * @default true
    */
   shouldCloseOnPress?: boolean;

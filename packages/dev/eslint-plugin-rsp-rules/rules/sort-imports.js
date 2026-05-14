@@ -19,8 +19,9 @@ const plugin = {
 
     /**
      * Gets the local name of the first imported module.
-     * @param {ASTNode} node - the ImportDeclaration node.
-     * @returns {?string} the local name of the first imported module.
+     *
+     * @param {ASTNode} node - The ImportDeclaration node.
+     * @returns {string | null} The local name of the first imported module.
      */
     function getFirstLocalMemberName(node) {
       if (node.type === 'ImportDeclaration' && node.specifiers[0]) {

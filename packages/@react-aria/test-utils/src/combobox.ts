@@ -16,11 +16,13 @@ import {ComboBoxTesterOpts, UserOpts} from './types';
 interface ComboBoxOpenOpts {
   /**
    * Whether the combobox opens on focus or needs to be manually opened via user action.
+   *
    * @default 'manual'
    */
   triggerBehavior?: 'focus' | 'manual';
   /**
-   * What interaction type to use when opening the combobox. Defaults to the interaction type set on the tester.
+   * What interaction type to use when opening the combobox. Defaults to the interaction type set on
+   * the tester.
    */
   interactionType?: UserOpts['interactionType'];
 }
@@ -143,8 +145,9 @@ export class ComboBoxTester {
   }
 
   /**
-   * Selects the desired combobox option. Defaults to using the interaction type set on the combobox tester. If necessary, will open the combobox dropdown beforehand.
-   * The desired option can be targeted via the option's node, the option's text, or the option's index.
+   * Selects the desired combobox option. Defaults to using the interaction type set on the combobox
+   * tester. If necessary, will open the combobox dropdown beforehand. The desired option can be
+   * targeted via the option's node, the option's text, or the option's index.
    */
   async selectOption(opts: ComboBoxSelectOpts): Promise<void> {
     let {option, triggerBehavior, interactionType = this._interactionType} = opts;
@@ -244,7 +247,8 @@ export class ComboBoxTester {
   }
 
   /**
-   * Returns the combobox's options if present. Can be filtered to a subsection of the listbox if provided via `element`.
+   * Returns the combobox's options if present. Can be filtered to a subsection of the listbox if
+   * provided via `element`.
    */
   options(opts: {element?: HTMLElement} = {}): HTMLElement[] {
     let {element = this.listbox} = opts;

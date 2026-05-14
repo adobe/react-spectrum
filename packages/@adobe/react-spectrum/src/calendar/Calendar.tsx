@@ -26,14 +26,16 @@ export interface SpectrumCalendarProps<T extends DateValue>
   extends AriaCalendarProps<T>, StyleProps {
   /**
    * The number of months to display at once. Up to 3 months are supported.
+   *
    * @default 1
    */
   visibleMonths?: number;
 
   /**
-   * A function to create a new [Calendar](https://react-spectrum.adobe.com/internationalized/date/Calendar.html)
-   * object for a given calendar identifier. If not provided, the `createCalendar` function
-   * from `@internationalized/date` will be used.
+   * A function to create a new
+   * [Calendar](https://react-spectrum.adobe.com/internationalized/date/Calendar.html) object for a
+   * given calendar identifier. If not provided, the `createCalendar` function from
+   * `@internationalized/date` will be used.
    */
   createCalendar?: (identifier: CalendarIdentifier) => ICalendar;
 }

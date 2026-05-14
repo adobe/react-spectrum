@@ -393,8 +393,8 @@ export function updateComponentIfPropPresent(
 /**
  * Remove render props, and move usage to a child component.
  *
- * Example:
- * - DialogTrigger: Update children to remove render props usage, and note that `close` export function moved from `DialogTrigger` to `Dialog`.
+ * Example: - DialogTrigger: Update children to remove render props usage, and note that `close`
+ * export function moved from `DialogTrigger` to `Dialog`.
  */
 export function moveRenderPropsToChild(
   path: NodePath<t.JSXElement>,
@@ -594,8 +594,8 @@ export function commentIfParentCollectionNotDetected(path: NodePath<t.JSXElement
 /**
  * If within a component, moves prop to new child component.
  *
- * Example:
- * - Section: If within `Menu`, move `title` prop string to be a child of new `Heading` within a `Header`.
+ * Example: - Section: If within `Menu`, move `title` prop string to be a child of new `Heading`
+ * within a `Header`.
  */
 export function movePropToNewChildComponentName(
   path: NodePath<t.JSXElement>,

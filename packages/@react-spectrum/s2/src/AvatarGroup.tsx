@@ -32,6 +32,7 @@ export interface AvatarGroupProps extends UnsafeStyles, DOMProps, AriaLabelingPr
   label?: string;
   /**
    * The size of the avatar group.
+   *
    * @default 24
    */
   size?: 16 | 20 | 24 | 28 | 32 | 36 | 40;

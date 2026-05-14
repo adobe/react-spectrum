@@ -31,16 +31,19 @@ export interface CalendarPropsBase {
   maxValue?: DateValue | null;
   /**
    * Whether the calendar is disabled.
+   *
    * @default false
    */
   isDisabled?: boolean;
   /**
    * Whether the calendar value is immutable.
+   *
    * @default false
    */
   isReadOnly?: boolean;
   /**
    * Whether to automatically focus the calendar when it mounts.
+   *
    * @default false
    */
   autoFocus?: boolean;
@@ -52,6 +55,7 @@ export interface CalendarPropsBase {
   onFocusChange?: (date: CalendarDate) => void;
   /**
    * Whether the current selection is valid or invalid according to application logic.
+   *
    * @deprecated Use `isInvalid` instead.
    */
   validationState?: ValidationState;
@@ -60,7 +64,9 @@ export interface CalendarPropsBase {
   /** An error message to display when the selected value is invalid. */
   errorMessage?: ReactNode;
   /**
-   * Controls the behavior of paging. Pagination either works by advancing the visible page by visibleDuration (default) or one unit of visibleDuration.
+   * Controls the behavior of paging. Pagination either works by advancing the visible page by
+   * visibleDuration (default) or one unit of visibleDuration.
+   *
    * @default visible
    */
   pageBehavior?: PageBehavior;
@@ -69,7 +75,9 @@ export interface CalendarPropsBase {
    */
   firstDayOfWeek?: 'sun' | 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat';
   /**
-   * Determines the alignment of the visible months on initial render based on the current selection or current date if there is no selection.
+   * Determines the alignment of the visible months on initial render based on the current selection
+   * or current date if there is no selection.
+   *
    * @default 'center'
    */
   selectionAlignment?: 'start' | 'center' | 'end';
@@ -96,6 +104,7 @@ interface CalendarStateBase {
   readonly timeZone: string;
   /**
    * The current validation state of the selected value.
+   *
    * @deprecated Use `isValueInvalid` instead.
    */
   readonly validationState: ValidationState | null;
@@ -119,7 +128,10 @@ interface CalendarStateBase {
   focusPreviousPage(): void;
   /** Moves focus to the start of the current section of dates, e.g. the start of the current month. */
   focusSectionStart(): void;
-  /** Moves focus to the end of the current section of dates, e.g. the end of the current month month. */
+  /**
+   * Moves focus to the end of the current section of dates, e.g. the end of the current month
+   * month.
+   */
   focusSectionEnd(): void;
   /**
    * Moves focus to the next section of dates based on what is currently displayed.
@@ -151,17 +163,27 @@ interface CalendarStateBase {
   isSelected(date: CalendarDate): boolean;
   /** Returns whether the given date is currently focused. */
   isCellFocused(date: CalendarDate): boolean;
-  /** Returns whether the given date is disabled according to the `minValue, `maxValue`, and `isDisabled` props. */
+  /**
+   * Returns whether the given date is disabled according to the `minValue, `maxValue`, and
+   * `isDisabled` props.
+   */
   isCellDisabled(date: CalendarDate): boolean;
   /** Returns whether the given date is unavailable according to the `isDateUnavailable` prop. */
   isCellUnavailable(date: CalendarDate): boolean;
-  /** Returns whether the previous visible date range is allowed to be selected according to the `minValue` prop. */
+  /**
+   * Returns whether the previous visible date range is allowed to be selected according to the
+   * `minValue` prop.
+   */
   isPreviousVisibleRangeInvalid(): boolean;
-  /** Returns whether the next visible date range is allowed to be selected according to the `maxValue` prop. */
+  /**
+   * Returns whether the next visible date range is allowed to be selected according to the
+   * `maxValue` prop.
+   */
   isNextVisibleRangeInvalid(): boolean;
   /**
-   * Returns an array of dates in the week index counted from the provided start date, or the first visible date if not given.
-   * The returned array always has 7 elements, but may include null if the date does not exist according to the calendar system.
+   * Returns an array of dates in the week index counted from the provided start date, or the first
+   * visible date if not given. The returned array always has 7 elements, but may include null if
+   * the date does not exist according to the calendar system.
    */
   getDatesInWeek(weekIndex: number, startDate?: CalendarDate): Array<CalendarDate | null>;
   /** Returns the number of weeks in a month. */

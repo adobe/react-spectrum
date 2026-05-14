@@ -29,11 +29,13 @@ import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatte
 
 export interface SpectrumRangeSliderProps extends SpectrumBarSliderBase<RangeValue<number>> {
   /**
-   * The name of the start input element, used when submitting an HTML form. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefname).
+   * The name of the start input element, used when submitting an HTML form. See
+   * [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefname).
    */
   startName?: string;
   /**
-   * The name of the end input element, used when submitting an HTML form. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefname).
+   * The name of the end input element, used when submitting an HTML form. See
+   * [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefname).
    */
   endName?: string;
   /**
@@ -45,7 +47,8 @@ export interface SpectrumRangeSliderProps extends SpectrumBarSliderBase<RangeVal
 }
 
 /**
- * RangeSliders allow users to quickly select a subset range. They should be used when the upper and lower bounds to the range are invariable.
+ * RangeSliders allow users to quickly select a subset range. They should be used when the upper and
+ * lower bounds to the range are invariable.
  */
 export const RangeSlider = React.forwardRef(function RangeSlider(
   props: SpectrumRangeSliderProps,

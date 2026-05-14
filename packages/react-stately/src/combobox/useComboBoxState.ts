@@ -43,6 +43,7 @@ type ValidationType<M extends SelectionMode> = M extends 'single' ? Key | null :
 export interface ComboBoxValidationValue<M extends SelectionMode = 'single'> {
   /**
    * The selected key in the ComboBox.
+   *
    * @deprecated
    */
   selectedKey: Key | null;
@@ -66,25 +67,32 @@ export interface ComboBoxProps<T, M extends SelectionMode = 'single'>
   defaultItems?: Iterable<T>;
   /** The list of ComboBox items (controlled). */
   items?: Iterable<T>;
-  /** Method that is called when the open state of the menu changes. Returns the new open state and the action that caused the opening of the menu. */
+  /**
+   * Method that is called when the open state of the menu changes. Returns the new open state and
+   * the action that caused the opening of the menu.
+   */
   onOpenChange?: (isOpen: boolean, menuTrigger?: MenuTriggerAction) => void;
   /**
    * Whether single or multiple selection is enabled.
+   *
    * @default 'single'
    */
   selectionMode?: M;
   /**
    * The currently selected key in the collection (controlled).
+   *
    * @deprecated
    */
   selectedKey?: Key | null;
   /**
    * The initial selected key in the collection (uncontrolled).
+   *
    * @deprecated
    */
   defaultSelectedKey?: Key | null;
   /**
    * Handler that is called when the selection changes.
+   *
    * @deprecated
    */
   onSelectionChange?: (key: Key | null) => void;
@@ -103,6 +111,7 @@ export interface ComboBoxProps<T, M extends SelectionMode = 'single'>
   // completionMode?: 'suggest' | 'complete',
   /**
    * The interaction required to display the ComboBox menu.
+   *
    * @default 'input'
    */
   menuTrigger?: MenuTriggerAction;
@@ -112,17 +121,20 @@ export interface ComboBoxState<T, M extends SelectionMode = 'single'>
   extends ListState<T>, OverlayTriggerState, FormValidationState {
   /**
    * The key for the first selected item.
+   *
    * @deprecated
    */
   readonly selectedKey: Key | null;
 
   /**
    * The default selected key.
+   *
    * @deprecated
    */
   readonly defaultSelectedKey: Key | null;
   /**
    * Sets the selected key.
+   *
    * @deprecated
    */
   setSelectedKey(key: Key | null): void;
@@ -134,6 +146,7 @@ export interface ComboBoxState<T, M extends SelectionMode = 'single'>
   setValue(value: Key | readonly Key[] | null): void;
   /**
    * The value of the first selected item.
+   *
    * @deprecated
    */
   readonly selectedItem: Node<T> | null;
@@ -157,7 +170,7 @@ export interface ComboBoxState<T, M extends SelectionMode = 'single'>
   open(focusStrategy?: FocusStrategy | null, trigger?: MenuTriggerAction): void;
   /** Toggles the menu. */
   toggle(focusStrategy?: FocusStrategy | null, trigger?: MenuTriggerAction): void;
-  /** Resets the input value to the previously selected item's text if any and closes the menu.  */
+  /** Resets the input value to the previously selected item's text if any and closes the menu. */
   revert(): void;
 }
 
@@ -174,9 +187,9 @@ export interface ComboBoxStateOptions<T, M extends SelectionMode = 'single'>
 }
 
 /**
- * Provides state management for a combo box component. Handles building a collection
- * of items from props and manages the option selection state of the combo box. In addition, it tracks the input value,
- * focus state, and other properties of the combo box.
+ * Provides state management for a combo box component. Handles building a collection of items from
+ * props and manages the option selection state of the combo box. In addition, it tracks the input
+ * value, focus state, and other properties of the combo box.
  */
 export function useComboBoxState<T extends object, M extends SelectionMode = 'single'>(
   props: ComboBoxStateOptions<T, M>

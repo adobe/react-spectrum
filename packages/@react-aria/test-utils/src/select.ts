@@ -15,7 +15,8 @@ import {SelectTesterOpts, UserOpts} from './types';
 
 interface SelectOpenOpts {
   /**
-   * What interaction type to use when opening the select. Defaults to the interaction type set on the tester.
+   * What interaction type to use when opening the select. Defaults to the interaction type set on
+   * the tester.
    */
   interactionType?: UserOpts['interactionType'];
 }
@@ -26,7 +27,9 @@ interface SelectTriggerOptionOpts extends SelectOpenOpts {
    */
   option: number | string | HTMLElement;
   /**
-   * Whether or not the select closes on selection. Depends on select implementation and configuration.
+   * Whether or not the select closes on selection. Depends on select implementation and
+   * configuration.
+   *
    * @default true
    */
   closesOnSelect?: boolean;
@@ -165,8 +168,9 @@ export class SelectTester {
   }
 
   /**
-   * Selects the desired select option. Defaults to using the interaction type set on the select tester. If necessary, will open the select dropdown beforehand.
-   * The desired option can be targeted via the option's node, the option's text, or the option's index.
+   * Selects the desired select option. Defaults to using the interaction type set on the select
+   * tester. If necessary, will open the select dropdown beforehand. The desired option can be
+   * targeted via the option's node, the option's text, or the option's index.
    */
   async selectOption(opts: SelectTriggerOptionOpts): Promise<void> {
     let {option, closesOnSelect, interactionType = this._interactionType} = opts || {};
@@ -232,7 +236,8 @@ export class SelectTester {
   }
 
   /**
-   * Returns the select's options if present. Can be filtered to a subsection of the listbox if provided via `element`.
+   * Returns the select's options if present. Can be filtered to a subsection of the listbox if
+   * provided via `element`.
    */
   options(opts: {element?: HTMLElement} = {}): HTMLElement[] {
     let {element = this.listbox} = opts;

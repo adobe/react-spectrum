@@ -275,8 +275,8 @@ function reducer<T, C>(data: AsyncListState<T, C>, action: Action<T, C>): AsyncL
 }
 
 /**
- * Manages state for an immutable async loaded list data structure, and provides convenience methods to
- * update the data over time. Manages loading and error states, pagination, and sorting.
+ * Manages state for an immutable async loaded list data structure, and provides convenience methods
+ * to update the data over time. Manages loading and error states, pagination, and sorting.
  */
 export function useAsyncList<T, C = string>(options: AsyncListOptions<T, C>): AsyncListData<T> {
   const {
