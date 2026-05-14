@@ -257,7 +257,9 @@ describe('useControlledState tests', function () {
 
   it('will console warn if the programmer tries to switch from controlled to uncontrolled', () => {
     let onChangeSpy = jest.fn();
-    using consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    using consoleWarnSpy = jest
+      .spyOn(console, 'warn')
+      .mockImplementation(() => {}) as jest.SpyInstance & Disposable;
     let {result, rerender} = renderHook(
       ({value, defaultValue, onChange}) => useControlledState(value, defaultValue, onChange),
       {
@@ -280,7 +282,9 @@ describe('useControlledState tests', function () {
 
   it('will console warn if the programmer tries to switch from uncontrolled to controlled', () => {
     let onChangeSpy = jest.fn();
-    using consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    using consoleWarnSpy = jest
+      .spyOn(console, 'warn')
+      .mockImplementation(() => {}) as jest.SpyInstance & Disposable;
     let {result, rerender} = renderHook(
       ({value, defaultValue, onChange}) => useControlledState(value, defaultValue, onChange),
       {

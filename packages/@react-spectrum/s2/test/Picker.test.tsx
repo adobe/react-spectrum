@@ -181,7 +181,8 @@ describe('Picker', () => {
   });
 
   it('should warn if the custom render value output has a interactive child', async () => {
-    using spy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    using spy = jest.spyOn(console, 'warn').mockImplementation(() => {}) as jest.SpyInstance &
+      Disposable;
     let items = [
       {id: 'chocolate', name: 'Chocolate'},
       {id: 'strawberry', name: 'Strawberry'},
@@ -221,7 +222,8 @@ describe('Picker', () => {
 
   it('should support contextual help', async () => {
     // Issue with how we don't render the contextual help button in the fake DOM since PressResponder isn't using createHideableComponent
-    using warn = jest.spyOn(global.console, 'warn').mockImplementation();
+    using warn = jest.spyOn(global.console, 'warn').mockImplementation() as jest.SpyInstance &
+      Disposable;
     let user = userEvent.setup({delay: null, pointerMap});
     let tree = render(
       <Picker
