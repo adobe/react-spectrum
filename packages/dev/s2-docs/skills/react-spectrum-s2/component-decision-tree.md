@@ -131,5 +131,5 @@ If the design clearly shows borders, fills, or a defined hit target, use the def
 ## Last-resort custom components
 
 - Only create a custom component when no S2 component matches the required interaction pattern, or when the needed layout cannot be achieved by composing existing S2 components.
-- Build custom components with React Aria Components for behavior and accessibility, and the S2 `style` macro for Spectrum styling.
+- Build custom components with React Aria Components for behavior and accessibility, and the S2 `style` macro for Spectrum styling. See [Creating Custom Components]({{guidesBase}}creating-custom-components.md) for the full pattern (`focusRing`, `baseColor`, `pressScale`, render props, animations, etc.).
 - Do not bypass an existing S2 component just to apply unsupported visual customization.

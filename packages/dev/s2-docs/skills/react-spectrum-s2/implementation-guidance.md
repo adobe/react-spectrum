@@ -145,7 +145,7 @@ Prefer **semantic** color tokens when the color carries meaning: `'accent'`, `'n
 - `space(px)` / `fontRelative(px)` — escape hatches for non-grid pixel values (rare).
 - `pressScale(scale)` — press-state scale transforms on custom interactive elements.
 
-See [Styling]({{guidesBase}}styling.md) and [Style Macro]({{guidesBase}}style-macro.md) for the full reference. If you hit a `style` macro import error, see the 'Framework setup' section of [Getting started]({{guidesBase}}getting-started.md).
+See [Styling]({{guidesBase}}styling.md) and [Style Macro]({{guidesBase}}style-macro.md) for the full reference. When building a custom component on top of React Aria Components with the `style` macro, see [Creating Custom Components]({{guidesBase}}creating-custom-components.md) for best practices. If you hit a `style` macro import error, see the 'Framework setup' section of [Getting started]({{guidesBase}}getting-started.md).
 
 ## Responsive design
 
