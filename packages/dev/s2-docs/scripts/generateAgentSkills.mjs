@@ -103,6 +103,16 @@ const CUSTOM_SKILL_CONTENT = {
         ),
         description:
           'How to translate Figma designs (via the Figma MCP) into S2 components and the `style` macro.'
+      },
+      {
+        title: 'Creating Custom Components',
+        path: 'creating-custom-components.md',
+        sourcePath: path.join(
+          REPO_ROOT,
+          'packages/dev/s2-docs/skills/react-spectrum-s2/creating-custom-components.md'
+        ),
+        description:
+          'How to build custom Spectrum 2 components using React Aria Components and the `style` macro.'
       }
     ]
   }
