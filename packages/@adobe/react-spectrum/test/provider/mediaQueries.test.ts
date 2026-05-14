@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {renderHook} from '@react-spectrum/test-utils-internal';
 import {cleanup, setMedia} from 'mock-match-media';
+import {renderHook} from '@react-spectrum/test-utils-internal';
 import {useColorScheme} from '../../src/provider/mediaQueries';
 
 let theme = {
