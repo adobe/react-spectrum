@@ -10,8 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionButton, ActionButtonProps} from '../src/ActionButton';
-
+import {ActionButton, ActionButtonContext, ActionButtonProps} from '../src/ActionButton';
 import {Avatar} from '../src/Avatar';
 import BellIcon from '../s2wf-icons/S2_Icon_Bell_20_N.svg';
 import CommentIcon from '../s2wf-icons/S2_Icon_Comment_20_N.svg';
@@ -138,32 +137,34 @@ const sizes = ['XS', 'S', 'M', 'L', 'XL'] as const;
 
 export const HoldAffordance: ActionButtonStory = {
   render: () => (
-    <div className={style({display: 'flex', flexDirection: 'column', gap: 16})}>
-      {sizes.map(size => (
-        <div key={size} className={style({display: 'flex', gap: 8, alignItems: 'center'})}>
-          <ActionButton size={size} holdAffordance aria-label={`icon only ${size}`}>
-            <Cut />
-          </ActionButton>
-          <ActionButton size={size} holdAffordance>
-            <Text>Cut</Text>
-          </ActionButton>
-          <ActionButton size={size} holdAffordance>
-            <Cut />
-            <Text>Cut</Text>
-          </ActionButton>
-          <ActionButton size={size} holdAffordance isQuiet aria-label={`quiet icon only ${size}`}>
-            <Cut />
-          </ActionButton>
-          <ActionButton size={size} holdAffordance isQuiet>
-            <Text>Cut</Text>
-          </ActionButton>
-          <ActionButton size={size} holdAffordance isQuiet>
-            <Cut />
-            <Text>Cut</Text>
-          </ActionButton>
-        </div>
-      ))}
-    </div>
+    <ActionButtonContext.Provider value={{holdAffordance: true}}>
+      <div className={style({display: 'flex', flexDirection: 'column', gap: 16})}>
+        {sizes.map(size => (
+          <div key={size} className={style({display: 'flex', gap: 8, alignItems: 'center'})}>
+            <ActionButton size={size} aria-label={`icon only ${size}`}>
+              <Cut />
+            </ActionButton>
+            <ActionButton size={size}>
+              <Text>Cut</Text>
+            </ActionButton>
+            <ActionButton size={size}>
+              <Cut />
+              <Text>Cut</Text>
+            </ActionButton>
+            <ActionButton size={size} isQuiet aria-label={`quiet icon only ${size}`}>
+              <Cut />
+            </ActionButton>
+            <ActionButton size={size} isQuiet>
+              <Text>Cut</Text>
+            </ActionButton>
+            <ActionButton size={size} isQuiet>
+              <Cut />
+              <Text>Cut</Text>
+            </ActionButton>
+          </div>
+        ))}
+      </div>
+    </ActionButtonContext.Provider>
   )
 };
 

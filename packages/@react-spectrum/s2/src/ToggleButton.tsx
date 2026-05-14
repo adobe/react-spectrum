@@ -58,10 +58,12 @@ export interface ToggleButtonProps
   isEmphasized?: boolean;
 }
 
+interface ToggleButtonContextProps extends Partial<ToggleButtonProps> {
+  holdAffordance?: boolean;
+}
+
 export const ToggleButtonContext =
-  createContext<ContextValue<Partial<ToggleButtonProps>, FocusableRefValue<HTMLButtonElement>>>(
-    null
-  );
+  createContext<ContextValue<ToggleButtonContextProps, FocusableRefValue<HTMLButtonElement>>>(null);
 
 /**
  * ToggleButtons allow users to toggle a selection on or off, for example
@@ -86,7 +88,7 @@ export const ToggleButton = forwardRef(function ToggleButton(
     size = props.size || 'M',
     isDisabled = props.isDisabled
   } = ctx || {};
-  let {holdAffordance} = props;
+  let {holdAffordance} = props as ToggleButtonContextProps;
   let {direction} = useLocale();
 
   return (

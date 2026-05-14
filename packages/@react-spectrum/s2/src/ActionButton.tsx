@@ -63,8 +63,6 @@ export interface ActionButtonStyleProps {
    * style](https://spectrum.adobe.com/page/action-button/#Quiet).
    */
   isQuiet?: boolean;
-  /** @private */
-  holdAffordance?: boolean;
 }
 
 interface ToggleButtonStyleProps {
@@ -318,10 +316,12 @@ const avatarSize: Record<NonNullable<ActionButtonStyleProps['size']>, number> = 
   XL: 26
 } as const;
 
+interface ActionButtonContextProps extends Partial<ActionButtonProps> {
+  holdAffordance?: boolean;
+}
+
 export const ActionButtonContext =
-  createContext<ContextValue<Partial<ActionButtonProps>, FocusableRefValue<HTMLButtonElement>>>(
-    null
-  );
+  createContext<ContextValue<ActionButtonContextProps, FocusableRefValue<HTMLButtonElement>>>(null);
 
 /**
  * ActionButtons allow users to perform an action. They're used for similar, task-based options
@@ -335,7 +335,7 @@ export const ActionButton = forwardRef(function ActionButton(
   [props, ref] = useSpectrumContextProps(props, ref, ActionButtonContext);
   props = useFormProps(props as any);
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
-  let {isPending = false} = props;
+  let {isPending = false, holdAffordance} = props as ActionButtonContextProps;
   let domRef = useFocusableRef(ref);
   let overlayTriggerState = useContext(OverlayTriggerStateContext);
   let ctx = useSlottedContext(ActionButtonGroupContext);
@@ -351,7 +351,6 @@ export const ActionButton = forwardRef(function ActionButton(
   } = ctx || {};
 
   let {isProgressVisible} = usePendingState(isPending);
-  let {holdAffordance} = props;
   let {direction} = useLocale();
 
   return (
