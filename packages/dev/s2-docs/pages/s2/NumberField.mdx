@@ -117,16 +117,35 @@ Use the `prefix` prop to display an additional element before the input in the n
 ```tsx render
 "use client";
 import {NumberField} from '@react-spectrum/s2/NumberField';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 function Example() {
   return (
-    <NumberField
-      label="Price"
-      /*- begin highlight -*/
-      prefix="USD"
-      /*- end highlight -*/
-      formatOptions={{style: 'currency', currency: 'USD', currencyDisplay: 'narrowSymbol'}}
-      placeholder="0.00" />
+    <div className={style({display: 'flex', flexDirection: 'column', gap: 8})}>
+      <div style={{font: 'title'}}>Dimensions</div>
+      <div className={style({display: 'flex', flexDirection: 'row', gap: 8})}>
+        <NumberField
+          aria-label="Width"
+          /*- begin highlight -*/
+          prefix="W"
+          /*- end highlight -*/
+          formatOptions={{style: 'unit', unit: 'inch'}}
+          defaultValue={10}
+          placeholder="0"
+          styles={style({width: 100})}
+          hideStepper />
+        <NumberField
+          aria-label="Height"
+          /*- begin highlight -*/
+          prefix="H"
+          /*- end highlight -*/
+          formatOptions={{style: 'unit', unit: 'inch'}}
+          defaultValue={10}
+          placeholder="0"
+          styles={style({width: 100})}
+          hideStepper />
+      </div>
+    </div>
   );
 }
 ```
