@@ -1,11 +1,7 @@
-import { type Meta } from "@storybook/react";
-import React from "react";
-import {
-  Disclosure,
-  DisclosureHeader,
-  DisclosurePanel
-} from "../src/Disclosure";
-import { DisclosureGroup } from "../src/DisclosureGroup";
+import {type Meta} from '@storybook/react';
+import React from 'react';
+import {Disclosure, DisclosureHeader, DisclosurePanel} from '../src/Disclosure';
+import {DisclosureGroup} from '../src/DisclosureGroup';
 
 const meta: Meta<typeof DisclosureGroup> = {
   component: DisclosureGroup,
@@ -33,4 +29,3 @@ export const Example = (args: any) => (
     </Disclosure>
   </DisclosureGroup>
 );
-

@@ -21,8 +21,22 @@ import {
 import {baseColor, focusRing, space, style} from '../style' with {type: 'macro'};
 import {CenterBaseline} from './CenterBaseline';
 import {ContextValue} from 'react-aria-components/slots';
-import {controlFont, controlSize, field, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
-import {DOMRef, DOMRefValue, FocusableRef, GlobalDOMAttributes, HelpTextProps, Orientation, SpectrumLabelableProps} from '@react-types/shared';
+import {
+  controlFont,
+  controlSize,
+  field,
+  getAllowedOverrides,
+  StyleProps
+} from './style-utils' with {type: 'macro'};
+import {
+  DOMRef,
+  DOMRefValue,
+  FocusableRef,
+  GlobalDOMAttributes,
+  HelpTextProps,
+  Orientation,
+  SpectrumLabelableProps
+} from '@react-types/shared';
 import {FieldLabel, HelpText} from './Field';
 import {FormContext, useFormProps} from './Form';
 import {pressScale} from './pressScale';
@@ -30,36 +44,48 @@ import React, {createContext, forwardRef, ReactNode, useContext, useRef} from 'r
 import {useDOMRef, useFocusableRef} from './useDOMRef';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface RadioGroupProps extends Omit<AriaRadioGroupProps, 'className' | 'style' | 'render' | 'children' | keyof GlobalDOMAttributes>, StyleProps, SpectrumLabelableProps, HelpTextProps {
+export interface RadioGroupProps
+  extends
+    Omit<
+      AriaRadioGroupProps,
+      'className' | 'style' | 'render' | 'children' | keyof GlobalDOMAttributes
+    >,
+    StyleProps,
+    SpectrumLabelableProps,
+    HelpTextProps {
   /**
    * The Radios contained within the RadioGroup.
    */
-  children: ReactNode,
+  children: ReactNode;
   /**
    * The size of the RadioGroup.
    *
    * @default 'M'
    */
-  size?: 'S' | 'M' | 'L' | 'XL',
+  size?: 'S' | 'M' | 'L' | 'XL';
   /**
    * The axis the radio elements should align with.
    *
    * @default 'vertical'
    */
-  orientation?: Orientation,
+  orientation?: Orientation;
   /**
    * Whether the RadioGroup should be displayed with an emphasized style.
    */
-  isEmphasized?: boolean
+  isEmphasized?: boolean;
 }
 
-export const RadioGroupContext = createContext<ContextValue<Partial<RadioGroupProps>, DOMRefValue<HTMLDivElement>>>(null);
+export const RadioGroupContext =
+  createContext<ContextValue<Partial<RadioGroupProps>, DOMRefValue<HTMLDivElement>>>(null);
 
 /**
  * Radio groups allow users to select a single option from a list of mutually exclusive options.
  * All possible options are exposed up front for users to compare.
  */
-export const RadioGroup = /*#__PURE__*/ forwardRef(function RadioGroup(props: RadioGroupProps, ref: DOMRef<HTMLDivElement>) {
+export const RadioGroup = /*#__PURE__*/ forwardRef(function RadioGroup(
+  props: RadioGroupProps,
+  ref: DOMRef<HTMLDivElement>
+) {
   [props, ref] = useSpectrumContextProps(props, ref, RadioGroupContext);
   let formContext = useContext(FormContext);
   props = useFormProps(props);
@@ -86,18 +112,27 @@ export const RadioGroup = /*#__PURE__*/ forwardRef(function RadioGroup(props: Ra
       orientation={orientation}
       ref={domRef}
       style={UNSAFE_style}
-      className={UNSAFE_className + style({
-        ...field(),
-        // Double the usual gap because of the internal padding within checkbox that spectrum has.
-        '--field-gap': {
-          type: 'rowGap',
-          value: 'calc(var(--field-height) - 1lh)'
-        }
-      }, getAllowedOverrides())({
-        size,
-        labelPosition,
-        isInForm: !!formContext
-      }, props.styles)}>
+      className={
+        UNSAFE_className +
+        style(
+          {
+            ...field(),
+            // Double the usual gap because of the internal padding within checkbox that spectrum has.
+            '--field-gap': {
+              type: 'rowGap',
+              value: 'calc(var(--field-height) - 1lh)'
+            }
+          },
+          getAllowedOverrides()
+        )(
+          {
+            size,
+            labelPosition,
+            isInForm: !!formContext
+          },
+          props.styles
+        )
+      }>
       {({isDisabled, isInvalid}) => (
         <>
           <FieldLabel
@@ -149,11 +184,27 @@ export const RadioGroup = /*#__PURE__*/ forwardRef(function RadioGroup(props: Ra
   );
 });
 
-export interface RadioProps extends Omit<AriaRadioProps, 'className' | 'style' | 'render' | 'children' | 'onHover' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange' | 'onClick' | keyof GlobalDOMAttributes>, StyleProps, Pick<HelpTextProps, 'description'> {
+export interface RadioProps
+  extends
+    Omit<
+      AriaRadioProps,
+      | 'className'
+      | 'style'
+      | 'render'
+      | 'children'
+      | 'onHover'
+      | 'onHoverStart'
+      | 'onHoverEnd'
+      | 'onHoverChange'
+      | 'onClick'
+      | keyof GlobalDOMAttributes
+    >,
+    StyleProps,
+    Pick<HelpTextProps, 'description'> {
   /**
    * The label for the element.
    */
-  children?: ReactNode
+  children?: ReactNode;
 }
 
 interface ContextProps {
@@ -162,42 +213,45 @@ interface ContextProps {
    *
    * @default 'M'
    */
-  size?: 'S' | 'M' | 'L' | 'XL',
+  size?: 'S' | 'M' | 'L' | 'XL';
   /**
    * Whether the Radio within a RadioGroup should be displayed with an emphasized style.
    */
-  isEmphasized?: boolean
+  isEmphasized?: boolean;
 }
 
 interface RadioContextProps extends RadioProps, ContextProps {}
 
 interface RenderProps extends RadioRenderProps, ContextProps {}
 
-const radioField = style({
-  display: 'grid',
-  gridTemplateColumns: {
-    default: ['max-content', '1fr'],
-    isNoVisibleLabel: ['max-content']
-  },
-  columnGap: 'text-to-control',
-  alignContent: 'start',
-  font: controlFont(),
-  '--field-height': {
-    type: 'height',
-    value: controlSize()
-  },
-  rowGap: {
-    size: {
-      S: space(1),
-      M: space(1), 
-      L: 2,
-      XL: 2
+const radioField = style(
+  {
+    display: 'grid',
+    gridTemplateColumns: {
+      default: ['max-content', '1fr'],
+      isNoVisibleLabel: ['max-content']
+    },
+    columnGap: 'text-to-control',
+    alignContent: 'start',
+    font: controlFont(),
+    '--field-height': {
+      type: 'height',
+      value: controlSize()
+    },
+    rowGap: {
+      size: {
+        S: space(1),
+        M: space(1),
+        L: 2,
+        XL: 2
+      }
+    },
+    gridColumnStart: {
+      isInForm: 'field'
     }
   },
-  gridColumnStart: {
-    isInForm: 'field'
-  }
-}, getAllowedOverrides());
+  getAllowedOverrides()
+);
 
 const wrapper = style({
   display: 'grid',
@@ -263,16 +317,16 @@ const smallerSize = {
  * Radio buttons allow users to select a single option from a list of mutually exclusive options.
  * All possible options are exposed up front for users to compare.
  */
-export const Radio = /*#__PURE__*/ forwardRef(function Radio(props: RadioProps, ref: FocusableRef<HTMLInputElement, HTMLDivElement>) {
+export const Radio = /*#__PURE__*/ forwardRef(function Radio(
+  props: RadioProps,
+  ref: FocusableRef<HTMLInputElement, HTMLDivElement>
+) {
   let {children, UNSAFE_className = '', UNSAFE_style} = props;
   let circleRef = useRef(null);
   let inputRef = useRef<HTMLInputElement | null>(null);
   let domRef = useFocusableRef(ref, inputRef);
   let isInForm = !!useContext(FormContext);
-  let {
-    size = 'M',
-    ...allProps
-  } = useFormProps<RadioContextProps>(props);
+  let {size = 'M', ...allProps} = useFormProps<RadioContextProps>(props);
 
   return (
     <RadioField
@@ -280,7 +334,10 @@ export const Radio = /*#__PURE__*/ forwardRef(function Radio(props: RadioProps, 
       ref={domRef}
       inputRef={inputRef}
       style={UNSAFE_style}
-      className={renderProps => UNSAFE_className + radioField({...renderProps, isInForm, size, isNoVisibleLabel: !children}, allProps.styles)}>
+      className={renderProps =>
+        UNSAFE_className +
+        radioField({...renderProps, isInForm, size, isNoVisibleLabel: !children}, allProps.styles)
+      }>
       {renderProps => (
         <>
           <RadioButton className={renderProps => wrapper({...renderProps, isInForm, size})}>
@@ -295,7 +352,8 @@ export const Radio = /*#__PURE__*/ forwardRef(function Radio(props: RadioProps, 
                       isEmphasized: allProps.isEmphasized,
                       isSelected: renderProps.isSelected,
                       size
-                    })} />
+                    })}
+                  />
                 </CenterBaseline>
                 {children}
               </>
@@ -308,7 +366,8 @@ export const Radio = /*#__PURE__*/ forwardRef(function Radio(props: RadioProps, 
               paddingTop: 0
             })}
             isDisabled={renderProps.isDisabled}
-            description={props.description} />
+            description={props.description}
+          />
         </>
       )}
     </RadioField>

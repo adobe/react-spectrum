@@ -22,7 +22,7 @@ function getRange(row) {
   let th = row.firstElementChild;
 
   do {
-    const { textContent } = th;
+    const {textContent} = th;
 
     let [start, end = start] = textContent.split('-');
 
@@ -54,8 +54,8 @@ function getLocales(cell) {
 }
 
 function getPlurals(tr, range) {
-  let columnTitles = [...tr.childNodes].map((td) => td.title);
-  let rules = Object.fromEntries(columnTitles.map((key) => [key, []]));
+  let columnTitles = [...tr.childNodes].map(td => td.title);
+  let rules = Object.fromEntries(columnTitles.map(key => [key, []]));
 
   let td = tr.firstElementChild;
 
@@ -64,9 +64,7 @@ function getPlurals(tr, range) {
   do {
     const category = td.title;
 
-    let columns = td.hasAttribute('colspan')
-      ? Number(td.getAttribute('colspan'))
-      : 1;
+    let columns = td.hasAttribute('colspan') ? Number(td.getAttribute('colspan')) : 1;
 
     do {
       rules[category].push(range[index]);
@@ -93,15 +91,12 @@ function extractTable(dom, integerTable, fractionTable) {
           for (const language of current.languages) {
             if (!results[language]) {
               results[language] = Object.fromEntries(
-                Object.keys(current.rules).map((key) => [key, []])
+                Object.keys(current.rules).map(key => [key, []])
               );
             }
 
             for (let rule in current.rules) {
-              results[language][rule] = [].concat(
-                results[language][rule],
-                current.rules[rule]
-              );
+              results[language][rule] = [].concat(results[language][rule], current.rules[rule]);
             }
           }
         }
@@ -109,7 +104,7 @@ function extractTable(dom, integerTable, fractionTable) {
         current = {
           range: [],
           languages: [],
-          rules: {},
+          rules: {}
         };
 
         current.range = getRange(tr);
@@ -150,13 +145,14 @@ function extractTable(dom, integerTable, fractionTable) {
   return Array.from(values);
 }
 
-fetch('https://www.unicode.org/cldr/charts/49/supplemental/language_plural_rules.html#comparison')
-  .then(async (response) => {
-    let data = await response.text();
-    const dom = new JSDOM(data);
+fetch(
+  'https://www.unicode.org/cldr/charts/49/supplemental/language_plural_rules.html#comparison'
+).then(async response => {
+  let data = await response.text();
+  const dom = new JSDOM(data);
 
-    const [integerTable, fractionTable] = dom.window.document.querySelectorAll('.pluralComp');
+  const [integerTable, fractionTable] = dom.window.document.querySelectorAll('.pluralComp');
 
-    let values = extractTable(dom, integerTable, fractionTable);
-    console.log(values);
-  });
+  let values = extractTable(dom, integerTable, fractionTable);
+  console.log(values);
+});

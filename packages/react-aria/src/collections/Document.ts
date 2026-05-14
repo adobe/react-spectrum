@@ -104,7 +104,11 @@ export class BaseNode<T> {
   }
 
   private invalidateChildIndices(child: ElementNode<T>): void {
-    if (this._minInvalidChildIndex == null || !this._minInvalidChildIndex.isConnected || child.index < this._minInvalidChildIndex.index) {
+    if (
+      this._minInvalidChildIndex == null ||
+      !this._minInvalidChildIndex.isConnected ||
+      child.index < this._minInvalidChildIndex.index
+    ) {
       this._minInvalidChildIndex = child;
       this.ownerDocument.markDirty(this);
     }
@@ -311,7 +315,8 @@ export class ElementNode<T> extends BaseNode<T> {
 
     node.index = this.index;
     node.level = this.level;
-    node.parentKey = this.parentNode instanceof ElementNode ? this.parentNode.node?.key ?? null : null;
+    node.parentKey =
+      this.parentNode instanceof ElementNode ? (this.parentNode.node?.key ?? null) : null;
     node.prevKey = this.previousVisibleSibling?.node?.key ?? null;
     node.nextKey = nextSibling?.node?.key ?? null;
     node.hasChildNodes = !!this.firstChild;
@@ -329,7 +334,13 @@ export class ElementNode<T> extends BaseNode<T> {
     }
   }
 
-  setProps<E extends Element>(obj: {[key: string]: any}, ref: ForwardedRef<E>, CollectionNodeClass: CollectionNodeClass<any>, rendered?: ReactNode, render?: (node: Node<T>) => ReactElement): void {
+  setProps<E extends Element>(
+    obj: {[key: string]: any},
+    ref: ForwardedRef<E>,
+    CollectionNodeClass: CollectionNodeClass<any>,
+    rendered?: ReactNode,
+    render?: (node: Node<T>) => ReactElement
+  ): void {
     let node;
     let {value, textValue, id, ...props} = obj;
     if (this.node == null) {
@@ -347,7 +358,11 @@ export class ElementNode<T> extends BaseNode<T> {
     if (obj['aria-label']) {
       node['aria-label'] = obj['aria-label'];
     }
-    node.textValue = textValue || (typeof props.children === 'string' ? props.children : '') || obj['aria-label'] || '';
+    node.textValue =
+      textValue ||
+      (typeof props.children === 'string' ? props.children : '') ||
+      obj['aria-label'] ||
+      '';
     if (id != null && id !== node.key) {
       throw new Error('Cannot change the id of an item');
     }
@@ -375,7 +390,10 @@ export class ElementNode<T> extends BaseNode<T> {
         let isHidden = value === 'none';
         if (element.isHidden !== isHidden) {
           // Mark parent node dirty if this element is currently the first or last visible child.
-          if (element.parentNode?.firstVisibleChild === element || element.parentNode?.lastVisibleChild === element) {
+          if (
+            element.parentNode?.firstVisibleChild === element ||
+            element.parentNode?.lastVisibleChild === element
+          ) {
             element.ownerDocument.markDirty(element.parentNode);
           }
 
@@ -518,7 +536,11 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
 
     // Finally, update the collection.
     if (this.nextCollection) {
-      this.nextCollection.commit(this.firstVisibleChild?.node?.key ?? null, this.lastVisibleChild?.node?.key ?? null, this.isSSR);
+      this.nextCollection.commit(
+        this.firstVisibleChild?.node?.key ?? null,
+        this.lastVisibleChild?.node?.key ?? null,
+        this.isSSR
+      );
       if (!this.isSSR) {
         this.collection = this.nextCollection;
         this.nextCollection = null;

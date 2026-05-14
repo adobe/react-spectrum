@@ -28,8 +28,7 @@ const RADIUS = 100;
 const TRACK_THICKNESS = 28;
 const THUMB_SIZE = 20;
 
-
-export const ColorWheelExample: ColorWheelStory = (args) => (
+export const ColorWheelExample: ColorWheelStory = args => (
   <ColorWheel {...args} outerRadius={RADIUS} innerRadius={RADIUS - TRACK_THICKNESS}>
     <ColorWheelTrack />
     <ColorThumb
@@ -41,6 +40,7 @@ export const ColorWheelExample: ColorWheelStory = (args) => (
         borderRadius: '50%',
         boxSizing: 'border-box',
         background: color.toString()
-      })} />
+      })}
+    />
   </ColorWheel>
 );

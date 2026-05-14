@@ -22,9 +22,9 @@ import {useEffect} from 'react';
 export const onCloseMap: WeakMap<Element, () => void> = new WeakMap();
 
 interface CloseOnScrollOptions {
-  triggerRef: RefObject<Element | null>,
-  isOpen?: boolean,
-  onClose?: (() => void) | null
+  triggerRef: RefObject<Element | null>;
+  isOpen?: boolean;
+  onClose?: (() => void) | null;
 }
 
 /** @private */
@@ -40,7 +40,10 @@ export function useCloseOnScroll(opts: CloseOnScrollOptions): void {
       // Ignore if scrolling an scrollable region outside the trigger's tree.
       let target = getEventTarget(e);
       // window is not a Node and doesn't have contain, but window contains everything
-      if (!triggerRef.current || ((target instanceof Node) && !nodeContains(target, triggerRef.current))) {
+      if (
+        !triggerRef.current ||
+        (target instanceof Node && !nodeContains(target, triggerRef.current))
+      ) {
         return;
       }
 

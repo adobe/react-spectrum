@@ -12,16 +12,45 @@
 
 /// <reference types="css-module-types" />
 
-export {shouldKeepSpectrumClassNames, keepSpectrumClassNames, classNames} from '@adobe/react-spectrum/private/utils/classNames';
+export {
+  shouldKeepSpectrumClassNames,
+  keepSpectrumClassNames,
+  classNames
+} from '@adobe/react-spectrum/private/utils/classNames';
 
 export {getWrappedElement} from '@adobe/react-spectrum/private/utils/getWrappedElement';
 export {useMediaQuery} from '@adobe/react-spectrum/private/utils/useMediaQuery';
-export {createDOMRef, createFocusableRef, useDOMRef, useFocusableRef, unwrapDOMRef, useUnwrapDOMRef} from '@adobe/react-spectrum/private/utils/useDOMRef';
-export {baseStyleProps, viewStyleProps, dimensionValue, responsiveDimensionValue, convertStyleProps, useStyleProps, passthroughStyle, getResponsiveProp} from '@adobe/react-spectrum/private/utils/styleProps';
-export {useSlotProps, cssModuleToSlots, SlotProvider, ClearSlots} from '@adobe/react-spectrum/private/utils/Slots';
+export {
+  createDOMRef,
+  createFocusableRef,
+  useDOMRef,
+  useFocusableRef,
+  unwrapDOMRef,
+  useUnwrapDOMRef
+} from '@adobe/react-spectrum/private/utils/useDOMRef';
+export {
+  baseStyleProps,
+  viewStyleProps,
+  dimensionValue,
+  responsiveDimensionValue,
+  convertStyleProps,
+  useStyleProps,
+  passthroughStyle,
+  getResponsiveProp
+} from '@adobe/react-spectrum/private/utils/styleProps';
+export {
+  useSlotProps,
+  cssModuleToSlots,
+  SlotProvider,
+  ClearSlots
+} from '@adobe/react-spectrum/private/utils/Slots';
 export {useHasChild} from '@adobe/react-spectrum/private/utils/useHasChild';
 export {useIsMobileDevice} from '@adobe/react-spectrum/private/utils/useIsMobileDevice';
-export {BreakpointProvider, useMatchedBreakpoints, useBreakpoint} from '@adobe/react-spectrum/private/utils/BreakpointProvider';
+export {
+  BreakpointProvider,
+  useMatchedBreakpoints,
+  useBreakpoint
+} from '@adobe/react-spectrum/private/utils/BreakpointProvider';
 export type {StyleHandlers} from '@adobe/react-spectrum/private/utils/styleProps';
 export {useValueEffect} from 'react-aria/private/utils/useValueEffect';
 export {useResizeObserver} from 'react-aria/private/utils/useResizeObserver';

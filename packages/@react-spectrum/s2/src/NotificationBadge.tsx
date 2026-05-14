@@ -30,93 +30,103 @@ export interface NotificationBadgeStyleProps {
    *
    * @default 'S'
    */
-  size?: 'S' | 'M' | 'L' | 'XL'
+  size?: 'S' | 'M' | 'L' | 'XL';
 }
 
-export interface NotificationBadgeProps extends DOMProps, AriaLabelingProps, StyleProps, NotificationBadgeStyleProps, SlotProps {
+export interface NotificationBadgeProps
+  extends DOMProps, AriaLabelingProps, StyleProps, NotificationBadgeStyleProps, SlotProps {
   /**
    * The value to be displayed in the notification badge.
    */
-  value?: number | null
+  value?: number | null;
 }
 
 interface NotificationBadgeContextProps extends Partial<NotificationBadgeProps> {
-  isDisabled?: boolean,
-  staticColor?: 'black' | 'white' | 'auto'
+  isDisabled?: boolean;
+  staticColor?: 'black' | 'white' | 'auto';
 }
 
-export const NotificationBadgeContext = createContext<ContextValue<Partial<NotificationBadgeContextProps>, DOMRefValue<HTMLDivElement>>>(null);
+export const NotificationBadgeContext =
+  createContext<ContextValue<Partial<NotificationBadgeContextProps>, DOMRefValue<HTMLDivElement>>>(
+    null
+  );
 
-const badge = style({
-  display: {
-    default: 'flex',
-    isDisabled: 'none'
-  },
-  font: 'ui',
-  color: {
-    default: 'white',
-    isStaticColor: 'auto',
-    forcedColors: 'ButtonText'
-  },
-  fontSize: {
-    size: {
-      S: 'ui-xs',
-      M: 'ui-xs',
-      L: 'ui-sm',
-      XL: 'ui'
-    }
-  },
-  borderStyle: {
-    forcedColors: 'solid'
-  },
-  borderWidth: {
-    forcedColors: '[1px]'
-  },
-  borderColor: {
-    forcedColors: 'ButtonBorder'
-  },
-  justifyContent: 'center',
-  alignItems: 'center',
-  backgroundColor: {
-    default: 'accent',
-    isStaticColor: 'transparent-overlay-1000',
-    forcedColors: 'ButtonFace'
-  },
-  height: {
-    size: {
-      S: {
-        default: 12,
-        isIndicatorOnly: 8
-      },
-      M: {
-        default: fontRelative(18), // sort of arbitrary? tried to get as close to the figma designs as possible
-        isIndicatorOnly: 8
-      },
-      L: {
-        default: 16,
-        isIndicatorOnly: fontRelative(12)
-      },
-      XL: {
-        default: 18,
-        isIndicatorOnly: fontRelative(12)
+const badge = style(
+  {
+    display: {
+      default: 'flex',
+      isDisabled: 'none'
+    },
+    font: 'ui',
+    color: {
+      default: 'white',
+      isStaticColor: 'auto',
+      forcedColors: 'ButtonText'
+    },
+    fontSize: {
+      size: {
+        S: 'ui-xs',
+        M: 'ui-xs',
+        L: 'ui-sm',
+        XL: 'ui'
       }
-    }
+    },
+    borderStyle: {
+      forcedColors: 'solid'
+    },
+    borderWidth: {
+      forcedColors: '[1px]'
+    },
+    borderColor: {
+      forcedColors: 'ButtonBorder'
+    },
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: {
+      default: 'accent',
+      isStaticColor: 'transparent-overlay-1000',
+      forcedColors: 'ButtonFace'
+    },
+    height: {
+      size: {
+        S: {
+          default: 12,
+          isIndicatorOnly: 8
+        },
+        M: {
+          default: fontRelative(18), // sort of arbitrary? tried to get as close to the figma designs as possible
+          isIndicatorOnly: 8
+        },
+        L: {
+          default: 16,
+          isIndicatorOnly: fontRelative(12)
+        },
+        XL: {
+          default: 18,
+          isIndicatorOnly: fontRelative(12)
+        }
+      }
+    },
+    aspectRatio: {
+      isIndicatorOnly: 'square',
+      isSingleDigit: 'square'
+    },
+    width: 'max',
+    paddingX: {
+      isDoubleDigit: 'edge-to-text'
+    },
+    borderRadius: 'pill'
   },
-  aspectRatio: {
-    isIndicatorOnly: 'square',
-    isSingleDigit: 'square'
-  },
-  width: 'max',
-  paddingX: {
-    isDoubleDigit: 'edge-to-text'
-  },
-  borderRadius: 'pill'
-}, getAllowedOverrides());
+  getAllowedOverrides()
+);
 
 /**
  * Notification badges are used to indicate new or pending activity .
  */
-export const NotificationBadge = forwardRef(function Badge(props: NotificationBadgeProps, ref: DOMRef<HTMLDivElement>) {
+export const NotificationBadge = forwardRef(function Badge(
+  props: NotificationBadgeProps,
+  ref: DOMRef<HTMLDivElement>
+) {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   [props, ref] = useSpectrumContextProps(props, ref, NotificationBadgeContext);
   let {
@@ -142,7 +152,7 @@ export const NotificationBadge = forwardRef(function Badge(props: NotificationBa
     throw new Error('Value must be a positive integer');
   } else {
     formattedValue = new NumberFormatter(locale).format(Math.min(value, 99));
-    let length = Math.log(value <= 99 ? value : 99) * Math.LOG10E + 1 | 0;  // for positive integers (https://stackoverflow.com/questions/14879691/get-number-of-digits-with-javascript)
+    let length = (Math.log(value <= 99 ? value : 99) * Math.LOG10E + 1) | 0; // for positive integers (https://stackoverflow.com/questions/14879691/get-number-of-digits-with-javascript)
     if (length === 1) {
       isSingleDigit = true;
     } else if (length === 2) {
@@ -150,7 +160,9 @@ export const NotificationBadge = forwardRef(function Badge(props: NotificationBa
     }
 
     if (value > 99) {
-      formattedValue = stringFormatter.format('notificationbadge.plus', {notifications: formattedValue});
+      formattedValue = stringFormatter.format('notificationbadge.plus', {
+        notifications: formattedValue
+      });
     }
   }
 
@@ -164,7 +176,20 @@ export const NotificationBadge = forwardRef(function Badge(props: NotificationBa
       {...filterDOMProps(otherProps, {labelable: true})}
       role={ariaLabel && 'img'}
       aria-label={ariaLabel}
-      className={(props.UNSAFE_className || '') + badge({size, isIndicatorOnly, isSingleDigit, isDoubleDigit, isDisabled, isStaticColor: !!staticColor}, props.styles)}
+      className={
+        (props.UNSAFE_className || '') +
+        badge(
+          {
+            size,
+            isIndicatorOnly,
+            isSingleDigit,
+            isDoubleDigit,
+            isDisabled,
+            isStaticColor: !!staticColor
+          },
+          props.styles
+        )
+      }
       style={props.UNSAFE_style}
       ref={domRef}>
       {formattedValue}

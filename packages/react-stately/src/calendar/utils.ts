@@ -21,12 +21,24 @@ import {
 } from '@internationalized/date';
 import {DateValue} from './types';
 
-export function isInvalid(date: DateValue, minValue?: DateValue | null, maxValue?: DateValue | null): boolean {
-  return (minValue != null && date.compare(minValue) < 0) ||
-    (maxValue != null && date.compare(maxValue) > 0);
+export function isInvalid(
+  date: DateValue,
+  minValue?: DateValue | null,
+  maxValue?: DateValue | null
+): boolean {
+  return (
+    (minValue != null && date.compare(minValue) < 0) ||
+    (maxValue != null && date.compare(maxValue) > 0)
+  );
 }
 
-export function alignCenter(date: CalendarDate, duration: DateDuration, locale: string, minValue?: DateValue | null, maxValue?: DateValue | null): CalendarDate {
+export function alignCenter(
+  date: CalendarDate,
+  duration: DateDuration,
+  locale: string,
+  minValue?: DateValue | null,
+  maxValue?: DateValue | null
+): CalendarDate {
   let halfDuration: DateDuration = {};
   for (let key in duration) {
     halfDuration[key] = Math.floor(duration[key] / 2);
@@ -39,7 +51,13 @@ export function alignCenter(date: CalendarDate, duration: DateDuration, locale: 
   return constrainStart(date, aligned, duration, locale, minValue, maxValue);
 }
 
-export function alignStart(date: CalendarDate, duration: DateDuration, locale: string, minValue?: DateValue | null, maxValue?: DateValue | null): CalendarDate {
+export function alignStart(
+  date: CalendarDate,
+  duration: DateDuration,
+  locale: string,
+  minValue?: DateValue | null,
+  maxValue?: DateValue | null
+): CalendarDate {
   // align to the start of the largest unit
   let aligned = date;
   if (duration.years) {
@@ -53,7 +71,13 @@ export function alignStart(date: CalendarDate, duration: DateDuration, locale: s
   return constrainStart(date, aligned, duration, locale, minValue, maxValue);
 }
 
-export function alignEnd(date: CalendarDate, duration: DateDuration, locale: string, minValue?: DateValue | null, maxValue?: DateValue | null): CalendarDate {
+export function alignEnd(
+  date: CalendarDate,
+  duration: DateDuration,
+  locale: string,
+  minValue?: DateValue | null,
+  maxValue?: DateValue | null
+): CalendarDate {
   let d = {...duration};
   // subtract 1 from the smallest unit
   if (d.days) {
@@ -76,22 +100,17 @@ export function constrainStart(
   duration: DateDuration,
   locale: string,
   minValue?: DateValue | null,
-  maxValue?: DateValue | null): CalendarDate {
+  maxValue?: DateValue | null
+): CalendarDate {
   if (minValue && date.compare(minValue) >= 0) {
-    let newDate = maxDate(
-      aligned,
-      alignStart(toCalendarDate(minValue), duration, locale)
-    );
+    let newDate = maxDate(aligned, alignStart(toCalendarDate(minValue), duration, locale));
     if (newDate) {
       aligned = newDate;
     }
   }
 
   if (maxValue && date.compare(maxValue) <= 0) {
-    let newDate = minDate(
-      aligned,
-      alignEnd(toCalendarDate(maxValue), duration, locale)
-    );
+    let newDate = minDate(aligned, alignEnd(toCalendarDate(maxValue), duration, locale));
     if (newDate) {
       aligned = newDate;
     }
@@ -100,7 +119,11 @@ export function constrainStart(
   return aligned;
 }
 
-export function constrainValue(date: CalendarDate, minValue?: DateValue | null, maxValue?: DateValue | null): CalendarDate {
+export function constrainValue(
+  date: CalendarDate,
+  minValue?: DateValue | null,
+  maxValue?: DateValue | null
+): CalendarDate {
   if (minValue) {
     let newDate = maxDate(date, toCalendarDate(minValue));
     if (newDate) {
@@ -118,7 +141,11 @@ export function constrainValue(date: CalendarDate, minValue?: DateValue | null, 
   return date;
 }
 
-export function previousAvailableDate(date: CalendarDate, minValue: DateValue, isDateUnavailable?: (date: CalendarDate) => boolean): CalendarDate | null {
+export function previousAvailableDate(
+  date: CalendarDate,
+  minValue: DateValue,
+  isDateUnavailable?: (date: CalendarDate) => boolean
+): CalendarDate | null {
   if (!isDateUnavailable) {
     return date;
   }
@@ -138,10 +165,5 @@ export function isEqualDuration(a: DateDuration, b: DateDuration): boolean {
     return true;
   }
 
-  return (
-    a.days === b.days &&
-    a.weeks === b.weeks &&
-    a.months === b.months &&
-    a.years === b.years
-  );
+  return a.days === b.days && a.weeks === b.weeks && a.months === b.months && a.years === b.years;
 }

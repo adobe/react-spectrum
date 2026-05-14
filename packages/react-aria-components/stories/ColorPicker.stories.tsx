@@ -53,18 +53,23 @@ function ColorPickerExampleRender(args) {
           </select>
         </label>
         <div style={{display: 'flex', gap: 4, width: 192}}>
-          {format === 'hex'
-            ? (
-              <ColorField style={{display: 'flex', flexDirection: 'column'}}>
-                <Label>Hex</Label>
-                <Input />
-              </ColorField>
-            ) : getColorChannels(format).map(channel => (
-              <ColorField key={channel} colorSpace={format} channel={channel} style={{display: 'flex', flexDirection: 'column', flex: 1}}>
+          {format === 'hex' ? (
+            <ColorField style={{display: 'flex', flexDirection: 'column'}}>
+              <Label>Hex</Label>
+              <Input />
+            </ColorField>
+          ) : (
+            getColorChannels(format).map(channel => (
+              <ColorField
+                key={channel}
+                colorSpace={format}
+                channel={channel}
+                style={{display: 'flex', flexDirection: 'column', flex: 1}}>
                 <Label />
                 <Input style={{width: '100%', boxSizing: 'border-box'}} />
               </ColorField>
-            ))}
+            ))
+          )}
         </div>
         <ColorSwatchPicker
           style={{
@@ -81,20 +86,23 @@ function ColorPickerExampleRender(args) {
                 borderRadius: 4,
                 position: 'relative'
               })}>
-              {({isSelected}) => (<>
-                <ColorSwatchExampleRender />
-                {isSelected && (
-                  <div
-                    style={{
-                      position: 'absolute',
-                      inset: 0,
-                      border: '2px solid black',
-                      outline: '2px solid white',
-                      outlineOffset: -4,
-                      borderRadius: 4
-                    }} />
-                )}
-              </>)}
+              {({isSelected}) => (
+                <>
+                  <ColorSwatchExampleRender />
+                  {isSelected && (
+                    <div
+                      style={{
+                        position: 'absolute',
+                        inset: 0,
+                        border: '2px solid black',
+                        outline: '2px solid white',
+                        outlineOffset: -4,
+                        borderRadius: 4
+                      }}
+                    />
+                  )}
+                </>
+              )}
             </ColorSwatchPickerItem>
           ))}
         </ColorSwatchPicker>
@@ -104,7 +112,7 @@ function ColorPickerExampleRender(args) {
 }
 
 export const ColorPickerExample: ColorPickerStory = {
-  render: (args) => <ColorPickerExampleRender {...args} />
+  render: args => <ColorPickerExampleRender {...args} />
 };
 
 function ColorPickerSlidersRender(args) {
@@ -121,7 +129,12 @@ function ColorPickerSlidersRender(args) {
               <option>hsb</option>
             </select>
           </label>
-          {color.toFormat(colorSpace).getColorChannels().map(c => <ColorSliderExampleRender key={c} colorSpace={colorSpace} channel={c} />)}
+          {color
+            .toFormat(colorSpace)
+            .getColorChannels()
+            .map(c => (
+              <ColorSliderExampleRender key={c} colorSpace={colorSpace} channel={c} />
+            ))}
           <ColorSliderExampleRender channel="alpha" />
         </ColorPickerTrigger>
       )}
@@ -130,7 +143,7 @@ function ColorPickerSlidersRender(args) {
 }
 
 export const ColorPickerSliders: ColorPickerStory = {
-  render: (args) => <ColorPickerSlidersRender {...args} />
+  render: args => <ColorPickerSlidersRender {...args} />
 };
 
 function ColorPickerTrigger({children}) {

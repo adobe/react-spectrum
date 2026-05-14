@@ -13,12 +13,6 @@
     "noEmit": false,
     "allowImportingTsExtensions": false
   },
-  "include": [
-    "src/**/*",
-    "../shared/src/**/*"
-  ],
-  "exclude": [
-    "dist",
-    "node_modules"
-  ]
+  "include": ["src/**/*", "../shared/src/**/*"],
+  "exclude": ["dist", "node_modules"]
 }

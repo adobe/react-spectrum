@@ -435,11 +435,7 @@ export type ColorValueV6 =
   | 'magenta-1400'
   | SemanticColorValue;
 
-type SemanticColorValue =
-  | 'negative'
-  | 'notice'
-  | 'positive'
-  | 'informative';
+type SemanticColorValue = 'negative' | 'notice' | 'positive' | 'informative';
 
 type BorderColorAlias =
   | 'negative'
@@ -459,45 +455,18 @@ type BorderColorAlias =
   | 'translucent-dark'
   | 'translucent-darker';
 
-type BackgroundColorAlias =
-  | 'default'
-  | 'disabled'
-  | 'transparent'
-  | 'label-gray';
+type BackgroundColorAlias = 'default' | 'disabled' | 'transparent' | 'label-gray';
 
-export type IconColorValue =
-  | 'negative'
-  | 'notice'
-  | 'positive'
-  | 'informative';
+export type IconColorValue = 'negative' | 'notice' | 'positive' | 'informative';
 
-export type BorderSizeValue =
-  | 'thin'
-  | 'thick'
-  | 'thicker'
-  | 'thickest'
-  | 'none';
+export type BorderSizeValue = 'thin' | 'thick' | 'thicker' | 'thickest' | 'none';
 
-export type BorderRadiusValue =
-  | 'xsmall'
-  | 'small'
-  | 'regular'
-  | 'medium'
-  | 'large';
+export type BorderRadiusValue = 'xsmall' | 'small' | 'regular' | 'medium' | 'large';
 
-export type BorderColorValue =
-  | 'default'
-  | BorderColorAlias
-  | ColorValue;
+export type BorderColorValue = 'default' | BorderColorAlias | ColorValue;
 
-export type BorderColorValueV6 =
-  | BorderColorAlias
-  | ColorValueV6;
+export type BorderColorValueV6 = BorderColorAlias | ColorValueV6;
 
-export type BackgroundColorValue =
-  | BackgroundColorAlias
-  | ColorValue;
+export type BackgroundColorValue = BackgroundColorAlias | ColorValue;
 
-export type BackgroundColorValueV6 =
-  | BackgroundColorAlias
-  | ColorValueV6;
+export type BackgroundColorValueV6 = BackgroundColorAlias | ColorValueV6;

@@ -14,16 +14,18 @@ const plugin = {
   meta: {
     type: 'suggestion',
     docs: {
-      description: 'Disallow using event.target in favor of getEventTarget for shadow DOM compatibility',
+      description:
+        'Disallow using event.target in favor of getEventTarget for shadow DOM compatibility',
       recommended: true
     },
     fixable: 'code',
     messages: {
       useGetEventTarget: 'Use getEventTarget() instead of .target for shadow DOM compatibility.',
-      unnecessaryNativeEvent: 'getEventTarget() already handles nativeEvent unwrapping. Pass the event directly.'
+      unnecessaryNativeEvent:
+        'getEventTarget() already handles nativeEvent unwrapping. Pass the event directly.'
     }
   },
-  create: (context) => {
+  create: context => {
     let hasGetEventTargetImport = false;
     let getEventTargetLocalName = 'getEventTarget';
     let existingReactAriaUtilsImport = null;
@@ -39,16 +41,18 @@ const plugin = {
           existingReactAriaUtilsImport = node;
           // Check if getEventTarget is already imported
           const hasGetEventTarget = node.specifiers.some(
-            spec => spec.type === 'ImportSpecifier' &&
-                    spec.imported.type === 'Identifier' &&
-                    spec.imported.name === 'getEventTarget'
+            spec =>
+              spec.type === 'ImportSpecifier' &&
+              spec.imported.type === 'Identifier' &&
+              spec.imported.name === 'getEventTarget'
           );
           if (hasGetEventTarget) {
             hasGetEventTargetImport = true;
             const getEventTargetSpec = node.specifiers.find(
-              spec => spec.type === 'ImportSpecifier' &&
-                      spec.imported.type === 'Identifier' &&
-                      spec.imported.name === 'getEventTarget'
+              spec =>
+                spec.type === 'ImportSpecifier' &&
+                spec.imported.type === 'Identifier' &&
+                spec.imported.name === 'getEventTarget'
             );
             getEventTargetLocalName = getEventTargetSpec.local.name;
           }
@@ -70,11 +74,12 @@ const plugin = {
         const arg = node.arguments[0];
 
         // Check if the argument is event.nativeEvent
-        if (arg.type === 'MemberExpression' &&
-            arg.property.type === 'Identifier' &&
-            arg.property.name === 'nativeEvent' &&
-            arg.object.type === 'Identifier') {
-          
+        if (
+          arg.type === 'MemberExpression' &&
+          arg.property.type === 'Identifier' &&
+          arg.property.name === 'nativeEvent' &&
+          arg.object.type === 'Identifier'
+        ) {
           // Only match common event parameter names
           const commonEventNames = /^(e|event|evt)$/i;
           if (!commonEventNames.test(arg.object.name)) {
@@ -84,7 +89,7 @@ const plugin = {
           context.report({
             node,
             messageId: 'unnecessaryNativeEvent',
-            fix: (fixer) => {
+            fix: fixer => {
               const sourceCode = context.sourceCode;
               // Get the event object without .nativeEvent (e.g., 'event' from 'event.nativeEvent')
               const eventText = sourceCode.getText(arg.object);
@@ -96,11 +101,13 @@ const plugin = {
       },
 
       // Detect .target property access
-      ['MemberExpression[property.name=\'target\']'](node) {
+      ["MemberExpression[property.name='target']"](node) {
         // Skip if it's already a getEventTarget call result
-        if (node.object.type === 'CallExpression' &&
-            node.object.callee.type === 'Identifier' &&
-            node.object.callee.name === getEventTargetLocalName) {
+        if (
+          node.object.type === 'CallExpression' &&
+          node.object.callee.type === 'Identifier' &&
+          node.object.callee.name === getEventTargetLocalName
+        ) {
           return;
         }
 
@@ -115,19 +122,24 @@ const plugin = {
           if (isEventTarget) {
             eventExpression = node.object;
           }
-        } else if (node.object.type === 'MemberExpression' || node.object.type === 'ChainExpression') {
+        } else if (
+          node.object.type === 'MemberExpression' ||
+          node.object.type === 'ChainExpression'
+        ) {
           // Handle *.event.target or *.event?.target patterns (e.g., window.event, getOwnerWindow(foo).event)
           let objectToCheck = node.object;
-          
+
           // Unwrap ChainExpression to get the MemberExpression
           if (objectToCheck.type === 'ChainExpression') {
             objectToCheck = objectToCheck.expression;
           }
-          
+
           // Check for *.event pattern (any expression followed by .event)
-          if (objectToCheck.type === 'MemberExpression' &&
-              objectToCheck.property.type === 'Identifier' &&
-              objectToCheck.property.name === 'event') {
+          if (
+            objectToCheck.type === 'MemberExpression' &&
+            objectToCheck.property.type === 'Identifier' &&
+            objectToCheck.property.name === 'event'
+          ) {
             isEventTarget = true;
             eventExpression = node.object;
           }
@@ -142,12 +154,14 @@ const plugin = {
         // These handlers use custom event types that don't extend DOM Events
         let currentNode = node;
         while (currentNode) {
-          if (currentNode.type === 'FunctionDeclaration' || 
-              currentNode.type === 'FunctionExpression' ||
-              currentNode.type === 'ArrowFunctionExpression') {
+          if (
+            currentNode.type === 'FunctionDeclaration' ||
+            currentNode.type === 'FunctionExpression' ||
+            currentNode.type === 'ArrowFunctionExpression'
+          ) {
             // Check if the function has a name that indicates it's a press or drag/drop handler
             let functionName = null;
-            
+
             if (currentNode.type === 'FunctionDeclaration' && currentNode.id) {
               functionName = currentNode.id.name;
             } else if (currentNode.parent) {
@@ -156,12 +170,14 @@ const plugin = {
                 functionName = currentNode.parent.id.name;
               } else if (currentNode.parent.type === 'Property' && currentNode.parent.key) {
                 functionName = currentNode.parent.key.name || currentNode.parent.key.value;
-              } else if (currentNode.parent.type === 'AssignmentExpression' && 
-                         currentNode.parent.left.type === 'Identifier') {
+              } else if (
+                currentNode.parent.type === 'AssignmentExpression' &&
+                currentNode.parent.left.type === 'Identifier'
+              ) {
                 functionName = currentNode.parent.left.name;
               }
             }
-            
+
             // Check if the function name indicates it's a press or drag/drop handler
             // Press handlers: onPress, onPressStart, onPressEnd, onPressUp, onPressChange, handlePress, etc.
             // Drag/drop handlers: onDrag, onDrop, onDropActivate, onDropEnter, onDropExit, onDragStart, onDragEnd, etc.
@@ -175,13 +191,13 @@ const plugin = {
         context.report({
           node,
           messageId: 'useGetEventTarget',
-          fix: (fixer) => {
+          fix: fixer => {
             const fixes = [];
             const sourceCode = context.sourceCode;
 
             // Get the event expression text
             let eventText = sourceCode.getText(eventExpression);
-            
+
             // If it's a ChainExpression (window.event?), unwrap it
             if (eventExpression.type === 'ChainExpression') {
               eventText = sourceCode.getText(eventExpression.expression);
@@ -196,10 +212,15 @@ const plugin = {
                 // Add getEventTarget to existing @react-aria/utils import
                 const specifiers = existingReactAriaUtilsImport.specifiers;
                 if (specifiers.length > 0) {
-                  fixes.push(fixer.insertTextAfter(
-                    sourceCode.getFirstToken(existingReactAriaUtilsImport, token => token.value === '{'),
-                    'getEventTarget, '
-                  ));
+                  fixes.push(
+                    fixer.insertTextAfter(
+                      sourceCode.getFirstToken(
+                        existingReactAriaUtilsImport,
+                        token => token.value === '{'
+                      ),
+                      'getEventTarget, '
+                    )
+                  );
                 }
               } else {
                 // No existing import from @react-aria/utils, create a new one
@@ -208,11 +229,11 @@ const plugin = {
 
                 if (imports.length > 0) {
                   const lastImport = imports[imports.length - 1];
-                  const importStatement = '\nimport {getEventTarget} from \'@react-aria/utils\';';
+                  const importStatement = "\nimport {getEventTarget} from '@react-aria/utils';";
                   fixes.push(fixer.insertTextAfter(lastImport, importStatement));
                 } else {
                   // No imports, add at the beginning
-                  const importStatement = 'import {getEventTarget} from \'@react-aria/utils\';\n';
+                  const importStatement = "import {getEventTarget} from '@react-aria/utils';\n";
                   fixes.push(fixer.insertTextBefore(programNode.body[0], importStatement));
                 }
               }

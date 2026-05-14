@@ -6,7 +6,9 @@ const test = (name: string, input: string) => {
   defineSnapshotTest(transform, {}, input, name);
 };
 
-test('Static - Renames Item to Breadcrumb and adds import', `
+test(
+  'Static - Renames Item to Breadcrumb and adds import',
+  `
 import {Breadcrumbs, Item, Menu, MenuTrigger, SubmenuTrigger, Button, Section, Header, Heading} from '@adobe/react-spectrum';
 
 <div>
@@ -37,9 +39,12 @@ import {Breadcrumbs, Item, Menu, MenuTrigger, SubmenuTrigger, Button, Section, H
     </Menu>
   </MenuTrigger>
 </div>
-`);
+`
+);
 
-test('Does not affect unimplemented collections', `
+test(
+  'Does not affect unimplemented collections',
+  `
 import {Item, ActionBarContainer, ActionBar, ListBox} from '@adobe/react-spectrum';
 import {SearchAutocomplete} from '@react-spectrum/autocomplete';
 import {StepList} from '@react-spectrum/steplist';
@@ -68,4 +73,5 @@ import {StepList} from '@react-spectrum/steplist';
     <Item key="three">Three</Item>
   </ListBox>
 </div>
-`);
+`
+);

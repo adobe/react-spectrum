@@ -21,10 +21,21 @@ import {
 import {CheckboxGroupStateContext} from 'react-aria-components/CheckboxGroup';
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import {ContextValue, useSlottedContext} from 'react-aria-components/slots';
-import {controlBorderRadius, controlFont, controlSize, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {
+  controlBorderRadius,
+  controlFont,
+  controlSize,
+  getAllowedOverrides,
+  StyleProps
+} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, ReactNode, useContext, useRef} from 'react';
 import DashIcon from '../ui-icons/Dash';
-import {FocusableRef, FocusableRefValue, GlobalDOMAttributes, HelpTextProps} from '@react-types/shared';
+import {
+  FocusableRef,
+  FocusableRefValue,
+  GlobalDOMAttributes,
+  HelpTextProps
+} from '@react-types/shared';
 import {FormContext, useFormProps} from './Form';
 import {HelpText} from './Field';
 import {pressScale} from './pressScale';
@@ -37,52 +48,75 @@ interface CheckboxStyleProps {
    *
    * @default 'M'
    */
-  size?: 'S' | 'M' | 'L' | 'XL',
+  size?: 'S' | 'M' | 'L' | 'XL';
   /** Whether the Checkbox should be displayed with an emphasized style. */
-  isEmphasized?: boolean
+  isEmphasized?: boolean;
 }
 
 interface RenderProps extends CheckboxRenderProps, CheckboxStyleProps {}
 
-export interface CheckboxProps extends Omit<CheckboxFieldProps, 'className' | 'style' | 'render' | 'children' | 'onHover' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange' | 'onClick' | keyof GlobalDOMAttributes>, HelpTextProps, StyleProps, CheckboxStyleProps {
+export interface CheckboxProps
+  extends
+    Omit<
+      CheckboxFieldProps,
+      | 'className'
+      | 'style'
+      | 'render'
+      | 'children'
+      | 'onHover'
+      | 'onHoverStart'
+      | 'onHoverEnd'
+      | 'onHoverChange'
+      | 'onClick'
+      | keyof GlobalDOMAttributes
+    >,
+    HelpTextProps,
+    StyleProps,
+    CheckboxStyleProps {
   /** The label for the element. */
-  children?: ReactNode
+  children?: ReactNode;
 }
 
-export const CheckboxContext = createContext<ContextValue<Partial<CheckboxProps>, FocusableRefValue<HTMLInputElement, HTMLDivElement>>>(null);
+export const CheckboxContext =
+  createContext<
+    ContextValue<Partial<CheckboxProps>, FocusableRefValue<HTMLInputElement, HTMLDivElement>>
+  >(null);
 
-const field = style({
-  display: 'grid',
-  gridTemplateColumns: {
-    default: ['max-content', '1fr'],
-    isNoVisibleLabel: ['max-content']
-  },
-  columnGap: 'text-to-control',
-  alignContent: 'start',
-  width: {
-    default: 'fit',
-    isInCheckboxGroup: 'auto'
-  },
-  font: controlFont(),
-  '--field-height': {
-    type: 'height',
-    value: controlSize()
-  },
-  rowGap: {
-    default: 'calc(var(--field-height) - 1lh)',
-    isInCheckboxGroup: {
-      size: {
-        S: space(1),
-        M: space(1), 
-        L: 2,
-        XL: 2
+const field = style(
+  {
+    display: 'grid',
+    gridTemplateColumns: {
+      default: ['max-content', '1fr'],
+      isNoVisibleLabel: ['max-content']
+    },
+    columnGap: 'text-to-control',
+    alignContent: 'start',
+    width: {
+      default: 'fit',
+      isInCheckboxGroup: 'auto'
+    },
+    font: controlFont(),
+    '--field-height': {
+      type: 'height',
+      value: controlSize()
+    },
+    rowGap: {
+      default: 'calc(var(--field-height) - 1lh)',
+      isInCheckboxGroup: {
+        size: {
+          S: space(1),
+          M: space(1),
+          L: 2,
+          XL: 2
+        }
       }
+    },
+    gridColumnStart: {
+      isInForm: 'field'
     }
   },
-  gridColumnStart: {
-    isInForm: 'field'
-  }
-}, getAllowedOverrides());
+  getAllowedOverrides()
+);
 
 const wrapper = style({
   display: 'grid',
@@ -169,7 +203,10 @@ const smallerSize = {
  * Checkboxes allow users to select multiple items from a list of individual items,
  * or to mark one individual item as selected.
  */
-export const Checkbox = forwardRef(function Checkbox({children, ...props}: CheckboxProps, ref: FocusableRef<HTMLInputElement, HTMLDivElement>) {
+export const Checkbox = forwardRef(function Checkbox(
+  {children, ...props}: CheckboxProps,
+  ref: FocusableRef<HTMLInputElement, HTMLDivElement>
+) {
   [props, ref] = useSpectrumContextProps(props, ref, CheckboxContext);
   let boxRef = useRef(null);
   let inputRef = useRef<HTMLInputElement | null>(null);
@@ -185,61 +222,68 @@ export const Checkbox = forwardRef(function Checkbox({children, ...props}: Check
       ref={domRef}
       inputRef={inputRef}
       style={props.UNSAFE_style}
-      className={(props.UNSAFE_className || '') + field({size: props.size || 'M', isInCheckboxGroup, isNoVisibleLabel: !children}, props.styles)}>
-      {({isDisabled, isInvalid}) => (<>
-        <CheckboxButton className={renderProps => wrapper({...renderProps, isInForm, size: props.size || 'M'})}>
-          {renderProps => {
-            let checkbox = (
-              <div
-                ref={boxRef}
-                style={pressScale(boxRef)(renderProps)}
-                className={box({
-                  ...renderProps,
-                  isSelected: renderProps.isSelected || renderProps.isIndeterminate,
-                  size: props.size || 'M',
-                  isEmphasized: isInCheckboxGroup ? ctx?.isEmphasized : props.isEmphasized
-                })}>
-                {renderProps.isIndeterminate &&
-                  <DashIcon size={smallerSize[props.size || 'M']} className={iconStyles} />
-                }
-                {renderProps.isSelected && !renderProps.isIndeterminate &&
-                  <CheckmarkIcon size={smallerSize[props.size || 'M']} className={iconStyles} />
-                }
-              </div>
-            );
+      className={
+        (props.UNSAFE_className || '') +
+        field(
+          {size: props.size || 'M', isInCheckboxGroup, isNoVisibleLabel: !children},
+          props.styles
+        )
+      }>
+      {({isDisabled, isInvalid}) => (
+        <>
+          <CheckboxButton
+            className={renderProps => wrapper({...renderProps, isInForm, size: props.size || 'M'})}>
+            {renderProps => {
+              let checkbox = (
+                <div
+                  ref={boxRef}
+                  style={pressScale(boxRef)(renderProps)}
+                  className={box({
+                    ...renderProps,
+                    isSelected: renderProps.isSelected || renderProps.isIndeterminate,
+                    size: props.size || 'M',
+                    isEmphasized: isInCheckboxGroup ? ctx?.isEmphasized : props.isEmphasized
+                  })}>
+                  {renderProps.isIndeterminate && (
+                    <DashIcon size={smallerSize[props.size || 'M']} className={iconStyles} />
+                  )}
+                  {renderProps.isSelected && !renderProps.isIndeterminate && (
+                    <CheckmarkIcon size={smallerSize[props.size || 'M']} className={iconStyles} />
+                  )}
+                </div>
+              );
 
-            // Only render checkbox without center baseline if no label.
-            // This avoids expanding the checkbox height to the font's line height.
-            if (!children) {
-              return checkbox;
-            }
+              // Only render checkbox without center baseline if no label.
+              // This avoids expanding the checkbox height to the font's line height.
+              if (!children) {
+                return checkbox;
+              }
 
-            return (
-              <>
-                <CenterBaseline>
-                  {checkbox}
-                </CenterBaseline>
-                <span className={style({gridColumnStart: 2})}>{children}</span>
-              </>
-            );
-          }}
-        </CheckboxButton>
-        <HelpText
-          size={isInCheckboxGroup ? smallerSize[props.size || 'M'] : props.size || 'M'}
-          styles={style({
-            gridColumnStart: {
-              default: 1,
-              isInCheckboxGroup: 2
-            },
-            paddingTop: 0
-          })({isInCheckboxGroup})}
-          isDisabled={isDisabled}
-          isInvalid={isInCheckboxGroup ? false : isInvalid}
-          description={props.description}
-          showErrorIcon>
-          {props.errorMessage}
-        </HelpText>
-      </>)}
+              return (
+                <>
+                  <CenterBaseline>{checkbox}</CenterBaseline>
+                  <span className={style({gridColumnStart: 2})}>{children}</span>
+                </>
+              );
+            }}
+          </CheckboxButton>
+          <HelpText
+            size={isInCheckboxGroup ? smallerSize[props.size || 'M'] : props.size || 'M'}
+            styles={style({
+              gridColumnStart: {
+                default: 1,
+                isInCheckboxGroup: 2
+              },
+              paddingTop: 0
+            })({isInCheckboxGroup})}
+            isDisabled={isDisabled}
+            isInvalid={isInCheckboxGroup ? false : isInvalid}
+            description={props.description}
+            showErrorIcon>
+            {props.errorMessage}
+          </HelpText>
+        </>
+      )}
     </CheckboxField>
   );
 });

@@ -10,7 +10,11 @@ const octokit = new Octokit({
 run();
 
 async function run() {
-  let packages = exec('yarn workspaces list --json').toString().split(require('os').EOL).filter(Boolean).map((x) => JSON.parse(x));
+  let packages = exec('yarn workspaces list --json')
+    .toString()
+    .split(require('os').EOL)
+    .filter(Boolean)
+    .map(x => JSON.parse(x));
   let commits = new Map();
 
   // Diff each package individually. Some packages might have been skipped during last release,
@@ -51,7 +55,7 @@ async function run() {
     }
   }
 
-  let sortedCommits = [...commits.values()].sort((a, b) => a[1] < b[1] ? -1 : 1);
+  let sortedCommits = [...commits.values()].sort((a, b) => (a[1] < b[1] ? -1 : 1));
 
   for (let commit of sortedCommits) {
     let message = '';
@@ -65,11 +69,11 @@ async function run() {
       let prId = m[2];
       message = m[1];
 
-      let res = await octokit.request('GET /repos/adobe/react-spectrum/pulls/{pull}', { pull: prId });
+      let res = await octokit.request('GET /repos/adobe/react-spectrum/pulls/{pull}', {pull: prId});
       user = `[@${res.data.user.login}](${res.data.user.html_url})`;
       pr = `https://github.com/adobe/react-spectrum/pull/${prId}`;
-
-    } else { // not a pr so just print what we know from the commit
+    } else {
+      // not a pr so just print what we know from the commit
       message = commit[3];
       user = commit[2];
     }

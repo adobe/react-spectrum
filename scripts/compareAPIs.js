@@ -1,4 +1,3 @@
-
 let fs = require('fs');
 let fg = require('fast-glob');
 let path = require('path');
@@ -6,7 +5,6 @@ let util = require('util');
 let chalk = require('chalk');
 let Diff = require('diff');
 const {parseArgs} = require('util');
-
 
 const args = parseArgs({
   options: {
@@ -68,7 +66,9 @@ async function compare() {
   let branchDir = args.values['branch-api-dir'] || path.join(__dirname, '..', 'dist', 'branch-api');
   let publishedDir = args.values['base-api-dir'] || path.join(__dirname, '..', 'dist', 'base-api');
   if (!(fs.existsSync(branchDir) && fs.existsSync(publishedDir))) {
-    console.log(chalk.redBright(`you must have both a branchDir ${branchDir} and baseDir ${publishedDir}`));
+    console.log(
+      chalk.redBright(`you must have both a branchDir ${branchDir} and baseDir ${publishedDir}`)
+    );
     return;
   }
 
@@ -79,7 +79,9 @@ async function compare() {
   // find all matching pairs based on what's been published
   for (let pubApi of publishedAPIs) {
     let pubApiPath = pubApi.split(path.sep);
-    let pkgJson = readJsonSync(path.join('/', ...pubApiPath.slice(0, pubApiPath.length - 2), 'package.json'));
+    let pkgJson = readJsonSync(
+      path.join('/', ...pubApiPath.slice(0, pubApiPath.length - 2), 'package.json')
+    );
     let name = pkgJson.name;
     let sharedPath = path.join(name, 'dist', 'api.json');
     let found = false;
@@ -98,7 +100,9 @@ async function compare() {
   // don't care about private APIs, but we do care if we're about to publish a new one
   for (let branchApi of branchAPIs) {
     let branchApiPath = branchApi.split(path.sep);
-    let pkgJson = readJsonSync(path.join('/', ...branchApiPath.slice(0, branchApiPath.length - 2), 'package.json'));
+    let pkgJson = readJsonSync(
+      path.join('/', ...branchApiPath.slice(0, branchApiPath.length - 2), 'package.json')
+    );
     let name = pkgJson.name;
     let sharedPath = path.join(name, 'dist', 'api.json');
     let found = false;
@@ -145,11 +149,19 @@ async function compare() {
         // remove extra newline we added between the name of the interface and the properties to make the diffs easier to read
         changes.push(`
 #### ${simplifiedName}
-${changedByDeps.length > 0 ? `changed by:
- - ${changedByDeps.join('\n - ')}\n\n` : ''}${diff.split('\n').filter(line => line !== ' ').join('\n')}${
-// eslint-disable-next-line no-nested-ternary
-affected.length > 0 ?
-args.values.isCI ? `
+${
+  changedByDeps.length > 0
+    ? `changed by:
+ - ${changedByDeps.join('\n - ')}\n\n`
+    : ''
+}${diff
+          .split('\n')
+          .filter(line => line !== ' ')
+          .join('\n')}${
+          // eslint-disable-next-line no-nested-ternary
+          affected.length > 0
+            ? args.values.isCI
+              ? `
 <details>
   <summary>it changed</summary>
    <ul>
@@ -157,10 +169,12 @@ args.values.isCI ? `
    </ul>
 </details>
 `
-  : `
+              : `
 it changed:
  - ${affected.join('\n - ')}
-` : ''}
+`
+            : ''
+        }
 `);
       }
     }
@@ -170,8 +184,7 @@ it changed:
 ### ${name.replace('/dist/api.json', '').replace(/^\//, '')}
 ${changes.join('\n')}
 -----------------------------------
-`
-      );
+`);
     }
   }
   if (messages.length) {
@@ -269,8 +282,12 @@ function getDiff(pair) {
   let branchApi = pair.branchApi === null ? {exports: {}} : getAPI(pair.branchApi);
   let publishedInterfaces = rebuildInterfaces(publishedApi);
   let branchInterfaces = rebuildInterfaces(branchApi);
-  let allExportNames = [...new Set([...Object.keys(publishedApi.exports), ...Object.keys(branchApi.exports)])];
-  let allInterfaces = [...new Set([...Object.keys(publishedInterfaces), ...Object.keys(branchInterfaces)])];
+  let allExportNames = [
+    ...new Set([...Object.keys(publishedApi.exports), ...Object.keys(branchApi.exports)])
+  ];
+  let allInterfaces = [
+    ...new Set([...Object.keys(publishedInterfaces), ...Object.keys(branchInterfaces)])
+  ];
   let formattedPublishedInterfaces = '';
   let formattedBranchInterfaces = '';
   formattedPublishedInterfaces = formatInterfaces(publishedInterfaces, allInterfaces);
@@ -282,7 +299,13 @@ function getDiff(pair) {
       return;
     }
     let simplifiedName = allExportNames[index];
-    let codeDiff = Diff.structuredPatch(iname, iname, formattedPublishedInterfaces[index], formattedBranchInterfaces[index], {newlineIsToken: true});
+    let codeDiff = Diff.structuredPatch(
+      iname,
+      iname,
+      formattedPublishedInterfaces[index],
+      formattedBranchInterfaces[index],
+      {newlineIsToken: true}
+    );
     if (args.values.verbose) {
       console.log(util.inspect(codeDiff, {depth: null}));
     }
@@ -291,32 +314,44 @@ function getDiff(pair) {
     let lines = formattedPublishedInterfaces[index].split('\n');
     codeDiff.hunks.forEach(hunk => {
       if (hunk.oldStart > prevEnd) {
-        result = [...result, ...lines.slice(prevEnd - 1, hunk.oldStart - 1).map((item, index) => ` ${item}`)];
+        result = [
+          ...result,
+          ...lines.slice(prevEnd - 1, hunk.oldStart - 1).map((item, index) => ` ${item}`)
+        ];
       }
       if (args.values.isCI) {
         result = [...result, ...hunk.lines];
       } else {
-        result = [...result, ...hunk.lines.map(line => {
-          if (line.startsWith('+')) {
-            return chalk.whiteBright.bgRgb(0, 60, 0)(line);
-          } else if (line.startsWith('-')) {
-            return chalk.whiteBright.bgRed(line);
-          }
-          return line;
-        })];
+        result = [
+          ...result,
+          ...hunk.lines.map(line => {
+            if (line.startsWith('+')) {
+              return chalk.whiteBright.bgRgb(0, 60, 0)(line);
+            } else if (line.startsWith('-')) {
+              return chalk.whiteBright.bgRed(line);
+            }
+            return line;
+          })
+        ];
       }
       prevEnd = hunk.oldStart + hunk.oldLines;
     });
     let joinedResult = '';
     if (codeDiff.hunks.length > 0) {
-      joinedResult = [...result, ...lines.slice(prevEnd).map((item, index) => ` ${item}`)].join('\n');
+      joinedResult = [...result, ...lines.slice(prevEnd).map((item, index) => ` ${item}`)].join(
+        '\n'
+      );
     }
     if (args.values.isCI && result.length > 0) {
       joinedResult = `\`\`\`diff
 ${joinedResult}
 \`\`\``;
     }
-    diffs.push({iname, result: joinedResult, simplifiedName: `${name.replace('/dist/api.json', '')}:${simplifiedName}`});
+    diffs.push({
+      iname,
+      result: joinedResult,
+      simplifiedName: `${name.replace('/dist/api.json', '')}:${simplifiedName}`
+    });
   });
 
   return {diffs, name};
@@ -385,7 +420,7 @@ function processType(value) {
     return `${name}<${value.typeParameters.map(processType).join(', ')}>`;
   }
   if (value.type === 'template') {
-    return `\`${value.elements.map(element => element.type === 'string' ? element.value : `\${${processType(element)}}`).join('')}\``;
+    return `\`${value.elements.map(element => (element.type === 'string' ? element.value : `\${${processType(element)}}`)).join('')}\``;
   }
   if (value.type === 'infer') {
     return `infer ${value.value}`;
@@ -418,13 +453,15 @@ function processType(value) {
   if (value.type === 'object') {
     if (value.properties) {
       return `${value.exact ? '{\\' : '{'}
-  ${Object.values(value.properties).map(property => {
-    depth += 2;
-    let result = ' '.repeat(depth);
-    result = `${result}${property.indexType ? '[' : ''}${property.name}${property.indexType ? `: ${processType(property.indexType)}]` : ''}${property.optional ? '?' : ''}: ${processType(property.value)}`;
-    depth -= 2;
-    return result;
-  }).join('\n')}
+  ${Object.values(value.properties)
+    .map(property => {
+      depth += 2;
+      let result = ' '.repeat(depth);
+      result = `${result}${property.indexType ? '[' : ''}${property.name}${property.indexType ? `: ${processType(property.indexType)}]` : ''}${property.optional ? '?' : ''}: ${processType(property.value)}`;
+      depth -= 2;
+      return result;
+    })
+    .join('\n')}
 ${value.exact ? '\\}' : '}'}`;
     }
     return '{}';
@@ -479,7 +516,7 @@ function rebuildInterfaces(json) {
   if (!json.exports) {
     return exports;
   }
-  Object.keys(json.exports).forEach((key) => {
+  Object.keys(json.exports).forEach(key => {
     currentlyProcessing = key;
     if (key === 'links') {
       console.log('skipping links');
@@ -499,19 +536,21 @@ function rebuildInterfaces(json) {
     if (item.type === 'component') {
       let compInterface = {};
       if (item.props && item.props.properties) {
-        Object.entries(item.props.properties).sort((([keyA], [keyB]) => keyA > keyB ? 1 : -1)).forEach(([, prop]) => {
-          if (prop.access === 'private') {
-            return;
-          }
-          let name = prop.name;
-          if (item.name === null) {
-            name = key;
-          }
-          let optional = prop.optional;
-          let defaultVal = prop.default;
-          let value = processType(prop.value);
-          compInterface[name] = {optional, defaultVal, value};
-        });
+        Object.entries(item.props.properties)
+          .sort(([keyA], [keyB]) => (keyA > keyB ? 1 : -1))
+          .forEach(([, prop]) => {
+            if (prop.access === 'private') {
+              return;
+            }
+            let name = prop.name;
+            if (item.name === null) {
+              name = key;
+            }
+            let optional = prop.optional;
+            let defaultVal = prop.default;
+            let value = processType(prop.value);
+            compInterface[name] = {optional, defaultVal, value};
+          });
       } else if (item.props && item.props.type === 'link') {
         let prop = item.props;
         let name = item.name;
@@ -525,58 +564,66 @@ function rebuildInterfaces(json) {
       }
       let name = item.name ?? key;
       if (item.typeParameters?.length > 0) {
-        compInterface['typeParameters'] = `<${item.typeParameters.map(processType).sort().join(', ')}>`;
+        compInterface['typeParameters'] =
+          `<${item.typeParameters.map(processType).sort().join(', ')}>`;
       }
       if (item.props?.extends?.length > 0) {
-        compInterface['extend'] = `extends ${item.props.extends.map(processType).sort().join(', ')}`;
+        compInterface['extend'] =
+          `extends ${item.props.extends.map(processType).sort().join(', ')}`;
       }
       exports[name] = compInterface;
     } else if (item.type === 'function') {
       let funcInterface = {};
-      Object.entries(item.parameters).sort((([keyA], [keyB]) => keyA > keyB ? 1 : -1)).forEach(([, param]) => {
-        if (param.access === 'private') {
-          return;
-        }
-        let name = param.name;
-        let optional = param.optional;
-        let defaultVal = param.default;
-        let value = processType(param.value);
-        funcInterface[name] = {optional, defaultVal, value};
-      });
+      Object.entries(item.parameters)
+        .sort(([keyA], [keyB]) => (keyA > keyB ? 1 : -1))
+        .forEach(([, param]) => {
+          if (param.access === 'private') {
+            return;
+          }
+          let name = param.name;
+          let optional = param.optional;
+          let defaultVal = param.default;
+          let value = processType(param.value);
+          funcInterface[name] = {optional, defaultVal, value};
+        });
       let returnVal = processType(item.return);
       let name = item.name ?? key;
       funcInterface['returnVal'] = returnVal;
       if (item.typeParameters?.length > 0) {
-        funcInterface['typeParameters'] = `<${item.typeParameters.map(processType).sort().join(', ')}>`;
+        funcInterface['typeParameters'] =
+          `<${item.typeParameters.map(processType).sort().join(', ')}>`;
       }
       exports[name] = funcInterface;
     } else if (item.type === 'interface') {
       let funcInterface = {};
-      Object.entries(item.properties).sort((([keyA], [keyB]) => keyA > keyB ? 1 : -1)).forEach(([, property]) => {
-        if (property.access === 'private' || property.access === 'protected') {
-          return;
-        }
-        let name = property.name;
-        let optional = property.optional;
-        let defaultVal = property.default;
-        // this needs to handle types like spreads, but need to build that into the build API's first
-        if (!property.value) {
-          name = 'UNKNOWN';
-          let i = 0;
-          while (funcInterface[name]) {
-            i++;
-            name = 'UNKNOWN' + String(i);
+      Object.entries(item.properties)
+        .sort(([keyA], [keyB]) => (keyA > keyB ? 1 : -1))
+        .forEach(([, property]) => {
+          if (property.access === 'private' || property.access === 'protected') {
+            return;
           }
-          funcInterface[name] = {optional, defaultVal, value: property.type};
-        } else {
-          let value = processType(property.value);
-          // TODO: what to do with defaultVal and optional
-          funcInterface[name] = {optional, defaultVal, value};
-        }
-      });
+          let name = property.name;
+          let optional = property.optional;
+          let defaultVal = property.default;
+          // this needs to handle types like spreads, but need to build that into the build API's first
+          if (!property.value) {
+            name = 'UNKNOWN';
+            let i = 0;
+            while (funcInterface[name]) {
+              i++;
+              name = 'UNKNOWN' + String(i);
+            }
+            funcInterface[name] = {optional, defaultVal, value: property.type};
+          } else {
+            let value = processType(property.value);
+            // TODO: what to do with defaultVal and optional
+            funcInterface[name] = {optional, defaultVal, value};
+          }
+        });
       let name = item.name ?? key;
       if (item.typeParameters?.length > 0) {
-        funcInterface['typeParameters'] = `<${item.typeParameters.map(processType).sort().join(', ')}>`;
+        funcInterface['typeParameters'] =
+          `<${item.typeParameters.map(processType).sort().join(', ')}>`;
       }
       exports[name] = funcInterface;
     } else if (item.type === 'link') {
@@ -618,7 +665,9 @@ function formatInterfaces(interfaces, allInterfaces) {
       }
       // include extra newline so that the names of the interface are always compared
       output += ' {\n\n';
-      output += interfaces[name].isType ? formatProp(name, interfaceO) : Object.entries(interfaceO).map(formatProp).join('\n');
+      output += interfaces[name].isType
+        ? formatProp(name, interfaceO)
+        : Object.entries(interfaceO).map(formatProp).join('\n');
       return `${output}\n}\n`;
     } else if (interfaceO === 'UNTYPED') {
       // include extra newline so that the names of the interface are always compared

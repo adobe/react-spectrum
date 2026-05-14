@@ -10,9 +10,7 @@ export function DroppableListBox() {
     acceptedDragTypes: ['pokemon'],
     async onRootDrop(e) {
       let items = await Promise.all(
-        e.items
-          .filter(isTextDropItem)
-          .map(async item => JSON.parse(await item.getText('pokemon')))
+        e.items.filter(isTextDropItem).map(async item => JSON.parse(await item.getText('pokemon')))
       );
       setItems(items);
     }

@@ -3,7 +3,6 @@
 .idea
 .package-lock.json
 .parcel-cache
-.vscode
 build-storybook.log
 coverage
 dist

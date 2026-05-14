@@ -19,51 +19,49 @@ import {useObjectRef} from '../utils/useObjectRef';
 import {useSyncRef} from '../utils/useSyncRef';
 
 interface PressResponderProps extends PressProps {
-  children: ReactNode
+  children: ReactNode;
 }
 
-export const PressResponder:
-  React.ForwardRefExoticComponent<PressResponderProps & React.RefAttributes<FocusableElement>> =
-React.forwardRef(({children, ...props}: PressResponderProps, ref: ForwardedRef<FocusableElement>) => {
-  let isRegistered = useRef(false);
-  let prevContext = useContext(PressResponderContext);
-  let context: any = mergeProps(prevContext || {}, {
-    ...props,
-    register() {
-      isRegistered.current = true;
-      if (prevContext) {
-        prevContext.register();
+export const PressResponder: React.ForwardRefExoticComponent<
+  PressResponderProps & React.RefAttributes<FocusableElement>
+> = React.forwardRef(
+  ({children, ...props}: PressResponderProps, ref: ForwardedRef<FocusableElement>) => {
+    let isRegistered = useRef(false);
+    let prevContext = useContext(PressResponderContext);
+    let context: any = mergeProps(prevContext || {}, {
+      ...props,
+      register() {
+        isRegistered.current = true;
+        if (prevContext) {
+          prevContext.register();
+        }
       }
-    }
-  });
+    });
 
-  context.ref = useObjectRef(ref || prevContext?.ref);
-  useSyncRef(prevContext, context.ref);
+    context.ref = useObjectRef(ref || prevContext?.ref);
+    useSyncRef(prevContext, context.ref);
 
-  useEffect(() => {
-    if (!isRegistered.current) {
-      if (process.env.NODE_ENV !== 'production') {
-        console.warn(
-          'A PressResponder was rendered without a pressable child. ' +
-          'Either call the usePress hook, or wrap your DOM node with <Pressable> component.'
-        );
+    useEffect(() => {
+      if (!isRegistered.current) {
+        if (process.env.NODE_ENV !== 'production') {
+          console.warn(
+            'A PressResponder was rendered without a pressable child. ' +
+              'Either call the usePress hook, or wrap your DOM node with <Pressable> component.'
+          );
+        }
+        isRegistered.current = true; // only warn once in strict mode.
       }
-      isRegistered.current = true; // only warn once in strict mode.
-    }
-  }, []);
+    }, []);
 
-  return (
-    <PressResponderContext.Provider value={context}>
-      {children}
-    </PressResponderContext.Provider>
-  );
-});
+    return (
+      <PressResponderContext.Provider value={context}>{children}</PressResponderContext.Provider>
+    );
+  }
+);
 
 export function ClearPressResponder({children}: {children: ReactNode}): JSX.Element {
   let context = useMemo(() => ({register: () => {}}), []);
   return (
-    <PressResponderContext.Provider value={context}>
-      {children}
-    </PressResponderContext.Provider>
+    <PressResponderContext.Provider value={context}>{children}</PressResponderContext.Provider>
   );
 }

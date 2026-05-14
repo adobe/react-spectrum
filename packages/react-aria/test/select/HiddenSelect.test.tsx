@@ -6,12 +6,15 @@ import {render, screen} from '@testing-library/react';
 import {SelectProps, useSelectState} from 'react-stately/useSelectState';
 import userEvent from '@testing-library/user-event';
 
-const HiddenSelectExample = (props: Partial<SelectProps<{ key: number, value: string }>> & { hiddenProps?: Partial<HiddenSelectProps<any>> }) => {
+const HiddenSelectExample = (
+  props: Partial<SelectProps<{key: number; value: string}>> & {
+    hiddenProps?: Partial<HiddenSelectProps<any>>;
+  }
+) => {
   const triggerRef = useRef(null);
   const state = useSelectState({
-    children: (item) => (
-      <Item>{item.value}</Item>
-    ), ...props
+    children: item => <Item>{item.value}</Item>,
+    ...props
   });
 
   return (
@@ -20,16 +23,18 @@ const HiddenSelectExample = (props: Partial<SelectProps<{ key: number, value: st
         label={props.label}
         state={state}
         triggerRef={triggerRef}
-        {...props.hiddenProps} />
+        {...props.hiddenProps}
+      />
       <button ref={triggerRef}>trigger</button>
     </>
   );
 };
 
-const makeItems = (size: number) => (new Array(size).fill('')).map((__, index) => ({
-  key: index + 1,
-  value: `${index + 1}`
-}));
+const makeItems = (size: number) =>
+  new Array(size).fill('').map((__, index) => ({
+    key: index + 1,
+    value: `${index + 1}`
+  }));
 
 describe('<HiddenSelect />', () => {
   let user;
@@ -38,9 +43,7 @@ describe('<HiddenSelect />', () => {
   });
 
   it('should successfully render for collection.size <= 300 and no selected key', () => {
-    render(
-      <HiddenSelectExample items={makeItems(5)} />
-    );
+    render(<HiddenSelectExample items={makeItems(5)} />);
   });
 
   it('should successfully render for collection.size > 300 with a name and no selected key', () => {
@@ -49,7 +52,8 @@ describe('<HiddenSelect />', () => {
         hiddenProps={{
           name: 'select'
         }}
-        items={makeItems(400)} />
+        items={makeItems(400)}
+      />
     );
   });
 
@@ -62,7 +66,8 @@ describe('<HiddenSelect />', () => {
           hiddenProps={{
             name: 'select'
           }}
-          items={[]} />
+          items={[]}
+        />
       </form>
     );
 
@@ -76,7 +81,8 @@ describe('<HiddenSelect />', () => {
       <HiddenSelectExample
         label="select"
         onSelectionChange={onSelectionChange}
-        items={makeItems(5)} />
+        items={makeItems(5)}
+      />
     );
 
     const select = screen.getByLabelText('select');
@@ -85,11 +91,7 @@ describe('<HiddenSelect />', () => {
   });
 
   it('should include a non-empty placeholder option for native select markup', () => {
-    render(
-      <HiddenSelectExample
-        label="select"
-        items={makeItems(5)} />
-    );
+    render(<HiddenSelectExample label="select" items={makeItems(5)} />);
 
     let select = screen.getByLabelText('select');
     let firstOption = select.querySelector('option')!;
@@ -106,7 +108,8 @@ describe('<HiddenSelect />', () => {
           hiddenProps={{
             name: 'select'
           }}
-          items={makeItems(5)} />
+          items={makeItems(5)}
+        />
       </form>
     );
 
@@ -115,18 +118,19 @@ describe('<HiddenSelect />', () => {
   });
 
   it('should always add a data attribute data-a11y-ignore="aria-hidden-focus"', () => {
-    render(
-      <HiddenSelectExample items={makeItems(5)} />
-    );
+    render(<HiddenSelectExample items={makeItems(5)} />);
 
-    expect(screen.getByTestId('hidden-select-container')).toHaveAttribute('data-a11y-ignore', 'aria-hidden-focus');
+    expect(screen.getByTestId('hidden-select-container')).toHaveAttribute(
+      'data-a11y-ignore',
+      'aria-hidden-focus'
+    );
   });
 
   it('should always add a data attribute data-react-aria-prevent-focus', () => {
-    render(
-      <HiddenSelectExample items={makeItems(5)} />
-    );
+    render(<HiddenSelectExample items={makeItems(5)} />);
 
-    expect(screen.getByTestId('hidden-select-container')).toHaveAttribute('data-react-aria-prevent-focus');
+    expect(screen.getByTestId('hidden-select-container')).toHaveAttribute(
+      'data-react-aria-prevent-focus'
+    );
   });
 });

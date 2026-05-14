@@ -342,10 +342,9 @@ exports[`variants 1`] = `
   }
 }
 :root, :host {
-  --color-red: red
-;
+  --color-red: red;
 }
-"
+  "
 `;
 
 exports[`variants with prefix 1`] = `
@@ -631,8 +630,7 @@ exports[`variants with prefix 1`] = `
   }
 }
 :root, :host {
-  --color-red: red
-;
+  --color-red: red;
 }
-"
+  "
 `;

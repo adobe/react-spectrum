@@ -29,44 +29,68 @@ interface StatusLightStyleProps {
    *
    * @default 'neutral'
    */
-  variant?: 'informative' | 'neutral' | 'positive' | 'notice' | 'negative' | 'celery' | 'chartreuse' | 'cyan' | 'fuchsia' | 'purple' | 'magenta' | 'indigo' | 'seafoam' | 'yellow' | 'pink' | 'turquoise' | 'cinnamon' | 'brown' | 'silver',
+  variant?:
+    | 'informative'
+    | 'neutral'
+    | 'positive'
+    | 'notice'
+    | 'negative'
+    | 'celery'
+    | 'chartreuse'
+    | 'cyan'
+    | 'fuchsia'
+    | 'purple'
+    | 'magenta'
+    | 'indigo'
+    | 'seafoam'
+    | 'yellow'
+    | 'pink'
+    | 'turquoise'
+    | 'cinnamon'
+    | 'brown'
+    | 'silver';
   /**
    * The size of the StatusLight.
    *
    * @default 'M'
    */
-  size?: 'S' | 'M' | 'L' | 'XL'
+  size?: 'S' | 'M' | 'L' | 'XL';
 }
 
-export interface StatusLightProps extends StatusLightStyleProps, DOMProps, AriaLabelingProps, StyleProps, SlotProps {
+export interface StatusLightProps
+  extends StatusLightStyleProps, DOMProps, AriaLabelingProps, StyleProps, SlotProps {
   /**
    * The content to display as the label.
    */
-  children?: ReactNode,
+  children?: ReactNode;
   /**
    * An accessibility role for the status light. Should be set when the status
    * can change at runtime, and no more than one status light will update simultaneously.
    * For cases where multiple statuses can change at the same time, use a Toast instead.
    */
-  role?: 'status'
+  role?: 'status';
 }
 
-export const StatusLightContext = createContext<ContextValue<Partial<StatusLightProps>, DOMRefValue<HTMLDivElement>>>(null);
+export const StatusLightContext =
+  createContext<ContextValue<Partial<StatusLightProps>, DOMRefValue<HTMLDivElement>>>(null);
 
-const wrapper = style<StatusLightStyleProps>({
-  display: 'flex',
-  gap: 'text-to-visual',
-  alignItems: 'baseline',
-  width: 'fit',
-  font: controlFont(),
-  color: {
-    default: 'neutral',
-    variant: {
-      neutral: 'gray-600'
-    }
+const wrapper = style<StatusLightStyleProps>(
+  {
+    display: 'flex',
+    gap: 'text-to-visual',
+    alignItems: 'baseline',
+    width: 'fit',
+    font: controlFont(),
+    color: {
+      default: 'neutral',
+      variant: {
+        neutral: 'gray-600'
+      }
+    },
+    disableTapHighlight: true
   },
-  disableTapHighlight: true
-}, getAllowedOverrides());
+  getAllowedOverrides()
+);
 
 const light = style<StatusLightStyleProps & {isSkeleton: boolean}>({
   size: {
@@ -108,9 +132,20 @@ const light = style<StatusLightStyleProps & {isSkeleton: boolean}>({
  * Status lights are used to color code categories and labels commonly found in data visualization.
  * When status lights have a semantic meaning, they should use semantic variant colors.
  */
-export const StatusLight = /*#__PURE__*/ forwardRef(function StatusLight(props: StatusLightProps, ref: DOMRef<HTMLDivElement>) {
+export const StatusLight = /*#__PURE__*/ forwardRef(function StatusLight(
+  props: StatusLightProps,
+  ref: DOMRef<HTMLDivElement>
+) {
   [props, ref] = useSpectrumContextProps(props, ref, StatusLightContext);
-  let {children, size = 'M', variant = 'neutral', role, UNSAFE_className = '', UNSAFE_style, styles} = props;
+  let {
+    children,
+    size = 'M',
+    variant = 'neutral',
+    role,
+    UNSAFE_className = '',
+    UNSAFE_style,
+    styles
+  } = props;
   let domRef = useDOMRef(ref);
   let isSkeleton = useIsSkeleton();
 
@@ -118,7 +153,11 @@ export const StatusLight = /*#__PURE__*/ forwardRef(function StatusLight(props: 
     console.warn('If no children are provided, an aria-label must be specified');
   }
 
-  if (!role && (props['aria-label'] || props['aria-labelledby']) && process.env.NODE_ENV !== 'production') {
+  if (
+    !role &&
+    (props['aria-label'] || props['aria-labelledby']) &&
+    process.env.NODE_ENV !== 'production'
+  ) {
     console.warn('A labelled StatusLight must have a role.');
   }
 

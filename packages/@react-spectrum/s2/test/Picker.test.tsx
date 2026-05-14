@@ -29,7 +29,11 @@ describe('Picker', () => {
         items={items}
         loadingState={loadingState}
         onLoadMore={onLoadMore}>
-        {(item: any) => <PickerItem id={item.name} textValue={item.name}>{item.name}</PickerItem>}
+        {(item: any) => (
+          <PickerItem id={item.name} textValue={item.name}>
+            {item.name}
+          </PickerItem>
+        )}
       </Picker>
     );
   }
@@ -76,8 +80,12 @@ describe('Picker', () => {
     let sentinel = tree.getByTestId('loadMoreSentinel');
     expect(observe).toHaveBeenLastCalledWith(sentinel);
 
-    act(() => {observer.instance.triggerCallback([{isIntersecting: true}]);});
-    act(() => {jest.runAllTimers();});
+    act(() => {
+      observer.instance.triggerCallback([{isIntersecting: true}]);
+    });
+    act(() => {
+      jest.runAllTimers();
+    });
 
     tree.rerender(
       <Picker label="test" onLoadMore={onLoadMore}>
@@ -89,8 +97,12 @@ describe('Picker', () => {
       </Picker>
     );
 
-    act(() => {observer.instance.triggerCallback([{isIntersecting: true}]);});
-    act(() => {jest.runAllTimers();});
+    act(() => {
+      observer.instance.triggerCallback([{isIntersecting: true}]);
+    });
+    act(() => {
+      jest.runAllTimers();
+    });
     // Note that if this was using useAsyncList, we'd be shielded from extranous onLoadMore calls but
     // we want to leave that to user discretion
     expect(onLoadMore).toHaveBeenCalledTimes(2);
@@ -137,25 +149,26 @@ describe('Picker', () => {
       {id: 'strawberry', name: 'Strawberry'},
       {id: 'vanilla', name: 'Vanilla'}
     ];
-    let renderValue = jest.fn((selectedItems) => (
-      <span data-testid="custom-value">
-        {selectedItems.map((item) => item.name).join(', ')}
-      </span>
+    let renderValue = jest.fn(selectedItems => (
+      <span data-testid="custom-value">{selectedItems.map(item => item.name).join(', ')}</span>
     ));
     let tree = render(
-      <Picker
-        label="Test picker"
-        selectionMode="multiple"
-        items={items}
-        renderValue={renderValue}>
-        {(item: any) => <PickerItem id={item.id} textValue={item.name}>{item.name}</PickerItem>}
+      <Picker label="Test picker" selectionMode="multiple" items={items} renderValue={renderValue}>
+        {(item: any) => (
+          <PickerItem id={item.id} textValue={item.name}>
+            {item.name}
+          </PickerItem>
+        )}
       </Picker>
     );
 
     // expect the placeholder to be rendered when no items are selected
     expect(tree.queryByTestId('custom-value')).toBeNull();
 
-    let selectTester = testUtilUser.createTester('Select', {root: tree.container, interactionType: 'mouse'});
+    let selectTester = testUtilUser.createTester('Select', {
+      root: tree.container,
+      interactionType: 'mouse'
+    });
     await selectTester.open();
     await selectTester.selectOption({option: 0});
     await selectTester.selectOption({option: 2});
@@ -163,7 +176,7 @@ describe('Picker', () => {
 
     // check that the clicked items are rendered in the custom renderValue output
     let lastSelectedItems = renderValue.mock.calls[renderValue.mock.calls.length - 1][0];
-    expect(lastSelectedItems.map((item) => item.name)).toEqual(['Chocolate', 'Vanilla']);
+    expect(lastSelectedItems.map(item => item.name)).toEqual(['Chocolate', 'Vanilla']);
     expect(tree.getByTestId('custom-value')).toHaveTextContent('Chocolate, Vanilla');
   });
 
@@ -180,25 +193,30 @@ describe('Picker', () => {
       </span>
     ));
     let tree = render(
-      <Picker
-        label="Test picker"
-        selectionMode="multiple"
-        items={items}
-        renderValue={renderValue}>
-        {(item: any) => <PickerItem id={item.id} textValue={item.name}>{item.name}</PickerItem>}
+      <Picker label="Test picker" selectionMode="multiple" items={items} renderValue={renderValue}>
+        {(item: any) => (
+          <PickerItem id={item.id} textValue={item.name}>
+            {item.name}
+          </PickerItem>
+        )}
       </Picker>
     );
 
     // expect the placeholder to be rendered when no items are selected
     expect(tree.queryByTestId('custom-value')).toBeNull();
 
-    let selectTester = testUtilUser.createTester('Select', {root: tree.container, interactionType: 'mouse'});
+    let selectTester = testUtilUser.createTester('Select', {
+      root: tree.container,
+      interactionType: 'mouse'
+    });
     await selectTester.open();
     await selectTester.selectOption({option: 0});
     await selectTester.selectOption({option: 2});
     await selectTester.close();
 
-    expect(spy).toHaveBeenCalledWith('Picker\'s value should not have interactive children for accessibility.');
+    expect(spy).toHaveBeenCalledWith(
+      "Picker's value should not have interactive children for accessibility."
+    );
   });
 
   it('should support contextual help', async () => {
@@ -212,9 +230,7 @@ describe('Picker', () => {
           <ContextualHelp>
             <Heading>Title here</Heading>
             <Content>
-              <Text>
-                Contents
-              </Text>
+              <Text>Contents</Text>
             </Content>
           </ContextualHelp>
         }

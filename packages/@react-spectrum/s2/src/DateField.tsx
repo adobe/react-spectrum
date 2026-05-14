@@ -22,28 +22,42 @@ import {
 
 import {ContextValue} from 'react-aria-components/slots';
 import {createContext, forwardRef, PropsWithChildren, ReactElement, Ref, useContext} from 'react';
-import {field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {
+  field,
+  fieldInput,
+  getAllowedOverrides,
+  StyleProps
+} from './style-utils' with {type: 'macro'};
 import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText} from './Field';
 import {FormContext} from 'react-aria-components/Form';
-import {forwardRefType, GlobalDOMAttributes, HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
+import {
+  forwardRefType,
+  GlobalDOMAttributes,
+  HelpTextProps,
+  SpectrumLabelableProps
+} from '@react-types/shared';
 import {style} from '../style' with {type: 'macro'};
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-
-export interface DateFieldProps<T extends DateValue> extends
-  Omit<AriaDateFieldProps<T>, 'children' | 'className' | 'style' | 'render' | keyof GlobalDOMAttributes>,
-  StyleProps,
-  SpectrumLabelableProps,
-  HelpTextProps {
-    /**
-     * The size of the DateField.
-     *
-     * @default 'M'
-     */
-    size?: 'S' | 'M' | 'L' | 'XL'
+export interface DateFieldProps<T extends DateValue>
+  extends
+    Omit<
+      AriaDateFieldProps<T>,
+      'children' | 'className' | 'style' | 'render' | keyof GlobalDOMAttributes
+    >,
+    StyleProps,
+    SpectrumLabelableProps,
+    HelpTextProps {
+  /**
+   * The size of the DateField.
+   *
+   * @default 'M'
+   */
+  size?: 'S' | 'M' | 'L' | 'XL';
 }
 
-export const DateFieldContext = createContext<ContextValue<Partial<DateFieldProps<any>>, HTMLDivElement>>(null);
+export const DateFieldContext =
+  createContext<ContextValue<Partial<DateFieldProps<any>>, HTMLDivElement>>(null);
 
 const segmentContainer = style({
   flexGrow: 1,
@@ -94,9 +108,9 @@ const iconStyles = style({
  * DateFields allow users to enter and edit date and time values using a keyboard.
  * Each part of a date value is displayed in an individually editable segment.
  */
-export const DateField = /*#__PURE__*/ (forwardRef as forwardRefType)(function DateField<T extends DateValue>(
-  props: DateFieldProps<T>, ref: Ref<HTMLDivElement>
-): ReactElement {
+export const DateField = /*#__PURE__*/ (forwardRef as forwardRefType)(function DateField<
+  T extends DateValue
+>(props: DateFieldProps<T>, ref: Ref<HTMLDivElement>): ReactElement {
   [props, ref] = useSpectrumContextProps(props, ref, DateFieldContext);
   let {
     label,
@@ -121,11 +135,17 @@ export const DateField = /*#__PURE__*/ (forwardRef as forwardRefType)(function D
       isRequired={isRequired}
       {...dateFieldProps}
       style={UNSAFE_style}
-      className={(UNSAFE_className || '') + style(field(), getAllowedOverrides())({
-        isInForm: !!formContext,
-        labelPosition,
-        size
-      }, styles)}>
+      className={
+        (UNSAFE_className || '') +
+        style(field(), getAllowedOverrides())(
+          {
+            isInForm: !!formContext,
+            labelPosition,
+            size
+          },
+          styles
+        )
+      }>
       {({isDisabled, isInvalid}) => {
         return (
           <>
@@ -176,15 +196,25 @@ export function DateInputContainer(props: PropsWithChildren): ReactElement {
 export function DateInput(props: Omit<DateInputProps, 'children'>): ReactElement {
   return (
     <AriaDateInput className="" {...props}>
-      {(segment) => (
+      {segment => (
         <AriaDateSegment
           segment={segment}
-          className={(renderProps) => dateSegment({...renderProps, isPunctuation: segment.type === 'literal'})} />
+          className={renderProps =>
+            dateSegment({...renderProps, isPunctuation: segment.type === 'literal'})
+          }
+        />
       )}
     </AriaDateInput>
   );
 }
 
-export function InvalidIndicator(props: {isInvalid: boolean, isDisabled: boolean}): ReactElement | null {
-  return props.isInvalid ? <div className={iconStyles}><FieldErrorIcon isDisabled={props.isDisabled} /></div> : null;
+export function InvalidIndicator(props: {
+  isInvalid: boolean;
+  isDisabled: boolean;
+}): ReactElement | null {
+  return props.isInvalid ? (
+    <div className={iconStyles}>
+      <FieldErrorIcon isDisabled={props.isDisabled} />
+    </div>
+  ) : null;
 }

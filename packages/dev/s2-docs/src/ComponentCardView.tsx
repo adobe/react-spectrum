@@ -8,22 +8,29 @@ import React from 'react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 export interface ComponentCardItem {
-  id: string,
-  name: string,
-  href: string,
-  description?: string
+  id: string;
+  name: string;
+  href: string;
+  description?: string;
 }
 
 interface ComponentCardGridProps {
-  items: ComponentCardItem[],
-  ariaLabel?: string,
-  size?: 'S' | 'M' | 'L',
-  currentUrl?: string,
-  onAction?: (key: Key) => void,
-  renderEmptyState?: () => React.ReactNode
+  items: ComponentCardItem[];
+  ariaLabel?: string;
+  size?: 'S' | 'M' | 'L';
+  currentUrl?: string;
+  onAction?: (key: Key) => void;
+  renderEmptyState?: () => React.ReactNode;
 }
 
-export function ComponentCardView({items, ariaLabel = 'Items', size = 'S', currentUrl, onAction, renderEmptyState}: ComponentCardGridProps) {
+export function ComponentCardView({
+  items,
+  ariaLabel = 'Items',
+  size = 'S',
+  currentUrl,
+  onAction,
+  renderEmptyState
+}: ComponentCardGridProps) {
   return (
     <InternalCardViewContext.Provider value={{ElementType: ListBoxItem as any, layout: 'grid'}}>
       <ImageCoordinator>
@@ -71,7 +78,15 @@ export function ComponentCardView({items, ariaLabel = 'Items', size = 'S', curre
           })}
           renderEmptyState={renderEmptyState}
           items={items}>
-          {(item) => <ComponentCard id={item.id} name={item.name.trim()} href={item.href} description={item.description} size={size} />}
+          {item => (
+            <ComponentCard
+              id={item.id}
+              name={item.name.trim()}
+              href={item.href}
+              description={item.description}
+              size={size}
+            />
+          )}
         </ListBox>
       </ImageCoordinator>
     </InternalCardViewContext.Provider>

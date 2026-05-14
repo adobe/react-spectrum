@@ -23,7 +23,9 @@ describe('useControlledState tests', function () {
 
   it('can handle default setValue behavior, wont invoke onChange for the same value twice in a row', () => {
     let onChangeSpy = jest.fn();
-    let {result} = renderHook(() => useControlledState<string>(undefined, 'defaultValue', onChangeSpy));
+    let {result} = renderHook(() =>
+      useControlledState<string>(undefined, 'defaultValue', onChangeSpy)
+    );
     let [value, setValue] = result.current;
     expect(value).toBe('defaultValue');
     expect(onChangeSpy).not.toHaveBeenCalled();
@@ -54,7 +56,9 @@ describe('useControlledState tests', function () {
 
   it('using NaN will only trigger onChange once', () => {
     let onChangeSpy = jest.fn();
-    let {result} = renderHook(() => useControlledState<number | null>(undefined, null, onChangeSpy));
+    let {result} = renderHook(() =>
+      useControlledState<number | null>(undefined, null, onChangeSpy)
+    );
     let [value, setValue] = result.current;
     expect(value).toBe(null);
     expect(onChangeSpy).not.toHaveBeenCalled();
@@ -72,14 +76,18 @@ describe('useControlledState tests', function () {
 
   it('can handle callback setValue behavior', () => {
     let onChangeSpy = jest.fn();
-    let {result} = renderHook(() => useControlledState<string>(undefined, 'defaultValue', onChangeSpy));
+    let {result} = renderHook(() =>
+      useControlledState<string>(undefined, 'defaultValue', onChangeSpy)
+    );
     let [value, setValue] = result.current;
     expect(value).toBe('defaultValue');
     expect(onChangeSpy).not.toHaveBeenCalled();
-    act(() => setValue((prevValue) => {
-      expect(prevValue).toBe('defaultValue');
-      return 'newValue';
-    }));
+    act(() =>
+      setValue(prevValue => {
+        expect(prevValue).toBe('defaultValue');
+        return 'newValue';
+      })
+    );
     [value, setValue] = result.current;
     expect(value).toBe('newValue');
     expect(onChangeSpy).toHaveBeenLastCalledWith('newValue');
@@ -88,15 +96,15 @@ describe('useControlledState tests', function () {
   it('does not trigger too many renders', async () => {
     let renderSpy = jest.fn();
 
-    let TestComponent = (props) => {
+    let TestComponent = props => {
       let [state, setState] = useControlledState(props.value, props.defaultValue, props.onChange);
       useEffect(() => renderSpy(), [state]);
       return <button onClick={() => setState(state + 1)} data-testid={state} />;
     };
 
-    let TestComponentWrapper = (props) => {
+    let TestComponentWrapper = props => {
       let [state, setState] = useState(props.defaultValue);
-      return <TestComponent onChange={(value) => setState(value)} value={state} />;
+      return <TestComponent onChange={value => setState(value)} value={state} />;
     };
 
     let {getByRole, getByTestId} = render(<TestComponentWrapper defaultValue={5} />);
@@ -114,7 +122,9 @@ describe('useControlledState tests', function () {
 
   it('can handle controlled setValue behavior', () => {
     let onChangeSpy = jest.fn();
-    let {result} = renderHook(() => useControlledState<string>('controlledValue', 'defaultValue', onChangeSpy));
+    let {result} = renderHook(() =>
+      useControlledState<string>('controlledValue', 'defaultValue', onChangeSpy)
+    );
     let [value, setValue] = result.current;
     expect(value).toBe('controlledValue');
     expect(onChangeSpy).not.toHaveBeenCalled();
@@ -134,25 +144,31 @@ describe('useControlledState tests', function () {
 
   it('can handle controlled callback setValue behavior', () => {
     let onChangeSpy = jest.fn();
-    let {result} = renderHook(() => useControlledState('controlledValue', 'defaultValue', onChangeSpy));
+    let {result} = renderHook(() =>
+      useControlledState('controlledValue', 'defaultValue', onChangeSpy)
+    );
     let [value, setValue] = result.current;
     expect(value).toBe('controlledValue');
     expect(onChangeSpy).not.toHaveBeenCalled();
 
-    act(() => setValue((prevValue) => {
-      expect(prevValue).toBe('controlledValue');
-      return 'newValue';
-    }));
+    act(() =>
+      setValue(prevValue => {
+        expect(prevValue).toBe('controlledValue');
+        return 'newValue';
+      })
+    );
     [value, setValue] = result.current;
     expect(value).toBe('controlledValue');
     expect(onChangeSpy).toHaveBeenLastCalledWith('newValue');
 
     onChangeSpy.mockClear();
 
-    act(() => setValue((prevValue) => {
-      expect(prevValue).toBe('controlledValue');
-      return 'controlledValue';
-    }));
+    act(() =>
+      setValue(prevValue => {
+        expect(prevValue).toBe('controlledValue');
+        return 'controlledValue';
+      })
+    );
     [value, setValue] = result.current;
     expect(value).toBe('controlledValue');
     expect(onChangeSpy).not.toHaveBeenCalled();
@@ -162,17 +178,17 @@ describe('useControlledState tests', function () {
     let onChangeSpy = jest.fn();
     let TestComponent = () => {
       let [val, setVal] = useState('controlledValue');
-      let [value, setValue] = useControlledState(val, 'defaultValue', (newval) => {
+      let [value, setValue] = useControlledState(val, 'defaultValue', newval => {
         setVal(newval);
         onChangeSpy(newval);
       });
       return (
         <button
           onClick={() => {
-            setValue((prevValue) => {
+            setValue(prevValue => {
               return prevValue + '-newValue';
             });
-            setValue((prevValue) => {
+            setValue(prevValue => {
               return prevValue + '-wombat';
             });
           }}>
@@ -193,7 +209,9 @@ describe('useControlledState tests', function () {
   it('can handle controlled callback setValue behavior after prop change', () => {
     let onChangeSpy = jest.fn();
     let propValue = 'controlledValue';
-    let {result, rerender} = renderHook(() => useControlledState(propValue, 'defaultValue', onChangeSpy));
+    let {result, rerender} = renderHook(() =>
+      useControlledState(propValue, 'defaultValue', onChangeSpy)
+    );
     let [value, setValue] = result.current;
     expect(value).toBe('controlledValue');
     expect(onChangeSpy).not.toHaveBeenCalled();
@@ -202,30 +220,36 @@ describe('useControlledState tests', function () {
     rerender();
     [value, setValue] = result.current;
 
-    act(() => setValue((prevValue) => {
-      expect(prevValue).toBe('updated');
-      return 'newValue';
-    }));
+    act(() =>
+      setValue(prevValue => {
+        expect(prevValue).toBe('updated');
+        return 'newValue';
+      })
+    );
     [value, setValue] = result.current;
     expect(value).toBe('updated');
     expect(onChangeSpy).toHaveBeenLastCalledWith('newValue');
 
     onChangeSpy.mockClear();
 
-    act(() => setValue((prevValue) => {
-      expect(prevValue).toBe('updated');
-      return 'newValue';
-    }));
+    act(() =>
+      setValue(prevValue => {
+        expect(prevValue).toBe('updated');
+        return 'newValue';
+      })
+    );
     [value, setValue] = result.current;
     expect(value).toBe('updated');
     expect(onChangeSpy).toHaveBeenLastCalledWith('newValue');
 
     onChangeSpy.mockClear();
 
-    act(() => setValue((prevValue) => {
-      expect(prevValue).toBe('updated');
-      return 'updated';
-    }));
+    act(() =>
+      setValue(prevValue => {
+        expect(prevValue).toBe('updated');
+        return 'updated';
+      })
+    );
     [value, setValue] = result.current;
     expect(value).toBe('updated');
     expect(onChangeSpy).not.toHaveBeenCalled();
@@ -249,7 +273,9 @@ describe('useControlledState tests', function () {
     expect(onChangeSpy).not.toHaveBeenCalled();
     // @ts-ignore this is an invalid case anyways
     rerender({value: undefined, defaultValue: 'defaultValue', onChange: onChangeSpy});
-    expect(consoleWarnSpy).toHaveBeenLastCalledWith('WARN: A component changed from controlled to uncontrolled.');
+    expect(consoleWarnSpy).toHaveBeenLastCalledWith(
+      'WARN: A component changed from controlled to uncontrolled.'
+    );
   });
 
   it('will console warn if the programmer tries to switch from uncontrolled to controlled', () => {
@@ -270,7 +296,9 @@ describe('useControlledState tests', function () {
     expect(onChangeSpy).not.toHaveBeenCalled();
     // @ts-ignore this is an invalid case anyways
     rerender({value: 'controlledValue', defaultValue: 'defaultValue', onChange: onChangeSpy});
-    expect(consoleWarnSpy).toHaveBeenLastCalledWith('WARN: A component changed from uncontrolled to controlled.');
+    expect(consoleWarnSpy).toHaveBeenLastCalledWith(
+      'WARN: A component changed from uncontrolled to controlled.'
+    );
   });
 
   it('should work with suspense when controlled', async () => {
@@ -289,13 +317,15 @@ describe('useControlledState tests', function () {
             onClick={() => {
               setValue(3);
               setShowChild(true);
-            }} />
+            }}
+          />
           <Child
             value={value}
-            onChange={(v) => {
+            onChange={v => {
               setValue(v);
               props.onChange(v);
-            }} />
+            }}
+          />
           {showChild && <AsyncChild />}
         </>
       );
@@ -304,7 +334,9 @@ describe('useControlledState tests', function () {
     function Child(props) {
       let [value, setValue] = useControlledState(props.value, props.defaultValue, props.onChange);
       return (
-        <button data-testid="value" onClick={() => setValue(value + 1)}>{value}</button>
+        <button data-testid="value" onClick={() => setValue(value + 1)}>
+          {value}
+        </button>
       );
     }
 
@@ -364,13 +396,15 @@ describe('useControlledState tests', function () {
             onClick={() => {
               setValue(3);
               setShowChild(true);
-            }} />
+            }}
+          />
           <Child
             value={value}
-            onChange={(v) => {
+            onChange={v => {
               setValue(v);
               props.onChange(v);
-            }} />
+            }}
+          />
           {showChild && <AsyncChild />}
         </>
       );
@@ -378,7 +412,9 @@ describe('useControlledState tests', function () {
     function Child(props) {
       let [value, setValue] = useControlledState(props.value, props.defaultValue, props.onChange);
       return (
-        <button data-testid="value" onClick={() => setValue(value => value + 1)}>{value}</button>
+        <button data-testid="value" onClick={() => setValue(value => value + 1)}>
+          {value}
+        </button>
       );
     }
     function TransitionButton({onClick}) {
@@ -425,7 +461,12 @@ describe('useControlledState tests', function () {
     }
 
     let resolve;
-    const AsyncChild = React.lazy(() => new Promise((r) => {resolve = r;}));
+    const AsyncChild = React.lazy(
+      () =>
+        new Promise(r => {
+          resolve = r;
+        })
+    );
     function Test(props) {
       let [value, setValue] = useControlledState<number>(undefined, 1, props.onChange);
       let [showChild, setShowChild] = useState(false);
@@ -489,7 +530,12 @@ describe('useControlledState tests', function () {
       return;
     }
     let resolve;
-    const AsyncChild = React.lazy(() => new Promise((r) => {resolve = r;}));
+    const AsyncChild = React.lazy(
+      () =>
+        new Promise(r => {
+          resolve = r;
+        })
+    );
     function Test(props) {
       let [value, setValue] = useControlledState<number>(undefined, 1, props.onChange);
       let [showChild, setShowChild] = useState(false);

@@ -67,105 +67,109 @@ export default {
 export type TextFieldStory = StoryObj<typeof TextField>;
 
 export const Default: TextFieldStory = {
-  render: (args) => render(args)
+  render: args => render(args)
 };
 
 export const ValueTestControlled: TextFieldStory = {
-  render: (args) => render({...args, value: 'Test'}),
+  render: args => render({...args, value: 'Test'}),
   name: 'value: Test (controlled)'
 };
 
 export const DefaultValueTestUncontrolled: TextFieldStory = {
-  render: (args) => render({...args, defaultValue: 'Test'}),
+  render: args => render({...args, defaultValue: 'Test'}),
   name: 'defaultValue: Test (uncontrolled)'
 };
 
 export const TypeEmail: TextFieldStory = {
-  render: (args) => render({...args, type: 'email'}),
+  render: args => render({...args, type: 'email'}),
   name: 'type: email'
 };
 
 export const Pattern09: TextFieldStory = {
-  render: (args) => render({...args, pattern: '[0-9]+'}),
+  render: args => render({...args, pattern: '[0-9]+'}),
   name: 'pattern: [0-9]+'
 };
 
 export const AutoFocusTrue: TextFieldStory = {
-  render: (args) => render({...args, autoFocus: true}),
+  render: args => render({...args, autoFocus: true}),
   name: 'autoFocus: true'
 };
 
 export const IconInfo: TextFieldStory = {
-  render: (args) => render({...args, icon: <Info />}),
+  render: args => render({...args, icon: <Info />}),
   name: 'icon: Info'
 };
 
 export const NoVisibleLabel: TextFieldStory = {
-  render: (args) => render({...args, label: null, 'aria-label': 'Street address'}),
+  render: args => render({...args, label: null, 'aria-label': 'Street address'}),
   name: 'no visible label'
 };
 
 export const WithDescription: TextFieldStory = {
-  render: (args) => render({...args, description: 'Please enter your street address.'}),
+  render: args => render({...args, description: 'Please enter your street address.'}),
   name: 'with description'
 };
 
 export const WithErrorMessage: TextFieldStory = {
-  render: (args) => render({
-    ...args,
-    errorMessage: 'Please enter a valid street address.',
-    validationState: 'invalid'
-  }),
+  render: args =>
+    render({
+      ...args,
+      errorMessage: 'Please enter a valid street address.',
+      validationState: 'invalid'
+    }),
   name: 'with error message'
 };
 
 export const WithValidState: TextFieldStory = {
-  render: (args) => render({
-    ...args,
-    value: 'user@example.com',
-    validationState: 'valid'
-  }),
+  render: args =>
+    render({
+      ...args,
+      value: 'user@example.com',
+      validationState: 'valid'
+    }),
   name: 'with valid state (shows validation icon)'
 };
 
 export const WithValidStateAndDescription: TextFieldStory = {
-  render: (args) => render({
-    ...args,
-    value: 'user@example.com',
-    validationState: 'valid',
-    description: 'This email address is valid and will be used for notifications.'
-  }),
+  render: args =>
+    render({
+      ...args,
+      value: 'user@example.com',
+      validationState: 'valid',
+      description: 'This email address is valid and will be used for notifications.'
+    }),
   name: 'with valid state and description'
 };
 
 export const WithDescriptionErrorMessageAndValidation: TextFieldStory = {
-  render: (args) => renderWithDescriptionErrorMessageAndValidation(args),
+  render: args => renderWithDescriptionErrorMessageAndValidation(args),
   name: 'with description, error message and validation'
 };
 
 export const WithContextualHelp: TextFieldStory = {
-  render: (args) => render({
-    ...args,
-    contextualHelp: (
-      <ContextualHelp>
-        <Heading>What is a segment?</Heading>
-        <Content>
-          Segments identify who your visitors are, what devices and services they use, where they
-          navigated from, and much more.
-        </Content>
-      </ContextualHelp>
-    )
-  }),
+  render: args =>
+    render({
+      ...args,
+      contextualHelp: (
+        <ContextualHelp>
+          <Heading>What is a segment?</Heading>
+          <Content>
+            Segments identify who your visitors are, what devices and services they use, where they
+            navigated from, and much more.
+          </Content>
+        </ContextualHelp>
+      )
+    }),
   name: 'with contextual help'
 };
 
 export const CustomWidth: TextFieldStory = {
-  render: (args) => render({...args, icon: <Info />, validationState: 'invalid', width: '300px'}),
+  render: args => render({...args, icon: <Info />, validationState: 'invalid', width: '300px'}),
   name: 'custom width'
 };
 
 export const CustomWidthSmall: TextFieldStory = {
-  render: (args) => render({...args, icon: <Info />, validationState: 'invalid', width: '30px'}),
+  render: args => render({...args, icon: <Info />, validationState: 'invalid', width: '30px'}),
   name: 'custom width small'
 };
 
@@ -206,7 +210,7 @@ let localeStrings = {
   'zh-TW': '字母順序'
 };
 // https://lingojam.com/ZalgoText
-let zalgoString = 'i̶͖̊́̃̒̄͆̚͝t̶̢̢̧̺̻̘̖̗͉̟̞̭̀̀͒͂͐̐̄̇́͒̅̆́\'̶̯̳̑͑͛͐͋̈́̆̇̓͝͝s̵͙͇͉̪̉̈́̐̌̌̃̓͝ ̴̙̘̙̏̍̌̀̕͝m̶̰̥͇̄͒̃̊́͋̎́͆̍̓͑̅͜ȩ̵̛̪̜̯͓͈̰̰̱̠͆̾́́̎̊͌̒́͗̚̕͠ͅ,̷̫̱͖̖͊̉̒̎͊͝ ̵̡̧̛̝̳̦͙͚̣̩̜͙̈́̾̃̋͒̃̇̔̀͜ͅi̵̯̰̰͉̺͎̖̐ͅ\'̷͚̊͐͑͗́͒͌́͛̚̕͝m̴̨̧̯̞͇̤͎̥̫̩͔͖̮̖̲̽͆͗̌̈̇͋̍̕͘͠ ̸͚̞̠̦̑̌̍͋̃t̷̘̝̘̣̮͓̠̮̤͍͕̓͛̉h̶̛͔̳̟̩̦͍̤̥̥̦̗͍͖̓͆̐̽̒̈́͝͠ē̷̛͓̫̜͕͈͙̮͕̝͙̆͂̇̿̋̇̓̂̋͒̂͂͝ ̸̨͈̠̟̤͇̟̗̼̲̯̭̓̈̑́̇̈̀͐͌͂͛͌̅͘͜͝ͅp̴̧̧̛̛̺̩̩̘̲̜̰̩͚̻̬̠̎̅́̏̂́̐̾̓̓͌͝r̷̜̱̒̊̒͛̔ơ̷̼̝̥̺͎͚͚͇̝̫̓̈́̽̈̍̈̌̂̀̚͝͝ḇ̵̠̼͔͙̦̝̠̳̤̍͗͐͝l̷̛̰̲̺̫̭̳̹̬̳̤̱͎̋͛ȩ̷͒m̵̳̟͉̪̞̎̐̓̏̒͗,̶̨͍̥̗̺̮̰̬͍̓͋̄̋͛́̄̕͝ ̷̧̡̧̫̯̘̣̠̮͕̪͈̣̹͌̈̃̃̈́̃̍̊͝͝ͅį̸̲̠̤̳͗̽̋͊̍͛͂̊̓̑̅͋̿t̶̛̲͈͇͇͊̋͐̐͌͒̊̿̕͘\'̸̧͍̠̲̤̠̝̩̟̿͌ś̷̳͇̅̇͛͛̈́̅̑̇̔̌͆͝ ̵̛̱̺̙̪͒̇̔͗͘ͅm̶̢̧̤̟͙͉̠̣̺̥̫͙̹͉̬̉̏͑̕͝e̴̪̥̪̠̜̻̪͎͎̱̱̯̜͒́̑̃̕';
+let zalgoString = "i̶͖̊́̃̒̄͆̚͝t̶̢̢̧̺̻̘̖̗͉̟̞̭̀̀͒͂͐̐̄̇́͒̅̆́'̶̯̳̑͑͛͐͋̈́̆̇̓͝͝s̵͙͇͉̪̉̈́̐̌̌̃̓͝ ̴̙̘̙̏̍̌̀̕͝m̶̰̥͇̄͒̃̊́͋̎́͆̍̓͑̅͜ȩ̵̛̪̜̯͓͈̰̰̱̠͆̾́́̎̊͌̒́͗̚̕͠ͅ,̷̫̱͖̖͊̉̒̎͊͝ ̵̡̧̛̝̳̦͙͚̣̩̜͙̈́̾̃̋͒̃̇̔̀͜ͅi̵̯̰̰͉̺͎̖̐ͅ'̷͚̊͐͑͗́͒͌́͛̚̕͝m̴̨̧̯̞͇̤͎̥̫̩͔͖̮̖̲̽͆͗̌̈̇͋̍̕͘͠ ̸͚̞̠̦̑̌̍͋̃t̷̘̝̘̣̮͓̠̮̤͍͕̓͛̉h̶̛͔̳̟̩̦͍̤̥̥̦̗͍͖̓͆̐̽̒̈́͝͠ē̷̛͓̫̜͕͈͙̮͕̝͙̆͂̇̿̋̇̓̂̋͒̂͂͝ ̸̨͈̠̟̤͇̟̗̼̲̯̭̓̈̑́̇̈̀͐͌͂͛͌̅͘͜͝ͅp̴̧̧̛̛̺̩̩̘̲̜̰̩͚̻̬̠̎̅́̏̂́̐̾̓̓͌͝r̷̜̱̒̊̒͛̔ơ̷̼̝̥̺͎͚͚͇̝̫̓̈́̽̈̍̈̌̂̀̚͝͝ḇ̵̠̼͔͙̦̝̠̳̤̍͗͐͝l̷̛̰̲̺̫̭̳̹̬̳̤̱͎̋͛ȩ̷͒m̵̳̟͉̪̞̎̐̓̏̒͗,̶̨͍̥̗̺̮̰̬͍̓͋̄̋͛́̄̕͝ ̷̧̡̧̫̯̘̣̠̮͕̪͈̣̹͌̈̃̃̈́̃̍̊͝͝ͅį̸̲̠̤̳͗̽̋͊̍͛͂̊̓̑̅͋̿t̶̛̲͈͇͇͊̋͐̐͌͒̊̿̕͘'̸̧͍̠̲̤̠̝̩̟̿͌ś̷̳͇̅̇͛͛̈́̅̑̇̔̌͆͝ ̵̛̱̺̙̪͒̇̔͗͘ͅm̶̢̧̤̟͙͉̠̣̺̥̫͙̹͉̬̉̏͑̕͝e̴̪̥̪̠̜̻̪͎͎̱̱̯̜͒́̑̃̕";
 function DefaultLocaleStrings(props) {
   let locale = useLocale();
   let [isZalgo, setValue] = React.useState(false);
@@ -216,14 +220,15 @@ function DefaultLocaleStrings(props) {
         label="Sampling of diacritics"
         value={isZalgo ? zalgoString : localeStrings[locale.locale]}
         UNSAFE_className="custom_classname"
-        {...props} />
+        {...props}
+      />
       <ActionButton onPress={() => setValue(prev => !prev)}>Toggle Zalgo</ActionButton>
     </>
   );
 }
 
 export const WithDifferentLocaleText: TextFieldStory = {
-  render: (args) => <DefaultLocaleStrings {...args} />
+  render: args => <DefaultLocaleStrings {...args} />
 };
 
 function render(props = {}) {
@@ -234,7 +239,8 @@ function render(props = {}) {
       onFocus={action('focus')}
       onBlur={action('blur')}
       UNSAFE_className="custom_classname"
-      {...props} />
+      {...props}
+    />
   );
 }
 
@@ -252,11 +258,8 @@ function renderWithDescriptionErrorMessageAndValidation(props) {
         label="Favorite number"
         maxLength={1}
         description="Enter a single digit number."
-        errorMessage={
-          value === ''
-            ? 'Empty input not allowed.'
-            : 'Single digit numbers are 0-9.'
-       } />
+        errorMessage={value === '' ? 'Empty input not allowed.' : 'Single digit numbers are 0-9.'}
+      />
     );
   }
 

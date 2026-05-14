@@ -21,7 +21,11 @@ function verify(locale, options, signDisplay, v) {
 
 let signDisplayValues = ['always', 'auto', 'never', 'exceptZero'];
 let localeValues = ['de-DE', 'ar-AE', 'fa', 'he-IL'];
-let optionsValues = [{}, {style: 'unit', unit: 'celsius'}, {style: 'currency', currency: 'USD', currencyDisplay: 'name'}];
+let optionsValues = [
+  {},
+  {style: 'unit', unit: 'celsius'},
+  {style: 'currency', currency: 'USD', currencyDisplay: 'name'}
+];
 let numValues = [-123, -1, -0, 0, +0, 1, 123];
 let numValueNames = ['-123', '-1', '-0', '0', '+0', '1', '123'];
 
@@ -31,7 +35,7 @@ describe('numberFormatSignDisplayPolyfill', () => {
       for (let options of optionsValues) {
         for (let i = 0; i < numValues.length; i++) {
           let num = numValues[i];
-           
+
           it(`${locale} - ${signDisplay} - ${JSON.stringify(options)} - ${numValueNames[i]}`, () => {
             verify(locale, options, signDisplay, num);
           });
