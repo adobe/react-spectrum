@@ -769,4 +769,3 @@ export const CollectionPreviewOffset: DnDStoryObj = {
     offsetY: 20
   }
 };
-

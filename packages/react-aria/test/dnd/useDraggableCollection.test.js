@@ -25,8 +25,8 @@ import {Droppable} from './examples';
 import {Item} from 'react-stately/Item';
 import {Provider} from '@adobe/react-spectrum/Provider';
 import React from 'react';
-import {defaultTheme as theme} from '@adobe/react-spectrum/defaultTheme';
 import {setMedia} from 'mock-match-media';
+import {defaultTheme as theme} from '@adobe/react-spectrum/defaultTheme';
 import userEvent from '@testing-library/user-event';
 
 describe('useDraggableCollection', () => {

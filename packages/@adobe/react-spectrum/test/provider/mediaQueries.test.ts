@@ -11,7 +11,7 @@
  */
 
 import {renderHook} from '@react-spectrum/test-utils-internal';
-import {setMedia, cleanup} from 'mock-match-media';
+import {cleanup, setMedia} from 'mock-match-media';
 import {useColorScheme} from '../../src/provider/mediaQueries';
 
 let theme = {

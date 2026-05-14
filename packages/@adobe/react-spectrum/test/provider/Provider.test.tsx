@@ -218,13 +218,13 @@ describe('Provider', () => {
     let breakpoints = {S: 480, M: 640, L: 1024};
     // jsdom/cssstyle doesn't support var() yet, so we need to use other values
     it.each`
-      name                    | mediaquery           | props            | expected
-      ${'default'}            | ${mediaQueryBelowS}  | ${{}}            | ${'192px'}
-      ${'default'}            | ${mediaQueryAtS}     | ${{}}            | ${'1000px'}
-      ${'default'}            | ${mediaQueryAtM}     | ${{}}            | ${'2000px'}
-      ${'default'}            | ${mediaQueryAtL}     | ${{}}            | ${'3000px'}
-      ${'custom breakpoints'} | ${mediaQueryBelowS}  | ${{breakpoints}} | ${'192px'}
-      ${'custom breakpoints'} | ${{width: 500}}      | ${{breakpoints}} | ${'1000px'}
+      name                    | mediaquery          | props            | expected
+      ${'default'}            | ${mediaQueryBelowS} | ${{}}            | ${'192px'}
+      ${'default'}            | ${mediaQueryAtS}    | ${{}}            | ${'1000px'}
+      ${'default'}            | ${mediaQueryAtM}    | ${{}}            | ${'2000px'}
+      ${'default'}            | ${mediaQueryAtL}    | ${{}}            | ${'3000px'}
+      ${'custom breakpoints'} | ${mediaQueryBelowS} | ${{breakpoints}} | ${'192px'}
+      ${'custom breakpoints'} | ${{width: 500}}     | ${{breakpoints}} | ${'1000px'}
       ${'custom breakpoints'} | ${{width: 800}}     | ${{breakpoints}} | ${'2000px'}
       ${'custom breakpoints'} | ${{width: 1100}}    | ${{breakpoints}} | ${'3000px'}
     `('$name $mediaquery', function ({mediaquery, props, expected}) {

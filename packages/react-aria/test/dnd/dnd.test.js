@@ -23,9 +23,9 @@ import {
 } from './mocks';
 import {Draggable, Droppable} from './examples';
 import {DragTypes} from '../../src/dnd/utils';
-import {setMedia} from 'mock-match-media';
 import React, {useEffect} from 'react';
 import ReactDOM from 'react-dom';
+import {setMedia} from 'mock-match-media';
 import userEvent from '@testing-library/user-event';
 
 function pointerEvent(type, opts) {
