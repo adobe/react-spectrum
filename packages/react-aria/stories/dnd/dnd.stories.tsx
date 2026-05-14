@@ -36,7 +36,7 @@ import {mergeProps} from '../../src/utils/mergeProps';
 import {Meta, StoryFn, StoryObj} from '@storybook/react';
 import Paste from '@spectrum-icons/workflow/Paste';
 import {PressResponder} from '../../src/interactions/PressResponder';
-import React, {JSX, useEffect, useRef, useState} from 'react';
+import React, {JSX, useRef} from 'react';
 import {ReorderableGridExample} from './Reorderable';
 import ShowMenu from '@spectrum-icons/workflow/ShowMenu';
 import {unwrapDOMRef} from '@adobe/react-spectrum/private/utils/useDOMRef';
@@ -770,75 +770,3 @@ export const CollectionPreviewOffset: DnDStoryObj = {
   }
 };
 
-// Verifies the latent DragManager.onBlur bug: when the focused drop target loses
-// focus with no replacement (relatedTarget === null), DragManager should restore
-// focus to the current drop target. With the bug, focus collapses to <body>.
-function BlurRestoreBugDemo(): JSX.Element {
-  let [status, setStatus] = useState('Idle. Click the button, then Tab → Enter → Tab.');
-  let [countdown, setCountdown] = useState<number | null>(null);
-  let [activeAfter, setActiveAfter] = useState('');
-
-  useEffect(() => {
-    if (countdown === null) {
-      return undefined;
-    }
-    if (countdown <= 0) {
-      let el = document.activeElement as HTMLElement | null;
-      let label = el?.textContent?.trim() || el?.tagName || 'null';
-      // oxlint-disable-next-line
-      setStatus(`Blurring active element: "${label}"`);
-      if (el && el !== document.body && typeof el.blur === 'function') {
-        el.blur();
-      }
-      // Read activeElement again after blur to show whether focus was restored.
-      setTimeout(() => {
-        let after = document.activeElement;
-        setActiveAfter(`document.activeElement = <${after?.tagName.toLowerCase()}>`);
-      }, 500);
-      setCountdown(null);
-      return undefined;
-    }
-    let t = setTimeout(() => setCountdown(c => (c == null ? null : c - 1)), 1000);
-    return () => clearTimeout(t);
-  }, [countdown]);
-
-  return (
-    <Flex direction="column" gap="size-200" alignItems="center">
-      <button
-        type="button"
-        onClick={() => {
-          setActiveAfter('');
-          setStatus(
-            'Armed. Tab to "Drag me", press Enter, then Tab to "Drop here" before the timer hits 0.'
-          );
-          setCountdown(8);
-        }}>
-        Arm auto-blur (fires in 8 seconds)
-      </button>
-      <div aria-live="polite">
-        {status}
-        {countdown !== null && ` (T-${countdown}s)`}
-      </div>
-      <div data-testid="active-after">{activeAfter}</div>
-      <Draggable />
-      <Droppable />
-      <ol style={{maxWidth: 520}}>
-        <li>Click "Arm auto-blur".</li>
-        <li>Press Tab to focus "Drag me".</li>
-        <li>Press Enter to start accessible drag (announcer: "Started dragging").</li>
-        <li>Press Tab to move focus to "Drop here". Focus ring is on the drop target.</li>
-        <li>Wait for the countdown to hit 0. The drop target is blurred programmatically.</li>
-        <li>
-          <strong>Bug (current source):</strong> document.activeElement becomes &lt;body&gt; — focus
-          is not restored, accessible drag is effectively lost. <strong>Fix:</strong>{' '}
-          document.activeElement stays on "Drop here".
-        </li>
-      </ol>
-    </Flex>
-  );
-}
-
-export const BlurRestoreBug: DnDStoryObj = {
-  render: () => <BlurRestoreBugDemo />,
-  name: 'Blur restore bug repro'
-};
