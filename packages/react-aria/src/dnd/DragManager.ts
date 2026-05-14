@@ -309,7 +309,7 @@ class DragSession {
 
   onBlur(e: FocusEvent): void {
     let activateButton = this.getCurrentActivateButton();
-    // Guard activateButton non-null so this doesn't trip on the common case where
+    // Guard activateButton non-null so this doesn't trip on the case where
     // there's no activate button and the focused element loses focus to nothing
     // (browsers and jsdom 26+ both set relatedTarget to null in that case).
     if (activateButton && e.relatedTarget === activateButton) {
