@@ -25,10 +25,8 @@ import {centerBaseline} from './CenterBaseline';
 import {Checkbox} from './Checkbox';
 import Chevron from '../ui-icons/Chevron';
 import {css} from '../style/style-macro' with {type: 'macro'};
-import {DEFAULT_SLOT, Provider, useContextProps} from 'react-aria-components/slots';
 import {
   DOMRef,
-  DragItem,
   forwardRefType,
   GlobalDOMAttributes,
   ItemDropTarget,
@@ -37,30 +35,24 @@ import {
 } from '@react-types/shared';
 import {DragAndDropContext, DropIndicator} from 'react-aria-components/useDragAndDrop';
 import DragHandle from '../ui-icons/DragHandle';
-import {
-  description,
-  dragPreviewBadge,
-  dragPreviewCard,
-  dragPreviewCardBack,
-  dragPreviewWrapper,
-  icon,
-  iconCenterWrapper,
-  insertionIndicatorBar,
-  insertionIndicatorCircle,
-  isFirstItem,
-  isPrevSelected,
-  label,
-  S2ListLayout
-} from './ListView';
+import {DragPreview} from './DragPreview';
 import {
   getAllowedOverrides,
   StylesPropWithHeight,
   UnsafeStyles
 } from './style-utils' with {type: 'macro'};
 import {IconContext} from './Icon';
+import {
+  insertionIndicatorBar,
+  insertionIndicatorCircle,
+  isFirstItem,
+  isPrevSelected,
+  S2ListLayout
+} from './ListView';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {ProgressCircle} from './ProgressCircle';
+import {Provider, useContextProps} from 'react-aria-components/slots';
 import {
   TreeItemProps as RACTreeItemProps,
   TreeProps as RACTreeProps,
@@ -242,65 +234,6 @@ const tree = style<TreeRenderProps>({
   }
 });
 
-export interface TreeViewDragPreviewProps {
-  /** The currently dragged items, sourced from renderDragPreview. */
-  items: DragItem[];
-  /** The overflow mode to be applied on the drag preview. */
-  overflowMode?: 'wrap' | 'truncate';
-  /**
-   * The contents of the drag preview. Supports the "label", "description", and "icon" slots.
-   * If no children are provided, defaults to the first drag item's plain text content.
-   */
-  children?: ReactNode;
-}
-
-/**
- * The default drag preview rendered by TreeView during drag and drop. Pass this to
- * a your drag hooks `renderDragPreview` to match the default visual. Provide your own
- * children to customize the drag preview's contents.
- */
-export function TreeViewDragPreview(props: TreeViewDragPreviewProps) {
-  let {items, overflowMode} = props;
-  let isDraggingMultiple = items.length > 1;
-  let itemLabel = items[0]?.['text/plain'] ?? '';
-  let scale = useScale();
-
-  return (
-    <div className={dragPreviewWrapper}>
-      {isDraggingMultiple && <div className={dragPreviewCardBack} />}
-      <div className={dragPreviewCard({scale})}>
-        <Provider
-          values={[
-            [
-              TextContext,
-              {
-                slots: {
-                  [DEFAULT_SLOT]: {styles: label({overflowMode})},
-                  label: {styles: label({overflowMode})},
-                  description: {styles: description({overflowMode})}
-                }
-              }
-            ],
-            [
-              IconContext,
-              {
-                slots: {
-                  icon: {
-                    render: centerBaseline({slot: 'icon', styles: iconCenterWrapper}),
-                    styles: icon
-                  }
-                }
-              }
-            ]
-          ]}>
-          {props.children ?? <Text>{itemLabel}</Text>}
-          {isDraggingMultiple && <div className={dragPreviewBadge}>{items.length}</div>}
-        </Provider>
-      </div>
-    </div>
-  );
-}
-
 let InternalTreeViewContext = createContext<{selectionStyle?: 'highlight' | 'checkbox'}>({});
 
 const insertionIndicatorWrapper = style({
@@ -349,7 +282,7 @@ export const TreeView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Tr
   let scale = useScale();
 
   if (dragAndDropHooks && dragAndDropHooks.renderDragPreview == null) {
-    dragAndDropHooks.renderDragPreview = items => <TreeViewDragPreview items={items} />;
+    dragAndDropHooks.renderDragPreview = items => <DragPreview items={items} />;
   }
 
   let hasCheckbox = props.selectionMode !== 'none' && selectionStyle !== 'highlight';

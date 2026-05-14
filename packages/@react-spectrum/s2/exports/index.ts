@@ -91,7 +91,8 @@ export {ImageCoordinator} from '../src/ImageCoordinator';
 export {InlineAlert, InlineAlertContext} from '../src/InlineAlert';
 export {LabeledValue, LabeledValueContext} from '../src/LabeledValue';
 export {Link, LinkContext} from '../src/Link';
-export {ListView, ListViewContext, ListViewItem, ListViewDragPreview} from '../src/ListView';
+export {ListView, ListViewContext, ListViewItem} from '../src/ListView';
+export {DragPreview} from '../src/DragPreview';
 export {
   MenuItem,
   MenuTrigger,
@@ -133,7 +134,6 @@ export {
   Column,
   TableContext,
   EditableCell,
-  TableViewDragPreview,
   TableFooter
 } from '../src/TableView';
 export {Tabs, TabList, Tab, TabPanel, TabsContext} from '../src/Tabs';
@@ -144,13 +144,7 @@ export {ToastContainer, ToastQueue} from '../src/Toast';
 export {ToggleButton, ToggleButtonContext} from '../src/ToggleButton';
 export {ToggleButtonGroup, ToggleButtonGroupContext} from '../src/ToggleButtonGroup';
 export {Tooltip, TooltipTrigger} from '../src/Tooltip';
-export {
-  TreeView,
-  TreeViewItem,
-  TreeViewItemContent,
-  TreeViewLoadMoreItem,
-  TreeViewDragPreview
-} from '../src/TreeView';
+export {TreeView, TreeViewItem, TreeViewItemContent, TreeViewLoadMoreItem} from '../src/TreeView';
 
 export {pressScale} from '../src/pressScale';
 
@@ -239,7 +233,8 @@ export type {ImageProps} from '../src/Image';
 export type {ImageCoordinatorProps} from '../src/ImageCoordinator';
 export type {LabeledValueProps} from '../src/LabeledValue';
 export type {LinkProps} from '../src/Link';
-export type {ListViewProps, ListViewItemProps, ListViewDragPreviewProps} from '../src/ListView';
+export type {ListViewProps, ListViewItemProps} from '../src/ListView';
+export type {DragPreviewProps} from '../src/DragPreview';
 export type {
   MenuTriggerProps,
   MenuProps,
@@ -273,7 +268,6 @@ export type {
   RowProps,
   CellProps,
   ColumnProps,
-  TableViewDragPreviewProps,
   TableFooterProps
 } from '../src/TableView';
 export type {TabsProps, TabProps, TabListProps, TabPanelProps} from '../src/Tabs';
@@ -288,8 +282,7 @@ export type {
   TreeViewProps,
   TreeViewItemProps,
   TreeViewItemContentProps,
-  TreeViewLoadMoreItemProps,
-  TreeViewDragPreviewProps
+  TreeViewLoadMoreItemProps
 } from '../src/TreeView';
 export type {AutocompleteProps} from 'react-aria-components/Autocomplete';
 export type {DateValue, DateRange} from 'react-aria-components/RangeCalendar';

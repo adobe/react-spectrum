@@ -46,11 +46,11 @@ import {
 } from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, ReactElement, ReactNode, useContext, useRef} from 'react';
 import {css} from '../style/style-macro' with {type: 'macro'};
+import {description, DragPreview, icon, iconCenterWrapper, label} from './DragPreview';
 import {
   DOMProps,
   DOMRef,
   DOMRefValue,
-  DragItem,
   forwardRefType,
   GlobalDOMAttributes,
   ItemDropTarget,
@@ -277,7 +277,7 @@ export const ListView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Li
 
   if (dragAndDropHooks && dragAndDropHooks.renderDragPreview == null) {
     dragAndDropHooks.renderDragPreview = items => (
-      <ListViewDragPreview items={items} overflowMode={overflowMode} />
+      <DragPreview items={items} overflowMode={overflowMode} />
     );
   }
 
@@ -774,59 +774,6 @@ let rowWrapper = style({
   display: 'contents'
 });
 
-export let label = style({
-  gridArea: 'label',
-  alignSelf: 'center',
-  font: controlFont(),
-  color: 'inherit',
-  truncate: true,
-  whiteSpace: {
-    default: 'nowrap',
-    overflowMode: {
-      wrap: 'normal'
-    }
-  }
-});
-
-export let description = style({
-  gridArea: 'description',
-  alignSelf: 'center',
-  truncate: true,
-  whiteSpace: {
-    default: 'nowrap',
-    overflowMode: {
-      wrap: 'normal'
-    }
-  },
-  font: 'ui-sm',
-  color: {
-    default: baseColor('neutral-subdued'),
-    isDisabled: 'disabled',
-    forcedColors: 'inherit'
-  },
-  transition: 'default'
-});
-
-export let iconCenterWrapper = style({
-  display: 'flex',
-  gridArea: 'icon',
-  gridRowEnd: 'span 2',
-  alignSelf: 'center',
-  alignItems: 'center'
-});
-
-export let icon = style({
-  display: 'block',
-  size: fontRelative(20),
-  // too small default icon size is wrong, it's like the icons are 1 tshirt size bigger than the rest of the component? check again after typography changes
-  // reminder, size of WF is applied via font size
-  marginEnd: 'text-to-visual',
-  '--iconPrimary': {
-    type: 'fill',
-    value: 'currentColor'
-  }
-});
-
 let image = style({
   gridArea: 'icon',
   gridRowEnd: 'span 2',
@@ -908,68 +855,6 @@ let dragButton = style<{isFocusVisible?: boolean}>({
     type: 'fill',
     value: 'currentColor'
   }
-});
-
-export let dragPreviewWrapper = style({
-  position: 'relative'
-});
-
-export let dragPreviewCardBack = style({
-  position: 'absolute',
-  zIndex: -1,
-  top: 4,
-  left: 4,
-  width: 200,
-  height: 'full',
-  borderRadius: 'default',
-  borderWidth: 1,
-  borderStyle: 'solid',
-  borderColor: 'blue-900',
-  backgroundColor: 'gray-25'
-});
-
-export let dragPreviewCard = style<{scale?: 'medium' | 'large'}>({
-  boxSizing: 'border-box',
-  paddingX: 0,
-  paddingY: 8,
-  backgroundColor: 'gray-25',
-  color: baseColor('neutral'),
-  position: 'relative',
-  display: 'grid',
-  gridTemplateAreas: ['. icon label       . badge .', '. .    description . badge .'],
-  gridTemplateColumns: [12, 'auto', 'minmax(0, 1fr)', 4, 'auto', 6],
-  gridTemplateRows: '1fr auto',
-  alignItems: 'baseline',
-  minHeight: {
-    default: 40,
-    scale: {
-      large: 50
-    }
-  },
-  width: 200,
-  borderRadius: 'default',
-  borderWidth: 1,
-  borderStyle: 'solid',
-  borderColor: 'blue-900'
-});
-
-export let dragPreviewBadge = style({
-  gridArea: 'badge',
-  alignSelf: 'center',
-  paddingX: 8,
-  paddingY: 2,
-  borderRadius: 'sm',
-  backgroundColor: {
-    default: 'blue-900',
-    forcedColors: 'Highlight'
-  },
-  font: 'ui-sm',
-  fontWeight: 'bold',
-  color: {
-    default: 'white',
-    forcedColors: 'HighlightText'
-  },
-  forcedColorAdjust: 'none'
 });
 
 let insertionIndicatorWrapper = style({
@@ -1100,65 +985,6 @@ function isLastItem(id: Key | undefined, state: ListState<unknown>) {
     return false;
   }
   return state.collection.getLastKey() === id;
-}
-
-export interface ListViewDragPreviewProps {
-  /** The currently dragged items, sourced from renderDragPreview. */
-  items: DragItem[];
-  /** The overflow mode to be applied on the drag preview. */
-  overflowMode?: ListViewStylesProps['overflowMode'];
-  /**
-   * The contents of the drag preview. Supports the "label", "description", and "icon" slots.
-   * If no children are provided, defaults to the first drag item's plain text content.
-   */
-  children?: ReactNode;
-}
-
-/**
- * The default drag preview rendered by ListView during drag and drop. Pass this to
- * a your drag hooks `renderDragPreview` to match the default visual. Provide your own
- * children to customize the drag preview's contents.
- */
-export function ListViewDragPreview(props: ListViewDragPreviewProps) {
-  let {items, overflowMode} = props;
-  let isDraggingMultiple = items.length > 1;
-  let itemLabel = items[0]?.['text/plain'] ?? '';
-  let scale = useScale();
-
-  return (
-    <div className={dragPreviewWrapper}>
-      {isDraggingMultiple && <div className={dragPreviewCardBack} />}
-      <div className={dragPreviewCard({scale})}>
-        <Provider
-          values={[
-            [
-              TextContext,
-              {
-                slots: {
-                  [DEFAULT_SLOT]: {styles: label({overflowMode})},
-                  label: {styles: label({overflowMode})},
-                  description: {styles: description({overflowMode})}
-                }
-              }
-            ],
-            [
-              IconContext,
-              {
-                slots: {
-                  icon: {
-                    render: centerBaseline({slot: 'icon', styles: iconCenterWrapper}),
-                    styles: icon
-                  }
-                }
-              }
-            ]
-          ]}>
-          {props.children ?? <Text>{itemLabel}</Text>}
-          {isDraggingMultiple && <div className={dragPreviewBadge}>{items.length}</div>}
-        </Provider>
-      </div>
-    </div>
-  );
 }
 
 export function ListViewItem(props: ListViewItemProps): ReactNode {

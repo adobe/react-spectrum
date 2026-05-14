@@ -19,6 +19,7 @@ import {Collection} from 'react-aria/Collection';
 import {Content, Heading, Text} from '../src/Content';
 import Copy from '../s2wf-icons/S2_Icon_Copy_20_N.svg';
 import Delete from '../s2wf-icons/S2_Icon_Delete_20_N.svg';
+import {DragPreview} from '../src/DragPreview';
 import {DroppableCollectionReorderEvent, Key} from '@react-types/shared';
 import Edit from '../s2wf-icons/S2_Icon_Edit_20_N.svg';
 import FileTxt from '../s2wf-icons/S2_Icon_FileText_20_N.svg';
@@ -33,7 +34,6 @@ import React, {ReactElement, useCallback, useState} from 'react';
 import {style} from '../style' with {type: 'macro'};
 import {
   TreeView,
-  TreeViewDragPreview,
   TreeViewItem,
   TreeViewItemContent,
   TreeViewItemProps,
@@ -1016,13 +1016,13 @@ function CustomDragPreview(props) {
   let id = items[0].id;
   let item = parentList.getItem(id);
   return (
-    <TreeViewDragPreview {...props}>
+    <DragPreview {...props}>
       {item.value.icon}
       <Text>{item.value.name}</Text>
       {item.value.childItems && (
         <Text slot="description">{`${item.value.childItems.length} item(s)`}</Text>
       )}
-    </TreeViewDragPreview>
+    </DragPreview>
   );
 }
 

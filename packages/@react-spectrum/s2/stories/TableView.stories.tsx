@@ -23,11 +23,11 @@ import {
   TableFooter,
   TableHeader,
   TableView,
-  TableViewDragPreview,
   TableViewProps
 } from '../src/TableView';
 import {Collection} from 'react-aria/Collection';
 import {Content, Heading, Text} from '../src/Content';
+import {DragPreview} from '../src/DragPreview';
 import Edit from '../s2wf-icons/S2_Icon_Edit_20_N.svg';
 import FileText from '../s2wf-icons/S2_Icon_FileText_20_N.svg';
 import Filter from '../s2wf-icons/S2_Icon_Filter_20_N.svg';
@@ -2218,11 +2218,11 @@ function CustomDragPreview(props) {
   let id = items[0].id;
   let item = parentList.getItem(id);
   return (
-    <TableViewDragPreview {...props}>
+    <DragPreview {...props}>
       {item.type === 'folder' ? <Folder /> : <FileText />}
       <Text>{item.name}</Text>
       <Text slot="description">{item.type}</Text>
-    </TableViewDragPreview>
+    </DragPreview>
   );
 }
 

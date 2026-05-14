@@ -74,7 +74,6 @@ import {
   DOMProps,
   DOMRef,
   DOMRefValue,
-  DragItem,
   forwardRefType,
   GlobalDOMAttributes,
   ItemDropTarget,
@@ -82,19 +81,8 @@ import {
   LoadingState,
   Node
 } from '@react-types/shared';
-import {centerBaseline} from './CenterBaseline';
 import DragHandle from '../ui-icons/DragHandle';
-import {
-  description,
-  dragPreviewBadge,
-  dragPreviewCard,
-  dragPreviewCardBack,
-  dragPreviewWrapper,
-  icon,
-  iconCenterWrapper,
-  InsertionIndicator,
-  label
-} from './ListView';
+import {DragPreview} from './DragPreview';
 import {Form} from 'react-aria-components/Form';
 import {
   getActiveElement,
@@ -104,6 +92,7 @@ import {
 import {getOwnerDocument} from 'react-aria/private/utils/domHelpers';
 import {GridNode} from 'react-stately/private/grid/GridCollection';
 import {IconContext} from './Icon';
+import {InsertionIndicator} from './ListView';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {Key} from '@react-types/shared';
@@ -136,7 +125,6 @@ import React, {
 import SortDownArrow from '../s2wf-icons/S2_Icon_SortDown_20_N.svg';
 import SortUpArrow from '../s2wf-icons/S2_Icon_SortUp_20_N.svg';
 import {Button as SpectrumButton} from './Button';
-import {Text, TextContext} from './Content';
 import {useActionBarContainer} from './ActionBar';
 import {useDOMRef} from './useDOMRef';
 import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
@@ -306,65 +294,6 @@ const table = style<
   forcedColorAdjust: 'none'
 });
 
-export interface TableViewDragPreviewProps {
-  /** The currently dragged items, sourced from renderDragPreview. */
-  items: DragItem[];
-  /** The overflow mode to be applied on the drag preview. */
-  overflowMode?: S2TableProps['overflowMode'];
-  /**
-   * The contents of the drag preview. Supports the "label", "description", and "icon" slots.
-   * If no children are provided, defaults to the first drag item's plain text content.
-   */
-  children?: ReactNode;
-}
-
-/**
- * The default drag preview rendered by TableView during drag and drop. Pass this to
- * a your drag hooks `renderDragPreview` to match the default visual. Provide your own
- * children to customize the drag preview's contents.
- */
-export function TableViewDragPreview(props: TableViewDragPreviewProps) {
-  let {items, overflowMode} = props;
-  let isDraggingMultiple = items.length > 1;
-  let itemLabel = items[0]?.['text/plain'] ?? '';
-  let scale = useScale();
-
-  return (
-    <div className={dragPreviewWrapper}>
-      {isDraggingMultiple && <div className={dragPreviewCardBack} />}
-      <div className={dragPreviewCard({scale})}>
-        <Provider
-          values={[
-            [
-              TextContext,
-              {
-                slots: {
-                  [DEFAULT_SLOT]: {styles: label({overflowMode})},
-                  label: {styles: label({overflowMode})},
-                  description: {styles: description({overflowMode})}
-                }
-              }
-            ],
-            [
-              IconContext,
-              {
-                slots: {
-                  icon: {
-                    render: centerBaseline({slot: 'icon', styles: iconCenterWrapper}),
-                    styles: icon
-                  }
-                }
-              }
-            ]
-          ]}>
-          {props.children ?? <Text>{itemLabel}</Text>}
-          {isDraggingMultiple && <div className={dragPreviewBadge}>{items.length}</div>}
-        </Provider>
-      </div>
-    </div>
-  );
-}
-
 // component-height-100
 const DEFAULT_HEADER_HEIGHT = {
   medium: 32,
@@ -505,7 +434,7 @@ export const TableView = forwardRef(function TableView(
 
   if (dragAndDropHooks && dragAndDropHooks.renderDragPreview == null) {
     dragAndDropHooks.renderDragPreview = items => (
-      <TableViewDragPreview items={items} overflowMode={overflowMode} />
+      <DragPreview items={items} overflowMode={overflowMode} />
     );
   }
 

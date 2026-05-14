@@ -21,6 +21,7 @@ import {chain} from 'react-aria/chain';
 import {Content, Heading, Text} from '../src/Content';
 import Copy from '../s2wf-icons/S2_Icon_Copy_20_N.svg';
 import Delete from '../s2wf-icons/S2_Icon_Delete_20_N.svg';
+import {DragPreview} from '../src/DragPreview';
 import Edit from '../s2wf-icons/S2_Icon_Edit_20_N.svg';
 import File from '../s2wf-icons/S2_Icon_File_20_N.svg';
 import Folder from '../s2wf-icons/S2_Icon_Folder_20_N.svg';
@@ -28,7 +29,7 @@ import FolderOpen from '../spectrum-illustrations/linear/FolderOpen';
 import {IllustratedMessage} from '../src/IllustratedMessage';
 import {Image} from '../src/Image';
 import {Key} from '@react-types/shared';
-import {ListView, ListViewDragPreview, ListViewItem} from '../src/ListView';
+import {ListView, ListViewItem} from '../src/ListView';
 import {MenuItem} from '../src/Menu';
 import type {Meta, StoryObj} from '@storybook/react';
 import {ReactNode, useState} from 'react';
@@ -693,7 +694,7 @@ function CustomDragPreview(props) {
   let id = items[0].id;
   let item = parentList.getItem(id);
   return (
-    <ListViewDragPreview {...props}>
+    <DragPreview {...props}>
       <Text>{item.name}</Text>
       {item.type === 'folder' && (
         <>
@@ -704,7 +705,7 @@ function CustomDragPreview(props) {
         </>
       )}
       {item.type === 'file' && <File />}
-    </ListViewDragPreview>
+    </DragPreview>
   );
 }
 

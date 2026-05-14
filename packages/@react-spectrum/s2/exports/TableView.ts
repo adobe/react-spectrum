@@ -7,9 +7,9 @@ export {
   Column,
   TableContext,
   EditableCell,
-  TableViewDragPreview,
   TableFooter
 } from '../src/TableView';
+export {DragPreview} from '../src/DragPreview';
 export {Collection} from 'react-aria/Collection';
 export type {
   TableViewProps,
@@ -18,9 +18,9 @@ export type {
   RowProps,
   CellProps,
   ColumnProps,
-  TableViewDragPreviewProps,
   TableFooterProps
 } from '../src/TableView';
+export type {DragPreviewProps} from '../src/DragPreview';
 export type {
   Selection,
   Key,
