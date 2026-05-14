@@ -809,7 +809,7 @@ describe('Menu', function () {
   });
 
   it('warns user if no aria-label is provided', () => {
-    let spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    using spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
     renderComponent(Menu, {}, {'aria-labelledby': undefined});
     expect(spyWarn).toHaveBeenCalledWith(
       'An aria-label or aria-labelledby prop is required for accessibility.'

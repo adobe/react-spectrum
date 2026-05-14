@@ -328,7 +328,7 @@ describe('ComboBox', function () {
   });
 
   it('renders with placeholder text and shows warning', function () {
-    let spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    using spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
     let {getByPlaceholderText, getByRole} = renderComboBox({placeholder: 'Test placeholder'});
 
     let searchAutocomplete = getByRole('combobox');

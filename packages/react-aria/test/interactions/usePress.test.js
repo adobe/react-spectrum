@@ -1124,7 +1124,7 @@ describe('usePress', function () {
     });
 
     it('should not ignore virtual pointer events on android ', function () {
-      let uaMock = jest.spyOn(navigator, 'userAgent', 'get').mockImplementation(() => 'Android');
+      using uaMock = jest.spyOn(navigator, 'userAgent', 'get').mockImplementation(() => 'Android');
 
       let events = [];
       let addEvent = e => events.push(e);
@@ -3034,7 +3034,7 @@ describe('usePress', function () {
         />
       );
 
-      let spy = jest.spyOn(window.navigator, 'platform', 'get').mockImplementation(() => 'Mac');
+      using spy = jest.spyOn(window.navigator, 'platform', 'get').mockImplementation(() => 'Mac');
 
       let el = res.getByText('test');
       fireEvent.keyDown(el, {key: 'Meta'});
@@ -4971,7 +4971,7 @@ describe('usePress', function () {
     });
 
     it('should not ignore virtual pointer events on android ', function () {
-      let uaMock = jest.spyOn(navigator, 'userAgent', 'get').mockImplementation(() => 'Android');
+      using uaMock = jest.spyOn(navigator, 'userAgent', 'get').mockImplementation(() => 'Android');
 
       const shadowRoot = setupShadowDOMTest({onPressChange: null});
 

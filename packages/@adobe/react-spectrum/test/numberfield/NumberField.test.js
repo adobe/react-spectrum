@@ -155,7 +155,7 @@ describe('NumberField', function () {
       let platformMock = jest
         .spyOn(navigator, 'platform', 'get')
         .mockImplementation(() => platform);
-      let uaMock = jest.spyOn(navigator, 'userAgent', 'get').mockImplementation(() => UA);
+      using uaMock = jest.spyOn(navigator, 'userAgent', 'get').mockImplementation(() => UA);
 
       let {textField} = renderNumberField({onChange: onChangeSpy, ...props});
       platformMock.mockRestore();

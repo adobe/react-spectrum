@@ -781,7 +781,7 @@ describe('ListBox', function () {
   });
 
   it('warns user if no aria-label is provided', () => {
-    let spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    using spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
     renderComponent({'aria-labelledby': undefined});
     expect(spyWarn).toHaveBeenCalledWith(
       'If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility'

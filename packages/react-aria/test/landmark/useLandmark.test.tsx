@@ -591,7 +591,7 @@ describe('LandmarkManager', function () {
   });
 
   it('Should allow 2+ landmarks with same role if they are labelled.', function () {
-    let spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    using spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
 
     render(
       <div>
@@ -631,7 +631,7 @@ describe('LandmarkManager', function () {
   });
 
   it('Should warn if 2+ landmarks with same role are used but not labelled.', function () {
-    let spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    using spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
 
     let tree = render(
       <div>
@@ -676,7 +676,7 @@ describe('LandmarkManager', function () {
   });
 
   it('Should warn if 2+ landmarks with same role and same label', function () {
-    let spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    using spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
 
     let tree = render(
       <div>
@@ -1214,7 +1214,7 @@ describe('LandmarkManager', function () {
   });
 
   it('updates the landmark if the label changes', function () {
-    let spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    using spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
     let tree = render(
       <div>
         <Navigation aria-label="nav label 1">

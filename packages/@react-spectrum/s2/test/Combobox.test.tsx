@@ -202,7 +202,7 @@ describe('Combobox', () => {
 
   it('should support contextual help', async () => {
     // Issue with how we don't render the contextual help button in the fake DOM since PressResponder isn't using createHideableComponent
-    let warn = jest.spyOn(global.console, 'warn').mockImplementation();
+    using warn = jest.spyOn(global.console, 'warn').mockImplementation();
     let user = userEvent.setup({delay: null, pointerMap});
     let tree = render(
       <ComboBox

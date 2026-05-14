@@ -26,6 +26,8 @@ export function mockImplementation(
   }
 
   // multiple override definition of spyOn doesn't work with our type
+  // we'll want to figure out how to make use of `using` here, or all
+  // the cleanup that jest needs to do should be returned
   let spy = jest.spyOn(...(spyTarget as [any, string, 'get']));
   mockCalls.forEach(mock => {
     spy.mockImplementationOnce(mock);
