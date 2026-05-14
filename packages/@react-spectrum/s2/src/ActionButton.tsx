@@ -187,7 +187,7 @@ export const btnStyles = style<
       },
       isDisabled: 'disabled',
       isStaticColor: {
-        default: baseColor('transparent-overlay-800'),
+        default: 'transparent-overlay-1000',
         isSelected: 'auto',
         isDisabled: 'transparent-overlay-400'
       },
