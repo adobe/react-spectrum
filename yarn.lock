@@ -10968,11 +10968,11 @@ __metadata:
   linkType: hard
 
 "@types/istanbul-lib-report@npm:*":
-  version: 1.1.1
-  resolution: "@types/istanbul-lib-report@npm:1.1.1"
+  version: 3.0.3
+  resolution: "@types/istanbul-lib-report@npm:3.0.3"
   dependencies:
     "@types/istanbul-lib-coverage": "npm:*"
-  checksum: 10c0/b773aa6adb92cef94b0985fa49d9d8c06f30117b7607426b99a2ab06c0019fcd27844f5ca787956a80c10dccae3f8a3062c818c90bebc299f06dac290d9d367f
+  checksum: 10c0/247e477bbc1a77248f3c6de5dadaae85ff86ac2d76c5fc6ab1776f54512a745ff2a5f791d22b942e3990ddbd40f3ef5289317c4fca5741bedfaa4f01df89051c
   languageName: node
   linkType: hard
 
