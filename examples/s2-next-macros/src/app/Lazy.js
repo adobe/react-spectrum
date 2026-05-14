@@ -60,6 +60,7 @@ import {
   Image,
   InlineAlert,
   Keyboard,
+  LabeledValue,
   Link,
   Meter,
   NumberField,
@@ -162,6 +163,7 @@ export default function Lazy() {
           <TextArea placeholder="Enter a description" label="Description" />
           <TextField placeholder="Enter a email" label="Email" />
           <TextField placeholder="Enter a password" label="Password" />
+          <LabeledValue label="Actual hours" value={0} />
           <SelectBoxGroup aria-label="Choose a cloud">
             <SelectBox id="aws" textValue="Amazon Web Services">
               <Server />
