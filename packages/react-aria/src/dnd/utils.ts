@@ -73,7 +73,6 @@ function mapModality(modality: string | null) {
     modality = 'virtual';
   }
 
-  // JSDOM now defines onTouchStart
   if (
     modality === 'virtual' &&
     typeof window !== 'undefined' &&

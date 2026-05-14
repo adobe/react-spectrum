@@ -22779,6 +22779,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"media-query-fns@npm:^2.1.2":
+  version: 2.1.2
+  resolution: "media-query-fns@npm:2.1.2"
+  dependencies:
+    media-query-parser: "npm:3.0.0-beta.1"
+  checksum: 10c0/6055602fb84c13e7506619e8c7900d10e46a3af7c2da08069cffa797241a3960c1e0f1fff2c9e12edc83116befd2f41c06b71323e2054d14ad8c26d98f8900a4
+  languageName: node
+  linkType: hard
+
+"media-query-parser@npm:3.0.0-beta.1":
+  version: 3.0.0-beta.1
+  resolution: "media-query-parser@npm:3.0.0-beta.1"
+  checksum: 10c0/84792a4cb05ce8f4fa3f85c851a1cacd9716d66e82131a23a6a1b912151f30d21a3a05cbf02b249d8f341ac72a0eea4f4ea1dd711712a43735a355d1f2c875f9
+  languageName: node
+  linkType: hard
+
 "media-typer@npm:0.3.0":
   version: 0.3.0
   resolution: "media-typer@npm:0.3.0"
@@ -26487,6 +26503,7 @@ __metadata:
     lucide-react: "npm:^0.517.0"
     md5: "npm:^2.2.1"
     mdast-util-to-string: "npm:^4.0.0"
+    media-query-fns: "npm:^2.1.2"
     mock-match-media: "npm:^1.0.0"
     motion: "npm:^12.23.6"
     npm-cli-login: "npm:^1.0.0"

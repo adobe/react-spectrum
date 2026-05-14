@@ -168,6 +168,7 @@
     "lucide-react": "^0.517.0",
     "md5": "^2.2.1",
     "mdast-util-to-string": "^4.0.0",
+    "media-query-fns": "^2.1.2",
     "mock-match-media": "^1.0.0",
     "motion": "^12.23.6",
     "npm-cli-login": "^1.0.0",
