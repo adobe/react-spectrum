@@ -15,7 +15,7 @@ import {renderHook} from '@react-spectrum/test-utils-internal';
 import {useLink} from '../../src/link/useLink';
 
 describe('useLink', function () {
-  let renderLinkHook = (props) => {
+  let renderLinkHook = props => {
     let {result} = renderHook(() => useLink(props));
     return result.current;
   };
@@ -34,7 +34,11 @@ describe('useLink', function () {
   });
 
   it('handles isDisabled', function () {
-    let {linkProps} = renderLinkHook({children: 'Test Link', elementType: 'span', isDisabled: true});
+    let {linkProps} = renderLinkHook({
+      children: 'Test Link',
+      elementType: 'span',
+      isDisabled: true
+    });
     expect(linkProps.role).toBe('link');
     expect(linkProps['aria-disabled']).toBe(true);
     expect(linkProps.tabIndex).toBeUndefined();

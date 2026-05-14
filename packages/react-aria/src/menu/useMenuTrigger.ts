@@ -27,38 +27,43 @@ import {useOverlayTrigger} from '../overlays/useOverlayTrigger';
 
 export interface AriaMenuTriggerProps {
   /** The type of menu that the menu trigger opens. */
-  type?: 'menu' | 'listbox',
+  type?: 'menu' | 'listbox';
   /** Whether menu trigger is disabled. */
-  isDisabled?: boolean,
+  isDisabled?: boolean;
   /** How menu is triggered. */
-  trigger?: MenuTriggerType
+  trigger?: MenuTriggerType;
 }
 
 export interface MenuTriggerAria<T> {
   /** Props for the menu trigger element. */
-  menuTriggerProps: AriaButtonProps,
+  menuTriggerProps: AriaButtonProps;
 
   /** Props for the menu. */
-  menuProps: AriaMenuOptions<T>
+  menuProps: AriaMenuOptions<T>;
 }
 
 /**
  * Provides the behavior and accessibility implementation for a menu trigger.
+ *
  * @param props - Props for the menu trigger.
  * @param state - State for the menu trigger.
  * @param ref - Ref to the HTML element trigger for the menu.
  */
-export function useMenuTrigger<T>(props: AriaMenuTriggerProps, state: MenuTriggerState, ref: RefObject<Element | null>): MenuTriggerAria<T> {
-  let {
-    type = 'menu',
-    isDisabled,
-    trigger = 'press'
-  } = props;
+export function useMenuTrigger<T>(
+  props: AriaMenuTriggerProps,
+  state: MenuTriggerState,
+  ref: RefObject<Element | null>
+): MenuTriggerAria<T> {
+  let {type = 'menu', isDisabled, trigger = 'press'} = props;
 
   let menuTriggerId = useId();
   let {triggerProps, overlayProps} = useOverlayTrigger({type}, state, ref);
 
-  let open = (shouldOpen: boolean, e: KeyboardEvent, focusStrategy: FocusStrategy = 'first'): boolean => {
+  let open = (
+    shouldOpen: boolean,
+    e: KeyboardEvent,
+    focusStrategy: FocusStrategy = 'first'
+  ): boolean => {
     if (!shouldOpen || e.isDefaultPrevented()) {
       return false;
     }
@@ -73,31 +78,31 @@ export function useMenuTrigger<T>(props: AriaMenuTriggerProps, state: MenuTrigge
   let {keyboardProps} = useKeyboard({
     isDisabled,
     shortcuts: {
-      'Enter': (e) => {
+      Enter: e => {
         return open(trigger !== 'longPress', e, 'first');
       },
-      ' ': (e) => {
+      ' ': e => {
         return open(trigger !== 'longPress', e, 'first');
       },
-      'ArrowDown': (e) => {
+      ArrowDown: e => {
         return open(trigger !== 'longPress', e, 'first');
       },
-      'ArrowUp': (e) => {
+      ArrowUp: e => {
         return open(trigger !== 'longPress', e, 'last');
       },
-      'Alt+Enter': (e) => {
+      'Alt+Enter': e => {
         return open(trigger === 'longPress', e, 'first');
       },
-      'Alt+ ': (e) => {
+      'Alt+ ': e => {
         return open(trigger === 'longPress', e, 'first');
       },
       // Alt+Arrow* must open for both trigger modes: for `press` it matches the same `e.key` cases as
       // plain Arrow*; for `longPress`, plain arrows are ignored elsewhere and Alt+Arrow is the opener
       // (see legacy `if (trigger === 'longPress' && !e.altKey) return` before the ArrowDown/Up switch).
-      'Alt+ArrowDown': (e) => {
+      'Alt+ArrowDown': e => {
         return open(true, e, 'first');
       },
-      'Alt+ArrowUp': (e) => {
+      'Alt+ArrowUp': e => {
         return open(true, e, 'last');
       }
     }
@@ -115,7 +120,7 @@ export function useMenuTrigger<T>(props: AriaMenuTriggerProps, state: MenuTrigge
     }
   });
 
-  let pressProps: PressProps =  {
+  let pressProps: PressProps = {
     preventFocusOnPress: true,
     onPressStart(e) {
       // For consistency with native, open the menu on mouse/key down, but touch up.

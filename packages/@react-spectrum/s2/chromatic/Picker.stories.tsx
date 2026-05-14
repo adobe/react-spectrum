@@ -10,7 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import {AsyncPickerStory, AsyncPickerStoryType, ContextualHelpExample, CustomWidth, Dynamic, Example, Sections, WithAvatars, WithIcons} from '../stories/Picker.stories';
+import {
+  AsyncPickerStory,
+  AsyncPickerStoryType,
+  ContextualHelpExample,
+  CustomWidth,
+  Dynamic,
+  Example,
+  Sections,
+  WithAvatars,
+  WithIcons
+} from '../stories/Picker.stories';
 import {expect} from '@storybook/jest';
 import type {Meta, StoryObj} from '@storybook/react';
 import {Picker, PickerItem} from '../src/Picker';
@@ -19,7 +29,12 @@ import {userEvent, waitFor, within} from 'storybook/test';
 const meta: Meta<typeof Picker<any>> = {
   component: Picker,
   parameters: {
-    chromaticProvider: {colorSchemes: ['light'], backgrounds: ['base'], locales: ['en-US'], disableAnimations: true},
+    chromaticProvider: {
+      colorSchemes: ['light'],
+      backgrounds: ['base'],
+      locales: ['en-US'],
+      disableAnimations: true
+    },
     chromatic: {ignoreSelectors: ['[role="progressbar"]']}
   },
   tags: ['autodocs'],
@@ -98,9 +113,12 @@ export const EmptyAndLoading: Story = {
   ),
   play: async ({canvasElement}) => {
     let body = canvasElement.ownerDocument.body;
-    await waitFor(() => {
-      expect(within(body).getByRole('progressbar', {hidden: true})).toBeInTheDocument();
-    }, {timeout: 5000});
+    await waitFor(
+      () => {
+        expect(within(body).getByRole('progressbar', {hidden: true})).toBeInTheDocument();
+      },
+      {timeout: 5000}
+    );
     await userEvent.tab();
     await userEvent.keyboard('{ArrowDown}');
     expect(within(body).queryByRole('listbox')).toBeFalsy();
@@ -115,33 +133,51 @@ export const AsyncResults: StoryObj<AsyncPickerStoryType> = {
   },
   play: async ({canvasElement}) => {
     let body = canvasElement.ownerDocument.body;
-    await waitFor(() => {
-      expect(within(body).getByRole('progressbar', {hidden: true})).toBeInTheDocument();
-    }, {timeout: 5000});
+    await waitFor(
+      () => {
+        expect(within(body).getByRole('progressbar', {hidden: true})).toBeInTheDocument();
+      },
+      {timeout: 5000}
+    );
     await userEvent.tab();
 
-    await waitFor(() => {
-      expect(within(body).queryByRole('progressbar', {hidden: true})).toBeFalsy();
-    }, {timeout: 5000});
+    await waitFor(
+      () => {
+        expect(within(body).queryByRole('progressbar', {hidden: true})).toBeFalsy();
+      },
+      {timeout: 5000}
+    );
 
     await userEvent.keyboard('{ArrowDown}');
     let listbox = await within(body).findByRole('listbox');
-    await waitFor(() => {
-      expect(within(listbox).getByText('Luke', {exact: false})).toBeInTheDocument();
-    }, {timeout: 5000});
+    await waitFor(
+      () => {
+        expect(within(listbox).getByText('Luke', {exact: false})).toBeInTheDocument();
+      },
+      {timeout: 5000}
+    );
 
-    await waitFor(() => {
-      expect(within(listbox).getByRole('progressbar', {hidden: true})).toBeInTheDocument();
-    }, {timeout: 5000});
+    await waitFor(
+      () => {
+        expect(within(listbox).getByRole('progressbar', {hidden: true})).toBeInTheDocument();
+      },
+      {timeout: 5000}
+    );
 
-    await waitFor(() => {
-      expect(within(listbox).queryByRole('progressbar', {hidden: true})).toBeFalsy();
-    }, {timeout: 5000});
+    await waitFor(
+      () => {
+        expect(within(listbox).queryByRole('progressbar', {hidden: true})).toBeFalsy();
+      },
+      {timeout: 5000}
+    );
 
     await userEvent.keyboard('{PageDown}');
 
-    await waitFor(() => {
-      expect(within(listbox).getByText('Greedo', {exact: false})).toBeInTheDocument();
-    }, {timeout: 5000});
+    await waitFor(
+      () => {
+        expect(within(listbox).getByText('Greedo', {exact: false})).toBeInTheDocument();
+      },
+      {timeout: 5000}
+    );
   }
 };

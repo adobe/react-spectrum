@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import React, { useState } from "react";
-import "@react-spectrum/s2/page.css";
+import React, {useState} from 'react';
+import '@react-spectrum/s2/page.css';
 import {
   ActionBar,
   ActionButton,
@@ -47,14 +47,14 @@ import {
   TreeViewItem,
   TreeViewItemContent,
   UnavailableMenuItemTrigger
-} from "@react-spectrum/s2";
-import Edit from "@react-spectrum/s2/icons/Edit";
-import FileTxt from "@react-spectrum/s2/icons/FileText";
-import Folder from "@react-spectrum/s2/icons/Folder";
-import Section from "./components/Section";
-import { style } from "@react-spectrum/s2/style" with { type: "macro" };
-import { CardViewExample } from "./components/CardViewExample";
-import { CollectionCardsExample } from "./components/CollectionCardsExample";
+} from '@react-spectrum/s2';
+import Edit from '@react-spectrum/s2/icons/Edit';
+import FileTxt from '@react-spectrum/s2/icons/FileText';
+import Folder from '@react-spectrum/s2/icons/Folder';
+import Section from './components/Section';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {CardViewExample} from './components/CardViewExample';
+import {CollectionCardsExample} from './components/CollectionCardsExample';
 
 const Lazy = React.lazy(() => import('./Lazy'));
 
@@ -62,14 +62,14 @@ function App() {
   let [isLazyLoaded, setLazyLoaded] = useState(false);
   let [cardViewState, setCardViewState] = useState({
     layout: 'grid',
-    loadingState: 'idle',
+    loadingState: 'idle'
   });
   let cardViewLoadingOptions = [
     {id: 'idle', label: 'Idle'},
     {id: 'loading', label: 'Loading'},
     {id: 'sorting', label: 'Sorting'},
     {id: 'loadingMore', label: 'Loading More'},
-    {id: 'error', label: 'Error'},
+    {id: 'error', label: 'Error'}
   ];
   let cardViewLayoutOptions = [
     {id: 'grid', label: 'Grid'},
@@ -77,43 +77,36 @@ function App() {
   ];
   return (
     <Provider elementType="main">
-      <Heading
-        styles={style({ font: "heading-xl", textAlign: "center" })}
-        level={1}
-      >
+      <Heading styles={style({font: 'heading-xl', textAlign: 'center'})} level={1}>
         Spectrum 2 + Webpack
       </Heading>
       <div
         className={style({
           maxWidth: 288,
-          margin: "auto",
-        })}
-      >
+          margin: 'auto'
+        })}>
         <Divider />
       </div>
       <div
         className={style({
-          display: "flex",
-          flexDirection: "column",
+          display: 'flex',
+          flexDirection: 'column',
           gap: 16,
-          alignItems: "center"
-        })}
-      >
+          alignItems: 'center'
+        })}>
         <Section title="Buttons">
           <ButtonGroup align="center" styles={style({maxWidth: '[100vw]'})}>
             <Button variant="primary">Primary</Button>
-            <Button variant="secondary"><Text>Secondary</Text></Button>
+            <Button variant="secondary">
+              <Text>Secondary</Text>
+            </Button>
             <ActionButton>
               <Edit />
               <Text>Action Button</Text>
               <NotificationBadge value={2} />
             </ActionButton>
             <ToggleButton>Toggle Button</ToggleButton>
-            <LinkButton
-              variant="primary"
-              href="https://adobe.com"
-              target="_blank"
-            >
+            <LinkButton variant="primary" href="https://adobe.com" target="_blank">
               Link Button
             </LinkButton>
             <ActionButtonGroup density="compact">
@@ -154,18 +147,18 @@ function App() {
           <CollectionCardsExample loadingState={cardViewState.loadingState} />
           <MenuTrigger>
             <ActionButton>Menu</ActionButton>
-            <Menu onAction={(key) => alert(key.toString())}>
+            <Menu onAction={key => alert(key.toString())}>
               <MenuItem id="cut">Cut</MenuItem>
               <MenuItem id="copy">Copy</MenuItem>
               <MenuItem id="paste">Paste</MenuItem>
               <MenuItem id="replace">Replace</MenuItem>
               <SubmenuTrigger>
                 <MenuItem id="share">Share</MenuItem>
-                <Menu onAction={(key) => alert(key.toString())}>
+                <Menu onAction={key => alert(key.toString())}>
                   <MenuItem id="copy-ink">Copy Link</MenuItem>
                   <SubmenuTrigger>
                     <MenuItem id="email">Email</MenuItem>
-                    <Menu onAction={(key) => alert(key.toString())}>
+                    <Menu onAction={key => alert(key.toString())}>
                       <MenuItem id="attachment">Email as Attachment</MenuItem>
                       <MenuItem id="link">Email as Link</MenuItem>
                     </Menu>
@@ -185,7 +178,7 @@ function App() {
           <MenuTrigger>
             <ActionButton>Menu Trigger</ActionButton>
             <Menu>
-              <MenuItem href="/foo" routerOptions={{ scroll: false }}>
+              <MenuItem href="/foo" routerOptions={{scroll: false}}>
                 Link to /foo
               </MenuItem>
               <MenuItem>Cut</MenuItem>
@@ -218,7 +211,9 @@ function App() {
               <ActionBar>
                 <ActionButton onPress={() => console.log('edit', selectedKeys)}>Edit</ActionButton>
                 <ActionButton onPress={() => console.log('copy', selectedKeys)}>Copy</ActionButton>
-                <ActionButton onPress={() => console.log('delete', selectedKeys)}>Delete</ActionButton>
+                <ActionButton onPress={() => console.log('delete', selectedKeys)}>
+                  Delete
+                </ActionButton>
               </ActionBar>
             )}>
             <TableHeader>
@@ -292,10 +287,14 @@ function App() {
           </TreeView>
         </Section>
 
-        {!isLazyLoaded && <ActionButton onPress={() => setLazyLoaded(true)}>Load more</ActionButton>}
-        {isLazyLoaded && <React.Suspense fallback={<>Loading</>}>
-          <Lazy />
-        </React.Suspense>}
+        {!isLazyLoaded && (
+          <ActionButton onPress={() => setLazyLoaded(true)}>Load more</ActionButton>
+        )}
+        {isLazyLoaded && (
+          <React.Suspense fallback={<>Loading</>}>
+            <Lazy />
+          </React.Suspense>
+        )}
       </div>
     </Provider>
   );

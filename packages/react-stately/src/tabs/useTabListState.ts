@@ -10,29 +10,43 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, CollectionBase, CollectionStateBase, Key, Node, SingleSelection} from '@react-types/shared';
+import {
+  Collection,
+  CollectionBase,
+  CollectionStateBase,
+  Key,
+  Node,
+  SingleSelection
+} from '@react-types/shared';
 import {SingleSelectListState, useSingleSelectListState} from '../list/useSingleSelectListState';
 import {useEffect, useRef} from 'react';
 
-export interface TabListProps<T> extends CollectionBase<T>, Omit<SingleSelection, 'disallowEmptySelection' | 'selectedKey' | 'defaultSelectedKey' | 'onSelectionChange'> {
+export interface TabListProps<T>
+  extends
+    CollectionBase<T>,
+    Omit<
+      SingleSelection,
+      'disallowEmptySelection' | 'selectedKey' | 'defaultSelectedKey' | 'onSelectionChange'
+    > {
   /**
    * Whether the TabList is disabled.
    * Shows that a selection exists, but is not available in that circumstance.
    */
-  isDisabled?: boolean,
+  isDisabled?: boolean;
   /** The currently selected key in the collection (controlled). */
-  selectedKey?: Key,
+  selectedKey?: Key;
   /** The initial selected keys in the collection (uncontrolled). */
-  defaultSelectedKey?: Key,
+  defaultSelectedKey?: Key;
   /** Handler that is called when the selection changes. */
-  onSelectionChange?: (key: Key) => void
+  onSelectionChange?: (key: Key) => void;
 }
 
-export interface TabListStateOptions<T> extends Omit<TabListProps<T>, 'children'>, CollectionStateBase<T> {}
+export interface TabListStateOptions<T>
+  extends Omit<TabListProps<T>, 'children'>, CollectionStateBase<T> {}
 
 export interface TabListState<T> extends SingleSelectListState<T> {
   /** Whether the tab list is disabled. */
-  isDisabled: boolean
+  isDisabled: boolean;
 }
 
 /**
@@ -42,26 +56,33 @@ export interface TabListState<T> extends SingleSelectListState<T> {
 export function useTabListState<T extends object>(props: TabListStateOptions<T>): TabListState<T> {
   let state = useSingleSelectListState<T>({
     ...props,
-    onSelectionChange: props.onSelectionChange ? (key => {
-      if (key != null) {
-        props.onSelectionChange?.(key);
-      }
-    }) : undefined,
+    onSelectionChange: props.onSelectionChange
+      ? key => {
+          if (key != null) {
+            props.onSelectionChange?.(key);
+          }
+        }
+      : undefined,
     suppressTextValueWarning: true,
-    defaultSelectedKey: props.defaultSelectedKey ?? findDefaultSelectedKey(props.collection, props.disabledKeys ? new Set(props.disabledKeys) : new Set()) ?? undefined
+    defaultSelectedKey:
+      props.defaultSelectedKey ??
+      findDefaultSelectedKey(
+        props.collection,
+        props.disabledKeys ? new Set(props.disabledKeys) : new Set()
+      ) ??
+      undefined
   });
 
-  let {
-    selectionManager,
-    collection,
-    selectedKey: currentSelectedKey
-  } = state;
+  let {selectionManager, collection, selectedKey: currentSelectedKey} = state;
 
   let lastSelectedKey = useRef(currentSelectedKey);
   useEffect(() => {
     // Ensure a tab is always selected (in case no selected key was specified or if selected item was deleted from collection)
     let selectedKey = currentSelectedKey;
-    if (props.selectedKey == null && (selectionManager.isEmpty || selectedKey == null || !collection.getItem(selectedKey))) {
+    if (
+      props.selectedKey == null &&
+      (selectionManager.isEmpty || selectedKey == null || !collection.getItem(selectedKey))
+    ) {
       selectedKey = findDefaultSelectedKey(collection, state.disabledKeys);
       if (selectedKey != null) {
         // directly set selection because replace/toggle selection won't consider disabled keys
@@ -70,7 +91,10 @@ export function useTabListState<T extends object>(props: TabListStateOptions<T>)
     }
 
     // If the tablist doesn't have focus and the selected key changes or if there isn't a focused key yet, change focused key to the selected key if it exists.
-    if (selectedKey != null && selectionManager.focusedKey == null || (!selectionManager.isFocused && selectedKey !== lastSelectedKey.current)) {
+    if (
+      (selectedKey != null && selectionManager.focusedKey == null) ||
+      (!selectionManager.isFocused && selectedKey !== lastSelectedKey.current)
+    ) {
       selectionManager.setFocusedKey(selectedKey);
     }
     lastSelectedKey.current = selectedKey;
@@ -82,16 +106,27 @@ export function useTabListState<T extends object>(props: TabListStateOptions<T>)
   };
 }
 
-function findDefaultSelectedKey<T>(collection: Collection<Node<T>> | undefined, disabledKeys: Set<Key>) {
+function findDefaultSelectedKey<T>(
+  collection: Collection<Node<T>> | undefined,
+  disabledKeys: Set<Key>
+) {
   let selectedKey: Key | null = null;
   if (collection) {
     selectedKey = collection.getFirstKey();
     // loop over tabs until we find one that isn't disabled and select that
-    while (selectedKey != null && (disabledKeys.has(selectedKey) || collection.getItem(selectedKey)?.props?.isDisabled) && selectedKey !== collection.getLastKey()) {
+    while (
+      selectedKey != null &&
+      (disabledKeys.has(selectedKey) || collection.getItem(selectedKey)?.props?.isDisabled) &&
+      selectedKey !== collection.getLastKey()
+    ) {
       selectedKey = collection.getKeyAfter(selectedKey);
     }
     // if this check is true, then every item is disabled, it makes more sense to default to the first key than the last
-    if (selectedKey != null && (disabledKeys.has(selectedKey) || collection.getItem(selectedKey)?.props?.isDisabled) && selectedKey === collection.getLastKey()) {
+    if (
+      selectedKey != null &&
+      (disabledKeys.has(selectedKey) || collection.getItem(selectedKey)?.props?.isDisabled) &&
+      selectedKey === collection.getLastKey()
+    ) {
       selectedKey = collection.getFirstKey();
     }
   }

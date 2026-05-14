@@ -50,7 +50,7 @@ const meta: Meta<typeof ListView> = {
     styles: style({height: 320})
   },
   decorators: [
-    (Story) => (
+    Story => (
       <div style={{width: '300px', resize: 'both', height: '320px', minHeight: '320px'}}>
         <Story />
       </div>
@@ -66,39 +66,36 @@ export const Example: Story = {
     'aria-label': 'Files',
     children: (
       <>
-        <ListViewItem>
-          Item 1
-        </ListViewItem>
-        <ListViewItem>
-          Item 2
-        </ListViewItem>
-        <ListViewItem>
-          Item 3
-        </ListViewItem>
+        <ListViewItem>Item 1</ListViewItem>
+        <ListViewItem>Item 2</ListViewItem>
+        <ListViewItem>Item 3</ListViewItem>
       </>
     )
   }
 };
 
 interface Item {
-  id: Key,
-  name: string,
-  type?: 'file' | 'folder',
-  children?: Item[]
+  id: Key;
+  name: string;
+  type?: 'file' | 'folder';
+  children?: Item[];
 }
 
 const items: Item[] = [
   {id: 'a', name: 'Adobe Photoshop', type: 'file'},
   {id: 'b', name: 'Adobe XD', type: 'file'},
-  {id: 'c', name: 'Documents', type: 'folder', children: [
-    {id: 1, name: 'Sales Pitch'},
-    {id: 2, name: 'Demo'},
-    {id: 3, name: 'Taxes'}
-  ]},
+  {
+    id: 'c',
+    name: 'Documents',
+    type: 'folder',
+    children: [
+      {id: 1, name: 'Sales Pitch'},
+      {id: 2, name: 'Demo'},
+      {id: 3, name: 'Taxes'}
+    ]
+  },
   {id: 'd', name: 'Adobe InDesign', type: 'file'},
-  {id: 'e', name: 'Utilities', type: 'folder', children: [
-    {id: 1, name: 'Activity Monitor'}
-  ]},
+  {id: 'e', name: 'Utilities', type: 'folder', children: [{id: 1, name: 'Activity Monitor'}]},
   {id: 'f', name: 'Adobe AfterEffects', type: 'file'},
   {id: 'g', name: 'Adobe Illustrator', type: 'file'},
   {id: 'h', name: 'Adobe Lightroom', type: 'file'},
@@ -106,20 +103,23 @@ const items: Item[] = [
   {id: 'j', name: 'Adobe Fresco', type: 'file'},
   {id: 'k', name: 'Adobe Dreamweaver', type: 'file'},
   {id: 'l', name: 'Adobe Connect', type: 'file'},
-  {id: 'm', name: 'Pictures', type: 'folder', children: [
-    {id: 1, name: 'Yosemite'},
-    {id: 2, name: 'Jackson Hole'},
-    {id: 3, name: 'Crater Lake'}
-  ]},
+  {
+    id: 'm',
+    name: 'Pictures',
+    type: 'folder',
+    children: [
+      {id: 1, name: 'Yosemite'},
+      {id: 2, name: 'Jackson Hole'},
+      {id: 3, name: 'Crater Lake'}
+    ]
+  },
   {id: 'n', name: 'Adobe Acrobat', type: 'file'}
 ];
 
 export const Dynamic: Story = {
-  render: (args) => (
+  render: args => (
     <ListView {...args} items={items}>
-      {(item) => (
-        <ListViewItem>{item.name}</ListViewItem>
-      )}
+      {item => <ListViewItem>{item.name}</ListViewItem>}
     </ListView>
   ),
   args: {
@@ -128,11 +128,15 @@ export const Dynamic: Story = {
 };
 
 // taken from https://random.dog/
-const itemsWithImages: Array<{id: string, title: string, url: string}> = [
+const itemsWithImages: Array<{id: string; title: string; url: string}> = [
   {id: '1', title: 'swimmer', url: 'https://random.dog/b2fe2172-cf11-43f4-9c7f-29bd19601712.jpg'},
   {id: '2', title: 'chocolate', url: 'https://random.dog/2032518a-eec8-4102-9d48-3dca5a26eb23.png'},
   {id: '3', title: 'good boi', url: 'https://random.dog/191091b2-7d69-47af-9f52-6605063f1a47.jpg'},
-  {id: '4', title: 'polar bear', url: 'https://random.dog/c22c077e-a009-486f-834c-a19edcc36a17.jpg'},
+  {
+    id: '4',
+    title: 'polar bear',
+    url: 'https://random.dog/c22c077e-a009-486f-834c-a19edcc36a17.jpg'
+  },
   {id: '5', title: 'cold boi', url: 'https://random.dog/093a41da-e2c0-4535-a366-9ef3f2013f73.jpg'},
   {id: '6', title: 'pilot', url: 'https://random.dog/09f8ecf4-c22b-49f4-af24-29fb5c8dbb2d.jpg'},
   {id: '7', title: 'nerd', url: 'https://random.dog/1a0535a6-ca89-4059-9b3a-04a554c0587b.jpg'},
@@ -140,7 +144,7 @@ const itemsWithImages: Array<{id: string, title: string, url: string}> = [
 ];
 
 export const WithImages: Story = {
-  render: (args) => (
+  render: args => (
     <ListView {...args} items={itemsWithImages}>
       {item => (
         <ListViewItem textValue={item.title}>
@@ -155,7 +159,7 @@ export const WithImages: Story = {
   }
 };
 
-const itemsWithIcons: Array<{id: string, title: string, icons: ReactNode}> = [
+const itemsWithIcons: Array<{id: string; title: string; icons: ReactNode}> = [
   {id: '0', title: 'folder of good bois', icons: <Folder />},
   {id: '1', title: 'swimmer', icons: <File />},
   {id: '2', title: 'chocolate', icons: <File />},
@@ -175,15 +179,19 @@ const itemsWithIcons: Array<{id: string, title: string, icons: ReactNode}> = [
 ];
 
 export const WithIcons: Story = {
-  render: (args) => (
+  render: args => (
     <ListView {...args} items={itemsWithIcons}>
       {item => (
         <ListViewItem textValue={item.title}>
           <Text>{item.title}</Text>
           {item.icons ? item.icons : null}
           <ActionButtonGroup>
-            <ActionButton aria-label="Edit"><Edit /></ActionButton>
-            <ActionButton aria-label="Delete"><Delete /></ActionButton>
+            <ActionButton aria-label="Edit">
+              <Edit />
+            </ActionButton>
+            <ActionButton aria-label="Delete">
+              <Delete />
+            </ActionButton>
           </ActionButtonGroup>
         </ListViewItem>
       )}
@@ -195,9 +203,9 @@ export const WithIcons: Story = {
 };
 
 export const Selection: Story = {
-  render: (args) => (
+  render: args => (
     <ListView {...args} items={items} onSelectionChange={action('onSelectionChange')}>
-      {(item) => (
+      {item => (
         <ListViewItem textValue={item.name}>
           {item.type === 'folder' ? <Folder /> : null}
           <Text>{item.name}</Text>
@@ -213,9 +221,9 @@ export const Selection: Story = {
 };
 
 export const HighlightSelection: Story = {
-  render: (args) => (
+  render: args => (
     <ListView {...args} items={items} onSelectionChange={action('onSelectionChange')}>
-      {(item) => (
+      {item => (
         <ListViewItem textValue={item.name}>
           {item.type === 'folder' ? <Folder /> : null}
           <Text>{item.name}</Text>
@@ -231,9 +239,13 @@ export const HighlightSelection: Story = {
 };
 
 export const DisabledItems: Story = {
-  render: (args) => (
-    <ListView {...args} items={items} disabledKeys={['a', 'c']} onSelectionChange={action('onSelectionChange')}>
-      {(item) => (
+  render: args => (
+    <ListView
+      {...args}
+      items={items}
+      disabledKeys={['a', 'c']}
+      onSelectionChange={action('onSelectionChange')}>
+      {item => (
         <ListViewItem textValue={item.name}>
           {item.type === 'folder' ? <Folder /> : null}
           <Text>{item.name}</Text>
@@ -248,12 +260,20 @@ export const DisabledItems: Story = {
 };
 
 export const Links: Story = {
-  render: (args) => (
+  render: args => (
     <ListView {...args}>
-      <ListViewItem id="https://adobe.com/" href="https://adobe.com/" target="_blank">Adobe</ListViewItem>
-      <ListViewItem id="https://google.com/" href="https://google.com/" target="_blank">Google</ListViewItem>
-      <ListViewItem id="https://apple.com/" href="https://apple.com/" target="_blank">Apple</ListViewItem>
-      <ListViewItem id="https://nytimes.com/" href="https://nytimes.com/" target="_blank">New York Times</ListViewItem>
+      <ListViewItem id="https://adobe.com/" href="https://adobe.com/" target="_blank">
+        Adobe
+      </ListViewItem>
+      <ListViewItem id="https://google.com/" href="https://google.com/" target="_blank">
+        Google
+      </ListViewItem>
+      <ListViewItem id="https://apple.com/" href="https://apple.com/" target="_blank">
+        Apple
+      </ListViewItem>
+      <ListViewItem id="https://nytimes.com/" href="https://nytimes.com/" target="_blank">
+        New York Times
+      </ListViewItem>
     </ListView>
   ),
   args: {
@@ -263,31 +283,52 @@ export const Links: Story = {
 };
 
 export const WithActionMenu: Story = {
-  render: (args) => (
-    <ListView {...args} onAction={action('onAction')} onSelectionChange={action('onSelectionChange')}>
+  render: args => (
+    <ListView
+      {...args}
+      onAction={action('onAction')}
+      onSelectionChange={action('onSelectionChange')}>
       <ListViewItem id="a" textValue="Utilities" hasChildItems>
         <Folder />
         <Text>Utilities</Text>
         <Text slot="description">16 items</Text>
         <ActionMenu onAction={action('actionMenuAction')}>
-          <MenuItem id="edit"><Edit /><Text>Edit</Text></MenuItem>
-          <MenuItem id="delete"><Delete /><Text>Delete</Text></MenuItem>
+          <MenuItem id="edit">
+            <Edit />
+            <Text>Edit</Text>
+          </MenuItem>
+          <MenuItem id="delete">
+            <Delete />
+            <Text>Delete</Text>
+          </MenuItem>
         </ActionMenu>
       </ListViewItem>
       <ListViewItem id="b" textValue="Adobe Photoshop">
         <Text>Adobe Photoshop</Text>
         <Text slot="description">Application</Text>
         <ActionMenu onAction={action('actionMenuAction')}>
-          <MenuItem id="edit"><Edit /><Text>Edit</Text></MenuItem>
-          <MenuItem id="delete"><Delete /><Text>Delete</Text></MenuItem>
+          <MenuItem id="edit">
+            <Edit />
+            <Text>Edit</Text>
+          </MenuItem>
+          <MenuItem id="delete">
+            <Delete />
+            <Text>Delete</Text>
+          </MenuItem>
         </ActionMenu>
       </ListViewItem>
       <ListViewItem id="c" textValue="Adobe Illustrator">
         <Text>Adobe Illustrator</Text>
         <Text slot="description">Application</Text>
         <ActionMenu onAction={action('actionMenuAction')}>
-          <MenuItem id="edit"><Edit /><Text>Edit</Text></MenuItem>
-          <MenuItem id="delete"><Delete /><Text>Delete</Text></MenuItem>
+          <MenuItem id="edit">
+            <Edit />
+            <Text>Edit</Text>
+          </MenuItem>
+          <MenuItem id="delete">
+            <Delete />
+            <Text>Delete</Text>
+          </MenuItem>
         </ActionMenu>
       </ListViewItem>
     </ListView>
@@ -299,29 +340,48 @@ export const WithActionMenu: Story = {
 };
 
 export const WithActionButtonGroupAndMenu: Story = {
-  render: (args) => (
-    <ListView {...args} onAction={action('onAction')} onSelectionChange={action('onSelectionChange')}>
+  render: args => (
+    <ListView
+      {...args}
+      onAction={action('onAction')}
+      onSelectionChange={action('onSelectionChange')}>
       <ListViewItem id="a" textValue="Utilities" hasChildItems>
         <Folder />
         <Text>Utilities</Text>
         <Text slot="description">16 items</Text>
         <ActionButtonGroup>
-          <ActionButton aria-label="Edit" onPress={action('editPress')}><Edit /></ActionButton>
+          <ActionButton aria-label="Edit" onPress={action('editPress')}>
+            <Edit />
+          </ActionButton>
         </ActionButtonGroup>
         <ActionMenu onAction={action('actionMenuAction')}>
-          <MenuItem id="edit"><Edit /><Text>Edit</Text></MenuItem>
-          <MenuItem id="delete"><Delete /><Text>Delete</Text></MenuItem>
+          <MenuItem id="edit">
+            <Edit />
+            <Text>Edit</Text>
+          </MenuItem>
+          <MenuItem id="delete">
+            <Delete />
+            <Text>Delete</Text>
+          </MenuItem>
         </ActionMenu>
       </ListViewItem>
       <ListViewItem id="b" textValue="Adobe Photoshop">
         <Text>Adobe Photoshop</Text>
         <Text slot="description">Application</Text>
         <ActionButtonGroup>
-          <ActionButton aria-label="Edit" onPress={action('editPress')}><Edit /></ActionButton>
+          <ActionButton aria-label="Edit" onPress={action('editPress')}>
+            <Edit />
+          </ActionButton>
         </ActionButtonGroup>
         <ActionMenu onAction={action('actionMenuAction')}>
-          <MenuItem id="edit"><Edit /><Text>Edit</Text></MenuItem>
-          <MenuItem id="delete"><Delete /><Text>Delete</Text></MenuItem>
+          <MenuItem id="edit">
+            <Edit />
+            <Text>Edit</Text>
+          </MenuItem>
+          <MenuItem id="delete">
+            <Delete />
+            <Text>Delete</Text>
+          </MenuItem>
         </ActionMenu>
       </ListViewItem>
     </ListView>
@@ -334,7 +394,7 @@ export const WithActionButtonGroupAndMenu: Story = {
 };
 
 export const EmptyState: Story = {
-  render: (args) => (
+  render: args => (
     <ListView
       {...args}
       renderEmptyState={() => (
@@ -353,11 +413,7 @@ export const EmptyState: Story = {
 };
 
 export const Loading: Story = {
-  render: (args) => (
-    <ListView {...args}>
-      {[]}
-    </ListView>
-  ),
+  render: args => <ListView {...args}>{[]}</ListView>,
   args: {
     'aria-label': 'Loading list',
     loadingState: 'loading'
@@ -365,7 +421,7 @@ export const Loading: Story = {
 };
 
 export const LoadingMore: Story = {
-  render: (args) => (
+  render: args => (
     <ListView {...args}>
       <ListViewItem id="a">Adobe Photoshop</ListViewItem>
       <ListViewItem id="b">Adobe Illustrator</ListViewItem>
@@ -381,8 +437,8 @@ export const LoadingMore: Story = {
 
 function AsyncListExample(props) {
   interface StarWarsChar {
-    name: string,
-    url: string
+    name: string;
+    url: string;
   }
 
   let list = useAsyncList<StarWarsChar>({
@@ -408,30 +464,32 @@ function AsyncListExample(props) {
       onLoadMore={list.loadMore}
       selectionMode="multiple"
       {...props}>
-      {(item: StarWarsChar) => (
-        <ListViewItem id={item.name}>{item.name}</ListViewItem>
-      )}
+      {(item: StarWarsChar) => <ListViewItem id={item.name}>{item.name}</ListViewItem>}
     </ListView>
   );
 }
 
 export const AsyncLoading: Story = {
-  render: (args) => <AsyncListExample {...args} />
+  render: args => <AsyncListExample {...args} />
 };
 
 export const LongText: Story = {
-  render: (args) => (
+  render: args => (
     <ListView {...args}>
       <ListViewItem id="a">
         This is a very very very very very very very very long title.
       </ListViewItem>
       <ListViewItem id="b" textValue="Short title, long description">
         <Text>Short title</Text>
-        <Text slot="description">This is a very very very very very very very very long description.</Text>
+        <Text slot="description">
+          This is a very very very very very very very very long description.
+        </Text>
       </ListViewItem>
       <ListViewItem id="c" textValue="Long title, long description">
         <Text>This is a very very very very very very very very long title.</Text>
-        <Text slot="description">This is a very very very very very very very very long description.</Text>
+        <Text slot="description">
+          This is a very very very very very very very very long description.
+        </Text>
       </ListViewItem>
     </ListView>
   ),
@@ -468,9 +526,20 @@ function NavigationExample(props) {
   };
 
   return (
-    <div className={style({display: 'flex', flexDirection: 'column', gap: 8, width: 'full', height: 'full'})}>
+    <div
+      className={style({
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 8,
+        width: 'full',
+        height: 'full'
+      })}>
       <Breadcrumbs onAction={onBreadcrumbAction}>
-        {breadcrumbs.map(item => <Breadcrumb key={item.id} id={item.id}>{item.name}</Breadcrumb>)}
+        {breadcrumbs.map(item => (
+          <Breadcrumb key={item.id} id={item.id}>
+            {item.name}
+          </Breadcrumb>
+        ))}
       </Breadcrumbs>
       <ListView
         aria-label={name}
@@ -494,7 +563,7 @@ function NavigationExample(props) {
 }
 
 export const Navigation: Story = {
-  render: (args) => <NavigationExample {...args} />,
+  render: args => <NavigationExample {...args} />,
   name: 'hasChildItems navigation'
 };
 
@@ -509,7 +578,7 @@ function ActionBarExample(props) {
       selectedKeys={selectedKeys}
       onSelectionChange={chain(setSelectedKeys, action('onSelectionChange'))}
       items={items}
-      renderActionBar={(keys) => {
+      renderActionBar={keys => {
         let selection = keys === 'all' ? 'all' : [...keys].join(', ');
         return (
           <ActionBar>
@@ -538,7 +607,7 @@ function ActionBarExample(props) {
 }
 
 export const WithActionBar: Story = {
-  render: (args) => <ActionBarExample {...args} />,
+  render: args => <ActionBarExample {...args} />,
   args: {
     'aria-label': 'Files with action bar'
   },
@@ -556,7 +625,7 @@ function ActionBarEmphasizedExample(props) {
       selectedKeys={selectedKeys}
       onSelectionChange={chain(setSelectedKeys, action('onSelectionChange'))}
       items={items}
-      renderActionBar={(keys) => {
+      renderActionBar={keys => {
         let selection = keys === 'all' ? 'all' : [...keys].join(', ');
         return (
           <ActionBar isEmphasized>
@@ -585,7 +654,7 @@ function ActionBarEmphasizedExample(props) {
 }
 
 export const WithActionBarEmphasized: Story = {
-  render: (args) => <ActionBarEmphasizedExample {...args} />,
+  render: args => <ActionBarEmphasizedExample {...args} />,
   args: {
     'aria-label': 'Files with emphasized action bar'
   },

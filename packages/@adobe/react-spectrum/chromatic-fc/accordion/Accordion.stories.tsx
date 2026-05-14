@@ -24,6 +24,6 @@ export default meta;
 export type AccordionStory = StoryObj<SpectrumAccordionProps>;
 
 export const Default: AccordionStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   args: {defaultExpandedKeys: ['shared']}
 };

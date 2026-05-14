@@ -1,4 +1,4 @@
-@import 'tailwindcss' source("./");
+@import 'tailwindcss' source('./');
 
 @config '../tailwind.config.js';
 

@@ -16,19 +16,23 @@ import {StepListState} from 'react-stately/private/steplist/useStepListState';
 import {useSelectableItem} from '../selection/useSelectableItem';
 
 export interface AriaStepListItemProps {
-  key: Key
+  key: Key;
 }
 
 export interface StepListItemAria {
   /** Props for the step link element. */
-  stepProps: HTMLAttributes<HTMLElement>,
+  stepProps: HTMLAttributes<HTMLElement>;
   /** Props for the visually hidden element indicating the step state. */
-  stepStateProps?: HTMLAttributes<HTMLElement>,
+  stepStateProps?: HTMLAttributes<HTMLElement>;
   /** Text content for the visually hidden message indicating the status of the step state. */
-  stepStateText?: String
+  stepStateText?: String;
 }
 
-export function useStepListItem<T>(props: AriaStepListItemProps, state: StepListState<T>, ref: RefObject<HTMLElement | null>): StepListItemAria {
+export function useStepListItem<T>(
+  props: AriaStepListItemProps,
+  state: StepListState<T>,
+  ref: RefObject<HTMLElement | null>
+): StepListItemAria {
   const {key} = props;
   let {selectionManager: manager, selectedKey} = state;
 

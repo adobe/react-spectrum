@@ -10,7 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-import {Calendar, DateFormatter, getLocalTimeZone, now, Time, toCalendar, toCalendarDate, toCalendarDateTime} from '@internationalized/date';
+import {
+  Calendar,
+  DateFormatter,
+  getLocalTimeZone,
+  now,
+  Time,
+  toCalendar,
+  toCalendarDate,
+  toCalendarDateTime
+} from '@internationalized/date';
 import {DatePickerProps, DateValue, Granularity, TimeValue} from './types';
 // @ts-ignore
 import i18nMessages from '../../intl/datepicker/*.json';
@@ -24,8 +33,9 @@ const dictionary = new LocalizedStringDictionary(i18nMessages);
 function getLocale() {
   // Match browser language setting here, NOT react-aria's I18nProvider, so that we match other browser-provided
   // validation messages, which to not respect our provider's language.
-  // @ts-ignore
-  let locale = typeof navigator !== 'undefined' && (navigator.language || navigator.userLanguage) || 'en-US';
+  let locale =
+    // @ts-ignore
+    (typeof navigator !== 'undefined' && (navigator.language || navigator.userLanguage)) || 'en-US';
 
   try {
     Intl.DateTimeFormat.supportedLocalesOf([locale]);
@@ -50,17 +60,27 @@ export function getValidationResult(
 
   if (isInvalid) {
     let locale = getLocale();
-    let strings = LocalizedStringDictionary.getGlobalDictionaryForPackage('@react-stately/datepicker') || dictionary;
+    let strings =
+      LocalizedStringDictionary.getGlobalDictionaryForPackage('@react-stately/datepicker') ||
+      dictionary;
     let formatter = new LocalizedStringFormatter(locale, strings);
     let dateFormatter = new DateFormatter(locale, getFormatOptions({}, options));
     let timeZone = dateFormatter.resolvedOptions().timeZone;
 
     if (rangeUnderflow && minValue != null) {
-      errors.push(formatter.format('rangeUnderflow', {minValue: dateFormatter.format(minValue.toDate(timeZone))}));
+      errors.push(
+        formatter.format('rangeUnderflow', {
+          minValue: dateFormatter.format(minValue.toDate(timeZone))
+        })
+      );
     }
 
     if (rangeOverflow && maxValue != null) {
-      errors.push(formatter.format('rangeOverflow', {maxValue: dateFormatter.format(maxValue.toDate(timeZone))}));
+      errors.push(
+        formatter.format('rangeOverflow', {
+          maxValue: dateFormatter.format(maxValue.toDate(timeZone))
+        })
+      );
     }
 
     if (isUnavailable) {
@@ -112,7 +132,9 @@ export function getRangeValidationResult(
 
   let result = mergeValidation(startValidation, endValidation);
   if (value?.end != null && value.start != null && value.end.compare(value.start) < 0) {
-    let strings = LocalizedStringDictionary.getGlobalDictionaryForPackage('@react-stately/datepicker') || dictionary;
+    let strings =
+      LocalizedStringDictionary.getGlobalDictionaryForPackage('@react-stately/datepicker') ||
+      dictionary;
     result = mergeValidation(result, {
       isInvalid: true,
       validationErrors: [strings.getStringForLocale('rangeReversed', getLocale())],
@@ -128,15 +150,18 @@ export function getRangeValidationResult(
   return result;
 }
 
-export type FieldOptions = Pick<Intl.DateTimeFormatOptions, 'year' | 'month' | 'day' | 'hour' | 'minute' | 'second'>;
+export type FieldOptions = Pick<
+  Intl.DateTimeFormatOptions,
+  'year' | 'month' | 'day' | 'hour' | 'minute' | 'second'
+>;
 export interface FormatterOptions {
-  timeZone?: string,
-  hideTimeZone?: boolean,
-  granularity?: DatePickerProps<any>['granularity'],
-  maxGranularity?: 'year' | 'month' | DatePickerProps<any>['granularity'],
-  hourCycle?: 12 | 24,
-  showEra?: boolean,
-  shouldForceLeadingZeros?: boolean
+  timeZone?: string;
+  hideTimeZone?: boolean;
+  granularity?: DatePickerProps<any>['granularity'];
+  maxGranularity?: 'year' | 'month' | DatePickerProps<any>['granularity'];
+  hourCycle?: 12 | 24;
+  showEra?: boolean;
+  shouldForceLeadingZeros?: boolean;
 }
 
 const DEFAULT_FIELD_OPTIONS: FieldOptions = {
@@ -161,7 +186,9 @@ export function getFormatOptions(
   fieldOptions: FieldOptions,
   options: FormatterOptions
 ): Intl.DateTimeFormatOptions {
-  let defaultFieldOptions = options.shouldForceLeadingZeros ? TWO_DIGIT_FIELD_OPTIONS : DEFAULT_FIELD_OPTIONS;
+  let defaultFieldOptions = options.shouldForceLeadingZeros
+    ? TWO_DIGIT_FIELD_OPTIONS
+    : DEFAULT_FIELD_OPTIONS;
   fieldOptions = {...defaultFieldOptions, ...fieldOptions};
   let granularity = options.granularity || 'minute';
   let keys = Object.keys(fieldOptions);
@@ -210,7 +237,10 @@ export function getPlaceholderTime(placeholderValue: DateValue | null | undefine
   return new Time();
 }
 
-export function convertValue(value: DateValue | null | undefined, calendar: Calendar): DateValue | null | undefined {
+export function convertValue(
+  value: DateValue | null | undefined,
+  calendar: Calendar
+): DateValue | null | undefined {
   if (value === null) {
     return null;
   }
@@ -222,18 +252,25 @@ export function convertValue(value: DateValue | null | undefined, calendar: Cale
   return toCalendar(value, calendar);
 }
 
-
-export function createPlaceholderDate(placeholderValue: DateValue | null | undefined, granularity: string, calendar: Calendar, timeZone: string | undefined): DateValue {
+export function createPlaceholderDate(
+  placeholderValue: DateValue | null | undefined,
+  granularity: string,
+  calendar: Calendar,
+  timeZone: string | undefined
+): DateValue {
   if (placeholderValue) {
     return convertValue(placeholderValue, calendar)!;
   }
 
-  let date = toCalendar(now(timeZone ?? getLocalTimeZone()).set({
-    hour: 0,
-    minute: 0,
-    second: 0,
-    millisecond: 0
-  }), calendar);
+  let date = toCalendar(
+    now(timeZone ?? getLocalTimeZone()).set({
+      hour: 0,
+      minute: 0,
+      second: 0,
+      millisecond: 0
+    }),
+    calendar
+  );
 
   if (granularity === 'year' || granularity === 'month' || granularity === 'day') {
     return toCalendarDate(date);
@@ -246,17 +283,23 @@ export function createPlaceholderDate(placeholderValue: DateValue | null | undef
   return date;
 }
 
-export function useDefaultProps(v: DateValue | null, granularity: Granularity | undefined): [Granularity, string | undefined] {
+export function useDefaultProps(
+  v: DateValue | null,
+  granularity: Granularity | undefined
+): [Granularity, string | undefined] {
   // Compute default granularity and time zone from the value. If the value becomes null, keep the last values.
-  let defaultTimeZone = (v && 'timeZone' in v ? v.timeZone : undefined);
-  let defaultGranularity: Granularity = (v && 'minute' in v ? 'minute' : 'day');
+  let defaultTimeZone = v && 'timeZone' in v ? v.timeZone : undefined;
+  let defaultGranularity: Granularity = v && 'minute' in v ? 'minute' : 'day';
 
   // props.granularity must actually exist in the value if one is provided.
   if (v && granularity && !(granularity in v)) {
     throw new Error('Invalid granularity ' + granularity + ' for value ' + v.toString());
   }
 
-  let [lastValue, setLastValue] = useState<[Granularity, string | undefined]>([defaultGranularity, defaultTimeZone]);
+  let [lastValue, setLastValue] = useState<[Granularity, string | undefined]>([
+    defaultGranularity,
+    defaultTimeZone
+  ]);
 
   // If the granularity or time zone changed, update the last value.
   if (v && (lastValue[0] !== defaultGranularity || lastValue[1] !== defaultTimeZone)) {

@@ -11,7 +11,13 @@
  */
 
 import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
-import {Checkbox as AriaCheckbox, CheckboxButton, CheckboxField, CheckboxGroup, CheckboxGroupContext} from '../src/Checkbox';
+import {
+  Checkbox as AriaCheckbox,
+  CheckboxButton,
+  CheckboxField,
+  CheckboxGroup,
+  CheckboxGroupContext
+} from '../src/Checkbox';
 import {FieldError} from '../src/FieldError';
 import {Label} from '../src/Label';
 import React, {forwardRef} from 'react';
@@ -38,31 +44,41 @@ const CheckboxLegacy = forwardRef(function CheckboxLegacy(props, ref) {
   return <AriaCheckbox {...props} ref={ref} className={props.className || props.buttonClassName} />;
 });
 
-describe.each(['CheckboxField', 'Checkbox'])('CheckboxGroup with %s', (comp) => {
+describe.each(['CheckboxField', 'Checkbox'])('CheckboxGroup with %s', comp => {
   let user;
   beforeAll(() => {
     user = userEvent.setup({delay: null, pointerMap});
   });
 
   let Checkbox = comp === 'CheckboxField' ? CheckboxExample : CheckboxLegacy;
-  let findRoot = el => comp === 'CheckboxField' ? el.closest('label').parentElement : el.closest('label');
+  let findRoot = el =>
+    comp === 'CheckboxField' ? el.closest('label').parentElement : el.closest('label');
   let TestCheckboxGroup = ({groupProps, checkboxProps}) => (
     <CheckboxGroup {...groupProps}>
       <Label>Test</Label>
-      <Checkbox {...checkboxProps} value="a">A</Checkbox>
-      <Checkbox {...checkboxProps} value="b">B</Checkbox>
-      <Checkbox {...checkboxProps} value="c">C</Checkbox>
+      <Checkbox {...checkboxProps} value="a">
+        A
+      </Checkbox>
+      <Checkbox {...checkboxProps} value="b">
+        B
+      </Checkbox>
+      <Checkbox {...checkboxProps} value="c">
+        C
+      </Checkbox>
     </CheckboxGroup>
   );
 
-  let renderGroup = (groupProps, checkboxProps) => render(<TestCheckboxGroup {...{groupProps, checkboxProps}} />);
+  let renderGroup = (groupProps, checkboxProps) =>
+    render(<TestCheckboxGroup {...{groupProps, checkboxProps}} />);
 
   it('should render a checkbox group with default classes', () => {
     let {getByRole, getAllByRole} = renderGroup();
     let group = getByRole('group');
     expect(group).toHaveAttribute('class', 'react-aria-CheckboxGroup');
     expect(group).toHaveAttribute('aria-labelledby');
-    expect(document.getElementById(group.getAttribute('aria-labelledby'))).toHaveTextContent('Test');
+    expect(document.getElementById(group.getAttribute('aria-labelledby'))).toHaveTextContent(
+      'Test'
+    );
 
     let checkboxes = getAllByRole('checkbox');
     for (let checkbox of checkboxes) {
@@ -105,7 +121,10 @@ describe.each(['CheckboxField', 'Checkbox'])('CheckboxGroup with %s', (comp) => 
   });
 
   it('should support disabled state on checkbox', () => {
-    let {getAllByRole} = renderGroup({}, {isDisabled: true, className: ({isDisabled}) => isDisabled ? 'disabled' : ''});
+    let {getAllByRole} = renderGroup(
+      {},
+      {isDisabled: true, className: ({isDisabled}) => (isDisabled ? 'disabled' : '')}
+    );
     let checkbox = getAllByRole('checkbox')[0];
     let label = checkbox.closest('label');
 
@@ -116,7 +135,7 @@ describe.each(['CheckboxField', 'Checkbox'])('CheckboxGroup with %s', (comp) => 
   });
 
   it('should support disabled state on group', () => {
-    let className = ({isDisabled}) => isDisabled ? 'disabled' : '';
+    let className = ({isDisabled}) => (isDisabled ? 'disabled' : '');
     let {getByRole, getAllByRole} = renderGroup({isDisabled: true, className}, {className});
     let group = getByRole('group');
     let checkbox = getAllByRole('checkbox')[0];
@@ -133,7 +152,10 @@ describe.each(['CheckboxField', 'Checkbox'])('CheckboxGroup with %s', (comp) => 
 
   it('should support selected state', async () => {
     let onChange = jest.fn();
-    let {getAllByRole} = renderGroup({onChange}, {className: ({isSelected}) => isSelected ? 'selected' : ''});
+    let {getAllByRole} = renderGroup(
+      {onChange},
+      {className: ({isSelected}) => (isSelected ? 'selected' : '')}
+    );
     let checkboxes = getAllByRole('checkbox');
     let label = checkboxes[0].closest('label');
 
@@ -157,7 +179,7 @@ describe.each(['CheckboxField', 'Checkbox'])('CheckboxGroup with %s', (comp) => 
   });
 
   it('should support read only state', () => {
-    let className = ({isReadOnly}) => isReadOnly ? 'readonly' : '';
+    let className = ({isReadOnly}) => (isReadOnly ? 'readonly' : '');
     let {getByRole, getAllByRole} = renderGroup({isReadOnly: true, className}, {className});
     let group = getByRole('group');
     let checkbox = getAllByRole('checkbox')[0];
@@ -172,7 +194,7 @@ describe.each(['CheckboxField', 'Checkbox'])('CheckboxGroup with %s', (comp) => 
   });
 
   it('should support validation state', () => {
-    let className = ({isInvalid}) => isInvalid ? 'invalid' : null;
+    let className = ({isInvalid}) => (isInvalid ? 'invalid' : null);
     let {getByRole, getAllByRole} = renderGroup({isInvalid: true, className}, {className});
     let group = getByRole('group');
     let checkbox = getAllByRole('checkbox')[0];
@@ -187,8 +209,11 @@ describe.each(['CheckboxField', 'Checkbox'])('CheckboxGroup with %s', (comp) => 
   });
 
   it('should support required state', () => {
-    let className = ({isRequired}) => isRequired ? 'required' : '';
-    let {getByRole, getAllByRole} = renderGroup({isRequired: true, className}, {isRequired: true, className});
+    let className = ({isRequired}) => (isRequired ? 'required' : '');
+    let {getByRole, getAllByRole} = renderGroup(
+      {isRequired: true, className},
+      {isRequired: true, className}
+    );
     let group = getByRole('group');
     let checkbox = getAllByRole('checkbox')[0];
     let label = checkbox.closest('label');
@@ -205,7 +230,9 @@ describe.each(['CheckboxField', 'Checkbox'])('CheckboxGroup with %s', (comp) => 
     let {getByRole, getAllByRole} = render(
       <CheckboxGroup isInvalid>
         <Label>Test</Label>
-        <Checkbox value="a" description="hello">A</Checkbox>
+        <Checkbox value="a" description="hello">
+          A
+        </Checkbox>
         <Text slot="description">Description</Text>
         <Text slot="errorMessage">Error</Text>
       </CheckboxGroup>
@@ -213,11 +240,23 @@ describe.each(['CheckboxField', 'Checkbox'])('CheckboxGroup with %s', (comp) => 
 
     let group = getByRole('group');
     expect(group).toHaveAttribute('aria-describedby');
-    expect(group.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ')).toBe('Description Error');
+    expect(
+      group
+        .getAttribute('aria-describedby')
+        .split(' ')
+        .map(id => document.getElementById(id).textContent)
+        .join(' ')
+    ).toBe('Description Error');
 
     let checkbox = getAllByRole('checkbox')[0];
     expect(checkbox).toHaveAttribute('aria-describedby');
-    expect(checkbox.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ')).toBe(comp === 'CheckboxField' ? 'hello Error Description' : 'Error Description');
+    expect(
+      checkbox
+        .getAttribute('aria-describedby')
+        .split(' ')
+        .map(id => document.getElementById(id).textContent)
+        .join(' ')
+    ).toBe(comp === 'CheckboxField' ? 'hello Error Description' : 'Error Description');
   });
 
   it('should support render props', () => {
@@ -263,10 +302,14 @@ describe.each(['CheckboxField', 'Checkbox'])('CheckboxGroup with %s', (comp) => 
       expect(findRoot(checkbox)).not.toHaveAttribute('data-invalid');
     }
 
-    act(() => {getByTestId('form').checkValidity();});
+    act(() => {
+      getByTestId('form').checkValidity();
+    });
 
     expect(group).toHaveAttribute('aria-describedby');
-    expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
+    expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent(
+      'Constraints not satisfied'
+    );
     expect(group).toHaveAttribute('data-invalid');
 
     for (let checkbox of checkboxes) {
@@ -299,7 +342,7 @@ describe.each(['CheckboxField', 'Checkbox'])('CheckboxGroup with %s', (comp) => 
     expect(document.activeElement).toBe(checkboxes[0]);
     expect(onBlur).not.toHaveBeenCalled();
     expect(onFocus).toHaveBeenCalledTimes(1);
-    expect(onFocusChange).toHaveBeenCalledTimes(1);  // triggered by onFocus
+    expect(onFocusChange).toHaveBeenCalledTimes(1); // triggered by onFocus
     expect(onFocusChange).toHaveBeenLastCalledWith(true);
 
     // inner focus changes shouldn't call the callbacks.
@@ -315,7 +358,7 @@ describe.each(['CheckboxField', 'Checkbox'])('CheckboxGroup with %s', (comp) => 
     expect(document.activeElement).toBe(button);
     expect(onBlur).toHaveBeenCalled();
     expect(onFocus).toHaveBeenCalledTimes(1);
-    expect(onFocusChange).toHaveBeenCalledTimes(2);  // triggered by onBlur
+    expect(onFocusChange).toHaveBeenCalledTimes(2); // triggered by onBlur
     expect(onFocusChange).toHaveBeenLastCalledWith(false);
   });
 

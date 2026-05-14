@@ -11,48 +11,49 @@
  */
 
 import {act, render, within} from '@testing-library/react';
-import {
-  pointerMap
-} from '@react-spectrum/test-utils-internal';
+import {pointerMap} from '@react-spectrum/test-utils-internal';
 import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
 
-let describeInteractions = ((name, tests) => describe.each`
-  interactionType
-  ${'mouse'}
-  ${'keyboard'}
-  ${'touch'}
-`(`${name} - $interactionType`, tests));
+let describeInteractions = (name, tests) =>
+  describe.each`
+    interactionType
+    ${'mouse'}
+    ${'keyboard'}
+    ${'touch'}
+  `(`${name} - $interactionType`, tests);
 
 // @ts-ignore
-describeInteractions.only = ((name, tests) => describe.only.each`
-  interactionType
-  ${'mouse'}
-  ${'keyboard'}
-  ${'touch'}
-`(`${name} - $interactionType`, tests));
+describeInteractions.only = (name, tests) =>
+  describe.only.each`
+    interactionType
+    ${'mouse'}
+    ${'keyboard'}
+    ${'touch'}
+  `(`${name} - $interactionType`, tests);
 
 // @ts-ignore
-describeInteractions.skip = ((name, tests) => describe.skip.each`
-  interactionType
-  ${'mouse'}
-  ${'keyboard'}
-  ${'touch'}
-`(`${name} - $interactionType`, tests));
+describeInteractions.skip = (name, tests) =>
+  describe.skip.each`
+    interactionType
+    ${'mouse'}
+    ${'keyboard'}
+    ${'touch'}
+  `(`${name} - $interactionType`, tests);
 
 interface AriaBaseTestProps {
-  setup?: () => void,
-  prefix?: string
+  setup?: () => void;
+  prefix?: string;
 }
 interface AriaTreeTestProps extends AriaBaseTestProps {
   renderers: {
     // must have an aria-label
-    standard: (props?: {name: string}) => ReturnType<typeof render>,
+    standard: (props?: {name: string}) => ReturnType<typeof render>;
     // must have an aria-label
-    singleSelection?: (props?: {name: string}) => ReturnType<typeof render>,
+    singleSelection?: (props?: {name: string}) => ReturnType<typeof render>;
     // must have an aria-label
-    allInteractionsDisabled?: (props?: {name: string}) => ReturnType<typeof render>
-  }
+    allInteractionsDisabled?: (props?: {name: string}) => ReturnType<typeof render>;
+  };
 }
 export const AriaTreeTests = ({renderers, setup, prefix}: AriaTreeTestProps): void => {
   describe(prefix ? prefix + 'AriaTree' : 'AriaTree', function () {
@@ -73,7 +74,7 @@ export const AriaTreeTests = ({renderers, setup, prefix}: AriaTreeTestProps): vo
     });
 
     it('should have the base set of aria and data attributes', () => {
-      let root = (renderers.standard!)();
+      let root = renderers.standard!();
       let treeTester = testUtilUser.createTester('Tree', {user, root: root.container});
       let tree = treeTester.tree;
       expect(tree).toHaveAttribute('aria-label');
@@ -89,8 +90,12 @@ export const AriaTreeTests = ({renderers, setup, prefix}: AriaTreeTestProps): vo
 
     describeInteractions('interaction', function ({interactionType}) {
       it('should have the expected attributes on the rows', async () => {
-        let tree = (renderers.standard!)();
-        let treeTester = testUtilUser.createTester('Tree', {user, root: tree.container, interactionType});
+        let tree = renderers.standard!();
+        let treeTester = testUtilUser.createTester('Tree', {
+          user,
+          root: tree.container,
+          interactionType
+        });
         await treeTester.toggleRowExpansion({row: 1});
         await treeTester.toggleRowExpansion({row: 2});
 
@@ -146,8 +151,12 @@ export const AriaTreeTests = ({renderers, setup, prefix}: AriaTreeTestProps): vo
         describeInteractions('interaction', function ({interactionType}) {
           // todo add test for using Space on the row to select it
           it('can select items', async () => {
-            let tree = (renderers.singleSelection!)();
-            let treeTester = testUtilUser.createTester('Tree', {user, root: tree.container, interactionType});
+            let tree = renderers.singleSelection!();
+            let treeTester = testUtilUser.createTester('Tree', {
+              user,
+              root: tree.container,
+              interactionType
+            });
 
             let rows = treeTester.rows;
             expect(rows[0]).toHaveAttribute('aria-selected', 'false');
@@ -211,8 +220,12 @@ export const AriaTreeTests = ({renderers, setup, prefix}: AriaTreeTestProps): vo
       describe('all interactions disabled', function () {
         describeInteractions('interaction', function ({interactionType}) {
           it('should not be able to interact with the tree', async () => {
-            let tree = (renderers.allInteractionsDisabled!)();
-            let treeTester = testUtilUser.createTester('Tree', {user, root: tree.container, interactionType});
+            let tree = renderers.allInteractionsDisabled!();
+            let treeTester = testUtilUser.createTester('Tree', {
+              user,
+              root: tree.container,
+              interactionType
+            });
 
             let rows = treeTester.rows;
             expect(rows[2]).toHaveAttribute('aria-expanded', 'false');

@@ -26,7 +26,6 @@ export default {
 
 export const KeyboardNavigation: StoryFn<typeof TreeExample> = () => <TreeExample />;
 
-
 function TreeExample(props = {}): JSX.Element {
   return (
     <Tree {...props}>
@@ -55,7 +54,10 @@ function Tree(props) {
   let state = useTreeState(props);
   let ref = useRef(null);
 
-  let keyboardDelegate = useMemo(() => new TreeKeyboardDelegate(state.collection, state.disabledKeys), [state.collection, state.disabledKeys]);
+  let keyboardDelegate = useMemo(
+    () => new TreeKeyboardDelegate(state.collection, state.disabledKeys),
+    [state.collection, state.disabledKeys]
+  );
 
   let {collectionProps} = useSelectableCollection({
     keyboardDelegate,
@@ -64,22 +66,14 @@ function Tree(props) {
   });
 
   return (
-    <div
-      {...collectionProps}
-      ref={ref}
-      role="tree">
+    <div {...collectionProps} ref={ref} role="tree">
       {TreeNodes({nodes: state.collection, state})}
     </div>
   );
 }
 
-function TreeNodes({nodes, state}: {nodes: Collection<Node<object>>, state: any}) {
-  return Array.from(nodes).map(node => (
-    <TreeItem
-      node={node}
-      key={node.key}
-      state={state} />
-  ));
+function TreeNodes({nodes, state}: {nodes: Collection<Node<object>>; state: any}) {
+  return Array.from(nodes).map(node => <TreeItem node={node} key={node.key} state={state} />);
 }
 
 function TreeItem({node, state}) {
@@ -106,14 +100,12 @@ function TreeItem({node, state}) {
       aria-selected={isSelected}
       ref={ref}
       role="treeitem">
-      <div className="title">
-        {node.rendered}
-      </div>
-      {isExpanded &&
+      <div className="title">{node.rendered}</div>
+      {isExpanded && (
         <div className="children" role="group">
           {TreeNodes({nodes: node.childNodes, state})}
         </div>
-      }
+      )}
     </div>
   );
 }
@@ -204,7 +196,10 @@ class TreeKeyboardDelegate<T> {
     while (key !== null) {
       let item = collection.getItem(key);
 
-      if (item?.textValue && collator.compare(search, item.textValue.slice(0, search.length)) === 0) {
+      if (
+        item?.textValue &&
+        collator.compare(search, item.textValue.slice(0, search.length)) === 0
+      ) {
         return key;
       }
 

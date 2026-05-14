@@ -11,23 +11,26 @@
  */
 
 import {createEventHandler} from './createEventHandler';
-import {createKeyboardShortcutHandler, KeyboardShortcutBindings} from './createKeyboardShortcutHandler';
+import {
+  createKeyboardShortcutHandler,
+  KeyboardShortcutBindings
+} from './createKeyboardShortcutHandler';
 import {DOMAttributes, KeyboardEvents} from '@react-types/shared';
 import {getEventTarget, nodeContains} from '../utils/shadowdom/DOMFunctions';
 import {KeyboardEvent as ReactKeyboardEvent, RefObject} from 'react';
 
 export interface KeyboardProps extends KeyboardEvents {
   /** Whether the keyboard events should be disabled. */
-  isDisabled?: boolean,
+  isDisabled?: boolean;
   /** Keyboard shortcuts to handle. */
-  shortcuts?: KeyboardShortcutBindings,
+  shortcuts?: KeyboardShortcutBindings;
   /** A ref to the element to ignore portal events. */
-  ignorePortalRef?: RefObject<Element | null> | null
+  ignorePortalRef?: RefObject<Element | null> | null;
 }
 
 export interface KeyboardResult {
   /** Props to spread onto the target element. */
-  keyboardProps: DOMAttributes
+  keyboardProps: DOMAttributes;
 }
 
 /**
@@ -39,18 +42,26 @@ export function useKeyboard(props: KeyboardProps): KeyboardResult {
   let onKeyUp;
   if (shortcuts) {
     let shortcutHandler = createKeyboardShortcutHandler(shortcuts);
-    onKeyDown = createEventHandler<ReactKeyboardEvent<any>>((e) => {
+    onKeyDown = createEventHandler<ReactKeyboardEvent<any>>(e => {
       // should be built in more somehow? or turn it off per matched handler?
 
-      if (ignorePortalRef && ignorePortalRef.current && !nodeContains(ignorePortalRef.current, getEventTarget(e) as Element)) {
+      if (
+        ignorePortalRef &&
+        ignorePortalRef.current &&
+        !nodeContains(ignorePortalRef.current, getEventTarget(e) as Element)
+      ) {
         e.continuePropagation();
         return;
       }
       shortcutHandler(e);
       props.onKeyDown?.(e);
     });
-    onKeyUp = createEventHandler<ReactKeyboardEvent<any>>((e) => {
-      if (ignorePortalRef && ignorePortalRef.current && !nodeContains(ignorePortalRef.current, getEventTarget(e) as Element)) {
+    onKeyUp = createEventHandler<ReactKeyboardEvent<any>>(e => {
+      if (
+        ignorePortalRef &&
+        ignorePortalRef.current &&
+        !nodeContains(ignorePortalRef.current, getEventTarget(e) as Element)
+      ) {
         e.continuePropagation();
         return;
       }
@@ -63,9 +74,11 @@ export function useKeyboard(props: KeyboardProps): KeyboardResult {
     onKeyUp = createEventHandler(props.onKeyUp);
   }
   return {
-    keyboardProps: props.isDisabled ? {} : {
-      onKeyDown,
-      onKeyUp
-    }
+    keyboardProps: props.isDisabled
+      ? {}
+      : {
+          onKeyDown,
+          onKeyUp
+        }
   };
 }

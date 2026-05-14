@@ -1,10 +1,29 @@
-import {AriaLabelingProps, AriaValidationProps, DOMAttributes, DOMProps, FocusableDOMProps, FocusableProps, InputDOMProps, LabelableProps, Orientation, RefObject, ValidationState} from '@react-types/shared';
+import {
+  AriaLabelingProps,
+  AriaValidationProps,
+  DOMAttributes,
+  DOMProps,
+  FocusableDOMProps,
+  FocusableProps,
+  InputDOMProps,
+  LabelableProps,
+  Orientation,
+  RefObject,
+  ValidationState
+} from '@react-types/shared';
 import {clamp} from 'react-stately/private/utils/number';
 import {focusWithoutScrolling} from '../utils/focusWithoutScrolling';
 import {getEventTarget} from '../utils/shadowdom/DOMFunctions';
 import {getSliderThumbId, sliderData} from './utils';
 import {mergeProps} from '../utils/mergeProps';
-import React, {ChangeEvent, InputHTMLAttributes, LabelHTMLAttributes, useCallback, useEffect, useRef} from 'react';
+import React, {
+  ChangeEvent,
+  InputHTMLAttributes,
+  LabelHTMLAttributes,
+  useCallback,
+  useEffect,
+  useRef
+} from 'react';
 import {SliderState} from 'react-stately/useSliderState';
 import {useFocusable} from '../interactions/useFocusable';
 import {useFormReset} from '../utils/useFormReset';
@@ -17,50 +36,59 @@ import {useMove} from '../interactions/useMove';
 export interface SliderThumbProps extends FocusableProps, LabelableProps {
   /**
    * The orientation of the Slider.
-   * @default 'horizontal'
+   *
    * @deprecated - pass to the slider instead.
+   * @default 'horizontal'
    */
-  orientation?: Orientation,
+  orientation?: Orientation;
   /** Whether the Thumb is disabled. */
-  isDisabled?: boolean,
+  isDisabled?: boolean;
   /**
    * Index of the thumb within the slider.
+   *
    * @default 0
    */
-  index?: number,
+  index?: number;
   /** @deprecated */
-  isRequired?: boolean,
+  isRequired?: boolean;
   /** @deprecated */
-  isInvalid?: boolean,
+  isInvalid?: boolean;
   /** @deprecated */
-  validationState?: ValidationState
+  validationState?: ValidationState;
 }
 
-export interface AriaSliderThumbProps extends SliderThumbProps, DOMProps, Omit<FocusableDOMProps, 'excludeFromTabOrder'>, InputDOMProps, AriaLabelingProps, AriaValidationProps {}
+export interface AriaSliderThumbProps
+  extends
+    SliderThumbProps,
+    DOMProps,
+    Omit<FocusableDOMProps, 'excludeFromTabOrder'>,
+    InputDOMProps,
+    AriaLabelingProps,
+    AriaValidationProps {}
 
 export interface SliderThumbAria {
   /** Props for the root thumb element; handles the dragging motion. */
-  thumbProps: DOMAttributes,
+  thumbProps: DOMAttributes;
 
   /** Props for the visually hidden range input element. */
-  inputProps: InputHTMLAttributes<HTMLInputElement>,
+  inputProps: InputHTMLAttributes<HTMLInputElement>;
 
   /** Props for the label element for this thumb (optional). */
-  labelProps: LabelHTMLAttributes<HTMLLabelElement>,
+  labelProps: LabelHTMLAttributes<HTMLLabelElement>;
 
   /** Whether this thumb is currently being dragged. */
-  isDragging: boolean,
+  isDragging: boolean;
   /** Whether the thumb is currently focused. */
-  isFocused: boolean,
+  isFocused: boolean;
   /** Whether the thumb is disabled. */
-  isDisabled: boolean
+  isDisabled: boolean;
 }
 
 export interface AriaSliderThumbOptions extends AriaSliderThumbProps {
   /** A ref to the track element. */
-  trackRef: RefObject<Element | null>,
+  trackRef: RefObject<Element | null>;
   /** A ref to the thumb input element. */
-  inputRef: RefObject<HTMLInputElement | null>
+  inputRef: RefObject<HTMLInputElement | null>;
 }
 
 /**
@@ -69,10 +97,7 @@ export interface AriaSliderThumbOptions extends AriaSliderThumbProps {
  * @param opts Options for this Slider thumb.
  * @param state Slider state, created via `useSliderState`.
  */
-export function useSliderThumb(
-  opts: AriaSliderThumbOptions,
-  state: SliderState
-): SliderThumbAria {
+export function useSliderThumb(opts: AriaSliderThumbOptions, state: SliderState): SliderThumbAria {
   let {
     index = 0,
     isRequired,
@@ -117,7 +142,7 @@ export function useSliderThumb(
   let reverseX = direction === 'rtl';
   let currentPosition = useRef<number>(null);
 
-  let keyboardUpdate = (cb) => {
+  let keyboardUpdate = cb => {
     // remember to set this so that onChangeEnd is fired
     state.setThumbDragging(index, true);
     cb();
@@ -127,22 +152,22 @@ export function useSliderThumb(
 
   let {keyboardProps} = useKeyboard({
     shortcuts: {
-      'PageUp': () => {
+      PageUp: () => {
         return keyboardUpdate(() => {
           state.incrementThumb(index, state.pageSize);
         });
       },
-      'PageDown': () => {
+      PageDown: () => {
         return keyboardUpdate(() => {
           state.decrementThumb(index, state.pageSize);
         });
       },
-      'Home': () => {
+      Home: () => {
         return keyboardUpdate(() => {
           state.setThumbValue(index, state.getThumbMinValue(index));
         });
       },
-      'End': () => {
+      End: () => {
         return keyboardUpdate(() => {
           state.setThumbValue(index, state.getThumbMaxValue(index));
         });
@@ -156,14 +181,8 @@ export function useSliderThumb(
       state.setThumbDragging(index, true);
     },
     onMove({deltaX, deltaY, pointerType, shiftKey}) {
-      const {
-        getThumbPercent,
-        setThumbPercent,
-        decrementThumb,
-        incrementThumb,
-        step,
-        pageSize
-      } = state;
+      const {getThumbPercent, setThumbPercent, decrementThumb, incrementThumb, step, pageSize} =
+        state;
       if (!trackRef.current) {
         return;
       }
@@ -214,10 +233,9 @@ export function useSliderThumb(
     addGlobalListener(window, 'mouseup', onUp, false);
     addGlobalListener(window, 'touchend', onUp, false);
     addGlobalListener(window, 'pointerup', onUp, false);
-
   };
 
-  let onUp = (e) => {
+  let onUp = e => {
     let id = e.pointerId ?? e.changedTouches?.[0].identifier;
     if (id === currentPointer.current) {
       focusInput();
@@ -233,27 +251,27 @@ export function useSliderThumb(
     thumbPosition = 1 - thumbPosition;
   }
 
-  let interactions = !isDisabled ? mergeProps(
-    keyboardProps,
-    moveProps,
-    {
-      onMouseDown: (e: React.MouseEvent) => {
-        if (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey) {
-          return;
+  let interactions = !isDisabled
+    ? mergeProps(keyboardProps, moveProps, {
+        onMouseDown: (e: React.MouseEvent) => {
+          if (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey) {
+            return;
+          }
+          onDown();
+        },
+        onPointerDown: (e: React.PointerEvent) => {
+          if (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey) {
+            return;
+          }
+          onDown(e.pointerId);
+        },
+        onTouchStart: (e: React.TouchEvent) => {
+          onDown(e.changedTouches[0].identifier);
         }
-        onDown();
-      },
-      onPointerDown: (e: React.PointerEvent) => {
-        if (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey) {
-          return;
-        }
-        onDown(e.pointerId);
-      },
-      onTouchStart: (e: React.TouchEvent) => {onDown(e.changedTouches[0].identifier);}
-    }
-  ) : {};
+      })
+    : {};
 
-  useFormReset(inputRef, state.defaultValues[index], (v) => {
+  useFormReset(inputRef, state.defaultValues[index], v => {
     state.setThumbValue(index, v);
   });
 
@@ -277,7 +295,9 @@ export function useSliderThumb(
       'aria-required': isRequired || undefined,
       'aria-invalid': isInvalid || validationState === 'invalid' || undefined,
       'aria-errormessage': opts['aria-errormessage'],
-      'aria-describedby': [data['aria-describedby'], opts['aria-describedby']].filter(Boolean).join(' '),
+      'aria-describedby': [data['aria-describedby'], opts['aria-describedby']]
+        .filter(Boolean)
+        .join(' '),
       'aria-details': [data['aria-details'], opts['aria-details']].filter(Boolean).join(' '),
       onChange: (e: ChangeEvent<HTMLInputElement>) => {
         state.setThumbValue(index, parseFloat(getEventTarget(e).value));

@@ -13,7 +13,9 @@
 import {isMac} from '../utils/platform';
 import {KeyboardEvent} from '@react-types/shared';
 
-export type KeyboardShortcutAction = (e: KeyboardEvent) => (boolean | Partial<{shouldContinuePropagation?: boolean, shouldPreventDefault?: boolean}>);
+export type KeyboardShortcutAction = (
+  e: KeyboardEvent
+) => boolean | Partial<{shouldContinuePropagation?: boolean; shouldPreventDefault?: boolean}>;
 
 /** Maps shortcut strings (e.g. `"Mod+s"`, `"Ctrl+Shift+a"`) to handlers. */
 export type KeyboardShortcutBindings = Record<string, KeyboardShortcutAction>;
@@ -33,15 +35,18 @@ const MODIFIER_NAMES = new Set([
 const CANONICAL_MODIFIER_ORDER = ['Alt', 'Ctrl', 'Meta', 'Shift'] as const;
 
 export interface ParsedKeyboardShortcut {
-  shift: boolean,
-  alt: boolean,
-  ctrl: boolean,
-  meta: boolean,
-  /** Platform primary: Cmd on Mac, Ctrl on Windows/Linux — expands to Meta or Ctrl in canonical form. */
-  mod: boolean,
+  shift: boolean;
+  alt: boolean;
+  ctrl: boolean;
+  meta: boolean;
+  /**
+   * Platform primary: Cmd on Mac, Ctrl on Windows/Linux — expands to Meta or Ctrl in canonical
+   * form.
+   */
+  mod: boolean;
   /** Platform secondary: Alt on Mac, Ctrl on Windows/Linux. */
-  sel: boolean,
-  key: string
+  sel: boolean;
+  key: string;
 }
 
 /**
@@ -65,7 +70,8 @@ export function modifierSetFromParsed(parsed: ParsedKeyboardShortcut): Set<strin
   if (parsed.mod) {
     set.add(isMac() ? 'Meta' : 'Ctrl');
   }
-  if (parsed.sel) { // Todo: I think there was a conflict or difference in behaviour in the original code based on this.
+  if (parsed.sel) {
+    // Todo: I think there was a conflict or difference in behaviour in the original code based on this.
     set.add(isMac() ? 'Alt' : 'Ctrl');
   }
   return set;
@@ -98,29 +104,34 @@ function sortedModifierTokens(set: Set<string>): string[] {
  * Modifiers are case-insensitive; order does not matter. `control` is an alias for `ctrl`.
  */
 export function parseKeyboardShortcut(spec: string): ParsedKeyboardShortcut {
-  let parts = spec.split('+').reduce<ParsedKeyboardShortcut>((prev, part) => {
-    let lower = part.toLowerCase();
-    if (MODIFIER_NAMES.has(lower)) {
-      if (lower === 'shift') {
-        prev.shift = true;
-      } else if (lower === 'alt') {
-        prev.alt = true;
-      } else if (lower === 'ctrl' || lower === 'control') {
-        prev.ctrl = true;
-      } else if (lower === 'meta') {
-        prev.meta = true;
-      } else if (lower === 'mod') {
-        prev.mod = true;
-      } else if (lower === 'sel') {
-        prev.sel = true;
+  let parts = spec.split('+').reduce<ParsedKeyboardShortcut>(
+    (prev, part) => {
+      let lower = part.toLowerCase();
+      if (MODIFIER_NAMES.has(lower)) {
+        if (lower === 'shift') {
+          prev.shift = true;
+        } else if (lower === 'alt') {
+          prev.alt = true;
+        } else if (lower === 'ctrl' || lower === 'control') {
+          prev.ctrl = true;
+        } else if (lower === 'meta') {
+          prev.meta = true;
+        } else if (lower === 'mod') {
+          prev.mod = true;
+        } else if (lower === 'sel') {
+          prev.sel = true;
+        }
+      } else {
+        prev.key = part;
       }
-    } else {
-      prev.key = part;
-    }
-    return prev;
-  }, {shift: false, alt: false, ctrl: false, meta: false, mod: false, sel: false, key: ''});
+      return prev;
+    },
+    {shift: false, alt: false, ctrl: false, meta: false, mod: false, sel: false, key: ''}
+  );
   if (parts.key === '') {
-    throw new Error(`Invalid keyboard shortcut: "${spec}". Must include exactly one non-modifier key (e.g. "a", "Enter", "ArrowDown"). Combine any of Shift, Alt, Ctrl, Meta, and Mod.`);
+    throw new Error(
+      `Invalid keyboard shortcut: "${spec}". Must include exactly one non-modifier key (e.g. "a", "Enter", "ArrowDown"). Combine any of Shift, Alt, Ctrl, Meta, and Mod.`
+    );
   }
   return parts;
 }
@@ -174,13 +185,16 @@ export function keyboardEventToCanonicalShortcut(e: KeyboardEvent): string {
  * Duplicate bindings that normalize to the same shortcut: later object entries win.
  *
  * @example
- * ```tsx
- * let onKeyDown = createKeyboardShortcutHandler({
- *   'Mod+s': (e) => { e.preventDefault(); save(); },
- *   'Ctrl+Shift+k': () => palette(),
- *   'Meta+Alt+ArrowLeft': () => back(),
- * });
- * ```
+ *   ```tsx
+ *   let onKeyDown = createKeyboardShortcutHandler({
+ *     'Mod+s': e => {
+ *       e.preventDefault();
+ *       save();
+ *     },
+ *     'Ctrl+Shift+k': () => palette(),
+ *     'Meta+Alt+ArrowLeft': () => back()
+ *   });
+ *   ```;
  */
 export function createKeyboardShortcutHandler(
   bindings: KeyboardShortcutBindings

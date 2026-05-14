@@ -15,7 +15,7 @@ import React from 'react';
 import {useTextField} from '../../src/textfield/useTextField';
 
 describe('useTextField hook', () => {
-  let renderTextFieldHook = (props) => {
+  let renderTextFieldHook = props => {
     let {result} = renderHook(() => useTextField(props, React.createRef()));
     return result.current.inputProps;
   };
@@ -31,7 +31,9 @@ describe('useTextField hook', () => {
       expect(props['aria-required']).toBeUndefined();
       expect(typeof props.onChange).toBe('function');
       expect(props.autoFocus).toBeFalsy();
-      expect(consoleWarnSpy).toHaveBeenLastCalledWith('If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility');
+      expect(consoleWarnSpy).toHaveBeenLastCalledWith(
+        'If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility'
+      );
     });
 
     it('with appropriate props if type is defined', () => {
@@ -65,7 +67,10 @@ describe('useTextField hook', () => {
     });
 
     it('with appropriate props if validationState is defined', () => {
-      let props = renderTextFieldHook({validationState: 'invalid', 'aria-label': 'mandatory label'});
+      let props = renderTextFieldHook({
+        validationState: 'invalid',
+        'aria-label': 'mandatory label'
+      });
       expect(props['aria-invalid']).toBeTruthy();
 
       props = renderTextFieldHook({validationState: 'valid', 'aria-label': 'mandatory label'});

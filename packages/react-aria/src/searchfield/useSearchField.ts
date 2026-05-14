@@ -23,31 +23,36 @@ import {useLocalizedStringFormatter} from '../i18n/useLocalizedStringFormatter';
 
 export interface AriaSearchFieldProps extends SearchFieldProps, Omit<AriaTextFieldProps, 'type'> {
   /**
-   * An enumerated attribute that defines what action label or icon to preset for the enter key on virtual keyboards. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/enterkeyhint).
+   * An enumerated attribute that defines what action label or icon to preset for the enter key on
+   * virtual keyboards. See
+   * [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/enterkeyhint).
    */
-  enterKeyHint?: 'enter' | 'done' | 'go' | 'next' | 'previous' | 'search' | 'send',
+  enterKeyHint?: 'enter' | 'done' | 'go' | 'next' | 'previous' | 'search' | 'send';
   /**
-   * The type of input to render. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdeftype).
+   * The type of input to render. See
+   * [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdeftype).
+   *
    * @default 'search'
    */
-  type?: 'text' | 'search' | 'url' | 'tel' | 'email' | 'password' | (string & {})
+  type?: 'text' | 'search' | 'url' | 'tel' | 'email' | 'password' | (string & {});
 }
 
 export interface SearchFieldAria extends ValidationResult {
   /** Props for the text field's visible label element (if any). */
-  labelProps: LabelHTMLAttributes<HTMLLabelElement>,
+  labelProps: LabelHTMLAttributes<HTMLLabelElement>;
   /** Props for the input element. */
-  inputProps: InputHTMLAttributes<HTMLInputElement>,
+  inputProps: InputHTMLAttributes<HTMLInputElement>;
   /** Props for the clear button. */
-  clearButtonProps: AriaButtonProps,
+  clearButtonProps: AriaButtonProps;
   /** Props for the searchfield's description element, if any. */
-  descriptionProps: DOMAttributes,
+  descriptionProps: DOMAttributes;
   /** Props for the searchfield's error message element, if any. */
-  errorMessageProps: DOMAttributes
+  errorMessageProps: DOMAttributes;
 }
 
 /**
  * Provides the behavior and accessibility implementation for a search field.
+ *
  * @param props - Props for the search field.
  * @param state - State for the search field, as returned by `useSearchFieldState`.
  * @param inputRef - A ref to the input element.
@@ -58,18 +63,12 @@ export function useSearchField(
   inputRef: RefObject<HTMLInputElement | null>
 ): SearchFieldAria {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/searchfield');
-  let {
-    isDisabled,
-    isReadOnly,
-    onSubmit,
-    onClear,
-    type = 'search'
-  } = props;
+  let {isDisabled, isReadOnly, onSubmit, onClear, type = 'search'} = props;
 
   let {keyboardProps} = useKeyboard({
     isDisabled: isDisabled || isReadOnly,
     shortcuts: {
-      'Enter': () => {
+      Enter: () => {
         if (isDisabled || isReadOnly) {
           return true;
         } else if (onSubmit) {
@@ -80,7 +79,7 @@ export function useSearchField(
         }
         return false;
       },
-      'Escape': () => {
+      Escape: () => {
         if (isDisabled || isReadOnly) {
           return false;
         }
@@ -111,28 +110,28 @@ export function useSearchField(
     inputRef.current?.focus();
   };
 
-  let {labelProps, inputProps, descriptionProps, errorMessageProps, ...validation} = useTextField({
-    ...props,
-    value: state.value,
-    onChange: state.setValue,
-    onKeyDown: props.onKeyDown,
-    onKeyUp: props.onKeyUp,
-    type
-  }, inputRef);
+  let {labelProps, inputProps, descriptionProps, errorMessageProps, ...validation} = useTextField(
+    {
+      ...props,
+      value: state.value,
+      onChange: state.setValue,
+      onKeyDown: props.onKeyDown,
+      onKeyUp: props.onKeyUp,
+      type
+    },
+    inputRef
+  );
 
   return {
     labelProps,
     // An edge case, in Autocomplete, if the keyboard hanlders are not in this order, then
     // Escape runs autocomplete/listbox first, then the search-field shortcut returns false and
     // continues propagation, leaking Escape to a parent Dialog.
-    inputProps: mergeProps(
-      keyboardProps,
-      {
-        ...inputProps,
-        // already handled by useSearchFieldState
-        defaultValue: undefined
-      }
-    ),
+    inputProps: mergeProps(keyboardProps, {
+      ...inputProps,
+      // already handled by useSearchFieldState
+      defaultValue: undefined
+    }),
     clearButtonProps: {
       'aria-label': stringFormatter.format('Clear search'),
       excludeFromTabOrder: true,

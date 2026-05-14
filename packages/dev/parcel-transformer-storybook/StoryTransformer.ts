@@ -1,9 +1,9 @@
-import { Transformer } from '@parcel/plugin';
-import { enrichCsf, formatCsf, loadCsf } from 'storybook/internal/csf-tools';
+import {Transformer} from '@parcel/plugin';
+import {enrichCsf, formatCsf, loadCsf} from 'storybook/internal/csf-tools';
 import * as t from '@babel/types';
 import path from 'path';
 import crypto from 'crypto';
-import { getClient, getCacheDir } from './react-docgen-typescript';
+import {getClient, getCacheDir} from './react-docgen-typescript';
 import {ComponentDoc} from 'react-docgen-typescript';
 import SourceMap from '@parcel/source-map';
 
@@ -33,7 +33,12 @@ module.exports = new Transformer({
   }
 });
 
-function processCsf(code: string, filePath: string, docs: ComponentDoc | null, refreshName: string | null) {
+function processCsf(
+  code: string,
+  filePath: string,
+  docs: ComponentDoc | null,
+  refreshName: string | null
+) {
   let csf = loadCsf(code, {
     fileName: filePath,
     makeTitle: title => title || 'default'
@@ -44,17 +49,21 @@ function processCsf(code: string, filePath: string, docs: ComponentDoc | null, r
   let count = 0;
   let addComponent = (node: t.Function) => {
     let name = 'Story' + count++;
-    csf._ast.program.body.push(t.functionDeclaration(
-      t.identifier(name),
-      node.params.map(p => t.cloneNode(p)),
-      t.isExpression(node.body) ? t.blockStatement([t.returnStatement(node.body)]) : node.body
-    ) as any);
+    csf._ast.program.body.push(
+      t.functionDeclaration(
+        t.identifier(name),
+        node.params.map(p => t.cloneNode(p)),
+        t.isExpression(node.body) ? t.blockStatement([t.returnStatement(node.body)]) : node.body
+      ) as any
+    );
     node.body = t.blockStatement([
       t.returnStatement(
         t.jsxElement(
           t.jsxOpeningElement(
             t.jsxIdentifier(name),
-            node.params.length && t.isIdentifier(node.params[0]) ? [t.jsxSpreadAttribute(t.cloneNode(node.params[0]))] : [],
+            node.params.length && t.isIdentifier(node.params[0])
+              ? [t.jsxSpreadAttribute(t.cloneNode(node.params[0]))]
+              : [],
             true
           ),
           null,
@@ -68,7 +77,12 @@ function processCsf(code: string, filePath: string, docs: ComponentDoc | null, r
 
   let handleRenderProperty = (node: t.ObjectExpression) => {
     // CSF 3 style object story. Extract render function into a component.
-    let render = node.properties.find(p => (t.isObjectProperty(p) || t.isObjectMethod(p)) && t.isIdentifier(p.key) && p.key.name === 'render');
+    let render = node.properties.find(
+      p =>
+        (t.isObjectProperty(p) || t.isObjectMethod(p)) &&
+        t.isIdentifier(p.key) &&
+        p.key.name === 'render'
+    );
     if (render?.type === 'ObjectProperty' && t.isFunction(render.value)) {
       let c = addComponent(render.value);
       node.properties.push(t.objectProperty(t.identifier('_internalComponent'), t.identifier(c)));
@@ -113,27 +127,33 @@ function processCsf(code: string, filePath: string, docs: ComponentDoc | null, r
       if (t.isFunction(node as any)) {
         // CSF 2 style function story.
         let c = addComponent(node as any);
-        csf._ast.program.body.push(t.expressionStatement(
-          t.assignmentExpression(
-            '=',
-            t.memberExpression(t.identifier(name), t.identifier('_internalComponent')),
-            t.identifier(c)
-          )
-        ) as any);
-
-        if (storyHash) {
-          csf._ast.program.body.push(t.expressionStatement(
+        csf._ast.program.body.push(
+          t.expressionStatement(
             t.assignmentExpression(
               '=',
-              t.memberExpression(t.identifier(name), t.identifier('_hash')),
-              t.stringLiteral(storyHash)
+              t.memberExpression(t.identifier(name), t.identifier('_internalComponent')),
+              t.identifier(c)
             )
-          ) as any);
+          ) as any
+        );
+
+        if (storyHash) {
+          csf._ast.program.body.push(
+            t.expressionStatement(
+              t.assignmentExpression(
+                '=',
+                t.memberExpression(t.identifier(name), t.identifier('_hash')),
+                t.stringLiteral(storyHash)
+              )
+            ) as any
+          );
         }
       } else if (node.type === 'ObjectExpression') {
         handleRenderProperty(node as any);
         if (storyHash) {
-          node.properties.push(t.objectProperty(t.identifier('_hash'), t.stringLiteral(storyHash)) as any);
+          node.properties.push(
+            t.objectProperty(t.identifier('_hash'), t.stringLiteral(storyHash)) as any
+          );
         }
       }
     }
@@ -142,15 +162,20 @@ function processCsf(code: string, filePath: string, docs: ComponentDoc | null, r
   // Hash the default export to invalidate Fast Refresh.
   if (csf._metaNode?.type === 'ObjectExpression') {
     if (docs) {
-      let component: any = csf._metaNode.properties.find((p: any) => t.isObjectProperty(p) && t.isIdentifier(p.key) && p.key.name === 'component');
+      let component: any = csf._metaNode.properties.find(
+        (p: any) => t.isObjectProperty(p) && t.isIdentifier(p.key) && p.key.name === 'component'
+      );
       if (t.isObjectProperty(component) && t.isExpression(component.value)) {
         component.value = t.sequenceExpression([
-          t.assignmentExpression('=', t.memberExpression(component.value, t.identifier('__docgenInfo')), t.valueToNode(docs)),
+          t.assignmentExpression(
+            '=',
+            t.memberExpression(component.value, t.identifier('__docgenInfo')),
+            t.valueToNode(docs)
+          ),
           component.value
         ]);
       }
     }
-
 
     if (refreshName) {
       handleRenderProperty(csf._metaNode as any);
@@ -159,7 +184,9 @@ function processCsf(code: string, filePath: string, docs: ComponentDoc | null, r
       hash.update(code.slice(csf._metaNode.start!, csf._metaNode.end!));
       hash.update(JSON.stringify(docs));
       let metaHash = hash.digest('hex');
-      csf._metaNode.properties.push(t.objectProperty(t.identifier('_hash'), t.stringLiteral(metaHash)) as any);
+      csf._metaNode.properties.push(
+        t.objectProperty(t.identifier('_hash'), t.stringLiteral(metaHash)) as any
+      );
     }
   }
 
@@ -168,14 +195,15 @@ function processCsf(code: string, filePath: string, docs: ComponentDoc | null, r
   }
 
   // @ts-ignore
-  return formatCsf(csf, {sourceFileName: filePath, sourceMaps: true, importAttributesKeyword: 'with'});
+  return formatCsf(csf, {
+    sourceFileName: filePath,
+    sourceMaps: true,
+    importAttributesKeyword: 'with'
+  });
 }
 
 function wrapRefresh(program: t.Program, filePath: string, refreshName: string) {
-  let wrapperPath = `${path.relative(
-    path.dirname(filePath),
-    __dirname,
-  )}/csf-hmr.js`;
+  let wrapperPath = `${path.relative(path.dirname(filePath), __dirname)}/csf-hmr.js`;
 
   // Group imports, exports, and body statements which will be wrapped in a try...catch.
   let imports: (t.ImportDeclaration | t.ExportDeclaration)[] = [];
@@ -195,7 +223,9 @@ function wrapRefresh(program: t.Program, filePath: string, refreshName: string) 
           let name = refreshName + '$Export' + exportVars.length;
           exportVars.push(t.variableDeclarator(t.identifier(name)));
           exports.push(t.exportSpecifier(t.identifier(name), t.identifier(id)));
-          statements.push(t.expressionStatement(t.assignmentExpression('=', t.identifier(name), t.identifier(id))));
+          statements.push(
+            t.expressionStatement(t.assignmentExpression('=', t.identifier(name), t.identifier(id)))
+          );
         }
       } else if (statement.specifiers) {
         for (let specifier of statement.specifiers) {
@@ -203,7 +233,11 @@ function wrapRefresh(program: t.Program, filePath: string, refreshName: string) 
             let name = refreshName + '$Export' + exportVars.length;
             exportVars.push(t.variableDeclarator(t.identifier(name)));
             exports.push(t.exportSpecifier(t.identifier(name), specifier.exported));
-            statements.push(t.expressionStatement(t.assignmentExpression('=', t.identifier(name), specifier.local)));
+            statements.push(
+              t.expressionStatement(
+                t.assignmentExpression('=', t.identifier(name), specifier.local)
+              )
+            );
           }
         }
       }
@@ -212,7 +246,11 @@ function wrapRefresh(program: t.Program, filePath: string, refreshName: string) 
         let name = refreshName + '$Export' + exportVars.length;
         exportVars.push(t.variableDeclarator(t.identifier(name)));
         exports.push(t.exportSpecifier(t.identifier(name), t.identifier('default')));
-        statements.push(t.expressionStatement(t.assignmentExpression('=', t.identifier(name), statement.declaration)));
+        statements.push(
+          t.expressionStatement(
+            t.assignmentExpression('=', t.identifier(name), statement.declaration)
+          )
+        );
       } else {
         statements.push(statement.declaration);
         let name = refreshName + '$Export' + exportVars.length;
@@ -232,8 +270,14 @@ function wrapRefresh(program: t.Program, filePath: string, refreshName: string) 
     ),
     t.variableDeclaration('var', exportVars),
     t.variableDeclaration('var', [
-      t.variableDeclarator(t.identifier(refreshName + '$PrevRefreshReg'), t.memberExpression(t.identifier('window'), t.identifier('$RefreshReg$'))),
-      t.variableDeclarator(t.identifier(refreshName + '$PrevRefreshSig'), t.memberExpression(t.identifier('window'), t.identifier('$RefreshSig$')))
+      t.variableDeclarator(
+        t.identifier(refreshName + '$PrevRefreshReg'),
+        t.memberExpression(t.identifier('window'), t.identifier('$RefreshReg$'))
+      ),
+      t.variableDeclarator(
+        t.identifier(refreshName + '$PrevRefreshSig'),
+        t.memberExpression(t.identifier('window'), t.identifier('$RefreshSig$'))
+      )
     ]),
     t.expressionStatement(
       t.callExpression(
@@ -249,7 +293,7 @@ function wrapRefresh(program: t.Program, filePath: string, refreshName: string) 
             t.memberExpression(t.identifier(refreshName + '$Helpers'), t.identifier('postlude')),
             [t.identifier('module')]
           )
-        ),
+        )
       ]),
       null,
       t.blockStatement([
@@ -258,15 +302,15 @@ function wrapRefresh(program: t.Program, filePath: string, refreshName: string) 
             '=',
             t.memberExpression(t.identifier('window'), t.identifier('$RefreshReg$')),
             t.identifier(refreshName + '$PrevRefreshReg')
-          ),
+          )
         ),
         t.expressionStatement(
           t.assignmentExpression(
             '=',
             t.memberExpression(t.identifier('window'), t.identifier('$RefreshSig$')),
             t.identifier(refreshName + '$PrevRefreshSig')
-          ),
-        ),
+          )
+        )
       ])
     ),
     t.exportNamedDeclaration(null, exports)

@@ -20,25 +20,27 @@ import {useKeyboard} from '../interactions/useKeyboard';
 
 export interface AriaOverlayProps {
   /** Whether the overlay is currently open. */
-  isOpen?: boolean,
+  isOpen?: boolean;
 
   /** Handler that is called when the overlay should close. */
-  onClose?: () => void,
+  onClose?: () => void;
 
   /**
    * Whether to close the overlay when the user interacts outside it.
+   *
    * @default false
    */
-  isDismissable?: boolean,
+  isDismissable?: boolean;
 
   /** Whether the overlay should close when focus is lost or moves outside it. */
-  shouldCloseOnBlur?: boolean,
+  shouldCloseOnBlur?: boolean;
 
   /**
    * Whether pressing the escape key to close the overlay should be disabled.
+   *
    * @default false
    */
-  isKeyboardDismissDisabled?: boolean,
+  isKeyboardDismissDisabled?: boolean;
 
   /**
    * When user interacts with the argument element outside of the overlay ref,
@@ -46,14 +48,14 @@ export interface AriaOverlayProps {
    * out interaction with elements that should not dismiss the overlay.
    * By default, onClose will always be called on interaction outside the overlay ref.
    */
-  shouldCloseOnInteractOutside?: (element: Element) => boolean
+  shouldCloseOnInteractOutside?: (element: Element) => boolean;
 }
 
 export interface OverlayAria {
   /** Props to apply to the overlay container element. */
-  overlayProps: DOMAttributes,
+  overlayProps: DOMAttributes;
   /** Props to apply to the underlay element, if any. */
-  underlayProps: DOMAttributes
+  underlayProps: DOMAttributes;
 }
 
 const visibleOverlays: RefObject<Element | null>[] = [];
@@ -98,7 +100,10 @@ export function useOverlay(props: AriaOverlayProps, ref: RefObject<Element | nul
   let onInteractOutsideStart = (e: PointerEvent) => {
     const topMostOverlay = visibleOverlays[visibleOverlays.length - 1];
     lastVisibleOverlay.current = topMostOverlay;
-    if (!shouldCloseOnInteractOutside || shouldCloseOnInteractOutside(getEventTarget(e) as Element)) {
+    if (
+      !shouldCloseOnInteractOutside ||
+      shouldCloseOnInteractOutside(getEventTarget(e) as Element)
+    ) {
       if (topMostOverlay === ref) {
         e.stopPropagation();
       }
@@ -106,7 +111,10 @@ export function useOverlay(props: AriaOverlayProps, ref: RefObject<Element | nul
   };
 
   let onInteractOutside = (e: PointerEvent) => {
-    if (!shouldCloseOnInteractOutside || shouldCloseOnInteractOutside(getEventTarget(e) as Element)) {
+    if (
+      !shouldCloseOnInteractOutside ||
+      shouldCloseOnInteractOutside(getEventTarget(e) as Element)
+    ) {
       if (visibleOverlays[visibleOverlays.length - 1] === ref) {
         e.stopPropagation();
       }
@@ -120,7 +128,7 @@ export function useOverlay(props: AriaOverlayProps, ref: RefObject<Element | nul
   // Handle the escape key
   let {keyboardProps} = useKeyboard({
     shortcuts: {
-      'Escape': (e) => {
+      Escape: e => {
         if (!isKeyboardDismissDisabled && !e.nativeEvent.isComposing) {
           onHide();
           return true;
@@ -131,11 +139,15 @@ export function useOverlay(props: AriaOverlayProps, ref: RefObject<Element | nul
   });
 
   // Handle clicking outside the overlay to close it
-  useInteractOutside({ref, onInteractOutside: isDismissable && isOpen ? onInteractOutside : undefined, onInteractOutsideStart});
+  useInteractOutside({
+    ref,
+    onInteractOutside: isDismissable && isOpen ? onInteractOutside : undefined,
+    onInteractOutsideStart
+  });
 
   let {focusWithinProps} = useFocusWithin({
     isDisabled: !shouldCloseOnBlur,
-    onBlurWithin: (e) => {
+    onBlurWithin: e => {
       // Do not close if relatedTarget is null, which means focus is lost to the body.
       // That can happen when switching tabs, or due to a VoiceOver/Chrome bug with Control+Option+Arrow navigation.
       // Clicking on the body to close the overlay should already be handled by useInteractOutside.
@@ -149,7 +161,10 @@ export function useOverlay(props: AriaOverlayProps, ref: RefObject<Element | nul
         return;
       }
 
-      if (!shouldCloseOnInteractOutside || shouldCloseOnInteractOutside(e.relatedTarget as Element)) {
+      if (
+        !shouldCloseOnInteractOutside ||
+        shouldCloseOnInteractOutside(e.relatedTarget as Element)
+      ) {
         onClose?.();
       }
     }

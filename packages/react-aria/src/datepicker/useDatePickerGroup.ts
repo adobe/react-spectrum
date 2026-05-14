@@ -10,13 +10,17 @@ import {useLocale} from '../i18n/I18nProvider';
 import {useMemo} from 'react';
 import {usePress} from '../interactions/usePress';
 
-export function useDatePickerGroup(state: DatePickerState | DateRangePickerState | DateFieldState, ref: RefObject<Element | null>, disableArrowNavigation?: boolean): DOMAttributes<FocusableElement> {
+export function useDatePickerGroup(
+  state: DatePickerState | DateRangePickerState | DateFieldState,
+  ref: RefObject<Element | null>,
+  disableArrowNavigation?: boolean
+): DOMAttributes<FocusableElement> {
   let {direction} = useLocale();
   let focusManager = useMemo(() => createFocusManager(ref), [ref]);
 
   let {keyboardProps} = useKeyboard({
     shortcuts: {
-      'Alt+ArrowDown': (e) => {
+      'Alt+ArrowDown': e => {
         if (!nodeContains(e.currentTarget, getEventTarget(e) as Element)) {
           return false;
         }
@@ -26,7 +30,7 @@ export function useDatePickerGroup(state: DatePickerState | DateRangePickerState
         }
         return false;
       },
-      'Alt+ArrowUp': (e) => {
+      'Alt+ArrowUp': e => {
         if (!nodeContains(e.currentTarget, getEventTarget(e) as Element)) {
           return false;
         }
@@ -36,7 +40,7 @@ export function useDatePickerGroup(state: DatePickerState | DateRangePickerState
         }
         return false;
       },
-      'ArrowLeft': (e) => {
+      ArrowLeft: e => {
         if (!nodeContains(e.currentTarget, getEventTarget(e) as Element)) {
           return false;
         }
@@ -60,7 +64,7 @@ export function useDatePickerGroup(state: DatePickerState | DateRangePickerState
         }
         return false;
       },
-      'ArrowRight': (e) => {
+      ArrowRight: e => {
         if (!nodeContains(e.currentTarget, getEventTarget(e) as Element)) {
           return false;
         }
@@ -93,7 +97,7 @@ export function useDatePickerGroup(state: DatePickerState | DateRangePickerState
       return;
     }
     // Try to find the segment prior to the element that was clicked on.
-    let target = window.event ? getEventTarget(window.event) as FocusableElement : null;
+    let target = window.event ? (getEventTarget(window.event) as FocusableElement) : null;
     let walker = getFocusableTreeWalker(ref.current, {tabbable: true});
     if (target) {
       walker.currentNode = target;

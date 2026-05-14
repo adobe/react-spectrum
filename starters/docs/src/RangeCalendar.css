@@ -1,4 +1,4 @@
-@import "./theme.css";
+@import './theme.css';
 
 .react-aria-RangeCalendar {
   display: flex;
@@ -40,7 +40,7 @@
     border-spacing: 0;
   }
 
-  [slot=errorMessage] {
+  [slot='errorMessage'] {
     font-size: var(--font-size-sm);
     color: var(--invalid-color);
   }
@@ -77,7 +77,7 @@
       }
 
       &[data-selection-start],
-      &:is(td:first-child > *, [aria-disabled] + td > *)  {
+      &:is(td:first-child > *, [aria-disabled] + td > *) {
         border-start-start-radius: 9999px;
         border-end-start-radius: 9999px;
         border-inline-start-width: 0.5px;

@@ -10,10 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-const findUp = require('find-up');
-const path = require('path');
-const fs = require('fs');
-const Module = require('module');
+import {builtinModules} from 'node:module';
+import {fileURLToPath} from 'node:url';
+import findUp from 'find-up';
+import fs from 'node:fs';
+import path from 'node:path';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
 const substrings = ['-', '+'];
 
 const devDependencies = new Set([
@@ -33,18 +37,18 @@ const devDependencies = new Set([
   'vite-plugin-svgr'
 ]);
 
-module.exports = {
+const plugin = {
   meta: {
     fixable: 'code'
   },
   create: function (context) {
-    let processNode = (node) => {
+    let processNode = node => {
       if (!node.source || node.importKind === 'type') {
         return;
       }
 
       let source = node.source.value.replace(/^[a-z-]+:/, '');
-      if (source.startsWith('.') || Module.builtinModules.includes(source)) {
+      if (source.startsWith('.') || builtinModules.includes(source)) {
         return;
       }
 
@@ -70,7 +74,11 @@ module.exports = {
         return;
       }
 
-      if (!exists(pkg.dependencies, pkgName) && !exists(pkg.peerDependencies, pkgName) && pkgName !== pkg.name) {
+      if (
+        !exists(pkg.dependencies, pkgName) &&
+        !exists(pkg.peerDependencies, pkgName) &&
+        pkgName !== pkg.name
+      ) {
         context.report({
           node,
           message: `Missing dependency on ${pkgName}.`,
@@ -83,7 +91,9 @@ module.exports = {
             }
 
             let depPkg = JSON.parse(fs.readFileSync(depPath, 'utf8'));
-            let pkgVersion = substrings.some(v => depPkg.version.includes(v)) ?  depPkg.version : `^${depPkg.version}`;
+            let pkgVersion = substrings.some(v => depPkg.version.includes(v))
+              ? depPkg.version
+              : `^${depPkg.version}`;
 
             if (pkgName === '@react-spectrum/provider') {
               pkg.peerDependencies = insertObject(pkg.peerDependencies, pkgName, pkgVersion);
@@ -126,3 +136,5 @@ function insertObject(obj, key, value) {
 
   return res;
 }
+
+export default plugin;

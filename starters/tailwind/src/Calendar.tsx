@@ -1,5 +1,5 @@
 'use client';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import {ChevronLeft, ChevronRight} from 'lucide-react';
 import React from 'react';
 import {
   Calendar as AriaCalendar,
@@ -11,19 +11,20 @@ import {
   CalendarHeaderCell,
   CalendarHeading,
   Text,
-  type DateValue,
+  type DateValue
 } from 'react-aria-components/Calendar';
-import { useLocale } from 'react-aria-components/I18nProvider';
-import { tv } from 'tailwind-variants';
-import { Button } from './Button';
-import { composeTailwindRenderProps, focusRing } from './utils';
+import {useLocale} from 'react-aria-components/I18nProvider';
+import {tv} from 'tailwind-variants';
+import {Button} from './Button';
+import {composeTailwindRenderProps, focusRing} from './utils';
 
 const cellStyles = tv({
   extend: focusRing,
   base: 'w-[calc(100cqw/7)] aspect-square text-sm cursor-default rounded-full flex items-center justify-center forced-color-adjust-none [-webkit-tap-highlight-color:transparent]',
   variants: {
     isSelected: {
-      false: 'text-neutral-900 dark:text-neutral-200 hover:bg-neutral-200 dark:hover:bg-neutral-700 pressed:bg-neutral-300 dark:pressed:bg-neutral-600',
+      false:
+        'text-neutral-900 dark:text-neutral-200 hover:bg-neutral-200 dark:hover:bg-neutral-700 pressed:bg-neutral-300 dark:pressed:bg-neutral-600',
       true: 'bg-blue-600 invalid:bg-red-600 text-white forced-colors:bg-[Highlight] forced-colors:invalid:bg-[Mark] forced-colors:text-[HighlightText]'
     },
     isDisabled: {
@@ -36,37 +37,55 @@ export interface CalendarProps<T extends DateValue> extends AriaCalendarProps<T>
   errorMessage?: string;
 }
 
-export function Calendar<T extends DateValue>(
-  { errorMessage, ...props }: CalendarProps<T>
-) {
+export function Calendar<T extends DateValue>({errorMessage, ...props}: CalendarProps<T>) {
   let {direction} = useLocale();
   let months = props.visibleDuration?.months || 1;
   return (
-    <AriaCalendar {...props} className={composeTailwindRenderProps(props.className, 'flex font-sans w-full max-w-fit overflow-auto gap-3')}>
+    <AriaCalendar
+      {...props}
+      className={composeTailwindRenderProps(
+        props.className,
+        'flex font-sans w-full max-w-fit overflow-auto gap-3'
+      )}>
       {Array.from({length: months}, (_, i) => (
         <div key={i} className="@container flex flex-col w-[calc(9*var(--spacing)*7)]">
           <header className="flex items-center mb-4">
-            {i === 0 &&
+            {i === 0 && (
               <Button variant="quiet" slot="previous">
-                {direction === 'rtl' ? <ChevronRight aria-hidden size={18} /> : <ChevronLeft aria-hidden size={18} />}
+                {direction === 'rtl' ? (
+                  <ChevronRight aria-hidden size={18} />
+                ) : (
+                  <ChevronLeft aria-hidden size={18} />
+                )}
               </Button>
-            }
-            <CalendarHeading offset={{months: i}} className="flex-1 font-sans font-semibold [font-variation-settings:normal] text-base text-center mx-2 my-0 text-neutral-900 dark:text-neutral-200" />
-            {i === months - 1 &&
+            )}
+            <CalendarHeading
+              offset={{months: i}}
+              className="flex-1 font-sans font-semibold [font-variation-settings:normal] text-base text-center mx-2 my-0 text-neutral-900 dark:text-neutral-200"
+            />
+            {i === months - 1 && (
               <Button variant="quiet" slot="next">
-                {direction === 'rtl' ? <ChevronLeft aria-hidden size={18} /> : <ChevronRight aria-hidden size={18} />}
+                {direction === 'rtl' ? (
+                  <ChevronLeft aria-hidden size={18} />
+                ) : (
+                  <ChevronRight aria-hidden size={18} />
+                )}
               </Button>
-            }
+            )}
           </header>
           <CalendarGrid offset={{months: i}} className="border-spacing-0">
             <CalendarGridHeader />
             <CalendarGridBody>
-              {(date) => <CalendarCell date={date} className={cellStyles} />}
+              {date => <CalendarCell date={date} className={cellStyles} />}
             </CalendarGridBody>
           </CalendarGrid>
         </div>
       ))}
-      {errorMessage && <Text slot="errorMessage" className="text-sm text-red-600">{errorMessage}</Text>}
+      {errorMessage && (
+        <Text slot="errorMessage" className="text-sm text-red-600">
+          {errorMessage}
+        </Text>
+      )}
     </AriaCalendar>
   );
 }
@@ -74,11 +93,11 @@ export function Calendar<T extends DateValue>(
 export function CalendarGridHeader() {
   return (
     <AriaCalendarGridHeader>
-      {(day) => (
+      {day => (
         <CalendarHeaderCell className="text-xs text-neutral-500 font-semibold">
           {day}
         </CalendarHeaderCell>
       )}
     </AriaCalendarGridHeader>
-  )
+  );
 }

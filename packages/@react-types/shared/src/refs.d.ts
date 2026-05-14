@@ -13,18 +13,23 @@
 import {ReactElement, Ref, RefAttributes} from 'react';
 
 export interface DOMRefValue<T extends HTMLElement = HTMLElement> {
-  UNSAFE_getDOMNode(): T | null
+  UNSAFE_getDOMNode(): T | null;
 }
 
-export interface FocusableRefValue<T extends HTMLElement = HTMLElement, D extends HTMLElement = T> extends DOMRefValue<D> {
-  focus(): void
+export interface FocusableRefValue<
+  T extends HTMLElement = HTMLElement,
+  D extends HTMLElement = T
+> extends DOMRefValue<D> {
+  focus(): void;
 }
 
 export type DOMRef<T extends HTMLElement = HTMLElement> = Ref<DOMRefValue<T>>;
-export type FocusableRef<T extends HTMLElement = HTMLElement, D extends HTMLElement = T> = Ref<FocusableRefValue<T, D>>;
+export type FocusableRef<T extends HTMLElement = HTMLElement, D extends HTMLElement = T> = Ref<
+  FocusableRefValue<T, D>
+>;
 
 export interface RefObject<T> {
-  current: T
+  current: T;
 }
 
 // Override forwardRef types so generics work.

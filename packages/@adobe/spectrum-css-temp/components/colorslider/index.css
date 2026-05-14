@@ -1,11 +1,7 @@
 :root {
   --spectrum-colorslider-handle-hitarea-border-radius: 0%;
-  --spectrum-colorslider-handle-hitarea-width: var(
-    --spectrum-global-dimension-size-300
-  );
-  --spectrum-colorslider-handle-hitarea-height: var(
-    --spectrum-global-dimension-size-300
-  );
+  --spectrum-colorslider-handle-hitarea-width: var(--spectrum-global-dimension-size-300);
+  --spectrum-colorslider-handle-hitarea-height: var(--spectrum-global-dimension-size-300);
 }
 
 .spectrum-ColorControl-hiddenField {
@@ -49,7 +45,7 @@
 
   /* The checkerboard is a separate element so that the gradient is overlaid on top. */
   &:before {
-    content: "";
+    content: '';
     z-index: -1;
     position: absolute;
     top: 0;
@@ -59,7 +55,9 @@
     border-radius: var(--spectrum-colorslider-border-radius);
     background-size: var(--spectrum-global-dimension-static-size-200)
       var(--spectrum-global-dimension-static-size-200);
-    background-position: 0 0, 0 var(--spectrum-global-dimension-static-size-100),
+    background-position:
+      0 0,
+      0 var(--spectrum-global-dimension-static-size-100),
       var(--spectrum-global-dimension-static-size-100)
         calc(-1 * var(--spectrum-global-dimension-static-size-100)),
       calc(-1 * var(--spectrum-global-dimension-static-size-100)) 0;
@@ -103,7 +101,7 @@
 
 .spectrum-ColorSlider-labelContainer {
   display: grid;
-  grid-template-areas: "label contextualHelp value";
+  grid-template-areas: 'label contextualHelp value';
   grid-template-columns: auto 1fr auto;
   justify-items: start;
 }

@@ -160,7 +160,7 @@ import SliderDark from 'url:../assets/component-illustrations/dark/Slider.avif';
 import SliderLight from 'url:../assets/component-illustrations/light/Slider.avif';
 import StatusLightDark from 'url:../assets/component-illustrations/dark/StatusLight.avif';
 import StatusLightLight from 'url:../assets/component-illustrations/light/StatusLight.avif';
-import {style} from '@react-spectrum/s2/style' with { type: 'macro' };
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import StyleDark from 'url:../assets/component-illustrations/dark/Style.avif';
 import StyleLight from 'url:../assets/component-illustrations/light/Style.avif';
 import StyleMacroDark from 'url:../assets/component-illustrations/dark/StyleMacro.avif';
@@ -197,144 +197,144 @@ import WorkingWithAIDark from 'url:../assets/component-illustrations/dark/Workin
 import WorkingWithAILight from 'url:../assets/component-illustrations/light/WorkingWithAI.avif';
 
 export interface ComponentCardItem {
-  id: string,
-  name: string,
-  href: string
+  id: string;
+  name: string;
+  href: string;
 }
 
 // Mapping from component names to their illustration [light, dark] tuple
 const componentIllustrations: Record<string, [string, string] | undefined> = {
   // Components
-  'Accordion': [AccordionLight, AccordionDark],
-  'ActionBar': [ActionBarLight, ActionBarDark],
-  'ActionButton': [ActionButtonLight, ActionButtonDark],
-  'ActionButtonGroup': [ActionGroupLight, ActionGroupDark],
-  'ActionMenu': [ActionMenuLight, ActionMenuDark],
-  'Autocomplete': [AutocompleteLight, AutocompleteDark],
-  'Avatar': [AvatarLight, AvatarDark],
-  'AvatarGroup': [AvatarGroupLight, AvatarGroupDark],
-  'Badge': [BadgeLight, BadgeDark],
-  'Breadcrumbs': [BreadcrumbsLight, BreadcrumbsDark],
-  'Button': [ButtonLight, ButtonDark],
-  'ButtonGroup': [ButtonGroupLight, ButtonGroupDark],
-  'Calendar': [CalendarLight, CalendarDark],
-  'Card': [CardLight, CardDark],
-  'CardView': [CardViewLight, CardViewDark],
-  'Checkbox': [CheckboxLight, CheckboxDark],
-  'CheckboxGroup': [CheckboxGroupLight, CheckboxGroupDark],
-  'ColorArea': [ColorAreaLight, ColorAreaDark],
-  'ColorField': [ColorFieldLight, ColorFieldDark],
-  'ColorPicker': [ColorPickerLight, ColorPickerDark],
-  'ColorSlider': [ColorSliderLight, ColorSliderDark],
-  'ColorSwatch': [ColorSwatchLight, ColorSwatchDark],
-  'ColorSwatchPicker': [ColorSwatchPickerLight, ColorSwatchPickerDark],
-  'ColorWheel': [ColorWheelLight, ColorWheelDark],
-  'ComboBox': [ComboBoxLight, ComboBoxDark],
-  'ContextualHelp': [ContextualHelpLight, ContextualHelpDark],
-  'DateField': [DateFieldLight, DateFieldDark],
-  'DatePicker': [DatePickerLight, DatePickerDark],
-  'DateRangePicker': [DateRangePickerLight, DateRangePickerDark],
-  'Dialog': [DialogLight, DialogDark],
-  'Disclosure': [DisclosureLight, DisclosureDark],
-  'DisclosureGroup': [AccordionLight, AccordionDark],
-  'Divider': [DividerLight, DividerDark],
-  'DropZone': [DropZoneLight, DropZoneDark],
-  'FileTrigger': [FileTriggerLight, FileTriggerDark],
-  'FocusRing': [FocusRingLight, FocusRingDark],
-  'FocusScope': [FocusScopeLight, FocusScopeDark],
-  'Form': [FormsLight, FormsDark],
-  'GridList': [CardViewLight, CardViewDark],
-  'Group': [GroupLight, GroupDark],
-  'Icons': [IconsLight, IconsDark],
-  'IllustratedMessage': [IllustratedMessageLight, IllustratedMessageDark],
-  'Illustrations': [IllustrationsLight, IllustrationsDark],
-  'Image': [ImageLight, ImageDark],
-  'InlineAlert': [InlineAlertLight, InlineAlertDark],
-  'Link': [LinkLight, LinkDark],
-  'LinkButton': [LinkButtonLight, LinkButtonDark],
-  'ListBox': [SelectionLight, SelectionDark],
-  'ListView': [ListViewLight, ListViewDark],
-  'Menu': [MenuLight, MenuDark],
-  'Meter': [MeterLight, MeterDark],
+  Accordion: [AccordionLight, AccordionDark],
+  ActionBar: [ActionBarLight, ActionBarDark],
+  ActionButton: [ActionButtonLight, ActionButtonDark],
+  ActionButtonGroup: [ActionGroupLight, ActionGroupDark],
+  ActionMenu: [ActionMenuLight, ActionMenuDark],
+  Autocomplete: [AutocompleteLight, AutocompleteDark],
+  Avatar: [AvatarLight, AvatarDark],
+  AvatarGroup: [AvatarGroupLight, AvatarGroupDark],
+  Badge: [BadgeLight, BadgeDark],
+  Breadcrumbs: [BreadcrumbsLight, BreadcrumbsDark],
+  Button: [ButtonLight, ButtonDark],
+  ButtonGroup: [ButtonGroupLight, ButtonGroupDark],
+  Calendar: [CalendarLight, CalendarDark],
+  Card: [CardLight, CardDark],
+  CardView: [CardViewLight, CardViewDark],
+  Checkbox: [CheckboxLight, CheckboxDark],
+  CheckboxGroup: [CheckboxGroupLight, CheckboxGroupDark],
+  ColorArea: [ColorAreaLight, ColorAreaDark],
+  ColorField: [ColorFieldLight, ColorFieldDark],
+  ColorPicker: [ColorPickerLight, ColorPickerDark],
+  ColorSlider: [ColorSliderLight, ColorSliderDark],
+  ColorSwatch: [ColorSwatchLight, ColorSwatchDark],
+  ColorSwatchPicker: [ColorSwatchPickerLight, ColorSwatchPickerDark],
+  ColorWheel: [ColorWheelLight, ColorWheelDark],
+  ComboBox: [ComboBoxLight, ComboBoxDark],
+  ContextualHelp: [ContextualHelpLight, ContextualHelpDark],
+  DateField: [DateFieldLight, DateFieldDark],
+  DatePicker: [DatePickerLight, DatePickerDark],
+  DateRangePicker: [DateRangePickerLight, DateRangePickerDark],
+  Dialog: [DialogLight, DialogDark],
+  Disclosure: [DisclosureLight, DisclosureDark],
+  DisclosureGroup: [AccordionLight, AccordionDark],
+  Divider: [DividerLight, DividerDark],
+  DropZone: [DropZoneLight, DropZoneDark],
+  FileTrigger: [FileTriggerLight, FileTriggerDark],
+  FocusRing: [FocusRingLight, FocusRingDark],
+  FocusScope: [FocusScopeLight, FocusScopeDark],
+  Form: [FormsLight, FormsDark],
+  GridList: [CardViewLight, CardViewDark],
+  Group: [GroupLight, GroupDark],
+  Icons: [IconsLight, IconsDark],
+  IllustratedMessage: [IllustratedMessageLight, IllustratedMessageDark],
+  Illustrations: [IllustrationsLight, IllustrationsDark],
+  Image: [ImageLight, ImageDark],
+  InlineAlert: [InlineAlertLight, InlineAlertDark],
+  Link: [LinkLight, LinkDark],
+  LinkButton: [LinkButtonLight, LinkButtonDark],
+  ListBox: [SelectionLight, SelectionDark],
+  ListView: [ListViewLight, ListViewDark],
+  Menu: [MenuLight, MenuDark],
+  Meter: [MeterLight, MeterDark],
   'Migrating to Spectrum 2': [MigratingLight, MigratingDark],
-  'Modal': [DialogLight, DialogDark],
-  'NumberField': [NumberFieldLight, NumberFieldDark],
-  'Picker': [PickerLight, PickerDark],
-  'Popover': [PopoverLight, PopoverDark],
-  'ProgressBar': [ProgressBarLight, ProgressBarDark],
-  'ProgressCircle': [ProgressCircleLight, ProgressCircleDark],
-  'Provider': [ProviderLight, ProviderDark],
-  'RadioGroup': [RadioGroupLight, RadioGroupDark],
-  'RangeCalendar': [RangeCalendarLight, RangeCalendarDark],
-  'RangeSlider': [RangeSliderLight, RangeSliderDark],
-  'SearchField': [SearchFieldLight, SearchFieldDark],
-  'SegmentedControl': [SegmentedControlLight, SegmentedControlDark],
-  'Select': [PickerLight, PickerDark],
-  'SelectBoxGroup': [SelectBoxGroupLight, SelectBoxGroupDark],
-  'Separator': [DividerLight, DividerDark],
-  'Skeleton': [SkeletonLight, SkeletonDark],
-  'Slider': [SliderLight, SliderDark],
-  'StatusLight': [StatusLightLight, StatusLightDark],
-  'Switch': [SwitchLight, SwitchDark],
-  'Table': [TableLight, TableDark],
-  'TableView': [TableLight, TableDark],
-  'Tabs': [TabsLight, TabsDark],
-  'TagGroup': [TagGroupLight, TagGroupDark],
-  'TextArea': [TextAreaLight, TextAreaDark],
-  'TextField': [TextFieldLight, TextFieldDark],
-  'TimeField': [TimeFieldLight, TimeFieldDark],
-  'Toast': [ToastLight, ToastDark],
-  'ToggleButton': [ToggleButtonLight, ToggleButtonDark],
-  'ToggleButtonGroup': [ToggleButtonGroupLight, ToggleButtonGroupDark],
-  'Toolbar': [ActionGroupLight, ActionGroupDark],
-  'Tooltip': [TooltipLight, TooltipDark],
-  'Tree': [TreeLight, TreeDark],
-  'TreeView': [TreeLight, TreeDark],
-  'Virtualizer': [CollectionLight, CollectionDark],
-  'VisuallyHidden': [AccessibilityLight, AccessibilityDark],
+  Modal: [DialogLight, DialogDark],
+  NumberField: [NumberFieldLight, NumberFieldDark],
+  Picker: [PickerLight, PickerDark],
+  Popover: [PopoverLight, PopoverDark],
+  ProgressBar: [ProgressBarLight, ProgressBarDark],
+  ProgressCircle: [ProgressCircleLight, ProgressCircleDark],
+  Provider: [ProviderLight, ProviderDark],
+  RadioGroup: [RadioGroupLight, RadioGroupDark],
+  RangeCalendar: [RangeCalendarLight, RangeCalendarDark],
+  RangeSlider: [RangeSliderLight, RangeSliderDark],
+  SearchField: [SearchFieldLight, SearchFieldDark],
+  SegmentedControl: [SegmentedControlLight, SegmentedControlDark],
+  Select: [PickerLight, PickerDark],
+  SelectBoxGroup: [SelectBoxGroupLight, SelectBoxGroupDark],
+  Separator: [DividerLight, DividerDark],
+  Skeleton: [SkeletonLight, SkeletonDark],
+  Slider: [SliderLight, SliderDark],
+  StatusLight: [StatusLightLight, StatusLightDark],
+  Switch: [SwitchLight, SwitchDark],
+  Table: [TableLight, TableDark],
+  TableView: [TableLight, TableDark],
+  Tabs: [TabsLight, TabsDark],
+  TagGroup: [TagGroupLight, TagGroupDark],
+  TextArea: [TextAreaLight, TextAreaDark],
+  TextField: [TextFieldLight, TextFieldDark],
+  TimeField: [TimeFieldLight, TimeFieldDark],
+  Toast: [ToastLight, ToastDark],
+  ToggleButton: [ToggleButtonLight, ToggleButtonDark],
+  ToggleButtonGroup: [ToggleButtonGroupLight, ToggleButtonGroupDark],
+  Toolbar: [ActionGroupLight, ActionGroupDark],
+  Tooltip: [TooltipLight, TooltipDark],
+  Tree: [TreeLight, TreeDark],
+  TreeView: [TreeLight, TreeDark],
+  Virtualizer: [CollectionLight, CollectionDark],
+  VisuallyHidden: [AccessibilityLight, AccessibilityDark],
   // Guides
-  'Collections': [CollectionLight, CollectionDark],
-  'Customization': [StyleLight, StyleDark],
+  Collections: [CollectionLight, CollectionDark],
+  Customization: [StyleLight, StyleDark],
   'Drag and Drop': [DragAndDropLight, DragAndDropDark],
-  'Forms': [FormsLight, FormsDark],
+  Forms: [FormsLight, FormsDark],
   'Framework setup': [FrameworksLight, FrameworksDark],
   'Getting started': [GettingStartedLight, GettingStartedDark],
   'MCP Server': [McpServerLight, McpServerDark],
-  'Quality': [AccessibilityLight, AccessibilityDark],
+  Quality: [AccessibilityLight, AccessibilityDark],
   'Working with AI': [WorkingWithAILight, WorkingWithAIDark],
-  'Selection': [SelectionLight, SelectionDark],
+  Selection: [SelectionLight, SelectionDark],
   'Style Macro': [StyleMacroLight, StyleMacroDark],
-  'Styling': [StyleLight, StyleDark],
-  'Testing': [TestingLight, TestingDark],
+  Styling: [StyleLight, StyleDark],
+  Testing: [TestingLight, TestingDark],
   // Hooks - interaction hooks
-  'useClipboard': [ClipboardLight, ClipboardDark],
-  'useDrag': [DragAndDropLight, DragAndDropDark],
-  'useDrop': [DragAndDropLight, DragAndDropDark],
-  'useFocus': [FocusRingLight, FocusRingDark],
-  'useFocusRing': [FocusRingLight, FocusRingDark],
-  'useFocusVisible': [FocusRingLight, FocusRingDark],
-  'useFocusWithin': [FocusRingLight, FocusRingDark],
-  'useHover': [HoverLight, HoverDark],
-  'useKeyboard': [KeyboardLight, KeyboardDark],
-  'useLongPress': [PressLight, PressDark],
-  'useMove': [MoveLight, MoveDark],
-  'usePress': [PressLight, PressDark],
+  useClipboard: [ClipboardLight, ClipboardDark],
+  useDrag: [DragAndDropLight, DragAndDropDark],
+  useDrop: [DragAndDropLight, DragAndDropDark],
+  useFocus: [FocusRingLight, FocusRingDark],
+  useFocusRing: [FocusRingLight, FocusRingDark],
+  useFocusVisible: [FocusRingLight, FocusRingDark],
+  useFocusWithin: [FocusRingLight, FocusRingDark],
+  useHover: [HoverLight, HoverDark],
+  useKeyboard: [KeyboardLight, KeyboardDark],
+  useLongPress: [PressLight, PressDark],
+  useMove: [MoveLight, MoveDark],
+  usePress: [PressLight, PressDark],
   // Hooks - utility hooks
-  'I18nProvider': [UtilityLight, UtilityDark],
-  'mergeProps': [UtilityLight, UtilityDark],
-  'PortalProvider': [UtilityLight, UtilityDark],
-  'SSRProvider': [UtilityLight, UtilityDark],
-  'useCollator': [UtilityLight, UtilityDark],
-  'useDateFormatter': [DatePickerLight, DatePickerDark],
-  'useField': [FormsLight, FormsDark],
-  'useFilter': [UtilityLight, UtilityDark],
-  'useId': [UtilityLight, UtilityDark],
-  'useIsSSR': [UtilityLight, UtilityDark],
-  'useLabel': [FormsLight, FormsDark],
-  'useLandmark': [AccessibilityLight, AccessibilityDark],
-  'useLocale': [UtilityLight, UtilityDark],
-  'useNumberFormatter': [NumberFieldLight, NumberFieldDark],
-  'useObjectRef': [UtilityLight, UtilityDark],
+  I18nProvider: [UtilityLight, UtilityDark],
+  mergeProps: [UtilityLight, UtilityDark],
+  PortalProvider: [UtilityLight, UtilityDark],
+  SSRProvider: [UtilityLight, UtilityDark],
+  useCollator: [UtilityLight, UtilityDark],
+  useDateFormatter: [DatePickerLight, DatePickerDark],
+  useField: [FormsLight, FormsDark],
+  useFilter: [UtilityLight, UtilityDark],
+  useId: [UtilityLight, UtilityDark],
+  useIsSSR: [UtilityLight, UtilityDark],
+  useLabel: [FormsLight, FormsDark],
+  useLandmark: [AccessibilityLight, AccessibilityDark],
+  useLocale: [UtilityLight, UtilityDark],
+  useNumberFormatter: [NumberFieldLight, NumberFieldDark],
+  useObjectRef: [UtilityLight, UtilityDark],
   // Blog posts - map to existing component illustrations
   'Building a Button Part 1: Press Events': [PressLight, PressDark],
   'Building a Button Part 2: Hover Interactions': [HoverLight, HoverDark],
@@ -343,21 +343,24 @@ const componentIllustrations: Record<string, [string, string] | undefined> = {
   'Taming the dragon: Accessible drag and drop': [DragAndDropLight, DragAndDropDark],
   'Date and Time Pickers for All': [DatePickerLight, DatePickerDark],
   'How we internationalized our number field': [NumberFieldLight, NumberFieldDark],
-  'Improving Internationalization Support in Our Date and Time Components': [DateFieldLight, DateFieldDark],
+  'Improving Internationalization Support in Our Date and Time Components': [
+    DateFieldLight,
+    DateFieldDark
+  ],
   'Accessible Color Descriptions for Improved Color Pickers': [ColorPickerLight, ColorPickerDark],
   'Creating a pointer-friendly submenu experience': [MenuLight, MenuDark],
   'Introducing React Spectrum': [AdobeLight, AdobeDark],
   // Internationalized
   'Internationalized Date': [DateRangePickerLight, DateRangePickerDark],
   'Calendar Interface': [CalendarLight, CalendarDark],
-  'CalendarDate': [CalendarLight, CalendarDark],
-  'CalendarDateTime': [DateFieldLight, DateFieldDark],
-  'Time': [TimeFieldLight, TimeFieldDark],
-  'ZonedDateTime': [DatePickerLight, DatePickerDark],
-  'DateFormatter': [DatePickerLight, DatePickerDark],
+  CalendarDate: [CalendarLight, CalendarDark],
+  CalendarDateTime: [DateFieldLight, DateFieldDark],
+  Time: [TimeFieldLight, TimeFieldDark],
+  ZonedDateTime: [DatePickerLight, DatePickerDark],
+  DateFormatter: [DatePickerLight, DatePickerDark],
   'Internationalized Number': [NumberFieldLight, NumberFieldDark],
-  'NumberFormatter': [NumberFieldLight, NumberFieldDark],
-  'NumberParser': [NumberFieldLight, NumberFieldDark],
+  NumberFormatter: [NumberFieldLight, NumberFieldDark],
+  NumberParser: [NumberFieldLight, NumberFieldDark],
   // Examples
   'Emoji Picker': exampleImages['emoji-picker'],
   'Filterable CRUD Table': exampleImages['crud'],
@@ -439,8 +442,8 @@ const releaseText = style({
 });
 
 interface IllustrationProps {
-  name: string,
-  href: string
+  name: string;
+  href: string;
 }
 
 function ComponentIllustration({name, href}: IllustrationProps) {
@@ -457,7 +460,8 @@ function ComponentIllustration({name, href}: IllustrationProps) {
       aria-hidden="true"
       width={960}
       height={600}
-      styles={illustrationStyles} />
+      styles={illustrationStyles}
+    />
   );
 }
 
@@ -471,12 +475,19 @@ function getReleaseVersionLabel(href: string) {
 }
 
 interface ComponentCardProps extends Omit<CardProps, 'children'> {
-  name: string,
-  href: string,
-  description?: string
+  name: string;
+  href: string;
+  description?: string;
 }
 
-export function ComponentCard({id, name, href, description, size, ...otherProps}: ComponentCardProps) {
+export function ComponentCard({
+  id,
+  name,
+  href,
+  description,
+  size,
+  ...otherProps
+}: ComponentCardProps) {
   let preview;
   let releaseVersion = getReleaseVersionLabel(href);
 
@@ -490,7 +501,8 @@ export function ComponentCard({id, name, href, description, size, ...otherProps}
           src={[
             {srcSet: BackgroundLight, colorScheme: 'light'},
             {srcSet: BackgroundDark, colorScheme: 'dark'}
-          ]} />
+          ]}
+        />
         <span className={releaseText}>{releaseVersion}</span>
       </div>
     );
@@ -508,13 +520,14 @@ export function ComponentCard({id, name, href, description, size, ...otherProps}
       size={size}
       name={name}
       description={description}
-      preview={preview} />
+      preview={preview}
+    />
   );
 }
 
 interface ComponentListProps {
-  pages: Page[],
-  components: string[]
+  pages: Page[];
+  components: string[];
 }
 
 export function ComponentList(props: ComponentListProps) {
@@ -544,11 +557,17 @@ export function ComponentList(props: ComponentListProps) {
         scrollPaddingX: '--paddingX'
       })}
       style={{
-        maskImage: 'linear-gradient(to right, transparent, white var(--paddingX) calc(100% - var(--paddingX)), transparent)'
+        maskImage:
+          'linear-gradient(to right, transparent, white var(--paddingX) calc(100% - var(--paddingX)), transparent)'
       }}>
       {pages.map(page => (
         <li key={page.url}>
-          <ComponentCard name={getTitle(page)} href={page.url} size="S" UNSAFE_style={{scrollSnapAlign: 'start'}} />
+          <ComponentCard
+            name={getTitle(page)}
+            href={page.url}
+            size="S"
+            UNSAFE_style={{scrollSnapAlign: 'start'}}
+          />
         </li>
       ))}
     </ul>

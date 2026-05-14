@@ -19,19 +19,19 @@ import userEvent from '@testing-library/user-event';
 
 function Example(props) {
   let {keyboardProps} = useKeyboard(props);
-  return <div tabIndex={-1} {...keyboardProps} data-testid="example">{props.children}</div>;
+  return (
+    <div tabIndex={-1} {...keyboardProps} data-testid="example">
+      {props.children}
+    </div>
+  );
 }
 
 describe('useKeyboard', function () {
   it('should handle keyboard events', async function () {
     let user = userEvent.setup({delay: null, pointerMap});
     let events = [];
-    let addEvent = (e) => events.push({type: e.type, target: e.target});
-    let tree = render(
-      <Example
-        onKeyDown={addEvent}
-        onKeyUp={addEvent} />
-    );
+    let addEvent = e => events.push({type: e.type, target: e.target});
+    let tree = render(<Example onKeyDown={addEvent} onKeyUp={addEvent} />);
 
     let el = tree.getByTestId('example');
     act(() => el.focus());
@@ -46,13 +46,8 @@ describe('useKeyboard', function () {
   it('should not handle events when disabled', async function () {
     let user = userEvent.setup({delay: null, pointerMap});
     let events = [];
-    let addEvent = (e) => events.push({type: e.type, target: e.target});
-    let tree = render(
-      <Example
-        isDisabled
-        onKeyDown={addEvent}
-        onKeyUp={addEvent} />
-    );
+    let addEvent = e => events.push({type: e.type, target: e.target});
+    let tree = render(<Example isDisabled onKeyDown={addEvent} onKeyUp={addEvent} />);
 
     let el = tree.getByTestId('example');
     act(() => el.focus());
@@ -69,9 +64,7 @@ describe('useKeyboard', function () {
     let onInnerKeyUp = jest.fn();
     let tree = render(
       <button onKeyDown={onWrapperKeyDown} onKeyUp={onWrapperKeyUp}>
-        <Example
-          onKeyDown={onInnerKeyDown}
-          onKeyUp={onInnerKeyUp} />
+        <Example onKeyDown={onInnerKeyDown} onKeyUp={onInnerKeyUp} />
       </button>
     );
 
@@ -93,9 +86,7 @@ describe('useKeyboard', function () {
     let onInnerKeyUp = jest.fn(e => e.continuePropagation());
     let tree = render(
       <button onKeyDown={onWrapperKeyDown} onKeyUp={onWrapperKeyUp}>
-        <Example
-          onKeyDown={onInnerKeyDown}
-          onKeyUp={onInnerKeyUp} />
+        <Example onKeyDown={onInnerKeyDown} onKeyUp={onInnerKeyUp} />
       </button>
     );
 
@@ -109,7 +100,6 @@ describe('useKeyboard', function () {
     expect(onWrapperKeyUp).toHaveBeenCalledTimes(1);
   });
 
-
   describe('shortcuts', () => {
     let platformMock;
     let user;
@@ -119,15 +109,15 @@ describe('useKeyboard', function () {
     afterEach(() => {
       platformMock?.mockRestore();
     });
-    let ExampleButton = (props) => {
+    let ExampleButton = props => {
       let {keyboardProps} = useKeyboard(props);
-      return (
-        <button {...keyboardProps}>Save</button>
-      );
+      return <button {...keyboardProps}>Save</button>;
     };
     describe('Mac (Mod = Meta)', () => {
       beforeEach(() => {
-        platformMock = jest.spyOn(navigator, 'platform', 'get').mockImplementation(() => 'MacIntel');
+        platformMock = jest
+          .spyOn(navigator, 'platform', 'get')
+          .mockImplementation(() => 'MacIntel');
       });
 
       it('matches Mod+key with metaKey', async () => {
@@ -174,7 +164,7 @@ describe('useKeyboard', function () {
 
         render(
           <div onKeyDown={onWrapperKeyDown} onKeyUp={onWrapperKeyUp}>
-            <ExampleButton shortcuts={{'s': save}} />
+            <ExampleButton shortcuts={{s: save}} />
           </div>
         );
 
@@ -243,18 +233,18 @@ describe('useKeyboard', function () {
         let save = jest.fn(() => true);
         let onWrapperKeyDown = jest.fn();
         let onWrapperKeyUp = jest.fn();
-  
+
         render(
           <div onKeyDown={onWrapperKeyDown} onKeyUp={onWrapperKeyUp}>
             <ExampleButton shortcuts={{'Shift+Alt+down': save}} />
           </div>
         );
-  
+
         await user.tab();
         expect(onWrapperKeyUp).toHaveBeenCalledTimes(1);
         onWrapperKeyDown.mockClear();
         onWrapperKeyUp.mockClear();
-  
+
         await user.keyboard('{Shift>}{Alt>}{ArrowDown}{/Alt}{/Shift}');
         expect(save).toHaveBeenCalledTimes(1);
         expect(onWrapperKeyDown).toHaveBeenCalledTimes(2);
@@ -266,17 +256,17 @@ describe('useKeyboard', function () {
         let modShiftA = jest.fn(() => true);
         let onWrapperKeyDown = jest.fn();
         let onWrapperKeyUp = jest.fn();
-  
+
         render(
           <div onKeyDown={onWrapperKeyDown} onKeyUp={onWrapperKeyUp}>
             <ExampleButton shortcuts={{'Mod+a': modA, 'Mod+Shift+a': modShiftA}} />
           </div>
         );
-  
+
         await user.tab();
         onWrapperKeyDown.mockClear();
         onWrapperKeyUp.mockClear();
-  
+
         await user.keyboard('{Shift>}{Meta>}a{/Meta}{/Shift}');
         expect(modShiftA).toHaveBeenCalled();
         expect(modA).not.toHaveBeenCalled();
@@ -294,24 +284,22 @@ describe('useKeyboard', function () {
         let fn = jest.fn(e => {
           expect(e.key).toBe('Escape');
         });
-        render(
-          <ExampleButton shortcuts={{'Escape': fn}} />
-        );
+        render(<ExampleButton shortcuts={{Escape: fn}} />);
         await user.tab();
         await user.keyboard('{Escape}');
       });
 
       it('continues propagation if the function did not handle the event', async () => {
-        let fn = jest.fn((e) => {
+        let fn = jest.fn(e => {
           return false;
         });
-        let onWrapperKeyDown = jest.fn((e) => {
+        let onWrapperKeyDown = jest.fn(e => {
           expect(e.isDefaultPrevented()).toBe(false);
         });
         let onWrapperKeyUp = jest.fn();
         render(
           <div onKeyDown={onWrapperKeyDown} onKeyUp={onWrapperKeyUp}>
-            <ExampleButton shortcuts={{'Escape': fn}} />
+            <ExampleButton shortcuts={{Escape: fn}} />
           </div>
         );
         await user.tab();
@@ -324,16 +312,16 @@ describe('useKeyboard', function () {
       });
 
       it('prevent default and stop propagation can both be finely controlled', async () => {
-        let fn = jest.fn((e) => {
+        let fn = jest.fn(e => {
           return {shouldPreventDefault: false, shouldContinuePropagation: true};
         });
-        let onWrapperKeyDown = jest.fn((e) => {
+        let onWrapperKeyDown = jest.fn(e => {
           expect(e.isDefaultPrevented()).toBe(false);
         });
         let onWrapperKeyUp = jest.fn();
         render(
           <div onKeyDown={onWrapperKeyDown} onKeyUp={onWrapperKeyUp}>
-            <ExampleButton shortcuts={{'Escape': fn}} />
+            <ExampleButton shortcuts={{Escape: fn}} />
           </div>
         );
         await user.tab();
