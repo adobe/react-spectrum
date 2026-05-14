@@ -4,15 +4,10 @@
   "private": true,
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
-  "main": "dist/main.js",
-  "module": "dist/module.js",
-  "exports": {
-    "source": "./src/index.ts",
-    "types": "./dist/types/src/index.d.ts",
-    "import": "./dist/import.mjs",
-    "require": "./dist/main.js"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adobe/react-spectrum"
   },
-  "types": "./dist/types/src/index.d.ts",
   "source": "src/index.ts",
   "files": [
     "dist",
@@ -21,26 +16,31 @@
   "sideEffects": [
     "*.css"
   ],
-  "targets": {
-    "types": false
+  "main": "dist/main.js",
+  "module": "dist/module.js",
+  "types": "./dist/types/src/index.d.ts",
+  "exports": {
+    "source": "./src/index.ts",
+    "types": "./dist/types/src/index.d.ts",
+    "import": "./dist/import.mjs",
+    "require": "./dist/main.js"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/adobe/react-spectrum"
+  "publishConfig": {
+    "access": "public"
   },
   "dependencies": {
     "@react-aria/utils": "^3.8.0",
     "@swc/helpers": "^0.5.0"
   },
+  "devDependencies": {
+    "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1",
+    "react-dom": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
+  },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1",
     "react-dom": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
   },
-  "publishConfig": {
-    "access": "public"
-  },
-  "devDependencies": {
-    "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1",
-    "react-dom": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
+  "targets": {
+    "types": false
   }
 }

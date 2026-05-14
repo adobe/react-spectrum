@@ -32,7 +32,10 @@ describe('TextArea', () => {
   });
 
   beforeEach(() => {
-    Object.defineProperty(HTMLElement.prototype, 'scrollHeight', {configurable: true, value: mockScrollHeight});
+    Object.defineProperty(HTMLElement.prototype, 'scrollHeight', {
+      configurable: true,
+      value: mockScrollHeight
+    });
   });
 
   afterEach(() => {
@@ -49,16 +52,19 @@ describe('TextArea', () => {
   // "auto" to get the scroller to appear, then the height is set equal to scrollHeight to remove the scroller
   // and properly adjust the height of the textarea to match the currently input text
   it.each`
-    Name                               | Component        | props
-    ${'v3 TextArea default'}           | ${TextArea}      | ${{isQuiet: true, onChange}}
-    ${'v3 TextArea (controlled)'}      | ${TextArea}      | ${{isQuiet: true, onChange, value: 'foo'}}
-    ${'v3 TextArea (uncontrolled)'}    | ${TextArea}      | ${{isQuiet: true, onChange, defaultValue: 'foo'}}
-  `('$Name quiet variant automatically adjusts its vertical height on mount', ({Component, props}) => {
-    let tree = renderComponent(Component, props);
-    let input = tree.getByTestId(testId);
+    Name                            | Component   | props
+    ${'v3 TextArea default'}        | ${TextArea} | ${{isQuiet: true, onChange}}
+    ${'v3 TextArea (controlled)'}   | ${TextArea} | ${{isQuiet: true, onChange, value: 'foo'}}
+    ${'v3 TextArea (uncontrolled)'} | ${TextArea} | ${{isQuiet: true, onChange, defaultValue: 'foo'}}
+  `(
+    '$Name quiet variant automatically adjusts its vertical height on mount',
+    ({Component, props}) => {
+      let tree = renderComponent(Component, props);
+      let input = tree.getByTestId(testId);
 
-    expect(input.style.height).toBe(`${mockScrollHeight}px`);
-  });
+      expect(input.style.height).toBe(`${mockScrollHeight}px`);
+    }
+  );
 
   it('isQuiet can adjust after text "grows"', async () => {
     let tree = renderComponent(TextArea, {isQuiet: true});
@@ -66,7 +72,10 @@ describe('TextArea', () => {
     let newScrollHeight = 1000;
     expect(input.style.height).toBe(`${mockScrollHeight}px`);
     // this will be cleaned up in the afterEach
-    Object.defineProperty(HTMLElement.prototype, 'scrollHeight', {configurable: true, value: newScrollHeight});
+    Object.defineProperty(HTMLElement.prototype, 'scrollHeight', {
+      configurable: true,
+      value: newScrollHeight
+    });
     await user.tab();
     await user.keyboard('15');
     expect(input.style.height).toBe(`${newScrollHeight}px`);
@@ -78,7 +87,10 @@ describe('TextArea', () => {
     let newScrollHeight = 1000;
     expect(input.style.height).toBe(`${mockScrollHeight}px`);
     // this will be cleaned up in the afterEach
-    Object.defineProperty(HTMLElement.prototype, 'scrollHeight', {configurable: true, value: newScrollHeight});
+    Object.defineProperty(HTMLElement.prototype, 'scrollHeight', {
+      configurable: true,
+      value: newScrollHeight
+    });
     await user.tab();
     await user.keyboard('15');
     expect(input.style.height).toBe(`${newScrollHeight}px`);

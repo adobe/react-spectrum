@@ -14,10 +14,28 @@ import {AriaButtonProps} from '../button/useButton';
 
 import {AriaDatePickerProps} from './useDatePicker';
 import {AriaDialogProps} from '../dialog/useDialog';
-import {AriaLabelingProps, DOMAttributes, DOMProps, GroupDOMAttributes, InputDOMProps, KeyboardEvent, RefObject, ValidationResult} from '@react-types/shared';
+import {
+  AriaLabelingProps,
+  DOMAttributes,
+  DOMProps,
+  GroupDOMAttributes,
+  InputDOMProps,
+  KeyboardEvent,
+  RefObject,
+  ValidationResult
+} from '@react-types/shared';
 import {createFocusManager} from '../focus/FocusScope';
-import {DateRange, DateRangePickerProps, DateRangePickerState, DateValue} from 'react-stately/useDateRangePickerState';
-import {DEFAULT_VALIDATION_RESULT, mergeValidation, privateValidationStateProp} from 'react-stately/private/form/useFormValidationState';
+import {
+  DateRange,
+  DateRangePickerProps,
+  DateRangePickerState,
+  DateValue
+} from 'react-stately/useDateRangePickerState';
+import {
+  DEFAULT_VALIDATION_RESULT,
+  mergeValidation,
+  privateValidationStateProp
+} from 'react-stately/private/form/useFormValidationState';
 import {filterDOMProps} from '../utils/filterDOMProps';
 import {focusManagerSymbol, roleSymbol} from './useDateField';
 import intlMessages from '../../intl/datepicker/*.json';
@@ -34,27 +52,28 @@ import {useLocale} from '../i18n/I18nProvider';
 import {useLocalizedStringFormatter} from '../i18n/useLocalizedStringFormatter';
 import {useMemo, useRef} from 'react';
 
-export interface AriaDateRangePickerProps<T extends DateValue> extends DateRangePickerProps<T>, AriaLabelingProps, Omit<InputDOMProps, 'name'>, DOMProps {}
+export interface AriaDateRangePickerProps<T extends DateValue>
+  extends DateRangePickerProps<T>, AriaLabelingProps, Omit<InputDOMProps, 'name'>, DOMProps {}
 
 export interface DateRangePickerAria extends ValidationResult {
   /** Props for the date range picker's visible label element, if any. */
-  labelProps: DOMAttributes,
+  labelProps: DOMAttributes;
   /** Props for the grouping element containing the date fields and button. */
-  groupProps: GroupDOMAttributes,
+  groupProps: GroupDOMAttributes;
   /** Props for the start date field. */
-  startFieldProps: AriaDatePickerProps<DateValue>,
+  startFieldProps: AriaDatePickerProps<DateValue>;
   /** Props for the end date field. */
-  endFieldProps: AriaDatePickerProps<DateValue>,
+  endFieldProps: AriaDatePickerProps<DateValue>;
   /** Props for the popover trigger button. */
-  buttonProps: AriaButtonProps,
+  buttonProps: AriaButtonProps;
   /** Props for the description element, if any. */
-  descriptionProps: DOMAttributes,
+  descriptionProps: DOMAttributes;
   /** Props for the error message element, if any. */
-  errorMessageProps: DOMAttributes,
+  errorMessageProps: DOMAttributes;
   /** Props for the popover dialog. */
-  dialogProps: AriaDialogProps,
+  dialogProps: AriaDialogProps;
   /** Props for the range calendar within the popover dialog. */
-  calendarProps: RangeCalendarProps<DateValue>
+  calendarProps: RangeCalendarProps<DateValue>;
 }
 
 /**
@@ -62,7 +81,11 @@ export interface DateRangePickerAria extends ValidationResult {
  * A date range picker combines two DateFields and a RangeCalendar popover to allow
  * users to enter or select a date and time range.
  */
-export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePickerProps<T>, state: DateRangePickerState, ref: RefObject<Element | null>): DateRangePickerAria {
+export function useDateRangePicker<T extends DateValue>(
+  props: AriaDateRangePickerProps<T>,
+  state: DateRangePickerState,
+  ref: RefObject<Element | null>
+): DateRangePickerAria {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/datepicker');
   let {isInvalid, validationErrors, validationDetails} = state.displayValidation;
   let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
@@ -76,7 +99,12 @@ export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePick
 
   let {locale} = useLocale();
   let range = state.formatValue(locale, {month: 'long'});
-  let description = range ? stringFormatter.format('selectedRangeDescription', {startDate: range.start, endDate: range.end}) : '';
+  let description = range
+    ? stringFormatter.format('selectedRangeDescription', {
+        startDate: range.start,
+        endDate: range.end
+      })
+    : '';
   let descProps = useDescription(description);
 
   let startFieldProps = {
@@ -94,11 +122,17 @@ export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePick
 
   let groupProps = useDatePickerGroup(state, ref);
 
-  let ariaDescribedBy = [descProps['aria-describedby'], fieldProps['aria-describedby']].filter(Boolean).join(' ') || undefined;
-  let focusManager = useMemo(() => createFocusManager(ref, {
-    // Exclude the button from the focus manager.
-    accept: element => element.id !== buttonId
-  }), [ref, buttonId]);
+  let ariaDescribedBy =
+    [descProps['aria-describedby'], fieldProps['aria-describedby']].filter(Boolean).join(' ') ||
+    undefined;
+  let focusManager = useMemo(
+    () =>
+      createFocusManager(ref, {
+        // Exclude the button from the focus manager.
+        accept: element => element.id !== buttonId
+      }),
+    [ref, buttonId]
+  );
 
   let commonFieldProps = {
     [focusManagerSymbol]: focusManager,
@@ -230,7 +264,7 @@ export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePick
     errorMessageProps,
     calendarProps: {
       autoFocus: true,
-      value: state.dateRange?.start && state.dateRange.end ? state.dateRange as DateRange : null,
+      value: state.dateRange?.start && state.dateRange.end ? (state.dateRange as DateRange) : null,
       onChange: state.setDateRange,
       minValue: props.minValue,
       maxValue: props.maxValue,
@@ -240,7 +274,10 @@ export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePick
       allowsNonContiguousRanges: props.allowsNonContiguousRanges,
       defaultFocusedValue: state.dateRange ? undefined : props.placeholderValue,
       isInvalid: state.isInvalid,
-      errorMessage: typeof props.errorMessage === 'function' ? props.errorMessage(state.displayValidation) : (props.errorMessage || state.displayValidation.validationErrors.join(' ')),
+      errorMessage:
+        typeof props.errorMessage === 'function'
+          ? props.errorMessage(state.displayValidation)
+          : props.errorMessage || state.displayValidation.validationErrors.join(' '),
       firstDayOfWeek: props.firstDayOfWeek,
       pageBehavior: props.pageBehavior
     },

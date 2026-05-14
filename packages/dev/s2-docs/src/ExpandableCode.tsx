@@ -52,13 +52,17 @@ const ExpandableCodeContext = createContext<ExpandableCodeContextValue>(null);
 export function ExpandableCodeProvider({children}) {
   let [isExpanded, setExpanded] = useState(false);
   return (
-    <ExpandableCodeContext value={[isExpanded, setExpanded]}>
-      {children}
-    </ExpandableCodeContext>
+    <ExpandableCodeContext value={[isExpanded, setExpanded]}>{children}</ExpandableCodeContext>
   );
 }
 
-export function ExpandableCode({children, hasHighlightedLine}: {children: ReactNode, hasHighlightedLine?: boolean}) {
+export function ExpandableCode({
+  children,
+  hasHighlightedLine
+}: {
+  children: ReactNode;
+  hasHighlightedLine?: boolean;
+}) {
   let state = useState(false);
   let ctx = useContext(ExpandableCodeContext);
   let [isExpanded, setExpanded] = ctx || state;
@@ -68,17 +72,27 @@ export function ExpandableCode({children, hasHighlightedLine}: {children: ReactN
   if (!isExpanded) {
     if (hasHighlightedLine) {
       // mask the top, bottom, and right sides
-      mask = 'linear-gradient(transparent, white 25% 50%, transparent), linear-gradient(to right, white 0% 85%, transparent)';
+      mask =
+        'linear-gradient(transparent, white 25% 50%, transparent), linear-gradient(to right, white 0% 85%, transparent)';
       padding = '0px';
     } else {
       // only mask the bottom and right
-      mask = 'linear-gradient(white 0% 50%, transparent), linear-gradient(to right, white 0% 85%, transparent)';
+      mask =
+        'linear-gradient(white 0% 50%, transparent), linear-gradient(to right, white 0% 85%, transparent)';
     }
   }
 
   return (
     <div ref={ref} className={example({isExpanded})}>
-      <div style={{maskImage: mask, maskComposite: 'intersect', maxHeight: isExpanded ? undefined : 'inherit', '--code-padding-y': padding} as CSSProperties}>
+      <div
+        style={
+          {
+            maskImage: mask,
+            maskComposite: 'intersect',
+            maxHeight: isExpanded ? undefined : 'inherit',
+            '--code-padding-y': padding
+          } as CSSProperties
+        }>
         {children}
       </div>
       <div className={expandWrapper({isExpanded})}>

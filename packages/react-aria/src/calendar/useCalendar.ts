@@ -12,14 +12,23 @@
 
 import {AriaLabelingProps, DOMProps} from '@react-types/shared';
 import {CalendarAria, useCalendarBase} from './useCalendarBase';
-import {CalendarProps, CalendarSelectionMode, CalendarState, DateValue} from 'react-stately/useCalendarState';
+import {
+  CalendarProps,
+  CalendarSelectionMode,
+  CalendarState,
+  DateValue
+} from 'react-stately/useCalendarState';
 
-export interface AriaCalendarProps<T extends DateValue, M extends CalendarSelectionMode = 'single'> extends CalendarProps<T, M>, DOMProps, AriaLabelingProps {}
+export interface AriaCalendarProps<T extends DateValue, M extends CalendarSelectionMode = 'single'>
+  extends CalendarProps<T, M>, DOMProps, AriaLabelingProps {}
 
 /**
  * Provides the behavior and accessibility implementation for a calendar component.
  * A calendar displays one or more date grids and allows users to select a single date.
  */
-export function useCalendar<T extends DateValue, M extends CalendarSelectionMode = 'single'>(props: AriaCalendarProps<T, M>, state: CalendarState<M>): CalendarAria {
+export function useCalendar<T extends DateValue, M extends CalendarSelectionMode = 'single'>(
+  props: AriaCalendarProps<T, M>,
+  state: CalendarState<M>
+): CalendarAria {
   return useCalendarBase(props, state);
 }

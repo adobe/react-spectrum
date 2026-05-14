@@ -40,7 +40,11 @@ import {WaterfallLayoutOptions} from '../../src/card/WaterfallLayout';
 
 let itemsNoSize = [
   {src: 'https://i.imgur.com/Z7AzH2c.jpg', title: 'Bob 1'},
-  {src: 'https://i.imgur.com/DhygPot.jpg', title: 'Joe 1 really really really really really really really really really really really really long'},
+  {
+    src: 'https://i.imgur.com/DhygPot.jpg',
+    title:
+      'Joe 1 really really really really really really really really really really really really long'
+  },
   {src: 'https://i.imgur.com/L7RTlvI.png', title: 'Jane 1'},
   {src: 'https://i.imgur.com/1nScMIH.jpg', title: 'Bob 2'},
   {src: 'https://i.imgur.com/DhygPot.jpg', title: 'Joe 2'},
@@ -202,7 +206,7 @@ export const AsyncLoadingWaterfall: AsyncLoadingCardViewStory = {
 };
 
 export const CustomLayoutOptions: CustomWaterfallLayoutStory = {
-  render: (args) => <CustomWaterfallLayout {...args} />,
+  render: args => <CustomWaterfallLayout {...args} />,
   args: {
     selectionMode: 'multiple',
     items: itemsNoSize,
@@ -212,17 +216,17 @@ export const CustomLayoutOptions: CustomWaterfallLayoutStory = {
 };
 
 interface LayoutOptions {
-  layoutOptions?: WaterfallLayoutOptions
+  layoutOptions?: WaterfallLayoutOptions;
 }
 
 type CustomWaterfallLayoutStory = StoryObj<typeof CustomWaterfallLayout>;
 function CustomWaterfallLayout(props: SpectrumCardViewProps<object> & LayoutOptions): JSX.Element {
-  let {
-    layoutOptions,
-    ...otherProps
-  } = props;
+  let {layoutOptions, ...otherProps} = props;
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
-  let galleryLayout = useMemo(() => new WaterfallLayout<object>({collator, ...layoutOptions}), [collator, layoutOptions]);
+  let galleryLayout = useMemo(
+    () => new WaterfallLayout<object>({collator, ...layoutOptions}),
+    [collator, layoutOptions]
+  );
 
   return CustomLayout({...otherProps, layout: galleryLayout});
 }

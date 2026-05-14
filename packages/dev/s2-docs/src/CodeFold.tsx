@@ -117,22 +117,38 @@ export function CodeFold({tokens}) {
 
   return (
     <Disclosure>
-      {({isExpanded}) => (<>
-        <Button
-          slot="trigger"
-          className={trigger}>
-          {({isHovered, isPressed, isFocusVisible}) => (<>
-            <Chevron size="S" aria-hidden className={chevronStyles({isExpanded, isHovered, isPressed, isFocusVisible})} />
-            <CodeClient tokens={firstLine} />
-            {!isExpanded 
-              ? <><span ref={ref} style={pressScale(ref)({isPressed})} className={more({isHovered, isPressed, isFocusVisible})}><More UNSAFE_style={{width: 14}} /></span><span data-no-copy><CodeClient tokens={lastLine} /></span></> 
-              : null}
-          </>)}
-        </Button>
-        <DisclosurePanel>
-          <CodeClient tokens={collapsed} />
-        </DisclosurePanel>
-      </>)}
+      {({isExpanded}) => (
+        <>
+          <Button slot="trigger" className={trigger}>
+            {({isHovered, isPressed, isFocusVisible}) => (
+              <>
+                <Chevron
+                  size="S"
+                  aria-hidden
+                  className={chevronStyles({isExpanded, isHovered, isPressed, isFocusVisible})}
+                />
+                <CodeClient tokens={firstLine} />
+                {!isExpanded ? (
+                  <>
+                    <span
+                      ref={ref}
+                      style={pressScale(ref)({isPressed})}
+                      className={more({isHovered, isPressed, isFocusVisible})}>
+                      <More UNSAFE_style={{width: 14}} />
+                    </span>
+                    <span data-no-copy>
+                      <CodeClient tokens={lastLine} />
+                    </span>
+                  </>
+                ) : null}
+              </>
+            )}
+          </Button>
+          <DisclosurePanel>
+            <CodeClient tokens={collapsed} />
+          </DisclosurePanel>
+        </>
+      )}
     </Disclosure>
   );
 }

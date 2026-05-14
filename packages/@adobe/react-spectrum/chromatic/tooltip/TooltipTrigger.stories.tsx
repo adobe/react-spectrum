@@ -23,10 +23,7 @@ export default {
   component: TooltipTrigger,
   args: {
     defaultOpen: true,
-    children: [
-      <ActionButton>Trigger Tooltip</ActionButton>,
-      <Tooltip>Tooltip message.</Tooltip>
-    ]
+    children: [<ActionButton>Trigger Tooltip</ActionButton>, <Tooltip>Tooltip message.</Tooltip>]
   },
   parameters: {
     chromaticProvider: {
@@ -77,18 +74,23 @@ export const ContainerPadding50AtEdge: TooltipTriggerStory = {
     containerPadding: 50,
     children: [
       <ActionButton>Trigger Tooltip</ActionButton>,
-      <Tooltip>Long tooltip message that just goes on and on again. But it just keeps going and going and going and going.</Tooltip>
+      <Tooltip>
+        Long tooltip message that just goes on and on again. But it just keeps going and going and
+        going and going.
+      </Tooltip>
     ]
   },
 
   // Padding is 223 + 8px from the story margin itself = 231px of space from edge to button.
   // Size that the tooltip takes is 180 (tooltip width) + 3 (margin on overlay) + 50 (container padding) - 1 (offset applied via tooltiptrigger) = 232px
   // Note the above size that is calculated is slightly off, will need to update calculatePosition
-  decorators: [(Story) => (
-    <div style={{width: '100%', padding: '223px'}}>
-      <Story />
-    </div>
-  )]
+  decorators: [
+    Story => (
+      <div style={{width: '100%', padding: '223px'}}>
+        <Story />
+      </div>
+    )
+  ]
 };
 
 export const ArrowPositioningAtEdge: TooltipTriggerStory = {
@@ -98,11 +100,13 @@ export const ArrowPositioningAtEdge: TooltipTriggerStory = {
       <Tooltip>Long tooltip message that just goes on and on.</Tooltip>
     ]
   },
-  decorators: [(Story) => (
-    <div style={{width: '100%'}}>
-      <Story />
-    </div>
-  )]
+  decorators: [
+    Story => (
+      <div style={{width: '100%'}}>
+        <Story />
+      </div>
+    )
+  ]
 };
 
 export const PlacementNoFlip: TooltipTriggerStory = {
@@ -114,9 +118,11 @@ export const PlacementNoFlip: TooltipTriggerStory = {
       <Tooltip>Long tooltip message that just goes on and on again.</Tooltip>
     ]
   },
-  decorators: [(Story) => (
-    <div style={{width: '100%'}}>
-      <Story />
-    </div>
-  )]
+  decorators: [
+    Story => (
+      <div style={{width: '100%'}}>
+        <Story />
+      </div>
+    )
+  ]
 };

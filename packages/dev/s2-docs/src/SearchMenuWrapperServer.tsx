@@ -4,7 +4,10 @@ import {ReactNode} from 'react';
 import {Router} from './Router';
 import SearchMenuWrapper from './SearchMenuWrapper';
 
-export default async function SearchMenuWrapperServer(props: {currentPage: Page, children: ReactNode}) {
+export default async function SearchMenuWrapperServer(props: {
+  currentPage: Page;
+  children: ReactNode;
+}) {
   return (
     <RouterWrapperServer currentPage={props.currentPage}>
       <SearchMenuWrapper>{props.children}</SearchMenuWrapper>

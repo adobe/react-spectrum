@@ -14,7 +14,10 @@ import {flushSync} from 'react-dom';
 import {RefObject, useCallback, useState} from 'react';
 import {useLayoutEffect} from './useLayoutEffect';
 
-export function useEnterAnimation(ref: RefObject<HTMLElement | null>, isReady: boolean = true): boolean {
+export function useEnterAnimation(
+  ref: RefObject<HTMLElement | null>,
+  isReady: boolean = true
+): boolean {
   let [isEntering, setEntering] = useState(true);
   let isAnimationReady = isEntering && isReady;
 
@@ -34,12 +37,18 @@ export function useEnterAnimation(ref: RefObject<HTMLElement | null>, isReady: b
     }
   }, [ref, isAnimationReady]);
 
-  useAnimation(ref, isAnimationReady, useCallback(() => setEntering(false), []));
+  useAnimation(
+    ref,
+    isAnimationReady,
+    useCallback(() => setEntering(false), [])
+  );
   return isAnimationReady;
 }
 
 export function useExitAnimation(ref: RefObject<HTMLElement | null>, isOpen: boolean): boolean {
-  let [exitState, setExitState] = useState<'closed' | 'open' | 'exiting'>(isOpen ? 'open' : 'closed');
+  let [exitState, setExitState] = useState<'closed' | 'open' | 'exiting'>(
+    isOpen ? 'open' : 'closed'
+  );
 
   switch (exitState) {
     case 'open':
@@ -64,14 +73,18 @@ export function useExitAnimation(ref: RefObject<HTMLElement | null>, isOpen: boo
     isExiting,
     useCallback(() => {
       // Set the state to closed, which will cause the element to be unmounted.
-      setExitState(state => state === 'exiting' ? 'closed' : state);
+      setExitState(state => (state === 'exiting' ? 'closed' : state));
     }, [])
   );
 
   return isExiting;
 }
 
-function useAnimation(ref: RefObject<HTMLElement | null>, isActive: boolean, onEnd: () => void): void {
+function useAnimation(
+  ref: RefObject<HTMLElement | null>,
+  isActive: boolean,
+  onEnd: () => void
+): void {
   useLayoutEffect(() => {
     if (isActive && ref.current) {
       if (!('getAnimations' in ref.current)) {

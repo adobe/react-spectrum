@@ -10,9 +10,26 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, pointerMap, render as render_, waitFor, within} from '@react-spectrum/test-utils-internal';
+import {
+  act,
+  fireEvent,
+  pointerMap,
+  render as render_,
+  waitFor,
+  within
+} from '@react-spectrum/test-utils-internal';
 import {Button} from '../../src/button/Button';
-import {CalendarDate, CalendarDateTime, DateFormatter, EthiopicCalendar, getLocalTimeZone, JapaneseCalendar, parseZonedDateTime, toCalendarDateTime, today} from '@internationalized/date';
+import {
+  CalendarDate,
+  CalendarDateTime,
+  DateFormatter,
+  EthiopicCalendar,
+  getLocalTimeZone,
+  JapaneseCalendar,
+  parseZonedDateTime,
+  toCalendarDateTime,
+  today
+} from '@internationalized/date';
 import {DatePicker} from '../../src/datepicker/DatePicker';
 import {Form} from '../../src/form/Form';
 import {Provider} from '../../src/provider/Provider';
@@ -27,7 +44,10 @@ function beforeInput(target, key) {
 }
 
 function getTextValue(el) {
-  if (el.className?.includes?.('DatePicker-placeholder') && !el.parentElement.className.includes('is-placeholder')) {
+  if (
+    el.className?.includes?.('DatePicker-placeholder') &&
+    !el.parentElement.className.includes('is-placeholder')
+  ) {
     return '';
   }
 
@@ -42,11 +62,7 @@ function render(el) {
   if (el.type === Provider) {
     return render_(el);
   }
-  let res = render_(
-    <Provider theme={theme}>
-      {el}
-    </Provider>
-  );
+  let res = render_(<Provider theme={theme}>{el}</Provider>);
   return {
     ...res,
     rerender(el) {
@@ -102,7 +118,9 @@ describe('DatePicker', function () {
     });
 
     it('should render a datepicker with granularity="second"', function () {
-      let {getAllByRole} = render(<DatePicker label="Date" value={new CalendarDateTime(2019, 2, 3)} granularity="second" />);
+      let {getAllByRole} = render(
+        <DatePicker label="Date" value={new CalendarDateTime(2019, 2, 3)} granularity="second" />
+      );
 
       let combobox = getAllByRole('group')[0];
       expect(combobox).toBeVisible();
@@ -206,7 +224,14 @@ describe('DatePicker', function () {
     });
 
     it('should focus field, move a segment, and open popover and does not blur', async function () {
-      let {getByRole, getAllByRole} = render(<DatePicker label="Date" onBlur={onBlurSpy} onFocus={onFocusSpy} onFocusChange={onFocusChangeSpy} />);
+      let {getByRole, getAllByRole} = render(
+        <DatePicker
+          label="Date"
+          onBlur={onBlurSpy}
+          onFocus={onFocusSpy}
+          onFocusChange={onFocusChangeSpy}
+        />
+      );
       let segments = getAllByRole('spinbutton');
       let button = getByRole('button');
 
@@ -237,7 +262,14 @@ describe('DatePicker', function () {
     });
 
     it('should focus field and leave to blur', async function () {
-      let {getAllByRole} = render(<DatePicker label="Date" onBlur={onBlurSpy} onFocus={onFocusSpy} onFocusChange={onFocusChangeSpy} />);
+      let {getAllByRole} = render(
+        <DatePicker
+          label="Date"
+          onBlur={onBlurSpy}
+          onFocus={onFocusSpy}
+          onFocusChange={onFocusChangeSpy}
+        />
+      );
       let segments = getAllByRole('spinbutton');
 
       expect(onBlurSpy).not.toHaveBeenCalled();
@@ -258,7 +290,14 @@ describe('DatePicker', function () {
     });
 
     it('should open popover and call picker onFocus', async function () {
-      let {getByRole} = render(<DatePicker label="Date" onBlur={onBlurSpy} onFocus={onFocusSpy} onFocusChange={onFocusChangeSpy} />);
+      let {getByRole} = render(
+        <DatePicker
+          label="Date"
+          onBlur={onBlurSpy}
+          onFocus={onFocusSpy}
+          onFocusChange={onFocusChangeSpy}
+        />
+      );
       let button = getByRole('button');
 
       expect(onBlurSpy).not.toHaveBeenCalled();
@@ -276,7 +315,14 @@ describe('DatePicker', function () {
     });
 
     it('should open and close popover and only call blur when focus leaves picker', async function () {
-      let {getByRole} = render(<DatePicker label="Date" onBlur={onBlurSpy} onFocus={onFocusSpy} onFocusChange={onFocusChangeSpy} />);
+      let {getByRole} = render(
+        <DatePicker
+          label="Date"
+          onBlur={onBlurSpy}
+          onFocus={onFocusSpy}
+          onFocusChange={onFocusChangeSpy}
+        />
+      );
       let button = getByRole('button');
 
       expect(onBlurSpy).not.toHaveBeenCalled();
@@ -319,7 +365,9 @@ describe('DatePicker', function () {
     });
 
     it('should trigger right arrow key event for segment navigation', async function () {
-      let {getAllByRole} = render(<DatePicker label="Date" onKeyDown={onKeyDownSpy} onKeyUp={onKeyUpSpy} />);
+      let {getAllByRole} = render(
+        <DatePicker label="Date" onKeyDown={onKeyDownSpy} onKeyUp={onKeyUpSpy} />
+      );
       let segments = getAllByRole('spinbutton');
 
       expect(onKeyDownSpy).not.toHaveBeenCalled();
@@ -337,7 +385,16 @@ describe('DatePicker', function () {
     });
 
     it('should trigger key event in popover and focus/blur/key events are not called', async function () {
-      let {getByRole} = render(<DatePicker label="Date" onBlur={onBlurSpy} onFocus={onFocusSpy} onFocusChange={onFocusChangeSpy} onKeyDown={onKeyDownSpy} onKeyUp={onKeyUpSpy} />);
+      let {getByRole} = render(
+        <DatePicker
+          label="Date"
+          onBlur={onBlurSpy}
+          onFocus={onFocusSpy}
+          onFocusChange={onFocusChangeSpy}
+          onKeyDown={onKeyDownSpy}
+          onKeyUp={onKeyUpSpy}
+        />
+      );
       let button = getByRole('button');
 
       expect(onKeyDownSpy).not.toHaveBeenCalled();
@@ -385,7 +442,10 @@ describe('DatePicker', function () {
 
       let cells = getAllByRole('gridcell');
       let selected = cells.find(cell => cell.getAttribute('aria-selected') === 'true');
-      expect(selected.children[0]).toHaveAttribute('aria-label', 'Sunday, February 3, 2019 selected');
+      expect(selected.children[0]).toHaveAttribute(
+        'aria-label',
+        'Sunday, February 3, 2019 selected'
+      );
 
       await user.click(selected.nextSibling.children[0]);
 
@@ -401,7 +461,11 @@ describe('DatePicker', function () {
       let onChange = jest.fn();
       let {getByRole, getAllByRole} = render(
         <Provider theme={theme}>
-          <DatePicker label="Date" defaultValue={new CalendarDate(2019, 2, 3)} onChange={onChange} />
+          <DatePicker
+            label="Date"
+            defaultValue={new CalendarDate(2019, 2, 3)}
+            onChange={onChange}
+          />
         </Provider>
       );
 
@@ -416,7 +480,10 @@ describe('DatePicker', function () {
 
       let cells = getAllByRole('gridcell');
       let selected = cells.find(cell => cell.getAttribute('aria-selected') === 'true');
-      expect(selected.children[0]).toHaveAttribute('aria-label', 'Sunday, February 3, 2019 selected');
+      expect(selected.children[0]).toHaveAttribute(
+        'aria-label',
+        'Sunday, February 3, 2019 selected'
+      );
 
       await user.click(selected.nextSibling.children[0]);
 
@@ -432,7 +499,11 @@ describe('DatePicker', function () {
       let onChange = jest.fn();
       let {getByRole, getAllByRole, getAllByLabelText} = render(
         <Provider theme={theme}>
-          <DatePicker label="Date" defaultValue={new CalendarDateTime(2019, 2, 3, 8, 45)} onChange={onChange} />
+          <DatePicker
+            label="Date"
+            defaultValue={new CalendarDateTime(2019, 2, 3, 8, 45)}
+            onChange={onChange}
+          />
         </Provider>
       );
 
@@ -447,7 +518,10 @@ describe('DatePicker', function () {
 
       let cells = getAllByRole('gridcell');
       let selected = cells.find(cell => cell.getAttribute('aria-selected') === 'true');
-      expect(selected.children[0]).toHaveAttribute('aria-label', 'Sunday, February 3, 2019 selected');
+      expect(selected.children[0]).toHaveAttribute(
+        'aria-label',
+        'Sunday, February 3, 2019 selected'
+      );
 
       let timeField = getAllByLabelText('Time')[0];
       expect(getTextValue(timeField)).toBe('8:45 AM');
@@ -479,7 +553,11 @@ describe('DatePicker', function () {
       let onChange = jest.fn();
       let {getByRole, getAllByRole, getAllByLabelText} = render(
         <Provider theme={theme}>
-          <DatePicker label="Date" defaultValue={new CalendarDateTime(2019, 2, 3, 10, 45)} onChange={onChange} />
+          <DatePicker
+            label="Date"
+            defaultValue={new CalendarDateTime(2019, 2, 3, 10, 45)}
+            onChange={onChange}
+          />
         </Provider>
       );
 
@@ -494,7 +572,10 @@ describe('DatePicker', function () {
 
       let cells = getAllByRole('gridcell');
       let selected = cells.find(cell => cell.getAttribute('aria-selected') === 'true');
-      expect(selected.children[0]).toHaveAttribute('aria-label', 'Sunday, February 3, 2019 selected');
+      expect(selected.children[0]).toHaveAttribute(
+        'aria-label',
+        'Sunday, February 3, 2019 selected'
+      );
 
       let timeField = getAllByLabelText('Time')[0];
       expect(getTextValue(timeField)).toBe('10:45 AM');
@@ -533,7 +614,13 @@ describe('DatePicker', function () {
       );
 
       let combobox = getAllByRole('group')[0];
-      let formatter = new Intl.DateTimeFormat('en-US', {year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric'});
+      let formatter = new Intl.DateTimeFormat('en-US', {
+        year: 'numeric',
+        month: 'numeric',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric'
+      });
       expectPlaceholder(combobox, 'mm/dd/yyyy, ––:–– AM');
 
       let button = getByRole('button');
@@ -550,7 +637,9 @@ describe('DatePicker', function () {
       expectPlaceholder(timeField, '––:–– AM');
 
       // selecting a date should not close the popover
-      let todayCell = cells.find(cell => cell.firstChild.getAttribute('aria-label')?.startsWith('Today'));
+      let todayCell = cells.find(cell =>
+        cell.firstChild.getAttribute('aria-label')?.startsWith('Today')
+      );
       await user.click(todayCell.firstChild);
 
       expect(todayCell).toHaveAttribute('aria-selected', 'true');
@@ -608,7 +697,13 @@ describe('DatePicker', function () {
       );
 
       let combobox = getAllByRole('group')[0];
-      let formatter = new Intl.DateTimeFormat('en-US', {year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric'});
+      let formatter = new Intl.DateTimeFormat('en-US', {
+        year: 'numeric',
+        month: 'numeric',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric'
+      });
       expectPlaceholder(combobox, 'mm/dd/yyyy, ––:–– AM');
 
       let button = getByRole('button');
@@ -619,7 +714,9 @@ describe('DatePicker', function () {
       expect(dialog).toBeVisible();
 
       let cells = getAllByRole('gridcell');
-      let todayCell = cells.find(cell => cell.firstChild.getAttribute('aria-label')?.startsWith('Today'));
+      let todayCell = cells.find(cell =>
+        cell.firstChild.getAttribute('aria-label')?.startsWith('Today')
+      );
       await user.click(todayCell.firstChild);
       expect(todayCell).toHaveAttribute('aria-selected', 'true');
       expect(onChange).not.toHaveBeenCalled();
@@ -691,7 +788,9 @@ describe('DatePicker', function () {
       expect(dialog).toBeVisible();
 
       let cells = getAllByRole('gridcell');
-      let todayCell = cells.find(cell => cell.firstChild.getAttribute('aria-label')?.startsWith('Today'));
+      let todayCell = cells.find(cell =>
+        cell.firstChild.getAttribute('aria-label')?.startsWith('Today')
+      );
       await user.click(todayCell.firstChild);
       expect(todayCell).toHaveAttribute('aria-selected', 'true');
       expect(onChange).not.toHaveBeenCalled();
@@ -723,7 +822,11 @@ describe('DatePicker', function () {
 
       expect(dialog).not.toBeInTheDocument();
       expect(onChange).toHaveBeenCalledTimes(2);
-      let formatter = new Intl.DateTimeFormat('en-US', {year: 'numeric', month: 'numeric', day: 'numeric'});
+      let formatter = new Intl.DateTimeFormat('en-US', {
+        year: 'numeric',
+        month: 'numeric',
+        day: 'numeric'
+      });
       let parts = formatter.formatToParts(today(getLocalTimeZone()).toDate(getLocalTimeZone()));
       let month = parts.find(p => p.type === 'month').value;
       let day = parts.find(p => p.type === 'day').value;
@@ -734,10 +837,12 @@ describe('DatePicker', function () {
     it('should clear date and time when controlled value is set to null', async function () {
       function ControlledDatePicker() {
         let [value, setValue] = React.useState(null);
-        return (<>
-          <DatePicker label="Date" granularity="minute" value={value} onChange={setValue} />
-          <button onClick={() => setValue(null)}>Clear</button>
-        </>);
+        return (
+          <>
+            <DatePicker label="Date" granularity="minute" value={value} onChange={setValue} />
+            <button onClick={() => setValue(null)}>Clear</button>
+          </>
+        );
       }
 
       let {getAllByRole, getAllByLabelText} = render(
@@ -747,7 +852,13 @@ describe('DatePicker', function () {
       );
 
       let combobox = getAllByRole('group')[0];
-      let formatter = new Intl.DateTimeFormat('en-US', {year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric'});
+      let formatter = new Intl.DateTimeFormat('en-US', {
+        year: 'numeric',
+        month: 'numeric',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric'
+      });
       expectPlaceholder(combobox, 'mm/dd/yyyy, ––:–– AM');
 
       let button = getAllByRole('button')[0];
@@ -755,7 +866,9 @@ describe('DatePicker', function () {
 
       let cells = getAllByRole('gridcell');
       let timeField = getAllByLabelText('Time')[0];
-      let todayCell = cells.find(cell => cell.firstChild.getAttribute('aria-label')?.startsWith('Today'));
+      let todayCell = cells.find(cell =>
+        cell.firstChild.getAttribute('aria-label')?.startsWith('Today')
+      );
       await user.click(todayCell.firstChild);
 
       expect(todayCell).toHaveAttribute('aria-selected', 'true');
@@ -869,7 +982,9 @@ describe('DatePicker', function () {
     });
 
     it('should support help text description', function () {
-      let {getAllByRole, getByRole, getByTestId} = render(<DatePicker label="Date" description="Help text" />);
+      let {getAllByRole, getByRole, getByTestId} = render(
+        <DatePicker label="Date" description="Help text" />
+      );
 
       let group = getByRole('group');
       let field = getByTestId('date-field');
@@ -888,7 +1003,9 @@ describe('DatePicker', function () {
     });
 
     it('should support error message', function () {
-      let {getAllByRole, getByRole, getByTestId} = render(<DatePicker label="Date" errorMessage="Error message" validationState="invalid" />);
+      let {getAllByRole, getByRole, getByTestId} = render(
+        <DatePicker label="Date" errorMessage="Error message" validationState="invalid" />
+      );
 
       let group = getByRole('group');
       let field = getByTestId('date-field');
@@ -905,7 +1022,9 @@ describe('DatePicker', function () {
     });
 
     it('should not display error message if not invalid', function () {
-      let {getAllByRole, getByRole, getByTestId} = render(<DatePicker label="Date" errorMessage="Error message" />);
+      let {getAllByRole, getByRole, getByTestId} = render(
+        <DatePicker label="Date" errorMessage="Error message" />
+      );
 
       let group = getByRole('group');
       let field = getByTestId('date-field');
@@ -919,18 +1038,27 @@ describe('DatePicker', function () {
     });
 
     it('should support help text with a value', function () {
-      let {getAllByRole, getByRole, getByTestId} = render(<DatePicker label="Date" description="Help text" value={new CalendarDate(2020, 2, 3)} />);
+      let {getAllByRole, getByRole, getByTestId} = render(
+        <DatePicker label="Date" description="Help text" value={new CalendarDate(2020, 2, 3)} />
+      );
 
       let group = getByRole('group');
       let field = getByTestId('date-field');
       expect(group).toHaveAttribute('aria-describedby');
       expect(field).not.toHaveAttribute('aria-describedby');
 
-      let description = group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+      let description = group
+        .getAttribute('aria-describedby')
+        .split(' ')
+        .map(d => document.getElementById(d).textContent)
+        .join(' ');
       expect(description).toBe('Selected Date: February 3, 2020 Help text');
 
       let segments = getAllByRole('spinbutton');
-      expect(segments[0]).toHaveAttribute('aria-describedby', group.getAttribute('aria-describedby'));
+      expect(segments[0]).toHaveAttribute(
+        'aria-describedby',
+        group.getAttribute('aria-describedby')
+      );
 
       for (let segment of segments.slice(1)) {
         expect(segment).not.toHaveAttribute('aria-describedby');
@@ -938,14 +1066,25 @@ describe('DatePicker', function () {
     });
 
     it('should support error message with a value', function () {
-      let {getAllByRole, getByRole, getByTestId} = render(<DatePicker label="Date" errorMessage="Error message" validationState="invalid" value={new CalendarDate(2020, 2, 3)} />);
+      let {getAllByRole, getByRole, getByTestId} = render(
+        <DatePicker
+          label="Date"
+          errorMessage="Error message"
+          validationState="invalid"
+          value={new CalendarDate(2020, 2, 3)}
+        />
+      );
 
       let group = getByRole('group');
       let field = getByTestId('date-field');
       expect(group).toHaveAttribute('aria-describedby');
       expect(field).not.toHaveAttribute('aria-describedby');
 
-      let description = group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+      let description = group
+        .getAttribute('aria-describedby')
+        .split(' ')
+        .map(d => document.getElementById(d).textContent)
+        .join(' ');
       expect(description).toBe('Selected Date: February 3, 2020 Error message');
 
       let segments = getAllByRole('spinbutton');
@@ -955,7 +1094,9 @@ describe('DatePicker', function () {
     });
 
     it('should support format help text', function () {
-      let {getAllByRole, getByRole, getByTestId} = render(<DatePicker label="Date" showFormatHelpText />);
+      let {getAllByRole, getByRole, getByTestId} = render(
+        <DatePicker label="Date" showFormatHelpText />
+      );
 
       // Not needed in aria-described by because each segment has a label already, so this would be duplicative.
       let group = getByRole('group');
@@ -970,11 +1111,17 @@ describe('DatePicker', function () {
     });
 
     it('should include era for BC dates', function () {
-      let {getAllByRole} = render(<DatePicker label="Date" value={new CalendarDate('BC', 5, 2, 3)} />);
+      let {getAllByRole} = render(
+        <DatePicker label="Date" value={new CalendarDate('BC', 5, 2, 3)} />
+      );
       let group = getAllByRole('group')[0];
       expect(group).toHaveAttribute('aria-describedby');
 
-      let description = group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+      let description = group
+        .getAttribute('aria-describedby')
+        .split(' ')
+        .map(d => document.getElementById(d).textContent)
+        .join(' ');
       expect(description).toBe('Selected Date: February 3, 5 BC');
 
       let segments = getAllByRole('spinbutton');
@@ -1006,7 +1153,9 @@ describe('DatePicker', function () {
     });
 
     it('should focus the last segment on mouse down in the field with a value', async function () {
-      let {getAllByRole, getByTestId} = render(<DatePicker label="Date" value={new CalendarDate(2020, 2, 3)} />);
+      let {getAllByRole, getByTestId} = render(
+        <DatePicker label="Date" value={new CalendarDate(2020, 2, 3)} />
+      );
       let field = getByTestId('date-field');
       let segments = getAllByRole('spinbutton');
 
@@ -1015,7 +1164,9 @@ describe('DatePicker', function () {
     });
 
     it('should focus the previous segment when the era is removed', async function () {
-      let {getByTestId, queryByTestId} = render(<DatePicker label="Date" defaultValue={new CalendarDate('BC', 2020, 2, 3)} />);
+      let {getByTestId, queryByTestId} = render(
+        <DatePicker label="Date" defaultValue={new CalendarDate('BC', 2020, 2, 3)} />
+      );
       let field = getByTestId('date-field');
       let era = getByTestId('era');
       expect(era).toBe(within(field).getAllByRole('spinbutton').pop());
@@ -1045,7 +1196,9 @@ describe('DatePicker', function () {
     });
 
     it('does not try to shift focus when the entire datepicker is unmounted while focused', function () {
-      let {rerender, getByTestId} = render(<DatePicker label="Date" defaultValue={new CalendarDate('BC', 2020, 2, 3)} />);
+      let {rerender, getByTestId} = render(
+        <DatePicker label="Date" defaultValue={new CalendarDate('BC', 2020, 2, 3)} />
+      );
       let era = getByTestId('era');
 
       act(() => era.focus());
@@ -1069,7 +1222,9 @@ describe('DatePicker', function () {
         );
         let segment = getByLabelText(label);
         let textContent = segment.textContent;
-        act(() => {segment.focus();});
+        act(() => {
+          segment.focus();
+        });
 
         await user.keyboard(`{${options?.upKey || 'ArrowUp'}}`);
         expect(onChange).toHaveBeenCalledTimes(1);
@@ -1091,7 +1246,9 @@ describe('DatePicker', function () {
         ));
         segment = getByLabelText(label);
         textContent = segment.textContent;
-        act(() => {segment.focus();});
+        act(() => {
+          segment.focus();
+        });
 
         await user.keyboard(`{${options?.upKey || 'ArrowUp'}}`);
         expect(onChange).toHaveBeenCalledTimes(1);
@@ -1105,10 +1262,12 @@ describe('DatePicker', function () {
           <Provider theme={theme} locale={options?.locale}>
             <DatePicker label="Date" defaultValue={value} onChange={onChange} {...options.props} />
           </Provider>
-          ));
+        ));
         segment = getByLabelText(label);
         textContent = segment.textContent;
-        act(() => {segment.focus();});
+        act(() => {
+          segment.focus();
+        });
 
         await user.keyboard(`{${options?.downKey || 'ArrowDown'}}`);
         expect(onChange).toHaveBeenCalledTimes(1);
@@ -1120,12 +1279,20 @@ describe('DatePicker', function () {
         onChange = jest.fn();
         ({getByLabelText, unmount} = render(
           <Provider theme={theme} locale={options?.locale}>
-            <DatePicker label="Date" defaultValue={value} isReadOnly onChange={onChange} {...options.props} />
+            <DatePicker
+              label="Date"
+              defaultValue={value}
+              isReadOnly
+              onChange={onChange}
+              {...options.props}
+            />
           </Provider>
         ));
         segment = getByLabelText(label);
         textContent = segment.textContent;
-        act(() => {segment.focus();});
+        act(() => {
+          segment.focus();
+        });
 
         await user.keyboard(`{${options?.upKey || 'ArrowUp'}}`);
         expect(onChange).not.toHaveBeenCalled();
@@ -1136,12 +1303,20 @@ describe('DatePicker', function () {
         onChange = jest.fn();
         ({getByLabelText, unmount} = render(
           <Provider theme={theme} locale={options?.locale}>
-            <DatePicker label="Date" defaultValue={value} isReadOnly onChange={onChange} {...options.props} />
+            <DatePicker
+              label="Date"
+              defaultValue={value}
+              isReadOnly
+              onChange={onChange}
+              {...options.props}
+            />
           </Provider>
         ));
         segment = getByLabelText(label);
         textContent = segment.textContent;
-        act(() => {segment.focus();});
+        act(() => {
+          segment.focus();
+        });
 
         await user.keyboard(`{${options?.downKey || 'ArrowDown'}}`);
         expect(onChange).not.toHaveBeenCalled();
@@ -1151,133 +1326,288 @@ describe('DatePicker', function () {
 
       describe('month', function () {
         it('should support using the arrow keys to increment and decrement the month', async function () {
-          await testArrows('month,', new CalendarDate(2019, 2, 3), new CalendarDate(2019, 3, 3), new CalendarDate(2019, 1, 3));
+          await testArrows(
+            'month,',
+            new CalendarDate(2019, 2, 3),
+            new CalendarDate(2019, 3, 3),
+            new CalendarDate(2019, 1, 3)
+          );
         });
 
         it('should wrap around when incrementing and decrementing the month', async function () {
-          await testArrows('month,', new CalendarDate(2019, 12, 3), new CalendarDate(2019, 1, 3), new CalendarDate(2019, 11, 3));
-          await testArrows('month,', new CalendarDate(2019, 1, 3), new CalendarDate(2019, 2, 3), new CalendarDate(2019, 12, 3));
+          await testArrows(
+            'month,',
+            new CalendarDate(2019, 12, 3),
+            new CalendarDate(2019, 1, 3),
+            new CalendarDate(2019, 11, 3)
+          );
+          await testArrows(
+            'month,',
+            new CalendarDate(2019, 1, 3),
+            new CalendarDate(2019, 2, 3),
+            new CalendarDate(2019, 12, 3)
+          );
         });
 
         it('should support using the page up and down keys to increment and decrement the month by 2', async function () {
-          await testArrows('month,', new CalendarDate(2019, 1, 3), new CalendarDate(2019, 3, 3), new CalendarDate(2019, 11, 3), {upKey: 'PageUp', downKey: 'PageDown'});
-          await testArrows('month,', new CalendarDate(2019, 2, 3), new CalendarDate(2019, 4, 3), new CalendarDate(2019, 12, 3), {upKey: 'PageUp', downKey: 'PageDown'});
+          await testArrows(
+            'month,',
+            new CalendarDate(2019, 1, 3),
+            new CalendarDate(2019, 3, 3),
+            new CalendarDate(2019, 11, 3),
+            {upKey: 'PageUp', downKey: 'PageDown'}
+          );
+          await testArrows(
+            'month,',
+            new CalendarDate(2019, 2, 3),
+            new CalendarDate(2019, 4, 3),
+            new CalendarDate(2019, 12, 3),
+            {upKey: 'PageUp', downKey: 'PageDown'}
+          );
         });
 
         it('should support using the home and end keys to jump to the min and max month', async function () {
-          await testArrows('month,', new CalendarDate(2019, 6, 3), new CalendarDate(2019, 12, 3), new CalendarDate(2019, 1, 3), {upKey: 'End', downKey: 'Home'});
+          await testArrows(
+            'month,',
+            new CalendarDate(2019, 6, 3),
+            new CalendarDate(2019, 12, 3),
+            new CalendarDate(2019, 1, 3),
+            {upKey: 'End', downKey: 'Home'}
+          );
         });
       });
 
       describe('day', function () {
         it('should support using the arrow keys to increment and decrement the day', async function () {
-          await testArrows('day,', new CalendarDate(2019, 2, 3), new CalendarDate(2019, 2, 4), new CalendarDate(2019, 2, 2));
+          await testArrows(
+            'day,',
+            new CalendarDate(2019, 2, 3),
+            new CalendarDate(2019, 2, 4),
+            new CalendarDate(2019, 2, 2)
+          );
         });
 
         it('should wrap around when incrementing and decrementing the day', async function () {
-          await testArrows('day,', new CalendarDate(2019, 8, 31), new CalendarDate(2019, 8, 1), new CalendarDate(2019, 8, 30));
-          await testArrows('day,', new CalendarDate(2019, 8, 1), new CalendarDate(2019, 8, 2), new CalendarDate(2019, 8, 31));
+          await testArrows(
+            'day,',
+            new CalendarDate(2019, 8, 31),
+            new CalendarDate(2019, 8, 1),
+            new CalendarDate(2019, 8, 30)
+          );
+          await testArrows(
+            'day,',
+            new CalendarDate(2019, 8, 1),
+            new CalendarDate(2019, 8, 2),
+            new CalendarDate(2019, 8, 31)
+          );
         });
 
         it('should support using the page up and down keys to increment and decrement the day by 7', async function () {
-          await testArrows('day,', new CalendarDate(2019, 2, 3), new CalendarDate(2019, 2, 10), new CalendarDate(2019, 2, 27), {upKey: 'PageUp', downKey: 'PageDown'});
+          await testArrows(
+            'day,',
+            new CalendarDate(2019, 2, 3),
+            new CalendarDate(2019, 2, 10),
+            new CalendarDate(2019, 2, 27),
+            {upKey: 'PageUp', downKey: 'PageDown'}
+          );
         });
 
         it('should support using the home and end keys to jump to the min and max day', async function () {
-          await testArrows('day,', new CalendarDate(2019, 8, 5), new CalendarDate(2019, 8, 31), new CalendarDate(2019, 8, 1), {upKey: 'End', downKey: 'Home'});
+          await testArrows(
+            'day,',
+            new CalendarDate(2019, 8, 5),
+            new CalendarDate(2019, 8, 31),
+            new CalendarDate(2019, 8, 1),
+            {upKey: 'End', downKey: 'Home'}
+          );
         });
       });
 
       describe('year', function () {
         it('should support using the arrow keys to increment and decrement the year', async function () {
-          await testArrows('year,', new CalendarDate(2019, 2, 3), new CalendarDate(2020, 2, 3), new CalendarDate(2018, 2, 3));
+          await testArrows(
+            'year,',
+            new CalendarDate(2019, 2, 3),
+            new CalendarDate(2020, 2, 3),
+            new CalendarDate(2018, 2, 3)
+          );
         });
 
         it('should support using the page up and down keys to increment and decrement the year to the nearest 5', async function () {
-          await testArrows('year,', new CalendarDate(2019, 2, 3), new CalendarDate(2020, 2, 3), new CalendarDate(2015, 2, 3), {upKey: 'PageUp', downKey: 'PageDown'});
+          await testArrows(
+            'year,',
+            new CalendarDate(2019, 2, 3),
+            new CalendarDate(2020, 2, 3),
+            new CalendarDate(2015, 2, 3),
+            {upKey: 'PageUp', downKey: 'PageDown'}
+          );
         });
       });
 
       describe('hour', function () {
         it('should support using the arrow keys to increment and decrement the hour', async function () {
-          await testArrows('hour,', new CalendarDateTime(2019, 2, 3, 8), new CalendarDateTime(2019, 2, 3, 9), new CalendarDateTime(2019, 2, 3, 7));
+          await testArrows(
+            'hour,',
+            new CalendarDateTime(2019, 2, 3, 8),
+            new CalendarDateTime(2019, 2, 3, 9),
+            new CalendarDateTime(2019, 2, 3, 7)
+          );
         });
 
         it('should wrap around when incrementing and decrementing the hour in 12 hour time', async function () {
           // AM
-          await testArrows('hour,', new CalendarDateTime(2019, 2, 3, 11), new CalendarDateTime(2019, 2, 3, 0), new CalendarDateTime(2019, 2, 3, 10));
-          await testArrows('hour,', new CalendarDateTime(2019, 2, 3, 0), new CalendarDateTime(2019, 2, 3, 1), new CalendarDateTime(2019, 2, 3, 11));
+          await testArrows(
+            'hour,',
+            new CalendarDateTime(2019, 2, 3, 11),
+            new CalendarDateTime(2019, 2, 3, 0),
+            new CalendarDateTime(2019, 2, 3, 10)
+          );
+          await testArrows(
+            'hour,',
+            new CalendarDateTime(2019, 2, 3, 0),
+            new CalendarDateTime(2019, 2, 3, 1),
+            new CalendarDateTime(2019, 2, 3, 11)
+          );
 
           // PM
-          await testArrows('hour,', new CalendarDateTime(2019, 2, 3, 23), new CalendarDateTime(2019, 2, 3, 12), new CalendarDateTime(2019, 2, 3, 22));
-          await testArrows('hour,', new CalendarDateTime(2019, 2, 3, 12), new CalendarDateTime(2019, 2, 3, 13), new CalendarDateTime(2019, 2, 3, 23));
+          await testArrows(
+            'hour,',
+            new CalendarDateTime(2019, 2, 3, 23),
+            new CalendarDateTime(2019, 2, 3, 12),
+            new CalendarDateTime(2019, 2, 3, 22)
+          );
+          await testArrows(
+            'hour,',
+            new CalendarDateTime(2019, 2, 3, 12),
+            new CalendarDateTime(2019, 2, 3, 13),
+            new CalendarDateTime(2019, 2, 3, 23)
+          );
         });
 
         it('should wrap around when incrementing and decrementing the hour in 24 hour time', async function () {
-          await testArrows('hour,', new CalendarDateTime(2019, 2, 3, 23), new CalendarDateTime(2019, 2, 3, 0), new CalendarDateTime(2019, 2, 3, 22), {props: {hourCycle: 24}});
-          await testArrows('hour,', new CalendarDateTime(2019, 2, 3, 0), new CalendarDateTime(2019, 2, 3, 1), new CalendarDateTime(2019, 2, 3, 23), {props: {hourCycle: 24}});
+          await testArrows(
+            'hour,',
+            new CalendarDateTime(2019, 2, 3, 23),
+            new CalendarDateTime(2019, 2, 3, 0),
+            new CalendarDateTime(2019, 2, 3, 22),
+            {props: {hourCycle: 24}}
+          );
+          await testArrows(
+            'hour,',
+            new CalendarDateTime(2019, 2, 3, 0),
+            new CalendarDateTime(2019, 2, 3, 1),
+            new CalendarDateTime(2019, 2, 3, 23),
+            {props: {hourCycle: 24}}
+          );
         });
 
         it('should support using the page up and down keys to increment and decrement the hour by 2', async function () {
-          await testArrows('hour,', new CalendarDateTime(2019, 2, 3, 8), new CalendarDateTime(2019, 2, 3, 10), new CalendarDateTime(2019, 2, 3, 6), {upKey: 'PageUp', downKey: 'PageDown'});
+          await testArrows(
+            'hour,',
+            new CalendarDateTime(2019, 2, 3, 8),
+            new CalendarDateTime(2019, 2, 3, 10),
+            new CalendarDateTime(2019, 2, 3, 6),
+            {upKey: 'PageUp', downKey: 'PageDown'}
+          );
         });
 
         it('should support using the home and end keys to jump to the min and max hour in 12 hour time', async function () {
           // AM
-          await testArrows('hour,', new CalendarDateTime(2019, 2, 3, 8), new CalendarDateTime(2019, 2, 3, 11), new CalendarDateTime(2019, 2, 3, 0), {upKey: 'End', downKey: 'Home'});
+          await testArrows(
+            'hour,',
+            new CalendarDateTime(2019, 2, 3, 8),
+            new CalendarDateTime(2019, 2, 3, 11),
+            new CalendarDateTime(2019, 2, 3, 0),
+            {upKey: 'End', downKey: 'Home'}
+          );
 
           // PM
-          await testArrows('hour,', new CalendarDateTime(2019, 2, 3, 16), new CalendarDateTime(2019, 2, 3, 23), new CalendarDateTime(2019, 2, 3, 12), {upKey: 'End', downKey: 'Home'});
+          await testArrows(
+            'hour,',
+            new CalendarDateTime(2019, 2, 3, 16),
+            new CalendarDateTime(2019, 2, 3, 23),
+            new CalendarDateTime(2019, 2, 3, 12),
+            {upKey: 'End', downKey: 'Home'}
+          );
         });
 
         it('should support using the home and end keys to jump to the min and max hour in 24 hour time', async function () {
-          await testArrows('hour,', new CalendarDateTime(2019, 2, 3, 8), new CalendarDateTime(2019, 2, 3, 23), new CalendarDateTime(2019, 2, 3, 0), {upKey: 'End', downKey: 'Home', props: {hourCycle: 24}});
+          await testArrows(
+            'hour,',
+            new CalendarDateTime(2019, 2, 3, 8),
+            new CalendarDateTime(2019, 2, 3, 23),
+            new CalendarDateTime(2019, 2, 3, 0),
+            {upKey: 'End', downKey: 'Home', props: {hourCycle: 24}}
+          );
         });
 
         it('should support cycling through DST fall back transitions', async function () {
           let onChange = jest.fn();
           let {getByLabelText} = render(
             <Provider theme={theme}>
-              <DatePicker label="Date" defaultValue={parseZonedDateTime('2021-11-07T00:45:00-07:00[America/Los_Angeles]')} onChange={onChange} />
+              <DatePicker
+                label="Date"
+                defaultValue={parseZonedDateTime('2021-11-07T00:45:00-07:00[America/Los_Angeles]')}
+                onChange={onChange}
+              />
             </Provider>
           );
           let segment = getByLabelText('hour,');
-          act(() => {segment.focus();});
+          act(() => {
+            segment.focus();
+          });
           await user.keyboard('{ArrowUp}');
           expect(onChange).toHaveBeenCalledTimes(1);
-          expect(onChange).toHaveBeenCalledWith(parseZonedDateTime('2021-11-07T01:45:00-07:00[America/Los_Angeles]'));
+          expect(onChange).toHaveBeenCalledWith(
+            parseZonedDateTime('2021-11-07T01:45:00-07:00[America/Los_Angeles]')
+          );
 
           await user.keyboard('{ArrowUp}');
           expect(onChange).toHaveBeenCalledTimes(2);
-          expect(onChange).toHaveBeenLastCalledWith(parseZonedDateTime('2021-11-07T01:45:00-08:00[America/Los_Angeles]'));
+          expect(onChange).toHaveBeenLastCalledWith(
+            parseZonedDateTime('2021-11-07T01:45:00-08:00[America/Los_Angeles]')
+          );
 
           await user.keyboard('{ArrowUp}');
           expect(onChange).toHaveBeenCalledTimes(3);
-          expect(onChange).toHaveBeenLastCalledWith(parseZonedDateTime('2021-11-07T02:45:00-08:00[America/Los_Angeles]'));
+          expect(onChange).toHaveBeenLastCalledWith(
+            parseZonedDateTime('2021-11-07T02:45:00-08:00[America/Los_Angeles]')
+          );
 
           await user.keyboard('{ArrowDown}');
           expect(onChange).toHaveBeenCalledTimes(4);
-          expect(onChange).toHaveBeenLastCalledWith(parseZonedDateTime('2021-11-07T01:45:00-08:00[America/Los_Angeles]'));
+          expect(onChange).toHaveBeenLastCalledWith(
+            parseZonedDateTime('2021-11-07T01:45:00-08:00[America/Los_Angeles]')
+          );
 
           await user.keyboard('{ArrowDown}');
           expect(onChange).toHaveBeenCalledTimes(5);
-          expect(onChange).toHaveBeenLastCalledWith(parseZonedDateTime('2021-11-07T01:45:00-07:00[America/Los_Angeles]'));
+          expect(onChange).toHaveBeenLastCalledWith(
+            parseZonedDateTime('2021-11-07T01:45:00-07:00[America/Los_Angeles]')
+          );
 
           await user.keyboard('{ArrowDown}');
           expect(onChange).toHaveBeenCalledTimes(6);
-          expect(onChange).toHaveBeenLastCalledWith(parseZonedDateTime('2021-11-07T00:45:00-07:00[America/Los_Angeles]'));
+          expect(onChange).toHaveBeenLastCalledWith(
+            parseZonedDateTime('2021-11-07T00:45:00-07:00[America/Los_Angeles]')
+          );
           // check that the hour is set to 12 and not 0
           expect(segment.textContent).toBe('12');
 
           await user.keyboard('{ArrowDown}');
           expect(onChange).toHaveBeenCalledTimes(7);
-          expect(onChange).toHaveBeenLastCalledWith(parseZonedDateTime('2021-11-07T11:45:00-08:00[America/Los_Angeles]'));
+          expect(onChange).toHaveBeenLastCalledWith(
+            parseZonedDateTime('2021-11-07T11:45:00-08:00[America/Los_Angeles]')
+          );
         });
 
         it('should support cycling through DST fall back transitions even if the minutes are undefined', async function () {
           let {getByLabelText} = render(
             <Provider theme={theme}>
-              <DatePicker label="Date" defaultValue={parseZonedDateTime('2021-11-07T00:45:00-07:00[America/Los_Angeles]')} />
+              <DatePicker
+                label="Date"
+                defaultValue={parseZonedDateTime('2021-11-07T00:45:00-07:00[America/Los_Angeles]')}
+              />
             </Provider>
           );
 
@@ -1316,56 +1646,135 @@ describe('DatePicker', function () {
 
       describe('minute', function () {
         it('should support using the arrow keys to increment and decrement the minute', async function () {
-          await testArrows('minute,', new CalendarDateTime(2019, 2, 3, 8, 5), new CalendarDateTime(2019, 2, 3, 8, 6), new CalendarDateTime(2019, 2, 3, 8, 4));
+          await testArrows(
+            'minute,',
+            new CalendarDateTime(2019, 2, 3, 8, 5),
+            new CalendarDateTime(2019, 2, 3, 8, 6),
+            new CalendarDateTime(2019, 2, 3, 8, 4)
+          );
         });
 
         it('should wrap around when incrementing and decrementing the minute', async function () {
-          await testArrows('minute,', new CalendarDateTime(2019, 2, 3, 8, 59), new CalendarDateTime(2019, 2, 3, 8, 0), new CalendarDateTime(2019, 2, 3, 8, 58));
-          await testArrows('minute,', new CalendarDateTime(2019, 2, 3, 8, 0), new CalendarDateTime(2019, 2, 3, 8, 1), new CalendarDateTime(2019, 2, 3, 8, 59));
+          await testArrows(
+            'minute,',
+            new CalendarDateTime(2019, 2, 3, 8, 59),
+            new CalendarDateTime(2019, 2, 3, 8, 0),
+            new CalendarDateTime(2019, 2, 3, 8, 58)
+          );
+          await testArrows(
+            'minute,',
+            new CalendarDateTime(2019, 2, 3, 8, 0),
+            new CalendarDateTime(2019, 2, 3, 8, 1),
+            new CalendarDateTime(2019, 2, 3, 8, 59)
+          );
         });
 
         it('should support using the page up and down keys to increment and decrement the minute to the nearest 15', async function () {
-          await testArrows('minute,', new CalendarDateTime(2019, 2, 3, 8, 22), new CalendarDateTime(2019, 2, 3, 8, 30), new CalendarDateTime(2019, 2, 3, 8, 15), {upKey: 'PageUp', downKey: 'PageDown'});
+          await testArrows(
+            'minute,',
+            new CalendarDateTime(2019, 2, 3, 8, 22),
+            new CalendarDateTime(2019, 2, 3, 8, 30),
+            new CalendarDateTime(2019, 2, 3, 8, 15),
+            {upKey: 'PageUp', downKey: 'PageDown'}
+          );
         });
 
         it('should support using the home and end keys to jump to the min and max minute', async function () {
-          await testArrows('minute,', new CalendarDateTime(2019, 2, 3, 8, 22), new CalendarDateTime(2019, 2, 3, 8, 59), new CalendarDateTime(2019, 2, 3, 8, 0), {upKey: 'End', downKey: 'Home', props: {hourCycle: 24}});
+          await testArrows(
+            'minute,',
+            new CalendarDateTime(2019, 2, 3, 8, 22),
+            new CalendarDateTime(2019, 2, 3, 8, 59),
+            new CalendarDateTime(2019, 2, 3, 8, 0),
+            {upKey: 'End', downKey: 'Home', props: {hourCycle: 24}}
+          );
         });
       });
 
       describe('second', function () {
         it('should support using the arrow keys to increment and decrement the second', async function () {
-          await testArrows('second,', new CalendarDateTime(2019, 2, 3, 8, 5, 10), new CalendarDateTime(2019, 2, 3, 8, 5, 11), new CalendarDateTime(2019, 2, 3, 8, 5, 9), {props: {granularity: 'second'}});
+          await testArrows(
+            'second,',
+            new CalendarDateTime(2019, 2, 3, 8, 5, 10),
+            new CalendarDateTime(2019, 2, 3, 8, 5, 11),
+            new CalendarDateTime(2019, 2, 3, 8, 5, 9),
+            {props: {granularity: 'second'}}
+          );
         });
 
         it('should wrap around when incrementing and decrementing the second', async function () {
-          await testArrows('second,', new CalendarDateTime(2019, 2, 3, 8, 5, 59), new CalendarDateTime(2019, 2, 3, 8, 5, 0), new CalendarDateTime(2019, 2, 3, 8, 5, 58), {props: {granularity: 'second'}});
-          await testArrows('second,', new CalendarDateTime(2019, 2, 3, 8, 5, 0), new CalendarDateTime(2019, 2, 3, 8, 5, 1), new CalendarDateTime(2019, 2, 3, 8, 5, 59), {props: {granularity: 'second'}});
+          await testArrows(
+            'second,',
+            new CalendarDateTime(2019, 2, 3, 8, 5, 59),
+            new CalendarDateTime(2019, 2, 3, 8, 5, 0),
+            new CalendarDateTime(2019, 2, 3, 8, 5, 58),
+            {props: {granularity: 'second'}}
+          );
+          await testArrows(
+            'second,',
+            new CalendarDateTime(2019, 2, 3, 8, 5, 0),
+            new CalendarDateTime(2019, 2, 3, 8, 5, 1),
+            new CalendarDateTime(2019, 2, 3, 8, 5, 59),
+            {props: {granularity: 'second'}}
+          );
         });
 
         it('should support using the page up and down keys to increment and decrement the second to the nearest 15', async function () {
-          await testArrows('second,', new CalendarDateTime(2019, 2, 3, 8, 5, 22), new CalendarDateTime(2019, 2, 3, 8, 5, 30), new CalendarDateTime(2019, 2, 3, 8, 5, 15), {upKey: 'PageUp', downKey: 'PageDown', props: {granularity: 'second'}});
+          await testArrows(
+            'second,',
+            new CalendarDateTime(2019, 2, 3, 8, 5, 22),
+            new CalendarDateTime(2019, 2, 3, 8, 5, 30),
+            new CalendarDateTime(2019, 2, 3, 8, 5, 15),
+            {upKey: 'PageUp', downKey: 'PageDown', props: {granularity: 'second'}}
+          );
         });
 
         it('should support using the home and end keys to jump to the min and max second', async function () {
-          await testArrows('second,', new CalendarDateTime(2019, 2, 3, 8, 5, 22), new CalendarDateTime(2019, 2, 3, 8, 5, 59), new CalendarDateTime(2019, 2, 3, 8, 5, 0), {upKey: 'End', downKey: 'Home', props: {granularity: 'second', hourCycle: 24}});
+          await testArrows(
+            'second,',
+            new CalendarDateTime(2019, 2, 3, 8, 5, 22),
+            new CalendarDateTime(2019, 2, 3, 8, 5, 59),
+            new CalendarDateTime(2019, 2, 3, 8, 5, 0),
+            {upKey: 'End', downKey: 'Home', props: {granularity: 'second', hourCycle: 24}}
+          );
         });
       });
 
       describe('day period', function () {
         it('should support using the arrow keys to increment and decrement the day period', async function () {
-          await testArrows('AM/PM,', new CalendarDateTime(2019, 2, 3, 8), new CalendarDateTime(2019, 2, 3, 20), new CalendarDateTime(2019, 2, 3, 20));
-          await testArrows('AM/PM,', new CalendarDateTime(2019, 2, 3, 20), new CalendarDateTime(2019, 2, 3, 8), new CalendarDateTime(2019, 2, 3, 8));
+          await testArrows(
+            'AM/PM,',
+            new CalendarDateTime(2019, 2, 3, 8),
+            new CalendarDateTime(2019, 2, 3, 20),
+            new CalendarDateTime(2019, 2, 3, 20)
+          );
+          await testArrows(
+            'AM/PM,',
+            new CalendarDateTime(2019, 2, 3, 20),
+            new CalendarDateTime(2019, 2, 3, 8),
+            new CalendarDateTime(2019, 2, 3, 8)
+          );
         });
       });
 
       describe('era', function () {
         it('should support using the arrow keys to increment and decrement the era', async function () {
-          await testArrows('era,', new CalendarDate(new JapaneseCalendar(), 'heisei', 5, 2, 3), new CalendarDate(new JapaneseCalendar(), 'reiwa', 5, 2, 3), new CalendarDate(new JapaneseCalendar(), 'showa', 5, 2, 3), {locale: 'en-US-u-ca-japanese'});
+          await testArrows(
+            'era,',
+            new CalendarDate(new JapaneseCalendar(), 'heisei', 5, 2, 3),
+            new CalendarDate(new JapaneseCalendar(), 'reiwa', 5, 2, 3),
+            new CalendarDate(new JapaneseCalendar(), 'showa', 5, 2, 3),
+            {locale: 'en-US-u-ca-japanese'}
+          );
         });
 
         it('should support cycling year across era boundaries', async function () {
-          await testArrows('year,', new CalendarDate(new JapaneseCalendar(), 'reiwa', 1, 12, 28), new CalendarDate(new JapaneseCalendar(), 'reiwa', 2, 12, 28), new CalendarDate(new JapaneseCalendar(), 'heisei', 30, 12, 28), {locale: 'en-US-u-ca-japanese'});
+          await testArrows(
+            'year,',
+            new CalendarDate(new JapaneseCalendar(), 'reiwa', 1, 12, 28),
+            new CalendarDate(new JapaneseCalendar(), 'reiwa', 2, 12, 28),
+            new CalendarDate(new JapaneseCalendar(), 'heisei', 30, 12, 28),
+            {locale: 'en-US-u-ca-japanese'}
+          );
         });
 
         it('should show and hide the era field as needed', async function () {
@@ -1390,7 +1799,11 @@ describe('DatePicker', function () {
         let onChange = jest.fn();
         let {getAllByRole} = render(
           <Provider theme={theme}>
-            <DatePicker label="Date" defaultValue={new CalendarDate(2026, 2, 28)} onChange={onChange} />
+            <DatePicker
+              label="Date"
+              defaultValue={new CalendarDate(2026, 2, 28)}
+              onChange={onChange}
+            />
           </Provider>
         );
 
@@ -1422,14 +1835,23 @@ describe('DatePicker', function () {
 
         let segment = getByLabelText(label);
         let textContent = segment.textContent;
-        act(() => {segment.focus();});
+        act(() => {
+          segment.focus();
+        });
 
-        let allowsZero = (label.indexOf('hour') === 0 && props?.hourCycle === 24) || label.indexOf('minute') === 0 || label.indexOf('second') === 0;
+        let allowsZero =
+          (label.indexOf('hour') === 0 && props?.hourCycle === 24) ||
+          label.indexOf('minute') === 0 ||
+          label.indexOf('second') === 0;
         let count = 0;
         for (let [i, key] of [...keys].entries()) {
           beforeInput(segment, key);
 
-          if (key !== '0' || (moved && i === keys.length - 1 && keys !== '00') || (i < keys.length - 1 && allowsZero)) {
+          if (
+            key !== '0' ||
+            (moved && i === keys.length - 1 && keys !== '00') ||
+            (i < keys.length - 1 && allowsZero)
+          ) {
             expect(onChange).toHaveBeenCalledTimes(++count);
           }
           if (key === '0' && !allowsZero && label !== 'era,') {
@@ -1464,13 +1886,19 @@ describe('DatePicker', function () {
         ));
         segment = getByLabelText(label);
         textContent = segment.textContent;
-        act(() => {segment.focus();});
+        act(() => {
+          segment.focus();
+        });
 
         count = 0;
         for (let [i, key] of [...keys].entries()) {
           beforeInput(segment, key);
 
-          if (key !== '0' || (moved && i === keys.length - 1 && keys !== '00') || (i < keys.length - 1 && allowsZero)) {
+          if (
+            key !== '0' ||
+            (moved && i === keys.length - 1 && keys !== '00') ||
+            (i < keys.length - 1 && allowsZero)
+          ) {
             expect(onChange).toHaveBeenCalledTimes(++count);
             expect(segment.textContent).not.toBe(textContent);
           }
@@ -1496,12 +1924,20 @@ describe('DatePicker', function () {
         onChange = jest.fn();
         ({getByLabelText, getAllByRole, unmount} = render(
           <Provider theme={theme} locale={props?.locale}>
-            <DatePicker label="Date" defaultValue={value} isReadOnly onChange={onChange} {...props} />
+            <DatePicker
+              label="Date"
+              defaultValue={value}
+              isReadOnly
+              onChange={onChange}
+              {...props}
+            />
           </Provider>
         ));
         segment = getByLabelText(label);
         textContent = segment.textContent;
-        act(() => {segment.focus();});
+        act(() => {
+          segment.focus();
+        });
 
         for (let key of keys) {
           beforeInput(segment, key);
@@ -1518,10 +1954,14 @@ describe('DatePicker', function () {
 
       function testIgnored(label, value, keys, expected) {
         let onChange = jest.fn();
-        let {getByLabelText, unmount} = render(<DatePicker label="Date" defaultValue={value} onChange={onChange} />);
+        let {getByLabelText, unmount} = render(
+          <DatePicker label="Date" defaultValue={value} onChange={onChange} />
+        );
 
         let segment = getByLabelText(label);
-        act(() => {segment.focus();});
+        act(() => {
+          segment.focus();
+        });
 
         for (let key of keys) {
           beforeInput(segment, key);
@@ -1537,7 +1977,13 @@ describe('DatePicker', function () {
       it('should support typing into the month segment', function () {
         testInput('month,', new CalendarDate(2019, 2, 3), '1', new CalendarDate(2019, 1, 3), false);
         testInput('month,', new CalendarDate(2019, 2, 3), '01', new CalendarDate(2019, 1, 3), true);
-        testInput('month,', new CalendarDate(2019, 2, 3), '12', new CalendarDate(2019, 12, 3), true);
+        testInput(
+          'month,',
+          new CalendarDate(2019, 2, 3),
+          '12',
+          new CalendarDate(2019, 12, 3),
+          true
+        );
         testInput('month,', new CalendarDate(2019, 2, 3), '4', new CalendarDate(2019, 4, 3), true);
         testIgnored('month,', new CalendarDate(2019, 2, 3), '0', '1');
         testIgnored('month,', new CalendarDate(2019, 2, 3), '00', '1');
@@ -1553,76 +1999,353 @@ describe('DatePicker', function () {
       });
 
       it('should support typing into the year segment', function () {
-        testInput('year,', new CalendarDate(2019, 2, 3), '1993', new CalendarDate(1993, 2, 3), false);
-        testInput('year,', new CalendarDateTime(2019, 2, 3, 8), '1993', new CalendarDateTime(1993, 2, 3, 8), true);
+        testInput(
+          'year,',
+          new CalendarDate(2019, 2, 3),
+          '1993',
+          new CalendarDate(1993, 2, 3),
+          false
+        );
+        testInput(
+          'year,',
+          new CalendarDateTime(2019, 2, 3, 8),
+          '1993',
+          new CalendarDateTime(1993, 2, 3, 8),
+          true
+        );
         testIgnored('year,', new CalendarDate(2019, 2, 3), '0', '1');
       });
 
       it('should support typing into the hour segment in 12 hour time', function () {
         // AM
-        testInput('hour,', new CalendarDateTime(2019, 2, 3, 8), '1', new CalendarDateTime(2019, 2, 3, 1), false);
-        testInput('hour,', new CalendarDateTime(2019, 2, 3, 8), '01', new CalendarDateTime(2019, 2, 3, 1), true);
-        testInput('hour,', new CalendarDateTime(2019, 2, 3, 8), '11', new CalendarDateTime(2019, 2, 3, 11), true);
-        testInput('hour,', new CalendarDateTime(2019, 2, 3, 8), '12', new CalendarDateTime(2019, 2, 3, 0), true);
-        testInput('hour,', new CalendarDateTime(2019, 2, 3, 8), '4', new CalendarDateTime(2019, 2, 3, 4), true);
+        testInput(
+          'hour,',
+          new CalendarDateTime(2019, 2, 3, 8),
+          '1',
+          new CalendarDateTime(2019, 2, 3, 1),
+          false
+        );
+        testInput(
+          'hour,',
+          new CalendarDateTime(2019, 2, 3, 8),
+          '01',
+          new CalendarDateTime(2019, 2, 3, 1),
+          true
+        );
+        testInput(
+          'hour,',
+          new CalendarDateTime(2019, 2, 3, 8),
+          '11',
+          new CalendarDateTime(2019, 2, 3, 11),
+          true
+        );
+        testInput(
+          'hour,',
+          new CalendarDateTime(2019, 2, 3, 8),
+          '12',
+          new CalendarDateTime(2019, 2, 3, 0),
+          true
+        );
+        testInput(
+          'hour,',
+          new CalendarDateTime(2019, 2, 3, 8),
+          '4',
+          new CalendarDateTime(2019, 2, 3, 4),
+          true
+        );
         testIgnored('hour,', new CalendarDateTime(2019, 2, 3, 8), '0', '12');
 
         // PM
-        testInput('hour,', new CalendarDateTime(2019, 2, 3, 20), '1', new CalendarDateTime(2019, 2, 3, 13), false);
-        testInput('hour,', new CalendarDateTime(2019, 2, 3, 20), '01', new CalendarDateTime(2019, 2, 3, 13), true);
-        testInput('hour,', new CalendarDateTime(2019, 2, 3, 20), '11', new CalendarDateTime(2019, 2, 3, 23), true);
-        testInput('hour,', new CalendarDateTime(2019, 2, 3, 20), '12', new CalendarDateTime(2019, 2, 3, 12), true);
-        testInput('hour,', new CalendarDateTime(2019, 2, 3, 20), '4', new CalendarDateTime(2019, 2, 3, 16), true);
+        testInput(
+          'hour,',
+          new CalendarDateTime(2019, 2, 3, 20),
+          '1',
+          new CalendarDateTime(2019, 2, 3, 13),
+          false
+        );
+        testInput(
+          'hour,',
+          new CalendarDateTime(2019, 2, 3, 20),
+          '01',
+          new CalendarDateTime(2019, 2, 3, 13),
+          true
+        );
+        testInput(
+          'hour,',
+          new CalendarDateTime(2019, 2, 3, 20),
+          '11',
+          new CalendarDateTime(2019, 2, 3, 23),
+          true
+        );
+        testInput(
+          'hour,',
+          new CalendarDateTime(2019, 2, 3, 20),
+          '12',
+          new CalendarDateTime(2019, 2, 3, 12),
+          true
+        );
+        testInput(
+          'hour,',
+          new CalendarDateTime(2019, 2, 3, 20),
+          '4',
+          new CalendarDateTime(2019, 2, 3, 16),
+          true
+        );
         testIgnored('hour,', new CalendarDateTime(2019, 2, 3, 20), '0', '12');
       });
 
       it('should support typing into the hour segment in 24 hour time', function () {
-        testInput('hour,', new CalendarDateTime(2019, 2, 3, 8), '0', new CalendarDateTime(2019, 2, 3, 0), false, {hourCycle: 24});
-        testInput('hour,', new CalendarDateTime(2019, 2, 3, 8), '00', new CalendarDateTime(2019, 2, 3, 0), true, {hourCycle: 24});
-        testInput('hour,', new CalendarDateTime(2019, 2, 3, 8), '1', new CalendarDateTime(2019, 2, 3, 1), false, {hourCycle: 24});
-        testInput('hour,', new CalendarDateTime(2019, 2, 3, 8), '01', new CalendarDateTime(2019, 2, 3, 1), true, {hourCycle: 24});
-        testInput('hour,', new CalendarDateTime(2019, 2, 3, 8), '11', new CalendarDateTime(2019, 2, 3, 11), true, {hourCycle: 24});
-        testInput('hour,', new CalendarDateTime(2019, 2, 3, 8), '23', new CalendarDateTime(2019, 2, 3, 23), true, {hourCycle: 24});
+        testInput(
+          'hour,',
+          new CalendarDateTime(2019, 2, 3, 8),
+          '0',
+          new CalendarDateTime(2019, 2, 3, 0),
+          false,
+          {hourCycle: 24}
+        );
+        testInput(
+          'hour,',
+          new CalendarDateTime(2019, 2, 3, 8),
+          '00',
+          new CalendarDateTime(2019, 2, 3, 0),
+          true,
+          {hourCycle: 24}
+        );
+        testInput(
+          'hour,',
+          new CalendarDateTime(2019, 2, 3, 8),
+          '1',
+          new CalendarDateTime(2019, 2, 3, 1),
+          false,
+          {hourCycle: 24}
+        );
+        testInput(
+          'hour,',
+          new CalendarDateTime(2019, 2, 3, 8),
+          '01',
+          new CalendarDateTime(2019, 2, 3, 1),
+          true,
+          {hourCycle: 24}
+        );
+        testInput(
+          'hour,',
+          new CalendarDateTime(2019, 2, 3, 8),
+          '11',
+          new CalendarDateTime(2019, 2, 3, 11),
+          true,
+          {hourCycle: 24}
+        );
+        testInput(
+          'hour,',
+          new CalendarDateTime(2019, 2, 3, 8),
+          '23',
+          new CalendarDateTime(2019, 2, 3, 23),
+          true,
+          {hourCycle: 24}
+        );
       });
 
       it('should support typing into the minute segment', function () {
-        testInput('minute,', new CalendarDateTime(2019, 2, 3, 8, 8), '0', new CalendarDateTime(2019, 2, 3, 8, 0), false);
-        testInput('minute,', new CalendarDateTime(2019, 2, 3, 8, 8), '00', new CalendarDateTime(2019, 2, 3, 8, 0), true);
-        testInput('minute,', new CalendarDateTime(2019, 2, 3, 8, 8), '1', new CalendarDateTime(2019, 2, 3, 8, 1), false);
-        testInput('minute,', new CalendarDateTime(2019, 2, 3, 8, 8), '01', new CalendarDateTime(2019, 2, 3, 8, 1), true);
-        testInput('minute,', new CalendarDateTime(2019, 2, 3, 8, 8), '2', new CalendarDateTime(2019, 2, 3, 8, 2), false);
-        testInput('minute,', new CalendarDateTime(2019, 2, 3, 8, 8), '02', new CalendarDateTime(2019, 2, 3, 8, 2), true);
-        testInput('minute,', new CalendarDateTime(2019, 2, 3, 8, 8), '5', new CalendarDateTime(2019, 2, 3, 8, 5), false);
-        testInput('minute,', new CalendarDateTime(2019, 2, 3, 8, 8), '6', new CalendarDateTime(2019, 2, 3, 8, 6), true);
-        testInput('minute,', new CalendarDateTime(2019, 2, 3, 8, 8), '59', new CalendarDateTime(2019, 2, 3, 8, 59), true);
+        testInput(
+          'minute,',
+          new CalendarDateTime(2019, 2, 3, 8, 8),
+          '0',
+          new CalendarDateTime(2019, 2, 3, 8, 0),
+          false
+        );
+        testInput(
+          'minute,',
+          new CalendarDateTime(2019, 2, 3, 8, 8),
+          '00',
+          new CalendarDateTime(2019, 2, 3, 8, 0),
+          true
+        );
+        testInput(
+          'minute,',
+          new CalendarDateTime(2019, 2, 3, 8, 8),
+          '1',
+          new CalendarDateTime(2019, 2, 3, 8, 1),
+          false
+        );
+        testInput(
+          'minute,',
+          new CalendarDateTime(2019, 2, 3, 8, 8),
+          '01',
+          new CalendarDateTime(2019, 2, 3, 8, 1),
+          true
+        );
+        testInput(
+          'minute,',
+          new CalendarDateTime(2019, 2, 3, 8, 8),
+          '2',
+          new CalendarDateTime(2019, 2, 3, 8, 2),
+          false
+        );
+        testInput(
+          'minute,',
+          new CalendarDateTime(2019, 2, 3, 8, 8),
+          '02',
+          new CalendarDateTime(2019, 2, 3, 8, 2),
+          true
+        );
+        testInput(
+          'minute,',
+          new CalendarDateTime(2019, 2, 3, 8, 8),
+          '5',
+          new CalendarDateTime(2019, 2, 3, 8, 5),
+          false
+        );
+        testInput(
+          'minute,',
+          new CalendarDateTime(2019, 2, 3, 8, 8),
+          '6',
+          new CalendarDateTime(2019, 2, 3, 8, 6),
+          true
+        );
+        testInput(
+          'minute,',
+          new CalendarDateTime(2019, 2, 3, 8, 8),
+          '59',
+          new CalendarDateTime(2019, 2, 3, 8, 59),
+          true
+        );
       });
 
       it('should support typing into the second segment', function () {
-        testInput('second,', new CalendarDateTime(2019, 2, 3, 8, 5, 8), '0', new CalendarDateTime(2019, 2, 3, 8, 5, 0), false, {granularity: 'second'});
-        testInput('second,', new CalendarDateTime(2019, 2, 3, 8, 5, 8), '00', new CalendarDateTime(2019, 2, 3, 8, 5, 0), true, {granularity: 'second'});
-        testInput('second,', new CalendarDateTime(2019, 2, 3, 8, 5, 8), '1', new CalendarDateTime(2019, 2, 3, 8, 5, 1), false, {granularity: 'second'});
-        testInput('second,', new CalendarDateTime(2019, 2, 3, 8, 5, 8), '01', new CalendarDateTime(2019, 2, 3, 8, 5, 1), true, {granularity: 'second'});
-        testInput('second,', new CalendarDateTime(2019, 2, 3, 8, 5, 8), '2', new CalendarDateTime(2019, 2, 3, 8, 5, 2), false, {granularity: 'second'});
-        testInput('second,', new CalendarDateTime(2019, 2, 3, 8, 5, 8), '5', new CalendarDateTime(2019, 2, 3, 8, 5, 5), false, {granularity: 'second'});
-        testInput('second,', new CalendarDateTime(2019, 2, 3, 8, 5, 8), '6', new CalendarDateTime(2019, 2, 3, 8, 5, 6), true, {granularity: 'second'});
-        testInput('second,', new CalendarDateTime(2019, 2, 3, 8, 5, 8), '59', new CalendarDateTime(2019, 2, 3, 8, 5, 59), true, {granularity: 'second'});
+        testInput(
+          'second,',
+          new CalendarDateTime(2019, 2, 3, 8, 5, 8),
+          '0',
+          new CalendarDateTime(2019, 2, 3, 8, 5, 0),
+          false,
+          {granularity: 'second'}
+        );
+        testInput(
+          'second,',
+          new CalendarDateTime(2019, 2, 3, 8, 5, 8),
+          '00',
+          new CalendarDateTime(2019, 2, 3, 8, 5, 0),
+          true,
+          {granularity: 'second'}
+        );
+        testInput(
+          'second,',
+          new CalendarDateTime(2019, 2, 3, 8, 5, 8),
+          '1',
+          new CalendarDateTime(2019, 2, 3, 8, 5, 1),
+          false,
+          {granularity: 'second'}
+        );
+        testInput(
+          'second,',
+          new CalendarDateTime(2019, 2, 3, 8, 5, 8),
+          '01',
+          new CalendarDateTime(2019, 2, 3, 8, 5, 1),
+          true,
+          {granularity: 'second'}
+        );
+        testInput(
+          'second,',
+          new CalendarDateTime(2019, 2, 3, 8, 5, 8),
+          '2',
+          new CalendarDateTime(2019, 2, 3, 8, 5, 2),
+          false,
+          {granularity: 'second'}
+        );
+        testInput(
+          'second,',
+          new CalendarDateTime(2019, 2, 3, 8, 5, 8),
+          '5',
+          new CalendarDateTime(2019, 2, 3, 8, 5, 5),
+          false,
+          {granularity: 'second'}
+        );
+        testInput(
+          'second,',
+          new CalendarDateTime(2019, 2, 3, 8, 5, 8),
+          '6',
+          new CalendarDateTime(2019, 2, 3, 8, 5, 6),
+          true,
+          {granularity: 'second'}
+        );
+        testInput(
+          'second,',
+          new CalendarDateTime(2019, 2, 3, 8, 5, 8),
+          '59',
+          new CalendarDateTime(2019, 2, 3, 8, 5, 59),
+          true,
+          {granularity: 'second'}
+        );
       });
 
       it('should support typing into the day period segment', function () {
-        testInput('AM/PM,', new CalendarDateTime(2019, 2, 3, 8), 'p', new CalendarDateTime(2019, 2, 3, 20), false);
-        testInput('AM/PM,', new CalendarDateTime(2019, 2, 3, 20), 'a', new CalendarDateTime(2019, 2, 3, 8), false);
+        testInput(
+          'AM/PM,',
+          new CalendarDateTime(2019, 2, 3, 8),
+          'p',
+          new CalendarDateTime(2019, 2, 3, 20),
+          false
+        );
+        testInput(
+          'AM/PM,',
+          new CalendarDateTime(2019, 2, 3, 20),
+          'a',
+          new CalendarDateTime(2019, 2, 3, 8),
+          false
+        );
       });
 
       it('should support entering arabic digits', function () {
-        testInput('year,', new CalendarDate(2019, 2, 3), '٢٠٢٤', new CalendarDate(2024, 2, 3), false);
+        testInput(
+          'year,',
+          new CalendarDate(2019, 2, 3),
+          '٢٠٢٤',
+          new CalendarDate(2024, 2, 3),
+          false
+        );
       });
 
       it('should support typing into the era segment', function () {
-        testInput('era,', new CalendarDate(new JapaneseCalendar(), 'reiwa', 5, 2, 3), 'h', new CalendarDate(new JapaneseCalendar(), 'heisei', 5, 2, 3), false, {locale: 'en-US-u-ca-japanese'});
-        testInput('era,', new CalendarDate(new JapaneseCalendar(), 'reiwa', 5, 2, 3), 's', new CalendarDate(new JapaneseCalendar(), 'showa', 5, 2, 3), false, {locale: 'en-US-u-ca-japanese'});
-        testInput('era,', new CalendarDate(new JapaneseCalendar(), 'showa', 5, 2, 3), 'r', new CalendarDate(new JapaneseCalendar(), 'reiwa', 5, 2, 3), false, {locale: 'en-US-u-ca-japanese'});
-        testInput('era,', new CalendarDate(new EthiopicCalendar(), 'AM', 2012, 2, 3), 'A', new CalendarDate(new EthiopicCalendar(), 'AA', 2012, 2, 3), false, {locale: 'en-US-u-ca-ethiopic'});
-        testInput('era,', new CalendarDate(new EthiopicCalendar(), 'AA', 2012, 2, 3), 'M', new CalendarDate(new EthiopicCalendar(), 'AM', 2012, 2, 3), false, {locale: 'en-US-u-ca-ethiopic'});
+        testInput(
+          'era,',
+          new CalendarDate(new JapaneseCalendar(), 'reiwa', 5, 2, 3),
+          'h',
+          new CalendarDate(new JapaneseCalendar(), 'heisei', 5, 2, 3),
+          false,
+          {locale: 'en-US-u-ca-japanese'}
+        );
+        testInput(
+          'era,',
+          new CalendarDate(new JapaneseCalendar(), 'reiwa', 5, 2, 3),
+          's',
+          new CalendarDate(new JapaneseCalendar(), 'showa', 5, 2, 3),
+          false,
+          {locale: 'en-US-u-ca-japanese'}
+        );
+        testInput(
+          'era,',
+          new CalendarDate(new JapaneseCalendar(), 'showa', 5, 2, 3),
+          'r',
+          new CalendarDate(new JapaneseCalendar(), 'reiwa', 5, 2, 3),
+          false,
+          {locale: 'en-US-u-ca-japanese'}
+        );
+        testInput(
+          'era,',
+          new CalendarDate(new EthiopicCalendar(), 'AM', 2012, 2, 3),
+          'A',
+          new CalendarDate(new EthiopicCalendar(), 'AA', 2012, 2, 3),
+          false,
+          {locale: 'en-US-u-ca-ethiopic'}
+        );
+        testInput(
+          'era,',
+          new CalendarDate(new EthiopicCalendar(), 'AA', 2012, 2, 3),
+          'M',
+          new CalendarDate(new EthiopicCalendar(), 'AM', 2012, 2, 3),
+          false,
+          {locale: 'en-US-u-ca-ethiopic'}
+        );
       });
 
       it('should allow entering invalid dates, and constrain on blur', async function () {
@@ -1651,7 +2374,11 @@ describe('DatePicker', function () {
         let onChange = jest.fn();
         let {getAllByRole} = render(
           <Provider theme={theme}>
-            <DatePicker label="Date" placeholderValue={parseZonedDateTime('2024-09-21T00:00:00[America/Los_Angeles]')} onChange={onChange} />
+            <DatePicker
+              label="Date"
+              placeholderValue={parseZonedDateTime('2024-09-21T00:00:00[America/Los_Angeles]')}
+              onChange={onChange}
+            />
           </Provider>
         );
 
@@ -1668,7 +2395,9 @@ describe('DatePicker', function () {
         await user.tab();
         await user.tab();
         expect(onChange).toHaveBeenCalledTimes(1);
-        expect(onChange).toHaveBeenCalledWith(parseZonedDateTime('2026-03-08T03:45:00[America/Los_Angeles]'));
+        expect(onChange).toHaveBeenCalledWith(
+          parseZonedDateTime('2026-03-08T03:45:00[America/Los_Angeles]')
+        );
         expectPlaceholder(group, '3/8/2026, 3:45 AM PDT');
       });
     });
@@ -1678,10 +2407,14 @@ describe('DatePicker', function () {
         let onChange = jest.fn();
 
         // Test controlled mode
-        let {getByLabelText, unmount} = render(<DatePicker label="Date" value={value} onChange={onChange} {...options} />);
+        let {getByLabelText, unmount} = render(
+          <DatePicker label="Date" value={value} onChange={onChange} {...options} />
+        );
         let segment = getByLabelText(label);
         let textContent = segment.textContent;
-        act(() => {segment.focus();});
+        act(() => {
+          segment.focus();
+        });
 
         await user.keyboard('{Backspace}');
         if (newValue != null) {
@@ -1695,10 +2428,14 @@ describe('DatePicker', function () {
 
         // Test uncontrolled mode
         onChange = jest.fn();
-        ({getByLabelText, unmount} = render(<DatePicker label="Date" defaultValue={value} onChange={onChange} {...options} />));
+        ({getByLabelText, unmount} = render(
+          <DatePicker label="Date" defaultValue={value} onChange={onChange} {...options} />
+        ));
         segment = getByLabelText(label);
         textContent = segment.textContent;
-        act(() => {segment.focus();});
+        act(() => {
+          segment.focus();
+        });
 
         await user.keyboard('{Backspace}');
         if (newValue != null) {
@@ -1733,18 +2470,41 @@ describe('DatePicker', function () {
       it('should support backspace in the hour segment in 12 hour time', async function () {
         // AM
         await testBackspace('hour,', new CalendarDateTime(2019, 2, 3, 8), null);
-        await testBackspace('hour,', new CalendarDateTime(2019, 2, 3, 11), new CalendarDateTime(2019, 2, 3, 1));
+        await testBackspace(
+          'hour,',
+          new CalendarDateTime(2019, 2, 3, 11),
+          new CalendarDateTime(2019, 2, 3, 1)
+        );
 
         // PM
         await testBackspace('hour,', new CalendarDateTime(2019, 2, 3, 16), null);
-        await testBackspace('hour,', new CalendarDateTime(2019, 2, 3, 23), new CalendarDateTime(2019, 2, 3, 13));
+        await testBackspace(
+          'hour,',
+          new CalendarDateTime(2019, 2, 3, 23),
+          new CalendarDateTime(2019, 2, 3, 13)
+        );
       });
 
       it('should support backspace in the hour segment in 24 hour time', async function () {
         await testBackspace('hour,', new CalendarDateTime(2019, 2, 3, 8), null, {hourCycle: 24});
-        await testBackspace('hour,', new CalendarDateTime(2019, 2, 3, 11), new CalendarDateTime(2019, 2, 3, 1), {hourCycle: 24});
-        await testBackspace('hour,', new CalendarDateTime(2019, 2, 3, 16), new CalendarDateTime(2019, 2, 3, 1), {hourCycle: 24});
-        await testBackspace('hour,', new CalendarDateTime(2019, 2, 3, 23), new CalendarDateTime(2019, 2, 3, 2), {hourCycle: 24});
+        await testBackspace(
+          'hour,',
+          new CalendarDateTime(2019, 2, 3, 11),
+          new CalendarDateTime(2019, 2, 3, 1),
+          {hourCycle: 24}
+        );
+        await testBackspace(
+          'hour,',
+          new CalendarDateTime(2019, 2, 3, 16),
+          new CalendarDateTime(2019, 2, 3, 1),
+          {hourCycle: 24}
+        );
+        await testBackspace(
+          'hour,',
+          new CalendarDateTime(2019, 2, 3, 23),
+          new CalendarDateTime(2019, 2, 3, 2),
+          {hourCycle: 24}
+        );
       });
 
       it('should support backspace in the am/pm field', async function () {
@@ -1754,26 +2514,52 @@ describe('DatePicker', function () {
 
       it('should support backspace in the minute segment', async function () {
         await testBackspace('minute,', new CalendarDateTime(2019, 2, 3, 5, 8), null);
-        await testBackspace('minute,', new CalendarDateTime(2019, 2, 3, 5, 25), new CalendarDateTime(2019, 2, 3, 5, 2));
-        await testBackspace('minute,', new CalendarDateTime(2019, 2, 3, 5, 59), new CalendarDateTime(2019, 2, 3, 5, 5));
+        await testBackspace(
+          'minute,',
+          new CalendarDateTime(2019, 2, 3, 5, 25),
+          new CalendarDateTime(2019, 2, 3, 5, 2)
+        );
+        await testBackspace(
+          'minute,',
+          new CalendarDateTime(2019, 2, 3, 5, 59),
+          new CalendarDateTime(2019, 2, 3, 5, 5)
+        );
       });
 
       it('should support second in the minute segment', async function () {
-        await testBackspace('second,', new CalendarDateTime(2019, 2, 3, 5, 5, 8), null, {granularity: 'second'});
-        await testBackspace('second,', new CalendarDateTime(2019, 2, 3, 5, 5, 25), new CalendarDateTime(2019, 2, 3, 5, 5, 2), {granularity: 'second'});
-        await testBackspace('second,', new CalendarDateTime(2019, 2, 3, 5, 5, 59), new CalendarDateTime(2019, 2, 3, 5, 5, 5), {granularity: 'second'});
+        await testBackspace('second,', new CalendarDateTime(2019, 2, 3, 5, 5, 8), null, {
+          granularity: 'second'
+        });
+        await testBackspace(
+          'second,',
+          new CalendarDateTime(2019, 2, 3, 5, 5, 25),
+          new CalendarDateTime(2019, 2, 3, 5, 5, 2),
+          {granularity: 'second'}
+        );
+        await testBackspace(
+          'second,',
+          new CalendarDateTime(2019, 2, 3, 5, 5, 59),
+          new CalendarDateTime(2019, 2, 3, 5, 5, 5),
+          {granularity: 'second'}
+        );
       });
 
       it('should support backspace with arabic digits', async function () {
         let onChange = jest.fn();
         let {getByLabelText} = render(
           <Provider theme={theme} locale="ar-EG">
-            <DatePicker label="Date" defaultValue={new CalendarDate(2019, 2, 3)} onChange={onChange} />
+            <DatePicker
+              label="Date"
+              defaultValue={new CalendarDate(2019, 2, 3)}
+              onChange={onChange}
+            />
           </Provider>
         );
         let segment = getByLabelText('السنة,');
         expect(segment).toHaveTextContent('٢٠١٩');
-        act(() => {segment.focus();});
+        act(() => {
+          segment.focus();
+        });
 
         await user.keyboard('{Backspace}');
         expect(onChange).toHaveBeenCalledTimes(1);
@@ -1785,7 +2571,11 @@ describe('DatePicker', function () {
         let onChange = jest.fn();
         let {getAllByRole} = render(
           <Provider theme={theme}>
-            <DatePicker label="Date" defaultValue={new CalendarDate(2019, 2, 3)} onChange={onChange} />
+            <DatePicker
+              label="Date"
+              defaultValue={new CalendarDate(2019, 2, 3)}
+              onChange={onChange}
+            />
           </Provider>
         );
 
@@ -1809,12 +2599,24 @@ describe('DatePicker', function () {
 
   describe('validation', function () {
     it('should display an error icon when date is less than the minimum (controlled)', function () {
-      let {getByTestId} = render(<DatePicker label="Date" value={new CalendarDate(1980, 1, 1)} minValue={new CalendarDate(1985, 1, 1)} />);
+      let {getByTestId} = render(
+        <DatePicker
+          label="Date"
+          value={new CalendarDate(1980, 1, 1)}
+          minValue={new CalendarDate(1985, 1, 1)}
+        />
+      );
       expect(getByTestId('invalid-icon')).toBeVisible();
     });
 
     it('should display an error icon when date is less than the minimum (uncontrolled)', async function () {
-      let {getByTestId, getByLabelText, queryByTestId} = render(<DatePicker label="Date" defaultValue={new CalendarDate(1985, 1, 1)} minValue={new CalendarDate(1985, 1, 1)} />);
+      let {getByTestId, getByLabelText, queryByTestId} = render(
+        <DatePicker
+          label="Date"
+          defaultValue={new CalendarDate(1985, 1, 1)}
+          minValue={new CalendarDate(1985, 1, 1)}
+        />
+      );
       expect(queryByTestId('invalid-icon')).toBeNull();
 
       let year = getByLabelText('year,');
@@ -1828,12 +2630,24 @@ describe('DatePicker', function () {
     });
 
     it('should display an error icon when date is greater than the maximum (controlled)', function () {
-      let {getByTestId} = render(<DatePicker label="Date" value={new CalendarDate(1990, 1, 1)} maxValue={new CalendarDate(1985, 1, 1)} />);
+      let {getByTestId} = render(
+        <DatePicker
+          label="Date"
+          value={new CalendarDate(1990, 1, 1)}
+          maxValue={new CalendarDate(1985, 1, 1)}
+        />
+      );
       expect(getByTestId('invalid-icon')).toBeVisible();
     });
 
     it('should display an error icon when date is greater than the maximum (uncontrolled)', async function () {
-      let {getByTestId, getByLabelText, queryByTestId} = render(<DatePicker label="Date" defaultValue={new CalendarDate(1985, 1, 1)} maxValue={new CalendarDate(1985, 1, 1)} />);
+      let {getByTestId, getByLabelText, queryByTestId} = render(
+        <DatePicker
+          label="Date"
+          defaultValue={new CalendarDate(1985, 1, 1)}
+          maxValue={new CalendarDate(1985, 1, 1)}
+        />
+      );
       expect(queryByTestId('invalid-icon')).toBeNull();
 
       let year = getByLabelText('year,');
@@ -1866,7 +2680,13 @@ describe('DatePicker', function () {
 
     it('should use the placeholderValue prop if provided', function () {
       let onChange = jest.fn();
-      let {getAllByRole} = render(<DatePicker label="Date" onChange={onChange} placeholderValue={new CalendarDate(1980, 1, 1)} />);
+      let {getAllByRole} = render(
+        <DatePicker
+          label="Date"
+          onChange={onChange}
+          placeholderValue={new CalendarDate(1980, 1, 1)}
+        />
+      );
 
       let combobox = getAllByRole('group')[0];
       expectPlaceholder(combobox, 'mm/dd/yyyy');
@@ -1881,7 +2701,9 @@ describe('DatePicker', function () {
       expectPlaceholder(combobox, 'mm/dd/yyyy');
 
       let segments = getAllByRole('spinbutton');
-      act(() => {segments[0].focus();});
+      act(() => {
+        segments[0].focus();
+      });
 
       await user.keyboard('{ArrowUp}');
       await user.keyboard('{ArrowRight}');
@@ -1909,14 +2731,18 @@ describe('DatePicker', function () {
 
     it('should use arrow keys to modify placeholder (controlled)', async function () {
       let onChange = jest.fn();
-      let {getAllByRole, rerender} = render(<DatePicker label="Date" onChange={onChange} value={null} />);
+      let {getAllByRole, rerender} = render(
+        <DatePicker label="Date" onChange={onChange} value={null} />
+      );
 
       let combobox = getAllByRole('group')[0];
       let formatter = new Intl.DateTimeFormat('en-US');
       expectPlaceholder(combobox, 'mm/dd/yyyy');
 
       let segments = getAllByRole('spinbutton');
-      act(() => {segments[0].focus();});
+      act(() => {
+        segments[0].focus();
+      });
 
       await user.keyboard('{ArrowUp}');
       await user.keyboard('{ArrowRight}');
@@ -1954,7 +2780,9 @@ describe('DatePicker', function () {
       expectPlaceholder(combobox, 'mm/dd/yyyy');
 
       let segments = getAllByRole('spinbutton');
-      act(() => {segments[0].focus();});
+      act(() => {
+        segments[0].focus();
+      });
 
       beforeInput(document.activeElement, '4');
       expect(segments[1]).toHaveFocus();
@@ -1989,14 +2817,18 @@ describe('DatePicker', function () {
 
     it('should enter a date to modify placeholder (controlled)', function () {
       let onChange = jest.fn();
-      let {getAllByRole, rerender} = render(<DatePicker label="Date" onChange={onChange} value={null} />);
+      let {getAllByRole, rerender} = render(
+        <DatePicker label="Date" onChange={onChange} value={null} />
+      );
 
       let combobox = getAllByRole('group')[0];
       let formatter = new Intl.DateTimeFormat('en-US');
       expectPlaceholder(combobox, 'mm/dd/yyyy');
 
       let segments = getAllByRole('spinbutton');
-      act(() => {segments[0].focus();});
+      act(() => {
+        segments[0].focus();
+      });
 
       beforeInput(document.activeElement, '4');
       expect(segments[1]).toHaveFocus();
@@ -2028,52 +2860,78 @@ describe('DatePicker', function () {
 
     it('should confirm the placeholder on blur and only AM/PM is un-entered', function () {
       let onChange = jest.fn();
-      let {getAllByRole} = render(<DatePicker label="Date" granularity="minute" onChange={onChange} />);
+      let {getAllByRole} = render(
+        <DatePicker label="Date" granularity="minute" onChange={onChange} />
+      );
 
       let combobox = getAllByRole('group')[0];
       expectPlaceholder(combobox, 'mm/dd/yyyy, ––:–– AM');
 
       let segments = getAllByRole('spinbutton');
-      act(() => {segments[0].focus();});
+      act(() => {
+        segments[0].focus();
+      });
 
       // Should not emit onChange if no segments are set
-      act(() => {segments[0].blur();});
+      act(() => {
+        segments[0].blur();
+      });
       expect(onChange).not.toHaveBeenCalled();
 
-      act(() => {segments[0].focus();});
+      act(() => {
+        segments[0].focus();
+      });
       beforeInput(document.activeElement, '4');
       expect(onChange).not.toHaveBeenCalled();
 
       expect(segments[1]).toHaveFocus();
-      act(() => {segments[1].blur();});
+      act(() => {
+        segments[1].blur();
+      });
       expect(onChange).not.toHaveBeenCalled();
 
-      act(() => {segments[1].focus();});
+      act(() => {
+        segments[1].focus();
+      });
       beforeInput(document.activeElement, '5');
 
       expect(segments[2]).toHaveFocus();
-      act(() => {segments[2].blur();});
+      act(() => {
+        segments[2].blur();
+      });
       expect(onChange).not.toHaveBeenCalled();
 
-      act(() => {segments[2].focus();});
+      act(() => {
+        segments[2].focus();
+      });
       beforeInput(document.activeElement, '2022');
 
       expect(segments[3]).toHaveFocus();
-      act(() => {segments[3].blur();});
+      act(() => {
+        segments[3].blur();
+      });
       expect(onChange).not.toHaveBeenCalled();
 
-      act(() => {segments[3].focus();});
+      act(() => {
+        segments[3].focus();
+      });
       beforeInput(document.activeElement, '5');
 
       expect(segments[4]).toHaveFocus();
-      act(() => {segments[4].blur();});
+      act(() => {
+        segments[4].blur();
+      });
       expect(onChange).not.toHaveBeenCalled();
 
-      act(() => {segments[4].focus();});
+      act(() => {
+        segments[4].focus();
+      });
       beforeInput(document.activeElement, '45');
 
       expect(segments[5]).toHaveFocus();
-      act(() => {segments[5].blur();});
+      act(() => {
+        segments[5].blur();
+      });
       expect(onChange).toHaveBeenCalledWith(new CalendarDateTime(2022, 4, 5, 5, 45));
     });
   });
@@ -2083,9 +2941,8 @@ describe('DatePicker', function () {
       let {getAllByRole} = render(
         <DatePicker
           label="Date"
-          defaultValue={parseZonedDateTime(
-            '2024-09-21T00:00:00[America/Los_Angeles]'
-          )} />
+          defaultValue={parseZonedDateTime('2024-09-21T00:00:00[America/Los_Angeles]')}
+        />
       );
       let combobox = getAllByRole('group')[0];
 
@@ -2113,15 +2970,12 @@ describe('DatePicker', function () {
       await user.tab();
       await user.keyboard('{Backspace}');
 
-      let timeZoneName =
-        new DateFormatter('en-US',
-          {
-            timeZone: 'America/Los_Angeles',
-            timeZoneName: 'short'
-          })
-          .formatToParts(new Date())
-          .find(p => p.type === 'timeZoneName')
-          .value;
+      let timeZoneName = new DateFormatter('en-US', {
+        timeZone: 'America/Los_Angeles',
+        timeZoneName: 'short'
+      })
+        .formatToParts(new Date())
+        .find(p => p.type === 'timeZoneName').value;
 
       expectPlaceholder(combobox, `mm/dd/yyyy, ––:–– AM ${timeZoneName}`);
     });
@@ -2130,7 +2984,8 @@ describe('DatePicker', function () {
       let {getAllByRole, getByRole} = render(
         <DatePicker
           label="Date"
-          defaultValue={parseZonedDateTime('2024-09-21T00:00:00[Greenwich]')} />
+          defaultValue={parseZonedDateTime('2024-09-21T00:00:00[Greenwich]')}
+        />
       );
       let combobox = getAllByRole('group')[0];
       let formatter = new Intl.DateTimeFormat('en-US', {
@@ -2172,12 +3027,10 @@ describe('DatePicker', function () {
       expect(dialog).toBeVisible();
 
       let cells = getAllByRole('gridcell');
-      let selected = cells.find(
-        (cell) => cell.getAttribute('aria-selected') === 'true'
-      );
+      let selected = cells.find(cell => cell.getAttribute('aria-selected') === 'true');
       expect(selected).toBeUndefined();
 
-      let todayCell = cells.find((cell) =>
+      let todayCell = cells.find(cell =>
         cell.firstChild.getAttribute('aria-label')?.startsWith('Today')
       );
       await user.click(todayCell.firstChild);
@@ -2188,10 +3041,7 @@ describe('DatePicker', function () {
       act(() => jest.runAllTimers());
       expect(dialog).not.toBeInTheDocument();
       let value = toCalendarDateTime(today('Greenwich'));
-      expectPlaceholder(
-        combobox,
-        `${formatter.format(value.toDate())} GMT`
-      );
+      expectPlaceholder(combobox, `${formatter.format(value.toDate())} GMT`);
     });
   });
 
@@ -2211,7 +3061,12 @@ describe('DatePicker', function () {
       let group = getByRole('group');
       let input = document.querySelector('input[name=date]');
 
-      let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+      let getDescription = () =>
+        group
+          .getAttribute('aria-describedby')
+          .split(' ')
+          .map(d => document.getElementById(d).textContent)
+          .join(' ');
       expect(getDescription()).toBe('Selected Date: February 3, 2020');
 
       expect(input).toHaveValue('2020-02-03');
@@ -2230,7 +3085,10 @@ describe('DatePicker', function () {
     if (parseInt(React.version, 10) >= 19) {
       it('resets to defaultValue when submitting form action', async () => {
         function Test() {
-          const [value, formAction] = React.useActionState(() => new CalendarDate(2025, 2, 3), new CalendarDate(2020, 2, 3));
+          const [value, formAction] = React.useActionState(
+            () => new CalendarDate(2025, 2, 3),
+            new CalendarDate(2020, 2, 3)
+          );
 
           return (
             <form action={formAction}>
@@ -2267,10 +3125,17 @@ describe('DatePicker', function () {
           expect(input.validity.valid).toBe(false);
           expect(group).not.toHaveAttribute('aria-describedby');
 
-          act(() => {getByTestId('form').checkValidity();});
+          act(() => {
+            getByTestId('form').checkValidity();
+          });
 
           expect(group).toHaveAttribute('aria-describedby');
-          let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+          let getDescription = () =>
+            group
+              .getAttribute('aria-describedby')
+              .split(' ')
+              .map(d => document.getElementById(d).textContent)
+              .join(' ');
           expect(getDescription()).toContain('Constraints not satisfied');
           expect(document.activeElement).toBe(within(group).getAllByRole('spinbutton')[0]);
 
@@ -2288,18 +3153,32 @@ describe('DatePicker', function () {
           let {getByRole, getByTestId} = render(
             <Provider theme={theme}>
               <Form data-testid="form">
-                <DatePicker label="Date" name="date" minValue={new CalendarDate(2020, 2, 3)} maxValue={new CalendarDate(2024, 2, 3)} defaultValue={new CalendarDate(2019, 2, 3)} validationBehavior="native" />
+                <DatePicker
+                  label="Date"
+                  name="date"
+                  minValue={new CalendarDate(2020, 2, 3)}
+                  maxValue={new CalendarDate(2024, 2, 3)}
+                  defaultValue={new CalendarDate(2019, 2, 3)}
+                  validationBehavior="native"
+                />
               </Form>
             </Provider>
           );
 
           let group = getByRole('group');
           let input = document.querySelector('input[name=date]');
-          let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+          let getDescription = () =>
+            group
+              .getAttribute('aria-describedby')
+              .split(' ')
+              .map(d => document.getElementById(d).textContent)
+              .join(' ');
           expect(input.validity.valid).toBe(false);
           expect(getDescription()).not.toContain('Value must be 2/3/2020 or later.');
 
-          act(() => {getByTestId('form').checkValidity();});
+          act(() => {
+            getByTestId('form').checkValidity();
+          });
 
           expect(group).toHaveAttribute('aria-describedby');
           expect(getDescription()).toContain('Value must be 2/3/2020 or later.');
@@ -2320,7 +3199,9 @@ describe('DatePicker', function () {
           expect(input.validity.valid).toBe(false);
           await user.tab();
 
-          act(() => {getByTestId('form').checkValidity();});
+          act(() => {
+            getByTestId('form').checkValidity();
+          });
           expect(getDescription()).toContain('Value must be 2/3/2024 or earlier.');
           expect(document.activeElement).toBe(within(group).getAllByRole('spinbutton')[0]);
 
@@ -2336,18 +3217,31 @@ describe('DatePicker', function () {
           let {getByRole, getByTestId} = render(
             <Provider theme={theme}>
               <Form data-testid="form">
-                <DatePicker name="date" label="Value" defaultValue={new CalendarDate(2020, 2, 3)} validationBehavior="native" validate={v => v.year < 2022 ? 'Invalid value' : null} />
+                <DatePicker
+                  name="date"
+                  label="Value"
+                  defaultValue={new CalendarDate(2020, 2, 3)}
+                  validationBehavior="native"
+                  validate={v => (v.year < 2022 ? 'Invalid value' : null)}
+                />
               </Form>
             </Provider>
           );
 
           let group = getByRole('group');
           let input = document.querySelector('input[name=date]');
-          let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+          let getDescription = () =>
+            group
+              .getAttribute('aria-describedby')
+              .split(' ')
+              .map(d => document.getElementById(d).textContent)
+              .join(' ');
           expect(getDescription()).not.toContain('Invalid value');
           expect(input.validity.valid).toBe(false);
 
-          act(() => {getByTestId('form').checkValidity();});
+          act(() => {
+            getByTestId('form').checkValidity();
+          });
 
           expect(group).toHaveAttribute('aria-describedby');
           expect(getDescription()).toContain('Invalid value');
@@ -2378,7 +3272,9 @@ describe('DatePicker', function () {
               <Provider theme={theme}>
                 <Form onSubmit={onSubmit} validationErrors={serverErrors}>
                   <DatePicker name="date" label="Value" validationBehavior="native" />
-                  <Button type="submit" data-testid="submit">Submit</Button>
+                  <Button type="submit" data-testid="submit">
+                    Submit
+                  </Button>
                 </Form>
               </Provider>
             );
@@ -2392,7 +3288,12 @@ describe('DatePicker', function () {
 
           await user.click(getByTestId('submit'));
 
-          let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+          let getDescription = () =>
+            group
+              .getAttribute('aria-describedby')
+              .split(' ')
+              .map(d => document.getElementById(d).textContent)
+              .join(' ');
           expect(getDescription()).toContain('Invalid value');
           expect(input.validity.valid).toBe(false);
 
@@ -2409,7 +3310,15 @@ describe('DatePicker', function () {
           let {getByTestId, getByRole} = render(
             <Provider theme={theme}>
               <Form data-testid="form">
-                <DatePicker name="date" label="Value" isRequired validationBehavior="native" errorMessage={e => e.validationDetails.valueMissing ? 'Please enter a value' : null} />
+                <DatePicker
+                  name="date"
+                  label="Value"
+                  isRequired
+                  validationBehavior="native"
+                  errorMessage={e =>
+                    e.validationDetails.valueMissing ? 'Please enter a value' : null
+                  }
+                />
               </Form>
             </Provider>
           );
@@ -2417,9 +3326,13 @@ describe('DatePicker', function () {
           let group = getByRole('group');
           expect(group).not.toHaveAttribute('aria-describedby');
 
-          act(() => {getByTestId('form').checkValidity();});
+          act(() => {
+            getByTestId('form').checkValidity();
+          });
           expect(group).toHaveAttribute('aria-describedby');
-          expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent('Please enter a value');
+          expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent(
+            'Please enter a value'
+          );
         });
 
         it('clears validation on form reset', async () => {
@@ -2427,7 +3340,9 @@ describe('DatePicker', function () {
             <Provider theme={theme}>
               <Form data-testid="form">
                 <DatePicker label="Date" name="date" isRequired validationBehavior="native" />
-                <Button type="reset" data-testid="reset">Reset</Button>
+                <Button type="reset" data-testid="reset">
+                  Reset
+                </Button>
               </Form>
             </Provider>
           );
@@ -2438,10 +3353,17 @@ describe('DatePicker', function () {
           expect(input.validity.valid).toBe(false);
           expect(group).not.toHaveAttribute('aria-describedby');
 
-          act(() => {getByTestId('form').checkValidity();});
+          act(() => {
+            getByTestId('form').checkValidity();
+          });
 
           expect(group).toHaveAttribute('aria-describedby');
-          let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+          let getDescription = () =>
+            group
+              .getAttribute('aria-describedby')
+              .split(' ')
+              .map(d => document.getElementById(d).textContent)
+              .join(' ');
           expect(getDescription()).toContain('Constraints not satisfied');
 
           await user.click(getByTestId('reset'));
@@ -2464,10 +3386,17 @@ describe('DatePicker', function () {
           expect(input.validity.valid).toBe(false);
           expect(group).not.toHaveAttribute('aria-describedby');
 
-          act(() => {getByTestId('form').checkValidity();});
+          act(() => {
+            getByTestId('form').checkValidity();
+          });
 
           expect(group).toHaveAttribute('aria-describedby');
-          let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+          let getDescription = () =>
+            group
+              .getAttribute('aria-describedby')
+              .split(' ')
+              .map(d => document.getElementById(d).textContent)
+              .join(' ');
           expect(getDescription()).toContain('Constraints not satisfied');
 
           await user.click(getByRole('button'));
@@ -2483,13 +3412,24 @@ describe('DatePicker', function () {
           let {getByRole} = render(
             <Provider theme={theme}>
               <Form data-testid="form">
-                <DatePicker label="Date" name="date" minValue={new CalendarDate(2020, 2, 3)} maxValue={new CalendarDate(2024, 2, 3)} defaultValue={new CalendarDate(2019, 2, 3)} />
+                <DatePicker
+                  label="Date"
+                  name="date"
+                  minValue={new CalendarDate(2020, 2, 3)}
+                  maxValue={new CalendarDate(2024, 2, 3)}
+                  defaultValue={new CalendarDate(2019, 2, 3)}
+                />
               </Form>
             </Provider>
           );
 
           let group = getByRole('group');
-          let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+          let getDescription = () =>
+            group
+              .getAttribute('aria-describedby')
+              .split(' ')
+              .map(d => document.getElementById(d).textContent)
+              .join(' ');
           expect(getDescription()).toContain('Value must be 2/3/2020 or later.');
 
           await user.keyboard('[Tab][Tab][Tab][ArrowUp]');
@@ -2506,14 +3446,23 @@ describe('DatePicker', function () {
           let {getByRole} = render(
             <Provider theme={theme}>
               <Form data-testid="form">
-                <DatePicker label="Value" defaultValue={new CalendarDate(2020, 2, 3)} validate={v => v.year < 2022 ? 'Invalid value' : null} />
+                <DatePicker
+                  label="Value"
+                  defaultValue={new CalendarDate(2020, 2, 3)}
+                  validate={v => (v.year < 2022 ? 'Invalid value' : null)}
+                />
               </Form>
             </Provider>
           );
 
           let group = getByRole('group');
           expect(group).toHaveAttribute('aria-describedby');
-          let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+          let getDescription = () =>
+            group
+              .getAttribute('aria-describedby')
+              .split(' ')
+              .map(d => document.getElementById(d).textContent)
+              .join(' ');
           expect(getDescription()).toContain('Invalid value');
 
           await user.keyboard('[Tab][ArrowRight][ArrowRight]2024');
@@ -2524,14 +3473,23 @@ describe('DatePicker', function () {
           let {getByRole} = render(
             <Provider theme={theme}>
               <Form validationErrors={{value: 'Invalid value'}}>
-                <DatePicker label="Value" name="value" defaultValue={new CalendarDate(2020, 2, 3)} />
+                <DatePicker
+                  label="Value"
+                  name="value"
+                  defaultValue={new CalendarDate(2020, 2, 3)}
+                />
               </Form>
             </Provider>
           );
 
           let group = getByRole('group');
           expect(group).toHaveAttribute('aria-describedby');
-          let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+          let getDescription = () =>
+            group
+              .getAttribute('aria-describedby')
+              .split(' ')
+              .map(d => document.getElementById(d).textContent)
+              .join(' ');
           expect(getDescription()).toContain('Invalid value');
 
           await user.keyboard('[Tab][ArrowRight][ArrowRight]2024[Tab]');

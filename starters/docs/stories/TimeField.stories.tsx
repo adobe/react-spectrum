@@ -13,7 +13,7 @@ export default meta;
 
 type Story = StoryFn<typeof TimeField>;
 
-export const Example: Story = (args) => <TimeField {...args} />;
+export const Example: Story = args => <TimeField {...args} />;
 
 Example.args = {
   label: 'Event time'

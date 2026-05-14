@@ -1,5 +1,5 @@
-@import "./theme.css";
-@import "./TextField.css";
+@import './theme.css';
+@import './TextField.css';
 
 .react-aria-NumberField {
   color: var(--text-color);
@@ -39,11 +39,11 @@
     justify-content: center;
     margin-inline-start: -1px;
 
-    &[slot=decrement] {
+    &[slot='decrement'] {
       border-radius: 0;
     }
 
-    &[slot=increment] {
+    &[slot='increment'] {
       border-radius: var(--radius);
       border-start-start-radius: 0;
       border-end-start-radius: 0;
@@ -63,7 +63,7 @@
     }
   }
 
-  [slot=description] {
+  [slot='description'] {
     font-size: 12px;
   }
 }

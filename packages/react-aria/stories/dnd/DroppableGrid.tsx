@@ -36,9 +36,9 @@ import {useListState} from 'react-stately/useListState';
 import {useVisuallyHidden} from '../../src/visually-hidden/VisuallyHidden';
 
 interface ListItem {
-  id: string,
-  type: string,
-  text: string
+  id: string;
+  type: string;
+  text: string;
 }
 
 export function DroppableGridExample(props: any): JSX.Element {
@@ -128,23 +128,29 @@ const DroppableGrid = React.forwardRef(function (props: any, ref) {
     focusMode: 'cell',
     selectedKeys: props.selectedKeys,
     onSelectionChange: props.onSelectionChange,
-    collection: React.useMemo(() => new GridCollection<object>({
-      columnCount: 1,
-      items: [...state.collection].map(item => ({
-        ...item,
-        childNodes: [{
-          key: `cell-${item.key}`,
-          type: 'cell',
-          index: 0,
-          value: null,
-          level: 0,
-          rendered: null,
-          textValue: item.textValue,
-          hasChildNodes: false,
-          childNodes: []
-        }]
-      }))
-    }), [state.collection])
+    collection: React.useMemo(
+      () =>
+        new GridCollection<object>({
+          columnCount: 1,
+          items: [...state.collection].map(item => ({
+            ...item,
+            childNodes: [
+              {
+                key: `cell-${item.key}`,
+                type: 'cell',
+                index: 0,
+                value: null,
+                level: 0,
+                rendered: null,
+                textValue: item.textValue,
+                hasChildNodes: false,
+                childNodes: []
+              }
+            ]
+          }))
+        }),
+      [state.collection]
+    )
   });
 
   React.useImperativeHandle(ref, () => ({
@@ -175,24 +181,36 @@ const DroppableGrid = React.forwardRef(function (props: any, ref) {
     onDrop: props.onDrop
   });
 
-  let {collectionProps} = useDroppableCollection({
-    keyboardDelegate,
-    dropTargetDelegate: new ListDropTargetDelegate(gridState.collection, domRef),
-    onDropActivate: props.onDropActivate,
-    onDrop: props.onDrop
-  }, dropState, domRef);
+  let {collectionProps} = useDroppableCollection(
+    {
+      keyboardDelegate,
+      dropTargetDelegate: new ListDropTargetDelegate(gridState.collection, domRef),
+      onDropActivate: props.onDropActivate,
+      onDrop: props.onDrop
+    },
+    dropState,
+    domRef
+  );
 
-  let {gridProps} = useGrid({
-    ...props,
-    'aria-label': 'List',
-    focusMode: 'cell'
-  }, gridState, domRef);
+  let {gridProps} = useGrid(
+    {
+      ...props,
+      'aria-label': 'List',
+      focusMode: 'cell'
+    },
+    gridState,
+    domRef
+  );
 
   let isDropTarget = dropState.isDropTarget({type: 'root'});
   let dropRef = React.useRef<HTMLDivElement | null>(null);
-  let {dropIndicatorProps} = useDropIndicator({
-    target: {type: 'root'}
-  }, dropState, dropRef);
+  let {dropIndicatorProps} = useDropIndicator(
+    {
+      target: {type: 'root'}
+    },
+    dropState,
+    dropRef
+  );
   let {visuallyHiddenProps} = useVisuallyHidden();
 
   return (
@@ -203,35 +221,44 @@ const DroppableGrid = React.forwardRef(function (props: any, ref) {
       style={props.style}
       data-droptarget={isDropTarget}
       role="grid">
-      {!dropIndicatorProps['aria-hidden'] &&
+      {!dropIndicatorProps['aria-hidden'] && (
         <div role="row">
-          <div
-            role="gridcell"
-            aria-selected="false">
-            <div {...visuallyHiddenProps} role="button" tabIndex={-1} {...dropIndicatorProps} ref={dropRef} />
+          <div role="gridcell" aria-selected="false">
+            <div
+              {...visuallyHiddenProps}
+              role="button"
+              tabIndex={-1}
+              {...dropIndicatorProps}
+              ref={dropRef}
+            />
           </div>
         </div>
-      }
+      )}
       {[...gridState.collection].map(item => (
         <React.Fragment key={item.key}>
           <InsertionIndicator
             key={item.key + '-before'}
             collectionRef={domRef}
             target={{type: 'item', key: item.key, dropPosition: 'before'}}
-            dropState={dropState} />
+            dropState={dropState}
+          />
           <CollectionItem
             key={item.key}
             item={item}
             state={gridState}
             dropState={dropState}
-            onPaste={items => props.onDrop({target: {type: 'item', key: item.key, dropPosition: 'before'}, items})} />
-          {state.collection.getKeyAfter(item.key) == null &&
+            onPaste={items =>
+              props.onDrop({target: {type: 'item', key: item.key, dropPosition: 'before'}, items})
+            }
+          />
+          {state.collection.getKeyAfter(item.key) == null && (
             <InsertionIndicator
               key={item.key + '-after'}
               target={{type: 'item', key: item.key, dropPosition: 'after'}}
               collectionRef={domRef}
-              dropState={dropState} />
-          }
+              dropState={dropState}
+            />
+          )}
         </React.Fragment>
       ))}
     </div>
@@ -244,15 +271,23 @@ function CollectionItem({item, state, dropState, onPaste}) {
   let cellNode = [...item.childNodes][0];
 
   let {rowProps} = useGridRow({node: item}, state, rowRef);
-  let {gridCellProps} = useGridCell({
-    node: cellNode,
-    focusMode: 'cell'
-  }, state, cellRef);
+  let {gridCellProps} = useGridCell(
+    {
+      node: cellNode,
+      focusMode: 'cell'
+    },
+    state,
+    cellRef
+  );
 
   let dropIndicatorRef = React.useRef<HTMLDivElement | null>(null);
-  let {dropIndicatorProps} = useDropIndicator({
-    target: {type: 'item', key: item.key, dropPosition: 'on'}
-  }, dropState, dropIndicatorRef);
+  let {dropIndicatorProps} = useDropIndicator(
+    {
+      target: {type: 'item', key: item.key, dropPosition: 'on'}
+    },
+    dropState,
+    dropIndicatorRef
+  );
   let {visuallyHiddenProps} = useVisuallyHidden();
 
   let {clipboardProps} = useClipboard({
@@ -266,13 +301,22 @@ function CollectionItem({item, state, dropState, onPaste}) {
           {...mergeProps(gridCellProps, clipboardProps)}
           ref={cellRef}
           className={classNames(dndStyles, 'droppable', {
-            'is-drop-target': dropState.isDropTarget({type: 'item', key: item.key, dropPosition: 'on'}),
+            'is-drop-target': dropState.isDropTarget({
+              type: 'item',
+              key: item.key,
+              dropPosition: 'on'
+            }),
             'is-selected': state.selectionManager.isSelected(item.key)
           })}>
           {item.rendered}
-          {!dropIndicatorProps['aria-hidden'] &&
-            <div {...visuallyHiddenProps} role="button" {...dropIndicatorProps} ref={dropIndicatorRef} />
-          }
+          {!dropIndicatorProps['aria-hidden'] && (
+            <div
+              {...visuallyHiddenProps}
+              role="button"
+              {...dropIndicatorProps}
+              ref={dropIndicatorRef}
+            />
+          )}
         </div>
       </FocusRing>
     </div>
@@ -296,10 +340,15 @@ function InsertionIndicator(props) {
       <div
         role="gridcell"
         aria-selected="false"
-        className={props.dropState.isDropTarget(props.target)
-        ? classNames(dropIndicatorStyles, 'spectrum-DropIndicator', 'spectrum-DropIndicator--horizontal')
-        : undefined
-      }
+        className={
+          props.dropState.isDropTarget(props.target)
+            ? classNames(
+                dropIndicatorStyles,
+                'spectrum-DropIndicator',
+                'spectrum-DropIndicator--horizontal'
+              )
+            : undefined
+        }
         style={{
           width: '100%',
           marginLeft: 0,

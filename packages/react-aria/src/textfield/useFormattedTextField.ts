@@ -18,18 +18,23 @@ import {RefObject} from '@react-types/shared';
 import {useEffectEvent} from '../utils/useEffectEvent';
 
 interface FormattedTextFieldState {
-  validate: (val: string) => boolean,
-  setInputValue: (val: string) => void
+  validate: (val: string) => boolean;
+  setInputValue: (val: string) => void;
 }
-
 
 function supportsNativeBeforeInputEvent() {
-  return typeof window !== 'undefined' &&
+  return (
+    typeof window !== 'undefined' &&
     window.InputEvent &&
-    typeof InputEvent.prototype.getTargetRanges === 'function';
+    typeof InputEvent.prototype.getTargetRanges === 'function'
+  );
 }
 
-export function useFormattedTextField(props: AriaTextFieldProps, state: FormattedTextFieldState, inputRef: RefObject<HTMLInputElement | null>): TextFieldAria {
+export function useFormattedTextField(
+  props: AriaTextFieldProps,
+  state: FormattedTextFieldState,
+  inputRef: RefObject<HTMLInputElement | null>
+): TextFieldAria {
   // All browsers implement the 'beforeinput' event natively except Firefox
   // (currently behind a flag as of Firefox 84). React's polyfill does not
   // run in all cases that the native event fires, e.g. when deleting text.
@@ -57,21 +62,26 @@ export function useFormattedTextField(props: AriaTextFieldProps, state: Formatte
       case 'deleteContent':
       case 'deleteByCut':
       case 'deleteByDrag':
-        nextValue = input.value.slice(0, input.selectionStart!) + input.value.slice(input.selectionEnd!);
+        nextValue =
+          input.value.slice(0, input.selectionStart!) + input.value.slice(input.selectionEnd!);
         break;
       case 'deleteContentForward':
         // This is potentially incorrect, since the browser may actually delete more than a single UTF-16
         // character. In reality, a full Unicode grapheme cluster consisting of multiple UTF-16 characters
         // or code points may be deleted. However, in our currently supported locales, there are no such cases.
         // If we support additional locales in the future, this may need to change.
-        nextValue = input.selectionEnd === input.selectionStart
-          ? input.value.slice(0, input.selectionStart!) + input.value.slice(input.selectionEnd! + 1)
-          : input.value.slice(0, input.selectionStart!) + input.value.slice(input.selectionEnd!);
+        nextValue =
+          input.selectionEnd === input.selectionStart
+            ? input.value.slice(0, input.selectionStart!) +
+              input.value.slice(input.selectionEnd! + 1)
+            : input.value.slice(0, input.selectionStart!) + input.value.slice(input.selectionEnd!);
         break;
       case 'deleteContentBackward':
-        nextValue = input.selectionEnd === input.selectionStart
-          ? input.value.slice(0, input.selectionStart! - 1) + input.value.slice(input.selectionStart!)
-          : input.value.slice(0, input.selectionStart!) + input.value.slice(input.selectionEnd!);
+        nextValue =
+          input.selectionEnd === input.selectionStart
+            ? input.value.slice(0, input.selectionStart! - 1) +
+              input.value.slice(input.selectionStart!)
+            : input.value.slice(0, input.selectionStart!) + input.value.slice(input.selectionEnd!);
         break;
       case 'deleteSoftLineBackward':
       case 'deleteHardLineBackward':
@@ -109,53 +119,60 @@ export function useFormattedTextField(props: AriaTextFieldProps, state: Formatte
 
   let onBeforeInput: InputEventHandler<HTMLInputElement> | null = !supportsNativeBeforeInputEvent()
     ? e => {
-      let nextValue =
-        getEventTarget(e).value.slice(0, getEventTarget(e).selectionStart!) +
-        e.data +
-        getEventTarget(e).value.slice(getEventTarget(e).selectionEnd!);
+        let nextValue =
+          getEventTarget(e).value.slice(0, getEventTarget(e).selectionStart!) +
+          e.data +
+          getEventTarget(e).value.slice(getEventTarget(e).selectionEnd!);
 
-      if (!state.validate(nextValue)) {
-        e.preventDefault();
-      }
-    }
-    : null;
-
-  let {labelProps, inputProps: textFieldProps, descriptionProps, errorMessageProps, ...validation} = useTextField(props, inputRef);
-
-  let compositionStartState = useRef<{value: string, selectionStart: number | null, selectionEnd: number | null} | null>(null);
-  return {
-    inputProps: mergeProps(
-      textFieldProps,
-      {
-        onBeforeInput,
-        onCompositionStart() {
-          // Chrome does not implement Input Events Level 2, which specifies the insertFromComposition
-          // and deleteByComposition inputType values for the beforeinput event. These are meant to occur
-          // at the end of a composition (e.g. Pinyin IME, Android auto correct, etc.), and crucially, are
-          // cancelable. The insertCompositionText and deleteCompositionText input types are not cancelable,
-          // nor would we want to cancel them because the input from the user is incomplete at that point.
-          // In Safari, insertFromComposition/deleteFromComposition will fire, however, allowing us to cancel
-          // the final composition result if it is invalid. As a fallback for Chrome and Firefox, which either
-          // don't support Input Events Level 2, or beforeinput at all, we store the state of the input when
-          // the compositionstart event fires, and undo the changes in compositionend (below) if it is invalid.
-          // Unfortunately, this messes up the undo/redo stack, but until insertFromComposition/deleteByComposition
-          // are implemented, there is no other way to prevent composed input.
-          // See https://bugs.chromium.org/p/chromium/issues/detail?id=1022204
-          let {value, selectionStart, selectionEnd} = inputRef.current!;
-          compositionStartState.current = {value, selectionStart, selectionEnd};
-        },
-        onCompositionEnd() {
-          if (inputRef.current && !state.validate(inputRef.current.value)) {
-            // Restore the input value in the DOM immediately so we can synchronously update the selection position.
-            // But also update the value in React state as well so it is correct for future updates.
-            let {value, selectionStart, selectionEnd} = compositionStartState.current!;
-            inputRef.current.value = value;
-            inputRef.current.setSelectionRange(selectionStart, selectionEnd);
-            state.setInputValue(value);
-          }
+        if (!state.validate(nextValue)) {
+          e.preventDefault();
         }
       }
-    ),
+    : null;
+
+  let {
+    labelProps,
+    inputProps: textFieldProps,
+    descriptionProps,
+    errorMessageProps,
+    ...validation
+  } = useTextField(props, inputRef);
+
+  let compositionStartState = useRef<{
+    value: string;
+    selectionStart: number | null;
+    selectionEnd: number | null;
+  } | null>(null);
+  return {
+    inputProps: mergeProps(textFieldProps, {
+      onBeforeInput,
+      onCompositionStart() {
+        // Chrome does not implement Input Events Level 2, which specifies the insertFromComposition
+        // and deleteByComposition inputType values for the beforeinput event. These are meant to occur
+        // at the end of a composition (e.g. Pinyin IME, Android auto correct, etc.), and crucially, are
+        // cancelable. The insertCompositionText and deleteCompositionText input types are not cancelable,
+        // nor would we want to cancel them because the input from the user is incomplete at that point.
+        // In Safari, insertFromComposition/deleteFromComposition will fire, however, allowing us to cancel
+        // the final composition result if it is invalid. As a fallback for Chrome and Firefox, which either
+        // don't support Input Events Level 2, or beforeinput at all, we store the state of the input when
+        // the compositionstart event fires, and undo the changes in compositionend (below) if it is invalid.
+        // Unfortunately, this messes up the undo/redo stack, but until insertFromComposition/deleteByComposition
+        // are implemented, there is no other way to prevent composed input.
+        // See https://bugs.chromium.org/p/chromium/issues/detail?id=1022204
+        let {value, selectionStart, selectionEnd} = inputRef.current!;
+        compositionStartState.current = {value, selectionStart, selectionEnd};
+      },
+      onCompositionEnd() {
+        if (inputRef.current && !state.validate(inputRef.current.value)) {
+          // Restore the input value in the DOM immediately so we can synchronously update the selection position.
+          // But also update the value in React state as well so it is correct for future updates.
+          let {value, selectionStart, selectionEnd} = compositionStartState.current!;
+          inputRef.current.value = value;
+          inputRef.current.setSelectionRange(selectionStart, selectionEnd);
+          state.setInputValue(value);
+        }
+      }
+    }),
     labelProps,
     descriptionProps,
     errorMessageProps,

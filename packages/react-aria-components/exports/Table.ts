@@ -14,9 +14,69 @@
 // to import it from a React Server Component in a framework like Next.js.
 import 'client-only';
 
-export {TableLoadMoreItem, Table, Row, Cell, Column, ColumnResizer, TableHeader, TableBody, TableContext, ResizableTableContainer, useTableOptions, TableStateContext, TableColumnResizeStateContext, TableFooter} from '../src/Table';
-export type {TableProps, TableRenderProps, TableHeaderProps, TableBodyProps, TableBodyRenderProps, ResizableTableContainerProps, ColumnProps, ColumnRenderProps, ColumnResizerProps, ColumnResizerRenderProps, RowProps, RowRenderProps, CellProps, CellRenderProps, TableLoadMoreItemProps, TableFooterProps} from '../src/Table';
-export type {Key, Selection, SortDescriptor, SortDirection, SelectionMode, DirectoryDropItem, DraggableCollectionEndEvent, DraggableCollectionMoveEvent, DraggableCollectionStartEvent, DragPreviewRenderer, DragTypes, DropItem, DropOperation, DroppableCollectionDropEvent, DroppableCollectionEnterEvent, DroppableCollectionExitEvent, DroppableCollectionInsertDropEvent, DroppableCollectionMoveEvent, DroppableCollectionOnItemDropEvent, DroppableCollectionReorderEvent, DroppableCollectionRootDropEvent, DropPosition, DropTarget, FileDropItem, ItemDropTarget, RootDropTarget, TextDropItem} from '@react-types/shared';
+export {
+  TableLoadMoreItem,
+  Table,
+  Row,
+  Cell,
+  Column,
+  ColumnResizer,
+  TableHeader,
+  TableBody,
+  TableContext,
+  ResizableTableContainer,
+  useTableOptions,
+  TableStateContext,
+  TableColumnResizeStateContext,
+  TableFooter
+} from '../src/Table';
+export type {
+  TableProps,
+  TableRenderProps,
+  TableHeaderProps,
+  TableBodyProps,
+  TableBodyRenderProps,
+  ResizableTableContainerProps,
+  ColumnProps,
+  ColumnRenderProps,
+  ColumnResizerProps,
+  ColumnResizerRenderProps,
+  RowProps,
+  RowRenderProps,
+  CellProps,
+  CellRenderProps,
+  TableLoadMoreItemProps,
+  TableFooterProps
+} from '../src/Table';
+export type {
+  Key,
+  Selection,
+  SortDescriptor,
+  SortDirection,
+  SelectionMode,
+  DirectoryDropItem,
+  DraggableCollectionEndEvent,
+  DraggableCollectionMoveEvent,
+  DraggableCollectionStartEvent,
+  DragPreviewRenderer,
+  DragTypes,
+  DropItem,
+  DropOperation,
+  DroppableCollectionDropEvent,
+  DroppableCollectionEnterEvent,
+  DroppableCollectionExitEvent,
+  DroppableCollectionInsertDropEvent,
+  DroppableCollectionMoveEvent,
+  DroppableCollectionOnItemDropEvent,
+  DroppableCollectionReorderEvent,
+  DroppableCollectionRootDropEvent,
+  DropPosition,
+  DropTarget,
+  FileDropItem,
+  ItemDropTarget,
+  RootDropTarget,
+  TextDropItem
+} from '@react-types/shared';
 export type {TableState} from 'react-stately/useTableState';
 export {Collection, type CollectionProps} from 'react-aria/Collection';
 

@@ -24,14 +24,17 @@ import {Item} from 'react-stately/Item';
 import {Link} from '../../src/link/Link';
 import {Meta, StoryFn, StoryObj} from '@storybook/react';
 import React, {JSX} from 'react';
-import {SpectrumTreeViewProps, TreeView, TreeViewItem, TreeViewItemContent} from '../../src/tree/TreeView';
+import {
+  SpectrumTreeViewProps,
+  TreeView,
+  TreeViewItem,
+  TreeViewItemContent
+} from '../../src/tree/TreeView';
 import {Text} from '../../src/text/Text';
 
 export default {
   title: 'TreeView',
-  excludeStories: [
-    'renderEmptyState'
-  ],
+  excludeStories: ['renderEmptyState'],
   argTypes: {
     items: {
       table: {
@@ -50,9 +53,14 @@ type TreeStory = StoryFn<typeof TreeView>;
 
 // TODO: This story crashes on save and story switch, not sure why or if only local...
 export const TreeExampleStatic: StoryObj<typeof TreeView> = {
-  render: (args) => (
+  render: args => (
     <div style={{width: '300px', resize: 'both', height: '90vh', overflow: 'auto'}}>
-      <TreeView {...args} disabledKeys={['projects-1']} aria-label="test static tree" onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
+      <TreeView
+        {...args}
+        disabledKeys={['projects-1']}
+        aria-label="test static tree"
+        onExpandedChange={action('onExpandedChange')}
+        onSelectionChange={action('onSelectionChange')}>
         <TreeViewItem id="Photos" textValue="Photos">
           <TreeViewItemContent>
             <Text>Photos</Text>
@@ -180,7 +188,12 @@ export const TreeExampleStatic: StoryObj<typeof TreeView> = {
 
 let TreeExampleStaticNoActionsRender = (args: SpectrumTreeViewProps<unknown>): JSX.Element => (
   <div style={{width: '300px', resize: 'both', height: '90vh', overflow: 'auto'}}>
-    <TreeView {...args} disabledKeys={['projects-1']} aria-label="test static tree" onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
+    <TreeView
+      {...args}
+      disabledKeys={['projects-1']}
+      aria-label="test static tree"
+      onExpandedChange={action('onExpandedChange')}
+      onSelectionChange={action('onSelectionChange')}>
       <TreeViewItem id="Photos" textValue="Photos">
         <TreeViewItemContent>
           <Text>Photos</Text>
@@ -221,10 +234,12 @@ let TreeExampleStaticNoActionsRender = (args: SpectrumTreeViewProps<unknown>): J
   </div>
 );
 
-export const TreeExampleStaticNoActions: TreeStory = (args: SpectrumTreeViewProps<unknown>) => <TreeExampleStaticNoActionsRender {...args} />;
+export const TreeExampleStaticNoActions: TreeStory = (args: SpectrumTreeViewProps<unknown>) => (
+  <TreeExampleStaticNoActionsRender {...args} />
+);
 
 export const ExampleNoActions: StoryObj<typeof TreeExampleStaticNoActionsRender> = {
-  render: (args) => <TreeExampleStaticNoActionsRender {...args} />,
+  render: args => <TreeExampleStaticNoActionsRender {...args} />,
   args: {
     selectionMode: 'none',
     selectionStyle: 'checkbox',
@@ -252,36 +267,69 @@ export const ExampleNoActions: StoryObj<typeof TreeExampleStaticNoActionsRender>
 };
 
 let rows = [
-  {id: 'projects', name: 'Projects', icon: <Folder />, childItems: [
-    {id: 'project-1', name: 'Project 1', icon: <FileTxt />},
-    {id: 'project-2', name: 'Project 2', icon: <Folder />, childItems: [
-      {id: 'project-2A', name: 'Project 2A', icon: <FileTxt />},
-      {id: 'project-2B', name: 'Project 2B', icon: <FileTxt />},
-      {id: 'project-2C', name: 'Project 2C', icon: <FileTxt />}
-    ]},
-    {id: 'project-3', name: 'Project 3', icon: <FileTxt />},
-    {id: 'project-4', name: 'Project 4', icon: <FileTxt />},
-    {id: 'project-5', name: 'Project 5', icon: <Folder />, childItems: [
-      {id: 'project-5A', name: 'Project 5A', icon: <FileTxt />},
-      {id: 'project-5B', name: 'Project 5B', icon: <FileTxt />},
-      {id: 'project-5C', name: 'Project 5C', icon: <FileTxt />}
-    ]}
-  ]},
-  {id: 'reports', name: 'Reports', icon: <Folder />, childItems: [
-    {id: 'reports-1', name: 'Reports 1', icon: <Folder />, childItems: [
-      {id: 'reports-1A', name: 'Reports 1A', icon: <Folder />, childItems: [
-        {id: 'reports-1AB', name: 'Reports 1AB', icon: <Folder />, childItems: [
-          {id: 'reports-1ABC', name: 'Reports 1ABC', icon: <FileTxt />}
-        ]}
-      ]},
-      {id: 'reports-1B', name: 'Reports 1B', icon: <FileTxt />},
-      {id: 'reports-1C', name: 'Reports 1C', icon: <FileTxt />}
-    ]},
-    {id: 'reports-2', name: 'Reports 2', icon: <FileTxt />}
-  ]}
+  {
+    id: 'projects',
+    name: 'Projects',
+    icon: <Folder />,
+    childItems: [
+      {id: 'project-1', name: 'Project 1', icon: <FileTxt />},
+      {
+        id: 'project-2',
+        name: 'Project 2',
+        icon: <Folder />,
+        childItems: [
+          {id: 'project-2A', name: 'Project 2A', icon: <FileTxt />},
+          {id: 'project-2B', name: 'Project 2B', icon: <FileTxt />},
+          {id: 'project-2C', name: 'Project 2C', icon: <FileTxt />}
+        ]
+      },
+      {id: 'project-3', name: 'Project 3', icon: <FileTxt />},
+      {id: 'project-4', name: 'Project 4', icon: <FileTxt />},
+      {
+        id: 'project-5',
+        name: 'Project 5',
+        icon: <Folder />,
+        childItems: [
+          {id: 'project-5A', name: 'Project 5A', icon: <FileTxt />},
+          {id: 'project-5B', name: 'Project 5B', icon: <FileTxt />},
+          {id: 'project-5C', name: 'Project 5C', icon: <FileTxt />}
+        ]
+      }
+    ]
+  },
+  {
+    id: 'reports',
+    name: 'Reports',
+    icon: <Folder />,
+    childItems: [
+      {
+        id: 'reports-1',
+        name: 'Reports 1',
+        icon: <Folder />,
+        childItems: [
+          {
+            id: 'reports-1A',
+            name: 'Reports 1A',
+            icon: <Folder />,
+            childItems: [
+              {
+                id: 'reports-1AB',
+                name: 'Reports 1AB',
+                icon: <Folder />,
+                childItems: [{id: 'reports-1ABC', name: 'Reports 1ABC', icon: <FileTxt />}]
+              }
+            ]
+          },
+          {id: 'reports-1B', name: 'Reports 1B', icon: <FileTxt />},
+          {id: 'reports-1C', name: 'Reports 1C', icon: <FileTxt />}
+        ]
+      },
+      {id: 'reports-2', name: 'Reports 2', icon: <FileTxt />}
+    ]
+  }
 ];
 
-const DynamicTreeItem = (props) => {
+const DynamicTreeItem = props => {
   let {childItems, name, icon} = props;
   return (
     <>
@@ -322,21 +370,27 @@ export const TreeExampleDynamic: StoryObj<typeof TreeView> = {
   ...TreeExampleStatic,
   render: (args: SpectrumTreeViewProps<unknown>) => (
     <div style={{width: '300px', resize: 'both', height: '90vh', overflow: 'auto'}}>
-      <TreeView disabledKeys={['reports-1AB']} aria-label="test dynamic tree" items={rows} onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')} {...args}>
+      <TreeView
+        disabledKeys={['reports-1AB']}
+        aria-label="test dynamic tree"
+        items={rows}
+        onExpandedChange={action('onExpandedChange')}
+        onSelectionChange={action('onSelectionChange')}
+        {...args}>
         {(item: any) => (
           <DynamicTreeItem
             id={item.id}
             icon={item.icon}
             childItems={item.childItems}
             textValue={item.name}
-            name={item.name} />
+            name={item.name}
+          />
         )}
       </TreeView>
     </div>
   ),
   parameters: undefined
 };
-
 
 export const WithActions: StoryObj<typeof TreeExampleDynamic> = {
   ...TreeExampleDynamic,
@@ -349,15 +403,22 @@ export const WithActions: StoryObj<typeof TreeExampleDynamic> = {
 
 export const WithLinks: TreeStory = (args: SpectrumTreeViewProps<unknown>) => (
   <div style={{width: '300px', resize: 'both', height: '90vh', overflow: 'auto'}}>
-    <TreeView {...args} disabledKeys={['reports-1AB']} aria-label="test dynamic tree" items={rows} onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
-      {(item) => (
+    <TreeView
+      {...args}
+      disabledKeys={['reports-1AB']}
+      aria-label="test dynamic tree"
+      items={rows}
+      onExpandedChange={action('onExpandedChange')}
+      onSelectionChange={action('onSelectionChange')}>
+      {item => (
         <DynamicTreeItem
           id={item.id}
           icon={item.icon}
           childItems={item.childItems}
           textValue={item.name}
           name={item.name}
-          href="https://adobe.com/" />
+          href="https://adobe.com/"
+        />
       )}
     </TreeView>
   </div>
@@ -380,7 +441,9 @@ export function renderEmptyState(): JSX.Element {
         <path d="M133.7,8.5h-118c-1.9,0-3.5,1.6-3.5,3.5v27c0,0.8,0.7,1.5,1.5,1.5s1.5-0.7,1.5-1.5V23.5h119V92c0,0.3-0.2,0.5-0.5,0.5h-118c-0.3,0-0.5-0.2-0.5-0.5V69c0-0.8-0.7-1.5-1.5-1.5s-1.5,0.7-1.5,1.5v23c0,1.9,1.6,3.5,3.5,3.5h118c1.9,0,3.5-1.6,3.5-3.5V12C137.2,10.1,135.6,8.5,133.7,8.5z M15.2,21.5V12c0-0.3,0.2-0.5,0.5-0.5h118c0.3,0,0.5,0.2,0.5,0.5v9.5H15.2z M32.6,16.5c0,0.6-0.4,1-1,1h-10c-0.6,0-1-0.4-1-1s0.4-1,1-1h10C32.2,15.5,32.6,15.9,32.6,16.5z M13.6,56.1l-8.6,8.5C4.8,65,4.4,65.1,4,65.1c-0.4,0-0.8-0.1-1.1-0.4c-0.6-0.6-0.6-1.5,0-2.1l8.6-8.5l-8.6-8.5c-0.6-0.6-0.6-1.5,0-2.1c0.6-0.6,1.5-0.6,2.1,0l8.6,8.5l8.6-8.5c0.6-0.6,1.5-0.6,2.1,0c0.6,0.6,0.6,1.5,0,2.1L15.8,54l8.6,8.5c0.6,0.6,0.6,1.5,0,2.1c-0.3,0.3-0.7,0.4-1.1,0.4c-0.4,0-0.8-0.1-1.1-0.4L13.6,56.1z" />
       </svg>
       <Heading>No results</Heading>
-      <Content>No results found, press <Link onPress={action('linkPress')}>here</Link> for more info.</Content>
+      <Content>
+        No results found, press <Link onPress={action('linkPress')}>here</Link> for more info.
+      </Content>
     </IllustratedMessage>
   );
 }
@@ -397,14 +460,21 @@ export const EmptyTree: StoryObj<typeof TreeExampleDynamic> = {
 
 export const WithActionMenu: TreeStory = (args: SpectrumTreeViewProps<unknown>) => (
   <div style={{width: '300px', resize: 'both', height: '90vh', overflow: 'auto'}}>
-    <TreeView {...args} disabledKeys={['reports-1AB']} aria-label="test dynamic tree" items={rows} onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
-      {(item) => (
+    <TreeView
+      {...args}
+      disabledKeys={['reports-1AB']}
+      aria-label="test dynamic tree"
+      items={rows}
+      onExpandedChange={action('onExpandedChange')}
+      onSelectionChange={action('onSelectionChange')}>
+      {item => (
         <DynamicTreeItem
           id={item.id}
           icon={item.icon}
           childItems={item.childItems}
           textValue={item.name}
-          name={item.name} />
+          name={item.name}
+        />
       )}
     </TreeView>
   </div>

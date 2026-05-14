@@ -1,5 +1,5 @@
-@import "./theme.css";
-@import "./utilities.css";
+@import './theme.css';
+@import './utilities.css';
 
 .react-aria-RadioGroup {
   display: flex;
@@ -13,11 +13,11 @@
     gap: var(--spacing-3);
   }
 
-  &[data-orientation=vertical] .radio-items {
+  &[data-orientation='vertical'] .radio-items {
     flex-direction: column;
   }
 
-  &[data-orientation=horizontal] .radio-items {
+  &[data-orientation='horizontal'] .radio-items {
     flex-direction: row;
     flex-wrap: wrap;
   }
@@ -27,11 +27,11 @@
   display: flex;
   flex-direction: column;
 
-  [slot=description] {
-    margin-left: calc(var(--spacing) * 6.5)
+  [slot='description'] {
+    margin-left: calc(var(--spacing) * 6.5);
   }
 
-  &[data-disabled] [slot=description] {
+  &[data-disabled] [slot='description'] {
     color: var(--text-color-disabled);
   }
 }

@@ -1,13 +1,7 @@
-import React, { useState } from "react";
-import {
-  Group,
-  Label,
-  Radio,
-  RadioGroup,
-  RadioGroupProps,
-} from "react-aria-components";
+import React, {useState} from 'react';
+import {Group, Label, Radio, RadioGroup, RadioGroupProps} from 'react-aria-components';
 
-interface StarRatingGroupProps extends Omit<RadioGroupProps, "children"> {
+interface StarRatingGroupProps extends Omit<RadioGroupProps, 'children'> {
   ratingCount?: number;
   value?: string;
   defaultValue?: string;
@@ -19,16 +13,13 @@ interface StarRatingGroupProps extends Omit<RadioGroupProps, "children"> {
 export function StarRatingGroup({
   ratingCount = 5,
   isEmphasized = false,
-  label = "Rating",
+  label = 'Rating',
   ...other
 }: StarRatingGroupProps) {
-  let allRatings = Array.from(Array(ratingCount).keys()).map((i) =>
-    String(i + 1)
-  );
+  let allRatings = Array.from(Array(ratingCount).keys()).map(i => String(i + 1));
 
   // Track which rating is hovered at the group level.
-  let [hoveredRating, setHoveredRating] =
-    useState<string | undefined>(undefined);
+  let [hoveredRating, setHoveredRating] = useState<string | undefined>(undefined);
 
   let onPointerOver = (e: React.PointerEvent<HTMLDivElement>) => {
     if ((e.target as HTMLElement).dataset?.rating) {
@@ -44,22 +35,17 @@ export function StarRatingGroup({
     <RadioGroup
       orientation="horizontal"
       className="flex flex-col m-auto space-y-10 text-center"
-      {...other}
-    >
-      {({ state }) => (
+      {...other}>
+      {({state}) => (
         <>
           <Label className="text-xl font-semibold mb-200">{label}</Label>
-          <Group
-            data-name="star-rating-group"
-            className="focus-visible:ring group"
-          >
+          <Group data-name="star-rating-group" className="focus-visible:ring group">
             <div
               data-name="star-rating-group"
               className="flex justify-evenly gap-75"
               onPointerOver={onPointerOver}
-              onPointerLeave={onPointerOut}
-            >
-              {allRatings.map((rating) => (
+              onPointerLeave={onPointerOut}>
+              {allRatings.map(rating => (
                 <StarRating
                   key={rating}
                   rating={rating}
@@ -80,7 +66,7 @@ export function StarRating({
   rating,
   selected,
   isEmphasized,
-  hoveredRating,
+  hoveredRating
 }: {
   rating: string;
   selected: string | null;
@@ -90,23 +76,20 @@ export function StarRating({
   let ratingNum = Number(rating);
   let selectedNum = Number(selected);
   let isFilled =
-    hoveredRating !== undefined
-      ? ratingNum <= Number(hoveredRating)
-      : ratingNum <= selectedNum;
-  let fillColor = isEmphasized ? "fill-accent-800" : "fill-gray-700";
-  let bgColor = isEmphasized ? "bg-accent-800" : "bg-gray-700";
+    hoveredRating !== undefined ? ratingNum <= Number(hoveredRating) : ratingNum <= selectedNum;
+  let fillColor = isEmphasized ? 'fill-accent-800' : 'fill-gray-700';
+  let bgColor = isEmphasized ? 'bg-accent-800' : 'bg-gray-700';
 
   return (
     <Radio aria-label={`${rating} stars`} value={rating}>
-      {({ isHovered, isSelected }) => (
+      {({isHovered, isSelected}) => (
         <>
           <svg
             data-rating={rating}
-            className={isFilled ? fillColor : "dark:fill-white"}
+            className={isFilled ? fillColor : 'dark:fill-white'}
             xmlns="http://www.w3.org/2000/svg"
             width={18}
-            height={18}
-          >
+            height={18}>
             {isFilled ? (
               <path d="m9.241.3 2.161 5.715 6.106.289a.255.255 0 0 1 .147.454l-4.77 3.823 1.612 5.9a.255.255 0 0 1-.386.28L9.002 13.4l-5.11 3.358a.255.255 0 0 1-.386-.28l1.612-5.9-4.77-3.821A.255.255 0 0 1 .495 6.3l6.107-.285L8.763.3a.255.255 0 0 1 .478 0Z" />
             ) : (
@@ -114,10 +97,7 @@ export function StarRating({
             )}
           </svg>
           {isHovered && isSelected && (
-            <span
-              aria-hidden="true"
-              className={`flex w-full h-25 -mb-25 ${bgColor}`}
-            />
+            <span aria-hidden="true" className={`flex w-full h-25 -mb-25 ${bgColor}`} />
           )}
         </>
       )}

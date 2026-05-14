@@ -65,11 +65,11 @@ export const Default: HelpTextStory = {};
 export const WithState: HelpTextStory = {
   args: {
     label: 'Empty field',
-    description: 'This input is only valid when it\'s empty.',
+    description: "This input is only valid when it's empty.",
     errorMessage: 'Remove input.'
   },
   argTypes: {validationState: {control: {disable: true}}},
-  render: (props) => <TextFieldWithValidationState {...props} />
+  render: props => <TextFieldWithValidationState {...props} />
 };
 
 export let AriaLabel: HelpTextStory = {
@@ -87,7 +87,9 @@ export let AriaLabel: HelpTextStory = {
   }
 };
 
-export const DescriptionAndCustomDescription: StoryObj<SpectrumTextFieldProps & {customDescription: string}> = {
+export const DescriptionAndCustomDescription: StoryObj<
+  SpectrumTextFieldProps & {customDescription: string}
+> = {
   args: {
     customDescription: 'Custom description.',
     'aria-describedby': 'custom-description'
@@ -98,12 +100,14 @@ export const DescriptionAndCustomDescription: StoryObj<SpectrumTextFieldProps & 
     },
     'aria-describedby': {control: {disable: true}}
   },
-  decorators: [(Story, Context) => (
-    <Flex direction="column" gap="size-125">
-      <Story />
-      <p id={Context.args['aria-describedby']}>{Context.args.customDescription}</p>
-    </Flex>
-  )]
+  decorators: [
+    (Story, Context) => (
+      <Flex direction="column" gap="size-125">
+        <Story />
+        <p id={Context.args['aria-describedby']}>{Context.args.customDescription}</p>
+      </Flex>
+    )
+  ]
 };
 
 export let AriaLabelWithDynamicHelpText: HelpTextStory = {
@@ -112,8 +116,12 @@ export let AriaLabelWithDynamicHelpText: HelpTextStory = {
     'aria-label': 'Password',
     description: undefined
   },
-  render: (props) => <TextFieldWithAriaLabelAndDynamicHelpText {...props} />,
-  parameters: {description: {data: 'For the case when there is no label and help text is added or removed dynamically. Focus should remain in the text field as the user types and the help text gets added or removed.'}}
+  render: props => <TextFieldWithAriaLabelAndDynamicHelpText {...props} />,
+  parameters: {
+    description: {
+      data: 'For the case when there is no label and help text is added or removed dynamically. Focus should remain in the text field as the user types and the help text gets added or removed.'
+    }
+  }
 };
 
 function TextFieldWithValidationState(props: SpectrumTextFieldProps) {
@@ -130,18 +138,9 @@ function TextFieldWithValidationState(props: SpectrumTextFieldProps) {
   }
 
   return (
-    <Flex
-      direction="column"
-      gap="size-200">
-      <TextField
-        {...props}
-        value={value}
-        onChange={setValue}
-        validationState={validState} />
-      <RadioGroup
-        label="Valid State"
-        value={valid ? valid : ''}
-        onChange={setValid}>
+    <Flex direction="column" gap="size-200">
+      <TextField {...props} value={value} onChange={setValue} validationState={validState} />
+      <RadioGroup label="Valid State" value={valid ? valid : ''} onChange={setValid}>
         <Radio value="valid">Valid</Radio>
         <Radio value="">undefined</Radio>
       </RadioGroup>
@@ -158,6 +157,7 @@ function TextFieldWithAriaLabelAndDynamicHelpText(props: SpectrumTextFieldProps)
       value={value}
       onChange={setValue}
       validationState={value.length ? 'invalid' : undefined}
-      errorMessage="Invalid length." />
+      errorMessage="Invalid length."
+    />
   );
 }

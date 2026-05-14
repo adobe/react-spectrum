@@ -26,12 +26,17 @@ let states = [
   {validationState: ['valid', 'invalid']},
   {isRequired: true},
   {necessityIndicator: 'label'},
-  {contextualHelp: (
-    <ContextualHelp>
-      <Heading>What is a segment?</Heading>
-      <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
-    </ContextualHelp>
-  )}
+  {
+    contextualHelp: (
+      <ContextualHelp>
+        <Heading>What is a segment?</Heading>
+        <Content>
+          Segments identify who your visitors are, what devices and services they use, where they
+          navigated from, and much more.
+        </Content>
+      </ContextualHelp>
+    )
+  }
 ];
 
 let combinations = generatePowerset(states, v => v.validationState && v.contextualHelp);
@@ -74,7 +79,9 @@ export type ColorFieldStory = StoryObj<typeof ColorField>;
 const Template = (args: SpectrumColorFieldProps): JSX.Element => (
   <Grid columns={repeat(3, '1fr')} autoFlow="row" gap="size-200">
     {combinations.map(c => {
-      let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
+      let key = Object.keys(c)
+        .map(k => shortName(k, c[k]))
+        .join(' ');
       if (!key) {
         key = 'empty';
       }
@@ -86,7 +93,9 @@ const Template = (args: SpectrumColorFieldProps): JSX.Element => (
 const TemplateSmall = (args: SpectrumColorFieldProps): JSX.Element => (
   <Grid columns={repeat(2, '1fr')} autoFlow="row" gap="size-200">
     {combinations.map(c => {
-      let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
+      let key = Object.keys(c)
+        .map(k => shortName(k, c[k]))
+        .join(' ');
       if (!key) {
         key = 'empty';
       }
@@ -97,54 +106,58 @@ const TemplateSmall = (args: SpectrumColorFieldProps): JSX.Element => (
 
 const NoLabelTemplate = (args: SpectrumColorFieldProps): JSX.Element => (
   <Grid columns={repeat(3, '1fr')} autoFlow="row" gap="size-300">
-    {combinations.filter(combo => combo.isRequired == null && combo.necessityIndicator == null).map(c => {
-      let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
-      if (!key) {
-        key = 'empty';
-      }
-      return <ColorField key={key} {...args} {...c} label={undefined} />;
-    })}
+    {combinations
+      .filter(combo => combo.isRequired == null && combo.necessityIndicator == null)
+      .map(c => {
+        let key = Object.keys(c)
+          .map(k => shortName(k, c[k]))
+          .join(' ');
+        if (!key) {
+          key = 'empty';
+        }
+        return <ColorField key={key} {...args} {...c} label={undefined} />;
+      })}
   </Grid>
 );
 
 export const PropDefaults: ColorFieldStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'default',
   args: {}
 };
 
 export const PropDefaultValue: ColorFieldStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'default value',
   args: {...PropDefaults.args, defaultValue: '#abcdef'}
 };
 
 export const PropPlaceholder: ColorFieldStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'placeholder',
   args: {...PropDefaults.args, placeholder: 'Enter a hex color'}
 };
 
 export const PropAriaLabelled: ColorFieldStory = {
-  render: (args) => <NoLabelTemplate {...args} />,
+  render: args => <NoLabelTemplate {...args} />,
   name: 'aria-label',
   args: {'aria-label': 'Label'}
 };
 
 export const PropLabelEnd: ColorFieldStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'label end',
   args: {...PropDefaults.args, labelAlign: 'end', defaultValue: '#abcdef'}
 };
 
 export const PropLabelSide: ColorFieldStory = {
-  render: (args) => <TemplateSmall {...args} />,
+  render: args => <TemplateSmall {...args} />,
   name: 'label side',
   args: {...PropDefaults.args, labelPosition: 'side', defaultValue: '#abcdef'}
 };
 
 export const PropCustomWidth: ColorFieldStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'custom width',
   args: {...PropDefaults.args, width: 'size-3000'}
 };

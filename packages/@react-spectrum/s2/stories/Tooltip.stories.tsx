@@ -31,7 +31,21 @@ const meta: Meta<typeof CombinedTooltip> = {
     onOpenChange: {table: {category: 'Events'}},
     children: {table: {disable: true}}
   },
-  decorators: [(Story) => <div style={{height: '100px', width: '200px', display: 'flex', alignItems: 'end', justifyContent: 'center', paddingBottom: 10}}><Story /></div>],
+  decorators: [
+    Story => (
+      <div
+        style={{
+          height: '100px',
+          width: '200px',
+          display: 'flex',
+          alignItems: 'end',
+          justifyContent: 'center',
+          paddingBottom: 10
+        }}>
+        <Story />
+      </div>
+    )
+  ],
   title: 'Tooltip'
 };
 
@@ -74,11 +88,15 @@ const ExampleRender = (args: any) => {
         columnGap: 12
       })}>
       <TooltipTrigger {...triggerProps}>
-        <Button aria-label="Crop"><Crop /></Button>
+        <Button aria-label="Crop">
+          <Crop />
+        </Button>
         <Tooltip {...tooltipProps}>Crop</Tooltip>
       </TooltipTrigger>
       <TooltipTrigger {...triggerProps}>
-        <ActionButton aria-label="Lasso"><LassoSelect /></ActionButton>
+        <ActionButton aria-label="Lasso">
+          <LassoSelect />
+        </ActionButton>
         <Tooltip {...tooltipProps}>Lasso</Tooltip>
       </TooltipTrigger>
     </div>
@@ -88,7 +106,7 @@ const ExampleRender = (args: any) => {
 type Story = StoryObj<typeof CombinedTooltip>;
 
 export const Example: Story = {
-  render: (args) => <ExampleRender {...args} />,
+  render: args => <ExampleRender {...args} />,
   argTypes: {
     isOpen: {
       control: 'select',
@@ -144,14 +162,16 @@ const LongLabelRender = (args: any) => {
   };
   return (
     <TooltipTrigger {...triggerProps}>
-      <ActionButton aria-label="Lasso"><LassoSelect /></ActionButton>
+      <ActionButton aria-label="Lasso">
+        <LassoSelect />
+      </ActionButton>
       <Tooltip {...tooltipProps}>Checkbox with very long label so we can see wrapping</Tooltip>
     </TooltipTrigger>
   );
 };
 
 export const LongLabel: Story = {
-  render: (args) => <LongLabelRender {...args} />,
+  render: args => <LongLabelRender {...args} />,
   argTypes: {
     isOpen: {
       control: 'select',

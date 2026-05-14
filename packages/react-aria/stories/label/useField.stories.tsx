@@ -4,11 +4,11 @@ import {useField} from '../../src/label/useField';
 import {ValidationState} from '@react-types/shared';
 
 interface TextFieldProps {
-  label: string,
-  value?: string,
-  description?: string,
-  errorMessage?: string,
-  validationState?: ValidationState
+  label: string;
+  value?: string;
+  description?: string;
+  errorMessage?: string;
+  validationState?: ValidationState;
 }
 
 const TextInputField = (props: TextFieldProps): JSX.Element => {
@@ -31,7 +31,7 @@ export default {
 } as Meta;
 
 export const NoError: StoryObj<typeof TextInputField> = {
-  render: (args) => <TextInputField {...args} />,
+  render: args => <TextInputField {...args} />,
   args: {
     label: 'Test label',
     value: 'Test value',
@@ -41,7 +41,7 @@ export const NoError: StoryObj<typeof TextInputField> = {
 };
 
 export const WithError: StoryObj<typeof TextInputField> = {
-  render: (args) => <TextInputField {...args} />,
+  render: args => <TextInputField {...args} />,
   args: {
     label: 'Test label',
     value: 'Test value',

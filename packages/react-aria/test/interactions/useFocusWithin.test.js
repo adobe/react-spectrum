@@ -16,23 +16,32 @@ import {useFocusWithin} from '../../src/interactions/useFocusWithin';
 
 function Example(props) {
   let {focusWithinProps} = useFocusWithin(props);
-  return <div tabIndex={-1} {...focusWithinProps} data-testid="example">{props.children}</div>;
+  return (
+    <div tabIndex={-1} {...focusWithinProps} data-testid="example">
+      {props.children}
+    </div>
+  );
 }
 
 describe('useFocusWithin', function () {
   it('handles focus events on the target itself', function () {
     let events = [];
-    let addEvent = (e) => events.push({type: e.type, target: e.target});
+    let addEvent = e => events.push({type: e.type, target: e.target});
     let tree = render(
       <Example
         onFocusWithin={addEvent}
         onBlurWithin={addEvent}
-        onFocusWithinChange={isFocused => events.push({type: 'focuschange', isFocused})} />
+        onFocusWithinChange={isFocused => events.push({type: 'focuschange', isFocused})}
+      />
     );
 
     let el = tree.getByTestId('example');
-    act(() => {el.focus();});
-    act(() => {el.blur();});
+    act(() => {
+      el.focus();
+    });
+    act(() => {
+      el.blur();
+    });
 
     expect(events).toEqual([
       {type: 'focus', target: el},
@@ -44,7 +53,7 @@ describe('useFocusWithin', function () {
 
   it('does handle focus events on children', function () {
     let events = [];
-    let addEvent = (e) => events.push({type: e.type, target: e.target});
+    let addEvent = e => events.push({type: e.type, target: e.target});
     let tree = render(
       <Example
         onFocusWithin={addEvent}
@@ -56,10 +65,18 @@ describe('useFocusWithin', function () {
 
     let el = tree.getByTestId('example');
     let child = tree.getByTestId('child');
-    act(() => {child.focus();});
-    act(() => {el.focus();});
-    act(() => {child.focus();});
-    act(() => {child.blur();});
+    act(() => {
+      child.focus();
+    });
+    act(() => {
+      el.focus();
+    });
+    act(() => {
+      child.focus();
+    });
+    act(() => {
+      child.blur();
+    });
 
     expect(events).toEqual([
       {type: 'focus', target: child},
@@ -71,7 +88,7 @@ describe('useFocusWithin', function () {
 
   it('does not handle focus events if disabled', function () {
     let events = [];
-    let addEvent = (e) => events.push({type: e.type, target: e.target});
+    let addEvent = e => events.push({type: e.type, target: e.target});
     let tree = render(
       <Example
         isDisabled
@@ -83,8 +100,12 @@ describe('useFocusWithin', function () {
     );
 
     let child = tree.getByTestId('child');
-    act(() => {child.focus();});
-    act(() => {child.blur();});
+    act(() => {
+      child.focus();
+    });
+    act(() => {
+      child.blur();
+    });
 
     expect(events).toEqual([]);
   });
@@ -96,17 +117,19 @@ describe('useFocusWithin', function () {
     let onInnerBlur = jest.fn(e => e.stopPropagation());
     let tree = render(
       <div onFocus={onWrapperFocus} onBlur={onWrapperBlur}>
-        <Example
-          onFocusWithin={onInnerFocus}
-          onBlurWithin={onInnerBlur}>
+        <Example onFocusWithin={onInnerFocus} onBlurWithin={onInnerBlur}>
           <div data-testid="child" tabIndex={-1} />
         </Example>
       </div>
     );
 
     let child = tree.getByTestId('child');
-    act(() => {child.focus();});
-    act(() => {child.blur();});
+    act(() => {
+      child.focus();
+    });
+    act(() => {
+      child.blur();
+    });
 
     expect(onInnerFocus).toHaveBeenCalledTimes(1);
     expect(onInnerBlur).toHaveBeenCalledTimes(1);
@@ -121,17 +144,19 @@ describe('useFocusWithin', function () {
     let onInnerBlur = jest.fn();
     let tree = render(
       <div onFocus={onWrapperFocus} onBlur={onWrapperBlur}>
-        <Example
-          onFocusWithin={onInnerFocus}
-          onBlurWithin={onInnerBlur}>
+        <Example onFocusWithin={onInnerFocus} onBlurWithin={onInnerBlur}>
           <div data-testid="child" tabIndex={-1} />
         </Example>
       </div>
     );
 
     let child = tree.getByTestId('child');
-    act(() => {child.focus();});
-    act(() => {child.blur();});
+    act(() => {
+      child.focus();
+    });
+    act(() => {
+      child.blur();
+    });
 
     expect(onInnerFocus).toHaveBeenCalledTimes(1);
     expect(onInnerBlur).toHaveBeenCalledTimes(1);
@@ -142,7 +167,11 @@ describe('useFocusWithin', function () {
   it('should fire onBlur when a focused element is disabled', async function () {
     function Example(props) {
       let {focusWithinProps} = useFocusWithin(props);
-      return <div {...focusWithinProps}><button disabled={props.disabled}>Button</button></div>;
+      return (
+        <div {...focusWithinProps}>
+          <button disabled={props.disabled}>Button</button>
+        </div>
+      );
     }
 
     let onFocus = jest.fn();
@@ -150,7 +179,9 @@ describe('useFocusWithin', function () {
     let tree = render(<Example onFocusWithin={onFocus} onBlurWithin={onBlur} />);
     let button = tree.getByRole('button');
 
-    act(() => {button.focus();});
+    act(() => {
+      button.focus();
+    });
     expect(onFocus).toHaveBeenCalled();
     tree.rerender(<Example disabled onFocusWithin={onFocus} onBlurWithin={onBlur} />);
     // MutationObserver is async
@@ -160,7 +191,11 @@ describe('useFocusWithin', function () {
   it('should fire onBlur when focus occurs outside', async function () {
     function Test(props) {
       let {focusWithinProps} = useFocusWithin(props);
-      return <div {...focusWithinProps} data-testid="test">{props.children}</div>;
+      return (
+        <div {...focusWithinProps} data-testid="test">
+          {props.children}
+        </div>
+      );
     }
 
     function Inner() {
@@ -169,7 +204,7 @@ describe('useFocusWithin', function () {
     }
 
     let events = [];
-    let addEvent = (e) => events.push({type: e.type, target: e.target});
+    let addEvent = e => events.push({type: e.type, target: e.target});
     let tree = render(
       <>
         <Test

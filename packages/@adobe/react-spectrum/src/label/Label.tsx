@@ -10,7 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {Alignment, DOMProps, DOMRef, LabelPosition, NecessityIndicator, StyleProps} from '@react-types/shared';
+import {
+  Alignment,
+  DOMProps,
+  DOMRef,
+  LabelPosition,
+  NecessityIndicator,
+  StyleProps
+} from '@react-types/shared';
 import Asterisk from '@spectrum-icons/ui/Asterisk';
 import {classNames} from '../utils/classNames';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
@@ -24,23 +31,26 @@ import {useProviderProps} from '../provider/Provider';
 import {useStyleProps} from '../utils/styleProps';
 
 export interface LabelProps {
-  children?: ReactNode,
-  htmlFor?: string, // for compatibility with React
-  for?: string,
-  elementType?: ElementType
+  children?: ReactNode;
+  htmlFor?: string; // for compatibility with React
+  for?: string;
+  elementType?: ElementType;
 }
 
 export interface SpectrumLabelPropsBase extends LabelProps, DOMProps, StyleProps {
-  labelPosition?: LabelPosition, // default top
-  labelAlign?: Alignment, // default start
-  isRequired?: boolean,
-  necessityIndicator?: NecessityIndicator, // default icon
-  includeNecessityIndicatorInAccessibilityName?: boolean
+  labelPosition?: LabelPosition; // default top
+  labelAlign?: Alignment; // default start
+  isRequired?: boolean;
+  necessityIndicator?: NecessityIndicator; // default icon
+  includeNecessityIndicatorInAccessibilityName?: boolean;
 }
 
 export interface SpectrumLabelProps extends SpectrumLabelPropsBase, HTMLAttributes<HTMLElement> {}
 
-export const Label = React.forwardRef(function Label(props: SpectrumLabelProps, ref: DOMRef<HTMLLabelElement>) {
+export const Label = React.forwardRef(function Label(
+  props: SpectrumLabelProps,
+  ref: DOMRef<HTMLLabelElement>
+) {
   props = useProviderProps(props);
   let {
     children,
@@ -60,11 +70,18 @@ export const Label = React.forwardRef(function Label(props: SpectrumLabelProps, 
   let {styleProps} = useStyleProps(otherProps);
 
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/label');
-  let necessityLabel = isRequired ? stringFormatter.format('(required)') : stringFormatter.format('(optional)');
+  let necessityLabel = isRequired
+    ? stringFormatter.format('(required)')
+    : stringFormatter.format('(optional)');
   let icon = (
     <Asterisk
       UNSAFE_className={classNames(styles, 'spectrum-FieldLabel-requiredIcon')}
-      aria-label={includeNecessityIndicatorInAccessibilityName ? stringFormatter.format('(required)') : undefined} />
+      aria-label={
+        includeNecessityIndicatorInAccessibilityName
+          ? stringFormatter.format('(required)')
+          : undefined
+      }
+    />
   );
 
   let labelClassNames = classNames(
@@ -86,11 +103,16 @@ export const Label = React.forwardRef(function Label(props: SpectrumLabelProps, 
       className={labelClassNames}
       htmlFor={ElementType === 'label' ? labelFor || htmlFor : undefined}>
       {children}
-      {(necessityIndicator === 'label' || (necessityIndicator === 'icon' && isRequired)) && ' \u200b'}
+      {(necessityIndicator === 'label' || (necessityIndicator === 'icon' && isRequired)) &&
+        ' \u200b'}
       {/* necessityLabel is hidden to screen readers if the field is required because
-        * aria-required is set on the field in that case. That will already be announced,
-        * so no need to duplicate it here. If optional, we do want it to be announced here. */}
-      {necessityIndicator === 'label' && <span aria-hidden={!includeNecessityIndicatorInAccessibilityName ? isRequired : undefined}>{necessityLabel}</span>}
+       * aria-required is set on the field in that case. That will already be announced,
+       * so no need to duplicate it here. If optional, we do want it to be announced here. */}
+      {necessityIndicator === 'label' && (
+        <span aria-hidden={!includeNecessityIndicatorInAccessibilityName ? isRequired : undefined}>
+          {necessityLabel}
+        </span>
+      )}
       {necessityIndicator === 'icon' && isRequired && icon}
     </ElementType>
   );
