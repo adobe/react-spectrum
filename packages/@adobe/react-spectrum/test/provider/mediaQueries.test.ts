@@ -22,8 +22,9 @@ let theme = {
   large: {}
 };
 
-let mediaQueryLight = {prefersColorScheme: 'light'};
-let mediaQueryDark = {prefersColorScheme: 'dark'};
+// `as const` narrows the string to the literal union setMedia expects.
+let mediaQueryLight = {prefersColorScheme: 'light'} as const;
+let mediaQueryDark = {prefersColorScheme: 'dark'} as const;
 
 describe('mediaQueries', () => {
   afterEach(() => {

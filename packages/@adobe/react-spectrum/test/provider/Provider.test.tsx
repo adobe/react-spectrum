@@ -30,8 +30,9 @@ let theme = {
   medium: {'spectrum--medium': 'spectrum--medium'},
   large: {'spectrum--large': 'spectrum--large'}
 };
-let mediaQueryLight = {prefersColorScheme: 'light'};
-let mediaQueryDark = {prefersColorScheme: 'dark'};
+// `as const` narrows the string to the literal union setMedia expects.
+let mediaQueryLight = {prefersColorScheme: 'light'} as const;
+let mediaQueryDark = {prefersColorScheme: 'dark'} as const;
 // mock-match-media drives (min-width: *) queries via viewport `width`, not a `minWidth` media key.
 let mediaQueryBelowS = {width: 300};
 let mediaQueryAtS = {width: 700};
