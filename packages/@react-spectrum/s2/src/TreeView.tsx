@@ -38,7 +38,11 @@ import {
 import {DragAndDropContext, DropIndicator} from 'react-aria-components/useDragAndDrop';
 import DragHandle from '../ui-icons/DragHandle';
 import {
+  description,
   dragPreviewBadge,
+  dragPreviewCard,
+  dragPreviewCardBack,
+  dragPreviewWrapper,
   icon,
   iconCenterWrapper,
   insertionIndicatorBar,
@@ -48,7 +52,6 @@ import {
   label,
   S2ListLayout
 } from './ListView';
-import {edgeToText} from '../style/spectrum-theme' with {type: 'macro'};
 import {
   getAllowedOverrides,
   StylesPropWithHeight,
@@ -239,56 +242,13 @@ const tree = style<TreeRenderProps>({
   }
 });
 
-// TODO: same as TableView, to update based on feedback
-const dragPreviewWrapper = style({
-  position: 'relative'
-});
-
-const dragPreviewCardBack = style({
-  position: 'absolute',
-  zIndex: -1,
-  top: 4,
-  left: 4,
-  width: 200,
-  height: 'full',
-  borderRadius: 'default',
-  borderWidth: 1,
-  borderStyle: 'solid',
-  borderColor: 'blue-900',
-  backgroundColor: 'gray-25'
-});
-
-const dragPreviewCard = style<{scale?: 'medium' | 'large'}>({
-  boxSizing: 'border-box',
-  paddingX: 0,
-  paddingY: 8,
-  backgroundColor: 'gray-25',
-  color: baseColor('neutral'),
-  position: 'relative',
-  display: 'grid',
-  // TODO update this per designs, maybe should look like ListView's? Same for tableview
-  gridTemplateColumns: [edgeToText(40), 'auto', 'minmax(0, 1fr)', 'auto', edgeToText(40)],
-  gridTemplateRows: '1fr',
-  gridTemplateAreas: ['. icon label badge .'],
-  alignItems: 'baseline',
-  minHeight: {
-    default: 40,
-    scale: {
-      large: 50
-    }
-  },
-  width: 200,
-  borderRadius: 'default',
-  borderWidth: 1,
-  borderStyle: 'solid',
-  borderColor: 'blue-900'
-});
-
 export interface TreeViewDragPreviewProps {
   /** The currently dragged items, sourced from renderDragPreview. */
   items: DragItem[];
+  /** The overflow mode to be applied on the drag preview. */
+  overflowMode?: 'wrap' | 'truncate';
   /**
-   * The contents of the drag preview. Supports the default text slot.
+   * The contents of the drag preview. Supports the "label", "description", and "icon" slots.
    * If no children are provided, defaults to the first drag item's plain text content.
    */
   children?: ReactNode;
@@ -300,7 +260,7 @@ export interface TreeViewDragPreviewProps {
  * children to customize the drag preview's contents.
  */
 export function TreeViewDragPreview(props: TreeViewDragPreviewProps) {
-  let {items} = props;
+  let {items, overflowMode} = props;
   let isDraggingMultiple = items.length > 1;
   let itemLabel = items[0]?.['text/plain'] ?? '';
   let scale = useScale();
@@ -315,7 +275,9 @@ export function TreeViewDragPreview(props: TreeViewDragPreviewProps) {
               TextContext,
               {
                 slots: {
-                  [DEFAULT_SLOT]: {styles: label({})}
+                  [DEFAULT_SLOT]: {styles: label({overflowMode})},
+                  label: {styles: label({overflowMode})},
+                  description: {styles: description({overflowMode})}
                 }
               }
             ],

@@ -82,15 +82,19 @@ import {
   LoadingState,
   Node
 } from '@react-types/shared';
+import {centerBaseline} from './CenterBaseline';
 import DragHandle from '../ui-icons/DragHandle';
 import {
+  description,
   dragPreviewBadge,
+  dragPreviewCard,
   dragPreviewCardBack,
   dragPreviewWrapper,
+  icon,
+  iconCenterWrapper,
   InsertionIndicator,
   label
 } from './ListView';
-import {edgeToText} from '../style/spectrum-theme' with {type: 'macro'};
 import {Form} from 'react-aria-components/Form';
 import {
   getActiveElement,
@@ -302,38 +306,13 @@ const table = style<
   forcedColorAdjust: 'none'
 });
 
-let dragPreviewCard = style<{scale?: 'medium' | 'large'}>({
-  boxSizing: 'border-box',
-  paddingX: 0,
-  paddingY: 8,
-  backgroundColor: 'gray-25',
-  color: baseColor('neutral'),
-  position: 'relative',
-  display: 'grid',
-  gridTemplateAreas: ['. label  badge .'],
-  gridTemplateColumns: [edgeToText(40), 'minmax(0, 1fr)', 'auto', edgeToText(40)],
-  gridTemplateRows: 'auto',
-  alignItems: 'baseline',
-  minHeight: {
-    default: 40,
-    scale: {
-      large: 50
-    }
-  },
-  width: 200,
-  borderRadius: 'default',
-  borderWidth: 1,
-  borderStyle: 'solid',
-  borderColor: 'blue-900'
-});
-
 export interface TableViewDragPreviewProps {
   /** The currently dragged items, sourced from renderDragPreview. */
   items: DragItem[];
   /** The overflow mode to be applied on the drag preview. */
   overflowMode?: S2TableProps['overflowMode'];
   /**
-   * The contents of the drag preview. Supports the default text slot.
+   * The contents of the drag preview. Supports the "label", "description", and "icon" slots.
    * If no children are provided, defaults to the first drag item's plain text content.
    */
   children?: ReactNode;
@@ -360,7 +339,20 @@ export function TableViewDragPreview(props: TableViewDragPreviewProps) {
               TextContext,
               {
                 slots: {
-                  [DEFAULT_SLOT]: {styles: label({overflowMode})}
+                  [DEFAULT_SLOT]: {styles: label({overflowMode})},
+                  label: {styles: label({overflowMode})},
+                  description: {styles: description({overflowMode})}
+                }
+              }
+            ],
+            [
+              IconContext,
+              {
+                slots: {
+                  icon: {
+                    render: centerBaseline({slot: 'icon', styles: iconCenterWrapper}),
+                    styles: icon
+                  }
                 }
               }
             ]

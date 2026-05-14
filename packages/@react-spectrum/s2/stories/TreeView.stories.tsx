@@ -1019,6 +1019,9 @@ function CustomDragPreview(props) {
     <TreeViewDragPreview {...props}>
       {item.value.icon}
       <Text>{item.value.name}</Text>
+      {item.value.childItems && (
+        <Text slot="description">{`${item.value.childItems.length} item(s)`}</Text>
+      )}
     </TreeViewDragPreview>
   );
 }
