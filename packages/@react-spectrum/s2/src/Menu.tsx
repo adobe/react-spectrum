@@ -61,8 +61,8 @@ import {edgeToText} from '../style/spectrum-theme' with {type: 'macro'};
 import {forwardRefType} from './types';
 import {HeaderContext, HeadingContext, KeyboardContext, Text, TextContext} from './Content';
 import {IconContext} from './Icon';
-import {ImageContext} from './Image'; // chevron right removed??
-import InfoCircleIcon from '../s2wf-icons/S2_Icon_InfoCircle_20_N.svg';
+import {ImageContext} from './Image';
+import InfoCircleIcon from '../s2wf-icons/S2_Icon_InfoCircle_20_N.svg'; // chevron right removed??
 import {InPopoverContext, Popover, PopoverContext} from './Popover';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
