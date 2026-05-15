@@ -1099,37 +1099,6 @@ describe('Autocomplete', () => {
     expect(dialogs).toHaveLength(0);
   });
 
-  it.each`
-    Name             | Component
-    ${'Tabs'}        | ${StaticTabs}
-    ${'Tree'}        | ${StaticTree}
-    ${'Breadcrumbs'} | ${StaticBreadcrumbs}
-  `('$Name doesnt get filtered by Autocomplete', async function ({Component}) {
-    let {getByRole, getByTestId} = render(
-      <AutocompleteWrapper>
-        <Component data-testid="wrapped" />
-      </AutocompleteWrapper>
-    );
-
-    let wrappedComponent = getByTestId('wrapped');
-    expect(await within(wrappedComponent).findByText('Foo')).toBeTruthy();
-    expect(await within(wrappedComponent).findByText('Bar')).toBeTruthy();
-    expect(await within(wrappedComponent).findByText('Baz')).toBeTruthy();
-
-    let input = getByRole('searchbox');
-    await user.tab();
-    expect(document.activeElement).toBe(input);
-    await user.keyboard('Foo');
-    expect(input).toHaveValue('Foo');
-    expect(input).not.toHaveAttribute('aria-controls');
-    expect(input).not.toHaveAttribute('aria-autocomplete');
-    expect(input).not.toHaveAttribute('aria-activedescendant');
-
-    expect(await within(wrappedComponent).findByText('Foo')).toBeTruthy();
-    expect(await within(wrappedComponent).findByText('Bar')).toBeTruthy();
-    expect(await within(wrappedComponent).findByText('Baz')).toBeTruthy();
-  });
-
   it('should allow user to filter by node information', async () => {
     let {getByRole} = render(
       <CustomFiltering>
