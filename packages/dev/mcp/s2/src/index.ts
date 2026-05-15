@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /// <reference types="node" />
-import {errorToString} from '../../shared/src/utils.js';
+import {errorToString, readPackageVersion} from '../../shared/src/utils.js';
 import {
   listIconNames,
   listIllustrationNames,
@@ -23,14 +23,15 @@ import {z} from 'zod';
       process.exit(0);
     }
 
-    await startServer('s2', '0.1.0', (server: McpServer) => {
+    await startServer('s2', readPackageVersion(import.meta.url), (server: McpServer) => {
       server.registerTool(
         'search_s2_icons',
         {
           title: 'Search S2 icons',
           description:
             'Searches the S2 workflow icon set by one or more terms; returns matching icon names.',
-          inputSchema: {terms: z.union([z.string(), z.array(z.string())])}
+          inputSchema: {terms: z.union([z.string(), z.array(z.string())])},
+          annotations: {readOnlyHint: true, openWorldHint: true}
         },
         async ({terms}) => {
           const allNames = listIconNames();
@@ -94,7 +95,8 @@ import {z} from 'zod';
           title: 'Search S2 illustrations',
           description:
             'Searches the S2 illustrations set by one or more terms; returns matching illustration names.',
-          inputSchema: {terms: z.union([z.string(), z.array(z.string())])}
+          inputSchema: {terms: z.union([z.string(), z.array(z.string())])},
+          annotations: {readOnlyHint: true, openWorldHint: true}
         },
         async ({terms}) => {
           const allNames = listIllustrationNames();
@@ -158,7 +160,8 @@ import {z} from 'zod';
           title: 'Get style macro property values',
           description:
             'Returns the allowed values for a given S2 style macro property (including expanded color/spacing value lists where applicable).',
-          inputSchema: {propertyName: z.string()}
+          inputSchema: {propertyName: z.string()},
+          annotations: {readOnlyHint: true, openWorldHint: true}
         },
         async ({propertyName}) => {
           const name = String(propertyName ?? '').trim();

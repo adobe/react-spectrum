@@ -304,7 +304,6 @@ export const FieldGroup = forwardRef(function FieldGroup(
           <CenterBaseline
             id={prefixId}
             styles={style({
-              minWidth: 20,
               color: 'gray-600',
               flexShrink: 0,
               marginEnd: 'text-to-visual'
