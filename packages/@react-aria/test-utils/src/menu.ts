@@ -218,7 +218,7 @@ export class MenuTester {
 
       if (interactionType === 'keyboard') {
         if (option?.getAttribute('aria-disabled') === 'true') {
-          return;
+          throw new Error(`Cannot select disabled option "${formatTargetNode(opts.option)}".`);
         }
 
         if (document.activeElement !== menu && !menu.contains(document.activeElement)) {
@@ -331,6 +331,15 @@ export class MenuTester {
       submenuTrigger = within(menu!)
         .getByText(submenuTrigger)
         .closest('[role=menuitem]')! as HTMLElement;
+    }
+
+    if (
+      submenuTrigger.getAttribute('aria-disabled') === 'true' ||
+      submenuTrigger.hasAttribute('disabled')
+    ) {
+      throw new Error(
+        `Cannot open submenu because its trigger "${formatTargetNode(submenuTrigger)}" is disabled.`
+      );
     }
 
     let submenuTriggerTester = new MenuTester({

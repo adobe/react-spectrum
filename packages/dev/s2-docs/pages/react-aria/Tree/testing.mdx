@@ -28,7 +28,7 @@ Tree supports long press interactions on its rows in certain configurations. See
 
 <InlineAlert variant="notice">
   <Heading>Requirements</Heading>
-  <Content>Please note that this library uses [@testing-library/react@16](https://www.npmjs.com/package/@testing-library/react) and [@testing-library/user-event@14](https://www.npmjs.com/package/@testing-library/user-event). This means that you need to be on React 18+ in order for these utilities to work.</Content>
+  <Content>Please note that this library uses [@testing-library/dom@10](https://www.npmjs.com/package/@testing-library/dom) and [@testing-library/user-event@14](https://www.npmjs.com/package/@testing-library/user-event). This means that you need to be on React 18+ in order for these utilities to work.</Content>
 </InlineAlert>
 
 Initialize a `User` object at the top of your test file, and use it to create a `Tree` pattern tester in your test cases. The tester has methods that you can call within your test to query for specific subcomponents or simulate common interactions.
@@ -64,7 +64,7 @@ it('Tree can select and expand an item via keyboard', async function () {
   expect(treeTester.getSelectedRows()).toHaveLength(1);
   expect(within(treeTester.getRows()[0]).getByRole('checkbox')).not.toBeChecked();
 
-  await treeTester.toggleRowExpansion({index: 0});
+  await treeTester.toggleRowExpansion({row: 0});
   expect(treeTester.getRows()[0]).toHaveAttribute('aria-expanded', 'true');
 });
 ```

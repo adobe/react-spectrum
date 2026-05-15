@@ -199,7 +199,7 @@ export class SelectTester {
 
     if (interactionType === 'keyboard') {
       if (option?.getAttribute('aria-disabled') === 'true') {
-        return;
+        throw new Error(`Cannot select disabled option "${formatTargetNode(opts.option)}".`);
       }
 
       if (document.activeElement !== listbox && !listbox.contains(document.activeElement)) {

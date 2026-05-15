@@ -197,7 +197,9 @@ export class ListBoxTester {
 
     if (interactionType === 'keyboard') {
       if (option?.getAttribute('aria-disabled') === 'true') {
-        return;
+        throw new Error(
+          `Cannot toggle selection on disabled option "${formatTargetNode(opts.option)}".`
+        );
       }
 
       await this.keyboardNavigateToOption({
@@ -249,7 +251,9 @@ export class ListBoxTester {
       await this.user.dblClick(option);
     } else if (interactionType === 'keyboard') {
       if (option?.getAttribute('aria-disabled') === 'true') {
-        return;
+        throw new Error(
+          `Cannot trigger action on disabled option "${formatTargetNode(opts.option)}".`
+        );
       }
 
       await this.keyboardNavigateToOption({option, selectionOnNav: 'none'});
