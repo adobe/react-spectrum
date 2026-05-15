@@ -1,4 +1,4 @@
-import {fileURLToPath} from 'url';
+import { fileURLToPath } from 'url';
 import fs from 'fs';
 import path from 'path';
 import sharp from 'sharp';
@@ -34,7 +34,7 @@ const libraries = {
     extensionName: 'react-spectrum-s2',
     description: "Build apps with Adobe's React Spectrum component library.",
     longDescription:
-      'Provides tools for browsing the React Spectrum (S2) documentation, including listing and reading pages, searching for available icons and illustrations, and looking up available styling token values. Uses the React Spectrum documentation content available at https://react-spectrum.adobe.com.',
+      'Provides tools for browsing the React Spectrum (S2) documentation, including listing and reading pages, searching for available icons and illustrations, and looking up available styling token values. Also bundles the React Aria docs tools for browsing React Aria documentation from the same server. Uses the React Spectrum documentation content available at https://react-spectrum.adobe.com and React Aria documentation content available at https://react-aria.adobe.com.',
     homepage: 'https://react-spectrum.adobe.com/',
     documentation: 'https://react-spectrum.adobe.com/ai.html',
     iconSvg: path.join(assetsDir, 'rsp-favicon.svg'),
@@ -55,7 +55,8 @@ const libraries = {
         name: 'get_style_macro_property_values',
         description:
           'Returns the allowed values for a given S2 style macro property (including expanded color/spacing value lists where applicable).'
-      }
+      },
+      ...sharedPageTools('React Aria', 'react_aria')
     ],
     srcDirs: [
       {
@@ -120,8 +121,8 @@ async function generateBundle(libraryName, config) {
   const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
   const stagingDir = path.join(config.outputDir, config.extensionName);
 
-  fs.rmSync(stagingDir, {recursive: true, force: true});
-  fs.mkdirSync(stagingDir, {recursive: true});
+  fs.rmSync(stagingDir, { recursive: true, force: true });
+  fs.mkdirSync(stagingDir, { recursive: true });
 
   for (const dir of config.srcDirs) {
     if (!fs.existsSync(dir.from)) {
@@ -144,8 +145,8 @@ async function generateBundle(libraryName, config) {
   // Replace it with the dark-mode color so the icon works on any background.
   svg = svg.replace(/light-dark\([^,]+,\s*([^)]+)\)/, '$1');
   await sharp(Buffer.from(svg))
-    .resize(448, 448, {fit: 'contain', background: {r: 0, g: 0, b: 0, alpha: 0}})
-    .extend({top: 32, bottom: 32, left: 32, right: 32, background: {r: 0, g: 0, b: 0, alpha: 0}})
+    .resize(448, 448, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } })
+    .extend({ top: 32, bottom: 32, left: 32, right: 32, background: { r: 0, g: 0, b: 0, alpha: 0 } })
     .png()
     .toFile(path.join(stagingDir, iconFile));
 
@@ -268,7 +269,7 @@ function resolvePackageDir(packageName, fromDir) {
 }
 
 function copyDirectory(from, to) {
-  fs.mkdirSync(path.dirname(to), {recursive: true});
+  fs.mkdirSync(path.dirname(to), { recursive: true });
   fs.cpSync(from, to, {
     recursive: true,
     dereference: true

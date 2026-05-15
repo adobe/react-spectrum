@@ -1,6 +1,6 @@
 # @react-spectrum/mcp
 
-The `@react-spectrum/mcp` package provides a [Model Context Protocol (MCP)](https://modelcontextprotocol.io/docs/getting-started/intro) server for React Spectrum (S2) documentation. It exposes a set of tools that MCP clients can discover and call to browse the docs, search for icons and illustrations, and more.
+The `@react-spectrum/mcp` package provides a [Model Context Protocol (MCP)](https://modelcontextprotocol.io/docs/getting-started/intro) server for React Spectrum (S2) documentation. It exposes a set of tools that MCP clients can discover and call to browse the docs, search for icons and illustrations, and more. It also bundles the React Aria docs tools, so you can browse React Aria documentation from the same server.
 
 ## Installation
 
@@ -110,6 +110,10 @@ Follow Windsurf MCP [documentation](https://docs.windsurf.com/windsurf/cascade/m
 | `get_s2_page` | `{ page_name: string, section_name?: string }` | Return full page markdown, or only the specified section. |
 | `search_s2_icons` | `{ terms: string \| string[] }` | Search S2 workflow icon names. |
 | `search_s2_illustrations` | `{ terms: string \| string[] }` | Search S2 illustration names. |
+| `get_style_macro_property_values` | `{ propertyName: string }` | Return allowed values for an S2 style macro property. |
+| `list_react_aria_pages` | `{ includeDescription?: boolean }` | List available pages in the React Aria docs. |
+| `get_react_aria_page_info` | `{ page_name: string }` | Return page description and list of section titles. |
+| `get_react_aria_page` | `{ page_name: string, section_name?: string }` | Return full page markdown, or only the specified section. |
 
 ## Privacy Policy
 
