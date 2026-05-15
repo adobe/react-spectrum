@@ -10,14 +10,6 @@ export interface Position {
   offset: number;
 }
 
-export interface Change {
-  /** The new list of segments. */
-  value: TokenFieldSegment[];
-  /** The new caret position. */
-  caret: Position;
-  undo?: (tokens: TokenSegmentList) => Change;
-}
-
 export enum Direction {
   Forward = 1,
   Backward = -1
@@ -31,8 +23,13 @@ export interface TokenSegmentListOptions {
  * A list of segments containing editable text and non-editable tokens.
  */
 export class TokenSegmentList {
-  segments: TokenFieldSegment[];
-  tokenRegex: RegExp | null = null;
+  readonly segments: readonly TokenFieldSegment[];
+  readonly tokenRegex: RegExp | null = null;
+  caretPosition: Position = {index: 0, offset: 0};
+  // Linked list representing the undo/redo history.
+  private previous: TokenSegmentList | null = null;
+  private next: TokenSegmentList | null = null;
+  private isCoalescing = true;
 
   constructor(tokens: TokenFieldSegment[], options?: TokenSegmentListOptions) {
     this.segments = tokens;
@@ -105,26 +102,27 @@ export class TokenSegmentList {
   }
 
   /** Replace the text between two positions with new text. */
-  replaceRange(start: Position, end: Position, text: string): Change {
+  replaceRange(start: Position, end: Position, text: string, coalesce = true): TokenSegmentList {
     return this.replaceRangeWithSegments(
       start,
       end,
-      text.length > 0 ? [this.createTextSegment(text)] : []
+      text.length > 0 ? [this.createTextSegment(text)] : [],
+      coalesce
     );
   }
 
-  replaceRangeWithSegments(start: Position, end: Position, insert: TokenFieldSegment[]): Change {
+  replaceRangeWithSegments(
+    start: Position,
+    end: Position,
+    insert: TokenFieldSegment[],
+    coalesce = true
+  ): TokenSegmentList {
     start = this.clampPosition(start);
     end = this.clampPosition(end);
     let startSegment = this.segments[start.index];
     let endSegment = this.segments[end.index];
     let [startSplit] = this.splitSegment(startSegment, start.offset);
     let [, endSplit] = this.splitSegment(endSegment, end.offset);
-
-    let caret = {
-      index: start.index,
-      offset: start.offset
-    };
 
     let newSegments = this.segments.slice(0, start.index);
     if (startSplit) {
@@ -133,9 +131,14 @@ export class TokenSegmentList {
 
     if (insert.length) {
       appendSegments(newSegments, insert);
-      caret.index = newSegments.length - 1;
-      caret.offset = newSegments[newSegments.length - 1].text.length;
     }
+
+    let lastSegment = newSegments[newSegments.length - 1];
+    let lastIsText = lastSegment && lastSegment.type === 'text';
+    let caret = {
+      index: lastIsText ? newSegments.length - 1 : newSegments.length,
+      offset: lastIsText ? lastSegment.text.length : 0
+    };
 
     if (endSplit) {
       appendSegments(newSegments, [endSplit]);
@@ -159,16 +162,27 @@ export class TokenSegmentList {
       }
     }
 
-    let original = this.slice(start, end);
-    return {
-      value: newSegments,
-      caret,
-      undo: tokens => tokens.replaceRangeWithSegments(start, caret, original)
-    };
+    let segments = new TokenSegmentList(newSegments);
+    segments.caretPosition = caret;
+    segments.isCoalescing = coalesce;
+    if (this.isCoalescing && coalesce && this.previous) {
+      segments.previous = this.previous;
+      segments.previous.next = segments;
+    } else {
+      segments.previous = this;
+      this.caretPosition = end;
+      this.next = segments;
+    }
+    return segments;
   }
 
   /** Delete text at a position using a segmenter. */
-  delete(position: Position, segmenter: Intl.Segmenter, direction: Direction): Change {
+  delete(
+    position: Position,
+    segmenter: Intl.Segmenter,
+    direction: Direction,
+    coalesce = true
+  ): TokenSegmentList {
     position = this.clampPosition(position);
 
     for (let i = position.index; i >= 0 && i < this.segments.length; i += direction) {
@@ -186,7 +200,8 @@ export class TokenSegmentList {
             return this.replaceRange(
               direction === Direction.Backward ? pos : position,
               direction === Direction.Backward ? position : pos,
-              ''
+              '',
+              coalesce
             );
           }
           continue;
@@ -212,7 +227,8 @@ export class TokenSegmentList {
             return this.replaceRange(
               direction === Direction.Backward ? pos : position,
               direction === Direction.Backward ? position : pos,
-              ''
+              '',
+              coalesce
             );
           }
           continue;
@@ -220,16 +236,14 @@ export class TokenSegmentList {
       }
     }
 
-    return {
-      value: this.segments,
-      caret: position
-    };
+    this.caretPosition = position;
+    return this;
   }
 
   /** Delete text to the next or previous line break. */
-  deleteLine(position: Position, direction: Direction): Change {
+  deleteLine(position: Position, direction: Direction, coalesce = true): TokenSegmentList {
     if (this.segments.length === 0) {
-      return {value: this.segments, caret: position};
+      return this;
     }
 
     for (let i = position.index; i >= 0 && i < this.segments.length; i += direction) {
@@ -252,7 +266,8 @@ export class TokenSegmentList {
         return this.replaceRange(
           direction === Direction.Backward ? pos : position,
           direction === Direction.Backward ? position : pos,
-          ''
+          '',
+          coalesce
         );
       }
     }
@@ -265,45 +280,41 @@ export class TokenSegmentList {
             index: this.segments.length - 1,
             offset: this.segments[this.segments.length - 1].text.length
           },
-      ''
+      '',
+      coalesce
     );
   }
 
   /** Converts the text at a position into a token. */
-  insertToken(position: Position): Change {
+  insertToken(position: Position): TokenSegmentList {
     let segment = this.segments[position.index];
     if (segment && segment.type === 'text') {
-      return {
-        value: [
-          ...this.segments.slice(0, position.index),
-          {type: 'token', text: segment.text},
-          ...this.segments.slice(position.index + 1)
-        ],
-        caret: {
-          index: position.index + 1,
-          offset: 0
-        }
-      };
+      return this.replaceRangeWithSegments(
+        {index: position.index, offset: 0},
+        {index: position.index, offset: segment.text.length},
+        [{type: 'token', text: segment.text}],
+        false
+      );
     }
 
-    return {
-      value: this.segments,
-      caret: position
-    };
+    this.caretPosition = position;
+    return this;
   }
 
-  slice(start: Position, end: Position): TokenFieldSegment[] {
+  slice(start: Position, end: Position): TokenSegmentList {
     start = this.clampPosition(start);
     end = this.clampPosition(end);
     if (start.index === end.index && start.offset === end.offset) {
-      return [];
+      return new TokenSegmentList([]);
     }
     if (start.index === end.index) {
       let segment = this.segments[start.index];
       if (segment.type === 'text') {
-        return [{type: 'text', text: segment.text.slice(start.offset, end.offset)}];
+        return new TokenSegmentList([
+          {type: 'text', text: segment.text.slice(start.offset, end.offset)}
+        ]);
       }
-      return [segment];
+      return new TokenSegmentList([segment]);
     }
     let startSegment = this.segments[start.index];
     let endSegment = this.segments[end.index];
@@ -318,7 +329,23 @@ export class TokenSegmentList {
     if (endSplit) {
       result.push(endSplit);
     }
-    return result;
+    return new TokenSegmentList(result);
+  }
+
+  toString(): string {
+    return this.segments.map(seg => seg.text).join('');
+  }
+
+  undo(): TokenSegmentList {
+    return this.previous ?? this;
+  }
+
+  redo(): TokenSegmentList {
+    return this.next ?? this;
+  }
+
+  endCoalescing(): void {
+    this.isCoalescing = false;
   }
 }
 
@@ -329,7 +356,7 @@ function appendSegments(
   for (let segment of insert) {
     let last = segments[segments.length - 1];
     if (last && last.type === 'text' && segment.type === 'text') {
-      last.text += segment.text;
+      segments[segments.length - 1] = {type: 'text', text: last.text + segment.text};
     } else {
       segments.push(segment);
     }

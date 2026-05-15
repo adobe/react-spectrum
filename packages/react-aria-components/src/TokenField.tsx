@@ -1,18 +1,22 @@
-import React, {useMemo, useRef} from 'react';
+import React, {ForwardedRef, forwardRef, HTMLAttributes, useMemo, useRef} from 'react';
 import {useControlledState} from 'react-stately/useControlledState';
 import {useEvent} from 'react-aria/private/utils/useEvent';
 import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
-import {Change, Direction, Position, TokenFieldSegment, TokenSegmentList} from './TokenSegmentList';
+import {Direction, Position, TokenFieldSegment, TokenSegmentList} from './TokenSegmentList';
 import {isCtrlKeyPressed} from 'react-aria/private/utils/keyboard';
 import {isMac} from 'react-aria/private/utils/platform';
+import {useObjectRef} from 'react-aria/useObjectRef';
+import {SlotProps, useSlottedContext} from './utils';
+import {FieldInputContext} from './Autocomplete';
+import {mergeRefs} from 'react-aria/mergeRefs';
 
 export type {TokenFieldSegment};
 
-export interface TokenFieldProps {
+export interface TokenFieldProps extends SlotProps {
   /** Structured document: text runs and atomic tokens. */
-  value?: TokenFieldSegment[];
-  defaultValue?: TokenFieldSegment[];
-  onChange?: (value: TokenFieldSegment[]) => void;
+  value?: TokenSegmentList;
+  defaultValue?: TokenSegmentList;
+  onChange?: (value: TokenSegmentList) => void;
   tokenRegex?: RegExp | null;
   /** When false (default), newline insertion is blocked. */
   multiline?: boolean;
@@ -28,10 +32,13 @@ export interface TokenFieldProps {
 
 export const CLIPBOARD_MIME_TYPE = 'application/vnd.react-aria.tokens+json';
 
-export function TokenField(props: TokenFieldProps) {
+export const TokenField = forwardRef(function TokenField(
+  props: TokenFieldProps,
+  forwardedRef: ForwardedRef<HTMLDivElement | null>
+) {
   let {
     value: valueProp,
-    defaultValue: defaultValueProp = [],
+    defaultValue: defaultValueProp = new TokenSegmentList([]),
     onChange,
     tokenRegex = null,
     multiline = false,
@@ -45,34 +52,34 @@ export function TokenField(props: TokenFieldProps) {
     'aria-describedby': ariaDescribedBy
   } = props;
 
-  let ref = useRef<HTMLDivElement | null>(null);
+  let fieldCtx = useSlottedContext(FieldInputContext, props.slot);
+  let {
+    value: autocompleteValue,
+    onChange: onAutocompleteChange,
+    ref: autocompleteRef,
+    ...autocompleteProps
+  } = fieldCtx ?? {};
+
+  let ref = useObjectRef(forwardedRef);
   let [state, setState] = useControlledState(valueProp, defaultValueProp, onChange);
   let graphemeSegmenter = useMemo(() => new Intl.Segmenter('en-US', {granularity: 'grapheme'}), []);
   let wordSegmenter = useMemo(() => new Intl.Segmenter('en-US', {granularity: 'word'}), []);
 
-  let nextCaretPosition = useRef<Position | null>(null);
   let dropPosition = useRef<Position | null>(null);
 
-  let undoManager = useRef(new UndoManager());
-
-  let apply = (fn: (value: TokenSegmentList) => Change, coalesce = true) => {
+  let apply = (fn: (value: TokenSegmentList) => TokenSegmentList) => {
     setState(value => {
-      let tokens = new TokenSegmentList(value, {tokenRegex});
-      let {value: newValue, caret, undo} = fn(tokens);
-      nextCaretPosition.current = caret;
-
-      if (undo) {
-        undoManager.current.push(() => apply(undo), coalesce);
-      }
-
+      let newValue = fn(value);
+      onAutocompleteChange?.(newValue.toString());
       return newValue;
     });
   };
 
+  let caretPosition = useRef<Position | null>(null);
   useLayoutEffect(() => {
-    if (ref.current && nextCaretPosition.current) {
-      setSelection(ref.current, nextCaretPosition.current);
-      nextCaretPosition.current = null;
+    if (ref.current && state.caretPosition && state.caretPosition !== caretPosition.current) {
+      setSelection(ref.current, state.caretPosition);
+      caretPosition.current = state.caretPosition;
     }
   });
 
@@ -84,7 +91,7 @@ export function TokenField(props: TokenFieldProps) {
     // console.log(start, end)
 
     // https://www.w3.org/TR/input-events-2/#interface-InputEvent-Attributes
-    console.log(e.inputType);
+    // console.log(e.inputType);
     switch (e.inputType) {
       case 'insertText':
       case 'insertReplacementText':
@@ -105,10 +112,13 @@ export function TokenField(props: TokenFieldProps) {
           dropPosition.current = null;
         }
 
-        apply(
-          tokens => tokens.replaceRangeWithSegments(start, end, data),
-          // Don't coalesce paste/drop events with other edits.
-          e.inputType === 'insertText'
+        apply(tokens =>
+          tokens.replaceRangeWithSegments(
+            start,
+            end,
+            data,
+            e.inputType === 'insertText' // Don't coalesce paste/drop events with other edits.
+          )
         );
         break;
       }
@@ -217,39 +227,40 @@ export function TokenField(props: TokenFieldProps) {
     let selection = window.getSelection();
     let range = selection?.getRangeAt(0)!;
     let [start, end] = rangeToPositions(range);
-    let segments = new TokenSegmentList(state).slice(start, end);
+    let slice = state.slice(start, end);
     let dataTransfer = 'clipboardData' in e ? e.clipboardData : e.dataTransfer;
-    dataTransfer?.setData(CLIPBOARD_MIME_TYPE, JSON.stringify(segments));
-    dataTransfer?.setData('text/plain', segments.map(s => s.text).join(''));
+    dataTransfer?.setData(CLIPBOARD_MIME_TYPE, JSON.stringify(slice.segments));
+    dataTransfer?.setData('text/plain', slice.toString());
 
     if (e.type === 'cut') {
-      apply(tokens => tokens.replaceRange(start, end, ''));
+      apply(tokens => tokens.replaceRange(start, end, '', false));
     }
   };
 
   useEvent(ref, 'copy', writeClipboardData);
   useEvent(ref, 'cut', writeClipboardData);
   useEvent(ref, 'dragstart', writeClipboardData);
-  useSelectionChange(ref, () => undoManager.current.endCoalescing());
+  useSelectionChange(ref, () => state.endCoalescing());
 
   useEvent(ref, 'keydown', e => {
     if (e.key === 'z' && isCtrlKeyPressed(e) && !e.shiftKey) {
       e.preventDefault();
-      undoManager.current.undo();
+      apply(state => state.undo());
     } else if (isMac() ? e.key === 'z' && e.metaKey && e.shiftKey : e.key === 'y' && e.ctrlKey) {
       e.preventDefault();
-      undoManager.current.redo();
+      apply(state => state.redo());
     }
   });
 
   return (
     <div
-      ref={ref}
+      ref={mergeRefs(ref, autocompleteRef as any)}
       role="textbox"
       contentEditable="true"
       suppressContentEditableWarning
+      {...(autocompleteProps as HTMLAttributes<HTMLDivElement>)}
       style={{padding: 4, whiteSpace: 'pre-wrap'}}>
-      {state.map((v, i) => {
+      {state.segments.map((v, i) => {
         switch (v.type) {
           case 'token':
             return <Token key={i}>{v.text}</Token>;
@@ -259,7 +270,7 @@ export function TokenField(props: TokenFieldProps) {
       })}
     </div>
   );
-}
+});
 
 function Token({children}) {
   return (
@@ -311,7 +322,7 @@ function setSelection(root: Element, pos: Position) {
     let range = document.createRange();
     let child = root.childNodes[pos.index];
     if (!child || child.nodeType === Node.ELEMENT_NODE) {
-      range.setStart(root, pos.index);
+      range.setStart(root, pos.offset > 0 ? pos.index + 1 : pos.index);
     } else {
       range.setStart(child, pos.offset);
     }
@@ -336,60 +347,4 @@ function useSelectionChange(ref: React.RefObject<Element | null>, handler: () =>
       handler();
     }
   });
-}
-
-type UndoOp = () => void;
-type UndoGroup = UndoOp[];
-
-class UndoManager {
-  private undoStack: UndoGroup[] = [];
-  private redoStack: UndoGroup[] = [];
-  private state: 'undo' | 'redo' | null = null;
-  private isCoalescing = false;
-
-  private pushToStack(stack: UndoGroup[], op: UndoOp, coalesce = true) {
-    if (this.isCoalescing && coalesce && stack.length > 0) {
-      stack[stack.length - 1].unshift(op);
-    } else {
-      stack.push([op]);
-    }
-    this.isCoalescing = coalesce;
-  }
-
-  endCoalescing() {
-    this.isCoalescing = false;
-  }
-
-  push(op: UndoOp, coalesce = true) {
-    switch (this.state) {
-      case null:
-        this.pushToStack(this.undoStack, op, coalesce);
-        this.redoStack = [];
-        break;
-      case 'undo':
-        this.pushToStack(this.redoStack, op, coalesce);
-        break;
-      case 'redo':
-        this.pushToStack(this.undoStack, op, coalesce);
-        break;
-    }
-  }
-
-  undo() {
-    let group = this.undoStack.pop();
-    if (group) {
-      this.state = 'undo';
-      group.forEach(op => op());
-      this.state = null;
-    }
-  }
-
-  redo() {
-    let group = this.redoStack.pop();
-    if (group) {
-      this.state = 'redo';
-      group.forEach(op => op());
-      this.state = null;
-    }
-  }
 }
