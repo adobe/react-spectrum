@@ -809,6 +809,134 @@ describe('TokenSegmentList', () => {
     });
   });
 
+  describe('undo/redo', () => {
+    it('returns the same instance when there is nothing to undo', () => {
+      let list = new TokenSegmentList([text('a')]);
+      expect(list.undo()).toBe(list);
+    });
+
+    it('returns the same instance when there is nothing to redo', () => {
+      let list = new TokenSegmentList([text('a')]);
+      expect(list.redo()).toBe(list);
+    });
+
+    it('undo restores the prior list and redo returns to the newer list', () => {
+      let initial = new TokenSegmentList([text('hello')]);
+      let updated = initial.replaceRange(
+        {index: 0, offset: 0},
+        {index: 0, offset: 5},
+        'hi'
+      );
+      expect(updated.toString()).toBe('hi');
+      let undone = updated.undo();
+      expect(undone).toBe(initial);
+      expect(undone.toString()).toBe('hello');
+      let redone = undone.redo();
+      expect(redone).toBe(updated);
+      expect(redone.toString()).toBe('hi');
+    });
+
+    it('coalesces consecutive replaceRange edits into a single undo step', () => {
+      let empty = new TokenSegmentList([text('')]);
+      let afterX = empty.replaceRange({index: 0, offset: 0}, {index: 0, offset: 0}, 'x');
+      let afterXY = afterX.replaceRange({index: 0, offset: 1}, {index: 0, offset: 1}, 'y');
+      let afterXYZ = afterXY.replaceRange({index: 0, offset: 2}, {index: 0, offset: 2}, 'z');
+      expect(afterXYZ.toString()).toBe('xyz');
+      expect(afterXYZ.undo()).toBe(empty);
+      expect(empty.redo()).toBe(afterXYZ);
+    });
+
+    it('endCoalescing starts a new undo group for the next edit only', () => {
+      let empty = new TokenSegmentList([text('')]);
+      let afterA = empty.replaceRange({index: 0, offset: 0}, {index: 0, offset: 0}, 'a');
+      afterA.endCoalescing();
+      let afterAB = afterA.replaceRange({index: 0, offset: 1}, {index: 0, offset: 1}, 'b');
+      let afterABC = afterAB.replaceRange({index: 0, offset: 2}, {index: 0, offset: 2}, 'c');
+      expect(afterABC.toString()).toBe('abc');
+      expect(afterABC.undo()).toBe(afterA);
+      expect(afterA.undo()).toBe(empty);
+    });
+
+    it('calling endCoalescing on the head before each edit keeps every change on its own undo step', () => {
+      let empty = new TokenSegmentList([text('')]);
+      let afterA = empty.replaceRange({index: 0, offset: 0}, {index: 0, offset: 0}, 'a');
+      afterA.endCoalescing();
+      let afterAB = afterA.replaceRange({index: 0, offset: 1}, {index: 0, offset: 1}, 'b');
+      afterAB.endCoalescing();
+      let afterABC = afterAB.replaceRange({index: 0, offset: 2}, {index: 0, offset: 2}, 'c');
+      expect(afterABC.toString()).toBe('abc');
+      expect(afterABC.undo()).toBe(afterAB);
+      expect(afterAB.undo()).toBe(afterA);
+      expect(afterA.undo()).toBe(empty);
+    });
+
+    it('supports undo and redo across multiple history entries', () => {
+      let a = new TokenSegmentList([text('')]);
+      let b = a.replaceRange({index: 0, offset: 0}, {index: 0, offset: 0}, '1');
+      b.endCoalescing();
+      let c = b.replaceRange({index: 0, offset: 1}, {index: 0, offset: 1}, '2');
+      c.endCoalescing();
+      let d = c.replaceRange({index: 0, offset: 2}, {index: 0, offset: 2}, '3');
+      expect(d.toString()).toBe('123');
+      expect(d.undo().undo().undo()).toBe(a);
+      expect(a.toString()).toBe('');
+      let r1 = a.redo();
+      expect(r1).toBe(b);
+      expect(r1.toString()).toBe('1');
+      let r2 = r1.redo();
+      expect(r2).toBe(c);
+      expect(r2.toString()).toBe('12');
+      let r3 = r2.redo();
+      expect(r3).toBe(d);
+      expect(r3.toString()).toBe('123');
+    });
+
+    it('replaceRange with coalesce false does not merge into the prior coalesced group', () => {
+      let empty = new TokenSegmentList([text('')]);
+      let afterA = empty.replaceRange({index: 0, offset: 0}, {index: 0, offset: 0}, 'a');
+      let afterAB = afterA.replaceRange(
+        {index: 0, offset: 1},
+        {index: 0, offset: 1},
+        'b',
+        false
+      );
+      expect(afterAB.toString()).toBe('ab');
+      expect(afterAB.undo()).toBe(afterA);
+      expect(afterA.undo()).toBe(empty);
+    });
+
+    it('a new edit after undo replaces the redo branch', () => {
+      let initial = new TokenSegmentList([text('a')]);
+      let branched = initial.replaceRange({index: 0, offset: 0}, {index: 0, offset: 0}, 'X');
+      expect(branched.toString()).toBe('Xa');
+      let back = branched.undo();
+      expect(back).toBe(initial);
+      let other = back.replaceRange({index: 0, offset: 0}, {index: 0, offset: 0}, 'Y');
+      expect(other.toString()).toBe('Ya');
+      expect(other.redo()).toBe(other);
+      expect(other.undo()).toBe(initial);
+      expect(initial.redo()).toBe(other);
+    });
+
+    it('insertToken is a separate undo step from coalesced typing', () => {
+      let list = new TokenSegmentList([text('hi')]);
+      let typed = list.replaceRange({index: 0, offset: 2}, {index: 0, offset: 2}, '!');
+      let tokenized = typed.insertToken({index: 0, offset: 0});
+      expect(tokenized.segments).toEqual([token('hi!')]);
+      expect(tokenized.undo()).toBe(typed);
+      expect(typed.undo()).toBe(list);
+    });
+
+    it('coalesces consecutive delete operations into one undo step', () => {
+      let list = new TokenSegmentList([text('abc')]);
+      let afterC = list.delete({index: 0, offset: 3}, graphemeSegmenter, Direction.Backward);
+      let afterB = afterC.delete({index: 0, offset: 2}, graphemeSegmenter, Direction.Backward);
+      expect(afterB.toString()).toBe('a');
+      expect(afterB.undo()).toBe(list);
+      expect(list.redo()).toBe(afterB);
+    });
+  });
+
   describe('tokenRegex', () => {
     const mentionRe = /@\S+(?=\s)/g;
 

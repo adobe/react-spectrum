@@ -39,7 +39,7 @@ const sample = new TokenSegmentList([
 const mentionTokenRegex = /(?<=\s|^)@\S+(?=\s)/g;
 
 export const TokenFieldExample: TokenFieldStory = () => {
-  return <TokenField defaultValue={sample} aria-label="Message" tokenRegex={mentionTokenRegex} />;
+  return <TokenField defaultValue={sample} aria-label="Message" />;
 };
 
 const usernames = [
@@ -107,40 +107,40 @@ export const WithPopover: TokenFieldStory = () => {
     filterValue == null ? [] : usernames.filter(emoji => emoji.username.includes(filterValue));
   return (
     <Autocomplete>
-      <div>
-        <TokenField value={value} onChange={setValue} aria-label="Message" ref={inputRef} />
-        <Popover
-          triggerRef={inputRef}
-          isOpen={filterAnchor != null && items.length > 0}
-          isNonModal
-          style={{
-            background: 'Canvas',
-            color: 'CanvasText',
-            border: '1px solid gray',
-            padding: 5
-          }}>
-          <Menu className={styles.menu} items={items} dependencies={[filterAnchor]}>
-            {item => (
-              <MyMenuItem
-                onAction={() => {
-                  setValue(value =>
-                    value.replaceRangeWithSegments(
-                      filterAnchor!,
-                      value.caretPosition,
-                      [
-                        {type: 'token', text: '@' + item.username},
-                        {type: 'text', text: ' '}
-                      ],
-                      false // Don't coalesce in undo/redo history.
-                    )
-                  );
-                }}>
-                {item.username}
-              </MyMenuItem>
-            )}
-          </Menu>
-        </Popover>
-      </div>
+      <TokenField value={value} onChange={setValue} aria-label="Message" ref={inputRef} />
+      <Popover
+        triggerRef={inputRef}
+        isOpen={filterAnchor != null && items.length > 0}
+        isNonModal
+        style={{
+          background: 'Canvas',
+          color: 'CanvasText'
+        }}>
+        <Menu
+          className={styles.menu}
+          items={items}
+          dependencies={[filterAnchor]}
+          style={{width: 'var(--trigger-width)'}}>
+          {item => (
+            <MyMenuItem
+              onAction={() => {
+                setValue(value =>
+                  value.replaceRangeWithSegments(
+                    filterAnchor!,
+                    value.caretPosition,
+                    [
+                      {type: 'token', text: '@' + item.username},
+                      {type: 'text', text: ' '}
+                    ],
+                    false // Don't coalesce in undo/redo history.
+                  )
+                );
+              }}>
+              {item.username}
+            </MyMenuItem>
+          )}
+        </Menu>
+      </Popover>
     </Autocomplete>
   );
 };

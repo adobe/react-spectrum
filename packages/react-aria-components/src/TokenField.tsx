@@ -17,7 +17,6 @@ export interface TokenFieldProps extends SlotProps {
   value?: TokenSegmentList;
   defaultValue?: TokenSegmentList;
   onChange?: (value: TokenSegmentList) => void;
-  tokenRegex?: RegExp | null;
   /** When false (default), newline insertion is blocked. */
   multiline?: boolean;
   isReadOnly?: boolean;
@@ -40,7 +39,6 @@ export const TokenField = forwardRef(function TokenField(
     value: valueProp,
     defaultValue: defaultValueProp = new TokenSegmentList([]),
     onChange,
-    tokenRegex = null,
     multiline = false,
     isReadOnly = false,
     isDisabled = false,
@@ -245,9 +243,11 @@ export const TokenField = forwardRef(function TokenField(
   useEvent(ref, 'keydown', e => {
     if (e.key === 'z' && isCtrlKeyPressed(e) && !e.shiftKey) {
       e.preventDefault();
+      e.stopPropagation();
       apply(state => state.undo());
     } else if (isMac() ? e.key === 'z' && e.metaKey && e.shiftKey : e.key === 'y' && e.ctrlKey) {
       e.preventDefault();
+      e.stopPropagation();
       apply(state => state.redo());
     }
   });
