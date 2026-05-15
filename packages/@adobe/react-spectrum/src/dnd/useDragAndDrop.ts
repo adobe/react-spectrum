@@ -92,7 +92,7 @@ interface DropHooks {
 }
 
 export interface DragAndDropHooks<T = object> {
-  /** Drag and drop hooks for the collection element.  */
+  /** Drag and drop hooks for the collection element. */
   dragAndDropHooks: DragHooks<T> &
     DropHooks & {
       isVirtualDragging?: () => boolean;
@@ -105,16 +105,22 @@ export interface DragAndDropOptions<T = object>
     Omit<DraggableCollectionProps, 'preview' | 'getItems'>,
     Omit<DroppableCollectionProps, 'onMove'> {
   /**
-   * A function that returns the items being dragged. If not specified, we assume that the collection is not draggable.
+   * A function that returns the items being dragged. If not specified, we assume that the
+   * collection is not draggable.
+   *
    * @default () => []
    */
   getItems?: (keys: Set<Key>, items: T[]) => DragItem[];
-  /** Provide a custom drag preview. `draggedKey` represents the key of the item the user actually dragged. */
+  /**
+   * Provide a custom drag preview. `draggedKey` represents the key of the item the user actually
+   * dragged.
+   */
   renderPreview?: (keys: Set<Key>, draggedKey: Key) => JSX.Element;
 }
 
 /**
- * Provides the hooks required to enable drag and drop behavior for a drag and drop compatible React Spectrum component.
+ * Provides the hooks required to enable drag and drop behavior for a drag and drop compatible React
+ * Spectrum component.
  */
 export function useDragAndDrop<T = object>(options: DragAndDropOptions<T>): DragAndDropHooks {
   let dragAndDropHooks = useMemo(() => {

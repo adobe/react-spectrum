@@ -37,9 +37,9 @@ export interface RangeCalendarProps<T extends DateValue>
    */
   allowsNonContiguousRanges?: boolean;
   /**
-   * Callback that is called for each date of the calendar. If it returns true, then the date is unavailable.
-   * The second argument provides the current selection anchor date, if any. This can be used to adjust the available
-   * dates based on the user's first selected date.
+   * Callback that is called for each date of the calendar. If it returns true, then the date is
+   * unavailable. The second argument provides the current selection anchor date, if any. This can
+   * be used to adjust the available dates based on the user's first selected date.
    */
   isDateUnavailable?: (date: DateValue, anchorDate: CalendarDate | null) => boolean;
 }
@@ -58,19 +58,22 @@ export interface RangeCalendarStateOptions<
   createCalendar: (name: CalendarIdentifier) => Calendar;
   /**
    * The amount of days that will be displayed at once. This affects how pagination works.
-   * @default {months: 1}
+   *
+   * @default { months: 1 }
    */
   visibleDuration?: DateDuration;
   /**
-   * Determines the alignment of the visible months on initial render based on the current selection or current date if there is no selection.
+   * Determines the alignment of the visible months on initial render based on the current selection
+   * or current date if there is no selection.
+   *
    * @default 'center'
    */
   selectionAlignment?: 'start' | 'center' | 'end';
 }
 
 /**
- * Provides state management for a range calendar component.
- * A range calendar displays one or more date grids and allows users to select a contiguous range of dates.
+ * Provides state management for a range calendar component. A range calendar displays one or more
+ * date grids and allows users to select a contiguous range of dates.
  */
 export function useRangeCalendarState<T extends DateValue = DateValue>(
   props: RangeCalendarStateOptions<T>

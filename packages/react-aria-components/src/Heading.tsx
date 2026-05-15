@@ -15,12 +15,15 @@ import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes} from 're
 
 export interface HeadingProps extends HTMLAttributes<HTMLElement>, DOMRenderProps<'h1', undefined> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element.
+   *
    * @default 'react-aria-Heading'
    */
   className?: string;
   /**
    * The heading level.
+   *
    * @default 3
    */
   level?: number;

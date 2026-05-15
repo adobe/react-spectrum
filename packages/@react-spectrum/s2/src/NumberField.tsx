@@ -69,6 +69,7 @@ export interface NumberFieldProps
     Pick<InputProps, 'placeholder'> {
   /**
    * Whether to hide the increment and decrement buttons.
+   *
    * @default false
    */
   hideStepper?: boolean;
@@ -78,6 +79,11 @@ export interface NumberFieldProps
    * @default 'M'
    */
   size?: 'S' | 'M' | 'L' | 'XL';
+  /**
+   * The prefix to display in the NumberField. A non-interactive element that appears before the
+   * input.
+   */
+  prefix?: ReactNode;
 }
 
 export const NumberFieldContext =
@@ -164,7 +170,8 @@ const stepperContainerStyles = style({
 });
 
 /**
- * NumberFields allow users to input number values with a keyboard or increment/decrement with step buttons.
+ * NumberFields allow users to input number values with a keyboard or increment/decrement with step
+ * buttons.
  */
 export const NumberField = forwardRef(function NumberField(
   props: NumberFieldProps,
@@ -237,6 +244,7 @@ export const NumberField = forwardRef(function NumberField(
               {label}
             </FieldLabel>
             <FieldGroup
+              prefix={props.prefix}
               size={size}
               styles={style({
                 ...fieldInput(),
@@ -249,7 +257,10 @@ export const NumberField = forwardRef(function NumberField(
               <InputContext.Consumer>
                 {ctx => (
                   <InputContext.Provider
-                    value={{...ctx, ref: mergeRefs((ctx as any)?.ref, inputRef)}}>
+                    value={{
+                      ...ctx,
+                      ref: mergeRefs((ctx as any)?.ref, inputRef)
+                    }}>
                     <Input />
                   </InputContext.Provider>
                 )}

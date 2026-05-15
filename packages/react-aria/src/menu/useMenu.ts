@@ -46,6 +46,7 @@ export interface AriaMenuProps<T> extends MenuProps<T>, DOMProps, AriaLabelingPr
    * Most experiences should not modify this option as it eliminates a keyboard user's ability to
    * easily clear selection. Only use if the escape key is being handled externally or should not
    * trigger selection clearing contextually.
+   *
    * @default 'clearSelection'
    */
   escapeKeyBehavior?: 'clearSelection' | 'none';
@@ -73,6 +74,7 @@ export interface AriaMenuOptions<T> extends Omit<AriaMenuProps<T>, 'children'>, 
 /**
  * Provides the behavior and accessibility implementation for a menu component.
  * A menu displays a list of actions or options that a user can choose.
+ *
  * @param props - Props for the menu.
  * @param state - State for the menu, as returned by `useListState`.
  */

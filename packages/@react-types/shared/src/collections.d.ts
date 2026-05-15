@@ -63,7 +63,10 @@ export interface CollectionBase<T> {
   children: CollectionChildren<T>;
   /** Item objects in the collection. */
   items?: Iterable<T>;
-  /** The item keys that are disabled. These items cannot be selected, focused, or otherwise interacted with. */
+  /**
+   * The item keys that are disabled. These items cannot be selected, focused, or otherwise
+   * interacted with.
+   */
   disabledKeys?: Iterable<Key>;
 }
 
@@ -205,6 +208,7 @@ export interface Node<T> {
   hasChildNodes: boolean;
   /**
    * The loaded children of this node.
+   *
    * @deprecated Use `collection.getChildren(node.key)` instead.
    */
   childNodes: Iterable<Node<T>>;

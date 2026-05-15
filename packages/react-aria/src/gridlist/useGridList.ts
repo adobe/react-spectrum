@@ -37,13 +37,14 @@ export interface GridListProps<T> extends CollectionBase<T>, MultipleSelection {
   /** Whether to auto focus the gridlist or an option. */
   autoFocus?: boolean | FocusStrategy;
   /**
-   * Handler that is called when a user performs an action on an item. The exact user event depends on
-   * the collection's `selectionBehavior` prop and the interaction modality.
+   * Handler that is called when a user performs an action on an item. The exact user event depends
+   * on the collection's `selectionBehavior` prop and the interaction modality.
    */
   onAction?: (key: Key) => void;
   /**
    * Whether `disabledKeys` applies to all interactions, or only selection.
-   * @default "all"
+   *
+   * @default 'all'
    */
   disabledBehavior?: DisabledBehavior;
   /** Whether selection should occur on press up instead of press down. */
@@ -54,6 +55,7 @@ export interface AriaGridListProps<T> extends GridListProps<T>, DOMProps, AriaLa
   /**
    * Whether keyboard navigation to focusable elements within grid list items is
    * via the left/right arrow keys or the tab key.
+   *
    * @default 'arrow'
    */
   keyboardNavigationBehavior?: 'arrow' | 'tab';
@@ -63,6 +65,7 @@ export interface AriaGridListProps<T> extends GridListProps<T>, DOMProps, AriaLa
    * Most experiences should not modify this option as it eliminates a keyboard user's ability to
    * easily clear selection. Only use if the escape key is being handled externally or should not
    * trigger selection clearing contextually.
+   *
    * @default 'clearSelection'
    */
   escapeKeyBehavior?: 'clearSelection' | 'none';
@@ -73,6 +76,7 @@ export interface AriaGridListOptions<T> extends Omit<AriaGridListProps<T>, 'chil
   isVirtualized?: boolean;
   /**
    * Whether typeahead navigation is disabled.
+   *
    * @default false
    */
   disallowTypeAhead?: boolean;
@@ -89,6 +93,7 @@ export interface AriaGridListOptions<T> extends Omit<AriaGridListProps<T>, 'chil
   layoutDelegate?: LayoutDelegate;
   /**
    * Whether focus should wrap around when the end/start is reached.
+   *
    * @default false
    */
   shouldFocusWrap?: boolean;
@@ -97,6 +102,7 @@ export interface AriaGridListOptions<T> extends Omit<AriaGridListProps<T>, 'chil
    * - 'action': link behaves like onAction.
    * - 'selection': link follows selection interactions (e.g. if URL drives selection).
    * - 'override': links override all other interactions (link items are not selectable).
+   *
    * @default 'action'
    */
   linkBehavior?: 'action' | 'selection' | 'override';
@@ -108,8 +114,10 @@ export interface GridListAria {
 }
 
 /**
- * Provides the behavior and accessibility implementation for a list component with interactive children.
- * A grid list displays data in a single column and enables a user to navigate its contents via directional navigation keys.
+ * Provides the behavior and accessibility implementation for a list component with interactive
+ * children. A grid list displays data in a single column and enables a user to navigate its
+ * contents via directional navigation keys.
+ *
  * @param props - Props for the list.
  * @param state - State for the list, as returned by `useListState`.
  * @param ref - The ref attached to the list element.

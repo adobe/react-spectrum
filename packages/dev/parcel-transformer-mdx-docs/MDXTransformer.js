@@ -262,7 +262,9 @@ module.exports = new Transformer({
         /**
          * Go from complex structure that the mdx plugin renders from to a simpler one
          * it starts as an array because we start with the h2's not h1.
-         * @example [{id, textContent, children: [{id, textContent, children: ...}, ...]}, ...]
+         *
+         * @example
+         *   [{id, textContent, children: [{id, textContent, children: ...}, ...]}, ...]
          */
         function treeConverter(tree, first = false) {
           let newTree = {};

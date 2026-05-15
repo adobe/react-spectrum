@@ -1,7 +1,7 @@
 import {colorScale} from '../../../@react-spectrum/s2/style/tokens';
 import type {MacroContext} from '@parcel/macros';
 import {style} from '@react-spectrum/s2/style';
-// eslint-disable-next-line rulesdir/imports
+// eslint-disable-next-line rsp-rules/imports
 import * as tokens from '@adobe/spectrum-tokens/dist/json/variables.json';
 
 export function getColorScale(
@@ -37,6 +37,7 @@ export function colorSwatch(
 
 /**
  * Gets the RGB values for a color token.
+ *
  * @param tokenName - The token name to look up.
  * @param mode - 'light' or 'dark' mode.
  * @returns [r, g, b] or null if not found.

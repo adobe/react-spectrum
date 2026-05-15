@@ -65,7 +65,9 @@ export interface RadioGroupProps
     SlotProps,
     GlobalDOMAttributes<HTMLDivElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-RadioGroup'
    */
   className?: ClassNameOrFunction<RadioGroupRenderProps>;
@@ -78,7 +80,9 @@ export interface RadioProps
     SlotProps,
     Omit<GlobalDOMAttributes<HTMLLabelElement>, 'onClick'> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-Radio'
    */
   className?: ClassNameOrFunction<RadioRenderProps>;
@@ -95,7 +99,9 @@ export interface RadioFieldProps
     SlotProps,
     Omit<GlobalDOMAttributes<HTMLDivElement>, 'onClick'> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-RadioField'
    */
   className?: ClassNameOrFunction<RadioFieldRenderProps>;
@@ -112,7 +118,9 @@ export interface RadioButtonProps
     SlotProps,
     Omit<GlobalDOMAttributes<HTMLLabelElement>, 'onClick'> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-RadioButton'
    */
   className?: ClassNameOrFunction<RadioButtonRenderProps>;
@@ -121,26 +129,31 @@ export interface RadioButtonProps
 export interface RadioGroupRenderProps {
   /**
    * The orientation of the radio group.
+   *
    * @selector [data-orientation="horizontal | vertical"]
    */
   orientation: Orientation;
   /**
    * Whether the radio group is disabled.
+   *
    * @selector [data-disabled]
    */
   isDisabled: boolean;
   /**
    * Whether the radio group is read only.
+   *
    * @selector [data-readonly]
    */
   isReadOnly: boolean;
   /**
    * Whether the radio group is required.
+   *
    * @selector [data-required]
    */
   isRequired: boolean;
   /**
    * Whether the radio group is invalid.
+   *
    * @selector [data-invalid]
    */
   isInvalid: boolean;
@@ -153,46 +166,55 @@ export interface RadioGroupRenderProps {
 export interface RadioRenderProps {
   /**
    * Whether the radio is selected.
+   *
    * @selector [data-selected]
    */
   isSelected: boolean;
   /**
    * Whether the radio is currently hovered with a mouse.
+   *
    * @selector [data-hovered]
    */
   isHovered: boolean;
   /**
    * Whether the radio is currently in a pressed state.
+   *
    * @selector [data-pressed]
    */
   isPressed: boolean;
   /**
    * Whether the radio is focused, either via a mouse or keyboard.
+   *
    * @selector [data-focused]
    */
   isFocused: boolean;
   /**
    * Whether the radio is keyboard focused.
+   *
    * @selector [data-focus-visible]
    */
   isFocusVisible: boolean;
   /**
    * Whether the radio is disabled.
+   *
    * @selector [data-disabled]
    */
   isDisabled: boolean;
   /**
    * Whether the radio is read only.
+   *
    * @selector [data-readonly]
    */
   isReadOnly: boolean;
   /**
    * Whether the radio is invalid.
+   *
    * @selector [data-invalid]
    */
   isInvalid: boolean;
   /**
    * Whether the checkbox is required.
+   *
    * @selector [data-required]
    */
   isRequired: boolean;
@@ -201,26 +223,31 @@ export interface RadioRenderProps {
 export interface RadioFieldRenderProps {
   /**
    * Whether the radio is selected.
+   *
    * @selector [data-selected]
    */
   isSelected: boolean;
   /**
    * Whether the radio is disabled.
+   *
    * @selector [data-disabled]
    */
   isDisabled: boolean;
   /**
    * Whether the radio is read only.
+   *
    * @selector [data-readonly]
    */
   isReadOnly: boolean;
   /**
    * Whether the radio is invalid.
+   *
    * @selector [data-invalid]
    */
   isInvalid: boolean;
   /**
    * Whether the checkbox is required.
+   *
    * @selector [data-required]
    */
   isRequired: boolean;
@@ -309,6 +336,7 @@ export const RadioGroup = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
 
 /**
  * A radio represents an individual option within a radio group.
+ *
  * @deprecated Use RadioField + RadioButton instead.
  */
 export const Radio = /*#__PURE__*/ (forwardRef as forwardRefType)(function Radio(
@@ -350,7 +378,8 @@ interface InternalRadioContextValue extends RadioAria {
 const InternalRadioContext = createContext<InternalRadioContextValue | null>(null);
 
 /**
- * A RadioField represents an individual option within a radio group, containing a RadioButton and optional description.
+ * A RadioField represents an individual option within a radio group, containing a RadioButton and
+ * optional description.
  */
 export const RadioField = /*#__PURE__*/ (forwardRef as forwardRefType)(function RadioField(
   props: RadioFieldProps,

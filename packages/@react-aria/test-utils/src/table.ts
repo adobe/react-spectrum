@@ -28,7 +28,8 @@ interface TableToggleSortOpts {
    */
   column: number | string | HTMLElement;
   /**
-   * What interaction type to use when sorting the column. Defaults to the interaction type set on the tester.
+   * What interaction type to use when sorting the column. Defaults to the interaction type set on
+   * the tester.
    */
   interactionType?: UserOpts['interactionType'];
 }
@@ -117,7 +118,8 @@ export class TableTester {
   }
 
   /**
-   * Toggles the selection for the specified table row. Defaults to using the interaction type set on the table tester.
+   * Toggles the selection for the specified table row. Defaults to using the interaction type set
+   * on the table tester.
    */
   async toggleRowSelection(opts: TableToggleRowOpts): Promise<void> {
     let {
@@ -183,7 +185,8 @@ export class TableTester {
   }
 
   /**
-   * Toggles the expansion for the specified tree row. Defaults to using the interaction type set on the tree tester.
+   * Toggles the expansion for the specified tree row. Defaults to using the interaction type set on
+   * the tree tester.
    */
   async toggleRowExpansion(opts: TableToggleExpansionOpts): Promise<void> {
     let {row, interactionType = this._interactionType} = opts;
@@ -224,7 +227,8 @@ export class TableTester {
   }
 
   /**
-   * Toggles the sort order for the specified table column. Defaults to using the interaction type set on the table tester.
+   * Toggles the sort order for the specified table column. Defaults to using the interaction type
+   * set on the table tester.
    */
   async toggleSort(opts: TableToggleSortOpts): Promise<void> {
     let {column, interactionType = this._interactionType} = opts;
@@ -323,7 +327,8 @@ export class TableTester {
   }
 
   /**
-   * Triggers an action for the specified table column menu. Defaults to using the interaction type set on the table tester.
+   * Triggers an action for the specified table column menu. Defaults to using the interaction type
+   * set on the table tester.
    */
   async triggerColumnHeaderAction(opts: TableColumnHeaderActionOpts): Promise<void> {
     let {column, interactionType = this._interactionType, action} = opts;
@@ -413,7 +418,8 @@ export class TableTester {
   }
 
   /**
-   * Triggers the action for the specified table row. Defaults to using the interaction type set on the table tester.
+   * Triggers the action for the specified table row. Defaults to using the interaction type set on
+   * the table tester.
    */
   async triggerRowAction(opts: TableRowActionOpts): Promise<void> {
     let {row, needsDoubleClick, interactionType = this._interactionType} = opts;
@@ -442,7 +448,8 @@ export class TableTester {
   // Additionally, should we also support keyboard navigation/typeahead? Those felt like they could be very easily replicated by the user via user.keyboard already and don't really
   // add much value if we provide that to them
   /**
-   * Toggle selection for all rows in the table. Defaults to using the interaction type set on the table tester.
+   * Toggle selection for all rows in the table. Defaults to using the interaction type set on the
+   * table tester.
    */
   async toggleSelectAll(opts: {interactionType?: UserOpts['interactionType']} = {}): Promise<void> {
     let {interactionType = this._interactionType} = opts;
@@ -541,7 +548,8 @@ export class TableTester {
   }
 
   /**
-   * Returns the cells within the table if any. Can be filtered against a specific row if provided via `element`.
+   * Returns the cells within the table if any. Can be filtered against a specific row if provided
+   * via `element`.
    */
   cells(opts: {element?: HTMLElement} = {}): HTMLElement[] {
     let {element = this.table} = opts;

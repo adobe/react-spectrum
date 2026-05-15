@@ -32,7 +32,8 @@ export interface BadgeStyleProps {
    */
   size?: 'S' | 'M' | 'L' | 'XL';
   /**
-   * The variant changes the background color of the badge. When badge has a semantic meaning, they should use the variant for semantic colors.
+   * The variant changes the background color of the badge. When badge has a semantic meaning, they
+   * should use the variant for semantic colors.
    *
    * @default 'neutral'
    */
@@ -64,11 +65,13 @@ export interface BadgeStyleProps {
     | 'silver';
   /**
    * The fill of the badge.
+   *
    * @default 'bold'
    */
   fillStyle?: 'bold' | 'subtle' | 'outline';
   /**
    * Sets the text behavior for the contents.
+   *
    * @default 'wrap'
    */
   overflowMode?: 'wrap' | 'truncate';
@@ -194,7 +197,8 @@ const badge = style<BadgeStyleProps>(
 );
 
 /**
- * Badges are used for showing a small amount of color-categorized metadata, ideal for getting a user's attention.
+ * Badges are used for showing a small amount of color-categorized metadata, ideal for getting a
+ * user's attention.
  */
 export const Badge = forwardRef(function Badge(props: BadgeProps, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, BadgeContext);

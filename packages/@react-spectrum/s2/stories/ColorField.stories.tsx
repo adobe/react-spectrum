@@ -10,12 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-import {ColorField} from '../src/ColorField';
+import {Color} from 'react-aria-components/ColorField';
+import {ColorField, ColorFieldProps} from '../src/ColorField';
+import {ColorSwatch} from '../src/ColorSwatch';
 
 import {Content, Footer, Heading, Text} from '../src/Content';
 import {ContextualHelp} from '../src/ContextualHelp';
 import {Link} from '../src/Link';
 import type {Meta, StoryObj} from '@storybook/react';
+import {useState} from 'react';
 
 const meta: Meta<typeof ColorField> = {
   component: ColorField,
@@ -66,6 +69,25 @@ export const ContextualHelpExample: Story = {
       }
     />
   ),
+  args: {
+    label: 'Color'
+  }
+};
+
+function ColorSwatchExample(props: ColorFieldProps) {
+  let [color, setColor] = useState<Color | null>(null);
+  return (
+    <ColorField
+      {...props}
+      value={color}
+      onChange={setColor}
+      prefix={<ColorSwatch size="XS" color={color ?? undefined} />}
+    />
+  );
+}
+
+export const WithPrefix: Story = {
+  render: args => <ColorSwatchExample {...args} />,
   args: {
     label: 'Color'
   }

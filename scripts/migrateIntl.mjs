@@ -161,6 +161,5 @@ for (let [key, value] of packs) {
  * searchwithin
  * steplist
  * table - coming soon
- * toast
- *
+ * toast.
  */

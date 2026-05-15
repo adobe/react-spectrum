@@ -30,7 +30,10 @@ export interface ToggleButtonGroupProps
       'children' | 'style' | 'className' | 'render' | keyof GlobalDOMAttributes
     >,
     DOMProps {
-  /** Whether the button should be displayed with an [emphasized style](https://spectrum.adobe.com/page/action-button/#Emphasis). */
+  /**
+   * Whether the button should be displayed with an [emphasized
+   * style](https://spectrum.adobe.com/page/action-button/#Emphasis).
+   */
   isEmphasized?: boolean;
 }
 

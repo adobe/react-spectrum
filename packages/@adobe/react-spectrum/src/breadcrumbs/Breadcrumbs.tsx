@@ -36,6 +36,7 @@ export interface SpectrumBreadcrumbsProps<T> extends AriaBreadcrumbsProps, Style
   onAction?: (key: Key) => void;
   /**
    * Size of the Breadcrumbs including spacing and layout.
+   *
    * @default 'L'
    */
   size?: 'S' | 'M' | 'L';

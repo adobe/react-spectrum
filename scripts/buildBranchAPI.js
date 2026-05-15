@@ -40,9 +40,10 @@ build().catch(err => {
 });
 
 /**
- * Building this will run the docs builder using the apiCheck pipeline in .parcelrc
- * This will generate json containing the visible (API/exposed) type definitions for each package
- * This is run against the current branch by copying the current branch into a temporary directory and building there
+ * Building this will run the docs builder using the apiCheck pipeline in .parcelrc This will
+ * generate json containing the visible (API/exposed) type definitions for each package This is run
+ * against the current branch by copying the current branch into a temporary directory and building
+ * there.
  */
 async function build() {
   let backupDir = tempy.directory();

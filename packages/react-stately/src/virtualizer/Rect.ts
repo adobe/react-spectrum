@@ -89,6 +89,7 @@ export class Rect {
 
   /**
    * Returns whether this rectangle intersects another rectangle.
+   *
    * @param rect - The rectangle to check.
    */
   intersects(rect: Rect): boolean {
@@ -104,6 +105,7 @@ export class Rect {
 
   /**
    * Returns whether this rectangle fully contains another rectangle.
+   *
    * @param rect - The rectangle to check.
    */
   containsRect(rect: Rect): boolean {
@@ -112,6 +114,7 @@ export class Rect {
 
   /**
    * Returns whether the rectangle contains the given point.
+   *
    * @param point - The point to check.
    */
   containsPoint(point: Point): boolean {
@@ -121,6 +124,7 @@ export class Rect {
   /**
    * Returns the first corner of this rectangle (from top to bottom, left to right)
    * that is contained in the given rectangle, or null of the rectangles do not intersect.
+   *
    * @param rect - The rectangle to check.
    */
   getCornerInRect(rect: Rect): RectCorner | null {

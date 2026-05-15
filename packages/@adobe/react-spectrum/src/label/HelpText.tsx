@@ -39,7 +39,8 @@ interface HelpTextProps
 }
 
 /**
- * Help text provides either an informative description or an error message that gives more context about what a user needs to input. It's commonly used in forms.
+ * Help text provides either an informative description or an error message that gives more context
+ * about what a user needs to input. It's commonly used in forms.
  */
 export const HelpText = React.forwardRef(function HelpText(
   props: HelpTextProps,

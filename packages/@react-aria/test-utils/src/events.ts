@@ -48,10 +48,13 @@ export function getMetaKey(): 'MetaLeft' | 'ControlLeft' {
 
 /**
  * Simulates a "long press" event on a element.
+ *
  * @param opts - Options for the long press.
  * @param opts.element - Element to long press.
- * @param opts.advanceTimer - Function that when called advances the timers in your test suite by a specific amount of time(ms).
- * @param opts.pointeropts - Options to pass to the simulated event. Defaults to mouse. See https://testing-library.com/docs/dom-testing-library/api-events/#fireevent for more info.
+ * @param opts.advanceTimer - Function that when called advances the timers in your test suite by a
+ *   specific amount of time(ms).
+ * @param opts.pointeropts - Options to pass to the simulated event. Defaults to mouse. See
+ *   https://testing-library.com/docs/dom-testing-library/api-events/#fireevent for more info.
  */
 export async function triggerLongPress(opts: {
   element: HTMLElement;

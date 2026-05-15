@@ -122,7 +122,10 @@ export class CalendarDate {
     return subtract(this, duration);
   }
 
-  /** Returns a new `CalendarDate` with the given fields set to the provided values. Other fields will be constrained accordingly. */
+  /**
+   * Returns a new `CalendarDate` with the given fields set to the provided values. Other fields
+   * will be constrained accordingly.
+   */
   set(fields: DateFields): CalendarDate {
     return set(this, fields);
   }
@@ -135,7 +138,10 @@ export class CalendarDate {
     return cycleDate(this, field, amount, options);
   }
 
-  /** Converts the date to a native JavaScript Date object, with the time set to midnight in the given time zone. */
+  /**
+   * Converts the date to a native JavaScript Date object, with the time set to midnight in the
+   * given time zone.
+   */
   toDate(timeZone: string): Date {
     return toDate(this, timeZone);
   }
@@ -145,7 +151,10 @@ export class CalendarDate {
     return dateToString(this);
   }
 
-  /** Compares this date with another. A negative result indicates that this date is before the given one, and a positive date indicates that it is after. */
+  /**
+   * Compares this date with another. A negative result indicates that this date is before the given
+   * one, and a positive date indicates that it is after.
+   */
   compare(b: AnyCalendarDate): number {
     return compareDate(this, b);
   }
@@ -188,7 +197,10 @@ export class Time {
     return subtractTime(this, duration);
   }
 
-  /** Returns a new `Time` with the given fields set to the provided values. Other fields will be constrained accordingly. */
+  /**
+   * Returns a new `Time` with the given fields set to the provided values. Other fields will be
+   * constrained accordingly.
+   */
   set(fields: TimeFields): Time {
     return setTime(this, fields);
   }
@@ -206,7 +218,10 @@ export class Time {
     return timeToString(this);
   }
 
-  /** Compares this time with another. A negative result indicates that this time is before the given one, and a positive time indicates that it is after. */
+  /**
+   * Compares this time with another. A negative result indicates that this time is before the given
+   * one, and a positive time indicates that it is after.
+   */
   compare(b: AnyTime): number {
     return compareTime(this, b);
   }
@@ -333,7 +348,10 @@ export class CalendarDateTime {
     return subtract(this, duration);
   }
 
-  /** Returns a new `CalendarDateTime` with the given fields set to the provided values. Other fields will be constrained accordingly. */
+  /**
+   * Returns a new `CalendarDateTime` with the given fields set to the provided values. Other fields
+   * will be constrained accordingly.
+   */
   set(fields: DateFields & TimeFields): CalendarDateTime {
     return set(setTime(this, fields), fields);
   }
@@ -368,7 +386,10 @@ export class CalendarDateTime {
     return dateTimeToString(this);
   }
 
-  /** Compares this date with another. A negative result indicates that this date is before the given one, and a positive date indicates that it is after. */
+  /**
+   * Compares this date with another. A negative result indicates that this date is before the given
+   * one, and a positive date indicates that it is after.
+   */
   compare(b: CalendarDate | CalendarDateTime | ZonedDateTime): number {
     let res = compareDate(this, b);
     if (res === 0) {
@@ -520,7 +541,10 @@ export class ZonedDateTime {
     return subtractZoned(this, duration);
   }
 
-  /** Returns a new `ZonedDateTime` with the given fields set to the provided values. Other fields will be constrained accordingly. */
+  /**
+   * Returns a new `ZonedDateTime` with the given fields set to the provided values. Other fields
+   * will be constrained accordingly.
+   */
   set(fields: DateFields & TimeFields, disambiguation?: Disambiguation): ZonedDateTime {
     return setZoned(this, fields, disambiguation);
   }
@@ -538,7 +562,10 @@ export class ZonedDateTime {
     return zonedToDate(this);
   }
 
-  /** Converts the date to an ISO 8601 formatted string, including the UTC offset and time zone identifier. */
+  /**
+   * Converts the date to an ISO 8601 formatted string, including the UTC offset and time zone
+   * identifier.
+   */
   toString(): string {
     return zonedDateTimeToString(this);
   }
@@ -548,7 +575,10 @@ export class ZonedDateTime {
     return this.toDate().toISOString();
   }
 
-  /** Compares this date with another. A negative result indicates that this date is before the given one, and a positive date indicates that it is after. */
+  /**
+   * Compares this date with another. A negative result indicates that this date is before the given
+   * one, and a positive date indicates that it is after.
+   */
   compare(b: CalendarDate | CalendarDateTime | ZonedDateTime): number {
     // TODO: Is this a bad idea??
     return this.toDate().getTime() - toZoned(b, this.timeZone).toDate().getTime();

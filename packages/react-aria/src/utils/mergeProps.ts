@@ -35,6 +35,7 @@ type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (
  * Merges multiple props objects together. Event handlers are chained,
  * classNames are combined, ids are deduplicated, and refs are merged.
  * For all other props, the last prop object overrides all previous ones.
+ *
  * @param args - Multiple sets of props to merge together.
  */
 export function mergeProps<T extends PropsArg[]>(...args: T): UnionToIntersection<TupleTypes<T>> {

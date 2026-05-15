@@ -102,7 +102,8 @@ export function useToggleButton(
 ): ToggleButtonAria<DOMAttributes>;
 /**
  * Provides the behavior and accessibility implementation for a toggle button component.
- * ToggleButtons allow users to toggle a selection on or off, for example switching between two states or modes.
+ * ToggleButtons allow users to toggle a selection on or off, for example switching between two
+ * states or modes.
  */
 export function useToggleButton(
   props: AriaToggleButtonOptions<ElementType>,

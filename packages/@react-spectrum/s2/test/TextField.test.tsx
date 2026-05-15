@@ -11,7 +11,7 @@
  */
 
 import {fireEvent, render} from '@react-spectrum/test-utils-internal';
-import {TextArea} from '../src/TextField';
+import {TextArea, TextField} from '../src/TextField';
 
 describe('TextField', () => {
   it('should focus textarea when tapping invalid icon', async () => {
@@ -26,5 +26,13 @@ describe('TextField', () => {
     fireEvent.touchEnd(icon);
 
     expect(document.activeElement).toBe(textarea);
+  });
+
+  it('should label the input with the prefix', () => {
+    let {getByRole} = render(<TextField label="Description" prefix="Prefix" />);
+
+    let input = getByRole('textbox');
+    let labels = input.getAttribute('aria-labelledby')?.split(' ');
+    expect(document.getElementById(labels![1])).toHaveTextContent('Prefix');
   });
 });

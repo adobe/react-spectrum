@@ -84,7 +84,9 @@ export interface TabsProps
     SlotProps,
     GlobalDOMAttributes<HTMLDivElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-Tabs'
    */
   className?: ClassNameOrFunction<TabsRenderProps>;
@@ -93,6 +95,7 @@ export interface TabsProps
 export interface TabsRenderProps {
   /**
    * The orientation of the tabs.
+   *
    * @selector [data-orientation="horizontal | vertical"]
    */
   orientation: Orientation;
@@ -105,7 +108,9 @@ export interface TabListProps<T>
     Omit<CollectionProps<T>, 'disabledKeys'>,
     GlobalDOMAttributes<HTMLDivElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-TabList'
    */
   className?: ClassNameOrFunction<TabListRenderProps>;
@@ -114,6 +119,7 @@ export interface TabListProps<T>
 export interface TabListRenderProps {
   /**
    * The orientation of the tab list.
+   *
    * @selector [data-orientation="horizontal | vertical"]
    */
   orientation: Orientation;
@@ -134,7 +140,9 @@ export interface TabProps
     PressEvents,
     Omit<GlobalDOMAttributes<HTMLDivElement>, 'onClick'> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-Tab'
    */
   className?: ClassNameOrFunction<TabRenderProps>;
@@ -147,31 +155,37 @@ export interface TabProps
 export interface TabRenderProps {
   /**
    * Whether the tab is currently hovered with a mouse.
+   *
    * @selector [data-hovered]
    */
   isHovered: boolean;
   /**
    * Whether the tab is currently in a pressed state.
+   *
    * @selector [data-pressed]
    */
   isPressed: boolean;
   /**
    * Whether the tab is currently selected.
+   *
    * @selector [data-selected]
    */
   isSelected: boolean;
   /**
    * Whether the tab is currently focused.
+   *
    * @selector [data-focused]
    */
   isFocused: boolean;
   /**
    * Whether the tab is currently keyboard focused.
+   *
    * @selector [data-focus-visible]
    */
   isFocusVisible: boolean;
   /**
    * Whether the tab is disabled.
+   *
    * @selector [data-disabled]
    */
   isDisabled: boolean;
@@ -180,13 +194,17 @@ export interface TabRenderProps {
 export interface TabPanelProps
   extends AriaTabPanelProps, RenderProps<TabPanelRenderProps>, GlobalDOMAttributes<HTMLDivElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-TabPanel'
    */
   className?: ClassNameOrFunction<TabPanelRenderProps>;
   /**
-   * Whether to mount the tab panel in the DOM even when it is not currently selected.
-   * Inactive tab panels are inert and cannot be interacted with. They must be styled appropriately so this is clear to the user visually.
+   * Whether to mount the tab panel in the DOM even when it is not currently selected. Inactive tab
+   * panels are inert and cannot be interacted with. They must be styled appropriately so this is
+   * clear to the user visually.
+   *
    * @default false
    */
   shouldForceMount?: boolean;
@@ -195,27 +213,32 @@ export interface TabPanelProps
 export interface TabPanelRenderProps {
   /**
    * Whether the tab panel is currently focused.
+   *
    * @selector [data-focused]
    */
   isFocused: boolean;
   /**
    * Whether the tab panel is currently keyboard focused.
+   *
    * @selector [data-focus-visible]
    */
   isFocusVisible: boolean;
   /**
    * Whether the tab panel is currently non-interactive. This occurs when the
    * `shouldForceMount` prop is true, and the corresponding tab is not selected.
+   *
    * @selector [data-inert]
    */
   isInert: boolean;
   /**
    * Whether the tab panel is currently entering. Use this to apply animations.
+   *
    * @selector [data-entering]
    */
   isEntering: boolean;
   /**
    * Whether the tab panel is currently exiting. Use this to apply animations.
+   *
    * @selector [data-exiting]
    */
   isExiting: boolean;
@@ -301,8 +324,8 @@ function TabsInner({props, tabsRef: ref, collection}: TabsInnerProps) {
 }
 
 /**
- * A TabList is used within Tabs to group tabs that a user can switch between.
- * The ids of the items within the <TabList> must match up with a corresponding item inside the <TabPanels>.
+ * A TabList is used within Tabs to group tabs that a user can switch between. The ids of the items
+ * within the <TabList> must match up with a corresponding item inside the <TabPanels>.
  */
 export const TabList = /*#__PURE__*/ (forwardRef as forwardRefType)(function TabList<
   T extends object
@@ -431,7 +454,9 @@ export interface TabPanelsProps<T>
     DOMRenderProps<'div', undefined>,
     GlobalDOMAttributes<HTMLDivElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element.
+   *
    * @default 'react-aria-TabPanels'
    */
   className?: string;
@@ -504,13 +529,13 @@ export const TabPanels = /*#__PURE__*/ createHideableComponent(function TabPanel
   // This breaks the rules of hooks because there is no effect that runs _before_ DOM updates.
   if (
     state.selectedKey != null &&
-    // eslint-disable-next-line rulesdir/pure-render
+    // eslint-disable-next-line rsp-rules/pure-render
     state.selectedKey !== selectedKeyRef.current &&
     ref.current &&
-    // eslint-disable-next-line rulesdir/pure-render
+    // eslint-disable-next-line rsp-rules/pure-render
     hasTransition.current
   ) {
-    // eslint-disable-next-line rulesdir/pure-render
+    // eslint-disable-next-line rsp-rules/pure-render
     prevSize.current = ref.current.getBoundingClientRect();
   }
 

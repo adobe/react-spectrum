@@ -30,6 +30,7 @@ export interface SpectrumLinkProps extends Omit<AriaLinkProps, 'onClick'>, Style
   children: ReactNode;
   /**
    * The [visual style](https://spectrum.adobe.com/page/link/#Options) of the link.
+   *
    * @default 'primary'
    */
   variant?: 'primary' | 'secondary' | 'overBackground';

@@ -84,15 +84,16 @@ async function generatePreviewModern(options, generatedEntries) {
    * Main preview module loaded directly by iframe.html as <script type="module">.
    *
    * Import order is load-bearing:
-   *   1. `storybook/internal/preview/runtime` MUST evaluate first. Its file-level
-   *      `setup()` side-effect populates `__STORYBOOK_MODULE_PREVIEW_API__`,
-   *      `__STORYBOOK_MODULE_CHANNELS__`, etc. on globalThis.
-   *   2. `./setup-addons.js` then imports from `storybook/preview-api`, which
-   *      parcel-resolver-storybook redirects to a global-reading shim. The
-   *      globals are populated by step 1, so the read succeeds.
-   *   3. The `story:` synthetic modules are static-imported (one named
-   *      `importer` per stories glob). They live in Parcel's module graph,
-   *      so file additions trigger StorybookResolver's invalidateOnFileCreate.
+   *
+   * 1. `storybook/internal/preview/runtime` MUST evaluate first. Its file-level `setup()` side-effect
+   *    populates `__STORYBOOK_MODULE_PREVIEW_API__`, `__STORYBOOK_MODULE_CHANNELS__`, etc. on
+   *    globalThis.
+   * 2. `./setup-addons.js` then imports from `storybook/preview-api`, which parcel-resolver-storybook
+   *    redirects to a global-reading shim. The globals are populated by step 1, so the read
+   *    succeeds.
+   * 3. The `story:` synthetic modules are static-imported (one named `importer` per stories glob).
+   *    They live in Parcel's module graph, so file additions trigger StorybookResolver's
+   *    invalidateOnFileCreate.
    *
    * See code/builders/builder-vite/src/codegen-modern-iframe-script.ts and
    * code/lib/core-webpack/src/to-importFn.ts for the upstream patterns this
@@ -159,14 +160,16 @@ function processPreviewAnnotation(annotationPath) {
 }
 
 /**
- * This file is largely based on https://github.com/storybookjs/storybook/blob/d1195cbd0c61687f1720fefdb772e2f490a46584/lib/core-common/src/utils/to-importFn.ts
+ * This file is largely based on
+ * https://github.com/storybookjs/storybook/blob/d1195cbd0c61687f1720fefdb772e2f490a46584/lib/core-common/src/utils/to-importFn.ts.
  */
 
 /**
  * This function takes an array of stories and creates a mapping between the stories' relative paths
- * to the working directory and their dynamic imports. The import is done in an asynchronous function
- * to delay loading. It then creates a function, `importFn(path)`, which resolves a path to an import
- * function and this is called by Storybook to fetch a story dynamically when needed.
+ * to the working directory and their dynamic imports. The import is done in an asynchronous
+ * function to delay loading. It then creates a function, `importFn(path)`, which resolves a path to
+ * an import function and this is called by Storybook to fetch a story dynamically when needed.
+ *
  * @param stories An array of absolute story paths.
  */
 async function toImportFn(stories, generatedEntries) {

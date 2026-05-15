@@ -35,7 +35,8 @@ export interface ToggleProps extends ToggleStateOptions, Validation<boolean>, Fo
    */
   children?: ReactNode;
   /**
-   * The value of the input element, used when submitting an HTML form. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefvalue).
+   * The value of the input element, used when submitting an HTML form. See
+   * [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefvalue).
    */
   value?: string;
 }

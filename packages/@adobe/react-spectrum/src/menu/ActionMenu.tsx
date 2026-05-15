@@ -38,7 +38,10 @@ export interface SpectrumActionMenuProps<T>
     AriaLabelingProps {
   /** Whether the button is disabled. */
   isDisabled?: boolean;
-  /** Whether the button should be displayed with a [quiet style](https://spectrum.adobe.com/page/action-button/#Quiet). */
+  /**
+   * Whether the button should be displayed with a [quiet
+   * style](https://spectrum.adobe.com/page/action-button/#Quiet).
+   */
   isQuiet?: boolean;
   /** Whether the element should receive focus on render. */
   autoFocus?: boolean;

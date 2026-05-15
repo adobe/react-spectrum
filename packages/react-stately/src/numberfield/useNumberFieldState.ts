@@ -43,9 +43,11 @@ export interface NumberFieldProps
    */
   formatOptions?: Intl.NumberFormatOptions;
   /**
-   * Controls the behavior of the number field when the user blurs the field after editing.
-   * 'snap' will clamp the value to the min/max values, and snap to the nearest step value.
-   * 'validate' will not clamp the value, and will validate that the value is within the min/max range and on a valid step.
+   * Controls the behavior of the number field when the user blurs the field after editing. 'snap'
+   * will clamp the value to the min/max values, and snap to the nearest step value. 'validate' will
+   * not clamp the value, and will validate that the value is within the min/max range and on a
+   * valid step.
+   *
    * @default 'snap'
    */
   commitBehavior?: 'snap' | 'validate';
@@ -73,9 +75,9 @@ export interface NumberFieldState extends FormValidationState {
   /** Whether the current value can be decremented according to the minimum value and step. */
   canDecrement: boolean;
   /**
-   * Validates a user input string according to the current locale and format options.
-   * Values can be partially entered, and may be valid even if they cannot currently be parsed to a number.
-   * Can be used to implement validation as a user types.
+   * Validates a user input string according to the current locale and format options. Values can be
+   * partially entered, and may be valid even if they cannot currently be parsed to a number. Can be
+   * used to implement validation as a user types.
    */
   validate(value: string): boolean;
   /** Sets the current text value of the input. */
@@ -83,10 +85,11 @@ export interface NumberFieldState extends FormValidationState {
   /** Sets the number value. */
   setNumberValue(val: number): void;
   /**
-   * Commits the current input value. The value is parsed to a number, clamped according
-   * to the minimum and maximum values of the field, and snapped to the nearest step value.
-   * This will fire the `onChange` prop with the new value, and if uncontrolled, update the `numberValue`.
+   * Commits the current input value. The value is parsed to a number, clamped according to the
+   * minimum and maximum values of the field, and snapped to the nearest step value. This will fire
+   * the `onChange` prop with the new value, and if uncontrolled, update the `numberValue`.
    * Typically this is called when the field is blurred.
+   *
    * @param value - The value to commit. If not provided, the current input value is used.
    */
   commit(value?: string): void;
@@ -103,14 +106,15 @@ export interface NumberFieldState extends FormValidationState {
 export interface NumberFieldStateOptions extends NumberFieldProps {
   /**
    * The locale that should be used for parsing.
+   *
    * @default 'en-US'
    */
   locale: string;
 }
 
 /**
- * Provides state management for a number field component. Number fields allow users to enter a number,
- * and increment or decrement the value using stepper buttons.
+ * Provides state management for a number field component. Number fields allow users to enter a
+ * number, and increment or decrement the value using stepper buttons.
  */
 export function useNumberFieldState(props: NumberFieldStateOptions): NumberFieldState {
   let {

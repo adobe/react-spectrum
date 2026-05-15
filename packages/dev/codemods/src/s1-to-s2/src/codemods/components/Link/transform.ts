@@ -39,6 +39,7 @@ function updateLegacyLink(path: NodePath<t.JSXElement>): void {
 
 /**
  * Transforms Link:
+ *
  * - Change variant="overBackground" to staticColor="white".
  * - If <a> was used inside Link (legacy API), remove the <a> and apply props directly to Link.
  */
