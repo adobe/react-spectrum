@@ -764,6 +764,51 @@ describe('DateField', function () {
           await user.tab();
           expect(getDescription()).not.toContain('Constraints not satisfied');
         });
+
+        it('should signal valueMissing when a complete date is made partial by clearing a segment (Bug #9624)', async () => {
+          // Regression (per devongovett's direction in #9624): a partially-filled required
+          // DateField should be marked invalid via valueMissing on blur. onChange(null) is
+          // deliberately NOT fired for partial values; validation must compensate.
+          let {getByRole, getByTestId} = render(
+            <Provider theme={theme}>
+              <Form data-testid="form">
+                <DateField label="Date" name="date" isRequired validationBehavior="native" />
+              </Form>
+            </Provider>
+          );
+
+          let group = getByRole('group');
+          let input = document.querySelector('input[name=date]');
+
+          // Fill a complete valid date: 4/28/2026
+          await user.tab();
+          await user.keyboard('4');
+          await user.keyboard('28');
+          await user.keyboard('2026');
+          expect(input.validity.valid).toBe(true);
+
+          // Refocus the month and clear it
+          let segments = within(group).getAllByRole('spinbutton');
+          act(() => {
+            segments[0].focus();
+          });
+          await user.keyboard('{Backspace}');
+          expect(segments[0]).toHaveAttribute('aria-valuetext', 'Empty');
+
+          // Tab forward past day and year to exit the group
+          await user.tab();
+          await user.tab();
+          await user.tab();
+
+          // The hidden input should reflect missing value and validation should surface
+          expect(input.validity.valid).toBe(false);
+          let getDescriptionAfter = () =>
+            (group.getAttribute('aria-describedby') || '')
+              .split(' ')
+              .map(d => document.getElementById(d)?.textContent || '')
+              .join(' ');
+          expect(getDescriptionAfter()).toContain('Constraints not satisfied');
+        });
       });
 
       describe('validationBehavior=aria', () => {

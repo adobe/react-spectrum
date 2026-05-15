@@ -3149,6 +3149,51 @@ describe('DatePicker', function () {
           expect(getDescription()).not.toContain('Constraints not satisfied');
         });
 
+        it('should signal validation when a complete date is made partial by clearing the month segment (Bug #9958)', async () => {
+          // Regression: clearing the month segment of a previously-complete date does not
+          // change the committed state.value, so the blur-time guard in useDateField.ts
+          // (state.value !== valueOnFocus.current) fails and commitValidation() is never
+          // called. With isRequired + an incomplete displayValue, validation should fire.
+          let {getByRole, getByTestId} = render(
+            <Provider theme={theme}>
+              <Form data-testid="form">
+                <DatePicker label="Date" name="date" isRequired validationBehavior="native" />
+              </Form>
+            </Provider>
+          );
+
+          let group = getByRole('group');
+          let input = document.querySelector('input[name=date]');
+
+          // Fill a complete valid date: 4/28/2026
+          await user.tab();
+          await user.keyboard('4');
+          await user.keyboard('28');
+          await user.keyboard('2026');
+          expect(input.validity.valid).toBe(true);
+
+          // Refocus the month segment and clear it (single Backspace for single-digit '4')
+          let segments = within(group).getAllByRole('spinbutton');
+          act(() => {
+            segments[0].focus();
+          });
+          await user.keyboard('{Backspace}');
+          expect(segments[0]).toHaveAttribute('aria-valuetext', 'Empty');
+
+          // Tab forward out of the group (month -> day -> year -> calendar trigger)
+          await user.tab();
+          await user.tab();
+          await user.tab();
+
+          // Field is now partial and required — expect validation error surfaced
+          let getDescription = () =>
+            (group.getAttribute('aria-describedby') || '')
+              .split(' ')
+              .map(d => document.getElementById(d)?.textContent || '')
+              .join(' ');
+          expect(getDescription()).toContain('Constraints not satisfied');
+        });
+
         it('supports minValue and maxValue', async () => {
           let {getByRole, getByTestId} = render(
             <Provider theme={theme}>

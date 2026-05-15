@@ -419,6 +419,38 @@ describe('TimeField', function () {
       expect(input).toHaveValue('08:30:00');
     });
 
+    it('should clear the hidden input value when a segment is cleared making the field partial (Bug #9801)', async () => {
+      // Regression: clearing one TimeField segment leaves the committed state.value
+      // unchanged, but the field is now visually incomplete. The hidden input — read by
+      // forms on submit — should reflect the missing value as '', not the stale committed
+      // time. Root cause: useDateField.ts uses state.timeValue?.toString() which is
+      // derived from the committed value, not from displayValue.
+      function Test() {
+        return (
+          <form>
+            <TimeField name="time" label="Time" defaultValue={new Time(13, 30)} />
+          </form>
+        );
+      }
+
+      let {getAllByRole} = render(<Test />);
+      let input = document.querySelector('input[name=time]');
+      let segments = getAllByRole('spinbutton');
+
+      expect(input).toHaveValue('13:30:00');
+
+      // Clear the hour segment (display shows '1 PM' for 13 — single digit → Empty in one Backspace)
+      act(() => {
+        segments[0].focus();
+      });
+      fireEvent.keyDown(document.activeElement, {key: 'Backspace'});
+      fireEvent.keyUp(document.activeElement, {key: 'Backspace'});
+      expect(segments[0]).toHaveAttribute('aria-valuetext', 'Empty');
+
+      // Field is partial — hidden input should not carry the stale committed time
+      expect(input).toHaveValue('');
+    });
+
     if (parseInt(React.version, 10) >= 19) {
       it('resets to defaultValue when submitting form action', async () => {
         function Test() {
