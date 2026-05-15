@@ -88,6 +88,7 @@ import {
 import {getOwnerDocument} from 'react-aria/private/utils/domHelpers';
 import {GridNode} from 'react-stately/private/grid/GridCollection';
 import {IconContext} from './Icon';
+// @ts-ignore
 import intlMessages from '../intl/*.json';
 import {Key} from '@react-types/shared';
 import {LayoutNode} from 'react-stately/useVirtualizerState';
@@ -602,7 +603,9 @@ const cellFocus = {
       default: 'Highlight'
     }
   },
-  borderRadius: '[5px]'
+  borderRadius: '[5px]',
+  // We need to render the cell focus ring on top of the cell divider if there is one. The divider has a z-index of 1.
+  zIndex: 2
 } as const;
 
 function CellFocusRing() {
@@ -693,7 +696,7 @@ export const Column = forwardRef(function Column(props: ColumnProps, ref: DOMRef
       ref={domRef}
       style={{borderInlineEndColor: 'transparent'}}
       className={renderProps =>
-        columnStyles({...renderProps, isMenu, align, isQuiet, selectionStyle})
+        columnStyles({...renderProps, isMenu, align, isQuiet})
       }>
       {({allowsSorting, sortDirection, isFocusVisible, sort, startResize}) => (
         <>
@@ -1795,9 +1798,7 @@ const row = style<
   height: 'full',
   position: 'relative',
   boxSizing: 'border-box',
-  backgroundColor: {
-    default: '--rowBackgroundColor'
-  },
+  backgroundColor: '--rowBackgroundColor',
   '--rowBackgroundColor': {
     type: 'backgroundColor',
     value: rowBackgroundColor
@@ -2055,7 +2056,7 @@ export const Row = /*#__PURE__*/ (forwardRef as forwardRefType)(function Row<T e
         (selectionStyle === 'highlight' ? ' ' + highlightSelectionBorder : '')
       }
       {...otherProps}>
-      {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
+      {selectionMode !== 'none' && selectionBehavior === 'toggle' && selectionStyle === 'checkbox' && (
         // Not sure what we want to do with this className, in Cell it currently overrides the className that would have been applied.
         // The `spread` otherProps must be after className in Cell.
         // @ts-ignore

@@ -987,11 +987,5 @@ function isLastItem(id: Key | undefined, state: ListState<unknown>) {
   let key = state.collection.getLastKey();
   let node = key ? state.collection.getItem(key) : null;
 
-  // Sometimes the last key is a loader node, so we check the previous nodes
-  while (node && node.type !== 'item') {
-    let prevKey = node.prevKey;
-    node = prevKey ? state.collection.getItem(prevKey) : null;
-  }
-
   return node ? node.key === id : false;
 }
