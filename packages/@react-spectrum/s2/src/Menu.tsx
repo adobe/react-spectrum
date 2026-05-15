@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {ActionButtonContext} from './ActionButton';
 import {
   Menu as AriaMenu,
   MenuItem as AriaMenuItem,
@@ -23,7 +24,6 @@ import {
   SubmenuTriggerProps as AriaSubmenuTriggerProps,
   MenuItemRenderProps
 } from 'react-aria-components/Menu';
-
 import {
   baseColor,
   centerPadding,
@@ -64,14 +64,15 @@ import {IconContext} from './Icon';
 import {ImageContext} from './Image';
 import InfoCircleIcon from '../s2wf-icons/S2_Icon_InfoCircle_20_N.svg'; // chevron right removed??
 import {InPopoverContext, Popover, PopoverContext} from './Popover';
-import intlMessages from '../intl/*.json';
 // @ts-ignore
+import intlMessages from '../intl/*.json';
 import LinkOutIcon from '../ui-icons/LinkOut';
 import {mergeStyles} from '../style/runtime';
 import {Placement} from 'react-aria/useOverlayPosition';
 import {PressResponder} from 'react-aria/private/interactions/PressResponder';
 import {pressScale} from './pressScale';
 import {Separator, SeparatorProps} from 'react-aria-components/Separator';
+import {ToggleButtonContext} from './ToggleButton';
 import {useGlobalListeners} from 'react-aria/private/utils/useGlobalListeners';
 import {useId} from 'react-aria/useId';
 import {useLocale} from 'react-aria/I18nProvider';
@@ -736,7 +737,7 @@ function MenuTrigger(props: MenuTriggerProps): ReactNode {
     );
   };
 
-  let {align = 'start', direction = 'bottom', shouldFlip} = props;
+  let {align = 'start', direction = 'bottom', shouldFlip, trigger = 'press'} = props;
   let placement: Placement;
   switch (direction) {
     case 'left':
@@ -750,25 +751,32 @@ function MenuTrigger(props: MenuTriggerProps): ReactNode {
     default:
       placement = `${direction} ${align}` as Placement;
   }
+  let holdAffordance = trigger === 'longPress';
 
   return (
-    <InternalMenuTriggerContext.Provider
-      value={{
-        align: props.align,
-        direction: props.direction,
-        shouldFlip: props.shouldFlip
-      }}>
-      <PopoverContext.Provider
-        value={{hideArrow: true, offset: 8, crossOffset: 0, placement, shouldFlip}}>
-        <InPopoverContext.Provider value={false}>
-          <AriaMenuTrigger {...props}>
-            <PressResponder onPressStart={onPressStart} isPressed={isPressed}>
-              {props.children}
-            </PressResponder>
-          </AriaMenuTrigger>
-        </InPopoverContext.Provider>
-      </PopoverContext.Provider>
-    </InternalMenuTriggerContext.Provider>
+    <Provider
+      values={[
+        [ActionButtonContext, {holdAffordance}],
+        [ToggleButtonContext, {holdAffordance}]
+      ]}>
+      <InternalMenuTriggerContext.Provider
+        value={{
+          align: props.align,
+          direction: props.direction,
+          shouldFlip: props.shouldFlip
+        }}>
+        <PopoverContext.Provider
+          value={{hideArrow: true, offset: 8, crossOffset: 0, placement, shouldFlip}}>
+          <InPopoverContext.Provider value={false}>
+            <AriaMenuTrigger {...props}>
+              <PressResponder onPressStart={onPressStart} isPressed={isPressed}>
+                {props.children}
+              </PressResponder>
+            </AriaMenuTrigger>
+          </InPopoverContext.Provider>
+        </PopoverContext.Provider>
+      </InternalMenuTriggerContext.Provider>
+    </Provider>
   );
 }
 

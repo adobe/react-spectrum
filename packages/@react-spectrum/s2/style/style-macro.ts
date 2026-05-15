@@ -419,6 +419,7 @@ export function createTheme<T extends Theme>(
         let prop = properties.get(property);
         if (prop) {
           for (let property of prop.cssProperties) {
+            // oxlint-disable-next-line max-depth
             if (property && allowedOverridesSet.has(property)) {
               let selector = classNamePrefix(property, property);
               let p = property.replace('--', '__');
