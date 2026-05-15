@@ -685,7 +685,7 @@ export interface ColumnProps extends Omit<
  * A column within a `<Table>`.
  */
 export const Column = forwardRef(function Column(props: ColumnProps, ref: DOMRef<HTMLDivElement>) {
-  let {isQuiet, selectionStyle} = useContext(InternalTableContext);
+  let {isQuiet} = useContext(InternalTableContext);
   let {allowsResizing, children, align = 'start'} = props;
   let domRef = useDOMRef(ref);
   let isMenu = allowsResizing || !!props.menuItems;
