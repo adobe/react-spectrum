@@ -237,6 +237,8 @@ const tree = style<TreeRenderProps>({
 let InternalTreeViewContext = createContext<{selectionStyle?: 'highlight' | 'checkbox'}>({});
 
 const insertionIndicatorWrapper = style({
+  position: 'absolute',
+  inset: 0,
   display: 'flex',
   alignItems: 'center',
   marginStart: {
