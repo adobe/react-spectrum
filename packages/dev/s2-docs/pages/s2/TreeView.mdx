@@ -390,12 +390,12 @@ function Example(props) {
 
 TreeView supports drag and drop interactions when the `dragAndDropHooks` prop is provided using the <TypeLink links={docs.links} type={docs.exports.useDragAndDrop} /> hook. Users can drop data on the tree as a whole, on individual items, insert new items between existing ones, or reorder items. The insertion indicator is level-aware, so drop positions reflect the target item's nesting depth. React Aria supports drag and drop via mouse, touch, keyboard, and screen reader interactions. See the [drag and drop guide](../react-aria/dnd?component=Tree) to learn more.
 
-You can customize the drag preview by passing <TypeLink links={docs.links} type={docs.exports.TreeViewDragPreview} /> to `useDragAndDrop`'s `renderDragPreview` with custom content.
+You can customize the drag preview by passing <TypeLink links={docs.links} type={docs.exports.DragPreview} /> or your own custom drag preview element to `useDragAndDrop`'s `renderDragPreview`. `DragPreview` supports leading icons and `Text` with `label` and `description` slots.
 
 ```tsx render type="s2"
 "use client";
 import {Text} from '@react-spectrum/s2';
-import {TreeView, TreeViewItem, TreeViewItemContent, TreeViewDragPreview} from '@react-spectrum/s2/TreeView';
+import {TreeView, TreeViewItem, TreeViewItemContent, DragPreview} from '@react-spectrum/s2/TreeView';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {useDragAndDrop} from '@react-spectrum/s2/useDragAndDrop';
 import {useTreeData} from '@react-spectrum/s2/useTreeData';
@@ -421,7 +421,7 @@ function ReorderableTree() {
 
   ///- begin highlight -///
   let {dragAndDropHooks} = useDragAndDrop({
-    getItems: (keys, items: typeof tree.items) => items.map(item => ({'text/plain': item.value.title})),
+    getItems: (keys, items: typeof tree.items) => items.map(item => ({'text/plain': item.value.title, numChildren: item.value.children.length })),
     onMove(e) {
       if (e.target.dropPosition === 'before') {
         tree.moveBefore(e.target.key, e.keys);
@@ -439,10 +439,13 @@ function ReorderableTree() {
       }
     },
     renderDragPreview: (items) => (
-      <TreeViewDragPreview items={items}>
-        <Folder />
+      <DragPreview items={items}>
+        {items[0].numChildren > 0 ? <Folder /> : <File />}
         <Text>{items[0]['text/plain']}</Text>
-      </TreeViewDragPreview>
+        {items[0].numChildren > 0 && (
+          <Text slot="description">{`${items[0].numChildren} item(s)`}</Text>
+        )}
+      </DragPreview>
     )
   });
   ///- end highlight -///

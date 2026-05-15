@@ -147,7 +147,7 @@ function FileTable() {
             <Row columns={visibleColumns}>
               {column => (
                 <Cell>
-                  {column.id === 'price' 
+                  {column.id === 'price'
                     ? item.price.toLocaleString('en-US', {style: 'currency', currency: 'USD', maximumFractionDigits: 0})
                     : item[column.id]}
                 </Cell>
@@ -951,15 +951,17 @@ function subscribe(fn) {
 
 Table supports drag and drop interactions when the `dragAndDropHooks` prop is provided using the <TypeLink links={docs.links} type={docs.exports.useDragAndDrop} /> hook. Users can drop data on the table as a whole, on individual rows, insert new rows between existing ones, or reorder rows. See the [drag and drop guide](../react-aria/dnd?component=Table) to learn more.
 
-You can customize the drag preview by passing <TypeLink links={docs.links} type={docs.exports.TableViewDragPreview} /> to `useDragAndDrop`'s `renderDragPreview` with custom content.
+You can customize the drag preview by passing <TypeLink links={docs.links} type={docs.exports.DragPreview} /> or your own custom drag preview element to `useDragAndDrop`'s `renderDragPreview`. `DragPreview` supports leading icons and `Text` with `label` and `description` slots.
 
 ```tsx render type="s2"
 "use client";
-import {TableView, TableHeader, TableBody, Column, Row, Cell, Collection, TableViewDragPreview} from '@react-spectrum/s2/TableView';
+import {TableView, TableHeader, TableBody, Column, Row, Cell, Collection, DragPreview} from '@react-spectrum/s2/TableView';
 import {Text} from '@react-spectrum/s2';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {useDragAndDrop} from '@react-spectrum/s2/useDragAndDrop';
 import {useTreeData} from '@react-spectrum/s2/useTreeData';
+import File from '@react-spectrum/s2/icons/File';
+import Folder from '@react-spectrum/s2/icons/Folder';
 
 function ReorderableTable() {
   let tree = useTreeData({
@@ -997,9 +999,11 @@ function ReorderableTable() {
       }
     },
     renderDragPreview: (items) => (
-      <TableViewDragPreview items={items}>
-        <Text>{`${items[0]['text/plain']} (${items[0].type})`}</Text>
-      </TableViewDragPreview>
+      <DragPreview items={items}>
+        {items[0].type === 'Directory' ? <Folder /> : <File />}
+        <Text>{items[0]['text/plain']}</Text>
+        <Text slot="description">{items[0].type}</Text>
+      </DragPreview>
     )
   });
   ///- end highlight -///
