@@ -72,6 +72,7 @@ export interface GridLayoutOptions {
   /**
    * The layout direction. When `'rtl'`, drop target positions (`'before'`/`'after'`)
    * are computed correctly for right-to-left locales in multi-column grids.
+   *
    * @default 'ltr'
    */
   direction?: 'ltr' | 'rtl';
