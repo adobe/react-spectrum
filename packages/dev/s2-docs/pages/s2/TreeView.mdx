@@ -421,7 +421,7 @@ function ReorderableTree() {
 
   ///- begin highlight -///
   let {dragAndDropHooks} = useDragAndDrop({
-    getItems: (keys, items: typeof tree.items) => items.map(item => ({'text/plain': item.value.title, numChildren: item.value.children.length })),
+    getItems: (keys, items: typeof tree.items) => items.map(item => ({'text/plain': item.value.title, numChildren: (item.value.children.length).toString()})),
     onMove(e) {
       if (e.target.dropPosition === 'before') {
         tree.moveBefore(e.target.key, e.keys);
@@ -440,9 +440,9 @@ function ReorderableTree() {
     },
     renderDragPreview: (items) => (
       <DragPreview items={items}>
-        {items[0].numChildren > 0 ? <Folder /> : <File />}
+        {items[0].numChildren !== '0' ? <Folder /> : <File />}
         <Text>{items[0]['text/plain']}</Text>
-        {items[0].numChildren > 0 && (
+        {items[0].numChildren !== '0' && (
           <Text slot="description">{`${items[0].numChildren} item(s)`}</Text>
         )}
       </DragPreview>
