@@ -10,6 +10,7 @@ import './Button.css';
 interface ButtonProps extends RACButtonProps {
   /**
    * The visual style of the button (Vanilla CSS implementation specific).
+   *
    * @default 'primary'
    */
   variant?: 'primary' | 'secondary' | 'quiet';

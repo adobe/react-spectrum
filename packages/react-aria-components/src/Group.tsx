@@ -28,26 +28,31 @@ import {useFocusRing} from 'react-aria/useFocusRing';
 export interface GroupRenderProps {
   /**
    * Whether the group is currently hovered with a mouse.
+   *
    * @selector [data-hovered]
    */
   isHovered: boolean;
   /**
    * Whether an element within the group is focused, either via a mouse or keyboard.
+   *
    * @selector [data-focus-within]
    */
   isFocusWithin: boolean;
   /**
    * Whether an element within the group is keyboard focused.
+   *
    * @selector [data-focus-visible]
    */
   isFocusVisible: boolean;
   /**
    * Whether the group is disabled.
+   *
    * @selector [data-disabled]
    */
   isDisabled: boolean;
   /**
    * Whether the group is invalid.
+   *
    * @selector [data-invalid]
    */
   isInvalid: boolean;
@@ -65,7 +70,9 @@ export interface GroupProps
     RenderProps<GroupRenderProps>,
     SlotProps {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-Group'
    */
   className?: ClassNameOrFunction<GroupRenderProps>;
@@ -80,6 +87,7 @@ export interface GroupProps
    * Use `'region'` when the contents of the group is important enough to be
    * included in the page table of contents. Use `'presentation'` if the group
    * is visual only and does not represent a semantic grouping of controls.
+   *
    * @default 'group'
    */
   role?: 'group' | 'region' | 'presentation';

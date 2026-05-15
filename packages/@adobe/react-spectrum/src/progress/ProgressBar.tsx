@@ -18,8 +18,8 @@ import styles from '@adobe/spectrum-css-temp/components/barloader/vars.css';
 import {useProgressBar} from 'react-aria/useProgressBar';
 
 /**
- * ProgressBars show the progression of a system operation: downloading, uploading, processing, etc., in a visual way.
- * They can represent either determinate or indeterminate progress.
+ * ProgressBars show the progression of a system operation: downloading, uploading, processing,
+ * etc., in a visual way. They can represent either determinate or indeterminate progress.
  */
 export const ProgressBar = React.forwardRef(function ProgressBar(
   props: SpectrumProgressBarProps,

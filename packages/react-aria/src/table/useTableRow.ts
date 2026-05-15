@@ -44,6 +44,7 @@ export interface TableRowAria extends GridRowAria {
 
 /**
  * Provides the behavior and accessibility implementation for a row in a table.
+ *
  * @param props - Props for the row.
  * @param state - State of the table, as returned by `useTableState`.
  */

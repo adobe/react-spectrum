@@ -38,10 +38,11 @@ interface VirtualizerOptions<T extends object, V> {
  * a stack, a grid, a circle, or any other layout you can think of. The layout can be changed
  * dynamically at runtime as well.
  *
- * Layouts produce information on what views should appear in the virtualizer, but do not create
- * the views themselves directly. It is the responsibility of the `VirtualizerDelegate` object
- * to render elements for each layout info. The virtualizer manages a set of `ReusableView` objects,
- * which are reused as the user scrolls by swapping their content with cached elements returned by the delegate.
+ * Layouts produce information on what views should appear in the virtualizer, but do not create the
+ * views themselves directly. It is the responsibility of the `VirtualizerDelegate` object to render
+ * elements for each layout info. The virtualizer manages a set of `ReusableView` objects, which are
+ * reused as the user scrolls by swapping their content with cached elements returned by the
+ * delegate.
  */
 export class Virtualizer<T extends object, V> {
   /**

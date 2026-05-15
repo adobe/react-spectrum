@@ -43,26 +43,31 @@ import {VisuallyHidden} from 'react-aria/VisuallyHidden';
 export interface DropZoneRenderProps {
   /**
    * Whether the dropzone is currently hovered with a mouse.
+   *
    * @selector [data-hovered]
    */
   isHovered: boolean;
   /**
    * Whether the dropzone is focused, either via a mouse or keyboard.
+   *
    * @selector [data-focused]
    */
   isFocused: boolean;
   /**
    * Whether the dropzone is keyboard focused.
+   *
    * @selector [data-focus-visible]
    */
   isFocusVisible: boolean;
   /**
    * Whether the dropzone is the drop target.
+   *
    * @selector [data-drop-target]
    */
   isDropTarget: boolean;
   /**
    * Whether the dropzone is disabled.
+   *
    * @selector [data-disabled]
    */
   isDisabled: boolean;
@@ -77,7 +82,9 @@ export interface DropZoneProps
     AriaLabelingProps,
     GlobalDOMAttributes<HTMLDivElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-DropZone'
    */
   className?: ClassNameOrFunction<DropZoneRenderProps>;

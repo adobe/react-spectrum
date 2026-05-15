@@ -55,7 +55,8 @@ export interface ToastContainerProps extends Omit<
 > {
   /**
    * Placement of the toast container on the page.
-   * @default "bottom"
+   *
+   * @default 'bottom'
    */
   placement?: ToastPlacement;
 }

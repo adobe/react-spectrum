@@ -40,7 +40,9 @@ export interface LinkProps
     DOMProps,
     Omit<GlobalDOMAttributes<HTMLAnchorElement>, 'onClick'> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-Link'
    */
   className?: ClassNameOrFunction<LinkRenderProps>;
@@ -49,31 +51,37 @@ export interface LinkProps
 export interface LinkRenderProps {
   /**
    * Whether the link is the current item within a list.
+   *
    * @selector [data-current]
    */
   isCurrent: boolean;
   /**
    * Whether the link is currently hovered with a mouse.
+   *
    * @selector [data-hovered]
    */
   isHovered: boolean;
   /**
    * Whether the link is currently in a pressed state.
+   *
    * @selector [data-pressed]
    */
   isPressed: boolean;
   /**
    * Whether the link is focused, either via a mouse or keyboard.
+   *
    * @selector [data-focused]
    */
   isFocused: boolean;
   /**
    * Whether the link is keyboard focused.
+   *
    * @selector [data-focus-visible]
    */
   isFocusVisible: boolean;
   /**
    * Whether the link is disabled.
+   *
    * @selector [data-disabled]
    */
   isDisabled: boolean;

@@ -33,11 +33,13 @@ import {useVisuallyHidden} from '../visually-hidden/VisuallyHidden';
 
 export interface AriaColorAreaProps extends ColorAreaProps, DOMProps, AriaLabelingProps {
   /**
-   * The name of the x channel input element, used when submitting an HTML form. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefname).
+   * The name of the x channel input element, used when submitting an HTML form. See
+   * [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefname).
    */
   xName?: string;
   /**
-   * The name of the y channel input element, used when submitting an HTML form. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefname).
+   * The name of the y channel input element, used when submitting an HTML form. See
+   * [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefname).
    */
   yName?: string;
   /**
@@ -69,8 +71,9 @@ export interface AriaColorAreaOptions extends AriaColorAreaProps {
 }
 
 /**
- * Provides the behavior and accessibility implementation for a color area component.
- * Color area allows users to adjust two channels of an RGB, HSL or HSB color value against a two-dimensional gradient background.
+ * Provides the behavior and accessibility implementation for a color area component. Color area
+ * allows users to adjust two channels of an RGB, HSL or HSB color value against a two-dimensional
+ * gradient background.
  */
 export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState): ColorAreaAria {
   let {

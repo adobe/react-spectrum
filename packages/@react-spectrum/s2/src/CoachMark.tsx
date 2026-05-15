@@ -385,9 +385,9 @@ export const CoachMark = forwardRef((props: CoachMarkProps, ref: ForwardedRef<HT
 export interface CoachMarkTriggerProps extends AriaDialogTriggerProps {}
 
 /**
- * DialogTrigger serves as a wrapper around a Dialog and its associated trigger, linking the Dialog's
- * open state with the trigger's press state. Additionally, it allows you to customize the type and
- * positioning of the Dialog.
+ * DialogTrigger serves as a wrapper around a Dialog and its associated trigger, linking the
+ * Dialog's open state with the trigger's press state. Additionally, it allows you to customize the
+ * type and positioning of the Dialog.
  */
 export function CoachMarkTrigger(props: CoachMarkTriggerProps): ReactNode {
   let triggerRef = useRef<HTMLDivElement>(null);

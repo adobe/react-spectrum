@@ -63,7 +63,9 @@ export interface CheckboxGroupProps
     SlotProps,
     GlobalDOMAttributes<HTMLDivElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-CheckboxGroup'
    */
   className?: ClassNameOrFunction<CheckboxGroupRenderProps>;
@@ -78,7 +80,9 @@ export interface CheckboxProps
     SlotProps,
     Omit<GlobalDOMAttributes<HTMLLabelElement>, 'onClick'> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-Checkbox'
    */
   className?: ClassNameOrFunction<CheckboxRenderProps>;
@@ -96,7 +100,9 @@ export interface CheckboxFieldProps
     SlotProps,
     Omit<GlobalDOMAttributes<HTMLDivElement>, 'onClick'> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-CheckboxField'
    */
   className?: ClassNameOrFunction<CheckboxFieldRenderProps>;
@@ -113,7 +119,9 @@ export interface CheckboxButtonProps
     SlotProps,
     GlobalDOMAttributes<HTMLLabelElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-CheckboxButton'
    */
   className?: ClassNameOrFunction<CheckboxButtonRenderProps>;
@@ -122,21 +130,25 @@ export interface CheckboxButtonProps
 export interface CheckboxGroupRenderProps {
   /**
    * Whether the checkbox group is disabled.
+   *
    * @selector [data-disabled]
    */
   isDisabled: boolean;
   /**
    * Whether the checkbox group is read only.
+   *
    * @selector [data-readonly]
    */
   isReadOnly: boolean;
   /**
    * Whether the checkbox group is required.
+   *
    * @selector [data-required]
    */
   isRequired: boolean;
   /**
    * Whether the checkbox group is invalid.
+   *
    * @selector [data-invalid]
    */
   isInvalid: boolean;
@@ -149,51 +161,61 @@ export interface CheckboxGroupRenderProps {
 export interface CheckboxRenderProps {
   /**
    * Whether the checkbox is selected.
+   *
    * @selector [data-selected]
    */
   isSelected: boolean;
   /**
    * Whether the checkbox is indeterminate.
+   *
    * @selector [data-indeterminate]
    */
   isIndeterminate: boolean;
   /**
    * Whether the checkbox is currently hovered with a mouse.
+   *
    * @selector [data-hovered]
    */
   isHovered: boolean;
   /**
    * Whether the checkbox is currently in a pressed state.
+   *
    * @selector [data-pressed]
    */
   isPressed: boolean;
   /**
    * Whether the checkbox is focused, either via a mouse or keyboard.
+   *
    * @selector [data-focused]
    */
   isFocused: boolean;
   /**
    * Whether the checkbox is keyboard focused.
+   *
    * @selector [data-focus-visible]
    */
   isFocusVisible: boolean;
   /**
    * Whether the checkbox is disabled.
+   *
    * @selector [data-disabled]
    */
   isDisabled: boolean;
   /**
    * Whether the checkbox is read only.
+   *
    * @selector [data-readonly]
    */
   isReadOnly: boolean;
   /**
    * Whether the checkbox invalid.
+   *
    * @selector [data-invalid]
    */
   isInvalid: boolean;
   /**
    * Whether the checkbox is required.
+   *
    * @selector [data-required]
    */
   isRequired: boolean;
@@ -202,31 +224,37 @@ export interface CheckboxRenderProps {
 export interface CheckboxFieldRenderProps {
   /**
    * Whether the checkbox is selected.
+   *
    * @selector [data-selected]
    */
   isSelected: boolean;
   /**
    * Whether the checkbox is indeterminate.
+   *
    * @selector [data-indeterminate]
    */
   isIndeterminate: boolean;
   /**
    * Whether the checkbox is disabled.
+   *
    * @selector [data-disabled]
    */
   isDisabled: boolean;
   /**
    * Whether the checkbox is read only.
+   *
    * @selector [data-readonly]
    */
   isReadOnly: boolean;
   /**
    * Whether the checkbox invalid.
+   *
    * @selector [data-invalid]
    */
   isInvalid: boolean;
   /**
    * Whether the checkbox is required.
+   *
    * @selector [data-required]
    */
   isRequired: boolean;
@@ -430,6 +458,7 @@ function useCheckboxAria(
 /**
  * A checkbox allows a user to select multiple items from a list of individual items, or
  * to mark one individual item as selected.
+ *
  * @deprecated Use CheckboxField + CheckboxButton instead.
  */
 export const Checkbox = /*#__PURE__*/ (forwardRef as forwardRefType)(function Checkbox(

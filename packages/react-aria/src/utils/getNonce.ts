@@ -30,8 +30,9 @@ export function resetNonceCache(): void {
 }
 
 /**
- * Returns the CSP nonce, if configured via a `<meta property="csp-nonce">` tag or `__webpack_nonce__`.
- * This allows dynamically injected `<style>` elements to work with Content Security Policy.
+ * Returns the CSP nonce, if configured via a `<meta property="csp-nonce">` tag or
+ * `__webpack_nonce__`. This allows dynamically injected `<style>` elements to work with Content
+ * Security Policy.
  */
 export function getNonce(doc?: Document): string | undefined {
   let d = doc ?? (typeof document !== 'undefined' ? document : undefined);

@@ -25,6 +25,7 @@ export interface ColorWheelProps extends Omit<ValueBase<string | Color>, 'onChan
   onChangeEnd?: (value: Color) => void;
   /**
    * The default value (uncontrolled).
+   *
    * @default 'hsl(0, 100%, 50%)'
    */
   defaultValue?: string | Color;
@@ -43,7 +44,10 @@ export interface ColorWheelState {
   /** Sets the hue channel of the current color value and triggers `onChange`. */
   setHue(value: number): void;
 
-  /** Sets the hue channel of the current color value based on the given coordinates and radius of the color wheel, and triggers `onChange`. */
+  /**
+   * Sets the hue channel of the current color value based on the given coordinates and radius of
+   * the color wheel, and triggers `onChange`.
+   */
   setHueFromPoint(x: number, y: number, radius: number): void;
   /** Returns the coordinates of the thumb relative to the center point of the color wheel. */
   getThumbPosition(radius: number): {x: number; y: number};

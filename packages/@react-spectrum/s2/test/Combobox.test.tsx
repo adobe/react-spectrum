@@ -292,4 +292,18 @@ describe('Combobox', () => {
     await user.click(backdrop!);
     expect(dialogTester.dialog).toBeNull();
   });
+
+  it('should label the input with the prefix', () => {
+    let {getByRole} = render(
+      <ComboBox label="Description" prefix="Prefix">
+        <ComboBoxItem>Item 1</ComboBoxItem>
+        <ComboBoxItem>Item 2</ComboBoxItem>
+        <ComboBoxItem>Item 3</ComboBoxItem>
+      </ComboBox>
+    );
+
+    let input = getByRole('combobox');
+    let labels = input.getAttribute('aria-labelledby')?.split(' ');
+    expect(document.getElementById(labels![1])).toHaveTextContent('Prefix');
+  });
 });

@@ -51,6 +51,7 @@ export interface CheckboxGroupState extends FormValidationState {
 
   /**
    * The current validation state of the checkbox group.
+   *
    * @deprecated Use `isInvalid` instead.
    */
   readonly validationState: ValidationState | null;

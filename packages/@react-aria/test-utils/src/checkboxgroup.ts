@@ -16,7 +16,8 @@ import {pressElement} from './events';
 
 interface TriggerCheckboxOptions {
   /**
-   * What interaction type to use when triggering a checkbox. Defaults to the interaction type set on the tester.
+   * What interaction type to use when triggering a checkbox. Defaults to the interaction type set
+   * on the tester.
    */
   interactionType?: UserOpts['interactionType'];
   /**
@@ -111,7 +112,8 @@ export class CheckboxGroupTester {
   }
 
   /**
-   * Toggles the specified checkbox. Defaults to using the interaction type set on the checkbox tester.
+   * Toggles the specified checkbox. Defaults to using the interaction type set on the checkbox
+   * tester.
    */
   async toggleCheckbox(opts: TriggerCheckboxOptions): Promise<void> {
     let {checkbox, interactionType = this._interactionType} = opts;
