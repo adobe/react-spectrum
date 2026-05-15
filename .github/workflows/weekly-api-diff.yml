@@ -209,18 +209,9 @@ jobs:
                 'Content-Type': 'application/json'
               }
             )
-            try:
-              print("Calling GitHub Models API...")
-              raw = urllib.request.urlopen(req).read()
-              summary = json.loads(raw)['choices'][0]['message']['content']
-              print("GitHub Models API: OK")
-            except urllib.error.HTTPError as e:
-              body = e.read().decode()
-              raise SystemExit(f"GitHub Models API error {e.code}: {body}")
+            summary = json.loads(urllib.request.urlopen(req).read())['choices'][0]['message']['content']
             message = f"📊 Weekly API Diff — {today}\n\n{summary}\n\nWhat's new this week: {delta_url}\nFull diff vs release: {diff_url}\n\nReact ✅ if changes look expected, or 🚨 if something looks wrong."
 
-          print(f"Posting to Slack channel: {channel}")
-          print(f"Slack token present: {bool(slack_token)}, length: {len(slack_token) if slack_token else 0}")
           req = urllib.request.Request(
             'https://slack.com/api/chat.postMessage',
             data=json.dumps({"channel": channel, "text": message}).encode(),
@@ -229,11 +220,7 @@ jobs:
               'Content-Type': 'application/json'
             }
           )
-          try:
-            resp = json.loads(urllib.request.urlopen(req).read())
-          except urllib.error.HTTPError as e:
-            body = e.read().decode()
-            raise SystemExit(f"Slack HTTP error {e.code}: {body}")
+          resp = json.loads(urllib.request.urlopen(req).read())
           print("Slack response:", resp.get('ok'), resp.get('error', ''))
           if not resp.get('ok'):
             raise SystemExit(f"Slack error: {resp.get('error')}")
