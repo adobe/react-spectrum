@@ -695,9 +695,7 @@ export const Column = forwardRef(function Column(props: ColumnProps, ref: DOMRef
       {...props}
       ref={domRef}
       style={{borderInlineEndColor: 'transparent'}}
-      className={renderProps =>
-        columnStyles({...renderProps, isMenu, align, isQuiet})
-      }>
+      className={renderProps => columnStyles({...renderProps, isMenu, align, isQuiet})}>
       {({allowsSorting, sortDirection, isFocusVisible, sort, startResize}) => (
         <>
           {/* Note this is mainly for column's without a dropdown menu. If there is a dropdown menu, the button is styled to have a focus ring for simplicity
@@ -2056,14 +2054,16 @@ export const Row = /*#__PURE__*/ (forwardRef as forwardRefType)(function Row<T e
         (selectionStyle === 'highlight' ? ' ' + highlightSelectionBorder : '')
       }
       {...otherProps}>
-      {selectionMode !== 'none' && selectionBehavior === 'toggle' && selectionStyle === 'checkbox' && (
-        // Not sure what we want to do with this className, in Cell it currently overrides the className that would have been applied.
-        // The `spread` otherProps must be after className in Cell.
-        // @ts-ignore
-        <Cell isSticky className={checkboxCellStyle}>
-          <Checkbox slot="selection" styles={selectionCheckbox} />
-        </Cell>
-      )}
+      {selectionMode !== 'none' &&
+        selectionBehavior === 'toggle' &&
+        selectionStyle === 'checkbox' && (
+          // Not sure what we want to do with this className, in Cell it currently overrides the className that would have been applied.
+          // The `spread` otherProps must be after className in Cell.
+          // @ts-ignore
+          <Cell isSticky className={checkboxCellStyle}>
+            <Checkbox slot="selection" styles={selectionCheckbox} />
+          </Cell>
+        )}
       <Collection items={columns} dependencies={[...dependencies, columns]}>
         {children}
       </Collection>
