@@ -41,7 +41,8 @@ import {
   DisclosureProps as RACDisclosureProps
 } from 'react-aria-components/Disclosure';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
-import {getAllowedOverrides, StyleProps, UnsafeStyles} from './style-utils' with {type: 'macro'};
+import {fontProperties, getAllowedOverrides, StyleProps, StylesPropWithFont, UnsafeStyles} from './style-utils' with {type: 'macro'};
+import {StyleString} from '../style/types' with {type: 'macro'};
 import {Heading} from 'react-aria-components/Heading';
 import React, {createContext, forwardRef, ReactNode, useContext} from 'react';
 import {useDOMRef} from './useDOMRef';
@@ -139,6 +140,11 @@ export interface DisclosureTitleProps extends UnsafeStyles, DOMProps {
   level?: number;
   /** The contents of the disclosure header. */
   children: React.ReactNode;
+  /**
+   * Spectrum-defined styles, returned by the `style()` macro. Only allows overriding
+   * `font`, `fontFamily`, `fontWeight`, `fontSize`, and `lineHeight`.
+   */
+  styles?: StylesPropWithFont;
 }
 
 interface DisclosureHeaderProps extends UnsafeStyles, DOMProps {
@@ -231,7 +237,7 @@ const buttonStyles = style({
   },
   textAlign: 'start',
   disableTapHighlight: true
-});
+}, getAllowedOverrides({font: true}));
 
 const chevronStyles = style({
   rotate: {
@@ -293,7 +299,7 @@ export const DisclosureTitle = forwardRef(function DisclosureTitle(
   props: DisclosureTitleProps,
   ref: DOMRef<HTMLDivElement>
 ) {
-  let {level = 3, UNSAFE_style, UNSAFE_className = '', ...otherProps} = props;
+  let {level = 3, UNSAFE_style, UNSAFE_className = '', styles, ...otherProps} = props;
   let domRef = useDOMRef(ref);
   const domProps = filterDOMProps(otherProps);
   let {direction} = useLocale();
@@ -309,7 +315,7 @@ export const DisclosureTitle = forwardRef(function DisclosureTitle(
       style={UNSAFE_style}
       className={(UNSAFE_className ?? '') + headingStyle}>
       <Button
-        className={renderProps => buttonStyles({...renderProps, size, density, isQuiet})}
+        className={renderProps => buttonStyles({...renderProps, size, density, isQuiet}, styles)}
         slot="trigger">
         <CenterBaseline>
           <Chevron size={size} className={chevronStyles({isExpanded, isRTL})} aria-hidden="true" />
