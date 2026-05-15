@@ -1,4 +1,4 @@
-import { fileURLToPath } from 'url';
+import {fileURLToPath} from 'url';
 import fs from 'fs';
 import path from 'path';
 import sharp from 'sharp';
@@ -121,8 +121,8 @@ async function generateBundle(libraryName, config) {
   const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
   const stagingDir = path.join(config.outputDir, config.extensionName);
 
-  fs.rmSync(stagingDir, { recursive: true, force: true });
-  fs.mkdirSync(stagingDir, { recursive: true });
+  fs.rmSync(stagingDir, {recursive: true, force: true});
+  fs.mkdirSync(stagingDir, {recursive: true});
 
   for (const dir of config.srcDirs) {
     if (!fs.existsSync(dir.from)) {
@@ -145,8 +145,8 @@ async function generateBundle(libraryName, config) {
   // Replace it with the dark-mode color so the icon works on any background.
   svg = svg.replace(/light-dark\([^,]+,\s*([^)]+)\)/, '$1');
   await sharp(Buffer.from(svg))
-    .resize(448, 448, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } })
-    .extend({ top: 32, bottom: 32, left: 32, right: 32, background: { r: 0, g: 0, b: 0, alpha: 0 } })
+    .resize(448, 448, {fit: 'contain', background: {r: 0, g: 0, b: 0, alpha: 0}})
+    .extend({top: 32, bottom: 32, left: 32, right: 32, background: {r: 0, g: 0, b: 0, alpha: 0}})
     .png()
     .toFile(path.join(stagingDir, iconFile));
 
@@ -269,7 +269,7 @@ function resolvePackageDir(packageName, fromDir) {
 }
 
 function copyDirectory(from, to) {
-  fs.mkdirSync(path.dirname(to), { recursive: true });
+  fs.mkdirSync(path.dirname(to), {recursive: true});
   fs.cpSync(from, to, {
     recursive: true,
     dereference: true
