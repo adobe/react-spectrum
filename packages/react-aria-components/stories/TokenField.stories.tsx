@@ -14,7 +14,7 @@ import {Meta, StoryFn} from '@storybook/react';
 import React, {useMemo, useRef, useState} from 'react';
 import './styles.css';
 import styles from '../example/index.css';
-import {TokenField, type TokenFieldSegment} from '../src/TokenField';
+import {TokenField, positionToDOMRange} from '../src/TokenField';
 import {Autocomplete} from '../src/Autocomplete';
 import {Popover} from '../src/Popover';
 import {Menu} from '../src/Menu';
@@ -112,15 +112,15 @@ export const WithPopover: TokenFieldStory = () => {
         triggerRef={inputRef}
         isOpen={filterAnchor != null && items.length > 0}
         isNonModal
+        placement="bottom start"
+        getTargetRect={target => {
+          return positionToDOMRange(target, filterAnchor!).getBoundingClientRect();
+        }}
         style={{
           background: 'Canvas',
           color: 'CanvasText'
         }}>
-        <Menu
-          className={styles.menu}
-          items={items}
-          dependencies={[filterAnchor]}
-          style={{width: 'var(--trigger-width)'}}>
+        <Menu className={styles.menu} items={items} dependencies={[filterAnchor]}>
           {item => (
             <MyMenuItem
               onAction={() => {

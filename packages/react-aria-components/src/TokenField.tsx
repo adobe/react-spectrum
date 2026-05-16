@@ -319,19 +319,24 @@ let isProgrammaticSelectionChange = false;
 function setSelection(root: Element, pos: Position) {
   let selection = window.getSelection();
   if (selection) {
-    let range = document.createRange();
-    let child = root.childNodes[pos.index];
-    if (!child || child.nodeType === Node.ELEMENT_NODE) {
-      range.setStart(root, pos.offset > 0 ? pos.index + 1 : pos.index);
-    } else {
-      range.setStart(child, pos.offset);
-    }
-    range.collapse(true);
-
+    let range = positionToDOMRange(root, pos);
     isProgrammaticSelectionChange = true;
     selection.removeAllRanges();
     selection.addRange(range);
   }
+}
+
+// TODO: do we want to export this?
+export function positionToDOMRange(root: Element, pos: Position): Range {
+  let range = document.createRange();
+  let child = root.childNodes[pos.index];
+  if (!child || child.nodeType === Node.ELEMENT_NODE) {
+    range.setStart(root, pos.offset > 0 ? pos.index + 1 : pos.index);
+  } else {
+    range.setStart(child, pos.offset);
+  }
+  range.collapse(true);
+  return range;
 }
 
 function useSelectionChange(ref: React.RefObject<Element | null>, handler: () => void) {
