@@ -1669,6 +1669,10 @@ export interface RowRenderProps extends ItemRenderProps {
    * @selector [data-level]
    */
   level: number;
+  /**
+   * State of the table.
+   */
+  state: TableState<unknown>;
 }
 
 export interface RowProps<T>
@@ -1830,6 +1834,7 @@ export const Row = /*#__PURE__*/ createBranchComponent(
       },
       values: {
         ...states,
+        state,
         isHovered,
         isFocused,
         isFocusVisible,

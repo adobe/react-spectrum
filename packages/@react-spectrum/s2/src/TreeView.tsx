@@ -42,13 +42,7 @@ import {
   UnsafeStyles
 } from './style-utils' with {type: 'macro'};
 import {IconContext} from './Icon';
-import {
-  insertionIndicatorBar,
-  insertionIndicatorCircle,
-  isFirstItem,
-  isPrevSelected,
-  S2ListLayout
-} from './ListView';
+import {insertionIndicatorBar, insertionIndicatorCircle, S2ListLayout} from './ListView';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {ProgressCircle} from './ProgressCircle';
@@ -917,4 +911,19 @@ function isNextSelected(id: Key | undefined, state: TreeState<unknown>) {
   }
 
   return keyAfter != null && state.selectionManager.isSelected(keyAfter);
+}
+
+function isPrevSelected(id: Key | undefined, state: TreeState<unknown>) {
+  if (id == null || !state) {
+    return false;
+  }
+  let keyBefore = state.collection.getKeyBefore(id);
+  return keyBefore != null && state.selectionManager.isSelected(keyBefore);
+}
+
+function isFirstItem(id: Key | undefined, state: TreeState<unknown>) {
+  if (id == null || !state) {
+    return false;
+  }
+  return state.collection.getFirstKey() === id;
 }

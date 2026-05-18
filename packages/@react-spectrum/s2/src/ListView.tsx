@@ -75,8 +75,7 @@ import {Key} from '@react-types/shared';
 import {LayoutInfo, Virtualizer} from 'react-aria-components/Virtualizer';
 import LinkOutIcon from '../ui-icons/LinkOut';
 import {ListLayout} from 'react-stately/useVirtualizerState';
-// @ts-ignore
-import {ListState} from 'react-stately/useListState';
+import type {ListState} from 'react-stately/useListState';
 import {ProgressCircle} from './ProgressCircle';
 import {Text, TextContext} from './Content';
 import {useActionBarContainer} from './ActionBar';
@@ -959,34 +958,6 @@ function ListSelectionCheckbox({isDisabled}: {isDisabled: boolean}) {
   );
 }
 
-function isNextSelected(id: Key | undefined, state: ListState<unknown>) {
-  if (id == null || !state) {
-    return false;
-  }
-  let keyAfter = state.collection.getKeyAfter(id);
-  return keyAfter != null && state.selectionManager.isSelected(keyAfter);
-}
-export function isPrevSelected(id: Key | undefined, state: ListState<unknown>) {
-  if (id == null || !state) {
-    return false;
-  }
-  let keyBefore = state.collection.getKeyBefore(id);
-  return keyBefore != null && state.selectionManager.isSelected(keyBefore);
-}
-
-export function isFirstItem(id: Key | undefined, state: ListState<unknown>) {
-  if (id == null || !state) {
-    return false;
-  }
-  return state.collection.getFirstKey() === id;
-}
-function isLastItem(id: Key | undefined, state: ListState<unknown>) {
-  if (id == null || !state) {
-    return false;
-  }
-  return state.collection.getLastKey() === id;
-}
-
 export function ListViewItem(props: ListViewItemProps): ReactNode {
   let ref = useRef(null);
   let {hasChildItems, ...otherProps} = props;
@@ -1174,4 +1145,38 @@ export function ListViewItem(props: ListViewItemProps): ReactNode {
       }}
     </GridListItem>
   );
+}
+
+function isNextSelected(id: Key | undefined, state: ListState<unknown>) {
+  if (id == null || !state) {
+    return false;
+  }
+  let keyAfter = state.collection.getKeyAfter(id);
+  return keyAfter != null && state.selectionManager.isSelected(keyAfter);
+}
+
+function isPrevSelected(id: Key | undefined, state: ListState<unknown>) {
+  if (id == null || !state) {
+    return false;
+  }
+  let keyBefore = state.collection.getKeyBefore(id);
+  return keyBefore != null && state.selectionManager.isSelected(keyBefore);
+}
+
+function isFirstItem(id: Key | undefined, state: ListState<unknown>) {
+  if (id == null || !state) {
+    return false;
+  }
+  return state.collection.getFirstKey() === id;
+}
+
+function isLastItem(id: Key | undefined, state: ListState<unknown>) {
+  if (id == null || !state) {
+    return false;
+  }
+
+  let key = state.collection.getLastKey();
+  let node = key ? state.collection.getItem(key) : null;
+
+  return node ? node.key === id : false;
 }
