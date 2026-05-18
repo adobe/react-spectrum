@@ -49,10 +49,10 @@ describe('useId', function () {
         let {createRoot} = require('react-dom/client');
         global.IS_REACT_ACT_ENVIRONMENT = true;
         let root = createRoot(container);
-        renderElement = (el) => root.render(el);
+        renderElement = el => root.render(el);
         unmount = () => root.unmount();
       } else {
-        renderElement = (el) => ReactDOM.render(el, container);
+        renderElement = el => ReactDOM.render(el, container);
         unmount = () => ReactDOM.unmountComponentAtNode(container);
       }
 
@@ -84,6 +84,75 @@ describe('useId', function () {
       // Unmount should remove the specific registration created for this hook instance.
       expect(unregister).toHaveBeenCalledTimes(1);
       expect(unregister).toHaveBeenCalledWith(register.mock.calls[0][2]);
+    });
+  });
+
+  it('unregisters the previous id and re-registers when the id changes', function () {
+    let register = jest.fn();
+    let unregister = jest.fn();
+
+    global.FinalizationRegistry = jest.fn(function () {
+      this.register = register;
+      this.unregister = unregister;
+    });
+
+    jest.isolateModules(() => {
+      let React = require('react');
+      let ReactDOM = require('react-dom');
+      let {act} = require('react-dom/test-utils');
+      let {useId, mergeIds} = require('../../src/utils/useId');
+      let isReact18OrHigher = parseInt(React.version, 10) >= 18;
+
+      function Test({tick}) {
+        let id = useId();
+        return React.createElement('div', {'data-id': id}, tick);
+      }
+
+      let container = document.createElement('div');
+      document.body.appendChild(container);
+
+      let renderElement;
+      let unmount;
+      if (isReact18OrHigher) {
+        let {createRoot} = require('react-dom/client');
+        global.IS_REACT_ACT_ENVIRONMENT = true;
+        let root = createRoot(container);
+        renderElement = el => root.render(el);
+        unmount = () => root.unmount();
+      } else {
+        renderElement = el => ReactDOM.render(el, container);
+        unmount = () => ReactDOM.unmountComponentAtNode(container);
+      }
+
+      act(() => {
+        renderElement(React.createElement(Test, {tick: 0}));
+      });
+
+      expect(register).toHaveBeenCalledTimes(1);
+      let firstToken = register.mock.calls[0][2];
+      // The held value passed to FinalizationRegistry.register is the id string.
+      let firstId = register.mock.calls[0][1];
+
+      // mergeIds sets the internal nextId ref and the next render's useEffect flushes that
+      // through setValue, producing a new res and exercising the id-change branch.
+      act(() => {
+        mergeIds(firstId, 'changed-id');
+        renderElement(React.createElement(Test, {tick: 1}));
+      });
+
+      // The previous registration should be unregistered with the original token, and the new id
+      // should be registered once.
+      expect(unregister).toHaveBeenCalledWith(firstToken);
+      expect(register).toHaveBeenCalledTimes(2);
+      expect(register.mock.calls[1][1]).toBe('changed-id');
+      // Re-using the same target object means the WeakMap key is stable across re-registrations.
+      expect(register.mock.calls[1][0]).toBe(register.mock.calls[0][0]);
+
+      act(() => {
+        unmount();
+      });
+
+      document.body.removeChild(container);
     });
   });
 });
