@@ -88,7 +88,11 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
     );
   }
 
-  protected findPreviousKey(fromKey?: Key, pred?: (item: Node<T>) => boolean): Key | null {
+  protected findPreviousKey(
+    fromKey?: Key,
+    pred?: (item: Node<T>) => boolean,
+    includeDisabled = false
+  ): Key | null {
     let key =
       fromKey != null ? this.collection.getKeyBefore(fromKey) : this.collection.getLastKey();
 
@@ -97,7 +101,7 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
       if (!item) {
         return null;
       }
-      if (!this.isDisabled(item) && (!pred || pred(item))) {
+      if ((includeDisabled || !this.isDisabled(item)) && (!pred || pred(item))) {
         return key;
       }
 
@@ -106,7 +110,11 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
     return null;
   }
 
-  protected findNextKey(fromKey?: Key, pred?: (item: Node<T>) => boolean): Key | null {
+  protected findNextKey(
+    fromKey?: Key,
+    pred?: (item: Node<T>) => boolean,
+    includeDisabled = false
+  ): Key | null {
     let key =
       fromKey != null ? this.collection.getKeyAfter(fromKey) : this.collection.getFirstKey();
 
@@ -115,7 +123,7 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
       if (!item) {
         return null;
       }
-      if (!this.isDisabled(item) && (!pred || pred(item))) {
+      if ((includeDisabled || !this.isDisabled(item)) && (!pred || pred(item))) {
         return key;
       }
 
@@ -156,7 +164,7 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
     return null;
   }
 
-  getKeyBelow(fromKey: Key): Key | null {
+  getKeyBelow(fromKey: Key, options?: {includeDisabled?: boolean}): Key | null {
     let key: Key | null = fromKey;
     let startItem = this.collection.getItem(key);
     if (!startItem) {
@@ -172,7 +180,7 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
     }
 
     // Find the next item
-    key = this.findNextKey(key, item => item.type === 'item');
+    key = this.findNextKey(key, item => item.type === 'item', options?.includeDisabled);
     if (key != null) {
       // If focus was on a cell, focus the cell with the same index in the next row.
       if (this.isCell(startItem)) {
@@ -188,7 +196,7 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
     return null;
   }
 
-  getKeyAbove(fromKey: Key): Key | null {
+  getKeyAbove(fromKey: Key, options?: {includeDisabled?: boolean}): Key | null {
     let key: Key | null = fromKey;
     let startItem = this.collection.getItem(key);
     if (!startItem) {
@@ -204,7 +212,7 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
     }
 
     // Find the previous item
-    key = this.findPreviousKey(key, item => item.type === 'item');
+    key = this.findPreviousKey(key, item => item.type === 'item', options?.includeDisabled);
     if (key != null) {
       // If focus was on a cell, focus the cell with the same index in the previous row.
       if (this.isCell(startItem)) {

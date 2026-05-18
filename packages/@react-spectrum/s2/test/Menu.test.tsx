@@ -10,12 +10,19 @@
  * governing permissions and limitations under the License.
  */
 
+import {
+  act,
+  installPointerEvent,
+  pointerMap,
+  render,
+  User
+} from '@react-spectrum/test-utils-internal';
+import {ActionButton} from '../src/ActionButton';
 import {AriaMenuTests} from '../../../react-aria-components/test/AriaMenu.test-util';
 import {Button} from '../src/Button';
 import {Collection} from 'react-aria/Collection';
 import {Content, Header, Heading} from '../src/Content';
 import {ContextualHelpPopover} from '../src/ContextualHelp';
-
 import {
   Menu,
   MenuItem,
@@ -24,11 +31,9 @@ import {
   SubmenuTrigger,
   UnavailableMenuItemTrigger
 } from '../src/Menu';
-
-import {pointerMap} from '@react-aria/test-utils';
 import React from 'react';
-import {render} from '@react-spectrum/test-utils-internal';
 import {Selection} from '@react-types/shared';
+import {ToggleButton} from '../src/ToggleButton';
 import userEvent from '@testing-library/user-event';
 
 // better to accept items from the test? or just have the test have a requirement that you render a certain-ish structure?
@@ -137,6 +142,63 @@ describe('Menu unavailable', () => {
     let menus = queryAllByRole('dialog');
     expect(menus).toHaveLength(0);
     expect(queryByText('Contact your administrator for permissions to delete.')).toBeNull();
+  });
+});
+
+describe('long press support', function () {
+  let testUtilUser = new User({advanceTimer: jest.advanceTimersByTime});
+  let user;
+  installPointerEvent();
+
+  beforeAll(function () {
+    user = userEvent.setup({delay: null, pointerMap});
+    jest.useFakeTimers();
+  });
+
+  afterEach(() => {
+    act(() => jest.runAllTimers());
+    jest.clearAllMocks();
+  });
+
+  it('should open the menu on longPress (ActionButton)', async function () {
+    let {getByRole} = render(
+      <MenuTrigger trigger="longPress">
+        <ActionButton>Menu Button</ActionButton>
+        <Menu>
+          <MenuItem>Cut</MenuItem>
+        </Menu>
+      </MenuTrigger>
+    );
+
+    let menuTester = testUtilUser.createTester('Menu', {root: getByRole('button')});
+    await user.click(menuTester.trigger);
+    act(() => {
+      jest.runAllTimers();
+    });
+    expect(menuTester.menu).toBeFalsy();
+    await menuTester.open({needsLongPress: true});
+    expect(menuTester.menu).toBeTruthy();
+  });
+
+  it('should open the menu on longPress (ToggleButton)', async function () {
+    let {getByRole} = render(
+      <MenuTrigger trigger="longPress">
+        <ToggleButton>Menu Button</ToggleButton>
+        <Menu>
+          <MenuItem>Cut</MenuItem>
+        </Menu>
+      </MenuTrigger>
+    );
+
+    let menuTester = testUtilUser.createTester('Menu', {root: getByRole('button')});
+    await user.click(menuTester.trigger);
+    act(() => {
+      jest.runAllTimers();
+    });
+    expect(menuTester.menu).toBeFalsy();
+    expect(menuTester.trigger).toHaveAttribute('data-selected', 'true');
+    await menuTester.open({needsLongPress: true});
+    expect(menuTester.menu).toBeTruthy();
   });
 });
 

@@ -279,7 +279,6 @@ export {useTreeData} from 'react-stately/useTreeData';
 export {useAsyncList} from 'react-stately/useAsyncList';
 export {
   ListLayout,
-  GridLayout,
   WaterfallLayout,
   Layout,
   LayoutInfo,
@@ -287,6 +286,7 @@ export {
   Rect,
   Point
 } from 'react-stately/useVirtualizerState';
+export {GridLayout} from '../src/GridLayout';
 
 export type {I18nProviderProps, Locale} from 'react-aria/I18nProvider';
 export type {Filter} from 'react-aria/useFilter';

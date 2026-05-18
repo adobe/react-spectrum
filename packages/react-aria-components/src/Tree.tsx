@@ -310,6 +310,12 @@ export interface TreeRenderProps {
    */
   allowsDragging: boolean;
   /**
+   * Whether the tree is currently the active drop target.
+   *
+   * @selector [data-drop-target]
+   */
+  isDropTarget: boolean;
+  /**
    * State of the tree.
    */
   state: TreeState<unknown>;
@@ -769,6 +775,8 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent(
     let state = useContext(TreeStateContext)!;
     ref = useObjectRef<HTMLDivElement>(ref);
     let {dragAndDropHooks, dragState, dropState} = useContext(DragAndDropContext)!;
+    let isDraggable =
+      dragState && !(dragState.isDisabled || dragState.selectionManager.isDisabled(item.key));
 
     // TODO: remove this when we support description in tree row
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -786,7 +794,7 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent(
     let level = rowProps['aria-level'] || 1;
 
     let {hoverProps, isHovered} = useHover({
-      isDisabled: !states.allowsSelection && !states.hasAction,
+      isDisabled: !states.allowsSelection && !states.hasAction && !isDraggable,
       onHoverStart: props.onHoverStart,
       onHoverChange: props.onHoverChange,
       onHoverEnd: props.onHoverEnd

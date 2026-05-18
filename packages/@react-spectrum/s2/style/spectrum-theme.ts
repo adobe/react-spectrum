@@ -1259,8 +1259,7 @@ export const style = createTheme({
       'bottom right',
       'bottom',
       'bottom left',
-      'left',
-      'top right'
+      'left'
     ] as const,
     cursor: [
       'auto',

@@ -476,6 +476,45 @@ jobs:
           paths:
             - 'ts-diff.txt'
 
+  skills-diff:
+    executor: rsp-large
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - run:
+          name: build agent skills (branch)
+          command: ./.circleci/build-skills.sh /tmp/dist/skills-branch
+
+      - run:
+          name: build agent skills (main)
+          command: |
+            mkdir -p ~/.ssh
+            curl -L https://api.github.com/meta | jq -r '.ssh_keys | .[]' | sed -e 's/^/github.com /' >> ~/.ssh/known_hosts
+            BRANCH_ROOT="$(pwd)"
+            BUILD_SKILLS="$BRANCH_ROOT/.circleci/build-skills.sh"
+            git worktree add --detach /tmp/main-worktree origin/main
+            # Reuse the branch's installed node_modules since `build-skills.sh`
+            # only invokes node scripts (no yarn install needed in the worktree).
+            ln -s "$BRANCH_ROOT/node_modules" /tmp/main-worktree/node_modules
+            cd /tmp/main-worktree && "$BUILD_SKILLS" /tmp/dist/skills-main
+
+      - run:
+          name: diff agent skills
+          command: |
+            mkdir -p dist
+            node .circleci/skills-diff.js \
+              /tmp/dist/skills-main /tmp/dist/skills-branch \
+              > dist/skills-diff.md || true
+
+      - store_artifacts:
+          path: dist/skills-diff.md
+
+      - persist_to_workspace:
+          root: dist
+          paths:
+            - 'skills-diff.md'
+
   typecheck-docs:
     executor: rsp-large
     steps:
@@ -903,6 +942,7 @@ jobs:
             if [ $GITHUB_TOKEN ]; then
               node .circleci/comment.js
               node .circleci/api-comment.js
+              node .circleci/skills-comment.js
             fi
 
   publish-nightly:
@@ -977,6 +1017,14 @@ workflows:
           requires:
             - ts-build-fork-point
             - ts-build-branch
+          filters:
+            branches:
+              ignore:
+                - /main$/
+                - /gh-readonly-queue\/.*$/
+      - skills-diff:
+          requires:
+            - install
           filters:
             branches:
               ignore:
@@ -1091,6 +1139,7 @@ workflows:
               ignore: main
           requires:
             - ts-diff
+            - skills-diff
             - deploy
             - deploy-s3-commit
       - comment:

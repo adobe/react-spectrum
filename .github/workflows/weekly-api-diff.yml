@@ -8,6 +8,9 @@ on:
 jobs:
   weekly-api-diff:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      models: read
     env:
       SNAPSHOTS_REPO: LFDanLu/react-spectrum-api-snapshots
 
