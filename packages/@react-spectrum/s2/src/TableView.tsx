@@ -483,7 +483,7 @@ export const TableView = forwardRef(function TableView(
       isInResizeMode,
       setIsInResizeMode,
       selectionMode,
-      selectionStyle
+      selectionStyle,
       disabledBehavior
     }),
     [
@@ -495,7 +495,7 @@ export const TableView = forwardRef(function TableView(
       isInResizeMode,
       setIsInResizeMode,
       selectionMode,
-      selectionStyle
+      selectionStyle,
       disabledBehavior
     ]
   );
@@ -1277,26 +1277,9 @@ const stickyCell = {
   backgroundColor: 'gray-25'
 } as const;
 
-// Bit gross but this is needed because the sticky cells currently cover/partially cover styles that the row applies so that
-// they don't appear when the table is scrolled. The below basically just continues the inset box-shadow that the row has when
-// it is focused as a drop target
-const rowDropTargetStickyOutline = {
-  boxShadow: {
-    default: 'none',
-    ':is([role="row"][data-drop-target] *)': {
-      default: `[inset 0 2px 0 0 ${color('blue-800')}, inset 0 -2px 0 0 ${color('blue-800')}]`,
-      forcedColors: '[inset 0 2px 0 0 Highlight, inset 0 -2px 0 0 Highlight]'
-    },
-    ':is([role="row"][data-focus-visible] *)': {
-      forcedColors: '[inset 0 2px 0 0 Highlight, inset 0 -2px 0 0 Highlight]'
-    }
-  }
-} as const;
-
 const checkboxCellStyle = style({
   ...commonCellStyles,
   ...stickyCell,
-  ...rowDropTargetStickyOutline,
   display: 'flex',
   paddingStart: 16,
   paddingEnd: 8,
@@ -1311,7 +1294,6 @@ const checkboxCellStyle = style({
 const dragCellStyle = style({
   ...commonCellStyles,
   ...stickyCell,
-  ...rowDropTargetStickyOutline,
   paddingStart: 4,
   paddingEnd: 4,
   alignContent: 'center',
@@ -2075,21 +2057,6 @@ const row = style<
     }
   },
   // When checkbox selection, render the gray divider between rows as a border
-  '--rowFocusIndicatorColor': {
-    type: 'outlineColor',
-    value: {
-      default: 'focus-ring',
-      forcedColors: 'Highlight'
-    }
-  },
-  outlineStyle: 'none',
-  boxShadow: {
-    isDropTarget: `[inset 0 0 0 2px ${color('blue-800')}]`,
-    forcedColors: {
-      isDropTarget: '[inset 0 0 0 2px Highlight]',
-      isFocusVisible: '[inset 0 0 0 2px Highlight]'
-    }
-  },
   borderTopWidth: 0,
   borderBottomWidth: {
     selectionStyle: {
@@ -2141,6 +2108,9 @@ const row = style<
         //   isNextSelected: '[inset 0 -1px 0px var(--borderColorGray)]'
         // }
       }
+    },
+    forcedColors: {
+      isFocusVisible: '[inset 0 0 0 2px Highlight]'
     }
   },
   fontWeight: {
@@ -2151,6 +2121,8 @@ const row = style<
   forcedColorAdjust: 'none'
 });
 
+// Sticky cells (the drag cell, and the checkbox cell when present) get an inline z-index=2 applied by the virtualizer's layout
+// To ensure that the highlight selection border is painted above the stick cells, set z-index to 3
 const highlightSelectionBorder = css(
   `&:before {
     content: "";
@@ -2158,7 +2130,7 @@ const highlightSelectionBorder = css(
     height: 100%;
     position: absolute;
     inset: 0;
-    z-index: 2;
+    z-index: 3;
     box-sizing: border-box;
     border-style: solid;
     border-color: var(--borderColor);
@@ -2181,7 +2153,7 @@ const focusIndicator = css(
     width: 100%;
     height: 100%;
     top: 0;
-    z-index: 2 ;
+    z-index: 2;
     inset-inline-start: 0;
     border-radius: 5px;
     position: absolute;
