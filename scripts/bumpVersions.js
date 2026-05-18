@@ -37,8 +37,10 @@ let excludedPackages = new Set([
 
 let monopackages = new Set([
   '@adobe/react-spectrum',
+  '@react-spectrum/s2',
   'react-aria',
-  'react-stately'
+  'react-stately',
+  'react-aria-components'
 ]);
 
 // Should be able to replace a lot of this file with yarns versioning plugin
@@ -52,7 +54,9 @@ class VersionManager {
   constructor() {
     let workspaceLookup = {};
     // Get dependency tree from yarn workspaces
-    this.workspacePackages = exec('yarn workspaces list --json -v').toString().split('\n')
+    this.workspacePackages = exec('yarn workspaces list --json -v')
+      .toString()
+      .split('\n')
       .map(line => {
         try {
           let result = JSON.parse(line);
@@ -65,7 +69,9 @@ class VersionManager {
       .filter(Boolean)
       .reduce((acc, item) => {
         acc[item.name] = item;
-        acc[item.name].workspaceDependencies = item.workspaceDependencies.map(dep => workspaceLookup[dep]);
+        acc[item.name].workspaceDependencies = item.workspaceDependencies.map(
+          dep => workspaceLookup[dep]
+        );
         return acc;
       }, {});
     this.existingPackages = new Set();
@@ -165,7 +171,6 @@ class VersionManager {
       }
     }
 
-
     // Diff each package individually. Some packages might have been skipped during last release,
     // so we cannot simply look at the last tag on the whole repo.
     for (let name in this.workspacePackages) {
@@ -175,21 +180,25 @@ class VersionManager {
         // Diff this package since the last published version, according to the package.json.
         // We create a git tag for each package version.
         let tag = `${pkg.name}@${pkg.version}`;
-        let res = spawn('git', ['diff', '--exit-code', tag + '..HEAD',  this.workspacePackages[name].location, ':!**/docs/**', ':!**/test/**', ':!**/stories/**', ':!**/chromatic/**']);
+        let res = spawn('git', [
+          'diff',
+          '--exit-code',
+          tag + '..HEAD',
+          this.workspacePackages[name].location,
+          ':!**/docs/**',
+          ':!**/test/**',
+          ':!**/stories/**',
+          ':!**/chromatic/**'
+        ]);
         if (res.status !== 0) {
           this.changedPackages.add(name);
         }
       }
     }
-
-    // Always bump monopackages
-    for (let pkg of monopackages) {
-      this.changedPackages.add(pkg);
-    }
   }
 
   async getVersionBumps() {
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       let server = http.createServer(async (req, res) => {
         if (req.method === 'POST') {
           await this.serveVersionBumps(req, res);
@@ -216,7 +225,10 @@ class VersionManager {
           <form method="post">
             <h1>Changed packages</h1>
             <table>
-              ${[...this.changedPackages].filter(pkg => !excludedPackages.has(pkg) && !this.existingPackages.has(pkg)).map(pkg => `
+              ${[...this.changedPackages]
+                .filter(pkg => !excludedPackages.has(pkg) && !this.existingPackages.has(pkg))
+                .map(
+                  pkg => `
               <tr>
                 <td><code>${pkg}</code></td>
                 <td>
@@ -229,11 +241,17 @@ class VersionManager {
                   </select>
                 </td>
               </tr>
-            `).join('\n')}
-              ${[...this.changedPackages].filter(pkg => !excludedPackages.has(pkg) && this.existingPackages.has(pkg)).map(pkg => {
-                let json = JSON.parse(fs.readFileSync(this.workspacePackages[pkg].location + '/package.json', 'utf8'));
-                let version = semver.parse(json.version);
-                return `
+            `
+                )
+                .join('\n')}
+              ${[...this.changedPackages]
+                .filter(pkg => !excludedPackages.has(pkg) && this.existingPackages.has(pkg))
+                .map(pkg => {
+                  let json = JSON.parse(
+                    fs.readFileSync(this.workspacePackages[pkg].location + '/package.json', 'utf8')
+                  );
+                  let version = semver.parse(json.version);
+                  return `
                   <tr>
                     <td><code>${pkg}</code></td>
                     <td>
@@ -249,7 +267,8 @@ class VersionManager {
                     </td>
                   </tr>
                 `;
-              }).join('\n')}
+                })
+                .join('\n')}
             </table>
             <input type="submit" />
           </form>
@@ -259,9 +278,9 @@ class VersionManager {
   }
 
   serveVersionBumps(req, res) {
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       let body = '';
-      req.on('data', (data) => {
+      req.on('data', data => {
         body += data;
       });
 
@@ -352,9 +371,10 @@ class VersionManager {
       // number to the correct status. If it's a new package, then ensure
       // the package.json version is correct according to the status.
       if (this.existingPackages.has(name)) {
-        let newVersion = status === 'released'
-          ? semver.inc(pkg.version, bump)
-          : semver.inc(pkg.version, 'prerelease', status);
+        let newVersion =
+          status === 'released'
+            ? semver.inc(pkg.version, bump)
+            : semver.inc(pkg.version, 'prerelease', status);
         versions.set(name, [pkg.version, newVersion, pkg.private]);
       } else {
         let newVersion = '3.0.0';
@@ -366,8 +386,6 @@ class VersionManager {
       }
     }
 
-
-
     return versions;
   }
 
@@ -375,13 +393,19 @@ class VersionManager {
     console.log('');
     for (let [name, [oldVersion, newVersion, isPrivate]] of versions) {
       if (newVersion !== oldVersion || isPrivate) {
-        console.log(`${name}: ${chalk.blue(oldVersion)}${isPrivate ? chalk.red(' (private)') : ''} => ${chalk.green(newVersion)}`);
+        console.log(
+          `${name}: ${chalk.blue(oldVersion)}${isPrivate ? chalk.red(' (private)') : ''} => ${chalk.green(newVersion)}`
+        );
       }
     }
 
     let loggedSpace = false;
     for (let name in this.workspacePackages) {
-      if (!this.releasedPackages.has(name) && !excludedPackages.has(name) && !this.existingPackages.has(name)) {
+      if (
+        !this.releasedPackages.has(name) &&
+        !excludedPackages.has(name) &&
+        !this.existingPackages.has(name)
+      ) {
         let filePath = this.workspacePackages[name].location + '/package.json';
         let pkg = JSON.parse(fs.readFileSync(filePath, 'utf8'));
         if (!pkg.private) {
@@ -429,7 +453,10 @@ class VersionManager {
       for (let dep in pkg.dependencies) {
         if (versions.has(dep)) {
           let {status} = this.releasedPackages.get(dep);
-          pkg.dependencies[dep] = (status === 'released' ? '^' : '') + versions.get(dep)[1];
+          // Pin dependencies on monopackages.
+          // Individual packages are left as caret dependencies since they only exist for backward compatibility.
+          pkg.dependencies[dep] =
+            (status === 'released' && !monopackages.has(dep) ? '^' : '') + versions.get(dep)[1];
         }
       }
 

@@ -17,3 +17,22 @@ import 'client-only';
 export {NumberField, NumberFieldContext, NumberFieldStateContext} from '../src/NumberField';
 export type {NumberFieldProps, NumberFieldRenderProps} from '../src/NumberField';
 export type {NumberFieldState} from 'react-stately/useNumberFieldState';
+
+export {Button} from '../src/Button';
+export type {ButtonProps, ButtonRenderProps} from '../src/Button';
+
+export {Group} from '../src/Group';
+export type {GroupProps, GroupRenderProps} from '../src/Group';
+
+export {Input} from '../src/Input';
+export type {InputProps, InputRenderProps} from '../src/Input';
+
+export {Label} from '../src/Label';
+export type {LabelProps} from '../src/Label';
+
+export {Text} from '../src/Text';
+export type {TextProps} from '../src/Text';
+
+export {FieldError} from '../src/FieldError';
+export type {FieldErrorProps, FieldErrorRenderProps} from '../src/FieldError';
+export type {ValidationResult} from '@react-types/shared';

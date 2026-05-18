@@ -11,54 +11,54 @@
  */
 
 import {act, fireEvent, render, within} from '@testing-library/react';
-import {
-  AriaBaseTestProps,
-  pointerMap
-} from '@react-spectrum/test-utils-internal';
+import {AriaBaseTestProps, pointerMap} from '@react-spectrum/test-utils-internal';
 import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
 
-let describeInteractions = ((name, tests) => describe.each`
-  interactionType
-  ${'mouse'}
-  ${'keyboard'}
-  ${'touch'}
-`(`${name} - $interactionType`, tests));
+let describeInteractions = (name, tests) =>
+  describe.each`
+    interactionType
+    ${'mouse'}
+    ${'keyboard'}
+    ${'touch'}
+  `(`${name} - $interactionType`, tests);
 
 // @ts-ignore
-describeInteractions.only = ((name, tests) => describe.only.each`
-  interactionType
-  ${'mouse'}
-  ${'keyboard'}
-  ${'touch'}
-`(`${name} - $interactionType`, tests));
+describeInteractions.only = (name, tests) =>
+  describe.only.each`
+    interactionType
+    ${'mouse'}
+    ${'keyboard'}
+    ${'touch'}
+  `(`${name} - $interactionType`, tests);
 
 // @ts-ignore
-describeInteractions.skip = ((name, tests) => describe.skip.each`
-  interactionType
-  ${'mouse'}
-  ${'keyboard'}
-  ${'touch'}
-`(`${name} - $interactionType`, tests));
+describeInteractions.skip = (name, tests) =>
+  describe.skip.each`
+    interactionType
+    ${'mouse'}
+    ${'keyboard'}
+    ${'touch'}
+  `(`${name} - $interactionType`, tests);
 
 let triggerText = 'Menu Button';
 interface AriaMenuTestProps extends AriaBaseTestProps {
   renderers: {
     // needs at least three child items, all enabled
-    standard: (props?: {name: string}) => ReturnType<typeof render>,
+    standard: (props?: {name: string}) => ReturnType<typeof render>;
     // trigger must be disabled
-    disabledTrigger?: (props?: {name: string}) => ReturnType<typeof render>,
+    disabledTrigger?: (props?: {name: string}) => ReturnType<typeof render>;
     // needs at least three child items, all enabled, with single selection
-    singleSelection?: (props?: {name: string}) => ReturnType<typeof render>,
+    singleSelection?: (props?: {name: string}) => ReturnType<typeof render>;
     // needs at least four child items, all enabled, with single selection
-    multipleSelection?: (props?: {name: string}) => ReturnType<typeof render>,
+    multipleSelection?: (props?: {name: string}) => ReturnType<typeof render>;
     // needs two menus that are siblings
-    multipleMenus?: (props?: {name: string}) => ReturnType<typeof render>,
+    multipleMenus?: (props?: {name: string}) => ReturnType<typeof render>;
     // Menu should only open on long press
-    longPress?: (props?: {name: string}) => ReturnType<typeof render>,
+    longPress?: (props?: {name: string}) => ReturnType<typeof render>;
     // Menu must have two levels of submenus
-    submenus?: (props?: {name: string}) => ReturnType<typeof render>
-  }
+    submenus?: (props?: {name: string}) => ReturnType<typeof render>;
+  };
 }
 export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps): void => {
   describe(prefix ? prefix + 'AriaMenuTrigger' : 'AriaMenuTrigger', function () {
@@ -86,14 +86,13 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps): vo
       act(() => jest.runAllTimers());
     });
 
+    // it('should support aria-label on the menu items', () => {
+    //   let {getAllByRole} = renderMenu({}, {'aria-label': 'test'});
 
-  // it('should support aria-label on the menu items', () => {
-  //   let {getAllByRole} = renderMenu({}, {'aria-label': 'test'});
-
-  //   for (let menuitem of getAllByRole('menuitem')) {
-  //     expect(menuitem).toHaveAttribute('aria-label', 'test');
-  //   }
-  // });
+    //   for (let menuitem of getAllByRole('menuitem')) {
+    //     expect(menuitem).toHaveAttribute('aria-label', 'test');
+    //   }
+    // });
 
     it('has default behavior (button renders, menu is closed)', function () {
       let tree = renderers.standard();
@@ -118,7 +117,9 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps): vo
       let triggerButton = menuTester.trigger!;
 
       await menuTester.open();
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
 
       let menu = menuTester.menu!;
       expect(menu).toBeTruthy();
@@ -129,7 +130,9 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps): vo
       expect(triggerButton).toHaveAttribute('aria-controls', menu.id);
 
       await user.click(triggerButton);
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
       expect(menu).not.toBeInTheDocument();
       expect(triggerButton).toHaveAttribute('aria-expanded', 'false');
     });
@@ -155,7 +158,9 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps): vo
       let triggerButton = menuTester.trigger!;
 
       await menuTester.open();
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
 
       let menu = menuTester.menu!;
       expect(menu).toBeTruthy();
@@ -168,7 +173,9 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps): vo
       fireEvent.mouseDown(document.body);
       fireEvent.mouseUp(document.body);
 
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
       expect(menu).not.toBeInTheDocument();
       expect(triggerButton).toHaveAttribute('aria-expanded', 'false');
     });
@@ -183,7 +190,9 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps): vo
       let triggerButton = menuTester.trigger;
 
       await menuTester.open();
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
 
       let menu = menuTester.menu;
       expect(menu).toBeTruthy();
@@ -191,7 +200,9 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps): vo
       expect(options[0]).toHaveFocus();
 
       await menuTester.close();
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
       expect(menu).not.toBeInTheDocument();
 
       expect(triggerButton).toHaveAttribute('aria-expanded', 'false');
@@ -204,7 +215,9 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps): vo
       let triggerButton = menuTester.trigger;
 
       await menuTester.open({direction: 'down'});
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
 
       let menu = menuTester.menu;
       expect(menu).toBeTruthy();
@@ -212,7 +225,9 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps): vo
       expect(options[0]).toHaveFocus();
 
       await menuTester.close();
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
       expect(menu).not.toBeInTheDocument();
 
       expect(triggerButton).toHaveAttribute('aria-expanded', 'false');
@@ -225,7 +240,9 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps): vo
       let triggerButton = menuTester.trigger;
 
       await menuTester.open({direction: 'up'});
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
 
       let menu = menuTester.menu;
       expect(menu).toBeTruthy();
@@ -233,7 +250,9 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps): vo
       expect(options[options.length - 1]).toHaveFocus();
 
       await menuTester.close();
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
       expect(menu).not.toBeInTheDocument();
 
       expect(triggerButton).toHaveAttribute('aria-expanded', 'false');
@@ -246,7 +265,9 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps): vo
       let triggerButton = menuTester.trigger!;
 
       await menuTester.open();
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
 
       let menu = menuTester.menu;
       expect(menu).toBeTruthy();
@@ -271,20 +292,28 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps): vo
       menuTester.setInteractionType('keyboard');
 
       await menuTester.open();
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
 
       let menu = menuTester.menu;
 
       await user.keyboard('[Space]');
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
       expect(menu).not.toBeInTheDocument();
 
       await menuTester.open();
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
       menu = menuTester.menu;
 
       await user.keyboard('[Enter]');
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
       expect(menu).not.toBeInTheDocument();
     });
 
@@ -294,14 +323,18 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps): vo
       menuTester.setInteractionType('keyboard');
 
       await menuTester.open();
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
 
       let menu = menuTester.menu;
       let buttons = tree.getAllByLabelText('Dismiss');
       expect(buttons.length).toBe(2);
 
       await user.click(buttons[0]);
-      act(() => {jest.runAllTimers();});
+      act(() => {
+        jest.runAllTimers();
+      });
 
       expect(menu).not.toBeInTheDocument();
     });
@@ -311,12 +344,14 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps): vo
     if (renderers.singleSelection) {
       describe('single selection', function () {
         it('selects an option via mouse', async function () {
-          let tree = (renderers.singleSelection!)();
+          let tree = renderers.singleSelection!();
           let menuTester = testUtilUser.createTester('Menu', {user, root: tree.container});
           let triggerButton = menuTester.trigger!;
 
           await menuTester.open();
-          act(() => {jest.runAllTimers();});
+          act(() => {
+            jest.runAllTimers();
+          });
 
           let menu = menuTester.menu;
           expect(menu).toBeTruthy();
@@ -326,11 +361,15 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps): vo
 
           await menuTester.selectOption({option: options[1], menuSelectionMode: 'single'});
 
-          act(() => {jest.runAllTimers();});
+          act(() => {
+            jest.runAllTimers();
+          });
           expect(menu).not.toBeInTheDocument();
 
           await menuTester.open();
-          act(() => {jest.runAllTimers();});
+          act(() => {
+            jest.runAllTimers();
+          });
 
           options = menuTester.options();
           expect(options[0]).toHaveAttribute('aria-checked', 'false');
@@ -338,12 +377,18 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps): vo
         });
 
         it('selects an option via keyboard and autoFocuses it next time the menu is opened via keyboard, does not clear if menu is closed with Esc', async function () {
-          let tree = (renderers.singleSelection!)();
-          let menuTester = testUtilUser.createTester('Menu', {user, root: tree.container, interactionType: 'keyboard'});
+          let tree = renderers.singleSelection!();
+          let menuTester = testUtilUser.createTester('Menu', {
+            user,
+            root: tree.container,
+            interactionType: 'keyboard'
+          });
           let triggerButton = menuTester.trigger!;
 
           await menuTester.open();
-          act(() => {jest.runAllTimers();});
+          act(() => {
+            jest.runAllTimers();
+          });
 
           let menu = menuTester.menu!;
           expect(menu).toBeTruthy();
@@ -354,11 +399,15 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps): vo
 
           await menuTester.selectOption({option: options[1], menuSelectionMode: 'single'});
 
-          act(() => {jest.runAllTimers();});
+          act(() => {
+            jest.runAllTimers();
+          });
           expect(menu).not.toBeInTheDocument();
 
           await menuTester.open();
-          act(() => {jest.runAllTimers();});
+          act(() => {
+            jest.runAllTimers();
+          });
 
           options = menuTester.options();
           expect(options[0]).toHaveAttribute('aria-checked', 'false');
@@ -368,7 +417,9 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps): vo
           await menuTester.close();
 
           await menuTester.open();
-          act(() => {jest.runAllTimers();});
+          act(() => {
+            jest.runAllTimers();
+          });
 
           options = menuTester.options();
           expect(options[0]).toHaveAttribute('aria-checked', 'false');
@@ -377,13 +428,15 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps): vo
         });
 
         it('selects an option via keyboard and does not close if it was selected with Space', async function () {
-          let tree = (renderers.singleSelection!)();
+          let tree = renderers.singleSelection!();
           let menuTester = testUtilUser.createTester('Menu', {user, root: tree.container});
           menuTester.setInteractionType('keyboard');
           let triggerButton = menuTester.trigger;
 
           await menuTester.open();
-          act(() => {jest.runAllTimers();});
+          act(() => {
+            jest.runAllTimers();
+          });
 
           let menu = menuTester.menu;
           expect(menu).toBeTruthy();
@@ -395,7 +448,9 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps): vo
           await user.keyboard('[ArrowDown]');
           await user.keyboard('[Space]');
 
-          act(() => {jest.runAllTimers();});
+          act(() => {
+            jest.runAllTimers();
+          });
           expect(menu).toBeInTheDocument();
           expect(options[0]).toHaveAttribute('aria-checked', 'false');
           expect(options[1]).toHaveAttribute('aria-checked', 'true');
@@ -403,18 +458,23 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps): vo
         });
 
         it('ignores keyboard repeat events', async function () {
-          let tree = (renderers.singleSelection!)();
+          let tree = renderers.singleSelection!();
           let menuTester = testUtilUser.createTester('Menu', {user, root: tree.container});
           menuTester.setInteractionType('keyboard');
           await user.tab();
           await user.keyboard('{Enter>}');
 
-          act(() => {jest.runAllTimers();});
+          act(() => {
+            jest.runAllTimers();
+          });
           fireEvent.keyDown(document.activeElement!, {key: 'Enter', repeat: true});
           let menu = menuTester.menu;
           expect(menu).toBeInTheDocument();
           await user.keyboard('{/Enter}');
-          expect(menuTester.options().filter(option => option.getAttribute('aria-checked') === 'true').length).toBe(0);
+          expect(
+            menuTester.options().filter(option => option.getAttribute('aria-checked') === 'true')
+              .length
+          ).toBe(0);
         });
       });
     }
@@ -422,11 +482,13 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps): vo
     if (renderers.multipleSelection) {
       describe('multiple selection', function () {
         it('selects options via mouse, autofocuses the last selected option when menu is reopened', async function () {
-          let tree = (renderers.multipleSelection!)();
+          let tree = renderers.multipleSelection!();
           let menuTester = testUtilUser.createTester('Menu', {user, root: tree.container});
 
           await menuTester.open();
-          act(() => {jest.runAllTimers();});
+          act(() => {
+            jest.runAllTimers();
+          });
 
           let menu = menuTester.menu;
           let options = menuTester.options();
@@ -437,15 +499,21 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps): vo
           expect(options[1]).toHaveAttribute('aria-checked', 'true');
           expect(options[2]).toHaveAttribute('aria-checked', 'true');
 
-          act(() => {jest.runAllTimers();});
+          act(() => {
+            jest.runAllTimers();
+          });
           expect(menu).toBeInTheDocument();
 
           await menuTester.close();
-          act(() => {jest.runAllTimers();});
+          act(() => {
+            jest.runAllTimers();
+          });
           expect(menu).not.toBeInTheDocument();
 
           await menuTester.open();
-          act(() => {jest.runAllTimers();});
+          act(() => {
+            jest.runAllTimers();
+          });
 
           menu = menuTester.menu;
           options = menuTester.options();
@@ -455,12 +523,14 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps): vo
         });
 
         it('selects options via keyboard and autoFocuses next time the menu is opened via keyboard, does not clear if menu is closed with Esc', async function () {
-          let tree = (renderers.multipleSelection!)();
+          let tree = renderers.multipleSelection!();
           let menuTester = testUtilUser.createTester('Menu', {user, root: tree.container});
           menuTester.setInteractionType('keyboard');
 
           await menuTester.open();
-          act(() => {jest.runAllTimers();});
+          act(() => {
+            jest.runAllTimers();
+          });
 
           let menu = menuTester.menu;
           let options = menuTester.options();
@@ -474,15 +544,21 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps): vo
           expect(options[1]).toHaveAttribute('aria-checked', 'true');
           expect(options[2]).toHaveAttribute('aria-checked', 'true');
 
-          act(() => {jest.runAllTimers();});
+          act(() => {
+            jest.runAllTimers();
+          });
           expect(menu).toBeInTheDocument();
 
           await menuTester.close();
-          act(() => {jest.runAllTimers();});
+          act(() => {
+            jest.runAllTimers();
+          });
           expect(menu).not.toBeInTheDocument();
 
           await menuTester.open();
-          act(() => {jest.runAllTimers();});
+          act(() => {
+            jest.runAllTimers();
+          });
 
           menu = menuTester.menu;
           options = menuTester.options();
@@ -492,12 +568,14 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps): vo
         });
 
         it('selects options via keyboard and immediately closes on selection if Enter was used', async function () {
-          let tree = (renderers.multipleSelection!)();
+          let tree = renderers.multipleSelection!();
           let menuTester = testUtilUser.createTester('Menu', {user, root: tree.container});
           menuTester.setInteractionType('keyboard');
 
           await menuTester.open();
-          act(() => {jest.runAllTimers();});
+          act(() => {
+            jest.runAllTimers();
+          });
 
           let menu = menuTester.menu;
           let options = menuTester.options();
@@ -506,11 +584,15 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps): vo
           await user.keyboard('[ArrowDown]');
           await user.keyboard('[Enter]');
 
-          act(() => {jest.runAllTimers();});
+          act(() => {
+            jest.runAllTimers();
+          });
           expect(menu).not.toBeInTheDocument();
 
           await menuTester.open();
-          act(() => {jest.runAllTimers();});
+          act(() => {
+            jest.runAllTimers();
+          });
 
           menu = menuTester.menu;
           options = menuTester.options();
@@ -521,18 +603,23 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps): vo
         });
 
         it('ignores keyboard repeat events', async function () {
-          let tree = (renderers.multipleSelection!)();
+          let tree = renderers.multipleSelection!();
           let menuTester = testUtilUser.createTester('Menu', {user, root: tree.container});
           menuTester.setInteractionType('keyboard');
           await user.tab();
           await user.keyboard('{Enter>}');
 
-          act(() => {jest.runAllTimers();});
+          act(() => {
+            jest.runAllTimers();
+          });
           fireEvent.keyDown(document.activeElement!, {key: 'Enter', repeat: true});
           let menu = menuTester.menu;
           expect(menu).toBeInTheDocument();
           await user.keyboard('{/Enter}');
-          expect(menuTester.options().filter(option => option.getAttribute('aria-checked') === 'true').length).toBe(0);
+          expect(
+            menuTester.options().filter(option => option.getAttribute('aria-checked') === 'true')
+              .length
+          ).toBe(0);
         });
       });
     }
@@ -540,12 +627,14 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps): vo
     if (renderers.disabledTrigger) {
       describe('disabled trigger', function () {
         it('does not trigger', async function () {
-          let tree = (renderers.disabledTrigger!)();
+          let tree = renderers.disabledTrigger!();
           let menuTester = testUtilUser.createTester('Menu', {user, root: tree.container});
           let triggerButton = menuTester.trigger;
 
           await menuTester.open();
-          act(() => {jest.runAllTimers();});
+          act(() => {
+            jest.runAllTimers();
+          });
 
           expect(triggerButton).toHaveAttribute('aria-expanded', 'false');
         });
@@ -555,7 +644,7 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps): vo
     if (renderers.multipleMenus) {
       describe('multiple menus', function () {
         it('two menus can not be open at the same time', async function () {
-          let tree = (renderers.multipleMenus!)();
+          let tree = renderers.multipleMenus!();
           let [button1, button2] = tree.getAllByRole('button');
           // TODO: should i try to open with the tester?
           // let menu1Tester = testUtilUser.createTester('Menu', {root: button1});
@@ -583,9 +672,13 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps): vo
     if (renderers.submenus) {
       describeInteractions('Submenus general interactions', function ({interactionType}) {
         it('should support a submenu trigger', async () => {
-          let tree = (renderers.submenus!)();
+          let tree = renderers.submenus!();
 
-          let menuTester = testUtilUser.createTester('Menu', {user, root: tree.container, interactionType});
+          let menuTester = testUtilUser.createTester('Menu', {
+            user,
+            root: tree.container,
+            interactionType
+          });
           await menuTester.open();
           let menu = menuTester.menu;
 
@@ -593,21 +686,31 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps): vo
           expect(submenuTrigger).toHaveAttribute('aria-expanded', 'false');
 
           let submenuUtil = (await menuTester.openSubmenu({submenuTrigger}))!;
-          act(() => {jest.runAllTimers();});
+          act(() => {
+            jest.runAllTimers();
+          });
           expect(submenuTrigger).toHaveAttribute('aria-expanded', 'true');
           let submenu = submenuUtil.menu;
           expect(submenu).toBeInTheDocument();
 
-          await submenuUtil.selectOption({option: submenuUtil.options().filter(item => item.getAttribute('aria-haspopup') == null)[0]});
+          await submenuUtil.selectOption({
+            option: submenuUtil
+              .options()
+              .filter(item => item.getAttribute('aria-haspopup') == null)[0]
+          });
           expect(menu).not.toBeInTheDocument();
           expect(submenu).not.toBeInTheDocument();
           expect(document.activeElement).toBe(menuTester.trigger);
         });
 
         it('should support nested submenu triggers', async () => {
-          let tree = (renderers.submenus!)();
+          let tree = renderers.submenus!();
 
-          let menuTester = testUtilUser.createTester('Menu', {user, root: tree.container, interactionType});
+          let menuTester = testUtilUser.createTester('Menu', {
+            user,
+            root: tree.container,
+            interactionType
+          });
           await menuTester.open();
           let menu = menuTester.menu;
 
@@ -622,12 +725,18 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps): vo
           let nestedSubmenuTrigger = submenuUtil.submenuTriggers[0];
           expect(nestedSubmenuTrigger).toHaveAttribute('aria-expanded', 'false');
 
-          let nestedSubmenuUtil = (await submenuUtil.openSubmenu({submenuTrigger: nestedSubmenuTrigger}))!;
+          let nestedSubmenuUtil = (await submenuUtil.openSubmenu({
+            submenuTrigger: nestedSubmenuTrigger
+          }))!;
           expect(nestedSubmenuTrigger).toHaveAttribute('aria-expanded', 'true');
           let nestedSubmenu = nestedSubmenuUtil.menu;
           expect(nestedSubmenu).toBeInTheDocument();
 
-          await nestedSubmenuUtil.selectOption({option: nestedSubmenuUtil.options().filter(item => item.getAttribute('aria-haspopup') == null)[0]});
+          await nestedSubmenuUtil.selectOption({
+            option: nestedSubmenuUtil
+              .options()
+              .filter(item => item.getAttribute('aria-haspopup') == null)[0]
+          });
           expect(menu).not.toBeInTheDocument();
           expect(submenu).not.toBeInTheDocument();
           expect(nestedSubmenu).not.toBeInTheDocument();
@@ -637,7 +746,7 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps): vo
 
       describe('submenu specific interaction tests', function () {
         it('should close all submenus if interacting outside root submenu', async () => {
-          let tree = (renderers.submenus!)();
+          let tree = renderers.submenus!();
 
           let menuTester = testUtilUser.createTester('Menu', {user, root: tree.container});
           await menuTester.open();
@@ -647,7 +756,9 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps): vo
           expect(submenuTrigger).toHaveAttribute('aria-expanded', 'false');
 
           let submenuUtil = (await menuTester.openSubmenu({submenuTrigger}))!;
-          act(() => {jest.runAllTimers();});
+          act(() => {
+            jest.runAllTimers();
+          });
           expect(submenuTrigger).toHaveAttribute('aria-expanded', 'true');
           let submenu = submenuUtil.menu;
           expect(submenu).toBeInTheDocument();
@@ -655,39 +766,59 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps): vo
           let nestedSubmenuTrigger = submenuUtil.submenuTriggers[0];
           expect(nestedSubmenuTrigger).toHaveAttribute('aria-expanded', 'false');
 
-          let nestedSubmenuUtil = (await submenuUtil.openSubmenu({submenuTrigger: nestedSubmenuTrigger}))!;
-          act(() => {jest.runAllTimers();});
+          let nestedSubmenuUtil = (await submenuUtil.openSubmenu({
+            submenuTrigger: nestedSubmenuTrigger
+          }))!;
+          act(() => {
+            jest.runAllTimers();
+          });
           expect(nestedSubmenuTrigger).toHaveAttribute('aria-expanded', 'true');
           let nestedSubmenu = nestedSubmenuUtil.menu;
           expect(submenu).toBeInTheDocument();
 
           await user.click(document.body);
-          act(() => {jest.runAllTimers();});
+          act(() => {
+            jest.runAllTimers();
+          });
           expect(nestedSubmenu).not.toBeInTheDocument();
           expect(submenu).not.toBeInTheDocument();
           expect(menu).not.toBeInTheDocument();
         });
 
         it('should close current submenu with Escape', async () => {
-          let tree = (renderers.submenus!)();
+          let tree = renderers.submenus!();
 
-          let menuTester = testUtilUser.createTester('Menu', {user, root: tree.container, interactionType: 'keyboard'});
+          let menuTester = testUtilUser.createTester('Menu', {
+            user,
+            root: tree.container,
+            interactionType: 'keyboard'
+          });
           await menuTester.open();
           let menu = menuTester.menu;
 
           let submenuTrigger = menuTester.submenuTriggers[0];
           let submenuUtil = (await menuTester.openSubmenu({submenuTrigger}))!;
-          act(() => {jest.runAllTimers();});
+          act(() => {
+            jest.runAllTimers();
+          });
           let submenu = submenuUtil.menu;
 
           let nestedSubmenuTrigger = submenuUtil.submenuTriggers[0];
-          let nestedSubmenuUtil = (await submenuUtil.openSubmenu({submenuTrigger: nestedSubmenuTrigger}))!;
-          act(() => {jest.runAllTimers();});
+          let nestedSubmenuUtil = (await submenuUtil.openSubmenu({
+            submenuTrigger: nestedSubmenuTrigger
+          }))!;
+          act(() => {
+            jest.runAllTimers();
+          });
           let nestedSubmenu = nestedSubmenuUtil.menu;
 
           await user.keyboard('[Escape]');
-          act(() => {jest.runAllTimers();});
-          act(() => {jest.runAllTimers();});
+          act(() => {
+            jest.runAllTimers();
+          });
+          act(() => {
+            jest.runAllTimers();
+          });
           expect(menu).toBeInTheDocument();
           expect(submenu).toBeInTheDocument();
           expect(nestedSubmenu).not.toBeInTheDocument();
@@ -695,33 +826,43 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps): vo
         });
 
         it('should close the submenu if another item in the same menu is focused', async () => {
-          let tree = (renderers.submenus!)();
+          let tree = renderers.submenus!();
           let menuTester = testUtilUser.createTester('Menu', {user, root: tree.container});
           await menuTester.open();
           let menu = menuTester.menu;
           let submenuTrigger = menuTester.submenuTriggers[0];
           let submenuUtil = (await menuTester.openSubmenu({submenuTrigger}))!;
-          act(() => {jest.runAllTimers();});
+          act(() => {
+            jest.runAllTimers();
+          });
           let submenu = submenuUtil.menu;
           expect(submenu).toBeInTheDocument();
           let nestedSubmenuTrigger = submenuUtil.submenuTriggers[0];
-          let nestedSubmenuUtil = (await submenuUtil.openSubmenu({submenuTrigger: nestedSubmenuTrigger}))!;
-          act(() => {jest.runAllTimers();});
+          let nestedSubmenuUtil = (await submenuUtil.openSubmenu({
+            submenuTrigger: nestedSubmenuTrigger
+          }))!;
+          act(() => {
+            jest.runAllTimers();
+          });
           let nestedSubmenu = nestedSubmenuUtil.menu;
           expect(submenu).toBeInTheDocument();
           await user.hover(menuTester.options()[0]);
-          act(() => {jest.runAllTimers();});
+          act(() => {
+            jest.runAllTimers();
+          });
           expect(nestedSubmenu).not.toBeInTheDocument();
           expect(submenu).not.toBeInTheDocument();
           expect(menu).toBeInTheDocument();
         });
 
         it('should retain focus on the submenu trigger when hovering it', async () => {
-          let tree = (renderers.submenus!)();
+          let tree = renderers.submenus!();
           let menuTester = testUtilUser.createTester('Menu', {user, root: tree.container});
           await menuTester.open();
           await user.hover(menuTester.submenuTriggers[0]);
-          act(() => {jest.runAllTimers();});
+          act(() => {
+            jest.runAllTimers();
+          });
           expect(menuTester.submenuTriggers[0]).toHaveAttribute('aria-expanded', 'true');
           expect(document.activeElement).toBe(menuTester.submenuTriggers[0]);
 
@@ -732,7 +873,6 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps): vo
         });
       });
     }
-
 
     // TODO: closeOnSelect is not implemented in RAC and therefor not in S2
     // TODO: long press might be implementation specific, better to test in S2 and RAC separately, also hard because i don't have a way to know if a button was "pressed"

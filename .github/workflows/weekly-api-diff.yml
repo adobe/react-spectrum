@@ -1,0 +1,227 @@
+name: Weekly API Diff
+
+on:
+  schedule:
+    - cron: '0 17 * * 1' # Monday 9am PST / 10am PDT (GH Actions cron is UTC)
+  workflow_dispatch: # manual trigger for testing
+
+jobs:
+  weekly-api-diff:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      models: read
+    env:
+      SNAPSHOTS_REPO: LFDanLu/react-spectrum-api-snapshots
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # required for build:api-published to find the last Publish commit
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'yarn'
+
+      - run: yarn --immutable
+
+      # Build current main API (~2 min, always fresh)
+      - name: Build current API snapshot
+        run: yarn build:api-branch
+
+      # Build release baseline using the last minor/major release commit (skips patch-only releases)
+      - name: Build release baseline
+        run: yarn build:api-published
+
+      - name: Generate diff
+        run: yarn compare:apis --isCI > /tmp/diff-current.txt || true
+
+      # Check out snapshots repo so we can read the previous diff and commit the new one
+      - uses: actions/checkout@v4
+        with:
+          repository: ${{ env.SNAPSHOTS_REPO }}
+          path: snapshots
+          token: ${{ secrets.SNAPSHOTS_REPO_TOKEN }}
+
+      # Compute week-to-week delta and commit new diff
+      - name: Save diff and compute delta
+        run: |
+          TODAY=$(date +%Y-%m-%d)
+          echo "TODAY=$TODAY" >> $GITHUB_ENV
+
+          CURRENT_PUBLISH=$(git log --grep='^Publish$' --oneline -1 | awk '{print $1}')
+          PREV_PUBLISH=$(cat snapshots/last-publish-hash.txt 2>/dev/null || echo "")
+
+          echo "=== Release detection ==="
+          echo "CURRENT_PUBLISH=$CURRENT_PUBLISH"
+          echo "PREV_PUBLISH=$PREV_PUBLISH"
+
+          if [ -n "$PREV_PUBLISH" ] && [ "$CURRENT_PUBLISH" != "$PREV_PUBLISH" ]; then
+            # Detect minor/major vs patch: check if s2 or react-aria-components got a x.y.0 tag on this Publish commit
+            IS_MINOR=$(git tag --points-at "$CURRENT_PUBLISH" | grep -E '^(@react-spectrum/s2|react-aria-components)@[0-9]+\.[0-9]+\.0$' | head -1)
+            echo "IS_MINOR_OR_MAJOR=${IS_MINOR:-(none)}"
+            if [ -n "$IS_MINOR" ]; then
+              echo "Minor/major release detected, resetting baseline"
+              echo "NEW_RELEASE=true" >> $GITHUB_ENV
+            else
+              echo "Patch release detected, updating hash, continuing with delta"
+              echo "$CURRENT_PUBLISH" > snapshots/last-publish-hash.txt
+            fi
+          else
+            echo "No new release"
+          fi
+
+          NEW_RELEASE="${NEW_RELEASE:-false}"
+
+          if [ "$NEW_RELEASE" != "true" ]; then
+            # Compare against the last diff in the snapshots repo
+            PREV=$(ls snapshots/diffs/*.txt 2>/dev/null | sort -r | head -1)
+            echo ""
+            echo "=== Delta computation ==="
+            echo "Comparing against: ${PREV:-(none, first run)}"
+            if [ -n "$PREV" ]; then
+              diff "$PREV" /tmp/diff-current.txt > /tmp/weekly-delta.txt || true
+            else
+              echo "(first run — no previous diff to compare against)" > /tmp/weekly-delta.txt
+            fi
+          fi
+
+          echo ""
+          echo "=== File sizes ==="
+          echo "diff-current.txt: $(wc -c < /tmp/diff-current.txt) bytes"
+          ls /tmp/weekly-delta.txt 2>/dev/null && echo "weekly-delta.txt: $(wc -c < /tmp/weekly-delta.txt) bytes" || echo "weekly-delta.txt: not created"
+          echo ""
+          echo "=== Delta content (first 20 lines) ==="
+          head -20 /tmp/weekly-delta.txt 2>/dev/null || echo "(none)"
+
+          # Commit a diff if there is a new minor/major release (fresh baseline), or diff changed from last week
+          # Skip if no difference from last diff (aka no change from last week/last run), or if the diff against the release code is empty
+          echo ""
+          echo "=== Commit decision ==="
+          if [ -s /tmp/diff-current.txt ] && ([ "$NEW_RELEASE" = "true" ] || [ -s /tmp/weekly-delta.txt ]); then
+            echo "Committing diff to snapshots repo"
+            cp /tmp/diff-current.txt snapshots/diffs/$TODAY.txt
+            mkdir -p snapshots/deltas
+            if [ -s /tmp/weekly-delta.txt ]; then
+              # Save processed delta: strip > / < markers and line-number markers,
+              # split into two labeled sections so it can be passed directly to the model
+              {
+                echo "=== NEW API CHANGES THIS WEEK (not in last week's diff) ==="
+                grep '^> ' /tmp/weekly-delta.txt | sed 's/^> //'
+                RELEASED=$(grep '^< ' /tmp/weekly-delta.txt | sed 's/^< //')
+                if [ -n "$RELEASED" ]; then
+                  echo ""
+                  echo "=== API CHANGES RELEASED SINCE LAST WEEK (were in last week's diff, now gone) ==="
+                  echo "$RELEASED"
+                fi
+              } > snapshots/deltas/$TODAY.txt
+            fi
+            cd snapshots
+            git config user.email "github-actions@github.com"
+            git config user.name "GitHub Actions"
+            git add diffs/$TODAY.txt
+            [ -f deltas/$TODAY.txt ] && git add deltas/$TODAY.txt
+            echo "$CURRENT_PUBLISH" > last-publish-hash.txt
+            git add last-publish-hash.txt
+            echo "=== Staged changes ==="
+            git diff --cached --stat
+            git diff --cached --quiet || (git commit -m "weekly api diff $TODAY" && git push)
+          else
+            echo "Skipping commit — diff-current empty=$([ ! -s /tmp/diff-current.txt ] && echo yes || echo no), new_release=$NEW_RELEASE, delta_empty=$([ ! -s /tmp/weekly-delta.txt ] && echo yes || echo no)"
+          fi
+
+      # Summarize with GitHub Models (free via GITHUB_TOKEN) and post to Slack
+      - name: Summarize and post to Slack
+        env:
+          SLACK_TSDIFF_CHROMATIC_BOT_TOKEN: ${{ secrets.SLACK_TSDIFF_CHROMATIC_BOT_TOKEN }}
+          SLACK_CHANNEL_ID: ${{ secrets.SLACK_CHANNEL_ID }}
+          TEST_SLACK_ID: ${{ secrets.TEST_SLACK_ID }}
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          python3 << 'PYEOF'
+          import glob, json, os, urllib.request
+
+          required = ['SLACK_TSDIFF_CHROMATIC_BOT_TOKEN', 'SLACK_CHANNEL_ID', 'GITHUB_TOKEN', 'TODAY', 'SNAPSHOTS_REPO', 'GITHUB_WORKSPACE']
+          missing = [k for k in required if not os.environ.get(k)]
+          if missing:
+            raise SystemExit(f"Missing required environment variables: {', '.join(missing)}")
+
+          today = os.environ['TODAY']
+          channel = os.environ['SLACK_CHANNEL_ID']
+          snapshots_repo = os.environ['SNAPSHOTS_REPO']
+          slack_token = os.environ['SLACK_TSDIFF_CHROMATIC_BOT_TOKEN']
+          github_token = os.environ['GITHUB_TOKEN']
+          workspace = os.environ['GITHUB_WORKSPACE']
+          diff_url = f"https://github.com/{snapshots_repo}/blob/main/diffs/{today}.txt"
+          delta_url = f"https://github.com/{snapshots_repo}/blob/main/deltas/{today}.txt"
+
+          vs_release_size = os.path.getsize('/tmp/diff-current.txt')
+          vs_last_week_size = os.path.getsize('/tmp/weekly-delta.txt') if os.path.exists('/tmp/weekly-delta.txt') else 0
+
+          prev_files = sorted(glob.glob(f"{workspace}/snapshots/diffs/*.txt"), reverse=True)
+          prev_date = os.path.basename(prev_files[0]).replace('.txt', '') if prev_files else None
+          prev_url = f"https://github.com/{snapshots_repo}/blob/main/diffs/{prev_date}.txt" if prev_date else None
+
+          new_release = os.environ.get('NEW_RELEASE') == 'true'
+
+          if vs_release_size == 0:
+            message = f"📊 Weekly API Diff — {today}\n\nNo API changes detected vs last release — all pending changes have been included in a release."
+          elif vs_last_week_size == 0 and not new_release:
+            prev_ref = f"last diff ({prev_date}): {prev_url}" if prev_date else "last diff"
+            message = f"📊 Weekly API Diff — {today}\n\nNo new API changes since {prev_ref}."
+          elif new_release:
+            message = f"📊 Weekly API Diff — {today}\n\nNew release since last diff — resetting baseline. Full diff vs release: {diff_url}\n\nReact ✅ if changes look expected, or 🚨 if something looks wrong."
+          else:
+            # Read the already-processed delta saved by the shell step
+            delta_path = f"{workspace}/snapshots/deltas/{today}.txt"
+            model_input = open(delta_path).read() if os.path.exists(delta_path) else ""
+
+            # Extract classification rules from prompt.md (single source of truth)
+            prompt_md = open(f"{workspace}/scripts/weekly-api-diff/prompt.md").read()
+            rules_start = prompt_md.find("Apply these grouping and classification rules")
+            rules_end = prompt_md.find("\n## Step 9", rules_start)
+            rules = prompt_md[rules_start:rules_end].strip() if rules_start != -1 else ""
+
+            payload = {
+              "model": "gpt-4o-mini",
+              "max_tokens": 800,
+              "messages": [{
+                "role": "user",
+                "content": (
+                  f"Summarize this week's react-spectrum API changes using grouped bullet points. Group related changes together (e.g. multiple layout classes losing the same method = one bullet). For each group or item:\n"
+                  f"- Name the component(s) or interface(s)\n"
+                  f"- Say what changed (added, removed, signature changed)\n"
+                  f"- Flag net-new components \n"
+                  f"Don't spell out full type signatures. Aim for a knowledgeable teammate skimming Slack.\n\n"
+                  f"IMPORTANT: Only report what is explicitly listed below. Do not infer or add anything from your training knowledge.\n\n"
+                  f"{rules}\n\n"
+                  f"{model_input}"
+                )
+              }]
+            }
+
+            req = urllib.request.Request(
+              'https://models.inference.ai.azure.com/chat/completions',
+              data=json.dumps(payload).encode(),
+              headers={
+                'Authorization': f'Bearer {github_token}',
+                'Content-Type': 'application/json'
+              }
+            )
+            summary = json.loads(urllib.request.urlopen(req).read())['choices'][0]['message']['content']
+            message = f"📊 Weekly API Diff — {today}\n\n{summary}\n\nWhat's new this week: {delta_url}\nFull diff vs release: {diff_url}\n\nReact ✅ if changes look expected, or 🚨 if something looks wrong."
+
+          req = urllib.request.Request(
+            'https://slack.com/api/chat.postMessage',
+            data=json.dumps({"channel": channel, "text": message}).encode(),
+            headers={
+              'Authorization': f'Bearer {slack_token}',
+              'Content-Type': 'application/json'
+            }
+          )
+          resp = json.loads(urllib.request.urlopen(req).read())
+          print("Slack response:", resp.get('ok'), resp.get('error', ''))
+          if not resp.get('ok'):
+            raise SystemExit(f"Slack error: {resp.get('error')}")
+          PYEOF

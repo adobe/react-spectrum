@@ -15,7 +15,7 @@ import {IconProps, IllustrationContext} from '../../src/Icon';
 import Stopwatch_L from 'illustration:./S2_lin_stopwatch_160.svg';
 import Stopwatch_M from 'illustration:./S2_lin_stopwatch_96.svg';
 import Stopwatch_S from 'illustration:./S2_lin_stopwatch_48.svg';
-import {useContextProps} from 'react-aria-components/utils';
+import {useContextProps} from 'react-aria-components/slots';
 
 export default function Stopwatch(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);

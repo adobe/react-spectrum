@@ -2,9 +2,9 @@
 import {
   Input,
   TextField as AriaTextField,
-  TextFieldProps as AriaTextFieldProps,
-  ValidationResult
-} from 'react-aria-components';
+  type TextFieldProps as AriaTextFieldProps,
+  type ValidationResult
+} from 'react-aria-components/TextField';
 import {Label, FieldError, Description} from './Form';
 import './TextField.css';
 
@@ -12,12 +12,16 @@ export interface TextFieldProps extends AriaTextFieldProps {
   label?: string;
   description?: string;
   errorMessage?: string | ((validation: ValidationResult) => string);
-  placeholder?: string
+  placeholder?: string;
 }
 
-export function TextField(
-  { label, description, errorMessage, placeholder, ...props }: TextFieldProps
-) {
+export function TextField({
+  label,
+  description,
+  errorMessage,
+  placeholder,
+  ...props
+}: TextFieldProps) {
   return (
     <AriaTextField {...props}>
       <Label>{label}</Label>

@@ -11,21 +11,16 @@
  */
 
 import {act, fireEvent} from '@react-spectrum/test-utils-internal';
-import {Cell} from 'react-stately/Cell';
-import {Column} from 'react-stately/Column';
+import {Cell, Column, Row, TableBody, TableHeader} from 'react-stately/useTableState';
 import {composeStories} from '@storybook/react';
 import {Key} from '@react-types/shared';
 import React from 'react';
 import {render} from '@testing-library/react';
 import {Table as ResizingTable} from '../../stories/table/example-resizing';
 import {resizingTests} from './tableResizingTests';
-import {Row} from 'react-stately/Row';
 import {setInteractionModality} from '../../src/interactions/useFocusVisible';
 import * as stories from '../../stories/table/useTable.stories';
-import {TableBody} from 'react-stately/TableBody';
-import {TableHeader} from 'react-stately/TableHeader';
 import {within} from '@testing-library/dom';
-
 
 let {TableWithSomeResizingFRsControlled} = composeStories(stories);
 
@@ -41,7 +36,9 @@ function getColumn(tree, name) {
 }
 
 function resizeCol(tree, col, delta) {
-  act(() => {setInteractionModality('pointer');});
+  act(() => {
+    setInteractionModality('pointer');
+  });
   let column = getColumn(tree, col);
   let resizer = within(column).getByRole('slider');
 
@@ -56,30 +53,31 @@ function resizeCol(tree, col, delta) {
 function resizeTable(clientWidth, newValue) {
   clientWidth.mockImplementation(() => newValue);
   fireEvent(window, new Event('resize'));
-  act(() => {jest.runAllTimers();});
+  act(() => {
+    jest.runAllTimers();
+  });
 }
 
 describe('Aria Table', () => {
-  resizingTests(render, (tree, ...args) => tree.rerender(...args), Table, TableWithSomeResizingFRsControlled, resizeCol, resizeTable);
+  resizingTests(
+    render,
+    (tree, ...args) => tree.rerender(...args),
+    Table,
+    TableWithSomeResizingFRsControlled,
+    resizeCol,
+    resizeTable
+  );
 });
 
-function Table(props: {columns: {id: Key, name: string}[], rows: Record<string, string>[]}) {
+function Table(props: {columns: {id: Key; name: string}[]; rows: Record<string, string>[]}) {
   let {columns, rows, ...args} = props;
   return (
     <ResizingTable {...args}>
       <TableHeader columns={columns}>
-        {column => (
-          <Column {...column}>
-            {column.name}
-          </Column>
-        )}
+        {column => <Column {...column}>{column.name}</Column>}
       </TableHeader>
       <TableBody items={rows}>
-        {item => (
-          <Row>
-            {columnKey => <Cell>{item[columnKey]}</Cell>}
-          </Row>
-        )}
+        {item => <Row>{columnKey => <Cell>{item[columnKey]}</Cell>}</Row>}
       </TableBody>
     </ResizingTable>
   );

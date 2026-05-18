@@ -12,7 +12,14 @@
 
 'use client';
 import {ColorPicker} from 'react-aria-components';
-import {ColorArea, ColorSlider, ColorField, ColorSwatch, Picker, PickerItem} from '@react-spectrum/s2';
+import {
+  ColorArea,
+  ColorSlider,
+  ColorField,
+  ColorSwatch,
+  Picker,
+  PickerItem
+} from '@react-spectrum/s2';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {getColorChannels} from '@react-stately/color';
 import {useState} from 'react';
@@ -34,9 +41,7 @@ function ColorEditor({hideAlphaChannel = false}: ColorEditorProps) {
       <div className={style({display: 'flex', gap: 12})}>
         <ColorArea colorSpace="hsb" xChannel="saturation" yChannel="brightness" />
         <ColorSlider colorSpace="hsb" channel="hue" orientation="vertical" />
-        {!hideAlphaChannel && (
-          <ColorSlider channel="alpha" orientation="vertical" />
-        )}
+        {!hideAlphaChannel && <ColorSlider channel="alpha" orientation="vertical" />}
       </div>
       <div className={style({display: 'flex', gap: 4})}>
         <Picker
@@ -44,20 +49,25 @@ function ColorEditor({hideAlphaChannel = false}: ColorEditorProps) {
           isQuiet
           styles={style({width: 70})}
           value={format}
-          onChange={(key) => setFormat(key as typeof format)}>
+          onChange={key => setFormat(key as typeof format)}>
           <PickerItem id="hex">{formatter.format('hex')}</PickerItem>
           <PickerItem id="rgb">{formatter.format('rgb')}</PickerItem>
           <PickerItem id="hsl">{formatter.format('hsl')}</PickerItem>
           <PickerItem id="hsb">{formatter.format('hsb')}</PickerItem>
         </Picker>
-        {format === 'hex'
-          ? <ColorField styles={style({width: 120})} aria-label={formatter.format('hex')} />
-          : getColorChannels(format).map(channel => (
-              <ColorField styles={style({width: 70})} key={channel} colorSpace={format} channel={channel} />
-            ))}
-        {!hideAlphaChannel && (
-          <ColorField styles={style({width: 70})} channel="alpha" />
+        {format === 'hex' ? (
+          <ColorField styles={style({width: 120})} aria-label={formatter.format('hex')} />
+        ) : (
+          getColorChannels(format).map(channel => (
+            <ColorField
+              styles={style({width: 70})}
+              key={channel}
+              colorSpace={format}
+              channel={channel}
+            />
+          ))
         )}
+        {!hideAlphaChannel && <ColorField styles={style({width: 70})} channel="alpha" />}
       </div>
     </div>
   );
@@ -83,9 +93,12 @@ export function ColorEditorExample() {
         {({color}) => (
           <div className={style({display: 'flex', flexWrap: 'wrap', gap: 24})}>
             <ColorEditor />
-            <div className={style({display: 'flex', flexDirection: 'column', gap: 8, marginTop: 16})}>
+            <div
+              className={style({display: 'flex', flexDirection: 'column', gap: 8, marginTop: 16})}>
               <ColorSwatch color={color} size="L" />
-              <span className={style({font: 'body'})}>{color.getColorName(navigator.language || 'en-US')}</span>
+              <span className={style({font: 'body'})}>
+                {color.getColorName(navigator.language || 'en-US')}
+              </span>
             </div>
           </div>
         )}

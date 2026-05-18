@@ -11,7 +11,7 @@
  */
 
 import {DOMProps, DOMRef, StyleProps} from '@react-types/shared';
-import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import React, {forwardRef, ReactNode} from 'react';
 import {useDOMRef} from '../utils/useDOMRef';
 import {useSlotProps} from '../utils/Slots';
@@ -21,12 +21,13 @@ export interface KeyboardProps extends DOMProps, StyleProps {
   /**
    * Keyboard shortcut text.
    */
-  children: ReactNode,
+  children: ReactNode;
   /**
    * A slot to place the keyboard shortcut in.
+   *
    * @default 'keyboard'
    */
-  slot?: string
+  slot?: string;
 }
 
 /**
@@ -34,10 +35,7 @@ export interface KeyboardProps extends DOMProps, StyleProps {
  */
 export const Keyboard = forwardRef(function Keyboard(props: KeyboardProps, ref: DOMRef) {
   props = useSlotProps(props, 'keyboard');
-  let {
-    children,
-    ...otherProps
-  } = props;
+  let {children, ...otherProps} = props;
   let {styleProps} = useStyleProps(otherProps);
   let domRef = useDOMRef(ref);
 

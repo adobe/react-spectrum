@@ -11,10 +11,10 @@
  */
 
 import {DOMProps, DOMRef, StyleProps} from '@react-types/shared';
-import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {HeadingContext} from 'react-aria-components/Heading';
 import React, {ElementType, forwardRef, ReactNode} from 'react';
-import {useContextProps} from 'react-aria-components/utils';
+import {useContextProps} from 'react-aria-components/slots';
 import {useDOMRef} from '../utils/useDOMRef';
 import {useSlotProps} from '../utils/Slots';
 import {useStyleProps} from '../utils/styleProps';
@@ -23,32 +23,33 @@ export interface HeadingProps extends DOMProps, StyleProps {
   /**
    * Heading content.
    */
-  children: ReactNode,
+  children: ReactNode;
   /**
    * A slot to place the heading in.
+   *
    * @default 'heading'
    */
-  slot?: string,
+  slot?: string;
   /**
    * Sets heading level, h1 through h6.
+   *
    * @default 3
    */
-  level?: 1 | 2 | 3 | 4 | 5 | 6
+  level?: 1 | 2 | 3 | 4 | 5 | 6;
 }
 
 /**
  * Heading is used to create various levels of typographic hierarchies.
  */
-export const Heading = forwardRef(function Heading(props: HeadingProps, ref: DOMRef<HTMLHeadingElement>) {
+export const Heading = forwardRef(function Heading(
+  props: HeadingProps,
+  ref: DOMRef<HTMLHeadingElement>
+) {
   let domRef = useDOMRef(ref);
   props = useSlotProps(props, 'heading');
   [props, domRef] = useContextProps(props, domRef, HeadingContext);
 
-  let {
-    children,
-    level = 3,
-    ...otherProps
-  } = props;
+  let {children, level = 3, ...otherProps} = props;
   let {styleProps} = useStyleProps(otherProps);
   let HeadingTag = `h${level}` as ElementType;
 

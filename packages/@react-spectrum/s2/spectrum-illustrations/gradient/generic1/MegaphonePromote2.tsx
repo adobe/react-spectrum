@@ -15,7 +15,7 @@ import MegaphonePromote2_M from 'illustration:./S2_fill_megaphonePromote2_generi
 import MegaphonePromote2_S from 'illustration:./S2_fill_megaphonePromote2_generic1_48.svg';
 import {ReactNode} from 'react';
 import {IconProps, IllustrationContext} from '../../../src/Icon';
-import {useContextProps} from 'react-aria-components/utils';
+import {useContextProps} from 'react-aria-components/slots';
 
 export default function MegaphonePromote2(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);

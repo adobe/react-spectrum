@@ -22,17 +22,22 @@ import swipeableTabsDark from 'url:../pages/react-aria/examples//swipeable-tabs-
 export const images: Record<string, [string, string]> = {
   'ios-list': [iosList, iosListDark],
   'emoji-picker': [emojiPicker, emojiPickerDark],
-  'kanban': [kanban, kanbanDark],
-  'photos': [photos, photosDark],
-  'crud': [crud, crudDark],
+  kanban: [kanban, kanbanDark],
+  photos: [photos, photosDark],
+  crud: [crud, crudDark],
   'ripple-button': [rippleButton, rippleButton],
-  'sheet': [sheet, sheetDark],
+  sheet: [sheet, sheetDark],
   'swipeable-tabs': [swipeableTabs, swipeableTabsDark]
 };
 
 export function ExampleList({tag, pages}) {
   let examples = pages
-    .filter(page => page.name.startsWith('react-aria/examples/') && !page.name.endsWith('index') && (!tag || page.exports?.keywords.includes(tag)))
+    .filter(
+      page =>
+        page.name.startsWith('react-aria/examples/') &&
+        !page.name.endsWith('index') &&
+        (!tag || page.exports?.keywords.includes(tag))
+    )
     .sort((a, b) => getTitle(a).localeCompare(getTitle(b)));
 
   return (
@@ -70,8 +75,14 @@ export function ExampleList({tag, pages}) {
                   <ExampleImage name={example.name} itemProp="image" />
                 </CardPreview>
                 <Content>
-                  <Text slot="title" itemProp="headline">{getTitle(example)}</Text>
-                  {example.exports?.description ? <Text slot="description" itemProp="description">{example.exports?.description}</Text> : null}
+                  <Text slot="title" itemProp="headline">
+                    {getTitle(example)}
+                  </Text>
+                  {example.exports?.description ? (
+                    <Text slot="description" itemProp="description">
+                      {example.exports?.description}
+                    </Text>
+                  ) : null}
                 </Content>
               </Card>
             </div>
@@ -82,7 +93,7 @@ export function ExampleList({tag, pages}) {
   );
 }
 
-const getTitle = (example) => example.tableOfContents?.[0]?.title;
+const getTitle = example => example.tableOfContents?.[0]?.title;
 
 const image = style({
   width: 'full',
@@ -92,7 +103,7 @@ const image = style({
   pointerEvents: 'none'
 });
 
-export function ExampleImage({name, itemProp}: {name: string, itemProp?: string}) {
+export function ExampleImage({name, itemProp}: {name: string; itemProp?: string}) {
   let img = images[path.basename(name)];
   if (!Array.isArray(img)) {
     return <Image src={img} alt="" styles={image} />;
@@ -107,6 +118,7 @@ export function ExampleImage({name, itemProp}: {name: string, itemProp?: string}
       ]}
       alt=""
       itemProp={itemProp}
-      styles={image} />
+      styles={image}
+    />
   );
 }

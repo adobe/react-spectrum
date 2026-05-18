@@ -10,7 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, pointerMap, render, simulateDesktop, simulateMobile, User, waitFor, within} from '@react-spectrum/test-utils-internal';
+import {
+  act,
+  fireEvent,
+  pointerMap,
+  render,
+  simulateDesktop,
+  simulateMobile,
+  User,
+  waitFor,
+  within
+} from '@react-spectrum/test-utils-internal';
 import {ActionButton} from '../../src/button/ActionButton';
 import {Button} from '../../src/button/Button';
 import {ButtonGroup} from '../../src/buttongroup/ButtonGroup';
@@ -26,7 +36,6 @@ import {TextField} from '../../src/textfield/TextField';
 import {defaultTheme as theme} from '../../src/theme-default/defaultTheme';
 import {UNSAFE_PortalProvider} from 'react-aria/PortalProvider';
 import userEvent from '@testing-library/user-event';
-
 
 describe('DialogTrigger', function () {
   let warnMock;
@@ -58,7 +67,9 @@ describe('DialogTrigger', function () {
 
     if (process.env.STRICT_MODE && warnMock.mock.calls.length > 0) {
       expect(warnMock).toHaveBeenCalledTimes(1);
-      expect(warnMock).toHaveBeenCalledWith('A DialogTrigger unmounted while open. This is likely due to being placed within a trigger that unmounts or inside a conditional. Consider using a DialogContainer instead.');
+      expect(warnMock).toHaveBeenCalledWith(
+        'A DialogTrigger unmounted while open. This is likely due to being placed within a trigger that unmounts or inside a conditional. Consider using a DialogContainer instead.'
+      );
       warnMock.mockRestore();
     }
   });
@@ -68,7 +79,7 @@ describe('DialogTrigger', function () {
       <Provider theme={theme}>
         <DialogTrigger>
           <ActionButton>Trigger</ActionButton>
-          <Dialog>contents</Dialog>
+          <Dialog aria-label="Test dialog">contents</Dialog>
         </DialogTrigger>
       </Provider>
     );
@@ -90,7 +101,7 @@ describe('DialogTrigger', function () {
       <Provider theme={theme}>
         <DialogTrigger type="tray">
           <ActionButton>Trigger</ActionButton>
-          <Dialog>contents</Dialog>
+          <Dialog aria-label="Test dialog">contents</Dialog>
         </DialogTrigger>
       </Provider>
     );
@@ -116,7 +127,7 @@ describe('DialogTrigger', function () {
       <Provider theme={theme}>
         <DialogTrigger type="popover">
           <ActionButton>Trigger</ActionButton>
-          <Dialog>contents</Dialog>
+          <Dialog aria-label="Test dialog">contents</Dialog>
         </DialogTrigger>
       </Provider>
     );
@@ -139,8 +150,8 @@ describe('DialogTrigger', function () {
       <Provider theme={theme}>
         <DialogTrigger type="popover">
           <ActionButton>Trigger</ActionButton>
-          {(close) => (
-            <Dialog>
+          {close => (
+            <Dialog aria-label="Test dialog">
               contents
               <ButtonGroup>
                 <Button variant="secondary" onPress={close}>
@@ -180,7 +191,7 @@ describe('DialogTrigger', function () {
       <Provider theme={theme}>
         <DialogTrigger type="popover">
           <ActionButton>Trigger</ActionButton>
-          <Dialog>contents</Dialog>
+          <Dialog aria-label="Test dialog">contents</Dialog>
         </DialogTrigger>
       </Provider>
     );
@@ -207,7 +218,7 @@ describe('DialogTrigger', function () {
       <Provider theme={theme}>
         <DialogTrigger type="popover" mobileType="tray">
           <ActionButton>Trigger</ActionButton>
-          <Dialog>contents</Dialog>
+          <Dialog aria-label="Test dialog">contents</Dialog>
         </DialogTrigger>
       </Provider>
     );
@@ -228,47 +239,50 @@ describe('DialogTrigger', function () {
     expect(tray).toBeVisible();
   });
 
-  it.each(['modal', 'popover', 'tray'])('contains focus within the dialog when rendered as a %s', async function (type) {
-    let {getByRole, getByTestId} = render(
-      <Provider theme={theme}>
-        <DialogTrigger type={type}>
-          <ActionButton>Trigger</ActionButton>
-          <Dialog>
-            <input data-testid="input1" />
-            <input data-testid="input2" />
-          </Dialog>
-        </DialogTrigger>
-      </Provider>
-    );
+  it.each(['modal', 'popover', 'tray'])(
+    'contains focus within the dialog when rendered as a %s',
+    async function (type) {
+      let {getByRole, getByTestId} = render(
+        <Provider theme={theme}>
+          <DialogTrigger type={type}>
+            <ActionButton>Trigger</ActionButton>
+            <Dialog aria-label="Test dialog">
+              <input data-testid="input1" />
+              <input data-testid="input2" />
+            </Dialog>
+          </DialogTrigger>
+        </Provider>
+      );
 
-    let button = getByRole('button');
-    await user.click(button);
+      let button = getByRole('button');
+      await user.click(button);
 
-    act(() => {
-      jest.runAllTimers();
-    });
+      act(() => {
+        jest.runAllTimers();
+      });
 
-    let dialog = getByRole('dialog');
-    let input1 = getByTestId('input1');
-    let input2 = getByTestId('input2');
-    expect(document.activeElement).toBe(dialog);
+      let dialog = getByRole('dialog');
+      let input1 = getByTestId('input1');
+      let input2 = getByTestId('input2');
+      expect(document.activeElement).toBe(dialog);
 
-    fireEvent.keyDown(document.activeElement, {key: 'Tab'});
-    expect(document.activeElement).toBe(input1);
+      fireEvent.keyDown(document.activeElement, {key: 'Tab'});
+      expect(document.activeElement).toBe(input1);
 
-    fireEvent.keyDown(document.activeElement, {key: 'Tab'});
-    expect(document.activeElement).toBe(input2);
+      fireEvent.keyDown(document.activeElement, {key: 'Tab'});
+      expect(document.activeElement).toBe(input2);
 
-    fireEvent.keyDown(document.activeElement, {key: 'Tab'});
-    expect(document.activeElement).toBe(input1);
-  });
+      fireEvent.keyDown(document.activeElement, {key: 'Tab'});
+      expect(document.activeElement).toBe(input1);
+    }
+  );
 
   it('should restore focus to the trigger when the dialog is closed', async function () {
     let {getByRole} = render(
       <Provider theme={theme}>
         <DialogTrigger>
           <ActionButton>Trigger</ActionButton>
-          <Dialog>contents</Dialog>
+          <Dialog aria-label="Test dialog">contents</Dialog>
         </DialogTrigger>
       </Provider>
     );
@@ -291,7 +305,7 @@ describe('DialogTrigger', function () {
       <Provider theme={theme}>
         <DialogTrigger type="popover">
           <ActionButton>Trigger</ActionButton>
-          <Dialog>contents</Dialog>
+          <Dialog aria-label="Test dialog">contents</Dialog>
         </DialogTrigger>
       </Provider>
     );
@@ -336,7 +350,7 @@ describe('DialogTrigger', function () {
       <Provider theme={theme}>
         <DialogTrigger onOpenChange={onOpenChange} type="popover">
           <ActionButton>Trigger</ActionButton>
-          <Dialog>contents</Dialog>
+          <Dialog aria-label="Test dialog">contents</Dialog>
         </DialogTrigger>
       </Provider>
     );
@@ -382,12 +396,14 @@ describe('DialogTrigger', function () {
       <Provider theme={theme} ref={rootProviderRef}>
         <DialogTrigger>
           <ActionButton>Trigger</ActionButton>
-          <Dialog>contents</Dialog>
+          <Dialog aria-label="Test dialog">contents</Dialog>
         </DialogTrigger>
       </Provider>
     );
 
-    expect(rootProviderRef.current.UNSAFE_getDOMNode().closest('[aria-hidden=true]')).not.toBeInTheDocument();
+    expect(
+      rootProviderRef.current.UNSAFE_getDOMNode().closest('[aria-hidden=true]')
+    ).not.toBeInTheDocument();
 
     let button = getByRole('button');
     await user.click(button);
@@ -400,7 +416,9 @@ describe('DialogTrigger', function () {
       expect(getByRole('dialog')).toBeVisible();
     }); // wait for animation
 
-    expect(rootProviderRef.current.UNSAFE_getDOMNode().closest('[aria-hidden=true]')).toBeInTheDocument();
+    expect(
+      rootProviderRef.current.UNSAFE_getDOMNode().closest('[aria-hidden=true]')
+    ).toBeInTheDocument();
 
     let dialog = getByRole('dialog');
     fireEvent.keyDown(dialog, {key: 'Escape'});
@@ -413,7 +431,9 @@ describe('DialogTrigger', function () {
       expect(dialog).not.toBeInTheDocument();
     }); // wait for animation
 
-    expect(rootProviderRef.current.UNSAFE_getDOMNode().closest('[aria-hidden=true]')).not.toBeInTheDocument();
+    expect(
+      rootProviderRef.current.UNSAFE_getDOMNode().closest('[aria-hidden=true]')
+    ).not.toBeInTheDocument();
   });
 
   it('can be controlled', async function () {
@@ -422,14 +442,16 @@ describe('DialogTrigger', function () {
         <Provider theme={theme}>
           <DialogTrigger isOpen={isOpen} onOpenChange={onOpenChange}>
             <ActionButton>Trigger</ActionButton>
-            <Dialog>contents</Dialog>
+            <Dialog aria-label="Test dialog">contents</Dialog>
           </DialogTrigger>
         </Provider>
       );
     }
 
     let onOpenChange = jest.fn();
-    let {getByRole, queryByRole, rerender} = render(<Test isOpen={false} onOpenChange={onOpenChange} />);
+    let {getByRole, queryByRole, rerender} = render(
+      <Test isOpen={false} onOpenChange={onOpenChange} />
+    );
 
     expect(queryByRole('dialog')).toBeNull();
 
@@ -480,7 +502,7 @@ describe('DialogTrigger', function () {
         <Provider theme={theme}>
           <DialogTrigger defaultOpen={defaultOpen} onOpenChange={onOpenChange}>
             <ActionButton>Trigger</ActionButton>
-            <Dialog>contents</Dialog>
+            <Dialog aria-label="Test dialog">contents</Dialog>
           </DialogTrigger>
         </Provider>
       );
@@ -518,7 +540,14 @@ describe('DialogTrigger', function () {
         <Provider theme={theme}>
           <DialogTrigger defaultOpen={defaultOpen} onOpenChange={onOpenChange}>
             <ActionButton>Trigger</ActionButton>
-            {(close) => <Dialog>contents<Button variant="primary" data-testid="closebtn" onPress={close}>Close</Button></Dialog>}
+            {close => (
+              <Dialog aria-label="Test dialog">
+                contents
+                <Button variant="primary" data-testid="closebtn" onPress={close}>
+                  Close
+                </Button>
+              </Dialog>
+            )}
           </DialogTrigger>
         </Provider>
       );
@@ -557,7 +586,7 @@ describe('DialogTrigger', function () {
         <Provider theme={theme}>
           <DialogTrigger isDismissable defaultOpen={defaultOpen} onOpenChange={onOpenChange}>
             <ActionButton>Trigger</ActionButton>
-            <Dialog>contents</Dialog>
+            <Dialog aria-label="Test dialog">contents</Dialog>
           </DialogTrigger>
         </Provider>
       );
@@ -594,9 +623,13 @@ describe('DialogTrigger', function () {
     function Test({defaultOpen, onOpenChange}) {
       return (
         <Provider theme={theme}>
-          <DialogTrigger type="modal" isDismissable defaultOpen={defaultOpen} onOpenChange={onOpenChange}>
+          <DialogTrigger
+            type="modal"
+            isDismissable
+            defaultOpen={defaultOpen}
+            onOpenChange={onOpenChange}>
             <ActionButton>Trigger</ActionButton>
-            <Dialog>contents</Dialog>
+            <Dialog aria-label="Test dialog">contents</Dialog>
           </DialogTrigger>
         </Provider>
       );
@@ -634,7 +667,7 @@ describe('DialogTrigger', function () {
         <Provider theme={theme}>
           <DialogTrigger type="modal" defaultOpen={defaultOpen} onOpenChange={onOpenChange}>
             <ActionButton>Trigger</ActionButton>
-            <Dialog>contents</Dialog>
+            <Dialog aria-label="Test dialog">contents</Dialog>
           </DialogTrigger>
         </Provider>
       );
@@ -665,9 +698,13 @@ describe('DialogTrigger', function () {
     function Test({defaultOpen, onOpenChange}) {
       return (
         <Provider theme={theme}>
-          <DialogTrigger type="popover" mobileType="modal" defaultOpen={defaultOpen} onOpenChange={onOpenChange}>
+          <DialogTrigger
+            type="popover"
+            mobileType="modal"
+            defaultOpen={defaultOpen}
+            onOpenChange={onOpenChange}>
             <ActionButton>Trigger</ActionButton>
-            <Dialog>contents</Dialog>
+            <Dialog aria-label="Test dialog">contents</Dialog>
           </DialogTrigger>
         </Provider>
       );
@@ -703,9 +740,13 @@ describe('DialogTrigger', function () {
     function Test({defaultOpen, onOpenChange}) {
       return (
         <Provider theme={theme}>
-          <DialogTrigger type="popover" defaultOpen={defaultOpen} onOpenChange={onOpenChange} isDismissable={false}>
+          <DialogTrigger
+            type="popover"
+            defaultOpen={defaultOpen}
+            onOpenChange={onOpenChange}
+            isDismissable={false}>
             <ActionButton>Trigger</ActionButton>
-            <Dialog>contents</Dialog>
+            <Dialog aria-label="Test dialog">contents</Dialog>
           </DialogTrigger>
         </Provider>
       );
@@ -742,7 +783,11 @@ describe('DialogTrigger', function () {
       <Provider theme={theme}>
         <DialogTrigger isKeyboardDismissDisabled>
           <ActionButton>Trigger</ActionButton>
-          {close => <Dialog><ActionButton onPress={close}>Close</ActionButton></Dialog>}
+          {close => (
+            <Dialog aria-label="Test dialog">
+              <ActionButton onPress={close}>Close</ActionButton>
+            </Dialog>
+          )}
         </DialogTrigger>
       </Provider>
     );
@@ -794,7 +839,7 @@ describe('DialogTrigger', function () {
           <Menu>
             <DialogTrigger isKeyboardDismissDisabled>
               <Item>Open menu</Item>
-              <Dialog>Content body</Dialog>
+              <Dialog aria-label="Test dialog">Content body</Dialog>
             </DialogTrigger>
           </Menu>
         </MenuTrigger>
@@ -821,7 +866,9 @@ describe('DialogTrigger', function () {
     expect(queryByRole('dialog')).toBeNull();
 
     expect(warn).toHaveBeenCalledTimes(1);
-    expect(warn).toHaveBeenCalledWith('A DialogTrigger unmounted while open. This is likely due to being placed within a trigger that unmounts or inside a conditional. Consider using a DialogContainer instead.');
+    expect(warn).toHaveBeenCalledWith(
+      'A DialogTrigger unmounted while open. This is likely due to being placed within a trigger that unmounts or inside a conditional. Consider using a DialogContainer instead.'
+    );
   });
 
   it('should not try to restore focus to the outer dialog when the inner dialog opens', async () => {
@@ -830,12 +877,12 @@ describe('DialogTrigger', function () {
         <TextField id="document-input" aria-label="document input" />
         <DialogTrigger>
           <ActionButton id="outer-trigger">Trigger</ActionButton>
-          <Dialog id="outer-dialog">
+          <Dialog aria-label="Test dialog" id="outer-dialog">
             <Content>
               <TextField id="outer-input" aria-label="outer input" autoFocus />
               <DialogTrigger>
                 <ActionButton id="inner-trigger">Trigger</ActionButton>
-                <Dialog id="inner-dialog">
+                <Dialog aria-label="Test dialog" id="inner-dialog">
                   <Content>
                     <TextField id="inner-input" aria-label="outer input" autoFocus />
                   </Content>
@@ -887,7 +934,9 @@ describe('DialogTrigger', function () {
     expect(document.activeElement).toBe(innerInput);
 
     let outsideInput = document.getElementById('document-input');
-    act(() => {outsideInput.focus();});
+    act(() => {
+      outsideInput.focus();
+    });
     act(() => {
       jest.runAllTimers();
     });
@@ -900,12 +949,12 @@ describe('DialogTrigger', function () {
         <TextField id="document-input" aria-label="document input" />
         <DialogTrigger type="popover">
           <ActionButton id="outer-trigger">Trigger1</ActionButton>
-          <Dialog id="outer-dialog">
+          <Dialog aria-label="Test dialog" id="outer-dialog">
             <Content>
               <TextField id="outer-input" aria-label="outer input" />
               <DialogTrigger type="popover">
                 <ActionButton id="inner-trigger">Trigger2</ActionButton>
-                <Dialog id="inner-dialog">
+                <Dialog aria-label="Test dialog" id="inner-dialog">
                   <Content>
                     <TextField id="inner-input" label="inner input" />
                   </Content>
@@ -929,7 +978,6 @@ describe('DialogTrigger', function () {
       expect(outerDialog).toBeVisible();
     }); // wait for animation
     let outerButton = getByText('Trigger2');
-
 
     await user.click(outerButton);
 
@@ -958,7 +1006,7 @@ describe('DialogTrigger', function () {
           <UNSAFE_PortalProvider getContainer={() => container.current}>
             <DialogTrigger type={props.type}>
               <ActionButton>Trigger</ActionButton>
-              <Dialog>contents</Dialog>
+              <Dialog aria-label="Test dialog">contents</Dialog>
             </DialogTrigger>
           </UNSAFE_PortalProvider>
         </Provider>
@@ -975,36 +1023,36 @@ describe('DialogTrigger', function () {
     }
 
     it('should render the dialog in the portal container', async () => {
-      let {getByRole, getByTestId} = render(
-        <App />
-      );
+      let {getByRole, getByTestId} = render(<App />);
 
       let button = getByRole('button');
       await user.click(button);
 
-      expect(getByRole('dialog').closest('[data-testid="custom-container"]')).toBe(getByTestId('custom-container'));
+      expect(getByRole('dialog').closest('[data-testid="custom-container"]')).toBe(
+        getByTestId('custom-container')
+      );
     });
 
     it('should render the tray in the portal container', async () => {
-      let {getByRole, getByTestId} = render(
-        <App type="tray" />
-      );
+      let {getByRole, getByTestId} = render(<App type="tray" />);
 
       let button = getByRole('button');
       await user.click(button);
 
-      expect(getByRole('dialog').closest('[data-testid="custom-container"]')).toBe(getByTestId('custom-container'));
+      expect(getByRole('dialog').closest('[data-testid="custom-container"]')).toBe(
+        getByTestId('custom-container')
+      );
     });
 
     it('should render the popover in the portal container', async () => {
-      let {getByRole, getByTestId} = render(
-        <App type="popover" />
-      );
+      let {getByRole, getByTestId} = render(<App type="popover" />);
 
       let button = getByRole('button');
       await user.click(button);
 
-      expect(getByRole('dialog').closest('[data-testid="custom-container"]')).toBe(getByTestId('custom-container'));
+      expect(getByRole('dialog').closest('[data-testid="custom-container"]')).toBe(
+        getByTestId('custom-container')
+      );
     });
   });
 });

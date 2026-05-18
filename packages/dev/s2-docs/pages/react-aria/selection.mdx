@@ -20,7 +20,7 @@ Selection is represented by a [Set](https://developer.mozilla.org/en-US/docs/Web
 
 ```tsx render
 "use client";
-import {type Selection} from 'react-aria-components';
+import {type Selection} from 'react-aria-components/ListBox';
 import {ListBox, ListBoxItem} from 'vanilla-starter/ListBox';
 import {useState} from 'react';
 
@@ -52,8 +52,8 @@ function Example() {
 
 ```tsx render
 "use client";
-import {GridList, GridListItem} from 'vanilla-starter/GridList';
-import {Text, type Selection} from 'react-aria-components';
+import {GridList, GridListItem, Text} from 'vanilla-starter/GridList';
+import {type Selection} from 'react-aria-components/GridList';
 import {useState} from 'react';
 
 export default function Example() {
@@ -93,7 +93,7 @@ function PokemonItem(props: {name: string}) {
 
 ```tsx render
 "use client";
-import {type Selection} from 'react-aria-components';
+import {type Selection} from 'react-aria-components/Tree';
 import {Tree, TreeItem} from 'vanilla-starter/Tree';
 import {useState} from 'react';
 
@@ -129,7 +129,7 @@ function Example() {
 
 ```tsx render
 "use client";
-import {type Selection} from 'react-aria-components';
+import {type Selection} from 'react-aria-components/TagGroup';
 import {TagGroup, Tag} from 'vanilla-starter/TagGroup';
 import {useState} from 'react';
 
@@ -161,7 +161,7 @@ function Example() {
 
 ```tsx render
 "use client";
-import {type Selection} from 'react-aria-components';
+import {type Selection} from 'react-aria-components/Table';
 import {Table, TableHeader, TableBody, Column, Row, Cell} from 'vanilla-starter/Table';
 import {useState} from 'react';
 
@@ -221,7 +221,7 @@ and `defaultSelectedKeys` can also be set to `"all"` to programmatically select 
 
 ```tsx render
 "use client";
-import {Table, TableHeader, Column, TableBody, Row, Cell, type Selection} from 'react-aria-components';
+import {Table, TableHeader, Column, TableBody, Row, Cell, type Selection} from 'react-aria-components/Table';
 import {Checkbox} from 'vanilla-starter/Checkbox';
 import {Button} from 'vanilla-starter/Button';
 import {useState} from 'react';
@@ -325,8 +325,7 @@ function Example(props) {
 
 ```tsx render wide docs={docs.exports.GridList} links={docs.links} props={['selectionBehavior']}
 "use client";
-import {GridList, GridListItem} from 'vanilla-starter/GridList';
-import {Text} from 'react-aria-components';
+import {GridList, GridListItem, Text} from 'vanilla-starter/GridList';
 import {useState} from 'react';
 
 function Example(props) {
@@ -365,7 +364,7 @@ function Example(props) {
 
 ```tsx render wide docs={docs.exports.Tree} links={docs.links} props={['selectionBehavior']}
 "use client";
-import {type Selection} from 'react-aria-components';
+import {type Selection} from 'react-aria-components/Tree';
 import {Tree, TreeItem} from 'vanilla-starter/Tree';
 import {useState} from 'react';
 
@@ -428,8 +427,7 @@ function Example(props) {
 
 ```tsx render wide docs={docs.exports.Table} links={docs.links} props={['selectionBehavior']}
 "use client";
-import {Table, TableHeader, Column, Row} from 'vanilla-starter/Table';
-import {TableBody, Cell} from 'react-aria-components';
+import {Table, TableHeader, Column, Row, TableBody, Cell} from 'vanilla-starter/Table';
 import {useState} from 'react';
 
 function Example(props) {
@@ -485,7 +483,7 @@ In some components like [Tabs](Tabs), only single selection is supported. In thi
 
 ```tsx render
 "use client";
-import type {Key} from 'react-aria-components';
+import type {Key} from 'react-aria-components/Tabs';
 import {Tabs, TabList, Tab, TabPanels, TabPanel} from 'vanilla-starter/Tabs';
 import Home from '@react-spectrum/s2/illustrations/gradient/generic2/Home';
 import Folder from '@react-spectrum/s2/illustrations/gradient/generic2/FolderOpen';
@@ -536,7 +534,7 @@ Render a `<SelectionIndicator />` within each collection item to animate selecti
 ```tsx render files={['packages/dev/s2-docs/pages/react-aria/SelectionIndicator.css']}
 "use client";
 import {ListBox, ListBoxItem} from 'vanilla-starter/ListBox';
-import {SelectionIndicator} from 'react-aria-components';
+import {SelectionIndicator} from 'react-aria-components/ListBox';
 import './SelectionIndicator.css';
 
 function SelectableItem({id, children}) {
@@ -571,8 +569,7 @@ In the `"replace"` selection behavior, selection is the primary interaction. Cli
 
 ```tsx render wide docs={docs.exports.GridList} links={docs.links} props={['selectionBehavior']} initialProps={{'aria-label': 'Files', selectionMode: 'multiple', 'data-size': 'small'}}
 "use client";
-import {GridList, GridListItem} from 'vanilla-starter/GridList';
-import {Text} from 'react-aria-components';
+import {GridList, GridListItem, Text} from 'vanilla-starter/GridList';
 
 <GridList/* PROPS */>
   <GridListItem
@@ -669,8 +666,7 @@ In dynamic collections, it may be more convenient to use the `onAction` prop at 
 
 ```tsx render wide docs={docs.exports.GridList} links={docs.links} props={['selectionBehavior']}
 "use client";
-import {GridList, GridListItem} from 'vanilla-starter/GridList';
-import {Text} from 'react-aria-components';
+import {GridList, GridListItem, Text} from 'vanilla-starter/GridList';
 
 ///- begin collapse -///
 let images = [
@@ -720,7 +716,7 @@ let images = [
 ```tsx render wide docs={docs.exports.Tree} links={docs.links} props={['selectionBehavior']}
 "use client";
 import {Tree, TreeItem} from 'vanilla-starter/Tree';
-import {Collection} from 'react-aria-components';
+import {Collection} from 'react-aria-components/Collection';
 
 ///- begin collapse -///
 const files = [
@@ -806,8 +802,7 @@ import {ListBox, ListBoxItem} from 'vanilla-starter/ListBox';
 
 ```tsx render wide docs={docs.exports.GridList} links={docs.links} props={['disabledBehavior']} initialProps={{'aria-label': 'Pokemon', selectionMode: 'multiple', 'data-size': 'small'}}
 "use client";
-import {GridList, GridListItem} from 'vanilla-starter/GridList';
-import {Text} from 'react-aria-components';
+import {GridList, GridListItem, Text} from 'vanilla-starter/GridList';
 
 <GridList/* PROPS */>
   <GridListItem textValue="Desert Sunset">
@@ -956,8 +951,7 @@ const items = [
 
 ```tsx render wide docs={docs.exports.GridList} links={docs.links} props={['disabledBehavior']} initialProps={{'aria-label': 'Pokemon', selectionMode: 'multiple'}}
 "use client";
-import {GridList, GridListItem} from 'vanilla-starter/GridList';
-import {Text} from 'react-aria-components';
+import {GridList, GridListItem, Text} from 'vanilla-starter/GridList';
 
 ///- begin collapse -///
 const items = [
@@ -988,7 +982,7 @@ const items = [
 ```tsx render wide docs={docs.exports.Tree} links={docs.links} props={['disabledBehavior']}
 "use client";
 import {Tree, TreeItem} from 'vanilla-starter/Tree';
-import {Collection} from 'react-aria-components';
+import {Collection} from 'react-aria-components/Collection';
 
 type Pokemon = {
   id: number;

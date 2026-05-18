@@ -15,7 +15,7 @@ import {IconProps, IllustrationContext} from '../../src/Icon';
 import Redo_L from 'illustration:./S2_lin_redo_160.svg';
 import Redo_M from 'illustration:./S2_lin_redo_96.svg';
 import Redo_S from 'illustration:./S2_lin_redo_48.svg';
-import {useContextProps} from 'react-aria-components/utils';
+import {useContextProps} from 'react-aria-components/slots';
 
 export default function Redo(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);

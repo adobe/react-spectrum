@@ -14,5 +14,8 @@
 // to import it from a React Server Component in a framework like Next.js.
 import 'client-only';
 
-export {Meter, MeterContext} from '../src/Meter';
+export {Meter} from '../src/Meter';
 export type {MeterProps, MeterRenderProps} from '../src/Meter';
+
+export {Label} from '../src/Label';
+export type {LabelProps} from '../src/Label';

@@ -21,7 +21,7 @@ import {render} from '@react-spectrum/test-utils-internal';
 describe('Dialog', function () {
   it('does not auto focus anything inside', function () {
     let {getByRole} = render(
-      <Dialog>
+      <Dialog aria-label="Test dialog">
         <input data-testid="input1" />
         <input data-testid="input2" />
       </Dialog>
@@ -34,11 +34,7 @@ describe('Dialog', function () {
   });
 
   it('auto focuses the dialog itself if there is no focusable child', function () {
-    let {getByRole} = render(
-      <Dialog>
-        contents
-      </Dialog>
-    );
+    let {getByRole} = render(<Dialog aria-label="Test dialog">contents</Dialog>);
 
     let dialog = getByRole('dialog');
     expect(document.activeElement).toBe(dialog);
@@ -46,7 +42,7 @@ describe('Dialog', function () {
 
   it('autofocuses any element that has autofocus inside', function () {
     let {getByTestId} = render(
-      <Dialog>
+      <Dialog aria-label="Test dialog">
         <input data-testid="input1" />
         <input data-testid="input2" autoFocus />
       </Dialog>
@@ -61,7 +57,9 @@ describe('Dialog', function () {
       <ModalProvider>
         <DialogContext.Provider value={{type: 'modal'}}>
           <Dialog>
-            <Heading><Header>The Title</Header></Heading>
+            <Heading>
+              <Header>The Title</Header>
+            </Heading>
           </Dialog>
         </DialogContext.Provider>
       </ModalProvider>
@@ -80,7 +78,9 @@ describe('Dialog', function () {
         <ModalProvider>
           <DialogContext.Provider value={{type: 'modal'}}>
             <Dialog aria-labelledby="batman">
-              <Heading><Header>The Title</Header></Heading>
+              <Heading>
+                <Header>The Title</Header>
+              </Heading>
             </Dialog>
           </DialogContext.Provider>
         </ModalProvider>
@@ -101,7 +101,9 @@ describe('Dialog', function () {
       <ModalProvider>
         <DialogContext.Provider value={{type: 'modal'}}>
           <Dialog aria-label="robin">
-            <Heading><Header>The Title</Header></Heading>
+            <Heading>
+              <Header>The Title</Header>
+            </Heading>
           </Dialog>
         </DialogContext.Provider>
       </ModalProvider>
@@ -119,7 +121,9 @@ describe('Dialog', function () {
       <ModalProvider>
         <DialogContext.Provider value={{type: 'tray', onClose}}>
           <Dialog data-testid="test">
-            <Heading><Header>The Title</Header></Heading>
+            <Heading>
+              <Header>The Title</Header>
+            </Heading>
           </Dialog>
         </DialogContext.Provider>
       </ModalProvider>

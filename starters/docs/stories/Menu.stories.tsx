@@ -1,6 +1,5 @@
 import {Menu, MenuTrigger, MenuItem, SubmenuTrigger} from '../src/Menu';
 import {Button} from '../src/Button';
-
 import type {Meta, StoryFn} from '@storybook/react';
 
 const meta: Meta<typeof Menu> = {
@@ -14,7 +13,7 @@ const meta: Meta<typeof Menu> = {
 export default meta;
 type Story = StoryFn<typeof Menu>;
 
-export const Example: Story = (args) => (
+export const Example: Story = args => (
   <MenuTrigger>
     <Button>Edit</Button>
     <Menu {...args}>

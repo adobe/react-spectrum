@@ -102,7 +102,7 @@ By default, `NumberField` displays the value using the numbering system for the 
 
 ```tsx render wide docs={docs.exports.I18nProvider} links={docs.links} props={['locale']} initialProps={{locale: 'hi-IN-u-nu-deva'}} controlOptions={{locale: 'numberingSystem'}}
 "use client";
-import {I18nProvider} from 'react-aria-components';
+import {I18nProvider} from 'react-aria-components/I18nProvider';
 import {NumberField} from 'vanilla-starter/NumberField';
 
 <I18nProvider/* PROPS */>
@@ -118,7 +118,7 @@ Use the `name` prop to submit the raw number value (not a formatted string) to t
 "use client";
 import {NumberField} from 'vanilla-starter/NumberField';
 import {Button} from 'vanilla-starter/Button';
-import {Form} from 'vanilla-starter/Form';;
+import {Form} from 'vanilla-starter/Form';
 
 <Form>
   <NumberField label="Width" name="width" isRequired />

@@ -18,7 +18,7 @@ Accessible forms start with clear, descriptive labels for each field. Use the `l
 
 ```tsx render
 "use client";
-import {TextField} from '@react-spectrum/s2';
+import {TextField} from '@react-spectrum/s2/TextField';
 
 <TextField
   type="password"
@@ -41,7 +41,9 @@ When using React 19, use the `action` prop to handle form submission. This recei
 
 ```tsx render
 "use client";
-import {Form, TextField, Button} from '@react-spectrum/s2';
+import {Form} from '@react-spectrum/s2/Form';
+import {TextField} from '@react-spectrum/s2/TextField';
+import {Button} from '@react-spectrum/s2/Button';
 
 <Form
   /*- begin highlight -*/
@@ -57,7 +59,9 @@ import {Form, TextField, Button} from '@react-spectrum/s2';
 
 ```tsx render
 "use client";
-import {Form, TextField, Button} from '@react-spectrum/s2';
+import {Form} from '@react-spectrum/s2/Form';
+import {TextField} from '@react-spectrum/s2/TextField';
+import {Button} from '@react-spectrum/s2/Button';
 
 <Form
   /*- begin highlight -*/
@@ -88,7 +92,9 @@ By default, all React Spectrum components are uncontrolled, which means that the
 
 ```tsx render
 'use client';
-import {Form, TextField, ButtonGroup, Button} from '@react-spectrum/s2';
+import {Form} from '@react-spectrum/s2/Form';
+import {TextField} from '@react-spectrum/s2/TextField';
+import {ButtonGroup, Button} from '@react-spectrum/s2/ButtonGroup';
 import {useState} from 'react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
@@ -133,7 +139,9 @@ All React Spectrum form components integrate with native HTML [constraint valida
 
 ```tsx render
 'use client';
-import {Form, TextField, ButtonGroup, Button} from '@react-spectrum/s2';
+import {Form} from '@react-spectrum/s2/Form';
+import {TextField} from '@react-spectrum/s2/TextField';
+import {ButtonGroup, Button} from '@react-spectrum/s2/ButtonGroup';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 <Form styles={style({maxWidth: 320})}>
@@ -168,7 +176,9 @@ By default, React Spectrum displays the error message provided by the browser, w
 
 ```tsx render
 "use client";
-import {Form, TextField, ButtonGroup, Button} from '@react-spectrum/s2';
+import {Form} from '@react-spectrum/s2/Form';
+import {TextField} from '@react-spectrum/s2/TextField';
+import {ButtonGroup, Button} from '@react-spectrum/s2/ButtonGroup';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 <Form styles={style({maxWidth: 320})}>
@@ -201,7 +211,9 @@ To implement custom validation rules, pass a function to the `validate` prop. Th
 
 ```tsx render
 "use client";
-import {Form, TextField, ButtonGroup, Button} from '@react-spectrum/s2';
+import {Form} from '@react-spectrum/s2/Form';
+import {TextField} from '@react-spectrum/s2/TextField';
+import {ButtonGroup, Button} from '@react-spectrum/s2/ButtonGroup';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 <Form styles={style({maxWidth: 320})}>
@@ -227,7 +239,7 @@ In some cases, validating in realtime can be desirable, such as when meeting pas
 
 ```tsx render
 'use client';
-import {TextField} from '@react-spectrum/s2';
+import {TextField} from '@react-spectrum/s2/TextField';
 import {useState} from 'react';
 
 function Example() {
@@ -266,7 +278,9 @@ To display server validation errors, set the `validationErrors` prop on the [For
 
 ```tsx render
 'use client';
-import {Form, TextField, ButtonGroup, Button} from '@react-spectrum/s2';
+import {Form} from '@react-spectrum/s2/Form';
+import {TextField} from '@react-spectrum/s2/TextField';
+import {ButtonGroup, Button} from '@react-spectrum/s2/ButtonGroup';
 import {useActionState} from 'react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
@@ -373,9 +387,10 @@ export async function createTodo(prevState: any, formData: FormData) {
 ```tsx
 // app/add-form.tsx
 'use client';
-
 import {useActionState} from 'react';
-import {Form, TextField, ActionButton} from '@react-spectrum/s2';
+import {Form} from '@react-spectrum/s2/Form';
+import {TextField} from '@react-spectrum/s2/TextField';
+import {ActionButton} from '@react-spectrum/s2/ActionButton';
 import {createTodo} from '@/app/actions';
 
 export function AddForm() {
@@ -386,7 +401,7 @@ export function AddForm() {
   return (
     /*- begin highlight -*/
     <Form action={formAction} validationErrors={errors}>
-    {/*- end highlight -*/}
+      {/*- end highlight -*/}
       <TextField label="Task" name="todo" />
       <ActionButton type="submit">Add</ActionButton>
     </Form>
@@ -401,7 +416,9 @@ export function AddForm() {
 ```tsx
 // app/routes/signup.tsx
 import {useSubmit} from 'react-router';
-import {Form, TextField, Button} from '@react-spectrum/s2';
+import {Form} from '@react-spectrum/s2/Form';
+import {TextField} from '@react-spectrum/s2/TextField';
+import {Button} from '@react-spectrum/s2/Button';
 
 export default function SignupForm({actionData}: Route.ComponentProps) {
   let submit = useSubmit();
@@ -450,7 +467,9 @@ Use the [Controller](https://react-hook-form.com/docs/usecontroller/controller) 
 
 ```tsx
 import {useForm, Controller} from 'react-hook-form'
-import {Form, TextField, Button} from '@react-spectrum/s2';
+import {Form} from '@react-spectrum/s2/Form';
+import {TextField} from '@react-spectrum/s2/TextField';
+import {Button} from '@react-spectrum/s2/Button';
 
 function App() {
   let {handleSubmit, control} = useForm({

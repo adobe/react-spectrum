@@ -15,7 +15,7 @@ import Paperairplane_M from 'illustration:./S2_lin_paperairplane_96.svg';
 import Paperairplane_S from 'illustration:./S2_lin_paperairplane_48.svg';
 import {ReactNode} from 'react';
 import {IconProps, IllustrationContext} from '../../src/Icon';
-import {useContextProps} from 'react-aria-components/utils';
+import {useContextProps} from 'react-aria-components/slots';
 
 export default function Paperairplane(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);

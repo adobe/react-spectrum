@@ -11,11 +11,8 @@
  */
 import {DropTarget} from '@react-types/shared';
 import {GridNode} from 'react-stately/private/grid/GridCollection';
-import {LayoutInfo} from 'react-stately/private/virtualizer/LayoutInfo';
-import {LayoutNode} from 'react-stately/private/layout/ListLayout';
-import {Rect} from 'react-stately/private/virtualizer/Rect';
+import {LayoutInfo, LayoutNode, Rect, TableLayout} from 'react-stately/useVirtualizerState';
 import {TableCollection} from 'react-stately/private/table/TableCollection';
-import {TableLayout} from 'react-stately/private/layout/TableLayout';
 
 export class TableViewLayout<T> extends TableLayout<T> {
   private isLoading: boolean = false;
@@ -44,7 +41,12 @@ export class TableViewLayout<T> extends TableLayout<T> {
 
     if (this.isLoading) {
       // Add some margin around the loader to ensure that scrollbars don't flicker in and out.
-      let rect = new Rect(40, children.length === 0 ? 40 : layoutInfo.rect.maxY, (width || this.virtualizer!.visibleRect.width) - 80, children.length === 0 ? this.virtualizer!.visibleRect.height - 80 : 60);
+      let rect = new Rect(
+        40,
+        children.length === 0 ? 40 : layoutInfo.rect.maxY,
+        (width || this.virtualizer!.visibleRect.width) - 80,
+        children.length === 0 ? this.virtualizer!.visibleRect.height - 80 : 60
+      );
       let loader = new LayoutInfo('loader', 'loader', rect);
       loader.parentKey = layoutInfo.key;
       loader.isSticky = children.length === 0;
@@ -57,7 +59,12 @@ export class TableViewLayout<T> extends TableLayout<T> {
       layoutInfo.rect.height = loader.rect.maxY;
       width = Math.max(width, rect.width);
     } else if (children.length === 0) {
-      let rect = new Rect(40, 40, this.virtualizer!.visibleRect.width - 80, this.virtualizer!.visibleRect.height - 80);
+      let rect = new Rect(
+        40,
+        40,
+        this.virtualizer!.visibleRect.width - 80,
+        this.virtualizer!.visibleRect.height - 80
+      );
       let empty = new LayoutInfo('empty', 'empty', rect);
       empty.parentKey = layoutInfo.key;
       empty.isSticky = true;
@@ -96,9 +103,15 @@ export class TableViewLayout<T> extends TableLayout<T> {
     return (node.props?.isDragButtonCell || node.props?.isSelectionCell) ?? false;
   }
 
-  getDropTargetFromPoint(x: number, y: number, isValidDropTarget: (target: DropTarget) => boolean): DropTarget | null {
+  getDropTargetFromPoint(
+    x: number,
+    y: number,
+    isValidDropTarget: (target: DropTarget) => boolean
+  ): DropTarget | null {
     // Offset for height of header row
-    y -= this.getVisibleLayoutInfos(new Rect(x, y, 1, 1)).find(info => info.type === 'headerrow')?.rect.height ?? 0;
+    y -=
+      this.getVisibleLayoutInfos(new Rect(x, y, 1, 1)).find(info => info.type === 'headerrow')?.rect
+        .height ?? 0;
     return super.getDropTargetFromPoint(x, y, isValidDropTarget);
   }
 }

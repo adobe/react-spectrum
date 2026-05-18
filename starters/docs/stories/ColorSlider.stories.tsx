@@ -1,5 +1,4 @@
 import {ColorSlider} from '../src/ColorSlider';
-
 import type {Meta, StoryFn} from '@storybook/react';
 
 const meta: Meta<typeof ColorSlider> = {
@@ -13,7 +12,7 @@ const meta: Meta<typeof ColorSlider> = {
 export default meta;
 type Story = StoryFn<typeof ColorSlider>;
 
-export const Example: Story = (args) => <ColorSlider {...args} style={{width: 200}} />;
+export const Example: Story = args => <ColorSlider {...args} style={{width: 200}} />;
 
 Example.args = {
   label: 'Red Opacity',

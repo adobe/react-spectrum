@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-export {useTree} from 'react-aria/private/tree/useTree';
+export {useTree} from 'react-aria/useTree';
 
-export {useTreeItem} from 'react-aria/private/tree/useTreeItem';
-export type {AriaTreeOptions, AriaTreeProps, TreeAria, TreeProps} from 'react-aria/private/tree/useTree';
-export type {AriaTreeItemOptions, TreeItemAria} from 'react-aria/private/tree/useTreeItem';
+export {useTreeItem} from 'react-aria/useTree';
+export type {AriaTreeOptions, AriaTreeProps, TreeAria, TreeProps} from 'react-aria/useTree';
+export type {AriaTreeItemOptions, TreeItemAria} from 'react-aria/useTree';

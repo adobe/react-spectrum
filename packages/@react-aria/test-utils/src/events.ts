@@ -10,8 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act} from './act';
-import {fireEvent} from '@testing-library/dom';
+import {act, fireEvent} from '@testing-library/react';
 import {UserOpts} from './types';
 
 export const DEFAULT_LONG_PRESS_TIME = 500;
@@ -49,12 +48,19 @@ export function getMetaKey(): 'MetaLeft' | 'ControlLeft' {
 
 /**
  * Simulates a "long press" event on a element.
+ *
  * @param opts - Options for the long press.
  * @param opts.element - Element to long press.
- * @param opts.advanceTimer - Function that when called advances the timers in your test suite by a specific amount of time(ms).
- * @param opts.pointeropts - Options to pass to the simulated event. Defaults to mouse. See https://testing-library.com/docs/dom-testing-library/api-events/#fireevent for more info.
+ * @param opts.advanceTimer - Function that when called advances the timers in your test suite by a
+ *   specific amount of time(ms).
+ * @param opts.pointeropts - Options to pass to the simulated event. Defaults to mouse. See
+ *   https://testing-library.com/docs/dom-testing-library/api-events/#fireevent for more info.
  */
-export async function triggerLongPress(opts: {element: HTMLElement, advanceTimer: (time: number) => unknown | Promise<unknown>, pointerOpts?: Record<string, any>}): Promise<void> {
+export async function triggerLongPress(opts: {
+  element: HTMLElement;
+  advanceTimer: (time: number) => unknown | Promise<unknown>;
+  pointerOpts?: Record<string, any>;
+}): Promise<void> {
   // TODO: note that this only works if the code from installPointerEvent is called somewhere in the test BEFORE the
   // render. Perhaps we should rely on the user setting that up since I'm not sure there is a great way to set that up here in the
   // util before first render. Will need to document it well
@@ -64,7 +70,15 @@ export async function triggerLongPress(opts: {element: HTMLElement, advanceTimer
   let shouldFocus = true;
   if (shouldFireCompatibilityEvents) {
     if (pointerType === 'touch') {
-      shouldFocus = shouldFireCompatibilityEvents = fireEvent.touchStart(element, {targetTouches: [{identifier: pointerOpts.pointerId, clientX: pointerOpts.clientX, clientY: pointerOpts.clientY}]});
+      shouldFocus = shouldFireCompatibilityEvents = fireEvent.touchStart(element, {
+        targetTouches: [
+          {
+            identifier: pointerOpts.pointerId,
+            clientX: pointerOpts.clientX,
+            clientY: pointerOpts.clientY
+          }
+        ]
+      });
     } else if (pointerType === 'mouse') {
       shouldFocus = fireEvent.mouseDown(element, pointerOpts);
       if (shouldFocus) {
@@ -76,7 +90,15 @@ export async function triggerLongPress(opts: {element: HTMLElement, advanceTimer
   fireEvent.pointerUp(element, {pointerType, ...pointerOpts});
   if (shouldFireCompatibilityEvents) {
     if (pointerType === 'touch') {
-      shouldFocus = fireEvent.touchEnd(element, {targetTouches: [{identifier: pointerOpts.pointerId, clientX: pointerOpts.clientX, clientY: pointerOpts.clientY}]});
+      shouldFocus = fireEvent.touchEnd(element, {
+        targetTouches: [
+          {
+            identifier: pointerOpts.pointerId,
+            clientX: pointerOpts.clientX,
+            clientY: pointerOpts.clientY
+          }
+        ]
+      });
       shouldFocus = fireEvent.mouseDown(element, pointerOpts);
       if (shouldFocus) {
         act(() => element.focus());
@@ -90,10 +112,18 @@ export async function triggerLongPress(opts: {element: HTMLElement, advanceTimer
 }
 
 // Docs cannot handle the types that userEvent actually declares, so hopefully this sub set is okay
-export async function pressElement(user: {click: (element: Element) => Promise<void>, keyboard: (keys: string) => Promise<void>, pointer: (opts: {target: Element, keys: string, coords?: any}) => Promise<void>}, element: HTMLElement, interactionType: UserOpts['interactionType']): Promise<void> {
+export async function pressElement(
+  user: {
+    click: (element: Element) => Promise<void>;
+    keyboard: (keys: string) => Promise<void>;
+    pointer: (opts: {target: Element; keys: string; coords?: any}) => Promise<void>;
+  },
+  element: HTMLElement,
+  interactionType: UserOpts['interactionType']
+): Promise<void> {
   if (interactionType === 'mouse') {
     // Add coords with pressure so this isn't detected as a virtual click
-    await user.pointer({target: element, keys: '[MouseLeft]', coords: {pressure: .5}});
+    await user.pointer({target: element, keys: '[MouseLeft]', coords: {pressure: 0.5}});
   } else if (interactionType === 'keyboard') {
     // TODO: For the keyboard flow, I wonder if it would be reasonable to just do fireEvent directly on the obtained row node or if we should
     // stick to simulting an actual user's keyboard operations as closely as possible

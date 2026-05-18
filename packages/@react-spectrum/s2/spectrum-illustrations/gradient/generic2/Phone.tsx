@@ -15,7 +15,7 @@ import Phone_M from 'illustration:./S2_fill_phone_generic2_96.svg';
 import Phone_S from 'illustration:./S2_fill_phone_generic2_48.svg';
 import {ReactNode} from 'react';
 import {IconProps, IllustrationContext} from '../../../src/Icon';
-import {useContextProps} from 'react-aria-components/utils';
+import {useContextProps} from 'react-aria-components/slots';
 
 export default function Phone(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);

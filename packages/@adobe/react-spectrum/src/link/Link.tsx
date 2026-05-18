@@ -16,7 +16,7 @@ import {classNames} from '../utils/classNames';
 import {FocusRing} from 'react-aria/FocusRing';
 import {getWrappedElement} from '../utils/getWrappedElement';
 import {mergeProps} from 'react-aria/mergeProps';
-import {mergeRefs} from 'react-aria/private/utils/mergeRefs';
+import {mergeRefs} from 'react-aria/mergeRefs';
 import React, {ForwardedRef, JSX, MutableRefObject, ReactNode, useRef} from 'react';
 import {StyleProps} from '@react-types/shared';
 import styles from '@adobe/spectrum-css-temp/components/link/vars.css';
@@ -27,14 +27,15 @@ import {useStyleProps} from '../utils/styleProps';
 
 export interface SpectrumLinkProps extends Omit<AriaLinkProps, 'onClick'>, StyleProps {
   /** The content to display in the link. */
-  children: ReactNode,
+  children: ReactNode;
   /**
    * The [visual style](https://spectrum.adobe.com/page/link/#Options) of the link.
+   *
    * @default 'primary'
    */
-  variant?: 'primary' | 'secondary' | 'overBackground',
+  variant?: 'primary' | 'secondary' | 'overBackground';
   /** Whether the link should be displayed with a quiet style. */
-  isQuiet?: boolean
+  isQuiet?: boolean;
 }
 
 let isOldReact = parseInt(React.version, 10) <= 18;
@@ -56,10 +57,13 @@ export function Link(props: SpectrumLinkProps): JSX.Element {
   let {hoverProps, isHovered} = useHover({});
 
   let ref = useRef(null);
-  let {linkProps} = useLink({
-    ...props,
-    elementType: !href && typeof children === 'string' ? 'span' : 'a'
-  }, ref);
+  let {linkProps} = useLink(
+    {
+      ...props,
+      elementType: !href && typeof children === 'string' ? 'span' : 'a'
+    },
+    ref
+  );
 
   let domProps = {
     ...styleProps,
@@ -98,10 +102,5 @@ export function Link(props: SpectrumLinkProps): JSX.Element {
     });
   }
 
-
-  return (
-    <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
-      {link}
-    </FocusRing>
-  );
+  return <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>{link}</FocusRing>;
 }

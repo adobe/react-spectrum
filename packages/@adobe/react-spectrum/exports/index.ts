@@ -116,8 +116,13 @@ export {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatte
 export {useNumberFormatter} from 'react-aria/useNumberFormatter';
 export {SSRProvider} from 'react-aria/SSRProvider';
 export {useDragAndDrop} from '../src/dnd/useDragAndDrop';
-export {DIRECTORY_DRAG_TYPE, isDirectoryDropItem, isFileDropItem, isTextDropItem} from 'react-aria/useDrop';
-export {Collection} from 'react-aria/private/collections/CollectionBuilder';
+export {
+  DIRECTORY_DRAG_TYPE,
+  isDirectoryDropItem,
+  isFileDropItem,
+  isTextDropItem
+} from 'react-aria/useDrop';
+export {Collection} from 'react-aria/Collection';
 export type {SpectrumActionBarContainerProps} from '../src/actionbar/ActionBarContainer';
 export type {SpectrumActionBarProps} from '../src/actionbar/ActionBar';
 export type {SpectrumActionGroupProps} from '../src/actiongroup/ActionGroup';
@@ -148,7 +153,7 @@ export type {DialogContainerValue} from '../src/dialog/useDialogContainer';
 export type {SpectrumAlertDialogProps} from '../src/dialog/AlertDialog';
 export type {SpectrumDialogContainerProps} from '../src/dialog/DialogContainer';
 export type {SpectrumDialogProps} from '../src/dialog/Dialog';
-export type {SpectrumDialogTriggerProps} from '../src/dialog/DialogTrigger';
+export type {SpectrumDialogTriggerProps, SpectrumDialogClose} from '../src/dialog/DialogTrigger';
 export type {SpectrumDateFieldProps} from '../src/datepicker/DateField';
 export type {SpectrumDatePickerProps} from '../src/datepicker/DatePicker';
 export type {SpectrumDateRangePickerProps} from '../src/datepicker/DateRangePicker';
@@ -179,7 +184,13 @@ export type {SpectrumNumberFieldProps} from '../src/numberfield/NumberField';
 export type {SpectrumPickerProps} from '../src/picker/Picker';
 export type {SpectrumProgressBarProps} from '../src/progress/ProgressBarBase';
 export type {SpectrumProgressCircleProps} from '../src/progress/ProgressCircle';
-export type {ProviderContext, ProviderProps, ColorScheme, Scale, Theme} from '../src/provider/types';
+export type {
+  ProviderContext,
+  ProviderProps,
+  ColorScheme,
+  Scale,
+  Theme
+} from '../src/provider/types';
 export type {SpectrumRadioGroupProps} from '../src/radio/RadioGroup';
 export type {SpectrumRadioProps} from '../src/radio/Radio';
 export type {SpectrumRangeSliderProps} from '../src/slider/RangeSlider';
@@ -192,18 +203,28 @@ export type {KeyboardProps} from '../src/text/Keyboard';
 export type {TextProps} from '../src/text/Text';
 export type {SpectrumTableProps} from '../src/table/TableView';
 export type {SpectrumColumnProps} from '../src/table/types';
-export type {TableHeaderProps} from 'react-stately/TableHeader';
-export type {TableBodyProps} from 'react-stately/TableBody';
-export type {RowProps} from 'react-stately/Row';
-export type {CellProps} from 'react-stately/Cell';
-export type {SpectrumTabListProps, SpectrumTabPanelsProps, SpectrumTabsProps} from '../src/tabs/Tabs';
+export type {
+  TableHeaderProps,
+  TableBodyProps,
+  RowProps,
+  CellProps
+} from 'react-stately/useTableState';
+export type {
+  SpectrumTabListProps,
+  SpectrumTabPanelsProps,
+  SpectrumTabsProps
+} from '../src/tabs/Tabs';
 export type {SpectrumTagGroupProps} from '../src/tag/TagGroup';
-export type {SpectrumTextFieldProps} from '../src/textfield/TextField';
+export type {SpectrumTextFieldProps, TextFieldRef} from '../src/textfield/TextField';
 export type {SpectrumTextAreaProps} from '../src/textfield/TextArea';
 export type {SpectrumToastContainerProps, SpectrumToastOptions} from '../src/toast/ToastContainer';
 export type {SpectrumTooltipProps} from '../src/tooltip/Tooltip';
 export type {SpectrumTooltipTriggerProps} from '../src/tooltip/TooltipTrigger';
-export type {SpectrumTreeViewProps, SpectrumTreeViewItemProps, SpectrumTreeViewItemContentProps} from '../src/tree/TreeView';
+export type {
+  SpectrumTreeViewProps,
+  SpectrumTreeViewItemProps,
+  SpectrumTreeViewItemContentProps
+} from '../src/tree/TreeView';
 export type {ContentProps} from '../src/view/Content';
 export type {FooterProps} from '../src/view/Footer';
 export type {HeaderProps} from '../src/view/Header';
@@ -221,7 +242,35 @@ export type {TimeValue, MappedTimeValue} from 'react-stately/useTimeFieldState';
 export type {Filter} from 'react-aria/useFilter';
 export type {Locale} from 'react-aria/I18nProvider';
 export type {SSRProviderProps} from 'react-aria/SSRProvider';
-export type {DirectoryDropItem, DraggableCollectionEndEvent, DraggableCollectionMoveEvent, DraggableCollectionStartEvent, DragPreviewRenderer, DragTypes, DropItem, DropOperation, DroppableCollectionDropEvent, DroppableCollectionEnterEvent, DroppableCollectionExitEvent, DroppableCollectionInsertDropEvent, DroppableCollectionMoveEvent, DroppableCollectionOnItemDropEvent, DroppableCollectionReorderEvent, DroppableCollectionRootDropEvent, DropPosition, DropTarget, FileDropItem, ItemDropTarget, RootDropTarget, TextDropItem} from '@react-types/shared';
+export type {
+  DirectoryDropItem,
+  DraggableCollectionEndEvent,
+  DraggableCollectionMoveEvent,
+  DraggableCollectionStartEvent,
+  DragPreviewRenderer,
+  DragTypes,
+  DropItem,
+  DropOperation,
+  DroppableCollectionDropEvent,
+  DroppableCollectionEnterEvent,
+  DroppableCollectionExitEvent,
+  DroppableCollectionInsertDropEvent,
+  DroppableCollectionMoveEvent,
+  DroppableCollectionOnItemDropEvent,
+  DroppableCollectionReorderEvent,
+  DroppableCollectionRootDropEvent,
+  DropPosition,
+  DropTarget,
+  FileDropItem,
+  ItemDropTarget,
+  RootDropTarget,
+  TextDropItem
+} from '@react-types/shared';
 export type {DragAndDropHooks, DragAndDropOptions} from '../src/dnd/useDragAndDrop';
 export type {Key, Selection, ItemProps, SectionProps, RouterConfig} from '@react-types/shared';
-export type {SpectrumAccordionProps, SpectrumDisclosureProps, SpectrumDisclosurePanelProps, SpectrumDisclosureTitleProps} from '../src/accordion/Accordion';
+export type {
+  SpectrumAccordionProps,
+  SpectrumDisclosureProps,
+  SpectrumDisclosurePanelProps,
+  SpectrumDisclosureTitleProps
+} from '../src/accordion/Accordion';

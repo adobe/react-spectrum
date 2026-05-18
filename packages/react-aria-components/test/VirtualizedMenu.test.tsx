@@ -12,7 +12,7 @@
 
 import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import {Button} from '../src/Button';
-import {ListLayout} from 'react-stately/private/layout/ListLayout';
+import {ListLayout} from 'react-stately/useVirtualizerState';
 import {Menu, MenuItem, MenuTrigger} from '../src/Menu';
 import {Popover} from '../src/Popover';
 import React from 'react';
@@ -31,15 +31,11 @@ let items = Array.from({length: 50}, (_, index) => {
 const VirtualizedExample = () => {
   return (
     <MenuTrigger>
-      <Button aria-label="Actions">
-        Menu ☰
-      </Button>
+      <Button aria-label="Actions">Menu ☰</Button>
       <Popover>
-        <Virtualizer
-          layout={ListLayout}
-          layoutOptions={{rowHeight: 25}}>
+        <Virtualizer layout={ListLayout} layoutOptions={{rowHeight: 25}}>
           <Menu items={items}>
-            {(item) => {
+            {item => {
               return <MenuItem>{item.name}</MenuItem>;
             }}
           </Menu>
@@ -50,7 +46,7 @@ const VirtualizedExample = () => {
 };
 
 // @ts-ignore
-window.getComputedStyle = (el) => el.style;
+window.getComputedStyle = el => el.style;
 
 describe('virtualized menu', () => {
   let user;
@@ -61,7 +57,9 @@ describe('virtualized menu', () => {
   });
 
   afterEach(() => {
-    act(() => {jest.runAllTimers();});
+    act(() => {
+      jest.runAllTimers();
+    });
   });
   it('should support virtualized menu', async () => {
     jest.restoreAllMocks(); // don't mock scrollTop for this test

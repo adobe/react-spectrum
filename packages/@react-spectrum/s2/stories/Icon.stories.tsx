@@ -33,9 +33,7 @@ type Story = StoryObj<typeof NewIcon>;
 export const Example: Story = {};
 
 export const ColorAndSize: Story = {
-  render: (args) => {
-    return (
-      <Alert {...args} styles={iconStyle({color: 'negative', size: 'XL'})} />
-    );
+  render: args => {
+    return <Alert {...args} styles={iconStyle({color: 'negative', size: 'XL'})} />;
   }
 };

@@ -17,18 +17,16 @@ import {useValueEffect} from './useValueEffect';
 
 // copied from SSRProvider.tsx to reduce exports, if needed again, consider sharing
 let canUseDOM = Boolean(
-  typeof window !== 'undefined' &&
-  window.document &&
-  window.document.createElement
+  typeof window !== 'undefined' && window.document && window.document.createElement
 );
 
-export let idsUpdaterMap: Map<string, { current: string | null }[]> = new Map();
+export let idsUpdaterMap: Map<string, {current: string | null}[]> = new Map();
 // This allows us to clean up the idsUpdaterMap when the id is no longer used.
 // Map is a strong reference, so unused ids wouldn't be cleaned up otherwise.
 // This can happen in suspended components where mount/unmount is not called.
 let registry;
 if (typeof FinalizationRegistry !== 'undefined') {
-  registry = new FinalizationRegistry<string>((heldValue) => {
+  registry = new FinalizationRegistry<string>(heldValue => {
     idsUpdaterMap.delete(heldValue);
   });
 }
@@ -36,6 +34,7 @@ let registeredIds = new WeakMap<object, string>();
 
 /**
  * If a default is not provided, generate an id.
+ *
  * @param defaultId - Default component id.
  */
 export function useId(defaultId?: string): string {
@@ -80,10 +79,14 @@ export function useId(defaultId?: string): string {
   // eslint-disable-next-line
   useEffect(() => {
     let newId = nextId.current;
-    if (newId) { setValue(newId); }
+    if (newId) {
+      setValue(newId);
+    }
 
     return () => {
-      if (newId) { nextId.current = null; }
+      if (newId) {
+        nextId.current = null;
+      }
     };
   });
 
@@ -107,7 +110,7 @@ export function mergeIds(idA: string, idB: string): string {
 
   let setIdsB = idsUpdaterMap.get(idB);
   if (setIdsB) {
-    setIdsB.forEach((ref) => (ref.current = idA));
+    setIdsB.forEach(ref => (ref.current = idA));
     return idA;
   }
 
@@ -117,13 +120,14 @@ export function mergeIds(idA: string, idB: string): string {
 /**
  * Used to generate an id, and after render, check if that id is rendered so we know
  * if we can use it in places such as labelledby.
+ *
  * @param depArray - When to recalculate if the id is in the DOM.
  */
 export function useSlotId(depArray: ReadonlyArray<any> = []): string {
   let id = useId();
   let [resolvedId, setResolvedId] = useValueEffect(id);
   let updateId = useCallback(() => {
-    setResolvedId(function *() {
+    setResolvedId(function* () {
       yield id;
 
       yield document.getElementById(id) ? id : undefined;

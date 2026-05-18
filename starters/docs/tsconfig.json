@@ -1,17 +1,14 @@
 {
   "compilerOptions": {
     "target": "ES2020",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "strict": true,
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
+    "verbatimModuleSyntax": true,
     "module": "esnext",
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
@@ -20,8 +17,5 @@
     "jsx": "react-jsx",
     "skipLibCheck": true
   },
-  "include": [
-    "src",
-    "stories"
-  ]
+  "include": ["src", "stories"]
 }

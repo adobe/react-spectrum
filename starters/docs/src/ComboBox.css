@@ -1,5 +1,5 @@
-@import "./theme.css";
-@import "./TextField.css";
+@import './theme.css';
+@import './TextField.css';
 
 .react-aria-ComboBox {
   color: var(--text-color);
@@ -24,7 +24,7 @@
   }
 }
 
-.combobox-popover[data-trigger=ComboBox] {
+.combobox-popover[data-trigger='ComboBox'] {
   width: var(--trigger-width);
   padding: 0;
 }

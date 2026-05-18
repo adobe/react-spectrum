@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaToolbarProps, useToolbar} from 'react-aria/private/toolbar/useToolbar';
+import {AriaToolbarProps, useToolbar} from 'react-aria/useToolbar';
 
 import {
   ClassNameOrFunction,
@@ -21,7 +21,7 @@ import {
   useContextProps,
   useRenderProps
 } from './utils';
-import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {forwardRefType, GlobalDOMAttributes, Orientation} from '@react-types/shared';
 import {mergeProps} from 'react-aria/mergeProps';
 import React, {createContext, ForwardedRef, forwardRef} from 'react';
@@ -29,26 +29,37 @@ import React, {createContext, ForwardedRef, forwardRef} from 'react';
 export interface ToolbarRenderProps {
   /**
    * The current orientation of the toolbar.
+   *
    * @selector [data-orientation]
    */
-  orientation: Orientation
+  orientation: Orientation;
 }
 
-export interface ToolbarProps extends AriaToolbarProps, SlotProps, RenderProps<ToolbarRenderProps>, GlobalDOMAttributes<HTMLDivElement> {
+export interface ToolbarProps
+  extends
+    AriaToolbarProps,
+    SlotProps,
+    RenderProps<ToolbarRenderProps>,
+    GlobalDOMAttributes<HTMLDivElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-Toolbar'
    */
-  className?: ClassNameOrFunction<ToolbarRenderProps>
+  className?: ClassNameOrFunction<ToolbarRenderProps>;
 }
 
 export const ToolbarContext = createContext<ContextValue<ToolbarProps, HTMLDivElement>>({});
 
 /**
- * A toolbar is a container for a set of interactive controls, such as buttons, dropdown menus, or checkboxes,
- * with arrow key navigation.
+ * A toolbar is a container for a set of interactive controls, such as buttons, dropdown menus, or
+ * checkboxes, with arrow key navigation.
  */
-export const Toolbar = /*#__PURE__*/ (forwardRef as forwardRefType)(function Toolbar(props: ToolbarProps, ref: ForwardedRef<HTMLDivElement>) {
+export const Toolbar = /*#__PURE__*/ (forwardRef as forwardRefType)(function Toolbar(
+  props: ToolbarProps,
+  ref: ForwardedRef<HTMLDivElement>
+) {
   [props, ref] = useContextProps(props, ref, ToolbarContext);
   let {toolbarProps} = useToolbar(props, ref);
   let renderProps = useRenderProps({

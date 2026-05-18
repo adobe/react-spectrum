@@ -4,34 +4,33 @@ import * as babel from '@babel/parser';
 import {fileURLToPath} from 'url';
 import fs from 'fs';
 import glob from 'fast-glob';
+import {mdxToMarkdown} from 'mdast-util-mdx';
 import path from 'path';
 import {Project} from 'ts-morph';
 import remarkMdx from 'remark-mdx';
 import remarkParse from 'remark-parse';
-import remarkStringify from 'remark-stringify';
+import {toMarkdown} from 'mdast-util-to-markdown';
 import {unified} from 'unified';
 import {visit} from 'unist-util-visit';
 
 const BASE_URL = {
   dev: {
     'react-aria': 'http://localhost:1234',
-    's2': 'http://localhost:4321'
+    s2: 'http://localhost:4321'
   },
   stage: {
     'react-aria': 'https://d5iwopk28bdhl.cloudfront.net',
-    's2': 'https://d1pzu54gtk2aed.cloudfront.net'
+    s2: 'https://d1pzu54gtk2aed.cloudfront.net'
   },
   prod: {
     'react-aria': 'https://react-aria.adobe.com',
-    's2': 'https://react-spectrum.adobe.com'
+    s2: 'https://react-spectrum.adobe.com'
   }
 };
 
 function getBaseUrl(library) {
   let env = process.env.DOCS_ENV;
-  let base = env
-    ? BASE_URL[env][library]
-    : `http://localhost:1234/${library}`;
+  let base = env ? BASE_URL[env][library] : `http://localhost:1234/${library}`;
   let publicUrl = process.env.PUBLIC_URL;
   if (publicUrl) {
     base += publicUrl.replace(/\/$/, '');
@@ -49,8 +48,22 @@ const COMPONENT_SRC_ROOTS = [S2_SRC_ROOT, RAC_SRC_ROOT, INTL_SRC_ROOT];
 const S2_DOCS_PAGES_ROOT = path.join(REPO_ROOT, 'packages/dev/s2-docs/pages');
 const DIST_ROOT = path.join(REPO_ROOT, 'packages/dev/s2-docs/dist');
 const LICENSE_COMMENT_REGEX = /^\s*\{\/\*[\s\S]*?Copyright\s+20\d{2}\s+Adobe[\s\S]*?\*\/\}\s*/;
+const ROUTERS_MDX_PATH = path.join(REPO_ROOT, 'packages/dev/s2-docs/src/routers-s2.mdx');
+const ROUTERS_PLACEHOLDER_REGEX = /<Routers\s+components=\{props\.components\}\s*\/>/g;
+let routersMdxCache = null;
+function getRoutersMdxContent() {
+  if (routersMdxCache == null) {
+    let contents = fs.readFileSync(ROUTERS_MDX_PATH, 'utf8').replace(LICENSE_COMMENT_REGEX, '');
+    contents = contents.replace(/^\s*(?:import|export)\s[^\n]*(?:\n|$)/gm, '');
+    routersMdxCache = contents.trim();
+  }
+  return routersMdxCache;
+}
 const S2_ICON_ROOT = path.join(REPO_ROOT, 'packages/@react-spectrum/s2/s2wf-icons');
-const S2_ILLUSTRATION_ROOT = path.join(REPO_ROOT, 'packages/@react-spectrum/s2/spectrum-illustrations');
+const S2_ILLUSTRATION_ROOT = path.join(
+  REPO_ROOT,
+  'packages/@react-spectrum/s2/spectrum-illustrations'
+);
 
 let iconNamesCache = null;
 let illustrationNamesCache = null;
@@ -70,6 +83,17 @@ const functionExamplesCache = new Map();
 let tsFileIndex = null;
 let styleMacroDataCache = null;
 const styleMacroTableCache = new Map();
+const styleMacroValueSetsInjected = new WeakSet();
+// Values to render without surrounding string quotes
+const BARE_VALUE_TOKENS = new Set([
+  'number',
+  'string',
+  'string[]',
+  'boolean',
+  'LinearGradient',
+  'true',
+  'false'
+]);
 
 function getTsFileIndex() {
   if (tsFileIndex) {
@@ -105,7 +129,13 @@ function getTsFileIndex() {
       const functionMatches = content.matchAll(/(?:export\s+)?function\s+(\w+)/g);
       const constMatches = content.matchAll(/(?:export\s+)?const\s+(\w+)\s*[=:]/g);
 
-      for (const match of [...interfaceMatches, ...typeMatches, ...classMatches, ...functionMatches, ...constMatches]) {
+      for (const match of [
+        ...interfaceMatches,
+        ...typeMatches,
+        ...classMatches,
+        ...functionMatches,
+        ...constMatches
+      ]) {
         const name = match[1];
         if (!tsFileIndex.has(name)) {
           tsFileIndex.set(name, []);
@@ -145,8 +175,8 @@ function cleanTypeText(t) {
  * defined in scope as ['green', 'blue'].
  *
  * @param {object} node - A Babel AST node (StringLiteral, ArrayExpression, etc.)
- * @param {Map} scope - A Map of variable names to their evaluated values
- * @returns {*} The evaluated value (string, number, array, object, Set, etc.) or undefined
+ * @param {Map} scope - A Map of variable names to their evaluated values.
+ * @returns {any} The evaluated value (string, number, array, object, Set, etc.) or undefined
  */
 function evaluateStylePropertiesNode(node, scope) {
   if (!node) {
@@ -289,10 +319,10 @@ function evaluateStylePropertiesNode(node, scope) {
  * and evaluates all variable declarations to extract style property metadata.
  *
  * The styleProperties.ts file contains definitions like:
- *   const properties = {
- *     spacing: { margin: ['0', '4', '8', '12'], padding: [...] },
- *     layout: { display: ['flex', 'grid', 'block'] }
- *   }
+ * const properties = {
+ * spacing: { margin: ['0', '4', '8', '12'], padding: [...] },
+ * layout: { display: ['flex', 'grid', 'block'] }
+ * }
  *
  * This function evaluates these declarations and returns a structured object with:
  * - properties: categorized style properties and their allowed values
@@ -300,7 +330,7 @@ function evaluateStylePropertiesNode(node, scope) {
  * - mdnTypeLinks/mdnPropertyLinks: documentation URLs
  * - various Sets for property categorization (spacing, sizing, etc.)
  *
- * @returns {object|null} Parsed style macro data or null if file doesn't exist/parse fails
+ * @returns {object | null} Parsed style macro data or null if file doesn't exist/parse fails
  */
 function loadStyleMacroData() {
   if (styleMacroDataCache !== null) {
@@ -327,7 +357,7 @@ function loadStyleMacroData() {
 
     // Helper to evaluate and register a variable declaration
     // Example: const colors = ['red', 'blue'] => scope.set('colors', ['red', 'blue'])
-    const registerDeclaration = (decl) => {
+    const registerDeclaration = decl => {
       if (!decl || decl.type !== 'VariableDeclarator') {
         return;
       }
@@ -346,7 +376,10 @@ function loadStyleMacroData() {
         node.declarations.forEach(registerDeclaration);
         continue;
       }
-      if (node.type === 'ExportNamedDeclaration' && node.declaration?.type === 'VariableDeclaration') {
+      if (
+        node.type === 'ExportNamedDeclaration' &&
+        node.declaration?.type === 'VariableDeclaration'
+      ) {
         node.declaration.declarations.forEach(registerDeclaration);
       }
     }
@@ -362,7 +395,9 @@ function loadStyleMacroData() {
       negativeSpacingProperties: scope.get('negativeSpacingProperties'),
       sizingProperties: scope.get('sizingProperties'),
       percentageProperties: scope.get('percentageProperties'),
-      spacingTypeValues: scope.get('spacingTypeValues') || {}
+      spacingTypeValues: scope.get('spacingTypeValues') || {},
+      propertyValueAlias: scope.get('propertyValueAlias') || {},
+      sharedValueSets: scope.get('sharedValueSets') || {}
     };
   } catch {
     styleMacroDataCache = null;
@@ -375,24 +410,25 @@ function loadStyleMacroData() {
  * Extracts property definitions for a specific category from the loaded style macro data.
  *
  * Example: For category 'spacing', this returns an object like:
- * {
- *   margin: {
- *     values: ['0', '4', '8', '12', '16'],
- *     additionalTypes: ['baseSpacing', 'number'],
- *     links: { '0': {href: 'https://...'} },
- *     description: 'Sets the margin on all sides'
- *   },
- *   marginX: {
- *     values: [...],
- *     additionalTypes: [...],
- *     links: {...},
- *     mapping: ['marginLeft', 'marginRight'],  // for shorthands
- *     description: 'Sets horizontal margins'
- *   }
- * }
+ *
+ *     {
+ *       margin: {
+ *         values: ['0', '4', '8', '12', '16'],
+ *         additionalTypes: ['baseSpacing', 'number'],
+ *         links: { '0': {href: 'https://...'} },
+ *         description: 'Sets the margin on all sides'
+ *       },
+ *       marginX: {
+ *         values: [...],
+ *         additionalTypes: [...],
+ *         links: {...},
+ *         mapping: ['marginLeft', 'marginRight'],  // for shorthands
+ *         description: 'Sets horizontal margins'
+ *       }
+ *     }
  *
  * @param {string} category - The property category (e.g., 'spacing', 'layout', 'colors')
- * @returns {object|null} Property definitions or null if category doesn't exist
+ * @returns {object | null} Property definitions or null if category doesn't exist
  */
 function getStyleMacroPropertyDefinitions(category) {
   const data = loadStyleMacroData();
@@ -402,7 +438,7 @@ function getStyleMacroPropertyDefinitions(category) {
 
   // Determine what additional type values a property accepts based on its classification
   // Example: spacing properties accept baseSpacing values like 0, 4, 8, 12, 16, etc.
-  const getAdditionalTypes = (propertyName) => {
+  const getAdditionalTypes = propertyName => {
     const types = [];
     if (data.baseSpacingProperties?.has?.(propertyName)) {
       types.push('baseSpacing');
@@ -420,11 +456,24 @@ function getStyleMacroPropertyDefinitions(category) {
   };
 
   const result = {};
+  const valueAliases = data.propertyValueAlias || {};
 
   // Process regular properties (e.g., margin, padding, display)
   for (const [name, rawValues] of Object.entries(data.properties[category])) {
     let values = Array.isArray(rawValues) ? [...rawValues] : [];
     const links = {};
+
+    // If this property's values are a known shared set, collapse them to a
+    // single alias and skip the rest of the per-value link processing.
+    if (valueAliases[name]) {
+      result[name] = {
+        values: [],
+        additionalTypes: [valueAliases[name], ...getAdditionalTypes(name)],
+        links: {},
+        description: data.propertyDescriptions?.[name]
+      };
+      continue;
+    }
 
     // Add MDN documentation links for specific property values
     if (data.mdnPropertyLinks?.[name]) {
@@ -441,10 +490,13 @@ function getStyleMacroPropertyDefinitions(category) {
     // Add MDN type documentation links for generic type values (e.g., 'length', 'color')
     for (const value of values) {
       if (links[value]) {
-        continue;  // Already has a link
+        continue; // Already has a link
       }
       // Skip 'number' for sizing properties and 'pill' for non-dimension categories
-      if ((value === 'number' && data.sizingProperties?.has?.(name)) || (value === 'pill' && category !== 'dimensions')) {
+      if (
+        (value === 'number' && data.sizingProperties?.has?.(name)) ||
+        (value === 'pill' && category !== 'dimensions')
+      ) {
         continue;
       }
       if (data.mdnTypeLinks?.[value]) {
@@ -483,7 +535,7 @@ function getStyleMacroPropertyDefinitions(category) {
       values,
       additionalTypes: getAdditionalTypes(shorthandDef.mapping?.[0]),
       links,
-      mapping: shorthandDef.mapping,  // Which full properties this shorthand controls
+      mapping: shorthandDef.mapping, // Which full properties this shorthand controls
       description: data.propertyDescriptions?.[`${shorthandName}Shorthand`]
     };
   }
@@ -494,22 +546,28 @@ function getStyleMacroPropertyDefinitions(category) {
 /**
  * Generates a markdown table documenting style macro properties and their allowed values.
  *
- * Example output for category 'spacing':
- * | Property | Values |
- * |---------|--------|
- * | margin | `0`, `4`, `8`, `12`, `baseSpacing (0, 4, 8, 12, 16, 20, 24, 28, 32)`, `number`, `lengthPercentage` |
- * | marginX | `0`, `4`, `8`, `baseSpacing (...)`, `number` |
- * | padding | `0`, `4`, `8`, `12`, `baseSpacing (...)` |
+ * Rows with identical value sets are collapsed into a single row listing all matching
+ * property names. Type categories (baseSpacing, negativeSpacing, etc.) are emitted as
+ * aliases and defined once in the Value Sets section at the top of the page.
  *
- * The table includes:
+ * The values column includes:
+ *
  * - Explicit allowed values (e.g., '0', '4', '8')
  * - Type categories with their full value sets (e.g., 'baseSpacing (0, 4, 8, ...)')
  * - Generic types (e.g., 'number', 'lengthPercentage')
  *
- * @param {string} category - Property category to generate table for (e.g., 'spacing', 'layout', 'colors')
+ * Example output for a spacing-like category:
+ *
+ * | Property                                                                                | Values                                                       |
+ * | --------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
+ * | `margin`, `marginTop`, `marginBottom`, `marginStart`, `marginEnd`, `marginX`, `marginY` | `auto`, `baseSpacing`, `negativeSpacing`, `lengthPercentage` |
+ * | `padding`, `paddingTop`, `paddingBottom`, ...                                           | `text-to-control`, ..., `baseSpacing`, `lengthPercentage`    |
+ *
+ * @param {string} category - Property category to generate table for (e.g., 'spacing', 'layout',
+ *   'colors')
  * @param {object} options - Configuration options (e.g., {sort: true})
  * @param {boolean} options.sort - Whether to sort properties alphabetically (default: true)
- * @returns {string|null} Markdown table string or null if no properties found
+ * @returns {string | null} Markdown table string or null if no properties found
  */
 function generateStyleMacroTable(category, {sort = true} = {}) {
   const cacheKey = `${category}:${sort ? 'sorted' : 'original'}`;
@@ -528,17 +586,17 @@ function generateStyleMacroTable(category, {sort = true} = {}) {
     propertyNames.sort((a, b) => a.localeCompare(b));
   }
 
-  const data = loadStyleMacroData();
-
-  // Build a row for each property, combining explicit values and type categories
-  const rows = propertyNames.map((propertyName) => {
+  // Build the token list for a single property, combining explicit values and type aliases.
+  // Type categories like `baseSpacing` are emitted as aliases; their full value sets
+  // are documented once in the Value Sets section at the top of the page.
+  const buildTokens = propertyName => {
     const def = definitions[propertyName] || {};
     const values = Array.isArray(def.values) ? def.values : [];
     const additionalTypes = Array.isArray(def.additionalTypes) ? def.additionalTypes : [];
     const tokens = [];
     const seen = new Set();
 
-    const addToken = (token) => {
+    const addToken = token => {
       if (!token || seen.has(token)) {
         return;
       }
@@ -546,41 +604,52 @@ function generateStyleMacroTable(category, {sort = true} = {}) {
       tokens.push(token);
     };
 
-    const formatValue = (value) => `\`${String(value)}\``;
+    const formatValue = value => {
+      if (typeof value === 'number') {
+        return `\`${value}\``;
+      }
+      const str = String(value);
+      if (BARE_VALUE_TOKENS.has(str) || str.includes('${')) {
+        return `\`${str}\``;
+      }
+      return `\`'${str}'\``;
+    };
 
-    // Add explicit allowed values (e.g., '0', '4', '8', 'flex', 'grid')
-    values.forEach((value) => {
+    values.forEach(value => {
       if (value === undefined || value === null) {
         return;
       }
       addToken(formatValue(value));
     });
 
-    // Add type categories with their full value sets
-    // Example: baseSpacing becomes `baseSpacing (0, 4, 8, 12, 16, 20, 24, 28, 32)`
-    additionalTypes.forEach((typeName) => {
+    additionalTypes.forEach(typeName => {
       if (!typeName) {
         return;
       }
-      if (typeName === 'baseSpacing' && Array.isArray(data?.spacingTypeValues?.baseSpacing)) {
-        const list = data.spacingTypeValues.baseSpacing.map(String).join(', ');
-        addToken(`\`${typeName} (${list})\``);
-        return;
-      }
-      if (typeName === 'negativeSpacing' && Array.isArray(data?.spacingTypeValues?.negativeSpacing)) {
-        const list = data.spacingTypeValues.negativeSpacing.map(String).join(', ');
-        addToken(`\`${typeName} (${list})\``);
-        return;
-      }
-      addToken(formatValue(typeName));
+      addToken(`\`${String(typeName)}\``);
     });
 
-    // Escape pipe characters for markdown table compatibility
-    const valueText = (tokens.length ? tokens.join(', ') : '—').replace(/\|/g, '\\|');
-    return {
-      name: propertyName,
-      values: valueText
-    };
+    return tokens;
+  };
+
+  // Group properties by identical token signatures so shared value sets collapse into one row.
+  // Example: margin/marginTop/marginBottom/... all share the same tokens and merge to one row.
+  const groups = new Map();
+  for (const name of propertyNames) {
+    const tokens = buildTokens(name);
+    const signature = tokens.join('\x1f');
+    let group = groups.get(signature);
+    if (!group) {
+      group = {names: [], tokens};
+      groups.set(signature, group);
+    }
+    group.names.push(name);
+  }
+
+  const rows = [...groups.values()].map(group => {
+    const nameCell = group.names.map(n => `\`${n}\``).join(', ');
+    const valueText = (group.tokens.length ? group.tokens.join(', ') : '—').replace(/\|/g, '\\|');
+    return `| ${nameCell} | ${valueText} |`;
   });
 
   if (!rows.length) {
@@ -588,16 +657,62 @@ function generateStyleMacroTable(category, {sort = true} = {}) {
     return null;
   }
 
-  // Build the markdown table
   const header = '| Property | Values |';
   const separator = '|---------|--------|';
-  const body = rows
-    .map((row) => `| \`${row.name}\` | ${row.values || '—'} |`)
-    .join('\n');
-
-  const table = `${header}\n${separator}\n${body}`;
+  const table = `${header}\n${separator}\n${rows.join('\n')}`;
   styleMacroTableCache.set(cacheKey, table);
   return table;
+}
+
+/**
+ * Generates the "Value sets" markdown section that defines the named aliases
+ * (baseSpacing, negativeSpacing, baseColors) and the generic type names
+ * (lengthPercentage, number, LinearGradient) referenced throughout the property tables.
+ *
+ * Injected once on the page so the tables below can reference these names
+ * by alias instead of repeating their full value lists on every row.
+ *
+ * @returns {string | null} Markdown section string.
+ */
+function generateValueSetsMarkdown() {
+  const data = loadStyleMacroData();
+  if (!data) {
+    return null;
+  }
+
+  const formatSetValue = v => (typeof v === 'number' ? `\`${v}\`` : `\`'${v}'\``);
+  const baseSpacing = Array.isArray(data.spacingTypeValues?.baseSpacing)
+    ? data.spacingTypeValues.baseSpacing.map(formatSetValue).join(', ')
+    : '';
+  const negativeSpacing = Array.isArray(data.spacingTypeValues?.negativeSpacing)
+    ? data.spacingTypeValues.negativeSpacing.map(formatSetValue).join(', ')
+    : '';
+
+  const lines = [
+    '## Value sets',
+    '',
+    'The named sets below are referenced throughout the property tables.',
+    'Aliases like `baseSpacing` stand in for their full value list rather than being repeated on every row.',
+    '',
+    `- **\`baseSpacing\`** — ${baseSpacing}`,
+    `- **\`negativeSpacing\`** — negative counterparts of \`baseSpacing\` (${negativeSpacing})`,
+    '- **`baseColors`** — every Spectrum 2 color token. Includes `transparent`, `black`, `white`; the numeric scales `gray-25`–`gray-1000` and `blue`/`red`/`orange`/`yellow`/`chartreuse`/`celery`/`green`/`seafoam`/`cyan`/`indigo`/`purple`/`fuchsia`/`magenta`/`pink`/`turquoise`/`brown`/`silver`/`cinnamon` at steps `100`–`1600`; the semantic scales `accent-100`–`accent-1600`, `informative-*`, `negative-*`, `notice-*`, `positive-*`; the `transparent-white-*` and `transparent-black-*` scales; overlay colors; and high-contrast-mode system colors (`ButtonFace`, `ButtonText`, `Field`, `Highlight`, `HighlightText`, `GrayText`, `Mark`, `LinkText`, `Background`, `ButtonBorder`).',
+    "- **`lengthPercentage`** — a CSS `<length-percentage>` string, e.g. `'100px'`, `'50%'`, `'1.25rem'`.",
+    '- **`number`** — a unitless numeric value. Meaning is context-dependent: for sizing / inset / margin / padding properties it is a pixel count (scaled via the Spectrum size factor); for `opacity`, `flexGrow`, `flexShrink`, `order`, `zIndex`, `lineClamp`, etc. it is passed through as-is.',
+    "- **`LinearGradient`** — the object produced by the `linearGradient` helper, e.g. `linearGradient('to bottom', ['gray-25', 0], ['gray-200', 100])`. Used by `backgroundImage`."
+  ];
+
+  // Append shared value-set aliases (e.g. positionKeywords) used by more than one property.
+  const sharedSets = data.sharedValueSets || {};
+  for (const [alias, values] of Object.entries(sharedSets)) {
+    if (!Array.isArray(values) || !values.length) {
+      continue;
+    }
+    const formatted = values.map(formatSetValue).join(', ');
+    lines.push(`- **\`${alias}\`** — ${formatted}`);
+  }
+
+  return lines.join('\n');
 }
 
 /**
@@ -628,7 +743,13 @@ function getTypeText(decl, fallbackContext) {
  * Preserves query params and hash fragments.
  */
 function transformRelativeUrl(href) {
-  if (!href || href.startsWith('http://') || href.startsWith('https://') || href.startsWith('mailto:') || href.startsWith('#')) {
+  if (
+    !href ||
+    href.startsWith('http://') ||
+    href.startsWith('https://') ||
+    href.startsWith('mailto:') ||
+    href.startsWith('#')
+  ) {
     return href;
   }
 
@@ -778,7 +899,9 @@ function evaluateNode(node, file) {
     case 'MemberExpression': {
       // Handle member expressions like docs.exports.GregorianCalendar.description
       const object = evaluateNode(node.object, file);
-      const property = node.computed ? evaluateNode(node.property, file) : (node.property.name || node.property.value);
+      const property = node.computed
+        ? evaluateNode(node.property, file)
+        : node.property.name || node.property.value;
       return `${object}.${property}`;
     }
 
@@ -824,7 +947,12 @@ function extractDescriptionFromExpression(node, file) {
   const componentName = obj.property?.name;
 
   // Check if the parent is .exports
-  if (obj.object?.type === 'MemberExpression' && obj.object.property?.name === 'exports' && componentName && file) {
+  if (
+    obj.object?.type === 'MemberExpression' &&
+    obj.object.property?.name === 'exports' &&
+    componentName &&
+    file
+  ) {
     const desc = getComponentDescription(componentName, file);
     return desc;
   }
@@ -937,13 +1065,15 @@ function getRootsForDocsSource(docsSource, file) {
       path.join(resolved, 'index.d.ts')
     ];
 
-    return getExistingRoots(candidates.map(candidate => {
-      if (!fs.existsSync(candidate)) {
-        return null;
-      }
+    return getExistingRoots(
+      candidates.map(candidate => {
+        if (!fs.existsSync(candidate)) {
+          return null;
+        }
 
-      return fs.statSync(candidate).isDirectory() ? candidate : path.dirname(candidate);
-    }));
+        return fs.statSync(candidate).isDirectory() ? candidate : path.dirname(candidate);
+      })
+    );
   }
 
   const packagePath = path.join(REPO_ROOT, 'packages', docsSource);
@@ -1032,7 +1162,8 @@ function resolveComponentPath(componentName, file, docsSource) {
 }
 
 /**
- * Extract the leading JSDoc description comment placed immediately above the export for a component.
+ * Extract the leading JSDoc description comment placed immediately above the export for a
+ * component.
  */
 function getComponentDescription(componentName, file, docsSource) {
   // Check cache first
@@ -1056,7 +1187,12 @@ function getComponentDescription(componentName, file, docsSource) {
 
   // Try to find an exported declaration named exactly like the component.
   const exportedDecl = source.getExportedDeclarations().get(componentName)?.[0];
-  const possibleNodes = [exportedDecl, source.getVariableDeclaration(componentName), source.getFunction(componentName), source.getClass(componentName)];
+  const possibleNodes = [
+    exportedDecl,
+    source.getVariableDeclaration(componentName),
+    source.getFunction(componentName),
+    source.getClass(componentName)
+  ];
 
   let firstNodeDesc = null;
   for (let node of possibleNodes.filter(Boolean)) {
@@ -1119,9 +1255,8 @@ function getJsDocData(node) {
   const tags = docs.flatMap(doc => doc.getTags());
 
   return {
-    description: docs
-      .map(doc => doc.getDescription().replace(/\n+/g, ' ').trim())
-      .find(Boolean) || '',
+    description:
+      docs.map(doc => doc.getDescription().replace(/\n+/g, ' ').trim()).find(Boolean) || '',
     defaultValue: tags.find(tag => tag.getTagName() === 'default')?.getCommentText() || '',
     selector: tags.find(tag => tag.getTagName() === 'selector')?.getCommentText() || '',
     deprecated: tags.some(tag => tag.getTagName() === 'deprecated'),
@@ -1138,6 +1273,7 @@ function shouldOmitSymbol(sym) {
 
 /**
  * Extracts one or more `@example` tag contents from JSDoc comments.
+ *
  * @param {string} text - The text to extract examples from.
  * @returns {string[]} An array of examples.
  */
@@ -1228,7 +1364,11 @@ function getFunctionExamples(functionName, file, docsSource) {
   }
 
   const exportedDecl = source.getExportedDeclarations().get(functionName)?.[0];
-  const possibleNodes = [exportedDecl, source.getVariableDeclaration(functionName), source.getFunction(functionName)];
+  const possibleNodes = [
+    exportedDecl,
+    source.getVariableDeclaration(functionName),
+    source.getFunction(functionName)
+  ];
 
   let firstNodeExamples = [];
   for (let node of possibleNodes.filter(Boolean)) {
@@ -1321,7 +1461,7 @@ function generatePropTable(componentName, file) {
 
   const propSymbols = iface.getType().getProperties();
 
-  const rows = propSymbols.flatMap((sym) => {
+  const rows = propSymbols.flatMap(sym => {
     if (shouldOmitSymbol(sym)) {
       return [];
     }
@@ -1342,7 +1482,7 @@ function generatePropTable(componentName, file) {
   const header = '| Name | Type | Default | Description |\n|------|------|---------|-------------|';
   const body = rows
     .sort((a, b) => a.name.localeCompare(b.name))
-    .map((r) => {
+    .map(r => {
       const typeStr = `\`${r.type}\``;
       return `| \`${r.name}\` | ${typeStr} | ${r.defVal || '—'} | ${r.description} |`;
     })
@@ -1447,7 +1587,9 @@ function generateInterfaceTable(interfaceName, file) {
     }
   }
 
-  if (!properties.length && !methods.length) {return null;}
+  if (!properties.length && !methods.length) {
+    return null;
+  }
 
   const sections = [];
 
@@ -1526,7 +1668,11 @@ function remarkRemoveImportsExports() {
           });
 
           for (const statement of ast.program.body) {
-            if (statement.type !== 'ImportDeclaration' || typeof statement.source.value !== 'string' || !statement.source.value.startsWith('docs:')) {
+            if (
+              statement.type !== 'ImportDeclaration' ||
+              typeof statement.source.value !== 'string' ||
+              !statement.source.value.startsWith('docs:')
+            ) {
               continue;
             }
 
@@ -1557,6 +1703,24 @@ function remarkRemoveImportsExports() {
 function remarkDocsComponentsToMarkdown() {
   return (tree, file) => {
     const relatedTypes = new Set();
+
+    // For the Style Macro page, inject the shared "Value sets" section above the first H2
+    // so aliases (baseSpacing, baseColors, etc.) are defined before any table references them.
+    const filePath = file?.path || '';
+    if (filePath.endsWith('style-macro.mdx') && !styleMacroValueSetsInjected.has(file)) {
+      styleMacroValueSetsInjected.add(file);
+      const valueSets = generateValueSetsMarkdown();
+      if (valueSets) {
+        const firstH2Index = tree.children.findIndex(
+          child => child.type === 'heading' && child.depth === 2
+        );
+        if (firstH2Index !== -1) {
+          const valueSetsTree = unified().use(remarkParse).parse(valueSets);
+          tree.children.splice(firstH2Index, 0, ...valueSetsTree.children);
+        }
+      }
+    }
+
     visit(tree, ['mdxJsxFlowElement', 'mdxJsxTextElement'], (node, index, parent) => {
       const name = node.name;
       if (name === 'InstallCommand') {
@@ -1714,13 +1878,16 @@ function remarkDocsComponentsToMarkdown() {
       // Render a text node with the component description.
       if (name === 'PageDescription') {
         // Assume first child is expression "docs.exports.Component.description".
-        const exprNode = node.children?.find((c) => c.type === 'mdxFlowExpression' || c.type === 'mdxTextExpression');
+        const exprNode = node.children?.find(
+          c => c.type === 'mdxFlowExpression' || c.type === 'mdxTextExpression'
+        );
         if (exprNode) {
           const m = exprNode.value.match(/docs\.exports\.([\w$]+)\.description/);
           if (m) {
             const desc = getComponentDescription(m[1], file);
             if (desc) {
               // Replace with normal paragraph node.
+              // oxlint-disable-next-line max-depth
               if (node.type === 'mdxJsxFlowElement') {
                 parent.children[index] = {
                   type: 'paragraph',
@@ -1733,21 +1900,16 @@ function remarkDocsComponentsToMarkdown() {
             }
           }
         }
-        // Use literal text content inside <PageDescription> if present.
-        const textContent = (node.children || [])
-          .filter(c => c.type === 'text' || c.type === 'mdxText')
-          .map(c => c.value)
-          .join('')
-          .trim();
-
-        if (textContent) {
+        // Use children inside <PageDescription> if present.
+        const descChildren = (node.children || []).filter(c => c.type !== 'mdxjsEsm');
+        if (descChildren.length > 0) {
           if (node.type === 'mdxJsxFlowElement') {
             parent.children[index] = {
               type: 'paragraph',
-              children: [{type: 'text', value: textContent}]
+              children: descChildren
             };
           } else {
-            parent.children[index] = {type: 'text', value: textContent};
+            parent.children.splice(index, 1, ...descChildren);
           }
           return;
         }
@@ -1758,7 +1920,7 @@ function remarkDocsComponentsToMarkdown() {
 
       // Render function description + examples from JSDoc.
       if (name === 'FunctionJSDoc') {
-        const functionAttr = node.attributes?.find((a) => a.name === 'function');
+        const functionAttr = node.attributes?.find(a => a.name === 'function');
         let functionName = null;
         let docsSource = null;
         if (functionAttr && functionAttr.value?.type === 'mdxJsxAttributeValueExpression') {
@@ -1791,7 +1953,9 @@ function remarkDocsComponentsToMarkdown() {
           if (examples.length > 1) {
             newNodes.push({
               type: 'paragraph',
-              children: [{type: 'strong', children: [{type: 'text', value: `Example ${exampleIndex + 1}:`}]}]
+              children: [
+                {type: 'strong', children: [{type: 'text', value: `Example ${exampleIndex + 1}:`}]}
+              ]
             });
           }
 
@@ -1815,7 +1979,7 @@ function remarkDocsComponentsToMarkdown() {
 
       // Render a table of props.
       if (name === 'PropTable') {
-        const compAttr = node.attributes?.find((a) => a.name === 'component');
+        const compAttr = node.attributes?.find(a => a.name === 'component');
         if (compAttr && compAttr.value?.type === 'mdxJsxAttributeValueExpression') {
           const m = compAttr.value.value.match(/docs\.exports\.([\w$]+)/);
           if (m) {
@@ -1872,7 +2036,9 @@ function remarkDocsComponentsToMarkdown() {
           exampleTitles = Array.isArray(parsed) ? parsed : [];
         }
 
-        const visualChildren = (node.children || []).filter(c => c.type === 'mdxJsxFlowElement' && c.name === 'VisualExample');
+        const visualChildren = (node.children || []).filter(
+          c => c.type === 'mdxJsxFlowElement' && c.name === 'VisualExample'
+        );
         const codeChildren = (node.children || []).filter(c => c.type === 'code');
 
         // Build replacement markdown nodes.
@@ -1907,7 +2073,9 @@ function remarkDocsComponentsToMarkdown() {
 
             fileList.forEach(fp => {
               const absPath = path.join(REPO_ROOT, fp);
-              if (!fs.existsSync(absPath)) {return;}
+              if (!fs.existsSync(absPath)) {
+                return;
+              }
               const contents = fs.readFileSync(absPath, 'utf8');
               const ext = path.extname(fp).slice(1);
 
@@ -1932,8 +2100,10 @@ function remarkDocsComponentsToMarkdown() {
         // Handle code block children (type="vanilla"|"tailwind" and files=[...])
         if (codeChildren.length > 0) {
           // Parse metadata from code blocks to extract type and files
-          const parseCodeMeta = (meta) => {
-            if (!meta) {return {};}
+          const parseCodeMeta = meta => {
+            if (!meta) {
+              return {};
+            }
             const result = {};
 
             // Extract type
@@ -1959,8 +2129,8 @@ function remarkDocsComponentsToMarkdown() {
           };
 
           const typeToTitle = {
-            'vanilla': 'Vanilla CSS',
-            'tailwind': 'Tailwind'
+            vanilla: 'Vanilla CSS',
+            tailwind: 'Tailwind'
           };
 
           // Check if this is a "component" type ExampleSwitcher (each code block gets its own example title)
@@ -1974,8 +2144,9 @@ function remarkDocsComponentsToMarkdown() {
             }
           }
 
-          if (switcherType === 'component' && exampleTitles.length > 0) {
-            // Each code block gets its own heading from the examples array
+          if (switcherType && switcherType !== 'css' && exampleTitles.length > 0) {
+            // For any explicit switcher type (e.g. "component", "router"), each code block
+            // represents a distinct example and gets its own heading from the examples array.
             codeChildren.forEach((codeChild, i) => {
               const title = exampleTitles[i] || `Example ${i + 1}`;
               const meta = parseCodeMeta(codeChild.meta);
@@ -2010,7 +2181,9 @@ function remarkDocsComponentsToMarkdown() {
               if (meta.files && Array.isArray(meta.files)) {
                 meta.files.forEach(fp => {
                   const absPath = path.join(REPO_ROOT, fp);
-                  if (!fs.existsSync(absPath)) {return;}
+                  if (!fs.existsSync(absPath)) {
+                    return;
+                  }
                   const contents = fs.readFileSync(absPath, 'utf8');
                   const ext = path.extname(fp).slice(1);
 
@@ -2034,7 +2207,7 @@ function remarkDocsComponentsToMarkdown() {
           } else {
             // Group code blocks by type (vanilla, tailwind, etc.)
             const codeBlocksByType = new Map();
-            codeChildren.forEach((codeChild) => {
+            codeChildren.forEach(codeChild => {
               const meta = parseCodeMeta(codeChild.meta);
               const type = meta.type || 'vanilla';
               if (!codeBlocksByType.has(type)) {
@@ -2087,7 +2260,9 @@ function remarkDocsComponentsToMarkdown() {
               // Add referenced files
               allFiles.forEach(fp => {
                 const absPath = path.join(REPO_ROOT, fp);
-                if (!fs.existsSync(absPath)) {return;}
+                if (!fs.existsSync(absPath)) {
+                  return;
+                }
                 const contents = fs.readFileSync(absPath, 'utf8');
                 const ext = path.extname(fp).slice(1);
 
@@ -2117,12 +2292,16 @@ function remarkDocsComponentsToMarkdown() {
 
       // Render code for each bundler.
       if (name === 'BundlerSwitcher') {
-        const bundlerItems = (node.children || []).filter(c => c.type === 'mdxJsxFlowElement' && c.name === 'BundlerSwitcherItem');
+        const bundlerItems = (node.children || []).filter(
+          c => c.type === 'mdxJsxFlowElement' && c.name === 'BundlerSwitcherItem'
+        );
         const newNodes = [];
 
-        const extractLabel = (itemNode) => {
+        const extractLabel = itemNode => {
           const labelAttr = itemNode.attributes?.find(a => a.name === 'label');
-          if (!labelAttr) {return null;}
+          if (!labelAttr) {
+            return null;
+          }
 
           if (labelAttr.value?.type === 'mdxJsxAttributeValueExpression') {
             return labelAttr.value.value.replace(/['"`]/g, '').trim();
@@ -2135,7 +2314,7 @@ function remarkDocsComponentsToMarkdown() {
           return null;
         };
 
-        bundlerItems.forEach((itemNode) => {
+        bundlerItems.forEach(itemNode => {
           const label = extractLabel(itemNode) || 'Configuration';
 
           newNodes.push({
@@ -2144,7 +2323,9 @@ function remarkDocsComponentsToMarkdown() {
             children: [{type: 'text', value: label}]
           });
 
-          const itemChildren = (itemNode.children || []).filter(child => child.type !== 'text' || child.value.trim() !== '');
+          const itemChildren = (itemNode.children || []).filter(
+            child => child.type !== 'text' || child.value.trim() !== ''
+          );
           if (itemChildren.length) {
             newNodes.push(...itemChildren);
           }
@@ -2177,7 +2358,8 @@ function remarkDocsComponentsToMarkdown() {
         let initialProps = {};
         if (initialPropsAttr && initialPropsAttr.value?.type === 'mdxJsxAttributeValueExpression') {
           const parsed = parseExpression(initialPropsAttr.value.value, file);
-          initialProps = (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) ? parsed : {};
+          initialProps =
+            parsed && typeof parsed === 'object' && !Array.isArray(parsed) ? parsed : {};
         }
 
         const {children: childrenProp, ...otherProps} = initialProps;
@@ -2281,8 +2463,10 @@ function remarkDocsComponentsToMarkdown() {
         }
 
         // Extract text content from children
-        const extractText = (children) => {
-          if (!children) {return '';}
+        const extractText = children => {
+          if (!children) {
+            return '';
+          }
           return children
             .map(child => {
               if (child.type === 'text' || child.type === 'mdxText') {
@@ -2339,7 +2523,7 @@ function remarkDocsComponentsToMarkdown() {
       }
 
       if (name === 'TypeLink') {
-        const typeAttr = node.attributes?.find((a) => a.name === 'type');
+        const typeAttr = node.attributes?.find(a => a.name === 'type');
         if (typeAttr && typeAttr.value?.type === 'mdxJsxAttributeValueExpression') {
           const expr = typeAttr.value.value.trim();
           // Match anyVar.exports.TypeName or docs.exports.TypeName
@@ -2348,7 +2532,11 @@ function remarkDocsComponentsToMarkdown() {
 
           if (!typeName) {
             // Fall back to the last identifier segment e.g. "PressEvent" in typesDocs.exports.PressEvent or just PressEvent
-            typeName = expr.split('.')?.pop()?.replace(/[^\w$]/g, '') || null;
+            typeName =
+              expr
+                .split('.')
+                ?.pop()
+                ?.replace(/[^\w$]/g, '') || null;
           }
 
           if (typeName) {
@@ -2402,7 +2590,7 @@ function remarkDocsComponentsToMarkdown() {
           const expr = propertiesAttr.value.value.trim();
           const match = expr.match(/getPropertyDefinitions\(\s*['"`]([^'"`]+)['"`]\s*\)/);
           if (match) {
-            category = match[1];  // e.g., 'spacing', 'layout', 'colors'
+            category = match[1]; // e.g., 'spacing', 'layout', 'colors'
           }
         }
 
@@ -2442,42 +2630,120 @@ function remarkDocsComponentsToMarkdown() {
         const colorSections = [
           {
             title: 'Background colors',
-            description: 'The backgroundColor property supports the following values, in addition to the semantic and global colors shown below. These colors are specifically chosen to be used as backgrounds, so prefer them over global colors where possible.',
+            description:
+              'The backgroundColor property supports the following values, in addition to the semantic and global colors shown below. These colors are specifically chosen to be used as backgrounds, so prefer them over global colors where possible.',
             colors: [
-              'base', 'layer-1', 'layer-2', 'pasteboard', 'elevated',
-              'accent', 'accent-subtle', 'neutral', 'neutral-subdued', 'neutral-subtle',
-              'negative', 'negative-subtle', 'informative', 'informative-subtle',
-              'positive', 'positive-subtle', 'notice', 'notice-subtle',
-              'gray', 'gray-subtle', 'red', 'red-subtle', 'orange', 'orange-subtle',
-              'yellow', 'yellow-subtle', 'chartreuse', 'chartreuse-subtle',
-              'celery', 'celery-subtle', 'green', 'green-subtle', 'seafoam', 'seafoam-subtle',
-              'cyan', 'cyan-subtle', 'blue', 'blue-subtle', 'indigo', 'indigo-subtle',
-              'purple', 'purple-subtle', 'fuchsia', 'fuchsia-subtle',
-              'magenta', 'magenta-subtle', 'pink', 'pink-subtle',
-              'turquoise', 'turquoise-subtle', 'cinnamon', 'cinnamon-subtle',
-              'brown', 'brown-subtle', 'silver', 'silver-subtle', 'disabled'
+              'base',
+              'layer-1',
+              'layer-2',
+              'pasteboard',
+              'elevated',
+              'accent',
+              'accent-subtle',
+              'neutral',
+              'neutral-subdued',
+              'neutral-subtle',
+              'negative',
+              'negative-subtle',
+              'informative',
+              'informative-subtle',
+              'positive',
+              'positive-subtle',
+              'notice',
+              'notice-subtle',
+              'gray',
+              'gray-subtle',
+              'red',
+              'red-subtle',
+              'orange',
+              'orange-subtle',
+              'yellow',
+              'yellow-subtle',
+              'chartreuse',
+              'chartreuse-subtle',
+              'celery',
+              'celery-subtle',
+              'green',
+              'green-subtle',
+              'seafoam',
+              'seafoam-subtle',
+              'cyan',
+              'cyan-subtle',
+              'blue',
+              'blue-subtle',
+              'indigo',
+              'indigo-subtle',
+              'purple',
+              'purple-subtle',
+              'fuchsia',
+              'fuchsia-subtle',
+              'magenta',
+              'magenta-subtle',
+              'pink',
+              'pink-subtle',
+              'turquoise',
+              'turquoise-subtle',
+              'cinnamon',
+              'cinnamon-subtle',
+              'brown',
+              'brown-subtle',
+              'silver',
+              'silver-subtle',
+              'disabled'
             ]
           },
           {
             title: 'Text colors',
-            description: 'The color property supports the following values, in addition to the semantic and global colors shown below. These colors are specifically chosen to be used as text colors, so prefer them over global colors where possible.',
+            description:
+              'The color property supports the following values, in addition to the semantic and global colors shown below. These colors are specifically chosen to be used as text colors, so prefer them over global colors where possible.',
             colors: [
-              'accent', 'neutral', 'neutral-subdued', 'negative', 'disabled',
-              'heading', 'title', 'body', 'detail', 'code'
+              'accent',
+              'neutral',
+              'neutral-subdued',
+              'negative',
+              'disabled',
+              'heading',
+              'title',
+              'body',
+              'detail',
+              'code'
             ]
           },
           {
             title: 'Semantic colors',
-            description: 'The following values are available across all color properties. Prefer to use semantic colors over global colors when they represent a specific meaning.',
-            scales: ['accent-color', 'informative-color', 'negative-color', 'notice-color', 'positive-color']
+            description:
+              'The following values are available across all color properties. Prefer to use semantic colors over global colors when they represent a specific meaning.',
+            scales: [
+              'accent-color',
+              'informative-color',
+              'negative-color',
+              'notice-color',
+              'positive-color'
+            ]
           },
           {
             title: 'Global colors',
             description: 'The following values are available across all color properties.',
             scales: [
-              'gray', 'blue', 'red', 'orange', 'yellow', 'chartreuse', 'celery',
-              'green', 'seafoam', 'cyan', 'indigo', 'purple', 'fuchsia',
-              'magenta', 'pink', 'turquoise', 'brown', 'silver', 'cinnamon'
+              'gray',
+              'blue',
+              'red',
+              'orange',
+              'yellow',
+              'chartreuse',
+              'celery',
+              'green',
+              'seafoam',
+              'cyan',
+              'indigo',
+              'purple',
+              'fuchsia',
+              'magenta',
+              'pink',
+              'turquoise',
+              'brown',
+              'silver',
+              'cinnamon'
             ]
           }
         ];
@@ -2504,14 +2770,16 @@ function remarkDocsComponentsToMarkdown() {
             newNodes.push(...listNode.children);
           } else if (section.scales) {
             // For scales, note that they include numbered variants (e.g., gray-100, gray-200, etc.)
-            const scaleNote = section.scales.map(scale => {
-              const baseName = scale.replace(/-color$/, '');
-              // Gray scale includes 25, 50, 75, while others start at 100
-              if (baseName === 'gray') {
-                return `- \`${baseName}\` scale (e.g., \`${baseName}-25\`, \`${baseName}-50\`, \`${baseName}-75\`, \`${baseName}-100\`, ..., \`${baseName}-1600\`)`;
-              }
-              return `- \`${baseName}\` scale (e.g., \`${baseName}-100\`, \`${baseName}-200\`, ..., \`${baseName}-1600\`)`;
-            }).join('\n');
+            const scaleNote = section.scales
+              .map(scale => {
+                const baseName = scale.replace(/-color$/, '');
+                // Gray scale includes 25, 50, 75, while others start at 100
+                if (baseName === 'gray') {
+                  return `- \`${baseName}\` scale (e.g., \`${baseName}-25\`, \`${baseName}-50\`, \`${baseName}-75\`, \`${baseName}-100\`, ..., \`${baseName}-1600\`)`;
+                }
+                return `- \`${baseName}\` scale (e.g., \`${baseName}-100\`, \`${baseName}-200\`, ..., \`${baseName}-1600\`)`;
+              })
+              .join('\n');
             const scaleNode = unified().use(remarkParse).parse(scaleNote);
             newNodes.push(...scaleNode.children);
           }
@@ -2547,7 +2815,7 @@ function remarkDocsComponentsToMarkdown() {
         }
 
         // Helper to extract text content from cell values
-        const extractCellText = (cell) => {
+        const extractCellText = cell => {
           if (cell === null || cell === undefined) {
             return '';
           }
@@ -2576,7 +2844,9 @@ function remarkDocsComponentsToMarkdown() {
           const separator = headers.map(() => '------');
 
           const bodyRows = rows.map(row => {
-            if (!Array.isArray(row)) {return [];}
+            if (!Array.isArray(row)) {
+              return [];
+            }
             return row.map((cell, colIdx) => {
               let text = extractCellText(cell);
               // Apply code formatting if this column is in codeColumns
@@ -2633,7 +2903,9 @@ function remarkDocsComponentsToMarkdown() {
           if (defaultClassAttr.value?.type === 'mdxJsxAttributeValueExpression') {
             // Expression like "'react-aria-ComboBox'"
             const m = defaultClassAttr.value.value.match(/['"]([\w-]+)['"]/);
-            if (m) {defaultClassName = m[1];}
+            if (m) {
+              defaultClassName = m[1];
+            }
           } else if (defaultClassAttr.value?.type === 'mdxJsxAttributeValueLiteral') {
             defaultClassName = defaultClassAttr.value.value;
           } else if (typeof defaultClassAttr.value === 'string') {
@@ -2644,10 +2916,14 @@ function remarkDocsComponentsToMarkdown() {
         const showOptionalAttr = node.attributes?.find(a => a.name === 'showOptional');
         const hideSelectorAttr = node.attributes?.find(a => a.name === 'hideSelector');
 
-        const table = generateStateTable(ifaceName, {
-          showOptional: !!showOptionalAttr,
-          hideSelector: !!hideSelectorAttr
-        }, file);
+        const table = generateStateTable(
+          ifaceName,
+          {
+            showOptional: !!showOptionalAttr,
+            hideSelector: !!hideSelectorAttr
+          },
+          file
+        );
 
         if (table) {
           const nodesToInsert = [];
@@ -2735,7 +3011,7 @@ function remarkDocsComponentsToMarkdown() {
     });
 
     // Clean up code block language specifiers (e.g. "tsx render" -> "tsx").
-    visit(tree, 'code', (node) => {
+    visit(tree, 'code', node => {
       if (node.meta) {
         node.meta = '';
       }
@@ -2751,7 +3027,7 @@ function remarkDocsComponentsToMarkdown() {
     });
 
     // Transform relative links to use .md extension.
-    visit(tree, 'link', (node) => {
+    visit(tree, 'link', node => {
       node.url = transformRelativeUrl(node.url);
     });
 
@@ -2848,7 +3124,9 @@ function generateClassAPITable(className, file) {
 
         const ctorDocs = ctor.getJsDocs();
         if (ctorDocs.length > 0) {
-          const paramTag = ctorDocs[0].getTags().find(t => t.getTagName() === 'param' && t.getName?.() === name);
+          const paramTag = ctorDocs[0]
+            .getTags()
+            .find(t => t.getTagName() === 'param' && t.getName?.() === name);
           if (paramTag) {
             description = paramTag.getCommentText() || '';
           }
@@ -2914,7 +3192,9 @@ function generateClassAPITable(className, file) {
         }
 
         // Document return value
-        const returnTag = methodDocs[0].getTags().find(t => t.getTagName() === 'returns' || t.getTagName() === 'return');
+        const returnTag = methodDocs[0]
+          .getTags()
+          .find(t => t.getTagName() === 'returns' || t.getTagName() === 'return');
         if (returnTag) {
           const returnDesc = returnTag.getCommentText() || '';
           // eslint-disable-next-line max-depth
@@ -2960,7 +3240,11 @@ function generateClassAPITable(className, file) {
 /**
  * Generate a markdown table for render props.
  */
-function generateStateTable(renderPropsName, {showOptional = false, hideSelector = false} = {}, file) {
+function generateStateTable(
+  renderPropsName,
+  {showOptional = false, hideSelector = false} = {},
+  file
+) {
   // Attempt to resolve source file by stripping trailing "RenderProps" to get component name.
   let componentName = renderPropsName.replace(/RenderProps$/, '');
 
@@ -2990,23 +3274,25 @@ function generateStateTable(renderPropsName, {showOptional = false, hideSelector
   }
 
   // Build rows
-  const rows = propSymbols.map(sym => {
-    if (shouldOmitSymbol(sym)) {
-      return null;
-    }
+  const rows = propSymbols
+    .map(sym => {
+      if (shouldOmitSymbol(sym)) {
+        return null;
+      }
 
-    const name = sym.getName();
+      const name = sym.getName();
 
-    const decl = sym.getDeclarations()?.[0];
-    let optional = false;
+      const decl = sym.getDeclarations()?.[0];
+      let optional = false;
 
-    if (decl) {
-      optional = decl.hasQuestionToken?.() || false;
-    }
+      if (decl) {
+        optional = decl.hasQuestionToken?.() || false;
+      }
 
-    const docData = getJsDocData(decl);
-    return {name, selector: docData.selector || '—', description: docData.description, optional};
-  }).filter(Boolean);
+      const docData = getJsDocData(decl);
+      return {name, selector: docData.selector || '—', description: docData.description, optional};
+    })
+    .filter(Boolean);
 
   // Filter optional props if showOptional is false
   const filteredRows = showOptional ? rows : rows.filter(r => !r.optional);
@@ -3015,10 +3301,13 @@ function generateStateTable(renderPropsName, {showOptional = false, hideSelector
     return null;
   }
 
-  const hasSelectorColumn = !hideSelector && filteredRows.some(r => r.selector && r.selector !== '—');
+  const hasSelectorColumn =
+    !hideSelector && filteredRows.some(r => r.selector && r.selector !== '—');
 
   const headerColumns = ['Render Prop'];
-  if (hasSelectorColumn) {headerColumns.push('CSS Selector');}
+  if (hasSelectorColumn) {
+    headerColumns.push('CSS Selector');
+  }
   headerColumns.push('Description');
 
   const header = `| ${headerColumns.join(' | ')} |\n|${headerColumns.map(() => '------').join('|')}|`;
@@ -3057,7 +3346,11 @@ function generateFunctionOptionsTable(functionName, file) {
 
   // Attempt to get an exported declaration for the function.
   const exportedDecl = source.getExportedDeclarations().get(functionName)?.[0];
-  const possibleDecls = [exportedDecl, source.getFunction(functionName), source.getVariableDeclaration(functionName)];
+  const possibleDecls = [
+    exportedDecl,
+    source.getFunction(functionName),
+    source.getVariableDeclaration(functionName)
+  ];
 
   let funcDecl = possibleDecls.find(Boolean);
   if (!funcDecl) {
@@ -3079,7 +3372,9 @@ function generateFunctionOptionsTable(functionName, file) {
   // Inspect the first parameter's declared type.
   for (const paramSym of params) {
     const paramDecl = paramSym.getDeclarations()?.[0];
-    if (!paramDecl) {continue;}
+    if (!paramDecl) {
+      continue;
+    }
 
     // Try to extract a simple type reference name.
     const typeNode = paramDecl.getTypeNode?.();
@@ -3089,7 +3384,10 @@ function generateFunctionOptionsTable(functionName, file) {
       typeName = typeNode.getText().split(/[<\s|&]/)[0];
     } else {
       // Fallback to type text.
-      typeName = paramDecl.getType?.().getText(paramDecl).split(/[<\s|&]/)[0];
+      typeName = paramDecl
+        .getType?.()
+        .getText(paramDecl)
+        .split(/[<\s|&]/)[0];
     }
 
     if (typeName) {
@@ -3121,7 +3419,11 @@ function generateFunctionSignature(functionName, file) {
 
   // Attempt to get an exported declaration for the function.
   const exportedDecl = source.getExportedDeclarations().get(functionName)?.[0];
-  const possibleDecls = [exportedDecl, source.getFunction(functionName), source.getVariableDeclaration(functionName)];
+  const possibleDecls = [
+    exportedDecl,
+    source.getFunction(functionName),
+    source.getVariableDeclaration(functionName)
+  ];
 
   let funcDecl = possibleDecls.find(Boolean);
   if (!funcDecl) {
@@ -3160,15 +3462,16 @@ function generateLibraryLlmsTxt(lib, files) {
   }
 
   const titleMap = {
-    's2': 'React Spectrum (S2) Documentation',
+    s2: 'React Spectrum (S2) Documentation',
     'react-aria': 'React Aria Components Documentation',
-    'internationalized': 'Internationalized Documentation'
+    internationalized: 'Internationalized Documentation'
   };
 
   const summaryMap = {
-    's2': 'Plain-text markdown documentation for React Spectrum S2 components.',
+    s2: 'Plain-text markdown documentation for React Spectrum S2 components.',
     'react-aria': 'Plain-text markdown documentation for React Aria components.',
-    'internationalized': 'Plain-text markdown documentation for internationalized date, time, and number utilities.'
+    internationalized:
+      'Plain-text markdown documentation for internationalized date, time, and number utilities.'
   };
 
   const title = titleMap[lib] || `${lib} documentation`;
@@ -3197,9 +3500,9 @@ function generateLibraryLlmsTxt(lib, files) {
 }
 
 /**
- * Scans the MDX pages in packages/dev/s2-docs/pages and produces a text-based markdown variant of each file.
- * React-specific JSX elements such as <PageDescription> and <PropTable> are replaced with plain markdown equivalents so
- * that the resulting *.md files can be consumed by LLMs.
+ * Scans the MDX pages in packages/dev/s2-docs/pages and produces a text-based markdown variant of
+ * each file. React-specific JSX elements such as <PageDescription> and <PropTable> are replaced
+ * with plain markdown equivalents so that the resulting *.md files can be consumed by LLMs.
  */
 async function main() {
   const mdxFiles = await glob('*/**/*.mdx', {
@@ -3209,27 +3512,49 @@ async function main() {
 
   // Collect generated markdown filenames and headings for each library so we can build llms.txt files.
   const docsByLibrary = {
-    's2': [],
+    s2: [],
     'react-aria': [],
-    'internationalized': [],
-    'root': []
+    internationalized: [],
+    root: []
   };
 
   for (const filePath of mdxFiles) {
     const rawContent = fs.readFileSync(filePath, 'utf8');
-    const mdContent = rawContent.replace(LICENSE_COMMENT_REGEX, '');
+
+    // Skip redirect pages
+    if (rawContent.includes('<meta http-equiv="refresh"')) {
+      continue;
+    }
+
+    // Skip error pages
+    if (path.basename(filePath) === 'error.mdx') {
+      continue;
+    }
+
+    let mdContent = rawContent.replace(LICENSE_COMMENT_REGEX, '');
+
+    // Inline the S2 Routers MDX content once at the bottom of the page.
+    // Avoids rendering the same content for every framework.
+    if (mdContent.includes('<Routers components={props.components} />')) {
+      mdContent = mdContent.replace(ROUTERS_PLACEHOLDER_REGEX, 'See the Routers section below.');
+      mdContent += '\n\n## Routers\n\n' + getRoutersMdxContent();
+    }
+
     const processor = unified()
       .use(remarkParse)
       .use(remarkMdx)
       .use(remarkRemoveImportsExports)
-      .use(remarkDocsComponentsToMarkdown)
-      .use(remarkStringify, {
-        fences: true,
-        bullets: '-',
-        listItemIndent: 'one'
-      });
+      .use(remarkDocsComponentsToMarkdown);
 
-    let markdown = String(await processor.process({value: mdContent, path: filePath}));
+    const file = {value: mdContent, path: filePath};
+    const tree = processor.parse(file);
+    const transformed = await processor.run(tree, file);
+    let markdown = toMarkdown(transformed, {
+      fences: true,
+      bullet: '-',
+      listItemIndent: 'one',
+      extensions: mdxToMarkdown.extensions
+    });
 
     // Convert markdown links ending in .html to .md (relative links only)
     markdown = markdown.replace(/\[([^\]]+)\]\(([^)]+\.html)\)/g, (match, text, url) => {
@@ -3289,7 +3614,7 @@ async function main() {
   generateLibraryLlmsTxt('react-aria', docsByLibrary['react-aria']);
 }
 
-main().catch((err) => {
+main().catch(err => {
   console.error(err);
   process.exit(1);
 });

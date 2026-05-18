@@ -11,4 +11,8 @@
  */
 
 export {TextFieldProps, AriaTextFieldProps} from '@react-aria/textfield';
-export {SpectrumTextFieldProps, SpectrumTextAreaProps, TextFieldRef} from '@react-spectrum/textfield';
+export {
+  SpectrumTextFieldProps,
+  SpectrumTextAreaProps,
+  TextFieldRef
+} from '@react-spectrum/textfield';

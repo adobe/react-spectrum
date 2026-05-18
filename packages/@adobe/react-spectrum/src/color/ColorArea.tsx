@@ -21,20 +21,25 @@ import {mergeProps} from 'react-aria/mergeProps';
 import React, {ReactElement, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/colorarea/vars.css';
 import {useColorAreaState} from 'react-stately/useColorAreaState';
-import {useContextProps} from 'react-aria-components/utils';
+import {useContextProps} from 'react-aria-components/slots';
 import {useFocusableRef} from '../utils/useDOMRef';
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {useProviderProps} from '../provider/Provider';
 
-export interface SpectrumColorAreaProps extends AriaColorAreaProps, Omit<StyleProps, 'width' | 'height'> {
+export interface SpectrumColorAreaProps
+  extends AriaColorAreaProps, Omit<StyleProps, 'width' | 'height'> {
   /** Size of the Color Area. */
-  size?: DimensionValue
+  size?: DimensionValue;
 }
 
 /**
- * ColorArea allows users to adjust two channels of an RGB, HSL or HSB color value against a two-dimensional gradient background.
+ * ColorArea allows users to adjust two channels of an RGB, HSL or HSB color value against a
+ * two-dimensional gradient background.
  */
-export const ColorArea = React.forwardRef(function ColorArea(props: SpectrumColorAreaProps, ref: FocusableRef<HTMLDivElement>) {
+export const ColorArea = React.forwardRef(function ColorArea(
+  props: SpectrumColorAreaProps,
+  ref: FocusableRef<HTMLDivElement>
+) {
   props = useProviderProps(props);
   let inputXRef = useRef(null);
   let inputYRef = useRef(null);
@@ -45,30 +50,25 @@ export const ColorArea = React.forwardRef(function ColorArea(props: SpectrumColo
   let size = props.size && dimensionValue(props.size);
   let {styleProps} = useStyleProps(props);
 
-
   let state = useColorAreaState(props);
 
-  let {
-    colorAreaProps,
-    xInputProps,
-    yInputProps,
-    thumbProps
-  } = useColorArea({...props, inputXRef, inputYRef, containerRef}, state);
+  let {colorAreaProps, xInputProps, yInputProps, thumbProps} = useColorArea(
+    {...props, inputXRef, inputYRef, containerRef},
+    state
+  );
   let {focusProps, isFocusVisible} = useFocusRing();
 
   return (
     <div
       {...colorAreaProps}
-      className={
-        classNames(
-          styles,
-          'spectrum-ColorArea',
-          {
-            'is-disabled': isDisabled
-          },
-          styleProps.className
-        )
-      }
+      className={classNames(
+        styles,
+        'spectrum-ColorArea',
+        {
+          'is-disabled': isDisabled
+        },
+        styleProps.className
+      )}
       ref={containerRef}
       style={{
         ...(isDisabled ? {} : colorAreaProps.style),
@@ -86,8 +86,16 @@ export const ColorArea = React.forwardRef(function ColorArea(props: SpectrumColo
         className={classNames(styles, 'spectrum-ColorArea-handle')}
         {...thumbProps}>
         <div role="presentation">
-          <input className={classNames(styles, 'spectrum-ColorArea-slider')} {...mergeProps(xInputProps, focusProps)} ref={inputXRef} />
-          <input className={classNames(styles, 'spectrum-ColorArea-slider')} {...mergeProps(yInputProps, focusProps)} ref={inputYRef} />
+          <input
+            className={classNames(styles, 'spectrum-ColorArea-slider')}
+            {...mergeProps(xInputProps, focusProps)}
+            ref={inputXRef}
+          />
+          <input
+            className={classNames(styles, 'spectrum-ColorArea-slider')}
+            {...mergeProps(yInputProps, focusProps)}
+            ref={inputYRef}
+          />
         </div>
       </ColorThumb>
     </div>

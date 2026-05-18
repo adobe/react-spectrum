@@ -15,7 +15,7 @@ import {IconProps, IllustrationContext} from '../../src/Icon';
 import Shapes_L from 'illustration:./S2_lin_shapes_160.svg';
 import Shapes_M from 'illustration:./S2_lin_shapes_96.svg';
 import Shapes_S from 'illustration:./S2_lin_shapes_48.svg';
-import {useContextProps} from 'react-aria-components/utils';
+import {useContextProps} from 'react-aria-components/slots';
 
 export default function Shapes(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);

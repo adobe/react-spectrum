@@ -11,7 +11,7 @@
  */
 
 import {AriaLabelingProps, DOMProps, StyleProps} from '@react-types/shared';
-import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import React, {JSX, ReactElement} from 'react';
 import {useSlotProps} from '../utils/Slots';
 import {useStyleProps} from '../utils/styleProps';
@@ -20,20 +20,21 @@ export interface IllustrationProps extends DOMProps, AriaLabelingProps, StylePro
   /**
    * A screen reader only label for the Illustration.
    */
-  'aria-label'?: string,
+  'aria-label'?: string;
   /**
    * The content to display. Should be an SVG.
    */
-  children: ReactElement<any>,
+  children: ReactElement<any>;
   /**
    * A slot to place the illustration in.
+   *
    * @default 'illustration'
    */
-  slot?: string,
+  slot?: string;
   /**
    * Indicates whether the element is exposed to an accessibility API.
    */
-  'aria-hidden'?: boolean | 'false' | 'true'
+  'aria-hidden'?: boolean | 'false' | 'true';
 }
 
 export type IllustrationPropsWithoutChildren = Omit<IllustrationProps, 'children'>;

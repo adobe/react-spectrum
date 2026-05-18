@@ -15,7 +15,9 @@ export const description = 'With autocomplete, virtualized scrolling, and keyboa
 
 ```tsx render dir="react-aria/examples" files={['packages/dev/s2-docs/pages/react-aria/examples/EmojiPicker.css']} type="vanilla" expanded
 "use client";
-import {Autocomplete, GridLayout, ListBox, ListBoxItem, Select, SelectValue, Size, useFilter, Virtualizer} from 'react-aria-components';
+import {Select, SelectValue, ListBox, ListBoxItem} from 'react-aria-components/Select';
+import {Autocomplete, useFilter} from 'react-aria-components/Autocomplete';
+import {Virtualizer, GridLayout, Size} from 'react-aria-components/Virtualizer';
 import {Button} from 'vanilla-starter/Button';
 import {Popover} from 'vanilla-starter/Popover';
 import {SearchField} from 'vanilla-starter/SearchField';

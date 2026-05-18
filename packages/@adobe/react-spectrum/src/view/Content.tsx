@@ -13,7 +13,7 @@
 import {ClearSlots, useSlotProps} from '../utils/Slots';
 
 import {DOMProps, DOMRef, StyleProps} from '@react-types/shared';
-import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import React, {forwardRef, ReactNode} from 'react';
 import {useDOMRef} from '../utils/useDOMRef';
 import {useStyleProps} from '../utils/styleProps';
@@ -22,7 +22,7 @@ export interface ContentProps extends DOMProps, StyleProps {
   /**
    * Content content.
    */
-  children: ReactNode
+  children: ReactNode;
 }
 
 /**
@@ -30,18 +30,13 @@ export interface ContentProps extends DOMProps, StyleProps {
  */
 export const Content = forwardRef(function Content(props: ContentProps, ref: DOMRef) {
   props = useSlotProps(props, 'content');
-  let {
-    children,
-    ...otherProps
-  } = props;
+  let {children, ...otherProps} = props;
   let {styleProps} = useStyleProps(otherProps);
   let domRef = useDOMRef(ref);
 
   return (
     <section {...filterDOMProps(otherProps)} {...styleProps} ref={domRef}>
-      <ClearSlots>
-        {children}
-      </ClearSlots>
+      <ClearSlots>{children}</ClearSlots>
     </section>
   );
 });

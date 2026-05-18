@@ -12,7 +12,7 @@
 
 import {AriaLabelingProps, DOMProps, StyleProps} from '@react-types/shared';
 import {classNames} from '../utils/classNames';
-import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {ProviderContext} from '../provider/types';
 import React, {JSX, ReactElement} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/icon/vars.css';
@@ -21,24 +21,19 @@ import {useSlotProps} from '../utils/Slots';
 import {useStyleProps} from '../utils/styleProps';
 
 export interface UIIconProps extends DOMProps, AriaLabelingProps, StyleProps {
-  children: ReactElement<any>,
-  slot?: string,
+  children: ReactElement<any>;
+  slot?: string;
   /**
    * Indicates whether the element is exposed to an accessibility API.
    */
-  'aria-hidden'?: boolean | 'false' | 'true'
+  'aria-hidden'?: boolean | 'false' | 'true';
 }
 
 export type UIIconPropsWithoutChildren = Omit<UIIconProps, 'children'>;
 
 export function UIIcon(props: UIIconProps): JSX.Element {
   props = useSlotProps(props, 'icon');
-  let {
-    children,
-    'aria-label': ariaLabel,
-    'aria-hidden': ariaHidden,
-    ...otherProps
-  } = props;
+  let {children, 'aria-label': ariaLabel, 'aria-hidden': ariaHidden, ...otherProps} = props;
 
   let {styleProps} = useStyleProps(otherProps);
   let provider: undefined | ProviderContext;
@@ -63,7 +58,7 @@ export function UIIcon(props: UIIconProps): JSX.Element {
     scale,
     focusable: 'false',
     'aria-label': ariaLabel,
-    'aria-hidden': (ariaLabel ? (ariaHidden || undefined) : true),
+    'aria-hidden': ariaLabel ? ariaHidden || undefined : true,
     role: 'img',
     className: classNames(
       styles,
@@ -72,6 +67,7 @@ export function UIIcon(props: UIIconProps): JSX.Element {
       {
         [`spectrum-UIIcon-${children.type['displayName']}`]: children.type['displayName']
       },
-      styleProps.className)
+      styleProps.className
+    )
   });
 }

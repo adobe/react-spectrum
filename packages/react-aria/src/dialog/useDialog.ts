@@ -10,7 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMAttributes, DOMProps, FocusableElement, RefObject} from '@react-types/shared';
+import {
+  AriaLabelingProps,
+  DOMAttributes,
+  DOMProps,
+  FocusableElement,
+  RefObject
+} from '@react-types/shared';
 import {filterDOMProps} from '../utils/filterDOMProps';
 import {focusSafely} from '../interactions/focusSafely';
 import {getActiveElement, isFocusWithin} from '../utils/shadowdom/DOMFunctions';
@@ -21,27 +27,29 @@ import {useSlotId} from '../utils/useId';
 export interface AriaDialogProps extends DOMProps, AriaLabelingProps {
   /**
    * The accessibility role for the dialog.
+   *
    * @default 'dialog'
    */
-  role?: 'dialog' | 'alertdialog'
+  role?: 'dialog' | 'alertdialog';
 }
 
 export interface DialogAria {
   /** Props for the dialog container element. */
-  dialogProps: DOMAttributes,
+  dialogProps: DOMAttributes;
 
   /** Props for the dialog title element. */
-  titleProps: DOMAttributes
+  titleProps: DOMAttributes;
 }
 
 /**
  * Provides the behavior and accessibility implementation for a dialog component.
  * A dialog is an overlay shown above other content in an application.
  */
-export function useDialog(props: AriaDialogProps, ref: RefObject<FocusableElement | null>): DialogAria {
-  let {
-    role = 'dialog'
-  } = props;
+export function useDialog(
+  props: AriaDialogProps,
+  ref: RefObject<FocusableElement | null>
+): DialogAria {
+  let {role = 'dialog'} = props;
   let titleId: string | undefined = useSlotId();
   titleId = props['aria-label'] ? undefined : titleId;
 
@@ -74,6 +82,28 @@ export function useDialog(props: AriaDialogProps, ref: RefObject<FocusableElemen
   }, [ref]);
 
   useOverlayFocusContain();
+
+  // Warn in dev mode if the dialog has no accessible title.
+  // This catches a common mistake where useDialog and useOverlayTriggerState
+  // are used in the same component, causing the title element to not be
+  // in the DOM when useSlotId queries for it.
+  // Check the DOM element directly since aria-labelledby may be added by
+  // wrapper components (e.g. RAC Dialog uses trigger ID as a fallback).
+  let hasWarned = useRef(false);
+  useEffect(() => {
+    if (process.env.NODE_ENV !== 'production' && !hasWarned.current && ref.current) {
+      let el = ref.current;
+      let hasAriaLabel = el.hasAttribute('aria-label');
+      let hasAriaLabelledby = el.hasAttribute('aria-labelledby');
+      if (!hasAriaLabel && !hasAriaLabelledby) {
+        console.warn(
+          'A dialog must have a title for accessibility. ' +
+            'Either provide an aria-label or aria-labelledby prop, or render a heading element inside the dialog.'
+        );
+        hasWarned.current = true;
+      }
+    }
+  });
 
   // We do not use aria-modal due to a Safari bug which forces the first focusable element to be focused
   // on mount when inside an iframe, no matter which element we programmatically focus.

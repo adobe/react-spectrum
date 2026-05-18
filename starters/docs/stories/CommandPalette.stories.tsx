@@ -2,7 +2,6 @@ import {Button} from '../src/Button';
 import {CommandPalette} from '../src/CommandPalette';
 import {DialogTrigger} from '../src/Dialog';
 import {MenuItem} from '../src/Menu';
-
 import type {Meta, StoryFn} from '@storybook/react';
 
 const meta: Meta<typeof CommandPalette> = {
@@ -16,9 +15,11 @@ const meta: Meta<typeof CommandPalette> = {
 export default meta;
 type Story = StoryFn<typeof CommandPalette>;
 
-export const Example: Story = (args) => (
+export const Example: Story = args => (
   <DialogTrigger>
-    <Button>Open Command Palette <kbd>⌘ J</kbd></Button>
+    <Button>
+      Open Command Palette <kbd>⌘ J</kbd>
+    </Button>
     <CommandPalette {...args}>
       <MenuItem>Create new file...</MenuItem>
       <MenuItem>Create new folder...</MenuItem>

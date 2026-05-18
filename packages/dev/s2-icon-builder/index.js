@@ -63,7 +63,9 @@ if (args.values.isLibrary) {
         includeNodeModules: false,
         outputFormat: 'esmodule',
         engines: {
-          browsers: ['last 2 Chrome versions, last 2 Safari versions, last 2 Firefox versions, last 2 Edge versions']
+          browsers: [
+            'last 2 Chrome versions, last 2 Safari versions, last 2 Firefox versions, last 2 Edge versions'
+          ]
         }
       },
       [`${args.values.type}-main`]: {
@@ -72,7 +74,9 @@ if (args.values.isLibrary) {
         includeNodeModules: false,
         outputFormat: 'commonjs',
         engines: {
-          browsers: ['last 2 Chrome versions, last 2 Safari versions, last 2 Firefox versions, last 2 Edge versions']
+          browsers: [
+            'last 2 Chrome versions, last 2 Safari versions, last 2 Firefox versions, last 2 Edge versions'
+          ]
         }
       }
     }
@@ -94,12 +98,15 @@ async function run() {
 run().then(() => {
   if (args.values.isLibrary) {
     for (let file of globSync(`${path.join(args.values.output, '.')}/*.mjs`)) {
-      fs.writeFileSync(file.replace('.mjs', '.d.ts'), `import type {IconProps} from '@react-spectrum/s2';
+      fs.writeFileSync(
+        file.replace('.mjs', '.d.ts'),
+        `import type {IconProps} from '@react-spectrum/s2';
 import type {ReactNode} from 'react';
 
 declare function Icon(props: IconProps): ReactNode;
 export default Icon;
-    `);
+    `
+      );
     }
   }
 });

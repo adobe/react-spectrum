@@ -4,39 +4,65 @@ import {ListKeyboardDelegate} from '../../src/selection/ListKeyboardDelegate';
 import {navigate} from '../../src/dnd/DropTargetKeyboardNavigation';
 
 interface Item {
-  id: string,
-  name: string,
-  childItems?: Item[]
+  id: string;
+  name: string;
+  childItems?: Item[];
 }
 
 let rows: Item[] = [
-  {id: 'projects', name: 'Projects', childItems: [
-    {id: 'project-1', name: 'Project 1'},
-    {id: 'project-2', name: 'Project 2', childItems: [
-      {id: 'project-2A', name: 'Project 2A'},
-      {id: 'project-2B', name: 'Project 2B'},
-      {id: 'project-2C', name: 'Project 2C'}
-    ]},
-    {id: 'project-3', name: 'Project 3'},
-    {id: 'project-4', name: 'Project 4'},
-    {id: 'project-5', name: 'Project 5', childItems: [
-      {id: 'project-5A', name: 'Project 5A'},
-      {id: 'project-5B', name: 'Project 5B'},
-      {id: 'project-5C', name: 'Project 5C'}
-    ]}
-  ]},
-  {id: 'reports', name: 'Reports', childItems: [
-    {id: 'reports-1', name: 'Reports 1', childItems: [
-      {id: 'reports-1A', name: 'Reports 1A', childItems: [
-        {id: 'reports-1AB', name: 'Reports 1AB', childItems: [
-          {id: 'reports-1ABC', name: 'Reports 1ABC'}
-        ]}
-      ]},
-      {id: 'reports-1B', name: 'Reports 1B'},
-      {id: 'reports-1C', name: 'Reports 1C'}
-    ]},
-    {id: 'reports-2', name: 'Reports 2'}
-  ]}
+  {
+    id: 'projects',
+    name: 'Projects',
+    childItems: [
+      {id: 'project-1', name: 'Project 1'},
+      {
+        id: 'project-2',
+        name: 'Project 2',
+        childItems: [
+          {id: 'project-2A', name: 'Project 2A'},
+          {id: 'project-2B', name: 'Project 2B'},
+          {id: 'project-2C', name: 'Project 2C'}
+        ]
+      },
+      {id: 'project-3', name: 'Project 3'},
+      {id: 'project-4', name: 'Project 4'},
+      {
+        id: 'project-5',
+        name: 'Project 5',
+        childItems: [
+          {id: 'project-5A', name: 'Project 5A'},
+          {id: 'project-5B', name: 'Project 5B'},
+          {id: 'project-5C', name: 'Project 5C'}
+        ]
+      }
+    ]
+  },
+  {
+    id: 'reports',
+    name: 'Reports',
+    childItems: [
+      {
+        id: 'reports-1',
+        name: 'Reports 1',
+        childItems: [
+          {
+            id: 'reports-1A',
+            name: 'Reports 1A',
+            childItems: [
+              {
+                id: 'reports-1AB',
+                name: 'Reports 1AB',
+                childItems: [{id: 'reports-1ABC', name: 'Reports 1ABC'}]
+              }
+            ]
+          },
+          {id: 'reports-1B', name: 'Reports 1B'},
+          {id: 'reports-1C', name: 'Reports 1C'}
+        ]
+      },
+      {id: 'reports-2', name: 'Reports 2'}
+    ]
+  }
 ];
 
 function toArray(iterableCollection: Iterable<Node<Item>>, predicate) {
@@ -56,7 +82,12 @@ class TestCollection implements Collection<Node<Item>> {
 
   constructor(items: Item[]) {
     this.map = new Map<Key, Node<Item>>();
-    let visitItem = (item: Item, index: number, level = 0, parentKey: string | null = null): Node<Item> => {
+    let visitItem = (
+      item: Item,
+      index: number,
+      level = 0,
+      parentKey: string | null = null
+    ): Node<Item> => {
       let childNodes = visitItems(item.childItems ?? [], level + 1, item.id);
       return {
         type: 'item',
@@ -195,7 +226,7 @@ class TestCollection implements Collection<Node<Item>> {
 
   getChildren(key: Key): Iterable<Node<Item>> {
     let item = this.map.get(key);
-    return toArray(item?.childNodes || [], (node) => node.type !== 'item');
+    return toArray(item?.childNodes || [], node => node.type !== 'item');
   }
 }
 
@@ -316,7 +347,11 @@ describe('drop target keyboard navigation', () => {
     expect(prevKeys).toEqual(expectedKeys.toReversed());
   });
 
-  function collect(keyboardDelegate: KeyboardDelegate, direction: 'up' | 'down' | 'left' | 'right', rtl = false) {
+  function collect(
+    keyboardDelegate: KeyboardDelegate,
+    direction: 'up' | 'down' | 'left' | 'right',
+    rtl = false
+  ) {
     let results: DropTarget[] = [];
     let target: DropTarget | null = null;
     do {

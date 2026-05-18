@@ -14,14 +14,13 @@ export const description = 'Displays data in rows and columns, with row selectio
 
 <PageDescription>{docs.exports.TableView.description}</PageDescription>
 
-```tsx render docs={docs.exports.TableView} links={docs.links} props={['selectionMode', 'overflowMode', 'density', 'isQuiet', 'disabledBehavior']} initialProps={{'aria-label': 'Files', selectionMode: 'multiple', 'treeColumn': 'name', disabledBehavior: 'selection'}} type="s2"
+```tsx render docs={docs.exports.TableView} links={docs.links} props={['selectionMode', 'overflowMode', 'density', 'isQuiet']} initialProps={{'aria-label': 'Files', selectionMode: 'multiple', 'treeColumn': 'name'}} type="s2"
 "use client";
-import {TableView, TableHeader, Column, TableBody, Row, Cell} from '@react-spectrum/s2';
+import {TableView, TableHeader, Column, TableBody, Row, Cell} from '@react-spectrum/s2/TableView';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 <TableView
   /* PROPS */
-  disabledKeys={['pacman', 'apps']}
   styles={style({width: 'full'})}>
   <TableHeader>
     <Column id="name" isRowHeader>Name</Column>
@@ -90,45 +89,48 @@ In this example, both the columns and the rows are provided to the table via a r
 
 ```tsx render type="s2"
 "use client";
-import {TableView, TableHeader, Column, TableBody, Row, Cell, CheckboxGroup, Checkbox, ActionButton} from '@react-spectrum/s2';
+import {TableView, TableHeader, Column, TableBody, Row, Cell, TableFooter} from '@react-spectrum/s2/TableView';
+import {CheckboxGroup, Checkbox} from '@react-spectrum/s2/CheckboxGroup';
+import {ActionButton} from '@react-spectrum/s2/ActionButton';
 import {useState} from 'react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 ///- begin collapse -///
 const columns = [
-  {name: 'Name', id: 'name', isRowHeader: true},
-  {name: 'Type', id: 'type'},
-  {name: 'Date Modified', id: 'date'}
+  {name: 'Title', id: 'title', isRowHeader: true},
+  {name: 'Status', id: 'status'},
+  {name: 'Payment Method', id: 'paymentMethod'},
+  {name: 'Price', id: 'price'}
 ];
 ///- end collapse -///
 
 ///- begin collapse -///
 const initialRows = [
-  {id: 1, name: 'Games', date: '6/7/2020', type: 'File folder'},
-  {id: 2, name: 'Program Files', date: '4/7/2021', type: 'File folder'},
-  {id: 3, name: 'bootmgr', date: '11/20/2010', type: 'System file'},
-  {id: 4, name: 'log.txt', date: '1/18/2016', type: 'Text Document'}
+  {id: 1, title: 'Website Design', status: 'Paid', paymentMethod: 'Credit Card', price: 1200},
+  {id: 2, title: 'Logo Creation', status: 'Pending', paymentMethod: 'PayPal', price: 350},
+  {id: 3, title: 'SEO Optimization', status: 'Overdue', paymentMethod: 'Bank Transfer', price: 800},
+  {id: 4, title: 'Social Media Setup', status: 'Paid', paymentMethod: 'Debit Card', price: 450},
+  {id: 5, title: 'Content Writing', status: 'Pending', paymentMethod: 'Credit Card', price: 600}
 ];
 ///- end collapse -///
 
 function FileTable() {
-  let [showColumns, setShowColumns] = useState(['name', 'type', 'date']);
+  let [showColumns, setShowColumns] = useState(['title', 'status', 'paymentMethod', 'price']);
   let visibleColumns = columns.filter(column => showColumns.includes(column.id));
 
   let [rows, setRows] = useState(initialRows);
   let addRow = () => {
-    let date = new Date().toLocaleDateString();
     setRows(rows => [
       ...rows,
-      {id: rows.length + 1, name: 'file.txt', date, type: 'Text Document'}
+      {id: rows.length + 1, title: 'New Invoice', status: 'Pending', paymentMethod: 'Credit Card', price: 250}
     ]);
   };
 
   return (
     <div className={style({display: 'flex', flexDirection: 'column', gap: 8, alignItems: 'start', width: 'full'})}>
       <CheckboxGroup aria-label="Show columns" value={showColumns} onChange={setShowColumns} orientation="horizontal">
-        <Checkbox value="type">Type</Checkbox>
-        <Checkbox value="date">Date Modified</Checkbox>
+        <Checkbox value="status">Status</Checkbox>
+        <Checkbox value="paymentMethod">Payment Method</Checkbox>
       </CheckboxGroup>
       <TableView aria-label="Files" styles={style({width: 'full'})}>
         <TableHeader columns={visibleColumns}>
@@ -143,10 +145,22 @@ function FileTable() {
           {item => (
             /*- end highlight -*/
             <Row columns={visibleColumns}>
-              {column => <Cell>{item[column.id]}</Cell>}
+              {column => (
+                <Cell>
+                  {column.id === 'price' 
+                    ? item.price.toLocaleString('en-US', {style: 'currency', currency: 'USD', maximumFractionDigits: 0})
+                    : item[column.id]}
+                </Cell>
+              )}
             </Row>
           )}
         </TableBody>
+        <TableFooter>
+          <Row>
+            <Cell colSpan={showColumns.length - 1}>Total</Cell>
+            <Cell>{rows.reduce((p, row) => p + row.price, 0).toLocaleString('en-US', {style: 'currency', currency: 'USD', maximumFractionDigits: 0})}</Cell>
+          </Row>
+        </TableFooter>
       </TableView>
       <ActionButton onPress={addRow}>Add row</ActionButton>
     </div>
@@ -166,7 +180,7 @@ Rows can be nested to display hierarchical data. Use the `treeColumn` prop to de
 
 ```tsx render
 "use client";
-import {TableView, TableHeader, Column, TableBody, Row, Cell, Collection, type Key} from '@react-spectrum/s2';
+import {TableView, TableHeader, Column, TableBody, Row, Cell, Collection, type Key} from '@react-spectrum/s2/TableView';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {useState} from 'react';
 
@@ -230,7 +244,8 @@ Use the `loadingState` and `onLoadMore` props to enable async loading and infini
 
 ```tsx render type="s2"
 "use client";
-import {TableView, TableHeader, Column, TableBody, Row, Cell, useAsyncList} from '@react-spectrum/s2';
+import {TableView, TableHeader, Column, TableBody, Row, Cell} from '@react-spectrum/s2/TableView';
+import {useAsyncList} from '@react-spectrum/s2/useAsyncList';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 interface Character {
@@ -295,7 +310,7 @@ Use the `href` prop on a Row to create a link. See the [getting started guide](g
 
 ```tsx render docs={docs.exports.TableView} links={docs.links} props={['selectionMode']} initialProps={{'aria-label': 'Bookmarks', selectionMode: 'multiple'}} wide type="s2"
 "use client";
-import {TableView, TableHeader, Column, TableBody, Row, Cell} from '@react-spectrum/s2';
+import {TableView, TableHeader, Column, TableBody, Row, Cell} from '@react-spectrum/s2/TableView';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 <TableView
@@ -334,7 +349,9 @@ Use `renderEmptyState` to render placeholder content when the table is empty.
 
 ```tsx render type="s2"
 "use client";
-import {TableView, TableHeader, Column, TableBody, IllustratedMessage, Heading, Content, Link} from '@react-spectrum/s2';
+import {TableView, TableHeader, Column, TableBody} from '@react-spectrum/s2/TableView';
+import {IllustratedMessage, Heading, Content} from '@react-spectrum/s2/IllustratedMessage';
+import {Link} from '@react-spectrum/s2/Link';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import FolderOpen from '@react-spectrum/s2/illustrations/linear/FolderOpen';
 
@@ -366,7 +383,7 @@ Use the `align` prop on a Column and Cell to set the text alignment. `showDivide
 
 ```tsx render hideImports type="s2"
 "use client";
-import {TableView, TableHeader, Column, TableBody, Row, Cell, Collection} from '@react-spectrum/s2';
+import {TableView, TableHeader, Column, TableBody, Row, Cell, Collection, TableFooter} from '@react-spectrum/s2/TableView';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 ///- begin collapse -///
@@ -417,13 +434,15 @@ function TableWithDividers() {
             </Row>
           )}
         </Collection>
+      </TableBody>
+      <TableFooter>
         <Row>
           {/*- begin highlight -*/}
           <Cell colSpan={2} align="end" showDivider>Total:</Cell>
           {/*- end highlight -*/}
           <Cell align="end">{rows.reduce((p, v) => p + v.level, 0)}</Cell>
         </Row>
-      </TableBody>
+      </TableFooter>
     </TableView>
   );
 }
@@ -435,7 +454,8 @@ Use the `menuItems` prop to add custom menu items to a Column. See the [Menu](Me
 
 ```tsx render type="s2"
 "use client";
-import {TableView, TableHeader, Column, TableBody, Row, Cell, MenuSection, MenuItem} from '@react-spectrum/s2';
+import {TableView, TableHeader, Column, TableBody, Row, Cell} from '@react-spectrum/s2/TableView';
+import {MenuSection, MenuItem} from '@react-spectrum/s2/Menu';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 ///- begin collapse -///
@@ -500,7 +520,10 @@ Render an `<EditableCell>` instead of a `<Cell>` to allow users to edit the valu
 
 ```tsx render type="s2"
 "use client";
-import {TableView, TableHeader, Column, TableBody, Row, Cell, EditableCell, TextField, ActionButton, Picker, PickerItem, Text, type Key, type ColumnProps} from '@react-spectrum/s2';
+import {TableView, TableHeader, Column, TableBody, Row, Cell, EditableCell, type Key, type ColumnProps,} from '@react-spectrum/s2/TableView';
+import {TextField} from '@react-spectrum/s2/TextField';
+import {ActionButton, Text} from '@react-spectrum/s2/ActionButton';
+import {Picker, PickerItem} from '@react-spectrum/s2/Picker';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import User from '@react-spectrum/s2/icons/User';
 import Edit from '@react-spectrum/s2/icons/Edit';
@@ -635,9 +658,11 @@ export default function EditableTable(props) {
 
 Use `selectionMode` to enable single or multiple selection, and `selectedKeys` (matching each row's `id`) to control the selected rows. Return an [ActionBar](ActionBar) from `renderActionBar` to handle bulk actions, and use `onAction` for row navigation. Disable rows with `isDisabled`. See the [selection guide](selection) for details.
 
-```tsx render docs={docs.exports.TableView} links={docs.links} props={['selectionMode', 'disallowEmptySelection']} initialProps={{selectionMode: 'multiple'}} wide type="s2"
+```tsx render docs={docs.exports.TableView} links={docs.links} props={['selectionMode', 'disallowEmptySelection', 'disabledBehavior']} initialProps={{selectionMode: 'multiple', disabledBehavior: 'selection'}} wide type="s2"
 "use client";
-import {TableView, TableHeader, Column, TableBody, Row, Cell, ActionBar, ActionButton, Text, type Selection} from '@react-spectrum/s2';
+import {TableView, TableHeader, Column, TableBody, Row, Cell, type Selection} from '@react-spectrum/s2/TableView';
+import {ActionBar, ActionButton} from '@react-spectrum/s2/ActionBar';
+import {Text} from '@react-spectrum/s2/ActionButton';
 import Edit from '@react-spectrum/s2/icons/Edit';
 import Copy from '@react-spectrum/s2/icons/Copy';
 import Delete from '@react-spectrum/s2/icons/Delete';
@@ -718,7 +743,7 @@ Set the `allowsSorting` prop on a Column to make it sortable. When the column he
 
 ```tsx render type="s2"
 "use client";
-import {TableView, TableHeader, Column, TableBody, Row, Cell, type SortDescriptor} from '@react-spectrum/s2';
+import {TableView, TableHeader, Column, TableBody, Row, Cell, type SortDescriptor} from '@react-spectrum/s2/TableView';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {useState} from 'react';
 
@@ -783,7 +808,7 @@ Set the `allowsResizing` prop on a Column to make it resizable. Use the `default
 
 ```tsx render type="s2"
 "use client";
-import {TableView, TableHeader, Column, TableBody, Row, Cell} from '@react-spectrum/s2';
+import {TableView, TableHeader, Column, TableBody, Row, Cell} from '@react-spectrum/s2/TableView';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 ///- begin collapse -///
@@ -825,7 +850,7 @@ The TableView's `onResize` event is called when a column resizer is moved by the
 
 ```tsx render type="s2"
 "use client";
-import {TableView, TableHeader, Column, TableBody, Row, Cell} from '@react-spectrum/s2';
+import {TableView, TableHeader, Column, TableBody, Row, Cell} from '@react-spectrum/s2/TableView';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {useSyncExternalStore} from 'react';
 
@@ -924,7 +949,7 @@ function subscribe(fn) {
 
 ## API
 
-```tsx links={{TableView: '#tableview', TableHeader: '#tableheader', Column: '#column', TableBody: '#tablebody', Row: '#row', Cell: '#cell', 'EditableCell': '#editablecell'}}
+```tsx links={{TableView: '#tableview', TableHeader: '#tableheader', Column: '#column', TableBody: '#tablebody', Row: '#row', Cell: '#cell', TableFooter: '#tablefooter', 'EditableCell': '#editablecell'}}
 <TableView>
   <TableHeader>
     <Column />
@@ -935,6 +960,11 @@ function subscribe(fn) {
       <EditableCell />
     </Row>
   </TableBody>
+  <TableFooter>
+    <Row>
+      <Cell />
+    </Row>
+  </TableFooter>
 </TableView>
 ```
 
@@ -961,6 +991,10 @@ function subscribe(fn) {
 ### Cell
 
 <PropTable component={docs.exports.Cell} links={docs.links} showDescription />
+
+### TableFooter
+
+<PropTable component={docs.exports.TableFooter} links={docs.links} showDescription />
 
 ### EditableCell
 

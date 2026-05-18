@@ -11,19 +11,18 @@
  */
 
 import {Key, RefObject} from '@react-types/shared';
-import {LayoutInfo} from 'react-stately/private/virtualizer/LayoutInfo';
-import {Size} from 'react-stately/private/virtualizer/Size';
+import {LayoutInfo, Size} from 'react-stately/useVirtualizerState';
 import {useCallback} from 'react';
 import {useLayoutEffect} from '../utils/useLayoutEffect';
 
 interface IVirtualizer {
-  updateItemSize(key: Key, size: Size): void
+  updateItemSize(key: Key, size: Size): void;
 }
 
 export interface VirtualizerItemOptions {
-  layoutInfo: LayoutInfo | null,
-  virtualizer: IVirtualizer,
-  ref: RefObject<HTMLElement | null>
+  layoutInfo: LayoutInfo | null;
+  virtualizer: IVirtualizer;
+  ref: RefObject<HTMLElement | null>;
 }
 
 export function useVirtualizerItem(options: VirtualizerItemOptions): {updateSize: () => void} {

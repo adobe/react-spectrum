@@ -11,7 +11,7 @@ import {
   useSlot
 } from './utils';
 import {ColorSliderState, useColorSliderState} from 'react-stately/useColorSliderState';
-import {filterDOMProps} from 'react-aria/private/utils/filterDOMProps';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {GlobalDOMAttributes} from '@react-types/shared';
 import {InternalColorThumbContext} from './ColorThumb';
 import {LabelContext} from './Label';
@@ -23,56 +23,64 @@ import {useLocale} from 'react-aria/I18nProvider';
 export interface ColorSliderRenderProps {
   /**
    * The orientation of the color slider.
+   *
    * @selector [data-orientation="horizontal | vertical"]
    */
-  orientation: Orientation,
+  orientation: Orientation;
   /**
    * Whether the color slider is disabled.
+   *
    * @selector [data-disabled]
    */
-  isDisabled: boolean,
+  isDisabled: boolean;
   /**
    * State of the color slider.
    */
-  state: ColorSliderState
+  state: ColorSliderState;
 }
 
-export interface ColorSliderProps extends Omit<AriaColorSliderProps, 'label'>, RenderProps<ColorSliderRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
+export interface ColorSliderProps
+  extends
+    Omit<AriaColorSliderProps, 'label'>,
+    RenderProps<ColorSliderRenderProps>,
+    SlotProps,
+    GlobalDOMAttributes<HTMLDivElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-ColorSlider'
    */
-  className?: ClassNameOrFunction<ColorSliderRenderProps>
+  className?: ClassNameOrFunction<ColorSliderRenderProps>;
 }
 
-export const ColorSliderContext = createContext<ContextValue<Partial<ColorSliderProps>, HTMLDivElement>>(null);
+export const ColorSliderContext =
+  createContext<ContextValue<Partial<ColorSliderProps>, HTMLDivElement>>(null);
 export const ColorSliderStateContext = createContext<ColorSliderState | null>(null);
 
 /**
  * A color slider allows users to adjust an individual channel of a color value.
  */
-export const ColorSlider = forwardRef(function ColorSlider(props: ColorSliderProps, ref: ForwardedRef<HTMLDivElement>) {
+export const ColorSlider = forwardRef(function ColorSlider(
+  props: ColorSliderProps,
+  ref: ForwardedRef<HTMLDivElement>
+) {
   [props, ref] = useContextProps(props, ref, ColorSliderContext);
   let {locale} = useLocale();
   let state = useColorSliderState({...props, locale});
   let trackRef = React.useRef(null);
   let inputRef = React.useRef(null);
 
-  let [labelRef, label] = useSlot(
-    !props['aria-label'] && !props['aria-labelledby']
+  let [labelRef, label] = useSlot(!props['aria-label'] && !props['aria-labelledby']);
+  let {trackProps, thumbProps, inputProps, labelProps, outputProps} = useColorSlider(
+    {
+      ...props,
+      label,
+      trackRef,
+      inputRef
+    },
+    state
   );
-  let {
-    trackProps,
-    thumbProps,
-    inputProps,
-    labelProps,
-    outputProps
-  } = useColorSlider({
-    ...props,
-    label,
-    trackRef,
-    inputRef
-  }, state);
 
   let renderProps = useRenderProps({
     ...props,
@@ -94,12 +102,24 @@ export const ColorSlider = forwardRef(function ColorSlider(props: ColorSliderPro
         [SliderStateContext, state],
         [SliderTrackContext, {...trackProps, ref: trackRef}],
         [SliderOutputContext, outputProps],
-        [LabelContext, {
-          ...labelProps,
-          ref: labelRef,
-          children: state.value.getChannelName(props.channel, locale)
-        }],
-        [InternalColorThumbContext, {state, thumbProps, inputXRef: inputRef, xInputProps: inputProps, isDisabled: props.isDisabled}]
+        [
+          LabelContext,
+          {
+            ...labelProps,
+            ref: labelRef,
+            children: state.value.getChannelName(props.channel, locale)
+          }
+        ],
+        [
+          InternalColorThumbContext,
+          {
+            state,
+            thumbProps,
+            inputXRef: inputRef,
+            xInputProps: inputProps,
+            isDisabled: props.isDisabled
+          }
+        ]
       ]}>
       <dom.div
         {...DOMProps}
@@ -107,7 +127,8 @@ export const ColorSlider = forwardRef(function ColorSlider(props: ColorSliderPro
         ref={ref}
         slot={props.slot || undefined}
         data-orientation={state.orientation}
-        data-disabled={state.isDisabled || undefined} />
+        data-disabled={state.isDisabled || undefined}
+      />
     </Provider>
   );
 });

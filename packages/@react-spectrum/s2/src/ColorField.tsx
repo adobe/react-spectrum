@@ -10,35 +10,64 @@
  * governing permissions and limitations under the License.
  */
 
-import {ColorField as AriaColorField, ColorFieldProps as AriaColorFieldProps} from 'react-aria-components/ColorField';
-
-import {ContextValue} from 'react-aria-components/utils';
-import {createContext, forwardRef, Ref, useContext, useImperativeHandle, useRef} from 'react';
+import {
+  ColorField as AriaColorField,
+  ColorFieldProps as AriaColorFieldProps
+} from 'react-aria-components/ColorField';
+import {ContextValue} from 'react-aria-components/slots';
+import {
+  createContext,
+  forwardRef,
+  ReactNode,
+  Ref,
+  useContext,
+  useImperativeHandle,
+  useRef
+} from 'react';
 import {createFocusableRef} from './useDOMRef';
 import {field, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText, Input} from './Field';
 import {FormContext, useFormProps} from './Form';
 import {GlobalDOMAttributes, HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
-import {InputProps} from 'react-aria-components/Input';
+import {InputContext, InputProps} from 'react-aria-components/Input';
+import {mergeRefs} from 'react-aria/mergeRefs';
 import {style} from '../style' with {type: 'macro'};
 import {TextFieldRef} from './TextField';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface ColorFieldProps extends Omit<AriaColorFieldProps, 'children' | 'className' | 'style' | 'render' | keyof GlobalDOMAttributes>, StyleProps, SpectrumLabelableProps, HelpTextProps, Pick<InputProps, 'placeholder'> {
+export interface ColorFieldProps
+  extends
+    Omit<
+      AriaColorFieldProps,
+      'children' | 'className' | 'style' | 'render' | keyof GlobalDOMAttributes
+    >,
+    StyleProps,
+    SpectrumLabelableProps,
+    HelpTextProps,
+    Pick<InputProps, 'placeholder'> {
   /**
    * The size of the color field.
    *
    * @default 'M'
    */
-  size?: 'S' | 'M' | 'L' | 'XL'
+  size?: 'S' | 'M' | 'L' | 'XL';
+  /**
+   * The prefix to display in the ColorField. A non-interactive element that appears before the
+   * input.
+   */
+  prefix?: ReactNode;
 }
 
-export const ColorFieldContext = createContext<ContextValue<Partial<ColorFieldProps>, TextFieldRef>>(null);
+export const ColorFieldContext =
+  createContext<ContextValue<Partial<ColorFieldProps>, TextFieldRef>>(null);
 
 /**
  * A color field allows users to edit a hex color or individual color channel value.
  */
-export const ColorField = forwardRef(function ColorField(props: ColorFieldProps, ref: Ref<TextFieldRef>) {
+export const ColorField = forwardRef(function ColorField(
+  props: ColorFieldProps,
+  ref: Ref<TextFieldRef>
+) {
   [props, ref] = useSpectrumContextProps(props, ref, ColorFieldContext);
   let formContext = useContext(FormContext);
   props = useFormProps(props);
@@ -75,34 +104,52 @@ export const ColorField = forwardRef(function ColorField(props: ColorFieldProps,
       {...fieldProps}
       ref={domRef}
       style={UNSAFE_style}
-      className={UNSAFE_className + style(field(), getAllowedOverrides())({
-        size: props.size,
-        labelPosition,
-        isInForm: !!formContext
-      }, styles)}>
-      {({isDisabled, isInvalid}) => (<>
-        <FieldLabel
-          isDisabled={isDisabled}
-          isRequired={props.isRequired}
-          size={props.size}
-          labelPosition={labelPosition}
-          labelAlign={labelAlign}
-          necessityIndicator={necessityIndicator}
-          contextualHelp={props.contextualHelp}>
-          {label}
-        </FieldLabel>
-        <FieldGroup size={props.size}>
-          <Input ref={inputRef} />
-          {isInvalid && <FieldErrorIcon isDisabled={isDisabled} />}
-        </FieldGroup>
-        <HelpText
-          size={props.size}
-          isDisabled={isDisabled}
-          isInvalid={isInvalid}
-          description={description}>
-          {errorMessage}
-        </HelpText>
-      </>)}
+      className={
+        UNSAFE_className +
+        style(field(), getAllowedOverrides())(
+          {
+            size: props.size,
+            labelPosition,
+            isInForm: !!formContext
+          },
+          styles
+        )
+      }>
+      {({isDisabled, isInvalid}) => (
+        <>
+          <FieldLabel
+            isDisabled={isDisabled}
+            isRequired={props.isRequired}
+            size={props.size}
+            labelPosition={labelPosition}
+            labelAlign={labelAlign}
+            necessityIndicator={necessityIndicator}
+            contextualHelp={props.contextualHelp}>
+            {label}
+          </FieldLabel>
+          <FieldGroup prefix={props.prefix} size={props.size}>
+            <InputContext.Consumer>
+              {ctx => (
+                <InputContext.Provider
+                  value={{
+                    ...ctx,
+                    ref: mergeRefs((ctx as any)?.ref, inputRef)
+                  }}>
+                  <Input />
+                </InputContext.Provider>
+              )}
+            </InputContext.Consumer>
+            {isInvalid && <FieldErrorIcon isDisabled={isDisabled} />}
+          </FieldGroup>
+          <HelpText
+            size={props.size}
+            isDisabled={isDisabled}
+            isInvalid={isInvalid}
+            description={description}>
+            {errorMessage}
+          </HelpText>
+        </>
+      )}
     </AriaColorField>
   );
 });

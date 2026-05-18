@@ -1,4 +1,4 @@
-@import "./theme.css";
+@import './theme.css';
 
 .react-aria-ToggleButtonGroup {
   display: flex;
@@ -29,7 +29,7 @@
   }
 }
 
-.react-aria-ToggleButtonGroup[data-orientation=horizontal] {
+.react-aria-ToggleButtonGroup[data-orientation='horizontal'] {
   flex-direction: row;
 
   > .react-aria-ToggleButton {
@@ -47,7 +47,7 @@
   }
 }
 
-.react-aria-ToggleButtonGroup[data-orientation=vertical] {
+.react-aria-ToggleButtonGroup[data-orientation='vertical'] {
   flex-direction: column;
   width: fit-content;
 

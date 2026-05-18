@@ -25,31 +25,32 @@ import {useProviderProps} from '../provider/Provider';
 import {useSearchFieldState} from 'react-stately/useSearchFieldState';
 import {useSlotProps} from '../utils/Slots';
 
-export interface SpectrumSearchFieldProps extends SpectrumTextInputBase, Omit<AriaSearchFieldProps, 'isInvalid' | 'validationState'>, SpectrumTextFieldProps {}
+export interface SpectrumSearchFieldProps
+  extends
+    SpectrumTextInputBase,
+    Omit<AriaSearchFieldProps, 'isInvalid' | 'validationState'>,
+    SpectrumTextFieldProps {}
 
 /**
  * A SearchField is a text field designed for searches.
  */
-export const SearchField = forwardRef(function SearchField(props: SpectrumSearchFieldProps, ref: Ref<TextFieldRef>) {
+export const SearchField = forwardRef(function SearchField(
+  props: SpectrumSearchFieldProps,
+  ref: Ref<TextFieldRef>
+) {
   props = useSlotProps(props, 'searchfield');
   props = useProviderProps(props);
   props = useFormProps(props);
-  let defaultIcon = (
-    <Magnifier data-testid="searchicon" />
-  );
+  let defaultIcon = <Magnifier data-testid="searchicon" />;
 
-  let {
-    icon = defaultIcon,
-    isDisabled,
-    UNSAFE_className,
-    placeholder,
-    ...otherProps
-  } = props;
+  let {icon = defaultIcon, isDisabled, UNSAFE_className, placeholder, ...otherProps} = props;
 
   let hasWarned = useRef(false);
   useEffect(() => {
     if (placeholder && !hasWarned.current && process.env.NODE_ENV !== 'production') {
-      console.warn('Placeholders are deprecated due to accessibility issues. Please use help text instead. See the docs for details: https://react-spectrum.adobe.com/react-spectrum/SearchField.html#help-text');
+      console.warn(
+        'Placeholders are deprecated due to accessibility issues. Please use help text instead. See the docs for details: https://react-spectrum.adobe.com/react-spectrum/SearchField.html#help-text'
+      );
       hasWarned.current = true;
     }
   }, [placeholder]);
@@ -62,13 +63,9 @@ export const SearchField = forwardRef(function SearchField(props: SpectrumSearch
     <ClearButton
       {...clearButtonProps}
       preventFocus
-      UNSAFE_className={
-        classNames(
-          styles,
-          'spectrum-ClearButton'
-        )
-      }
-      isDisabled={isDisabled} />
+      UNSAFE_className={classNames(styles, 'spectrum-ClearButton')}
+      isDisabled={isDisabled}
+    />
   );
 
   let validationState = props.validationState || (result.isInvalid ? 'invalid' : undefined);
@@ -78,25 +75,24 @@ export const SearchField = forwardRef(function SearchField(props: SpectrumSearch
       {...otherProps}
       {...result}
       validationState={validationState}
-      UNSAFE_className={
-        classNames(
-          styles,
-          'spectrum-Search',
-          'spectrum-Textfield',
-          {
-            'is-disabled': isDisabled,
-            'is-quiet': props.isQuiet,
-            'spectrum-Search--invalid': validationState === 'invalid' && !isDisabled,
-            'spectrum-Search--valid': validationState === 'valid' && !isDisabled
-          },
-          UNSAFE_className
-        )
-      }
+      UNSAFE_className={classNames(
+        styles,
+        'spectrum-Search',
+        'spectrum-Textfield',
+        {
+          'is-disabled': isDisabled,
+          'is-quiet': props.isQuiet,
+          'spectrum-Search--invalid': validationState === 'invalid' && !isDisabled,
+          'spectrum-Search--valid': validationState === 'valid' && !isDisabled
+        },
+        UNSAFE_className
+      )}
       inputClassName={classNames(styles, 'spectrum-Search-input')}
       ref={ref}
       inputRef={inputRef}
       isDisabled={isDisabled}
       icon={icon}
-      wrapperChildren={(state.value !== '' && !props.isReadOnly) ? clearButton : undefined} />
+      wrapperChildren={state.value !== '' && !props.isReadOnly ? clearButton : undefined}
+    />
   );
 }) as (props: SpectrumSearchFieldProps & {ref?: Ref<TextFieldRef>}) => ReactElement;

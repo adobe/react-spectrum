@@ -12,27 +12,30 @@
 
 import {FocusableProvider} from 'react-aria/private/interactions/useFocusable';
 import {Overlay} from '../overlays/Overlay';
-import {Placement, PositionProps, useOverlayPosition} from 'react-aria/private/overlays/useOverlayPosition';
+import {Placement, PositionProps, useOverlayPosition} from 'react-aria/useOverlayPosition';
 import React, {JSX, ReactElement, useRef, useState} from 'react';
 import {TooltipContext} from './context';
 import {TooltipTriggerProps, useTooltipTriggerState} from 'react-stately/useTooltipTriggerState';
 import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
 import {useTooltipTrigger} from 'react-aria/useTooltipTrigger';
 
-export interface SpectrumTooltipTriggerProps extends Omit<TooltipTriggerProps, 'closeDelay'>, PositionProps {
-  children: [ReactElement, ReactElement],
+export interface SpectrumTooltipTriggerProps
+  extends Omit<TooltipTriggerProps, 'closeDelay'>, PositionProps {
+  children: [ReactElement, ReactElement];
 
   /**
    * The additional offset applied along the main axis between the element and its
    * anchor element.
+   *
    * @default 7
    */
-  offset?: number,
+  offset?: number;
   /**
    * The placement of the tooltip with respect to the trigger.
+   *
    * @default 'top'
    */
-  placement?: Placement
+  placement?: Placement;
 }
 
 const DEFAULT_OFFSET = -1; // Offset needed to reach 4px/5px (med/large) distance between tooltip and trigger button
@@ -55,11 +58,15 @@ function TooltipTrigger(props: SpectrumTooltipTriggerProps) {
   let tooltipTriggerRef = useRef<HTMLElement>(null);
   let overlayRef = useRef<HTMLDivElement>(null);
 
-  let {triggerProps, tooltipProps} = useTooltipTrigger({
-    isDisabled,
-    trigger: triggerAction,
-    shouldCloseOnPress
-  }, state, tooltipTriggerRef);
+  let {triggerProps, tooltipProps} = useTooltipTrigger(
+    {
+      isDisabled,
+      trigger: triggerAction,
+      shouldCloseOnPress
+    },
+    state,
+    tooltipTriggerRef
+  );
 
   let [borderRadius, setBorderRadius] = useState(0);
   useLayoutEffect(() => {
@@ -93,9 +100,7 @@ function TooltipTrigger(props: SpectrumTooltipTriggerProps) {
   });
 
   return (
-    <FocusableProvider
-      {...triggerProps}
-      ref={tooltipTriggerRef}>
+    <FocusableProvider {...triggerProps} ref={tooltipTriggerRef}>
       {trigger}
       <TooltipContext.Provider
         value={{
@@ -127,7 +132,7 @@ TooltipTrigger.getCollectionNode = function* (props: SpectrumTooltipTriggerProps
   let [trigger, tooltip] = childArray;
   yield {
     element: trigger,
-    wrapper: (element) => (
+    wrapper: element => (
       <TooltipTrigger key={element.key} {...props}>
         {element}
         {tooltip}

@@ -16,7 +16,8 @@ A **static collection** is a collection that does not change over time (e.g. har
 
 ```tsx render type="s2"
 "use client";
-import {Menu, MenuTrigger, MenuItem, ActionButton} from '@react-spectrum/s2';
+import {Menu, MenuTrigger, MenuItem} from '@react-spectrum/s2/Menu';
+import {ActionButton} from '@react-spectrum/s2/ActionButton';
 
 <MenuTrigger>
   <ActionButton>Menu</ActionButton>
@@ -36,7 +37,8 @@ Sections or groups of items can be constructed by wrapping the items in a sectio
 
 ```tsx render type="s2"
 "use client";
-import {Menu, MenuTrigger, MenuItem, MenuSection, ActionButton, Header, Heading} from '@react-spectrum/s2';
+import {Menu, MenuTrigger, MenuItem, MenuSection, Header, Heading} from '@react-spectrum/s2/Menu';
+import {ActionButton} from '@react-spectrum/s2/ActionButton';
 
 <MenuTrigger>
   <ActionButton>Menu</ActionButton>
@@ -64,7 +66,7 @@ import {Menu, MenuTrigger, MenuItem, MenuSection, ActionButton, Header, Heading}
 
 ```tsx render type="s2"
 "use client";
-import {Picker, PickerSection, PickerItem, Header, Heading} from '@react-spectrum/s2';
+import {Picker, PickerSection, PickerItem, Header, Heading} from '@react-spectrum/s2/Picker';
 
 <Picker label="Text style">
   {/*- begin highlight -*/}
@@ -97,7 +99,8 @@ Use the `items` prop to provide an array of objects, and a function to render ea
 
 ```tsx render type="s2"
 "use client";
-import {TagGroup, Tag, ActionButton, Text} from '@react-spectrum/s2';
+import {TagGroup, Tag, Text} from '@react-spectrum/s2/TagGroup';
+import {ActionButton} from '@react-spectrum/s2/ActionButton';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import AddIcon from '@react-spectrum/s2/icons/Add';
 import {useState} from 'react';
@@ -170,9 +173,9 @@ Dynamic collections are automatically memoized to improve performance. Rendered 
 
 ```tsx render type="s2"
 "use client";
-import {CardView, AssetCard, CardPreview, Image, Content, Text} from '@react-spectrum/s2';
+import {CardView, AssetCard, CardPreview, Image, Content, Text} from '@react-spectrum/s2/CardView';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
-import {ToggleButtonGroup, ToggleButton} from '@react-spectrum/s2';
+import {ToggleButtonGroup, ToggleButton} from '@react-spectrum/s2/ToggleButtonGroup';
 import {useState} from 'react';
 
 const items = [
@@ -231,7 +234,7 @@ To combine multiple sources of data, or mix static and dynamic items, use the `<
 
 ```tsx render type="s2"
 "use client";
-import {Picker, PickerSection, PickerItem, Header, Heading, Collection} from '@react-spectrum/s2';
+import {Picker, PickerSection, PickerItem, Header, Heading, Collection} from '@react-spectrum/s2/Picker';
 
 let animals = [
   {id: 1, species: 'Aardvark'},
@@ -280,7 +283,8 @@ Many components support infinite scrolling via the `loadingState` and `onLoadMor
 
 ```tsx render type="s2"
 "use client";
-import {TableView, TableHeader, Column, TableBody, Row, Cell, useAsyncList} from '@react-spectrum/s2';
+import {TableView, TableHeader, Column, TableBody, Row, Cell} from '@react-spectrum/s2/TableView';
+import {useAsyncList} from '@react-spectrum/s2/useAsyncList';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 interface Character {

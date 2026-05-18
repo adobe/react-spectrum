@@ -10,10 +10,13 @@ export default function RangeCalendarExample() {
   let disabledRanges = [
     [now, now.add({days: 2})],
     [now.add({days: 10}), now.add({days: 14})],
-    [now.add({days: 23}), now.add({days: 28})],
+    [now.add({days: 23}), now.add({days: 28})]
   ];
 
-  let isDateUnavailable = (date) => disabledRanges.some((interval) => date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0);
+  let isDateUnavailable = date =>
+    disabledRanges.some(
+      interval => date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0
+    );
 
   return (
     <div className={style({display: 'flex', flexDirection: 'column', alignItems: 'center'})}>
@@ -21,7 +24,8 @@ export default function RangeCalendarExample() {
         aria-label="Trip dates"
         minValue={now}
         isDateUnavailable={isDateUnavailable}
-        defaultValue={{start: now.add({days: 5}), end: now.add({days: 8})}} />
+        defaultValue={{start: now.add({days: 5}), end: now.add({days: 8})}}
+      />
     </div>
   );
 }

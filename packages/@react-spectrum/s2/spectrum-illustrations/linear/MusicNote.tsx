@@ -15,7 +15,7 @@ import MusicNote_M from 'illustration:./S2_lin_musicNote_96.svg';
 import MusicNote_S from 'illustration:./S2_lin_musicNote_48.svg';
 import {ReactNode} from 'react';
 import {IconProps, IllustrationContext} from '../../src/Icon';
-import {useContextProps} from 'react-aria-components/utils';
+import {useContextProps} from 'react-aria-components/slots';
 
 export default function MusicNote(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);

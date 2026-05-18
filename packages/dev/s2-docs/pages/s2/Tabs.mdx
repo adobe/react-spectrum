@@ -14,7 +14,7 @@ export const description = 'Organize content into multiple sections, and allow a
 <PageDescription>{docs.exports.Tabs.description}</PageDescription>
 ```tsx render docs={docs.exports.Tabs} props={['density', 'orientation', 'keyboardActivation', 'isDisabled']} initialProps={{'aria-label': 'Tabs'}} links={docs.links} type="s2"
 "use client";
-import {Tabs, TabList, Tab, TabPanel} from '@react-spectrum/s2';
+import {Tabs, TabList, Tab, TabPanel} from '@react-spectrum/s2/Tabs';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import Home from '@react-spectrum/s2/illustrations/gradient/generic2/Home';
 import Folder from '@react-spectrum/s2/illustrations/gradient/generic2/FolderOpen';
@@ -59,7 +59,8 @@ import Settings from '@react-spectrum/s2/illustrations/gradient/generic1/GearSet
 
 ```tsx render
 "use client";
-import {ActionButton, ActionButtonGroup, Tabs, TabList, Tab, TabPanel, Collection} from '@react-spectrum/s2';
+import {Tabs, TabList, Tab, TabPanel, Collection} from '@react-spectrum/s2/Tabs';
+import {ActionButtonGroup, ActionButton} from '@react-spectrum/s2/ActionButtonGroup';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {useState} from 'react';
 import AddCircle from '@react-spectrum/s2/icons/AddCircle';
@@ -124,7 +125,7 @@ function Example() {
 
 ```tsx render docs={docs.exports.Tabs} links={docs.links} props={['labelBehavior']} initialProps={{'aria-label': 'Tabs'}} type="s2" wide
 "use client"
-import {Tabs, TabList, Tab, TabPanel, Text} from '@react-spectrum/s2';
+import {Tabs, TabList, Tab, TabPanel, Text} from '@react-spectrum/s2/Tabs';
 import Edit from '@react-spectrum/s2/icons/Edit';
 import Bell from '@react-spectrum/s2/icons/Bell';
 import Heart from '@react-spectrum/s2/icons/Heart';
@@ -164,7 +165,7 @@ Horizontal tabs automatically collapse into a Picker when space is limited.
 
 ```tsx render
 "use client";
-import {Tabs, TabList, Tab, TabPanel} from '@react-spectrum/s2';
+import {Tabs, TabList, Tab, TabPanel} from '@react-spectrum/s2/Tabs';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 <div
@@ -211,7 +212,7 @@ Use the `defaultSelectedKey` or `selectedKey` prop to set the selected tab. The 
 
 ```tsx render
 "use client";
-import {Tabs, TabList, Tab, TabPanel, type Key} from '@react-spectrum/s2';
+import {Tabs, TabList, Tab, TabPanel, type Key} from '@react-spectrum/s2/Tabs';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import Home from '@react-spectrum/s2/illustrations/gradient/generic2/Home';
 import Folder from '@react-spectrum/s2/illustrations/gradient/generic2/FolderOpen';

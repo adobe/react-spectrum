@@ -16,7 +16,7 @@ export const description = 'Displays a collapsible list of options, and allows a
 
 ```tsx render docs={docs.exports.Picker} links={docs.links} props={['label', 'selectionMode', 'size', 'labelPosition', 'description', 'contextualHelp', 'isQuiet', 'isDisabled']} initialProps={{label: 'Ice cream flavor'}} type="s2"
 "use client";
-import {Picker, PickerItem} from '@react-spectrum/s2';
+import {Picker, PickerItem} from '@react-spectrum/s2/Picker';
 
 <Picker/* PROPS */>
   <PickerItem>Chocolate</PickerItem>
@@ -33,7 +33,7 @@ import {Picker, PickerItem} from '@react-spectrum/s2';
 
 ```tsx render
 "use client";
-import {Picker, PickerItem} from '@react-spectrum/s2';
+import {Picker, PickerItem} from '@react-spectrum/s2/Picker';
 
 function Example() {
   let options = [
@@ -64,7 +64,8 @@ function Example() {
 
 ```tsx render
 "use client";
-import {Avatar, Picker, PickerItem, Text} from '@react-spectrum/s2';
+import {Avatar} from '@react-spectrum/s2/Avatar';
+import {Picker, PickerItem, Text} from '@react-spectrum/s2/Picker';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import Comment from '@react-spectrum/s2/icons/Comment';
 import Edit from '@react-spectrum/s2/icons/Edit';
@@ -122,7 +123,7 @@ Use the `<PickerSection>` component to group options. A `<Header>` element, with
 
 ```tsx render
 "use client";
-import {Picker, PickerSection, PickerItem, Header, Heading, Text} from '@react-spectrum/s2';
+import {Picker, PickerSection, PickerItem, Header, Heading, Text} from '@react-spectrum/s2/Picker';
 
 <Picker label="Ice cream flavor">
   {/*- begin highlight -*/}
@@ -154,7 +155,8 @@ Use the `loadingState` and `onLoadMore` props to enable async loading and infini
 
 ```tsx render
 "use client";
-import {Picker, PickerItem, useAsyncList} from '@react-spectrum/s2';
+import {Picker, PickerItem} from '@react-spectrum/s2/Picker';
+import {useAsyncList} from '@react-spectrum/s2/useAsyncList';
 
 interface Character {
   name: string
@@ -196,7 +198,7 @@ Use the `href` prop on a `<PickerItem>` to create a link. See the [getting start
 
 ```tsx render
 "use client";
-import {Picker, PickerItem} from '@react-spectrum/s2';
+import {Picker, PickerItem} from '@react-spectrum/s2/Picker';
 
 <Picker label="Project">
   <PickerItem href="https://example.com/" target="_blank">Create new…</PickerItem>
@@ -212,7 +214,7 @@ Use the `defaultValue` or `value` prop to set the selected item. The value corre
 
 ```tsx render docs={docs.exports.Picker} links={docs.links} props={['selectionMode']} wide
 "use client";
-import {Picker, PickerItem} from '@react-spectrum/s2';
+import {Picker, PickerItem} from '@react-spectrum/s2/Picker';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {useState} from 'react';
 
@@ -249,7 +251,8 @@ Use the `renderValue` prop to provide a custom element to display selected items
 
 ```tsx render
 "use client";
-import {Avatar, AvatarGroup, Picker, PickerItem, Text} from '@react-spectrum/s2';
+import {AvatarGroup, Avatar} from '@react-spectrum/s2/AvatarGroup';
+import {Picker, PickerItem, Text} from '@react-spectrum/s2/Picker';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 ///- begin collapse -///
@@ -297,7 +300,9 @@ Use the `name` prop to submit the `id` of the selected item to the server. Set t
 
 ```tsx render docs={docs.exports.Picker} links={docs.links} props={['isRequired', 'necessityIndicator']} initialProps={{isRequired: true}} type="s2" wide
 "use client";
-import {Picker, PickerItem, Form, Button} from '@react-spectrum/s2';
+import {Picker, PickerItem} from '@react-spectrum/s2/Picker';
+import {Form} from '@react-spectrum/s2/Form';
+import {Button} from '@react-spectrum/s2/Button';
 
 function Example(props) {
   return (
@@ -329,7 +334,7 @@ The open state of the Picker can be controlled via the `defaultOpen` and `isOpen
 
 ```tsx render hideImports docs={docs.exports.Picker} links={docs.links} props={['align', 'direction', 'shouldFlip', 'menuWidth']}
 "use client";
-import {Picker, PickerItem} from '@react-spectrum/s2';
+import {Picker, PickerItem} from '@react-spectrum/s2/Picker';
 import {useState} from 'react';
 
 function Example(props) {

@@ -13,7 +13,7 @@ export const description = 'Displays a non-modal message associated with objects
 
 ```tsx render docs={docs.exports.InlineAlert} links={docs.links} props={['variant', 'fillStyle']} initialProps={{variant: 'neutral'}} type="s2" wide
 "use client";
-import {InlineAlert, Heading, Content} from '@react-spectrum/s2';
+import {InlineAlert, Heading, Content} from '@react-spectrum/s2/InlineAlert';
 
 <InlineAlert/* PROPS */>
   <Heading>Payment Information</Heading>
@@ -27,7 +27,8 @@ Use the `autoFocus` prop to focus the alert when it first renders. This is usefu
 
 ```tsx render hideImports
 "use client";
-import {InlineAlert, Heading, Content, Button} from '@react-spectrum/s2';
+import {InlineAlert, Heading, Content} from '@react-spectrum/s2/InlineAlert';
+import {Button} from '@react-spectrum/s2/Button';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {useState} from 'react';
 

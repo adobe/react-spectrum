@@ -22,9 +22,9 @@ import {Rect} from './Rect';
 import {Size} from './Size';
 
 interface VirtualizerOptions<T extends object, V> {
-  delegate: VirtualizerDelegate<T, V>,
-  collection: Collection<T>,
-  layout: Layout<T>
+  delegate: VirtualizerDelegate<T, V>;
+  collection: Collection<T>;
+  layout: Layout<T>;
 }
 
 /**
@@ -38,10 +38,11 @@ interface VirtualizerOptions<T extends object, V> {
  * a stack, a grid, a circle, or any other layout you can think of. The layout can be changed
  * dynamically at runtime as well.
  *
- * Layouts produce information on what views should appear in the virtualizer, but do not create
- * the views themselves directly. It is the responsibility of the `VirtualizerDelegate` object
- * to render elements for each layout info. The virtualizer manages a set of `ReusableView` objects,
- * which are reused as the user scrolls by swapping their content with cached elements returned by the delegate.
+ * Layouts produce information on what views should appear in the virtualizer, but do not create the
+ * views themselves directly. It is the responsibility of the `VirtualizerDelegate` object to render
+ * elements for each layout info. The virtualizer manages a set of `ReusableView` objects, which are
+ * reused as the user scrolls by swapping their content with cached elements returned by the
+ * delegate.
  */
 export class Virtualizer<T extends object, V> {
   /**
@@ -58,6 +59,8 @@ export class Virtualizer<T extends object, V> {
   readonly contentSize: Size;
   /** The currently visible rectangle. */
   readonly visibleRect: Rect;
+  /** The size of the virtualizer scroll view. */
+  readonly size: Size;
   /** The set of persisted keys that are always present in the DOM, even if not currently in view. */
   readonly persistedKeys: Set<Key>;
 
@@ -72,8 +75,9 @@ export class Virtualizer<T extends object, V> {
     this.delegate = options.delegate;
     this.collection = options.collection;
     this.layout = options.layout;
-    this.contentSize = new Size;
-    this.visibleRect = new Rect;
+    this.contentSize = new Size();
+    this.visibleRect = new Rect();
+    this.size = new Size();
     this.persistedKeys = new Set();
     this._visibleViews = new Map();
     this._renderedContent = new WeakMap();
@@ -110,7 +114,9 @@ export class Virtualizer<T extends object, V> {
   }
 
   private getParentView(layoutInfo: LayoutInfo): ReusableView<T, V> | undefined {
-    return layoutInfo.parentKey != null ? this._visibleViews.get(layoutInfo.parentKey) : this._rootView;
+    return layoutInfo.parentKey != null
+      ? this._visibleViews.get(layoutInfo.parentKey)
+      : this._rootView;
   }
 
   private getReusableView(layoutInfo: LayoutInfo): ChildView<T, V> {
@@ -170,8 +176,14 @@ export class Virtualizer<T extends object, V> {
     let visibleRect = this.visibleRect;
     let contentOffsetX = context.contentChanged ? 0 : visibleRect.x;
     let contentOffsetY = context.contentChanged ? 0 : visibleRect.y;
-    contentOffsetX = Math.max(0, Math.min(this.contentSize.width - visibleRect.width, contentOffsetX));
-    contentOffsetY = Math.max(0, Math.min(this.contentSize.height - visibleRect.height, contentOffsetY));
+    contentOffsetX = Math.max(
+      0,
+      Math.min(this.contentSize.width - visibleRect.width, contentOffsetX)
+    );
+    contentOffsetY = Math.max(
+      0,
+      Math.min(this.contentSize.height - visibleRect.height, contentOffsetY)
+    );
 
     if (contentOffsetX !== visibleRect.x || contentOffsetY !== visibleRect.y) {
       // If the offset changed, trigger a new re-render.
@@ -184,8 +196,14 @@ export class Virtualizer<T extends object, V> {
 
   getVisibleLayoutInfos(): Map<Key, LayoutInfo> {
     let isTestEnv = process.env.NODE_ENV === 'test' && !process.env.VIRT_ON;
-    let isClientWidthMocked = isTestEnv && typeof HTMLElement !== 'undefined' && Object.getOwnPropertyNames(HTMLElement.prototype).includes('clientWidth');
-    let isClientHeightMocked = isTestEnv && typeof HTMLElement !== 'undefined' && Object.getOwnPropertyNames(HTMLElement.prototype).includes('clientHeight');
+    let isClientWidthMocked =
+      isTestEnv &&
+      typeof HTMLElement !== 'undefined' &&
+      Object.getOwnPropertyNames(HTMLElement.prototype).includes('clientWidth');
+    let isClientHeightMocked =
+      isTestEnv &&
+      typeof HTMLElement !== 'undefined' &&
+      Object.getOwnPropertyNames(HTMLElement.prototype).includes('clientHeight');
 
     let rect: Rect;
     if (isTestEnv && !(isClientWidthMocked && isClientHeightMocked)) {
@@ -194,7 +212,7 @@ export class Virtualizer<T extends object, V> {
       rect = this._overscanManager.getOverscannedRect();
     }
     let layoutInfos = this.layout.getVisibleLayoutInfos(rect);
-    let map = new Map;
+    let map = new Map();
     for (let layoutInfo of layoutInfos) {
       map.set(layoutInfo.key, layoutInfo);
     }
@@ -288,19 +306,35 @@ export class Virtualizer<T extends object, V> {
       needsUpdate = true;
     }
 
-    if (!this.visibleRect.equals(opts.visibleRect)) {
+    if (!this.visibleRect.equals(opts.visibleRect) || !this.size.equals(opts.size)) {
       this._overscanManager.setVisibleRect(opts.visibleRect);
-      let shouldInvalidate = this.layout.shouldInvalidate(opts.visibleRect, this.visibleRect);
+
+      // Create a rectangle using the scroll position and layout size of the scroll view. This is not the same
+      // as the visibleRect, whose width and height may change during window scrolling.
+      let oldRect = new Rect(
+        this.visibleRect.x,
+        this.visibleRect.y,
+        this.size.width,
+        this.size.height
+      );
+      let newRect = new Rect(
+        opts.visibleRect.x,
+        opts.visibleRect.y,
+        opts.size.width,
+        opts.size.height
+      );
+      let shouldInvalidate = this.layout.shouldInvalidate(newRect, oldRect);
 
       if (shouldInvalidate) {
         offsetChanged = !opts.visibleRect.pointEquals(this.visibleRect);
-        sizeChanged = !opts.visibleRect.sizeEquals(this.visibleRect);
+        sizeChanged = !this.size.equals(opts.size);
         needsLayout = true;
       } else {
         needsUpdate = true;
       }
 
       mutableThis.visibleRect = opts.visibleRect;
+      mutableThis.size = opts.size;
     }
 
     if (opts.invalidationContext !== this._invalidationContext) {
@@ -308,10 +342,14 @@ export class Virtualizer<T extends object, V> {
         sizeChanged ||= opts.invalidationContext.sizeChanged || false;
         offsetChanged ||= opts.invalidationContext.offsetChanged || false;
         itemSizeChanged ||= opts.invalidationContext.itemSizeChanged || false;
-        layoutOptionsChanged ||= opts.invalidationContext.layoutOptions != null
-          && this._invalidationContext.layoutOptions != null
-          && opts.invalidationContext.layoutOptions !== this._invalidationContext.layoutOptions
-          && this.layout.shouldInvalidateLayoutOptions(opts.invalidationContext.layoutOptions, this._invalidationContext.layoutOptions);
+        layoutOptionsChanged ||=
+          opts.invalidationContext.layoutOptions != null &&
+          this._invalidationContext.layoutOptions != null &&
+          opts.invalidationContext.layoutOptions !== this._invalidationContext.layoutOptions &&
+          this.layout.shouldInvalidateLayoutOptions(
+            opts.invalidationContext.layoutOptions,
+            this._invalidationContext.layoutOptions
+          );
         needsLayout ||= itemSizeChanged || sizeChanged || offsetChanged || layoutOptionsChanged;
       }
       this._invalidationContext = opts.invalidationContext;

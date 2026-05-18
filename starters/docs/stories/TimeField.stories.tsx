@@ -1,5 +1,4 @@
 import {TimeField} from '../src/TimeField';
-
 import type {Meta, StoryFn} from '@storybook/react';
 
 const meta: Meta<typeof TimeField> = {
@@ -14,7 +13,7 @@ export default meta;
 
 type Story = StoryFn<typeof TimeField>;
 
-export const Example: Story = (args) => <TimeField {...args} />;
+export const Example: Story = args => <TimeField {...args} />;
 
 Example.args = {
   label: 'Event time'

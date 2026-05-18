@@ -12,12 +12,9 @@
 
 jest.mock('../../src/live-announcer/LiveAnnouncer');
 import {announce} from '../../src/live-announcer/LiveAnnouncer';
-import {Cell} from 'react-stately/Cell';
-import {Column} from 'react-stately/Column';
+import {Cell, Column, Row, TableBody, TableHeader} from 'react-stately/useTableState';
 import {pointerMap, render} from '@react-spectrum/test-utils-internal';
 import React, {useRef} from 'react';
-import {Row} from 'react-stately/Row';
-import {TableBody} from 'react-stately/TableBody';
 import {
   TableCell,
   TableCheckboxCell,
@@ -27,7 +24,6 @@ import {
   TableRowGroup,
   TableSelectAllCell
 } from '../../stories/table/example-backwards-compat';
-import {TableHeader} from 'react-stately/TableHeader';
 import userEvent from '@testing-library/user-event';
 import {useTable} from '../../src/table/useTable';
 import {useTableState} from 'react-stately/useTableState';
@@ -65,20 +61,27 @@ function Table(props) {
         {collection.headerRows.map(headerRow => (
           <TableHeaderRow key={headerRow.key} item={headerRow} state={state}>
             {[...state.collection.getChildren!(headerRow.key)].map(column =>
-              column.props.isSelectionCell
-                ? <TableSelectAllCell key={column.key} column={column} state={state} />
-                : <TableColumnHeader key={column.key} column={column} state={state} />
+              column.props.isSelectionCell ? (
+                <TableSelectAllCell key={column.key} column={column} state={state} />
+              ) : (
+                <TableColumnHeader key={column.key} column={column} state={state} />
+              )
             )}
           </TableHeaderRow>
         ))}
       </TableRowGroup>
-      <TableRowGroup ref={bodyRef} type="tbody" style={{display: 'block', overflow: 'auto', maxHeight: '200px'}}>
+      <TableRowGroup
+        ref={bodyRef}
+        type="tbody"
+        style={{display: 'block', overflow: 'auto', maxHeight: '200px'}}>
         {[...collection].map(row => (
           <TableRow key={row.key} item={row} state={state} onAction={onAction}>
             {[...state.collection.getChildren!(row.key)].map(cell =>
-              cell.props.isSelectionCell
-                ? <TableCheckboxCell key={cell.key} cell={cell} state={state} />
-                : <TableCell key={cell.key} cell={cell} state={state} />
+              cell.props.isSelectionCell ? (
+                <TableCheckboxCell key={cell.key} cell={cell} state={state} />
+              ) : (
+                <TableCell key={cell.key} cell={cell} state={state} />
+              )
             )}
           </TableRow>
         ))}
@@ -113,18 +116,10 @@ describe('useTable', () => {
           aria-label="Table with selection"
           selectionMode="multiple">
           <TableHeader columns={columns}>
-            {column => (
-              <Column key={column.uid}>
-                {column.name}
-              </Column>
-            )}
+            {column => <Column key={column.uid}>{column.name}</Column>}
           </TableHeader>
           <TableBody items={rows}>
-            {item => (
-              <Row>
-                {columnKey => <Cell>{item[columnKey]}</Cell>}
-              </Row>
-            )}
+            {item => <Row>{columnKey => <Cell>{item[columnKey]}</Cell>}</Row>}
           </TableBody>
         </Table>
       );

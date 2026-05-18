@@ -17,7 +17,7 @@ export const description = 'Allows users to adjust an individual channel of a co
   links={docs.links}
   props={['label', 'colorSpace', 'channel', 'orientation', 'contextualHelp', 'isDisabled']}
   initialProps={{channel: 'hue', defaultValue: 'hsl(0, 100%, 50%)'}}
-  importSource="@react-spectrum/s2"
+  importSource="@react-spectrum/s2/ColorSlider"
   type="s2" />
 
 ## Value
@@ -28,7 +28,7 @@ The `onChange` event is called as the user drags, and `onChangeEnd` is called wh
 
 ```tsx render
 "use client";
-import {ColorSlider, parseColor} from '@react-spectrum/s2';
+import {ColorSlider, parseColor} from '@react-spectrum/s2/ColorSlider';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {useState} from 'react';
 

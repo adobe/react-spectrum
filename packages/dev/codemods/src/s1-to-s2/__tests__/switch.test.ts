@@ -7,9 +7,12 @@ const test = (name: string, input: string) => {
 };
 
 // nothing yet
-test('Renames variants', `
+test(
+  'Renames variants',
+  `
 // import {Switch} from '@adobe/react-spectrum';
 
 <div>
 </div>
-`);
+`
+);

@@ -10,7 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, pointerMap, render, simulateMobile, waitFor} from '@react-spectrum/test-utils-internal';
+import {
+  act,
+  pointerMap,
+  render,
+  simulateMobile,
+  waitFor
+} from '@react-spectrum/test-utils-internal';
 import {ActionButton} from '@adobe/react-spectrum/ActionButton';
 import {Button} from '@adobe/react-spectrum/Button';
 import {Content} from '@adobe/react-spectrum/Content';
@@ -35,7 +41,9 @@ describe('watchModals', () => {
   });
 
   afterEach(() => {
-    act(() => {jest.runAllTimers();});
+    act(() => {
+      jest.runAllTimers();
+    });
   });
 
   let verify = async function (modal, queryByRole) {
@@ -73,7 +81,7 @@ describe('watchModals', () => {
         <Provider theme={theme}>
           <DialogTrigger>
             <ActionButton aria-label="Trigger" />
-            <Dialog>contents</Dialog>
+            <Dialog aria-label="Test dialog">contents</Dialog>
           </DialogTrigger>
         </Provider>
         <hr />
@@ -95,12 +103,12 @@ describe('watchModals', () => {
         <Provider theme={theme}>
           <DialogTrigger>
             <ActionButton aria-label="Trigger" />
-            <Dialog>
+            <Dialog aria-label="Test dialog">
               <Content>
                 <div>Outer</div>
                 <DialogTrigger>
                   <Button variant="primary" aria-label="Nested Trigger" />
-                  <Dialog>Inner</Dialog>
+                  <Dialog aria-label="Test dialog">Inner</Dialog>
                 </DialogTrigger>
               </Content>
             </Dialog>
@@ -171,11 +179,7 @@ describe('watchModals', () => {
 
   it('should hide around Menus', async () => {
     let withSection = [
-      {name: 'Heading 1', children: [
-        {name: 'Foo'},
-        {name: 'Bar'},
-        {name: 'Baz'}
-      ]}
+      {name: 'Heading 1', children: [{name: 'Foo'}, {name: 'Bar'}, {name: 'Baz'}]}
     ];
     watchModals();
     let {getByLabelText, getByRole, queryByRole} = render(
@@ -207,11 +211,7 @@ describe('watchModals', () => {
 
   it('should hide around Tray', async () => {
     let withSection = [
-      {name: 'Heading 1', children: [
-        {name: 'Foo'},
-        {name: 'Bar'},
-        {name: 'Baz'}
-      ]}
+      {name: 'Heading 1', children: [{name: 'Foo'}, {name: 'Bar'}, {name: 'Baz'}]}
     ];
     // menu should be a tray
     simulateMobile();
@@ -249,7 +249,7 @@ describe('watchModals', () => {
         <Provider theme={theme}>
           <DialogTrigger type="popover">
             <ActionButton aria-label="Trigger" />
-            <Dialog>contents</Dialog>
+            <Dialog aria-label="Test dialog">contents</Dialog>
           </DialogTrigger>
         </Provider>
         <hr />

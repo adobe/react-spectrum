@@ -17,7 +17,7 @@ import React from 'react';
 
 export default {
   title: 'CalendarCell'
-} as Meta<typeof AllStates> ;
+} as Meta<typeof AllStates>;
 
 export type AllStatesStory = StoryFn<typeof AllStates>;
 

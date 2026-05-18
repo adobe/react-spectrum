@@ -13,7 +13,8 @@ export const description = 'Displays a description of an element on hover or foc
 
 ```tsx render docs={docs.exports.TooltipTrigger} links={docs.links} props={['placement', 'crossOffset', 'shouldFlip', 'shouldCloseOnPress']} type="s2"
 "use client";
-import {Tooltip, TooltipTrigger, ActionButton} from '@react-spectrum/s2';
+import {Tooltip, TooltipTrigger} from '@react-spectrum/s2/Tooltip';
+import {ActionButton} from '@react-spectrum/s2/ActionButton';
 import Edit from '@react-spectrum/s2/icons/Edit';
 
 <TooltipTrigger>
@@ -28,7 +29,8 @@ Tooltips appear after a "warmup" delay when hovering, or instantly on focus. Onc
 
 ```tsx render docs={docs.exports.TooltipTrigger} links={docs.links} props={['trigger', 'delay', 'isDisabled']} type="s2"
 "use client";
-import {TooltipTrigger, Tooltip, ActionButton} from '@react-spectrum/s2';
+import {TooltipTrigger, Tooltip} from '@react-spectrum/s2/Tooltip';
+import {ActionButton} from '@react-spectrum/s2/ActionButton';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import Edit from '@react-spectrum/s2/icons/Edit';
 import Save from '@react-spectrum/s2/icons/SaveFloppy';
@@ -70,7 +72,8 @@ Tooltips must be placed on focusable elements so they are accessible to keyboard
 
 ```tsx render
 "use client";
-import {Button, ContextualHelp, Heading, Content} from '@react-spectrum/s2';
+import {Button} from '@react-spectrum/s2/Button';
+import {ContextualHelp, Heading, Content} from '@react-spectrum/s2/ContextualHelp';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 <div className={style({display: 'flex', gap: 8, alignItems: 'center'})}>

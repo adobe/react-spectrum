@@ -30,11 +30,13 @@ const args = parseArgs({
 main();
 
 function main() {
-  let exportFiles = fg.sync('**/exports/**/*.ts', {
-    cwd: packagesDir,
-    absolute: true,
-    ignore: ['**/*.d.ts']
-  }).sort((a, b) => a.localeCompare(b));
+  let exportFiles = fg
+    .sync('**/exports/**/*.ts', {
+      cwd: packagesDir,
+      absolute: true,
+      ignore: ['**/*.d.ts']
+    })
+    .sort((a, b) => a.localeCompare(b));
 
   let program = ts.createProgram(exportFiles, {
     allowJs: false,
@@ -58,9 +60,7 @@ function main() {
 
     let moduleSymbol = checker.getSymbolAtLocation(sourceFile);
     let exports = moduleSymbol ? checker.getExportsOfModule(moduleSymbol) : [];
-    let exportNames = exports
-      .map(symbol => symbol.getName())
-      .sort((a, b) => a.localeCompare(b));
+    let exportNames = exports.map(symbol => symbol.getName()).sort((a, b) => a.localeCompare(b));
 
     let specifier = getImportSpecifier(fileName);
 
@@ -174,7 +174,9 @@ function getExportNotes(entry, exportName, packageData) {
 
   if (entry.isRoot) {
     if (data.privateExports.has(exportName)) {
-      notes.push(`also exported from private subpath: ${formatSpecifierList(data.privateExportPaths.get(exportName))}`);
+      notes.push(
+        `also exported from private subpath: ${formatSpecifierList(data.privateExportPaths.get(exportName))}`
+      );
     }
 
     if (!data.subpathExports.has(exportName)) {
@@ -182,7 +184,9 @@ function getExportNotes(entry, exportName, packageData) {
     }
   } else {
     if (entry.isPrivate && data.rootExports.has(exportName)) {
-      notes.push(`also exported from index via private subpath: ${formatSpecifierList(data.privateExportPaths.get(exportName))}`);
+      notes.push(
+        `also exported from index via private subpath: ${formatSpecifierList(data.privateExportPaths.get(exportName))}`
+      );
     }
 
     if (!entry.isPrivate && !data.rootExports.has(exportName)) {
@@ -214,5 +218,7 @@ function matchesNoteFilter(notes, noteFilters) {
 }
 
 function formatSpecifierList(specifiers) {
-  return Array.from(specifiers).sort((a, b) => a.localeCompare(b)).join(', ');
+  return Array.from(specifiers)
+    .sort((a, b) => a.localeCompare(b))
+    .join(', ');
 }

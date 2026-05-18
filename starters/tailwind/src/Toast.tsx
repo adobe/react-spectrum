@@ -1,14 +1,14 @@
 'use client';
-import React, { CSSProperties } from 'react';
+import React, {type CSSProperties} from 'react';
 import {
   UNSTABLE_ToastRegion as ToastRegion,
   UNSTABLE_Toast as Toast,
   UNSTABLE_ToastQueue as ToastQueue,
   UNSTABLE_ToastContent as ToastContent,
-  ToastProps,
+  type ToastProps,
   Button,
   Text
-} from 'react-aria-components';
+} from 'react-aria-components/Toast';
 import {XIcon} from 'lucide-react';
 import {composeTailwindRenderProps} from './utils';
 import {flushSync} from 'react-dom';
@@ -44,9 +44,13 @@ export function MyToastRegion() {
       {({toast}) => (
         <MyToast toast={toast}>
           <ToastContent className="flex flex-col flex-1 min-w-0">
-            <Text slot="title" className="font-semibold text-white text-sm">{toast.content.title}</Text>
+            <Text slot="title" className="font-semibold text-white text-sm">
+              {toast.content.title}
+            </Text>
             {toast.content.description && (
-              <Text slot="description" className="text-xs text-white">{toast.content.description}</Text>
+              <Text slot="description" className="text-xs text-white">
+                {toast.content.description}
+              </Text>
             )}
           </ToastContent>
           <Button
@@ -68,7 +72,7 @@ export function MyToast(props: ToastProps<MyToastContent>) {
       style={{viewTransitionName: props.toast.key} as CSSProperties}
       className={composeTailwindRenderProps(
         props.className,
-        "flex items-center gap-4 bg-blue-600 px-4 py-3 rounded-lg outline-none forced-colors:outline focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-blue-600 focus-visible:outline-offset-2 [view-transition-class:toast] font-sans w-[230px]"
+        'flex items-center gap-4 bg-blue-600 px-4 py-3 rounded-lg outline-none forced-colors:outline focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-blue-600 focus-visible:outline-offset-2 [view-transition-class:toast] font-sans w-[230px]'
       )}
     />
   );
