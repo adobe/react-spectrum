@@ -45,8 +45,6 @@ import {IconContext} from './Icon';
 import {
   insertionIndicatorBar,
   insertionIndicatorCircle,
-  isFirstItem,
-  isPrevSelected,
   S2ListLayout
 } from './ListView';
 // @ts-ignore
