@@ -213,9 +213,10 @@ export const GridListContext =
  * A grid list displays a list of interactive items, with support for keyboard navigation,
  * single or multiple selection, and row actions.
  */
-export const GridList = /*#__PURE__*/ (forwardRef as forwardRefType)(function GridList<
-  T extends object
->(props: GridListProps<T>, ref: ForwardedRef<HTMLDivElement>) {
+export const GridList = /*#__PURE__*/ (forwardRef as forwardRefType)(function GridList<T>(
+  props: GridListProps<T>,
+  ref: ForwardedRef<HTMLDivElement>
+) {
   // Render the portal first so that we have the collection by the time we render the DOM in SSR.
   [props, ref] = useContextProps(props, ref, GridListContext);
 
@@ -226,17 +227,13 @@ export const GridList = /*#__PURE__*/ (forwardRef as forwardRefType)(function Gr
   );
 });
 
-interface GridListInnerProps<T extends object> {
+interface GridListInnerProps<T> {
   props: GridListProps<T> & SelectableCollectionContextValue<T>;
-  collection: ICollection<Node<object>>;
+  collection: ICollection<Node<any>>;
   gridListRef: RefObject<HTMLElement | null>;
 }
 
-function GridListInner<T extends object>({
-  props,
-  collection,
-  gridListRef: ref
-}: GridListInnerProps<T>) {
+function GridListInner<T>({props, collection, gridListRef: ref}: GridListInnerProps<T>) {
   [props, ref] = useContextProps(props, ref, SelectableCollectionContext);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let {shouldUseVirtualFocus, filter, disallowTypeAhead, ...DOMCollectionProps} = props;
@@ -493,7 +490,7 @@ export interface GridListItemProps<T = object>
  * A GridListItem represents an individual item in a GridList.
  */
 export const GridListItem = /*#__PURE__*/ createLeafComponent(ItemNode, function GridListItem<
-  T extends object
+  T
 >(props: GridListItemProps<T>, forwardedRef: ForwardedRef<HTMLDivElement>, item: Node<T>) {
   let state = useContext(ListStateContext)!;
   let {dragAndDropHooks, dragState, dropState} = useContext(DragAndDropContext);
@@ -866,7 +863,7 @@ export interface GridListSectionProps<T> extends SectionProps<T>, DOMRenderProps
  */
 export const GridListSection = /*#__PURE__*/ createBranchComponent(
   SectionNode,
-  <T extends object>(
+  <T extends any>(
     props: GridListSectionProps<T>,
     ref: ForwardedRef<HTMLDivElement>,
     item: Node<T>

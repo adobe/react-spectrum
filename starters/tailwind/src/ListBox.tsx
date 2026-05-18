@@ -17,7 +17,7 @@ import {composeTailwindRenderProps, focusRing} from './utils';
 
 interface ListBoxProps<T> extends Omit<AriaListBoxProps<T>, 'layout' | 'orientation'> {}
 
-export function ListBox<T extends object>({children, ...props}: ListBoxProps<T>) {
+export function ListBox<T>({children, ...props}: ListBoxProps<T>) {
   return (
     <AriaListBox
       {...props}
@@ -107,7 +107,7 @@ export interface DropdownSectionProps<T> extends ListBoxSectionProps<T> {
   items?: any;
 }
 
-export function DropdownSection<T extends object>(props: DropdownSectionProps<T>) {
+export function DropdownSection<T>(props: DropdownSectionProps<T>) {
   return (
     <ListBoxSection className="first:-mt-[5px] after:content-[''] after:block after:h-[5px] last:after:hidden">
       <Header className="text-sm font-semibold text-neutral-500 dark:text-neutral-300 px-4 py-1 truncate sticky -top-[5px] -mt-px -mx-1 z-10 bg-neutral-100/60 dark:bg-neutral-700/60 backdrop-blur-md supports-[-moz-appearance:none]:bg-neutral-100 border-y border-y-neutral-200 dark:border-y-neutral-700 [&+*]:mt-1">

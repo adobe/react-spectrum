@@ -47,7 +47,7 @@ export interface ListState<T> {
  * Provides state management for list-like components. Handles building a collection
  * of items from props, and manages multiple selection state.
  */
-export function useListState<T extends object>(props: ListProps<T>): ListState<T> {
+export function useListState<T>(props: ListProps<T>): ListState<T> {
   let {filter, layoutDelegate} = props;
 
   let selectionState = useMultipleSelectionState(props);
@@ -85,7 +85,7 @@ export function useListState<T extends object>(props: ListProps<T>): ListState<T
 /**
  * Filters a collection using the provided filter function and returns a new ListState.
  */
-export function UNSTABLE_useFilteredListState<T extends object>(
+export function UNSTABLE_useFilteredListState<T>(
   state: ListState<T>,
   filterFn: ((nodeValue: string, node: Node<T>) => boolean) | null | undefined
 ): ListState<T> {

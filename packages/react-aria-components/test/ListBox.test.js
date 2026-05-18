@@ -454,6 +454,62 @@ describe('ListBox', () => {
     expect(items).toHaveLength(2);
   });
 
+  it('should support dynamic collection with non-object entries', () => {
+    let {getAllByRole, rerender} = render(
+      <ListBox aria-label="Test" items={['Foo', 'Bar', 'Baz']}>
+        {item => <ListBoxItem>{item}</ListBoxItem>}
+      </ListBox>
+    );
+
+    let items = getAllByRole('option');
+    expect(items).toHaveLength(3);
+    expect(items[0].textContent).toBe('Foo');
+    expect(items[1].textContent).toBe('Bar');
+    expect(items[2].textContent).toBe('Baz');
+
+    rerender(
+      <ListBox aria-label="Test" items={['Foo', 'Baz']}>
+        {item => <ListBoxItem>{item}</ListBoxItem>}
+      </ListBox>
+    );
+
+    items = getAllByRole('option');
+    expect(items).toHaveLength(2);
+    expect(items[0].textContent).toBe('Foo');
+    expect(items[1].textContent).toBe('Baz');
+  });
+
+  it('should update collection if render function changes', () => {
+    let objects = [{name: 'Foo'}, {name: 'Bar'}, {name: 'Baz'}];
+    let {getAllByRole, rerender} = render(
+      <ListBox aria-label="Test" items={objects}>
+        {item => <ListBoxItem id={item.name}>{item.name}</ListBoxItem>}
+      </ListBox>
+    );
+
+    let items = getAllByRole('option');
+    expect(items).toHaveLength(3);
+    expect(items[0].textContent).toBe('Foo');
+    expect(items[1].textContent).toBe('Bar');
+    expect(items[2].textContent).toBe('Baz');
+
+    rerender(
+      <ListBox aria-label="Test" items={objects}>
+        {item => (
+          <ListBoxItem id={item.name} textValue="Updated">
+            Updated: {item.name}
+          </ListBoxItem>
+        )}
+      </ListBox>
+    );
+
+    items = getAllByRole('option');
+    expect(items).toHaveLength(3);
+    expect(items[0].textContent).toBe('Updated: Foo');
+    expect(items[1].textContent).toBe('Updated: Bar');
+    expect(items[2].textContent).toBe('Updated: Baz');
+  });
+
   it('should support autoFocus', () => {
     let {getByRole} = renderListbox({autoFocus: true});
     let listbox = getByRole('listbox');

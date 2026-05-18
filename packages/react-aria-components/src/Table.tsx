@@ -992,7 +992,7 @@ let THeadElementType = forwardRef(function THeadElementType(
  */
 export const TableHeader = /*#__PURE__*/ createBranchComponent(
   TableHeaderNode,
-  <T extends object>(
+  <T extends any>(
     props: TableHeaderProps<T>,
     ref: ForwardedRef<HTMLTableSectionElement | HTMLDivElement>
   ) => {
@@ -1502,7 +1502,7 @@ let TableBodyElementType = forwardRef(function TableBodyElementType(
  */
 export const TableBody = /*#__PURE__*/ createBranchComponent(
   TableBodyNode,
-  <T extends object>(
+  <T extends any>(
     props: TableBodyProps<T>,
     ref: ForwardedRef<HTMLTableSectionElement | HTMLDivElement>,
     node: Node<T>
@@ -1609,7 +1609,7 @@ let TableFooterElementType = forwardRef(function TableFooterElementType(
  */
 export const TableFooter = /*#__PURE__*/ createBranchComponent(
   TableFooterNode,
-  <T extends object>(
+  <T extends any>(
     props: TableFooterProps<T>,
     ref: ForwardedRef<HTMLTableSectionElement | HTMLDivElement>,
     node: Node<T>
@@ -1754,7 +1754,7 @@ let TableRowElementType = forwardRef(function TableRowElementType(
  */
 export const Row = /*#__PURE__*/ createBranchComponent(
   TableRowNode,
-  <T extends object>(
+  <T extends any>(
     props: RowProps<T>,
     forwardedRef: ForwardedRef<HTMLTableRowElement | HTMLDivElement>,
     item: GridNode<T>

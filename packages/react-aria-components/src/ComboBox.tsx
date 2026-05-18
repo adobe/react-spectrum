@@ -92,7 +92,7 @@ export interface ComboBoxRenderProps {
   isReadOnly: boolean;
 }
 
-export interface ComboBoxProps<T extends object, M extends SelectionMode = 'single'>
+export interface ComboBoxProps<T, M extends SelectionMode = 'single'>
   extends
     Omit<
       AriaComboBoxProps<T, M>,
@@ -137,7 +137,7 @@ export const ComboBoxStateContext = createContext<ComboBoxState<any, SelectionMo
  * items matching a query.
  */
 export const ComboBox = /*#__PURE__*/ createHideableComponent(function ComboBox<
-  T extends object,
+  T,
   M extends SelectionMode = 'single'
 >(props: ComboBoxProps<T, M>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, ComboBoxContext);
@@ -176,17 +176,13 @@ export const ComboBox = /*#__PURE__*/ createHideableComponent(function ComboBox<
 // Contexts to clear inside the popover.
 const CLEAR_CONTEXTS = [LabelContext, ButtonContext, InputContext, GroupContext, TextContext];
 
-interface ComboBoxInnerProps<T extends object> {
+interface ComboBoxInnerProps<T> {
   props: ComboBoxProps<T, SelectionMode>;
   collection: Collection<Node<T>>;
   comboBoxRef: RefObject<HTMLDivElement | null>;
 }
 
-function ComboBoxInner<T extends object>({
-  props,
-  collection,
-  comboBoxRef: ref
-}: ComboBoxInnerProps<T>) {
+function ComboBoxInner<T>({props, collection, comboBoxRef: ref}: ComboBoxInnerProps<T>) {
   let {name, formValue = 'key', allowsCustomValue} = props;
   if (allowsCustomValue) {
     formValue = 'text';
@@ -367,7 +363,7 @@ export interface ComboBoxValueRenderProps<T> {
   state: ComboBoxState<T, 'single' | 'multiple'>;
 }
 
-export interface ComboBoxValueProps<T extends object>
+export interface ComboBoxValueProps<T>
   extends
     Omit<HTMLAttributes<HTMLElement>, keyof RenderProps<unknown>>,
     RenderProps<ComboBoxValueRenderProps<T>, 'div'> {
@@ -390,9 +386,10 @@ export const ComboBoxValueContext =
  * selected. By default, the items are rendered as a comma separated list. Use the render function
  * to customize this.
  */
-export const ComboBoxValue = /*#__PURE__*/ createHideableComponent(function ComboBoxValue<
-  T extends object
->(props: ComboBoxValueProps<T>, ref: ForwardedRef<HTMLDivElement>) {
+export const ComboBoxValue = /*#__PURE__*/ createHideableComponent(function ComboBoxValue<T>(
+  props: ComboBoxValueProps<T>,
+  ref: ForwardedRef<HTMLDivElement>
+) {
   [props, ref] = useContextProps(props, ref, ComboBoxValueContext);
   let state = useContext(ComboBoxStateContext)!;
   let formatter = useListFormatter();

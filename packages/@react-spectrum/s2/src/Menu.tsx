@@ -423,7 +423,7 @@ let wrappingDiv = style({
 /**
  * Menus display a list of actions or options that a user can choose.
  */
-export const Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(function Menu<T extends object>(
+export const Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(function Menu<T>(
   props: MenuProps<T>,
   ref: DOMRef<HTMLDivElement>
 ) {
@@ -510,12 +510,12 @@ export function Divider(props: SeparatorProps): ReactNode {
   );
 }
 
-export interface MenuSectionProps<T extends object> extends Omit<
+export interface MenuSectionProps<T> extends Omit<
   AriaMenuSectionProps<T>,
   'style' | 'className' | 'render' | keyof GlobalDOMAttributes
 > {}
 
-export function MenuSection<T extends object>(props: MenuSectionProps<T>): ReactNode {
+export function MenuSection<T>(props: MenuSectionProps<T>): ReactNode {
   // remember, context doesn't work if it's around Section nor inside
   let {size} = useContext(InternalMenuContext);
   return (
@@ -833,8 +833,8 @@ function UnavailableMenuItemTrigger(props: UnavailableMenuItemTriggerProps): JSX
 export {MenuTrigger, SubmenuTrigger, UnavailableMenuItemTrigger};
 
 // This is purely so that storybook generates the types for both Menu and MenuTrigger
-interface ICombined<T extends object> extends MenuProps<T>, Omit<MenuTriggerProps, 'children'> {}
+interface ICombined<T> extends MenuProps<T>, Omit<MenuTriggerProps, 'children'> {}
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function CombinedMenu<T extends object>(props: ICombined<T>): ReactNode {
+export function CombinedMenu<T>(props: ICombined<T>): ReactNode {
   return <div />;
 }

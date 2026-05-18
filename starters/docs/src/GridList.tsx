@@ -16,11 +16,7 @@ import {GripVertical} from 'lucide-react';
 import {ProgressCircle} from './ProgressCircle';
 import './GridList.css';
 
-export function GridList<T extends object>({
-  children,
-  layout = 'grid',
-  ...props
-}: GridListProps<T>) {
+export function GridList<T>({children, layout = 'grid', ...props}: GridListProps<T>) {
   return (
     <AriaGridList {...props} layout={layout}>
       {children}

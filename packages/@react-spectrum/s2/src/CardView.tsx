@@ -239,9 +239,10 @@ export const CardViewContext =
 /**
  * A CardView displays a group of related objects, with support for selection and bulk actions.
  */
-export const CardView = /*#__PURE__*/ (forwardRef as forwardRefType)(function CardView<
-  T extends object
->(props: CardViewProps<T>, ref: DOMRef<HTMLDivElement>) {
+export const CardView = /*#__PURE__*/ (forwardRef as forwardRefType)(function CardView<T>(
+  props: CardViewProps<T>,
+  ref: DOMRef<HTMLDivElement>
+) {
   [props, ref] = useSpectrumContextProps(props, ref, CardViewContext);
   let {
     children,
