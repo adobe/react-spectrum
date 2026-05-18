@@ -27,7 +27,11 @@ import {
   getRangeValidationResult,
   useDefaultProps
 } from './utils';
-import {FormValidationState, useFormValidationState} from '../form/useFormValidationState';
+import {
+  FormValidationState,
+  privateSetIsValuePartialProp,
+  useFormValidationState
+} from '../form/useFormValidationState';
 import {OverlayTriggerState, useOverlayTriggerState} from '../overlays/useOverlayTriggerState';
 import {RangeValue, ValidationState} from '@react-types/shared';
 import {useControlledState} from '../utils/useControlledState';
@@ -225,6 +229,12 @@ export function useDateRangePickerState<T extends DateValue = DateValue>(
   );
 
   let {minValue, maxValue, isDateUnavailable} = props;
+
+  // Partial-state lifted up from the inner start/end DateFields via privateSetIsValuePartialProp.
+  // See useDateField.ts and useDatePickerState.ts for the matching pattern.
+  let [startIsValuePartial, setStartIsValuePartial] = useState(false);
+  let [endIsValuePartial, setEndIsValuePartial] = useState(false);
+
   let builtinValidation = useMemo(
     () =>
       getRangeValidationResult(
@@ -232,9 +242,19 @@ export function useDateRangePickerState<T extends DateValue = DateValue>(
         minValue,
         maxValue,
         isDateUnavailable ? date => isDateUnavailable(date, null) : undefined,
-        formatOpts
+        formatOpts,
+        startIsValuePartial,
+        endIsValuePartial
       ),
-    [value, minValue, maxValue, isDateUnavailable, formatOpts]
+    [
+      value,
+      minValue,
+      maxValue,
+      isDateUnavailable,
+      formatOpts,
+      startIsValuePartial,
+      endIsValuePartial
+    ]
   );
 
   let validation = useFormValidationState({
@@ -253,6 +273,9 @@ export function useDateRangePickerState<T extends DateValue = DateValue>(
 
   return {
     ...validation,
+    // Two setters since the range has two independent fields with separate partial state.
+    [`${privateSetIsValuePartialProp}-start`]: setStartIsValuePartial,
+    [`${privateSetIsValuePartialProp}-end`]: setEndIsValuePartial,
     value,
     defaultValue: props.defaultValue ?? initialValue,
     setValue,

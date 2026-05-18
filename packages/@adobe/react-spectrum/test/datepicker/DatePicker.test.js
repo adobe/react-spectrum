@@ -3151,10 +3151,11 @@ describe('DatePicker', function () {
 
         it('should signal validation when a complete date is made partial by clearing the month segment (Bug #9958)', async () => {
           // Regression: clearing the month segment of a previously-complete date does not
-          // change the committed state.value, so the blur-time guard in useDateField.ts
-          // (state.value !== valueOnFocus.current) fails and commitValidation() is never
-          // called. With isRequired + an incomplete displayValue, validation should fire.
-          let {getByRole, getByTestId} = render(
+          // change the committed state.value. Without isRequired alone the form had no
+          // signal to block submit. Now getValidationResult treats partial display state as
+          // invalid via the lifted-up isValuePartial flag in useDatePickerState, surfacing
+          // a localized error message.
+          let {getByRole} = render(
             <Provider theme={theme}>
               <Form data-testid="form">
                 <DatePicker label="Date" name="date" isRequired validationBehavior="native" />
@@ -3185,13 +3186,55 @@ describe('DatePicker', function () {
           await user.tab();
           await user.tab();
 
-          // Field is now partial and required — expect validation error surfaced
+          // Field is now partial — expect validation error surfaced
           let getDescription = () =>
             (group.getAttribute('aria-describedby') || '')
               .split(' ')
               .map(d => document.getElementById(d)?.textContent || '')
               .join(' ');
-          expect(getDescription()).toContain('Constraints not satisfied');
+          expect(input.validity.valid).toBe(false);
+          expect(getDescription()).toContain('Please enter a value.');
+        });
+
+        it('should signal validation when a date with minValue is made partial without isRequired (Bug #9958)', async () => {
+          // The exact scenario the user reported: DatePicker forms in the docs using only
+          // minValue/maxValue / isDateUnavailable / validate (no isRequired) — clearing month
+          // or day must still block submission and surface an error.
+          let {getByRole} = render(
+            <Provider theme={theme}>
+              <Form>
+                <DatePicker
+                  label="Date"
+                  name="date"
+                  minValue={new CalendarDate(2020, 1, 1)}
+                  maxValue={new CalendarDate(2030, 1, 1)}
+                  defaultValue={new CalendarDate(2026, 4, 28)}
+                  validationBehavior="native"
+                />
+              </Form>
+            </Provider>
+          );
+
+          let group = getByRole('group');
+          let input = document.querySelector('input[name=date]');
+          let segments = within(group).getAllByRole('spinbutton');
+
+          // Clear the month segment (single-digit '4' goes straight to null).
+          act(() => { segments[0].focus(); });
+          await user.keyboard('{Backspace}');
+          expect(segments[0]).toHaveAttribute('aria-valuetext', 'Empty');
+
+          await user.tab();
+          await user.tab();
+          await user.tab();
+
+          let description = (group.getAttribute('aria-describedby') || '')
+            .split(' ')
+            .map(d => document.getElementById(d)?.textContent || '')
+            .join(' ');
+
+          expect(input.validity.valid).toBe(false);
+          expect(description).toContain('Please enter a value.');
         });
 
         it('supports minValue and maxValue', async () => {

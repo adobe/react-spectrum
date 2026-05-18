@@ -25,7 +25,11 @@ import {
   getValidationResult,
   useDefaultProps
 } from './utils';
-import {FormValidationState, useFormValidationState} from '../form/useFormValidationState';
+import {
+  FormValidationState,
+  privateSetIsValuePartialProp,
+  useFormValidationState
+} from '../form/useFormValidationState';
 import {OverlayTriggerState, useOverlayTriggerState} from '../overlays/useOverlayTriggerState';
 import {useControlledState} from '../utils/useControlledState';
 import {useMemo, useState} from 'react';
@@ -144,9 +148,23 @@ export function useDatePickerState<T extends DateValue = DateValue>(
   );
 
   let {minValue, maxValue, isDateUnavailable} = props;
+
+  // Partial-state lifted up from the inner DateField via `privateSetIsValuePartialProp`
+  // on fieldProps. The field calls our setter when its IncompleteDate has some-but-not-all
+  // editable segments filled, so the parent's validation pipeline can surface the error.
+  let [isValuePartial, setIsValuePartial] = useState(false);
+
   let builtinValidation = useMemo(
-    () => getValidationResult(value, minValue, maxValue, isDateUnavailable, formatOpts),
-    [value, minValue, maxValue, isDateUnavailable, formatOpts]
+    () =>
+      getValidationResult(
+        value,
+        minValue,
+        maxValue,
+        isDateUnavailable,
+        formatOpts,
+        isValuePartial
+      ),
+    [value, minValue, maxValue, isDateUnavailable, formatOpts, isValuePartial]
   );
 
   let validation = useFormValidationState({
@@ -199,6 +217,7 @@ export function useDatePickerState<T extends DateValue = DateValue>(
 
   return {
     ...validation,
+    [privateSetIsValuePartialProp]: setIsValuePartial,
     value,
     defaultValue: props.defaultValue ?? initialValue,
     setValue,

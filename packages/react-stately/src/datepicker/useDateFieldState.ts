@@ -101,6 +101,13 @@ export interface DateFieldState extends FormValidationState {
   /** Whether the field is required. */
   isRequired: boolean;
   /**
+   * Whether the display value is partially filled — some editable segments have values and
+   * some are still placeholders.
+   *
+   * @private
+   */
+  isValuePartial: boolean;
+  /**
    * Increments the given segment. Upon reaching the minimum or maximum value, the value wraps
    * around to the opposite limit.
    */
@@ -363,9 +370,20 @@ export function useDateFieldState<T extends DateValue = DateValue>(
     setValue(displayValue.cycle(type, amount, placeholder, displaySegments));
   };
 
+  let isValuePartial =
+    !displayValue.isComplete(displaySegments) && !displayValue.isCleared(displaySegments);
+
   let builtinValidation = useMemo(
-    () => getValidationResult(value, minValue, maxValue, isDateUnavailable, formatOpts),
-    [value, minValue, maxValue, isDateUnavailable, formatOpts]
+    () =>
+      getValidationResult(
+        value,
+        minValue,
+        maxValue,
+        isDateUnavailable,
+        formatOpts,
+        isValuePartial
+      ),
+    [value, minValue, maxValue, isDateUnavailable, formatOpts, isValuePartial]
   );
 
   let validation = useFormValidationState({
@@ -394,6 +412,7 @@ export function useDateFieldState<T extends DateValue = DateValue>(
     isDisabled,
     isReadOnly,
     isRequired,
+    isValuePartial,
     increment(part) {
       adjustSegment(part, 1);
     },

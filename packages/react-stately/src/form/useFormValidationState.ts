@@ -51,6 +51,10 @@ export const FormValidationContext: Context<ValidationErrors> = createContext<Va
 // This needs to be stable across server and client module evaluation for SSR hydration.
 export const privateValidationStateProp: string = '__reactAriaFormValidationState';
 
+// Private prop for DatePicker / DateRangePicker to receive partial-state notifications
+// from its inner DateField(s). See useDateFieldState.isValuePartial.
+export const privateSetIsValuePartialProp: string = '__reactAriaDatePickerSetIsValuePartial';
+
 interface FormValidationProps<T> extends Validation<T> {
   builtinValidation?: ValidationResult;
   name?: string | string[];

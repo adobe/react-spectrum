@@ -50,12 +50,13 @@ export function getValidationResult(
   minValue: DateValue | null | undefined,
   maxValue: DateValue | null | undefined,
   isDateUnavailable: ((v: DateValue) => boolean) | undefined,
-  options: FormatterOptions
+  options: FormatterOptions,
+  isValuePartial: boolean = false
 ): ValidationResult {
   let rangeOverflow = value != null && maxValue != null && value.compare(maxValue) > 0;
   let rangeUnderflow = value != null && minValue != null && value.compare(minValue) < 0;
   let isUnavailable = (value != null && isDateUnavailable?.(value)) || false;
-  let isInvalid = rangeOverflow || rangeUnderflow || isUnavailable;
+  let isInvalid = rangeOverflow || rangeUnderflow || isUnavailable || isValuePartial;
   let errors: string[] = [];
 
   if (isInvalid) {
@@ -66,6 +67,10 @@ export function getValidationResult(
     let formatter = new LocalizedStringFormatter(locale, strings);
     let dateFormatter = new DateFormatter(locale, getFormatOptions({}, options));
     let timeZone = dateFormatter.resolvedOptions().timeZone;
+
+    if (isValuePartial) {
+      errors.push(formatter.format('incompleteValue'));
+    }
 
     if (rangeUnderflow && minValue != null) {
       errors.push(
@@ -101,7 +106,7 @@ export function getValidationResult(
       tooLong: false,
       tooShort: false,
       typeMismatch: false,
-      valueMissing: false,
+      valueMissing: isValuePartial,
       valid: !isInvalid
     }
   };
@@ -112,14 +117,17 @@ export function getRangeValidationResult(
   minValue: DateValue | null | undefined,
   maxValue: DateValue | null | undefined,
   isDateUnavailable: ((v: DateValue) => boolean) | undefined,
-  options: FormatterOptions
+  options: FormatterOptions,
+  startIsValuePartial: boolean = false,
+  endIsValuePartial: boolean = false
 ): ValidationResult {
   let startValidation = getValidationResult(
     value?.start ?? null,
     minValue,
     maxValue,
     isDateUnavailable,
-    options
+    options,
+    startIsValuePartial
   );
 
   let endValidation = getValidationResult(
@@ -127,7 +135,8 @@ export function getRangeValidationResult(
     minValue,
     maxValue,
     isDateUnavailable,
-    options
+    options,
+    endIsValuePartial
   );
 
   let result = mergeValidation(startValidation, endValidation);

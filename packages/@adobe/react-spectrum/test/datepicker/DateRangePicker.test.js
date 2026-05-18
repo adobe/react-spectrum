@@ -1924,6 +1924,53 @@ describe('DateRangePicker', function () {
           expect(getDescription()).not.toContain('Constraints not satisfied');
         });
 
+        it('should signal validation when an endpoint date is made partial by clearing a segment (Bug #9958 followup)', async () => {
+          // Locks transitive coverage of DateRangePicker: each endpoint has its own
+          // DateFieldState with isValuePartial. Clearing a segment of either endpoint should
+          // fire validation on blur.
+          let {getByRole} = render(
+            <Provider theme={theme}>
+              <Form>
+                <DateRangePicker
+                  label="Date"
+                  startName="start"
+                  endName="end"
+                  defaultValue={{
+                    start: new CalendarDate(2026, 4, 28),
+                    end: new CalendarDate(2026, 5, 15)
+                  }}
+                  isRequired
+                  validationBehavior="native"
+                />
+              </Form>
+            </Provider>
+          );
+
+          let group = getByRole('group');
+          let segments = within(group).getAllByRole('spinbutton');
+          act(() => {
+            segments[0].focus();
+          });
+          await user.keyboard('{Backspace}');
+          expect(segments[0]).toHaveAttribute('aria-valuetext', 'Empty');
+
+          // Tab past remaining start segments, end segments, and calendar trigger
+          await user.tab();
+          await user.tab();
+          await user.tab();
+          await user.tab();
+          await user.tab();
+          await user.tab();
+          await user.tab();
+
+          let getDescription = () =>
+            (group.getAttribute('aria-describedby') || '')
+              .split(' ')
+              .map(d => document.getElementById(d)?.textContent || '')
+              .join(' ');
+          expect(getDescription()).toContain('Please enter a value.');
+        });
+
         it('supports minValue and maxValue', async () => {
           let {getByRole, getByTestId} = render(
             <Provider theme={theme}>

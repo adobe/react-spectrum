@@ -2,6 +2,7 @@ export {
   FormValidationContext,
   useFormValidationState,
   privateValidationStateProp,
+  privateSetIsValuePartialProp,
   type FormValidationState,
   DEFAULT_VALIDATION_RESULT,
   mergeValidation,

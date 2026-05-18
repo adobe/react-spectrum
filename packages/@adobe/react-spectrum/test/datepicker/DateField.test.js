@@ -767,9 +767,10 @@ describe('DateField', function () {
 
         it('should signal valueMissing when a complete date is made partial by clearing a segment (Bug #9624)', async () => {
           // Regression (per devongovett's direction in #9624): a partially-filled required
-          // DateField should be marked invalid via valueMissing on blur. onChange(null) is
-          // deliberately NOT fired for partial values; validation must compensate.
-          let {getByRole, getByTestId} = render(
+          // DateField should be marked invalid on blur. onChange(null) is deliberately NOT
+          // fired for partial values; getValidationResult compensates by surfacing the
+          // localized "Please enter a value." message via builtinValidation.
+          let {getByRole} = render(
             <Provider theme={theme}>
               <Form data-testid="form">
                 <DateField label="Date" name="date" isRequired validationBehavior="native" />
@@ -807,7 +808,97 @@ describe('DateField', function () {
               .split(' ')
               .map(d => document.getElementById(d)?.textContent || '')
               .join(' ');
-          expect(getDescriptionAfter()).toContain('Constraints not satisfied');
+          expect(getDescriptionAfter()).toContain('Please enter a value.');
+        });
+
+        it('should clear the validation error after a partial field is completed (Bug #9624 round-trip)', async () => {
+          // Locks the lifecycle: complete -> clear segment (error) -> re-complete with a new
+          // valid value (error clears). Verifies the fix does not leave the field stuck invalid.
+          let {getByRole} = render(
+            <Provider theme={theme}>
+              <Form data-testid="form">
+                <DateField label="Date" name="date" isRequired validationBehavior="native" />
+              </Form>
+            </Provider>
+          );
+
+          let group = getByRole('group');
+          let input = document.querySelector('input[name=date]');
+
+          await user.tab();
+          await user.keyboard('4');
+          await user.keyboard('28');
+          await user.keyboard('2026');
+
+          let segments = within(group).getAllByRole('spinbutton');
+          act(() => {
+            segments[0].focus();
+          });
+          await user.keyboard('{Backspace}');
+          await user.tab();
+          await user.tab();
+          await user.tab();
+
+          let getDescription = () =>
+            (group.getAttribute('aria-describedby') || '')
+              .split(' ')
+              .map(d => document.getElementById(d)?.textContent || '')
+              .join(' ');
+          expect(getDescription()).toContain('Please enter a value.');
+
+          // Re-focus month and complete the date with a different valid value
+          act(() => {
+            segments[0].focus();
+          });
+          await user.keyboard('5');
+          await user.tab();
+          await user.tab();
+          await user.tab();
+
+          expect(input.validity.valid).toBe(true);
+          expect(getDescription()).not.toContain('Please enter a value.');
+        });
+
+        it('should signal validation for partial values regardless of isRequired (Bug #9958)', async () => {
+          // Per LFDanLu: "invalidate the field if the date is incomplete in general."
+          // The earlier scope-guard test asserted the opposite; updated to lock the new
+          // behavior — partial values are flagged invalid even without isRequired so that
+          // min/max/unavailable/validate configurations also block submission.
+          let {getByRole} = render(
+            <Provider theme={theme}>
+              <Form>
+                <DateField
+                  label="Date"
+                  name="date"
+                  minValue={new CalendarDate(2020, 1, 1)}
+                  defaultValue={new CalendarDate(2026, 4, 28)}
+                  validationBehavior="native"
+                />
+              </Form>
+            </Provider>
+          );
+
+          let group = getByRole('group');
+          let input = document.querySelector('input[name=date]');
+          let segments = within(group).getAllByRole('spinbutton');
+
+          act(() => {
+            segments[0].focus();
+          });
+          await user.keyboard('{Backspace}');
+          await user.keyboard('{Backspace}');
+          expect(segments[0]).toHaveAttribute('aria-valuetext', 'Empty');
+
+          await user.tab();
+          await user.tab();
+          await user.tab();
+
+          expect(input.validity.valid).toBe(false);
+          let description = (group.getAttribute('aria-describedby') || '')
+            .split(' ')
+            .map(d => document.getElementById(d)?.textContent || '')
+            .join(' ');
+          expect(description).toContain('Please enter a value.');
         });
       });
 
@@ -894,6 +985,38 @@ describe('DateField', function () {
 
           await user.keyboard('[Tab][ArrowRight][ArrowRight]2024[Tab]');
           expect(getDescription()).not.toContain('Invalid value');
+        });
+
+        it('should clear the hidden input value when partial in aria mode (Bug #9624)', async () => {
+          // Aria-mode counterpart to the native-mode #9624 regression: the hidden input must
+          // reflect the partial display state regardless of validationBehavior so any consumer
+          // (e.g. FormData) sees the missing value.
+          let {getByRole} = render(
+            <Provider theme={theme}>
+              <Form>
+                <DateField
+                  label="Date"
+                  name="date"
+                  isRequired
+                  validationBehavior="aria"
+                  defaultValue={new CalendarDate(2026, 4, 28)}
+                />
+              </Form>
+            </Provider>
+          );
+
+          let group = getByRole('group');
+          let input = document.querySelector('input[name=date]');
+          expect(input).toHaveValue('2026-04-28');
+
+          let segments = within(group).getAllByRole('spinbutton');
+          act(() => {
+            segments[0].focus();
+          });
+          await user.keyboard('{Backspace}');
+          expect(segments[0]).toHaveAttribute('aria-valuetext', 'Empty');
+
+          expect(input).toHaveValue('');
         });
       });
     });

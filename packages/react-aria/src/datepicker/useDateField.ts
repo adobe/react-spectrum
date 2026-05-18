@@ -26,6 +26,7 @@ import {filterDOMProps} from '../utils/filterDOMProps';
 import {InputHTMLAttributes, useEffect, useMemo, useRef} from 'react';
 import intlMessages from '../../intl/datepicker/*.json';
 import {mergeProps} from '../utils/mergeProps';
+import {privateSetIsValuePartialProp} from 'react-stately/private/form/useFormValidationState';
 import {TimeFieldState, TimePickerProps, TimeValue} from 'react-stately/useTimeFieldState';
 import {useDatePickerGroup} from './useDatePickerGroup';
 // @ts-ignore
@@ -110,7 +111,8 @@ export function useDateField<T extends DateValue>(
     },
     onBlurWithin: e => {
       state.confirmPlaceholder();
-      if (state.value !== valueOnFocus.current) {
+      // Also fire for partial display values: `value` is never updated for those by design.
+      if (state.value !== valueOnFocus.current || state.isValuePartial) {
         state.commitValidation();
       }
       props.onBlur?.(e);
@@ -188,11 +190,25 @@ export function useDateField<T extends DateValue>(
     props.inputRef
   );
 
+  // When wrapped by DatePicker / DateRangePicker, the picker owns the validation pipeline
+  // (via privateValidationStateProp). Push our local partial state up so the picker's
+  // getValidationResult sees it; standalone fields handle this in useDateFieldState directly.
+  let setParentIsValuePartial = (props as any)[privateSetIsValuePartialProp] as
+    | ((isPartial: boolean) => void)
+    | undefined;
+  useEffect(() => {
+    if (setParentIsValuePartial) {
+      setParentIsValuePartial(state.isValuePartial);
+      return () => setParentIsValuePartial(false);
+    }
+  }, [setParentIsValuePartial, state.isValuePartial]);
+
+  // Empty when partial so the native `required` constraint sees a missing value.
   let inputProps: InputHTMLAttributes<HTMLInputElement> = {
     type: 'hidden',
     name: props.name,
     form: props.form,
-    value: state.value?.toString() || '',
+    value: state.isValuePartial ? '' : state.value?.toString() || '',
     disabled: props.isDisabled
   };
 
@@ -257,6 +273,7 @@ export function useTimeField<T extends TimeValue>(
   ref: RefObject<Element | null>
 ): DateFieldAria {
   let res = useDateField(props, state, ref);
-  res.inputProps.value = state.timeValue?.toString() || '';
+  // Same partial-state guard as the DateField hidden input.
+  res.inputProps.value = state.isValuePartial ? '' : state.timeValue?.toString() || '';
   return res;
 }
