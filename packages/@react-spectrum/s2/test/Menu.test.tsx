@@ -171,13 +171,13 @@ describe('long press support', function () {
     );
 
     let menuTester = testUtilUser.createTester('Menu', {root: getByRole('button')});
-    await user.click(menuTester.trigger);
+    await user.click(menuTester.getTrigger());
     act(() => {
       jest.runAllTimers();
     });
-    expect(menuTester.menu).toBeFalsy();
+    expect(menuTester.getMenu()).toBeFalsy();
     await menuTester.open({needsLongPress: true});
-    expect(menuTester.menu).toBeTruthy();
+    expect(menuTester.getMenu()).toBeTruthy();
   });
 
   it('should open the menu on longPress (ToggleButton)', async function () {
@@ -191,14 +191,14 @@ describe('long press support', function () {
     );
 
     let menuTester = testUtilUser.createTester('Menu', {root: getByRole('button')});
-    await user.click(menuTester.trigger);
+    await user.click(menuTester.getTrigger());
     act(() => {
       jest.runAllTimers();
     });
-    expect(menuTester.menu).toBeFalsy();
-    expect(menuTester.trigger).toHaveAttribute('data-selected', 'true');
+    expect(menuTester.getMenu()).toBeFalsy();
+    expect(menuTester.getTrigger()).toHaveAttribute('data-selected', 'true');
     await menuTester.open({needsLongPress: true});
-    expect(menuTester.menu).toBeTruthy();
+    expect(menuTester.getMenu()).toBeTruthy();
   });
 });
 
