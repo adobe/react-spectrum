@@ -183,6 +183,7 @@ const DraggableGridListRender = (args: GridListProps<any>) => {
   return (
     <GridList
       className={styles.menu}
+      disabledKeys={['3']}
       aria-label="draggable gridlist"
       orientation={args.orientation}
       selectionMode="multiple"

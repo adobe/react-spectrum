@@ -1643,7 +1643,11 @@ export const TableFooter = /*#__PURE__*/ createBranchComponent(
 );
 
 export interface RowRenderProps extends ItemRenderProps {
-  /** Whether the row's children have keyboard focus. */
+  /**
+   * Whether the row's children have keyboard focus.
+   *
+   * @selector [data-focus-visible-within]
+   */
   isFocusVisibleWithin: boolean;
   /** The unique id of the row. */
   id?: Key;
@@ -1755,6 +1759,8 @@ export const Row = /*#__PURE__*/ createBranchComponent(
     let state = useContext(TableStateContext)!;
     let {dragAndDropHooks, dragState, dropState} = useContext(DragAndDropContext);
     let {isVirtualized, CollectionBranch} = useContext(CollectionRendererContext);
+    let isDraggable =
+      dragState && !(dragState.isDisabled || dragState.selectionManager.isDisabled(item.key));
     let {rowProps, expandButtonProps, ...states} = useTableRow(
       {
         node: item,
@@ -1769,7 +1775,7 @@ export const Row = /*#__PURE__*/ createBranchComponent(
       within: true
     });
     let {hoverProps, isHovered} = useHover({
-      isDisabled: !states.allowsSelection && !states.hasAction,
+      isDisabled: !states.allowsSelection && !states.hasAction && !isDraggable,
       onHoverStart: props.onHoverStart,
       onHoverChange: props.onHoverChange,
       onHoverEnd: props.onHoverEnd
