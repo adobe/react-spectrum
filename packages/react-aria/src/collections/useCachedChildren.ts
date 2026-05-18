@@ -55,8 +55,8 @@ export function useCachedChildren<T>(props: CachedChildrenOptions<T>): ReactNode
         if (!rendered) {
           rendered = children(item);
           // @ts-ignore
-          let id = rendered.props.id ?? item.key ?? item.id;
-          if (idScope != null && rendered.props.id == null) {
+          let id = rendered.props.id ?? item?.key ?? item?.id;
+          if (idScope != null && rendered.props.id == null && id != null) {
             id = idScope + ':' + id;
           }
 
