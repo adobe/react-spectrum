@@ -1156,7 +1156,7 @@ export const TableHeader = /*#__PURE__*/ (forwardRef as forwardRefType)(function
 >({columns, dependencies, children}: TableHeaderProps<T>, ref: DOMRef<HTMLDivElement>) {
   let scale = useScale();
   let {selectionBehavior, selectionMode, allowsDragging} = useTableOptions();
-  let {isQuiet} = useContext(InternalTableContext);
+  let {isQuiet, selectionStyle} = useContext(InternalTableContext);
   let domRef = useDOMRef(ref);
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
 
