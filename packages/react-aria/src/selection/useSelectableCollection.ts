@@ -367,6 +367,7 @@ export function useSelectableCollection(
             let last: FocusableElement;
             do {
               last = walker.lastChild() as FocusableElement;
+              // oxlint-disable-next-line max-depth
               if (last) {
                 next = last;
               }

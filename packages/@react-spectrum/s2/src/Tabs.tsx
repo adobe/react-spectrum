@@ -283,7 +283,7 @@ const tablistWrapper = style(
   getAllowedOverrides()
 );
 
-export function TabList<T extends object>(props: TabListProps<T>): ReactNode | null {
+export function TabList<T>(props: TabListProps<T>): ReactNode | null {
   let {showTabs, menuId, valueId, tabs, listRef, onSelectionChange, ariaLabel, ariaDescribedBy} =
     useContext(CollapseContext) ?? {};
   let {density, orientation, labelBehavior} = useContext(InternalTabsContext);
@@ -311,7 +311,7 @@ export function TabList<T extends object>(props: TabListProps<T>): ReactNode | n
   );
 }
 
-function TabListInner<T extends object>(props: TabListProps<T>) {
+function TabListInner<T>(props: TabListProps<T>) {
   let {
     tablistRef,
     orientation,

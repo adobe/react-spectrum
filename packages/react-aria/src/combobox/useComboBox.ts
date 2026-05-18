@@ -520,7 +520,7 @@ function useValueId(depArray: ReadonlyArray<any> = []): string | undefined {
 
   useEffect(() => {
     if (exists && !document.getElementById(id)) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
+      // oxlint-disable-next-line react-hooks-js/set-state-in-effect
       setExists(false);
     }
   }, [id, exists, lastDeps]);

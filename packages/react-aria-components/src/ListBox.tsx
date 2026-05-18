@@ -199,9 +199,10 @@ export const ListStateContext = createContext<ListState<any> | null>(null);
 /**
  * A listbox displays a list of options and allows a user to select one or more of them.
  */
-export const ListBox = /*#__PURE__*/ (forwardRef as forwardRefType)(function ListBox<
-  T extends object
->(props: ListBoxProps<T>, ref: ForwardedRef<HTMLDivElement>) {
+export const ListBox = /*#__PURE__*/ (forwardRef as forwardRefType)(function ListBox<T>(
+  props: ListBoxProps<T>,
+  ref: ForwardedRef<HTMLDivElement>
+) {
   [props, ref] = useContextProps(props, ref, ListBoxContext);
   let state = useContext(ListStateContext);
 
@@ -235,11 +236,7 @@ interface ListBoxInnerProps<T> {
   listBoxRef: RefObject<HTMLElement | null>;
 }
 
-function ListBoxInner<T extends object>({
-  state: inputState,
-  props,
-  listBoxRef
-}: ListBoxInnerProps<T>) {
+function ListBoxInner<T>({state: inputState, props, listBoxRef}: ListBoxInnerProps<T>) {
   [props, listBoxRef] = useContextProps(props, listBoxRef, SelectableCollectionContext);
   let {dragAndDropHooks, layout = 'stack', orientation = 'vertical', filter} = props;
   let state = UNSTABLE_useFilteredListState(inputState, filter);
@@ -446,7 +443,7 @@ export interface ListBoxSectionProps<T>
   className?: string;
 }
 
-function ListBoxSectionInner<T extends object>(
+function ListBoxSectionInner<T>(
   props: ListBoxSectionProps<T>,
   ref: ForwardedRef<HTMLElement>,
   section: Node<T>,
@@ -532,11 +529,13 @@ export interface ListBoxItemProps<T = object>
  * A ListBoxItem represents an individual option in a ListBox.
  */
 export const ListBoxItem = /*#__PURE__*/ createLeafComponent(ItemNode, function ListBoxItem<
-  T extends object
+  T
 >(props: ListBoxItemProps<T>, forwardedRef: ForwardedRef<HTMLDivElement>, item: Node<T>) {
   let ref = useObjectRef<any>(forwardedRef);
   let state = useContext(ListStateContext)!;
   let {dragAndDropHooks, dragState, dropState} = useContext(DragAndDropContext)!;
+  let isDraggable =
+    dragState && !(dragState.isDisabled || dragState.selectionManager.isDisabled(item.key));
   let {optionProps, labelProps, descriptionProps, ...states} = useOption(
     {key: item.key, 'aria-label': props?.['aria-label']},
     state,
@@ -544,7 +543,7 @@ export const ListBoxItem = /*#__PURE__*/ createLeafComponent(ItemNode, function 
   );
 
   let {hoverProps, isHovered} = useHover({
-    isDisabled: !states.allowsSelection && !states.hasAction,
+    isDisabled: !states.allowsSelection && !states.hasAction && !isDraggable,
     onHoverStart: item.props.onHoverStart,
     onHoverChange: item.props.onHoverChange,
     onHoverEnd: item.props.onHoverEnd

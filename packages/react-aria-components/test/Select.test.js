@@ -54,7 +54,7 @@ describe('Select', () => {
     let wrapper = getByTestId('select');
     let selectTester = testUtilUser.createTester('Select', {root: wrapper});
 
-    let trigger = selectTester.trigger;
+    let trigger = selectTester.getTrigger();
     expect(trigger).toHaveTextContent('Select an item');
     expect(trigger).not.toHaveAttribute('data-pressed');
 
@@ -83,12 +83,12 @@ describe('Select', () => {
     await selectTester.open();
 
     expect(trigger).toHaveAttribute('data-pressed', 'true');
-    let listbox = selectTester.listbox;
+    let listbox = selectTester.getListbox();
     expect(listbox).toHaveAttribute('class', 'react-aria-ListBox');
     expect(listbox.closest('.react-aria-Popover')).toBeInTheDocument();
     expect(listbox.closest('.react-aria-Popover')).toHaveAttribute('data-trigger', 'Select');
 
-    let options = selectTester.options();
+    let options = selectTester.getOptions();
     expect(options).toHaveLength(3);
 
     await user.click(options[1]);
@@ -103,7 +103,7 @@ describe('Select', () => {
     );
 
     let selectTester = testUtilUser.createTester('Select', {root: getByTestId('select')});
-    let trigger = selectTester.trigger;
+    let trigger = selectTester.getTrigger();
     expect(trigger.closest('.react-aria-Select')).toHaveAttribute('slot', 'test');
     expect(trigger).toHaveAttribute('aria-label', 'test');
   });
@@ -145,7 +145,7 @@ describe('Select', () => {
     );
 
     let selectTester = testUtilUser.createTester('Select', {root: getByTestId('select')});
-    let trigger = selectTester.trigger;
+    let trigger = selectTester.getTrigger();
     expect(trigger).toHaveTextContent('Cat');
   });
 
@@ -172,14 +172,14 @@ describe('Select', () => {
     );
 
     let selectTester = testUtilUser.createTester('Select', {root: getByTestId('select')});
-    let trigger = selectTester.trigger;
+    let trigger = selectTester.getTrigger();
     expect(trigger).toHaveTextContent('1 - Cat');
   });
 
   it('supports placeholder', () => {
     let {getByTestId} = render(<TestSelect placeholder="Select an animal" />);
     let selectTester = testUtilUser.createTester('Select', {root: getByTestId('select')});
-    let trigger = selectTester.trigger;
+    let trigger = selectTester.getTrigger();
     expect(trigger).toHaveTextContent('Select an animal');
   });
 
@@ -230,7 +230,7 @@ describe('Select', () => {
     );
 
     let selectTester = testUtilUser.createTester('Select', {root: getByTestId('select')});
-    let trigger = selectTester.trigger;
+    let trigger = selectTester.getTrigger();
     expect(trigger).toHaveTextContent('open');
 
     await selectTester.open();
@@ -255,12 +255,12 @@ describe('Select', () => {
     );
 
     let selectTester = testUtilUser.createTester('Select', {root: getByTestId('select')});
-    let trigger = selectTester.trigger;
+    let trigger = selectTester.getTrigger();
 
     await selectTester.open();
     expect(trigger).toHaveAttribute('data-pressed', 'true');
 
-    await selectTester.selectOption({option: 'Dog', closesOnSelect: false});
+    await selectTester.toggleOptionSelection({option: 'Dog', closesOnSelect: false});
     expect(trigger).toHaveTextContent('Dog');
     expect(trigger).toHaveAttribute('data-pressed', 'true');
   });
@@ -283,12 +283,12 @@ describe('Select', () => {
     );
 
     let selectTester = testUtilUser.createTester('Select', {root: getByTestId('select')});
-    let trigger = selectTester.trigger;
+    let trigger = selectTester.getTrigger();
 
     await selectTester.open();
     expect(trigger).toHaveAttribute('data-pressed', 'true');
 
-    await selectTester.selectOption({option: 'Dog', closesOnSelect: true});
+    await selectTester.toggleOptionSelection({option: 'Dog', closesOnSelect: true});
     expect(trigger).toHaveTextContent('Dog');
     expect(trigger).not.toHaveAttribute('data-pressed', 'true');
   });
@@ -329,7 +329,7 @@ describe('Select', () => {
 
     let wrapper = getByTestId('test-select');
     let selectTester = testUtilUser.createTester('Select', {root: wrapper});
-    let trigger = selectTester.trigger;
+    let trigger = selectTester.getTrigger();
     let select = wrapper;
     let input = document.querySelector('[name=select]');
     expect(input).toHaveAttribute('required');
@@ -348,8 +348,8 @@ describe('Select', () => {
     expect(select).toHaveAttribute('data-invalid');
     expect(document.activeElement).toBe(trigger);
 
-    await selectTester.selectOption({option: 'Cat'});
-    expect(selectTester.trigger).not.toHaveAttribute('aria-describedby');
+    await selectTester.toggleOptionSelection({option: 'Cat'});
+    expect(selectTester.getTrigger()).not.toHaveAttribute('aria-describedby');
     expect(select).not.toHaveAttribute('data-invalid');
   });
 
@@ -461,7 +461,7 @@ describe('Select', () => {
 
     await user.tab();
     await user.tab();
-    expect(document.activeElement).toBe(selectTester.trigger);
+    expect(document.activeElement).toBe(selectTester.getTrigger());
 
     await user.tab();
     expect(document.activeElement).toBe(clearButton);
@@ -473,13 +473,13 @@ describe('Select', () => {
     expect(document.activeElement).toBe(clearButton);
 
     await user.tab({shift: true});
-    expect(document.activeElement).toBe(selectTester.trigger);
+    expect(document.activeElement).toBe(selectTester.getTrigger());
 
     await user.tab({shift: true});
     expect(document.activeElement).toBe(beforeInput);
 
     await user.tab();
-    await selectTester.selectOption({option: 'Dog'});
+    await selectTester.toggleOptionSelection({option: 'Dog'});
 
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(onChangeSpy).toHaveBeenLastCalledWith('dog');
@@ -497,11 +497,11 @@ describe('Select', () => {
       root: wrapper,
       interactionType: 'keyboard'
     });
-    let trigger = selectTester.trigger;
+    let trigger = selectTester.getTrigger();
     expect(trigger).toHaveTextContent('Select an item');
     expect(trigger).not.toHaveAttribute('data-pressed');
 
-    await selectTester.selectOption({option: 'Kangaroo'});
+    await selectTester.toggleOptionSelection({option: 'Kangaroo'});
     expect(trigger).toHaveTextContent('Kangaroo');
   });
 
@@ -545,7 +545,7 @@ describe('Select', () => {
         root: wrapper,
         interactionType: 'keyboard'
       });
-      let trigger = selectTester.trigger;
+      let trigger = selectTester.getTrigger();
       expect(trigger).toHaveTextContent('Northern Territory');
       expect(trigger).not.toHaveAttribute('data-pressed');
     });
@@ -615,7 +615,7 @@ describe('Select', () => {
     let selectTester = testUtilUser.createTester('Select', {
       root: getByTestId('select')
     });
-    let trigger = selectTester.trigger;
+    let trigger = selectTester.getTrigger();
     expect(document.activeElement).toBe(trigger);
   });
 
@@ -673,7 +673,7 @@ describe('Select', () => {
 
     let wrapper = getByTestId('select');
     let selectTester = testUtilUser.createTester('Select', {root: wrapper});
-    await user.click(selectTester.trigger);
+    await user.click(selectTester.getTrigger());
 
     let popover = queryByTestId('popover');
     expect(popover).toBeFalsy();
@@ -695,7 +695,7 @@ describe('Select', () => {
       </Select>
     );
 
-    await user.click(selectTester.trigger);
+    await user.click(selectTester.getTrigger());
     popover = queryByTestId('popover');
     expect(popover).toBeFalsy();
   });
@@ -733,11 +733,11 @@ describe('Select', () => {
     const {getByTestId} = render(<Test />);
     const wrapper = getByTestId('select');
     const selectTester = testUtilUser.createTester('Select', {root: wrapper});
-    const trigger = selectTester.trigger;
+    const trigger = selectTester.getTrigger();
     const submit = getByTestId('submit');
 
     expect(trigger).toHaveTextContent('Select an item');
-    await selectTester.selectOption({option: 'Cat'});
+    await selectTester.toggleOptionSelection({option: 'Cat'});
     expect(trigger).toHaveTextContent('Cat');
     await user.click(submit);
     expect(onSubmit).toHaveBeenCalledTimes(1);
@@ -758,19 +758,19 @@ describe('Select', () => {
     let wrapper = getByTestId('select');
     let selectTester = testUtilUser.createTester('Select', {root: wrapper});
 
-    let trigger = selectTester.trigger;
+    let trigger = selectTester.getTrigger();
     expect(trigger).toHaveTextContent('Select an item');
 
     await selectTester.open();
 
-    let listbox = selectTester.listbox;
+    let listbox = selectTester.getListbox();
     expect(listbox).toHaveAttribute('aria-multiselectable', 'true');
 
-    let options = selectTester.options();
+    let options = selectTester.getOptions();
     expect(options).toHaveLength(3);
 
-    await user.click(options[0]);
-    await user.click(options[1]);
+    await selectTester.toggleOptionSelection({option: options[0]});
+    await selectTester.toggleOptionSelection({option: options[1]});
     expect(trigger).toHaveTextContent('Cat and Dog');
     await selectTester.close();
 
@@ -779,6 +779,30 @@ describe('Select', () => {
 
     let formData = new FormData(getByTestId('form'));
     expect(formData.getAll('select')).toEqual(['cat', 'dog']);
+  });
+
+  it('should support deselection if multiple selection is enabled', async () => {
+    let onChange = jest.fn();
+    let {getByTestId} = render(<TestSelect selectionMode="multiple" onChange={onChange} />);
+    let selectTester = testUtilUser.createTester('Select', {root: getByTestId('select')});
+
+    await selectTester.toggleOptionSelection({option: 'Cat'});
+    await selectTester.toggleOptionSelection({option: 'Dog'});
+    expect(selectTester.getOptions()[0]).toHaveAttribute('aria-selected', 'true');
+    expect(selectTester.getOptions()[1]).toHaveAttribute('aria-selected', 'true');
+    expect(onChange).toHaveBeenLastCalledWith(['cat', 'dog']);
+
+    await selectTester.toggleOptionSelection({option: 'Cat'});
+    expect(selectTester.getOptions()[0]).toHaveAttribute('aria-selected', 'false');
+    expect(selectTester.getOptions()[1]).toHaveAttribute('aria-selected', 'true');
+    expect(onChange).toHaveBeenLastCalledWith(['dog']);
+
+    await selectTester.toggleOptionSelection({option: 'Dog'});
+    expect(selectTester.getOptions()[0]).toHaveAttribute('aria-selected', 'false');
+    expect(selectTester.getOptions()[1]).toHaveAttribute('aria-selected', 'false');
+    expect(onChange).toHaveBeenLastCalledWith([]);
+
+    await selectTester.close();
   });
 
   it('should support multiple selection form integration with many items', async () => {
@@ -807,7 +831,7 @@ describe('Select', () => {
     let wrapper = getByTestId('select');
     let selectTester = testUtilUser.createTester('Select', {root: wrapper});
 
-    let trigger = selectTester.trigger;
+    let trigger = selectTester.getTrigger();
     expect(trigger).toHaveTextContent('Select an item');
 
     let submit = getByTestId('submit');
@@ -818,7 +842,7 @@ describe('Select', () => {
 
     await selectTester.open();
 
-    let options = selectTester.options();
+    let options = selectTester.getOptions();
     await user.click(options[0]);
     await user.click(options[1]);
     await selectTester.close();
@@ -838,12 +862,12 @@ describe('Select', () => {
     let wrapper = getByTestId('select');
     let selectTester = testUtilUser.createTester('Select', {root: wrapper});
 
-    let trigger = selectTester.trigger;
+    let trigger = selectTester.getTrigger();
     expect(trigger).toHaveTextContent('Dog and Kangaroo');
 
     await selectTester.open();
 
-    let options = selectTester.options();
+    let options = selectTester.getOptions();
     expect(options[0]).toHaveAttribute('aria-selected', 'false');
     expect(options[1]).toHaveAttribute('aria-selected', 'true');
     expect(options[2]).toHaveAttribute('aria-selected', 'true');
@@ -874,10 +898,10 @@ describe('Select', () => {
     );
 
     let selectTester = testUtilUser.createTester('Select', {root: getByTestId('select')});
-    let trigger = selectTester.trigger;
+    let trigger = selectTester.getTrigger();
     expect(trigger).toHaveTextContent('Cat');
 
-    await selectTester.selectOption({option: 'Dog'});
+    await selectTester.toggleOptionSelection({option: 'Dog'});
     expect(trigger).toHaveTextContent('2 selected items');
   });
 

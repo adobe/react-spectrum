@@ -14,7 +14,7 @@ import {Popover} from './Popover';
 import {Label, FieldError, Description} from './Form';
 import './Select.css';
 
-export interface SelectProps<T extends object, M extends 'single' | 'multiple'> extends Omit<
+export interface SelectProps<T, M extends 'single' | 'multiple'> extends Omit<
   AriaSelectProps<T, M>,
   'children'
 > {
@@ -25,7 +25,7 @@ export interface SelectProps<T extends object, M extends 'single' | 'multiple'> 
   children: React.ReactNode | ((item: T) => React.ReactNode);
 }
 
-export function Select<T extends object, M extends 'single' | 'multiple' = 'single'>({
+export function Select<T, M extends 'single' | 'multiple' = 'single'>({
   label,
   description,
   errorMessage,
@@ -49,7 +49,7 @@ export function Select<T extends object, M extends 'single' | 'multiple' = 'sing
   );
 }
 
-export function SelectListBox<T extends object>(props: ListBoxProps<T>) {
+export function SelectListBox<T>(props: ListBoxProps<T>) {
   return <DropdownListBox {...props} />;
 }
 

@@ -10,7 +10,7 @@ import {
 import {ChevronRight} from 'lucide-react';
 import './Breadcrumbs.css';
 
-export function Breadcrumbs<T extends object>(props: BreadcrumbsProps<T>) {
+export function Breadcrumbs<T>(props: BreadcrumbsProps<T>) {
   return <RACBreadcrumbs {...props} />;
 }
 
