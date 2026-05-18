@@ -828,7 +828,7 @@ let dragButtonContainer = style({
   width: 10
 });
 
-let dragButton = style<{isFocusVisible?: boolean}>({
+export let dragButton = style({
   color: 'inherit',
   display: 'flex',
   alignItems: 'center',

@@ -34,6 +34,14 @@ import {
   LoadingState
 } from '@react-types/shared';
 import {DragAndDropContext, DropIndicator} from 'react-aria-components/useDragAndDrop';
+import {
+  dragButton,
+  insertionIndicatorBar,
+  insertionIndicatorCircle,
+  isFirstItem,
+  isPrevSelected,
+  S2ListLayout
+} from './ListView';
 import DragHandle from '../ui-icons/DragHandle';
 import {DragPreview} from './DragPreview';
 import {
@@ -42,7 +50,6 @@ import {
   UnsafeStyles
 } from './style-utils' with {type: 'macro'};
 import {IconContext} from './Icon';
-import {insertionIndicatorBar, insertionIndicatorCircle, S2ListLayout} from './ListView';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {ProgressCircle} from './ProgressCircle';
@@ -582,33 +589,6 @@ const treeDragButtonContainer = style({
   width: 10
 });
 
-const treeDragButton = style({
-  color: 'inherit',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  height: 22,
-  width: 10,
-  padding: 0,
-  margin: 0,
-  backgroundColor: 'transparent',
-  borderStyle: 'none',
-  borderRadius: 'sm',
-  outlineStyle: {
-    default: 'none',
-    isFocusVisible: 'solid'
-  },
-  outlineColor: {
-    default: 'focus-ring',
-    forcedColors: 'Highlight'
-  },
-  outlineWidth: 2,
-  '--iconPrimary': {
-    type: 'fill',
-    value: 'currentColor'
-  }
-});
-
 let treeRowFocusRing = style({
   ...focusRing(),
   outlineOffset: {
@@ -736,7 +716,7 @@ export const TreeViewItemContent = (props: TreeViewItemContentProps): ReactNode 
                     style={
                       !isFocusVisibleWithin && !isFocusVisible ? {...visuallyHiddenProps.style} : {}
                     }
-                    className={treeDragButton}>
+                    className={dragButton}>
                     <DragHandle size="M" />
                   </Button>
                 )}
