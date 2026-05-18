@@ -51,7 +51,6 @@ import {
 } from './ListView';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {ListLayout} from 'react-stately/useVirtualizerState';
 import {ProgressCircle} from './ProgressCircle';
 import {Provider, useContextProps} from 'react-aria-components/slots';
 import {
