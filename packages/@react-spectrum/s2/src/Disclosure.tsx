@@ -41,8 +41,12 @@ import {
   DisclosureProps as RACDisclosureProps
 } from 'react-aria-components/Disclosure';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
-import {fontProperties, getAllowedOverrides, StyleProps, StylesPropWithFont, UnsafeStyles} from './style-utils' with {type: 'macro'};
-import {StyleString} from '../style/types' with {type: 'macro'};
+import {
+  getAllowedOverrides,
+  StyleProps,
+  StylesPropWithFont,
+  UnsafeStyles
+} from './style-utils' with {type: 'macro'};
 import {Heading} from 'react-aria-components/Heading';
 import React, {createContext, forwardRef, ReactNode, useContext} from 'react';
 import {useDOMRef} from './useDOMRef';
@@ -159,85 +163,88 @@ const headingStyle = style({
   minWidth: 0
 });
 
-const buttonStyles = style({
-  ...focusRing(),
-  outlineOffset: -2,
-  font: 'heading',
-  color: {
-    default: baseColor('neutral'),
-    forcedColors: 'ButtonText',
-    isDisabled: {
-      default: 'disabled',
-      forcedColors: 'GrayText'
-    }
-  },
-  fontWeight: 'bold',
-  fontSize: {
-    size: {
-      S: 'title-sm',
-      M: 'title',
-      L: 'title-lg',
-      XL: 'title-xl'
-    }
-  },
-  lineHeight: 'ui',
-  display: 'flex',
-  flexGrow: 1,
-  alignItems: 'baseline',
-  paddingX: 'calc(self(minHeight) * 3/8 - 1px)',
-  paddingY: centerPadding(),
-  gap: 'calc(self(minHeight) * 3/8 - 1px)',
-  minHeight: {
-    // compact is equivalent to 'control', but other densities have more padding.
-    size: {
-      S: {
-        density: {
-          compact: 18,
-          regular: 24,
-          spacious: 32
-        }
-      },
-      M: {
-        density: {
-          compact: 24,
-          regular: 32,
-          spacious: 40
-        }
-      },
-      L: {
-        density: {
-          compact: 32,
-          regular: 40,
-          spacious: 48
-        }
-      },
-      XL: {
-        density: {
-          compact: 40,
-          regular: 48,
-          spacious: 56
+const buttonStyles = style(
+  {
+    ...focusRing(),
+    outlineOffset: -2,
+    font: 'heading',
+    color: {
+      default: baseColor('neutral'),
+      forcedColors: 'ButtonText',
+      isDisabled: {
+        default: 'disabled',
+        forcedColors: 'GrayText'
+      }
+    },
+    fontWeight: 'bold',
+    fontSize: {
+      size: {
+        S: 'title-sm',
+        M: 'title',
+        L: 'title-lg',
+        XL: 'title-xl'
+      }
+    },
+    lineHeight: 'ui',
+    display: 'flex',
+    flexGrow: 1,
+    alignItems: 'baseline',
+    paddingX: 'calc(self(minHeight) * 3/8 - 1px)',
+    paddingY: centerPadding(),
+    gap: 'calc(self(minHeight) * 3/8 - 1px)',
+    minHeight: {
+      // compact is equivalent to 'control', but other densities have more padding.
+      size: {
+        S: {
+          density: {
+            compact: 18,
+            regular: 24,
+            spacious: 32
+          }
+        },
+        M: {
+          density: {
+            compact: 24,
+            regular: 32,
+            spacious: 40
+          }
+        },
+        L: {
+          density: {
+            compact: 32,
+            regular: 40,
+            spacious: 48
+          }
+        },
+        XL: {
+          density: {
+            compact: 40,
+            regular: 48,
+            spacious: 56
+          }
         }
       }
-    }
+    },
+    width: 'full',
+    backgroundColor: {
+      default: 'transparent',
+      isFocusVisible: lightDark('transparent-black-100', 'transparent-white-100'),
+      isHovered: lightDark('transparent-black-100', 'transparent-white-100'),
+      isPressed: lightDark('transparent-black-300', 'transparent-white-300')
+    },
+    transition: 'default',
+    borderWidth: 0,
+    borderRadius: {
+      // Only rounded for keyboard focus and quiet.
+      default: 'none',
+      isFocusVisible: 'default',
+      isQuiet: 'default'
+    },
+    textAlign: 'start',
+    disableTapHighlight: true
   },
-  width: 'full',
-  backgroundColor: {
-    default: 'transparent',
-    isFocusVisible: lightDark('transparent-black-100', 'transparent-white-100'),
-    isHovered: lightDark('transparent-black-100', 'transparent-white-100'),
-    isPressed: lightDark('transparent-black-300', 'transparent-white-300')
-  },
-  transition: 'default',
-  borderWidth: 0,
-  borderRadius: {
-    // Only rounded for keyboard focus and quiet.
-    default: 'none',
-    isFocusVisible: 'default',
-    isQuiet: 'default'
-  },
-  textAlign: 'start',
-  disableTapHighlight: true
-}, getAllowedOverrides({font: true}));
+  getAllowedOverrides({font: true})
+);
 
 const chevronStyles = style({
   rotate: {

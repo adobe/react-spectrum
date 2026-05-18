@@ -127,7 +127,7 @@ export const CustomFont: Story = {
     return (
       <div className={style({minHeight: 240})}>
         <Disclosure {...args}>
-          <DisclosureTitle styles={style({font: "ui-lg"})}>Files</DisclosureTitle>
+          <DisclosureTitle styles={style({font: 'ui-lg'})}>Files</DisclosureTitle>
           <DisclosurePanel>Files content</DisclosurePanel>
         </Disclosure>
       </div>

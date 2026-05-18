@@ -375,7 +375,13 @@ export const widthProperties = ['width', 'minWidth', 'maxWidth'] as const;
 
 export const heightProperties = ['size', 'height', 'minHeight', 'maxHeight'] as const;
 
-export const fontProperties = ['font', 'fontFamily', 'fontWeight', 'lineHeight', 'fontSize'] as const;
+export const fontProperties = [
+  'font',
+  'fontFamily',
+  'fontWeight',
+  'lineHeight',
+  'fontSize'
+] as const;
 
 export type StylesProp = StyleString<
   (typeof allowedOverrides)[number] | (typeof widthProperties)[number]
@@ -387,9 +393,7 @@ export type StylesPropWithHeight = StyleString<
 >;
 export type StylesPropWithoutWidth = StyleString<(typeof allowedOverrides)[number]>;
 
-export type StylesPropWithFont = StyleString<
-  | (typeof fontProperties)[number]
->;
+export type StylesPropWithFont = StyleString<(typeof fontProperties)[number]>;
 export type UnsafeClassName = string & {properties?: never};
 export interface UnsafeStyles {
   /**

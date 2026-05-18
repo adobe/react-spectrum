@@ -10,13 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {MessageSource} from '../src/MessageSource';
+import {MessageSource, SourceList, SourceListItem} from '../src/MessageSource';
 import type {Meta, StoryObj} from '@storybook/react';
-import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
 import React from 'react';
 import {style} from '../style' with {type: 'macro'};
-import {DisclosurePanel} from '../src/Disclosure';
-
 
 const meta: Meta<typeof MessageSource> = {
   component: MessageSource,
@@ -45,11 +42,44 @@ export default meta;
 type Story = StoryObj<typeof MessageSource>;
 
 export const Example: Story = {
+  args: {
+    label: 'Sources'
+  },
   render: args => {
     return (
       <div className={style({minHeight: 240})}>
-        <MessageSource label="File" {...args}>
-          <DisclosurePanel>Files content</DisclosurePanel>
+        <MessageSource {...args}>
+          <SourceList>
+            <SourceListItem href="#">Hilton email</SourceListItem>
+            <SourceListItem href="#">Market research</SourceListItem>
+            <SourceListItem href="#">User research</SourceListItem>
+          </SourceList>
+        </MessageSource>
+      </div>
+    );
+  }
+};
+
+export const Dynamic: Story = {
+  args: {
+    label: 'Sources'
+  },
+  render: args => {
+    const sources = [
+      {id: '1', label: 'Hilton email', href: '#'},
+      {id: '2', label: 'Market research', href: '#'},
+      {id: '3', label: 'User research', href: '#'}
+    ];
+    return (
+      <div className={style({minHeight: 240})}>
+        <MessageSource {...args}>
+          <SourceList>
+            {sources.map(source => (
+              <SourceListItem key={source.id} href={source.href}>
+                {source.label}
+              </SourceListItem>
+            ))}
+          </SourceList>
         </MessageSource>
       </div>
     );
