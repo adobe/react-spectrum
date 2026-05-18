@@ -42,11 +42,7 @@ import {
   UnsafeStyles
 } from './style-utils' with {type: 'macro'};
 import {IconContext} from './Icon';
-import {
-  insertionIndicatorBar,
-  insertionIndicatorCircle,
-  S2ListLayout
-} from './ListView';
+import {insertionIndicatorBar, insertionIndicatorCircle, S2ListLayout} from './ListView';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {ProgressCircle} from './ProgressCircle';
