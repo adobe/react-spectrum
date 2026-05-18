@@ -21,7 +21,8 @@ import {Rect} from './Rect';
  */
 export class LayoutInfo {
   /**
-   * The type of element represented by this LayoutInfo. Should match the `type` of the corresponding collection node.
+   * The type of element represented by this LayoutInfo. Should match the `type` of the
+   * corresponding collection node.
    */
   type: string;
 
@@ -49,18 +50,21 @@ export class LayoutInfo {
    * Whether the size is estimated. `false` by default.
    * Items with estimated sizes will be measured the first time they are added to the DOM.
    * The estimated size is used to calculate the size and position of the scrollbar.
+   *
    * @default false
    */
   estimatedSize: boolean;
 
   /**
    * Whether the layout info sticks to the viewport when scrolling.
+   *
    * @default false
    */
   isSticky: boolean;
 
   /**
    * The element's opacity.
+   *
    * @default 1
    */
   opacity: number;
@@ -77,13 +81,16 @@ export class LayoutInfo {
 
   /**
    * Whether the element allows its contents to overflow its container.
+   *
    * @default false
    */
   allowOverflow: boolean;
 
   /**
-   * @param type The type of element represented by this LayoutInfo. Should match the `type` of the corresponding collection node.
-   * @param key A unique key for this LayoutInfo. Should match the `key` of the corresponding collection node.
+   * @param type The type of element represented by this LayoutInfo. Should match the `type` of the
+   *   corresponding collection node.
+   * @param key A unique key for this LayoutInfo. Should match the `key` of the corresponding
+   *   collection node.
    * @param rect The rectangle describing the size and position of this element.
    */
   constructor(type: string, key: Key, rect: Rect) {

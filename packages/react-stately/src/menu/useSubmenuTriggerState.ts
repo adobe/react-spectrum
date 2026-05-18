@@ -40,8 +40,8 @@ export interface SubmenuTriggerState extends OverlayTriggerState {
 }
 
 /**
- * Manages state for a submenu trigger. Tracks whether the submenu is currently open, the level of the submenu, and
- * controls which item will receive focus when it opens.
+ * Manages state for a submenu trigger. Tracks whether the submenu is currently open, the level of
+ * the submenu, and controls which item will receive focus when it opens.
  */
 export function useSubmenuTriggerState(
   props: SubmenuTriggerProps,

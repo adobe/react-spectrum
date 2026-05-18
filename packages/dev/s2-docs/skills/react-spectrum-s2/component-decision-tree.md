@@ -1,4 +1,4 @@
-## Component Decision Tree
+# Component Decision Tree
 
 If the user does not specify which component they would like to use, choose one based on the requirements. Use the following as a guide:
 
@@ -8,7 +8,7 @@ If the user does not specify which component they would like to use, choose one 
 - If two components could work, choose the more standard and accessible pattern.
 - Reach for React Aria Components plus the S2 `style` macro only as a last resort when no S2 component fits the behavior or layout, or if the user specifically asks for a custom component.
 
-### Actions and navigation
+## Actions and navigation
 
 - Use `Button` for primary or secondary calls to action and prominent actions. It can also navigate.
 - Use `ActionButton` for lower-emphasis actions, toolbar actions, row actions, and compact icon-led actions.
@@ -19,7 +19,7 @@ If the user does not specify which component they would like to use, choose one 
 - Use `Menu` when the menu itself is the pattern, especially if you need sections, submenus, selection, links, or a custom trigger arrangement.
 - Use `ActionBar` for bulk actions within a collection component.
 
-### Choosing from options
+## Choosing from options
 
 - Use `Switch` for turning a setting on or off.
 - Use `Checkbox` for a single independent yes or no option.
@@ -32,7 +32,7 @@ If the user does not specify which component they would like to use, choose one 
 - Use `ToggleButton` for a single pressed/unpressed control.
 - Use `ToggleButtonGroup` for compact formatting-style or tool-style toggles, especially if multi-select may be needed.
 
-### Text and value input
+## Text and value input
 
 - Use `TextField` for single-line plain text input.
 - Use `SearchField` for a search query with search-specific clear and submit behavior.
@@ -48,7 +48,7 @@ If the user does not specify which component they would like to use, choose one 
 - Use `ColorSwatchPicker` to choose from predefined colors.
 - Use `ColorArea`, `ColorSlider`, and `ColorWheel` for direct color manipulation.
 
-### Collections and data views
+## Collections and data views
 
 - Use `TableView` when users need rows and columns, dense comparison, sortable headers, cell-level content, editable cells, column resizing, or other tabular behaviors.
 - Use `ListView` for a flat list of records where each row is the main unit and may include icons, thumbnails, descriptions, and row actions.
@@ -58,14 +58,14 @@ If the user does not specify which component they would like to use, choose one 
 - Use `TableView` with expandable rows only if the tabular columns still matter after hierarchy is introduced.
 - Use `ListView` with `hasChildItems` and breadcrumbs for drill-in navigation when only one level is shown at a time.
 
-### `TableView` vs `ListView` vs `TreeView` vs `CardView`
+## `TableView` vs `ListView` vs `TreeView` vs `CardView`
 
 - Choose `TableView` if the user needs to compare fields across columns.
 - Choose `ListView` if the user needs a simple vertical list of records with optional secondary content and actions.
 - Choose `TreeView` if parent-child structure is the key mental model.
 - Choose `CardView` if preview imagery, card layouts, or gallery browsing matter more than dense comparison.
 
-### Cards
+## Cards
 
 - Use `Card` for one summarized object, not for an entire selectable collection.
 - Use `CardView` when many cards need keyboard navigation, selection, loading states, empty states, or bulk actions.
@@ -76,7 +76,7 @@ If the user does not specify which component they would like to use, choose one 
 - Use a preview-only `Card` for gallery tiles in a waterfall-style presentation.
 - Use a custom `Card` only when the object is still clearly a card but the built-in layouts do not fit the content structure.
 
-### Structure and disclosure
+## Structure and disclosure
 
 - Use `Tabs` when switching between peer sections of content and showing one panel at a time.
 - Use `SegmentedControl` instead of `Tabs` when switching app modes or views rather than full content panels.
@@ -85,7 +85,7 @@ If the user does not specify which component they would like to use, choose one 
 - Use `Breadcrumbs` to show navigation depth or hierarchy location.
 - Use `Divider` to separate adjacent groups of content.
 
-### Overlays, help, and feedback
+## Overlays, help, and feedback
 
 - Use `Tooltip` for a short description of a focusable element. Do not rely on it for essential content.
 - Use `ContextualHelp` for additional explanation near content, especially for non-interactive or disabled UI.
@@ -97,7 +97,7 @@ If the user does not specify which component they would like to use, choose one 
 - Use `InlineAlert` for a persistent non-modal message associated with content in the current view.
 - Use `Toast` for temporary global feedback after an action.
 
-### Status, loading, media, and empty states
+## Status, loading, media, and empty states
 
 - Use `Badge` for compact color-coded metadata.
 - Use `StatusLight` for an object's current status.
@@ -110,8 +110,26 @@ If the user does not specify which component they would like to use, choose one 
 - Use `DropZone` for drag-and-drop file or object upload targets.
 - Use `Form` to provide layout, submission, and validation structure for grouped fields.
 
-### Last-resort custom components
+## Quiet vs. full-emphasis variants
+
+Several components expose an `isQuiet` (or `quiet` variant) prop that removes the chrome — borders, fills, and sometimes padding — so the control reads as inline content rather than a discrete object. Pick by *context*, not by visual taste:
+
+- Use **quiet** variants for:
+  - Toolbar and toolbar-like rows (`ActionButton`, `ToggleButton`, `ActionMenu` with `isQuiet`).
+  - Inline editing affordances embedded in dense content (e.g. a `Picker` inside a table cell, an `ActionButton` inline in a paragraph).
+  - Repeated controls in collection rows (`ListView`, `TreeView`, `TableView` row actions) where full button chrome would compete with the row content.
+  - Compact secondary affordances next to body copy (a quiet `Link`, a quiet `Breadcrumbs` trail in a tight header).
+  - Subordinate disclosures inside another container (`Accordion` with `isQuiet`, `Disclosure` with `isQuiet` inside a panel or card).
+- Use the **default (full-emphasis)** variant for:
+  - Standalone primary or secondary actions on a page (`Button`, full-chrome `ActionButton`, `LinkButton`).
+  - Form controls in a Form layout (`Picker`, `ComboBox`, `TextField`, etc.) — quiet form fields are a deliberate inline-editing choice, not the default.
+  - Top-level navigation (`Breadcrumbs`, `Tabs`).
+  - The main content view (`ListView`, `TableView`, `TreeView` displayed as the page's primary surface).
+
+If the design clearly shows borders, fills, or a defined hit target, use the default variant. If the control sits *inside* another bordered/filled surface and the design renders it without chrome, use quiet. Don't apply `isQuiet` just to make something look more compact — adjust spacing instead.
+
+## Last-resort custom components
 
 - Only create a custom component when no S2 component matches the required interaction pattern, or when the needed layout cannot be achieved by composing existing S2 components.
-- Build custom components with React Aria Components for behavior and accessibility, and the S2 `style` macro for Spectrum styling.
+- Build custom components with React Aria Components for behavior and accessibility, and the S2 `style` macro for Spectrum styling. See [Creating Custom Components]({{guidesBase}}creating-custom-components.md) for the full pattern (`focusRing`, `baseColor`, `pressScale`, render props, animations, etc.).
 - Do not bypass an existing S2 component just to apply unsupported visual customization.

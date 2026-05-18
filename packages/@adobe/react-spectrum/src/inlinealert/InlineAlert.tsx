@@ -31,6 +31,7 @@ import {useStyleProps} from '../utils/styleProps';
 export interface SpectrumInlineAlertProps extends DOMProps, StyleProps {
   /**
    * The [visual style](https://spectrum.adobe.com/page/in-line-alert/#Options) of the Inline Alert.
+   *
    * @default 'neutral'
    */
   variant?: 'neutral' | 'info' | 'positive' | 'notice' | 'negative';
@@ -52,8 +53,8 @@ let ICONS = {
 };
 
 /**
- * Inline alerts display a non-modal message associated with objects in a view.
- * These are often used in form validation, providing a place to aggregate feedback related to multiple fields.
+ * Inline alerts display a non-modal message associated with objects in a view. These are often used
+ * in form validation, providing a place to aggregate feedback related to multiple fields.
  */
 export const InlineAlert = React.forwardRef(function InlineAlert(
   props: SpectrumInlineAlertProps,

@@ -101,7 +101,7 @@ yarn test --coverage
 ```
 
 ### Linting
-The code is linted with [eslint](https://eslint.org/). The linter runs whenever you run the tests, but you can also run it with
+The code is linted with [oxlint](https://oxc.rs/docs/guide/usage/linter.html). The linter runs whenever you run the tests, but you can also run it with
 ```bash
 yarn lint
 ```

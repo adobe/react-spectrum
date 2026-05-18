@@ -19,8 +19,8 @@ export interface AriaColorChannelFieldProps extends ColorChannelFieldProps, Aria
 export interface ColorChannelFieldAria extends NumberFieldAria {}
 
 /**
- * Provides the behavior and accessibility implementation for a color channel field, allowing users to edit the
- * value of an individual color channel.
+ * Provides the behavior and accessibility implementation for a color channel field, allowing users
+ * to edit the value of an individual color channel.
  */
 export function useColorChannelField(
   props: AriaColorChannelFieldProps,

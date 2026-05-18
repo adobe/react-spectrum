@@ -105,14 +105,16 @@ interface DropHooks {
 export type DragAndDropHooks<T = object> = DragHooks<T> & DropHooks;
 
 export interface DragAndDrop<T = object> {
-  /** Drag and drop hooks for the collection element.  */
+  /** Drag and drop hooks for the collection element. */
   dragAndDropHooks: DragAndDropHooks<T>;
 }
 
 export interface DragAndDropOptions<T = object>
   extends Omit<DraggableCollectionProps, 'preview' | 'getItems'>, DroppableCollectionProps {
   /**
-   * A function that returns the items being dragged. If not specified, we assume that the collection is not draggable.
+   * A function that returns the items being dragged. If not specified, we assume that the
+   * collection is not draggable.
+   *
    * @default () => []
    */
   getItems?: (keys: Set<Key>, items: T[]) => DragItem[];
@@ -129,14 +131,18 @@ export interface DragAndDropOptions<T = object>
    * default DropIndicator is provided.
    */
   renderDropIndicator?: (target: DropTarget) => JSX.Element;
-  /** A custom delegate object that provides drop targets for pointer coordinates within the collection. */
+  /**
+   * A custom delegate object that provides drop targets for pointer coordinates within the
+   * collection.
+   */
   dropTargetDelegate?: DropTargetDelegate;
   /** Whether the drag and drop events should be disabled. */
   isDisabled?: boolean;
 }
 
 /**
- * Provides the hooks required to enable drag and drop behavior for a drag and drop compatible collection component.
+ * Provides the hooks required to enable drag and drop behavior for a drag and drop compatible
+ * collection component.
  */
 export function useDragAndDrop<T = object>(options: DragAndDropOptions<T>): DragAndDrop<T> {
   let dragAndDropHooks = useMemo(() => {

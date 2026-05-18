@@ -164,11 +164,13 @@ export function MenuTrigger(props: MenuTriggerProps): JSX.Element | null {
 
 export interface SubmenuTriggerProps {
   /**
-   * The contents of the SubmenuTrigger. The first child should be an Item (the trigger) and the second child should be the Popover (for the submenu).
+   * The contents of the SubmenuTrigger. The first child should be an Item (the trigger) and the
+   * second child should be the Popover (for the submenu).
    */
   children: ReactElement[];
   /**
    * The delay time in milliseconds for the submenu to appear after hovering over the trigger.
+   *
    * @default 200
    */
   delay?: number;
@@ -258,6 +260,7 @@ export const SubmenuTrigger = /*#__PURE__*/ createBranchComponent(
 export interface MenuRenderProps {
   /**
    * Whether the menu has no items and should display its empty state.
+   *
    * @selector [data-empty]
    */
   isEmpty: boolean;
@@ -271,7 +274,9 @@ export interface MenuProps<T>
     SlotProps,
     GlobalDOMAttributes<HTMLDivElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-Menu'
    */
   className?: ClassNameOrFunction<MenuRenderProps>;
@@ -397,7 +402,9 @@ export interface MenuSectionProps<T>
     Omit<MultipleSelection, 'disabledKeys'>,
     DOMRenderProps<'section', undefined> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element.
+   *
    * @default 'react-aria-MenuSection'
    */
   className?: string;
@@ -513,13 +520,18 @@ export interface MenuItemProps<T = object>
     PressEvents,
     Omit<GlobalDOMAttributes<HTMLDivElement>, 'onClick'> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-MenuItem'
    */
   className?: ClassNameOrFunction<MenuItemRenderProps>;
   /** The unique id of the item. */
   id?: Key;
-  /** The object value that this item represents. When using dynamic collections, this is set automatically. */
+  /**
+   * The object value that this item represents. When using dynamic collections, this is set
+   * automatically.
+   */
   value?: T;
   /** A string representation of the item's contents, used for features like typeahead. */
   textValue?: string;

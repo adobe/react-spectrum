@@ -13,6 +13,7 @@
 interface Options {
   /**
    * Output module format.
+   *
    * @default 'cjs'
    */
   format?: 'cjs' | 'esm';

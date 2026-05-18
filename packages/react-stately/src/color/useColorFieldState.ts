@@ -70,9 +70,8 @@ export interface ColorFieldState extends FormValidationState {
   /** Sets the current value to the minimum color value, and fires `onChange`. */
   decrementToMin(): void;
   /**
-   * Validates a user input string.
-   * Values can be partially entered, and may be valid even if they cannot currently be parsed to a color.
-   * Can be used to implement validation as a user types.
+   * Validates a user input string. Values can be partially entered, and may be valid even if they
+   * cannot currently be parsed to a color. Can be used to implement validation as a user types.
    */
   validate(value: string): boolean;
 }

@@ -16,9 +16,7 @@ const plugin = {
     fixable: 'code'
   },
   create: context => ({
-    /**
-     * expect(() => tree.getByRole('separator')).toThrow();
-     */
+    /* expect(() => tree.getByRole('separator')).toThrow(); */
     [`CallExpression[callee.property.name='getByRole'][parent.parent.callee.name='expect'][parent.parent.parent.property.name=/toThrow/]`](
       node
     ) {
@@ -34,9 +32,7 @@ const plugin = {
       });
     },
 
-    /**
-     * expect(() => getByRole('separator')).toThrow();
-     */
+    /* expect(() => getByRole('separator')).toThrow(); */
     [`CallExpression[callee.name='getByRole'][parent.parent.callee.name='expect'][parent.parent.parent.property.name=/toThrow/]`](
       node
     ) {
@@ -48,9 +44,7 @@ const plugin = {
       });
     },
 
-    /**
-     * expect(() => {tree.getByRole('separator')}).toThrow();
-     */
+    /* expect(() => {tree.getByRole('separator')}).toThrow(); */
     [`CallExpression[callee.property.name='getByRole'][parent.parent.parent.parent.callee.name='expect'][parent.parent.parent.parent.parent.property.name=/toThrow/]`](
       node
     ) {
@@ -67,9 +61,7 @@ const plugin = {
       });
     },
 
-    /**
-     * expect(() => {getByRole('separator')}).toThrow();
-     */
+    /* expect(() => {getByRole('separator')}).toThrow(); */
     [`CallExpression[callee.name='getByRole'][parent.parent.parent.parent.callee.name='expect'][parent.parent.parent.parent.parent.property.name=/toThrow/]`](
       node
     ) {

@@ -1,3 +1,5 @@
+max-files-changed: 100
+
 needs translations:
   - changed-files:
       - any-glob-to-any-file: ['**/intl/*.json']

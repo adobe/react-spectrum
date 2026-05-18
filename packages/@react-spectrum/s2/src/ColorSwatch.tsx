@@ -34,11 +34,13 @@ export interface ColorSwatchProps
     UnsafeStyles {
   /**
    * The size of the ColorSwatch.
+   *
    * @default 'M'
    */
   size?: 'XS' | 'S' | 'M' | 'L';
   /**
    * The corner rounding of the ColorSwatch.
+   *
    * @default 'default'
    */
   rounding?: 'default' | 'none' | 'full';

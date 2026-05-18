@@ -57,7 +57,9 @@ export interface SliderProps<T = number | number[]>
     SlotProps,
     GlobalDOMAttributes<HTMLDivElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-Slider'
    */
   className?: ClassNameOrFunction<SliderRenderProps>;
@@ -78,11 +80,13 @@ export const SliderOutputContext =
 export interface SliderRenderProps {
   /**
    * The orientation of the slider.
+   *
    * @selector [data-orientation="horizontal | vertical"]
    */
   orientation: Orientation;
   /**
    * Whether the slider is disabled.
+   *
    * @selector [data-disabled]
    */
   isDisabled: boolean;
@@ -144,7 +148,9 @@ export const Slider = /*#__PURE__*/ (forwardRef as forwardRefType)(function Slid
 export interface SliderOutputProps
   extends RenderProps<SliderRenderProps, 'output'>, GlobalDOMAttributes<HTMLOutputElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-SliderOutput'
    */
   className?: ClassNameOrFunction<SliderRenderProps>;
@@ -192,6 +198,7 @@ export const SliderOutput = /*#__PURE__*/ (forwardRef as forwardRefType)(functio
 export interface SliderTrackRenderProps extends SliderRenderProps {
   /**
    * Whether the slider track is currently hovered with a mouse.
+   *
    * @selector [data-hovered]
    */
   isHovered: boolean;
@@ -200,7 +207,9 @@ export interface SliderTrackRenderProps extends SliderRenderProps {
 export interface SliderTrackProps
   extends HoverEvents, RenderProps<SliderTrackRenderProps>, GlobalDOMAttributes<HTMLDivElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-SliderTrack'
    */
   className?: ClassNameOrFunction<SliderTrackRenderProps>;
@@ -251,26 +260,31 @@ export interface SliderThumbRenderProps {
   state: SliderState;
   /**
    * Whether this thumb is currently being dragged.
+   *
    * @selector [data-dragging]
    */
   isDragging: boolean;
   /**
    * Whether the thumb is currently hovered with a mouse.
+   *
    * @selector [data-hovered]
    */
   isHovered: boolean;
   /**
    * Whether the thumb is currently focused.
+   *
    * @selector [data-focused]
    */
   isFocused: boolean;
   /**
    * Whether the thumb is keyboard focused.
+   *
    * @selector [data-focus-visible]
    */
   isFocusVisible: boolean;
   /**
    * Whether the thumb is disabled.
+   *
    * @selector [data-disabled]
    */
   isDisabled: boolean;
@@ -283,7 +297,9 @@ export interface SliderThumbProps
     RenderProps<SliderThumbRenderProps>,
     GlobalDOMAttributes<HTMLDivElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-SliderThumb'
    */
   className?: ClassNameOrFunction<SliderThumbRenderProps>;
@@ -361,6 +377,7 @@ export const SliderThumb = /*#__PURE__*/ (forwardRef as forwardRefType)(function
 export interface SliderFillRenderProps extends SliderRenderProps {
   /**
    * Whether the slider fill is currently hovered with a mouse.
+   *
    * @selector [data-hovered]
    */
   isHovered: boolean;
@@ -370,11 +387,14 @@ export interface SliderFillProps
   extends HoverEvents, RenderProps<SliderFillRenderProps>, GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The offset from which to start the fill.
+   *
    * @default 0
    */
   offset?: number;
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-SliderFill'
    */
   className?: ClassNameOrFunction<SliderFillRenderProps>;

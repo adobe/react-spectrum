@@ -97,14 +97,18 @@ let TestGridListSections = ({listBoxProps, itemProps}) => (
   </GridList>
 );
 
-let DraggableGridList = ({orientation, ...props}) => {
+let DraggableGridList = ({orientation, disabledKeys, ...props}) => {
   let {dragAndDropHooks} = useDragAndDrop({
     getItems: keys => [...keys].map(key => ({'text/plain': key})),
     ...props
   });
 
   return (
-    <GridList aria-label="Test" orientation={orientation} dragAndDropHooks={dragAndDropHooks}>
+    <GridList
+      aria-label="Test"
+      orientation={orientation}
+      disabledKeys={disabledKeys}
+      dragAndDropHooks={dragAndDropHooks}>
       <GridListItem id="cat" textValue="Cat">
         <Button slot="drag">≡</Button>
         <Checkbox slot="selection" /> Cat
@@ -245,6 +249,16 @@ describe('GridList', () => {
     expect(row).not.toHaveClass('hover');
     expect(onHoverEnd).toHaveBeenCalledTimes(1);
     expect(onHoverChange).toHaveBeenCalledTimes(2);
+  });
+
+  it('should show hover state on draggable rows even when not selectable/actionable', async () => {
+    let {getAllByRole} = render(<DraggableGridList selectionMode="none" />);
+    let row = getAllByRole('row')[0];
+    expect(row).not.toHaveAttribute('data-hovered');
+    await user.hover(row);
+    expect(row).toHaveAttribute('data-hovered', 'true');
+    await user.unhover(row);
+    expect(row).not.toHaveAttribute('data-hovered');
   });
 
   it('should not show hover state when item is not interactive', async () => {
@@ -1239,6 +1253,25 @@ describe('GridList', () => {
       act(() => jest.runAllTimers());
 
       expect(onReorder).toHaveBeenCalledTimes(1);
+    });
+
+    it('should not skip drop positions before/after a disabled item', async () => {
+      let onReorder = jest.fn();
+      render(<DraggableGridList disabledKeys={['dog']} onReorder={onReorder} />);
+      await user.tab();
+      await user.keyboard('{ArrowRight}');
+      await user.keyboard('{Enter}');
+      act(() => jest.runAllTimers());
+      expect(document.activeElement).toHaveAttribute('aria-label', 'Insert between Cat and Dog');
+      await user.keyboard('{ArrowDown}');
+      expect(document.activeElement).toHaveAttribute(
+        'aria-label',
+        'Insert between Dog and Kangaroo'
+      );
+      await user.keyboard('{ArrowDown}');
+      expect(document.activeElement).toHaveAttribute('aria-label', 'Insert after Kangaroo');
+      await user.keyboard('{Escape}');
+      act(() => jest.runAllTimers());
     });
 
     it('should support dropping on rows', async () => {

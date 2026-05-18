@@ -43,11 +43,14 @@ export interface AriaSelectableListOptions extends Omit<
    */
   layoutDelegate?: LayoutDelegate;
   /**
-   * The item keys that are disabled. These items cannot be selected, focused, or otherwise interacted with.
+   * The item keys that are disabled. These items cannot be selected, focused, or otherwise
+   * interacted with.
    */
   disabledKeys: Set<Key>;
   /**
-   * The primary orientation of the items. Usually this is the direction that the collection scrolls.
+   * The primary orientation of the items. Usually this is the direction that the collection
+   * scrolls.
+   *
    * @default 'vertical'
    */
   orientation?: Orientation;

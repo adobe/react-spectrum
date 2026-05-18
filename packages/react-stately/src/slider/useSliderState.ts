@@ -20,6 +20,7 @@ export interface SliderProps<T = number | number[]>
   extends RangeInputBase<number>, ValueBase<T>, LabelableProps {
   /**
    * The orientation of the Slider.
+   *
    * @default 'horizontal'
    */
   orientation?: Orientation;
@@ -30,16 +31,19 @@ export interface SliderProps<T = number | number[]>
   // These are duplicated from ValueBase to define defaults for the docs.
   /**
    * The slider's minimum value.
+   *
    * @default 0
    */
   minValue?: number;
   /**
    * The slider's maximum value.
+   *
    * @default 100
    */
   maxValue?: number;
   /**
    * The slider's step value.
+   *
    * @default 1
    */
   step?: number;
@@ -56,6 +60,7 @@ export interface SliderState {
   readonly defaultValues: number[];
   /**
    * Get the value for the specified thumb.
+   *
    * @param index
    */
   getThumbValue(index: number): number;
@@ -63,6 +68,7 @@ export interface SliderState {
   /**
    * Sets the value for the specified thumb.
    * The actual value set will be clamped and rounded according to min/max/step.
+   *
    * @param index
    * @param value
    */
@@ -70,6 +76,7 @@ export interface SliderState {
 
   /**
    * Sets value for the specified thumb by percent offset (between 0 and 1).
+   *
    * @param index
    * @param percent
    */
@@ -77,11 +84,13 @@ export interface SliderState {
 
   /**
    * Whether the specific thumb is being dragged.
+   *
    * @param index
    */
   isThumbDragging(index: number): boolean;
   /**
    * Set is dragging on the specified thumb.
+   *
    * @param index
    * @param dragging
    */
@@ -94,60 +103,70 @@ export interface SliderState {
   /**
    * Set focused true on specified thumb. This will remove focus from
    * any thumb that had it before.
+   *
    * @param index
    */
   setFocusedThumb(index: number | undefined): void;
 
   /**
    * Returns the specified thumb's value as a percentage from 0 to 1.
+   *
    * @param index
    */
   getThumbPercent(index: number): number;
 
   /**
    * Returns the value as a percent between the min and max of the slider.
+   *
    * @param index
    */
   getValuePercent(value: number): number;
 
   /**
    * Returns the string label for the specified thumb's value, per props.formatOptions.
+   *
    * @param index
    */
   getThumbValueLabel(index: number): string;
 
   /**
    * Returns the string label for the value, per props.formatOptions.
+   *
    * @param value
    */
   getFormattedValue(value?: number | number[]): string;
 
   /**
    * Returns the min allowed value for the specified thumb.
+   *
    * @param index
    */
   getThumbMinValue(index: number): number;
 
   /**
    * Returns the max allowed value for the specified thumb.
+   *
    * @param index
    */
   getThumbMaxValue(index: number): number;
 
   /**
    * Converts a percent along track (between 0 and 1) to the corresponding value.
+   *
    * @param percent
    */
   getPercentValue(percent: number): number;
 
   /**
    * Returns if the specified thumb is editable.
+   *
    * @param index
    */
   isThumbEditable(index: number): boolean;
 
   /**
    * Set the specified thumb's editable state.
+   *
    * @param index
    * @param editable
    */
@@ -191,6 +210,7 @@ export interface SliderStateOptions<T> extends SliderProps<T> {
  * Provides state management for a slider component. Stores values for all thumbs,
  * formats values for localization, and provides methods to update the position
  * of any thumbs.
+ *
  * @param props
  */
 export function useSliderState<T extends number | number[]>(

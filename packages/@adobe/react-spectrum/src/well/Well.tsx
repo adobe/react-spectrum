@@ -32,8 +32,9 @@ export interface SpectrumWellProps extends DOMProps, AriaLabelingProps, StylePro
 }
 
 /**
- * A Well is a content container that displays non-editable content separate from other content on the screen.
- * Often this is used to display preformatted text, such as code/markup examples on a documentation page.
+ * A Well is a content container that displays non-editable content separate from other content on
+ * the screen. Often this is used to display preformatted text, such as code/markup examples on a
+ * documentation page.
  */
 export const Well = forwardRef(function Well(
   props: SpectrumWellProps,

@@ -53,37 +53,44 @@ export interface CollectionProps<T> extends Omit<CollectionBase<T>, 'children'> 
 export interface ItemRenderProps {
   /**
    * Whether the item is currently hovered with a mouse.
+   *
    * @selector [data-hovered]
    */
   isHovered: boolean;
   /**
    * Whether the item is currently in a pressed state.
+   *
    * @selector [data-pressed]
    */
   isPressed: boolean;
   /**
    * Whether the item is currently selected.
+   *
    * @selector [data-selected]
    */
   isSelected: boolean;
   /**
    * Whether the item is currently focused.
+   *
    * @selector [data-focused]
    */
   isFocused: boolean;
   /**
    * Whether the item is currently keyboard focused.
+   *
    * @selector [data-focus-visible]
    */
   isFocusVisible: boolean;
   /**
-   * Whether the item is non-interactive, i.e. both selection and actions are disabled and the item may
-   * not be focused. Dependent on `disabledKeys` and `disabledBehavior`.
+   * Whether the item is non-interactive, i.e. both selection and actions are disabled and the item
+   * may not be focused. Dependent on `disabledKeys` and `disabledBehavior`.
+   *
    * @selector [data-disabled]
    */
   isDisabled: boolean;
   /**
    * The type of selection that is allowed in the collection.
+   *
    * @selector [data-selection-mode="single | multiple"]
    */
   selectionMode: SelectionMode;
@@ -91,18 +98,21 @@ export interface ItemRenderProps {
   selectionBehavior: SelectionBehavior;
   /**
    * Whether the item allows dragging.
+   *
    * @note This property is only available in collection components that support drag and drop.
    * @selector [data-allows-dragging]
    */
   allowsDragging?: boolean;
   /**
    * Whether the item is currently being dragged.
+   *
    * @note This property is only available in collection components that support drag and drop.
    * @selector [data-dragging]
    */
   isDragging?: boolean;
   /**
    * Whether the item is currently an active drop target.
+   *
    * @note This property is only available in collection components that support drag and drop.
    * @selector [data-drop-target]
    */
@@ -116,7 +126,10 @@ export interface SectionProps<T>
     GlobalDOMAttributes<HTMLElement> {
   /** The unique id of the section. */
   id?: Key;
-  /** The object value that this section represents. When using dynamic collections, this is set automatically. */
+  /**
+   * The object value that this section represents. When using dynamic collections, this is set
+   * automatically.
+   */
   value?: T;
   /** Static child items or a function to render children. */
   children?: ReactNode | ((item: T) => ReactElement);

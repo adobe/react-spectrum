@@ -79,7 +79,9 @@ export interface DatePickerProps<T extends DateValue>
    */
   size?: 'S' | 'M' | 'L' | 'XL';
   /**
-   * The maximum number of months to display at once in the calendar popover, if screen space permits.
+   * The maximum number of months to display at once in the calendar popover, if screen space
+   * permits.
+   *
    * @default 1
    */
   maxVisibleMonths?: number;
@@ -148,7 +150,8 @@ export const timeField = style({
 });
 
 /**
- * DatePickers combine a DateField and a Calendar popover to allow users to enter or select a date and time value.
+ * DatePickers combine a DateField and a Calendar popover to allow users to enter or select a date
+ * and time value.
  */
 export const DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function DatePicker<
   T extends DateValue

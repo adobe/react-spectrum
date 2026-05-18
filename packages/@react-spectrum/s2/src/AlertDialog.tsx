@@ -31,6 +31,7 @@ import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatte
 export interface AlertDialogProps extends DOMProps, UnsafeStyles {
   /**
    * The [visual style](https://spectrum.adobe.com/page/alert-dialog/#Options) of the AlertDialog.
+   *
    * @default 'confirmation'
    */
   variant?: 'confirmation' | 'information' | 'destructive' | 'error' | 'warning';
@@ -78,7 +79,8 @@ const icon = style({
 });
 
 /**
- * AlertDialogs are a specific type of Dialog. They display important information that users need to acknowledge.
+ * AlertDialogs are a specific type of Dialog. They display important information that users need to
+ * acknowledge.
  */
 export const AlertDialog = forwardRef(function AlertDialog(props: AlertDialogProps, ref: DOMRef) {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');

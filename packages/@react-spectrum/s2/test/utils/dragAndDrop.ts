@@ -53,13 +53,22 @@ function createWritableDataTransfer(): {dataTransfer: DataTransfer; proxy: DataT
 }
 
 interface DragAndDropOptions {
-  /** Clicks on the source element at this point relative to the top-left corner of the element's padding box. */
+  /**
+   * Clicks on the source element at this point relative to the top-left corner of the element's
+   * padding box.
+   */
   sourcePosition?: {x: number; y: number};
-  /** Drops on the target element at this point relative to the top-left corner of the element's padding box. */
+  /**
+   * Drops on the target element at this point relative to the top-left corner of the element's
+   * padding box.
+   */
   targetPosition?: {x: number; y: number};
 }
 
-/** Returns the clientX/clientY for a position relative to an element's padding box, or the element's center if no position is given. */
+/**
+ * Returns the clientX/clientY for a position relative to an element's padding box, or the element's
+ * center if no position is given.
+ */
 function resolveClientPosition(
   element: Element,
   position?: {x: number; y: number}

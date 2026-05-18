@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-module.exports = {
+const plugin = {
   create: function (context) {
     return {
       ImportDeclaration(node) {
@@ -25,10 +25,15 @@ module.exports = {
         importSpecifiers.map(item => {
           let itemName = getName(item);
           if (itemName === 'useLayoutEffect') {
-            context.report(node, 'Please use useLayoutEffect from @react-aria/utils instead.');
+            context.report({
+              node,
+              message: 'Please use useLayoutEffect from @react-aria/utils instead.'
+            });
           }
         });
       }
     };
   }
 };
+
+export default plugin;

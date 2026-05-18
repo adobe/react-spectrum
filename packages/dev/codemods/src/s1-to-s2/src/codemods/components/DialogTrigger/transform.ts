@@ -15,9 +15,11 @@ let availableComponents = getComponents();
  * Updates DialogTrigger and DialogContainer to the new API.
  *
  * Example:
+ *
  * - When `type="popover"`, replaces Dialog with `<Popover>`.
  * - When `type="fullscreen"`, replaces Dialog with `<FullscreenDialog>`.
- * - When `type="fullscreenTakeover"`, replaces Dialog with `<FullscreenDialog variant="fullscreenTakeover">`.
+ * - When `type="fullscreenTakeover"`, replaces Dialog with `<FullscreenDialog
+ *   variant="fullscreenTakeover">`.
  */
 export function updateDialogChild(path: NodePath<t.JSXElement>): void {
   let program = path.findParent(p => t.isProgram(p.node)) as NodePath<t.Program>;

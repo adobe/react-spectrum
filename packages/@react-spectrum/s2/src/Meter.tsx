@@ -25,7 +25,9 @@ import {useDOMRef} from './useDOMRef';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 interface MeterStyleProps {
-  /** The [visual style](https://spectrum.adobe.com/page/meter/#-Options) of the Meter.
+  /**
+   * The [visual style](https://spectrum.adobe.com/page/meter/#-Options) of the Meter.
+   *
    * @default 'informative'
    */
   variant?: 'informative' | 'positive' | 'notice' | 'negative';
@@ -41,6 +43,7 @@ interface MeterStyleProps {
   staticColor?: 'white' | 'black' | 'auto';
   /**
    * The label's overall position relative to the element it is labeling.
+   *
    * @default 'top'
    */
   labelPosition?: LabelPosition;

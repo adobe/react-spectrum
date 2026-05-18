@@ -1,23 +1,22 @@
 #!/usr/bin/env node
 /**
- * Accessibility Testing Script for s2-docs
+ * Accessibility Testing Script for s2-docs.
  *
  * This script opens each documentation page in Playwright and checks for Axe accessibility errors.
  *
  * Usage:
- *   node scripts/testAccessibility.mjs [options]
+ * node scripts/testAccessibility.mjs [options]
  *
  * Options:
- *   --library <s2|react-aria|all>  Which docs to test (default: all)
- *   --base-url <url>               Base URL for the docs server (default: http://localhost:1234)
- *   --headless <true|false>        Run in headless mode (default: true)
- *   --no-html-ext                  Don't add .html extension to URLs (for CloudFront deployments)
- *   --strip-prefix                 Strip the s2/ or react-aria/ prefix from URLs
+ * --library <s2|react-aria|all>  Which docs to test (default: all)
+ * --base-url <url>               Base URL for the docs server (default: http://localhost:1234)
+ * --headless <true|false>        Run in headless mode (default: true)
+ * --no-html-ext                  Don't add .html extension to URLs (for CloudFront deployments)
+ * --strip-prefix                 Strip the s2/ or react-aria/ prefix from URLs.
  *
- * Examples:
- *   node scripts/testAccessibility.mjs
- *   node scripts/testAccessibility.mjs --library s2
- *   node scripts/testAccessibility.mjs --base-url https://cloudfront.net/pr/xyz --no-html-ext --strip-prefix
+ * Examples: node scripts/testAccessibility.mjs node scripts/testAccessibility.mjs --library s2 node
+ * scripts/testAccessibility.mjs --base-url https://cloudfront.net/pr/xyz --no-html-ext
+ * --strip-prefix.
  */
 
 import {chromium} from 'playwright';
@@ -34,11 +33,11 @@ const pagesDir = path.resolve(__dirname, '../pages');
 /**
  * Known false positives in React Spectrum components.
  * These are documented accessibility tool issues that don't represent actual a11y problems.
- * See: https://react-spectrum.adobe.com/react-spectrum/accessibility.html
+ * See: https://react-spectrum.adobe.com/react-spectrum/accessibility.html.
  *
  * Format: { pagePattern: [ruleIds to ignore] }
  * - pagePattern can be a string (exact match) or regex pattern
- * - ruleIds are axe-core rule identifiers
+ * - ruleIds are axe-core rule identifiers.
  */
 const KNOWN_FALSE_POSITIVES = {
   // ListBox: WAI-ARIA 1.2 supports groups in listbox, but axe-core hasn't caught up

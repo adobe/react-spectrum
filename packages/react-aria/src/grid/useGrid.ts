@@ -39,6 +39,7 @@ export interface GridProps extends DOMProps, AriaLabelingProps {
   isVirtualized?: boolean;
   /**
    * Whether typeahead navigation is disabled.
+   *
    * @default false
    */
   disallowTypeAhead?: boolean;
@@ -49,16 +50,20 @@ export interface GridProps extends DOMProps, AriaLabelingProps {
   keyboardDelegate?: KeyboardDelegate;
   /**
    * Whether initial grid focus should be placed on the grid row or grid cell.
+   *
    * @default 'row'
    */
   focusMode?: 'row' | 'cell';
   /**
-   * A function that returns the text that should be announced by assistive technology when a row is added or removed from selection.
+   * A function that returns the text that should be announced by assistive technology when a row is
+   * added or removed from selection.
+   *
    * @default (key) => state.collection.getItem(key)?.textValue
    */
   getRowText?: (key: Key) => string;
   /**
-   * The ref attached to the scrollable body. Used to provided automatic scrolling on item focus for non-virtualized grids.
+   * The ref attached to the scrollable body. Used to provided automatic scrolling on item focus for
+   * non-virtualized grids.
    */
   scrollRef?: RefObject<HTMLElement | null>;
   /** Handler that is called when a user performs an action on the row. */
@@ -71,6 +76,7 @@ export interface GridProps extends DOMProps, AriaLabelingProps {
    * Most experiences should not modify this option as it eliminates a keyboard user's ability to
    * easily clear selection. Only use if the escape key is being handled externally or should not
    * trigger selection clearing contextually.
+   *
    * @default 'clearSelection'
    */
   escapeKeyBehavior?: 'clearSelection' | 'none';
@@ -84,8 +90,10 @@ export interface GridAria {
 }
 
 /**
- * Provides the behavior and accessibility implementation for a grid component.
- * A grid displays data in one or more rows and columns and enables a user to navigate its contents via directional navigation keys.
+ * Provides the behavior and accessibility implementation for a grid component. A grid displays data
+ * in one or more rows and columns and enables a user to navigate its contents via directional
+ * navigation keys.
+ *
  * @param props - Props for the grid.
  * @param state - State for the grid, as returned by `useGridState`.
  * @param ref - The ref attached to the grid element.

@@ -14,12 +14,14 @@ import {ActionButtonGroupContext} from './ActionButtonGroup';
 import {ActionMenuContext} from './ActionMenu';
 import {
   baseColor,
+  color,
   colorMix,
   focusRing,
   fontRelative,
   space,
   style
 } from '../style' with {type: 'macro'};
+import {Button} from 'react-aria-components/Button';
 import {centerBaseline} from './CenterBaseline';
 import {Checkbox} from './Checkbox';
 import {CheckboxContext} from 'react-aria-components/Checkbox';
@@ -43,15 +45,19 @@ import {
   UnsafeStyles
 } from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, ReactElement, ReactNode, useContext, useRef} from 'react';
+import {css} from '../style/style-macro' with {type: 'macro'};
+import {description, DragPreview, icon, iconCenterWrapper, label} from './DragPreview';
 import {
   DOMProps,
   DOMRef,
   DOMRefValue,
   forwardRefType,
   GlobalDOMAttributes,
+  ItemDropTarget,
   LoadingState
 } from '@react-types/shared';
-import {edgeToText} from '../style/spectrum-theme' with {type: 'macro'};
+import DragHandle from '../ui-icons/DragHandle';
+import {DropIndicator} from 'react-aria-components/useDragAndDrop';
 import {
   GridList,
   GridListItem,
@@ -63,8 +69,10 @@ import {
 } from 'react-aria-components/GridList';
 import {IconContext} from './Icon';
 import {ImageContext} from './Image';
+// @ts-ignore
 import intlMessages from '../intl/*.json';
 import {Key} from '@react-types/shared';
+import {LayoutInfo, Virtualizer} from 'react-aria-components/Virtualizer';
 import LinkOutIcon from '../ui-icons/LinkOut';
 import {ListLayout} from 'react-stately/useVirtualizerState';
 // @ts-ignore
@@ -73,11 +81,12 @@ import {ProgressCircle} from './ProgressCircle';
 import {Text, TextContext} from './Content';
 import {useActionBarContainer} from './ActionBar';
 import {useDOMRef} from './useDOMRef';
+import {useFocusRing} from 'react-aria/useFocusRing';
 import {useLocale} from 'react-aria/I18nProvider';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useScale} from './utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
-import {Virtualizer} from 'react-aria-components/Virtualizer';
+import {useVisuallyHidden} from 'react-aria/VisuallyHidden';
 
 export interface ListViewProps<T>
   extends
@@ -87,7 +96,6 @@ export interface ListViewProps<T>
       | 'style'
       | 'children'
       | 'selectionBehavior'
-      | 'dragAndDropHooks'
       | 'layout'
       | 'render'
       | 'keyboardNavigationBehavior'
@@ -117,11 +125,13 @@ interface ListViewStylesProps {
   isQuiet?: boolean;
   /**
    * How selection should be displayed.
+   *
    * @default 'checkbox'
    */
   selectionStyle?: 'highlight' | 'checkbox';
   /**
    * Sets the overflow behavior for item contents.
+   *
    * @default 'truncate'
    */
   overflowMode?: 'wrap' | 'truncate';
@@ -159,15 +169,40 @@ const listViewWrapper = style(
     disableTapHighlight: true,
     position: 'relative',
     // Clip ActionBar animation.
-    overflow: 'clip'
+    overflow: 'clip',
+    '--root-drop-radius': {
+      type: 'borderTopStartRadius',
+      value: 'default'
+    }
   },
   getAllowedOverrides({height: true})
 );
 
+// similar to tableview, use this approach so we can actually have a 2px outline when root dropping.
+// cant do a external box shadow due to the clipping that is applied on the wrapper element...
+// an inset box shadow runs into problems with the item background clipping the box shadow...
+const rootDropOutline = css(`
+  &:has([role="grid"][data-drop-target])::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    border: 2px solid ${color('blue-800')};
+    border-radius: var(--root-drop-radius);
+    z-index: 2;
+  }
+  @media (forced-colors: active) {
+    &:has([role="grid"][data-drop-target])::after {
+      border-color: Highlight;
+    }
+  }
+`);
+
 // When any row has a trailing icon, reserve space so actions align.
 const hasTrailingIconRows = ':has([data-has-trailing-icon]) [role="row"]';
 
-const listView = style<GridListRenderProps & {isQuiet?: boolean}>({
+const dropTargetBackground = colorMix('gray-25', 'blue-900', 10);
+const listView = style<GridListRenderProps & {isQuiet?: boolean; isDropTarget?: boolean}>({
   ...focusRing(),
   outlineOffset: {
     default: -2,
@@ -184,7 +219,10 @@ const listView = style<GridListRenderProps & {isQuiet?: boolean}>({
   backgroundColor: {
     default: 'gray-25',
     isQuiet: 'transparent',
-    forcedColors: 'Background'
+    isDropTarget: {
+      default: dropTargetBackground,
+      forcedColors: 'Background'
+    }
   },
   borderRadius: {
     default: 'default',
@@ -196,6 +234,7 @@ const listView = style<GridListRenderProps & {isQuiet?: boolean}>({
     isQuiet: 0
   },
   borderStyle: 'solid',
+  forcedColorAdjust: 'none',
   '--trailing-icon-width': {
     type: 'width',
     value: {
@@ -205,8 +244,18 @@ const listView = style<GridListRenderProps & {isQuiet?: boolean}>({
   }
 });
 
+export class S2ListLayout<T> extends ListLayout<T> {
+  getDropTargetLayoutInfo(target: ItemDropTarget): LayoutInfo {
+    let layoutInfo = super.getDropTargetLayoutInfo(target);
+    layoutInfo.zIndex = 1;
+    layoutInfo.allowOverflow = true;
+    return layoutInfo;
+  }
+}
+
 /**
- * A ListView displays a list of interactive items, and allows a user to navigate, select, or perform an action.
+ * A ListView displays a list of interactive items, and allows a user to navigate, select, or
+ * perform an action.
  */
 export const ListView = /*#__PURE__*/ (forwardRef as forwardRefType)(function ListView<T>(
   props: ListViewProps<T>,
@@ -222,9 +271,23 @@ export const ListView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Li
     onLoadMore,
     renderEmptyState: userRenderEmptyState,
     hideLinkOutIcon = false,
+    dragAndDropHooks,
     ...otherProps
   } = props;
   let scale = useScale();
+
+  if (dragAndDropHooks && dragAndDropHooks.renderDragPreview == null) {
+    dragAndDropHooks.renderDragPreview = items => (
+      <DragPreview items={items} overflowMode={overflowMode} />
+    );
+  }
+
+  if (dragAndDropHooks) {
+    dragAndDropHooks.renderDropIndicator = target => (
+      <InsertionIndicator target={target as ItemDropTarget} />
+    );
+  }
+
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   let rowHeight = scale === 'large' ? 50 : 40;
 
@@ -297,19 +360,23 @@ export const ListView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Li
   return (
     <div
       ref={domRef}
-      className={(props.UNSAFE_className || '') + listViewWrapper(null, props.styles)}
+      className={
+        (props.UNSAFE_className || '') + listViewWrapper(null, props.styles) + ' ' + rootDropOutline
+      }
       style={props.UNSAFE_style}>
       <Virtualizer
-        layout={ListLayout}
+        layout={S2ListLayout}
         layoutOptions={{
           estimatedRowHeight: rowHeight,
-          loaderHeight: 60
+          loaderHeight: 60,
+          dropIndicatorThickness: 0
         }}>
         <InternalListViewContext.Provider
           value={{isQuiet, selectionStyle, overflowMode, scale, hideLinkOutIcon}}>
           <GridList
             ref={scrollRef as any}
             {...gridListProps}
+            dragAndDropHooks={dragAndDropHooks}
             selectionBehavior={selectionStyle === 'highlight' ? 'replace' : 'toggle'}
             selectionMode={gridListProps.selectionMode}
             renderEmptyState={renderEmptyState}
@@ -320,7 +387,8 @@ export const ListView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Li
             className={renderProps =>
               listView({
                 ...renderProps,
-                isQuiet
+                isQuiet,
+                isDropTarget: renderProps.isDropTarget
               })
             }
             selectedKeys={selectedKeys}
@@ -338,6 +406,8 @@ export const ListView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Li
 const selectedBackground = colorMix('gray-25', 'gray-900', 7);
 const selectedActiveBackground = colorMix('gray-25', 'gray-900', 10);
 
+// TODO: removed the background color in HCM for highlight selection since it made it hard to see the focus
+// ring of the drag button, this matches v3 anyways. thoughts?
 const listitem = style<
   GridListItemRenderProps & {
     isFocused: boolean;
@@ -353,9 +423,25 @@ const listitem = style<
     isNextNotSelected?: boolean;
     selectionStyle?: 'highlight' | 'checkbox';
     scale?: 'medium' | 'large';
+    isDropTarget?: boolean;
   }
 >({
-  outlineStyle: 'none',
+  outlineStyle: {
+    default: 'none',
+    isDropTarget: 'solid'
+  },
+  outlineWidth: {
+    isDropTarget: 2
+  },
+  outlineOffset: {
+    isDropTarget: -2
+  },
+  outlineColor: {
+    isDropTarget: 'blue-800',
+    forcedColors: {
+      isDropTarget: 'Highlight'
+    }
+  },
   boxSizing: 'border-box',
   columnGap: 0,
   paddingX: 0,
@@ -367,11 +453,6 @@ const listitem = style<
     isDisabled: 'disabled',
     forcedColors: {
       default: 'ButtonText',
-      selectionStyle: {
-        highlight: {
-          isSelected: 'HighlightText'
-        }
-      },
       isDisabled: 'GrayText'
     }
   },
@@ -380,18 +461,20 @@ const listitem = style<
   gridColumnEnd: -1,
   display: 'grid',
   gridTemplateAreas: [
-    '. checkmark icon label       actions actionmenu trailing-icon .',
-    '. .         .    description actions actionmenu trailing-icon .'
+    '. dragbutton . checkmark icon label       actions actionmenu trailing-icon .',
+    '. .          . .         .    description actions actionmenu trailing-icon .'
   ],
   gridTemplateColumns: [
-    edgeToText(40),
+    4,
+    'auto',
+    8,
     'auto',
     'auto',
     'minmax(0, 1fr)',
     'auto',
     'auto',
     'var(--trailing-icon-width)',
-    edgeToText(40)
+    6
   ],
   gridTemplateRows: '1fr auto',
   rowGap: {
@@ -443,10 +526,35 @@ const listitem = style<
     type: 'borderTopStartRadius',
     value: 'default'
   },
+  borderTopStartRadius: {
+    isDropTarget: {
+      isFirstItem: 'default'
+    }
+  },
+  borderTopEndRadius: {
+    isDropTarget: {
+      isFirstItem: 'default'
+    }
+  },
   forcedColorAdjust: 'none'
 });
 
 const insetBorderRadius = 'calc(var(--radius) - 1px)';
+const rootDropSelectedRowBackground = colorMix('gray-25', 'blue-900', 28);
+const rowDropBackground = colorMix('gray-25', 'blue-900', 10);
+const rootRowDropStyles = {
+  // Unlike v3 tableview, v3 listview has the same background color for the listview itself and the rows when
+  // dropping on root
+  default: dropTargetBackground,
+  isSelected: rootDropSelectedRowBackground,
+  forcedColors: 'Background'
+} as const;
+const rowDropStyles = {
+  // Also unlike v3, dropping on a selected row vs a non selected row doesn't have any difference in background color
+  default: rowDropBackground,
+  isSelected: rowDropBackground,
+  forcedColors: 'Background'
+} as const;
 
 const listRowBackground = style<
   GridListItemRenderProps & {
@@ -458,6 +566,7 @@ const listRowBackground = style<
     isPrevNotSelected?: boolean;
     isNextNotSelected?: boolean;
     selectionStyle?: 'highlight' | 'checkbox';
+    isDropTarget?: boolean;
   }
 >({
   position: 'absolute',
@@ -506,14 +615,9 @@ const listRowBackground = style<
         }
       }
     },
-    forcedColors: {
-      default: 'Background',
-      selectionStyle: {
-        highlight: {
-          isSelected: 'Highlight'
-        }
-      }
-    }
+    forcedColors: 'transparent',
+    ':is([role="grid"][data-drop-target] *)': rootRowDropStyles,
+    isDropTarget: rowDropStyles
   },
   borderTopStartRadius: {
     isQuiet: 'default',
@@ -667,57 +771,8 @@ let listRowFocusRing = style<
   pointerEvents: 'none'
 });
 
-export let label = style({
-  gridArea: 'label',
-  alignSelf: 'center',
-  font: controlFont(),
-  color: 'inherit',
-  truncate: true,
-  whiteSpace: {
-    default: 'nowrap',
-    overflowMode: {
-      wrap: 'normal'
-    }
-  }
-});
-
-export let description = style({
-  gridArea: 'description',
-  alignSelf: 'center',
-  truncate: true,
-  whiteSpace: {
-    default: 'nowrap',
-    overflowMode: {
-      wrap: 'normal'
-    }
-  },
-  font: 'ui-sm',
-  color: {
-    default: baseColor('neutral-subdued'),
-    isDisabled: 'disabled',
-    forcedColors: 'inherit'
-  },
-  transition: 'default'
-});
-
-export let iconCenterWrapper = style({
-  display: 'flex',
-  gridArea: 'icon',
-  gridRowEnd: 'span 2',
-  alignSelf: 'center',
-  alignItems: 'center'
-});
-
-export let icon = style({
-  display: 'block',
-  size: fontRelative(20),
-  // too small default icon size is wrong, it's like the icons are 1 tshirt size bigger than the rest of the component? check again after typography changes
-  // reminder, size of WF is applied via font size
-  marginEnd: 'text-to-visual',
-  '--iconPrimary': {
-    type: 'fill',
-    value: 'currentColor'
-  }
+let rowWrapper = style({
+  display: 'contents'
 });
 
 let image = style({
@@ -765,6 +820,100 @@ const listTrailingIcon = style({
   marginStart: 'text-to-visual'
 });
 
+let dragButtonContainer = style({
+  gridArea: 'dragbutton',
+  gridRowEnd: 'span 2',
+  alignSelf: 'center',
+  display: 'flex',
+  alignItems: 'center',
+  width: 10
+});
+
+let dragButton = style<{isFocusVisible?: boolean}>({
+  color: 'inherit',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  // TODO: arbitrary, basically taken from v3
+  height: 22,
+  width: 10,
+  padding: 0,
+  margin: 0,
+  backgroundColor: 'transparent',
+  borderStyle: 'none',
+  borderRadius: 'sm',
+  // TODO: this mimicks v3 too, do we want halo focus ring?
+  outlineStyle: {
+    default: 'none',
+    isFocusVisible: 'solid'
+  },
+  outlineColor: {
+    default: 'focus-ring',
+    forcedColors: 'Highlight'
+  },
+  outlineWidth: 2,
+  '--iconPrimary': {
+    type: 'fill',
+    value: 'currentColor'
+  }
+});
+
+let insertionIndicatorWrapper = style({
+  position: 'absolute',
+  inset: 0,
+  display: 'flex',
+  alignItems: 'center'
+});
+
+export let insertionIndicatorBar = style<{isDropTarget?: boolean}>({
+  flexGrow: 1,
+  height: 2,
+  backgroundColor: {
+    default: 'transparent',
+    isDropTarget: 'blue-800',
+    forcedColors: {
+      isDropTarget: 'Highlight'
+    }
+  },
+  borderBottomWidth: {
+    default: 0,
+    isDropTarget: 2
+  },
+  borderColor: {
+    isDropTarget: 'blue-800',
+    forcedColors: {
+      isDropTarget: 'Highlight'
+    }
+  },
+  forcedColorAdjust: 'none'
+});
+
+export let insertionIndicatorCircle = style<{isDropTarget: boolean}>({
+  width: 8,
+  height: 8,
+  borderRadius: 'full',
+  borderWidth: {
+    isDropTarget: 2
+  },
+  borderStyle: {
+    isDropTarget: 'solid'
+  },
+  borderColor: {
+    isDropTarget: 'blue-800',
+    forcedColors: {
+      isDropTarget: 'Highlight'
+    }
+  },
+  backgroundColor: {
+    isDropTarget: 'gray-25',
+    forcedColors: {
+      default: 'transparent',
+      isDropTarget: 'Background'
+    }
+  },
+  forcedColorAdjust: 'none'
+});
+
 const centeredWrapper = style({
   display: 'flex',
   alignItems: 'center',
@@ -786,6 +935,20 @@ const emptyStateWrapper = style({
   boxSizing: 'border-box',
   padding: 16
 });
+
+export function InsertionIndicator({target}: {target: ItemDropTarget}) {
+  return (
+    <DropIndicator className="" target={target}>
+      {({isDropTarget}) => (
+        <div className={insertionIndicatorWrapper}>
+          <div className={insertionIndicatorCircle({isDropTarget})} />
+          <div className={insertionIndicatorBar({isDropTarget})} />
+          <div className={insertionIndicatorCircle({isDropTarget})} />
+        </div>
+      )}
+    </DropIndicator>
+  );
+}
 
 function ListSelectionCheckbox({isDisabled}: {isDisabled: boolean}) {
   let selectionContext = useSlottedContext(CheckboxContext, 'selection');
@@ -841,6 +1004,10 @@ export function ListViewItem(props: ListViewItemProps): ReactNode {
     props.textValue || (typeof props.children === 'string' ? props.children : undefined);
   let {direction} = useLocale();
   let hasTrailingIcon = hasChildItems || (isLinkOut && !hideLinkOutIcon);
+  let {visuallyHiddenProps} = useVisuallyHidden();
+  let {isFocusVisible: isFocusVisibleWithin, focusProps: focusWithinProps} = useFocusRing({
+    within: true
+  });
 
   return (
     <GridListItem
@@ -864,7 +1031,15 @@ export function ListViewItem(props: ListViewItemProps): ReactNode {
       }>
       {renderProps => {
         let {children} = props;
-        let {selectionMode, selectionBehavior, isDisabled, id, state} = renderProps;
+        let {
+          selectionMode,
+          selectionBehavior,
+          isDisabled,
+          id,
+          state,
+          allowsDragging,
+          isFocusVisible
+        } = renderProps;
         return (
           <Provider
             values={[
@@ -908,25 +1083,13 @@ export function ListViewItem(props: ListViewItemProps): ReactNode {
                 }
               ]
             ]}>
-            <div
-              className={listRowBackground({
-                ...renderProps,
-                selectionStyle,
-                isQuiet,
-                isPrevSelected: isPrevSelected(id, state),
-                isNextSelected: isNextSelected(id, state),
-                isPrevNotSelected: !isPrevSelected(id, state),
-                isNextNotSelected: !isNextSelected(id, state),
-                isFirstItem: isFirstItem(id, state),
-                isLastItem: isLastItem(id, state)
-              })}
-            />
-            {renderProps.isFocusVisible && (
+            <div className={rowWrapper} {...focusWithinProps}>
               <div
-                className={listRowFocusRing({
+                className={listRowBackground({
                   ...renderProps,
                   selectionStyle,
                   isQuiet,
+                  isDropTarget: renderProps.isDropTarget,
                   isPrevSelected: isPrevSelected(id, state),
                   isNextSelected: isNextSelected(id, state),
                   isPrevNotSelected: !isPrevSelected(id, state),
@@ -935,47 +1098,78 @@ export function ListViewItem(props: ListViewItemProps): ReactNode {
                   isLastItem: isLastItem(id, state)
                 })}
               />
-            )}
-            {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
-              <ListSelectionCheckbox isDisabled={isDisabled} />
-            )}
-            {typeof children === 'string' ? <Text slot="label">{children}</Text> : children}
-            {isLinkOut && !hideLinkOutIcon && (
-              <div className={listTrailingIcon}>
-                <LinkOutIcon
-                  size="M"
-                  className={style({
-                    scaleX: {
-                      direction: {
-                        rtl: -1
-                      }
-                    },
-                    '--iconPrimary': {
-                      type: 'fill',
-                      value: 'currentColor'
-                    }
-                  })({direction})}
+              {renderProps.isFocusVisible && (
+                <div
+                  className={listRowFocusRing({
+                    ...renderProps,
+                    selectionStyle,
+                    isQuiet,
+                    isPrevSelected: isPrevSelected(id, state),
+                    isNextSelected: isNextSelected(id, state),
+                    isPrevNotSelected: !isPrevSelected(id, state),
+                    isNextNotSelected: !isNextSelected(id, state),
+                    isFirstItem: isFirstItem(id, state),
+                    isLastItem: isLastItem(id, state)
+                  })}
                 />
-              </div>
-            )}
-            {hasChildItems && !isLinkOut && (
-              <div className={listTrailingIcon}>
-                <Chevron
-                  className={style({
-                    scale: {
-                      direction: {
-                        ltr: '1',
-                        rtl: '-1'
+              )}
+              {allowsDragging && (
+                <div className={dragButtonContainer}>
+                  {!isDisabled && (
+                    <Button
+                      slot="drag"
+                      style={
+                        !isFocusVisibleWithin && !isFocusVisible
+                          ? {...visuallyHiddenProps.style}
+                          : {}
                       }
-                    },
-                    '--iconPrimary': {
-                      type: 'fill',
-                      value: 'currentColor'
-                    }
-                  })({direction})}
-                />
-              </div>
-            )}
+                      className={dragButton}>
+                      <DragHandle size="M" />
+                    </Button>
+                  )}
+                </div>
+              )}
+              {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
+                <ListSelectionCheckbox isDisabled={isDisabled} />
+              )}
+              {typeof children === 'string' ? <Text slot="label">{children}</Text> : children}
+              {isLinkOut && !hideLinkOutIcon && (
+                <div className={listTrailingIcon}>
+                  <LinkOutIcon
+                    size="M"
+                    className={style({
+                      scaleX: {
+                        direction: {
+                          rtl: -1
+                        }
+                      },
+                      '--iconPrimary': {
+                        type: 'fill',
+                        value: 'currentColor'
+                      }
+                    })({direction})}
+                  />
+                </div>
+              )}
+              {hasChildItems && !isLinkOut && (
+                <div className={listTrailingIcon}>
+                  <Chevron
+                    className={style({
+                      scale: {
+                        direction: {
+                          ltr: '1',
+                          rtl: '-1'
+                        }
+                      },
+                      '--iconPrimary': {
+                        type: 'fill',
+                        value: 'currentColor'
+                      }
+                    })({direction})}
+                  />
+                </div>
+              )}
+            </div>
           </Provider>
         );
       }}

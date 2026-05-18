@@ -17,6 +17,7 @@ export interface SliderProps<T> extends AriaSliderProps<T> {
   thumbLabels?: string[];
   /**
    * The offset from which to start the fill.
+   *
    * @default 0
    */
   fillOffset?: number;

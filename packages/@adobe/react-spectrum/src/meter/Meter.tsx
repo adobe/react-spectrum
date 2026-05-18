@@ -20,6 +20,7 @@ import {useMeter} from 'react-aria/useMeter';
 export interface SpectrumMeterProps extends SpectrumProgressBarBaseProps {
   /**
    * The [visual style](https://spectrum.adobe.com/page/meter/#Options) of the Meter.
+   *
    * @default 'informative'
    */
   variant?: 'informative' | 'positive' | 'warning' | 'critical';

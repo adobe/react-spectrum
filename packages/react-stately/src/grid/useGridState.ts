@@ -15,7 +15,10 @@ export interface GridState<T, C extends IGridCollection<T>> {
   disabledKeys: Set<Key>;
   /** A selection manager to read and update row selection state. */
   selectionManager: SelectionManager;
-  /** Whether keyboard navigation is disabled, such as when the arrow keys should be handled by a component within a cell. */
+  /**
+   * Whether keyboard navigation is disabled, such as when the arrow keys should be handled by a
+   * component within a cell.
+   */
   isKeyboardNavigationDisabled: boolean;
 }
 
@@ -26,12 +29,13 @@ export interface GridStateOptions<
   collection: C;
   disabledKeys?: Iterable<Key>;
   focusMode?: 'row' | 'cell';
-  /** @private - do not use unless you know what you're doing. */
+  /** @private - Do not use unless you know what you're doing. */
   UNSAFE_selectionState?: MultipleSelectionState;
 }
 
 /**
- * Provides state management for a grid component. Handles row selection and focusing a grid cell's focusable child if applicable.
+ * Provides state management for a grid component. Handles row selection and focusing a grid cell's
+ * focusable child if applicable.
  */
 export function useGridState<T extends object, C extends IGridCollection<T>>(
   props: GridStateOptions<T, C>

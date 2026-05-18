@@ -41,6 +41,7 @@ export interface TableProps<T> extends MultipleSelection, Sortable, Expandable {
    * Most experiences should not modify this option as it eliminates a keyboard user's ability to
    * easily clear selection. Only use if the escape key is being handled externally or should not
    * trigger selection clearing contextually.
+   *
    * @default 'clearSelection'
    */
   escapeKeyBehavior?: 'clearSelection' | 'none';
@@ -59,9 +60,15 @@ export interface TableState<T> extends GridState<T, ITableCollection<T>> {
   sortDescriptor: SortDescriptor | null;
   /** Calls the provided onSortChange handler with the provided column key and sort direction. */
   sort(columnKey: Key, direction?: 'ascending' | 'descending'): void;
-  /** Whether keyboard navigation is disabled, such as when the arrow keys should be handled by a component within a cell. */
+  /**
+   * Whether keyboard navigation is disabled, such as when the arrow keys should be handled by a
+   * component within a cell.
+   */
   isKeyboardNavigationDisabled: boolean;
-  /** Set whether keyboard navigation is disabled, such as when the arrow keys should be handled by a component within a cell. */
+  /**
+   * Set whether keyboard navigation is disabled, such as when the arrow keys should be handled by a
+   * component within a cell.
+   */
   setKeyboardNavigationDisabled: (val: boolean) => void;
   /** A set of keys for items that are expanded. */
   expandedKeys: Set<Key>;
@@ -85,11 +92,13 @@ export interface TableStateProps<T> extends MultipleSelectionStateProps, Expanda
   collection?: ITableCollection<T>;
   /** Whether the row selection checkboxes should be displayed. */
   showSelectionCheckboxes?: boolean;
-  /** Whether the row drag button should be displayed.
+  /**
+   * Whether the row drag button should be displayed.
+   *
    * @private
    */
   showDragButtons?: boolean;
-  /** @private - do not use unless you know what you're doing. */
+  /** @private - Do not use unless you know what you're doing. */
   UNSAFE_selectionState?: MultipleSelectionState;
   /** The id of the column that displays hierarchical data. */
   treeColumn?: Key;
@@ -101,8 +110,8 @@ const OPPOSITE_SORT_DIRECTION = {
 };
 
 /**
- * Provides state management for a table component. Handles building a collection
- * of columns and rows from props. In addition, it tracks row selection and manages sort order changes.
+ * Provides state management for a table component. Handles building a collection of columns and
+ * rows from props. In addition, it tracks row selection and manages sort order changes.
  */
 export function useTableState<T extends object>(props: TableStateProps<T>): TableState<T> {
   let [isKeyboardNavigationDisabled, setKeyboardNavigationDisabled] = useState(false);

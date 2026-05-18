@@ -99,6 +99,10 @@ export interface ComboboxStyleProps {
    * @default 'M'
    */
   size?: 'S' | 'M' | 'L' | 'XL';
+  /**
+   * The prefix to display in the ComboBox. A non-interactive element that appears before the input.
+   */
+  prefix?: ReactNode;
 }
 export interface ComboBoxProps<T>
   extends
@@ -142,9 +146,15 @@ export interface ComboBoxProps<T>
    * @default 'start'
    */
   align?: 'start' | 'end';
-  /** Width of the menu. By default, matches width of the trigger. Note that the minimum width of the dropdown is always equal to the trigger's width. */
+  /**
+   * Width of the menu. By default, matches width of the trigger. Note that the minimum width of the
+   * dropdown is always equal to the trigger's width.
+   */
   menuWidth?: number;
-  /** The current loading state of the ComboBox. Determines whether or not the progress circle should be shown. */
+  /**
+   * The current loading state of the ComboBox. Determines whether or not the progress circle should
+   * be shown.
+   */
   loadingState?: LoadingState;
 }
 
@@ -377,7 +387,8 @@ export const LOADER_ROW_HEIGHTS = {
 let InternalComboboxContext = createContext<{size: 'S' | 'M' | 'L' | 'XL'}>({size: 'M'});
 
 /**
- * ComboBox allow users to choose a single option from a collapsible list of options when space is limited.
+ * ComboBox allow users to choose a single option from a collapsible list of options when space is
+ * limited.
  */
 export const ComboBox = /*#__PURE__*/ (forwardRef as forwardRefType)(function ComboBox<T>(
   props: ComboBoxProps<T>,
@@ -696,6 +707,7 @@ const ComboboxInner = forwardRef(function ComboboxInner(
           {label}
         </FieldLabel>
         <FieldGroup
+          prefix={props.prefix}
           role="presentation"
           isDisabled={isDisabled}
           isInvalid={isInvalid}
@@ -709,7 +721,11 @@ const ComboboxInner = forwardRef(function ComboboxInner(
           })({size})}>
           <InputContext.Consumer>
             {ctx => (
-              <InputContext.Provider value={{...ctx, ref: mergeRefs((ctx as any)?.ref, inputRef)}}>
+              <InputContext.Provider
+                value={{
+                  ...ctx,
+                  ref: mergeRefs((ctx as any)?.ref, inputRef)
+                }}>
                 <Input aria-describedby={spinnerId} />
               </InputContext.Provider>
             )}

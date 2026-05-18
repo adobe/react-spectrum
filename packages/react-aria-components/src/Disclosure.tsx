@@ -55,7 +55,9 @@ export interface DisclosureGroupProps
     DOMProps,
     GlobalDOMAttributes<HTMLDivElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-DisclosureGroup'
    */
   className?: ClassNameOrFunction<DisclosureGroupRenderProps>;
@@ -64,6 +66,7 @@ export interface DisclosureGroupProps
 export interface DisclosureGroupRenderProps {
   /**
    * Whether the disclosure group is disabled.
+   *
    * @selector [data-disabled]
    */
   isDisabled: boolean;
@@ -112,27 +115,35 @@ export interface DisclosureProps
     SlotProps,
     GlobalDOMAttributes<HTMLDivElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-Disclosure'
    */
   className?: ClassNameOrFunction<DisclosureRenderProps>;
-  /** An id for the disclosure when used within a DisclosureGroup, matching the id used in `expandedKeys`. */
+  /**
+   * An id for the disclosure when used within a DisclosureGroup, matching the id used in
+   * `expandedKeys`.
+   */
   id?: Key;
 }
 
 export interface DisclosureRenderProps {
   /**
    * Whether the disclosure is expanded.
+   *
    * @selector [data-expanded]
    */
   isExpanded: boolean;
   /**
    * Whether the disclosure has keyboard focus.
+   *
    * @selector [data-focus-visible-within]
    */
   isFocusVisibleWithin: boolean;
   /**
    * Whether the disclosure is disabled.
+   *
    * @selector [data-disabled]
    */
   isDisabled: boolean;
@@ -153,7 +164,8 @@ interface InternalDisclosureContextValue {
 const InternalDisclosureContext = createContext<InternalDisclosureContextValue | null>(null);
 
 /**
- * A disclosure is a collapsible section of content. It is composed of a a header with a heading and trigger button, and a panel that contains the content.
+ * A disclosure is a collapsible section of content. It is composed of a a header with a heading and
+ * trigger button, and a panel that contains the content.
  */
 export const Disclosure = /*#__PURE__*/ (forwardRef as forwardRefType)(function Disclosure(
   props: DisclosureProps,
@@ -240,6 +252,7 @@ export const Disclosure = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
 export interface DisclosurePanelRenderProps {
   /**
    * Whether keyboard focus is within the disclosure panel.
+   *
    * @selector [data-focus-visible-within]
    */
   isFocusVisibleWithin: boolean;
@@ -252,12 +265,15 @@ export interface DisclosurePanelProps
     LabelAriaProps,
     GlobalDOMAttributes<HTMLDivElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-DisclosurePanel'
    */
   className?: ClassNameOrFunction<DisclosurePanelRenderProps>;
   /**
    * The accessibility role for the disclosure's panel.
+   *
    * @default 'group'
    */
   role?: 'group' | 'region';

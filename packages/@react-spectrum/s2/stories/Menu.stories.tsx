@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {ActionButton} from '../src/ActionButton';
 import AlignLeft from '../s2wf-icons/S2_Icon_TextAlignLeft_20_N.svg';
 import AlignMiddle from '../s2wf-icons/S2_Icon_TextAlignCenter_20_N.svg';
 import AlignRight from '../s2wf-icons/S2_Icon_TextAlignRight_20_N.svg';
@@ -19,12 +20,12 @@ import {categorizeArgTypes, getActionArgs} from './utils';
 import ClockPendingIcon from '../s2wf-icons/S2_Icon_ClockPending_20_N.svg';
 import {CombinedMenu} from '../src/Menu';
 import CommentTextIcon from '../s2wf-icons/S2_Icon_CommentText_20_N.svg';
-
 import CommunityIcon from '../s2wf-icons/S2_Icon_Community_20_N.svg';
-
 import {Content, Footer, Header, Heading, Keyboard, Text} from '../src/Content';
 import {ContextualHelpPopover} from '../src/ContextualHelp';
 import Copy from '../s2wf-icons/S2_Icon_Copy_20_N.svg';
+import Crop from '../s2wf-icons/S2_Icon_Crop_20_N.svg';
+import CropRotate from '../s2wf-icons/S2_Icon_CropRotate_20_N.svg';
 import Cut from '../s2wf-icons/S2_Icon_Cut_20_N.svg';
 import DeviceDesktopIcon from '../s2wf-icons/S2_Icon_DeviceDesktop_20_N.svg';
 import DeviceTabletIcon from '../s2wf-icons/S2_Icon_DeviceTablet_20_N.svg';
@@ -47,7 +48,9 @@ import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
 import Paste from '../s2wf-icons/S2_Icon_Paste_20_N.svg';
 import {ReactElement, useState} from 'react';
 import {Selection} from '@react-types/shared';
+import StampClone from '../s2wf-icons/S2_Icon_StampClone_20_N.svg';
 import TextIcon from '../s2wf-icons/S2_Icon_Text_20_N.svg';
+import {ToggleButton} from '../src/ToggleButton';
 import Underline from '../s2wf-icons/S2_Icon_TextUnderline_20_N.svg';
 
 const events = ['onAction', 'onClose', 'onOpenChange', 'onScroll', 'onSelectionChange'];
@@ -397,4 +400,38 @@ export const UnavailableMenuItem: Story = {
       </MenuTrigger>
     );
   }
+};
+
+export const HoldAffordance: Story = {
+  render: args => (
+    <div
+      style={{
+        display: 'flex',
+        gap: 8
+      }}>
+      <MenuTrigger trigger="longPress" {...args}>
+        <ActionButton size={args.size}>Copy</ActionButton>
+        <Menu>
+          <MenuItem>Copy as plain text</MenuItem>
+          <MenuItem>Copy as rich text</MenuItem>
+          <MenuItem>Copy URL</MenuItem>
+        </Menu>
+      </MenuTrigger>
+      <MenuTrigger trigger="longPress" {...args}>
+        <ToggleButton aria-label="Crop" size={args.size}>
+          <Crop />
+        </ToggleButton>
+        <Menu>
+          <MenuItem>
+            <CropRotate />
+            <Text>Crop Rotate</Text>
+          </MenuItem>
+          <MenuItem>
+            <StampClone />
+            <Text>Clone Stamp</Text>
+          </MenuItem>
+        </Menu>
+      </MenuTrigger>
+    </div>
+  )
 };

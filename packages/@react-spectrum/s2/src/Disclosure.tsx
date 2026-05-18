@@ -57,11 +57,13 @@ export interface DisclosureProps
     StyleProps {
   /**
    * The size of the disclosure.
+   *
    * @default 'M'
    */
   size?: 'S' | 'M' | 'L' | 'XL';
   /**
    * The amount of space between the disclosures.
+   *
    * @default 'regular'
    */
   density?: 'compact' | 'regular' | 'spacious';
@@ -102,7 +104,8 @@ const disclosure = style(
 );
 
 /**
- * A disclosure is a collapsible section of content. It is composed of a header with a heading and trigger button, and a panel that contains the content.
+ * A disclosure is a collapsible section of content. It is composed of a header with a heading and
+ * trigger button, and a panel that contains the content.
  */
 export const Disclosure = forwardRef(function Disclosure(
   props: DisclosureProps,
@@ -128,7 +131,8 @@ export const Disclosure = forwardRef(function Disclosure(
 });
 
 export interface DisclosureTitleProps extends UnsafeStyles, DOMProps {
-  /** The heading level of the disclosure header.
+  /**
+   * The heading level of the disclosure header.
    *
    * @default 3
    */
@@ -275,7 +279,8 @@ function DisclosureHeaderWithForwardRef(props: DisclosureHeaderProps, ref: DOMRe
 }
 
 /**
- * A wrapper element for the disclosure title that can contain other elements not part of the trigger.
+ * A wrapper element for the disclosure title that can contain other elements not part of the
+ * trigger.
  */
 export const DisclosureHeader = /*#__PURE__*/ (forwardRef as forwardRefType)(
   DisclosureHeaderWithForwardRef
@@ -354,7 +359,8 @@ const panelInner = style({
 });
 
 /**
- * A disclosure panel is a collapsible section of content that is hidden until the disclosure is expanded.
+ * A disclosure panel is a collapsible section of content that is hidden until the disclosure is
+ * expanded.
  */
 export const DisclosurePanel = forwardRef(function DisclosurePanel(
   props: DisclosurePanelProps,

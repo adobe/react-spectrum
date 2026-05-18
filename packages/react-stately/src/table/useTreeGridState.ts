@@ -40,8 +40,9 @@ export interface TreeGridStateProps<T> extends Omit<TableStateProps<T>, 'collect
 }
 
 /**
- * Provides state management for a tree grid component. Handles building a collection
- * of columns and rows from props. In addition, it tracks and manages expanded rows, row selection, and sort order changes.
+ * Provides state management for a tree grid component. Handles building a collection of columns and
+ * rows from props. In addition, it tracks and manages expanded rows, row selection, and sort order
+ * changes.
  */
 export function UNSTABLE_useTreeGridState<T extends object>(
   props: TreeGridStateProps<T>

@@ -1,7 +1,7 @@
 import {themes} from 'storybook/theming';
 import './preview.css';
 
-/** @type { import('@storybook/react').Preview } */
+/** @type {import('@storybook/react').Preview} */
 const preview = {
   parameters: {
     controls: {

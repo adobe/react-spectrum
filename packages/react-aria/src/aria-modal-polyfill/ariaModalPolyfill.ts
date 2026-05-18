@@ -17,19 +17,22 @@ type Revert = () => void;
 const currentDocument = typeof document !== 'undefined' ? document : undefined;
 
 /**
- * Acts as a polyfill for `aria-modal` by watching for added modals and hiding any surrounding DOM elements with `aria-hidden`.
+ * Acts as a polyfill for `aria-modal` by watching for added modals and hiding any surrounding DOM
+ * elements with `aria-hidden`.
  */
 export function watchModals(
   selector: string = 'body',
   {document = currentDocument}: {document?: Document} = {}
 ): Revert {
   /**
-   * Listen for additions to the child list of the selected element (defaults to body). This is where providers render modal portals.
-   * When one is added, see if there is a modal inside it, if there is, then hide everything else from screen readers.
-   * If there was already a modal open and a new one was added, undo everything that the previous modal had hidden and hide based on the new one.
+   * Listen for additions to the child list of the selected element (defaults to body). This is
+   * where providers render modal portals. When one is added, see if there is a modal inside it, if
+   * there is, then hide everything else from screen readers. If there was already a modal open and
+   * a new one was added, undo everything that the previous modal had hidden and hide based on the
+   * new one.
    *
-   * If a modal container is removed, then undo the hiding based on the last hide others. Check if there are any other modals still around, and
-   * hide based on the last one added.
+   * If a modal container is removed, then undo the hiding based on the last hide others. Check if
+   * there are any other modals still around, and hide based on the last one added.
    */
   if (!document) {
     return () => {};

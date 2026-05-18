@@ -36,6 +36,7 @@ export interface LongPressProps {
   onLongPress?: (e: LongPressEvent) => void;
   /**
    * The amount of time in milliseconds to wait before triggering a long press.
+   *
    * @default 500ms
    */
   threshold?: number;
@@ -54,8 +55,8 @@ export interface LongPressResult {
 const DEFAULT_THRESHOLD = 500;
 
 /**
- * Handles long press interactions across mouse and touch devices. Supports a customizable time threshold,
- * accessibility description, and normalizes behavior across browsers and devices.
+ * Handles long press interactions across mouse and touch devices. Supports a customizable time
+ * threshold, accessibility description, and normalizes behavior across browsers and devices.
  */
 export function useLongPress(props: LongPressProps): LongPressResult {
   let {

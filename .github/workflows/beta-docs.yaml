@@ -4,6 +4,9 @@ on:
     types: [published]
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   trigger-circleci:
     runs-on: ubuntu-latest
