@@ -9,13 +9,30 @@ import {z} from 'zod';
 export async function startServer(
   library: Library,
   version: string,
-  registerAdditionalTools?: (server: McpServer) => void | Promise<void>
+  options: {
+    additionalLibraries?: Library[];
+    registerAdditionalTools?: (server: McpServer) => void | Promise<void>;
+  } = {}
 ) {
   const server = new McpServer({
     name: library === 's2' ? 's2-docs-server' : 'react-aria-docs-server',
     version
   });
 
+  const libraries: Library[] = [library, ...(options.additionalLibraries ?? [])];
+  for (const lib of libraries) {
+    await registerLibraryDocsTools(server, lib);
+  }
+
+  if (options.registerAdditionalTools) {
+    await options.registerAdditionalTools(server);
+  }
+
+  const transport = new StdioServerTransport();
+  await server.connect(transport);
+}
+
+async function registerLibraryDocsTools(server: McpServer, library: Library) {
   // Build page index at startup.
   try {
     await buildPageIndex(library);
@@ -103,11 +120,4 @@ export async function startServer(
       return {content: [{type: 'text', text: snippet}]} as const;
     }
   );
-
-  if (registerAdditionalTools) {
-    await registerAdditionalTools(server);
-  }
-
-  const transport = new StdioServerTransport();
-  await server.connect(transport);
 }
