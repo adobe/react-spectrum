@@ -1305,7 +1305,9 @@ const dragCellStyle = style({
   ...stickyCell,
   paddingStart: 4,
   paddingEnd: 4,
+  display: 'flex',
   alignContent: 'center',
+  alignItems: 'center',
   height: 'calc(100% - 1px)',
   borderBottomWidth: 0,
   backgroundColor: '--rowBackgroundColor'
