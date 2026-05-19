@@ -497,12 +497,14 @@ The \`references/\` directory contains detailed documentation organized as follo
   }
 
   if (categories.components.length > 0) {
+    const componentNames = categories.components.map(entry => entry.title).join(', ');
     content += `### Components
+
+Component documentation is in \`references/components/\` — one Markdown file per component (e.g. \`references/components/Button.md\`). Read the file for a component when you need its API, props, examples, or accessibility notes.
+
+Available components: ${componentNames}.
+
 `;
-    for (const entry of categories.components) {
-      content += `- [${entry.title}](references/components/${entry.path})${entry.description ? `: ${entry.description}` : ''}\n`;
-    }
-    content += '\n';
   }
 
   if (categories.interactions.length > 0) {
