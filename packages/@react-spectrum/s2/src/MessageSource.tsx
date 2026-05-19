@@ -92,7 +92,7 @@ export const SourceList = (forwardRef as forwardRefType)(function SourceList(
   );
 });
 
-export interface SourceListItemProps extends LinkProps, UnsafeStyles, DOMProps {
+export interface SourceListItemProps extends Omit<LinkProps, 'variant'>, UnsafeStyles, DOMProps {
   /** The content of the source list item. */
   children: React.ReactNode;
 }
@@ -172,9 +172,9 @@ const badge = style(
 /**
  * A small visual indicator showing a count or position.
  */
-export const NumberBadge = forwardRef(function Badge(
+export const NumberBadge = forwardRef(function NumberBadge(
   props: NumberBadgeProps,
-  ref: DOMRef<HTMLDivElement>
+  ref: DOMRef<HTMLSpanElement>
 ) {
   let {size = 'S', value, ...otherProps} = props;
   let domRef = useDOMRef(ref);
@@ -182,8 +182,6 @@ export const NumberBadge = forwardRef(function Badge(
   let formattedValue = '';
 
   if (value <= 0 && process.env.NODE_ENV !== 'production') {
-    console.warn('Value cannot be negative or zero');
-  } else if (!Number.isInteger(value) && process.env.NODE_ENV !== 'production') {
     console.warn('Value must be a positive integer');
   } else {
     formattedValue = new NumberFormatter(locale).format(value);
