@@ -1286,23 +1286,6 @@ const stickyCell = {
   backgroundColor: 'gray-25'
 } as const;
 
-// The sticky checkbox cell covers/maskes the rest of the row's content when it is scrolled under it
-// because of that it is full height but thus covers the "on" drop styling applied on the row
-// to address this we apply the same kind of box shadow to the cells
-const rowDropTargetStickyOutline = {
-  boxShadow: {
-    default: 'none',
-    ':is([role="row"][data-drop-target] *)': {
-      default: `[inset 0 2px 0 0 ${color('blue-800')}, inset 0 -2px 0 0 ${color('blue-800')}]`,
-      forcedColors: '[inset 0 2px 0 0 Highlight, inset 0 -2px 0 0 Highlight]'
-    },
-    ':is([role="row"][data-focus-visible] *)': {
-      forcedColors: '[inset 0 2px 0 0 Highlight, inset 0 -2px 0 0 Highlight]'
-    }
-  }
-} as const;
-
-
 const checkboxCellStyle = style({
   ...commonCellStyles,
   ...stickyCell,

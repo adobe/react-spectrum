@@ -33,7 +33,7 @@ import {
   Key,
   LoadingState
 } from '@react-types/shared';
-import {dragButton, isFirstItem, isPrevSelected, S2ListLayout} from './ListView';
+import {dragButton, S2ListLayout} from './ListView';
 import DragHandle from '../ui-icons/DragHandle';
 import {DragPreview} from './DragPreview';
 import {
