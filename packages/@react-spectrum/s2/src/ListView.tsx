@@ -426,7 +426,7 @@ const listitem = style<
   }
 >({
   outlineStyle: {
-    default: 'none',
+    default: 'none'
   },
   boxSizing: 'border-box',
   columnGap: 0,
@@ -515,17 +515,7 @@ const listitem = style<
     type: 'borderTopStartRadius',
     value: 'default'
   },
-  // borderTopStartRadius: {
-  //   isDropTarget: {
-  //     isFirstItem: 'default'
-  //   }
-  // },
-  // borderTopEndRadius: {
-  //   isDropTarget: {
-  //     isFirstItem: 'default'
-  //   }
-  // },
-  forcedColorAdjust: 'none',
+  forcedColorAdjust: 'none'
 });
 
 const insetBorderRadius = 'calc(var(--radius) - 1px)';
@@ -606,7 +596,7 @@ const listRowBackground = style<
     },
     forcedColors: 'transparent',
     ':is([role="grid"][data-drop-target] *)': rootRowDropStyles,
-    isDropTarget: rowDropStyles,
+    isDropTarget: rowDropStyles
   },
   borderTopStartRadius: {
     isQuiet: 'default',
@@ -689,7 +679,7 @@ const listRowBackground = style<
       selectionStyle: {
         checkbox: 0,
         highlight: 1
-      },
+      }
     },
     isDropTarget: 2
   },
