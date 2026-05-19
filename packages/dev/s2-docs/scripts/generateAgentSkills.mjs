@@ -36,7 +36,7 @@ const SKILLS = {
   'react-spectrum-s2': {
     name: 'react-spectrum-s2',
     description:
-      "Build UIs with React Spectrum S2 (Spectrum 2), Adobe's component library for React. Use when developers are using `@react-spectrum/s2` or need Adobe design system components. Provides comprehensive documentation, guides, and guidelines for all components. Also includes React Aria Components documentation as a reference for the cases where a custom component must be built on top of the unstyled React Aria primitives.",
+      "Build UIs with React Spectrum S2 (Spectrum 2), Adobe's component library for React. Use when developers are using `@react-spectrum/s2` or need Adobe design system components. Includes React Aria Components docs as a reference for building custom components on top of unstyled primitives.",
     license: 'Apache-2.0',
     sourceDir: 's2',
     additionalReferenceLibraries: [
@@ -461,15 +461,9 @@ function generateDocsSkillMd(skillConfig, categories, isS2) {
   let content = generateFrontmatter(skillConfig);
 
   if (isS2) {
-    content += `# React Spectrum S2 (Spectrum 2)
-
-React Spectrum S2 is Adobe's implementation of the Spectrum 2 design system in React. It provides a collection of accessible, adaptive, and high-quality UI components.
-`;
+    content += '# React Spectrum S2 (Spectrum 2)\n';
   } else {
-    content += `# React Aria Components
-
-React Aria Components is a library of unstyled, accessible UI components that you can style with any CSS solution. Built on top of React Aria hooks, it provides the accessibility and behavior without prescribing any visual design.
-`;
+    content += '# React Aria Components\n';
   }
 
   if (customSkillNotesMarkdown) {
@@ -494,7 +488,7 @@ The \`references/\` directory contains detailed documentation organized as follo
       content += `- [${entry.title}](references/guides/${entry.path})${entry.description ? `: ${entry.description}` : ''}\n`;
     }
     for (const entry of categories.guides) {
-      content += `- [${entry.title}](references/guides/${entry.path})${entry.description ? `: ${entry.description}` : ''}\n`;
+      content += `- [${entry.title}](references/guides/${entry.path})\n`;
     }
     content += '\n';
   }
