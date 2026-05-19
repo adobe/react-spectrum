@@ -10,7 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMProps, DOMRef, forwardRefType} from '@react-types/shared';
+import {
+  AriaLabelingProps,
+  DOMProps,
+  DOMRef,
+  DOMRefValue,
+  forwardRefType
+} from '@react-types/shared';
+import {baseColor, focusRing, style} from '../style' with {type: 'macro'};
+import {ContextValue, SlotProps} from 'react-aria-components/slots';
 import {
   Disclosure,
   DisclosurePanel,
@@ -20,17 +28,21 @@ import {
 } from './Disclosure';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {getAllowedOverrides, StyleProps, UnsafeStyles} from './style-utils' with {type: 'macro'};
-import {Link, LinkProps} from './Link';
+import {Link, LinkProps} from 'react-aria-components/Link';
 import {NumberFormatter} from '@internationalized/number';
 import React, {createContext, forwardRef, useContext} from 'react';
-import {SlotProps} from 'react-aria-components/slots';
-import {style} from '../style' with {type: 'macro'};
 import {useDOMRef} from './useDOMRef';
 import {useLocale} from 'react-aria/I18nProvider';
+import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface MessageSourceProps extends Omit<DisclosureProps, 'isQuiet'> {
   label: string;
 }
+
+export const MessageSourceContext =
+  createContext<ContextValue<Partial<MessageSourceProps>, DOMRefValue<HTMLDivElement>>>(null);
+
+const MessageSourceInternalContext = createContext<{size: 'S' | 'M' | 'L' | 'XL'}>({size: 'M'});
 
 /**
  * Message sources display references associated with a system message. Associating the source to
@@ -40,13 +52,18 @@ export const MessageSource = (forwardRef as forwardRefType)(function MessageSour
   props: MessageSourceProps,
   ref: DOMRef<HTMLDivElement>
 ) {
+  [props, ref] = useSpectrumContextProps(props, ref, MessageSourceContext);
   let {label, children, size = 'M', ...otherProps} = props;
 
   return (
-    <Disclosure {...otherProps} size={size} ref={ref} isQuiet>
-      <DisclosureTitle>{label}</DisclosureTitle>
-      {children}
-    </Disclosure>
+    <MessageSourceInternalContext.Provider value={{size}}>
+      <NumberBadgeContext.Provider value={{size}}>
+        <Disclosure {...otherProps} size={size} ref={ref} isQuiet>
+          <DisclosureTitle>{label}</DisclosureTitle>
+          {children}
+        </Disclosure>
+      </NumberBadgeContext.Provider>
+    </MessageSourceInternalContext.Provider>
   );
 });
 
@@ -92,7 +109,23 @@ export const SourceList = (forwardRef as forwardRefType)(function SourceList(
   );
 });
 
-export interface SourceListItemProps extends Omit<LinkProps, 'variant'>, UnsafeStyles, DOMProps {
+const linkStyles = style({
+  ...focusRing(),
+  font: {
+    size: {
+      S: 'body-sm',
+      M: 'body',
+      L: 'body-lg',
+      XL: 'body-xl'
+    }
+  },
+  borderRadius: 'sm',
+  color: baseColor('neutral'),
+  disableTapHighlight: true
+});
+
+export interface SourceListItemProps
+  extends Omit<LinkProps, 'className' | 'style'>, UnsafeStyles, DOMProps {
   /** The content of the source list item. */
   children: React.ReactNode;
 }
@@ -106,14 +139,14 @@ export const SourceListItem = (forwardRef as forwardRefType)(function SourceList
   ref: DOMRef<HTMLLIElement>
 ) {
   let index = useContext(SourceListIndexContext);
+  let {size} = useContext(MessageSourceInternalContext);
   let {children, UNSAFE_style, UNSAFE_className = '', ...otherProps} = props;
   let itemRef = useDOMRef(ref);
 
   return (
     <li ref={itemRef} style={UNSAFE_style} className={(UNSAFE_className ?? '') + itemStyles}>
       <NumberBadge value={index} />
-      {/* maybe link should support t-shirt sizing? or we need to make it custom so that the font size changes  */}
-      <Link variant="secondary" {...otherProps}>
+      <Link {...otherProps} className={linkStyles({size})}>
         {children}
       </Link>
     </li>
@@ -137,17 +170,20 @@ export interface NumberBadgeProps
   value: number;
 }
 
+interface NumberBadgeContextProps extends Partial<NumberBadgeProps> {}
+export const NumberBadgeContext =
+  createContext<ContextValue<Partial<NumberBadgeContextProps>, DOMRefValue<HTMLSpanElement>>>(null);
+
 const badge = style(
   {
     display: 'flex',
-    font: 'ui',
     color: 'gray-900',
-    fontSize: {
+    font: {
       size: {
         S: 'ui-xs',
-        M: 'ui-xs',
-        L: 'ui-sm',
-        XL: 'ui'
+        M: 'ui-sm',
+        L: 'ui',
+        XL: 'ui-lg'
       }
     },
     borderStyle: {
@@ -162,8 +198,23 @@ const badge = style(
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'gray-200',
-    width: 16,
-    height: 20,
+    // These are arbitrary sizes since there are no designs for them
+    width: {
+      size: {
+        S: 14,
+        M: 16,
+        L: 18,
+        XL: 20
+      }
+    },
+    height: {
+      size: {
+        S: 18,
+        M: 20,
+        L: 22,
+        XL: 24
+      }
+    },
     borderRadius: 'sm'
   },
   getAllowedOverrides()
@@ -176,6 +227,7 @@ export const NumberBadge = forwardRef(function NumberBadge(
   props: NumberBadgeProps,
   ref: DOMRef<HTMLSpanElement>
 ) {
+  [props, ref] = useSpectrumContextProps(props, ref, NumberBadgeContext);
   let {size = 'S', value, ...otherProps} = props;
   let domRef = useDOMRef(ref);
   let {locale} = useLocale();
@@ -187,9 +239,7 @@ export const NumberBadge = forwardRef(function NumberBadge(
     formattedValue = new NumberFormatter(locale).format(value);
   }
 
-  // TODO: If we expect this to be used standalone, then it might be worth adding this back in.
   // let ariaLabel = props['aria-label'] || undefined;
-
   return (
     <span
       {...filterDOMProps(otherProps)}
