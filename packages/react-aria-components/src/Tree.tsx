@@ -310,6 +310,12 @@ export interface TreeRenderProps {
    */
   allowsDragging: boolean;
   /**
+   * Whether the tree is currently the active drop target.
+   *
+   * @selector [data-drop-target]
+   */
+  isDropTarget: boolean;
+  /**
    * State of the tree.
    */
   state: TreeState<unknown>;
@@ -361,7 +367,7 @@ export const TreeStateContext = createContext<TreeState<any> | null>(null);
  * A tree provides users with a way to navigate nested hierarchical information, with support for
  * keyboard navigation and selection.
  */
-export const Tree = /*#__PURE__*/ (forwardRef as forwardRefType)(function Tree<T extends object>(
+export const Tree = /*#__PURE__*/ (forwardRef as forwardRefType)(function Tree<T>(
   props: TreeProps<T>,
   ref: ForwardedRef<HTMLDivElement>
 ) {
@@ -388,13 +394,13 @@ const EXPANSION_KEYS = {
   }
 };
 
-interface TreeInnerProps<T extends object> {
+interface TreeInnerProps<T> {
   props: TreeProps<T>;
   collection: TreeCollection<T>;
   treeRef: RefObject<HTMLDivElement | null>;
 }
 
-function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInnerProps<T>) {
+function TreeInner<T>({props, collection, treeRef: ref}: TreeInnerProps<T>) {
   const {dragAndDropHooks} = props;
   let {direction} = useLocale();
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
@@ -765,10 +771,12 @@ class TreeItemNode extends CollectionNode<any> {
  */
 export const TreeItem = /*#__PURE__*/ createBranchComponent(
   TreeItemNode,
-  <T extends object>(props: TreeItemProps<T>, ref: ForwardedRef<HTMLDivElement>, item: Node<T>) => {
+  <T extends any>(props: TreeItemProps<T>, ref: ForwardedRef<HTMLDivElement>, item: Node<T>) => {
     let state = useContext(TreeStateContext)!;
     ref = useObjectRef<HTMLDivElement>(ref);
     let {dragAndDropHooks, dragState, dropState} = useContext(DragAndDropContext)!;
+    let isDraggable =
+      dragState && !(dragState.isDisabled || dragState.selectionManager.isDisabled(item.key));
 
     // TODO: remove this when we support description in tree row
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -786,7 +794,7 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent(
     let level = rowProps['aria-level'] || 1;
 
     let {hoverProps, isHovered} = useHover({
-      isDisabled: !states.allowsSelection && !states.hasAction,
+      isDisabled: !states.allowsSelection && !states.hasAction && !isDraggable,
       onHoverStart: props.onHoverStart,
       onHoverChange: props.onHoverChange,
       onHoverEnd: props.onHoverEnd
@@ -1069,7 +1077,7 @@ export interface TreeLoadMoreItemProps
 }
 
 export const TreeLoadMoreItem = createLeafComponent(LoaderNode, function TreeLoadingSentinel<
-  T extends object
+  T
 >(props: TreeLoadMoreItemProps, ref: ForwardedRef<HTMLDivElement>, item: Node<T>) {
   let {isVirtualized} = useContext(CollectionRendererContext);
   let state = useContext(TreeStateContext)!;
@@ -1248,7 +1256,7 @@ export interface GridListSectionProps<T>
  */
 export const TreeSection = /*#__PURE__*/ createBranchComponent(
   SectionNode,
-  <T extends object>(
+  <T extends any>(
     props: GridListSectionProps<T>,
     ref: ForwardedRef<HTMLDivElement>,
     item: Node<T>

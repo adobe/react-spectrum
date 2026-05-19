@@ -18,7 +18,7 @@ import {
 } from 'react-aria-components/ListBox';
 import {ReactNode} from 'react';
 
-export function ListBox<T extends object>({children, ...props}: ListBoxProps<T>): ReactNode {
+export function ListBox<T>({children, ...props}: ListBoxProps<T>): ReactNode {
   return <AriaListBox {...props}>{children}</AriaListBox>;
 }
 

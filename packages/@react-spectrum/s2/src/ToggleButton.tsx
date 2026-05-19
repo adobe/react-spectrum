@@ -13,9 +13,10 @@
 import {ActionButtonStyleProps, btnStyles} from './ActionButton';
 import {centerBaseline} from './CenterBaseline';
 import {ContextValue, Provider, useSlottedContext} from 'react-aria-components/slots';
+import CornerTriangle from '../ui-icons/CornerTriangle';
 import {createContext, forwardRef, ReactNode} from 'react';
 import {FocusableRef, FocusableRefValue, GlobalDOMAttributes} from '@react-types/shared';
-import {fontRelative, style} from '../style' with {type: 'macro'};
+import {fontRelative, space, style} from '../style' with {type: 'macro'};
 import {IconContext} from './Icon';
 import {pressScale} from './pressScale';
 import {
@@ -28,6 +29,7 @@ import {Text, TextContext} from './Content';
 import {ToggleButtonGroupContext} from './ToggleButtonGroup';
 import {useFocusableRef} from './useDOMRef';
 import {useFormProps} from './Form';
+import {useLocale} from 'react-aria/I18nProvider';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface ToggleButtonProps
@@ -56,10 +58,12 @@ export interface ToggleButtonProps
   isEmphasized?: boolean;
 }
 
+interface ToggleButtonContextProps extends Partial<ToggleButtonProps> {
+  holdAffordance?: boolean;
+}
+
 export const ToggleButtonContext =
-  createContext<ContextValue<Partial<ToggleButtonProps>, FocusableRefValue<HTMLButtonElement>>>(
-    null
-  );
+  createContext<ContextValue<ToggleButtonContextProps, FocusableRefValue<HTMLButtonElement>>>(null);
 
 /**
  * ToggleButtons allow users to toggle a selection on or off, for example
@@ -84,6 +88,8 @@ export const ToggleButton = forwardRef(function ToggleButton(
     size = props.size || 'M',
     isDisabled = props.isDisabled
   } = ctx || {};
+  let {holdAffordance} = props as ToggleButtonContextProps;
+  let {direction} = useLocale();
 
   return (
     <RACToggleButton
@@ -124,6 +130,37 @@ export const ToggleButton = forwardRef(function ToggleButton(
         ]}>
         {typeof props.children === 'string' ? <Text>{props.children}</Text> : props.children}
       </Provider>
+      {holdAffordance && (
+        <CornerTriangle
+          size={size === 'XS' ? 'S' : size}
+          className={style({
+            position: 'absolute',
+            insetEnd: {
+              size: {
+                XS: space(3),
+                S: space(3),
+                M: 4,
+                L: space(5),
+                XL: space(6)
+              }
+            },
+            bottom: {
+              size: {
+                XS: space(3),
+                S: space(3),
+                M: 4,
+                L: space(5),
+                XL: space(6)
+              }
+            },
+            scaleX: {
+              direction: {
+                rtl: -1
+              }
+            }
+          })({direction, size})}
+        />
+      )}
     </RACToggleButton>
   );
 });

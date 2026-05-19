@@ -16,6 +16,7 @@ import {
   StaticColorDecorator,
   StaticColorProvider
 } from '../stories/utils';
+import Cut from '../s2wf-icons/S2_Icon_Cut_20_N.svg';
 import {generatePowerset} from '@react-spectrum/story-utils';
 import type {Meta, StoryObj} from '@storybook/react';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
@@ -23,7 +24,7 @@ import {ReactElement} from 'react';
 import {shortName} from './utils';
 import {style} from '../style' with {type: 'macro'};
 import {Text} from '../src/Content';
-import {ToggleButton, ToggleButtonProps} from '../src/ToggleButton';
+import {ToggleButton, ToggleButtonContext, ToggleButtonProps} from '../src/ToggleButton';
 
 const events = ['onPress', 'onPressChange', 'onPressEnd', 'onPressStart', 'onPressUp', 'onChange'];
 
@@ -126,5 +127,40 @@ export const Truncate: StoryObj<typeof Template> = {
         <Text>Press me</Text>
       </ToggleButton>
     </div>
+  )
+};
+
+const sizes = ['XS', 'S', 'M', 'L', 'XL'] as const;
+
+export const HoldAffordance: StoryObj<typeof Template> = {
+  render: () => (
+    <ToggleButtonContext.Provider value={{holdAffordance: true}}>
+      <div className={style({display: 'flex', flexDirection: 'column', gap: 16})}>
+        {sizes.map(size => (
+          <div key={size} className={style({display: 'flex', gap: 8, alignItems: 'center'})}>
+            <ToggleButton size={size} aria-label={`icon only ${size}`}>
+              <Cut />
+            </ToggleButton>
+            <ToggleButton size={size}>
+              <Text>Cut</Text>
+            </ToggleButton>
+            <ToggleButton size={size}>
+              <Cut />
+              <Text>Cut</Text>
+            </ToggleButton>
+            <ToggleButton size={size} isQuiet aria-label={`quiet icon only ${size}`}>
+              <Cut />
+            </ToggleButton>
+            <ToggleButton size={size} isQuiet>
+              <Text>Cut</Text>
+            </ToggleButton>
+            <ToggleButton size={size} isQuiet>
+              <Cut />
+              <Text>Cut</Text>
+            </ToggleButton>
+          </div>
+        ))}
+      </div>
+    </ToggleButtonContext.Provider>
   )
 };

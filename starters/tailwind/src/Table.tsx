@@ -92,7 +92,7 @@ export function Column(props: ColumnProps) {
   );
 }
 
-export function TableHeader<T extends object>(props: TableHeaderProps<T>) {
+export function TableHeader<T>(props: TableHeaderProps<T>) {
   let {selectionBehavior, selectionMode, allowsDragging} = useTableOptions();
 
   return (
@@ -117,11 +117,11 @@ export function TableHeader<T extends object>(props: TableHeaderProps<T>) {
   );
 }
 
-export function TableBody<T extends object>(props: TableBodyProps<T>) {
+export function TableBody<T>(props: TableBodyProps<T>) {
   return <AriaTableBody {...props} className="empty:italic empty:text-center empty:text-sm" />;
 }
 
-export function TableFooter<T extends object>(props: TableFooterProps<T>) {
+export function TableFooter<T>(props: TableFooterProps<T>) {
   return <AriaTableFooter {...props} className="bg-neutral-200 dark:bg-neutral-700 font-bold" />;
 }
 
@@ -130,7 +130,7 @@ const rowStyles = tv({
   base: 'group/row relative cursor-default select-none -outline-offset-2 text-neutral-900 disabled:text-neutral-300 dark:text-neutral-200 dark:disabled:text-neutral-600 text-sm hover:bg-neutral-100 pressed:bg-neutral-100 dark:hover:bg-neutral-800 dark:pressed:bg-neutral-800 selected:bg-blue-100 selected:hover:bg-blue-200 selected:pressed:bg-blue-200 dark:selected:bg-blue-700/30 dark:selected:hover:bg-blue-700/40 dark:selected:pressed:bg-blue-700/40 last:rounded-b-lg'
 });
 
-export function Row<T extends object>({id, columns, children, ...otherProps}: RowProps<T>) {
+export function Row<T>({id, columns, children, ...otherProps}: RowProps<T>) {
   let {selectionBehavior, allowsDragging} = useTableOptions();
 
   return (
