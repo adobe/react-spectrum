@@ -204,7 +204,7 @@ function DroppableListView() {
       styles={style({height: 250})}>
       {item => (
         <ListViewItem textValue={item.name}>
-          {item.url ? <Image src={item.url} alt={item.title} /> : null}
+          {item.url ? <Image src={item.url} alt={item.name} /> : null}
           <Text slot="label">{item.name}</Text>
         </ListViewItem>
       )}
