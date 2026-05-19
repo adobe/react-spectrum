@@ -59,29 +59,3 @@ export const Example: Story = {
     );
   }
 };
-
-export const Dynamic: Story = {
-  args: {
-    label: 'Sources'
-  },
-  render: args => {
-    const sources = [
-      {id: '1', label: 'Hilton email', href: '#'},
-      {id: '2', label: 'Market research', href: '#'},
-      {id: '3', label: 'User research', href: '#'}
-    ];
-    return (
-      <div className={style({minHeight: 240})}>
-        <MessageSource {...args}>
-          <SourceList>
-            {sources.map(source => (
-              <SourceListItem key={source.id} href={source.href}>
-                {source.label}
-              </SourceListItem>
-            ))}
-          </SourceList>
-        </MessageSource>
-      </div>
-    );
-  }
-};
