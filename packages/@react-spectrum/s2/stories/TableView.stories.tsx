@@ -68,6 +68,7 @@ const meta: Meta<typeof TableView> = {
   argTypes: {
     ...categorizeArgTypes('Events', ['onAction', 'onLoadMore', ...events]),
     children: {table: {disable: true}},
+    dragAndDropHooks: {table: {disable: true}},
     onAction: {
       options: Object.keys(onActionOptions), // An array of serializable values
       mapping: onActionOptions, // Maps serializable option values to complex arg values

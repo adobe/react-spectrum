@@ -155,7 +155,7 @@ const treeViewWrapper = style(
     },
     '--root-drop-radius': {
       type: 'borderTopStartRadius',
-      value: 'default'
+      value: 'sm'
     }
   },
   getAllowedOverrides({height: true})
@@ -444,8 +444,6 @@ const treeRowBackground = style({
   backgroundColor: {
     default: '--rowBackgroundColor',
     forcedColors: 'Background',
-    ':is([role="treegrid"][data-drop-target] *)': rootRowDropStyles,
-    isDropTarget: rowDropStyles,
     selectionStyle: {
       highlight: {
         default: '--rowBackgroundColor',
@@ -457,7 +455,9 @@ const treeRowBackground = style({
           forcedColors: 'Highlight'
         }
       }
-    }
+    },
+    ':is([role="treegrid"][data-drop-target] *)': rootRowDropStyles,
+    isDropTarget: rowDropStyles
   },
   borderTopStartRadius: {
     default: '--borderRadiusTreeItem',
