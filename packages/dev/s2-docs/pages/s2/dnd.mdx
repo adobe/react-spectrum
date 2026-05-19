@@ -166,7 +166,7 @@ A <TypeLink links={docs.links} type={docs.links[docs.exports.FileDropItem.id]} /
 "use client";
 import {ListView, ListViewItem} from '@react-spectrum/s2/ListView';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
-import {Text} from '@react-spectrum/s2';
+import {Image, Text} from '@react-spectrum/s2';
 import {useDragAndDrop, isFileDropItem} from '@react-spectrum/s2/useDragAndDrop';
 import {useState} from 'react';
 
@@ -204,7 +204,7 @@ function DroppableListView() {
       styles={style({height: 250})}>
       {item => (
         <ListViewItem textValue={item.name}>
-          <img src={item.url} style={{width: 24, height: 24, objectFit: 'cover'}} alt={item.name} />
+          {item.url ? <Image src={item.url} alt={item.title} /> : null}
           <Text slot="label">{item.name}</Text>
         </ListViewItem>
       )}
