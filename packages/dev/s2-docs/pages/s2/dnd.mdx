@@ -12,6 +12,7 @@ import {GroupedPropTable, PropTable} from '../../src/PropTable';
 
 export const section = 'Guides';
 export const description = 'How to implement drag and drop.';
+export const tags = ['dnd'];
 
 # Drag and Drop
 
@@ -116,7 +117,7 @@ Users can drop one or more **drop items**, each of which contains data to be tra
 
 ### Text
 
-A **TextDropItem** represents textual data in one or more different formats. These may be either standard [mime types](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types) or custom app-specific formats.
+A <TypeLink links={docs.links} type={docs.links[docs.exports.TextDropItem.id]} /> represents textual data in one or more different formats. These may be either standard [mime types](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types) or custom app-specific formats.
 
 This example uses the `acceptedDragTypes` prop to accept items that include an app-specific type, which is retrieved using the item's `getText` method. When `acceptedDragTypes` is specified, the dropped items are filtered to include only items that include the accepted types.
 
@@ -159,7 +160,7 @@ function DroppableCOMPONENT() {
 
 ### Files
 
-A **FileDropItem** references a file on the user's device. It includes the name and mime type of the file, and methods to read the contents as plain text, or retrieve a [File](https://developer.mozilla.org/en-US/docs/Web/API/File) object for uploading. This example accepts JPEG and PNG image files, and renders them by creating a local [object URL](https://developer.mozilla.org/en-US/docs/Web/API/URL/createObjectURL).
+A <TypeLink links={docs.links} type={docs.links[docs.exports.FileDropItem.id]} /> references a file on the user's device. It includes the name and mime type of the file, and methods to read the contents as plain text, or retrieve a [File](https://developer.mozilla.org/en-US/docs/Web/API/File) object for uploading. This example accepts JPEG and PNG image files, and renders them by creating a local [object URL](https://developer.mozilla.org/en-US/docs/Web/API/URL/createObjectURL).
 
 ```tsx render type="s2"
 "use client";
@@ -213,7 +214,7 @@ function DroppableListView() {
 
 ### Directories
 
-A **DirectoryDropItem** references the contents of a directory on the user's device. It includes the name of the directory, as well as a method to iterate through the files and folders within the directory. Include the special `DIRECTORY_DRAG_TYPE` type in `acceptedDragTypes` to limit drops to directories.
+A <TypeLink links={docs.links} type={docs.links[docs.exports.DirectoryDropItem.id]} /> references the contents of a directory on the user's device. It includes the name of the directory, as well as a method to iterate through the files and folders within the directory. Include the special `DIRECTORY_DRAG_TYPE` type in `acceptedDragTypes` to limit drops to directories.
 
 ```tsx render type="s2"
 "use client";
@@ -456,7 +457,7 @@ function DroppableCOMPONENT() {
 
 ### Reordering items
 
-Use the `onMove` event to enable reordering items within a collection.
+Use the `onReorder` event to enable reordering items. For components with hierarchy like [TreeView](TreeView), this only allows reordering within the same level. Use `onMove` to allow moving items between levels.
 
 <ExampleSwitcher type="component" examples={['ListView', 'TreeView', 'TableView']}>
 
@@ -484,7 +485,7 @@ function ReorderableCOMPONENT() {
     },
     ///- end collapse -///
     ///- begin highlight -///
-    onMove(e) {
+    onReorder(e) {
       if (e.target.dropPosition === 'before') {
         list.moveBefore(e.target.key, e.keys);
       } else if (e.target.dropPosition === 'after') {
@@ -502,9 +503,9 @@ function ReorderableCOMPONENT() {
 
 ### Moving items
 
-Use the `onMove` event to enable moving items within a collection. For components with hierarchy like [TreeView](TreeView) and [TableView](TableView), this allows moving items between levels by dropping on an item with the `"on"` position.
+Use the `onMove` event to enable moving items within a collection. This allows reordering items within a level and moving items between levels. It supports dropping both on and between items.
 
-<ExampleSwitcher type="component" examples={['TreeView', 'TableView']}>
+<ExampleSwitcher type="component" examples={['ListView', 'TreeView', 'TableView']}>
 
 ```tsx render type="s2" files={['packages/dev/s2-docs/pages/s2/PokemonCOMPONENT.tsx']}
 "use client";
@@ -514,28 +515,7 @@ import {PokemonCOMPONENT, Pokemon, defaultItems} from './PokemonCOMPONENT';
 
 function ReorderableCOMPONENT() {
   let tree = useTreeData({
-    initialItems: [
-      {id: 1, name: 'Bulbasaur', type: 'Grass', level: 14, children: [
-        {id: 2, name: 'Ivysaur', type: 'Grass', level: 30, children: [
-          {id: 3, name: 'Venusaur', type: 'Grass', level: 83, children: []}
-        ]}
-      ]},
-      {id: 4, name: 'Charmander', type: 'Fire', level: 16, children: [
-        {id: 5, name: 'Charmeleon', type: 'Fire', level: 32, children: [
-          {id: 6, name: 'Charizard', type: 'Fire, Flying', level: 67, children: []}
-        ]}
-      ]},
-      {id: 7, name: 'Squirtle', type: 'Water', level: 8, children: [
-        {id: 8, name: 'Wartortle', type: 'Water', level: 34, children: [
-          {id: 9, name: 'Blastoise', type: 'Water', level: 56, children: []}
-        ]}
-      ]},
-      {id: 10, name: 'Pichu', type: 'Electric', level: 45, children: [
-        {id: 11, name: 'Pikachu', type: 'Electric', level: 85, children: [
-          {id: 12, name: 'Raichu', type: 'Electric', level: 100, children: []}
-        ]}
-      ]}
-    ]
+    initialItems: defaultItems
   });
 
   let {dragAndDropHooks} = useDragAndDrop({
@@ -659,7 +639,7 @@ function DndCOMPONENT(props: DndCOMPONENTProps) {
     },
 
     // Handle reordering items within the same list.
-    onMove(e) {
+    onReorder(e) {
       if (e.target.dropPosition === 'before') {
         list.moveBefore(e.target.key, e.keys);
       } else if (e.target.dropPosition === 'after') {
@@ -694,7 +674,7 @@ function DndCOMPONENT(props: DndCOMPONENTProps) {
 
 ## Drop operations
 
-A **drop operation** is an indication of what will happen when dragged data is dropped on a particular drop target. These are:
+A <TypeLink links={docs.links} type={docs.links[docs.exports.DropOperation.id]} /> is an indication of what will happen when dragged data is dropped on a particular drop target. These are:
 
 * `move` – the dragged data will be moved from its source location to the target location.
 * `copy` – the dragged data will be copied to the target destination.
