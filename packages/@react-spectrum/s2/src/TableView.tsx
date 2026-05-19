@@ -1924,6 +1924,7 @@ const rowBackgroundColor = {
   selectionStyle: {
     highlight: {
       default: 'gray-25',
+      isQuiet: '--s2-container-bg',
       isHovered: colorMix('gray-25', 'gray-900', 7), // table-row-hover-color
       isPressed: colorMix('gray-25', 'gray-900', 10), // table-row-hover-color
       isSelected: {
