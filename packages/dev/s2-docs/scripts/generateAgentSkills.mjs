@@ -247,6 +247,9 @@ function parseLlmsTxt(llmsTxtPath) {
     if (node.type === 'text') {
       return node.value;
     }
+    if (node.type === 'inlineCode') {
+      return '`' + node.value + '`';
+    }
     if (Array.isArray(node.children)) {
       return node.children.map(toText).join('');
     }

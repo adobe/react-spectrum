@@ -3834,10 +3834,11 @@ async function main() {
       heading = headingMatch[1].trim();
     }
 
-    // Extract the description (first paragraph after heading)
+    // Extract the description (first paragraph after heading). Skip if the
+    // first block after the heading is another heading rather than prose.
     let description = null;
     const descriptionMatch = markdown.match(/^#\s+.+$\n\n(.+?)(?:\n\n|$)/m);
-    if (descriptionMatch) {
+    if (descriptionMatch && !descriptionMatch[1].trim().startsWith('#')) {
       description = descriptionMatch[1].trim();
     }
 
