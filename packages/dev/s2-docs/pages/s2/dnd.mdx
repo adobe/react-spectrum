@@ -165,6 +165,7 @@ A <TypeLink links={docs.links} type={docs.links[docs.exports.FileDropItem.id]} /
 ```tsx render type="s2"
 "use client";
 import {ListView, ListViewItem} from '@react-spectrum/s2/ListView';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Text} from '@react-spectrum/s2';
 import {useDragAndDrop, isFileDropItem} from '@react-spectrum/s2/useDragAndDrop';
 import {useState} from 'react';
@@ -200,7 +201,7 @@ function DroppableListView() {
       items={items}
       dragAndDropHooks={dragAndDropHooks}
       renderEmptyState={() => "Drop images here"}
-      style={{height: 250}}>
+      styles={style({height: 250})}>
       {item => (
         <ListViewItem textValue={item.name}>
           <img src={item.url} style={{width: 24, height: 24, objectFit: 'cover'}} alt={item.name} />
@@ -221,7 +222,7 @@ A <TypeLink links={docs.links} type={docs.links[docs.exports.DirectoryDropItem.i
 import {TreeView, TreeViewItem, TreeViewItemContent, Collection, Text} from '@react-spectrum/s2/TreeView';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {useDragAndDrop, DIRECTORY_DRAG_TYPE, type DirectoryDropItem, isDirectoryDropItem} from '@react-spectrum/s2/useDragAndDrop';
-import {useState} from 'react';
+import {ReactElement, useState} from 'react';
 import File from '@react-spectrum/s2/icons/File';
 import Folder from '@react-spectrum/s2/icons/Folder';
 import {IllustratedMessage, Heading, Content} from '@react-spectrum/s2/IllustratedMessage';
