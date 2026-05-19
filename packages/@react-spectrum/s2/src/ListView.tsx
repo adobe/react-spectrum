@@ -427,19 +427,6 @@ const listitem = style<
 >({
   outlineStyle: {
     default: 'none',
-    isDropTarget: 'solid'
-  },
-  outlineWidth: {
-    isDropTarget: 2
-  },
-  outlineOffset: {
-    isDropTarget: -2
-  },
-  outlineColor: {
-    isDropTarget: 'blue-800',
-    forcedColors: {
-      isDropTarget: 'Highlight'
-    }
   },
   boxSizing: 'border-box',
   columnGap: 0,
@@ -495,13 +482,16 @@ const listitem = style<
     type: 'borderColor',
     value: {
       default: 'gray-300',
+      forcedColors: 'ButtonBorder',
       isSelected: {
         selectionStyle: {
-          highlight: 'blue-900',
+          highlight: {
+            default: 'blue-900',
+            forcedColors: 'Highlight'
+          },
           checkbox: 'gray-300'
         }
-      },
-      forcedColors: 'ButtonBorder'
+      }
     }
   },
   borderTopWidth: 0,
@@ -525,17 +515,17 @@ const listitem = style<
     type: 'borderTopStartRadius',
     value: 'default'
   },
-  borderTopStartRadius: {
-    isDropTarget: {
-      isFirstItem: 'default'
-    }
-  },
-  borderTopEndRadius: {
-    isDropTarget: {
-      isFirstItem: 'default'
-    }
-  },
-  forcedColorAdjust: 'none'
+  // borderTopStartRadius: {
+  //   isDropTarget: {
+  //     isFirstItem: 'default'
+  //   }
+  // },
+  // borderTopEndRadius: {
+  //   isDropTarget: {
+  //     isFirstItem: 'default'
+  //   }
+  // },
+  forcedColorAdjust: 'none',
 });
 
 const insetBorderRadius = 'calc(var(--radius) - 1px)';
@@ -616,7 +606,7 @@ const listRowBackground = style<
     },
     forcedColors: 'transparent',
     ':is([role="grid"][data-drop-target] *)': rootRowDropStyles,
-    isDropTarget: rowDropStyles
+    isDropTarget: rowDropStyles,
   },
   borderTopStartRadius: {
     isQuiet: 'default',
@@ -629,7 +619,8 @@ const listRowBackground = style<
         }
       },
       isQuiet: 'default'
-    }
+    },
+    isDropTarget: 'default'
   },
   borderTopEndRadius: {
     isQuiet: 'default',
@@ -642,7 +633,8 @@ const listRowBackground = style<
         }
       },
       isQuiet: 'default'
-    }
+    },
+    isDropTarget: 'default'
   },
   borderBottomStartRadius: {
     isQuiet: 'default',
@@ -655,7 +647,8 @@ const listRowBackground = style<
         }
       },
       isQuiet: 'default'
-    }
+    },
+    isDropTarget: 'default'
   },
   borderBottomEndRadius: {
     isQuiet: 'default',
@@ -668,7 +661,8 @@ const listRowBackground = style<
         }
       },
       isQuiet: 'default'
-    }
+    },
+    isDropTarget: 'default'
   },
   borderTopWidth: {
     default: {
@@ -677,7 +671,8 @@ const listRowBackground = style<
         highlight: 1
       }
     },
-    isPrevSelected: 0
+    isPrevSelected: 0,
+    isDropTarget: 2
   },
   borderBottomWidth: {
     default: {
@@ -686,15 +681,17 @@ const listRowBackground = style<
         highlight: 1
       }
     },
-    isNextSelected: 0
+    isNextSelected: 0,
+    isDropTarget: 2
   },
   borderStartWidth: {
     default: {
       selectionStyle: {
         checkbox: 0,
         highlight: 1
-      }
-    }
+      },
+    },
+    isDropTarget: 2
   },
   borderEndWidth: {
     default: {
@@ -702,7 +699,8 @@ const listRowBackground = style<
         checkbox: 0,
         highlight: 1
       }
-    }
+    },
+    isDropTarget: 2
   },
   borderStyle: 'solid',
   borderColor: {
@@ -712,6 +710,10 @@ const listRowBackground = style<
         checkbox: 'transparent',
         highlight: '--borderColor'
       }
+    },
+    isDropTarget: 'blue-800',
+    forcedColors: {
+      isDropTarget: 'Highlight'
     }
   }
 });
