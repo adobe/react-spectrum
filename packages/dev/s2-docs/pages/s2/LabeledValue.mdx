@@ -149,7 +149,7 @@ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 <Form/* PROPS */>
   <div
     role="group"
-    className={style({display: 'flex', alignItems: 'center', gap: 48})}>
+    className={style({display: 'flex', alignItems: 'end', gap: 48})}>
     <ComboBox label="Duration type" styles={style({width: 120})}>
       <ComboBoxItem>Simple</ComboBoxItem>
       <ComboBoxItem>Calculated assignment</ComboBoxItem>
@@ -165,7 +165,7 @@ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
   <div
     role="group"
     aria-labelledby="working hours"
-    className={style({display: 'flex', alignItems: 'center', gap: 48, font: 'ui'})}>
+    className={style({display: 'flex', alignItems: 'end', gap: 48, font: 'ui'})}>
     <NumberField
       label="Planned hours"
       placeholder="–"
@@ -181,7 +181,7 @@ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
   <div
     role="group"
     aria-labelledby="working hours"
-    className={style({display: 'flex', alignItems: 'center', gap: 48, font: 'ui'})}>
+    className={style({display: 'flex', alignItems: 'end', gap: 48, font: 'ui'})}>
     <LabeledValue 
       label="Project duration"
       value={1}
