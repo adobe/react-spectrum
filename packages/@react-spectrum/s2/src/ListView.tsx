@@ -57,7 +57,6 @@ import {
   LoadingState
 } from '@react-types/shared';
 import DragHandle from '../ui-icons/DragHandle';
-import {DropIndicator} from 'react-aria-components/useDragAndDrop';
 import {
   GridList,
   GridListItem,
@@ -69,6 +68,7 @@ import {
 } from 'react-aria-components/GridList';
 import {IconContext} from './Icon';
 import {ImageContext} from './Image';
+import {InsertionIndicator} from './InsertionIndicator';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {Key} from '@react-types/shared';
@@ -857,62 +857,6 @@ export let dragButton = style({
   }
 });
 
-let insertionIndicatorWrapper = style({
-  position: 'absolute',
-  inset: 0,
-  display: 'flex',
-  alignItems: 'center'
-});
-
-export let insertionIndicatorBar = style<{isDropTarget?: boolean}>({
-  flexGrow: 1,
-  height: 2,
-  backgroundColor: {
-    default: 'transparent',
-    isDropTarget: 'blue-800',
-    forcedColors: {
-      isDropTarget: 'Highlight'
-    }
-  },
-  borderBottomWidth: {
-    default: 0,
-    isDropTarget: 2
-  },
-  borderColor: {
-    isDropTarget: 'blue-800',
-    forcedColors: {
-      isDropTarget: 'Highlight'
-    }
-  },
-  forcedColorAdjust: 'none'
-});
-
-export let insertionIndicatorCircle = style<{isDropTarget: boolean}>({
-  width: 8,
-  height: 8,
-  borderRadius: 'full',
-  borderWidth: {
-    isDropTarget: 2
-  },
-  borderStyle: {
-    isDropTarget: 'solid'
-  },
-  borderColor: {
-    isDropTarget: 'blue-800',
-    forcedColors: {
-      isDropTarget: 'Highlight'
-    }
-  },
-  backgroundColor: {
-    isDropTarget: 'gray-25',
-    forcedColors: {
-      default: 'transparent',
-      isDropTarget: 'Background'
-    }
-  },
-  forcedColorAdjust: 'none'
-});
-
 const centeredWrapper = style({
   display: 'flex',
   alignItems: 'center',
@@ -934,20 +878,6 @@ const emptyStateWrapper = style({
   boxSizing: 'border-box',
   padding: 16
 });
-
-export function InsertionIndicator({target}: {target: ItemDropTarget}) {
-  return (
-    <DropIndicator className="" target={target}>
-      {({isDropTarget}) => (
-        <div className={insertionIndicatorWrapper}>
-          <div className={insertionIndicatorCircle({isDropTarget})} />
-          <div className={insertionIndicatorBar({isDropTarget})} />
-          <div className={insertionIndicatorCircle({isDropTarget})} />
-        </div>
-      )}
-    </DropIndicator>
-  );
-}
 
 function ListSelectionCheckbox({isDisabled}: {isDisabled: boolean}) {
   let selectionContext = useSlottedContext(CheckboxContext, 'selection');

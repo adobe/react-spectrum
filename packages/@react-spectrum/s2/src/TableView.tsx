@@ -92,7 +92,7 @@ import {
 import {getOwnerDocument} from 'react-aria/private/utils/domHelpers';
 import {GridNode} from 'react-stately/private/grid/GridCollection';
 import {IconContext} from './Icon';
-import {InsertionIndicator} from './ListView';
+import {InsertionIndicator} from './InsertionIndicator';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {Key} from '@react-types/shared';
@@ -299,7 +299,19 @@ const table = style<
       isCheckboxSelection: 56
     }
   },
-  forcedColorAdjust: 'none'
+  forcedColorAdjust: 'none',
+  '--indicator-level-padding': {
+    type: 'width',
+    value: {
+      // 16 (drag cell width) + 14 (chevron start padding + half of chevron (5) - radius of drop indicator circle (6) - 1 (fudge factor)) + 40 (checkbox cell width)
+      default: 30,
+      isCheckboxSelection: 71
+    }
+  },
+  '--indent': {
+    type: 'width',
+    value: 16
+  }
 });
 
 // component-height-100
@@ -503,7 +515,6 @@ export const TableView = forwardRef(function TableView(
   let scrollRef = useRef<HTMLElement | null>(null);
   let isCheckboxSelection = selectionMode === 'multiple' || selectionMode === 'single';
   let isDragAndDrop = !!dragAndDropHooks?.useDraggableCollectionState;
-
   let {selectedKeys, onSelectionChange, actionBar, actionBarHeight} = useActionBarContainer({
     ...props,
     scrollRef
@@ -1227,10 +1238,6 @@ const commonCellStyles = {
 } as const;
 
 const treeColumnStyles = {
-  '--indent': {
-    type: 'width',
-    value: 16
-  },
   '--treeColumnPadding': {
     type: 'width',
     value: {

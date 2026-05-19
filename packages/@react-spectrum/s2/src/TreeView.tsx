@@ -33,15 +33,7 @@ import {
   Key,
   LoadingState
 } from '@react-types/shared';
-import {DragAndDropContext, DropIndicator} from 'react-aria-components/useDragAndDrop';
-import {
-  dragButton,
-  insertionIndicatorBar,
-  insertionIndicatorCircle,
-  isFirstItem,
-  isPrevSelected,
-  S2ListLayout
-} from './ListView';
+import {dragButton, isFirstItem, isPrevSelected, S2ListLayout} from './ListView';
 import DragHandle from '../ui-icons/DragHandle';
 import {DragPreview} from './DragPreview';
 import {
@@ -50,6 +42,7 @@ import {
   UnsafeStyles
 } from './style-utils' with {type: 'macro'};
 import {IconContext} from './Icon';
+import {InsertionIndicator} from './InsertionIndicator';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {ProgressCircle} from './ProgressCircle';
@@ -237,38 +230,6 @@ const tree = style<TreeRenderProps>({
 
 let InternalTreeViewContext = createContext<{selectionStyle?: 'highlight' | 'checkbox'}>({});
 
-const insertionIndicatorWrapper = style({
-  position: 'absolute',
-  inset: 0,
-  display: 'flex',
-  alignItems: 'center',
-  marginStart: {
-    default:
-      'calc((var(--tree-item-level, 1) - 1) * var(--indent) + var(--indicator-level-padding, 0px))',
-    isRoot: 0
-  }
-});
-
-function TreeInsertionIndicator({target}: {target: ItemDropTarget}) {
-  let {dropState} = useContext(DragAndDropContext) ?? {};
-  let level = 0;
-  if (target.type === 'item' && dropState?.collection) {
-    level = dropState.collection.getItem(target.key)?.level ?? 0;
-  }
-
-  return (
-    <DropIndicator className="" target={target}>
-      {({isDropTarget}) => (
-        <div className={insertionIndicatorWrapper({isRoot: level === 0})}>
-          <div className={insertionIndicatorCircle({isDropTarget})} />
-          <div className={insertionIndicatorBar({isDropTarget})} />
-          <div className={insertionIndicatorCircle({isDropTarget})} />
-        </div>
-      )}
-    </DropIndicator>
-  );
-}
-
 /**
  * A tree view provides users with a way to navigate nested hierarchical information.
  */
@@ -293,7 +254,7 @@ export const TreeView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Tr
 
   if (dragAndDropHooks) {
     dragAndDropHooks.renderDropIndicator = target => (
-      <TreeInsertionIndicator target={target as ItemDropTarget} />
+      <InsertionIndicator target={target as ItemDropTarget} />
     );
   }
   let renderer;
