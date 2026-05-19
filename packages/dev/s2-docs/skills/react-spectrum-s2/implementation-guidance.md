@@ -10,7 +10,7 @@ import Folder from '@react-spectrum/s2/icons/Folder';
 import CloudUpload from '@react-spectrum/s2/illustrations/gradient/generic2/CloudUpload';
 ```
 
-Common types and list-data hooks are re-exported from `@react-spectrum/s2` — don't pull them from `react-aria-components`, `react-stately`, or `@react-types/*`:
+Common types and list-data hooks are re-exported from `@react-spectrum/s2` — prefer importing from there instead of `react-aria-components`, `react-stately`, or `@react-types/*`:
 
 ```tsx
 import type {Key, Selection, SortDescriptor, PressEvent, RangeValue, DateValue, DateRange, TimeValue, RouterConfig} from '@react-spectrum/s2';
@@ -19,7 +19,7 @@ import {useListData, useTreeData, useAsyncList} from '@react-spectrum/s2';
 
 ### Use the typed Item for each collection
 
-Each S2 collection component has its own item export — don't import a generic `Item` from `react-aria-components`. `Menu` → `MenuItem`/`MenuSection`; `Picker` → `PickerItem`/`PickerSection`; `ComboBox` → `ComboBoxItem`/`ComboBoxSection`; `ListView` → `ListViewItem`; `TreeView` → `TreeViewItem` (with `TreeViewItemContent`); `TableView` → `Row`/`Column`/`Cell`/`TableHeader`/`TableBody`; `SegmentedControl` → `SegmentedControlItem`; `TagGroup` → `Tag`; `Breadcrumbs` → `Breadcrumb`; `Accordion` → `AccordionItem` (with `AccordionItemHeader`/`AccordionItemTitle`/`AccordionItemPanel`).
+Each S2 collection component has its own item export — there is no generic `Item` component. `Menu` → `MenuItem`/`MenuSection`; `Picker` → `PickerItem`/`PickerSection`; `ComboBox` → `ComboBoxItem`/`ComboBoxSection`; `ListView` → `ListViewItem`; `TreeView` → `TreeViewItem` (with `TreeViewItemContent`); `TableView` → `Row`/`Column`/`Cell`/`TableHeader`/`TableBody`; `SegmentedControl` → `SegmentedControlItem`; `TagGroup` → `Tag`; `Breadcrumbs` → `Breadcrumb`; `Accordion` → `AccordionItem` (with `AccordionItemHeader`/`AccordionItemTitle`/`AccordionItemPanel`).
 
 ## Styling
 
@@ -122,30 +122,6 @@ Prefer **semantic** color tokens when the color carries meaning: `'accent'`, `'n
 ### Don't restate default prop values
 
 `variant="primary"` on `Button`, `size="M"` on most components, `density="regular"` on collections — setting a prop to its default is noise. Omit it.
-
-### Built-in macro utilities
-
-`@react-spectrum/s2/style` exports helpers — use them instead of rebuilding by hand:
-
-- `focusRing()` — Spectrum focus outline (color, width, offset, `isFocusVisible`, forced colors). Spread into a `style({...})` call; the call must receive `isFocusVisible` at runtime. RAC components pass this as a render prop to className, or you can use the `useFocusRing` hook.
-
-  ```tsx
-  import {focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
-  import {Button} from 'react-aria-components';
-
-  const tile = style({
-    ...focusRing(),
-    borderRadius: 'lg',
-    padding: 8
-  });
-  <Button className={tile}>…</Button>
-  ```
-- `lightDark(light, dark)` — a value that adapts to the current color scheme. Use this for one-off light/dark differences.
-- `baseColor(token)` / `color(token)` — produce a color value for custom CSS variables.
-- `space(px)` / `fontRelative(px)` — escape hatches for non-grid pixel values (rare).
-- `pressScale(scale)` — press-state scale transforms on custom interactive elements.
-
-See [Styling]({{guidesBase}}styling.md) and [Style Macro]({{guidesBase}}style-macro.md) for the full reference. When building a custom component on top of React Aria Components with the `style` macro, see [Creating Custom Components]({{guidesBase}}creating-custom-components.md) for best practices. If you hit a `style` macro import error, see the 'Framework setup' section of [Getting started]({{guidesBase}}getting-started.md).
 
 ## Responsive design
 
@@ -268,7 +244,7 @@ Every collection (`ListView`, `TableView`, `CardView`, `TreeView`, `Menu`, `List
 ### Empty and loading states are built in
 
 - Empty state: pass `renderEmptyState` returning an `IllustratedMessage`. Don't conditionally swap the whole collection for a custom empty `div`.
-- Async data: use `useAsyncList` (or the user's preferred data fetching library) plus the collection's `loadingState`/`onLoadMore` props. Don't render a separate spinner above the collection.
+- Async data: use `useAsyncList` (or the user's preferred data fetching library) plus the collection's `loadingState`/`onLoadMore` props. Don't render a separate spinner.
 
 ### Bulk actions with ActionBar
 
@@ -374,4 +350,3 @@ Before reporting the task as complete, exercise the project's own toolchain. The
 - **Typecheck.** Run the project's typecheck (`tsc --noEmit`, `tsc -b`, etc.). Fix everything — wrong `size` values, missing required props, raw CSS in the macro all surface here.
 - **Build or dev server.** Run at least once. The macro's "cannot statically evaluate" error means a value inside `style({...})` depends on something non-literal; refactor to use runtime conditions or the runtime style function.
 - **Runtime warnings.** If you can render the page, check the console for missing `aria-label`/`textValue`, deprecated props, etc. Treat these as failures.
-

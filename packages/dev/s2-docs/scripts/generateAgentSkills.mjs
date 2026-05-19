@@ -36,7 +36,7 @@ const SKILLS = {
   'react-spectrum-s2': {
     name: 'react-spectrum-s2',
     description:
-      'Build accessible UI components with React Spectrum S2 (Spectrum 2). Use when developers mention React Spectrum, Spectrum 2, S2, @react-spectrum/s2, or Adobe design system components. Provides documentation for buttons, forms, dialogs, tables, date/time pickers, color pickers, and other accessible components. Includes React Aria Components documentation as a fallback reference for custom components that must use unstyled primitives.',
+      "Build UIs with React Spectrum S2 (Spectrum 2), Adobe's component library for React. Use when developers are using `@react-spectrum/s2` or need Adobe design system components. Provides comprehensive documentation, guides, and guidelines for all components. Also includes React Aria Components documentation as a reference for the cases where a custom component must be built on top of the unstyled React Aria primitives.",
     license: 'Apache-2.0',
     sourceDir: 's2',
     additionalReferenceLibraries: [
@@ -45,7 +45,7 @@ const SKILLS = {
         referenceSubdir: 'react-aria',
         title: 'React Aria Components',
         description:
-          'Fallback documentation for unstyled accessible primitives. Use only when no React Spectrum S2 component fits the required interaction or layout.'
+          'Documentation for unstyled accessible primitives. Use only when no React Spectrum S2 component fits the requirements.'
       }
     ],
     compatibility: 'Requires a React project with @react-spectrum/s2 installed.',
@@ -86,28 +86,23 @@ const CUSTOM_SKILL_CONTENT = {
   'react-spectrum-s2': {
     skillNotesMarkdown: [
       'If the requirements do not clearly specify which React Spectrum component to use, consult the [Component Decision Tree](references/guides/component-decision-tree.md) before choosing a component.',
-      'If the request involves a Figma design, frame, or URL — or if the Figma MCP (`get_design_context`, `get_screenshot`, `get_variable_defs`, `search_design_system`) is available — consult [Implementing Figma designs with React Spectrum S2](references/guides/figma-to-s2.md) before generating code. The Figma MCP returns React + Tailwind reference output that must be translated to S2 components and the `style` macro.',
+      'If the request involves a Figma design, frame, or URL — or if the Figma MCP (`get_design_context`,`search_design_system`, etc.) is available — consult [Implementing Figma designs with React Spectrum S2](references/guides/figma-to-s2.md) before generating code.',
+      'When writing tests that exercise S2 components, consult [Testing with React Spectrum S2](references/guides/test-utils-guidance.md) and prefer the ARIA pattern testers from `@react-spectrum/test-utils` over hand-rolled role/selector queries.',
       `## React Spectrum S2 vs React Aria Components
 
 React Spectrum S2 is built on top of React Aria Components. The S2 components add Spectrum 2 styling, behavior, and slot structure on top of the unstyled React Aria primitives. Always prefer S2 components for React Spectrum work because they are pre-styled, design-system compliant, and cover most common UI patterns.
 
 Only reach for React Aria Components directly when:
-- Building a custom component because no S2 component matches the required interaction or layout. Follow [Creating Custom Components](references/guides/creating-custom-components.md) and pair the React Aria primitive with the S2 \`style\` macro for Spectrum styling.
-- Composing a primitive that S2 does not expose at all, such as \`FocusScope\`, \`VisuallyHidden\`, \`useFocusRing\`, \`mergeProps\`, or \`Toolbar\`.
+- Building a custom component because no S2 component matches the requirements. Follow [Creating Custom Components](references/guides/creating-custom-components.md) and pair the React Aria primitive with the S2 \`style\` macro for Spectrum styling.
+- You need a utility such as \`FocusScope\`, \`VisuallyHidden\`, \`useFocusRing\`, \`mergeProps\`, etc.
 
-When using both libraries in the same file:
-- Import S2 components from \`@react-spectrum/s2/<ComponentName>\` and React Aria primitives from \`react-aria-components\` or \`react-aria-components/<ComponentName>\`.
-- Do not mix \`Item\` or \`Section\` from \`react-aria-components\` into S2 collections. Use the typed item exports from the S2 collection itself, such as \`MenuItem\`, \`PickerItem\`, or \`ListViewItem\`.
-- Do not re-import shared types such as \`Key\`, \`Selection\`, \`SortDescriptor\`, or \`PressEvent\` from \`react-aria-components\` when they are re-exported from \`@react-spectrum/s2\`.
-
-The React Aria Components documentation is bundled under \`references/react-aria/\`. Start with [React Aria llms.txt](references/react-aria/llms.txt) only after confirming that no S2 component fits.`
+The React Aria Components documentation is bundled under \`references/react-aria/\`. Many unstyled React Aria Components share the same name as S2 components, so ensure that you're searching and accessing the correct docs where needed.`
     ].join('\n\n'),
     embeddedMarkdownPaths: [
       path.join(
         REPO_ROOT,
         'packages/dev/s2-docs/skills/react-spectrum-s2/implementation-guidance.md'
-      ),
-      path.join(REPO_ROOT, 'packages/dev/s2-docs/skills/react-spectrum-s2/test-utils-guidance.md')
+      )
     ],
     guideEntries: [
       {
@@ -139,6 +134,16 @@ The React Aria Components documentation is bundled under \`references/react-aria
         ),
         description:
           'How to build custom Spectrum 2 components using React Aria Components and the `style` macro.'
+      },
+      {
+        title: 'Testing with React Spectrum S2',
+        path: 'test-utils-guidance.md',
+        sourcePath: path.join(
+          REPO_ROOT,
+          'packages/dev/s2-docs/skills/react-spectrum-s2/test-utils-guidance.md'
+        ),
+        description:
+          'How to write tests for S2 components using ARIA pattern testers from `@react-spectrum/test-utils`.'
       }
     ]
   },
@@ -532,15 +537,6 @@ The \`references/\` directory contains detailed documentation organized as follo
     content += '\n';
   }
 
-  if (categories.testing.length > 0) {
-    content += `### Testing
-`;
-    for (const entry of categories.testing) {
-      content += `- [${entry.title}](references/testing/${entry.path})\n`;
-    }
-    content += '\n';
-  }
-
   if (additionalReferenceLibraries.length > 0) {
     content += `### Additional References
 `;
@@ -727,7 +723,8 @@ function copyDocsDocumentation(skillConfig, categories, skillDir, options = {}) 
       targetPath,
       renderCustomMarkdown(sourcePath, {
         '{{guidesBase}}': '',
-        '{{componentsBase}}': '../components/'
+        '{{componentsBase}}': '../components/',
+        '{{testingBase}}': '../testing/'
       }) + '\n'
     );
   }
