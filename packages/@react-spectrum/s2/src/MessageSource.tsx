@@ -23,10 +23,10 @@ import {getAllowedOverrides, StyleProps, UnsafeStyles} from './style-utils' with
 import {Link, LinkProps} from './Link';
 import {NumberFormatter} from '@internationalized/number';
 import React, {createContext, forwardRef, useContext} from 'react';
+import {SlotProps} from 'react-aria-components/slots';
+import {style} from '../style' with {type: 'macro'};
 import {useDOMRef} from './useDOMRef';
 import {useLocale} from 'react-aria/I18nProvider';
-import {style} from '../style' with {type: 'macro'};
-import {SlotProps} from 'react-aria-components/slots';
 
 export interface MessageSourceProps extends Omit<DisclosureProps, 'isQuiet'> {
   label: string;
@@ -40,21 +40,19 @@ export const MessageSource = (forwardRef as forwardRefType)(function MessageSour
   props: MessageSourceProps,
   ref: DOMRef<HTMLDivElement>
 ) {
-  let {label, ...otherProps} = props;
+  let {label, children, size = 'M', ...otherProps} = props;
 
   return (
-    <Disclosure {...otherProps} ref={ref} isQuiet>
-      {/* we can do this if we don't plan to allow extra stuff like buttons and icons inside the message source. otherwise, might be good to do what we did in S2 Disclosure and have users render their own DisclosureTitle/DisclosureHeader */}
-      {/* will note that this matches more closely with how swc has chosen to implement it */}
+    <Disclosure {...otherProps} size={size} ref={ref} isQuiet>
       <DisclosureTitle>{label}</DisclosureTitle>
-      {props.children}
+      {children}
     </Disclosure>
   );
 });
 
 // SourceList injects a 1-based index so SourceListItem
 // can render it without needing an explicit prop.
-const SourceListIndexContext = createContext<number>(0);
+const SourceListIndexContext = createContext<number>(1);
 
 const listStyles = style({
   listStyleType: 'none',
@@ -108,15 +106,11 @@ export const SourceListItem = (forwardRef as forwardRefType)(function SourceList
   ref: DOMRef<HTMLLIElement>
 ) {
   let index = useContext(SourceListIndexContext);
-  let {id, children, UNSAFE_style, UNSAFE_className = '', ...otherProps} = props;
+  let {children, UNSAFE_style, UNSAFE_className = '', ...otherProps} = props;
   let itemRef = useDOMRef(ref);
 
   return (
-    <li
-      key={id}
-      ref={itemRef}
-      style={UNSAFE_style}
-      className={(UNSAFE_className ?? '') + itemStyles}>
+    <li ref={itemRef} style={UNSAFE_style} className={(UNSAFE_className ?? '') + itemStyles}>
       <NumberBadge value={index} />
       {/* maybe link should support t-shirt sizing? or we need to make it custom so that the font size changes  */}
       <Link variant="secondary" {...otherProps}>
@@ -128,7 +122,7 @@ export const SourceListItem = (forwardRef as forwardRefType)(function SourceList
 
 export interface NumberBadgeStyleProps {
   /**
-   * The size of the notification badge.
+   * The size of the number badge.
    *
    * @default 'S'
    */
@@ -143,7 +137,6 @@ export interface NumberBadgeProps
   value: number;
 }
 
-// TODO: need to update the styles so that the width of the badge is consistent (so making sure the numbers themselves have the same width if they have the same number of digits)
 const badge = style(
   {
     display: 'flex',
@@ -169,7 +162,6 @@ const badge = style(
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'gray-200',
-    // figure out the tshirt sizing here
     width: 16,
     height: 20,
     borderRadius: 'sm'
@@ -178,7 +170,7 @@ const badge = style(
 );
 
 /**
- * NumberBadge are used to number the order in a list...idk something.
+ * A small visual indicator showing a count or position.
  */
 export const NumberBadge = forwardRef(function Badge(
   props: NumberBadgeProps,
@@ -189,21 +181,24 @@ export const NumberBadge = forwardRef(function Badge(
   let {locale} = useLocale();
   let formattedValue = '';
 
-  if (value <= 0) {
-    throw new Error('Value cannot be negative or zero');
-  } else if (!Number.isInteger(value)) {
-    throw new Error('Value must be a positive integer');
+  if (value <= 0 && process.env.NODE_ENV !== 'production') {
+    console.warn('Value cannot be negative or zero');
+  } else if (!Number.isInteger(value) && process.env.NODE_ENV !== 'production') {
+    console.warn('Value must be a positive integer');
   } else {
     formattedValue = new NumberFormatter(locale).format(value);
   }
 
-  let ariaLabel = props['aria-label'] || undefined;
+  // TODO: If we expect this to be used standalone, then it might be worth adding this back in.
+  // let ariaLabel = props['aria-label'] || undefined;
 
   return (
     <span
-      {...filterDOMProps(otherProps, {labelable: true})}
-      role={ariaLabel && 'img'}
-      aria-label={ariaLabel}
+      {...filterDOMProps(otherProps)}
+      // role={ariaLabel && 'img'}
+      // aria-label={ariaLabel}
+      // We set aria-hidden to true to prevent screenreader from announcing the value of the badge by itself which is not very meaningful.
+      aria-hidden="true"
       className={
         (props.UNSAFE_className || '') +
         badge(
