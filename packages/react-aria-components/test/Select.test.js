@@ -568,11 +568,15 @@ describe('Select', () => {
       );
 
       let wrapper = getByTestId('select');
+
+      let selectTester = testUtilUser.createTester('Select', {
+        root: wrapper,
+        interactionType: 'keyboard'
+      });
+      let trigger = selectTester.getTrigger();
+
       await user.tab();
       await user.keyboard('B');
-
-      let selectTester = testUtilUser.createTester('Select', {root: wrapper, interactionType: 'keyboard'});
-      let trigger = selectTester.trigger;
       expect(trigger).toHaveTextContent('Banana');
 
       act(() => {
@@ -601,11 +605,15 @@ describe('Select', () => {
       );
 
       let wrapper = getByTestId('select');
+
+      let selectTester = testUtilUser.createTester('Select', {
+        root: wrapper,
+        interactionType: 'keyboard'
+      });
+      let trigger = selectTester.getTrigger();
+
       await user.tab();
       await user.keyboard('bb');
-
-      let selectTester = testUtilUser.createTester('Select', {root: wrapper, interactionType: 'keyboard'});
-      let trigger = selectTester.trigger;
       expect(trigger).toHaveTextContent('Blackberry');
     });
   });

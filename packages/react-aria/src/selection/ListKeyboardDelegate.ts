@@ -346,7 +346,7 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
       }
 
       key = this.getNextKey(key);
-      
+
       if (key == null && !hasWrapped) {
         key = this.getFirstKey();
         hasWrapped = true;

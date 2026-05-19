@@ -48,9 +48,9 @@ export interface TypeSelectAria {
 export function useTypeSelect(options: AriaTypeSelectOptions): TypeSelectAria {
   let {keyboardDelegate, selectionManager, onTypeSelect} = options;
   let state = useRef<{
-    search: string,
-    timeout: ReturnType<typeof setTimeout> | undefined,
-    startKey: Key | null
+    search: string;
+    timeout: ReturnType<typeof setTimeout> | undefined;
+    startKey: Key | null;
   }>({
     search: '',
     timeout: undefined,
@@ -98,10 +98,7 @@ export function useTypeSelect(options: AriaTypeSelectOptions): TypeSelectAria {
       if (
         selectionManager.focusedKey != null &&
         selectionManager.isFocused &&
-        (
-          state.search.length > 1 ||
-          isFreshSearch
-        )
+        (state.search.length > 1 || isFreshSearch)
       ) {
         let focusedItem = selectionManager.collection.getItem(selectionManager.focusedKey);
         if (focusedItem?.textValue) {
@@ -114,7 +111,10 @@ export function useTypeSelect(options: AriaTypeSelectOptions): TypeSelectAria {
       }
 
       if (key == null) {
-        key = keyboardDelegate.getKeyForSearch(state.search, state.startKey ?? selectionManager.focusedKey);
+        key = keyboardDelegate.getKeyForSearch(
+          state.search,
+          state.startKey ?? selectionManager.focusedKey
+        );
       }
 
       // If no key found, search from the top.
