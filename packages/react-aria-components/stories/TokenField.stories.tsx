@@ -14,7 +14,7 @@ import {Meta, StoryFn} from '@storybook/react';
 import React, {useMemo, useRef, useState} from 'react';
 import './styles.css';
 import styles from '../example/index.css';
-import {TokenField, positionToDOMRange} from '../src/TokenField';
+import {TokenField, Token, positionToDOMRange} from '../src/TokenField';
 import {Autocomplete} from '../src/Autocomplete';
 import {Popover} from '../src/Popover';
 import {Menu} from '../src/Menu';
@@ -33,13 +33,18 @@ const sample = new TokenSegmentList([
   {type: 'token', text: 'Hello'},
   {type: 'text', text: ' tokens testing '},
   {type: 'token', text: 'World'},
+  {type: 'token', text: 'Testing'},
   {type: 'text', text: ' test'}
 ]);
 
 const mentionTokenRegex = /(?<=\s|^)@\S+(?=\s)/g;
 
 export const TokenFieldExample: TokenFieldStory = () => {
-  return <TokenField defaultValue={sample} aria-label="Message" />;
+  return (
+    <TokenField defaultValue={sample} aria-label="Message">
+      {segment => <Token>{segment.text}</Token>}
+    </TokenField>
+  );
 };
 
 const usernames = [
@@ -107,7 +112,9 @@ export const WithPopover: TokenFieldStory = () => {
     filterValue == null ? [] : usernames.filter(emoji => emoji.username.includes(filterValue));
   return (
     <Autocomplete>
-      <TokenField value={value} onChange={setValue} aria-label="Message" ref={inputRef} />
+      <TokenField value={value} onChange={setValue} aria-label="Message" ref={inputRef}>
+        {segment => <Token>{segment.text}</Token>}
+      </TokenField>
       <Popover
         triggerRef={inputRef}
         isOpen={filterAnchor != null && items.length > 0}

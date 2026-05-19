@@ -557,7 +557,7 @@ export function useAutocomplete<T>(
 
   inputProps = {
     ...inputProps,
-    ...(shouldUseVirtualFocus && virtualFocusProps),
+    ...(shouldUseVirtualFocus && hasCollection && virtualFocusProps),
     enterKeyHint: 'go',
     'aria-controls': hasCollection ? collectionId : undefined,
     // TODO: readd proper logic for completionMode = complete (aria-autocomplete: both)

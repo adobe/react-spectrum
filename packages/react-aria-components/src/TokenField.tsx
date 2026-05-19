@@ -1,4 +1,13 @@
-import React, {ForwardedRef, forwardRef, HTMLAttributes, useMemo, useRef} from 'react';
+import React, {
+  cloneElement,
+  ForwardedRef,
+  forwardRef,
+  Fragment,
+  HTMLAttributes,
+  useMemo,
+  useRef,
+  useState
+} from 'react';
 import {useControlledState} from 'react-stately/useControlledState';
 import {useEvent} from 'react-aria/private/utils/useEvent';
 import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
@@ -9,24 +18,30 @@ import {useObjectRef} from 'react-aria/useObjectRef';
 import {SlotProps, useSlottedContext} from './utils';
 import {FieldInputContext} from './Autocomplete';
 import {mergeRefs} from 'react-aria/mergeRefs';
+import {announce} from 'react-aria/private/live-announcer/LiveAnnouncer';
+import {RenderProps, StyleRenderProps, useRenderProps} from './utils';
+import {useFocusRing} from 'react-aria/useFocusRing';
 
 export type {TokenFieldSegment};
 
-export interface TokenFieldProps extends SlotProps {
-  /** Structured document: text runs and atomic tokens. */
+interface TokenFieldRenderProps {
+  isReadOnly: boolean;
+  isDisabled: boolean;
+  isFocused: boolean;
+  isFocusVisible: boolean;
+}
+
+export interface TokenFieldProps extends StyleRenderProps<TokenFieldRenderProps>, SlotProps {
   value?: TokenSegmentList;
   defaultValue?: TokenSegmentList;
   onChange?: (value: TokenSegmentList) => void;
-  /** When false (default), newline insertion is blocked. */
+  children: (segment: TokenFieldSegment) => React.ReactElement;
   multiline?: boolean;
   isReadOnly?: boolean;
   isDisabled?: boolean;
   'aria-label'?: string;
   'aria-labelledby'?: string;
   'aria-describedby'?: string;
-  id?: string;
-  className?: string;
-  style?: React.CSSProperties;
 }
 
 export const CLIPBOARD_MIME_TYPE = 'application/vnd.react-aria.tokens+json';
@@ -39,12 +54,10 @@ export const TokenField = forwardRef(function TokenField(
     value: valueProp,
     defaultValue: defaultValueProp = new TokenSegmentList([]),
     onChange,
+    children,
     multiline = false,
     isReadOnly = false,
     isDisabled = false,
-    id,
-    className,
-    style,
     'aria-label': ariaLabel,
     'aria-labelledby': ariaLabelledBy,
     'aria-describedby': ariaDescribedBy
@@ -83,10 +96,11 @@ export const TokenField = forwardRef(function TokenField(
 
   useEvent(ref, 'beforeinput', e => {
     let selection = window.getSelection();
-    let range = selection?.getRangeAt(0)!;
-    let [start, end] = rangeToPositions(range);
-
-    // console.log(start, end)
+    if (!selection || selection.rangeCount === 0) {
+      return;
+    }
+    let range = selection.getRangeAt(0);
+    let [start, end] = rangeToPositions(ref.current!, range);
 
     // https://www.w3.org/TR/input-events-2/#interface-InputEvent-Attributes
     // console.log(e.inputType);
@@ -192,8 +206,11 @@ export const TokenField = forwardRef(function TokenField(
   let compositionStart = useRef<[Position, Position] | null>(null);
   useEvent(ref, 'compositionstart', () => {
     let selection = window.getSelection();
-    let range = selection?.getRangeAt(0)!;
-    compositionStart.current = rangeToPositions(range);
+    if (!selection || selection.rangeCount === 0) {
+      return;
+    }
+    let range = selection.getRangeAt(0);
+    compositionStart.current = rangeToPositions(ref.current!, range);
   });
 
   useEvent(ref, 'compositionend', e => {
@@ -208,12 +225,12 @@ export const TokenField = forwardRef(function TokenField(
     if (typeof document.caretPositionFromPoint === 'function') {
       let pos = document.caretPositionFromPoint(e.clientX, e.clientY);
       if (pos) {
-        dropPosition.current = getPosition(pos.offsetNode, pos.offset);
+        dropPosition.current = getPosition(ref.current!, pos.offsetNode, pos.offset);
       }
     } else if (typeof document.caretRangeFromPoint === 'function') {
       let range = document.caretRangeFromPoint(e.clientX, e.clientY);
       if (range) {
-        dropPosition.current = getPosition(range.startContainer, range.startOffset);
+        dropPosition.current = getPosition(ref.current!, range.startContainer, range.startOffset);
       }
     }
   });
@@ -222,9 +239,11 @@ export const TokenField = forwardRef(function TokenField(
     if ('clipboardData' in e) {
       e.preventDefault();
     }
-    let selection = window.getSelection();
-    let range = selection?.getRangeAt(0)!;
-    let [start, end] = rangeToPositions(range);
+    let selection = getSelection(ref.current!);
+    if (!selection) {
+      return;
+    }
+    let [start, end] = selection;
     let slice = state.slice(start, end);
     let dataTransfer = 'clipboardData' in e ? e.clipboardData : e.dataTransfer;
     dataTransfer?.setData(CLIPBOARD_MIME_TYPE, JSON.stringify(slice.segments));
@@ -238,7 +257,26 @@ export const TokenField = forwardRef(function TokenField(
   useEvent(ref, 'copy', writeClipboardData);
   useEvent(ref, 'cut', writeClipboardData);
   useEvent(ref, 'dragstart', writeClipboardData);
-  useSelectionChange(ref, () => state.endCoalescing());
+  useSelectionChange(ref, () => {
+    state.endCoalescing();
+
+    // When the cursor moves next to a token, announce it.
+    // Otherwise the screen reader will only announce the first/last character.
+    if (window.getSelection()?.isCollapsed) {
+      let [start, end] = getSelection(ref.current!)!;
+      if (start.index === end.index && start.offset === 0) {
+        let segment = state.segments[start.index];
+        if (segment.type === 'token') {
+          announce(segment.text, 'assertive');
+        }
+      } else if (start.offset === state.segments[start.index].text.length) {
+        let segment = state.segments[start.index + 1];
+        if (segment?.type === 'token') {
+          announce(segment.text, 'assertive');
+        }
+      }
+    }
+  });
 
   useEvent(ref, 'keydown', e => {
     if (e.key === 'z' && isCtrlKeyPressed(e) && !e.shiftKey) {
@@ -249,21 +287,91 @@ export const TokenField = forwardRef(function TokenField(
       e.preventDefault();
       e.stopPropagation();
       apply(state => state.redo());
+    } else if (e.key === 'ArrowLeft') {
+      // Firefox does not allow placing the cursor between adjacent tokens, so navigate manually.
+      let selection = getSelection(ref.current!);
+      if (!selection) {
+        return;
+      }
+
+      let {index, offset} = selection[0];
+      let prev = state.segments[index - 1];
+      if (offset === 0 && prev?.type === 'token') {
+        e.preventDefault();
+        e.stopPropagation();
+
+        let twoPrev = state.segments[index - 2];
+        setSelection(
+          ref.current!,
+          twoPrev?.type === 'text'
+            ? {index: index - 2, offset: twoPrev.text.length}
+            : {index: index - 1, offset: 0},
+          true
+        );
+      }
+    } else if (e.key === 'ArrowRight') {
+      let selection = getSelection(ref.current!);
+      if (!selection) {
+        return;
+      }
+      let {index, offset} = selection[0];
+      let cur = state.segments[index];
+      let next = state.segments[index + 1];
+      if (
+        (cur?.type === 'token' && next?.type === 'token') ||
+        (cur?.type === 'text' && next?.type === 'token' && offset === cur.text.length)
+      ) {
+        e.preventDefault();
+        e.stopPropagation();
+        setSelection(
+          ref.current!,
+          {
+            index: index + (cur.type === 'token' ? 1 : 2),
+            offset: 0
+          },
+          true
+        );
+      }
+    }
+  });
+
+  let {isFocused, isFocusVisible, focusProps} = useFocusRing();
+
+  let renderProps = useRenderProps({
+    ...props,
+    children: undefined,
+    defaultClassName: 'react-aria-TokenField',
+    values: {
+      isFocused,
+      isFocusVisible,
+      isDisabled,
+      isReadOnly
     }
   });
 
   return (
     <div
+      {...renderProps}
+      {...focusProps}
+      {...(autocompleteProps as HTMLAttributes<HTMLDivElement>)}
       ref={mergeRefs(ref, autocompleteRef as any)}
       role="textbox"
       contentEditable="true"
       suppressContentEditableWarning
-      {...(autocompleteProps as HTMLAttributes<HTMLDivElement>)}
-      style={{padding: 4, whiteSpace: 'pre-wrap'}}>
+      aria-label={ariaLabel}
+      aria-labelledby={ariaLabelledBy}
+      aria-describedby={ariaDescribedBy}
+      data-focused={isFocused || undefined}
+      data-focus-visible={isFocusVisible || undefined}
+      data-disabled={isDisabled || undefined}
+      data-readonly={isReadOnly || undefined}
+      style={{...renderProps.style, whiteSpace: 'pre-wrap'}}>
       {state.segments.map((v, i) => {
         switch (v.type) {
-          case 'token':
-            return <Token key={i}>{v.text}</Token>;
+          case 'token': {
+            let token = children(v);
+            return <Fragment key={i}>{token}</Fragment>;
+          }
           case 'text':
             return v.text;
         }
@@ -272,23 +380,59 @@ export const TokenField = forwardRef(function TokenField(
   );
 });
 
-function Token({children}) {
+interface TokenRenderProps {
+  isSelected: boolean;
+  isDisabled: boolean;
+}
+
+interface TokenProps extends RenderProps<TokenRenderProps> {}
+
+export const Token = forwardRef(function Token(
+  props: TokenProps,
+  ref: ForwardedRef<HTMLSpanElement>
+) {
+  let objectRef = useObjectRef(ref);
+  let [isSelected, setSelected] = useState(false);
+
+  useEvent(useRef(document), 'selectionchange', () => {
+    let selection = window.getSelection();
+    if (!selection || selection.rangeCount === 0 || !objectRef.current) {
+      return;
+    }
+
+    let range = selection.getRangeAt(0);
+    if (!range.collapsed && range.intersectsNode(objectRef.current)) {
+      setSelected(true);
+    } else {
+      setSelected(false);
+    }
+  });
+
+  let renderProps = useRenderProps({
+    ...props,
+    defaultClassName: 'react-aria-Token',
+    values: {
+      isSelected,
+      isDisabled: false
+    }
+  });
+
   return (
     <span
+      ref={objectRef}
+      {...renderProps}
       contentEditable="false"
       suppressContentEditableWarning
+      data-selected={isSelected || undefined}
       style={{
-        border: '1px solid gray',
-        borderRadius: 4,
-        padding: '0 2px',
-        // marginRight: 4,
+        ...renderProps.style,
         userSelect: 'all',
         WebkitUserSelect: 'all'
       }}>
-      {children}
+      {renderProps.children}
     </span>
   );
-}
+});
 
 function indexOfNode(node: Node) {
   let index = 0;
@@ -300,27 +444,40 @@ function indexOfNode(node: Node) {
   return index;
 }
 
-function rangeToPositions(range: Range | StaticRange): [Position, Position] {
-  let start = getPosition(range.startContainer, range.startOffset);
-  let end = getPosition(range.endContainer, range.endOffset);
+function getSelection(container: Element): [Position, Position] | null {
+  let selection = window.getSelection();
+  if (!selection || selection.rangeCount === 0) {
+    return null;
+  }
+  let range = selection.getRangeAt(0);
+  return rangeToPositions(container, range);
+}
+
+function rangeToPositions(container: Element, range: Range | StaticRange): [Position, Position] {
+  let start = getPosition(container, range.startContainer, range.startOffset, false);
+  let end = getPosition(container, range.endContainer, range.endOffset, !range.collapsed);
   return [start, end];
 }
 
-function getPosition(node: Node, offset: number): Position {
-  if (node.nodeType === Node.ELEMENT_NODE) {
+function getPosition(container: Element, node: Node, offset: number, end = false): Position {
+  if (node === container) {
     return {index: offset, offset: 0};
   }
+
   let index = indexOfNode(node);
+  if (node.nodeType === Node.ELEMENT_NODE) {
+    return {index, offset: end ? (node.textContent?.length ?? 0) : 0};
+  }
   return {index, offset};
 }
 
 let isProgrammaticSelectionChange = false;
 
-function setSelection(root: Element, pos: Position) {
+function setSelection(root: Element, pos: Position, fireEvent = false) {
   let selection = window.getSelection();
   if (selection) {
     let range = positionToDOMRange(root, pos);
-    isProgrammaticSelectionChange = true;
+    isProgrammaticSelectionChange = !fireEvent;
     selection.removeAllRanges();
     selection.addRange(range);
   }
@@ -347,8 +504,12 @@ function useSelectionChange(ref: React.RefObject<Element | null>, handler: () =>
     }
 
     let selection = window.getSelection();
-    let range = selection?.getRangeAt(0)!;
-    if (ref.current && ref.current.contains(range?.commonAncestorContainer)) {
+    if (!selection || selection.rangeCount === 0 || !ref.current) {
+      return;
+    }
+
+    let range = selection.getRangeAt(0);
+    if (range.intersectsNode(ref.current)) {
       handler();
     }
   });
