@@ -10,10 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
+import {Button} from 'react-aria-components/Button';
 import {DragAndDropContext, DropIndicator} from 'react-aria-components/useDragAndDrop';
+import DragHandle from '../ui-icons/DragHandle';
 import {ItemDropTarget} from '@react-types/shared';
 import React, {useContext} from 'react';
 import {style} from '../style' with {type: 'macro'};
+import {useVisuallyHidden} from 'react-aria/VisuallyHidden';
 
 let insertionIndicatorWrapper = style<{isDropTarget?: boolean; isRoot?: boolean}>({
   position: 'absolute',
@@ -79,5 +82,46 @@ export function InsertionIndicator({target}: {target: ItemDropTarget}) {
         </div>
       )}
     </DropIndicator>
+  );
+}
+
+let dragButton = style({
+  color: 'inherit',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  // TODO: arbitrary, basically taken from v3
+  height: 22,
+  width: 10,
+  padding: 0,
+  margin: 0,
+  backgroundColor: 'transparent',
+  borderStyle: 'none',
+  borderRadius: 'sm',
+  // TODO: this mimicks v3 too, do we want halo focus ring?
+  outlineStyle: {
+    default: 'none',
+    isFocusVisible: 'solid'
+  },
+  outlineColor: {
+    default: 'focus-ring',
+    forcedColors: 'Highlight'
+  },
+  outlineWidth: 2,
+  '--iconPrimary': {
+    type: 'fill',
+    value: 'currentColor'
+  }
+});
+
+export function DragHandleButton({isFocusVisibleWithin}: {isFocusVisibleWithin: boolean}) {
+  let {visuallyHiddenProps} = useVisuallyHidden();
+  return (
+    <Button
+      slot="drag"
+      style={!isFocusVisibleWithin ? visuallyHiddenProps.style : {}}
+      className={dragButton}>
+      <DragHandle size="M" />
+    </Button>
   );
 }

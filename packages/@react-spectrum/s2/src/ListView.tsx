@@ -21,7 +21,6 @@ import {
   space,
   style
 } from '../style' with {type: 'macro'};
-import {Button} from 'react-aria-components/Button';
 import {centerBaseline} from './CenterBaseline';
 import {Checkbox} from './Checkbox';
 import {CheckboxContext} from 'react-aria-components/Checkbox';
@@ -56,7 +55,7 @@ import {
   ItemDropTarget,
   LoadingState
 } from '@react-types/shared';
-import DragHandle from '../ui-icons/DragHandle';
+import {DragHandleButton, InsertionIndicator} from './dnd-utils';
 import {
   GridList,
   GridListItem,
@@ -68,7 +67,6 @@ import {
 } from 'react-aria-components/GridList';
 import {IconContext} from './Icon';
 import {ImageContext} from './Image';
-import {InsertionIndicator} from './InsertionIndicator';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {Key} from '@react-types/shared';
@@ -80,12 +78,10 @@ import {ProgressCircle} from './ProgressCircle';
 import {Text, TextContext} from './Content';
 import {useActionBarContainer} from './ActionBar';
 import {useDOMRef} from './useDOMRef';
-import {useFocusRing} from 'react-aria/useFocusRing';
 import {useLocale} from 'react-aria/I18nProvider';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useScale} from './utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
-import {useVisuallyHidden} from 'react-aria/VisuallyHidden';
 
 export interface ListViewProps<T>
   extends
@@ -828,35 +824,6 @@ let dragButtonContainer = style({
   width: 10
 });
 
-export let dragButton = style({
-  color: 'inherit',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  // TODO: arbitrary, basically taken from v3
-  height: 22,
-  width: 10,
-  padding: 0,
-  margin: 0,
-  backgroundColor: 'transparent',
-  borderStyle: 'none',
-  borderRadius: 'sm',
-  // TODO: this mimicks v3 too, do we want halo focus ring?
-  outlineStyle: {
-    default: 'none',
-    isFocusVisible: 'solid'
-  },
-  outlineColor: {
-    default: 'focus-ring',
-    forcedColors: 'Highlight'
-  },
-  outlineWidth: 2,
-  '--iconPrimary': {
-    type: 'fill',
-    value: 'currentColor'
-  }
-});
-
 const centeredWrapper = style({
   display: 'flex',
   alignItems: 'center',
@@ -905,10 +872,6 @@ export function ListViewItem(props: ListViewItemProps): ReactNode {
     props.textValue || (typeof props.children === 'string' ? props.children : undefined);
   let {direction} = useLocale();
   let hasTrailingIcon = hasChildItems || (isLinkOut && !hideLinkOutIcon);
-  let {visuallyHiddenProps} = useVisuallyHidden();
-  let {isFocusVisible: isFocusVisibleWithin, focusProps: focusWithinProps} = useFocusRing({
-    within: true
-  });
 
   return (
     <GridListItem
@@ -939,7 +902,7 @@ export function ListViewItem(props: ListViewItemProps): ReactNode {
           id,
           state,
           allowsDragging,
-          isFocusVisible
+          isFocusVisibleWithin
         } = renderProps;
         return (
           <Provider
@@ -984,7 +947,7 @@ export function ListViewItem(props: ListViewItemProps): ReactNode {
                 }
               ]
             ]}>
-            <div className={rowWrapper} {...focusWithinProps}>
+            <div className={rowWrapper}>
               <div
                 className={listRowBackground({
                   ...renderProps,
@@ -1016,18 +979,7 @@ export function ListViewItem(props: ListViewItemProps): ReactNode {
               )}
               {allowsDragging && (
                 <div className={dragButtonContainer}>
-                  {!isDisabled && (
-                    <Button
-                      slot="drag"
-                      style={
-                        !isFocusVisibleWithin && !isFocusVisible
-                          ? {...visuallyHiddenProps.style}
-                          : {}
-                      }
-                      className={dragButton}>
-                      <DragHandle size="M" />
-                    </Button>
-                  )}
+                  {!isDisabled && <DragHandleButton isFocusVisibleWithin={isFocusVisibleWithin} />}
                 </div>
               )}
               {selectionMode !== 'none' && selectionBehavior === 'toggle' && (

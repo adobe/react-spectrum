@@ -81,7 +81,7 @@ import {
   LoadingState,
   Node
 } from '@react-types/shared';
-import DragHandle from '../ui-icons/DragHandle';
+import {DragHandleButton} from './dnd-utils';
 import {DragPreview} from './DragPreview';
 import {Form} from 'react-aria-components/Form';
 import {
@@ -92,7 +92,7 @@ import {
 import {getOwnerDocument} from 'react-aria/private/utils/domHelpers';
 import {GridNode} from 'react-stately/private/grid/GridCollection';
 import {IconContext} from './Icon';
-import {InsertionIndicator} from './InsertionIndicator';
+import {InsertionIndicator} from './dnd-utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {Key} from '@react-types/shared';
@@ -1305,61 +1305,10 @@ const dragCellStyle = style({
   ...stickyCell,
   paddingStart: 4,
   paddingEnd: 4,
-  display: 'flex',
   alignContent: 'center',
-  alignItems: 'center',
   height: 'calc(100% - 1px)',
   borderBottomWidth: 0,
   backgroundColor: '--rowBackgroundColor'
-});
-
-const dragButton = style({
-  color: 'inherit',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  padding: 0,
-  backgroundColor: 'transparent',
-  borderStyle: 'none',
-  borderRadius: 'sm',
-  outlineStyle: {
-    default: 'none',
-    isFocusVisible: 'solid'
-  },
-  outlineColor: {
-    default: 'focus-ring',
-    forcedColors: 'Highlight'
-  },
-  outlineWidth: 2,
-  '--iconPrimary': {
-    type: 'fill',
-    value: 'currentColor'
-  },
-  // note that this doesn't have clip or clipPath, but this seems to be sufficient
-  height: {
-    default: 1,
-    ':is([role="row"][data-focus-visible-within] *)': 22
-  },
-  width: {
-    default: 1,
-    ':is([role="row"][data-focus-visible-within] *)': 10
-  },
-  margin: {
-    default: '[-1]',
-    ':is([role="row"][data-focus-visible-within] *)': 0
-  },
-  overflow: {
-    default: 'hidden',
-    ':is([role="row"][data-focus-visible-within] *)': 'visible'
-  },
-  position: {
-    default: 'absolute',
-    ':is([role="row"][data-focus-visible-within] *)': 'relative'
-  },
-  whiteSpace: {
-    default: 'nowrap',
-    ':is([role="row"][data-focus-visible-within] *)': 'normal'
-  }
 });
 
 const cellContent = style({
@@ -2233,14 +2182,16 @@ export const Row = /*#__PURE__*/ (forwardRef as forwardRefType)(function Row<T>(
       }
       {...otherProps}>
       {allowsDragging && (
-        // @ts-ignore
-        <Cell isSticky className={dragCellStyle}>
-          {!(otherProps.isDisabled && tableVisualOptions.disabledBehavior === 'all') && (
-            <Button slot="drag" className={dragButton}>
-              <DragHandle size="M" />
-            </Button>
-          )}
-        </Cell>
+        <RACCell
+          // @ts-ignore
+          isSticky
+          className={dragCellStyle}>
+          {({isFocusVisibleWithinRow}) =>
+            !(otherProps.isDisabled && tableVisualOptions.disabledBehavior === 'all') && (
+              <DragHandleButton isFocusVisibleWithin={isFocusVisibleWithinRow} />
+            )
+          }
+        </RACCell>
       )}
       {selectionMode !== 'none' &&
         selectionBehavior === 'toggle' &&

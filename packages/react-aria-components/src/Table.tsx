@@ -1675,6 +1675,14 @@ export interface RowRenderProps extends ItemRenderProps {
   state: TableState<unknown>;
 }
 
+export interface RowFocusContextValue {
+  isFocusVisibleWithinRow: boolean;
+}
+
+export const RowFocusContext = createContext<RowFocusContextValue>({
+  isFocusVisibleWithinRow: false
+});
+
 export interface RowProps<T>
   extends
     StyleRenderProps<RowRenderProps, 'tr' | 'div'>,
@@ -1779,6 +1787,8 @@ export const Row = /*#__PURE__*/ createBranchComponent(
       within: true
     });
     let {hoverProps, isHovered} = useHover({
+      // because of https://bugs.webkit.org/show_bug.cgi?id=214609, supporting hover styles when a item is ONLY isDraggable
+      // results in hover styles sticking around after a reorder/drop operation...
       isDisabled: !states.allowsSelection && !states.hasAction && !isDraggable,
       onHoverStart: props.onHoverStart,
       onHoverChange: props.onHoverChange,
@@ -1935,7 +1945,8 @@ export const Row = /*#__PURE__*/ createBranchComponent(
                   }
                 }
               ],
-              [SelectionIndicatorContext, {isSelected: states.isSelected}]
+              [SelectionIndicatorContext, {isSelected: states.isSelected}],
+              [RowFocusContext, {isFocusVisibleWithinRow: isFocusVisibleWithin}]
             ]}>
             <CollectionBranch collection={state.collection} parent={item} />
           </Provider>
@@ -1997,6 +2008,12 @@ export interface CellRenderProps {
    * @selector [data-disabled]
    */
   isDisabled: boolean;
+  /**
+   * Whether keyboard focus is visible anywhere within the parent row.
+   *
+   * @selector [data-focus-visible-within-row]
+   */
+  isFocusVisibleWithinRow: boolean;
   /**
    * The unique id of the cell.
    */
@@ -2091,6 +2108,7 @@ export const Cell = /*#__PURE__*/ createLeafComponent(
     );
     let {isFocused, isFocusVisible, focusProps} = useFocusRing();
     let {hoverProps, isHovered} = useHover({});
+    let {isFocusVisibleWithinRow} = useContext(RowFocusContext);
     let isSelected =
       cell.parentKey != null ? state.selectionManager.isSelected(cell.parentKey) : false;
     // colIndex is null, when there is so span, falling back to using the index
@@ -2108,6 +2126,7 @@ export const Cell = /*#__PURE__*/ createLeafComponent(
       values: {
         isFocused,
         isFocusVisible,
+        isFocusVisibleWithinRow,
         isPressed,
         isHovered,
         isSelected,
@@ -2130,6 +2149,7 @@ export const Cell = /*#__PURE__*/ createLeafComponent(
         ref={ref as any}
         data-focused={isFocused || undefined}
         data-focus-visible={isFocusVisible || undefined}
+        data-focus-visible-within-row={isFocusVisibleWithinRow || undefined}
         data-pressed={isPressed || undefined}
         data-selected={isSelected || undefined}
         data-column-index={columnIndex}

@@ -33,8 +33,7 @@ import {
   Key,
   LoadingState
 } from '@react-types/shared';
-import {dragButton, S2ListLayout} from './ListView';
-import DragHandle from '../ui-icons/DragHandle';
+import {DragHandleButton} from './dnd-utils';
 import {DragPreview} from './DragPreview';
 import {
   getAllowedOverrides,
@@ -42,7 +41,7 @@ import {
   UnsafeStyles
 } from './style-utils' with {type: 'macro'};
 import {IconContext} from './Icon';
-import {InsertionIndicator} from './InsertionIndicator';
+import {InsertionIndicator} from './dnd-utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {ProgressCircle} from './ProgressCircle';
@@ -68,6 +67,7 @@ import React, {
   useContext,
   useRef
 } from 'react';
+import {S2ListLayout} from './ListView';
 import {Text, TextContext} from './Content';
 import {TreeState} from 'react-stately/useTreeState';
 import {useActionBarContainer} from './ActionBar';
@@ -75,7 +75,6 @@ import {useDOMRef} from './useDOMRef';
 import {useLocale} from 'react-aria/I18nProvider';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useScale} from './utils';
-import {useVisuallyHidden} from 'react-aria/VisuallyHidden';
 import {Virtualizer} from 'react-aria-components/Virtualizer';
 
 interface S2TreeProps {
@@ -620,7 +619,6 @@ export const TreeViewItemContent = (props: TreeViewItemContentProps): ReactNode 
   let scale = useScale();
 
   let {selectionStyle} = useContext(InternalTreeViewContext);
-  let {visuallyHiddenProps} = useVisuallyHidden();
 
   return (
     <TreeItemContent>
@@ -671,16 +669,7 @@ export const TreeViewItemContent = (props: TreeViewItemContentProps): ReactNode 
             )}
             {allowsDragging && (
               <div className={treeDragButtonContainer}>
-                {!isDisabled && (
-                  <Button
-                    slot="drag"
-                    style={
-                      !isFocusVisibleWithin && !isFocusVisible ? {...visuallyHiddenProps.style} : {}
-                    }
-                    className={dragButton}>
-                    <DragHandle size="M" />
-                  </Button>
-                )}
+                {!isDisabled && <DragHandleButton isFocusVisibleWithin={isFocusVisibleWithin} />}
               </div>
             )}
             {selectionMode !== 'none' &&
