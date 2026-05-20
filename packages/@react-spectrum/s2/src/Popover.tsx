@@ -98,12 +98,13 @@ let popover = style(
       default: 'elevated',
       isArrowShown: 'none'
     },
-    outlineStyle: 'solid',
-    outlineWidth: 1,
-    outlineColor: {
+    borderStyle: 'solid',
+    borderWidth: 1,
+    borderColor: {
       default: lightDark('transparent-white-25', 'gray-200'),
       forcedColors: 'ButtonBorder'
     },
+    outlineStyle: 'none',
     width: {
       size: {
         // Copied from designs, not sure if correct.
@@ -154,7 +155,8 @@ let popover = style(
     isolation: 'isolate',
     pointerEvents: {
       isExiting: 'none'
-    }
+    },
+    overflow: 'auto'
   },
   getAllowedOverrides()
 );
@@ -322,10 +324,10 @@ const innerDivStyle = style(
     boxSizing: 'border-box',
     outlineStyle: 'none',
     borderRadius: 'inherit',
-    overflow: 'auto',
+    // overflow: 'auto',
     position: 'relative',
     width: 'full',
-    maxSize: 'inherit'
+    maxSize: 'inherit',
   },
   getAllowedOverrides({height: true})
 );
