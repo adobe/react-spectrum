@@ -610,7 +610,7 @@ const listRowBackground = style<
       },
       isQuiet: 'default'
     },
-    isDropTarget: 'default'
+    isDropTarget: insetBorderRadius
   },
   borderTopEndRadius: {
     isQuiet: 'default',
@@ -624,7 +624,7 @@ const listRowBackground = style<
       },
       isQuiet: 'default'
     },
-    isDropTarget: 'default'
+    isDropTarget: insetBorderRadius
   },
   borderBottomStartRadius: {
     isQuiet: 'default',
@@ -638,7 +638,7 @@ const listRowBackground = style<
       },
       isQuiet: 'default'
     },
-    isDropTarget: 'default'
+    isDropTarget: insetBorderRadius
   },
   borderBottomEndRadius: {
     isQuiet: 'default',
@@ -652,7 +652,7 @@ const listRowBackground = style<
       },
       isQuiet: 'default'
     },
-    isDropTarget: 'default'
+    isDropTarget: insetBorderRadius
   },
   borderTopWidth: {
     default: {
