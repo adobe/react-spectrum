@@ -24,6 +24,7 @@ describe('Tabs', () => {
   beforeAll(() => {
     jest.useFakeTimers();
     user = userEvent.setup({delay: null, pointerMap});
+    Element.prototype.getAnimations = jest.fn().mockImplementation(() => []);
   });
 
   afterEach(() => {
