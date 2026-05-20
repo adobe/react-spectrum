@@ -324,7 +324,6 @@ const innerDivStyle = style(
     boxSizing: 'border-box',
     outlineStyle: 'none',
     borderRadius: 'inherit',
-    // overflow: 'auto',
     position: 'relative',
     width: 'full',
     maxSize: 'inherit'
