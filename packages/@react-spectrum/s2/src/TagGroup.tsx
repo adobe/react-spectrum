@@ -129,9 +129,10 @@ const InternalTagGroupContext = createContext<TagGroupProps<any>>({});
  * Tags allow users to categorize content. They can represent keywords or people, and are grouped to
  * describe an item or a search request.
  */
-export const TagGroup = /*#__PURE__*/ (forwardRef as forwardRefType)(function TagGroup<
-  T extends object
->(props: TagGroupProps<T>, ref: DOMRef<HTMLDivElement>) {
+export const TagGroup = /*#__PURE__*/ (forwardRef as forwardRefType)(function TagGroup<T>(
+  props: TagGroupProps<T>,
+  ref: DOMRef<HTMLDivElement>
+) {
   [props, ref] = useSpectrumContextProps(props, ref, TagGroupContext);
   props = useFormProps(props);
   let {onRemove} = props;

@@ -17,7 +17,7 @@ export const description = 'Displays a non-editable value with a label';
   component={LabeledValue}
   docs={types.exports.LabeledValueProps}
   links={types.links}
-  props={['label', 'size', 'labelPosition', 'labelAlign', 'contextualHelp']}
+  props={['label', 'size', 'labelPosition', 'contextualHelp']}
   initialProps={{
     label: 'File name',
     value: 'Budget.pdf'
@@ -131,6 +131,72 @@ import {LabeledValue} from '@react-spectrum/s2/LabeledValue';
 import {Link} from '@react-spectrum/s2/Link';
 
 <LabeledValue label="Website" value={<Link href="https://www.adobe.com/">Adobe.com</Link>} />
+```
+
+## Form
+
+Use `LabeledValue` within a `Form` to display non-editable information alongside editable fields.
+
+```tsx render docs={docs.exports.Form} links={docs.links} props={['size', 'labelAlign', 'necessityIndicator', 'isRequired', 'isDisabled']} type="s2"
+"use client";
+import {Button} from '@react-spectrum/s2/Button';
+import {ComboBox, ComboBoxItem} from '@react-spectrum/s2/ComboBox';
+import {Form} from '@react-spectrum/s2/Form';
+import {LabeledValue} from '@react-spectrum/s2/LabeledValue';
+import {NumberField} from '@react-spectrum/s2/NumberField';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+<Form/* PROPS */>
+  <div
+    role="group"
+    className={style({display: 'flex', alignItems: 'center', gap: 48})}>
+    <ComboBox label="Duration type" styles={style({width: 120})}>
+      <ComboBoxItem>Simple</ComboBoxItem>
+      <ComboBoxItem>Calculated assignment</ComboBoxItem>
+      <ComboBoxItem>Calculated work</ComboBoxItem>
+      <ComboBoxItem>Effort driven</ComboBoxItem>
+    </ComboBox>
+    <NumberField
+    label="Duration days"
+    placeholder="# of days"
+    defaultValue={1} 
+    styles={style({width: 120})}/>
+  </div>
+  <div
+    role="group"
+    aria-labelledby="working hours"
+    className={style({display: 'flex', alignItems: 'center', gap: 48, font: 'ui'})}>
+    <NumberField
+      label="Planned hours"
+      placeholder="–"
+      defaultValue={1} 
+      styles={style({width: 120})}/>
+    {/*- begin highlight -*/}
+    <LabeledValue 
+      label="Actual hours"
+      value={0}
+      styles={style({width: 120})}/>
+    {/*- end highlight -*/}
+  </div>
+  <div
+    role="group"
+    aria-labelledby="working hours"
+    className={style({display: 'flex', alignItems: 'center', gap: 48, font: 'ui'})}>
+    <LabeledValue 
+      label="Project duration"
+      value={1}
+      styles={style({width: 120})}/>
+    <LabeledValue 
+      label="Actual duration"
+      value={0}
+      styles={style({width: 120})}/>
+  </div>
+  <Button
+    type="submit"
+    variant="primary">
+    Submit
+  </Button>
+</Form>
 ```
 
 

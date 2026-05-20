@@ -76,12 +76,13 @@ const SKILLS = {
 const CUSTOM_SKILL_CONTENT = {
   'react-spectrum-s2': {
     skillNotesMarkdown:
-      'If the requirements do not clearly specify which React Spectrum component to use, consult the [Component Decision Tree](references/guides/component-decision-tree.md) before choosing a component.',
+      'If the requirements do not clearly specify which React Spectrum component to use, consult the [Component Decision Tree](references/guides/component-decision-tree.md) before choosing a component.\n\nIf the request involves a Figma design, frame, or URL — or if the Figma MCP (`get_design_context`, `get_screenshot`, `get_variable_defs`, `search_design_system`) is available — consult [Implementing Figma designs with React Spectrum S2](references/guides/figma-to-s2.md) before generating code. The Figma MCP returns React + Tailwind reference output that must be translated to S2 components and the `style` macro.',
     embeddedMarkdownPaths: [
       path.join(
         REPO_ROOT,
         'packages/dev/s2-docs/skills/react-spectrum-s2/implementation-guidance.md'
-      )
+      ),
+      path.join(REPO_ROOT, 'packages/dev/s2-docs/skills/react-spectrum-s2/test-utils-guidance.md')
     ],
     guideEntries: [
       {
@@ -93,7 +94,32 @@ const CUSTOM_SKILL_CONTENT = {
         ),
         description:
           'How to choose the right S2 component when requirements do not name one explicitly.'
+      },
+      {
+        title: 'Implementing Figma designs with React Spectrum S2',
+        path: 'figma-to-s2.md',
+        sourcePath: path.join(
+          REPO_ROOT,
+          'packages/dev/s2-docs/skills/react-spectrum-s2/figma-to-s2.md'
+        ),
+        description:
+          'How to translate Figma designs (via the Figma MCP) into S2 components and the `style` macro.'
+      },
+      {
+        title: 'Creating Custom Components',
+        path: 'creating-custom-components.md',
+        sourcePath: path.join(
+          REPO_ROOT,
+          'packages/dev/s2-docs/skills/react-spectrum-s2/creating-custom-components.md'
+        ),
+        description:
+          'How to build custom Spectrum 2 components using React Aria Components and the `style` macro.'
       }
+    ]
+  },
+  'react-aria': {
+    embeddedMarkdownPaths: [
+      path.join(REPO_ROOT, 'packages/dev/s2-docs/skills/react-aria/test-utils-guidance.md')
     ]
   }
 };
@@ -375,7 +401,8 @@ function generateDocsSkillMd(skillConfig, categories, isS2) {
   const customSkillNotesMarkdown = getCustomSkillNotesMarkdown(skillConfig.name);
   const embeddedCustomMarkdown = readCustomEmbeddedMarkdown(skillConfig.name, {
     '{{guidesBase}}': 'references/guides/',
-    '{{componentsBase}}': 'references/components/'
+    '{{componentsBase}}': 'references/components/',
+    '{{testingBase}}': 'references/testing/'
   });
 
   let content = generateFrontmatter(skillConfig);

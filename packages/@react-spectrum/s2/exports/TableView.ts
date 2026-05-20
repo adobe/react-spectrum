@@ -9,6 +9,7 @@ export {
   EditableCell,
   TableFooter
 } from '../src/TableView';
+export {DragPreview} from '../src/DragPreview';
 export {Collection} from 'react-aria/Collection';
 export type {
   TableViewProps,
@@ -19,6 +20,7 @@ export type {
   ColumnProps,
   TableFooterProps
 } from '../src/TableView';
+export type {DragPreviewProps} from '../src/DragPreview';
 export type {
   Selection,
   Key,

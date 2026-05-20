@@ -10,8 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, waitFor, within} from '@testing-library/react';
+import {act} from './act';
 import {DialogTesterOpts, UserOpts} from './types';
+import {waitFor, within} from '@testing-library/dom';
 
 interface DialogOpenOpts {
   /**
@@ -34,13 +35,17 @@ export class DialogTester {
     this._interactionType = interactionType || 'mouse';
     this._overlayType = overlayType || 'modal';
 
-    // Handle case where element provided is a wrapper of the trigger button
-    let trigger = within(root).queryByRole('button');
-    if (trigger) {
-      this._trigger = trigger;
+    // Handle case where element provided is a wrapper of the trigger button.
+    let buttons = within(root).queryAllByRole('button');
+    let triggerButton: HTMLElement | undefined;
+    if (buttons.length === 0) {
+      triggerButton = root;
+    } else if (buttons.length === 1) {
+      triggerButton = buttons[0];
     } else {
-      this._trigger = root;
+      triggerButton = buttons.find(button => button.hasAttribute('aria-haspopup'));
     }
+    this._trigger = triggerButton ?? root;
   }
 
   /**
@@ -55,7 +60,7 @@ export class DialogTester {
    */
   async open(opts: DialogOpenOpts = {}): Promise<void> {
     let {interactionType = this._interactionType} = opts;
-    let trigger = this.trigger;
+    let trigger = this.getTrigger();
     if (!trigger.hasAttribute('disabled')) {
       if (interactionType === 'mouse') {
         await this.user.click(trigger);
@@ -133,7 +138,7 @@ export class DialogTester {
   /**
    * Returns the dialog's trigger.
    */
-  get trigger(): HTMLElement {
+  getTrigger(): HTMLElement {
     if (!this._trigger) {
       throw new Error('No trigger element found for dialog.');
     }
@@ -144,7 +149,7 @@ export class DialogTester {
   /**
    * Returns the dialog if present.
    */
-  get dialog(): HTMLElement | null {
+  getDialog(): HTMLElement | null {
     return this._dialog && document.contains(this._dialog) ? this._dialog : null;
   }
 }

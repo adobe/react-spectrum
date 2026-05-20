@@ -16,7 +16,7 @@ import {Text} from './Content';
 import {ProgressCircle} from './ProgressCircle';
 import './ListBox.css';
 
-export function ListBox<T extends object>({children, ...props}: ListBoxProps<T>) {
+export function ListBox<T>({children, ...props}: ListBoxProps<T>) {
   return <AriaListBox {...props}>{children}</AriaListBox>;
 }
 
@@ -32,7 +32,7 @@ export function ListBoxItem(props: ListBoxItemProps) {
   );
 }
 
-export function ListBoxSection<T extends object>(props: ListBoxSectionProps<T>) {
+export function ListBoxSection<T>(props: ListBoxSectionProps<T>) {
   return <AriaListBoxSection {...props} />;
 }
 
@@ -44,7 +44,7 @@ export function ListBoxLoadMoreItem(props: ListBoxLoadMoreItemProps) {
   );
 }
 
-export function DropdownListBox<T extends object>(props: ListBoxProps<T>) {
+export function DropdownListBox<T>(props: ListBoxProps<T>) {
   return <AriaListBox {...props} className="dropdown-listbox" />;
 }
 

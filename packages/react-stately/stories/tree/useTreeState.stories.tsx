@@ -72,7 +72,7 @@ function Tree(props) {
   );
 }
 
-function TreeNodes({nodes, state}: {nodes: Collection<Node<object>>; state: any}) {
+function TreeNodes({nodes, state}: {nodes: Collection<Node<any>>; state: any}) {
   return Array.from(nodes).map(node => <TreeItem node={node} key={node.key} state={state} />);
 }
 
