@@ -1,0 +1,36 @@
+<svg style="background:var(--anatomy-gray-100); padding: calc((152px - 104px) / 2) 10px" height="104" viewBox="0 0 230 104">
+  <defs>
+    <filter id="Union_45" x="0" y="0" width="230" height="104" filterUnits="userSpaceOnUse">
+      <feOffset dy="1" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="2" result="blur"/>
+      <feFlood flood-opacity="0.149"/>
+      <feComposite operator="in" in2="blur"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g id="FocusScope" transform="translate(-1488 -1292)">
+    <g transform="matrix(1, 0, 0, 1, 1488, 1292)" filter="url(#Union_45)">
+      <g id="Union_45-2" data-name="Union 45" transform="translate(-1511 -7412)" fill="var(--anatomy-gray-50)">
+        <path d="M 1731 7508.5 L 1521 7508.5 C 1519.070068359375 7508.5 1517.5 7506.9296875 1517.5 7505 L 1517.5 7421 C 1517.5 7419.0703125 1519.070068359375 7417.5 1521 7417.5 L 1731 7417.5 C 1732.929931640625 7417.5 1734.5 7419.0703125 1734.5 7421 L 1734.5 7505 C 1734.5 7506.9296875 1732.929931640625 7508.5 1731 7508.5 Z" stroke="none"/>
+        <path d="M 1521 7418 C 1519.345825195312 7418 1518 7419.345703125 1518 7421 L 1518 7505 C 1518 7506.654296875 1519.345825195312 7508 1521 7508 L 1731 7508 C 1732.654174804688 7508 1734 7506.654296875 1734 7505 L 1734 7421 C 1734 7419.345703125 1732.654174804688 7418 1731 7418 L 1521 7418 M 1521 7417 L 1731 7417 C 1733.209106445312 7417 1735 7418.791015625 1735 7421 L 1735 7505 C 1735 7507.208984375 1733.209106445312 7509 1731 7509 L 1521 7509 C 1518.790893554688 7509 1517 7507.208984375 1517 7505 L 1517 7421 C 1517 7418.791015625 1518.790893554688 7417 1521 7417 Z" stroke="none" fill="var(--anatomy-gray-400)"/>
+      </g>
+    </g>
+    <g id="Text_field" data-name="Text field" transform="translate(1506 1309)">
+      <rect id="Placement_Area" data-name="Placement Area" width="194" height="30" fill="red" opacity="0"/>
+      <g id="Field" fill="var(--anatomy-gray-50)" stroke="var(--anatomy-gray-600)" stroke-width="2">
+        <rect width="194" height="30" rx="5" stroke="none"/>
+        <rect x="1" y="1" width="192" height="28" rx="4" fill="none"/>
+      </g>
+      <text id="Text" transform="translate(11 20)" fill="var(--anatomy-gray-900)" font-size="10" font-family="var(--anatomy-font)"><tspan x="0" y="0"> </tspan></text>
+      <rect id="Caret" width="1" height="19" transform="translate(11 5)" fill="var(--anatomy-gray-900)"/>
+    </g>
+    <g id="Text_field-2" data-name="Text field" transform="translate(1506 1347)">
+      <rect id="Placement_Area-2" data-name="Placement Area" width="194" height="30" fill="red" opacity="0"/>
+      <g id="Field-2" data-name="Field" fill="var(--anatomy-gray-50)" stroke="var(--anatomy-gray-400)" stroke-width="1">
+        <rect width="194" height="30" rx="5" stroke="none"/>
+        <rect x="0.5" y="0.5" width="193" height="29" rx="4.5" fill="none"/>
+      </g>
+      <text id="Text-2" data-name="Text" transform="translate(11 20)" fill="var(--anatomy-gray-800)" font-size="10" font-family="var(--anatomy-font)"><tspan x="0" y="0"> </tspan></text>
+    </g>
+  </g>
+</svg>

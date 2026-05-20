@@ -1,0 +1,143 @@
+{/* Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import comboboxAccessibilityUrl from 'url:../assets/combobox-accessibility.mp4';
+import comboboxScrollingUrl from 'url:../assets/combobox-scrolling-safari.mp4';
+import comboboxVisualViewportUrl from 'url:../assets/combobox-visual-viewport.mp4';
+import comboboxExampleImageUrl from 'url:../assets/combobox-example.png';
+import screenreaderSpreadsheetImageUrl from 'url:../assets/screenreader-spreadsheet-combobox.png';
+import comboboxVideoUrl from 'url:../assets/combobox.mp4';
+
+import {BlogPostLayout, Video, Image} from '@react-spectrum/docs';
+export default BlogPostLayout;
+
+---
+keywords: [combobox, accessibility, mobile, react spectrum, react, spectrum, interactions, touch]
+description: After many months of research, development, and testing, we’re excited to announce that the React Spectrum [ComboBox](../../s2/ComboBox.html) component and React Aria [useComboBox](../useComboBox.html) hook are now available! In this post we'll take a deeper look into some of the challenges we faced when building an accessible and mobile friendly ComboBox.
+date: 2021-07-13
+author: '[Daniel Lu](https://github.com/LFDanLu)'
+---
+
+# Creating an accessible autocomplete experience
+
+After many months of research, development, and extensive testing across browsers, devices, and assistive technology, we’re excited to announce that the React Spectrum [ComboBox](../../s2/ComboBox.html) component and React Aria [useComboBox](../useComboBox.html) hook are now available! We’ve focused on the following areas to help you build quality autocomplete experiences.
+
+- **Accessibility** — Our ComboBox has been tested with screen readers across desktop and mobile devices, and with many different input methods including mouse, touch, and keyboard. We encountered many screen reader differences, and worked hard to ensure announcements are clear and consistent.
+- **Mobile** — On small screens, the React Spectrum ComboBox is automatically displayed in a tray, which improves the user experience by giving them a larger area to scroll. We also optimized our experience for touch screen interactions and on screen keyboards.
+- **Asynchronous loading** — Autocomplete suggestions can be loaded asynchronously, and large lists can be loaded on demand through infinite scrolling.
+- **Customizability** — React Aria hooks allow full control over the rendering and styling of your ComboBox component, while letting us take care of the behavioral complexities for you. Use our default filter or you can provide custom filtering for complete control.
+
+<Video src={comboboxVideoUrl} loop autoPlay muted style={{maxWidth: 'min(100%, 1920px)', display: 'block', margin: '40px auto'}} />
+
+## Building a ComboBox
+
+For those who may be unfamiliar with a combobox (alternatively known as an "autocomplete"), it is an input field that has a popover listbox associated with it. The listbox contains
+a list of options within that a user may select as the value for the combobox and is often filtered to display possible matches to the user's current input text. Finally, there may be a button accompanying the input field used
+for toggling the open state of the popover listbox. An example of a combobox that you may be familiar with is the search bar found on Google, Youtube, or X.
+
+<Image src={comboboxExampleImageUrl} alt="Screenshot of example ComboBox, select a major" style={{maxWidth: 'min(100%, 350px)', display: 'block', margin: '20px auto'}} />
+
+While the above may seem rather straight forward, a combobox contains a significant amount of complexity. The state logic of the combobox needs to track the input value and selected option, determining when to sync the two or allow each to
+diverge depending on the user interaction. This logic is complicated even further if the combobox allows the user to submit custom values or if the input value or selected item is controlled via props instead. Additionally, the combobox can be used
+on a variety of platforms that each support different interaction methods (touch, virtual clicks, keyboard and mouse), resulting in subtle nuances in the combobox's behavior.
+In this blog post, we'll be covering the challenges we encountered with regards to ComboBox's mobile experience and accessibility.
+
+## Mobile experience
+
+### Onscreen Keyboard
+
+Like many of our other components, ComboBox displays its options in a tray rather than a popover when rendered on a mobile device or a smaller screen. This allows for a better mobile experience
+since the tray can display more items on the screen and grants users a larger hit area to scroll through. To compensate for the fact that the tray covers the majority of the
+screen including the ComboBox, we included an input field within the tray so that end users could still type to filter the available items. So far so good. However,
+when we tested the ComboBox's tray input on iOS Safari, the tray's bottom half was covered by the onscreen keyboard and we could not scroll the hidden items into view.
+
+It turns out that iOS Safari does not shrink the browser window to accommodate the onscreen keyboard unlike other mobile browsers. Instead, Safari pushes the window upwards and
+partially off screen. At the time, we had been relying on `window.innerHeight` to inform us on how tall the tray should be but now we had to find a different way of tracking the available window
+space for the tray.
+
+Luckily for us, iOS 13 added support for the [VisualViewport](https://developer.mozilla.org/en-US/docs/Web/API/VisualViewport) API. By querying `window.visualViewport.height` we could get a reliable measurement of how much vertical space was available on screen. Furthermore, we could track
+when the onscreen keyboard was opened or dismissed by listening to the VisualViewport's `resize` event. Leveraging these two allowed us to create a tray that properly adjusts to the presence of iOS onscreen keyboard. Check out the video below
+to see how the ComboBox tray worked before and after we switched to the VisualViewport API. If you'd like to track the visual viewport size in your own app, you can use the [useViewportSize](https://github.com/adobe/react-spectrum/blob/main/packages/@react-aria/utils/src/useViewportSize.ts) hook available in the `@react-aria/utils` package.
+
+<Video src={comboboxVisualViewportUrl} loop autoPlay muted style={{maxWidth: 'min(80%, 350px)', display: 'block', margin: '20px auto'}} />
+
+### Page Scrolling
+
+Another issue we encountered had to do with iOS Safari page scrolling behavior. When the onscreen keyboard is visible, iOS Safari makes the page scrollable so that users can still access content that is hidden behind the keyboard. However,
+now that our ComboBox tray sizes itself to fit in the visual viewport, users could now scroll the entire tray itself off screen. To stop this from happening, we prevent default on `touchmove` events that happen on the document body
+or root element of the document. This preserves the user's ability to scroll through the options in the tray but blocks any attempt to scroll the page itself until the tray is closed. The video below
+illustrates the difference in scrolling behavior before and after our fix. If you are building your own overlays and would like to prevent this kind of document scrolling behavior, check out the [usePreventScroll](https://github.com/adobe/react-spectrum/blob/main/packages/@react-aria/overlays/src/usePreventScroll.ts) hook in the `react-aria/overlays` package.
+
+<Video src={comboboxScrollingUrl} loop autoPlay muted style={{maxWidth: 'min(80%, 350px)', display: 'block', margin: '20px auto'}} />
+
+## Accessibility
+
+To ensure that our ComboBox is accessible, we followed the [WAI-ARIA 1.2 combobox example](https://www.w3.org/TR/wai-aria-practices-1.2/#combobox). Unfortunately, differences between our implementation and the spec arose
+as we built ComboBox and subsequent testing sessions revealed varied support across screen readers. Here are just a couple of the challenges we faced and the solutions we came up with to address them.
+
+### Portals
+
+One significant difference between the WAI-ARIA 1.2 ComboBox spec and our ComboBox implementation was the usage of React Portals for the listbox. In the [example](https://www.w3.org/TR/wai-aria-practices-1.2/examples/combobox/combobox-autocomplete-list.html)
+the listbox is a sibling to the combobox, allowing for easy navigation between the two elements when using a screen reader. The same couldn't be said for our listbox since
+it is portalled to the end of the document, meaning there could be any number of elements that a screen reader user would have to navigate through just to move from the ComboBox input to the listbox itself. For touch screen reader users, it would be particularly problematic
+since they may not have access to a physical keyboard and thus can't use the arrow keys to navigate through options.
+
+This put us in a bind because removing the portal strategy wasn't really an option. If we didn't portal the popover out to the end of the document, we'd run into the risk of the listbox being clipped if the combobox's parent had `overflow: hidden` or `overflow: scroll`
+set. Therefore, we had to figure out a way to make the input and listbox the only elements accessible to screen readers while the popover is open so that a screen reader user wouldn't accidentally leave the ComboBox context.
+
+The solution that we came up with was to crawl the DOM and apply `aria-hidden` to every element that wasn't the input or listbox. To crawl the DOM we used a [TreeWalker](https://developer.mozilla.org/en-US/docs/Web/API/TreeWalker),
+setting up a node filter to determine if a node should be left visible, hidden, or skipped in the case where its parent was already hidden. In addition, we watch for any changes in the DOM while the listbox is open
+via a [MutationObserver](https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver), hiding those new elements if need be. When the popover closes, every node that we modified is reverted back to its previous state.
+Check out our [ariaHideOutside](https://github.com/adobe/react-spectrum/blob/main/packages/@react-aria/overlays/src/ariaHideOutside.ts) function in `@react-aria/overlays` if you'd like to learn more.
+
+### Mobile implementation divergence
+
+Another divergence between the WAI-ARIA 1.2 ComboBox example and our ComboBox implementation came as a result of our mobile implementation. Initially, we considered the outer input and the tray input as both being individual combo boxes that mirror each other's state. This became increasingly complicated as we
+tried to manage things like focus and internal state between the two inputs. The result included adding several tray input specific affordances to our `useComboBox` hook as well as reducing the aria hook's generality by introducing this React Spectrum specific behavior. Interacting with the tray input using a screen reader was also problematic
+since the screen reader would detect that the input had `role="combobox"` and thus erroneously announce "double tap to close", a touch action usually reserved for focusing an input. After some deliberation, we decided to alter the accessibility implementation for the mobile experience, removing the outer combo box input in favor of a button that
+resembles a combo box. Tapping the button opens the tray that contains the actual combo box input, albeit with `role="searchbox"` instead of `role="combobox"` to avoid the aforementioned screen reader announcement.
+
+### Differences in screen readers
+
+Just like browsers, screen readers can be quite varied in behavior and may require deliberate tooling to ensure a consistent degree of functionality. While automated accessibility tools can be useful for ensuring that your component meets baseline accessibility guidelines,
+manual testing is irreplaceable for surfacing these behavioral differences, illustrated in part by the image below.
+
+<Image src={screenreaderSpreadsheetImageUrl} alt="Screenshot of ComboBox screen reader vs browser test matrix" expandable />
+
+#### NVDA
+
+Initially, our ComboBox would automatically focus the first item in the listbox whenever opened so the user wouldn't have to issue another keypress to begin option navigation. However, when we tested the ComboBox using NVDA we discovered that
+character deletions and text cursor movement in the ComboBox input weren't being announced at all. NVDA would only resume announcing if no options had virtual focus via `aria-activedescendant`, so we ended up clearing option focus on any changes to the input text or
+left/right arrow key presses.
+
+#### VoiceOver
+
+VoiceOver has limited support for `aria-activedescendant`, failing to announce when the focused ComboBox item changed in a variety of situations. In Safari, changes to the `aria-activedescendant` aren't announced
+when the input is empty. In Chrome, VoiceOver only announces changes to `aria-activedescendant` if `aria-selected="true"` is applied to the focused item. If the list of options is organized into sections using `role="group"`,
+VoiceOver doesn't announce the focused item at all in any browser.
+
+Announcing item focus wasn't the only issue we encountered. VoiceOver doesn't announce the number of options currently available in the menu or the current section title, information that a user would find helpful when navigating the ComboBox options.
+When selecting an option from the listbox, an announcement of the item's name is made but the fact that it is now "selected" is omitted.
+
+As a workaround, we made use of [ARIA live-regions](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/ARIA_Live_Regions). When the ComboBox's listbox is opened for the first time, we create two visually hidden `aria-live` regions in the DOM with two `div` elements, one with `aria-live="polite"` and the other `aria-live="assertive"`
+so that we have control over how the message should be announced to the user. Then whenever updates occur in the ComboBox, we can have the screen reader announce custom messages by updating the contents of these elements. Thankfully, the bulk of this functionality was setup already in
+React Aria's `LiveAnnouncer`, allowing us to reuse it for our ComboBox after some updates.
+
+Special care was taken such that the messages themselves only contained relevant and concise information tailored to the current state of the ComboBox at any given time. For example, the ComboBox only announces the current section name and item count when the user enters a new section in the listbox.
+When the user then moves to a different option in the same section, only the newly focused item name is announced. Similarly, the total option count is only announced when number of options available in the listbox changes. Since many of these messages were added to fill in gaps in VoiceOver's announcement,
+we only trigger the `LiveAnnouncer` on Apple devices to avoid announcement overlap on other screen readers.
+
+If you are interested in using this `LiveAnnouncer` yourself, check out [LiveAnnouncer](https://github.com/adobe/react-spectrum/blob/main/packages/@react-aria/live-announcer/src/LiveAnnouncer.tsx) in `@react-aria/live-announcer`. Otherwise, the [useComboBox](../useComboBox.html) hook provides you with all of the custom messaging out of the box. See the video below for a sneak peek!
+
+<Video src={comboboxAccessibilityUrl} alt="Demo of VoiceOver announcement in ComboBox" style={{maxWidth: 'min(100%, 700px)', display: 'block', margin: '20px auto'}} controls />
+
+## Conclusion
+
+When we first set off to build ComboBox, we had no idea of the complexity that awaited us. If you're building your own combo box component for your design system, I'd recommend checking out the [useComboBox](../react-aria/useComboBox.html) hook which handles all of this complexity and has been tested across a wide variety of devices, browsers, and assistive technology combinations.
+It really just goes to show how important cross browser and device testing is when building a component.

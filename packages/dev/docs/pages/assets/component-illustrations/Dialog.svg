@@ -1,0 +1,32 @@
+<svg style="background:var(--anatomy-gray-400); padding: 10px; box-sizing: border-box; max-height: 153px" height="229" viewBox="0 0 480 229">
+  <rect id="Placement_Area" data-name="Placement Area" width="480" height="229" fill="red" opacity="0"/>
+  <rect id="Background" width="480" height="229" rx="4" fill="var(--anatomy-gray-100)"/>
+  <text id="Header" transform="translate(40 40)" fill="var(--anatomy-gray-900)" font-size="18" font-family="var(--anatomy-font)" font-weight="700"><tspan x="0" y="18">Delete file</tspan></text>
+  <g id="Divider">
+    <rect id="Placement_Area-2" data-name="Placement Area" width="400" height="2" transform="translate(40 74)" fill="red" opacity="0"/>
+    <rect id="Bar" width="400" height="2" rx="1" transform="translate(40 74)" fill="var(--anatomy-gray-300)"/>
+  </g>
+  <text id="Body" transform="translate(40 92)" fill="var(--anatomy-gray-800)" font-size="14" font-family="var(--anatomy-font)"><tspan x="0" y="14">Are you sure you want to delete &quot;budget.xls&quot;? It cannot be recovered.</tspan></text>
+  <g id="Button_Group" data-name="Button Group">
+    <rect id="Placement_Area-3" data-name="Placement Area" width="160" height="32" transform="translate(280 157)" fill="red" opacity="0"/>
+    <g id="Button">
+      <rect id="Placement_Area-4" data-name="Placement Area" width="72" height="32" transform="translate(280 157)" fill="red" opacity="0"/>
+      <g id="Background-2" data-name="Background" transform="translate(280 157)" fill="rgba(0,0,0,0)" stroke="var(--anatomy-gray-300)" stroke-width="2">
+        <rect width="72" height="32" rx="16" stroke="none"/>
+        <rect x="1" y="1" width="70" height="30" rx="15" fill="none"/>
+      </g>
+      <text id="Text" transform="translate(297 177)" fill="var(--anatomy-gray-800)" font-size="14" font-family="var(--anatomy-font)" font-weight="700"><tspan x="0" y="0">Cancel</tspan></text>
+    </g>
+    <g id="Button-2" data-name="Button">
+      <rect id="Placement_Area-5" data-name="Placement Area" width="72" height="32" transform="translate(368 157)" fill="red" opacity="0"/>
+      <g id="Background-3" data-name="Background" transform="translate(368 157)" fill="rgba(0,0,0,0)" stroke="var(--anatomy-gray-800)" stroke-width="2">
+        <rect width="72" height="32" rx="16" stroke="none"/>
+        <rect x="1" y="1" width="70" height="30" rx="15" fill="none"/>
+      </g>
+      <text id="Text-2" data-name="Text" transform="translate(385 177)" fill="var(--anatomy-gray-800)" font-size="14" font-family="var(--anatomy-font)" font-weight="700"><tspan x="0" y="0">Delete</tspan></text>
+    </g>
+  </g>
+  <g id="Alert">
+    <path id="Path_49" data-name="Path 49" d="M8.563,1.29.2,16.255A.5.5,0,0,0,.636,17H17.364a.5.5,0,0,0,.436-.744L9.436,1.29a.5.5,0,0,0-.872,0ZM10,14.75a.25.25,0,0,1-.25.25H8.25A.25.25,0,0,1,8,14.75v-1.5A.25.25,0,0,1,8.25,13h1.5a.25.25,0,0,1,.25.25Zm0-3a.25.25,0,0,1-.25.25H8.25A.25.25,0,0,1,8,11.75v-6a.25.25,0,0,1,.25-.25h1.5a.25.25,0,0,1,.25.25Z" transform="translate(422 40)" fill="var(--anatomy-gray-700)"/>
+  </g>
+</svg>

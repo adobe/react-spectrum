@@ -1,0 +1,172 @@
+{/* Copyright 2023 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {ExampleLayout} from '@react-spectrum/docs';
+export default ExampleLayout;
+
+import docs from 'docs:react-aria-components';
+import {TypeLink} from '@react-spectrum/docs';
+import styles from '@react-spectrum/docs/src/docs.css';
+import Picker from '@react-spectrum/docs/pages/assets/component-illustrations/Picker.svg';
+import Button from '@react-spectrum/docs/pages/assets/component-illustrations/ActionButton.svg';
+import Popover from '@react-spectrum/docs/pages/assets/component-illustrations/Popover.svg';
+import ListBox from '@react-spectrum/docs/pages/assets/component-illustrations/ListBox.svg';
+import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
+
+---
+keywords: [example, select, aria, accessibility, react, component]
+type: component
+image: status-select.png
+description: An issue status dropdown styled with Tailwind CSS.
+---
+
+# Status Select
+
+An issue status [Select](../Select.html) styled with [Tailwind CSS](https://tailwindcss.com/).
+
+## Example
+
+```tsx import
+import './tailwind.global.css';
+```
+
+```tsx example standalone
+import {Select, Label, Button, SelectValue, Popover, ListBox, ListBoxItem} from 'react-aria-components';
+import type {ListBoxItemProps} from 'react-aria-components';
+import {ChevronsUpDown, Check} from 'lucide-react';
+
+function SelectExample() {
+  return (
+    <div className="bg-linear-to-tl from-amber-500 to-rose-700 p-8 sm:h-[250px] rounded-lg flex justify-center">
+      <Select className="flex flex-col gap-1 w-[200px] relative">
+        <Label className="text-white cursor-default">Status</Label>
+        <Button className="flex items-center cursor-default rounded-lg border-0 bg-white/90 pressed:bg-white transition py-2 pl-5 pr-2 text-base text-left leading-normal shadow-md text-gray-700 focus:outline-hidden focus-visible:ring-2 ring-white ring-offset-2 ring-offset-rose-700">
+          <SelectValue className="flex-1 truncate placeholder-shown:italic" />
+          <ChevronsUpDown className="w-4 h-4" />
+        </Button>
+        <Popover className="max-h-60 w-(--trigger-width) overflow-auto rounded-md bg-white text-base shadow-lg ring-1 ring-black/5 entering:animate-in entering:fade-in exiting:animate-out exiting:fade-out">
+          <ListBox className="outline-hidden p-1">
+            <StatusItem textValue="Backlog">
+              <Status className="bg-gray-500" />
+              Backlog
+            </StatusItem>
+            <StatusItem textValue="In Progress">
+              <Status className="bg-blue-500" />
+              In Progress
+            </StatusItem>
+            <StatusItem textValue="In Review">
+              <Status className="bg-yellow-500" />
+              In Review
+            </StatusItem>
+            <StatusItem textValue="Done">
+              <Status className="bg-green-500" />
+              Done
+            </StatusItem>
+            <StatusItem textValue="Won't Do">
+              <Status className="bg-red-500" />
+              Won't Do
+            </StatusItem>
+          </ListBox>
+        </Popover>
+      </Select>
+    </div>
+  );
+}
+
+function StatusItem(props: ListBoxItemProps & {children: React.ReactNode}) {
+  return (
+    <ListBoxItem
+      {...props}
+      className="group flex items-center gap-2 cursor-default select-none py-2 px-4 outline-hidden rounded-sm text-gray-900 focus:bg-rose-600 focus:text-white">
+      {({ isSelected }) => (
+        <>
+          <span className="flex-1 flex items-center gap-2 truncate font-normal group-selected:font-medium">{props.children}</span>
+          <span className="w-5 flex items-center text-rose-600 group-focus:text-white">
+            {isSelected && <Check className="w-4 h-4" />}
+          </span>
+        </>
+      )}
+    </ListBoxItem>
+  );
+}
+
+function Status({className}: {className: string}) {
+  return <span className={`w-3 h-3 rounded-full border border-solid border-white ${className}`} />;
+}
+```
+
+### Tailwind config
+
+This example uses the following plugins:
+
+* [tailwindcss-react-aria-components](../styling.html#plugin)
+* [tailwindcss-animate](https://github.com/jamiebuilds/tailwindcss-animate)
+
+When using Tailwind v4, add them to your CSS:
+
+```css render=false
+@import "tailwindcss";
+@plugin "tailwindcss-react-aria-components";
+@plugin "tailwindcss-animate";
+```
+
+<details>
+
+<summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Tailwind v3</summary>
+
+When using Tailwind v3, add the plugins to your `tailwind.config.js` instead:
+
+```tsx
+module.exports = {
+  // ...
+  plugins: [
+    require('tailwindcss-react-aria-components'),
+    require('tailwindcss-animate')
+  ]
+};
+```
+
+**Note**: When using Tailwind v3, install `tailwindcss-react-aria-components` version 1.x instead of 2.x.
+
+</details>
+
+## Components
+
+<section className={styles.cardGroup} data-size="small">
+
+<ExampleCard
+  url="../Select.html"
+  title="Select"
+  description="A select displays a collapsible list of options, and allows a user to select one of them.">
+  <Picker style={{background: 'var(--anatomy-gray-100)', width: 'calc(100% - 20px)', padding: 10, maxHeight: 132}} />
+</ExampleCard>
+
+<ExampleCard
+  url="../ListBox.html"
+  title="ListBox"
+  description="A listbox allows a user to select one or more options from a list.">
+  <ListBox style={{background: 'var(--anatomy-gray-100)', width: 'calc(100% - 20px)', padding: 10, maxHeight: 132}} />
+</ExampleCard>
+
+<ExampleCard
+  url="../Popover.html"
+  title="Popover"
+  description="A popover displays content in context with a trigger element.">
+  <Popover />
+</ExampleCard>
+
+<ExampleCard
+  url="../Button.html"
+  title="Button"
+  description="A button allows a user to perform an action.">
+  <Button />
+</ExampleCard>
+
+</section>

@@ -1,0 +1,130 @@
+{/* Copyright 2023 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {ExampleLayout} from '@react-spectrum/docs';
+export default ExampleLayout;
+
+import docs from 'docs:react-aria-components';
+import {TypeLink} from '@react-spectrum/docs';
+import styles from '@react-spectrum/docs/src/docs.css';
+import Popover from '@react-spectrum/docs/pages/assets/component-illustrations/Popover.svg';
+import Menu from '@react-spectrum/docs/pages/assets/component-illustrations/Menu.svg';
+import Button from '@react-spectrum/docs/pages/assets/component-illustrations/ActionButton.svg';
+import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
+
+---
+keywords: [example, menu, aria, accessibility, react, component]
+type: component
+image: action-menu.png
+description: An animated menu of actions, styled with Tailwind CSS.
+---
+
+# Action Menu
+
+An animated [Menu](../Menu.html) of actions, styled with [Tailwind CSS](https://tailwindcss.com/).
+
+## Example
+
+```tsx import
+import './tailwind.global.css';
+```
+
+```tsx example standalone
+import {MenuTrigger, Button, Popover, Menu, MenuItem, Separator} from 'react-aria-components';
+import type {MenuItemProps} from 'react-aria-components';
+import {Menu as MenuIcon} from 'lucide-react';
+
+function MenuExample() {
+  return (
+    <div className="bg-linear-to-r to-blue-500 from-violet-500 p-8 h-[250px] rounded-lg">
+      <MenuTrigger>
+        <Button aria-label="Menu" className="inline-flex items-center justify-center rounded-md bg-black/20 bg-clip-padding border border-white/20 px-3 py-2 text-white hover:bg-black/30 pressed:bg-black/40 transition-colors cursor-default outline-hidden focus-visible:ring-2 focus-visible:ring-white/75"><MenuIcon className="w-4 h-4" /></Button>
+        <Popover className="p-1 w-56 overflow-auto rounded-md bg-white shadow-lg ring-1 ring-black/5 entering:animate-in entering:fade-in entering:zoom-in-95 exiting:animate-out exiting:fade-out exiting:zoom-out-95 fill-mode-forwards origin-top-left">
+          <Menu className="outline-hidden">
+            <ActionItem id="new">New…</ActionItem>
+            <ActionItem id="open">Open…</ActionItem>
+            <Separator className="bg-gray-300 h-[1px] mx-3 my-1" />
+            <ActionItem id="save">Save</ActionItem>
+            <ActionItem id="save-as">Save as…</ActionItem>
+            <Separator className="bg-gray-300 h-[1px] mx-3 my-1" />
+            <ActionItem id="print">Print…</ActionItem>
+          </Menu>
+        </Popover>
+      </MenuTrigger>
+    </div>
+  );
+}
+
+function ActionItem(props: MenuItemProps) {
+  return <MenuItem {...props} className="group flex w-full items-center rounded-md px-3 py-2 box-border outline-hidden cursor-default text-gray-900 focus:bg-violet-500 focus:text-white" />;
+}
+```
+
+### Tailwind config
+
+This example uses the following plugins:
+
+* [tailwindcss-react-aria-components](../styling.html#plugin)
+* [tailwindcss-animate](https://github.com/jamiebuilds/tailwindcss-animate)
+
+When using Tailwind v4, add them to your CSS:
+
+```css render=false
+@import "tailwindcss";
+@plugin "tailwindcss-react-aria-components";
+@plugin "tailwindcss-animate";
+```
+
+<details>
+
+<summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Tailwind v3</summary>
+
+When using Tailwind v3, add the plugins to your `tailwind.config.js` instead:
+
+```tsx
+module.exports = {
+  // ...
+  plugins: [
+    require('tailwindcss-react-aria-components'),
+    require('tailwindcss-animate')
+  ]
+};
+```
+
+**Note**: When using Tailwind v3, install `tailwindcss-react-aria-components` version 1.x instead of 2.x.
+
+</details>
+
+## Components
+
+<section className={styles.cardGroup} data-size="small">
+
+<ExampleCard
+  url="../Menu.html"
+  title="Menu"
+  description="A menu displays a list of actions or options that a user can choose.">
+  <Menu style={{background: 'var(--anatomy-gray-100)', width: 'calc(100% - 20px)', padding: 10, maxHeight: 132}} />
+</ExampleCard>
+
+<ExampleCard
+  url="../Button.html"
+  title="Button"
+  description="A button allows a user to perform an action.">
+  <Button />
+</ExampleCard>
+
+<ExampleCard
+  url="../Popover.html"
+  title="Popover"
+  description="A popover displays content in context with a trigger element.">
+  <Popover />
+</ExampleCard>
+
+</section>

@@ -1,0 +1,25 @@
+<svg style="background:var(--anatomy-gray-100); padding: calc((152px - 38.739px) / 2) 10px" height="38.739" viewBox="0 0 38 38.739">
+  <g id="Decorative_icon" data-name="Decorative icon" transform="translate(-5 -2.761)">
+    <g id="Icon">
+      <rect id="Rectangle_142290" data-name="Rectangle 142290" width="4.348" height="4.348" rx="1" transform="translate(11.957 17.393)" fill="var(--anatomy-gray-500)"/>
+      <rect id="Rectangle_142291" data-name="Rectangle 142291" width="4.348" height="4.348" rx="1" transform="translate(18.48 17.393)" fill="var(--anatomy-gray-500)"/>
+      <rect id="Rectangle_142292" data-name="Rectangle 142292" width="4.348" height="4.348" rx="1" transform="translate(25.002 17.393)" fill="var(--anatomy-gray-500)"/>
+      <rect id="Rectangle_142293" data-name="Rectangle 142293" width="4.348" height="4.348" rx="1" transform="translate(31.524 17.393)" fill="var(--anatomy-gray-500)"/>
+      <rect id="Rectangle_142294" data-name="Rectangle 142294" width="4.348" height="4.348" rx="1" transform="translate(11.957 23.915)" fill="var(--anatomy-gray-500)"/>
+      <rect id="Rectangle_142295" data-name="Rectangle 142295" width="4.348" height="4.348" rx="1" transform="translate(18.48 23.915)" fill="var(--anatomy-gray-500)"/>
+      <rect id="Rectangle_142296" data-name="Rectangle 142296" width="4.348" height="4.348" rx="1" transform="translate(25.002 23.915)" fill="var(--anatomy-gray-500)"/>
+      <rect id="Rectangle_142297" data-name="Rectangle 142297" width="4.348" height="4.348" rx="1" transform="translate(31.524 23.915)" fill="var(--anatomy-gray-500)"/>
+      <rect id="Rectangle_142298" data-name="Rectangle 142298" width="4.348" height="4.348" rx="1" transform="translate(11.957 30.437)" fill="var(--anatomy-gray-500)"/>
+      <rect id="Rectangle_142299" data-name="Rectangle 142299" width="4.348" height="4.348" rx="1" transform="translate(18.48 30.437)" fill="var(--anatomy-gray-500)"/>
+      <rect id="Rectangle_142300" data-name="Rectangle 142300" width="4.348" height="4.348" rx="1" transform="translate(25.002 30.437)" fill="var(--anatomy-gray-500)"/>
+      <rect id="Rectangle_142301" data-name="Rectangle 142301" width="4.348" height="4.348" rx="1" transform="translate(31.524 30.437)" fill="var(--anatomy-gray-500)"/>
+      <g id="Rectangle_142302" data-name="Rectangle 142302" transform="translate(5 7.5)" fill="none" stroke="var(--anatomy-gray-400)" stroke-width="2.1">
+        <rect width="38" height="34" rx="4" stroke="none"/>
+        <rect x="1.05" y="1.05" width="35.9" height="31.9" rx="2.95" fill="none"/>
+      </g>
+      <path id="Path_63895" data-name="Path 63895" d="M33.524,5.848V2.587A1.087,1.087,0,0,0,32.437,1.5H30.263a1.087,1.087,0,0,0-1.087,1.087V5.848H13.957V2.587A1.087,1.087,0,0,0,12.87,1.5H10.7A1.087,1.087,0,0,0,9.609,2.587V5.848H33.524ZM9.609,9.109v2.174A1.087,1.087,0,0,0,10.7,12.37H12.87a1.087,1.087,0,0,0,1.087-1.087V9.109H29.176v2.174a1.087,1.087,0,0,0,1.087,1.087h2.174a1.087,1.087,0,0,0,1.087-1.087V9.109" transform="translate(2.348 1.761)" fill="var(--anatomy-gray-600)" stroke="var(--anatomy-gray-900)" stroke-opacity="0" stroke-width="1"/>
+      <path id="Path_63896" data-name="Path 63896" d="M11.957,7.455h4.348v3.459H11.957Z" fill="var(--anatomy-gray-600)"/>
+      <path id="Path_63897" data-name="Path 63897" d="M11.957,7.455h4.348v3.459H11.957Z" transform="translate(19.567)" fill="var(--anatomy-gray-600)"/>
+    </g>
+  </g>
+</svg>

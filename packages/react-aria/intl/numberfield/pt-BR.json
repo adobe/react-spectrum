@@ -1,0 +1,5 @@
+{
+  "decrease": "Diminuir {fieldLabel}",
+  "increase": "Aumentar {fieldLabel}",
+  "numberField": "Campo de número"
+}

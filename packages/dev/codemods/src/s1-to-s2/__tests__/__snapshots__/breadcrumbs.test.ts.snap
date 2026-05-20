@@ -1,0 +1,126 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Comments out autoFocusCurrent 1`] = `
+"import { Breadcrumb, Breadcrumbs } from "@react-spectrum/s2";
+
+// TODO(S2-upgrade): S2 Breadcrumbs no longer includes a nav element by default. You can wrap the Breadcrumbs component in a nav element if needed.
+// TODO(S2-upgrade): autoFocusCurrent has not been implemented yet.
+<Breadcrumbs>
+  <Breadcrumb id="home">Home</Breadcrumb>
+  <Breadcrumb id="trendy">Trendy</Breadcrumb>
+  <Breadcrumb id="march 2020 assets">March 2020 Assets</Breadcrumb>
+</Breadcrumbs>"
+`;
+
+exports[`Comments out isMultiline 1`] = `
+"import { Breadcrumb, Breadcrumbs } from "@react-spectrum/s2";
+
+// TODO(S2-upgrade): S2 Breadcrumbs no longer includes a nav element by default. You can wrap the Breadcrumbs component in a nav element if needed.
+// TODO(S2-upgrade): isMultiline has not been implemented yet.
+<Breadcrumbs>
+  <Breadcrumb id="home">Home</Breadcrumb>
+  <Breadcrumb id="trendy">Trendy</Breadcrumb>
+  <Breadcrumb id="march 2020 assets">March 2020 Assets</Breadcrumb>
+</Breadcrumbs>"
+`;
+
+exports[`Comments out showRoot 1`] = `
+"import { Breadcrumb, Breadcrumbs } from "@react-spectrum/s2";
+
+// TODO(S2-upgrade): S2 Breadcrumbs no longer includes a nav element by default. You can wrap the Breadcrumbs component in a nav element if needed.
+// TODO(S2-upgrade): showRoot has not been implemented yet.
+<Breadcrumbs>
+  <Breadcrumb id="home">Home</Breadcrumb>
+  <Breadcrumb id="trendy">Trendy</Breadcrumb>
+  <Breadcrumb id="2020 assets">March 2020 Assets</Breadcrumb>
+  <Breadcrumb id="winter">Winter</Breadcrumb>
+  <Breadcrumb id="holiday">Holiday</Breadcrumb>
+</Breadcrumbs>"
+`;
+
+exports[`Dynamic - Renames Item to Breadcrumb 1`] = `
+"import { Breadcrumb, Breadcrumbs } from "@react-spectrum/s2";
+let folders = [
+  {id: 1, label: 'Home'},
+  {id: 2, label: 'Trendy'},
+  {id: 3, label: 'March 2020 Assets'}
+];
+<div>
+  // TODO(S2-upgrade): S2 Breadcrumbs no longer includes a nav element by default. You can wrap the Breadcrumbs component in a nav element if needed.
+  <Breadcrumbs onAction={(a) => setFolderId(a)}>
+    {folders.map(f => <Breadcrumb id={f.id} key={f.id}>{f.label}</Breadcrumb>)}
+  </Breadcrumbs>
+</div>"
+`;
+
+exports[`Dynamic - Renames key to id 1`] = `
+"import { Breadcrumb, Breadcrumbs } from "@react-spectrum/s2";
+const items = [
+  {id: 1, name: 'News'},
+  {id: 2, name: 'Travel'},
+  {id: 3, name: 'Gaming'},
+  {id: 4, name: 'Shopping'}
+];
+<div>
+  // TODO(S2-upgrade): S2 Breadcrumbs no longer includes a nav element by default. You can wrap the Breadcrumbs component in a nav element if needed.
+  <Breadcrumbs items={items}>
+    {item => <Breadcrumb id={item.id}>{item.name}</Breadcrumb>}
+  </Breadcrumbs>
+  // TODO(S2-upgrade): S2 Breadcrumbs no longer includes a nav element by default. You can wrap the Breadcrumbs component in a nav element if needed.
+  <Breadcrumbs items={items}>
+    {item => <Breadcrumb id={item.id}>{item.name}</Breadcrumb>}
+  </Breadcrumbs>
+  // TODO(S2-upgrade): S2 Breadcrumbs no longer includes a nav element by default. You can wrap the Breadcrumbs component in a nav element if needed.
+  <Breadcrumbs items={items}>
+    {item => <Breadcrumb>{item.name}</Breadcrumb>}
+  </Breadcrumbs>
+</div>"
+`;
+
+exports[`Leaves a comment if size prop contains "S" 1`] = `
+"import { Breadcrumb, Breadcrumbs } from "@react-spectrum/s2";
+
+// TODO(S2-upgrade): S2 Breadcrumbs no longer includes a nav element by default. You can wrap the Breadcrumbs component in a nav element if needed.
+<Breadcrumbs // TODO(S2-upgrade): size="S" is no longer supported. You'll need to update this manually.
+size={true ? 'M' : 'S'}>
+  <Breadcrumb id="home">Home</Breadcrumb>
+  <Breadcrumb id="trendy">Trendy</Breadcrumb>
+</Breadcrumbs>"
+`;
+
+exports[`Removes size="S" 1`] = `
+"import { Breadcrumb, Breadcrumbs } from "@react-spectrum/s2";
+
+// TODO(S2-upgrade): S2 Breadcrumbs no longer includes a nav element by default. You can wrap the Breadcrumbs component in a nav element if needed.
+<Breadcrumbs>
+  <Breadcrumb id="home">Home</Breadcrumb>
+  <Breadcrumb id="trendy">Trendy</Breadcrumb>
+</Breadcrumbs>"
+`;
+
+exports[`Static - Renames Item to Breadcrumb and adds import 1`] = `
+"import { Breadcrumb, Breadcrumbs } from "@react-spectrum/s2";
+
+<div>
+  // TODO(S2-upgrade): S2 Breadcrumbs no longer includes a nav element by default. You can wrap the Breadcrumbs component in a nav element if needed.
+  <Breadcrumbs>
+    <Breadcrumb id="home">Home</Breadcrumb>
+    <Breadcrumb id="trendy">Trendy</Breadcrumb>
+    <Breadcrumb id="march 2020 assets">March 2020 Assets</Breadcrumb>
+  </Breadcrumbs>
+</div>"
+`;
+
+exports[`Static - Renames key to id 1`] = `
+"import { Breadcrumb, Breadcrumbs } from "@react-spectrum/s2";
+let externalKey = 'travel';
+<div>
+  // TODO(S2-upgrade): S2 Breadcrumbs no longer includes a nav element by default. You can wrap the Breadcrumbs component in a nav element if needed.
+  <Breadcrumbs>
+    <Breadcrumb id="news">News</Breadcrumb>
+    <Breadcrumb id={externalKey}>Travel</Breadcrumb>
+    <Breadcrumb>Gaming</Breadcrumb>
+    <Breadcrumb>Shopping</Breadcrumb>
+  </Breadcrumbs>
+</div>"
+`;

@@ -1,0 +1,28 @@
+{
+  "name": "storybook-builder-parcel",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "main": "./preset.mjs",
+  "exports": {
+    ".": "./preset.mjs",
+    "./preset": "./preset.mjs"
+  },
+  "scripts": {
+    "build": "true",
+    "clean": "true"
+  },
+  "dependencies": {
+    "@parcel/core": "^2.16.3",
+    "@parcel/reporter-cli": "^2.16.3",
+    "@parcel/utils": "^2.16.3",
+    "http-proxy-middleware": "^2.0.6",
+    "storybook": "^10.0.0"
+  },
+  "devDependencies": {
+    "react": "*"
+  },
+  "peerDependencies": {
+    "react": "*"
+  }
+}

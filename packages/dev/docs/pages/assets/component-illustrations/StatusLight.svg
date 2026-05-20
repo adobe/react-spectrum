@@ -1,0 +1,5 @@
+<svg style="background:var(--anatomy-gray-100); padding: calc((152px - 32px) / 2) 10px" height="32" viewBox="0 0 46 32">
+  <rect id="Placement_Area" data-name="Placement Area" width="46" height="32" fill="red" opacity="0"/>
+  <circle id="Dot" cx="4" cy="4" r="4" transform="translate(0 12)" fill="var(--anatomy-gray-600)"/>
+  <text id="Text" transform="translate(18 20)" fill="var(--anatomy-gray-800)" font-size="14" font-family="var(--anatomy-font)"><tspan x="0" y="0">Draft</tspan></text>
+</svg>

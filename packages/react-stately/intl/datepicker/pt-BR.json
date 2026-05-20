@@ -1,0 +1,6 @@
+{
+  "rangeOverflow": "O valor deve ser {maxValue} ou anterior.",
+  "rangeReversed": "A data inicial deve ser anterior à data final.",
+  "rangeUnderflow": "O valor deve ser {minValue} ou posterior.",
+  "unavailableDate": "Data selecionada indisponível."
+}

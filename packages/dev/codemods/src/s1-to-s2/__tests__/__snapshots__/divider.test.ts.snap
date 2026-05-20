@@ -1,0 +1,9 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Does nothing 1`] = `
+"import { Divider } from "@react-spectrum/s2";
+
+<div>
+  <Divider />
+</div>"
+`;

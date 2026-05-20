@@ -1,0 +1,7 @@
+{
+  "actions": "Akcie",
+  "actionsAvailable": "Dostupné akcie.",
+  "clearSelection": "Vymazať výber",
+  "selected": "Vybrané položky: {count}",
+  "selectedAll": "Všetky vybraté položky"
+}

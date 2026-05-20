@@ -1,0 +1,403 @@
+/*
+ * Copyright 2024 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
+import {
+  GridList as AriaGridList,
+  GridListItem,
+  GridListLoadMoreItem,
+  GridListProps,
+  GridListRenderProps
+} from 'react-aria-components/GridList';
+
+import {CardContext, InternalCardViewContext} from './Card';
+import {Collection} from 'react-aria/Collection';
+import {ContextValue} from 'react-aria-components/slots';
+import {
+  createContext,
+  forwardRef,
+  ReactElement,
+  useCallback,
+  useMemo,
+  useRef,
+  useState
+} from 'react';
+import {
+  DOMRef,
+  DOMRefValue,
+  forwardRefType,
+  GlobalDOMAttributes,
+  Key,
+  LoadingState
+} from '@react-types/shared';
+import {focusRing, style} from '../style' with {type: 'macro'};
+import {
+  getAllowedOverrides,
+  StylesPropWithHeight,
+  UnsafeStyles
+} from './style-utils' with {type: 'macro'};
+import {GridLayout, Size, Virtualizer, WaterfallLayout} from 'react-aria-components/Virtualizer';
+import {ImageCoordinator} from './ImageCoordinator';
+import {useActionBarContainer} from './ActionBar';
+import {useDOMRef} from './useDOMRef';
+import {useEffectEvent} from 'react-aria/private/utils/useEffectEvent';
+import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
+import {useResizeObserver} from 'react-aria/private/utils/useResizeObserver';
+import {useSpectrumContextProps} from './useSpectrumContextProps';
+
+export interface CardViewProps<T>
+  extends
+    Omit<
+      GridListProps<T>,
+      | 'layout'
+      | 'keyboardNavigationBehavior'
+      | 'selectionBehavior'
+      | 'className'
+      | 'style'
+      | 'render'
+      | 'isLoading'
+      | keyof GlobalDOMAttributes
+    >,
+    UnsafeStyles {
+  /**
+   * The layout of the cards.
+   *
+   * @default 'grid'
+   */
+  layout?: 'grid' | 'waterfall';
+  /**
+   * The size of the cards.
+   *
+   * @default 'M'
+   */
+  size?: 'XS' | 'S' | 'M' | 'L' | 'XL';
+  /**
+   * The amount of space between the cards.
+   *
+   * @default 'regular'
+   */
+  density?: 'compact' | 'regular' | 'spacious';
+  /**
+   * The visual style of the cards.
+   *
+   * @default 'primary'
+   */
+  variant?: 'primary' | 'secondary' | 'tertiary' | 'quiet';
+  /**
+   * How selection should be displayed.
+   *
+   * @default 'checkbox'
+   */
+  selectionStyle?: 'checkbox' | 'highlight';
+  /** The loading state of the CardView. */
+  loadingState?: LoadingState;
+  /** Handler that is called when more items should be loaded, e.g. while scrolling near the bottom. */
+  onLoadMore?: () => void;
+  /** Spectrum-defined styles, returned by the `style()` macro. */
+  styles?: StylesPropWithHeight;
+  /** Provides the ActionBar to render when cards are selected in the CardView. */
+  renderActionBar?: (selectedKeys: 'all' | Set<Key>) => ReactElement;
+}
+
+const layoutOptions = {
+  XS: {
+    compact: {
+      minSpace: new Size(6, 6),
+      minItemSize: new Size(100, 100),
+      maxItemSize: new Size(140, 140)
+    },
+    regular: {
+      minSpace: new Size(8, 8),
+      minItemSize: new Size(100, 100),
+      maxItemSize: new Size(140, 140)
+    },
+    spacious: {
+      minSpace: new Size(12, 12),
+      minItemSize: new Size(100, 100),
+      maxItemSize: new Size(140, 140)
+    }
+  },
+  S: {
+    compact: {
+      minSpace: new Size(8, 8),
+      minItemSize: new Size(150, 150),
+      maxItemSize: new Size(210, 210)
+    },
+    regular: {
+      minSpace: new Size(12, 12),
+      minItemSize: new Size(150, 150),
+      maxItemSize: new Size(210, 210)
+    },
+    spacious: {
+      minSpace: new Size(16, 16),
+      minItemSize: new Size(150, 150),
+      maxItemSize: new Size(210, 210)
+    }
+  },
+  M: {
+    compact: {
+      minSpace: new Size(12, 12),
+      minItemSize: new Size(200, 200),
+      maxItemSize: new Size(280, 280)
+    },
+    regular: {
+      minSpace: new Size(16, 16),
+      minItemSize: new Size(200, 200),
+      maxItemSize: new Size(280, 280)
+    },
+    spacious: {
+      minSpace: new Size(20, 20),
+      minItemSize: new Size(200, 200),
+      maxItemSize: new Size(280, 280)
+    }
+  },
+  L: {
+    compact: {
+      minSpace: new Size(16, 16),
+      minItemSize: new Size(270, 270),
+      maxItemSize: new Size(370, 370)
+    },
+    regular: {
+      minSpace: new Size(20, 20),
+      minItemSize: new Size(270, 270),
+      maxItemSize: new Size(370, 370)
+    },
+    spacious: {
+      minSpace: new Size(24, 24),
+      minItemSize: new Size(270, 270),
+      maxItemSize: new Size(370, 370)
+    }
+  },
+  XL: {
+    compact: {
+      minSpace: new Size(20, 20),
+      minItemSize: new Size(340, 340),
+      maxItemSize: new Size(460, 460)
+    },
+    regular: {
+      minSpace: new Size(24, 24),
+      minItemSize: new Size(340, 340),
+      maxItemSize: new Size(460, 460)
+    },
+    spacious: {
+      minSpace: new Size(28, 28),
+      minItemSize: new Size(340, 340),
+      maxItemSize: new Size(460, 460)
+    }
+  }
+};
+
+const SIZES = ['XS', 'S', 'M', 'L', 'XL'] as const;
+
+const cardViewStyles = style(
+  {
+    overflowY: {
+      default: 'auto',
+      isLoading: 'hidden'
+    },
+    display: {
+      isEmpty: 'flex'
+    },
+    boxSizing: 'border-box',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    ...focusRing(),
+    outlineStyle: {
+      default: 'none',
+      isEmpty: {
+        isFocusVisible: 'solid'
+      }
+    },
+    outlineOffset: -2,
+    height: {
+      isActionBar: 'full'
+    }
+  },
+  getAllowedOverrides({height: true})
+);
+
+const wrapperStyles = style(
+  {
+    position: 'relative',
+    overflow: 'clip'
+  },
+  getAllowedOverrides({height: true})
+);
+
+export const CardViewContext =
+  createContext<ContextValue<Partial<CardViewProps<any>>, DOMRefValue<HTMLDivElement>>>(null);
+
+/**
+ * A CardView displays a group of related objects, with support for selection and bulk actions.
+ */
+export const CardView = /*#__PURE__*/ (forwardRef as forwardRefType)(function CardView<T>(
+  props: CardViewProps<T>,
+  ref: DOMRef<HTMLDivElement>
+) {
+  [props, ref] = useSpectrumContextProps(props, ref, CardViewContext);
+  let {
+    children,
+    layout: layoutName = 'grid',
+    size: sizeProp = 'M',
+    density = 'regular',
+    variant = 'primary',
+    selectionStyle = 'checkbox',
+    UNSAFE_className = '',
+    UNSAFE_style,
+    styles,
+    loadingState,
+    onLoadMore,
+    items,
+    renderEmptyState: renderEmptyStateProp,
+    ...otherProps
+  } = props;
+  let domRef = useDOMRef(ref);
+  let innerRef = useRef(null);
+  let scrollRef = props.renderActionBar ? innerRef : domRef;
+
+  // This calculates the maximum t-shirt size where at least two columns fit in the available width.
+  let [maxSizeIndex, setMaxSizeIndex] = useState(SIZES.length - 1);
+  let updateSize = useCallback(() => {
+    let w = scrollRef.current?.clientWidth ?? 0;
+    let i = SIZES.length - 1;
+    while (i > 0) {
+      let opts = layoutOptions[SIZES[i]][density];
+      if (w >= opts.minItemSize.width * 2 + opts.minSpace.width * 3) {
+        break;
+      }
+      i--;
+    }
+    setMaxSizeIndex(i);
+  }, [scrollRef, density]);
+  let updateSizeEvent = useEffectEvent(updateSize);
+
+  useResizeObserver({
+    ref: scrollRef,
+    box: 'border-box',
+    onResize: updateSize
+  });
+
+  useLayoutEffect(() => {
+    updateSizeEvent();
+  }, []);
+
+  // The actual rendered t-shirt size is the minimum between the size prop and the maximum possible size.
+  let size = SIZES[Math.min(maxSizeIndex, SIZES.indexOf(sizeProp))];
+  let layout = layoutName === 'waterfall' ? WaterfallLayout : GridLayout;
+  let options = layoutOptions[size][density];
+
+  let ctx = useMemo(() => ({size, variant}), [size, variant]);
+
+  let {selectedKeys, onSelectionChange, actionBar, actionBarHeight} = useActionBarContainer({
+    ...props,
+    scrollRef
+  });
+
+  let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
+  let renderer;
+  let cardLoadingSentinel = <GridListLoadMoreItem isLoading={isLoading} onLoadMore={onLoadMore} />;
+
+  if (typeof children === 'function' && items) {
+    renderer = (
+      <>
+        <Collection items={items} dependencies={props.dependencies}>
+          {children}
+        </Collection>
+        {cardLoadingSentinel}
+      </>
+    );
+  } else {
+    renderer = (
+      <>
+        {children}
+        {cardLoadingSentinel}
+      </>
+    );
+  }
+
+  // Wrap the renderEmptyState function so that it is not called when there is a skeleton loader.
+  let renderEmptyState = renderEmptyStateProp
+    ? (renderProps: GridListRenderProps) => {
+        let collection = renderProps.state.collection;
+        let firstKey = collection.getFirstKey();
+        if (firstKey == null || collection.getItem(firstKey)?.type !== 'skeleton') {
+          return renderEmptyStateProp(renderProps);
+        }
+      }
+    : undefined;
+
+  let cardViewCtx = useMemo(
+    () => ({
+      layout: layoutName,
+      ElementType: GridListItem
+    }),
+    [layoutName]
+  );
+
+  let cardView = (
+    <Virtualizer layout={layout} layoutOptions={options}>
+      <InternalCardViewContext.Provider value={cardViewCtx}>
+        <CardContext.Provider value={ctx}>
+          <ImageCoordinator>
+            <AriaGridList
+              ref={scrollRef}
+              {...otherProps}
+              renderEmptyState={renderEmptyState}
+              items={items}
+              layout="grid"
+              selectionBehavior={selectionStyle === 'highlight' ? 'replace' : 'toggle'}
+              selectedKeys={selectedKeys}
+              defaultSelectedKeys={undefined}
+              onSelectionChange={onSelectionChange}
+              style={{
+                ...(!props.renderActionBar ? UNSAFE_style : {}),
+                // Add padding at the bottom when the action bar is visible so users can scroll to the last items.
+                // Also add scroll padding so keyboard navigating preserves the padding.
+                paddingBottom: actionBarHeight > 0 ? actionBarHeight + options.minSpace.height : 0,
+                scrollPadding: options.minSpace.height,
+                scrollPaddingBottom: actionBarHeight + options.minSpace.height
+              }}
+              className={renderProps =>
+                (!props.renderActionBar ? UNSAFE_className : '') +
+                cardViewStyles(
+                  {
+                    ...renderProps,
+                    isLoading: props.loadingState === 'loading',
+                    isActionBar: !!props.renderActionBar
+                  },
+                  !props.renderActionBar ? styles : undefined
+                )
+              }>
+              {renderer}
+            </AriaGridList>
+          </ImageCoordinator>
+        </CardContext.Provider>
+      </InternalCardViewContext.Provider>
+    </Virtualizer>
+  );
+
+  // Add extra wrapper if there is an action bar so we can position relative to it.
+  // ActionBar cannot be inside the GridList due to ARIA and focus management requirements.
+  if (props.renderActionBar) {
+    return (
+      <div
+        ref={domRef}
+        className={UNSAFE_className + wrapperStyles(null, styles)}
+        style={UNSAFE_style}>
+        {cardView}
+        {actionBar}
+      </div>
+    );
+  }
+
+  return cardView;
+});

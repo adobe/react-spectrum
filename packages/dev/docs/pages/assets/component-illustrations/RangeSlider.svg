@@ -1,0 +1,17 @@
+<svg style="background:var(--anatomy-gray-100); padding: calc((152px - 48px) / 2) 10px" height="48" viewBox="0 0 200 48">
+  <rect id="Placement_Area" data-name="Placement Area" width="200" height="48" fill="red" opacity="0"/>
+  <text id="Label" transform="translate(0 16)" fill="var(--anatomy-gray-700)" font-size="14" font-family="var(--anatomy-font)"><tspan x="0" y="0">Price range</tspan></text>
+  <rect id="Placement_Area-2" data-name="Placement Area" width="200" height="16" transform="translate(0 24)" fill="red" opacity="0"/>
+  <path id="Track" d="M1,0H48a0,0,0,0,1,0,0V2a0,0,0,0,1,0,0H1A1,1,0,0,1,0,1V1A1,1,0,0,1,1,0Z" transform="translate(0 31)" fill="var(--anatomy-gray-400)"/>
+  <path id="Track-2" data-name="Track" d="M0,0H50a1,1,0,0,1,1,1V1a1,1,0,0,1-1,1H0A0,0,0,0,1,0,2V0A0,0,0,0,1,0,0Z" transform="translate(149 31)" fill="var(--anatomy-gray-400)"/>
+  <rect id="Fill" width="53" height="2" transform="translate(72 31)" fill="var(--anatomy-gray-700)"/>
+  <g id="Handle" transform="translate(129 24)" fill="rgba(255,255,255,0)" stroke="var(--anatomy-gray-700)" stroke-width="2">
+    <circle cx="8" cy="8" r="8" stroke="none"/>
+    <circle cx="8" cy="8" r="7" fill="none"/>
+  </g>
+  <text id="Value" transform="translate(200 16)" fill="var(--anatomy-gray-800)" font-size="14" font-family="var(--anatomy-font)"><tspan x="-68.656" y="0">$100 – $300</tspan></text>
+  <g id="Handle-2" data-name="Handle" transform="translate(52 24)" fill="rgba(255,255,255,0)" stroke="var(--anatomy-gray-700)" stroke-width="2">
+    <circle cx="8" cy="8" r="8" stroke="none"/>
+    <circle cx="8" cy="8" r="7" fill="none"/>
+  </g>
+</svg>

@@ -1,0 +1,13 @@
+diff --git a/index.d.ts b/index.d.ts
+index ba9855b0a36d5fbd70f92da611f3e1e96f203ee3..167de6defae46d391a45cc63dd11403722fb1619 100644
+--- a/index.d.ts
++++ b/index.d.ts
+@@ -4,7 +4,7 @@
+  */
+ export function mdxjs(
+   options?:
+-    | import('micromark-extension-mdx-expression/dev/lib/syntax').Options
++    | Options
+     | undefined
+ ): Extension
+ export type Extension = import('micromark-util-types').Extension

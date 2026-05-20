@@ -1,0 +1,516 @@
+/*
+ * Copyright 2022 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
+import {
+  AriaRadioGroupProps,
+  AriaRadioProps,
+  RadioAria,
+  useRadio,
+  useRadioGroup
+} from 'react-aria/useRadioGroup';
+import {
+  ClassNameOrFunction,
+  ContextValue,
+  dom,
+  Provider,
+  RACValidation,
+  removeDataAttributes,
+  RenderProps,
+  SlotProps,
+  useContextProps,
+  useRenderProps,
+  useSlot,
+  useSlottedContext
+} from './utils';
+import {FieldErrorContext} from './FieldError';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
+import {FormContext} from './Form';
+import {forwardRefType, GlobalDOMAttributes, RefObject} from '@react-types/shared';
+import {HoverEvents, Orientation} from '@react-types/shared';
+import {LabelContext} from './Label';
+import {mergeProps} from 'react-aria/mergeProps';
+import {mergeRefs} from 'react-aria/mergeRefs';
+import {RadioGroupState, useRadioGroupState} from 'react-stately/useRadioGroupState';
+import React, {createContext, ForwardedRef, forwardRef, useContext, useMemo} from 'react';
+import {SelectionIndicatorContext} from './SelectionIndicator';
+import {SharedElementTransition} from './SharedElementTransition';
+import {TextContext} from './Text';
+import {useFocusRing} from 'react-aria/useFocusRing';
+import {useHover} from 'react-aria/useHover';
+import {useObjectRef} from 'react-aria/useObjectRef';
+import {VisuallyHidden} from 'react-aria/VisuallyHidden';
+
+export interface RadioGroupProps
+  extends
+    Omit<
+      AriaRadioGroupProps,
+      | 'children'
+      | 'label'
+      | 'description'
+      | 'errorMessage'
+      | 'validationState'
+      | 'validationBehavior'
+    >,
+    RACValidation,
+    RenderProps<RadioGroupRenderProps>,
+    SlotProps,
+    GlobalDOMAttributes<HTMLDivElement> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
+   * @default 'react-aria-RadioGroup'
+   */
+  className?: ClassNameOrFunction<RadioGroupRenderProps>;
+}
+export interface RadioProps
+  extends
+    Omit<AriaRadioProps, 'children'>,
+    HoverEvents,
+    RenderProps<RadioRenderProps, 'label'>,
+    SlotProps,
+    Omit<GlobalDOMAttributes<HTMLLabelElement>, 'onClick'> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
+   * @default 'react-aria-Radio'
+   */
+  className?: ClassNameOrFunction<RadioRenderProps>;
+  /**
+   * A ref for the HTML input element.
+   */
+  inputRef?: RefObject<HTMLInputElement | null>;
+}
+
+export interface RadioFieldProps
+  extends
+    Omit<AriaRadioProps, 'children'>,
+    RenderProps<RadioFieldRenderProps>,
+    SlotProps,
+    Omit<GlobalDOMAttributes<HTMLDivElement>, 'onClick'> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
+   * @default 'react-aria-RadioField'
+   */
+  className?: ClassNameOrFunction<RadioFieldRenderProps>;
+  /**
+   * A ref for the HTML input element.
+   */
+  inputRef?: RefObject<HTMLInputElement | null>;
+}
+
+export interface RadioButtonProps
+  extends
+    HoverEvents,
+    RenderProps<RadioButtonRenderProps, 'label'>,
+    SlotProps,
+    Omit<GlobalDOMAttributes<HTMLLabelElement>, 'onClick'> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
+   * @default 'react-aria-RadioButton'
+   */
+  className?: ClassNameOrFunction<RadioButtonRenderProps>;
+}
+
+export interface RadioGroupRenderProps {
+  /**
+   * The orientation of the radio group.
+   *
+   * @selector [data-orientation="horizontal | vertical"]
+   */
+  orientation: Orientation;
+  /**
+   * Whether the radio group is disabled.
+   *
+   * @selector [data-disabled]
+   */
+  isDisabled: boolean;
+  /**
+   * Whether the radio group is read only.
+   *
+   * @selector [data-readonly]
+   */
+  isReadOnly: boolean;
+  /**
+   * Whether the radio group is required.
+   *
+   * @selector [data-required]
+   */
+  isRequired: boolean;
+  /**
+   * Whether the radio group is invalid.
+   *
+   * @selector [data-invalid]
+   */
+  isInvalid: boolean;
+  /**
+   * State of the radio group.
+   */
+  state: RadioGroupState;
+}
+
+export interface RadioRenderProps {
+  /**
+   * Whether the radio is selected.
+   *
+   * @selector [data-selected]
+   */
+  isSelected: boolean;
+  /**
+   * Whether the radio is currently hovered with a mouse.
+   *
+   * @selector [data-hovered]
+   */
+  isHovered: boolean;
+  /**
+   * Whether the radio is currently in a pressed state.
+   *
+   * @selector [data-pressed]
+   */
+  isPressed: boolean;
+  /**
+   * Whether the radio is focused, either via a mouse or keyboard.
+   *
+   * @selector [data-focused]
+   */
+  isFocused: boolean;
+  /**
+   * Whether the radio is keyboard focused.
+   *
+   * @selector [data-focus-visible]
+   */
+  isFocusVisible: boolean;
+  /**
+   * Whether the radio is disabled.
+   *
+   * @selector [data-disabled]
+   */
+  isDisabled: boolean;
+  /**
+   * Whether the radio is read only.
+   *
+   * @selector [data-readonly]
+   */
+  isReadOnly: boolean;
+  /**
+   * Whether the radio is invalid.
+   *
+   * @selector [data-invalid]
+   */
+  isInvalid: boolean;
+  /**
+   * Whether the checkbox is required.
+   *
+   * @selector [data-required]
+   */
+  isRequired: boolean;
+}
+
+export interface RadioFieldRenderProps {
+  /**
+   * Whether the radio is selected.
+   *
+   * @selector [data-selected]
+   */
+  isSelected: boolean;
+  /**
+   * Whether the radio is disabled.
+   *
+   * @selector [data-disabled]
+   */
+  isDisabled: boolean;
+  /**
+   * Whether the radio is read only.
+   *
+   * @selector [data-readonly]
+   */
+  isReadOnly: boolean;
+  /**
+   * Whether the radio is invalid.
+   *
+   * @selector [data-invalid]
+   */
+  isInvalid: boolean;
+  /**
+   * Whether the checkbox is required.
+   *
+   * @selector [data-required]
+   */
+  isRequired: boolean;
+}
+
+export interface RadioButtonRenderProps extends RadioRenderProps {}
+
+export const RadioGroupContext = createContext<ContextValue<RadioGroupProps, HTMLDivElement>>(null);
+export const RadioContext =
+  createContext<ContextValue<Partial<RadioProps>, HTMLLabelElement>>(null);
+export const RadioFieldContext =
+  createContext<ContextValue<Partial<RadioFieldProps>, HTMLDivElement>>(null);
+export const RadioGroupStateContext = createContext<RadioGroupState | null>(null);
+
+/**
+ * A radio group allows a user to select a single item from a list of mutually exclusive options.
+ */
+export const RadioGroup = /*#__PURE__*/ (forwardRef as forwardRefType)(function RadioGroup(
+  props: RadioGroupProps,
+  ref: ForwardedRef<HTMLDivElement>
+) {
+  [props, ref] = useContextProps(props, ref, RadioGroupContext);
+  let {validationBehavior: formValidationBehavior} = useSlottedContext(FormContext) || {};
+  let validationBehavior = props.validationBehavior ?? formValidationBehavior ?? 'native';
+  let state = useRadioGroupState({
+    ...props,
+    validationBehavior
+  });
+
+  let [labelRef, label] = useSlot(!props['aria-label'] && !props['aria-labelledby']);
+  let {radioGroupProps, labelProps, descriptionProps, errorMessageProps, ...validation} =
+    useRadioGroup(
+      {
+        ...props,
+        label,
+        validationBehavior
+      },
+      state
+    );
+
+  let renderProps = useRenderProps({
+    ...props,
+    values: {
+      orientation: props.orientation || 'vertical',
+      isDisabled: state.isDisabled,
+      isReadOnly: state.isReadOnly,
+      isRequired: state.isRequired,
+      isInvalid: state.isInvalid,
+      state
+    },
+    defaultClassName: 'react-aria-RadioGroup'
+  });
+
+  let DOMProps = filterDOMProps(props, {global: true});
+
+  return (
+    <dom.div
+      {...mergeProps(DOMProps, renderProps, radioGroupProps)}
+      ref={ref}
+      slot={props.slot || undefined}
+      data-orientation={props.orientation || 'vertical'}
+      data-invalid={state.isInvalid || undefined}
+      data-disabled={state.isDisabled || undefined}
+      data-readonly={state.isReadOnly || undefined}
+      data-required={state.isRequired || undefined}>
+      <Provider
+        values={[
+          [RadioGroupStateContext, state],
+          [LabelContext, {...labelProps, ref: labelRef, elementType: 'span'}],
+          [
+            TextContext,
+            {
+              slots: {
+                description: descriptionProps,
+                errorMessage: errorMessageProps
+              }
+            }
+          ],
+          [FieldErrorContext, validation]
+        ]}>
+        <SharedElementTransition>{renderProps.children}</SharedElementTransition>
+      </Provider>
+    </dom.div>
+  );
+});
+
+/**
+ * A radio represents an individual option within a radio group.
+ *
+ * @deprecated Use RadioField + RadioButton instead.
+ */
+export const Radio = /*#__PURE__*/ (forwardRef as forwardRefType)(function Radio(
+  props: RadioProps,
+  ref: ForwardedRef<HTMLLabelElement>
+) {
+  let {inputRef: userProvidedInputRef = null, ...otherProps} = props;
+  [props, ref] = useContextProps(otherProps, ref, RadioContext);
+  let state = React.useContext(RadioGroupStateContext)!;
+  let inputRef = useObjectRef(
+    useMemo(
+      () => mergeRefs(userProvidedInputRef, props.inputRef !== undefined ? props.inputRef : null),
+      [userProvidedInputRef, props.inputRef]
+    )
+  );
+  let aria = useRadio(
+    {
+      ...removeDataAttributes<RadioProps>(props),
+      // ReactNode type doesn't allow function children.
+      children: typeof props.children === 'function' ? true : props.children
+    },
+    state,
+    inputRef
+  );
+
+  return (
+    <InternalRadioContext.Provider
+      value={{...aria, inputRef, defaultClassName: 'react-aria-Radio'}}>
+      <RadioButton {...props} ref={ref} />
+    </InternalRadioContext.Provider>
+  );
+});
+
+interface InternalRadioContextValue extends RadioAria {
+  inputRef: RefObject<HTMLInputElement | null>;
+  defaultClassName: string;
+}
+
+const InternalRadioContext = createContext<InternalRadioContextValue | null>(null);
+
+/**
+ * A RadioField represents an individual option within a radio group, containing a RadioButton and
+ * optional description.
+ */
+export const RadioField = /*#__PURE__*/ (forwardRef as forwardRefType)(function RadioField(
+  props: RadioFieldProps,
+  ref: ForwardedRef<HTMLDivElement>
+) {
+  let {inputRef: userProvidedInputRef = null, ...otherProps} = props;
+  [props, ref] = useContextProps(otherProps, ref, RadioFieldContext);
+  let state = React.useContext(RadioGroupStateContext)!;
+  let inputRef = useObjectRef(
+    useMemo(
+      () => mergeRefs(userProvidedInputRef, props.inputRef !== undefined ? props.inputRef : null),
+      [userProvidedInputRef, props.inputRef]
+    )
+  );
+  let aria = useRadio(
+    {
+      ...removeDataAttributes<RadioFieldProps>(props),
+      // ReactNode type doesn't allow function children.
+      children: typeof props.children === 'function' ? true : props.children
+    },
+    state,
+    inputRef
+  );
+  let {descriptionProps, isSelected, isDisabled} = aria;
+
+  let renderProps = useRenderProps({
+    ...props,
+    defaultClassName: 'react-aria-RadioField',
+    values: {
+      isSelected,
+      isDisabled,
+      isReadOnly: state.isReadOnly,
+      isInvalid: state.isInvalid,
+      isRequired: state.isRequired
+    }
+  });
+
+  let DOMProps = filterDOMProps(props, {global: true});
+  delete DOMProps.id;
+  delete DOMProps.onClick;
+
+  return (
+    <dom.div
+      {...mergeProps(DOMProps, renderProps)}
+      ref={ref}
+      data-selected={isSelected || undefined}
+      data-disabled={isDisabled || undefined}
+      data-readonly={state.isReadOnly || undefined}
+      data-invalid={state.isInvalid || undefined}
+      data-required={state.isRequired || undefined}>
+      <Provider
+        values={[
+          [SelectionIndicatorContext, {isSelected}],
+          [
+            InternalRadioContext,
+            {
+              ...aria,
+              inputRef,
+              defaultClassName: 'react-aria-RadioButton'
+            }
+          ],
+          [
+            TextContext,
+            {
+              slots: {
+                description: descriptionProps
+              }
+            }
+          ]
+        ]}>
+        {renderProps.children}
+      </Provider>
+    </dom.div>
+  );
+});
+
+/**
+ * A RadioButton is the clickable area of a radio, including the indicator and label.
+ */
+export const RadioButton = /*#__PURE__*/ (forwardRef as forwardRefType)(function RadioButton(
+  props: RadioButtonProps,
+  ref: ForwardedRef<HTMLLabelElement>
+) {
+  let {labelProps, inputProps, isSelected, isDisabled, isPressed, defaultClassName, inputRef} =
+    useContext(InternalRadioContext)!;
+  let state = React.useContext(RadioGroupStateContext)!;
+  let {isFocused, isFocusVisible, focusProps} = useFocusRing();
+  let interactionDisabled = isDisabled || state.isReadOnly;
+
+  let {hoverProps, isHovered} = useHover({
+    ...props,
+    isDisabled: interactionDisabled
+  });
+
+  let renderProps = useRenderProps({
+    ...props,
+    defaultClassName,
+    values: {
+      isSelected,
+      isPressed,
+      isHovered,
+      isFocused,
+      isFocusVisible,
+      isDisabled,
+      isReadOnly: state.isReadOnly,
+      isInvalid: state.isInvalid,
+      isRequired: state.isRequired
+    }
+  });
+
+  let DOMProps = filterDOMProps(props, {global: true});
+  delete DOMProps.id;
+  delete DOMProps.onClick;
+
+  return (
+    <dom.label
+      {...mergeProps(DOMProps, labelProps, hoverProps, renderProps)}
+      ref={ref}
+      data-selected={isSelected || undefined}
+      data-pressed={isPressed || undefined}
+      data-hovered={isHovered || undefined}
+      data-focused={isFocused || undefined}
+      data-focus-visible={isFocusVisible || undefined}
+      data-disabled={isDisabled || undefined}
+      data-readonly={state.isReadOnly || undefined}
+      data-invalid={state.isInvalid || undefined}
+      data-required={state.isRequired || undefined}>
+      <VisuallyHidden elementType="span">
+        <input {...mergeProps(inputProps, focusProps)} ref={inputRef} />
+      </VisuallyHidden>
+      {renderProps.children}
+    </dom.label>
+  );
+});

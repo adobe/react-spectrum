@@ -1,0 +1,204 @@
+{/* Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/toast';
+import {HeaderInfo, PropTable, PageDescription, ClassAPI, TypeContext, InterfaceType, TypeLink} from '@react-spectrum/docs';
+import packageData from '@react-spectrum/toast/package.json';
+import {Keyboard} from '@react-spectrum/text';
+
+```tsx import
+import {ButtonGroup, Button} from '@adobe/react-spectrum';
+import {ToastContainer, ToastQueue} from '@react-spectrum/toast';
+```
+
+---
+category: Status
+keywords: [toast, notifications, alert]
+---
+
+# Toast
+
+<PageDescription>Toasts display brief, temporary notifications of actions, errors, or other events in an application.</PageDescription>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['ToastContainer', 'ToastQueue']}
+  sourceData={[
+    {type: 'Spectrum', url: 'https://spectrum.adobe.com/page/toast/'}
+  ]} />
+
+## Example
+
+First, render a toast container at the root of your app:
+
+```tsx example hidden
+<ToastContainer />
+```
+
+Then, queue a toast from anywhere:
+
+```tsx example
+<Button
+  onPress={() => ToastQueue.positive('Toast is done!')}
+  variant="primary">
+  Show toast
+</Button>
+```
+
+## Content
+
+Toasts are triggered using one of the methods of <TypeLink links={docs.links} type={docs.exports.ToastQueue} />. A &lt;<TypeLink links={docs.links} type={docs.exports.ToastContainer} />&gt; element must be rendered at the root of your app in order to display the queued toasts.
+
+Toasts are shown according to the order they are added, with the most recent toast appearing at the bottom of the stack. Please use Toasts sparingly, see [Spectrum design docs](https://spectrum.adobe.com/page/toast/#Too-many-toasts).
+
+```tsx example
+<ButtonGroup>
+  <Button
+    ///- begin highlight -///
+    onPress={() => ToastQueue.neutral('Toast available')}
+    ///- end highlight -///
+    variant="secondary">
+    Show Neutral Toast
+  </Button>
+  <Button
+    ///- begin highlight -///
+    onPress={() => ToastQueue.positive('Toast is done!')}
+    ///- end highlight -///
+    variant="primary">
+    Show Positive Toast
+  </Button>
+  <Button
+    ///- begin highlight -///
+    onPress={() => ToastQueue.negative('Toast is burned!')}
+    ///- end highlight -///
+    variant="negative">
+    Show Negative Toast
+  </Button>
+  <Button
+    ///- begin highlight -///
+    onPress={() => ToastQueue.info('Toasting…')}
+    ///- end highlight -///
+    variant="accent"
+    style="outline">
+    Show Info Toast
+  </Button>
+</ButtonGroup>
+```
+
+### Internationalization
+
+To internationalize a Toast, all text content within the toast should be localized. This includes the `actionLabel` option, if provided. For languages that are read right-to-left (e.g. Hebrew and Arabic), the layout of Toast is automatically flipped.
+
+### Accessibility
+
+Toasts are automatically displayed in a [landmark region](https://www.w3.org/WAI/ARIA/apg/practices/landmark-regions/) labeled "Notifications". The label can be overridden using the `aria-label` prop of the `ToastContainer` element. Landmark regions can be navigated using the keyboard by pressing the <Keyboard>F6</Keyboard> key to move forward, and the <Keyboard>Shift</Keyboard> + <Keyboard>F6</Keyboard> key to move backward. This provides an easy way for keyboard users to jump to the toasts from anywhere in the app. When the last toast is closed, keyboard focus is restored.
+
+## Events
+
+Toasts can include an optional action by specifying the `actionLabel` and `onAction` options when queueing a toast. In addition, the `onClose` event is triggered when the toast is dismissed. The `shouldCloseOnAction` option automatically closes the toast when an action is performed.
+
+```tsx example
+<Button
+  onPress={() => ToastQueue.info('An update is available', {
+    ///- begin highlight -///
+    actionLabel: 'Update',
+    onAction: () => alert('Updating!'),
+    shouldCloseOnAction: true
+    ///- end highlight -///
+  })}
+  variant="primary">
+  Show toast
+</Button>
+```
+
+## Auto-dismiss
+
+Toasts support a `timeout` option to automatically hide them after a certain amount of time. For accessibility, toasts have a minimum timeout of 5 seconds, and actionable toasts will not auto dismiss. In addition, timers will pause when the user focuses or hovers over a toast.
+
+Be sure only to automatically dismiss toasts when the information is not important, or may be found elsewhere. Some users may require additional time to read a toast message, and screen zoom users may miss toasts entirely.
+
+```tsx example
+<Button
+  ///- begin highlight -///
+  onPress={() => ToastQueue.positive('Toast is done!', {timeout: 5000})}
+  ///- end highlight -///
+  variant="primary">
+  Show toast
+</Button>
+```
+
+## Programmatic dismissal
+
+Toasts may be programmatically dismissed if they become irrelevant before the user manually closes them. Each method of `ToastQueue` returns a function which may be used to close a toast.
+
+```tsx example
+function Example() {
+  let [close, setClose] = React.useState(null);
+
+  return (
+    <Button
+      onPress={() => {
+        if (!close) {
+          ///- begin highlight -///
+          let close = ToastQueue.negative('Unable to save', {onClose: () => setClose(null)});
+          ///- end highlight -///
+          setClose(() => close);
+        } else {
+          ///- begin highlight -///
+          close();
+          ///- end highlight -///
+        }
+      }}
+      variant="primary">
+      {close ? 'Hide' : 'Show'} Toast
+    </Button>
+  );
+}
+```
+
+## Placement
+
+By default, toasts are displayed at the bottom center of the screen. This can be changed by setting the `placement` prop on the `ToastContainer` to `'top'`, `'top end'`, `'bottom'`, or `'bottom end'`.
+
+```tsx example render=false hidden
+<ToastContainer placement="bottom end" />
+```
+
+## API
+
+### ToastQueue
+
+<div style={{marginBottom: 40}}>
+  <TypeContext.Provider value={docs.links}>
+    <InterfaceType properties={docs.exports.ToastQueue.properties} />
+  </TypeContext.Provider>
+</div>
+
+### Toast options
+
+<div style={{marginBottom: 40}}>
+  <TypeContext.Provider value={docs.links}>
+    <InterfaceType properties={docs.exports.SpectrumToastOptions.properties} />
+  </TypeContext.Provider>
+</div>
+
+### ToastContainer props
+
+<TypeContext.Provider value={docs.links}>
+  <InterfaceType properties={docs.exports.ToastContainer.props.properties} showRequired showDefault isComponent />
+</TypeContext.Provider>
+
+## Testing
+
+To identify a particular instance of the secondary or close button, you can use the following data-testid's respectively:
+- `"rsp-Toast-secondaryButton"`
+- `"rsp-Toast-closeButton"`

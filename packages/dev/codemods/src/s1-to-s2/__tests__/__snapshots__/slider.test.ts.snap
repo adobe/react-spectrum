@@ -1,0 +1,33 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Comments out getValueLabel 1`] = `
+"import { Slider } from "@react-spectrum/s2";
+
+// TODO(S2-upgrade): getValueLabel has not been implemented yet.
+<Slider label="Cookies to buy" defaultValue={12} />"
+`;
+
+exports[`Comments out orientation 1`] = `
+"import { Slider } from "@react-spectrum/s2";
+
+// TODO(S2-upgrade): orientation has not been implemented yet.
+<Slider label="Cookies to buy" defaultValue={12} />"
+`;
+
+exports[`Removes isFilled 1`] = `
+"import { Slider } from "@react-spectrum/s2";
+
+<Slider label="Cookies to buy" defaultValue={12} />"
+`;
+
+exports[`Removes showValueLabel 1`] = `
+"import { Slider } from "@react-spectrum/s2";
+
+<Slider label="Cookies to buy" defaultValue={12} />"
+`;
+
+exports[`Removes trackGradient 1`] = `
+"import { Slider } from "@react-spectrum/s2";
+
+<Slider label="Cookies to buy" defaultValue={12} />"
+`;

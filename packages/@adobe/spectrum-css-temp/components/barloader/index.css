@@ -1,0 +1,139 @@
+/*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+
+@import '../commons/index.css';
+
+.spectrum-BarLoader {
+  position: relative;
+  display: inline-flex;
+  flex-flow: row wrap;
+  justify-content: space-between;
+  align-items: center;
+  min-inline-size: var(--spectrum-global-dimension-static-size-600);
+  inline-size: var(--spectrum-barloader-large-width);
+  vertical-align: top;
+  isolation: isolate;
+
+  &.spectrum-BarLoader--indeterminate {
+    max-inline-size: var(--spectrum-barloader-large-width);
+  }
+
+  &.spectrum-BarLoader--indeterminate.spectrum-BarLoader--sideLabel {
+    .spectrum-BarLoader-track {
+      max-inline-size: var(--spectrum-barloader-large-width);
+      inline-size: 100%;
+    }
+  }
+}
+
+.spectrum-BarLoader-track {
+  /* Visually apply border radius to child elements */
+  overflow: hidden;
+  min-inline-size: var(--spectrum-global-dimension-static-size-600);
+  inline-size: 100%;
+  height: var(--spectrum-barloader-large-height);
+  border-radius: var(--spectrum-barloader-large-border-radius);
+  z-index: 1; /* to fix a weird webkit bug with rounded corners and masking */
+}
+
+.spectrum-BarLoader-fill {
+  border: none;
+  height: var(--spectrum-barloader-large-height);
+
+  transition: width 1s;
+}
+
+.spectrum-BarLoader-label,
+.spectrum-BarLoader-percentage {
+  font-size: var(--spectrum-fieldlabel-text-size);
+  font-weight: var(--spectrum-fieldlabel-text-font-weight);
+  line-height: var(--spectrum-fieldlabel-text-line-height);
+  text-align: start;
+  margin-bottom: var(--spectrum-barloader-large-label-gap-y);
+}
+
+.spectrum-BarLoader-label {
+  flex: 1 1 0%;
+}
+
+.spectrum-BarLoader-percentage {
+  align-self: flex-start;
+  margin-inline-start: var(--spectrum-barloader-small-label-gap-x);
+}
+
+.spectrum-BarLoader--sideLabel {
+  display: inline-flex;
+  flex-flow: row;
+  justify-content: space-between;
+  min-inline-size: fit-content;
+
+  .spectrum-BarLoader-track {
+    inline-size: inherit;
+  }
+
+  .spectrum-BarLoader-label {
+    margin-inline-end: var(--spectrum-barloader-large-label-gap-x);
+    margin-bottom: 0;
+  }
+  .spectrum-BarLoader-percentage {
+    order: 3;
+    text-align: end;
+    margin-inline-start: var(--spectrum-barloader-large-label-gap-x);
+    margin-bottom: 0;
+  }
+}
+
+.spectrum-BarLoader--small {
+  min-inline-size: var(--spectrum-global-dimension-static-size-600);
+
+  .spectrum-BarLoader-fill {
+    height: var(--spectrum-barloader-small-height);
+  }
+
+  .spectrum-BarLoader-track {
+    height: var(--spectrum-barloader-small-height);
+    border-radius: var(--spectrum-barloader-small-border-radius);
+  }
+}
+.spectrum-BarLoader--indeterminate .spectrum-BarLoader-fill {
+  inline-size: var(--spectrum-barloader-large-indeterminate-fill-width);
+  position: relative;
+  animation-duration: var(--spectrum-barloader-large-indeterminate-duration);
+  animation-iteration-count: infinite;
+  animation-timing-function: var(--spectrum-barloader-large-indeterminate-animation-ease);
+  will-change: transform;
+
+  [dir='ltr'] & {
+    animation-name: indeterminate-loop-ltr;
+  }
+  [dir='rtl'] & {
+    animation-name: indeterminate-loop-rtl;
+  }
+}
+
+@keyframes indeterminate-loop-ltr {
+  from {
+    transform: translate(calc(var(--spectrum-barloader-large-indeterminate-fill-width) * -1));
+  }
+  to {
+    transform: translate(var(--spectrum-barloader-large-width));
+  }
+}
+
+@keyframes indeterminate-loop-rtl {
+  from {
+    transform: translate(var(--spectrum-barloader-large-width));
+  }
+  to {
+    transform: translate(calc(var(--spectrum-barloader-large-width) * -1));
+  }
+}

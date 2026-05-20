@@ -1,0 +1,195 @@
+{/* Copyright 2024 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import bundleSizeImageUrl from 'url:../assets/bundle-size.webp';
+import initialVideoUrl from 'url:../assets/color-picker-initial.mp4';
+import finalVideoUrl from 'url:../assets/color-picker-final.mp4';
+
+import {BlogPostLayout, Video, Track, Image} from '@react-spectrum/docs';
+export default BlogPostLayout;
+
+```jsx import
+import {ColorEditor, ColorSwatch} from '@react-spectrum/color';
+import {ColorPicker} from 'react-aria-components';
+```
+
+---
+keywords: [color picker, color, internationalization, localization, components, accessibility, react spectrum, react]
+description: Recently, we released a suite of color picker components in React Aria and React Spectrum. Since colors are inherently visual, ensuring these components are accessible to users with visual impairments presented a significant challenge. In this post, we'll discuss how we developed an algorithm that generates clear color descriptions for screen readers in multiple languages, while minimizing bundle size.
+date: 2024-10-02
+author: '[Devon Govett](https://x.com/devongovett)'
+---
+
+# Accessible Color Descriptions for Improved Color Pickers
+
+Recently, we released a suite of color picker components in React Aria and React Spectrum. These components help users choose a color in various ways, including a 2D [ColorArea](../react-aria/ColorArea.html), channel-based [ColorSlider](../react-aria/ColorSlider.html), circular [ColorWheel](../react-aria/ColorWheel.html), preset [ColorSwatchPicker](../react-aria/ColorSwatchPicker.html), and a hex value [ColorField](../react-aria/ColorField.html). You can compose these individual pieces together to create a full [ColorPicker](../react-aria/ColorPicker.html) with whatever custom layout or configuration you need.
+
+## Initial accessibility experience
+
+Accessibility is at the core of all of our work on the React Spectrum team, and ColorPicker was no exception. However, these components presented a significant challenge: colors are inherently visual, so how should we make them accessible for users with visual impairments?
+
+Our initial implementation followed the typical ARIA patterns such as [slider](https://www.w3.org/WAI/ARIA/apg/patterns/slider/) to implement ColorArea, ColorSlider, and ColorWheel, and [listbox](https://www.w3.org/WAI/ARIA/apg/patterns/listbox/) to implement ColorSwatchPicker. This provided good support for mouse, touch, and keyboard input, but the screen reader experience left something to be desired. Out of the box, screen readers would only announce raw channel values like “Red: 182, Green: 96, Blue: 38”. I don’t know about you, but I can’t imagine what color that is just by hearing those numbers!
+
+<Video
+  alt="Demo of VoiceOver announcement in ColorArea before improvements"
+  src={initialVideoUrl + '#t=0.1'}
+  style={{maxWidth: 'min(100%, 700px)', display: 'block', margin: '20px auto'}}
+  controls
+  preload="metadata" />
+
+## Improving screen reader announcements
+
+We set out to improve the screen reader experience using textual descriptions of the colors that a user selected.  To do this, we compiled an extensive list of color names from sources such as [Procato](https://procato.com/rgb+index/?css) and the [CSS named color keywords](https://developer.mozilla.org/en-US/docs/Web/CSS/named-color), and used the [Delta E](https://en.wikipedia.org/wiki/Color_difference) algorithm to match the user’s selected color to the closest color name. This resulted in much more intuitive screen reader announcements such as “Moderate Cornflower Blue” instead of numeric values like “Hue: 200 degrees, Saturation: 60%, Lightness: 62%”. This was a significant improvement!
+
+However, despite the improvement, this approach presented several challenges. First, it required a huge number of strings for all of the color descriptions. We had almost 700 named colors, each of which needed to be translated into the 34 different languages we support, resulting in almost 24,000 strings measuring over 1 MB gzipped in bundle size.
+
+<Image
+  alt="Screenshot of bundle analysis showing over 1 MB of bundle size accounted for by color names in many languages"
+  src={bundleSizeImageUrl}
+  style={{maxWidth: 'min(100%, 700px)', display: 'block', margin: '20px auto'}}
+  expandable />
+
+It was also a question whether translating all of these color names between languages would even be feasible. Languages and cultures describe colors in different ways, and translating esoteric names like “Light brilliant amaranth” and “Pale persian blue” between languages might not make sense to people around the world. This would likely require creating different color lists for each language, rather than translating a single list – a monumental task that wouldn't scale as we added new languages.
+
+Finally, in terms of accessibility, some of the color names were difficult to understand, even for native English speakers. For example, I'm not sure I would know the difference between "Arctic Blue", "Cornflower Blue", "Cobalt Blue", or "Persian Blue" without looking at them. This would pose a challenge for users with limited or no vision.
+
+## Generating color descriptions
+
+Our final solution requires only 30 short strings per language to generate a description of any color. This includes 13 hues (pink, red, orange, brown, yellow, green, cyan, blue, purple, magenta, gray, white, and black), along with the halfway points between them (e.g. red orange, yellow green, and blue purple), and modifiers for lightness (very dark, dark, light, and very light), and chroma (grayish, pale, and vibrant). These strings are combined together to form a full color description.
+
+In addition to reducing the number of strings we need, these descriptions are also simpler, more universally understood, and more easily translated between languages. For example, the description of <span role="img" aria-roledescription="color swatch" aria-label="light pale cyan blue" style={{background: '#64B1D8', display: 'inline-block', verticalAlign: 'middle', width: 24, height: 24, borderRadius: 4}} /> is “light pale cyan blue”, and the description of <span role="img" aria-roledescription="color swatch" aria-label="“dark vibrant purple magenta" style={{background: '#9932cc', display: 'inline-block', verticalAlign: 'middle', width: 24, height: 24, borderRadius: 4}} /> is “dark vibrant purple magenta”.
+
+Our algorithm for generating color descriptions works in the [OKLCH](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value/oklch) color space, recently standardized by CSS. This color space offers the advantage of uniform lightness across all hues, unlike HSL, where hues like blue appear significantly darker than hues like green or yellow at the same lightness value. The difference between HSL and OKLCH is shown below.
+
+<div role="img" aria-label="Color wheel for HSL and OKLCH" style={{display: 'flex', gap: 24, margin: '48px 0', flexWrap: 'wrap', justifyContent: 'center', forcedColorAdjust: 'none'}}>
+  <div style={{width: 280, height: 280, borderRadius: '50%', background: `radial-gradient(var(--page-background) 0% 25%, transparent 20%), conic-gradient(in hsl longer hue, hsl(0, 100%, 50%), hsl(360, 100%, 50%))`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '1.2em'}}>HSL</div>
+
+  <div style={{width: 280, height: 280, borderRadius: '50%', background: `radial-gradient(var(--page-background) 0% 25%, transparent 20%), conic-gradient(in oklch longer hue, oklch(70% 0.25 0), oklch(70% 0.25 360))`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '1.2em'}}>OKLCH</div>
+</div>
+
+In HSL, certain hues also appear to shift as the lightness changes — for example, blue tends to shift toward purple as it gets lighter. This would lead to perceptually inaccurate descriptions, where colors that appear purple might be described as blue. OKLCH resolves this issue by maintaining a consistent hue across all lightness levels.
+
+<div role="img" aria-label="Comparison of a blue gradient in HSL and OKLCH" style={{display: 'flex', gap: 32, margin: '48px 0', flexWrap: 'wrap', justifyContent: 'center', forcedColorAdjust: 'none'}}>
+  <div style={{display: 'flex', flexDirection: 'column', gap: 8, alignItems: 'center'}}>
+    <div style={{width: 240, height: 240, background: 'linear-gradient(to right, hsl(240, 0%, 100%), hsl(240, 100%, 50%))'}} />
+    <span style={{fontWeight: 'bold', fontSize: '1.2em'}}>HSL</span>
+  </div>
+  <div style={{display: 'flex', flexDirection: 'column', gap: 8, alignItems: 'center'}}>
+    <div style={{width: 240, height: 240, background: 'linear-gradient(in oklab to right, hsl(240, 0%, 100%), hsl(240, 100%, 50%))'}} />
+    <span style={{fontWeight: 'bold', fontSize: '1.2em'}}>OKLCH</span>
+  </div>
+</div>
+
+These properties of OKLCH allow us to generate perceptually accurate descriptions for any color. Once a color is mapped to the OKLCH color space, we determine its hue name by dividing the color wheel into segments. Since the hue channel is measured in degrees from 0 to 360, it's simple to find the closest hue name using the angles of each segment.
+
+<div role="img" aria-label="A color wheel with pie chart segments for each hue" style={{width: 280, height: 280, borderRadius: '50%', background: `conic-gradient(in oklch longer hue, oklch(75% 0.25 0), oklch(75% 0.25 360))`, position: 'relative', color: 'black', margin: '48px auto', forcedColorAdjust: 'none'}}>
+  {[
+    [334, 362, 'Pink'],
+    [2, 32, 'Red'],
+    [32, 71, 'Orange'],
+    [71, 115, 'Yellow'],
+    [115, 155, 'Green'],
+    [155, 220, 'Cyan'],
+    [220, 274, 'Blue'],
+    [274, 302, 'Purple'],
+    [302, 334, 'Magenta']
+  ].map(([start, end, name]) => {
+    let center = (360 - (start + (end - start) / 2) + 180) * Math.PI / 180;
+    let radius = 280 / 2;
+    return (
+      <>
+        <div style={{width: 2, height: radius, background: 'black', position: 'absolute', top: '0%', left: 'calc(50% - 1px)', transform: `rotate(${start}deg)`, transformOrigin: 'center bottom'}} />
+        <span style={{position: 'absolute', top: radius + Math.cos(center) * 100, left: radius + Math.sin(center) * 100, transform: 'translate(-50%, -50%)'}}>{name}</span>
+      </>
+    )
+  })}
+</div>
+
+If a hue falls at least halfway between two segments, the names of both segments are combined. For example, a hue between red and orange would be described as “red orange”. These combinations are separate localized strings in order to account for languages that have specific terms for mid-hues, such as “Rotorange” in German.
+
+There are also a few additional special cases. For instance, dark orange is referred to as “brown”, while darker yellows tend to appear more green and are described as “yellow green”.
+
+<div role="img" aria-label="Two gradients showing orange to brown and yellow to yellow green. Orange to brown splits 15% down, yellow to yellow green splits 8% down" style={{display: 'flex', gap: 32, margin: '48px 0', flexWrap: 'wrap', justifyContent: 'center', forcedColorAdjust: 'none'}}>
+  <div style={{display: 'flex', flexDirection: 'column', gap: 8, alignItems: 'center'}}>
+    <div style={{width: 240, height: 240, background: 'linear-gradient(in oklch to bottom, oklch(100% 0.2 60), oklch(0% 0.2 60))', position: 'relative'}}>
+      <span style={{position: 'absolute', top: '16%', left: '50%', transform: 'translate(-50%, -50%)', color: 'black'}}>Orange</span>
+      <div style={{width: '100%', height: 2, background: 'white', position: 'absolute', top: '32%'}} />
+      <span style={{position: 'absolute', top: '66%', left: '50%', transform: 'translate(-50%, -50%)', color: 'white'}}>Brown</span>
+    </div>
+  </div>
+  <div style={{display: 'flex', flexDirection: 'column', gap: 8, alignItems: 'center'}}>
+    <div style={{width: 240, height: 240, background: 'linear-gradient(in oklch to bottom, oklch(100% 0.2 104), oklch(0% 0.2 104))', position: 'relative'}}>
+      <span style={{position: 'absolute', top: '7.5%', left: '50%', transform: 'translate(-50%, -50%)', color: 'black'}}>Yellow</span>
+      <div style={{width: '100%', height: 2, background: 'white', position: 'absolute', top: '15%'}} />
+      <span style={{position: 'absolute', top: '57.5%', left: '50%', transform: 'translate(-50%, -50%)', color: 'white'}}>Yellow Green</span>
+    </div>
+  </div>
+</div>
+
+The hue name is combined with lightness (very dark, dark, light, very light) and chroma (grayish, pale, and vibrant) descriptors based on ranges in the L and C channels of the OKLCH color space to create a complete color description.
+
+<div role="img" aria-label="Two pink gradients showing lightness and chroma. Lightness has 5 segments labeled very light, light, nothing, dark, and very dark. Chroma has 4 segments labeled grayish, pale, nothing, and vibrant." style={{display: 'flex', gap: 32, margin: '48px 0', flexWrap: 'wrap', justifyContent: 'center', forcedColorAdjust: 'none'}}>
+  <div style={{display: 'flex', flexDirection: 'column', gap: 8, alignItems: 'center'}}>
+    <div style={{width: 240, height: 240, background: 'linear-gradient(in oklch to bottom, oklch(100% 0.25 0), oklch(0% 0.25 0))', position: 'relative'}}>
+      <span style={{position: 'absolute', top: '7.5%', left: '50%', transform: 'translate(-50%, -50%)', color: 'black'}}>Very Light</span>
+      <div style={{width: '100%', height: 2, background: 'white', position: 'absolute', top: '15%'}} />
+      <span style={{position: 'absolute', top: '22.5%', left: '50%', transform: 'translate(-50%, -50%)', color: 'black'}}>Light</span>
+      <div style={{width: '100%', height: 2, background: 'white', position: 'absolute', top: '30%'}} />
+      <div style={{width: '100%', height: 2, background: 'white', position: 'absolute', top: '45%'}} />
+      <span style={{position: 'absolute', top: '57.5%', left: '50%', transform: 'translate(-50%, -50%)', color: 'white'}}>Dark</span>
+      <div style={{width: '100%', height: 2, background: 'white', position: 'absolute', top: '70%'}} />
+      <span style={{position: 'absolute', top: '85%', left: '50%', transform: 'translate(-50%, -50%)', color: 'white'}}>Very Dark</span>
+    </div>
+    <span style={{fontWeight: 'bold', fontSize: '1.2em'}}>Lightness</span>
+  </div>
+  <div style={{display: 'flex', flexDirection: 'column', gap: 8, alignItems: 'center'}}>
+    <div style={{width: 240, height: 240, background: 'linear-gradient(in oklab to bottom, oklch(70% 0 0), oklch(70% 0.37 0))', position: 'relative'}}>
+      <span style={{position: 'absolute', top: '5%', left: '50%', transform: 'translate(-50%, -50%)', color: 'black'}}>Grayish</span>
+      <div style={{width: '100%', height: 2, background: 'white', position: 'absolute', top: '10%'}} />
+      <span style={{position: 'absolute', top: '18.5%', left: '50%', transform: 'translate(-50%, -50%)', color: 'black'}}>Pale</span>
+      <div style={{width: '100%', height: 2, background: 'white', position: 'absolute', top: '27%'}} />
+      <div style={{width: '100%', height: 2, background: 'white', position: 'absolute', top: '45%'}} />
+      <span style={{position: 'absolute', top: '72.5%', left: '50%', transform: 'translate(-50%, -50%)', color: 'black'}}>Vibrant</span>
+    </div>
+    <span style={{fontWeight: 'bold', fontSize: '1.2em'}}>Chroma</span>
+  </div>
+</div>
+
+The order that the hue, chroma, and lightness descriptors are combined varies by language. For example in English we say `"{lightness} {chroma} {hue}"`, but in Italian the order is `"{hue} {chroma} {lightness}"`. This flexibility is achieved by using placeholders, allowing our translators to determine the appropriate arrangement for each language.
+
+Check out the color picker below to see the results of this algorithm:
+
+```tsx snippet
+<ColorPicker label="Fill" defaultValue="#5100FF">
+  {({color}) =>
+    <div style={{display: 'flex', flexWrap: 'wrap', gap: 24}}>
+      <ColorEditor />
+      <div style={{display: 'flex', flexDirection: 'column', gap: 8}}>
+        <ColorSwatch size="L" />
+        <span>{color.getColorName(navigator.language || 'en-US')}</span>
+      </div>
+    </div>
+  }
+</ColorPicker>
+```
+
+## Final result
+
+After developing this algorithm to generate color descriptions, we integrated it into all of our color picker components. Since the same description may be generated for a range of colors, our components also announce the precise numeric value of the channels being modified. For example, a hue slider may announce “260 degrees, blue purple, slider”. Numeric values are useful for fine adjustments, while the color descriptions provide an overall sense of the color, similar to how one would perceive it visually.
+
+The video below shows interacting with a ColorArea with color descriptions. You can also try it yourself with a screen reader in the example above.
+
+<Video
+  alt="Demo of VoiceOver announcement in ColorArea after improvements"
+  src={finalVideoUrl + '#t=0.1'}
+  style={{maxWidth: 'min(100%, 700px)', display: 'block', margin: '20px auto'}}
+  controls
+  preload="metadata" />
+
+Check out our [ColorPicker](../react-aria/ColorPicker.html) components in React Aria to build accessible, customizable, and styleable color pickers in your own applications.

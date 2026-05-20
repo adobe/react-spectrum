@@ -1,0 +1,18 @@
+{
+  "calendar": "Kalenteri",
+  "day": "päivä",
+  "dayPeriod": "vuorokaudenaika",
+  "endDate": "Päättymispäivä",
+  "era": "aikakausi",
+  "hour": "tunti",
+  "minute": "minuutti",
+  "month": "kuukausi",
+  "second": "sekunti",
+  "selectedDateDescription": "Valittu päivämäärä: {date}",
+  "selectedRangeDescription": "Valittu aikaväli: {startDate} – {endDate}",
+  "selectedTimeDescription": "Valittu aika: {time}",
+  "startDate": "Alkamispäivä",
+  "timeZoneName": "aikavyöhyke",
+  "weekday": "viikonpäivä",
+  "year": "vuosi"
+}

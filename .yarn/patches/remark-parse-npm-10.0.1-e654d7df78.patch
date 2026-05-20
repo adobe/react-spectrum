@@ -1,0 +1,12 @@
+diff --git a/lib/index.d.ts b/lib/index.d.ts
+index 0e8563eb2fe2aad42400d3aad666f36df0dbc16a..d20f18817ab64c586de59eb411fd739ece028a95 100644
+--- a/lib/index.d.ts
++++ b/lib/index.d.ts
+@@ -1,6 +1,6 @@
+ /** @type {import('unified').Plugin<[Options?] | void[], string, Root>} */
+ export default function remarkParse(
+-  options: void | import('mdast-util-from-markdown/lib').Options | undefined
++  options: void | import('mdast-util-from-markdown').Options | undefined
+ ): void
+ export type Root = import('mdast').Root
+ export type Options = import('mdast-util-from-markdown').Options

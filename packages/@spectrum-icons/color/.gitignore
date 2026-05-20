@@ -1,0 +1,9 @@
+
+/*
+
+!.gitignore
+!package.json
+!tsconfig.types.json
+!/stories/
+!/scripts/
+!.npmignore

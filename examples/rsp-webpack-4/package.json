@@ -1,0 +1,44 @@
+{
+  "name": "rsp-cra-18-webpack-4",
+  "version": "1.0.0",
+  "private": true,
+  "description": "test esm with webpack 4",
+  "workspaces": [
+    "../../packages/*/*"
+  ],
+  "main": "src/index.jsx",
+  "scripts": {
+    "build": "webpack --mode production",
+    "start": "webpack-dev-server --mode development --open",
+    "test": "test",
+    "install-17": "yarn add -W react@^17 react-dom@^17",
+    "postinstall": "patch-package",
+    "prepareForProd": "node ./scripts/prepareForProd.mjs"
+  },
+  "dependencies": {
+    "@adobe/react-spectrum": "latest",
+    "@react-spectrum/provider": "latest",
+    "@spectrum-icons/workflow": "latest",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.24.3",
+    "@babel/core": "^7.24.3",
+    "@babel/preset-env": "^7.24.3",
+    "@babel/preset-react": "^7.24.1",
+    "babel-loader": "^8.0.2",
+    "css-loader": "^1.0.0",
+    "jest": "^26",
+    "patch-package": "^8.0.0",
+    "style-loader": "0.23.0",
+    "webpack": "^4.46.0",
+    "webpack-cli": "^3.1.1",
+    "webpack-dev-server": "^3.1.8"
+  },
+  "resolutions": {
+    "terser-webpack-plugin": "4.2.3"
+  },
+  "packageManager": "yarn@4.2.2",
+  "NOTE": "Do not update Jest. The old version is used for testing."
+}

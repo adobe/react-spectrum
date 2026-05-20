@@ -1,0 +1,12 @@
+<svg style="background:var(--anatomy-gray-100); padding: 60px 10px" height="32" viewBox="0 0 70 32">
+  <rect id="Placement_Area" data-name="Placement Area" width="70" height="32" fill="red" opacity="0"/>
+  <g id="Background" fill="var(--anatomy-gray-75)" stroke="var(--anatomy-gray-400)" stroke-width="1">
+    <rect width="70" height="32" rx="4" stroke="none"/>
+    <rect x="0.5" y="0.5" width="69" height="31" rx="3.5" fill="none"/>
+  </g>
+  <g id="Icon">
+    <rect id="Canvas" width="18" height="18" transform="translate(10 7)" fill="var(--anatomy-gray-700)" opacity="0"/>
+    <path id="Path_3134" data-name="Path 3134" d="M16.784,4.1,13.9,1.216a.608.608,0,0,0-.433-.176H13.45a.685.685,0,0,0-.464.2L2.542,11.686a.5.5,0,0,0-.126.211L1.028,16.55c-.057.188.229.426.391.426a.125.125,0,0,0,.031,0c.138-.031,3.933-1.172,4.656-1.389a.486.486,0,0,0,.207-.125L16.757,5.014a.686.686,0,0,0,.2-.441.61.61,0,0,0-.173-.473ZM5.7,14.658c-1.081.325-2.431.733-3.365,1.011l1-3.365Z" transform="translate(10 7)" fill="var(--anatomy-gray-700)"/>
+  </g>
+  <text id="Text" transform="translate(36 20)" fill="var(--anatomy-gray-800)" font-size="14" font-family="var(--anatomy-font)"><tspan x="0" y="0">Edit</tspan></text>
+</svg>

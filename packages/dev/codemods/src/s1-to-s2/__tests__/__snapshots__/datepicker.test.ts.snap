@@ -1,0 +1,30 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Removes isQuiet 1`] = `
+"import { DatePicker } from "@react-spectrum/s2";
+let isQuiet = true;
+let props = {isQuiet: true};
+<div>
+  <DatePicker />
+  <DatePicker />
+  <DatePicker />
+  <DatePicker />
+  <DatePicker />
+  <DatePicker // TODO(S2-upgrade): check this spread for style props
+  {...props} />
+</div>"
+`;
+
+exports[`changes validationState to isInvalid or nothing 1`] = `
+"import { DatePicker } from "@react-spectrum/s2";
+  let validationState = 'invalid';
+  let props = {validationState: 'invalid'};
+  <div>
+    <DatePicker isInvalid />
+    <DatePicker />
+    <DatePicker // TODO(S2-upgrade): Prop validationState could not be automatically updated because validationState could not be followed.
+    validationState={validationState} />
+    <DatePicker // TODO(S2-upgrade): check this spread for style props
+    {...props} />
+  </div>"
+`;

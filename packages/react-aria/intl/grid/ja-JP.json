@@ -1,0 +1,8 @@
+{
+  "deselectedItem": "{item} が選択されていません。",
+  "longPressToSelect": "長押しして選択モードを開きます。",
+  "select": "選択",
+  "selectedAll": "すべての項目を選択しました。",
+  "selectedCount": "{count, plural, =0 {項目が選択されていません} one {# 項目を選択しました} other {# 項目を選択しました}}。",
+  "selectedItem": "{item} を選択しました。"
+}

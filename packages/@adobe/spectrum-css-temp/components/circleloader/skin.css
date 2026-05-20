@@ -1,0 +1,56 @@
+/*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+
+.spectrum-CircleLoader {
+  /* TODO: Update to use semantic tokens when available */
+  --spectrum-loader-circle-medium-track-fill-color: var(--spectrum-accent-color-900);
+  --spectrum-loader-circle-static-black-track-color: rgba(0, 0, 0, 0.25);
+  --spectrum-loader-circle-static-black-fill-color: var(--spectrum-global-color-static-black);
+}
+
+.spectrum-CircleLoader-track {
+  border-color: var(--spectrum-loader-circle-medium-track-color);
+}
+
+.spectrum-CircleLoader-fill {
+  border-color: var(--spectrum-loader-circle-medium-track-fill-color);
+}
+
+.spectrum-CircleLoader--overBackground,
+.spectrum-CircleLoader--staticWhite {
+  .spectrum-CircleLoader-track {
+    border-color: var(--spectrum-loader-circle-medium-over-background-track-color);
+  }
+  .spectrum-CircleLoader-fill {
+    border-color: var(--spectrum-loader-circle-medium-over-background-track-fill-color);
+  }
+}
+
+.spectrum-CircleLoader--staticBlack {
+  .spectrum-CircleLoader-track {
+    border-color: var(--spectrum-loader-circle-static-black-track-color);
+  }
+  .spectrum-CircleLoader-fill {
+    border-color: var(--spectrum-loader-circle-static-black-fill-color);
+  }
+}
+
+@media (forced-colors: active) {
+  .spectrum-CircleLoader {
+    --spectrum-loader-circle-medium-track-fill-color: Highlight;
+    --spectrum-loader-circle-medium-over-background-track-fill-color: Highlight;
+    --spectrum-loader-circle-static-black-fill-color: Highlight;
+    --spectrum-loader-circle-medium-track-color: Background;
+    --spectrum-loader-circle-medium-over-background-track-color: Background;
+    --spectrum-loader-circle-static-black-track-color: Background;
+  }
+}

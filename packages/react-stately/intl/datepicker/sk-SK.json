@@ -1,0 +1,6 @@
+{
+  "rangeOverflow": "Hodnota musí byť {maxValue} alebo skoršia.",
+  "rangeReversed": "Dátum začiatku musí byť skorší ako dátum konca.",
+  "rangeUnderflow": "Hodnota musí byť {minValue} alebo neskoršia.",
+  "unavailableDate": "Vybratý dátum je nedostupný."
+}

@@ -1,0 +1,122 @@
+{/* Copyright 2023 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {ExampleLayout} from '@react-spectrum/docs';
+export default ExampleLayout;
+
+import docs from 'docs:react-aria-components';
+import {TypeLink} from '@react-spectrum/docs';
+import styles from '@react-spectrum/docs/src/docs.css';
+import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+import RadioGroup from '@react-spectrum/docs/pages/assets/component-illustrations/RadioGroup.svg';
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
+
+---
+keywords: [example, radio, aria, accessibility, react, component]
+type: component
+image: shipping-radio.png
+description: A shipping options RadioGroup styled with Tailwind CSS.
+---
+
+# Shipping Radio Group
+
+A shipping options [RadioGroup](../RadioGroup.html) styled with [Tailwind CSS](https://tailwindcss.com/).
+
+## Example
+
+```tsx import
+import './tailwind.global.css';
+```
+
+```tsx example standalone
+import {RadioGroup, Radio, Label} from 'react-aria-components';
+import {CheckCircle, Circle} from 'lucide-react';
+
+function RadioGroupExample() {
+  return (
+    <div className="bg-linear-to-r from-blue-300 to-indigo-300 p-2 sm:p-8 rounded-lg flex justify-center">
+      <RadioGroup className="flex flex-col gap-2 w-full max-w-[300px]" defaultValue="Standard">
+        <Label className="text-xl text-slate-900 font-semibold font-serif">Shipping</Label>
+        <ShippingOption name="Standard" time="4-10 business days" price="$4.99" />
+        <ShippingOption name="Express" time="2-5 business days" price="$15.99" />
+        <ShippingOption name="Lightning" time="1 business day" price="$24.99" />
+      </RadioGroup>
+    </div>
+  );
+}
+
+function ShippingOption({name, time, price}) {
+  return (
+    <Radio value={name} className={({isFocusVisible, isSelected, isPressed}) => `
+      group relative flex cursor-default rounded-lg px-4 py-3 shadow-lg outline-hidden bg-clip-padding border border-solid
+      ${isFocusVisible ? 'ring-2 ring-blue-600 ring-offset-1 ring-offset-white/80' : ''}
+      ${isSelected ? 'bg-blue-600 border-white/30 text-white' : 'border-transparent'}
+      ${isPressed && !isSelected ? 'bg-blue-50' : ''}
+      ${!isSelected && !isPressed ? 'bg-white' : ''}
+    `}>
+      {({isSelected}) => (
+        <div className="flex w-full items-center justify-between gap-3">
+          <div className="flex items-center shrink-0 text-blue-400 group-selected:text-white">
+            {isSelected ? <CheckCircle className="w-6 h-6" /> : <Circle className="w-6 h-6" />}
+          </div>
+          <div className="flex flex-1 flex-col">
+            <div className="text-lg font-serif font-semibold text-gray-900 group-selected:text-white">{name}</div>
+            <div className="inline text-gray-500 group-selected:text-sky-100">
+              {time}
+            </div>
+          </div>
+          <div className="font-medium font-mono text-gray-900 group-selected:text-white">{price}</div>
+        </div>
+      )}
+    </Radio>
+  );
+}
+```
+
+### Tailwind config
+
+This example uses the [tailwindcss-react-aria-components](../styling.html#plugin) plugin. When using Tailwind v4, add it to your CSS:
+
+```css render=false
+@import "tailwindcss";
+@plugin "tailwindcss-react-aria-components";
+```
+
+<details>
+
+<summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Tailwind v3</summary>
+
+When using Tailwind v3, add the plugin to your `tailwind.config.js` instead:
+
+```tsx
+module.exports = {
+  // ...
+  plugins: [
+    require('tailwindcss-react-aria-components')
+  ]
+};
+```
+
+**Note**: When using Tailwind v3, install `tailwindcss-react-aria-components` version 1.x instead of 2.x.
+
+</details>
+
+## Components
+
+<section className={styles.cardGroup} data-size="small">
+
+<ExampleCard
+  url="../RadioGroup.html"
+  title="RadioGroup"
+  description="A radio group allows a user to select a single item from a list of options.">
+  <RadioGroup />
+</ExampleCard>
+
+</section>
+

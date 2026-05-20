@@ -1,0 +1,7 @@
+{
+  "actions": "Dejanja",
+  "actionsAvailable": "Na voljo so dejanja.",
+  "clearSelection": "Počisti izbor",
+  "selected": "Izbrano: {count}",
+  "selectedAll": "Vsi izbrani"
+}

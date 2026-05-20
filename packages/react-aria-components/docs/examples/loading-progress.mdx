@@ -1,0 +1,95 @@
+{/* Copyright 2023 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {ExampleLayout} from '@react-spectrum/docs';
+export default ExampleLayout;
+
+import docs from 'docs:react-aria-components';
+import {TypeLink} from '@react-spectrum/docs';
+import styles from '@react-spectrum/docs/src/docs.css';
+import ProgressBar from '@react-spectrum/docs/pages/assets/component-illustrations/ProgressBar.svg';
+import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
+
+---
+keywords: [example, progressbar, aria, accessibility, react, component]
+type: component
+image: loading-progress.png
+description: A loading ProgressBar styled with Tailwind CSS.
+---
+
+# Loading ProgressBar
+
+A loading [ProgressBar](../ProgressBar.html) styled with [Tailwind CSS](https://tailwindcss.com/).
+
+## Example
+
+```tsx import
+import './tailwind.global.css';
+```
+
+```tsx example standalone
+import {ProgressBar, Label} from 'react-aria-components';
+
+<div className="bg-linear-to-r from-blue-600 to-purple-600 p-12 rounded-lg flex justify-center">
+  <ProgressBar value={30} className="flex flex-col gap-3 w-56 text-white">
+    {({percentage, valueText}) => <>
+      <div className="flex">
+        <Label className="flex-1">Loading…</Label>
+        <span>{valueText}</span>
+      </div>
+      <div className="h-2 top-[50%] transform translate-y-[-50%] w-full rounded-full bg-white/40">
+        <div className="absolute h-2 top-[50%] transform translate-y-[-50%] rounded-full bg-white" style={{width: percentage + '%'}} />
+      </div>
+    </>}
+  </ProgressBar>
+</div>
+```
+
+### Tailwind config
+
+This example uses the [tailwindcss-react-aria-components](../styling.html#plugin) plugin. When using Tailwind v4, add it to your CSS:
+
+```css render=false
+@import "tailwindcss";
+@plugin "tailwindcss-react-aria-components";
+```
+
+<details>
+
+<summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Tailwind v3</summary>
+
+When using Tailwind v3, add the plugin to your `tailwind.config.js` instead:
+
+```tsx
+module.exports = {
+  // ...
+  plugins: [
+    require('tailwindcss-react-aria-components')
+  ]
+};
+```
+
+**Note**: When using Tailwind v3, install `tailwindcss-react-aria-components` version 1.x instead of 2.x.
+
+</details>
+
+## Components
+
+<section className={styles.cardGroup} data-size="small">
+
+<ExampleCard
+  url="../ProgressBar.html"
+  title="ProgressBar"
+  description="A progress bar shows progress of an operation over time.">
+  <ProgressBar />
+</ExampleCard>
+
+</section>
+

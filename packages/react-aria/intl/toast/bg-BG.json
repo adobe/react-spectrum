@@ -1,0 +1,4 @@
+{
+  "close": "Затвори",
+  "notifications": "{count, plural, one {# известие} other {# известия}}."
+}

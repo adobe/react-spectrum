@@ -1,0 +1,6 @@
+{
+  "rangeOverflow": "Verdien må være {maxValue} eller tidligere.",
+  "rangeReversed": "Startdatoen må være før sluttdatoen.",
+  "rangeUnderflow": "Verdien må være {minValue} eller senere.",
+  "unavailableDate": "Valgt dato utilgjengelig."
+}

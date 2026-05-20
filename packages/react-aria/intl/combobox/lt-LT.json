@@ -1,0 +1,7 @@
+{
+  "buttonLabel": "Rodyti pasiūlymus",
+  "countAnnouncement": "Yra {optionCount, plural, one {# parinktis} other {# parinktys (-ių)}}.",
+  "focusAnnouncement": "{isGroupChange, select, true {Įvesta grupė {groupTitle}, su {groupCount, plural, one {# parinktimi} other {# parinktimis (-ių)}}. } other {}}{optionText}{isSelected, select, true {, pasirinkta} other {}}",
+  "listboxLabel": "Pasiūlymai",
+  "selectedAnnouncement": "{optionText}, pasirinkta"
+}

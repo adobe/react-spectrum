@@ -1,0 +1,11 @@
+<svg style="background:var(--anatomy-gray-100); padding: 50px 10px" height="80" viewBox="0 0 200 80">
+  <rect id="Placement_Area" data-name="Placement Area" width="200" height="80" fill="red" opacity="0"/>
+  <g id="Skeleton">
+    <rect id="Line_1" width="200" height="12" rx="2" fill="var(--anatomy-gray-300)"/>
+    <rect id="Line_2" y="20" width="180" height="12" rx="2" fill="var(--anatomy-gray-300)"/>
+    <rect id="Line_3" y="40" width="160" height="12" rx="2" fill="var(--anatomy-gray-300)"/>
+    <circle id="Circle" cx="12" cy="12" r="12" transform="translate(0 56)" fill="var(--anatomy-gray-300)"/>
+    <rect id="Short_Line" x="32" y="62" width="80" height="12" rx="2" fill="var(--anatomy-gray-300)"/>
+  </g>
+</svg>
+

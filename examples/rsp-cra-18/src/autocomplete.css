@@ -1,0 +1,44 @@
+.react-aria-Menu {
+  display: block;
+  min-width: 150px;
+  width: fit-content;
+  margin: 4px 0 0 0;
+  border: 1px solid gray;
+  background: lightgray;
+  padding: 0;
+  list-style: none;
+  overflow-y: auto;
+  height: 100px;
+}
+
+.item {
+  padding: 2px 5px;
+  outline: none;
+  cursor: default;
+  color: black;
+  background: transparent;
+}
+
+.item[data-disabled] {
+  opacity: 0.4;
+}
+
+.item.focused {
+  background: gray;
+  color: white;
+}
+
+.item.open:not(.focused) {
+  background: lightslategray;
+  color: white;
+}
+
+.item.item.hovered {
+  background: lightsalmon;
+  color: white;
+}
+
+.item.selected {
+  background: purple;
+  color: white;
+}

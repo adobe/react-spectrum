@@ -1,0 +1,75 @@
+<svg style="background:var(--anatomy-gray-100); width: calc(100% - 20px); padding: 10px; max-height: 205px;" viewBox="0 0 188 205">
+  <defs>
+    <filter id="Background" x="0" y="57" width="188" height="148" filterUnits="userSpaceOnUse">
+      <feOffset dy="1" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="2" result="blur"/>
+      <feFlood flood-opacity="0.149"/>
+      <feComposite operator="in" in2="blur"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g id="ComboBox" transform="translate(-482 -205)">
+    <g id="Combo_box" data-name="Combo box" transform="translate(488 205)">
+      <g id="Placement_Area" data-name="Placement Area" fill="red" stroke="rgba(0,0,0,0)" stroke-width="1" opacity="0">
+        <rect width="176" height="56" stroke="none"/>
+        <rect x="0.5" y="0.5" width="175" height="55" fill="none"/>
+      </g>
+      <text id="Label" transform="translate(0 16)" fill="var(--anatomy-gray-700)" font-size="12" font-family="var(--anatomy-font)"><tspan x="0" y="0">Favorite animal</tspan></text>
+      <g id="Text_Area" data-name="Text Area" transform="translate(0 24)" fill="var(--anatomy-gray-50)" stroke="var(--anatomy-gray-600)" stroke-width="1">
+        <rect width="176" height="32" rx="4" stroke="none"/>
+        <rect x="0.5" y="0.5" width="175" height="31" rx="3.5" fill="none"/>
+      </g>
+      <path id="Field_Button_Fill" data-name="Field Button Fill" d="M0,0H30a4,4,0,0,1,4,4V28a4,4,0,0,1-4,4H0Z" transform="translate(142 24)" fill="var(--anatomy-gray-200)"/>
+      <path id="Field_Button_Border" data-name="Field Button Border" d="M0,0H30a4,4,0,0,1,4,4V28a4,4,0,0,1-4,4H0ZM0,1A1,1,0,0,0,1,0V32a1,1,0,0,0-1-1H30a3,3,0,0,0,3-3V4a3,3,0,0,0-3-3Z" transform="translate(142 24)" fill="var(--anatomy-gray-600)"/>
+      <text id="Text" transform="translate(12 44)" fill="var(--anatomy-gray-800)" font-size="14" font-family="var(--anatomy-font)"><tspan x="0" y="0">Ca</tspan></text>
+      <g id="Chevron">
+        <g id="Frame" transform="translate(154 37)" fill="var(--anatomy-gray-600)" stroke="rgba(0,0,0,0)" stroke-width="1" opacity="0">
+          <rect width="10" height="6" stroke="none"/>
+          <rect x="0.5" y="0.5" width="9" height="5" fill="none"/>
+        </g>
+        <path id="Shape" d="M9.99,1.01A1,1,0,0,0,8.283.3L5,3.586,1.717.3A1,1,0,1,0,.3,1.717L4.293,5.7a1,1,0,0,0,1.414,0L9.7,1.717A1,1,0,0,0,9.99,1.01Z" transform="translate(154 37)" fill="var(--anatomy-gray-900)"/>
+      </g>
+      <g id="Focus_Border" data-name="Focus Border" transform="translate(0 24)" fill="rgba(0,0,0,0)" stroke="var(--anatomy-gray-600)" stroke-width="1">
+        <rect width="176" height="32" rx="4" stroke="none"/>
+        <rect x="0.5" y="0.5" width="175" height="31" rx="3.5" fill="none"/>
+      </g>
+      <g id="Menu">
+        <g id="Placement_Area-2" data-name="Placement Area" transform="translate(0 62)" fill="red" stroke="rgba(0,0,0,0)" stroke-width="1" opacity="0">
+          <rect width="176" height="136" stroke="none"/>
+          <rect x="0.5" y="0.5" width="175" height="135" fill="none"/>
+        </g>
+        <g transform="matrix(1, 0, 0, 1, -6, 0)" filter="url(#Background)">
+          <g id="Background-2" data-name="Background" transform="translate(6 62)" fill="var(--anatomy-gray-50)" stroke="var(--anatomy-gray-400)" stroke-width="1">
+            <rect width="176" height="136" rx="4" stroke="none"/>
+            <rect x="0.5" y="0.5" width="175" height="135" rx="3.5" fill="none"/>
+          </g>
+        </g>
+        <g id="Hover" transform="translate(2 130)" fill="var(--anatomy-gray-900)" stroke="rgba(0,0,0,0)" stroke-width="1" opacity="0.04">
+          <rect width="172" height="32" stroke="none"/>
+          <rect x="0.5" y="0.5" width="171" height="31" fill="none"/>
+        </g>
+        <g id="Menu_Item" data-name="Menu Item" transform="translate(12 66)" fill="rgba(255,0,0,0)" stroke="rgba(0,0,0,0)" stroke-width="1">
+          <rect width="60" height="32" stroke="none"/>
+          <rect x="0.5" y="0.5" width="59" height="31" fill="none"/>
+        </g>
+        <text id="Camel" transform="translate(12 86)" fill="var(--anatomy-gray-800)" font-size="14" font-family="var(--anatomy-font)"><tspan x="0" y="0">Camel</tspan></text>
+        <g id="Menu_Item-2" data-name="Menu Item" transform="translate(12 98)" fill="rgba(255,0,0,0)" stroke="rgba(0,0,0,0)" stroke-width="1">
+          <rect width="78" height="32" stroke="none"/>
+          <rect x="0.5" y="0.5" width="77" height="31" fill="none"/>
+        </g>
+        <text id="Capybara" transform="translate(12 118)" fill="var(--anatomy-gray-800)" font-size="14" font-family="var(--anatomy-font)"><tspan x="0" y="0">Capybara</tspan></text>
+        <g id="Menu_Item-3" data-name="Menu Item" transform="translate(12 130)" fill="rgba(255,0,0,0)" stroke="rgba(0,0,0,0)" stroke-width="1">
+          <rect width="68" height="32" stroke="none"/>
+          <rect x="0.5" y="0.5" width="67" height="31" fill="none"/>
+        </g>
+        <text id="Caribou" transform="translate(12 150)" fill="var(--anatomy-gray-800)" font-size="14" font-family="var(--anatomy-font)"><tspan x="0" y="0">Caribou</tspan></text>
+        <g id="Menu_Item-4" data-name="Menu Item" transform="translate(12 162)" fill="rgba(255,0,0,0)" stroke="rgba(0,0,0,0)" stroke-width="1">
+          <rect width="42" height="32" stroke="none"/>
+          <rect x="0.5" y="0.5" width="41" height="31" fill="none"/>
+        </g>
+        <text id="Cat" transform="translate(12 182)" fill="var(--anatomy-gray-800)" font-size="14" font-family="var(--anatomy-font)"><tspan x="0" y="0">Cat</tspan></text>
+      </g>
+    </g>
+    <line id="Line_1" data-name="Line 1" y2="16" transform="translate(516.5 236.5)" fill="none" stroke="var(--anatomy-gray-600)" stroke-width="1"/>
+  </g>
+</svg>

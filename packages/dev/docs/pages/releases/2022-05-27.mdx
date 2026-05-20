@@ -1,0 +1,249 @@
+{/* Copyright 2022 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {BlogPostLayout, Hero} from '@react-spectrum/docs';
+export default BlogPostLayout;
+
+---
+description: React 18 is now officially supported! Other updates include a major version bump to our workflow icons package, support for emphasized Tabs, and various bug fixes to our existing components and hooks. Thank you to all who contributed to this release!
+date: 2022-05-31
+---
+
+# May 31, 2022 Release
+
+This release includes compatibility with React 18! We have tested each component and hook to verify that it works as expected, while retaining support for React 17 and 16 as well. Special thanks to [@eps1lon](https://github.com/eps1lon) for their help with getting our tests working with React 18. Note that this release only includes basic compatibility. Strict mode support is still a work in progress, and will be supported in a future release.
+
+A major version bump to our Spectrum workflow icons package is included in this release, so please check out the changes [here](#icons-update) and upgrade accordingly.
+Other updates include added support for emphasized Tabs and various bug fixes to our existing components and hooks. Thank you to all who contributed to this release!
+
+## New features
+- Support for isEmphasized Tabs - [@ktabors](https://github.com/ktabors) - [PR](https://github.com/adobe/react-spectrum/pull/3124)
+
+## Updates
+- React 18 support - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/3108)
+- Update dom-helpers - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/3110)
+
+## Fixes
+- Reduce the number of rerenders from focus hooks - [@csantos1113](https://github.com/csantos1113) - [PR](https://github.com/adobe/react-spectrum/pull/3045)
+- Fix NumberParser mistakenly returning Arabic values in non-Arabic locales  - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/3116)
+- Add ActionMenu to mono-package - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/3144)
+- Distinguish Talkback virtual clicks from Windows FF touch event - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/3136)
+- Fixes missing 'props' from API sections of useFocus and useFocusWithin docs - [@ktabors](https://github.com/ktabors) - [PR](https://github.com/adobe/react-spectrum/pull/3161)
+- Fix ButtonGroup visual flicker on resize check - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/3160)
+
+## Under construction
+
+Fixes to pre-released components are listed below. Please feel free to try them out, and report any issues you encounter.
+
+- Fix edge cases in DatePicker with min/max dates and eras - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/3149)
+- Make DatePicker button keyboard focusable - [@majornista](https://github.com/majornista) - [PR](https://github.com/adobe/react-spectrum/pull/3145)
+
+## Icons update
+
+3 icons were renamed to fix a typo in their name:
+```
+SelectSubstract -> SelectSubtract
+SubstractBackPath -> SubtractBackPath
+SubstractFromSelection -> SubtractFromSelection
+```
+The `Tableau` icon was removed.
+
+2 icons were added:
+```
+CircleFilled
+Invite
+```
+
+Various icons were updated, including changes to `Circle` which is now `CircleFilled`  Please see the [PR](https://github.com/adobe/react-spectrum/pull/3019) for more information.
+
+## Released packages
+
+```
+ - @adobe/react-spectrum@3.18.0
+ - @internationalized/date@3.0.0-rc.1
+ - @internationalized/message@3.0.7
+ - @internationalized/number@3.1.1
+ - @react-aria/accordion@3.0.0-alpha.8
+ - @react-aria/actiongroup@3.3.0
+ - @react-aria/aria-modal-polyfill@3.5.0
+ - @react-aria/autocomplete@3.0.0-alpha.7
+ - @react-aria/breadcrumbs@3.2.0
+ - @react-aria/button@3.5.0
+ - @react-aria/calendar@3.0.0-rc.1
+ - @react-aria/checkbox@3.4.0
+ - @react-aria/color@3.0.0-beta.12
+ - @react-aria/combobox@3.3.0
+ - @react-aria/datepicker@3.0.0-rc.1
+ - @react-aria/dialog@3.2.0
+ - @react-aria/dnd@3.0.0-alpha.9
+ - @react-aria/focus@3.6.0
+ - @react-aria/grid@3.3.0
+ - @react-aria/i18n@3.4.0
+ - @react-aria/interactions@3.9.0
+ - @react-aria/label@3.3.0
+ - @react-aria/link@3.3.0
+ - @react-aria/list@3.0.0-alpha.0
+ - @react-aria/listbox@3.5.0
+ - @react-aria/live-announcer@3.1.0
+ - @react-aria/menu@3.5.0
+ - @react-aria/meter@3.2.0
+ - @react-aria/numberfield@3.2.0
+ - @react-aria/overlays@3.9.0
+ - @react-aria/progress@3.2.0
+ - @react-aria/radio@3.2.0
+ - @react-aria/searchfield@3.3.0
+ - @react-aria/select@3.7.0
+ - @react-aria/selection@3.9.0
+ - @react-aria/separator@3.2.0
+ - @react-aria/slider@3.1.0
+ - @react-aria/spinbutton@3.1.0
+ - @react-aria/ssr@3.2.0
+ - @react-aria/switch@3.2.0
+ - @react-aria/table@3.3.0
+ - @react-aria/tabs@3.2.0
+ - @react-aria/tag@3.0.0-alpha.6
+ - @react-aria/textfield@3.6.0
+ - @react-aria/toggle@3.3.0
+ - @react-aria/tooltip@3.2.0
+ - @react-aria/utils@3.13.0
+ - @react-aria/virtualizer@3.4.0
+ - @react-aria/visually-hidden@3.3.0
+ - @react-spectrum/accordion@3.0.0-alpha.9
+ - @react-spectrum/actionbar@3.0.0-alpha.9
+ - @react-spectrum/actiongroup@3.5.0
+ - @react-spectrum/autocomplete@3.0.0-alpha.7
+ - @react-spectrum/avatar@3.0.0-alpha.6
+ - @react-spectrum/breadcrumbs@3.4.0
+ - @react-spectrum/button@3.8.0
+ - @react-spectrum/buttongroup@3.3.0
+ - @react-spectrum/calendar@3.0.0-rc.1
+ - @react-spectrum/card@3.0.0-alpha.8
+ - @react-spectrum/checkbox@3.4.0
+ - @react-spectrum/color@3.0.0-beta.12
+ - @react-spectrum/combobox@3.4.0
+ - @react-spectrum/contextualhelp@3.1.0
+ - @react-spectrum/datepicker@3.0.0-rc.1
+ - @react-spectrum/dialog@3.4.0
+ - @react-spectrum/divider@3.3.0
+ - @react-spectrum/dnd@3.0.0-alpha.3
+ - @react-spectrum/form@3.3.0
+ - @react-spectrum/icon@3.4.0
+ - @react-spectrum/illustratedmessage@3.2.0
+ - @react-spectrum/image@3.2.0
+ - @react-spectrum/label@3.6.0
+ - @react-spectrum/layout@3.3.0
+ - @react-spectrum/link@3.3.0
+ - @react-spectrum/list@3.0.0-alpha.11
+ - @react-spectrum/listbox@3.6.0
+ - @react-spectrum/menu@3.7.0
+ - @react-spectrum/meter@3.2.0
+ - @react-spectrum/numberfield@3.3.0
+ - @react-spectrum/overlays@3.6.0
+ - @react-spectrum/picker@3.6.0
+ - @react-spectrum/progress@3.2.0
+ - @react-spectrum/provider@3.4.0
+ - @react-spectrum/radio@3.2.0
+ - @react-spectrum/searchfield@3.4.0
+ - @react-spectrum/searchwithin@3.0.0-alpha.7
+ - @react-spectrum/slider@3.1.0
+ - @react-spectrum/statuslight@3.3.0
+ - @react-spectrum/switch@3.2.0
+ - @react-spectrum/table@3.2.0
+ - @react-spectrum/tabs@3.2.0
+ - @react-spectrum/tag@3.0.0-alpha.6
+ - @react-spectrum/text@3.2.0
+ - @react-spectrum/textfield@3.5.0
+ - @react-spectrum/theme-dark@3.3.0
+ - @react-spectrum/theme-default@3.3.0
+ - @react-spectrum/theme-light@3.2.0
+ - @react-spectrum/tooltip@3.2.0
+ - @react-spectrum/utils@3.7.0
+ - @react-spectrum/view@3.2.0
+ - @react-spectrum/well@3.2.0
+ - @react-stately/calendar@3.0.0-rc.1
+ - @react-stately/checkbox@3.1.0
+ - @react-stately/collections@3.4.0
+ - @react-stately/color@3.0.0-beta.11
+ - @react-stately/combobox@3.1.0
+ - @react-stately/data@3.5.0
+ - @react-stately/datepicker@3.0.0-rc.1
+ - @react-stately/dnd@3.0.0-alpha.7
+ - @react-stately/grid@3.2.0
+ - @react-stately/layout@3.5.0
+ - @react-stately/list@3.5.0
+ - @react-stately/menu@3.3.0
+ - @react-stately/numberfield@3.1.0
+ - @react-stately/overlays@3.3.0
+ - @react-stately/radio@3.4.0
+ - @react-stately/searchfield@3.2.0
+ - @react-stately/select@3.2.0
+ - @react-stately/selection@3.10.0
+ - @react-stately/slider@3.1.0
+ - @react-stately/table@3.2.0
+ - @react-stately/tabs@3.1.0
+ - @react-stately/toggle@3.3.0
+ - @react-stately/tooltip@3.1.0
+ - @react-stately/tree@3.3.0
+ - @react-stately/utils@3.5.0
+ - @react-stately/virtualizer@3.2.0
+ - @react-types/accordion@3.0.0-alpha.6
+ - @react-types/actionbar@3.0.0-alpha.6
+ - @react-types/actiongroup@3.3.0
+ - @react-types/autocomplete@3.0.0-alpha.5
+ - @react-types/avatar@3.0.0-alpha.5
+ - @react-types/breadcrumbs@3.4.0
+ - @react-types/button@3.5.0
+ - @react-types/buttongroup@3.2.0
+ - @react-types/calendar@3.0.0-rc.1
+ - @react-types/card@3.0.0-alpha.6
+ - @react-types/checkbox@3.3.0
+ - @react-types/color@3.0.0-beta.9
+ - @react-types/combobox@3.5.0
+ - @react-types/contextualhelp@3.1.0
+ - @react-types/datepicker@3.0.0-rc.1
+ - @react-types/dialog@3.4.0
+ - @react-types/divider@3.2.0
+ - @react-types/form@3.3.0
+ - @react-types/grid@3.1.0
+ - @react-types/illustratedmessage@3.2.0
+ - @react-types/image@3.2.0
+ - @react-types/label@3.6.0
+ - @react-types/layout@3.3.0
+ - @react-types/link@3.3.0
+ - @react-types/list@3.0.0-alpha.0
+ - @react-types/listbox@3.3.0
+ - @react-types/menu@3.6.0
+ - @react-types/meter@3.2.0
+ - @react-types/numberfield@3.3.0
+ - @react-types/overlays@3.6.0
+ - @react-types/progress@3.2.0
+ - @react-types/provider@3.5.0
+ - @react-types/radio@3.2.0
+ - @react-types/searchfield@3.3.0
+ - @react-types/searchwithin@3.0.0-alpha.5
+ - @react-types/select@3.6.0
+ - @react-types/shared@3.13.0
+ - @react-types/slider@3.1.0
+ - @react-types/statuslight@3.2.0
+ - @react-types/switch@3.2.0
+ - @react-types/table@3.2.0
+ - @react-types/tabs@3.1.0
+ - @react-types/tag@3.0.0-alpha.4
+ - @react-types/text@3.2.0
+ - @react-types/textfield@3.5.0
+ - @react-types/tooltip@3.2.0
+ - @react-types/view@3.2.0
+ - @react-types/well@3.2.0
+ - @spectrum-icons/color@3.4.0
+ - @spectrum-icons/illustrations@3.3.0
+ - @spectrum-icons/ui@3.3.0
+ - @spectrum-icons/workflow@4.0.0
+ - react-aria@3.16.0
+ - react-stately@3.14.0
+ ```

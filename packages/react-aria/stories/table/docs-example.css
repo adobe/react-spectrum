@@ -1,0 +1,100 @@
+.aria-table {
+  border-collapse: collapse;
+  width: 300px;
+  height: 200px;
+  display: block;
+  position: relative;
+  overflow: auto;
+
+  .aria-table-rowGroup {
+    display: block;
+  }
+
+  .aria-table-rowGroupHeader {
+    border-bottom: 2px solid var(--spectrum-global-color-gray-800);
+    position: sticky;
+    top: 0;
+    background: var(--spectrum-gray-100);
+    width: fit-content;
+  }
+
+  .aria-table-rowGroupBody {
+    max-height: 200px;
+  }
+
+  .aria-table-row {
+    display: flex;
+  }
+
+  .aria-table-headerCell {
+    padding: 5px 10px;
+    outline: none;
+    cursor: default;
+    display: block;
+    flex: 0 0 auto;
+    box-sizing: border-box;
+    text-align: left;
+
+    .aria-table-headerTitle {
+      width: 100%;
+      text-align: left;
+      border: none;
+      background: transparent;
+      flex: 1 1 auto;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      margin-inline-start: -6px;
+      outline: none;
+
+      &.focus {
+        outline: 2px solid orange;
+      }
+    }
+  }
+
+  .aria-table-resizer {
+    width: 15px;
+    background-color: grey;
+    cursor: col-resize;
+    height: 30px;
+    touch-action: none;
+    flex: 0 0 auto;
+    box-sizing: border-box;
+    border: 5px;
+    border-style: none solid;
+    border-color: transparent;
+    background-clip: content-box;
+
+    &.focus {
+      background-color: orange;
+    }
+
+    &.resizing {
+      border-color: orange;
+      background-color: transparent;
+    }
+  }
+
+  .aria-table-row {
+    display: flex;
+    width: fit-content;
+  }
+
+  .aria-table-cell {
+    padding: 5px 10px;
+    outline: none;
+    cursor: default;
+    display: block;
+    flex: 0 0 auto;
+    box-sizing: border-box;
+    box-shadow: none;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+
+    &.focus {
+      box-shadow: inset 0 0 0 2px orange;
+    }
+  }
+}

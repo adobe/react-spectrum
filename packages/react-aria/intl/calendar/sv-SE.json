@@ -1,0 +1,14 @@
+{
+  "dateRange": "{startDate} till {endDate}",
+  "dateSelected": "{date} har valts",
+  "finishRangeSelectionPrompt": "Klicka för att avsluta val av datumintervall",
+  "maximumDate": "Sista tillgängliga datum",
+  "minimumDate": "Första tillgängliga datum",
+  "next": "Nästa",
+  "previous": "Föregående",
+  "selectedDateDescription": "Valt datum: {date}",
+  "selectedRangeDescription": "Valt intervall: {dateRange}",
+  "startRangeSelectionPrompt": "Klicka för att välja datumintervall",
+  "todayDate": "Idag, {date}",
+  "todayDateSelected": "Idag, {date} har valts"
+}

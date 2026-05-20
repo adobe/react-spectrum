@@ -1,0 +1,7 @@
+{
+  "actions": "操作",
+  "actionsAvailable": "有可用操作。",
+  "clearSelection": "清除选择",
+  "selected": "{count, plural, =0 {无选择} other {已选择 # 个}}",
+  "selectedAll": "全选"
+}

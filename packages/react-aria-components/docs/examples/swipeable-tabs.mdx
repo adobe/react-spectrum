@@ -1,0 +1,265 @@
+{/* Copyright 2023 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {ExampleLayout} from '@react-spectrum/docs';
+export default ExampleLayout;
+
+import docs from 'docs:react-aria-components';
+import {TypeLink} from '@react-spectrum/docs';
+import styles from '@react-spectrum/docs/src/docs.css';
+import Tabs from '@react-spectrum/docs/pages/assets/component-illustrations/Tabs.svg';
+import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
+
+---
+keywords: [example, tabs, aria, accessibility, react, component]
+type: component
+image: swipeable-tabs.png
+description: A swipeable Tabs component built with Framer Motion and CSS scroll snapping.
+---
+
+# Swipeable Tabs
+
+A swipeable [Tabs](../Tabs.html) component built with with React Aria Components, [Framer Motion](https://www.framer.com/motion/), [Tailwind CSS](https://tailwindcss.com/), and [CSS scroll snapping](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_scroll_snap).
+
+## Example
+
+```tsx import
+import './tailwind.global.css';
+```
+
+```css hidden
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+}
+```
+
+```tsx example flip
+import {
+  Tabs,
+  TabList,
+  Tab,
+  TabPanel,
+  Collection
+} from "react-aria-components";
+import { motion, animate, useScroll, useTransform, useMotionValueEvent } from "motion/react";
+import { useCallback, useEffect, useRef, useState } from "react";
+
+let tabs = [
+  { id: "world", label: "World" },
+  { id: "ny", label: "N.Y." },
+  { id: "business", label: "Business" },
+  { id: "arts", label: "Arts" },
+  { id: "science", label: "Science" }
+];
+
+function AnimatedTabs() {
+  let [selectedKey, setSelectedKey] = useState(tabs[0].id);
+
+  let tabListRef = useRef(null);
+  let tabPanelsRef = useRef(null);
+
+  // Track the scroll position of the tab panel container.
+  let { scrollXProgress } = useScroll({
+    container: tabPanelsRef
+  });
+
+  // Find all the tab elements so we can use their dimensions.
+  let [tabElements, setTabElements] = useState([]);
+  useEffect(() => {
+    if (tabElements.length === 0) {
+      let tabs = tabListRef.current.querySelectorAll("[role=tab]");
+      setTabElements(tabs);
+    }
+  }, [tabElements]);
+
+  // This function determines which tab should be selected
+  // based on the scroll position.
+  let getIndex = useCallback(
+    (x) => Math.max(0, Math.floor((tabElements.length - 1) * x)),
+    [tabElements]
+  );
+
+  // This function transforms the scroll position into the X position
+  // or width of the selected tab indicator.
+  let transform = (x, property) => {
+    if (!tabElements.length) return 0;
+
+    // Find the tab index for the scroll X position.
+    let index = getIndex(x);
+
+    // Get the difference between this tab and the next one.
+    let difference =
+      index < tabElements.length - 1
+        ? tabElements[index + 1][property] - tabElements[index][property]
+        : tabElements[index].offsetWidth;
+
+    // Get the percentage between tabs.
+    // This is the difference between the integer index and fractional one.
+    let percent = (tabElements.length - 1) * x - index;
+
+    // Linearly interpolate to calculate the position of the selection indicator.
+    let value = tabElements[index][property] + difference * percent;
+
+    // iOS scrolls weird when translateX is 0 for some reason. 🤷‍♂️
+    return value || 0.1;
+  };
+
+  let x = useTransform(scrollXProgress, (x) => transform(x, "offsetLeft"));
+  let width = useTransform(scrollXProgress, (x) => transform(x, "offsetWidth"));
+
+  // When the user scrolls, update the selected key
+  // so that the correct tab panel becomes interactive.
+  useMotionValueEvent(scrollXProgress, "change", (x) => {
+    if (animationRef.current || !tabElements.length) return;
+    setSelectedKey(tabs[getIndex(x)].id);
+  });
+
+  // When the user clicks on a tab perform an animation of
+  // the scroll position to the newly selected tab panel.
+  let animationRef = useRef(null);
+  let onSelectionChange = (selectedKey) => {
+    setSelectedKey(selectedKey);
+
+    // If the scroll position is already moving but we aren't animating
+    // then the key changed as a result of a user scrolling. Ignore.
+    if (scrollXProgress.getVelocity() && !animationRef.current) {
+      return;
+    }
+
+    let tabPanel = tabPanelsRef.current;
+    let index = tabs.findIndex((tab) => tab.id === selectedKey);
+    animationRef.current?.stop();
+    animationRef.current = animate(
+      tabPanel.scrollLeft,
+      tabPanel.scrollWidth * (index / tabs.length),
+      {
+        type: "spring",
+        bounce: 0.2,
+        duration: 0.6,
+        onUpdate: (v) => {
+          tabPanel.scrollLeft = v;
+        },
+        onPlay: () => {
+          // Disable scroll snap while the animation is going or weird things happen.
+          tabPanel.style.scrollSnapType = "none";
+        },
+        onComplete: () => {
+          tabPanel.style.scrollSnapType = "";
+          animationRef.current = null;
+        }
+      }
+    );
+  };
+
+  return (
+    <Tabs
+      className="w-fit max-w-[min(100%,350px)]"
+      selectedKey={selectedKey}
+      onSelectionChange={onSelectionChange}>
+      <div className="relative">
+        <TabList ref={tabListRef} className="flex -mx-1" items={tabs}>
+          {(tab) =>
+            <Tab className="cursor-default px-3 py-1.5 text-md transition outline-hidden touch-none">
+              {({ isSelected, isFocusVisible }) => <>
+                {tab.label}
+                {isFocusVisible && isSelected && (
+                  // Focus ring.
+                  <motion.span
+                    className="absolute inset-0 z-10 rounded-full ring-2 ring-black ring-offset-2"
+                    style={{ x, width }}
+                  />
+                )}
+              </>}
+            </Tab>
+          }
+        </TabList>
+        {/* Selection indicator. */}
+        <motion.span
+          className="absolute inset-0 z-10 bg-white rounded-full mix-blend-difference"
+          style={{ x, width }} />
+      </div>
+      <div
+        ref={tabPanelsRef}
+        className="my-4 overflow-auto snap-x snap-mandatory no-scrollbar flex">
+        <Collection items={tabs}>
+          {(tab) => (
+            <TabPanel
+              shouldForceMount
+              className="shrink-0 w-full px-2 box-border snap-start outline-hidden -outline-offset-2 rounded-sm focus-visible:outline-black">
+              <h2>{tab.label} contents...</h2>
+              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean sit amet nisl blandit, pellentesque eros eu, scelerisque eros. Sed cursus urna at nunc lacinia dapibus.</p>
+            </TabPanel>
+          )}
+        </Collection>
+      </div>
+    </Tabs>
+  );
+}
+```
+
+### Tailwind config
+
+This example uses the [tailwindcss-react-aria-components](../styling.html#plugin) plugin. When using Tailwind v4, add it to your CSS:
+
+```css render=false
+@import "tailwindcss";
+@plugin "tailwindcss-react-aria-components";
+```
+
+<details>
+
+<summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Tailwind v3</summary>
+
+When using Tailwind v3, add the plugin to your `tailwind.config.js` instead:
+
+```tsx
+module.exports = {
+  // ...
+  plugins: [
+    require('tailwindcss-react-aria-components')
+  ]
+};
+```
+
+**Note**: When using Tailwind v3, install `tailwindcss-react-aria-components` version 1.x instead of 2.x.
+
+</details>
+
+## Components
+
+<section className={styles.cardGroup} data-size="small">
+
+<ExampleCard
+  url="../Tabs.html"
+  title="Tabs"
+  description="Tabs organize content into multiple sections, and allow a user to view one at a time.">
+  <Tabs />
+</ExampleCard>
+
+</section>
+
+## Learn more
+
+This example was inspired by [Sam Selikoff](https://www.youtube.com/@samselikoff)'s video ["Animated tabs with inverted text"](https://www.youtube.com/watch?v=kep_Iaxuzy0). Check it out to learn more about how the inverted text effect works!
+
+<div className={styles.responsiveVideo}>
+  <iframe
+    title="YouTube embedded video: 'Animated tabs – with inverted text!' by Sam Selikoff"
+    width="840"
+    height="471"
+    src="https://www.youtube.com/embed/kep_Iaxuzy0"
+    frameBorder="0"
+    allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+    allowFullScreen />
+</div>

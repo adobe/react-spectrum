@@ -1,0 +1,1191 @@
+version: 2.1
+parameters:
+  GHA_Event:
+    type: string
+    default: ''
+  GHA_Actor:
+    type: string
+    default: ''
+  GHA_Action:
+    type: string
+    default: ''
+  GHA_Meta:
+    type: string
+    default: ''
+
+orbs:
+  aws-cli: circleci/aws-cli@5.4.1
+  aws-s3: circleci/aws-s3@4.1
+
+executors:
+  rsp:
+    docker:
+      - image: cimg/node:24.14.1
+    environment:
+      CACHE_VERSION: v1
+    working_directory: ~/react-spectrum
+
+  rsp-large:
+    docker:
+      - image: cimg/node:24.14.1
+    resource_class: large
+    environment:
+      CACHE_VERSION: v1
+    working_directory: ~/react-spectrum
+
+  rsp-xlarge:
+    docker:
+      - image: cimg/node:24.14.1
+    resource_class: xlarge
+    environment:
+      CACHE_VERSION: v1
+    working_directory: ~/react-spectrum
+
+  rsp-2xlarge:
+    docker:
+      - image: cimg/node:24.14.1
+    resource_class: 2xlarge
+    environment:
+      CACHE_VERSION: v1
+    working_directory: ~/react-spectrum
+
+commands:
+  deploy-s3:
+    parameters:
+      dir:
+        type: string
+      bucket:
+        type: string
+    steps:
+      - attach_workspace:
+          at: /tmp/dist
+      - aws-cli/install
+      - run:
+          name: Check AWS credentials
+          command: |
+            if [ -z "$AWS_ROLE_ARN" ]; then
+              echo "AWS credentials not found"
+              circleci-agent step halt
+            fi
+      - aws-cli/setup:
+          role_arn: $AWS_ROLE_ARN
+          region: $AWS_DEFAULT_REGION
+          role_session_name: 'CircleCI-Deploy-Session'
+      - run:
+          name: Verify AWS CLI setup
+          command: aws sts get-caller-identity
+      - run:
+          name: Configure AWS CLI for concurrent requests
+          command: aws configure set default.s3.max_concurrent_requests 100
+      - run:
+          name: Copy immutable assets to S3
+          command: |
+            aws s3 cp /tmp/dist/s2-docs/<< parameters.dir >> << parameters.bucket >> --recursive \
+              --cache-control "public,max-age=31536000,immutable" \
+              --exclude "*.html" --exclude "*.rsc" --exclude "*.txt" --exclude "*.json" --exclude "*.md" --exclude "*.xml"
+      - run:
+          name: Copy HTML and data files to S3
+          command: |
+            aws s3 cp /tmp/dist/s2-docs/<< parameters.dir >> << parameters.bucket >> --recursive \
+              --cache-control "public,max-age=300,stale-while-revalidate=300" \
+              --exclude "*" --include "*.html" --include "*.json" --include "*.xml"
+      - run:
+          name: Copy Markdown files to S3
+          command: |
+            aws s3 cp /tmp/dist/s2-docs/<< parameters.dir >> << parameters.bucket >> --recursive \
+              --cache-control "public,max-age=300,stale-while-revalidate=300" \
+              --content-type "text/markdown;charset=utf-8" \
+              --exclude "*" --include "*.md"
+      - run:
+          name: Copy text files to S3
+          command: |
+            aws s3 cp /tmp/dist/s2-docs/<< parameters.dir >> << parameters.bucket >> --recursive \
+              --cache-control "public,max-age=300,stale-while-revalidate=300" \
+              --content-type "text/plain;charset=utf-8" \
+              --exclude "*" --include "*.txt"
+      - run:
+          name: Copy RSC files to S3
+          command: |
+            aws s3 cp /tmp/dist/s2-docs/<< parameters.dir >> << parameters.bucket >> --recursive \
+              --cache-control "public,max-age=300,stale-while-revalidate=300" \
+              --content-type "text/x-component;charset=utf-8" \
+              --exclude "*" --include "*.rsc"
+
+jobs:
+  install:
+    executor: rsp-large
+    steps:
+      - checkout
+      - run:
+          name: Write npmrc
+          command: |
+            if [ $NPM_PASSWORD ]; then
+              cp .circleci/.npmrc .npmrc
+            fi
+
+      - run:
+          name: build
+          command: |
+            yarn --immutable
+
+      - save_cache:
+          paths:
+            - ~/react-spectrum
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+  install-16:
+    executor: rsp-large
+    steps:
+      - checkout
+
+      - run:
+          name: Write npmrc
+          command: |
+            if [ $NPM_PASSWORD ]; then
+              cp .circleci/.npmrc .npmrc
+            fi
+
+      - run:
+          name: build
+          command: |
+            yarn install --immutable && yarn install-16
+
+      - save_cache:
+          paths:
+            - ~/react-spectrum
+          key: react-spectrum16-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+  install-17:
+    executor: rsp-large
+    steps:
+      - checkout
+
+      - run:
+          name: Write npmrc
+          command: |
+            if [ $NPM_PASSWORD ]; then
+              cp .circleci/.npmrc .npmrc
+            fi
+
+      - run:
+          name: build
+          command: |
+            yarn install --immutable && yarn install-17
+
+      - save_cache:
+          paths:
+            - ~/react-spectrum
+          key: react-spectrum17-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+  install-18:
+    executor: rsp-large
+    steps:
+      - checkout
+
+      - run:
+          name: Write npmrc
+          command: |
+            if [ $NPM_PASSWORD ]; then
+              cp .circleci/.npmrc .npmrc
+            fi
+
+      - run:
+          name: build
+          command: |
+            yarn install --immutable && yarn install-18
+
+      - save_cache:
+          paths:
+            - ~/react-spectrum
+          key: react-spectrum-18-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+  install-canary:
+    executor: rsp-large
+    steps:
+      - checkout
+
+      - run:
+          name: Write npmrc
+          command: |
+            if [ $NPM_PASSWORD ]; then
+              cp .circleci/.npmrc .npmrc
+            fi
+
+      - run:
+          name: build
+          command: |
+            yarn install --immutable && yarn install-canary
+
+      - save_cache:
+          paths:
+            - ~/react-spectrum
+          key: react-spectrum-canary-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+  test-ssr:
+    executor: rsp-xlarge
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - run:
+          name: test ssr
+          command: yarn test:ssr
+
+  test:
+    parallelism: 3
+    executor: rsp-xlarge
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - run: mkdir ~/junit
+
+      - run:
+          name: test
+          command: |
+            shopt -s globstar
+            TESTFILES=$(circleci tests glob "packages/**/*.test.[tj]{s,sx}" | circleci tests split --split-by=timings)
+            yarn test ${TESTFILES}
+
+      - run:
+          command: |
+            cat junit.xml
+            cp junit.xml ~/junit/
+          when: always
+      - store_test_results:
+          path: ~/junit
+      - store_artifacts:
+          path: ~/junit
+
+  test-ssr-16:
+    executor: rsp-xlarge
+    steps:
+      - restore_cache:
+          key: react-spectrum16-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - run:
+          name: test ssr
+          command: |
+            yarn test:ssr
+
+  test-ssr-17:
+    executor: rsp-xlarge
+    steps:
+      - restore_cache:
+          key: react-spectrum17-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - run:
+          name: test ssr
+          command: |
+            yarn test:ssr
+
+  test-ssr-18:
+    executor: rsp-xlarge
+    steps:
+      - restore_cache:
+          key: react-spectrum-18-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - run:
+          name: test ssr
+          command: |
+            yarn test:ssr
+
+  test-ssr-canary:
+    executor: rsp-xlarge
+    steps:
+      - restore_cache:
+          key: react-spectrum-canary-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - run:
+          name: test ssr
+          command: |
+            yarn test:ssr
+
+  test-16:
+    parallelism: 3
+    executor: rsp-xlarge
+    steps:
+      - restore_cache:
+          key: react-spectrum16-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - run: mkdir ~/junit
+
+      - run:
+          name: test
+          command: |
+            shopt -s globstar
+            TESTFILES=$(circleci tests glob "packages/**/*.test.[tj]{s,sx}" | circleci tests split --split-by=timings)
+            JEST_JUNIT_OUTPUT_NAME="junit-16.xml" yarn test ${TESTFILES}
+
+      - run:
+          command: cp junit-16.xml ~/junit/
+          when: always
+      - store_test_results:
+          path: ~/junit
+      - store_artifacts:
+          path: ~/junit
+
+  test-17:
+    parallelism: 3
+    executor: rsp-xlarge
+    steps:
+      - restore_cache:
+          key: react-spectrum17-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - run: mkdir ~/junit
+
+      - run:
+          name: test
+          command: |
+            shopt -s globstar
+            TESTFILES=$(circleci tests glob "packages/**/*.test.[tj]{s,sx}" | circleci tests split --split-by=timings)
+            JEST_JUNIT_OUTPUT_NAME="junit-17.xml" yarn test ${TESTFILES}
+
+      - run:
+          command: cp junit-17.xml ~/junit/
+          when: always
+      - store_test_results:
+          path: ~/junit
+      - store_artifacts:
+          path: ~/junit
+
+  test-18:
+    parallelism: 3
+    executor: rsp-xlarge
+    steps:
+      - restore_cache:
+          key: react-spectrum-18-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - run: mkdir ~/junit
+
+      - run:
+          name: test
+          command: |
+            shopt -s globstar
+            TESTFILES=$(circleci tests glob "packages/**/*.test.[tj]{s,sx}" | circleci tests split --split-by=timings)
+            JEST_JUNIT_OUTPUT_NAME="junit-18.xml" yarn test ${TESTFILES}
+
+      - run:
+          command: cp junit-18.xml ~/junit/
+          when: always
+      - store_test_results:
+          path: ~/junit
+      - store_artifacts:
+          path: ~/junit
+
+  test-canary:
+    parallelism: 3
+    executor: rsp-xlarge
+    steps:
+      - restore_cache:
+          key: react-spectrum-canary-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - run: mkdir ~/junit
+
+      - run:
+          name: test
+          command: |
+            shopt -s globstar
+            TESTFILES=$(circleci tests glob "packages/**/*.test.[tj]{s,sx}" | circleci tests split --split-by=timings)
+            JEST_JUNIT_OUTPUT_NAME="junit-canary.xml" yarn test ${TESTFILES}
+
+      - run:
+          command: cp junit-canary.xml ~/junit/
+          when: always
+      - store_test_results:
+          path: ~/junit
+      - store_artifacts:
+          path: ~/junit
+
+  test-build:
+    executor: rsp-2xlarge
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - run:
+          name: test
+          command: |
+            make build
+            node --loader ./scripts/esm-support/loader.mjs ./scripts/esm-support/testESM.mjs
+            node scripts/testCJS.cjs
+
+  lint:
+    executor: rsp-xlarge
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - run:
+          name: lint
+          command: |
+            yarn test:lint
+            yarn lint
+
+  ts-build-branch:
+    executor: rsp-large
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - run:
+          name: build branch apis
+          command: yarn build:api-branch
+
+      - persist_to_workspace:
+          root: dist
+          paths:
+            - 'branch-api/'
+
+  ts-build-fork-point:
+    executor: rsp-large
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - run:
+          name: build fork-point apis
+          command: |
+            mkdir -p ~/.ssh
+            curl -L https://api.github.com/meta | jq -r '.ssh_keys | .[]' | sed -e 's/^/github.com /' >> ~/.ssh/known_hosts
+            yarn build:api-branch --githash="origin/main" --output="base-api" && yarn build:api-branch && yarn compare:apis
+
+      - persist_to_workspace:
+          root: dist
+          paths:
+            - 'base-api/'
+
+  ts-diff:
+    executor: rsp-large
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - attach_workspace:
+          at: /tmp/dist
+
+      - run:
+          name: compare api
+          command: |
+            yarn test:parcel
+            mkdir -p dist
+            yarn compare:apis --isCI --branch-api-dir="/tmp/dist/branch-api" --base-api-dir="/tmp/dist/base-api" | tee dist/ts-diff.txt
+
+      - persist_to_workspace:
+          root: dist
+          paths:
+            - 'ts-diff.txt'
+
+  skills-diff:
+    executor: rsp-large
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - run:
+          name: build agent skills (branch)
+          command: ./.circleci/build-skills.sh /tmp/dist/skills-branch
+
+      - run:
+          name: build agent skills (main)
+          command: |
+            mkdir -p ~/.ssh
+            curl -L https://api.github.com/meta | jq -r '.ssh_keys | .[]' | sed -e 's/^/github.com /' >> ~/.ssh/known_hosts
+            BRANCH_ROOT="$(pwd)"
+            BUILD_SKILLS="$BRANCH_ROOT/.circleci/build-skills.sh"
+            git worktree add --detach /tmp/main-worktree origin/main
+            # Reuse the branch's installed node_modules since `build-skills.sh`
+            # only invokes node scripts (no yarn install needed in the worktree).
+            ln -s "$BRANCH_ROOT/node_modules" /tmp/main-worktree/node_modules
+            cd /tmp/main-worktree && "$BUILD_SKILLS" /tmp/dist/skills-main
+
+      - run:
+          name: diff agent skills
+          command: |
+            mkdir -p dist
+            node .circleci/skills-diff.js \
+              /tmp/dist/skills-main /tmp/dist/skills-branch \
+              > dist/skills-diff.md || true
+
+      - store_artifacts:
+          path: dist/skills-diff.md
+
+      - persist_to_workspace:
+          root: dist
+          paths:
+            - 'skills-diff.md'
+
+  typecheck-docs:
+    executor: rsp-large
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - run:
+          name: check-examples
+          command: make check-examples
+
+  storybook:
+    executor: rsp-large
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - run:
+          name: build storybook
+          command: make storybook
+
+      - persist_to_workspace:
+          root: dist
+          paths:
+            - '*/storybook/'
+
+  storybook-s2:
+    executor: rsp-large
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - run:
+          name: build s2 storybook
+          command: yarn build:storybook-s2
+
+      - persist_to_workspace:
+          root: dist
+          paths:
+            - '*/storybook-s2/'
+
+  s2-docs:
+    executor: rsp-xlarge
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - run:
+          name: build s2 docs
+          command: make s2-docs
+
+      - persist_to_workspace:
+          root: dist
+          paths:
+            - 's2-docs/'
+
+  s2-docs-stage:
+    executor: rsp-xlarge
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - run:
+          name: build s2 docs
+          command: make s2-docs-stage
+
+      - persist_to_workspace:
+          root: dist
+          paths:
+            - 's2-docs/'
+
+  s2-docs-production:
+    executor: rsp-xlarge
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - run:
+          name: build s2 docs
+          command: make s2-docs-production
+
+      - persist_to_workspace:
+          root: dist
+          paths:
+            - 's2-docs/'
+
+  verdaccio:
+    executor: rsp-xlarge
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - run:
+          name: run verdaccio and publish built packages
+          command: |
+            mkdir -p verdaccio-workspace
+            ./scripts/verdaccio-ci.sh
+            ./scripts/verdaccio-deploy.sh
+          environment:
+            VERDACCIO_STORAGE_PATH: /tmp/verdaccio-workspace/storage
+
+      # Store the prod docs website w/ verdaccio packages in a separate dist folder so it doesn't get deployed by "deploy" workflow
+      # This is because we have a separate deploy flow for the test prod docs website so it doesn't hold up the normal "deploy" workflow
+      - persist_to_workspace:
+          root: /tmp/verdaccio-workspace
+          paths:
+            - storage
+
+  v-rsp-cra-18:
+    executor: rsp-xlarge
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - attach_workspace:
+          at: /tmp/verdaccio-workspace
+
+      - run:
+          name: build react-spectrum-cra-18 off verdaccio
+          command: |
+            ./scripts/verdaccio-ci.sh
+            ./scripts/verdaccio-build-rsp-cra-18.sh
+          environment:
+            VERDACCIO_STORAGE_PATH: /tmp/verdaccio-workspace/storage
+
+      - persist_to_workspace:
+          root: verdaccio_dist
+          paths:
+            - '*/verdaccio/rsp-cra-18'
+
+  v-webpack-4:
+    executor: rsp-xlarge
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - attach_workspace:
+          at: /tmp/verdaccio-workspace
+
+      - run:
+          name: build webpack-4 off verdaccio
+          command: |
+            ./scripts/verdaccio-ci.sh
+            ./scripts/verdaccio-build-webpack-4.sh
+          environment:
+            VERDACCIO_STORAGE_PATH: /tmp/verdaccio-workspace/storage
+
+      - persist_to_workspace:
+          root: verdaccio_dist
+          paths:
+            - '*/verdaccio/webpack-4'
+
+  v-nextjs:
+    executor: rsp-xlarge
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - attach_workspace:
+          at: /tmp/verdaccio-workspace
+
+      - run:
+          name: build nextjs off verdaccio
+          command: |
+            ./scripts/verdaccio-ci.sh
+            ./scripts/verdaccio-build-nextjs.sh
+          environment:
+            VERDACCIO_STORAGE_PATH: /tmp/verdaccio-workspace/storage
+
+      - persist_to_workspace:
+          root: verdaccio_dist
+          paths:
+            - '*/verdaccio/next'
+
+  v-rac-rsp-tailwind:
+    executor: rsp-xlarge
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - attach_workspace:
+          at: /tmp/verdaccio-workspace
+
+      - run:
+          name: build rac-rsp-tailwind off verdaccio
+          command: |
+            ./scripts/verdaccio-ci.sh
+            ./scripts/verdaccio-build-rac-rsp-tailwind.sh
+          environment:
+            VERDACCIO_STORAGE_PATH: /tmp/verdaccio-workspace/storage
+
+      - persist_to_workspace:
+          root: verdaccio_dist
+          paths:
+            - '*/verdaccio/rac-spectrum-tailwind'
+
+  v-s2-parcel:
+    executor: rsp-xlarge
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - attach_workspace:
+          at: /tmp/verdaccio-workspace
+
+      - run:
+          name: build s2-parcel off verdaccio
+          command: |
+            ./scripts/verdaccio-ci.sh
+            ./scripts/verdaccio-build-s2-parcel.sh
+          environment:
+            VERDACCIO_STORAGE_PATH: /tmp/verdaccio-workspace/storage
+
+      - persist_to_workspace:
+          root: verdaccio_dist
+          paths:
+            - '*/verdaccio/s2-parcel-example'
+
+  v-s2-vite:
+    executor: rsp-xlarge
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - attach_workspace:
+          at: /tmp/verdaccio-workspace
+
+      - run:
+          name: build s2-vite off verdaccio
+          command: |
+            ./scripts/verdaccio-ci.sh
+            ./scripts/verdaccio-build-s2-vite.sh
+          environment:
+            VERDACCIO_STORAGE_PATH: /tmp/verdaccio-workspace/storage
+
+      - persist_to_workspace:
+          root: verdaccio_dist
+          paths:
+            - '*/verdaccio/s2-vite-project'
+
+  v-s2-webpack:
+    executor: rsp-xlarge
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - attach_workspace:
+          at: /tmp/verdaccio-workspace
+
+      - run:
+          name: build s2-webpack off verdaccio
+          command: |
+            ./scripts/verdaccio-ci.sh
+            ./scripts/verdaccio-build-s2-webpack.sh
+          environment:
+            VERDACCIO_STORAGE_PATH: /tmp/verdaccio-workspace/storage
+
+      - persist_to_workspace:
+          root: verdaccio_dist
+          paths:
+            - '*/verdaccio/s2-webpack-5-example'
+
+  v-s2-next:
+    executor: rsp-xlarge
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - attach_workspace:
+          at: /tmp/verdaccio-workspace
+
+      - run:
+          name: build s2-next off verdaccio
+          command: |
+            ./scripts/verdaccio-ci.sh
+            ./scripts/verdaccio-build-s2-next.sh
+          environment:
+            VERDACCIO_STORAGE_PATH: /tmp/verdaccio-workspace/storage
+
+      - persist_to_workspace:
+          root: verdaccio_dist
+          paths:
+            - '*/verdaccio/s2-next-macros'
+
+  v-icon-builder:
+    executor: rsp-xlarge
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - attach_workspace:
+          at: /tmp/verdaccio-workspace
+
+      - run:
+          name: build icon-builder off verdaccio
+          command: |
+            ./scripts/verdaccio-ci.sh
+            ./scripts/verdaccio-build-icon-builder.sh
+          environment:
+            VERDACCIO_STORAGE_PATH: /tmp/verdaccio-workspace/storage
+
+      - persist_to_workspace:
+          root: verdaccio_dist
+          paths:
+            - '*/verdaccio/icon-builder-fixture'
+
+  v-publish-stats:
+    executor: rsp
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - attach_workspace:
+          at: /tmp/verdaccio_dist
+
+      - run:
+          name: build size diffs off verdaccio
+          command: |
+            ./scripts/verdaccio-build-pre-azure.sh
+
+      - persist_to_workspace:
+          root: verdaccio_dist
+          paths:
+            - '*/verdaccio/publish-stats'
+
+  v-starters:
+    executor: rsp-xlarge
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - attach_workspace:
+          at: /tmp/verdaccio-workspace
+
+      - run:
+          name: build s2-next off verdaccio
+          command: |
+            ./scripts/verdaccio-ci.sh
+            ./scripts/verdaccio-build-starters.sh
+          environment:
+            VERDACCIO_STORAGE_PATH: /tmp/verdaccio-workspace/storage
+
+      - persist_to_workspace:
+          root: dist
+          paths:
+            - 's2-docs/'
+
+  deploy:
+    docker:
+      - image: mcr.microsoft.com/azure-cli:2.63.0
+    steps:
+      - attach_workspace:
+          at: /tmp/dist
+      - run:
+          name: Install AzCopy
+          command: |
+            wget -O azcopy.tar.gz https://aka.ms/downloadazcopy-v10-linux
+            tar -xf azcopy.tar.gz
+            mv ./azcopy_linux_amd64_*/azcopy /usr/local/bin/
+      - run:
+          name: deploy
+          command: |
+            if [ $AZURE_STORAGE_SAS_TOKEN ]; then
+              azcopy copy "/tmp/dist/*" "https://reactspectrum.blob.core.windows.net/reactspectrum${AZURE_STORAGE_SAS_TOKEN}" --recursive --exclude-pattern "*.md;*.txt"
+              azcopy copy "/tmp/dist/*" "https://reactspectrum.blob.core.windows.net/reactspectrum${AZURE_STORAGE_SAS_TOKEN}" --recursive --include-pattern "*.md" --content-type "text/markdown; charset=utf-8"
+              azcopy copy "/tmp/dist/*" "https://reactspectrum.blob.core.windows.net/reactspectrum${AZURE_STORAGE_SAS_TOKEN}" --recursive --include-pattern "*.txt" --content-type "text/plain; charset=utf-8"
+            fi
+
+  # Separate deploy workflow for the test docs built w/ verdaccio packages so it doesn't hold up the other deploy workflows
+  deploy-verdaccio:
+    docker:
+      - image: mcr.microsoft.com/azure-cli:2.63.0
+    steps:
+      - attach_workspace:
+          at: /tmp/verdaccio_dist
+      - run:
+          name: Install AzCopy
+          command: |
+            wget -O azcopy.tar.gz https://aka.ms/downloadazcopy-v10-linux
+            tar -xf azcopy.tar.gz
+            mv ./azcopy_linux_amd64_*/azcopy /usr/local/bin/
+      - run:
+          name: deploy
+          command: |
+            if [ $AZURE_STORAGE_SAS_TOKEN ]; then
+              for dir in /tmp/verdaccio_dist/*/verdaccio; do
+                azcopy copy "$dir/*" "https://reactspectrum.blob.core.windows.net/reactspectrum/$CIRCLE_SHA1/verdaccio${AZURE_STORAGE_SAS_TOKEN}" --recursive --exclude-pattern "*.md;*.txt"
+                azcopy copy "$dir/*" "https://reactspectrum.blob.core.windows.net/reactspectrum/$CIRCLE_SHA1/verdaccio${AZURE_STORAGE_SAS_TOKEN}" --recursive --include-pattern "*.md" --content-type "text/markdown; charset=utf-8"
+                azcopy copy "$dir/*" "https://reactspectrum.blob.core.windows.net/reactspectrum/$CIRCLE_SHA1/verdaccio${AZURE_STORAGE_SAS_TOKEN}" --recursive --include-pattern "*.txt" --content-type "text/plain; charset=utf-8"
+              done
+            fi
+
+  deploy-s3-stage:
+    executor: rsp
+    steps:
+      - deploy-s3:
+          dir: react-aria
+          bucket: s3://react-aria-stage
+      - deploy-s3:
+          dir: s2
+          bucket: s3://react-spectrum-stage
+
+  deploy-s3-production:
+    executor: rsp
+    steps:
+      - deploy-s3:
+          dir: react-aria
+          bucket: s3://react-aria-prod
+      - deploy-s3:
+          dir: s2
+          bucket: s3://react-spectrum-prod
+
+  comment:
+    executor: rsp
+    steps:
+      - checkout
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - attach_workspace:
+          at: /tmp/dist
+
+      - run:
+          name: comment on pr
+          command: |
+            if [ $GITHUB_TOKEN ]; then
+              node .circleci/comment.js
+              node .circleci/api-comment.js
+              node .circleci/skills-comment.js
+            fi
+
+  publish-nightly:
+    executor: rsp-xlarge
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+      - run:
+          name: Authenticate with npm
+          command: |
+            echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > .npmrc
+            yarn config set npmAuthToken $NPM_TOKEN
+            git update-index --skip-worktree .npmrc
+      - run:
+          name: Publish
+          command: make publish-nightly
+
+workflows:
+  commit:
+    jobs:
+      - install
+      - install-16
+      - install-17
+      - install-18
+      - test-ssr:
+          requires:
+            - install
+      - test:
+          requires:
+            - install
+      - test-ssr-16:
+          requires:
+            - install-16
+      - test-16:
+          requires:
+            - install-16
+      - test-ssr-17:
+          requires:
+            - install-17
+      - test-17:
+          requires:
+            - install-17
+      - test-18:
+          requires:
+            - install-18
+      - test-ssr-18:
+          requires:
+            - install-18
+      - test-build:
+          requires:
+            - install
+      - lint:
+          requires:
+            - install
+      - ts-build-fork-point:
+          requires:
+            - install
+          filters:
+            branches:
+              ignore:
+                - /main$/
+                - /gh-readonly-queue\/.*$/
+      - ts-build-branch:
+          requires:
+            - install
+          filters:
+            branches:
+              ignore:
+                - /main$/
+                - /gh-readonly-queue\/.*$/
+      - ts-diff:
+          requires:
+            - ts-build-fork-point
+            - ts-build-branch
+          filters:
+            branches:
+              ignore:
+                - /main$/
+                - /gh-readonly-queue\/.*$/
+      - skills-diff:
+          requires:
+            - install
+          filters:
+            branches:
+              ignore:
+                - /main$/
+                - /gh-readonly-queue\/.*$/
+      - typecheck-docs:
+          requires:
+            - install
+      - storybook:
+          requires:
+            - install
+      - storybook-s2:
+          requires:
+            - install
+      - s2-docs:
+          requires:
+            - install
+      - s2-docs-stage:
+          requires:
+            - install
+          filters:
+            branches:
+              only: main
+      - verdaccio:
+          filters:
+            branches:
+              only: main
+          requires:
+            - install
+      - v-rsp-cra-18:
+          requires:
+            - verdaccio
+      - v-webpack-4:
+          requires:
+            - verdaccio
+      - v-nextjs:
+          requires:
+            - verdaccio
+      - v-rac-rsp-tailwind:
+          requires:
+            - verdaccio
+      - v-s2-parcel:
+          requires:
+            - verdaccio
+      - v-s2-vite:
+          requires:
+            - verdaccio
+      - v-s2-webpack:
+          requires:
+            - verdaccio
+      - v-s2-next:
+          requires:
+            - verdaccio
+      - v-icon-builder:
+          requires:
+            - verdaccio
+      - v-publish-stats:
+          requires:
+            - verdaccio
+            - v-webpack-4
+            - v-nextjs
+            - v-rsp-cra-18
+      - v-starters:
+          requires:
+            - verdaccio
+      - deploy:
+          requires:
+            - lint
+            - test-ssr
+            - test
+            - test-ssr-16
+            - test-16
+            - test-ssr-17
+            - test-17
+            - test-ssr-18
+            - test-18
+            - test-build
+            - storybook
+            - storybook-s2
+      - deploy-s3-stage:
+          name: deploy-s3-commit
+          requires:
+            - s2-docs
+          filters:
+            branches:
+              ignore: main
+      - deploy-s3-stage:
+          name: deploy-s3-main
+          requires:
+            - s2-docs
+            - s2-docs-stage
+            - v-starters
+          filters:
+            branches:
+              only: main
+      - deploy-verdaccio:
+          requires:
+            - v-rsp-cra-18
+            - v-webpack-4
+            - v-nextjs
+            - v-rac-rsp-tailwind
+            - v-s2-parcel
+            - v-s2-vite
+            - v-s2-webpack
+            - v-s2-next
+            - v-icon-builder
+            - v-publish-stats
+      - comment:
+          name: comment-pr
+          filters:
+            branches:
+              ignore: main
+          requires:
+            - ts-diff
+            - skills-diff
+            - deploy
+            - deploy-s3-commit
+      - comment:
+          name: comment-verdaccio
+          requires:
+            - deploy-verdaccio
+
+  prod-docs:
+    when:
+      and:
+        - equal: ['prod-docs', << pipeline.parameters.GHA_Action >>]
+        - or:
+            - equal: ['release', << pipeline.parameters.GHA_Event >>]
+            - equal: ['workflow_dispatch', << pipeline.parameters.GHA_Event >>]
+    jobs:
+      - install
+      - s2-docs-production:
+          filters:
+            branches:
+              only: main
+          requires:
+            - install
+      - deploy-s3-production:
+          filters:
+            branches:
+              only: main
+          requires:
+            - s2-docs-production
+
+  nightly:
+    triggers:
+      - schedule:
+          cron: '0 9 * * *' # 02:00 PDT
+          filters:
+            branches:
+              only:
+                - main
+    jobs:
+      - install
+      - publish-nightly
+
+  nightly-manual:
+    when:
+      and:
+        - equal: ['nightly', << pipeline.parameters.GHA_Action >>]
+        - equal: ['workflow_dispatch', << pipeline.parameters.GHA_Event >>]
+    jobs:
+      - install
+      - publish-nightly

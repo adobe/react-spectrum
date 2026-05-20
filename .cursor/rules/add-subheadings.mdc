@@ -1,0 +1,22 @@
+---
+alwaysApply: false
+---
+
+# Step 3: Add sub-headings
+
+Within the Enhancements, Fixes, and Under Construction categories, group commits by UI component under sub-headings.
+
+### Sub-heading rules:
+- Use sub-headings ONLY for:
+  - Enhancements
+  - Fixes
+  - Under Construction
+- Do NOT create sub-headings for:
+  - Documentation
+  - To Be Categorized
+  - S2
+- Sub-headings should be in alphabetical order
+- Use "Miscellaneous" as a sub-heading for commits that do not belong to a specific component
+- Each category can have its own Miscellaneous sub-heading
+- Write sub-headings and commits as unordered lists using a hyphen (-)
+- Do NOT bold the sub-heading text

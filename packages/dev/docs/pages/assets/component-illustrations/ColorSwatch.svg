@@ -1,0 +1,13 @@
+<svg style="background:var(--anatomy-gray-100); padding: calc((152px - 32px) / 2) 0; width: 100%" height="32" viewBox="0 0 32 32" fill="none">
+  <g clip-path="url(#clip0_1_507)">
+    <rect width="32" height="32" rx="4" fill="var(--anatomy-gray-500)"/>
+    <g opacity="0.51">
+      <rect x="0.5" y="0.5" width="31" height="31" rx="3.5" stroke="black"/>
+    </g>
+  </g>
+  <defs>
+    <clipPath id="clip0_1_507">
+      <rect width="32" height="32" fill="white"/>
+    </clipPath>
+  </defs>
+</svg>

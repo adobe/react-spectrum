@@ -1,0 +1,36 @@
+---
+alwaysApply: false
+---
+
+# Step 1: Categorize commits 
+
+Sort ALL commit messages into one of six main categories. The main categories are the following:
+- Enhancements
+- Fixes
+- Documentation
+- Under Construction
+- To Be Categorized
+- S2
+
+Before categorizing commits into other groups, check whether each commit should be classified as “Under Construction.”
+- Follow the steps below in order:
+  1. Identify pre-release packages
+    - Use a command such as grep to scan the repository for package versions that include prerelease identifiers (e.g., alpha, beta, rc)
+  2. Extract component keywords from commit messages
+    - Parse each commit message to identify possible component names
+    - Normalize these keywords (e.g., lowercase, remove punctuation) for easier comparison.
+  3. Compare extracted keywords with pre-release packages
+    - If any keyword matches a package in the list, mark the commit as Under Construction.
+  4. Check for explicit prerelease keywords in commit text
+    - If the commit message directly includes alpha, beta, or rc, classify it as Under Construction, regardless of package matches.
+
+Next, categorize the remaining commits not categorized as "Under Construction". Use the following keywords to determine the category:
+| Keyword                    | Category |
+|----------------------------|----------|
+| feat                       | Enhancements|
+| fix                        | Fixes |
+| docs                       | Documentation |
+| chore, revert, bump, build | To Be Categorized |
+| S2                         | S2 |
+
+Do not duplicate commits. In terms of priority, it should be Under Construction > S2 > To Be Categorized > Enhancements > Fixes > Documentation

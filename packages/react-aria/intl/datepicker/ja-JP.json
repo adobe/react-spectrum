@@ -1,0 +1,18 @@
+{
+  "calendar": "カレンダー",
+  "day": "日",
+  "dayPeriod": "午前/午後",
+  "endDate": "終了日",
+  "era": "時代",
+  "hour": "時",
+  "minute": "分",
+  "month": "月",
+  "second": "秒",
+  "selectedDateDescription": "選択した日付 : {date}",
+  "selectedRangeDescription": "選択範囲 : {startDate} から {endDate}",
+  "selectedTimeDescription": "選択した時間 : {time}",
+  "startDate": "開始日",
+  "timeZoneName": "タイムゾーン",
+  "weekday": "曜日",
+  "year": "年"
+}

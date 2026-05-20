@@ -1,0 +1,159 @@
+<svg style="background:var(--anatomy-gray-100); width: calc(100% - 20px); padding: 10px" height="152" viewBox="0 0 364 232">
+  <g id="ListView" transform="translate(-123 -249)">
+    <g id="Group_156664" data-name="Group 156664" transform="translate(0 -9)">
+      <g id="Rectangle_142243" data-name="Rectangle 142243" transform="translate(123 258)" fill="var(--anatomy-gray-50)" stroke="var(--anatomy-gray-400)" stroke-width="1.5">
+        <rect width="364" height="232" rx="6" stroke="none"/>
+        <rect x="0.75" y="0.75" width="362.5" height="230.5" rx="5.25" fill="none"/>
+      </g>
+      <rect id="Rectangle_142239" data-name="Rectangle 142239" width="364" height="58" transform="translate(123 258)" fill="var(--anatomy-gray-50)" opacity="0"/>
+      <rect id="Rectangle_142240" data-name="Rectangle 142240" width="364" height="58" transform="translate(123 316)" fill="var(--anatomy-gray-50)" opacity="0"/>
+      <rect id="Rectangle_142241" data-name="Rectangle 142241" width="364" height="58" transform="translate(123 374)" fill="var(--anatomy-gray-900)" fill-opacity="0.1"/>
+      <rect id="Rectangle_142242" data-name="Rectangle 142242" width="364" height="58" transform="translate(123 432)" fill="var(--anatomy-gray-50)" opacity="0"/>
+      <text id="Documents" transform="translate(228 286)" fill="var(--anatomy-gray-800)" font-size="19" font-family="var(--anatomy-font)"><tspan x="0" y="0">Documents</tspan></text>
+      <line id="Line_13" data-name="Line 13" x2="363.252" transform="translate(123.5 316.5)" fill="none" stroke="var(--anatomy-gray-400)" stroke-width="1.5"/>
+      <line id="Line_14" data-name="Line 14" x2="363.252" transform="translate(123.5 374.522)" fill="none" stroke="var(--anatomy-gray-400)" stroke-width="1.5"/>
+      <line id="Line_15" data-name="Line 15" x2="363.252" transform="translate(123.5 432.522)" fill="none" stroke="var(--anatomy-gray-400)" stroke-width="1.5"/>
+      <g id="Action_group" data-name="Action group" transform="translate(365.252 321)">
+        <g id="Action_Button" data-name="Action Button" transform="translate(34)">
+          <g id="Placement_Area" data-name="Placement Area" transform="translate(-0.252)" fill="red" stroke="var(--anatomy-gray-900)" stroke-opacity="0" stroke-width="1" opacity="0">
+            <rect width="48" height="48" stroke="none"/>
+            <rect x="0.5" y="0.5" width="47" height="47" fill="none"/>
+          </g>
+          <rect id="Background" width="48" height="48" rx="4" transform="translate(-0.252)" fill="var(--anatomy-gray-800)" fill-opacity="0"/>
+          <g id="Icon" transform="translate(10.5 10.5)">
+            <g id="Canvas" fill="var(--anatomy-gray-700)" stroke="var(--anatomy-gray-700)" stroke-width="1" opacity="0">
+              <rect width="27" height="27" stroke="none"/>
+              <rect x="0.5" y="0.5" width="26" height="26" fill="none"/>
+            </g>
+            <path id="Path_35570" data-name="Path 35570" d="M14.862,8.75A1.612,1.612,0,1,1,13.25,7.138h0A1.613,1.613,0,0,1,14.863,8.75Zm.138,9h-.25v-5.7a.3.3,0,0,0-.3-.3H11.5s-.875.024-.875.75.875.75.875.75h.25v4.5H11.5s-.875.024-.875.75.875.75.875.75H15s.875-.025.875-.75S15,17.75,15,17.75ZM13.25.5A12.75,12.75,0,1,0,26,13.25,12.75,12.75,0,0,0,13.25.5Zm0,22.762A10.012,10.012,0,1,1,23.262,13.25,10.012,10.012,0,0,1,13.25,23.262Z" transform="translate(0.25 0.25)" fill="var(--anatomy-gray-700)"/>
+          </g>
+        </g>
+      </g>
+      <g id="Group_156659" data-name="Group 156659" transform="translate(454.252 263)">
+        <rect id="Rectangle_139996" data-name="Rectangle 139996" width="15" height="48" transform="translate(-0.252)" fill="red" opacity="0"/>
+        <g id="ChevronSize100" transform="translate(0 16.5)">
+          <rect id="Frame" width="15" height="15" fill="var(--anatomy-gray-800)" fill-opacity="0"/>
+          <path id="Path_35561" data-name="Path 35561" d="M3.437,14.9a1.312,1.312,0,0,1-.922-2.246L7.757,7.475,2.515,2.3A1.312,1.312,0,1,1,4.36.428l6.188,6.113a1.314,1.314,0,0,1,0,1.868L4.36,14.522A1.307,1.307,0,0,1,3.437,14.9Z" transform="translate(1.063 0.025)" fill="var(--anatomy-gray-700)"/>
+        </g>
+      </g>
+      <g id="Checkbox" transform="translate(141 263)">
+        <g id="Placement_Area-2" data-name="Placement Area" fill="red" stroke="var(--anatomy-gray-900)" stroke-opacity="0" stroke-width="1" opacity="0">
+          <rect width="21" height="48" stroke="none"/>
+          <rect x="0.5" y="0.5" width="20" height="47" fill="none"/>
+        </g>
+        <g id="Box" transform="translate(0 13.5)" fill="var(--anatomy-gray-75)" stroke="var(--anatomy-gray-600)" stroke-width="3">
+          <rect width="21" height="21" rx="2" stroke="none"/>
+          <rect x="1.5" y="1.5" width="18" height="18" rx="0.5" fill="none"/>
+        </g>
+      </g>
+      <g id="Checkbox-2" data-name="Checkbox" transform="translate(141 321)">
+        <g id="Placement_Area-3" data-name="Placement Area" fill="red" stroke="var(--anatomy-gray-900)" stroke-opacity="0" stroke-width="1" opacity="0">
+          <rect width="21" height="48" stroke="none"/>
+          <rect x="0.5" y="0.5" width="20" height="47" fill="none"/>
+        </g>
+        <g id="Box-2" data-name="Box" transform="translate(0 13.5)" fill="var(--anatomy-gray-75)" stroke="var(--anatomy-gray-600)" stroke-width="3">
+          <rect width="21" height="21" rx="2" stroke="none"/>
+          <rect x="1.5" y="1.5" width="18" height="18" rx="0.5" fill="none"/>
+        </g>
+      </g>
+      <g id="Checkbox-3" data-name="Checkbox" transform="translate(141 379)">
+        <g id="Placement_Area-4" data-name="Placement Area" fill="red" stroke="var(--anatomy-gray-900)" stroke-opacity="0" stroke-width="1" opacity="0">
+          <rect width="21" height="48" stroke="none"/>
+          <rect x="0.5" y="0.5" width="20" height="47" fill="none"/>
+        </g>
+        <g id="Box-3" data-name="Box" transform="translate(0 13.5)" fill="var(--anatomy-gray-700)" stroke="var(--anatomy-gray-900)" stroke-opacity="0" stroke-width="1">
+          <rect width="21" height="21" rx="2" stroke="none"/>
+          <rect x="0.5" y="0.5" width="20" height="20" rx="1.5" fill="none"/>
+        </g>
+        <g id="Checkmark" transform="translate(3 16.5)">
+          <g id="Frame-2" data-name="Frame" fill="var(--anatomy-gray-600)" stroke="var(--anatomy-gray-900)" stroke-opacity="0" stroke-width="1" opacity="0">
+            <rect width="15" height="15" stroke="none"/>
+            <rect x="0.5" y="0.5" width="14" height="14" fill="none"/>
+          </g>
+          <path id="Shape" d="M5.441,13.011a1.5,1.5,0,0,1-1.182-.578L.827,7.934A1.5,1.5,0,1,1,3.191,6.089l2.25,2.986,5.886-7.486a1.5,1.5,0,1,1,2.364,1.845l-7.068,9A1.5,1.5,0,0,1,5.441,13.011Z" transform="translate(0.241 0.489)" fill="var(--anatomy-gray-75)"/>
+        </g>
+      </g>
+      <g id="Checkbox-4" data-name="Checkbox" transform="translate(141 437)">
+        <g id="Placement_Area-5" data-name="Placement Area" fill="red" stroke="var(--anatomy-gray-900)" stroke-opacity="0" stroke-width="1" opacity="0">
+          <rect width="21" height="48" stroke="none"/>
+          <rect x="0.5" y="0.5" width="20" height="47" fill="none"/>
+        </g>
+        <g id="Box-4" data-name="Box" transform="translate(0 13.5)" fill="var(--anatomy-gray-75)" stroke="var(--anatomy-gray-600)" stroke-width="3">
+          <rect width="21" height="21" rx="2" stroke="none"/>
+          <rect x="1.5" y="1.5" width="18" height="18" rx="0.5" fill="none"/>
+        </g>
+      </g>
+      <g id="Action_group-2" data-name="Action group" transform="translate(365.252 380)">
+        <g id="Action_Button-2" data-name="Action Button" transform="translate(34)">
+          <g id="Placement_Area-6" data-name="Placement Area" transform="translate(-0.252)" fill="red" stroke="var(--anatomy-gray-900)" stroke-opacity="0" stroke-width="1" opacity="0">
+            <rect width="48" height="48" stroke="none"/>
+            <rect x="0.5" y="0.5" width="47" height="47" fill="none"/>
+          </g>
+          <rect id="Background-2" data-name="Background" width="48" height="48" rx="4" transform="translate(-0.252)" fill="var(--anatomy-gray-800)" fill-opacity="0"/>
+          <g id="Icon-2" data-name="Icon" transform="translate(10.5 10.5)">
+            <g id="Canvas-2" data-name="Canvas" fill="var(--anatomy-gray-700)" stroke="var(--anatomy-gray-700)" stroke-width="1" opacity="0">
+              <rect width="27" height="27" stroke="none"/>
+              <rect x="0.5" y="0.5" width="26" height="26" fill="none"/>
+            </g>
+            <path id="Path_35570-2" data-name="Path 35570" d="M14.862,8.75A1.612,1.612,0,1,1,13.25,7.138h0A1.613,1.613,0,0,1,14.863,8.75Zm.138,9h-.25v-5.7a.3.3,0,0,0-.3-.3H11.5s-.875.024-.875.75.875.75.875.75h.25v4.5H11.5s-.875.024-.875.75.875.75.875.75H15s.875-.025.875-.75S15,17.75,15,17.75ZM13.25.5A12.75,12.75,0,1,0,26,13.25,12.75,12.75,0,0,0,13.25.5Zm0,22.762A10.012,10.012,0,1,1,23.262,13.25,10.012,10.012,0,0,1,13.25,23.262Z" transform="translate(0.25 0.25)" fill="var(--anatomy-gray-700)"/>
+          </g>
+        </g>
+      </g>
+      <g id="Action_group-3" data-name="Action group" transform="translate(365.252 437)">
+        <g id="Action_Button-3" data-name="Action Button" transform="translate(34)">
+          <g id="Placement_Area-7" data-name="Placement Area" transform="translate(-0.252)" fill="red" stroke="var(--anatomy-gray-900)" stroke-opacity="0" stroke-width="1" opacity="0">
+            <rect width="48" height="48" stroke="none"/>
+            <rect x="0.5" y="0.5" width="47" height="47" fill="none"/>
+          </g>
+          <rect id="Background-3" data-name="Background" width="48" height="48" rx="4" transform="translate(-0.252)" fill="var(--anatomy-gray-800)" fill-opacity="0"/>
+          <g id="Icon-3" data-name="Icon" transform="translate(10.5 10.5)">
+            <g id="Canvas-3" data-name="Canvas" fill="var(--anatomy-gray-700)" stroke="var(--anatomy-gray-700)" stroke-width="1" opacity="0">
+              <rect width="27" height="27" stroke="none"/>
+              <rect x="0.5" y="0.5" width="26" height="26" fill="none"/>
+            </g>
+            <path id="Path_35570-3" data-name="Path 35570" d="M14.862,8.75A1.612,1.612,0,1,1,13.25,7.138h0A1.613,1.613,0,0,1,14.863,8.75Zm.138,9h-.25v-5.7a.3.3,0,0,0-.3-.3H11.5s-.875.024-.875.75.875.75.875.75h.25v4.5H11.5s-.875.024-.875.75.875.75.875.75H15s.875-.025.875-.75S15,17.75,15,17.75ZM13.25.5A12.75,12.75,0,1,0,26,13.25,12.75,12.75,0,0,0,13.25.5Zm0,22.762A10.012,10.012,0,1,1,23.262,13.25,10.012,10.012,0,0,1,13.25,23.262Z" transform="translate(0.25 0.25)" fill="var(--anatomy-gray-700)"/>
+          </g>
+        </g>
+      </g>
+      <g id="Action_group-4" data-name="Action group" transform="translate(365.252 263)">
+        <g id="Action_Button-4" data-name="Action Button" transform="translate(34)">
+          <g id="Placement_Area-8" data-name="Placement Area" transform="translate(-0.252)" fill="red" stroke="var(--anatomy-gray-900)" stroke-opacity="0" stroke-width="1" opacity="0">
+            <rect width="48" height="48" stroke="none"/>
+            <rect x="0.5" y="0.5" width="47" height="47" fill="none"/>
+          </g>
+          <rect id="Background-4" data-name="Background" width="48" height="48" rx="4" transform="translate(-0.252)" fill="var(--anatomy-gray-800)" fill-opacity="0"/>
+          <g id="Icon-4" data-name="Icon" transform="translate(10.5 10.5)">
+            <g id="Canvas-4" data-name="Canvas" fill="var(--anatomy-gray-700)" stroke="var(--anatomy-gray-700)" stroke-width="1" opacity="0">
+              <rect width="27" height="27" stroke="none"/>
+              <rect x="0.5" y="0.5" width="26" height="26" fill="none"/>
+            </g>
+            <path id="Path_35570-4" data-name="Path 35570" d="M14.862,8.75A1.612,1.612,0,1,1,13.25,7.138h0A1.613,1.613,0,0,1,14.863,8.75Zm.138,9h-.25v-5.7a.3.3,0,0,0-.3-.3H11.5s-.875.024-.875.75.875.75.875.75h.25v4.5H11.5s-.875.024-.875.75.875.75.875.75H15s.875-.025.875-.75S15,17.75,15,17.75ZM13.25.5A12.75,12.75,0,1,0,26,13.25,12.75,12.75,0,0,0,13.25.5Zm0,22.762A10.012,10.012,0,1,1,23.262,13.25,10.012,10.012,0,0,1,13.25,23.262Z" transform="translate(0.25 0.25)" fill="var(--anatomy-gray-700)"/>
+          </g>
+        </g>
+      </g>
+      <text id="_12_items" data-name="12 items" transform="translate(228 305)" fill="var(--anatomy-gray-800)" font-size="15" font-family="var(--anatomy-font)"><tspan x="0" y="0">12 items</tspan></text>
+      <text id="Onboarding" transform="translate(228 343)" fill="var(--anatomy-gray-800)" font-size="19" font-family="var(--anatomy-font)"><tspan x="0" y="0">Onboarding</tspan></text>
+      <text id="PDF" transform="translate(228 363)" fill="var(--anatomy-gray-800)" font-size="15" font-family="var(--anatomy-font)"><tspan x="0" y="0">PDF</tspan></text>
+      <text id="Budget" transform="translate(228 401)" fill="var(--anatomy-gray-800)" font-size="19" font-family="var(--anatomy-font)"><tspan x="0" y="0">Budget</tspan></text>
+      <text id="XLS" transform="translate(228 421)" fill="var(--anatomy-gray-800)" font-size="15" font-family="var(--anatomy-font)"><tspan x="0" y="0">XLS</tspan></text>
+      <text id="Sales_Pitch" data-name="Sales Pitch" transform="translate(228 459)" fill="var(--anatomy-gray-800)" font-size="19" font-family="var(--anatomy-font)"><tspan x="0" y="0">Sales Pitch</tspan></text>
+      <text id="PPT" transform="translate(228 479)" fill="var(--anatomy-gray-800)" font-size="15" font-family="var(--anatomy-font)"><tspan x="0" y="0">PPT</tspan></text>
+    </g>
+    <g id="folder_general_lightUI_32" transform="translate(177.5 261)">
+      <path id="Path_35615" data-name="Path 35615" d="M3.508,34.984A2.979,2.979,0,0,1,.5,31.977V5.508A2.979,2.979,0,0,1,3.508,2.5H15.659a2.375,2.375,0,0,1,1.684.722l3.73,3.73a1.092,1.092,0,0,0,.842.361H34.789A2.979,2.979,0,0,1,37.8,10.32V31.977a2.979,2.979,0,0,1-3.008,3.008Z" transform="translate(0.102 0.102)" fill="var(--anatomy-gray-200)"/>
+      <path id="Path_35616" data-name="Path 35616" d="M34.891,6.813H22.017c-.12,0-.241,0-.481-.241l-3.73-3.73A2.9,2.9,0,0,0,15.761,2H3.609A3.545,3.545,0,0,0,0,5.609V32.078a3.62,3.62,0,0,0,3.609,3.609H34.891A3.62,3.62,0,0,0,38.5,32.078V10.422A3.545,3.545,0,0,0,34.891,6.813ZM37.3,32.078a2.413,2.413,0,0,1-2.406,2.406H3.609A2.413,2.413,0,0,1,1.2,32.078V8.016H34.891A2.413,2.413,0,0,1,37.3,10.422Z" fill="var(--anatomy-gray-500)"/>
+    </g>
+    <g id="filetype_generic_lightUI_32" transform="translate(177 315)">
+      <path id="White_Bg" data-name="White Bg" d="M6.756,40.881A3.26,3.26,0,0,1,3.5,37.625V3.759A3.26,3.26,0,0,1,6.756.5H26.789a2.59,2.59,0,0,1,1.838.759L35.3,7.908a2.625,2.625,0,0,1,.767,1.845V37.625a3.259,3.259,0,0,1-3.256,3.256Z" transform="translate(0.151 0.152)" fill="var(--anatomy-gray-50)"/>
+      <path id="Gray_Outline" data-name="Gray Outline" d="M35.9,7.594,29.233.951A3.211,3.211,0,0,0,26.94,0H6.908A3.919,3.919,0,0,0,3,3.908V37.773a3.911,3.911,0,0,0,3.908,3.908H32.958a3.911,3.911,0,0,0,3.908-3.908V9.9A3.276,3.276,0,0,0,35.9,7.594Zm-7.5-5.64,6.539,6.513H29.051a.653.653,0,0,1-.651-.651Zm7.164,35.819a2.6,2.6,0,0,1-2.605,2.605H6.908A2.6,2.6,0,0,1,4.3,37.773V3.908A2.613,2.613,0,0,1,6.908,1.3H26.94a.634.634,0,0,1,.156.013v6.5a1.959,1.959,0,0,0,1.954,1.954h6.5a.442.442,0,0,1,.013.13Z" fill="var(--anatomy-gray-500)"/>
+    </g>
+    <g id="filetype_generic_lightUI_32-2" data-name="filetype_generic_lightUI_32" transform="translate(177 373.993)">
+      <path id="White_Bg-2" data-name="White Bg" d="M6.756,40.881A3.26,3.26,0,0,1,3.5,37.625V3.759A3.26,3.26,0,0,1,6.756.5H26.789a2.59,2.59,0,0,1,1.838.759L35.3,7.908a2.625,2.625,0,0,1,.767,1.845V37.625a3.259,3.259,0,0,1-3.256,3.256Z" transform="translate(0.151 0.152)" fill="var(--anatomy-gray-50)"/>
+      <path id="Gray_Outline-2" data-name="Gray Outline" d="M35.9,7.594,29.233.951A3.211,3.211,0,0,0,26.94,0H6.908A3.919,3.919,0,0,0,3,3.908V37.773a3.911,3.911,0,0,0,3.908,3.908H32.958a3.911,3.911,0,0,0,3.908-3.908V9.9A3.276,3.276,0,0,0,35.9,7.594Zm-7.5-5.64,6.539,6.513H29.051a.653.653,0,0,1-.651-.651Zm7.164,35.819a2.6,2.6,0,0,1-2.605,2.605H6.908A2.6,2.6,0,0,1,4.3,37.773V3.908A2.613,2.613,0,0,1,6.908,1.3H26.94a.634.634,0,0,1,.156.013v6.5a1.959,1.959,0,0,0,1.954,1.954h6.5a.442.442,0,0,1,.013.13Z" fill="var(--anatomy-gray-500)"/>
+    </g>
+    <g id="filetype_generic_lightUI_32-3" data-name="filetype_generic_lightUI_32" transform="translate(177 431)">
+      <path id="White_Bg-3" data-name="White Bg" d="M6.756,40.881A3.26,3.26,0,0,1,3.5,37.625V3.759A3.26,3.26,0,0,1,6.756.5H26.789a2.59,2.59,0,0,1,1.838.759L35.3,7.908a2.625,2.625,0,0,1,.767,1.845V37.625a3.259,3.259,0,0,1-3.256,3.256Z" transform="translate(0.151 0.152)" fill="var(--anatomy-gray-50)"/>
+      <path id="Gray_Outline-3" data-name="Gray Outline" d="M35.9,7.594,29.233.951A3.211,3.211,0,0,0,26.94,0H6.908A3.919,3.919,0,0,0,3,3.908V37.773a3.911,3.911,0,0,0,3.908,3.908H32.958a3.911,3.911,0,0,0,3.908-3.908V9.9A3.276,3.276,0,0,0,35.9,7.594Zm-7.5-5.64,6.539,6.513H29.051a.653.653,0,0,1-.651-.651Zm7.164,35.819a2.6,2.6,0,0,1-2.605,2.605H6.908A2.6,2.6,0,0,1,4.3,37.773V3.908A2.613,2.613,0,0,1,6.908,1.3H26.94a.634.634,0,0,1,.156.013v6.5a1.959,1.959,0,0,0,1.954,1.954h6.5a.442.442,0,0,1,.013.13Z" fill="var(--anatomy-gray-500)"/>
+    </g>
+  </g>
+</svg>

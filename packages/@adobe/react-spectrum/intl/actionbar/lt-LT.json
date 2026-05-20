@@ -1,0 +1,7 @@
+{
+  "actions": "Veiksmai",
+  "actionsAvailable": "Galimi veiksmai.",
+  "clearSelection": "Išvalyti pasirinkimą",
+  "selected": "Pasirinkta: {count}",
+  "selectedAll": "Pasirinkta viskas"
+}

@@ -1,0 +1,190 @@
+{/* Copyright 2023 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {ExampleLayout} from '@react-spectrum/docs';
+export default ExampleLayout;
+
+import docs from 'docs:react-aria-components';
+import {TypeLink} from '@react-spectrum/docs';
+import styles from '@react-spectrum/docs/src/docs.css';
+import ListBox from '@react-spectrum/docs/pages/assets/component-illustrations/ListBox.svg';
+import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
+
+---
+keywords: [example, listbox, aria, accessibility, react, component]
+type: component
+image: contact-list.png
+description: A ListBox featuring sticky section headers and multiple selection.
+---
+
+# Contact List
+
+A [ListBox](../ListBox.html) styled with [Tailwind CSS](https://tailwindcss.com/), featuring sticky section headers and macOS-style multiple selection.
+
+## Example
+
+```tsx import
+import './tailwind.global.css';
+
+const favorites = [
+  {
+    id: 'tony',
+    name: 'Tony Baldwin',
+    username: '@tony',
+    avatar: 'https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
+  },
+  {
+    id: 'jlangstrath',
+    name: 'Julienne Langstrath',
+    username: '@jlangstrath',
+    avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
+  },
+  {
+    id: 'rgonzalez',
+    name: 'Roberto Gonzalez',
+    username: '@rgonzalez',
+    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
+  }
+];
+
+const people = [
+  {
+    id: 1,
+    avatar:
+      "https://images.unsplash.com/photo-1599566150163-29194dcaad36?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+    name: "Gilberto Miguel",
+    username: "@gilberto_miguel"
+  },
+  {
+    id: 2,
+    avatar:
+      "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+    name: "Maia Pettegree",
+    username: "@mpettegree"
+  },
+  {
+    id: 3,
+    avatar:
+      "https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+    name: "Wade Redington",
+    username: "@redington"
+  },
+  {
+    id: 4,
+    avatar:
+      "https://images.unsplash.com/photo-1528763380143-65b3ac89a3ff?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+    name: "Kurtis Gurrado",
+    username: "@kurtis"
+  },
+  {
+    id: 5,
+    avatar:
+      "https://images.unsplash.com/photo-1569913486515-b74bf7751574?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+    name: "Sonja Balmann",
+    username: "@sbalmann"
+  },
+  {
+    id: 6,
+    avatar:
+      "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+    name: "Brent Mickelwright",
+    username: "@brent_m"
+  },
+  {
+    id: 7,
+    avatar:
+      "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2.25&w=256&h=256&q=80",
+    name: "Charles Webb",
+    username: "@cwebb"
+  }
+];
+```
+
+```tsx example standalone
+import {ListBox, ListBoxItem, ListBoxSection, Header, Collection, Text} from 'react-aria-components';
+
+function ContactListExample() {
+  return (
+    <div className="bg-linear-to-r from-blue-500 to-sky-500 p-8 rounded-lg flex justify-center">
+      <ListBox aria-label="Contacts" selectionMode="multiple" selectionBehavior="replace" className="w-72 max-h-[290px] overflow-auto outline-hidden bg-white text-gray-700 p-2 flex flex-col gap-2 rounded-lg shadow-sm scroll-pb-2 scroll-pt-7">
+        <ContactSection title="Favorites" items={favorites}>
+          {item => <Contact item={item} />}
+        </ContactSection>
+        <ContactSection title="All Contacts" items={people}>
+          {item => <Contact item={item} />}
+        </ContactSection>
+      </ListBox>
+    </div>
+  );
+}
+
+function ContactSection({title, children, items}) {
+  return (
+    <ListBoxSection>
+      <Header className="sticky -top-2 bg-white z-10 font-bold font-serif px-2 mb-1 text-slate-700">{title}</Header>
+      <Collection items={items}>
+        {children}
+      </Collection>
+    </ListBoxSection>
+  );
+}
+
+function Contact({item}) {
+  return (
+    <ListBoxItem id={item.id} textValue={item.name} className="group relative py-1 px-2 outline-hidden cursor-default grid grid-rows-2 grid-flow-col auto-cols-max gap-x-3 rounded-sm selected:bg-blue-500 text-slate-700 selected:text-white [&:has(+[data-selected])]:selected:rounded-b-none [&[data-selected]+[data-selected]]:rounded-t-none focus-visible:ring-2 ring-offset-2 ring-blue-500">
+      <img src={item.avatar} alt="" className="row-span-2 place-self-center h-8 w-8 rounded-full" />
+      <Text slot="label" className="font-semibold truncate">{item.name}</Text>
+      <Text slot="description" className="truncate text-sm text-slate-600 group-selected:text-white">{item.username}</Text>
+      <div className="absolute left-12 right-2 bottom-0 h-px bg-gray-200 group-selected:bg-blue-400 [.group[data-selected]:has(+:not([data-selected]))_&]:hidden [.group:not([data-selected]):has(+[data-selected])_&]:hidden [.group[data-selected]:last-child_&]:hidden" />
+    </ListBoxItem>
+  );
+}
+```
+
+### Tailwind config
+
+This example uses the [tailwindcss-react-aria-components](../styling.html#plugin) plugin. When using Tailwind v4, add it to your CSS:
+
+```css render=false
+@import "tailwindcss";
+@plugin "tailwindcss-react-aria-components";
+```
+
+<details>
+
+<summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Tailwind v3</summary>
+
+When using Tailwind v3, add the plugin to your `tailwind.config.js` instead:
+
+```tsx
+module.exports = {
+  // ...
+  plugins: [
+    require('tailwindcss-react-aria-components')
+  ]
+};
+```
+
+**Note**: When using Tailwind v3, install `tailwindcss-react-aria-components` version 1.x instead of 2.x.
+
+</details>
+
+## Components
+
+<section className={styles.cardGroup} data-size="small">
+
+<ExampleCard
+  url="../ListBox.html"
+  title="ListBox"
+  description="A listbox displays a list of options, and allows a user to select one or more of them.">
+  <ListBox />
+</ExampleCard>
+
+</section>

@@ -1,0 +1,51 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Removes showErrorIcon 1`] = `
+"import { Radio, RadioGroup } from "@react-spectrum/s2";
+let showErrorIcon = true;
+let props = {showErrorIcon: true};
+<div>
+  <RadioGroup label="Favorite sports">
+    <Radio value="soccer">Soccer</Radio>
+  </RadioGroup>
+  <RadioGroup label="Favorite sports">
+    <Radio value="soccer">Soccer</Radio>
+  </RadioGroup>
+  <RadioGroup label="Favorite sports">
+    <Radio value="soccer">Soccer</Radio>
+  </RadioGroup>
+  <RadioGroup label="Favorite sports">
+    <Radio value="soccer">Soccer</Radio>
+  </RadioGroup>
+  <RadioGroup label="Favorite sports" // TODO(S2-upgrade): check this spread for style props
+  {...props}>
+    <Radio value="soccer">Soccer</Radio>
+  </RadioGroup>
+</div>"
+`;
+
+exports[`changes validationState to isInvalid or nothing 1`] = `
+"import { RadioGroup, Radio } from "@react-spectrum/s2";
+let validationState = 'invalid';
+let props = {validationState: 'invalid'};
+let foo;
+<div>
+  <RadioGroup label="Favorite sports" isInvalid>
+    <Radio value="soccer">Soccer</Radio>
+  </RadioGroup>
+  <RadioGroup label="Favorite sports">
+    <Radio value="soccer">Soccer</Radio>
+  </RadioGroup>
+  <RadioGroup label="Favorite sports" isInvalid>
+    <Radio value="soccer">Soccer</Radio>
+  </RadioGroup>
+  <RadioGroup label="Favorite sports" // TODO(S2-upgrade): Prop validationState could not be automatically updated because validationState could not be followed.
+  validationState={validationState}>
+    <Radio value="soccer">Soccer</Radio>
+  </RadioGroup>
+  <RadioGroup label="Favorite sports" // TODO(S2-upgrade): check this spread for style props
+  {...props}>
+    <Radio value="soccer">Soccer</Radio>
+  </RadioGroup>
+</div>"
+`;

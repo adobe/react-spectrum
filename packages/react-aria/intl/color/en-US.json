@@ -1,0 +1,8 @@
+{
+  "colorPicker": "Color picker",
+  "twoDimensionalSlider": "2D slider",
+  "colorNameAndValue": "{name}: {value}",
+  "colorInputLabel": "{label}, {channelLabel}",
+  "colorSwatch": "color swatch",
+  "transparent": "transparent"
+}
