@@ -327,7 +327,7 @@ const innerDivStyle = style(
     // overflow: 'auto',
     position: 'relative',
     width: 'full',
-    maxSize: 'inherit',
+    maxSize: 'inherit'
   },
   getAllowedOverrides({height: true})
 );
