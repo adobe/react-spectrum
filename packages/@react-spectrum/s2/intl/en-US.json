@@ -28,6 +28,7 @@
   "notificationbadge.plus": "{notifications}+",
   "picker.placeholder": "Select…",
   "picker.selectedCount": "{count, plural, =0 {No items selected} one {# item selected} other {# items selected}}",
+  "responsestatus.loading": "Loading",
   "slider.maximum": "Maximum",
   "slider.minimum": "Minimum",
   "table.cancel": "Cancel",
