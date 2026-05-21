@@ -81,7 +81,7 @@ import {
   LoadingState,
   Node
 } from '@react-types/shared';
-import {DragHandleButton} from './dnd-utils';
+import {DragHandleButton, InsertionIndicator} from './dnd-utils';
 import {DragPreview} from './DragPreview';
 import {Form} from 'react-aria-components/Form';
 import {
@@ -92,7 +92,6 @@ import {
 import {getOwnerDocument} from 'react-aria/private/utils/domHelpers';
 import {GridNode} from 'react-stately/private/grid/GridCollection';
 import {IconContext} from './Icon';
-import {InsertionIndicator} from './dnd-utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {Key} from '@react-types/shared';

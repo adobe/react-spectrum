@@ -33,7 +33,7 @@ import {
   Key,
   LoadingState
 } from '@react-types/shared';
-import {DragHandleButton} from './dnd-utils';
+import {DragHandleButton, InsertionIndicator} from './dnd-utils';
 import {DragPreview} from './DragPreview';
 import {
   getAllowedOverrides,
@@ -41,7 +41,6 @@ import {
   UnsafeStyles
 } from './style-utils' with {type: 'macro'};
 import {IconContext} from './Icon';
-import {InsertionIndicator} from './dnd-utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {ProgressCircle} from './ProgressCircle';
