@@ -46,7 +46,8 @@ const meta: Meta<typeof ListView> = {
   tags: ['autodocs'],
   argTypes: {
     ...categorizeArgTypes('Events', ['onSelectionChange']),
-    children: {table: {disable: true}}
+    children: {table: {disable: true}},
+    dragAndDropHooks: {table: {disable: true}}
   },
   title: 'ListView',
   args: {

@@ -21,7 +21,6 @@ import {
   space,
   style
 } from '../style' with {type: 'macro'};
-import {Button} from 'react-aria-components/Button';
 import {centerBaseline} from './CenterBaseline';
 import {Checkbox} from './Checkbox';
 import {CheckboxContext} from 'react-aria-components/Checkbox';
@@ -56,8 +55,7 @@ import {
   ItemDropTarget,
   LoadingState
 } from '@react-types/shared';
-import DragHandle from '../ui-icons/DragHandle';
-import {DropIndicator} from 'react-aria-components/useDragAndDrop';
+import {DragHandleButton, InsertionIndicator} from './dnd-utils';
 import {
   GridList,
   GridListItem,
@@ -80,12 +78,10 @@ import {ProgressCircle} from './ProgressCircle';
 import {Text, TextContext} from './Content';
 import {useActionBarContainer} from './ActionBar';
 import {useDOMRef} from './useDOMRef';
-import {useFocusRing} from 'react-aria/useFocusRing';
 import {useLocale} from 'react-aria/I18nProvider';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useScale} from './utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
-import {useVisuallyHidden} from 'react-aria/VisuallyHidden';
 
 export interface ListViewProps<T>
   extends
@@ -820,91 +816,6 @@ let dragButtonContainer = style({
   width: 10
 });
 
-let dragButton = style<{isFocusVisible?: boolean}>({
-  color: 'inherit',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  // TODO: arbitrary, basically taken from v3
-  height: 22,
-  width: 10,
-  padding: 0,
-  margin: 0,
-  backgroundColor: 'transparent',
-  borderStyle: 'none',
-  borderRadius: 'sm',
-  // TODO: this mimicks v3 too, do we want halo focus ring?
-  outlineStyle: {
-    default: 'none',
-    isFocusVisible: 'solid'
-  },
-  outlineColor: {
-    default: 'focus-ring',
-    forcedColors: 'Highlight'
-  },
-  outlineWidth: 2,
-  '--iconPrimary': {
-    type: 'fill',
-    value: 'currentColor'
-  }
-});
-
-let insertionIndicatorWrapper = style({
-  position: 'absolute',
-  inset: 0,
-  display: 'flex',
-  alignItems: 'center'
-});
-
-export let insertionIndicatorBar = style<{isDropTarget?: boolean}>({
-  flexGrow: 1,
-  height: 2,
-  backgroundColor: {
-    default: 'transparent',
-    isDropTarget: 'blue-800',
-    forcedColors: {
-      isDropTarget: 'Highlight'
-    }
-  },
-  borderBottomWidth: {
-    default: 0,
-    isDropTarget: 2
-  },
-  borderColor: {
-    isDropTarget: 'blue-800',
-    forcedColors: {
-      isDropTarget: 'Highlight'
-    }
-  },
-  forcedColorAdjust: 'none'
-});
-
-export let insertionIndicatorCircle = style<{isDropTarget: boolean}>({
-  width: 8,
-  height: 8,
-  borderRadius: 'full',
-  borderWidth: {
-    isDropTarget: 2
-  },
-  borderStyle: {
-    isDropTarget: 'solid'
-  },
-  borderColor: {
-    isDropTarget: 'blue-800',
-    forcedColors: {
-      isDropTarget: 'Highlight'
-    }
-  },
-  backgroundColor: {
-    isDropTarget: 'gray-25',
-    forcedColors: {
-      default: 'transparent',
-      isDropTarget: 'Background'
-    }
-  },
-  forcedColorAdjust: 'none'
-});
-
 const centeredWrapper = style({
   display: 'flex',
   alignItems: 'center',
@@ -926,20 +837,6 @@ const emptyStateWrapper = style({
   boxSizing: 'border-box',
   padding: 16
 });
-
-export function InsertionIndicator({target}: {target: ItemDropTarget}) {
-  return (
-    <DropIndicator className="" target={target}>
-      {({isDropTarget}) => (
-        <div className={insertionIndicatorWrapper}>
-          <div className={insertionIndicatorCircle({isDropTarget})} />
-          <div className={insertionIndicatorBar({isDropTarget})} />
-          <div className={insertionIndicatorCircle({isDropTarget})} />
-        </div>
-      )}
-    </DropIndicator>
-  );
-}
 
 function ListSelectionCheckbox({isDisabled}: {isDisabled: boolean}) {
   let selectionContext = useSlottedContext(CheckboxContext, 'selection');
@@ -967,10 +864,6 @@ export function ListViewItem(props: ListViewItemProps): ReactNode {
     props.textValue || (typeof props.children === 'string' ? props.children : undefined);
   let {direction} = useLocale();
   let hasTrailingIcon = hasChildItems || (isLinkOut && !hideLinkOutIcon);
-  let {visuallyHiddenProps} = useVisuallyHidden();
-  let {isFocusVisible: isFocusVisibleWithin, focusProps: focusWithinProps} = useFocusRing({
-    within: true
-  });
 
   return (
     <GridListItem
@@ -1001,7 +894,7 @@ export function ListViewItem(props: ListViewItemProps): ReactNode {
           id,
           state,
           allowsDragging,
-          isFocusVisible
+          isFocusVisibleWithin
         } = renderProps;
         return (
           <Provider
@@ -1046,7 +939,7 @@ export function ListViewItem(props: ListViewItemProps): ReactNode {
                 }
               ]
             ]}>
-            <div className={rowWrapper} {...focusWithinProps}>
+            <div className={rowWrapper}>
               <div
                 className={listRowBackground({
                   ...renderProps,
@@ -1078,18 +971,7 @@ export function ListViewItem(props: ListViewItemProps): ReactNode {
               )}
               {allowsDragging && (
                 <div className={dragButtonContainer}>
-                  {!isDisabled && (
-                    <Button
-                      slot="drag"
-                      style={
-                        !isFocusVisibleWithin && !isFocusVisible
-                          ? {...visuallyHiddenProps.style}
-                          : {}
-                      }
-                      className={dragButton}>
-                      <DragHandle size="M" />
-                    </Button>
-                  )}
+                  {!isDisabled && <DragHandleButton isFocusVisibleWithin={isFocusVisibleWithin} />}
                 </div>
               )}
               {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
