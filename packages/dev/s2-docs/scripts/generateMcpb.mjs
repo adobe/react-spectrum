@@ -34,7 +34,7 @@ const libraries = {
     extensionName: 'react-spectrum-s2',
     description: "Build apps with Adobe's React Spectrum component library.",
     longDescription:
-      'Provides tools for browsing the React Spectrum (S2) documentation, including listing and reading pages, searching for available icons and illustrations, and looking up available styling token values. Uses the React Spectrum documentation content available at https://react-spectrum.adobe.com.',
+      'Provides tools for browsing the React Spectrum (S2) documentation, including listing and reading pages, searching for available icons and illustrations, and looking up available styling token values. Also bundles the React Aria docs tools for browsing React Aria documentation from the same server. Uses the React Spectrum documentation content available at https://react-spectrum.adobe.com and React Aria documentation content available at https://react-aria.adobe.com.',
     homepage: 'https://react-spectrum.adobe.com/',
     documentation: 'https://react-spectrum.adobe.com/ai.html',
     iconSvg: path.join(assetsDir, 'rsp-favicon.svg'),
@@ -55,7 +55,8 @@ const libraries = {
         name: 'get_style_macro_property_values',
         description:
           'Returns the allowed values for a given S2 style macro property (including expanded color/spacing value lists where applicable).'
-      }
+      },
+      ...sharedPageTools('React Aria', 'react_aria')
     ],
     srcDirs: [
       {

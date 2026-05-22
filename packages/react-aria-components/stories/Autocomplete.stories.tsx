@@ -950,7 +950,10 @@ export const AutocompleteMenuInPopoverDialogTrigger: MenuStory = {
                   Please select an option below.
                 </Text>
               </SearchField>
-              <Menu className={styles.menu} items={dynamicAutocompleteSubdialog} {...args}>
+              <Menu<MenuNode>
+                {...args}
+                className={styles.menu}
+                items={dynamicAutocompleteSubdialog}>
                 {item => dynamicRenderFuncSections(item)}
               </Menu>
             </div>
@@ -1299,7 +1302,7 @@ function AutocompleteNodeFiltering(args) {
             Please select an option below.
           </Text>
         </SearchField>
-        <Menu className={styles.menu} items={dynamicAutocompleteSubdialog} {...args}>
+        <Menu<MenuNode> {...args} className={styles.menu} items={dynamicAutocompleteSubdialog}>
           {item => dynamicRenderFuncSections(item)}
         </Menu>
       </div>

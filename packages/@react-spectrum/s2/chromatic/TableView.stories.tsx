@@ -21,6 +21,8 @@ import {
   TableViewProps
 } from '../src/TableView';
 import {Content, Heading} from '../src/Content';
+import {DragAndDropReorder, DragBetweenTables} from '../stories/TableView.stories';
+import {expect, userEvent} from 'storybook/test';
 import {FixedColumnWidths} from '../../../react-aria-components/stories/Table.stories';
 import FolderOpen from '../spectrum-illustrations/linear/FolderOpen';
 import {IllustratedMessage} from '../src/IllustratedMessage';
@@ -42,7 +44,7 @@ const meta: Meta<typeof TableView> = {
 export default meta;
 
 const StaticTable = (args: TableViewProps): ReactElement => (
-  <TableView aria-label="Files" {...args} styles={style({width: 320, height: 320})}>
+  <TableView aria-label="Files" styles={style({width: 320, height: 320})} {...args}>
     <TableHeader>
       <Column isRowHeader>Name</Column>
       <Column>Type</Column>
@@ -114,6 +116,34 @@ let items = [
   {id: 9, foo: 'Foo 9', bar: 'Bar 9', baz: 'Baz 9', yah: 'Yah long long long 9'},
   {id: 10, foo: 'Foo 10', bar: 'Bar 10', baz: 'Baz 10', yah: 'Yah long long long 10'}
 ];
+
+export const CheckboxSelection: StoryObj<typeof StaticTable> = {
+  render: StaticTable,
+  args: {
+    selectionMode: 'multiple',
+    selectionStyle: 'checkbox',
+    selectedKeys: ['1', '2'],
+    styles: style({width: 500}),
+    onResize: undefined,
+    onResizeStart: undefined,
+    onResizeEnd: undefined,
+    onLoadMore: undefined
+  }
+};
+
+export const HighlightSelection: StoryObj<typeof StaticTable> = {
+  ...Example,
+  args: {
+    selectionMode: 'multiple',
+    selectionStyle: 'highlight',
+    selectedKeys: ['1', '2'],
+    styles: style({width: 500}),
+    onResize: undefined,
+    onResizeStart: undefined,
+    onResizeEnd: undefined,
+    onLoadMore: undefined
+  }
+};
 
 const DynamicTable = (args: TableViewProps): ReactElement => (
   <TableView aria-label="Dynamic table" {...args} styles={style({width: 320, height: 208})}>
@@ -582,5 +612,47 @@ export const RACFixedWidth = {
       scales: ['medium'],
       colorSchemes: ['light']
     }
+  }
+};
+
+type TableStory = StoryObj<typeof TableView>;
+
+export const InsertionIndicator: TableStory = {
+  ...DragAndDropReorder,
+  play: async () => {
+    await userEvent.tab();
+    await userEvent.keyboard('[ArrowRight]');
+    await userEvent.keyboard('[Enter]');
+    expect(document.activeElement).toHaveRole('button');
+    expect(document.activeElement).toHaveAttribute(
+      'aria-label',
+      expect.stringContaining('Insert between')
+    );
+  }
+};
+
+export const RootDrop: TableStory = {
+  ...DragBetweenTables,
+  play: async () => {
+    await userEvent.tab();
+    await userEvent.keyboard('[ArrowRight]');
+    await userEvent.keyboard('[Enter]');
+    await userEvent.keyboard('[Tab]');
+    expect(document.activeElement).toHaveRole('button');
+    expect(document.activeElement).toHaveAttribute('aria-label', 'Drop on');
+  }
+};
+
+export const OnFolderDrop: TableStory = {
+  ...DragBetweenTables,
+  play: async () => {
+    await userEvent.tab();
+    await userEvent.keyboard('[ArrowRight]');
+    await userEvent.keyboard('[Enter]');
+    await userEvent.keyboard('[Tab]');
+    await userEvent.keyboard('[ArrowDown]');
+    await userEvent.keyboard('[ArrowDown]');
+    expect(document.activeElement).toHaveRole('button');
+    expect(document.activeElement).toHaveAttribute('aria-label', 'Drop on Pictures');
   }
 };
