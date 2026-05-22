@@ -12,12 +12,12 @@
 
 import {ActionButton} from '@react-spectrum/s2/ActionButton';
 import {ActionMenu} from '@react-spectrum/s2/ActionMenu';
-import {Asset as AssetComponent, AssetList} from '../src/AssetList';
+import {Asset as AssetComponent, AssetList} from '@react-spectrum/s2-ai/AssetList';
 import {
   BasicHorizontalCard,
   HorizontalCard,
   CardPreview as HorizontalCardPreview
-} from '../src/HorizontalCard';
+} from '@react-spectrum/s2-ai/HorizontalCard';
 import {Card, CardProps} from '@react-spectrum/s2/Card';
 import ChevronRight from '@react-spectrum/s2/icons/ChevronRight';
 import {Content} from '@react-spectrum/s2/Content';

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Asset, AssetList} from '../src/AssetList';
+import {Asset, AssetList} from '@react-spectrum/s2-ai/AssetList';
 import {Image} from '@react-spectrum/s2/Image';
 import {render} from '@react-spectrum/test-utils-internal';
 
