@@ -44,9 +44,9 @@ import {GridListItem, GridListItemProps} from 'react-aria-components/GridList';
 import {ImageContext} from '@react-spectrum/s2/Image';
 import {ImageCoordinator} from '@react-spectrum/s2/ImageCoordinator';
 import {inertValue} from 'react-aria/private/utils/inertValue';
+// @ts-ignore
 import intlMessages from '../intl/*.json';
 import {Link} from 'react-aria-components/Link';
-// @ts-ignore
 import {LinkButtonContext} from '@react-spectrum/s2/LinkButton';
 import {mergeStyles} from '@react-spectrum/s2/style/runtime';
 import {pressScale} from '@react-spectrum/s2/pressScale';
@@ -924,16 +924,15 @@ const styles = style<{
   },
   getAllowedOverrides()
 );
+
 const CloseButton = function CloseButton(props) {
   let ref = useRef<FocusableRefValue<HTMLButtonElement>>(null);
   let domRef = useFocusableRef(ref);
-  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   return (
     <Button
       {...props}
       ref={domRef}
       slot="remove"
-      aria-label={props['aria-label'] || stringFormatter.format('dialog.dismiss')}
       style={pressScale(domRef, {})}
       className={renderProps => styles({...renderProps, size: props.size || 'M'}, props.styles)}>
       <CrossIcon
