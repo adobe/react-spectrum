@@ -176,15 +176,12 @@ export class TokenSegmentList {
     return segments;
   }
 
-  /** Delete text at a position using a segmenter. */
-  delete(
+  findBoundaryWithSegmenter(
     position: Position,
     segmenter: Intl.Segmenter,
-    direction: Direction,
-    coalesce = true
-  ): TokenSegmentList {
+    direction: Direction
+  ): Position | null {
     position = this.clampPosition(position);
-
     for (let i = position.index; i >= 0 && i < this.segments.length; i += direction) {
       let segment = this.segments[i];
       switch (segment.type) {
@@ -193,16 +190,14 @@ export class TokenSegmentList {
             i !== position.index ||
             (direction === Direction.Backward ? position.offset > 0 : position.offset === 0)
           ) {
-            let pos: Position = {
-              index: i,
-              offset: direction === Direction.Backward ? 0 : segment.text.length
+            let index = i + direction;
+            return {
+              index: index >= 0 ? index : 0,
+              offset:
+                direction === Direction.Backward && index >= 0
+                  ? this.segments[index].text.length
+                  : 0
             };
-            return this.replaceRange(
-              direction === Direction.Backward ? pos : position,
-              direction === Direction.Backward ? position : pos,
-              '',
-              coalesce
-            );
           }
           continue;
         case 'text': {
@@ -218,32 +213,29 @@ export class TokenSegmentList {
           }
 
           let part = segmenter.segment(segment.text).containing(offset);
+          while (part && part.isWordLike === false) {
+            offset += direction;
+            part = segmenter.segment(segment.text).containing(offset);
+          }
+
           if (part) {
-            let pos: Position = {
+            return {
               index: i,
               offset:
                 direction === Direction.Backward ? part.index : part.index + part.segment.length
             };
-            return this.replaceRange(
-              direction === Direction.Backward ? pos : position,
-              direction === Direction.Backward ? position : pos,
-              '',
-              coalesce
-            );
           }
           continue;
         }
       }
     }
 
-    this.caretPosition = position;
-    return this;
+    return null;
   }
 
-  /** Delete text to the next or previous line break. */
-  deleteLine(position: Position, direction: Direction, coalesce = true): TokenSegmentList {
+  findLineBoundary(position: Position, direction: Direction): Position | null {
     if (this.segments.length === 0) {
-      return this;
+      return null;
     }
 
     for (let i = position.index; i >= 0 && i < this.segments.length; i += direction) {
@@ -259,30 +251,59 @@ export class TokenSegmentList {
             )
           : segment.text.indexOf('\n', i === position.index ? position.offset : 0);
       if (offset >= 0) {
-        let pos: Position = {
+        return {
           index: i,
           offset: offset
         };
-        return this.replaceRange(
-          direction === Direction.Backward ? pos : position,
-          direction === Direction.Backward ? position : pos,
-          '',
-          coalesce
-        );
       }
     }
 
-    return this.replaceRange(
-      direction === Direction.Backward ? {index: 0, offset: 0} : position,
-      direction === Direction.Backward
-        ? position
-        : {
-            index: this.segments.length - 1,
-            offset: this.segments[this.segments.length - 1].text.length
-          },
-      '',
-      coalesce
-    );
+    return direction === Direction.Backward
+      ? {index: 0, offset: 0}
+      : {
+          index: this.segments.length - 1,
+          offset: this.segments[this.segments.length - 1].text.length
+        };
+  }
+
+  /** Delete text at a position using a segmenter. */
+  delete(
+    position: Position,
+    segmenter: Intl.Segmenter,
+    direction: Direction,
+    coalesce = true
+  ): TokenSegmentList {
+    let boundary = this.findBoundaryWithSegmenter(position, segmenter, direction);
+    if (boundary) {
+      return this.replaceRange(
+        direction === Direction.Backward ? boundary : position,
+        direction === Direction.Backward ? position : boundary,
+        '',
+        coalesce
+      );
+    }
+
+    this.caretPosition = position;
+    return this;
+  }
+
+  /** Delete text to the next or previous line break. */
+  deleteLine(position: Position, direction: Direction, coalesce = true): TokenSegmentList {
+    if (this.segments.length === 0) {
+      return this;
+    }
+
+    let boundary = this.findLineBoundary(position, direction);
+    if (boundary) {
+      return this.replaceRange(
+        direction === Direction.Backward ? boundary : position,
+        direction === Direction.Backward ? position : boundary,
+        '',
+        coalesce
+      );
+    }
+
+    return this;
   }
 
   /** Converts the text at a position into a token. */

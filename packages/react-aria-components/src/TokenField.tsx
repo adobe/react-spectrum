@@ -1,5 +1,10 @@
+import {announce} from 'react-aria/private/live-announcer/LiveAnnouncer';
+import {Direction, Position, TokenFieldSegment, TokenSegmentList} from './TokenSegmentList';
+import {FieldInputContext} from './Autocomplete';
+import {isCtrlKeyPressed} from 'react-aria/private/utils/keyboard';
+import {isMac} from 'react-aria/private/utils/platform';
+import {mergeRefs} from 'react-aria/mergeRefs';
 import React, {
-  cloneElement,
   ForwardedRef,
   forwardRef,
   Fragment,
@@ -8,19 +13,13 @@ import React, {
   useRef,
   useState
 } from 'react';
+import {RenderProps, StyleRenderProps, useRenderProps} from './utils';
+import {SlotProps, useSlottedContext} from './utils';
 import {useControlledState} from 'react-stately/useControlledState';
 import {useEvent} from 'react-aria/private/utils/useEvent';
-import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
-import {Direction, Position, TokenFieldSegment, TokenSegmentList} from './TokenSegmentList';
-import {isCtrlKeyPressed} from 'react-aria/private/utils/keyboard';
-import {isMac} from 'react-aria/private/utils/platform';
-import {useObjectRef} from 'react-aria/useObjectRef';
-import {SlotProps, useSlottedContext} from './utils';
-import {FieldInputContext} from './Autocomplete';
-import {mergeRefs} from 'react-aria/mergeRefs';
-import {announce} from 'react-aria/private/live-announcer/LiveAnnouncer';
-import {RenderProps, StyleRenderProps, useRenderProps} from './utils';
 import {useFocusRing} from 'react-aria/useFocusRing';
+import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
+import {useObjectRef} from 'react-aria/useObjectRef';
 
 export type {TokenFieldSegment};
 
@@ -77,6 +76,7 @@ export const TokenField = forwardRef(function TokenField(
   let wordSegmenter = useMemo(() => new Intl.Segmenter('en-US', {granularity: 'word'}), []);
 
   let dropPosition = useRef<Position | null>(null);
+  let transferredData = useRef<TokenFieldSegment[] | null>(null);
 
   let apply = (fn: (value: TokenSegmentList) => TokenSegmentList) => {
     setState(value => {
@@ -89,7 +89,7 @@ export const TokenField = forwardRef(function TokenField(
   let caretPosition = useRef<Position | null>(null);
   useLayoutEffect(() => {
     if (ref.current && state.caretPosition && state.caretPosition !== caretPosition.current) {
-      setSelection(ref.current, state.caretPosition);
+      setCursor(ref.current, state.caretPosition);
       caretPosition.current = state.caretPosition;
     }
   });
@@ -111,7 +111,10 @@ export const TokenField = forwardRef(function TokenField(
       case 'insertFromYank':
       case 'insertFromDrop': {
         let data: TokenFieldSegment[] = [{type: 'text', text: e.data ?? ''}];
-        if (e.dataTransfer) {
+        if (transferredData.current) {
+          data = transferredData.current;
+          transferredData.current = null;
+        } else if (e.dataTransfer) {
           if (e.dataTransfer.types.includes(CLIPBOARD_MIME_TYPE)) {
             data = JSON.parse(e.dataTransfer.getData(CLIPBOARD_MIME_TYPE));
           } else if (e.dataTransfer.types.includes('text/plain')) {
@@ -220,21 +223,6 @@ export const TokenField = forwardRef(function TokenField(
     }
   });
 
-  // Store the cursor position on drop so we know where to insert when the insertFromDrop event occurs.
-  useEvent(ref, 'drop', e => {
-    if (typeof document.caretPositionFromPoint === 'function') {
-      let pos = document.caretPositionFromPoint(e.clientX, e.clientY);
-      if (pos) {
-        dropPosition.current = getPosition(ref.current!, pos.offsetNode, pos.offset);
-      }
-    } else if (typeof document.caretRangeFromPoint === 'function') {
-      let range = document.caretRangeFromPoint(e.clientX, e.clientY);
-      if (range) {
-        dropPosition.current = getPosition(ref.current!, range.startContainer, range.startOffset);
-      }
-    }
-  });
-
   let writeClipboardData = (e: ClipboardEvent | DragEvent) => {
     if ('clipboardData' in e) {
       e.preventDefault();
@@ -257,6 +245,32 @@ export const TokenField = forwardRef(function TokenField(
   useEvent(ref, 'copy', writeClipboardData);
   useEvent(ref, 'cut', writeClipboardData);
   useEvent(ref, 'dragstart', writeClipboardData);
+  useEvent(ref, 'paste', e => {
+    // Safari doesn't pass the custom clipboard data type to beforeinput dataTransfer so we handle it here.
+    if (e.clipboardData && e.clipboardData.types.includes(CLIPBOARD_MIME_TYPE)) {
+      transferredData.current = JSON.parse(e.clipboardData.getData(CLIPBOARD_MIME_TYPE));
+    }
+  });
+
+  // Store the cursor position on drop so we know where to insert when the insertFromDrop event occurs.
+  useEvent(ref, 'drop', e => {
+    if (typeof document.caretPositionFromPoint === 'function') {
+      let pos = document.caretPositionFromPoint(e.clientX, e.clientY);
+      if (pos) {
+        dropPosition.current = getPosition(ref.current!, pos.offsetNode, pos.offset);
+      }
+    } else if (typeof document.caretRangeFromPoint === 'function') {
+      let range = document.caretRangeFromPoint(e.clientX, e.clientY);
+      if (range) {
+        dropPosition.current = getPosition(ref.current!, range.startContainer, range.startOffset);
+      }
+    }
+
+    if (e.dataTransfer && e.dataTransfer.types.includes(CLIPBOARD_MIME_TYPE)) {
+      transferredData.current = JSON.parse(e.dataTransfer.getData(CLIPBOARD_MIME_TYPE));
+    }
+  });
+
   useSelectionChange(ref, () => {
     state.endCoalescing();
 
@@ -266,7 +280,7 @@ export const TokenField = forwardRef(function TokenField(
       let [start, end] = getSelection(ref.current!)!;
       if (start.index === end.index && start.offset === 0) {
         let segment = state.segments[start.index];
-        if (segment.type === 'token') {
+        if (segment?.type === 'token') {
           announce(segment.text, 'assertive');
         }
       } else if (start.offset === state.segments[start.index].text.length) {
@@ -287,50 +301,59 @@ export const TokenField = forwardRef(function TokenField(
       e.preventDefault();
       e.stopPropagation();
       apply(state => state.redo());
-    } else if (e.key === 'ArrowLeft') {
+    } else if (e.key === 'ArrowLeft' && !e.metaKey) {
       // Firefox does not allow placing the cursor between adjacent tokens, so navigate manually.
       let selection = getSelection(ref.current!);
       if (!selection) {
         return;
       }
-
-      let {index, offset} = selection[0];
-      let prev = state.segments[index - 1];
-      if (offset === 0 && prev?.type === 'token') {
+      let start = state.findBoundaryWithSegmenter(
+        selection[0],
+        e.altKey ? wordSegmenter : graphemeSegmenter,
+        Direction.Backward
+      );
+      if (start) {
         e.preventDefault();
         e.stopPropagation();
-
-        let twoPrev = state.segments[index - 2];
-        setSelection(
-          ref.current!,
-          twoPrev?.type === 'text'
-            ? {index: index - 2, offset: twoPrev.text.length}
-            : {index: index - 1, offset: 0},
-          true
-        );
+        setSelection(ref.current!, start, e.shiftKey ? selection[1] : start, true);
       }
-    } else if (e.key === 'ArrowRight') {
+    } else if (e.key === 'ArrowRight' && !e.metaKey) {
       let selection = getSelection(ref.current!);
       if (!selection) {
         return;
       }
-      let {index, offset} = selection[0];
-      let cur = state.segments[index];
-      let next = state.segments[index + 1];
-      if (
-        (cur?.type === 'token' && next?.type === 'token') ||
-        (cur?.type === 'text' && next?.type === 'token' && offset === cur.text.length)
-      ) {
+      let end = state.findBoundaryWithSegmenter(
+        selection[1],
+        e.altKey ? wordSegmenter : graphemeSegmenter,
+        Direction.Forward
+      );
+      if (end) {
         e.preventDefault();
         e.stopPropagation();
-        setSelection(
-          ref.current!,
-          {
-            index: index + (cur.type === 'token' ? 1 : 2),
-            offset: 0
-          },
-          true
-        );
+        setSelection(ref.current!, e.shiftKey ? selection[0] : end, end, true);
+      }
+    } else if (e.key === 'Home') {
+      // Browsers do not behave consistently when there are tokens.
+      let selection = getSelection(ref.current!);
+      if (!selection) {
+        return;
+      }
+      let boundary = state.findLineBoundary(selection[0], Direction.Backward);
+      if (boundary) {
+        e.preventDefault();
+        e.stopPropagation();
+        setCursor(ref.current!, boundary, true);
+      }
+    } else if (e.key === 'End') {
+      let selection = getSelection(ref.current!);
+      if (!selection) {
+        return;
+      }
+      let boundary = state.findLineBoundary(selection[1], Direction.Forward);
+      if (boundary) {
+        e.preventDefault();
+        e.stopPropagation();
+        setCursor(ref.current!, boundary, true);
       }
     }
   });
@@ -473,10 +496,14 @@ function getPosition(container: Element, node: Node, offset: number, end = false
 
 let isProgrammaticSelectionChange = false;
 
-function setSelection(root: Element, pos: Position, fireEvent = false) {
+function setCursor(root: Element, pos: Position, fireEvent = false) {
+  setSelection(root, pos, pos, fireEvent);
+}
+
+function setSelection(root: Element, start: Position, end: Position, fireEvent = false) {
   let selection = window.getSelection();
   if (selection) {
-    let range = positionToDOMRange(root, pos);
+    let range = createDOMRange(root, start, end);
     isProgrammaticSelectionChange = !fireEvent;
     selection.removeAllRanges();
     selection.addRange(range);
@@ -485,14 +512,23 @@ function setSelection(root: Element, pos: Position, fireEvent = false) {
 
 // TODO: do we want to export this?
 export function positionToDOMRange(root: Element, pos: Position): Range {
+  return createDOMRange(root, pos, pos);
+}
+
+function createDOMRange(root: Element, start: Position, end: Position): Range {
   let range = document.createRange();
-  let child = root.childNodes[pos.index];
+  let child = root.childNodes[start.index];
   if (!child || child.nodeType === Node.ELEMENT_NODE) {
-    range.setStart(root, pos.offset > 0 ? pos.index + 1 : pos.index);
+    range.setStart(root, start.offset > 0 ? start.index + 1 : start.index);
   } else {
-    range.setStart(child, pos.offset);
+    range.setStart(child, start.offset);
   }
-  range.collapse(true);
+  child = root.childNodes[end.index];
+  if (!child || child.nodeType === Node.ELEMENT_NODE) {
+    range.setEnd(root, end.offset > 0 ? end.index + 1 : end.index);
+  } else {
+    range.setEnd(child, end.offset);
+  }
   return range;
 }
 

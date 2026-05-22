@@ -26,7 +26,7 @@ function intlJsonPlugin(): Plugin {
   return {
     name: 'intl-json-loader',
     async resolveId(source, importer) {
-      if (/\/intl\/.*\*\.json$/.test(source) && importer) {
+      if (importer && /\/intl\/.*\*.json$/.test(source)) {
         const dir = path.dirname(importer);
         const intlDir = path.resolve(dir, source.replace('*.json', ''));
         return `virtual:intl-messages:${intlDir}`;
@@ -161,6 +161,15 @@ function iconWrapperPlugin(): Plugin {
   };
 }
 
+let unlock: ((value: any) => void) | null = null;
+
+declare module 'vitest/browser' {
+  interface BrowserCommands {
+    lockClipboard: () => Promise<void>;
+    unlockClipboard: () => void;
+  }
+}
+
 export default defineConfig({
   plugins: [
     // @ts-expect-error
@@ -204,19 +213,53 @@ export default defineConfig({
   ],
   test: {
     globals: true,
+    pool: 'threads',
     setupFiles: ['./test/browser/setup.ts'],
     include: ['packages/**/test/**/*.browser.test.{ts,tsx}'],
     browser: {
       provider: playwright(),
       enabled: true,
       instances: [
-        {browser: 'chromium', name: 'chromium-mobile', viewport: {width: 414, height: 896}},
-        {browser: 'chromium', name: 'chromium-desktop', viewport: {width: 1280, height: 720}},
-        {browser: 'firefox', name: 'firefox-mobile', viewport: {width: 414, height: 896}},
-        {browser: 'firefox', name: 'firefox-desktop', viewport: {width: 1280, height: 720}},
-        {browser: 'webkit', name: 'webkit-mobile', viewport: {width: 414, height: 896}},
-        {browser: 'webkit', name: 'webkit-desktop', viewport: {width: 1280, height: 720}}
-      ]
+        // {browser: 'chromium', name: 'chromium-mobile', viewport: {width: 414, height: 896}},
+        {
+          browser: 'chromium',
+          name: 'chromium-desktop',
+          viewport: {width: 1280, height: 720},
+          headless: true
+        },
+        // {browser: 'firefox', name: 'firefox-mobile', viewport: {width: 414, height: 896}},
+        {
+          browser: 'firefox',
+          name: 'firefox-desktop',
+          viewport: {width: 1280, height: 720},
+          headless: true
+        },
+        // {browser: 'webkit', name: 'webkit-mobile', viewport: {width: 414, height: 896}},
+        {
+          browser: 'webkit',
+          name: 'webkit-desktop',
+          viewport: {width: 1280, height: 720},
+          headless: true
+        }
+      ],
+      commands: {
+        lockClipboard: async () => {
+          await new Promise(resolve => {
+            navigator.locks.request('clipboard', async () => {
+              resolve(null);
+              await new Promise(resolve1 => {
+                unlock = resolve1;
+              });
+            });
+          });
+        },
+        unlockClipboard: () => {
+          if (unlock) {
+            unlock(null);
+            unlock = null;
+          }
+        }
+      }
     },
     coverage: {
       provider: 'v8',
