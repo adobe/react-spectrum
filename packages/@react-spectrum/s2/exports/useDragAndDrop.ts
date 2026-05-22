@@ -1,11 +1,11 @@
-export {useDragAndDrop} from 'react-aria-components/useDragAndDrop';
+export {useDragAndDrop} from '../src/useDragAndDrop';
 export {
   DIRECTORY_DRAG_TYPE,
   isDirectoryDropItem,
   isFileDropItem,
   isTextDropItem
 } from 'react-aria/useDrop';
-export type {DragAndDropHooks, DragAndDropOptions} from 'react-aria-components/useDragAndDrop';
+export type {DragAndDropHooks} from 'react-aria-components/useDragAndDrop';
 export type {
   DirectoryDropItem,
   DraggableCollectionEndEvent,
@@ -30,3 +30,4 @@ export type {
   RootDropTarget,
   TextDropItem
 } from '@react-types/shared';
+export type {DragAndDropOptions} from '../src/useDragAndDrop';
