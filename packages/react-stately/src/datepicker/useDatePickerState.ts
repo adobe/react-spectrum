@@ -163,14 +163,7 @@ export function useDatePickerState<T extends DateValue = DateValue>(
 
   let builtinValidation = useMemo(
     () =>
-      getValidationResult(
-        value,
-        minValue,
-        maxValue,
-        isDateUnavailable,
-        formatOpts,
-        isValuePartial
-      ),
+      getValidationResult(value, minValue, maxValue, isDateUnavailable, formatOpts, isValuePartial),
     [value, minValue, maxValue, isDateUnavailable, formatOpts, isValuePartial]
   );
 
@@ -185,9 +178,7 @@ export function useDatePickerState<T extends DateValue = DateValue>(
     props.validationState || (isValueInvalid ? 'invalid' : null);
 
   let commitValue = (date: DateValue, time: TimeValue) => {
-    setValue(
-      'timeZone' in time ? time.set(toCalendarDate(date)) : toCalendarDateTime(date, time)
-    );
+    setValue('timeZone' in time ? time.set(toCalendarDate(date)) : toCalendarDateTime(date, time));
     setSelectedDate(null);
     setSelectedTime(null);
     validation.commitValidation();

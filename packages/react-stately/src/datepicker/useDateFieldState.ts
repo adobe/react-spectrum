@@ -375,14 +375,7 @@ export function useDateFieldState<T extends DateValue = DateValue>(
 
   let builtinValidation = useMemo(
     () =>
-      getValidationResult(
-        value,
-        minValue,
-        maxValue,
-        isDateUnavailable,
-        formatOpts,
-        isValuePartial
-      ),
+      getValidationResult(value, minValue, maxValue, isDateUnavailable, formatOpts, isValuePartial),
     [value, minValue, maxValue, isDateUnavailable, formatOpts, isValuePartial]
   );
 

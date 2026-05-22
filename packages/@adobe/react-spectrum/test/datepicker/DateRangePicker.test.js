@@ -2289,7 +2289,9 @@ describe('DateRangePicker', function () {
           let segments = within(group).getAllByRole('spinbutton');
 
           // Clear the start month segment, then blur the field -> partial error appears.
-          act(() => { segments[0].focus(); });
+          act(() => {
+            segments[0].focus();
+          });
           await user.keyboard('{Backspace}');
           expect(segments[0]).toHaveAttribute('aria-valuetext', 'Empty');
           // Tab past remaining start segments, end segments, and calendar trigger button.

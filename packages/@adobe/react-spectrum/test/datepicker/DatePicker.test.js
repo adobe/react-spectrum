@@ -3220,7 +3220,9 @@ describe('DatePicker', function () {
           let segments = within(group).getAllByRole('spinbutton');
 
           // Clear the month segment (single-digit '4' goes straight to null).
-          act(() => { segments[0].focus(); });
+          act(() => {
+            segments[0].focus();
+          });
           await user.keyboard('{Backspace}');
           expect(segments[0]).toHaveAttribute('aria-valuetext', 'Empty');
 
@@ -3261,7 +3263,9 @@ describe('DatePicker', function () {
           let input = document.querySelector('input[name=date]');
           let segments = within(group).getAllByRole('spinbutton');
 
-          act(() => { segments[0].focus(); });
+          act(() => {
+            segments[0].focus();
+          });
           await user.keyboard('{Backspace}');
           expect(segments[0]).toHaveAttribute('aria-valuetext', 'Empty');
 
@@ -3304,7 +3308,9 @@ describe('DatePicker', function () {
           let segments = within(group).getAllByRole('spinbutton');
 
           // Clear the month segment, then blur the field -> partial error appears.
-          act(() => { segments[0].focus(); });
+          act(() => {
+            segments[0].focus();
+          });
           await user.keyboard('{Backspace}');
           expect(segments[0]).toHaveAttribute('aria-valuetext', 'Empty');
           await user.tab();
