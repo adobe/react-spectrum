@@ -803,14 +803,14 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
       rect =
         this.orientation === 'horizontal'
           ? new Rect(
-              layoutInfo.rect.x - this.dropIndicatorThickness / 2,
+              Math.max(0, layoutInfo.rect.x - this.dropIndicatorThickness / 2),
               layoutInfo.rect.y,
               this.dropIndicatorThickness,
               layoutInfo.rect.height
             )
           : new Rect(
               layoutInfo.rect.x,
-              layoutInfo.rect.y - this.dropIndicatorThickness / 2,
+              Math.max(0, layoutInfo.rect.y - this.dropIndicatorThickness / 2),
               layoutInfo.rect.width,
               this.dropIndicatorThickness
             );
@@ -831,7 +831,6 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
           currentKey = this.collection.getKeyAfter(currentKey);
         }
       }
-
       rect =
         this.orientation === 'horizontal'
           ? new Rect(

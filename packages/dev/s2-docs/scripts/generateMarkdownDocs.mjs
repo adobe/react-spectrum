@@ -109,12 +109,14 @@ function getTsFileIndex() {
     path.posix.join(REPO_ROOT, 'packages/**/*.{ts,tsx,d.ts}')
   ];
 
-  const files = glob.sync(patterns, {
-    absolute: true,
-    suppressErrors: true,
-    deep: 5,
-    ignore: ['**/node_modules/**', '**/*.test.*', '**/*.stories.*', '**/dist/**']
-  });
+  const files = glob
+    .sync(patterns, {
+      absolute: true,
+      suppressErrors: true,
+      deep: 5,
+      ignore: ['**/node_modules/**', '**/*.test.*', '**/*.stories.*', '**/dist/**']
+    })
+    .sort((a, b) => a.localeCompare(b));
 
   // Build index: for each file, extract exported names for quick lookup
   tsFileIndex = new Map();
@@ -152,6 +154,9 @@ function getTsFileIndex() {
   }
 
   console.log(`Built index with ${tsFileIndex.size} symbols in ${Date.now() - startTime}ms`);
+  for (const candidates of tsFileIndex.values()) {
+    candidates.sort((a, b) => a.localeCompare(b));
+  }
   return tsFileIndex;
 }
 
@@ -163,7 +168,255 @@ function cleanTypeText(t) {
   let cleaned = t.replace(/import\(["'][^)]*["']\)\./g, '');
   // Remove duplicate type parameters.
   cleaned = cleaned.replace(/<\s*([A-Za-z0-9_$.]+)\s*,\s*\1\s*>/g, '<$1>');
-  return cleaned;
+  return normalizeTypeText(cleaned);
+}
+
+// TypeScript can emit union members in different orders across fresh projects.
+// Canonicalize unions while avoiding parameter lists and object type bodies.
+function findTopLevelArrow(text) {
+  let depth = 0;
+  let quote = null;
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    if (quote) {
+      if (ch === '\\') {
+        i++;
+      } else if (ch === quote) {
+        quote = null;
+      }
+      continue;
+    }
+
+    if (ch === '"' || ch === "'" || ch === '`') {
+      quote = ch;
+      continue;
+    }
+
+    if (ch === '(' || ch === '[' || ch === '{' || ch === '<') {
+      depth++;
+    } else if (ch === ')' || ch === ']' || ch === '}' || ch === '>') {
+      depth = Math.max(0, depth - 1);
+    } else if (ch === '=' && text[i + 1] === '>' && depth === 0) {
+      return i;
+    }
+  }
+
+  return -1;
+}
+
+function findMatchingDelimiter(text, start) {
+  const pairs = {
+    '(': ')',
+    '[': ']',
+    '{': '}',
+    '<': '>'
+  };
+  const open = text[start];
+  const close = pairs[open];
+  if (!close) {
+    return -1;
+  }
+
+  let depth = 0;
+  let quote = null;
+  for (let i = start; i < text.length; i++) {
+    const ch = text[i];
+    if (quote) {
+      if (ch === '\\') {
+        i++;
+      } else if (ch === quote) {
+        quote = null;
+      }
+      continue;
+    }
+
+    if (ch === '"' || ch === "'" || ch === '`') {
+      quote = ch;
+      continue;
+    }
+
+    if (ch === open) {
+      depth++;
+    } else if (ch === close) {
+      depth--;
+      if (depth === 0) {
+        return i;
+      }
+    }
+  }
+
+  return -1;
+}
+
+function normalizeNestedTypeText(text) {
+  let out = '';
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    if (ch === '"' || ch === "'" || ch === '`') {
+      const start = i;
+      i++;
+      while (i < text.length) {
+        if (text[i] === '\\') {
+          i += 2;
+          continue;
+        }
+        if (text[i] === ch) {
+          break;
+        }
+        i++;
+      }
+      out += text.slice(start, Math.min(i + 1, text.length));
+      continue;
+    }
+
+    if (ch === '(' || ch === '[' || ch === '{' || ch === '<') {
+      const end = findMatchingDelimiter(text, i);
+      if (end !== -1) {
+        const nextText = text.slice(end + 1);
+        const isFunctionParams = ch === '(' && /^\s*=>/.test(nextText);
+        const inner = text.slice(i + 1, end);
+        const normalizedInner =
+          ch === '{' || isFunctionParams
+            ? normalizeNestedTypeText(inner)
+            : normalizeTypeText(inner);
+        out += ch + normalizedInner + text[end];
+        i = end;
+        continue;
+      }
+    }
+
+    out += ch;
+  }
+
+  return out;
+}
+
+function splitTopLevelUnion(text) {
+  const parts = [];
+  let depth = 0;
+  let quote = null;
+  let start = 0;
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    if (quote) {
+      if (ch === '\\') {
+        i++;
+      } else if (ch === quote) {
+        quote = null;
+      }
+      continue;
+    }
+
+    if (ch === '"' || ch === "'" || ch === '`') {
+      quote = ch;
+      continue;
+    }
+
+    if (ch === '(' || ch === '[' || ch === '{' || ch === '<') {
+      depth++;
+    } else if (ch === ')' || ch === ']' || ch === '}' || ch === '>') {
+      depth = Math.max(0, depth - 1);
+    } else if (ch === '|' && depth === 0) {
+      parts.push(text.slice(start, i).trim());
+      start = i + 1;
+    }
+  }
+
+  if (parts.length > 0) {
+    parts.push(text.slice(start).trim());
+  }
+
+  return parts;
+}
+
+function stringLiteralValue(text) {
+  const match = text.match(/^(['"])(.*)\1$/);
+  return match ? match[2] : null;
+}
+
+function unionSortKey(part) {
+  const text = part.trim();
+  const primitiveOrder = new Map([
+    ['any', 0],
+    ['unknown', 1],
+    ['never', 2],
+    ['void', 3],
+    ['boolean', 4],
+    ['number', 5],
+    ['string', 6],
+    ['symbol', 7],
+    ['bigint', 8]
+  ]);
+
+  if (primitiveOrder.has(text)) {
+    return [0, primitiveOrder.get(text), ''];
+  }
+
+  if (/^-?\d+(?:\.\d+)?$/.test(text)) {
+    return [1, Number(text), ''];
+  }
+
+  const literal = stringLiteralValue(text);
+  if (literal != null) {
+    const booleanLiteralOrder = new Map([
+      ['true', 0],
+      ['false', 1]
+    ]);
+    if (booleanLiteralOrder.has(literal)) {
+      return [2, booleanLiteralOrder.get(literal), literal];
+    }
+    return [2, 2, literal.toLowerCase()];
+  }
+
+  if (text === 'null') {
+    return [8, 0, ''];
+  }
+
+  if (text === 'undefined') {
+    return [9, 0, ''];
+  }
+
+  return [3, 0, text.toLowerCase()];
+}
+
+function compareUnionParts(a, b) {
+  const aKey = unionSortKey(a);
+  const bKey = unionSortKey(b);
+  for (let i = 0; i < Math.max(aKey.length, bKey.length); i++) {
+    if (aKey[i] < bKey[i]) {
+      return -1;
+    }
+    if (aKey[i] > bKey[i]) {
+      return 1;
+    }
+  }
+  return a.localeCompare(b);
+}
+
+function sortUnionMembers(text) {
+  const parts = splitTopLevelUnion(text);
+  if (parts.length <= 1) {
+    return text;
+  }
+
+  return parts.sort(compareUnionParts).join(' | ');
+}
+
+function normalizeTypeText(t) {
+  const text = t.trim();
+  if (!text) {
+    return text;
+  }
+
+  const normalized = normalizeNestedTypeText(text);
+  const arrowIndex = findTopLevelArrow(normalized);
+  if (arrowIndex >= 0) {
+    const before = normalized.slice(0, arrowIndex + 2);
+    const after = normalized.slice(arrowIndex + 2).trim();
+    return `${before} ${normalizeTypeText(after)}`;
+  }
+
+  return sortUnionMembers(normalized);
 }
 
 /**
@@ -1602,7 +1855,7 @@ function generateInterfaceTable(interfaceName, file) {
     // Check if we need a Default column
     const hasDefaults = properties.some(p => !!p.defVal);
 
-    // Sort properties so required ones are shown first
+    // Sort properties so required ones are shown first, then alphabetically.
     const sortedProps = properties.sort((a, b) => {
       if (!a.optional && b.optional) {
         return -1;
@@ -1610,7 +1863,7 @@ function generateInterfaceTable(interfaceName, file) {
       if (a.optional && !b.optional) {
         return 1;
       }
-      return 0;
+      return a.name.localeCompare(b.name);
     });
 
     if (hasDefaults) {
@@ -1640,12 +1893,14 @@ function generateInterfaceTable(interfaceName, file) {
       sections.push('### Methods\n');
     }
 
-    methods.forEach(m => {
-      sections.push(`#### \`${m.signature}\`\n`);
-      if (m.description) {
-        sections.push(`${m.description}\n`);
-      }
-    });
+    methods
+      .sort((a, b) => a.name.localeCompare(b.name))
+      .forEach(m => {
+        sections.push(`#### \`${m.signature}\`\n`);
+        if (m.description) {
+          sections.push(`${m.description}\n`);
+        }
+      });
   }
 
   const result = sections.join('\n');
@@ -3505,10 +3760,12 @@ function generateLibraryLlmsTxt(lib, files) {
  * with plain markdown equivalents so that the resulting *.md files can be consumed by LLMs.
  */
 async function main() {
-  const mdxFiles = await glob('*/**/*.mdx', {
-    cwd: S2_DOCS_PAGES_ROOT,
-    absolute: true
-  });
+  const mdxFiles = (
+    await glob('*/**/*.mdx', {
+      cwd: S2_DOCS_PAGES_ROOT,
+      absolute: true
+    })
+  ).sort((a, b) => a.localeCompare(b));
 
   // Collect generated markdown filenames and headings for each library so we can build llms.txt files.
   const docsByLibrary = {
@@ -3577,10 +3834,11 @@ async function main() {
       heading = headingMatch[1].trim();
     }
 
-    // Extract the description (first paragraph after heading)
+    // Extract the description (first paragraph after heading). Skip if the
+    // first block after the heading is another heading rather than prose.
     let description = null;
     const descriptionMatch = markdown.match(/^#\s+.+$\n\n(.+?)(?:\n\n|$)/m);
-    if (descriptionMatch) {
+    if (descriptionMatch && !descriptionMatch[1].trim().startsWith('#')) {
       description = descriptionMatch[1].trim();
     }
 

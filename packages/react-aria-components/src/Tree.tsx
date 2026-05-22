@@ -794,6 +794,8 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent(
     let level = rowProps['aria-level'] || 1;
 
     let {hoverProps, isHovered} = useHover({
+      // because of https://bugs.webkit.org/show_bug.cgi?id=214609, supporting hover styles when a item is ONLY isDraggable
+      // results in hover styles sticking around after a reorder/drop operation...
       isDisabled: !states.allowsSelection && !states.hasAction && !isDraggable,
       onHoverStart: props.onHoverStart,
       onHoverChange: props.onHoverChange,

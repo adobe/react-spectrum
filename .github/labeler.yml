@@ -198,6 +198,10 @@ ListBox:
   - changed-files:
       - any-glob-to-any-file: '**/ListBox.tsx'
 
+ListView:
+  - changed-files:
+      - any-glob-to-any-file: '**/ListView.tsx'
+
 Menu:
   - changed-files:
       - any-glob-to-any-file: '**/Menu.tsx'
