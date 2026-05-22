@@ -2261,6 +2261,64 @@ describe('DateRangePicker', function () {
           expect(input.validity.valid).toBe(true);
           expect(getDescription()).not.toContain('Constraints not satisfied');
         });
+
+        it('should clear the partial-value error on the first calendar selection that completes the range (Bug #9958 follow-up)', async () => {
+          // Repro of the "takes two interactions" bug for DateRangePicker: after a partial start
+          // endpoint surfaces "Please enter a value.", selecting a complete range from the calendar
+          // must clear it on the FIRST selection. Both setStartIsValuePartial and
+          // setEndIsValuePartial must be reset synchronously before commitValidation().
+          let {getByRole} = render(
+            <Provider theme={theme}>
+              <Form>
+                <DateRangePicker
+                  label="Date"
+                  startName="start"
+                  endName="end"
+                  defaultValue={{
+                    start: new CalendarDate(2019, 2, 3),
+                    end: new CalendarDate(2019, 5, 6)
+                  }}
+                  validationBehavior="native"
+                />
+              </Form>
+            </Provider>
+          );
+
+          let group = getByRole('group');
+          let startInput = document.querySelector('input[name=start]');
+          let segments = within(group).getAllByRole('spinbutton');
+
+          // Clear the start month segment, then blur the field -> partial error appears.
+          act(() => { segments[0].focus(); });
+          await user.keyboard('{Backspace}');
+          expect(segments[0]).toHaveAttribute('aria-valuetext', 'Empty');
+          // Tab past remaining start segments, end segments, and calendar trigger button.
+          await user.tab();
+          await user.tab();
+          await user.tab();
+          await user.tab();
+          await user.tab();
+          await user.tab();
+          await user.tab();
+
+          let getDescription = () =>
+            (group.getAttribute('aria-describedby') || '')
+              .split(' ')
+              .map(d => document.getElementById(d)?.textContent || '')
+              .join(' ');
+          expect(getDescription()).toContain('Please enter a value.');
+
+          // Open the calendar and select a complete range with two clicks on the focused cell.
+          // The calendar opens with focus on the highlighted start date; clicking it sets the
+          // range start, clicking the same focused cell again sets the range end.
+          await user.click(getByRole('button'));
+          await user.click(document.activeElement);
+          await user.click(document.activeElement);
+
+          // The range is now complete and valid -> error must be gone after ONE selection sequence.
+          expect(startInput.validity.valid).toBe(true);
+          expect(getDescription()).not.toContain('Please enter a value.');
+        });
       });
 
       describe('validationBehavior=aria', () => {
