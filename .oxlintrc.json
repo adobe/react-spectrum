@@ -371,7 +371,11 @@
       }
     },
     {
-      "files": ["packages/@react-spectrum/s2/**", "packages/dev/s2-docs/**"],
+      "files": [
+        "packages/@react-spectrum/s2/**",
+        "packages/dev/s2-docs/**",
+        "packages/@react-spectrum/s2-ai/**"
+      ],
       "rules": {
         "react/react-in-jsx-scope": "off"
       }

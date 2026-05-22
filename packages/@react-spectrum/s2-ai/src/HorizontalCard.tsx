@@ -21,12 +21,9 @@ import {
 } from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Button} from 'react-aria-components/Button';
 import {ButtonContext} from '@react-spectrum/s2/Button';
-import {LinkButtonContext} from '@react-spectrum/s2/LinkButton';
 import {Checkbox} from '@react-spectrum/s2/Checkbox';
 import {composeRenderProps} from 'react-aria-components/composeRenderProps';
 import {ContentContext} from '@react-spectrum/s2/Content';
-import {FooterContext} from '@react-spectrum/s2/Footer';
-import {TextContext} from '@react-spectrum/s2/Text';
 import {ContextValue, DEFAULT_SLOT, Provider} from 'react-aria-components/slots';
 import {
   controlSize,
@@ -42,18 +39,21 @@ import {
   GlobalDOMAttributes
 } from '@react-types/shared';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
+import {FooterContext} from '@react-spectrum/s2/Footer';
 import {GridListItem, GridListItemProps} from 'react-aria-components/GridList';
 import {ImageContext} from '@react-spectrum/s2/Image';
 import {ImageCoordinator} from '@react-spectrum/s2/ImageCoordinator';
 import {inertValue} from 'react-aria/private/utils/inertValue';
-// @ts-ignore
 import intlMessages from '../intl/*.json';
 import {Link} from 'react-aria-components/Link';
+// @ts-ignore
+import {LinkButtonContext} from '@react-spectrum/s2/LinkButton';
 import {mergeStyles} from '@react-spectrum/s2/style/runtime';
 import {pressScale} from '@react-spectrum/s2/pressScale';
 import {SkeletonContext, useIsSkeleton} from '@react-spectrum/s2/Skeleton';
 import type {StyleProps, UnsafeStyles} from '@react-spectrum/s2/style-utils';
 import {Tag, TagGroup, TagList} from 'react-aria-components/TagGroup';
+import {TextContext} from '@react-spectrum/s2/Text';
 import {useDOMRef} from '@react-spectrum/s2/useDOMRef';
 import {useFocusableRef} from '@react-spectrum/s2/useDOMRef';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';

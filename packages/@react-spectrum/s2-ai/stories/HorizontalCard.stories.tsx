@@ -23,12 +23,12 @@ import {Card, CardProps} from '@react-spectrum/s2/Card';
 import ChevronRight from '@react-spectrum/s2/icons/ChevronRight';
 import {Content} from '@react-spectrum/s2/Content';
 import {Footer} from '@react-spectrum/s2/Footer';
-import {Text} from '@react-spectrum/s2/Text';
 import {Image} from '@react-spectrum/s2/Image';
 import {MenuItem} from '@react-spectrum/s2/Menu';
 import type {Meta, StoryObj} from '@storybook/react';
 import {Skeleton} from '@react-spectrum/s2/Skeleton';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {Text} from '@react-spectrum/s2/Text';
 
 const meta: Meta<CardProps & {isLoading?: boolean}> = {
   component: HorizontalCard,
