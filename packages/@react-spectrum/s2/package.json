@@ -45,6 +45,13 @@
       "import": "./style/dist/module.mjs",
       "require": "./style/dist/main.cjs"
     },
+    "./style/runtime": {
+      "source": "./style/runtime.ts",
+      "types": "./dist/types/style/runtime.d.ts",
+      "module": "./style/dist/runtime.mjs",
+      "import": "./style/dist/runtime.mjs",
+      "require": "./style/dist/runtime.cjs"
+    },
     "./icons/*": {
       "source": "./s2wf-icons/S2_Icon_*_20_N.svg",
       "types": [
@@ -67,6 +74,12 @@
     },
     "./illustrations/linear/internal/*": null,
     "./illustrations/gradient/*/internal/*": null,
+    "./ui-icons/*": {
+      "source": "./ui-icons/*.tsx",
+      "types": "./dist/types/ui-icons/*.d.ts",
+      "import": "./dist/ui-icons/*.mjs",
+      "require": "./dist/ui-icons/*.cjs"
+    },
     "./package.json": "./package.json",
     "./*": {
       "source": "./exports/*.ts",
