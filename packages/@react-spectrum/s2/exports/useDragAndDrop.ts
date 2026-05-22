@@ -31,3 +31,4 @@ export type {
   TextDropItem
 } from '@react-types/shared';
 export type {DragAndDropOptions} from '../src/useDragAndDrop';
+export type {DragAndDrop} from 'react-aria-components/useDragAndDrop';

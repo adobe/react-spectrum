@@ -10,13 +10,23 @@
  * governing permissions and limitations under the License.
  */
 
-import type {DragAndDropOptions as RACDragAndDropOptions} from 'react-aria-components/useDragAndDrop';
+import type {
+  DragAndDrop,
+  DragAndDropOptions as RACDragAndDropOptions
+} from 'react-aria-components/useDragAndDrop';
 import {useDragAndDrop as useRACDragAndDrop} from 'react-aria-components/useDragAndDrop';
 
-export type DragAndDropOptions<T = object> = Omit<RACDragAndDropOptions<T>, 'renderDropIndicator'>;
+export type {DragAndDrop};
 
-export function useDragAndDrop<T = object>(
-  options: DragAndDropOptions<T>
-): ReturnType<typeof useRACDragAndDrop<T>> {
+export interface DragAndDropOptions<T = object> extends Omit<
+  RACDragAndDropOptions<T>,
+  'renderDropIndicator'
+> {}
+
+/**
+ * Provides the hooks required to enable drag and drop behavior for a drag and drop compatible
+ * collection component.
+ */
+export function useDragAndDrop<T = object>(options: DragAndDropOptions<T>): DragAndDrop<T> {
   return useRACDragAndDrop(options);
 }
