@@ -2,5 +2,6 @@
   "rangeOverflow": "Vrednost mora da bude {maxValue} ili starija.",
   "rangeReversed": "Datum početka mora biti pre datuma završetka.",
   "rangeUnderflow": "Vrednost mora da bude {minValue} ili novija.",
-  "unavailableDate": "Izabrani datum nije dostupan."
+  "unavailableDate": "Izabrani datum nije dostupan.",
+  "incompleteValue": "Please enter a value."
 }
