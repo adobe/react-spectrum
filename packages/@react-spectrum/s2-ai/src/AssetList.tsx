@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaLabelingProps, DOMRef, FocusableRefValue} from '@react-types/shared';
 import {baseColor, focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {BasicHorizontalCard} from './HorizontalCard';
 import {Button} from 'react-aria-components/Button';
@@ -19,7 +20,6 @@ import {
   getAllowedOverrides
 } from '@react-spectrum/s2/style-utils' with {type: 'macro'};
 import CrossIcon from '@react-spectrum/s2/ui-icons/Cross';
-import {DOMRef, FocusableRefValue} from '@react-types/shared';
 import {forwardRef, useRef} from 'react';
 import {pressScale} from '@react-spectrum/s2/pressScale';
 import {Tag, TagGroup, TagList} from 'react-aria-components/TagGroup';
@@ -113,7 +113,10 @@ export const AssetList = forwardRef(function AssetList(props: any, ref: DOMRef<H
   );
 });
 
-export const Asset = forwardRef(function Asset(props: CardProps, ref: DOMRef<HTMLDivElement>) {
+export const Asset = forwardRef(function Asset(
+  props: CardProps & AriaLabelingProps,
+  ref: DOMRef<HTMLDivElement>
+) {
   let {
     textValue,
     'aria-label': ariaLabel,
