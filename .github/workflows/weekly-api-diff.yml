@@ -148,7 +148,7 @@ jobs:
             raise SystemExit(f"Missing required environment variables: {', '.join(missing)}")
 
           today = os.environ['TODAY']
-          channel = os.environ['SLACK_CHANNEL_ID']
+          channel = os.environ.get('TEST_SLACK_ID') or os.environ['SLACK_CHANNEL_ID']
           snapshots_repo = os.environ['SNAPSHOTS_REPO']
           slack_token = os.environ['SLACK_TSDIFF_CHROMATIC_BOT_TOKEN']
           github_token = os.environ['GITHUB_TOKEN']
@@ -165,13 +165,31 @@ jobs:
 
           new_release = os.environ.get('NEW_RELEASE') == 'true'
 
+          def post(text, thread_ts=None):
+            payload = {"channel": channel, "text": text, "unfurl_links": False, "unfurl_media": False}
+            if thread_ts:
+              payload["thread_ts"] = thread_ts
+            req = urllib.request.Request(
+              'https://slack.com/api/chat.postMessage',
+              data=json.dumps(payload).encode(),
+              headers={
+                'Authorization': f'Bearer {slack_token}',
+                'Content-Type': 'application/json'
+              }
+            )
+            resp = json.loads(urllib.request.urlopen(req).read())
+            print("Slack response:", resp.get('ok'), resp.get('error', ''))
+            if not resp.get('ok'):
+              raise SystemExit(f"Slack error: {resp.get('error')}")
+            return resp['message']['ts']
+
           if vs_release_size == 0:
-            message = f"📊 Weekly API Diff — {today}\n\nNo API changes detected vs last release — all pending changes have been included in a release."
+            body = "No API changes detected vs last release — all pending changes have been included in a release."
           elif vs_last_week_size == 0 and not new_release:
             prev_ref = f"last diff ({prev_date}): {prev_url}" if prev_date else "last diff"
-            message = f"📊 Weekly API Diff — {today}\n\nNo new API changes since {prev_ref}."
+            body = f"No new API changes since {prev_ref}."
           elif new_release:
-            message = f"📊 Weekly API Diff — {today}\n\nNew release since last diff — resetting baseline. Full diff vs release: {diff_url}\n\nReact ✅ if changes look expected, or 🚨 if something looks wrong."
+            body = f"New release since last diff — resetting baseline. Full diff vs release: {diff_url}\n\nReact ✅ if changes look expected, or 🚨 if something looks wrong."
           else:
             # Read the already-processed delta saved by the shell step
             delta_path = f"{workspace}/snapshots/deltas/{today}.txt"
@@ -210,18 +228,8 @@ jobs:
               }
             )
             summary = json.loads(urllib.request.urlopen(req).read())['choices'][0]['message']['content']
-            message = f"📊 Weekly API Diff — {today}\n\n{summary}\n\nWhat's new this week: {delta_url}\nFull diff vs release: {diff_url}\n\nReact ✅ if changes look expected, or 🚨 if something looks wrong."
+            body = f"{summary}\n\nWhat's new this week: {delta_url}\nFull diff vs release: {diff_url}\n\nReact ✅ if changes look expected, or 🚨 if something looks wrong."
 
-          req = urllib.request.Request(
-            'https://slack.com/api/chat.postMessage',
-            data=json.dumps({"channel": channel, "text": message}).encode(),
-            headers={
-              'Authorization': f'Bearer {slack_token}',
-              'Content-Type': 'application/json'
-            }
-          )
-          resp = json.loads(urllib.request.urlopen(req).read())
-          print("Slack response:", resp.get('ok'), resp.get('error', ''))
-          if not resp.get('ok'):
-            raise SystemExit(f"Slack error: {resp.get('error')}")
+          ts = post(f"📊 Weekly API Diff — {today}")
+          post(f"📊 Weekly API Diff — {today}\n\n{body}", thread_ts=ts)
           PYEOF

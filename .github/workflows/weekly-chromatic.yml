@@ -66,6 +66,7 @@ jobs:
     env:
       SLACK_TSDIFF_CHROMATIC_BOT_TOKEN: ${{ secrets.SLACK_TSDIFF_CHROMATIC_BOT_TOKEN }}
       SLACK_CHANNEL_ID: ${{ secrets.SLACK_CHANNEL_ID }}
+      TEST_SLACK_ID: ${{ secrets.TEST_SLACK_ID }}
       CHROMATIC_URL: ${{ needs.chromatic.outputs.build_url }}
       CHROMATIC_CODE: ${{ needs.chromatic.outputs.code }}
       CHROMATIC_FC_URL: ${{ needs.chromatic-fc.outputs.build_url }}
@@ -83,7 +84,7 @@ jobs:
             raise SystemExit(f"Missing required environment variables: {', '.join(missing)}")
 
           today = date.today().isoformat()
-          channel = os.environ['SLACK_CHANNEL_ID']
+          channel = os.environ.get('TEST_SLACK_ID') or os.environ['SLACK_CHANNEL_ID']
           slack_token = os.environ['SLACK_TSDIFF_CHROMATIC_BOT_TOKEN']
 
           def fmt(code, url):
@@ -93,23 +94,29 @@ jobs:
                   return f"✅ | {url}"
               return f"⚠️ changes pending review | {url}"
 
-          message = "\n".join([
-              f"📸 Weekly Chromatic — {today}",
-              "",
+          body = "\n".join([
               f"Chromatic: {fmt(os.environ['CHROMATIC_CODE'], os.environ['CHROMATIC_URL'])}",
               f"Forced Colors: {fmt(os.environ['CHROMATIC_FC_CODE'], os.environ['CHROMATIC_FC_URL'])}",
           ])
 
-          req = urllib.request.Request(
-              'https://slack.com/api/chat.postMessage',
-              data=json.dumps({"channel": channel, "text": message}).encode(),
-              headers={
-                  'Authorization': f'Bearer {slack_token}',
-                  'Content-Type': 'application/json'
-              }
-          )
-          resp = json.loads(urllib.request.urlopen(req).read())
-          print("Slack response:", resp.get('ok'), resp.get('error', ''))
-          if not resp.get('ok'):
-              raise SystemExit(f"Slack error: {resp.get('error')}")
+          def post(text, thread_ts=None):
+              payload = {"channel": channel, "text": text, "unfurl_links": False, "unfurl_media": False}
+              if thread_ts:
+                  payload["thread_ts"] = thread_ts
+              req = urllib.request.Request(
+                  'https://slack.com/api/chat.postMessage',
+                  data=json.dumps(payload).encode(),
+                  headers={
+                      'Authorization': f'Bearer {slack_token}',
+                      'Content-Type': 'application/json'
+                  }
+              )
+              resp = json.loads(urllib.request.urlopen(req).read())
+              print("Slack response:", resp.get('ok'), resp.get('error', ''))
+              if not resp.get('ok'):
+                  raise SystemExit(f"Slack error: {resp.get('error')}")
+              return resp['message']['ts']
+
+          ts = post(f"📸 Weekly Chromatic — {today}")
+          post(f"📸 Weekly Chromatic — {today}\n\n{body}", thread_ts=ts)
           PYEOF
