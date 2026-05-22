@@ -66,7 +66,6 @@ jobs:
     env:
       SLACK_TSDIFF_CHROMATIC_BOT_TOKEN: ${{ secrets.SLACK_TSDIFF_CHROMATIC_BOT_TOKEN }}
       SLACK_CHANNEL_ID: ${{ secrets.SLACK_CHANNEL_ID }}
-      TEST_SLACK_ID: ${{ secrets.TEST_SLACK_ID }}
       CHROMATIC_URL: ${{ needs.chromatic.outputs.build_url }}
       CHROMATIC_CODE: ${{ needs.chromatic.outputs.code }}
       CHROMATIC_FC_URL: ${{ needs.chromatic-fc.outputs.build_url }}
@@ -84,7 +83,7 @@ jobs:
             raise SystemExit(f"Missing required environment variables: {', '.join(missing)}")
 
           today = date.today().isoformat()
-          channel = os.environ.get('TEST_SLACK_ID') or os.environ['SLACK_CHANNEL_ID']
+          channel = os.environ['SLACK_CHANNEL_ID']
           slack_token = os.environ['SLACK_TSDIFF_CHROMATIC_BOT_TOKEN']
 
           def fmt(code, url):

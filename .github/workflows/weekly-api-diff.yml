@@ -193,7 +193,10 @@ jobs:
           else:
             # Read the already-processed delta saved by the shell step
             delta_path = f"{workspace}/snapshots/deltas/{today}.txt"
-            model_input = open(delta_path).read() if os.path.exists(delta_path) else ""
+            model_input_full = open(delta_path).read() if os.path.exists(delta_path) else ""
+            TRUNCATE_LIMIT = 8000
+            truncated = len(model_input_full) > TRUNCATE_LIMIT
+            model_input = model_input_full[:TRUNCATE_LIMIT] if truncated else model_input_full
 
             # Extract classification rules from prompt.md (single source of truth)
             prompt_md = open(f"{workspace}/scripts/weekly-api-diff/prompt.md").read()
@@ -228,7 +231,8 @@ jobs:
               }
             )
             summary = json.loads(urllib.request.urlopen(req).read())['choices'][0]['message']['content']
-            body = f"{summary}\n\nWhat's new this week: {delta_url}\nFull diff vs release: {diff_url}\n\nReact ✅ if changes look expected, or 🚨 if something looks wrong."
+            truncation_note = "\n\n⚠️ Delta was large — summary may be incomplete. Check the full delta link below." if truncated else ""
+            body = f"{summary}{truncation_note}\n\nWhat's new this week: {delta_url}\nFull diff vs release: {diff_url}\n\nReact ✅ if changes look expected, or 🚨 if something looks wrong."
 
           ts = post(f"📊 Weekly API Diff — {today}")
           post(f"📊 Weekly API Diff — {today}\n\n{body}", thread_ts=ts)
