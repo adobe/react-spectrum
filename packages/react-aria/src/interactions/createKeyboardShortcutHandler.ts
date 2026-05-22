@@ -27,8 +27,7 @@ const MODIFIER_NAMES = new Set([
   'ctrl',
   'control',
   'meta',
-  'mod', // OS dependent - Cmd on Mac, Ctrl on Windows/Linux
-  'sel' // OS dependent - Alt on Mac, Ctrl on Windows/Linux
+  'mod' // OS dependent - Cmd on Mac, Ctrl on Windows/Linux
 ]);
 
 /** Canonical modifier order for stable keys (sorted, fixed order). */
@@ -44,8 +43,6 @@ export interface ParsedKeyboardShortcut {
    * form.
    */
   mod: boolean;
-  /** Platform secondary: Alt on Mac, Ctrl on Windows/Linux. */
-  sel: boolean;
   key: string;
 }
 
@@ -69,10 +66,6 @@ export function modifierSetFromParsed(parsed: ParsedKeyboardShortcut): Set<strin
   }
   if (parsed.mod) {
     set.add(isMac() ? 'Meta' : 'Ctrl');
-  }
-  if (parsed.sel) {
-    // Todo: I think there was a conflict or difference in behaviour in the original code based on this.
-    set.add(isMac() ? 'Alt' : 'Ctrl');
   }
   return set;
 }
@@ -118,15 +111,13 @@ export function parseKeyboardShortcut(spec: string): ParsedKeyboardShortcut {
           prev.meta = true;
         } else if (lower === 'mod') {
           prev.mod = true;
-        } else if (lower === 'sel') {
-          prev.sel = true;
         }
       } else {
         prev.key = part;
       }
       return prev;
     },
-    {shift: false, alt: false, ctrl: false, meta: false, mod: false, sel: false, key: ''}
+    {shift: false, alt: false, ctrl: false, meta: false, mod: false, key: ''}
   );
   if (parts.key === '') {
     throw new Error(

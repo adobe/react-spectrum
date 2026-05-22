@@ -36,6 +36,7 @@ import {getFocusableTreeWalker} from '../focus/FocusScope';
 import {getInteractionModality} from '../interactions/useFocusVisible';
 import {getItemElement, isNonContiguousSelectionModifier, useCollectionId} from './utils';
 import {isCtrlKeyPressed} from '../utils/keyboard';
+import {isMac} from '../utils/platform';
 import {isTabbable} from '../utils/isFocusable';
 import {mergeProps} from '../utils/mergeProps';
 import {MultipleSelectionManager} from 'react-stately/useMultipleSelectionState';
@@ -404,9 +405,9 @@ export function useSelectableCollection(
 
   let withShiftSel = (key, callback) => {
     return {
-      [key + '+Shift+Sel']: callback,
+      [isMac() ? key + '+Shift+Alt' : key + '+Shift+Ctrl']: callback,
       [key + '+Shift']: callback,
-      [key + '+Sel']: callback,
+      [isMac() ? key + '+Alt' : key + '+Ctrl']: callback,
       [key]: callback
     };
   };
@@ -421,7 +422,7 @@ export function useSelectableCollection(
       ...withShiftSel('End', end),
       ...withShiftSel('PageDown', pageDown),
       ...withShiftSel('PageUp', pageUp),
-      'a+Sel': aHandler,
+      [isMac() ? 'a+Alt' : 'a+Ctrl']: aHandler,
       Escape: escape,
       Tab: tab,
       'Tab+Shift': shiftTab
