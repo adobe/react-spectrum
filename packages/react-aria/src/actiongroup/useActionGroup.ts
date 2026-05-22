@@ -103,14 +103,12 @@ export function useActionGroup<T>(
         } else {
           focusManager.focusNext({wrap: true});
         }
-        return true;
       },
       ArrowDown: e => {
         if (!nodeContains(e.currentTarget, getEventTarget(e))) {
           return false;
         }
         focusManager.focusNext({wrap: true});
-        return true;
       },
       ArrowLeft: e => {
         if (!nodeContains(e.currentTarget, getEventTarget(e))) {
@@ -121,14 +119,12 @@ export function useActionGroup<T>(
         } else {
           focusManager.focusPrevious({wrap: true});
         }
-        return true;
       },
       ArrowUp: e => {
         if (!nodeContains(e.currentTarget, getEventTarget(e))) {
           return false;
         }
         focusManager.focusPrevious({wrap: true});
-        return true;
       }
     }
   });

@@ -183,7 +183,7 @@ export function useSelectableCollection(
         let itemProps = manager.getItemProps(key);
         if (item) {
           router.open(item, e, itemProps.href, itemProps.routerOptions);
-          return true;
+          return;
         }
 
         return false;
@@ -197,10 +197,10 @@ export function useSelectableCollection(
 
       if (e.shiftKey && manager.selectionMode === 'multiple') {
         manager.extendSelection(key);
-        return true;
+        return;
       } else if (selectOnFocus && !isNonContiguousSelectionModifier(e)) {
         manager.replaceSelection(key);
-        return true;
+        return;
       }
     }
     return false;
@@ -256,10 +256,10 @@ export function useSelectableCollection(
       if (firstKey != null) {
         if (isCtrlKeyPressed(e) && e.shiftKey && manager.selectionMode === 'multiple') {
           manager.extendSelection(firstKey);
-          return true;
+          return;
         } else if (selectOnFocus) {
           manager.replaceSelection(firstKey);
-          return true;
+          return;
         }
       }
     }
@@ -316,10 +316,10 @@ export function useSelectableCollection(
       if (lastKey != null) {
         if (isCtrlKeyPressed(e) && e.shiftKey && manager.selectionMode === 'multiple') {
           manager.extendSelection(lastKey);
-          return true;
+          return;
         } else if (selectOnFocus) {
           manager.replaceSelection(lastKey);
-          return true;
+          return;
         }
       }
     }
@@ -349,7 +349,7 @@ export function useSelectableCollection(
   let aHandler = () => {
     if (manager.selectionMode === 'multiple' && disallowSelectAll !== true) {
       manager.selectAll();
-      return true;
+      return;
     }
     return false;
   };
@@ -361,7 +361,7 @@ export function useSelectableCollection(
       manager.selectedKeys.size !== 0
     ) {
       manager.clearSelection();
-      return true;
+      return;
     }
     return false;
   };

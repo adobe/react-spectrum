@@ -171,7 +171,6 @@ const ActionBarInner = forwardRef(function ActionBarInner(
     shortcuts: {
       Escape: () => {
         onClearSelection?.();
-        return true;
       }
     }
   });

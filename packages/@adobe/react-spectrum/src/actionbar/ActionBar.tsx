@@ -115,7 +115,6 @@ function ActionBarInner<T>(props: ActionBarInnerProps<T>, ref: Ref<HTMLDivElemen
     shortcuts: {
       Escape: () => {
         onClearSelection();
-        return true;
       }
     }
   });

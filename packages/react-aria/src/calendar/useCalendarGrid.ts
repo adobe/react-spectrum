@@ -83,35 +83,27 @@ export function useCalendarGrid(
     shortcuts: {
       Enter: () => {
         state.selectFocusedDate();
-        return true;
       },
       ' ': () => {
         state.selectFocusedDate();
-        return true;
       },
       PageUp: () => {
         state.focusPreviousSection();
-        return true;
       },
       'Shift+PageUp': () => {
         state.focusPreviousSection(true);
-        return true;
       },
       PageDown: () => {
         state.focusNextSection();
-        return true;
       },
       'Shift+PageDown': () => {
         state.focusNextSection(true);
-        return true;
       },
       End: () => {
         state.focusSectionEnd();
-        return true;
       },
       Home: () => {
         state.focusSectionStart();
-        return true;
       },
       ArrowLeft: () => {
         if (direction === 'rtl') {
@@ -119,11 +111,9 @@ export function useCalendarGrid(
         } else {
           state.focusPreviousDay();
         }
-        return true;
       },
       ArrowUp: () => {
         state.focusPreviousRow();
-        return true;
       },
       ArrowRight: () => {
         if (direction === 'rtl') {
@@ -131,11 +121,9 @@ export function useCalendarGrid(
         } else {
           state.focusNextDay();
         }
-        return true;
       },
       ArrowDown: () => {
         state.focusNextRow();
-        return true;
       },
       Escape: () => {
         // Cancel the selection.

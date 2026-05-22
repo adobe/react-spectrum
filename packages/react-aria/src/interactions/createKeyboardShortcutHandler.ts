@@ -15,7 +15,10 @@ import {KeyboardEvent} from '@react-types/shared';
 
 export type KeyboardShortcutAction = (
   e: KeyboardEvent
-) => boolean | Partial<{shouldContinuePropagation?: boolean; shouldPreventDefault?: boolean}>;
+) =>
+  | void
+  | boolean
+  | Partial<{shouldContinuePropagation?: boolean; shouldPreventDefault?: boolean}>;
 
 /** Maps shortcut strings (e.g. `"Mod+s"`, `"Ctrl+Shift+a"`) to handlers. */
 export type KeyboardShortcutBindings = Record<string, KeyboardShortcutAction>;
@@ -200,7 +203,9 @@ export function createKeyboardShortcutHandler(
     let canonical = keyboardEventToCanonicalShortcut(e);
     let action = map.get(canonical);
     let result = action?.(e);
-    if (typeof result === 'boolean') {
+    if (result === undefined && action !== undefined) {
+      result = {shouldContinuePropagation: false, shouldPreventDefault: true};
+    } else if (typeof result === 'boolean') {
       result = {shouldContinuePropagation: !result, shouldPreventDefault: result};
     }
     if (result?.shouldPreventDefault) {

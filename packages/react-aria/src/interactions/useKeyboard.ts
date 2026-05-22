@@ -65,7 +65,7 @@ export function useKeyboard(props: KeyboardProps): KeyboardResult {
         e.continuePropagation();
         return;
       }
-      // implement shortcut handler on keyup
+      // implement shortcut handler on keyup, what should the map be called? or should it be another syntax on shortcuts?
       e.continuePropagation();
       props.onKeyUp?.(e);
     });
