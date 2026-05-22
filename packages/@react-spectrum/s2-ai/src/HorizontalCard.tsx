@@ -44,8 +44,6 @@ import {GridListItem, GridListItemProps} from 'react-aria-components/GridList';
 import {ImageContext} from '@react-spectrum/s2/Image';
 import {ImageCoordinator} from '@react-spectrum/s2/ImageCoordinator';
 import {inertValue} from 'react-aria/private/utils/inertValue';
-// @ts-ignore
-import intlMessages from '../intl/*.json';
 import {Link} from 'react-aria-components/Link';
 import {LinkButtonContext} from '@react-spectrum/s2/LinkButton';
 import {mergeStyles} from '@react-spectrum/s2/style/runtime';
@@ -56,7 +54,6 @@ import {Tag, TagGroup, TagList} from 'react-aria-components/TagGroup';
 import {TextContext} from '@react-spectrum/s2/Text';
 import {useDOMRef} from '@react-spectrum/s2/useDOMRef';
 import {useFocusableRef} from '@react-spectrum/s2/useDOMRef';
-import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useSpectrumContextProps} from '@react-spectrum/s2/useSpectrumContextProps';
 
 interface CardRenderProps {
