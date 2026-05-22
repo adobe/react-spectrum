@@ -12,9 +12,8 @@
 
 import {ActionButton} from '@react-spectrum/s2/ActionButton';
 import {ActionMenu} from '@react-spectrum/s2/ActionMenu';
+import {Asset as AssetComponent, AssetList} from '../src/AssetList';
 import {
-  Asset as AssetComponent,
-  AssetList,
   BasicHorizontalCard,
   HorizontalCard,
   CardPreview as HorizontalCardPreview
@@ -194,6 +193,16 @@ export const AIAssetList: Story = {
           slot="thumbnail"
           src={new URL('../../s2/stories/assets/placeholder.png', import.meta.url).toString()}
         />
+      </AssetComponent>
+      <AssetComponent aria-label="Echidna.pdf">
+        <Image
+          slot="thumbnail"
+          src={new URL('../../s2/stories/assets/placeholder.png', import.meta.url).toString()}
+        />
+        <Content>
+          <Text slot="title">Card title</Text>
+          <Text slot="description">Card description.</Text>
+        </Content>
       </AssetComponent>
     </AssetList>
   )

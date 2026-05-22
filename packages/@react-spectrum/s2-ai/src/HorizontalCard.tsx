@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Adobe. All rights reserved.
+ * Copyright 2026 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -11,49 +11,35 @@
  */
 
 import {ActionMenuContext} from '@react-spectrum/s2/ActionMenu';
+import {ButtonContext} from '@react-spectrum/s2/Button';
+import {Checkbox} from '@react-spectrum/s2/Checkbox';
 import {
-  baseColor,
   color,
   focusRing,
   lightDark,
   space,
   style
 } from '@react-spectrum/s2/style' with {type: 'macro'};
-import {Button} from 'react-aria-components/Button';
-import {ButtonContext} from '@react-spectrum/s2/Button';
-import {Checkbox} from '@react-spectrum/s2/Checkbox';
 import {composeRenderProps} from 'react-aria-components/composeRenderProps';
 import {ContentContext} from '@react-spectrum/s2/Content';
 import {ContextValue, DEFAULT_SLOT, Provider} from 'react-aria-components/slots';
-import {
-  controlSize,
-  getAllowedOverrides
-} from '@react-spectrum/s2/style-utils' with {type: 'macro'};
-import {createContext, forwardRef, ReactNode, useContext, useRef} from 'react';
-import CrossIcon from '@react-spectrum/s2/ui-icons/Cross';
-import {
-  DOMProps,
-  DOMRef,
-  DOMRefValue,
-  FocusableRefValue,
-  GlobalDOMAttributes
-} from '@react-types/shared';
+import {createContext, forwardRef, ReactNode, useContext} from 'react';
+import {DOMProps, DOMRef, DOMRefValue, GlobalDOMAttributes} from '@react-types/shared';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {FooterContext} from '@react-spectrum/s2/Footer';
+import {getAllowedOverrides} from '@react-spectrum/s2/style-utils' with {type: 'macro'};
 import {GridListItem, GridListItemProps} from 'react-aria-components/GridList';
 import {ImageContext} from '@react-spectrum/s2/Image';
 import {ImageCoordinator} from '@react-spectrum/s2/ImageCoordinator';
 import {inertValue} from 'react-aria/private/utils/inertValue';
 import {Link} from 'react-aria-components/Link';
 import {LinkButtonContext} from '@react-spectrum/s2/LinkButton';
-import {mergeStyles} from '@react-spectrum/s2/style/runtime';
+import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
 import {pressScale} from '@react-spectrum/s2/pressScale';
 import {SkeletonContext, useIsSkeleton} from '@react-spectrum/s2/Skeleton';
 import type {StyleProps, UnsafeStyles} from '@react-spectrum/s2/style-utils';
-import {Tag, TagGroup, TagList} from 'react-aria-components/TagGroup';
 import {TextContext} from '@react-spectrum/s2/Text';
 import {useDOMRef} from '@react-spectrum/s2/useDOMRef';
-import {useFocusableRef} from '@react-spectrum/s2/useDOMRef';
 import {useSpectrumContextProps} from '@react-spectrum/s2/useSpectrumContextProps';
 
 interface CardRenderProps {
@@ -191,7 +177,7 @@ let card = style(
       },
       isBasic: 68,
       isCardView: 'full',
-      [onlyPreview]: 'auto'
+      [onlyPreview]: 68
     },
     width: {
       default: 'full',
@@ -263,6 +249,20 @@ let card = style(
       // Focus ring moves to preview when quiet.
       variant: {
         quiet: 'none'
+      }
+    },
+    '--basic-thumb-size': {
+      type: 'height',
+      value: {
+        default: 68,
+        size: {
+          XS: 24,
+          S: 26,
+          M: 32,
+          L: 36,
+          XL: 40
+        },
+        [onlyPreview]: 'full'
       }
     }
   },
@@ -822,15 +822,7 @@ export const BasicHorizontalCard = forwardRef(function BasicHorizontalCard(
                       alignSelf: 'center',
                       pointerEvents: 'none',
                       userSelect: 'none',
-                      size: {
-                        size: {
-                          XS: 24,
-                          S: 26,
-                          M: 32,
-                          L: 36,
-                          XL: 40
-                        }
-                      },
+                      size: '--basic-thumb-size',
                       borderRadius: {
                         default: 'default',
                         size: {
@@ -870,111 +862,5 @@ export const BasicHorizontalCard = forwardRef(function BasicHorizontalCard(
         </Provider>
       ))}
     </Card>
-  );
-});
-
-const hoverBackground = {
-  default: 'gray-200',
-  isStaticColor: 'transparent-overlay-200'
-} as const;
-
-const styles = style<{
-  isDisabled: boolean;
-  isHovered: boolean;
-  isFocusVisible: boolean;
-  isPressed: boolean;
-  size: 'S' | 'M' | 'L' | 'XL';
-}>(
-  {
-    ...focusRing(),
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    size: controlSize(),
-    flexShrink: 0,
-    borderRadius: 'full',
-    padding: 0,
-    borderStyle: 'none',
-    transition: 'default',
-    backgroundColor: {
-      default: 'gray-200',
-      isHovered: hoverBackground,
-      isFocusVisible: hoverBackground,
-      isPressed: hoverBackground
-    },
-    '--iconPrimary': {
-      type: 'color',
-      value: {
-        default: baseColor('neutral'),
-        isDisabled: 'disabled',
-        forcedColors: {
-          default: 'ButtonText',
-          isDisabled: 'GrayText'
-        }
-      }
-    },
-    outlineColor: {
-      default: 'focus-ring',
-      forcedColors: 'Highlight'
-    },
-    disableTapHighlight: true
-  },
-  getAllowedOverrides()
-);
-
-const CloseButton = function CloseButton(props) {
-  let ref = useRef<FocusableRefValue<HTMLButtonElement>>(null);
-  let domRef = useFocusableRef(ref);
-  return (
-    <Button
-      {...props}
-      ref={domRef}
-      slot="remove"
-      style={pressScale(domRef, {})}
-      className={renderProps => styles({...renderProps, size: props.size || 'M'}, props.styles)}>
-      <CrossIcon
-        size={({XS: 'S', S: 'M', M: 'XL', L: 'XXL', XL: 'XXXL'} as const)[props.size || 'M']}
-      />
-    </Button>
-  );
-};
-
-let assetListStyles = style({}, getAllowedOverrides());
-
-export const AssetList = forwardRef(function AssetList(props: any, ref: DOMRef<HTMLDivElement>) {
-  let domRef = useDOMRef(ref);
-  return (
-    <TagGroup {...props} className={assetListStyles(props.styles)} ref={domRef}>
-      <TagList
-        className={style({
-          display: 'flex',
-          flexDirection: 'row',
-          gap: 16,
-          flexWrap: 'wrap',
-          alignItems: 'center',
-          width: 'full'
-        })}>
-        {props.children}
-      </TagList>
-    </TagGroup>
-  );
-});
-
-export const Asset = forwardRef(function Asset(props: CardProps, ref: DOMRef<HTMLDivElement>) {
-  let domRef = useDOMRef(ref);
-  return (
-    <Tag ref={domRef} className={style({flexShrink: 0, flexGrow: 0, position: 'relative'})}>
-      <BasicHorizontalCard {...props}>{props.children}</BasicHorizontalCard>
-      {/** Definitely not a close button, though looks like one. */}
-      <div
-        className={style({
-          position: 'absolute',
-          top: 0,
-          insetEnd: 0,
-          transform: 'translate(50%, -50%)'
-        })}>
-        <CloseButton size="XS" />
-      </div>
-    </Tag>
   );
 });
