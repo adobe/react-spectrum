@@ -688,7 +688,15 @@ function CellFocusRing() {
   return (
     <div
       role="presentation"
-      className={style({...cellFocus, position: 'absolute', inset: 0, pointerEvents: 'none'})({
+      className={style({
+        ...cellFocus,
+        position: 'absolute',
+        top: 'var(--topFocusRing)',
+        bottom: 0,
+        insetStart: 0,
+        insetEnd: 0,
+        pointerEvents: 'none'
+      })({
         isFocusVisible: true
       })}
     />
@@ -2022,16 +2030,7 @@ const row = style<
     }
   },
   borderTopWidth: 0,
-  borderBottomWidth: {
-    selectionStyle: {
-      highlight: {
-        default: 1,
-        isSelected: 0,
-        isNextSelected: 0
-      },
-      checkbox: 1
-    }
-  },
+  borderBottomWidth: 1,
   borderStartWidth: 0,
   borderEndWidth: 0,
   borderStyle: 'solid',
@@ -2039,7 +2038,8 @@ const row = style<
     selectionStyle: {
       highlight: {
         default: 'gray-300',
-        isSelected: 'transparent'
+        isSelected: 'transparent',
+        isNextSelected: 'transparent'
       },
       checkbox: 'gray-300'
     }
@@ -2081,22 +2081,34 @@ const row = style<
   },
   isolation: 'isolate',
   forcedColorAdjust: 'none',
-  '--topPosition': {
+  '--topFocusRing': {
     type: 'top',
     value: {
       default: '[-1px]',
       isFirstItem: 0
     }
   },
+  '--topHighlightBorder': {
+    type: 'top',
+    value: {
+      default: 0,
+      isSelected: '[-1px]',
+      // Don't overlap focus ring of row above.
+      isPrevSelected: 0,
+      isFirstItem: 0,
+      forcedColors: 0
+    }
+  },
   '--bottomPosition': {
     type: 'bottom',
     value: {
-      default: '[-1px]',
       selectionStyle: {
-        highlight: {
+        checkbox: {
           default: '[-1px]',
-          isSelected: 0
-        }
+          // Avoid the next row's selected background covering this row's focus ring.
+          isNextSelected: 0
+        },
+        highlight: '[-1px]'
       }
     }
   }
@@ -2107,12 +2119,11 @@ const row = style<
 const highlightSelectionBorder = css(
   `&:before {
     content: "";
-    width: 100%;
-    height: 100%;
+    top: var(--topHighlightBorder);
+    bottom: -1px;
+    inset-inline: 0;
     position: absolute;
-    inset: 0;
     z-index: 3;
-    box-sizing: border-box;
     border-style: solid;
     border-color: var(--borderColor);
     border-top-width: var(--borderTopWidth);
@@ -2131,7 +2142,7 @@ const highlightSelectionBorder = css(
 const focusIndicator = css(
   `&:after {
     content: "";
-    top: var(--topPosition);
+    top: var(--topFocusRing);
     bottom: var(--bottomPosition);
     z-index: 3;
     inset-inline-start: 0;
