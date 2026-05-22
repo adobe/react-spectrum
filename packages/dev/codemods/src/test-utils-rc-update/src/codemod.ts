@@ -137,7 +137,11 @@ export default function transformer(file: FileInfo, api: API): string {
       }
       let obj = call.callee.object;
       let methodName = call.callee.property?.type === 'Identifier' ? call.callee.property.name : '';
-      if (obj?.type === 'Identifier' && testerVarNames.has(obj.name) && TESTER_RETURNING_METHODS.has(methodName)) {
+      if (
+        obj?.type === 'Identifier' &&
+        testerVarNames.has(obj.name) &&
+        TESTER_RETURNING_METHODS.has(methodName)
+      ) {
         testerVarNames.add(id.name);
         propagating = true;
       }
@@ -147,7 +151,11 @@ export default function transformer(file: FileInfo, api: API): string {
   let didChange = false;
 
   function renamePropInCallee(callee: any): boolean {
-    if (!isMemberOf(callee) || callee.object?.type !== 'Identifier' || !testerVarNames.has(callee.object.name)) {
+    if (
+      !isMemberOf(callee) ||
+      callee.object?.type !== 'Identifier' ||
+      !testerVarNames.has(callee.object.name)
+    ) {
       return false;
     }
     let propName: string = callee.property?.type === 'Identifier' ? callee.property.name : '';
@@ -231,7 +239,11 @@ export default function transformer(file: FileInfo, api: API): string {
   // Pass 3: Rename param keys inside find* calls — {optionIndexOrText: x} → {indexOrText: x}
   function renameFindParamKey(callPath: any): void {
     let callee = callPath.node.callee as any;
-    if (!isMemberOf(callee) || callee.object?.type !== 'Identifier' || !testerVarNames.has(callee.object.name)) {
+    if (
+      !isMemberOf(callee) ||
+      callee.object?.type !== 'Identifier' ||
+      !testerVarNames.has(callee.object.name)
+    ) {
       return;
     }
     let methodName: string = callee.property?.type === 'Identifier' ? callee.property.name : '';
@@ -244,7 +256,11 @@ export default function transformer(file: FileInfo, api: API): string {
       return;
     }
     for (let prop of firstArg.properties) {
-      if (prop.type === 'ObjectProperty' && prop.key?.type === 'Identifier' && prop.key.name === oldKey) {
+      if (
+        prop.type === 'ObjectProperty' &&
+        prop.key?.type === 'Identifier' &&
+        prop.key.name === oldKey
+      ) {
         prop.key = j.identifier('indexOrText');
         didChange = true;
       }
