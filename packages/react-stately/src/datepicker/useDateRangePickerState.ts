@@ -131,7 +131,12 @@ export function useDateRangePickerState<T extends DateValue = DateValue>(
 
   let value = controlledValue || placeholderValue;
 
-  let setValue = (newValue: RangeValue<DateValue | null> | null) => {
+  // Partial-state hoisted before setValue so the wrapper can reference the setters.
+  // Lifted from the inner start/end DateFields via privateSetIsValuePartialProp.
+  let [startIsValuePartial, setStartIsValuePartial] = useState(false);
+  let [endIsValuePartial, setEndIsValuePartial] = useState(false);
+
+  let setValueInternal = (newValue: RangeValue<DateValue | null> | null) => {
     value = newValue || {start: null, end: null};
     setPlaceholderValue(value);
     if (isCompleteRange(value)) {
@@ -139,6 +144,14 @@ export function useDateRangePickerState<T extends DateValue = DateValue>(
     } else {
       setControlledValue(null);
     }
+  };
+
+  // Wrap the setter so any committed range (complete or null) always resets both partial flags,
+  // preventing stale isValuePartial state when a consumer calls state.setValue() directly.
+  let setValue = (newValue: RangeValue<DateValue | null> | null) => {
+    setStartIsValuePartial(false);
+    setEndIsValuePartial(false);
+    setValueInternal(newValue);
   };
 
   let v = value?.start || value?.end || props.placeholderValue || null;
@@ -229,11 +242,6 @@ export function useDateRangePickerState<T extends DateValue = DateValue>(
   );
 
   let {minValue, maxValue, isDateUnavailable} = props;
-
-  // Partial-state lifted up from the inner start/end DateFields via privateSetIsValuePartialProp.
-  // See useDateField.ts and useDatePickerState.ts for the matching pattern.
-  let [startIsValuePartial, setStartIsValuePartial] = useState(false);
-  let [endIsValuePartial, setEndIsValuePartial] = useState(false);
 
   let builtinValidation = useMemo(
     () =>

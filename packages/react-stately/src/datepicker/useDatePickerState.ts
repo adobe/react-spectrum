@@ -99,7 +99,7 @@ export function useDatePickerState<T extends DateValue = DateValue>(
   props: DatePickerStateOptions<T>
 ): DatePickerState {
   let overlayState = useOverlayTriggerState(props);
-  let [value, setValue] = useControlledState<DateValue | null, MappedDateValue<T> | null>(
+  let [value, setValueInternal] = useControlledState<DateValue | null, MappedDateValue<T> | null>(
     props.value,
     props.defaultValue || null,
     props.onChange
@@ -154,6 +154,13 @@ export function useDatePickerState<T extends DateValue = DateValue>(
   // editable segments filled, so the parent's validation pipeline can surface the error.
   let [isValuePartial, setIsValuePartial] = useState(false);
 
+  // Wrap the raw setter so any committed value (complete or null) always resets the partial flag.
+  // This prevents stale isValuePartial state when a consumer calls state.setValue() directly.
+  let setValue = (newValue: DateValue | null) => {
+    setIsValuePartial(false);
+    setValueInternal(newValue);
+  };
+
   let builtinValidation = useMemo(
     () =>
       getValidationResult(
@@ -178,7 +185,9 @@ export function useDatePickerState<T extends DateValue = DateValue>(
     props.validationState || (isValueInvalid ? 'invalid' : null);
 
   let commitValue = (date: DateValue, time: TimeValue) => {
-    setValue('timeZone' in time ? time.set(toCalendarDate(date)) : toCalendarDateTime(date, time));
+    setValue(
+      'timeZone' in time ? time.set(toCalendarDate(date)) : toCalendarDateTime(date, time)
+    );
     setSelectedDate(null);
     setSelectedTime(null);
     validation.commitValidation();

@@ -53,6 +53,10 @@ export function getValidationResult(
   options: FormatterOptions,
   isValuePartial: boolean = false
 ): ValidationResult {
+  // A partial value blocks submission (isValuePartial -> invalid + valueMissing). Constraint
+  // errors are evaluated against the value as usual, so a partial value shows the same descriptive
+  // messages a complete invalid value would (e.g. "Value must be … or later."). Only when a
+  // partial value violates no constraint does it fall back to the generic incomplete message.
   let rangeOverflow = value != null && maxValue != null && value.compare(maxValue) > 0;
   let rangeUnderflow = value != null && minValue != null && value.compare(minValue) < 0;
   let isUnavailable = (value != null && isDateUnavailable?.(value)) || false;
@@ -67,10 +71,6 @@ export function getValidationResult(
     let formatter = new LocalizedStringFormatter(locale, strings);
     let dateFormatter = new DateFormatter(locale, getFormatOptions({}, options));
     let timeZone = dateFormatter.resolvedOptions().timeZone;
-
-    if (isValuePartial) {
-      errors.push(formatter.format('incompleteValue'));
-    }
 
     if (rangeUnderflow && minValue != null) {
       errors.push(
@@ -90,6 +90,10 @@ export function getValidationResult(
 
     if (isUnavailable) {
       errors.push(formatter.format('unavailableDate'));
+    }
+
+    if (isValuePartial && errors.length === 0) {
+      errors.push(formatter.format('incompleteValue'));
     }
   }
 
