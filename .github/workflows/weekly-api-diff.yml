@@ -136,7 +136,6 @@ jobs:
         env:
           SLACK_TSDIFF_CHROMATIC_BOT_TOKEN: ${{ secrets.SLACK_TSDIFF_CHROMATIC_BOT_TOKEN }}
           SLACK_CHANNEL_ID: ${{ secrets.SLACK_CHANNEL_ID }}
-          TEST_SLACK_ID: ${{ secrets.TEST_SLACK_ID }}
           GITHUB_TOKEN: ${{ github.token }}
         run: |
           python3 << 'PYEOF'
@@ -148,7 +147,7 @@ jobs:
             raise SystemExit(f"Missing required environment variables: {', '.join(missing)}")
 
           today = os.environ['TODAY']
-          channel = os.environ.get('TEST_SLACK_ID') or os.environ['SLACK_CHANNEL_ID']
+          channel = os.environ['SLACK_CHANNEL_ID']
           snapshots_repo = os.environ['SNAPSHOTS_REPO']
           slack_token = os.environ['SLACK_TSDIFF_CHROMATIC_BOT_TOKEN']
           github_token = os.environ['GITHUB_TOKEN']
