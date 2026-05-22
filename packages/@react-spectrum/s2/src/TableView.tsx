@@ -1913,7 +1913,12 @@ const rowTextColor = {
 
 const row = style<
   RowRenderProps &
-    S2TableProps & {isInFooter?: boolean; isNextSelected?: boolean; isPrevSelected?: boolean}
+    S2TableProps & {
+      isInFooter?: boolean;
+      isNextSelected?: boolean;
+      isPrevSelected?: boolean;
+      isFirstItem?: boolean;
+    }
 >({
   height: 'full',
   position: 'relative',
