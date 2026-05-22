@@ -170,18 +170,14 @@ function setupGlobalFocusEvents(element?: HTMLElement | null) {
   // a getter-only accessor — e.g. when @testing-library/user-event's setup()
   // has instrumented it. Plain assignment throws in that case.
   let focus = windowObject.HTMLElement.prototype.focus;
-  try {
-    Object.defineProperty(windowObject.HTMLElement.prototype, 'focus', {
-      configurable: true,
-      writable: true,
-      value: function () {
-        hasEventBeforeFocus = true;
-        focus.apply(this, arguments as unknown as [options?: FocusOptions | undefined]);
-      }
-    });
-  } catch {
-    // Non-configurable accessor: can't wrap. Other listeners still cover most cases.
-  }
+  Reflect.defineProperty(windowObject.HTMLElement.prototype, 'focus', {
+    configurable: true,
+    writable: true,
+    value: function () {
+      hasEventBeforeFocus = true;
+      focus.apply(this, arguments as unknown as [options?: FocusOptions | undefined]);
+    }
+  });
 
   documentObject.addEventListener('keydown', handleKeyboardEvent, true);
   documentObject.addEventListener('keyup', handleKeyboardEvent, true);
@@ -223,15 +219,11 @@ const tearDownWindowFocusTracking = (element, loadListener?: () => void) => {
   if (!hasSetupGlobalListeners.has(windowObject)) {
     return;
   }
-  try {
-    Object.defineProperty(windowObject.HTMLElement.prototype, 'focus', {
-      configurable: true,
-      writable: true,
-      value: hasSetupGlobalListeners.get(windowObject)!.focus
-    });
-  } catch {
-    // See setupGlobalFocusEvents.
-  }
+  Reflect.defineProperty(windowObject.HTMLElement.prototype, 'focus', {
+    configurable: true,
+    writable: true,
+    value: hasSetupGlobalListeners.get(windowObject)!.focus
+  });
 
   documentObject.removeEventListener('keydown', handleKeyboardEvent, true);
   documentObject.removeEventListener('keyup', handleKeyboardEvent, true);
