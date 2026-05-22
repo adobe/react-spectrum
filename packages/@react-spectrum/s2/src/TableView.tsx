@@ -2016,11 +2016,14 @@ const row = style<
       }
     }
   },
-  // When checkbox selection, render the gray divider between rows as a border
   borderTopWidth: 0,
   borderBottomWidth: {
     selectionStyle: {
-      highlight: 0,
+      highlight: {
+        default: 1,
+        isSelected: 0,
+        isNextSelected: 0
+      },
       checkbox: 1
     }
   },
@@ -2029,7 +2032,10 @@ const row = style<
   borderStyle: 'solid',
   borderColor: {
     selectionStyle: {
-      highlight: 'transparent',
+      highlight: {
+        default: 'gray-300',
+        isSelected: 'transparent'
+      },
       checkbox: 'gray-300'
     }
   },
@@ -2057,20 +2063,11 @@ const row = style<
       isSelected: '--borderColorBlue'
     }
   },
-  // When highlight selection, render gray dividers as box shadow
-  boxShadow: {
-    selectionStyle: {
-      highlight: {
-        default: '[inset 0 -1px 0px var(--borderColorGray)]',
-        isNextSelected: '[inset 0 0 0 var(--borderColorGray)]'
-        // TODO: Determine if we want to support gray dividers between selected grouped rows
-        // isSelected: {
-        //   isNextSelected: '[inset 0 -1px 0px var(--borderColorGray)]'
-        // }
-      }
-    },
-    forcedColors: {
-      isFocusVisible: '[inset 0 0 0 2px Highlight]'
+  '--focusRingColor': {
+    type: 'outlineColor',
+    value: {
+      default: 'focus-ring',
+      forcedColors: 'Highlight'
     }
   },
   fontWeight: {
@@ -2078,11 +2075,30 @@ const row = style<
     isInFooter: 'bold'
   },
   isolation: 'isolate',
-  forcedColorAdjust: 'none'
+  forcedColorAdjust: 'none',
+  '--topPosition': {
+    type: 'top',
+    value: {
+      default: '[-1px]',
+      isFirstItem: 0
+    }
+  },
+  '--bottomPosition': {
+    type: 'bottom',
+    value: {
+      default: '[-1px]',
+      selectionStyle: {
+        highlight: {
+          default: '[-1px]',
+          isSelected: 0
+        }
+      }
+    }
+  }
 });
 
 // Sticky cells (the drag cell, and the checkbox cell when present) get an inline z-index=2 applied by the virtualizer's layout
-// To ensure that the highlight selection border is painted above the stick cells, set z-index to 3
+// To ensure that the highlight selection border is painted above the sticky cells, set z-index to 3
 const highlightSelectionBorder = css(
   `&:before {
     content: "";
@@ -2110,15 +2126,15 @@ const highlightSelectionBorder = css(
 const focusIndicator = css(
   `&:after {
     content: "";
-    width: 100%;
-    height: 100%;
-    top: 0;
-    z-index: 2;
+    top: var(--topPosition);
+    bottom: var(--bottomPosition);
+    z-index: 3;
     inset-inline-start: 0;
+    inset-inline-end: 0;
     border-radius: 5px;
     position: absolute;
     outline-style: solid;
-    outline-color: var(--borderColorBlue);
+    outline-color: var(--focusRingColor);
     outline-width: 2px;
     outline-offset: -2px;
     pointer-events: none;
@@ -2174,6 +2190,7 @@ export const Row = /*#__PURE__*/ (forwardRef as forwardRefType)(function Row<T>(
           ...tableVisualOptions,
           selectionStyle,
           isInFooter,
+          isFirstItem: isFirstItem(renderProps.id, renderProps.state),
           isNextSelected: isNextSelected(renderProps.id, renderProps.state),
           isPrevSelected: isPrevSelected(renderProps.id, renderProps.state)
         }) +
@@ -2253,4 +2270,11 @@ export function isPrevSelected(id: Key | undefined, state: TableState<unknown>) 
   }
   let keyBefore = state.collection.getKeyBefore(id);
   return keyBefore != null && state.selectionManager.isSelected(keyBefore);
+}
+
+function isFirstItem(id: Key | undefined, state: TableState<unknown>) {
+  if (id == null || !state) {
+    return false;
+  }
+  return state.collection.getFirstKey() === id;
 }
