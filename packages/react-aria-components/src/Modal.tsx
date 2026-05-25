@@ -11,8 +11,6 @@
  */
 
 import {AriaModalOverlayProps, useModalOverlay} from 'react-aria/useModalOverlay';
-import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
-import {willOpenKeyboard} from 'react-aria/private/utils/keyboard';
 import {
   ClassNameOrFunction,
   ContextValue,
@@ -26,6 +24,7 @@ import {
 import {DismissButton, Overlay} from 'react-aria/Overlay';
 import {DOMAttributes, forwardRefType, GlobalDOMAttributes, RefObject} from '@react-types/shared';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
+import {getActiveElement} from 'react-aria/private/utils/shadowdom/DOMFunctions';
 import {isScrollable} from 'react-aria/private/utils/isScrollable';
 import {mergeProps} from 'react-aria/mergeProps';
 import {mergeRefs} from 'react-aria/mergeRefs';
@@ -46,10 +45,11 @@ import React, {
 } from 'react';
 import {useEnterAnimation, useExitAnimation} from 'react-aria/private/utils/animation';
 import {useIsSSR} from 'react-aria/SSRProvider';
+import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
 import {useObjectRef} from 'react-aria/useObjectRef';
 import {useViewportSize} from 'react-aria/private/utils/useViewportSize';
-import {getActiveElement} from 'react-aria/private/utils/shadowdom/DOMFunctions';
 import {useVisuallyHidden} from 'react-aria/VisuallyHidden';
+import {willOpenKeyboard} from 'react-aria/private/utils/keyboard';
 
 export interface ModalOverlayProps
   extends
