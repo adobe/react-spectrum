@@ -35,9 +35,6 @@ let restore;
  * restores it on unmount. Also ensures that content does not
  * shift due to the scrollbars disappearing.
  */
-// TODO(Docs): Fixed outdated documentation of IOS Safari scroll prevention.
-// TODO(Docs): Fixed crash when attempting to override focus in test scenarios.
-// TODO(Docs): Fixed platform detection causing IOS Safari prevention to run in other engines.
 export function usePreventScroll(options: PreventScrollOptions = {}): void {
   let {isDisabled} = options;
 
