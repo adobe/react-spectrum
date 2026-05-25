@@ -11,11 +11,10 @@
  */
 
 import {chain} from '../utils/chain';
-
 import {getActiveElement, getEventTarget} from '../utils/shadowdom/DOMFunctions';
 import {getNonce} from '../utils/getNonce';
 import {getScrollParent} from '../utils/getScrollParent';
-import {isIOS} from '../utils/platform';
+import {isIOS, isWebKit} from '../utils/platform';
 import {isScrollable} from '../utils/isScrollable';
 import {useLayoutEffect} from '../utils/useLayoutEffect';
 import {willOpenKeyboard} from '../utils/keyboard';
@@ -36,6 +35,9 @@ let restore;
  * restores it on unmount. Also ensures that content does not
  * shift due to the scrollbars disappearing.
  */
+// TODO(Docs): Fixed outdated documentation of IOS Safari scroll prevention.
+// TODO(Docs): Fixed crash when attempting to override focus in test scenarios.
+// TODO(Docs): Fixed platform detection causing IOS Safari prevention to run in other engines.
 export function usePreventScroll(options: PreventScrollOptions = {}): void {
   let {isDisabled} = options;
 
@@ -46,7 +48,7 @@ export function usePreventScroll(options: PreventScrollOptions = {}): void {
 
     preventScrollCount++;
     if (preventScrollCount === 1) {
-      if (isIOS()) {
+      if (isIOS() && isWebKit()) {
         restore = preventScrollMobileSafari();
       } else {
         restore = preventScrollStandard();
@@ -197,18 +199,22 @@ function preventScrollMobileSafari() {
 
   // Override programmatic focus to scroll into view without scrolling the whole page.
   let focus = HTMLElement.prototype.focus;
-  HTMLElement.prototype.focus = function (opts) {
-    // Track whether the keyboard was already visible before.
-    let activeElement = getActiveElement();
-    let wasKeyboardVisible = activeElement != null && willOpenKeyboard(activeElement);
+  Reflect.defineProperty(HTMLElement.prototype, 'focus', {
+    configurable: true,
+    writable: true,
+    value: function (opts?: FocusOptions) {
+      // Track whether the keyboard was already visible before.
+      let activeElement = getActiveElement();
+      let wasKeyboardVisible = activeElement != null && willOpenKeyboard(activeElement);
 
-    // Focus the element without scrolling the page.
-    focus.call(this, {...opts, preventScroll: true});
+      // Focus the element without scrolling the page.
+      focus.call(this, {...opts, preventScroll: true});
 
-    if (!opts || !opts.preventScroll) {
-      scrollIntoViewWhenReady(this, wasKeyboardVisible);
+      if (!opts || !opts.preventScroll) {
+        scrollIntoViewWhenReady(this, wasKeyboardVisible);
+      }
     }
-  };
+  });
 
   let removeEvents = chain(
     addEvent(document, 'touchstart', onTouchStart, {passive: false, capture: true}),
@@ -220,7 +226,11 @@ function preventScrollMobileSafari() {
     restoreOverflow();
     removeEvents();
     style.remove();
-    HTMLElement.prototype.focus = focus;
+    Reflect.defineProperty(HTMLElement.prototype, 'focus', {
+      configurable: true,
+      writable: true,
+      value: focus
+    });
   };
 }
 

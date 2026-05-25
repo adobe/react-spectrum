@@ -11,7 +11,8 @@
  */
 
 import {AriaModalOverlayProps, useModalOverlay} from 'react-aria/useModalOverlay';
-
+import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
+import {willOpenKeyboard} from 'react-aria/private/utils/keyboard';
 import {
   ClassNameOrFunction,
   ContextValue,
@@ -34,11 +35,21 @@ import {
   useOverlayTriggerState
 } from 'react-stately/useOverlayTriggerState';
 import {OverlayTriggerStateContext} from './Dialog';
-import React, {createContext, ForwardedRef, forwardRef, useContext, useMemo, useRef} from 'react';
+import React, {
+  createContext,
+  ForwardedRef,
+  forwardRef,
+  useContext,
+  useMemo,
+  useRef,
+  useState
+} from 'react';
 import {useEnterAnimation, useExitAnimation} from 'react-aria/private/utils/animation';
 import {useIsSSR} from 'react-aria/SSRProvider';
 import {useObjectRef} from 'react-aria/useObjectRef';
 import {useViewportSize} from 'react-aria/private/utils/useViewportSize';
+import {getActiveElement} from 'react-aria/private/utils/shadowdom/DOMFunctions';
+import {useVisuallyHidden} from 'react-aria/VisuallyHidden';
 
 export interface ModalOverlayProps
   extends
@@ -300,11 +311,12 @@ interface ModalContentProps
 
 function ModalContent(props: ModalContentProps) {
   let {modalProps, modalRef, isExiting, isDismissable} = useContext(InternalModalContext)!;
+  let [isOpen, setOpen] = useState(false);
   let state = useContext(OverlayTriggerStateContext)!;
   let mergedRefs = useMemo(() => mergeRefs(props.modalRef, modalRef), [props.modalRef, modalRef]);
 
   let ref = useObjectRef(mergedRefs);
-  let entering = useEnterAnimation(ref);
+  let entering = useEnterAnimation(ref, isOpen);
   let renderProps = useRenderProps({
     ...props,
     defaultClassName: 'react-aria-Modal',
@@ -315,15 +327,40 @@ function ModalContent(props: ModalContentProps) {
     }
   });
 
+  // Hide the modal initially, since an auto-focused input may cause a viewport resize in the next frame.
+  // If so, delay the reveal by another frame to avoid layout shift when the viewport settles.
+  useLayoutEffect(() => {
+    let frame: number, frame2: number;
+
+    frame = requestAnimationFrame(() => {
+      let activeElement = getActiveElement();
+      if (activeElement && willOpenKeyboard(activeElement)) {
+        frame2 = requestAnimationFrame(() => setOpen(true));
+      } else {
+        setOpen(true);
+      }
+    });
+
+    return () => {
+      cancelAnimationFrame(frame);
+      cancelAnimationFrame(frame2);
+    };
+  }, []);
+
+  let {visuallyHiddenProps} = useVisuallyHidden();
+  let contentStyle = isOpen ? {display: 'contents'} : visuallyHiddenProps.style;
+
   return (
-    <dom.div
-      {...mergeProps(filterDOMProps(props, {global: true}), modalProps)}
-      {...renderProps}
-      ref={ref}
-      data-entering={entering || undefined}
-      data-exiting={isExiting || undefined}>
-      {isDismissable && <DismissButton onDismiss={state.close} />}
-      {renderProps.children}
+    <dom.div style={contentStyle}>
+      <dom.div
+        {...mergeProps(filterDOMProps(props, {global: true}), modalProps)}
+        {...renderProps}
+        ref={ref}
+        data-entering={entering || undefined}
+        data-exiting={isExiting || undefined}>
+        {isDismissable && <DismissButton onDismiss={state.close} />}
+        {renderProps.children}
+      </dom.div>
     </dom.div>
   );
 }
