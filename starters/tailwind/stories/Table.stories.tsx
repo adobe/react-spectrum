@@ -1,7 +1,6 @@
 import {type Meta} from '@storybook/react';
 import React, {useMemo, useState} from 'react';
-import {TableBody} from 'react-aria-components/Table';
-import {Cell, Column, Row, Table, TableHeader} from '../src/Table';
+import {Cell, Column, Row, Table, TableBody, TableHeader} from '../src/Table';
 
 const meta: Meta<typeof Table> = {
   component: Table,
@@ -32,9 +31,9 @@ export const Example = (args: any) => {
   });
 
   let items = useMemo(() => {
-    // @ts-ignore
     let items = rows
       .slice()
+      // @ts-ignore
       .sort((a, b) => a[sortDescriptor.column].localeCompare(b[sortDescriptor.column]));
     if (sortDescriptor.direction === 'descending') {
       items.reverse();
@@ -61,7 +60,7 @@ export const Example = (args: any) => {
         </Column>
       </TableHeader>
       <TableBody items={items}>
-        {row => (
+        {(row: any) => (
           <Row>
             <Cell>{row.name}</Cell>
             <Cell>{row.type}</Cell>

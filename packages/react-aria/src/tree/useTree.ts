@@ -42,8 +42,10 @@ export interface TreeAria {
 }
 
 /**
- * Provides the behavior and accessibility implementation for a single column treegrid component with interactive children.
- * A tree grid provides users with a way to navigate nested hierarchical information.
+ * Provides the behavior and accessibility implementation for a single column treegrid component
+ * with interactive children. A tree grid provides users with a way to navigate nested hierarchical
+ * information.
+ *
  * @param props - Props for the treegrid.
  * @param state - State for the treegrid, as returned by `useTreeState`.
  * @param ref - The ref attached to the treegrid element.

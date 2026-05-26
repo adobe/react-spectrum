@@ -1,3 +1,24 @@
+import {dirname, join} from 'path';
+import {fileURLToPath} from 'url';
+import {readFileSync} from 'fs';
+
+// Resolves the version from the nearest package.json above the CLI entry point.
+// Both the npm-published layout (dist/<lib>/src/index.js) and the .mcpb bundle
+// layout (server/<lib>/src/index.js) place package.json three levels up.
+export function readPackageVersion(entryUrl: string): string {
+  const entryDir = dirname(fileURLToPath(entryUrl));
+  const pkgPath = join(entryDir, '..', '..', '..', 'package.json');
+  try {
+    const pkg = JSON.parse(readFileSync(pkgPath, 'utf8'));
+    if (typeof pkg.version === 'string' && pkg.version.length > 0) {
+      return pkg.version;
+    }
+  } catch {
+    // fall through
+  }
+  return '0.0.0';
+}
+
 export function errorToString(err: unknown): string {
   if (err && typeof err === 'object' && 'stack' in err && typeof (err as any).stack === 'string') {
     return (err as any).stack as string;

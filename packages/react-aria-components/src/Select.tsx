@@ -63,37 +63,43 @@ type SelectionMode = 'single' | 'multiple';
 export interface SelectRenderProps {
   /**
    * Whether the select is focused, either via a mouse or keyboard.
+   *
    * @selector [data-focused]
    */
   isFocused: boolean;
   /**
    * Whether the select is keyboard focused.
+   *
    * @selector [data-focus-visible]
    */
   isFocusVisible: boolean;
   /**
    * Whether the select is disabled.
+   *
    * @selector [data-disabled]
    */
   isDisabled: boolean;
   /**
    * Whether the select is currently open.
+   *
    * @selector [data-open]
    */
   isOpen: boolean;
   /**
    * Whether the select is invalid.
+   *
    * @selector [data-invalid]
    */
   isInvalid: boolean;
   /**
    * Whether the select is required.
+   *
    * @selector [data-required]
    */
   isRequired: boolean;
 }
 
-export interface SelectProps<T extends object = {}, M extends SelectionMode = 'single'>
+export interface SelectProps<T, M extends SelectionMode = 'single'>
   extends
     Omit<
       AriaSelectProps<T, M>,
@@ -110,12 +116,15 @@ export interface SelectProps<T extends object = {}, M extends SelectionMode = 's
     SlotProps,
     GlobalDOMAttributes<HTMLDivElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-Select'
    */
   className?: ClassNameOrFunction<SelectRenderProps>;
   /**
    * Temporary text that occupies the select when it is empty.
+   *
    * @default 'Select an item' (localized)
    */
   placeholder?: string;
@@ -129,7 +138,7 @@ export const SelectStateContext = createContext<SelectState<unknown, SelectionMo
  * A select displays a collapsible list of options and allows a user to select one of them.
  */
 export const Select = /*#__PURE__*/ createHideableComponent(function Select<
-  T extends object = {},
+  T,
   M extends SelectionMode = 'single'
 >(props: SelectProps<T, M>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, SelectContext);
@@ -160,13 +169,13 @@ export const Select = /*#__PURE__*/ createHideableComponent(function Select<
 // Contexts to clear inside the popover.
 const CLEAR_CONTEXTS = [LabelContext, ButtonContext, TextContext];
 
-interface SelectInnerProps<T extends object> {
+interface SelectInnerProps<T> {
   props: SelectProps<T, SelectionMode>;
   selectRef: ForwardedRef<HTMLDivElement>;
   collection: Collection<Node<T>>;
 }
 
-function SelectInner<T extends object>({props, selectRef: ref, collection}: SelectInnerProps<T>) {
+function SelectInner<T>({props, selectRef: ref, collection}: SelectInnerProps<T>) {
   let {validationBehavior: formValidationBehavior} = useSlottedContext(FormContext) || {};
   let validationBehavior = props.validationBehavior ?? formValidationBehavior ?? 'native';
   let state = useSelectState({
@@ -287,11 +296,13 @@ function SelectInner<T extends object>({props, selectRef: ref, collection}: Sele
 export interface SelectValueRenderProps<T> {
   /**
    * Whether the value is a placeholder.
+   *
    * @selector [data-placeholder]
    */
   isPlaceholder: boolean;
   /**
    * The object value of the first selected item.
+   *
    * @deprecated
    */
   selectedItem: T | null;
@@ -303,12 +314,14 @@ export interface SelectValueRenderProps<T> {
   state: SelectState<T, 'single' | 'multiple'>;
 }
 
-export interface SelectValueProps<T extends object>
+export interface SelectValueProps<T>
   extends
     Omit<HTMLAttributes<HTMLElement>, keyof RenderProps<unknown>>,
     RenderProps<SelectValueRenderProps<T>, 'span'> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-SelectValue'
    */
   className?: ClassNameOrFunction<SelectValueRenderProps<T>>;
@@ -321,9 +334,10 @@ export const SelectValueContext =
  * SelectValue renders the current value of a Select, or a placeholder if no value is selected.
  * It is usually placed within the button element.
  */
-export const SelectValue = /*#__PURE__*/ createHideableComponent(function SelectValue<
-  T extends object
->(props: SelectValueProps<T>, ref: ForwardedRef<HTMLSpanElement>) {
+export const SelectValue = /*#__PURE__*/ createHideableComponent(function SelectValue<T>(
+  props: SelectValueProps<T>,
+  ref: ForwardedRef<HTMLSpanElement>
+) {
   [props, ref] = useContextProps(props, ref, SelectValueContext);
   let state = useContext(SelectStateContext)! as SelectState<T, 'single' | 'multiple'>;
   let {placeholder} = useSlottedContext(SelectContext)!;

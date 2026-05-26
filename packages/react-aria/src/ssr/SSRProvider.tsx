@@ -12,7 +12,7 @@
 
 // We must avoid a circular dependency with @react-aria/utils, and this useLayoutEffect is
 // guarded by a check that it only runs on the client side.
-// eslint-disable-next-line rulesdir/useLayoutEffectRule
+// eslint-disable-next-line rsp-rules/use-layout-effect-rule
 import React, {JSX, ReactNode, useContext, useLayoutEffect, useMemo, useRef, useState} from 'react';
 
 // To support SSR, the auto incrementing id counter is stored in a context. This allows
@@ -109,7 +109,7 @@ let componentIds = new WeakMap();
 function useCounter(isDisabled = false) {
   let ctx = useContext(SSRContext);
   let ref = useRef<number | null>(null);
-  // eslint-disable-next-line rulesdir/pure-render
+  // eslint-disable-next-line rsp-rules/pure-render
   if (ref.current === null && !isDisabled) {
     // In strict mode, React renders components twice, and the ref will be reset to null on the second render.
     // This means our id counter will be incremented twice instead of once. This is a problem because on the
@@ -140,11 +140,11 @@ function useCounter(isDisabled = false) {
       }
     }
 
-    // eslint-disable-next-line rulesdir/pure-render
+    // eslint-disable-next-line rsp-rules/pure-render
     ref.current = ++ctx.current;
   }
 
-  // eslint-disable-next-line rulesdir/pure-render
+  // eslint-disable-next-line rsp-rules/pure-render
   return ref.current;
 }
 

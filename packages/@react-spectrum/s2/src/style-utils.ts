@@ -15,22 +15,21 @@ import {fontRelative as internalFontRelative} from '../style/spectrum-theme';
 import {StyleString} from '../style/types';
 
 /**
- * Calculates vertical padding to center a single line of text within a container.
- * Uses the CSS `self()` function and `1lh` unit to compute the padding based on
- * the container's minimum height and border widths.
- * This is useful for precise vertical centering without introducing a flex/grid layout to the container.
- *
- * @param minHeight - A CSS expression for the minimum height to center within. Defaults to `'self(minHeight)'`.
- * @returns A CSS `calc()` expression wrapped as an arbitrary style value.
+ * Calculates vertical padding to center a single line of text within a container. Uses the CSS
+ * `self()` function and `1lh` unit to compute the padding based on the container's minimum height
+ * and border widths. This is useful for precise vertical centering without introducing a flex/grid
+ * layout to the container.
  *
  * @example
- * ```tsx
- * import {centerPadding, style} from '@react-spectrum/s2/style' with {type: 'macro'};
+ *   import {centerPadding, style} from '@react-spectrum/s2/style' with {type: 'macro'};
  *
- * const styles = style({
- *   paddingY: centerPadding()
- * });
- * ```
+ *   const styles = style({
+ *     paddingY: centerPadding()
+ *   });
+ *
+ * @param minHeight - A CSS expression for the minimum height to center within. Defaults to
+ *   `'self(minHeight)'`.
+ * @returns A CSS `calc()` expression wrapped as an arbitrary style value.
  */
 export function centerPadding(minHeight: string = 'self(minHeight)'): `[${string}]` {
   return `[calc((${minHeight} - self(borderTopWidth, 0px) - self(borderBottomWidth, 0px) - 1lh) / 2)]`;
@@ -133,20 +132,18 @@ export const fieldInput = () =>
   }) as const;
 
 /**
- * Returns style properties that set the CSS `color-scheme` for a component.
- * Defaults to the page's color scheme and supports `'light'`, `'dark'`, and `'light dark'` values
- * via the `colorScheme` render prop condition.
- * Intended for root containers (e.g. providers, modals, and popovers), and not needed for individual components.
+ * Returns style properties that set the CSS `color-scheme` for a component. Defaults to the page's
+ * color scheme and supports `'light'`, `'dark'`, and `'light dark'` values via the `colorScheme`
+ * render prop condition. Intended for root containers (e.g. providers, modals, and popovers), and
+ * not needed for individual components.
  *
  * @example
- * ```tsx
- * import {setColorScheme, style} from '@react-spectrum/s2/style' with {type: 'macro'};
+ *   import {setColorScheme, style} from '@react-spectrum/s2/style' with {type: 'macro'};
  *
- * const styles = style({
- *   ...setColorScheme(),
- *   backgroundColor: 'layer-1'
- * });
- * ```
+ *   const styles = style({
+ *     ...setColorScheme(),
+ *     backgroundColor: 'layer-1'
+ *   });
  */
 export const setColorScheme = () =>
   ({
@@ -389,9 +386,16 @@ export type StylesPropWithHeight = StyleString<
 export type StylesPropWithoutWidth = StyleString<(typeof allowedOverrides)[number]>;
 export type UnsafeClassName = string & {properties?: never};
 export interface UnsafeStyles {
-  /** Sets the CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. Only use as a **last resort**. Use the `style` macro via the `styles` prop instead. */
+  /**
+   * Sets the CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className)
+   * for the element. Only use as a **last resort**. Use the `style` macro via the `styles` prop
+   * instead.
+   */
   UNSAFE_className?: UnsafeClassName;
-  /** Sets inline [style](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/style) for the element. Only use as a **last resort**. Use the `style` macro via the `styles` prop instead. */
+  /**
+   * Sets inline [style](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/style) for the
+   * element. Only use as a **last resort**. Use the `style` macro via the `styles` prop instead.
+   */
   UNSAFE_style?: CSSProperties;
 }
 

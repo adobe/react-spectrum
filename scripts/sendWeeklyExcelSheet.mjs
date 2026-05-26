@@ -13,7 +13,6 @@ if (!SLACK_TESTING_BOT_TOKEN || !SLACK_CHANNEL_ID) {
 function getPreviousWeekRange() {
   let today = new Date();
   let endDate = new Date(today);
-  endDate.setDate(today.getDate() - 1);
 
   let startDate = new Date(today);
   startDate.setDate(today.getDate() - 7);

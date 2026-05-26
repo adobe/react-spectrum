@@ -11,7 +11,7 @@
  */
 
 jest.mock('react-aria/src/live-announcer/LiveAnnouncer');
-import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
+import {act, fireEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import {announce} from 'react-aria/private/live-announcer/LiveAnnouncer';
 import {Button} from '../src/Button';
 import {FieldError} from '../src/FieldError';
@@ -21,7 +21,7 @@ import {I18nProvider} from 'react-aria/I18nProvider';
 import {Input} from '../src/Input';
 import {Label} from '../src/Label';
 import {NumberField, NumberFieldContext} from '../src/NumberField';
-import React from 'react';
+import React, {useState} from 'react';
 import {Text} from '../src/Text';
 import userEvent from '@testing-library/user-event';
 
@@ -582,5 +582,48 @@ describe('NumberField', () => {
     expect(input).toHaveValue('30');
     expect(input.validity.valid).toBe(true);
     expect(input).not.toHaveAttribute('aria-describedby');
+  });
+
+  describe('auto spinning', () => {
+    beforeAll(() => {
+      jest.useFakeTimers();
+    });
+    afterEach(() => {
+      act(() => {
+        jest.runAllTimers();
+      });
+    });
+
+    it('stops spinning if the associated button is disabled', async () => {
+      function NumberFieldDisabledButtons({label}) {
+        const [value, setValue] = useState(4);
+
+        return (
+          <NumberField value={value} onChange={setValue}>
+            <Label>{label}</Label>
+            <Group>
+              <Input className="react-aria-Input inset" />
+              <Button slot="decrement" isDisabled={value <= 4}>
+                -
+              </Button>
+              <Button slot="increment" isDisabled={value >= 8}>
+                +
+              </Button>
+            </Group>
+          </NumberField>
+        );
+      }
+      let {getByRole} = render(<NumberFieldDisabledButtons />);
+      let input = getByRole('textbox');
+      let decrementButton = getByRole('button', {name: 'Decrease'});
+      let incrementButton = getByRole('button', {name: 'Increase'});
+      await user.click(incrementButton);
+      // manually fire these events because user.click will refuse to fire the up event if the button is disabled
+      fireEvent.mouseDown(decrementButton, {button: 0});
+      fireEvent.mouseUp(decrementButton, {button: 0});
+      await act(async () => jest.runAllTimers());
+      expect(decrementButton).toBeDisabled();
+      expect(input).toHaveValue('4');
+    });
   });
 });

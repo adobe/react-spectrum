@@ -21,6 +21,7 @@ export interface TableHeaderRowAria {
 
 /**
  * Provides the behavior and accessibility implementation for a header row in a table.
+ *
  * @param props - Props for the row.
  * @param state - State of the table, as returned by `useTableState`.
  */

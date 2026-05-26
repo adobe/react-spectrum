@@ -33,7 +33,8 @@ export interface FullscreenDialogProps
     StyleProps {
   /**
    * The variant of fullscreen dialog to display.
-   * @default "fullscreen"
+   *
+   * @default 'fullscreen'
    */
   variant?: 'fullscreen' | 'fullscreenTakeover';
   /** Whether pressing the escape key to close the dialog should be disabled. */
@@ -106,7 +107,8 @@ export const dialogInner = style({
 });
 
 /**
- * Takeover dialogs are large types of dialogs. They use the totality of the screen and should be used for modal experiences with complex workflows.
+ * Takeover dialogs are large types of dialogs. They use the totality of the screen and should be
+ * used for modal experiences with complex workflows.
  */
 export const FullscreenDialog = forwardRef(function FullscreenDialog(
   props: FullscreenDialogProps,

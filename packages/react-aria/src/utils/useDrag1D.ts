@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-/* eslint-disable rulesdir/pure-render */
+/* eslint-disable rsp-rules/pure-render */
 
 import {getEventTarget, nodeContains} from './shadowdom/DOMFunctions';
 import {getOffset} from './getOffset';

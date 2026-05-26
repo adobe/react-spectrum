@@ -40,6 +40,7 @@ function updateAvatarSize(path: NodePath<t.JSXElement>) {
 
 /**
  * Transforms Avatar:
+ *
  * - Comment out isDisabled (it has not been implemented yet).
  * - Update size to be a pixel value if it currently matches 'avatar-size-*'.
  */

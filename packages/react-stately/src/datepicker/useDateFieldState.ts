@@ -71,7 +71,7 @@ export interface DateFieldState extends FormValidationState {
   value: DateValue | null;
   /** The default field value. */
   defaultValue: DateValue | null;
-  /** The current value, converted to a native JavaScript `Date` object.  */
+  /** The current value, converted to a native JavaScript `Date` object. */
   dateValue: Date;
   /** The calendar system currently in use. */
   calendar: Calendar;
@@ -82,7 +82,9 @@ export interface DateFieldState extends FormValidationState {
   /** A date formatter configured for the current locale and format. */
   dateFormatter: DateFormatter;
   /**
-   * The current validation state of the date field, based on the `validationState`, `minValue`, and `maxValue` props.
+   * The current validation state of the date field, based on the `validationState`, `minValue`, and
+   * `maxValue` props.
+   *
    * @deprecated Use `isInvalid` instead.
    */
   validationState: ValidationState | null;
@@ -98,9 +100,15 @@ export interface DateFieldState extends FormValidationState {
   isReadOnly: boolean;
   /** Whether the field is required. */
   isRequired: boolean;
-  /** Increments the given segment. Upon reaching the minimum or maximum value, the value wraps around to the opposite limit. */
+  /**
+   * Increments the given segment. Upon reaching the minimum or maximum value, the value wraps
+   * around to the opposite limit.
+   */
   increment(type: DateSegmentType): void;
-  /** Decrements the given segment. Upon reaching the minimum or maximum value, the value wraps around to the opposite limit. */
+  /**
+   * Decrements the given segment. Upon reaching the minimum or maximum value, the value wraps
+   * around to the opposite limit.
+   */
   decrement(type: DateSegmentType): void;
   /**
    * Increments the given segment by a larger amount, rounding it to the nearest increment.
@@ -163,6 +171,7 @@ const TYPE_MAPPING = {
 export interface DateFieldStateOptions<T extends DateValue = DateValue> extends DatePickerProps<T> {
   /**
    * The maximum unit to display in the date field.
+   *
    * @default 'year'
    */
   maxGranularity?: 'year' | 'month' | Granularity;

@@ -102,10 +102,10 @@ export function parseDateTime(value: string): CalendarDateTime {
 }
 
 /**
- * Parses an ISO 8601 date and time string with a time zone extension and optional UTC offset
- * (e.g. "2021-11-07T00:45[America/Los_Angeles]" or "2021-11-07T00:45-07:00[America/Los_Angeles]").
- * Ambiguous times due to daylight saving time transitions are resolved according to the `disambiguation`
- * parameter.
+ * Parses an ISO 8601 date and time string with a time zone extension and optional UTC offset (e.g.
+ * "2021-11-07T00:45[America/Los_Angeles]" or "2021-11-07T00:45-07:00[America/Los_Angeles]").
+ * Ambiguous times due to daylight saving time transitions are resolved according to the
+ * `disambiguation` parameter.
  */
 export function parseZonedDateTime(value: string, disambiguation?: Disambiguation): ZonedDateTime {
   let m = value.match(ZONED_DATE_TIME_RE);
@@ -254,6 +254,7 @@ export function zonedDateTimeToString(date: ZonedDateTime): string {
 
 /**
  * Parses an ISO 8601 duration string (e.g. "P3Y6M6W4DT12H30M5S").
+ *
  * @param value An ISO 8601 duration string.
  * @returns A DateTimeDuration object.
  */

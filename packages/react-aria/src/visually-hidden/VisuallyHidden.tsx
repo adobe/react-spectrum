@@ -28,6 +28,7 @@ export interface VisuallyHiddenProps extends DOMAttributes {
 
   /**
    * The element type for the container.
+   *
    * @default 'div'
    */
   elementType?: string | JSXElementConstructor<any>;

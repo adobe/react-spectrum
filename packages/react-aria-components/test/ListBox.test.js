@@ -111,13 +111,13 @@ describe('ListBox', () => {
     );
 
     let listboxTester = testUtilUser.createTester('ListBox', {root: getByRole('listbox')});
-    expect(listboxTester.listbox).toHaveAttribute('data-rac');
-    let sections = listboxTester.sections;
+    expect(listboxTester.getListbox()).toHaveAttribute('data-rac');
+    let sections = listboxTester.getSections();
     for (let section of sections) {
       expect(section).toHaveAttribute('data-rac');
     }
 
-    let options = listboxTester.options();
+    let options = listboxTester.getOptions();
     for (let option of options) {
       expect(option).toHaveAttribute('data-rac');
     }
@@ -454,6 +454,62 @@ describe('ListBox', () => {
     expect(items).toHaveLength(2);
   });
 
+  it('should support dynamic collection with non-object entries', () => {
+    let {getAllByRole, rerender} = render(
+      <ListBox aria-label="Test" items={['Foo', 'Bar', 'Baz']}>
+        {item => <ListBoxItem>{item}</ListBoxItem>}
+      </ListBox>
+    );
+
+    let items = getAllByRole('option');
+    expect(items).toHaveLength(3);
+    expect(items[0].textContent).toBe('Foo');
+    expect(items[1].textContent).toBe('Bar');
+    expect(items[2].textContent).toBe('Baz');
+
+    rerender(
+      <ListBox aria-label="Test" items={['Foo', 'Baz']}>
+        {item => <ListBoxItem>{item}</ListBoxItem>}
+      </ListBox>
+    );
+
+    items = getAllByRole('option');
+    expect(items).toHaveLength(2);
+    expect(items[0].textContent).toBe('Foo');
+    expect(items[1].textContent).toBe('Baz');
+  });
+
+  it('should update collection if render function changes', () => {
+    let objects = [{name: 'Foo'}, {name: 'Bar'}, {name: 'Baz'}];
+    let {getAllByRole, rerender} = render(
+      <ListBox aria-label="Test" items={objects}>
+        {item => <ListBoxItem id={item.name}>{item.name}</ListBoxItem>}
+      </ListBox>
+    );
+
+    let items = getAllByRole('option');
+    expect(items).toHaveLength(3);
+    expect(items[0].textContent).toBe('Foo');
+    expect(items[1].textContent).toBe('Bar');
+    expect(items[2].textContent).toBe('Baz');
+
+    rerender(
+      <ListBox aria-label="Test" items={objects}>
+        {item => (
+          <ListBoxItem id={item.name} textValue="Updated">
+            Updated: {item.name}
+          </ListBoxItem>
+        )}
+      </ListBox>
+    );
+
+    items = getAllByRole('option');
+    expect(items).toHaveLength(3);
+    expect(items[0].textContent).toBe('Updated: Foo');
+    expect(items[1].textContent).toBe('Updated: Bar');
+    expect(items[2].textContent).toBe('Updated: Baz');
+  });
+
   it('should support autoFocus', () => {
     let {getByRole} = renderListbox({autoFocus: true});
     let listbox = getByRole('listbox');
@@ -489,6 +545,16 @@ describe('ListBox', () => {
     expect(option).not.toHaveClass('hover');
     expect(hoverEndSpy).toHaveBeenCalledTimes(1);
     expect(hoverChangeSpy).toHaveBeenCalledTimes(2);
+  });
+
+  it('should show hover state on draggable options even when not selectable/actionable', async () => {
+    let {getAllByRole} = render(<DraggableListBox selectionMode="none" />);
+    let option = getAllByRole('option')[0];
+    expect(option).not.toHaveAttribute('data-hovered');
+    await user.hover(option);
+    expect(option).toHaveAttribute('data-hovered', 'true');
+    await user.unhover(option);
+    expect(option).not.toHaveAttribute('data-hovered');
   });
 
   it('should not show hover state when item is not interactive', async () => {
@@ -587,7 +653,7 @@ describe('ListBox', () => {
     );
 
     let listboxTester = testUtilUser.createTester('ListBox', {root: getByRole('listbox')});
-    let option = listboxTester.options()[0];
+    let option = listboxTester.getOptions()[0];
     expect(option).not.toHaveAttribute('aria-selected', 'true');
     expect(option).not.toHaveClass('selected');
 
@@ -649,7 +715,7 @@ describe('ListBox', () => {
     );
     let listboxTester = testUtilUser.createTester('ListBox', {root: getByRole('listbox')});
 
-    let options = listboxTester.options();
+    let options = listboxTester.getOptions();
     await listboxTester.triggerOptionAction({option: options[0], interactionType});
     expect(onAction).toHaveBeenCalledTimes(1);
   });
@@ -669,14 +735,14 @@ describe('ListBox', () => {
     );
     let listboxTester = testUtilUser.createTester('ListBox', {root: getByRole('listbox')});
 
-    let options = listboxTester.options();
+    let options = listboxTester.getOptions();
     await listboxTester.triggerOptionAction({option: options[0]});
-    let selectedOptions = listboxTester.selectedOptions;
+    let selectedOptions = listboxTester.getSelectedOptions();
     expect(selectedOptions).toHaveLength(1);
     expect(onAction).not.toHaveBeenCalled();
 
     await listboxTester.triggerOptionAction({option: options[1], needsDoubleClick: true});
-    selectedOptions = listboxTester.selectedOptions;
+    selectedOptions = listboxTester.getSelectedOptions();
     expect(selectedOptions).toHaveLength(1);
     expect(onAction).toHaveBeenCalledTimes(1);
   });
@@ -695,7 +761,7 @@ describe('ListBox', () => {
           root: getByRole('listbox'),
           interactionType: type
         });
-        let options = listboxTester.options();
+        let options = listboxTester.getOptions();
 
         expect(onSelectionChange).toHaveBeenCalledTimes(0);
         let option2 = options[2];
@@ -712,8 +778,8 @@ describe('ListBox', () => {
           expect(onSelectionChange).toHaveBeenCalledTimes(1);
         }
         expect(new Set(onSelectionChange.mock.calls.at(-1)[0])).toEqual(new Set(['kangaroo']));
-        expect(listboxTester.selectedOptions).toHaveLength(1);
-        expect(listboxTester.selectedOptions[0]).toBe(option2);
+        expect(listboxTester.getSelectedOptions()).toHaveLength(1);
+        expect(listboxTester.getSelectedOptions()[0]).toBe(option2);
 
         let option1 = options[1];
         await listboxTester.toggleOptionSelection({option: option1, selectionBehavior: 'replace'});
@@ -727,8 +793,8 @@ describe('ListBox', () => {
           expect(onSelectionChange).toHaveBeenCalledTimes(2);
         }
         expect(new Set(onSelectionChange.mock.calls.at(-1)[0])).toEqual(new Set(['dog']));
-        expect(listboxTester.selectedOptions).toHaveLength(1);
-        expect(listboxTester.selectedOptions[0]).toBe(option1);
+        expect(listboxTester.getSelectedOptions()).toHaveLength(1);
+        expect(listboxTester.getSelectedOptions()[0]).toBe(option1);
 
         await listboxTester.toggleOptionSelection({option: option1, selectionBehavior: 'replace'});
         expect(option1).toHaveAttribute('aria-selected', 'false');
@@ -741,7 +807,7 @@ describe('ListBox', () => {
           expect(onSelectionChange).toHaveBeenCalledTimes(3);
         }
         expect(new Set(onSelectionChange.mock.calls.at(-1)[0])).toEqual(new Set([]));
-        expect(listboxTester.selectedOptions).toHaveLength(0);
+        expect(listboxTester.getSelectedOptions()).toHaveLength(0);
       });
 
       it('should perform toggle selection in highlight mode when using modifier keys', async () => {
@@ -754,7 +820,7 @@ describe('ListBox', () => {
           root: getByRole('listbox'),
           interactionType: type
         });
-        let options = listboxTester.options();
+        let options = listboxTester.getOptions();
 
         let option2 = options[2];
         await listboxTester.toggleOptionSelection({
@@ -769,13 +835,13 @@ describe('ListBox', () => {
           expect(new Set(onSelectionChange.mock.calls.at(-1)[0])).toEqual(
             new Set(['cat', 'kangaroo'])
           );
-          expect(listboxTester.selectedOptions).toHaveLength(2);
-          expect(listboxTester.selectedOptions[1]).toBe(option2);
+          expect(listboxTester.getSelectedOptions()).toHaveLength(2);
+          expect(listboxTester.getSelectedOptions()[1]).toBe(option2);
         } else {
           expect(onSelectionChange).toHaveBeenCalledTimes(1);
           expect(new Set(onSelectionChange.mock.calls.at(-1)[0])).toEqual(new Set(['kangaroo']));
-          expect(listboxTester.selectedOptions).toHaveLength(1);
-          expect(listboxTester.selectedOptions[0]).toBe(option2);
+          expect(listboxTester.getSelectedOptions()).toHaveLength(1);
+          expect(listboxTester.getSelectedOptions()[0]).toBe(option2);
         }
 
         let option1 = options[1];
@@ -789,17 +855,17 @@ describe('ListBox', () => {
           expect(new Set(onSelectionChange.mock.calls.at(-1)[0])).toEqual(
             new Set(['cat', 'dog', 'kangaroo'])
           );
-          expect(listboxTester.selectedOptions).toHaveLength(3);
-          expect(listboxTester.selectedOptions[1]).toBe(option1);
-          expect(listboxTester.selectedOptions[2]).toBe(option2);
+          expect(listboxTester.getSelectedOptions()).toHaveLength(3);
+          expect(listboxTester.getSelectedOptions()[1]).toBe(option1);
+          expect(listboxTester.getSelectedOptions()[2]).toBe(option2);
         } else {
           expect(onSelectionChange).toHaveBeenCalledTimes(2);
           expect(new Set(onSelectionChange.mock.calls.at(-1)[0])).toEqual(
             new Set(['dog', 'kangaroo'])
           );
-          expect(listboxTester.selectedOptions).toHaveLength(2);
-          expect(listboxTester.selectedOptions[0]).toBe(option1);
-          expect(listboxTester.selectedOptions[1]).toBe(option2);
+          expect(listboxTester.getSelectedOptions()).toHaveLength(2);
+          expect(listboxTester.getSelectedOptions()[0]).toBe(option1);
+          expect(listboxTester.getSelectedOptions()[1]).toBe(option2);
         }
 
         // With modifier key, you should be able to deselect on press of the same row
@@ -813,13 +879,13 @@ describe('ListBox', () => {
           expect(new Set(onSelectionChange.mock.calls.at(-1)[0])).toEqual(
             new Set(['cat', 'kangaroo'])
           );
-          expect(listboxTester.selectedOptions).toHaveLength(2);
-          expect(listboxTester.selectedOptions[1]).toBe(option2);
+          expect(listboxTester.getSelectedOptions()).toHaveLength(2);
+          expect(listboxTester.getSelectedOptions()[1]).toBe(option2);
         } else {
           expect(onSelectionChange).toHaveBeenCalledTimes(3);
           expect(new Set(onSelectionChange.mock.calls.at(-1)[0])).toEqual(new Set(['kangaroo']));
-          expect(listboxTester.selectedOptions).toHaveLength(1);
-          expect(listboxTester.selectedOptions[0]).toBe(option2);
+          expect(listboxTester.getSelectedOptions()).toHaveLength(1);
+          expect(listboxTester.getSelectedOptions()[0]).toBe(option2);
         }
       });
 
@@ -833,7 +899,7 @@ describe('ListBox', () => {
           root: getByRole('listbox'),
           interactionType: type
         });
-        let options = listboxTester.options();
+        let options = listboxTester.getOptions();
 
         let option2 = options[2];
         await listboxTester.toggleOptionSelection({option: 'Kangaroo'});
@@ -846,8 +912,8 @@ describe('ListBox', () => {
           expect(onSelectionChange).toHaveBeenCalledTimes(1);
         }
         expect(new Set(onSelectionChange.mock.calls.at(-1)[0])).toEqual(new Set(['kangaroo']));
-        expect(listboxTester.selectedOptions).toHaveLength(1);
-        expect(listboxTester.selectedOptions[0]).toBe(option2);
+        expect(listboxTester.getSelectedOptions()).toHaveLength(1);
+        expect(listboxTester.getSelectedOptions()[0]).toBe(option2);
 
         let option1 = options[1];
         await listboxTester.toggleOptionSelection({option: option1});
@@ -862,8 +928,8 @@ describe('ListBox', () => {
             expect(onSelectionChange).toHaveBeenCalledTimes(2);
           }
           expect(new Set(onSelectionChange.mock.calls.at(-1)[0])).toEqual(new Set(['dog']));
-          expect(listboxTester.selectedOptions).toHaveLength(1);
-          expect(listboxTester.selectedOptions[0]).toBe(option1);
+          expect(listboxTester.getSelectedOptions()).toHaveLength(1);
+          expect(listboxTester.getSelectedOptions()[0]).toBe(option1);
           // pressing without modifier keys won't deselect the row
           await listboxTester.toggleOptionSelection({option: option1});
           expect(option1).toHaveAttribute('aria-selected', 'true');
@@ -873,7 +939,7 @@ describe('ListBox', () => {
           } else {
             expect(onSelectionChange).toHaveBeenCalledTimes(2);
           }
-          expect(listboxTester.selectedOptions).toHaveLength(1);
+          expect(listboxTester.getSelectedOptions()).toHaveLength(1);
         } else {
           // touch always behaves as toggle
           expect(option1).toHaveAttribute('aria-selected', 'true');
@@ -882,16 +948,16 @@ describe('ListBox', () => {
           expect(option2).toHaveAttribute('data-selected', 'true');
           expect(onSelectionChange).toHaveBeenCalledTimes(2);
           expect(new Set(onSelectionChange.mock.calls[1][0])).toEqual(new Set(['dog', 'kangaroo']));
-          expect(listboxTester.selectedOptions).toHaveLength(2);
-          expect(listboxTester.selectedOptions[0]).toBe(option1);
+          expect(listboxTester.getSelectedOptions()).toHaveLength(2);
+          expect(listboxTester.getSelectedOptions()[0]).toBe(option1);
 
           await listboxTester.toggleOptionSelection({option: option1});
           expect(option1).toHaveAttribute('aria-selected', 'false');
           expect(option1).not.toHaveAttribute('data-selected');
           expect(onSelectionChange).toHaveBeenCalledTimes(3);
           expect(new Set(onSelectionChange.mock.calls[2][0])).toEqual(new Set(['kangaroo']));
-          expect(listboxTester.selectedOptions).toHaveLength(1);
-          expect(listboxTester.selectedOptions[0]).toBe(option2);
+          expect(listboxTester.getSelectedOptions()).toHaveLength(1);
+          expect(listboxTester.getSelectedOptions()[0]).toBe(option2);
         }
       });
     });
@@ -918,21 +984,21 @@ describe('ListBox', () => {
         interactionType: 'touch'
       });
 
-      await listboxTester.toggleOptionSelection({option: listboxTester.options()[0]});
-      expect(listboxTester.selectedOptions).toHaveLength(0);
+      await listboxTester.toggleOptionSelection({option: listboxTester.getOptions()[0]});
+      expect(listboxTester.getSelectedOptions()).toHaveLength(0);
       expect(onAction).toHaveBeenCalledTimes(1);
 
       await listboxTester.toggleOptionSelection({
-        option: listboxTester.options()[0],
+        option: listboxTester.getOptions()[0],
         needsLongPress: true
       });
-      expect(listboxTester.selectedOptions).toHaveLength(1);
-      expect(listboxTester.selectedOptions[0]).toBe(listboxTester.options()[0]);
+      expect(listboxTester.getSelectedOptions()).toHaveLength(1);
+      expect(listboxTester.getSelectedOptions()[0]).toBe(listboxTester.getOptions()[0]);
       expect(onAction).toHaveBeenCalledTimes(1);
 
-      await listboxTester.toggleOptionSelection({option: listboxTester.options()[1]});
-      expect(listboxTester.selectedOptions).toHaveLength(2);
-      expect(listboxTester.selectedOptions[1]).toBe(listboxTester.options()[1]);
+      await listboxTester.toggleOptionSelection({option: listboxTester.getOptions()[1]});
+      expect(listboxTester.getSelectedOptions()).toHaveLength(2);
+      expect(listboxTester.getSelectedOptions()[1]).toBe(listboxTester.getOptions()[1]);
     });
   });
 
@@ -1024,13 +1090,11 @@ describe('ListBox', () => {
     /**
      * The following ListBox is roughly in this shape:
      *
-     * -------------------
-     * | 1,1 | 1,2 | 1,3 |
-     * -------------------
-     * | 2,1 | 2,2 | 2,3 |
-     * -------------------
-     * | 3,1 | 3,2 | 3,3 |
-     * -------------------
+     * ## | 1,1 | 1,2 | 1,3 |
+     *
+     * ## | 2,1 | 2,2 | 2,3 |
+     *
+     * ## | 3,1 | 3,2 | 3,3 |
      */
     let {getAllByRole} = render(
       <ListBox layout="grid" aria-label="Test">
@@ -1125,13 +1189,11 @@ describe('ListBox', () => {
     /**
      * The following ListBox is roughly in this shape:
      *
-     * -------------------
-     * | 1,1 | 2,1 | 3,1 |
-     * -------------------
-     * | 1,2 | 2,2 | 3,2 |
-     * -------------------
-     * | 1,3 | 3,2 | 3,3 |
-     * -------------------
+     * ## | 1,1 | 2,1 | 3,1 |
+     *
+     * ## | 1,2 | 2,2 | 3,2 |
+     *
+     * ## | 1,3 | 3,2 | 3,3 |
      */
     let {getAllByRole} = render(
       <ListBox layout="grid" orientation="horizontal" aria-label="Test">
@@ -1184,6 +1246,66 @@ describe('ListBox', () => {
 
     keyPress('ArrowLeft'); // shouldn't throw when pressed one more time at the boundary.
     expect(document.activeElement).toBe(options[0]); // 1,1
+  });
+
+  it('should support keyboard navigation across grid layout via the test util', async () => {
+    /**
+     * The following ListBox is roughly in this shape:
+     *
+     * ## | 1,1 | 2,1 | 3,1 |
+     *
+     * ## | 1,2 | 2,2 | 3,2 |
+     *
+     * ## | 1,3 | 3,2 | 3,3 |
+     */
+    let {getByRole} = render(
+      <ListBox layout="grid" aria-label="Test" selectionMode="single">
+        <ListBoxItem>1,1</ListBoxItem>
+        <ListBoxItem>1,2</ListBoxItem>
+        <ListBoxItem>1,3</ListBoxItem>
+        <ListBoxItem>2,1</ListBoxItem>
+        <ListBoxItem>2,2</ListBoxItem>
+        <ListBoxItem>2,3</ListBoxItem>
+        <ListBoxItem>3,1</ListBoxItem>
+        <ListBoxItem>3,2</ListBoxItem>
+        <ListBoxItem>3,3</ListBoxItem>
+      </ListBox>
+    );
+
+    jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function () {
+      if (this.getAttribute('role') === 'listbox') {
+        return {top: 0, left: 0, bottom: 200, right: 300, width: 300, height: 200};
+      } else {
+        let index = [...this.parentElement.children].indexOf(this);
+        return {
+          top: (index % 3) * 40,
+          left: Math.floor(index / 3) * 100,
+          bottom: (index % 3) * 40 + 40,
+          right: Math.floor(index / 3) * 100 + 100,
+          width: 100,
+          height: 40
+        };
+      }
+    });
+
+    let listboxTester = testUtilUser.createTester('ListBox', {
+      root: getByRole('listbox'),
+      interactionType: 'keyboard',
+      layout: 'grid'
+    });
+    let options = listboxTester.getOptions();
+
+    await listboxTester.toggleOptionSelection({option: options[5]});
+    expect(options[5]).toHaveAttribute('aria-selected', 'true');
+    expect(document.activeElement).toBe(options[5]);
+
+    await listboxTester.toggleOptionSelection({option: '1,1'});
+    expect(options[0]).toHaveAttribute('aria-selected', 'true');
+    expect(document.activeElement).toBe(options[0]);
+
+    await listboxTester.toggleOptionSelection({option: 8});
+    expect(options[8]).toHaveAttribute('aria-selected', 'true');
+    expect(document.activeElement).toBe(options[8]);
   });
 
   it('should support onScroll', () => {
@@ -1267,7 +1389,7 @@ describe('ListBox', () => {
     let {getByRole} = renderListbox({selectionMode: 'multiple', escapeKeyBehavior: 'none'});
 
     let listboxTester = testUtilUser.createTester('ListBox', {root: getByRole('listbox')});
-    let option = listboxTester.options()[0];
+    let option = listboxTester.getOptions()[0];
     expect(option).not.toHaveAttribute('aria-selected', 'true');
     expect(option).not.toHaveClass('selected');
 
@@ -1326,6 +1448,33 @@ describe('ListBox', () => {
       act(() => jest.runAllTimers());
 
       expect(onReorder).toHaveBeenCalledTimes(1);
+    });
+
+    it('should not skip drop positions before/after a disabled item', async () => {
+      let onReorder = jest.fn();
+      let {getAllByRole} = render(
+        <DraggableListBox disabledKeys={['dog']} onReorder={onReorder} />
+      );
+      let option = getAllByRole('option')[0];
+      fireEvent.keyDown(option, {key: 'Enter'});
+      fireEvent.keyUp(option, {key: 'Enter'});
+      act(() => jest.runAllTimers());
+      expect(document.activeElement).toHaveAttribute('aria-label', 'Insert before Cat');
+      fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+      fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+      expect(document.activeElement).toHaveAttribute('aria-label', 'Insert between Cat and Dog');
+      fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+      fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+      expect(document.activeElement).toHaveAttribute(
+        'aria-label',
+        'Insert between Dog and Kangaroo'
+      );
+      fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+      fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+      expect(document.activeElement).toHaveAttribute('aria-label', 'Insert after Kangaroo');
+      fireEvent.keyDown(document.activeElement, {key: 'Escape'});
+      fireEvent.keyUp(document.activeElement, {key: 'Escape'});
+      act(() => jest.runAllTimers());
     });
 
     it('should support dropping on options', () => {
@@ -1982,7 +2131,7 @@ describe('ListBox', () => {
       let tree = render(<AsyncListbox isLoading items={items} />);
 
       let listboxTester = testUtilUser.createTester('ListBox', {root: tree.getByRole('listbox')});
-      let options = listboxTester.options();
+      let options = listboxTester.getOptions();
       expect(options).toHaveLength(4);
       let loaderRow = options[3];
       expect(loaderRow).toHaveTextContent('Loading...');
@@ -1995,7 +2144,7 @@ describe('ListBox', () => {
       let tree = render(<AsyncListbox items={items} />);
 
       let listboxTester = testUtilUser.createTester('ListBox', {root: tree.getByRole('listbox')});
-      let options = listboxTester.options();
+      let options = listboxTester.getOptions();
       expect(options).toHaveLength(3);
       expect(tree.queryByText('Loading...')).toBeFalsy();
       expect(tree.getByTestId('loadMoreSentinel')).toBeInTheDocument();
@@ -2005,7 +2154,7 @@ describe('ListBox', () => {
       let tree = render(<AsyncListbox items={[]} />);
 
       let listboxTester = testUtilUser.createTester('ListBox', {root: tree.getByRole('listbox')});
-      let options = listboxTester.options();
+      let options = listboxTester.getOptions();
       expect(options).toHaveLength(1);
       expect(options[0]).toHaveTextContent('empty state');
       expect(tree.queryByText('Loading...')).toBeFalsy();
@@ -2013,7 +2162,7 @@ describe('ListBox', () => {
 
       // Even if the listbox is empty, providing isLoading will render the loader
       tree.rerender(<AsyncListbox items={[]} isLoading />);
-      options = listboxTester.options();
+      options = listboxTester.getOptions();
       expect(options).toHaveLength(2);
       expect(options[1]).toHaveTextContent('empty state');
       expect(tree.queryByText('Loading...')).toBeTruthy();
@@ -2100,7 +2249,7 @@ describe('ListBox', () => {
       it('should always render the sentinel even when virtualized', () => {
         let tree = render(<VirtualizedAsyncListbox isLoading items={items} />);
         let listboxTester = testUtilUser.createTester('ListBox', {root: tree.getByRole('listbox')});
-        let options = listboxTester.options();
+        let options = listboxTester.getOptions();
         expect(options).toHaveLength(8);
         let loaderRow = options[7];
         expect(loaderRow).toHaveTextContent('Loading...');
@@ -2123,31 +2272,31 @@ describe('ListBox', () => {
       it.skip('should not reserve room for the loader if isLoading is false', () => {
         let tree = render(<VirtualizedAsyncListbox items={items} />);
         let listboxTester = testUtilUser.createTester('ListBox', {root: tree.getByRole('listbox')});
-        let options = listboxTester.options();
+        let options = listboxTester.getOptions();
         expect(options).toHaveLength(7);
-        expect(within(listboxTester.listbox).queryByText('Loading...')).toBeFalsy();
+        expect(within(listboxTester.getListbox()).queryByText('Loading...')).toBeFalsy();
 
-        let sentinel = within(listboxTester.listbox).getByTestId('loadMoreSentinel');
+        let sentinel = within(listboxTester.getListbox()).getByTestId('loadMoreSentinel');
         let sentinelParentStyles = sentinel.parentElement.parentElement.style;
         expect(sentinelParentStyles.top).toBe('1250px');
         expect(sentinelParentStyles.height).toBe('0px');
         expect(sentinel.parentElement).toHaveAttribute('inert');
 
         tree.rerender(<VirtualizedAsyncListbox items={[]} />);
-        options = listboxTester.options();
+        options = listboxTester.getOptions();
         expect(options).toHaveLength(1);
         let emptyStateRow = options[0];
         expect(emptyStateRow).toHaveTextContent('empty state');
-        expect(within(listboxTester.listbox).queryByText('Loading...')).toBeFalsy();
+        expect(within(listboxTester.getListbox()).queryByText('Loading...')).toBeFalsy();
 
-        sentinel = within(listboxTester.listbox).getByTestId('loadMoreSentinel');
+        sentinel = within(listboxTester.getListbox()).getByTestId('loadMoreSentinel');
         sentinelParentStyles = sentinel.parentElement.parentElement.style;
         expect(sentinelParentStyles.top).toBe('0px');
         expect(sentinelParentStyles.height).toBe('0px');
 
         // Setting isLoading will render the loader even if the list is empty.
         tree.rerender(<VirtualizedAsyncListbox items={[]} isLoading />);
-        options = listboxTester.options();
+        options = listboxTester.getOptions();
         expect(options).toHaveLength(2);
         emptyStateRow = options[1];
         expect(emptyStateRow).toHaveTextContent('empty state');
@@ -2155,7 +2304,7 @@ describe('ListBox', () => {
         let loadingRow = options[0];
         expect(loadingRow).toHaveTextContent('Loading...');
 
-        sentinel = within(listboxTester.listbox).getByTestId('loadMoreSentinel');
+        sentinel = within(listboxTester.getListbox()).getByTestId('loadMoreSentinel');
         sentinelParentStyles = sentinel.parentElement.parentElement.style;
         expect(sentinelParentStyles.top).toBe('0px');
         expect(sentinelParentStyles.height).toBe('30px');

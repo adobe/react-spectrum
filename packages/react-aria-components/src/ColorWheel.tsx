@@ -26,6 +26,7 @@ import React, {
 export interface ColorWheelRenderProps {
   /**
    * Whether the color wheel is disabled.
+   *
    * @selector [data-disabled]
    */
   isDisabled: boolean;
@@ -42,7 +43,9 @@ export interface ColorWheelProps
     SlotProps,
     GlobalDOMAttributes<HTMLDivElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-ColorWheel'
    */
   className?: ClassNameOrFunction<ColorWheelRenderProps>;
@@ -111,7 +114,9 @@ export interface ColorWheelTrackRenderProps extends ColorWheelRenderProps {}
 export interface ColorWheelTrackProps
   extends StyleRenderProps<ColorWheelTrackRenderProps>, GlobalDOMAttributes<HTMLDivElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-ColorWheelTrack'
    */
   className?: ClassNameOrFunction<ColorWheelTrackRenderProps>;

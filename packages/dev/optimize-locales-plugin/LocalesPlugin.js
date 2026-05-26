@@ -18,7 +18,7 @@ module.exports = createUnplugin(({locales}) => {
     name: 'locales-plugin',
     resolveId(specifier, sourcePath, options) {
       if (
-        !/[/\\](@react-stately|@react-aria|@react-spectrum|react-aria-components)[/\\]/.test(
+        !/[/\\](@react-stately|@react-aria|@react-spectrum|react-aria|react-aria-components)[/\\]/.test(
           sourcePath
         ) ||
         options?.ssr

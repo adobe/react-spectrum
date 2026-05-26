@@ -48,21 +48,25 @@ export interface SelectProps<T, M extends SelectionMode = 'single'>
     FocusableProps {
   /**
    * Whether single or multiple selection is enabled.
+   *
    * @default 'single'
    */
   selectionMode?: M;
   /**
    * The currently selected key in the collection (controlled).
+   *
    * @deprecated
    */
   selectedKey?: Key | null;
   /**
    * The initial selected key in the collection (uncontrolled).
+   *
    * @deprecated
    */
   defaultSelectedKey?: Key | null;
   /**
    * Handler that is called when the selection changes.
+   *
    * @deprecated
    */
   onSelectionChange?: (key: Key | null) => void;
@@ -72,7 +76,10 @@ export interface SelectProps<T, M extends SelectionMode = 'single'>
   defaultOpen?: boolean;
   /** Method that is called when the open state of the menu changes. */
   onOpenChange?: (isOpen: boolean) => void;
-  /** Whether the Select should close when an item is selected. Defaults to true if selectionMode is single, false otherwise. */
+  /**
+   * Whether the Select should close when an item is selected. Defaults to true if selectionMode is
+   * single, false otherwise.
+   */
   shouldCloseOnSelect?: boolean;
   /** Whether the select should be allowed to be open when the collection is empty. */
   allowsEmptyCollection?: boolean;
@@ -85,18 +92,21 @@ export interface SelectState<T, M extends SelectionMode = 'single'>
   extends ListState<T>, OverlayTriggerState, FormValidationState {
   /**
    * The key for the first selected item.
+   *
    * @deprecated
    */
   readonly selectedKey: Key | null;
 
   /**
    * The default selected key.
+   *
    * @deprecated
    */
   readonly defaultSelectedKey: Key | null;
 
   /**
    * Sets the selected key.
+   *
    * @deprecated
    */
   setSelectedKey(key: Key | null): void;
@@ -112,6 +122,7 @@ export interface SelectState<T, M extends SelectionMode = 'single'>
 
   /**
    * The value of the first selected item.
+   *
    * @deprecated
    */
   readonly selectedItem: Node<T> | null;
@@ -140,7 +151,7 @@ export interface SelectState<T, M extends SelectionMode = 'single'>
  * of items from props, handles the open state for the popup menu, and manages
  * multiple selection state.
  */
-export function useSelectState<T extends object, M extends SelectionMode = 'single'>(
+export function useSelectState<T, M extends SelectionMode = 'single'>(
   props: SelectStateOptions<T, M>
 ): SelectState<T, M> {
   let {selectionMode = 'single' as M, shouldCloseOnSelect = selectionMode === 'single'} = props;

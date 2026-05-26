@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /// <reference types="node" />
-import {errorToString} from '../../shared/src/utils.js';
+import {errorToString, readPackageVersion} from '../../shared/src/utils.js';
 import {startServer} from '../../shared/src/server.js';
 
 // CLI entry for React Aria
@@ -13,7 +13,7 @@ import {startServer} from '../../shared/src/server.js';
       );
       process.exit(0);
     }
-    await startServer('react-aria', '0.1.0');
+    await startServer('react-aria', readPackageVersion(import.meta.url));
   } catch (err) {
     console.error(errorToString(err));
     process.exit(1);

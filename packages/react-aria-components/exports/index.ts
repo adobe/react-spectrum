@@ -186,9 +186,11 @@ export {
   SliderOutput,
   SliderTrack,
   SliderThumb,
+  SliderFill,
   SliderContext,
   SliderOutputContext,
   SliderTrackContext,
+  SliderFillContext,
   SliderStateContext
 } from '../src/Slider';
 export {Switch, SwitchField, SwitchButton, SwitchContext, SwitchFieldContext} from '../src/Switch';
@@ -277,7 +279,6 @@ export {useTreeData} from 'react-stately/useTreeData';
 export {useAsyncList} from 'react-stately/useAsyncList';
 export {
   ListLayout,
-  GridLayout,
   WaterfallLayout,
   Layout,
   LayoutInfo,
@@ -285,6 +286,7 @@ export {
   Rect,
   Point
 } from 'react-stately/useVirtualizerState';
+export {GridLayout} from '../src/GridLayout';
 
 export type {I18nProviderProps, Locale} from 'react-aria/I18nProvider';
 export type {Filter} from 'react-aria/useFilter';
@@ -440,6 +442,8 @@ export type {
   SliderThumbProps,
   SliderTrackProps,
   SliderTrackRenderProps,
+  SliderFillProps,
+  SliderFillRenderProps,
   SliderThumbRenderProps
 } from '../src/Slider';
 export type {

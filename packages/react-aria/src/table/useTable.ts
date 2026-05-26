@@ -30,7 +30,10 @@ import {useMemo} from 'react';
 import {useUpdateEffect} from '../utils/useUpdateEffect';
 
 export interface AriaTableProps extends GridProps {
-  /** The layout object for the table. Computes what content is visible and how to position and style them. */
+  /**
+   * The layout object for the table. Computes what content is visible and how to position and style
+   * them.
+   */
   layoutDelegate?: LayoutDelegate;
   /** @deprecated - Use layoutDelegate instead. */
   layout?: DeprecatedLayout;
@@ -51,9 +54,10 @@ interface DeprecatedVirtualizer {
 }
 
 /**
- * Provides the behavior and accessibility implementation for a table component.
- * A table displays data in rows and columns and enables a user to navigate its contents via directional navigation keys,
- * and optionally supports row selection and sorting.
+ * Provides the behavior and accessibility implementation for a table component. A table displays
+ * data in rows and columns and enables a user to navigate its contents via directional navigation
+ * keys, and optionally supports row selection and sorting.
+ *
  * @param props - Props for the table.
  * @param state - State for the table, as returned by `useTableState`.
  * @param ref - The ref attached to the table element.

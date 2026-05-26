@@ -17,8 +17,8 @@ import {RefObject} from '@react-types/shared';
 export interface DraggableCollectionOptions {}
 
 /**
- * Handles drag interactions for a collection component, with support for traditional mouse and touch
- * based drag and drop, in addition to full parity for keyboard and screen reader users.
+ * Handles drag interactions for a collection component, with support for traditional mouse and
+ * touch based drag and drop, in addition to full parity for keyboard and screen reader users.
  */
 export function useDraggableCollection(
   props: DraggableCollectionOptions,

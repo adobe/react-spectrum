@@ -26,6 +26,7 @@ import {useToolbar} from '../toolbar/useToolbar';
 export interface AriaToggleButtonGroupProps extends ToggleGroupProps, AriaLabelingProps {
   /**
    * The orientation of the the toggle button group.
+   *
    * @default 'horizontal'
    */
   orientation?: Orientation;
@@ -101,7 +102,8 @@ export function useToggleButtonGroupItem(
 ): ToggleButtonAria<DOMAttributes>;
 /**
  * Provides the behavior and accessibility implementation for a toggle button component.
- * ToggleButtons allow users to toggle a selection on or off, for example switching between two states or modes.
+ * ToggleButtons allow users to toggle a selection on or off, for example switching between two
+ * states or modes.
  */
 export function useToggleButtonGroupItem(
   props: AriaToggleButtonGroupItemOptions<ElementType>,

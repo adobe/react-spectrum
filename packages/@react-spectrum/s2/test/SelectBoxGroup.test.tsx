@@ -127,7 +127,7 @@ describe('SelectBoxGroup', () => {
       let listboxTester = testUtilUser.createTester('ListBox', {root: screen.getByRole('listbox')});
 
       await listboxTester.toggleOptionSelection({option: 0});
-      expect(listboxTester.options()[0]).toHaveAttribute('aria-selected', 'true');
+      expect(listboxTester.getOptions()[0]).toHaveAttribute('aria-selected', 'true');
     });
 
     it('handles uncontrolled click selection in multiple mode', async () => {
@@ -137,8 +137,8 @@ describe('SelectBoxGroup', () => {
       await listboxTester.toggleOptionSelection({option: 0});
       await listboxTester.toggleOptionSelection({option: 1});
 
-      expect(listboxTester.options()[0]).toHaveAttribute('aria-selected', 'true');
-      expect(listboxTester.options()[1]).toHaveAttribute('aria-selected', 'true');
+      expect(listboxTester.getOptions()[0]).toHaveAttribute('aria-selected', 'true');
+      expect(listboxTester.getOptions()[1]).toHaveAttribute('aria-selected', 'true');
     });
 
     it('handles uncontrolled selection toggle', async () => {
@@ -146,12 +146,12 @@ describe('SelectBoxGroup', () => {
       let listboxTester = testUtilUser.createTester('ListBox', {root: screen.getByRole('listbox')});
 
       await listboxTester.toggleOptionSelection({option: 0});
-      expect(listboxTester.options()[0]).toHaveAttribute('aria-selected', 'true');
+      expect(listboxTester.getOptions()[0]).toHaveAttribute('aria-selected', 'true');
 
       // Toggle off in single mode by selecting another
       await listboxTester.toggleOptionSelection({option: 1});
-      expect(listboxTester.options()[0]).toHaveAttribute('aria-selected', 'false');
-      expect(listboxTester.options()[1]).toHaveAttribute('aria-selected', 'true');
+      expect(listboxTester.getOptions()[0]).toHaveAttribute('aria-selected', 'false');
+      expect(listboxTester.getOptions()[1]).toHaveAttribute('aria-selected', 'true');
     });
 
     it('handles uncontrolled keyboard selection', async () => {
@@ -173,7 +173,7 @@ describe('SelectBoxGroup', () => {
       let listboxTester = testUtilUser.createTester('ListBox', {root: screen.getByRole('listbox')});
 
       await listboxTester.toggleOptionSelection({option: 0});
-      expect(listboxTester.options()[0]).toHaveAttribute('aria-selected', 'true');
+      expect(listboxTester.getOptions()[0]).toHaveAttribute('aria-selected', 'true');
     });
 
     it('handles controlled multiple selection', async () => {
@@ -183,8 +183,8 @@ describe('SelectBoxGroup', () => {
       await listboxTester.toggleOptionSelection({option: 0});
       await listboxTester.toggleOptionSelection({option: 1});
 
-      expect(listboxTester.options()[0]).toHaveAttribute('aria-selected', 'true');
-      expect(listboxTester.options()[1]).toHaveAttribute('aria-selected', 'true');
+      expect(listboxTester.getOptions()[0]).toHaveAttribute('aria-selected', 'true');
+      expect(listboxTester.getOptions()[1]).toHaveAttribute('aria-selected', 'true');
     });
 
     it('calls onSelectionChange when selection changes in controlled mode', async () => {

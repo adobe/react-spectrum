@@ -118,31 +118,37 @@ import {useVisuallyHidden} from 'react-aria/VisuallyHidden';
 export interface GridListRenderProps {
   /**
    * Whether the list has no items and should display its empty state.
+   *
    * @selector [data-empty]
    */
   isEmpty: boolean;
   /**
    * Whether the grid list is currently focused.
+   *
    * @selector [data-focused]
    */
   isFocused: boolean;
   /**
    * Whether the grid list is currently keyboard focused.
+   *
    * @selector [data-focus-visible]
    */
   isFocusVisible: boolean;
   /**
    * Whether the grid list is currently the active drop target.
+   *
    * @selector [data-drop-target]
    */
   isDropTarget: boolean;
   /**
    * Whether the items are arranged in a stack or grid.
+   *
    * @selector [data-layout="stack | grid"]
    */
   layout: 'stack' | 'grid';
   /**
    * The primary orientation of the items.
+   *
    * @selector [data-orientation="vertical | horizontal"]
    */
   orientation: Orientation;
@@ -160,31 +166,41 @@ export interface GridListProps<T>
     SlotProps,
     GlobalDOMAttributes<HTMLDivElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-GridList'
    */
   className?: ClassNameOrFunction<GridListRenderProps>;
   /**
    * Whether typeahead navigation is disabled.
+   *
    * @default false
    */
   disallowTypeAhead?: boolean;
   /**
    * How multiple selection should behave in the collection.
-   * @default "toggle"
+   *
+   * @default 'toggle'
    */
   selectionBehavior?: SelectionBehavior;
-  /** The drag and drop hooks returned by `useDragAndDrop` used to enable drag and drop behavior for the GridList. */
+  /**
+   * The drag and drop hooks returned by `useDragAndDrop` used to enable drag and drop behavior for
+   * the GridList.
+   */
   dragAndDropHooks?: DragAndDropHooks<NoInfer<T>>;
   /** Provides content to display when there are no items in the list. */
   renderEmptyState?: (props: GridListRenderProps) => ReactNode;
   /**
    * Whether the items are arranged in a stack or grid.
+   *
    * @default 'stack'
    */
   layout?: 'stack' | 'grid';
   /**
-   * The primary orientation of the items. Usually this is the direction that the collection scrolls.
+   * The primary orientation of the items. Usually this is the direction that the collection
+   * scrolls.
+   *
    * @default 'vertical'
    */
   orientation?: Orientation;
@@ -197,9 +213,10 @@ export const GridListContext =
  * A grid list displays a list of interactive items, with support for keyboard navigation,
  * single or multiple selection, and row actions.
  */
-export const GridList = /*#__PURE__*/ (forwardRef as forwardRefType)(function GridList<
-  T extends object
->(props: GridListProps<T>, ref: ForwardedRef<HTMLDivElement>) {
+export const GridList = /*#__PURE__*/ (forwardRef as forwardRefType)(function GridList<T>(
+  props: GridListProps<T>,
+  ref: ForwardedRef<HTMLDivElement>
+) {
   // Render the portal first so that we have the collection by the time we render the DOM in SSR.
   [props, ref] = useContextProps(props, ref, GridListContext);
 
@@ -210,17 +227,13 @@ export const GridList = /*#__PURE__*/ (forwardRef as forwardRefType)(function Gr
   );
 });
 
-interface GridListInnerProps<T extends object> {
+interface GridListInnerProps<T> {
   props: GridListProps<T> & SelectableCollectionContextValue<T>;
-  collection: ICollection<Node<object>>;
+  collection: ICollection<Node<any>>;
   gridListRef: RefObject<HTMLElement | null>;
 }
 
-function GridListInner<T extends object>({
-  props,
-  collection,
-  gridListRef: ref
-}: GridListInnerProps<T>) {
+function GridListInner<T>({props, collection, gridListRef: ref}: GridListInnerProps<T>) {
   [props, ref] = useContextProps(props, ref, SelectableCollectionContext);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let {shouldUseVirtualFocus, filter, disallowTypeAhead, ...DOMCollectionProps} = props;
@@ -436,6 +449,12 @@ export interface GridListItemRenderProps extends ItemRenderProps {
   /** The unique id of the item. */
   id?: Key;
   /**
+   * Whether the item's children have keyboard focus.
+   *
+   * @selector [data-focus-visible-within]
+   */
+  isFocusVisibleWithin: boolean;
+  /**
    * State of the grid list.
    */
   state: ListState<unknown>;
@@ -449,21 +468,26 @@ export interface GridListItemProps<T = object>
     PressEvents,
     Omit<GlobalDOMAttributes<HTMLDivElement>, 'onClick'> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-GridListItem'
    */
   className?: ClassNameOrFunction<GridListItemRenderProps>;
   /** The unique id of the item. */
   id?: Key;
-  /** The object value that this item represents. When using dynamic collections, this is set automatically. */
+  /**
+   * The object value that this item represents. When using dynamic collections, this is set
+   * automatically.
+   */
   value?: T;
   /** A string representation of the item's contents, used for features like typeahead. */
   textValue?: string;
   /** Whether the item is disabled. */
   isDisabled?: boolean;
   /**
-   * Handler that is called when a user performs an action on the item. The exact user event depends on
-   * the collection's `selectionBehavior` prop and the interaction modality.
+   * Handler that is called when a user performs an action on the item. The exact user event depends
+   * on the collection's `selectionBehavior` prop and the interaction modality.
    */
   onAction?: () => void;
 }
@@ -472,12 +496,14 @@ export interface GridListItemProps<T = object>
  * A GridListItem represents an individual item in a GridList.
  */
 export const GridListItem = /*#__PURE__*/ createLeafComponent(ItemNode, function GridListItem<
-  T extends object
+  T
 >(props: GridListItemProps<T>, forwardedRef: ForwardedRef<HTMLDivElement>, item: Node<T>) {
   let state = useContext(ListStateContext)!;
   let {dragAndDropHooks, dragState, dropState} = useContext(DragAndDropContext);
   let ref = useObjectRef<HTMLDivElement>(forwardedRef);
   let {isVirtualized} = useContext(CollectionRendererContext);
+  let isDraggable =
+    dragState && !(dragState.isDisabled || dragState.selectionManager.isDisabled(item.key));
   let {rowProps, gridCellProps, descriptionProps, ...states} = useGridListItem(
     {
       node: item,
@@ -489,13 +515,18 @@ export const GridListItem = /*#__PURE__*/ createLeafComponent(ItemNode, function
   );
 
   let {hoverProps, isHovered} = useHover({
-    isDisabled: !states.allowsSelection && !states.hasAction,
+    // because of https://bugs.webkit.org/show_bug.cgi?id=214609, supporting hover styles when a item is ONLY isDraggable
+    // results in hover styles sticking around after a reorder/drop operation...
+    isDisabled: !states.allowsSelection && !states.hasAction && !isDraggable,
     onHoverStart: item.props.onHoverStart,
     onHoverChange: item.props.onHoverChange,
     onHoverEnd: item.props.onHoverEnd
   });
 
   let {isFocusVisible, focusProps} = useFocusRing();
+  let {isFocusVisible: isFocusVisibleWithin, focusProps: focusWithinProps} = useFocusRing({
+    within: true
+  });
   let {checkboxProps} = useGridListSelectionCheckbox({key: item.key}, state);
 
   let buttonProps =
@@ -534,6 +565,7 @@ export const GridListItem = /*#__PURE__*/ createLeafComponent(ItemNode, function
       ...states,
       isHovered,
       isFocusVisible,
+      isFocusVisibleWithin,
       selectionMode: state.selectionManager.selectionMode,
       selectionBehavior: state.selectionManager.selectionBehavior,
       allowsDragging: !!dragState,
@@ -586,6 +618,7 @@ export const GridListItem = /*#__PURE__*/ createLeafComponent(ItemNode, function
           renderProps,
           rowProps,
           focusProps,
+          focusWithinProps,
           hoverProps,
           draggableItem?.dragProps
         )}
@@ -595,6 +628,7 @@ export const GridListItem = /*#__PURE__*/ createLeafComponent(ItemNode, function
         data-hovered={isHovered || undefined}
         data-focused={states.isFocused || undefined}
         data-focus-visible={isFocusVisible || undefined}
+        data-focus-visible-within={isFocusVisibleWithin || undefined}
         data-pressed={states.isPressed || undefined}
         data-allows-dragging={!!dragState || undefined}
         data-dragging={isDragging || undefined}
@@ -755,7 +789,9 @@ export interface GridListLoadMoreItemProps
     DOMRenderProps<'div', undefined>,
     GlobalDOMAttributes<HTMLDivElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element.
+   *
    * @default 'react-aria-GridListLoadMoreItem'
    */
   className?: string;
@@ -828,7 +864,9 @@ export const GridListLoadMoreItem = createLeafComponent(
 
 export interface GridListSectionProps<T> extends SectionProps<T>, DOMRenderProps<'div', undefined> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element.
+   *
    * @default 'react-aria-GridListSection'
    */
   className?: string;
@@ -839,7 +877,7 @@ export interface GridListSectionProps<T> extends SectionProps<T>, DOMRenderProps
  */
 export const GridListSection = /*#__PURE__*/ createBranchComponent(
   SectionNode,
-  <T extends object>(
+  <T extends any>(
     props: GridListSectionProps<T>,
     ref: ForwardedRef<HTMLDivElement>,
     item: Node<T>

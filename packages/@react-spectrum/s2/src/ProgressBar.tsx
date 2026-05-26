@@ -45,6 +45,7 @@ interface ProgressBarStyleProps {
   staticColor?: 'white' | 'black' | 'auto';
   /**
    * The label's overall position relative to the element it is labeling.
+   *
    * @default 'top'
    */
   labelPosition?: LabelPosition;
@@ -168,8 +169,8 @@ const indeterminateAnimation = style({
 });
 
 /**
- * ProgressBars show the progression of a system operation: downloading, uploading, processing, etc., in a visual way.
- * They can represent either determinate or indeterminate progress.
+ * ProgressBars show the progression of a system operation: downloading, uploading, processing,
+ * etc., in a visual way. They can represent either determinate or indeterminate progress.
  */
 export const ProgressBar = /*#__PURE__*/ forwardRef(function ProgressBar(
   props: ProgressBarProps,

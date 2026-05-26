@@ -134,8 +134,8 @@ describe('Picker/Select ', function () {
       );
 
       let selectTester = testUtilUser.createTester('Select', {root: screen.getByTestId('test')});
-      await selectTester.selectOption({option: 'Three'});
-      expect(selectTester.trigger).toHaveTextContent('Three');
+      await selectTester.toggleOptionSelection({option: 'Three'});
+      expect(selectTester.getTrigger()).toHaveTextContent('Three');
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
       expect(onSelectionChange).toHaveBeenLastCalledWith('three');
     });
@@ -160,8 +160,8 @@ describe('Picker/Select ', function () {
       );
 
       let selectTester = testUtilUser.createTester('Select', {root: screen.getByTestId('test')});
-      await selectTester.selectOption({option: 'Cat'});
-      expect(selectTester.trigger).toHaveTextContent('Cat');
+      await selectTester.toggleOptionSelection({option: 'Cat'});
+      expect(selectTester.getTrigger()).toHaveTextContent('Cat');
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
       expect(onSelectionChange).toHaveBeenLastCalledWith('cat');
     });
@@ -247,8 +247,8 @@ describe('Picker/Select ', function () {
       );
 
       let selectTester = testUtilUser.createTester('Select', {root: screen.getByTestId('test')});
-      await selectTester.selectOption({option: 'Three'});
-      expect(selectTester.trigger).toHaveTextContent('Three');
+      await selectTester.toggleOptionSelection({option: 'Three'});
+      expect(selectTester.getTrigger()).toHaveTextContent('Three');
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
       expect(onSelectionChange).toHaveBeenLastCalledWith('three');
     });
@@ -275,8 +275,8 @@ describe('Picker/Select ', function () {
       let selectTester = testUtilUser.createTester('Select', {
         root: screen.getAllByTestId('test')[0]
       });
-      await selectTester.selectOption({option: 'Cat'});
-      expect(selectTester.trigger).toHaveTextContent('Cat');
+      await selectTester.toggleOptionSelection({option: 'Cat'});
+      expect(selectTester.getTrigger()).toHaveTextContent('Cat');
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
       expect(onSelectionChange).toHaveBeenLastCalledWith('cat');
     });
@@ -306,7 +306,7 @@ describe('Picker/Select ', function () {
 
       let selectTester = testUtilUser.createTester('Select', {root: screen.getByTestId('test')});
       await selectTester.open();
-      expect(await screen.findByTestId('tray')).toContainElement(selectTester.listbox);
+      expect(await screen.findByTestId('tray')).toContainElement(selectTester.getListbox());
     });
   });
 });

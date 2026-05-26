@@ -71,28 +71,36 @@ export interface SpectrumPickerProps<T>
     StyleProps {
   /** Whether the textfield should be displayed with a quiet style. */
   isQuiet?: boolean;
-  /** Alignment of the menu relative to the input target.
+  /**
+   * Alignment of the menu relative to the input target.
+   *
    * @default 'start'
    */
   align?: Alignment;
   /**
    * Direction the menu will render relative to the Picker.
+   *
    * @default 'bottom'
    */
   direction?: 'bottom' | 'top';
   /**
    * Whether the menu should automatically flip direction when space is limited.
+   *
    * @default true
    */
   shouldFlip?: boolean;
-  /** Width of the menu. By default, matches width of the trigger. Note that the minimum width of the dropdown is always equal to the trigger's width. */
+  /**
+   * Width of the menu. By default, matches width of the trigger. Note that the minimum width of the
+   * dropdown is always equal to the trigger's width.
+   */
   menuWidth?: DimensionValue;
   /** Whether the element should receive focus on render. */
   autoFocus?: boolean;
 }
 
 /**
- * Pickers allow users to choose a single option from a collapsible list of options when space is limited.
+ * Pickers allow users to choose a single option from a collapsible list of options when space is
+ * limited.
  */
 // forwardRef doesn't support generic parameters, so cast the result to the correct type
 // https://stackoverflow.com/questions/58469229/react-with-typescript-generics-while-using-react-forwardref

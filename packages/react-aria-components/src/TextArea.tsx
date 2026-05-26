@@ -19,7 +19,9 @@ export interface TextAreaProps
     HoverEvents,
     StyleRenderProps<InputRenderProps, 'textarea'> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-TextArea'
    */
   className?: ClassNameOrFunction<InputRenderProps>;

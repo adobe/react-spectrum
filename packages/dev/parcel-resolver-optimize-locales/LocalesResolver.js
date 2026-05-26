@@ -23,7 +23,7 @@ module.exports = new Resolver({
   resolve({specifier, dependency, config}) {
     if (
       !Array.isArray(config) ||
-      !/[/\\](@react-stately|@react-aria|@react-spectrum|react-aria-components)[/\\]/.test(
+      !/[/\\](@react-stately|@react-aria|@react-spectrum|react-aria|react-aria-components)[/\\]/.test(
         dependency.sourcePath
       )
     ) {

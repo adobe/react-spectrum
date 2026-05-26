@@ -80,12 +80,14 @@ export interface TabsProps
   children: ReactNode;
   /**
    * The amount of space between the tabs.
+   *
    * @default 'regular'
    */
   density?: 'compact' | 'regular';
   /**
    * Defines if the text within the tabs should be hidden and only the icon should be shown.
    * The text is always visible when the item is collapsed into a picker.
+   *
    * @default 'show'
    */
   labelBehavior?: 'show' | 'hide';
@@ -174,7 +176,8 @@ const tabs = style(
 );
 
 /**
- * Tabs organize content into multiple sections and allow users to navigate between them. The content under the set of tabs should be related and form a coherent unit.
+ * Tabs organize content into multiple sections and allow users to navigate between them. The
+ * content under the set of tabs should be related and form a coherent unit.
  */
 export const Tabs = forwardRef(function Tabs(props: TabsProps, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, TabsContext);
@@ -280,7 +283,7 @@ const tablistWrapper = style(
   getAllowedOverrides()
 );
 
-export function TabList<T extends object>(props: TabListProps<T>): ReactNode | null {
+export function TabList<T>(props: TabListProps<T>): ReactNode | null {
   let {showTabs, menuId, valueId, tabs, listRef, onSelectionChange, ariaLabel, ariaDescribedBy} =
     useContext(CollapseContext) ?? {};
   let {density, orientation, labelBehavior} = useContext(InternalTabsContext);
@@ -308,7 +311,7 @@ export function TabList<T extends object>(props: TabListProps<T>): ReactNode | n
   );
 }
 
-function TabListInner<T extends object>(props: TabListProps<T>) {
+function TabListInner<T>(props: TabListProps<T>) {
   let {
     tablistRef,
     orientation,

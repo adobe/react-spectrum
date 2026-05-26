@@ -303,6 +303,7 @@ export interface PopoverDialogProps
   children?: ReactNode;
   /**
    * The amount of padding around the contents of the dialog.
+   *
    * @default 'default'
    */
   padding?: 'default' | 'none';

@@ -54,8 +54,8 @@ export interface SelectableItemOptions extends DOMProps {
    */
   shouldSelectOnPressUp?: boolean;
   /**
-   * Whether selection requires the pointer/mouse down and up events to occur on the same target or triggers selection on
-   * the target of the pointer/mouse up event.
+   * Whether selection requires the pointer/mouse down and up events to occur on the same target or
+   * triggers selection on the target of the pointer/mouse up event.
    */
   allowsDifferentPressOrigin?: boolean;
   /**
@@ -73,8 +73,8 @@ export interface SelectableItemOptions extends DOMProps {
   /** Whether the item is disabled. */
   isDisabled?: boolean;
   /**
-   * Handler that is called when a user performs an action on the item. The exact user event depends on
-   * the collection's `selectionBehavior` prop and the interaction modality.
+   * Handler that is called when a user performs an action on the item. The exact user event depends
+   * on the collection's `selectionBehavior` prop and the interaction modality.
    */
   onAction?: () => void;
   /**
@@ -83,6 +83,7 @@ export interface SelectableItemOptions extends DOMProps {
    * - 'selection': link follows selection interactions (e.g. if URL drives selection).
    * - 'override': links override all other interactions (link items are not selectable).
    * - 'none': links are disabled for both selection and actions (e.g. handled elsewhere).
+   *
    * @default 'action'
    */
   linkBehavior?: 'action' | 'selection' | 'override' | 'none';
@@ -96,12 +97,13 @@ export interface SelectableItemStates {
   /** Whether the item is currently focused. */
   isFocused: boolean;
   /**
-   * Whether the item is non-interactive, i.e. both selection and actions are disabled and the item may
-   * not be focused. Dependent on `disabledKeys` and `disabledBehavior`.
+   * Whether the item is non-interactive, i.e. both selection and actions are disabled and the item
+   * may not be focused. Dependent on `disabledKeys` and `disabledBehavior`.
    */
   isDisabled: boolean;
   /**
-   * Whether the item may be selected, dependent on `selectionMode`, `disabledKeys`, and `disabledBehavior`.
+   * Whether the item may be selected, dependent on `selectionMode`, `disabledKeys`, and
+   * `disabledBehavior`.
    */
   allowsSelection: boolean;
   /**

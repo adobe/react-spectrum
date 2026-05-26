@@ -123,6 +123,16 @@ export const ListBoxComplex: ListBoxStory = () => (
   </ListBox>
 );
 
+export const ListBoxDynamicStrings: ListBoxStory = args => (
+  <ListBox
+    className={styles.menu}
+    {...args}
+    aria-label="test listbox"
+    items={['Foo', 'Bar', 'Baz']}>
+    {item => <MyListBoxItem>{item}</MyListBoxItem>}
+  </ListBox>
+);
+
 interface Album {
   id: number;
   image: string;
@@ -542,6 +552,7 @@ function VirtualizedListBoxDndRender(args): JSX.Element {
           style={{width: '100%', height: '100%'}}
           aria-label="virtualized listbox"
           items={list.items}
+          disabledKeys={[3, 5]}
           dragAndDropHooks={dragAndDropHooks}>
           {item => <MyListBoxItem>{item.name}</MyListBoxItem>}
         </ListBox>

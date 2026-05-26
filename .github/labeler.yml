@@ -1,3 +1,5 @@
+max-files-changed: 100
+
 needs translations:
   - changed-files:
       - any-glob-to-any-file: ['**/intl/*.json']
@@ -195,6 +197,10 @@ LinkButton:
 ListBox:
   - changed-files:
       - any-glob-to-any-file: '**/ListBox.tsx'
+
+ListView:
+  - changed-files:
+      - any-glob-to-any-file: '**/ListView.tsx'
 
 Menu:
   - changed-files:

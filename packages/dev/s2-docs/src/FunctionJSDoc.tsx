@@ -23,20 +23,6 @@ interface FunctionJSDocProps {
   };
 }
 
-function parseFencedCodeBlock(example: string): {lang?: string; code: string} | null {
-  let trimmed = example.trim();
-  let match = trimmed.match(/^```([^\n`]*)\n([\s\S]*?)\n```$/);
-  if (!match) {
-    return null;
-  }
-
-  let [, lang, code] = match;
-  return {
-    lang: lang?.trim() || undefined,
-    code
-  };
-}
-
 export function FunctionJSDoc({function: func}: FunctionJSDocProps) {
   let examples = Array.isArray(func.examples) ? func.examples.filter(Boolean) : [];
 
@@ -46,19 +32,14 @@ export function FunctionJSDoc({function: func}: FunctionJSDocProps) {
         {renderHTMLfromMarkdown(func.description, {forceInline: false, forceBlock: true})}
       </span>
       {examples.map((example, index) => {
-        let parsedExample = parseFencedCodeBlock(example);
         return (
           <div key={index} className={style({marginTop: 12})}>
             {examples.length > 1 && (
               <strong className={style({font: 'title-sm'})}>Example {index + 1}:</strong>
             )}
-            {parsedExample ? (
-              <pre className={standaloneCode}>
-                <Code lang={parsedExample.lang || 'tsx'}>{parsedExample.code}</Code>
-              </pre>
-            ) : (
-              renderHTMLfromMarkdown(example, {forceInline: false, forceBlock: true})
-            )}
+            <pre className={standaloneCode}>
+              <Code lang="tsx">{example.trim()}</Code>
+            </pre>
           </div>
         );
       })}

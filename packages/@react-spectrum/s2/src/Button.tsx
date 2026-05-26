@@ -254,7 +254,7 @@ const button = style<ButtonRenderProps & ButtonStyleProps & {isStaticColor: bool
           fill: {
             variant: {
               primary: 'auto',
-              secondary: baseColor('transparent-overlay-800'),
+              secondary: 'white',
               premium: 'white',
               genai: 'white'
             }
@@ -264,7 +264,7 @@ const button = style<ButtonRenderProps & ButtonStyleProps & {isStaticColor: bool
               premium: 'white',
               genai: 'white'
             },
-            default: baseColor('transparent-overlay-800')
+            default: 'white'
           }
         },
         isDisabled: 'transparent-overlay-400'
@@ -515,7 +515,8 @@ export const Button = forwardRef(function Button(
 });
 
 /**
- * A LinkButton combines the functionality of a link with the appearance of a button. Useful for allowing users to navigate to another page.
+ * A LinkButton combines the functionality of a link with the appearance of a button. Useful for
+ * allowing users to navigate to another page.
  */
 export const LinkButton = forwardRef(function LinkButton(
   props: LinkButtonProps,

@@ -17,23 +17,21 @@ import {CSSProperties, RefObject} from 'react';
  * Returns a render prop style function that applies a subtle Spectrum "press" scale
  * effect to an element while it is being pressed.
  *
+ * @example
+ *   import {Button} from 'react-aria-components/Button';
+ *   import {pressScale} from '@react-spectrum/s2';
+ *   import {useRef} from 'react';
+ *
+ *   function MyButton(props) {
+ *     let ref = useRef(null);
+ *     return <Button {...props} ref={ref} style={pressScale(ref, props.style)} />;
+ *   }
+ *
  * @param ref - A ref to the element receiving the press effect.
  * @param style - An optional base style object, or a render prop function returning
- * one.
+ *   one.
  * @returns A render prop function suitable for passing to a React Aria component's
  * `style` prop.
- *
- * @example
- * ```tsx
- * import {Button} from 'react-aria-components/Button';
- * import {pressScale} from '@react-spectrum/s2';
- * import {useRef} from 'react';
- *
- * function MyButton(props) {
- *   let ref = useRef(null);
- *   return <Button {...props} ref={ref} style={pressScale(ref, props.style)} />;
- * }
- * ```
  */
 export function pressScale<R extends {isPressed: boolean}>(
   ref: RefObject<HTMLElement | null>,
