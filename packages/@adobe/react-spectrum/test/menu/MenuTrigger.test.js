@@ -271,11 +271,11 @@ describe('MenuTrigger', function () {
 
         if (Component === MenuTrigger) {
           expect(menuTester.getTrigger()).toHaveAttribute('aria-expanded', 'true');
-          expect(onOpenChange).toBeCalledTimes(1);
+          expect(onOpenChange).toHaveBeenCalledTimes(1);
         } else {
           expect(menuTester.getTrigger()).toHaveAttribute('aria-expanded');
-          expect(onOpen).toBeCalledTimes(1);
-          expect(onClose).toBeCalledTimes(0);
+          expect(onOpen).toHaveBeenCalledTimes(1);
+          expect(onClose).toHaveBeenCalledTimes(0);
         }
 
         await menuTester.toggleOptionSelection({
@@ -285,9 +285,9 @@ describe('MenuTrigger', function () {
         });
 
         if (Component === MenuTrigger) {
-          expect(onSelectionChange).toBeCalledTimes(2);
+          expect(onSelectionChange).toHaveBeenCalledTimes(2);
         } else {
-          expect(onSelect).toBeCalledTimes(2);
+          expect(onSelect).toHaveBeenCalledTimes(2);
         }
 
         expect(menuTester.getMenu()).toBeInTheDocument();
