@@ -36,9 +36,18 @@ const SKILLS = {
   'react-spectrum-s2': {
     name: 'react-spectrum-s2',
     description:
-      'Build accessible UI components with React Spectrum S2 (Spectrum 2). Use when developers mention React Spectrum, Spectrum 2, S2, @react-spectrum/s2, or Adobe design system components. Provides documentation for buttons, forms, dialogs, tables, date/time pickers, color pickers, and other accessible components.',
+      "Build UIs with React Spectrum S2 (Spectrum 2), Adobe's component library for React. Use when developers are using `@react-spectrum/s2` or need Adobe design system components. Includes React Aria Components docs as a reference for building custom components on top of unstyled primitives.",
     license: 'Apache-2.0',
     sourceDir: 's2',
+    additionalReferenceLibraries: [
+      {
+        skillName: 'react-aria',
+        referenceSubdir: 'react-aria',
+        title: 'React Aria Components',
+        description:
+          'Documentation for unstyled accessible primitives. Use only when no React Spectrum S2 component fits the requirements.'
+      }
+    ],
     compatibility: 'Requires a React project with @react-spectrum/s2 installed.',
     metadata: {
       author: 'Adobe',
@@ -75,8 +84,20 @@ const SKILLS = {
 
 const CUSTOM_SKILL_CONTENT = {
   'react-spectrum-s2': {
-    skillNotesMarkdown:
+    skillNotesMarkdown: [
       'If the requirements do not clearly specify which React Spectrum component to use, consult the [Component Decision Tree](references/guides/component-decision-tree.md) before choosing a component.',
+      'If the request involves a Figma design, frame, or URL — or if the Figma MCP (`get_design_context`,`search_design_system`, etc.) is available — consult [Implementing Figma designs with React Spectrum S2](references/guides/figma-to-s2.md) before generating code.',
+      'When writing tests that exercise S2 components, consult [Testing with React Spectrum S2](references/guides/test-utils-guidance.md) and prefer the ARIA pattern testers from `@react-spectrum/test-utils` over hand-rolled role/selector queries.',
+      `## React Spectrum S2 vs React Aria Components
+
+React Spectrum S2 is built on top of React Aria Components. The S2 components add Spectrum 2 styling, behavior, and slot structure on top of the unstyled React Aria primitives. Always prefer S2 components for React Spectrum work because they are pre-styled, design-system compliant, and cover most common UI patterns.
+
+Only reach for React Aria Components directly when:
+- Building a custom component because no S2 component matches the requirements. Follow [Creating Custom Components](references/guides/creating-custom-components.md) and pair the React Aria primitive with the S2 \`style\` macro for Spectrum styling.
+- You need a utility such as \`FocusScope\`, \`VisuallyHidden\`, \`useFocusRing\`, \`mergeProps\`, etc.
+
+The React Aria Components documentation is bundled under \`references/react-aria/\`. Many unstyled React Aria Components share the same name as S2 components, so ensure that you're searching and accessing the correct docs where needed.`
+    ].join('\n\n'),
     embeddedMarkdownPaths: [
       path.join(
         REPO_ROOT,
@@ -93,7 +114,42 @@ const CUSTOM_SKILL_CONTENT = {
         ),
         description:
           'How to choose the right S2 component when requirements do not name one explicitly.'
+      },
+      {
+        title: 'Implementing Figma designs with React Spectrum S2',
+        path: 'figma-to-s2.md',
+        sourcePath: path.join(
+          REPO_ROOT,
+          'packages/dev/s2-docs/skills/react-spectrum-s2/figma-to-s2.md'
+        ),
+        description:
+          'How to translate Figma designs (via the Figma MCP) into S2 components and the `style` macro.'
+      },
+      {
+        title: 'Creating Custom Components',
+        path: 'creating-custom-components.md',
+        sourcePath: path.join(
+          REPO_ROOT,
+          'packages/dev/s2-docs/skills/react-spectrum-s2/creating-custom-components.md'
+        ),
+        description:
+          'How to build custom Spectrum 2 components using React Aria Components and the `style` macro.'
+      },
+      {
+        title: 'Testing with React Spectrum S2',
+        path: 'test-utils-guidance.md',
+        sourcePath: path.join(
+          REPO_ROOT,
+          'packages/dev/s2-docs/skills/react-spectrum-s2/test-utils-guidance.md'
+        ),
+        description:
+          'How to write tests for S2 components using ARIA pattern testers from `@react-spectrum/test-utils`.'
       }
+    ]
+  },
+  'react-aria': {
+    embeddedMarkdownPaths: [
+      path.join(REPO_ROOT, 'packages/dev/s2-docs/skills/react-aria/test-utils-guidance.md')
     ]
   }
 };
@@ -157,6 +213,25 @@ function getCustomSkillNotesMarkdown(skillName) {
   return getCustomSkillContent(skillName)?.skillNotesMarkdown ?? '';
 }
 
+function getAdditionalReferenceLibraries(skillConfig) {
+  return (skillConfig.additionalReferenceLibraries ?? []).flatMap(library => {
+    const referencedSkillConfig = SKILLS[library.skillName];
+    if (!referencedSkillConfig) {
+      console.warn(
+        `Additional reference skill "${library.skillName}" not found for ${skillConfig.name}`
+      );
+      return [];
+    }
+
+    return [
+      {
+        ...library,
+        skillConfig: referencedSkillConfig
+      }
+    ];
+  });
+}
+
 /**
  * Parse llms.txt to get documentation entries.
  */
@@ -171,6 +246,9 @@ function parseLlmsTxt(llmsTxtPath) {
     }
     if (node.type === 'text') {
       return node.value;
+    }
+    if (node.type === 'inlineCode') {
+      return '`' + node.value + '`';
     }
     if (Array.isArray(node.children)) {
       return node.children.map(toText).join('');
@@ -373,23 +451,19 @@ metadata:
 function generateDocsSkillMd(skillConfig, categories, isS2) {
   const customGuideEntries = getCustomGuideEntries(skillConfig.name);
   const customSkillNotesMarkdown = getCustomSkillNotesMarkdown(skillConfig.name);
+  const additionalReferenceLibraries = getAdditionalReferenceLibraries(skillConfig);
   const embeddedCustomMarkdown = readCustomEmbeddedMarkdown(skillConfig.name, {
     '{{guidesBase}}': 'references/guides/',
-    '{{componentsBase}}': 'references/components/'
+    '{{componentsBase}}': 'references/components/',
+    '{{testingBase}}': 'references/testing/'
   });
 
   let content = generateFrontmatter(skillConfig);
 
   if (isS2) {
-    content += `# React Spectrum S2 (Spectrum 2)
-
-React Spectrum S2 is Adobe's implementation of the Spectrum 2 design system in React. It provides a collection of accessible, adaptive, and high-quality UI components.
-`;
+    content += '# React Spectrum S2 (Spectrum 2)\n';
   } else {
-    content += `# React Aria Components
-
-React Aria Components is a library of unstyled, accessible UI components that you can style with any CSS solution. Built on top of React Aria hooks, it provides the accessibility and behavior without prescribing any visual design.
-`;
+    content += '# React Aria Components\n';
   }
 
   if (customSkillNotesMarkdown) {
@@ -414,18 +488,20 @@ The \`references/\` directory contains detailed documentation organized as follo
       content += `- [${entry.title}](references/guides/${entry.path})${entry.description ? `: ${entry.description}` : ''}\n`;
     }
     for (const entry of categories.guides) {
-      content += `- [${entry.title}](references/guides/${entry.path})${entry.description ? `: ${entry.description}` : ''}\n`;
+      content += `- [${entry.title}](references/guides/${entry.path})\n`;
     }
     content += '\n';
   }
 
   if (categories.components.length > 0) {
+    const componentNames = categories.components.map(entry => entry.title).join(', ');
     content += `### Components
+
+Component documentation is in \`references/components/\` — one Markdown file per component (e.g. \`references/components/Button.md\`). Read the file for a component when you need its API, props, examples, or accessibility notes.
+
+Available components: ${componentNames}.
+
 `;
-    for (const entry of categories.components) {
-      content += `- [${entry.title}](references/components/${entry.path})${entry.description ? `: ${entry.description}` : ''}\n`;
-    }
-    content += '\n';
   }
 
   if (categories.interactions.length > 0) {
@@ -460,11 +536,11 @@ The \`references/\` directory contains detailed documentation organized as follo
     content += '\n';
   }
 
-  if (categories.testing.length > 0) {
-    content += `### Testing
+  if (additionalReferenceLibraries.length > 0) {
+    content += `### Additional References
 `;
-    for (const entry of categories.testing) {
-      content += `- [${entry.title}](references/testing/${entry.path})\n`;
+    for (const library of additionalReferenceLibraries) {
+      content += `- [${library.title}](references/${library.referenceSubdir}/llms.txt)${library.description ? `: ${library.description}` : ''}\n`;
     }
     content += '\n';
   }
@@ -592,8 +668,8 @@ Use these when you need more component-by-component or API-level detail:
 /**
  * Copy documentation files to the skill's references directory.
  */
-function copyDocsDocumentation(skillConfig, categories, skillDir) {
-  const refsDir = path.join(skillDir, 'references');
+function copyDocsDocumentation(skillConfig, categories, skillDir, options = {}) {
+  const refsDir = path.join(skillDir, 'references', options.referenceSubdir ?? '');
   const sourceDir = path.join(MARKDOWN_DOCS_DIST, skillConfig.sourceDir);
   const customGuideEntries = getCustomGuideEntries(skillConfig.name);
 
@@ -646,7 +722,8 @@ function copyDocsDocumentation(skillConfig, categories, skillDir) {
       targetPath,
       renderCustomMarkdown(sourcePath, {
         '{{guidesBase}}': '',
-        '{{componentsBase}}': '../components/'
+        '{{componentsBase}}': '../components/',
+        '{{testingBase}}': '../testing/'
       }) + '\n'
     );
   }
@@ -684,6 +761,25 @@ function copyDocsDocumentation(skillConfig, categories, skillDir) {
   const llmsTxtSource = path.join(sourceDir, 'llms.txt');
   if (fs.existsSync(llmsTxtSource)) {
     fs.copyFileSync(llmsTxtSource, path.join(refsDir, 'llms.txt'));
+  }
+}
+
+function copyAdditionalReferenceLibraries(skillConfig, skillDir) {
+  for (const library of getAdditionalReferenceLibraries(skillConfig)) {
+    const llmsTxtPath = path.join(MARKDOWN_DOCS_DIST, library.skillConfig.sourceDir, 'llms.txt');
+    if (!fs.existsSync(llmsTxtPath)) {
+      console.warn(`Warning: expected additional reference docs not found: ${llmsTxtPath}`);
+      continue;
+    }
+
+    const entries = parseLlmsTxt(llmsTxtPath);
+    const categories = categorizeEntries(entries, library.skillConfig.sourceDir);
+    copyDocsDocumentation(library.skillConfig, categories, skillDir, {
+      referenceSubdir: library.referenceSubdir
+    });
+    console.log(
+      `Copied ${library.title} documentation to ${path.relative(REPO_ROOT, path.join(skillDir, 'references', library.referenceSubdir))}`
+    );
   }
 }
 
@@ -844,6 +940,7 @@ function generateSkill(skillConfig, wellKnownRoot) {
   console.log(
     `Copied documentation to ${path.relative(REPO_ROOT, path.join(skillDir, 'references'))}`
   );
+  copyAdditionalReferenceLibraries(skillConfig, skillDir);
 
   return skillDir;
 }

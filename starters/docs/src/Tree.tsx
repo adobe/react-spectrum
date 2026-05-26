@@ -18,7 +18,7 @@ import {Checkbox} from './Checkbox';
 import {ProgressCircle} from './ProgressCircle';
 import './Tree.css';
 
-export function Tree<T extends object>(props: TreeProps<T>) {
+export function Tree<T>(props: TreeProps<T>) {
   return <AriaTree {...props} />;
 }
 
@@ -69,7 +69,7 @@ export function TreeLoadMoreItem(props: TreeLoadMoreItemProps) {
   );
 }
 
-export function TreeSection<T extends object>(props: React.ComponentProps<typeof AriaTreeSection>) {
+export function TreeSection(props: React.ComponentProps<typeof AriaTreeSection>) {
   return <AriaTreeSection {...props} />;
 }
 

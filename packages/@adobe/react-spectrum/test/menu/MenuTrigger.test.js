@@ -126,7 +126,7 @@ describe('MenuTrigger', function () {
       jest.runAllTimers();
     });
 
-    let menu = menuTester.menu;
+    let menu = menuTester.getMenu();
     expect(menu).toBeInTheDocument();
     expect(menu).toHaveAttribute('aria-labelledby', triggerButton.id);
 
@@ -223,7 +223,7 @@ describe('MenuTrigger', function () {
     async function openAndTriggerMenuItem(tree, role, selectionMode, triggerEvent) {
       let menuTester = testUtilUser.createTester('Menu', {root: tree.container});
       await menuTester.open();
-      let menuItems = menuTester.options();
+      let menuItems = menuTester.getOptions();
       let itemToAction = menuItems[1];
       await triggerEvent(itemToAction);
       act(() => {
@@ -255,7 +255,7 @@ describe('MenuTrigger', function () {
           expect(onSelect).toHaveBeenCalledTimes(0);
         }
 
-        await menuTester.selectOption({
+        await menuTester.toggleOptionSelection({
           option: 'Foo',
           menuSelectionMode: 'single',
           closesOnSelect: false
@@ -267,13 +267,36 @@ describe('MenuTrigger', function () {
           expect(onSelect).toHaveBeenCalledTimes(1);
         }
 
-        expect(menuTester.menu).toBeInTheDocument();
+        expect(menuTester.getMenu()).toBeInTheDocument();
 
         if (Component === MenuTrigger) {
-          expect(menuTester.trigger).toHaveAttribute('aria-expanded', 'true');
+          expect(menuTester.getTrigger()).toHaveAttribute('aria-expanded', 'true');
+          expect(onOpenChange).toBeCalledTimes(1);
+        } else {
+          expect(menuTester.getTrigger()).toHaveAttribute('aria-expanded');
+          expect(onOpen).toBeCalledTimes(1);
+          expect(onClose).toBeCalledTimes(0);
+        }
+
+        await menuTester.toggleOptionSelection({
+          option: 'Bar',
+          menuSelectionMode: 'single',
+          closesOnSelect: false
+        });
+
+        if (Component === MenuTrigger) {
+          expect(onSelectionChange).toBeCalledTimes(2);
+        } else {
+          expect(onSelect).toBeCalledTimes(2);
+        }
+
+        expect(menuTester.getMenu()).toBeInTheDocument();
+
+        if (Component === MenuTrigger) {
+          expect(menuTester.getTrigger()).toHaveAttribute('aria-expanded', 'true');
           expect(onOpenChange).toHaveBeenCalledTimes(1);
         } else {
-          expect(menuTester.trigger).toHaveAttribute('aria-expanded');
+          expect(menuTester.getTrigger()).toHaveAttribute('aria-expanded');
           expect(onOpen).toHaveBeenCalledTimes(1);
           expect(onClose).toHaveBeenCalledTimes(0);
         }
@@ -294,14 +317,14 @@ describe('MenuTrigger', function () {
         expect(onOpenChange).toHaveBeenCalledTimes(1);
         expect(onSelectionChange).toHaveBeenCalledTimes(0);
         menuTester.setInteractionType('keyboard');
-        await menuTester.selectOption({
+        await menuTester.toggleOptionSelection({
           option: 'Foo',
           menuSelectionMode: 'single',
           closesOnSelect: false
         });
 
-        expect(menuTester.menu).toBeInTheDocument();
-        expect(menuTester.trigger).toHaveAttribute('aria-expanded', 'true');
+        expect(menuTester.getMenu()).toBeInTheDocument();
+        expect(menuTester.getTrigger()).toHaveAttribute('aria-expanded', 'true');
         expect(onOpenChange).toHaveBeenCalledTimes(1);
       }
     );
@@ -327,14 +350,14 @@ describe('MenuTrigger', function () {
         expect(onOpenChange).toHaveBeenCalledTimes(1);
         expect(onSelectionChange).toHaveBeenCalledTimes(0);
 
-        await menuTester.selectOption({
+        await menuTester.toggleOptionSelection({
           option: 'Foo',
           menuSelectionMode: 'multiple',
           keyboardActivation: 'Space'
         });
         expect(onSelectionChange).toHaveBeenCalledTimes(1);
         expect(onSelectionChange.mock.calls[0][0].has('Foo')).toBeTruthy();
-        await menuTester.selectOption({
+        await menuTester.toggleOptionSelection({
           option: 'Bar',
           menuSelectionMode: 'multiple',
           keyboardActivation: 'Space'
@@ -343,7 +366,7 @@ describe('MenuTrigger', function () {
         expect(onSelectionChange.mock.calls[1][0].has('Bar')).toBeTruthy();
 
         await menuTester.close();
-        expect(menuTester.menu).not.toBeInTheDocument();
+        expect(menuTester.getMenu()).not.toBeInTheDocument();
         expect(onOpenChange).toHaveBeenCalledTimes(2);
       }
     );
@@ -991,7 +1014,7 @@ describe('MenuTrigger', function () {
       jest.runAllTimers();
     });
 
-    let menu = menuTester.menu;
+    let menu = menuTester.getMenu();
 
     await user.tab();
     act(() => {
@@ -1001,7 +1024,7 @@ describe('MenuTrigger', function () {
       jest.runAllTimers();
     });
     expect(menu).toBeInTheDocument();
-    expect(document.activeElement).toBe(menuTester.options()[0]);
+    expect(document.activeElement).toBe(menuTester.getOptions()[0]);
   });
 });
 

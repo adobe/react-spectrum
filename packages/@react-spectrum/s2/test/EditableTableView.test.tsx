@@ -293,7 +293,7 @@ describe('TableView', () => {
         overlayType: 'modal'
       });
       await dialogTester.open();
-      let dialog = dialogTester.dialog;
+      let dialog = dialogTester.getDialog();
       expect(dialog).toBeVisible();
 
       let input = within(dialog!).getByRole('textbox');
@@ -308,7 +308,7 @@ describe('TableView', () => {
 
       expect(dialog).not.toBeInTheDocument();
 
-      expect(tableTester.findRow({rowIndexOrText: 'Apples Crisp'})).toBeInTheDocument();
+      expect(tableTester.findRow({indexOrText: 'Apples Crisp'})).toBeInTheDocument();
 
       // navigate to Farmer column
       await user.keyboard('{ArrowRight}');
@@ -321,13 +321,13 @@ describe('TableView', () => {
         overlayType: 'modal'
       });
       await dialogTester.open();
-      dialog = dialogTester.dialog;
+      dialog = dialogTester.getDialog();
       // TODO: also weird that it is dialog.dialog?
       expect(dialog).toBeVisible();
 
       let selectTester = testUtilUser.createTester('Select', {root: dialog!});
-      expect(selectTester.trigger).toHaveFocus();
-      await selectTester.selectOption({option: 'Steven'});
+      expect(selectTester.getTrigger()).toHaveFocus();
+      await selectTester.toggleOptionSelection({option: 'Steven'});
       act(() => {
         jest.runAllTimers();
       });
@@ -342,7 +342,7 @@ describe('TableView', () => {
 
       expect(dialog).not.toBeInTheDocument();
       expect(
-        within(tableTester.findRow({rowIndexOrText: 'Apples Crisp'})).getByText('Steven')
+        within(tableTester.findRow({indexOrText: 'Apples Crisp'})).getByText('Steven')
       ).toBeInTheDocument();
 
       await user.tab();
@@ -350,7 +350,7 @@ describe('TableView', () => {
 
       await user.tab({shift: true});
       expect(
-        within(tableTester.findRow({rowIndexOrText: 'Apples Crisp'})).getByRole('button', {
+        within(tableTester.findRow({indexOrText: 'Apples Crisp'})).getByRole('button', {
           name: 'Edit farmer'
         })
       ).toHaveFocus();
@@ -394,7 +394,7 @@ describe('TableView', () => {
 
       expect(dialog).not.toBeInTheDocument();
 
-      expect(tableTester.findRow({rowIndexOrText: 'Peaches'})).toBeInTheDocument();
+      expect(tableTester.findRow({indexOrText: 'Peaches'})).toBeInTheDocument();
     });
 
     it('should be cancellable through the buttons in the dialog', async () => {
@@ -422,7 +422,7 @@ describe('TableView', () => {
 
       expect(dialog).not.toBeInTheDocument();
 
-      expect(tableTester.findRow({rowIndexOrText: 'Apples'})).toBeInTheDocument();
+      expect(tableTester.findRow({indexOrText: 'Apples'})).toBeInTheDocument();
       expect(onCancel).toHaveBeenCalled();
     });
 
@@ -453,7 +453,7 @@ describe('TableView', () => {
       });
 
       expect(dialog).not.toBeInTheDocument();
-      expect(tableTester.findRow({rowIndexOrText: 'Apples'})).toBeInTheDocument();
+      expect(tableTester.findRow({indexOrText: 'Apples'})).toBeInTheDocument();
       expect(onCancel).toHaveBeenCalled();
     });
   });
@@ -479,7 +479,7 @@ describe('TableView', () => {
       });
 
       expect(dialog).not.toBeInTheDocument();
-      expect(tableTester.findRow({rowIndexOrText: 'Apples Crisp'})).toBeInTheDocument();
+      expect(tableTester.findRow({indexOrText: 'Apples Crisp'})).toBeInTheDocument();
     });
   });
 
@@ -506,7 +506,7 @@ describe('TableView', () => {
       });
 
       expect(dialog).not.toBeInTheDocument();
-      expect(tableTester.findRow({rowIndexOrText: 'Apples Crisp'})).toBeInTheDocument();
+      expect(tableTester.findRow({indexOrText: 'Apples Crisp'})).toBeInTheDocument();
       let button = within(tableTester.findCell({text: 'Apples Crisp'})).getByRole('button');
       expect(button).toHaveAttribute('aria-disabled', 'true');
       expect(button).toHaveFocus();
@@ -541,7 +541,7 @@ describe('TableView', () => {
       });
 
       expect(dialog).not.toBeInTheDocument();
-      expect(tableTester.findRow({rowIndexOrText: 'Apples Crisp'})).toBeInTheDocument();
+      expect(tableTester.findRow({indexOrText: 'Apples Crisp'})).toBeInTheDocument();
       let button = within(tableTester.findCell({text: 'Apples Crisp'})).getByRole('button');
       expect(button).toHaveAttribute('aria-disabled', 'true');
       expect(button).toHaveFocus();
@@ -742,7 +742,7 @@ describe('TableView', () => {
             overlayType: 'modal'
           });
           await dialogTester.open();
-          let dialog = dialogTester.dialog;
+          let dialog = dialogTester.getDialog();
           expect(dialog).toBeVisible();
 
           let input = within(dialog!).getByRole('textbox');
@@ -757,7 +757,7 @@ describe('TableView', () => {
 
           expect(dialog).not.toBeInTheDocument();
 
-          expect(tableTester.findRow({rowIndexOrText: 'Apples Crisp'})).toBeInTheDocument();
+          expect(tableTester.findRow({indexOrText: 'Apples Crisp'})).toBeInTheDocument();
 
           // navigate to Farmer column
           await user.keyboard('{ArrowRight}');
@@ -770,13 +770,13 @@ describe('TableView', () => {
             overlayType: 'modal'
           });
           await dialogTester.open();
-          dialog = dialogTester.dialog;
+          dialog = dialogTester.getDialog();
           // TODO: also weird that it is dialog.dialog?
           expect(dialog).toBeVisible();
 
           let selectTester = testUtilUser.createTester('Select', {root: dialog!});
-          expect(selectTester.trigger).toHaveFocus();
-          await selectTester.selectOption({option: 'Steven'});
+          expect(selectTester.getTrigger()).toHaveFocus();
+          await selectTester.toggleOptionSelection({option: 'Steven'});
           act(() => {
             jest.runAllTimers();
           });
@@ -791,7 +791,7 @@ describe('TableView', () => {
 
           expect(dialog).not.toBeInTheDocument();
           expect(
-            within(tableTester.findRow({rowIndexOrText: 'Apples Crisp'})).getByText('Steven')
+            within(tableTester.findRow({indexOrText: 'Apples Crisp'})).getByText('Steven')
           ).toBeInTheDocument();
 
           await user.tab();
@@ -799,7 +799,7 @@ describe('TableView', () => {
 
           await user.tab({shift: true});
           expect(
-            within(tableTester.findRow({rowIndexOrText: 'Apples Crisp'})).getByRole('button', {
+            within(tableTester.findRow({indexOrText: 'Apples Crisp'})).getByRole('button', {
               name: 'Edit farmer'
             })
           ).toHaveFocus();
@@ -843,7 +843,7 @@ describe('TableView', () => {
 
           expect(dialog).not.toBeInTheDocument();
 
-          expect(tableTester.findRow({rowIndexOrText: 'Peaches'})).toBeInTheDocument();
+          expect(tableTester.findRow({indexOrText: 'Peaches'})).toBeInTheDocument();
         });
 
         it('should be cancellable through the buttons in the dialog', async () => {
@@ -871,7 +871,7 @@ describe('TableView', () => {
 
           expect(dialog).not.toBeInTheDocument();
 
-          expect(tableTester.findRow({rowIndexOrText: 'Apples'})).toBeInTheDocument();
+          expect(tableTester.findRow({indexOrText: 'Apples'})).toBeInTheDocument();
           expect(onCancel).toHaveBeenCalled();
         });
 
@@ -902,7 +902,7 @@ describe('TableView', () => {
           });
 
           expect(dialog).not.toBeInTheDocument();
-          expect(tableTester.findRow({rowIndexOrText: 'Apples'})).toBeInTheDocument();
+          expect(tableTester.findRow({indexOrText: 'Apples'})).toBeInTheDocument();
           expect(onCancel).toHaveBeenCalled();
         });
       });
@@ -928,7 +928,7 @@ describe('TableView', () => {
           });
 
           expect(dialog).not.toBeInTheDocument();
-          expect(tableTester.findRow({rowIndexOrText: 'Apples Crisp'})).toBeInTheDocument();
+          expect(tableTester.findRow({indexOrText: 'Apples Crisp'})).toBeInTheDocument();
         });
       });
 
@@ -955,7 +955,7 @@ describe('TableView', () => {
           });
 
           expect(dialog).not.toBeInTheDocument();
-          expect(tableTester.findRow({rowIndexOrText: 'Apples Crisp'})).toBeInTheDocument();
+          expect(tableTester.findRow({indexOrText: 'Apples Crisp'})).toBeInTheDocument();
           let button = within(tableTester.findCell({text: 'Apples Crisp'})).getByRole('button');
           expect(button).toHaveAttribute('aria-disabled', 'true');
           expect(button).toHaveFocus();
@@ -990,7 +990,7 @@ describe('TableView', () => {
           });
 
           expect(dialog).not.toBeInTheDocument();
-          expect(tableTester.findRow({rowIndexOrText: 'Apples Crisp'})).toBeInTheDocument();
+          expect(tableTester.findRow({indexOrText: 'Apples Crisp'})).toBeInTheDocument();
           let button = within(tableTester.findCell({text: 'Apples Crisp'})).getByRole('button');
           expect(button).toHaveAttribute('aria-disabled', 'true');
           expect(button).toHaveFocus();

@@ -104,7 +104,7 @@ export function VirtualizedListBoxExample(props: any): JSX.Element {
 }
 
 const Context = React.createContext<{
-  state: ListState<object>;
+  state: ListState<any>;
   dropState: DroppableCollectionState;
 } | null>(null);
 const acceptedTypes = ['item', 'folder'];

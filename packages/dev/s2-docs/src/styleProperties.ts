@@ -103,6 +103,18 @@ const negativeBaseSpacingValues = [
 ];
 const relativeSpacingValues = ['text-to-control', 'text-to-visual', 'edge-to-text', 'pill'];
 const heightBaseValues = ['auto', 'full', 'min', 'max', 'fit', 'screen'];
+// Position keyword set shared by `backgroundPosition` and `objectPosition`.
+const positionKeywordValues = [
+  'bottom',
+  'center',
+  'left',
+  'left bottom',
+  'left top',
+  'right',
+  'right bottom',
+  'right top',
+  'top'
+];
 const fontSize = [
   'ui-xs',
   'ui-sm',
@@ -310,7 +322,7 @@ const dimensionsPropertyValues: {[key: string]: (string | number)[]} = {
   left: ['auto', 'full'],
   bottom: ['auto', 'full'],
   right: ['auto', 'full'],
-  aspectRatio: ['auto', 'square', 'video', 'number / number']
+  aspectRatio: ['auto', 'square', 'video', '${number}/${number}']
 };
 
 const textPropertyValues: {[key: string]: (string | number)[]} = {
@@ -345,17 +357,7 @@ const effectsPropertyValues: {[key: string]: (string | number)[]} = {
   colorScheme: ['light', 'dark', 'light dark'],
   // TODO: ideally would be type for LinearGradient, will need to decide if we wanna export LinearGradient
   backgroundImage: ['string', 'LinearGradient'],
-  backgroundPosition: [
-    'bottom',
-    'center',
-    'left',
-    'left bottom',
-    'left top',
-    'right',
-    'right bottom',
-    'right top',
-    'top'
-  ],
+  backgroundPosition: positionKeywordValues,
   backgroundSize: ['auto', 'cover', 'contain'],
   backgroundAttachment: ['fixed', 'local', 'scroll'],
   backgroundClip: ['border-box', 'padding-box', 'content-box', 'text'],
@@ -580,17 +582,7 @@ const miscPropertyValues: {[key: string]: (string | number)[]} = {
   scrollSnapStop: ['normal', 'always'],
   appearance: ['none', 'auto'],
   objectFit: ['contain', 'cover', 'fill', 'none', 'scale-down'],
-  objectPosition: [
-    'bottom',
-    'center',
-    'left',
-    'left bottom',
-    'left top',
-    'right',
-    'right bottom',
-    'right top',
-    'top'
-  ],
+  objectPosition: positionKeywordValues,
   willChange: ['auto', 'scroll-position', 'contents', 'transform'],
   zIndex: ['number'],
   disableTapHighlight: ['true'],
@@ -861,6 +853,16 @@ export function getAdditionalTypes(propertyName: string): string[] {
 export const spacingTypeValues = {
   baseSpacing: baseSpacingValues,
   negativeSpacing: negativeBaseSpacingValues
+};
+
+// Maps a property name to a named value-set alias.
+export const propertyValueAlias: {[key: string]: string} = {
+  backgroundPosition: 'positionKeywords',
+  objectPosition: 'positionKeywords'
+};
+
+export const sharedValueSets: {[key: string]: (string | number)[]} = {
+  positionKeywords: positionKeywordValues
 };
 
 // a mapping of value to mdn links that should be replaced in place

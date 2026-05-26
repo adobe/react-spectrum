@@ -14,7 +14,7 @@ import {classNames} from '@adobe/react-spectrum/private/utils/classNames';
 
 import dndStyles from './dnd.css';
 import dropIndicatorStyles from '@adobe/spectrum-css-temp/components/dropindicator/vars.css';
-import {DroppableCollectionDropEvent} from '@react-types/shared';
+import {DroppableCollectionDropEvent, Node} from '@react-types/shared';
 import {FocusRing} from '../../src/focus/FocusRing';
 import Folder from '@spectrum-icons/workflow/Folder';
 import {GridCollection} from 'react-stately/private/grid/GridCollection';
@@ -132,22 +132,25 @@ const DroppableGrid = React.forwardRef(function (props: any, ref) {
       () =>
         new GridCollection<object>({
           columnCount: 1,
-          items: [...state.collection].map(item => ({
-            ...item,
-            childNodes: [
-              {
-                key: `cell-${item.key}`,
-                type: 'cell',
-                index: 0,
-                value: null,
-                level: 0,
-                rendered: null,
-                textValue: item.textValue,
-                hasChildNodes: false,
-                childNodes: []
-              }
-            ]
-          }))
+          items: [...state.collection].map(
+            item =>
+              ({
+                ...item,
+                childNodes: [
+                  {
+                    key: `cell-${item.key}`,
+                    type: 'cell',
+                    index: 0,
+                    value: null,
+                    level: 0,
+                    rendered: null,
+                    textValue: item.textValue,
+                    hasChildNodes: false,
+                    childNodes: []
+                  }
+                ]
+              }) as Node<any>
+          )
         }),
       [state.collection]
     )

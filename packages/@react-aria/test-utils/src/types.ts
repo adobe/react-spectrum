@@ -38,6 +38,12 @@ export interface BaseTesterOpts extends UserOpts {
   user?: any;
   /** The base element for the given tester (e.g. the table, menu trigger button, etc). */
   root: HTMLElement;
+  /**
+   * The horizontal layout direction, typically affected by locale.
+   *
+   * @default 'ltr'
+   */
+  direction?: Direction;
 }
 
 export interface CheckboxGroupTesterOpts extends BaseTesterOpts {}
@@ -67,13 +73,22 @@ export interface DialogTesterOpts extends BaseTesterOpts {
   overlayType?: 'modal' | 'popover';
 }
 
-export interface GridListTesterOpts extends BaseTesterOpts {}
+export interface GridListTesterOpts extends BaseTesterOpts {
+  /**
+   * The layout of the gridlist.
+   *
+   * @default 'stack'
+   */
+  layout?: 'stack' | 'grid';
+}
 
 export interface ListBoxTesterOpts extends BaseTesterOpts {
   /**
-   * A function used by the test utils to advance timers during interactions.
+   * The layout of the listbox.
+   *
+   * @default 'stack'
    */
-  advanceTimer?: UserOpts['advanceTimer'];
+  layout?: 'stack' | 'grid';
 }
 
 export interface MenuTesterOpts extends BaseTesterOpts {
@@ -91,14 +106,7 @@ export interface MenuTesterOpts extends BaseTesterOpts {
   rootMenu?: HTMLElement;
 }
 
-export interface RadioGroupTesterOpts extends BaseTesterOpts {
-  /**
-   * The horizontal layout direction, typically affected by locale.
-   *
-   * @default 'ltr'
-   */
-  direction?: Direction;
-}
+export interface RadioGroupTesterOpts extends BaseTesterOpts {}
 
 export interface SelectTesterOpts extends BaseTesterOpts {
   /**
@@ -109,28 +117,11 @@ export interface SelectTesterOpts extends BaseTesterOpts {
   root: HTMLElement;
 }
 
-export interface TableTesterOpts extends BaseTesterOpts {
-  /**
-   * A function used by the test utils to advance timers during interactions.
-   */
-  advanceTimer?: UserOpts['advanceTimer'];
-}
+export interface TableTesterOpts extends BaseTesterOpts {}
 
-export interface TabsTesterOpts extends BaseTesterOpts {
-  /**
-   * The horizontal layout direction, typically affected by locale.
-   *
-   * @default 'ltr'
-   */
-  direction?: Direction;
-}
+export interface TabsTesterOpts extends BaseTesterOpts {}
 
-export interface TreeTesterOpts extends BaseTesterOpts {
-  /**
-   * A function used by the test utils to advance timers during interactions.
-   */
-  advanceTimer?: UserOpts['advanceTimer'];
-}
+export interface TreeTesterOpts extends BaseTesterOpts {}
 
 export interface BaseGridRowInteractionOpts {
   /**
@@ -157,7 +148,6 @@ export interface ToggleGridRowOpts extends BaseGridRowInteractionOpts {
    * @default 'true'
    */
   checkboxSelection?: boolean;
-  // TODO: this api feels a bit confusing tbh...
   /**
    * Whether the grid has a selectionBehavior of "toggle" or "replace" (aka highlight selection).
    * This affects the user operations required to toggle row selection by adding modifier keys
@@ -165,7 +155,7 @@ export interface ToggleGridRowOpts extends BaseGridRowInteractionOpts {
    * 'replace'" grid. If you would like to still simulate user actions (aka press) without these
    * modifiers keys for a "selectionBehavior: replace" grid, simply omit this option. See the
    * "Selection Behavior" section of the appropriate React Aria Component docs for more information
-   * (e.g. https://react-spectrum.adobe.com/react-aria/Tree.html#selection-behavior).
+   * (e.g. https://react-aria.adobe.com/Tree#selection-and-actions).
    *
    * @default 'toggle'
    */
