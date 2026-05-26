@@ -446,8 +446,6 @@ jobs:
       - run:
           name: build fork-point apis
           command: |
-            mkdir -p ~/.ssh
-            curl -L https://api.github.com/meta | jq -r '.ssh_keys | .[]' | sed -e 's/^/github.com /' >> ~/.ssh/known_hosts
             yarn build:api-branch --githash="origin/main" --output="base-api" && yarn build:api-branch && yarn compare:apis
 
       - persist_to_workspace:
@@ -489,8 +487,6 @@ jobs:
       - run:
           name: build agent skills (main)
           command: |
-            mkdir -p ~/.ssh
-            curl -L https://api.github.com/meta | jq -r '.ssh_keys | .[]' | sed -e 's/^/github.com /' >> ~/.ssh/known_hosts
             BRANCH_ROOT="$(pwd)"
             BUILD_SKILLS="$BRANCH_ROOT/.circleci/build-skills.sh"
             git worktree add --detach /tmp/main-worktree origin/main
