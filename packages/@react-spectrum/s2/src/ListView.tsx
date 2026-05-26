@@ -507,7 +507,8 @@ const listitem = style<
   borderColor: {
     default: '--borderColor',
     isNextSelected: 'transparent',
-    isSelected: 'transparent'
+    isSelected: 'transparent',
+    forcedColors: 'ButtonBorder'
   },
   '--radius': {
     type: 'borderTopStartRadius',
