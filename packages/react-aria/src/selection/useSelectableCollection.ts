@@ -166,7 +166,7 @@ export function useSelectableCollection(
     e: KeyboardEvent,
     key: Key | undefined,
     childFocus?: FocusStrategy
-  ): boolean => {
+  ): boolean | void => {
     if (key != null) {
       if (
         manager.isLink(key) &&
