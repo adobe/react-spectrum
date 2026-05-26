@@ -110,7 +110,10 @@ Then apply the standard formatting rules:
 After rewriting the `## Changelog` body, count the total number of `-` bullet lines across all component sections in the file. Compare to the expected count from step 2.5.
 
 - **Count matches:** continue to step 4.
-- **Count is less:** diff the original flat commit list against the bullets you wrote to find which entries are missing. Either place them in the correct section, or — if a commit was intentionally merged into another bullet from the same PR — leave a note: `{/* dropped: <original message> — merged into above */}`. Do not leave commits silently missing.
+- **Count is less:** diff the original flat commit list against the bullets you wrote to find which entries are missing. Either place them in the correct section, or leave a drop note explaining why. Do not leave commits silently missing. Drop note forms:
+  - `{/* dropped: <message> ([PR](url)) — merged into above */}` — use **only** when the bullet directly above literally describes what this PR did (i.e. you rewrote the bullet to incorporate this PR's changes). Do not use this if the bullet above doesn't mention the content of this PR.
+  - `{/* dropped: <message> ([PR](url)) — follow-up refinement of [PR](url) */}` — use for iterative polish PRs (design feedback, followups, small adjustments) whose user-facing change is fully captured by the initial feature PR's bullet.
+  - `{/* dropped: <message> ([PR](url)) — internal tooling */}` — use for commits with no user-facing impact (lint migration, formatting, yarn upgrade, internal scripts, test-only changes).
 - **Count is greater:** this is fine if a multi-component PR was duplicated across sections (intentional per the grouping rules).
 
 ### 4. Fill in `description` and intro paragraph
