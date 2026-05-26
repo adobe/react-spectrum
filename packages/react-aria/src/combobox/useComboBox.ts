@@ -53,6 +53,7 @@ import {privateValidationStateProp} from 'react-stately/private/form/useFormVali
 import {useEvent} from '../utils/useEvent';
 import {useFormReset} from '../utils/useFormReset';
 import {useId} from '../utils/useId';
+import {useInteractOutside} from '../interactions/useInteractOutside';
 import {useLabels} from '../utils/useLabels';
 import {useLocalizedStringFormatter} from '../i18n/useLocalizedStringFormatter';
 import {useMenuTrigger} from '../menu/useMenuTrigger';
@@ -239,6 +240,11 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(
     }
   };
 
+  // Track when the menu was closed by an outside interaction so that
+  // we can prevent it from reopening when focus returns to the input
+  // (e.g. after a modal overlay dismiss returns focus).
+  let closedByInteractOutsideRef = useRef(false);
+
   let onBlur = (e: FocusEvent<HTMLInputElement>) => {
     let blurFromButton = buttonRef?.current && buttonRef.current === e.relatedTarget;
     let blurIntoPopover = nodeContains(popoverRef.current, e.relatedTarget);
@@ -264,6 +270,16 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(
     }
 
     state.setFocused(true);
+
+    // If the menu was just closed by an outside interaction and focus
+    // returned to the input (e.g. overlay dismiss), close it again
+    // to prevent menuTrigger="focus" from reopening the popover.
+    if (closedByInteractOutsideRef.current) {
+      closedByInteractOutsideRef.current = false;
+      if (state.isOpen) {
+        state.setOpen(false);
+      }
+    }
   };
 
   let valueId = useValueId([
@@ -460,6 +476,21 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(
         }
       : undefined
   );
+
+  // usePopover -> useOverlay calls useInteractOutside, but ComboBox is non-modal, so `isDismissable` is false.
+  // Because of this, onInteractOutside is not passed to useInteractOutside, so we need to call it here.
+  useInteractOutside({
+    ref: popoverRef,
+    onInteractOutside: e => {
+      let target = getEventTarget(e) as Element;
+      if (nodeContains(buttonRef?.current, target) || nodeContains(inputRef.current, target)) {
+        return;
+      }
+      closedByInteractOutsideRef.current = true;
+      state.close();
+    },
+    isDisabled: !state.isOpen
+  });
 
   return {
     labelProps,
