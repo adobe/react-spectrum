@@ -438,6 +438,11 @@ const listitem = style<
     isDisabled: 'disabled',
     forcedColors: {
       default: 'ButtonText',
+      isSelected: {
+        selectionStyle: {
+          highlight: 'HighlightText'
+        }
+      },
       isDisabled: 'GrayText'
     }
   },

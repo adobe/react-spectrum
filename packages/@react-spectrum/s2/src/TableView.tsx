@@ -1910,7 +1910,14 @@ const rowBackgroundColor = {
 const rowTextColor = {
   default: baseColor('neutral-subdued'),
   isSelected: baseColor('neutral'),
-  forcedColors: 'ButtonText',
+  forcedColors: {
+    default: 'ButtonText',
+    isSelected: {
+      selectionStyle: {
+        highlight: 'HighlightText'
+      }
+    }
+  },
   isDisabled: {
     default: 'disabled',
     forcedColors: 'GrayText'
