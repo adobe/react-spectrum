@@ -139,7 +139,7 @@ export interface DragPreviewProps {
   /** The overflow mode to be applied on the drag preview. */
   overflowMode?: 'wrap' | 'truncate';
   /**
-   * The contents of the drag preview. Supports the "label", "description", and "icon" slots.
+   * The contents of the drag preview. Supports the `label`, `description`, and `icon` slots.
    * If no children are provided, defaults to the first drag item's plain text content.
    */
   children?: ReactNode;

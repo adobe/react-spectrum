@@ -68,6 +68,7 @@ const meta: Meta<typeof TableView> = {
   argTypes: {
     ...categorizeArgTypes('Events', ['onAction', 'onLoadMore', ...events]),
     children: {table: {disable: true}},
+    dragAndDropHooks: {table: {disable: true}},
     onAction: {
       options: Object.keys(onActionOptions), // An array of serializable values
       mapping: onActionOptions, // Maps serializable option values to complex arg values
@@ -2389,6 +2390,105 @@ function ReorderableTableExample(props) {
 export const DragAndDropReorder: StoryObj<typeof TableView> = {
   render: args => <ReorderableTableExample {...args} />,
   name: 'Drag and drop reorder'
+};
+
+function ReorderableTableWithNested(props) {
+  let tree = useTreeData({
+    initialItems: [
+      {
+        id: '1',
+        title: 'Documents',
+        type: 'Directory',
+        date: '10/20/2025',
+        children: [
+          {
+            id: '2',
+            title: 'Project',
+            type: 'Directory',
+            date: '8/2/2025',
+            children: [
+              {id: '3', title: 'Weekly Report', type: 'File', date: '7/10/2025', children: []},
+              {id: '4', title: 'Budget', type: 'File', date: '8/20/2025', children: []}
+            ]
+          }
+        ]
+      },
+      {
+        id: '5',
+        title: 'Photos',
+        type: 'Directory',
+        date: '2/3/2026',
+        children: [
+          {id: '6', title: 'Image 1', type: 'File', date: '1/23/2026', children: []},
+          {id: '7', title: 'Image 2', type: 'File', date: '2/3/2026', children: []}
+        ]
+      }
+    ]
+  });
+
+  let {dragAndDropHooks} = useDragAndDrop({
+    getItems: (keys, items: typeof tree.items) =>
+      items.map(item => ({'text/plain': item.value.title, type: item.value.type})),
+    onMove(e) {
+      if (e.target.dropPosition === 'before') {
+        tree.moveBefore(e.target.key, e.keys);
+      } else if (e.target.dropPosition === 'after') {
+        tree.moveAfter(e.target.key, e.keys);
+      } else if (e.target.dropPosition === 'on') {
+        let targetNode = tree.getItem(e.target.key);
+        if (targetNode) {
+          let targetIndex = targetNode.children ? targetNode.children.length : 0;
+          let keyArray = Array.from(e.keys);
+          for (let i = 0; i < keyArray.length; i++) {
+            tree.move(keyArray[i], e.target.key, targetIndex + i);
+          }
+        }
+      }
+    },
+    renderDragPreview: items => (
+      <DragPreview items={items}>
+        {items[0].type === 'Directory' ? <Folder /> : <FileText />}
+        <Text>{items[0]['text/plain']}</Text>
+        <Text slot="description">{items[0].type}</Text>
+      </DragPreview>
+    )
+  });
+
+  return (
+    <TableView
+      aria-label="Files"
+      selectionMode="multiple"
+      treeColumn="name"
+      defaultExpandedKeys={['5']}
+      dragAndDropHooks={dragAndDropHooks}
+      styles={style({width: 400})}
+      {...props}>
+      <TableHeader>
+        <Column id="name" isRowHeader>
+          Name
+        </Column>
+        <Column id="type">Type</Column>
+        <Column id="date">Date Modified</Column>
+      </TableHeader>
+      <TableBody items={tree.items}>
+        {function renderItem(item) {
+          return (
+            <Row id={item.key}>
+              <Cell>{item.value.title}</Cell>
+              <Cell>{item.value.type}</Cell>
+              <Cell>{item.value.date}</Cell>
+              <Collection items={item.children ?? []}>{renderItem}</Collection>
+            </Row>
+          );
+        }}
+      </TableBody>
+    </TableView>
+  );
+}
+
+export const ReorderableNestedRows: StoryObj<typeof TableView> = {
+  render: args => <ReorderableTableWithNested {...args} />,
+  name: 'Reorderable, nested rows'
 };
 
 let itemProcessor = async (items, acceptedDragTypes) => {
