@@ -8,9 +8,7 @@
   render at a translate offset while [data-entering]/[data-exiting] is true,
   relying on the transition to slide back to translate: 0. With transitions
   disabled in Chromatic, the slide never happens, so a snapshot taken while
-  isEntering is still true catches the popover ~4px off. Firefox is more
-  prone to this than Chrome because getAnimations().finished resolves later,
-  giving snapshots a wider window to land in the entering state.
+  isEntering is still true catches the popover ~4px off.
 */
 .disableAnimations [data-entering],
 .disableAnimations [data-exiting] {
