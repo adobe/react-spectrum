@@ -83,7 +83,18 @@ Then apply the standard formatting rules:
 - Wrap camelCase/code terms in backticks: `onClick`, `isDisabled`, `onPress`.
 - Do NOT use backticks for component names.
 - Replace: RAC → React Aria, V3 → React Spectrum.
+- Strip editorial hedging — remove words like *inadvertently*, *accidentally*, *incorrectly*, *mistakenly* from bug descriptions. Just describe what changed.
 - Capitalize component names: Accordion, Autocomplete, Badge, Breadcrumbs, Buttons, Calendar, Checkbox, CheckboxGroup, Collections, ColorArea, ColorField, ColorPicker, ColorSlider, ColorSwatch, ColorSwatchPicker, ColorWheel, ComboBox, Date and Time, DateField, DatePicker, DateRangePicker, Dialog, Disclosure, DisclosureGroup, Drag and Drop, DropZone, FileTrigger, Form, InlineAlert, Link, Listbox, ListView, Menu, Meter, Modal, NotificationBadge, NumberField, Picker, ProgressBar, ProgressCircle, RadioGroup, RangeCalendar, SearchField, Select, Slider, StatusLight, Switch, Table, Tabs, TagGroup, TextArea, TextField, TimeField, Toast, ToggleButton, ToggleButtonGroup, Tooltip, Tree, Virtualizer.
+
+**Drop internal/infrastructure commits.** Before writing a bullet, ask: *"Would a user of this library notice this change in their own code or in the browser?"* If no, drop the entry and add a drop-note comment instead. Common cases to drop:
+- Build-tool or bundler fixes (e.g. lightningcss compatibility, Parcel internals)
+- TypeScript fixes for non-public or internal files (e.g. `page.css` type stubs)
+- Documentation copy-only changes with no API or behavior impact
+- Internal tooling, lint migrations, script changes
+
+Use the standard `internal tooling` drop-note format (see §3.5) for any dropped commit.
+
+**One bullet per new API surface.** When a single PR introduces multiple distinct public APIs — new components, new props, new callback arguments — write one bullet per API rather than one bullet per PR. Fetch the PR body (`gh pr view <n> --json body,files`) and scan the description and changed file paths for each new exported symbol or prop. Each deserves its own line.
 
 **Group by component.** Replace the flat list under `## Changelog` with sub-headings:
 
@@ -100,7 +111,7 @@ Then apply the standard formatting rules:
 - ...
 ```
 
-- Each component gets its own sub-heading — never group multiple components under a combined heading like "Checkbox, RadioGroup, Switch". If a single PR affects multiple components, duplicate the entry under each component's own heading.
+- Each component gets its own sub-heading — never group multiple components under a combined heading like "Checkbox, RadioGroup, Switch". If a single PR affects multiple components, write one bullet per component, each naming only that component, and place each under its own sub-heading. Do not name sibling components inside the bullet text — e.g. write "Add drag and drop support" under **ListView**, **Table**, and **TreeView** separately, not "Add drag and drop support to ListView, Table, and TreeView" under a single heading.
 - Sub-headings in alphabetical order, with "General Changes" first.
 - Use `-` (not `*`) for list items inside sub-headings, matching the existing release-notes style (see `packages/dev/s2-docs/pages/react-aria/releases/v1-17-0.mdx` for reference).
 - Do NOT bold sub-heading text.
