@@ -19,56 +19,62 @@ export const section = 'Releases';
 export const tags = ['release', 'S2'];
 export const date = 'May 26, 2026';
 export const title = 'v1.4.0';
-export const description = 'v1.4.0 adds drag and drop to Spectrum 2 collection components, introduces LabeledValue, adds TextField prefix support, and brings major Calendar improvements including multi-select and day/week views.';
+export const description = '';
 export const isSubpage = true;
 
 # v1.4.0
 
-v1.4.0 is a major feature release. Drag and drop is now fully supported in [ListView](../ListView), [TableView](../TableView), and [TreeView](../TreeView) — with a customizable `DragPreview` component for tailoring the appearance of dragged items. The new [LabeledValue](../LabeledValue) component renders a read-only key-value pair. [TextField](../TextField) gains a `prefix` prop for prepending text or an icon. [Calendar](../Calendar) receives major enhancements: multi-select, week and day views, `weeksInMonth`, and month/year picker navigation. [Checkbox](../Checkbox), [RadioGroup](../RadioGroup), and [Switch](../Switch) now support help text, and [Slider](../Slider) gains a `SliderFill` component for a filled track. TableView also adds highlight selection style and a new `TableFooter` component.
 
 As always, thanks to all our contributors!
 
 ## Changelog
 
 ### General Changes
-- Update `RouterConfig` module augmentation docs and `use-subpaths` codemod to use `@react-spectrum/s2/Provider` instead of `@react-spectrum/s2` - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/9941)
 - Add `pressScale` prop documentation - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/9940)
-- Improve consistency of `--trigger-width` for Popover - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/9913)
-- Fix backward compatibility with lightningcss `color-scheme` CSS variable compilation - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/10010)
-- Fix TypeScript types for `page.css` - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/10016)
 - Agent skill improvements - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/9939), [PR](https://github.com/adobe/react-spectrum/pull/10083)
 ### Button
-- Update Button color tokens to improve contrast - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10069)
+- Update Button color to improve contrast when static - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10069)
 ### Calendar
-- Add support for multi-select, week and day views, `weeksInMonth`, month and year pickers, and unavailable anchor dates - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/9948)
-- Fix Calendar header spacing - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10017)
+- Add support for `selectionMode="multiple" in Calendar - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/9948)
+- Adds `anchorDate` as an argument to `isDateUnavailable` in RangeCalendar to let users change available dates based on the first date the user picks - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/9948)
 ### Checkbox
-- Add support for help text - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/9877)
-- Fix Checkbox layout when used inside CardView - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10012)
+- Add support for description and error message - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/9877), [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10012)
+### ColorField
+- Add `prefix` prop for prepending a non-interactive element inside the field - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10014), [PR](https://github.com/adobe/react-spectrum/pull/10060)
 ### Collections
 - Fix handling of falsy keys - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/9993)
 - Allow collection `items` to be non-object values such as strings and numbers - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/10047)
-### Drag and Drop
-- Add drag and drop support to ListView, TableView, and TreeView, including a customizable `DragPreview` component - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/9791), [PR](https://github.com/adobe/react-spectrum/pull/10082)
+### Combobox
+- Adjust ComboBox item transition to prevent a background color flash when hovering between items quickly - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/9953)
+- Add `prefix` prop for prepending a non-interactive element inside the field - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10014), [PR](https://github.com/adobe/react-spectrum/pull/10060)
 ### LabeledValue
-- Add LabeledValue component to Spectrum 2 - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/9965), [PR](https://github.com/adobe/react-spectrum/pull/10061)
+- Add LabeledValue component - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/9965), [PR](https://github.com/adobe/react-spectrum/pull/10061)
+### ListView
+- Add drag and drop support - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/9791), [PR](https://github.com/adobe/react-spectrum/pull/10082)
+- Ensure ListView renders its divider and borders with the proper colors in HCM - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/10108)
 ### Menu
-- Adjust Menu, Picker, and ComboBox item transition to prevent a background color flash when hovering between items quickly - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/9953)
+- Adjust Menu item transition to prevent a background color flash when hovering between items quickly - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/9953)
 - Add hold affordance icon for `longPress` MenuTrigger variants with ActionButton and ToggleButton - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/10066)
+### NumberField
+- Add `prefix` prop for prepending a non-interactive element inside the field - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10014), [PR](https://github.com/adobe/react-spectrum/pull/10060), [PR](https://github.com/adobe/react-spectrum/pull/10070)
+### Picker
+- Adjust Picker item transition to prevent a background color flash when hovering between items quickly - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/9953)
 ### RadioGroup
-- Add support for help text - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/9877)
-- Fix RadioGroup layout when used inside CardView - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10012)
+- Add support for description and error message - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/9877), [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10012)
 ### Slider
 - Add `SliderFill` component with built-in styles for rendering a filled track, and improve default `SliderOutput` value formatting - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/10021)
 ### Switch
-- Add support for help text - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/9877)
-- Fix Switch layout when used inside CardView - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10012)
-### Table
-- Fix miscentered empty state and loaders in TableView - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/9980)
+- Add support for description and error message - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/9877), [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/10012)
+### TableView
 - Add `TableFooter` component - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/9943)
 - Add highlight selection style to TableView - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/9883)
+- Add drag and drop support - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/9791), [PR](https://github.com/adobe/react-spectrum/pull/10082)
+- Ensure TableView renders its divider and borders with the proper colors in HCM - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/10108)
 ### TextField
-- Add `prefix` prop for prepending text or an icon inside the field - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/9957), [PR](https://github.com/adobe/react-spectrum/pull/10014), [PR](https://github.com/adobe/react-spectrum/pull/10060), [PR](https://github.com/adobe/react-spectrum/pull/10070)
+- Add `prefix` prop for prepending a non-interactive element inside the field - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/9957), [PR](https://github.com/adobe/react-spectrum/pull/10014), [PR](https://github.com/adobe/react-spectrum/pull/10060), [PR](https://github.com/adobe/react-spectrum/pull/10070)
+### TreeView
+- Add drag and drop support - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/9791), [PR](https://github.com/adobe/react-spectrum/pull/10082)
+
 
 ## Released packages
 
