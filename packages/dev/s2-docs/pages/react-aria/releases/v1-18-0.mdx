@@ -24,7 +24,30 @@ export const isSubpage = true;
 
 # v1.18.0
 
+This release packs in several new features! [Calendar](../Calendar) now supports multiple date selection, as well as new [CalendarHeading](../Calendar#calendarheading), [CalendarMonthPicker](../Calendar#month-and-year-pickers), and [CalendarYearPicker](../Calendar#month-and-year-pickers) components that allow you to customize how the user can jump to a different month or year. We have also added a [TableFooter](../Table#content) component to support footers in Table, and a [SliderFill](../Slider#sliderfill) component that simplifies the process of styling the fill portion in a Slider.
+
 As always, thanks to all our contributors!
+
+## Checkbox, Radio, and Switch API updates
+
+We have also added support for description and error message slots to individual checkboxes, switches, and radios. Because this requires introducing a new DOM wrapper around the label element we currently render, we are deprecating the `Checkbox`, `Radio`, and `Switch` components and introducing [CheckboxField](../Checkbox#checkboxfield), [RadioField](../RadioGroup#radiofield), and [SwitchField](../Switch#switchfield) as replacements. These accept [CheckboxButton](../Checkbox#checkboxbutton), [RadioButton](../RadioGroup#radiobutton), and [SwitchButton](../Switch#switchbutton) as children, along with `<Text slot="description">` and `<FieldError>`.
+
+To add support for description and error message in your implementation, update your component as shown below.
+
+```diff
+-<Checkbox>Label</Checkbox>
++<CheckboxField>
++  <CheckboxButton>Label</CheckboxButton>
++  <Text slot="description">Description</Text>
++  <FieldError />
++</CheckboxField>
+```
+
+## @react-aria/test-utils RC
+
+We are pleased to announce that our [test utils](../testing#react-aria-test-utils) have advanced to RC! Alongside improvements such as RTL support and handling grid navigation, the API for the testers have been updated for consistency and thus various breaking changes have been made. To migrate from beta to RC, run the `test-utils-rc-update` codemod via:
+
+<InstallCommand isCommand pkg="@react-spectrum/codemods" flags="test-utils-rc-update --path /path/to/tests" />
 
 ## Changelog
 
