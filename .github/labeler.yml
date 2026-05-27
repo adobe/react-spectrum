@@ -11,7 +11,8 @@ S2:
 RAC:
   - any:
       - changed-files:
-          - all-globs-to-any-file: ['**/react-aria-components/**', '!**/*.stories.*', '!**/*.test.*']
+          - all-globs-to-any-file:
+              ['**/react-aria-components/**', '!**/*.stories.*', '!**/*.test.*']
       - changed-files:
           - all-globs-to-any-file: ['**/@react-aria/**', '!**/*.stories.*', '!**/*.test.*']
 
