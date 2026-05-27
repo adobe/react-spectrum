@@ -5715,6 +5715,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@parcel/reporter-turbosnap-stats@npm:0.0.0, @parcel/reporter-turbosnap-stats@workspace:packages/dev/parcel-reporter-turbosnap-stats":
+  version: 0.0.0-use.local
+  resolution: "@parcel/reporter-turbosnap-stats@workspace:packages/dev/parcel-reporter-turbosnap-stats"
+  dependencies:
+    "@parcel/plugin": "npm:^2.16.3"
+    "@parcel/types": "npm:^2.16.3"
+  languageName: unknown
+  linkType: soft
+
 "@parcel/resolver-default@npm:2.16.3, @parcel/resolver-default@npm:^2.16.3":
   version: 2.16.3
   resolution: "@parcel/resolver-default@npm:2.16.3"
@@ -6297,7 +6306,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@parcel/types@npm:2.16.4":
+"@parcel/types@npm:2.16.4, @parcel/types@npm:^2.16.3":
   version: 2.16.4
   resolution: "@parcel/types@npm:2.16.4"
   dependencies:
@@ -29133,6 +29142,7 @@ __metadata:
   dependencies:
     "@parcel/core": "npm:^2.16.3"
     "@parcel/reporter-cli": "npm:^2.16.3"
+    "@parcel/reporter-turbosnap-stats": "npm:0.0.0"
     "@parcel/utils": "npm:^2.16.3"
     http-proxy-middleware: "npm:^2.0.6"
     react: "npm:*"
