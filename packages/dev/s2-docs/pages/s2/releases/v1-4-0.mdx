@@ -24,8 +24,15 @@ export const isSubpage = true;
 
 # v1.4.0
 
+This release brings long awaited [drag and drop support](../dnd) to [ListView](../ListView#drag-and-drop), [TableView](../TableView#drag-and-drop), and [TreeView](../TreeView#drag-and-drop)! TableView now also supports [highlight selection](../TableView) and a new [TableFooter](../TableView#content) component for footer support. Form components such as [ComboBox](../ComboBox#content) and [TextField](../TextField#prefix) now allow custom prefixes, and the new [LabeledValue](../LabeledValue) can be used to display read-only label/value pairs. In addition, description and error messages can be configured for [Checkbox](../Checkbox#forms), [Radio](../RadioGroup), and [Switch](../Switch#forms) as well. Last but not least, [Calendar](../Calendar) now supports multiple date selection.
 
 As always, thanks to all our contributors!
+
+## @react-spectrum/test-utils RC
+
+We are pleased to announce that our [test utils](../testing#react-spectrum-test-utils) have advanced to RC! Alongside improvements such as RTL support and handling grid navigation, the API for the testers have been updated for consistency and thus various breaking changes have been made. To migrate from beta to RC, run the `test-utils-rc-update` codemod via:
+
+<InstallCommand isCommand pkg="@react-spectrum/codemods" flags="test-utils-rc-update --path /path/to/tests" />
 
 ## Changelog
 
