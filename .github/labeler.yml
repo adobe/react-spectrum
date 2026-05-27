@@ -5,18 +5,22 @@ needs translations:
       - any-glob-to-any-file: ['**/intl/*.json']
 
 S2:
-  - changed-files:
-      - any-glob-to-any-file: ['**/s2/**']
+  - all:
+      - changed-files:
+          - any-glob-to-any-file: ['**/s2/**']
+          - all-globs-to-all-files: ['!**/*.stories.*', '!**/*.test.*']
 
 RAC:
-  - changed-files:
-      - any-glob-to-any-file: ['**/react-aria-components/**', '**/@react-aria/**']
+  - all:
+      - changed-files:
+          - any-glob-to-any-file: ['**/react-aria-components/**', '**/@react-aria/**']
+          - all-globs-to-all-files: ['!**/*.stories.*', '!**/*.test.*']
 
 v3:
   - all:
       - changed-files:
           - any-glob-to-any-file: '**/@react-spectrum/**'
-          - all-globs-to-all-files: '!**/@react-spectrum/s2/**'
+          - all-globs-to-all-files: ['!**/@react-spectrum/s2/**', '!**/*.stories.*', '!**/*.test.*']
 
 Accordion:
   - changed-files:
