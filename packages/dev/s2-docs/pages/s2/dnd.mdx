@@ -74,8 +74,7 @@ While dragging, a **drag preview** is displayed under the user's mouse or finger
 
 ```tsx render type="s2" files={['packages/dev/s2-docs/pages/s2/PokemonCOMPONENT.tsx']}
 "use client";
-import {useDragAndDrop} from '@react-spectrum/s2/useDragAndDrop';
-import {DragPreview} from '@react-spectrum/s2/COMPONENT';
+import {DragPreview, useDragAndDrop} from '@react-spectrum/s2/useDragAndDrop';
 import {Text} from '@react-spectrum/s2';
 import File from '@react-spectrum/s2/icons/File';
 import {PokemonCOMPONENT, Pokemon} from './PokemonCOMPONENT';
@@ -574,9 +573,8 @@ This example puts together many of the examples described above, allowing users 
 
 ```tsx render type="s2"
 "use client";
-import {useDragAndDrop, isTextDropItem} from '@react-spectrum/s2/useDragAndDrop';
+import {DragPreview, useDragAndDrop, isTextDropItem} from '@react-spectrum/s2/useDragAndDrop';
 import {useListData} from '@react-spectrum/s2/useListData';
-import {DragPreview} from '@react-spectrum/s2/COMPONENT';
 import {Text} from '@react-spectrum/s2';
 import File from '@react-spectrum/s2/icons/File';
 import {PokemonCOMPONENT, Pokemon, defaultItems} from './PokemonCOMPONENT';
