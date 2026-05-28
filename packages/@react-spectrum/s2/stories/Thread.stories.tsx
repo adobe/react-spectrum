@@ -349,7 +349,7 @@ type StreamingMessage =
   | {id: number; type: 'tool-call'; label: string; isStreaming: boolean}
   | {id: number; type: 'sources'; items: string[]}
   | {id: number; type: 'card'; title: string; description: string; imageUrl: string}
-  | {id: number; type: 'status'; status: 'pending' | 'complete'};
+  | {id: number; type: 'status'; status: 'pending' | 'complete'; thinking?: string};
 
 let MOCK_SOURCES = [
   'Hilton brand email — Q1 campaign 2026',
@@ -531,6 +531,25 @@ export function StreamingThread() {
     setTimeout(() => completeTool(), (timestamp += toolCallDuration));
     setTimeout(
       () =>
+        setMessages(prev => [...prev, {id: nextId.current++, type: 'status', status: 'pending'}]),
+      (timestamp += 500)
+    );
+    setTimeout(
+      () =>
+        setMessages(prev => [
+          ...prev.slice(0, -1),
+          {
+            id: nextId.current++,
+            type: 'status',
+            status: 'complete',
+            thinking:
+              'The user shared Hilton brand assets and is asking for a presentation outline. I analyzed the visual themes and brand guidelines to suggest a narrative structure that aligns with the hospitality brand identity.'
+          }
+        ]),
+      (timestamp += 2000)
+    );
+    setTimeout(
+      () =>
         streamText(
           'Based on the assets you shared, I recommend focusing on the narrative arc first, then ' +
             'layering in supporting visuals and data to reinforce the core message. The main themes ' +
@@ -564,7 +583,7 @@ export function StreamingThread() {
             return <UserMessage textValue={msg.content}>{msg.content}</UserMessage>;
           }
           if (msg.type === 'status') {
-            return <ResponseStatus status={msg.status} />;
+            return <ResponseStatus status={msg.status} thinking={msg.thinking} />;
           }
           if (msg.type === 'tool-call') {
             return <ToolCallStatus label={msg.label} isStreaming={msg.isStreaming} />;
