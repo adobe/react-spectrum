@@ -12,7 +12,6 @@
 
 import {ActionButton} from '../src/ActionButton';
 import {ActionMenu} from '../src/ActionMenu';
-import {announce} from 'react-aria/private/live-announcer/LiveAnnouncer';
 import {AssetCard} from '../src/Card';
 import {baseColor, css, focusRing, style} from '../style' with {type: 'macro'};
 import {Button} from '../src/Button';
@@ -349,19 +348,29 @@ type StreamingMessage =
   | {id: number; type: 'system'; content: string; isStreaming?: boolean}
   | {id: number; type: 'tool-call'; label: string; isStreaming: boolean}
   | {id: number; type: 'sources'; items: string[]}
+  | {id: number; type: 'card'; title: string; description: string; imageUrl: string}
   | {id: number; type: 'status'; status: 'pending' | 'complete'};
 
-const mockSources = ['Google — google.com', 'Adobe — Adobe.com'];
+let MOCK_SOURCES = [
+  'Hilton brand email — Q1 campaign 2026',
+  'Market research — hospitality trends 2025',
+  'User research — loyalty programme survey'
+];
 
-const mockResponse =
-  'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in';
+let MOCK_CARD = {
+  title: 'Desert Sunset',
+  description: 'PNG • 2/3/2024',
+  imageUrl:
+    'https://images.unsplash.com/photo-1705034598432-1694e203cdf3?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+};
 
 function ToolCallStatus({label, isStreaming}: {label: string; isStreaming: boolean}) {
-  let textValue = isStreaming ? `Calling ${label}…` : `${label} complete`;
+  let textValue = isStreaming ? `${label}…` : `${label} complete`;
   return (
     <ThreadItem
       textValue={textValue}
       isStreaming={isStreaming}
+      shouldAnnounceOnMount
       className={style({
         ...focusRing(),
         borderRadius: 'sm',
@@ -370,7 +379,7 @@ function ToolCallStatus({label, isStreaming}: {label: string; isStreaming: boole
         gap: 8
       })}>
       {isStreaming ? (
-        <ProgressCircle isIndeterminate size="S" aria-label={textValue} />
+        <ProgressCircle isIndeterminate size="S" aria-label={label} />
       ) : (
         <CheckmarkCircle />
       )}
@@ -396,6 +405,35 @@ function SourcesMessage({items: sourceItems}: {items: string[]}) {
   );
 }
 
+function CardMessage({
+  title,
+  description,
+  imageUrl
+}: {
+  title: string;
+  description: string;
+  imageUrl: string;
+}) {
+  return (
+    <ThreadItem textValue={title} className={style({...focusRing(), borderRadius: 'default'})}>
+      <AssetCard>
+        <CardPreview>
+          <Image src={imageUrl} />
+        </CardPreview>
+        <Content>
+          <Text slot="title">{title}</Text>
+          <ActionMenu>
+            <MenuItem>Edit</MenuItem>
+            <MenuItem>Share</MenuItem>
+            <MenuItem>Delete</MenuItem>
+          </ActionMenu>
+          <Text slot="description">{description}</Text>
+        </Content>
+      </AssetCard>
+    </ThreadItem>
+  );
+}
+
 export function StreamingThread() {
   let [messages, setMessages] = useState<StreamingMessage[]>(
     initialResponses as StreamingMessage[]
@@ -412,65 +450,102 @@ export function StreamingThread() {
       return;
     }
 
-    let userMessageId = nextId.current++;
-    let statusId = nextId.current++;
-    let toolCallId = nextId.current++;
-    let sourcesId = nextId.current++;
-    let responseId = nextId.current++;
+    // user message added first so its announcement plays before
+    setMessages(prev => [...prev, {id: nextId.current++, type: 'user', content: text}]);
 
-    setMessages(prev => [
-      ...prev,
-      {id: userMessageId, type: 'user', content: text},
-      {id: statusId, type: 'status', status: 'pending'}
-    ]);
-
-    setTimeout(() => {
+    function addTool(label: string, replaceStatus = false) {
       setMessages(prev =>
-        prev.map(m =>
-          m.id === statusId
-            ? {id: toolCallId, type: 'tool-call', label: 'search', isStreaming: true}
-            : m
-        )
+        replaceStatus
+          ? [
+              ...prev.slice(0, -1),
+              {id: nextId.current++, type: 'tool-call', label, isStreaming: true}
+            ]
+          : [...prev, {id: nextId.current++, type: 'tool-call', label, isStreaming: true}]
       );
-    }, 4000);
+    }
 
-    setTimeout(() => {
+    function completeTool() {
       setMessages(prev =>
-        prev.map(m =>
-          m.id === toolCallId && m.type === 'tool-call'
-            ? {id: m.id, type: 'tool-call', label: m.label, isStreaming: false}
-            : m
-        )
+        prev.map(m => (m.type === 'tool-call' && m.isStreaming ? {...m, isStreaming: false} : m))
       );
-    }, 4000);
+    }
 
-    setTimeout(() => {
-      setMessages(prev => [...prev, {id: sourcesId, type: 'sources', items: mockSources}]);
-    }, 4000);
-
-    setTimeout(() => {
+    function streamText(content: string) {
       setMessages(prev => [
         ...prev,
-        {id: responseId, type: 'system', content: '', isStreaming: true}
+        {id: nextId.current++, type: 'system', content: '', isStreaming: true}
       ]);
-
-      // stream tokens every 80ms
-      let tokens = mockResponse.split(' ');
+      let tokens = content.split(' ');
       let accumulated = '';
       tokens.forEach((token, i) => {
         setTimeout(() => {
           accumulated += (i === 0 ? '' : ' ') + token;
-          let isLast = i === tokens.length - 1;
           setMessages(prev =>
             prev.map(m =>
-              m.id === responseId
-                ? {id: responseId, type: 'system', content: accumulated, isStreaming: !isLast}
+              m.type === 'system' && m.isStreaming
+                ? {...m, content: accumulated, isStreaming: i < tokens.length - 1}
                 : m
             )
           );
         }, i * 80);
       });
-    }, 8000);
+    }
+
+    // TODO: these durations are quite generous in order to accomodate for announcements, but realistically it might be
+    // faster and thus the announcements will get cut off even with polite...
+    // first batch, does took calls with text response
+    let timestamp = 0;
+    let toolCallDuration = 4000;
+    // Status added after short delay so user message announcement plays first
+    setTimeout(
+      () => {
+        setMessages(prev => [...prev, {id: nextId.current++, type: 'status', status: 'pending'}]);
+      },
+      (timestamp += 1000)
+    );
+    setTimeout(() => addTool('Thinking', true), (timestamp += 1000));
+    setTimeout(() => completeTool(), (timestamp += toolCallDuration));
+    setTimeout(() => addTool('Loading tool'), (timestamp += 1000));
+    setTimeout(() => completeTool(), (timestamp += toolCallDuration));
+    setTimeout(() => addTool('Searching'), (timestamp += 1000));
+    setTimeout(() => completeTool(), (timestamp += toolCallDuration));
+    setTimeout(
+      () => {
+        setMessages(prev => [
+          ...prev,
+          {
+            id: nextId.current++,
+            type: 'system',
+            content:
+              'I found some relevant assets that match your request. Let me pull up the details.'
+          }
+        ]);
+      },
+      (timestamp += 1000)
+    );
+
+    // then does searching, streaming more text, returning a card and sources
+    setTimeout(() => addTool('Searching'), (timestamp += 4000));
+    setTimeout(() => completeTool(), (timestamp += toolCallDuration));
+    setTimeout(() => addTool('Querying database'), (timestamp += 1000));
+    setTimeout(() => completeTool(), (timestamp += toolCallDuration));
+    setTimeout(
+      () =>
+        streamText(
+          'Based on the assets you shared, I recommend focusing on the narrative arc first, then ' +
+            'layering in supporting visuals and data to reinforce the core message. The main themes ' +
+            'revolve around brand consistency, audience engagement, and clear calls to action.'
+        ),
+      (timestamp += 1000)
+    );
+
+    let streamEndTimestamp = timestamp + 8000;
+    setTimeout(() => {
+      setMessages(prev => [...prev, {id: nextId.current++, type: 'card', ...MOCK_CARD}]);
+    }, streamEndTimestamp);
+    setTimeout(() => {
+      setMessages(prev => [...prev, {id: nextId.current++, type: 'sources', items: MOCK_SOURCES}]);
+    }, streamEndTimestamp + 1000);
   }
 
   return (
@@ -496,6 +571,15 @@ export function StreamingThread() {
           }
           if (msg.type === 'sources') {
             return <SourcesMessage items={msg.items} />;
+          }
+          if (msg.type === 'card') {
+            return (
+              <CardMessage
+                title={msg.title}
+                description={msg.description}
+                imageUrl={msg.imageUrl}
+              />
+            );
           }
           return (
             <SystemMessage textValue={msg.content} isStreaming={msg.isStreaming}>
@@ -714,8 +798,7 @@ function Attachment({
 
 function UserMessage({
   children,
-  textValue = ' ',
-  isStreaming
+  textValue = ' '
 }: {
   children: ReactNode;
   textValue?: string;
@@ -724,7 +807,6 @@ function UserMessage({
   return (
     <ThreadItem
       textValue={textValue}
-      isStreaming={isStreaming}
       className={style({
         ...focusRing(),
         backgroundColor: 'gray-50',

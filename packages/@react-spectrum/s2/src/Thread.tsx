@@ -135,15 +135,16 @@ export const Thread = /*#__PURE__*/ (forwardRef as forwardRefType)(function Thre
 });
 
 interface ThreadItemProps extends Pick<GridListItemProps, 'className' | 'children' | 'textValue'> {
-  // TODO: if not provided, announce immediately? or have separate prop for that?
   isStreaming?: boolean;
+  /** Announce textValue on mount even when isStreaming is provided. */
+  shouldAnnounceOnMount?: boolean;
 }
 
 export function ThreadItem(props: ThreadItemProps) {
-  let {className, children, textValue = ' ', isStreaming} = props;
+  let {className, children, textValue = ' ', isStreaming, shouldAnnounceOnMount} = props;
 
   useLayoutEffect(() => {
-    if (isStreaming === undefined && textValue && textValue !== ' ') {
+    if ((isStreaming === undefined || shouldAnnounceOnMount) && textValue && textValue !== ' ') {
       announce(textValue, 'polite');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
