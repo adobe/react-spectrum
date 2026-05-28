@@ -127,6 +127,8 @@ export function useTag<T>(
       onPress: () => (onRemove ? onRemove(new Set([item.key])) : null)
     },
     rowProps: mergeProps(focusableProps, rowProps, domProps, linkProps, {
+      // @ts-ignore
+      'data-testid': 'tag-row',
       tabIndex,
       onKeyDown: onRemove ? onKeyDown : undefined,
       'aria-describedby': descProps['aria-describedby']
