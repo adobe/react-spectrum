@@ -129,25 +129,47 @@ export function buildStatsMap(
 }
 
 const STORY_FILE_RE = /\.stories\.(js|jsx|mjs|ts|tsx)$/;
+const CSF_GLOB_ENTRY = './parcel-csf-glob.js';
 
 // Parcel's dynamic-import-based code splitting routes `() => import('./Foo.stories.tsx')`
 // through @parcel/runtime-js wrappers, so the synthetic stories.js's resolved deps
 // land on runtime chunks rather than the story files themselves. The story files
 // then end up in their own bundles with no edge pointing back at './storybook-stories.js',
 // which means chromatic-cli's TurboSnap can't find them via the CSF-glob walk.
-// This helper bridges the gap by directly adding './storybook-stories.js' as a reason
-// on every asset whose name matches a story-file pattern.
+//
+// This helper bridges the gap by inserting a synthetic CSF-glob node between
+// './storybook-stories.js' and the actual story files. The three-level chain
+// chromatic-cli's getDependentStoryFiles expects is:
+//
+//     ./storybook-stories.js  ←  (CSF entry, imported by preview-main.js)
+//        ↓ imports
+//     ./parcel-csf-glob.js    ←  reasons=[storybook-stories.js] → identified as the CSF glob
+//        ↓ imports
+//     ./Foo.stories.tsx       ←  reasons=[parcel-csf-glob.js]   → added to affectedModuleIds
+//
+// Pointing story files directly at './storybook-stories.js' would make THEM the
+// CSF globs (per getDependentStoryFiles.ts:174-181), causing traceName to bail
+// at the story file (line 287) and source files (not story files) to end up
+// in affectedModuleIds — which chromatic then can't match to storyIndex entries.
 export function addStoryEntries(statsMap: Map<string, Module>, logger?: Logger): number {
   let tagged = 0;
   for (const entry of statsMap.values()) {
     if (!STORY_FILE_RE.test(entry.name)) continue;
-    if (entry.reasons.every(r => r.moduleName !== CANONICAL_CSF_GLOB)) {
-      entry.reasons.push({moduleName: CANONICAL_CSF_GLOB});
+    if (entry.reasons.every(r => r.moduleName !== CSF_GLOB_ENTRY)) {
+      entry.reasons.push({moduleName: CSF_GLOB_ENTRY});
       tagged++;
     }
   }
+  // Insert the synthetic CSF-glob node itself with CANONICAL_CSF_GLOB as its only reason.
+  if (tagged > 0 && !statsMap.has(CSF_GLOB_ENTRY)) {
+    statsMap.set(CSF_GLOB_ENTRY, {
+      id: CSF_GLOB_ENTRY,
+      name: CSF_GLOB_ENTRY,
+      reasons: [{moduleName: CANONICAL_CSF_GLOB}]
+    });
+  }
   logger?.info({
-    message: `parcel-reporter-turbosnap-stats: tagged ${tagged} story file(s) with ./storybook-stories.js`
+    message: `parcel-reporter-turbosnap-stats: tagged ${tagged} story file(s) via synthetic CSF glob`
   });
   return tagged;
 }

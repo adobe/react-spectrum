@@ -269,7 +269,9 @@ describe('writeStats — happy path', () => {
 });
 
 describe('addStoryEntries', () => {
-  test('adds ./storybook-stories.js as reason on .stories.tsx files', () => {
+  const CSF_GLOB = './parcel-csf-glob.js';
+
+  test('tags .stories.tsx files with the synthetic CSF-glob entry', () => {
     const m = new Map<string, Module>([
       [
         './packages/foo/Accordion.stories.tsx',
@@ -282,8 +284,20 @@ describe('addStoryEntries', () => {
     ]);
     addStoryEntries(m);
     expect(m.get('./packages/foo/Accordion.stories.tsx')!.reasons).toEqual([
-      {moduleName: './storybook-stories.js'}
+      {moduleName: CSF_GLOB}
     ]);
+  });
+
+  test('inserts the synthetic CSF-glob node with ./storybook-stories.js as its reason', () => {
+    const m = new Map<string, Module>([
+      ['./Foo.stories.tsx', {id: './Foo.stories.tsx', name: './Foo.stories.tsx', reasons: []}]
+    ]);
+    addStoryEntries(m);
+    expect(m.get(CSF_GLOB)).toEqual({
+      id: CSF_GLOB,
+      name: CSF_GLOB,
+      reasons: [{moduleName: './storybook-stories.js'}]
+    });
   });
 
   test('does not add a duplicate reason if already present', () => {
@@ -293,12 +307,12 @@ describe('addStoryEntries', () => {
         {
           id: './Foo.stories.tsx',
           name: './Foo.stories.tsx',
-          reasons: [{moduleName: './storybook-stories.js'}]
+          reasons: [{moduleName: CSF_GLOB}]
         }
       ]
     ]);
     addStoryEntries(m);
-    expect(m.get('./Foo.stories.tsx')!.reasons).toEqual([{moduleName: './storybook-stories.js'}]);
+    expect(m.get('./Foo.stories.tsx')!.reasons).toEqual([{moduleName: CSF_GLOB}]);
   });
 
   test('matches .stories.{js,jsx,mjs,ts,tsx} extensions', () => {
@@ -312,7 +326,7 @@ describe('addStoryEntries', () => {
     const m = new Map<string, Module>(names.map(n => [n, {id: n, name: n, reasons: []}]));
     addStoryEntries(m);
     for (const n of names) {
-      expect(m.get(n)!.reasons).toEqual([{moduleName: './storybook-stories.js'}]);
+      expect(m.get(n)!.reasons).toEqual([{moduleName: CSF_GLOB}]);
     }
   });
 

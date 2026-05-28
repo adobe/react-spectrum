@@ -38,20 +38,26 @@ describe('integration: real Parcel build emits preview-stats.json', () => {
     });
 
     // The fixture has no storybook-resolver stories.js virtual, but it does include
-    // Button.stories.tsx. addStoryEntries bridges the gap by injecting
-    // './storybook-stories.js' as a reason on every .stories.* asset, so the
-    // reporter succeeds and writes preview-stats.json. Verify the file exists and
-    // contains the CSF-glob reason — that proves the entire chain ran against real
-    // Parcel internals.
+    // Button.stories.tsx. addStoryEntries bridges the gap by inserting a synthetic
+    // CSF-glob node and tagging .stories.* assets with it. Verify:
+    //   1. The CSF-glob node exists and has ./storybook-stories.js as a reason
+    //   2. At least one .stories.* file has the CSF-glob node as a reason
+    // This is the three-level chain chromatic-cli's traversal expects.
     await parcel.run();
     const statsPath = path.join(distDir, 'preview-stats.json');
     expect(fs.existsSync(statsPath)).toBe(true);
     const stats = JSON.parse(fs.readFileSync(statsPath, 'utf8'));
-    const storiesModule = stats.modules.find((m: any) =>
-      m.reasons.some((r: any) => r.moduleName === './storybook-stories.js')
+
+    const csfGlobNode = stats.modules.find((m: any) => m.name === './parcel-csf-glob.js');
+    expect(csfGlobNode).toBeDefined();
+    expect(csfGlobNode.reasons).toEqual([{moduleName: './storybook-stories.js'}]);
+
+    const storyFile = stats.modules.find(
+      (m: any) =>
+        /\.stories\./.test(m.name)
+        && m.reasons.some((r: any) => r.moduleName === './parcel-csf-glob.js')
     );
-    expect(storiesModule).toBeDefined();
-    expect(storiesModule.name).toMatch(/\.stories\./);
+    expect(storyFile).toBeDefined();
     expect(stats.modules.length).toBeGreaterThan(0);
   });
 });

@@ -521,7 +521,7 @@ const tagStyles = style<
   transition: 'default',
   // maxWidth: 'calc(self(height) * 7)', // s2 designs show a max width on tags but we pushed back on this in v3
   backgroundColor: {
-    default: 'blue-100',
+    default: 'gray-100',
     isHovered: {
       default: 'gray-200'
     },
