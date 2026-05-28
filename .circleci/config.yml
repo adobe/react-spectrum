@@ -21,6 +21,7 @@ executors:
   rsp:
     docker:
       - image: cimg/node:24.14.1
+    resource_class: medium.gen2
     environment:
       CACHE_VERSION: v1
     working_directory: ~/react-spectrum
@@ -28,7 +29,7 @@ executors:
   rsp-large:
     docker:
       - image: cimg/node:24.14.1
-    resource_class: large
+    resource_class: large.gen2
     environment:
       CACHE_VERSION: v1
     working_directory: ~/react-spectrum
@@ -36,7 +37,7 @@ executors:
   rsp-xlarge:
     docker:
       - image: cimg/node:24.14.1
-    resource_class: xlarge
+    resource_class: xlarge.gen2
     environment:
       CACHE_VERSION: v1
     working_directory: ~/react-spectrum
@@ -44,7 +45,7 @@ executors:
   rsp-2xlarge:
     docker:
       - image: cimg/node:24.14.1
-    resource_class: 2xlarge
+    resource_class: 2xlarge.gen2
     environment:
       CACHE_VERSION: v1
     working_directory: ~/react-spectrum
@@ -447,7 +448,7 @@ jobs:
           name: build fork-point apis
           command: |
             mkdir -p ~/.ssh
-            curl -L https://api.github.com/meta | jq -r '.ssh_keys | .[]' | sed -e 's/^/github.com /' >> ~/.ssh/known_hosts
+            ssh-keyscan -t rsa,ed25519 github.com >> ~/.ssh/known_hosts
             yarn build:api-branch --githash="origin/main" --output="base-api" && yarn build:api-branch && yarn compare:apis
 
       - persist_to_workspace:
@@ -490,7 +491,7 @@ jobs:
           name: build agent skills (main)
           command: |
             mkdir -p ~/.ssh
-            curl -L https://api.github.com/meta | jq -r '.ssh_keys | .[]' | sed -e 's/^/github.com /' >> ~/.ssh/known_hosts
+            ssh-keyscan -t rsa,ed25519 github.com >> ~/.ssh/known_hosts
             BRANCH_ROOT="$(pwd)"
             BUILD_SKILLS="$BRANCH_ROOT/.circleci/build-skills.sh"
             git worktree add --detach /tmp/main-worktree origin/main
