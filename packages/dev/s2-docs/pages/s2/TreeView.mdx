@@ -395,9 +395,9 @@ You can customize the drag preview by passing <TypeLink links={docs.links} type=
 ```tsx render type="s2"
 "use client";
 import {Text} from '@react-spectrum/s2';
-import {TreeView, TreeViewItem, TreeViewItemContent, DragPreview} from '@react-spectrum/s2/TreeView';
+import {TreeView, TreeViewItem, TreeViewItemContent} from '@react-spectrum/s2/TreeView';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
-import {useDragAndDrop} from '@react-spectrum/s2/useDragAndDrop';
+import {DragPreview, useDragAndDrop} from '@react-spectrum/s2/useDragAndDrop';
 import {useTreeData} from '@react-spectrum/s2/useTreeData';
 import {Collection} from '@react-spectrum/s2';
 import Folder from '@react-spectrum/s2/icons/Folder';

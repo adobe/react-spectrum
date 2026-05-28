@@ -70,6 +70,11 @@ export function useCalendarHeading(
       );
     }
 
-    return formatter.format(startDate.toDate(state.timeZone));
+    // Custom calendars like the 4-5-4 fiscal calendar use getFormattableMonth to map
+    // their internal month back to the Gregorian month that should be displayed.
+    let displayDate = startDate.calendar.getFormattableMonth
+      ? startDate.calendar.getFormattableMonth(startDate)
+      : startDate;
+    return formatter.format(displayDate.toDate(state.timeZone));
   }, [formatter, isDays, startDate, state.timeZone, state.visibleRange.end]);
 }

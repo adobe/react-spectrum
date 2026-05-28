@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 const {parseArgs} = require('node:util');
 import {s1_to_s2} from './s1-to-s2/src';
+import {test_utils_rc_update} from './test-utils-rc-update/src';
 import {use_monopackages} from './use-monopackages/src';
 import {use_subpaths} from './use-subpaths/src';
 
@@ -57,15 +58,22 @@ export interface UseMonopackagesCodemodOptions extends JSCodeshiftOptions {
 
 export interface UseSubpathsCodemodOptions extends JSCodeshiftOptions {}
 
+export interface TestUtilsRcUpdateOptions extends JSCodeshiftOptions {}
+
 const codemods: Record<
   string,
   (
-    options: S1ToS2CodemodOptions | UseMonopackagesCodemodOptions | UseSubpathsCodemodOptions
+    options:
+      | S1ToS2CodemodOptions
+      | UseMonopackagesCodemodOptions
+      | UseSubpathsCodemodOptions
+      | TestUtilsRcUpdateOptions
   ) => void
 > = {
   's1-to-s2': s1_to_s2,
   'use-monopackages': use_monopackages,
-  'use-subpaths': use_subpaths
+  'use-subpaths': use_subpaths,
+  'test-utils-rc-update': test_utils_rc_update
 };
 
 // https://github.com/facebook/jscodeshift?tab=readme-ov-file#usage-cli

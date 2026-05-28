@@ -23,7 +23,7 @@ import {useLocale} from 'react-aria/I18nProvider';
 import {useProviderProps} from '../provider/Provider';
 
 export interface SpectrumCalendarProps<T extends DateValue>
-  extends AriaCalendarProps<T>, StyleProps {
+  extends Omit<AriaCalendarProps<T>, 'selectionMode' | 'weeksInMonth'>, StyleProps {
   /**
    * The number of months to display at once. Up to 3 months are supported.
    *
@@ -52,7 +52,7 @@ export const Calendar = React.forwardRef(function Calendar<T extends DateValue>(
   visibleMonths = Math.max(visibleMonths, 1);
   let visibleDuration = useMemo(() => ({months: visibleMonths}), [visibleMonths]);
   let {locale} = useLocale();
-  let state = useCalendarState({
+  let state = useCalendarState<T, 'single'>({
     ...props,
     locale,
     visibleDuration,
