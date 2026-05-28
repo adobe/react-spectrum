@@ -15,8 +15,8 @@ import {ActionMenu} from '@react-spectrum/s2/ActionMenu';
 import {Asset as AssetComponent, AssetList} from '@react-spectrum/s2-ai/AssetList';
 import {
   BasicHorizontalCard,
-  HorizontalCard,
-  CardPreview as HorizontalCardPreview
+  CardPreview,
+  HorizontalCard
 } from '@react-spectrum/s2-ai/HorizontalCard';
 import {Card, CardProps} from '@react-spectrum/s2/Card';
 import ChevronRight from '@react-spectrum/s2/icons/ChevronRight';
@@ -56,7 +56,7 @@ const meta: Meta<CardProps & {isLoading?: boolean}> = {
   decorators: (children, {args}) => (
     <Skeleton isLoading={args.isLoading || false}>{children(args)}</Skeleton>
   ),
-  title: 'HorizontalCard'
+  title: 'S2-AI/HorizontalCard'
 };
 
 export default meta;
@@ -74,12 +74,12 @@ export const Horizontal: Story = {
         justifyContent: 'center'
       }}>
       <HorizontalCard {...args} styles={style({maxWidth: 600})}>
-        <HorizontalCardPreview>
+        <CardPreview>
           <Image
             slot="preview"
             src={new URL('../../s2/stories/assets/preview.png', import.meta.url).toString()}
           />
-        </HorizontalCardPreview>
+        </CardPreview>
         <Image
           slot="thumbnail"
           src={new URL('../../s2/stories/assets/placeholder.png', import.meta.url).toString()}
@@ -93,12 +93,12 @@ export const Horizontal: Story = {
         </Content>
       </HorizontalCard>
       <HorizontalCard {...args} styles={style({maxWidth: 600})}>
-        <HorizontalCardPreview>
+        <CardPreview>
           <Image
             slot="preview"
             src={new URL('../../s2/stories/assets/preview.png', import.meta.url).toString()}
           />
-        </HorizontalCardPreview>
+        </CardPreview>
         <Content>
           <Text slot="title">
             <Image

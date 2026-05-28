@@ -10,21 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMRef, FocusableRefValue} from '@react-types/shared';
+import {AriaLabelingProps} from '@react-types/shared';
 import {baseColor, focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {BasicHorizontalCard} from './HorizontalCard';
 import {Button} from 'react-aria-components/Button';
 import {CardProps} from '@react-spectrum/s2/Card';
-import {
-  controlSize,
-  getAllowedOverrides
-} from '@react-spectrum/s2/style-utils' with {type: 'macro'};
-import CrossIcon from '@react-spectrum/s2/ui-icons/Cross';
+import Close from '@react-spectrum/s2/icons/Close';
+import {controlSize, getAllowedOverrides} from './style-utils-copy' with {type: 'macro'};
 import {forwardRef, useRef} from 'react';
+import {iconStyle} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {pressScale} from '@react-spectrum/s2/pressScale';
 import {Tag, TagGroup, TagList} from 'react-aria-components/TagGroup';
-import {useDOMRef} from '@react-spectrum/s2/useDOMRef';
-import {useFocusableRef} from '@react-spectrum/s2/useDOMRef';
 
 const hoverBackground = {
   default: 'gray-200',
@@ -75,29 +71,33 @@ const styles = style<{
   getAllowedOverrides()
 );
 
+const closeIconStyle = ({size = 'M'}) => {
+  if (size === 'S') return iconStyle({size: 'XS'});
+  else if (size === 'M') return iconStyle({size: 'S'});
+  else if (size === 'L') return iconStyle({size: 'M'});
+  else if (size === 'XL') return iconStyle({size: 'L'});
+  else return iconStyle({size: 'S'});
+};
+
 const CloseButton = function CloseButton(props) {
-  let ref = useRef<FocusableRefValue<HTMLButtonElement>>(null);
-  let domRef = useFocusableRef(ref);
+  let ref = useRef(null);
   return (
     <Button
       {...props}
-      ref={domRef}
+      ref={ref}
       slot="remove"
-      style={pressScale(domRef, {})}
+      style={pressScale(ref, {})}
       className={renderProps => styles({...renderProps, size: props.size || 'M'}, props.styles)}>
-      <CrossIcon
-        size={({XS: 'S', S: 'M', M: 'XL', L: 'XXL', XL: 'XXXL'} as const)[props.size || 'M']}
-      />
+      <Close styles={closeIconStyle({size: props.size ?? 'M'})} />
     </Button>
   );
 };
 
 let assetListStyles = style({}, getAllowedOverrides());
 
-export const AssetList = forwardRef(function AssetList(props: any, ref: DOMRef<HTMLDivElement>) {
-  let domRef = useDOMRef(ref);
+export const AssetList = forwardRef(function AssetList(props: any, ref: Ref<HTMLDivElement>) {
   return (
-    <TagGroup {...props} className={assetListStyles(props.styles)} ref={domRef}>
+    <TagGroup {...props} className={assetListStyles(props.styles)} ref={ref}>
       <TagList
         className={style({
           display: 'flex',
@@ -115,7 +115,7 @@ export const AssetList = forwardRef(function AssetList(props: any, ref: DOMRef<H
 
 export const Asset = forwardRef(function Asset(
   props: CardProps & AriaLabelingProps,
-  ref: DOMRef<HTMLDivElement>
+  ref: Ref<HTMLDivElement>
 ) {
   let {
     textValue,
@@ -124,14 +124,13 @@ export const Asset = forwardRef(function Asset(
     'aria-describedby': ariaDescribedby,
     ...otherProps
   } = props;
-  let domRef = useDOMRef(ref);
   return (
     <Tag
       textValue={textValue}
       aria-label={ariaLabel}
       aria-labelledby={ariaLabelledby}
       aria-describedby={ariaDescribedby}
-      ref={domRef}
+      ref={ref}
       className={style({flexShrink: 0, flexGrow: 0, position: 'relative'})}>
       <BasicHorizontalCard {...otherProps}>{props.children}</BasicHorizontalCard>
       {/** Definitely not a close button, though looks like one. */}
