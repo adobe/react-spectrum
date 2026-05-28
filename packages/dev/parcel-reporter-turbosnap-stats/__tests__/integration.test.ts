@@ -1,11 +1,10 @@
-import {Parcel} from '@parcel/core';
-// @ts-ignore — untyped internal package
-import {FSCache} from '@parcel/cache';
-// @ts-ignore — untyped internal package
-import {NodeFS} from '@parcel/fs';
-import path from 'path';
 import fs from 'fs';
+import {FSCache} from '@parcel/cache';
+// @ts-ignore — @parcel/fs has no published types in this version
+import {NodeFS} from '@parcel/fs';
 import os from 'os';
+import {Parcel} from '@parcel/core';
+import path from 'path';
 
 jest.setTimeout(60_000);
 
@@ -16,6 +15,7 @@ describe('integration: real Parcel build emits preview-stats.json', () => {
     // Use FSCache so Jest's CJS transform doesn't trip over lmdb/native.js
     // which uses import.meta.url (ESM-only) causing "URL must be of scheme file".
     const cacheDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ts-cache-'));
+    // @ts-expect-error — published @parcel/cache .d.ts declares FSCache(cacheDir) but the runtime constructor is FSCache(fs, cacheDir)
     const cache = new FSCache(new NodeFS(), cacheDir);
 
     const parcel = new (Parcel as any)({
@@ -23,10 +23,12 @@ describe('integration: real Parcel build emits preview-stats.json', () => {
       config: path.join(fixtureDir, '.parcelrc'),
       mode: 'production',
       cache,
-      additionalReporters: [{
-        packageName: '@parcel/reporter-turbosnap-stats',
-        resolveFrom: __filename
-      }],
+      additionalReporters: [
+        {
+          packageName: '@parcel/reporter-turbosnap-stats',
+          resolveFrom: __filename
+        }
+      ],
       targets: {
         default: {
           distDir,

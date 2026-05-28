@@ -1,5 +1,5 @@
+import {addStoryEntries, buildStatsMap, rewriteStoryVirtuals, writeStats} from './helpers';
 import {Reporter} from '@parcel/plugin';
-import {buildStatsMap, rewriteStoryVirtuals, addStoryEntries, writeStats} from './helpers';
 
 const reporter = new Reporter({
   async report({event, options, logger}) {

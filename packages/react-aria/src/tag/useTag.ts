@@ -118,6 +118,7 @@ export function useTag<T>(
 
   return {
     removeButtonProps: {
+      // @ts-ignore
       'data-testid': 'tag-remove-button',
       'aria-label': stringFormatter.format('removeButtonLabel'),
       'aria-labelledby': `${buttonId} ${rowProps.id}`,

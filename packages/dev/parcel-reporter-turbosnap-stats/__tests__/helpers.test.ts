@@ -1,7 +1,16 @@
-import {stripQueryParams, normalize, isUserCode, buildStatsMap, rewriteStoryVirtuals, writeStats, addStoryEntries, type Module} from '../helpers';
+import {
+  addStoryEntries,
+  buildStatsMap,
+  isUserCode,
+  type Module,
+  normalize,
+  rewriteStoryVirtuals,
+  stripQueryParams,
+  writeStats
+} from '../helpers';
+import fs from 'fs';
 import os from 'os';
 import path from 'path';
-import fs from 'fs';
 
 describe('stripQueryParams', () => {
   test('returns input unchanged when no query string', () => {
@@ -25,7 +34,9 @@ describe('normalize', () => {
     expect(normalize('/repo/src/Button.tsx?v=42', root)).toBe('./src/Button.tsx');
   });
   test('Windows backslashes converted to forward slashes', () => {
-    expect(normalize('/repo/src\\nested\\Button.tsx', root)).toMatch(/^\.\/src\/nested\/Button\.tsx$/);
+    expect(normalize('/repo/src\\nested\\Button.tsx', root)).toMatch(
+      /^\.\/src\/nested\/Button\.tsx$/
+    );
   });
   test('\\0-prefixed synthetic id gets virtual: leading-slash form', () => {
     expect(normalize('\0synthetic/foo.js', root)).toBe('/virtual:/synthetic/foo.js');
@@ -71,15 +82,15 @@ function makeMockGraph(opts: {assets: string[]; edges: [string, string][]}) {
   }
 
   return {
-    getBundles: () => [{
-      traverseAssets: (visit: (a: any) => void) => {
-        for (const a of assetById.values()) visit(a);
+    getBundles: () => [
+      {
+        traverseAssets: (visit: (a: any) => void) => {
+          for (const a of assetById.values()) visit(a);
+        }
       }
-    }],
-    getDependencies: (asset: {filePath: string}) =>
-      depsBySource.get(asset.filePath) ?? [],
-    getResolvedAsset: (dep: {target: string}) =>
-      assetById.get(dep.target) ?? null
+    ],
+    getDependencies: (asset: {filePath: string}) => depsBySource.get(asset.filePath) ?? [],
+    getResolvedAsset: (dep: {target: string}, _bundle: unknown) => assetById.get(dep.target) ?? null
   } as any;
 }
 
@@ -92,26 +103,33 @@ describe('buildStatsMap', () => {
       edges: [['./Button.stories.tsx', './Button.tsx']]
     });
     const m = buildStatsMap(g, root);
-    expect(m.get('./Button.tsx')?.reasons).toEqual([
-      {moduleName: './Button.stories.tsx'}
-    ]);
+    expect(m.get('./Button.tsx')?.reasons).toEqual([{moduleName: './Button.stories.tsx'}]);
     expect(m.get('./Button.stories.tsx')?.reasons).toEqual([]);
   });
 
   test('accumulates reasons from multiple importers', () => {
     const g = makeMockGraph({
       assets: ['./shared.ts', './a.tsx', './b.tsx'],
-      edges: [['./a.tsx', './shared.ts'], ['./b.tsx', './shared.ts']]
+      edges: [
+        ['./a.tsx', './shared.ts'],
+        ['./b.tsx', './shared.ts']
+      ]
     });
     const m = buildStatsMap(g, root);
-    const reasons = m.get('./shared.ts')!.reasons.map(r => r.moduleName).sort();
+    const reasons = m
+      .get('./shared.ts')!
+      .reasons.map(r => r.moduleName)
+      .sort();
     expect(reasons).toEqual(['./a.tsx', './b.tsx']);
   });
 
   test('dedupes repeated edges from the same importer', () => {
     const g = makeMockGraph({
       assets: ['./shared.ts', './a.tsx'],
-      edges: [['./a.tsx', './shared.ts'], ['./a.tsx', './shared.ts']]
+      edges: [
+        ['./a.tsx', './shared.ts'],
+        ['./a.tsx', './shared.ts']
+      ]
     });
     const m = buildStatsMap(g, root);
     expect(m.get('./shared.ts')!.reasons).toEqual([{moduleName: './a.tsx'}]);
@@ -150,11 +168,14 @@ describe('rewriteStoryVirtuals', () => {
   test('rewrites any reason pointing at the old virtual', () => {
     const m = new Map<string, Module>([
       [STORY_VIRTUAL, {id: STORY_VIRTUAL, name: STORY_VIRTUAL, reasons: []}],
-      ['./Button.stories.tsx', {
-        id: './Button.stories.tsx',
-        name: './Button.stories.tsx',
-        reasons: [{moduleName: STORY_VIRTUAL}]
-      }]
+      [
+        './Button.stories.tsx',
+        {
+          id: './Button.stories.tsx',
+          name: './Button.stories.tsx',
+          reasons: [{moduleName: STORY_VIRTUAL}]
+        }
+      ]
     ]);
     rewriteStoryVirtuals(m);
     expect(m.get('./Button.stories.tsx')!.reasons).toEqual([{moduleName: CANONICAL}]);
@@ -189,8 +210,7 @@ const silentLogger = {info: () => {}};
 describe('writeStats — validation', () => {
   test('throws when modules map is empty', async () => {
     const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'ts-empty-'));
-    await expect(writeStats(tmp, new Map(), silentLogger))
-      .rejects.toThrow(/empty modules array/);
+    await expect(writeStats(tmp, new Map(), silentLogger)).rejects.toThrow(/empty modules array/);
   });
 
   test('throws when no module references ./storybook-stories.js', async () => {
@@ -198,8 +218,9 @@ describe('writeStats — validation', () => {
     const m = new Map<string, Module>([
       ['./Foo.tsx', {id: './Foo.tsx', name: './Foo.tsx', reasons: []}]
     ]);
-    await expect(writeStats(tmp, m, silentLogger))
-      .rejects.toThrow(/no module references \.\/storybook-stories\.js/);
+    await expect(writeStats(tmp, m, silentLogger)).rejects.toThrow(
+      /no module references \.\/storybook-stories\.js/
+    );
   });
 });
 
@@ -207,20 +228,30 @@ describe('writeStats — happy path', () => {
   test('writes preview-stats.json to distDir with expected shape', async () => {
     const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'ts-write-'));
     const m = new Map<string, Module>([
-      ['./storybook-stories.js', {
-        id: './storybook-stories.js',
-        name: './storybook-stories.js',
-        reasons: [{moduleName: './preview-main.js'}]
-      }],
-      ['./Button.stories.tsx', {
-        id: './Button.stories.tsx',
-        name: './Button.stories.tsx',
-        reasons: [{moduleName: './storybook-stories.js'}]
-      }]
+      [
+        './storybook-stories.js',
+        {
+          id: './storybook-stories.js',
+          name: './storybook-stories.js',
+          reasons: [{moduleName: './preview-main.js'}]
+        }
+      ],
+      [
+        './Button.stories.tsx',
+        {
+          id: './Button.stories.tsx',
+          name: './Button.stories.tsx',
+          reasons: [{moduleName: './storybook-stories.js'}]
+        }
+      ]
     ]);
 
     let infoLog: string | undefined;
-    const logger = {info: (m: {message: string}) => { infoLog = m.message; }};
+    const logger = {
+      info: (m: {message: string}) => {
+        infoLog = m.message;
+      }
+    };
     await writeStats(tmp, m, logger);
 
     const written = JSON.parse(fs.readFileSync(path.join(tmp, 'preview-stats.json'), 'utf8'));
@@ -240,11 +271,14 @@ describe('writeStats — happy path', () => {
 describe('addStoryEntries', () => {
   test('adds ./storybook-stories.js as reason on .stories.tsx files', () => {
     const m = new Map<string, Module>([
-      ['./packages/foo/Accordion.stories.tsx', {
-        id: './packages/foo/Accordion.stories.tsx',
-        name: './packages/foo/Accordion.stories.tsx',
-        reasons: []
-      }]
+      [
+        './packages/foo/Accordion.stories.tsx',
+        {
+          id: './packages/foo/Accordion.stories.tsx',
+          name: './packages/foo/Accordion.stories.tsx',
+          reasons: []
+        }
+      ]
     ]);
     addStoryEntries(m);
     expect(m.get('./packages/foo/Accordion.stories.tsx')!.reasons).toEqual([
@@ -254,23 +288,28 @@ describe('addStoryEntries', () => {
 
   test('does not add a duplicate reason if already present', () => {
     const m = new Map<string, Module>([
-      ['./Foo.stories.tsx', {
-        id: './Foo.stories.tsx',
-        name: './Foo.stories.tsx',
-        reasons: [{moduleName: './storybook-stories.js'}]
-      }]
+      [
+        './Foo.stories.tsx',
+        {
+          id: './Foo.stories.tsx',
+          name: './Foo.stories.tsx',
+          reasons: [{moduleName: './storybook-stories.js'}]
+        }
+      ]
     ]);
     addStoryEntries(m);
-    expect(m.get('./Foo.stories.tsx')!.reasons).toEqual([
-      {moduleName: './storybook-stories.js'}
-    ]);
+    expect(m.get('./Foo.stories.tsx')!.reasons).toEqual([{moduleName: './storybook-stories.js'}]);
   });
 
   test('matches .stories.{js,jsx,mjs,ts,tsx} extensions', () => {
-    const names = ['./a.stories.js', './b.stories.jsx', './c.stories.mjs', './d.stories.ts', './e.stories.tsx'];
-    const m = new Map<string, Module>(
-      names.map(n => [n, {id: n, name: n, reasons: []}])
-    );
+    const names = [
+      './a.stories.js',
+      './b.stories.jsx',
+      './c.stories.mjs',
+      './d.stories.ts',
+      './e.stories.tsx'
+    ];
+    const m = new Map<string, Module>(names.map(n => [n, {id: n, name: n, reasons: []}]));
     addStoryEntries(m);
     for (const n of names) {
       expect(m.get(n)!.reasons).toEqual([{moduleName: './storybook-stories.js'}]);

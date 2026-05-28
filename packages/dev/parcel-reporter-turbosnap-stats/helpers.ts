@@ -1,9 +1,9 @@
 // Helpers for parcel-reporter-turbosnap-stats. See ./StatsReporter.ts for the
 // plugin entry; this file holds the pure functions exported for unit testing.
 
+import type {Asset, BundleGraph} from '@parcel/types';
 import fs from 'fs';
 import path from 'path';
-import type {BundleGraph, Asset} from '@parcel/types';
 
 // TurboSnap may still report 0% reuse for reasons outside this reporter's control:
 //   1. Lockfile-only diff with no node_modules in stats — we DO include node_modules,
@@ -14,8 +14,14 @@ import type {BundleGraph, Asset} from '@parcel/types';
 //   3. Changes under any configured staticDir — same bail.
 // See chromatic-cli node-src/lib/turbosnap/getDependentStoryFiles.ts lines 250-269.
 
-export interface Reason { moduleName: string; }
-export interface Module { id: string; name: string; reasons: Reason[]; }
+export interface Reason {
+  moduleName: string;
+}
+export interface Module {
+  id: string;
+  name: string;
+  reasons: Reason[];
+}
 
 export function stripQueryParams(id: string): string {
   const idx = id.indexOf('?');
@@ -44,10 +50,7 @@ export function normalize(filePath: string, projectRoot: string): string {
 // normalized "./node_modules/@parcel/runtime-*"). Also filter the React JSX
 // runtime — mirrors builder-vite's filter; means React-version bumps won't
 // propagate via stats, but avoids every JSX file having identical noisy reasons.
-const FILTER_PATTERNS: RegExp[] = [
-  /@parcel\/runtime-/,
-  /\/react\/jsx-runtime\.js$/
-];
+const FILTER_PATTERNS: RegExp[] = [/@parcel\/runtime-/, /\/react\/jsx-runtime\.js$/];
 
 export function isUserCode(name: string): boolean {
   if (name.startsWith(VIRTUAL_PREFIX)) return false;
@@ -111,7 +114,7 @@ export function buildStatsMap(
       ensure(assetName);
 
       for (const dep of bundleGraph.getDependencies(asset)) {
-        const target = bundleGraph.getResolvedAsset(dep);
+        const target = bundleGraph.getResolvedAsset(dep, bundle);
         if (!target) continue;
         const depName = normalize(target.filePath, projectRoot);
         if (!isUserCode(depName)) continue;
@@ -134,10 +137,7 @@ const STORY_FILE_RE = /\.stories\.(js|jsx|mjs|ts|tsx)$/;
 // which means chromatic-cli's TurboSnap can't find them via the CSF-glob walk.
 // This helper bridges the gap by directly adding './storybook-stories.js' as a reason
 // on every asset whose name matches a story-file pattern.
-export function addStoryEntries(
-  statsMap: Map<string, Module>,
-  logger?: Logger
-): number {
+export function addStoryEntries(statsMap: Map<string, Module>, logger?: Logger): number {
   let tagged = 0;
   for (const entry of statsMap.values()) {
     if (!STORY_FILE_RE.test(entry.name)) continue;
@@ -146,11 +146,15 @@ export function addStoryEntries(
       tagged++;
     }
   }
-  logger?.info({message: `parcel-reporter-turbosnap-stats: tagged ${tagged} story file(s) with ./storybook-stories.js`});
+  logger?.info({
+    message: `parcel-reporter-turbosnap-stats: tagged ${tagged} story file(s) with ./storybook-stories.js`
+  });
   return tagged;
 }
 
-interface Logger { info: (m: {message: string}) => void; }
+interface Logger {
+  info: (m: {message: string}) => void;
+}
 
 export async function writeStats(
   distDir: string,
@@ -174,14 +178,13 @@ export async function writeStats(
   if (!hasCsfGlob) {
     throw new Error(
       'parcel-reporter-turbosnap-stats: no module references ./storybook-stories.js as a reason. ' +
-      'chromatic-cli will hard-error with "Did not find any CSF globs in preview-stats.json". ' +
-      'Check that parcel-resolver-storybook generated a stories.js virtual and STORY_VIRTUAL_RE matches its filePath.'
+        'chromatic-cli will hard-error with "Did not find any CSF globs in preview-stats.json". ' +
+        'Check that parcel-resolver-storybook generated a stories.js virtual and STORY_VIRTUAL_RE matches its filePath.'
     );
   }
 
-  await fs.promises.writeFile(
-    path.join(distDir, 'preview-stats.json'),
-    JSON.stringify(stats)
-  );
-  logger.info({message: `parcel-reporter-turbosnap-stats: wrote preview-stats.json (${stats.modules.length} modules) to ${distDir}`});
+  await fs.promises.writeFile(path.join(distDir, 'preview-stats.json'), JSON.stringify(stats));
+  logger.info({
+    message: `parcel-reporter-turbosnap-stats: wrote preview-stats.json (${stats.modules.length} modules) to ${distDir}`
+  });
 }
