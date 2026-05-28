@@ -15,14 +15,17 @@ import {announce} from 'react-aria/private/live-announcer/LiveAnnouncer';
 import ChevronDown from '../s2wf-icons/S2_Icon_ChevronDown_20_N.svg';
 import {DOMRef, forwardRefType} from '@react-types/shared';
 import {forwardRef, useCallback, useEffect, useRef, useState} from 'react';
-import {GridList, GridListProps} from 'react-aria-components/GridList';
+import {
+  GridList,
+  GridListItem,
+  GridListItemProps,
+  GridListProps
+} from 'react-aria-components/GridList';
 import {style} from '../style' with {type: 'macro'};
 import {useDOMRef} from './useDOMRef';
+import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
 
-interface ThreadProps<T extends object> extends Pick<GridListProps<T>, 'items' | 'children'> {
-  /** Returns the announcement text for an item when it is added to the thread. */
-  getItemText?: (item: T) => string;
-}
+interface ThreadProps<T extends object> extends Pick<GridListProps<T>, 'items' | 'children'> {}
 
 // TODO: things to look at
 // chatgpt, claude, other AI assistants to see their UX
@@ -49,31 +52,6 @@ export const Thread = /*#__PURE__*/ (forwardRef as forwardRefType)(function Thre
   let domRef = useDOMRef(ref);
   let isNearBottomRef = useRef(true);
   let [showScrollButton, setShowScrollButton] = useState(false);
-  let seenKeysRef = useRef<Set<unknown> | null>(null);
-
-  useEffect(() => {
-    if (!items) {
-      return;
-    }
-    if (seenKeysRef.current === null) {
-      // make sure we don't announce items that are already in the thread, user can navigate though the thread
-      // ideally we would have access to the internal state or something so that we could access the keys/id tied to the
-      // collection items
-      seenKeysRef.current = new Set([...items]);
-      return;
-    }
-
-    if (!getItemText) {
-      return;
-    }
-
-    for (let item of items) {
-      if (!seenKeysRef.current.has(item)) {
-        seenKeysRef.current.add(item);
-        announce(getItemText(item), 'polite');
-      }
-    }
-  }, [items, getItemText]);
 
   let handleScroll = useCallback(() => {
     if (!domRef.current) {
@@ -155,3 +133,38 @@ export const Thread = /*#__PURE__*/ (forwardRef as forwardRefType)(function Thre
     </div>
   );
 });
+
+interface ThreadItemProps extends Pick<GridListItemProps, 'className' | 'children' | 'textValue'> {
+  // TODO: if not provided, announce immediately? or have separate prop for that?
+  isStreaming?: boolean;
+}
+
+export function ThreadItem(props: ThreadItemProps) {
+  let {className, children, textValue = ' ', isStreaming} = props;
+
+  useLayoutEffect(() => {
+    if (isStreaming === undefined && textValue && textValue !== ' ') {
+      announce(textValue, 'polite');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  let isStreamingNow = isStreaming ?? false;
+  let prevStreamingRef = useRef(isStreamingNow);
+  useLayoutEffect(() => {
+    if (isStreaming === undefined) {
+      return;
+    }
+    let wasStreaming = prevStreamingRef.current;
+    prevStreamingRef.current = isStreamingNow;
+    if (wasStreaming && !isStreamingNow && textValue && textValue !== ' ') {
+      announce(textValue, 'polite');
+    }
+  }, [isStreaming, isStreamingNow, textValue]);
+
+  return (
+    <GridListItem textValue={textValue} className={className}>
+      {children}
+    </GridListItem>
+  );
+}

@@ -19,7 +19,6 @@ import {Button} from '../src/Button';
 import {
   ButtonContext,
   GridList,
-  GridListItem,
   Group,
   isFileDropItem,
   Label,
@@ -43,9 +42,9 @@ import {MenuItem} from '../src/Menu';
 import type {Meta} from '@storybook/react';
 import Plus from '@react-spectrum/s2/icons/Add';
 import {ProgressCircle} from '../src/ProgressCircle';
-import {ReactNode, useCallback, useEffect, useRef, useState} from 'react';
+import {ReactNode, useRef, useState} from 'react';
 import Send from '@react-spectrum/s2/icons/ArrowUpSend';
-import {Thread} from '../src/Thread';
+import {Thread, ThreadItem} from '../src/Thread';
 import ThumbDown from '@react-spectrum/s2/icons/ThumbDown';
 import ThumbUp from '@react-spectrum/s2/icons/ThumbUp';
 import {ToggleButton} from '../src/ToggleButton';
@@ -219,6 +218,8 @@ export function DynamicThread() {
   let lastMessage = messages.at(-1);
   let isPending = lastMessage?.type === 'status' && lastMessage.status === 'pending';
 
+  // TODO: test announcements here since we aren't setting isStreaming here
+  // maybe the items should announce on mount, but not for initial mount of the whole chat
   function handleSend(text: string) {
     if (!text.trim()) {
       return;
@@ -247,15 +248,7 @@ export function DynamicThread() {
         gap: 32,
         height: '100%'
       })}>
-      <Thread
-        items={[...messages].reverse()}
-        getItemText={msg =>
-          msg.type === 'status'
-            ? msg.status === 'pending'
-              ? 'Generating response…'
-              : ''
-            : msg.content
-        }>
+      <Thread items={[...messages].reverse()}>
         {msg => {
           if (msg.type === 'user') {
             return <UserMessage textValue={msg.content}>{msg.content}</UserMessage>;
@@ -283,17 +276,6 @@ export function VirtualizedThread() {
   let nextId = useRef(initialResponses.length);
   let lastMessage = messages.at(-1);
   let isPending = lastMessage?.type === 'status' && lastMessage.status === 'pending';
-  let seenKeysRef = useRef<Set<unknown> | null>(null);
-  let getItemText = useCallback(
-    msg =>
-      msg.type === 'status'
-        ? msg.status === 'pending'
-          ? 'Generating response…'
-          : ''
-        : msg.content,
-    []
-  );
-
   function handleSend(text: string) {
     if (!text.trim()) {
       return;
@@ -311,31 +293,6 @@ export function VirtualizedThread() {
       ]);
     }, 1500);
   }
-
-  // TODO: this is a copy of what is in thread, merge when we support virtualizer
-  useEffect(() => {
-    if (!messages) {
-      return;
-    }
-    if (seenKeysRef.current === null) {
-      // make sure we don't announce items that are already in the thread, user can navigate though the thread
-      // ideally we would have access to the internal state or something so that we could access the keys/id tied to the
-      // collection items
-      seenKeysRef.current = new Set([...messages]);
-      return;
-    }
-
-    if (!getItemText) {
-      return;
-    }
-
-    for (let item of messages) {
-      if (!seenKeysRef.current.has(item)) {
-        seenKeysRef.current.add(item);
-        announce(getItemText(item), 'polite');
-      }
-    }
-  }, [messages, getItemText]);
 
   return (
     <div
@@ -387,7 +344,176 @@ export function VirtualizedThread() {
   );
 }
 
+type StreamingMessage =
+  | {id: number; type: 'user'; content: string}
+  | {id: number; type: 'system'; content: string; isStreaming?: boolean}
+  | {id: number; type: 'tool-call'; label: string; isStreaming: boolean}
+  | {id: number; type: 'sources'; items: string[]}
+  | {id: number; type: 'status'; status: 'pending' | 'complete'};
+
+const mockSources = ['Google — google.com', 'Adobe — Adobe.com'];
+
+const mockResponse =
+  'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in';
+
+function ToolCallStatus({label, isStreaming}: {label: string; isStreaming: boolean}) {
+  let textValue = isStreaming ? `Calling ${label}…` : `${label} complete`;
+  return (
+    <ThreadItem
+      textValue={textValue}
+      isStreaming={isStreaming}
+      className={style({
+        ...focusRing(),
+        borderRadius: 'sm',
+        display: 'flex',
+        alignItems: 'center',
+        gap: 8
+      })}>
+      {isStreaming ? (
+        <ProgressCircle isIndeterminate size="S" aria-label={textValue} />
+      ) : (
+        <CheckmarkCircle />
+      )}
+      <span className={style({font: 'ui', color: 'neutral-subdued'})}>{textValue}</span>
+    </ThreadItem>
+  );
+}
+
+function SourcesMessage({items: sourceItems}: {items: string[]}) {
+  let textValue = `Found ${sourceItems.length} source${sourceItems.length !== 1 ? 's' : ''}`;
+  return (
+    <ThreadItem textValue={textValue} className={style({...focusRing(), borderRadius: 'default'})}>
+      <Sources>
+        <SourceList>
+          {sourceItems.map((s, i) => (
+            <SourceListItem key={i} href="#">
+              {s}
+            </SourceListItem>
+          ))}
+        </SourceList>
+      </Sources>
+    </ThreadItem>
+  );
+}
+
+export function StreamingThread() {
+  let [messages, setMessages] = useState<StreamingMessage[]>(
+    initialResponses as StreamingMessage[]
+  );
+  let nextId = useRef(initialResponses.length);
+  let lastMessage = messages.at(-1);
+  let isDisabled =
+    lastMessage?.type === 'status' ||
+    lastMessage?.type === 'tool-call' ||
+    (lastMessage?.type === 'system' && lastMessage.isStreaming);
+
+  function handleSend(text: string) {
+    if (!text.trim()) {
+      return;
+    }
+
+    let userMessageId = nextId.current++;
+    let statusId = nextId.current++;
+    let toolCallId = nextId.current++;
+    let sourcesId = nextId.current++;
+    let responseId = nextId.current++;
+
+    setMessages(prev => [
+      ...prev,
+      {id: userMessageId, type: 'user', content: text},
+      {id: statusId, type: 'status', status: 'pending'}
+    ]);
+
+    setTimeout(() => {
+      setMessages(prev =>
+        prev.map(m =>
+          m.id === statusId
+            ? {id: toolCallId, type: 'tool-call', label: 'search', isStreaming: true}
+            : m
+        )
+      );
+    }, 4000);
+
+    setTimeout(() => {
+      setMessages(prev =>
+        prev.map(m =>
+          m.id === toolCallId && m.type === 'tool-call'
+            ? {id: m.id, type: 'tool-call', label: m.label, isStreaming: false}
+            : m
+        )
+      );
+    }, 4000);
+
+    setTimeout(() => {
+      setMessages(prev => [...prev, {id: sourcesId, type: 'sources', items: mockSources}]);
+    }, 4000);
+
+    setTimeout(() => {
+      setMessages(prev => [
+        ...prev,
+        {id: responseId, type: 'system', content: '', isStreaming: true}
+      ]);
+
+      // stream tokens every 80ms
+      let tokens = mockResponse.split(' ');
+      let accumulated = '';
+      tokens.forEach((token, i) => {
+        setTimeout(() => {
+          accumulated += (i === 0 ? '' : ' ') + token;
+          let isLast = i === tokens.length - 1;
+          setMessages(prev =>
+            prev.map(m =>
+              m.id === responseId
+                ? {id: responseId, type: 'system', content: accumulated, isStreaming: !isLast}
+                : m
+            )
+          );
+        }, i * 80);
+      });
+    }, 8000);
+  }
+
+  return (
+    <div
+      className={style({
+        margin: 0,
+        marginX: 'auto',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 32,
+        height: '100%'
+      })}>
+      <Thread items={[...messages].reverse()}>
+        {(msg: StreamingMessage) => {
+          if (msg.type === 'user') {
+            return <UserMessage textValue={msg.content}>{msg.content}</UserMessage>;
+          }
+          if (msg.type === 'status') {
+            return <ResponseStatus status={msg.status} />;
+          }
+          if (msg.type === 'tool-call') {
+            return <ToolCallStatus label={msg.label} isStreaming={msg.isStreaming} />;
+          }
+          if (msg.type === 'sources') {
+            return <SourcesMessage items={msg.items} />;
+          }
+          return (
+            <SystemMessage textValue={msg.content} isStreaming={msg.isStreaming}>
+              <div role="document">
+                <p className={style({font: 'body'})}>{msg.content || ''}</p>
+              </div>
+              {!msg.isStreaming && <MessageFeedback />}
+            </SystemMessage>
+          );
+        }}
+      </Thread>
+      <PromptField onSend={handleSend} isDisabled={!!isDisabled} />
+    </div>
+  );
+}
+
 // TODO: all of the below was copied from rsp-prototypes, just filler for now
+// some modifications for streaming and what not
 function PromptField({
   onSend,
   isDisabled
@@ -586,10 +712,19 @@ function Attachment({
   );
 }
 
-function UserMessage({children, textValue = ' '}: {children: ReactNode; textValue?: string}) {
+function UserMessage({
+  children,
+  textValue = ' ',
+  isStreaming
+}: {
+  children: ReactNode;
+  textValue?: string;
+  isStreaming?: boolean;
+}) {
   return (
-    <GridListItem
+    <ThreadItem
       textValue={textValue}
+      isStreaming={isStreaming}
       className={style({
         ...focusRing(),
         backgroundColor: 'gray-50',
@@ -600,17 +735,26 @@ function UserMessage({children, textValue = ' '}: {children: ReactNode; textValu
         alignSelf: 'end'
       })}>
       {children}
-    </GridListItem>
+    </ThreadItem>
   );
 }
 
-function SystemMessage({children, textValue = ' '}: {children: ReactNode; textValue?: string}) {
+function SystemMessage({
+  children,
+  textValue = ' ',
+  isStreaming
+}: {
+  children: ReactNode;
+  textValue?: string;
+  isStreaming?: boolean;
+}) {
   return (
-    <GridListItem
+    <ThreadItem
       textValue={textValue}
+      isStreaming={isStreaming}
       className={style({...focusRing(), borderRadius: 'default'})}>
       {children}
-    </GridListItem>
+    </ThreadItem>
   );
 }
 
@@ -631,9 +775,7 @@ function ResponseStatus({status, thinking}: {status: 'pending' | 'complete'; thi
   switch (status) {
     case 'pending':
       return (
-        // TODO: check announcement w/ and w/o the textValue
-        // It announces just fine w/o the text value but still useful for typeahead
-        <GridListItem
+        <ThreadItem
           textValue="Generating response"
           className={style({
             ...focusRing(),
@@ -646,13 +788,11 @@ function ResponseStatus({status, thinking}: {status: 'pending' | 'complete'; thi
           <span className={style({font: 'ui', color: 'neutral-subdued'})}>
             Generating response...
           </span>
-        </GridListItem>
+        </ThreadItem>
       );
     case 'complete':
       return (
-        // TODO: maybe we need focusMode="child"?
-        // TODO: check announcement w/ and w/o the textValue, if it autofocused the child that would change behavior
-        <GridListItem
+        <ThreadItem
           textValue="Response generated"
           className={style({
             ...focusRing(),
@@ -682,7 +822,7 @@ function ResponseStatus({status, thinking}: {status: 'pending' | 'complete'; thi
               <CheckmarkCircle />
             </>
           )}
-        </GridListItem>
+        </ThreadItem>
       );
   }
 }
