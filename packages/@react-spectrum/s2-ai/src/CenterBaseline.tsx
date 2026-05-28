@@ -10,13 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {css} from '../style/style-macro' with {type: 'macro'};
+import {css} from './style-macro' with {type: 'macro'};
 import {CSSProperties, ReactNode} from 'react';
 import {DOMAttributes} from '@react-types/shared';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
-import {mergeStyles} from '../style/runtime';
-import {style} from '../style' with {type: 'macro'};
-import {StyleString} from '../style/types';
+import {mergeStyles} from './mergeStyles';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {StyleString} from './types';
 
 interface CenterBaselineProps extends DOMAttributes {
   style?: CSSProperties;

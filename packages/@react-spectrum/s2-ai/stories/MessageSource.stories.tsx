@@ -13,7 +13,7 @@
 import {MessageSource, SourceList, SourceListItem} from '../src/MessageSource';
 import type {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
-import {style} from '../style' with {type: 'macro'};
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 const meta: Meta<typeof MessageSource> = {
   component: MessageSource,
