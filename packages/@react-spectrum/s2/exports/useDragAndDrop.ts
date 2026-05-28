@@ -5,6 +5,7 @@ export {
   isFileDropItem,
   isTextDropItem
 } from 'react-aria/useDrop';
+export {DragPreview} from '../src/DragPreview';
 export type {DragAndDropHooks} from 'react-aria-components/useDragAndDrop';
 export type {
   DirectoryDropItem,
@@ -32,3 +33,4 @@ export type {
 } from '@react-types/shared';
 export type {DragAndDropOptions} from '../src/useDragAndDrop';
 export type {DragAndDrop} from 'react-aria-components/useDragAndDrop';
+export type {DragPreviewProps} from '../src/DragPreview';

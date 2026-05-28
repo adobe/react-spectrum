@@ -40,26 +40,26 @@ describe('style-macro', () => {
 "@layer _.a, _.b, _.c;
 
 @layer _.b {
-  .Jbs131:first-child {
+  .Jbs14:first-child {
     margin-top: 0.25rem;
   }
 }
 
 @layer _.c.p {
   @media (min-width: 64rem) {
-    .Jbpv131:first-child {
+    .Jbpv14:first-child {
       margin-top: 0.5rem;
     }
   }
 }
 
-.-macro-static-MypNfe {
-        --macro-data-MypNfe: {"style":{"marginTop":{":first-child":{"default":4,"lg":8}}},"loc":"undefined:undefined:undefined"};
+.-macro-static-I08ui {
+        --macro-data-I08ui: {"style":{"marginTop":{":first-child":{"default":4,"lg":8}}},"loc":"undefined:undefined:undefined"};
       }
 
 "
 `);
-    expect(js).toMatchInlineSnapshot('" Jbs131 Jbpv131 -macro-static-MypNfe"');
+    expect(js).toMatchInlineSnapshot(`" Jbs14 Jbpv14 -macro-static-I08ui"`);
   });
 
   it('should support self references', () => {
@@ -73,60 +73,60 @@ describe('style-macro', () => {
 "@layer _.a;
 
 @layer _.a {
-  ._kc131 {
+  ._kc14 {
     border-top-width: 2px;
   }
 
 
-  .hc131 {
+  .hc14 {
     border-bottom-width: 2px;
   }
 
 
-  .mCPFGYc131 {
+  .mCPFGYc14 {
     border-inline-start-width: var(--m);
   }
 
 
-  .lc131 {
+  .lc14 {
     border-inline-end-width: 2px;
   }
 
 
-  .SMBFGYc131 {
+  .SMBFGYc14 {
     padding-inline-start: var(--S);
   }
 
 
-  .Rv131 {
+  .Rv14 {
     padding-inline-end: calc(var(--F, var(--M)) * 3 / 8);
   }
 
 
-  .ZjUQgKd131 {
+  .ZjUQgKd14 {
     width: calc(200px - var(--m) - var(--S));
   }
 
 
-  .-m_-mc131 {
+  .-m_-mc14 {
     --m: 2px;
   }
 
 
-  .-S_-Sv131 {
+  .-S_-Sv14 {
     --S: calc(var(--F, var(--M)) * 3 / 8);
   }
 }
 
-.-macro-static-uhFF5b {
-        --macro-data-uhFF5b: {"style":{"borderWidth":2,"paddingX":"edge-to-text","width":"calc(200px - self(borderStartWidth) - self(paddingStart))"},"loc":"undefined:undefined:undefined"};
+.-macro-static-e1GIg {
+        --macro-data-e1GIg: {"style":{"borderWidth":2,"paddingX":"edge-to-text","width":"calc(200px - self(borderStartWidth) - self(paddingStart))"},"loc":"undefined:undefined:undefined"};
       }
 
 "
 `);
 
     expect(js).toMatchInlineSnapshot(
-      '" _kc131 hc131 mCPFGYc131 lc131 SMBFGYc131 Rv131 ZjUQgKd131 -m_-mc131 -S_-Sv131 -macro-static-uhFF5b"'
+      `" _kc14 hc14 mCPFGYc14 lc14 SMBFGYc14 Rv14 ZjUQgKd14 -m_-mc14 -S_-Sv14 -macro-static-e1GIg"`
     );
   });
 
@@ -144,9 +144,9 @@ describe('style-macro', () => {
       color: 'green-400'
     });
 
-    expect(js()).toMatchInlineSnapshot('"  gw131 pg131 -macro-dynamic-mu4yby"');
-    expect(overrides).toMatchInlineSnapshot('" g8tmWqb131 pHJ3AUd131 -macro-static-CvspF"');
-    expect(js({}, overrides)).toMatchInlineSnapshot('"  g8tmWqb131 pg131 -macro-dynamic-1b9jdne"');
+    expect(js()).toMatchInlineSnapshot(`"  gw14 pg14 -macro-dynamic-1hksi7i"`);
+    expect(overrides).toMatchInlineSnapshot(`" g8tmWqb14 pHJ3AUd14 -macro-static-QgnkJd"`);
+    expect(js({}, overrides)).toMatchInlineSnapshot(`"  g8tmWqb14 pg14 -macro-dynamic-7jtiyi"`);
   });
 
   it('should support allowed overrides for properties that expand into multiple', () => {
@@ -161,10 +161,10 @@ describe('style-macro', () => {
       translateX: 40
     });
 
-    expect(js()).toMatchInlineSnapshot('"  -_7PloMd-B131 __Ya131 -macro-dynamic-4f51mn"');
-    expect(overrides).toMatchInlineSnapshot('" -_7PloMd-D131 __Ya131 -macro-static-nMoh6b"');
+    expect(js()).toMatchInlineSnapshot(`"  -_7PloMd-B14 __Ya14 -macro-dynamic-1hkkiwv"`);
+    expect(overrides).toMatchInlineSnapshot(`" -_7PloMd-D14 __Ya14 -macro-static-F3q0Dd"`);
     expect(js({}, overrides)).toMatchInlineSnapshot(
-      '"  -_7PloMd-D131 __Ya131 -macro-dynamic-f33ipt"'
+      `"  -_7PloMd-D14 __Ya14 -macro-dynamic-j53z9d"`
     );
   });
 
@@ -180,10 +180,10 @@ describe('style-macro', () => {
       padding: 40
     });
 
-    expect(js()).toMatchInlineSnapshot('"  Tk131 Qk131 Sk131 Rk131 -macro-dynamic-efgw2h"');
-    expect(overrides).toMatchInlineSnapshot('" Tm131 Qm131 Sm131 Rm131 -macro-static-9GxvHb"');
+    expect(js()).toMatchInlineSnapshot(`"  Tk14 Qk14 Sk14 Rk14 -macro-dynamic-10enpkp"`);
+    expect(overrides).toMatchInlineSnapshot(`" Tm14 Qm14 Sm14 Rm14 -macro-static-rawlJc"`);
     expect(js({}, overrides)).toMatchInlineSnapshot(
-      '"  Tm131 Qm131 Sm131 Rm131 -macro-dynamic-15z7wbl"'
+      `"  Tm14 Qm14 Sm14 Rm14 -macro-dynamic-5anb29"`
     );
   });
 
@@ -199,11 +199,9 @@ describe('style-macro', () => {
       fontSize: 'ui-xs'
     });
 
-    expect(js()).toMatchInlineSnapshot('"  -_6BNtrc-woabcc131 vx131 -macro-dynamic-zj2kbi"');
-    expect(overrides).toMatchInlineSnapshot('" -_6BNtrc-a131 vx131 -macro-static-EPvKFd"');
-    expect(js({}, overrides)).toMatchInlineSnapshot(
-      '"  -_6BNtrc-a131 vx131 -macro-dynamic-jkg234"'
-    );
+    expect(js()).toMatchInlineSnapshot(`"  -_6BNtrc-woabcc14 vx14 -macro-dynamic-bw4d5q"`);
+    expect(overrides).toMatchInlineSnapshot(`" -_6BNtrc-a14 vx14 -macro-static-cD4zjb"`);
+    expect(js({}, overrides)).toMatchInlineSnapshot(`"  -_6BNtrc-a14 vx14 -macro-dynamic-1yik7yo"`);
   });
 
   it("should support allowed overrides for values that aren't defined", () => {
@@ -218,9 +216,9 @@ describe('style-macro', () => {
       minWidth: 32
     });
 
-    expect(js()).toMatchInlineSnapshot('"  gE131 -macro-dynamic-1osl3dc"');
-    expect(overrides).toMatchInlineSnapshot('" Nk131 -macro-static-J7ItY"');
-    expect(js({}, overrides)).toMatchInlineSnapshot('"  Nk131 gE131 -macro-dynamic-1soyf0e"');
+    expect(js()).toMatchInlineSnapshot(`"  gE14 -macro-dynamic-1tvo6tc"`);
+    expect(overrides).toMatchInlineSnapshot(`" Nk14 -macro-static-1ozQQc"`);
+    expect(js({}, overrides)).toMatchInlineSnapshot(`"  Nk14 gE14 -macro-dynamic-1fyk7lq"`);
   });
 
   it('should support runtime conditions', () => {
@@ -241,32 +239,32 @@ describe('style-macro', () => {
 "@layer _.a;
 
 @layer _.a {
-  .gH131 {
+  .gH14 {
     background-color: light-dark(rgb(233, 233, 233), rgb(44, 44, 44));
   }
 
 
-  .gF131 {
+  .gF14 {
     background-color: light-dark(rgb(225, 225, 225), rgb(50, 50, 50));
   }
 
 
-  .gE131 {
+  .gE14 {
     background-color: light-dark(rgb(218, 218, 218), rgb(57, 57, 57));
   }
 
 
-  .pt131 {
+  .pt14 {
     color: light-dark(rgb(41, 41, 41), rgb(219, 219, 219));
   }
 
 
-  .po131 {
+  .po14 {
     color: light-dark(rgb(19, 19, 19), rgb(242, 242, 242));
   }
 
 
-  .pm131 {
+  .pm14 {
     color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));
   }
 }
@@ -274,9 +272,9 @@ describe('style-macro', () => {
 "
 `);
 
-    expect(js({})).toMatchInlineSnapshot('"  gH131 pt131 -macro-dynamic-15nvpf0"');
-    expect(js({isHovered: true})).toMatchInlineSnapshot('"  gF131 po131 -macro-dynamic-1g7f3s5"');
-    expect(js({isPressed: true})).toMatchInlineSnapshot('"  gE131 pm131 -macro-dynamic-1nv6ioy"');
+    expect(js({})).toMatchInlineSnapshot(`"  gH14 pt14 -macro-dynamic-1bsdq7g"`);
+    expect(js({isHovered: true})).toMatchInlineSnapshot(`"  gF14 po14 -macro-dynamic-mtyglh"`);
+    expect(js({isPressed: true})).toMatchInlineSnapshot(`"  gE14 pm14 -macro-dynamic-1nxkx1e"`);
   });
 
   it('should support nested runtime conditions', () => {
@@ -295,33 +293,33 @@ describe('style-macro', () => {
 "@layer _.a;
 
 @layer _.a {
-  .gH131 {
+  .gH14 {
     background-color: light-dark(rgb(233, 233, 233), rgb(44, 44, 44));
   }
 
 
-  .gF131 {
+  .gF14 {
     background-color: light-dark(rgb(225, 225, 225), rgb(50, 50, 50));
   }
 
 
-  .g_h131 {
+  .g_h14 {
     background-color: light-dark(rgb(75, 117, 255), rgb(64, 105, 253));
   }
 
 
-  .g3131 {
+  .g314 {
     background-color: light-dark(rgb(59, 99, 251), rgb(86, 129, 255));
   }
 }
 
 "
 `);
-    expect(js({})).toMatchInlineSnapshot('"  gH131 -macro-dynamic-43fbrn"');
-    expect(js({isHovered: true})).toMatchInlineSnapshot('"  gF131 -macro-dynamic-1tkkitt"');
-    expect(js({isSelected: true})).toMatchInlineSnapshot('"  g_h131 -macro-dynamic-zzf86q"');
+    expect(js({})).toMatchInlineSnapshot(`"  gH14 -macro-dynamic-874gf7"`);
+    expect(js({isHovered: true})).toMatchInlineSnapshot(`"  gF14 -macro-dynamic-mz49cx"`);
+    expect(js({isSelected: true})).toMatchInlineSnapshot(`"  g_h14 -macro-dynamic-15g8h7m"`);
     expect(js({isSelected: true, isHovered: true})).toMatchInlineSnapshot(
-      '"  g3131 -macro-dynamic-19tzf3y"'
+      `"  g314 -macro-dynamic-1ktebam"`
     );
   });
 
@@ -336,9 +334,9 @@ describe('style-macro', () => {
       }
     });
 
-    expect(js({variant: 'accent'})).toMatchInlineSnapshot('"  gY131 -macro-dynamic-ea1kkk"');
-    expect(js({variant: 'primary'})).toMatchInlineSnapshot('"  gjQquMe131 -macro-dynamic-17nl5q"');
-    expect(js({variant: 'secondary'})).toMatchInlineSnapshot('"  gw131 -macro-dynamic-fjccci"');
+    expect(js({variant: 'accent'})).toMatchInlineSnapshot(`"  gY14 -macro-dynamic-1o5y9ec"`);
+    expect(js({variant: 'primary'})).toMatchInlineSnapshot(`"  gjQquMe14 -macro-dynamic-1nrp3ym"`);
+    expect(js({variant: 'secondary'})).toMatchInlineSnapshot(`"  gw14 -macro-dynamic-1fldd9u"`);
   });
 
   it('supports runtime conditions nested inside css conditions', () => {
@@ -356,14 +354,14 @@ describe('style-macro', () => {
 
 @layer _.b.l {
   @media (forced-colors: active) {
-    .plb131 {
+    .plb14 {
       color: ButtonText;
     }
   }
 
 
   @media (forced-colors: active) {
-    .ple131 {
+    .ple14 {
       color: HighlightText;
     }
   }
@@ -372,8 +370,8 @@ describe('style-macro', () => {
 "
 `);
 
-    expect(js({})).toMatchInlineSnapshot('"  plb131 -macro-dynamic-a7vfaa"');
-    expect(js({isSelected: true})).toMatchInlineSnapshot('"  ple131 -macro-dynamic-ojtpnp"');
+    expect(js({})).toMatchInlineSnapshot(`"  plb14 -macro-dynamic-42tseq"`);
+    expect(js({isSelected: true})).toMatchInlineSnapshot(`"  ple14 -macro-dynamic-hfe3zp"`);
   });
 
   it('inherits parent default when nested branch has no default key', () => {
@@ -389,9 +387,9 @@ describe('style-macro', () => {
     });
     // forcedColors.default should apply when variant=highlight but !isSelected
     expect(css).toContain('ButtonText');
-    expect(js({variant: 'highlight'})).toMatchInlineSnapshot('"  plb131 -macro-dynamic-a7vfaa"');
+    expect(js({variant: 'highlight'})).toMatchInlineSnapshot(`"  plb14 -macro-dynamic-42tseq"`);
     expect(js({variant: 'highlight', isSelected: true})).toMatchInlineSnapshot(
-      '"  ple131 -macro-dynamic-ojtpnp"'
+      `"  ple14 -macro-dynamic-hfe3zp"`
     );
   });
 
@@ -400,33 +398,33 @@ describe('style-macro', () => {
       padding: 24
     });
 
-    expect(js).toMatchInlineSnapshot('" Th131 Qh131 Sh131 Rh131 -macro-static-D80Fbe"');
+    expect(js).toMatchInlineSnapshot(`" Th14 Qh14 Sh14 Rh14 -macro-static-xbQCP"`);
     expect(css).toMatchInlineSnapshot(`
 "@layer _.a;
 
 @layer _.a {
-  .Th131 {
+  .Th14 {
     padding-top: 24px;
   }
 
 
-  .Qh131 {
+  .Qh14 {
     padding-bottom: 24px;
   }
 
 
-  .Sh131 {
+  .Sh14 {
     padding-inline-start: 24px;
   }
 
 
-  .Rh131 {
+  .Rh14 {
     padding-inline-end: 24px;
   }
 }
 
-.-macro-static-D80Fbe {
-        --macro-data-D80Fbe: {"style":{"padding":24},"loc":"undefined:undefined:undefined"};
+.-macro-static-xbQCP {
+        --macro-data-xbQCP: {"style":{"padding":24},"loc":"undefined:undefined:undefined"};
       }
 
 "
@@ -442,13 +440,13 @@ describe('style-macro', () => {
 "@layer _.a;
 
 @layer _.a {
-  .gpQzfVb131 {
+  .gpQzfVb14 {
     background-color: rgb(from light-dark(rgb(39, 77, 234), rgb(105, 149, 254)) r g b / 50%);
   }
 }
 
-.-macro-static-aOn8Q {
-        --macro-data-aOn8Q: {"style":{"backgroundColor":"blue-1000/50"},"loc":"undefined:undefined:undefined"};
+.-macro-static-mwnohc {
+        --macro-data-mwnohc: {"style":{"backgroundColor":"blue-1000/50"},"loc":"undefined:undefined:undefined"};
       }
 
 "
@@ -467,13 +465,13 @@ describe('style-macro', () => {
 "@layer _.a;
 
 @layer _.a {
-  .-FUeYm-gE131 {
+  .-FUeYm-gE14 {
     --foo: light-dark(rgb(218, 218, 218), rgb(57, 57, 57));
   }
 }
 
-.-macro-static-kFNJUb {
-        --macro-data-kFNJUb: {"style":{"--foo":{"type":"backgroundColor","value":"gray-300"}},"loc":"undefined:undefined:undefined"};
+.-macro-static-OWe9Jb {
+        --macro-data-OWe9Jb: {"style":{"--foo":{"type":"backgroundColor","value":"gray-300"}},"loc":"undefined:undefined:undefined"};
       }
 
 "

@@ -10,10 +10,7 @@ npm install @react-spectrum/test-utils --save-dev
 
 ### Core pattern
 
-External consumers import from `@react-spectrum/test-utils`. Tests inside the `packages/` monorepo should import everything from `@react-spectrum/test-utils-internal`, which re-exports `User` and all other test utilities:
- ```ts
-import {act, render, User} from '@react-spectrum/test-utils-internal';
-```
+External consumers import from `@react-spectrum/test-utils`.
 
 Initialize a `User` once per test file. Call `createTester` to get a tester for a specific ARIA pattern, then call tester methods to simulate interactions.
 
