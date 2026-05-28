@@ -62,7 +62,7 @@
     "build:icons": "babel-node --presets @babel/env ./scripts/buildIcons.js",
     "clean:icons": "babel-node --presets @babel/env ./scripts/cleanIcons.js",
     "postinstall": "patch-package && yarn build:icons",
-    "chromatic": "NODE_ENV=production CHROMATIC=1 chromatic --project-token $CHROMATIC_PROJECT_TOKEN --build-script-name 'build:chromatic' --only-changed --trace-changed --dry-run",
+    "chromatic": "NODE_ENV=production CHROMATIC=1 chromatic --project-token $CHROMATIC_PROJECT_TOKEN --build-script-name 'build:chromatic' --only-changed",
     "chromatic:forced-colors": "NODE_ENV=production CHROMATIC=1 chromatic --project-token $CHROMATIC_FC_PROJECT_TOKEN --build-script-name 'build:chromatic-fc' --only-changed",
     "merge:css": "babel-node --presets @babel/env ./scripts/merge-spectrum-css.js",
     "release": "lerna publish from-package --yes",
