@@ -27,7 +27,11 @@ import {
   DisclosureTitle
 } from '@react-spectrum/s2/Disclosure';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
-import {getAllowedOverrides, StyleProps, UnsafeStyles} from './style-utils-copy' with {type: 'macro'};
+import {
+  getAllowedOverrides,
+  StyleProps,
+  UnsafeStyles
+} from './style-utils-copy' with {type: 'macro'};
 import {Link, LinkProps} from 'react-aria-components/Link';
 import {NumberFormatter} from '@internationalized/number';
 import React, {createContext, forwardRef, useContext} from 'react';

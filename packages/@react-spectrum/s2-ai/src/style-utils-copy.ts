@@ -66,7 +66,6 @@ export const fontProperties = [
   'fontSize'
 ] as const;
 
-
 export type StylesProp = StyleString<
   (typeof allowedOverrides)[number] | (typeof widthProperties)[number]
 >;
