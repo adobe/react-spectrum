@@ -81,7 +81,7 @@ import {
   LoadingState,
   Node
 } from '@react-types/shared';
-import DragHandle from '../ui-icons/DragHandle';
+import {DragHandleButton, InsertionIndicator} from './dnd-utils';
 import {DragPreview} from './DragPreview';
 import {Form} from 'react-aria-components/Form';
 import {
@@ -92,7 +92,6 @@ import {
 import {getOwnerDocument} from 'react-aria/private/utils/domHelpers';
 import {GridNode} from 'react-stately/private/grid/GridCollection';
 import {IconContext} from './Icon';
-import {InsertionIndicator} from './ListView';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {Key} from '@react-types/shared';
@@ -271,6 +270,7 @@ const table = style<
     default: 'gray-300',
     isDropTarget: 'blue-800',
     forcedColors: {
+      default: 'ButtonBorder',
       isDropTarget: 'Highlight'
     }
   },
@@ -299,7 +299,19 @@ const table = style<
       isCheckboxSelection: 56
     }
   },
-  forcedColorAdjust: 'none'
+  forcedColorAdjust: 'none',
+  '--indicator-level-padding': {
+    type: 'width',
+    value: {
+      // 16 (drag cell width) + 14 (chevron start padding + half of chevron (5) - radius of drop indicator circle (6) - 1 (fudge factor)) + 40 (checkbox cell width)
+      default: 30,
+      isCheckboxSelection: 71
+    }
+  },
+  '--indent': {
+    type: 'width',
+    value: 16
+  }
 });
 
 // component-height-100
@@ -503,7 +515,6 @@ export const TableView = forwardRef(function TableView(
   let scrollRef = useRef<HTMLElement | null>(null);
   let isCheckboxSelection = selectionMode === 'multiple' || selectionMode === 'single';
   let isDragAndDrop = !!dragAndDropHooks?.useDraggableCollectionState;
-
   let {selectedKeys, onSelectionChange, actionBar, actionBarHeight} = useActionBarContainer({
     ...props,
     scrollRef
@@ -1092,7 +1103,10 @@ function ResizerIndicator({isFocusVisible, isResizing}) {
 const tableHeader = style({
   height: 'full',
   width: 'full',
-  backgroundColor: 'gray-75',
+  backgroundColor: {
+    default: 'gray-75',
+    forcedColors: 'transparent'
+  },
   // Attempt to prevent 1px area where you can see scrolled cell content between the table outline and the table header
   marginTop: '[-1px]',
   '--resizerDisplay': {
@@ -1135,7 +1149,10 @@ const selectAllCheckboxColumn = style({
   },
   borderBottomWidth: 1,
   borderStyle: 'solid',
-  backgroundColor: 'gray-75'
+  backgroundColor: {
+    default: 'gray-75',
+    forcedColors: 'transparent'
+  }
 });
 
 export interface TableHeaderProps<T> extends Omit<
@@ -1227,10 +1244,6 @@ const commonCellStyles = {
 } as const;
 
 const treeColumnStyles = {
-  '--indent': {
-    type: 'width',
-    value: 16
-  },
   '--treeColumnPadding': {
     type: 'width',
     value: {
@@ -1302,55 +1315,6 @@ const dragCellStyle = style({
   height: 'calc(100% - 1px)',
   borderBottomWidth: 0,
   backgroundColor: '--rowBackgroundColor'
-});
-
-const dragButton = style({
-  color: 'inherit',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  padding: 0,
-  backgroundColor: 'transparent',
-  borderStyle: 'none',
-  borderRadius: 'sm',
-  outlineStyle: {
-    default: 'none',
-    isFocusVisible: 'solid'
-  },
-  outlineColor: {
-    default: 'focus-ring',
-    forcedColors: 'Highlight'
-  },
-  outlineWidth: 2,
-  '--iconPrimary': {
-    type: 'fill',
-    value: 'currentColor'
-  },
-  // note that this doesn't have clip or clipPath, but this seems to be sufficient
-  height: {
-    default: 1,
-    ':is([role="row"][data-focus-visible-within] *)': 22
-  },
-  width: {
-    default: 1,
-    ':is([role="row"][data-focus-visible-within] *)': 10
-  },
-  margin: {
-    default: '[-1]',
-    ':is([role="row"][data-focus-visible-within] *)': 0
-  },
-  overflow: {
-    default: 'hidden',
-    ':is([role="row"][data-focus-visible-within] *)': 'visible'
-  },
-  position: {
-    default: 'absolute',
-    ':is([role="row"][data-focus-visible-within] *)': 'relative'
-  },
-  whiteSpace: {
-    default: 'nowrap',
-    ':is([role="row"][data-focus-visible-within] *)': 'normal'
-  }
 });
 
 const cellContent = style({
@@ -1913,6 +1877,9 @@ const rowBackgroundColor = {
     default: 'gray-25',
     isQuiet: '--s2-container-bg'
   },
+  forcedColors: {
+    default: 'Background'
+  },
   isHovered: colorMix('gray-25', 'gray-900', 7), // table-row-hover-color
   isPressed: colorMix('gray-25', 'gray-900', 10), // table-row-hover-color
   isSelected: {
@@ -1924,6 +1891,7 @@ const rowBackgroundColor = {
   selectionStyle: {
     highlight: {
       default: 'gray-25',
+      isQuiet: '--s2-container-bg',
       isHovered: colorMix('gray-25', 'gray-900', 7), // table-row-hover-color
       isPressed: colorMix('gray-25', 'gray-900', 10), // table-row-hover-color
       isSelected: {
@@ -1935,9 +1903,6 @@ const rowBackgroundColor = {
     }
   },
   isInFooter: 'gray-200',
-  forcedColors: {
-    default: 'Background'
-  },
   ':is([role="grid"][data-drop-target] *)': rootRowDropStyles,
   isDropTarget: rowDropStyles
 } as const;
@@ -1945,7 +1910,14 @@ const rowBackgroundColor = {
 const rowTextColor = {
   default: baseColor('neutral-subdued'),
   isSelected: baseColor('neutral'),
-  forcedColors: 'ButtonText',
+  forcedColors: {
+    default: 'ButtonText',
+    isSelected: {
+      selectionStyle: {
+        highlight: 'HighlightText'
+      }
+    }
+  },
   isDisabled: {
     default: 'disabled',
     forcedColors: 'GrayText'
@@ -2072,7 +2044,10 @@ const row = style<
   borderColor: {
     selectionStyle: {
       highlight: 'transparent',
-      checkbox: 'gray-300'
+      checkbox: {
+        default: 'gray-300',
+        forcedColors: 'ButtonBorder'
+      }
     }
   },
   '--borderColorGray': {
@@ -2224,14 +2199,16 @@ export const Row = /*#__PURE__*/ (forwardRef as forwardRefType)(function Row<T>(
       }
       {...otherProps}>
       {allowsDragging && (
-        // @ts-ignore
-        <Cell isSticky className={dragCellStyle}>
-          {!(otherProps.isDisabled && tableVisualOptions.disabledBehavior === 'all') && (
-            <Button slot="drag" className={dragButton}>
-              <DragHandle size="M" />
-            </Button>
-          )}
-        </Cell>
+        <RACCell
+          // @ts-ignore
+          isSticky
+          className={dragCellStyle}>
+          {({isFocusVisibleWithinRow}) =>
+            !(otherProps.isDisabled && tableVisualOptions.disabledBehavior === 'all') && (
+              <DragHandleButton isFocusVisibleWithin={isFocusVisibleWithinRow} />
+            )
+          }
+        </RACCell>
       )}
       {selectionMode !== 'none' &&
         selectionBehavior === 'toggle' &&

@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/color",
-  "version": "3.2.0",
+  "version": "3.2.1",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "repository": {
@@ -31,9 +31,9 @@
     "access": "public"
   },
   "dependencies": {
-    "@adobe/react-spectrum": "3.47.0",
+    "@adobe/react-spectrum": "^3.47.0",
     "@swc/helpers": "^0.5.0",
-    "react-stately": "3.46.0"
+    "react-stately": "^3.46.0"
   },
   "devDependencies": {
     "@react-spectrum/style-macro-s1": "3.0.0-alpha.6",

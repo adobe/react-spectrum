@@ -449,6 +449,12 @@ export interface GridListItemRenderProps extends ItemRenderProps {
   /** The unique id of the item. */
   id?: Key;
   /**
+   * Whether the item's children have keyboard focus.
+   *
+   * @selector [data-focus-visible-within]
+   */
+  isFocusVisibleWithin: boolean;
+  /**
    * State of the grid list.
    */
   state: ListState<unknown>;
@@ -509,6 +515,8 @@ export const GridListItem = /*#__PURE__*/ createLeafComponent(ItemNode, function
   );
 
   let {hoverProps, isHovered} = useHover({
+    // because of https://bugs.webkit.org/show_bug.cgi?id=214609, supporting hover styles when a item is ONLY isDraggable
+    // results in hover styles sticking around after a reorder/drop operation...
     isDisabled: !states.allowsSelection && !states.hasAction && !isDraggable,
     onHoverStart: item.props.onHoverStart,
     onHoverChange: item.props.onHoverChange,
@@ -516,6 +524,9 @@ export const GridListItem = /*#__PURE__*/ createLeafComponent(ItemNode, function
   });
 
   let {isFocusVisible, focusProps} = useFocusRing();
+  let {isFocusVisible: isFocusVisibleWithin, focusProps: focusWithinProps} = useFocusRing({
+    within: true
+  });
   let {checkboxProps} = useGridListSelectionCheckbox({key: item.key}, state);
 
   let buttonProps =
@@ -554,6 +565,7 @@ export const GridListItem = /*#__PURE__*/ createLeafComponent(ItemNode, function
       ...states,
       isHovered,
       isFocusVisible,
+      isFocusVisibleWithin,
       selectionMode: state.selectionManager.selectionMode,
       selectionBehavior: state.selectionManager.selectionBehavior,
       allowsDragging: !!dragState,
@@ -606,6 +618,7 @@ export const GridListItem = /*#__PURE__*/ createLeafComponent(ItemNode, function
           renderProps,
           rowProps,
           focusProps,
+          focusWithinProps,
           hoverProps,
           draggableItem?.dragProps
         )}
@@ -615,6 +628,7 @@ export const GridListItem = /*#__PURE__*/ createLeafComponent(ItemNode, function
         data-hovered={isHovered || undefined}
         data-focused={states.isFocused || undefined}
         data-focus-visible={isFocusVisible || undefined}
+        data-focus-visible-within={isFocusVisibleWithin || undefined}
         data-pressed={states.isPressed || undefined}
         data-allows-dragging={!!dragState || undefined}
         data-dragging={isDragging || undefined}
