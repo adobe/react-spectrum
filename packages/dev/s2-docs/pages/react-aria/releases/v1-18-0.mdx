@@ -24,13 +24,13 @@ export const isSubpage = true;
 
 # v1.18.0
 
-This release packs in several new features! [Calendar](../Calendar) now supports multiple date selection, as well as new [CalendarHeading](../Calendar#calendarheading), [CalendarMonthPicker](../Calendar#month-and-year-pickers), and [CalendarYearPicker](../Calendar#month-and-year-pickers) components that allow the user to jump to a different month or year. [RangeCalendar](../RangeCalendar#validation) now supports determining the available dates based on the first date a user selects. We have also added a [TableFooter](../Table#content) component, and a [SliderFill](../Slider#value-scale) component that simplifies the process of styling the fill portion in a Slider.
+This release packs in several new features! [Calendar](../Calendar) now supports multiple date selection, as well as new [CalendarHeading](../Calendar#calendarheading), [CalendarMonthPicker](../Calendar#month-and-year-pickers), and [CalendarYearPicker](../Calendar#month-and-year-pickers) components that allow the user to jump to a different month or year. [RangeCalendar](../RangeCalendar#validation) now supports determining the available dates based on the first date a user selects. We have also added a [TableFooter](../Table#content) component, description and error messages configurations for [Checkbox](../Checkbox#forms), [Radio](../RadioGroup), and [Switch](../Switch#forms), and a [SliderFill](../Slider#value-scale) component that simplifies the process of styling the fill portion in a Slider.
 
 As always, thank you to all our contributors!
 
 ## Checkbox, Radio, and Switch API updates
 
-We have also added support for description and error message slots to individual checkboxes, switches, and radios. Because this requires introducing a new DOM wrapper around the label element we currently render, we are deprecating the `Checkbox`, `Radio`, and `Switch` components and introducing [CheckboxField](../Checkbox#checkboxfield), [RadioField](../RadioGroup#radiofield), and [SwitchField](../Switch#switchfield) as replacements. These accept [CheckboxButton](../Checkbox#checkboxbutton), [RadioButton](../RadioGroup#radiobutton), and [SwitchButton](../Switch#switchbutton) as children, along with `<Text slot="description">` and `<FieldError>`.
+We have added support for description and error message slots to individual checkboxes, switches, and radios. Because this requires introducing a new DOM wrapper around the label element we currently render, we are deprecating the `Checkbox`, `Radio`, and `Switch` components and introducing [CheckboxField](../Checkbox#checkboxfield), [RadioField](../RadioGroup#radiofield), and [SwitchField](../Switch#switchfield) as replacements. These accept [CheckboxButton](../Checkbox#checkboxbutton), [RadioButton](../RadioGroup#radiobutton), and [SwitchButton](../Switch#switchbutton) as children, along with `<Text slot="description">` and `<FieldError>`.
 
 To add support for description and error message in your implementation, update your component as shown below.
 
