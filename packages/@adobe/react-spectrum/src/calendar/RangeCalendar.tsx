@@ -23,7 +23,7 @@ import {useProviderProps} from '../provider/Provider';
 import {useRangeCalendarState} from 'react-stately/useRangeCalendarState';
 
 export interface SpectrumRangeCalendarProps<T extends DateValue>
-  extends AriaRangeCalendarProps<T>, StyleProps {
+  extends Omit<AriaRangeCalendarProps<T>, 'weeksInMonth'>, StyleProps {
   /**
    * The number of months to display at once. Up to 3 months are supported.
    *
