@@ -23,6 +23,11 @@ describe('integration: real Parcel build emits preview-stats.json', () => {
       config: path.join(fixtureDir, '.parcelrc'),
       mode: 'production',
       cache,
+      // Disable Parcel's persistent cache so it never reads/writes @parcel/watcher
+      // snapshot files. The BruteForceBackend used on Linux CI containers throws
+      // "Unable to open snapshot file" on a fresh cache; with shouldDisableCache
+      // Parcel skips the snapshot read entirely.
+      shouldDisableCache: true,
       additionalReporters: [
         {
           packageName: '@parcel/reporter-turbosnap-stats',
