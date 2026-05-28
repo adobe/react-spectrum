@@ -21,6 +21,7 @@ executors:
   rsp:
     docker:
       - image: cimg/node:24.14.1
+    resource_class: medium.gen2
     environment:
       CACHE_VERSION: v1
     working_directory: ~/react-spectrum
@@ -28,7 +29,7 @@ executors:
   rsp-large:
     docker:
       - image: cimg/node:24.14.1
-    resource_class: large
+    resource_class: large.gen2
     environment:
       CACHE_VERSION: v1
     working_directory: ~/react-spectrum
@@ -36,7 +37,7 @@ executors:
   rsp-xlarge:
     docker:
       - image: cimg/node:24.14.1
-    resource_class: xlarge
+    resource_class: xlarge.gen2
     environment:
       CACHE_VERSION: v1
     working_directory: ~/react-spectrum
@@ -44,7 +45,7 @@ executors:
   rsp-2xlarge:
     docker:
       - image: cimg/node:24.14.1
-    resource_class: 2xlarge
+    resource_class: 2xlarge.gen2
     environment:
       CACHE_VERSION: v1
     working_directory: ~/react-spectrum
