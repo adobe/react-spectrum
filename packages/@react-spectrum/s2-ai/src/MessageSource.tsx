@@ -17,7 +17,7 @@ import {
   DOMRefValue,
   forwardRefType
 } from '@react-types/shared';
-import {baseColor, focusRing, style} from '../style' with {type: 'macro'};
+import {baseColor, focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {ContextValue, SlotProps} from 'react-aria-components/slots';
 import {
   Disclosure,
@@ -25,9 +25,9 @@ import {
   DisclosurePanelProps,
   DisclosureProps,
   DisclosureTitle
-} from './Disclosure';
+} from '@react-spectrum/s2/Disclosure';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
-import {getAllowedOverrides, StyleProps, UnsafeStyles} from './style-utils' with {type: 'macro'};
+import {getAllowedOverrides, StyleProps, UnsafeStyles} from './style-utils-copy' with {type: 'macro'};
 import {Link, LinkProps} from 'react-aria-components/Link';
 import {NumberFormatter} from '@internationalized/number';
 import React, {createContext, forwardRef, useContext} from 'react';

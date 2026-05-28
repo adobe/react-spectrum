@@ -17,7 +17,7 @@ import {
   DOMRefValue,
   GlobalDOMAttributes
 } from '@react-types/shared';
-import {baseColor, focusRing, space, style} from '../style' with {type: 'macro'};
+import {baseColor, focusRing, space, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Button} from 'react-aria-components/Button';
 import {CenterBaseline, centerBaseline} from './CenterBaseline';
 import CheckmarkCircle from '../s2wf-icons/S2_Icon_CheckmarkCircle_20_N.svg';
@@ -36,12 +36,12 @@ import {
   StyleProps,
   StylesPropWithFont,
   UnsafeStyles
-} from './style-utils' with {type: 'macro'};
+} from './style-utils-copy' with {type: 'macro'};
 import {Heading} from 'react-aria-components/Heading';
-import {IconContext} from './Icon';
+import {IconContext} from '@react-spectrum/s2/Icon';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {ProgressCircle} from './ProgressCircle';
+import {ProgressCircle} from '@react-spectrum/s2/ProgressCircle';
 import React, {createContext, forwardRef, ReactNode, useContext} from 'react';
 import {useDOMRef} from './useDOMRef';
 import {useLocale} from 'react-aria/I18nProvider';
