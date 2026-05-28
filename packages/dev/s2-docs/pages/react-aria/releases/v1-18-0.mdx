@@ -17,16 +17,16 @@ import docs from 'docs:@react-spectrum/s2';
 export const hideNav = true;
 export const section = 'Releases';
 export const tags = ['release', 'React Aria'];
-export const date = 'May 26, 2026';
+export const date = 'May 28, 2026';
 export const title = 'v1.18.0';
-export const description = '';
+export const description = 'This release packs a serious punch with several exciting new features! Highlights include major Calendar enhancements, support for table footers, a new SliderFill component that simplifies Slider styling, and a wide range of bug fixes!';
 export const isSubpage = true;
 
 # v1.18.0
 
-This release packs in several new features! [Calendar](../Calendar) now supports multiple date selection, as well as new [CalendarHeading](../Calendar#calendarheading), [CalendarMonthPicker](../Calendar#month-and-year-pickers), and [CalendarYearPicker](../Calendar#month-and-year-pickers) components that allow you to customize how the user can jump to a different month or year. We have also added a [TableFooter](../Table#content) component to support footers in Table, and a [SliderFill](../Slider#sliderfill) component that simplifies the process of styling the fill portion in a Slider.
+This release packs in several new features! [Calendar](../Calendar) now supports multiple date selection, as well as new [CalendarHeading](../Calendar#calendarheading), [CalendarMonthPicker](../Calendar#month-and-year-pickers), and [CalendarYearPicker](../Calendar#month-and-year-pickers) components that allow the user to jump to a different month or year. [RangeCalendar](../RangeCalendar#validation) now supports determining the available dates based on the first date a user selects. We have also added a [TableFooter](../Table#content) component, and a [SliderFill](../Slider#value-scale) component that simplifies the process of styling the fill portion in a Slider.
 
-As always, thanks to all our contributors!
+As always, thank you to all our contributors!
 
 ## Checkbox, Radio, and Switch API updates
 
@@ -45,7 +45,7 @@ To add support for description and error message in your implementation, update 
 
 ## Test utils RC
 
-We are pleased to announce that our [test utils](../testing#react-aria-test-utils) have advanced to RC! Alongside improvements such as RTL support and handling grid navigation, the API for the testers have been updated for consistency and thus various breaking changes have been made. To migrate from beta to RC, run the `test-utils-rc-update` codemod via:
+We are pleased to announce that our [test utils](../testing#react-aria-test-utils) have advanced to RC! Alongside improvements such as RTL support and handling grid navigation, the API for the testers has been updated for consistency and thus various breaking changes have been made. To migrate from beta to RC, run the `test-utils-rc-update` codemod via:
 
 <InstallCommand isCommand pkg="@react-spectrum/codemods" flags="test-utils-rc-update --path /path/to/tests" />
 
@@ -81,7 +81,7 @@ We are pleased to announce that our [test utils](../testing#react-aria-test-util
 - Fix MenuItem render function receiving an `href` when the item is not a link - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/10018)
 - Fix Menu rendered inside Tabs - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/10019)
 ### Modal
-- Fix layout shift in Sheet example on Modal docs - [@nwidynski](https://github.com/nwidynsk) - [PR](https://github.com/adobe/react-spectrum/pull/9956)
+- Fix layout shift in Sheet example on Modal docs - [@nwidynski](https://github.com/nwidynski) - [PR](https://github.com/adobe/react-spectrum/pull/9956)
 ### NumberField
 - Allow `formatOptions` to be passed as an inline object without resetting user input - [@Wonchang0314](https://github.com/Wonchang0314) - [PR](https://github.com/adobe/react-spectrum/pull/9905)
 - Fix SpinButton spinning indefinitely when value results in a disabled button - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/9813)
@@ -101,7 +101,7 @@ We are pleased to announce that our [test utils](../testing#react-aria-test-util
 - Fix virtualized Table loader width not updating when the table width changes - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/9961)
 - Add `state` to `RowRenderProps` - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/9883)
 ### Tabs
-- Support CSS logical properties (e.g. `block-size`, 'inline-size`) for TabPanel animations - [@SupaSeeka](https://github.com/SupaSeeka) - [PR](https://github.com/adobe/react-spectrum/pull/9951)
+- Support CSS logical properties (e.g. `block-size`, `inline-size`) for TabPanel animations - [@SupaSeeka](https://github.com/SupaSeeka) - [PR](https://github.com/adobe/react-spectrum/pull/9951)
 ### TextField
 - Fix a type mismatch in `useTextField` for `<textarea>` elements - [@nami8824](https://github.com/nami8824) - [PR](https://github.com/adobe/react-spectrum/pull/9884)
 ### Tree
