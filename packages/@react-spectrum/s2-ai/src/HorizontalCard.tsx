@@ -23,7 +23,7 @@ import {
 import {composeRenderProps} from 'react-aria-components/composeRenderProps';
 import {ContentContext} from '@react-spectrum/s2/Content';
 import {ContextValue, DEFAULT_SLOT, Provider} from 'react-aria-components/slots';
-import {createContext, forwardRef, ReactNode, useContext, useRef} from 'react';
+import {createContext, forwardRef, ReactNode, useContext} from 'react';
 import {DOMProps, DOMRef, DOMRefValue, GlobalDOMAttributes} from '@react-types/shared';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {FooterContext} from '@react-spectrum/s2/Footer';
@@ -39,6 +39,7 @@ import {pressScale} from '@react-spectrum/s2/pressScale';
 import {SkeletonContext, useIsSkeleton} from '@react-spectrum/s2/Skeleton';
 import type {StyleProps, UnsafeStyles} from './style-utils-copy';
 import {TextContext} from '@react-spectrum/s2/Text';
+import {useDOMRef} from './useDOMRef';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 interface CardRenderProps {
@@ -446,10 +447,11 @@ const actionButtonSize = {
 
 const Card = forwardRef(function Card(
   props: CardProps & {isBasic?: boolean},
-  ref: Ref<HTMLDivElement>
+  ref: DOMRef<HTMLDivElement>
 ) {
   [props] = useSpectrumContextProps(props, ref, CardContext);
   let {ElementType} = useContext(InternalCardViewContext);
+  let domRef = useDOMRef(ref);
   let {
     isBasic = false,
     density = 'regular',
@@ -505,16 +507,14 @@ const Card = forwardRef(function Card(
     </Provider>
   );
 
-  let fallbackRef = useRef(null);
-  let newRef = ref ?? fallbackRef;
-  let press = pressScale(newRef, UNSAFE_style);
+  let press = pressScale(domRef, UNSAFE_style);
   if (ElementType === 'div' && !isSkeleton && props.href) {
     // Standalone Card that has an href should be rendered as a Link.
     // NOTE: In this case, the card must not contain interactive elements.
     return (
       <Link
         {...filterDOMProps(otherProps, {isLink: true})}
-        ref={newRef}
+        ref={domRef as any}
         className={renderProps =>
           UNSAFE_className +
           card(
@@ -543,7 +543,7 @@ const Card = forwardRef(function Card(
         id={id != null ? String(id) : undefined}
         // @ts-ignore - React < 19 compat
         inert={inertValue(isSkeleton)}
-        ref={ref}
+        ref={domRef}
         className={
           UNSAFE_className +
           card({size, density, variant, isBasic, isCardView: ElementType !== 'div'}, styles)
@@ -568,7 +568,7 @@ const Card = forwardRef(function Card(
   return (
     <ElementType
       {...props}
-      ref={ref}
+      ref={domRef}
       className={renderProps =>
         UNSAFE_className +
         card(
@@ -644,21 +644,19 @@ export interface CardPreviewProps extends UnsafeStyles, DOMProps {
 
 export const CardPreview = forwardRef(function CardPreview(
   props: CardPreviewProps,
-  ref: Ref<HTMLDivElement>
+  ref: DOMRef<HTMLDivElement>
 ) {
-  console.log('CardPreview', props);
   let {size, isQuiet, isHovered, isFocusVisible, isSelected, isPressed, isCheckboxSelection} =
     useContext(InternalCardContext);
   let {UNSAFE_className = '', UNSAFE_style} = props;
-  let fallbackRef = useRef(null);
-  let newRef = ref ?? fallbackRef;
+  let domRef = useDOMRef(ref);
   return (
     <div
       {...filterDOMProps(props)}
       slot="preview"
-      ref={newRef}
+      ref={domRef}
       className={UNSAFE_className + preview({size, isQuiet, isHovered, isFocusVisible, isSelected})}
-      style={isQuiet ? pressScale(newRef)({isPressed}) : UNSAFE_style}>
+      style={isQuiet ? pressScale(domRef)({isPressed}) : UNSAFE_style}>
       {isQuiet && <SelectionIndicator />}
       {isQuiet && isCheckboxSelection && <CardCheckbox />}
       <div className={style({borderRadius: 'inherit', overflow: 'clip', height: 'full'})}>

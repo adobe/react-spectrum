@@ -1,3 +1,6 @@
+import {CSSProperties} from 'react';
+import {StyleString} from './types';
+
 export const controlSize = (size: 'sm' | 'md' = 'md'): typeof controlSizeM | typeof controlSizeS =>
   size === 'sm' ? controlSizeS : controlSizeM;
 

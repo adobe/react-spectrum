@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps} from '@react-types/shared';
+import {AriaLabelingProps, DOMRef} from '@react-types/shared';
 import {baseColor, focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {BasicHorizontalCard} from './HorizontalCard';
 import {Button} from 'react-aria-components/Button';
@@ -21,6 +21,7 @@ import {forwardRef, useRef} from 'react';
 import {iconStyle} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {pressScale} from '@react-spectrum/s2/pressScale';
 import {Tag, TagGroup, TagList} from 'react-aria-components/TagGroup';
+import {useDOMRef} from './useDOMRef';
 
 const hoverBackground = {
   default: 'gray-200',
@@ -95,9 +96,10 @@ const CloseButton = function CloseButton(props) {
 
 let assetListStyles = style({}, getAllowedOverrides());
 
-export const AssetList = forwardRef(function AssetList(props: any, ref: Ref<HTMLDivElement>) {
+export const AssetList = forwardRef(function AssetList(props: any, ref: DOMRef<HTMLDivElement>) {
+  let domRef = useDOMRef(ref);
   return (
-    <TagGroup {...props} className={assetListStyles(props.styles)} ref={ref}>
+    <TagGroup {...props} className={assetListStyles(props.styles)} ref={domRef}>
       <TagList
         className={style({
           display: 'flex',
@@ -115,7 +117,7 @@ export const AssetList = forwardRef(function AssetList(props: any, ref: Ref<HTML
 
 export const Asset = forwardRef(function Asset(
   props: CardProps & AriaLabelingProps,
-  ref: Ref<HTMLDivElement>
+  ref: DOMRef<HTMLDivElement>
 ) {
   let {
     textValue,
@@ -124,13 +126,14 @@ export const Asset = forwardRef(function Asset(
     'aria-describedby': ariaDescribedby,
     ...otherProps
   } = props;
+  let domRef = useDOMRef(ref);
   return (
     <Tag
       textValue={textValue}
       aria-label={ariaLabel}
       aria-labelledby={ariaLabelledby}
       aria-describedby={ariaDescribedby}
-      ref={ref}
+      ref={domRef}
       className={style({flexShrink: 0, flexGrow: 0, position: 'relative'})}>
       <BasicHorizontalCard {...otherProps}>{props.children}</BasicHorizontalCard>
       {/** Definitely not a close button, though looks like one. */}
