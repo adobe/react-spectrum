@@ -10,7 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, installPointerEvent, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
+import {
+  act,
+  fireEvent,
+  installPointerEvent,
+  pointerMap,
+  render,
+  within
+} from '@react-spectrum/test-utils-internal';
 import {DataTransfer, DataTransferItem, DragEvent} from './mocks';
 import {DraggableCollectionExample} from '../../stories/dnd/DraggableCollection';
 import {DraggableListBox} from '../../stories/dnd/DraggableListBox';
@@ -52,7 +59,11 @@ describe('useDraggableCollection', () => {
       let onDrop = jest.fn();
       let tree = render(
         <Provider theme={theme}>
-          <DraggableCollectionExample onDragStart={onDragStart} onDragMove={onDragMove} onDragEnd={onDragEnd} />
+          <DraggableCollectionExample
+            onDragStart={onDragStart}
+            onDragMove={onDragMove}
+            onDragEnd={onDragEnd}
+          />
           <Droppable onDrop={onDrop} />
         </Provider>
       );
@@ -81,7 +92,10 @@ describe('useDraggableCollection', () => {
       expect([...dataTransfer.items]).toEqual([
         new DataTransferItem('folder', 'Bar'),
         new DataTransferItem('text/plain', 'Bar'),
-        new DataTransferItem('application/vnd.react-aria.items+json', JSON.stringify([{folder: 'Bar', 'text/plain': 'Bar'}]))
+        new DataTransferItem(
+          'application/vnd.react-aria.items+json',
+          JSON.stringify([{folder: 'Bar', 'text/plain': 'Bar'}])
+        )
       ]);
       expect(dataTransfer._dragImage.node.textContent).toBe('Bar');
       expect(dataTransfer._dragImage.node.querySelector('.badge')).toBeNull();
@@ -174,10 +188,13 @@ describe('useDraggableCollection', () => {
       expect([...dataTransfer.items]).toEqual([
         new DataTransferItem('folder', 'Foo'),
         new DataTransferItem('text/plain', 'Foo\nBar'),
-        new DataTransferItem('application/vnd.react-aria.items+json', JSON.stringify([
-          {folder: 'Foo', 'text/plain': 'Foo'},
-          {folder: 'Bar', 'text/plain': 'Bar'}
-        ]))
+        new DataTransferItem(
+          'application/vnd.react-aria.items+json',
+          JSON.stringify([
+            {folder: 'Foo', 'text/plain': 'Foo'},
+            {folder: 'Bar', 'text/plain': 'Bar'}
+          ])
+        )
       ]);
       expect(dataTransfer._dragImage.node.querySelector('span').textContent).toBe('Bar');
       expect(dataTransfer._dragImage.node.querySelector('.badge').textContent).toBe('2');
@@ -269,9 +286,10 @@ describe('useDraggableCollection', () => {
       expect([...dataTransfer.items]).toEqual([
         new DataTransferItem('folder', 'Bar'),
         new DataTransferItem('text/plain', 'Bar'),
-        new DataTransferItem('application/vnd.react-aria.items+json', JSON.stringify([
-          {folder: 'Bar', 'text/plain': 'Bar'}
-        ]))
+        new DataTransferItem(
+          'application/vnd.react-aria.items+json',
+          JSON.stringify([{folder: 'Bar', 'text/plain': 'Bar'}])
+        )
       ]);
       expect(dataTransfer._dragImage.node.querySelector('span').textContent).toBe('Bar');
       expect(dataTransfer._dragImage.node.querySelector('.badge')).toBeNull();
@@ -579,7 +597,11 @@ describe('useDraggableCollection', () => {
       let onDrop = jest.fn();
       let tree = render(
         <Provider theme={theme}>
-          <DraggableListBox aria-label="Test" selectionMode="multiple" onDragStart={onDragStart} onDragEnd={onDragEnd}>
+          <DraggableListBox
+            aria-label="Test"
+            selectionMode="multiple"
+            onDragStart={onDragStart}
+            onDragEnd={onDragEnd}>
             <Item key="foo">Foo</Item>
             <Item key="bar">Bar</Item>
             <Item key="baz">Baz</Item>
@@ -599,7 +621,9 @@ describe('useDraggableCollection', () => {
 
       await user.keyboard('[Space]');
       expect(options[0]).toHaveAttribute('aria-selected', 'true');
-      expect(document.getElementById(options[0].getAttribute('aria-describedby'))).toHaveTextContent('Press Enter to start dragging');
+      expect(
+        document.getElementById(options[0].getAttribute('aria-describedby'))
+      ).toHaveTextContent('Press Enter to start dragging');
 
       await user.keyboard('[ArrowDown]');
       expect(document.activeElement).toBe(options[1]);
@@ -607,7 +631,9 @@ describe('useDraggableCollection', () => {
       await user.keyboard('[Space]');
       expect(options[1]).toHaveAttribute('aria-selected', 'true');
       expect(options[1]).toHaveAttribute('aria-describedby');
-      expect(document.getElementById(options[1].getAttribute('aria-describedby'))).toHaveTextContent('Press Enter to drag 2 selected items.');
+      expect(
+        document.getElementById(options[1].getAttribute('aria-describedby'))
+      ).toHaveTextContent('Press Enter to drag 2 selected items.');
 
       await user.keyboard('[Enter]');
       act(() => jest.runAllTimers());
@@ -665,7 +691,13 @@ describe('useDraggableCollection', () => {
       let onAction = jest.fn();
       let tree = render(
         <Provider theme={theme}>
-          <DraggableListBox aria-label="Test" selectionMode="multiple" selectionBehavior="replace" onDragStart={onDragStart} onDragEnd={onDragEnd} onAction={onAction}>
+          <DraggableListBox
+            aria-label="Test"
+            selectionMode="multiple"
+            selectionBehavior="replace"
+            onDragStart={onDragStart}
+            onDragEnd={onDragEnd}
+            onAction={onAction}>
             <Item key="foo">Foo</Item>
             <Item key="bar">Bar</Item>
             <Item key="baz">Baz</Item>
@@ -685,14 +717,18 @@ describe('useDraggableCollection', () => {
 
       await user.keyboard('[Space]');
       expect(options[0]).toHaveAttribute('aria-selected', 'true');
-      expect(document.getElementById(options[0].getAttribute('aria-describedby'))).toHaveTextContent('Press Alt + Enter to start dragging');
+      expect(
+        document.getElementById(options[0].getAttribute('aria-describedby'))
+      ).toHaveTextContent('Press Alt + Enter to start dragging');
 
       await user.keyboard('{Shift>}{ArrowDown}{/Shift}');
       expect(document.activeElement).toBe(options[1]);
 
       expect(options[1]).toHaveAttribute('aria-selected', 'true');
       expect(options[1]).toHaveAttribute('aria-describedby');
-      expect(document.getElementById(options[1].getAttribute('aria-describedby'))).toHaveTextContent('Press Alt + Enter to drag 2 selected items.');
+      expect(
+        document.getElementById(options[1].getAttribute('aria-describedby'))
+      ).toHaveTextContent('Press Alt + Enter to drag 2 selected items.');
 
       await user.keyboard('[Enter]');
       act(() => jest.runAllTimers());
@@ -1006,7 +1042,11 @@ describe('useDraggableCollection', () => {
       let onDrop = jest.fn();
       let tree = render(
         <Provider theme={theme}>
-          <DraggableListBox aria-label="Test" selectionMode="multiple" onDragStart={onDragStart} onDragEnd={onDragEnd}>
+          <DraggableListBox
+            aria-label="Test"
+            selectionMode="multiple"
+            onDragStart={onDragStart}
+            onDragEnd={onDragEnd}>
             <Item key="foo">Foo</Item>
             <Item key="bar">Bar</Item>
             <Item key="baz">Baz</Item>
@@ -1024,11 +1064,15 @@ describe('useDraggableCollection', () => {
       fireEvent.focus(options[0]);
       await user.pointer({target: options[0], keys: '[TouchA]'});
       expect(options[0]).toHaveAttribute('aria-selected', 'true');
-      expect(document.getElementById(options[0].getAttribute('aria-describedby'))).toHaveTextContent('Long press to start dragging');
+      expect(
+        document.getElementById(options[0].getAttribute('aria-describedby'))
+      ).toHaveTextContent('Long press to start dragging');
 
       await user.pointer({target: options[1], keys: '[TouchA]'});
       expect(options[1]).toHaveAttribute('aria-selected', 'true');
-      expect(document.getElementById(options[1].getAttribute('aria-describedby'))).toHaveTextContent('Long press to drag 2 selected items.');
+      expect(
+        document.getElementById(options[1].getAttribute('aria-describedby'))
+      ).toHaveTextContent('Long press to drag 2 selected items.');
 
       fireEvent.pointerDown(options[1], {pointerType: 'touch', width: 0.33, height: 0.33});
       let dataTransfer = new DataTransfer();
@@ -1092,7 +1136,12 @@ describe('useDraggableCollection', () => {
       let onAction = jest.fn();
       let tree = render(
         <Provider theme={theme}>
-          <DraggableListBox aria-label="Test" selectionMode="multiple" onDragStart={onDragStart} onDragEnd={onDragEnd} onAction={onAction}>
+          <DraggableListBox
+            aria-label="Test"
+            selectionMode="multiple"
+            onDragStart={onDragStart}
+            onDragEnd={onDragEnd}
+            onAction={onAction}>
             <Item key="foo">Foo</Item>
             <Item key="bar">Bar</Item>
             <Item key="baz">Baz</Item>
@@ -1125,11 +1174,15 @@ describe('useDraggableCollection', () => {
       expect(onDragStart).toHaveBeenCalledTimes(0);
 
       expect(options[0]).toHaveAttribute('aria-selected', 'true');
-      expect(document.getElementById(options[0].getAttribute('aria-describedby'))).toHaveTextContent('Long press to start dragging');
+      expect(
+        document.getElementById(options[0].getAttribute('aria-describedby'))
+      ).toHaveTextContent('Long press to start dragging');
 
       await user.pointer({target: options[1], keys: '[TouchA]'});
       expect(options[1]).toHaveAttribute('aria-selected', 'true');
-      expect(document.getElementById(options[1].getAttribute('aria-describedby'))).toHaveTextContent('Long press to drag 2 selected items');
+      expect(
+        document.getElementById(options[1].getAttribute('aria-describedby'))
+      ).toHaveTextContent('Long press to drag 2 selected items');
 
       fireEvent.pointerDown(options[1], {pointerType: 'touch', width: 0.33, height: 0.33});
       fireEvent(options[1], new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));

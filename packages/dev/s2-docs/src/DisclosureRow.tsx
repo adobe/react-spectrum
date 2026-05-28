@@ -75,7 +75,9 @@ export function DisclosureRow({title, children, defaultExpanded}) {
     <TableBody>
       <TableRow>
         <td colSpan={3} className={tableCell}>
-          <Button {...buttonProps} className={p => buttonStyles({...p, isExpanded: state.isExpanded})}>
+          <Button
+            {...buttonProps}
+            className={p => buttonStyles({...p, isExpanded: state.isExpanded})}>
             {/* @ts-ignore */}
             <Chevron styles={chevronStyles({isExpanded: state.isExpanded})} />
             {title}

@@ -19,7 +19,11 @@ import userEvent from '@testing-library/user-event';
 // Refinement of ClearButton to be done later
 describe('ClearButton', function () {
   let onPressSpy = jest.fn();
-  let FakeIcon = (props) => <svg {...props}><path d="M 10,150 L 70,10 L 130,150 z" /></svg>;
+  let FakeIcon = props => (
+    <svg {...props}>
+      <path d="M 10,150 L 70,10 L 130,150 z" />
+    </svg>
+  );
 
   afterEach(() => {
     onPressSpy.mockClear();
@@ -41,7 +45,11 @@ describe('ClearButton', function () {
     Name                | Component      | props
     ${'v3 ClearButton'} | ${ClearButton} | ${{}}
   `('$Name allows custom props to be passed through to the button', function ({Component, props}) {
-    let {getByRole} = render(<Component {...props} data-foo="bar">Click Me</Component>);
+    let {getByRole} = render(
+      <Component {...props} data-foo="bar">
+        Click Me
+      </Component>
+    );
 
     let button = getByRole('button', {hidden: true});
     expect(button).toHaveAttribute('data-foo', 'bar');
@@ -50,7 +58,7 @@ describe('ClearButton', function () {
   it.each`
     Name                | Component
     ${'v3 ClearButton'} | ${ClearButton}
-  `('$Name doesn\'t accept an icon as a prop', function ({Component}) {
+  `("$Name doesn't accept an icon as a prop", function ({Component}) {
     let mockIcon = <FakeIcon role="status" />;
     let tree = render(<Component icon={mockIcon} />);
 
@@ -68,7 +76,9 @@ describe('ClearButton', function () {
     let button = tree.queryByRole('button');
     expect(button).toBe(ref.current.UNSAFE_getDOMNode());
 
-    act(() => {ref.current.focus();});
+    act(() => {
+      ref.current.focus();
+    });
     expect(document.activeElement).toBe(button);
   });
 });

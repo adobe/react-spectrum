@@ -12,4 +12,10 @@
 
 export {useTag, useTagGroup} from 'react-aria/useTagGroup';
 
-export type {TagGroupAria, AriaTagGroupProps, AriaTagGroupOptions, AriaTagProps, TagAria} from 'react-aria/useTagGroup';
+export type {
+  TagGroupAria,
+  AriaTagGroupProps,
+  AriaTagGroupOptions,
+  AriaTagProps,
+  TagAria
+} from 'react-aria/useTagGroup';

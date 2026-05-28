@@ -5,9 +5,9 @@ import {registerSpectrumLink} from './prefetch';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 interface ComponentCardProps extends Omit<CardProps, 'children'> {
-  preview: ReactNode,
-  name: string,
-  description?: string
+  preview: ReactNode;
+  name: string;
+  description?: string;
 }
 
 export function ComponentCardClient(props: ComponentCardProps) {
@@ -28,9 +28,7 @@ export function ComponentCardClient(props: ComponentCardProps) {
 
   return (
     <Card {...otherProps} href={href} textValue={name} ref={ref}>
-      <CardPreview>
-        {preview}
-      </CardPreview>
+      <CardPreview>{preview}</CardPreview>
       <Content styles={style({alignContent: 'start'})}>
         <Text slot="title">{name}</Text>
         {description && <Text slot="description">{description}</Text>}

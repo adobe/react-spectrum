@@ -31,17 +31,18 @@ import {useStyleProps} from '../utils/styleProps';
 export interface SpectrumInlineAlertProps extends DOMProps, StyleProps {
   /**
    * The [visual style](https://spectrum.adobe.com/page/in-line-alert/#Options) of the Inline Alert.
+   *
    * @default 'neutral'
    */
-  variant?: 'neutral' | 'info' | 'positive' | 'notice' | 'negative',
+  variant?: 'neutral' | 'info' | 'positive' | 'notice' | 'negative';
   /**
    * The contents of the Inline Alert.
    */
-  children: ReactNode,
+  children: ReactNode;
   /**
    * Whether to automatically focus the Inline Alert when it first renders.
    */
-  autoFocus?: boolean
+  autoFocus?: boolean;
 }
 
 let ICONS = {
@@ -52,17 +53,15 @@ let ICONS = {
 };
 
 /**
- * Inline alerts display a non-modal message associated with objects in a view.
- * These are often used in form validation, providing a place to aggregate feedback related to multiple fields.
+ * Inline alerts display a non-modal message associated with objects in a view. These are often used
+ * in form validation, providing a place to aggregate feedback related to multiple fields.
  */
-export const InlineAlert = React.forwardRef(function InlineAlert(props: SpectrumInlineAlertProps, ref: DOMRef<HTMLDivElement>) {
+export const InlineAlert = React.forwardRef(function InlineAlert(
+  props: SpectrumInlineAlertProps,
+  ref: DOMRef<HTMLDivElement>
+) {
   props = useProviderProps(props);
-  let {
-    children,
-    variant = 'neutral',
-    autoFocus,
-    ...otherProps
-  } = props;
+  let {children, variant = 'neutral', autoFocus, ...otherProps} = props;
 
   let {styleProps} = useStyleProps(otherProps);
   let domRef = useDOMRef(ref);
@@ -105,7 +104,9 @@ export const InlineAlert = React.forwardRef(function InlineAlert(props: Spectrum
         role="alert">
         <Grid UNSAFE_className={styles['spectrum-InLineAlert-grid']}>
           <SlotProvider slots={slots}>
-            {Icon && <Icon UNSAFE_className={styles['spectrum-InLineAlert-icon']} aria-label={iconAlt} />}
+            {Icon && (
+              <Icon UNSAFE_className={styles['spectrum-InLineAlert-icon']} aria-label={iconAlt} />
+            )}
             {children}
           </SlotProvider>
         </Grid>

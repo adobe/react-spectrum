@@ -23,13 +23,15 @@ import {useSelectableList} from '../selection/useSelectableList';
 export interface AriaStepListProps<T> extends StepListProps<T>, AriaLabelingProps, DOMProps {}
 
 export interface StepListAria {
-  listProps: HTMLAttributes<HTMLElement>
+  listProps: HTMLAttributes<HTMLElement>;
 }
 
-export function useStepList<T>(props: AriaStepListProps<T>, state: StepListState<T>, ref: RefObject<HTMLOListElement | null>): StepListAria {
-  let {
-    'aria-label': ariaLabel
-  } = props;
+export function useStepList<T>(
+  props: AriaStepListProps<T>,
+  state: StepListState<T>,
+  ref: RefObject<HTMLOListElement | null>
+): StepListAria {
+  let {'aria-label': ariaLabel} = props;
   let {listProps} = useSelectableList({
     ...props,
     ...state,
@@ -50,5 +52,3 @@ export function useStepList<T>(props: AriaStepListProps<T>, state: StepListState
     }
   };
 }
-
-

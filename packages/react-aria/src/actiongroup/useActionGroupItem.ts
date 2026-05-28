@@ -18,21 +18,25 @@ import {useEffect} from 'react';
 import {useEffectEvent} from '../utils/useEffectEvent';
 
 export interface AriaActionGroupItemProps {
-  key: Key
+  key: Key;
 }
 
 export interface ActionGroupItemAria {
-  buttonProps: DOMAttributes & PressProps
+  buttonProps: DOMAttributes & PressProps;
 }
 
 const BUTTON_ROLES = {
-  'none': undefined,
-  'single': 'radio',
-  'multiple': 'checkbox'
+  none: undefined,
+  single: 'radio',
+  multiple: 'checkbox'
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function useActionGroupItem<T>(props: AriaActionGroupItemProps, state: ListState<T>, ref?: RefObject<FocusableElement | null>): ActionGroupItemAria {
+export function useActionGroupItem<T>(
+  props: AriaActionGroupItemProps,
+  state: ListState<T>,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  ref?: RefObject<FocusableElement | null>
+): ActionGroupItemAria {
   let selectionMode = state.selectionManager.selectionMode;
   let buttonProps = {
     role: BUTTON_ROLES[selectionMode]

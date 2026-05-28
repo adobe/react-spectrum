@@ -1,16 +1,19 @@
 'use client';
 import React from 'react';
-import { Button } from 'react-aria-components/Button';
-import { ColorPicker as AriaColorPicker, type ColorPickerProps as AriaColorPickerProps } from 'react-aria-components/ColorPicker';
-import { DialogTrigger } from 'react-aria-components/Dialog';
+import {Button} from 'react-aria-components/Button';
+import {
+  ColorPicker as AriaColorPicker,
+  type ColorPickerProps as AriaColorPickerProps
+} from 'react-aria-components/ColorPicker';
+import {DialogTrigger} from 'react-aria-components/Dialog';
 import {ColorSwatch} from './ColorSwatch';
 import {ColorArea} from './ColorArea';
 import {ColorSlider} from './ColorSlider';
 import {ColorField} from './ColorField';
 import {Dialog} from './Dialog';
 import {Popover} from './Popover';
-import { tv } from 'tailwind-variants';
-import { focusRing } from './utils';
+import {tv} from 'tailwind-variants';
+import {focusRing} from './utils';
 
 const buttonStyles = tv({
   extend: focusRing,
@@ -22,7 +25,7 @@ export interface ColorPickerProps extends Omit<AriaColorPickerProps, 'children'>
   children?: React.ReactNode;
 }
 
-export function ColorPicker({ label, children, ...props }: ColorPickerProps) {
+export function ColorPicker({label, children, ...props}: ColorPickerProps) {
   return (
     <AriaColorPicker {...props}>
       <DialogTrigger>
@@ -34,11 +37,7 @@ export function ColorPicker({ label, children, ...props }: ColorPickerProps) {
           <Dialog className="flex flex-col gap-2">
             {children || (
               <>
-                <ColorArea
-                  colorSpace="hsb"
-                  xChannel="saturation"
-                  yChannel="brightness"
-                />
+                <ColorArea colorSpace="hsb" xChannel="saturation" yChannel="brightness" />
                 <ColorSlider colorSpace="hsb" channel="hue" />
                 <ColorField label="Hex" />
               </>

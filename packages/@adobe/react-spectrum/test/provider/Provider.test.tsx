@@ -53,21 +53,33 @@ describe('Provider', () => {
 
   it('Uses OS theme by default - dark', () => {
     matchMedia.useMediaQuery(mediaQueryDark);
-    let {getByTestId} = render(<Provider theme={theme} data-testid="testid"><div>hello</div></Provider>);
+    let {getByTestId} = render(
+      <Provider theme={theme} data-testid="testid">
+        <div>hello</div>
+      </Provider>
+    );
     let provider = getByTestId('testid');
     expect(provider.classList.contains('spectrum--dark')).toBeTruthy();
   });
 
   it('Uses OS theme by default - light', () => {
     matchMedia.useMediaQuery(mediaQueryLight);
-    let {getByTestId} = render(<Provider theme={theme} data-testid="testid"><div>hello</div></Provider>);
+    let {getByTestId} = render(
+      <Provider theme={theme} data-testid="testid">
+        <div>hello</div>
+      </Provider>
+    );
     let provider = getByTestId('testid');
     expect(provider.classList.contains('spectrum--light')).toBeTruthy();
   });
 
   it('Can be set to dark regardless of OS setting', () => {
     matchMedia.useMediaQuery(mediaQueryLight);
-    let {getByTestId} = render(<Provider theme={theme} colorScheme="dark" data-testid="testid"><div>hello</div></Provider>);
+    let {getByTestId} = render(
+      <Provider theme={theme} colorScheme="dark" data-testid="testid">
+        <div>hello</div>
+      </Provider>
+    );
     let provider = getByTestId('testid');
     expect(provider.classList.contains('spectrum--dark')).toBeTruthy();
   });
@@ -111,7 +123,7 @@ describe('Provider', () => {
 
   it('Nested providers can update to follow their ancestors', () => {
     matchMedia.useMediaQuery(mediaQueryDark);
-    let NestedProviders = (props) => (
+    let NestedProviders = props => (
       <Provider theme={theme} colorScheme={props.colorScheme} data-testid="testid1">
         <Provider data-testid="testid2">
           <div>hello</div>
@@ -210,22 +222,20 @@ describe('Provider', () => {
     let breakpoints = {S: 480, M: 640, L: 1024};
     // jsdom/cssstyle doesn't support var() yet, so we need to use other values
     it.each`
-      name                    | mediaquery               | props                   | expected
-      ${'default'}            | ${mediaQueryMinXSmall}   | ${{}}                   | ${'192px'}
-      ${'default'}            | ${mediaQueryMinSmall}    | ${{}}                   | ${'1000px'}
-      ${'default'}            | ${mediaQueryMinMedium}   | ${{}}                   | ${'2000px'}
-      ${'default'}            | ${mediaQueryMinLarge}    | ${{}}                   | ${'3000px'}
-      ${'custom breakpoints'} | ${mediaQueryMinXSmall}   | ${{breakpoints}}        | ${'192px'}
-      ${'custom breakpoints'} | ${'(min-width: 480px)'}  | ${{breakpoints}}        | ${'1000px'}
-      ${'custom breakpoints'} | ${'(min-width: 640px)'}  | ${{breakpoints}}        | ${'2000px'}
-      ${'custom breakpoints'} | ${'(min-width: 1024px)'} | ${{breakpoints}}        | ${'3000px'}
+      name                    | mediaquery               | props            | expected
+      ${'default'}            | ${mediaQueryMinXSmall}   | ${{}}            | ${'192px'}
+      ${'default'}            | ${mediaQueryMinSmall}    | ${{}}            | ${'1000px'}
+      ${'default'}            | ${mediaQueryMinMedium}   | ${{}}            | ${'2000px'}
+      ${'default'}            | ${mediaQueryMinLarge}    | ${{}}            | ${'3000px'}
+      ${'custom breakpoints'} | ${mediaQueryMinXSmall}   | ${{breakpoints}} | ${'192px'}
+      ${'custom breakpoints'} | ${'(min-width: 480px)'}  | ${{breakpoints}} | ${'1000px'}
+      ${'custom breakpoints'} | ${'(min-width: 640px)'}  | ${{breakpoints}} | ${'2000px'}
+      ${'custom breakpoints'} | ${'(min-width: 1024px)'} | ${{breakpoints}} | ${'3000px'}
     `('$name $mediaquery', function ({mediaquery, props, expected}) {
       matchMedia.useMediaQuery(mediaquery);
       let {getByTestId} = render(
         <Provider theme={theme} data-testid="testid1" {...props}>
-          <TextField
-            label="foo"
-            width={{base: '192px', S: '1000px', M: '2000px', L: '3000px'}} />
+          <TextField label="foo" width={{base: '192px', S: '1000px', M: '2000px', L: '3000px'}} />
         </Provider>
       );
       // use provider to get at the outer div, any props on TextField will end up on the input
@@ -244,9 +254,7 @@ describe('Provider', () => {
       matchMedia.useMediaQuery(mediaquery);
       let {getByTestId} = render(
         <Provider theme={theme} data-testid="testid1">
-          <TextField
-            label="foo"
-            width={{base: '192px', L: '3000px'}} />
+          <TextField label="foo" width={{base: '192px', L: '3000px'}} />
         </Provider>
       );
       let provider = getByTestId('testid1');

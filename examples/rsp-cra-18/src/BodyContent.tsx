@@ -1,12 +1,11 @@
-import {useState, FormEvent, useRef} from "react";
-import {Key, Item, TabList, TabPanels, Tabs} from '@adobe/react-spectrum'
+import {useState, FormEvent, useRef} from 'react';
+import {Key, Item, TabList, TabPanels, Tabs} from '@adobe/react-spectrum';
 import TodoList from './TodoList';
 import JournalList from './JournalList';
-import ToDo from './ToDo'
-import Journal from './Journal'
+import ToDo from './ToDo';
+import Journal from './Journal';
 
-function BodyContent(){
-
+function BodyContent() {
   //states for the To-Do list
   const [list, setList] = useState<ToDo[]>([]);
   const [value, setValue] = useState('');
@@ -20,60 +19,55 @@ function BodyContent(){
   const countJournals = useRef(0);
 
   const options = [
-    {id: "Bad", name: "Bad"},
-    {id: "Okay", name: "Okay"},
-    {id: "Good", name: "Good"},
-    {id: "Great", name: "Great"}
-  ]
+    {id: 'Bad', name: 'Bad'},
+    {id: 'Okay', name: 'Okay'},
+    {id: 'Good', name: 'Good'},
+    {id: 'Great', name: 'Great'}
+  ];
 
   //functions for the To-Do list
-  function handleSubmitToDo(e: FormEvent<HTMLInputElement>){
-    e.preventDefault()
+  function handleSubmitToDo(e: FormEvent<HTMLInputElement>) {
+    e.preventDefault();
 
-    if (value.length > 0){
-        setList(prevListArray => {
-            return [
-                ...prevListArray,
-                {id: count.current, task: value}]
-        })
+    if (value.length > 0) {
+      setList(prevListArray => {
+        return [...prevListArray, {id: count.current, task: value}];
+      });
 
-        count.current = count.current + 1;
+      count.current = count.current + 1;
     }
-    setValue(""); //clears text field on submit
+    setValue(''); //clears text field on submit
   }
 
-  function updateCompleted(complete : string){
+  function updateCompleted(complete: string) {
     setCompleted(prevListArray => {
-        return [
-            ...prevListArray,
-            {id: prevListArray.length, task: complete}]
+      return [...prevListArray, {id: prevListArray.length, task: complete}];
     });
   }
 
-  function clearCompleted(){
-      setCompleted(() => {
-          return [];
-      })
+  function clearCompleted() {
+    setCompleted(() => {
+      return [];
+    });
   }
 
   //functions for journal entries
-  function handleSubmitJournals(e: FormEvent<HTMLInputElement>){
-      e.preventDefault()
+  function handleSubmitJournals(e: FormEvent<HTMLInputElement>) {
+    e.preventDefault();
 
-      countJournals.current = countJournals.current + 1; //used to determine key for each item in the entryList array
+    countJournals.current = countJournals.current + 1; //used to determine key for each item in the entryList array
 
-      setEntryList(prevListArray => {
-          return [
-              ...prevListArray,
-              {rate: rating, description: description, id: countJournals.current}
-          ]
-      })
+    setEntryList(prevListArray => {
+      return [
+        ...prevListArray,
+        {rate: rating, description: description, id: countJournals.current}
+      ];
+    });
 
-      setValue('') //clears the text area when submitted
+    setValue(''); //clears the text area when submitted
   }
 
-  return(
-
+  return (
     <Tabs aria-label="Different Productivity Tabs">
       <TabList>
         <Item key="TdL">To-do List</Item>
@@ -81,27 +75,31 @@ function BodyContent(){
       </TabList>
       <TabPanels>
         <Item key="TdL">
-          <TodoList list={list}
-                    setList={setList}
-                    handleSubmit={handleSubmitToDo}
-                    value={value}
-                    setValue={setValue}
-                    completed={completed}
-                    updateCompleted={updateCompleted}
-                    clearCompleted={clearCompleted}/>
+          <TodoList
+            list={list}
+            setList={setList}
+            handleSubmit={handleSubmitToDo}
+            value={value}
+            setValue={setValue}
+            completed={completed}
+            updateCompleted={updateCompleted}
+            clearCompleted={clearCompleted}
+          />
         </Item>
         <Item key="DJ">
-            <JournalList rating={rating}
-                          setRating={setRating}
-                          entryList={entryList}
-                          options={options}
-                          description={description}
-                          setDescription={setDescription}
-                          handleSubmit={handleSubmitJournals}/>
+          <JournalList
+            rating={rating}
+            setRating={setRating}
+            entryList={entryList}
+            options={options}
+            description={description}
+            setDescription={setDescription}
+            handleSubmit={handleSubmitJournals}
+          />
         </Item>
       </TabPanels>
     </Tabs>
-  )
+  );
 }
 
 export default BodyContent;

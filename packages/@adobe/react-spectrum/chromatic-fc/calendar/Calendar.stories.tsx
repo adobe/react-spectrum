@@ -28,15 +28,11 @@ export const All: CalendarStory = () => (
     <h2>Selected</h2>
     <Calendar value={date} />
     <h2>Min Max</h2>
-    <Calendar
-      minValue={new CalendarDate(2022, 2, 10)}
-      maxValue={new CalendarDate(2022, 2, 20)} />
+    <Calendar minValue={new CalendarDate(2022, 2, 10)} maxValue={new CalendarDate(2022, 2, 20)} />
     <h2>Disabled</h2>
     <Calendar isDisabled value={date} />
     <h2>Unavailable</h2>
-    <Calendar
-      focusedValue={date}
-      isDateUnavailable={date => date.day >= 10 && date.day <= 20} />
+    <Calendar focusedValue={date} isDateUnavailable={date => date.day >= 10 && date.day <= 20} />
     <h2>Error Message</h2>
     <Calendar value={date} isInvalid errorMessage="Selection invalid." />
     <h2>Disabled Invalid</h2>

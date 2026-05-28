@@ -28,17 +28,23 @@ export default {
 
 export type TabsStory = StoryFn<typeof Tabs>;
 
-export const TabsExample: TabsStory = (props) => {
+export const TabsExample: TabsStory = props => {
   let [url, setUrl] = useState('/FoR');
 
   return (
     <RouterProvider navigate={setUrl}>
       <Tabs selectedKey={url} onSelectionChange={console.log} {...props}>
         <TabList aria-label="History of Ancient Rome" style={{display: 'flex', gap: 8}}>
-          <CustomTab id="/FoR" href="/FoR">Founding of Rome</CustomTab>
-          <CustomTab id="/MaR" href="/MaR">Monarchy and Republic</CustomTab>
+          <CustomTab id="/FoR" href="/FoR">
+            Founding of Rome
+          </CustomTab>
+          <CustomTab id="/MaR" href="/MaR">
+            Monarchy and Republic
+          </CustomTab>
           <TooltipTrigger>
-            <CustomTab id="/Emp" href="/Emp">Empire</CustomTab>
+            <CustomTab id="/Emp" href="/Emp">
+              Empire
+            </CustomTab>
             <Tooltip
               offset={5}
               style={{
@@ -57,15 +63,9 @@ export const TabsExample: TabsStory = (props) => {
             </Tooltip>
           </TooltipTrigger>
         </TabList>
-        <TabPanel id="/FoR">
-          Arma virumque cano, Troiae qui primus ab oris.
-        </TabPanel>
-        <TabPanel id="/MaR">
-          Senatus Populusque Romanus.
-        </TabPanel>
-        <TabPanel id="/Emp">
-          Alea jacta est.
-        </TabPanel>
+        <TabPanel id="/FoR">Arma virumque cano, Troiae qui primus ab oris.</TabPanel>
+        <TabPanel id="/MaR">Senatus Populusque Romanus.</TabPanel>
+        <TabPanel id="/Emp">Alea jacta est.</TabPanel>
       </Tabs>
     </RouterProvider>
   );
@@ -77,29 +77,35 @@ export const TabsRenderProps: TabsStory = () => {
 
   return (
     <div style={{display: 'flex', flexDirection: 'row', gap: 8}}>
-      <Button onPress={() => setTabOrientation((current) => current === 'vertical' ? 'horizontal' : 'vertical')}>
+      <Button
+        onPress={() =>
+          setTabOrientation(current => (current === 'vertical' ? 'horizontal' : 'vertical'))
+        }>
         Change Orientation
       </Button>
       <Tabs orientation={tabOrientation}>
         {({orientation}) => (
           <div>
-            <div style={{display: 'flex', flexDirection: orientation === 'vertical' ? 'row' : 'column', gap: 8}}>
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: orientation === 'vertical' ? 'row' : 'column',
+                gap: 8
+              }}>
               <TabList
                 aria-label="History of Ancient Rome"
-                style={{display: 'flex', flexDirection: orientation === 'vertical' ? 'column' : 'row', gap: 8}}>
+                style={{
+                  display: 'flex',
+                  flexDirection: orientation === 'vertical' ? 'column' : 'row',
+                  gap: 8
+                }}>
                 <CustomTab id="FoR">Founding of Rome</CustomTab>
                 <CustomTab id="MaR">Monarchy and Republic</CustomTab>
                 <CustomTab id="Emp">Empire</CustomTab>
               </TabList>
-              <TabPanel id="FoR">
-                Arma virumque cano, Troiae qui primus ab oris.
-              </TabPanel>
-              <TabPanel id="MaR">
-                Senatus Populusque Romanus.
-              </TabPanel>
-              <TabPanel id="Emp">
-                Alea jacta est.
-              </TabPanel>
+              <TabPanel id="FoR">Arma virumque cano, Troiae qui primus ab oris.</TabPanel>
+              <TabPanel id="MaR">Senatus Populusque Romanus.</TabPanel>
+              <TabPanel id="Emp">Alea jacta est.</TabPanel>
             </div>
           </div>
         )}
@@ -114,7 +120,8 @@ const CustomTab = (props: TabProps) => {
       {...props}
       style={({isSelected}) => ({
         borderBottom: '2px solid ' + (isSelected ? 'slateblue' : 'transparent')
-      })} />
+      })}
+    />
   );
 };
 

@@ -16,13 +16,15 @@ import {Meter, MeterContext} from '../src/Meter';
 import React from 'react';
 import {render} from '@react-spectrum/test-utils-internal';
 
-let TestMeter = (props) => (
+let TestMeter = props => (
   <Meter value={25} data-foo="bar" {...props}>
-    {({percentage, valueText}) => (<>
-      <Label>Storage space</Label>
-      <span className="value">{valueText}</span>
-      <div className="bar" style={{width: percentage + '%'}} />
-    </>)}
+    {({percentage, valueText}) => (
+      <>
+        <Label>Storage space</Label>
+        <span className="value">{valueText}</span>
+        <div className="bar" style={{width: percentage + '%'}} />
+      </>
+    )}
   </Meter>
 );
 
@@ -35,7 +37,9 @@ describe('Meter', () => {
     expect(meter).toHaveAttribute('aria-valuenow', '25');
     expect(meter).toHaveAttribute('aria-labelledby');
     expect(meter).toHaveAttribute('data-foo', 'bar');
-    expect(document.getElementById(meter.getAttribute('aria-labelledby'))).toHaveTextContent('Storage space');
+    expect(document.getElementById(meter.getAttribute('aria-labelledby'))).toHaveTextContent(
+      'Storage space'
+    );
 
     let value = meter.querySelector('.value');
     expect(value).toHaveTextContent('25%');

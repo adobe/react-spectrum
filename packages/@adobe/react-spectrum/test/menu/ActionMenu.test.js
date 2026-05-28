@@ -41,13 +41,15 @@ describe('ActionMenu', function () {
   });
 
   it('basic test', async function () {
-    let tree = render(<Provider theme={theme}>
-      <ActionMenu onAction={onActionSpy}>
-        <Item>Foo</Item>
-        <Item>Bar</Item>
-        <Item>Baz</Item>
-      </ActionMenu>
-    </Provider>);
+    let tree = render(
+      <Provider theme={theme}>
+        <ActionMenu onAction={onActionSpy}>
+          <Item>Foo</Item>
+          <Item>Bar</Item>
+          <Item>Baz</Item>
+        </ActionMenu>
+      </Provider>
+    );
 
     let button = tree.getByRole('button');
     expect(button).toHaveAttribute('aria-label', 'More actions');
@@ -56,7 +58,6 @@ describe('ActionMenu', function () {
     let menu = tree.getByRole('menu');
     expect(menu).toBeTruthy();
     expect(menu).toHaveAttribute('aria-labelledby', button.id);
-
 
     let menuItem1 = within(menu).getByText('Foo');
     let menuItem2 = within(menu).getByText('Bar');
@@ -70,26 +71,30 @@ describe('ActionMenu', function () {
   });
 
   it('custom aria label', function () {
-    let tree = render(<Provider theme={theme}>
-      <ActionMenu aria-label="Custom Aria Label">
-        <Item>Foo</Item>
-        <Item>Bar</Item>
-        <Item>Baz</Item>
-      </ActionMenu>
-    </Provider>);
+    let tree = render(
+      <Provider theme={theme}>
+        <ActionMenu aria-label="Custom Aria Label">
+          <Item>Foo</Item>
+          <Item>Bar</Item>
+          <Item>Baz</Item>
+        </ActionMenu>
+      </Provider>
+    );
 
     let button = tree.getByRole('button');
     expect(button).toHaveAttribute('aria-label', 'Custom Aria Label');
   });
 
   it('is disabled', async function () {
-    let tree = render(<Provider theme={theme}>
-      <ActionMenu isDisabled>
-        <Item>Foo</Item>
-        <Item>Bar</Item>
-        <Item>Baz</Item>
-      </ActionMenu>
-    </Provider>);
+    let tree = render(
+      <Provider theme={theme}>
+        <ActionMenu isDisabled>
+          <Item>Foo</Item>
+          <Item>Bar</Item>
+          <Item>Baz</Item>
+        </ActionMenu>
+      </Provider>
+    );
 
     let button = tree.getByRole('button');
     expect(button).toHaveAttribute('aria-label', 'More actions');
@@ -100,13 +105,15 @@ describe('ActionMenu', function () {
   });
 
   it('supports autofocus', function () {
-    let tree = render(<Provider theme={theme}>
-      <ActionMenu autoFocus>
-        <Item>Foo</Item>
-        <Item>Bar</Item>
-        <Item>Baz</Item>
-      </ActionMenu>
-    </Provider>);
+    let tree = render(
+      <Provider theme={theme}>
+        <ActionMenu autoFocus>
+          <Item>Foo</Item>
+          <Item>Bar</Item>
+          <Item>Baz</Item>
+        </ActionMenu>
+      </Provider>
+    );
 
     let button = tree.getByRole('button');
     expect(document.activeElement).toBe(button);
@@ -123,7 +130,9 @@ describe('ActionMenu', function () {
       </Provider>
     );
 
-    act(() => {jest.runAllTimers();});
+    act(() => {
+      jest.runAllTimers();
+    });
     expect(onOpenChange).toBeCalledTimes(0);
 
     let menu = tree.getByRole('menu');
@@ -131,7 +140,9 @@ describe('ActionMenu', function () {
 
     let triggerButton = tree.getByLabelText('More actions');
     await user.click(triggerButton);
-    act(() => {jest.runAllTimers();});
+    act(() => {
+      jest.runAllTimers();
+    });
 
     menu = tree.getByRole('menu');
     expect(menu).toBeTruthy();
@@ -150,7 +161,9 @@ describe('ActionMenu', function () {
       </Provider>
     );
 
-    act(() => {jest.runAllTimers();});
+    act(() => {
+      jest.runAllTimers();
+    });
     expect(onOpenChange).toBeCalledTimes(0);
 
     let menu = tree.getByRole('menu');
@@ -158,7 +171,9 @@ describe('ActionMenu', function () {
 
     let triggerButton = tree.getByLabelText('More actions');
     await user.click(triggerButton);
-    act(() => {jest.runAllTimers();});
+    act(() => {
+      jest.runAllTimers();
+    });
 
     expect(menu).not.toBeInTheDocument();
     expect(onOpenChange).toBeCalledTimes(1);

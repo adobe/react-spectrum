@@ -22,7 +22,11 @@ let refExists = (ComponentToCheck, children, props) => {
     useEffect(() => {
       ref = internalRef;
     }, [internalRef]);
-    return (<ComponentToCheck ref={internalRef} {...props} data-testid={dataTestId}>{children}</ComponentToCheck>);
+    return (
+      <ComponentToCheck ref={internalRef} {...props} data-testid={dataTestId}>
+        {children}
+      </ComponentToCheck>
+    );
   };
 
   let {getByText, getByTestId} = render(<Component />);
@@ -33,8 +37,8 @@ let refExists = (ComponentToCheck, children, props) => {
 
 describe('Well', () => {
   it.each`
-    Name      | Component   | props
-    ${'v3'}   | ${Well}     | ${{UNSAFE_className: 'myClass', 'data-testid': 'wellV3'}}
+    Name    | Component | props
+    ${'v3'} | ${Well}   | ${{UNSAFE_className: 'myClass', 'data-testid': 'wellV3'}}
   `('$Name supports UNSAFE_className', ({Component, props}) => {
     let {getByTestId} = render(<Component {...props}>My Well</Component>);
     let className = getByTestId(props['data-testid']).className;
@@ -43,16 +47,16 @@ describe('Well', () => {
   });
 
   it.each`
-    Name      | Component   | props
-    ${'v3'}   | ${Well}     | ${{'data-testid': 'wellV3'}}
+    Name    | Component | props
+    ${'v3'} | ${Well}   | ${{'data-testid': 'wellV3'}}
   `('$Name supports additional properties', ({Component, props}) => {
     let {getByTestId} = render(<Component {...props}>My Well</Component>);
     expect(getByTestId(props['data-testid'])).toHaveAttribute('data-testid', props['data-testid']);
   });
 
   it.each`
-    Name      | Component
-    ${'v3'}   | ${Well}
+    Name    | Component
+    ${'v3'} | ${Well}
   `('$Name supports children', ({Component}) => {
     let {getByText} = render(<Component>My Well</Component>);
     expect(getByText('My Well')).toBeTruthy();
@@ -65,7 +69,11 @@ describe('Well', () => {
   });
 
   it('v3 supports aria-label with a role', function () {
-    let {getByText} = render(<Well role="region" aria-label="well">Well</Well>);
+    let {getByText} = render(
+      <Well role="region" aria-label="well">
+        Well
+      </Well>
+    );
     let well = getByText('Well');
     expect(well).toHaveAttribute('role', 'region');
     expect(well).toHaveAttribute('aria-label', 'well');

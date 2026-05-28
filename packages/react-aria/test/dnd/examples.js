@@ -22,9 +22,11 @@ export function Draggable(props) {
   let preview = useRef(null);
   let {dragProps, isDragging} = useDrag({
     getItems() {
-      return [{
-        'text/plain': 'hello world'
-      }];
+      return [
+        {
+          'text/plain': 'hello world'
+        }
+      ];
     },
     preview,
     ...props
@@ -32,18 +34,10 @@ export function Draggable(props) {
 
   return (
     <>
-      <div
-        {...dragProps}
-        role="button"
-        tabIndex={0}
-        data-dragging={isDragging}>
+      <div {...dragProps} role="button" tabIndex={0} data-dragging={isDragging}>
         {props.children || 'Drag me'}
       </div>
-      {props.renderPreview &&
-        <DragPreview ref={preview}>
-          {props.renderPreview}
-        </DragPreview>
-      }
+      {props.renderPreview && <DragPreview ref={preview}>{props.renderPreview}</DragPreview>}
     </>
   );
 }
@@ -58,12 +52,8 @@ export function Droppable(props) {
   let {buttonProps} = useButton({elementType: 'div'}, ref);
 
   return (
-    <div
-      {...mergeProps(dropProps, buttonProps)}
-      ref={ref}
-      data-droptarget={isDropTarget}>
+    <div {...mergeProps(dropProps, buttonProps)} ref={ref} data-droptarget={isDropTarget}>
       {props.children || 'Drop here'}
     </div>
   );
 }
-

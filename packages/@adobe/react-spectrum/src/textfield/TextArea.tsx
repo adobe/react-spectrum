@@ -14,7 +14,12 @@ import {AriaTextFieldProps, useTextField} from 'react-aria/useTextField';
 
 import {chain} from 'react-aria/chain';
 import React, {ReactElement, Ref, useCallback, useEffect, useRef} from 'react';
-import {SpectrumFieldValidation, SpectrumLabelableProps, SpectrumTextInputBase, StyleProps} from '@react-types/shared';
+import {
+  SpectrumFieldValidation,
+  SpectrumLabelableProps,
+  SpectrumTextInputBase,
+  StyleProps
+} from '@react-types/shared';
 import {TextFieldBase} from './TextFieldBase';
 import {TextFieldRef} from './TextField';
 import {useControlledState} from 'react-stately/useControlledState';
@@ -22,11 +27,20 @@ import {useFormProps} from '../form/Form';
 import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
 import {useProviderProps} from '../provider/Provider';
 
-export interface SpectrumTextAreaProps extends SpectrumTextInputBase, Omit<AriaTextFieldProps<HTMLTextAreaElement>, 'isInvalid' | 'validationState' | 'type' | 'pattern'>, SpectrumFieldValidation<string>, SpectrumLabelableProps, StyleProps {
+export interface SpectrumTextAreaProps
+  extends
+    SpectrumTextInputBase,
+    Omit<
+      AriaTextFieldProps<HTMLTextAreaElement>,
+      'isInvalid' | 'validationState' | 'type' | 'pattern'
+    >,
+    SpectrumFieldValidation<string>,
+    SpectrumLabelableProps,
+    StyleProps {
   /** An icon to display at the start of the input. */
-  icon?: ReactElement | null,
+  icon?: ReactElement | null;
   /** Whether the input should be displayed with a quiet style. */
-  isQuiet?: boolean
+  isQuiet?: boolean;
 }
 
 /**
@@ -34,7 +48,10 @@ export interface SpectrumTextAreaProps extends SpectrumTextInputBase, Omit<AriaT
  * a sizable amount of text to enter. They allow for all customizations that
  * are available to text fields.
  */
-export const TextArea = React.forwardRef(function TextArea(props: SpectrumTextAreaProps, ref: Ref<TextFieldRef<HTMLTextAreaElement>>) {
+export const TextArea = React.forwardRef(function TextArea(
+  props: SpectrumTextAreaProps,
+  ref: Ref<TextFieldRef<HTMLTextAreaElement>>
+) {
   props = useProviderProps(props);
   props = useFormProps(props);
   let {
@@ -47,7 +64,11 @@ export const TextArea = React.forwardRef(function TextArea(props: SpectrumTextAr
   } = props;
 
   // not in stately because this is so we know when to re-measure, which is a spectrum design
-  let [inputValue, setInputValue] = useControlledState(props.value, props.defaultValue ?? '', () => {});
+  let [inputValue, setInputValue] = useControlledState(
+    props.value,
+    props.defaultValue ?? '',
+    () => {}
+  );
   let inputRef = useRef<HTMLTextAreaElement>(null);
 
   let onHeightChange = useCallback(() => {
@@ -82,20 +103,25 @@ export const TextArea = React.forwardRef(function TextArea(props: SpectrumTextAr
   let hasWarned = useRef(false);
   useEffect(() => {
     if (props.placeholder && !hasWarned.current && process.env.NODE_ENV !== 'production') {
-      console.warn('Placeholders are deprecated due to accessibility issues. Please use help text instead. See the docs for details: https://react-spectrum.adobe.com/react-spectrum/TextArea.html#help-text');
+      console.warn(
+        'Placeholders are deprecated due to accessibility issues. Please use help text instead. See the docs for details: https://react-spectrum.adobe.com/react-spectrum/TextArea.html#help-text'
+      );
       hasWarned.current = true;
     }
   }, [props.placeholder]);
 
-  let result = useTextField({
-    ...props,
-    onChange: chain(onChange, setInputValue),
-    inputElementType: 'textarea'
-  }, inputRef);
+  let result = useTextField(
+    {
+      ...props,
+      onChange: chain(onChange, setInputValue),
+      inputElementType: 'textarea'
+    },
+    inputRef
+  );
 
   return (
     <TextFieldBase
-      {...otherProps as any}
+      {...(otherProps as any)}
       ref={ref}
       inputRef={inputRef}
       {...result}
@@ -103,6 +129,7 @@ export const TextArea = React.forwardRef(function TextArea(props: SpectrumTextAr
       isDisabled={isDisabled}
       isQuiet={isQuiet}
       isReadOnly={isReadOnly}
-      isRequired={isRequired} />
+      isRequired={isRequired}
+    />
   );
 });

@@ -11,7 +11,7 @@
  */
 
 export type Mutable<T> = {
-  -readonly[P in keyof T]: T[P]
+  -readonly [P in keyof T]: T[P];
 };
 
 export function mod(amount: number, numerator: number): number {

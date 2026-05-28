@@ -19,7 +19,7 @@ import {useSearchAutocomplete} from '../../src/autocomplete/useSearchAutocomplet
 describe('useSearchAutocomplete', function () {
   let preventDefault = jest.fn();
   let stopPropagation = jest.fn();
-  let event = (e) => ({
+  let event = e => ({
     ...e,
     nativeEvent: {
       isComposing: false
@@ -28,7 +28,10 @@ describe('useSearchAutocomplete', function () {
     stopPropagation
   });
 
-  let defaultProps = {items: [{id: 1, name: 'one'}], children: (props) => <Item>{props.name}</Item>};
+  let defaultProps = {
+    items: [{id: 1, name: 'one'}],
+    children: props => <Item>{props.name}</Item>
+  };
 
   afterEach(() => {
     jest.clearAllMocks();
@@ -69,11 +72,13 @@ describe('useSearchAutocomplete', function () {
       listBoxRef: React.createRef()
     };
 
-    let {result: state} = renderHook((props) => useComboBoxState(props), {initialProps: props});
+    let {result: state} = renderHook(props => useComboBoxState(props), {initialProps: props});
     state.current.open = openSpy;
     state.current.toggle = toggleSpy;
 
-    let {result} = renderHook((props) => useSearchAutocomplete(props, state.current), {initialProps: props});
+    let {result} = renderHook(props => useSearchAutocomplete(props, state.current), {
+      initialProps: props
+    });
     let {inputProps} = result.current;
     inputProps.onKeyDown(event({key: 'ArrowDown'}));
     expect(openSpy).toHaveBeenCalledTimes(1);

@@ -10,7 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-
 import {act, createShadowRoot, render} from '@react-spectrum/test-utils-internal';
 import {focusSafely} from '../../src/interactions/focusSafely';
 import {focusWithoutScrolling} from '../../src/utils/focusWithoutScrolling';
