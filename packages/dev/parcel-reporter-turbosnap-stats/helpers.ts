@@ -118,6 +118,13 @@ export function buildStatsMap(
         if (!target) continue;
         const depName = normalize(target.filePath, projectRoot);
         if (!isUserCode(depName)) continue;
+        // Skip self-edges. Parcel sometimes emits multiple Asset objects for the
+        // same source file (e.g., a transformer's sibling output, HMR runtime
+        // injection), giving them distinct asset.id values but identical filePath.
+        // Without this guard those collapse into "TagGroup.tsx is a reason for
+        // TagGroup.tsx" entries — harmless (chromatic-cli filters them at
+        // getDependentStoryFiles.ts:169) but noisy in the emitted JSON.
+        if (depName === assetName) continue;
         const entry = ensure(depName);
         if (entry.reasons.every(r => r.moduleName !== assetName)) {
           entry.reasons.push({moduleName: assetName});

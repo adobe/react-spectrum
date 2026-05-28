@@ -54,8 +54,8 @@ describe('integration: real Parcel build emits preview-stats.json', () => {
 
     const storyFile = stats.modules.find(
       (m: any) =>
-        /\.stories\./.test(m.name)
-        && m.reasons.some((r: any) => r.moduleName === './parcel-csf-glob.js')
+        /\.stories\./.test(m.name) &&
+        m.reasons.some((r: any) => r.moduleName === './parcel-csf-glob.js')
     );
     expect(storyFile).toBeDefined();
     expect(stats.modules.length).toBeGreaterThan(0);

@@ -150,6 +150,20 @@ describe('buildStatsMap', () => {
     const m = buildStatsMap(g, root);
     expect(m.get('./leaf.ts')).toEqual({id: './leaf.ts', name: './leaf.ts', reasons: []});
   });
+
+  test('skips self-edges when two assets share a normalized name', () => {
+    // Simulate Parcel emitting two Asset objects for the same source file
+    // (different ids, same filePath): one with id='A', one with id='B'. The mock
+    // graph indexes assets by filePath, so we use a single entry but add a
+    // self-pointing edge to mimic the dep traversal landing on a sibling asset
+    // that normalizes to the same name.
+    const g = makeMockGraph({
+      assets: ['./TagGroup.tsx'],
+      edges: [['./TagGroup.tsx', './TagGroup.tsx']]
+    });
+    const m = buildStatsMap(g, root);
+    expect(m.get('./TagGroup.tsx')!.reasons).toEqual([]);
+  });
 });
 
 describe('rewriteStoryVirtuals', () => {
