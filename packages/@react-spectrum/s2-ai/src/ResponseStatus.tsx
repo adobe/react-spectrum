@@ -20,7 +20,7 @@ import {
 import {baseColor, focusRing, space, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Button} from 'react-aria-components/Button';
 import {CenterBaseline, centerBaseline} from './CenterBaseline';
-import CheckmarkCircle from '../s2wf-icons/S2_Icon_CheckmarkCircle_20_N.svg';
+import CheckmarkCircle from '@react-spectrum/s2/icons/CheckmarkCircle';
 import Chevron from '../ui-icons/Chevron';
 import {ContextValue, Provider, useSlottedContext} from 'react-aria-components/slots';
 import {
