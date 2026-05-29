@@ -10,19 +10,21 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionButton} from './ActionButton';
 import {announce} from 'react-aria/private/live-announcer/LiveAnnouncer';
-import ChevronDown from '../s2wf-icons/S2_Icon_ChevronDown_20_N.svg';
+import {ButtonContext} from 'react-aria-components/Button';
 import {
   createContext,
   forwardRef,
+  ReactNode,
   useCallback,
   useContext,
   useEffect,
   useRef,
   useState
 } from 'react';
-import {DOMRef, forwardRefType, RefObject} from '@react-types/shared';
+import type {CSSProperties} from 'react';
+import {DEFAULT_SLOT, Provider} from 'react-aria-components/slots';
+import {DOMRef, forwardRefType} from '@react-types/shared';
 import {
   GridList,
   GridListItem,
@@ -30,15 +32,39 @@ import {
   GridListProps
 } from 'react-aria-components/GridList';
 import {nodeContains} from 'react-aria/private/utils/shadowdom/DOMFunctions';
-import {style} from '../style' with {type: 'macro'};
+import {TextFieldContext} from 'react-aria-components/TextField';
 import {useDOMRef} from './useDOMRef';
 import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
 
-const ThreadContext = createContext<(text: string) => void>(text => announce(text, 'polite'));
+interface InternalThreadContextValue {
+  announceItem: (text: string) => void;
+  setGridListFocused: (isFocused: boolean) => void;
+  setIsNearBottom: (isNear: boolean) => void;
+  setScrollElement: (element: HTMLElement | null) => void;
+}
 
-interface ThreadProps<T extends object> extends Pick<GridListProps<T>, 'items' | 'children'> {
-  /** Ref to the Thread's associated prompt field. */
-  fieldRef?: RefObject<HTMLElement | null>;
+const InternalThreadContext = createContext<InternalThreadContextValue>({
+  announceItem: text => announce(text, 'polite'),
+  setGridListFocused: () => {},
+  setIsNearBottom: () => {},
+  setScrollElement: () => {}
+});
+
+interface ThreadScrollButtonContextValue {
+  isNearBottom: boolean;
+  scrollToBottom: () => void;
+}
+
+const ThreadScrollButtonContext = createContext<ThreadScrollButtonContextValue>({
+  isNearBottom: true,
+  scrollToBottom: () => {}
+});
+
+// TODO: make this more RAC like (aka default class name and other RAC prop)
+interface ThreadProps {
+  className?: string;
+  style?: CSSProperties;
+  children?: ReactNode;
 }
 
 // TODO: things to look at
@@ -59,69 +85,22 @@ interface ThreadProps<T extends object> extends Pick<GridListProps<T>, 'items' |
 // make prompt field accept enter to submit the prompt, and have Option + Enter make a new line instead,  mimics
 // other ai chat experiences
 
-export const Thread = /*#__PURE__*/ (forwardRef as forwardRefType)(function Thread<
-  T extends object
->(props: ThreadProps<T>, ref: DOMRef<HTMLDivElement>) {
-  let {children, items, fieldRef} = props;
+export const Thread = /*#__PURE__*/ (forwardRef as forwardRefType)(function Thread(
+  props: ThreadProps,
+  ref: DOMRef<HTMLDivElement>
+) {
+  let {children, className, style} = props;
   let domRef = useDOMRef(ref);
-  let isNearBottomRef = useRef(true);
-  let [showScrollButton, setShowScrollButton] = useState(false);
-
   let isGridListFocusedRef = useRef(false);
   let isFieldFocusedRef = useRef(false);
   let hasNewMessagesRef = useRef(false);
   let timeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // TODO gridlist doesn't have onfocus/onblur
-  useEffect(() => {
-    let el = domRef.current;
-    if (!el) {
-      return;
-    }
-
-    let onFocusIn = () => {
-      isGridListFocusedRef.current = true;
-    };
-
-    let onFocusOut = (e: FocusEvent) => {
-      if (!nodeContains(el, e.relatedTarget as Node)) {
-        isGridListFocusedRef.current = false;
-      }
-    };
-
-    el.addEventListener('focusin', onFocusIn);
-    el.addEventListener('focusout', onFocusOut);
-    return () => {
-      el.removeEventListener('focusin', onFocusIn);
-      el.removeEventListener('focusout', onFocusOut);
-    };
-  }, [domRef]);
-
-  // TODO: would like the structure to be more RAC like aka we pass these via context, but that would
-  // require thread to also accept the prompt field as a child alongside the children for gridlist
-  useEffect(() => {
-    let field = fieldRef?.current;
-    if (!field) {
-      return;
-    }
-
-    let onFocusIn = () => {
-      isFieldFocusedRef.current = true;
-    };
-
-    let onFocusOut = (e: FocusEvent) => {
-      if (!nodeContains(field, e.relatedTarget as Node)) {
-        isFieldFocusedRef.current = false;
-      }
-    };
-
-    field.addEventListener('focusin', onFocusIn);
-    field.addEventListener('focusout', onFocusOut);
-    return () => {
-      field.removeEventListener('focusin', onFocusIn);
-      field.removeEventListener('focusout', onFocusOut);
-    };
-  }, [fieldRef]);
+  let scrollRef = useRef<HTMLElement | null>(null);
+  let scrollToBottom = useCallback(() => {
+    scrollRef.current?.scrollTo({top: 0, behavior: 'smooth'});
+  }, []);
+  let [isNearBottom, setIsNearBottom] = useState(true);
 
   // only announce new items if user is in the prompt field, otherwise if they
   // are in the thread only announce there are new responses. If not in thread, don't announce
@@ -148,6 +127,14 @@ export const Thread = /*#__PURE__*/ (forwardRef as forwardRefType)(function Thre
     }
   }, []);
 
+  let setGridListFocused = useCallback((isFocused: boolean) => {
+    isGridListFocusedRef.current = isFocused;
+  }, []);
+
+  let setScrollElement = useCallback((el: HTMLElement | null) => {
+    scrollRef.current = el;
+  }, []);
+
   useEffect(() => {
     return () => {
       if (timeout.current !== null) {
@@ -156,16 +143,97 @@ export const Thread = /*#__PURE__*/ (forwardRef as forwardRefType)(function Thre
     };
   }, []);
 
+  return (
+    <Provider
+      values={[
+        [
+          InternalThreadContext,
+          {announceItem, setGridListFocused, setIsNearBottom, setScrollElement}
+        ],
+        [ThreadScrollButtonContext, {isNearBottom, scrollToBottom}],
+        [
+          TextFieldContext,
+          {
+            slots: {
+              [DEFAULT_SLOT]: {},
+              prompt: {
+                onFocusChange: (focused: boolean) => {
+                  isFieldFocusedRef.current = focused;
+                }
+              }
+            }
+          }
+        ]
+      ]}>
+      <div ref={domRef} className={className} style={style}>
+        {children}
+      </div>
+    </Provider>
+  );
+});
+
+interface ThreadListProps<T extends object> extends Pick<
+  GridListProps<T>,
+  'items' | 'children' | 'focusOnEntry' | 'aria-label' | 'aria-labelledby'
+> {
+  className?: string;
+}
+
+export function ThreadList<T extends object>(props: ThreadListProps<T>) {
+  let {
+    items,
+    children,
+    className,
+    focusOnEntry,
+    'aria-label': ariaLabel,
+    'aria-labelledby': ariaLabelledby
+  } = props;
+
+  let {setGridListFocused, setIsNearBottom, setScrollElement} = useContext(InternalThreadContext);
+  let isNearBottomRef = useRef(true);
+  let gridListRef = useRef<HTMLDivElement | null>(null);
+
+  let callbackRef = useCallback(
+    (el: HTMLDivElement | null) => {
+      gridListRef.current = el;
+      setScrollElement(el);
+    },
+    [setScrollElement]
+  );
+
+  // TODO: gridlist doesn't have onFocus/onBlur
+  useEffect(() => {
+    let el = gridListRef.current;
+    if (!el) {
+      return;
+    }
+
+    let onFocusIn = () => setGridListFocused(true);
+    let onFocusOut = (e: FocusEvent) => {
+      if (!nodeContains(el, e.relatedTarget as Node)) {
+        setGridListFocused(false);
+      }
+    };
+
+    el.addEventListener('focusin', onFocusIn);
+    el.addEventListener('focusout', onFocusOut);
+    return () => {
+      el.removeEventListener('focusin', onFocusIn);
+      el.removeEventListener('focusout', onFocusOut);
+    };
+  }, [setGridListFocused]);
+
   let handleScroll = useCallback(() => {
-    if (!domRef.current) {
+    let el = gridListRef.current;
+    if (!el) {
       return;
     }
 
     // because column reversed scrollTop=0 is the bottom and the scrollTop goes negative as you move up
-    let nearBottom = domRef.current.scrollTop > -100;
+    let nearBottom = el.scrollTop > -100;
     isNearBottomRef.current = nearBottom;
-    setShowScrollButton(!nearBottom);
-  }, [domRef]);
+    setIsNearBottom(nearBottom);
+  }, [setIsNearBottom]);
 
   useEffect(() => {
     // scrolls to bottom on first render cuz we initialize isNearBottomRef to true,
@@ -175,72 +243,54 @@ export const Thread = /*#__PURE__*/ (forwardRef as forwardRefType)(function Thre
     // however, as it is streaming the response in, it will allow you to scroll where ever and not pull you back down
     if (isNearBottomRef.current) {
       requestAnimationFrame(() => {
-        if (domRef.current) {
-          domRef.current.scrollTop = 0;
+        if (gridListRef.current) {
+          gridListRef.current.scrollTop = 0;
         }
       });
     }
-  }, [items, domRef]);
-
-  let scrollToBottom = useCallback(() => {
-    if (domRef.current) {
-      domRef.current.scrollTo({top: 0, behavior: 'smooth'});
-    }
-  }, [domRef]);
+  }, [items]);
 
   return (
-    <ThreadContext.Provider value={announceItem}>
-      <div
-        className={style({
-          position: 'relative',
-          display: 'flex',
-          flexDirection: 'column',
-          overflow: 'hidden',
-          flexGrow: 1
-        })}>
-        {/*
-          TODO this is before the grid list so that a user tabbing in will hit this first
-          so they can then scroll to bottom. Wonder if there should also be one after the grid list
-          so that shift tabbing from the input keyboard works
-        */}
-        {showScrollButton && (
-          <div
-            className={style({
-              position: 'absolute',
-              bottom: 16,
-              left: '50%'
-            })}>
-            <ActionButton aria-label="Scroll to bottom" onPress={scrollToBottom}>
-              <ChevronDown />
-            </ActionButton>
-          </div>
-        )}
-        <GridList
-          disallowTypeAhead
-          onScroll={handleScroll}
-          aria-label="Chat thread"
-          keyboardNavigationBehavior="tab"
-          focusOnEntry="first"
-          items={items}
-          ref={domRef}
-          className={style({
-            display: 'flex',
-            flexDirection: 'column-reverse',
-            rowGap: 16,
-            alignItems: 'start',
-            flexGrow: 1,
-            overflow: 'auto',
-            padding: 8,
-            scrollPadding: 8
-          })}>
-          {children}
-        </GridList>
-      </div>
-    </ThreadContext.Provider>
+    <GridList
+      ref={callbackRef}
+      disallowTypeAhead
+      onScroll={handleScroll}
+      keyboardNavigationBehavior="tab"
+      focusOnEntry={focusOnEntry}
+      items={items}
+      aria-label={ariaLabel}
+      aria-labelledby={ariaLabelledby}
+      // TODO: for now we enforce this, but to be configurable?
+      style={{display: 'flex', flexDirection: 'column-reverse'}}
+      className={className}>
+      {children}
+    </GridList>
   );
-});
+}
+
+interface ThreadScrollButtonProps {
+  children?: ReactNode;
+}
+
+// TODO: wrapper so we can do the "if isNearBottom then hide" logic, could do this via inline styles perhaps
+// and ditch the wrapper?
+export function ThreadScrollButton({children}: ThreadScrollButtonProps) {
+  let {isNearBottom, scrollToBottom} = useContext(ThreadScrollButtonContext);
+
+  if (isNearBottom) {
+    return null;
+  }
+
+  return (
+    <ButtonContext.Provider
+      value={{slots: {[DEFAULT_SLOT]: {}, scroll: {onPress: scrollToBottom}}}}>
+      {children}
+    </ButtonContext.Provider>
+  );
+}
 
 interface ThreadItemProps extends Pick<GridListItemProps, 'className' | 'children' | 'textValue'> {
+  /** Whether or not the item's content is currently being streamed in. */
   isStreaming?: boolean;
   /** Announce textValue on mount even when isStreaming is provided. */
   shouldAnnounceOnMount?: boolean;
@@ -248,7 +298,7 @@ interface ThreadItemProps extends Pick<GridListItemProps, 'className' | 'childre
 
 export function ThreadItem(props: ThreadItemProps) {
   let {className, children, textValue = ' ', isStreaming, shouldAnnounceOnMount} = props;
-  let announceItem = useContext(ThreadContext);
+  let {announceItem} = useContext(InternalThreadContext);
 
   // TODO: using aria-live on the gridlist item was pretty chatty and the streaming causes the text announcement
   // to constantly reset. If we used a live region and updated its contents when streaming finished that worked decently

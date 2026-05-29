@@ -30,6 +30,7 @@ import {
 } from 'react-aria-components';
 import {Card, CardPreview} from '../src/Card';
 import CheckmarkCircle from '@react-spectrum/s2/icons/CheckmarkCircle';
+import ChevronDown from '../s2wf-icons/S2_Icon_ChevronDown_20_N.svg';
 import ChevronRight from '@react-spectrum/s2/icons/ArrowCurved';
 import {CloseButton} from '../src/CloseButton';
 import {Content, Text} from '../src/Content';
@@ -43,7 +44,7 @@ import Plus from '@react-spectrum/s2/icons/Add';
 import {ProgressCircle} from '../src/ProgressCircle';
 import {ReactNode, useRef, useState} from 'react';
 import Send from '@react-spectrum/s2/icons/ArrowUpSend';
-import {Thread, ThreadItem} from '../src/Thread';
+import {Thread, ThreadItem, ThreadList, ThreadScrollButton} from '../src/Thread';
 import ThumbDown from '@react-spectrum/s2/icons/ThumbDown';
 import ThumbUp from '@react-spectrum/s2/icons/ThumbUp';
 import {ToggleButton} from '../src/ToggleButton';
@@ -84,104 +85,123 @@ export function StaticThread() {
         gap: 32,
         height: '100%'
       })}>
-      <Thread>
-        <SystemMessage>
-          <h3 className={style({font: 'title-lg'})}>What would you like to do next?</h3>
-          <div className={style({display: 'flex', flexWrap: 'wrap', gap: 8})}>
-            <Button variant="secondary">
-              <ChevronRight />
-              <Text>Create a year-over-year growth chart for the next decade</Text>
-            </Button>
-            <Button variant="secondary">
-              <ChevronRight />
-              <Text>Generate a congratulatory poster</Text>
-            </Button>
-            <Button variant="secondary">
-              <ChevronRight />
-              <Text>Summarize Development pipeline</Text>
-            </Button>
-          </div>
-        </SystemMessage>
-        <ResponseStatus status="pending" />
-        <UserMessage>
-          Can you help me create a 45-minute presentation, with animations, for an executive update?
-        </UserMessage>
-        <SystemMessage>
-          <div role="document">
-            <h3 className={style({font: 'heading-sm'})}>
-              Big idea/core narrative: The warmth of welcome
-            </h3>
-            <p className={style({font: 'body'})}>
-              Hospitality begins the moment our customers set foot off their plane. We are more than
-              accommodation, and we service a diverse base. We hope to be the anchor and bounce
-              board for all who stay with us.{' '}
-            </p>
-            <h4 className={style({font: 'heading-xs'})}>Belonging happens at Hilton</h4>
-            <p className={style({font: 'body'})}>
-              We strive to be familiar but exceed expectations. These assets highlight how belonging
-              is personified.
-            </p>
-            <h4 className={style({font: 'heading-xs'})}>We are more than accommodation</h4>
-            <ul className={style({font: 'body'})}>
-              <li>Airport pick up service</li>
-              <li>Local recommendations</li>
-              <li>Everyday excursions</li>
-              <li>Customizable experience</li>
-            </ul>
-          </div>
-          <MessageFeedback />
-          <Sources>
-            <SourceList>
-              <SourceListItem href="#">Hilton brand email — Q1 campaign 2026</SourceListItem>
-              <SourceListItem href="#">Market research — hospitality trends 2025</SourceListItem>
-              <SourceListItem href="#">User research — loyalty programme survey</SourceListItem>
-            </SourceList>
-          </Sources>
-        </SystemMessage>
-        <ResponseStatus
-          status="complete"
-          thinking="The user said make a presentation deck but didn't specify duration of deck. Assumption is a brief presentation. I should check previous Hilton executive presentation decks and extract the structure."
-        />
-        <UserMessage>
-          Can you help me create a 45-minute presentation, with animations, for an executive update?
-        </UserMessage>
-        <SystemMessage>
-          <AssetCard>
-            <CardPreview>
-              <Image src="https://images.unsplash.com/photo-1705034598432-1694e203cdf3?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" />
-            </CardPreview>
-            <Content>
-              <Text slot="title">Desert Sunset</Text>
-              <ActionMenu>
-                <MenuItem>Edit</MenuItem>
-                <MenuItem>Share</MenuItem>
-                <MenuItem>Delete</MenuItem>
-              </ActionMenu>
-              <Text slot="description">PNG • 2/3/2024</Text>
-            </Content>
-          </AssetCard>
-        </SystemMessage>
-        <UserMessage>
-          Can you help me create a 45-minute presentation, with animations, for an executive update?
-        </UserMessage>
-        <UserMessage>
-          <Card variant="quiet">
-            <CardPreview>
-              <Image src="https://react-spectrum.adobe.com/preview.c3b340d3.png" />
-            </CardPreview>
-            <Content>
-              <Text slot="title">Hilton commercial assets</Text>
-              <ActionMenu>
-                <MenuItem>Edit</MenuItem>
-                <MenuItem>Share</MenuItem>
-                <MenuItem>Delete</MenuItem>
-              </ActionMenu>
-              <Text slot="description">2026</Text>
-            </Content>
-          </Card>
-        </UserMessage>
+      <Thread
+        className={style({
+          display: 'flex',
+          flexDirection: 'column',
+          overflow: 'hidden',
+          flexGrow: 1
+        })}>
+        <ThreadList
+          aria-label="Chat thread"
+          className={style({
+            flexGrow: 1,
+            overflow: 'auto',
+            padding: 8,
+            rowGap: 16,
+            alignItems: 'start'
+          })}>
+          <SystemMessage>
+            <h3 className={style({font: 'title-lg'})}>What would you like to do next?</h3>
+            <div className={style({display: 'flex', flexWrap: 'wrap', gap: 8})}>
+              <Button variant="secondary">
+                <ChevronRight />
+                <Text>Create a year-over-year growth chart for the next decade</Text>
+              </Button>
+              <Button variant="secondary">
+                <ChevronRight />
+                <Text>Generate a congratulatory poster</Text>
+              </Button>
+              <Button variant="secondary">
+                <ChevronRight />
+                <Text>Summarize Development pipeline</Text>
+              </Button>
+            </div>
+          </SystemMessage>
+          <ResponseStatus status="pending" />
+          <UserMessage>
+            Can you help me create a 45-minute presentation, with animations, for an executive
+            update?
+          </UserMessage>
+          <SystemMessage>
+            <div role="document">
+              <h3 className={style({font: 'heading-sm'})}>
+                Big idea/core narrative: The warmth of welcome
+              </h3>
+              <p className={style({font: 'body'})}>
+                Hospitality begins the moment our customers set foot off their plane. We are more
+                than accommodation, and we service a diverse base. We hope to be the anchor and
+                bounce board for all who stay with us.{' '}
+              </p>
+              <h4 className={style({font: 'heading-xs'})}>Belonging happens at Hilton</h4>
+              <p className={style({font: 'body'})}>
+                We strive to be familiar but exceed expectations. These assets highlight how
+                belonging is personified.
+              </p>
+              <h4 className={style({font: 'heading-xs'})}>We are more than accommodation</h4>
+              <ul className={style({font: 'body'})}>
+                <li>Airport pick up service</li>
+                <li>Local recommendations</li>
+                <li>Everyday excursions</li>
+                <li>Customizable experience</li>
+              </ul>
+            </div>
+            <MessageFeedback />
+            <Sources>
+              <SourceList>
+                <SourceListItem href="#">Hilton brand email — Q1 campaign 2026</SourceListItem>
+                <SourceListItem href="#">Market research — hospitality trends 2025</SourceListItem>
+                <SourceListItem href="#">User research — loyalty programme survey</SourceListItem>
+              </SourceList>
+            </Sources>
+          </SystemMessage>
+          <ResponseStatus
+            status="complete"
+            thinking="The user said make a presentation deck but didn't specify duration of deck. Assumption is a brief presentation. I should check previous Hilton executive presentation decks and extract the structure."
+          />
+          <UserMessage>
+            Can you help me create a 45-minute presentation, with animations, for an executive
+            update?
+          </UserMessage>
+          <SystemMessage>
+            <AssetCard>
+              <CardPreview>
+                <Image src="https://images.unsplash.com/photo-1705034598432-1694e203cdf3?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" />
+              </CardPreview>
+              <Content>
+                <Text slot="title">Desert Sunset</Text>
+                <ActionMenu>
+                  <MenuItem>Edit</MenuItem>
+                  <MenuItem>Share</MenuItem>
+                  <MenuItem>Delete</MenuItem>
+                </ActionMenu>
+                <Text slot="description">PNG • 2/3/2024</Text>
+              </Content>
+            </AssetCard>
+          </SystemMessage>
+          <UserMessage>
+            Can you help me create a 45-minute presentation, with animations, for an executive
+            update?
+          </UserMessage>
+          <UserMessage>
+            <Card variant="quiet">
+              <CardPreview>
+                <Image src="https://react-spectrum.adobe.com/preview.c3b340d3.png" />
+              </CardPreview>
+              <Content>
+                <Text slot="title">Hilton commercial assets</Text>
+                <ActionMenu>
+                  <MenuItem>Edit</MenuItem>
+                  <MenuItem>Share</MenuItem>
+                  <MenuItem>Delete</MenuItem>
+                </ActionMenu>
+                <Text slot="description">2026</Text>
+              </Content>
+            </Card>
+          </UserMessage>
+        </ThreadList>
+        <PromptField />
       </Thread>
-      <PromptField />
     </div>
   );
 }
@@ -214,7 +234,6 @@ let initialResponses = [
 export function DynamicThread() {
   let [messages, setMessages] = useState<Message[]>(initialResponses);
   let nextId = useRef(initialResponses.length);
-  let promptRef = useRef<HTMLDivElement>(null);
   let lastMessage = messages.at(-1);
   let isPending = lastMessage?.type === 'status' && lastMessage.status === 'pending';
 
@@ -248,27 +267,69 @@ export function DynamicThread() {
         gap: 32,
         height: '100%'
       })}>
-      <Thread items={[...messages].reverse()} fieldRef={promptRef}>
-        {msg => {
-          if (msg.type === 'user') {
-            return <UserMessage textValue={msg.content}>{msg.content}</UserMessage>;
-          }
-          if (msg.type === 'status') {
-            return <ResponseStatus status={msg.status} />;
-          }
-          return (
-            <SystemMessage textValue={msg.content}>
-              <div role="document">
-                <p className={style({font: 'body'})}>{msg.content}</p>
-              </div>
-              <MessageFeedback />
-            </SystemMessage>
-          );
-        }}
-      </Thread>
-      <div ref={promptRef}>
+      <Thread
+        className={style({
+          display: 'flex',
+          flexDirection: 'column',
+          overflow: 'hidden',
+          flexGrow: 1,
+          gap: 16,
+          paddingX: 16
+        })}>
+        <div
+          className={style({
+            position: 'relative',
+            flexGrow: 1,
+            overflow: 'hidden',
+            display: 'flex',
+            flexDirection: 'column'
+          })}>
+          <div
+            className={style({
+              position: 'absolute',
+              bottom: 16,
+              left: '50%',
+              transform: 'translateX(-50%)',
+              zIndex: 1
+            })}>
+            <ThreadScrollButton>
+              <ActionButton slot="scroll" aria-label="Scroll to bottom">
+                <ChevronDown />
+              </ActionButton>
+            </ThreadScrollButton>
+          </div>
+          <ThreadList
+            items={[...messages].reverse()}
+            focusOnEntry="first"
+            aria-label="Chat thread"
+            className={style({
+              flexGrow: 1,
+              overflow: 'auto',
+              padding: 8,
+              scrollPadding: 8,
+              rowGap: 16,
+              alignItems: 'start'
+            })}>
+            {msg => {
+              if (msg.type === 'user') {
+                return <UserMessage textValue={msg.content}>{msg.content}</UserMessage>;
+              }
+              if (msg.type === 'status') {
+                return <ResponseStatus status={msg.status} />;
+              }
+              return (
+                <SystemMessage textValue={msg.content}>
+                  <div role="document">
+                    <p className={style({font: 'body'})}>{msg.content}</p>
+                  </div>
+                  <MessageFeedback />
+                </SystemMessage>
+              );
+            }}
+          </ThreadList>
+        </div>
         <PromptField onSend={handleSend} isDisabled={isPending} />
-      </div>
+      </Thread>
     </div>
   );
 }
@@ -442,7 +503,6 @@ export function StreamingThread() {
     initialResponses as StreamingMessage[]
   );
   let nextId = useRef(initialResponses.length);
-  let promptRef = useRef<HTMLDivElement>(null);
   let lastMessage = messages.at(-1);
   let isDisabled =
     lastMessage?.type === 'status' ||
@@ -565,6 +625,8 @@ export function StreamingThread() {
   }
 
   return (
+    // TODO: these extra div wrappers would need to be implemented by the RAC user, maybe we can internalize some more?
+    // of particular note is the scroll button. Same for the other styles
     <div
       className={style({
         margin: 0,
@@ -574,42 +636,84 @@ export function StreamingThread() {
         gap: 32,
         height: '100%'
       })}>
-      <Thread items={[...messages].reverse()} fieldRef={promptRef}>
-        {(msg: StreamingMessage) => {
-          if (msg.type === 'user') {
-            return <UserMessage textValue={msg.content}>{msg.content}</UserMessage>;
-          }
-          if (msg.type === 'status') {
-            return <ResponseStatus status={msg.status} thinking={msg.thinking} />;
-          }
-          if (msg.type === 'tool-call') {
-            return <ToolCallStatus label={msg.label} isStreaming={msg.isStreaming} />;
-          }
-          if (msg.type === 'sources') {
-            return <SourcesMessage items={msg.items} />;
-          }
-          if (msg.type === 'card') {
-            return (
-              <CardMessage
-                title={msg.title}
-                description={msg.description}
-                imageUrl={msg.imageUrl}
-              />
-            );
-          }
-          return (
-            <SystemMessage textValue={msg.content} isStreaming={msg.isStreaming}>
-              <div role="document">
-                <p className={style({font: 'body'})}>{msg.content || ''}</p>
-              </div>
-              {!msg.isStreaming && <MessageFeedback />}
-            </SystemMessage>
-          );
-        }}
-      </Thread>
-      <div ref={promptRef}>
+      <Thread
+        className={style({
+          display: 'flex',
+          flexDirection: 'column',
+          overflow: 'hidden',
+          flexGrow: 1,
+          gap: 16,
+          paddingX: 16
+        })}>
+        <div
+          className={style({
+            position: 'relative',
+            flexGrow: 1,
+            overflow: 'hidden',
+            display: 'flex',
+            flexDirection: 'column'
+          })}>
+          <div
+            className={style({
+              position: 'absolute',
+              bottom: 16,
+              left: '50%',
+              transform: 'translateX(-50%)',
+              zIndex: 1
+            })}>
+            <ThreadScrollButton>
+              <ActionButton slot="scroll" aria-label="Scroll to bottom">
+                <ChevronDown />
+              </ActionButton>
+            </ThreadScrollButton>
+          </div>
+          <ThreadList
+            items={[...messages].reverse()}
+            focusOnEntry="first"
+            aria-label="Chat thread"
+            className={style({
+              flexGrow: 1,
+              overflow: 'auto',
+              padding: 8,
+              scrollPadding: 8,
+              rowGap: 16,
+              alignItems: 'start'
+            })}>
+            {(msg: StreamingMessage) => {
+              if (msg.type === 'user') {
+                return <UserMessage textValue={msg.content}>{msg.content}</UserMessage>;
+              }
+              if (msg.type === 'status') {
+                return <ResponseStatus status={msg.status} thinking={msg.thinking} />;
+              }
+              if (msg.type === 'tool-call') {
+                return <ToolCallStatus label={msg.label} isStreaming={msg.isStreaming} />;
+              }
+              if (msg.type === 'sources') {
+                return <SourcesMessage items={msg.items} />;
+              }
+              if (msg.type === 'card') {
+                return (
+                  <CardMessage
+                    title={msg.title}
+                    description={msg.description}
+                    imageUrl={msg.imageUrl}
+                  />
+                );
+              }
+              return (
+                <SystemMessage textValue={msg.content} isStreaming={msg.isStreaming}>
+                  <div role="document">
+                    <p className={style({font: 'body'})}>{msg.content || ''}</p>
+                  </div>
+                  {!msg.isStreaming && <MessageFeedback />}
+                </SystemMessage>
+              );
+            }}
+          </ThreadList>
+        </div>
         <PromptField onSend={handleSend} isDisabled={!!isDisabled} />
-      </div>
+      </Thread>
     </div>
   );
 }
@@ -687,7 +791,7 @@ function PromptField({
             />
           ))}
         </AttachmentList>
-        <TextField value={text} onChange={value => setText(value)}>
+        <TextField value={text} onChange={value => setText(value)} slot="prompt">
           <Label
             className={style({
               display: 'block',
