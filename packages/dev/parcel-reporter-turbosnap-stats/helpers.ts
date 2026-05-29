@@ -1,8 +1,7 @@
 // Helpers for parcel-reporter-turbosnap-stats. See ./StatsReporter.ts for the
 // plugin entry; this file holds the pure functions exported for unit testing.
 
-import type {Asset, BundleGraph} from '@parcel/types';
-import fs from 'fs';
+import type {Asset, BundleGraph, FileSystem} from '@parcel/types';
 import path from 'path';
 
 // TurboSnap may still report 0% reuse for reasons outside this reporter's control:
@@ -188,6 +187,7 @@ interface Logger {
 export async function writeStats(
   distDir: string,
   statsMap: Map<string, Module>,
+  outputFS: FileSystem,
   logger: Logger
 ): Promise<void> {
   // Sort modules by name so the emitted JSON is byte-stable across Parcel
@@ -212,7 +212,7 @@ export async function writeStats(
     );
   }
 
-  await fs.promises.writeFile(path.join(distDir, 'preview-stats.json'), JSON.stringify(stats));
+  await outputFS.writeFile(path.join(distDir, 'preview-stats.json'), JSON.stringify(stats), null);
   logger.info({
     message: `parcel-reporter-turbosnap-stats: wrote preview-stats.json (${stats.modules.length} modules) to ${distDir}`
   });

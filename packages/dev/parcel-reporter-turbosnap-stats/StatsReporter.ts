@@ -16,7 +16,7 @@ const reporter = new Reporter({
         'parcel-reporter-turbosnap-stats: no bundles were produced; cannot determine output dir.'
       );
     }
-    await writeStats(distDir, statsMap, logger);
+    await writeStats(distDir, statsMap, options.outputFS, logger);
   }
 });
 

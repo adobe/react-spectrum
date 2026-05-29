@@ -220,11 +220,18 @@ describe('rewriteStoryVirtuals', () => {
 });
 
 const silentLogger = {info: () => {}};
+// Minimal FileSystem stub: writeStats only calls .writeFile, so we adapt node's
+// fs.promises.writeFile to match @parcel/types FileSystem's signature.
+const nodeFS = {
+  writeFile: (p: string, c: string | Buffer) => fs.promises.writeFile(p, c)
+} as any;
 
 describe('writeStats — validation', () => {
   test('throws when modules map is empty', async () => {
     const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'ts-empty-'));
-    await expect(writeStats(tmp, new Map(), silentLogger)).rejects.toThrow(/empty modules array/);
+    await expect(writeStats(tmp, new Map(), nodeFS, silentLogger)).rejects.toThrow(
+      /empty modules array/
+    );
   });
 
   test('throws when no module references ./storybook-stories.js', async () => {
@@ -232,7 +239,7 @@ describe('writeStats — validation', () => {
     const m = new Map<string, Module>([
       ['./Foo.tsx', {id: './Foo.tsx', name: './Foo.tsx', reasons: []}]
     ]);
-    await expect(writeStats(tmp, m, silentLogger)).rejects.toThrow(
+    await expect(writeStats(tmp, m, nodeFS, silentLogger)).rejects.toThrow(
       /no module references \.\/storybook-stories\.js/
     );
   });
@@ -266,7 +273,7 @@ describe('writeStats — happy path', () => {
         infoLog = m.message;
       }
     };
-    await writeStats(tmp, m, logger);
+    await writeStats(tmp, m, nodeFS, logger);
 
     const written = JSON.parse(fs.readFileSync(path.join(tmp, 'preview-stats.json'), 'utf8'));
     expect(Object.keys(written)).toEqual(['modules']);

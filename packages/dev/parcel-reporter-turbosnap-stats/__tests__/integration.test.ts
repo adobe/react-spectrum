@@ -30,7 +30,13 @@ describe('integration: real Parcel build emits preview-stats.json', () => {
       shouldDisableCache: true,
       additionalReporters: [
         {
-          packageName: '@parcel/reporter-turbosnap-stats',
+          // Point Parcel's plugin resolver at the package's local entry rather
+          // than '@parcel/reporter-turbosnap-stats'. yarn doesn't symlink this
+          // workspace into node_modules/@parcel/ until a dependent package
+          // (storybook-builder-parcel) is also installed, so a fresh checkout
+          // would fail with "Cannot find Parcel plugin". A relative path is
+          // permitted by Parcel's plugin-name validator (ParcelConfig.schema.js:29).
+          packageName: '../index.js',
           resolveFrom: __filename
         }
       ],
