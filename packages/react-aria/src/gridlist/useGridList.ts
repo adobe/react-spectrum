@@ -106,6 +106,10 @@ export interface AriaGridListOptions<T> extends Omit<AriaGridListProps<T>, 'chil
    * @default 'action'
    */
   linkBehavior?: 'action' | 'selection' | 'override';
+  /**
+   * Which item in the collection to focus when tabbing into the collection. Overrides default
+   * roving tab index like behavior.
+   */
   focusOnEntry?: 'first' | 'last';
 }
 
