@@ -13,19 +13,18 @@ const LIBRARY_ORDER = ['React Aria Components', 'Spectrum 2'];
 const LIBRARY_CONFIG = {
   'React Aria Components': {
     releasesDir: 'packages/dev/s2-docs/pages/react-aria/releases',
-    template: 's2docs',
     tag: 'React Aria',
     docsDir: 'packages/dev/s2-docs/pages/react-aria'
   },
   'Spectrum 2': {
     releasesDir: 'packages/dev/s2-docs/pages/s2/releases',
-    template: 's2docs',
     tag: 'S2',
     docsDir: 'packages/dev/s2-docs/pages/s2'
   },
 };
 
 function packageToLibrary(name) {
+  // Skip this package
   if (name.startsWith('@spectrum-icons/')) {
     return null;
   }
@@ -41,6 +40,8 @@ function packageToLibrary(name) {
   if (name === '@react-spectrum/s2') {
     return 'Spectrum 2';
   }
+  // V3 has no LIBRARY_CONFIG entry. Its commits are collected but only printed
+  // as a warning, never written to a file. See the v3Bucket handling at the end of run().
   if (name === '@adobe/react-spectrum' || name.startsWith('@react-spectrum/')) {
     return 'React Spectrum';
   }
@@ -62,6 +63,7 @@ function nextVersionFilename(releasesDir) {
   versions.sort((a, b) => b[0] - a[0] || b[1] - a[1] || b[2] - a[2]);
   let [major, minor] = versions[0];
   let nextMinor = minor + 1;
+  // Always produces a minor bump (x.N+1.0)
   return {filename: `v${major}-${nextMinor}-0.mdx`, version: `${major}.${nextMinor}.0`};
 }
 
@@ -126,35 +128,6 @@ ${body}
 `;
 }
 
-function scaffoldV3Blog({dateYMD, body, commitCount}) {
-  let year = new Date().getFullYear();
-  return `${licenseHeader(year)}
-
-import {BlogPostLayout, Hero, Image} from '@react-spectrum/docs';
-export default BlogPostLayout;
-
----
-description: [TODO: 1–2 sentence highlights summary]
-date: ${dateYMD}
----
-
-# ${prettyDate(dateYMD)} Release
-
-[TODO: intro paragraph]
-
-{/* Commits: ${commitCount} */}
-## Changelog
-
-${body}
-
-## Released packages
-
-\`\`\`
-[TODO: paste output of yarn bumpVersions here]
-\`\`\`
-`;
-}
-
 function resolveTag(pkgName, pkgVersion) {
   let exact = `${pkgName}@${pkgVersion}`;
   let check = spawn('git', ['rev-parse', '--verify', exact], {encoding: 'utf8'});
@@ -173,15 +146,21 @@ async function renderCommitLine(commit) {
   let user = '';
   let pr;
 
+  // commit fields: [0] hash, [1] ISO date, [2] author name, [3] subject (from --pretty format)
   let m = commit[3].match(/(.*?) \(#(\d+)\)$/);
 
   if (m) {
     let prId = m[2];
     message = m[1];
 
-    let res = await octokit.request('GET /repos/adobe/react-spectrum/pulls/{pull}', {pull: prId});
-    user = `[@${res.data.user.login}](${res.data.user.html_url})`;
-    pr = `https://github.com/adobe/react-spectrum/pull/${prId}`;
+    try {
+      let res = await octokit.request('GET /repos/adobe/react-spectrum/pulls/{pull}', {pull: prId});
+      user = `[@${res.data.user.login}](${res.data.user.html_url})`;
+      pr = `https://github.com/adobe/react-spectrum/pull/${prId}`;
+    } catch (e) {
+      console.warn(`⚠ Could not fetch PR #${prId} from GitHub (${e.message}) — falling back to git author`);
+      user = commit[2];
+    }
   } else {
     message = commit[3];
     user = commit[2];
@@ -202,8 +181,8 @@ async function run() {
   let commitsByLibrary = new Map();
   let libraryTags = new Map();
 
-  for (let name in packages) {
-    let filePath = packages[name].location + '/package.json';
+  for (let {location} of packages) {
+    let filePath = location + '/package.json';
     let pkg = JSON.parse(fs.readFileSync(filePath, 'utf8'));
     if (pkg.private) {
       continue;
@@ -223,6 +202,7 @@ async function run() {
       continue;
     }
 
+    // Track the first tag seen per library as the anchor for git log ranges.
     if (!libraryTags.has(library)) {
       libraryTags.set(library, tag);
     }
@@ -231,7 +211,7 @@ async function run() {
       'log',
       `${tag}..HEAD`,
       '--pretty="%H%x00%aI%x00%an%x00%s"',
-      packages[name].location,
+      location,
 
       // filter out non-code changes
       ':!**/test/**',
@@ -255,14 +235,14 @@ async function run() {
       }
 
       let info = line.replace(/^"|"$/g, '').split('\0');
-      if (info[3] === 'Publish') {
+      if (info[3] === 'Publish') { // skip Publish commits
         continue;
       }
-      bucket.set(info[0], info);
+      bucket.set(info[0], info); // keyed by hash — deduplicates commits touching multiple packages
     }
   }
 
-  // Scan docs directories for docs-only commits (e.g. guide additions, new component pages).
+  // Scan docs directories for docs-only commits
   // These live in private packages skipped by the main loop above.
   for (let [library, config] of Object.entries(LIBRARY_CONFIG)) {
     if (!config.docsDir) continue;
@@ -293,6 +273,7 @@ async function run() {
     }
   }
 
+  // Handle commits under RAC and S2
   for (let library of LIBRARY_ORDER) {
     let bucket = commitsByLibrary.get(library);
     if (!bucket || bucket.size === 0) {
@@ -300,10 +281,7 @@ async function run() {
     }
 
     let sorted = [...bucket.values()].sort((a, b) => (a[1] < b[1] ? -1 : 1));
-    let lines = [];
-    for (let commit of sorted) {
-      lines.push(await renderCommitLine(commit));
-    }
+    let lines = await Promise.all(sorted.map(renderCommitLine));
     let body = lines.join('\n');
 
     let config = LIBRARY_CONFIG[library];
@@ -311,15 +289,9 @@ async function run() {
     let outPath;
     let content;
 
-    if (config.template === 'v3blog') {
-      let ymd = todayYMD();
-      outPath = path.join(dir, `${ymd}.mdx`);
-      content = scaffoldV3Blog({dateYMD: ymd, body, commitCount: lines.length});
-    } else {
-      let {filename, version} = nextVersionFilename(dir);
-      outPath = path.join(dir, filename);
-      content = scaffoldS2Docs({version, dateYMD: todayYMD(), tag: config.tag, body, commitCount: lines.length});
-    }
+    let {filename, version} = nextVersionFilename(dir);
+    outPath = path.join(dir, filename);
+    content = scaffoldS2Docs({version, dateYMD: todayYMD(), tag: config.tag, body, commitCount: lines.length});
 
     if (fs.existsSync(outPath)) {
       console.warn(`⚠ ${outPath} already exists — skipping (${bucket.size} commits not written). Printing to stdout instead:\n`);
@@ -333,6 +305,7 @@ async function run() {
     console.log(`✓ Wrote ${outPath} (${bucket.size} commits)`);
   }
 
+  // Handle commits in V3
   let v3Bucket = commitsByLibrary.get('React Spectrum');
   if (v3Bucket && v3Bucket.size > 0) {
     console.warn(`\nℹ ${v3Bucket.size} React Spectrum (v3) commit(s) were not written to a file. Review them manually if needed:\n`);
