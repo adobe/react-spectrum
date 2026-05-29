@@ -134,8 +134,8 @@ jobs:
       # Summarize with GitHub Models (free via GITHUB_TOKEN) and post to Slack
       - name: Summarize and post to Slack
         env:
-          SLACK_TSDIFF_CHROMATIC_BOT_TOKEN: ${{ secrets.SLACK_TESTING_BOT_TOKEN }}
-          SLACK_CHANNEL_ID: ${{ secrets.TEST_SLACK_ID }}
+          SLACK_TSDIFF_CHROMATIC_BOT_TOKEN: ${{ secrets.SLACK_TSDIFF_CHROMATIC_BOT_TOKEN }}
+          SLACK_CHANNEL_ID: ${{ secrets.SLACK_CHANNEL_ID }}
           GITHUB_TOKEN: ${{ github.token }}
         run: |
           python3 << 'PYEOF'
@@ -147,7 +147,7 @@ jobs:
             raise SystemExit(f"Missing required environment variables: {', '.join(missing)}")
 
           today = os.environ['TODAY']
-          channel = os.environ['SLACK_CHANNEL_ID']
+          channel = os.environ['TEST_SLACK_ID']
           snapshots_repo = os.environ['SNAPSHOTS_REPO']
           slack_token = os.environ['SLACK_TSDIFF_CHROMATIC_BOT_TOKEN']
           github_token = os.environ['GITHUB_TOKEN']
