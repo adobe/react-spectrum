@@ -635,7 +635,7 @@ function PromptField({
   // Not using RAC DropZone because it adds its own focusable button,
   // and we want to avoid an extra tab stop by attaching to the input.
   // TODO: support clipboard too (without messing up pasting text)
-  let inputRef = useRef(null);
+  let inputRef = useRef<HTMLTextAreaElement>(null);
   let {dropProps, dropButtonProps, isDropTarget} = useDrop({
     ref: inputRef,
     hasDropButton: true,
@@ -699,6 +699,7 @@ function PromptField({
           </Label>
           <TextArea
             {...dropButtonProps}
+            ref={inputRef}
             placeholder="Ready to get started? Ask a question, share an idea, or add a task."
             style={{resize: 'none'}}
             className={style({
@@ -735,6 +736,7 @@ function PromptField({
             onPress={() => {
               onSend?.(text);
               setText('');
+              inputRef.current?.focus();
             }}>
             <Send />
           </Button>

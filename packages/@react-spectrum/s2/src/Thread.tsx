@@ -32,10 +32,10 @@ import {
 import {nodeContains} from 'react-aria/private/utils/shadowdom/DOMFunctions';
 import {style} from '../style' with {type: 'macro'};
 import {useDOMRef} from './useDOMRef';
-import {useFocusWithin} from 'react-aria/useFocusWithin';
 import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
 
-const ThreadFocusContext = createContext<{current: boolean}>({current: false});
+const ThreadContext = createContext<(text: string) => void>(text => announce(text, 'polite'));
+
 interface ThreadProps<T extends object> extends Pick<GridListProps<T>, 'items' | 'children'> {
   /** Ref to the Thread's associated prompt field. */
   fieldRef?: RefObject<HTMLElement | null>;
@@ -67,16 +67,35 @@ export const Thread = /*#__PURE__*/ (forwardRef as forwardRefType)(function Thre
   let isNearBottomRef = useRef(true);
   let [showScrollButton, setShowScrollButton] = useState(false);
 
-  // track if focus is in the thread or inputfield so we can prevent announcements
-  let isThreadFocusedRef = useRef(false);
+  let isGridListFocusedRef = useRef(false);
   let isFieldFocusedRef = useRef(false);
-  let isInScopeRef = useRef(true);
-  let {focusWithinProps} = useFocusWithin({
-    onFocusWithinChange: focused => {
-      isThreadFocusedRef.current = focused;
-      isInScopeRef.current = focused || isFieldFocusedRef.current;
+  let hasNewMessagesRef = useRef(false);
+  let timeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // TODO gridlist doesn't have onfocus/onblur
+  useEffect(() => {
+    let el = domRef.current;
+    if (!el) {
+      return;
     }
-  });
+
+    let onFocusIn = () => {
+      isGridListFocusedRef.current = true;
+    };
+
+    let onFocusOut = (e: FocusEvent) => {
+      if (!nodeContains(el, e.relatedTarget as Node)) {
+        isGridListFocusedRef.current = false;
+      }
+    };
+
+    el.addEventListener('focusin', onFocusIn);
+    el.addEventListener('focusout', onFocusOut);
+    return () => {
+      el.removeEventListener('focusin', onFocusIn);
+      el.removeEventListener('focusout', onFocusOut);
+    };
+  }, [domRef]);
 
   // TODO: would like the structure to be more RAC like aka we pass these via context, but that would
   // require thread to also accept the prompt field as a child alongside the children for gridlist
@@ -85,14 +104,14 @@ export const Thread = /*#__PURE__*/ (forwardRef as forwardRefType)(function Thre
     if (!field) {
       return;
     }
+
     let onFocusIn = () => {
       isFieldFocusedRef.current = true;
-      isInScopeRef.current = true;
     };
+
     let onFocusOut = (e: FocusEvent) => {
       if (!nodeContains(field, e.relatedTarget as Node)) {
         isFieldFocusedRef.current = false;
-        isInScopeRef.current = isThreadFocusedRef.current;
       }
     };
 
@@ -103,6 +122,39 @@ export const Thread = /*#__PURE__*/ (forwardRef as forwardRefType)(function Thre
       field.removeEventListener('focusout', onFocusOut);
     };
   }, [fieldRef]);
+
+  // only announce new items if user is in the prompt field, otherwise if they
+  // are in the thread only announce there are new responses. If not in thread, don't announce
+  let announceItem = useCallback((text: string) => {
+    if (isGridListFocusedRef.current) {
+      // TODO: ideally announce number of new messages, but only count system messages? maybe threaditem needs
+      // to have a "type" prop
+      if (!hasNewMessagesRef.current) {
+        hasNewMessagesRef.current = true;
+        announce('New message', 'polite');
+        // TODO: arbirary amount of time to wait before announcing new message, maybe we don't clear until
+        // we detect they scroll down? Or maybe when we do the message count we do it after a certain number of messages?
+        // or maybe this is fine
+        timeout.current = setTimeout(() => {
+          hasNewMessagesRef.current = false;
+          timeout.current = null;
+        }, 5000);
+      }
+      return;
+    }
+
+    if (isFieldFocusedRef.current) {
+      announce(text, 'polite');
+    }
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (timeout.current !== null) {
+        clearTimeout(timeout.current);
+      }
+    };
+  }, []);
 
   let handleScroll = useCallback(() => {
     if (!domRef.current) {
@@ -137,9 +189,8 @@ export const Thread = /*#__PURE__*/ (forwardRef as forwardRefType)(function Thre
   }, [domRef]);
 
   return (
-    <ThreadFocusContext.Provider value={isInScopeRef}>
+    <ThreadContext.Provider value={announceItem}>
       <div
-        {...focusWithinProps}
         className={style({
           position: 'relative',
           display: 'flex',
@@ -185,7 +236,7 @@ export const Thread = /*#__PURE__*/ (forwardRef as forwardRefType)(function Thre
           {children}
         </GridList>
       </div>
-    </ThreadFocusContext.Provider>
+    </ThreadContext.Provider>
   );
 });
 
@@ -197,18 +248,16 @@ interface ThreadItemProps extends Pick<GridListItemProps, 'className' | 'childre
 
 export function ThreadItem(props: ThreadItemProps) {
   let {className, children, textValue = ' ', isStreaming, shouldAnnounceOnMount} = props;
-  let isInScopeRef = useContext(ThreadFocusContext);
+  let announceItem = useContext(ThreadContext);
 
   // TODO: using aria-live on the gridlist item was pretty chatty and the streaming causes the text announcement
   // to constantly reset. If we used a live region and updated its contents when streaming finished that worked decently
   // but still feels quite verbose. Stick with this and get feedback
   useLayoutEffect(() => {
-    if (!isInScopeRef.current) {
-      return;
-    }
     if ((isStreaming === undefined || shouldAnnounceOnMount) && textValue && textValue !== ' ') {
-      announce(textValue, 'polite');
+      announceItem(textValue);
     }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -221,11 +270,9 @@ export function ThreadItem(props: ThreadItemProps) {
     let wasStreaming = prevStreamingRef.current;
     prevStreamingRef.current = isStreamingNow;
     if (wasStreaming && !isStreamingNow && textValue && textValue !== ' ') {
-      if (isInScopeRef.current) {
-        announce(textValue, 'polite');
-      }
+      announceItem(textValue);
     }
-  }, [isStreaming, isStreamingNow, textValue, isInScopeRef]);
+  }, [isStreaming, isStreamingNow, textValue, announceItem]);
 
   return (
     <GridListItem textValue={textValue} className={className}>
