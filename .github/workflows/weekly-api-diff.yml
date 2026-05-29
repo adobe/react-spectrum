@@ -135,7 +135,7 @@ jobs:
       - name: Summarize and post to Slack
         env:
           SLACK_TSDIFF_CHROMATIC_BOT_TOKEN: ${{ secrets.SLACK_TESTING_BOT_TOKEN }}
-          SLACK_CHANNEL_ID: ${{ secrets.SLACK_TESTING_CHANNEL_ID }}
+          SLACK_CHANNEL_ID: ${{ secrets.TEST_SLACK_ID }}
           GITHUB_TOKEN: ${{ github.token }}
         run: |
           python3 << 'PYEOF'
