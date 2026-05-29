@@ -20,7 +20,7 @@ const LIBRARY_CONFIG = {
     releasesDir: 'packages/dev/s2-docs/pages/s2/releases',
     tag: 'S2',
     docsDir: 'packages/dev/s2-docs/pages/s2'
-  },
+  }
 };
 
 function packageToLibrary(name) {
@@ -30,9 +30,12 @@ function packageToLibrary(name) {
   }
   if (
     name.startsWith('@internationalized/') ||
-    name === 'react-stately' || name.startsWith('@react-stately/') ||
-    name === 'react-aria' || name.startsWith('@react-aria/') ||
-    name === 'react-aria-components' || name === 'tailwindcss-react-aria-components' ||
+    name === 'react-stately' ||
+    name.startsWith('@react-stately/') ||
+    name === 'react-aria' ||
+    name.startsWith('@react-aria/') ||
+    name === 'react-aria-components' ||
+    name === 'tailwindcss-react-aria-components' ||
     name.startsWith('@react-types/')
   ) {
     return 'React Aria Components';
@@ -77,7 +80,20 @@ function todayYMD() {
 
 function prettyDate(ymd) {
   let [y, m, d] = ymd.split('-').map(Number);
-  let months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+  let months = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December'
+  ];
   return `${months[m - 1]} ${d}, ${y}`;
 }
 
@@ -136,7 +152,9 @@ function resolveTag(pkgName, pkgVersion) {
   }
   // Exact tag doesn't exist (e.g. a patch bump without a new tag) — fall back to the
   // most recent tag for this package using git's version sort.
-  let list = spawn('git', ['tag', '-l', '--sort=version:refname', `${pkgName}@*`], {encoding: 'utf8'});
+  let list = spawn('git', ['tag', '-l', '--sort=version:refname', `${pkgName}@*`], {
+    encoding: 'utf8'
+  });
   let tags = list.stdout.trim().split('\n').filter(Boolean);
   return tags.length > 0 ? tags[tags.length - 1] : null;
 }
@@ -158,7 +176,9 @@ async function renderCommitLine(commit) {
       user = `[@${res.data.user.login}](${res.data.user.html_url})`;
       pr = `https://github.com/adobe/react-spectrum/pull/${prId}`;
     } catch (e) {
-      console.warn(`⚠ Could not fetch PR #${prId} from GitHub (${e.message}) — falling back to git author`);
+      console.warn(
+        `⚠ Could not fetch PR #${prId} from GitHub (${e.message}) — falling back to git author`
+      );
       user = commit[2];
     }
   } else {
@@ -235,7 +255,8 @@ async function run() {
       }
 
       let info = line.replace(/^"|"$/g, '').split('\0');
-      if (info[3] === 'Publish') { // skip Publish commits
+      if (info[3] === 'Publish') {
+        // skip Publish commits
         continue;
       }
       bucket.set(info[0], info); // keyed by hash — deduplicates commits touching multiple packages
@@ -254,7 +275,7 @@ async function run() {
       `${tag}..HEAD`,
       '--pretty="%H%x00%aI%x00%an%x00%s"',
       config.docsDir,
-      ':!**/releases/**'  // don't include the release note files themselves
+      ':!**/releases/**' // don't include the release note files themselves
     ];
 
     let res = spawn('git', args, {encoding: 'utf8'});
@@ -269,7 +290,7 @@ async function run() {
       if (line === '') continue;
       let info = line.replace(/^"|"$/g, '').split('\0');
       if (info[3] === 'Publish') continue;
-      bucket.set(info[0], info);  // keyed by hash — deduplicates with source commits
+      bucket.set(info[0], info); // keyed by hash — deduplicates with source commits
     }
   }
 
@@ -291,10 +312,18 @@ async function run() {
 
     let {filename, version} = nextVersionFilename(dir);
     outPath = path.join(dir, filename);
-    content = scaffoldS2Docs({version, dateYMD: todayYMD(), tag: config.tag, body, commitCount: lines.length});
+    content = scaffoldS2Docs({
+      version,
+      dateYMD: todayYMD(),
+      tag: config.tag,
+      body,
+      commitCount: lines.length
+    });
 
     if (fs.existsSync(outPath)) {
-      console.warn(`⚠ ${outPath} already exists — skipping (${bucket.size} commits not written). Printing to stdout instead:\n`);
+      console.warn(
+        `⚠ ${outPath} already exists — skipping (${bucket.size} commits not written). Printing to stdout instead:\n`
+      );
       console.log(`# ${library}\n`);
       console.log(body);
       console.log();
@@ -308,7 +337,9 @@ async function run() {
   // Handle commits in V3
   let v3Bucket = commitsByLibrary.get('React Spectrum');
   if (v3Bucket && v3Bucket.size > 0) {
-    console.warn(`\nℹ ${v3Bucket.size} React Spectrum (v3) commit(s) were not written to a file. Review them manually if needed:\n`);
+    console.warn(
+      `\nℹ ${v3Bucket.size} React Spectrum (v3) commit(s) were not written to a file. Review them manually if needed:\n`
+    );
     let sorted = [...v3Bucket.values()].sort((a, b) => (a[1] < b[1] ? -1 : 1));
     for (let commit of sorted) {
       console.warn(`  ${commit[3]}`);
