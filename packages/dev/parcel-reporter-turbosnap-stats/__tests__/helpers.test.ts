@@ -38,9 +38,6 @@ describe('normalize', () => {
       /^\.\/src\/nested\/Button\.tsx$/
     );
   });
-  test('\\0-prefixed synthetic id gets virtual: leading-slash form', () => {
-    expect(normalize('\0synthetic/foo.js', root)).toBe('/virtual:/synthetic/foo.js');
-  });
 });
 
 describe('isUserCode', () => {
@@ -59,26 +56,31 @@ describe('isUserCode', () => {
   test('normalized node_modules @parcel/runtime-* → false', () => {
     expect(isUserCode('./node_modules/@parcel/runtime-js/lib/runtime-abc.js')).toBe(false);
   });
-  test('\\0-prefixed synthetic ids → false', () => {
-    expect(isUserCode('\0synthetic')).toBe(false);
-  });
   test('virtual storybook-stories.js → true (it is the CSF-glob anchor)', () => {
     expect(isUserCode('./storybook-stories.js')).toBe(true);
   });
 });
 
-// Minimal stand-in satisfying the four BundleGraph methods buildStatsMap uses.
+// Minimal stand-in satisfying the BundleGraph methods buildStatsMap uses.
 // If Parcel ever renames these methods, this mock breaks first — and the test
 // failure tells the maintainer where to look.
-function makeMockGraph(opts: {assets: string[]; edges: [string, string][]}) {
+function makeMockGraph(opts: {
+  assets: string[];
+  edges?: [string, string][];
+  asyncEdges?: [string, string][];
+}) {
   const assetById = new Map<string, {id: string; filePath: string}>();
   for (const filePath of opts.assets) {
     assetById.set(filePath, {id: filePath, filePath});
   }
-  const depsBySource = new Map<string, {id: string; target: string}[]>();
-  for (const [src, dst] of opts.edges) {
+  const depsBySource = new Map<string, {id: string; target: string; isAsync?: boolean}[]>();
+  for (const [src, dst] of opts.edges ?? []) {
     if (!depsBySource.has(src)) depsBySource.set(src, []);
     depsBySource.get(src)!.push({id: `${src}->${dst}`, target: dst});
+  }
+  for (const [src, dst] of opts.asyncEdges ?? []) {
+    if (!depsBySource.has(src)) depsBySource.set(src, []);
+    depsBySource.get(src)!.push({id: `${src}->${dst}`, target: dst, isAsync: true});
   }
 
   return {
@@ -90,7 +92,14 @@ function makeMockGraph(opts: {assets: string[]; edges: [string, string][]}) {
       }
     ],
     getDependencies: (asset: {filePath: string}) => depsBySource.get(asset.filePath) ?? [],
-    getResolvedAsset: (dep: {target: string}, _bundle: unknown) => assetById.get(dep.target) ?? null
+    getResolvedAsset: (dep: {target: string; isAsync?: boolean}, _bundle: unknown) =>
+      dep.isAsync ? null : (assetById.get(dep.target) ?? null),
+    resolveAsyncDependency: (dep: {target: string; isAsync?: boolean}, _bundle: unknown) => {
+      if (!dep.isAsync) return null;
+      const target = assetById.get(dep.target);
+      return target ? {type: 'asset', value: target} : null;
+    },
+    getAssetById: (id: string) => assetById.get(id)
   } as any;
 }
 
@@ -163,6 +172,17 @@ describe('buildStatsMap', () => {
     });
     const m = buildStatsMap(g, root);
     expect(m.get('./TagGroup.tsx')!.reasons).toEqual([]);
+  });
+
+  test('resolves async deps past Parcel runtime wrappers to the target asset', () => {
+    // Real Parcel: getResolvedAsset on an async dep returns the @parcel/runtime-js
+    // wrapper, not the target. resolveAsyncDependency unwraps to the real asset.
+    const g = makeMockGraph({
+      assets: ['./entry.js', './Foo.stories.tsx'],
+      asyncEdges: [['./entry.js', './Foo.stories.tsx']]
+    });
+    const m = buildStatsMap(g, root);
+    expect(m.get('./Foo.stories.tsx')?.reasons).toEqual([{moduleName: './entry.js'}]);
   });
 });
 
@@ -291,44 +311,16 @@ describe('writeStats — happy path', () => {
 
 describe('addStoryEntries', () => {
   const CSF_GLOB = './parcel-csf-glob.js';
+  const CANONICAL = './storybook-stories.js';
 
-  test('tags .stories.tsx files with the synthetic CSF-glob entry', () => {
-    const m = new Map<string, Module>([
-      [
-        './packages/foo/Accordion.stories.tsx',
-        {
-          id: './packages/foo/Accordion.stories.tsx',
-          name: './packages/foo/Accordion.stories.tsx',
-          reasons: []
-        }
-      ]
-    ]);
-    addStoryEntries(m);
-    expect(m.get('./packages/foo/Accordion.stories.tsx')!.reasons).toEqual([
-      {moduleName: CSF_GLOB}
-    ]);
-  });
-
-  test('inserts the synthetic CSF-glob node with ./storybook-stories.js as its reason', () => {
-    const m = new Map<string, Module>([
-      ['./Foo.stories.tsx', {id: './Foo.stories.tsx', name: './Foo.stories.tsx', reasons: []}]
-    ]);
-    addStoryEntries(m);
-    expect(m.get(CSF_GLOB)).toEqual({
-      id: CSF_GLOB,
-      name: CSF_GLOB,
-      reasons: [{moduleName: './storybook-stories.js'}]
-    });
-  });
-
-  test('does not add a duplicate reason if already present', () => {
+  test('rewrites the storybook-stories.js reason on a story file to the synthetic glob', () => {
     const m = new Map<string, Module>([
       [
         './Foo.stories.tsx',
         {
           id: './Foo.stories.tsx',
           name: './Foo.stories.tsx',
-          reasons: [{moduleName: CSF_GLOB}]
+          reasons: [{moduleName: CANONICAL}]
         }
       ]
     ]);
@@ -336,28 +328,50 @@ describe('addStoryEntries', () => {
     expect(m.get('./Foo.stories.tsx')!.reasons).toEqual([{moduleName: CSF_GLOB}]);
   });
 
-  test('matches .stories.{js,jsx,mjs,ts,tsx} extensions', () => {
-    const names = [
-      './a.stories.js',
-      './b.stories.jsx',
-      './c.stories.mjs',
-      './d.stories.ts',
-      './e.stories.tsx'
-    ];
-    const m = new Map<string, Module>(names.map(n => [n, {id: n, name: n, reasons: []}]));
-    addStoryEntries(m);
-    for (const n of names) {
-      expect(m.get(n)!.reasons).toEqual([{moduleName: CSF_GLOB}]);
-    }
-  });
-
-  test('does not touch non-story files', () => {
+  test('inserts the synthetic CSF-glob node with ./storybook-stories.js as its reason', () => {
     const m = new Map<string, Module>([
-      ['./Button.tsx', {id: './Button.tsx', name: './Button.tsx', reasons: []}],
-      ['./not-a-story.txt', {id: './not-a-story.txt', name: './not-a-story.txt', reasons: []}]
+      [
+        './Foo.stories.tsx',
+        {
+          id: './Foo.stories.tsx',
+          name: './Foo.stories.tsx',
+          reasons: [{moduleName: CANONICAL}]
+        }
+      ]
     ]);
     addStoryEntries(m);
+    expect(m.get(CSF_GLOB)).toEqual({
+      id: CSF_GLOB,
+      name: CSF_GLOB,
+      reasons: [{moduleName: CANONICAL}]
+    });
+  });
+
+  test('preserves other reasons besides storybook-stories.js', () => {
+    const m = new Map<string, Module>([
+      [
+        './Foo.stories.tsx',
+        {
+          id: './Foo.stories.tsx',
+          name: './Foo.stories.tsx',
+          reasons: [{moduleName: CANONICAL}, {moduleName: './docs.mdx'}]
+        }
+      ]
+    ]);
+    addStoryEntries(m);
+    expect(m.get('./Foo.stories.tsx')!.reasons).toEqual([
+      {moduleName: CSF_GLOB},
+      {moduleName: './docs.mdx'}
+    ]);
+  });
+
+  test('does nothing and skips synthetic node insertion when no story files match', () => {
+    const m = new Map<string, Module>([
+      ['./Button.tsx', {id: './Button.tsx', name: './Button.tsx', reasons: []}]
+    ]);
+    const tagged = addStoryEntries(m);
+    expect(tagged).toBe(0);
     expect(m.get('./Button.tsx')!.reasons).toEqual([]);
-    expect(m.get('./not-a-story.txt')!.reasons).toEqual([]);
+    expect(m.has(CSF_GLOB)).toBe(false);
   });
 });

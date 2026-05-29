@@ -48,12 +48,15 @@ describe('integration: real Parcel build emits preview-stats.json', () => {
       }
     });
 
-    // The fixture has no storybook-resolver stories.js virtual, but it does include
-    // Button.stories.tsx. addStoryEntries bridges the gap by inserting a synthetic
-    // CSF-glob node and tagging .stories.* assets with it. Verify:
+    // The fixture mirrors the production setup: preview.js imports a stories.js
+    // entry at storybook-builder-parcel/generated-entries/stories.js, which
+    // async-imports Button.stories.tsx. After buildStatsMap (with
+    // resolveAsyncDependency unwrapping the runtime wrapper), rewriteStoryVirtuals
+    // renames the entry to ./storybook-stories.js, and addStoryEntries rewrites
+    // the story file's reason to point at the synthetic ./parcel-csf-glob.js.
+    // Verify the three-level chain chromatic-cli's traversal expects:
     //   1. The CSF-glob node exists and has ./storybook-stories.js as a reason
     //   2. At least one .stories.* file has the CSF-glob node as a reason
-    // This is the three-level chain chromatic-cli's traversal expects.
     await parcel.run();
     const statsPath = path.join(distDir, 'preview-stats.json');
     expect(fs.existsSync(statsPath)).toBe(true);

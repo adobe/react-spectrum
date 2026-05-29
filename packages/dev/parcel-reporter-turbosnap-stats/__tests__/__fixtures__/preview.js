@@ -1,2 +1,2 @@
-import {Button} from './Button.stories.tsx';
-console.log(Button);
+import stories from './storybook-builder-parcel/generated-entries/stories.js';
+console.log(stories);
