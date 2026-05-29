@@ -135,6 +135,7 @@ jobs:
       - name: Summarize and post to Slack
         env:
           SLACK_TSDIFF_CHROMATIC_BOT_TOKEN: ${{ secrets.SLACK_TSDIFF_CHROMATIC_BOT_TOKEN }}
+          SLACK_CHANNEL_ID: ${{ secrets.SLACK_CHANNEL_ID }}
           TEST_SLACK_ID: ${{ secrets.TEST_SLACK_ID }}
           GITHUB_TOKEN: ${{ github.token }}
         run: |
