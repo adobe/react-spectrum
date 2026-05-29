@@ -35,7 +35,7 @@ const meta: Meta<typeof MessageSource> = {
     },
     children: {table: {disable: true}}
   },
-  title: 'MessageSource'
+  title: 'S2-AI/MessageSource'
 };
 
 export default meta;

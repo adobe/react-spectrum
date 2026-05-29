@@ -38,7 +38,7 @@ const meta: Meta<typeof ResponseStatus> = {
   args: {
     isLoading: true
   },
-  title: 'ResponseStatus'
+  title: 'S2-AI/ResponseStatus'
 };
 
 export default meta;
