@@ -102,6 +102,19 @@ Then apply the standard formatting rules:
 - TypeScript fixes for non-public or internal files (e.g. `page.css` type stubs)
 - Internal tooling, lint migrations, script changes
 
+**Check whether a bug fix is a follow-up for a change introduced in this same release.** When processing a commit that is labeled `fix:` or is otherwise clearly a bug fix, fetch the PR body and title:
+
+```bash
+gh pr view <number> --json title,body
+```
+
+Scan the title and body for references to other PRs — patterns like `#1234`, `PR #1234`, `follow-up to #1234`, `follow up for #1234`, `introduced in #1234`, `regression from #1234`, `broken by #1234`, `related to #1234`. If you find one or more referenced PR numbers, check whether any of those numbers appear in the current release's commit list (the flat list in `## Changelog` before your rewrite).
+
+- **Referenced PR is in this release** → the bug was introduced and fixed within the same release cycle, so users on the previous release never experienced it. Drop this fix bullet using `follow-up refinement of [PR](url)` as the reason (see §3.5 drop notes). Do not mention the bug in the original PR's bullet — the net user-visible effect is just the original change working correctly.
+- **Referenced PR is not in this release (or no cross-reference found)** → the bug is a real prod regression that users on the current release could hit. Keep it as a standalone bullet, following the standard framing and tense rules.
+
+This check matters because surfacing a "fix" for something that was never actually released as broken misleads users about what they should expect. When in doubt (ambiguous reference, cross-repo link), keep the bullet and treat it as a real fix.
+
 **Do not drop docs commits without checking the files.** A commit prefixed `docs:` or containing "docs" in the message is not automatically internal. Before dropping, fetch `gh pr view <n> --json body,files` and scan:
 - **New user-facing guides or how-tos on component pages** (e.g. a "Client side routing" section added to `Link.mdx`, a migration guide, an accessibility pattern explanation): include if a library user would find it directly actionable. Write the bullet as "Add [topic] guide to [Component] documentation".
 - **Starter template changes** (`starters/docs/src/`, `starters/tailwind/src/`): these power the docs site examples, not standalone copyable files — treat changes here as docs site fixes.
