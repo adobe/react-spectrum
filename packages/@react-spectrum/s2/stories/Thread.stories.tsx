@@ -510,17 +510,10 @@ export function StreamingThread() {
     setTimeout(() => addTool('Searching'), (timestamp += 1000));
     setTimeout(() => completeTool(), (timestamp += toolCallDuration));
     setTimeout(
-      () => {
-        setMessages(prev => [
-          ...prev,
-          {
-            id: nextId.current++,
-            type: 'system',
-            content:
-              'I found some relevant assets that match your request. Let me pull up the details.'
-          }
-        ]);
-      },
+      () =>
+        streamText(
+          'I found some relevant assets that match your request. Let me pull up the details.'
+        ),
       (timestamp += 1000)
     );
 

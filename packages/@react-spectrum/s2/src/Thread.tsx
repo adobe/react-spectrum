@@ -143,6 +143,9 @@ interface ThreadItemProps extends Pick<GridListItemProps, 'className' | 'childre
 export function ThreadItem(props: ThreadItemProps) {
   let {className, children, textValue = ' ', isStreaming, shouldAnnounceOnMount} = props;
 
+  // TODO: using aria-live on the gridlist item was pretty chatty and the streaming causes the text announcement
+  // to constantly reset. If we used a live region and updated its contents when streaming finished that worked decently
+  // but still feels quite verbose. Stick with this and get feedback
   useLayoutEffect(() => {
     if ((isStreaming === undefined || shouldAnnounceOnMount) && textValue && textValue !== ' ') {
       announce(textValue, 'polite');
