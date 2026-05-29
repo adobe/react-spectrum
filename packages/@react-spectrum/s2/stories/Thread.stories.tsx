@@ -214,6 +214,7 @@ let initialResponses = [
 export function DynamicThread() {
   let [messages, setMessages] = useState<Message[]>(initialResponses);
   let nextId = useRef(initialResponses.length);
+  let promptRef = useRef<HTMLDivElement>(null);
   let lastMessage = messages.at(-1);
   let isPending = lastMessage?.type === 'status' && lastMessage.status === 'pending';
 
@@ -247,7 +248,7 @@ export function DynamicThread() {
         gap: 32,
         height: '100%'
       })}>
-      <Thread items={[...messages].reverse()}>
+      <Thread items={[...messages].reverse()} fieldRef={promptRef}>
         {msg => {
           if (msg.type === 'user') {
             return <UserMessage textValue={msg.content}>{msg.content}</UserMessage>;
@@ -265,7 +266,9 @@ export function DynamicThread() {
           );
         }}
       </Thread>
-      <PromptField onSend={handleSend} isDisabled={isPending} />
+      <div ref={promptRef}>
+        <PromptField onSend={handleSend} isDisabled={isPending} />
+      </div>
     </div>
   );
 }
@@ -439,6 +442,7 @@ export function StreamingThread() {
     initialResponses as StreamingMessage[]
   );
   let nextId = useRef(initialResponses.length);
+  let promptRef = useRef<HTMLDivElement>(null);
   let lastMessage = messages.at(-1);
   let isDisabled =
     lastMessage?.type === 'status' ||
@@ -570,7 +574,7 @@ export function StreamingThread() {
         gap: 32,
         height: '100%'
       })}>
-      <Thread items={[...messages].reverse()}>
+      <Thread items={[...messages].reverse()} fieldRef={promptRef}>
         {(msg: StreamingMessage) => {
           if (msg.type === 'user') {
             return <UserMessage textValue={msg.content}>{msg.content}</UserMessage>;
@@ -603,7 +607,9 @@ export function StreamingThread() {
           );
         }}
       </Thread>
-      <PromptField onSend={handleSend} isDisabled={!!isDisabled} />
+      <div ref={promptRef}>
+        <PromptField onSend={handleSend} isDisabled={!!isDisabled} />
+      </div>
     </div>
   );
 }
