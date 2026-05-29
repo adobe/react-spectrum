@@ -10,11 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionButton} from '../src/ActionButton';
-import {ActionMenu} from '../src/ActionMenu';
-import {AssetCard} from '../src/Card';
-import {baseColor, css, focusRing, style} from '../style' with {type: 'macro'};
-import {Button} from '../src/Button';
+import {ActionButton} from '@react-spectrum/s2/ActionButton';
+import {ActionMenu} from '@react-spectrum/s2/ActionMenu';
+import {AssetCard, Card, CardPreview} from '@react-spectrum/s2/Card';
+import {baseColor, css, focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {Button} from '@react-spectrum/s2/Button';
 import {
   ButtonContext,
   GridList,
@@ -28,27 +28,32 @@ import {
   TextField,
   useDrop
 } from 'react-aria-components';
-import {Card, CardPreview} from '../src/Card';
 import CheckmarkCircle from '@react-spectrum/s2/icons/CheckmarkCircle';
-import ChevronDown from '../s2wf-icons/S2_Icon_ChevronDown_20_N.svg';
+import ChevronDown from '@react-spectrum/s2/icons/ChevronDown';
 import ChevronRight from '@react-spectrum/s2/icons/ArrowCurved';
-import {CloseButton} from '../src/CloseButton';
-import {Content, Text} from '../src/Content';
-import {Disclosure, DisclosureHeader, DisclosurePanel, DisclosureTitle} from '../src/Disclosure';
-import {Image} from '../src/Image';
-import {Link, LinkProps} from '../src/Link';
+import {CloseButton} from '@react-spectrum/s2/CloseButton';
+import {Content} from '@react-spectrum/s2/Content';
+import {
+  Disclosure,
+  DisclosureHeader,
+  DisclosurePanel,
+  DisclosureTitle
+} from '@react-spectrum/s2/Disclosure';
+import {Image} from '@react-spectrum/s2/Image';
+import {Link, LinkProps} from '@react-spectrum/s2/Link';
 import {ListLayout} from 'react-stately/useVirtualizerState';
-import {MenuItem} from '../src/Menu';
+import {MenuItem} from '@react-spectrum/s2/Menu';
 import type {Meta} from '@storybook/react';
 import Plus from '@react-spectrum/s2/icons/Add';
-import {ProgressCircle} from '../src/ProgressCircle';
+import {ProgressCircle} from '@react-spectrum/s2/ProgressCircle';
 import {ReactNode, useRef, useState} from 'react';
 import Send from '@react-spectrum/s2/icons/ArrowUpSend';
+import {Text} from '@react-spectrum/s2/Text';
 import {Thread, ThreadItem, ThreadList, ThreadScrollButton} from '../src/Thread';
 import ThumbDown from '@react-spectrum/s2/icons/ThumbDown';
 import ThumbUp from '@react-spectrum/s2/icons/ThumbUp';
-import {ToggleButton} from '../src/ToggleButton';
-import {ToggleButtonGroup} from '../src/ToggleButtonGroup';
+import {ToggleButton} from '@react-spectrum/s2/ToggleButton';
+import {ToggleButtonGroup} from '@react-spectrum/s2/ToggleButtonGroup';
 import {Virtualizer} from 'react-aria-components/Virtualizer';
 
 const meta: Meta<typeof Thread> = {
@@ -57,7 +62,7 @@ const meta: Meta<typeof Thread> = {
     layout: 'centered'
   },
   tags: ['autodocs'],
-  title: 'Thread',
+  title: 'S2-AI/Thread',
   decorators: [
     Story => (
       <div style={{width: '800px', height: '700px'}}>
@@ -68,7 +73,6 @@ const meta: Meta<typeof Thread> = {
 };
 
 export default meta;
-// type Story = StoryObj<typeof Thread>;
 
 export function StaticThread() {
   // TODO: problem with this is that we are applying column reverse so tabbing into the collection brings you to the "bottom" item
