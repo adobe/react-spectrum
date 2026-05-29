@@ -83,7 +83,6 @@ export function useTag<T>(
         } else {
           onRemove?.(new Set([item.key]));
         }
-        return true;
       },
       Backspace: () => {
         if (state.selectionManager.isSelected(item.key)) {
@@ -91,7 +90,6 @@ export function useTag<T>(
         } else {
           onRemove?.(new Set([item.key]));
         }
-        return true;
       }
     }
   });

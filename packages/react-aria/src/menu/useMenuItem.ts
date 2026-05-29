@@ -325,7 +325,6 @@ export function useMenuItem<T>(
         // click above sets modality to "virtual", need to set interaction modality back to 'keyboard' so focusSafely calls properly move focus
         // to the newly opened submenu's first item.
         setInteractionModality('keyboard');
-        return true;
       },
       Enter: e => {
         if (e.repeat) {
@@ -341,7 +340,7 @@ export function useMenuItem<T>(
         if (target.tagName !== 'A') {
           target.click();
           setInteractionModality('keyboard');
-          return true;
+          return;
         }
 
         setInteractionModality('keyboard');

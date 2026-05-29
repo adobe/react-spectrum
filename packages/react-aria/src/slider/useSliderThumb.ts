@@ -147,7 +147,6 @@ export function useSliderThumb(opts: AriaSliderThumbOptions, state: SliderState)
     state.setThumbDragging(index, true);
     cb();
     state.setThumbDragging(index, false);
-    return true;
   };
 
   let {keyboardProps} = useKeyboard({

@@ -119,7 +119,6 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
     state.setDragging(false);
     focusInput(inputRef);
     setFocusedInput(input);
-    return true;
   };
 
   let {keyboardProps} = useKeyboard({

@@ -251,28 +251,24 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(
           return false;
         }
         state.open('first', 'manual');
-        return true;
       },
       ArrowUp: e => {
         if (e.nativeEvent.isComposing) {
           return false;
         }
         state.open('last', 'manual');
-        return true;
       },
       ArrowLeft: e => {
         if (e.nativeEvent.isComposing) {
           return false;
         }
         state.selectionManager.setFocusedKey(null);
-        return true;
       },
       ArrowRight: e => {
         if (e.nativeEvent.isComposing) {
           return false;
         }
         state.selectionManager.setFocusedKey(null);
-        return true;
       }
     }
   });

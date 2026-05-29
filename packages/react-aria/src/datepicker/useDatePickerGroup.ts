@@ -26,7 +26,6 @@ export function useDatePickerGroup(
         }
         if ('setOpen' in state) {
           state.setOpen(true);
-          return true;
         }
         return false;
       },
@@ -36,7 +35,6 @@ export function useDatePickerGroup(
         }
         if ('setOpen' in state) {
           state.setOpen(true);
-          return true;
         }
         return false;
       },
@@ -55,12 +53,12 @@ export function useDatePickerGroup(
 
             if (prev) {
               prev.focus();
-              return true;
+              return;
             }
           }
         } else {
           focusManager.focusPrevious();
-          return true;
+          return;
         }
         return false;
       },
@@ -79,12 +77,12 @@ export function useDatePickerGroup(
 
             if (next) {
               next.focus();
-              return true;
+              return;
             }
           }
         } else {
           focusManager.focusNext();
-          return true;
+          return;
         }
         return false;
       }

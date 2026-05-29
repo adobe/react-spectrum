@@ -81,11 +81,11 @@ export function useSpinButton(props: SpinButtonProps): SpinbuttonAria {
         }
         if (onIncrementPage) {
           onIncrementPage();
-          return true;
+          return;
         }
         if (onIncrement) {
           onIncrement();
-          return true;
+          return;
         }
         return false;
       },
@@ -95,7 +95,7 @@ export function useSpinButton(props: SpinButtonProps): SpinbuttonAria {
         }
         if (onIncrement) {
           onIncrement();
-          return true;
+          return;
         }
         return false;
       },
@@ -105,11 +105,11 @@ export function useSpinButton(props: SpinButtonProps): SpinbuttonAria {
         }
         if (onDecrementPage) {
           onDecrementPage();
-          return true;
+          return;
         }
         if (onDecrement) {
           onDecrement();
-          return true;
+          return;
         }
         return false;
       },
@@ -119,7 +119,7 @@ export function useSpinButton(props: SpinButtonProps): SpinbuttonAria {
         }
         if (onDecrement) {
           onDecrement();
-          return true;
+          return;
         }
         return false;
       },
@@ -129,7 +129,7 @@ export function useSpinButton(props: SpinButtonProps): SpinbuttonAria {
         }
         if (onDecrementToMin) {
           onDecrementToMin();
-          return true;
+          return;
         }
         return false;
       },
@@ -139,7 +139,7 @@ export function useSpinButton(props: SpinButtonProps): SpinbuttonAria {
         }
         if (onIncrementToMax) {
           onIncrementToMax();
-          return true;
+          return;
         }
         return false;
       }

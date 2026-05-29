@@ -130,16 +130,13 @@ export function useDateSegment(
     shortcuts: {
       Backspace: () => {
         backspace();
-        return true;
       },
       Delete: () => {
         backspace();
-        return true;
       },
       'Mod+a': () => {
         // Firefox does not fire selectstart for Ctrl/Cmd + A
         // https://bugzilla.mozilla.org/show_bug.cgi?id=1742153
-        return true;
       }
     }
   });

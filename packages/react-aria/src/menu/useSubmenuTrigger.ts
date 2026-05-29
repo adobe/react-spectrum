@@ -141,7 +141,7 @@ export function useSubmenuTrigger<T>(
           if (!shouldUseVirtualFocus && ref.current) {
             focusWithoutScrolling(ref.current);
           }
-          return true;
+          return;
         }
         return false;
       },
@@ -154,7 +154,7 @@ export function useSubmenuTrigger<T>(
           if (!shouldUseVirtualFocus && ref.current) {
             focusWithoutScrolling(ref.current);
           }
-          return true;
+          return;
         }
         return false;
       },
@@ -167,7 +167,7 @@ export function useSubmenuTrigger<T>(
           if (!shouldUseVirtualFocus && ref.current) {
             focusWithoutScrolling(ref.current);
           }
-          return true;
+          return;
         }
         return false;
       }
@@ -197,10 +197,10 @@ export function useSubmenuTrigger<T>(
             if (type === 'menu' && !!submenuRef?.current && getActiveElement() === ref?.current) {
               focusWithoutScrolling(submenuRef.current);
             }
-            return true;
+            return;
           } else if (state.isOpen) {
             onSubmenuClose();
-            return true;
+            return;
           } else {
             return false;
           }
@@ -217,10 +217,10 @@ export function useSubmenuTrigger<T>(
             if (type === 'menu' && !!submenuRef?.current && getActiveElement() === ref?.current) {
               focusWithoutScrolling(submenuRef.current);
             }
-            return true;
+            return;
           } else if (state.isOpen) {
             onSubmenuClose();
-            return true;
+            return;
           } else {
             return false;
           }

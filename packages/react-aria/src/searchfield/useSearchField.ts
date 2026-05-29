@@ -70,12 +70,12 @@ export function useSearchField(
     shortcuts: {
       Enter: () => {
         if (isDisabled || isReadOnly) {
-          return true;
+          return;
         } else if (onSubmit) {
           // for backward compatibility;
           // otherwise, "Enter" on an input would trigger a form submit, the default browser behavior
           onSubmit(state.value);
-          return true;
+          return;
         }
         return false;
       },
@@ -87,11 +87,9 @@ export function useSearchField(
         // the hook
         if (state.value === '' && (!inputRef.current || inputRef.current.value === '')) {
           return false;
-        } else {
-          state.setValue('');
-          onClear?.();
-          return true;
         }
+        state.setValue('');
+        onClear?.();
       }
     }
   });

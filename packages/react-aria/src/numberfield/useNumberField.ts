@@ -268,7 +268,6 @@ export function useNumberField(
           commit();
         });
         commitValidation();
-        return true;
       }
     },
     onKeyDown,

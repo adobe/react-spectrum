@@ -145,7 +145,7 @@ export function useTableColumnResize<T>(
   let endResizeEvent = () => {
     if (editModeEnabled) {
       endResize(item);
-      return true;
+      return;
     }
     return false;
   };
@@ -158,10 +158,8 @@ export function useTableColumnResize<T>(
       Enter: () => {
         if (editModeEnabled) {
           endResize(item);
-          return true;
         } else {
           startResize(item);
-          return true;
         }
       },
       ' ': () => {

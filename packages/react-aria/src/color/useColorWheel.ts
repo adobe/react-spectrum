@@ -80,13 +80,11 @@ export function useColorWheel(
         state.setDragging(true);
         state.increment(state.pageStep);
         state.setDragging(false);
-        return true;
       },
       PageDown: () => {
         state.setDragging(true);
         state.decrement(state.pageStep);
         state.setDragging(false);
-        return true;
       }
     }
   });

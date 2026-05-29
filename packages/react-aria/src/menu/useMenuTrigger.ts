@@ -63,12 +63,11 @@ export function useMenuTrigger<T>(
     shouldOpen: boolean,
     e: KeyboardEvent,
     focusStrategy: FocusStrategy = 'first'
-  ): boolean => {
+  ): boolean | void => {
     if (!shouldOpen || e.isDefaultPrevented()) {
       return false;
     }
     state.toggle(focusStrategy);
-    return true;
   };
 
   // React puts listeners on the same root, so even if propagation was stopped, immediate propagation is still possible.

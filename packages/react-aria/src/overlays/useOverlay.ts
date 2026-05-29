@@ -131,7 +131,7 @@ export function useOverlay(props: AriaOverlayProps, ref: RefObject<Element | nul
       Escape: e => {
         if (!isKeyboardDismissDisabled && !e.nativeEvent.isComposing) {
           onHide();
-          return true;
+          return;
         }
         return false;
       }

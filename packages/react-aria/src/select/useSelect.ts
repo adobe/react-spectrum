@@ -150,7 +150,6 @@ export function useSelect<T, M extends SelectionMode = 'single'>(
         if (key != null) {
           state.setSelectedKey(key);
         }
-        return true;
       },
       ArrowRight: () => {
         if (state.selectionManager.selectionMode === 'multiple') {
@@ -163,7 +162,6 @@ export function useSelect<T, M extends SelectionMode = 'single'>(
         if (key != null) {
           state.setSelectedKey(key);
         }
-        return true;
       }
     },
     onKeyDown: props.onKeyDown,
