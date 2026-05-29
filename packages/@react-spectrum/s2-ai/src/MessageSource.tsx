@@ -157,7 +157,7 @@ export const SourceListItem = (forwardRef as forwardRefType)(function SourceList
   );
 });
 
-export interface NumberBadgeStyleProps {
+interface NumberBadgeStyleProps {
   /**
    * The size of the number badge.
    *
