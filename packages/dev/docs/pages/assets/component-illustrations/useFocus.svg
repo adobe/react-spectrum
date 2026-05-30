@@ -1,0 +1,9 @@
+<svg style="background:var(--anatomy-gray-100); padding: calc((152px - 30px) / 2) 10px" height="30" viewBox="0 0 200 30">
+  <rect id="Placement_Area" data-name="Placement Area" width="200" height="30" fill="red" opacity="0"/>
+  <g id="Field" fill="var(--anatomy-gray-50)" stroke="var(--anatomy-gray-600)" stroke-width="2">
+    <rect width="200" height="30" rx="5" stroke="none"/>
+    <rect x="1" y="1" width="198" height="28" rx="4" fill="none"/>
+  </g>
+  <text id="Text" transform="translate(11 20)" fill="var(--anatomy-gray-900)" font-size="10" font-family="var(--anatomy-font)"><tspan x="0" y="0"> </tspan></text>
+  <rect id="Caret" width="1" height="19" transform="translate(11 5)" fill="var(--anatomy-gray-900)"/>
+</svg>

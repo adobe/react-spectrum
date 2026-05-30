@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Comments out getValueLabel 1`] = `
+"import { RangeSlider } from "@react-spectrum/s2";
+
+// TODO(S2-upgrade): getValueLabel has not been implemented yet.
+<RangeSlider label="Range" defaultValue={{ start: 12, end: 36 }} />"
+`;
+
+exports[`Comments out orientation 1`] = `
+"import { RangeSlider } from "@react-spectrum/s2";
+
+// TODO(S2-upgrade): orientation has not been implemented yet.
+<RangeSlider label="Range" defaultValue={{ start: 12, end: 36 }} />"
+`;
+
+exports[`Removes showValueLabel 1`] = `
+"import { RangeSlider } from "@react-spectrum/s2";
+
+<RangeSlider label="Range" defaultValue={{ start: 12, end: 36 }} />"
+`;

@@ -1,0 +1,27 @@
+<svg style="background:var(--anatomy-gray-100); padding: calc((152px - 56px) / 2) 10px" height="56" viewBox="0 0 176 56">
+  <rect id="Placement_Area" data-name="Placement Area" width="176" height="56" fill="red" opacity="0"/>
+  <g id="Label">
+    <rect id="Placement_Area-2" data-name="Placement Area" width="33" height="24" fill="red" opacity="0"/>
+    <text id="Text" transform="translate(0 16)" fill="var(--anatomy-gray-700)" font-size="12" font-family="var(--anatomy-font)"><tspan x="0" y="0">Search</tspan></text>
+  </g>
+  <g id="Field" transform="translate(0 24)" fill="var(--anatomy-gray-50)" stroke="var(--anatomy-gray-400)" stroke-width="1">
+    <rect width="176" height="32" rx="4" stroke="none"/>
+    <rect x="0.5" y="0.5" width="175" height="31" rx="3.5" fill="none"/>
+  </g>
+  <text id="Text-2" data-name="Text" transform="translate(31 44)" fill="var(--anatomy-gray-800)" font-size="14" font-family="var(--anatomy-font)"><tspan x="0" y="0">Hawaii</tspan></text>
+  <g id="Close_Button" data-name="Close Button" transform="translate(144 24)">
+    <rect id="Placement_Area-3" data-name="Placement Area" width="32" height="32" fill="red" opacity="0"/>
+    <circle id="Background" cx="16" cy="16" r="16" fill="rgba(0,0,0,0)"/>
+    <g id="Icon">
+      <rect id="Frame" width="8" height="8" transform="translate(12 12)" fill="var(--anatomy-gray-700)" opacity="0"/>
+      <path id="Path_3124" data-name="Path 3124" d="M5.238,4,7.694,1.544A.875.875,0,0,0,6.457.306L4,2.762,1.543.306A.875.875,0,0,0,.306,1.544L2.762,4,.306,6.456A.875.875,0,1,0,1.543,7.694L4,5.238,6.457,7.694A.875.875,0,1,0,7.694,6.456Z" transform="translate(12 12)" fill="var(--anatomy-gray-700)"/>
+    </g>
+  </g>
+  <g id="Decorative_icon" data-name="Decorative icon" transform="translate(8 32)">
+    <rect id="Placement_Area-4" data-name="Placement Area" width="16" height="16" fill="red" opacity="0"/>
+    <g id="Icon-2" data-name="Icon">
+      <rect id="Canvas" width="16" height="16" fill="var(--anatomy-gray-700)" opacity="0"/>
+      <path id="Path_3125" data-name="Path 3125" d="M14.863,13.548l-3.455-3.454a5.7,5.7,0,1,0-1.314,1.314l3.454,3.454a.933.933,0,0,0,1.315-1.315ZM2.786,6.786a4,4,0,1,1,4,4,4,4,0,0,1-4-4Z" transform="translate(-0.119 -0.119)" fill="var(--anatomy-gray-700)"/>
+    </g>
+  </g>
+</svg>

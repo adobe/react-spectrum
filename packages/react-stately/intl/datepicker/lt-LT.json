@@ -1,0 +1,6 @@
+{
+  "rangeOverflow": "Reikšmė turi būti {maxValue} arba ankstesnė.",
+  "rangeReversed": "Pradžios data turi būti ankstesnė nei pabaigos data.",
+  "rangeUnderflow": "Reikšmė turi būti {minValue} arba naujesnė.",
+  "unavailableDate": "Pasirinkta data nepasiekiama."
+}

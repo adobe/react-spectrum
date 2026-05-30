@@ -1,0 +1,273 @@
+/*
+ * Copyright 2024 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
+import {act} from './act';
+import {formatTargetNode} from './utils';
+import {SelectTesterOpts, UserOpts} from './types';
+import {waitFor, within} from '@testing-library/dom';
+
+interface SelectOpenOpts {
+  /**
+   * What interaction type to use when opening the select. Defaults to the interaction type set on
+   * the tester.
+   */
+  interactionType?: UserOpts['interactionType'];
+}
+
+interface SelectTriggerOptionOpts extends SelectOpenOpts {
+  /**
+   * The index, text, or node of the option to select. Option nodes can be sourced via
+   * `getOptions()`.
+   */
+  option: number | string | HTMLElement;
+  /**
+   * Whether or not the select closes on selection. Depends on select implementation and
+   * configuration.
+   *
+   * @default true
+   */
+  closesOnSelect?: boolean;
+}
+
+export class SelectTester {
+  private user;
+  private _interactionType: UserOpts['interactionType'];
+  private _trigger: HTMLElement;
+
+  constructor(opts: SelectTesterOpts) {
+    let {root, user, interactionType} = opts;
+    this.user = user;
+    this._interactionType = interactionType || 'mouse';
+    // Handle case where the wrapper element is provided rather than the Select's button (aka RAC)
+    let buttons = within(root).queryAllByRole('button');
+    let triggerButton;
+    if (buttons.length === 0) {
+      triggerButton = root;
+    } else if (buttons.length === 1) {
+      triggerButton = buttons[0];
+    } else {
+      triggerButton = buttons.find(button => button.hasAttribute('aria-haspopup'));
+    }
+
+    this._trigger = triggerButton ?? root;
+  }
+  /**
+   * Set the interaction type used by the select tester.
+   */
+  setInteractionType(type: UserOpts['interactionType']): void {
+    this._interactionType = type;
+  }
+
+  /**
+   * Opens the select. Defaults to using the interaction type set on the select tester.
+   */
+  async open(opts: SelectOpenOpts = {}): Promise<void> {
+    let {interactionType = this._interactionType} = opts;
+    let trigger = this.getTrigger();
+    let isDisabled = trigger.hasAttribute('disabled');
+
+    if (interactionType === 'mouse') {
+      await this.user.click(this._trigger);
+    } else if (interactionType === 'keyboard') {
+      act(() => trigger.focus());
+      await this.user.keyboard('[Enter]');
+    } else if (interactionType === 'touch') {
+      await this.user.pointer({target: this._trigger, keys: '[TouchA]'});
+    }
+
+    await waitFor(() => {
+      if (!isDisabled && trigger.getAttribute('aria-controls') == null) {
+        throw new Error('No aria-controls found on select element trigger.');
+      } else {
+        return true;
+      }
+    });
+    let listBoxId = trigger.getAttribute('aria-controls');
+    await waitFor(() => {
+      if (!isDisabled && (!listBoxId || document.getElementById(listBoxId) == null)) {
+        throw new Error(`ListBox with id of ${listBoxId} not found in document.`);
+      } else {
+        return true;
+      }
+    });
+  }
+
+  /**
+   * Closes the select.
+   */
+  async close(): Promise<void> {
+    let listbox = this.getListbox();
+    if (listbox) {
+      act(() => listbox.focus());
+      await this.user.keyboard('[Escape]');
+    }
+
+    await waitFor(() => {
+      if (document.activeElement !== this._trigger) {
+        throw new Error(
+          `Expected the document.activeElement after closing the select dropdown to be the select component trigger but got ${document.activeElement}`
+        );
+      } else {
+        return true;
+      }
+    });
+
+    if (listbox && document.contains(listbox)) {
+      throw new Error(
+        'Expected the select element listbox to not be in the document after closing the dropdown.'
+      );
+    }
+  }
+
+  /**
+   * Returns a option matching the specified index or text content.
+   */
+  findOption(opts: {indexOrText: number | string}): HTMLElement {
+    let {indexOrText} = opts;
+
+    let option;
+    let options = this.getOptions();
+    let listbox = this.getListbox();
+
+    if (typeof indexOrText === 'number') {
+      option = options[indexOrText];
+    } else if (typeof indexOrText === 'string' && listbox != null) {
+      option = within(listbox!).getByText(indexOrText).closest('[role=option]')! as HTMLElement;
+    }
+
+    return option;
+  }
+
+  private async keyboardNavigateToOption(opts: {option: HTMLElement}) {
+    let {option} = opts;
+    let options = this.getOptions();
+    let targetIndex = options.indexOf(option);
+    if (targetIndex === -1) {
+      throw new Error('Option provided is not in the listbox');
+    }
+    if (document.activeElement === this.getListbox()) {
+      await this.user.keyboard('[ArrowDown]');
+    }
+    let currIndex = options.indexOf(document.activeElement as HTMLElement);
+    if (currIndex === -1) {
+      throw new Error('ActiveElement is not in the listbox');
+    }
+    let direction = targetIndex > currIndex ? 'down' : 'up';
+
+    for (let i = 0; i < Math.abs(targetIndex - currIndex); i++) {
+      await this.user.keyboard(`[${direction === 'down' ? 'ArrowDown' : 'ArrowUp'}]`);
+    }
+  }
+
+  /**
+   * Toggles the selection of the desired select option if possible. Defaults to using the
+   * interaction type set on the select tester. If necessary, will open the select dropdown
+   * beforehand. The desired option can be targeted via the option's node, the option's text, or the
+   * option's index.
+   */
+  async toggleOptionSelection(opts: SelectTriggerOptionOpts): Promise<void> {
+    let {option, closesOnSelect, interactionType = this._interactionType} = opts || {};
+    let trigger = this.getTrigger();
+    if (!trigger.getAttribute('aria-controls')) {
+      await this.open();
+    }
+    let listbox = this.getListbox();
+    if (!listbox) {
+      throw new Error("Select's listbox not found.");
+    }
+
+    if (typeof option === 'string' || typeof option === 'number') {
+      option = this.findOption({indexOrText: option});
+    }
+
+    if (!option) {
+      throw new Error(`Target option "${formatTargetNode(opts.option)}" not found in the listbox.`);
+    }
+
+    let isMultiSelect = listbox.getAttribute('aria-multiselectable') === 'true';
+    let isSingleSelect = !isMultiSelect;
+    closesOnSelect = closesOnSelect ?? isSingleSelect;
+
+    if (interactionType === 'keyboard') {
+      if (option?.getAttribute('aria-disabled') === 'true') {
+        throw new Error(`Cannot select disabled option "${formatTargetNode(opts.option)}".`);
+      }
+
+      if (document.activeElement !== listbox && !listbox.contains(document.activeElement)) {
+        act(() => listbox.focus());
+      }
+      await this.keyboardNavigateToOption({option});
+      await this.user.keyboard('[Enter]');
+    } else {
+      if (interactionType === 'mouse') {
+        await this.user.click(option);
+      } else {
+        await this.user.pointer({target: option, keys: '[TouchA]'});
+      }
+    }
+
+    if (closesOnSelect && option?.getAttribute('href') == null) {
+      await waitFor(() => {
+        if (document.activeElement !== this._trigger) {
+          throw new Error(
+            `Expected the document.activeElement after selecting an option to be the select component trigger but got ${document.activeElement}`
+          );
+        } else {
+          return true;
+        }
+      });
+
+      if (document.contains(listbox)) {
+        throw new Error(
+          'Expected select element listbox to not be in the document after selecting an option'
+        );
+      }
+    }
+  }
+
+  /**
+   * Returns the select's options if present. Can be filtered to a subsection of the listbox if
+   * provided via `element`.
+   */
+  getOptions(opts: {element?: HTMLElement} = {}): HTMLElement[] {
+    let {element = this.getListbox()} = opts;
+    let options = [];
+    if (element) {
+      options = within(element).queryAllByRole('option');
+    }
+
+    return options;
+  }
+
+  /**
+   * Returns the select's trigger.
+   */
+  getTrigger(): HTMLElement {
+    return this._trigger;
+  }
+
+  /**
+   * Returns the select's listbox if present.
+   */
+  getListbox(): HTMLElement | null {
+    let listBoxId = this.getTrigger().getAttribute('aria-controls');
+    return listBoxId ? document.getElementById(listBoxId) : null;
+  }
+
+  /**
+   * Returns the select's sections if present.
+   */
+  getSections(): HTMLElement[] {
+    let listbox = this.getListbox();
+    return listbox ? within(listbox).queryAllByRole('group') : [];
+  }
+}

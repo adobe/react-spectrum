@@ -1,0 +1,57 @@
+<svg style="background:var(--anatomy-gray-100); padding: calc((152px - 148px) / 2) 10px" height="148" viewBox="0 0 251.999 148">
+  <defs>
+    <filter id="Union_44" x="0" y="0" width="251.999" height="123.001" filterUnits="userSpaceOnUse">
+      <feOffset dy="1" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="2" result="blur"/>
+      <feFlood flood-opacity="0.149"/>
+      <feComposite operator="in" in2="blur"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g id="Popover" transform="translate(-1034.001 -1240)">
+    <g transform="matrix(1, 0, 0, 1, 1034, 1240)" filter="url(#Union_44)">
+      <g id="Union_44-2" data-name="Union 44" transform="translate(-1511 -7412)" fill="var(--anatomy-gray-50)">
+        <path d="M 1604.999633789062 7527.29345703125 L 1597.353881835938 7519.64599609375 L 1597.207397460938 7519.49951171875 L 1597.000244140625 7519.49951171875 L 1521.000366210938 7519.49951171875 C 1519.070678710938 7519.49951171875 1517.500732421875 7517.92919921875 1517.500732421875 7515.99951171875 L 1517.500732421875 7420.9990234375 C 1517.500732421875 7419.0693359375 1519.070678710938 7417.49951171875 1521.000366210938 7417.49951171875 L 1753.000122070312 7417.49951171875 C 1754.929809570312 7417.49951171875 1756.499755859375 7419.0693359375 1756.499755859375 7420.9990234375 L 1756.499755859375 7515.99951171875 C 1756.499755859375 7517.92919921875 1754.929809570312 7519.49951171875 1753.000122070312 7519.49951171875 L 1613.000732421875 7519.49951171875 L 1612.793579101562 7519.49951171875 L 1612.647216796875 7519.64599609375 L 1604.999633789062 7527.29345703125 Z" stroke="none"/>
+        <path d="M 1604.999755859375 7526.58642578125 L 1612.586547851562 7518.99951171875 L 1753.000122070312 7518.99951171875 C 1754.654174804688 7518.99951171875 1755.999755859375 7517.65380859375 1755.999755859375 7515.99951171875 L 1755.999755859375 7420.9990234375 C 1755.999755859375 7419.34521484375 1754.654174804688 7417.99951171875 1753.000122070312 7417.99951171875 L 1521.000366210938 7417.99951171875 C 1519.346313476562 7417.99951171875 1518.000732421875 7419.34521484375 1518.000732421875 7420.9990234375 L 1518.000732421875 7515.99951171875 C 1518.000732421875 7517.65380859375 1519.346313476562 7518.99951171875 1521.000366210938 7518.99951171875 L 1597.41455078125 7518.99951171875 L 1604.999755859375 7526.58642578125 M 1604.999633789062 7528.00048828125 L 1597.000244140625 7519.99951171875 L 1521.000366210938 7519.99951171875 C 1518.791748046875 7519.99951171875 1517.000732421875 7518.20849609375 1517.000732421875 7515.99951171875 L 1517.000732421875 7420.9990234375 C 1517.000732421875 7418.79052734375 1518.791748046875 7416.99951171875 1521.000366210938 7416.99951171875 L 1753.000122070312 7416.99951171875 C 1755.208618164062 7416.99951171875 1756.999755859375 7418.79052734375 1756.999755859375 7420.9990234375 L 1756.999755859375 7515.99951171875 C 1756.999755859375 7518.20849609375 1755.208618164062 7519.99951171875 1753.000122070312 7519.99951171875 L 1613.000732421875 7519.99951171875 L 1604.999633789062 7528.00048828125 Z" stroke="none" fill="var(--anatomy-gray-400)"/>
+      </g>
+    </g>
+    <text id="Header" transform="translate(1052 1253)" fill="var(--anatomy-gray-900)" font-size="15" font-family="var(--anatomy-font)" font-weight="700"><tspan x="0" y="16">Properties</tspan></text>
+    <g id="Action_button" data-name="Action button" transform="translate(1116 1364)">
+      <rect id="Placement_Area" data-name="Placement Area" width="24" height="24" fill="red" opacity="0"/>
+      <g id="Background" fill="var(--anatomy-gray-200)" stroke="var(--anatomy-gray-500)" stroke-width="1">
+        <rect width="24" height="24" rx="4" stroke="none"/>
+        <rect x="0.5" y="0.5" width="23" height="23" rx="3.5" fill="none"/>
+      </g>
+      <g id="Icon">
+        <rect id="Canvas" width="16" height="16" transform="translate(4 4)" fill="var(--anatomy-gray-900)" opacity="0"/>
+        <path id="Path_3131" data-name="Path 3131" d="M15,2.777H7.178a2.222,2.222,0,0,0-4.356,0h-1.6A.222.222,0,0,0,1,3v.444a.222.222,0,0,0,.222.222h1.6a2.222,2.222,0,0,0,4.356,0H15a.222.222,0,0,0,.222-.222V3A.222.222,0,0,0,15,2.777ZM5,4.555A1.333,1.333,0,1,1,6.333,3.222,1.333,1.333,0,0,1,5,4.555Z" transform="translate(3.889 3.889)" fill="var(--anatomy-gray-900)"/>
+        <path id="Path_3132" data-name="Path 3132" d="M15,12.777H8.956a2.222,2.222,0,0,0-4.356,0H1.222A.222.222,0,0,0,1,13v.444a.222.222,0,0,0,.222.222H4.6a2.222,2.222,0,0,0,4.356,0H15a.222.222,0,0,0,.222-.222V13A.222.222,0,0,0,15,12.777ZM6.778,14.555a1.333,1.333,0,1,1,1.333-1.333A1.333,1.333,0,0,1,6.778,14.555Z" transform="translate(3.889 2.778)" fill="var(--anatomy-gray-900)"/>
+        <path id="Path_3133" data-name="Path 3133" d="M1,8v.444a.222.222,0,0,0,.222.222H9.044a2.222,2.222,0,0,0,4.356,0H15a.222.222,0,0,0,.222-.222V8A.222.222,0,0,0,15,7.777H13.4a2.222,2.222,0,0,0-4.356,0H1.222A.222.222,0,0,0,1,8Zm8.889.222a1.333,1.333,0,1,1,1.333,1.333A1.333,1.333,0,0,1,9.889,8.222Z" transform="translate(3.889 3.334)" fill="var(--anatomy-gray-900)"/>
+      </g>
+    </g>
+    <g id="Text_field" data-name="Text field" transform="translate(1052 1281)">
+      <rect id="Placement_Area-2" data-name="Placement Area" width="210" height="24" fill="red" opacity="0"/>
+      <g id="Label">
+        <rect id="Placement_Area-3" data-name="Placement Area" width="29" height="24" fill="red" opacity="0"/>
+        <text id="Text" transform="translate(0 16)" fill="var(--anatomy-gray-700)" font-size="12" font-family="var(--anatomy-font)"><tspan x="0" y="0">Width</tspan></text>
+      </g>
+      <g id="Field" transform="translate(43)" fill="var(--anatomy-gray-50)" stroke="var(--anatomy-gray-400)" stroke-width="1">
+        <rect width="173" height="24" rx="4" stroke="none"/>
+        <rect x="0.5" y="0.5" width="172" height="23" rx="3.5" fill="none"/>
+      </g>
+      <text id="Text-2" data-name="Text" transform="translate(50 16)" fill="var(--anatomy-gray-800)" font-size="12" font-family="var(--anatomy-font)"><tspan x="0" y="0">250 px</tspan></text>
+    </g>
+    <g id="Text_field-2" data-name="Text field" transform="translate(1052.199 1311)">
+      <rect id="Placement_Area-4" data-name="Placement Area" width="216" height="24" transform="translate(-0.199)" fill="red" opacity="0"/>
+      <g id="Label-2" data-name="Label">
+        <rect id="Placement_Area-5" data-name="Placement Area" width="32" height="24" transform="translate(-0.199)" fill="red" opacity="0"/>
+        <text id="Text-3" data-name="Text" transform="translate(-0.199 16)" fill="var(--anatomy-gray-700)" font-size="12" font-family="var(--anatomy-font)"><tspan x="0" y="0">Height</tspan></text>
+      </g>
+      <g id="Field-2" data-name="Field" transform="translate(42.801)" fill="var(--anatomy-gray-50)" stroke="var(--anatomy-gray-400)" stroke-width="1">
+        <rect width="173" height="24" rx="4" stroke="none"/>
+        <rect x="0.5" y="0.5" width="172" height="23" rx="3.5" fill="none"/>
+      </g>
+      <text id="Text-4" data-name="Text" transform="translate(49.801 16)" fill="var(--anatomy-gray-800)" font-size="12" font-family="var(--anatomy-font)"><tspan x="0" y="0">100 px</tspan></text>
+    </g>
+  </g>
+</svg>

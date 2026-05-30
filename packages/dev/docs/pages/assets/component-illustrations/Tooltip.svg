@@ -1,0 +1,21 @@
+<svg style="background:var(--anatomy-gray-100); padding: calc((152px - 66px) / 2) 10px" height="66" viewBox="0 0 39 66">
+  <g id="Tooltip" transform="translate(-1504 -276)">
+    <g id="Tooltip-2" data-name="Tooltip" transform="translate(1504 276)">
+      <rect id="Placement_Area" data-name="Placement Area" width="39" height="24" fill="red" opacity="0"/>
+      <rect id="Background" width="39" height="24" rx="4" fill="var(--anatomy-gray-700)"/>
+      <path id="Tip" d="M-4,0H4L0,4Z" transform="translate(20 24)" fill="var(--anatomy-gray-700)"/>
+      <text id="Text" transform="translate(10 4)" fill="var(--anatomy-gray-50)" font-size="12" font-family="var(--anatomy-font)"><tspan x="0" y="12">Edit</tspan></text>
+    </g>
+    <g id="Action_button" data-name="Action button" transform="translate(1507 310)">
+      <rect id="Placement_Area-2" data-name="Placement Area" width="32" height="32" fill="red" opacity="0"/>
+      <g id="Background-2" data-name="Background" fill="var(--anatomy-gray-50)" stroke="var(--anatomy-gray-500)" stroke-width="1">
+        <rect width="32" height="32" rx="4" stroke="none"/>
+        <rect x="0.5" y="0.5" width="31" height="31" rx="3.5" fill="none"/>
+      </g>
+      <g id="Icon">
+        <rect id="Canvas" width="18" height="18" transform="translate(7 7)" fill="var(--anatomy-gray-900)" opacity="0"/>
+        <path id="Path_51" data-name="Path 51" d="M16.784,4.1,13.9,1.216a.608.608,0,0,0-.433-.176H13.45a.685.685,0,0,0-.464.2L2.542,11.686a.5.5,0,0,0-.126.211L1.028,16.55c-.057.188.229.426.391.426a.125.125,0,0,0,.031,0c.138-.031,3.933-1.172,4.656-1.389a.486.486,0,0,0,.207-.125L16.757,5.014a.686.686,0,0,0,.2-.441.61.61,0,0,0-.173-.473ZM5.7,14.658c-1.081.325-2.431.733-3.365,1.011l1-3.365Z" transform="translate(7 7)" fill="var(--anatomy-gray-900)"/>
+      </g>
+    </g>
+  </g>
+</svg>

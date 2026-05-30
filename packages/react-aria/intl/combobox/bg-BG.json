@@ -1,0 +1,7 @@
+{
+  "buttonLabel": "Покажи предложения",
+  "countAnnouncement": "{optionCount, plural, one {# опция} other {# опции}} на разположение.",
+  "focusAnnouncement": "{isGroupChange, select, true {Въведена група {groupTitle}, с {groupCount, plural, one {# опция} other {# опции}}. } other {}}{optionText}{isSelected, select, true {, избрани} other {}}",
+  "listboxLabel": "Предложения",
+  "selectedAnnouncement": "{optionText}, избрани"
+}

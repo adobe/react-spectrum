@@ -1,0 +1,47 @@
+/*
+ * Copyright 2023 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
+import actEventsTest from './rules/act-events-test.js';
+import fasterNodeContains from './rules/faster-node-contains.js';
+import imports from './rules/imports.js';
+import noGetByRoleToThrow from './rules/no-getByRole-toThrow.js';
+import noNonShadowContains from './rules/no-non-shadow-contains.js';
+import noPackageRootImports from './rules/no-package-root-imports.js';
+import noReactKey from './rules/no-react-key.js';
+import pureRender from './rules/pure-render.js';
+import safeEventTarget from './rules/safe-event-target.js';
+import shadowSafeActiveElement from './rules/shadow-safe-active-element.js';
+import sortImports from './rules/sort-imports.js';
+import useLayoutEffectRule from './rules/use-layout-effect-rule.js';
+
+const rules = {
+  'act-events-test': actEventsTest,
+  'no-getByRole-toThrow': noGetByRoleToThrow,
+  'no-package-root-imports': noPackageRootImports,
+  'no-react-key': noReactKey,
+  'sort-imports': sortImports,
+  'no-non-shadow-contains': noNonShadowContains,
+  'safe-event-target': safeEventTarget,
+  'shadow-safe-active-element': shadowSafeActiveElement,
+  'faster-node-contains': fasterNodeContains,
+  imports,
+  'use-layout-effect-rule': useLayoutEffectRule,
+  'pure-render': pureRender
+};
+
+const meta = {
+  name: 'rsp-rules',
+  version: '1.0.0'
+};
+
+export {meta, rules};
+export default {meta, rules};

@@ -1,0 +1,187 @@
+/*
+ * Copyright 2024 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
+import type * as CSS from 'csstype';
+import {
+  Inset,
+  fontRelative as internalFontRelative,
+  space as internalSpace,
+  Spacing,
+  style
+} from './spectrum-theme';
+import type {MacroContext} from '@parcel/macros';
+import {StyleString} from './types';
+
+export {baseColor, color, lightDark, colorMix, size, style} from './spectrum-theme';
+export {css} from './style-macro';
+export {centerPadding, setColorScheme} from '../src/style-utils';
+export type {StyleString} from './types';
+
+/**
+ * Converts a pixel value to a Spectrum spacing token in `rem` units.
+ *
+ * @example
+ *   import {space, style} from '@react-spectrum/s2/style' with {type: 'macro'};
+ *
+ *   const styles = style({
+ *     gap: space(12) // 12/16 = 0.75rem
+ *   });
+ *
+ * @param px - The spacing in pixels.
+ * @returns A `rem` value wrapped as an arbitrary style value.
+ */
+export function space(px: number): `[${string}]` {
+  return `[${internalSpace(px)}]`;
+}
+
+/**
+ * Converts a pixel value to a font-relative `em` length. Useful for sizing elements
+ * relative to the current font size. Defaults to a 14px base.
+ *
+ * @example
+ *   import {fontRelative, style} from '@react-spectrum/s2/style' with {type: 'macro'};
+ *
+ *   const styles = style({
+ *     gap: fontRelative(2) // 2/14 = ~0.143em
+ *   });
+ *
+ * @param base - The pixel value to convert.
+ * @param baseFontSize - The base font size in pixels to divide by. Defaults to `14`.
+ * @returns A CSS `em` value wrapped as an arbitrary style value.
+ */
+export function fontRelative(base: number, baseFontSize = 14): `[${string}]` {
+  return `[${internalFontRelative(base, baseFontSize)}]`;
+}
+
+/**
+ * Returns consistent Spectrum focus ring outline styles for interactive components.
+ *
+ * Note: Requires `isFocusVisible` to be passed into the style call that uses this.
+ *
+ * @example
+ *   import {focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
+ *
+ *   const styles = style({
+ *     ...focusRing(),
+ *     borderRadius: 'lg'
+ *   });
+ */
+export const focusRing = () =>
+  ({
+    outlineStyle: {
+      default: 'none',
+      isFocusVisible: 'solid'
+    },
+    outlineColor: {
+      default: 'focus-ring',
+      forcedColors: 'Highlight'
+    },
+    outlineWidth: 2,
+    outlineOffset: 2
+  }) as const;
+
+export interface IconStyle {
+  size?: 'XS' | 'S' | 'M' | 'L' | 'XL';
+  color?:
+    | 'white'
+    | 'black'
+    | 'accent'
+    | 'neutral'
+    | 'negative'
+    | 'informative'
+    | 'positive'
+    | 'notice'
+    | 'gray'
+    | 'red'
+    | 'orange'
+    | 'yellow'
+    | 'chartreuse'
+    | 'celery'
+    | 'green'
+    | 'seafoam'
+    | 'cyan'
+    | 'blue'
+    | 'indigo'
+    | 'purple'
+    | 'fuchsia'
+    | 'magenta'
+    | 'pink'
+    | 'turquoise'
+    | 'cinnamon'
+    | 'brown'
+    | 'silver';
+  margin?: Spacing;
+  marginStart?: Spacing;
+  marginEnd?: Spacing;
+  marginTop?: Spacing;
+  marginBottom?: Spacing;
+  marginX?: Spacing;
+  marginY?: Spacing;
+  alignSelf?: 'auto' | 'start' | 'end' | 'center' | 'stretch' | 'baseline';
+  justifySelf?: 'auto' | 'start' | 'end' | 'center' | 'stretch';
+  order?: number;
+  gridArea?: CSS.Property.GridArea;
+  gridColumnStart?: CSS.Property.GridColumnStart;
+  gridColumnEnd?: CSS.Property.GridColumnEnd;
+  gridRowStart?: CSS.Property.GridRowStart;
+  gridRowEnd?: CSS.Property.GridRowStart;
+  position?: 'absolute' | 'fixed' | 'relative' | 'sticky' | 'static';
+  zIndex?: number;
+  top?: Inset;
+  bottom?: Inset;
+  inset?: Inset;
+  insetX?: Inset;
+  insetY?: Inset;
+  insetStart?: Inset;
+  insetEnd?: Inset;
+  rotate?: number | `${number}deg` | `${number}rad` | `${number}grad` | `${number}turn`;
+}
+
+const iconSizes = {
+  XS: 14,
+  S: 16,
+  M: 20,
+  L: 22,
+  XL: 26
+} as const;
+
+/**
+ * Generates styles for an icon element with the given size, color, and layout options.
+ * Must be imported with `{type: 'macro'}`.
+ *
+ * @example
+ *   import {iconStyle} from '@react-spectrum/s2/style' with {type: 'macro'};
+ *   import Edit from '@react-spectrum/s2/icons/Edit';
+ *
+ *   <Edit styles={iconStyle({size: 'XL', color: 'positive'})} />;
+ *
+ * @param options - Icon styling options including `size` (XS–XL), `color`, and layout properties.
+ * @returns A `StyleString` that can be applied to an icon element.
+ */
+export function iconStyle(
+  this: MacroContext | void,
+  options: IconStyle
+): StyleString<Exclude<keyof IconStyle, 'color' | 'size'>> {
+  let {size = 'M', color, ...styles} = options;
+
+  if (color) {
+    styles['--iconPrimary'] = {
+      type: 'fill',
+      value: color
+    };
+  }
+
+  styles['size'] = iconSizes[size];
+
+  // @ts-ignore
+  return style.call(this, styles);
+}

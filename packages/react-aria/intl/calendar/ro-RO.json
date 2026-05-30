@@ -1,0 +1,14 @@
+{
+  "dateRange": "De la {startDate} până la {endDate}",
+  "dateSelected": "{date} selectată",
+  "finishRangeSelectionPrompt": "Apăsaţi pentru a finaliza selecţia razei pentru dată",
+  "maximumDate": "Ultima dată disponibilă",
+  "minimumDate": "Prima dată disponibilă",
+  "next": "Următorul",
+  "previous": "Înainte",
+  "selectedDateDescription": "Dată selectată: {date}",
+  "selectedRangeDescription": "Interval selectat: {dateRange}",
+  "startRangeSelectionPrompt": "Apăsaţi pentru a începe selecţia razei pentru dată",
+  "todayDate": "Astăzi, {date}",
+  "todayDateSelected": "Azi, {date} selectată"
+}

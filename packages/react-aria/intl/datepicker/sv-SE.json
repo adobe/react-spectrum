@@ -1,0 +1,18 @@
+{
+  "calendar": "Kalender",
+  "day": "dag",
+  "dayPeriod": "fm/em",
+  "endDate": "Slutdatum",
+  "era": "era",
+  "hour": "timme",
+  "minute": "minut",
+  "month": "månad",
+  "second": "sekund",
+  "selectedDateDescription": "Valt datum: {date}",
+  "selectedRangeDescription": "Valt intervall: {startDate} till {endDate}",
+  "selectedTimeDescription": "Vald tid: {time}",
+  "startDate": "Startdatum",
+  "timeZoneName": "tidszon",
+  "weekday": "veckodag",
+  "year": "år"
+}

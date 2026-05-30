@@ -1,0 +1,27 @@
+.button {
+  position: relative;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  outline: none;
+}
+
+.spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  visibility: hidden;
+  display: none;
+}
+.spinner-pending {
+  opacity: 1;
+  visibility: visible;
+  display: block;
+}
+
+.pending {
+  opacity: 0;
+}

@@ -1,0 +1,387 @@
+{/* Copyright 2023 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {ExampleLayout} from '@react-spectrum/docs';
+export default ExampleLayout;
+
+import docs from 'docs:react-aria-components';
+import {TypeLink} from '@react-spectrum/docs';
+import styles from '@react-spectrum/docs/src/docs.css';
+import Button from '@react-spectrum/docs/pages/assets/component-illustrations/ActionButton.svg';
+import ListView from '@react-spectrum/docs/pages/assets/component-illustrations/ListView.svg';
+import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
+
+---
+keywords: [example, gridlist, aria, accessibility, react, component]
+type: component
+image: ios-list.png
+description: A GridList with swipe gestures, layout animations, and multi selection.
+---
+
+# iOS List View
+
+A re-creation of the iOS List View built with React Aria Components, [Framer Motion](https://www.framer.com/motion/), and [Tailwind CSS](https://tailwindcss.com/) with support for swipe gestures, layout animations, and multiple selection mode.
+
+## Example
+
+```tsx import
+import './tailwind.global.css';
+
+let messages = {
+  "emails": [
+    {
+      "id": 1,
+      "subject": "Meeting Reminder: Project Kickoff",
+      "sender": "Emma Johnson",
+      "date": "9:40 AM",
+      "message": "Dear Devon,\n\nThis is a friendly reminder of the upcoming project kickoff meeting scheduled for tomorrow at 9am. The meeting will be held in [location]. It's essential that all team members attend to ensure a successful start to the project.\n\nPlease come prepared with any necessary materials or information relevant to the project. If you have any questions or need further clarification, don't hesitate to reach out to me.\n\nLooking forward to seeing you at the meeting.\n\nBest regards,\nEmma"
+    },
+    {
+      "id": 2,
+      "subject": "Important Account Update",
+      "sender": "support@company.com",
+      "date": "8:23 AM",
+      "message": "Dear Devon,\n\nWe hope this email finds you well. We are writing to inform you about an important update regarding your account with us. As part of our ongoing efforts to enhance security, we have implemented a new two-factor authentication process.\n\nTo ensure continued access to your account, please follow the instructions provided in the attached document to set up the two-factor authentication feature. If you have any questions or need assistance, please don't hesitate to contact our support team.\n\nThank you for your cooperation.\n\nBest regards,\nThe [Company] Team"
+    },
+    {
+      "id": 3,
+      "subject": "Promotion Announcement",
+      "sender": "Liam Thompson",
+      "date": "Yesterday",
+      "message": "Dear Devon,\n\nWe are pleased to inform you that based on your exceptional performance, dedication, and contributions to the company, you have been promoted to the position of [new position]. This promotion is a recognition of your hard work and the value you bring to our organization.\n\nPlease accept our heartfelt congratulations on this well-deserved achievement. We believe that you will excel in your new role and contribute to the continued success of our team.\n\nIf you have any questions or need any support during this transition, please don't hesitate to contact the HR department.\n\nBest regards,\nThe HR Team"
+    },
+    {
+      "id": 4,
+      "subject": "Invitation to Exclusive Networking Event",
+      "sender": "events@company.com",
+      "date": "Yesterday",
+      "message": "Dear Devon,\n\nYou are cordially invited to our upcoming exclusive networking event, where industry leaders, professionals, and enthusiasts gather to exchange ideas and forge valuable connections. This event will take place on [date] at [venue], starting at [time].\n\nPlease RSVP by [RSVP date] to secure your spot. We anticipate a high demand for attendance, so we encourage you to respond promptly. We look forward to welcoming you to this exciting event!\n\nBest regards,\nThe [Company] Events Team"
+    },
+    {
+      "id": 5,
+      "subject": "Thank You for Your Recent Purchase",
+      "sender": "sales@company.com",
+      "date": "Friday",
+      "message": "Dear Devon,\n\nThank you for your recent purchase from our online store. We appreciate your business and are delighted to let you know that your order has been successfully processed and is now being prepared for shipment.\n\nYou will receive a confirmation email with tracking details as soon as your package is dispatched. If you have any questions regarding your order or need further assistance, please don't hesitate to reach out to our customer support team.\n\nOnce again, thank you for choosing us as your preferred shopping destination.\n\nBest regards,\nThe [Company] Team"
+    },
+    {
+      "id": 6,
+      "sender": "Jane Doe",
+      "subject": "New Project Proposal",
+      "date": "Friday",
+      "message": "Hi Devon,\n\nI've attached a new project proposal for your review. Please let me know what you think.\n\nThanks,\nJane"
+    },
+    {
+      "id": 7,
+      "sender": "Susan Smith",
+      "subject": "Status Update",
+      "date": "Friday",
+      "message": "Hi Devon,\n\nI'm just sending a quick status update on the project we're working on together. I'm on track to meet my deadlines, and I'll keep you updated on my progress.\n\nThanks,\nSusan"
+    },
+    {
+      "id": 8,
+      "sender": "Michael Jones",
+      "subject": "Question about the presentation",
+      "date": "Thursday",
+      "message": "Hi Devon,\n\nI had a question about the presentation you gave last week. I was wondering if you could send me the slides so I can review them in more detail.\n\nThanks,\nMichael"
+    },
+    {
+      "id": 9,
+      "sender": "Customer Service",
+      "subject": "Order Confirmation",
+      "date": "Thursday",
+      "message": "Hi Devon,\n\nWe just wanted to confirm that your order has been shipped. Your order number is 1234567890, and it should arrive at your home address within 2-3 business days.\n\nThanks for your purchase!\n\nCustomer Service"
+    },
+    {
+      "id": 10,
+      "sender": "Your Bank",
+      "subject": "Account Statement",
+      "date": "Wednesday",
+      "message": "Hi Devon,\n\nWe're writing to you today to provide you with your monthly account statement. As you can see, your account balance is currently $1,000.00.\n\nPlease let us know if you have any questions.\n\nThanks,\nYour Bank"
+    },
+    {
+      "id": 11,
+      "sender": "hr@company2.com",
+      "subject": "Employee Benefits Update",
+      "date": "Tuesday",
+      "message": "Dear Devon,\n\nWe wanted to inform you about the recent updates to our employee benefits package. We have enhanced the healthcare coverage options and added additional wellness programs to support your well-being.\n\nPlease review the attached document for detailed information on the updated benefits. If you have any questions or need further assistance, feel free to contact the HR department.\n\nBest regards,\nThe HR Team"
+    }
+  ]
+}
+```
+
+```tsx example flip
+import { Button, GridListItem, GridList } from "react-aria-components";
+import type {Selection, SelectionMode} from 'react-aria-components';
+import {
+  motion,
+  animate,
+  AnimatePresence,
+  useMotionValue,
+  useIsPresent,
+  useMotionTemplate,
+  useMotionValueEvent
+} from "motion/react";
+import { useRef, useState } from "react";
+import type {CSSProperties} from 'react';
+
+const MotionItem = motion(GridListItem);
+const inertiaTransition = {
+  type: "inertia" as const,
+  bounceStiffness: 300,
+  bounceDamping: 40,
+  timeConstant: 300
+};
+
+function SwipableList() {
+  let [items, setItems] = useState(messages.emails);
+  let [selectedKeys, setSelectedKeys] = useState<Selection>(new Set());
+  let [selectionMode, setSelectionMode] = useState<SelectionMode>("none");
+  let onDelete = () => {
+    setItems(items.filter((i) => selectedKeys !== 'all' && !selectedKeys.has(i.id)));
+    setSelectedKeys(new Set());
+    setSelectionMode("none");
+  };
+
+  return (
+    <div className="flex flex-col h-full max-h-[500px] sm:w-[400px] -mx-[14px] sm:mx-0">
+      {/* Toolbar */}
+      <div className="flex pb-4 justify-between">
+        <Button
+          className="text-blue-600 text-lg outline-hidden bg-transparent border-none transition pressed:text-blue-700 focus-visible:ring-3 disabled:text-gray-400"
+          style={{ opacity: selectionMode === "none" ? 0 : 1 }}
+          isDisabled={selectedKeys !== 'all' && selectedKeys.size === 0}
+          onPress={onDelete}
+        >
+          Delete
+        </Button>
+        <Button
+          className="text-blue-600 text-lg outline-hidden bg-transparent border-none transition pressed:text-blue-700 focus-visible:ring-3"
+          onPress={() => {
+            setSelectionMode((m) => (m === "none" ? "multiple" : "none"));
+            setSelectedKeys(new Set());
+          }}
+        >
+          {selectionMode === "none" ? "Edit" : "Cancel"}
+        </Button>
+      </div>
+      <GridList
+        className="relative flex-1 overflow-auto"
+        aria-label="Inbox"
+        onAction={selectionMode === "none" ? () => {} : undefined}
+        selectionMode={selectionMode}
+        selectedKeys={selectedKeys}
+        onSelectionChange={setSelectedKeys}
+      >
+        <AnimatePresence>
+          {items.map((item) => (
+            <ListItem
+              key={item.id}
+              id={item.id}
+              textValue={[item.sender, item.date, item.subject, item.message].join('\n')}
+              onRemove={() => setItems(items.filter((i) => i !== item))}
+            >
+              <div className="flex flex-col text-md cursor-default">
+                <div className="flex justify-between">
+                  <p className="font-bold text-lg m-0">{item.sender}</p>
+                  <p className="text-gray-500 m-0">{item.date}</p>
+                </div>
+                <p className="m-0">{item.subject}</p>
+                <p className="line-clamp-2 text-gray-500 dark:text-gray-400 m-0">{item.message}</p>
+              </div>
+            </ListItem>
+          ))}
+        </AnimatePresence>
+      </GridList>
+    </div>
+  );
+}
+
+function ListItem({ id, children, textValue, onRemove }) {
+  let ref = useRef(null);
+  let x = useMotionValue(0);
+  let isPresent = useIsPresent();
+  let xPx = useMotionTemplate`${x}px`;
+
+  // Align the text in the remove button to the left if the
+  // user has swiped at least 80% of the width.
+  let [align, setAlign] = useState("end");
+  useMotionValueEvent(x, "change", (x) => {
+    let a = x < -ref.current?.offsetWidth * 0.8 ? "start" : "end";
+    setAlign(a);
+  });
+
+  return (
+    <MotionItem
+      id={id}
+      textValue={textValue}
+      className="outline-hidden group relative overflow-clip border-t border-0 border-solid last:border-b border-gray-200 dark:border-gray-800 pressed:bg-gray-200 dark:pressed:bg-gray-800 selected:bg-gray-200 dark:selected:bg-gray-800 focus-visible:outline focus-visible:outline-blue-600 focus-visible:-outline-offset-2"
+      layout
+      transition={{ duration: 0.25 }}
+      exit={{ opacity: 0 }}
+      // Take item out of the flow if it is being removed.
+      style={{ position: isPresent ? "relative" : "absolute" }}
+    >
+      {/* @ts-ignore - Framer Motion's types don't handle functions properly. */}
+      {({ selectionMode, isSelected }) => (
+        // Content of the item can be swiped to reveal the delete button, or fully swiped to delete.
+        <motion.div
+          ref={ref}
+          style={{ x, "--x": xPx } as CSSProperties}
+          className="flex items-center"
+          drag={selectionMode === "none" ? "x" : undefined}
+          dragConstraints={{ right: 0 }}
+          onDragEnd={(e, { offset }) => {
+            // If the user dragged past 80% of the width, remove the item
+            // otherwise animate back to the nearest snap point.
+            let v = offset.x > -20 ? 0 : -100;
+            if (x.get() < -ref.current.offsetWidth * 0.8) {
+              v = -ref.current.offsetWidth;
+              onRemove();
+            }
+            animate(x, v, { ...inertiaTransition, min: v, max: v });
+          }}
+          onDragStart={() => {
+            // Cancel react-aria press event when dragging starts.
+            document.dispatchEvent(new PointerEvent("pointercancel"));
+          }}
+        >
+          {selectionMode === "multiple" && (
+            <SelectionCheckmark isSelected={isSelected} />
+          )}
+          <motion.div
+            layout
+            layoutDependency={selectionMode}
+            transition={{ duration: 0.25 }}
+            className="relative flex items-center px-4 py-2 z-10"
+          >
+            {children}
+          </motion.div>
+          {selectionMode === "none" && (
+            <Button
+              className="bg-red-600 pressed:bg-red-700 cursor-default text-lg outline-hidden border-none transition-colors text-white flex items-center absolute top-0 left-[100%] py-2 h-full z-0 isolate focus-visible:outline focus-visible:outline-blue-600 focus-visible:-outline-offset-2"
+              style={{
+                // Calculate the size of the button based on the drag position,
+                // which is stored in a CSS variable above.
+                width: "max(100px, calc(-1 * var(--x)))",
+                justifyContent: align
+              }}
+              onPress={onRemove}
+              // Move the button into view when it is focused with the keyboard
+              // (e.g. via the arrow keys).
+              onFocus={() => x.set(-100)}
+              onBlur={() => x.set(0)}
+            >
+              <motion.span
+                initial={false}
+                className="px-4"
+                animate={{
+                  // Whenever the alignment changes, perform a keyframe animation
+                  // between the previous position and new position. This is done
+                  // by calculating a transform for the previous alignment and
+                  // animating it back to zero.
+                  transform:
+                    align === "start"
+                      ? ["translateX(calc(-100% - var(--x)))", "translateX(0)"]
+                      : ["translateX(calc(100% + var(--x)))", "translateX(0)"]
+                }}
+              >
+                Delete
+              </motion.span>
+            </Button>
+          )}
+        </motion.div>
+      )}
+    </MotionItem>
+  );
+}
+
+function SelectionCheckmark({ isSelected }) {
+  return (
+    <motion.svg
+      aria-hidden="true"
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      className="w-6 h-6 shrink-0 ml-4"
+      initial={{ x: -40 }}
+      animate={{ x: 0 }}
+      transition={{ duration: 0.25 }}
+    >
+      {!isSelected && (
+        <circle
+          r={9}
+          cx={12}
+          cy={12}
+          stroke="currentColor"
+          fill="none"
+          strokeWidth={1}
+          className="text-gray-400"
+        />
+      )}
+      {isSelected && (
+        <path
+          className="text-blue-600"
+          fillRule="evenodd"
+          d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z"
+          clipRule="evenodd"
+        />
+      )}
+    </motion.svg>
+  );
+}
+```
+
+### Tailwind config
+
+This example uses the [tailwindcss-react-aria-components](../styling.html#plugin) plugin. When using Tailwind v4, add it to your CSS:
+
+```css render=false
+@import "tailwindcss";
+@plugin "tailwindcss-react-aria-components";
+```
+
+<details>
+
+<summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Tailwind v3</summary>
+
+When using Tailwind v3, add the plugin to your `tailwind.config.js` instead:
+
+```tsx
+module.exports = {
+  // ...
+  plugins: [
+    require('tailwindcss-react-aria-components')
+  ]
+};
+```
+
+**Note**: When using Tailwind v3, install `tailwindcss-react-aria-components` version 1.x instead of 2.x.
+
+</details>
+
+## Components
+
+<section className={styles.cardGroup} data-size="small">
+
+<ExampleCard
+  url="../GridList.html"
+  title="GridList"
+  description="A grid list displays a list of interactive items, with keyboard navigation, row selection, and actions.">
+  <ListView />
+</ExampleCard>
+
+<ExampleCard
+  url="../Button.html"
+  title="Button"
+  description="A button allows a user to perform an action.">
+  <Button style={{background: 'var(--anatomy-gray-100)', padding: 'calc((172px - 32px) / 2) 10px'}} />
+</ExampleCard>
+
+</section>

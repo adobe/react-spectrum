@@ -1,0 +1,6 @@
+{
+  "rangeOverflow": "值必须是 {maxValue} 或更早日期。",
+  "rangeReversed": "开始日期必须早于结束日期。",
+  "rangeUnderflow": "值必须是 {minValue} 或更晚日期。",
+  "unavailableDate": "所选日期不可用。"
+}

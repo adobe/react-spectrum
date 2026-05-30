@@ -1,0 +1,14 @@
+{
+  "dateRange": "{startDate} do {endDate}",
+  "dateSelected": "{date} izabran",
+  "finishRangeSelectionPrompt": "Kliknite da dovršite opseg izabranih datuma",
+  "maximumDate": "Zadnji raspoloživi datum",
+  "minimumDate": "Prvi raspoloživi datum",
+  "next": "Sledeći",
+  "previous": "Prethodni",
+  "selectedDateDescription": "Izabrani datum: {date}",
+  "selectedRangeDescription": "Izabrani period: {dateRange}",
+  "startRangeSelectionPrompt": "Kliknite da započnete opseg izabranih datuma",
+  "todayDate": "Danas, {date}",
+  "todayDateSelected": "Danas, izabran {date}"
+}

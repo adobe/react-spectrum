@@ -1,0 +1,105 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="max-height:300px;background:var(--anatomy-gray-100);padding:32px;margin-bottom:16px;width:calc(100% - 64px);border-radius:var(--anatomy-radius);" viewBox="0 0 627 300">
+  <title>List anatomy diagram</title>
+  <desc>Shows a list and list item component with labels pointing to its parts.</desc>
+  <defs>
+    <clipPath id="clip-listview_anatomy">
+      <rect width="627" height="300"/>
+    </clipPath>
+  </defs>
+  <g id="listview_anatomy" clip-path="url(#clip-listview_anatomy)">
+    <rect width="627" height="300" fill="var(--anatomy-gray-100)"/>
+    <g id="Group_156661" data-name="Group 156661" transform="translate(0 -186)">
+      <text id="List_container" data-name="List container" transform="translate(75.999 366)" fill="var(--anatomy-gray-700)" font-size="13" font-family="var(--anatomy-font)" font-style="italic"><tspan x="-67.847" y="0">List container</tspan></text>
+      <g id="Group_152111" data-name="Group 152111" transform="translate(195 847.715) rotate(180)">
+        <rect id="Rectangle_138454" data-name="Rectangle 138454" width="8" height="1" transform="translate(101 484.715)" fill="var(--anatomy-gray-700)"/>
+        <g id="Group_72702" data-name="Group 72702" transform="translate(92 372)">
+          <rect id="Rectangle_138451" data-name="Rectangle 138451" width="8" height="1" transform="translate(0 -0.285)" fill="var(--anatomy-gray-700)"/>
+          <rect id="Rectangle_138453" data-name="Rectangle 138453" width="1" height="228" transform="translate(8 -0.285)" fill="var(--anatomy-gray-700)"/>
+          <rect id="Rectangle_138452" data-name="Rectangle 138452" width="8" height="1" transform="translate(0 226.715)" fill="var(--anatomy-gray-700)"/>
+        </g>
+      </g>
+    </g>
+    <g id="Group_156664" data-name="Group 156664" transform="translate(0 -199)">
+      <g id="Rectangle_142243" data-name="Rectangle 142243" transform="translate(123 258)" fill="var(--anatomy-gray-50)" stroke="var(--anatomy-gray-400)" stroke-width="1.5">
+        <rect width="364" height="232" rx="6" stroke="none"/>
+        <rect x="0.75" y="0.75" width="362.5" height="230.5" rx="5.25" fill="none"/>
+      </g>
+      <rect id="Rectangle_142239" data-name="Rectangle 142239" width="364" height="58" transform="translate(123 258)" fill="var(--anatomy-gray-800)" opacity="0"/>
+      <rect id="Rectangle_142240" data-name="Rectangle 142240" width="364" height="58" transform="translate(123 316)" fill="var(--anatomy-gray-800)" opacity="0"/>
+      <rect id="Rectangle_142241" data-name="Rectangle 142241" width="364" height="58" transform="translate(123 374)" fill="var(--spectrum-alias-highlight-selected)"/>
+      <rect id="Rectangle_142242" data-name="Rectangle 142242" width="364" height="58" transform="translate(123 432)" fill="var(--anatomy-gray-800)" opacity="0"/>
+      <text id="List_item" data-name="List item" transform="translate(174 293)" fill="var(--anatomy-gray-800)" font-size="21" font-family="var(--anatomy-font)" font-style="italic"><tspan x="0" y="0">List item</tspan></text>
+      <text id="List_item-2" data-name="List item" transform="translate(174 351)" fill="var(--anatomy-gray-800)" font-size="21" font-family="var(--anatomy-font)" font-style="italic"><tspan x="0" y="0">List item</tspan></text>
+      <text id="List_item-3" data-name="List item" transform="translate(174 409)" fill="var(--anatomy-gray-800)" font-size="21" font-family="var(--anatomy-font)" font-style="italic"><tspan x="0" y="0">List item</tspan></text>
+      <text id="List_item-4" data-name="List item" transform="translate(174 467)" fill="var(--anatomy-gray-800)" font-size="21" font-family="var(--anatomy-font)" font-style="italic"><tspan x="0" y="0">List item</tspan></text>
+      <line id="Line_13" data-name="Line 13" x2="363.252" transform="translate(123.5 316.5)" fill="none" stroke="var(--anatomy-gray-400)" stroke-width="1.5"/>
+      <line id="Line_14" data-name="Line 14" x2="363.252" transform="translate(123.5 374.522)" fill="none" stroke="var(--anatomy-gray-400)" stroke-width="1.5"/>
+      <line id="Line_15" data-name="Line 15" x2="363.252" transform="translate(123.5 432.522)" fill="none" stroke="var(--anatomy-gray-400)" stroke-width="1.5"/>
+      <g id="Checkbox" transform="translate(142 264)">
+        <g id="Placement_Area" data-name="Placement Area" fill="red" stroke="var(--anatomy-gray-900)" stroke-opacity="0" stroke-width="1" opacity="0">
+          <rect width="21" height="48" stroke="none"/>
+          <rect x="0.5" y="0.5" width="20" height="47" fill="none"/>
+        </g>
+        <g id="Box" transform="translate(0 13.5)" fill="var(--anatomy-gray-100)" stroke="var(--anatomy-gray-600)" stroke-width="3">
+          <rect width="21" height="21" rx="2" stroke="none"/>
+          <rect x="1.5" y="1.5" width="18" height="18" rx="0.5" fill="none"/>
+        </g>
+      </g>
+      <g id="Checkbox-2" data-name="Checkbox" transform="translate(141 321)">
+        <g id="Placement_Area-2" data-name="Placement Area" fill="red" stroke="var(--anatomy-gray-900)" stroke-opacity="0" stroke-width="1" opacity="0">
+          <rect width="21" height="48" stroke="none"/>
+          <rect x="0.5" y="0.5" width="20" height="47" fill="none"/>
+        </g>
+        <g id="Box-2" data-name="Box" transform="translate(0 13.5)" fill="var(--anatomy-gray-100)" stroke="var(--anatomy-gray-600)" stroke-width="3">
+          <rect width="21" height="21" rx="2" stroke="none"/>
+          <rect x="1.5" y="1.5" width="18" height="18" rx="0.5" fill="none"/>
+        </g>
+      </g>
+      <g id="Checkbox-3" data-name="Checkbox" transform="translate(141 379)">
+        <g id="Placement_Area-3" data-name="Placement Area" fill="red" stroke="var(--anatomy-gray-900)" stroke-opacity="0" stroke-width="1" opacity="0">
+          <rect width="21" height="48" stroke="none"/>
+          <rect x="0.5" y="0.5" width="20" height="47" fill="none"/>
+        </g>
+        <g id="Box-3" data-name="Box" transform="translate(0 13.5)" fill="var(--anatomy-gray-700)" stroke="var(--anatomy-gray-900)" stroke-opacity="0" stroke-width="1">
+          <rect width="21" height="21" rx="2" stroke="none"/>
+          <rect x="0.5" y="0.5" width="20" height="20" rx="1.5" fill="none"/>
+        </g>
+        <g id="Checkmark" transform="translate(3 16.5)">
+          <g id="Frame" fill="var(--anatomy-gray-600)" stroke="var(--anatomy-gray-900)" stroke-opacity="0" stroke-width="1" opacity="0">
+            <rect width="15" height="15" stroke="none"/>
+            <rect x="0.5" y="0.5" width="14" height="14" fill="none"/>
+          </g>
+          <path id="Shape" d="M5.441,13.011a1.5,1.5,0,0,1-1.182-.578L.827,7.934A1.5,1.5,0,1,1,3.191,6.089l2.25,2.986,5.886-7.486a1.5,1.5,0,1,1,2.364,1.845l-7.068,9A1.5,1.5,0,0,1,5.441,13.011Z" transform="translate(0.241 0.489)" fill="var(--anatomy-gray-100)"/>
+        </g>
+      </g>
+      <g id="Checkbox-4" data-name="Checkbox" transform="translate(141 437)">
+        <g id="Placement_Area-4" data-name="Placement Area" fill="red" stroke="var(--anatomy-gray-900)" stroke-opacity="0" stroke-width="1" opacity="0">
+          <rect width="21" height="48" stroke="none"/>
+          <rect x="0.5" y="0.5" width="20" height="47" fill="none"/>
+        </g>
+        <g id="Box-4" data-name="Box" transform="translate(0 13.5)" fill="var(--anatomy-gray-100)" stroke="var(--anatomy-gray-600)" stroke-width="3">
+          <rect width="21" height="21" rx="2" stroke="none"/>
+          <rect x="1.5" y="1.5" width="18" height="18" rx="0.5" fill="none"/>
+        </g>
+      </g>
+    </g>
+    <g id="Group_152101" data-name="Group 152101" transform="translate(200.005 422)">
+      <text id="List_item_row" data-name="List item row" transform="translate(336 -343)" fill="var(--anatomy-gray-700)" font-size="13" font-family="var(--anatomy-font)" font-style="italic"><tspan x="0" y="0">List item row</tspan></text>
+      <g id="Group_152108" data-name="Group 152108" transform="translate(752.999 -692) rotate(180)">
+        <rect id="Rectangle_3659" data-name="Rectangle 3659" width="20" height="48" transform="translate(421 -336) rotate(-90)" fill="red" opacity="0"/>
+        <path id="Union_56" data-name="Union 56" d="M-9134-324.5a2.5,2.5,0,0,1,2-2.449V-370h1v43.052a2.5,2.5,0,0,1,2,2.449,2.5,2.5,0,0,1-2.5,2.5A2.5,2.5,0,0,1-9134-324.5Z" transform="translate(791 -9477.5) rotate(-90)" fill="var(--anatomy-gray-500)"/>
+      </g>
+    </g>
+    <g id="Group_156663" data-name="Group 156663" transform="translate(200.005 447)">
+      <text id="List_item_grid_cell" data-name="List item grid cell" transform="translate(336 -343)" fill="var(--anatomy-gray-700)" font-size="13" font-family="var(--anatomy-font)" font-style="italic"><tspan x="0" y="0">List item grid cell</tspan></text>
+      <g id="Group_152108-2" data-name="Group 152108" transform="translate(752.999 -692) rotate(180)">
+        <rect id="Rectangle_3659-2" data-name="Rectangle 3659" width="20" height="48" transform="translate(421 -336) rotate(-90)" fill="red" opacity="0"/>
+        <path id="Union_56-2" data-name="Union 56" d="M-9134-304.5a2.5,2.5,0,0,1,2-2.451V-370h1v63.05a2.5,2.5,0,0,1,2,2.451,2.5,2.5,0,0,1-2.5,2.5A2.5,2.5,0,0,1-9134-304.5Z" transform="translate(791 -9477.5) rotate(-90)" fill="var(--anatomy-gray-500)"/>
+      </g>
+    </g>
+    <text id="Selection_checkbox_optional_" data-name="Selection
+checkbox
+(optional)" transform="translate(175 14)" fill="var(--anatomy-gray-700)" font-size="12" font-family="var(--anatomy-font)" font-style="italic"><tspan x="-41.82" y="0">Selection</tspan><tspan x="-43.26" y="15">checkbox</tspan><tspan x="-46.5" y="30">(optional)</tspan></text>
+    <line id="Line_9" data-name="Line 9" y2="24" transform="translate(152.5 50.5)" fill="none" stroke="var(--anatomy-gray-700)" stroke-width="1"/>
+  </g>
+</svg>

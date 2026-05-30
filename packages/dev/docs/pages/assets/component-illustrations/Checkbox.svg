@@ -1,0 +1,18 @@
+<svg style="background:var(--anatomy-gray-100); padding: 60px 10px" height="32" viewBox="0 0 79 32">
+  <g id="Placement_Area" data-name="Placement Area" fill="red" stroke="rgba(0,0,0,0)" stroke-width="1" opacity="0">
+    <rect width="79" height="32" stroke="none"/>
+    <rect x="0.5" y="0.5" width="78" height="31" fill="none"/>
+  </g>
+  <g id="Box" transform="translate(0 9)" fill="var(--anatomy-gray-700)" stroke="rgba(0,0,0,0)" stroke-width="1">
+    <rect width="14" height="14" rx="2" stroke="none"/>
+    <rect x="0.5" y="0.5" width="13" height="13" rx="1.5" fill="none"/>
+  </g>
+  <g id="Checkmark">
+    <g id="Frame" transform="translate(2 11)" fill="var(--anatomy-gray-600)" stroke="rgba(0,0,0,0)" stroke-width="1" opacity="0">
+      <rect width="10" height="10" stroke="none"/>
+      <rect x="0.5" y="0.5" width="9" height="9" fill="none"/>
+    </g>
+    <path id="Shape" d="M3.788,9A1,1,0,0,1,3,8.615l-2.288-3a1,1,0,1,1,1.576-1.23l1.5,1.991L7.712,1.385a1,1,0,1,1,1.576,1.23l-4.712,6A1,1,0,0,1,3.788,9Z" transform="translate(2 11)" fill="var(--anatomy-gray-75)"/>
+  </g>
+  <text id="Text" transform="translate(24 20)" fill="var(--anatomy-gray-800)" font-size="14" font-family="var(--anatomy-font)"><tspan x="0" y="0">Subscribe</tspan></text>
+</svg>

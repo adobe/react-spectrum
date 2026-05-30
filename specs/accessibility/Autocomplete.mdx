@@ -1,0 +1,238 @@
+# Autocomplete Accessibility Specification
+
+## Overview
+
+An [`Autocomplete`](https://react-spectrum.corp.adobe.com/components/Autocomplete) or [`ComboBox`](https://react-spectrum.corp.adobe.com/components/ComboBox) is an input widget with an associated popup that enables a user to select a value from a collection of possible values.
+In some implementations, the popup presents allowed values, while in other implementations, the popup presents suggested values, and a user may either select one of the suggestions from the popup or type a value.
+The popup may be a [`listbox`](https://www.w3.org/TR/wai-aria-practices-1.2/#Listbox), [`grid`](https://www.w3.org/TR/wai-aria-practices-1.2/#Grid), [`tree`](https://www.w3.org/TR/wai-aria-practices-1.2/#TreeView), or [`dialog`](https://www.w3.org/TR/wai-aria-practices-1.2/#dialog_modal). Many implementations, like the [`ComboBox`](https://react-spectrum.corp.adobe.com/components/ComboBox) in React Spectrum, also include a third optional element -- a graphical "Open" button adjacent to the combobox, which indicates availability of the popup. Activating the "Open" button displays the popup if suggestions are available.
+
+## WAI-ARIA Design Pattern
+
+The [`Autocomplete`](https://react-spectrum.corp.adobe.com/components/Autocomplete) or [`ComboBox`](https://react-spectrum.corp.adobe.com/components/ComboBox) component implements the [Combobox design pattern, per WAI-ARIA 1.2](https://www.w3.org/TR/wai-aria-practices-1.2/#combobox).
+
+The combobox pattern supports several optional behaviors. 
+The one that most shapes interaction is text input. 
+Some comboboxes allow users to type and edit text in the combobox and others do not. 
+If a combobox does not support text input, it is referred to as select-only, meaning the only way users can set a value is by selecting a value in the popup. 
+For example, in some browsers, an HTML `select` element with `size="1"` is presented to assistive technologies as a combobox. In React Spectrum, this type of combobox is defined as a [`Select`](./Select).
+Alternatively, if a combobox supports text input, it is referred to as editable.
+An editable combobox may either allow users to input any arbitrary value, or it may restrict its value to a discrete set of allowed values, in which case typing input serves to filter suggestions presented in the popup.
+
+The popup is hidden by default, i.e., the default state is collapsed. The conditions that trigger expansion -- display of the popup -- are specific to each implementation. Some possible conditions that trigger expansion include:
+
+- It is displayed when the `ArrowDown` key is pressed or the "Open" button is activated. Optionally, if the combobox is editable and contains a string that does not match an allowed value, expansion does not occur.
+- It is displayed when the combobox receives focus even if the combobox is editable and empty.
+- If the combobox is editable, the popup is displayed only if a certain number of characters are typed in the combobox and those characters match some portion of one of the suggested values.
+
+Combobox widgets are useful for acquiring user input in either of two scenarios:
+
+1. The value must be one of a predefined set of allowed values, e.g., a location field must contain a valid location name. Note that the listbox and menu button patterns are also useful in this scenario; differences between combobox and alternative patterns are described below.
+2. An arbitrary value is allowed, but it is advantageous to suggest possible values to users. For example, a search field may suggest similar or previous searches to save the user time.
+
+### Autocomplete behavior
+
+The nature of possible values presented by a popup and the way they are presented is called the autocomplete behavior. Comboboxes can have one of four forms of autocomplete:
+
+1. `List autocomplete with automatic selection (default)`: The combobox is editable, and when the popup is triggered, it presents suggested values that complete or logically correspond to the characters typed in the combobox, and the first suggestion is automatically highlighted as selected. The automatically selected suggestion becomes the value of the combobox when the combobox loses focus unless the user chooses a different suggestion, changes the character string in the combobox or presses `Escape` to close the popup. This is the default behavior for `Autocomplete` in React Spectrum.
+2. `List with inline autocomplete`: This is the same as list with automatic selection with one additional feature. The portion of the selected suggestion that has not been typed by the user, a completion string, appears inline after the input cursor in the combobox. The inline completion string is visually highlighted and has a selected state.
+3. `List autocomplete with manual selection`: When the popup is triggered, it presents suggested values. If the combobox is editable, the suggested values complete or logically correspond to the characters typed in the combobox. The character string the user has typed will become the value of the combobox unless the user selects a value in the popup.
+4. `No autocomplete`: The combobox is editable, and when the popup is triggered, the suggested values it contains are the same regardless of the characters typed in the combobox. For example, the popup suggests a set of recently entered values, and the suggestions do not change as the user types.
+
+If a combobox is editable and has any form of list autocomplete, the popup may appear and disappear as the user types. For example, if the user types a two character string that triggers five suggestions to be displayed but then types a third character that forms a string that does not have any matching suggestions, the popup may close and, if present, the inline completion string disappears.
+
+Two other widgets that are also visually compact and enable users to make a single choice from a set of discrete choices are [`listbox`](https://www.w3.org/TR/wai-aria-practices-1.2/#Listbox) and [`menu button`](https://www.w3.org/TR/wai-aria-practices-1.2/#menubutton).
+One feature that distinguishes combobox from both listbox and menu button is that the user's choice can be presented as a value in an editable field, which gives users the ability to select some or all of the value for copying to the clipboard. 
+Comboboxes and menu buttons can be implemented so users can explore the set of allowed choices without losing a previously made choice. 
+That is, users can navigate the set of available choices in a combobox popup or menu and then press `Escape`, which closes the popup or menu without changing previous input. 
+In contrast, navigating among options in a single-select listbox immediately changes its value, and `Escape` does not provide an undo mechanism. 
+Comboboxes and listboxes can be marked as `required` with `aria-required="true"`, and they have an accessible name that is distinct from their value. 
+Thus, when assistive technology users focus either a combobox or listbox in its default state, they can perceive both a name and value for the widget. 
+However, a menu button cannot be marked `required`, and while it has an accessible name, it does not have a value so is not suitable for conveying the user's choice in its collapsed state.
+
+### Keyboard
+
+- `Tab`: The combobox input should be included in the Tab navigation order for the page.
+  - Note: The "Open" icon button to expand the popup should be removed from the Tab navigation order using `tabIndex={-1}`.
+  - When the popup is a [`listbox`](https://www.w3.org/TR/wai-aria-practices-1.2/#Listbox), [`grid`](https://www.w3.org/TR/wai-aria-practices-1.2/#Grid), or [`tree`](https://www.w3.org/TR/wai-aria-practices-1.2/#TreeView), descendants of the popup should not be included in the in the Tab navigation order for the page.
+  - When the popup is a [`dialog`](https://www.w3.org/TR/wai-aria-practices-1.2/#dialog_modal), keyboard focus should be trapped within the dialog when the user moves focus to it.
+
+#### Combobox Keyboard Interaction for the Input
+
+Note: With the exception of the `dialog` popup variant, DOM Focus should be maintained in the combobox input, and the assistive technology focus within the popup should be controlled using [`aria-activedescendant`](https://www.w3.org/TR/wai-aria-1.2/#aria-activedescendant) as described in [Managing Focus in Composites Using `aria-activedescendant`](https://www.w3.org/TR/wai-aria-practices-1.2/#kbd_focus_activedescendant).
+
+When focus is in the combobox input:
+
+- `ArrowDown`: If the popup is open, moves focus into the popup:
+  - If the autocomplete behavior automatically selected a suggestion before `ArrowDown` was pressed, focus is placed on the suggestion following the automatically selected suggestion.
+  - Otherwise, places focus on the first focusable element in the popup.
+- `ArrowUp (Optional)`: If the popup is open, places focus on the last focusable element in the popup.
+- `Escape`: Dismisses the popup if it is open. Optionally, if the popup is closes before `Escape` is pressed, clears the combobox input.
+- `Enter`: If the combobox is editable and an autocomplete suggestion is selected in the popup, accepts the suggestion either by placing the input cursor at the end of the accepted value in the combobox or by performing a default action on the value. For example, in the React Spectrum [`TagField`](https://react-spectrum.corp.adobe.com/components/TagField), the default action may be to add the accepted value to the [`TagList`](https://react-spectrum.corp.adobe.com/components/TagList) and then clear the combobox input so the user can add another `Tag`.
+- Printable Characters:
+  - If the combobox is editable, type characters in the combobox. Note that some implementations may regard certain characters as invalid and prevent their input.
+  - If the combobox is not editable, optionally moves focus to a value that starts with the typed characters.
+- If the combobox is editable, it supports standard single line text editing keys appropriate for the device platform (see note below).
+- `Alt + ArrowDown (Optional)`: If the popup is available but not open, opens the popup without moving focus.
+- `Alt + ArrowUp (Optional)`: If the popup is open (This is basically the equivalent of pressing the `Escape` key):
+  - If the popup contains focus, returns focus to the combobox.
+  - Closes the popup. 
+
+> NOTE:
+> 
+> Standard single line text editing keys appropriate for the device platform:
+> 
+> 1. include keys for input, cursor movement, selection, and text manipulation.
+> 2. Standard key assignments for editing functions depend on the device operating system.
+> 3. The most robust approach for providing text editing functions is to rely on browsers, which supply them for HTML `input`s with `type` equal to `text` and for elements with the `contenteditable` HTML attribute.
+> 4. IMPORTANT: Ensure JavaScript does not interfere with browser-provided text editing functions by capturing key events for the keys used to perform them.
+
+#### Listbox Popup Keyboard Interaction
+
+When focus is in a listbox popup:
+
+- `Enter`: Accepts the focused option in the listbox by closing the popup, placing the accepted value in the combobox, and if the combobox is editable, placing the input cursor at the end of the value.
+- `Escape`: Closes the popup and returns focus to the combobox. Optionally, if the combobox is editable, clears the contents of the combobox.
+- `ArrowDown`: Moves focus to and selects the next option. If focus is on the last option, either returns focus to the combobox or does nothing.
+- `ArrowUp`: Moves focus to and selects the previous option. If focus is on the first option, either returns focus to the combobox or does nothing.
+- `ArrowRight`: If the combobox is editable, returns focus to the combobox without closing the popup and moves the input cursor one character to the right. If the input cursor is on the right-most character, the cursor does not move.
+- `ArrowLeft`: If the combobox is editable, returns focus to the combobox without closing the popup and moves the input cursor one character to the left. If the input cursor is on the left-most character, the cursor does not move.
+- `PageDown (Optional)`: Moves focus down an author-determined number of options, typically scrolling so the bottom option in the currently visible set of options becomes one of the first visible options. If focus is in the last option of the listbox, focus does not move.
+- `PageUp (Optional)`: Moves focus up an author-determined number of options, typically scrolling so the top option in the currently visible set of options becomes one of the last visible options. If focus is in the first option of the listbox, focus does not move.
+- `Home (Optional)`: Either moves focus to and selects the first option or, if the combobox is editable, returns focus to the combobox and places the cursor on the first character.
+- `End (Optional)`: Either moves focus to the last option or, if the combobox is editable, returns focus to the combobox and places the cursor after the last character.
+- Any printable character:
+  - If the combobox is editable, returns the focus to the combobox without closing the popup and types the character.
+  - Otherwise, moves focus to the next option with a name that starts with the characters typed.
+- `Backspace`: If the combobox is editable, returns focus to the combobox and deletes the character prior to the cursor.
+- `Delete`: If the combobox is editable, returns focus to the combobox, removes the selected state if a suggestion was selected, and removes the inline autocomplete string if present.
+
+> NOTE:
+>  
+> 1. DOM Focus should be maintained in the combobox input, and the assistive technology focus within the listbox should be controlled using [`aria-activedescendant`](https://www.w3.org/TR/wai-aria-1.2/#aria-activedescendant) as described in [Managing Focus in Composites Using `aria-activedescendant`](https://www.w3.org/TR/wai-aria-practices-1.2/#kbd_focus_activedescendant).
+> 2. Selection follows focus in the listbox; the listbox allows only one suggested value to be selected at a time for the combobox value.
+
+#### Grid Popup Keyboard Interaction
+
+NOTE: React Spectrum v2 does not currently implement the grid popup example.
+
+In a grid popup, each suggested value may be represented by either a single cell or an entire row. See notes below for how this aspect of grid design effects the keyboard interaction design and the way that selection moves in response to focus movements.
+
+- `Enter`: Accepts the currently selected suggested value by closing the popup, placing the selected value in the combobox, and if the combobox is editable, placing the input cursor at the end of the value.
+- `Escape`: Closes the popup and returns focus to the combobox. Optionally, if the combobox is editable, clears the contents of the combobox.
+-  `ArrowRight`: Moves focus one cell to the right. Optionally, if focus is on the right-most cell in the row, focus may move to the first cell in the following row. If focus is on the last cell in the grid, either does nothing or returns focus to the combobox.
+- `ArrowLeft`: Moves focus one cell to the left. Optionally, if focus is on the left-most cell in the row, focus may move to the last cell in the previous row. If focus is on the first cell in the grid, either does nothing or returns focus to the combobox.
+- `ArrowDown`: Moves focus one cell down. If focus is in the last row of the grid, either does nothing or returns focus to the combobox.
+- `ArrowUp`: Moves focus one cell up. If focus is in the first row of the grid, either does nothing or returns focus to the combobox.
+- `PageDown (Optional)`: Moves focus down an author-determined number of rows, typically scrolling so the bottom row in the currently visible set of rows becomes one of the first visible rows. If focus is in the last row of the grid, focus does not move.
+- `PageUp (Optional)`: Moves focus up an author-determined number of rows, typically scrolling so the top row in the currently visible set of rows becomes one of the last visible rows. If focus is in the first row of the grid, focus does not move.
+- `Home (Optional)`: Either:
+  - Moves focus to the first cell in the row that contains focus. Or, if the grid has fewer than three cells per row or multiple suggested values per row, focus may move to the first cell in the grid.
+  - If the combobox is editable, returns focus to the combobox and places the cursor on the first character.
+- `End (Optional)`: Either:
+  - Moves focus to the last cell in the row that contains focus. Or, if the grid has fewer than three cells per row or multiple suggested values per row, focus may move to the last cell in the grid.
+  - If the combobox is editable, returns focus to the combobox and places the cursor after the last character.
+- `Control + Home (optional)`: moves focus to the first row.
+- `Control + End (Optional)`: moves focus to the last row.
+- Any printable character: If the combobox is editable, returns the focus to the combobox without closing the popup and types the character.
+- `Backspace`: If the combobox is editable, returns focus to the combobox and deletes the character prior to the cursor.
+- `Delete`: If the combobox is editable, returns focus to the combobox, removes the selected state if a suggestion was selected, and removes the inline autocomplete string if present.
+
+> NOTE
+> 
+> 1. DOM Focus should be maintained in the combobox input, and the assistive technology focus within the grid should be controlled using [`aria-activedescendant`](https://www.w3.org/TR/wai-aria-1.2/#aria-activedescendant) as described in [Managing Focus in Composites Using `aria-activedescendant`](https://www.w3.org/TR/wai-aria-practices-1.2/#kbd_focus_activedescendant).
+> 2. The grid allows only one suggested value to be selected at a time for the combobox value.
+> 3. In a grid popup, each suggested value may be represented by either a single cell or an entire row. This aspect of design effects focus and selection movement:
+>   - A. If every cell contains a different suggested value:
+>     - Selection follows focus so that the cell containing focus is selected.
+>     - Horizontal arrow key navigation typically wraps from one row to another.
+>     - Vertical arrow key navigation typically wraps from one column to another.
+>   - B. If all cells in a row contain information about the same suggested value:
+>     - Either the row containing focus is selected or a cell containing a suggested value is selected when any cell in the same row contains focus.
+>     - Horizontal key navigation may wrap from one row to another.
+>     - Vertical arrow key navigation does not wrap from one column to another.
+
+#### Tree Popup Keyboard Interaction
+
+NOTE: React Spectrum v2 does not currently implement the tree popup example.
+
+In some implementations of tree popups, some or all parent nodes may serve as suggestion category labels so may not be selectable values. See notes below for how this aspect of the design effects the way selection moves in response to focus movements.
+
+When focus is in a vertically oriented tree popup:
+
+- `Enter`: Accepts the currently selected suggested value by closing the popup, placing the selected value in the combobox, and if the combobox is editable, placing the input cursor at the end of the value.
+- `Escape`: Closes the popup and returns focus to the combobox. Optionally, if the combobox is editable, clears the contents of the combobox.
+- `ArrowRight`:
+  - When focus is on a closed node, opens the node; focus and selection do not move.
+  - When focus is on a open node, moves focus to the first child node and selects it if it is selectable.
+  - When focus is on an end node, does nothing.
+- `ArrowLeft`:
+  - When focus is on an open node, closes the node.
+  - When focus is on a child node that is also either an end node or a closed node, moves focus to its parent node and selects it if it is selectable.
+  - When focus is on a root node that is also either an end node or a closed node, does nothing.
+- `ArrowDown`: Moves focus to the next node that is focusable without opening or closing a node and selects it if it is selectable.
+- `ArrowUp`: Moves focus to the previous node that is focusable without opening or closing a node and selects it if it is selectable.
+- `PageDown`:
+- `PageUp`:
+- `Home`: Moves focus to the first focusable node in the tree without opening or closing a node and selects it if it is selectable.
+- `End`: Moves focus to the last focusable node in the tree without opening or closing a node and selects it if it is selectable.
+- Any printable character:
+  - If the combobox is editable, returns the focus to the combobox without closing the popup and types the character.
+  - Otherwise, moves focus to the next suggested value with a name that starts with the characters typed.
+
+> NOTE
+> 
+> 1. DOM Focus should be maintained in the combobox input, and the assistive technology focus within the grid should be controlled using [`aria-activedescendant`](https://www.w3.org/TR/wai-aria-1.2/#aria-activedescendant) as described in [Managing Focus in Composites Using `aria-activedescendant`](https://www.w3.org/TR/wai-aria-practices-1.2/#kbd_focus_activedescendant).
+> 2. The tree allows only one suggested value to be selected at a time for the combobox value.
+> 3. In a tree popup, some or all parent nodes may not be selectable values; they may serve as category labels for suggested values. If focus moves to a node that is not a selectable value, either:
+>    - The previously selected node, if any, remains selected until focus moves to a node that is selectable.
+>    - There is no selected value.
+>    - In either case, focus is visually distinct from selection so users can readily see if a value is selected or not.
+> 4. If nodes in the tree are arranged horizontally (`aria-orientation` is set to `horizontal`):
+>    - `ArrowDown` performs as `ArrowRight` is described above, and vice versa.
+>    - `ArrowUp` performs as `ArrowLeft` is described above, and vice versa.
+
+### Dialog Popup Keyboard Interaction
+
+NOTE: React Spectrum v2 does not currently implement the dialog popup example, but a common use case would be where a search returns heterogeneous search results, like global search on [Adobe.com](https://adobe.com/).
+
+When focus is in a dialog popup:
+
+- There are two ways to close the popup and return focus to the combobox:
+  1. Perform an action in the dialog, such as activate a button, that specifies a value for the combobox.
+  2. Cancel out of the dialog, e.g., press `Escape` or activate the cancel button in the dialog. Canceling either returns focus to the text box without changing the combobox value or returns focus to the combobox and clears the combobox.
+- The dialog implements the keyboard interaction defined in the [`modal dialog pattern`](https://www.w3.org/TR/wai-aria-practices-1.2/#dialog_modal).
+
+> NOTE
+> Unlike other combobox popups, dialogs do not support `aria-activedescendant` so DOM focus moves into the dialog from the combobox.
+
+### Roles, States, and Properties
+
+- The element that serves as an input and displays the combobox value has role [`combobox`](https://www.w3.org/TR/wai-aria-1.2/#combobox).
+- The combobox element has [`aria-controls`](https://www.w3.org/TR/wai-aria-1.2/#aria-controls) set to an `IDREF` value that refers to the element that serves as the popup. Note that `aria-controls` only needs to be set when the popup is visible. However, it is valid to reference an element that is not visible so long as it is present in the DOM.
+- The popup is an element that has `role` [`listbox`](https://www.w3.org/TR/wai-aria-practices-1.2/#Listbox), [`grid`](https://www.w3.org/TR/wai-aria-practices-1.2/#Grid), [`tree`](https://www.w3.org/TR/wai-aria-practices-1.2/#TreeView), or [`dialog`](https://www.w3.org/TR/wai-aria-practices-1.2/#dialog_modal).
+- If the popup has a role other than `listbox`, the element with role `combobox` has [`aria-haspopup`](https://www.w3.org/TR/wai-aria-1.2/#aria-haspopup) set to a value that corresponds to the popup type. That is, `aria-haspopup` is set to `grid`, `tree`, or `dialog`. Note that elements with `role` `combobox` have an implicit `aria-haspopup` value of `listbox`.
+- When the combobox popup is not visible, the element with role `combobox` has aria-expanded set to false. When the popup element is visible, [`aria-expanded`](https://www.w3.org/TR/wai-aria-1.2/#aria-expanded) is set to `true`. Note that elements with role `combobox` have a default value for `aria-expanded` of `false`.
+- When a combobox receives focus, DOM focus is placed on the combobox input element.
+- When a descendant of a `listbox`, `grid`, or `tree` popup is focused, DOM focus remains on the combobox and the combobox has [`aria-activedescendant`](https://www.w3.org/TR/wai-aria-1.2/#aria-activedescendant) set to an `IDREF` value that refers to the focused element within the popup.
+- For a combobox that controls a `listbox`, `grid`, or `tree` popup, when a suggested value is visually indicated as the currently selected value, the `option`, `gridcell`, `row`, or `treeitem` containing that value has [`aria-selected`](https://www.w3.org/TR/wai-aria-1.2/#aria-selected) set to `true`.
+- If the combobox has a visible label and the combobox element is an HTML element that can be labelled using the HTML `label` element (e.g., the `input` element), it is labeled using the `label` element. Otherwise, if it has a visible label, the combobox element has [`aria-labelledby`](https://www.w3.org/TR/wai-aria-1.2/#aria-labelledby) set to a value that refers to the labelling element. Otherwise, the combobox element has a label provided by [`aria-label`](https://www.w3.org/TR/wai-aria-1.2/#aria-label).
+- The combobox element has [`aria-autocomplete`](https://www.w3.org/TR/wai-aria-1.2/#aria-autocomplete) set to a value that corresponds to its autocomplete behavior:
+  - `list`: When the popup is triggered, it presents suggested values. If the combobox is editable, the values complete or logically correspond to the characters typed in the combobox.
+  - `both`: When the popup is triggered, it presents suggested values that complete or logically correspond to the characters typed in the combobox. In addition, the portion of the selected suggestion that has not been typed by the user, known as the completion string, appears inline after the input cursor in the combobox. The inline completion string is visually highlighted and has a selected state.
+  - `none`: When the popup is displayed, the suggested values it contains are the same regardless of the characters typed in the combobox.
+
+> NOTE
+>
+> 1. In ARIA 1.0, the combobox referenced its popup with [`aria-owns`](https://www.w3.org/TR/wai-aria-1.2/#aria-owns) instead of [`aria-controls`](https://www.w3.org/TR/wai-aria-1.2/#aria-controls). While user agents might support comboboxes with `aria-owns` for backwards compatibility with legacy content, it is strongly recommended that authors use `aria-controls`.
+> 2. When referring to the roles, states, and properties documentation for the below list of patterns used for popups, keep in mind that a combobox is a single-select widget where selection follows focus in the popup.
+> 3. The roles, states, and properties for popup elements are defined in their respective design patterns:
+>   - [Listbox Roles, States, and Properties](https://www.w3.org/TR/wai-aria-practices-1.2/#listbox_roles_states_props)
+>   - [Grid Roles, States, and Properties](https://www.w3.org/TR/wai-aria-practices-1.2/#grid_roles_states_props)
+>   - [Tree Roles, States, and Properties](https://www.w3.org/TR/wai-aria-practices-1.2/#tree_roles_states_props)
+>   - [Dialog Roles, States, and Properties](https://www.w3.org/TR/wai-aria-practices-1.2/#dialog_roles_states_props)
+
+## v2 Implementation details
+
+The React Spectrum v2 implementation uses the [WAI-ARIA 1.1 Combobox design pattern](https://www.w3.org/TR/wai-aria-practices-1.1/#wai-aria-roles-states-and-properties-6), which is being deprecated in favor of the [WAI-ARIA 1.2 Combobox design pattern](https://www.w3.org/TR/wai-aria-practices-1.2/#wai-aria-roles-states-and-properties-6).
+
+The main difference between the WAI-ARIA 1.1 and WAI-ARIA 1.2 design patterns is that in 1.1 the role `combobox` was set on a wrapper `div` containing either a `textbox` or `searchbox`, whereas in 1.2, the `input` itself will have role `combobox`.

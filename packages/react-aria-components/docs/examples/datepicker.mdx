@@ -1,0 +1,183 @@
+{/* Copyright 2023 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {ExampleLayout} from '@react-spectrum/docs';
+export default ExampleLayout;
+
+import docs from 'docs:react-aria-components';
+import {TypeLink} from '@react-spectrum/docs';
+import styles from '@react-spectrum/docs/src/docs.css';
+import DatePicker from '@react-spectrum/docs/pages/assets/component-illustrations/DatePicker.svg';
+import Button from '@react-spectrum/docs/pages/assets/component-illustrations/ActionButton.svg';
+import Label from '@react-spectrum/docs/pages/assets/component-illustrations/Label.svg';
+import Popover from '@react-spectrum/docs/pages/assets/component-illustrations/Popover.svg';
+import DateField from '@react-spectrum/docs/pages/assets/component-illustrations/DateField.svg';
+import Calendar from '@react-spectrum/docs/pages/assets/component-illustrations/Calendar.svg';
+import Dialog from '@react-spectrum/docs/pages/assets/component-illustrations/Dialog.svg';
+import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
+
+---
+keywords: [example, datepicker, aria, accessibility, react, component]
+type: component
+image: datepicker.png
+description: A DatePicker component styled with Tailwind CSS.
+---
+
+# DatePicker
+
+A [DatePicker](../DatePicker.html) component styled with [Tailwind CSS](https://tailwindcss.com/).
+
+## Example
+
+```tsx import
+import './tailwind.global.css';
+```
+
+```tsx example standalone
+import {DatePicker, Label, Group, Heading, DateInput, DateSegment, Button, Popover, Dialog, Calendar, CalendarGrid, CalendarGridHeader, CalendarHeaderCell, CalendarGridBody, CalendarCell} from 'react-aria-components';
+import type {ButtonProps, PopoverProps} from 'react-aria-components';
+import {ChevronLeft, ChevronRight, ChevronsUpDown} from 'lucide-react';
+
+function DatePickerExample() {
+  return (
+    <div className="bg-linear-to-r from-violet-500 to-fuchsia-600 p-12 sm:h-[400px] rounded-lg flex items-start justify-center">
+      <DatePicker className="group flex flex-col gap-1 w-[200px]">
+        <Label className="text-white cursor-default">Date</Label>
+        <Group className="flex rounded-lg bg-white/90 focus-within:bg-white group-open:bg-white transition pl-3 shadow-md text-gray-700 focus-visible:ring-2 ring-black">
+          <DateInput className="flex flex-1 py-2">
+            {(segment) => <DateSegment segment={segment} className="px-0.5 tabular-nums outline-hidden rounded-xs focus:bg-violet-700 focus:text-white caret-transparent placeholder-shown:italic" />}
+          </DateInput>
+          <Button className="outline-hidden px-3 flex items-center text-gray-700 transition border-0 border-solid border-l border-l-purple-200 bg-transparent rounded-r-lg pressed:bg-purple-100 focus-visible:ring-2 ring-black">
+            <ChevronsUpDown className="w-4 h-4" />
+          </Button>
+        </Group>
+        <MyPopover>
+          <Dialog className="p-6 text-gray-600">
+            <Calendar>
+              <header className="flex items-center gap-1 pb-4 px-1 font-serif w-full">
+                <Heading className="flex-1 font-semibold text-2xl ml-2" />
+                <RoundButton slot="previous"><ChevronLeft /></RoundButton>
+                <RoundButton slot="next"><ChevronRight /></RoundButton>
+              </header>
+              <CalendarGrid className="border-spacing-1 border-separate">
+                <CalendarGridHeader>
+                  {day => <CalendarHeaderCell className="text-xs text-gray-500 font-semibold">{day}</CalendarHeaderCell>}
+                </CalendarGridHeader>
+                <CalendarGridBody>
+                  {date => <CalendarCell date={date} className="w-9 h-9 outline-hidden cursor-default rounded-full flex items-center justify-center outside-month:text-gray-300 hover:bg-gray-100 pressed:bg-gray-200 selected:bg-violet-700 selected:text-white focus-visible:ring-3 ring-violet-600/70 ring-offset-2" />}
+                </CalendarGridBody>
+              </CalendarGrid>
+            </Calendar>
+          </Dialog>
+        </MyPopover>
+      </DatePicker>
+    </div>
+  );
+}
+
+function RoundButton(props: ButtonProps) {
+  return <Button {...props} className="w-9 h-9 outline-hidden cursor-default bg-transparent text-gray-600 border-0 rounded-full flex items-center justify-center hover:bg-gray-100 pressed:bg-gray-200 focus-visible:ring-3 ring-violet-600/70 ring-offset-2" />;
+}
+
+function MyPopover(props: PopoverProps) {
+  return (
+    <Popover
+      {...props}
+      className={({isEntering, isExiting}) => `
+        overflow-auto rounded-lg drop-shadow-lg ring-1 ring-black/10 bg-white
+        ${isEntering ? 'animate-in fade-in placement-bottom:slide-in-from-top-1 placement-top:slide-in-from-bottom-1 ease-out duration-200' : ''}
+        ${isExiting ? 'animate-out fade-out placement-bottom:slide-out-to-top-1 placement-top:slide-out-to-bottom-1 ease-in duration-150' : ''}
+      `} />
+  );
+}
+```
+
+### Tailwind config
+
+This example uses the following plugins:
+
+* [tailwindcss-react-aria-components](../styling.html#plugin)
+* [tailwindcss-animate](https://github.com/jamiebuilds/tailwindcss-animate)
+
+When using Tailwind v4, add them to your CSS:
+
+```css render=false
+@import "tailwindcss";
+@plugin "tailwindcss-react-aria-components";
+@plugin "tailwindcss-animate";
+```
+
+<details>
+
+<summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Tailwind v3</summary>
+
+When using Tailwind v3, add the plugins to your `tailwind.config.js` instead:
+
+```tsx
+module.exports = {
+  // ...
+  plugins: [
+    require('tailwindcss-react-aria-components'),
+    require('tailwindcss-animate')
+  ]
+};
+```
+
+**Note**: When using Tailwind v3, install `tailwindcss-react-aria-components` version 1.x instead of 2.x.
+
+</details>
+
+## Components
+
+<section className={styles.cardGroup} data-size="small">
+
+<ExampleCard
+  url="../DatePicker.html"
+  title="DatePicker"
+  description="A date picker combines a DateField and a Calendar popover.">
+  <DatePicker />
+</ExampleCard>
+
+<ExampleCard
+  url="../DateField.html"
+  title="DateField"
+  description="A date field allows a user to enter and edit date values using a keyboard.">
+  <DateField />
+</ExampleCard>
+
+<ExampleCard
+  url="../Calendar.html"
+  title="Calendar"
+  description="A calendar allows a user to select a single date from a date grid.">
+  <Calendar />
+</ExampleCard>
+
+<ExampleCard
+  url="../Button.html"
+  title="Button"
+  description="A button allows a user to perform an action.">
+  <Button />
+</ExampleCard>
+
+<ExampleCard
+  url="../Popover.html"
+  title="Popover"
+  description="A popover displays content in context with a trigger element.">
+  <Popover />
+</ExampleCard>
+
+<ExampleCard
+  url="../Dialog.html"
+  title="Dialog"
+  description="A dialog is an overlay shown above other content in an application.">
+  <Dialog />
+</ExampleCard>
+
+</section>

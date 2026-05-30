@@ -1,0 +1,170 @@
+{/* Copyright 2024 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/accordion';
+import {HeaderInfo, PropTable, TypeLink, PageDescription} from '@react-spectrum/docs';
+import packageData from '@react-spectrum/accordion/package.json';
+
+---
+category: Navigation
+keywords: [disclosure, accordion, collapse, expand]
+---
+
+```jsx import
+import {Accordion, Disclosure, DisclosureTitle, DisclosurePanel} from '@react-spectrum/accordion';
+```
+
+# Accordion
+
+<PageDescription>{docs.exports.Accordion.description}</PageDescription>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['Accordion', 'Disclosure', 'DisclosureTitle', 'DisclosurePanel']}
+  since="3.38.0" />
+
+## Example
+
+```tsx example
+<Accordion defaultExpandedKeys={['personal']}>
+  <Disclosure id="personal">
+    <DisclosureTitle>Personal Information</DisclosureTitle>
+    <DisclosurePanel>
+      Personal information form here.
+    </DisclosurePanel>
+  </Disclosure>
+  <Disclosure id="billing">
+    <DisclosureTitle>Billing Address</DisclosureTitle>
+    <DisclosurePanel>
+      Billing address form here.
+    </DisclosurePanel>
+  </Disclosure>
+</Accordion>
+```
+
+
+## Content
+
+Accordion accepts multiple [Disclosure](Disclosure.html) elements as children. Each disclosure accepts an `id` prop which is passed to the `onExpandedChange` handler to identify the expanded disclosure within the accordion. See the [Events](#events) section for more details about expansion.
+
+### Internationalization
+In order to internationalize an Accordion, all text content within the accordion should be localized.
+
+## Events
+
+Accordion accepts an `onExpandedChange` prop which is triggered when a disclosure is expanded or collapsed. The example below uses `onExpandedChange` to programmatically control disclosure expansion.
+
+```tsx example
+import {Key} from "@react-types/shared";
+
+function ControlledExpansion() {
+  let [expandedKeys, setExpandedKeys] = React.useState<Set<Key>>(new Set(['personal']))
+
+  return (
+    <>
+      <Accordion expandedKeys={expandedKeys} onExpandedChange={setExpandedKeys}>
+        <Disclosure id="personal">
+          <DisclosureTitle>Personal Information</DisclosureTitle>
+          <DisclosurePanel>
+            Personal information form here.
+          </DisclosurePanel>
+        </Disclosure>
+        <Disclosure id="billing">
+          <DisclosureTitle>Billing Address</DisclosureTitle>
+          <DisclosurePanel>
+            Billing address form here.
+          </DisclosurePanel>
+        </Disclosure>
+      </Accordion>
+      <div style={{marginTop: '20px'}}>You have expanded: {expandedKeys}</div>
+    </>
+  )
+}
+```
+
+## Expanded
+
+By default, only one disclosure will be expanded at a time. To expand multiple disclosures, apply the `allowsMultipleExpanded` prop to Accordion.
+
+```tsx example
+<Accordion allowsMultipleExpanded defaultExpandedKeys={['personal', 'billing']}>
+  <Disclosure id="personal">
+    <DisclosureTitle>Personal Information</DisclosureTitle>
+    <DisclosurePanel>
+      Personal information form here.
+    </DisclosurePanel>
+  </Disclosure>
+  <Disclosure id="billing">
+    <DisclosureTitle>Billing Address</DisclosureTitle>
+    <DisclosurePanel>
+      Billing address form here.
+    </DisclosurePanel>
+  </Disclosure>
+</Accordion>
+```
+## Props
+
+### Accordion
+
+<PropTable component={docs.exports.Accordion} links={docs.links} />
+
+### Disclosure
+
+<PropTable component={docs.exports.Disclosure} links={docs.links} />
+
+### Disclosure Title
+
+<PropTable component={docs.exports.DisclosureTitle} links={docs.links} />
+
+### Disclosure Panel
+
+<PropTable component={docs.exports.DisclosurePanel} links={docs.links} />
+
+## Visual Options
+
+### Disabled
+
+```tsx example
+<Accordion isDisabled>
+  <Disclosure id="personal">
+    <DisclosureTitle>Personal Information</DisclosureTitle>
+    <DisclosurePanel>
+      Personal information form here.
+    </DisclosurePanel>
+  </Disclosure>
+  <Disclosure id="billing">
+    <DisclosureTitle>Billing Address</DisclosureTitle>
+    <DisclosurePanel>
+      Billing address form here.
+    </DisclosurePanel>
+  </Disclosure>
+</Accordion>
+```
+
+### Quiet
+
+```tsx example
+<Accordion isQuiet>
+  <Disclosure id="personal">
+    <DisclosureTitle>Personal Information</DisclosureTitle>
+    <DisclosurePanel>
+      Personal information form here.
+    </DisclosurePanel>
+  </Disclosure>
+  <Disclosure id="billing">
+    <DisclosureTitle>Billing Address</DisclosureTitle>
+    <DisclosurePanel>
+      Billing address form here.
+    </DisclosurePanel>
+  </Disclosure>
+</Accordion>
+```

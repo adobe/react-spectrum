@@ -1,0 +1,169 @@
+import {
+  AriaLabelingProps,
+  GlobalDOMAttributes,
+  HoverEvents,
+  PressEvents,
+  ValueBase
+} from '@react-types/shared';
+import {
+  ClassNameOrFunction,
+  composeRenderProps,
+  ContextValue,
+  RenderProps,
+  StyleRenderProps,
+  useContextProps
+} from './utils';
+import {Color} from 'react-stately/Color';
+import {ColorSwatchContext} from './ColorSwatch';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
+import intlMessages from '../intl/*.json';
+import {ListBox, ListBoxItem, ListBoxItemRenderProps, ListBoxRenderProps} from './ListBox';
+// @ts-ignore
+import {parseColor} from 'react-stately/Color';
+import React, {
+  createContext,
+  ForwardedRef,
+  forwardRef,
+  ReactNode,
+  useContext,
+  useEffect,
+  useMemo
+} from 'react';
+import {useColorPickerState} from 'react-stately/useColorPickerState';
+import {useLocale} from 'react-aria/I18nProvider';
+import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
+
+export interface ColorSwatchPickerRenderProps extends Omit<ListBoxRenderProps, 'isDropTarget'> {}
+export interface ColorSwatchPickerProps
+  extends
+    ValueBase<string | Color, Color>,
+    AriaLabelingProps,
+    StyleRenderProps<ColorSwatchPickerRenderProps>,
+    GlobalDOMAttributes<HTMLDivElement> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
+   * @default 'react-aria-ColorSwatchPicker'
+   */
+  className?: ClassNameOrFunction<ColorSwatchPickerRenderProps>;
+  /** The children of the ColorSwatchPicker. */
+  children?: ReactNode;
+  /**
+   * Whether the items are arranged in a stack or grid.
+   *
+   * @default 'grid'
+   */
+  layout?: 'grid' | 'stack';
+}
+
+export const ColorSwatchPickerContext =
+  createContext<ContextValue<ColorSwatchPickerProps, HTMLDivElement>>(null);
+const ColorMapContext = createContext<Map<string, Color> | null>(null);
+
+/**
+ * A ColorSwatchPicker displays a list of color swatches and allows a user to select one of them.
+ */
+export const ColorSwatchPicker = forwardRef(function ColorSwatchPicker(
+  props: ColorSwatchPickerProps,
+  ref: ForwardedRef<HTMLDivElement>
+) {
+  [props, ref] = useContextProps(props, ref, ColorSwatchPickerContext);
+  let state = useColorPickerState(props);
+  let colorMap = useMemo(() => new Map(), []);
+  let formatter = useLocalizedStringFormatter(intlMessages, 'react-aria-components');
+
+  return (
+    <ListBox
+      {...filterDOMProps(props, {labelable: true})}
+      ref={ref}
+      className={props.className || 'react-aria-ColorSwatchPicker'}
+      style={props.style}
+      aria-label={
+        props['aria-label'] ||
+        (!props['aria-labelledby'] ? formatter.format('colorSwatchPicker') : undefined)
+      }
+      layout={props.layout || 'grid'}
+      selectionMode="single"
+      selectedKeys={[state.color.toString('hexa')]}
+      onSelectionChange={keys => {
+        // single select, 'all' cannot occur. appease typescript.
+        if (keys !== 'all') {
+          state.setColor(colorMap.get([...keys][0]));
+        }
+      }}
+      disallowEmptySelection>
+      <ColorMapContext.Provider value={colorMap}>{props.children}</ColorMapContext.Provider>
+    </ListBox>
+  );
+});
+
+export interface ColorSwatchPickerItemRenderProps extends Omit<
+  ListBoxItemRenderProps,
+  'selectionMode' | 'selectionBehavior'
+> {
+  /** The color of the swatch. */
+  color: Color;
+}
+
+export interface ColorSwatchPickerItemProps
+  extends
+    RenderProps<ColorSwatchPickerItemRenderProps>,
+    HoverEvents,
+    PressEvents,
+    Omit<GlobalDOMAttributes<HTMLDivElement>, 'onClick'> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
+   * @default 'react-aria-ColorSwatchPickerItem'
+   */
+  className?: ClassNameOrFunction<ColorSwatchPickerItemRenderProps>;
+  /** The color of the swatch. */
+  color: string | Color;
+  /** Whether the color swatch is disabled. */
+  isDisabled?: boolean;
+}
+
+export const ColorSwatchPickerItem = forwardRef(function ColorSwatchPickerItem(
+  props: ColorSwatchPickerItemProps,
+  ref: ForwardedRef<HTMLDivElement>
+) {
+  let propColor = props.color || '#0000';
+  let color = useMemo(
+    () => (typeof propColor === 'string' ? parseColor(propColor) : propColor),
+    [propColor]
+  );
+  let {locale} = useLocale();
+  let map = useContext(ColorMapContext)!;
+  useEffect(() => {
+    let key = color.toString('hexa');
+    map.set(key, color);
+    return () => {
+      map.delete(key);
+    };
+  }, [color, map]);
+
+  let wrap = v => {
+    if (typeof v === 'function') {
+      return renderProps => v({...renderProps, color});
+    }
+    return v;
+  };
+
+  return (
+    <ListBoxItem
+      {...props}
+      // ColorSwatchPickerItem is never a link.
+      render={props.render as any}
+      ref={ref}
+      id={color.toString('hexa')}
+      textValue={color.getColorName(locale)}
+      className={wrap(props.className || 'react-aria-ColorSwatchPickerItem')}
+      style={wrap(props.style)}>
+      {composeRenderProps(wrap(props.children), children => (
+        <ColorSwatchContext.Provider value={{color}}>{children}</ColorSwatchContext.Provider>
+      ))}
+    </ListBoxItem>
+  );
+});

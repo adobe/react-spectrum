@@ -1,0 +1,6 @@
+{
+  "rangeOverflow": "Valoarea trebuie să fie {maxValue} sau anterioară.",
+  "rangeReversed": "Data de început trebuie să fie anterioară datei de sfârșit.",
+  "rangeUnderflow": "Valoarea trebuie să fie {minValue} sau ulterioară.",
+  "unavailableDate": "Data selectată nu este disponibilă."
+}

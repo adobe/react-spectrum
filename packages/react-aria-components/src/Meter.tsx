@@ -1,0 +1,100 @@
+/*
+ * Copyright 2022 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
+import {AriaMeterProps, useMeter} from 'react-aria/useMeter';
+
+import {clamp} from 'react-stately/private/utils/number';
+import {
+  ClassNameOrFunction,
+  ContextValue,
+  dom,
+  RenderProps,
+  SlotProps,
+  useContextProps,
+  useRenderProps,
+  useSlot
+} from './utils';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
+import {forwardRefType, GlobalDOMAttributes} from '@react-types/shared';
+import {LabelContext} from './Label';
+import {mergeProps} from 'react-aria/mergeProps';
+import React, {createContext, ForwardedRef, forwardRef} from 'react';
+
+export interface MeterProps
+  extends
+    Omit<AriaMeterProps, 'label'>,
+    RenderProps<MeterRenderProps>,
+    SlotProps,
+    GlobalDOMAttributes<HTMLDivElement> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
+   * @default 'react-aria-Meter'
+   */
+  className?: ClassNameOrFunction<MeterRenderProps>;
+}
+
+export interface MeterRenderProps {
+  /**
+   * The value as a percentage between the minimum and maximum.
+   */
+  percentage: number;
+  /**
+   * A formatted version of the value.
+   *
+   * @selector [aria-valuetext]
+   */
+  valueText: string | undefined;
+}
+
+export const MeterContext = createContext<ContextValue<MeterProps, HTMLDivElement>>(null);
+
+/**
+ * A meter represents a quantity within a known range, or a fractional value.
+ */
+export const Meter = /*#__PURE__*/ (forwardRef as forwardRefType)(function Meter(
+  props: MeterProps,
+  ref: ForwardedRef<HTMLDivElement>
+) {
+  [props, ref] = useContextProps(props, ref, MeterContext);
+  let {value = 0, minValue = 0, maxValue = 100} = props;
+  value = clamp(value, minValue, maxValue);
+
+  let [labelRef, label] = useSlot(!props['aria-label'] && !props['aria-labelledby']);
+  let {meterProps, labelProps} = useMeter({...props, label});
+
+  // Calculate the width of the progress bar as a percentage
+  let percentage = ((value - minValue) / (maxValue - minValue)) * 100;
+
+  let renderProps = useRenderProps({
+    ...props,
+    defaultClassName: 'react-aria-Meter',
+    values: {
+      percentage,
+      valueText: meterProps['aria-valuetext']
+    }
+  });
+
+  let DOMProps = filterDOMProps(props, {global: true});
+
+  return (
+    <dom.div
+      {...mergeProps(DOMProps, renderProps, meterProps)}
+      ref={ref}
+      slot={props.slot || undefined}>
+      <LabelContext.Provider value={{...labelProps, ref: labelRef, elementType: 'span'}}>
+        {renderProps.children}
+      </LabelContext.Provider>
+    </dom.div>
+  );
+});

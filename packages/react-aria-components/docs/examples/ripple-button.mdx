@@ -1,0 +1,138 @@
+{/* Copyright 2023 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {ExampleLayout} from '@react-spectrum/docs';
+export default ExampleLayout;
+
+import docs from 'docs:react-aria-components';
+import {TypeLink} from '@react-spectrum/docs';
+import styles from '@react-spectrum/docs/src/docs.css';
+import Button from '@react-spectrum/docs/pages/assets/component-illustrations/Button.svg';
+import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
+
+---
+keywords: [example, button, aria, accessibility, react, component]
+type: component
+image: ripple-button.png
+description: A button with an animated ripple effect styled with Tailwind CSS.
+---
+
+# Ripple Button
+
+A [Button](../Button.html) with an animated ripple effect styled with [Tailwind CSS](https://tailwindcss.com/).
+
+## Example
+
+```tsx import
+import './tailwind.global.css';
+```
+
+```tsx example standalone
+import {Button} from 'react-aria-components';
+import {useEffect, useRef, useState} from 'react';
+import {Plane} from 'lucide-react';
+
+function RippleButton(props) {
+  const [coords, setCoords] = useState(null);
+
+  let timeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+  let onPress = (e) => {
+    setCoords({x: e.x, y: e.y});
+    if (e.x !== -1 && e.y !== -1) {
+      clearTimeout(timeout.current);
+      timeout.current = setTimeout(() => setCoords(null), 600);
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      clearTimeout(timeout.current);
+    };
+  }, []);
+
+  return (
+    <div className="bg-linear-to-r from-teal-300 to-cyan-500 p-12 rounded-lg flex justify-center">
+      <Button
+        onPress={onPress}
+        className={`
+      relative overflow-hidden
+      inline-flex items-center justify-center rounded-md bg-black/50 bg-clip-padding border border-white/20 px-6 py-4 text-white text-lg
+      hover:bg-black/60 pressed:bg-black/70 transition-colors cursor-default outline-hidden focus-visible:ring-2 focus-visible:ring-white/75`}>
+      {coords && (
+        <div
+          key={`${coords.x},${coords.y}`}
+          className="absolute h-8 w-8 rounded-full opacity-100 bg-white/60"
+          style={{
+            animation: 'ripple 600ms linear',
+            left: coords.x - 15,
+            top: coords.y - 15
+          }} />)}
+        <span className="flex items-center gap-4">{props.children}</span>
+      </Button>
+    </div>
+  )
+}
+
+<RippleButton><Plane className="w-6 h-6" /> Book flight</RippleButton>
+```
+```css
+@keyframes ripple {
+  from {
+    transform: scale(0);
+    opacity: 1;
+  }
+  to {
+    transform: scale(6);
+    opacity: 0;
+  }
+}
+```
+
+### Tailwind config
+
+This example uses the [tailwindcss-react-aria-components](../styling.html#plugin) plugin. When using Tailwind v4, add it to your CSS:
+
+```css render=false
+@import "tailwindcss";
+@plugin "tailwindcss-react-aria-components";
+```
+
+<details>
+
+<summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Tailwind v3</summary>
+
+When using Tailwind v3, add the plugin to your `tailwind.config.js` instead:
+
+```tsx
+module.exports = {
+  // ...
+  plugins: [
+    require('tailwindcss-react-aria-components')
+  ]
+};
+```
+
+**Note**: When using Tailwind v3, install `tailwindcss-react-aria-components` version 1.x instead of 2.x.
+
+</details>
+
+## Components
+
+<section className={styles.cardGroup} data-size="small">
+
+  <ExampleCard
+    url="../Button.html"
+    title="Button"
+    description="A button allows a user to perform an action.">
+    <Button />
+  </ExampleCard>
+
+</section>
+

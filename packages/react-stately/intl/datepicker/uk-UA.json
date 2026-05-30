@@ -1,0 +1,6 @@
+{
+  "rangeOverflow": "Значення має бути не пізніше {maxValue}.",
+  "rangeReversed": "Дата початку має передувати даті завершення.",
+  "rangeUnderflow": "Значення має бути не раніше {minValue}.",
+  "unavailableDate": "Вибрана дата недоступна."
+}

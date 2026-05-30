@@ -1,0 +1,98 @@
+.sidebar {
+  width: 200px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid light-dark(#eee, #222);
+  background: light-dark(#fdfdfd, #1d1d1d);
+  zoom: var(--scale);
+
+  h1 {
+    height: 44px;
+    font-size: 16px;
+    margin: 0;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    margin-left: 20px;
+  }
+
+  @media (width < 500px) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    z-index: 999;
+    transition: translate 250ms;
+
+    &[inert] {
+      translate: -100% 0;
+    }
+  }
+}
+
+.sidebar-Tree {
+  overflow: auto;
+  flex: 1;
+}
+
+.sidebar-TreeItem {
+  height: 32px;
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  padding: 0 12px;
+  margin: 4px 8px;
+  padding-left: calc(4px + (var(--tree-item-level) - 1) * 12px);
+  border-radius: 8px;
+  cursor: default;
+  position: relative;
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+
+  span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &[data-pressed] {
+    background: light-dark(#ddd, #222);
+  }
+
+  &[data-selected] {
+    background: light-dark(black, white);
+    color: light-dark(white, black);
+  }
+
+  &[data-drop-target]::after {
+    content: '';
+    position: absolute;
+    border-radius: inherit;
+    inset: 0;
+    outline: 2px solid dodgerblue;
+    background: rgb(from dodgerblue r g b / 0.4);
+  }
+
+  &[data-focus-visible] {
+    outline: 2px solid light-dark(black, white);
+    outline-offset: 2px;
+  }
+
+  .chevron {
+    all: unset;
+    margin-right: 4px;
+    transition: rotate 200ms;
+    svg {
+      display: block;
+    }
+  }
+
+  &[data-expanded] .chevron {
+    rotate: 90deg;
+  }
+
+  &:not(:has(.chevron))::before {
+    content: '';
+    width: 20px;
+  }
+}

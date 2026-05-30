@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="f" data-name="ICONS" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12">
+  <circle cx="3.8" cy="10.4" r="1.1" fill="var(--iconPrimary, #222)" stroke-width="0"/>
+  <circle cx="3.8" cy="6" r="1.1" fill="var(--iconPrimary, #222)" stroke-width="0"/>
+  <circle cx="3.8" cy="1.6" r="1.1" fill="var(--iconPrimary, #222)" stroke-width="0"/>
+  <circle cx="8.2" cy="10.4" r="1.1" fill="var(--iconPrimary, #222)" stroke-width="0"/>
+  <circle cx="8.2" cy="6" r="1.1" fill="var(--iconPrimary, #222)" stroke-width="0"/>
+  <circle cx="8.2" cy="1.6" r="1.1" fill="var(--iconPrimary, #222)" stroke-width="0"/>
+</svg>

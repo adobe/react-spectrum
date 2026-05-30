@@ -1,0 +1,100 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Dynamic - Renames Item to Tag 1`] = `
+"import { Tag, TagGroup } from "@react-spectrum/s2";
+const items = [
+  {id: 1, name: 'News'},
+  {id: 2, name: 'Travel'},
+  {id: 3, name: 'Gaming'},
+  {id: 4, name: 'Shopping'}
+];
+
+<div>
+  <TagGroup items={items} aria-label="Dynamic TagGroup items example">
+    {item => <Tag>{item.name}</Tag>}
+  </TagGroup>
+</div>"
+`;
+
+exports[`Dynamic - Renames key to id 1`] = `
+"import { Tag, TagGroup } from "@react-spectrum/s2";
+const items = [
+  {id: 1, name: 'News'},
+  {id: 2, name: 'Travel'},
+  {id: 3, name: 'Gaming'},
+  {id: 4, name: 'Shopping'}
+];
+
+<div>
+  <TagGroup items={items} aria-label="Dynamic TagGroup items example">
+    {item => <Tag id={item.id}>{item.name}</Tag>}
+  </TagGroup>
+  <TagGroup items={items} aria-label="Dynamic TagGroup items example">
+    {item => <Tag id={item.id}>{item.name}</Tag>}
+  </TagGroup>
+  <TagGroup items={items} aria-label="Dynamic TagGroup items example">
+    {item => <Tag>{item.name}</Tag>}
+  </TagGroup>
+</div>"
+`;
+
+exports[`Static - Renames Item to Tag 1`] = `
+"import { Tag, TagGroup } from "@react-spectrum/s2";
+
+<div>
+  <TagGroup aria-label="Static TagGroup items example">
+    <Tag>News</Tag>
+    <Tag>Travel</Tag>
+    <Tag>Gaming</Tag>
+    <Tag>Shopping</Tag>
+  </TagGroup>
+</div>"
+`;
+
+exports[`Static - Renames key to id 1`] = `
+"import { Tag, TagGroup } from "@react-spectrum/s2";
+
+let externalKey = 'travel';
+<div>
+  <TagGroup aria-label="Static TagGroup items example">
+    <Tag id="news">News</Tag>
+    <Tag id={externalKey}>Travel</Tag>
+    <Tag>Gaming</Tag>
+    <Tag>Shopping</Tag>
+  </TagGroup>
+</div>"
+`;
+
+exports[`changes validationState to isInvalid or nothing 1`] = `
+"import { Tag, TagGroup } from "@react-spectrum/s2";
+
+let validationState = 'invalid';
+let props = {validationState: 'invalid'};
+<div>
+  <TagGroup
+    aria-label="Static TagGroup items example"
+    isInvalid>
+    <Tag>News</Tag>
+  </TagGroup>
+  <TagGroup aria-label="Static TagGroup items example">
+    <Tag>News</Tag>
+  </TagGroup>
+  <TagGroup
+    aria-label="Static TagGroup items example"
+    isInvalid>
+    <Tag>News</Tag>
+  </TagGroup>
+  <TagGroup
+    aria-label="Static TagGroup items example"
+    // TODO(S2-upgrade): Prop validationState could not be automatically updated because validationState could not be followed.
+    validationState={validationState}>
+    <Tag>News</Tag>
+  </TagGroup>
+  <TagGroup
+    aria-label="Static TagGroup items example"
+    // TODO(S2-upgrade): check this spread for style props
+    {...props}>
+    <Tag>News</Tag>
+  </TagGroup>
+</div>"
+`;

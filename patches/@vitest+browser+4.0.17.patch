@@ -1,0 +1,16 @@
+diff --git a/node_modules/@vitest/browser/matchers.d.ts b/node_modules/@vitest/browser/matchers.d.ts
+index 1234567..abcdefg 100644
+--- a/node_modules/@vitest/browser/matchers.d.ts
++++ b/node_modules/@vitest/browser/matchers.d.ts
+@@ -1,9 +1,8 @@
+ import type { Locator } from './context.js'
+-import type { TestingLibraryMatchers } from './jest-dom.js'
+ import type { Assertion, ExpectPollOptions } from 'vitest'
+ 
+ declare module 'vitest' {
+-  interface JestAssertion<T = any> extends TestingLibraryMatchers<void, T> {}
+-  interface AsymmetricMatchersContaining extends TestingLibraryMatchers<void, void> {}
++  interface JestAssertion<T = any> {}
++  interface AsymmetricMatchersContaining {}
+ 
+   type Promisify<O> = {

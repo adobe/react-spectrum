@@ -1,0 +1,32 @@
+<svg style="background:var(--anatomy-gray-100); padding: calc((152px - 120px) / 2) 10px" height="120" viewBox="0 0 72 120">
+  <g id="RadioGroup" transform="translate(-1226 -222)">
+    <g id="Radio_button" data-name="Radio button" transform="translate(1226 246)">
+      <rect id="Placement_Area" data-name="Placement Area" width="56" height="32" fill="red" opacity="0"/>
+      <g id="Radio" transform="translate(0 9)" fill="var(--anatomy-gray-75)" stroke="var(--anatomy-gray-700)" stroke-width="5">
+        <circle cx="7" cy="7" r="7" stroke="none"/>
+        <circle cx="7" cy="7" r="4.5" fill="none"/>
+      </g>
+      <text id="Text" transform="translate(24 20)" fill="var(--anatomy-gray-800)" font-size="14" font-family="var(--anatomy-font)"><tspan x="0" y="0">Small</tspan></text>
+    </g>
+    <g id="Radio_button-2" data-name="Radio button" transform="translate(1226 278)">
+      <rect id="Placement_Area-2" data-name="Placement Area" width="72" height="32" fill="red" opacity="0"/>
+      <g id="Radio-2" data-name="Radio" transform="translate(0 9)" fill="var(--anatomy-gray-75)" stroke="var(--anatomy-gray-700)" stroke-width="2">
+        <circle cx="7" cy="7" r="7" stroke="none"/>
+        <circle cx="7" cy="7" r="6" fill="none"/>
+      </g>
+      <text id="Text-2" data-name="Text" transform="translate(24 20)" fill="var(--anatomy-gray-800)" font-size="14" font-family="var(--anatomy-font)"><tspan x="0" y="0">Medium</tspan></text>
+    </g>
+    <g id="Radio_button-3" data-name="Radio button" transform="translate(1226 310)">
+      <rect id="Placement_Area-3" data-name="Placement Area" width="56" height="32" fill="red" opacity="0"/>
+      <g id="Radio-3" data-name="Radio" transform="translate(0 9)" fill="var(--anatomy-gray-75)" stroke="var(--anatomy-gray-700)" stroke-width="2">
+        <circle cx="7" cy="7" r="7" stroke="none"/>
+        <circle cx="7" cy="7" r="6" fill="none"/>
+      </g>
+      <text id="Text-3" data-name="Text" transform="translate(24 20)" fill="var(--anatomy-gray-800)" font-size="14" font-family="var(--anatomy-font)"><tspan x="0" y="0">Large</tspan></text>
+    </g>
+    <g id="Field_label" data-name="Field label" transform="translate(1226 222)">
+      <rect id="Placement_Area-4" data-name="Placement Area" width="19" height="24" fill="red" opacity="0"/>
+      <text id="Text-4" data-name="Text" transform="translate(0 16)" fill="var(--anatomy-gray-700)" font-size="12" font-family="var(--anatomy-font)"><tspan x="0" y="0">Size</tspan></text>
+    </g>
+  </g>
+</svg>

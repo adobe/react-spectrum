@@ -1,0 +1,7 @@
+{
+  "buttonLabel": "제안 사항 표시",
+  "countAnnouncement": "{optionCount, plural, one {#개 옵션} other {#개 옵션}}을 사용할 수 있습니다.",
+  "focusAnnouncement": "{isGroupChange, select, true {입력한 그룹 {groupTitle}, {groupCount, plural, one {#개 옵션} other {#개 옵션}}. } other {}}{optionText}{isSelected, select, true {, 선택됨} other {}}",
+  "listboxLabel": "제안",
+  "selectedAnnouncement": "{optionText}, 선택됨"
+}

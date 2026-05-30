@@ -1,0 +1,144 @@
+{/* Copyright 2023 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {ExampleLayout} from '@react-spectrum/docs';
+export default ExampleLayout;
+
+import docs from 'docs:react-aria-components';
+import {TypeLink} from '@react-spectrum/docs';
+import styles from '@react-spectrum/docs/src/docs.css';
+import Button from '@react-spectrum/docs/pages/assets/component-illustrations/ActionButton.svg';
+import Dialog from '@react-spectrum/docs/pages/assets/component-illustrations/Dialog.svg';
+import Link from '@react-spectrum/docs/pages/assets/component-illustrations/Link.svg';
+import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
+
+---
+keywords: [example, modal, dialog, aria, accessibility, react, component]
+type: component
+image: destructive-dialog.png
+description: An animated confirmation dialog, styled with Tailwind CSS.
+---
+
+# Destructive Alert Dialog
+
+An animated confirmation [Dialog](../Dialog.html) for a destructive action, styled with [Tailwind CSS](https://tailwindcss.com/).
+
+## Example
+
+```tsx import
+import './tailwind.global.css';
+```
+
+```tsx example standalone
+import {DialogTrigger, Button, ModalOverlay, Modal, Dialog, Heading} from 'react-aria-components';
+import {AlertTriangle} from 'lucide-react';
+
+function ModalExample() {
+  return (
+    <div className="bg-linear-to-r from-sky-400 to-indigo-500 p-12 rounded-lg flex justify-center">
+      <DialogTrigger>
+        <Button className="inline-flex items-center justify-center rounded-md bg-black/20 bg-clip-padding border border-white/20 px-3.5 py-2 font-medium font-[inherit] text-base text-white hover:bg-black/30 pressed:bg-black/40 transition-colors cursor-default outline-hidden focus-visible:ring-2 focus-visible:ring-white/75">Delete…</Button>
+        <ModalOverlay className={({isEntering, isExiting}) => `
+          absolute top-0 left-0 w-full h-(--page-height) z-10 bg-black/25 backdrop-blur isolate
+          ${isEntering ? 'animate-in fade-in duration-300 ease-out' : ''}
+          ${isExiting ? 'animate-out fade-out duration-200 ease-in' : ''}
+        `}>
+          <Modal className={({isEntering, isExiting}) => `
+            sticky top-0 left-0 w-full h-(--visual-viewport-height) flex items-center justify-center p-4 box-border text-center
+            ${isEntering ? 'animate-in zoom-in-95 ease-out duration-300' : ''}
+            ${isExiting ? 'animate-out zoom-out-95 ease-in duration-200' : ''}
+          `}>
+            <Dialog role="alertdialog" className="max-w-md max-h-full overflow-hidden rounded-2xl bg-white p-6 box-border text-left align-middle shadow-xl outline-hidden relative">
+              {({ close }) => (<>
+                <Heading slot="title" className="text-xxl font-semibold leading-6 my-0 text-slate-700">Delete folder</Heading>
+                <div className="w-6 h-6 text-red-500 absolute right-6 top-6 stroke-2"><AlertTriangle className="w-6 h-6" /></div>
+                <p className="mt-3 text-slate-500">
+                  Are you sure you want to delete "Documents"? All contents will be permanently destroyed.
+                </p>
+                <div className="mt-6 flex justify-end gap-2">
+                  <DialogButton
+                    className="bg-slate-200 text-slate-800 hover:border-slate-300 pressed:bg-slate-300"
+                    onPress={close}>
+                    Cancel
+                  </DialogButton>
+                  <DialogButton
+                    className="bg-red-500 text-white hover:border-red-600 pressed:bg-red-600"
+                    onPress={close}>
+                    Delete
+                  </DialogButton>
+                </div>
+              </>)}
+            </Dialog>
+          </Modal>
+        </ModalOverlay>
+      </DialogTrigger>
+    </div>
+  );
+}
+
+function DialogButton({className, ...props}) {
+  return <Button {...props} className={`inline-flex justify-center rounded-md border border-solid border-transparent px-5 py-2 font-semibold font-[inherit] text-base transition-colors cursor-default outline-hidden focus-visible:ring-2 ring-blue-500 ring-offset-2 ${className}`} />;
+}
+```
+
+### Tailwind config
+
+This example uses the following plugins:
+
+* [tailwindcss-react-aria-components](../styling.html#plugin)
+* [tailwindcss-animate](https://github.com/jamiebuilds/tailwindcss-animate)
+
+When using Tailwind v4, add them to your CSS:
+
+```css render=false
+@import "tailwindcss";
+@plugin "tailwindcss-react-aria-components";
+@plugin "tailwindcss-animate";
+```
+
+<details>
+
+<summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Tailwind v3</summary>
+
+When using Tailwind v3, add the plugins to your `tailwind.config.js` instead:
+
+```tsx
+module.exports = {
+  // ...
+  plugins: [
+    require('tailwindcss-react-aria-components'),
+    require('tailwindcss-animate')
+  ]
+};
+```
+
+**Note**: When using Tailwind v3, install `tailwindcss-react-aria-components` version 1.x instead of 2.x.
+
+</details>
+
+## Components
+
+<section className={styles.cardGroup} data-size="small">
+
+<ExampleCard
+  url="../Dialog.html"
+  title="Dialog"
+  description="A dialog is an overlay shown above other content in an application.">
+  <Dialog />
+</ExampleCard>
+
+<ExampleCard
+  url="../Button.html"
+  title="Button"
+  description="A button allows a user to perform an action.">
+  <Button />
+</ExampleCard>
+
+</section>

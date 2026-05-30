@@ -1,0 +1,8 @@
+<svg style="background:var(--anatomy-gray-100); padding: calc((152px - 32px) / 2) 10px" height="32" viewBox="0 0 176 32">
+  <rect id="Placement_Area" data-name="Placement Area" width="176" height="56" fill="red" opacity="0"/>
+  <g id="Field" fill="var(--anatomy-gray-50)" stroke="var(--anatomy-gray-400)" stroke-width="1">
+    <rect width="176" height="32" rx="4" stroke="none"/>
+    <rect x="0.5" y="0.5" width="175" height="31" rx="3.5" fill="none"/>
+  </g>
+  <text id="Text-2" data-name="Text" transform="translate(12 20)" fill="var(--anatomy-gray-800)" font-size="14" font-family="var(--anatomy-font)"><tspan x="0" y="0">123 Any St.</tspan></text>
+</svg>

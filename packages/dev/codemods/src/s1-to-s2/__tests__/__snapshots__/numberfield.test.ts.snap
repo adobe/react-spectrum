@@ -1,0 +1,39 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Comments out hideStepper 1`] = `
+"import { NumberField } from "@react-spectrum/s2";
+
+<div>
+  <NumberField hideStepper />
+  <NumberField hideStepper={true} />
+</div>"
+`;
+
+exports[`Removes isQuiet 1`] = `
+"import { NumberField } from "@react-spectrum/s2";
+let isQuiet = true;
+let props = {isQuiet: true};
+<div>
+  <NumberField />
+  <NumberField />
+  <NumberField />
+  <NumberField />
+  <NumberField />
+  <NumberField // TODO(S2-upgrade): check this spread for style props
+  {...props} />
+</div>"
+`;
+
+exports[`changes validationState to isInvalid or nothing 1`] = `
+"import { NumberField } from "@react-spectrum/s2";
+let validationState = 'invalid';
+let props = {validationState: 'invalid'};
+<div>
+  <NumberField isInvalid />
+  <NumberField />
+  <NumberField // TODO(S2-upgrade): Prop validationState could not be automatically updated because validationState could not be followed.
+  validationState={validationState} />
+  <NumberField // TODO(S2-upgrade): check this spread for style props
+  {...props} />
+</div>"
+`;

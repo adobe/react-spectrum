@@ -1,0 +1,12 @@
+<svg id="ICONS" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18">
+  <defs>
+    <style>
+      .fill {
+        fill: #444;
+      }
+    </style>
+  </defs>
+  <path class="fill" d="M9,8A.99942.99942,0,0,0,8,9v4a1,1,0,0,0,2,0V9A.99942.99942,0,0,0,9,8Z"/>
+  <circle class="fill" cx="9" cy="5.5" r="1.5"/>
+  <path class="fill" d="M9,0a9,9,0,1,0,9,9A9.00984,9.00984,0,0,0,9,0ZM9,16a7,7,0,1,1,7-7A7.00849,7.00849,0,0,1,9,16Z"/>
+</svg>

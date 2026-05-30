@@ -1,0 +1,7 @@
+/* Individual imports to omit preflight CSS reset */
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/utilities.css' layer(utilities) source(none);
+@source "*.mdx";
+@plugin "tailwindcss-react-aria-components";
+@plugin "tailwindcss-animate";
+@variant dark (&:where([style*="color-scheme: dark"] *));

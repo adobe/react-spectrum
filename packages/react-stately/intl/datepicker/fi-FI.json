@@ -1,0 +1,6 @@
+{
+  "rangeOverflow": "Arvon on oltava {maxValue} tai sitä aikaisempi.",
+  "rangeReversed": "Aloituspäivän on oltava ennen lopetuspäivää.",
+  "rangeUnderflow": "Arvon on oltava {minValue} tai sitä myöhäisempi.",
+  "unavailableDate": "Valittu päivämäärä ei ole käytettävissä."
+}

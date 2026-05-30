@@ -1,0 +1,154 @@
+{/* Copyright 2023 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {ExampleLayout} from '@react-spectrum/docs';
+export default ExampleLayout;
+
+import docs from 'docs:react-aria-components';
+import {TypeLink} from '@react-spectrum/docs';
+import styles from '@react-spectrum/docs/src/docs.css';
+import Tabs from '@react-spectrum/docs/pages/assets/component-illustrations/Tabs.svg';
+import Link from '@react-spectrum/docs/pages/assets/component-illustrations/Link.svg';
+import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
+
+---
+keywords: [example, tabs, aria, accessibility, react, component]
+type: component
+image: category-tabs.png
+description: An article category tabs component styled with Tailwind CSS.
+---
+
+# Category Tabs
+
+An article category [Tabs](../Tabs.html) component styled with [Tailwind CSS](https://tailwindcss.com/).
+
+## Example
+
+```tsx import
+import './tailwind.global.css';
+```
+
+```css hidden
+a[href="#"] {
+  -webkit-touch-callout: none;
+}
+```
+
+```tsx example standalone
+import {Tabs, TabList, Tab, TabPanel, Link} from 'react-aria-components';
+import type {TabProps, TabPanelProps} from 'react-aria-components';
+
+function TabsExample() {
+  return (
+    <div className="bg-linear-to-r from-lime-600 to-emerald-600 py-8 px-2 sm:px-8 rounded-lg flex justify-center">
+      <Tabs className="w-full max-w-[300px]">
+        <TabList aria-label="Feeds" className="flex space-x-1 rounded-full bg-green-900/40 bg-clip-padding p-1 border border-solid border-white/30">
+          <MyTab id="blog">Blog</MyTab>
+          <MyTab id="releases">Releases</MyTab>
+          <MyTab id="docs">Docs</MyTab>
+        </TabList>
+        <MyTabPanel id="blog">
+          <div className="flex flex-col">
+            <Article title="Taming the dragon: Accessible drag and drop" summary="We are excited to announce the release of drag and drop support in React Aria and React Spectrum! This includes a suite of hooks for implementing drag and drop interactions, with support for both mouse and touch, as well as full parity for keyboard and screen reader input." />
+            <Article title="Date and Time Pickers for All" summary="We are very excited to announce the release of the React Aria and React Spectrum date and time picker components! This includes a full suite of fully featured components and hooks including calendars, date and time fields, and range pickers, all with a focus on internationalization and accessibility. It also includes @internationalized/date, a brand new framework-agnostic library for locale-aware date and time manipulation." />
+            <Article title="Creating an accessible autocomplete experience" summary="After many months of research, development, and testing, we’re excited to announce that the React Spectrum ComboBox component and React Aria useComboBox hook are now available! In this post we'll take a deeper look into some of the challenges we faced when building an accessible and mobile friendly ComboBox." />
+          </div>
+        </MyTabPanel>
+        <MyTabPanel id="releases">
+          <div className="flex flex-col">
+            <Article title="February 23, 2023 Release" summary="In this release, we have added support for Node ESM to all of our packages. We have also been busy at work on our pre-releases and improving our focus management in collections." />
+            <Article title="December 16, 2022 Release" summary="It is our last release of the year and we are happy to share a new TableView feature, now in beta. Using the new allowsResizing prop on a Column in TableView gives users the ability to dynamically adjust the width of that column. TableView column resizing supports mouse, keyboard, touch, and screen reader interactions to allow all users to take advantage of a customizable table." />
+            <Article title="November 15, 2022 Release" summary="We are excited to announce the release of drag and drop support in React Aria and React Spectrum! This includes a suite of hooks for implementing drag and drop interactions. There is also an update to all Spectrum colors, aligning React Spectrum with the latest Spectrum designs. Finally, React Aria includes a new simplified API for overlays such as popovers and modals." />
+          </div>
+        </MyTabPanel>
+        <MyTabPanel id="docs">
+          <div className="flex flex-col">
+            <Article title="React Stately" summary="A library of React Hooks that provides cross-platform state management for your design system." />
+            <Article title="React Aria" summary="A library of React Hooks that provides accessible UI primitives for your design system." />
+            <Article title="React Spectrum" summary="A React implementation of Spectrum, Adobe’s design system." />
+          </div>
+        </MyTabPanel>
+      </Tabs>
+    </div>
+  );
+}
+
+function MyTab(props: TabProps) {
+  return (
+    <Tab
+      {...props}
+      className={({isSelected}) => `
+        w-full rounded-full py-2.5 font-medium text-[1.1em] text-center cursor-default ring-black outline-hidden transition-colors focus-visible:ring-2
+        ${isSelected ? 'text-emerald-700 bg-white shadow-sm' : 'text-white hover:bg-white/10 pressed:bg-white/10'}
+      `} />
+  );
+}
+
+function MyTabPanel(props: TabPanelProps) {
+  return <TabPanel {...props} className="mt-2 text-gray-700 font-serif rounded-2xl bg-white p-2 shadow-sm ring-black outline-hidden focus-visible:ring-2" />;
+}
+
+function Article({title, summary}: {title: string, summary: string}) {
+  return (
+    <Link href="#" className="p-2 rounded-lg hover:bg-gray-100 pressed:bg-gray-100 text-[inherit] no-underline outline-hidden focus-visible:ring-2 ring-emerald-500">
+      <h3 className="text-base mt-0 mb-0.5 font-semibold overflow-hidden text-ellipsis whitespace-nowrap">{title}</h3>
+      <p className="text-sm m-0 overflow-hidden text-ellipsis line-clamp-2">{summary}</p>
+    </Link>
+  );
+}
+```
+
+### Tailwind config
+
+This example uses the [tailwindcss-react-aria-components](../styling.html#plugin) plugin. When using Tailwind v4, add it to your CSS:
+
+```css render=false
+@import "tailwindcss";
+@plugin "tailwindcss-react-aria-components";
+```
+
+<details>
+
+<summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Tailwind v3</summary>
+
+When using Tailwind v3, add the plugin to your `tailwind.config.js` instead:
+
+```tsx
+module.exports = {
+  // ...
+  plugins: [
+    require('tailwindcss-react-aria-components')
+  ]
+};
+```
+
+**Note**: When using Tailwind v3, install `tailwindcss-react-aria-components` version 1.x instead of 2.x.
+
+</details>
+
+## Components
+
+<section className={styles.cardGroup} data-size="small">
+
+<ExampleCard
+  url="../Tabs.html"
+  title="Tabs"
+  description="Tabs organize content into multiple sections, and allow a user to view one at a time.">
+  <Tabs />
+</ExampleCard>
+
+<ExampleCard
+  url="../Link.html"
+  title="Link"
+  description="A link allows a user to navigate to another page.">
+  <Link />
+</ExampleCard>
+
+</section>

@@ -1,0 +1,28 @@
+{
+  "name": "esbuild-rainbow",
+  "version": "1.0.0",
+  "description": "Test app using macros",
+  "license": "ISC",
+  "author": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "node build.mjs -build",
+    "start": "node build.mjs -watch",
+    "test": "test",
+    "postinstall": "patch-package"
+  },
+  "dependencies": {
+    "@react-spectrum/s2": "latest",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.22",
+    "@types/react-dom": "^18.2.22",
+    "esbuild": "^0.20.2",
+    "esbuild-plugin-tsc": "^0.4.0",
+    "patch-package": "^8.0.0",
+    "typescript": "^5.4.3",
+    "unplugin-parcel-macros": "^0.0.3"
+  }
+}

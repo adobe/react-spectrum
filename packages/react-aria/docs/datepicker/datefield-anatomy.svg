@@ -1,0 +1,33 @@
+<svg style="max-height: 142px; background: var(--anatomy-gray-100); padding: 32px; margin-bottom: 16px; width: calc(100% - 64px); border-radius: var(--anatomy-radius);" viewBox="0 0 272 142">
+  <title>Date field anatomy diagram</title>
+  <desc>Shows a date field with labels pointing to its parts, including the label, field, and segments.</desc>
+  <g id="Group_151081" data-name="Group 151081" transform="translate(-341 -39)">
+    <g id="Group_3804" data-name="Group 3804" transform="translate(309 38)">
+      <rect id="Rectangle_64" data-name="Rectangle 64" width="264" height="84" transform="translate(40 30)" fill="red" opacity="0"/>
+      <g id="rectangle-18" transform="translate(40 66)" fill="var(--anatomy-gray-50)" stroke="var(--anatomy-gray-400)" stroke-width="1.5">
+        <rect width="264" height="48" rx="6" stroke="none"/>
+        <rect x="0.75" y="0.75" width="262.5" height="46.5" rx="5.25" fill="none"/>
+      </g>
+      <text id="Typography" transform="translate(40 54)" fill="var(--anatomy-gray-700)" font-size="18" font-family="var(--anatomy-font)"><tspan x="0" y="0">Event date</tspan></text>
+    </g>
+    <rect id="Rectangle_148423" data-name="Rectangle 148423" width="23" height="26" rx="2" transform="translate(366 115)" fill="#4a6fc3"/>
+    <text id="Typography-2" data-name="Typography" transform="translate(367 134)" fill="#fff" font-size="21" font-family="var(--anatomy-font)"><tspan x="8" y="0" xml:space="preserve">8</tspan><tspan y="0" xml:space="preserve" fill="var(--anatomy-gray-700)"> / 15 / 2022</tspan></text>
+    <text id="Segment" transform="translate(359 178)" fill="var(--anatomy-gray-700)" font-size="13" font-family="var(--anatomy-font)" font-style="italic"><tspan x="0" y="0">Segment</tspan></text>
+    <g id="Group_151080" data-name="Group 151080" transform="translate(368 138)">
+      <rect id="Rectangle_3659" data-name="Rectangle 3659" width="20" height="19" transform="translate(0 2)" fill="red" opacity="0"/>
+      <circle id="Ellipse_378" data-name="Ellipse 378" cx="2.5" cy="2.5" r="2.5" transform="translate(7.5)" fill="var(--anatomy-gray-500)"/>
+      <rect id="Rectangle_3657" data-name="Rectangle 3657" width="1" height="23" transform="translate(9.5 4)" fill="var(--anatomy-gray-500)"/>
+    </g>
+    <g id="Group_151068" data-name="Group 151068" transform="translate(118 435)">
+      <text id="Field" transform="translate(402 -348)" fill="var(--anatomy-gray-700)" font-size="13" font-family="var(--anatomy-font)" font-style="italic"><tspan x="-12.064" y="0">Field</tspan></text>
+      <circle id="Ellipse_378-2" data-name="Ellipse 378" cx="2.5" cy="2.5" r="2.5" transform="translate(399.5 -317)" fill="var(--anatomy-gray-500)"/>
+      <rect id="Rectangle_3657-2" data-name="Rectangle 3657" width="1" height="27" transform="translate(401.5 -343)" fill="var(--anatomy-gray-500)"/>
+    </g>
+    <g id="Group_3937" data-name="Group 3937" transform="translate(-41 400)">
+      <rect id="Rectangle_3659-2" data-name="Rectangle 3659" width="20" height="19" transform="translate(392 -343)" fill="red" opacity="0"/>
+      <text id="Label" transform="translate(410 -348)" fill="var(--anatomy-gray-700)" font-size="13" font-family="var(--anatomy-font)" font-style="italic"><tspan x="-27.651" y="0">Label</tspan></text>
+      <circle id="Ellipse_378-3" data-name="Ellipse 378" cx="2.5" cy="2.5" r="2.5" transform="translate(399.5 -327)" fill="var(--anatomy-gray-500)"/>
+      <rect id="Rectangle_3657-3" data-name="Rectangle 3657" width="1" height="17" transform="translate(401.5 -343)" fill="var(--anatomy-gray-500)"/>
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,851 @@
+/*
+ * Copyright 2022 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
+import {act, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
+import {Button} from '../src/Button';
+import {Dialog, DialogTrigger} from '../src/Dialog';
+import {FieldError} from '../src/FieldError';
+import {Label} from '../src/Label';
+import {Modal} from '../src/Modal';
+import {
+  RadioButton,
+  RadioContext,
+  RadioField,
+  RadioFieldContext,
+  RadioGroup,
+  RadioGroupContext,
+  Radio as RadioLegacy
+} from '../src/RadioGroup';
+import React, {forwardRef} from 'react';
+import {Text} from '../src/Text';
+import {User} from '@react-aria/test-utils';
+import userEvent from '@testing-library/user-event';
+
+const RadioFieldItem = forwardRef(function RadioFieldItem(props, ref) {
+  return (
+    <RadioField {...props} ref={ref}>
+      <RadioButton
+        className={props.buttonClassName}
+        onHoverStart={props.onHoverStart}
+        onHoverEnd={props.onHoverEnd}
+        onHoverChange={props.onHoverChange}>
+        {props.children}
+      </RadioButton>
+      {props.description && <Text slot="description">{props.description}</Text>}
+    </RadioField>
+  );
+});
+
+describe.each(['RadioGroup', 'RadioField'])('%s', comp => {
+  let user;
+  let testUtilUser = new User();
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+  });
+
+  let Radio = comp === 'RadioGroup' ? RadioLegacy : RadioFieldItem;
+  let TestRadioGroupLegacy = ({groupProps, radioProps}) => (
+    <RadioGroup {...groupProps}>
+      <Label>Test</Label>
+      <Radio
+        {...radioProps}
+        className={radioProps?.className || radioProps?.buttonClassName}
+        value="a">
+        A
+      </Radio>
+      <Radio
+        {...radioProps}
+        className={radioProps?.className || radioProps?.buttonClassName}
+        value="b">
+        B
+      </Radio>
+      <Radio
+        {...radioProps}
+        className={radioProps?.className || radioProps?.buttonClassName}
+        value="c">
+        C
+      </Radio>
+    </RadioGroup>
+  );
+
+  let TestRadioGroupField = ({groupProps, radioProps}) => (
+    <RadioGroup {...groupProps}>
+      <Label>Test</Label>
+      <RadioFieldItem {...radioProps} value="a">
+        A
+      </RadioFieldItem>
+      <RadioFieldItem {...radioProps} value="b">
+        B
+      </RadioFieldItem>
+      <RadioFieldItem {...radioProps} value="c">
+        C
+      </RadioFieldItem>
+    </RadioGroup>
+  );
+
+  let TestRadioGroup = comp === 'RadioField' ? TestRadioGroupField : TestRadioGroupLegacy;
+  let renderGroup = (groupProps, radioProps) =>
+    render(<TestRadioGroup {...{groupProps, radioProps}} />);
+  let findRoot = el =>
+    comp === 'RadioField' ? el.closest('label').parentElement : el.closest('label');
+
+  it('should render a radio group with default classes', () => {
+    let {getByRole, getAllByRole} = renderGroup();
+    let group = getByRole('radiogroup');
+    expect(group).toHaveAttribute('class', 'react-aria-RadioGroup');
+    expect(group).toHaveAttribute('aria-labelledby');
+    expect(document.getElementById(group.getAttribute('aria-labelledby'))).toHaveTextContent(
+      'Test'
+    );
+
+    let radios = getAllByRole('radio');
+    for (let radio of radios) {
+      let label = findRoot(radio);
+      expect(label).toHaveAttribute(
+        'class',
+        comp === 'RadioField' ? 'react-aria-RadioField' : 'react-aria-Radio'
+      );
+    }
+  });
+
+  it('should render a radio group with custom classes', () => {
+    let {getByRole, getAllByRole} = renderGroup({className: 'group'}, {className: 'radio'});
+    let group = getByRole('radiogroup');
+    expect(group).toHaveAttribute('class', 'group');
+    let radios = getAllByRole('radio');
+    for (let radio of radios) {
+      let label = findRoot(radio);
+      expect(label).toHaveAttribute('class', 'radio');
+    }
+  });
+
+  it('should support DOM props', () => {
+    let {getByRole, getAllByRole} = renderGroup({'data-foo': 'bar'}, {'data-test': 'test'});
+    let group = getByRole('radiogroup');
+    expect(group).toHaveAttribute('data-foo', 'bar');
+    for (let radio of getAllByRole('radio')) {
+      expect(findRoot(radio)).toHaveAttribute('data-test', 'test');
+    }
+  });
+
+  it('should support custom render function', () => {
+    let {getAllByRole, getByRole} = renderGroup(
+      {render: props => <div {...props} data-custom="true" />},
+      {
+        render: props =>
+          comp === 'RadioField' ? (
+            <div {...props} data-custom="true" />
+          ) : (
+            // eslint-disable-next-line jsx-a11y/label-has-associated-control
+            <label {...props} data-custom="true" />
+          )
+      }
+    );
+    let group = getByRole('radiogroup');
+    expect(group).toHaveAttribute('data-custom', 'true');
+    for (let radio of getAllByRole('radio')) {
+      expect(findRoot(radio)).toHaveAttribute('data-custom', 'true');
+    }
+  });
+
+  it('should support render props', () => {
+    let {getByRole} = render(
+      <RadioGroup isRequired>
+        {({isRequired}) => (
+          <>
+            <Label data-required={isRequired}>Test</Label>
+            <Radio value="a">A</Radio>
+            <Radio value="b">B</Radio>
+            <Radio value="c">C</Radio>
+          </>
+        )}
+      </RadioGroup>
+    );
+    let group = getByRole('radiogroup');
+    let label = document.getElementById(group.getAttribute('aria-labelledby'));
+    expect(label).toHaveAttribute('data-required', 'true');
+  });
+
+  it('should support Radio render props', async () => {
+    let {getAllByRole} = render(
+      <RadioGroup defaultValue="a">
+        <Label>Test</Label>
+        <Radio value="a">{({isSelected}) => (isSelected ? 'A (selected)' : 'A')}</Radio>
+        <Radio value="b">{({isSelected}) => (isSelected ? 'B (selected)' : 'B')}</Radio>
+      </RadioGroup>
+    );
+    let radios = getAllByRole('radio');
+    expect(radios[0].closest('label')).toHaveTextContent('A (selected)');
+    expect(radios[1].closest('label')).toHaveTextContent('B');
+    await user.click(radios[1]);
+    expect(radios[0].closest('label')).toHaveTextContent('A');
+    expect(radios[1].closest('label')).toHaveTextContent('B (selected)');
+  });
+
+  it('should support slot', () => {
+    let ItemContext = comp === 'RadioField' ? RadioFieldContext : RadioContext;
+    let {getByRole, getAllByRole} = render(
+      <RadioGroupContext.Provider value={{slots: {test: {'aria-label': 'test'}}}}>
+        <ItemContext.Provider value={{'data-test': 'test'}}>
+          <TestRadioGroup groupProps={{slot: 'test'}} />
+        </ItemContext.Provider>
+      </RadioGroupContext.Provider>
+    );
+
+    let group = getByRole('radiogroup');
+    expect(group).toHaveAttribute('slot', 'test');
+    expect(group).toHaveAttribute('aria-label', 'test');
+
+    let radios = getAllByRole('radio');
+    for (let radio of radios) {
+      expect(findRoot(radio)).toHaveAttribute('data-test', 'test');
+    }
+  });
+
+  it('should support hover', async () => {
+    let hoverStartSpy = jest.fn();
+    let hoverChangeSpy = jest.fn();
+    let hoverEndSpy = jest.fn();
+    let {getAllByRole} = renderGroup(
+      {},
+      {
+        buttonClassName: ({isHovered}) => (isHovered ? 'hover' : ''),
+        onHoverStart: hoverStartSpy,
+        onHoverChange: hoverChangeSpy,
+        onHoverEnd: hoverEndSpy
+      }
+    );
+    let radio = getAllByRole('radio')[0].closest('label');
+
+    expect(radio).not.toHaveAttribute('data-hovered');
+    expect(radio).not.toHaveClass('hover');
+
+    await user.hover(radio);
+    expect(radio).toHaveAttribute('data-hovered', 'true');
+    expect(radio).toHaveClass('hover');
+    expect(hoverStartSpy).toHaveBeenCalledTimes(1);
+    expect(hoverChangeSpy).toHaveBeenCalledTimes(1);
+
+    await user.unhover(radio);
+    expect(radio).not.toHaveAttribute('data-hovered');
+    expect(radio).not.toHaveClass('hover');
+    expect(hoverEndSpy).toHaveBeenCalledTimes(1);
+    expect(hoverChangeSpy).toHaveBeenCalledTimes(2);
+  });
+
+  it('should support focus ring', async () => {
+    let {getAllByRole} = renderGroup(
+      {},
+      {buttonClassName: ({isFocusVisible}) => (isFocusVisible ? 'focus' : '')}
+    );
+    let radio = getAllByRole('radio')[0];
+    let label = radio.closest('label');
+
+    expect(label).not.toHaveAttribute('data-focus-visible');
+    expect(label).not.toHaveClass('focus');
+
+    await user.tab();
+    expect(document.activeElement).toBe(radio);
+    expect(label).toHaveAttribute('data-focus-visible', 'true');
+    expect(label).toHaveClass('focus');
+
+    await user.tab();
+    expect(label).not.toHaveAttribute('data-focus-visible');
+    expect(label).not.toHaveClass('focus');
+  });
+
+  it('should support press state', async () => {
+    let onPress = jest.fn();
+    let onClick = jest.fn();
+    let onClickCapture = jest.fn();
+    let {getAllByRole} = renderGroup(
+      {},
+      {
+        buttonClassName: ({isPressed}) => (isPressed ? 'pressed' : ''),
+        onClick,
+        onPress,
+        onClickCapture
+      }
+    );
+    let radio = getAllByRole('radio')[0].closest('label');
+
+    expect(radio).not.toHaveAttribute('data-pressed');
+    expect(radio).not.toHaveClass('pressed');
+
+    await user.pointer({target: radio, keys: '[MouseLeft>]'});
+    expect(radio).toHaveAttribute('data-pressed', 'true');
+    expect(radio).toHaveClass('pressed');
+
+    await user.pointer({target: radio, keys: '[/MouseLeft]'});
+    expect(radio).not.toHaveAttribute('data-pressed');
+    expect(radio).not.toHaveClass('pressed');
+
+    expect(onPress).toHaveBeenCalledTimes(1);
+    expect(onClick).toHaveBeenCalledTimes(1);
+    expect(onClickCapture).toHaveBeenCalledTimes(1);
+  });
+
+  it('should support press state with keyboard', async () => {
+    let onPress = jest.fn();
+    let onClick = jest.fn();
+    let {getAllByRole} = renderGroup(
+      {},
+      {buttonClassName: ({isPressed}) => (isPressed ? 'pressed' : ''), onClick, onPress}
+    );
+    let radio = getAllByRole('radio')[0].closest('label');
+
+    expect(radio).not.toHaveAttribute('data-pressed');
+    expect(radio).not.toHaveClass('pressed');
+
+    await user.tab();
+    await user.keyboard('[Space>]');
+    expect(radio).toHaveAttribute('data-pressed', 'true');
+    expect(radio).toHaveClass('pressed');
+
+    await user.keyboard('[/Space]');
+    expect(radio).not.toHaveAttribute('data-pressed');
+    expect(radio).not.toHaveClass('pressed');
+
+    expect(onPress).toHaveBeenCalledTimes(1);
+    expect(onClick).toHaveBeenCalledTimes(1);
+  });
+
+  it('should support disabled state on radio', () => {
+    let {getAllByRole} = renderGroup(
+      {},
+      {isDisabled: true, buttonClassName: ({isDisabled}) => (isDisabled ? 'disabled' : '')}
+    );
+    let radio = getAllByRole('radio')[0];
+    let label = radio.closest('label');
+
+    expect(radio).toBeDisabled();
+    expect(label).toHaveAttribute('data-disabled', 'true');
+    expect(findRoot(label)).toHaveAttribute('data-disabled', 'true');
+    expect(label).toHaveClass('disabled');
+  });
+
+  it('should support disabled state on group', () => {
+    let className = ({isDisabled}) => (isDisabled ? 'disabled' : '');
+    let {getByRole, getAllByRole} = renderGroup({isDisabled: true, className}, {className});
+    let group = getByRole('radiogroup');
+    let radio = getAllByRole('radio')[0];
+    let label = radio.closest('label');
+
+    expect(group).toHaveAttribute('aria-disabled');
+    expect(group).toHaveClass('disabled');
+
+    expect(radio).toBeDisabled();
+    expect(label).toHaveAttribute('data-disabled', 'true');
+    expect(findRoot(label)).toHaveClass('disabled');
+    expect(findRoot(label)).toHaveAttribute('data-disabled', 'true');
+  });
+
+  it('should support selected state', async () => {
+    let onChange = jest.fn();
+    let {getByRole} = renderGroup(
+      {onChange},
+      {buttonClassName: ({isSelected}) => (isSelected ? 'selected' : '')}
+    );
+    let radioGroupTester = testUtilUser.createTester('RadioGroup', {root: getByRole('radiogroup')});
+    let radios = radioGroupTester.getRadios();
+    let label = radios[0].closest('label');
+
+    expect(radioGroupTester.getSelectedRadio()).toBeFalsy();
+    expect(label).not.toHaveAttribute('data-selected');
+    expect(findRoot(label)).not.toHaveAttribute('data-selected');
+    expect(label).not.toHaveClass('selected');
+
+    await radioGroupTester.triggerRadio({radio: radios[0]});
+    expect(onChange).toHaveBeenLastCalledWith('a');
+    expect(radioGroupTester.getSelectedRadio()).toBe(radios[0]);
+    expect(label).toHaveAttribute('data-selected', 'true');
+    expect(findRoot(label)).toHaveAttribute('data-selected', 'true');
+    expect(label).toHaveClass('selected');
+
+    await radioGroupTester.triggerRadio({radio: radios[1]});
+    expect(onChange).toHaveBeenLastCalledWith('b');
+    expect(radios[0]).not.toBeChecked();
+    expect(radioGroupTester.getSelectedRadio()).toBe(radios[1]);
+    expect(label).not.toHaveAttribute('data-selected');
+    expect(findRoot(label)).not.toHaveAttribute('data-selected');
+    expect(label).not.toHaveClass('selected');
+  });
+
+  it('should support read only state', () => {
+    let className = ({isReadOnly}) => (isReadOnly ? 'readonly' : '');
+    let {getByRole, getAllByRole} = renderGroup({isReadOnly: true, className}, {className});
+    let group = getByRole('radiogroup');
+    let label = getAllByRole('radio')[0].closest('label');
+
+    expect(group).toHaveAttribute('aria-readonly');
+    expect(group).toHaveClass('readonly');
+
+    expect(label).toHaveAttribute('data-readonly');
+    expect(findRoot(label)).toHaveAttribute('data-readonly');
+    expect(findRoot(label)).toHaveClass('readonly');
+  });
+
+  it('should support invalid state', () => {
+    let className = ({isInvalid}) => (isInvalid ? 'invalid' : null);
+    let {getByRole, getAllByRole} = renderGroup({isInvalid: true, className}, {className});
+    let group = getByRole('radiogroup');
+    let radio = getAllByRole('radio')[0];
+    let label = radio.closest('label');
+
+    expect(group).toHaveAttribute('aria-invalid', 'true');
+    expect(group).toHaveClass('invalid');
+
+    expect(label).toHaveAttribute('data-invalid', 'true');
+    expect(findRoot(label)).toHaveAttribute('data-invalid', 'true');
+    expect(findRoot(label)).toHaveClass('invalid');
+  });
+
+  it('should support required state', () => {
+    let className = ({isRequired}) => (isRequired ? 'required' : '');
+    let {getByRole, getAllByRole} = renderGroup({isRequired: true, className}, {className});
+    let group = getByRole('radiogroup');
+    let radio = getAllByRole('radio')[0];
+    let label = radio.closest('label');
+
+    expect(group).toHaveAttribute('aria-required', 'true');
+    expect(group).toHaveClass('required');
+
+    expect(label).toHaveAttribute('data-required', 'true');
+    expect(findRoot(label)).toHaveAttribute('data-required', 'true');
+    expect(findRoot(label)).toHaveClass('required');
+  });
+
+  it('should support orientation', async () => {
+    let onChange = jest.fn();
+    let {getByRole} = renderGroup({
+      onChange,
+      orientation: 'horizontal',
+      className: ({orientation}) => orientation
+    });
+    let radioGroupTester = testUtilUser.createTester('RadioGroup', {root: getByRole('radiogroup')});
+
+    expect(radioGroupTester.getRadioGroup()).toHaveAttribute('aria-orientation', 'horizontal');
+    expect(radioGroupTester.getRadioGroup()).toHaveClass('horizontal');
+    let radios = radioGroupTester.getRadios();
+    await radioGroupTester.triggerRadio({radio: radios[0]});
+    expect(radios[0]).toBeChecked();
+
+    await radioGroupTester.triggerRadio({radio: 2, interactionType: 'keyboard'});
+    expect(radios[2]).toBeChecked();
+  });
+
+  it('supports help text', () => {
+    let {getByRole, getAllByRole} = render(
+      <RadioGroup isInvalid>
+        <Label>Test</Label>
+        <Radio value="a" description="hello">
+          A
+        </Radio>
+        <Text slot="description">Description</Text>
+        <Text slot="errorMessage">Error</Text>
+      </RadioGroup>
+    );
+
+    let group = getByRole('radiogroup');
+    expect(group).toHaveAttribute('aria-describedby');
+    expect(
+      group
+        .getAttribute('aria-describedby')
+        .split(' ')
+        .map(id => document.getElementById(id).textContent)
+        .join(' ')
+    ).toBe('Description Error');
+
+    let radio = getAllByRole('radio')[0];
+    expect(radio).toHaveAttribute('aria-describedby');
+    expect(
+      radio
+        .getAttribute('aria-describedby')
+        .split(' ')
+        .map(id => document.getElementById(id).textContent)
+        .join(' ')
+    ).toBe(comp === 'RadioField' ? 'hello Error Description' : 'Error Description');
+  });
+
+  it('should not navigate within the group using Tab', async () => {
+    let {getAllByRole} = renderGroup(
+      {},
+      {buttonClassName: ({isFocusVisible}) => (isFocusVisible ? 'focus' : '')}
+    );
+    let radios = getAllByRole('radio');
+    let labelA = radios[0].closest('label');
+    let labelB = radios[1].closest('label');
+    let labelC = radios[2].closest('label');
+
+    const expectNotFocused = (...labels) => {
+      labels.forEach(label => {
+        expect(label).not.toHaveAttribute('data-focus-visible');
+        expect(label).not.toHaveClass('focus');
+      });
+    };
+
+    expectNotFocused(labelA, labelB, labelC);
+
+    await user.tab();
+    expect(document.activeElement).toBe(radios[0]);
+    expect(labelA).toHaveAttribute('data-focus-visible', 'true');
+    expect(labelA).toHaveClass('focus');
+    expectNotFocused(labelB, labelC);
+
+    await user.tab();
+    expectNotFocused(labelA, labelB, labelC);
+
+    await user.tab({shift: true});
+    expect(document.activeElement).toBe(radios[2]);
+    expect(labelC).toHaveAttribute('data-focus-visible', 'true');
+    expect(labelC).toHaveClass('focus');
+    expectNotFocused(labelA, labelB);
+  });
+
+  it('should not navigate within the group using Tab in Dialog', async () => {
+    let {getByRole} = render(
+      <DialogTrigger>
+        <Button>Trigger</Button>
+        <Modal data-test="modal">
+          <Dialog role="alertdialog" data-test="dialog">
+            {({close}) => (
+              <>
+                <TestRadioGroup
+                  radioProps={{
+                    buttonClassName: ({isFocusVisible}) => (isFocusVisible ? 'focus' : '')
+                  }}
+                />
+                <Button onPress={close}>Close</Button>
+              </>
+            )}
+          </Dialog>
+        </Modal>
+      </DialogTrigger>
+    );
+
+    let trigger = getByRole('button');
+    await user.click(trigger);
+
+    let dialog = getByRole('alertdialog');
+
+    let radios = within(dialog).getAllByRole('radio');
+    let labelA = radios[0].closest('label');
+    let labelB = radios[1].closest('label');
+    let labelC = radios[2].closest('label');
+
+    const expectNotFocused = (...labels) => {
+      labels.forEach(label => {
+        expect(label).not.toHaveAttribute('data-focus-visible');
+        expect(label).not.toHaveClass('focus');
+      });
+    };
+
+    expectNotFocused(labelA, labelB, labelC);
+
+    await user.tab();
+    expect(document.activeElement).toBe(radios[0]);
+    expect(labelA).toHaveAttribute('data-focus-visible', 'true');
+    expect(labelA).toHaveClass('focus');
+    expectNotFocused(labelB, labelC);
+
+    await user.tab();
+    let close = within(dialog).getByRole('button');
+    expect(document.activeElement).toBe(close);
+    expectNotFocused(labelA, labelB, labelC);
+
+    await user.tab({shift: true});
+    expect(document.activeElement).toBe(radios[2]);
+    expect(labelC).toHaveAttribute('data-focus-visible', 'true');
+    expect(labelC).toHaveClass('focus');
+    expectNotFocused(labelA, labelB);
+  });
+
+  it('should support aria-describedby on a radio', () => {
+    let {getAllByRole} = renderGroup({}, {'aria-describedby': 'test'});
+    let radios = getAllByRole('radio');
+    for (let radio of radios) {
+      expect(radio).toHaveAttribute('aria-describedby', 'test');
+    }
+  });
+
+  it('should render data- attributes only on the outer Radio element or RadioGroup', () => {
+    let {getAllByTestId, getAllByRole} = render(
+      <RadioGroup data-testid="radio-group">
+        <Label>Test</Label>
+        <Radio data-testid="radio-a" value="a">
+          A
+        </Radio>
+        <Radio value="b">B</Radio>
+        <Radio value="c">C</Radio>
+      </RadioGroup>
+    );
+    let radio = getAllByTestId('radio-a');
+    expect(radio).toHaveLength(1);
+    expect(radio[0].nodeName).toBe(comp === 'RadioField' ? 'DIV' : 'LABEL');
+    let group = getAllByRole('radiogroup');
+    expect(group).toHaveLength(1);
+    expect(group[0]).toHaveAttribute('data-testid', 'radio-group');
+  });
+
+  it('supports validation errors', async () => {
+    let {getByRole, getAllByRole, getByTestId} = render(
+      <form data-testid="form">
+        <RadioGroup isRequired>
+          <Label>Test</Label>
+          <Radio value="a">A</Radio>
+          <FieldError />
+        </RadioGroup>
+      </form>
+    );
+
+    let group = getByRole('radiogroup');
+    expect(group).not.toHaveAttribute('aria-describedby');
+    expect(group).not.toHaveAttribute('data-invalid');
+
+    let radios = getAllByRole('radio');
+    for (let input of radios) {
+      expect(input).toHaveAttribute('required');
+      expect(input).not.toHaveAttribute('aria-required');
+      expect(input.validity.valid).toBe(false);
+    }
+
+    act(() => {
+      getByTestId('form').checkValidity();
+    });
+
+    expect(group).toHaveAttribute('aria-describedby');
+    expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent(
+      'Constraints not satisfied'
+    );
+    expect(group).toHaveAttribute('data-invalid');
+    expect(document.activeElement).toBe(radios[0]);
+
+    await user.click(radios[0]);
+    for (let input of radios) {
+      expect(input.validity.valid).toBe(true);
+    }
+
+    expect(group).not.toHaveAttribute('aria-describedby');
+    expect(group).not.toHaveAttribute('data-invalid');
+  });
+
+  it('supports validation errors when last radio is disabled', async () => {
+    let {getByRole, getAllByRole, getByTestId} = render(
+      <form data-testid="form">
+        <RadioGroup isRequired>
+          <Label>Test</Label>
+          <Radio value="a">A</Radio>
+          <Radio value="b" isDisabled>
+            B
+          </Radio>
+          <FieldError />
+        </RadioGroup>
+      </form>
+    );
+
+    let group = getByRole('radiogroup');
+    expect(group).not.toHaveAttribute('aria-describedby');
+    expect(group).not.toHaveAttribute('data-invalid');
+
+    let radios = getAllByRole('radio');
+    for (let input of radios) {
+      expect(input).toHaveAttribute('required');
+      expect(input).not.toHaveAttribute('aria-required');
+      expect(input.validity.valid).toBe(false);
+    }
+
+    act(() => {
+      getByTestId('form').checkValidity();
+    });
+
+    expect(group).toHaveAttribute('aria-describedby');
+    expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent(
+      'Constraints not satisfied'
+    );
+    expect(group).toHaveAttribute('data-invalid');
+    expect(document.activeElement).toBe(radios[0]);
+
+    await user.click(radios[0]);
+    for (let input of radios) {
+      expect(input.validity.valid).toBe(true);
+    }
+
+    expect(group).not.toHaveAttribute('aria-describedby');
+    expect(group).not.toHaveAttribute('data-invalid');
+  });
+
+  it('should support focus events', async () => {
+    let onBlur = jest.fn();
+    let onFocus = jest.fn();
+    let onFocusChange = jest.fn();
+
+    let {getAllByRole} = renderGroup({onBlur, onFocus, onFocusChange});
+    let radio = getAllByRole('radio')[0];
+
+    await user.tab();
+    expect(document.activeElement).toBe(radio);
+    expect(onBlur).toHaveBeenCalledTimes(0);
+    expect(onFocus).toHaveBeenCalledTimes(1);
+    expect(onFocusChange).toHaveBeenCalledTimes(1);
+
+    await user.keyboard('[ArrowRight]');
+    expect(onBlur).toHaveBeenCalledTimes(0);
+    expect(onFocus).toHaveBeenCalledTimes(1);
+    expect(onFocusChange).toHaveBeenCalledTimes(1);
+
+    await user.tab();
+    expect(onBlur).toHaveBeenCalledTimes(1);
+    expect(onFocus).toHaveBeenCalledTimes(1);
+    expect(onFocusChange).toHaveBeenCalledTimes(2);
+  });
+
+  it('should support refs', () => {
+    let groupRef = React.createRef();
+    let radioRef = React.createRef();
+    let {getByRole} = render(
+      <RadioGroup ref={groupRef}>
+        <Label>Test</Label>
+        <Radio ref={radioRef} value="a">
+          A
+        </Radio>
+      </RadioGroup>
+    );
+    expect(groupRef.current).toBe(getByRole('radiogroup'));
+    expect(radioRef.current).toBe(findRoot(getByRole('radio')));
+  });
+
+  it('should support input ref', () => {
+    let inputRef = React.createRef();
+    let {getByRole} = render(
+      <RadioGroup>
+        <Label>Test</Label>
+        <Radio inputRef={inputRef} value="a">
+          A
+        </Radio>
+      </RadioGroup>
+    );
+    let radio = getByRole('radio');
+    expect(inputRef.current).toBe(radio);
+  });
+
+  it('should support and merge input ref on context', () => {
+    let inputRef = React.createRef();
+    let contextInputRef = React.createRef();
+    let Context = comp === 'RadioField' ? RadioFieldContext : RadioContext;
+    let {getByRole} = render(
+      <RadioGroup>
+        <Label>Test</Label>
+        <Context.Provider value={{inputRef: contextInputRef}}>
+          <Radio inputRef={inputRef} value="a">
+            A
+          </Radio>
+        </Context.Provider>
+      </RadioGroup>
+    );
+    let radio = getByRole('radio');
+    expect(inputRef.current).toBe(radio);
+    expect(contextInputRef.current).toBe(radio);
+  });
+
+  it('should navigate within the group using ArrowRight/Left but skip non-radios', async () => {
+    let {getAllByRole} = render(
+      <RadioGroup>
+        <Label>Test</Label>
+        <Radio value="a">
+          <object tabIndex={-1}>
+            <img alt="" />
+          </object>
+          <span>A</span>
+        </Radio>
+        <Radio value="b">B</Radio>
+        <Radio value="c">C</Radio>
+      </RadioGroup>
+    );
+    let radios = getAllByRole('radio');
+    await user.tab();
+    expect(document.activeElement).toBe(radios[0]);
+    await user.keyboard('[ArrowRight]');
+    expect(document.activeElement).toBe(radios[1]);
+    await user.keyboard('[ArrowLeft]');
+    expect(document.activeElement).toBe(radios[0]);
+  });
+
+  it('should support form prop', () => {
+    let {getAllByRole} = renderGroup({form: 'test'});
+    for (let radio of getAllByRole('radio')) {
+      expect(radio).toHaveAttribute('form', 'test');
+    }
+  });
+
+  it('should not trigger onBlur/onFocus on sequential presses of a Radio', async () => {
+    let onBlur = jest.fn();
+    let onFocus = jest.fn();
+
+    let {getAllByRole} = render(
+      <RadioGroup>
+        <Label>Test</Label>
+        <Radio value="a" onFocus={onFocus} onBlur={onBlur}>
+          A
+        </Radio>
+        <Radio value="b">B</Radio>
+      </RadioGroup>
+    );
+
+    let radios = getAllByRole('radio');
+    let radio = radios[0];
+    let label = radio.closest('label');
+
+    await user.click(label);
+    expect(onFocus).toHaveBeenCalledTimes(1);
+    expect(onBlur).not.toHaveBeenCalled();
+
+    onFocus.mockClear();
+
+    await user.click(label);
+
+    expect(onFocus).not.toHaveBeenCalled();
+    expect(onBlur).not.toHaveBeenCalled();
+  });
+
+  it('should trigger onBlur when moving focus between different Radio buttons', async () => {
+    let onBlurA = jest.fn();
+    let onFocusA = jest.fn();
+    let onBlurB = jest.fn();
+    let onFocusB = jest.fn();
+
+    let {getAllByRole} = render(
+      <RadioGroup>
+        <Label>Test</Label>
+        <Radio value="a" onFocus={onFocusA} onBlur={onBlurA}>
+          A
+        </Radio>
+        <Radio value="b" onFocus={onFocusB} onBlur={onBlurB}>
+          B
+        </Radio>
+      </RadioGroup>
+    );
+
+    let radios = getAllByRole('radio');
+    let radioA = radios[0];
+    let radioB = radios[1];
+    let labelA = radioA.closest('label');
+    let labelB = radioB.closest('label');
+
+    await user.click(labelA);
+    expect(onFocusA).toHaveBeenCalledTimes(1);
+    expect(onBlurA).not.toHaveBeenCalled();
+
+    await user.click(labelB);
+    expect(onFocusB).toHaveBeenCalledTimes(1);
+    expect(onBlurA).toHaveBeenCalledTimes(1);
+  });
+});

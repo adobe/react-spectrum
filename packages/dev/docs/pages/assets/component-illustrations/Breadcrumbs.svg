@@ -1,0 +1,17 @@
+<svg style="background:var(--anatomy-gray-100); padding: calc((152px - 20px) / 2) 10px" height="20" viewBox="0 0 173 20">
+  <g id="Breadcrumbs" transform="translate(-1044 -1133)">
+    <g id="Decorative_icon" data-name="Decorative icon" transform="translate(1088 1137)">
+      <g id="Icon" transform="translate(4.629 3.146)">
+        <path id="Path_3126" data-name="Path 3126" d="M10.788,8.007a.8.8,0,0,1-.234.563L7.362,11.76a.8.8,0,1,1-1.148-1.108l.02-.02L8.861,8.007,6.234,5.38A.8.8,0,0,1,7.342,4.233l.02.02,3.191,3.19a.8.8,0,0,1,.234.564Z" transform="translate(-5.951 -4.045)" fill="var(--anatomy-gray-600)"/>
+      </g>
+    </g>
+    <text id="Link" transform="translate(1044 1149)" fill="var(--anatomy-gray-600)" font-size="16" font-family="var(--anatomy-font)"><tspan x="0" y="0">Home</tspan></text>
+    <text id="Link-2" data-name="Link" transform="translate(1106 1149)" fill="var(--anatomy-gray-600)" font-size="16" font-family="var(--anatomy-font)"><tspan x="0" y="0">Assets</tspan></text>
+    <text id="Link-3" data-name="Link" transform="translate(1169 1149)" fill="var(--anatomy-gray-900)" font-size="16" font-family="var(--anatomy-font)" font-weight="700"><tspan x="0" y="0">Photos</tspan></text>
+    <g id="Decorative_icon-2" data-name="Decorative icon" transform="translate(1151 1137)">
+      <g id="Icon-2" data-name="Icon" transform="translate(4.629 3.146)">
+        <path id="Path_3126-2" data-name="Path 3126" d="M10.788,8.007a.8.8,0,0,1-.234.563L7.362,11.76a.8.8,0,1,1-1.148-1.108l.02-.02L8.861,8.007,6.234,5.38A.8.8,0,0,1,7.342,4.233l.02.02,3.191,3.19a.8.8,0,0,1,.234.564Z" transform="translate(-5.951 -4.045)" fill="var(--anatomy-gray-600)"/>
+      </g>
+    </g>
+  </g>
+</svg>

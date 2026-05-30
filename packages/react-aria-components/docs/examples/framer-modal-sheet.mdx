@@ -1,0 +1,224 @@
+{/* Copyright 2023 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {ExampleLayout} from '@react-spectrum/docs';
+export default ExampleLayout;
+
+import docs from 'docs:react-aria-components';
+import {TypeLink} from '@react-spectrum/docs';
+import styles from '@react-spectrum/docs/src/docs.css';
+import Dialog from '@react-spectrum/docs/pages/assets/component-illustrations/Dialog.svg';
+import Button from '@react-spectrum/docs/pages/assets/component-illustrations/ActionButton.svg';
+import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
+
+---
+keywords: [example, modal, dialog, aria, accessibility, react, component]
+type: component
+image: framer-modal-sheet.png
+description: An iOS-style gesture driven modal sheet built with Framer Motion.
+---
+
+# Gesture Driven Modal Sheet
+
+An iOS-style gesture driven modal sheet built with React Aria Components, [Framer Motion](https://www.framer.com/motion/), and [Tailwind CSS](https://tailwindcss.com/).
+
+## Example
+
+```tsx import
+import './tailwind.global.css';
+```
+
+```css hidden
+body {
+  background: black;
+}
+
+body > div {
+  background: var(--page-background);
+  translate: 0;
+  transform-origin: center 0;
+  overflow: auto;
+  height: 100vh;
+}
+```
+
+```tsx example flip
+import {
+  AnimatePresence,
+  motion,
+  animate,
+  useMotionTemplate,
+  useMotionValue,
+  useTransform,
+  useMotionValueEvent,
+  cubicBezier
+} from 'motion/react';
+import {
+  Dialog,
+  ModalOverlay,
+  Modal,
+  Button,
+  Heading
+} from 'react-aria-components';
+import { useState } from 'react';
+
+// Wrap React Aria modal components so they support motion values.
+const MotionModal = motion(Modal);
+const MotionModalOverlay = motion(ModalOverlay);
+
+const inertiaTransition = {
+  type: "inertia" as const,
+  bounceStiffness: 300,
+  bounceDamping: 40,
+  timeConstant: 300
+};
+
+const staticTransition = {
+  duration: 0.5,
+  ease: cubicBezier(0.32, 0.72, 0, 1)
+};
+
+const SHEET_MARGIN = 34;
+const SHEET_RADIUS = 12;
+
+const root = document.body.firstChild as HTMLElement;
+
+function Sheet() {
+  let [isOpen, setOpen] = useState(false);
+  let h = window.innerHeight - SHEET_MARGIN;
+  let y = useMotionValue(h);
+  let bgOpacity = useTransform(y, [0, h], [0.4, 0]);
+  let bg = useMotionTemplate`rgba(0, 0, 0, ${bgOpacity})`;
+
+  // Scale the body down and adjust the border radius when the sheet is open.
+  let bodyScale = useTransform(
+    y,
+    [0, h],
+    [(window.innerWidth - SHEET_MARGIN) / window.innerWidth, 1]
+  );
+  let bodyTranslate = useTransform(y, [0, h], [SHEET_MARGIN - SHEET_RADIUS, 0]);
+  let bodyBorderRadius = useTransform(y, [0, h], [SHEET_RADIUS, 0]);
+
+  useMotionValueEvent(bodyScale, 'change', v => root.style.scale = `${v}`);
+  useMotionValueEvent(bodyTranslate, 'change', v => root.style.translate = `0 ${v}px`);
+  useMotionValueEvent(bodyBorderRadius, 'change', v => root.style.borderRadius = `${v}px`);
+
+  return (
+    <>
+      <Button
+        className="text-blue-600 text-lg font-semibold outline-hidden rounded-sm bg-transparent border-none pressed:text-blue-700 focus-visible:ring-3"
+        onPress={() => setOpen(true)}>
+        Open sheet
+      </Button>
+      <AnimatePresence>
+        {isOpen && (
+          <MotionModalOverlay
+            // Force the modal to be open when AnimatePresence renders it.
+            isOpen
+            onOpenChange={setOpen}
+            className="fixed inset-0 z-10"
+            style={{ backgroundColor: bg as any }}>
+            <MotionModal
+              className="bg-(--page-background) absolute bottom-0 w-full rounded-t-xl shadow-lg will-change-transform"
+              initial={{ y: h }}
+              animate={{ y: 0 }}
+              exit={{ y: h }}
+              transition={staticTransition}
+              style={{
+                y,
+                top: SHEET_MARGIN,
+                // Extra padding at the bottom to account for rubber band scrolling.
+                paddingBottom: window.screen.height
+              }}
+              drag="y"
+              dragConstraints={{ top: 0 }}
+              onDragEnd={(e, { offset, velocity }) => {
+                if (offset.y > window.innerHeight * 0.75 || velocity.y > 10) {
+                  setOpen(false);
+                } else {
+                  animate(y, 0, { ...inertiaTransition, min: 0, max: 0 });
+                }
+              }}>
+              {/* drag affordance */}
+              <div className="mx-auto w-12 mt-2 h-1.5 rounded-full bg-gray-400" />
+              <Dialog className="px-4 pb-4 outline-hidden">
+                <div className="flex justify-end">
+                  <Button
+                    className="text-blue-600 text-lg font-semibold mb-8 outline-hidden rounded-sm bg-transparent border-none pressed:text-blue-700 focus-visible:ring-3"
+                    onPress={() => setOpen(false)}>
+                    Done
+                  </Button>
+                </div>
+                <Heading slot="title" className="text-3xl font-semibold mb-4">
+                  Modal sheet
+                </Heading>
+                <p className="text-lg mb-4">
+                  This is a dialog with a custom modal overlay built with React Aria Components and Framer Motion.
+                </p>
+                <p className="text-lg">
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean sit amet nisl blandit, pellentesque eros eu, scelerisque eros. Sed cursus urna at nunc lacinia dapibus.
+                </p>
+              </Dialog>
+            </MotionModal>
+          </MotionModalOverlay>
+        )}
+      </AnimatePresence>
+    </>
+  );
+}
+```
+
+### Tailwind config
+
+This example uses the [tailwindcss-react-aria-components](../styling.html#plugin) plugin. When using Tailwind v4, add it to your CSS:
+
+```css render=false
+@import "tailwindcss";
+@plugin "tailwindcss-react-aria-components";
+```
+
+<details>
+
+<summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Tailwind v3</summary>
+
+When using Tailwind v3, add the plugin to your `tailwind.config.js` instead:
+
+```tsx
+module.exports = {
+  // ...
+  plugins: [
+    require('tailwindcss-react-aria-components')
+  ]
+};
+```
+
+**Note**: When using Tailwind v3, install `tailwindcss-react-aria-components` version 1.x instead of 2.x.
+
+</details>
+
+## Components
+
+<section className={styles.cardGroup} data-size="small">
+
+<ExampleCard
+  url="../Dialog.html"
+  title="Dialog"
+  description="A dialog is an overlay shown above other content in an application.">
+  <Dialog />
+</ExampleCard>
+
+<ExampleCard
+  url="../Button.html"
+  title="Button"
+  description="A button allows a user to perform an action.">
+  <Button />
+</ExampleCard>
+
+</section>

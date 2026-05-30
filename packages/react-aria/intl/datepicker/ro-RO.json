@@ -1,0 +1,18 @@
+{
+  "calendar": "Calendar",
+  "day": "zi",
+  "dayPeriod": "a.m/p.m.",
+  "endDate": "Dată final",
+  "era": "eră",
+  "hour": "oră",
+  "minute": "minut",
+  "month": "lună",
+  "second": "secundă",
+  "selectedDateDescription": "Dată selectată: {date}",
+  "selectedRangeDescription": "Interval selectat: de la {startDate} până la {endDate}",
+  "selectedTimeDescription": "Ora selectată: {time}",
+  "startDate": "Dată început",
+  "timeZoneName": "fus orar",
+  "weekday": "ziua din săptămână",
+  "year": "an"
+}

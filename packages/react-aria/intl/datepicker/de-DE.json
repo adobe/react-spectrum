@@ -1,0 +1,18 @@
+{
+  "calendar": "Kalender",
+  "day": "Tag",
+  "dayPeriod": "Tageshälfte",
+  "endDate": "Enddatum",
+  "era": "Epoche",
+  "hour": "Stunde",
+  "minute": "Minute",
+  "month": "Monat",
+  "second": "Sekunde",
+  "selectedDateDescription": "Ausgewähltes Datum: {date}",
+  "selectedRangeDescription": "Ausgewählter Bereich: {startDate} bis {endDate}",
+  "selectedTimeDescription": "Ausgewählte Zeit: {time}",
+  "startDate": "Startdatum",
+  "timeZoneName": "Zeitzone",
+  "weekday": "Wochentag",
+  "year": "Jahr"
+}

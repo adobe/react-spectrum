@@ -1,0 +1,24 @@
+<svg style="background:var(--anatomy-gray-100); padding: calc((152px - 56px) / 2) 10px" height="56" viewBox="0 0 176 56">
+  <rect id="Placement_Area" data-name="Placement Area" width="176" height="56" fill="red" opacity="0"/>
+  <g id="Label">
+    <rect id="Placement_Area-2" data-name="Placement Area" width="39" height="24" fill="red" opacity="0"/>
+    <text id="Text" transform="translate(0 16)" fill="var(--anatomy-gray-700)" font-size="12" font-family="var(--anatomy-font)"><tspan x="0" y="0">Width</tspan></text>
+  </g>
+  <g id="Field" transform="translate(0 24)" fill="var(--anatomy-gray-50)" stroke="var(--anatomy-gray-400)" stroke-width="1">
+    <rect width="176" height="32" rx="4" stroke="none"/>
+    <rect x="0.5" y="0.5" width="175" height="31" rx="3.5" fill="none"/>
+  </g>
+  <text id="Text-2" data-name="Text" transform="translate(12 44)" fill="var(--anatomy-gray-800)" font-size="14" font-family="var(--anatomy-font)"><tspan x="0" y="0">4 in</tspan></text>
+  <g id="Group_151250" data-name="Group 151250" transform="translate(-346.559 -67.615)">
+    <g id="rectangle-18" transform="translate(498.559 91.615)" fill="var(--anatomy-gray-75)" stroke="var(--anatomy-gray-400)" stroke-width="1">
+      <path d="M0,0H20a4,4,0,0,1,4,4V16.5a0,0,0,0,1,0,0H0a0,0,0,0,1,0,0V0A0,0,0,0,1,0,0Z" stroke="none"/>
+      <path d="M.5.5H20A3.5,3.5,0,0,1,23.5,4V16a0,0,0,0,1,0,0H.5a0,0,0,0,1,0,0V.5A0,0,0,0,1,.5.5Z" fill="none"/>
+    </g>
+    <g id="rectangle-18-2" data-name="rectangle-18" transform="translate(498.559 107.115)" fill="var(--anatomy-gray-75)" stroke="var(--anatomy-gray-400)" stroke-width="1">
+      <path d="M0,0H24a0,0,0,0,1,0,0V12.5a4,4,0,0,1-4,4H0a0,0,0,0,1,0,0V0A0,0,0,0,1,0,0Z" stroke="none"/>
+      <path d="M.5.5h23a0,0,0,0,1,0,0v12A3.5,3.5,0,0,1,20,16H.5a0,0,0,0,1,0,0V.5A0,0,0,0,1,.5.5Z" fill="none"/>
+    </g>
+    <path id="Shape_1_" d="M4.7,4a.764.764,0,0,0-.2-.5L1.2.2A.764.764,0,0,0,.7,0,.713.713,0,0,0,0,.8a.551.551,0,0,0,.2.5L2.9,4,.2,6.7a.551.551,0,0,0-.2.5A.713.713,0,0,0,.7,8a.764.764,0,0,0,.5-.2L4.4,4.6A.864.864,0,0,0,4.7,4Z" transform="translate(506.559 102.815) rotate(-90)" fill="var(--anatomy-gray-800)"/>
+    <path id="Shape_1_2" data-name="Shape_1_" d="M4.7,4a.764.764,0,0,0-.2-.5L1.2.2A.764.764,0,0,0,.7,0,.713.713,0,0,0,0,.8a.551.551,0,0,0,.2.5L2.9,4,.2,6.7a.551.551,0,0,0-.2.5A.713.713,0,0,0,.7,8a.764.764,0,0,0,.5-.2L4.4,4.6A.864.864,0,0,0,4.7,4Z" transform="translate(514.559 112.415) rotate(90)" fill="var(--anatomy-gray-800)"/>
+  </g>
+</svg>

@@ -1,0 +1,27 @@
+<svg style="max-height: 245.5px; background: var(--anatomy-gray-300); padding: 12px; margin-bottom: 16px; width: calc(100% - 24px); border-radius: var(--anatomy-radius);" viewBox="0 0 319 245.5">
+  <defs>
+    <filter id="Path_3120" x="0" y="51.5" width="319" height="194" filterUnits="userSpaceOnUse">
+      <feOffset dy="3" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feFlood flood-opacity="0.149"/>
+      <feComposite operator="in" in2="blur"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g id="Group_3957" data-name="Group 3957" transform="translate(-18.5 -40)">
+    <g id="Group_3941" data-name="Group 3941" transform="translate(0 68)">
+      <g transform="matrix(1, 0, 0, 1, 18.5, -28)" filter="url(#Path_3120)">
+        <path id="Path_3120-2" data-name="Path 3120" d="M4,0H296a4,4,0,0,1,4,4V171a4,4,0,0,1-4,4H4a4,4,0,0,1-4-4V4A4,4,0,0,1,4,0Z" transform="translate(9.5 58)" fill="var(--anatomy-gray-50)" stroke="var(--anatomy-gray-400)" stroke-width="1"/>
+      </g>
+    </g>
+    <g id="Group_3942" data-name="Group 3942" transform="translate(-168 401)">
+      <text id="Underlay" transform="translate(402 -348)" fill="var(--anatomy-gray-900)" font-size="13" font-family="var(--anatomy-font)" font-style="italic"><tspan x="-23.185" y="0">Underlay</tspan></text>
+      <path id="Union_12" data-name="Union 12" d="M-682.5-357a2.5,2.5,0,0,1,2-2.449V-381h1v21.55a2.5,2.5,0,0,1,2,2.449,2.5,2.5,0,0,1-2.5,2.5A2.5,2.5,0,0,1-682.5-357Z" transform="translate(1081.5 38)" fill="var(--anatomy-gray-900)"/>
+    </g>
+    <g id="Group_3943" data-name="Group 3943" transform="translate(-287 401)">
+      <rect id="Rectangle_3659" data-name="Rectangle 3659" width="20" height="55" transform="translate(392 -343)" fill="red" opacity="0"/>
+      <text id="Modal" transform="translate(402 -348)" fill="var(--anatomy-gray-900)" font-size="13" font-family="var(--anatomy-font)" font-style="italic"><tspan x="-16.471" y="0">Modal</tspan></text>
+      <path id="Union_13" data-name="Union 13" d="M-770-326.5a2.5,2.5,0,0,1,2-2.45V-381h1v52.049a2.5,2.5,0,0,1,2,2.45,2.5,2.5,0,0,1-2.5,2.5A2.5,2.5,0,0,1-770-326.5Z" transform="translate(1169.5 38)" fill="var(--anatomy-gray-900)"/>
+    </g>
+  </g>
+</svg>

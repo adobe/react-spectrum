@@ -1,0 +1,14 @@
+{
+  "dateRange": "{startDate} до {endDate}",
+  "dateSelected": "Избрано е {date}",
+  "finishRangeSelectionPrompt": "Натиснете, за да довършите избора на времеви интервал",
+  "maximumDate": "Последна налична дата",
+  "minimumDate": "Първа налична дата",
+  "next": "Напред",
+  "previous": "Назад",
+  "selectedDateDescription": "Избрана дата: {date}",
+  "selectedRangeDescription": "Избран диапазон: {dateRange}",
+  "startRangeSelectionPrompt": "Натиснете, за да пристъпите към избора на времеви интервал",
+  "todayDate": "Днес, {date}",
+  "todayDateSelected": "Днес, {date} са избрани"
+}

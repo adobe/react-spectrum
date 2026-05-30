@@ -1,0 +1,183 @@
+{
+  "name": "@react-spectrum/s2",
+  "version": "1.4.0",
+  "description": "Spectrum 2 UI components in React",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adobe/react-spectrum"
+  },
+  "source": "exports/index.ts",
+  "files": [
+    "dist",
+    "style",
+    "page.css",
+    "page.css.map",
+    "icons",
+    "illustrations",
+    "src",
+    "exports",
+    "*.js"
+  ],
+  "sideEffects": [
+    "*.css"
+  ],
+  "main": "./dist/exports/index.cjs",
+  "module": "./dist/exports/index.mjs",
+  "types": "./dist/types/exports/index.d.ts",
+  "exports": {
+    ".": {
+      "source": "./exports/index.ts",
+      "types": "./dist/types/exports/index.d.ts",
+      "module": "./dist/exports/index.mjs",
+      "import": "./dist/exports/index.mjs",
+      "require": "./dist/exports/index.cjs"
+    },
+    "./page.css": {
+      "source": "./src/page.ts",
+      "types": "./dist/types/src/page.d.ts",
+      "default": "./page.css"
+    },
+    "./style": {
+      "source": "./style/index.ts",
+      "types": "./dist/types/style/index.d.ts",
+      "module": "./style/dist/module.mjs",
+      "import": "./style/dist/module.mjs",
+      "require": "./style/dist/main.cjs"
+    },
+    "./icons/*": {
+      "source": "./s2wf-icons/S2_Icon_*_20_N.svg",
+      "types": [
+        "./icons/*.d.ts",
+        "./icon.d.ts"
+      ],
+      "module": "./icons/*.mjs",
+      "import": "./icons/*.mjs",
+      "require": "./icons/*.cjs"
+    },
+    "./illustrations/*": {
+      "source": "./spectrum-illustrations/*.tsx",
+      "types": [
+        "./illustrations/*.d.ts",
+        "./icon.d.ts"
+      ],
+      "module": "./illustrations/*.mjs",
+      "import": "./illustrations/*.mjs",
+      "require": "./illustrations/*.cjs"
+    },
+    "./illustrations/linear/internal/*": null,
+    "./illustrations/gradient/*/internal/*": null,
+    "./package.json": "./package.json",
+    "./*": {
+      "source": "./exports/*.ts",
+      "types": "./dist/types/exports/*.d.ts",
+      "import": "./dist/exports/*.mjs",
+      "require": "./dist/exports/*.cjs"
+    },
+    "./private/*": null
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "prepublishOnly": "rm -rf dist/page.cjs* && mv dist/private/page*.css page.css && mv dist/private/page.css.map page.css.map || true",
+    "prepack": "npm pkg delete scripts devDependencies resolutions alias targets",
+    "postpack": "git checkout -- package.json"
+  },
+  "dependencies": {
+    "@internationalized/date": "^3.12.2",
+    "@internationalized/number": "^3.6.7",
+    "@parcel/macros": "^2.16.3",
+    "@react-types/shared": "^3.35.0",
+    "react-aria": "3.49.0",
+    "react-aria-components": "1.18.0",
+    "react-stately": "3.47.0"
+  },
+  "devDependencies": {
+    "@adobe/spectrum-tokens": "14.0.0",
+    "@react-aria/test-utils": "^1.0.0-alpha.8",
+    "@storybook/jest": "^0.2.3",
+    "@testing-library/dom": "^10.1.0",
+    "@testing-library/react": "^16.0.0",
+    "@testing-library/user-event": "^14.0.0",
+    "react": "^19.0.0-rc.1",
+    "react-dom": "^19.0.0-rc.1"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0-rc.1",
+    "react-dom": "^19.0.0-rc.1"
+  },
+  "browserslist": "last 2 Chrome versions, last 2 Safari versions, last 2 Firefox versions, last 2 Edge versions",
+  "page": "dist/page.cjs",
+  "style-main": "style/dist/main.cjs",
+  "style-module": "style/dist/module.mjs",
+  "targets": {
+    "module": false,
+    "main": false,
+    "types": false,
+    "page": {
+      "source": "src/page.ts",
+      "isLibrary": true
+    },
+    "style-module": {
+      "source": "style/index.ts",
+      "isLibrary": true,
+      "outputFormat": "esmodule",
+      "context": "node"
+    },
+    "style-main": {
+      "source": "style/index.ts",
+      "isLibrary": true,
+      "outputFormat": "commonjs",
+      "context": "node"
+    },
+    "icons-module": {
+      "source": "s2wf-icons/*.svg",
+      "distDir": "icons",
+      "isLibrary": true,
+      "outputFormat": "esmodule",
+      "includeNodeModules": false
+    },
+    "icons-main": {
+      "source": "s2wf-icons/*.svg",
+      "distDir": "icons",
+      "isLibrary": true,
+      "outputFormat": "commonjs",
+      "includeNodeModules": false
+    },
+    "illustrations-module": {
+      "source": [
+        "spectrum-illustrations/gradient/*/*.tsx",
+        "spectrum-illustrations/linear/*.tsx"
+      ],
+      "distDir": "illustrations",
+      "isLibrary": true,
+      "outputFormat": "esmodule",
+      "includeNodeModules": false
+    },
+    "illustrations-main": {
+      "source": [
+        "spectrum-illustrations/gradient/*/*.tsx",
+        "spectrum-illustrations/linear/*.tsx"
+      ],
+      "distDir": "illustrations",
+      "isLibrary": true,
+      "outputFormat": "commonjs",
+      "includeNodeModules": false
+    },
+    "exports-module": {
+      "source": "exports/*.ts",
+      "distDir": "dist",
+      "isLibrary": true,
+      "outputFormat": "esmodule",
+      "includeNodeModules": false
+    },
+    "exports-main": {
+      "source": "exports/*.ts",
+      "distDir": "dist",
+      "isLibrary": true,
+      "outputFormat": "commonjs",
+      "includeNodeModules": false
+    }
+  }
+}

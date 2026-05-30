@@ -1,0 +1,18 @@
+{
+  "calendar": "Kalendorius",
+  "day": "diena",
+  "dayPeriod": "iki pietų / po pietų",
+  "endDate": "Pabaigos data",
+  "era": "era",
+  "hour": "valanda",
+  "minute": "minutė",
+  "month": "mėnuo",
+  "second": "sekundė",
+  "selectedDateDescription": "Pasirinkta data: {date}",
+  "selectedRangeDescription": "Pasirinktas intervalas: nuo {startDate} iki {endDate}",
+  "selectedTimeDescription": "Pasirinktas laikas: {time}",
+  "startDate": "Pradžios data",
+  "timeZoneName": "laiko juosta",
+  "weekday": "savaitės diena",
+  "year": "metai"
+}

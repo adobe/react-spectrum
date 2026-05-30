@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Replaces size prop with macro size value 1`] = `
+"import { ColorWheel } from "@react-spectrum/s2";
+import { style } from "@react-spectrum/s2/style" with { type: "macro" };
+let size = 75;
+let props = {size: 100};
+
+<>
+  <ColorWheel defaultValue="hsl(30, 100%, 50%)" styles={style({
+    size: 96
+  })} />
+  <ColorWheel defaultValue="hsl(30, 100%, 50%)" styles={style({
+    size: 50
+  })} />
+  <ColorWheel defaultValue="hsl(30, 100%, 50%)" // TODO(S2-upgrade): update this style prop
+  size={size} />
+  <ColorWheel defaultValue="hsl(30, 100%, 50%)" // TODO(S2-upgrade): check this spread for style props
+  {...props} />
+</>"
+`;
