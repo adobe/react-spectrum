@@ -260,10 +260,7 @@ export function useNumberField(
   let {keyboardProps} = useKeyboard({
     isDisabled: isDisabled || isReadOnly,
     shortcuts: {
-      Enter: e => {
-        if (e.nativeEvent.isComposing) {
-          return false;
-        }
+      Enter: () => {
         flushSync(() => {
           commit();
         });

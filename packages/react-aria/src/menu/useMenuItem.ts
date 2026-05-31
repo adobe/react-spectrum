@@ -316,9 +316,6 @@ export function useMenuItem<T>(
   let {keyboardProps} = useKeyboard({
     shortcuts: {
       ' ': e => {
-        if (e.repeat) {
-          return false;
-        }
         interaction.current = {pointerType: 'keyboard', key: ' '};
         (getEventTarget(e) as HTMLElement).click();
 
@@ -327,9 +324,6 @@ export function useMenuItem<T>(
         setInteractionModality('keyboard');
       },
       Enter: e => {
-        if (e.repeat) {
-          return false;
-        }
         interaction.current = {pointerType: 'keyboard', key: 'Enter'};
         let target = getEventTarget(e) as HTMLElement;
 

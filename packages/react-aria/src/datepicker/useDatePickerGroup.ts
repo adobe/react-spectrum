@@ -3,7 +3,7 @@ import {DateFieldState} from 'react-stately/useDateFieldState';
 import {DatePickerState} from 'react-stately/useDatePickerState';
 import {DateRangePickerState} from 'react-stately/useDateRangePickerState';
 import {DOMAttributes, FocusableElement, RefObject} from '@react-types/shared';
-import {getEventTarget, nodeContains} from '../utils/shadowdom/DOMFunctions';
+import {getEventTarget} from '../utils/shadowdom/DOMFunctions';
 import {mergeProps} from '../utils/mergeProps';
 import {useKeyboard} from '../interactions/useKeyboard';
 import {useLocale} from '../i18n/I18nProvider';
@@ -20,29 +20,19 @@ export function useDatePickerGroup(
 
   let {keyboardProps} = useKeyboard({
     shortcuts: {
-      'Alt+ArrowDown': e => {
-        if (!nodeContains(e.currentTarget, getEventTarget(e) as Element)) {
-          return false;
-        }
+      'Alt+ArrowDown': () => {
         if ('setOpen' in state) {
           state.setOpen(true);
         }
         return false;
       },
-      'Alt+ArrowUp': e => {
-        if (!nodeContains(e.currentTarget, getEventTarget(e) as Element)) {
-          return false;
-        }
+      'Alt+ArrowUp': () => {
         if ('setOpen' in state) {
           state.setOpen(true);
         }
         return false;
       },
       ArrowLeft: e => {
-        if (!nodeContains(e.currentTarget, getEventTarget(e) as Element)) {
-          return false;
-        }
-
         if (disableArrowNavigation) {
           return false;
         }
@@ -63,10 +53,6 @@ export function useDatePickerGroup(
         return false;
       },
       ArrowRight: e => {
-        if (!nodeContains(e.currentTarget, getEventTarget(e) as Element)) {
-          return false;
-        }
-
         if (disableArrowNavigation) {
           return false;
         }

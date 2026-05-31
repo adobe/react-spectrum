@@ -74,11 +74,9 @@ export function useSpinButton(props: SpinButtonProps): SpinbuttonAria {
   }, []);
 
   let {keyboardProps} = useKeyboard({
+    isDisabled: isDisabled || isReadOnly,
     shortcuts: {
-      PageUp: e => {
-        if (isReadOnly || e.nativeEvent.isComposing) {
-          return false;
-        }
+      PageUp: () => {
         if (onIncrementPage) {
           onIncrementPage();
           return;
@@ -89,20 +87,14 @@ export function useSpinButton(props: SpinButtonProps): SpinbuttonAria {
         }
         return false;
       },
-      ArrowUp: e => {
-        if (isReadOnly || e.nativeEvent.isComposing) {
-          return false;
-        }
+      ArrowUp: () => {
         if (onIncrement) {
           onIncrement();
           return;
         }
         return false;
       },
-      PageDown: e => {
-        if (isReadOnly || e.nativeEvent.isComposing) {
-          return false;
-        }
+      PageDown: () => {
         if (onDecrementPage) {
           onDecrementPage();
           return;
@@ -113,30 +105,21 @@ export function useSpinButton(props: SpinButtonProps): SpinbuttonAria {
         }
         return false;
       },
-      ArrowDown: e => {
-        if (isReadOnly || e.nativeEvent.isComposing) {
-          return false;
-        }
+      ArrowDown: () => {
         if (onDecrement) {
           onDecrement();
           return;
         }
         return false;
       },
-      Home: e => {
-        if (isReadOnly || e.nativeEvent.isComposing) {
-          return false;
-        }
+      Home: () => {
         if (onDecrementToMin) {
           onDecrementToMin();
           return;
         }
         return false;
       },
-      End: e => {
-        if (isReadOnly || e.nativeEvent.isComposing) {
-          return false;
-        }
+      End: () => {
         if (onIncrementToMax) {
           onIncrementToMax();
           return;

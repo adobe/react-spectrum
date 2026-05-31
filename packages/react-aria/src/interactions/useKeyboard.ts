@@ -17,15 +17,15 @@ import {
 } from './createKeyboardShortcutHandler';
 import {DOMAttributes, KeyboardEvents} from '@react-types/shared';
 import {getEventTarget, nodeContains} from '../utils/shadowdom/DOMFunctions';
-import {KeyboardEvent as ReactKeyboardEvent, RefObject} from 'react';
+import {KeyboardEvent as ReactKeyboardEvent} from 'react';
 
 export interface KeyboardProps extends KeyboardEvents {
   /** Whether the keyboard events should be disabled. */
   isDisabled?: boolean;
   /** Keyboard shortcuts to handle. */
   shortcuts?: KeyboardShortcutBindings;
-  /** A ref to the element to ignore portal events. */
-  ignorePortalRef?: RefObject<Element | null> | null;
+  allowRepeats?: boolean;
+  allowComposing?: boolean;
 }
 
 export interface KeyboardResult {
@@ -37,30 +37,39 @@ export interface KeyboardResult {
  * Handles keyboard interactions for a focusable element.
  */
 export function useKeyboard(props: KeyboardProps): KeyboardResult {
-  let {shortcuts, ignorePortalRef = null} = props;
+  let {shortcuts, allowRepeats = false, allowComposing = false} = props;
   let onKeyDown;
   let onKeyUp;
   if (shortcuts) {
     let shortcutHandler = createKeyboardShortcutHandler(shortcuts);
     onKeyDown = createEventHandler<ReactKeyboardEvent<any>>(e => {
-      // should be built in more somehow? or turn it off per matched handler?
-
+      // If keyboard event didn't originate from a child of the current target,
+      // then it's a React event coming through a portal. We should ignore it.
+      if (!nodeContains(e.currentTarget, getEventTarget(e))) {
+        e.continuePropagation();
+        return;
+      }
       if (
-        ignorePortalRef &&
-        ignorePortalRef.current &&
-        !nodeContains(ignorePortalRef.current, getEventTarget(e) as Element)
+        (e.nativeEvent?.repeat && !allowRepeats) ||
+        (e.nativeEvent?.isComposing && !allowComposing)
       ) {
         e.continuePropagation();
         return;
       }
+
       shortcutHandler(e);
       props.onKeyDown?.(e);
     });
     onKeyUp = createEventHandler<ReactKeyboardEvent<any>>(e => {
+      // If keyboard event didn't originate from a child of the current target,
+      // then it's a React event coming through a portal. We should ignore it.
+      if (!nodeContains(e.currentTarget, getEventTarget(e))) {
+        e.continuePropagation();
+        return;
+      }
       if (
-        ignorePortalRef &&
-        ignorePortalRef.current &&
-        !nodeContains(ignorePortalRef.current, getEventTarget(e) as Element)
+        (e.nativeEvent?.repeat && !allowRepeats) ||
+        (e.nativeEvent?.isComposing && !allowComposing)
       ) {
         e.continuePropagation();
         return;

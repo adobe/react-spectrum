@@ -162,6 +162,7 @@ export function useSubmenuTrigger<T>(
         if (!isFocusWithin(e.currentTarget)) {
           return false;
         }
+        // TODO is this one covered by a test? did my changes to have a default stop on portals break this?
         if (nodeContains(submenuRef.current, getEventTarget(e) as Element)) {
           onSubmenuClose();
           if (!shouldUseVirtualFocus && ref.current) {

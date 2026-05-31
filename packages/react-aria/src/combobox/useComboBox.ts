@@ -181,9 +181,6 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(
   let {keyboardProps} = useKeyboard({
     shortcuts: {
       Enter: e => {
-        if (e.nativeEvent.isComposing) {
-          return false;
-        }
         // Prevent default form submission if menu is open since we may be selecting a option
         let shouldPreventDefault = state.isOpen;
         // If the focused item is a link, trigger opening it. Items that are links are not selectable.
@@ -212,11 +209,7 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(
         state.commit();
         return {shouldPreventDefault};
       },
-      Tab: e => {
-        if (e.nativeEvent.isComposing) {
-          return false;
-        }
-
+      Tab: () => {
         // If the focused item is a link, trigger opening it. Items that are links are not selectable.
         if (state.isOpen && listBoxRef.current && state.selectionManager.focusedKey != null) {
           let collectionItem = state.collection.getItem(state.selectionManager.focusedKey);
@@ -234,40 +227,24 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(
         }
         return {shouldPreventDefault: false};
       },
-      Escape: e => {
-        if (e.nativeEvent.isComposing) {
-          return false;
-        }
+      Escape: () => {
         let shouldContinuePropagation = false;
         if (!state.selectionManager.isEmpty || state.inputValue === '' || props.allowsCustomValue) {
-          e.continuePropagation();
           shouldContinuePropagation = true;
         }
         state.revert();
         return {shouldContinuePropagation};
       },
-      ArrowDown: e => {
-        if (e.nativeEvent.isComposing) {
-          return false;
-        }
+      ArrowDown: () => {
         state.open('first', 'manual');
       },
-      ArrowUp: e => {
-        if (e.nativeEvent.isComposing) {
-          return false;
-        }
+      ArrowUp: () => {
         state.open('last', 'manual');
       },
-      ArrowLeft: e => {
-        if (e.nativeEvent.isComposing) {
-          return false;
-        }
+      ArrowLeft: () => {
         state.selectionManager.setFocusedKey(null);
       },
-      ArrowRight: e => {
-        if (e.nativeEvent.isComposing) {
-          return false;
-        }
+      ArrowRight: () => {
         state.selectionManager.setFocusedKey(null);
       }
     }

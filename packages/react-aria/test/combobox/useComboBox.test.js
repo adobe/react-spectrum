@@ -117,7 +117,9 @@ describe('useComboBox', function () {
     let {inputProps} = result.current;
 
     act(() => {
-      inputProps.onKeyDown(event({key: 'Enter'}));
+      inputProps.onKeyDown(
+        event({key: 'Enter', target: {}, currentTarget: {contains: () => true}})
+      );
     });
 
     expect(preventDefault).toHaveBeenCalledTimes(1);
@@ -149,7 +151,9 @@ describe('useComboBox', function () {
       initialProps: props
     });
     act(() => {
-      openResult.current.inputProps.onKeyDown(event({key: 'Tab'}));
+      openResult.current.inputProps.onKeyDown(
+        event({key: 'Tab', target: {}, currentTarget: {contains: () => true}})
+      );
     });
     expect(commitSpy).toHaveBeenCalledTimes(1);
   });
@@ -161,11 +165,15 @@ describe('useComboBox', function () {
 
     let {result} = renderHook(props => useComboBox(props, state.current), {initialProps: props});
     let {inputProps, buttonProps} = result.current;
-    inputProps.onKeyDown(event({key: 'ArrowDown'}));
+    inputProps.onKeyDown(
+      event({key: 'ArrowDown', target: {}, currentTarget: {contains: () => true}})
+    );
     expect(openSpy).toHaveBeenCalledTimes(1);
     expect(openSpy).toHaveBeenLastCalledWith('first', 'manual');
     expect(toggleSpy).toHaveBeenCalledTimes(0);
-    inputProps.onKeyDown(event({key: 'ArrowUp'}));
+    inputProps.onKeyDown(
+      event({key: 'ArrowUp', target: {}, currentTarget: {contains: () => true}})
+    );
     expect(openSpy).toHaveBeenCalledTimes(2);
     expect(openSpy).toHaveBeenLastCalledWith('last', 'manual');
     expect(toggleSpy).toHaveBeenCalledTimes(0);

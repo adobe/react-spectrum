@@ -128,8 +128,8 @@ export function useOverlay(props: AriaOverlayProps, ref: RefObject<Element | nul
   // Handle the escape key
   let {keyboardProps} = useKeyboard({
     shortcuts: {
-      Escape: e => {
-        if (!isKeyboardDismissDisabled && !e.nativeEvent.isComposing) {
+      Escape: () => {
+        if (!isKeyboardDismissDisabled) {
           onHide();
           return;
         }

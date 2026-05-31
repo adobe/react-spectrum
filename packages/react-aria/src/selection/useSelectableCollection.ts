@@ -207,12 +207,6 @@ export function useSelectableCollection(
   };
 
   let arrowDown = (e: KeyboardEvent) => {
-    // Keyboard events bubble through portals. Don't handle keyboard events
-    // for elements outside the collection (e.g. menus).
-    if (!ref.current || !nodeContains(ref.current, getEventTarget(e) as Element)) {
-      return false;
-    }
-
     if (delegate.getKeyBelow) {
       let nextKey =
         manager.focusedKey != null
@@ -405,14 +399,13 @@ export function useSelectableCollection(
 
   let withShiftSel = (key, callback) => {
     return {
-      [isMac() ? key + '+Shift+Alt' : key + '+Shift+Ctrl']: callback,
+      [isMac() ? key + '+Shift+Alt' : key + '+Shift+Control']: callback,
       [key + '+Shift']: callback,
-      [isMac() ? key + '+Alt' : key + '+Ctrl']: callback,
+      [isMac() ? key + '+Alt' : key + '+Control']: callback,
       [key]: callback
     };
   };
   let {keyboardProps} = useKeyboard({
-    ignorePortalRef: ref as RefObject<Element>,
     shortcuts: {
       ...withShiftSel('ArrowDown', arrowDown),
       ...withShiftSel('ArrowUp', arrowUp),
@@ -422,7 +415,7 @@ export function useSelectableCollection(
       ...withShiftSel('End', end),
       ...withShiftSel('PageDown', pageDown),
       ...withShiftSel('PageUp', pageUp),
-      [isMac() ? 'a+Alt' : 'a+Ctrl']: aHandler,
+      [isMac() ? 'a+Alt' : 'a+Control']: aHandler,
       Escape: escape,
       Tab: tab,
       'Tab+Shift': shiftTab

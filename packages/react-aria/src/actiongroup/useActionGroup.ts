@@ -24,7 +24,6 @@ import {
 } from '@react-types/shared';
 import {createFocusManager} from '../focus/FocusScope';
 import {filterDOMProps} from '../utils/filterDOMProps';
-import {getEventTarget, nodeContains} from '../utils/shadowdom/DOMFunctions';
 import {ListState} from 'react-stately/useListState';
 import {useKeyboard} from '../interactions/useKeyboard';
 import {useLayoutEffect} from '../utils/useLayoutEffect';
@@ -94,36 +93,24 @@ export function useActionGroup<T>(
   let flipDirection = direction === 'rtl' && orientation === 'horizontal';
   let {keyboardProps} = useKeyboard({
     shortcuts: {
-      ArrowRight: e => {
-        if (!nodeContains(e.currentTarget, getEventTarget(e))) {
-          return false;
-        }
+      ArrowRight: () => {
         if (flipDirection) {
           focusManager.focusPrevious({wrap: true});
         } else {
           focusManager.focusNext({wrap: true});
         }
       },
-      ArrowDown: e => {
-        if (!nodeContains(e.currentTarget, getEventTarget(e))) {
-          return false;
-        }
+      ArrowDown: () => {
         focusManager.focusNext({wrap: true});
       },
-      ArrowLeft: e => {
-        if (!nodeContains(e.currentTarget, getEventTarget(e))) {
-          return false;
-        }
+      ArrowLeft: () => {
         if (flipDirection) {
           focusManager.focusNext({wrap: true});
         } else {
           focusManager.focusPrevious({wrap: true});
         }
       },
-      ArrowUp: e => {
-        if (!nodeContains(e.currentTarget, getEventTarget(e))) {
-          return false;
-        }
+      ArrowUp: () => {
         focusManager.focusPrevious({wrap: true});
       }
     }

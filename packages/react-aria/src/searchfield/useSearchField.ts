@@ -69,9 +69,7 @@ export function useSearchField(
     isDisabled: isDisabled || isReadOnly,
     shortcuts: {
       Enter: () => {
-        if (isDisabled || isReadOnly) {
-          return;
-        } else if (onSubmit) {
+        if (onSubmit) {
           // for backward compatibility;
           // otherwise, "Enter" on an input would trigger a form submit, the default browser behavior
           onSubmit(state.value);
@@ -80,9 +78,6 @@ export function useSearchField(
         return false;
       },
       Escape: () => {
-        if (isDisabled || isReadOnly) {
-          return false;
-        }
         // Also check the inputRef value for the case where the value was set directly on the input element instead of going through
         // the hook
         if (state.value === '' && (!inputRef.current || inputRef.current.value === '')) {

@@ -20,21 +20,20 @@ export type KeyboardShortcutAction = (
   | boolean
   | Partial<{shouldContinuePropagation?: boolean; shouldPreventDefault?: boolean}>;
 
-/** Maps shortcut strings (e.g. `"Mod+s"`, `"Ctrl+Shift+a"`) to handlers. */
+/** Maps shortcut strings (e.g. `"Mod+s"`, `"Control+Shift+a"`) to handlers. */
 export type KeyboardShortcutBindings = Record<string, KeyboardShortcutAction>;
 
 /** Modifier names in shortcut strings (case-insensitive). Order in the string does not matter. */
 const MODIFIER_NAMES = new Set([
   'shift',
   'alt',
-  'ctrl',
   'control',
   'meta',
-  'mod' // OS dependent - Cmd on Mac, Ctrl on Windows/Linux
+  'mod' // OS dependent - Cmd on Mac, Control on Windows/Linux
 ]);
 
 /** Canonical modifier order for stable keys (sorted, fixed order). */
-const CANONICAL_MODIFIER_ORDER = ['Alt', 'Ctrl', 'Meta', 'Shift'] as const;
+const CANONICAL_MODIFIER_ORDER = ['Alt', 'Control', 'Meta', 'Shift'] as const;
 
 export interface ParsedKeyboardShortcut {
   shift: boolean;
@@ -42,8 +41,8 @@ export interface ParsedKeyboardShortcut {
   ctrl: boolean;
   meta: boolean;
   /**
-   * Platform primary: Cmd on Mac, Ctrl on Windows/Linux — expands to Meta or Ctrl in canonical
-   * form.
+   * Platform primary: Cmd on Mac, Control on Windows/Linux — expands to Meta or Control in
+   * canonical form.
    */
   mod: boolean;
   key: string;
@@ -62,13 +61,13 @@ export function modifierSetFromParsed(parsed: ParsedKeyboardShortcut): Set<strin
     set.add('Shift');
   }
   if (parsed.ctrl) {
-    set.add('Ctrl');
+    set.add('Control');
   }
   if (parsed.meta) {
     set.add('Meta');
   }
   if (parsed.mod) {
-    set.add(isMac() ? 'Meta' : 'Ctrl');
+    set.add(isMac() ? 'Meta' : 'Control');
   }
   return set;
 }
@@ -80,7 +79,7 @@ export function modifierSetFromEvent(e: KeyboardEvent): Set<string> {
     set.add('Alt');
   }
   if (e.ctrlKey) {
-    set.add('Ctrl');
+    set.add('Control');
   }
   if (e.metaKey) {
     set.add('Meta');
@@ -108,7 +107,7 @@ export function parseKeyboardShortcut(spec: string): ParsedKeyboardShortcut {
           prev.shift = true;
         } else if (lower === 'alt') {
           prev.alt = true;
-        } else if (lower === 'ctrl' || lower === 'control') {
+        } else if (lower === 'control') {
           prev.ctrl = true;
         } else if (lower === 'meta') {
           prev.meta = true;

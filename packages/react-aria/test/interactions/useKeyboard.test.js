@@ -179,14 +179,14 @@ describe('useKeyboard', function () {
         expect(onWrapperKeyUp).toHaveBeenCalledTimes(2);
       });
 
-      it('Ctrl+Shift distinct from Mod+Shift', async () => {
+      it('Control+Shift distinct from Mod+Shift', async () => {
         let modShift = jest.fn();
         let ctrlShift = jest.fn();
         let onWrapperKeyDown = jest.fn();
         let onWrapperKeyUp = jest.fn();
         render(
           <div onKeyDown={onWrapperKeyDown} onKeyUp={onWrapperKeyUp}>
-            <ExampleButton shortcuts={{'Mod+Shift+a': modShift, 'Ctrl+Shift+a': ctrlShift}} />
+            <ExampleButton shortcuts={{'Mod+Shift+a': modShift, 'Control+Shift+a': ctrlShift}} />
           </div>
         );
         await user.tab();
@@ -210,13 +210,13 @@ describe('useKeyboard', function () {
         expect(onWrapperKeyUp).toHaveBeenCalledTimes(3);
       });
 
-      it('Meta+Ctrl+Alt combination', async () => {
+      it('Meta+Control+Alt combination', async () => {
         let fn = jest.fn();
         let onWrapperKeyDown = jest.fn();
         let onWrapperKeyUp = jest.fn();
         render(
           <div onKeyDown={onWrapperKeyDown} onKeyUp={onWrapperKeyUp}>
-            <ExampleButton shortcuts={{'Meta+Ctrl+Alt+z': fn}} />
+            <ExampleButton shortcuts={{'Meta+Control+Alt+z': fn}} />
           </div>
         );
         await user.tab();
