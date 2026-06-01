@@ -37,7 +37,9 @@ export const Example: Story = {
   },
   render: args => (
     <MessageSuggestionList {...args}>
-      <MessageSuggestion>Create a year-over-year growth chart for the next decade</MessageSuggestion>
+      <MessageSuggestion>
+        Create a year-over-year growth chart for the next decade
+      </MessageSuggestion>
       <MessageSuggestion>Generate a congratulatory poster</MessageSuggestion>
       <MessageSuggestion>Summarize development pipeline</MessageSuggestion>
     </MessageSuggestionList>

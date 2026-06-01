@@ -1,1 +1,6 @@
-export {MessageSuggestion, MessageSuggestionContext, MessageSuggestionList, MessageSuggestionListContext} from '../src/MessageSuggestion';
+export {
+  MessageSuggestion,
+  MessageSuggestionContext,
+  MessageSuggestionList,
+  MessageSuggestionListContext
+} from '../src/MessageSuggestion';

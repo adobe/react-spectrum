@@ -11,29 +11,42 @@
  */
 
 import {AriaLabelingProps, DOMProps, DOMRef, DOMRefValue} from '@react-types/shared';
-import {focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import ArrowCurved from '@react-spectrum/s2/icons/ArrowCurved';
+import {ButtonProps, Button as RACButton} from 'react-aria-components/Button';
+import {centerBaseline} from './CenterBaseline';
+import {
+  centerPadding,
+  controlSize,
+  getAllowedOverrides
+} from './style-utils-copy' with {type: 'macro'};
 import {ContextValue, Provider, SlotProps} from 'react-aria-components/slots';
 import {createContext, forwardRef, ReactNode} from 'react';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
-import {centerPadding, controlSize, getAllowedOverrides} from './style-utils-copy' with {type: 'macro'};
+import {focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {IconContext} from '@react-spectrum/s2/Icon';
+import {pressScale} from '@react-spectrum/s2';
 import type {StyleProps} from './style-utils-copy';
-import ArrowCurved from '@react-spectrum/s2/icons/ArrowCurved';
-import {Button as RACButton, ButtonProps} from 'react-aria-components/Button';
 import {useDOMRef} from './useDOMRef';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
-import {pressScale} from '@react-spectrum/s2';
-import {centerBaseline} from './CenterBaseline';
-import {IconContext} from '@react-spectrum/s2/Icon';
 
-export interface MessageSuggestionProps extends Omit<ButtonProps, 'style' | 'className' | 'isPending' | 'isDisabled'>, StyleProps {
+export interface MessageSuggestionProps
+  extends Omit<ButtonProps, 'style' | 'className' | 'isPending' | 'isDisabled'>, StyleProps {
   /** The text content of the suggestion. */
   children: ReactNode;
 }
 
 export const MessageSuggestionContext =
-  createContext<ContextValue<Partial<MessageSuggestionProps>, DOMRefValue<HTMLButtonElement>>>(null);
+  createContext<ContextValue<Partial<MessageSuggestionProps>, DOMRefValue<HTMLButtonElement>>>(
+    null
+  );
 
-const suggestionStyles = style<{isHovered: boolean; isPressed: boolean; isDisabled: boolean; isFocusVisible: boolean; isFocused: boolean}>(
+const suggestionStyles = style<{
+  isHovered: boolean;
+  isPressed: boolean;
+  isDisabled: boolean;
+  isFocusVisible: boolean;
+  isFocused: boolean;
+}>(
   {
     display: 'flex',
     flexDirection: 'row',
@@ -70,22 +83,17 @@ export const MessageSuggestion = forwardRef(function MessageSuggestion(
 ) {
   [props, ref] = useSpectrumContextProps(props, ref, MessageSuggestionContext);
   let domRef = useDOMRef<HTMLButtonElement>(ref);
-  let {
-    children,
-    UNSAFE_className = '',
-    UNSAFE_style,
-    styles,
-    ...otherProps
-  } = props;
+  let {children, UNSAFE_className = '', UNSAFE_style, styles, ...otherProps} = props;
 
   return (
     <RACButton
       {...filterDOMProps(props, {labelable: true})}
       {...otherProps}
-      ref={domRef}    
+      ref={domRef}
       style={pressScale(domRef, UNSAFE_style)}
-      className={renderProps => (UNSAFE_className + '') + suggestionStyles(renderProps, styles)}>
-      <Provider values={[
+      className={renderProps => UNSAFE_className + '' + suggestionStyles(renderProps, styles)}>
+      <Provider
+        values={[
           [
             IconContext,
             {
@@ -107,7 +115,8 @@ export const MessageSuggestion = forwardRef(function MessageSuggestion(
   );
 });
 
-export interface MessageSuggestionListProps extends DOMProps, AriaLabelingProps, StyleProps, SlotProps {
+export interface MessageSuggestionListProps
+  extends DOMProps, AriaLabelingProps, StyleProps, SlotProps {
   /** The MessageSuggestion children to display. */
   children: ReactNode;
   /** Heading displayed above the suggestions. */
@@ -115,7 +124,9 @@ export interface MessageSuggestionListProps extends DOMProps, AriaLabelingProps,
 }
 
 export const MessageSuggestionListContext =
-  createContext<ContextValue<Partial<MessageSuggestionListProps>, DOMRefValue<HTMLDivElement>>>(null);
+  createContext<ContextValue<Partial<MessageSuggestionListProps>, DOMRefValue<HTMLDivElement>>>(
+    null
+  );
 
 const listStyles = style(
   {
