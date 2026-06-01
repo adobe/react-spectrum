@@ -71,7 +71,7 @@ export interface TagProps extends AriaTagProps {
   color?: Color;
 }
 
-export function TagGroup<T extends object>({
+export function TagGroup<T>({
   label,
   description,
   errorMessage,

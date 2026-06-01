@@ -77,7 +77,7 @@ const styles = style<
         default: baseColor('neutral'),
         isDisabled: 'disabled',
         isStaticColor: {
-          default: baseColor('transparent-overlay-800'),
+          default: 'white',
           isDisabled: 'transparent-overlay-400'
         },
         forcedColors: {

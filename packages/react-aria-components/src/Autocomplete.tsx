@@ -73,7 +73,7 @@ export const FieldInputContext =
 /**
  * An autocomplete allows users to search or filter a list of suggestions.
  */
-export function Autocomplete<T extends object>(props: AutocompleteProps<T>): JSX.Element {
+export function Autocomplete<T>(props: AutocompleteProps<T>): JSX.Element {
   let ctx = useSlottedContext(AutocompleteContext, props.slot);
   props = mergeProps(ctx, props);
   let {filter, disableAutoFocusFirst} = props;

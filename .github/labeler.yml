@@ -6,16 +6,20 @@ needs translations:
 
 S2:
   - changed-files:
-      - any-glob-to-any-file: ['**/s2/**']
+      - all-globs-to-any-file: ['**/s2/**', '!**/*.stories.*', '!**/*.test.*']
 
 RAC:
-  - changed-files:
-      - any-glob-to-any-file: ['**/react-aria-components/**', '**/@react-aria/**']
+  - any:
+      - changed-files:
+          - all-globs-to-any-file:
+              ['**/react-aria-components/**', '!**/*.stories.*', '!**/*.test.*']
+      - changed-files:
+          - all-globs-to-any-file: ['**/@react-aria/**', '!**/*.stories.*', '!**/*.test.*']
 
 v3:
   - all:
       - changed-files:
-          - any-glob-to-any-file: '**/@react-spectrum/**'
+          - all-globs-to-any-file: ['**/@react-spectrum/**', '!**/*.stories.*', '!**/*.test.*']
           - all-globs-to-all-files: '!**/@react-spectrum/s2/**'
 
 Accordion:
@@ -197,6 +201,10 @@ LinkButton:
 ListBox:
   - changed-files:
       - any-glob-to-any-file: '**/ListBox.tsx'
+
+ListView:
+  - changed-files:
+      - any-glob-to-any-file: '**/ListView.tsx'
 
 Menu:
   - changed-files:
