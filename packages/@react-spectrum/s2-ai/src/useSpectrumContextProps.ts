@@ -14,7 +14,7 @@ import {Context, ForwardedRef, useMemo} from 'react';
 import {ContextValue, SlotProps, useSlottedContext} from 'react-aria-components/slots';
 import {mergeProps} from 'react-aria/mergeProps';
 import {mergeRefs} from 'react-aria/mergeRefs';
-import {mergeStyles} from './mergeStyles';
+import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
 import {RefObject} from '@react-types/shared';
 import {useObjectRef} from 'react-aria/useObjectRef';
 
