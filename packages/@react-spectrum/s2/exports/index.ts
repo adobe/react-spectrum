@@ -102,7 +102,6 @@ export {
   UnavailableMenuItemTrigger,
   MenuContext
 } from '../src/Menu';
-export {MessageFeedback, MessageFeedbackContext} from '../src/MessageFeedback';
 export {Meter, MeterContext} from '../src/Meter';
 export {NotificationBadge, NotificationBadgeContext} from '../src/NotificationBadge';
 export {NumberField, NumberFieldContext} from '../src/NumberField';
@@ -146,7 +145,6 @@ export {ToggleButton, ToggleButtonContext} from '../src/ToggleButton';
 export {ToggleButtonGroup, ToggleButtonGroupContext} from '../src/ToggleButtonGroup';
 export {Tooltip, TooltipTrigger} from '../src/Tooltip';
 export {TreeView, TreeViewItem, TreeViewItemContent, TreeViewLoadMoreItem} from '../src/TreeView';
-export {UserMessage, UserMessageContext} from '../src/UserMessage';
 
 export {pressScale} from '../src/pressScale';
 
@@ -245,10 +243,6 @@ export type {
   SubmenuTriggerProps,
   UnavailableMenuItemTriggerProps
 } from '../src/Menu';
-export type {
-  MessageFeedbackProps,
-  MessageFeedbackValue
-} from '../src/MessageFeedback';
 export type {MeterProps} from '../src/Meter';
 export type {NotificationBadgeProps} from '../src/NotificationBadge';
 export type {PickerProps, PickerItemProps, PickerSectionProps} from '../src/Picker';
@@ -290,7 +284,6 @@ export type {
   TreeViewItemContentProps,
   TreeViewLoadMoreItemProps
 } from '../src/TreeView';
-export type {UserMessageProps, UserMessageModality} from '../src/UserMessage';
 export type {AutocompleteProps} from 'react-aria-components/Autocomplete';
 export type {DateValue, DateRange} from 'react-aria-components/RangeCalendar';
 export type {TimeValue} from 'react-aria-components/TimeField';

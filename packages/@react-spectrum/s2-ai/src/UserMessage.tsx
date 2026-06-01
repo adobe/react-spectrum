@@ -14,18 +14,18 @@ import {AriaLabelingProps, DOMProps, DOMRef, DOMRefValue} from '@react-types/sha
 import {ContextValue, DEFAULT_SLOT, Provider, SlotProps} from 'react-aria-components/slots';
 import {createContext, forwardRef, ReactNode} from 'react';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
-import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
-import {ImageContext} from './Image';
-import {style} from '../style' with {type: 'macro'};
+import {getAllowedOverrides} from './style-utils-copy' with {type: 'macro'};
+import {ImageContext} from '@react-spectrum/s2/Image';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import type {StyleProps} from './style-utils-copy';
 import {useDOMRef} from './useDOMRef';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export type UserMessageModality = 'fullscreen' | 'split' | 'panel';
 
-export interface UserMessageProps
-  extends DOMProps, AriaLabelingProps, StyleProps, SlotProps {
+export interface UserMessageProps extends DOMProps, AriaLabelingProps, StyleProps, SlotProps {
   /** The contents of the user message bubble. */
-  children: ReactNode,
+  children: ReactNode;
   /**
    * Controls the maximum width of the bubble to fit the surrounding modality.
    *
@@ -35,7 +35,7 @@ export interface UserMessageProps
    *
    * @default 'fullscreen'
    */
-  modality?: UserMessageModality
+  modality?: UserMessageModality;
 }
 
 export const UserMessageContext =
@@ -88,19 +88,13 @@ const bubble = style<{modality: UserMessageModality}>(
  * UserMessage renders a single user-authored message in a conversational AI thread.
  * Pass `slot="image"` on an Image child to switch to a vertical layout with a full-width preview.
  */
-export const UserMessage = /*#__PURE__*/ forwardRef(function UserMessage(
+export const UserMessage = forwardRef(function UserMessage(
   props: UserMessageProps,
   ref: DOMRef<HTMLDivElement>
 ) {
   [props, ref] = useSpectrumContextProps(props, ref, UserMessageContext);
   let domRef = useDOMRef(ref);
-  let {
-    children,
-    modality = 'fullscreen',
-    UNSAFE_className = '',
-    UNSAFE_style,
-    styles
-  } = props;
+  let {children, modality = 'fullscreen', UNSAFE_className = '', UNSAFE_style, styles} = props;
 
   return (
     <div

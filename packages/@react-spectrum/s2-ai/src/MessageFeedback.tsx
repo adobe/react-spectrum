@@ -14,36 +14,36 @@ import {AriaLabelingProps, DOMProps, DOMRef, DOMRefValue, Selection} from '@reac
 import {ContextValue, SlotProps} from 'react-aria-components/slots';
 import {createContext, forwardRef} from 'react';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
-import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {getAllowedOverrides} from './style-utils-copy' with {type: 'macro'};
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {ToggleButton} from './ToggleButton';
 import {ToggleButtonGroup as RACToggleButtonGroup} from 'react-aria-components/ToggleButtonGroup';
-import {style} from '../style' with {type: 'macro'};
-import ThumbDown from '../s2wf-icons/S2_Icon_ThumbDown_20_N.svg';
-import ThumbUp from '../s2wf-icons/S2_Icon_ThumbUp_20_N.svg';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import type {StyleProps} from './style-utils-copy';
+import ThumbDown from '@react-spectrum/s2/icons/ThumbDown';
+import ThumbUp from '@react-spectrum/s2/icons/ThumbUp';
+import {ToggleButton} from '@react-spectrum/s2/ToggleButton';
 import {useDOMRef} from './useDOMRef';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export type MessageFeedbackValue = 'up' | 'down' | null;
 
-export interface MessageFeedbackProps
-  extends DOMProps, AriaLabelingProps, StyleProps, SlotProps {
+export interface MessageFeedbackProps extends DOMProps, AriaLabelingProps, StyleProps, SlotProps {
   /** The selected feedback value (controlled). */
-  value?: MessageFeedbackValue,
+  value?: MessageFeedbackValue;
   /** The default feedback value (uncontrolled). */
-  defaultValue?: MessageFeedbackValue,
+  defaultValue?: MessageFeedbackValue;
   /** Called when the selection changes, including when toggled off (value=null). */
-  onChange?: (value: MessageFeedbackValue) => void,
-  /** Called only when a positive selection is made (not when toggled off). */
-  onFeedback?: (value: Exclude<MessageFeedbackValue, null>) => void,
+  onChange?: (value: MessageFeedbackValue) => void;
+  /** Called when a selection is made (not when toggled off). */
+  onFeedback?: (value: Exclude<MessageFeedbackValue, null>) => void;
   /** Whether the feedback controls are disabled. */
-  isDisabled?: boolean,
+  isDisabled?: boolean;
   /** Accessible label for the thumbs up button. */
-  thumbUpLabel?: string,
+  thumbUpLabel?: string;
   /** Accessible label for the thumbs down button. */
-  thumbDownLabel?: string
+  thumbDownLabel?: string;
 }
 
 export const MessageFeedbackContext =
@@ -70,12 +70,12 @@ function selectionToValue(selection: Selection): MessageFeedbackValue {
 /**
  * MessageFeedback collects thumbs up / thumbs down feedback on an AI response.
  */
-export const MessageFeedback = /*#__PURE__*/ forwardRef(function MessageFeedback(
+export const MessageFeedback = forwardRef(function MessageFeedback(
   props: MessageFeedbackProps,
   ref: DOMRef<HTMLDivElement>
 ) {
   [props, ref] = useSpectrumContextProps(props, ref, MessageFeedbackContext);
-  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2-ai');
   let domRef = useDOMRef(ref);
   let {
     value,
@@ -118,10 +118,16 @@ export const MessageFeedback = /*#__PURE__*/ forwardRef(function MessageFeedback
       isDisabled={isDisabled}
       style={UNSAFE_style}
       className={UNSAFE_className + groupStyles(null, styles)}>
-      <ToggleButton id="up" isQuiet aria-label={thumbUpLabel ?? stringFormatter.format('messagefeedback.thumbUp')}>
+      <ToggleButton
+        id="up"
+        isQuiet
+        aria-label={thumbUpLabel ?? stringFormatter.format('messagefeedback.thumbUp')}>
         <ThumbUp />
       </ToggleButton>
-      <ToggleButton id="down" isQuiet aria-label={thumbDownLabel ?? stringFormatter.format('messagefeedback.thumbDown')}>
+      <ToggleButton
+        id="down"
+        isQuiet
+        aria-label={thumbDownLabel ?? stringFormatter.format('messagefeedback.thumbDown')}>
         <ThumbDown />
       </ToggleButton>
     </RACToggleButtonGroup>

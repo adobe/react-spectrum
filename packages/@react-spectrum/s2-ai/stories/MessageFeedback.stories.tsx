@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {categorizeArgTypes, getActionArgs} from './utils';
+import {categorizeArgTypes, getActionArgs} from '../../s2/stories/utils';
+import {ComponentProps, ReactElement, useState} from 'react';
+import {MessageFeedback} from '@react-spectrum/s2-ai/MessageFeedback';
 import type {Meta, StoryObj} from '@storybook/react';
-import {MessageFeedback, MessageFeedbackProps, MessageFeedbackValue} from '../src/MessageFeedback';
-import {ReactElement, useState} from 'react';
 
 const events = ['onChange', 'onFeedback'];
 
@@ -32,7 +32,7 @@ const meta: Meta<typeof MessageFeedback> = {
     'aria-label': 'Rate this response',
     ...getActionArgs(events)
   },
-  title: 'MessageFeedback'
+  title: 'S2-AI/MessageFeedback'
 };
 
 export default meta;
@@ -52,8 +52,8 @@ export const Disabled: Story = {
   args: {isDisabled: true}
 };
 
-function ControlledExample(args: MessageFeedbackProps): ReactElement {
-  let [value, setValue] = useState<MessageFeedbackValue>(null);
+function ControlledExample(args: ComponentProps<typeof MessageFeedback>): ReactElement {
+  let [value, setValue] = useState<'up' | 'down' | null>(null);
   return (
     <div style={{display: 'flex', flexDirection: 'column', gap: 12, alignItems: 'center'}}>
       <MessageFeedback {...args} value={value} onChange={setValue} />
@@ -63,5 +63,5 @@ function ControlledExample(args: MessageFeedbackProps): ReactElement {
 }
 
 export const Controlled: Story = {
-  render: (args) => <ControlledExample {...args} />
+  render: args => <ControlledExample {...args} />
 };

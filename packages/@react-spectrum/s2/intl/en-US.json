@@ -24,8 +24,6 @@
   "label.(required)": "(required)",
   "menu.moreActions": "More actions",
   "menu.unavailable": "Unavailable, expand for details",
-  "messagefeedback.thumbDown": "Bad response",
-  "messagefeedback.thumbUp": "Good response",
   "notificationbadge.indicatorOnly": "New activity",
   "notificationbadge.plus": "{notifications}+",
   "picker.placeholder": "Select…",

@@ -10,13 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionMenu} from '../src/ActionMenu';
-import {Heading, Text} from '../src/Content';
-import {Image} from '../src/Image';
+import {ActionMenu} from '@react-spectrum/s2/ActionMenu';
+import {Heading} from '@react-spectrum/s2/Heading';
+import {Image} from '@react-spectrum/s2/Image';
+import {MenuItem} from '@react-spectrum/s2/Menu';
 import type {Meta, StoryObj} from '@storybook/react';
-import {MenuItem} from '../src/Menu';
-import {style} from '../style' with {type: 'macro'};
-import {UserMessage} from '../src/UserMessage';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {Text} from '@react-spectrum/s2/Text';
+import {UserMessage} from '@react-spectrum/s2-ai/UserMessage';
 
 const meta: Meta<typeof UserMessage> = {
   component: UserMessage,
@@ -27,14 +28,14 @@ const meta: Meta<typeof UserMessage> = {
     children: {table: {disable: true}}
   },
   tags: ['autodocs'],
-  title: 'UserMessage'
+  title: 'S2-AI/UserMessage'
 };
 
 export default meta;
 type Story = StoryObj<typeof UserMessage>;
 
 export const Example: Story = {
-  render: (args) => (
+  render: args => (
     <div style={{display: 'flex', flexDirection: 'column', gap: 16, alignItems: 'flex-end'}}>
       <UserMessage {...args}>Can you summarize this report?</UserMessage>
       <UserMessage {...args}>
@@ -45,12 +46,13 @@ export const Example: Story = {
 };
 
 export const WithImage: Story = {
-  render: (args) => (
+  render: args => (
     <UserMessage {...args}>
       <Image
         slot="image"
-        src={new URL('assets/preview.png', import.meta.url).toString()}
-        alt="Hotel commercial assets" />
+        src={new URL('../../s2/stories/assets/preview.png', import.meta.url).toString()}
+        alt="Hotel commercial assets"
+      />
       <div className={style({width: 180})}>
         <div
           className={style({
@@ -84,10 +86,10 @@ export const WithCard: Story = {
   args: {
     modality: 'split'
   },
-  render: (args) => (
+  render: args => (
     <UserMessage {...args}>
       <Image
-        src={new URL('assets/preview.png', import.meta.url).toString()}
+        src={new URL('../../s2/stories/assets/preview.png', import.meta.url).toString()}
         alt="Hotel commercial assets"
         styles={style({
           width: 32,
@@ -95,7 +97,8 @@ export const WithCard: Story = {
           borderRadius: 'sm',
           backgroundColor: 'transparent',
           flexShrink: 0
-        })} />
+        })}
+      />
       <div
         className={style({
           display: 'flex',
@@ -112,9 +115,7 @@ export const WithCard: Story = {
             flexDirection: 'column',
             minWidth: 0
           })}>
-          <Heading styles={style({font: 'title-xs', margin: 0})}>
-            Hotel commercial assets
-          </Heading>
+          <Heading styles={style({font: 'title-xs', margin: 0})}>Hotel commercial assets</Heading>
           <Text styles={style({font: 'body-2xs'})}>2026</Text>
         </div>
         <ActionMenu isQuiet size="S">
@@ -131,13 +132,16 @@ export const Modalities: Story = {
   render: () => (
     <div style={{display: 'flex', flexDirection: 'column', gap: 16, alignItems: 'flex-end'}}>
       <UserMessage modality="fullscreen">
-        Full screen: Can you help me create a 45-minute presentation, with animations, for an executive update?
+        Full screen: Can you help me create a 45-minute presentation, with animations, for an
+        executive update?
       </UserMessage>
       <UserMessage modality="split">
-        Split / right rail: Can you help me create a 45-minute presentation, with animations, for an executive update?
+        Split / right rail: Can you help me create a 45-minute presentation, with animations, for an
+        executive update?
       </UserMessage>
       <UserMessage modality="panel">
-        Panel: Can you help me create a 45-minute presentation, with animations, for an executive update?
+        Panel: Can you help me create a 45-minute presentation, with animations, for an executive
+        update?
       </UserMessage>
     </div>
   )
