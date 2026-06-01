@@ -12,10 +12,9 @@
 
 jest.mock('react-aria/src/live-announcer/LiveAnnouncer');
 
-import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
+import {act, fireEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import {announce} from 'react-aria/private/live-announcer/LiveAnnouncer';
 import {Button, Input, TextField} from 'react-aria-components';
-import {fireEvent} from '@testing-library/react';
 import React from 'react';
 import {Thread, ThreadItem, ThreadList, ThreadScrollButton} from '../src/Thread';
 import userEvent from '@testing-library/user-event';
