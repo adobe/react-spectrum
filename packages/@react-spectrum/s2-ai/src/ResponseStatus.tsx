@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Adobe. All rights reserved.
+ * Copyright 2026 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -10,28 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionButtonContext} from './ActionButton';
 import {
   AriaLabelingProps,
   DOMProps,
   DOMRef,
   DOMRefValue,
-  forwardRefType,
   GlobalDOMAttributes
 } from '@react-types/shared';
-import {
-  baseColor,
-  centerPadding,
-  focusRing,
-  lightDark,
-  space,
-  style
-} from '../style' with {type: 'macro'};
+import {baseColor, focusRing, space, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Button} from 'react-aria-components/Button';
-import {CenterBaseline} from './CenterBaseline';
-
+import {CenterBaseline, centerBaseline} from './CenterBaseline';
+import CheckmarkCircle from '@react-spectrum/s2/icons/CheckmarkCircle';
 import Chevron from '../ui-icons/Chevron';
-
 import {ContextValue, Provider, useSlottedContext} from 'react-aria-components/slots';
 import {
   DisclosureStateContext,
@@ -46,14 +36,19 @@ import {
   StyleProps,
   StylesPropWithFont,
   UnsafeStyles
-} from './style-utils' with {type: 'macro'};
+} from './style-utils-copy' with {type: 'macro'};
 import {Heading} from 'react-aria-components/Heading';
+import {IconContext} from '@react-spectrum/s2/Icon';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
+import {ProgressCircle} from '@react-spectrum/s2/ProgressCircle';
 import React, {createContext, forwardRef, ReactNode, useContext} from 'react';
 import {useDOMRef} from './useDOMRef';
 import {useLocale} from 'react-aria/I18nProvider';
+import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface DisclosureProps
+export interface ResponseStatusProps
   extends
     Omit<
       RACDisclosureProps,
@@ -61,98 +56,86 @@ export interface DisclosureProps
     >,
     StyleProps {
   /**
-   * The size of the disclosure.
+   * The size of the response status.
    *
    * @default 'M'
    */
   size?: 'S' | 'M' | 'L' | 'XL';
   /**
-   * The amount of space between the disclosures.
+   * The amount of space between stacked response statuses.
    *
    * @default 'regular'
    */
   density?: 'compact' | 'regular' | 'spacious';
-  /** Whether the disclosure should be displayed with a quiet style. */
-  isQuiet?: boolean;
-  /** The contents of the disclosure, consisting of a DisclosureTitle and DisclosurePanel. */
+  /**
+   * Whether the response is still being generated. When true, a ProgressCircle replaces
+   * the chevron and the panel cannot be expanded. The trigger remains focusable.
+   */
+  isLoading?: boolean;
+  /**
+   * The contents of the response status, consisting of a ResponseStatusTitle and
+   * ResponseStatusPanel.
+   */
   children: ReactNode;
 }
 
-export const DisclosureContext =
-  createContext<ContextValue<Partial<DisclosureProps>, DOMRefValue<HTMLDivElement>>>(null);
+export const ResponseStatusContext =
+  createContext<ContextValue<Partial<ResponseStatusProps>, DOMRefValue<HTMLDivElement>>>(null);
 
-const disclosure = style(
+const responseStatus = style(
   {
     color: 'heading',
-    borderTopWidth: {
-      default: 1,
-      isQuiet: 0
-    },
-    borderBottomWidth: {
-      default: 1,
-      isQuiet: 0,
-      isInGroup: {
-        default: 0,
-        ':last-child': {
-          default: 1,
-          isQuiet: 0
-        }
-      }
-    },
-    borderStartWidth: 0,
-    borderEndWidth: 0,
-    borderStyle: 'solid',
-    borderColor: 'gray-200',
     minWidth: 200
   },
   getAllowedOverrides()
 );
 
 /**
- * A disclosure is a collapsible section of content. It is composed of a header with a heading and
- * trigger button, and a panel that contains the content.
+ * A ResponseStatus indicates the progress of a system response while it is begin generated and when
+ * it is complete.
  */
-export const Disclosure = forwardRef(function Disclosure(
-  props: DisclosureProps,
+export const ResponseStatus = forwardRef(function ResponseStatus(
+  props: ResponseStatusProps,
   ref: DOMRef<HTMLDivElement>
 ) {
-  [props, ref] = useSpectrumContextProps(props, ref, DisclosureContext);
-  let {size = 'M', density = 'regular', isQuiet, UNSAFE_style, UNSAFE_className = ''} = props;
+  [props, ref] = useSpectrumContextProps(props, ref, ResponseStatusContext);
+  let {size = 'M', density = 'regular', isLoading, UNSAFE_style, UNSAFE_className = ''} = props;
   let domRef = useDOMRef(ref);
 
-  let isInGroup = useContext(DisclosureContext) !== null;
+  let disclosureProps: Partial<RACDisclosureProps> = {};
+  if (isLoading) {
+    disclosureProps.isExpanded = false;
+    disclosureProps.onExpandedChange = () => {};
+  }
 
   return (
-    <Provider values={[[DisclosureContext, {size, isQuiet, density}]]}>
+    <Provider values={[[ResponseStatusContext, {size, density, isLoading}]]}>
       <RACDisclosure
         {...props}
+        {...disclosureProps}
         ref={domRef}
         style={UNSAFE_style}
-        className={(UNSAFE_className ?? '') + disclosure({isQuiet, isInGroup}, props.styles)}>
+        className={(UNSAFE_className ?? '') + responseStatus(null, props.styles)}>
         {props.children}
       </RACDisclosure>
     </Provider>
   );
 });
 
-export interface DisclosureTitleProps extends UnsafeStyles, DOMProps {
+export interface ResponseStatusTitleProps extends UnsafeStyles, DOMProps {
   /**
-   * The heading level of the disclosure header.
+   * The heading level of the response status header.
    *
    * @default 3
    */
   level?: number;
-  /** The contents of the disclosure header. */
+  /** The contents of the response status header. */
   children: React.ReactNode;
   /**
    * Spectrum-defined styles, returned by the `style()` macro. Only allows overriding
    * `font`, `fontFamily`, `fontWeight`, `fontSize`, and `lineHeight`.
    */
   styles?: StylesPropWithFont;
-}
-
-interface DisclosureHeaderProps extends UnsafeStyles, DOMProps {
-  children: React.ReactNode;
 }
 
 const headingStyle = style({
@@ -167,7 +150,14 @@ const buttonStyles = style(
   {
     ...focusRing(),
     outlineOffset: -2,
-    font: 'heading',
+    font: {
+      size: {
+        S: 'body-sm',
+        M: 'body',
+        L: 'body-lg',
+        XL: 'body-xl'
+      }
+    },
     color: {
       default: baseColor('neutral'),
       forcedColors: 'ButtonText',
@@ -176,24 +166,12 @@ const buttonStyles = style(
         forcedColors: 'GrayText'
       }
     },
-    fontWeight: 'bold',
-    fontSize: {
-      size: {
-        S: 'title-sm',
-        M: 'title',
-        L: 'title-lg',
-        XL: 'title-xl'
-      }
-    },
-    lineHeight: 'ui',
     display: 'flex',
     flexGrow: 1,
-    alignItems: 'baseline',
+    alignItems: 'center',
     paddingX: 'calc(self(minHeight) * 3/8 - 1px)',
-    paddingY: centerPadding(),
     gap: 'calc(self(minHeight) * 3/8 - 1px)',
     minHeight: {
-      // compact is equivalent to 'control', but other densities have more padding.
       size: {
         S: {
           density: {
@@ -226,20 +204,10 @@ const buttonStyles = style(
       }
     },
     width: 'full',
-    backgroundColor: {
-      default: 'transparent',
-      isFocusVisible: lightDark('transparent-black-100', 'transparent-white-100'),
-      isHovered: lightDark('transparent-black-100', 'transparent-white-100'),
-      isPressed: lightDark('transparent-black-300', 'transparent-white-300')
-    },
+    backgroundColor: 'transparent',
     transition: 'default',
     borderWidth: 0,
-    borderRadius: {
-      // Only rounded for keyboard focus and quiet.
-      default: 'none',
-      isFocusVisible: 'default',
-      isQuiet: 'default'
-    },
+    borderRadius: 'default',
     textAlign: 'start',
     disableTapHighlight: true
   },
@@ -259,51 +227,32 @@ const chevronStyles = style({
   flexShrink: 0
 });
 
-const InternalDisclosureHeader = createContext<{} | null>(null);
-
-function DisclosureHeaderWithForwardRef(props: DisclosureHeaderProps, ref: DOMRef<HTMLDivElement>) {
-  let {UNSAFE_className, UNSAFE_style, children} = props;
-  let domRef = useDOMRef(ref);
-  let {size, isQuiet, density} = useSlottedContext(DisclosureContext)!;
-
-  // Shift button size down by 2 for compact density, 1 for regular/spacious to ensure there is space between the top and bottom of the action button and container
-  let newSize: 'XS' | 'S' | 'M' | 'L' | 'XL' | undefined = size;
-  const sizes = ['XS', 'S', 'M', 'L', 'XL'];
-  const currentIndex = sizes.indexOf(size ?? 'M');
-  const shift = density === 'compact' ? 2 : 1;
-  newSize = sizes[Math.max(0, currentIndex - shift)] as 'XS' | 'S' | 'M' | 'L' | 'XL';
-
-  return (
-    <Provider
-      values={[
-        [ActionButtonContext, {size: newSize, isQuiet}],
-        [InternalDisclosureHeader, {}]
-      ]}>
-      <div
-        style={UNSAFE_style}
-        className={
-          (UNSAFE_className ?? '') + style({display: 'flex', alignItems: 'center', gap: 4})
-        }
-        ref={domRef}>
-        {children}
-      </div>
-    </Provider>
-  );
-}
+const progressCircleStyles = style({
+  width: {
+    size: {
+      S: 16,
+      M: 18,
+      L: 20,
+      XL: 22
+    }
+  },
+  height: {
+    size: {
+      S: 16,
+      M: 18,
+      L: 20,
+      XL: 22
+    }
+  }
+});
 
 /**
- * A wrapper element for the disclosure title that can contain other elements not part of the
- * trigger.
+ * A response status title consisting of a heading and a trigger button. The leading icon is
+ * a progress circle while loading and a chevron once complete; a checkmark is rendered at
+ * the trailing edge of the row when not loading.
  */
-export const DisclosureHeader = /*#__PURE__*/ (forwardRef as forwardRefType)(
-  DisclosureHeaderWithForwardRef
-);
-
-/**
- * A disclosure title consisting of a heading and a trigger button to expand/collapse the panel.
- */
-export const DisclosureTitle = forwardRef(function DisclosureTitle(
-  props: DisclosureTitleProps,
+export const ResponseStatusTitle = forwardRef(function ResponseStatusTitle(
+  props: ResponseStatusTitleProps,
   ref: DOMRef<HTMLDivElement>
 ) {
   let {level = 3, UNSAFE_style, UNSAFE_className = '', styles, ...otherProps} = props;
@@ -311,10 +260,11 @@ export const DisclosureTitle = forwardRef(function DisclosureTitle(
   const domProps = filterDOMProps(otherProps);
   let {direction} = useLocale();
   let {isExpanded} = useContext(DisclosureStateContext)!;
-  let {size, density, isQuiet} = useSlottedContext(DisclosureContext)!;
+  let {size = 'M', density, isLoading} = useSlottedContext(ResponseStatusContext)!;
   let isRTL = direction === 'rtl';
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
 
-  let buttonTrigger = (
+  return (
     <Heading
       {...domProps}
       level={level}
@@ -322,24 +272,61 @@ export const DisclosureTitle = forwardRef(function DisclosureTitle(
       style={UNSAFE_style}
       className={(UNSAFE_className ?? '') + headingStyle}>
       <Button
-        className={renderProps => buttonStyles({...renderProps, size, density, isQuiet}, styles)}
+        className={renderProps => buttonStyles({...renderProps, size, density}, styles)}
         slot="trigger">
-        <CenterBaseline>
-          <Chevron size={size} className={chevronStyles({isExpanded, isRTL})} aria-hidden="true" />
-        </CenterBaseline>
+        {isLoading ? (
+          <CenterBaseline>
+            <ProgressCircle
+              styles={progressCircleStyles({size})}
+              isIndeterminate
+              aria-label={stringFormatter.format('responsestatus.loading')}
+            />
+          </CenterBaseline>
+        ) : (
+          <CenterBaseline>
+            <Chevron
+              size={size}
+              className={chevronStyles({isExpanded, isRTL})}
+              aria-hidden="true"
+            />
+          </CenterBaseline>
+        )}
         {props.children}
+        {!isLoading && (
+          <Provider
+            values={[
+              [
+                IconContext,
+                {
+                  render: centerBaseline({slot: 'icon'}),
+                  styles: style({
+                    marginStart: 'auto',
+                    flexShrink: 0,
+                    size: {
+                      size: {
+                        S: 16,
+                        M: 20,
+                        L: 24,
+                        XL: 28
+                      }
+                    },
+                    '--iconPrimary': {
+                      type: 'fill',
+                      value: 'currentColor'
+                    }
+                  })({size})
+                }
+              ]
+            ]}>
+            <CheckmarkCircle aria-hidden="true" />
+          </Provider>
+        )}
       </Button>
     </Heading>
   );
-  let ctx = useContext(InternalDisclosureHeader);
-  if (ctx) {
-    return buttonTrigger;
-  }
-
-  return <DisclosureHeader>{buttonTrigger}</DisclosureHeader>;
 });
 
-export interface DisclosurePanelProps
+export interface ResponseStatusPanelProps
   extends
     Omit<RACDisclosurePanelProps, 'className' | 'style' | 'render' | 'children'>,
     UnsafeStyles,
@@ -372,16 +359,16 @@ const panelInner = style({
 });
 
 /**
- * A disclosure panel is a collapsible section of content that is hidden until the disclosure is
- * expanded.
+ * A response status panel is a collapsible section of content that is hidden until the
+ * response status is expanded. The panel cannot be expanded while `isLoading` is true.
  */
-export const DisclosurePanel = forwardRef(function DisclosurePanel(
-  props: DisclosurePanelProps,
+export const ResponseStatusPanel = forwardRef(function ResponseStatusPanel(
+  props: ResponseStatusPanelProps,
   ref: DOMRef<HTMLDivElement>
 ) {
   let {UNSAFE_style, UNSAFE_className = '', ...otherProps} = props;
+  let {size = 'M'} = useSlottedContext(ResponseStatusContext)!;
   const domProps = filterDOMProps(otherProps);
-  let {size} = useSlottedContext(DisclosureContext)!;
   let panelRef = useDOMRef(ref);
   return (
     <RACDisclosurePanel
