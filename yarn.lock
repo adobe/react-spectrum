@@ -8107,7 +8107,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-spectrum/s2@npm:1.4.0, @react-spectrum/s2@npm:^1.0.0, @react-spectrum/s2@workspace:packages/@react-spectrum/s2":
+"@react-spectrum/s2@npm:1.4.0, @react-spectrum/s2@npm:^1.0.0, @react-spectrum/s2@npm:^1.4.0, @react-spectrum/s2@workspace:packages/@react-spectrum/s2":
   version: 0.0.0-use.local
   resolution: "@react-spectrum/s2@workspace:packages/@react-spectrum/s2"
   dependencies:
