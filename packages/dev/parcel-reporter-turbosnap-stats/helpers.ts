@@ -110,9 +110,10 @@ export function buildStatsMap(
         const asyncResult = bundleGraph.resolveAsyncDependency(dep, bundle);
         let target: Asset | null | undefined;
         if (asyncResult) {
-          target = asyncResult.type === 'asset'
-            ? asyncResult.value
-            : bundleGraph.getAssetById(asyncResult.value.entryAssetId);
+          target =
+            asyncResult.type === 'asset'
+              ? asyncResult.value
+              : bundleGraph.getAssetById(asyncResult.value.entryAssetId);
         } else {
           target = bundleGraph.getResolvedAsset(dep, bundle);
         }
