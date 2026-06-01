@@ -67,24 +67,8 @@ interface ThreadProps {
   children?: ReactNode;
 }
 
-// TODO: things to look at
-// chatgpt, claude, other AI assistants to see their UX
-// they each don't seem to use column-reverse
-
-// TODO: things to figure out/try
-// tabbing is a bit broken as well since we hit the child elements of the gridlist rows in opposite order... This seems to be due to the
+// TODO: tabbing is a bit broken as well since we hit the child elements of the gridlist rows in opposite order... This seems to be due to the
 // tabIndex = 0 of the ToggleButtons in the ToggleButtonGroup
-// also since we track the last focused key of the Gridlist, you get a experience where you might tab in, go to the input field to add some messages
-// and tab back to the Gridlist but get returned to your last focused key instead of to the newest message
-// maybe we could do something like force that the last item is the internal focusedKey, always updating this to the latest last child
-// whenever items update AND focus is not within the gridlist
-
-// TODO: things to handle later
-// virtualizer layout
-// weird behavior where the prompt field loses focus everytime you enter something
-// make prompt field accept enter to submit the prompt, and have Option + Enter make a new line instead,  mimics
-// other ai chat experiences
-
 export const Thread = /*#__PURE__*/ (forwardRef as forwardRefType)(function Thread(
   props: ThreadProps,
   ref: DOMRef<HTMLDivElement>
@@ -172,12 +156,11 @@ export const Thread = /*#__PURE__*/ (forwardRef as forwardRefType)(function Thre
   );
 });
 
+// TODO: update the items/className/children/etc type to reflect a thread specific classname once we finalize API
 interface ThreadListProps<T extends object> extends Pick<
   GridListProps<T>,
-  'items' | 'children' | 'focusOnEntry' | 'aria-label' | 'aria-labelledby'
-> {
-  className?: string;
-}
+  'items' | 'children' | 'focusOnEntry' | 'aria-label' | 'aria-labelledby' | 'className'
+> {}
 
 export function ThreadList<T extends object>(props: ThreadListProps<T>) {
   let {
@@ -239,8 +222,6 @@ export function ThreadList<T extends object>(props: ThreadListProps<T>) {
     // scrolls to bottom on first render cuz we initialize isNearBottomRef to true,
     // otherwise handles scrolling new prompts/etc into view unless you are scrolled up above
     // 100px
-    // TODO: seems like other chat agents will scroll you down regardless of where you are in the chat
-    // however, as it is streaming the response in, it will allow you to scroll where ever and not pull you back down
     if (isNearBottomRef.current) {
       requestAnimationFrame(() => {
         if (gridListRef.current) {
@@ -289,6 +270,7 @@ export function ThreadScrollButton({children}: ThreadScrollButtonProps) {
   );
 }
 
+// TODO: update the className type to reflect a thread specific classname once we finalize API
 interface ThreadItemProps extends Pick<GridListItemProps, 'className' | 'children' | 'textValue'> {
   /** Whether or not the item's content is currently being streamed in. */
   isStreaming?: boolean;

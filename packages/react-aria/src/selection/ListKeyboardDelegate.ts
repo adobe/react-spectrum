@@ -166,10 +166,10 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
     return prevRect.x === itemRect.x || prevRect.y !== itemRect.y;
   }
 
+  // checks to see if the next/prev key is spatially above/below the current key. If not, that means we are in
+  // a reversed column layout and need to adjust appropriately
   // TODO: still need to see how this works with virtualizer once there is handling for the reverse layout
-  // also need to double check why page up/down doesnt work well, maybe the column reverse?
-  // this felt like a simpler approach then changing getKeyAbove/Below to be purely spatial calculations (aka going through the collection
-  // and finding the item that is closest spatially above/below)
+  // this felt like a simpler approach then changing getKeyAbove/Below to be purely spatial calculations
   private isReversed(key: Key): boolean {
     let nextKey = this.getNextKey(key);
     let currentEl = getItemElement(this.ref, key);
@@ -295,7 +295,6 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
     }
 
     let reversed = this.isReversed(key);
-
     if (menu && !isScrollable(menu)) {
       return this.getFirstKey();
     }
@@ -337,10 +336,8 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
     }
 
     let reversed = this.isReversed(key);
-
     if (menu && !isScrollable(menu)) {
       return this.getLastKey();
-      // return reversed ? this.getFirstKey() : this.getLastKey();
     }
 
     let nextKey: Key | null = key;

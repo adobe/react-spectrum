@@ -109,6 +109,8 @@ export interface AriaGridListOptions<T> extends Omit<AriaGridListProps<T>, 'chil
   /**
    * Which item in the collection to focus when tabbing into the collection. Overrides default
    * roving tab index like behavior.
+   *
+   * @private
    */
   focusOnEntry?: 'first' | 'last';
 }

@@ -126,13 +126,11 @@ export interface AriaSelectableCollectionOptions {
    * @default 'action'
    */
   linkBehavior?: 'action' | 'selection' | 'override';
-  // TODO: for testing, but this makes it so we can force tab entry into a collection to the first or last item
-  // this is for the AI thread component since we want shift tab and tab to both go to the newest message
-  // debatable if we should also have this clear the "last focused key" behavior that collections has since I feel like users
-  // want to always to go the newest message from the input field
   /**
    * Which item in the collection to focus when tabbing into the collection. Overrides default
    * roving tab index like behavior.
+   *
+   * @private
    */
   focusOnEntry?: 'first' | 'last';
 }
@@ -433,10 +431,10 @@ export function useSelectableCollection(
       }
     };
 
-    // TODO: we need the "virtual" modality case here because shift tabbing from the prompt field's asset card back into the
-    // thread is a virtual focus event (the tab handler in onKeyDown focuses the ref of the AttachementList aka TagGroup, hence the virtual modality)
+    // we need the "virtual" modality case checks here because shift tabbing from the prompt field's asset card back into the
+    // thread is a virtual focus event (the tab handler in onKeyDown focuses the ref of the AttachementList aka TagGroup via a focus() call, hence the virtual modality)
     if (focusOnEntry && (modality === 'keyboard' || modality === 'virtual')) {
-      // TODO: always go to the first item in the Thread when tabbing forwards/backwards into the collection
+      // always go to the first item in the Thread when tabbing forwards/backwards into the collection
       // since it is probably more important to the user to see the new prompt reply rather than go to the last focused key
       navigateToKey(focusOnEntry === 'first' ? delegate.getFirstKey?.() : delegate.getLastKey?.());
     } else if (manager.focusedKey == null) {
@@ -467,8 +465,6 @@ export function useSelectableCollection(
           focusWithoutScrolling(element);
         }
 
-        // TODO: we also need to scroll if modality is virtual because shift tabbing from the AttachmentList to the Thread as mentioned above
-        // causes the Thread to scroll to the top if we don't call this
         if (modality === 'keyboard' || modality === 'virtual') {
           scrollIntoViewport(element, {containingElement: ref.current});
         }

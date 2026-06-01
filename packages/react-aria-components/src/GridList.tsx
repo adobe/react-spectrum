@@ -204,13 +204,11 @@ export interface GridListProps<T>
    * @default 'vertical'
    */
   orientation?: Orientation;
-  // TODO: for testing, but this makes it so we can force tab entry into a collection to the first or last item
-  // this is for the AI thread component since we want shift tab and tab to both go to the newest message
-  // debatable if we should also have this clear the "last focused key" behavior that collections has since I feel like users
-  // want to always to go the newest message from the input field
   /**
    * Which item in the collection to focus when tabbing into the collection. Overrides default
    * roving tab index like behavior.
+   *
+   * @private
    */
   focusOnEntry?: 'first' | 'last';
 }
