@@ -24,7 +24,8 @@ const meta: Meta<typeof CardView> = {
   component: CardView,
   parameters: {
     layout: 'fullscreen',
-    chromaticProvider: {disableAnimations: true}
+    chromaticProvider: {disableAnimations: true},
+    chromatic: {prefersReducedMotion: 'reduce'}
   },
   title: 'S2 Chromatic/CardView'
 };
