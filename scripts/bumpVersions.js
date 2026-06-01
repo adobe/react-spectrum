@@ -43,6 +43,15 @@ let monopackages = new Set([
   'react-aria-components'
 ]);
 
+function isSkipped(pkg) {
+  return (
+    (pkg.name.includes('@react-aria') && pkg.dependencies?.['react-aria']) ||
+    (pkg.name.includes('@react-stately') && pkg.dependencies?.['react-stately']) ||
+    (pkg.name.includes('@react-types') && !pkg.name.includes('@react-types/shared')) ||
+    (pkg.name.includes('@react-spectrum') && pkg.dependencies?.['@adobe/react-spectrum'])
+  );
+}
+
 // Should be able to replace a lot of this file with yarns versioning plugin
 // it should ensure version bumps for dependencies
 // it can also make a preview if we use deferred updates, and we don't need to have semver
@@ -176,6 +185,11 @@ class VersionManager {
     for (let name in this.workspacePackages) {
       let filePath = this.workspacePackages[name].location + '/package.json';
       let pkg = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+      if (isSkipped(pkg)) {
+        console.log('skip', name);
+        continue;
+      }
+
       if (!pkg.private) {
         // Diff this package since the last published version, according to the package.json.
         // We create a git tag for each package version.
@@ -297,6 +311,13 @@ class VersionManager {
   addReleasedPackage(pkg, bump, isDep = false) {
     bump = this.versionBumps[pkg] || bump;
     if (excludedPackages.has(pkg) || bump === 'unpublished' || bump === 'unchanged') {
+      return;
+    }
+
+    let p = JSON.parse(
+      fs.readFileSync(this.workspacePackages[pkg].location + '/package.json', 'utf8')
+    );
+    if (isSkipped(p)) {
       return;
     }
 
