@@ -21,7 +21,7 @@ export const isSubpage = true;
 
 <PageDescription>{docs.exports.useSelect.description}</PageDescription>
 
-This example combines `useSelect` with [useButton](../Button/useButton.html) for the trigger, [useListBox](../ListBox/useListBox.html) for the popup, and [usePopover](../Popover/usePopover.html) for positioning. A &lt;`HiddenSelect`&gt; renders a hidden native `<select>` to enable browser form autofill. The `Button`, `ListBox`, and `Popover` components shown collapsed below can be shared with other components such as a ComboBox or Menu.
+This example combines `useSelect` with [useButton](../Button/useButton) for the trigger, [useListBox](../ListBox/useListBox) for the popup, and [usePopover](../Popover) for positioning. A &lt;`HiddenSelect`&gt; renders a hidden native `<select>` to enable browser form autofill. The `Button`, `ListBox`, and `Popover` components shown collapsed below can be shared with other components such as a ComboBox or Menu.
 
 ```tsx render
 "use client";
@@ -159,7 +159,7 @@ function Popover({children, state, ...props}: PopoverProps) {
 
 A select can be built using the [&lt;select&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/select) and [&lt;option&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/option) HTML elements, but this is not possible to style consistently cross browser, especially the options. `useSelect` helps achieve accessible select components that can be styled as needed without compromising on high quality interactions. It follows the [ARIA listbox pattern](https://www.w3.org/WAI/ARIA/apg/patterns/listbox/).
 
-* Exposed to assistive technology as a button with a `listbox` popup using ARIA (combined with [useListBox](../ListBox/useListBox.html))
+* Exposed to assistive technology as a button with a `listbox` popup using ARIA (combined with [useListBox](../ListBox/useListBox))
 * Support for selecting a single option
 * Support for disabled options
 * Support for sections
