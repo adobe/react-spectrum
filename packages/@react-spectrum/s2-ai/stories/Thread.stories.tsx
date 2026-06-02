@@ -13,7 +13,7 @@
 import {ActionButton} from '@react-spectrum/s2/ActionButton';
 import {ActionMenu} from '@react-spectrum/s2/ActionMenu';
 import {AssetCard, Card, CardPreview} from '@react-spectrum/s2/Card';
-import {baseColor, css, focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {baseColor, focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Button} from '@react-spectrum/s2/Button';
 import {
   ButtonContext,
@@ -28,31 +28,24 @@ import {
   TextField,
   useDrop
 } from 'react-aria-components';
-import CheckmarkCircle from '@react-spectrum/s2/icons/CheckmarkCircle';
 import ChevronDown from '@react-spectrum/s2/icons/ChevronDown';
 import {CloseButton} from '@react-spectrum/s2/CloseButton';
 import {Content} from '@react-spectrum/s2/Content';
-import {
-  Disclosure,
-  DisclosureHeader,
-  DisclosurePanel,
-  DisclosureTitle
-} from '@react-spectrum/s2/Disclosure';
 import {Image} from '@react-spectrum/s2/Image';
-import {Link, LinkProps} from '@react-spectrum/s2/Link';
+import {Link} from '@react-spectrum/s2/Link';
 import {ListLayout} from 'react-stately/useVirtualizerState';
 import {MenuItem} from '@react-spectrum/s2/Menu';
+import {MessageFeedback} from '../src/MessageFeedback';
+import {MessageSource, SourceList, SourceListItem} from '../src/MessageSource';
+import {MessageSuggestion, MessageSuggestionList} from '../src/MessageSuggestion';
 import type {Meta} from '@storybook/react';
 import Plus from '@react-spectrum/s2/icons/Add';
-import {ProgressCircle} from '@react-spectrum/s2/ProgressCircle';
 import {ReactNode, useRef, useState} from 'react';
+import {ResponseStatus, ResponseStatusPanel, ResponseStatusTitle} from '../src/ResponseStatus';
 import Send from '@react-spectrum/s2/icons/ArrowUpSend';
 import {Text} from '@react-spectrum/s2/Text';
 import {Thread, ThreadItem, ThreadList, ThreadScrollButton} from '../src/Thread';
-import ThumbDown from '@react-spectrum/s2/icons/ThumbDown';
-import ThumbUp from '@react-spectrum/s2/icons/ThumbUp';
-import {ToggleButton} from '@react-spectrum/s2/ToggleButton';
-import {ToggleButtonGroup} from '@react-spectrum/s2/ToggleButtonGroup';
+import {UserMessage} from '../src/UserMessage';
 import {Virtualizer} from 'react-aria-components/Virtualizer';
 
 const meta: Meta<typeof Thread> = {
@@ -100,16 +93,27 @@ let initialResponses = [
 
 type StreamingMessage =
   | {id: number; type: 'user'; content: string}
-  | {id: number; type: 'system'; content: string; isStreaming?: boolean}
-  | {id: number; type: 'tool-call'; label: string; isStreaming: boolean}
-  | {id: number; type: 'sources'; items: string[]}
+  | {id: number; type: 'system'; content: string; isStreaming?: boolean; sources?: string[]}
+  | {
+      id: number;
+      type: 'status';
+      label: string;
+      isStreaming: boolean;
+      details: string;
+    }
   | {id: number; type: 'card'; title: string; description: string; imageUrl: string}
-  | {id: number; type: 'status'; status: 'pending' | 'complete'; thinking?: string};
+  | {id: number; type: 'suggestions'; title: string; suggestions: string[]};
 
 let MOCK_SOURCES = [
   'Hilton brand email — Q1 campaign 2026',
   'Market research — hospitality trends 2025',
   'User research — loyalty programme survey'
+];
+
+let MOCK_SUGGESTIONS = [
+  'Suggest a presentation structure',
+  'What other assets might be relevant?',
+  'Summarize the key themes'
 ];
 
 let MOCK_CARD = {
@@ -118,47 +122,6 @@ let MOCK_CARD = {
   imageUrl:
     'https://images.unsplash.com/photo-1705034598432-1694e203cdf3?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
 };
-
-function ToolCallStatus({label, isStreaming}: {label: string; isStreaming: boolean}) {
-  let textValue = isStreaming ? `${label}…` : `${label} complete`;
-  return (
-    <ThreadItem
-      textValue={textValue}
-      isStreaming={isStreaming}
-      shouldAnnounceOnMount
-      className={style({
-        ...focusRing(),
-        borderRadius: 'sm',
-        display: 'flex',
-        alignItems: 'center',
-        gap: 8
-      })}>
-      {isStreaming ? (
-        <ProgressCircle isIndeterminate size="S" aria-label={label} />
-      ) : (
-        <CheckmarkCircle />
-      )}
-      <span className={style({font: 'ui', color: 'neutral-subdued'})}>{textValue}</span>
-    </ThreadItem>
-  );
-}
-
-function SourcesMessage({items: sourceItems}: {items: string[]}) {
-  let textValue = `Found ${sourceItems.length} source${sourceItems.length !== 1 ? 's' : ''}`;
-  return (
-    <ThreadItem textValue={textValue} className={style({...focusRing(), borderRadius: 'default'})}>
-      <Sources>
-        <SourceList>
-          {sourceItems.map((s, i) => (
-            <SourceListItem key={i} href="#">
-              {s}
-            </SourceListItem>
-          ))}
-        </SourceList>
-      </Sources>
-    </ThreadItem>
-  );
-}
 
 function CardMessage({
   title,
@@ -196,8 +159,7 @@ export function StreamingThread() {
   let nextId = useRef(initialResponses.length);
   let lastMessage = messages.at(-1);
   let isDisabled =
-    lastMessage?.type === 'status' ||
-    lastMessage?.type === 'tool-call' ||
+    (lastMessage?.type === 'status' && lastMessage.isStreaming) ||
     (lastMessage?.type === 'system' && lastMessage.isStreaming);
 
   function handleSend(text: string) {
@@ -213,19 +175,36 @@ export function StreamingThread() {
         replaceStatus
           ? [
               ...prev.slice(0, -1),
-              {id: nextId.current++, type: 'tool-call', label, isStreaming: true}
+              {
+                id: nextId.current++,
+                type: 'status',
+                label,
+                isStreaming: true,
+                details: ''
+              }
             ]
-          : [...prev, {id: nextId.current++, type: 'tool-call', label, isStreaming: true}]
+          : [
+              ...prev,
+              {
+                id: nextId.current++,
+                type: 'status',
+                label,
+                isStreaming: true,
+                details: ''
+              }
+            ]
       );
     }
 
-    function completeTool() {
+    function completeTool(details: string) {
       setMessages(prev =>
-        prev.map(m => (m.type === 'tool-call' && m.isStreaming ? {...m, isStreaming: false} : m))
+        prev.map(m =>
+          m.type === 'status' && m.isStreaming ? {...m, isStreaming: false, details} : m
+        )
       );
     }
 
-    function streamText(content: string) {
+    function streamText(content: string, sources?: string[]) {
       setMessages(prev => [
         ...prev,
         {id: nextId.current++, type: 'system', content: '', isStreaming: true}
@@ -235,10 +214,16 @@ export function StreamingThread() {
       tokens.forEach((token, i) => {
         setTimeout(() => {
           accumulated += (i === 0 ? '' : ' ') + token;
+          let isLastToken = i === tokens.length - 1;
           setMessages(prev =>
             prev.map(m =>
               m.type === 'system' && m.isStreaming
-                ? {...m, content: accumulated, isStreaming: i < tokens.length - 1}
+                ? {
+                    ...m,
+                    content: accumulated,
+                    isStreaming: !isLastToken,
+                    ...(isLastToken && sources ? {sources} : {})
+                  }
                 : m
             )
           );
@@ -254,16 +239,37 @@ export function StreamingThread() {
     // Status added after short delay so user message announcement plays first
     setTimeout(
       () => {
-        setMessages(prev => [...prev, {id: nextId.current++, type: 'status', status: 'pending'}]);
+        setMessages(prev => [
+          ...prev,
+          {
+            id: nextId.current++,
+            type: 'status',
+            label: 'Generating response',
+            isStreaming: true,
+            details: ''
+          }
+        ]);
       },
       (timestamp += 1000)
     );
     setTimeout(() => addTool('Thinking', true), (timestamp += 1000));
-    setTimeout(() => completeTool(), (timestamp += toolCallDuration));
+    setTimeout(
+      () =>
+        completeTool(
+          'Reviewed conversation context and identified the user is searching for Hilton brand assets.'
+        ),
+      (timestamp += toolCallDuration)
+    );
     setTimeout(() => addTool('Loading tool'), (timestamp += 1000));
-    setTimeout(() => completeTool(), (timestamp += toolCallDuration));
+    setTimeout(
+      () => completeTool('Asset search tool loaded with access to the Hilton brand library.'),
+      (timestamp += toolCallDuration)
+    );
     setTimeout(() => addTool('Searching'), (timestamp += 1000));
-    setTimeout(() => completeTool(), (timestamp += toolCallDuration));
+    setTimeout(
+      () => completeTool('Found 15 assets matching the brand criteria across 3 campaigns.'),
+      (timestamp += toolCallDuration)
+    );
     setTimeout(
       () =>
         streamText(
@@ -274,12 +280,31 @@ export function StreamingThread() {
 
     // then does searching, streaming more text, returning a card and sources
     setTimeout(() => addTool('Searching'), (timestamp += 4000));
-    setTimeout(() => completeTool(), (timestamp += toolCallDuration));
-    setTimeout(() => addTool('Querying database'), (timestamp += 1000));
-    setTimeout(() => completeTool(), (timestamp += toolCallDuration));
     setTimeout(
       () =>
-        setMessages(prev => [...prev, {id: nextId.current++, type: 'status', status: 'pending'}]),
+        completeTool('Identified additional brand materials related to the presentation context.'),
+      (timestamp += toolCallDuration)
+    );
+    setTimeout(() => addTool('Querying database'), (timestamp += 1000));
+    setTimeout(
+      () =>
+        completeTool(
+          'Retrieved asset records including metadata, previews, and usage rights for 12 items.'
+        ),
+      (timestamp += toolCallDuration)
+    );
+    setTimeout(
+      () =>
+        setMessages(prev => [
+          ...prev,
+          {
+            id: nextId.current++,
+            type: 'status',
+            label: 'Generating response',
+            isStreaming: true,
+            details: ''
+          }
+        ]),
       (timestamp += 500)
     );
     setTimeout(
@@ -289,8 +314,9 @@ export function StreamingThread() {
           {
             id: nextId.current++,
             type: 'status',
-            status: 'complete',
-            thinking:
+            label: 'Response generated',
+            isStreaming: false,
+            details:
               'The user shared Hilton brand assets and is asking for a presentation outline. I analyzed the visual themes and brand guidelines to suggest a narrative structure that aligns with the hospitality brand identity.'
           }
         ]),
@@ -301,7 +327,8 @@ export function StreamingThread() {
         streamText(
           'Based on the assets you shared, I recommend focusing on the narrative arc first, then ' +
             'layering in supporting visuals and data to reinforce the core message. The main themes ' +
-            'revolve around brand consistency, audience engagement, and clear calls to action.'
+            'revolve around brand consistency, audience engagement, and clear calls to action.',
+          MOCK_SOURCES
         ),
       (timestamp += 1000)
     );
@@ -311,7 +338,15 @@ export function StreamingThread() {
       setMessages(prev => [...prev, {id: nextId.current++, type: 'card', ...MOCK_CARD}]);
     }, streamEndTimestamp);
     setTimeout(() => {
-      setMessages(prev => [...prev, {id: nextId.current++, type: 'sources', items: MOCK_SOURCES}]);
+      setMessages(prev => [
+        ...prev,
+        {
+          id: nextId.current++,
+          type: 'suggestions',
+          title: 'Suggested follow-ups',
+          suggestions: MOCK_SUGGESTIONS
+        }
+      ]);
     }, streamEndTimestamp + 1000);
   }
 
@@ -372,16 +407,38 @@ export function StreamingThread() {
             })}>
             {(msg: StreamingMessage) => {
               if (msg.type === 'user') {
-                return <UserMessage textValue={msg.content}>{msg.content}</UserMessage>;
+                // TODO: probably want ThreadItem to be a part of UserMessage?
+                return (
+                  <ThreadItem
+                    textValue={msg.content}
+                    className={style({...focusRing(), borderRadius: 'default', alignSelf: 'end'})}>
+                    <UserMessage>{msg.content}</UserMessage>
+                  </ThreadItem>
+                );
               }
               if (msg.type === 'status') {
-                return <ResponseStatus status={msg.status} thinking={msg.thinking} />;
-              }
-              if (msg.type === 'tool-call') {
-                return <ToolCallStatus label={msg.label} isStreaming={msg.isStreaming} />;
-              }
-              if (msg.type === 'sources') {
-                return <SourcesMessage items={msg.items} />;
+                let announcement = msg.isStreaming ? `${msg.label}…` : `${msg.label} complete`;
+                let title = msg.isStreaming ? `${msg.label}…` : msg.label;
+                // TODO: might want to have ThreadItem be a part of the ResponseStatus by default?
+                // Ideally it would auto focus the ResponseStatus itself via focusMode=child, but we
+                // probably want to make that on a case by case basis
+                // (aka it would make sense to auto focus children here but not for a system message that has text and other focusable children)
+                return (
+                  <ThreadItem
+                    textValue={announcement}
+                    isStreaming={msg.isStreaming}
+                    shouldAnnounceOnMount
+                    className={style({...focusRing(), borderRadius: 'default'})}>
+                    <ResponseStatus isLoading={msg.isStreaming}>
+                      <ResponseStatusTitle>{title}</ResponseStatusTitle>
+                      <ResponseStatusPanel>
+                        {msg.details && (
+                          <p className={style({font: 'body-sm', margin: 0})}>{msg.details}</p>
+                        )}
+                      </ResponseStatusPanel>
+                    </ResponseStatus>
+                  </ThreadItem>
+                );
               }
               if (msg.type === 'card') {
                 return (
@@ -392,8 +449,26 @@ export function StreamingThread() {
                   />
                 );
               }
+              if (msg.type === 'suggestions') {
+                // TODO: probably should have ThreadItem auto wrap MessageSuggestionList as well
+                // but this one I could see perhaps being a standalone component to be used outside of thread
+                return (
+                  <ThreadItem
+                    textValue={msg.title}
+                    className={style({...focusRing(), borderRadius: 'default'})}>
+                    <MessageSuggestionList title={msg.title}>
+                      {msg.suggestions.map((s, i) => (
+                        <MessageSuggestion key={i}>{s}</MessageSuggestion>
+                      ))}
+                    </MessageSuggestionList>
+                  </ThreadItem>
+                );
+              }
               return (
-                <SystemMessage textValue={msg.content} isStreaming={msg.isStreaming}>
+                <SystemMessage
+                  textValue={msg.content}
+                  isStreaming={msg.isStreaming}
+                  sources={msg.sources}>
                   <div role="document">
                     <p className={style({font: 'body'})}>{msg.content || ''}</p>
                   </div>
@@ -456,10 +531,27 @@ export function VirtualizedThread() {
           })}>
           {msg => {
             if (msg.type === 'user') {
-              return <UserMessage textValue={msg.content}>{msg.content}</UserMessage>;
+              return (
+                <ThreadItem
+                  textValue={msg.content}
+                  className={style({...focusRing(), borderRadius: 'lg', alignSelf: 'end'})}>
+                  <UserMessage>{msg.content}</UserMessage>
+                </ThreadItem>
+              );
             }
             if (msg.type === 'status') {
-              return <ResponseStatus status={msg.status} />;
+              let isPending = msg.status === 'pending';
+              let message = isPending ? 'Generating response' : 'Response generated';
+
+              return (
+                <ThreadItem
+                  textValue={message}
+                  className={style({...focusRing(), borderRadius: 'default'})}>
+                  <ResponseStatus isLoading={isPending}>
+                    <ResponseStatusTitle>{message}</ResponseStatusTitle>
+                  </ResponseStatus>
+                </ThreadItem>
+              );
             }
             return (
               <SystemMessage textValue={msg.content}>
@@ -679,39 +771,16 @@ function Attachment({
   );
 }
 
-function UserMessage({
-  children,
-  textValue = ' '
-}: {
-  children: ReactNode;
-  textValue?: string;
-  isStreaming?: boolean;
-}) {
-  return (
-    <ThreadItem
-      textValue={textValue}
-      className={style({
-        ...focusRing(),
-        backgroundColor: 'gray-50',
-        paddingX: 16,
-        paddingY: 8,
-        font: 'body',
-        borderRadius: 'lg',
-        alignSelf: 'end'
-      })}>
-      {children}
-    </ThreadItem>
-  );
-}
-
 function SystemMessage({
   children,
   textValue = ' ',
-  isStreaming
+  isStreaming,
+  sources
 }: {
   children: ReactNode;
   textValue?: string;
   isStreaming?: boolean;
+  sources?: string[];
 }) {
   return (
     <ThreadItem
@@ -719,130 +788,17 @@ function SystemMessage({
       isStreaming={isStreaming}
       className={style({...focusRing(), borderRadius: 'default'})}>
       {children}
+      {sources && sources.length > 0 && (
+        <MessageSource label="Sources">
+          <SourceList>
+            {sources.map((s, i) => (
+              <SourceListItem key={i} href="#">
+                {s}
+              </SourceListItem>
+            ))}
+          </SourceList>
+        </MessageSource>
+      )}
     </ThreadItem>
-  );
-}
-
-function MessageFeedback() {
-  return (
-    <ToggleButtonGroup selectionMode="single" isQuiet styles={style({marginTop: 8})}>
-      <ToggleButton id="up" aria-label="Thumbs up">
-        <ThumbUp />
-      </ToggleButton>
-      <ToggleButton id="down" aria-label="Thumbs down">
-        <ThumbDown />
-      </ToggleButton>
-    </ToggleButtonGroup>
-  );
-}
-
-function ResponseStatus({status, thinking}: {status: 'pending' | 'complete'; thinking?: string}) {
-  switch (status) {
-    case 'pending':
-      return (
-        <ThreadItem
-          textValue="Generating response"
-          className={style({
-            ...focusRing(),
-            borderRadius: 'sm',
-            display: 'flex',
-            alignItems: 'center',
-            gap: 8
-          })}>
-          <ProgressCircle isIndeterminate size="S" aria-label="Generating response" />
-          <span className={style({font: 'ui', color: 'neutral-subdued'})}>
-            Generating response...
-          </span>
-        </ThreadItem>
-      );
-    case 'complete':
-      return (
-        <ThreadItem
-          textValue="Response generated"
-          className={style({
-            ...focusRing(),
-            borderRadius: 'default',
-            display: 'flex',
-            alignItems: 'center',
-            gap: 8
-          })}>
-          {thinking ? (
-            <Disclosure size="S" isQuiet>
-              <DisclosureHeader UNSAFE_style={{width: 'fit-content'}}>
-                <DisclosureTitle>
-                  <span className={style({display: 'flex', alignItems: 'center', gap: 8})}>
-                    Response generated <CheckmarkCircle />
-                  </span>
-                </DisclosureTitle>
-              </DisclosureHeader>
-              <DisclosurePanel>
-                <p className={style({font: 'body-sm'})}>{thinking}</p>
-              </DisclosurePanel>
-            </Disclosure>
-          ) : (
-            <>
-              <span className={style({font: 'ui', color: 'neutral-subdued'})}>
-                Generating response...
-              </span>
-              <CheckmarkCircle />
-            </>
-          )}
-        </ThreadItem>
-      );
-  }
-}
-
-function Sources({children}: {children: ReactNode}) {
-  return (
-    <Disclosure size="S" isQuiet styles={style({marginTop: 8})}>
-      <DisclosureHeader UNSAFE_style={{width: 'fit-content'}}>
-        <DisclosureTitle>Sources</DisclosureTitle>
-      </DisclosureHeader>
-      <DisclosurePanel>{children}</DisclosurePanel>
-    </Disclosure>
-  );
-}
-
-function SourceList({children}: {children: ReactNode}) {
-  return (
-    <ol
-      style={{counterReset: 'step'}}
-      className={style({
-        display: 'flex',
-        flexDirection: 'column',
-        rowGap: 4,
-        paddingStart: 0,
-        margin: 0
-      })}>
-      {children}
-    </ol>
-  );
-}
-
-function SourceListItem(props: LinkProps) {
-  return (
-    <li
-      style={{counterIncrement: 'step'}}
-      className={style({
-        listStyleType: 'none'
-      })}>
-      <span
-        className={
-          css('&::before { content: counter(step) }') +
-          style({
-            fontWeight: 'normal',
-            borderRadius: 'sm',
-            backgroundColor: 'gray-100',
-            display: 'inline-block',
-            paddingX: 8,
-            height: '[1lh]',
-            textAlign: 'center',
-            font: 'body-sm',
-            marginEnd: 8
-          })
-        }
-      />
-      <Link {...props} variant="secondary" isStandalone />
-    </li>
   );
 }
