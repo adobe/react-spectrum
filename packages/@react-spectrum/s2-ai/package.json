@@ -44,9 +44,6 @@
     "prepack": "npm pkg delete scripts devDependencies resolutions alias targets",
     "postpack": "git checkout -- package.json"
   },
-  "dependencies": {
-    "@parcel/macros": "^2.16.3"
-  },
   "devDependencies": {
     "@react-aria/test-utils": "^1.0.0-alpha.8",
     "@storybook/jest": "^0.2.3",
