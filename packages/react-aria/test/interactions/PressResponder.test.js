@@ -53,7 +53,7 @@ describe('PressResponder', function () {
   });
 
   it('should warn if there is no pressable child', function () {
-    let warn = jest.spyOn(global.console, 'warn').mockImplementation();
+    using warn = jest.spyOn(global.console, 'warn').mockImplementation();
     render(
       <PressResponder>
         <div>
@@ -67,7 +67,7 @@ describe('PressResponder', function () {
   });
 
   it('should not warn if there is a pressable child', function () {
-    let warn = jest.spyOn(global.console, 'warn').mockImplementation();
+    using warn = jest.spyOn(global.console, 'warn').mockImplementation();
     render(
       <PressResponder>
         <div>

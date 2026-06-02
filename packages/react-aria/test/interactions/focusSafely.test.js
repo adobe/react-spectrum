@@ -46,7 +46,7 @@ describe('focusSafely', () => {
       jest.runAllTimers();
     });
 
-    expect(focusWithoutScrolling).toBeCalledTimes(0);
+    expect(focusWithoutScrolling).toHaveBeenCalledTimes(0);
   });
 
   it("should focus on the element if it's connected", async function () {
@@ -64,7 +64,7 @@ describe('focusSafely', () => {
       jest.runAllTimers();
     });
 
-    expect(focusWithoutScrolling).toBeCalledTimes(1);
+    expect(focusWithoutScrolling).toHaveBeenCalledTimes(1);
   });
 
   describe('focusSafely with Shadow DOM', function () {
@@ -89,7 +89,7 @@ describe('focusSafely', () => {
         jest.runAllTimers();
       });
 
-      expect(focusWithoutScrolling).toBeCalledTimes(0);
+      expect(focusWithoutScrolling).toHaveBeenCalledTimes(0);
     });
 
     it("should focus on the element if it's connected within shadow DOM", async function () {
@@ -109,7 +109,7 @@ describe('focusSafely', () => {
         jest.runAllTimers();
       });
 
-      expect(focusWithoutScrolling).toBeCalledTimes(1);
+      expect(focusWithoutScrolling).toHaveBeenCalledTimes(1);
 
       unmount();
       shadowRoot.host.remove();

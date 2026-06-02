@@ -10,10 +10,7 @@ npm install @react-aria/test-utils --save-dev
 
 ### Core pattern
 
-External consumers should import from `@react-aria/test-utils`. Tests inside the `packages/` monorepo should import everything from `@react-spectrum/test-utils-internal`, which re-exports `User` and all other test utilities:
-```ts
-import {act, render, User} from '@react-spectrum/test-utils-internal';
-```
+External consumers should import from `@react-aria/test-utils`.
 
 Initialize a `User` once per test file. Call `createTester` to get a tester for a specific ARIA pattern, then call tester methods to simulate interactions.
 
@@ -73,7 +70,7 @@ Skip the testers and write manual interactions for the following cases:
 Components with draggable handles (Slider, ColorArea, ColorSlider, ColorWheel) need `getBoundingClientRect` mocked so move calculations work:
 
 ```ts
-import {installMouseEvent} from '@react-spectrum/test-utils';
+import {installMouseEvent} from '@react-aria/test-utils';
 installMouseEvent();
 
 beforeAll(() => {

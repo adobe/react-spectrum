@@ -56,10 +56,15 @@ export function useCalendarMonthPicker(
   let numMonths = state.focusedDate.calendar.getMonthsInYear(state.focusedDate);
   for (let i = 1; i <= numMonths; i++) {
     let date = state.focusedDate.set({month: i});
+    // Calendars like the 4-5-4 fiscal calendar use getFormattableMonth to map
+    // their internal month back to the Gregorian month that should be displayed.
+    let displayDate = date.calendar.getFormattableMonth
+      ? date.calendar.getFormattableMonth(date)
+      : date;
     months.push({
       id: i,
       date,
-      formatted: formatter.format(date.toDate(state.timeZone))
+      formatted: formatter.format(displayDate.toDate(state.timeZone))
     });
   }
 

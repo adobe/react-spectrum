@@ -98,7 +98,7 @@ describe('Shared TextField behavior', () => {
     ${'v3 TextArea'}    | ${TextArea}
     ${'v3 SearchField'} | ${SearchField}
   `('$Name renders with placeholder text and shows warning', ({Name, Component}) => {
-    let spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    using spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
     let tree = renderComponent(Component, {
       placeholder: inputText,
       'aria-label': 'mandatory label'

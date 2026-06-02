@@ -103,7 +103,7 @@ describe('Focusable', function () {
   });
 
   it('should error if component does not forward its ref', async function () {
-    let spy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    using spy = jest.spyOn(console, 'error').mockImplementation(() => {});
     let Component = () => <span role="button">Hi</span>;
     render(
       <Focusable>
@@ -115,7 +115,7 @@ describe('Focusable', function () {
   });
 
   it('should error if component does not forward its ref to a DOM element', async function () {
-    let spy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    using spy = jest.spyOn(console, 'error').mockImplementation(() => {});
     let Component = React.forwardRef((_, ref) => {
       useImperativeHandle(ref, () => ({something: true}));
       return <button>Test</button>;
@@ -131,7 +131,7 @@ describe('Focusable', function () {
   });
 
   it('should warn if child is not focusable', async function () {
-    let spy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    using spy = jest.spyOn(console, 'warn').mockImplementation(() => {});
     let Component = React.forwardRef((_, ref) => (
       <span role="button" ref={ref}>
         Hi
@@ -149,7 +149,7 @@ describe('Focusable', function () {
   });
 
   it('should warn if child does not have a role', async function () {
-    let spy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    using spy = jest.spyOn(console, 'warn').mockImplementation(() => {});
     render(
       <Focusable>
         <span>Trigger</span>
@@ -160,7 +160,7 @@ describe('Focusable', function () {
   });
 
   it('should warn if child does not have an interactive role', async function () {
-    let spy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    using spy = jest.spyOn(console, 'warn').mockImplementation(() => {});
     render(
       <Focusable>
         <span role="presentation">Trigger</span>
