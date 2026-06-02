@@ -34,7 +34,7 @@ import {
   startOfWeek,
   today
 } from '@internationalized/date';
-import {Custom454Calendar} from '@internationalized/date/tests/customCalendarImpl';
+import {Custom454Calendar} from '/packages/@internationalized/date/tests/customCalendarImpl';
 import {ListBox, ListBoxItem} from '../src/ListBox';
 import {Popover} from '../src/Popover';
 import React, {useContext, useState} from 'react';

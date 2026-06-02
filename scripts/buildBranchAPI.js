@@ -107,7 +107,7 @@ async function build() {
   // Add dependencies on each published package to the package.json, and
   // copy the docs from the current package into the temp dir.
   let packagesDir = path.join(srcDir, 'packages');
-  let packages = glob.sync('*/**/package.json', {cwd: packagesDir});
+  let packages = glob.sync('*/**/package.json', {cwd: packagesDir, ignore: ['**/node_modules/**']});
 
   pkg.devDependencies['babel-plugin-transform-glob-import'] = '*';
 

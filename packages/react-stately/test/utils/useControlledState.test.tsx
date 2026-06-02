@@ -111,12 +111,12 @@ describe('useControlledState tests', function () {
     let button = getByRole('button');
     getByTestId('5');
     if (!process.env.STRICT_MODE) {
-      expect(renderSpy).toBeCalledTimes(1);
+      expect(renderSpy).toHaveBeenCalledTimes(1);
     }
     await user.click(button);
     getByTestId('6');
     if (!process.env.STRICT_MODE) {
-      expect(renderSpy).toBeCalledTimes(2);
+      expect(renderSpy).toHaveBeenCalledTimes(2);
     }
   });
 
@@ -257,7 +257,9 @@ describe('useControlledState tests', function () {
 
   it('will console warn if the programmer tries to switch from controlled to uncontrolled', () => {
     let onChangeSpy = jest.fn();
-    let consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    using consoleWarnSpy = jest
+      .spyOn(console, 'warn')
+      .mockImplementation(() => {}) as jest.SpyInstance & Disposable;
     let {result, rerender} = renderHook(
       ({value, defaultValue, onChange}) => useControlledState(value, defaultValue, onChange),
       {
@@ -280,7 +282,9 @@ describe('useControlledState tests', function () {
 
   it('will console warn if the programmer tries to switch from uncontrolled to controlled', () => {
     let onChangeSpy = jest.fn();
-    let consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    using consoleWarnSpy = jest
+      .spyOn(console, 'warn')
+      .mockImplementation(() => {}) as jest.SpyInstance & Disposable;
     let {result, rerender} = renderHook(
       ({value, defaultValue, onChange}) => useControlledState(value, defaultValue, onChange),
       {

@@ -159,6 +159,7 @@ module.exports = {
 
   // Options that will be passed to the testEnvironment
   testEnvironmentOptions: {
+    globalsCleanup: 'on',
     customExportConditions: ['source']
   },
 
