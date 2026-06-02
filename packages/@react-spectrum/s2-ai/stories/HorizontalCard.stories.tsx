@@ -176,7 +176,7 @@ export const Horizontal: Story = {
   )
 };
 
-export const AIAssetList: Story = {
+export const AIAttachmentList: Story = {
   render: args => (
     <AttachmentList {...args} styles={style({width: 400})}>
       <AttachmentComponent aria-label="Demo file.pdf">

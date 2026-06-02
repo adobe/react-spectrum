@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Attachment, AttachmentList} from '/packages/@react-spectrum/s2-ai/exports/AttachmentList';
+import {Attachment, AttachmentList} from '../exports/AttachmentList';
 import {Image} from '@react-spectrum/s2/Image';
 import {render} from '@react-spectrum/test-utils-internal';
 
