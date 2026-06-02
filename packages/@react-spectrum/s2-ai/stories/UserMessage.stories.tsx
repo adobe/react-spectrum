@@ -48,36 +48,36 @@ export const Example: Story = {
 export const WithImage: Story = {
   render: args => (
     <div style={{width: 250}}>
-    <UserMessage {...args}>
-      <Image
-        slot="image"
-        src={new URL('../../s2/stories/assets/preview.png', import.meta.url).toString()}
-        alt="Hotel commercial assets"
-      />
-      <div
-        className={style({
-          display: 'flex',
-          flexDirection: 'row',
-          alignItems: 'baseline',
-          gap: 8
-        })}>
-        <Heading
-          styles={style({
-            font: 'title-xs',
-            margin: 0,
-            flexGrow: 1,
-            minWidth: 0
+      <UserMessage {...args}>
+        <Image
+          slot="image"
+          src={new URL('../../s2/stories/assets/preview.png', import.meta.url).toString()}
+          alt="Hotel commercial assets"
+        />
+        <div
+          className={style({
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'baseline',
+            gap: 8
           })}>
-          Hotel commercial assets
-        </Heading>
-        <ActionMenu isQuiet size="XS">
-          <MenuItem>Edit</MenuItem>
-          <MenuItem>Share</MenuItem>
-          <MenuItem>Delete</MenuItem>
-        </ActionMenu>
-      </div>
-      <Text styles={style({font: 'body-2xs'})}>2026</Text>
-    </UserMessage>
+          <Heading
+            styles={style({
+              font: 'title-xs',
+              margin: 0,
+              flexGrow: 1,
+              minWidth: 0
+            })}>
+            Hotel commercial assets
+          </Heading>
+          <ActionMenu isQuiet size="XS">
+            <MenuItem>Edit</MenuItem>
+            <MenuItem>Share</MenuItem>
+            <MenuItem>Delete</MenuItem>
+          </ActionMenu>
+        </div>
+        <Text styles={style({font: 'body-2xs'})}>2026</Text>
+      </UserMessage>
     </div>
   )
 };
@@ -85,44 +85,44 @@ export const WithImage: Story = {
 export const WithCard: Story = {
   render: args => (
     <div style={{width: 300}}>
-    <UserMessage {...args}>
-      <Image
-        src={new URL('../../s2/stories/assets/preview.png', import.meta.url).toString()}
-        alt="Hotel commercial assets"
-        styles={style({
-          width: 32,
-          height: 32,
-          borderRadius: 'sm',
-          backgroundColor: 'transparent',
-          flexShrink: 0
-        })}
-      />
-      <div
-        className={style({
-          display: 'flex',
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          flexGrow: 1,
-          gap: 8,
-          minWidth: 0
-        })}>
+      <UserMessage {...args}>
+        <Image
+          src={new URL('../../s2/stories/assets/preview.png', import.meta.url).toString()}
+          alt="Hotel commercial assets"
+          styles={style({
+            width: 32,
+            height: 32,
+            borderRadius: 'sm',
+            backgroundColor: 'transparent',
+            flexShrink: 0
+          })}
+        />
         <div
           className={style({
             display: 'flex',
-            flexDirection: 'column',
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            flexGrow: 1,
+            gap: 8,
             minWidth: 0
           })}>
-          <Heading styles={style({font: 'title-xs', margin: 0})}>Hotel commercial assets</Heading>
-          <Text styles={style({font: 'body-2xs'})}>2026</Text>
+          <div
+            className={style({
+              display: 'flex',
+              flexDirection: 'column',
+              minWidth: 0
+            })}>
+            <Heading styles={style({font: 'title-xs', margin: 0})}>Hotel commercial assets</Heading>
+            <Text styles={style({font: 'body-2xs'})}>2026</Text>
+          </div>
+          <ActionMenu isQuiet size="S">
+            <MenuItem>Edit</MenuItem>
+            <MenuItem>Share</MenuItem>
+            <MenuItem>Delete</MenuItem>
+          </ActionMenu>
         </div>
-        <ActionMenu isQuiet size="S">
-          <MenuItem>Edit</MenuItem>
-          <MenuItem>Share</MenuItem>
-          <MenuItem>Delete</MenuItem>
-        </ActionMenu>
-      </div>
-    </UserMessage>
+      </UserMessage>
     </div>
   )
 };
