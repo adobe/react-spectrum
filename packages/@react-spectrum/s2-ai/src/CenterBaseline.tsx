@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {CSSProperties, ReactNode} from 'react';
 import {css, style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {CSSProperties, ReactNode} from 'react';
 import {DOMAttributes} from '@react-types/shared';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {mergeStyles} from './mergeStyles';
