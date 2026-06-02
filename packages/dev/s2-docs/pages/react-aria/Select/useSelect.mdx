@@ -26,6 +26,8 @@ This example combines `useSelect` with [useButton](../Button/useButton.html) for
 ```tsx render
 "use client";
 import React from 'react';
+import type {AriaPopoverProps} from 'react-aria/usePopover';
+import type {OverlayTriggerState} from 'react-stately/useOverlayTriggerState';
 import {HiddenSelect, useSelect} from 'react-aria/useSelect';
 import {useSelectState} from 'react-stately/useSelectState';
 import {Item} from 'react-stately/Item';
@@ -39,7 +41,7 @@ function Select(props) {
   let state = useSelectState(props);
 
   // Get props for child elements from useSelect.
-  let ref = React.useRef(null);
+  let ref = React.useRef<HTMLButtonElement | null>(null);
   let {labelProps, triggerProps, valueProps, menuProps, hiddenSelectProps} = useSelect(props, state, ref);
 
   return (
@@ -109,8 +111,13 @@ function Option({item, state}) {
   );
 }
 
-function Popover({children, state, ...props}) {
-  let popoverRef = React.useRef(null);
+interface PopoverProps extends Omit<AriaPopoverProps, 'popoverRef'> {
+  children: React.ReactNode,
+  state: OverlayTriggerState
+}
+
+function Popover({children, state, ...props}: PopoverProps) {
+  let popoverRef = React.useRef<HTMLDivElement | null>(null);
   let {popoverProps, underlayProps} = usePopover({...props, popoverRef}, state);
 
   return (
