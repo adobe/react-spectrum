@@ -14,15 +14,13 @@ import {AriaLabelingProps, DOMProps, DOMRef, DOMRefValue, Selection} from '@reac
 import {ContextValue, SlotProps} from 'react-aria-components/slots';
 import {createContext, forwardRef} from 'react';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
-import {getAllowedOverrides} from './style-utils-copy' with {type: 'macro'};
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {ToggleButtonGroup as RACToggleButtonGroup} from 'react-aria-components/ToggleButtonGroup';
-import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import type {StyleProps} from './style-utils-copy';
 import ThumbDown from '@react-spectrum/s2/icons/ThumbDown';
 import ThumbUp from '@react-spectrum/s2/icons/ThumbUp';
 import {ToggleButton} from '@react-spectrum/s2/ToggleButton';
+import {ToggleButtonGroup} from '@react-spectrum/s2/ToggleButtonGroup';
 import {useDOMRef} from './useDOMRef';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
@@ -36,8 +34,6 @@ export interface MessageFeedbackProps extends DOMProps, AriaLabelingProps, Style
   defaultValue?: MessageFeedbackValue;
   /** Called when the selection changes, including when toggled off (value=null). */
   onChange?: (value: MessageFeedbackValue) => void;
-  /** Called when a selection is made (not when toggled off). */
-  onFeedback?: (value: Exclude<MessageFeedbackValue, null>) => void;
   /** Whether the feedback controls are disabled. */
   isDisabled?: boolean;
   /** Accessible label for the thumbs up button. */
@@ -49,21 +45,8 @@ export interface MessageFeedbackProps extends DOMProps, AriaLabelingProps, Style
 export const MessageFeedbackContext =
   createContext<ContextValue<Partial<MessageFeedbackProps>, DOMRefValue<HTMLDivElement>>>(null);
 
-const groupStyles = style(
-  {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4
-  },
-  getAllowedOverrides()
-);
-
 function selectionToValue(selection: Selection): MessageFeedbackValue {
-  if (selection === 'all') {
-    return null;
-  }
-  let [first] = selection;
+  let [first] = selection as Iterable<string>;
   return first === 'up' || first === 'down' ? first : null;
 }
 
@@ -81,7 +64,6 @@ export const MessageFeedback = forwardRef(function MessageFeedback(
     value,
     defaultValue,
     onChange,
-    onFeedback,
     isDisabled,
     thumbUpLabel,
     thumbDownLabel,
@@ -91,11 +73,7 @@ export const MessageFeedback = forwardRef(function MessageFeedback(
   } = props;
 
   let handleSelectionChange = (selection: Selection): void => {
-    let next = selectionToValue(selection);
-    onChange?.(next);
-    if (next !== null) {
-      onFeedback?.(next);
-    }
+    onChange?.(selectionToValue(selection));
   };
 
   let toKeys = (v: MessageFeedbackValue | undefined): Iterable<string> | undefined => {
@@ -108,7 +86,7 @@ export const MessageFeedback = forwardRef(function MessageFeedback(
   let defaultSelectedKeys = toKeys(defaultValue);
 
   return (
-    <RACToggleButtonGroup
+    <ToggleButtonGroup
       {...filterDOMProps(props, {labelable: true})}
       ref={domRef}
       selectionMode="single"
@@ -116,8 +94,9 @@ export const MessageFeedback = forwardRef(function MessageFeedback(
       defaultSelectedKeys={defaultSelectedKeys}
       onSelectionChange={handleSelectionChange}
       isDisabled={isDisabled}
-      style={UNSAFE_style}
-      className={UNSAFE_className + groupStyles(null, styles)}>
+      UNSAFE_style={UNSAFE_style}
+      UNSAFE_className={UNSAFE_className}
+      styles={styles}>
       <ToggleButton
         id="up"
         isQuiet
@@ -130,6 +109,6 @@ export const MessageFeedback = forwardRef(function MessageFeedback(
         aria-label={thumbDownLabel ?? stringFormatter.format('messagefeedback.thumbDown')}>
         <ThumbDown />
       </ToggleButton>
-    </RACToggleButtonGroup>
+    </ToggleButtonGroup>
   );
 });

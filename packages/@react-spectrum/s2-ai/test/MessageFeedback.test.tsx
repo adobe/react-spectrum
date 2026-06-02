@@ -50,41 +50,27 @@ describe('MessageFeedback', () => {
     expect(getByRole('radio', {name: 'Bad response'})).not.toBeChecked();
   });
 
-  it('fires onChange and onFeedback when an option is selected', async () => {
+  it('fires onChange when an option is selected', async () => {
     let onChange = jest.fn();
-    let onFeedback = jest.fn();
     let {getByRole} = render(
-      <MessageFeedback
-        aria-label="Rate this response"
-        onChange={onChange}
-        onFeedback={onFeedback}
-      />
+      <MessageFeedback aria-label="Rate this response" onChange={onChange} />
     );
 
     await user.click(getByRole('radio', {name: 'Good response'}));
     expect(onChange).toHaveBeenLastCalledWith('up');
-    expect(onFeedback).toHaveBeenLastCalledWith('up');
 
     await user.click(getByRole('radio', {name: 'Bad response'}));
     expect(onChange).toHaveBeenLastCalledWith('down');
-    expect(onFeedback).toHaveBeenLastCalledWith('down');
   });
 
-  it('fires onChange with null when toggled back off, but not onFeedback', async () => {
+  it('fires onChange with null when toggled back off', async () => {
     let onChange = jest.fn();
-    let onFeedback = jest.fn();
     let {getByRole} = render(
-      <MessageFeedback
-        aria-label="Rate this response"
-        defaultValue="up"
-        onChange={onChange}
-        onFeedback={onFeedback}
-      />
+      <MessageFeedback aria-label="Rate this response" defaultValue="up" onChange={onChange} />
     );
 
     await user.click(getByRole('radio', {name: 'Good response'}));
     expect(onChange).toHaveBeenLastCalledWith(null);
-    expect(onFeedback).not.toHaveBeenCalled();
   });
 
   it('respects the controlled value prop', () => {
