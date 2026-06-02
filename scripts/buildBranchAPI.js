@@ -163,6 +163,23 @@ async function build() {
     recursive: true
   });
 
+  // Collect workspace package names so we can strip intra-monorepo dependencies.
+  // Sibling packages may pin exact versions (e.g. "@adobe/react-spectrum": "3.47.0")
+  // that don't match the workspace version being built, causing yarn to install from
+  // npm instead of symlinking to the workspace. Removing these entries lets yarn always
+  // resolve them via the workspace.
+  let workspacePackageNames = new Set(
+    packages
+      .map(p => {
+        try {
+          return JSON.parse(fs.readFileSync(path.join(srcDir, 'packages', p), 'utf8')).name;
+        } catch {
+          return null;
+        }
+      })
+      .filter(Boolean)
+  );
+
   let excludeList = ['@react-spectrum/story-utils'];
   // Copy packages over to temp dir
   console.log('copying over');
@@ -186,6 +203,13 @@ async function build() {
       delete json.main;
       delete json.module;
       delete json.devDependencies;
+      if (json.dependencies) {
+        for (let dep of Object.keys(json.dependencies)) {
+          if (workspacePackageNames.has(dep)) {
+            delete json.dependencies[dep];
+          }
+        }
+      }
       json.apiCheck = 'dist/api.json';
       json.targets = {
         apiCheck: {}

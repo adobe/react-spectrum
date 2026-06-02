@@ -34,7 +34,7 @@ import {ImageCoordinator} from '@react-spectrum/s2/ImageCoordinator';
 import {inertValue} from 'react-aria/private/utils/inertValue';
 import {Link} from 'react-aria-components/Link';
 import {LinkButtonContext} from '@react-spectrum/s2/LinkButton';
-import {mergeStyles} from './mergeStyles';
+import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
 import {pressScale} from '@react-spectrum/s2/pressScale';
 import {SkeletonContext, useIsSkeleton} from '@react-spectrum/s2/Skeleton';
 import type {StyleProps, UnsafeStyles} from './style-utils-copy';
