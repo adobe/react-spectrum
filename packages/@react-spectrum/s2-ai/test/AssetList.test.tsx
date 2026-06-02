@@ -10,18 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
-import {Asset, AssetList} from '@react-spectrum/s2-ai/AssetList';
+import {Attachment, AttachmentList} from '/packages/@react-spectrum/s2-ai/exports/AttachmentList';
 import {Image} from '@react-spectrum/s2/Image';
 import {render} from '@react-spectrum/test-utils-internal';
 
-describe('AssetList', () => {
+describe('AttachmentList', () => {
   it('should render', () => {
     let {getByRole} = render(
-      <AssetList aria-label="Uploaded files">
-        <Asset aria-label="Demo file.pdf" textValue="Demo file.pdf">
+      <AttachmentList aria-label="Uploaded files">
+        <Attachment aria-label="Demo file.pdf" textValue="Demo file.pdf">
           <Image slot="thumbnail" src="https://example.com/image.png" />
-        </Asset>
-      </AssetList>
+        </Attachment>
+      </AttachmentList>
     );
 
     expect(getByRole('grid')).toBeInTheDocument();

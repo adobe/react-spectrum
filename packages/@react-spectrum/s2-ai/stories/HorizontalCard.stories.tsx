@@ -12,7 +12,7 @@
 
 import {ActionButton} from '@react-spectrum/s2/ActionButton';
 import {ActionMenu} from '@react-spectrum/s2/ActionMenu';
-import {Attachment as AttachmentComponent, AttachmentList} from '@react-spectrum/s2-ai/AssetList';
+import {Attachment as AttachmentComponent, AttachmentList} from '/packages/@react-spectrum/s2-ai/exports/AttachmentList';
 import {
   BasicHorizontalCard,
   CardPreview,
