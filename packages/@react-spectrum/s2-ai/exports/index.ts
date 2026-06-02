@@ -7,4 +7,5 @@ export {
   MessageSuggestionList,
   MessageSuggestionListContext
 } from '../src/MessageSuggestion';
+export {ResponseStatus, ResponseStatusPanel} from '../src/ResponseStatus';
 export {UserMessage} from '../src/UserMessage';
