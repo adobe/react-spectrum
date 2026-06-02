@@ -11,7 +11,6 @@
  */
 
 import {AriaButtonProps} from 'react-aria/useButton';
-
 import {AriaComboBoxProps, useComboBox} from 'react-aria/useComboBox';
 import {
   AsyncLoadable,
@@ -41,7 +40,6 @@ import {FocusRing} from 'react-aria/FocusRing';
 import intlMessages from '../../intl/combobox/*.json';
 import {ListBoxBase, useListBoxLayout} from '../listbox/ListBoxBase';
 import {MobileComboBox} from './MobileComboBox';
-// @ts-ignore
 import {Popover} from '../overlays/Popover';
 import {PressResponder} from 'react-aria/private/interactions/PressResponder';
 import {ProgressCircle} from '../progress/ProgressCircle';

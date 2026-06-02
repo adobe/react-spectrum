@@ -11,7 +11,6 @@
  */
 
 import {AriaLabelingProps} from '@react-types/shared';
-// @ts-ignore
 import intlMessages from '../../intl/grid/*.json';
 import {MultipleSelectionManager} from 'react-stately/useMultipleSelectionState';
 import {useDescription} from '../utils/useDescription';

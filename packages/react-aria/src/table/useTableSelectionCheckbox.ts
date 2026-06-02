@@ -12,7 +12,6 @@
 
 import {AriaCheckboxProps} from '../checkbox/useCheckbox';
 import {getRowLabelledBy} from './utils';
-// @ts-ignore
 import intlMessages from '../../intl/table/*.json';
 import {Key} from '@react-types/shared';
 import {TableState} from 'react-stately/useTableState';

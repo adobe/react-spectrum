@@ -32,7 +32,6 @@ import {FieldButton} from '../button/FieldButton';
 import intlMessages from '../../intl/picker/*.json';
 import {ListBoxBase, useListBoxLayout} from '../listbox/ListBoxBase';
 import {mergeProps} from 'react-aria/mergeProps';
-// @ts-ignore
 import {Popover} from '../overlays/Popover';
 import {PressResponder} from 'react-aria/private/interactions/PressResponder';
 import {ProgressCircle} from '../progress/ProgressCircle';

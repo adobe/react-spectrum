@@ -92,7 +92,6 @@ import {
 import {getOwnerDocument} from 'react-aria/private/utils/domHelpers';
 import {GridNode} from 'react-stately/private/grid/GridCollection';
 import {IconContext} from './Icon';
-// @ts-ignore
 import intlMessages from '../intl/*.json';
 import {Key} from '@react-types/shared';
 import {LayoutInfo, Rect, TableLayout, Virtualizer} from 'react-aria-components/Virtualizer';
@@ -101,7 +100,6 @@ import {Menu, MenuItem, MenuSection, MenuTrigger} from './Menu';
 import Nubbin from '../ui-icons/S2_MoveHorizontalTableWidget.svg';
 import {OverlayTriggerStateContext} from 'react-aria-components/Dialog';
 import {ProgressCircle} from './ProgressCircle';
-// @ts-ignore
 import {CheckboxContext as RACCheckboxContext} from 'react-aria-components/Checkbox';
 import {Popover as RACPopover} from 'react-aria-components/Popover';
 import React, {

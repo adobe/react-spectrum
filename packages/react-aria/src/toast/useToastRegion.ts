@@ -18,7 +18,6 @@ import intlMessages from '../../intl/toast/*.json';
 import {mergeProps} from '../utils/mergeProps';
 import {ToastState} from 'react-stately/useToastState';
 import {useCallback, useEffect, useRef} from 'react';
-// @ts-ignore
 import {useFocusWithin} from '../interactions/useFocusWithin';
 import {useHover} from '../interactions/useHover';
 import {useLandmark} from '../landmark/useLandmark';

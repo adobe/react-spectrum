@@ -24,7 +24,6 @@ import {
 } from './Slider';
 import {FocusableRef, FocusableRefValue, RangeValue} from '@react-types/shared';
 import {FormContext, useFormProps} from './Form';
-// @ts-ignore
 import intlMessages from '../intl/*.json';
 import {pressScale} from './pressScale';
 import {SliderFill, SliderThumb, SliderTrack} from 'react-aria-components/Slider';

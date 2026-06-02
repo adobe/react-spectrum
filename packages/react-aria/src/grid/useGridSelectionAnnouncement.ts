@@ -12,7 +12,6 @@
 
 import {announce} from '../live-announcer/LiveAnnouncer';
 import {Collection, Key, Node, Selection} from '@react-types/shared';
-// @ts-ignore
 import intlMessages from '../../intl/grid/*.json';
 import {SelectionManager} from 'react-stately/private/selection/SelectionManager';
 import {useCallback, useRef} from 'react';
