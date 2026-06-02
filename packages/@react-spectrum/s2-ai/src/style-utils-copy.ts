@@ -4,10 +4,6 @@ import {StyleString} from './types';
 export const controlSize = (size: 'sm' | 'md' = 'md'): typeof controlSizeM | typeof controlSizeS =>
   size === 'sm' ? controlSizeS : controlSizeM;
 
-export function centerPadding(minHeight: string = 'self(minHeight)'): `[${string}]` {
-  return `[calc((${minHeight} - self(borderTopWidth, 0px) - self(borderBottomWidth, 0px) - 1lh) / 2)]`;
-}
-
 const controlSizeM = {
   default: 32,
   size: {

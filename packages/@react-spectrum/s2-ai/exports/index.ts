@@ -1,4 +1,4 @@
-export {Asset, AssetList} from '../src/AssetList';
+export {Asset, AssetList} from '../src/AttachmentList';
 export {BasicHorizontalCard, HorizontalCard} from '../src/HorizontalCard';
 export {MessageFeedback} from '../src/MessageFeedback';
 export {

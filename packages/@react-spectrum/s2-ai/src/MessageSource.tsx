@@ -150,7 +150,7 @@ export const SourceListItem = (forwardRef as forwardRefType)(function SourceList
   return (
     <li ref={itemRef} style={UNSAFE_style} className={(UNSAFE_className ?? '') + itemStyles}>
       <NumberBadge value={index} />
-      <Link {...otherProps} className={linkStyles({size})}>
+      <Link {...otherProps} className={renderProps => linkStyles({size, ...renderProps})}>
         {children}
       </Link>
     </li>

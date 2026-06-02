@@ -94,12 +94,15 @@ const CloseButton = function CloseButton(props) {
   );
 };
 
-let assetListStyles = style({}, getAllowedOverrides());
+let attachmentListStyles = style({}, getAllowedOverrides());
 
-export const AssetList = forwardRef(function AssetList(props: any, ref: DOMRef<HTMLDivElement>) {
+export const AttachmentList = forwardRef(function AttachmentList(
+  props: any,
+  ref: DOMRef<HTMLDivElement>
+) {
   let domRef = useDOMRef(ref);
   return (
-    <TagGroup {...props} className={assetListStyles(props.styles)} ref={domRef}>
+    <TagGroup {...props} className={attachmentListStyles(props.styles)} ref={domRef}>
       <TagList
         className={style({
           display: 'flex',
@@ -115,7 +118,7 @@ export const AssetList = forwardRef(function AssetList(props: any, ref: DOMRef<H
   );
 });
 
-export const Asset = forwardRef(function Asset(
+export const Attachment = forwardRef(function Attachment(
   props: CardProps & AriaLabelingProps,
   ref: DOMRef<HTMLDivElement>
 ) {
@@ -134,7 +137,13 @@ export const Asset = forwardRef(function Asset(
       aria-labelledby={ariaLabelledby}
       aria-describedby={ariaDescribedby}
       ref={domRef}
-      className={style({flexShrink: 0, flexGrow: 0, position: 'relative'})}>
+      className={style({
+        flexShrink: 0,
+        flexGrow: 0,
+        position: 'relative',
+        ...focusRing(),
+        borderRadius: 'default'
+      })}>
       <BasicHorizontalCard {...otherProps}>{props.children}</BasicHorizontalCard>
       {/** Definitely not a close button, though looks like one. */}
       <div

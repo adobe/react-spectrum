@@ -17,11 +17,17 @@ import {
   DOMRefValue,
   GlobalDOMAttributes
 } from '@react-types/shared';
-import {baseColor, focusRing, space, style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {
+  baseColor,
+  focusRing,
+  iconStyle,
+  space,
+  style
+} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Button} from 'react-aria-components/Button';
 import {CenterBaseline, centerBaseline} from './CenterBaseline';
 import CheckmarkCircle from '@react-spectrum/s2/icons/CheckmarkCircle';
-import Chevron from '../ui-icons/Chevron';
+import ChevronRight from '@react-spectrum/s2/icons/ChevronRight';
 import {ContextValue, Provider, useSlottedContext} from 'react-aria-components/slots';
 import {
   DisclosureStateContext,
@@ -283,12 +289,8 @@ export const ResponseStatusTitle = forwardRef(function ResponseStatusTitle(
             />
           </CenterBaseline>
         ) : (
-          <CenterBaseline>
-            <Chevron
-              size={size}
-              className={chevronStyles({isExpanded, isRTL})}
-              aria-hidden="true"
-            />
+          <CenterBaseline styles={chevronStyles({isExpanded, isRTL})}>
+            <Chevron size={size} />
           </CenterBaseline>
         )}
         {props.children}
@@ -380,3 +382,18 @@ export const ResponseStatusPanel = forwardRef(function ResponseStatusPanel(
     </RACDisclosurePanel>
   );
 });
+
+// Ideally I would use iconStyle but since it must be fully evaluated at compile time — passing a runtime variable (size prop) to it is not allowed.
+// TODO: Should iconStyle also return a runtime function?
+function Chevron({size}) {
+  switch (size) {
+    case 'S':
+      return <ChevronRight styles={iconStyle({size: 'S'})} />;
+    case 'M':
+      return <ChevronRight styles={iconStyle({size: 'M'})} />;
+    case 'L':
+      return <ChevronRight styles={iconStyle({size: 'L'})} />;
+    case 'XL':
+      return <ChevronRight styles={iconStyle({size: 'XL'})} />;
+  }
+}

@@ -1,1 +1,1 @@
-export {Asset, AssetList} from '../src/AssetList';
+export {Attachment, AttachmentList} from '../src/AttachmentList';

@@ -12,7 +12,7 @@
 
 import {ActionButton} from '@react-spectrum/s2/ActionButton';
 import {ActionMenu} from '@react-spectrum/s2/ActionMenu';
-import {Asset as AssetComponent, AssetList} from '@react-spectrum/s2-ai/AssetList';
+import {Attachment as AttachmentComponent, AttachmentList} from '@react-spectrum/s2-ai/AssetList';
 import {
   BasicHorizontalCard,
   CardPreview,
@@ -175,26 +175,26 @@ export const Horizontal: Story = {
 
 export const AIAssetList: Story = {
   render: args => (
-    <AssetList {...args} styles={style({width: 400})}>
-      <AssetComponent aria-label="Demo file.pdf">
+    <AttachmentList {...args} styles={style({width: 400})}>
+      <AttachmentComponent aria-label="Demo file.pdf">
         <Image
           slot="thumbnail"
           src={new URL('../../s2/stories/assets/placeholder.png', import.meta.url).toString()}
         />
-      </AssetComponent>
-      <AssetComponent aria-label="Alligator.pdf">
+      </AttachmentComponent>
+      <AttachmentComponent aria-label="Alligator.pdf">
         <Image
           slot="thumbnail"
           src={new URL('../../s2/stories/assets/placeholder.png', import.meta.url).toString()}
         />
-      </AssetComponent>
-      <AssetComponent aria-label="Rules.pdf">
+      </AttachmentComponent>
+      <AttachmentComponent aria-label="Rules.pdf">
         <Image
           slot="thumbnail"
           src={new URL('../../s2/stories/assets/placeholder.png', import.meta.url).toString()}
         />
-      </AssetComponent>
-      <AssetComponent aria-label="Echidna.pdf">
+      </AttachmentComponent>
+      <AttachmentComponent aria-label="Echidna.pdf">
         <Image
           slot="thumbnail"
           src={new URL('../../s2/stories/assets/placeholder.png', import.meta.url).toString()}
@@ -203,7 +203,7 @@ export const AIAssetList: Story = {
           <Text slot="title">Card title</Text>
           <Text slot="description">Card description.</Text>
         </Content>
-      </AssetComponent>
-    </AssetList>
+      </AttachmentComponent>
+    </AttachmentList>
   )
 };
