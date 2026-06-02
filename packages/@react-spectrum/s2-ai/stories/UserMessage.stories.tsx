@@ -47,46 +47,44 @@ export const Example: Story = {
 
 export const WithImage: Story = {
   render: args => (
+    <div style={{width: 250}}>
     <UserMessage {...args}>
       <Image
         slot="image"
         src={new URL('../../s2/stories/assets/preview.png', import.meta.url).toString()}
         alt="Hotel commercial assets"
       />
-      <div className={style({width: 180})}>
-        <div
-          className={style({
-            display: 'flex',
-            flexDirection: 'row',
-            alignItems: 'baseline',
-            gap: 8
+      <div
+        className={style({
+          display: 'flex',
+          flexDirection: 'row',
+          alignItems: 'baseline',
+          gap: 8
+        })}>
+        <Heading
+          styles={style({
+            font: 'title-xs',
+            margin: 0,
+            flexGrow: 1,
+            minWidth: 0
           })}>
-          <Heading
-            styles={style({
-              font: 'title-xs',
-              margin: 0,
-              flexGrow: 1,
-              minWidth: 0
-            })}>
-            Hotel commercial assets
-          </Heading>
-          <ActionMenu isQuiet size="XS">
-            <MenuItem>Edit</MenuItem>
-            <MenuItem>Share</MenuItem>
-            <MenuItem>Delete</MenuItem>
-          </ActionMenu>
-        </div>
-        <Text styles={style({font: 'body-2xs'})}>2026</Text>
+          Hotel commercial assets
+        </Heading>
+        <ActionMenu isQuiet size="XS">
+          <MenuItem>Edit</MenuItem>
+          <MenuItem>Share</MenuItem>
+          <MenuItem>Delete</MenuItem>
+        </ActionMenu>
       </div>
+      <Text styles={style({font: 'body-2xs'})}>2026</Text>
     </UserMessage>
+    </div>
   )
 };
 
 export const WithCard: Story = {
-  args: {
-    modality: 'split'
-  },
   render: args => (
+    <div style={{width: 300}}>
     <UserMessage {...args}>
       <Image
         src={new URL('../../s2/stories/assets/preview.png', import.meta.url).toString()}
@@ -125,24 +123,6 @@ export const WithCard: Story = {
         </ActionMenu>
       </div>
     </UserMessage>
-  )
-};
-
-export const Modalities: Story = {
-  render: () => (
-    <div style={{display: 'flex', flexDirection: 'column', gap: 16, alignItems: 'flex-end'}}>
-      <UserMessage modality="fullscreen">
-        Full screen: Can you help me create a 45-minute presentation, with animations, for an
-        executive update?
-      </UserMessage>
-      <UserMessage modality="split">
-        Split / right rail: Can you help me create a 45-minute presentation, with animations, for an
-        executive update?
-      </UserMessage>
-      <UserMessage modality="panel">
-        Panel: Can you help me create a 45-minute presentation, with animations, for an executive
-        update?
-      </UserMessage>
     </div>
   )
 };

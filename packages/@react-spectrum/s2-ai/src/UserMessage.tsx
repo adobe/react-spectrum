@@ -21,21 +21,9 @@ import type {StyleProps} from './style-utils-copy';
 import {useDOMRef} from './useDOMRef';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export type UserMessageModality = 'fullscreen' | 'split' | 'panel';
-
 export interface UserMessageProps extends DOMProps, AriaLabelingProps, StyleProps, SlotProps {
   /** The contents of the user message bubble. */
   children: ReactNode;
-  /**
-   * Controls the maximum width of the bubble to fit the surrounding modality.
-   *
-   * - `fullscreen`: up to 536px (chat in a full-page conversation)
-   * - `split`: up to 440px (split or right-rail layout)
-   * - `panel`: up to 360px (narrow panel)
-   *
-   * @default 'fullscreen'
-   */
-  modality?: UserMessageModality;
 }
 
 export const UserMessageContext =
@@ -49,7 +37,8 @@ const previewImage = style({
   objectFit: 'cover'
 });
 
-const bubble = style<{modality: UserMessageModality}>(
+// TODO: revisit whether 75% is the right, or if there should be different modalities
+const bubble = style(
   {
     display: 'flex',
     flexDirection: {
@@ -72,14 +61,11 @@ const bubble = style<{modality: UserMessageModality}>(
     font: 'body',
     boxSizing: 'border-box',
     alignSelf: 'end',
-    maxWidth: {
-      modality: {
-        fullscreen: 536,
-        split: 440,
-        panel: 360
-      }
-    },
-    width: 'fit'
+    maxWidth: '75%',
+    width: {
+      default: 'fit',
+      ':has([slot=image])': '75%'
+    }
   },
   getAllowedOverrides()
 );
@@ -94,14 +80,14 @@ export const UserMessage = forwardRef(function UserMessage(
 ) {
   [props, ref] = useSpectrumContextProps(props, ref, UserMessageContext);
   let domRef = useDOMRef(ref);
-  let {children, modality = 'fullscreen', UNSAFE_className = '', UNSAFE_style, styles} = props;
+  let {children, UNSAFE_className = '', UNSAFE_style, styles} = props;
 
   return (
     <div
       {...filterDOMProps(props, {labelable: true})}
       ref={domRef}
       style={UNSAFE_style}
-      className={UNSAFE_className + bubble({modality}, styles)}>
+      className={UNSAFE_className + bubble(null, styles)}>
       <Provider
         values={[
           [
