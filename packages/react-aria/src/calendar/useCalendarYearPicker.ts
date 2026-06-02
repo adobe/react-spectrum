@@ -68,15 +68,15 @@ export function useCalendarYearPicker(
   // However, this can be constrained by the calendar's minimum and maximum date.
   let visibleYears = props.visibleYears || 20;
   let minDate = state.focusedDate.subtract({years: Math.floor(visibleYears / 2)});
-  let maxDate = state.focusedDate.add({years: Math.ceil(visibleYears / 2)});
+  let maxDate = state.focusedDate.add({years: Math.ceil(visibleYears / 2) - 1});
   if (state.maxValue && maxDate.compare(state.maxValue) > 0) {
     maxDate = toCalendarDate(state.maxValue);
-    minDate = maxDate.subtract({years: visibleYears});
+    minDate = maxDate.subtract({years: visibleYears - 1});
   }
 
   if (state.minValue && minDate.compare(state.minValue) < 0) {
     minDate = toCalendarDate(state.minValue);
-    maxDate = minDate.add({years: visibleYears});
+    maxDate = minDate.add({years: visibleYears - 1});
     if (state.maxValue && maxDate.compare(state.maxValue) > 0) {
       maxDate = toCalendarDate(state.maxValue);
     }
@@ -85,7 +85,7 @@ export function useCalendarYearPicker(
   let years: CalendarYearPickerItem[] = [];
   let date = minDate;
   let value = 0;
-  while (date.compare(maxDate) < 0) {
+  while (date.compare(maxDate) <= 0) {
     if (isSameYear(date, state.focusedDate)) {
       value = years.length;
     }
