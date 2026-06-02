@@ -1,0 +1,145 @@
+{/* Copyright 2026 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '../../../src/Layout';
+export default Layout;
+import {FunctionAPI} from '../../../src/FunctionAPI';
+import {InterfaceType} from '../../../src/types';
+import docs from 'docs:@react-aria/listbox';
+
+export const section = 'Hooks';
+export const description = 'Provides the behavior and accessibility implementation for a listbox component.';
+export const isSubpage = true;
+
+# useListBox
+
+<PageDescription>{docs.exports.useListBox.description}</PageDescription>
+
+```tsx render
+"use client";
+import React from 'react';
+import {useListBox, useOption} from 'react-aria/useListBox';
+import {useListState} from 'react-stately/useListState';
+import {Item} from 'react-stately/Item';
+import {useFocusRing} from 'react-aria/useFocusRing';
+import {mergeProps} from 'react-aria/mergeProps';
+
+function ListBox(props) {
+  // Create state based on the incoming props.
+  let state = useListState(props);
+  let ref = React.useRef(null);
+  let {listBoxProps, labelProps} = useListBox(props, state, ref);
+
+  return (
+    <>
+      <div {...labelProps}>{props.label}</div>
+      <ul
+        {...listBoxProps}
+        ref={ref}
+        style={{
+          padding: 0,
+          margin: '5px 0',
+          listStyle: 'none',
+          border: '1px solid gray',
+          maxWidth: 250,
+          maxHeight: 300,
+          overflow: 'auto'
+        }}>
+        {[...state.collection].map(item => (
+          <Option key={item.key} item={item} state={state} />
+        ))}
+      </ul>
+    </>
+  );
+}
+
+function Option({item, state}) {
+  let ref = React.useRef(null);
+  let {optionProps, isSelected, isDisabled} = useOption({key: item.key}, state, ref);
+
+  // Determine whether we should show a keyboard focus ring for accessibility.
+  let {isFocusVisible, focusProps} = useFocusRing();
+
+  return (
+    <li
+      {...mergeProps(optionProps, focusProps)}
+      ref={ref}
+      style={{
+        display: 'block',
+        padding: '2px 5px',
+        outline: isFocusVisible ? '2px solid orange' : 'none',
+        background: isSelected ? 'blueviolet' : 'transparent',
+        color: isSelected ? 'white' : isDisabled ? '#aaa' : 'inherit',
+        cursor: 'default'
+      }}>
+      {item.rendered}
+    </li>
+  );
+}
+
+<ListBox label="Alignment" selectionMode="single">
+  <Item>Left</Item>
+  <Item>Middle</Item>
+  <Item>Right</Item>
+</ListBox>
+```
+
+## Features
+
+A listbox can be built using the [&lt;select&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/select) and [&lt;option&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/option) HTML elements, but this is not possible to style consistently cross browser. `useListBox` helps achieve accessible listbox components that can be styled as needed. It follows the [ARIA listbox pattern](https://www.w3.org/WAI/ARIA/apg/patterns/listbox/).
+
+Note: `useListBox` only handles the list itself. For a dropdown similar to a `<select>`, see [useSelect](../Select/useSelect.html).
+
+* Exposed to assistive technology as a `listbox` using ARIA
+* Support for single, multiple, or no selection
+* Support for disabled items
+* Support for sections
+* Labeling support for accessibility
+* Support for mouse, touch, and keyboard interactions
+* Tab stop focus management
+* Keyboard navigation support including arrow keys, home/end, page up/down, select all, and clear
+* Automatic scrolling support during keyboard navigation
+* Typeahead to allow focusing options by typing text
+* Support for use with virtualized lists
+
+## State management
+
+`useListBox` requires knowledge of the options in the listbox in order to handle keyboard navigation and other interactions. It does this using the `Collection` interface, which is a generic interface to access sequential unique keyed data. You can implement this interface yourself, e.g. by using a prop to pass a list of item objects, but `useListState` from `react-stately` implements a JSX based interface for building collections instead. See [Collection Components](../collections) for more information.
+
+In addition, `useListState` manages the state necessary for multiple selection and exposes a `SelectionManager`, which makes use of the collection to provide an interface to update the selection state. For more information, see [Selection](../selection).
+
+## API
+
+<FunctionAPI function={docs.exports.useListBox} links={docs.links} />
+<FunctionAPI function={docs.exports.useOption} links={docs.links} />
+<FunctionAPI function={docs.exports.useListBoxSection} links={docs.links} />
+
+### AriaListBoxOptions
+
+<InterfaceType {...docs.exports.AriaListBoxOptions} />
+
+### ListBoxAria
+
+<InterfaceType {...docs.exports.ListBoxAria} />
+
+### AriaOptionProps
+
+<InterfaceType {...docs.exports.AriaOptionProps} />
+
+### OptionAria
+
+<InterfaceType {...docs.exports.OptionAria} />
+
+### AriaListBoxSectionProps
+
+<InterfaceType {...docs.exports.AriaListBoxSectionProps} />
+
+### ListBoxSectionAria
+
+<InterfaceType {...docs.exports.ListBoxSectionAria} />

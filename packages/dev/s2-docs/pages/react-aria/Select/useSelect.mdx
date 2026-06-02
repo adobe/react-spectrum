@@ -1,0 +1,184 @@
+{/* Copyright 2026 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '../../../src/Layout';
+export default Layout;
+import {FunctionAPI} from '../../../src/FunctionAPI';
+import {InterfaceType} from '../../../src/types';
+import docs from 'docs:@react-aria/select';
+
+export const section = 'Hooks';
+export const description = 'Provides the behavior and accessibility implementation for a select component.';
+export const isSubpage = true;
+
+# useSelect
+
+<PageDescription>{docs.exports.useSelect.description}</PageDescription>
+
+This example combines `useSelect` with [useButton](../Button/useButton.html) for the trigger, [useListBox](../ListBox/useListBox.html) for the popup, and [usePopover](../Popover/usePopover.html) for positioning. A &lt;`HiddenSelect`&gt; renders a hidden native `<select>` to enable browser form autofill. The `Button`, `ListBox`, and `Popover` components shown collapsed below can be shared with other components such as a ComboBox or Menu.
+
+```tsx render
+"use client";
+import React from 'react';
+import {HiddenSelect, useSelect} from 'react-aria/useSelect';
+import {useSelectState} from 'react-stately/useSelectState';
+import {Item} from 'react-stately/Item';
+import {useButton} from 'react-aria/useButton';
+import {useListBox, useOption} from 'react-aria/useListBox';
+import {usePopover} from 'react-aria/usePopover';
+import {Overlay, DismissButton} from 'react-aria/Overlay';
+
+function Select(props) {
+  // Create state based on the incoming props.
+  let state = useSelectState(props);
+
+  // Get props for child elements from useSelect.
+  let ref = React.useRef(null);
+  let {labelProps, triggerProps, valueProps, menuProps, hiddenSelectProps} = useSelect(props, state, ref);
+
+  return (
+    <div style={{display: 'inline-block'}}>
+      <div {...labelProps}>{props.label}</div>
+      <HiddenSelect {...hiddenSelectProps} />
+      <Button {...triggerProps} buttonRef={ref} style={{height: 30, fontSize: 14}}>
+        <span {...valueProps}>
+          {state.selectedItem ? state.selectedItem.rendered : 'Select an option'}
+        </span>
+        <span aria-hidden="true" style={{paddingLeft: 5}}>▼</span>
+      </Button>
+      {state.isOpen &&
+        <Popover state={state} triggerRef={ref} placement="bottom start">
+          <ListBox {...menuProps} state={state} />
+        </Popover>
+      }
+    </div>
+  );
+}
+
+///- begin collapse -///
+function Button(props) {
+  let ref = props.buttonRef;
+  let {buttonProps} = useButton(props, ref);
+  return <button {...buttonProps} ref={ref} style={props.style}>{props.children}</button>;
+}
+
+function ListBox(props) {
+  let ref = React.useRef(null);
+  let {listBoxRef = ref, state} = props;
+  let {listBoxProps} = useListBox(props, state, listBoxRef);
+
+  return (
+    <ul
+      {...listBoxProps}
+      ref={listBoxRef}
+      style={{margin: 0, padding: 0, listStyle: 'none', maxHeight: 150, overflow: 'auto', minWidth: 100}}>
+      {[...state.collection].map(item => (
+        <Option key={item.key} item={item} state={state} />
+      ))}
+    </ul>
+  );
+}
+
+function Option({item, state}) {
+  let ref = React.useRef(null);
+  let {optionProps, isSelected, isFocused, isDisabled} = useOption({key: item.key}, state, ref);
+
+  return (
+    <li
+      {...optionProps}
+      ref={ref}
+      style={{
+        background: isFocused ? 'blueviolet' : 'transparent',
+        color: isDisabled ? 'gray' : isFocused ? 'white' : 'inherit',
+        padding: '2px 5px',
+        outline: 'none',
+        cursor: 'default',
+        display: 'flex',
+        justifyContent: 'space-between',
+        gap: 10
+      }}>
+      {item.rendered}
+      {isSelected ? <span aria-hidden="true">✓</span> : null}
+    </li>
+  );
+}
+
+function Popover({children, state, ...props}) {
+  let popoverRef = React.useRef(null);
+  let {popoverProps, underlayProps} = usePopover({...props, popoverRef}, state);
+
+  return (
+    <Overlay>
+      <div {...underlayProps} style={{position: 'fixed', inset: 0}} />
+      <div
+        {...popoverProps}
+        ref={popoverRef}
+        style={{
+          ...popoverProps.style,
+          background: 'Canvas',
+          color: 'CanvasText',
+          border: '1px solid gray',
+          borderRadius: 6,
+          boxShadow: '0 8px 20px rgba(0, 0, 0, 0.1)'
+        }}>
+        <DismissButton onDismiss={state.close} />
+        {children}
+        <DismissButton onDismiss={state.close} />
+      </div>
+    </Overlay>
+  );
+}
+///- end collapse -///
+
+<Select label="Favorite Color">
+  <Item>Red</Item>
+  <Item>Orange</Item>
+  <Item>Yellow</Item>
+  <Item>Green</Item>
+  <Item>Blue</Item>
+  <Item>Purple</Item>
+  <Item>Black</Item>
+  <Item>White</Item>
+</Select>
+```
+
+## Features
+
+A select can be built using the [&lt;select&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/select) and [&lt;option&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/option) HTML elements, but this is not possible to style consistently cross browser, especially the options. `useSelect` helps achieve accessible select components that can be styled as needed without compromising on high quality interactions. It follows the [ARIA listbox pattern](https://www.w3.org/WAI/ARIA/apg/patterns/listbox/).
+
+* Exposed to assistive technology as a button with a `listbox` popup using ARIA (combined with [useListBox](../ListBox/useListBox.html))
+* Support for selecting a single option
+* Support for disabled options
+* Support for sections
+* Labeling support for accessibility
+* Support for native HTML constraint validation with customizable UI, custom validation functions, realtime validation, and server-side validation errors
+* Support for mouse, touch, and keyboard interactions
+* Tab stop focus management
+* Keyboard support for opening the listbox using the arrow keys, including automatically focusing the first or last item accordingly
+* Typeahead to allow selecting options by typing text, even without opening the listbox
+* Browser autofill integration via a hidden native `<select>` element
+* Mobile screen reader listbox dismissal support
+
+## State management
+
+`useSelect` requires knowledge of the options in the select in order to handle keyboard navigation and other interactions. It does this using the `Collection` interface, which is a generic interface to access sequential unique keyed data. You can implement this interface yourself, e.g. by using a prop to pass a list of item objects, but `useSelectState` from `react-stately` implements a JSX based interface for building collections instead. See [Collection Components](../collections) for more information.
+
+In addition, `useSelectState` manages the state necessary for selection and exposes a `SelectionManager`, which makes use of the collection to provide an interface to update the selection state. It also holds state to track if the popup is open. For more information about selection, see [Selection](../selection).
+
+## API
+
+<FunctionAPI function={docs.exports.useSelect} links={docs.links} />
+
+### AriaSelectOptions
+
+<InterfaceType {...docs.exports.AriaSelectOptions} />
+
+### SelectAria
+
+<InterfaceType {...docs.exports.SelectAria} />

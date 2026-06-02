@@ -1,0 +1,76 @@
+{/* Copyright 2026 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '../../../src/Layout';
+export default Layout;
+import {FunctionAPI} from '../../../src/FunctionAPI';
+import {InterfaceType} from '../../../src/types';
+import docs from 'docs:@react-aria/button';
+
+export const section = 'Hooks';
+export const description = 'Provides the behavior and accessibility implementation for a button.';
+export const isSubpage = true;
+
+# useButton
+
+<PageDescription>{docs.exports.useButton.description}</PageDescription>
+
+```tsx render
+"use client";
+import React from 'react';
+import {useButton} from 'react-aria/useButton';
+
+function Button(props) {
+  let ref = React.useRef(null);
+  let {buttonProps, isPressed} = useButton(props, ref);
+
+  return (
+    <button
+      {...buttonProps}
+      ref={ref}
+      style={{
+        background: isPressed ? 'darkgreen' : 'green',
+        color: 'white',
+        border: 'none',
+        padding: '8px 12px',
+        borderRadius: 8,
+        fontSize: 14,
+        cursor: 'pointer'
+      }}>
+      {props.children}
+    </button>
+  );
+}
+
+<Button onPress={() => alert('Button pressed!')}>Press me</Button>
+```
+
+## Features
+
+On the surface, building a custom styled button seems simple. However, there are many cross browser inconsistencies in interactions and accessibility features to consider. `useButton` handles all of these interactions for you, so you can focus on the styling. It follows the [ARIA button pattern](https://www.w3.org/WAI/ARIA/apg/patterns/button/).
+
+* Native HTML `<button>` support
+* `<a>` and custom element type support via ARIA
+* Mouse and touch event handling, and press state management
+* Keyboard focus management and cross browser normalization
+* Keyboard event support for <Keyboard>Space</Keyboard> and <Keyboard>Enter</Keyboard> keys
+
+Read our [blog post](blog/building-a-button-part-1) about the complexities of building buttons that work well across devices and interaction methods.
+
+## API
+
+<FunctionAPI function={docs.exports.useButton} links={docs.links} />
+
+### AriaButtonProps
+
+<InterfaceType {...docs.exports.AriaButtonProps} />
+
+### ButtonAria
+
+<InterfaceType {...docs.exports.ButtonAria} />
