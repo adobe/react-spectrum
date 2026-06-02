@@ -57,9 +57,9 @@ import {useListState} from 'react-stately/useListState';
 import {VirtualizedListBoxExample} from './VirtualizedListBox';
 
 interface ItemValue {
-  id: string,
-  type: string,
-  text: string
+  id: string;
+  type: string;
+  text: string;
 }
 let manyItems: Array<ItemValue> = [];
 for (let i = 0; i < 20; i++) {
@@ -193,7 +193,7 @@ export const DroppableGrid: DnDStoryObj = {
   render: () => (
     <Flex direction="column" alignItems="start">
       <ActionGroup
-        onAction={(action) => {
+        onAction={action => {
           switch (action) {
             case 'copy':
             case 'cut': {
@@ -230,7 +230,8 @@ export const DroppableGrid: DnDStoryObj = {
         <DroppableGridExample
           onDropEnter={action('onDropEnter')}
           onDropExit={action('onDropExit')}
-          onDrop={action('onDrop')} />
+          onDrop={action('onDrop')}
+        />
       </Flex>
     </Flex>
   ),
@@ -262,8 +263,9 @@ export const MultipleCollectionDropTargets: DnDStoryObj = {
     <Flex direction="row" gap="size-200" alignItems="center" wrap>
       <DraggableCollectionExample />
       <VirtualizedListBoxExample
-        items={manyItems.map((item) => ({...item, type: 'folder'}))}
-        accept="folder" />
+        items={manyItems.map(item => ({...item, type: 'folder'}))}
+        accept="folder"
+      />
       <VirtualizedListBoxExample items={manyItems} accept="item" />
     </Flex>
   ),
@@ -280,9 +282,11 @@ export const DraggableDisabled: DnDStoryObj = {
 export let Draggable = ({isDisabled = false}: {isDisabled?: boolean}): JSX.Element => {
   let {dragProps, isDragging} = useDrag({
     getItems() {
-      return [{
-        'text/plain': 'hello world'
-      }];
+      return [
+        {
+          'text/plain': 'hello world'
+        }
+      ];
     },
     getAllowedDropOperations() {
       return ['copy'];
@@ -295,9 +299,11 @@ export let Draggable = ({isDisabled = false}: {isDisabled?: boolean}): JSX.Eleme
 
   let {clipboardProps} = useClipboard({
     getItems() {
-      return [{
-        'text/plain': 'hello world'
-      }];
+      return [
+        {
+          'text/plain': 'hello world'
+        }
+      ];
     }
   });
 
@@ -317,7 +323,9 @@ export let Draggable = ({isDisabled = false}: {isDisabled?: boolean}): JSX.Eleme
   );
 };
 
-export let DraggableStory: DnDStory = ({isDisabled = false}: {isDisabled?: boolean}) => <Draggable isDisabled={isDisabled} />;
+export let DraggableStory: DnDStory = ({isDisabled = false}: {isDisabled?: boolean}) => (
+  <Draggable isDisabled={isDisabled} />
+);
 DraggableStory.storyName = 'Draggable';
 
 export let Droppable = ({type, children, actionId = ''}: any): JSX.Element => {
@@ -353,7 +361,9 @@ export let Droppable = ({type, children, actionId = ''}: any): JSX.Element => {
   );
 };
 
-export let DroppableStory: DnDStory = ({type, children, actionId = ''}: any) => <Droppable type={type} children={children} actionId={actionId} />;
+export let DroppableStory: DnDStory = ({type, children, actionId = ''}: any) => (
+  <Droppable type={type} children={children} actionId={actionId} />
+);
 DroppableStory.storyName = 'Droppable';
 
 function DialogButton({children}) {
@@ -385,7 +395,7 @@ function DraggableCollectionExample(props) {
     ]
   });
 
-  let onDragEnd = (e) => {
+  let onDragEnd = e => {
     if (e.dropOperation === 'move') {
       list.remove(...e.keys);
     }
@@ -421,23 +431,29 @@ function DraggableCollection(props) {
   let gridState = useGridState({
     ...props,
     selectionMode: 'multiple',
-    collection: React.useMemo(() => new GridCollection<ItemValue>({
-      columnCount: 1,
-      items: [...state.collection].map(item => ({
-        ...item,
-        childNodes: [{
-          key: `cell-${item.key}`,
-          type: 'cell',
-          index: 0,
-          value: null,
-          level: 0,
-          rendered: null,
-          textValue: item.textValue,
-          hasChildNodes: false,
-          childNodes: []
-        }]
-      }))
-    }), [state.collection])
+    collection: React.useMemo(
+      () =>
+        new GridCollection<ItemValue>({
+          columnCount: 1,
+          items: [...state.collection].map(item => ({
+            ...item,
+            childNodes: [
+              {
+                key: `cell-${item.key}`,
+                type: 'cell',
+                index: 0,
+                value: null,
+                level: 0,
+                rendered: null,
+                textValue: item.textValue,
+                hasChildNodes: false,
+                childNodes: []
+              }
+            ]
+          }))
+        }),
+      [state.collection]
+    )
   });
 
   let preview = useRef(null);
@@ -446,16 +462,18 @@ function DraggableCollection(props) {
     collection: gridState.collection,
     selectionManager: gridState.selectionManager,
     getItems(keys) {
-      return [...keys].map(key => {
-        let item = gridState.collection.getItem(key)!;
+      return [...keys]
+        .map(key => {
+          let item = gridState.collection.getItem(key)!;
 
-        // TODO why doesn't this work like DraggableCollection example?
-        return {
-          // @ts-ignore
-          [item.value.type]: item.textValue,
-          'text/plain': item.textValue
-        };
-      }).filter(item => item != null);
+          // TODO why doesn't this work like DraggableCollection example?
+          return {
+            // @ts-ignore
+            [item.value.type]: item.textValue,
+            'text/plain': item.textValue
+          };
+        })
+        .filter(item => item != null);
     },
     preview,
     onDragStart: action('onDragStart'),
@@ -463,11 +481,15 @@ function DraggableCollection(props) {
   });
   useDraggableCollection({}, dragState, ref);
 
-  let {gridProps} = useGrid({
-    ...props,
-    'aria-label': 'Draggable list',
-    focusMode: 'cell'
-  }, gridState, ref);
+  let {gridProps} = useGrid(
+    {
+      ...props,
+      'aria-label': 'Draggable list',
+      focusMode: 'cell'
+    },
+    gridState,
+    ref
+  );
 
   return (
     <div
@@ -483,7 +505,8 @@ function DraggableCollection(props) {
           item={item}
           state={gridState}
           dragState={dragState}
-          onCut={props.onCut} />
+          onCut={props.onCut}
+        />
       ))}
       <DragPreview ref={preview}>
         {() => {
@@ -491,14 +514,17 @@ function DraggableCollection(props) {
           let draggedKey = [...selectedKeys][0];
           let item = state.collection.getItem(draggedKey);
           let element = (
-            <div className={classNames(dndStyles, 'draggable', 'is-drag-preview', {'is-dragging-multiple': selectedKeys.size > 1})}>
+            <div
+              className={classNames(dndStyles, 'draggable', 'is-drag-preview', {
+                'is-dragging-multiple': selectedKeys.size > 1
+              })}>
               <div className={classNames(dndStyles, 'drag-handle')}>
                 <ShowMenu size="XS" />
               </div>
               {item && <span>{item.rendered}</span>}
-              {selectedKeys.size > 1 &&
+              {selectedKeys.size > 1 && (
                 <div className={classNames(dndStyles, 'badge')}>{selectedKeys.size}</div>
-              }
+              )}
             </div>
           );
 
@@ -519,16 +545,27 @@ function DraggableCollectionItem({item, state, dragState, onCut}) {
   let cellNode = [...item.childNodes][0];
   let isSelected = state.selectionManager.isSelected(item.key);
 
-  let {rowProps} = useGridRow({
-    node: item,
-    shouldSelectOnPressUp: true
-  }, state, rowRef);
-  let {gridCellProps} = useGridCell({
-    node: cellNode,
-    focusMode: 'cell'
-  }, state, cellRef);
+  let {rowProps} = useGridRow(
+    {
+      node: item,
+      shouldSelectOnPressUp: true
+    },
+    state,
+    rowRef
+  );
+  let {gridCellProps} = useGridCell(
+    {
+      node: cellNode,
+      focusMode: 'cell'
+    },
+    state,
+    cellRef
+  );
 
-  let {dragProps, dragButtonProps} = useDraggableItem({key: item.key, hasDragButton: true}, dragState);
+  let {dragProps, dragButtonProps} = useDraggableItem(
+    {key: item.key, hasDragButton: true},
+    dragState
+  );
 
   let {clipboardProps} = useClipboard({
     getItems: () => dragState.getItems(item.key),
@@ -536,10 +573,13 @@ function DraggableCollectionItem({item, state, dragState, onCut}) {
   });
 
   let buttonRef = React.useRef(null);
-  let {buttonProps} = useButton({
-    ...dragButtonProps,
-    elementType: 'div'
-  }, buttonRef);
+  let {buttonProps} = useButton(
+    {
+      ...dragButtonProps,
+      elementType: 'div'
+    },
+    buttonRef
+  );
   let id = useId();
 
   return (
@@ -555,7 +595,7 @@ function DraggableCollectionItem({item, state, dragState, onCut}) {
           })}>
           <FocusRing focusRingClass={classNames(dndStyles, 'focus-ring')}>
             <div
-              {...buttonProps as React.HTMLAttributes<HTMLElement>}
+              {...(buttonProps as React.HTMLAttributes<HTMLElement>)}
               ref={buttonRef}
               className={classNames(dndStyles, 'drag-handle')}>
               <ShowMenu size="XS" />
@@ -569,7 +609,7 @@ function DraggableCollectionItem({item, state, dragState, onCut}) {
 }
 
 export const DraggableEnabledDisabledControl: DnDStoryObj = {
-  render: (args) => (
+  render: args => (
     <Flex direction="row" gap="size-200" alignItems="center" wrap>
       <DraggableCollectionExample {...args} />
       <DroppableListBoxExample />
@@ -585,7 +625,7 @@ export const DraggableEnabledDisabledControl: DnDStoryObj = {
 };
 
 export const DroppableEnabledDisabledControl: DnDStoryObj = {
-  render: (args) => (
+  render: args => (
     <Flex direction="row" gap="size-200" alignItems="center" wrap>
       <DraggableCollectionExample />
       <DroppableListBoxExample {...args} />
@@ -602,11 +642,11 @@ export const DroppableEnabledDisabledControl: DnDStoryObj = {
 
 interface PreviewOffsetArgs {
   /** Strategy for positioning the preview. */
-  mode: 'default' | 'custom',
+  mode: 'default' | 'custom';
   /** X offset in pixels (only used when mode = custom). */
-  offsetX: number,
+  offsetX: number;
   /** Y offset in pixels (only used when mode = custom). */
-  offsetY: number
+  offsetY: number;
 }
 
 function DraggableWithPreview({mode, offsetX, offsetY}: PreviewOffsetArgs): JSX.Element {
@@ -614,9 +654,11 @@ function DraggableWithPreview({mode, offsetX, offsetY}: PreviewOffsetArgs): JSX.
 
   const {dragProps, isDragging} = useDrag({
     getItems() {
-      return [{
-        'text/plain': 'preview offset demo'
-      }];
+      return [
+        {
+          'text/plain': 'preview offset demo'
+        }
+      ];
     },
     preview,
     onDragStart: action('onDragStart'),
@@ -625,9 +667,11 @@ function DraggableWithPreview({mode, offsetX, offsetY}: PreviewOffsetArgs): JSX.
 
   const {clipboardProps} = useClipboard({
     getItems() {
-      return [{
-        'text/plain': 'preview offset demo'
-      }];
+      return [
+        {
+          'text/plain': 'preview offset demo'
+        }
+      ];
     }
   });
 
@@ -667,7 +711,7 @@ function DraggableWithPreview({mode, offsetX, offsetY}: PreviewOffsetArgs): JSX.
 }
 
 export const PreviewOffset: DnDStoryObj = {
-  render: (args) => (
+  render: args => (
     <Flex direction="column" gap="size-200" alignItems="center">
       <DraggableWithPreview {...args} />
       <Droppable />
@@ -697,7 +741,7 @@ export const PreviewOffset: DnDStoryObj = {
 };
 
 export const CollectionPreviewOffset: DnDStoryObj = {
-  render: (args) => (
+  render: args => (
     <Flex direction="column" gap="size-200" alignItems="center">
       <DraggableCollectionExample {...args} />
       <Droppable />

@@ -15,23 +15,23 @@ import {useAction} from '../utils/useAction';
 
 export interface SearchFieldProps extends TextFieldProps {
   /** Handler that is called when the SearchField is submitted. */
-  onSubmit?: (value: string) => void,
+  onSubmit?: (value: string) => void;
 
   /** Handler that is called when the clear button is pressed. */
-  onClear?: () => void,
+  onClear?: () => void;
 
   /** Async action that is called when the SearchField is submitted. */
-  submitAction?: (value: string) => void | Promise<void>,
-  
+  submitAction?: (value: string) => void | Promise<void>;
+
   /** Async action that is called when the clear button is pressed. */
-  clearAction?: () => void | Promise<void>
+  clearAction?: () => void | Promise<void>;
 }
 
 export interface SearchFieldState extends TextFieldState {
   /** Clears the search field. */
-  clear(): void,
+  clear(): void;
   /** Submits the search field. */
-  submit(): void
+  submit(): void;
 }
 
 /**

@@ -15,7 +15,7 @@ import {Key} from '@react-types/shared';
 
 // numbers and percents are considered static. *fr units or a lack of units are considered dynamic.
 export function isStatic(width?: ColumnSize | null): boolean {
-  return width != null && (!isNaN(width as number) || (String(width)).match(/^(\d+)(?=%$)/) !== null);
+  return width != null && (!isNaN(width as number) || String(width).match(/^(\d+)(?=%$)/) !== null);
 }
 
 export function parseFractionalUnit(width?: ColumnSize | null): number {
@@ -26,8 +26,10 @@ export function parseFractionalUnit(width?: ColumnSize | null): number {
   // if width is the incorrect format, just default it to a 1fr
   if (!match) {
     if (process.env.NODE_ENV !== 'production') {
-      console.warn(`width: ${width} is not a supported format, width should be a number (ex. 150), percentage (ex. '50%') or fr unit (ex. '2fr')`,
-        'defaulting to \'1fr\'');
+      console.warn(
+        `width: ${width} is not a supported format, width should be a number (ex. 150), percentage (ex. '50%') or fr unit (ex. '2fr')`,
+        "defaulting to '1fr'"
+      );
     }
     return 1;
   }
@@ -45,69 +47,79 @@ export function parseStaticWidth(width: number | string, tableWidth: number): nu
   return width;
 }
 
-
-export function getMaxWidth(maxWidth: number | string | null | undefined, tableWidth: number): number {
-  return maxWidth != null
-    ? parseStaticWidth(maxWidth, tableWidth)
-    : Number.MAX_SAFE_INTEGER;
+export function getMaxWidth(
+  maxWidth: number | string | null | undefined,
+  tableWidth: number
+): number {
+  return maxWidth != null ? parseStaticWidth(maxWidth, tableWidth) : Number.MAX_SAFE_INTEGER;
 }
 
 // cannot support FR units, we'd need to know everything else in the table to do that
 export function getMinWidth(minWidth: number | string, tableWidth: number): number {
-  return minWidth != null
-    ? parseStaticWidth(minWidth, tableWidth)
-    : 0;
+  return minWidth != null ? parseStaticWidth(minWidth, tableWidth) : 0;
 }
 
-
 export interface IColumn {
-  minWidth?: number | string,
-  maxWidth?: number | string,
-  width?: number | string,
-  defaultWidth?: number | string,
-  key: Key
+  minWidth?: number | string;
+  maxWidth?: number | string;
+  width?: number | string;
+  defaultWidth?: number | string;
+  key: Key;
 }
 
 interface FlexItem {
-  frozen: boolean,
-  baseSize: number,
-  hypotheticalMainSize: number,
-  min: number,
-  max: number,
-  flex: number,
-  targetMainSize: number,
-  violation: number
+  frozen: boolean;
+  baseSize: number;
+  hypotheticalMainSize: number;
+  min: number;
+  max: number;
+  flex: number;
+  targetMainSize: number;
+  violation: number;
 }
 
 /**
  * Implements the flex algorithm described in https://www.w3.org/TR/css-flexbox-1/#layout-algorithm
- * It makes a few constraint/assumptions:
- * 1. All basis values are 0 unless it is a static width, then the basis is the static width
- * 2. All flex grow and shrink values are equal to the FR specified on the column, grow and shrink for the same column are equal
- * 3. We only have one row
- * An example of the setup can be seen here https://jsfiddle.net/snowystinger/wv0ymjaf/61/ where I let the browser figure out the
- * flex of the columns.
- * Note: We differ in one key aspect, all of our column widths must be whole numbers, so we avoid browser
- * sub pixel rounding errors. To do this, we use a cascading rounding algorithm to ensure that the sum of the widths is maintained
- * while distributing the rounding remainder across the columns.
+ * It makes a few constraint/assumptions: 1. All basis values are 0 unless it is a static width,
+ * then the basis is the static width 2. All flex grow and shrink values are equal to the FR
+ * specified on the column, grow and shrink for the same column are equal 3. We only have one row An
+ * example of the setup can be seen here https://jsfiddle.net/snowystinger/wv0ymjaf/61/ where I let
+ * the browser figure out the flex of the columns. Note: We differ in one key aspect, all of our
+ * column widths must be whole numbers, so we avoid browser sub pixel rounding errors. To do this,
+ * we use a cascading rounding algorithm to ensure that the sum of the widths is maintained while
+ * distributing the rounding remainder across the columns.
  *
- * As noted in the chrome source code, this algorithm is very accurate, but has the potential to be quadratic.
- * They have deemed this to be acceptable because the number of elements is usually small and the flex factors
- * are usually not high variance. I believe we can make the same assumptions. Particularly once resizing is
- * started, it will convert all columns to the left to static widths, so it will cut down on the number of FR columns.
+ * As noted in the chrome source code, this algorithm is very accurate, but has the potential to be
+ * quadratic. They have deemed this to be acceptable because the number of elements is usually small
+ * and the flex factors are usually not high variance. I believe we can make the same assumptions.
+ * Particularly once resizing is started, it will convert all columns to the left to static widths,
+ * so it will cut down on the number of FR columns.
  *
- * There are likely faster ways to do this, I've chosen to stick to the spec as closely as possible for readability, accuracy, and for the
- * note that this behaving quadratically is unlikely to be a problem.
+ * There are likely faster ways to do this, I've chosen to stick to the spec as closely as possible
+ * for readability, accuracy, and for the note that this behaving quadratically is unlikely to be a
+ * problem.
+ *
  * @param availableWidth - The visible width of the table.
  * @param columns - The table defined columns.
  * @param changedColumns - Any columns we want to override, for example, during resizing.
  * @param getDefaultWidth - A function that returns the default width of a column by its index.
- * @param getDefaultMinWidth - A function that returns the default min width of a column by its index.
+ * @param getDefaultMinWidth - A function that returns the default min width of a column by its
+ *   index.
  */
-export function calculateColumnSizes(availableWidth: number, columns: IColumn[], changedColumns: Map<Key, ColumnSize>, getDefaultWidth?: (index: number) => ColumnSize | null | undefined, getDefaultMinWidth?: (index: number) => ColumnSize | null | undefined): number[] {
+export function calculateColumnSizes(
+  availableWidth: number,
+  columns: IColumn[],
+  changedColumns: Map<Key, ColumnSize>,
+  getDefaultWidth?: (index: number) => ColumnSize | null | undefined,
+  getDefaultMinWidth?: (index: number) => ColumnSize | null | undefined
+): number[] {
   let hasNonFrozenItems = false;
   let flexItems: FlexItem[] = columns.map((column, index) => {
-    let width: ColumnSize = (changedColumns.get(column.key) != null ? changedColumns.get(column.key) ?? '1fr' : column.width ?? column.defaultWidth ?? getDefaultWidth?.(index) ?? '1fr') as ColumnSize;
+    let width: ColumnSize = (
+      changedColumns.get(column.key) != null
+        ? (changedColumns.get(column.key) ?? '1fr')
+        : (column.width ?? column.defaultWidth ?? getDefaultWidth?.(index) ?? '1fr')
+    ) as ColumnSize;
     let frozen = false;
     let baseSize = 0;
     let flex = 0;
@@ -189,10 +201,10 @@ export function calculateColumnSizes(availableWidth: number, columns: IColumn[],
      * proportional to the ratio.
      */
     if (remainingFreeSpace > 0) {
-      flexItems.forEach((item) => {
+      flexItems.forEach(item => {
         if (!item.frozen) {
           let ratio = item.flex / flexFactors;
-          item.targetMainSize = item.baseSize + (ratio * remainingFreeSpace);
+          item.targetMainSize = item.baseSize + ratio * remainingFreeSpace;
         }
       });
     }

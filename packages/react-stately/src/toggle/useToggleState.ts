@@ -18,49 +18,50 @@ export interface ToggleStateOptions extends InputBase {
   /**
    * Whether the element should be selected (uncontrolled).
    */
-  defaultSelected?: boolean,
+  defaultSelected?: boolean;
   /**
    * Whether the element should be selected (controlled).
    */
-  isSelected?: boolean,
+  isSelected?: boolean;
   /**
    * Handler that is called when the element's selection state changes.
    */
-  onChange?: (isSelected: boolean) => void,
+  onChange?: (isSelected: boolean) => void;
   /**
    * Async action that is called when the state changes.
    * During the action, the button is in a pending state.
    * Only supported in React 19 and later.
    */
-  changeAction?: (isSelected: boolean) => void | Promise<void>
+  changeAction?: (isSelected: boolean) => void | Promise<void>;
 }
 
 export interface ToggleProps extends ToggleStateOptions, Validation<boolean>, FocusableProps {
   /**
    * The label for the element.
    */
-  children?: ReactNode,
+  children?: ReactNode;
   /**
-   * The value of the input element, used when submitting an HTML form. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefvalue).
+   * The value of the input element, used when submitting an HTML form. See
+   * [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefvalue).
    */
-  value?: string
+  value?: string;
 }
 
 export interface ToggleState {
   /** Whether the toggle is selected. */
-  readonly isSelected: boolean,
+  readonly isSelected: boolean;
 
   /** Whether the toggle is selected by default. */
-  readonly defaultSelected: boolean,
+  readonly defaultSelected: boolean;
 
   /** Whether the change action is pending. */
-  readonly isPending: boolean,
+  readonly isPending: boolean;
 
   /** Updates selection state. */
-  setSelected(isSelected: boolean): void,
+  setSelected(isSelected: boolean): void;
 
   /** Toggle the selection state. */
-  toggle(): void
+  toggle(): void;
 }
 
 /**
@@ -69,7 +70,12 @@ export interface ToggleState {
 export function useToggleState(props: ToggleStateOptions = {}): ToggleState {
   let {isReadOnly} = props;
 
-  let [isSelected, isPending, setSelected] = useControlledStateAction(props.isSelected, props.defaultSelected || false, props.onChange, props.changeAction);
+  let [isSelected, isPending, setSelected] = useControlledStateAction(
+    props.isSelected,
+    props.defaultSelected || false,
+    props.onChange,
+    props.changeAction
+  );
   let [initialValue] = useState(isSelected);
 
   function updateSelected(value) {

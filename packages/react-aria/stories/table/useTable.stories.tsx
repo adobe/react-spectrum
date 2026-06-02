@@ -54,18 +54,10 @@ const Template = (args: SpectrumTableProps<any>): JSX.Element => (
     <input id="focusable-before" />
     <Table aria-label="Table with selection" selectionMode="multiple" {...args}>
       <TableHeader columns={columns}>
-        {column => (
-          <Column key={column.uid}>
-            {column.name}
-          </Column>
-        )}
+        {column => <Column key={column.uid}>{column.name}</Column>}
       </TableHeader>
       <TableBody items={defaultRows}>
-        {item => (
-          <Row>
-            {columnKey => <Cell>{item[columnKey]}</Cell>}
-          </Row>
-        )}
+        {item => <Row>{columnKey => <Cell>{item[columnKey]}</Cell>}</Row>}
       </TableBody>
     </Table>
     <label htmlFor="focus-after">Focusable after</label>
@@ -79,33 +71,23 @@ const TemplateBackwardsCompat = (args: SpectrumTableProps<any>): JSX.Element => 
     <input id="focusable-before" />
     <BackwardCompatTable aria-label="Table with selection" selectionMode="multiple" {...args}>
       <TableHeader columns={columns}>
-        {column => (
-          <Column key={column.uid}>
-            {column.name}
-          </Column>
-        )}
+        {column => <Column key={column.uid}>{column.name}</Column>}
       </TableHeader>
       <TableBody items={defaultRows}>
-        {item => (
-          <Row>
-            {columnKey => <Cell>{item[columnKey]}</Cell>}
-          </Row>
-        )}
+        {item => <Row>{columnKey => <Cell>{item[columnKey]}</Cell>}</Row>}
       </TableBody>
     </BackwardCompatTable>
-    <label htmlFor="focusable-after">
-      Focusable after
-    </label>
+    <label htmlFor="focusable-after">Focusable after</label>
     <input id="focusable-after" />
   </>
 );
 
 export const ScrollTesting: StoryObj<typeof Table> = {
-  render: (args) => <Template {...args} />
+  render: args => <Template {...args} />
 };
 
 export const ActionTesting: StoryObj<typeof Table> = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   args: {selectionBehavior: 'replace', selectionStyle: 'highlight', onAction: action('onAction')},
   parameters: {
     a11y: {
@@ -118,7 +100,7 @@ export const ActionTesting: StoryObj<typeof Table> = {
 };
 
 export const BackwardCompatActionTesting: StoryObj<typeof Table> = {
-  render: (args) => <TemplateBackwardsCompat {...args} />,
+  render: args => <TemplateBackwardsCompat {...args} />,
   args: {selectionBehavior: 'replace', selectionStyle: 'highlight', onAction: action('onAction')},
   parameters: {
     a11y: {
@@ -132,27 +114,27 @@ export const BackwardCompatActionTesting: StoryObj<typeof Table> = {
 
 export const TableWithResizingNoProps: StoryObj<typeof Table> = {
   args: {},
-  render: (args) => (
+  render: args => (
     <ResizingTable {...args}>
       <TableHeader columns={columns}>
-        {(column) => (
+        {column => (
           <Column key={column.uid} allowsResizing>
             {column.name}
           </Column>
         )}
       </TableHeader>
       <TableBody items={defaultRows}>
-        {(item) => <Row>{(columnKey) => <Cell>{item[columnKey]}</Cell>}</Row>}
+        {item => <Row>{columnKey => <Cell>{item[columnKey]}</Cell>}</Row>}
       </TableBody>
     </ResizingTable>
   )
 };
 
 interface ColumnData {
-  name: string,
-  uid: string,
-  defaultWidth?: ColumnSize | null,
-  width?: ColumnSize | null
+  name: string;
+  uid: string;
+  defaultWidth?: ColumnSize | null;
+  width?: ColumnSize | null;
 }
 let columnsDefaultFR: ColumnData[] = [
   {name: 'Name', uid: 'name', defaultWidth: '1fr'},
@@ -166,32 +148,41 @@ export const TableWithResizingFRs: StoryObj<typeof Table> = {
     <ResizingTable>
       <TableHeader columns={columnsDefaultFR}>
         {column => (
-          <Column key={column.uid} defaultWidth={column.defaultWidth} width={column.width} allowsResizing>
+          <Column
+            key={column.uid}
+            defaultWidth={column.defaultWidth}
+            width={column.width}
+            allowsResizing>
             {column.name}
           </Column>
         )}
       </TableHeader>
       <TableBody items={defaultRows}>
-        {item => (
-          <Row>
-            {columnKey => <Cell>{item[columnKey]}</Cell>}
-          </Row>
-        )}
+        {item => <Row>{columnKey => <Cell>{item[columnKey]}</Cell>}</Row>}
       </TableBody>
     </ResizingTable>
   )
 };
 
-function ControlledTableResizing(props: {columns: Array<{name: string, uid: string, width?: ColumnSize | null}>, rows: typeof defaultRows[0][], onResize: any}): JSX.Element {
+function ControlledTableResizing(props: {
+  columns: Array<{name: string; uid: string; width?: ColumnSize | null}>;
+  rows: (typeof defaultRows)[0][];
+  onResize: any;
+}): JSX.Element {
   let {columns, rows = defaultRows, onResize, ...otherProps} = props;
-  let [widths, _setWidths] = useState<Map<Key, ColumnSize | null>>(() => new Map(columns.filter(col => col.width).map((col) => [col.uid as Key, col.width ?? null])));
+  let [widths, _setWidths] = useState<Map<Key, ColumnSize | null>>(
+    () => new Map(columns.filter(col => col.width).map(col => [col.uid as Key, col.width ?? null]))
+  );
 
-  let setWidths = useCallback((vals: Map<Key, ColumnSize>) => {
-    let controlledKeys = new Set(columns.filter(col => col.width).map((col) => col.uid as Key));
-    let newVals = new Map(Array.from(vals).filter(([key]) => controlledKeys.has(key)));
-    _setWidths(newVals);
-    onResize?.(vals);
-  }, [columns, onResize]);
+  let setWidths = useCallback(
+    (vals: Map<Key, ColumnSize>) => {
+      let controlledKeys = new Set(columns.filter(col => col.width).map(col => col.uid as Key));
+      let newVals = new Map(Array.from(vals).filter(([key]) => controlledKeys.has(key)));
+      _setWidths(newVals);
+      onResize?.(vals);
+    },
+    [columns, onResize]
+  );
   let [savedCols, setSavedCols] = useState(widths);
   let [renderKey, setRenderKey] = useState(Math.random());
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -204,8 +195,16 @@ function ControlledTableResizing(props: {columns: Array<{name: string, uid: stri
         onClick={() => {
           _setWidths(savedCols);
           setRenderKey(Math.random());
-        }}>Restore Cols</button>
-      <div>Current saved column state: {'{'}{Array.from(savedCols).map(([key, entry]) => `${key} => ${entry}`).join(',')}{'}'}</div>
+        }}>
+        Restore Cols
+      </button>
+      <div>
+        Current saved column state: {'{'}
+        {Array.from(savedCols)
+          .map(([key, entry]) => `${key} => ${entry}`)
+          .join(',')}
+        {'}'}
+      </div>
       <div key={renderKey}>
         <ResizingTable onResize={setWidths} {...otherProps}>
           <TableHeader columns={cols}>
@@ -216,11 +215,7 @@ function ControlledTableResizing(props: {columns: Array<{name: string, uid: stri
             )}
           </TableHeader>
           <TableBody items={rows}>
-            {item => (
-              <Row>
-                {columnKey => <Cell>{item[columnKey]}</Cell>}
-              </Row>
-            )}
+            {item => <Row>{columnKey => <Cell>{item[columnKey]}</Cell>}</Row>}
           </TableBody>
         </ResizingTable>
       </div>
@@ -236,13 +231,17 @@ let columnsFR: ColumnData[] = [
 
 export const TableWithResizingFRsControlled: StoryObj<typeof ControlledTableResizing> = {
   args: {columns: columnsFR},
-  render: (args) => <ControlledTableResizing {...args} />,
-  parameters: {description: {data: `
+  render: args => <ControlledTableResizing {...args} />,
+  parameters: {
+    description: {
+      data: `
   You can use the buttons to save and restore the column widths. When restoring,
   you will see a quick flash because the entire table is re-rendered. This
   mimics what would happen if an app reloaded the whole page and restored a saved
   column width state.
-  `}}
+  `
+    }
+  }
 };
 
 let columnsSomeFR: ColumnData[] = [
@@ -255,18 +254,22 @@ let columnsSomeFR: ColumnData[] = [
 
 export const TableWithSomeResizingFRsControlled: StoryObj<typeof ControlledTableResizing> = {
   args: {columns: columnsSomeFR},
-  render: (args) => <ControlledTableResizing {...args} />,
-  parameters: {description: {data: `
+  render: args => <ControlledTableResizing {...args} />,
+  parameters: {
+    description: {
+      data: `
   You can use the buttons to save and restore the column widths. When restoring,
   you will see a quick flash because the entire table is re-rendered. This
   mimics what would happen if an app reloaded the whole page and restored a saved
   column width state.
-  `}}
+  `
+    }
+  }
 };
 
 export const DocExample: StoryObj<typeof DocsTable> = {
   args: {},
-  render: (args) => (
+  render: args => (
     <DocsTable
       aria-label="Table with always visible resizers"
       onResizeStart={action('onResizeStart')}
@@ -281,11 +284,7 @@ export const DocExample: StoryObj<typeof DocsTable> = {
         )}
       </TableHeader>
       <TableBody items={defaultRows}>
-        {item => (
-          <Row>
-            {columnKey => <Cell>{item[columnKey]}</Cell>}
-          </Row>
-        )}
+        {item => <Row>{columnKey => <Cell>{item[columnKey]}</Cell>}</Row>}
       </TableBody>
     </DocsTable>
   )
@@ -293,19 +292,26 @@ export const DocExample: StoryObj<typeof DocsTable> = {
 
 export const DocExampleControlled: StoryObj<typeof ControlledDocsTable> = {
   args: {columns: columnsFR},
-  render: (args) => (
-    <ControlledDocsTable {...args} />
-  )
+  render: args => <ControlledDocsTable {...args} />
 };
 
-function ControlledDocsTable(props: {columns: Array<{name: string, uid: string, width?: ColumnSize | null}>, rows: any, onResize: any}): JSX.Element {
+function ControlledDocsTable(props: {
+  columns: Array<{name: string; uid: string; width?: ColumnSize | null}>;
+  rows: any;
+  onResize: any;
+}): JSX.Element {
   let {columns, onResize, ...otherProps} = props;
-  let [widths, _setWidths] = useState(() => new Map(columns.filter(col => col.width).map((col) => [col.uid as Key, col.width ?? null])));
-  let setWidths = useCallback((newWidths: Map<Key, ColumnSize>) => {
-    let controlledKeys = new Set(columns.filter(col => col.width).map((col) => col.uid as Key));
-    let newVals = new Map(Array.from(newWidths).filter(([key]) => controlledKeys.has(key)));
-    _setWidths(newVals);
-  }, [columns]);
+  let [widths, _setWidths] = useState(
+    () => new Map(columns.filter(col => col.width).map(col => [col.uid as Key, col.width ?? null]))
+  );
+  let setWidths = useCallback(
+    (newWidths: Map<Key, ColumnSize>) => {
+      let controlledKeys = new Set(columns.filter(col => col.width).map(col => col.uid as Key));
+      let newVals = new Map(Array.from(newWidths).filter(([key]) => controlledKeys.has(key)));
+      _setWidths(newVals);
+    },
+    [columns]
+  );
 
   // Needed to get past column caching so new sizes actually are rendered
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -324,11 +330,7 @@ function ControlledDocsTable(props: {columns: Array<{name: string, uid: string, 
         )}
       </TableHeader>
       <TableBody items={defaultRows}>
-        {item => (
-          <Row>
-            {columnKey => <Cell>{item[columnKey]}</Cell>}
-          </Row>
-        )}
+        {item => <Row>{columnKey => <Cell>{item[columnKey]}</Cell>}</Row>}
       </TableBody>
     </DocsTable>
   );

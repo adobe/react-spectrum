@@ -46,31 +46,41 @@ const Template = (args: SpectrumTabsProps<object>): JSX.Element => (
       <Item key="val1">
         <Heading>Tab Body 1</Heading>
         <Text>
-          Dolore ex esse laboris elit magna esse sunt. Pariatur in veniam Lorem est occaecat do magna nisi mollit ipsum sit adipisicing fugiat ex. Pariatur ullamco exercitation ea qui adipisicing.
+          Dolore ex esse laboris elit magna esse sunt. Pariatur in veniam Lorem est occaecat do
+          magna nisi mollit ipsum sit adipisicing fugiat ex. Pariatur ullamco exercitation ea qui
+          adipisicing.
         </Text>
       </Item>
       <Item key="val2">
         <Heading>Tab Body 2</Heading>
         <Text>
-          Dolore ex esse laboris elit magna esse sunt. Pariatur in veniam Lorem est occaecat do magna nisi mollit ipsum sit adipisicing fugiat ex. Pariatur ullamco exercitation ea qui adipisicing.
+          Dolore ex esse laboris elit magna esse sunt. Pariatur in veniam Lorem est occaecat do
+          magna nisi mollit ipsum sit adipisicing fugiat ex. Pariatur ullamco exercitation ea qui
+          adipisicing.
         </Text>
       </Item>
       <Item key="val3">
         <Heading>Tab Body 3</Heading>
         <Text>
-          Dolore ex esse laboris elit magna esse sunt. Pariatur in veniam Lorem est occaecat do magna nisi mollit ipsum sit adipisicing fugiat ex. Pariatur ullamco exercitation ea qui adipisicing.
+          Dolore ex esse laboris elit magna esse sunt. Pariatur in veniam Lorem est occaecat do
+          magna nisi mollit ipsum sit adipisicing fugiat ex. Pariatur ullamco exercitation ea qui
+          adipisicing.
         </Text>
       </Item>
       <Item key="val4">
         <Heading>Tab Body 4</Heading>
         <Text>
-          Dolore ex esse laboris elit magna esse sunt. Pariatur in veniam Lorem est occaecat do magna nisi mollit ipsum sit adipisicing fugiat ex. Pariatur ullamco exercitation ea qui adipisicing.
+          Dolore ex esse laboris elit magna esse sunt. Pariatur in veniam Lorem est occaecat do
+          magna nisi mollit ipsum sit adipisicing fugiat ex. Pariatur ullamco exercitation ea qui
+          adipisicing.
         </Text>
       </Item>
       <Item key="val5">
         <Heading>Tab Body 5</Heading>
         <Text>
-          Dolore ex esse laboris elit magna esse sunt. Pariatur in veniam Lorem est occaecat do magna nisi mollit ipsum sit adipisicing fugiat ex. Pariatur ullamco exercitation ea qui adipisicing.
+          Dolore ex esse laboris elit magna esse sunt. Pariatur in veniam Lorem est occaecat do
+          magna nisi mollit ipsum sit adipisicing fugiat ex. Pariatur ullamco exercitation ea qui
+          adipisicing.
         </Text>
       </Item>
     </TabPanels>
@@ -78,42 +88,48 @@ const Template = (args: SpectrumTabsProps<object>): JSX.Element => (
 );
 
 export const Default: TabsStoryProps = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   args: {}
 };
 
 export const DefaultMobileViewport: TabsStoryProps = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   parameters: {chromatic: {viewports: [320]}}
 };
 
 export const Quiet: TabsStoryProps = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   args: {...Default.args, isQuiet: true}
 };
 
 export const Emphasized: TabsStoryProps = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   args: {...Default.args, isEmphasized: true}
 };
 
 export const Compact: TabsStoryProps = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   args: {...Default.args, density: 'compact'}
 };
 
 export const CompactQuiet: TabsStoryProps = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   args: {...Quiet.args, ...Compact.args}
 };
 
 export const Vertical: TabsStoryProps = {
-  render: (args) => (
+  render: args => (
     <Tabs {...args} aria-label="Tab example" maxWidth={500}>
       <TabList>
         <Item key="val1">Tab 1</Item>
-        <Item key="val2"><span lang="ja">バナーおよびディスプレイ広告</span></Item>
-        <Item key="val3"><span lang="de" style={{hyphens: 'auto'}}>Rindfleischetikettierungsüberwachungsaufgabenübertragungsgesetz</span></Item>
+        <Item key="val2">
+          <span lang="ja">バナーおよびディスプレイ広告</span>
+        </Item>
+        <Item key="val3">
+          <span lang="de" style={{hyphens: 'auto'}}>
+            Rindfleischetikettierungsüberwachungsaufgabenübertragungsgesetz
+          </span>
+        </Item>
         <Item key="val4">Tab 4</Item>
         <Item key="val5">Tab 5</Item>
       </TabList>
@@ -121,31 +137,41 @@ export const Vertical: TabsStoryProps = {
         <Item key="val1">
           <Heading>Tab Body 1</Heading>
           <Text>
-            Dolore ex esse laboris elit magna esse sunt. Pariatur in veniam Lorem est occaecat do magna nisi mollit ipsum sit adipisicing fugiat ex. Pariatur ullamco exercitation ea qui adipisicing.
+            Dolore ex esse laboris elit magna esse sunt. Pariatur in veniam Lorem est occaecat do
+            magna nisi mollit ipsum sit adipisicing fugiat ex. Pariatur ullamco exercitation ea qui
+            adipisicing.
           </Text>
         </Item>
         <Item key="val2">
           <Heading>Tab Body 2</Heading>
           <Text>
-            Dolore ex esse laboris elit magna esse sunt. Pariatur in veniam Lorem est occaecat do magna nisi mollit ipsum sit adipisicing fugiat ex. Pariatur ullamco exercitation ea qui adipisicing.
+            Dolore ex esse laboris elit magna esse sunt. Pariatur in veniam Lorem est occaecat do
+            magna nisi mollit ipsum sit adipisicing fugiat ex. Pariatur ullamco exercitation ea qui
+            adipisicing.
           </Text>
         </Item>
         <Item key="val3">
           <Heading>Tab Body 3</Heading>
           <Text>
-            Dolore ex esse laboris elit magna esse sunt. Pariatur in veniam Lorem est occaecat do magna nisi mollit ipsum sit adipisicing fugiat ex. Pariatur ullamco exercitation ea qui adipisicing.
+            Dolore ex esse laboris elit magna esse sunt. Pariatur in veniam Lorem est occaecat do
+            magna nisi mollit ipsum sit adipisicing fugiat ex. Pariatur ullamco exercitation ea qui
+            adipisicing.
           </Text>
         </Item>
         <Item key="val4">
           <Heading>Tab Body 4</Heading>
           <Text>
-            Dolore ex esse laboris elit magna esse sunt. Pariatur in veniam Lorem est occaecat do magna nisi mollit ipsum sit adipisicing fugiat ex. Pariatur ullamco exercitation ea qui adipisicing.
+            Dolore ex esse laboris elit magna esse sunt. Pariatur in veniam Lorem est occaecat do
+            magna nisi mollit ipsum sit adipisicing fugiat ex. Pariatur ullamco exercitation ea qui
+            adipisicing.
           </Text>
         </Item>
         <Item key="val5">
           <Heading>Tab Body 5</Heading>
           <Text>
-            Dolore ex esse laboris elit magna esse sunt. Pariatur in veniam Lorem est occaecat do magna nisi mollit ipsum sit adipisicing fugiat ex. Pariatur ullamco exercitation ea qui adipisicing.
+            Dolore ex esse laboris elit magna esse sunt. Pariatur in veniam Lorem est occaecat do
+            magna nisi mollit ipsum sit adipisicing fugiat ex. Pariatur ullamco exercitation ea qui
+            adipisicing.
           </Text>
         </Item>
       </TabPanels>
@@ -155,12 +181,18 @@ export const Vertical: TabsStoryProps = {
 };
 
 export const VerticalMaxWidth: TabsStoryProps = {
-  render: (args) => (
+  render: args => (
     <Tabs {...args} aria-label="Tab example" maxWidth={500}>
       <TabList width={120}>
         <Item key="val1">Tab 1</Item>
-        <Item key="val2"><span lang="ja">バナーおよびディスプレイ広告</span></Item>
-        <Item key="val3"><span lang="de" style={{hyphens: 'auto'}}>Rindfleischetikettierungsüberwachungsaufgabenübertragungsgesetz</span></Item>
+        <Item key="val2">
+          <span lang="ja">バナーおよびディスプレイ広告</span>
+        </Item>
+        <Item key="val3">
+          <span lang="de" style={{hyphens: 'auto'}}>
+            Rindfleischetikettierungsüberwachungsaufgabenübertragungsgesetz
+          </span>
+        </Item>
         <Item key="val4">Tab 4</Item>
         <Item key="val5">Tab 5</Item>
       </TabList>
@@ -168,31 +200,41 @@ export const VerticalMaxWidth: TabsStoryProps = {
         <Item key="val1">
           <Heading>Tab Body 1</Heading>
           <Text>
-            Dolore ex esse laboris elit magna esse sunt. Pariatur in veniam Lorem est occaecat do magna nisi mollit ipsum sit adipisicing fugiat ex. Pariatur ullamco exercitation ea qui adipisicing.
+            Dolore ex esse laboris elit magna esse sunt. Pariatur in veniam Lorem est occaecat do
+            magna nisi mollit ipsum sit adipisicing fugiat ex. Pariatur ullamco exercitation ea qui
+            adipisicing.
           </Text>
         </Item>
         <Item key="val2">
           <Heading>Tab Body 2</Heading>
           <Text>
-            Dolore ex esse laboris elit magna esse sunt. Pariatur in veniam Lorem est occaecat do magna nisi mollit ipsum sit adipisicing fugiat ex. Pariatur ullamco exercitation ea qui adipisicing.
+            Dolore ex esse laboris elit magna esse sunt. Pariatur in veniam Lorem est occaecat do
+            magna nisi mollit ipsum sit adipisicing fugiat ex. Pariatur ullamco exercitation ea qui
+            adipisicing.
           </Text>
         </Item>
         <Item key="val3">
           <Heading>Tab Body 3</Heading>
           <Text>
-            Dolore ex esse laboris elit magna esse sunt. Pariatur in veniam Lorem est occaecat do magna nisi mollit ipsum sit adipisicing fugiat ex. Pariatur ullamco exercitation ea qui adipisicing.
+            Dolore ex esse laboris elit magna esse sunt. Pariatur in veniam Lorem est occaecat do
+            magna nisi mollit ipsum sit adipisicing fugiat ex. Pariatur ullamco exercitation ea qui
+            adipisicing.
           </Text>
         </Item>
         <Item key="val4">
           <Heading>Tab Body 4</Heading>
           <Text>
-            Dolore ex esse laboris elit magna esse sunt. Pariatur in veniam Lorem est occaecat do magna nisi mollit ipsum sit adipisicing fugiat ex. Pariatur ullamco exercitation ea qui adipisicing.
+            Dolore ex esse laboris elit magna esse sunt. Pariatur in veniam Lorem est occaecat do
+            magna nisi mollit ipsum sit adipisicing fugiat ex. Pariatur ullamco exercitation ea qui
+            adipisicing.
           </Text>
         </Item>
         <Item key="val5">
           <Heading>Tab Body 5</Heading>
           <Text>
-            Dolore ex esse laboris elit magna esse sunt. Pariatur in veniam Lorem est occaecat do magna nisi mollit ipsum sit adipisicing fugiat ex. Pariatur ullamco exercitation ea qui adipisicing.
+            Dolore ex esse laboris elit magna esse sunt. Pariatur in veniam Lorem est occaecat do
+            magna nisi mollit ipsum sit adipisicing fugiat ex. Pariatur ullamco exercitation ea qui
+            adipisicing.
           </Text>
         </Item>
       </TabPanels>
@@ -202,41 +244,41 @@ export const VerticalMaxWidth: TabsStoryProps = {
 };
 
 export const VerticalQuiet: TabsStoryProps = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   args: {...Vertical.args, ...Quiet.args}
 };
 
 export const VerticalCompact: TabsStoryProps = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   args: {...Vertical.args, ...Compact.args}
 };
 
 export const VerticalCompactQuiet: TabsStoryProps = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   args: {...Vertical.args, ...CompactQuiet.args}
 };
 
 export const EmphasizedQuiet: TabsStoryProps = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   args: {...Emphasized.args, ...Quiet.args}
 };
 
 export const EmphasizedVertical: TabsStoryProps = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   args: {...Emphasized.args, ...Vertical.args}
 };
 
 export const EmphasizedVerticalQuiet: TabsStoryProps = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   args: {...Emphasized.args, ...Vertical.args, ...Quiet.args}
 };
 
 export const EmphasizedCompact: TabsStoryProps = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   args: {...Emphasized.args, ...Compact.args}
 };
 
 export const EmphasizedCompactVertical: TabsStoryProps = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   args: {...Emphasized.args, ...Compact.args, ...Vertical.args}
 };

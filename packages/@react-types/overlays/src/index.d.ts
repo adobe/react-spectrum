@@ -21,32 +21,32 @@ export {OverlayProps} from '@react-spectrum/overlays';
 
 // Old and unused. Left for backward compatibility.
 export interface ModalProps extends StyleProps, Omit<OverlayProps, 'nodeRef'> {
-  children: ReactElement,
-  isOpen?: boolean,
-  onClose?: () => void,
-  type?: 'modal' | 'fullscreen' | 'fullscreenTakeover',
-  isDismissable?: boolean
+  children: ReactElement;
+  isOpen?: boolean;
+  onClose?: () => void;
+  type?: 'modal' | 'fullscreen' | 'fullscreenTakeover';
+  isDismissable?: boolean;
 }
 
 // Old and unused. Left for backward compatibility.
-export interface PopoverProps extends StyleProps, Omit<OverlayProps, 'nodeRef'>  {
-  children: ReactNode,
-  placement?: PlacementAxis,
-  arrowProps?: HTMLAttributes<HTMLElement>,
-  hideArrow?: boolean,
-  isOpen?: boolean,
-  onClose?: () => void,
-  shouldCloseOnBlur?: boolean,
-  isNonModal?: boolean,
-  isDismissable?: boolean
+export interface PopoverProps extends StyleProps, Omit<OverlayProps, 'nodeRef'> {
+  children: ReactNode;
+  placement?: PlacementAxis;
+  arrowProps?: HTMLAttributes<HTMLElement>;
+  hideArrow?: boolean;
+  isOpen?: boolean;
+  onClose?: () => void;
+  shouldCloseOnBlur?: boolean;
+  isNonModal?: boolean;
+  isDismissable?: boolean;
 }
 
 // Old and unused. Left for backward compatibility.
-export interface TrayProps extends StyleProps, Omit<OverlayProps, 'nodeRef'>  {
-  children: ReactElement,
-  isOpen?: boolean,
-  onClose?: () => void,
-  shouldCloseOnBlur?: boolean,
-  isFixedHeight?: boolean,
-  isNonModal?: boolean
+export interface TrayProps extends StyleProps, Omit<OverlayProps, 'nodeRef'> {
+  children: ReactElement;
+  isOpen?: boolean;
+  onClose?: () => void;
+  shouldCloseOnBlur?: boolean;
+  isFixedHeight?: boolean;
+  isNonModal?: boolean;
 }

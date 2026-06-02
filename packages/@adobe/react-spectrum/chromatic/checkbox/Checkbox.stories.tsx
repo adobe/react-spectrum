@@ -41,15 +41,17 @@ IsEmphasizedTrue.story = {
   name: 'isEmphasized: true'
 };
 
-export const IsEmphasizedTrueValidationStateInvalid: CheckboxStory = () =>
-  <Render isEmphasized isInvalid />;
+export const IsEmphasizedTrueValidationStateInvalid: CheckboxStory = () => (
+  <Render isEmphasized isInvalid />
+);
 
 IsEmphasizedTrueValidationStateInvalid.story = {
   name: 'isEmphasized: true, validationState: "invalid"'
 };
 
-export const IsEmphasizedTrueIsDisabledTrue: CheckboxStory = () =>
-  <Render isEmphasized isDisabled />;
+export const IsEmphasizedTrueIsDisabledTrue: CheckboxStory = () => (
+  <Render isEmphasized isDisabled />
+);
 
 IsEmphasizedTrueIsDisabledTrue.story = {
   name: 'isEmphasized: true, isDisabled: true'
@@ -79,7 +81,9 @@ LongLabel.story = {
   name: 'long label'
 };
 
-export const NoLabel: CheckboxStory = () => <RenderNoLabel aria-label="This checkbox has no visible label" />;
+export const NoLabel: CheckboxStory = () => (
+  <RenderNoLabel aria-label="This checkbox has no visible label" />
+);
 
 NoLabel.story = {
   name: 'no label'

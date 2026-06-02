@@ -3,15 +3,18 @@ import {getName} from '../../shared/utils';
 import {NodePath} from '@babel/traverse';
 import * as t from '@babel/types';
 
-function updateAvatarSize(
-  path: NodePath<t.JSXElement>
-) {
+function updateAvatarSize(path: NodePath<t.JSXElement>) {
   if (
     t.isJSXElement(path.node) &&
     t.isJSXIdentifier(path.node.openingElement.name) &&
     getName(path, path.node.openingElement.name) === 'Avatar'
   ) {
-    let sizeAttrPath = path.get('openingElement').get('attributes').find((attr) => t.isJSXAttribute(attr.node) && attr.node.name.name === 'size') as NodePath<t.JSXAttribute>;
+    let sizeAttrPath = path
+      .get('openingElement')
+      .get('attributes')
+      .find(
+        attr => t.isJSXAttribute(attr.node) && attr.node.name.name === 'size'
+      ) as NodePath<t.JSXAttribute>;
     if (sizeAttrPath) {
       let value = sizeAttrPath.node.value;
       if (value?.type === 'StringLiteral') {
@@ -37,6 +40,7 @@ function updateAvatarSize(
 
 /**
  * Transforms Avatar:
+ *
  * - Comment out isDisabled (it has not been implemented yet).
  * - Update size to be a pixel value if it currently matches 'avatar-size-*'.
  */

@@ -12,9 +12,9 @@
 
 import {action} from 'storybook/actions';
 import {Button} from '../src/Button';
-
 import {
   Cell,
+  CellProps,
   Column,
   ColumnProps,
   ColumnResizer,
@@ -22,11 +22,10 @@ import {
   Row,
   Table,
   TableBody,
+  TableFooter,
   TableHeader,
-  TableLayout
+  TableLoadMoreItem
 } from '../src/Table';
-
-import {CellProps, TableLoadMoreItem} from '../src/Table';
 import {Checkbox, CheckboxProps} from '../src/Checkbox';
 import {Collection} from 'react-aria/Collection';
 import {Dialog, DialogTrigger} from '../src/Dialog';
@@ -40,10 +39,12 @@ import {Popover} from '../src/Popover';
 import React, {JSX, startTransition, Suspense, useState} from 'react';
 import {Selection} from '@react-types/shared';
 import styles from '../example/index.css';
+import {TableLayout} from '../src/TableLayout';
 import {useAsyncList} from 'react-stately/useAsyncList';
 import {useListData} from 'react-stately/useListData';
 import {Virtualizer} from '../src/Virtualizer';
 import './styles.css';
+import {useTreeData} from 'react-stately';
 
 export default {
   title: 'React Aria Components/Table',
@@ -54,18 +55,20 @@ export default {
 export type TableStory = StoryFn<typeof Table>;
 export type TableStoryObj = StoryObj<typeof Table>;
 
-const ReorderableTable = ({initialItems}: {initialItems: {id: string, name: string}[]}) => {
+const ReorderableTable = ({initialItems}: {initialItems: {id: string; name: string}[]}) => {
   let list = useListData({initialItems});
 
   const {dragAndDropHooks} = useDragAndDrop({
     getItems: keys => {
-      return [...keys].filter(k => !!list.getItem(k)).map(k => {
-        const item = list.getItem(k);
-        return {
-          'text/plain': item!.id,
-          item: JSON.stringify(item)
-        };
-      });
+      return [...keys]
+        .filter(k => !!list.getItem(k))
+        .map(k => {
+          const item = list.getItem(k);
+          return {
+            'text/plain': item!.id,
+            item: JSON.stringify(item)
+          };
+        });
     },
     getDropOperation: () => 'move',
     onReorder: e => {
@@ -104,10 +107,16 @@ const ReorderableTable = ({initialItems}: {initialItems: {id: string, name: stri
   return (
     <Table aria-label="Reorderable table" dragAndDropHooks={dragAndDropHooks}>
       <TableHeader>
-        <MyColumn isRowHeader defaultWidth="50%">Id</MyColumn>
+        <MyColumn isRowHeader defaultWidth="50%">
+          Id
+        </MyColumn>
         <MyColumn>Name</MyColumn>
       </TableHeader>
-      <TableBody items={list.items} renderEmptyState={({isDropTarget}) => <span style={{color: isDropTarget ? 'red' : 'black'}}>Drop items here</span>}>
+      <TableBody
+        items={list.items}
+        renderEmptyState={({isDropTarget}) => (
+          <span style={{color: isDropTarget ? 'red' : 'black'}}>Drop items here</span>
+        )}>
         {item => (
           <Row>
             <Cell>{item.id}</Cell>
@@ -130,7 +139,7 @@ export const ReorderableTableExample: TableStory = () => (
   </>
 );
 
-const TableExample: TableStory = (args) => {
+const TableExample: TableStory = args => {
   let list = useListData({
     initialItems: [
       {id: 1, name: 'Games', date: '6/7/2020', type: 'File folder'},
@@ -145,8 +154,12 @@ const TableExample: TableStory = (args) => {
       <ResizableTableContainer>
         <Table aria-label="Example table" {...args}>
           <TableHeader>
-            <Column width={30} minWidth={0}><MyCheckbox slot="selection" /></Column>
-            <MyColumn isRowHeader defaultWidth="30%">Name</MyColumn>
+            <Column width={30} minWidth={0}>
+              <MyCheckbox slot="selection" />
+            </Column>
+            <MyColumn isRowHeader defaultWidth="30%">
+              Name
+            </MyColumn>
             <MyColumn>Type</MyColumn>
             <MyColumn>Date Modified</MyColumn>
             <MyColumn>Actions</MyColumn>
@@ -154,7 +167,9 @@ const TableExample: TableStory = (args) => {
           <TableBody items={list.items}>
             {item => (
               <Row>
-                <Cell><MyCheckbox slot="selection" /></Cell>
+                <Cell>
+                  <MyCheckbox slot="selection" />
+                </Cell>
                 <Cell>{item.name}</Cell>
                 <Cell>{item.type}</Cell>
                 <Cell>{item.date}</Cell>
@@ -182,18 +197,20 @@ const TableExample: TableStory = (args) => {
                           padding: 30
                         }}>
                         <Dialog>
-                          {({close}) => (<>
-                            <Heading slot="title">Delete item</Heading>
-                            <p>Are you sure?</p>
-                            <Button onPress={close}>Cancel</Button>
-                            <Button
-                              onPress={() => {
-                                close();
-                                list.remove(item.id);
-                              }}>
-                              Delete
-                            </Button>
-                          </>)}
+                          {({close}) => (
+                            <>
+                              <Heading slot="title">Delete item</Heading>
+                              <p>Are you sure?</p>
+                              <Button onPress={close}>Cancel</Button>
+                              <Button
+                                onPress={() => {
+                                  close();
+                                  list.remove(item.id);
+                                }}>
+                                Delete
+                              </Button>
+                            </>
+                          )}
                         </Dialog>
                       </Modal>
                     </ModalOverlay>
@@ -208,7 +225,7 @@ const TableExample: TableStory = (args) => {
   );
 };
 
-export const FixedColumnWidths: TableStory = (args) => {
+export const FixedColumnWidths: TableStory = args => {
   let list = useListData({
     initialItems: [
       {id: 1, name: 'Games', date: '6/7/2020', type: 'File folder'},
@@ -223,15 +240,21 @@ export const FixedColumnWidths: TableStory = (args) => {
       <ResizableTableContainer>
         <Table aria-label="Example table with fixed column widths" {...args}>
           <TableHeader>
-            <Column width={30} minWidth={0}><MyCheckbox slot="selection" /></Column>
-            <MyColumn isRowHeader width={100}>Name</MyColumn>
+            <Column width={30} minWidth={0}>
+              <MyCheckbox slot="selection" />
+            </Column>
+            <MyColumn isRowHeader width={100}>
+              Name
+            </MyColumn>
             <MyColumn width={100}>Type</MyColumn>
             <MyColumn width={100}>Date Modified</MyColumn>
           </TableHeader>
           <TableBody items={list.items}>
             {item => (
               <Row>
-                <Cell><MyCheckbox slot="selection" /></Cell>
+                <Cell>
+                  <MyCheckbox slot="selection" />
+                </Cell>
                 <Cell>{item.name}</Cell>
                 <Cell>{item.type}</Cell>
                 <Cell>{item.date}</Cell>
@@ -284,14 +307,12 @@ export const TableDynamicExample: TableStory = () => {
   return (
     <Table aria-label="Files">
       <TableHeader columns={columns}>
-        {(column) => (
-          <Column isRowHeader={column.isRowHeader}>{column.name}</Column>
-        )}
+        {column => <Column isRowHeader={column.isRowHeader}>{column.name}</Column>}
       </TableHeader>
       <TableBody items={rows}>
-        {(item) => (
+        {item => (
           <Row columns={columns} id={item.id}>
-            {(column) => {
+            {column => {
               return <Cell>{item[column.id]}</Cell>;
             }}
           </Row>
@@ -311,24 +332,54 @@ let timeTableColumns = [
 ];
 
 let timeTableRows = [
-  {id: 1, time: '08:00 - 09:00', monday: 'Math', tuesday: 'History', wednesday: 'Science', thursday: 'English', friday: 'Art'},
+  {
+    id: 1,
+    time: '08:00 - 09:00',
+    monday: 'Math',
+    tuesday: 'History',
+    wednesday: 'Science',
+    thursday: 'English',
+    friday: 'Art'
+  },
   {id: 2, time: '09:00 - 10:00', name: 'Break', type: 'break'},
-  {id: 3, time: '10:00 - 11:00', monday: 'Math', tuesday: 'History', wednesday: 'Science', thursday: 'English', friday: 'Art'},
-  {id: 4, time: '11:00 - 12:00', monday: 'Math', tuesday: 'History', wednesday: 'Science', thursday: 'English', friday: 'Art'},
+  {
+    id: 3,
+    time: '10:00 - 11:00',
+    monday: 'Math',
+    tuesday: 'History',
+    wednesday: 'Science',
+    thursday: 'English',
+    friday: 'Art'
+  },
+  {
+    id: 4,
+    time: '11:00 - 12:00',
+    monday: 'Math',
+    tuesday: 'History',
+    wednesday: 'Science',
+    thursday: 'English',
+    friday: 'Art'
+  },
   {id: 5, time: '12:00 - 13:00', name: 'Break', type: 'break'},
-  {id: 6, time: '13:00 - 14:00', monday: 'History', tuesday: 'Math', wednesday: 'English', thursday: 'Science', friday: 'Art'}
+  {
+    id: 6,
+    time: '13:00 - 14:00',
+    monday: 'History',
+    tuesday: 'Math',
+    wednesday: 'English',
+    thursday: 'Science',
+    friday: 'Art'
+  }
 ];
 
 export const TableCellColSpanExample: TableStory = () => {
   return (
     <Table aria-label="Timetable">
       <TableHeader columns={timeTableColumns}>
-        {(column) => (
-          <Column isRowHeader={column.isRowHeader}>{column.name}</Column>
-        )}
+        {column => <Column isRowHeader={column.isRowHeader}>{column.name}</Column>}
       </TableHeader>
       <TableBody items={timeTableRows}>
-        {(item) => (
+        {item => (
           <Row columns={columns}>
             {item.type === 'break' ? (
               <>
@@ -357,9 +408,9 @@ export const TableCellColSpanWithVariousSpansExample: TableStory = () => {
     <Table aria-label="Table with various colspans">
       <TableHeader>
         <Column isRowHeader>Col 1</Column>
-        <Column >Col 2</Column>
-        <Column >Col 3</Column>
-        <Column >Col 4</Column>
+        <Column>Col 2</Column>
+        <Column>Col 3</Column>
+        <Column>Col 4</Column>
       </TableHeader>
       <TableBody>
         <Row>
@@ -407,7 +458,9 @@ const MyColumn = (props: ColumnProps) => {
       {({startResize}) => (
         <div style={{display: 'flex'}}>
           <MenuTrigger>
-            <Button style={{flex: 1, textAlign: 'left'}}>{props.children as React.ReactNode}</Button>
+            <Button style={{flex: 1, textAlign: 'left'}}>
+              {props.children as React.ReactNode}
+            </Button>
             <Popover>
               <Menu className={styles.menu} onAction={() => startResize()}>
                 <MyMenuItem id="resize">Resize</MyMenuItem>
@@ -427,17 +480,17 @@ const MyColumn = (props: ColumnProps) => {
 };
 
 interface FileItem {
-  id: string,
-  name: string,
-  type: string
+  id: string;
+  name: string;
+  type: string;
 }
 
 interface DndTableProps {
-  initialItems: FileItem[],
-  'aria-label': string,
-  isDisabled?: boolean,
-  isLoading?: boolean,
-  onSelectionChange?: (keys: Selection) => void
+  initialItems: FileItem[];
+  'aria-label': string;
+  isDisabled?: boolean;
+  isLoading?: boolean;
+  onSelectionChange?: (keys: Selection) => void;
 }
 
 function DndTableRender(props: DndTableProps): JSX.Element {
@@ -449,13 +502,15 @@ function DndTableRender(props: DndTableProps): JSX.Element {
     isDisabled: props.isDisabled,
     // Provide drag data in a custom format as well as plain text.
     getItems(keys) {
-      return [...keys].filter(k => !!list.getItem(k)).map((key) => {
-        let item = list.getItem(key);
-        return {
-          'custom-app-type': JSON.stringify(item),
-          'text/plain': item!.name
-        };
-      });
+      return [...keys]
+        .filter(k => !!list.getItem(k))
+        .map(key => {
+          let item = list.getItem(key);
+          return {
+            'custom-app-type': JSON.stringify(item),
+            'text/plain': item!.name
+          };
+        });
     },
 
     // Accept drops with the custom format.
@@ -467,10 +522,10 @@ function DndTableRender(props: DndTableProps): JSX.Element {
     // Handle drops between items from other lists.
     async onInsert(e) {
       let processedItems = await Promise.all(
-          e.items
-            .filter(isTextDropItem)
-            .map(async item => JSON.parse(await item.getText('custom-app-type')))
-        );
+        e.items
+          .filter(isTextDropItem)
+          .map(async item => JSON.parse(await item.getText('custom-app-type')))
+      );
       if (e.target.dropPosition === 'before') {
         list.insertBefore(e.target.key, ...processedItems);
       } else if (e.target.dropPosition === 'after') {
@@ -481,10 +536,10 @@ function DndTableRender(props: DndTableProps): JSX.Element {
     // Handle drops on the collection when empty.
     async onRootDrop(e) {
       let processedItems = await Promise.all(
-          e.items
-            .filter(isTextDropItem)
-            .map(async item => JSON.parse(await item.getText('custom-app-type')))
-        );
+        e.items
+          .filter(isTextDropItem)
+          .map(async item => JSON.parse(await item.getText('custom-app-type')))
+      );
       list.append(...processedItems);
     },
 
@@ -511,24 +566,32 @@ function DndTableRender(props: DndTableProps): JSX.Element {
       aria-label={props['aria-label']}
       selectionMode="multiple"
       selectedKeys={list.selectedKeys}
-      onSelectionChange={(keys) => {
+      onSelectionChange={keys => {
         props.onSelectionChange?.(keys);
         list.setSelectedKeys(keys);
       }}
       dragAndDropHooks={dragAndDropHooks}>
       <TableHeader>
         <Column />
-        <Column><MyCheckbox slot="selection" /></Column>
+        <Column>
+          <MyCheckbox slot="selection" />
+        </Column>
         <Column>ID</Column>
         <Column isRowHeader>Name</Column>
         <Column>Type</Column>
       </TableHeader>
-      <TableBody items={list.items} renderEmptyState={() => renderEmptyLoader({isLoading: props.isLoading, tableWidth: 200})}>
+      <TableBody
+        items={list.items}
+        renderEmptyState={() => renderEmptyLoader({isLoading: props.isLoading, tableWidth: 200})}>
         <Collection items={list.items}>
           {item => (
             <Row>
-              <Cell><Button slot="drag">≡</Button></Cell>
-              <Cell><MyCheckbox slot="selection" /></Cell>
+              <Cell>
+                <Button slot="drag">≡</Button>
+              </Cell>
+              <Cell>
+                <MyCheckbox slot="selection" />
+              </Cell>
               <Cell>{item.id}</Cell>
               <Cell>{item.name}</Cell>
               <Cell>{item.type}</Cell>
@@ -541,17 +604,15 @@ function DndTableRender(props: DndTableProps): JSX.Element {
   );
 }
 
-export const DndTable: StoryFn<typeof DndTableRender> = (props) => {
-  return (
-    <DndTableRender {...props} />
-  );
+export const DndTable: StoryFn<typeof DndTableRender> = props => {
+  return <DndTableRender {...props} />;
 };
 
 type DndTableExampleProps = {
-  isDisabledFirstTable?: boolean,
-  isDisabledSecondTable?: boolean,
-  isLoading?: boolean
-}
+  isDisabledFirstTable?: boolean;
+  isDisabledSecondTable?: boolean;
+  isLoading?: boolean;
+};
 
 function DndTableExampleRender(props: DndTableExampleProps): JSX.Element {
   return (
@@ -559,32 +620,34 @@ function DndTableExampleRender(props: DndTableExampleProps): JSX.Element {
       <DndTableRender
         isLoading={props.isLoading}
         initialItems={[
-        {id: '1', type: 'file', name: 'Adobe Photoshop'},
-        {id: '2', type: 'file', name: 'Adobe XD'},
-        {id: '3', type: 'folder', name: 'Documents'},
-        {id: '4', type: 'file', name: 'Adobe InDesign'},
-        {id: '5', type: 'folder', name: 'Utilities'},
-        {id: '6', type: 'file', name: 'Adobe AfterEffects'}
+          {id: '1', type: 'file', name: 'Adobe Photoshop'},
+          {id: '2', type: 'file', name: 'Adobe XD'},
+          {id: '3', type: 'folder', name: 'Documents'},
+          {id: '4', type: 'file', name: 'Adobe InDesign'},
+          {id: '5', type: 'folder', name: 'Utilities'},
+          {id: '6', type: 'file', name: 'Adobe AfterEffects'}
         ]}
         aria-label="First Table"
-        isDisabled={props.isDisabledFirstTable} />
+        isDisabled={props.isDisabledFirstTable}
+      />
       <DndTableRender
         isLoading={props.isLoading}
         initialItems={[
-        {id: '7', type: 'folder', name: 'Pictures'},
-        {id: '8', type: 'file', name: 'Adobe Fresco'},
-        {id: '9', type: 'folder', name: 'Apps'},
-        {id: '10', type: 'file', name: 'Adobe Illustrator'},
-        {id: '11', type: 'file', name: 'Adobe Lightroom'},
-        {id: '12', type: 'file', name: 'Adobe Dreamweaver'}
+          {id: '7', type: 'folder', name: 'Pictures'},
+          {id: '8', type: 'file', name: 'Adobe Fresco'},
+          {id: '9', type: 'folder', name: 'Apps'},
+          {id: '10', type: 'file', name: 'Adobe Illustrator'},
+          {id: '11', type: 'file', name: 'Adobe Lightroom'},
+          {id: '12', type: 'file', name: 'Adobe Dreamweaver'}
         ]}
         aria-label="Second Table"
-        isDisabled={props.isDisabledSecondTable} />
+        isDisabled={props.isDisabledSecondTable}
+      />
     </div>
   );
 }
 
-export const DndTableExample: StoryFn<typeof DndTableExampleRender> = (props) => {
+export const DndTableExample: StoryFn<typeof DndTableExampleRender> = props => {
   return <DndTableExampleRender {...props} />;
 };
 
@@ -608,13 +671,15 @@ function DndTableWithNoValidDropTargetsRender(): JSX.Element {
 
   let {dragAndDropHooks} = useDragAndDrop({
     getItems(keys) {
-      return [...keys].filter(k => !!list.getItem(k)).map((key) => {
-        let item = list.getItem(key);
-        return {
-          'custom-app-type': JSON.stringify(item),
-          'text/plain': item!.name
-        };
-      });
+      return [...keys]
+        .filter(k => !!list.getItem(k))
+        .map(key => {
+          let item = list.getItem(key);
+          return {
+            'custom-app-type': JSON.stringify(item),
+            'text/plain': item!.name
+          };
+        });
     },
     onItemDrop() {},
     shouldAcceptItemDrop() {
@@ -631,7 +696,9 @@ function DndTableWithNoValidDropTargetsRender(): JSX.Element {
       dragAndDropHooks={dragAndDropHooks}>
       <TableHeader>
         <Column />
-        <Column><MyCheckbox slot="selection" /></Column>
+        <Column>
+          <MyCheckbox slot="selection" />
+        </Column>
         <Column>ID</Column>
         <Column isRowHeader>Name</Column>
         <Column>Type</Column>
@@ -640,13 +707,17 @@ function DndTableWithNoValidDropTargetsRender(): JSX.Element {
         <Collection items={list.items}>
           {item => (
             <Row>
-              <Cell><Button slot="drag">≡</Button></Cell>
-              <Cell><MyCheckbox slot="selection" /></Cell>
+              <Cell>
+                <Button slot="drag">≡</Button>
+              </Cell>
+              <Cell>
+                <MyCheckbox slot="selection" />
+              </Cell>
               <Cell>{item.id}</Cell>
               <Cell>{item.name}</Cell>
               <Cell>{item.type}</Cell>
             </Row>
-            )}
+          )}
         </Collection>
       </TableBody>
     </Table>
@@ -678,9 +749,11 @@ export const MyCheckbox = ({children, ...props}: CheckboxProps) => {
         <>
           <div className="checkbox">
             <svg viewBox="0 0 18 18" aria-hidden="true">
-              {isIndeterminate
-                ? <rect x={1} y={7.5} width={15} height={3} />
-                : <polyline points="1 9 7 14 15 4" />}
+              {isIndeterminate ? (
+                <rect x={1} y={7.5} width={15} height={3} />
+              ) : (
+                <polyline points="1 9 7 14 15 4" />
+              )}
             </svg>
           </div>
           {children}
@@ -690,15 +763,15 @@ export const MyCheckbox = ({children, ...props}: CheckboxProps) => {
   );
 };
 
-const MyTableLoadingIndicator = (props) => {
-  let {tableWidth =  400, ...otherProps} = props;
+const MyTableLoadingIndicator = props => {
+  let {tableWidth = 400, ...otherProps} = props;
   return (
     // These styles will make the load more spinner sticky. A user would know if their table is virtualized and thus could control this styling if they wanted to
     // TODO: this doesn't work because the virtualizer wrapper around the table body has overflow: hidden. Perhaps could change this by extending the table layout and
     // making the layoutInfo for the table body have allowOverflow
-    (<TableLoadMoreItem style={{height: 30, width: tableWidth}} {...otherProps}>
+    <TableLoadMoreItem style={{height: 30, width: tableWidth}} {...otherProps}>
       <LoadingSpinner style={{height: 20, position: 'unset'}} />
-    </TableLoadMoreItem>)
+    </TableLoadMoreItem>
   );
 };
 
@@ -706,10 +779,12 @@ function MyTableBody(props) {
   let {rows, children, isLoading, onLoadMore, tableWidth, ...otherProps} = props;
   return (
     <TableBody {...otherProps}>
-      <Collection items={rows}>
-        {children}
-      </Collection>
-      <MyTableLoadingIndicator tableWidth={tableWidth} isLoading={isLoading} onLoadMore={onLoadMore} />
+      <Collection items={rows}>{children}</Collection>
+      <MyTableLoadingIndicator
+        tableWidth={tableWidth}
+        isLoading={isLoading}
+        onLoadMore={onLoadMore}
+      />
     </TableBody>
   );
 }
@@ -718,14 +793,12 @@ const TableLoadingBodyWrapper = (args: {isLoadingMore: boolean}): JSX.Element =>
   return (
     <Table aria-label="Files">
       <TableHeader columns={columns}>
-        {(column) => (
-          <Column isRowHeader={column.isRowHeader}>{column.name}</Column>
-        )}
+        {column => <Column isRowHeader={column.isRowHeader}>{column.name}</Column>}
       </TableHeader>
       <MyTableBody rows={rows} isLoading={args.isLoadingMore}>
-        {(item) => (
+        {item => (
           <Row columns={columns}>
-            {(column) => {
+            {column => {
               return <Cell>{item[column.id]}</Cell>;
             }}
           </Row>
@@ -748,7 +821,7 @@ function MyRow(props) {
     <>
       {/* Note that all the props are propagated from MyRow to Row, ensuring the id propagates */}
       <Row {...props} />
-      {props.shouldRenderLoader && <MyTableLoadingIndicator isLoading={props.isLoadingMore} /> }
+      {props.shouldRenderLoader && <MyTableLoadingIndicator isLoading={props.isLoadingMore} />}
     </>
   );
 }
@@ -757,14 +830,15 @@ const TableLoadingRowRenderWrapper = (args: {isLoadingMore: boolean}): JSX.Eleme
   return (
     <Table aria-label="Files">
       <TableHeader columns={columns}>
-        {(column) => (
-          <Column isRowHeader={column.isRowHeader}>{column.name}</Column>
-        )}
+        {column => <Column isRowHeader={column.isRowHeader}>{column.name}</Column>}
       </TableHeader>
       <TableBody items={rows} dependencies={[args.isLoadingMore]}>
-        {(item) => (
-          <MyRow columns={columns} shouldRenderLoader={item.id === 4} isLoadingMore={args.isLoadingMore}>
-            {(column) => {
+        {item => (
+          <MyRow
+            columns={columns}
+            shouldRenderLoader={item.id === 4}
+            isLoadingMore={args.isLoadingMore}>
+            {column => {
               return <Cell>{item[column.id]}</Cell>;
             }}
           </MyRow>
@@ -782,10 +856,17 @@ export const TableLoadingRowRenderWrapperStory: StoryObj<typeof TableLoadingRowR
   name: 'Table loading, row renderer wrapper and dep array'
 };
 
-
 function renderEmptyLoader({isLoading, tableWidth = 400}) {
-  let contents = isLoading ? <LoadingSpinner style={{height: 20, width: 20, transform: 'translate(-50%, -50%)'}} />  : 'No results found';
-  return <div style={{height: 30, position: 'sticky', top: 0, left: 0, width: tableWidth}}>{contents}</div>;
+  let contents = isLoading ? (
+    <LoadingSpinner style={{height: 20, width: 20, transform: 'translate(-50%, -50%)'}} />
+  ) : (
+    'No results found'
+  );
+  return (
+    <div style={{height: 30, position: 'sticky', top: 0, left: 0, width: tableWidth}}>
+      {contents}
+    </div>
+  );
 }
 
 const RenderEmptyState = (args: {isLoading: boolean}): JSX.Element => {
@@ -793,19 +874,18 @@ const RenderEmptyState = (args: {isLoading: boolean}): JSX.Element => {
   return (
     <Table aria-label="Files" selectionMode="multiple">
       <TableHeader columns={columns}>
-        <Column><MyCheckbox slot="selection" /></Column>
+        <Column>
+          <MyCheckbox slot="selection" />
+        </Column>
         <Collection items={columns}>
-          {(column) => (
-
-            <Column isRowHeader={column.isRowHeader}>{column.name}</Column>
-          )}
+          {column => <Column isRowHeader={column.isRowHeader}>{column.name}</Column>}
         </Collection>
       </TableHeader>
       <TableBody renderEmptyState={() => renderEmptyLoader({isLoading})}>
         <Collection items={[]}>
-          {(item) => (
+          {item => (
             <Row columns={columns}>
-              {(column) => {
+              {column => {
                 return <Cell>{item[column.id]}</Cell>;
               }}
             </Row>
@@ -825,10 +905,10 @@ export const RenderEmptyStateStory: StoryObj<typeof RenderEmptyState> = {
 };
 
 interface Character {
-  name: string,
-  height: number,
-  mass: number,
-  birth_year: number
+  name: string;
+  height: number;
+  mass: number;
+  birth_year: number;
 }
 
 const OnLoadMoreTable = (args: {delay: number}): JSX.Element => {
@@ -854,18 +934,33 @@ const OnLoadMoreTable = (args: {delay: number}): JSX.Element => {
     <ResizableTableContainer style={{height: 150, width: 400, overflow: 'auto'}}>
       <Table aria-label="Load more table">
         <TableHeader>
-          <Column id="name" isRowHeader style={{position: 'sticky', top: 0, backgroundColor: 'lightgray'}}>Name</Column>
-          <Column id="height" style={{position: 'sticky', top: 0, backgroundColor: 'lightgray'}}>Height</Column>
-          <Column id="mass" style={{position: 'sticky', top: 0, backgroundColor: 'lightgray'}}>Mass</Column>
-          <Column id="birth_year" style={{position: 'sticky', top: 0, backgroundColor: 'lightgray'}}>Birth Year</Column>
+          <Column
+            id="name"
+            isRowHeader
+            style={{position: 'sticky', top: 0, backgroundColor: 'lightgray'}}>
+            Name
+          </Column>
+          <Column id="height" style={{position: 'sticky', top: 0, backgroundColor: 'lightgray'}}>
+            Height
+          </Column>
+          <Column id="mass" style={{position: 'sticky', top: 0, backgroundColor: 'lightgray'}}>
+            Mass
+          </Column>
+          <Column
+            id="birth_year"
+            style={{position: 'sticky', top: 0, backgroundColor: 'lightgray'}}>
+            Birth Year
+          </Column>
         </TableHeader>
         <MyTableBody
           tableWidth={400}
-          renderEmptyState={() => renderEmptyLoader({isLoading: list.loadingState === 'loading', tableWidth: 400})}
+          renderEmptyState={() =>
+            renderEmptyLoader({isLoading: list.loadingState === 'loading', tableWidth: 400})
+          }
           isLoading={list.loadingState === 'loadingMore'}
           onLoadMore={list.loadMore}
           rows={list.items}>
-          {(item) => (
+          {item => (
             <Row id={item.name} style={{width: 'inherit', height: 'inherit'}}>
               <Cell>{item.name}</Cell>
               <Cell>{item.height}</Cell>
@@ -888,7 +983,7 @@ export const OnLoadMoreTableStory: StoryObj<typeof OnLoadMoreTable> = {
 };
 
 export const VirtualizedTable: TableStory = () => {
-  let items: {id: number, foo: string, bar: string, baz: string}[] = [];
+  let items: {id: number; foo: string; bar: string; baz: string}[] = [];
   for (let i = 0; i < 1000; i++) {
     items.push({id: i, foo: `Foo ${i}`, bar: `Bar ${i}`, baz: `Baz ${i}`});
   }
@@ -898,8 +993,10 @@ export const VirtualizedTable: TableStory = () => {
   });
 
   let {dragAndDropHooks} = useDragAndDrop({
-    getItems: (keys) => {
-      return [...keys].filter(k => !!list.getItem(k)).map(key => ({'text/plain': list.getItem(key)!.foo}));
+    getItems: keys => {
+      return [...keys]
+        .filter(k => !!list.getItem(k))
+        .map(key => ({'text/plain': list.getItem(key)!.foo}));
     },
     onReorder(e) {
       if (e.target.dropPosition === 'before') {
@@ -909,7 +1006,16 @@ export const VirtualizedTable: TableStory = () => {
       }
     },
     renderDropIndicator(target) {
-      return <DropIndicator target={target} style={({isDropTarget}) => ({width: '100%', height: '100%', background: isDropTarget ? 'blue' : 'transparent'})} />;
+      return (
+        <DropIndicator
+          target={target}
+          style={({isDropTarget}) => ({
+            width: '100%',
+            height: '100%',
+            background: isDropTarget ? 'blue' : 'transparent'
+          })}
+        />
+      );
     }
   });
 
@@ -920,19 +1026,36 @@ export const VirtualizedTable: TableStory = () => {
         rowHeight: 25,
         headingHeight: 25
       }}>
-      <Table aria-label="virtualized table" selectionMode="multiple" dragAndDropHooks={dragAndDropHooks} style={{height: 400, width: 400, overflow: 'auto', scrollPaddingTop: 25}}>
-        <TableHeader style={{background: 'var(--spectrum-gray-100)', width: '100%', height: '100%'}}>
+      <Table
+        aria-label="virtualized table"
+        selectionMode="multiple"
+        dragAndDropHooks={dragAndDropHooks}
+        style={{height: 400, width: 400, overflow: 'auto', scrollPaddingTop: 25}}>
+        <TableHeader
+          style={{background: 'var(--spectrum-gray-100)', width: '100%', height: '100%'}}>
           <Column width={30} minWidth={0} />
-          <Column width={30} minWidth={0}><MyCheckbox slot="selection" /></Column>
-          <Column isRowHeader><strong>Foo</strong></Column>
-          <Column><strong>Bar</strong></Column>
-          <Column><strong>Baz</strong></Column>
+          <Column width={30} minWidth={0}>
+            <MyCheckbox slot="selection" />
+          </Column>
+          <Column isRowHeader>
+            <strong>Foo</strong>
+          </Column>
+          <Column>
+            <strong>Bar</strong>
+          </Column>
+          <Column>
+            <strong>Baz</strong>
+          </Column>
         </TableHeader>
         <TableBody items={list.items}>
           {item => (
             <Row style={{width: 'inherit', height: 'inherit'}}>
-              <Cell><Button slot="drag">≡</Button></Cell>
-              <Cell><MyCheckbox slot="selection" /></Cell>
+              <Cell>
+                <Button slot="drag">≡</Button>
+              </Cell>
+              <Cell>
+                <MyCheckbox slot="selection" />
+              </Cell>
               <Cell>{item.foo}</Cell>
               <Cell>{item.bar}</Cell>
               <Cell>{item.baz}</Cell>
@@ -945,13 +1068,14 @@ export const VirtualizedTable: TableStory = () => {
 };
 
 export const VirtualizedTableWithResizing: TableStory = () => {
-  let items: {id: number, foo: string, bar: string, baz: string}[] = [];
+  let items: {id: number; foo: string; bar: string; baz: string}[] = [];
   for (let i = 0; i < 1000; i++) {
     items.push({id: i, foo: `Foo ${i}`, bar: `Bar ${i}`, baz: `Baz ${i}`});
   }
 
   return (
-    <ResizableTableContainer style={{height: 400, width: 400, overflow: 'auto', scrollPaddingTop: 25}}>
+    <ResizableTableContainer
+      style={{height: 400, width: 400, overflow: 'auto', scrollPaddingTop: 25}}>
       <Virtualizer
         layout={TableLayout}
         layoutOptions={{
@@ -959,7 +1083,8 @@ export const VirtualizedTableWithResizing: TableStory = () => {
           headingHeight: 25
         }}>
         <Table aria-label="virtualized table">
-          <TableHeader style={{background: 'var(--spectrum-gray-100)', width: '100%', height: '100%'}}>
+          <TableHeader
+            style={{background: 'var(--spectrum-gray-100)', width: '100%', height: '100%'}}>
             <MyColumn isRowHeader>Foo</MyColumn>
             <MyColumn>Bar</MyColumn>
             <MyColumn>Baz</MyColumn>
@@ -979,7 +1104,10 @@ export const VirtualizedTableWithResizing: TableStory = () => {
   );
 };
 
-function VirtualizedTableWithEmptyState(args: {isLoading: boolean, showRows: boolean}): JSX.Element {
+function VirtualizedTableWithEmptyState(args: {
+  isLoading: boolean;
+  showRows: boolean;
+}): JSX.Element {
   let rows = [
     {foo: 'Foo 1', bar: 'Bar 1', baz: 'Baz 1'},
     {foo: 'Foo 2', bar: 'Bar 2', baz: 'Baz 2'},
@@ -988,7 +1116,8 @@ function VirtualizedTableWithEmptyState(args: {isLoading: boolean, showRows: boo
   ];
 
   return (
-    <ResizableTableContainer style={{height: 400, width: 400, overflow: 'auto', scrollPaddingTop: 25}}>
+    <ResizableTableContainer
+      style={{height: 400, width: 400, overflow: 'auto', scrollPaddingTop: 25}}>
       <Virtualizer
         layout={TableLayout}
         layoutOptions={{
@@ -996,16 +1125,19 @@ function VirtualizedTableWithEmptyState(args: {isLoading: boolean, showRows: boo
           headingHeight: 25
         }}>
         <Table aria-label="virtualized table">
-          <TableHeader style={{background: 'var(--spectrum-gray-100)', width: '100%', height: '100%'}}>
+          <TableHeader
+            style={{background: 'var(--spectrum-gray-100)', width: '100%', height: '100%'}}>
             <MyColumn isRowHeader>Foo</MyColumn>
             <MyColumn>Bar</MyColumn>
             <MyColumn>Baz</MyColumn>
           </TableHeader>
           <MyTableBody
             isLoading={args.isLoading && args.showRows}
-            renderEmptyState={() => renderEmptyLoader({isLoading: !args.showRows && args.isLoading})}
+            renderEmptyState={() =>
+              renderEmptyLoader({isLoading: !args.showRows && args.isLoading})
+            }
             rows={!args.showRows ? [] : rows}>
-            {(item) => (
+            {item => (
               <Row id={item.foo} style={{width: 'inherit', height: 'inherit'}}>
                 <Cell>{item.foo}</Cell>
                 <Cell>{item.bar}</Cell>
@@ -1019,14 +1151,15 @@ function VirtualizedTableWithEmptyState(args: {isLoading: boolean, showRows: boo
   );
 }
 
-export const VirtualizedTableWithEmptyStateStory: StoryObj<typeof VirtualizedTableWithEmptyState> = {
-  render: VirtualizedTableWithEmptyState,
-  args: {
-    isLoading: false,
-    showRows: false
-  },
-  name: 'Virtualized Table With Empty State'
-};
+export const VirtualizedTableWithEmptyStateStory: StoryObj<typeof VirtualizedTableWithEmptyState> =
+  {
+    render: VirtualizedTableWithEmptyState,
+    args: {
+      isLoading: false,
+      showRows: false
+    },
+    name: 'Virtualized Table With Empty State'
+  };
 
 const OnLoadMoreTableVirtualized = (args: {delay: number}): JSX.Element => {
   let list = useAsyncList<Character>({
@@ -1054,9 +1187,14 @@ const OnLoadMoreTableVirtualized = (args: {delay: number}): JSX.Element => {
         headingHeight: 25,
         loaderHeight: 30
       }}>
-      <Table aria-label="Load more table virtualized" style={{height: 150, width: 400, overflow: 'auto'}}>
-        <TableHeader style={{background: 'var(--spectrum-gray-100)', width: '100%', height: '100%'}}>
-          <Column id="name" isRowHeader>Name</Column>
+      <Table
+        aria-label="Load more table virtualized"
+        style={{height: 150, width: 400, overflow: 'auto'}}>
+        <TableHeader
+          style={{background: 'var(--spectrum-gray-100)', width: '100%', height: '100%'}}>
+          <Column id="name" isRowHeader>
+            Name
+          </Column>
           <Column id="height">Height</Column>
           <Column id="mass">Mass</Column>
           <Column id="birth_year">Birth Year</Column>
@@ -1066,7 +1204,7 @@ const OnLoadMoreTableVirtualized = (args: {delay: number}): JSX.Element => {
           isLoading={list.loadingState === 'loadingMore'}
           onLoadMore={list.loadMore}
           rows={list.items}>
-          {(item) => (
+          {item => (
             <Row id={item.name} style={{width: 'inherit', height: 'inherit'}}>
               <Cell>{item.name}</Cell>
               <Cell>{item.height}</Cell>
@@ -1116,8 +1254,11 @@ const OnLoadMoreTableVirtualizedResizeWrapper = (args: {delay: number}): JSX.Ele
           loaderHeight: 30
         }}>
         <Table aria-label="Load more table virtualized">
-          <TableHeader style={{background: 'var(--spectrum-gray-100)', width: '100%', height: '100%'}}>
-            <Column id="name" isRowHeader>Name</Column>
+          <TableHeader
+            style={{background: 'var(--spectrum-gray-100)', width: '100%', height: '100%'}}>
+            <Column id="name" isRowHeader>
+              Name
+            </Column>
             <Column id="height">Height</Column>
             <Column id="mass">Mass</Column>
             <Column id="birth_year">Birth Year</Column>
@@ -1127,7 +1268,7 @@ const OnLoadMoreTableVirtualizedResizeWrapper = (args: {delay: number}): JSX.Ele
             isLoading={list.loadingState === 'loadingMore'}
             onLoadMore={list.loadMore}
             rows={list.items}>
-            {(item) => (
+            {item => (
               <Row id={item.name} style={{width: 'inherit', height: 'inherit'}}>
                 <Cell>{item.name}</Cell>
                 <Cell>{item.height}</Cell>
@@ -1142,7 +1283,9 @@ const OnLoadMoreTableVirtualizedResizeWrapper = (args: {delay: number}): JSX.Ele
   );
 };
 
-export const OnLoadMoreTableVirtualizedResizeWrapperStory: StoryObj<typeof OnLoadMoreTableVirtualizedResizeWrapper> = {
+export const OnLoadMoreTableVirtualizedResizeWrapperStory: StoryObj<
+  typeof OnLoadMoreTableVirtualizedResizeWrapper
+> = {
   render: OnLoadMoreTableVirtualizedResizeWrapper,
   name: 'Virtualized Table with async loading, with wrapper around Virtualizer',
   args: {
@@ -1172,7 +1315,16 @@ const VirtualizedTableLoaderWidthTest = (args: {delay: number}): JSX.Element => 
   });
 
   return (
-    <div style={{resize: 'horizontal', overflow: 'auto', width: 600, height: 400, minWidth: 300, border: '1px solid gray', padding: 8}}>
+    <div
+      style={{
+        resize: 'horizontal',
+        overflow: 'auto',
+        width: 600,
+        height: 400,
+        minWidth: 300,
+        border: '1px solid gray',
+        padding: 8
+      }}>
       <Virtualizer
         layout={TableLayout}
         layoutOptions={{
@@ -1180,16 +1332,23 @@ const VirtualizedTableLoaderWidthTest = (args: {delay: number}): JSX.Element => 
           headingHeight: 25,
           loaderHeight: 30
         }}>
-        <Table aria-label="Star Wars characters" style={{width: '100%', height: '100%', overflow: 'auto'}}>
+        <Table
+          aria-label="Star Wars characters"
+          style={{width: '100%', height: '100%', overflow: 'auto'}}>
           <TableHeader>
-            <Column id="name" isRowHeader>Name</Column>
+            <Column id="name" isRowHeader>
+              Name
+            </Column>
             <Column id="height">Height</Column>
             <Column id="mass">Mass</Column>
             <Column id="birth_year">Birth Year</Column>
           </TableHeader>
-          <TableBody renderEmptyState={() => renderEmptyLoader({isLoading: list.loadingState === 'loading'})}>
+          <TableBody
+            renderEmptyState={() =>
+              renderEmptyLoader({isLoading: list.loadingState === 'loading'})
+            }>
             <Collection items={list.items}>
-              {(item) => (
+              {item => (
                 <Row id={item.name}>
                   <Cell>{item.name}</Cell>
                   <Cell>{item.height}</Cell>
@@ -1211,7 +1370,9 @@ const VirtualizedTableLoaderWidthTest = (args: {delay: number}): JSX.Element => 
   );
 };
 
-export const VirtualizedTableLoaderWidthTestStory: StoryObj<typeof VirtualizedTableLoaderWidthTest> = {
+export const VirtualizedTableLoaderWidthTestStory: StoryObj<
+  typeof VirtualizedTableLoaderWidthTest
+> = {
   render: VirtualizedTableLoaderWidthTest,
   name: 'virtualized table, loader dynamic width',
   args: {delay: 10000},
@@ -1223,9 +1384,9 @@ export const VirtualizedTableLoaderWidthTestStory: StoryObj<typeof VirtualizedTa
 };
 
 interface Launch {
-  id: number,
-  mission_name: string,
-  launch_year: number
+  id: number;
+  mission_name: string;
+  launch_year: number;
 }
 
 const items: Launch[] = [
@@ -1290,7 +1451,10 @@ function LocationsTableBody({promise}) {
 }
 
 export const TableWithSuspense: StoryObj<typeof TableSuspense> = {
-  render: React.use != null ? (args) => <TableSuspense {...args} /> : () => <>'This story requires React 19.'</>,
+  render:
+    React.use != null
+      ? args => <TableSuspense {...args} />
+      : () => <>'This story requires React 19.'</>,
   args: {
     reactTransition: false
   },
@@ -1719,20 +1883,20 @@ export const TableWithReactTransition: TableStory = () => {
       <Button
         onPress={() =>
           startTransition(() => {
-            setShow((s) => !s);
+            setShow(s => !s);
           })
         }>
         Toggle data using useState + startTransition
       </Button>
       <Table aria-label="test">
         <TableHeader columns={columns1}>
-          {(column) => <Column {...column}>{column.name}</Column>}
+          {column => <Column {...column}>{column.name}</Column>}
         </TableHeader>
         <TableBody items={items}>
           {(row: any) => (
             <Row id={row.id} columns={columns1}>
               {/* @ts-ignore */}
-              {(column) => <Cell>{row[column.id]}</Cell>}
+              {column => <Cell>{row[column.id]}</Cell>}
             </Row>
           )}
         </TableBody>
@@ -1744,27 +1908,36 @@ export const TableWithReactTransition: TableStory = () => {
 function NameCell(props: CellProps) {
   return (
     <Cell style={({level}) => ({paddingLeft: (level - 1) * 32})}>
-      {({hasChildItems, isTreeColumn, isExpanded}) => (<>
-        {hasChildItems && isTreeColumn && (
-          <Button className={styles.chevron} slot="chevron">
-            <div style={{transform: `rotate(${isExpanded ? 90 : 0}deg)`, width: '16px', height: '16px'}}>
-              <svg viewBox="0 0 24 24" style={{width: '16px', height: '16px'}}>
-                <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-              </svg>
-            </div>
-          </Button>
-        )}
-        {props.children}
-      </>)}
+      {({hasChildItems, isTreeColumn, isExpanded}) => (
+        <>
+          {hasChildItems && isTreeColumn && (
+            <Button className={styles.chevron} slot="chevron">
+              <div
+                style={{
+                  transform: `rotate(${isExpanded ? 90 : 0}deg)`,
+                  width: '16px',
+                  height: '16px'
+                }}>
+                <svg viewBox="0 0 24 24" style={{width: '16px', height: '16px'}}>
+                  <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                </svg>
+              </div>
+            </Button>
+          )}
+          {props.children}
+        </>
+      )}
     </Cell>
   );
 }
 
-export const TableNestedRows: TableStory = (args) => {
+export const TableNestedRows: TableStory = args => {
   return (
     <Table aria-label="Files" selectionMode="multiple" treeColumn="name" {...args}>
       <TableHeader>
-        <Column id="name" isRowHeader>Name</Column>
+        <Column id="name" isRowHeader>
+          Name
+        </Column>
         <Column id="type">Type</Column>
         <Column id="date">Date Modified</Column>
       </TableHeader>
@@ -1790,6 +1963,221 @@ export const TableNestedRows: TableStory = (args) => {
           <Cell>11/20/2010</Cell>
         </MyRow>
       </TableBody>
+    </Table>
+  );
+};
+
+const invoices = [
+  {title: 'Website Design', status: 'Paid', paymentMethod: 'Credit Card', price: '$1,200'},
+  {title: 'Logo Creation', status: 'Pending', paymentMethod: 'PayPal', price: '$350'},
+  {title: 'SEO Optimization', status: 'Overdue', paymentMethod: 'Bank Transfer', price: '$800'},
+  {title: 'Social Media Setup', status: 'Paid', paymentMethod: 'Debit Card', price: '$450'},
+  {title: 'Content Writing', status: 'Pending', paymentMethod: 'Credit Card', price: '$600'},
+  {title: 'App Development', status: 'Paid', paymentMethod: 'Wire Transfer', price: '$5,000'},
+  {title: 'Maintenance Plan', status: 'Overdue', paymentMethod: 'PayPal', price: '$200'}
+];
+
+export const TableFooterExample: TableStory = args => {
+  return (
+    <Table aria-label="Files" selectionMode="multiple" {...args}>
+      <TableHeader style={{background: 'light-dark(#ccc, #333)', fontWeight: 'bold'}}>
+        <Column isRowHeader>Title</Column>
+        <Column>Status</Column>
+        <Column>Payment Method</Column>
+        <Column>Price</Column>
+      </TableHeader>
+      <TableBody items={invoices}>
+        {item => (
+          <MyRow id={item.title}>
+            <Cell>{item.title}</Cell>
+            <Cell>{item.status}</Cell>
+            <Cell>{item.paymentMethod}</Cell>
+            <Cell>{item.price}</Cell>
+          </MyRow>
+        )}
+      </TableBody>
+      <TableFooter style={{background: 'light-dark(#ccc, #333)', fontWeight: 'bold'}}>
+        <MyRow>
+          <Cell colSpan={3} style={{textAlign: 'end'}}>
+            Total:
+          </Cell>
+          <Cell>
+            {invoices
+              .reduce((p, item) => p + Number(item.price.replace(/[$,]/g, '')), 0)
+              .toLocaleString('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                maximumFractionDigits: 0
+              })}
+          </Cell>
+        </MyRow>
+      </TableFooter>
+    </Table>
+  );
+};
+
+export const VirtualizedTableFooter: TableStory = args => {
+  return (
+    <Virtualizer layout={TableLayout}>
+      <Table aria-label="Files" selectionMode="multiple" style={{width: 500}} {...args}>
+        <TableHeader
+          style={{height: '100%', background: 'light-dark(#ccc, #333)', fontWeight: 'bold'}}>
+          <Column isRowHeader>Title</Column>
+          <Column>Status</Column>
+          <Column>Payment Method</Column>
+          <Column>Price</Column>
+        </TableHeader>
+        <TableBody items={invoices}>
+          {item => (
+            <MyRow id={item.title}>
+              <Cell>{item.title}</Cell>
+              <Cell>{item.status}</Cell>
+              <Cell>{item.paymentMethod}</Cell>
+              <Cell>{item.price}</Cell>
+            </MyRow>
+          )}
+        </TableBody>
+        <TableFooter
+          style={{height: '100%', background: 'light-dark(#ccc, #333)', fontWeight: 'bold'}}>
+          <MyRow>
+            <Cell colSpan={3} style={{textAlign: 'end'}}>
+              Total:
+            </Cell>
+            <Cell>
+              {invoices
+                .reduce((p, item) => p + Number(item.price.replace(/[$,]/g, '')), 0)
+                .toLocaleString('en-US', {
+                  style: 'currency',
+                  currency: 'USD',
+                  maximumFractionDigits: 0
+                })}
+            </Cell>
+          </MyRow>
+        </TableFooter>
+      </Table>
+    </Virtualizer>
+  );
+};
+
+export const TableSectionExample: TableStory = args => {
+  let sections = ['Overdue', 'Pending', 'Paid'];
+
+  return (
+    <Table aria-label="Files" selectionMode="multiple" {...args}>
+      <TableHeader style={{background: 'light-dark(#ccc, #333)', fontWeight: 'bold'}}>
+        <Column isRowHeader>Title</Column>
+        <Column>Payment Method</Column>
+        <Column>Price</Column>
+      </TableHeader>
+      {sections.map(section => (
+        <TableBody key={section}>
+          <MyRow style={{height: '100%', background: 'light-dark(#ccc, #333)', fontWeight: 'bold'}}>
+            <Cell colSpan={3}>{section}</Cell>
+          </MyRow>
+          <Collection items={invoices.filter(invoice => invoice.status === section)}>
+            {item => (
+              <MyRow id={item.title}>
+                <Cell>{item.title}</Cell>
+                <Cell>{item.paymentMethod}</Cell>
+                <Cell>{item.price}</Cell>
+              </MyRow>
+            )}
+          </Collection>
+        </TableBody>
+      ))}
+    </Table>
+  );
+};
+
+export const TableSectionDnd: TableStory = args => {
+  let sections = ['Overdue', 'Pending', 'Paid'];
+  let tree = useTreeData({
+    initialItems: sections.map(section => ({
+      title: section,
+      children: invoices.filter(invoice => invoice.status === section)
+    })),
+    getKey: item => item.title
+  });
+
+  let {dragAndDropHooks} = useDragAndDrop({
+    getItems: (keys, items: typeof tree.items) =>
+      items.map(item => ({'text/plain': item.value.title})),
+    getDropOperation(target) {
+      // Prevent dropping on section headers or at the top-level (turning an item into a section)
+      if (target.type === 'item' && target.dropPosition !== 'on') {
+        let item = tree.getItem(target.key);
+        return item?.parentKey ? 'move' : 'cancel';
+      }
+      return 'cancel';
+    },
+    onMove(e) {
+      if (e.target.dropPosition === 'before') {
+        tree.moveBefore(e.target.key, e.keys);
+      } else if (e.target.dropPosition === 'after') {
+        tree.moveAfter(e.target.key, e.keys);
+      } else if (e.target.dropPosition === 'on') {
+        let targetNode = tree.getItem(e.target.key);
+        if (targetNode) {
+          let targetIndex = targetNode.children ? targetNode.children.length : 0;
+          let keyArray = Array.from(e.keys);
+          for (let i = 0; i < keyArray.length; i++) {
+            tree.move(keyArray[i], e.target.key, targetIndex + i);
+          }
+        }
+      }
+    }
+  });
+
+  return (
+    <Table
+      aria-label="Files"
+      selectionMode="multiple"
+      dragAndDropHooks={dragAndDropHooks}
+      {...args}>
+      <TableHeader style={{background: 'light-dark(#ccc, #333)', fontWeight: 'bold'}}>
+        <Column />
+        <Column isRowHeader>Title</Column>
+        <Column>Payment Method</Column>
+        <Column>Price</Column>
+      </TableHeader>
+      <Collection items={tree.items}>
+        {section => (
+          <TableBody>
+            <MyRow
+              isDisabled
+              style={{height: '100%', background: 'light-dark(#ccc, #333)', fontWeight: 'bold'}}>
+              <Cell colSpan={4}>{section.value.title}</Cell>
+            </MyRow>
+            <Collection items={section.children!}>
+              {(item: any) => (
+                <MyRow id={item.value.title}>
+                  <Column>
+                    <Button slot="drag">≡</Button>
+                  </Column>
+                  <Cell>{item.value.title}</Cell>
+                  <Cell>{item.value.paymentMethod}</Cell>
+                  <Cell>{item.value.price}</Cell>
+                </MyRow>
+              )}
+            </Collection>
+          </TableBody>
+        )}
+      </Collection>
+      <TableFooter
+        style={{height: '100%', background: 'light-dark(#ccc, #333)', fontWeight: 'bold'}}>
+        <MyRow isDisabled>
+          <Cell colSpan={3}>Total</Cell>
+          <Cell>
+            {invoices
+              .reduce((p, item) => p + Number(item.price.replace(/[$,]/g, '')), 0)
+              .toLocaleString('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                maximumFractionDigits: 0
+              })}
+          </Cell>
+        </MyRow>
+      </TableFooter>
     </Table>
   );
 };

@@ -10,9 +10,29 @@
  * governing permissions and limitations under the License.
  */
 
-import {AnyCalendarDate, AnyDateTime, AnyTime, CycleOptions, CycleTimeOptions, DateDuration, DateField, DateFields, DateTimeDuration, Disambiguation, TimeDuration, TimeField, TimeFields} from './types';
+import {
+  AnyCalendarDate,
+  AnyDateTime,
+  AnyTime,
+  CycleOptions,
+  CycleTimeOptions,
+  DateDuration,
+  DateField,
+  DateFields,
+  DateTimeDuration,
+  Disambiguation,
+  TimeDuration,
+  TimeField,
+  TimeFields
+} from './types';
 import {CalendarDate, CalendarDateTime, Time, ZonedDateTime} from './CalendarDate';
-import {epochFromDate, fromAbsolute, toAbsolute, toCalendar, toCalendarDateTime} from './conversion';
+import {
+  epochFromDate,
+  fromAbsolute,
+  toAbsolute,
+  toCalendar,
+  toCalendarDateTime
+} from './conversion';
 import {GregorianCalendar} from './calendars/GregorianCalendar';
 import {Mutable} from './utils';
 
@@ -20,8 +40,14 @@ const ONE_HOUR = 3600000;
 
 export function add(date: CalendarDateTime, duration: DateTimeDuration): CalendarDateTime;
 export function add(date: CalendarDate, duration: DateDuration): CalendarDate;
-export function add(date: CalendarDate | CalendarDateTime, duration: DateTimeDuration): CalendarDate | CalendarDateTime;
-export function add(date: CalendarDate | CalendarDateTime, duration: DateTimeDuration): Mutable<AnyCalendarDate | AnyDateTime> {
+export function add(
+  date: CalendarDate | CalendarDateTime,
+  duration: DateTimeDuration
+): CalendarDate | CalendarDateTime;
+export function add(
+  date: CalendarDate | CalendarDateTime,
+  duration: DateTimeDuration
+): Mutable<AnyCalendarDate | AnyDateTime> {
   let mutableDate: Mutable<AnyCalendarDate | AnyDateTime> = date.copy();
   let days = 'hour' in mutableDate ? addTimeFields(mutableDate, duration) : 0;
 
@@ -74,7 +100,10 @@ export function add(date: CalendarDate | CalendarDateTime, duration: DateTimeDur
     mutableDate.day = mutableDate.calendar.getDaysInMonth(mutableDate);
   }
 
-  mutableDate.day = Math.max(1, Math.min(mutableDate.calendar.getDaysInMonth(mutableDate), mutableDate.day));
+  mutableDate.day = Math.max(
+    1,
+    Math.min(mutableDate.calendar.getDaysInMonth(mutableDate), mutableDate.day)
+  );
   return mutableDate;
 }
 
@@ -140,13 +169,19 @@ export function invertDuration(duration: DateTimeDuration): DateTimeDuration {
 
 export function subtract(date: CalendarDateTime, duration: DateTimeDuration): CalendarDateTime;
 export function subtract(date: CalendarDate, duration: DateDuration): CalendarDate;
-export function subtract(date: CalendarDate | CalendarDateTime, duration: DateTimeDuration): CalendarDate | CalendarDateTime {
+export function subtract(
+  date: CalendarDate | CalendarDateTime,
+  duration: DateTimeDuration
+): CalendarDate | CalendarDateTime {
   return add(date, invertDuration(duration));
 }
 
 export function set(date: CalendarDateTime, fields: DateFields): CalendarDateTime;
 export function set(date: CalendarDate, fields: DateFields): CalendarDate;
-export function set(date: CalendarDate | CalendarDateTime, fields: DateFields): Mutable<AnyCalendarDate> {
+export function set(
+  date: CalendarDate | CalendarDateTime,
+  fields: DateFields
+): Mutable<AnyCalendarDate> {
   let mutableDate: Mutable<AnyCalendarDate> = date.copy();
 
   if (fields.era != null) {
@@ -171,7 +206,10 @@ export function set(date: CalendarDate | CalendarDateTime, fields: DateFields): 
 
 export function setTime(value: CalendarDateTime, fields: TimeFields): CalendarDateTime;
 export function setTime(value: Time, fields: TimeFields): Time;
-export function setTime(value: Time | CalendarDateTime, fields: TimeFields): Mutable<Time | CalendarDateTime> {
+export function setTime(
+  value: Time | CalendarDateTime,
+  fields: TimeFields
+): Mutable<Time | CalendarDateTime> {
   let mutableValue: Mutable<Time | CalendarDateTime> = value.copy();
 
   if (fields.hour != null) {
@@ -243,9 +281,24 @@ export function subtractTime(time: Time, duration: TimeDuration): Time {
   return addTime(time, invertDuration(duration));
 }
 
-export function cycleDate(value: CalendarDateTime, field: DateField, amount: number, options?: CycleOptions): CalendarDateTime;
-export function cycleDate(value: CalendarDate, field: DateField, amount: number, options?: CycleOptions): CalendarDate;
-export function cycleDate(value: CalendarDate | CalendarDateTime, field: DateField, amount: number, options?: CycleOptions): Mutable<CalendarDate | CalendarDateTime> {
+export function cycleDate(
+  value: CalendarDateTime,
+  field: DateField,
+  amount: number,
+  options?: CycleOptions
+): CalendarDateTime;
+export function cycleDate(
+  value: CalendarDate,
+  field: DateField,
+  amount: number,
+  options?: CycleOptions
+): CalendarDate;
+export function cycleDate(
+  value: CalendarDate | CalendarDateTime,
+  field: DateField,
+  amount: number,
+  options?: CycleOptions
+): Mutable<CalendarDate | CalendarDateTime> {
   let mutable: Mutable<CalendarDate | CalendarDateTime> = value.copy();
 
   switch (field) {
@@ -281,10 +334,22 @@ export function cycleDate(value: CalendarDate | CalendarDateTime, field: DateFie
       break;
     }
     case 'month':
-      mutable.month = cycleValue(value.month, amount, 1, value.calendar.getMonthsInYear(value), options?.round);
+      mutable.month = cycleValue(
+        value.month,
+        amount,
+        1,
+        value.calendar.getMonthsInYear(value),
+        options?.round
+      );
       break;
     case 'day':
-      mutable.day = cycleValue(value.day, amount, 1, value.calendar.getDaysInMonth(value), options?.round);
+      mutable.day = cycleValue(
+        value.day,
+        amount,
+        1,
+        value.calendar.getDaysInMonth(value),
+        options?.round
+      );
       break;
     default:
       throw new Error('Unsupported field ' + field);
@@ -298,9 +363,24 @@ export function cycleDate(value: CalendarDate | CalendarDateTime, field: DateFie
   return mutable;
 }
 
-export function cycleTime(value: CalendarDateTime, field: TimeField, amount: number, options?: CycleTimeOptions): CalendarDateTime;
-export function cycleTime(value: Time, field: TimeField, amount: number, options?: CycleTimeOptions): Time;
-export function cycleTime(value: Time | CalendarDateTime, field: TimeField, amount: number, options?: CycleTimeOptions): Mutable<Time | CalendarDateTime> {
+export function cycleTime(
+  value: CalendarDateTime,
+  field: TimeField,
+  amount: number,
+  options?: CycleTimeOptions
+): CalendarDateTime;
+export function cycleTime(
+  value: Time,
+  field: TimeField,
+  amount: number,
+  options?: CycleTimeOptions
+): Time;
+export function cycleTime(
+  value: Time | CalendarDateTime,
+  field: TimeField,
+  amount: number,
+  options?: CycleTimeOptions
+): Mutable<Time | CalendarDateTime> {
   let mutable: Mutable<Time | CalendarDateTime> = value.copy();
 
   switch (field) {
@@ -364,7 +444,12 @@ function cycleValue(value: number, amount: number, min: number, max: number, rou
 
 export function addZoned(dateTime: ZonedDateTime, duration: DateTimeDuration): ZonedDateTime {
   let ms: number;
-  if ((duration.years != null && duration.years !== 0) || (duration.months != null && duration.months !== 0) || (duration.weeks != null && duration.weeks !== 0) || (duration.days != null && duration.days !== 0)) {
+  if (
+    (duration.years != null && duration.years !== 0) ||
+    (duration.months != null && duration.months !== 0) ||
+    (duration.weeks != null && duration.weeks !== 0) ||
+    (duration.days != null && duration.days !== 0)
+  ) {
     let res = add(toCalendarDateTime(dateTime), {
       years: duration.years,
       months: duration.months,
@@ -396,7 +481,12 @@ export function subtractZoned(dateTime: ZonedDateTime, duration: DateTimeDuratio
   return addZoned(dateTime, invertDuration(duration));
 }
 
-export function cycleZoned(dateTime: ZonedDateTime, field: DateField | TimeField, amount: number, options?: CycleTimeOptions): ZonedDateTime {
+export function cycleZoned(
+  dateTime: ZonedDateTime,
+  field: DateField | TimeField,
+  amount: number,
+  options?: CycleTimeOptions
+): ZonedDateTime {
   // For date fields, we want the time to remain consistent and the UTC offset to potentially change to account for DST changes.
   // For time fields, we want the time to change by the amount given. This may result in the hour field staying the same, but the UTC
   // offset changing in the case of a backward DST transition, or skipping an hour in the case of a forward DST transition.
@@ -417,12 +507,18 @@ export function cycleZoned(dateTime: ZonedDateTime, field: DateField | TimeField
       // that is within the current day.
       let plainDateTime = toCalendarDateTime(dateTime);
       let minDate = toCalendar(setTime(plainDateTime, {hour: min}), new GregorianCalendar());
-      let minAbsolute = [toAbsolute(minDate, dateTime.timeZone, 'earlier'), toAbsolute(minDate, dateTime.timeZone, 'later')]
-        .filter(ms => fromAbsolute(ms, dateTime.timeZone).day === minDate.day)[0];
+      let minAbsolute = [
+        toAbsolute(minDate, dateTime.timeZone, 'earlier'),
+        toAbsolute(minDate, dateTime.timeZone, 'later')
+      ].filter(ms => fromAbsolute(ms, dateTime.timeZone).day === minDate.day)[0];
 
       let maxDate = toCalendar(setTime(plainDateTime, {hour: max}), new GregorianCalendar());
-      let maxAbsolute = [toAbsolute(maxDate, dateTime.timeZone, 'earlier'), toAbsolute(maxDate, dateTime.timeZone, 'later')]
-        .filter(ms => fromAbsolute(ms, dateTime.timeZone).day === maxDate.day).pop()!;
+      let maxAbsolute = [
+        toAbsolute(maxDate, dateTime.timeZone, 'earlier'),
+        toAbsolute(maxDate, dateTime.timeZone, 'later')
+      ]
+        .filter(ms => fromAbsolute(ms, dateTime.timeZone).day === maxDate.day)
+        .pop()!;
 
       // Since hours may repeat, we need to operate on the absolute time in milliseconds.
       // This is done in hours from the Unix epoch so that cycleValue works correctly,
@@ -430,13 +526,16 @@ export function cycleZoned(dateTime: ZonedDateTime, field: DateField | TimeField
       let ms = epochFromDate(dateTime) - dateTime.offset;
       let hours = Math.floor(ms / ONE_HOUR);
       let remainder = ms % ONE_HOUR;
-      ms = cycleValue(
-        hours,
-        amount,
-        Math.floor(minAbsolute / ONE_HOUR),
-        Math.floor(maxAbsolute / ONE_HOUR),
-        options?.round
-      ) * ONE_HOUR + remainder;
+      ms =
+        cycleValue(
+          hours,
+          amount,
+          Math.floor(minAbsolute / ONE_HOUR),
+          Math.floor(maxAbsolute / ONE_HOUR),
+          options?.round
+        ) *
+          ONE_HOUR +
+        remainder;
 
       // Now compute the new timezone offset, and convert the absolute time back to local time.
       return toCalendar(fromAbsolute(ms, dateTime.timeZone), dateTime.calendar);
@@ -459,7 +558,11 @@ export function cycleZoned(dateTime: ZonedDateTime, field: DateField | TimeField
   }
 }
 
-export function setZoned(dateTime: ZonedDateTime, fields: DateFields & TimeFields, disambiguation?: Disambiguation): ZonedDateTime {
+export function setZoned(
+  dateTime: ZonedDateTime,
+  fields: DateFields & TimeFields,
+  disambiguation?: Disambiguation
+): ZonedDateTime {
   // Set the date/time fields, and recompute the UTC offset to account for DST changes.
   // We also need to validate by converting back to a local time in case hours are skipped during forward DST transitions.
   let plainDateTime = toCalendarDateTime(dateTime);

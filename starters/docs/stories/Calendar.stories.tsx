@@ -12,6 +12,4 @@ const meta: Meta<typeof Calendar> = {
 export default meta;
 type Story = StoryFn<typeof Calendar>;
 
-export const Example: Story = (args) => (
-  <Calendar aria-label="Event date" {...args} />
-);
+export const Example: Story = args => <Calendar aria-label="Event date" {...args} />;

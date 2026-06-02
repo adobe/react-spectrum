@@ -12,8 +12,8 @@ async function run() {
       username: context.actor
     });
 
-    if (!['admin','write'].includes(data.permission)) {
-      core.setFailed('User doesn\'t have write permissions or higher');
+    if (!['admin', 'write'].includes(data.permission)) {
+      core.setFailed("User doesn't have write permissions or higher");
     }
   } catch (error) {
     core.setFailed(error.message);

@@ -16,13 +16,15 @@ import {ProgressBar, ProgressBarContext} from '../src/ProgressBar';
 import React from 'react';
 import {render} from '@react-spectrum/test-utils-internal';
 
-let TestProgressBar = (props) => (
+let TestProgressBar = props => (
   <ProgressBar value={25} data-foo="bar" {...props}>
-    {({percentage, valueText}) => (<>
-      <Label>Loading…</Label>
-      <span className="value">{valueText}</span>
-      <div className="bar" style={{width: percentage + '%'}} />
-    </>)}
+    {({percentage, valueText}) => (
+      <>
+        <Label>Loading…</Label>
+        <span className="value">{valueText}</span>
+        <div className="bar" style={{width: percentage + '%'}} />
+      </>
+    )}
   </ProgressBar>
 );
 
@@ -35,7 +37,9 @@ describe('ProgressBar', () => {
     expect(progressbar).toHaveAttribute('aria-valuenow', '25');
     expect(progressbar).toHaveAttribute('aria-labelledby');
     expect(progressbar).toHaveAttribute('data-foo', 'bar');
-    expect(document.getElementById(progressbar.getAttribute('aria-labelledby'))).toHaveTextContent('Loading…');
+    expect(document.getElementById(progressbar.getAttribute('aria-labelledby'))).toHaveTextContent(
+      'Loading…'
+    );
 
     let value = progressbar.querySelector('.value');
     expect(value).toHaveTextContent('25%');
@@ -46,11 +50,15 @@ describe('ProgressBar', () => {
 
   it('supports indeterminate state', () => {
     let {getByRole} = render(
-      <ProgressBar isIndeterminate className={({isIndeterminate}) => `progressbar ${isIndeterminate ? 'indeterminate' : ''}`}>
-        {({percentage, valueText}) => (<>
-          <Label>Loading…</Label>
-          <div className="bar" style={{width: percentage + '%'}} />
-        </>)}
+      <ProgressBar
+        isIndeterminate
+        className={({isIndeterminate}) => `progressbar ${isIndeterminate ? 'indeterminate' : ''}`}>
+        {({percentage, valueText}) => (
+          <>
+            <Label>Loading…</Label>
+            <div className="bar" style={{width: percentage + '%'}} />
+          </>
+        )}
       </ProgressBar>
     );
 
@@ -75,7 +83,9 @@ describe('ProgressBar', () => {
   });
 
   it('should support custom render function', () => {
-    let {getByRole} = render(<TestProgressBar render={props => <div {...props} data-custom="bar" />} />);
+    let {getByRole} = render(
+      <TestProgressBar render={props => <div {...props} data-custom="bar" />} />
+    );
     let progressbar = getByRole('progressbar');
     expect(progressbar).toHaveAttribute('data-custom', 'bar');
   });

@@ -6,10 +6,10 @@ import {Key, Tab, TabList, TabPanel, Tabs} from '@react-spectrum/s2';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 interface FileTabsProps {
-  children?: ReactNode,
-  files: {[name: string]: ReactElement},
-  extraFiles?: {[name: string]: ReactElement},
-  defaultSelectedKey?: Key
+  children?: ReactNode;
+  files: {[name: string]: ReactElement};
+  extraFiles?: {[name: string]: ReactElement};
+  defaultSelectedKey?: Key;
 }
 
 const FileTabsContext = createContext<((tab: Key) => void) | null>(null);
@@ -44,10 +44,22 @@ export function FileTabs({children, files, extraFiles, defaultSelectedKey}: File
         data-files>
         <TabList styles={style({marginBottom: 20})}>
           {children && <Tab id="example">Example</Tab>}
-          {Object.keys(tabs).map(file => <Tab key={file} id={file}>{file}</Tab>)}
+          {Object.keys(tabs).map(file => (
+            <Tab key={file} id={file}>
+              {file}
+            </Tab>
+          ))}
         </TabList>
-        {children && <TabPanel id="example" shouldForceMount data-example>{children}</TabPanel>}
-        {Object.entries(tabs).map(([name, file]) => <TabPanel key={name} id={name}>{file}</TabPanel>)}
+        {children && (
+          <TabPanel id="example" shouldForceMount data-example>
+            {children}
+          </TabPanel>
+        )}
+        {Object.entries(tabs).map(([name, file]) => (
+          <TabPanel key={name} id={name}>
+            {file}
+          </TabPanel>
+        ))}
       </Tabs>
     </FileTabsContext>
   );
@@ -64,6 +76,7 @@ export function TabLink({name, ...props}) {
       {...props}
       onPress={() => {
         onFileClick(name);
-      }} />
+      }}
+    />
   );
 }

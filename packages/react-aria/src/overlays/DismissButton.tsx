@@ -20,7 +20,7 @@ import {VisuallyHidden} from '../visually-hidden/VisuallyHidden';
 
 export interface DismissButtonProps extends AriaLabelingProps, DOMProps {
   /** Called when the dismiss button is activated. */
-  onDismiss?: () => void
+  onDismiss?: () => void;
 }
 
 /**
@@ -42,11 +42,7 @@ export function DismissButton(props: DismissButtonProps): JSX.Element {
 
   return (
     <VisuallyHidden>
-      <button
-        {...labels}
-        tabIndex={-1}
-        onClick={onClick}
-        style={{width: 1, height: 1}} />
+      <button {...labels} tabIndex={-1} onClick={onClick} style={{width: 1, height: 1}} />
     </VisuallyHidden>
   );
 }

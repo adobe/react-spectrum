@@ -67,10 +67,12 @@ describe('useDisclosure', () => {
       return {state, disclosure};
     });
 
-    let event = (e: Partial<PressEvent>) => (e as PressEvent);
+    let event = (e: Partial<PressEvent>) => e as PressEvent;
 
     act(() => {
-      result.current.disclosure.buttonProps.onPressStart?.(event({pointerType: 'keyboard'}) as PressEvent);
+      result.current.disclosure.buttonProps.onPressStart?.(
+        event({pointerType: 'keyboard'}) as PressEvent
+      );
     });
 
     expect(result.current.state.isExpanded).toBe(true);
@@ -91,10 +93,13 @@ describe('useDisclosure', () => {
   });
 
   it('should keep panel hidden when toggling disabled state', () => {
-    let {rerender} = renderHook(({isDisabled}: {isDisabled: boolean}) => {
-      let state = useDisclosureState({});
-      return useDisclosure({isDisabled}, state, ref);
-    }, {initialProps: {isDisabled: false}});
+    let {rerender} = renderHook(
+      ({isDisabled}: {isDisabled: boolean}) => {
+        let state = useDisclosureState({});
+        return useDisclosure({isDisabled}, state, ref);
+      },
+      {initialProps: {isDisabled: false}}
+    );
 
     act(() => {
       rerender({isDisabled: true});

@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "homepage": ".",
-  "packageManager": "yarn@4.2.2",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -32,5 +31,6 @@
   "resolutions": {
     "next/@swc/helpers": "0.4.36"
   },
-  "browserslist": "defaults"
+  "browserslist": "defaults",
+  "packageManager": "yarn@4.2.2"
 }

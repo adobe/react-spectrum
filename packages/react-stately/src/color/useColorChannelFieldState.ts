@@ -6,32 +6,39 @@ import {useControlledStateAction} from '../utils/useControlledStateAction';
 import {useMemo, useState} from 'react';
 
 export interface ColorChannelFieldProps extends ColorFieldProps {
-  colorSpace?: ColorSpace,
-  channel: ColorChannel
+  colorSpace?: ColorSpace;
+  channel: ColorChannel;
 }
 
 export interface ColorChannelFieldStateOptions extends ColorChannelFieldProps {
-  locale: string
+  locale: string;
 }
 
 export interface ColorChannelFieldState extends NumberFieldState {
   /** The current value of the field. */
-  colorValue: Color,
+  colorValue: Color;
   /** The default value of the field. */
-  defaultColorValue: Color | null,
+  defaultColorValue: Color | null;
   /** Sets the color value of the field. */
-  setColorValue(value: Color | null): void
+  setColorValue(value: Color | null): void;
 }
 
 /**
  * Provides state management for a color channel field, allowing users to edit the
  * value of an individual color channel.
  */
-export function useColorChannelFieldState(props: ColorChannelFieldStateOptions): ColorChannelFieldState {
+export function useColorChannelFieldState(
+  props: ColorChannelFieldStateOptions
+): ColorChannelFieldState {
   let {channel, colorSpace, locale} = props;
   let initialValue = useColor(props.value);
   let initialDefaultValue = useColor(props.defaultValue);
-  let [colorValue, isPending, setColor] = useControlledStateAction(initialValue, initialDefaultValue ?? null, props.onChange, props.changeAction);
+  let [colorValue, isPending, setColor] = useControlledStateAction(
+    initialValue,
+    initialDefaultValue ?? null,
+    props.onChange,
+    props.changeAction
+  );
   let color = useConvertColor(colorValue, colorSpace);
   let [initialColorValue] = useState(colorValue);
   let defaultColorValue = initialDefaultValue ?? initialColorValue;
@@ -44,8 +51,9 @@ export function useColorChannelFieldState(props: ColorChannelFieldStateOptions):
   let numberFieldState = useNumberFieldState({
     locale,
     value: colorValue === null ? NaN : value / multiplier,
-    defaultValue: defaultColorValue === null ? NaN : defaultColor.getChannelValue(channel) / multiplier,
-    onChange: (v) => {
+    defaultValue:
+      defaultColorValue === null ? NaN : defaultColor.getChannelValue(channel) / multiplier,
+    onChange: v => {
       if (!Number.isNaN(v)) {
         setColor(color.withChannelValue(channel, v * multiplier));
       } else {
@@ -71,6 +79,8 @@ function useConvertColor(colorValue: Color | null, colorSpace: ColorSpace | null
   let black = useColor('#000')!;
   return useMemo(() => {
     let nonNullColorValue = colorValue || black;
-    return colorSpace && nonNullColorValue ? nonNullColorValue.toFormat(colorSpace) : nonNullColorValue;
+    return colorSpace && nonNullColorValue
+      ? nonNullColorValue.toFormat(colorSpace)
+      : nonNullColorValue;
   }, [black, colorValue, colorSpace]);
 }

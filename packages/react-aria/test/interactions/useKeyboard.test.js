@@ -17,19 +17,19 @@ import userEvent from '@testing-library/user-event';
 
 function Example(props) {
   let {keyboardProps} = useKeyboard(props);
-  return <div tabIndex={-1} {...keyboardProps} data-testid="example">{props.children}</div>;
+  return (
+    <div tabIndex={-1} {...keyboardProps} data-testid="example">
+      {props.children}
+    </div>
+  );
 }
 
 describe('useKeyboard', function () {
   it('should handle keyboard events', async function () {
     let user = userEvent.setup({delay: null, pointerMap});
     let events = [];
-    let addEvent = (e) => events.push({type: e.type, target: e.target});
-    let tree = render(
-      <Example
-        onKeyDown={addEvent}
-        onKeyUp={addEvent} />
-    );
+    let addEvent = e => events.push({type: e.type, target: e.target});
+    let tree = render(<Example onKeyDown={addEvent} onKeyUp={addEvent} />);
 
     let el = tree.getByTestId('example');
     act(() => el.focus());
@@ -44,13 +44,8 @@ describe('useKeyboard', function () {
   it('should not handle events when disabled', async function () {
     let user = userEvent.setup({delay: null, pointerMap});
     let events = [];
-    let addEvent = (e) => events.push({type: e.type, target: e.target});
-    let tree = render(
-      <Example
-        isDisabled
-        onKeyDown={addEvent}
-        onKeyUp={addEvent} />
-    );
+    let addEvent = e => events.push({type: e.type, target: e.target});
+    let tree = render(<Example isDisabled onKeyDown={addEvent} onKeyUp={addEvent} />);
 
     let el = tree.getByTestId('example');
     act(() => el.focus());
@@ -67,9 +62,7 @@ describe('useKeyboard', function () {
     let onInnerKeyUp = jest.fn();
     let tree = render(
       <button onKeyDown={onWrapperKeyDown} onKeyUp={onWrapperKeyUp}>
-        <Example
-          onKeyDown={onInnerKeyDown}
-          onKeyUp={onInnerKeyUp} />
+        <Example onKeyDown={onInnerKeyDown} onKeyUp={onInnerKeyUp} />
       </button>
     );
 
@@ -91,9 +84,7 @@ describe('useKeyboard', function () {
     let onInnerKeyUp = jest.fn(e => e.continuePropagation());
     let tree = render(
       <button onKeyDown={onWrapperKeyDown} onKeyUp={onWrapperKeyUp}>
-        <Example
-          onKeyDown={onInnerKeyDown}
-          onKeyUp={onInnerKeyUp} />
+        <Example onKeyDown={onInnerKeyDown} onKeyUp={onInnerKeyUp} />
       </button>
     );
 

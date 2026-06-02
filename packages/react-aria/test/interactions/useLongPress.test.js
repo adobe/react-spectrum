@@ -19,14 +19,22 @@ import {usePress} from '../../src/interactions/usePress';
 function Example(props) {
   let {elementType: ElementType = 'div', ...otherProps} = props;
   let {longPressProps} = useLongPress(otherProps);
-  return <ElementType {...longPressProps} tabIndex="0">test</ElementType>;
+  return (
+    <ElementType {...longPressProps} tabIndex="0">
+      test
+    </ElementType>
+  );
 }
 
 function ExampleWithPress(props) {
   let {elementType: ElementType = 'div', onPress, onPressStart, onPressEnd, ...otherProps} = props;
   let {longPressProps} = useLongPress(otherProps);
   let {pressProps} = usePress({onPress, onPressStart, onPressEnd});
-  return <ElementType {...mergeProps(longPressProps, pressProps)} tabIndex="0">test</ElementType>;
+  return (
+    <ElementType {...mergeProps(longPressProps, pressProps)} tabIndex="0">
+      test
+    </ElementType>
+  );
 }
 
 describe('useLongPress', function () {
@@ -42,12 +50,9 @@ describe('useLongPress', function () {
 
   it('should perform a long press', function () {
     let events = [];
-    let addEvent = (e) => events.push(e);
+    let addEvent = e => events.push(e);
     let res = render(
-      <Example
-        onLongPressStart={addEvent}
-        onLongPressEnd={addEvent}
-        onLongPress={addEvent} />
+      <Example onLongPressStart={addEvent} onLongPressEnd={addEvent} onLongPress={addEvent} />
     );
 
     let el = res.getByText('test');
@@ -159,12 +164,9 @@ describe('useLongPress', function () {
 
   it('should cancel if pointer ends before timeout', function () {
     let events = [];
-    let addEvent = (e) => events.push(e);
+    let addEvent = e => events.push(e);
     let res = render(
-      <Example
-        onLongPressStart={addEvent}
-        onLongPressEnd={addEvent}
-        onLongPress={addEvent} />
+      <Example onLongPressStart={addEvent} onLongPressEnd={addEvent} onLongPress={addEvent} />
     );
 
     let el = res.getByText('test');
@@ -202,7 +204,7 @@ describe('useLongPress', function () {
 
   it('should cancel other press events', function () {
     let events = [];
-    let addEvent = (e) => events.push(e);
+    let addEvent = e => events.push(e);
     let res = render(
       <ExampleWithPress
         onLongPressStart={addEvent}
@@ -210,7 +212,8 @@ describe('useLongPress', function () {
         onLongPress={addEvent}
         onPressStart={addEvent}
         onPressEnd={addEvent}
-        onPress={addEvent} />
+        onPress={addEvent}
+      />
     );
 
     let el = res.getByText('test');
@@ -280,7 +283,7 @@ describe('useLongPress', function () {
 
   it('should not cancel press events if pointer ends before timer', function () {
     let events = [];
-    let addEvent = (e) => events.push(e);
+    let addEvent = e => events.push(e);
     let res = render(
       <ExampleWithPress
         onLongPressStart={addEvent}
@@ -288,7 +291,8 @@ describe('useLongPress', function () {
         onLongPress={addEvent}
         onPressStart={addEvent}
         onPressEnd={addEvent}
-        onPress={addEvent} />
+        onPress={addEvent}
+      />
     );
 
     let el = res.getByText('test');
@@ -359,13 +363,14 @@ describe('useLongPress', function () {
 
   it('allows changing the threshold', function () {
     let events = [];
-    let addEvent = (e) => events.push(e);
+    let addEvent = e => events.push(e);
     let res = render(
       <Example
         onLongPressStart={addEvent}
         onLongPressEnd={addEvent}
         onLongPress={addEvent}
-        threshold={800} />
+        threshold={800}
+      />
     );
 
     let el = res.getByText('test');
@@ -438,7 +443,11 @@ describe('useLongPress', function () {
 
   it('does not show accessibilityDescription if disabled', function () {
     let res = render(
-      <Example accessibilityDescription="Long press to open menu" onLongPress={() => {}} isDisabled />
+      <Example
+        accessibilityDescription="Long press to open menu"
+        onLongPress={() => {}}
+        isDisabled
+      />
     );
 
     let el = res.getByText('test');
@@ -446,9 +455,7 @@ describe('useLongPress', function () {
   });
 
   it('does not show accessibilityDescription if no onLongPress handler', function () {
-    let res = render(
-      <Example accessibilityDescription="Long press to open menu" />
-    );
+    let res = render(<Example accessibilityDescription="Long press to open menu" />);
 
     let el = res.getByText('test');
     expect(el).not.toHaveAttribute('aria-describedby');
@@ -469,13 +476,14 @@ describe('useLongPress', function () {
 
   it('should not fire any events for keyboard interactions', function () {
     let events = [];
-    let addEvent = (e) => events.push(e);
+    let addEvent = e => events.push(e);
     let res = render(
       <Example
         onLongPressStart={addEvent}
         onLongPressEnd={addEvent}
         onLongPress={addEvent}
-        threshold={800} />
+        threshold={800}
+      />
     );
 
     let el = res.getByText('test');

@@ -12,7 +12,13 @@
 
 jest.mock('react-aria/src/live-announcer/LiveAnnouncer');
 
-import {act, installPointerEvent, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
+import {
+  act,
+  installPointerEvent,
+  pointerMap,
+  render,
+  within
+} from '@react-spectrum/test-utils-internal';
 import {announce} from 'react-aria/private/live-announcer/LiveAnnouncer';
 import {CalendarDate} from '@internationalized/date';
 import {DateField, DateFieldContext, DateInput, DateSegment} from '../src/DateField';
@@ -58,7 +64,13 @@ describe('DateField', () => {
     expect(label).toHaveTextContent('Birth date');
 
     expect(input).toHaveAttribute('aria-describedby');
-    expect(input.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ')).toBe('Description Error');
+    expect(
+      input
+        .getAttribute('aria-describedby')
+        .split(' ')
+        .map(id => document.getElementById(id).textContent)
+        .join(' ')
+    ).toBe('Description Error');
 
     for (let segment of getAllByRole('spinbutton')) {
       expect(segment).toHaveAttribute('class', 'react-aria-DateSegment');
@@ -68,7 +80,9 @@ describe('DateField', () => {
       expect(segment).not.toHaveAttribute('data-readonly');
     }
 
-    for (let literal of [...input.children].filter(child => child.getAttribute('data-type') === 'literal')) {
+    for (let literal of [...input.children].filter(
+      child => child.getAttribute('data-type') === 'literal'
+    )) {
       expect(literal).not.toHaveAttribute('data-readonly');
     }
   });
@@ -78,7 +92,12 @@ describe('DateField', () => {
       <DateField className="date-field">
         <Label>Birth date</Label>
         <DateInput className="date-input">
-          {segment => <DateSegment segment={segment} className={({isPlaceholder}) => `segment ${isPlaceholder ? 'placeholder' : ''}`} />}
+          {segment => (
+            <DateSegment
+              segment={segment}
+              className={({isPlaceholder}) => `segment ${isPlaceholder ? 'placeholder' : ''}`}
+            />
+          )}
         </DateInput>
       </DateField>
     );
@@ -96,9 +115,7 @@ describe('DateField', () => {
     let {getByRole} = render(
       <DateFieldContext.Provider value={{slots: {test: {'aria-label': 'test'}}}}>
         <DateField slot="test">
-          <DateInput>
-            {segment => <DateSegment segment={segment} />}
-          </DateInput>
+          <DateInput>{segment => <DateSegment segment={segment} />}</DateInput>
         </DateField>
       </DateFieldContext.Provider>
     );
@@ -109,11 +126,16 @@ describe('DateField', () => {
   });
 
   it('should support custom render function', () => {
-    let {getByRole, getAllByRole} =  render(
+    let {getByRole, getAllByRole} = render(
       <DateField render={props => <div {...props} data-custom="true" />}>
         <Label render={props => <span {...props} data-custom="true" />}>Birth date</Label>
         <DateInput className="date-input" render={props => <div {...props} data-custom="true" />}>
-          {segment => <DateSegment segment={segment} render={props => <span {...props} data-custom="true" />} />}
+          {segment => (
+            <DateSegment
+              segment={segment}
+              render={props => <span {...props} data-custom="true" />}
+            />
+          )}
         </DateInput>
       </DateField>
     );
@@ -134,8 +156,16 @@ describe('DateField', () => {
     let {getByRole} = render(
       <DateField>
         <Label>Birth date</Label>
-        <DateInput className={({isHovered}) => isHovered ? 'hover' : ''}>
-          {segment => <DateSegment segment={segment} className={({isHovered}) => isHovered ? 'hover' : ''} onHoverStart={hoverStartSpy} onHoverChange={hoverChangeSpy} onHoverEnd={hoverEndSpy} />}
+        <DateInput className={({isHovered}) => (isHovered ? 'hover' : '')}>
+          {segment => (
+            <DateSegment
+              segment={segment}
+              className={({isHovered}) => (isHovered ? 'hover' : '')}
+              onHoverStart={hoverStartSpy}
+              onHoverChange={hoverChangeSpy}
+              onHoverEnd={hoverEndSpy}
+            />
+          )}
         </DateInput>
       </DateField>
     );
@@ -170,8 +200,13 @@ describe('DateField', () => {
     let {getByRole} = render(
       <DateField>
         <Label>Birth date</Label>
-        <DateInput className={({isFocusVisible}) => isFocusVisible ? 'focus' : ''}>
-          {segment => <DateSegment segment={segment} className={({isFocusVisible}) => isFocusVisible ? 'focus' : ''} />}
+        <DateInput className={({isFocusVisible}) => (isFocusVisible ? 'focus' : '')}>
+          {segment => (
+            <DateSegment
+              segment={segment}
+              className={({isFocusVisible}) => (isFocusVisible ? 'focus' : '')}
+            />
+          )}
         </DateInput>
       </DateField>
     );
@@ -200,7 +235,7 @@ describe('DateField', () => {
     let {getByRole, getAllByRole} = render(
       <DateField isDisabled>
         <Label>Birth date</Label>
-        <DateInput className={({isDisabled}) => isDisabled ? 'disabled' : ''}>
+        <DateInput className={({isDisabled}) => (isDisabled ? 'disabled' : '')}>
           {segment => <DateSegment segment={segment} />}
         </DateInput>
       </DateField>
@@ -213,7 +248,9 @@ describe('DateField', () => {
       expect(segment).not.toHaveAttribute('data-readonly');
       expect(segment).toHaveAttribute('data-disabled');
     }
-    for (let literal of [...group.children].filter(child => child.getAttribute('data-type') === 'literal')) {
+    for (let literal of [...group.children].filter(
+      child => child.getAttribute('data-type') === 'literal'
+    )) {
       expect(literal).not.toHaveAttribute('data-readonly');
       expect(literal).toHaveAttribute('data-disabled');
     }
@@ -223,9 +260,7 @@ describe('DateField', () => {
     let {getByRole, getAllByRole} = render(
       <DateField isReadOnly isDisabled>
         <Label>Birth date</Label>
-        <DateInput>
-          {segment => <DateSegment segment={segment} />}
-        </DateInput>
+        <DateInput>{segment => <DateSegment segment={segment} />}</DateInput>
       </DateField>
     );
 
@@ -237,7 +272,9 @@ describe('DateField', () => {
       expect(segment).toHaveAttribute('data-readonly');
       expect(segment).toHaveAttribute('data-disabled');
     }
-    for (let literal of [...group.children].filter(child => child.getAttribute('data-type') === 'literal')) {
+    for (let literal of [...group.children].filter(
+      child => child.getAttribute('data-type') === 'literal'
+    )) {
       expect(literal).toHaveAttribute('data-readonly');
       expect(literal).toHaveAttribute('data-disabled');
     }
@@ -247,9 +284,7 @@ describe('DateField', () => {
     let {getByRole, getAllByRole} = render(
       <DateField isReadOnly>
         <Label>Birth date</Label>
-        <DateInput>
-          {segment => <DateSegment segment={segment} />}
-        </DateInput>
+        <DateInput>{segment => <DateSegment segment={segment} />}</DateInput>
       </DateField>
     );
 
@@ -262,7 +297,9 @@ describe('DateField', () => {
       expect(segment).toHaveAttribute('data-readonly');
       expect(segment).not.toHaveAttribute('data-disabled');
     }
-    for (let literal of [...group.children].filter(child => child.getAttribute('data-type') === 'literal')) {
+    for (let literal of [...group.children].filter(
+      child => child.getAttribute('data-type') === 'literal'
+    )) {
       expect(literal).toHaveAttribute('data-readonly');
       expect(literal).not.toHaveAttribute('data-disabled');
     }
@@ -277,8 +314,7 @@ describe('DateField', () => {
         {({isInvalid}) => (
           <>
             <Label>Birth date</Label>
-            <DateInput
-              data-validation-state={isInvalid ? 'invalid' : null}>
+            <DateInput data-validation-state={isInvalid ? 'invalid' : null}>
               {segment => <DateSegment segment={segment} />}
             </DateInput>
           </>
@@ -295,8 +331,7 @@ describe('DateField', () => {
         {({isDisabled}) => (
           <>
             <Label>Birth date</Label>
-            <DateInput
-              data-disabled-state={isDisabled ? 'disabled' : null}>
+            <DateInput data-disabled-state={isDisabled ? 'disabled' : null}>
               {segment => <DateSegment segment={segment} />}
             </DateInput>
           </>
@@ -313,8 +348,7 @@ describe('DateField', () => {
         {({isRequired}) => (
           <>
             <Label>Birth date</Label>
-            <DateInput
-              data-required-state={isRequired ? 'required' : null}>
+            <DateInput data-required-state={isRequired ? 'required' : null}>
               {segment => <DateSegment segment={segment} />}
             </DateInput>
           </>
@@ -329,9 +363,7 @@ describe('DateField', () => {
     let {getByRole, rerender} = render(
       <DateField>
         <Label>Birth date</Label>
-        <DateInput>
-          {segment => <DateSegment segment={segment} />}
-        </DateInput>
+        <DateInput>{segment => <DateSegment segment={segment} />}</DateInput>
       </DateField>
     );
     let group = getByRole('group');
@@ -339,9 +371,7 @@ describe('DateField', () => {
     rerender(
       <DateField isRequired>
         <Label>Birth date</Label>
-        <DateInput>
-          {segment => <DateSegment segment={segment} />}
-        </DateInput>
+        <DateInput>{segment => <DateSegment segment={segment} />}</DateInput>
       </DateField>
     );
     expect(group.closest('.react-aria-DateField')).toHaveAttribute('data-required');
@@ -351,9 +381,7 @@ describe('DateField', () => {
     render(
       <DateField name="birthday" form="test" value={new CalendarDate(2020, 2, 3)}>
         <Label>Birth date</Label>
-        <DateInput>
-          {segment => <DateSegment segment={segment} />}
-        </DateInput>
+        <DateInput>{segment => <DateSegment segment={segment} />}</DateInput>
       </DateField>
     );
     let input = document.querySelector('input[name=birthday]');
@@ -365,9 +393,7 @@ describe('DateField', () => {
     let {getAllByTestId} = render(
       <DateField data-testid="date-field">
         <Label>Birth Date</Label>
-        <DateInput>
-          {segment => <DateSegment segment={segment} />}
-        </DateInput>
+        <DateInput>{segment => <DateSegment segment={segment} />}</DateInput>
       </DateField>
     );
     let outerEl = getAllByTestId('date-field');
@@ -380,9 +406,7 @@ describe('DateField', () => {
       <form data-testid="form">
         <DateField name="date" isRequired>
           <Label>Birth Date</Label>
-          <DateInput>
-            {segment => <DateSegment segment={segment} />}
-          </DateInput>
+          <DateInput>{segment => <DateSegment segment={segment} />}</DateInput>
           <FieldError />
         </DateField>
       </form>
@@ -395,10 +419,17 @@ describe('DateField', () => {
     expect(group).not.toHaveAttribute('aria-describedby');
     expect(group).not.toHaveAttribute('data-invalid');
 
-    act(() => {getByTestId('form').checkValidity();});
+    act(() => {
+      getByTestId('form').checkValidity();
+    });
 
     expect(group).toHaveAttribute('aria-describedby');
-    let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+    let getDescription = () =>
+      group
+        .getAttribute('aria-describedby')
+        .split(' ')
+        .map(d => document.getElementById(d).textContent)
+        .join(' ');
     expect(getDescription()).toContain('Constraints not satisfied');
     expect(group).toHaveAttribute('data-invalid');
     expect(document.activeElement).toBe(within(group).getAllByRole('spinbutton')[0]);
@@ -418,9 +449,7 @@ describe('DateField', () => {
       <form data-testid="form">
         <DateField name="date" isRequired isInvalid={false}>
           <Label>Birth Date</Label>
-          <DateInput>
-            {segment => <DateSegment segment={segment} />}
-          </DateInput>
+          <DateInput>{segment => <DateSegment segment={segment} />}</DateInput>
           <FieldError />
         </DateField>
       </form>
@@ -433,7 +462,9 @@ describe('DateField', () => {
     expect(group).not.toHaveAttribute('aria-describedby');
     expect(group).not.toHaveAttribute('data-invalid');
 
-    act(() => {getByTestId('form').checkValidity();});
+    act(() => {
+      getByTestId('form').checkValidity();
+    });
 
     expect(input.validity.valid).toBe(false);
     expect(group).not.toHaveAttribute('aria-describedby');
@@ -444,9 +475,7 @@ describe('DateField', () => {
     let {getAllByRole} = render(
       <DateField defaultValue={new CalendarDate(2024, 12, 31)}>
         <Label>Birth date</Label>
-        <DateInput>
-          {segment => <DateSegment segment={segment} />}
-        </DateInput>
+        <DateInput>{segment => <DateSegment segment={segment} />}</DateInput>
       </DateField>
     );
 
@@ -475,9 +504,7 @@ describe('DateField', () => {
     let {getAllByRole} = render(
       <DateField defaultValue={new CalendarDate(2024, 12, 31)}>
         <Label>Birth date</Label>
-        <DateInput>
-          {segment => <DateSegment segment={segment} />}
-        </DateInput>
+        <DateInput>{segment => <DateSegment segment={segment} />}</DateInput>
       </DateField>
     );
 
@@ -493,9 +520,7 @@ describe('DateField', () => {
       <I18nProvider locale="zh-CN-u-ca-chinese">
         <DateField defaultValue={new CalendarDate(2024, 12, 31)}>
           <Label>Birth date</Label>
-          <DateInput>
-            {segment => <DateSegment segment={segment} />}
-          </DateInput>
+          <DateInput>{segment => <DateSegment segment={segment} />}</DateInput>
         </DateField>
       </I18nProvider>
     );
@@ -505,13 +530,11 @@ describe('DateField', () => {
     expect(segmentTypes).toEqual(['year', 'literal', 'month', 'day']);
   });
 
-  it('should support autofill', async() => {
+  it('should support autofill', async () => {
     let {getByRole} = render(
       <DateField>
         <Label>Birth date</Label>
-        <DateInput>
-          {segment => <DateSegment segment={segment} />}
-        </DateInput>
+        <DateInput>{segment => <DateSegment segment={segment} />}</DateInput>
       </DateField>
     );
 
@@ -525,9 +548,7 @@ describe('DateField', () => {
     let {getAllByRole} = render(
       <DateField>
         <Label>Date</Label>
-        <DateInput>
-          {segment => <DateSegment segment={segment} />}
-        </DateInput>
+        <DateInput>{segment => <DateSegment segment={segment} />}</DateInput>
       </DateField>
     );
 
@@ -548,7 +569,7 @@ describe('DateField', () => {
   });
 
   if (parseInt(React.version, 10) >= 19) {
-    describe('changeAction', () => {  
+    describe('changeAction', () => {
       function DateFieldChangeActionExample() {
         return (
           <DateField
@@ -559,16 +580,14 @@ describe('DateField', () => {
             {({isPending}) => (
               <>
                 <Label>Date</Label>
-                <DateInput>
-                  {segment => <DateSegment segment={segment} />}
-                </DateInput>
+                <DateInput>{segment => <DateSegment segment={segment} />}</DateInput>
                 {isPending ? <ProgressBar aria-label="Loading" isIndeterminate /> : null}
               </>
             )}
           </DateField>
         );
       }
-  
+
       it('shows ProgressBar while pending', async () => {
         let {getByRole, queryByRole} = render(<DateFieldChangeActionExample />);
         let group = getByRole('group');
@@ -577,20 +596,20 @@ describe('DateField', () => {
 
         await user.click(segments[0]);
         await user.keyboard('{ArrowUp}');
-  
+
         expect(field).toHaveAttribute('data-pending');
         expect(segments[0]).toHaveTextContent('7');
 
         let progressbar = getByRole('progressbar');
         expect(progressbar).toBeInTheDocument();
         expect(group.getAttribute('aria-describedby')).toContain(progressbar.id);
-  
+
         expect(announce).toHaveBeenCalledWith({'aria-labelledby': progressbar.id}, 'assertive');
-  
+
         await act(async () => {
           jest.runAllTimers();
         });
-  
+
         expect(field).not.toHaveAttribute('data-pending');
         expect(queryByRole('progressbar')).not.toBeInTheDocument();
         expect(announce).toHaveBeenCalledWith({'aria-labelledby': group.id}, 'assertive');

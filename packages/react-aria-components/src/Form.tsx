@@ -17,41 +17,50 @@ import {GlobalDOMAttributes, FormProps as SharedFormProps} from '@react-types/sh
 import React, {createContext, ForwardedRef, forwardRef, useMemo} from 'react';
 import {useAction} from 'react-stately/private/utils/useAction';
 
-export interface FormProps extends SharedFormProps, RenderProps<FormRenderProps, 'form'>, GlobalDOMAttributes<HTMLFormElement> {
+export interface FormProps
+  extends
+    SharedFormProps,
+    RenderProps<FormRenderProps, 'form'>,
+    GlobalDOMAttributes<HTMLFormElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element.
+   *
    * @default 'react-aria-Form'
    */
-  className?: string,
+  className?: string;
   /**
    * Whether to use native HTML form validation to prevent form submission
    * when a field value is missing or invalid, or mark fields as required
    * or invalid via ARIA.
+   *
    * @default 'native'
    */
-  validationBehavior?: 'aria' | 'native',
+  validationBehavior?: 'aria' | 'native';
   /**
    * Async action that is called when the value changes.
    * This differs from the React's `action` prop in a few ways:
-   * 
-   * * Errors thrown during the action are caught and passed to the `actionError` render prop.
-   * * The pending state is automatically passed to the form's submit button.
-   * * The form is not automatically reset after the action completes.
+   *
+   * - Errors thrown during the action are caught and passed to the `actionError` render prop.
+   * - The pending state is automatically passed to the form's submit button.
+   * - The form is not automatically reset after the action completes.
    */
-  submitAction?: (data: FormData) => void | Promise<void>
+  submitAction?: (data: FormData) => void | Promise<void>;
 }
 
 export interface FormRenderProps {
   /**
    * Whether the form's submit action is pending.
+   *
    * @selector [data-pending]
    */
-  isPending: boolean,
+  isPending: boolean;
   /**
    * The last error that occurred within the form's submit action.
+   *
    * @selector [data-action-error]
    */
-  actionError: unknown | null
+  actionError: unknown | null;
 }
 
 export const FormContext = createContext<ContextValue<FormProps, HTMLFormElement>>(null);
@@ -63,7 +72,18 @@ export const FormPendingContext = createContext<boolean>(false);
  */
 export const Form = forwardRef(function Form(props: FormProps, ref: ForwardedRef<HTMLFormElement>) {
   [props, ref] = useContextProps(props, ref, FormContext);
-  let {validationErrors, validationBehavior = 'native', render, children, className, style, submitAction, action, onSubmit, ...domProps} = props;
+  let {
+    validationErrors,
+    validationBehavior = 'native',
+    render,
+    children,
+    className,
+    style,
+    submitAction,
+    action,
+    onSubmit,
+    ...domProps
+  } = props;
 
   let [onAction, isPending, actionError] = useAction(submitAction);
   let [formError, fieldErrors] = useMemo(() => {
@@ -72,12 +92,12 @@ export const Form = forwardRef(function Form(props: FormProps, ref: ForwardedRef
       let formErrors: string[] = [];
       let fieldErrors: Record<string, string[]> = {};
       for (let issue of actionError['issues']) {
-        if (
-          issue &&
-          typeof issue === 'object' &&
-          typeof issue.message === 'string'
-        ) {
-          if (Array.isArray(issue.path) && issue.path.length > 0 && typeof issue.path[0] === 'string') {
+        if (issue && typeof issue === 'object' && typeof issue.message === 'string') {
+          if (
+            Array.isArray(issue.path) &&
+            issue.path.length > 0 &&
+            typeof issue.path[0] === 'string'
+          ) {
             fieldErrors[issue.path[0]] ||= [];
             fieldErrors[issue.path[0]].push(issue.message);
           } else {
@@ -88,8 +108,12 @@ export const Form = forwardRef(function Form(props: FormProps, ref: ForwardedRef
 
       return [formErrors.length > 0 ? formErrors : null, fieldErrors];
 
-    // Alternative error shape based on Zod's flattenError result: https://zod.dev/error-formatting#zflattenerror
-    } else if (actionError && typeof actionError === 'object' && (actionError['formErrors'] || actionError['fieldErrors'])) {
+      // Alternative error shape based on Zod's flattenError result: https://zod.dev/error-formatting#zflattenerror
+    } else if (
+      actionError &&
+      typeof actionError === 'object' &&
+      (actionError['formErrors'] || actionError['fieldErrors'])
+    ) {
       return [actionError['formErrors'], actionError['fieldErrors']];
     }
 

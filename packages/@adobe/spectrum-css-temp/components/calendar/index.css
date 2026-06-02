@@ -17,7 +17,9 @@ governing permissions and limitations under the License.
   --spectrum-calendar-border-width-reset: 0;
   --spectrum-calendar-margin-y: 24px;
   --spectrum-calendar-margin-x: 32px;
-  --spectrum-calendar-max-width: calc((var(--spectrum-calendar-day-width) * 7) + (var(--spectrum-calendar-day-padding) * 12));
+  --spectrum-calendar-max-width: calc(
+    (var(--spectrum-calendar-day-width) * 7) + (var(--spectrum-calendar-day-padding) * 12)
+  );
   --spectrum-calendar-min-width: calc(var(--spectrum-calendar-day-width) * 7);
   --spectrum-calendar-button-gap: var(--spectrum-global-dimension-size-40);
   --spectrum-calendar-title-margin-x: var(--spectrum-global-dimension-size-75);
@@ -181,7 +183,9 @@ governing permissions and limitations under the License.
     outline: 0;
   }
 
-  &:lang(ja), &:lang(zh), &:lang(ko) {
+  &:lang(ja),
+  &:lang(zh),
+  &:lang(ko) {
     font-size: var(--spectrum-calendar-day-text-size-han);
   }
 
@@ -225,8 +229,9 @@ governing permissions and limitations under the License.
     margin: 0;
     transform: translateX(0); /* Forces FF to render on the pixel grid */
 
-    transition: box-shadow var(--spectrum-global-animation-duration-100) ease-out,
-                margin var(--spectrum-global-animation-duration-100) ease-out;
+    transition:
+      box-shadow var(--spectrum-global-animation-duration-100) ease-out,
+      margin var(--spectrum-global-animation-duration-100) ease-out;
   }
 
   &.is-focused {

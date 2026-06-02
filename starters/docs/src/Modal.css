@@ -1,4 +1,4 @@
-@import "./theme.css";
+@import './theme.css';
 
 .react-aria-ModalOverlay {
   position: absolute;
@@ -6,7 +6,7 @@
   left: 0;
   width: var(--page-width);
   height: var(--page-height);
-  background: rgba(0 0 0 / .5);
+  background: rgba(0 0 0 / 0.5);
   overflow: clip;
   z-index: 100;
   font-family: system-ui;

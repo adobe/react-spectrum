@@ -14,7 +14,7 @@ import {categorizeArgTypes, getActionArgs, StaticColorDecorator} from './utils';
 import {LinkButton} from '../src/Button';
 import type {Meta, StoryObj} from '@storybook/react';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
-import {style} from '../style' with { type: 'macro' };
+import {style} from '../style' with {type: 'macro'};
 import {Text} from '../src/Content';
 
 const events = ['onPress', 'onPressChange', 'onPressEnd', 'onPressStart', 'onPressUp'];
@@ -38,13 +38,20 @@ export default meta;
 
 type Story = StoryObj<typeof LinkButton>;
 export const Example: Story = {
-  render: (args) => {
+  render: args => {
     return (
       <div style={{display: 'flex', flexDirection: 'column', alignItems: 'start', gap: 8}}>
         <LinkButton {...args}>Press me</LinkButton>
-        <LinkButton {...args}><NewIcon /><Text>Test</Text></LinkButton>
-        <LinkButton aria-label="Press me" {...args}><NewIcon /></LinkButton>
-        <LinkButton {...args} styles={style({maxWidth: 128})}>Very long button with wrapping text to see what happens</LinkButton>
+        <LinkButton {...args}>
+          <NewIcon />
+          <Text>Test</Text>
+        </LinkButton>
+        <LinkButton aria-label="Press me" {...args}>
+          <NewIcon />
+        </LinkButton>
+        <LinkButton {...args} styles={style({maxWidth: 128})}>
+          Very long button with wrapping text to see what happens
+        </LinkButton>
         <LinkButton {...args} styles={style({maxWidth: 128})}>
           <NewIcon />
           <Text>Very long button with wrapping text to see what happens</Text>

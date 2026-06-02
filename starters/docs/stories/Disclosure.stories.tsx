@@ -12,10 +12,9 @@ const meta: Meta<typeof Disclosure> = {
 export default meta;
 type Story = StoryFn<typeof Disclosure>;
 
-export const Example: Story = (args) => (
+export const Example: Story = args => (
   <Disclosure {...args}>
     <DisclosureHeader>Manage your account</DisclosureHeader>
     <DisclosurePanel>Details on managing your account</DisclosurePanel>
   </Disclosure>
 );
-

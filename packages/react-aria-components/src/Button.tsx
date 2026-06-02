@@ -34,51 +34,66 @@ import {useHover} from 'react-aria/useHover';
 export interface ButtonRenderProps {
   /**
    * Whether the button is currently hovered with a mouse.
+   *
    * @selector [data-hovered]
    */
-  isHovered: boolean,
+  isHovered: boolean;
   /**
    * Whether the button is currently in a pressed state.
+   *
    * @selector [data-pressed]
    */
-  isPressed: boolean,
+  isPressed: boolean;
   /**
    * Whether the button is focused, either via a mouse or keyboard.
+   *
    * @selector [data-focused]
    */
-  isFocused: boolean,
+  isFocused: boolean;
   /**
    * Whether the button is keyboard focused.
+   *
    * @selector [data-focus-visible]
    */
-  isFocusVisible: boolean,
+  isFocusVisible: boolean;
   /**
    * Whether the button is disabled.
+   *
    * @selector [data-disabled]
    */
-  isDisabled: boolean,
+  isDisabled: boolean;
   /**
    * Whether the button's action is pending.
+   *
    * @selector [data-pending]
    */
-  isPending: boolean,
+  isPending: boolean;
   /**
    * The last error that occurred within the button's action.
+   *
    * @selector [data-action-error]
    */
-  actionError: unknown | null
+  actionError: unknown | null;
 }
 
-export interface ButtonProps extends Omit<AriaButtonProps, 'children' | 'href' | 'target' | 'rel' | 'elementType'>, HoverEvents, SlotProps, RenderProps<ButtonRenderProps, 'button'>, Omit<GlobalDOMAttributes<HTMLButtonElement>, 'onClick'> {
+export interface ButtonProps
+  extends
+    Omit<AriaButtonProps, 'children' | 'href' | 'target' | 'rel' | 'elementType'>,
+    HoverEvents,
+    SlotProps,
+    RenderProps<ButtonRenderProps, 'button'>,
+    Omit<GlobalDOMAttributes<HTMLButtonElement>, 'onClick'> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-Button'
    */
-  className?: ClassNameOrFunction<ButtonRenderProps>
+  className?: ClassNameOrFunction<ButtonRenderProps>;
 }
 
 interface ButtonContextValue extends ButtonProps {
-  isPressed?: boolean
+  isPressed?: boolean;
 }
 
 export const ButtonContext = createContext<ContextValue<ButtonContextValue, HTMLButtonElement>>({});
@@ -86,17 +101,23 @@ export const ButtonContext = createContext<ContextValue<ButtonContextValue, HTML
 /**
  * A button allows a user to perform an action, with mouse, touch, and keyboard interactions.
  */
-export const Button = /*#__PURE__*/ createHideableComponent(function Button(props: ButtonProps, ref: ForwardedRef<HTMLButtonElement>) {
+export const Button = /*#__PURE__*/ createHideableComponent(function Button(
+  props: ButtonProps,
+  ref: ForwardedRef<HTMLButtonElement>
+) {
   [props, ref] = useContextProps(props, ref, ButtonContext);
   let ctx = props as ButtonContextValue;
 
   // Ideally we would use React's `useFormStatus` for this but it is buggy.
   // https://github.com/facebook/react/issues/30368
   let isFormPending = useContext(FormPendingContext);
-  let {buttonProps, progressBarProps, isPressed, isPending, actionError} = useButton({
-    ...props,
-    isPending: props.isPending || (props.type === 'submit' && isFormPending)
-  }, ref);
+  let {buttonProps, progressBarProps, isPressed, isPending, actionError} = useButton(
+    {
+      ...props,
+      isPending: props.isPending || (props.type === 'submit' && isFormPending)
+    },
+    ref
+  );
   let {focusProps, isFocused, isFocusVisible} = useFocusRing(props);
   let {hoverProps, isHovered} = useHover({
     ...props,

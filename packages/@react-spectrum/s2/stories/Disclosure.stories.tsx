@@ -16,8 +16,7 @@ import {Disclosure, DisclosureHeader, DisclosurePanel, DisclosureTitle} from '..
 import type {Meta, StoryObj} from '@storybook/react';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
 import React from 'react';
-import {style} from '../style' with { type: 'macro' };
-
+import {style} from '../style' with {type: 'macro'};
 
 const meta: Meta<typeof Disclosure> = {
   component: Disclosure,
@@ -49,16 +48,12 @@ export default meta;
 type Story = StoryObj<typeof Disclosure>;
 
 export const Example: Story = {
-  render: (args) => {
+  render: args => {
     return (
       <div className={style({minHeight: 240})}>
         <Disclosure {...args}>
-          <DisclosureTitle>
-            Files
-          </DisclosureTitle>
-          <DisclosurePanel>
-            Files content
-          </DisclosurePanel>
+          <DisclosureTitle>Files</DisclosureTitle>
+          <DisclosurePanel>Files content</DisclosurePanel>
         </Disclosure>
       </div>
     );
@@ -66,22 +61,17 @@ export const Example: Story = {
 };
 
 export const WithLongTitle: Story = {
-  render: (args) => {
+  render: args => {
     return (
       <div className={style({minHeight: 240})}>
-        <Disclosure styles={style({maxWidth: 224})}  {...args}>
-          <DisclosureTitle>
-            Very very very very very long title that wraps
-          </DisclosureTitle>
-          <DisclosurePanel>
-            Content
-          </DisclosurePanel>
+        <Disclosure styles={style({maxWidth: 224})} {...args}>
+          <DisclosureTitle>Very very very very very long title that wraps</DisclosureTitle>
+          <DisclosurePanel>Content</DisclosurePanel>
         </Disclosure>
       </div>
     );
   }
 };
-
 
 WithLongTitle.parameters = {
   docs: {
@@ -89,29 +79,21 @@ WithLongTitle.parameters = {
   }
 };
 
-export const Controlled: Story['render'] = (args) => {
+export const Controlled: Story['render'] = args => {
   let [isExpanded, setExpanded] = React.useState(false);
   return (
     <Disclosure {...args} isExpanded={isExpanded} onExpandedChange={setExpanded}>
-      <DisclosureTitle>
-        Files
-      </DisclosureTitle>
-      <DisclosurePanel>
-        Files content
-      </DisclosurePanel>
+      <DisclosureTitle>Files</DisclosureTitle>
+      <DisclosurePanel>Files content</DisclosurePanel>
     </Disclosure>
   );
 };
 
 export const ControlledClosed: Story = {
-  render: (args) => (
+  render: args => (
     <Disclosure isExpanded={false} {...args}>
-      <DisclosureTitle>
-        Files
-      </DisclosureTitle>
-      <DisclosurePanel>
-        Files content
-      </DisclosurePanel>
+      <DisclosureTitle>Files</DisclosureTitle>
+      <DisclosurePanel>Files content</DisclosurePanel>
     </Disclosure>
   )
 };
@@ -123,22 +105,19 @@ ControlledClosed.parameters = {
 };
 
 export const WithActionButton: Story = {
-  render: (args) => {
+  render: args => {
     return (
       <div className={style({minHeight: 240})}>
         <Disclosure {...args}>
           <DisclosureHeader>
-            <DisclosureTitle>
-              Files
-            </DisclosureTitle>
-            <ActionButton><NewIcon aria-label="new icon " /></ActionButton>
+            <DisclosureTitle>Files</DisclosureTitle>
+            <ActionButton>
+              <NewIcon aria-label="new icon " />
+            </ActionButton>
           </DisclosureHeader>
-          <DisclosurePanel>
-            Files content
-          </DisclosurePanel>
+          <DisclosurePanel>Files content</DisclosurePanel>
         </Disclosure>
       </div>
     );
   }
 };
-

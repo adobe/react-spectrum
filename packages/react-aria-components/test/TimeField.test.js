@@ -12,7 +12,13 @@
 
 jest.mock('react-aria/src/live-announcer/LiveAnnouncer');
 
-import {act, installPointerEvent, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
+import {
+  act,
+  installPointerEvent,
+  pointerMap,
+  render,
+  within
+} from '@react-spectrum/test-utils-internal';
 import {announce} from 'react-aria/private/live-announcer/LiveAnnouncer';
 import {DateInput, DateSegment, TimeField, TimeFieldContext} from '../src/DateField';
 import {FieldError} from '../src/FieldError';
@@ -57,7 +63,13 @@ describe('TimeField', () => {
     expect(label).toHaveTextContent('Birth date');
 
     expect(input).toHaveAttribute('aria-describedby');
-    expect(input.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ')).toBe('Description Error');
+    expect(
+      input
+        .getAttribute('aria-describedby')
+        .split(' ')
+        .map(id => document.getElementById(id).textContent)
+        .join(' ')
+    ).toBe('Description Error');
 
     for (let segment of getAllByRole('spinbutton')) {
       expect(segment).toHaveAttribute('class', 'react-aria-DateSegment');
@@ -72,7 +84,12 @@ describe('TimeField', () => {
       <TimeField className="date-field">
         <Label>Birth date</Label>
         <DateInput className="date-input">
-          {segment => <DateSegment segment={segment} className={({isPlaceholder}) => `segment ${isPlaceholder ? 'placeholder' : ''}`} />}
+          {segment => (
+            <DateSegment
+              segment={segment}
+              className={({isPlaceholder}) => `segment ${isPlaceholder ? 'placeholder' : ''}`}
+            />
+          )}
         </DateInput>
       </TimeField>
     );
@@ -87,11 +104,16 @@ describe('TimeField', () => {
   });
 
   it('should support custom render function', () => {
-    let {getByRole, getAllByRole} =  render(
+    let {getByRole, getAllByRole} = render(
       <TimeField render={props => <div {...props} data-custom="true" />}>
         <Label render={props => <span {...props} data-custom="true" />}>Birth date</Label>
         <DateInput className="date-input" render={props => <div {...props} data-custom="true" />}>
-          {segment => <DateSegment segment={segment} render={props => <span {...props} data-custom="true" />} />}
+          {segment => (
+            <DateSegment
+              segment={segment}
+              render={props => <span {...props} data-custom="true" />}
+            />
+          )}
         </DateInput>
       </TimeField>
     );
@@ -109,9 +131,7 @@ describe('TimeField', () => {
     let {getByRole} = render(
       <TimeFieldContext.Provider value={{slots: {test: {'aria-label': 'test'}}}}>
         <TimeField slot="test">
-          <DateInput>
-            {segment => <DateSegment segment={segment} />}
-          </DateInput>
+          <DateInput>{segment => <DateSegment segment={segment} />}</DateInput>
         </TimeField>
       </TimeFieldContext.Provider>
     );
@@ -123,7 +143,10 @@ describe('TimeField', () => {
 
   it('should support render props', () => {
     let {getByRole} = render(
-      <TimeField minValue={new Time(6, 0, 0)} defaultValue={new Time(5, 0, 0)} validationBehavior="aria">
+      <TimeField
+        minValue={new Time(6, 0, 0)}
+        defaultValue={new Time(5, 0, 0)}
+        validationBehavior="aria">
         {({isInvalid}) => (
           <>
             <Label>Birth date</Label>
@@ -145,8 +168,7 @@ describe('TimeField', () => {
         {({isDisabled}) => (
           <>
             <Label>Birth date</Label>
-            <DateInput 
-              data-disabled-state={isDisabled ? 'disabled' : null}>
+            <DateInput data-disabled-state={isDisabled ? 'disabled' : null}>
               {segment => <DateSegment segment={segment} />}
             </DateInput>
           </>
@@ -164,8 +186,7 @@ describe('TimeField', () => {
         {({isRequired}) => (
           <>
             <Label>Time</Label>
-            <DateInput
-              data-required-state={isRequired ? 'required' : null}>
+            <DateInput data-required-state={isRequired ? 'required' : null}>
               {segment => <DateSegment segment={segment} />}
             </DateInput>
           </>
@@ -180,9 +201,7 @@ describe('TimeField', () => {
     let {getByRole, rerender} = render(
       <TimeField>
         <Label>Time</Label>
-        <DateInput>
-          {segment => <DateSegment segment={segment} />}
-        </DateInput>
+        <DateInput>{segment => <DateSegment segment={segment} />}</DateInput>
       </TimeField>
     );
     let group = getByRole('group');
@@ -190,9 +209,7 @@ describe('TimeField', () => {
     rerender(
       <TimeField isRequired>
         <Label>Time</Label>
-        <DateInput>
-          {segment => <DateSegment segment={segment} />}
-        </DateInput>
+        <DateInput>{segment => <DateSegment segment={segment} />}</DateInput>
       </TimeField>
     );
     expect(group.closest('.react-aria-TimeField')).toHaveAttribute('data-required');
@@ -202,9 +219,7 @@ describe('TimeField', () => {
     render(
       <TimeField name="time" form="test" value={new Time(8, 30)}>
         <Label>Time</Label>
-        <DateInput>
-          {segment => <DateSegment segment={segment} />}
-        </DateInput>
+        <DateInput>{segment => <DateSegment segment={segment} />}</DateInput>
       </TimeField>
     );
     let input = document.querySelector('input[name=time]');
@@ -217,9 +232,7 @@ describe('TimeField', () => {
       <form data-testid="form">
         <TimeField name="date" isRequired>
           <Label>Time</Label>
-          <DateInput>
-            {segment => <DateSegment segment={segment} />}
-          </DateInput>
+          <DateInput>{segment => <DateSegment segment={segment} />}</DateInput>
           <FieldError />
         </TimeField>
       </form>
@@ -231,10 +244,17 @@ describe('TimeField', () => {
     expect(input.validity.valid).toBe(false);
     expect(group).not.toHaveAttribute('aria-describedby');
 
-    act(() => {getByTestId('form').checkValidity();});
+    act(() => {
+      getByTestId('form').checkValidity();
+    });
 
     expect(group).toHaveAttribute('aria-describedby');
-    let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+    let getDescription = () =>
+      group
+        .getAttribute('aria-describedby')
+        .split(' ')
+        .map(d => document.getElementById(d).textContent)
+        .join(' ');
     expect(getDescription()).toContain('Constraints not satisfied');
     expect(document.activeElement).toBe(within(group).getAllByRole('spinbutton')[0]);
 
@@ -249,7 +269,7 @@ describe('TimeField', () => {
   });
 
   if (parseInt(React.version, 10) >= 19) {
-    describe('changeAction', () => {  
+    describe('changeAction', () => {
       function DateFieldChangeActionExample() {
         return (
           <TimeField
@@ -260,16 +280,14 @@ describe('TimeField', () => {
             {({isPending}) => (
               <>
                 <Label>Time</Label>
-                <DateInput>
-                  {segment => <DateSegment segment={segment} />}
-                </DateInput>
+                <DateInput>{segment => <DateSegment segment={segment} />}</DateInput>
                 {isPending ? <ProgressBar aria-label="Loading" isIndeterminate /> : null}
               </>
             )}
           </TimeField>
         );
       }
-  
+
       it('shows ProgressBar while pending', async () => {
         let {getByRole, queryByRole} = render(<DateFieldChangeActionExample />);
         let group = getByRole('group');
@@ -278,20 +296,20 @@ describe('TimeField', () => {
 
         await user.click(segments[0]);
         await user.keyboard('{ArrowUp}');
-  
+
         expect(field).toHaveAttribute('data-pending');
         expect(segments[0]).toHaveTextContent('9');
 
         let progressbar = getByRole('progressbar');
         expect(progressbar).toBeInTheDocument();
         expect(group.getAttribute('aria-describedby')).toContain(progressbar.id);
-  
+
         expect(announce).toHaveBeenCalledWith({'aria-labelledby': progressbar.id}, 'assertive');
-  
+
         await act(async () => {
           jest.runAllTimers();
         });
-  
+
         expect(field).not.toHaveAttribute('data-pending');
         expect(queryByRole('progressbar')).not.toBeInTheDocument();
         expect(announce).toHaveBeenCalledWith({'aria-labelledby': group.id}, 'assertive');

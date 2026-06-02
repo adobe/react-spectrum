@@ -17,7 +17,7 @@ import babel from '@rollup/plugin-babel';
 import replace from '@rollup/plugin-replace';
 import css from 'rollup-plugin-import-css';
 import macros from 'unplugin-parcel-macros';
-import reactSvg from "rollup-plugin-react-svg";
+import reactSvg from 'rollup-plugin-react-svg';
 
 // `npm run build` -> `production` is true
 // `npm run dev` -> `production` is false
