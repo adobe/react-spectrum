@@ -31,7 +31,6 @@ import {dimensionValue} from '../utils/styleProps';
 import {Field} from '../label/Field';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {FocusRing} from 'react-aria/FocusRing';
-// @ts-ignore
 import intlMessages from '../../intl/autocomplete/*.json';
 import {ListBoxBase, useListBoxLayout} from '../listbox/ListBoxBase';
 import Magnifier from '@spectrum-icons/ui/Magnifier';

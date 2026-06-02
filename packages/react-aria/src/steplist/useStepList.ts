@@ -13,7 +13,6 @@
 import {AriaLabelingProps, DOMProps, RefObject} from '@react-types/shared';
 import {filterDOMProps} from '../utils/filterDOMProps';
 import {HTMLAttributes} from 'react';
-// @ts-ignore
 import intlMessages from '../../intl/steplist/*.json';
 import {mergeProps} from '../utils/mergeProps';
 import {StepListProps, StepListState} from 'react-stately/private/steplist/useStepListState';

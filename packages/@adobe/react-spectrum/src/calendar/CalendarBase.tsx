@@ -20,7 +20,6 @@ import ChevronRight from '@spectrum-icons/ui/ChevronRightLarge';
 import {classNames} from '../utils/classNames';
 import {DOMProps, RefObject, StyleProps} from '@react-types/shared';
 import {HelpText} from '../label/HelpText';
-// @ts-ignore
 import intlMessages from '../../intl/calendar/*.json';
 import {RangeCalendarState} from 'react-stately/useRangeCalendarState';
 import React, {HTMLAttributes, JSX} from 'react';

@@ -29,7 +29,6 @@ import {
 } from 'react';
 import {DOMProps, DOMRef, DOMRefValue, Key} from '@react-types/shared';
 import {FocusScope} from 'react-aria/FocusScope';
-// @ts-ignore
 import intlMessages from '../intl/*.json';
 import {lightDark, style} from '../style' with {type: 'macro'};
 import {StyleProps} from './style-utils' with {type: 'macro'};

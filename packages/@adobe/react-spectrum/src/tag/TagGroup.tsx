@@ -24,7 +24,6 @@ import {
 import {Field} from '../label/Field';
 import {FocusRing} from 'react-aria/FocusRing';
 import {FocusScope} from 'react-aria/FocusScope';
-// @ts-ignore
 import intlMessages from '../../intl/tag/*.json';
 import {ListCollection} from 'react-stately/private/list/ListCollection';
 import {ListKeyboardDelegate} from 'react-aria/ListKeyboardDelegate';

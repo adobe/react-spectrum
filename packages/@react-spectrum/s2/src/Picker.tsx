@@ -76,7 +76,6 @@ import {forwardRefType} from './types';
 import {getOwnerDocument} from 'react-aria/private/utils/domHelpers';
 import {HeaderContext, HeadingContext, Text, TextContext} from './Content';
 import {IconContext} from './Icon';
-// @ts-ignore
 import intlMessages from '../intl/*.json';
 import {isFocusable} from 'react-aria/private/utils/isFocusable';
 import {ListLayout} from 'react-stately/useVirtualizerState';

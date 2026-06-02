@@ -13,7 +13,6 @@ import {DialogTrigger, DialogTriggerProps} from './DialogTrigger';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import HelpIcon from '../s2wf-icons/S2_Icon_HelpCircle_20_N.svg';
 import InfoIcon from '../s2wf-icons/S2_Icon_InfoCircle_20_N.svg';
-// @ts-ignore
 import intlMessages from '../intl/*.json';
 import {mergeProps} from 'react-aria/mergeProps';
 import {mergeStyles} from '../style/runtime';

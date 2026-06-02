@@ -18,7 +18,6 @@ import CrossMedium from '@spectrum-icons/ui/CrossMedium';
 import {DOMProps, DOMRef} from '@react-types/shared';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import InfoMedium from '@spectrum-icons/ui/InfoMedium';
-// @ts-ignore
 import intlMessages from '../../intl/toast/*.json';
 import {mergeProps} from 'react-aria/mergeProps';
 import {QueuedToast, ToastState} from 'react-stately/useToastState';

@@ -14,7 +14,6 @@ import {AriaButtonProps} from '../button/useButton';
 import {AriaMenuOptions} from './useMenu';
 import {FocusableElement, RefObject} from '@react-types/shared';
 import {focusWithoutScrolling} from '../utils/focusWithoutScrolling';
-// @ts-ignore
 import intlMessages from '../../intl/menu/*.json';
 import {MenuTriggerState, MenuTriggerType} from 'react-stately/useMenuTriggerState';
 import {PressProps} from '../interactions/usePress';

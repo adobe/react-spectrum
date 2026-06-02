@@ -17,7 +17,6 @@ import CrossLarge from '@spectrum-icons/ui/CrossLarge';
 import {DialogContext, DialogContextValue} from './context';
 import {DOMRef, StyleProps} from '@react-types/shared';
 import {Grid} from '../layout/Grid';
-// @ts-ignore
 import intlMessages from '../../intl/dialog/*.json';
 import {mergeProps} from 'react-aria/mergeProps';
 import React, {ReactNode, useContext, useMemo, useRef} from 'react';

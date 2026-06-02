@@ -27,7 +27,6 @@ import {FieldButton} from '../button/FieldButton';
 import {Flex} from '../layout/Flex';
 import {FocusableRef} from '@react-types/shared';
 import {Input} from './Input';
-// @ts-ignore
 import intlMessages from '../../intl/datepicker/*.json';
 import {mergeProps} from 'react-aria/mergeProps';
 import {RangeCalendar} from '../calendar/RangeCalendar';

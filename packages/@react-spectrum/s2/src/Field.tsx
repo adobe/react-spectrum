@@ -35,7 +35,6 @@ import {
   Input as RACInput,
   InputProps as RACInputProps
 } from 'react-aria-components/Input';
-// @ts-ignore
 import intlMessages from '../intl/*.json';
 import {Label, LabelProps} from 'react-aria-components/Label';
 import {mergeStyles} from '../style/runtime';

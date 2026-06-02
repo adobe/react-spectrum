@@ -37,7 +37,6 @@ import {
 } from 'react-stately/private/form/useFormValidationState';
 import {filterDOMProps} from '../utils/filterDOMProps';
 import {focusManagerSymbol, roleSymbol} from './useDateField';
-// @ts-ignore
 import intlMessages from '../../intl/datepicker/*.json';
 import {mergeProps} from '../utils/mergeProps';
 import {nodeContains} from '../utils/shadowdom/DOMFunctions';

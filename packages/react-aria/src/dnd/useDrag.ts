@@ -39,7 +39,6 @@ import {
   useDragModality,
   writeToDataTransfer
 } from './utils';
-// @ts-ignore
 import intlMessages from '../../intl/dnd/*.json';
 import {isVirtualClick, isVirtualPointerEvent} from '../utils/isVirtualEvent';
 import {useDescription} from '../utils/useDescription';

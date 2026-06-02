@@ -25,7 +25,6 @@ import {focusRing, style} from '../style' with {type: 'macro'};
 import {FocusScope} from 'react-aria/FocusScope';
 import {getEventTarget} from 'react-aria/private/utils/shadowdom/DOMFunctions';
 import InfoIcon from '../s2wf-icons/S2_Icon_InfoCircle_20_N.svg';
-// @ts-ignore
 import intlMessages from '../intl/*.json';
 import {isWebKit} from 'react-aria/private/utils/platform';
 import {ToastOptions as RACToastOptions, ToastQueue} from 'react-stately/useToastState';

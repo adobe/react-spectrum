@@ -17,7 +17,6 @@ import {focusSafely} from '../interactions/focusSafely';
 import {getActiveElement, getEventTarget} from '../utils/shadowdom/DOMFunctions';
 import {getColumnHeaderId} from './utils';
 import {GridNode} from 'react-stately/private/grid/GridCollection';
-// @ts-ignore
 import intlMessages from '../../intl/table/*.json';
 import {mergeProps} from '../utils/mergeProps';
 import {TableColumnResizeState} from 'react-stately/useTableState';

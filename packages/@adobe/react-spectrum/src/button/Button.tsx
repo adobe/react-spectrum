@@ -14,7 +14,6 @@ import {AriaButtonProps, useButton} from 'react-aria/useButton';
 import {classNames} from '../utils/classNames';
 import {FocusableRef, StyleProps} from '@react-types/shared';
 import {FocusRing} from 'react-aria/FocusRing';
-// @ts-ignore
 import intlMessages from '../../intl/button/*.json';
 import {isAppleDevice, isFirefox} from 'react-aria/private/utils/platform';
 import {mergeProps} from 'react-aria/mergeProps';

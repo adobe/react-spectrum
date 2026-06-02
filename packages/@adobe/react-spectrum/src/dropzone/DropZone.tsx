@@ -14,7 +14,6 @@ import {AriaLabelingProps, DOMProps, DOMRef, StyleProps} from '@react-types/shar
 import {classNames} from '../utils/classNames';
 import {DropZoneProps, DropZone as RACDropZone} from 'react-aria-components/DropZone';
 import {HeadingContext} from 'react-aria-components/Heading';
-// @ts-ignore
 import intlMessages from '../../intl/dropzone/*.json';
 import {mergeProps} from 'react-aria/mergeProps';
 import {Provider} from 'react-aria-components/slots';

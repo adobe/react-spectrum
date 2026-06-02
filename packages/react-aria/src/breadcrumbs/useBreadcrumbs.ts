@@ -12,7 +12,6 @@
 
 import {AriaLabelingProps, DOMAttributes, DOMProps} from '@react-types/shared';
 import {filterDOMProps} from '../utils/filterDOMProps';
-// @ts-ignore
 import intlMessages from '../../intl/breadcrumbs/*.json';
 import {useLocalizedStringFormatter} from '../i18n/useLocalizedStringFormatter';
 

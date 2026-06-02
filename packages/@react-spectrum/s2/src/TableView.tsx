@@ -92,7 +92,6 @@ import {
 import {getOwnerDocument} from 'react-aria/private/utils/domHelpers';
 import {GridNode} from 'react-stately/private/grid/GridCollection';
 import {IconContext} from './Icon';
-// @ts-ignore
 import intlMessages from '../intl/*.json';
 import {Key} from '@react-types/shared';
 import {LayoutInfo, Rect, TableLayout, Virtualizer} from 'react-aria-components/Virtualizer';

@@ -35,7 +35,6 @@ import {
 import {filterDOMProps} from '../utils/filterDOMProps';
 import {flushSync} from 'react-dom';
 import {getActiveElement, getEventTarget} from '../utils/shadowdom/DOMFunctions';
-// @ts-ignore
 import intlMessages from '../../intl/numberfield/*.json';
 import {isAndroid, isIOS, isIPhone} from '../utils/platform';
 import {mergeProps} from '../utils/mergeProps';

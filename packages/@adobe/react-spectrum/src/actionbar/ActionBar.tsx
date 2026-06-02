@@ -18,7 +18,6 @@ import CrossLarge from '@spectrum-icons/ui/CrossLarge';
 import {DOMProps, DOMRef, ItemElement, ItemRenderer, Key, StyleProps} from '@react-types/shared';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {FocusScope} from 'react-aria/FocusScope';
-// @ts-ignore
 import intlMessages from '../../intl/actionbar/*.json';
 import {OpenTransition} from '../overlays/OpenTransition';
 import React, {ReactElement, Ref, useEffect, useRef, useState} from 'react';

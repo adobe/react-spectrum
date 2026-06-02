@@ -22,7 +22,6 @@ import {FocusableRef, ValidationState} from '@react-types/shared';
 import {focusSafely} from 'react-aria/private/interactions/focusSafely';
 import {FocusScope} from 'react-aria/FocusScope';
 import {getActiveElement} from 'react-aria/private/utils/shadowdom/DOMFunctions';
-// @ts-ignore
 import intlMessages from '../../intl/autocomplete/*.json';
 import {ListBoxBase, useListBoxLayout} from '../listbox/ListBoxBase';
 import Magnifier from '@spectrum-icons/ui/Magnifier';

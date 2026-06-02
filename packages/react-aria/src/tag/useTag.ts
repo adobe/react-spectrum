@@ -14,7 +14,6 @@ import {AriaButtonProps} from '../button/useButton';
 import {DOMAttributes, FocusableElement, Node, RefObject} from '@react-types/shared';
 import {filterDOMProps} from '../utils/filterDOMProps';
 import {hookData} from './useTagGroup';
-// @ts-ignore
 import intlMessages from '../../intl/tag/*.json';
 import {KeyboardEvent} from 'react';
 import type {ListState} from 'react-stately/useListState';

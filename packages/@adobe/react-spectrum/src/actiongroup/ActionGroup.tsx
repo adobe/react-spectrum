@@ -19,7 +19,6 @@ import {classNames} from '../utils/classNames';
 import {ClearSlots, SlotProvider, useSlotProps} from '../utils/Slots';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {FocusScope} from 'react-aria/FocusScope';
-// @ts-ignore
 import intlMessages from '../../intl/actiongroup/*.json';
 import {Item} from 'react-stately/Item';
 import {ListState, useListState} from 'react-stately/useListState';

@@ -56,7 +56,6 @@ import {forwardRefType} from './types';
 import {IconContext} from './Icon';
 import {ImageContext} from './Image';
 import {inertValue} from 'react-aria/private/utils/inertValue';
-// @ts-ignore
 import intlMessages from '../intl/*.json';
 import {pressScale} from './pressScale';
 import {ButtonContext as RACButtonContext} from 'react-aria-components/Button';

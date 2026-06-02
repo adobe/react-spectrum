@@ -26,7 +26,6 @@ import {FocusRing} from 'react-aria/FocusRing';
 import {focusSafely} from 'react-aria/private/interactions/focusSafely';
 import {FocusScope} from 'react-aria/FocusScope';
 import {getActiveElement} from 'react-aria/private/utils/shadowdom/DOMFunctions';
-// @ts-ignore
 import intlMessages from '../../intl/combobox/*.json';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {ListBoxBase, useListBoxLayout} from '../listbox/ListBoxBase';

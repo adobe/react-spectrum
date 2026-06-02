@@ -29,7 +29,6 @@ import {classNames} from '../utils/classNames';
 import {dimensionValue} from '../utils/styleProps';
 import {Field} from '../label/Field';
 import {FieldButton} from '../button/FieldButton';
-// @ts-ignore
 import intlMessages from '../../intl/picker/*.json';
 import {ListBoxBase, useListBoxLayout} from '../listbox/ListBoxBase';
 import {mergeProps} from 'react-aria/mergeProps';

@@ -40,7 +40,6 @@ import {
 import {GridNode} from 'react-stately/private/grid/GridCollection';
 import {HoverProps, useHover} from 'react-aria/useHover';
 import {InsertionIndicator} from './InsertionIndicator';
-// @ts-ignore
 import intlMessages from '../../intl/table/*.json';
 import {isAndroid} from 'react-aria/private/utils/platform';
 import {Item} from 'react-stately/Item';

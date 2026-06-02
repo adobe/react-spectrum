@@ -26,7 +26,6 @@ import {CalendarProps} from 'react-stately/useCalendarState';
 import {createFocusManager} from '../focus/FocusScope';
 import {DatePickerProps, DatePickerState, DateValue} from 'react-stately/useDatePickerState';
 import {filterDOMProps} from '../utils/filterDOMProps';
-// @ts-ignore
 import intlMessages from '../../intl/datepicker/*.json';
 import {mergeProps} from '../utils/mergeProps';
 import {nodeContains} from '../utils/shadowdom/DOMFunctions';

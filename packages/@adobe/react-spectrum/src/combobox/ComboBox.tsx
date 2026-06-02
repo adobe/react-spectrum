@@ -37,7 +37,6 @@ import {dimensionValue} from '../utils/styleProps';
 import {Field} from '../label/Field';
 import {FieldButton} from '../button/FieldButton';
 import {FocusRing} from 'react-aria/FocusRing';
-// @ts-ignore
 import intlMessages from '../../intl/combobox/*.json';
 import {ListBoxBase, useListBoxLayout} from '../listbox/ListBoxBase';
 import {MobileComboBox} from './MobileComboBox';

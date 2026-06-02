@@ -36,7 +36,6 @@ import {
 import {getActiveElement, getEventTarget} from '../utils/shadowdom/DOMFunctions';
 import {getInteractionModality, getPointerType} from '../interactions/useFocusVisible';
 import {getOwnerDocument} from '../utils/domHelpers';
-// @ts-ignore
 import intlMessages from '../../intl/autocomplete/*.json';
 import {isAndroid, isIOS} from '../utils/platform';
 import {isCtrlKeyPressed} from '../utils/keyboard';

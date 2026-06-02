@@ -14,7 +14,6 @@ import {AriaLabelingProps, DOMAttributes, DOMProps, RefObject} from '@react-type
 import {ColorAreaProps, ColorAreaState} from 'react-stately/useColorAreaState';
 import {ColorChannel} from 'react-stately/Color';
 import {focusWithoutScrolling} from '../utils/focusWithoutScrolling';
-// @ts-ignore
 import intlMessages from '../../intl/color/*.json';
 import {isAndroid, isIOS} from '../utils/platform';
 import {mergeProps} from '../utils/mergeProps';

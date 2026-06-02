@@ -24,7 +24,6 @@ import {
 import {DropOptions, useDrop} from 'react-aria/useDrop';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {getEventTarget, nodeContains} from 'react-aria/private/utils/shadowdom/DOMFunctions';
-// @ts-ignore
 import intlMessages from '../intl/*.json';
 import {isFocusable} from 'react-aria/private/utils/isFocusable';
 import {mergeProps} from 'react-aria/mergeProps';

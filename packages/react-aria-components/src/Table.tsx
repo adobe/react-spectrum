@@ -73,7 +73,6 @@ import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {FocusScope} from 'react-aria/FocusScope';
 import {GridNode} from 'react-stately/private/grid/GridCollection';
 import {inertValue} from 'react-aria/private/utils/inertValue';
-// @ts-ignore
 import intlMessages from '../intl/*.json';
 import {isScrollable} from 'react-aria/private/utils/isScrollable';
 import {ITableCollection} from 'react-stately/private/table/TableCollection';

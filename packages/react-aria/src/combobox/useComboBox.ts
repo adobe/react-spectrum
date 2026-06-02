@@ -45,7 +45,6 @@ import {getChildNodes} from 'react-stately/private/collections/getChildNodes';
 import {getItemCount} from 'react-stately/private/collections/getItemCount';
 import {getItemId, listData} from '../listbox/utils';
 import {getOwnerDocument} from '../utils/domHelpers';
-// @ts-ignore
 import intlMessages from '../../intl/combobox/*.json';
 import {isAppleDevice} from '../utils/platform';
 import {ListKeyboardDelegate} from '../selection/ListKeyboardDelegate';
