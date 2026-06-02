@@ -11,7 +11,6 @@
  */
 
 import {ActionButton} from '../button/ActionButton';
-
 import {ActionGroup} from '../actiongroup/ActionGroup';
 import {announce} from 'react-aria/private/live-announcer/LiveAnnouncer';
 import {classNames} from '../utils/classNames';
@@ -19,9 +18,9 @@ import CrossLarge from '@spectrum-icons/ui/CrossLarge';
 import {DOMProps, DOMRef, ItemElement, ItemRenderer, Key, StyleProps} from '@react-types/shared';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {FocusScope} from 'react-aria/FocusScope';
+// @ts-ignore
 import intlMessages from '../../intl/actionbar/*.json';
 import {OpenTransition} from '../overlays/OpenTransition';
-// @ts-ignore
 import React, {ReactElement, Ref, useEffect, useRef, useState} from 'react';
 import styles from './actionbar.css';
 import {Text} from '../text/Text';

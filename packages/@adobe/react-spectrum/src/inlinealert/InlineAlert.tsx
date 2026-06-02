@@ -17,10 +17,10 @@ import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {FocusRing} from 'react-aria/FocusRing';
 import {Grid} from '../layout/Grid';
 import InfoMedium from '@spectrum-icons/ui/InfoMedium';
+// @ts-ignore
 import intlMessages from '../../intl/inlinealert/*.json';
 import React, {ReactNode, useEffect, useRef} from 'react';
 import {SlotProvider} from '../utils/Slots';
-// @ts-ignore
 import styles from '@adobe/spectrum-css-temp/components/inlinealert/vars.css';
 import SuccessMedium from '@spectrum-icons/ui/SuccessMedium';
 import {useDOMRef} from '../utils/useDOMRef';

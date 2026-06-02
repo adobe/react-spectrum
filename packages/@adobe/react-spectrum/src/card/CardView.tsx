@@ -16,10 +16,10 @@ import {CardViewContext, useCardViewContext} from './CardViewContext';
 import {classNames} from '../utils/classNames';
 import {DOMRef, DOMRefValue, Node} from '@react-types/shared';
 import {GridCollection} from 'react-stately/private/grid/GridCollection';
+// @ts-ignore
 import intlMessages from '../../intl/card/*.json';
 import {mergeProps} from 'react-aria/mergeProps';
 import {ProgressCircle} from '../progress/ProgressCircle';
-// @ts-ignore
 import React, {ReactElement, ReactNode, useCallback, useMemo, useRef} from 'react';
 import {ReusableView} from 'react-stately/useVirtualizerState';
 import {SpectrumCardViewProps} from './types';

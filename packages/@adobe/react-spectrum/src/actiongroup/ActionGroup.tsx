@@ -11,7 +11,6 @@
  */
 
 import {ActionButton} from '../button/ActionButton';
-
 import {AriaActionGroupProps, useActionGroup} from 'react-aria/private/actiongroup/useActionGroup';
 import {AriaLabelingProps, DOMProps, DOMRef, Key, Node, StyleProps} from '@react-types/shared';
 import buttonStyles from '@adobe/spectrum-css-temp/components/button/vars.css';
@@ -20,6 +19,7 @@ import {classNames} from '../utils/classNames';
 import {ClearSlots, SlotProvider, useSlotProps} from '../utils/Slots';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {FocusScope} from 'react-aria/FocusScope';
+// @ts-ignore
 import intlMessages from '../../intl/actiongroup/*.json';
 import {Item} from 'react-stately/Item';
 import {ListState, useListState} from 'react-stately/useListState';
@@ -28,7 +28,6 @@ import {MenuTrigger} from '../menu/MenuTrigger';
 import {mergeProps} from 'react-aria/mergeProps';
 import More from '@spectrum-icons/workflow/More';
 import {PressResponder} from 'react-aria/private/interactions/PressResponder';
-// @ts-ignore
 import {Provider, useProviderProps} from '../provider/Provider';
 import React, {
   forwardRef,

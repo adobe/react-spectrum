@@ -11,7 +11,6 @@
  */
 
 import {announce} from '../live-announcer/LiveAnnouncer';
-
 import {AriaButtonProps} from '../button/useButton';
 import {ariaHideOutside} from '../overlays/ariaHideOutside';
 import {
@@ -46,6 +45,7 @@ import {getChildNodes} from 'react-stately/private/collections/getChildNodes';
 import {getItemCount} from 'react-stately/private/collections/getItemCount';
 import {getItemId, listData} from '../listbox/utils';
 import {getOwnerDocument} from '../utils/domHelpers';
+// @ts-ignore
 import intlMessages from '../../intl/combobox/*.json';
 import {isAppleDevice} from '../utils/platform';
 import {ListKeyboardDelegate} from '../selection/ListKeyboardDelegate';
@@ -54,7 +54,6 @@ import {privateValidationStateProp} from 'react-stately/private/form/useFormVali
 import {useEvent} from '../utils/useEvent';
 import {useFormReset} from '../utils/useFormReset';
 import {useId} from '../utils/useId';
-// @ts-ignore
 import {useLabels} from '../utils/useLabels';
 import {useLocalizedStringFormatter} from '../i18n/useLocalizedStringFormatter';
 import {useMenuTrigger} from '../menu/useMenuTrigger';

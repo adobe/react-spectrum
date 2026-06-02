@@ -11,7 +11,6 @@
  */
 
 import {AriaDatePickerProps, DateValue, useDatePicker} from 'react-aria/useDatePicker';
-
 import {Calendar} from '../calendar/Calendar';
 import CalendarIcon from '@spectrum-icons/workflow/Calendar';
 import {CalendarIdentifier, Calendar as ICalendar} from '@internationalized/date';
@@ -25,8 +24,8 @@ import {Field} from '../label/Field';
 import {FieldButton} from '../button/FieldButton';
 import {FocusableRef, SpectrumLabelableProps, StyleProps} from '@react-types/shared';
 import {Input} from './Input';
-import intlMessages from '../../intl/datepicker/*.json';
 // @ts-ignore
+import intlMessages from '../../intl/datepicker/*.json';
 import {mergeProps} from 'react-aria/mergeProps';
 import React, {ReactElement, useRef} from 'react';
 import {SpectrumDateFieldBase} from './DateField';

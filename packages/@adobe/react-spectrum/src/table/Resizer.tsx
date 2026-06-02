@@ -4,8 +4,8 @@ import eCursor from 'bundle-text:./cursors/Cur_MoveToRight_9_9.svg';
 import ewCursor from 'bundle-text:./cursors/Cur_MoveHorizontal_9_9.svg';
 import {FocusRing} from 'react-aria/FocusRing';
 import {GridNode} from 'react-stately/private/grid/GridCollection';
-import intlMessages from '../../intl/table/*.json';
 // @ts-ignore
+import intlMessages from '../../intl/table/*.json';
 import {isWebKit} from 'react-aria/private/utils/platform';
 import {Key, RefObject} from '@react-types/shared';
 import {mergeProps} from 'react-aria/mergeProps';

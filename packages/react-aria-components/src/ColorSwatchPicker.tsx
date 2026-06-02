@@ -16,9 +16,9 @@ import {
 import {Color} from 'react-stately/Color';
 import {ColorSwatchContext} from './ColorSwatch';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
+// @ts-ignore
 import intlMessages from '../intl/*.json';
 import {ListBox, ListBoxItem, ListBoxItemRenderProps, ListBoxRenderProps} from './ListBox';
-// @ts-ignore
 import {parseColor} from 'react-stately/Color';
 import React, {
   createContext,

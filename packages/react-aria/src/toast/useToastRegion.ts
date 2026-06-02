@@ -14,11 +14,11 @@ import {AriaLabelingProps, DOMAttributes, FocusableElement, RefObject} from '@re
 import {focusWithoutScrolling} from '../utils/focusWithoutScrolling';
 import {getEventTarget} from '../utils/shadowdom/DOMFunctions';
 import {getInteractionModality} from '../interactions/useFocusVisible';
+// @ts-ignore
 import intlMessages from '../../intl/toast/*.json';
 import {mergeProps} from '../utils/mergeProps';
 import {ToastState} from 'react-stately/useToastState';
 import {useCallback, useEffect, useRef} from 'react';
-// @ts-ignore
 import {useFocusWithin} from '../interactions/useFocusWithin';
 import {useHover} from '../interactions/useHover';
 import {useLandmark} from '../landmark/useLandmark';

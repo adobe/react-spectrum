@@ -22,6 +22,7 @@ import {FocusableRef, ValidationState} from '@react-types/shared';
 import {focusSafely} from 'react-aria/private/interactions/focusSafely';
 import {FocusScope} from 'react-aria/FocusScope';
 import {getActiveElement} from 'react-aria/private/utils/shadowdom/DOMFunctions';
+// @ts-ignore
 import intlMessages from '../../intl/autocomplete/*.json';
 import {ListBoxBase, useListBoxLayout} from '../listbox/ListBoxBase';
 import Magnifier from '@spectrum-icons/ui/Magnifier';
@@ -39,7 +40,6 @@ import React, {
 } from 'react';
 import searchAutocompleteStyles from './searchautocomplete.css';
 import searchStyles from '@adobe/spectrum-css-temp/components/search/vars.css';
-// @ts-ignore
 import {setInteractionModality} from 'react-aria/private/interactions/useFocusVisible';
 import {SpectrumSearchAutocompleteProps} from './SearchAutocomplete';
 import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';

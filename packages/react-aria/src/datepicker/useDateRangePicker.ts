@@ -11,7 +11,6 @@
  */
 
 import {AriaButtonProps} from '../button/useButton';
-
 import {AriaDatePickerProps} from './useDatePicker';
 import {AriaDialogProps} from '../dialog/useDialog';
 import {
@@ -38,12 +37,12 @@ import {
 } from 'react-stately/private/form/useFormValidationState';
 import {filterDOMProps} from '../utils/filterDOMProps';
 import {focusManagerSymbol, roleSymbol} from './useDateField';
+// @ts-ignore
 import intlMessages from '../../intl/datepicker/*.json';
 import {mergeProps} from '../utils/mergeProps';
 import {nodeContains} from '../utils/shadowdom/DOMFunctions';
 import {RangeCalendarProps} from 'react-stately/useRangeCalendarState';
 import {useDatePickerGroup} from './useDatePickerGroup';
-// @ts-ignore
 import {useDescription} from '../utils/useDescription';
 import {useField} from '../label/useField';
 import {useFocusWithin} from '../interactions/useFocusWithin';

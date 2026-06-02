@@ -36,6 +36,7 @@ import {
 import {getActiveElement, getEventTarget} from '../utils/shadowdom/DOMFunctions';
 import {getInteractionModality, getPointerType} from '../interactions/useFocusVisible';
 import {getOwnerDocument} from '../utils/domHelpers';
+// @ts-ignore
 import intlMessages from '../../intl/autocomplete/*.json';
 import {isAndroid, isIOS} from '../utils/platform';
 import {isCtrlKeyPressed} from '../utils/keyboard';
@@ -53,11 +54,8 @@ import {
 } from 'react';
 import {useEffectEvent} from '../utils/useEffectEvent';
 import {useEvent} from '../utils/useEvent';
-
 import {useId} from '../utils/useId';
-
 import {useLabels} from '../utils/useLabels';
-// @ts-ignore
 import {useLayoutEffect} from '../utils/useLayoutEffect';
 import {useLocalizedStringFormatter} from '../i18n/useLocalizedStringFormatter';
 import {useObjectRef} from '../utils/useObjectRef';

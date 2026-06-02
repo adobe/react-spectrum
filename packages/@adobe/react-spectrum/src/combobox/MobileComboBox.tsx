@@ -26,6 +26,7 @@ import {FocusRing} from 'react-aria/FocusRing';
 import {focusSafely} from 'react-aria/private/interactions/focusSafely';
 import {FocusScope} from 'react-aria/FocusScope';
 import {getActiveElement} from 'react-aria/private/utils/shadowdom/DOMFunctions';
+// @ts-ignore
 import intlMessages from '../../intl/combobox/*.json';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {ListBoxBase, useListBoxLayout} from '../listbox/ListBoxBase';
@@ -44,7 +45,6 @@ import React, {
 } from 'react';
 import searchStyles from '@adobe/spectrum-css-temp/components/search/vars.css';
 import {setInteractionModality} from 'react-aria/private/interactions/useFocusVisible';
-// @ts-ignore
 import {SpectrumComboBoxProps} from './ComboBox';
 import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {TextFieldBase} from '../textfield/TextFieldBase';

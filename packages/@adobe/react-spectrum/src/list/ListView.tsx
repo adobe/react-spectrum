@@ -11,7 +11,6 @@
  */
 
 import {AriaGridListProps, useGridList} from 'react-aria/useGridList';
-
 import {
   AsyncLoadable,
   DOMRef,
@@ -30,11 +29,11 @@ import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {FocusRing} from 'react-aria/FocusRing';
 import {FocusScope} from 'react-aria/FocusScope';
 import InsertionIndicator from './InsertionIndicator';
+// @ts-ignore
 import intlMessages from '../../intl/list/*.json';
 import {ListKeyboardDelegate} from 'react-aria/ListKeyboardDelegate';
 import {ListState, useListState} from 'react-stately/useListState';
 import listStyles from './styles.css';
-// @ts-ignore
 import {ListViewItem} from './ListViewItem';
 import {ListViewLayout} from './ListViewLayout';
 import {mergeProps} from 'react-aria/mergeProps';

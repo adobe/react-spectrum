@@ -24,11 +24,11 @@ import {createFocusManager, FocusManager} from '../focus/FocusScope';
 import {DateFieldProps, DateFieldState, DateValue} from 'react-stately/useDateFieldState';
 import {filterDOMProps} from '../utils/filterDOMProps';
 import {InputHTMLAttributes, useEffect, useMemo, useRef} from 'react';
+// @ts-ignore
 import intlMessages from '../../intl/datepicker/*.json';
 import {mergeProps} from '../utils/mergeProps';
 import {TimeFieldState, TimePickerProps, TimeValue} from 'react-stately/useTimeFieldState';
 import {useDatePickerGroup} from './useDatePickerGroup';
-// @ts-ignore
 import {useDescription} from '../utils/useDescription';
 import {useField} from '../label/useField';
 import {useFocusWithin} from '../interactions/useFocusWithin';

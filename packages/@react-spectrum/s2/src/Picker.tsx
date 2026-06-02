@@ -76,13 +76,13 @@ import {forwardRefType} from './types';
 import {getOwnerDocument} from 'react-aria/private/utils/domHelpers';
 import {HeaderContext, HeadingContext, Text, TextContext} from './Content';
 import {IconContext} from './Icon';
+// @ts-ignore
 import intlMessages from '../intl/*.json';
 import {isFocusable} from 'react-aria/private/utils/isFocusable';
 import {ListLayout} from 'react-stately/useVirtualizerState';
 import {mergeStyles} from '../style/runtime';
 import {Placement} from 'react-aria-components/Popover';
 import {Popover} from './Popover';
-// @ts-ignore
 import {PressResponder} from 'react-aria/private/interactions/PressResponder';
 import {pressScale} from './pressScale';
 import {ProgressCircle} from './ProgressCircle';

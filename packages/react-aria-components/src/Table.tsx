@@ -73,6 +73,7 @@ import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {FocusScope} from 'react-aria/FocusScope';
 import {GridNode} from 'react-stately/private/grid/GridCollection';
 import {inertValue} from 'react-aria/private/utils/inertValue';
+// @ts-ignore
 import intlMessages from '../intl/*.json';
 import {isScrollable} from 'react-aria/private/utils/isScrollable';
 import {ITableCollection} from 'react-stately/private/table/TableCollection';
@@ -115,7 +116,6 @@ import {useControlledState} from 'react-stately/useControlledState';
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {useHover} from 'react-aria/useHover';
 import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
-// @ts-ignore
 import {useLocale} from 'react-aria/I18nProvider';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useMultipleSelectionState} from 'react-stately/useMultipleSelectionState';

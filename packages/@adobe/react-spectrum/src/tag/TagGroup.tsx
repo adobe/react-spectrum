@@ -11,7 +11,6 @@
  */
 
 import {ActionButton} from '../button/ActionButton';
-
 import {AriaTagGroupProps, useTagGroup} from 'react-aria/useTagGroup';
 import {classNames} from '../utils/classNames';
 import {
@@ -25,8 +24,8 @@ import {
 import {Field} from '../label/Field';
 import {FocusRing} from 'react-aria/FocusRing';
 import {FocusScope} from 'react-aria/FocusScope';
-import intlMessages from '../../intl/tag/*.json';
 // @ts-ignore
+import intlMessages from '../../intl/tag/*.json';
 import {ListCollection} from 'react-stately/private/list/ListCollection';
 import {ListKeyboardDelegate} from 'react-aria/ListKeyboardDelegate';
 import {Provider, useProvider, useProviderProps} from '../provider/Provider';

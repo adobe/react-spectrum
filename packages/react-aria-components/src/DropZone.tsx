@@ -24,6 +24,7 @@ import {
 import {DropOptions, useDrop} from 'react-aria/useDrop';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {getEventTarget, nodeContains} from 'react-aria/private/utils/shadowdom/DOMFunctions';
+// @ts-ignore
 import intlMessages from '../intl/*.json';
 import {isFocusable} from 'react-aria/private/utils/isFocusable';
 import {mergeProps} from 'react-aria/mergeProps';
@@ -35,7 +36,6 @@ import {useFocusRing} from 'react-aria/useFocusRing';
 import {useHover} from 'react-aria/useHover';
 import {useLabels} from 'react-aria/private/utils/useLabels';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
-// @ts-ignore
 import {useObjectRef} from 'react-aria/useObjectRef';
 import {useSlotId} from 'react-aria/private/utils/useId';
 import {VisuallyHidden} from 'react-aria/VisuallyHidden';

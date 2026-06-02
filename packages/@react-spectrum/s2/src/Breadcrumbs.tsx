@@ -11,14 +11,12 @@
  */
 
 import {ActionButton} from './ActionButton';
-
 import {
   Breadcrumb as AriaBreadcrumb,
   BreadcrumbProps as AriaBreadcrumbItemProps,
   BreadcrumbsProps as AriaBreadcrumbsProps,
   Breadcrumbs as RACBreadcrumbs
 } from 'react-aria-components/Breadcrumbs';
-
 import {baseColor, focusRing, size, style} from '../style' with {type: 'macro'};
 import ChevronIcon from '../ui-icons/Chevron';
 import {
@@ -56,13 +54,12 @@ import {
 } from 'react';
 import FolderIcon from '../s2wf-icons/S2_Icon_FolderBreadcrumb_20_N.svg';
 import {forwardRefType} from './types';
-// @ts-ignore
 import {HeadingContext} from 'react-aria-components/Heading';
 import {inertValue} from 'react-aria/private/utils/inertValue';
+// @ts-ignore
 import intlMessages from '../intl/*.json';
 import {Link, LinkRenderProps} from 'react-aria-components/Link';
 import {Menu, MenuItem, MenuTrigger} from './Menu';
-// @ts-ignore
 import {Text} from './Content';
 import {useDOMRef} from './useDOMRef';
 import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
