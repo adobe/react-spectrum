@@ -344,6 +344,16 @@ The example below will maintain at least 50px between the popover and the edge o
 </DialogTrigger>
 ```
 
+### Z-index
+
+By default, popovers render with a `z-index` of 100000 so they appear above other content on the page. To position a popover relative to other layers — for example, beneath a modal — set a `zIndex` via the `style` prop. The `style` prop is applied after the default positioning styles, so it takes precedence.
+
+```jsx
+<Popover style={{zIndex: 30}}>
+  {/* ... */}
+</Popover>
+```
+
 ## Controlled open state
 
 The above examples have shown `Popover` used within a `<DialogTrigger>`, which handles opening the popover when a button is clicked, and positioning relative to the trigger. This is convenient, but there are cases where you want to show a popover programmatically rather than as a result of a user action, or render the `<Popover>` in a different part of the JSX tree.
