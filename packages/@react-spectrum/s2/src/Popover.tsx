@@ -98,13 +98,12 @@ let popover = style(
       default: 'elevated',
       isArrowShown: 'none'
     },
-    borderStyle: 'solid',
-    borderWidth: 1,
-    borderColor: {
+    outlineStyle: 'solid',
+    outlineWidth: 1,
+    outlineColor: {
       default: lightDark('transparent-white-25', 'gray-200'),
       forcedColors: 'ButtonBorder'
     },
-    outlineStyle: 'none',
     width: {
       size: {
         // Copied from designs, not sure if correct.
