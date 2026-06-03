@@ -26,6 +26,7 @@ import {
   TableViewProps
 } from '../src/TableView';
 import {Collection} from 'react-aria/Collection';
+import {ComboBox, ComboBoxItem} from '../src/ComboBox';
 import {Content, Heading, Text} from '../src/Content';
 import {DragPreview} from '../src/DragPreview';
 import Edit from '../s2wf-icons/S2_Icon_Edit_20_N.svg';
@@ -38,7 +39,6 @@ import {Key} from '@react-types/shared';
 import {Link} from '../src/Link';
 import {MenuItem, MenuSection} from '../src/Menu';
 import type {Meta, StoryObj} from '@storybook/react';
-import {ComboBox, ComboBoxItem} from '../src/ComboBox';
 import {Picker, PickerItem} from '../src/Picker';
 import React, {ReactElement, useCallback, useEffect, useRef, useState} from 'react';
 import {SortDescriptor} from '@react-types/shared';
