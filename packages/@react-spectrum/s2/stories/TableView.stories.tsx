@@ -38,6 +38,7 @@ import {Key} from '@react-types/shared';
 import {Link} from '../src/Link';
 import {MenuItem, MenuSection} from '../src/Menu';
 import type {Meta, StoryObj} from '@storybook/react';
+import {ComboBox, ComboBoxItem} from '../src/ComboBox';
 import {Picker, PickerItem} from '../src/Picker';
 import React, {ReactElement, useCallback, useEffect, useRef, useState} from 'react';
 import {SortDescriptor} from '@react-types/shared';
@@ -2489,6 +2490,154 @@ function ReorderableTableWithNested(props) {
 export const ReorderableNestedRows: StoryObj<typeof TableView> = {
   render: args => <ReorderableTableWithNested {...args} />,
   name: 'Reorderable, nested rows'
+};
+
+function NestedRowsDnDWithTextField(props) {
+  let tree = useTreeData({
+    initialItems: [
+      {
+        id: '1',
+        title: 'Documents',
+        type: 'Directory',
+        date: '10/20/2025',
+        children: [
+          {
+            id: '2',
+            title: 'Project',
+            type: 'Directory',
+            date: '8/2/2025',
+            children: [
+              {id: '3', title: 'Weekly Report', type: 'File', date: '7/10/2025', children: []},
+              {id: '4', title: 'Budget', type: 'File', date: '8/20/2025', children: []}
+            ]
+          }
+        ]
+      },
+      {
+        id: '5',
+        title: 'Photos',
+        type: 'Directory',
+        date: '2/3/2026',
+        children: [
+          {id: '6', title: 'Image 1', type: 'File', date: '1/23/2026', children: []},
+          {id: '7', title: 'Image 2', type: 'File', date: '2/3/2026', children: []}
+        ]
+      }
+    ]
+  });
+
+  let {dragAndDropHooks} = useDragAndDrop({
+    getItems: (keys, items: typeof tree.items) =>
+      items.map(item => ({'text/plain': item.value.title, type: item.value.type})),
+    onMove(e) {
+      if (e.target.dropPosition === 'before') {
+        tree.moveBefore(e.target.key, e.keys);
+      } else if (e.target.dropPosition === 'after') {
+        tree.moveAfter(e.target.key, e.keys);
+      } else if (e.target.dropPosition === 'on') {
+        let targetNode = tree.getItem(e.target.key);
+        if (targetNode) {
+          let targetIndex = targetNode.children ? targetNode.children.length : 0;
+          let keyArray = Array.from(e.keys);
+          for (let i = 0; i < keyArray.length; i++) {
+            tree.move(keyArray[i], e.target.key, targetIndex + i);
+          }
+        }
+      }
+    },
+    renderDragPreview: items => (
+      <DragPreview items={items}>
+        {items[0].type === 'Directory' ? <Folder /> : <FileText />}
+        <Text>{items[0]['text/plain']}</Text>
+        <Text slot="description">{items[0].type}</Text>
+      </DragPreview>
+    )
+  });
+
+  return (
+    <TableView
+      aria-label="Files"
+      selectionMode="multiple"
+      treeColumn="name"
+      defaultExpandedKeys={['1', '2', '5']}
+      dragAndDropHooks={dragAndDropHooks}
+      styles={style({width: 700, height: 320})}
+      {...props}>
+      <TableHeader>
+        <Column id="name" isRowHeader>
+          Name
+        </Column>
+        <Column id="type">Type</Column>
+        <Column id="date">Date Modified</Column>
+      </TableHeader>
+      <TableBody items={tree.items}>
+        {function renderItem(item) {
+          return (
+            <Row id={item.key}>
+              <EditableCell
+                aria-label={`Edit ${item.value.title}`}
+                onSubmit={e => {
+                  e.preventDefault();
+                  let formData = new FormData(e.target as HTMLFormElement);
+                  let title = formData.get('name') as string;
+                  tree.update(item.key, {
+                    ...item.value,
+                    title
+                  });
+                }}
+                renderEditing={() => (
+                  <TextField
+                    name="name"
+                    aria-label="Edit name"
+                    autoFocus
+                    isRequired
+                    styles={style({flexGrow: 1, flexShrink: 1, minWidth: 0})}
+                    defaultValue={item.value.title}
+                  />
+                )}>
+                <div
+                  className={style({
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 8,
+                    justifyContent: 'space-between'
+                  })}>
+                  {item.value.title}
+                  <ActionButton slot="edit" aria-label="Edit name">
+                    <Edit />
+                  </ActionButton>
+                </div>
+              </EditableCell>
+              <Cell>
+                <ComboBox
+                  aria-label="Type"
+                  defaultInputValue={item.value.type}
+                  styles={style({width: 'full'})}>
+                  <ComboBoxItem id="File">File</ComboBoxItem>
+                  <ComboBoxItem id="Directory">Directory</ComboBoxItem>
+                  <ComboBoxItem id="Application">Application</ComboBoxItem>
+                  <ComboBoxItem id="Image">Image</ComboBoxItem>
+                </ComboBox>
+              </Cell>
+              <Cell>
+                <TextField
+                  aria-label="Date modified"
+                  defaultValue={item.value.date}
+                  styles={style({width: 'full'})}
+                />
+              </Cell>
+              <Collection items={item.children ?? []}>{renderItem}</Collection>
+            </Row>
+          );
+        }}
+      </TableBody>
+    </TableView>
+  );
+}
+
+export const NestedRowsDnDWithTextFieldStory: StoryObj<typeof TableView> = {
+  render: args => <NestedRowsDnDWithTextField {...args} />,
+  name: 'Nested rows, DnD reorder, TextField in last cell'
 };
 
 let itemProcessor = async (items, acceptedDragTypes) => {
