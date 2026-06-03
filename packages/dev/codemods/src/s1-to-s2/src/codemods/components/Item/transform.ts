@@ -1,4 +1,7 @@
-import {commentIfParentCollectionNotDetected, updateComponentWithinCollection} from '../../shared/transforms';
+import {
+  commentIfParentCollectionNotDetected,
+  updateComponentWithinCollection
+} from '../../shared/transforms';
 import {NodePath} from '@babel/traverse';
 import * as t from '@babel/types';
 
@@ -15,14 +18,35 @@ import * as t from '@babel/types';
  */
 export default function transformItem(path: NodePath<t.JSXElement>): void {
   // Update Items based on parent collection component
-  updateComponentWithinCollection(path, {parentComponentName: 'Menu', newComponentName: 'MenuItem'});
-  updateComponentWithinCollection(path, {parentComponentName: 'ActionMenu', newComponentName: 'MenuItem'});
-  updateComponentWithinCollection(path, {parentComponentName: 'ContextualHelpTrigger', newComponentName: 'MenuItem'});
+  updateComponentWithinCollection(path, {
+    parentComponentName: 'Menu',
+    newComponentName: 'MenuItem'
+  });
+  updateComponentWithinCollection(path, {
+    parentComponentName: 'ActionMenu',
+    newComponentName: 'MenuItem'
+  });
+  updateComponentWithinCollection(path, {
+    parentComponentName: 'ContextualHelpTrigger',
+    newComponentName: 'MenuItem'
+  });
   updateComponentWithinCollection(path, {parentComponentName: 'TagGroup', newComponentName: 'Tag'});
-  updateComponentWithinCollection(path, {parentComponentName: 'Breadcrumbs', newComponentName: 'Breadcrumb'});
-  updateComponentWithinCollection(path, {parentComponentName: 'Picker', newComponentName: 'PickerItem'});
-  updateComponentWithinCollection(path, {parentComponentName: 'ComboBox', newComponentName: 'ComboBoxItem'});
-  updateComponentWithinCollection(path, {parentComponentName: 'ListView', newComponentName: 'ListViewItem'});
+  updateComponentWithinCollection(path, {
+    parentComponentName: 'Breadcrumbs',
+    newComponentName: 'Breadcrumb'
+  });
+  updateComponentWithinCollection(path, {
+    parentComponentName: 'Picker',
+    newComponentName: 'PickerItem'
+  });
+  updateComponentWithinCollection(path, {
+    parentComponentName: 'ComboBox',
+    newComponentName: 'ComboBoxItem'
+  });
+  updateComponentWithinCollection(path, {
+    parentComponentName: 'ListView',
+    newComponentName: 'ListViewItem'
+  });
 
   // Comment if parent collection not detected
   commentIfParentCollectionNotDetected(path);

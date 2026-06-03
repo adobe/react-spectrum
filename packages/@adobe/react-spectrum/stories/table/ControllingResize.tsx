@@ -19,17 +19,17 @@ import React, {JSX, useCallback, useMemo, useState} from 'react';
 import {SpectrumColumnProps} from '../../src/table/types';
 
 export interface PokemonColumn extends Omit<SpectrumColumnProps<any>, 'children'> {
-  name: string,
-  uid: string,
-  width?: ColumnSize | null
+  name: string;
+  uid: string;
+  width?: ColumnSize | null;
 }
 export interface PokemonData {
-  id: number,
-  name: string,
-  type: string,
-  level: string,
-  weight: string,
-  height: string
+  id: number;
+  name: string;
+  type: string;
+  level: string;
+  weight: string;
+  height: string;
 }
 let defaultColumns: PokemonColumn[] = [
   {name: 'Name', uid: 'name', width: '1fr'},
@@ -54,16 +54,26 @@ let defaultRows: PokemonData[] = [
   {id: 12, name: 'Pikachu', type: 'Electric', level: '100', weight: '13lbs', height: '1\'4"'}
 ];
 
-export function ControllingResize(props: {columns?: PokemonColumn[], rows?: PokemonData[], onResize?: (sizes: Map<Key, ColumnSize>) => void, [name: string]: any}): JSX.Element {
+export function ControllingResize(props: {
+  columns?: PokemonColumn[];
+  rows?: PokemonData[];
+  onResize?: (sizes: Map<Key, ColumnSize>) => void;
+  [name: string]: any;
+}): JSX.Element {
   let {columns = defaultColumns, rows = defaultRows, onResize, ...otherProps} = props;
-  let [widths, _setWidths] = useState<Map<Key, ColumnSize | null>>(() => new Map(columns.filter(col => col.width).map((col) => [col.uid as Key, col.width ?? null])));
+  let [widths, _setWidths] = useState<Map<Key, ColumnSize | null>>(
+    () => new Map(columns.filter(col => col.width).map(col => [col.uid as Key, col.width ?? null]))
+  );
 
-  let setWidths = useCallback((vals: Map<Key, ColumnSize>) => {
-    let controlledKeys = new Set(columns.filter(col => col.width).map((col) => col.uid as Key));
-    let newVals = new Map(Array.from(vals).filter(([key]) => controlledKeys.has(key)));
-    _setWidths(newVals);
-    onResize?.(vals);
-  }, [onResize, columns, _setWidths]);
+  let setWidths = useCallback(
+    (vals: Map<Key, ColumnSize>) => {
+      let controlledKeys = new Set(columns.filter(col => col.width).map(col => col.uid as Key));
+      let newVals = new Map(Array.from(vals).filter(([key]) => controlledKeys.has(key)));
+      _setWidths(newVals);
+      onResize?.(vals);
+    },
+    [onResize, columns, _setWidths]
+  );
   let [savedCols, setSavedCols] = useState(widths);
   let [renderKey, setRenderKey] = useState(() => Math.random());
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -71,26 +81,34 @@ export function ControllingResize(props: {columns?: PokemonColumn[], rows?: Poke
 
   return (
     <div>
-      <Button variant="accent" onPress={() => setSavedCols(widths)}>Save Cols</Button>
+      <Button variant="accent" onPress={() => setSavedCols(widths)}>
+        Save Cols
+      </Button>
       <Button
         variant="accent"
         onPress={() => {
           _setWidths(savedCols);
           setRenderKey(Math.random());
-        }}>Restore Cols</Button>
-      <div>Current saved column state: {'{'}{Array.from(savedCols).map(([key, entry]) => `${key} => ${entry}`).join(',')}{'}'}</div>
+        }}>
+        Restore Cols
+      </Button>
+      <div>
+        Current saved column state: {'{'}
+        {Array.from(savedCols)
+          .map(([key, entry]) => `${key} => ${entry}`)
+          .join(',')}
+        {'}'}
+      </div>
       <div key={renderKey}>
         <TableView aria-label="Table with resizable columns" onResize={setWidths} {...otherProps}>
           <TableHeader columns={cols}>
-            {column => <Column {...column} key={column.uid} width={widths.get(column.uid)} allowsResizing>{column.name}</Column>}
-          </TableHeader>
-          <TableBody items={rows}>
-            {item => (
-              <Row>
-                {key => <Cell>{item[key]}</Cell>}
-              </Row>
+            {column => (
+              <Column {...column} key={column.uid} width={widths.get(column.uid)} allowsResizing>
+                {column.name}
+              </Column>
             )}
-          </TableBody>
+          </TableHeader>
+          <TableBody items={rows}>{item => <Row>{key => <Cell>{item[key]}</Cell>}</Row>}</TableBody>
         </TableView>
       </div>
     </div>

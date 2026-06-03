@@ -16,12 +16,11 @@ import {ITableCollection} from 'react-stately/private/table/TableCollection';
 import {Key, Node} from '@react-types/shared';
 
 export class TableKeyboardDelegate<T> extends GridKeyboardDelegate<T, ITableCollection<T>> {
-
   protected isCell(node: Node<T>): boolean {
     return node.type === 'cell' || node.type === 'rowheader' || node.type === 'column';
   }
 
-  getKeyBelow(key: Key): Key | null {
+  getKeyBelow(key: Key, options?: {includeDisabled?: boolean}): Key | null {
     let startItem = this.collection.getItem(key);
     if (!startItem) {
       return null;
@@ -48,10 +47,10 @@ export class TableKeyboardDelegate<T> extends GridKeyboardDelegate<T, ITableColl
       return super.getKeyForItemInRowByIndex(firstKey, startItem.index);
     }
 
-    return super.getKeyBelow(key);
+    return super.getKeyBelow(key, options);
   }
 
-  getKeyAbove(key: Key): Key | null {
+  getKeyAbove(key: Key, options?: {includeDisabled?: boolean}): Key | null {
     let startItem = this.collection.getItem(key);
     if (!startItem) {
       return null;
@@ -59,7 +58,8 @@ export class TableKeyboardDelegate<T> extends GridKeyboardDelegate<T, ITableColl
 
     // If focus was on a column, focus the parent column if any
     if (startItem.type === 'column') {
-      let parent = startItem.parentKey != null ? this.collection.getItem(startItem.parentKey) : null;
+      let parent =
+        startItem.parentKey != null ? this.collection.getItem(startItem.parentKey) : null;
       if (parent && parent.type === 'column') {
         return parent.key;
       }
@@ -68,7 +68,7 @@ export class TableKeyboardDelegate<T> extends GridKeyboardDelegate<T, ITableColl
     }
 
     // only return above row key if not header row
-    let superKey = super.getKeyAbove(key);
+    let superKey = super.getKeyAbove(key, options);
     let superItem = superKey != null ? this.collection.getItem(superKey) : null;
     if (superItem && superItem.type !== 'headerrow') {
       return superKey;
@@ -193,9 +193,7 @@ export class TableKeyboardDelegate<T> extends GridKeyboardDelegate<T, ITableColl
           if (this.collator.compare(substring, search) === 0) {
             // If we started on a cell, end on the matching cell. Otherwise, end on the row.
             let fromItem = fromKey != null ? collection.getItem(fromKey) : startItem;
-            return fromItem?.type === 'cell'
-              ? cell.key
-              : item.key;
+            return fromItem?.type === 'cell' ? cell.key : item.key;
           }
         }
       }

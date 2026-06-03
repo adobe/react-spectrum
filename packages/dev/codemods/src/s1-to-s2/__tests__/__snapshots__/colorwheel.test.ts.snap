@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Replaces size prop with macro size value 1`] = `
 "import { ColorWheel } from "@react-spectrum/s2";

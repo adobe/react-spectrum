@@ -12,9 +12,10 @@
 
 import {getOwnerWindow} from './domHelpers';
 
-type NonceWindow = Window & typeof globalThis & {
-  __webpack_nonce__?: string
-};
+type NonceWindow = Window &
+  typeof globalThis & {
+    __webpack_nonce__?: string;
+  };
 
 function getWebpackNonce(doc?: Document): string | undefined {
   let ownerWindow = doc?.defaultView as NonceWindow | null | undefined;
@@ -29,8 +30,9 @@ export function resetNonceCache(): void {
 }
 
 /**
- * Returns the CSP nonce, if configured via a `<meta property="csp-nonce">` tag or `__webpack_nonce__`.
- * This allows dynamically injected `<style>` elements to work with Content Security Policy.
+ * Returns the CSP nonce, if configured via a `<meta property="csp-nonce">` tag or
+ * `__webpack_nonce__`. This allows dynamically injected `<style>` elements to work with Content
+ * Security Policy.
  */
 export function getNonce(doc?: Document): string | undefined {
   let d = doc ?? (typeof document !== 'undefined' ? document : undefined);
@@ -43,7 +45,12 @@ export function getNonce(doc?: Document): string | undefined {
   }
 
   let meta = d.querySelector('meta[property="csp-nonce"]');
-  let nonce = (meta && meta instanceof getOwnerWindow(meta).HTMLMetaElement && (meta.nonce || meta.content)) || getWebpackNonce(d) || undefined;
+  let nonce =
+    (meta &&
+      meta instanceof getOwnerWindow(meta).HTMLMetaElement &&
+      (meta.nonce || meta.content)) ||
+    getWebpackNonce(d) ||
+    undefined;
 
   if (nonce !== undefined) {
     nonceCache.set(d, nonce);

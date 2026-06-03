@@ -8,7 +8,10 @@ export const NpmLogo = createIcon(props => {
       <rect width="27.23" height="27.23" rx="2" mask={`url(#${maskId})`} />
       <mask id={maskId}>
         <rect width="27.23" height="27.23" rx="2" fill="white" />
-        <polygon fill="black" points="5.8 21.75 13.66 21.75 13.67 9.98 17.59 9.98 17.58 21.76 21.51 21.76 21.52 6.06 5.82 6.04 5.8 21.75" />
+        <polygon
+          fill="black"
+          points="5.8 21.75 13.66 21.75 13.67 9.98 17.59 9.98 17.58 21.76 21.51 21.76 21.52 6.06 5.82 6.04 5.8 21.75"
+        />
       </mask>
     </svg>
   );

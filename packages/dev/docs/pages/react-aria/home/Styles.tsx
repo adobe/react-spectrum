@@ -11,16 +11,17 @@
  */
 'use client';
 import {AddressBar, FileTab, Scrollable, Window} from './components';
-import {animate, AnimationPlaybackControls, motion, useMotionValueEvent, useReducedMotion, useScroll, useTransform} from 'motion/react';
-import {Button} from 'vanilla-starter/Button';
 import {
-  Collection,
-  Key,
-  Tab,
-  TabList,
-  TabPanel,
-  Tabs
-} from 'react-aria-components';
+  animate,
+  AnimationPlaybackControls,
+  motion,
+  useMotionValueEvent,
+  useReducedMotion,
+  useScroll,
+  useTransform
+} from 'motion/react';
+import {Button} from 'vanilla-starter/Button';
+import {Collection, Key, Tab, TabList, TabPanel, Tabs} from 'react-aria-components';
 import {ComboBox, ComboBoxItem} from 'tailwind-starter/ComboBox';
 import {DatePicker} from 'vanilla-starter/DatePicker';
 import React, {ReactNode, useCallback, useEffect, useRef, useState} from 'react';
@@ -34,102 +35,114 @@ export function Styles({children}): ReactNode {
         {
           id: 'css',
           label: 'Vanilla CSS',
-          content: <div className="flex flex-col gap-4">
-            <Window
-              className="h-fit"
-              isBackground
-              toolbar={
-                <div className="grid grid-cols-2 w-full">
-                  <FileTab>DatePicker.tsx</FileTab>
-                  <FileTab className="hidden lg:block">DatePicker.css</FileTab>
+          content: (
+            <div className="flex flex-col gap-4">
+              <Window
+                className="h-fit"
+                isBackground
+                toolbar={
+                  <div className="grid grid-cols-2 w-full">
+                    <FileTab>DatePicker.tsx</FileTab>
+                    <FileTab className="hidden lg:block">DatePicker.css</FileTab>
+                  </div>
+                }>
+                <div className="grid grid-cols-1 lg:grid-cols-2 bg-gray-50 dark:bg-zinc-800/80 dark:backdrop-saturate-200">
+                  <Scrollable className="rounded-bl-lg">{styling}</Scrollable>
+                  <div className="flex flex-row px-3 lg:hidden bg-gray-200/80 backdrop-blur-md dark:bg-zinc-700/80 border-y border-gray-300 dark:border-zinc-700">
+                    <FileTab>DatePicker.css</FileTab>
+                  </div>
+                  <Scrollable className="rounded-br-lg lg:border-l lg:border-l-gray-200 dark:border-l-zinc-600">
+                    {css}
+                  </Scrollable>
                 </div>
-              }>
-              <div className="grid grid-cols-1 lg:grid-cols-2 bg-gray-50 dark:bg-zinc-800/80 dark:backdrop-saturate-200">
-                <Scrollable className="rounded-bl-lg">
-                  {styling}
-                </Scrollable>
-                <div className="flex flex-row px-3 lg:hidden bg-gray-200/80 backdrop-blur-md dark:bg-zinc-700/80 border-y border-gray-300 dark:border-zinc-700">
-                  <FileTab>DatePicker.css</FileTab>
+              </Window>
+              <Window
+                className="lg:absolute bottom-10 left-[16.5%] max-w-[350px] sm:w-[350px]"
+                toolbar={<AddressBar>https://your-app.com</AddressBar>}>
+                <div className="flex items-center justify-center bg-gray-50 dark:bg-zinc-900 col-span-2 box-border pt-12 pb-14 text-sm">
+                  <DatePicker label="Date Planted" />
                 </div>
-                <Scrollable className="rounded-br-lg lg:border-l lg:border-l-gray-200 dark:border-l-zinc-600">
-                  {css}
-                </Scrollable>
-              </div>
-            </Window>
-            <Window
-              className="lg:absolute bottom-10 left-[16.5%] max-w-[350px] sm:w-[350px]"
-              toolbar={<AddressBar>https://your-app.com</AddressBar>}>
-              <div className="flex items-center justify-center bg-gray-50 dark:bg-zinc-900 col-span-2 box-border pt-12 pb-14 text-sm">
-                <DatePicker label="Date Planted" />
-              </div>
-            </Window>
-          </div>
+              </Window>
+            </div>
+          )
         },
         {
           id: 'tailwind',
           label: 'Tailwind',
-          content: <div className="flex flex-col lg:flex-row gap-4">
-            <Window className="flex-1 bg-gray-50 dark:bg-zinc-800/80 dark:backdrop-saturate-200" isBackground toolbar={<FileTab>ComboBox.tsx</FileTab>}>
-              <Scrollable className="rounded-b-lg">
-                {tailwind}
-              </Scrollable>
-            </Window>
-            <Window className=" max-w-[350px] sm:w-[350px]" toolbar={<AddressBar>https://your-app.com</AddressBar>}>
-              <div className="flex-1 flex flex-col w-full box-border px-16 py-24 bg-gray-50 dark:bg-zinc-900">
-                <ComboBox label="Assignee" items={people} defaultSelectedKey={1}>
-                  {item => (
-                    <ComboBoxItem textValue={item.name}>
-                      <img alt="" src={item.avatar} className="w-6 h-6 rounded-full" />
-                      <span className="truncate">{item.name}</span>
-                    </ComboBoxItem>
-                  )}
-                </ComboBox>
-              </div>
-            </Window>
-          </div>
+          content: (
+            <div className="flex flex-col lg:flex-row gap-4">
+              <Window
+                className="flex-1 bg-gray-50 dark:bg-zinc-800/80 dark:backdrop-saturate-200"
+                isBackground
+                toolbar={<FileTab>ComboBox.tsx</FileTab>}>
+                <Scrollable className="rounded-b-lg">{tailwind}</Scrollable>
+              </Window>
+              <Window
+                className=" max-w-[350px] sm:w-[350px]"
+                toolbar={<AddressBar>https://your-app.com</AddressBar>}>
+                <div className="flex-1 flex flex-col w-full box-border px-16 py-24 bg-gray-50 dark:bg-zinc-900">
+                  <ComboBox label="Assignee" items={people} defaultSelectedKey={1}>
+                    {item => (
+                      <ComboBoxItem textValue={item.name}>
+                        <img alt="" src={item.avatar} className="w-6 h-6 rounded-full" />
+                        <span className="truncate">{item.name}</span>
+                      </ComboBoxItem>
+                    )}
+                  </ComboBox>
+                </div>
+              </Window>
+            </div>
+          )
         },
         {
           id: 'styled-components',
           label: 'Styled Components',
-          content: <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Window isBackground toolbar={<FileTab>Slider.tsx</FileTab>} className="bg-gray-50 dark:bg-zinc-800/80 backdrop-saturate-200">
-              <Scrollable className="rounded-b-lg">
-                {styledComponents}
-              </Scrollable>
-            </Window>
-            <Window toolbar={<AddressBar>https://your-app.com</AddressBar>}>
-              <div className="flex-1 flex items-center justify-center bg-gray-50 dark:bg-zinc-800 py-20 box-border">
-                <Slider label="Opacity" defaultValue={30} />
-              </div>
-            </Window>
-          </div>
+          content: (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Window
+                isBackground
+                toolbar={<FileTab>Slider.tsx</FileTab>}
+                className="bg-gray-50 dark:bg-zinc-800/80 backdrop-saturate-200">
+                <Scrollable className="rounded-b-lg">{styledComponents}</Scrollable>
+              </Window>
+              <Window toolbar={<AddressBar>https://your-app.com</AddressBar>}>
+                <div className="flex-1 flex items-center justify-center bg-gray-50 dark:bg-zinc-800 py-20 box-border">
+                  <Slider label="Opacity" defaultValue={30} />
+                </div>
+              </Window>
+            </div>
+          )
         },
         {
           id: 'panda',
           label: 'Panda',
-          content: <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Window isBackground toolbar={<FileTab>Button.tsx</FileTab>} className="bg-gray-50 dark:bg-zinc-800/80 dark:backdrop-saturate-200">
-              <Scrollable className="rounded-b-lg">
-                {panda}
-              </Scrollable>
-            </Window>
-            <Window toolbar={<AddressBar>https://your-app.com</AddressBar>}>
-              <div className="flex-1 flex items-center justify-center bg-gray-50 dark:bg-zinc-800 py-20 box-border">
-                <Button className="bg-blue-600 text-white pressed:bg-blue-700 border border-white/10 rounded-lg box-border px-4 py-2 cursor-default outline outline-0 focus-visible:outline-2 outline-blue-600 dark:outline-blue-500 outline-offset-2">
-                  Initiate launch sequence…
-                </Button>
-              </div>
-            </Window>
-          </div>
+          content: (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Window
+                isBackground
+                toolbar={<FileTab>Button.tsx</FileTab>}
+                className="bg-gray-50 dark:bg-zinc-800/80 dark:backdrop-saturate-200">
+                <Scrollable className="rounded-b-lg">{panda}</Scrollable>
+              </Window>
+              <Window toolbar={<AddressBar>https://your-app.com</AddressBar>}>
+                <div className="flex-1 flex items-center justify-center bg-gray-50 dark:bg-zinc-800 py-20 box-border">
+                  <Button className="bg-blue-600 text-white pressed:bg-blue-700 border border-white/10 rounded-lg box-border px-4 py-2 cursor-default outline outline-0 focus-visible:outline-2 outline-blue-600 dark:outline-blue-500 outline-offset-2">
+                    Initiate launch sequence…
+                  </Button>
+                </div>
+              </Window>
+            </div>
+          )
         }
-      ]} />
+      ]}
+    />
   );
 }
 
 interface TabOptions {
-  id: string,
-  label: string,
-  content: React.ReactNode
+  id: string;
+  label: string;
+  content: React.ReactNode;
 }
 
 function AnimatedTabs({tabs}: {tabs: TabOptions[]}) {
@@ -155,14 +168,16 @@ function AnimatedTabs({tabs}: {tabs: TabOptions[]}) {
   // This function determines which tab should be selected
   // based on the scroll position.
   let getIndex = useCallback(
-    (x) => Math.max(0, Math.floor((tabElements.length - 1) * x)),
+    x => Math.max(0, Math.floor((tabElements.length - 1) * x)),
     [tabElements]
   );
 
   // This function transforms the scroll position into the X position
   // or width of the selected tab indicator.
   let transform = (x, property) => {
-    if (!tabElements.length) {return 0;}
+    if (!tabElements.length) {
+      return 0;
+    }
 
     // Find the tab index for the scroll X position.
     let index = getIndex(x);
@@ -184,13 +199,15 @@ function AnimatedTabs({tabs}: {tabs: TabOptions[]}) {
     return value || 0.1;
   };
 
-  let x = useTransform(scrollXProgress, (x) => transform(x, 'offsetLeft'));
-  let width = useTransform(scrollXProgress, (x) => transform(x, 'offsetWidth'));
+  let x = useTransform(scrollXProgress, x => transform(x, 'offsetLeft'));
+  let width = useTransform(scrollXProgress, x => transform(x, 'offsetWidth'));
 
   // When the user scrolls, update the selected key
   // so that the correct tab panel becomes interactive.
-  useMotionValueEvent(scrollXProgress, 'change', (x) => {
-    if (animationRef.current || !tabElements.length) {return;}
+  useMotionValueEvent(scrollXProgress, 'change', x => {
+    if (animationRef.current || !tabElements.length) {
+      return;
+    }
     setSelectedKey(tabs[getIndex(x)].id);
   });
 
@@ -208,7 +225,7 @@ function AnimatedTabs({tabs}: {tabs: TabOptions[]}) {
     }
 
     let tabPanel = tabPanelsRef.current!;
-    let index = tabs.findIndex((tab) => tab.id === selectedKey);
+    let index = tabs.findIndex(tab => tab.id === selectedKey);
     let scrollLeft = tabPanel.scrollWidth * (index / tabs.length);
     if (shouldReduceMotion) {
       tabPanel.scrollLeft = scrollLeft;
@@ -216,26 +233,22 @@ function AnimatedTabs({tabs}: {tabs: TabOptions[]}) {
     }
 
     animationRef.current?.stop();
-    animationRef.current = animate(
-      tabPanel.scrollLeft,
-      scrollLeft,
-      {
-        type: 'spring',
-        bounce: 0.2,
-        duration: 0.6,
-        onUpdate: (v) => {
-          tabPanel.scrollLeft = v;
-        },
-        onPlay: () => {
-          // Disable scroll snap while the animation is going or weird things happen.
-          tabPanel.style.scrollSnapType = 'none';
-        },
-        onComplete: () => {
-          tabPanel.style.scrollSnapType = '';
-          animationRef.current = null;
-        }
+    animationRef.current = animate(tabPanel.scrollLeft, scrollLeft, {
+      type: 'spring',
+      bounce: 0.2,
+      duration: 0.6,
+      onUpdate: v => {
+        tabPanel.scrollLeft = v;
+      },
+      onPlay: () => {
+        // Disable scroll snap while the animation is going or weird things happen.
+        tabPanel.style.scrollSnapType = 'none';
+      },
+      onComplete: () => {
+        tabPanel.style.scrollSnapType = '';
+        animationRef.current = null;
       }
-    );
+    });
   };
 
   // Scroll selected tab into view.
@@ -245,7 +258,11 @@ function AnimatedTabs({tabs}: {tabs: TabOptions[]}) {
     if (tab) {
       let scroll = tabListScrollRef.current;
       // Would use scrollIntoView but it's broken in Chrome: https://github.com/facebook/react/issues/23396
-      if (scroll && (tab.offsetLeft < scroll.scrollLeft || (tab.offsetLeft + tab.offsetWidth) > (scroll.offsetWidth + scroll.scrollLeft))) {
+      if (
+        scroll &&
+        (tab.offsetLeft < scroll.scrollLeft ||
+          tab.offsetLeft + tab.offsetWidth > scroll.offsetWidth + scroll.scrollLeft)
+      ) {
         scroll.scroll({
           left: tab.offsetLeft,
           behavior: 'smooth'
@@ -259,32 +276,38 @@ function AnimatedTabs({tabs}: {tabs: TabOptions[]}) {
       className="-mx-8 md:-mx-2"
       selectedKey={selectedKey}
       onSelectionChange={onSelectionChange}>
-      <div className="relative overflow-x-auto no-scrollbar dark:isolate p-2 sm:-m-2" ref={tabListScrollRef}>
+      <div
+        className="relative overflow-x-auto no-scrollbar dark:isolate p-2 sm:-m-2"
+        ref={tabListScrollRef}>
         <TabList ref={tabListRef} className="flex px-2 y-2 md:px-0" items={tabs}>
-          {(tab) =>
-            (<Tab className="shrink-0 cursor-default px-3 py-1.5 text-sm sm:text-base text-black dark:text-white transition outline outline-0 forced-colors:selected:text-[HighlightText]! forced-color-adjust-none">
-              {({isSelected, isFocusVisible}) => (<>
-                {tab.label}
-                {isFocusVisible && isSelected && (
-                  // Focus ring.
-                  <motion.span
-                    className="absolute inset-y-2 inset-x-0 z-10 rounded-full outline outline-2 outline-black dark:outline-white forced-colors:outline-[Highlight]! outline-offset-2"
-                    style={{x, width}} />
-                )}
-              </>)}
-            </Tab>)
-          }
+          {tab => (
+            <Tab className="shrink-0 cursor-default px-3 py-1.5 text-sm sm:text-base text-black dark:text-white transition outline outline-0 forced-colors:selected:text-[HighlightText]! forced-color-adjust-none">
+              {({isSelected, isFocusVisible}) => (
+                <>
+                  {tab.label}
+                  {isFocusVisible && isSelected && (
+                    // Focus ring.
+                    <motion.span
+                      className="absolute inset-y-2 inset-x-0 z-10 rounded-full outline outline-2 outline-black dark:outline-white forced-colors:outline-[Highlight]! outline-offset-2"
+                      style={{x, width}}
+                    />
+                  )}
+                </>
+              )}
+            </Tab>
+          )}
         </TabList>
         {/* Selection indicator. */}
         <motion.span
           className="absolute inset-y-2 inset-x-0 z-10 bg-white rounded-full mix-blend-difference forced-colors:bg-[Highlight] forced-colors:mix-blend-normal forced-colors:-z-10"
-          style={{x, width}} />
+          style={{x, width}}
+        />
       </div>
       <div
         ref={tabPanelsRef}
         className="relative pt-10 pb-10 overflow-auto snap-x snap-mandatory no-scrollbar flex edge-mask">
         <Collection items={tabs}>
-          {(tab) => (
+          {tab => (
             <TabPanel
               shouldForceMount
               className="shrink-0 w-full px-4 box-border snap-start snap-always outline outline-0 -outline-offset-2 rounded-sm focus-visible:outline-black">

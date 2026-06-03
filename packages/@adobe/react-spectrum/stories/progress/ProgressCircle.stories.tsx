@@ -40,7 +40,7 @@ export default {
 
 export type ProgressCircleStory = StoryFn<SpectrumProgressCircleProps>;
 
-export const Default: ProgressCircleStory = (args) => render(args);
+export const Default: ProgressCircleStory = args => render(args);
 export const Value50: ProgressCircleStory = () => render({value: 50});
 
 Value50.story = {
@@ -53,19 +53,19 @@ Value100.story = {
   name: 'value: 100'
 };
 
-export const SizeS: ProgressCircleStory = (args) => render({...args, size: 'S'});
+export const SizeS: ProgressCircleStory = args => render({...args, size: 'S'});
 
 SizeS.story = {
   name: 'size: S'
 };
 
-export const SizeL: ProgressCircleStory = (args) => render({...args, size: 'L'});
+export const SizeL: ProgressCircleStory = args => render({...args, size: 'L'});
 
 SizeL.story = {
   name: 'size: L'
 };
 
-export const VariantOverBackground: ProgressCircleStory = (args) => (
+export const VariantOverBackground: ProgressCircleStory = args => (
   <div style={grayedBoxStyle}>{render({...args, variant: 'overBackground'})}</div>
 );
 
@@ -73,16 +73,20 @@ VariantOverBackground.story = {
   name: 'variant: overBackground'
 };
 
-export const StaticColorWhite: ProgressCircleStory = (args) => (
-  <div style={{...grayedBoxStyle, backgroundColor: 'rgb(0, 119, 114)'}}>{render({...args, staticColor: 'white'})}</div>
+export const StaticColorWhite: ProgressCircleStory = args => (
+  <div style={{...grayedBoxStyle, backgroundColor: 'rgb(0, 119, 114)'}}>
+    {render({...args, staticColor: 'white'})}
+  </div>
 );
 
 StaticColorWhite.story = {
   name: 'staticColor: white'
 };
 
-export const StaticColorBlack: ProgressCircleStory = (args) => (
-  <div style={{...grayedBoxStyle, backgroundColor: 'rgb(206, 247, 243)'}}>{render({...args, staticColor: 'black'})}</div>
+export const StaticColorBlack: ProgressCircleStory = args => (
+  <div style={{...grayedBoxStyle, backgroundColor: 'rgb(206, 247, 243)'}}>
+    {render({...args, staticColor: 'black'})}
+  </div>
 );
 
 StaticColorBlack.story = {
@@ -106,13 +110,15 @@ IsIndeterminateTrue.story = {
   name: 'isIndeterminate: true'
 };
 
-export const IsIndeterminateTrueSizeS: ProgressCircleStory = () => render({isIndeterminate: true, size: 'S'});
+export const IsIndeterminateTrueSizeS: ProgressCircleStory = () =>
+  render({isIndeterminate: true, size: 'S'});
 
 IsIndeterminateTrueSizeS.story = {
   name: 'isIndeterminate: true, size: S'
 };
 
-export const IsIndeterminateTrueSizeL: ProgressCircleStory = () => render({isIndeterminate: true, size: 'L'});
+export const IsIndeterminateTrueSizeL: ProgressCircleStory = () =>
+  render({isIndeterminate: true, size: 'L'});
 
 IsIndeterminateTrueSizeL.story = {
   name: 'isIndeterminate: true, size: L'

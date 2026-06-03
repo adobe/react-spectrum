@@ -1,5 +1,14 @@
 import {action} from 'storybook/actions';
-import {DragBetweenListsComplex, DragBetweenListsOverride, DragExampleUtilHandlers, FinderDropUtilHandlers, InsertExampleUtilHandlers, ItemDropExampleUtilHandlers, ReorderExampleUtilHandlers, RootDropExampleUtilHandlers} from './ListViewDnDUtilExamples';
+import {
+  DragBetweenListsComplex,
+  DragBetweenListsOverride,
+  DragExampleUtilHandlers,
+  FinderDropUtilHandlers,
+  InsertExampleUtilHandlers,
+  ItemDropExampleUtilHandlers,
+  ReorderExampleUtilHandlers,
+  RootDropExampleUtilHandlers
+} from './ListViewDnDUtilExamples';
 import {Droppable} from '../../../../react-aria/stories/dnd/dnd.stories';
 import {Flex} from '../../src/layout/Flex';
 import {ListView} from '../../src/list/ListView';
@@ -47,38 +56,51 @@ export default {
 export type ListViewStory = StoryObj<typeof ListView>;
 
 export const DragOut: ListViewStory = {
-  render: (args) => (
+  render: args => (
     <Flex direction="row" wrap alignItems="center">
       <input aria-label="input before" />
       <Droppable />
-      <DragExampleUtilHandlers listViewProps={args} dndOptions={{onDragStart: action('dragStart'), onDragEnd: action('dragEnd')}} />
+      <DragExampleUtilHandlers
+        listViewProps={args}
+        dndOptions={{onDragStart: action('dragStart'), onDragEnd: action('dragEnd')}}
+      />
     </Flex>
   ),
   name: 'Drag out of list'
 };
 
 export const DragWithin: ListViewStory = {
-  render: (args) => (
-    <ReorderExampleUtilHandlers listViewProps={args} dndOptions={{onDragStart: action('dragStart'), onDragEnd: action('dragEnd')}} />
+  render: args => (
+    <ReorderExampleUtilHandlers
+      listViewProps={args}
+      dndOptions={{onDragStart: action('dragStart'), onDragEnd: action('dragEnd')}}
+    />
   ),
   name: 'Drag within list (Reorder}'
 };
 
-let manyItems: {identifier: string, type: string, name: string}[] = [];
+let manyItems: {identifier: string; type: string; name: string}[] = [];
 for (let i = 0; i < 100; i++) {
   manyItems.push({identifier: 'item' + i, type: 'item', name: 'Item ' + i});
 }
 
 export const DragWithinMany: ListViewStory = {
-  render: (args) => (
-    <ReorderExampleUtilHandlers {...args} items={manyItems} listViewProps={{overflowMode: 'wrap', height: 400}} />
+  render: args => (
+    <ReorderExampleUtilHandlers
+      {...args}
+      items={manyItems}
+      listViewProps={{overflowMode: 'wrap', height: 400}}
+    />
   ),
   name: 'Drag within list with many items'
 };
 
 export const DropOntoItem: ListViewStory = {
-  render: (args) => (
-    <ItemDropExampleUtilHandlers listViewProps={args} dndOptions={{onDragStart: action('dragStart'), onDragEnd: action('dragEnd')}} />
+  render: args => (
+    <ItemDropExampleUtilHandlers
+      listViewProps={args}
+      dndOptions={{onDragStart: action('dragStart'), onDragEnd: action('dragEnd')}}
+    />
   ),
   name: 'drop onto item/folder',
   parameters: {
@@ -89,8 +111,11 @@ export const DropOntoItem: ListViewStory = {
 };
 
 export const DropOntoRoot: ListViewStory = {
-  render: (args) => (
-    <RootDropExampleUtilHandlers listViewProps={args} firstListDnDOptions={{onDragStart: action('dragStart')}} />
+  render: args => (
+    <RootDropExampleUtilHandlers
+      listViewProps={args}
+      firstListDnDOptions={{onDragStart: action('dragStart')}}
+    />
   ),
   name: 'drop onto root',
   parameters: {
@@ -101,8 +126,11 @@ export const DropOntoRoot: ListViewStory = {
 };
 
 export const DropBetween: ListViewStory = {
-  render: (args) => (
-    <InsertExampleUtilHandlers listViewProps={args} firstListDnDOptions={{onDragStart: action('dragStart')}} />
+  render: args => (
+    <InsertExampleUtilHandlers
+      listViewProps={args}
+      firstListDnDOptions={{onDragStart: action('dragStart')}}
+    />
   ),
   name: 'drop between items',
   parameters: {
@@ -113,9 +141,7 @@ export const DropBetween: ListViewStory = {
 };
 
 export const DirectoryFileDrop: ListViewStory = {
-  render: (args) => (
-    <FinderDropUtilHandlers listViewProps={args} />
-  ),
+  render: args => <FinderDropUtilHandlers listViewProps={args} />,
   name: 'allows directories and files from finder',
   parameters: {
     description: {
@@ -125,7 +151,7 @@ export const DirectoryFileDrop: ListViewStory = {
 };
 
 export const Complex: ListViewStory = {
-  render: (args) => (
+  render: args => (
     <DragBetweenListsComplex
       listViewProps={args}
       firstListDnDOptions={{
@@ -133,7 +159,8 @@ export const Complex: ListViewStory = {
       }}
       secondListDnDOptions={{
         onDragStart: action('dragStartList2')
-      }} />
+      }}
+    />
   ),
   name: 'complex drag between lists',
   parameters: {
@@ -144,19 +171,22 @@ export const Complex: ListViewStory = {
 };
 
 export const GetDropOperationDefault: ListViewStory = {
-  render: (args) => (
+  render: args => (
     <DragBetweenListsComplex
       listViewProps={args}
       firstListDnDOptions={{
         onDragStart: action('dragStartList1'),
-        getDropOperation: (_, __, allowedOperations) => allowedOperations.filter(op => op !== 'move')[0],
+        getDropOperation: (_, __, allowedOperations) =>
+          allowedOperations.filter(op => op !== 'move')[0],
         getAllowedDropOperations: () => ['link']
       }}
       secondListDnDOptions={{
         onDragStart: action('dragStartList2'),
-        getDropOperation: (_, __, allowedOperations) => allowedOperations.filter(op => op !== 'move')[0],
+        getDropOperation: (_, __, allowedOperations) =>
+          allowedOperations.filter(op => op !== 'move')[0],
         getAllowedDropOperations: () => ['move', 'copy', 'link']
-      }} />
+      }}
+    />
   ),
   name: 'using getDropOperations to determine default drop operation',
   parameters: {
@@ -167,9 +197,7 @@ export const GetDropOperationDefault: ListViewStory = {
 };
 
 export const UtilOverride: ListViewStory = {
-  render: (args) => (
-    <DragBetweenListsOverride {...args} />
-  ),
+  render: args => <DragBetweenListsOverride {...args} />,
   name: 'util handlers overridden by onDrop and getDropOperations',
   parameters: {
     description: {

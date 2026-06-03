@@ -71,83 +71,87 @@ const Template = (args: SpectrumFormProps): JSX.Element => (
     <TextField
       label="City"
       placeholder="San Francisco"
-      contextualHelp={(
+      contextualHelp={
         <ContextualHelp>
           <Heading>What is a segment?</Heading>
-          <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
+          <Content>
+            Segments identify who your visitors are, what devices and services they use, where they
+            navigated from, and much more.
+          </Content>
         </ContextualHelp>
-      )} />
+      }
+    />
   </Form>
 );
 
 export const Default: FormStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'default',
   args: {}
 };
 
 export const LabelPositionSide: FormStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'label position: side',
   args: {...Default.args, labelPosition: 'side'}
 };
 
 export const LabelAlignEnd: FormStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'label align: end',
   args: {...Default.args, labelAlign: 'end'}
 };
 
 export const LabelAlignSideEnd: FormStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'label position: side, label align: end',
   args: {...Default.args, labelPosition: 'side', labelAlign: 'end'}
 };
 
 export const Required: FormStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'isRequired',
   args: {...Default.args, isRequired: true}
 };
 
 export const NecessityIndicatorLabel: FormStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'necessity indicator: label',
   args: {...Default.args, necessityIndicator: 'label'}
 };
 
 export const Quiet: FormStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'isQuiet',
   args: {...Default.args, isQuiet: true}
 };
 
 export const Emphasized: FormStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'isEmphasized',
   args: {...Default.args, isEmphasized: true}
 };
 
 export const Disabled: FormStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'isDisabled',
   args: {...Default.args, isDisabled: true}
 };
 
 export const ReadOnly: FormStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'isReadOnly',
   args: {...Default.args, isReadOnly: true}
 };
 
 export const ValidationStateInvalid: FormStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'validationState: invalid',
   args: {...Default.args, validationState: 'invalid'}
 };
 
 export const ValidationStateValid: FormStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'validationState: valid',
   args: {...Default.args, validationState: 'valid'}
 };

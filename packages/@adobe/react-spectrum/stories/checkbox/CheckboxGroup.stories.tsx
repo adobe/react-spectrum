@@ -100,7 +100,7 @@ export default {
 } as Meta<typeof CheckboxGroup>;
 
 export const Default: CheckboxGroupStory = {
-  render: (args) => render(args)
+  render: args => render(args)
 };
 
 export const DefaultValue: CheckboxGroupStory = {
@@ -116,22 +116,23 @@ export const ControlledValue: CheckboxGroupStory = {
 };
 
 export const OneCheckboxDisabled: CheckboxGroupStory = {
-  render: (args) => render(args, [{}, {isDisabled: true}, {}]),
+  render: args => render(args, [{}, {isDisabled: true}, {}]),
   name: 'isDisabled on one checkbox'
 };
 
 export const TwoCheckboxDisabled: CheckboxGroupStory = {
-  render: (args) => render({...args, defaultValue: ['dragons']}, [{}, {isDisabled: true}, {isDisabled: true}]),
+  render: args =>
+    render({...args, defaultValue: ['dragons']}, [{}, {isDisabled: true}, {isDisabled: true}]),
   name: 'isDisabled two checkboxes and one checked'
 };
 
 export const OneInvalidCheckbox: CheckboxGroupStory = {
-  render: (args) => render(args, [{}, {isInvalid: true}, {}]),
+  render: args => render(args, [{}, {isInvalid: true}, {}]),
   name: 'validationState: "invalid" on one checkbox'
 };
 
 export const FixedWidth: CheckboxGroupStory = {
-  render: (args) => renderWithDescriptionErrorMessageAndValidation(args),
+  render: args => renderWithDescriptionErrorMessageAndValidation(args),
   name: 'with description, error message and validation, fixed width'
 };
 
@@ -141,7 +142,10 @@ export const ContextualHelpStory: CheckboxGroupStory = {
     contextualHelp: (
       <ContextualHelp>
         <Heading>What is a segment?</Heading>
-        <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
+        <Content>
+          Segments identify who your visitors are, what devices and services they use, where they
+          navigated from, and much more.
+        </Content>
       </ContextualHelp>
     )
   },
@@ -149,28 +153,37 @@ export const ContextualHelpStory: CheckboxGroupStory = {
 };
 
 export const AutoFocus: CheckboxGroupStory = {
-  render: (args) => render(args, [{}, {autoFocus: true}, {}]),
+  render: args => render(args, [{}, {autoFocus: true}, {}]),
   name: 'autoFocus on one checkbox'
 };
 
 export const ControlledGroup: CheckboxGroupStory = {
-  render: (args) => <ControlledCheckboxGroup {...args} />,
+  render: args => <ControlledCheckboxGroup {...args} />,
   name: 'controlled'
 };
 
-function render(props: Omit<SpectrumCheckboxGroupProps, 'children'> = {}, checkboxProps: any[] = []) {
+function render(
+  props: Omit<SpectrumCheckboxGroupProps, 'children'> = {},
+  checkboxProps: any[] = []
+) {
   return (
     <CheckboxGroup label="Pets" {...props}>
-      <Checkbox value="dogs" {...checkboxProps[0]}>Dogs</Checkbox>
-      <Checkbox value="cats" {...checkboxProps[1]}>Cats</Checkbox>
-      <Checkbox value="dragons" {...checkboxProps[2]}>Dragons</Checkbox>
+      <Checkbox value="dogs" {...checkboxProps[0]}>
+        Dogs
+      </Checkbox>
+      <Checkbox value="cats" {...checkboxProps[1]}>
+        Cats
+      </Checkbox>
+      <Checkbox value="dragons" {...checkboxProps[2]}>
+        Dragons
+      </Checkbox>
     </CheckboxGroup>
   );
 }
 
 function ControlledCheckboxGroup(props) {
   let [checked, setChecked] = useState<string[]>([]);
-  let onChange = (value) => {
+  let onChange = value => {
     setChecked(value);
     props?.onChange?.(value);
   };
@@ -199,10 +212,8 @@ function renderWithDescriptionErrorMessageAndValidation(props) {
           isInvalid={!isValid}
           description="Select a pet."
           errorMessage={
-          checked.includes('cats')
-            ? 'No cats allowed.'
-            : 'Select only dogs and dragons.'
-        }>
+            checked.includes('cats') ? 'No cats allowed.' : 'Select only dogs and dragons.'
+          }>
           <Checkbox value="dogs">Dogs</Checkbox>
           <Checkbox value="cats">Cats</Checkbox>
           <Checkbox value="dragons">Dragons</Checkbox>

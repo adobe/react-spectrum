@@ -1,1 +1,4 @@
-export {useHighlightSelectionDescription, type HighlightSelectionDescriptionProps} from '../../../src/grid/useHighlightSelectionDescription';
+export {
+  useHighlightSelectionDescription,
+  type HighlightSelectionDescriptionProps
+} from '../../../src/grid/useHighlightSelectionDescription';

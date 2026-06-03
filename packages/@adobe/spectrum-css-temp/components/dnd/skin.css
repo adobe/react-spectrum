@@ -11,8 +11,12 @@ governing permissions and limitations under the License.
 */
 
 .spectrum-Dropzone {
-    --spectrum-dropzone-illustratedmessage-illustration-color-selected: var(--spectrum-global-color-blue-400);
-    --spectrum-dropzone-illustratedmessage-illustration-color-key-focus: var(--spectrum-global-color-blue-500);
+  --spectrum-dropzone-illustratedmessage-illustration-color-selected: var(
+    --spectrum-global-color-blue-400
+  );
+  --spectrum-dropzone-illustratedmessage-illustration-color-key-focus: var(
+    --spectrum-global-color-blue-500
+  );
 }
 
 .spectrum-Dropzone {
@@ -42,7 +46,7 @@ governing permissions and limitations under the License.
     }
   }
 }
-  
+
 @media (forced-colors: active) {
   .spectrum-Dropzone {
     --spectrum-dropzone-border-color: CanvasText;
@@ -55,4 +59,3 @@ governing permissions and limitations under the License.
     }
   }
 }
-  

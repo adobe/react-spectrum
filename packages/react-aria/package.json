@@ -1,6 +1,6 @@
 {
   "name": "react-aria",
-  "version": "3.48.0",
+  "version": "3.49.0",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "./dist/exports/index.cjs",
@@ -47,14 +47,14 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@internationalized/date": "^3.12.1",
-    "@internationalized/number": "^3.6.6",
-    "@internationalized/string": "^3.2.8",
-    "@react-types/shared": "^3.34.0",
+    "@internationalized/date": "^3.12.2",
+    "@internationalized/number": "^3.6.7",
+    "@internationalized/string": "^3.2.9",
+    "@react-types/shared": "^3.35.0",
     "@swc/helpers": "^0.5.0",
     "aria-hidden": "^1.2.3",
     "clsx": "^2.0.0",
-    "react-stately": "3.46.0",
+    "react-stately": "3.47.0",
     "use-sync-external-store": "^1.6.0"
   },
   "peerDependencies": {
@@ -63,7 +63,9 @@
   },
   "devDependencies": {
     "@babel/cli": "^7.24.1",
-    "@babel/core": "^7.24.3"
+    "@babel/core": "^7.24.3",
+    "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1",
+    "react-dom": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
   },
   "publishConfig": {
     "access": "public"

@@ -27,7 +27,7 @@ governing permissions and limitations under the License.
   background-color: var(--spectrum-yellow-background-color-default);
 }
 
-.spectrum-Badge--seafoam  {
+.spectrum-Badge--seafoam {
   color: var(--spectrum-gray-50);
   background-color: var(--spectrum-seafoam-background-color-default);
 }
@@ -36,26 +36,26 @@ governing permissions and limitations under the License.
   background-color: var(--spectrum-semantic-positive-color-background);
 }
 
-.spectrum-Badge--info  {
+.spectrum-Badge--info {
   background-color: var(--spectrum-semantic-informative-color-background);
 }
 
-.spectrum-Badge--fuchsia  {
+.spectrum-Badge--fuchsia {
   color: var(--spectrum-gray-50);
   background-color: var(--spectrum-fuchsia-background-color-default);
 }
 
-.spectrum-Badge--indigo  {
+.spectrum-Badge--indigo {
   color: var(--spectrum-gray-50);
   background-color: var(--spectrum-indigo-background-color-default);
 }
 
-.spectrum-Badge--magenta  {
+.spectrum-Badge--magenta {
   color: var(--spectrum-gray-50);
   background-color: var(--spectrum-magenta-background-color-default);
 }
 
-.spectrum-Badge--purple  {
+.spectrum-Badge--purple {
   color: var(--spectrum-gray-50);
   background-color: var(--spectrum-purple-background-color-default);
 }

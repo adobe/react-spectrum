@@ -50,7 +50,9 @@ export type ProviderStory = StoryFn<typeof Template>;
 const Template = (args: ProviderProps): JSX.Element => (
   <Provider {...args} UNSAFE_style={{padding: 50}}>
     <Form>
-      <Flex> {/* Extra div via Flex so that the button does not expand to 100% width */}
+      <Flex>
+        {' '}
+        {/* Extra div via Flex so that the button does not expand to 100% width */}
         <Button variant="primary">I am a button</Button>
       </Flex>
       <Checkbox isSelected>Cats!</Checkbox>
@@ -78,13 +80,17 @@ const Template = (args: ProviderProps): JSX.Element => (
         placeholder="Something"
         marginTop="size-100"
         necessityIndicator="label"
-        value="dummy value" />
+        value="dummy value"
+      />
     </Form>
   </Provider>
 );
 
 const NestedColorSchemeTemplate = (props: ProviderProps): JSX.Element => (
-  <Provider colorScheme="dark" UNSAFE_style={{padding: 50, textAlign: 'center', width: 500}} {...props}>
+  <Provider
+    colorScheme="dark"
+    UNSAFE_style={{padding: 50, textAlign: 'center', width: 500}}
+    {...props}>
     <Button variant="primary">I am a dark button</Button>
     <Provider colorScheme="light" UNSAFE_style={{padding: 50, margin: 50, textAlign: 'center'}}>
       <Button variant="primary">I am a light button</Button>
@@ -107,12 +113,13 @@ const ResponsiveStyleTemplate = (props: ProviderProps): JSX.Element => (
       <TextField
         label="A text field"
         placeholder="Something"
-        width={{base: 'size-800', S: 'size-1000', M: 'size-2000', L: 'size-3000'}} />
+        width={{base: 'size-800', S: 'size-1000', M: 'size-2000', L: 'size-3000'}}
+      />
     </div>
     <Button
       isHidden={{base: false, S: false, M: false, L: true}}
       marginTop={{base: 'size-100', M: 'size-1000'}}
-      variant="primary" >
+      variant="primary">
       This button is hidden in large display.
     </Button>
   </Provider>
@@ -122,25 +129,26 @@ const CustomResponsivStylePropsTemplate = (props: ProviderProps): JSX.Element =>
   let Breakpoint = () => {
     let {matchedBreakpoints} = useBreakpoint()!;
     let breakpoint = matchedBreakpoints[0];
-    let width = {base: 'size-1600', XS: 'size-2000', S: 'size-2400', M: 'size-3000', L: 'size-3400', XL: 'size-4600', XXL: 'size-6000'};
+    let width = {
+      base: 'size-1600',
+      XS: 'size-2000',
+      S: 'size-2400',
+      M: 'size-3000',
+      L: 'size-3400',
+      XL: 'size-4600',
+      XXL: 'size-6000'
+    };
     return (
       <>
-        <Button
-          variant="primary"
-          width={width} >
+        <Button variant="primary" width={width}>
           Button with {breakpoint} breakpoint.
         </Button>
-        <div>
-          width: {width[breakpoint]}
-        </div>
+        <div>width: {width[breakpoint]}</div>
       </>
     );
   };
   return (
-    <Provider
-      breakpoints={{S: 480, M: 640, L: 1024}}
-      UNSAFE_style={{padding: 50}}
-      {...props}>
+    <Provider breakpoints={{S: 480, M: 640, L: 1024}} UNSAFE_style={{padding: 50}} {...props}>
       <Breakpoint />
     </Provider>
   );
@@ -153,12 +161,8 @@ const BreakpointOmittedTemplate = (props: ProviderProps): JSX.Element => {
     let width = {base: 'size-1600', S: 'size-2400', L: 'size-3400'};
     return (
       <>
-        <p>
-          button's width will be S: 'size-2400' at M viewport.
-        </p>
-        <Button
-          variant="primary"
-          width={width} >
+        <p>button's width will be S: 'size-2400' at M viewport.</p>
+        <Button variant="primary" width={width}>
           Button with {breakpoint} breakpoint.
         </Button>
       </>
@@ -174,61 +178,61 @@ const BreakpointOmittedTemplate = (props: ProviderProps): JSX.Element => {
 export type ProviderStoryObj = StoryObj<typeof Template>;
 
 export const Default: ProviderStoryObj = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'default',
   args: {}
 };
 
 export const CustomTheme: ProviderStoryObj = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'custom theme',
   args: {theme: THEME}
 };
 
 export const NestedColorScheme: ProviderStoryObj = {
-  render: (args) => <NestedColorSchemeTemplate {...args} />,
+  render: args => <NestedColorSchemeTemplate {...args} />,
   name: 'nested color schemes',
   args: {}
 };
 
 export const NestedProp: ProviderStoryObj = {
-  render: (args) => <NestedPropTemplate {...args} />,
+  render: args => <NestedPropTemplate {...args} />,
   name: 'nested props',
   args: {}
 };
 
 export const Quiet: ProviderStoryObj = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'isQuiet',
   args: {isQuiet: true}
 };
 
 export const Emphasized: ProviderStoryObj = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'isEmphasized',
   args: {isEmphasized: true}
 };
 
 export const Disabled: ProviderStoryObj = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'isDisabled',
   args: {isDisabled: true}
 };
 
 export const ReadOnly: ProviderStoryObj = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'isReadOnly',
   args: {isReadOnly: true}
 };
 
 export const Required: ProviderStoryObj = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'isRequired',
   args: {isRequired: true}
 };
 
 export const ResponsiveStyle: ProviderStoryObj = {
-  render: (args) => <ResponsiveStyleTemplate {...args} />,
+  render: args => <ResponsiveStyleTemplate {...args} />,
 
   parameters: {
     chromatic: {viewports: [320, 700, 1000, 1200, 1300]},
@@ -242,7 +246,7 @@ export const ResponsiveStyle: ProviderStoryObj = {
 };
 
 export const CustomResponsivStyleProps: ProviderStoryObj = {
-  render: (args) => <CustomResponsivStylePropsTemplate {...args} />,
+  render: args => <CustomResponsivStylePropsTemplate {...args} />,
   name: 'custom responsive styleProps',
 
   parameters: {
@@ -257,7 +261,7 @@ export const CustomResponsivStyleProps: ProviderStoryObj = {
 };
 
 export const BreakpointOmitted: ProviderStoryObj = {
-  render: (args) => <BreakpointOmittedTemplate {...args} />,
+  render: args => <BreakpointOmittedTemplate {...args} />,
 
   parameters: {
     chromatic: {viewports: [320, 1000, 1200]},

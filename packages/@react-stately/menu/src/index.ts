@@ -12,4 +12,11 @@
 
 export {useMenuTriggerState, useSubmenuTriggerState} from 'react-stately/useMenuTriggerState';
 
-export type {MenuTriggerProps, MenuTriggerType, MenuTriggerState, RootMenuTriggerState, SubmenuTriggerProps, SubmenuTriggerState} from 'react-stately/useMenuTriggerState';
+export type {
+  MenuTriggerProps,
+  MenuTriggerType,
+  MenuTriggerState,
+  RootMenuTriggerState,
+  SubmenuTriggerProps,
+  SubmenuTriggerState
+} from 'react-stately/useMenuTriggerState';

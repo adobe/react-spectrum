@@ -43,7 +43,9 @@ export const Example: Story = {
   render(args) {
     return (
       <CheckboxGroup {...args}>
-        <Checkbox isEmphasized value="soccer">Soccer</Checkbox>
+        <Checkbox isEmphasized value="soccer">
+          Soccer
+        </Checkbox>
         <Checkbox value="baseball">Baseball</Checkbox>
         <Checkbox value="basketball">Basketball</Checkbox>
       </CheckboxGroup>
@@ -55,26 +57,25 @@ export const Example: Story = {
 };
 
 export const ContextualHelpExample: Story = {
-  render: (args) => (
+  render: args => (
     <CheckboxGroup
       {...args}
       contextualHelp={
         <ContextualHelp>
           <Heading>Sports</Heading>
           <Content>
-            <Text>
-              Social games we paly to have fun and stay healthy.
-            </Text>
+            <Text>Social games we paly to have fun and stay healthy.</Text>
           </Content>
           <Footer>
-            <Link
-              isStandalone
-              href="https://en.wikipedia.org/wiki/Sport"
-              target="_blank">Learn more about sports</Link>
+            <Link isStandalone href="https://en.wikipedia.org/wiki/Sport" target="_blank">
+              Learn more about sports
+            </Link>
           </Footer>
         </ContextualHelp>
       }>
-      <Checkbox isEmphasized value="soccer">Soccer</Checkbox>
+      <Checkbox isEmphasized value="soccer">
+        Soccer
+      </Checkbox>
       <Checkbox value="baseball">Baseball</Checkbox>
       <Checkbox value="basketball">Basketball</Checkbox>
     </CheckboxGroup>
@@ -85,15 +86,12 @@ export const ContextualHelpExample: Story = {
       <ContextualHelp>
         <Heading>Sports</Heading>
         <Content>
-          <Text>
-            Social games we paly to have fun and stay healthy.
-          </Text>
+          <Text>Social games we paly to have fun and stay healthy.</Text>
         </Content>
         <Footer>
-          <Link
-            isStandalone
-            href="https://en.wikipedia.org/wiki/Sport"
-            target="_blank">Learn more about sports</Link>
+          <Link isStandalone href="https://en.wikipedia.org/wiki/Sport" target="_blank">
+            Learn more about sports
+          </Link>
         </Footer>
       </ContextualHelp>
     )
@@ -104,9 +102,15 @@ export const HelpText: Story = {
   render(args) {
     return (
       <CheckboxGroup {...args}>
-        <Checkbox value="soccer" description="Get notified about new features and improvements">Product update</Checkbox>
-        <Checkbox value="baseball" description="Important notifications about your account safety">Security alerts</Checkbox>
-        <Checkbox value="basketball" description="Receive promotions, offers, and newsletters">Marketing emails</Checkbox>
+        <Checkbox value="soccer" description="Get notified about new features and improvements">
+          Product update
+        </Checkbox>
+        <Checkbox value="baseball" description="Important notifications about your account safety">
+          Security alerts
+        </Checkbox>
+        <Checkbox value="basketball" description="Receive promotions, offers, and newsletters">
+          Marketing emails
+        </Checkbox>
       </CheckboxGroup>
     );
   },

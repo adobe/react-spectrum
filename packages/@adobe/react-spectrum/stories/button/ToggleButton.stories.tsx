@@ -67,12 +67,12 @@ export default {
 } as Meta<typeof ToggleButton>;
 
 export const Default: ToggleButtonStory = {
-  render: (args) => render(args)
+  render: args => render(args)
 };
 
 export const StaticWhite: ToggleButtonStory = {
   args: {staticColor: 'white'},
-  render: (args) => (
+  render: args => (
     <View backgroundColor="static-blue-700" padding="size-1000">
       <Flex direction="column" rowGap="size-150">
         {render(args)}
@@ -84,7 +84,7 @@ export const StaticWhite: ToggleButtonStory = {
 
 export const StaticBlack: ToggleButtonStory = {
   args: {staticColor: 'black'},
-  render: (args) => (
+  render: args => (
     <View backgroundColor="static-yellow-400" padding="size-1000">
       <Flex direction="column" rowGap="size-150">
         {render(args)}
@@ -120,7 +120,11 @@ function render(props = {}) {
         <Add />
         <Text>Default</Text>
       </ToggleButton>
-      <ToggleButton onChange={action('change')} onPress={action('press')} defaultSelected {...props}>
+      <ToggleButton
+        onChange={action('change')}
+        onPress={action('press')}
+        defaultSelected
+        {...props}>
         <Add />
         <Text>Selected</Text>
       </ToggleButton>
@@ -132,7 +136,9 @@ function ControlledToggleButton() {
   let [selected, setSelected] = useState(false);
   return (
     <div>
-      <ToggleButton isSelected={selected} onChange={setSelected}>Press Me</ToggleButton>
+      <ToggleButton isSelected={selected} onChange={setSelected}>
+        Press Me
+      </ToggleButton>
       <br />
       {selected ? 'true' : 'false'}
     </div>

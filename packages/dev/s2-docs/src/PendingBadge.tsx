@@ -3,6 +3,10 @@ import React from 'react';
 
 export function PendingBadge() {
   return (
-    <Badge variant="informative" UNSAFE_style={{width: 'fit-content', display: 'inline-flex', verticalAlign: 'middle'}}>Pending</Badge>
+    <Badge
+      variant="informative"
+      UNSAFE_style={{width: 'fit-content', display: 'inline-flex', verticalAlign: 'middle'}}>
+      Pending
+    </Badge>
   );
 }

@@ -16,11 +16,11 @@ import {RefObject, StyleProps} from '@react-types/shared';
 import {TooltipTriggerState} from 'react-stately/useTooltipTriggerState';
 
 interface TooltipContextProps extends StyleProps {
-  state?: TooltipTriggerState,
-  ref?: RefObject<HTMLDivElement | null>,
-  placement: PlacementAxis | null,
-  arrowProps?: HTMLAttributes<HTMLElement>,
-  arrowRef?: RefObject<HTMLElement | null>
+  state?: TooltipTriggerState;
+  ref?: RefObject<HTMLDivElement | null>;
+  placement: PlacementAxis | null;
+  arrowProps?: HTMLAttributes<HTMLElement>;
+  arrowRef?: RefObject<HTMLElement | null>;
 }
 
 export const TooltipContext = React.createContext<TooltipContextProps>({placement: null});

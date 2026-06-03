@@ -36,62 +36,57 @@ export default meta;
 type Story = StoryObj<typeof IllustratedMessage>;
 
 export const Example: Story = {
-  render: (args) => (
+  render: args => (
     <IllustratedMessage {...args}>
       <Cloud />
-      <Heading>
-        Illustrated message title
-      </Heading>
+      <Heading>Illustrated message title</Heading>
       <Content>
-        Illustrated message description. Give more information about what a user can do, expect, or how to make items appear.    </Content>
+        Illustrated message description. Give more information about what a user can do, expect, or
+        how to make items appear.{' '}
+      </Content>
       <ButtonGroup>
-        <Button variant="secondary" >Label</Button>
-        <Button variant="accent" >Label</Button>
+        <Button variant="secondary">Label</Button>
+        <Button variant="accent">Label</Button>
       </ButtonGroup>
     </IllustratedMessage>
   )
 };
 
 export const NoButtonLongText: Story = {
-  render: (args) => (
+  render: args => (
     <IllustratedMessage {...args}>
       <Cloud />
-      <Heading>
-        Error 403: Access not allowed
-      </Heading>
+      <Heading>Error 403: Access not allowed</Heading>
       <Content>
-        You do not have permission to access this page. Try checking the URL or visit a different page.
+        You do not have permission to access this page. Try checking the URL or visit a different
+        page.
       </Content>
     </IllustratedMessage>
   )
 };
 
 export const NoButtonShortText: Story = {
-  render: (args) => (
+  render: args => (
     <IllustratedMessage {...args}>
       <Cloud />
-      <Heading>
-        Error 504: Server timeout
-      </Heading>
-      <Content>
-        The server took too long. Please try again later.
-      </Content>
+      <Heading>Error 504: Server timeout</Heading>
+      <Content>The server took too long. Please try again later.</Content>
     </IllustratedMessage>
   )
 };
 
 export const Gradient: Story = {
-  render: (args) => (
+  render: args => (
     <IllustratedMessage {...args}>
       <Folder />
-      <Heading>
-        Illustrated message title
-      </Heading>
+      <Heading>Illustrated message title</Heading>
       <Content>
-        Illustrated message description. Give more information about what a user can do, expect, or how to make items appear.    </Content>
+        Illustrated message description. Give more information about what a user can do, expect, or
+        how to make items appear.{' '}
+      </Content>
       <ButtonGroup>
-        <Button variant="secondary" >Label</Button>
-        <Button variant="accent" >Label</Button>
+        <Button variant="secondary">Label</Button>
+        <Button variant="accent">Label</Button>
       </ButtonGroup>
     </IllustratedMessage>
   )

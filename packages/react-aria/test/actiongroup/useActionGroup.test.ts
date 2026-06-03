@@ -17,7 +17,7 @@ import {useActionGroup} from '../../src/actiongroup/useActionGroup';
 import {useListState} from 'react-stately/useListState';
 
 describe('useActionGroup', function () {
-  let renderActionGroupHook = (props) => {
+  let renderActionGroupHook = props => {
     let ref = createRef<FocusableElement>();
     let {result} = renderHook(() => useActionGroup(props, useListState(props), ref));
     return result.current;

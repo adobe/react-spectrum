@@ -10,7 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
-import {CalendarDate, CalendarDateTime, parseAbsolute, parseDate, parseDateTime, parseDuration, parseTime, parseZonedDateTime, Time, ZonedDateTime} from '../src/index';
+import {
+  CalendarDate,
+  CalendarDateTime,
+  parseAbsolute,
+  parseDate,
+  parseDateTime,
+  parseDuration,
+  parseTime,
+  parseZonedDateTime,
+  Time,
+  ZonedDateTime
+} from '../src/index';
 
 describe('string conversion', function () {
   describe('parseTime', function () {
@@ -255,7 +266,17 @@ describe('string conversion', function () {
 
     it('should parse a date with a time with milliseconds but no offset', function () {
       let date = parseZonedDateTime('2020-02-03T12:24:45.12[America/Los_Angeles]');
-      let expected = new ZonedDateTime(2020, 2, 3, 'America/Los_Angeles', -28800000, 12, 24, 45, 120);
+      let expected = new ZonedDateTime(
+        2020,
+        2,
+        3,
+        'America/Los_Angeles',
+        -28800000,
+        12,
+        24,
+        45,
+        120
+      );
       expect(date).toEqual(expected);
     });
 
@@ -285,7 +306,17 @@ describe('string conversion', function () {
 
     it('should parse a date with a time with milliseconds and an offset', function () {
       let date = parseZonedDateTime('2020-02-03T12:24:45.12-08:00[America/Los_Angeles]');
-      let expected = new ZonedDateTime(2020, 2, 3, 'America/Los_Angeles', -28800000, 12, 24, 45, 120);
+      let expected = new ZonedDateTime(
+        2020,
+        2,
+        3,
+        'America/Los_Angeles',
+        -28800000,
+        12,
+        24,
+        45,
+        120
+      );
       expect(date).toEqual(expected);
     });
 
@@ -330,8 +361,12 @@ describe('string conversion', function () {
     });
 
     it('should error if parsing a date with an invalid offset', function () {
-      expect(() => parseZonedDateTime('2020-02-03T12:24:45.12-04:00[America/Los_Angeles]')).toThrow();
-      expect(() => parseZonedDateTime('2020-02-03T12:24:45.12-08:24[America/Los_Angeles]')).toThrow();
+      expect(() =>
+        parseZonedDateTime('2020-02-03T12:24:45.12-04:00[America/Los_Angeles]')
+      ).toThrow();
+      expect(() =>
+        parseZonedDateTime('2020-02-03T12:24:45.12-08:24[America/Los_Angeles]')
+      ).toThrow();
       expect(() => parseZonedDateTime('2021-03-14T02:00-08:00[America/Los_Angeles]')).toThrow();
       expect(() => parseZonedDateTime('2021-03-14T02:00-07:00[America/Los_Angeles]')).toThrow();
     });
@@ -427,7 +462,7 @@ describe('string conversion', function () {
 
     it('should parse BC dates', function () {
       let date = parseAbsolute('0000-01-01T01:00Z', 'UTC');
-      let expected =  new ZonedDateTime('BC', 1, 1, 1, 'UTC', 0, 1, 0, 0);
+      let expected = new ZonedDateTime('BC', 1, 1, 1, 'UTC', 0, 1, 0, 0);
       expect(date).toEqual(expected);
 
       date = parseAbsolute('-000002-01-01T01:00Z', 'UTC');
@@ -671,13 +706,19 @@ describe('string conversion', function () {
       }).toThrow('Invalid ISO 8601 Duration string: P1Y1M1W0,5D');
       expect(() => {
         parseDuration('P1Y1M1W1DT0.5H5S');
-      }).toThrow('Invalid ISO 8601 Duration string: P1Y1M1W1DT0.5H5S - only the smallest unit can be fractional');
+      }).toThrow(
+        'Invalid ISO 8601 Duration string: P1Y1M1W1DT0.5H5S - only the smallest unit can be fractional'
+      );
       expect(() => {
         parseDuration('P1Y1M1W1DT1.5H0,5M');
-      }).toThrow('Invalid ISO 8601 Duration string: P1Y1M1W1DT1.5H0,5M - only the smallest unit can be fractional');
+      }).toThrow(
+        'Invalid ISO 8601 Duration string: P1Y1M1W1DT1.5H0,5M - only the smallest unit can be fractional'
+      );
       expect(() => {
         parseDuration('P1Y1M1W1DT1H0.5M0.5S');
-      }).toThrow('Invalid ISO 8601 Duration string: P1Y1M1W1DT1H0.5M0.5S - only the smallest unit can be fractional');
+      }).toThrow(
+        'Invalid ISO 8601 Duration string: P1Y1M1W1DT1H0.5M0.5S - only the smallest unit can be fractional'
+      );
       expect(() => {
         parseDuration('P');
       }).toThrow('Invalid ISO 8601 Duration string: P');

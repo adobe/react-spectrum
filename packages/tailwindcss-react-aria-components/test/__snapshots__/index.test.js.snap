@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`variants 1`] = `
 "/*! tailwindcss v4.0.17 | MIT License | https://tailwindcss.com */
@@ -419,10 +419,9 @@ exports[`variants 1`] = `
   }
 }
 :root, :host {
-  --color-red: red
-;
+  --color-red: red;
 }
-"
+  "
 `;
 
 exports[`variants with prefix 1`] = `
@@ -708,8 +707,7 @@ exports[`variants with prefix 1`] = `
   }
 }
 :root, :host {
-  --color-red: red
-;
+  --color-red: red;
 }
-"
+  "
 `;

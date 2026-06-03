@@ -13,7 +13,12 @@
 import {ButtonGroupContext} from './ButtonGroup';
 import {ContentContext, HeadingContext} from './Content';
 import {ContextValue, Provider} from 'react-aria-components/slots';
-import {controlFont, getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
+import {
+  controlFont,
+  getAllowedOverrides,
+  StylesPropWithHeight,
+  UnsafeStyles
+} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, ReactNode} from 'react';
 import {DOMProps, DOMRef, DOMRefValue} from '@react-types/shared';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
@@ -28,79 +33,85 @@ interface IllustratedMessageStyleProps {
    *
    * @default 'M'
    */
-  size?: 'S' | 'M' | 'L',
+  size?: 'S' | 'M' | 'L';
   /**
    * The direction that the IllustratedMessage should be laid out in.
    *
    * @default 'vertical'
    */
-  orientation?: 'horizontal' | 'vertical'
+  orientation?: 'horizontal' | 'vertical';
 }
 
-interface S2SpectrumIllustratedMessageProps extends DOMProps, UnsafeStyles, IllustratedMessageStyleProps {
+interface S2SpectrumIllustratedMessageProps
+  extends DOMProps, UnsafeStyles, IllustratedMessageStyleProps {
   /** Spectrum-defined styles, returned by the `style()` macro. */
-  styles?: StylesPropWithHeight,
+  styles?: StylesPropWithHeight;
   /** The content to display in the IllustratedMessage. */
-  children: ReactNode
+  children: ReactNode;
 }
 
-const illustratedMessage = style<IllustratedMessageStyleProps & {isInDropZone?: boolean}>({
-  display: 'grid',
-  font: controlFont(),
-  maxWidth: {
-    orientation: {
-      vertical: 380,
-      horizontal: 528 // ask design about max width for horizontal because doesn't look great when L
+const illustratedMessage = style<IllustratedMessageStyleProps & {isInDropZone?: boolean}>(
+  {
+    display: 'grid',
+    font: controlFont(),
+    maxWidth: {
+      orientation: {
+        vertical: 380,
+        horizontal: 528 // ask design about max width for horizontal because doesn't look great when L
+      }
+    },
+    gridTemplateAreas: {
+      orientation: {
+        vertical: [
+          '   .  illustration .   ',
+          '   .       .       .   ',
+          'heading heading heading',
+          '   .       .       .   ',
+          'content content content',
+          '   .  buttonGroup  .   '
+        ],
+        horizontal: [
+          'illustration . heading',
+          'illustration .    .   ',
+          'illustration . content',
+          'illustration . buttonGroup'
+        ]
+      }
+    },
+    gridTemplateRows: {
+      orientation: {
+        vertical: {
+          default: ['min-content', 12, 'min-content', 4, 'min-content', 'min-content'],
+          size: {
+            L: ['min-content', 8, 'min-content', 4, 'min-content', 'min-content']
+          }
+        },
+        horizontal: ['1fr', 4, '1fr']
+      }
+    },
+    gridTemplateColumns: {
+      orientation: {
+        horizontal: ['1fr', 12, 'auto']
+      }
+    },
+    justifyItems: {
+      orientation: {
+        vertical: 'center',
+        horizontal: 'start'
+      }
+    },
+    textAlign: {
+      orientation: {
+        vertical: 'center'
+      }
     }
   },
-  gridTemplateAreas: {
-    orientation: {
-      vertical: [
-        '   .  illustration .   ',
-        '   .       .       .   ',
-        'heading heading heading',
-        '   .       .       .   ',
-        'content content content',
-        '   .  buttonGroup  .   '
-      ],
-      horizontal: [
-        'illustration . heading',
-        'illustration .    .   ',
-        'illustration . content',
-        'illustration . buttonGroup'
-      ]
-    }
-  },
-  gridTemplateRows: {
-    orientation: {
-      vertical: {
-        default: ['min-content', 12, 'min-content', 4, 'min-content', 'min-content'],
-        size: {
-          L: ['min-content', 8, 'min-content', 4, 'min-content', 'min-content']
-        }
-      },
-      horizontal: ['1fr', 4, '1fr']
-    }
-  },
-  gridTemplateColumns: {
-    orientation: {
-      horizontal: ['1fr', 12, 'auto']
-    }
-  },
-  justifyItems: {
-    orientation: {
-      vertical: 'center',
-      horizontal: 'start'
-    }
-  },
-  textAlign: {
-    orientation: {
-      vertical: 'center'
-    }
-  }
-}, getAllowedOverrides({height: true}));
+  getAllowedOverrides({height: true})
+);
 
-const illustration = style<IllustratedMessageStyleProps & {isInDropZone?: boolean, isDropTarget?: boolean}>({
+const illustration = style<
+  IllustratedMessageStyleProps & {isInDropZone?: boolean; isDropTarget?: boolean}
+>({
   gridArea: 'illustration',
   alignSelf: 'center',
   '--iconPrimary': {
@@ -143,17 +154,23 @@ const buttonGroup = style({
 });
 
 interface IllustratedMessageContextProps extends Partial<S2SpectrumIllustratedMessageProps> {
-  isInDropZone?: boolean,
-  isDropTarget?: boolean
+  isInDropZone?: boolean;
+  isDropTarget?: boolean;
 }
 
-export const IllustratedMessageContext = createContext<ContextValue<Partial<IllustratedMessageContextProps>, DOMRefValue<HTMLDivElement>>>(null);
+export const IllustratedMessageContext =
+  createContext<ContextValue<Partial<IllustratedMessageContextProps>, DOMRefValue<HTMLDivElement>>>(
+    null
+  );
 
 /**
  * An IllustratedMessage displays an illustration and a message, usually
  * for an empty state or an error page.
  */
-export const IllustratedMessage = /*#__PURE__*/ forwardRef(function IllustratedMessage(props: S2SpectrumIllustratedMessageProps, ref: DOMRef<HTMLDivElement>) {
+export const IllustratedMessage = /*#__PURE__*/ forwardRef(function IllustratedMessage(
+  props: S2SpectrumIllustratedMessageProps,
+  ref: DOMRef<HTMLDivElement>
+) {
   [props, ref] = useSpectrumContextProps(props, ref, IllustratedMessageContext);
   let domRef = useDOMRef(ref);
   let {
@@ -171,16 +188,28 @@ export const IllustratedMessage = /*#__PURE__*/ forwardRef(function IllustratedM
     <div
       {...filterDOMProps(otherProps)}
       style={UNSAFE_style}
-      className={UNSAFE_className + illustratedMessage({
-        size: props.size || 'M',
-        orientation: props.orientation || 'vertical'
-      }, props.styles)}
+      className={
+        UNSAFE_className +
+        illustratedMessage(
+          {
+            size: props.size || 'M',
+            orientation: props.orientation || 'vertical'
+          },
+          props.styles
+        )
+      }
       ref={domRef}>
       <Provider
         values={[
           [HeadingContext, {styles: heading({orientation, size})}],
           [ContentContext, {styles: content({size})}],
-          [IllustrationContext, {size: size === 'L' ? 'L' : 'M', styles: illustration({orientation, size, isInDropZone, isDropTarget})}],
+          [
+            IllustrationContext,
+            {
+              size: size === 'L' ? 'L' : 'M',
+              styles: illustration({orientation, size, isInDropZone, isDropTarget})
+            }
+          ],
           [ButtonGroupContext, {styles: buttonGroup}]
         ]}>
         {children}

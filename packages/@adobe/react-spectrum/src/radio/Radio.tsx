@@ -28,13 +28,11 @@ export interface SpectrumRadioProps extends Omit<AriaRadioProps, 'onClick'>, Sty
  * Radio buttons allow users to select a single option from a list of mutually exclusive options.
  * All possible options are exposed up front for users to compare.
  */
-export const Radio = forwardRef(function Radio(props: SpectrumRadioProps, ref: FocusableRef<HTMLLabelElement>) {
-  let {
-    isDisabled,
-    children,
-    autoFocus,
-    ...otherProps
-  } = props;
+export const Radio = forwardRef(function Radio(
+  props: SpectrumRadioProps,
+  ref: FocusableRef<HTMLLabelElement>
+) {
+  let {isDisabled, children, autoFocus, ...otherProps} = props;
   let {styleProps} = useStyleProps(otherProps);
   let {hoverProps, isHovered} = useHover({isDisabled});
 
@@ -42,16 +40,17 @@ export const Radio = forwardRef(function Radio(props: SpectrumRadioProps, ref: F
   let domRef = useFocusableRef(ref, inputRef);
 
   let radioGroupProps = useRadioProvider();
-  let {
-    isEmphasized,
-    state
-  } = radioGroupProps;
+  let {isEmphasized, state} = radioGroupProps;
 
-  let {labelProps, inputProps} = useRadio({
-    ...props,
-    ...radioGroupProps,
-    isDisabled
-  }, state, inputRef);
+  let {labelProps, inputProps} = useRadio(
+    {
+      ...props,
+      ...radioGroupProps,
+      isDisabled
+    },
+    state,
+    inputRef
+  );
 
   return (
     <label
@@ -59,33 +58,28 @@ export const Radio = forwardRef(function Radio(props: SpectrumRadioProps, ref: F
       {...styleProps}
       {...hoverProps}
       ref={domRef}
-      className={
-        classNames(
-          styles,
-          'spectrum-Radio',
-          {
-            // Removing. Pending design feedback.
-            // 'spectrum-Radio--labelBelow': labelPosition === 'bottom',
-            'spectrum-Radio--quiet': !isEmphasized,
-            'is-disabled': isDisabled,
-            'is-invalid': state.isInvalid,
-            'is-hovered': isHovered
-          },
-          styleProps.className
-        )
-      }>
+      className={classNames(
+        styles,
+        'spectrum-Radio',
+        {
+          // Removing. Pending design feedback.
+          // 'spectrum-Radio--labelBelow': labelPosition === 'bottom',
+          'spectrum-Radio--quiet': !isEmphasized,
+          'is-disabled': isDisabled,
+          'is-invalid': state.isInvalid,
+          'is-hovered': isHovered
+        },
+        styleProps.className
+      )}>
       <FocusRing focusRingClass={classNames(styles, 'focus-ring')} autoFocus={autoFocus}>
         <input
           {...inputProps}
           ref={inputRef}
-          className={classNames(styles, 'spectrum-Radio-input')} />
+          className={classNames(styles, 'spectrum-Radio-input')}
+        />
       </FocusRing>
       <span className={classNames(styles, 'spectrum-Radio-button')} />
-      {children && (
-        <span className={classNames(styles, 'spectrum-Radio-label')}>
-          {children}
-        </span>
-      )}
+      {children && <span className={classNames(styles, 'spectrum-Radio-label')}>{children}</span>}
     </label>
   );
 });

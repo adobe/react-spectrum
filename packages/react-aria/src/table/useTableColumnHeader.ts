@@ -13,7 +13,6 @@
 import {DOMAttributes, FocusableElement, RefObject} from '@react-types/shared';
 import {getColumnHeaderId} from './utils';
 import {GridNode} from 'react-stately/private/grid/GridCollection';
-// @ts-ignore
 import intlMessages from '../../intl/table/*.json';
 import {isAndroid} from '../utils/platform';
 import {mergeProps} from '../utils/mergeProps';
@@ -26,32 +25,44 @@ import {useLocalizedStringFormatter} from '../i18n/useLocalizedStringFormatter';
 import {usePress} from '../interactions/usePress';
 
 export interface AriaTableColumnHeaderProps<T> {
-  /** An object representing the [column header](https://www.w3.org/TR/wai-aria-1.1/#columnheader). Contains all the relevant information that makes up the column header. */
-  node: GridNode<T>,
-  /** Whether the [column header](https://www.w3.org/TR/wai-aria-1.1/#columnheader) is contained in a virtual scroller. */
-  isVirtualized?: boolean
+  /**
+   * An object representing the [column header](https://www.w3.org/TR/wai-aria-1.1/#columnheader).
+   * Contains all the relevant information that makes up the column header.
+   */
+  node: GridNode<T>;
+  /**
+   * Whether the [column header](https://www.w3.org/TR/wai-aria-1.1/#columnheader) is contained in a
+   * virtual scroller.
+   */
+  isVirtualized?: boolean;
 }
 
 export interface TableColumnHeaderAria {
   /** Props for the [column header](https://www.w3.org/TR/wai-aria-1.1/#columnheader) element. */
-  columnHeaderProps: DOMAttributes,
+  columnHeaderProps: DOMAttributes;
   /** Whether the column is currently in a pressed state. */
-  isPressed: boolean
+  isPressed: boolean;
 }
 
 /**
  * Provides the behavior and accessibility implementation for a column header in a table.
+ *
  * @param props - Props for the column header.
  * @param state - State of the table, as returned by `useTableState`.
  * @param ref - The ref attached to the column header element.
  */
-export function useTableColumnHeader<T>(props: AriaTableColumnHeaderProps<T>, state: TableState<T>, ref: RefObject<FocusableElement | null>): TableColumnHeaderAria {
+export function useTableColumnHeader<T>(
+  props: AriaTableColumnHeaderProps<T>,
+  state: TableState<T>,
+  ref: RefObject<FocusableElement | null>
+): TableColumnHeaderAria {
   let {node} = props;
   let allowsSorting = node.props.allowsSorting;
   // if there are no focusable children, the column header will focus the cell
   let {gridCellProps} = useGridCell({...props, focusMode: 'child'}, state, ref);
 
-  let isSelectionCellDisabled = node.props.isSelectionCell && state.selectionManager.selectionMode === 'single';
+  let isSelectionCellDisabled =
+    node.props.isSelectionCell && state.selectionManager.selectionMode === 'single';
 
   let {pressProps, isPressed} = usePress({
     isDisabled: !allowsSorting || isSelectionCellDisabled,

@@ -21,12 +21,12 @@ import svgr from 'vite-plugin-svgr';
 
 const s2Dir = path.resolve(__dirname, 'packages/@react-spectrum/s2');
 
-// Handles ../intl/*.json imports
+// Handles ../intl/*.json and ../intl/<feature>/*.json imports.
 function intlJsonPlugin(): Plugin {
   return {
     name: 'intl-json-loader',
     async resolveId(source, importer) {
-      if (source.includes('/intl/*.json') && importer) {
+      if (/\/intl\/.*\*\.json$/.test(source) && importer) {
         const dir = path.dirname(importer);
         const intlDir = path.resolve(dir, source.replace('*.json', ''));
         return `virtual:intl-messages:${intlDir}`;
@@ -65,11 +65,11 @@ function illustrationResolverPlugin(): Plugin {
       if (source.startsWith('@react-spectrum/s2/illustrations/')) {
         const illustrationPath = source.replace('@react-spectrum/s2/illustrations/', '');
         const tsxPath = path.resolve(s2Dir, 'spectrum-illustrations', illustrationPath + '.tsx');
-        
+
         if (fs.existsSync(tsxPath)) {
           return tsxPath;
         }
-        
+
         return null;
       }
       return null;
@@ -78,8 +78,8 @@ function illustrationResolverPlugin(): Plugin {
 }
 
 /**
- * Handle S2 illustrations
- * 
+ * Handle S2 illustrations.
+ *
  * Resolves the SVG and wraps it with createIllustration from Icon.tsx.
  */
 function illustrationPlugin(): Plugin {
@@ -113,8 +113,8 @@ function illustrationPlugin(): Plugin {
 }
 
 /**
- * Handle S2 workflow icons
- * 
+ * Handle S2 workflow icons.
+ *
  * Resolves the SVG and wraps it with createIcon from Icon.tsx.
  */
 function iconWrapperPlugin(): Plugin {

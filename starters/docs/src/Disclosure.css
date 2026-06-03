@@ -1,4 +1,4 @@
-@import "./theme.css";
+@import './theme.css';
 
 .react-aria-Disclosure {
   width: calc(var(--spacing) * 50);
@@ -29,7 +29,7 @@
     &[data-hovered],
     &[data-pressed] {
       background: var(--gray-300);
-      color: var(--text-color-hover)
+      color: var(--text-color-hover);
     }
 
     &[data-pressed] {

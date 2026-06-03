@@ -10,7 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {Accordion, Disclosure, DisclosurePanel, DisclosureTitle} from '../../src/accordion/Accordion';
+import {
+  Accordion,
+  Disclosure,
+  DisclosurePanel,
+  DisclosureTitle
+} from '../../src/accordion/Accordion';
 import {act, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {Provider} from '../../src/provider/Provider';
 import React from 'react';
@@ -84,7 +89,9 @@ describe('Accordion', function () {
     let buttons = tree.getAllByRole('button');
     let selectedItem = buttons[0];
     expect(selectedItem).toHaveAttribute('aria-expanded', 'false');
-    act(() => {selectedItem.focus();});
+    act(() => {
+      selectedItem.focus();
+    });
     expect(document.activeElement).toBe(selectedItem);
 
     await user.keyboard('{Enter}');
@@ -100,7 +107,9 @@ describe('Accordion', function () {
     let tree = renderComponent();
     let buttons = tree.getAllByRole('button');
     let [firstItem, secondItem, thirdItem] = buttons;
-    act(() => {firstItem.focus();});
+    act(() => {
+      firstItem.focus();
+    });
     expect(document.activeElement).toBe(firstItem);
     await user.tab();
     expect(document.activeElement).toBe(secondItem);
@@ -144,7 +153,9 @@ describe('Accordion', function () {
     let buttons = tree.getAllByRole('button');
     let selectedItem = buttons[0];
     expect(selectedItem).toHaveAttribute('aria-expanded', 'true');
-    act(() => {selectedItem.click();});
+    act(() => {
+      selectedItem.click();
+    });
     expect(onExpandedChange).toHaveBeenCalledTimes(1);
     expect(selectedItem).toHaveAttribute('aria-expanded', 'true');
   });
