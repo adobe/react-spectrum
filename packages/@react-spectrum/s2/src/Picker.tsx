@@ -82,7 +82,6 @@ import {ListLayout} from 'react-stately/useVirtualizerState';
 import {mergeStyles} from '../style/runtime';
 import {Placement} from 'react-aria-components/Popover';
 import {Popover} from './Popover';
-// @ts-ignore
 import {PressResponder} from 'react-aria/private/interactions/PressResponder';
 import {pressScale} from './pressScale';
 import {ProgressCircle} from './ProgressCircle';

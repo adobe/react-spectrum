@@ -16,7 +16,6 @@ import {Collection, FocusableElement, Node, RefObject} from '@react-types/shared
 import {getRowLabelledBy} from './utils';
 import {GridRowAria, GridRowProps, useGridRow} from '../grid/useGridRow';
 import {HTMLAttributes} from 'react';
-// @ts-ignore
 import intlMessages from '../../intl/table/*.json';
 import {ITableCollection} from 'react-stately/private/table/TableCollection';
 import {mergeProps} from '../utils/mergeProps';

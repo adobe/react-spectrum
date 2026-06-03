@@ -243,7 +243,7 @@ describe('useDroppableCollection', () => {
       let cells = within(grid).getAllByRole('gridcell');
       expect(cells).toHaveLength(6);
 
-      let scrollTop = jest.spyOn(grid, 'scrollTop', 'set');
+      using scrollTop = jest.spyOn(grid, 'scrollTop', 'set');
 
       let dataTransfer = new DataTransfer();
       fireEvent(draggable, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));

@@ -11,12 +11,10 @@
  */
 
 import {AriaButtonProps} from '../button/useButton';
-
 import {AriaLabelingProps, DOMAttributes, FocusableElement, RefObject} from '@react-types/shared';
 import {filterDOMProps} from '../utils/filterDOMProps';
 import intlMessages from '../../intl/toast/*.json';
 import {QueuedToast, ToastState} from 'react-stately/useToastState';
-// @ts-ignore
 import {useEffect, useState} from 'react';
 import {useId, useSlotId} from '../utils/useId';
 import {useLayoutEffect} from '../utils/useLayoutEffect';

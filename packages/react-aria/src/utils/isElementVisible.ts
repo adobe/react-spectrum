@@ -29,7 +29,7 @@ function isStyleVisible(element: Element) {
   let isVisible = display !== 'none' && visibility !== 'hidden' && visibility !== 'collapse';
 
   if (isVisible) {
-    const {getComputedStyle} = element.ownerDocument.defaultView as unknown as Window;
+    const {getComputedStyle} = getOwnerWindow(element);
     let {display: computedDisplay, visibility: computedVisibility} = getComputedStyle(element);
 
     isVisible =

@@ -45,7 +45,7 @@ describe('StatusLight', function () {
     Name             | Component      | props
     ${'StatusLight'} | ${StatusLight} | ${{variant: 'celery'}}
   `('$Name warns user if no label is provided', function ({Component, props}) {
-    let spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    using spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
     render(<Component {...props} id="status-light" />);
     expect(spyWarn).toHaveBeenCalledWith(
       'If no children are provided, an aria-label must be specified'
@@ -56,7 +56,7 @@ describe('StatusLight', function () {
     Name             | Component      | props
     ${'StatusLight'} | ${StatusLight} | ${{variant: 'celery'}}
   `('$Name warns user if label is provided without a role', function ({Component, props}) {
-    let spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    using spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
     render(<Component {...props} aria-label="test" id="status-light" />);
     expect(spyWarn).toHaveBeenCalledWith('A labelled StatusLight must have a role.');
   });

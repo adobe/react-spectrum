@@ -20,7 +20,6 @@ import {
 } from 'react-stately/useCalendarState';
 import {filterDOMProps} from '../utils/filterDOMProps';
 import {hookData, useSelectedDateDescription, useVisibleRangeDescription} from './utils';
-// @ts-ignore
 import intlMessages from '../../intl/calendar/*.json';
 import {mergeProps} from '../utils/mergeProps';
 import {RangeCalendarState} from 'react-stately/useRangeCalendarState';

@@ -11,7 +11,6 @@
  */
 
 import {ActionButton} from '../button/ActionButton';
-
 import {AriaActionGroupProps, useActionGroup} from 'react-aria/private/actiongroup/useActionGroup';
 import {AriaLabelingProps, DOMProps, DOMRef, Key, Node, StyleProps} from '@react-types/shared';
 import buttonStyles from '@adobe/spectrum-css-temp/components/button/vars.css';
@@ -28,7 +27,6 @@ import {MenuTrigger} from '../menu/MenuTrigger';
 import {mergeProps} from 'react-aria/mergeProps';
 import More from '@spectrum-icons/workflow/More';
 import {PressResponder} from 'react-aria/private/interactions/PressResponder';
-// @ts-ignore
 import {Provider, useProviderProps} from '../provider/Provider';
 import React, {
   forwardRef,

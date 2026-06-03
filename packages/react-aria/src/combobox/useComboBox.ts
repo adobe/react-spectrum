@@ -11,7 +11,6 @@
  */
 
 import {announce} from '../live-announcer/LiveAnnouncer';
-
 import {AriaButtonProps} from '../button/useButton';
 import {ariaHideOutside} from '../overlays/ariaHideOutside';
 import {
@@ -54,7 +53,6 @@ import {privateValidationStateProp} from 'react-stately/private/form/useFormVali
 import {useEvent} from '../utils/useEvent';
 import {useFormReset} from '../utils/useFormReset';
 import {useId} from '../utils/useId';
-// @ts-ignore
 import {useLabels} from '../utils/useLabels';
 import {useLocalizedStringFormatter} from '../i18n/useLocalizedStringFormatter';
 import {useMenuTrigger} from '../menu/useMenuTrigger';

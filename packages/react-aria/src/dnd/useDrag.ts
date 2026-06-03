@@ -11,7 +11,6 @@
  */
 
 import {AriaButtonProps} from '../button/useButton';
-
 import {
   DragEndEvent,
   DragItem,
@@ -43,7 +42,6 @@ import {
 import intlMessages from '../../intl/dnd/*.json';
 import {isVirtualClick, isVirtualPointerEvent} from '../utils/isVirtualEvent';
 import {useDescription} from '../utils/useDescription';
-// @ts-ignore
 import {useGlobalListeners} from '../utils/useGlobalListeners';
 import {useLocalizedStringFormatter} from '../i18n/useLocalizedStringFormatter';
 
