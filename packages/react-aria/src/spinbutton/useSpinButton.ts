@@ -14,7 +14,6 @@ import {announce, clearAnnouncer} from '../live-announcer/LiveAnnouncer';
 
 import {AriaButtonProps} from '../button/useButton';
 import {DOMAttributes, InputBase, RangeInputBase, Validation, ValueBase} from '@react-types/shared';
-// @ts-ignore
 import intlMessages from '../../intl/spinbutton/*.json';
 import {useCallback, useEffect, useRef, useState} from 'react';
 import {useEffectEvent} from '../utils/useEffectEvent';

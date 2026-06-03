@@ -53,11 +53,8 @@ import {
 } from 'react';
 import {useEffectEvent} from '../utils/useEffectEvent';
 import {useEvent} from '../utils/useEvent';
-
 import {useId} from '../utils/useId';
-
 import {useLabels} from '../utils/useLabels';
-// @ts-ignore
 import {useLayoutEffect} from '../utils/useLayoutEffect';
 import {useLocalizedStringFormatter} from '../i18n/useLocalizedStringFormatter';
 import {useObjectRef} from '../utils/useObjectRef';

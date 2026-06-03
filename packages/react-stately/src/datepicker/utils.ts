@@ -21,7 +21,6 @@ import {
   toCalendarDateTime
 } from '@internationalized/date';
 import {DatePickerProps, DateValue, Granularity, TimeValue} from './types';
-// @ts-ignore
 import i18nMessages from '../../intl/datepicker/*.json';
 import {LocalizedStringDictionary, LocalizedStringFormatter} from '@internationalized/string';
 import {mergeValidation, VALID_VALIDITY_STATE} from '../form/useFormValidationState';

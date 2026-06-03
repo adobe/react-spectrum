@@ -87,7 +87,7 @@ describe('<HiddenSelect />', () => {
 
     const select = screen.getByLabelText('select');
     await user.selectOptions(select, '5');
-    expect(onSelectionChange).toBeCalledWith('5');
+    expect(onSelectionChange).toHaveBeenCalledWith('5');
   });
 
   it('should include a non-empty placeholder option for native select markup', () => {

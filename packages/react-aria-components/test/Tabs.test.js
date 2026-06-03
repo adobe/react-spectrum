@@ -578,7 +578,7 @@ describe('Tabs', () => {
     expect(tabs[1]).toHaveAttribute('aria-selected', 'false');
     expect(tabs[2]).toHaveAttribute('aria-selected', 'true');
 
-    expect(onSelectionChange).toBeCalledTimes(1);
+    expect(onSelectionChange).toHaveBeenCalledTimes(1);
   });
 
   it('should support tabs as links', async function () {

@@ -39,7 +39,6 @@ import intlMessages from '../intl/*.json';
 import {Label, LabelProps} from 'react-aria-components/Label';
 import {mergeStyles} from '../style/runtime';
 import {Provider} from 'react-aria-components/slots';
-// @ts-ignore
 import {StyleString} from '../style/types';
 import {Text} from 'react-aria-components/Text';
 import {useDOMRef} from './useDOMRef';

@@ -17,7 +17,6 @@ import {
   useGridListItem
 } from '../gridlist/useGridListItem';
 import {DOMAttributes, FocusableElement, Node, RefObject} from '@react-types/shared';
-// @ts-ignore
 import intlMessages from '../../intl/tree/*.json';
 import {TreeState} from 'react-stately/useTreeState';
 import {useLabels} from '../utils/useLabels';

@@ -16,7 +16,6 @@ import {filterDOMProps} from '../utils/filterDOMProps';
 import {HTMLAttributes, useMemo} from 'react';
 import intlMessages from '../../intl/color/*.json';
 import {parseColor} from 'react-stately/Color';
-// @ts-ignore
 import {useId} from '../utils/useId';
 import {useLocale} from '../i18n/I18nProvider';
 import {useLocalizedStringFormatter} from '../i18n/useLocalizedStringFormatter';

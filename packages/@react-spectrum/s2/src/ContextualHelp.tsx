@@ -17,7 +17,6 @@ import intlMessages from '../intl/*.json';
 import {mergeProps} from 'react-aria/mergeProps';
 import {mergeStyles} from '../style/runtime';
 import {Placement} from 'react-aria-components/Popover';
-// @ts-ignore
 import {Popover, PopoverDialogProps} from './Popover';
 import {space, style} from '../style' with {type: 'macro'};
 import {StyleProps} from './style-utils' with {type: 'macro'};

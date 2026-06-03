@@ -49,7 +49,7 @@ describe('<HiddenDateInput />', () => {
     let input = document.querySelector('input[type=date]');
     await user.type(input, '2000-05-30');
     let dateValue = parseDate('2000-05-30');
-    expect(onChange).toBeCalledWith(dateValue);
+    expect(onChange).toHaveBeenCalledWith(dateValue);
   });
 
   it('should always add a data attribute data-a11y-ignore="aria-hidden-focus"', () => {
