@@ -21,137 +21,86 @@ export const isSubpage = true;
 
 <PageDescription>{docs.exports.useSelect.description}</PageDescription>
 
-This example combines `useSelect` with [useButton](../Button/useButton) for the trigger, [useListBox](../ListBox/useListBox) for the popup, and [usePopover](../Popover) for positioning. A &lt;`HiddenSelect`&gt; renders a hidden native `<select>` to enable browser form autofill. The `Button`, `ListBox`, and `Popover` components shown collapsed below can be shared with other components such as a ComboBox or Menu.
+This example uses `useSelect` to provide the behavior for a custom select, and reuses the [Button](../Button), [Popover](../Popover), and [ListBox](../ListBox) components from React Aria Components to render the trigger, popup, and list of options. The values returned by the hook are passed to these components via context, following the [Reusing children](../customization#reusing-children) pattern. A &lt;`HiddenSelect`&gt; renders a hidden native `<select>` to enable browser form autofill.
 
 ```tsx render
 "use client";
 import React from 'react';
-import type {AriaPopoverProps} from 'react-aria/usePopover';
-import type {OverlayTriggerState} from 'react-stately/useOverlayTriggerState';
 import {HiddenSelect, useSelect} from 'react-aria/useSelect';
 import {useSelectState} from 'react-stately/useSelectState';
-import {Item} from 'react-stately/Item';
-import {useButton} from 'react-aria/useButton';
-import {useListBox, useOption} from 'react-aria/useListBox';
-import {usePopover} from 'react-aria/usePopover';
-import {Overlay, DismissButton} from 'react-aria/Overlay';
+import {CollectionBuilder} from 'react-aria/CollectionBuilder';
+import {Provider} from 'react-aria-components/slots';
+import {SelectValue, SelectContext, SelectStateContext, SelectValueContext} from 'react-aria-components/Select';
+import {Collection} from 'react-aria-components/Collection';
+import {LabelContext} from 'react-aria-components/Label';
+import {ButtonContext} from 'react-aria-components/Button';
+import {OverlayTriggerStateContext} from 'react-aria-components/Dialog';
+import {PopoverContext} from 'react-aria-components/Popover';
+import {ListBoxContext, ListStateContext} from 'react-aria-components/ListBox';
+import {Button} from 'vanilla-starter/Button';
+import {Label} from 'vanilla-starter/Form';
+import {Popover} from 'vanilla-starter/Popover';
+import {SelectListBox, SelectItem} from 'vanilla-starter/Select';
+import {ChevronDown} from 'lucide-react';
+import 'vanilla-starter/Select.css';
 
 function Select(props) {
-  // Create state based on the incoming props.
-  let state = useSelectState(props);
+  // useSelectState needs a collection built from the items. CollectionBuilder
+  // renders a hidden copy of them to construct it before rendering.
+  return (
+    <CollectionBuilder content={<Collection>{props.children}</Collection>}>
+      {collection => <SelectInner {...props} collection={collection} />}
+    </CollectionBuilder>
+  );
+}
+
+function SelectInner({collection, ...props}) {
+  // Create state based on the collection and incoming props.
+  let state = useSelectState({...props, collection, children: undefined});
 
   // Get props for child elements from useSelect.
-  let ref = React.useRef<HTMLButtonElement | null>(null);
-  let {labelProps, triggerProps, valueProps, menuProps, hiddenSelectProps} = useSelect(props, state, ref);
+  let buttonRef = React.useRef(null);
+  let scrollRef = React.useRef(null);
+  let {labelProps, triggerProps, valueProps, menuProps, hiddenSelectProps} =
+    useSelect(props, state, buttonRef);
 
+  // Provide the values returned by the hook to the reused components via context.
   return (
-    <div style={{display: 'inline-block'}}>
-      <div {...labelProps}>{props.label}</div>
-      <HiddenSelect {...hiddenSelectProps} />
-      <Button {...triggerProps} buttonRef={ref} style={{height: 30, fontSize: 14}}>
-        <span {...valueProps}>
-          {state.selectedItem ? state.selectedItem.rendered : 'Select an option'}
-        </span>
-        <span aria-hidden="true" style={{paddingLeft: 5}}>▼</span>
-      </Button>
-      {state.isOpen &&
-        <Popover state={state} triggerRef={ref} placement="bottom start">
-          <ListBox {...menuProps} state={state} />
+    <Provider
+      values={[
+        [SelectContext, props],
+        [SelectStateContext, state],
+        [SelectValueContext, valueProps],
+        [LabelContext, {...labelProps, elementType: 'span'}],
+        [ButtonContext, {...triggerProps, ref: buttonRef, isPressed: state.isOpen}],
+        [OverlayTriggerStateContext, state],
+        [PopoverContext, {trigger: 'Select', triggerRef: buttonRef, scrollRef, placement: 'bottom start'}],
+        [ListBoxContext, {...menuProps, ref: scrollRef}],
+        [ListStateContext, state]
+      ]}>
+      <div className="react-aria-Select">
+        <Label>{props.label}</Label>
+        <Button>
+          <SelectValue />
+          <ChevronDown />
+        </Button>
+        <HiddenSelect {...hiddenSelectProps} />
+        <Popover hideArrow className="select-popover">
+          {/* Rendered from the collection in state, provided via ListStateContext. */}
+          <SelectListBox />
         </Popover>
-      }
-    </div>
-  );
-}
-
-///- begin collapse -///
-function Button(props) {
-  let ref = props.buttonRef;
-  let {buttonProps} = useButton(props, ref);
-  return <button {...buttonProps} ref={ref} style={props.style}>{props.children}</button>;
-}
-
-function ListBox(props) {
-  let ref = React.useRef(null);
-  let {listBoxRef = ref, state} = props;
-  let {listBoxProps} = useListBox(props, state, listBoxRef);
-
-  return (
-    <ul
-      {...listBoxProps}
-      ref={listBoxRef}
-      style={{margin: 0, padding: 0, listStyle: 'none', maxHeight: 150, overflow: 'auto', minWidth: 100}}>
-      {[...state.collection].map(item => (
-        <Option key={item.key} item={item} state={state} />
-      ))}
-    </ul>
-  );
-}
-
-function Option({item, state}) {
-  let ref = React.useRef(null);
-  let {optionProps, isSelected, isFocused, isDisabled} = useOption({key: item.key}, state, ref);
-
-  return (
-    <li
-      {...optionProps}
-      ref={ref}
-      style={{
-        background: isFocused ? 'blueviolet' : 'transparent',
-        color: isDisabled ? 'gray' : isFocused ? 'white' : 'inherit',
-        padding: '2px 5px',
-        outline: 'none',
-        cursor: 'default',
-        display: 'flex',
-        justifyContent: 'space-between',
-        gap: 10
-      }}>
-      {item.rendered}
-      {isSelected ? <span aria-hidden="true">✓</span> : null}
-    </li>
-  );
-}
-
-interface PopoverProps extends Omit<AriaPopoverProps, 'popoverRef'> {
-  children: React.ReactNode,
-  state: OverlayTriggerState
-}
-
-function Popover({children, state, ...props}: PopoverProps) {
-  let popoverRef = React.useRef<HTMLDivElement | null>(null);
-  let {popoverProps, underlayProps} = usePopover({...props, popoverRef}, state);
-
-  return (
-    <Overlay>
-      <div {...underlayProps} style={{position: 'fixed', inset: 0}} />
-      <div
-        {...popoverProps}
-        ref={popoverRef}
-        style={{
-          ...popoverProps.style,
-          background: 'Canvas',
-          color: 'CanvasText',
-          border: '1px solid gray',
-          borderRadius: 6,
-          boxShadow: '0 8px 20px rgba(0, 0, 0, 0.1)'
-        }}>
-        <DismissButton onDismiss={state.close} />
-        {children}
-        <DismissButton onDismiss={state.close} />
       </div>
-    </Overlay>
+    </Provider>
   );
 }
-///- end collapse -///
 
-<Select label="Favorite Color">
-  <Item>Red</Item>
-  <Item>Orange</Item>
-  <Item>Yellow</Item>
-  <Item>Green</Item>
-  <Item>Blue</Item>
-  <Item>Purple</Item>
-  <Item>Black</Item>
-  <Item>White</Item>
+<Select label="Favorite Animal">
+  <SelectItem>Aardvark</SelectItem>
+  <SelectItem>Cat</SelectItem>
+  <SelectItem>Dog</SelectItem>
+  <SelectItem>Kangaroo</SelectItem>
+  <SelectItem>Panda</SelectItem>
+  <SelectItem>Snake</SelectItem>
 </Select>
 ```
 
