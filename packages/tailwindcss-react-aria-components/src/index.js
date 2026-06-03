@@ -118,30 +118,8 @@ let getSelector = (prefix, attributeName, attributeValue) => {
   }
 };
 
-let mapSelector = (selector, fn) => {
-  if (Array.isArray(selector)) {
-    return selector.map(fn);
-  } else if (selector && typeof selector === 'object') {
-    // CSS-in-JS object form (hover). Pass through unchanged.
-    return selector;
-  } else {
-    return fn(selector);
-  }
-};
-
-let wrapSelector = (selector, wrap) => {
-  if (typeof selector === 'function') {
-    return selector(wrap);
-  } else {
-    return wrap(selector);
-  }
-};
-
 let addVariants = (variantName, selectors, addVariant) => {
-  addVariant(
-    variantName,
-    mapSelector(selectors, selector => wrapSelector(selector, s => s))
-  );
+  addVariant(variantName, selectors);
 };
 
 module.exports = plugin.withOptions(options => ({addVariant}) => {
