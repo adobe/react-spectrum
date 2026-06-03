@@ -15,7 +15,7 @@ import {Popover} from './Popover';
 import {composeTailwindRenderProps} from './utils';
 import {FieldButton} from './FieldButton';
 
-export interface ComboBoxProps<T extends object, M extends 'single' | 'multiple'> extends Omit<
+export interface ComboBoxProps<T, M extends 'single' | 'multiple'> extends Omit<
   AriaComboBoxProps<T, M>,
   'children'
 > {
@@ -26,7 +26,7 @@ export interface ComboBoxProps<T extends object, M extends 'single' | 'multiple'
   children: React.ReactNode | ((item: T) => React.ReactNode);
 }
 
-export function ComboBox<T extends object, M extends 'single' | 'multiple' = 'single'>({
+export function ComboBox<T, M extends 'single' | 'multiple' = 'single'>({
   label,
   description,
   errorMessage,
@@ -71,6 +71,6 @@ export function ComboBoxItem(props: ListBoxItemProps) {
   return <DropdownItem {...props} />;
 }
 
-export function ComboBoxSection<T extends object>(props: DropdownSectionProps<T>) {
+export function ComboBoxSection<T>(props: DropdownSectionProps<T>) {
   return <DropdownSection {...props} />;
 }

@@ -115,7 +115,6 @@ import {useControlledState} from 'react-stately/useControlledState';
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {useHover} from 'react-aria/useHover';
 import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
-// @ts-ignore
 import {useLocale} from 'react-aria/I18nProvider';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useMultipleSelectionState} from 'react-stately/useMultipleSelectionState';
@@ -992,7 +991,7 @@ let THeadElementType = forwardRef(function THeadElementType(
  */
 export const TableHeader = /*#__PURE__*/ createBranchComponent(
   TableHeaderNode,
-  <T extends object>(
+  <T extends any>(
     props: TableHeaderProps<T>,
     ref: ForwardedRef<HTMLTableSectionElement | HTMLDivElement>
   ) => {
@@ -1502,7 +1501,7 @@ let TableBodyElementType = forwardRef(function TableBodyElementType(
  */
 export const TableBody = /*#__PURE__*/ createBranchComponent(
   TableBodyNode,
-  <T extends object>(
+  <T extends any>(
     props: TableBodyProps<T>,
     ref: ForwardedRef<HTMLTableSectionElement | HTMLDivElement>,
     node: Node<T>
@@ -1609,7 +1608,7 @@ let TableFooterElementType = forwardRef(function TableFooterElementType(
  */
 export const TableFooter = /*#__PURE__*/ createBranchComponent(
   TableFooterNode,
-  <T extends object>(
+  <T extends any>(
     props: TableFooterProps<T>,
     ref: ForwardedRef<HTMLTableSectionElement | HTMLDivElement>,
     node: Node<T>
@@ -1643,7 +1642,11 @@ export const TableFooter = /*#__PURE__*/ createBranchComponent(
 );
 
 export interface RowRenderProps extends ItemRenderProps {
-  /** Whether the row's children have keyboard focus. */
+  /**
+   * Whether the row's children have keyboard focus.
+   *
+   * @selector [data-focus-visible-within]
+   */
   isFocusVisibleWithin: boolean;
   /** The unique id of the row. */
   id?: Key;
@@ -1665,7 +1668,19 @@ export interface RowRenderProps extends ItemRenderProps {
    * @selector [data-level]
    */
   level: number;
+  /**
+   * State of the table.
+   */
+  state: TableState<unknown>;
 }
+
+export interface RowFocusContextValue {
+  isFocusVisibleWithinRow: boolean;
+}
+
+export const RowFocusContext = createContext<RowFocusContextValue>({
+  isFocusVisibleWithinRow: false
+});
 
 export interface RowProps<T>
   extends
@@ -1746,7 +1761,7 @@ let TableRowElementType = forwardRef(function TableRowElementType(
  */
 export const Row = /*#__PURE__*/ createBranchComponent(
   TableRowNode,
-  <T extends object>(
+  <T extends any>(
     props: RowProps<T>,
     forwardedRef: ForwardedRef<HTMLTableRowElement | HTMLDivElement>,
     item: GridNode<T>
@@ -1755,6 +1770,8 @@ export const Row = /*#__PURE__*/ createBranchComponent(
     let state = useContext(TableStateContext)!;
     let {dragAndDropHooks, dragState, dropState} = useContext(DragAndDropContext);
     let {isVirtualized, CollectionBranch} = useContext(CollectionRendererContext);
+    let isDraggable =
+      dragState && !(dragState.isDisabled || dragState.selectionManager.isDisabled(item.key));
     let {rowProps, expandButtonProps, ...states} = useTableRow(
       {
         node: item,
@@ -1769,7 +1786,9 @@ export const Row = /*#__PURE__*/ createBranchComponent(
       within: true
     });
     let {hoverProps, isHovered} = useHover({
-      isDisabled: !states.allowsSelection && !states.hasAction,
+      // because of https://bugs.webkit.org/show_bug.cgi?id=214609, supporting hover styles when a item is ONLY isDraggable
+      // results in hover styles sticking around after a reorder/drop operation...
+      isDisabled: !states.allowsSelection && !states.hasAction && !isDraggable,
       onHoverStart: props.onHoverStart,
       onHoverChange: props.onHoverChange,
       onHoverEnd: props.onHoverEnd
@@ -1824,6 +1843,7 @@ export const Row = /*#__PURE__*/ createBranchComponent(
       },
       values: {
         ...states,
+        state,
         isHovered,
         isFocused,
         isFocusVisible,
@@ -1924,7 +1944,8 @@ export const Row = /*#__PURE__*/ createBranchComponent(
                   }
                 }
               ],
-              [SelectionIndicatorContext, {isSelected: states.isSelected}]
+              [SelectionIndicatorContext, {isSelected: states.isSelected}],
+              [RowFocusContext, {isFocusVisibleWithinRow: isFocusVisibleWithin}]
             ]}>
             <CollectionBranch collection={state.collection} parent={item} />
           </Provider>
@@ -1986,6 +2007,12 @@ export interface CellRenderProps {
    * @selector [data-disabled]
    */
   isDisabled: boolean;
+  /**
+   * Whether keyboard focus is visible anywhere within the parent row.
+   *
+   * @selector [data-focus-visible-within-row]
+   */
+  isFocusVisibleWithinRow: boolean;
   /**
    * The unique id of the cell.
    */
@@ -2080,6 +2107,7 @@ export const Cell = /*#__PURE__*/ createLeafComponent(
     );
     let {isFocused, isFocusVisible, focusProps} = useFocusRing();
     let {hoverProps, isHovered} = useHover({});
+    let {isFocusVisibleWithinRow} = useContext(RowFocusContext);
     let isSelected =
       cell.parentKey != null ? state.selectionManager.isSelected(cell.parentKey) : false;
     // colIndex is null, when there is so span, falling back to using the index
@@ -2097,6 +2125,7 @@ export const Cell = /*#__PURE__*/ createLeafComponent(
       values: {
         isFocused,
         isFocusVisible,
+        isFocusVisibleWithinRow,
         isPressed,
         isHovered,
         isSelected,
@@ -2119,6 +2148,7 @@ export const Cell = /*#__PURE__*/ createLeafComponent(
         ref={ref as any}
         data-focused={isFocused || undefined}
         data-focus-visible={isFocusVisible || undefined}
+        data-focus-visible-within-row={isFocusVisibleWithinRow || undefined}
         data-pressed={isPressed || undefined}
         data-selected={isSelected || undefined}
         data-column-index={columnIndex}

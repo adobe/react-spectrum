@@ -22,7 +22,6 @@ import {forwardRefType, GlobalDOMAttributes} from '@react-types/shared';
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {HeaderContext, HeadingContext} from './Content';
 import {helpTextStyles} from './Field';
-// @ts-ignore
 import intlMessages from '../intl/*.json';
 import {style} from '../style' with {type: 'macro'};
 import {Text} from 'react-aria-components/Text';

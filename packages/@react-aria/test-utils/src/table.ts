@@ -10,15 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, waitFor, within} from '@testing-library/react';
+import {act} from './act';
 import {
   BaseGridRowInteractionOpts,
+  Direction,
   GridRowActionOpts,
   TableTesterOpts,
   ToggleGridRowOpts,
   UserOpts
 } from './types';
-import {getAltKey, getMetaKey, pressElement, triggerLongPress} from './events';
+import {formatTargetNode, getAltKey, getMetaKey, pressElement, triggerLongPress} from './utils';
+import {waitFor, within} from '@testing-library/dom';
 
 interface TableToggleRowOpts extends ToggleGridRowOpts {}
 interface TableToggleExpansionOpts extends BaseGridRowInteractionOpts {}
@@ -45,14 +47,23 @@ export class TableTester {
   private user;
   private _interactionType: UserOpts['interactionType'];
   private _advanceTimer: UserOpts['advanceTimer'];
+  private _direction: Direction;
   private _table: HTMLElement;
 
   constructor(opts: TableTesterOpts) {
-    let {root, user, interactionType, advanceTimer} = opts;
+    let {root, user, interactionType, advanceTimer, direction} = opts;
     this.user = user;
     this._interactionType = interactionType || 'mouse';
     this._advanceTimer = advanceTimer;
+    this._direction = direction || 'ltr';
     this._table = root;
+    let role = root.getAttribute('role');
+    if (role !== 'grid' && role !== 'treegrid') {
+      let table = within(root).queryByRole('grid') || within(root).queryByRole('treegrid');
+      if (table) {
+        this._table = table;
+      }
+    }
   }
 
   /**
@@ -62,14 +73,13 @@ export class TableTester {
     this._interactionType = type;
   }
 
-  // TODO: RTL
   private async keyboardNavigateToRow(opts: {
     row: HTMLElement;
     selectionOnNav?: 'default' | 'none';
   }) {
     let {row, selectionOnNav = 'default'} = opts;
     let altKey = getAltKey();
-    let rows = this.rows;
+    let rows = this.getRows();
     let targetIndex = rows.indexOf(row);
     if (targetIndex === -1) {
       throw new Error('Row provided is not in the table');
@@ -84,20 +94,22 @@ export class TableTester {
       await this.user.keyboard('[ArrowDown]');
     }
 
+    let rowGroups = this.getRowGroups();
     // If focus is currently somewhere in the first row group (aka on a column), we want to keyboard navigate downwards till we reach the rows
-    if (this.rowGroups[0].contains(document.activeElement)) {
+    if (rowGroups[0].contains(document.activeElement)) {
       do {
         await this.user.keyboard('[ArrowDown]');
-      } while (!this.rowGroups[1].contains(document.activeElement));
+      } while (!rowGroups[1].contains(document.activeElement));
     }
 
     // Move focus onto the row itself
+    let focusPrevKey = this._direction === 'rtl' ? 'ArrowRight' : 'ArrowLeft';
     if (
-      this.rowGroups[1].contains(document.activeElement) &&
+      rowGroups[1].contains(document.activeElement) &&
       document.activeElement!.getAttribute('role') !== 'row'
     ) {
       do {
-        await this.user.keyboard('[ArrowLeft]');
+        await this.user.keyboard(`[${focusPrevKey}]`);
       } while (document.activeElement!.getAttribute('role') !== 'row');
     }
     let currIndex = rows.indexOf(document.activeElement as HTMLElement);
@@ -130,18 +142,25 @@ export class TableTester {
       selectionBehavior = 'toggle'
     } = opts;
 
-    let altKey = getMetaKey();
+    let altKey = getAltKey();
     let metaKey = getMetaKey();
 
     if (typeof row === 'string' || typeof row === 'number') {
-      row = this.findRow({rowIndexOrText: row});
+      row = this.findRow({indexOrText: row});
     }
 
     if (!row) {
-      throw new Error('Target row not found in the table.');
+      throw new Error(`Target row "${formatTargetNode(opts.row)}" not found in the table.`);
     }
 
     let rowCheckbox = within(row).queryByRole('checkbox');
+
+    if (
+      rowCheckbox?.getAttribute('disabled') === '' ||
+      row.getAttribute('aria-disabled') === 'true'
+    ) {
+      throw new Error(`Cannot toggle selection on disabled row "${formatTargetNode(opts.row)}".`);
+    }
 
     if (interactionType === 'keyboard' && (!checkboxSelection || !rowCheckbox)) {
       await this.keyboardNavigateToRow({
@@ -162,14 +181,10 @@ export class TableTester {
     } else {
       let cell = within(row).getAllByRole('gridcell')[0];
       if (needsLongPress && interactionType === 'touch') {
-        if (this._advanceTimer == null) {
-          throw new Error('No advanceTimers provided for long press.');
-        }
-
         // Note that long press interactions with rows is strictly touch only for grid rows
         await triggerLongPress({
           element: cell,
-          advanceTimer: this._advanceTimer,
+          advanceTimer: this._advanceTimer!,
           pointerOpts: {pointerType: 'touch'}
         });
       } else {
@@ -190,38 +205,38 @@ export class TableTester {
    */
   async toggleRowExpansion(opts: TableToggleExpansionOpts): Promise<void> {
     let {row, interactionType = this._interactionType} = opts;
-    if (!this.table.contains(document.activeElement)) {
+    if (!this.getTable().contains(document.activeElement)) {
       await act(async () => {
-        this.table.focus();
+        this.getTable().focus();
       });
     }
 
     if (typeof row === 'string' || typeof row === 'number') {
-      row = this.findRow({rowIndexOrText: row});
+      row = this.findRow({indexOrText: row});
     }
 
     if (!row) {
-      throw new Error('Target row not found in the table.');
+      throw new Error(`Target row "${formatTargetNode(opts.row)}" not found in the table.`);
     } else if (row.getAttribute('aria-expanded') == null) {
-      throw new Error('Target row is not expandable.');
+      throw new Error(`Target row "${formatTargetNode(opts.row)}" is not expandable.`);
+    }
+
+    if (row.getAttribute('aria-disabled') === 'true') {
+      throw new Error(`Cannot toggle expansion on disabled row "${formatTargetNode(opts.row)}".`);
     }
 
     if (interactionType === 'mouse' || interactionType === 'touch') {
       let rowExpander = within(row).getAllByRole('button')[0]; // what happens if the button is not first? how can we differentiate?
       await pressElement(this.user, rowExpander, interactionType);
     } else if (interactionType === 'keyboard') {
-      if (row?.getAttribute('aria-disabled') === 'true') {
-        return;
-      }
-
-      // TODO: We always Use Option/Ctrl when keyboard navigating so selection isn't changed
-      // in selectionmode="replace"/highlight selection when navigating to the row that the user wants
-      // to expand. Discuss if this is useful or not
+      // note that our keyboard navigation makes sure selection isn't changes
       await this.keyboardNavigateToRow({row});
+      let collapseKey = this._direction === 'rtl' ? 'ArrowRight' : 'ArrowLeft';
+      let expandKey = this._direction === 'rtl' ? 'ArrowLeft' : 'ArrowRight';
       if (row.getAttribute('aria-expanded') === 'true') {
-        await this.user.keyboard('[ArrowLeft]');
+        await this.user.keyboard(`[${collapseKey}]`);
       } else {
-        await this.user.keyboard('[ArrowRight]');
+        await this.user.keyboard(`[${expandKey}]`);
       }
     }
   }
@@ -235,9 +250,9 @@ export class TableTester {
 
     let columnheader;
     if (typeof column === 'number') {
-      columnheader = this.columns[column];
+      columnheader = this.getColumns()[column];
     } else if (typeof column === 'string') {
-      columnheader = within(this.rowGroups[0]).getByText(column);
+      columnheader = within(this.getRowGroups()[0]).getByText(column);
       while (columnheader && !/columnheader/.test(columnheader.getAttribute('role'))) {
         columnheader = columnheader.parentElement;
       }
@@ -304,12 +319,8 @@ export class TableTester {
       }
 
       // Handle cases where the table may transition in response to the row selection/deselection
-      if (!this._advanceTimer) {
-        throw new Error('No advanceTimers provided for table transition.');
-      }
-
       await act(async () => {
-        await this._advanceTimer?.(200);
+        await this._advanceTimer!(200);
       });
 
       await waitFor(() => {
@@ -335,9 +346,9 @@ export class TableTester {
 
     let columnheader;
     if (typeof column === 'number') {
-      columnheader = this.columns[column];
+      columnheader = this.getColumns()[column];
     } else if (typeof column === 'string') {
-      columnheader = within(this.rowGroups[0]).getByText(column);
+      columnheader = within(this.getRowGroups()[0]).getByText(column);
       while (columnheader && !/columnheader/.test(columnheader.getAttribute('role'))) {
         columnheader = columnheader.parentElement;
       }
@@ -395,12 +406,8 @@ export class TableTester {
       }
 
       // Handle cases where the table may transition in response to the row selection/deselection
-      if (!this._advanceTimer) {
-        throw new Error('No advanceTimers provided for table transition.');
-      }
-
       await act(async () => {
-        await this._advanceTimer?.(200);
+        await this._advanceTimer!(200);
       });
 
       await waitFor(() => {
@@ -425,11 +432,15 @@ export class TableTester {
     let {row, needsDoubleClick, interactionType = this._interactionType} = opts;
 
     if (typeof row === 'string' || typeof row === 'number') {
-      row = this.findRow({rowIndexOrText: row});
+      row = this.findRow({indexOrText: row});
     }
 
     if (!row) {
-      throw new Error('Target row not found in the table.');
+      throw new Error(`Target row "${formatTargetNode(opts.row)}" not found in the table.`);
+    }
+
+    if (row.getAttribute('aria-disabled') === 'true') {
+      throw new Error(`Cannot trigger row action on disabled row "${formatTargetNode(opts.row)}".`);
     }
 
     if (needsDoubleClick) {
@@ -442,9 +453,6 @@ export class TableTester {
     }
   }
 
-  // TODO: should there be utils for drag and drop and column resizing? For column resizing, I'm not entirely convinced that users will be doing that in their tests.
-  // For DnD, it might be tricky to do for keyboard DnD since we wouldn't know what valid drop zones there are... Similarly, for simulating mouse drag and drop the coordinates depend
-  // on the mocks the user sets up for their row height/etc.
   // Additionally, should we also support keyboard navigation/typeahead? Those felt like they could be very easily replicated by the user via user.keyboard already and don't really
   // add much value if we provide that to them
   /**
@@ -453,11 +461,15 @@ export class TableTester {
    */
   async toggleSelectAll(opts: {interactionType?: UserOpts['interactionType']} = {}): Promise<void> {
     let {interactionType = this._interactionType} = opts;
-    let checkbox = within(this.table).getByLabelText('Select All');
     if (interactionType === 'keyboard') {
-      // TODO: using the .focus -> trigger keyboard Enter approach doesn't work for some reason, for now just trigger select all with click.
-      await this.user.click(checkbox);
+      let metaKey = getMetaKey();
+      let table = this.getTable();
+      if (document.activeElement !== table && !table.contains(document.activeElement)) {
+        act(() => table.focus());
+      }
+      await this.user.keyboard(`[${metaKey}>]a[/${metaKey}]`);
     } else {
+      let checkbox = within(this.getTable()).getByLabelText('Select All');
       await pressElement(this.user, checkbox, interactionType);
     }
   }
@@ -465,16 +477,16 @@ export class TableTester {
   /**
    * Returns a row matching the specified index or text content.
    */
-  findRow(opts: {rowIndexOrText: number | string}): HTMLElement {
-    let {rowIndexOrText} = opts;
+  findRow(opts: {indexOrText: number | string}): HTMLElement {
+    let {indexOrText} = opts;
 
     let row;
-    let rows = this.rows;
-    let bodyRowGroup = this.rowGroups[1];
-    if (typeof rowIndexOrText === 'number') {
-      row = rows[rowIndexOrText];
-    } else if (typeof rowIndexOrText === 'string') {
-      row = within(bodyRowGroup).getByText(rowIndexOrText);
+    let rows = this.getRows();
+    let bodyRowGroup = this.getRowGroups()[1];
+    if (typeof indexOrText === 'number') {
+      row = rows[indexOrText];
+    } else if (typeof indexOrText === 'string') {
+      row = within(bodyRowGroup).getByText(indexOrText);
       while (row && row.getAttribute('role') !== 'row') {
         row = row.parentElement;
       }
@@ -489,7 +501,7 @@ export class TableTester {
   findCell(opts: {text: string}): HTMLElement {
     let {text} = opts;
 
-    let cell = within(this.table).getByText(text);
+    let cell = within(this.getTable()).getByText(text);
     if (cell) {
       while (cell && !/gridcell|rowheader|columnheader/.test(cell.getAttribute('role') || '')) {
         if (cell.parentElement) {
@@ -506,14 +518,14 @@ export class TableTester {
   /**
    * Returns the table.
    */
-  get table(): HTMLElement {
+  getTable(): HTMLElement {
     return this._table;
   }
 
   /**
    * Returns the row groups within the table.
    */
-  get rowGroups(): HTMLElement[] {
+  getRowGroups(): HTMLElement[] {
     let table = this._table;
     return table ? within(table).queryAllByRole('rowgroup') : [];
   }
@@ -521,38 +533,57 @@ export class TableTester {
   /**
    * Returns the columns within the table.
    */
-  get columns(): HTMLElement[] {
-    let headerRowGroup = this.rowGroups[0];
+  getColumns(): HTMLElement[] {
+    let headerRowGroup = this.getRowGroups()[0];
     return headerRowGroup ? within(headerRowGroup).queryAllByRole('columnheader') : [];
   }
 
   /**
-   * Returns the rows within the table if any.
+   * Returns the rows within the table if any. Can be filtered to a specific row group if provided
+   * via `element`.
    */
-  get rows(): HTMLElement[] {
-    return this.rowGroups.slice(1).flatMap(rowGroup => within(rowGroup).queryAllByRole('row'));
+  getRows(opts: {element?: HTMLElement} = {}): HTMLElement[] {
+    let {element} = opts;
+    if (element != null) {
+      return within(element).queryAllByRole('row');
+    }
+    return this.getRowGroups()
+      .slice(1)
+      .flatMap(rowGroup => within(rowGroup).queryAllByRole('row'));
   }
 
   /**
    * Returns the currently selected rows within the table if any.
    */
-  get selectedRows(): HTMLElement[] {
-    return this.rows.filter(row => row.getAttribute('aria-selected') === 'true');
+  getSelectedRows(): HTMLElement[] {
+    return this.getRows().filter(row => row.getAttribute('aria-selected') === 'true');
+  }
+
+  /**
+   * Returns the footer rows within the table if any.
+   */
+  getFooterRows(): HTMLElement[] {
+    let rowGroups = this.getRowGroups();
+    if (rowGroups.length < 3) {
+      return [];
+    }
+    let footerRowGroup = rowGroups.at(-1);
+    return footerRowGroup ? within(footerRowGroup).queryAllByRole('row') : [];
   }
 
   /**
    * Returns the row headers within the table if any.
    */
-  get rowHeaders(): HTMLElement[] {
-    return within(this.table).queryAllByRole('rowheader');
+  getRowHeaders(): HTMLElement[] {
+    return within(this.getTable()).queryAllByRole('rowheader');
   }
 
   /**
    * Returns the cells within the table if any. Can be filtered against a specific row if provided
    * via `element`.
    */
-  cells(opts: {element?: HTMLElement} = {}): HTMLElement[] {
-    let {element = this.table} = opts;
+  getCells(opts: {element?: HTMLElement} = {}): HTMLElement[] {
+    let {element = this.getTable()} = opts;
     return within(element).queryAllByRole('gridcell');
   }
 }

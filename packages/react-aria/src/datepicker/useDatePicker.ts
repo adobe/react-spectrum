@@ -11,7 +11,6 @@
  */
 
 import {AriaButtonProps} from '../button/useButton';
-
 import {AriaDialogProps} from '../dialog/useDialog';
 import {
   AriaLabelingProps,
@@ -34,7 +33,6 @@ import {
   privateSetIsValuePartialProp,
   privateValidationStateProp
 } from 'react-stately/private/form/useFormValidationState';
-// @ts-ignore
 import {roleSymbol} from './useDateField';
 import {useDatePickerGroup} from './useDatePickerGroup';
 import {useDescription} from '../utils/useDescription';

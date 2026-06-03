@@ -8,6 +8,9 @@ on:
 jobs:
   weekly-api-diff:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      models: read
     env:
       SNAPSHOTS_REPO: LFDanLu/react-spectrum-api-snapshots
 
@@ -32,7 +35,7 @@ jobs:
         run: yarn build:api-published
 
       - name: Generate diff
-        run: yarn compare:apis --isCI > /tmp/diff-current.txt || true
+        run: yarn compare:apis --isCI > /tmp/diff-current.md || true
 
       # Check out snapshots repo so we can read the previous diff and commit the new one
       - uses: actions/checkout@v4
@@ -73,12 +76,12 @@ jobs:
 
           if [ "$NEW_RELEASE" != "true" ]; then
             # Compare against the last diff in the snapshots repo
-            PREV=$(ls snapshots/diffs/*.txt 2>/dev/null | sort -r | head -1)
+            PREV=$(ls snapshots/diffs/*.md 2>/dev/null | sort -r | head -1)
             echo ""
             echo "=== Delta computation ==="
             echo "Comparing against: ${PREV:-(none, first run)}"
             if [ -n "$PREV" ]; then
-              diff "$PREV" /tmp/diff-current.txt > /tmp/weekly-delta.txt || true
+              diff "$PREV" /tmp/diff-current.md > /tmp/weekly-delta.txt || true
             else
               echo "(first run — no previous diff to compare against)" > /tmp/weekly-delta.txt
             fi
@@ -86,7 +89,7 @@ jobs:
 
           echo ""
           echo "=== File sizes ==="
-          echo "diff-current.txt: $(wc -c < /tmp/diff-current.txt) bytes"
+          echo "diff-current.md: $(wc -c < /tmp/diff-current.md) bytes"
           ls /tmp/weekly-delta.txt 2>/dev/null && echo "weekly-delta.txt: $(wc -c < /tmp/weekly-delta.txt) bytes" || echo "weekly-delta.txt: not created"
           echo ""
           echo "=== Delta content (first 20 lines) ==="
@@ -96,9 +99,9 @@ jobs:
           # Skip if no difference from last diff (aka no change from last week/last run), or if the diff against the release code is empty
           echo ""
           echo "=== Commit decision ==="
-          if [ -s /tmp/diff-current.txt ] && ([ "$NEW_RELEASE" = "true" ] || [ -s /tmp/weekly-delta.txt ]); then
+          if [ -s /tmp/diff-current.md ] && ([ "$NEW_RELEASE" = "true" ] || [ -s /tmp/weekly-delta.txt ]); then
             echo "Committing diff to snapshots repo"
-            cp /tmp/diff-current.txt snapshots/diffs/$TODAY.txt
+            cp /tmp/diff-current.md snapshots/diffs/$TODAY.md
             mkdir -p snapshots/deltas
             if [ -s /tmp/weekly-delta.txt ]; then
               # Save processed delta: strip > / < markers and line-number markers,
@@ -112,20 +115,20 @@ jobs:
                   echo "=== API CHANGES RELEASED SINCE LAST WEEK (were in last week's diff, now gone) ==="
                   echo "$RELEASED"
                 fi
-              } > snapshots/deltas/$TODAY.txt
+              } > snapshots/deltas/$TODAY.md
             fi
             cd snapshots
             git config user.email "github-actions@github.com"
             git config user.name "GitHub Actions"
-            git add diffs/$TODAY.txt
-            [ -f deltas/$TODAY.txt ] && git add deltas/$TODAY.txt
+            git add diffs/$TODAY.md
+            [ -f deltas/$TODAY.md ] && git add deltas/$TODAY.md
             echo "$CURRENT_PUBLISH" > last-publish-hash.txt
             git add last-publish-hash.txt
             echo "=== Staged changes ==="
             git diff --cached --stat
             git diff --cached --quiet || (git commit -m "weekly api diff $TODAY" && git push)
           else
-            echo "Skipping commit — diff-current empty=$([ ! -s /tmp/diff-current.txt ] && echo yes || echo no), new_release=$NEW_RELEASE, delta_empty=$([ ! -s /tmp/weekly-delta.txt ] && echo yes || echo no)"
+            echo "Skipping commit — diff-current empty=$([ ! -s /tmp/diff-current.md ] && echo yes || echo no), new_release=$NEW_RELEASE, delta_empty=$([ ! -s /tmp/weekly-delta.txt ] && echo yes || echo no)"
           fi
 
       # Summarize with GitHub Models (free via GITHUB_TOKEN) and post to Slack
@@ -150,29 +153,50 @@ jobs:
           slack_token = os.environ['SLACK_TSDIFF_CHROMATIC_BOT_TOKEN']
           github_token = os.environ['GITHUB_TOKEN']
           workspace = os.environ['GITHUB_WORKSPACE']
-          diff_url = f"https://github.com/{snapshots_repo}/blob/main/diffs/{today}.txt"
-          delta_url = f"https://github.com/{snapshots_repo}/blob/main/deltas/{today}.txt"
+          diff_url = f"https://github.com/{snapshots_repo}/blob/main/diffs/{today}.md"
+          delta_url = f"https://github.com/{snapshots_repo}/blob/main/deltas/{today}.md"
 
-          vs_release_size = os.path.getsize('/tmp/diff-current.txt')
+          vs_release_size = os.path.getsize('/tmp/diff-current.md')
           vs_last_week_size = os.path.getsize('/tmp/weekly-delta.txt') if os.path.exists('/tmp/weekly-delta.txt') else 0
 
-          prev_files = sorted(glob.glob(f"{workspace}/snapshots/diffs/*.txt"), reverse=True)
-          prev_date = os.path.basename(prev_files[0]).replace('.txt', '') if prev_files else None
-          prev_url = f"https://github.com/{snapshots_repo}/blob/main/diffs/{prev_date}.txt" if prev_date else None
+          prev_files = sorted(glob.glob(f"{workspace}/snapshots/diffs/*.md"), reverse=True)
+          prev_date = os.path.basename(prev_files[0]).replace('.md', '') if prev_files else None
+          prev_url = f"https://github.com/{snapshots_repo}/blob/main/diffs/{prev_date}.md" if prev_date else None
 
           new_release = os.environ.get('NEW_RELEASE') == 'true'
 
+          def post(text, thread_ts=None):
+            payload = {"channel": channel, "text": text, "unfurl_links": False, "unfurl_media": False}
+            if thread_ts:
+              payload["thread_ts"] = thread_ts
+            req = urllib.request.Request(
+              'https://slack.com/api/chat.postMessage',
+              data=json.dumps(payload).encode(),
+              headers={
+                'Authorization': f'Bearer {slack_token}',
+                'Content-Type': 'application/json'
+              }
+            )
+            resp = json.loads(urllib.request.urlopen(req).read())
+            print("Slack response:", resp.get('ok'), resp.get('error', ''))
+            if not resp.get('ok'):
+              raise SystemExit(f"Slack error: {resp.get('error')}")
+            return resp['message']['ts']
+
           if vs_release_size == 0:
-            message = f"📊 Weekly API Diff — {today}\n\nNo API changes detected vs last release — all pending changes have been included in a release."
+            body = "No API changes detected vs last release — all pending changes have been included in a release."
           elif vs_last_week_size == 0 and not new_release:
             prev_ref = f"last diff ({prev_date}): {prev_url}" if prev_date else "last diff"
-            message = f"📊 Weekly API Diff — {today}\n\nNo new API changes since {prev_ref}."
+            body = f"No new API changes since {prev_ref}."
           elif new_release:
-            message = f"📊 Weekly API Diff — {today}\n\nNew release since last diff — resetting baseline. Full diff vs release: {diff_url}\n\nReact ✅ if changes look expected, or 🚨 if something looks wrong."
+            body = f"New release since last diff — resetting baseline. Full diff vs release: {diff_url}\n\nReact ✅ if changes look expected, or 🚨 if something looks wrong."
           else:
             # Read the already-processed delta saved by the shell step
-            delta_path = f"{workspace}/snapshots/deltas/{today}.txt"
-            model_input = open(delta_path).read() if os.path.exists(delta_path) else ""
+            delta_path = f"{workspace}/snapshots/deltas/{today}.md"
+            model_input_full = open(delta_path).read() if os.path.exists(delta_path) else ""
+            TRUNCATE_LIMIT = 8000
+            truncated = len(model_input_full) > TRUNCATE_LIMIT
+            model_input = model_input_full[:TRUNCATE_LIMIT] if truncated else model_input_full
 
             # Extract classification rules from prompt.md (single source of truth)
             prompt_md = open(f"{workspace}/scripts/weekly-api-diff/prompt.md").read()
@@ -207,18 +231,9 @@ jobs:
               }
             )
             summary = json.loads(urllib.request.urlopen(req).read())['choices'][0]['message']['content']
-            message = f"📊 Weekly API Diff — {today}\n\n{summary}\n\nWhat's new this week: {delta_url}\nFull diff vs release: {diff_url}\n\nReact ✅ if changes look expected, or 🚨 if something looks wrong."
+            truncation_note = "\n\n⚠️ Delta was large — summary may be incomplete. Check the full delta link below." if truncated else ""
+            body = f"{summary}{truncation_note}\n\nWhat's new this week: {delta_url}\nFull diff vs release: {diff_url}\n\nReact ✅ if changes look expected, or 🚨 if something looks wrong."
 
-          req = urllib.request.Request(
-            'https://slack.com/api/chat.postMessage',
-            data=json.dumps({"channel": channel, "text": message}).encode(),
-            headers={
-              'Authorization': f'Bearer {slack_token}',
-              'Content-Type': 'application/json'
-            }
-          )
-          resp = json.loads(urllib.request.urlopen(req).read())
-          print("Slack response:", resp.get('ok'), resp.get('error', ''))
-          if not resp.get('ok'):
-            raise SystemExit(f"Slack error: {resp.get('error')}")
+          ts = post(f"📊 Weekly API Diff — {today}")
+          post(f"📊 Weekly API Diff — {today}\n\n{body}", thread_ts=ts)
           PYEOF

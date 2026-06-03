@@ -21,7 +21,7 @@ describe('useProgressBar', function () {
   };
 
   it('with default props if no props are provided', () => {
-    let consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    using consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
     let {progressBarProps} = renderProgressBarHook({});
     expect(progressBarProps.role).toBe('progressbar');
     expect(progressBarProps['aria-valuemin']).toBe(0);
@@ -59,7 +59,7 @@ describe('useProgressBar', function () {
   });
 
   it('with custom text value', () => {
-    let props = {value: 25, valueLabel: '¥25'};
+    let props = {value: 25, valueLabel: '¥25', 'aria-label': 'mandatory label'};
     let {progressBarProps} = renderProgressBarHook(props);
     expect(progressBarProps['aria-valuenow']).toBe(25);
     expect(progressBarProps['aria-valuetext']).toBe('¥25');

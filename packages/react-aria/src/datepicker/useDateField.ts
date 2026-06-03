@@ -29,7 +29,6 @@ import {mergeProps} from '../utils/mergeProps';
 import {privateSetIsValuePartialProp} from 'react-stately/private/form/useFormValidationState';
 import {TimeFieldState, TimePickerProps, TimeValue} from 'react-stately/useTimeFieldState';
 import {useDatePickerGroup} from './useDatePickerGroup';
-// @ts-ignore
 import {useDescription} from '../utils/useDescription';
 import {useField} from '../label/useField';
 import {useFocusWithin} from '../interactions/useFocusWithin';

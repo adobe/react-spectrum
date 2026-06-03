@@ -139,6 +139,7 @@ const InternalTabsContext = createContext<
   Partial<TabsProps> & {
     tablistRef?: RefObject<HTMLDivElement | null>;
     selectedKey?: Key | null;
+    baseId?: string;
   }
 >({});
 
@@ -200,6 +201,8 @@ export const Tabs = forwardRef(function Tabs(props: TabsProps, ref: DOMRef<HTMLD
   }
 
   let tablistRef = useRef<HTMLDivElement | null>(null);
+  // Shared base id so child Tab/TabPanel components can derive stable ids.
+  let baseId = useId();
 
   return (
     <Provider
@@ -215,6 +218,7 @@ export const Tabs = forwardRef(function Tabs(props: TabsProps, ref: DOMRef<HTMLD
             tablistRef,
             onSelectionChange: setValue,
             labelBehavior,
+            baseId,
             'aria-label': props['aria-label'],
             'aria-labelledby': props['aria-labelledby']
           }
@@ -283,7 +287,7 @@ const tablistWrapper = style(
   getAllowedOverrides()
 );
 
-export function TabList<T extends object>(props: TabListProps<T>): ReactNode | null {
+export function TabList<T>(props: TabListProps<T>): ReactNode | null {
   let {showTabs, menuId, valueId, tabs, listRef, onSelectionChange, ariaLabel, ariaDescribedBy} =
     useContext(CollapseContext) ?? {};
   let {density, orientation, labelBehavior} = useContext(InternalTabsContext);
@@ -311,7 +315,7 @@ export function TabList<T extends object>(props: TabListProps<T>): ReactNode | n
   );
 }
 
-function TabListInner<T extends object>(props: TabListProps<T>) {
+function TabListInner<T>(props: TabListProps<T>) {
   let {
     tablistRef,
     orientation,
@@ -460,9 +464,12 @@ const icon = style({
 });
 
 export function Tab(props: TabProps): ReactNode {
-  let {density, orientation, labelBehavior} = useContext(InternalTabsContext) ?? {};
+  let {density, orientation, labelBehavior, baseId} = useContext(InternalTabsContext) ?? {};
 
-  let contentId = useId();
+  // Derive a stable content id from the shared baseId on InternalTabsContext.
+  // Prevents infinite loop when rendering across multiple CollectionBuilder portals.
+  let fallbackId = useId();
+  let contentId = `${baseId ?? fallbackId}-content-${props.id ?? fallbackId}`;
   let ariaLabelledBy = props['aria-labelledby'] || '';
 
   return (

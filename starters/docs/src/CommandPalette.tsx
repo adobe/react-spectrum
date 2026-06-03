@@ -12,13 +12,13 @@ import {Modal} from './Modal';
 import {useEffect} from 'react';
 import './CommandPalette.css';
 
-export interface CommandPaletteProps<T extends object>
+export interface CommandPaletteProps<T>
   extends Omit<AriaAutocompleteProps, 'children'>, AriaMenuProps<T> {
   isOpen: boolean;
   onOpenChange: (isOpen?: boolean) => void;
 }
 
-export function CommandPalette<T extends object>(props: CommandPaletteProps<T>) {
+export function CommandPalette<T>(props: CommandPaletteProps<T>) {
   let {isOpen, onOpenChange} = props;
   let {contains} = useFilter({sensitivity: 'base'});
 

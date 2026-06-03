@@ -11,7 +11,6 @@
  */
 
 import {ActionButton} from '../button/ActionButton';
-
 import {ActionGroup} from '../actiongroup/ActionGroup';
 import {announce} from 'react-aria/private/live-announcer/LiveAnnouncer';
 import {classNames} from '../utils/classNames';
@@ -21,7 +20,6 @@ import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {FocusScope} from 'react-aria/FocusScope';
 import intlMessages from '../../intl/actionbar/*.json';
 import {OpenTransition} from '../overlays/OpenTransition';
-// @ts-ignore
 import React, {ReactElement, Ref, useEffect, useRef, useState} from 'react';
 import styles from './actionbar.css';
 import {Text} from '../text/Text';

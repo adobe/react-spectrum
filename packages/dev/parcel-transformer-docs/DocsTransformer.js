@@ -548,7 +548,11 @@ module.exports = new Transformer({
         );
       }
 
-      if (path.isTSExpressionWithTypeArguments()) {
+      // due to oxlint formatting, WaterfallLayout/other classes now are multiline declarations
+      // the "extends Layout<Node<T>, 0>" part then ends up becoming isTSInstantiationExpressions superclass rather than just Identifier.
+      // as a result, should be handled similar to isTSExpressionWithTypeArguments (aka Blah<T>)
+      // see https://astexplorer.net/#/gist/451958d4b4a31868f0896664e2291a92/15ffdc9fe4097cfdb9f997f12d550fdff4761205 for verification
+      if (path.isTSExpressionWithTypeArguments() || path.isTSInstantiationExpression()) {
         if (path.node.typeParameters) {
           return Object.assign(node, {
             type: 'application',

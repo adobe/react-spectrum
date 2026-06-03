@@ -401,7 +401,7 @@ describe('useSliderThumb', () => {
         expect(onChangeSpy).toHaveBeenLastCalledWith([40]);
         expect(onChangeEndSpy).toHaveBeenLastCalledWith([40]);
         expect(stateRef.current.values).toEqual([40]);
-        expect(onChangeEndSpy).toBeCalledTimes(1);
+        expect(onChangeEndSpy).toHaveBeenCalledTimes(1);
       });
     });
 
@@ -435,7 +435,7 @@ describe('useSliderThumb', () => {
         expect(onChangeSpy).toHaveBeenLastCalledWith([40]);
         expect(onChangeEndSpy).toHaveBeenLastCalledWith([40]);
         expect(stateRef.current.values).toEqual([40]);
-        expect(onChangeEndSpy).toBeCalledTimes(1);
+        expect(onChangeEndSpy).toHaveBeenCalledTimes(1);
       });
 
       it('can be moved by dragging (vertical)', () => {
@@ -468,7 +468,7 @@ describe('useSliderThumb', () => {
         expect(onChangeSpy).toHaveBeenLastCalledWith([40]);
         expect(onChangeEndSpy).toHaveBeenLastCalledWith([40]);
         expect(stateRef.current.values).toEqual([40]);
-        expect(onChangeEndSpy).toBeCalledTimes(1);
+        expect(onChangeEndSpy).toHaveBeenCalledTimes(1);
       });
     });
 

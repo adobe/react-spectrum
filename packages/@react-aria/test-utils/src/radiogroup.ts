@@ -10,9 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, within} from '@testing-library/react';
+import {act} from './act';
 import {Direction, Orientation, RadioGroupTesterOpts, UserOpts} from './types';
-import {pressElement} from './events';
+import {formatTargetNode, pressElement} from './utils';
+import {within} from '@testing-library/dom';
 
 interface TriggerRadioOptions {
   /**
@@ -55,14 +56,14 @@ export class RadioGroupTester {
   /**
    * Returns a radio matching the specified index or text content.
    */
-  findRadio(opts: {radioIndexOrText: number | string}): HTMLElement {
-    let {radioIndexOrText} = opts;
+  findRadio(opts: {indexOrText: number | string}): HTMLElement {
+    let {indexOrText} = opts;
 
     let radio;
-    if (typeof radioIndexOrText === 'number') {
-      radio = this.radios[radioIndexOrText];
-    } else if (typeof radioIndexOrText === 'string') {
-      let label = within(this.radiogroup).getByText(radioIndexOrText);
+    if (typeof indexOrText === 'number') {
+      radio = this.getRadios()[indexOrText];
+    } else if (typeof indexOrText === 'string') {
+      let label = within(this.getRadioGroup()).getByText(indexOrText);
       // Label may wrap the radio, or the actual label may be a sibling span, or the radio div could have the label within it
       if (label) {
         radio = within(label).queryByRole('radio');
@@ -82,7 +83,7 @@ export class RadioGroupTester {
 
   private async keyboardNavigateToRadio(opts: {radio: HTMLElement; orientation?: Orientation}) {
     let {radio, orientation = 'vertical'} = opts;
-    let radios = this.radios;
+    let radios = this.getRadios();
     radios = radios.filter(
       radio => !(radio.hasAttribute('disabled') || radio.getAttribute('aria-disabled') === 'true')
     );
@@ -97,8 +98,8 @@ export class RadioGroupTester {
       throw new Error('Radio provided is not in the radio group.');
     }
 
-    if (!this.radiogroup.contains(document.activeElement)) {
-      let selectedRadio = this.selectedRadio;
+    if (!this.getRadioGroup().contains(document.activeElement)) {
+      let selectedRadio = this.getSelectedRadio();
       if (selectedRadio != null) {
         act(() => selectedRadio.focus());
       } else {
@@ -136,13 +137,15 @@ export class RadioGroupTester {
     let {radio, interactionType = this._interactionType} = opts;
 
     if (typeof radio === 'string' || typeof radio === 'number') {
-      radio = this.findRadio({radioIndexOrText: radio});
+      radio = this.findRadio({indexOrText: radio});
     }
 
     if (!radio) {
-      throw new Error('Target radio not found in the radio group.');
+      throw new Error(
+        `Target radio "${formatTargetNode(opts.radio)}" not found in the radio group.`
+      );
     } else if (radio.hasAttribute('disabled')) {
-      throw new Error('Target radio is disabled.');
+      throw new Error(`Target radio "${formatTargetNode(opts.radio)}" is disabled.`);
     }
 
     if (interactionType === 'keyboard') {
@@ -156,21 +159,21 @@ export class RadioGroupTester {
   /**
    * Returns the radiogroup.
    */
-  get radiogroup(): HTMLElement {
+  getRadioGroup(): HTMLElement {
     return this._radiogroup;
   }
 
   /**
    * Returns the radios.
    */
-  get radios(): HTMLElement[] {
-    return within(this.radiogroup).queryAllByRole('radio');
+  getRadios(): HTMLElement[] {
+    return within(this.getRadioGroup()).queryAllByRole('radio');
   }
 
   /**
    * Returns the currently selected radio in the radiogroup if any.
    */
-  get selectedRadio(): HTMLElement | null {
-    return this.radios.find(radio => (radio as HTMLInputElement).checked) || null;
+  getSelectedRadio(): HTMLElement | null {
+    return this.getRadios().find(radio => (radio as HTMLInputElement).checked) || null;
   }
 }

@@ -73,15 +73,17 @@ describe('Combobox', () => {
     let tree = render(<ComboBox label="test">{[]}</ComboBox>);
 
     let comboboxTester = testUtilUser.createTester('ComboBox', {root: tree.container});
-    expect(comboboxTester.listbox).toBeFalsy();
+    expect(comboboxTester.getListbox()).toBeFalsy();
     comboboxTester.setInteractionType('mouse');
     await comboboxTester.open();
 
-    let options = comboboxTester.options();
+    let options = comboboxTester.getOptions();
     expect(options).toHaveLength(1);
-    expect(comboboxTester.listbox).toBeTruthy();
+    expect(comboboxTester.getListbox()).toBeTruthy();
     expect(options[0]).toHaveTextContent('No results');
-    expect(within(comboboxTester.listbox!).getByTestId('loadMoreSentinel')).toBeInTheDocument();
+    expect(
+      within(comboboxTester.getListbox()!).getByTestId('loadMoreSentinel')
+    ).toBeInTheDocument();
   });
 
   it('should only call loadMore whenever intersection is detected', async () => {
@@ -102,7 +104,7 @@ describe('Combobox', () => {
     );
 
     let comboboxTester = testUtilUser.createTester('ComboBox', {root: tree.container});
-    expect(comboboxTester.listbox).toBeFalsy();
+    expect(comboboxTester.getListbox()).toBeFalsy();
     comboboxTester.setInteractionType('mouse');
     await comboboxTester.open();
 
@@ -158,7 +160,7 @@ describe('Combobox', () => {
 
     expect(announce).toHaveBeenLastCalledWith('5 options available.');
     expect(
-      within(comboboxTester.listbox!).getByRole('progressbar', {hidden: true})
+      within(comboboxTester.getListbox()!).getByRole('progressbar', {hidden: true})
     ).toBeInTheDocument();
 
     await user.keyboard('C');
@@ -174,13 +176,13 @@ describe('Combobox', () => {
       interactionType: 'mouse'
     });
     await comboboxTester.open();
-    let options = comboboxTester.options();
+    let options = comboboxTester.getOptions();
     for (let [index, option] of options.entries()) {
       expect(option).toHaveAttribute('aria-posinset', `${index + 1}`);
     }
 
     tree.rerender(<DynamicCombobox items={items} loadingState="filtering" />);
-    options = comboboxTester.options();
+    options = comboboxTester.getOptions();
     for (let [index, option] of options.entries()) {
       expect(option).toHaveAttribute('aria-posinset', `${index + 1}`);
     }
@@ -194,7 +196,7 @@ describe('Combobox', () => {
     ];
     tree.rerender(<DynamicCombobox items={newItems} loadingState="idle" />);
 
-    options = comboboxTester.options();
+    options = comboboxTester.getOptions();
     for (let [index, option] of options.entries()) {
       expect(option).toHaveAttribute('aria-posinset', `${index + 1}`);
     }
@@ -202,7 +204,8 @@ describe('Combobox', () => {
 
   it('should support contextual help', async () => {
     // Issue with how we don't render the contextual help button in the fake DOM since PressResponder isn't using createHideableComponent
-    let warn = jest.spyOn(global.console, 'warn').mockImplementation();
+    using warn = jest.spyOn(global.console, 'warn').mockImplementation() as jest.SpyInstance &
+      Disposable;
     let user = userEvent.setup({delay: null, pointerMap});
     let tree = render(
       <ComboBox
@@ -229,7 +232,7 @@ describe('Combobox', () => {
     });
     let buttons = tree.getAllByRole('button');
     expect(buttons).toHaveLength(2);
-    expect(buttons[1]).toBe(comboboxTester.trigger);
+    expect(buttons[1]).toBe(comboboxTester.getTrigger());
 
     await user.click(buttons[0]);
 
@@ -271,26 +274,26 @@ describe('Combobox', () => {
       interactionType: 'mouse'
     });
     await dialogTester.open();
-    expect(dialogTester.dialog).toBeVisible();
+    expect(dialogTester.getDialog()).toBeVisible();
     act(() => {
       jest.runAllTimers();
     });
     let comboboxTester = testUtilUser.createTester('ComboBox', {
-      root: dialogTester.dialog!,
+      root: dialogTester.getDialog()!,
       interactionType: 'mouse'
     });
     await comboboxTester.open();
 
-    expect(comboboxTester.listbox).toBeVisible();
+    expect(comboboxTester.getListbox()).toBeVisible();
     act(() => {
       jest.runAllTimers();
     });
     let backdrop = document.querySelector('[style*="--visual-viewport-height"]');
     await user.click(backdrop!);
 
-    await waitFor(() => expect(comboboxTester.listbox).toBeNull());
+    await waitFor(() => expect(comboboxTester.getListbox()).toBeNull());
     await user.click(backdrop!);
-    expect(dialogTester.dialog).toBeNull();
+    expect(dialogTester.getDialog()).toBeNull();
   });
 
   it('should label the input with the prefix', () => {

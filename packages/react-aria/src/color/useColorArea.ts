@@ -19,7 +19,6 @@ import {isAndroid, isIOS} from '../utils/platform';
 import {mergeProps} from '../utils/mergeProps';
 import React, {ChangeEvent, InputHTMLAttributes, useCallback, useRef, useState} from 'react';
 import {useColorAreaGradient} from './useColorAreaGradient';
-// @ts-ignore
 import {useFocus} from '../interactions/useFocus';
 import {useFocusWithin} from '../interactions/useFocusWithin';
 import {useFormReset} from '../utils/useFormReset';

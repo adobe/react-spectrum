@@ -11,7 +11,6 @@
  */
 
 import {announce} from '../live-announcer/LiveAnnouncer';
-
 import {AriaButtonProps} from '../button/useButton';
 import {
   AriaLabelingProps,
@@ -41,7 +40,6 @@ import {isAndroid, isIOS, isIPhone} from '../utils/platform';
 import {mergeProps} from '../utils/mergeProps';
 import {NumberFieldProps, NumberFieldState} from 'react-stately/useNumberFieldState';
 import {privateValidationStateProp} from 'react-stately/private/form/useFormValidationState';
-// @ts-ignore
 import {useFocus} from '../interactions/useFocus';
 import {useFocusWithin} from '../interactions/useFocusWithin';
 import {useFormattedTextField} from '../textfield/useFormattedTextField';

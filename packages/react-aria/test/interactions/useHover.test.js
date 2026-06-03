@@ -20,7 +20,6 @@ import {
 import {ActionButton} from '@adobe/react-spectrum/ActionButton';
 import {Dialog} from '@adobe/react-spectrum/Dialog';
 import {DialogTrigger} from '@adobe/react-spectrum/DialogTrigger';
-import MatchMediaMock from 'jest-matchmedia-mock';
 import {Provider} from '@adobe/react-spectrum/Provider';
 import React, {useState} from 'react';
 import {defaultTheme as theme} from '@adobe/react-spectrum/defaultTheme';
@@ -618,9 +617,7 @@ describe('useHover', function () {
       jest.useFakeTimers();
     });
 
-    let matchMedia;
     beforeEach(() => {
-      matchMedia = new MatchMediaMock();
       // this needs to be a setTimeout so that the dialog can be removed from the dom before the callback is invoked
       jest
         .spyOn(window, 'requestAnimationFrame')
@@ -637,8 +634,6 @@ describe('useHover', function () {
           jest.runAllTimers();
         });
       }
-
-      matchMedia.clear();
       window.requestAnimationFrame.mockRestore();
     });
 

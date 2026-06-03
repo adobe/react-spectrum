@@ -21,7 +21,7 @@ import {composeRenderProps} from 'react-aria-components/composeRenderProps';
 import {dropdownItemStyles} from './ListBox';
 import {Popover, type PopoverProps} from './Popover';
 
-export function Menu<T extends object>(props: MenuProps<T>) {
+export function Menu<T>(props: MenuProps<T>) {
   return (
     <AriaMenu
       {...props}
@@ -66,7 +66,7 @@ export interface MenuSectionProps<T> extends AriaMenuSectionProps<T> {
   items?: any;
 }
 
-export function MenuSection<T extends object>(props: MenuSectionProps<T>) {
+export function MenuSection<T>(props: MenuSectionProps<T>) {
   return (
     <AriaMenuSection
       {...props}

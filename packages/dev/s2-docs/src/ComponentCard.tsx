@@ -107,6 +107,8 @@ import InlineAlertDark from 'url:../assets/component-illustrations/dark/InlineAl
 import InlineAlertLight from 'url:../assets/component-illustrations/light/InlineAlert.avif';
 import KeyboardDark from 'url:../assets/component-illustrations/dark/Keyboard.avif';
 import KeyboardLight from 'url:../assets/component-illustrations/light/Keyboard.avif';
+import LabeledValueDark from 'url:../assets/component-illustrations/dark/LabeledValue.avif';
+import LabeledValueLight from 'url:../assets/component-illustrations/light/LabeledValue.avif';
 import LinkButtonDark from 'url:../assets/component-illustrations/dark/LinkButton.avif';
 import LinkButtonLight from 'url:../assets/component-illustrations/light/LinkButton.avif';
 import LinkDark from 'url:../assets/component-illustrations/dark/Link.avif';
@@ -250,6 +252,7 @@ const componentIllustrations: Record<string, [string, string] | undefined> = {
   Illustrations: [IllustrationsLight, IllustrationsDark],
   Image: [ImageLight, ImageDark],
   InlineAlert: [InlineAlertLight, InlineAlertDark],
+  LabeledValue: [LabeledValueLight, LabeledValueDark],
   Link: [LinkLight, LinkDark],
   LinkButton: [LinkButtonLight, LinkButtonDark],
   ListBox: [SelectionLight, SelectionDark],

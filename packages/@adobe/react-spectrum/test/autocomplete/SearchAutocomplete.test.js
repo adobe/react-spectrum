@@ -206,7 +206,7 @@ describe('SearchAutocomplete', function () {
   });
 
   it('renders with placeholder text and shows warning', function () {
-    let spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    using spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
     let {getByPlaceholderText, getByRole} = renderSearchAutocomplete({
       placeholder: 'Test placeholder'
     });
@@ -357,7 +357,7 @@ describe('SearchAutocomplete', function () {
         });
 
         let listbox = getByRole('listbox');
-        expect(onOpenChange).toBeCalledTimes(1);
+        expect(onOpenChange).toHaveBeenCalledTimes(1);
         expect(onOpenChange).toHaveBeenCalledWith(true, 'focus');
         await testSearchAutocompleteOpen(searchAutocomplete, listbox);
       });

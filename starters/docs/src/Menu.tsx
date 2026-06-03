@@ -33,7 +33,7 @@ export function MenuTrigger(props: MenuTriggerProps) {
   );
 }
 
-export function Menu<T extends object>(props: MenuProps<T>) {
+export function Menu<T>(props: MenuProps<T>) {
   return <AriaMenu {...props}>{props.children}</AriaMenu>;
 }
 
@@ -58,7 +58,7 @@ export function MenuItem(props: Omit<MenuItemProps, 'children'> & {children?: Re
   );
 }
 
-export function MenuSection<T extends object>(props: MenuSectionProps<T>) {
+export function MenuSection<T>(props: MenuSectionProps<T>) {
   return <AriaMenuSection {...props} />;
 }
 

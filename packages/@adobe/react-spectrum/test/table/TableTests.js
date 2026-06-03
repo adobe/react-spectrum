@@ -2327,15 +2327,15 @@ export let tableTests = () => {
         tableTester.setInteractionType('keyboard');
 
         await tableTester.toggleRowSelection({row: 0});
-        expect(tableTester.selectedRows).toHaveLength(1);
+        expect(tableTester.getSelectedRows()).toHaveLength(1);
         expect(onSelectionChange).toHaveBeenCalledTimes(1);
 
         await tableTester.toggleRowSelection({row: 1});
-        expect(tableTester.selectedRows).toHaveLength(2);
+        expect(tableTester.getSelectedRows()).toHaveLength(2);
         expect(onSelectionChange).toHaveBeenCalledTimes(2);
 
         await user.keyboard('{Escape}');
-        expect(tableTester.selectedRows).toHaveLength(2);
+        expect(tableTester.getSelectedRows()).toHaveLength(2);
         expect(onSelectionChange).toHaveBeenCalledTimes(2);
       });
 
@@ -2751,12 +2751,12 @@ export let tableTests = () => {
 
         checkSelectAll(tree, 'unchecked');
 
-        let rows = tableTester.rows;
+        let rows = tableTester.getRows();
         checkRowSelection(rows.slice(1), false);
-        expect(tableTester.selectedRows).toHaveLength(0);
+        expect(tableTester.getSelectedRows()).toHaveLength(0);
 
         await tableTester.toggleSelectAll();
-        expect(tableTester.selectedRows).toHaveLength(tableTester.rows.length);
+        expect(tableTester.getSelectedRows()).toHaveLength(tableTester.getRows().length);
         expect(onSelectionChange).toHaveBeenCalledTimes(1);
         expect(onSelectionChange.mock.calls[0][0]).toEqual('all');
         checkRowSelection(rows.slice(1), true);
@@ -3313,7 +3313,7 @@ export let tableTests = () => {
       });
 
       it('will add to the current selection if the command key is pressed', async function () {
-        let uaMock = jest.spyOn(navigator, 'platform', 'get').mockImplementation(() => 'Mac');
+        using uaMock = jest.spyOn(navigator, 'platform', 'get').mockImplementation(() => 'Mac');
         let onSelectionChange = jest.fn();
         let tree = renderTable({onSelectionChange, selectionStyle: 'highlight'});
 
@@ -4893,11 +4893,11 @@ export let tableTests = () => {
     });
 
     it("should add sort direction info to the column header's aria-describedby for Android", async function () {
-      let uaMock = jest.spyOn(navigator, 'userAgent', 'get').mockImplementation(() => 'Android');
+      using uaMock = jest.spyOn(navigator, 'userAgent', 'get').mockImplementation(() => 'Android');
       let tree = render(<ExampleSortTable />);
       let tableTester = testUtilUser.createTester('Table', {root: tree.getByRole('grid')});
       tableTester.setInteractionType('keyboard');
-      let columnheaders = tableTester.columns;
+      let columnheaders = tableTester.getColumns();
       expect(columnheaders).toHaveLength(3);
       expect(columnheaders[0]).not.toHaveAttribute('aria-sort');
       expect(columnheaders[1]).not.toHaveAttribute('aria-sort');

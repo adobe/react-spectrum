@@ -15,7 +15,6 @@ import {AriaTextFieldProps, useTextField} from '../textfield/useTextField';
 import {chain} from '../utils/chain';
 import {DOMAttributes, RefObject, ValidationResult} from '@react-types/shared';
 import {InputHTMLAttributes, LabelHTMLAttributes} from 'react';
-// @ts-ignore
 import intlMessages from '../../intl/searchfield/*.json';
 import {SearchFieldProps, SearchFieldState} from 'react-stately/useSearchFieldState';
 import {useLocalizedStringFormatter} from '../i18n/useLocalizedStringFormatter';

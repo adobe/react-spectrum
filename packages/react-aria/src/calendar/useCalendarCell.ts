@@ -18,7 +18,6 @@ import {getActiveElement, getEventTarget} from '../utils/shadowdom/DOMFunctions'
 import {getEraFormat, hookData} from './utils';
 import {getInteractionModality} from '../interactions/useFocusVisible';
 import {getScrollParent} from '../utils/getScrollParent';
-// @ts-ignore
 import intlMessages from '../../intl/calendar/*.json';
 import {mergeProps} from '../utils/mergeProps';
 import {RangeCalendarState} from 'react-stately/useRangeCalendarState';

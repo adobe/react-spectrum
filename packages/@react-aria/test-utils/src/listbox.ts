@@ -10,9 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, within} from '@testing-library/react';
-import {getAltKey, getMetaKey, pressElement, triggerLongPress} from './events';
+import {act} from './act';
+import {formatTargetNode, getAltKey, getMetaKey, pressElement, triggerLongPress} from './utils';
 import {ListBoxTesterOpts, UserOpts} from './types';
+import {within} from '@testing-library/dom';
 
 interface ListBoxToggleOptionOpts {
   /**
@@ -65,13 +66,21 @@ export class ListBoxTester {
   private _interactionType: UserOpts['interactionType'];
   private _advanceTimer: UserOpts['advanceTimer'];
   private _listbox: HTMLElement;
+  private _layout: ListBoxTesterOpts['layout'];
 
   constructor(opts: ListBoxTesterOpts) {
-    let {root, user, interactionType, advanceTimer} = opts;
+    let {root, user, interactionType, advanceTimer, layout} = opts;
     this.user = user;
     this._interactionType = interactionType || 'mouse';
-    this._listbox = root;
     this._advanceTimer = advanceTimer;
+    this._layout = layout || 'stack';
+    this._listbox = root;
+    if (root.getAttribute('role') !== 'listbox') {
+      let listbox = within(root).queryByRole('listbox');
+      if (listbox) {
+        this._listbox = listbox;
+      }
+    }
   }
 
   /**
@@ -81,36 +90,33 @@ export class ListBoxTester {
     this._interactionType = type;
   }
 
-  // TODO: now that we have listbox, perhaps select can make use of this tester internally
   /**
    * Returns a option matching the specified index or text content.
    */
-  findOption(opts: {optionIndexOrText: number | string}): HTMLElement {
-    let {optionIndexOrText} = opts;
+  findOption(opts: {indexOrText: number | string}): HTMLElement {
+    let {indexOrText} = opts;
 
     let option;
-    let options = this.options();
+    let options = this.getOptions();
 
-    if (typeof optionIndexOrText === 'number') {
-      option = options[optionIndexOrText];
-    } else if (typeof optionIndexOrText === 'string') {
-      option = within(this.listbox!)
-        .getByText(optionIndexOrText)
+    if (typeof indexOrText === 'number') {
+      option = options[indexOrText];
+    } else if (typeof indexOrText === 'string') {
+      option = within(this.getListbox()!)
+        .getByText(indexOrText)
         .closest('[role=option]')! as HTMLElement;
     }
 
     return option;
   }
 
-  // TODO: this is basically the same as menu except for the error message, refactor later so that they share
-  // TODO: this also doesn't support grid layout yet
   private async keyboardNavigateToOption(opts: {
     option: HTMLElement;
     selectionOnNav?: 'default' | 'none';
   }) {
     let {option, selectionOnNav = 'default'} = opts;
     let altKey = getAltKey();
-    let options = this.options();
+    let options = this.getOptions();
     let targetIndex = options.indexOf(option);
     if (targetIndex === -1) {
       throw new Error('Option provided is not in the listbox');
@@ -131,12 +137,34 @@ export class ListBoxTester {
       throw new Error('ActiveElement is not in the listbox');
     }
 
-    let direction = targetIndex > currIndex ? 'down' : 'up';
     if (selectionOnNav === 'none') {
       await this.user.keyboard(`[${altKey}>]`);
     }
-    for (let i = 0; i < Math.abs(targetIndex - currIndex); i++) {
-      await this.user.keyboard(`[${direction === 'down' ? 'ArrowDown' : 'ArrowUp'}]`);
+    if (this._layout === 'grid') {
+      while (document.activeElement !== option) {
+        let curr = (document.activeElement as HTMLElement).getBoundingClientRect();
+        let target = option.getBoundingClientRect();
+        let key: string;
+        // compare current position with desired position to determine if we need to go up/down/left/right
+        // use 1 in the comparison here for subpixels since getBoundingClientRect returns subpixels precision
+        if (Math.abs(curr.top - target.top) > 1) {
+          key = curr.top < target.top ? 'ArrowDown' : 'ArrowUp';
+        } else if (Math.abs(curr.left - target.left) > 1) {
+          key = curr.left < target.left ? 'ArrowRight' : 'ArrowLeft';
+        } else {
+          // if the diff in current vs desired is < 1 but it is claiming we arent focused on the target
+          // then we might be in a case where getBoundingClientRect isnt mocked
+          throw new Error(
+            'Could not navigate to target option in grid layout. Did the test mock getBoundingClientRect?'
+          );
+        }
+        await this.user.keyboard(`[${key}]`);
+      }
+    } else {
+      let direction = targetIndex > currIndex ? 'down' : 'up';
+      for (let i = 0; i < Math.abs(targetIndex - currIndex); i++) {
+        await this.user.keyboard(`[${direction === 'down' ? 'ArrowDown' : 'ArrowUp'}]`);
+      }
     }
     if (selectionOnNav === 'none') {
       await this.user.keyboard(`[/${altKey}]`);
@@ -160,16 +188,18 @@ export class ListBoxTester {
     let metaKey = getMetaKey();
 
     if (typeof option === 'string' || typeof option === 'number') {
-      option = this.findOption({optionIndexOrText: option});
+      option = this.findOption({indexOrText: option});
     }
 
     if (!option) {
-      throw new Error('Target option not found in the listbox.');
+      throw new Error(`Target option "${formatTargetNode(opts.option)}" not found in the listbox.`);
     }
 
     if (interactionType === 'keyboard') {
       if (option?.getAttribute('aria-disabled') === 'true') {
-        return;
+        throw new Error(
+          `Cannot toggle selection on disabled option "${formatTargetNode(opts.option)}".`
+        );
       }
 
       await this.keyboardNavigateToOption({
@@ -185,13 +215,9 @@ export class ListBoxTester {
       }
     } else {
       if (needsLongPress && interactionType === 'touch') {
-        if (this._advanceTimer == null) {
-          throw new Error('No advanceTimers provided for long press.');
-        }
-
         await triggerLongPress({
           element: option,
-          advanceTimer: this._advanceTimer,
+          advanceTimer: this._advanceTimer!,
           pointerOpts: {pointerType: 'touch'}
         });
       } else {
@@ -214,18 +240,20 @@ export class ListBoxTester {
     let {option, needsDoubleClick, interactionType = this._interactionType} = opts;
 
     if (typeof option === 'string' || typeof option === 'number') {
-      option = this.findOption({optionIndexOrText: option});
+      option = this.findOption({indexOrText: option});
     }
 
     if (!option) {
-      throw new Error('Target option not found in the listbox.');
+      throw new Error(`Target option "${formatTargetNode(opts.option)}" not found in the listbox.`);
     }
 
     if (needsDoubleClick) {
       await this.user.dblClick(option);
     } else if (interactionType === 'keyboard') {
       if (option?.getAttribute('aria-disabled') === 'true') {
-        return;
+        throw new Error(
+          `Cannot trigger action on disabled option "${formatTargetNode(opts.option)}".`
+        );
       }
 
       await this.keyboardNavigateToOption({option, selectionOnNav: 'none'});
@@ -238,7 +266,7 @@ export class ListBoxTester {
   /**
    * Returns the listbox.
    */
-  get listbox(): HTMLElement {
+  getListbox(): HTMLElement {
     return this._listbox;
   }
 
@@ -246,7 +274,7 @@ export class ListBoxTester {
    * Returns the listbox options. Can be filtered to a subsection of the listbox if provided via
    * `element`.
    */
-  options(opts: {element?: HTMLElement} = {}): HTMLElement[] {
+  getOptions(opts: {element?: HTMLElement} = {}): HTMLElement[] {
     let {element = this._listbox} = opts;
     let options = [];
     if (element) {
@@ -259,14 +287,14 @@ export class ListBoxTester {
   /**
    * Returns the listbox's selected options if any.
    */
-  get selectedOptions(): HTMLElement[] {
-    return this.options().filter(row => row.getAttribute('aria-selected') === 'true');
+  getSelectedOptions(): HTMLElement[] {
+    return this.getOptions().filter(row => row.getAttribute('aria-selected') === 'true');
   }
 
   /**
    * Returns the listbox's sections if any.
    */
-  get sections(): HTMLElement[] {
+  getSections(): HTMLElement[] {
     return within(this._listbox).queryAllByRole('group');
   }
 }

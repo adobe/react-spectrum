@@ -54,22 +54,25 @@ describe('RadioGroup', () => {
         root: getByRole('radiogroup'),
         direction
       });
-      expect(radioGroupTester.radiogroup).toHaveAttribute('aria-orientation', props.orientation);
-      let radios = radioGroupTester.radios;
+      expect(radioGroupTester.getRadioGroup()).toHaveAttribute(
+        'aria-orientation',
+        props.orientation
+      );
+      let radios = radioGroupTester.getRadios();
       await radioGroupTester.triggerRadio({radio: radios[0]});
       expect(radios[0]).toBeChecked();
 
       await radioGroupTester.triggerRadio({radio: 4, interactionType: 'keyboard'});
       expect(radios[4]).toBeChecked();
 
-      let radio4 = radioGroupTester.findRadio({radioIndexOrText: 3});
+      let radio4 = radioGroupTester.findRadio({indexOrText: 3});
       await radioGroupTester.triggerRadio({radio: radio4, interactionType: 'keyboard'});
       expect(radios[3]).toBeChecked();
 
       await radioGroupTester.triggerRadio({radio: 'Dogs', interactionType: 'mouse'});
       expect(radios[0]).toBeChecked();
 
-      let radio5 = radioGroupTester.findRadio({radioIndexOrText: 'Chocobo'});
+      let radio5 = radioGroupTester.findRadio({indexOrText: 'Chocobo'});
       await radioGroupTester.triggerRadio({radio: radio5, interactionType: 'mouse'});
       expect(radios[4]).toBeChecked();
 
@@ -79,9 +82,9 @@ describe('RadioGroup', () => {
       // instead of using ArrowLeft/ArrowRight
       await user.keyboard('[ArrowLeft]');
       if (props.locale === 'ar-AE' && props.orientation === 'horizontal') {
-        expect(radioGroupTester.selectedRadio).toBe(radios[0]);
+        expect(radioGroupTester.getSelectedRadio()).toBe(radios[0]);
       } else {
-        expect(radioGroupTester.selectedRadio).toBe(radios[3]);
+        expect(radioGroupTester.getSelectedRadio()).toBe(radios[3]);
       }
     }
   );

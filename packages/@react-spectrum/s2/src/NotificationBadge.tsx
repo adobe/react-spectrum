@@ -15,7 +15,6 @@ import {ContextValue, SlotProps} from 'react-aria-components/slots';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {fontRelative, style} from '../style' with {type: 'macro'};
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
-// @ts-ignore
 import intlMessages from '../intl/*.json';
 import {NumberFormatter} from '@internationalized/number';
 import React, {createContext, forwardRef} from 'react';

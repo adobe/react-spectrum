@@ -22,7 +22,6 @@ import {
 import {createContext, forwardRef} from 'react';
 import CrossIcon from '../ui-icons/Cross';
 import {FocusableRef, FocusableRefValue} from '@react-types/shared';
-// @ts-ignore
 import intlMessages from '../intl/*.json';
 import {pressScale} from './pressScale';
 import {useFocusableRef} from './useDOMRef';
@@ -77,7 +76,7 @@ const styles = style<
         default: baseColor('neutral'),
         isDisabled: 'disabled',
         isStaticColor: {
-          default: baseColor('transparent-overlay-800'),
+          default: 'white',
           isDisabled: 'transparent-overlay-400'
         },
         forcedColors: {

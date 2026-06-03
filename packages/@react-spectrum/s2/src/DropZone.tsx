@@ -26,7 +26,6 @@ import {
   UnsafeStyles
 } from './style-utils' with {type: 'macro'};
 import {IllustratedMessageContext} from './IllustratedMessage';
-// @ts-ignore
 import intlMessages from '../intl/*.json';
 import {style} from '../style' with {type: 'macro'};
 import {useDOMRef} from './useDOMRef';
