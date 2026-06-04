@@ -106,7 +106,7 @@ export function DialogTrigger(props: DialogTriggerProps): JSX.Element {
           }
         ]
       ]}>
-      <PressResponder {...triggerProps} ref={buttonRef} isPressed={state.isOpen}>
+      <PressResponder {...triggerProps} ref={buttonRef} isPressed={false}>
         {props.children}
       </PressResponder>
     </Provider>
