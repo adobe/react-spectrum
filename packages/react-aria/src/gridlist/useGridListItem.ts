@@ -321,18 +321,17 @@ export function useGridListItem<T>(
     }
 
     if (keyboardNavigationBehavior === 'tab') {
-      // TODO: try out Rob's useTypeSelect change in place of this stop propagation for character keys?
-      // will still need to stop arrow key propagation otherwise useSelectableCollection recieves the event and moves focus
-      // should it just stop propagation for all events?
-      if (activeElement !== ref.current) {
-        if (
-          isArrowKey(e.key) ||
-          isCharacterKey(e.key) ||
-          (e.key === '' && state.selectionManager.selectionMode !== 'none')
-        ) {
-          e.stopPropagation();
-          return;
-        }
+      // TODO: Added Rob's useTypeSelect changes, but that only stops if type select is in progress
+      // This will stop arrow key navigation and typeselect from bubbling up
+      // (note that this breaks TagGroup's old behavior of using arrow keys to move from "x" button to next tag and typeselect when inside a card/row)
+      // should it just stop propagation for all events since we can't rely on non-RAC components stopping propagation even they handled the event
+      // Will need to do something similar for click?
+      if (
+        activeElement !== ref.current &&
+        (isArrowKey(e.key) || isCharacterKey(e.key) || e.key === 'Enter')
+      ) {
+        e.stopPropagation();
+        return;
       }
 
       // TODO: for tree expansion since we turn off the capturing listener if keyboardNavigationBehavior = tab
@@ -403,7 +402,6 @@ export function useGridListItem<T>(
   let rowProps: DOMAttributes = mergeProps(itemProps, linkProps, {
     role: 'row',
     onKeyDownCapture: keyboardNavigationBehavior === 'arrow' ? onKeyDownCapture : undefined,
-    onKeyDown,
     onFocus,
     // 'aria-label': [(node.textValue || undefined), rowAnnouncement].filter(Boolean).join(', '),
     'aria-label': node['aria-label'] || node.textValue || undefined,
@@ -417,6 +415,16 @@ export function useGridListItem<T>(
         : undefined,
     id: getRowId(state, node.key)
   });
+
+  // TODO we need to guard against space/enter triggering selection/row link via usePress (from itemProps) so check if propagation
+  // is stopped. this also fixes space not working in a textfield in a tree parent row
+  let baseOnKeyDown = rowProps.onKeyDown;
+  rowProps.onKeyDown = (e: ReactKeyboardEvent<FocusableElement>) => {
+    onKeyDown(e as ReactKeyboardEvent);
+    if (!e.isPropagationStopped()) {
+      baseOnKeyDown?.(e);
+    }
+  };
 
   if (isVirtualized) {
     let {collection} = state;
