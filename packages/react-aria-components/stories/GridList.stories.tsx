@@ -969,7 +969,7 @@ export const AsyncGridListGridVirtualized: StoryObj<typeof AsyncGridListGridVirt
 };
 
 // TODO: bugs to investigate
-// clicking on the textfield and hitting space in the textfield when selection is enabled causes selection to be toggled
+// clicking on the textfield when selection is enabled causes selection to be toggled
 export const GridListWithTextfield: GridListStory = args => {
   let isHorizontalStack = args.orientation === 'horizontal' && args.layout !== 'grid';
   return (
@@ -987,23 +987,23 @@ export const GridListWithTextfield: GridListStory = args => {
           gridAutoFlow: args.orientation === 'horizontal' ? 'column' : 'row'
         }}
         {...args}>
-        <MyGridListItem>
+        <MyGridListItem textValue="Rac TextField">
           RAC TextField
           <TextField aria-label="Name">
             <Input />
           </TextField>
         </MyGridListItem>
-        <MyGridListItem>
+        <MyGridListItem textValue="Rac input">
           Raw input <input aria-label="Raw text input" style={{marginLeft: 4}} />
         </MyGridListItem>
-        <MyGridListItem>
+        <MyGridListItem textValue="TextField + Button">
           TextField + Button
           <TextField aria-label="Search">
             <Input />
           </TextField>{' '}
           <Button>Go</Button>
         </MyGridListItem>
-        <MyGridListItem>
+        <MyGridListItem textValue="Toolbar">
           Toolbar
           <Toolbar aria-label="Text formatting" style={{gap: 4}}>
             <Button>Bold</Button>
@@ -1011,7 +1011,7 @@ export const GridListWithTextfield: GridListStory = args => {
             <Button>Underline</Button>
           </Toolbar>
         </MyGridListItem>
-        <MyGridListItem>
+        <MyGridListItem textValue="Menu">
           Menu
           {/* TODO: hitting escape to close the menu, returns focus to the row.
           Tabbing back from the external input also focuses the trggerbutton rather than the row. Tabbing back into the textfield row focuses the row  */}

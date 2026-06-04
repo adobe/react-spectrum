@@ -1806,8 +1806,7 @@ export const HugeVirtualizedTree: StoryObj<typeof VirtualizedTreeRender> = {
 };
 
 // TODO: bugs to investigate
-// clicking on the textfield and hitting space in the textfield when selection is enabled causes selection to be toggled
-// cant add spaces in the parent rows textfield?
+// clicking on the textfield when selection is enabled causes selection to be toggled
 function TreeWithTextField<T>(props: TreeProps<T>) {
   return (
     <>
