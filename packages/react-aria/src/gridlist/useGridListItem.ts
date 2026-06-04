@@ -327,7 +327,7 @@ export function useGridListItem<T>(
       // should it just stop propagation for all events since we can't rely on non-RAC components stopping propagation even they handled the event
       // Will need to do something similar for click?
       if (
-        activeElement !== ref.current &&
+        getEventTarget(e) !== ref.current &&
         (isArrowKey(e.key) || isCharacterKey(e.key) || e.key === 'Enter')
       ) {
         e.stopPropagation();
