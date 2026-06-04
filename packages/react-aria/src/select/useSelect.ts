@@ -184,8 +184,6 @@ export function useSelect<T, M extends SelectionMode = 'single'>(
     errorMessage: props.errorMessage || validationErrors
   });
 
-  typeSelectProps.onKeyDown = typeSelectProps.onKeyDownCapture;
-  delete typeSelectProps.onKeyDownCapture;
   if (state.selectionManager.selectionMode === 'multiple') {
     typeSelectProps = {};
   }
