@@ -16,17 +16,18 @@ import {Checkbox, CheckboxProps} from '../src/Checkbox';
 import {classNames} from '@adobe/react-spectrum/private/utils/classNames';
 import {Collection} from 'react-aria/Collection';
 import {DroppableCollectionReorderEvent, Key} from '@react-types/shared';
+import {Input} from '../src/Input';
 import {isTextDropItem, useDragAndDrop} from '../exports/useDragAndDrop';
 import {ListLayout} from 'react-stately/useVirtualizerState';
-import {Menu, MenuTrigger} from '../src/Menu';
-
+import {Menu, MenuItem, MenuTrigger} from '../src/Menu';
 import {Meta, StoryFn, StoryObj} from '@storybook/react';
-
 import {MyMenuItem} from './utils';
 import {Popover} from '../src/Popover';
 import React, {JSX, ReactNode, useCallback, useState} from 'react';
 import styles from '../example/index.css';
 import {Text} from '../src/Text';
+import {TextField} from '../src/TextField';
+import {Toolbar} from '../src/Toolbar';
 import {
   Tree,
   TreeHeader,
@@ -54,6 +55,7 @@ export type TreeStory = StoryFn<typeof Tree>;
 interface StaticTreeItemProps extends TreeItemProps {
   title?: string;
   children: ReactNode;
+  interactive?: ReactNode;
 }
 
 interface MyCheckboxProps extends CheckboxProps {
@@ -117,6 +119,7 @@ const StaticTreeItem = (props: StaticTreeItemProps) => {
                 </Button>
               )}
               <Text className={styles.title}>{props.title || props.children}</Text>
+              {props.interactive}
               <Button className={styles.button} aria-label="Info" onPress={action('Info press')}>
                 ⓘ
               </Button>
@@ -1800,4 +1803,134 @@ export const HugeVirtualizedTree: StoryObj<typeof VirtualizedTreeRender> = {
     items: treeData
   },
   render: args => <HugeVirtualizedTreeRender {...args} />
+};
+
+// TODO: bugs to investigate
+// clicking on the textfield and hitting space in the textfield when selection is enabled causes selection to be toggled
+// cant add spaces in the parent rows textfield?
+function TreeWithTextField<T>(props: TreeProps<T>) {
+  return (
+    <>
+      <input aria-label="Before tree" />
+      <Tree
+        className={styles.tree}
+        style={{width: 500}}
+        aria-label="tree with textfields"
+        disabledKeys={['rawinput']}
+        // TODO: cast for now, tab behavior to be added to Tree later (will need tests/docs and whatnot)?
+        {...({keyboardNavigationBehavior: 'tab'} as any)}
+        {...props}>
+        <StaticTreeItem
+          id="textfield"
+          textValue="RAC TextField"
+          interactive={
+            <TextField aria-label="Name">
+              <Input />
+            </TextField>
+          }>
+          RAC TextField
+        </StaticTreeItem>
+        <StaticTreeItem
+          id="rawinput"
+          textValue="Raw input"
+          interactive={<input aria-label="Raw text input" />}>
+          Raw input
+        </StaticTreeItem>
+        <StaticTreeItem
+          id="row1"
+          textValue="row 1"
+          title="row 1"
+          interactive={
+            <TextField aria-label="row 1 input">
+              <Input />
+            </TextField>
+          }>
+          <StaticTreeItem
+            id="group1-textfield-button"
+            textValue="TextField and Button"
+            interactive={
+              <>
+                <TextField aria-label="Search">
+                  <Input />
+                </TextField>
+                <Button>Go</Button>
+              </>
+            }>
+            TextField + Button
+          </StaticTreeItem>
+          <StaticTreeItem
+            id="group1-toolbar"
+            textValue="Toolbar"
+            interactive={
+              <Toolbar aria-label="Text formatting" style={{gap: 4}}>
+                <Button>Bold</Button>
+                <Button>Italic</Button>
+                <Button>Underline</Button>
+              </Toolbar>
+            }>
+            Toolbar
+          </StaticTreeItem>
+          <StaticTreeItem
+            id="group1-nested"
+            textValue="Nested Group"
+            title="Nested Group"
+            interactive={<input aria-label="Nested group input" />}>
+            <StaticTreeItem
+              id="group1-nested-1"
+              textValue="Nested child 1"
+              interactive={<input aria-label="Nested child 1 input" />}>
+              Nested child 1
+            </StaticTreeItem>
+            <StaticTreeItem
+              id="group1-nested-2"
+              textValue="Nested child 2"
+              interactive={
+                <MenuTrigger>
+                  <Button aria-label="Options">▾</Button>
+                  <Popover>
+                    <Menu className={styles.menu}>
+                      <MenuItem>Cut</MenuItem>
+                      <MenuItem>Copy</MenuItem>
+                      <MenuItem>Paste</MenuItem>
+                    </Menu>
+                  </Popover>
+                </MenuTrigger>
+              }>
+              Nested child 2
+            </StaticTreeItem>
+          </StaticTreeItem>
+        </StaticTreeItem>
+      </Tree>
+      <input aria-label="After tree" />
+    </>
+  );
+}
+
+export const TreeWithTextFieldStory: StoryObj<typeof TreeWithTextField> = {
+  render: args => <TreeWithTextField {...args} />,
+  args: {
+    selectionMode: 'none',
+    selectionBehavior: 'toggle',
+    disabledBehavior: 'selection'
+  },
+  argTypes: {
+    // TODO: add later
+    // keyboardNavigationBehavior: {
+    //   control: 'radio',
+    //   options: ['arrow', 'tab']
+    // },
+    selectionMode: {
+      control: 'radio',
+      options: ['none', 'single', 'multiple']
+    },
+    selectionBehavior: {
+      control: 'radio',
+      options: ['toggle', 'replace']
+    },
+    disabledBehavior: {
+      control: 'radio',
+      options: ['selection', 'all']
+    }
+  },
+  name: 'Tree with Textfield'
 };

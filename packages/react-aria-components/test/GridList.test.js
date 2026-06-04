@@ -1145,6 +1145,60 @@ describe('GridList', () => {
     expect(document.activeElement).toBe(items[0]);
   });
 
+  it('should not navigate rows when arrow keys are pressed while a text input child has focus', async () => {
+    let {getAllByRole, getByRole} = render(
+      <GridList aria-label="Test" keyboardNavigationBehavior="tab">
+        <GridListItem id="item1">
+          Apple <input aria-label="input 1" />
+        </GridListItem>
+        <GridListItem id="item2">Banana</GridListItem>
+      </GridList>
+    );
+
+    let rows = getAllByRole('row');
+    let input = getByRole('textbox');
+
+    await user.tab();
+    expect(document.activeElement).toBe(rows[0]);
+
+    await user.tab();
+    expect(document.activeElement).toBe(input);
+
+    await user.keyboard('{ArrowDown}');
+    expect(document.activeElement).toBe(input);
+    await user.keyboard('{ArrowUp}');
+    expect(document.activeElement).toBe(input);
+  });
+
+  it('should not trigger typeahead when typing in a text input child', async () => {
+    let {getAllByRole, getByRole} = render(
+      <GridList aria-label="Test" keyboardNavigationBehavior="tab">
+        <GridListItem id="item1" textValue="Apple">
+          Apple <input aria-label="input 1" />
+        </GridListItem>
+        <GridListItem id="item2" textValue="Banana">
+          Banana
+        </GridListItem>
+      </GridList>
+    );
+
+    let rows = getAllByRole('row');
+    let input = getByRole('textbox');
+
+    await user.tab();
+    expect(document.activeElement).toBe(rows[0]);
+    await user.tab();
+    expect(document.activeElement).toBe(input);
+
+    await user.keyboard('b');
+    expect(document.activeElement).toBe(input);
+    expect(input).toHaveValue('b');
+  });
+
+  it('should not trigger selection when typing in the text input child', async () => {
+    // TODO: implement, right now it will select
+  });
+
   it('should not propagate the checkbox context from selection into other cells', async () => {
     let tree = render(
       <GridList aria-label="Test" selectionMode="multiple">

@@ -310,7 +310,7 @@ export function useGridListItem<T>(
     }
   };
 
-  let onKeyDown = e => {
+  let onKeyDown = (e: ReactKeyboardEvent) => {
     let activeElement = getActiveElement();
     if (
       !nodeContains(e.currentTarget, getEventTarget(e) as Element) ||
@@ -318,6 +318,57 @@ export function useGridListItem<T>(
       !activeElement
     ) {
       return;
+    }
+
+    if (keyboardNavigationBehavior === 'tab') {
+      // TODO: try out Rob's useTypeSelect change in place of this stop propagation for character keys?
+      // will still need to stop arrow key propagation otherwise useSelectableCollection recieves the event and moves focus
+      // should it just stop propagation for all events?
+      if (activeElement !== ref.current) {
+        if (
+          isArrowKey(e.key) ||
+          isCharacterKey(e.key) ||
+          (e.key === '' && state.selectionManager.selectionMode !== 'none')
+        ) {
+          e.stopPropagation();
+          return;
+        }
+      }
+
+      // TODO: for tree expansion since we turn off the capturing listener if keyboardNavigationBehavior = tab
+      // copied from above, extract into helper later
+      // need to support tab keyboard navigation in tree
+      if ('expandedKeys' in state && activeElement === ref.current) {
+        if (
+          e.key === EXPANSION_KEYS['expand'][direction] &&
+          state.selectionManager.focusedKey === node.key &&
+          hasChildRows &&
+          !state.expandedKeys.has(node.key)
+        ) {
+          state.toggleKey(node.key);
+          e.stopPropagation();
+          return;
+        } else if (
+          e.key === EXPANSION_KEYS['collapse'][direction] &&
+          state.selectionManager.focusedKey === node.key
+        ) {
+          // If item is collapsible, collapse it; else move to parent
+          if (hasChildRows && state.expandedKeys.has(node.key)) {
+            state.toggleKey(node.key);
+            e.stopPropagation();
+            return;
+          } else if (
+            !state.expandedKeys.has(node.key) &&
+            node.parentKey &&
+            state.collection.getItem(node.parentKey)?.type === 'item'
+          ) {
+            // Item is a leaf or already collapsed, move focus to parent
+            state.selectionManager.setFocusedKey(node.parentKey);
+            e.stopPropagation();
+            return;
+          }
+        }
+      }
     }
 
     switch (e.key) {
@@ -351,7 +402,7 @@ export function useGridListItem<T>(
 
   let rowProps: DOMAttributes = mergeProps(itemProps, linkProps, {
     role: 'row',
-    onKeyDownCapture,
+    onKeyDownCapture: keyboardNavigationBehavior === 'arrow' ? onKeyDownCapture : undefined,
     onKeyDown,
     onFocus,
     // 'aria-label': [(node.textValue || undefined), rowAnnouncement].filter(Boolean).join(', '),
@@ -418,4 +469,13 @@ function getDirectChildren<T>(parent: RSNode<T>, collection: Collection<RSNode<T
     node = node.nextKey != null ? collection.getItem(node.nextKey) : null;
   }
   return siblings;
+}
+
+function isArrowKey(key: string) {
+  return key === 'ArrowUp' || key === 'ArrowDown' || key === 'ArrowLeft' || key === 'ArrowRight';
+}
+
+// same logic as in useTypeSelect getStringForKey
+function isCharacterKey(key: string) {
+  return key.length === 1 || !/^[A-Z]/i.test(key);
 }

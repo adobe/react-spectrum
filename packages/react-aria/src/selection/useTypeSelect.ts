@@ -103,9 +103,9 @@ export function useTypeSelect(options: AriaTypeSelectOptions): TypeSelectAria {
 
   return {
     typeSelectProps: {
-      // Using a capturing listener to catch the keydown event before
-      // other hooks in order to handle the Spacebar event.
-      onKeyDownCapture: keyboardDelegate.getKeyForSearch ? onKeyDown : undefined
+      // TODO: now that this is not capturing, will need to make sure other collection components/hooks
+      // work properly with it (aka now space for selection will alway take priority)
+      onKeyDown: keyboardDelegate.getKeyForSearch ? onKeyDown : undefined
     }
   };
 }

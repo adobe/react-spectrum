@@ -28,10 +28,12 @@ import {
   GridListSection
 } from '../src/GridList';
 import {Heading} from '../src/Heading';
+import {Input} from '../src/Input';
 import {Key} from '@react-types/shared';
 import {ListLayout, Size, WaterfallLayout} from 'react-stately/useVirtualizerState';
 import {LoadingSpinner} from './utils';
 import {LoadingState} from '@react-types/shared';
+import {Menu, MenuItem, MenuTrigger} from '../src/Menu';
 import {Meta, StoryFn, StoryObj} from '@storybook/react';
 import {Modal, ModalOverlay, ModalOverlayProps} from '../src/Modal';
 import {Popover} from '../src/Popover';
@@ -39,6 +41,8 @@ import React, {JSX, useState} from 'react';
 import styles from '../example/index.css';
 import {Tag, TagGroup, TagList} from '../src/TagGroup';
 import {Text} from '../src/Text';
+import {TextField} from '../src/TextField';
+import {Toolbar} from '../src/Toolbar';
 import {useAsyncList} from 'react-stately/useAsyncList';
 import {useListData} from 'react-stately/useListData';
 import {Virtualizer} from '../src/Virtualizer';
@@ -312,13 +316,21 @@ GridListSectionExample.story = {
 };
 
 export function VirtualizedGridListSection() {
-  let sections: {id: string; name: string; children: {id: string; name: string}[]}[] = [];
+  let sections: {
+    id: string;
+    name: string;
+    children: {id: string; name: string}[];
+  }[] = [];
   for (let s = 0; s < 10; s++) {
     let items: {id: string; name: string}[] = [];
     for (let i = 0; i < 3; i++) {
       items.push({id: `item_${s}_${i}`, name: `Section ${s}, Item ${i}`});
     }
-    sections.push({id: `section_${s}`, name: `Section ${s}`, children: items});
+    sections.push({
+      id: `section_${s}`,
+      name: `Section ${s}`,
+      children: items
+    });
   }
 
   return (
@@ -360,7 +372,9 @@ const VirtualizedGridListRender = (args: GridListProps<any> & {isLoading: boolea
 
   let {dragAndDropHooks} = useDragAndDrop({
     getItems: keys => {
-      return [...keys].map(key => ({'text/plain': list.getItem(key)?.name ?? ''}));
+      return [...keys].map(key => ({
+        'text/plain': list.getItem(key)?.name ?? ''
+      }));
     },
     onReorder(e) {
       if (e.target.dropPosition === 'before') {
@@ -950,6 +964,106 @@ export const AsyncGridListGridVirtualized: StoryObj<typeof AsyncGridListGridVirt
     loadingState: {
       control: 'select',
       options: ['idle', 'loadingMore']
+    }
+  }
+};
+
+// TODO: bugs to investigate
+// clicking on the textfield and hitting space in the textfield when selection is enabled causes selection to be toggled
+export const GridListWithTextfield: GridListStory = args => {
+  let isHorizontalStack = args.orientation === 'horizontal' && args.layout !== 'grid';
+  return (
+    <>
+      <input />
+      <GridList
+        className={styles.menu}
+        aria-label="gridlist with textfield"
+        keyboardNavigationBehavior="tab"
+        style={{
+          width: isHorizontalStack ? undefined : 400,
+          height: isHorizontalStack ? undefined : 400,
+          display: isHorizontalStack ? 'flex' : 'grid',
+          gridTemplate: args.layout === 'grid' ? 'repeat(3, 1fr) / repeat(3, 1fr)' : 'auto / 1fr',
+          gridAutoFlow: args.orientation === 'horizontal' ? 'column' : 'row'
+        }}
+        {...args}>
+        <MyGridListItem>
+          RAC TextField
+          <TextField aria-label="Name">
+            <Input />
+          </TextField>
+        </MyGridListItem>
+        <MyGridListItem>
+          Raw input <input aria-label="Raw text input" style={{marginLeft: 4}} />
+        </MyGridListItem>
+        <MyGridListItem>
+          TextField + Button
+          <TextField aria-label="Search">
+            <Input />
+          </TextField>{' '}
+          <Button>Go</Button>
+        </MyGridListItem>
+        <MyGridListItem>
+          Toolbar
+          <Toolbar aria-label="Text formatting" style={{gap: 4}}>
+            <Button>Bold</Button>
+            <Button>Italic</Button>
+            <Button>Underline</Button>
+          </Toolbar>
+        </MyGridListItem>
+        <MyGridListItem>
+          Menu
+          {/* TODO: hitting escape to close the menu, returns focus to the row.
+          Tabbing back from the external input also focuses the trggerbutton rather than the row. Tabbing back into the textfield row focuses the row  */}
+          <MenuTrigger>
+            <Button aria-label="Options">▾</Button>
+            <Popover>
+              <Menu className={styles.menu}>
+                <MenuItem>Cut</MenuItem>
+                <MenuItem>Copy</MenuItem>
+                <MenuItem>Paste</MenuItem>
+              </Menu>
+            </Popover>
+          </MenuTrigger>
+        </MyGridListItem>
+      </GridList>
+      <input />
+    </>
+  );
+};
+
+GridListWithTextfield.story = {
+  args: {
+    layout: 'stack',
+    orientation: 'vertical',
+    escapeKeyBehavior: 'clearSelection',
+    shouldSelectOnPressUp: false,
+    disallowTypeAhead: false
+  },
+  argTypes: {
+    layout: {
+      control: 'radio',
+      options: ['stack', 'grid']
+    },
+    orientation: {
+      control: 'radio',
+      options: ['vertical', 'horizontal']
+    },
+    keyboardNavigationBehavior: {
+      control: 'radio',
+      options: ['arrow', 'tab']
+    },
+    selectionMode: {
+      control: 'radio',
+      options: ['none', 'single', 'multiple']
+    },
+    selectionBehavior: {
+      control: 'radio',
+      options: ['toggle', 'replace']
+    },
+    escapeKeyBehavior: {
+      control: 'radio',
+      options: ['clearSelection', 'none']
     }
   }
 };
