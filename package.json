@@ -277,6 +277,8 @@
         "packages/@adobe/react-spectrum/src/color/*.tsx",
         "packages/@react-spectrum/s2/**/*.{js,ts,tsx}",
         "packages/@react-spectrum/s2/stories/**",
+        "packages/@react-spectrum/s2-ai/**/*.{js,ts,tsx}",
+        "packages/@react-spectrum/s2-ai/stories/**",
         ".storybook-s2/**",
         "packages/dev/s2-docs/**",
         "starters/**"
