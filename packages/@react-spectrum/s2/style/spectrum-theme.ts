@@ -577,7 +577,9 @@ const timingFunction = {
 let durationValue = (value: number | string) => (typeof value === 'number' ? value + 'ms' : value);
 
 const fontWeightBase = {
-  normal: '400',
+  normal: {
+    default: '400'
+  },
   medium: {
     default: '500'
   },
@@ -589,26 +591,25 @@ const fontWeightBase = {
     default: '800',
     ':lang(ja, ko, zh)': '700' // Adobe Clean Han uses 700 as the extra bold weight.
   },
-  black: '900'
+  black: {
+    default: '900'
+  }
 } as const;
 
 export const fontWeight = {
   ...fontWeightBase,
   heading: {
-    default:
-      fontWeightBase[getToken('heading-sans-serif-font-weight') as keyof typeof fontWeightBase],
+    ...fontWeightBase[getToken('heading-sans-serif-font-weight') as keyof typeof fontWeightBase],
     ':lang(ja, ko, zh, zh-Hant, zh-Hans)':
       fontWeightBase[getToken('heading-cjk-font-weight') as keyof typeof fontWeightBase]
   },
   title: {
-    default:
-      fontWeightBase[getToken('title-sans-serif-font-weight') as keyof typeof fontWeightBase],
+    ...fontWeightBase[getToken('title-sans-serif-font-weight') as keyof typeof fontWeightBase],
     ':lang(ja, ko, zh, zh-Hant, zh-Hans)':
       fontWeightBase[getToken('title-cjk-font-weight') as keyof typeof fontWeightBase]
   },
   detail: {
-    default:
-      fontWeightBase[getToken('detail-sans-serif-font-weight') as keyof typeof fontWeightBase],
+    ...fontWeightBase[getToken('detail-sans-serif-font-weight') as keyof typeof fontWeightBase],
     ':lang(ja, ko, zh, zh-Hant, zh-Hans)':
       fontWeightBase[getToken('detail-cjk-font-weight') as keyof typeof fontWeightBase]
   }
