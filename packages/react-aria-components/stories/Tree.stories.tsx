@@ -1807,7 +1807,7 @@ export const HugeVirtualizedTree: StoryObj<typeof VirtualizedTreeRender> = {
 
 // TODO: bugs to investigate
 // clicking on the textfield when selection is enabled causes selection to be toggled
-function TreeWithTextField<T>(props: TreeProps<T>) {
+export function TreeWithTextField<T>(props: TreeProps<T>) {
   return (
     <>
       <input aria-label="Before tree" />
