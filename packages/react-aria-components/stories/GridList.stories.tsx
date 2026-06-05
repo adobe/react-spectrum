@@ -12,9 +12,10 @@
 
 import {action} from 'storybook/actions';
 import {Button} from '../src/Button';
-import {Checkbox, CheckboxProps} from '../src/Checkbox';
+import {Checkbox, CheckboxGroup, CheckboxProps} from '../src/Checkbox';
 import {classNames} from '@adobe/react-spectrum/private/utils/classNames';
 import {Collection} from 'react-aria/Collection';
+import {ComboBox} from '../src/ComboBox';
 import {Dialog, DialogTrigger} from '../src/Dialog';
 import {DropIndicator, useDragAndDrop} from '../src/useDragAndDrop';
 import {GridLayout} from '../src/GridLayout';
@@ -30,8 +31,9 @@ import {
 import {Heading} from '../src/Heading';
 import {Input} from '../src/Input';
 import {Key} from '@react-types/shared';
+import {ListBox} from '../src/ListBox';
 import {ListLayout, Size, WaterfallLayout} from 'react-stately/useVirtualizerState';
-import {LoadingSpinner} from './utils';
+import {LoadingSpinner, MyListBoxItem} from './utils';
 import {LoadingState} from '@react-types/shared';
 import {Menu, MenuItem, MenuTrigger} from '../src/Menu';
 import {Meta, StoryFn, StoryObj} from '@storybook/react';
@@ -47,6 +49,7 @@ import {useAsyncList} from 'react-stately/useAsyncList';
 import {useListData} from 'react-stately/useListData';
 import {Virtualizer} from '../src/Virtualizer';
 import './styles.css';
+import {Radio, RadioGroup} from '../src/RadioGroup';
 
 export default {
   title: 'React Aria Components/GridList',
@@ -968,12 +971,16 @@ export const AsyncGridListGridVirtualized: StoryObj<typeof AsyncGridListGridVirt
   }
 };
 
+let comboboxEmptyState = () => {
+  return <div style={{height: 30, width: '100%'}}>No results</div>;
+};
+
 // TODO: bugs to investigate
 // clicking on the textfield when selection is enabled causes selection to be toggled
 export const GridListWithTextfield: GridListStory = args => {
   let isHorizontalStack = args.orientation === 'horizontal' && args.layout !== 'grid';
   return (
-    <>
+    <div style={{display: 'flex', flexDirection: 'column'}}>
       <input />
       <GridList
         className={styles.menu}
@@ -1006,9 +1013,9 @@ export const GridListWithTextfield: GridListStory = args => {
         <MyGridListItem textValue="Toolbar">
           Toolbar
           <Toolbar aria-label="Text formatting" style={{gap: 4}}>
-            <Button>Bold</Button>
-            <Button>Italic</Button>
-            <Button>Underline</Button>
+            <Button onPress={action('Bold press')}>Bold</Button>
+            <Button onPress={action('Italics press')}>Italic</Button>
+            <Button onPress={action('Underline press')}>Underline</Button>
           </Toolbar>
         </MyGridListItem>
         <MyGridListItem textValue="Menu">
@@ -1026,9 +1033,80 @@ export const GridListWithTextfield: GridListStory = args => {
             </Popover>
           </MenuTrigger>
         </MyGridListItem>
+        <MyGridListItem textValue="Radiogroup">
+          RadioGroup
+          <RadioGroup
+            aria-label="Radiogroup"
+            className={styles.radiogroup}
+            style={{flexDirection: 'row'}}>
+            <Radio className={styles.radio} value="dogs" data-testid="radio-dog">
+              Dog
+            </Radio>
+            <Radio className={styles.radio} value="cats">
+              Cat
+            </Radio>
+            <Radio className={styles.radio} value="dragon">
+              Dragon
+            </Radio>
+          </RadioGroup>
+        </MyGridListItem>
+        <MyGridListItem textValue="Checkboxgroup">
+          CheckboxGroup
+          <CheckboxGroup aria-label="Checkboxgroup" style={{display: 'flex', flexDirection: 'row'}}>
+            <Checkbox value="soccer">
+              <div className="checkbox" aria-hidden="true">
+                <svg viewBox="0 0 18 18">
+                  <polyline points="1 9 7 14 15 4" />
+                </svg>
+              </div>
+              Soccer
+            </Checkbox>
+            <Checkbox value="baseball">
+              <div className="checkbox" aria-hidden="true">
+                <svg viewBox="0 0 18 18">
+                  <polyline points="1 9 7 14 15 4" />
+                </svg>
+              </div>
+              Baseball
+            </Checkbox>
+            <Checkbox value="basketball">
+              <div className="checkbox" aria-hidden="true">
+                <svg viewBox="0 0 18 18">
+                  <polyline points="1 9 7 14 15 4" />
+                </svg>
+              </div>
+              Basketball
+            </Checkbox>
+          </CheckboxGroup>
+        </MyGridListItem>
+        <MyGridListItem textValue="Combobox">
+          ComboBox
+          <ComboBox aria-label="combobox" allowsEmptyCollection>
+            <div style={{display: 'flex'}}>
+              <Input />
+              <Button>
+                <span aria-hidden="true" style={{padding: '0 2px'}}>
+                  ▼
+                </span>
+              </Button>
+            </div>
+            <Popover>
+              <ListBox
+                renderEmptyState={comboboxEmptyState}
+                data-testid="combo-box-list-box"
+                className={styles.menu}
+                style={{width: 'var(--trigger-width)'}}>
+                <MyListBoxItem>Foo</MyListBoxItem>
+                <MyListBoxItem>Bar</MyListBoxItem>
+                <MyListBoxItem>Baz</MyListBoxItem>
+                <MyListBoxItem href="http://google.com">Google</MyListBoxItem>
+              </ListBox>
+            </Popover>
+          </ComboBox>
+        </MyGridListItem>
       </GridList>
       <input />
-    </>
+    </div>
   );
 };
 

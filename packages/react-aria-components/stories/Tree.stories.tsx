@@ -15,13 +15,15 @@ import {Button} from '../src/Button';
 import {Checkbox, CheckboxProps} from '../src/Checkbox';
 import {classNames} from '@adobe/react-spectrum/private/utils/classNames';
 import {Collection} from 'react-aria/Collection';
+import {ComboBox} from '../src/ComboBox';
 import {DroppableCollectionReorderEvent, Key} from '@react-types/shared';
 import {Input} from '../src/Input';
 import {isTextDropItem, useDragAndDrop} from '../exports/useDragAndDrop';
+import {ListBox} from '../src/ListBox';
 import {ListLayout} from 'react-stately/useVirtualizerState';
 import {Menu, MenuItem, MenuTrigger} from '../src/Menu';
 import {Meta, StoryFn, StoryObj} from '@storybook/react';
-import {MyMenuItem} from './utils';
+import {MyListBoxItem, MyMenuItem} from './utils';
 import {Popover} from '../src/Popover';
 import React, {JSX, ReactNode, useCallback, useState} from 'react';
 import styles from '../example/index.css';
@@ -47,7 +49,7 @@ import './styles.css';
 export default {
   title: 'React Aria Components/Tree',
   component: Tree,
-  excludeStories: ['TreeExampleStaticRender']
+  excludeStories: ['TreeExampleStaticRender', 'TreeWithTextField']
 } as Meta<typeof Tree>;
 
 export type TreeStory = StoryFn<typeof Tree>;
@@ -1805,15 +1807,19 @@ export const HugeVirtualizedTree: StoryObj<typeof VirtualizedTreeRender> = {
   render: args => <HugeVirtualizedTreeRender {...args} />
 };
 
+let comboboxEmptyState = () => {
+  return <div style={{height: 30, width: '100%'}}>No results</div>;
+};
+
 // TODO: bugs to investigate
 // clicking on the textfield when selection is enabled causes selection to be toggled
 export function TreeWithTextField<T>(props: TreeProps<T>) {
   return (
-    <>
+    <div style={{display: 'flex', flexDirection: 'column'}}>
       <input aria-label="Before tree" />
       <Tree
         className={styles.tree}
-        style={{width: 500}}
+        style={{width: 400}}
         aria-label="tree with textfields"
         disabledKeys={['rawinput']}
         // TODO: cast for now, tab behavior to be added to Tree later (will need tests/docs and whatnot)?
@@ -1862,9 +1868,9 @@ export function TreeWithTextField<T>(props: TreeProps<T>) {
             textValue="Toolbar"
             interactive={
               <Toolbar aria-label="Text formatting" style={{gap: 4}}>
-                <Button>Bold</Button>
-                <Button>Italic</Button>
-                <Button>Underline</Button>
+                <Button onPress={action('Bold press')}>Bold</Button>
+                <Button onPress={action('Italics press')}>Italic</Button>
+                <Button onPress={action('Underline press')}>Underline</Button>
               </Toolbar>
             }>
             Toolbar
@@ -1877,7 +1883,30 @@ export function TreeWithTextField<T>(props: TreeProps<T>) {
             <StaticTreeItem
               id="group1-nested-1"
               textValue="Nested child 1"
-              interactive={<input aria-label="Nested child 1 input" />}>
+              interactive={
+                <ComboBox aria-label="combobox" allowsEmptyCollection>
+                  <div style={{display: 'flex'}}>
+                    <Input />
+                    <Button>
+                      <span aria-hidden="true" style={{padding: '0 2px'}}>
+                        ▼
+                      </span>
+                    </Button>
+                  </div>
+                  <Popover>
+                    <ListBox
+                      renderEmptyState={comboboxEmptyState}
+                      data-testid="combo-box-list-box"
+                      className={styles.menu}
+                      style={{width: 'var(--trigger-width)'}}>
+                      <MyListBoxItem>Foo</MyListBoxItem>
+                      <MyListBoxItem>Bar</MyListBoxItem>
+                      <MyListBoxItem>Baz</MyListBoxItem>
+                      <MyListBoxItem href="http://google.com">Google</MyListBoxItem>
+                    </ListBox>
+                  </Popover>
+                </ComboBox>
+              }>
               Nested child 1
             </StaticTreeItem>
             <StaticTreeItem
@@ -1901,7 +1930,7 @@ export function TreeWithTextField<T>(props: TreeProps<T>) {
         </StaticTreeItem>
       </Tree>
       <input aria-label="After tree" />
-    </>
+    </div>
   );
 }
 
