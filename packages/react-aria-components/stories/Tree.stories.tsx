@@ -1811,8 +1811,6 @@ let comboboxEmptyState = () => {
   return <div style={{height: 30, width: '100%'}}>No results</div>;
 };
 
-// TODO: bugs to investigate
-// clicking on the textfield when selection is enabled causes selection to be toggled
 export function TreeWithTextField<T>(props: TreeProps<T>) {
   return (
     <div style={{display: 'flex', flexDirection: 'column'}}>
@@ -1822,8 +1820,7 @@ export function TreeWithTextField<T>(props: TreeProps<T>) {
         style={{width: 400}}
         aria-label="tree with textfields"
         disabledKeys={['rawinput']}
-        // TODO: cast for now, tab behavior to be added to Tree later (will need tests/docs and whatnot)?
-        {...({keyboardNavigationBehavior: 'tab'} as any)}
+        keyboardNavigationBehavior="tab"
         {...props}>
         <StaticTreeItem
           id="textfield"
@@ -1942,11 +1939,10 @@ export const TreeWithTextFieldStory: StoryObj<typeof TreeWithTextField> = {
     disabledBehavior: 'selection'
   },
   argTypes: {
-    // TODO: add later
-    // keyboardNavigationBehavior: {
-    //   control: 'radio',
-    //   options: ['arrow', 'tab']
-    // },
+    keyboardNavigationBehavior: {
+      control: 'radio',
+      options: ['arrow', 'tab']
+    },
     selectionMode: {
       control: 'radio',
       options: ['none', 'single', 'multiple']

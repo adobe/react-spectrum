@@ -257,7 +257,7 @@ import {Tree, TreeHeader, TreeItem, TreeSection} from 'vanilla-starter/Tree';
     <TreeItem id="shared-photos" title="Shared Photos">
       <TreeItem id="shared-photo-1" title="Shared Photo 1" />
       <TreeItem id="shared-photo-2" title="Shared Photo 2" />
-    </TreeItem> 
+    </TreeItem>
   </TreeSection>
   <TreeSection>
     <TreeHeader>Documents</TreeHeader>
@@ -320,6 +320,59 @@ function Example(props) {
     </div>
   );
 }
+```
+
+## Keyboard navigation
+
+By default, Tree uses arrow key navigation to move focus into rows. Set `keyboardNavigationBehavior="tab"` to have <Keyboard>Option</Keyboard> move focus in and out of a row.
+
+```tsx render
+"use client";
+import {Tree, TreeItem, TreeItemContent} from 'vanilla-starter/Tree';
+import {ComboBox, ComboBoxItem} from 'vanilla-starter/ComboBox';
+
+///- begin collapse -///
+function PermissionPicker({label}) {
+  return (
+    <ComboBox style={{marginInlineStart: 'auto', flexShrink: 0}} aria-label={label} defaultSelectedKey="view" placeholder="Permission">
+      <ComboBoxItem id="view">Can view</ComboBoxItem>
+      <ComboBoxItem id="comment">Can comment</ComboBoxItem>
+      <ComboBoxItem id="edit">Can edit</ComboBoxItem>
+    </ComboBox>
+  );
+}
+///- end collapse -///
+
+<Tree
+  /*- begin highlight -*/
+  keyboardNavigationBehavior="tab"
+  /*- end highlight -*/
+  defaultExpandedKeys={['documents', 'photos']}
+  aria-label="Shared files"
+  style={{width: 420}}>
+  <TreeItem id="documents" title="Documents">
+    <TreeItem id="weekly" textValue="Weekly Report.pdf">
+      <TreeItemContent>
+        Weekly Report.pdf
+        <PermissionPicker label="Weekly Report.pdf permission" />
+      </TreeItemContent>
+    </TreeItem>
+    <TreeItem id="budget" textValue="Budget.xlsx">
+      <TreeItemContent>
+        Budget.xlsx
+        <PermissionPicker label="Budget.xlsx permission" />
+      </TreeItemContent>
+    </TreeItem>
+  </TreeItem>
+  <TreeItem id="photos" title="Photos">
+    <TreeItem id="sunset" textValue="Sunset.jpg">
+      <TreeItemContent>
+        Sunset.jpg
+        <PermissionPicker label="Sunset.jpg permission" />
+      </TreeItemContent>
+    </TreeItem>
+  </TreeItem>
+</Tree>
 ```
 
 ## Drag and drop
