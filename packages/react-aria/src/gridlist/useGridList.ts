@@ -106,6 +106,13 @@ export interface AriaGridListOptions<T> extends Omit<AriaGridListProps<T>, 'chil
    * @default 'action'
    */
   linkBehavior?: 'action' | 'selection' | 'override';
+  /**
+   * Which item in the collection to focus when tabbing into the collection. Overrides default
+   * roving tab index like behavior.
+   *
+   * @private
+   */
+  focusOnEntry?: 'first' | 'last';
 }
 
 export interface GridListAria {
@@ -156,7 +163,8 @@ export function useGridList<T>(
     linkBehavior,
     disallowTypeAhead,
     autoFocus: props.autoFocus,
-    escapeKeyBehavior
+    escapeKeyBehavior,
+    focusOnEntry: props.focusOnEntry
   });
 
   let id = useId(props.id);
