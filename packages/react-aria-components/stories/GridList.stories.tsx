@@ -975,8 +975,6 @@ let comboboxEmptyState = () => {
   return <div style={{height: 30, width: '100%'}}>No results</div>;
 };
 
-// TODO: bugs to investigate
-// clicking on the textfield when selection is enabled causes selection to be toggled
 export const GridListWithTextfield: GridListStory = args => {
   let isHorizontalStack = args.orientation === 'horizontal' && args.layout !== 'grid';
   return (
