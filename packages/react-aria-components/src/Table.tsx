@@ -721,6 +721,7 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
     isVirtualized,
     layoutDelegate,
     dropTargetDelegate: ctxDropTargetDelegate,
+    refreshVisibleRect,
     CollectionRoot
   } = useContext(CollectionRendererContext);
   let {dragAndDropHooks} = props;
@@ -728,7 +729,8 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
     {
       ...DOMCollectionProps,
       layoutDelegate,
-      isVirtualized
+      isVirtualized,
+      UNSTABLE_virtualizerRefresh: refreshVisibleRect
     },
     filteredState,
     ref

@@ -74,6 +74,8 @@ export interface AriaGridListProps<T> extends GridListProps<T>, DOMProps, AriaLa
 export interface AriaGridListOptions<T> extends Omit<AriaGridListProps<T>, 'children'> {
   /** Whether the list uses virtual scrolling. */
   isVirtualized?: boolean;
+  /** @private Refreshes the virtualizer visible rect after programmatic scrolling. */
+  UNSTABLE_virtualizerRefresh?: () => void;
   /**
    * Whether typeahead navigation is disabled.
    *
@@ -129,6 +131,7 @@ export function useGridList<T>(
 ): GridListAria {
   let {
     isVirtualized,
+    UNSTABLE_virtualizerRefresh,
     keyboardDelegate,
     layoutDelegate,
     onAction,
@@ -151,6 +154,7 @@ export function useGridList<T>(
     keyboardDelegate,
     layoutDelegate,
     isVirtualized,
+    UNSTABLE_virtualizerRefresh,
     selectOnFocus: state.selectionManager.selectionBehavior === 'replace',
     shouldFocusWrap: props.shouldFocusWrap,
     linkBehavior,

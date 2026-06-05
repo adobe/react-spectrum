@@ -65,6 +65,7 @@ interface ScrollViewAria {
   isScrolling: boolean;
   scrollViewProps: HTMLAttributes<HTMLElement>;
   contentProps: HTMLAttributes<HTMLElement>;
+  refreshVisibleRect: () => void;
 }
 
 export function useScrollView(
@@ -133,6 +134,33 @@ export function useScrollView(
     }
   }, [state, allowsWindowScrolling, onVisibleRectChange]);
 
+  let updateViewportOffset = useCallback(() => {
+    let boundingRect = ref.current!.getBoundingClientRect();
+    let x = boundingRect.x < 0 ? -boundingRect.x : 0;
+    let y = boundingRect.y < 0 ? -boundingRect.y : 0;
+    state.viewportOffset = new Point(x, y);
+  }, [ref, state]);
+
+  let updateScrollPosition = useCallback(() => {
+    state.scrollPosition = new Point(
+      Math.max(0, Math.min(getScrollLeft(ref.current!, direction), contentSize.width - state.size.width)),
+      Math.max(0, Math.min(ref.current!.scrollTop, contentSize.height - state.size.height))
+    );
+  }, [contentSize, direction, ref, state]);
+
+  let refreshVisibleRect = useCallback(() => {
+    if (!ref.current) {
+      return;
+    }
+
+    if (allowsWindowScrolling) {
+      updateViewportOffset();
+    }
+
+    updateScrollPosition();
+    updateVisibleRect();
+  }, [allowsWindowScrolling, ref, updateScrollPosition, updateViewportOffset, updateVisibleRect]);
+
   let [isScrolling, setScrolling] = useState(false);
 
   let onScroll = useCallback(
@@ -148,23 +176,18 @@ export function useScrollView(
 
       if (target !== ref.current) {
         // An ancestor element or the window was scrolled. Update the position of the scroll view relative to the viewport.
-        let boundingRect = ref.current!.getBoundingClientRect();
-        let x = boundingRect.x < 0 ? -boundingRect.x : 0;
-        let y = boundingRect.y < 0 ? -boundingRect.y : 0;
-        if (x === state.viewportOffset.x && y === state.viewportOffset.y) {
+        let lastViewportOffset = state.viewportOffset;
+        updateViewportOffset();
+        if (
+          lastViewportOffset.x === state.viewportOffset.x &&
+          lastViewportOffset.y === state.viewportOffset.y
+        ) {
           return;
         }
-
-        state.viewportOffset = new Point(x, y);
       } else {
         // The scroll view itself was scrolled. Update the local scroll position.
         // Prevent rubber band scrolling from shaking when scrolling out of bounds
-        let scrollTop = target.scrollTop;
-        let scrollLeft = getScrollLeft(target, direction);
-        state.scrollPosition = new Point(
-          Math.max(0, Math.min(scrollLeft, contentSize.width - state.size.width)),
-          Math.max(0, Math.min(scrollTop, contentSize.height - state.size.height))
-        );
+        updateScrollPosition();
       }
 
       flushSync(() => {
@@ -208,9 +231,9 @@ export function useScrollView(
     [
       onScrollProp,
       ref,
-      direction,
       state,
-      contentSize,
+      updateScrollPosition,
+      updateViewportOffset,
       updateVisibleRect,
       onScrollStart,
       onScrollEnd
@@ -394,6 +417,7 @@ export function useScrollView(
     contentProps: {
       role: 'presentation',
       style: innerStyle
-    }
+    },
+    refreshVisibleRect
   };
 }
