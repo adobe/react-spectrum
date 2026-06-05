@@ -1841,7 +1841,7 @@ describe('GridList', () => {
     ])(
       'should not navigate rows when arrow keys are pressed while a text input child has focus (%s)',
       async (_, listProps) => {
-        let {getAllByRole, getByRole} = render(
+        let {getByRole} = render(
           <GridList aria-label="Test" {...listProps}>
             <GridListItem id="item1" textValue="Apple">
               Apple <input aria-label="input 1" />
@@ -1852,7 +1852,8 @@ describe('GridList', () => {
           </GridList>
         );
 
-        let rows = getAllByRole('row');
+        let gridListTester = testUtilUser.createTester('GridList', {root: getByRole('grid')});
+        let rows = gridListTester.getRows();
         let input = getByRole('textbox');
 
         await user.tab();
@@ -1877,7 +1878,7 @@ describe('GridList', () => {
     ])(
       'should not trigger typeahead when typing in a text input child (%s)',
       async (_, listProps) => {
-        let {getAllByRole, getByRole} = render(
+        let {getByRole} = render(
           <GridList aria-label="Test" {...listProps}>
             <GridListItem id="item1" textValue="Apple">
               Apple <input aria-label="input 1" />
@@ -1888,7 +1889,8 @@ describe('GridList', () => {
           </GridList>
         );
 
-        let rows = getAllByRole('row');
+        let gridListTester = testUtilUser.createTester('GridList', {root: getByRole('grid')});
+        let rows = gridListTester.getRows();
         let input = getByRole('textbox');
 
         await user.tab();
@@ -1909,7 +1911,7 @@ describe('GridList', () => {
       'should not trigger selection when pressing Space in a text input child (%s)',
       async (_, listProps) => {
         let onSelectionChange = jest.fn();
-        let {getAllByRole, getByRole} = render(
+        let {getByRole} = render(
           <GridList
             aria-label="Test"
             {...listProps}
@@ -1924,7 +1926,8 @@ describe('GridList', () => {
           </GridList>
         );
 
-        let rows = getAllByRole('row');
+        let gridListTester = testUtilUser.createTester('GridList', {root: getByRole('grid')});
+        let rows = gridListTester.getRows();
         let input = getByRole('textbox');
 
         await user.tab();
@@ -1935,6 +1938,65 @@ describe('GridList', () => {
         await user.keyboard(' ');
         expect(input).toHaveValue(' ');
         expect(onSelectionChange).not.toHaveBeenCalled();
+      }
+    );
+
+    it.each([
+      ['keyboardNavigationBehavior="tab"', {keyboardNavigationBehavior: 'tab'}],
+      ['layout="grid"', {layout: 'grid'}]
+    ])(
+      'should not trigger selection when clicking on a tabbable child element (%s)',
+      async (_, listProps) => {
+        let onSelectionChange = jest.fn();
+        let {getByRole} = render(
+          <GridList
+            aria-label="Test"
+            {...listProps}
+            selectionMode="multiple"
+            onSelectionChange={onSelectionChange}>
+            <GridListItem id="item1" textValue="Apple">
+              Apple <input aria-label="input 1" />
+            </GridListItem>
+            <GridListItem id="item2" textValue="Banana">
+              Banana
+            </GridListItem>
+          </GridList>
+        );
+
+        let input = getByRole('textbox');
+        await user.click(input);
+        expect(document.activeElement).toBe(input);
+        expect(onSelectionChange).not.toHaveBeenCalled();
+      }
+    );
+
+    it.each([
+      ['keyboardNavigationBehavior="tab"', {keyboardNavigationBehavior: 'tab'}],
+      ['layout="grid"', {layout: 'grid'}]
+    ])(
+      'should still trigger selection when clicking on a row with no tabbable children (%s)',
+      async (_, listProps) => {
+        let onSelectionChange = jest.fn();
+        let {getByRole} = render(
+          <GridList
+            aria-label="Test"
+            {...listProps}
+            selectionMode="multiple"
+            onSelectionChange={onSelectionChange}>
+            <GridListItem id="item1" textValue="Apple">
+              Apple
+            </GridListItem>
+            <GridListItem id="item2" textValue="Banana">
+              Banana
+            </GridListItem>
+          </GridList>
+        );
+
+        let gridListTester = testUtilUser.createTester('GridList', {root: getByRole('grid')});
+        let rows = gridListTester.getRows();
+        await user.click(rows[0]);
+        expect(onSelectionChange).toHaveBeenCalledTimes(1);
+        expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(['item1']));
       }
     );
   });

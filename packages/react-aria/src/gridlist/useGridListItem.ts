@@ -30,8 +30,15 @@ import {
 import {getFocusableTreeWalker} from '../focus/FocusScope';
 import {getRowId, listMap} from './utils';
 import {getScrollParent} from '../utils/getScrollParent';
-import {HTMLAttributes, KeyboardEvent as ReactKeyboardEvent, useRef} from 'react';
+import {
+  HTMLAttributes,
+  KeyboardEvent as ReactKeyboardEvent,
+  MouseEvent as ReactMouseEvent,
+  PointerEvent as ReactPointerEvent,
+  useRef
+} from 'react';
 import {isFocusVisible} from '../interactions/useFocusVisible';
+import {isTabbable} from '../utils/isFocusable';
 import type {ListState} from 'react-stately/useListState';
 import {mergeProps} from '../utils/mergeProps';
 import {scrollIntoViewport} from '../utils/scrollIntoView';
@@ -416,7 +423,9 @@ export function useGridListItem<T>(
     id: getRowId(state, node.key)
   });
 
-  // TODO we need to guard against space/enter triggering selection/row link via usePress (from itemProps) so check if propagation
+  // TODO: guarding against selection when firing space/enter/click on a element in a row is technically not only limited to textfields so I
+  // am not making it specific to keyboardNavigationBehavior = tab, but maybe we should still?
+  // we need to guard against space/enter triggering selection/row link via usePress (from itemProps) so check if propagation
   // is stopped. this also fixes space not working in a textfield in a tree parent row
   let baseOnKeyDown = rowProps.onKeyDown;
   rowProps.onKeyDown = (e: ReactKeyboardEvent<FocusableElement>) => {
@@ -424,6 +433,28 @@ export function useGridListItem<T>(
     if (!e.isPropagationStopped()) {
       baseOnKeyDown?.(e);
     }
+  };
+
+  // guard against presses triggering row selecition when they happen on elements within the row
+  // am currently assuming if it is tabbable it is interactive, but maybe can use a different kind of check
+  let baseOnPointerDown = rowProps.onPointerDown;
+  rowProps.onPointerDown = (e: ReactPointerEvent<FocusableElement>) => {
+    let target = getEventTarget(e) as Element | null;
+    if (target && target !== ref.current && isTabbable(target)) {
+      e.stopPropagation();
+      return;
+    }
+    baseOnPointerDown?.(e);
+  };
+
+  let baseOnMouseDown = rowProps.onMouseDown;
+  rowProps.onMouseDown = (e: ReactMouseEvent<FocusableElement>) => {
+    let target = getEventTarget(e) as Element | null;
+    if (target && target !== ref.current && isTabbable(target)) {
+      e.stopPropagation();
+      return;
+    }
+    baseOnMouseDown?.(e);
   };
 
   if (isVirtualized) {
