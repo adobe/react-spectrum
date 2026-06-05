@@ -1145,88 +1145,6 @@ describe('GridList', () => {
     expect(document.activeElement).toBe(items[0]);
   });
 
-  it('should not navigate rows when arrow keys are pressed while a text input child has focus', async () => {
-    let {getAllByRole, getByRole} = render(
-      <GridList aria-label="Test" keyboardNavigationBehavior="tab">
-        <GridListItem id="item1" textValue="Apple">
-          Apple <input aria-label="input 1" />
-        </GridListItem>
-        <GridListItem id="item2" textValue="Banana">
-          Banana
-        </GridListItem>
-      </GridList>
-    );
-
-    let rows = getAllByRole('row');
-    let input = getByRole('textbox');
-
-    await user.tab();
-    expect(document.activeElement).toBe(rows[0]);
-
-    await user.tab();
-    expect(document.activeElement).toBe(input);
-
-    await user.keyboard('{ArrowDown}');
-    expect(document.activeElement).toBe(input);
-    await user.keyboard('{ArrowUp}');
-    expect(document.activeElement).toBe(input);
-  });
-
-  it('should not trigger typeahead when typing in a text input child', async () => {
-    let {getAllByRole, getByRole} = render(
-      <GridList aria-label="Test" keyboardNavigationBehavior="tab">
-        <GridListItem id="item1" textValue="Apple">
-          Apple <input aria-label="input 1" />
-        </GridListItem>
-        <GridListItem id="item2" textValue="Banana">
-          Banana
-        </GridListItem>
-      </GridList>
-    );
-
-    let rows = getAllByRole('row');
-    let input = getByRole('textbox');
-
-    await user.tab();
-    expect(document.activeElement).toBe(rows[0]);
-    await user.tab();
-    expect(document.activeElement).toBe(input);
-
-    await user.keyboard('b');
-    expect(document.activeElement).toBe(input);
-    expect(input).toHaveValue('b');
-  });
-
-  it('should not trigger selection when pressing Space in a text input child', async () => {
-    using onSelectionChange = jest.fn();
-    let {getAllByRole, getByRole} = render(
-      <GridList
-        aria-label="Test"
-        keyboardNavigationBehavior="tab"
-        selectionMode="multiple"
-        onSelectionChange={onSelectionChange}>
-        <GridListItem id="item1" textValue="Apple">
-          Apple <input aria-label="input 1" />
-        </GridListItem>
-        <GridListItem id="item2" textValue="Banana">
-          Banana
-        </GridListItem>
-      </GridList>
-    );
-
-    let rows = getAllByRole('row');
-    let input = getByRole('textbox');
-
-    await user.tab();
-    expect(document.activeElement).toBe(rows[0]);
-    await user.tab();
-    expect(document.activeElement).toBe(input);
-
-    await user.keyboard(' ');
-    expect(input).toHaveValue(' ');
-    expect(onSelectionChange).not.toHaveBeenCalled();
-  });
-
   it('should not propagate the checkbox context from selection into other cells', async () => {
     let tree = render(
       <GridList aria-label="Test" selectionMode="multiple">
@@ -1912,6 +1830,111 @@ describe('GridList', () => {
         expect(onPressEnd).toHaveBeenCalledTimes(1);
         expect(onPress).toHaveBeenCalledTimes(1);
         expect(onClick).toHaveBeenCalledTimes(1);
+      }
+    );
+  });
+
+  describe('tab navigation and textfields', () => {
+    it.each([
+      ['keyboardNavigationBehavior="tab"', {keyboardNavigationBehavior: 'tab'}],
+      ['layout="grid"', {layout: 'grid'}]
+    ])(
+      'should not navigate rows when arrow keys are pressed while a text input child has focus (%s)',
+      async (_, listProps) => {
+        let {getAllByRole, getByRole} = render(
+          <GridList aria-label="Test" {...listProps}>
+            <GridListItem id="item1" textValue="Apple">
+              Apple <input aria-label="input 1" />
+            </GridListItem>
+            <GridListItem id="item2" textValue="Banana">
+              Banana
+            </GridListItem>
+          </GridList>
+        );
+
+        let rows = getAllByRole('row');
+        let input = getByRole('textbox');
+
+        await user.tab();
+        expect(document.activeElement).toBe(rows[0]);
+        await user.tab();
+        expect(document.activeElement).toBe(input);
+
+        await user.keyboard('{ArrowDown}');
+        expect(document.activeElement).toBe(input);
+        await user.keyboard('{ArrowUp}');
+        expect(document.activeElement).toBe(input);
+        await user.keyboard('{ArrowRight}');
+        expect(document.activeElement).toBe(input);
+        await user.keyboard('{ArrowLeft}');
+        expect(document.activeElement).toBe(input);
+      }
+    );
+
+    it.each([
+      ['keyboardNavigationBehavior="tab"', {keyboardNavigationBehavior: 'tab'}],
+      ['layout="grid"', {layout: 'grid'}]
+    ])(
+      'should not trigger typeahead when typing in a text input child (%s)',
+      async (_, listProps) => {
+        let {getAllByRole, getByRole} = render(
+          <GridList aria-label="Test" {...listProps}>
+            <GridListItem id="item1" textValue="Apple">
+              Apple <input aria-label="input 1" />
+            </GridListItem>
+            <GridListItem id="item2" textValue="Banana">
+              Banana
+            </GridListItem>
+          </GridList>
+        );
+
+        let rows = getAllByRole('row');
+        let input = getByRole('textbox');
+
+        await user.tab();
+        expect(document.activeElement).toBe(rows[0]);
+        await user.tab();
+        expect(document.activeElement).toBe(input);
+
+        await user.keyboard('b');
+        expect(document.activeElement).toBe(input);
+        expect(input).toHaveValue('b');
+      }
+    );
+
+    it.each([
+      ['keyboardNavigationBehavior="tab"', {keyboardNavigationBehavior: 'tab'}],
+      ['layout="grid"', {layout: 'grid'}]
+    ])(
+      'should not trigger selection when pressing Space in a text input child (%s)',
+      async (_, listProps) => {
+        let onSelectionChange = jest.fn();
+        let {getAllByRole, getByRole} = render(
+          <GridList
+            aria-label="Test"
+            {...listProps}
+            selectionMode="multiple"
+            onSelectionChange={onSelectionChange}>
+            <GridListItem id="item1" textValue="Apple">
+              Apple <input aria-label="input 1" />
+            </GridListItem>
+            <GridListItem id="item2" textValue="Banana">
+              Banana
+            </GridListItem>
+          </GridList>
+        );
+
+        let rows = getAllByRole('row');
+        let input = getByRole('textbox');
+
+        await user.tab();
+        expect(document.activeElement).toBe(rows[0]);
+        await user.tab();
+        expect(document.activeElement).toBe(input);
+
+        await user.keyboard(' ');
+        expect(input).toHaveValue(' ');
+        expect(onSelectionChange).not.toHaveBeenCalled();
       }
     );
   });

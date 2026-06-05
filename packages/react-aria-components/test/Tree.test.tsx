@@ -47,7 +47,8 @@ import {Virtualizer} from '../src/Virtualizer';
 let {
   EmptyTreeStaticStory: EmptyLoadingTree,
   LoadingStoryDepOnTopStory: LoadingMoreTree,
-  TreeWithDragAndDrop
+  TreeWithDragAndDrop,
+  TreeWithTextFieldStory
 } = composeStories(stories);
 
 let onSelectionChange = jest.fn();
@@ -2837,6 +2838,92 @@ describe('Tree', () => {
     expect(rows[18]).toHaveAttribute('aria-level', '5');
     expect(rows[18]).toHaveAttribute('aria-posinset', '1');
     expect(rows[18]).toHaveAttribute('aria-setsize', '1');
+  });
+
+  describe('tab navigation and textfields', () => {
+    it('should not navigate rows when arrow keys are pressed while a text input child has focus', async () => {
+      let {getByRole} = render(<TreeWithTextFieldStory />);
+      let treeTester = testUtilUser.createTester('Tree', {root: getByRole('treegrid')});
+      let rows = treeTester.getRows();
+      let input = getByRole('textbox', {name: 'Name'});
+
+      // tab past the before tree input
+      await user.tab();
+      await user.tab();
+      expect(document.activeElement).toBe(rows[0]);
+      await user.tab();
+      expect(document.activeElement).toBe(input);
+
+      await user.keyboard('{ArrowDown}');
+      expect(document.activeElement).toBe(input);
+      await user.keyboard('{ArrowUp}');
+      expect(document.activeElement).toBe(input);
+      await user.keyboard('{ArrowRight}');
+      expect(document.activeElement).toBe(input);
+      await user.keyboard('{ArrowLeft}');
+      expect(document.activeElement).toBe(input);
+    });
+
+    it('should not trigger typeahead when typing in a text input child', async () => {
+      let {getByRole} = render(<TreeWithTextFieldStory />);
+      let treeTester = testUtilUser.createTester('Tree', {root: getByRole('treegrid')});
+      let rows = treeTester.getRows();
+      let input = getByRole('textbox', {name: 'Name'});
+
+      await user.tab();
+      await user.tab();
+      expect(document.activeElement).toBe(rows[0]);
+      await user.tab();
+      expect(document.activeElement).toBe(input);
+
+      await user.keyboard('row');
+      expect(document.activeElement).toBe(input);
+      expect(input).toHaveValue('row');
+    });
+
+    it('should not trigger selection when pressing Space in a text input child of a leaf row', async () => {
+      let onSelectionChange = jest.fn();
+      let {getByRole} = render(
+        <TreeWithTextFieldStory selectionMode="multiple" onSelectionChange={onSelectionChange} />
+      );
+      let treeTester = testUtilUser.createTester('Tree', {root: getByRole('treegrid')});
+      let rows = treeTester.getRows();
+      let input = getByRole('textbox', {name: 'Name'});
+
+      await user.tab();
+      await user.tab();
+      expect(document.activeElement).toBe(rows[0]);
+      await user.tab();
+      await user.tab();
+      expect(document.activeElement).toBe(input);
+
+      await user.keyboard(' ');
+      expect(input).toHaveValue(' ');
+      expect(onSelectionChange).not.toHaveBeenCalled();
+    });
+
+    it('should allow typing space in the text input child of a parent row', async () => {
+      let onSelectionChange = jest.fn();
+      let {getByRole} = render(
+        <TreeWithTextFieldStory selectionMode="multiple" onSelectionChange={onSelectionChange} />
+      );
+      let treeTester = testUtilUser.createTester('Tree', {root: getByRole('treegrid')});
+      let rows = treeTester.getRows();
+
+      await user.tab();
+      await user.tab();
+      expect(document.activeElement).toBe(rows[0]);
+      await user.keyboard('{ArrowDown}');
+      await user.keyboard('{ArrowDown}');
+      await user.tab();
+      await user.tab();
+      let parentInput = getByRole('textbox', {name: 'row 1 input'});
+      expect(document.activeElement).toBe(parentInput);
+
+      await user.keyboard(' ');
+      expect(parentInput).toHaveValue(' ');
+      expect(onSelectionChange).not.toHaveBeenCalled();
+    });
   });
 });
 
