@@ -119,7 +119,7 @@ const baseColors = {
 };
 
 // Resolves a color to its most basic form, following all aliases.
-function resolveColorToken(token: string | ColorToken | ColorRef): ColorToken {
+export function resolveColorToken(token: string | ColorToken | ColorRef): ColorToken {
   if (typeof token === 'string') {
     return {
       type: 'color',
@@ -150,7 +150,7 @@ function resolveColorToken(token: string | ColorToken | ColorRef): ColorToken {
   };
 }
 
-function colorTokenToString(token: ColorToken, opacity?: string | number) {
+export function colorTokenToString(token: ColorToken, opacity?: string | number) {
   let result =
     token.light === token.dark ? token.light : `light-dark(${token.light}, ${token.dark})`;
   if (opacity) {
@@ -592,7 +592,7 @@ const fontWeightBase = {
   black: '900'
 } as const;
 
-const fontWeight = {
+export const fontWeight = {
   ...fontWeightBase,
   heading: {
     default:
@@ -614,7 +614,7 @@ const fontWeight = {
   }
 } as const;
 
-const i18nFonts = {
+export const i18nFonts = {
   ':lang(ar)': 'adobe-clean-arabic, myriad-arabic, ui-sans-serif, system-ui, sans-serif',
   ':lang(he)': 'adobe-clean-hebrew, myriad-hebrew, ui-sans-serif, system-ui, sans-serif',
   ':lang(ja)':
@@ -632,7 +632,7 @@ const i18nFonts = {
     "adobe-clean-han-simplified-c, source-han-simplified-c, 'SimSun', 'Heiti SC Light', sans-serif"
 } as const;
 
-const fontSize = {
+export const fontSize = {
   // The default font size scale is for use within UI components.
   'ui-xs': fontSizeToken('font-size-50'),
   'ui-sm': fontSizeToken('font-size-75'),
@@ -681,14 +681,58 @@ const fontSize = {
   'code-xl': fontSizeToken('code-size-xl')
 } as const;
 
+export const fontFamily = {
+  sans: {
+    default:
+      'var(--s2-font-family-sans, adobe-clean-spectrum-vf), adobe-clean-variable, adobe-clean, ui-sans-serif, system-ui, sans-serif',
+    ...i18nFonts
+  },
+  serif: {
+    default:
+      'var(--s2-font-family-serif, adobe-clean-spectrum-srf-vf), adobe-clean-serif, "Source Serif", Georgia, serif',
+    ...i18nFonts
+  },
+  code: 'source-code-pro, "Source Code Pro", Monaco, monospace'
+} as const;
+
 // Line heights linearly interpolate between 1.3 and 1.15 for font sizes between 10 and 32, rounded to the nearest 2px.
 // Text above 32px always has a line height of 1.15.
-const fontSizeCalc = 'var(--s2-font-size-base, 14) * var(--fs)';
+export const fontSizeCalc = 'var(--s2-font-size-base, 14) * var(--fs)';
 const minFontScale = 1.15;
 const maxFontScale = 1.3;
 const minFontSize = 10;
 const maxFontSize = 32;
 const lineHeightCalc = `round(1em * (${minFontScale} + (1 - ((min(${maxFontSize}, ${fontSizeCalc}) - ${minFontSize})) / ${maxFontSize - minFontSize}) * ${(maxFontScale - minFontScale).toFixed(2)}), 2px)`;
+export const lineHeight = {
+  // See https://spectrum.corp.adobe.com/page/typography/#Line-height
+  ui: {
+    // Calculate line-height based on font size.
+    default: lineHeightCalc,
+    // CJK fonts use a larger line-height.
+    ':lang(ja, ko, zh, zh-Hant, zh-Hans, zh-CN, zh-SG)': getToken('line-height-200')
+  },
+  heading: {
+    default: lineHeightCalc,
+    ':lang(ja, ko, zh, zh-Hant, zh-Hans, zh-CN, zh-SG)': getToken('heading-cjk-line-height')
+  },
+  title: {
+    default: lineHeightCalc,
+    ':lang(ja, ko, zh, zh-Hant, zh-Hans, zh-CN, zh-SG)': getToken('title-cjk-line-height')
+  },
+  body: {
+    // Body text uses spacious line height, 1.5 for all font sizes.
+    default: getToken('body-line-height'),
+    ':lang(ja, ko, zh, zh-Hant, zh-Hans, zh-CN, zh-SG)': getToken('body-cjk-line-height')
+  },
+  detail: {
+    default: lineHeightCalc,
+    ':lang(ja, ko, zh, zh-Hant, zh-Hans, zh-CN, zh-SG)': getToken('detail-cjk-line-height')
+  },
+  code: {
+    default: getToken('code-line-height'),
+    ':lang(ja, ko, zh, zh-Hant, zh-Hans, zh-CN, zh-SG)': getToken('code-cjk-line-height')
+  }
+} as const;
 
 export const style = createTheme({
   properties: {
@@ -928,19 +972,7 @@ export const style = createTheme({
     ),
 
     // text
-    fontFamily: {
-      sans: {
-        default:
-          'var(--s2-font-family-sans, adobe-clean-spectrum-vf), adobe-clean-variable, adobe-clean, ui-sans-serif, system-ui, sans-serif',
-        ...i18nFonts
-      },
-      serif: {
-        default:
-          'var(--s2-font-family-serif, adobe-clean-spectrum-srf-vf), adobe-clean-serif, "Source Serif", Georgia, serif',
-        ...i18nFonts
-      },
-      code: 'source-code-pro, "Source Code Pro", Monaco, monospace'
-    },
+    fontFamily,
     fontSize: new ExpandedProperty<keyof typeof fontSize>(
       ['--fs', 'fontSize'],
       value => {
@@ -965,36 +997,7 @@ export const style = createTheme({
       },
       fontWeight
     ),
-    lineHeight: {
-      // See https://spectrum.corp.adobe.com/page/typography/#Line-height
-      ui: {
-        // Calculate line-height based on font size.
-        default: lineHeightCalc,
-        // CJK fonts use a larger line-height.
-        ':lang(ja, ko, zh, zh-Hant, zh-Hans, zh-CN, zh-SG)': getToken('line-height-200')
-      },
-      heading: {
-        default: lineHeightCalc,
-        ':lang(ja, ko, zh, zh-Hant, zh-Hans, zh-CN, zh-SG)': getToken('heading-cjk-line-height')
-      },
-      title: {
-        default: lineHeightCalc,
-        ':lang(ja, ko, zh, zh-Hant, zh-Hans, zh-CN, zh-SG)': getToken('title-cjk-line-height')
-      },
-      body: {
-        // Body text uses spacious line height, 1.5 for all font sizes.
-        default: getToken('body-line-height'),
-        ':lang(ja, ko, zh, zh-Hant, zh-Hans, zh-CN, zh-SG)': getToken('body-cjk-line-height')
-      },
-      detail: {
-        default: lineHeightCalc,
-        ':lang(ja, ko, zh, zh-Hant, zh-Hans, zh-CN, zh-SG)': getToken('detail-cjk-line-height')
-      },
-      code: {
-        default: getToken('code-line-height'),
-        ':lang(ja, ko, zh, zh-Hant, zh-Hans, zh-CN, zh-SG)': getToken('code-cjk-line-height')
-      }
-    },
+    lineHeight,
     listStyleType: ['none', 'disc', 'decimal'] as const,
     listStylePosition: ['inside', 'outside'] as const,
     textTransform: ['uppercase', 'lowercase', 'capitalize', 'none'] as const,
