@@ -111,19 +111,18 @@ export const TextAreaExample: StoryTextArea = {
 };
 
 export const TextAreaContextualHelpExample: StoryTextArea = {
-  render: (args) => (
+  render: args => (
     <TextArea
       {...args}
       contextualHelp={
         <ContextualHelp>
           <Heading>Share your thoughts!</Heading>
           <Content>
-            <Text>
-              Your comment will be visible to other users.
-            </Text>
+            <Text>Your comment will be visible to other users.</Text>
           </Content>
         </ContextualHelp>
-      } />
+      }
+    />
   ),
   args: {
     label: 'Comment',
