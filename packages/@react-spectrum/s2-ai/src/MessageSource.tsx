@@ -10,15 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {
-  AriaLabelingProps,
-  DOMProps,
-  DOMRef,
-  DOMRefValue,
-  forwardRefType
-} from '@react-types/shared';
+import {AriaLabelingProps, DOMProps, DOMRef, forwardRefType} from '@react-types/shared';
 import {baseColor, focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
-import {ContextValue, SlotProps} from 'react-aria-components/slots';
 import {
   Disclosure,
   DisclosurePanel,
@@ -27,24 +20,24 @@ import {
   DisclosureTitle
 } from '@react-spectrum/s2/Disclosure';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
-import {
-  getAllowedOverrides,
-  StyleProps,
-  UnsafeStyles
-} from './style-utils-copy' with {type: 'macro'};
 import {Link, LinkProps} from 'react-aria-components/Link';
+import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
 import {NumberFormatter} from '@internationalized/number';
 import React, {createContext, forwardRef, useContext} from 'react';
+import {SlotProps} from 'react-aria-components/slots';
+import {StyleString} from './types';
 import {useDOMRef} from './useDOMRef';
 import {useLocale} from 'react-aria/I18nProvider';
-import {useSpectrumContextProps} from './useSpectrumContextProps';
-
-export interface MessageSourceProps extends Omit<DisclosureProps, 'isQuiet'> {
+export interface MessageSourceProps extends Omit<
+  DisclosureProps,
+  'isQuiet' | 'styles' | 'UNSAFE_className' | 'UNSAFE_style'
+> {
   label: string;
+  /**
+   * Spectrum-defined styles, returned by the `style()` macro.
+   */
+  styles?: StyleString;
 }
-
-export const MessageSourceContext =
-  createContext<ContextValue<Partial<MessageSourceProps>, DOMRefValue<HTMLDivElement>>>(null);
 
 const MessageSourceInternalContext = createContext<{size: 'S' | 'M' | 'L' | 'XL'}>({size: 'M'});
 
@@ -56,13 +49,19 @@ export const MessageSource = (forwardRef as forwardRefType)(function MessageSour
   props: MessageSourceProps,
   ref: DOMRef<HTMLDivElement>
 ) {
-  [props, ref] = useSpectrumContextProps(props, ref, MessageSourceContext);
-  let {label, children, size = 'M', ...otherProps} = props;
+  // [props, ref] = useSpectrumContextProps(props, ref, MessageSourceContext);
+  let {label, children, size = 'M', styles, ...otherProps} = props;
 
   return (
     <MessageSourceInternalContext.Provider value={{size}}>
       <NumberBadgeContext.Provider value={{size}}>
-        <Disclosure {...otherProps} size={size} ref={ref} isQuiet>
+        <Disclosure
+          {...otherProps}
+          //@ts-ignore
+          UNSAFE_className={styles}
+          size={size}
+          ref={ref}
+          isQuiet>
           <DisclosureTitle>{label}</DisclosureTitle>
           {children}
         </Disclosure>
@@ -90,7 +89,15 @@ const itemStyles = style({
   gap: 8
 });
 
-export interface SourceListProps extends DisclosurePanelProps {}
+export interface SourceListProps extends Omit<
+  DisclosurePanelProps,
+  'styles' | 'UNSAFE_className' | 'UNSAFE_style'
+> {
+  /**
+   * Spectrum-defined styles, returned by the `style()` macro.
+   */
+  styles?: StyleString;
+}
 
 /**
  * A SourceList displays an ordered list of sources inside a MessageSource.
@@ -100,14 +107,18 @@ export const SourceList = (forwardRef as forwardRefType)(function SourceList(
   props: SourceListProps,
   ref: DOMRef<HTMLDivElement>
 ) {
-  let {children, ...otherProps} = props;
+  let {children, styles, ...otherProps} = props;
 
   let numberedChildren = React.Children.map(children, (child, i) => (
     <SourceListIndexContext.Provider value={i + 1}>{child}</SourceListIndexContext.Provider>
   ));
 
   return (
-    <DisclosurePanel {...otherProps} ref={ref}>
+    <DisclosurePanel
+      {...otherProps}
+      // @ts-ignore
+      UNSAFE_className={styles}
+      ref={ref}>
       <ol className={listStyles}>{numberedChildren}</ol>
     </DisclosurePanel>
   );
@@ -128,10 +139,13 @@ const linkStyles = style({
   disableTapHighlight: true
 });
 
-export interface SourceListItemProps
-  extends Omit<LinkProps, 'className' | 'style'>, UnsafeStyles, DOMProps {
+export interface SourceListItemProps extends Omit<LinkProps, 'className' | 'style'>, DOMProps {
   /** The content of the source list item. */
   children: React.ReactNode;
+  /**
+   * Spectrum-defined styles, returned by the `style()` macro.
+   */
+  styles?: StyleString;
 }
 
 /**
@@ -144,11 +158,11 @@ export const SourceListItem = (forwardRef as forwardRefType)(function SourceList
 ) {
   let index = useContext(SourceListIndexContext);
   let {size} = useContext(MessageSourceInternalContext);
-  let {children, UNSAFE_style, UNSAFE_className = '', ...otherProps} = props;
+  let {children, ...otherProps} = props;
   let itemRef = useDOMRef(ref);
 
   return (
-    <li ref={itemRef} style={UNSAFE_style} className={(UNSAFE_className ?? '') + itemStyles}>
+    <li ref={itemRef} className={mergeStyles(itemStyles, props.styles)}>
       <NumberBadge value={index} />
       <Link {...otherProps} className={renderProps => linkStyles({size, ...renderProps})}>
         {children}
@@ -167,62 +181,61 @@ interface NumberBadgeStyleProps {
 }
 
 export interface NumberBadgeProps
-  extends DOMProps, AriaLabelingProps, StyleProps, NumberBadgeStyleProps, SlotProps {
+  extends DOMProps, AriaLabelingProps, NumberBadgeStyleProps, SlotProps {
   /**
    * The value to be displayed in the notification badge.
    */
   value: number;
+  /**
+   * Spectrum-defined styles, returned by the `style()` macro.
+   */
+  styles?: StyleString;
 }
 
-interface NumberBadgeContextProps extends Partial<NumberBadgeProps> {}
-export const NumberBadgeContext =
-  createContext<ContextValue<Partial<NumberBadgeContextProps>, DOMRefValue<HTMLSpanElement>>>(null);
+const NumberBadgeContext = createContext<{size?: 'S' | 'M' | 'L' | 'XL'}>({});
 
-const badge = style(
-  {
-    display: 'flex',
-    color: 'gray-900',
-    font: {
-      size: {
-        S: 'ui-xs',
-        M: 'ui-sm',
-        L: 'ui',
-        XL: 'ui-lg'
-      }
-    },
-    borderStyle: {
-      forcedColors: 'solid'
-    },
-    borderWidth: {
-      forcedColors: '[1px]'
-    },
-    borderColor: {
-      forcedColors: 'ButtonBorder'
-    },
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'gray-200',
-    // These are arbitrary sizes since there are no designs for them
-    width: {
-      size: {
-        S: 14,
-        M: 16,
-        L: 18,
-        XL: 20
-      }
-    },
-    height: {
-      size: {
-        S: 18,
-        M: 20,
-        L: 22,
-        XL: 24
-      }
-    },
-    borderRadius: 'sm'
+const badge = style({
+  display: 'flex',
+  color: 'gray-900',
+  font: {
+    size: {
+      S: 'ui-xs',
+      M: 'ui-sm',
+      L: 'ui',
+      XL: 'ui-lg'
+    }
   },
-  getAllowedOverrides()
-);
+  borderStyle: {
+    forcedColors: 'solid'
+  },
+  borderWidth: {
+    forcedColors: '[1px]'
+  },
+  borderColor: {
+    forcedColors: 'ButtonBorder'
+  },
+  justifyContent: 'center',
+  alignItems: 'center',
+  backgroundColor: 'gray-200',
+  // These are arbitrary sizes since there are no designs for them
+  width: {
+    size: {
+      S: 14,
+      M: 16,
+      L: 18,
+      XL: 20
+    }
+  },
+  height: {
+    size: {
+      S: 18,
+      M: 20,
+      L: 22,
+      XL: 24
+    }
+  },
+  borderRadius: 'sm'
+});
 
 /**
  * A small visual indicator showing a count or position.
@@ -231,7 +244,6 @@ export const NumberBadge = forwardRef(function NumberBadge(
   props: NumberBadgeProps,
   ref: DOMRef<HTMLSpanElement>
 ) {
-  [props, ref] = useSpectrumContextProps(props, ref, NumberBadgeContext);
   let {size = 'S', value, ...otherProps} = props;
   let domRef = useDOMRef(ref);
   let {locale} = useLocale();
@@ -251,16 +263,12 @@ export const NumberBadge = forwardRef(function NumberBadge(
       // aria-label={ariaLabel}
       // We set aria-hidden to true to prevent screenreader from announcing the value of the badge by itself which is not very meaningful.
       aria-hidden="true"
-      className={
-        (props.UNSAFE_className || '') +
-        badge(
-          {
-            size
-          },
-          props.styles
-        )
-      }
-      style={props.UNSAFE_style}
+      className={mergeStyles(
+        badge({
+          size
+        }),
+        props.styles
+      )}
       ref={domRef}>
       {formattedValue}
     </span>

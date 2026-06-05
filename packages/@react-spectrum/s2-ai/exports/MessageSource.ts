@@ -1,11 +1,4 @@
-export {
-  MessageSource,
-  MessageSourceContext,
-  SourceList,
-  SourceListItem,
-  NumberBadge,
-  NumberBadgeContext
-} from '../src/MessageSource';
+export {MessageSource, SourceList, SourceListItem, NumberBadge} from '../src/MessageSource';
 
 export type {
   MessageSourceProps,

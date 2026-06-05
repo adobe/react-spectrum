@@ -10,24 +10,23 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMProps, DOMRef, DOMRefValue, Selection} from '@react-types/shared';
-import {ContextValue, SlotProps} from 'react-aria-components/slots';
-import {createContext, forwardRef} from 'react';
+import {AriaLabelingProps, DOMProps, DOMRef, Selection} from '@react-types/shared';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
+import {forwardRef} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import type {StyleProps} from './style-utils-copy';
+import {SlotProps} from 'react-aria-components/slots';
+import {StyleString} from './types';
 import ThumbDown from '@react-spectrum/s2/icons/ThumbDown';
 import ThumbUp from '@react-spectrum/s2/icons/ThumbUp';
 import {ToggleButton} from '@react-spectrum/s2/ToggleButton';
 import {ToggleButtonGroup} from '@react-spectrum/s2/ToggleButtonGroup';
 import {useDOMRef} from './useDOMRef';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
-import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export type MessageFeedbackValue = 'up' | 'down' | null;
 
-export interface MessageFeedbackProps extends DOMProps, AriaLabelingProps, StyleProps, SlotProps {
+export interface MessageFeedbackProps extends DOMProps, AriaLabelingProps, SlotProps {
   /** The selected feedback value (controlled). */
   value?: MessageFeedbackValue;
   /** The default feedback value (uncontrolled). */
@@ -40,10 +39,11 @@ export interface MessageFeedbackProps extends DOMProps, AriaLabelingProps, Style
   thumbUpLabel?: string;
   /** Accessible label for the thumbs down button. */
   thumbDownLabel?: string;
+  /**
+   * Spectrum-defined styles, returned by the `style()` macro.
+   */
+  styles?: StyleString;
 }
-
-export const MessageFeedbackContext =
-  createContext<ContextValue<Partial<MessageFeedbackProps>, DOMRefValue<HTMLDivElement>>>(null);
 
 function selectionToValue(selection: Selection): MessageFeedbackValue {
   let [first] = selection as Iterable<string>;
@@ -57,20 +57,9 @@ export const MessageFeedback = forwardRef(function MessageFeedback(
   props: MessageFeedbackProps,
   ref: DOMRef<HTMLDivElement>
 ) {
-  [props, ref] = useSpectrumContextProps(props, ref, MessageFeedbackContext);
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2-ai');
   let domRef = useDOMRef(ref);
-  let {
-    value,
-    defaultValue,
-    onChange,
-    isDisabled,
-    thumbUpLabel,
-    thumbDownLabel,
-    UNSAFE_className = '',
-    UNSAFE_style,
-    styles
-  } = props;
+  let {value, defaultValue, onChange, isDisabled, thumbUpLabel, thumbDownLabel, styles} = props;
 
   let handleSelectionChange = (selection: Selection): void => {
     onChange?.(selectionToValue(selection));
@@ -94,9 +83,9 @@ export const MessageFeedback = forwardRef(function MessageFeedback(
       defaultSelectedKeys={defaultSelectedKeys}
       onSelectionChange={handleSelectionChange}
       isDisabled={isDisabled}
-      UNSAFE_style={UNSAFE_style}
-      UNSAFE_className={UNSAFE_className}
-      styles={styles}>
+      // Pass styles to UNSAFE because S2 ToggleButtonGroup styles have type StylesPropWithHeight which restrict what can be overridden
+      //@ts-ignore
+      UNSAFE_className={styles}>
       <ToggleButton
         id="up"
         isQuiet

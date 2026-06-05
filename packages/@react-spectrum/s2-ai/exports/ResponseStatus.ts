@@ -1,9 +1,4 @@
-export {
-  ResponseStatus,
-  ResponseStatusContext,
-  ResponseStatusTitle,
-  ResponseStatusPanel
-} from '../src/ResponseStatus';
+export {ResponseStatus, ResponseStatusTitle, ResponseStatusPanel} from '../src/ResponseStatus';
 
 export type {
   ResponseStatusProps,
