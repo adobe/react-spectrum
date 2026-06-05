@@ -10,34 +10,46 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMProps, DOMRef, DOMRefValue} from '@react-types/shared';
+import {AriaLabelingProps, DOMProps, DOMRef} from '@react-types/shared';
 import ArrowCurved from '@react-spectrum/s2/icons/ArrowCurved';
 import {ButtonProps, Button as RACButton} from 'react-aria-components/Button';
-import {centerBaseline} from './CenterBaseline';
+import {CenterBaseline} from '@react-spectrum/s2/CenterBaseline';
 import {centerPadding, focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
-import {ContextValue, Provider, SlotProps} from 'react-aria-components/slots';
-import {controlSize, getAllowedOverrides} from './style-utils-copy' with {type: 'macro'};
-import {createContext, forwardRef, ReactNode} from 'react';
+import {createContext, forwardRef, ReactNode, useContext} from 'react';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {IconContext} from '@react-spectrum/s2/Icon';
+import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
 import {pressScale} from '@react-spectrum/s2';
-import type {StyleProps} from './style-utils-copy';
+import {Provider, SlotProps} from 'react-aria-components/slots';
+import {StyleString} from './types';
 import {useDOMRef} from './useDOMRef';
 import {useLocale} from 'react-aria/I18nProvider';
-import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface MessageSuggestionProps
-  extends Omit<ButtonProps, 'style' | 'className' | 'isPending' | 'isDisabled'>, StyleProps {
+const controlSizeM = {
+  default: 32,
+  size: {
+    XS: 20,
+    S: 24,
+    L: 40,
+    XL: 48
+  }
+} as const;
+
+export interface MessageSuggestionProps extends Omit<
+  ButtonProps,
+  'style' | 'className' | 'isPending' | 'isDisabled'
+> {
   /** The text content of the suggestion. */
   children: ReactNode;
   /** The size of the MessageSuggestion. */
   size?: 'S' | 'M' | 'L' | 'XL';
+  /**
+   * Spectrum-defined styles, returned by the `style()` macro.
+   */
+  styles?: StyleString;
 }
 
-export const MessageSuggestionContext =
-  createContext<ContextValue<Partial<MessageSuggestionProps>, DOMRefValue<HTMLButtonElement>>>(
-    null
-  );
+const MessageSuggestionContext = createContext<{groupSize?: 'S' | 'M' | 'L' | 'XL'}>({});
 
 const suggestionStyles = style<{
   isHovered: boolean;
@@ -46,40 +58,37 @@ const suggestionStyles = style<{
   isFocusVisible: boolean;
   isFocused: boolean;
   size: 'S' | 'M' | 'L' | 'XL';
-}>(
-  {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'baseline',
-    gap: 'text-to-visual',
-    paddingX: 'pill',
-    paddingY: 0,
-    '--labelPadding': {
-      type: 'paddingTop',
-      value: centerPadding()
-    },
-    minHeight: controlSize(),
-    borderRadius: 'pill',
-    font: {
-      size: {
-        S: 'body-sm',
-        M: 'body',
-        L: 'body-lg',
-        XL: 'body-xl'
-      }
-    },
-    backgroundColor: {
-      default: 'gray-100',
-      isHovered: 'gray-200',
-      isPressed: 'gray-300'
-    },
-    color: 'neutral',
-    borderStyle: 'none',
-    disableTapHighlight: true,
-    ...focusRing()
+}>({
+  display: 'flex',
+  flexDirection: 'row',
+  alignItems: 'baseline',
+  gap: 'text-to-visual',
+  paddingX: 'pill',
+  paddingY: 0,
+  '--labelPadding': {
+    type: 'paddingTop',
+    value: centerPadding()
   },
-  getAllowedOverrides()
-);
+  minHeight: controlSizeM,
+  borderRadius: 'pill',
+  font: {
+    size: {
+      S: 'body-sm',
+      M: 'body',
+      L: 'body-lg',
+      XL: 'body-xl'
+    }
+  },
+  backgroundColor: {
+    default: 'gray-100',
+    isHovered: 'gray-200',
+    isPressed: 'gray-300'
+  },
+  color: 'neutral',
+  borderStyle: 'none',
+  disableTapHighlight: true,
+  ...focusRing()
+});
 
 /**
  * MessageSuggestion renders a single pressable suggestion in a conversation.
@@ -88,30 +97,26 @@ export const MessageSuggestion = forwardRef(function MessageSuggestion(
   props: MessageSuggestionProps,
   ref: DOMRef<HTMLButtonElement>
 ) {
-  [props, ref] = useSpectrumContextProps(props, ref, MessageSuggestionContext);
   let domRef = useDOMRef<HTMLButtonElement>(ref);
-  let {children, UNSAFE_className = '', UNSAFE_style, styles, size = 'M', ...otherProps} = props;
+  let {children, styles, size = 'M', ...otherProps} = props;
   let {direction} = useLocale();
   let isRTL = direction === 'rtl';
+
+  let {groupSize} = useContext(MessageSuggestionContext);
+  size = groupSize ? groupSize : size;
 
   return (
     <RACButton
       {...filterDOMProps(props, {labelable: true})}
       {...otherProps}
       ref={domRef}
-      style={pressScale(domRef, UNSAFE_style)}
-      className={renderProps =>
-        UNSAFE_className + '' + suggestionStyles({...renderProps, size}, styles)
-      }>
+      style={pressScale(domRef)}
+      className={renderProps => mergeStyles(suggestionStyles({...renderProps, size}), styles)}>
       <Provider
         values={[
           [
             IconContext,
             {
-              render: centerBaseline({
-                slot: 'icon',
-                styles: style({order: 0, transform: {isRTL: 'scale(-1, 1)'}})({isRTL})
-              }),
               styles: style({
                 flexShrink: 0,
                 '--iconPrimary': {
@@ -122,36 +127,33 @@ export const MessageSuggestion = forwardRef(function MessageSuggestion(
             }
           ]
         ]}>
-        <ArrowCurved />
+        <CenterBaseline styles={style({order: 0, transform: {isRTL: 'scale(-1, 1)'}})({isRTL})}>
+          <ArrowCurved />
+        </CenterBaseline>
         <span className={style({paddingY: '--labelPadding'})}>{children}</span>
       </Provider>
     </RACButton>
   );
 });
 
-export interface MessageSuggestionListProps
-  extends DOMProps, AriaLabelingProps, StyleProps, SlotProps {
+export interface MessageSuggestionListProps extends DOMProps, AriaLabelingProps, SlotProps {
   /** The MessageSuggestion children to display. */
   children: ReactNode;
   /** Heading displayed above the suggestions. */
   title: string;
   /** The size of hte Buttons within the MessageSuggestionList. */
   size?: 'S' | 'M' | 'L' | 'XL';
+  /**
+   * Spectrum-defined styles, returned by the `style()` macro.
+   */
+  styles?: StyleString;
 }
 
-export const MessageSuggestionListContext =
-  createContext<ContextValue<Partial<MessageSuggestionListProps>, DOMRefValue<HTMLDivElement>>>(
-    null
-  );
-
-const listStyles = style(
-  {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: 8
-  },
-  getAllowedOverrides()
-);
+const listStyles = style({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: 8
+});
 
 const titleStyles = style({
   font: {
@@ -180,18 +182,16 @@ export const MessageSuggestionList = forwardRef(function MessageSuggestionList(
   props: MessageSuggestionListProps,
   ref: DOMRef<HTMLDivElement>
 ) {
-  [props, ref] = useSpectrumContextProps(props, ref, MessageSuggestionListContext);
   let domRef = useDOMRef(ref);
-  let {children, title, UNSAFE_className = '', UNSAFE_style, styles, size = 'M'} = props;
+  let {children, title, styles, size = 'M'} = props;
 
   return (
     <div
       {...filterDOMProps(props, {labelable: true})}
       ref={domRef}
-      style={UNSAFE_style}
-      className={(UNSAFE_className || '') + listStyles(null, styles)}>
+      className={mergeStyles(listStyles, styles)}>
       <h3 className={titleStyles({size})}>{title}</h3>
-      <MessageSuggestionContext.Provider value={{size}}>
+      <MessageSuggestionContext.Provider value={{groupSize: size}}>
         <div className={responseStyles}>{children}</div>
       </MessageSuggestionContext.Provider>
     </div>

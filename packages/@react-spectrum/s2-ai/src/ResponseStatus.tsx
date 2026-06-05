@@ -10,13 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {
-  AriaLabelingProps,
-  DOMProps,
-  DOMRef,
-  DOMRefValue,
-  GlobalDOMAttributes
-} from '@react-types/shared';
+import {AriaLabelingProps, DOMProps, DOMRef, GlobalDOMAttributes} from '@react-types/shared';
 import {
   baseColor,
   focusRing,
@@ -25,10 +19,9 @@ import {
   style
 } from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Button} from 'react-aria-components/Button';
-import {CenterBaseline, centerBaseline} from './CenterBaseline';
+import {CenterBaseline} from '@react-spectrum/s2/CenterBaseline';
 import CheckmarkCircle from '@react-spectrum/s2/icons/CheckmarkCircle';
 import ChevronRight from '@react-spectrum/s2/icons/ChevronRight';
-import {ContextValue, Provider, useSlottedContext} from 'react-aria-components/slots';
 import {
   DisclosureStateContext,
   Disclosure as RACDisclosure,
@@ -37,30 +30,22 @@ import {
   DisclosureProps as RACDisclosureProps
 } from 'react-aria-components/Disclosure';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
-import {
-  getAllowedOverrides,
-  StyleProps,
-  StylesPropWithFont,
-  UnsafeStyles
-} from './style-utils-copy' with {type: 'macro'};
 import {Heading} from 'react-aria-components/Heading';
 import {IconContext} from '@react-spectrum/s2/Icon';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
+import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
 import {ProgressCircle} from '@react-spectrum/s2/ProgressCircle';
+import {Provider} from 'react-aria-components/slots';
 import React, {createContext, forwardRef, ReactNode, useContext} from 'react';
+import {StyleString} from './types';
 import {useDOMRef} from './useDOMRef';
 import {useLocale} from 'react-aria/I18nProvider';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
-import {useSpectrumContextProps} from './useSpectrumContextProps';
-
-export interface ResponseStatusProps
-  extends
-    Omit<
-      RACDisclosureProps,
-      'className' | 'style' | 'render' | 'children' | keyof GlobalDOMAttributes
-    >,
-    StyleProps {
+export interface ResponseStatusProps extends Omit<
+  RACDisclosureProps,
+  'className' | 'style' | 'render' | 'children' | keyof GlobalDOMAttributes
+> {
   /**
    * The size of the response status.
    *
@@ -83,18 +68,22 @@ export interface ResponseStatusProps
    * ResponseStatusPanel.
    */
   children: ReactNode;
+  /**
+   * Spectrum-defined styles, returned by the `style()` macro.
+   */
+  styles?: StyleString;
 }
 
-export const ResponseStatusContext =
-  createContext<ContextValue<Partial<ResponseStatusProps>, DOMRefValue<HTMLDivElement>>>(null);
+const ResponseStatusContext = createContext<{
+  size?: 'S' | 'M' | 'L' | 'XL';
+  density?: 'compact' | 'regular' | 'spacious';
+  isLoading?: boolean;
+}>({});
 
-const responseStatus = style(
-  {
-    color: 'heading',
-    minWidth: 200
-  },
-  getAllowedOverrides()
-);
+const responseStatus = style({
+  color: 'heading',
+  minWidth: 200
+});
 
 /**
  * A ResponseStatus indicates the progress of a system response while it is begin generated and when
@@ -104,8 +93,7 @@ export const ResponseStatus = forwardRef(function ResponseStatus(
   props: ResponseStatusProps,
   ref: DOMRef<HTMLDivElement>
 ) {
-  [props, ref] = useSpectrumContextProps(props, ref, ResponseStatusContext);
-  let {size = 'M', density = 'regular', isLoading, UNSAFE_style, UNSAFE_className = ''} = props;
+  let {size = 'M', density = 'regular', isLoading, styles} = props;
   let domRef = useDOMRef(ref);
 
   let disclosureProps: Partial<RACDisclosureProps> = {};
@@ -120,15 +108,14 @@ export const ResponseStatus = forwardRef(function ResponseStatus(
         {...props}
         {...disclosureProps}
         ref={domRef}
-        style={UNSAFE_style}
-        className={(UNSAFE_className ?? '') + responseStatus(null, props.styles)}>
+        className={mergeStyles(responseStatus, styles)}>
         {props.children}
       </RACDisclosure>
     </Provider>
   );
 });
 
-export interface ResponseStatusTitleProps extends UnsafeStyles, DOMProps {
+export interface ResponseStatusTitleProps extends DOMProps {
   /**
    * The heading level of the response status header.
    *
@@ -138,10 +125,9 @@ export interface ResponseStatusTitleProps extends UnsafeStyles, DOMProps {
   /** The contents of the response status header. */
   children: React.ReactNode;
   /**
-   * Spectrum-defined styles, returned by the `style()` macro. Only allows overriding
-   * `font`, `fontFamily`, `fontWeight`, `fontSize`, and `lineHeight`.
+   * Spectrum-defined styles, returned by the `style()` macro.
    */
-  styles?: StylesPropWithFont;
+  styles?: StyleString;
 }
 
 const headingStyle = style({
@@ -152,73 +138,70 @@ const headingStyle = style({
   minWidth: 0
 });
 
-const buttonStyles = style(
-  {
-    ...focusRing(),
-    outlineOffset: -2,
-    font: {
-      size: {
-        S: 'body-sm',
-        M: 'body',
-        L: 'body-lg',
-        XL: 'body-xl'
-      }
-    },
-    color: {
-      default: baseColor('neutral'),
-      forcedColors: 'ButtonText',
-      isDisabled: {
-        default: 'disabled',
-        forcedColors: 'GrayText'
-      }
-    },
-    display: 'flex',
-    flexGrow: 1,
-    alignItems: 'center',
-    paddingX: 'calc(self(minHeight) * 3/8 - 1px)',
-    gap: 'calc(self(minHeight) * 3/8 - 1px)',
-    minHeight: {
-      size: {
-        S: {
-          density: {
-            compact: 18,
-            regular: 24,
-            spacious: 32
-          }
-        },
-        M: {
-          density: {
-            compact: 24,
-            regular: 32,
-            spacious: 40
-          }
-        },
-        L: {
-          density: {
-            compact: 32,
-            regular: 40,
-            spacious: 48
-          }
-        },
-        XL: {
-          density: {
-            compact: 40,
-            regular: 48,
-            spacious: 56
-          }
+const buttonStyles = style({
+  ...focusRing(),
+  outlineOffset: -2,
+  font: {
+    size: {
+      S: 'body-sm',
+      M: 'body',
+      L: 'body-lg',
+      XL: 'body-xl'
+    }
+  },
+  color: {
+    default: baseColor('neutral'),
+    forcedColors: 'ButtonText',
+    isDisabled: {
+      default: 'disabled',
+      forcedColors: 'GrayText'
+    }
+  },
+  display: 'flex',
+  flexGrow: 1,
+  alignItems: 'center',
+  paddingX: 'calc(self(minHeight) * 3/8 - 1px)',
+  gap: 'calc(self(minHeight) * 3/8 - 1px)',
+  minHeight: {
+    size: {
+      S: {
+        density: {
+          compact: 18,
+          regular: 24,
+          spacious: 32
+        }
+      },
+      M: {
+        density: {
+          compact: 24,
+          regular: 32,
+          spacious: 40
+        }
+      },
+      L: {
+        density: {
+          compact: 32,
+          regular: 40,
+          spacious: 48
+        }
+      },
+      XL: {
+        density: {
+          compact: 40,
+          regular: 48,
+          spacious: 56
         }
       }
-    },
-    width: 'full',
-    backgroundColor: 'transparent',
-    transition: 'default',
-    borderWidth: 0,
-    borderRadius: 'default',
-    textAlign: 'start',
-    disableTapHighlight: true
+    }
   },
-  getAllowedOverrides({font: true})
-);
+  width: 'full',
+  backgroundColor: 'transparent',
+  transition: 'default',
+  borderWidth: 0,
+  borderRadius: 'default',
+  textAlign: 'start',
+  disableTapHighlight: true
+});
 
 const chevronStyles = style({
   rotate: {
@@ -261,24 +244,19 @@ export const ResponseStatusTitle = forwardRef(function ResponseStatusTitle(
   props: ResponseStatusTitleProps,
   ref: DOMRef<HTMLDivElement>
 ) {
-  let {level = 3, UNSAFE_style, UNSAFE_className = '', styles, ...otherProps} = props;
+  let {level = 3, styles, ...otherProps} = props;
   let domRef = useDOMRef(ref);
   const domProps = filterDOMProps(otherProps);
   let {direction} = useLocale();
   let {isExpanded} = useContext(DisclosureStateContext)!;
-  let {size = 'M', density, isLoading} = useSlottedContext(ResponseStatusContext)!;
+  let {size = 'M', density, isLoading} = useContext(ResponseStatusContext)!;
   let isRTL = direction === 'rtl';
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
 
   return (
-    <Heading
-      {...domProps}
-      level={level}
-      ref={domRef}
-      style={UNSAFE_style}
-      className={(UNSAFE_className ?? '') + headingStyle}>
+    <Heading {...domProps} level={level} ref={domRef} className={mergeStyles(headingStyle, styles)}>
       <Button
-        className={renderProps => buttonStyles({...renderProps, size, density}, styles)}
+        className={renderProps => buttonStyles({...renderProps, size, density})}
         slot="trigger">
         {isLoading ? (
           <CenterBaseline>
@@ -300,7 +278,6 @@ export const ResponseStatusTitle = forwardRef(function ResponseStatusTitle(
               [
                 IconContext,
                 {
-                  render: centerBaseline({slot: 'icon'}),
                   styles: style({
                     marginStart: 'auto',
                     flexShrink: 0,
@@ -320,7 +297,9 @@ export const ResponseStatusTitle = forwardRef(function ResponseStatusTitle(
                 }
               ]
             ]}>
-            <CheckmarkCircle aria-hidden="true" />
+            <CenterBaseline slot="icon">
+              <CheckmarkCircle aria-hidden="true" />
+            </CenterBaseline>
           </Provider>
         )}
       </Button>
@@ -331,10 +310,10 @@ export const ResponseStatusTitle = forwardRef(function ResponseStatusTitle(
 export interface ResponseStatusPanelProps
   extends
     Omit<RACDisclosurePanelProps, 'className' | 'style' | 'render' | 'children'>,
-    UnsafeStyles,
     DOMProps,
     AriaLabelingProps {
   children: React.ReactNode;
+  styles?: StyleString;
 }
 
 const panelStyles = style({
@@ -368,16 +347,14 @@ export const ResponseStatusPanel = forwardRef(function ResponseStatusPanel(
   props: ResponseStatusPanelProps,
   ref: DOMRef<HTMLDivElement>
 ) {
-  let {UNSAFE_style, UNSAFE_className = '', ...otherProps} = props;
-  let {size = 'M'} = useSlottedContext(ResponseStatusContext)!;
-  const domProps = filterDOMProps(otherProps);
+  let {size = 'M'} = useContext(ResponseStatusContext)!;
+  const domProps = filterDOMProps(props);
   let panelRef = useDOMRef(ref);
   return (
     <RACDisclosurePanel
       {...domProps}
       ref={panelRef}
-      style={UNSAFE_style}
-      className={(UNSAFE_className ?? '') + panelStyles}>
+      className={mergeStyles(panelStyles, props.styles)}>
       <div className={panelInner({size})}>{props.children}</div>
     </RACDisclosurePanel>
   );
