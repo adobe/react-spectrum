@@ -77,7 +77,7 @@ export const ImplicitGrid: GridStory = () => (
     justifyContent="center"
     width="80%"
     gap="size-100">
-    {colors.map((color) => (
+    {colors.map(color => (
       <View key={String(color)} backgroundColor={color} />
     ))}
   </Grid>
@@ -98,7 +98,7 @@ export const Responsive: GridStory = () => (
     justifyContent="center"
     width="80%"
     gap={{base: 'size-100', M: 'size-250', L: 'size-350'}}>
-    {colors.map((color) => (
+    {colors.map(color => (
       <View key={String(color)} backgroundColor={color} />
     ))}
   </Grid>

@@ -17,10 +17,23 @@ import type {Meta} from '@storybook/react';
 const meta: Meta<typeof ComboBox<any>> = {
   component: ComboBox,
   parameters: {
-    chromaticProvider: {colorSchemes: ['dark'], backgrounds: ['base'], locales: ['ar-AE'], disableAnimations: true}
+    chromaticProvider: {
+      colorSchemes: ['dark'],
+      backgrounds: ['base'],
+      locales: ['ar-AE'],
+      disableAnimations: true
+    }
   },
   title: 'S2 Chromatic/ComboBoxRTL'
 };
 
 export default meta;
-export {Static, WithSections, WithDynamic, Icons, Avatars, ContextualHelp, WithCustomWidth} from './Combobox.stories';
+export {
+  Static,
+  WithSections,
+  WithDynamic,
+  Icons,
+  Avatars,
+  ContextualHelp,
+  WithCustomWidth
+} from './Combobox.stories';

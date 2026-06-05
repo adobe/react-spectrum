@@ -22,7 +22,6 @@ import {forwardRefType, GlobalDOMAttributes} from '@react-types/shared';
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {HeaderContext, HeadingContext} from './Content';
 import {helpTextStyles} from './Field';
-// @ts-ignore
 import intlMessages from '../intl/*.json';
 import {style} from '../style' with {type: 'macro'};
 import {Text} from 'react-aria-components/Text';
@@ -30,59 +29,78 @@ import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatte
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface RangeCalendarProps<T extends DateValue>
-  extends Omit<AriaRangeCalendarProps<T>, 'visibleDuration' | 'style' | 'className' | 'render' | 'children' | 'styles' | keyof GlobalDOMAttributes>,
-  StyleProps {
+  extends
+    Omit<
+      AriaRangeCalendarProps<T>,
+      | 'visibleDuration'
+      | 'weeksInMonth'
+      | 'style'
+      | 'className'
+      | 'render'
+      | 'children'
+      | 'styles'
+      | keyof GlobalDOMAttributes
+    >,
+    StyleProps {
   /**
    * The error message to display when the calendar is invalid.
    */
-  errorMessage?: ReactNode,
+  errorMessage?: ReactNode;
   /**
    * The number of months to display at once.
+   *
    * @default 1
    */
-  visibleMonths?: number
+  visibleMonths?: number;
 }
 
-export const RangeCalendarContext = createContext<ContextValue<Partial<RangeCalendarProps<any>>, HTMLDivElement>>(null);
+export const RangeCalendarContext =
+  createContext<ContextValue<Partial<RangeCalendarProps<any>>, HTMLDivElement>>(null);
 
-const calendarStyles = style<{isMultiMonth?: boolean}>({
-  display: 'flex',
-  containerType: {
-    default: 'inline-size',
-    isMultiMonth: 'unset'
-  },
-  flexDirection: 'column',
-  gap: 24,
-  disableTapHighlight: true,
-  '--cell-gap': {
-    type: 'paddingStart',
-    value: 4
-  },
-  '--cell-max-width': {
-    type: 'width',
-    value: 32
-  },
-  '--cell-responsive-size': {
-    type: 'width',
-    value: {
-      default: '[min(var(--cell-max-width), (100cqw - (var(--cell-gap) * 12)) / 7)]',
-      isMultiMonth: '--cell-max-width'
+const calendarStyles = style<{isMultiMonth?: boolean}>(
+  {
+    display: 'flex',
+    containerType: {
+      default: 'inline-size',
+      isMultiMonth: 'unset'
+    },
+    flexDirection: 'column',
+    gap: 24,
+    disableTapHighlight: true,
+    '--cell-gap': {
+      type: 'paddingStart',
+      value: 4
+    },
+    '--cell-max-width': {
+      type: 'width',
+      value: 32
+    },
+    '--cell-responsive-size': {
+      type: 'width',
+      value: {
+        default: '[min(var(--cell-max-width), (100cqw - (var(--cell-gap) * 12)) / 7)]',
+        isMultiMonth: '--cell-max-width'
+      }
+    },
+    width: {
+      default: 'calc(7 * var(--cell-max-width) + var(--cell-gap) * 12)',
+      isMultiMonth: 'fit'
+    },
+    maxWidth: {
+      default: 'full',
+      isMultiMonth: 'unset'
     }
   },
-  width: {
-    default: 'calc(7 * var(--cell-max-width) + var(--cell-gap) * 12)',
-    isMultiMonth: 'fit'
-  },
-  maxWidth: {
-    default: 'full',
-    isMultiMonth: 'unset'
-  }
-}, getAllowedOverrides());
+  getAllowedOverrides()
+);
 
 /**
- * RangeCalendars display a grid of days in one or more months and allow users to select a contiguous range of dates.
+ * RangeCalendars display a grid of days in one or more months and allow users to select a
+ * contiguous range of dates.
  */
-export const RangeCalendar = /*#__PURE__*/ (forwardRef as forwardRefType)(function RangeCalendar<T extends DateValue>(props: RangeCalendarProps<T>, ref: ForwardedRef<HTMLDivElement>) {
+export const RangeCalendar = /*#__PURE__*/ (forwardRef as forwardRefType)(function RangeCalendar<
+  T extends DateValue
+>(props: RangeCalendarProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, RangeCalendarContext);
   let {
     visibleMonths = 1,
@@ -110,7 +128,7 @@ export const RangeCalendar = /*#__PURE__*/ (forwardRef as forwardRefType)(functi
                 [HeaderContext, null],
                 [HeadingContext, null]
               ]}>
-              <CalendarHeader />
+              <CalendarHeader visibleMonths={visibleMonths} />
             </Provider>
             <div
               className={style({
@@ -124,8 +142,11 @@ export const RangeCalendar = /*#__PURE__*/ (forwardRef as forwardRefType)(functi
               ))}
             </div>
             {isInvalid && (
-              <Text slot="errorMessage" className={helpTextStyles({isInvalid, isDisabled, size: 'M'})}>
-                {errorMessage || stringFormatter.format('calendar.invalidSelection', {selectedCount: 2})}
+              <Text
+                slot="errorMessage"
+                className={helpTextStyles({isInvalid, isDisabled, size: 'M'})}>
+                {errorMessage ||
+                  stringFormatter.format('calendar.invalidSelection', {selectedCount: 2})}
               </Text>
             )}
           </>

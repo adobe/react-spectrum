@@ -18,7 +18,12 @@ export class TabsKeyboardDelegate<T> implements KeyboardDelegate {
   private disabledKeys: Set<Key>;
   private tabDirection: boolean;
 
-  constructor(collection: Collection<Node<T>>, direction: Direction, orientation: Orientation, disabledKeys: Set<Key> = new Set()) {
+  constructor(
+    collection: Collection<Node<T>>,
+    direction: Direction,
+    orientation: Orientation,
+    disabledKeys: Set<Key> = new Set()
+  ) {
     this.collection = collection;
     this.flipDirection = direction === 'rtl' && orientation === 'horizontal';
     this.disabledKeys = disabledKeys;
@@ -38,7 +43,6 @@ export class TabsKeyboardDelegate<T> implements KeyboardDelegate {
     }
     return this.getNextKey(key);
   }
-
 
   private isDisabled(key: Key) {
     return this.disabledKeys.has(key) || !!this.collection.getItem(key)?.props?.isDisabled;

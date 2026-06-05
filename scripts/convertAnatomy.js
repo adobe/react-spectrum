@@ -25,20 +25,23 @@ contents = contents.replace(/"(#[0-9a-f]{3,6})"/gi, (_, m) => {
   }
 });
 
-contents = contents.replace(/(fill|stroke)="rgba\((\d+),\s*(\d+),\s*(\d+),\s*([\d.]+)\)"/g, (m, p, r, g, b, a) => {
-  let color = {
-    r: parseInt(r, 10),
-    g: parseInt(g, 10),
-    b: parseInt(b, 10)
-  };
-  let nearest = nearestColor(color);
-  if (nearest) {
-    return `${p}="var(${nearest})" ${p}-opacity="${a}"`;
-  } else {
-    console.log(m);
-    return m;
+contents = contents.replace(
+  /(fill|stroke)="rgba\((\d+),\s*(\d+),\s*(\d+),\s*([\d.]+)\)"/g,
+  (m, p, r, g, b, a) => {
+    let color = {
+      r: parseInt(r, 10),
+      g: parseInt(g, 10),
+      b: parseInt(b, 10)
+    };
+    let nearest = nearestColor(color);
+    if (nearest) {
+      return `${p}="var(${nearest})" ${p}-opacity="${a}"`;
+    } else {
+      console.log(m);
+      return m;
+    }
   }
-});
+);
 
 contents = contents.replace(/font-family="(.*?)"/g, 'font-family="Adobe-Clean"');
 
@@ -56,26 +59,27 @@ function nearestColor(target) {
   var tmp;
   let res;
   for (let color in colors) {
-    tmp = distance(target, hexToRgb(color))
+    tmp = distance(target, hexToRgb(color));
     if (tmp < lowest) {
       lowest = tmp;
       res = color;
-    };
+    }
   }
   return colors[res];
-
 }
 
 function hexToRgb(hex) {
   var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
-  hex = hex.replace(shorthandRegex, function(m, r, g, b) {
+  hex = hex.replace(shorthandRegex, function (m, r, g, b) {
     return r + r + g + g + b + b;
   });
 
   var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-  return result ? {
-    r: parseInt(result[1], 16),
-    g: parseInt(result[2], 16),
-    b: parseInt(result[3], 16)
-  } : null;
+  return result
+    ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16)
+      }
+    : null;
 }

@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 var Refresh = require('react-refresh/runtime');
 function debounce(func, delay) {
@@ -101,7 +101,7 @@ function getRefreshBoundarySignature(exports) {
     signature.push(exports.default._hash);
   }
 
-  let isESM = ('__esModule' in exports);
+  let isESM = '__esModule' in exports;
   for (let key in exports) {
     if (key === '__esModule' || key === 'default') {
       continue;
@@ -130,7 +130,7 @@ function registerExportsForReactRefresh(module) {
     // (This is important for legacy environments.)
     return;
   }
-  let isESM = ('__esModule' in exports);
+  let isESM = '__esModule' in exports;
   for (var key in exports) {
     var desc = Object.getOwnPropertyDescriptor(exports, key);
     if (desc && desc.get && !isESM) {

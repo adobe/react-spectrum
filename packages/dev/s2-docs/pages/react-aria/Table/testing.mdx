@@ -28,7 +28,7 @@ Table supports long press interactions on its rows in certain configurations. Se
 
 <InlineAlert variant="notice">
   <Heading>Requirements</Heading>
-  <Content>Please note that this library uses [@testing-library/react@16](https://www.npmjs.com/package/@testing-library/react) and [@testing-library/user-event@14](https://www.npmjs.com/package/@testing-library/user-event). This means that you need to be on React 18+ in order for these utilities to work.</Content>
+  <Content>Please note that this library uses [@testing-library/dom@10](https://www.npmjs.com/package/@testing-library/dom) and [@testing-library/user-event@14](https://www.npmjs.com/package/@testing-library/user-event). This means that you need to be on React 18+ in order for these utilities to work.</Content>
 </InlineAlert>
 
 Initialize a `User` object at the top of your test file, and use it to create a `Table` pattern tester in your test cases. The tester has methods that you can call within your test to query for specific subcomponents or simulate common interactions.
@@ -52,22 +52,22 @@ it('Table can toggle row selection', async function () {
     </Table>
   );
   let tableTester = testUtilUser.createTester('Table', {root: getByTestId('test-table')});
-  expect(tableTester.selectedRows).toHaveLength(0);
+  expect(tableTester.getSelectedRows()).toHaveLength(0);
 
   await tableTester.toggleSelectAll();
-  expect(tableTester.selectedRows).toHaveLength(10);
+  expect(tableTester.getSelectedRows()).toHaveLength(10);
 
   await tableTester.toggleRowSelection({row: 2});
-  expect(tableTester.selectedRows).toHaveLength(9);
-  let checkbox = within(tableTester.rows[2]).getByRole('checkbox');
+  expect(tableTester.getSelectedRows()).toHaveLength(9);
+  let checkbox = within(tableTester.getRows()[2]).getByRole('checkbox');
   expect(checkbox).not.toBeChecked();
 
   await tableTester.toggleSelectAll();
-  expect(tableTester.selectedRows).toHaveLength(10);
+  expect(tableTester.getSelectedRows()).toHaveLength(10);
   expect(checkbox).toBeChecked();
 
   await tableTester.toggleSelectAll();
-  expect(tableTester.selectedRows).toHaveLength(0);
+  expect(tableTester.getSelectedRows()).toHaveLength(0);
 });
 ```
 

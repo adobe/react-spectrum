@@ -11,7 +11,14 @@
  */
 
 import {addWindowFocusTracking} from '../../src/interactions/useFocusVisible';
-import {Cell, Column, Row, TableBody, TableHeader, TableView} from '@adobe/react-spectrum/TableView';
+import {
+  Cell,
+  Column,
+  Row,
+  TableBody,
+  TableHeader,
+  TableView
+} from '@adobe/react-spectrum/TableView';
 import Frame from 'react-frame-component';
 import {Key} from '@react-types/shared';
 import {mergeProps} from '../../src/utils/mergeProps';
@@ -22,19 +29,17 @@ import {useButton} from '../../src/button/useButton';
 import {useFocusRing} from '../../src/focus/useFocusRing';
 
 interface IColumn {
-  name: string,
-  key: string
+  name: string;
+  key: string;
 }
 interface RowValue {
-  key: string
+  key: string;
 }
 
 let manyColumns: IColumn[] = [];
 for (let i = 0; i < 100; i++) {
   manyColumns.push(
-    i === 0
-      ? {name: 'Column name', key: 'C0'}
-      : {name: 'Column ' + i, key: 'C' + i}
+    i === 0 ? {name: 'Column name', key: 'C0'} : {name: 'Column ' + i, key: 'C' + i}
   );
 }
 
@@ -79,24 +84,23 @@ function SearchExample(): JSX.Element {
     <div>
       <SearchField
         aria-label="table searchfield"
-        onChange={(value) => {
-          const newItems = manyRows.filter((item) =>
+        onChange={value => {
+          const newItems = manyRows.filter(item =>
             item['C0'].toLowerCase().includes(value.toLowerCase())
           );
           setItems(newItems);
-        }} />
-      <TableView aria-label="Searchable table with many columns and rows" selectionMode="multiple" width={700} height={500}>
+        }}
+      />
+      <TableView
+        aria-label="Searchable table with many columns and rows"
+        selectionMode="multiple"
+        width={700}
+        height={500}>
         <TableHeader columns={manyColumns}>
-          {column =>
-            <Column minWidth={100}>{column.name}</Column>
-          }
+          {column => <Column minWidth={100}>{column.name}</Column>}
         </TableHeader>
         <TableBody items={items}>
-          {item =>
-            (<Row key={item.key}>
-              {(key: Key) => <Cell>{item[key]}</Cell>}
-            </Row>)
-          }
+          {item => <Row key={item.key}>{(key: Key) => <Cell>{item[key]}</Cell>}</Row>}
         </TableBody>
       </TableView>
     </div>
@@ -117,7 +121,7 @@ function MyButton(props) {
   );
 }
 
-const IFrameExample = (props) => {
+const IFrameExample = props => {
   let btnRef = useRef(null);
   useEffect(() => {
     return addWindowFocusTracking(btnRef.current);

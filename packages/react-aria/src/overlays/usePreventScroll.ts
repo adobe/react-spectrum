@@ -22,7 +22,7 @@ import {willOpenKeyboard} from '../utils/keyboard';
 
 interface PreventScrollOptions {
   /** Whether the scroll lock is disabled. */
-  isDisabled?: boolean
+  isDisabled?: boolean;
 }
 
 const visualViewport = typeof document !== 'undefined' && window.visualViewport;
@@ -119,10 +119,7 @@ function preventScrollMobileSafari() {
     }
 
     // If this is a range input, allow touch move to allow user to adjust the slider value
-    if (e.composedPath().some((el) =>
-      el instanceof HTMLInputElement &&
-      el.type === 'range'
-    )) {
+    if (e.composedPath().some(el => el instanceof HTMLInputElement && el.type === 'range')) {
       allowTouchMove = true;
     }
 
@@ -172,7 +169,10 @@ function preventScrollMobileSafari() {
     // block horizontal scrolling too. In that case, adding `touch-action: pan-x` to
     // the element will prevent vertical page scrolling. We can't add that automatically
     // because it must be set before the touchstart event.
-    if (scrollable.scrollHeight === scrollable.clientHeight && scrollable.scrollWidth === scrollable.clientWidth) {
+    if (
+      scrollable.scrollHeight === scrollable.clientHeight &&
+      scrollable.scrollWidth === scrollable.clientWidth
+    ) {
       e.preventDefault();
     }
   };
@@ -267,20 +267,36 @@ function scrollIntoView(target: Element) {
   while (nextTarget && nextTarget !== root) {
     // Find the parent scrollable element and adjust the scroll position if the target is not already in view.
     let scrollable = getScrollParent(nextTarget);
-    if (scrollable !== document.documentElement && scrollable !== document.body && scrollable !== nextTarget) {
+    if (
+      scrollable !== document.documentElement &&
+      scrollable !== document.body &&
+      scrollable !== nextTarget
+    ) {
       let scrollableRect = scrollable.getBoundingClientRect();
       let targetRect = nextTarget.getBoundingClientRect();
-      if (targetRect.top < scrollableRect.top || targetRect.bottom > scrollableRect.top + nextTarget.clientHeight) {
+      if (
+        targetRect.top < scrollableRect.top ||
+        targetRect.bottom > scrollableRect.top + nextTarget.clientHeight
+      ) {
         let bottom = scrollableRect.bottom;
         if (visualViewport) {
           bottom = Math.min(bottom, visualViewport.offsetTop + visualViewport.height);
         }
 
         // Center within the viewport.
-        let adjustment = (targetRect.top - scrollableRect.top) - ((bottom - scrollableRect.top) / 2 - targetRect.height / 2);
+        let adjustment =
+          targetRect.top -
+          scrollableRect.top -
+          ((bottom - scrollableRect.top) / 2 - targetRect.height / 2);
         scrollable.scrollTo({
           // Clamp to the valid range to prevent over-scrolling.
-          top: Math.max(0, Math.min(scrollable.scrollHeight - scrollable.clientHeight, scrollable.scrollTop + adjustment)),
+          top: Math.max(
+            0,
+            Math.min(
+              scrollable.scrollHeight - scrollable.clientHeight,
+              scrollable.scrollTop + adjustment
+            )
+          ),
           behavior: 'smooth'
         });
       }

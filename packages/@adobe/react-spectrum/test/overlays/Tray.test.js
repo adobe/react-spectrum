@@ -66,7 +66,9 @@ describe('Tray', function () {
     await waitFor(() => {
       expect(getByRole('dialog')).toBeVisible();
     }); // wait for animation
-    act(() => {jest.runAllTimers();});
+    act(() => {
+      jest.runAllTimers();
+    });
 
     let dialog = await getByRole('dialog');
     fireEvent.keyDown(dialog, {key: 'Escape'});
@@ -87,7 +89,9 @@ describe('Tray', function () {
     await waitFor(() => {
       expect(getByRole('dialog')).toBeVisible();
     }); // wait for animation
-    act(() => {jest.runAllTimers();});
+    act(() => {
+      jest.runAllTimers();
+    });
 
     fireEvent.mouseDown(document.body);
     fireEvent.mouseUp(document.body);
@@ -95,6 +99,35 @@ describe('Tray', function () {
   });
 
   it('hides the tray on blur when shouldCloseOnBlur is true', async function () {
+    let onOpenChange = jest.fn();
+    let {getByRole, getByTestId} = render(
+      <Provider theme={theme}>
+        <TestTray isOpen onOpenChange={onOpenChange} shouldCloseOnBlur>
+          <Dialog aria-label="Test dialog">contents</Dialog>
+        </TestTray>
+        <button data-testid="outside">Outside</button>
+      </Provider>
+    );
+
+    await waitFor(() => {
+      expect(getByRole('dialog')).toBeVisible();
+    }); // wait for animation
+    act(() => {
+      jest.runAllTimers();
+    });
+
+    let dialog = await getByRole('dialog');
+    let outside = getByTestId('outside');
+    expect(document.activeElement).toBe(dialog);
+    expect(onOpenChange).toHaveBeenCalledTimes(0);
+
+    act(() => {
+      outside.focus();
+    });
+    expect(onOpenChange).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not close when focus is lost with no replacement, such as switching tabs', async function () {
     let onOpenChange = jest.fn();
     let {getByRole} = render(
       <Provider theme={theme}>
@@ -106,15 +139,20 @@ describe('Tray', function () {
 
     await waitFor(() => {
       expect(getByRole('dialog')).toBeVisible();
-    }); // wait for animation
-    act(() => {jest.runAllTimers();});
+    });
+    act(() => {
+      jest.runAllTimers();
+    });
 
-    let dialog = await getByRole('dialog');
+    let dialog = getByRole('dialog');
     expect(document.activeElement).toBe(dialog);
-    expect(onOpenChange).toHaveBeenCalledTimes(0);
+    expect(onOpenChange).not.toHaveBeenCalled();
 
-    act(() => {dialog.blur();});
-    expect(onOpenChange).toHaveBeenCalledTimes(1);
+    act(() => {
+      dialog.blur();
+    });
+    expect(onOpenChange).not.toHaveBeenCalled();
+    expect(dialog).toBeVisible();
   });
 
   it('should have hidden dismiss buttons for screen readers', function () {

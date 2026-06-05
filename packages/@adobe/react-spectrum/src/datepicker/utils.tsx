@@ -23,7 +23,9 @@ import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
 import {useLocale} from 'react-aria/I18nProvider';
 import {useProvider} from '../provider/Provider';
 
-export function useFormatHelpText(props: Pick<SpectrumDatePickerBase<any>, 'description' | 'showFormatHelpText'>): ReactNode {
+export function useFormatHelpText(
+  props: Pick<SpectrumDatePickerBase<any>, 'description' | 'showFormatHelpText'>
+): ReactNode {
   let formatter = useDateFormatter({dateStyle: 'short'});
   let displayNames = useDisplayNames();
   return useMemo(() => {
@@ -32,16 +34,18 @@ export function useFormatHelpText(props: Pick<SpectrumDatePickerBase<any>, 'desc
     }
 
     if (props.showFormatHelpText) {
-      return (
-        formatter.formatToParts(new Date()).map((s, i) => {
-          if (s.type === 'literal' || s.type === 'unknown' || (s.type as string) === 'yearName') {
-            return <span key={i}>{` ${s.value} `}</span>;
-          }
+      return formatter.formatToParts(new Date()).map((s, i) => {
+        if (s.type === 'literal' || s.type === 'unknown' || (s.type as string) === 'yearName') {
+          return <span key={i}>{` ${s.value} `}</span>;
+        }
 
-          let type = s.type as string === 'relatedYear' ? 'year' : s.type;
-          return <span key={i} style={{unicodeBidi: 'embed', direction: 'ltr'}}>{displayNames.of(type)}</span>;
-        })
-      );
+        let type = (s.type as string) === 'relatedYear' ? 'year' : s.type;
+        return (
+          <span key={i} style={{unicodeBidi: 'embed', direction: 'ltr'}}>
+            {displayNames.of(type)}
+          </span>
+        );
+      });
     }
 
     return '';
@@ -74,7 +78,9 @@ function getVisibleMonths(scale) {
   return Math.floor((window.innerWidth - popoverPadding * 2) / (monthWidth + gap));
 }
 
-export function useFocusManagerRef(ref: FocusableRef<HTMLElement>): React.RefObject<HTMLElement | null> {
+export function useFocusManagerRef(
+  ref: FocusableRef<HTMLElement>
+): React.RefObject<HTMLElement | null> {
   let domRef = useRef<HTMLElement | null>(null);
   useImperativeHandle(ref, () => ({
     ...createDOMRef(domRef),
@@ -85,15 +91,19 @@ export function useFocusManagerRef(ref: FocusableRef<HTMLElement>): React.RefObj
   return domRef;
 }
 
-export function useFormattedDateWidth(state: {getDateFormatter: (locale: string, formatOptions: FormatterOptions) => DateFormatter}): number {
+export function useFormattedDateWidth(state: {
+  getDateFormatter: (locale: string, formatOptions: FormatterOptions) => DateFormatter;
+}): number {
   let locale = useLocale()?.locale;
   let currentDate = new Date();
-  let formatedDate = state.getDateFormatter(locale, {shouldForceLeadingZeros: true}).format(currentDate);
-  let totalCharacters =  formatedDate.length;
+  let formatedDate = state
+    .getDateFormatter(locale, {shouldForceLeadingZeros: true})
+    .format(currentDate);
+  let totalCharacters = formatedDate.length;
 
   // The max of two is for times with only hours.
   // As the length of a date grows we need to proportionally increase the width.
   // We use the character count with 'ch' units and add extra padding to accomate for
   // dates with months and time dashes, which are wider characters.
-  return (totalCharacters + Math.max(Math.floor(totalCharacters / 5), 2));
+  return totalCharacters + Math.max(Math.floor(totalCharacters / 5), 2);
 }

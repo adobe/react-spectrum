@@ -23,15 +23,23 @@ let states = [
   {isDisabled: true},
   {label: [null, 'custom label']},
   {showValueLabel: false},
-  {contextualHelp: (
-    <ContextualHelp>
-      <Heading>What is a segment?</Heading>
-      <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
-    </ContextualHelp>
-  )}
+  {
+    contextualHelp: (
+      <ContextualHelp>
+        <Heading>What is a segment?</Heading>
+        <Content>
+          Segments identify who your visitors are, what devices and services they use, where they
+          navigated from, and much more.
+        </Content>
+      </ContextualHelp>
+    )
+  }
 ];
 
-let combinations = generatePowerset(states, (merged) => merged.label === null && (merged.showValueLabel === false || merged.contextualHelp));
+let combinations = generatePowerset(
+  states,
+  merged => merged.label === null && (merged.showValueLabel === false || merged.contextualHelp)
+);
 
 function shortName(key, value) {
   let returnVal = '';
@@ -63,11 +71,20 @@ export type ColorSliderStory = StoryObj<typeof ColorSlider>;
 const Template = (args: SpectrumColorSliderProps): JSX.Element => (
   <Grid columns={repeat(states.length, '1fr')} autoFlow="row" gap="size-300">
     {combinations.map(c => {
-      let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
+      let key = Object.keys(c)
+        .map(k => shortName(k, c[k]))
+        .join(' ');
       if (!key) {
         key = 'empty';
       }
-      return <ColorSlider key={key} {...args} {...c} label={c.label === 'custom label' ? key : c.label} />;
+      return (
+        <ColorSlider
+          key={key}
+          {...args}
+          {...c}
+          label={c.label === 'custom label' ? key : c.label}
+        />
+      );
     })}
   </Grid>
 );
@@ -75,53 +92,63 @@ const Template = (args: SpectrumColorSliderProps): JSX.Element => (
 const VerticalTemplate = (args: SpectrumColorSliderProps): JSX.Element => (
   <Grid columns={repeat(5, '1fr')} autoFlow="row" gap="size-300">
     {combinations.map(c => {
-      let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
+      let key = Object.keys(c)
+        .map(k => shortName(k, c[k]))
+        .join(' ');
       if (!key) {
         key = 'empty';
       }
-      return <ColorSlider key={key} {...args} {...c} label={c.label === 'custom label' ? key : c.label} orientation="vertical" />;
+      return (
+        <ColorSlider
+          key={key}
+          {...args}
+          {...c}
+          label={c.label === 'custom label' ? key : c.label}
+          orientation="vertical"
+        />
+      );
     })}
   </Grid>
 );
 
 export const PropChannelRed: ColorSliderStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'channel: red',
   args: {channel: 'red', defaultValue: '#7f0000'}
 };
 
 export const PropChannelAlpha: ColorSliderStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'channel: alpha',
   args: {channel: 'alpha', defaultValue: '#7f0000'}
 };
 
 export const PropChannelLightness: ColorSliderStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'channel: lightness',
   args: {channel: 'lightness', defaultValue: 'hsla(0, 100%, 50%, 0.5)'}
 };
 
 export const PropChannelBrightness: ColorSliderStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'channel: brightness',
   args: {channel: 'brightness', defaultValue: 'hsba(0, 100%, 50%, 0.5)'}
 };
 
 export const PropVertical: ColorSliderStory = {
-  render: (args) => <VerticalTemplate {...args} />,
+  render: args => <VerticalTemplate {...args} />,
   name: 'orientation: vertical',
   args: {channel: 'red', defaultValue: '#7f0000'}
 };
 
 export const PropCustomWidth: ColorSliderStory = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: 'custom width',
   args: {channel: 'red', defaultValue: '#7f0000', width: 'size-3600'}
 };
 
 export const PropCustomHeight: ColorSliderStory = {
-  render: (args) => <VerticalTemplate {...args} />,
+  render: args => <VerticalTemplate {...args} />,
   name: 'custom height',
   args: {channel: 'red', defaultValue: '#7f0000', height: 'size-3600'}
 };

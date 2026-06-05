@@ -1,1 +1,4 @@
-export {useInteractOutside, type InteractOutsideProps} from '../src/interactions/useInteractOutside';
+export {
+  useInteractOutside,
+  type InteractOutsideProps
+} from '../src/interactions/useInteractOutside';

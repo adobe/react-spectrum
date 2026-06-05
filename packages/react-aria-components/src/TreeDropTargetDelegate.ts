@@ -1,28 +1,36 @@
-import {Direction, DropTarget, DropTargetDelegate, ItemDropTarget, Key, Node, RootDropTarget} from '@react-types/shared';
+import {
+  Direction,
+  DropTarget,
+  DropTargetDelegate,
+  ItemDropTarget,
+  Key,
+  Node,
+  RootDropTarget
+} from '@react-types/shared';
 
 interface TreeCollection<T> extends Iterable<Node<T>> {
-  getItem(key: Key): Node<T> | null,
-  getChildren?(key: Key): Iterable<Node<T>>,
-  getKeyAfter(key: Key): Key | null,
-  getKeyBefore(key: Key): Key | null
+  getItem(key: Key): Node<T> | null;
+  getChildren?(key: Key): Iterable<Node<T>>;
+  getKeyAfter(key: Key): Key | null;
+  getKeyBefore(key: Key): Key | null;
 }
 
 interface TreeState<T> {
-  collection: TreeCollection<T>,
-  expandedKeys: Set<Key>
+  collection: TreeCollection<T>;
+  expandedKeys: Set<Key>;
 }
 
 interface PointerTracking {
-  lastY: number,
-  lastX: number,
-  yDirection: 'up' | 'down' | null,
-  xDirection: 'left' | 'right' | null,
+  lastY: number;
+  lastX: number;
+  yDirection: 'up' | 'down' | null;
+  xDirection: 'left' | 'right' | null;
   boundaryContext: {
-    parentKey: Key,
-    lastSwitchY: number,
-    lastSwitchX: number,
-    preferredTargetIndex?: number
-  } | null
+    parentKey: Key;
+    lastSwitchY: number;
+    lastSwitchX: number;
+    preferredTargetIndex?: number;
+  } | null;
 }
 
 const X_SWITCH_THRESHOLD = 10;
@@ -45,7 +53,11 @@ export class TreeDropTargetDelegate<T> {
     this.direction = direction;
   }
 
-  getDropTargetFromPoint(x: number, y: number, isValidDropTarget: (target: DropTarget) => boolean): DropTarget | null {
+  getDropTargetFromPoint(
+    x: number,
+    y: number,
+    isValidDropTarget: (target: DropTarget) => boolean
+  ): DropTarget | null {
     let baseTarget = this.delegate!.getDropTargetFromPoint(x, y, isValidDropTarget);
     if (!baseTarget || baseTarget.type === 'root') {
       return baseTarget;
@@ -83,6 +95,14 @@ export class TreeDropTargetDelegate<T> {
     // Normalize to 'after'
     if (target.dropPosition === 'before') {
       let keyBefore = this.state!.collection.getKeyBefore(target.key);
+
+      while (keyBefore != null) {
+        let node = this.state!.collection.getItem(keyBefore);
+        if (node?.type === 'item') {
+          break;
+        }
+        keyBefore = node?.parentKey ?? null;
+      }
       if (keyBefore != null) {
         let convertedTarget = {
           type: 'item',
@@ -104,7 +124,14 @@ export class TreeDropTargetDelegate<T> {
 
     let resolvedItemTarget: ItemDropTarget;
     if (potentialTargets.length > 1) {
-      resolvedItemTarget = this.selectTarget(potentialTargets, target, x, y, currentYMovement, currentXMovement);
+      resolvedItemTarget = this.selectTarget(
+        potentialTargets,
+        target,
+        x,
+        y,
+        currentYMovement,
+        currentXMovement
+      );
     } else {
       resolvedItemTarget = potentialTargets[0];
       // Reset boundary context since we're not in a boundary case
@@ -116,7 +143,10 @@ export class TreeDropTargetDelegate<T> {
 
   // Returns potential targets for an ambiguous drop position (e.g. after the last child of a parent, or after the parent itself)
   // Ordered by level, from innermost to outermost.
-  private getPotentialTargets(originalTarget: ItemDropTarget, isValidDropTarget: (target: DropTarget) => boolean): ItemDropTarget[] {
+  private getPotentialTargets(
+    originalTarget: ItemDropTarget,
+    isValidDropTarget: (target: DropTarget) => boolean
+  ): ItemDropTarget[] {
     if (originalTarget.dropPosition === 'on') {
       return [originalTarget];
     }
@@ -133,11 +163,21 @@ export class TreeDropTargetDelegate<T> {
     let potentialTargets = [target];
 
     // If target has children and is expanded, use "before first child"
-    if (currentItem && currentItem.hasChildNodes && this.state!.expandedKeys.has(currentItem.key) && collection.getChildren && target.dropPosition === 'after') {
+    if (
+      currentItem &&
+      currentItem.hasChildNodes &&
+      this.state!.expandedKeys.has(currentItem.key) &&
+      collection.getChildren &&
+      target.dropPosition === 'after'
+    ) {
       // Find the first item child (traverse keys directly instead of using collection.getChildren, which may only include cells).
-      let firstChildItemNode = currentItem.firstChildKey != null ? collection.getItem(currentItem.firstChildKey) : null;
+      let firstChildItemNode =
+        currentItem.firstChildKey != null ? collection.getItem(currentItem.firstChildKey) : null;
       while (firstChildItemNode && firstChildItemNode.type !== 'item') {
-        firstChildItemNode = firstChildItemNode.nextKey != null ? collection.getItem(firstChildItemNode.nextKey) : null;
+        firstChildItemNode =
+          firstChildItemNode.nextKey != null
+            ? collection.getItem(firstChildItemNode.nextKey)
+            : null;
       }
 
       if (firstChildItemNode?.type === 'item') {
@@ -163,9 +203,9 @@ export class TreeDropTargetDelegate<T> {
     let parentKey = currentItem?.parentKey;
     let ancestorTargets: ItemDropTarget[] = [];
 
-    while (parentKey) {
+    while (parentKey != null) {
       let parentItem = collection.getItem(parentKey);
-      let nextItem = parentItem?.nextKey ? collection.getItem(parentItem.nextKey) : null;
+      let nextItem = parentItem?.nextKey != null ? collection.getItem(parentItem.nextKey) : null;
       let isLastChildAtLevel = !nextItem || nextItem.parentKey !== parentKey;
 
       if (isLastChildAtLevel) {
@@ -193,8 +233,15 @@ export class TreeDropTargetDelegate<T> {
     // Handle converting "after" to "before next" for non-ambiguous cases
     if (potentialTargets.length === 1) {
       let nextKey = collection.getKeyAfter(target.key);
-      let nextNode = nextKey ? collection.getItem(nextKey) : null;
-      if (nextKey != null && nextNode && currentItem && nextNode.level != null && currentItem.level != null && nextNode.level > currentItem.level) {
+      let nextNode = nextKey != null ? collection.getItem(nextKey) : null;
+      if (
+        nextKey != null &&
+        nextNode &&
+        currentItem &&
+        nextNode.level != null &&
+        currentItem.level != null &&
+        nextNode.level > currentItem.level
+      ) {
         let beforeTarget = {
           type: 'item',
           key: nextKey,
@@ -225,7 +272,7 @@ export class TreeDropTargetDelegate<T> {
     let currentItem = this.state!.collection.getItem(originalTarget.key);
     let parentKey = currentItem?.parentKey;
 
-    if (!parentKey) {
+    if (parentKey == null) {
       return potentialTargets[0];
     }
 
@@ -300,7 +347,10 @@ export class TreeDropTargetDelegate<T> {
       tracking.yDirection = null;
     }
 
-    let targetIndex = Math.max(0, Math.min(boundaryContext.preferredTargetIndex || 0, potentialTargets.length - 1));
+    let targetIndex = Math.max(
+      0,
+      Math.min(boundaryContext.preferredTargetIndex || 0, potentialTargets.length - 1)
+    );
     return potentialTargets[targetIndex];
   }
 }

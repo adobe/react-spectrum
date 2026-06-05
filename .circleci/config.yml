@@ -2,16 +2,16 @@ version: 2.1
 parameters:
   GHA_Event:
     type: string
-    default: ""
+    default: ''
   GHA_Actor:
     type: string
-    default: ""
+    default: ''
   GHA_Action:
     type: string
-    default: ""
+    default: ''
   GHA_Meta:
     type: string
-    default: ""
+    default: ''
 
 orbs:
   aws-cli: circleci/aws-cli@5.4.1
@@ -20,31 +20,32 @@ orbs:
 executors:
   rsp:
     docker:
-      - image: cimg/node:24.13.0
+      - image: cimg/node:24.14.1
+    resource_class: medium.gen2
     environment:
       CACHE_VERSION: v1
     working_directory: ~/react-spectrum
 
   rsp-large:
     docker:
-      - image: cimg/node:24.13.0
-    resource_class: large
+      - image: cimg/node:24.14.1
+    resource_class: large.gen2
     environment:
       CACHE_VERSION: v1
     working_directory: ~/react-spectrum
 
   rsp-xlarge:
     docker:
-      - image: cimg/node:24.13.0
-    resource_class: xlarge
+      - image: cimg/node:24.14.1
+    resource_class: xlarge.gen2
     environment:
       CACHE_VERSION: v1
     working_directory: ~/react-spectrum
 
   rsp-2xlarge:
     docker:
-      - image: cimg/node:24.13.0
-    resource_class: 2xlarge
+      - image: cimg/node:24.14.1
+    resource_class: 2xlarge.gen2
     environment:
       CACHE_VERSION: v1
     working_directory: ~/react-spectrum
@@ -63,10 +64,17 @@ commands:
       - run:
           name: Check AWS credentials
           command: |
-            if [ -z "$AWS_ACCESS_KEY_ID" ] || [ -z "$AWS_SECRET_ACCESS_KEY" ]; then
+            if [ -z "$AWS_ROLE_ARN" ]; then
               echo "AWS credentials not found"
               circleci-agent step halt
             fi
+      - aws-cli/setup:
+          role_arn: $AWS_ROLE_ARN
+          region: $AWS_DEFAULT_REGION
+          role_session_name: 'CircleCI-Deploy-Session'
+      - run:
+          name: Verify AWS CLI setup
+          command: aws sts get-caller-identity
       - run:
           name: Configure AWS CLI for concurrent requests
           command: aws configure set default.s3.max_concurrent_requests 100
@@ -440,7 +448,7 @@ jobs:
           name: build fork-point apis
           command: |
             mkdir -p ~/.ssh
-            curl -L https://api.github.com/meta | jq -r '.ssh_keys | .[]' | sed -e 's/^/github.com /' >> ~/.ssh/known_hosts
+            ssh-keyscan -t rsa,ed25519 github.com >> ~/.ssh/known_hosts
             yarn build:api-branch --githash="origin/main" --output="base-api" && yarn build:api-branch && yarn compare:apis
 
       - persist_to_workspace:
@@ -468,6 +476,45 @@ jobs:
           root: dist
           paths:
             - 'ts-diff.txt'
+
+  skills-diff:
+    executor: rsp-large
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - run:
+          name: build agent skills (branch)
+          command: ./.circleci/build-skills.sh /tmp/dist/skills-branch
+
+      - run:
+          name: build agent skills (main)
+          command: |
+            mkdir -p ~/.ssh
+            ssh-keyscan -t rsa,ed25519 github.com >> ~/.ssh/known_hosts
+            BRANCH_ROOT="$(pwd)"
+            BUILD_SKILLS="$BRANCH_ROOT/.circleci/build-skills.sh"
+            git worktree add --detach /tmp/main-worktree origin/main
+            # Reuse the branch's installed node_modules since `build-skills.sh`
+            # only invokes node scripts (no yarn install needed in the worktree).
+            ln -s "$BRANCH_ROOT/node_modules" /tmp/main-worktree/node_modules
+            cd /tmp/main-worktree && "$BUILD_SKILLS" /tmp/dist/skills-main
+
+      - run:
+          name: diff agent skills
+          command: |
+            mkdir -p dist
+            node .circleci/skills-diff.js \
+              /tmp/dist/skills-main /tmp/dist/skills-branch \
+              > dist/skills-diff.md || true
+
+      - store_artifacts:
+          path: dist/skills-diff.md
+
+      - persist_to_workspace:
+          root: dist
+          paths:
+            - 'skills-diff.md'
 
   typecheck-docs:
     executor: rsp-large
@@ -686,6 +733,28 @@ jobs:
           paths:
             - '*/verdaccio/s2-parcel-example'
 
+  v-s2-vite:
+    executor: rsp-xlarge
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - attach_workspace:
+          at: /tmp/verdaccio-workspace
+
+      - run:
+          name: build s2-vite off verdaccio
+          command: |
+            ./scripts/verdaccio-ci.sh
+            ./scripts/verdaccio-build-s2-vite.sh
+          environment:
+            VERDACCIO_STORAGE_PATH: /tmp/verdaccio-workspace/storage
+
+      - persist_to_workspace:
+          root: verdaccio_dist
+          paths:
+            - '*/verdaccio/s2-vite-project'
+
   v-s2-webpack:
     executor: rsp-xlarge
     steps:
@@ -874,6 +943,7 @@ jobs:
             if [ $GITHUB_TOKEN ]; then
               node .circleci/comment.js
               node .circleci/api-comment.js
+              node .circleci/skills-comment.js
             fi
 
   publish-nightly:
@@ -933,20 +1003,34 @@ workflows:
             - install
           filters:
             branches:
-              ignore: main
+              ignore:
+                - /main$/
+                - /gh-readonly-queue\/.*$/
       - ts-build-branch:
           requires:
             - install
           filters:
             branches:
-              ignore: main
+              ignore:
+                - /main$/
+                - /gh-readonly-queue\/.*$/
       - ts-diff:
           requires:
             - ts-build-fork-point
             - ts-build-branch
           filters:
             branches:
-              ignore: main
+              ignore:
+                - /main$/
+                - /gh-readonly-queue\/.*$/
+      - skills-diff:
+          requires:
+            - install
+          filters:
+            branches:
+              ignore:
+                - /main$/
+                - /gh-readonly-queue\/.*$/
       - typecheck-docs:
           requires:
             - install
@@ -984,6 +1068,9 @@ workflows:
           requires:
             - verdaccio
       - v-s2-parcel:
+          requires:
+            - verdaccio
+      - v-s2-vite:
           requires:
             - verdaccio
       - v-s2-webpack:
@@ -1041,6 +1128,7 @@ workflows:
             - v-nextjs
             - v-rac-rsp-tailwind
             - v-s2-parcel
+            - v-s2-vite
             - v-s2-webpack
             - v-s2-next
             - v-icon-builder
@@ -1052,6 +1140,7 @@ workflows:
               ignore: main
           requires:
             - ts-diff
+            - skills-diff
             - deploy
             - deploy-s3-commit
       - comment:
@@ -1062,10 +1151,10 @@ workflows:
   prod-docs:
     when:
       and:
-        - equal: [ "prod-docs", << pipeline.parameters.GHA_Action >> ]
+        - equal: ['prod-docs', << pipeline.parameters.GHA_Action >>]
         - or:
-          - equal: [ "release", << pipeline.parameters.GHA_Event >>]
-          - equal: [ "workflow_dispatch", << pipeline.parameters.GHA_Event >>]
+            - equal: ['release', << pipeline.parameters.GHA_Event >>]
+            - equal: ['workflow_dispatch', << pipeline.parameters.GHA_Event >>]
     jobs:
       - install
       - s2-docs-production:
@@ -1084,7 +1173,7 @@ workflows:
   nightly:
     triggers:
       - schedule:
-          cron: "0 9 * * *" # 02:00 PDT
+          cron: '0 9 * * *' # 02:00 PDT
           filters:
             branches:
               only:
@@ -1096,8 +1185,8 @@ workflows:
   nightly-manual:
     when:
       and:
-        - equal: [ "nightly", << pipeline.parameters.GHA_Action >> ]
-        - equal: [ "workflow_dispatch", << pipeline.parameters.GHA_Event >>]
+        - equal: ['nightly', << pipeline.parameters.GHA_Action >>]
+        - equal: ['workflow_dispatch', << pipeline.parameters.GHA_Event >>]
     jobs:
       - install
       - publish-nightly

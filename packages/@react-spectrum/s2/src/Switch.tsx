@@ -10,16 +10,32 @@
  * governing permissions and limitations under the License.
  */
 
-import {Switch as AriaSwitch, SwitchProps as AriaSwitchProps, SwitchRenderProps} from 'react-aria-components/Switch';
-
 import {baseColor, focusRing, fontRelative, style} from '../style' with {type: 'macro'};
 import {CenterBaseline} from './CenterBaseline';
 import {ContextValue} from 'react-aria-components/slots';
-import {controlFont, controlSize, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {
+  controlFont,
+  controlSize,
+  getAllowedOverrides,
+  StyleProps
+} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, ReactNode, useContext, useRef} from 'react';
-import {Direction, FocusableRef, FocusableRefValue, GlobalDOMAttributes} from '@react-types/shared';
+import {
+  Direction,
+  FocusableRef,
+  FocusableRefValue,
+  GlobalDOMAttributes,
+  HelpTextProps
+} from '@react-types/shared';
 import {FormContext, useFormProps} from './Form';
+import {HelpText} from './Field';
 import {pressScale} from './pressScale';
+import {
+  SwitchButton,
+  SwitchField,
+  SwitchFieldProps,
+  SwitchRenderProps
+} from 'react-aria-components/Switch';
 import {useFocusableRef} from './useDOMRef';
 import {useLocale} from 'react-aria/I18nProvider';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
@@ -30,41 +46,78 @@ interface SwitchStyleProps {
    *
    * @default 'M'
    */
-  size?: 'S' | 'M' | 'L' | 'XL',
+  size?: 'S' | 'M' | 'L' | 'XL';
   /**
    * Whether the Switch should be displayed with an emphasized style.
    */
-  isEmphasized?: boolean
+  isEmphasized?: boolean;
 }
 
 interface RenderProps extends SwitchRenderProps, SwitchStyleProps {}
 
-export interface SwitchProps extends Omit<AriaSwitchProps, 'className' | 'style' | 'render' | 'children'  | 'onHover' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange' | keyof GlobalDOMAttributes>, StyleProps, SwitchStyleProps {
-  children?: ReactNode
+export interface SwitchProps
+  extends
+    Omit<
+      SwitchFieldProps,
+      | 'className'
+      | 'style'
+      | 'render'
+      | 'children'
+      | 'onHover'
+      | 'onHoverStart'
+      | 'onHoverEnd'
+      | 'onHoverChange'
+      | keyof GlobalDOMAttributes
+    >,
+    HelpTextProps,
+    StyleProps,
+    SwitchStyleProps {
+  children?: ReactNode;
 }
 
-export const SwitchContext = createContext<ContextValue<Partial<SwitchProps>, FocusableRefValue<HTMLLabelElement>>>(null);
+export const SwitchContext =
+  createContext<
+    ContextValue<Partial<SwitchProps>, FocusableRefValue<HTMLInputElement, HTMLDivElement>>
+  >(null);
+
+const field = style(
+  {
+    display: 'grid',
+    gridTemplateColumns: {
+      default: ['max-content', '1fr'],
+      isNoVisibleLabel: ['max-content']
+    },
+    columnGap: 'text-to-control',
+    width: 'fit',
+    font: controlFont(),
+    '--field-height': {
+      type: 'height',
+      value: controlSize()
+    },
+    rowGap: 'calc(var(--field-height) - 1lh)',
+    gridColumnStart: {
+      isInForm: 'field'
+    }
+  },
+  getAllowedOverrides()
+);
 
 const wrapper = style({
-  display: 'flex',
-  columnGap: 'text-to-control',
+  display: 'grid',
+  gridTemplateColumns: 'subgrid',
+  gridColumnStart: 1,
+  gridColumnEnd: -1,
   alignItems: 'baseline',
-  width: 'fit',
-  font: controlFont(),
   transition: 'colors',
   color: {
     default: baseColor('neutral'),
-    forcedColors: 'ButtonText',
     isDisabled: {
       default: 'disabled',
       forcedColors: 'GrayText'
     }
   },
-  gridColumnStart: {
-    isInForm: 'field'
-  },
   disableTapHighlight: true
-}, getAllowedOverrides());
+});
 
 const track = style<RenderProps>({
   ...focusRing(),
@@ -148,7 +201,9 @@ const transformStyle = ({isSelected, direction}: SwitchRenderProps & {direction:
         'translateX(calc(var(--trackWidth) - 100% - 4px)) perspective(calc(2 * (var(--trackHeight) - 6px))) translateZ(-4px)'
       : 'translateX(calc(100% - var(--trackWidth) + 4px)) perspective(calc(2 * (var(--trackHeight) - 6px))) translateZ(-4px)';
   return {
-    transform: isSelected ? placement : 'perspective(calc(var(--trackHeight) - 8px)) translateZ(-4px)'
+    transform: isSelected
+      ? placement
+      : 'perspective(calc(var(--trackHeight) - 8px)) translateZ(-4px)'
   };
 };
 
@@ -156,7 +211,10 @@ const transformStyle = ({isSelected, direction}: SwitchRenderProps & {direction:
  * Switches allow users to turn an individual option on or off.
  * They are usually used to activate or deactivate a specific setting.
  */
-export const Switch = /*#__PURE__*/ forwardRef(function Switch(props: SwitchProps, ref: FocusableRef<HTMLLabelElement>) {
+export const Switch = /*#__PURE__*/ forwardRef(function Switch(
+  props: SwitchProps,
+  ref: FocusableRef<HTMLInputElement, HTMLDivElement>
+) {
   [props, ref] = useSpectrumContextProps(props, ref, SwitchContext);
   let {children, UNSAFE_className = '', UNSAFE_style} = props;
   let inputRef = useRef<HTMLInputElement | null>(null);
@@ -166,30 +224,56 @@ export const Switch = /*#__PURE__*/ forwardRef(function Switch(props: SwitchProp
   let {direction} = useLocale();
   props = useFormProps(props);
   return (
-    <AriaSwitch
+    <SwitchField
       {...props}
       ref={domRef}
       inputRef={inputRef}
       style={UNSAFE_style}
-      className={renderProps => UNSAFE_className + wrapper({...renderProps, isInForm, size: props.size || 'M'}, props.styles)}>
-      {renderProps => (
+      className={renderProps =>
+        UNSAFE_className +
+        field(
+          {...renderProps, isInForm, size: props.size || 'M', isNoVisibleLabel: !children},
+          props.styles
+        )
+      }>
+      {({isDisabled, isInvalid}) => (
         <>
-          <CenterBaseline>
-            <div
-              className={track({
-                ...renderProps,
-                size: props.size || 'M',
-                isEmphasized: props.isEmphasized
-              })}>
-              <div
-                ref={handleRef}
-                style={pressScale(handleRef, transformStyle)({...renderProps, direction})}
-                className={handle(renderProps)} />
-            </div>
-          </CenterBaseline>
-          {children}
+          <SwitchButton
+            className={renderProps => wrapper({...renderProps, isInForm, size: props.size || 'M'})}>
+            {renderProps => (
+              <>
+                <CenterBaseline>
+                  <div
+                    className={track({
+                      ...renderProps,
+                      size: props.size || 'M',
+                      isEmphasized: props.isEmphasized
+                    })}>
+                    <div
+                      ref={handleRef}
+                      style={pressScale(handleRef, transformStyle)({...renderProps, direction})}
+                      className={handle(renderProps)}
+                    />
+                  </div>
+                </CenterBaseline>
+                {children}
+              </>
+            )}
+          </SwitchButton>
+          <HelpText
+            size={props.size || 'M'}
+            styles={style({
+              gridColumnStart: 1,
+              paddingTop: 0
+            })}
+            isDisabled={isDisabled}
+            isInvalid={isInvalid}
+            description={props.description}
+            showErrorIcon>
+            {props.errorMessage}
+          </HelpText>
         </>
       )}
-    </AriaSwitch>
+    </SwitchField>
   );
 });

@@ -16,12 +16,18 @@ import {render} from '@react-spectrum/test-utils-internal';
 
 function ModalDOM(props) {
   let {modalProps} = useModal();
-  return <div data-testid={props.modalId || 'modal'} {...modalProps}>{props.children}</div>;
+  return (
+    <div data-testid={props.modalId || 'modal'} {...modalProps}>
+      {props.children}
+    </div>
+  );
 }
 
 function Modal(props) {
   return (
-    <OverlayContainer portalContainer={props.container} data-testid={props.providerId || 'modal-provider'}>
+    <OverlayContainer
+      portalContainer={props.container}
+      data-testid={props.providerId || 'modal-provider'}>
       <ModalDOM modalId={props.modalId}>{props.children}</ModalDOM>
     </OverlayContainer>
   );
@@ -31,9 +37,7 @@ function Example(props) {
   return (
     <OverlayProvider data-testid="root-provider">
       This is the root provider.
-      {props.showModal &&
-        <Modal container={props.container}>{props.children}</Modal>
-      }
+      {props.showModal && <Modal container={props.container}>{props.children}</Modal>}
     </OverlayProvider>
   );
 }
@@ -113,7 +117,9 @@ describe('useModal', function () {
     res.rerender(
       <div id="alternateContainer" data-testid="alternate-container">
         <Example showModal container={document.getElementById('alternateContainer')}>
-          <Modal providerId="inner-modal-provider" modalId="inner-modal">Inner</Modal>
+          <Modal providerId="inner-modal-provider" modalId="inner-modal">
+            Inner
+          </Modal>
         </Example>
       </div>
     );

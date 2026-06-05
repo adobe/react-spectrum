@@ -12,5 +12,5 @@ export default function ColorExamples() {
         <ColorWheel defaultValue="hsl(30, 100%, 50%)" />
       </Flex>
     </>
-  )
+  );
 }

@@ -1,4 +1,4 @@
-@import "./theme.css";
+@import './theme.css';
 
 .react-aria-GridList {
   justify-content: center;
@@ -20,13 +20,13 @@
     scroll-padding: 50px;
   }
 
-  &[data-layout=grid]:not(:has(.react-aria-GridListSection)) {
+  &[data-layout='grid']:not(:has(.react-aria-GridListSection)):not([data-empty]) {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(100px, var(--grid-item-size)));
     grid-auto-rows: min-content;
   }
 
-  &[data-layout=grid] > .react-aria-GridListSection {
+  &[data-layout='grid'] > .react-aria-GridListSection {
     grid-template-columns: repeat(auto-fit, minmax(100px, var(--grid-item-size)));
     grid-auto-rows: min-content;
   }
@@ -35,31 +35,31 @@
     margin-top: var(--spacing-4);
   }
 
-  &[data-layout=stack] > .react-aria-GridListSection {
+  &[data-layout='stack'] > .react-aria-GridListSection {
     grid-template-columns: auto;
     align-items: center;
   }
 
-  &[data-size=small] {
+  &[data-size='small'] {
     --grid-item-size: 150px;
   }
 
   @media (width < 500px) {
-    &[data-layout=grid] {
+    &[data-layout='grid'] {
       --grid-item-size: 150px;
     }
 
-    &[data-layout=grid]:not(:has(.react-aria-GridListSection)) {
+    &[data-layout='grid']:not(:has(.react-aria-GridListSection)) {
       grid-template-columns: 1fr 1fr;
     }
   }
 
-  &[data-layout=stack] {
+  &[data-layout='stack']:not([data-empty]) {
     display: grid;
     grid-template-columns: auto;
     align-items: center;
 
-    &[data-orientation=horizontal] {
+    &[data-orientation='horizontal'] {
       display: flex;
       flex-direction: row;
       justify-content: normal;
@@ -71,7 +71,7 @@
     }
   }
 
-  &[data-layout=grid][data-orientation=horizontal] {
+  &[data-layout='grid'][data-orientation='horizontal'] {
     grid-auto-flow: column;
     grid-template-rows: auto auto;
     grid-template-columns: none;
@@ -167,38 +167,41 @@
     color: var(--text-color-disabled);
   }
 
-  .react-aria-Checkbox {
+  .react-aria-CheckboxField {
     position: absolute;
     top: var(--spacing-4);
     inset-inline-start: var(--spacing-4);
-    --focus-ring-color: var(--highlight-foreground);
-    --checkmark-color: light-dark(white, black);
 
-    .indicator {
-      --indicator-border: light-dark(rgb(0 0 0 / 0.9), rgb(255 255 255 / 0.7));
+    .react-aria-CheckboxButton {
+      --focus-ring-color: var(--highlight-foreground);
+      --checkmark-color: light-dark(white, black);
 
-      @media (forced-colors: active) {
-        --indicator-border: ButtonBorder;
+      .indicator {
+        --indicator-border: light-dark(rgb(0 0 0 / 0.9), rgb(255 255 255 / 0.7));
+
+        @media (forced-colors: active) {
+          --indicator-border: ButtonBorder;
+        }
       }
-    }
 
-    &[data-selected] .indicator {
-      --indicator-color: light-dark(black, var(--highlight-foreground));
-      --indicator-shadow: transparent;
+      &[data-selected] .indicator {
+        --indicator-color: light-dark(black, var(--highlight-foreground));
+        --indicator-shadow: transparent;
 
-      @media (forced-colors: active) {
-        --indicator-color: Highlight;
-        --checkmark-color: HighlightText;
+        @media (forced-colors: active) {
+          --indicator-color: Highlight;
+          --checkmark-color: HighlightText;
+        }
       }
-    }
 
-    &::before {
-      content: '';
-      position: absolute;
-      inset: -4px;
-      background: light-dark(rgb(255 255 255 / 0.51), rgb(0 0 0 / 0.56));
-      box-shadow: rgba(0, 0, 0, 0.24) 0px 2px 8px 0px;
-      border-radius: var(--radius);
+      &::before {
+        content: '';
+        position: absolute;
+        inset: -4px;
+        background: light-dark(rgb(255 255 255 / 0.51), rgb(0 0 0 / 0.56));
+        box-shadow: rgba(0, 0, 0, 0.24) 0px 2px 8px 0px;
+        border-radius: var(--radius);
+      }
     }
   }
 
@@ -223,12 +226,12 @@
       font-weight: 500;
     }
 
-    &[slot=description] {
+    &[slot='description'] {
       font-size: var(--font-size-sm);
     }
   }
 
-  .react-aria-Button[slot=drag] {
+  .react-aria-Button[slot='drag'] {
     all: unset;
     display: inline-flex;
     align-items: center;
@@ -279,7 +282,7 @@
   width: 100%;
 
   > .react-aria-GridListHeader {
-      grid-column: 1 / -1;
+    grid-column: 1 / -1;
   }
 }
 
@@ -293,7 +296,9 @@
   border: 0.5px solid var(--gray-400);
   cursor: default;
   user-select: none;
-  box-shadow: inset 0px 1px 0px white, inset 0px -4px 8px var(--gray-200);
+  box-shadow:
+    inset 0px 1px 0px white,
+    inset 0px -4px 8px var(--gray-200);
   border-radius: var(--radius);
   padding: var(--spacing-1) var(--spacing-4);
 

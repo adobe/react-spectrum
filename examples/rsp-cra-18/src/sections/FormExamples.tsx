@@ -1,4 +1,22 @@
-import {Flex, Divider, Form, ComboBox, Item, Button, TextField, RadioGroup, Radio, CheckboxGroup, Checkbox, NumberField, RangeSlider, SearchField, Slider, Switch, TextArea} from '@adobe/react-spectrum';
+import {
+  Flex,
+  Divider,
+  Form,
+  ComboBox,
+  Item,
+  Button,
+  TextField,
+  RadioGroup,
+  Radio,
+  CheckboxGroup,
+  Checkbox,
+  NumberField,
+  RangeSlider,
+  SearchField,
+  Slider,
+  Switch,
+  TextArea
+} from '@adobe/react-spectrum';
 
 export default function FormExamples() {
   return (
@@ -28,9 +46,8 @@ export default function FormExamples() {
             <Checkbox value="basketball">Basketball</Checkbox>
           </CheckboxGroup>
           <NumberField label="Width" defaultValue={1024} minValue={0} />
-          <RangeSlider label="Range" defaultValue={{ start: 12, end: 36 }} />
-          <SearchField
-            label="Search" />
+          <RangeSlider label="Range" defaultValue={{start: 12, end: 36}} />
+          <SearchField label="Search" />
           <Slider label="Cookies to buy" defaultValue={12} />
           <Switch>Low power mode</Switch>
           <TextArea label="Description" />
@@ -38,5 +55,5 @@ export default function FormExamples() {
         </Form>
       </Flex>
     </>
-  )
+  );
 }

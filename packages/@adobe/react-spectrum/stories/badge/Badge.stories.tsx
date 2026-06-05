@@ -25,7 +25,18 @@ export default {
     variant: {
       control: {
         type: 'select',
-        options: ['positive', 'negative', 'neutral', 'info', 'indigo', 'yellow', 'magenta', 'fuchsia', 'purple', 'seafoam']
+        options: [
+          'positive',
+          'negative',
+          'neutral',
+          'info',
+          'indigo',
+          'yellow',
+          'magenta',
+          'fuchsia',
+          'purple',
+          'seafoam'
+        ]
       }
     }
   }
@@ -37,12 +48,28 @@ export const Default: BadgeStory = {
 };
 
 export const WithIcon: BadgeStory = {
-  args: {children: <><CheckmarkCircle aria-label="Done" /><Text>Licensed</Text></>, variant: 'positive'},
+  args: {
+    children: (
+      <>
+        <CheckmarkCircle aria-label="Done" />
+        <Text>Licensed</Text>
+      </>
+    ),
+    variant: 'positive'
+  },
   name: 'With icon'
 };
 
 export const WithIconReverseOrder: BadgeStory = {
-  args: {children: <><Text>Licensed</Text><CheckmarkCircle aria-label="Done" /></>, variant: 'positive'},
+  args: {
+    children: (
+      <>
+        <Text>Licensed</Text>
+        <CheckmarkCircle aria-label="Done" />
+      </>
+    ),
+    variant: 'positive'
+  },
   name: 'With icon, order reversed'
 };
 

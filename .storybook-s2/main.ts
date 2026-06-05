@@ -1,4 +1,5 @@
-import type { StorybookConfig } from "storybook/internal/types";
+import type {StorybookConfig} from 'storybook/internal/types';
+import {fileURLToPath} from 'node:url';
 
 // const excludedProps = new Set([
 //   'id',
@@ -14,24 +15,30 @@ import type { StorybookConfig } from "storybook/internal/types";
 //   'onInput'
 // ]);
 
+const localAddon = (rel: string) => fileURLToPath(import.meta.resolve(rel));
+
 const config: StorybookConfig = {
   stories: [
     './docs/*.mdx',
-    "../packages/@react-spectrum/s2/stories/*.stories.@(js|jsx|mjs|ts|tsx)",
+    '../packages/@react-spectrum/s2/stories/*.stories.@(js|jsx|mjs|ts|tsx)',
+    '../packages/@react-spectrum/s2-ai/stories/*.stories.@(js|jsx|mjs|ts|tsx)'
   ],
   addons: [
-    './custom-addons/provider/register',
+    localAddon('./custom-addons/provider/preset.ts'),
     // "@storybook/addon-styling-webpack",
-    "@storybook/addon-docs",
-    "@vueless/storybook-dark-mode",
-    "@storybook/addon-a11y",
+    '@storybook/addon-docs',
+    '@vueless/storybook-dark-mode',
+    '@storybook/addon-a11y'
   ],
   framework: {
-    name: "storybook-react-parcel",
-    options: {},
+    name: 'storybook-react-parcel',
+    options: {}
   },
   core: {
     disableWhatsNewNotifications: true
+  },
+  features: {
+    sidebarOnboardingChecklist: false
   }
   // typescript: {
   //   reactDocgen: 'react-docgen-typescript',

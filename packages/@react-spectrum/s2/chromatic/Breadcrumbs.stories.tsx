@@ -16,7 +16,7 @@ import {type IMany, Many} from '../stories/Breadcrumbs.stories';
 import type {Meta, StoryObj} from '@storybook/react';
 import {ReactNode} from 'react';
 import {shortName} from './utils';
-import {style} from '../style' with { type: 'macro' };
+import {style} from '../style' with {type: 'macro'};
 import {userEvent, within} from 'storybook/test';
 
 const meta: Meta<typeof Breadcrumbs> = {
@@ -31,7 +31,12 @@ export const Dynamic: StoryObj<IMany> = {
   ...Many,
   parameters: {
     // TODO: move these options back to meta above once we get strings for ar-AE. This is just to prevent the RTL story's config from actually applying
-    chromaticProvider: {colorSchemes: ['light'], backgrounds: ['base'], locales: ['en-US'], disableAnimations: true}
+    chromaticProvider: {
+      colorSchemes: ['light'],
+      backgrounds: ['base'],
+      locales: ['en-US'],
+      disableAnimations: true
+    }
   },
   play: async ({canvasElement}) => {
     // This uses click because using .tab twice didn't move focus to the menu
@@ -42,34 +47,38 @@ export const Dynamic: StoryObj<IMany> = {
   }
 };
 
-let states = [
-  {isDisabled: true},
-  {size: ['M', 'L']}
-];
+let states = [{isDisabled: true}, {size: ['M', 'L']}];
 
 let combinations = generatePowerset(states);
 
 const Template = (): ReactNode => {
   return (
-    <div className={style({display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 250px))', gridAutoFlow: 'row', alignItems: 'center', justifyItems: 'start', gap: 24, width: '100vw'})}>
+    <div
+      className={style({
+        display: 'grid',
+        gridTemplateColumns: 'repeat(2, minmax(0, 250px))',
+        gridAutoFlow: 'row',
+        alignItems: 'center',
+        justifyItems: 'start',
+        gap: 24,
+        width: '100vw'
+      })}>
       {combinations.map(c => {
-        let fullComboName = Object.keys(c).map(k => `${k}: ${c[k]}`).join(' ');
-        let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
+        let fullComboName = Object.keys(c)
+          .map(k => `${k}: ${c[k]}`)
+          .join(' ');
+        let key = Object.keys(c)
+          .map(k => shortName(k, c[k]))
+          .join(' ');
         if (!key) {
           key = 'default';
         }
 
         return (
           <Breadcrumbs data-testid={fullComboName} key={key} {...c}>
-            <Breadcrumb href="/">
-              Home
-            </Breadcrumb>
-            <Breadcrumb href="/react-aria">
-              React Aria
-            </Breadcrumb>
-            <Breadcrumb href="/breadcrumbs">
-              Breadcrumbs
-            </Breadcrumb>
+            <Breadcrumb href="/">Home</Breadcrumb>
+            <Breadcrumb href="/react-aria">React Aria</Breadcrumb>
+            <Breadcrumb href="/breadcrumbs">Breadcrumbs</Breadcrumb>
           </Breadcrumbs>
         );
       })}

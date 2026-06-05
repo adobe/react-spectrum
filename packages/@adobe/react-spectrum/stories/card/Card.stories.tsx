@@ -59,7 +59,7 @@ export const Default: CardStory = {
     )
   },
   decorators: [
-    (Story) => (
+    Story => (
       <div style={{width: '208px'}}>
         <Story />
       </div>
@@ -70,14 +70,10 @@ export const Default: CardStory = {
 export const CardGrid: CardStory = {
   render: (args, context) => <Card {...args} {...context} id={null} />,
   args: {layout: 'grid'},
-  decorators: [(Story, context) => (
-    <CardGridDecorator
-      Story={Story}
-      context={context} />
-  )]
+  decorators: [(Story, context) => <CardGridDecorator Story={Story} context={context} />]
 };
 
-let CardGridDecorator = (props) => {
+let CardGridDecorator = props => {
   let {Story, context} = props;
   let {args} = context;
   let {scale} = useProvider();
@@ -94,21 +90,25 @@ let CardGridDecorator = (props) => {
         justifyItems: 'center',
         alignItems: 'start'
       }}>
-      {
-        (new Array(15).fill(0)).map((_, index) => {
-          let url = getImage(index);
-          return (
-            <div style={scale === 'medium' ? {width: '208px', height: '293px'} : {width: '208px', height: '355px'}} key={`${index}${url}`}>
-              <Story {...args}>
-                <Image src={url} />
-                <Heading>Title {index}</Heading>
-                <Text slot="detail">PNG</Text>
-                <Content>Description</Content>
-              </Story>
-            </div>
-          );
-        })
-      }
+      {new Array(15).fill(0).map((_, index) => {
+        let url = getImage(index);
+        return (
+          <div
+            style={
+              scale === 'medium'
+                ? {width: '208px', height: '293px'}
+                : {width: '208px', height: '355px'}
+            }
+            key={`${index}${url}`}>
+            <Story {...args}>
+              <Image src={url} />
+              <Heading>Title {index}</Heading>
+              <Text slot="detail">PNG</Text>
+              <Content>Description</Content>
+            </Story>
+          </div>
+        );
+      })}
     </div>
   );
 };
@@ -116,14 +116,10 @@ let CardGridDecorator = (props) => {
 export const CardWaterfall: CardStory = {
   render: (args, context) => <Card {...args} {...context} id={null} />,
   args: {layout: 'waterfall'},
-  decorators: [(Story, context) => (
-    <CardWaterfallDecorator
-      Story={Story}
-      context={context} />
-  )]
+  decorators: [(Story, context) => <CardWaterfallDecorator Story={Story} context={context} />]
 };
 
-let CardWaterfallDecorator = (props) => {
+let CardWaterfallDecorator = props => {
   let {Story, context} = props;
   let {args} = context;
   return (
@@ -137,35 +133,29 @@ let CardWaterfallDecorator = (props) => {
         flexWrap: 'wrap',
         alignItems: 'start'
       }}>
-      {
-        (new Array(15).fill(0)).map((_, index) => {
-          let url = getImage(index);
-          return (
-            <div style={{width: '208px', margin: '10px'}} key={`${index}${url}`}>
-              <Story {...args}>
-                <Image src={url} />
-                <Heading>Title {index}</Heading>
-                <Text slot="detail">PNG</Text>
-                <Content>{getDescription(index)}</Content>
-              </Story>
-            </div>
-          );
-        })
-      }
+      {new Array(15).fill(0).map((_, index) => {
+        let url = getImage(index);
+        return (
+          <div style={{width: '208px', margin: '10px'}} key={`${index}${url}`}>
+            <Story {...args}>
+              <Image src={url} />
+              <Heading>Title {index}</Heading>
+              <Text slot="detail">PNG</Text>
+              <Content>{getDescription(index)}</Content>
+            </Story>
+          </div>
+        );
+      })}
     </div>
   );
 };
 
 export const CardFloat: CardStory = {
   render: (args, context) => <Card {...args} {...context} id={null} />,
-  decorators: [(Story, context) => (
-    <CardFloatDecorator
-      Story={Story}
-      context={context} />
-  )]
+  decorators: [(Story, context) => <CardFloatDecorator Story={Story} context={context} />]
 };
 
-let CardFloatDecorator = (props) => {
+let CardFloatDecorator = props => {
   let {Story, context} = props;
   let {args} = context;
   return (
@@ -174,21 +164,19 @@ let CardFloatDecorator = (props) => {
         width: '100%',
         margin: '50px'
       }}>
-      {
-        (new Array(15).fill(0)).map((_, index) => {
-          let url = getImage(index);
-          return (
-            <div style={{float: 'left', margin: '10px'}} key={`${index}${url}`}>
-              <Story {...args}>
-                <Image src={url} />
-                <Heading>Title {index}</Heading>
-                <Text slot="detail">PNG</Text>
-                <Content>Description</Content>
-              </Story>
-            </div>
-          );
-        })
-      }
+      {new Array(15).fill(0).map((_, index) => {
+        let url = getImage(index);
+        return (
+          <div style={{float: 'left', margin: '10px'}} key={`${index}${url}`}>
+            <Story {...args}>
+              <Image src={url} />
+              <Heading>Title {index}</Heading>
+              <Text slot="detail">PNG</Text>
+              <Content>Description</Content>
+            </Story>
+          </div>
+        );
+      })}
     </div>
   );
 };
@@ -196,14 +184,10 @@ let CardFloatDecorator = (props) => {
 export const CardGridMessyText: CardStory = {
   render: (args, context) => <Card {...args} {...context} id={null} />,
   args: {...Default.args, layout: 'grid'},
-  decorators: [(Story, context) => (
-    <CardGridMessyTextDecorator
-      Story={Story}
-      context={context} />
-  )]
+  decorators: [(Story, context) => <CardGridMessyTextDecorator Story={Story} context={context} />]
 };
 
-let CardGridMessyTextDecorator = (props) => {
+let CardGridMessyTextDecorator = props => {
   let {Story, context} = props;
   let {args} = context;
   let {scale} = useProvider();
@@ -221,21 +205,34 @@ let CardGridMessyTextDecorator = (props) => {
         justifyItems: 'center',
         alignItems: 'start'
       }}>
-      {
-        (new Array(15).fill(0)).map((_, index) => {
-          let url = getImage(index);
-          return (
-            <div style={scale === 'medium' ? {width: '208px', height: '293px'} : {width: '208px', height: '355px'}} key={`${index}${url}`}>
-              <Story {...args}>
-                <Image src={url} />
-                <Heading>{index} Rechtsschutzversicherungsgesellschaften Nahrungsmittelunverträglichkeit Unabhängigkeitserklärungen Freundschaftsbeziehungen</Heading>
-                <Text slot="detail">Rechtsschutzversicherungsgesellschaften Nahrungsmittelunverträglichkeit Unabhängigkeitserklärungen Freundschaftsbeziehungen</Text>
-                <Content>Rechtsschutzversicherungsgesellschaften Nahrungsmittelunverträglichkeit Unabhängigkeitserklärungen Freundschaftsbeziehungen</Content>
-              </Story>
-            </div>
-          );
-        })
-      }
+      {new Array(15).fill(0).map((_, index) => {
+        let url = getImage(index);
+        return (
+          <div
+            style={
+              scale === 'medium'
+                ? {width: '208px', height: '293px'}
+                : {width: '208px', height: '355px'}
+            }
+            key={`${index}${url}`}>
+            <Story {...args}>
+              <Image src={url} />
+              <Heading>
+                {index} Rechtsschutzversicherungsgesellschaften Nahrungsmittelunverträglichkeit
+                Unabhängigkeitserklärungen Freundschaftsbeziehungen
+              </Heading>
+              <Text slot="detail">
+                Rechtsschutzversicherungsgesellschaften Nahrungsmittelunverträglichkeit
+                Unabhängigkeitserklärungen Freundschaftsbeziehungen
+              </Text>
+              <Content>
+                Rechtsschutzversicherungsgesellschaften Nahrungsmittelunverträglichkeit
+                Unabhängigkeitserklärungen Freundschaftsbeziehungen
+              </Content>
+            </Story>
+          </div>
+        );
+      })}
     </div>
   );
 };
@@ -243,14 +240,12 @@ let CardGridMessyTextDecorator = (props) => {
 export const CardWaterfallMessyText: CardStory = {
   render: (args, context) => <Card {...args} {...context} id={null} />,
   args: {...Default.args, layout: 'waterfall'},
-  decorators: [(Story, context) => (
-    <CardWaterfallMessyTextDecorator
-      Story={Story}
-      context={context} />
-  )]
+  decorators: [
+    (Story, context) => <CardWaterfallMessyTextDecorator Story={Story} context={context} />
+  ]
 };
 
-let CardWaterfallMessyTextDecorator = (props) => {
+let CardWaterfallMessyTextDecorator = props => {
   let {Story, context} = props;
   let {args} = context;
   return (
@@ -264,21 +259,28 @@ let CardWaterfallMessyTextDecorator = (props) => {
         flexWrap: 'wrap',
         alignItems: 'start'
       }}>
-      {
-        (new Array(15).fill(0)).map((_, index) => {
-          let url = getImage(index);
-          return (
-            <div style={{width: '208px', margin: '10px'}} key={`${index}${url}`}>
-              <Story {...args}>
-                <Image src={url} />
-                <Heading>{index} Rechtsschutzversicherungsgesellschaften Nahrungsmittelunverträglichkeit Unabhängigkeitserklärungen Freundschaftsbeziehungen</Heading>
-                <Text slot="detail">Rechtsschutzversicherungsgesellschaften Nahrungsmittelunverträglichkeit Unabhängigkeitserklärungen Freundschaftsbeziehungen</Text>
-                <Content>Rechtsschutzversicherungsgesellschaften Nahrungsmittelunverträglichkeit Unabhängigkeitserklärungen Freundschaftsbeziehungen</Content>
-              </Story>
-            </div>
-          );
-        })
-      }
+      {new Array(15).fill(0).map((_, index) => {
+        let url = getImage(index);
+        return (
+          <div style={{width: '208px', margin: '10px'}} key={`${index}${url}`}>
+            <Story {...args}>
+              <Image src={url} />
+              <Heading>
+                {index} Rechtsschutzversicherungsgesellschaften Nahrungsmittelunverträglichkeit
+                Unabhängigkeitserklärungen Freundschaftsbeziehungen
+              </Heading>
+              <Text slot="detail">
+                Rechtsschutzversicherungsgesellschaften Nahrungsmittelunverträglichkeit
+                Unabhängigkeitserklärungen Freundschaftsbeziehungen
+              </Text>
+              <Content>
+                Rechtsschutzversicherungsgesellschaften Nahrungsmittelunverträglichkeit
+                Unabhängigkeitserklärungen Freundschaftsbeziehungen
+              </Content>
+            </Story>
+          </div>
+        );
+      })}
     </div>
   );
 };
@@ -286,14 +288,10 @@ let CardWaterfallMessyTextDecorator = (props) => {
 export const CardGridNoPreview: CardStory = {
   render: (args, context) => <Card {...args} {...context} id={null} />,
   args: {...Default.args, layout: 'grid'},
-  decorators: [(Story, context) => (
-    <CardGridNoPreviewDecorator
-      Story={Story}
-      context={context} />
-  )]
+  decorators: [(Story, context) => <CardGridNoPreviewDecorator Story={Story} context={context} />]
 };
 
-let CardGridNoPreviewDecorator = (props) => {
+let CardGridNoPreviewDecorator = props => {
   let {Story, context} = props;
   let {args} = context;
   let {scale} = useProvider();
@@ -311,20 +309,24 @@ let CardGridNoPreviewDecorator = (props) => {
         justifyItems: 'center',
         alignItems: 'start'
       }}>
-      {
-        (new Array(15).fill(0)).map((_, index) => {
-          let url = getImage(index);
-          return (
-            <div style={scale === 'medium' ? {width: '208px', height: '160px'} : {width: '208px', height: '200px'}} key={`${index}${url}`}>
-              <Story {...args}>
-                <Heading>Title {index}</Heading>
-                <Text slot="detail">PNG</Text>
-                <Content>Description</Content>
-              </Story>
-            </div>
-          );
-        })
-      }
+      {new Array(15).fill(0).map((_, index) => {
+        let url = getImage(index);
+        return (
+          <div
+            style={
+              scale === 'medium'
+                ? {width: '208px', height: '160px'}
+                : {width: '208px', height: '200px'}
+            }
+            key={`${index}${url}`}>
+            <Story {...args}>
+              <Heading>Title {index}</Heading>
+              <Text slot="detail">PNG</Text>
+              <Content>Description</Content>
+            </Story>
+          </div>
+        );
+      })}
     </div>
   );
 };
@@ -332,14 +334,12 @@ let CardGridNoPreviewDecorator = (props) => {
 export const CardWaterfallNoPreview: CardStory = {
   render: (args, context) => <Card {...args} {...context} id={null} />,
   args: {layout: 'waterfall'},
-  decorators: [(Story, context) => (
-    <CardWaterfallNoPreviewDecorator
-      Story={Story}
-      context={context} />
-  )]
+  decorators: [
+    (Story, context) => <CardWaterfallNoPreviewDecorator Story={Story} context={context} />
+  ]
 };
 
-let CardWaterfallNoPreviewDecorator = (props) => {
+let CardWaterfallNoPreviewDecorator = props => {
   let {Story, context} = props;
   let {args} = context;
 
@@ -354,55 +354,56 @@ let CardWaterfallNoPreviewDecorator = (props) => {
         flexWrap: 'wrap',
         alignItems: 'start'
       }}>
-      {
-        (new Array(15).fill(0)).map((_, index) => {
-          let url = getImage(index);
-          return (
-            <div style={{width: '208px', margin: '10px'}} key={`${index}${url}`}>
-              <Story {...args}>
-                <Heading>Title {index}</Heading>
-                <Text slot="detail">PNG</Text>
-                <Content>{getDescription(index)}</Content>
-              </Story>
-            </div>
-          );
-        })
-      }
+      {new Array(15).fill(0).map((_, index) => {
+        let url = getImage(index);
+        return (
+          <div style={{width: '208px', margin: '10px'}} key={`${index}${url}`}>
+            <Story {...args}>
+              <Heading>Title {index}</Heading>
+              <Text slot="detail">PNG</Text>
+              <Content>{getDescription(index)}</Content>
+            </Story>
+          </div>
+        );
+      })}
     </div>
   );
 };
 
-
 /* This is a bit of a funny template, we can't get selected on a Card through context because
-* if there's context it assumes it's being rendered in a collection. It's just here for a quick check of styles. */
+ * if there's context it assumes it's being rendered in a collection. It's just here for a quick check of styles. */
 interface ISelectableCard {
-  disabledKeys: Set<any>,
+  disabledKeys: Set<any>;
   selectionManager: {
-    isSelected: () => boolean,
-    select: () => Dispatch<SetStateAction<ISelectableCard>>
-  }
+    isSelected: () => boolean;
+    select: () => Dispatch<SetStateAction<ISelectableCard>>;
+  };
 }
 let SelectableCard = (props: SpectrumCardProps) => {
   let [state, setState] = useState<ISelectableCard>({
     disabledKeys: new Set(),
     selectionManager: {
       isSelected: () => true,
-      select: () => setState(prev => ({
+      select: () =>
+        setState(prev => ({
+          ...prev,
+          selectionManager: {
+            ...prev.selectionManager,
+            isSelected: () => !prev.selectionManager.isSelected()
+          }
+        }))
+    }
+  });
+  let {pressProps} = usePress({
+    onPress: () =>
+      setState(prev => ({
         ...prev,
         selectionManager: {
           ...prev.selectionManager,
           isSelected: () => !prev.selectionManager.isSelected()
         }
       }))
-    }
   });
-  let {pressProps} = usePress({onPress: () => setState(prev => ({
-    ...prev,
-    selectionManager: {
-      ...prev.selectionManager,
-      isSelected: () => !prev.selectionManager.isSelected()
-    }
-  }))});
   return (
     <div style={{width: '208px'}} {...pressProps}>
       <CardViewContext.Provider value={{state}}>
@@ -414,5 +415,5 @@ let SelectableCard = (props: SpectrumCardProps) => {
 
 export const Selected: CardStory = {
   args: {...Default.args},
-  render: (args) => <SelectableCard {...args} id={null} />
+  render: args => <SelectableCard {...args} id={null} />
 };
