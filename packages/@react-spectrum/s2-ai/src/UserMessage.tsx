@@ -10,24 +10,24 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMProps, DOMRef, DOMRefValue} from '@react-types/shared';
-import {ContextValue, DEFAULT_SLOT, Provider, SlotProps} from 'react-aria-components/slots';
-import {createContext, forwardRef, ReactNode} from 'react';
+import {AriaLabelingProps, DOMProps, DOMRef} from '@react-types/shared';
+import {DEFAULT_SLOT, Provider, SlotProps} from 'react-aria-components/slots';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
-import {getAllowedOverrides} from './style-utils-copy' with {type: 'macro'};
+import {forwardRef, ReactNode} from 'react';
 import {ImageContext} from '@react-spectrum/s2/Image';
+import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
-import type {StyleProps} from './style-utils-copy';
+import {StyleString} from './types';
 import {useDOMRef} from './useDOMRef';
-import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface UserMessageProps extends DOMProps, AriaLabelingProps, StyleProps, SlotProps {
+export interface UserMessageProps extends DOMProps, AriaLabelingProps, SlotProps {
   /** The contents of the user message bubble. */
   children: ReactNode;
+  /**
+   * Spectrum-defined styles, returned by the `style()` macro.
+   */
+  styles?: StyleString;
 }
-
-export const UserMessageContext =
-  createContext<ContextValue<Partial<UserMessageProps>, DOMRefValue<HTMLDivElement>>>(null);
 
 const previewImage = style({
   width: 'full',
@@ -38,37 +38,34 @@ const previewImage = style({
 });
 
 // TODO: revisit whether 75% is the right, or if there should be different modalities
-const bubble = style(
-  {
-    display: 'flex',
-    flexDirection: {
-      default: 'row',
-      ':has([slot=image])': 'column'
-    },
-    alignItems: {
-      default: 'center',
-      ':has([slot=image])': 'stretch'
-    },
-    gap: 8,
-    paddingY: 8,
-    paddingX: {
-      default: 16,
-      ':has(img)': 8
-    },
-    backgroundColor: 'gray-50',
-    color: 'neutral',
-    borderRadius: 'lg',
-    font: 'body',
-    boxSizing: 'border-box',
-    alignSelf: 'end',
-    maxWidth: '75%',
-    width: {
-      default: 'fit',
-      ':has([slot=image])': '75%'
-    }
+const bubble = style({
+  display: 'flex',
+  flexDirection: {
+    default: 'row',
+    ':has([slot=image])': 'column'
   },
-  getAllowedOverrides()
-);
+  alignItems: {
+    default: 'center',
+    ':has([slot=image])': 'stretch'
+  },
+  gap: 8,
+  paddingY: 8,
+  paddingX: {
+    default: 16,
+    ':has(img)': 8
+  },
+  backgroundColor: 'gray-50',
+  color: 'neutral',
+  borderRadius: 'lg',
+  font: 'body',
+  boxSizing: 'border-box',
+  alignSelf: 'end',
+  maxWidth: '75%',
+  width: {
+    default: 'fit',
+    ':has([slot=image])': '75%'
+  }
+});
 
 /**
  * UserMessage renders a single user-authored message in a conversational AI thread.
@@ -78,16 +75,14 @@ export const UserMessage = forwardRef(function UserMessage(
   props: UserMessageProps,
   ref: DOMRef<HTMLDivElement>
 ) {
-  [props, ref] = useSpectrumContextProps(props, ref, UserMessageContext);
   let domRef = useDOMRef(ref);
-  let {children, UNSAFE_className = '', UNSAFE_style, styles} = props;
+  let {children, styles} = props;
 
   return (
     <div
       {...filterDOMProps(props, {labelable: true})}
       ref={domRef}
-      style={UNSAFE_style}
-      className={UNSAFE_className + bubble(null, styles)}>
+      className={mergeStyles(bubble, styles)}>
       <Provider
         values={[
           [

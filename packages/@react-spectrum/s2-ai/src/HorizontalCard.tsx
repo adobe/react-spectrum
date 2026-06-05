@@ -22,12 +22,11 @@ import {
 } from '@react-spectrum/s2/style' with {type: 'macro'};
 import {composeRenderProps} from 'react-aria-components/composeRenderProps';
 import {ContentContext} from '@react-spectrum/s2/Content';
-import {ContextValue, DEFAULT_SLOT, Provider} from 'react-aria-components/slots';
 import {createContext, forwardRef, ReactNode, useContext} from 'react';
-import {DOMProps, DOMRef, DOMRefValue, GlobalDOMAttributes} from '@react-types/shared';
+import {DEFAULT_SLOT, Provider} from 'react-aria-components/slots';
+import {DOMProps, DOMRef, GlobalDOMAttributes} from '@react-types/shared';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {FooterContext} from '@react-spectrum/s2/Footer';
-import {getAllowedOverrides} from './style-utils-copy' with {type: 'macro'};
 import {GridListItem, GridListItemProps} from 'react-aria-components/GridList';
 import {ImageContext} from '@react-spectrum/s2/Image';
 import {ImageCoordinator} from '@react-spectrum/s2/ImageCoordinator';
@@ -37,31 +36,26 @@ import {LinkButtonContext} from '@react-spectrum/s2/LinkButton';
 import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
 import {pressScale} from '@react-spectrum/s2/pressScale';
 import {SkeletonContext, useIsSkeleton} from '@react-spectrum/s2/Skeleton';
-import type {StyleProps, UnsafeStyles} from './style-utils-copy';
+import {StyleString} from './types';
 import {TextContext} from '@react-spectrum/s2/Text';
 import {useDOMRef} from './useDOMRef';
-import {useSpectrumContextProps} from './useSpectrumContextProps';
-
 interface CardRenderProps {
   /** The size of the Card. */
   size: 'XS' | 'S' | 'M' | 'L' | 'XL';
 }
 
-export interface CardProps
-  extends
-    Omit<
-      GridListItemProps,
-      | 'className'
-      | 'style'
-      | 'render'
-      | 'children'
-      | 'onHoverChange'
-      | 'onHoverStart'
-      | 'onHoverEnd'
-      | 'onClick'
-      | keyof GlobalDOMAttributes
-    >,
-    StyleProps {
+export interface CardProps extends Omit<
+  GridListItemProps,
+  | 'className'
+  | 'style'
+  | 'render'
+  | 'children'
+  | 'onHoverChange'
+  | 'onHoverStart'
+  | 'onHoverEnd'
+  | 'onClick'
+  | keyof GlobalDOMAttributes
+> {
   /** The children of the Card. */
   children: ReactNode | ((renderProps: CardRenderProps) => ReactNode);
   /**
@@ -82,6 +76,10 @@ export interface CardProps
    * @default 'primary'
    */
   variant?: 'primary' | 'secondary' | 'tertiary' | 'quiet';
+  /**
+   * Spectrum-defined styles, returned by the `style()` macro.
+   */
+  styles?: StyleString;
 }
 
 const borderRadius = {
@@ -103,171 +101,168 @@ const borderRadius = {
 
 const onlyPreview = ':not(:has([data-slot=content])):not(:has([data-slot=preview]))';
 
-let card = style(
-  {
-    display: 'flex',
-    flexDirection: 'row',
-    position: 'relative',
-    borderRadius,
-    '--s2-container-bg': {
-      type: 'backgroundColor',
-      value: {
-        variant: {
-          primary: 'elevated',
-          secondary: 'layer-1',
-          basic: 'layer-2'
-        },
-        forcedColors: 'ButtonFace'
-      }
-    },
-    backgroundColor: {
-      default: '--s2-container-bg',
+let card = style({
+  display: 'flex',
+  flexDirection: 'row',
+  position: 'relative',
+  borderRadius,
+  '--s2-container-bg': {
+    type: 'backgroundColor',
+    value: {
       variant: {
-        tertiary: 'transparent',
-        quiet: 'transparent'
-      }
-    },
-    // TODO: No box shadow for basic, secondary, dark
-    // also none for basic tertiary
-    boxShadow: {
-      default: 'emphasized',
-      isHovered: 'elevated',
-      isFocusVisible: 'elevated',
-      isSelected: 'elevated',
-      forcedColors: '[0 0 0 1px var(--hcm-buttonborder, ButtonBorder)]',
-      variant: {
-        tertiary: {
-          // Render border with box-shadow to avoid affecting layout.
-          default: `[0 0 0 2px ${color('gray-100')}]`,
-          isHovered: `[0 0 0 2px ${color('gray-200')}]`,
-          isFocusVisible: `[0 0 0 2px ${color('gray-200')}]`,
-          isSelected: 'none',
-          forcedColors: '[0 0 0 2px var(--hcm-buttonborder, ButtonBorder)]'
-        },
-        quiet: 'none'
-      }
-    },
-    forcedColorAdjust: 'none',
-    transition: 'default',
-    fontFamily: 'sans',
-    textDecoration: 'none',
-    overflow: {
-      default: 'clip',
-      variant: {
-        quiet: 'visible'
-      }
-    },
-    contain: 'layout',
-    disableTapHighlight: true,
-    userSelect: {
-      isCardView: 'none'
-    },
-    cursor: {
-      isLink: 'pointer'
-    },
-    height: {
-      default: {
-        size: {
-          XS: 160,
-          S: 180,
-          M: 200,
-          L: 220,
-          XL: 240
-        }
+        primary: 'elevated',
+        secondary: 'layer-1',
+        basic: 'layer-2'
       },
-      isBasic: 68,
-      isCardView: 'full',
-      [onlyPreview]: 68
+      forcedColors: 'ButtonFace'
+    }
+  },
+  backgroundColor: {
+    default: '--s2-container-bg',
+    variant: {
+      tertiary: 'transparent',
+      quiet: 'transparent'
+    }
+  },
+  // TODO: No box shadow for basic, secondary, dark
+  // also none for basic tertiary
+  boxShadow: {
+    default: 'emphasized',
+    isHovered: 'elevated',
+    isFocusVisible: 'elevated',
+    isSelected: 'elevated',
+    forcedColors: '[0 0 0 1px var(--hcm-buttonborder, ButtonBorder)]',
+    variant: {
+      tertiary: {
+        // Render border with box-shadow to avoid affecting layout.
+        default: `[0 0 0 2px ${color('gray-100')}]`,
+        isHovered: `[0 0 0 2px ${color('gray-200')}]`,
+        isFocusVisible: `[0 0 0 2px ${color('gray-200')}]`,
+        isSelected: 'none',
+        forcedColors: '[0 0 0 2px var(--hcm-buttonborder, ButtonBorder)]'
+      },
+      quiet: 'none'
+    }
+  },
+  forcedColorAdjust: 'none',
+  transition: 'default',
+  fontFamily: 'sans',
+  textDecoration: 'none',
+  overflow: {
+    default: 'clip',
+    variant: {
+      quiet: 'visible'
+    }
+  },
+  contain: 'layout',
+  disableTapHighlight: true,
+  userSelect: {
+    isCardView: 'none'
+  },
+  cursor: {
+    isLink: 'pointer'
+  },
+  height: {
+    default: {
+      size: {
+        XS: 160,
+        S: 180,
+        M: 200,
+        L: 220,
+        XL: 240
+      }
     },
-    width: {
-      default: 'full',
-      [onlyPreview]: 'auto'
-    },
-    aspectRatio: {
-      [onlyPreview]: '1/1'
-    },
-    '--card-spacing': {
-      type: 'paddingTop',
-      value: {
-        density: {
-          compact: {
-            size: {
-              XS: '[6px]',
-              S: 8,
-              M: 12,
-              L: 16,
-              XL: 20
-            }
-          },
-          regular: {
-            size: {
-              XS: 8,
-              S: 12,
-              M: 16,
-              L: 20,
-              XL: 24
-            }
-          },
-          spacious: {
-            size: {
-              XS: 12,
-              S: 16,
-              M: 20,
-              L: 24,
-              XL: 28
-            }
+    isBasic: 68,
+    isCardView: 'full',
+    [onlyPreview]: 68
+  },
+  width: {
+    default: 'full',
+    [onlyPreview]: 'auto'
+  },
+  aspectRatio: {
+    [onlyPreview]: '1/1'
+  },
+  '--card-spacing': {
+    type: 'paddingTop',
+    value: {
+      density: {
+        compact: {
+          size: {
+            XS: '[6px]',
+            S: 8,
+            M: 12,
+            L: 16,
+            XL: 20
           }
         },
-        [onlyPreview]: 0
-      }
-    },
-    '--card-padding-y': {
-      type: 'paddingTop',
-      value: {
-        default: '--card-spacing',
-        variant: {
-          quiet: 0
-        }
-      }
-    },
-    '--card-padding-x': {
-      type: 'paddingStart',
-      value: {
-        default: '--card-spacing',
-        variant: {
-          quiet: 0
-        }
-      }
-    },
-    paddingY: '--card-padding-y',
-    paddingX: '--card-padding-x',
-    boxSizing: 'border-box',
-    ...focusRing(),
-    outlineStyle: {
-      default: 'none',
-      isFocusVisible: 'solid',
-      // Focus ring moves to preview when quiet.
-      variant: {
-        quiet: 'none'
-      }
-    },
-    '--basic-thumb-size': {
-      type: 'height',
-      value: {
-        default: 68,
-        size: {
-          XS: 24,
-          S: 26,
-          M: 32,
-          L: 36,
-          XL: 40
+        regular: {
+          size: {
+            XS: 8,
+            S: 12,
+            M: 16,
+            L: 20,
+            XL: 24
+          }
         },
-        [onlyPreview]: 'full'
+        spacious: {
+          size: {
+            XS: 12,
+            S: 16,
+            M: 20,
+            L: 24,
+            XL: 28
+          }
+        }
+      },
+      [onlyPreview]: 0
+    }
+  },
+  '--card-padding-y': {
+    type: 'paddingTop',
+    value: {
+      default: '--card-spacing',
+      variant: {
+        quiet: 0
       }
     }
   },
-  getAllowedOverrides()
-);
+  '--card-padding-x': {
+    type: 'paddingStart',
+    value: {
+      default: '--card-spacing',
+      variant: {
+        quiet: 0
+      }
+    }
+  },
+  paddingY: '--card-padding-y',
+  paddingX: '--card-padding-x',
+  boxSizing: 'border-box',
+  ...focusRing(),
+  outlineStyle: {
+    default: 'none',
+    isFocusVisible: 'solid',
+    // Focus ring moves to preview when quiet.
+    variant: {
+      quiet: 'none'
+    }
+  },
+  '--basic-thumb-size': {
+    type: 'height',
+    value: {
+      default: 68,
+      size: {
+        XS: 24,
+        S: 26,
+        M: 32,
+        L: 36,
+        XL: 40
+      },
+      [onlyPreview]: 'full'
+    }
+  }
+});
 
 let selectionIndicator = style({
   position: 'absolute',
@@ -414,8 +409,6 @@ export const InternalCardViewContext = createContext({
   ElementType: 'div' as 'div' | typeof GridListItem,
   layout: 'grid' as 'grid' | 'waterfall'
 });
-export const CardContext =
-  createContext<ContextValue<Partial<CardProps>, DOMRefValue<HTMLDivElement>>>(null);
 
 interface InternalCardContextValue {
   isQuiet: boolean;
@@ -449,7 +442,6 @@ const Card = forwardRef(function Card(
   props: CardProps & {isBasic?: boolean},
   ref: DOMRef<HTMLDivElement>
 ) {
-  [props] = useSpectrumContextProps(props, ref, CardContext);
   let {ElementType} = useContext(InternalCardViewContext);
   let domRef = useDOMRef(ref);
   let {
@@ -457,8 +449,6 @@ const Card = forwardRef(function Card(
     density = 'regular',
     size = 'M',
     variant = 'primary',
-    UNSAFE_className = '',
-    UNSAFE_style,
     styles,
     id,
     ...otherProps
@@ -507,7 +497,7 @@ const Card = forwardRef(function Card(
     </Provider>
   );
 
-  let press = pressScale(domRef, UNSAFE_style);
+  let press = pressScale(domRef);
   if (ElementType === 'div' && !isSkeleton && props.href) {
     // Standalone Card that has an href should be rendered as a Link.
     // NOTE: In this case, the card must not contain interactive elements.
@@ -516,15 +506,22 @@ const Card = forwardRef(function Card(
         {...filterDOMProps(otherProps, {isLink: true})}
         ref={domRef as any}
         className={renderProps =>
-          UNSAFE_className +
-          card(
-            {...renderProps, size, density, variant, isBasic, isCardView: false, isLink: true},
+          mergeStyles(
+            card({
+              ...renderProps,
+              size,
+              density,
+              variant,
+              isBasic,
+              isCardView: false,
+              isLink: true
+            }),
             styles
           )
         }
         style={renderProps =>
           // Only the preview in quiet cards scales down on press
-          variant === 'quiet' ? UNSAFE_style : press(renderProps)
+          variant === 'quiet' ? undefined : press(renderProps)
         }>
         {renderProps => (
           <InternalCardContext.Provider
@@ -544,11 +541,10 @@ const Card = forwardRef(function Card(
         // @ts-ignore - React < 19 compat
         inert={inertValue(isSkeleton)}
         ref={domRef}
-        className={
-          UNSAFE_className +
-          card({size, density, variant, isBasic, isCardView: ElementType !== 'div'}, styles)
-        }
-        style={UNSAFE_style}>
+        className={mergeStyles(
+          card({size, density, variant, isBasic, isCardView: ElementType !== 'div'}),
+          styles
+        )}>
         <InternalCardContext.Provider
           value={{
             size,
@@ -570,15 +566,22 @@ const Card = forwardRef(function Card(
       {...props}
       ref={domRef}
       className={renderProps =>
-        UNSAFE_className +
-        card(
-          {...renderProps, isCardView: true, isLink: !!props.href, size, density, variant, isBasic},
+        mergeStyles(
+          card({
+            ...renderProps,
+            isCardView: true,
+            isLink: !!props.href,
+            size,
+            density,
+            variant,
+            isBasic
+          }),
           styles
         )
       }
       style={renderProps =>
         // Only the preview in quiet cards scales down on press
-        variant === 'quiet' ? UNSAFE_style : press(renderProps)
+        variant === 'quiet' ? undefined : press(renderProps)
       }>
       {({selectionMode, selectionBehavior, isHovered, isFocusVisible, isSelected, isPressed}) => (
         <InternalCardContext.Provider
@@ -638,8 +641,12 @@ function CardCheckbox() {
   );
 }
 
-export interface CardPreviewProps extends UnsafeStyles, DOMProps {
+export interface CardPreviewProps extends DOMProps {
   children: ReactNode;
+  /**
+   * Spectrum-defined styles, returned by the `style()` macro.
+   */
+  styles?: StyleString;
 }
 
 export const CardPreview = forwardRef(function CardPreview(
@@ -648,15 +655,17 @@ export const CardPreview = forwardRef(function CardPreview(
 ) {
   let {size, isQuiet, isHovered, isFocusVisible, isSelected, isPressed, isCheckboxSelection} =
     useContext(InternalCardContext);
-  let {UNSAFE_className = '', UNSAFE_style} = props;
   let domRef = useDOMRef(ref);
   return (
     <div
       {...filterDOMProps(props)}
       slot="preview"
       ref={domRef}
-      className={UNSAFE_className + preview({size, isQuiet, isHovered, isFocusVisible, isSelected})}
-      style={isQuiet ? pressScale(domRef)({isPressed}) : UNSAFE_style}>
+      className={mergeStyles(
+        preview({size, isQuiet, isHovered, isFocusVisible, isSelected}),
+        props.styles
+      )}
+      style={isQuiet ? pressScale(domRef)({isPressed}) : undefined}>
       {isQuiet && <SelectionIndicator />}
       {isQuiet && isCheckboxSelection && <CardCheckbox />}
       <div className={style({borderRadius: 'inherit', overflow: 'clip', height: 'full'})}>

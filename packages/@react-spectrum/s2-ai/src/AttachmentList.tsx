@@ -16,12 +16,22 @@ import {BasicHorizontalCard} from './HorizontalCard';
 import {Button} from 'react-aria-components/Button';
 import {CardProps} from '@react-spectrum/s2/Card';
 import Close from '@react-spectrum/s2/icons/Close';
-import {controlSize, getAllowedOverrides} from './style-utils-copy' with {type: 'macro'};
 import {forwardRef, useRef} from 'react';
 import {iconStyle} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
 import {pressScale} from '@react-spectrum/s2/pressScale';
 import {Tag, TagGroup, TagList} from 'react-aria-components/TagGroup';
 import {useDOMRef} from './useDOMRef';
+
+const controlSizeM = {
+  default: 32,
+  size: {
+    XS: 20,
+    S: 24,
+    L: 40,
+    XL: 48
+  }
+} as const;
 
 const hoverBackground = {
   default: 'gray-200',
@@ -34,43 +44,40 @@ const styles = style<{
   isFocusVisible: boolean;
   isPressed: boolean;
   size: 'S' | 'M' | 'L' | 'XL';
-}>(
-  {
-    ...focusRing(),
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    size: controlSize(),
-    flexShrink: 0,
-    borderRadius: 'full',
-    padding: 0,
-    borderStyle: 'none',
-    transition: 'default',
-    backgroundColor: {
-      default: 'gray-200',
-      isHovered: hoverBackground,
-      isFocusVisible: hoverBackground,
-      isPressed: hoverBackground
-    },
-    '--iconPrimary': {
-      type: 'color',
-      value: {
-        default: baseColor('neutral'),
-        isDisabled: 'disabled',
-        forcedColors: {
-          default: 'ButtonText',
-          isDisabled: 'GrayText'
-        }
-      }
-    },
-    outlineColor: {
-      default: 'focus-ring',
-      forcedColors: 'Highlight'
-    },
-    disableTapHighlight: true
+}>({
+  ...focusRing(),
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  size: controlSizeM,
+  flexShrink: 0,
+  borderRadius: 'full',
+  padding: 0,
+  borderStyle: 'none',
+  transition: 'default',
+  backgroundColor: {
+    default: 'gray-200',
+    isHovered: hoverBackground,
+    isFocusVisible: hoverBackground,
+    isPressed: hoverBackground
   },
-  getAllowedOverrides()
-);
+  '--iconPrimary': {
+    type: 'color',
+    value: {
+      default: baseColor('neutral'),
+      isDisabled: 'disabled',
+      forcedColors: {
+        default: 'ButtonText',
+        isDisabled: 'GrayText'
+      }
+    }
+  },
+  outlineColor: {
+    default: 'focus-ring',
+    forcedColors: 'Highlight'
+  },
+  disableTapHighlight: true
+});
 
 const closeIconStyle = ({size = 'M'}) => {
   if (size === 'S') return iconStyle({size: 'XS'});
@@ -88,13 +95,13 @@ const CloseButton = function CloseButton(props) {
       ref={ref}
       slot="remove"
       style={pressScale(ref, {})}
-      className={renderProps => styles({...renderProps, size: props.size || 'M'}, props.styles)}>
+      className={renderProps =>
+        mergeStyles(styles({...renderProps, size: props.size || 'M'}), props.styles)
+      }>
       <Close styles={closeIconStyle({size: props.size ?? 'M'})} />
     </Button>
   );
 };
-
-let attachmentListStyles = style({}, getAllowedOverrides());
 
 export const AttachmentList = forwardRef(function AttachmentList(
   props: any,
@@ -102,7 +109,7 @@ export const AttachmentList = forwardRef(function AttachmentList(
 ) {
   let domRef = useDOMRef(ref);
   return (
-    <TagGroup {...props} className={attachmentListStyles(props.styles)} ref={domRef}>
+    <TagGroup {...props} className={props.styles} ref={domRef}>
       <TagList
         className={style({
           display: 'flex',
