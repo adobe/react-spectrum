@@ -50,11 +50,13 @@ export interface SelectBoxGroupProps<T>
   children: ReactNode | ((item: T) => ReactNode);
   /**
    * The layout direction of the content in each SelectBox.
+   *
    * @default 'vertical'
    */
   orientation?: Orientation;
   /**
    * The selection mode for the SelectBoxGroup.
+   *
    * @default 'single'
    */
   selectionMode?: 'single' | 'multiple';
@@ -413,7 +415,7 @@ export function SelectBox(props: SelectBoxProps): ReactNode {
  * SelectBoxGroup allows users to select one or more options from a list.
  */
 export const SelectBoxGroup = /*#__PURE__*/ (forwardRef as forwardRefType)(function SelectBoxGroup<
-  T extends object
+  T
 >(props: SelectBoxGroupProps<T>, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, SelectBoxGroupContext);
 

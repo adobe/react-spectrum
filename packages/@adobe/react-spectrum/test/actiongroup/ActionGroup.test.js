@@ -435,10 +435,10 @@ describe('ActionGroup', function () {
     let [button1, button2] = getAllByRole('radio');
     await user.click(button1);
     expect(button1).toHaveAttribute('disabled');
-    expect(onSelectionChange).toBeCalledTimes(0);
+    expect(onSelectionChange).toHaveBeenCalledTimes(0);
     await user.click(button2);
     expect(button2).not.toHaveAttribute('disabled');
-    expect(onSelectionChange).toBeCalledTimes(1);
+    expect(onSelectionChange).toHaveBeenCalledTimes(1);
   });
 
   it('ActionGroup handles selectedKeys (controlled)', async function () {
@@ -453,7 +453,7 @@ describe('ActionGroup', function () {
     expect(button1).toHaveAttribute('aria-checked', 'true');
     expect(button2).toHaveAttribute('aria-checked', 'false');
     await user.click(button2);
-    expect(onSelectionChange).toBeCalledTimes(1);
+    expect(onSelectionChange).toHaveBeenCalledTimes(1);
     expect(button1).toHaveAttribute('aria-checked', 'true');
     expect(button2).toHaveAttribute('aria-checked', 'false');
   });
@@ -470,7 +470,7 @@ describe('ActionGroup', function () {
     expect(button1).toHaveAttribute('aria-checked', 'true');
     expect(button2).toHaveAttribute('aria-checked', 'false');
     await user.click(button2);
-    expect(onSelectionChange).toBeCalledTimes(1);
+    expect(onSelectionChange).toHaveBeenCalledTimes(1);
     expect(button1).toHaveAttribute('aria-checked', 'false');
     expect(button2).toHaveAttribute('aria-checked', 'true');
   });
@@ -481,10 +481,10 @@ describe('ActionGroup', function () {
 
     let [button1] = getAllByRole('radio');
     await user.click(button1);
-    expect(onSelectionChange).toBeCalledTimes(1);
+    expect(onSelectionChange).toHaveBeenCalledTimes(1);
     expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(['1']));
     await user.click(button1);
-    expect(onSelectionChange).toBeCalledTimes(2);
+    expect(onSelectionChange).toHaveBeenCalledTimes(2);
     expect(new Set(onSelectionChange.mock.calls[1][0])).toEqual(new Set([]));
   });
 

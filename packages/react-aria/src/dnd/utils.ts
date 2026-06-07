@@ -73,7 +73,12 @@ function mapModality(modality: string | null) {
     modality = 'virtual';
   }
 
-  if (modality === 'virtual' && typeof window !== 'undefined' && 'ontouchstart' in window) {
+  if (
+    modality === 'virtual' &&
+    typeof window !== 'undefined' &&
+    typeof window.matchMedia === 'function' &&
+    window.matchMedia('(pointer: coarse)').matches
+  ) {
     modality = 'touch';
   }
 
@@ -353,7 +358,7 @@ export function isDirectoryDropItem(dropItem: DropItem): dropItem is DirectoryDr
 
 // Global DnD collection state tracker.
 export interface DnDState {
-  /** A ref for the  of the drag items in the current drag session if any. */
+  /** A ref for the of the drag items in the current drag session if any. */
   draggingCollectionRef?: RefObject<HTMLElement | null>;
   /** The set of currently dragged keys. */
   draggingKeys: Set<Key>;

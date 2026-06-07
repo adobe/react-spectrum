@@ -16,7 +16,6 @@ import {Collection, FocusableElement, Node, RefObject} from '@react-types/shared
 import {getRowLabelledBy} from './utils';
 import {GridRowAria, GridRowProps, useGridRow} from '../grid/useGridRow';
 import {HTMLAttributes} from 'react';
-// @ts-ignore
 import intlMessages from '../../intl/table/*.json';
 import {ITableCollection} from 'react-stately/private/table/TableCollection';
 import {mergeProps} from '../utils/mergeProps';
@@ -44,6 +43,7 @@ export interface TableRowAria extends GridRowAria {
 
 /**
  * Provides the behavior and accessibility implementation for a row in a table.
+ *
  * @param props - Props for the row.
  * @param state - State of the table, as returned by `useTableState`.
  */

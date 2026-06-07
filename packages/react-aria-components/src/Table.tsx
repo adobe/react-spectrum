@@ -115,7 +115,6 @@ import {useControlledState} from 'react-stately/useControlledState';
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {useHover} from 'react-aria/useHover';
 import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
-// @ts-ignore
 import {useLocale} from 'react-aria/I18nProvider';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useMultipleSelectionState} from 'react-stately/useMultipleSelectionState';
@@ -463,7 +462,9 @@ const ResizableTableContainerContext = createContext<ResizableTableContainerCont
 export interface ResizableTableContainerProps
   extends DOMProps, DOMRenderProps<'div', undefined>, GlobalDOMAttributes<HTMLDivElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element.
+   *
    * @default 'react-aria-ResizableTableContainer'
    */
   className?: string;
@@ -556,16 +557,19 @@ export const TableColumnResizeStateContext = createContext<TableColumnResizeStat
 export interface TableRenderProps {
   /**
    * Whether the table is currently focused.
+   *
    * @selector [data-focused]
    */
   isFocused: boolean;
   /**
    * Whether the table is currently keyboard focused.
+   *
    * @selector [data-focus-visible]
    */
   isFocusVisible: boolean;
   /**
    * Whether the table is currently the active drop target.
+   *
    * @selector [data-drop-target]
    */
   isDropTarget: boolean;
@@ -583,7 +587,9 @@ export interface TableProps
     AriaLabelingProps,
     GlobalDOMAttributes<HTMLTableElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-Table'
    */
   className?: ClassNameOrFunction<TableRenderProps>;
@@ -591,23 +597,28 @@ export interface TableProps
   children?: ReactNode;
   /**
    * How multiple selection should behave in the collection.
-   * @default "toggle"
+   *
+   * @default 'toggle'
    */
   selectionBehavior?: SelectionBehavior;
   /**
    * Whether `disabledKeys` applies to all interactions, or only selection.
-   * @default "all"
+   *
+   * @default 'all'
    */
   disabledBehavior?: DisabledBehavior;
   /** Handler that is called when a user performs an action on the row. */
   onRowAction?: (key: Key) => void;
-  /** The drag and drop hooks returned by `useDragAndDrop` used to enable drag and drop behavior for the Table. */
+  /**
+   * The drag and drop hooks returned by `useDragAndDrop` used to enable drag and drop behavior for
+   * the Table.
+   */
   dragAndDropHooks?: DragAndDropHooks;
 }
 
 /**
- * A table displays data in rows and columns and enables a user to navigate its contents via directional navigation keys,
- * and optionally supports row selection and sorting.
+ * A table displays data in rows and columns and enables a user to navigate its contents via
+ * directional navigation keys, and optionally supports row selection and sorting.
  */
 export const Table = forwardRef(function Table(
   props: TableProps,
@@ -931,6 +942,7 @@ export function useTableOptions(): TableOptionsContextValue {
 export interface TableHeaderRenderProps {
   /**
    * Whether the table header is currently hovered with a mouse.
+   *
    * @selector [data-hovered]
    */
   isHovered: boolean;
@@ -942,13 +954,18 @@ export interface TableHeaderProps<T>
     HoverEvents,
     GlobalDOMAttributes<HTMLTableSectionElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-TableHeader'
    */
   className?: ClassNameOrFunction<TableHeaderRenderProps>;
   /** A list of table columns. */
   columns?: Iterable<T>;
-  /** A list of `Column(s)` or a function. If the latter, a list of columns must be provided using the `columns` prop. */
+  /**
+   * A list of `Column(s)` or a function. If the latter, a list of columns must be provided using
+   * the `columns` prop.
+   */
   children?: ReactNode | ((item: T) => ReactElement);
   /** Values that should invalidate the column cache when using dynamic collections. */
   dependencies?: ReadonlyArray<any>;
@@ -974,7 +991,7 @@ let THeadElementType = forwardRef(function THeadElementType(
  */
 export const TableHeader = /*#__PURE__*/ createBranchComponent(
   TableHeaderNode,
-  <T extends object>(
+  <T extends any>(
     props: TableHeaderProps<T>,
     ref: ForwardedRef<HTMLTableSectionElement | HTMLDivElement>
   ) => {
@@ -1072,36 +1089,43 @@ function TableHeaderRow({item}: {item: GridNode<any>}) {
 export interface ColumnRenderProps {
   /**
    * Whether the column is currently hovered with a mouse.
+   *
    * @selector [data-hovered]
    */
   isHovered: boolean;
   /**
    * Whether the column is currently in a pressed state.
+   *
    * @selector [data-pressed]
    */
   isPressed: boolean;
   /**
    * Whether the column is currently focused.
+   *
    * @selector [data-focused]
    */
   isFocused: boolean;
   /**
    * Whether the column is currently keyboard focused.
+   *
    * @selector [data-focus-visible]
    */
   isFocusVisible: boolean;
   /**
    * Whether the column allows sorting.
+   *
    * @selector [data-allows-sorting]
    */
   allowsSorting: boolean;
   /**
    * The current sort direction.
+   *
    * @selector [data-sort-direction="ascending | descending"]
    */
   sortDirection: SortDirection | undefined;
   /**
    * Whether the column is currently being resized.
+   *
    * @selector [data-resizing]
    */
   isResizing: boolean;
@@ -1120,7 +1144,9 @@ export interface ColumnProps
     RenderProps<ColumnRenderProps, 'th' | 'div'>,
     GlobalDOMAttributes<HTMLTableHeaderCellElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-Column'
    */
   className?: ClassNameOrFunction<ColumnRenderProps>;
@@ -1128,17 +1154,32 @@ export interface ColumnProps
   id?: Key;
   /** Whether the column allows sorting. */
   allowsSorting?: boolean;
-  /** Whether a column is a [row header](https://www.w3.org/TR/wai-aria-1.1/#rowheader) and should be announced by assistive technology during row navigation. */
+  /**
+   * Whether a column is a [row header](https://www.w3.org/TR/wai-aria-1.1/#rowheader) and should be
+   * announced by assistive technology during row navigation.
+   */
   isRowHeader?: boolean;
   /** A string representation of the column's contents, used for accessibility announcements. */
   textValue?: string;
-  /** The width of the column. This prop only applies when the `<Table>` is wrapped in a `<ResizableTableContainer>`. */
+  /**
+   * The width of the column. This prop only applies when the `<Table>` is wrapped in a
+   * `<ResizableTableContainer>`.
+   */
   width?: ColumnSize | null;
-  /** The default width of the column. This prop only applies when the `<Table>` is wrapped in a `<ResizableTableContainer>`. */
+  /**
+   * The default width of the column. This prop only applies when the `<Table>` is wrapped in a
+   * `<ResizableTableContainer>`.
+   */
   defaultWidth?: ColumnSize | null;
-  /** The minimum width of the column. This prop only applies when the `<Table>` is wrapped in a `<ResizableTableContainer>`. */
+  /**
+   * The minimum width of the column. This prop only applies when the `<Table>` is wrapped in a
+   * `<ResizableTableContainer>`.
+   */
   minWidth?: ColumnStaticSize | null;
-  /** The maximum width of the column. This prop only applies when the `<Table>` is wrapped in a `<ResizableTableContainer>`. */
+  /**
+   * The maximum width of the column. This prop only applies when the `<Table>` is wrapped in a
+   * `<ResizableTableContainer>`.
+   */
   maxWidth?: ColumnStaticSize | null;
 }
 
@@ -1260,26 +1301,31 @@ export const Column = /*#__PURE__*/ createLeafComponent(
 export interface ColumnResizerRenderProps {
   /**
    * Whether the resizer is currently hovered with a mouse.
+   *
    * @selector [data-hovered]
    */
   isHovered: boolean;
   /**
    * Whether the resizer is currently focused.
+   *
    * @selector [data-focused]
    */
   isFocused: boolean;
   /**
    * Whether the resizer is currently keyboard focused.
+   *
    * @selector [data-focus-visible]
    */
   isFocusVisible: boolean;
   /**
    * Whether the resizer is currently being resized.
+   *
    * @selector [data-resizing]
    */
   isResizing: boolean;
   /**
    * The direction that the column is currently resizable.
+   *
    * @selector [data-resizable-direction="right | left | both"]
    */
   resizableDirection: 'right' | 'left' | 'both';
@@ -1288,7 +1334,9 @@ export interface ColumnResizerRenderProps {
 export interface ColumnResizerProps
   extends HoverEvents, RenderProps<ColumnResizerRenderProps>, GlobalDOMAttributes<HTMLDivElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-ColumnResizer'
    */
   className?: ClassNameOrFunction<ColumnResizerRenderProps>;
@@ -1405,11 +1453,13 @@ export const ColumnResizer = forwardRef(function ColumnResizer(
 export interface TableBodyRenderProps {
   /**
    * Whether the table body has no rows and should display its empty state.
+   *
    * @selector [data-empty]
    */
   isEmpty: boolean;
   /**
    * Whether the Table is currently the active drop target.
+   *
    * @selector [data-drop-target]
    */
   isDropTarget: boolean;
@@ -1421,7 +1471,9 @@ export interface TableBodyProps<T>
     StyleRenderProps<TableBodyRenderProps, 'tbody' | 'div'>,
     GlobalDOMAttributes<HTMLTableSectionElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-TableBody'
    */
   className?: ClassNameOrFunction<TableBodyRenderProps>;
@@ -1449,7 +1501,7 @@ let TableBodyElementType = forwardRef(function TableBodyElementType(
  */
 export const TableBody = /*#__PURE__*/ createBranchComponent(
   TableBodyNode,
-  <T extends object>(
+  <T extends any>(
     props: TableBodyProps<T>,
     ref: ForwardedRef<HTMLTableSectionElement | HTMLDivElement>,
     node: Node<T>
@@ -1532,7 +1584,9 @@ export interface TableFooterProps<T>
     StyleProps,
     GlobalDOMAttributes<HTMLTableSectionElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element.
+   *
    * @default 'react-aria-TableFooter'
    */
   className?: string;
@@ -1554,7 +1608,7 @@ let TableFooterElementType = forwardRef(function TableFooterElementType(
  */
 export const TableFooter = /*#__PURE__*/ createBranchComponent(
   TableFooterNode,
-  <T extends object>(
+  <T extends any>(
     props: TableFooterProps<T>,
     ref: ForwardedRef<HTMLTableSectionElement | HTMLDivElement>,
     node: Node<T>
@@ -1588,26 +1642,45 @@ export const TableFooter = /*#__PURE__*/ createBranchComponent(
 );
 
 export interface RowRenderProps extends ItemRenderProps {
-  /** Whether the row's children have keyboard focus. */
+  /**
+   * Whether the row's children have keyboard focus.
+   *
+   * @selector [data-focus-visible-within]
+   */
   isFocusVisibleWithin: boolean;
   /** The unique id of the row. */
   id?: Key;
   /**
    * Whether the row is expanded.
+   *
    * @selector [data-expanded]
    */
   isExpanded: boolean;
   /**
    * Whether the row has child rows.
+   *
    * @selector [data-has-child-items]
    */
   hasChildItems: boolean;
   /**
    * What level the row has within the table.
+   *
    * @selector [data-level]
    */
   level: number;
+  /**
+   * State of the table.
+   */
+  state: TableState<unknown>;
 }
+
+export interface RowFocusContextValue {
+  isFocusVisibleWithinRow: boolean;
+}
+
+export const RowFocusContext = createContext<RowFocusContextValue>({
+  isFocusVisibleWithinRow: false
+});
 
 export interface RowProps<T>
   extends
@@ -1617,7 +1690,9 @@ export interface RowProps<T>
     PressEvents,
     Omit<GlobalDOMAttributes<HTMLTableRowElement>, 'onClick'> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-Row'
    */
   className?: ClassNameOrFunction<RowRenderProps>;
@@ -1625,7 +1700,10 @@ export interface RowProps<T>
   columns?: Iterable<T>;
   /** The cells within the row. Supports static items or a function for dynamic rendering. */
   children?: ReactNode | ((item: T) => ReactElement);
-  /** The object value that this row represents. When using dynamic collections, this is set automatically. */
+  /**
+   * The object value that this row represents. When using dynamic collections, this is set
+   * automatically.
+   */
   value?: T;
   /** Values that should invalidate the cell cache when using dynamic collections. */
   dependencies?: ReadonlyArray<any>;
@@ -1636,8 +1714,8 @@ export interface RowProps<T>
   /** Whether `disabledKeys` applies to all interactions, or only selection. */
   disabledBehavior?: DisabledBehavior;
   /**
-   * Handler that is called when a user performs an action on the row. The exact user event depends on
-   * the collection's `selectionBehavior` prop and the interaction modality.
+   * Handler that is called when a user performs an action on the row. The exact user event depends
+   * on the collection's `selectionBehavior` prop and the interaction modality.
    */
   onAction?: () => void;
   /** The unique id of the row. */
@@ -1683,7 +1761,7 @@ let TableRowElementType = forwardRef(function TableRowElementType(
  */
 export const Row = /*#__PURE__*/ createBranchComponent(
   TableRowNode,
-  <T extends object>(
+  <T extends any>(
     props: RowProps<T>,
     forwardedRef: ForwardedRef<HTMLTableRowElement | HTMLDivElement>,
     item: GridNode<T>
@@ -1692,6 +1770,8 @@ export const Row = /*#__PURE__*/ createBranchComponent(
     let state = useContext(TableStateContext)!;
     let {dragAndDropHooks, dragState, dropState} = useContext(DragAndDropContext);
     let {isVirtualized, CollectionBranch} = useContext(CollectionRendererContext);
+    let isDraggable =
+      dragState && !(dragState.isDisabled || dragState.selectionManager.isDisabled(item.key));
     let {rowProps, expandButtonProps, ...states} = useTableRow(
       {
         node: item,
@@ -1706,7 +1786,9 @@ export const Row = /*#__PURE__*/ createBranchComponent(
       within: true
     });
     let {hoverProps, isHovered} = useHover({
-      isDisabled: !states.allowsSelection && !states.hasAction,
+      // because of https://bugs.webkit.org/show_bug.cgi?id=214609, supporting hover styles when a item is ONLY isDraggable
+      // results in hover styles sticking around after a reorder/drop operation...
+      isDisabled: !states.allowsSelection && !states.hasAction && !isDraggable,
       onHoverStart: props.onHoverStart,
       onHoverChange: props.onHoverChange,
       onHoverEnd: props.onHoverEnd
@@ -1761,6 +1843,7 @@ export const Row = /*#__PURE__*/ createBranchComponent(
       },
       values: {
         ...states,
+        state,
         isHovered,
         isFocused,
         isFocusVisible,
@@ -1861,7 +1944,8 @@ export const Row = /*#__PURE__*/ createBranchComponent(
                   }
                 }
               ],
-              [SelectionIndicatorContext, {isSelected: states.isSelected}]
+              [SelectionIndicatorContext, {isSelected: states.isSelected}],
+              [RowFocusContext, {isFocusVisibleWithinRow: isFocusVisibleWithin}]
             ]}>
             <CollectionBranch collection={state.collection} parent={item} />
           </Provider>
@@ -1888,38 +1972,50 @@ export const Row = /*#__PURE__*/ createBranchComponent(
 export interface CellRenderProps {
   /**
    * Whether the cell is currently in a pressed state.
+   *
    * @selector [data-pressed]
    */
   isPressed: boolean;
   /**
    * Whether the cell is currently focused.
+   *
    * @selector [data-focused]
    */
   isFocused: boolean;
   /**
    * Whether the cell is currently keyboard focused.
+   *
    * @selector [data-focus-visible]
    */
   isFocusVisible: boolean;
   /**
    * Whether the cell is currently hovered with a mouse.
+   *
    * @selector [data-hovered]
    */
   isHovered: boolean;
   /**
    * Whether the parent row is currently selected.
+   *
    * @selector [data-selected]
    */
   isSelected: boolean;
   /**
-   * Whether the parent row is non-interactive, i.e. both selection and actions are disabled and the item may
-   * not be focused. Dependent on `disabledKeys` and `disabledBehavior`.
+   * Whether the parent row is non-interactive, i.e. both selection and actions are disabled and the
+   * item may not be focused. Dependent on `disabledKeys` and `disabledBehavior`.
+   *
    * @selector [data-disabled]
    */
   isDisabled: boolean;
   /**
+   * Whether keyboard focus is visible anywhere within the parent row.
+   *
+   * @selector [data-focus-visible-within-row]
+   */
+  isFocusVisibleWithinRow: boolean;
+  /**
    * The unique id of the cell.
-   **/
+   */
   id?: Key;
   /**
    * The index of the column that this cell belongs to. Respects col spanning.
@@ -1927,21 +2023,25 @@ export interface CellRenderProps {
   columnIndex?: number | null;
   /**
    * Whether the column displays hierarchical data.
+   *
    * @selector [data-tree-column]
    */
   isTreeColumn: boolean;
   /**
    * Whether the parent row is expanded.
+   *
    * @selector [data-expanded]
    */
   isExpanded: boolean;
   /**
    * Whether the parent row has child rows.
+   *
    * @selector [data-has-child-items]
    */
   hasChildItems: boolean;
   /**
    * What level the parent row has within the table.
+   *
    * @selector [data-level]
    */
   level: number;
@@ -1950,7 +2050,9 @@ export interface CellRenderProps {
 export interface CellProps
   extends RenderProps<CellRenderProps, 'td' | 'div'>, GlobalDOMAttributes<HTMLTableCellElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-Cell'
    */
   className?: ClassNameOrFunction<CellRenderProps>;
@@ -2005,6 +2107,7 @@ export const Cell = /*#__PURE__*/ createLeafComponent(
     );
     let {isFocused, isFocusVisible, focusProps} = useFocusRing();
     let {hoverProps, isHovered} = useHover({});
+    let {isFocusVisibleWithinRow} = useContext(RowFocusContext);
     let isSelected =
       cell.parentKey != null ? state.selectionManager.isSelected(cell.parentKey) : false;
     // colIndex is null, when there is so span, falling back to using the index
@@ -2022,6 +2125,7 @@ export const Cell = /*#__PURE__*/ createLeafComponent(
       values: {
         isFocused,
         isFocusVisible,
+        isFocusVisibleWithinRow,
         isPressed,
         isHovered,
         isSelected,
@@ -2044,6 +2148,7 @@ export const Cell = /*#__PURE__*/ createLeafComponent(
         ref={ref as any}
         data-focused={isFocused || undefined}
         data-focus-visible={isFocusVisible || undefined}
+        data-focus-visible-within-row={isFocusVisibleWithinRow || undefined}
         data-pressed={isPressed || undefined}
         data-selected={isSelected || undefined}
         data-column-index={columnIndex}
@@ -2197,7 +2302,9 @@ export interface TableLoadMoreItemProps
     DOMRenderProps<'tr' | 'div', undefined>,
     GlobalDOMAttributes<HTMLTableRowElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element.
+   *
    * @default 'react-aria-TableLoadMoreItem'
    */
   className?: string;

@@ -19,7 +19,6 @@ import {
   ColorSpace,
   Color as IColor
 } from './types';
-// @ts-ignore
 import intlMessages from '../../intl/color/*.json';
 import {LocalizedStringDictionary, LocalizedStringFormatter} from '@internationalized/string';
 import {NumberFormatter} from '@internationalized/number';
@@ -355,6 +354,7 @@ class RGBColor extends Color {
   /**
    * Converts an RGB color value to HSB.
    * Conversion formula adapted from https://en.wikipedia.org/wiki/HSL_and_HSV#From_RGB.
+   *
    * @returns An HSBColor object.
    */
   private toHSB(): IColor {
@@ -394,6 +394,7 @@ class RGBColor extends Color {
   /**
    * Converts an RGB color value to HSL.
    * Conversion formula adapted from https://en.wikipedia.org/wiki/HSL_and_HSV#From_RGB.
+   *
    * @returns An HSLColor object.
    */
   private toHSL(): IColor {
@@ -543,6 +544,7 @@ class HSBColor extends Color {
   /**
    * Converts a HSB color to HSL.
    * Conversion formula adapted from https://en.wikipedia.org/wiki/HSL_and_HSV#HSV_to_HSL.
+   *
    * @returns An HSLColor object.
    */
   private toHSL(): IColor {
@@ -563,8 +565,9 @@ class HSBColor extends Color {
   }
 
   /**
-   * Converts a HSV color value to RGB.
-   * Conversion formula adapted from https://en.wikipedia.org/wiki/HSL_and_HSV#HSV_to_RGB_alternative.
+   * Converts a HSV color value to RGB. Conversion formula adapted from
+   * https://en.wikipedia.org/wiki/HSL_and_HSV#HSV_to_RGB_alternative.
+   *
    * @returns An RGBColor object.
    */
   private toRGB(): IColor {
@@ -694,6 +697,7 @@ class HSLColor extends Color {
   /**
    * Converts a HSL color to HSB.
    * Conversion formula adapted from https://en.wikipedia.org/wiki/HSL_and_HSV#HSL_to_HSV.
+   *
    * @returns An HSBColor object.
    */
   private toHSB(): IColor {
@@ -710,8 +714,9 @@ class HSLColor extends Color {
   }
 
   /**
-   * Converts a HSL color to RGB.
-   * Conversion formula adapted from https://en.wikipedia.org/wiki/HSL_and_HSV#HSL_to_RGB_alternative.
+   * Converts a HSL color to RGB. Conversion formula adapted from
+   * https://en.wikipedia.org/wiki/HSL_and_HSV#HSL_to_RGB_alternative.
+   *
    * @returns An RGBColor object.
    */
   private toRGB(): IColor {

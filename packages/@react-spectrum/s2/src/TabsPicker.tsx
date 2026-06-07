@@ -41,7 +41,7 @@ import {useFormProps} from './Form';
 import {useLocale} from 'react-aria/I18nProvider';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 export interface PickerStyleProps {}
-export interface PickerProps<T extends object>
+export interface PickerProps<T>
   extends
     Omit<AriaSelectProps<T>, 'children' | 'style' | 'className' | 'render' | 'placeholder'>,
     PickerStyleProps,
@@ -63,12 +63,16 @@ export interface PickerProps<T extends object>
    * @default 'start'
    */
   align?: 'start' | 'end';
-  /** Width of the menu. By default, matches width of the trigger. Note that the minimum width of the dropdown is always equal to the trigger's width. */
+  /**
+   * Width of the menu. By default, matches width of the trigger. Note that the minimum width of the
+   * dropdown is always equal to the trigger's width.
+   */
   menuWidth?: number;
   /** Density of the tabs, affects the height of the picker. */
   density: 'compact' | 'regular';
   /**
    * If the tab picker should only display icon and no text for the button label.
+   *
    * @default 'show
    */
   labelBehavior?: 'show' | 'hide';
@@ -159,7 +163,7 @@ const iconCenterWrapper = style({
   }
 });
 let InsideSelectValueContext = createContext(false);
-function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLButtonElement>) {
+function Picker<T>(props: PickerProps<T>, ref: FocusableRef<HTMLButtonElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, PickerContext);
   let domRef = useFocusableRef(ref);
   props = useFormProps(props);
@@ -305,7 +309,8 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
   );
 }
 /**
- * Pickers allow users to choose a single option from a collapsible list of options when space is limited.
+ * Pickers allow users to choose a single option from a collapsible list of options when space is
+ * limited.
  */
 let _Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(Picker);
 export {_Picker as Picker};

@@ -29,17 +29,20 @@ export interface SpectrumColorSwatchPickerProps
   children: ReactNode;
   /**
    * The amount of padding between the swatches.
-   * @default "regular"
+   *
+   * @default 'regular'
    */
   density?: 'compact' | 'regular' | 'spacious';
   /**
    * The size of the color swatches.
-   * @default "M"
+   *
+   * @default 'M'
    */
   size?: 'XS' | 'S' | 'M' | 'L';
   /**
    * The corner rounding of the color swatches.
-   * @default "none"
+   *
+   * @default 'none'
    */
   rounding?: 'none' | 'default' | 'full';
 }

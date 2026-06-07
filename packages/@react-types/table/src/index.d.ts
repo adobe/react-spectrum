@@ -46,11 +46,13 @@ export interface SpectrumTableProps<T>
   extends TableProps<T>, SpectrumSelectionProps, DOMProps, AriaLabelingProps, StyleProps {
   /**
    * Sets the amount of vertical padding within each cell.
+   *
    * @default 'regular'
    */
   density?: 'compact' | 'regular' | 'spacious';
   /**
    * Sets the overflow behavior for the cell contents.
+   *
    * @default 'truncate'
    */
   overflowMode?: 'wrap' | 'truncate';

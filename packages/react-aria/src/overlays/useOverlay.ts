@@ -26,6 +26,7 @@ export interface AriaOverlayProps {
 
   /**
    * Whether to close the overlay when the user interacts outside it.
+   *
    * @default false
    */
   isDismissable?: boolean;
@@ -35,6 +36,7 @@ export interface AriaOverlayProps {
 
   /**
    * Whether pressing the escape key to close the overlay should be disabled.
+   *
    * @default false
    */
   isKeyboardDismissDisabled?: boolean;

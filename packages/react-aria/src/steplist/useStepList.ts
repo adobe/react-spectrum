@@ -14,7 +14,6 @@ import {AriaLabelingProps, DOMProps, RefObject} from '@react-types/shared';
 import {filterDOMProps} from '../utils/filterDOMProps';
 import {HTMLAttributes} from 'react';
 import intlMessages from '../../intl/steplist/*.json';
-// @ts-ignore
 import {mergeProps} from '../utils/mergeProps';
 import {StepListProps, StepListState} from 'react-stately/private/steplist/useStepListState';
 import {useLocalizedStringFormatter} from '../i18n/useLocalizedStringFormatter';

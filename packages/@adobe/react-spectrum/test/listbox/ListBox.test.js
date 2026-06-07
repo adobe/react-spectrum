@@ -109,11 +109,11 @@ describe('ListBox', function () {
   it('renders properly', function () {
     let tree = renderComponent();
     let listboxTester = testUtilUser.createTester('ListBox', {root: tree.getByRole('listbox')});
-    let listbox = listboxTester.listbox;
+    let listbox = listboxTester.getListbox();
     expect(listbox).toBeTruthy();
     expect(listbox).toHaveAttribute('aria-labelledby', 'label');
 
-    let sections = listboxTester.sections;
+    let sections = listboxTester.getSections();
     expect(sections.length).toBe(withSection.length);
 
     for (let section of sections) {
@@ -130,7 +130,7 @@ describe('ListBox', function () {
       }
     }
 
-    let options = listboxTester.options();
+    let options = listboxTester.getOptions();
     expect(options.length).toBe(withSection.reduce((acc, curr) => acc + curr.children.length, 0));
     let i = 1;
     for (let option of options) {
@@ -141,11 +141,11 @@ describe('ListBox', function () {
       expect(option).toHaveAttribute('aria-setsize');
     }
 
-    expect(listboxTester.findOption({optionIndexOrText: 'Foo'})).toBeTruthy();
-    expect(listboxTester.findOption({optionIndexOrText: 'Bar'})).toBeTruthy();
-    expect(listboxTester.findOption({optionIndexOrText: 'Baz'})).toBeTruthy();
-    expect(listboxTester.findOption({optionIndexOrText: 'Blah'})).toBeTruthy();
-    expect(listboxTester.findOption({optionIndexOrText: 'Bleh'})).toBeTruthy();
+    expect(listboxTester.findOption({indexOrText: 'Foo'})).toBeTruthy();
+    expect(listboxTester.findOption({indexOrText: 'Bar'})).toBeTruthy();
+    expect(listboxTester.findOption({indexOrText: 'Baz'})).toBeTruthy();
+    expect(listboxTester.findOption({indexOrText: 'Blah'})).toBeTruthy();
+    expect(listboxTester.findOption({indexOrText: 'Bleh'})).toBeTruthy();
   });
 
   it('renders with falsy id', function () {
@@ -214,7 +214,7 @@ describe('ListBox', function () {
       });
       let listboxTester = testUtilUser.createTester('ListBox', {root: tree.getByRole('listbox')});
 
-      let selectedOptions = listboxTester.selectedOptions;
+      let selectedOptions = listboxTester.getSelectedOptions();
       expect(selectedOptions).toHaveLength(1);
       expect(selectedOptions[0]).toBe(document.activeElement);
       expect(selectedOptions[0]).toHaveAttribute('aria-selected', 'true');
@@ -226,7 +226,7 @@ describe('ListBox', function () {
 
       // Select a different listbox item via enter
       await listboxTester.toggleOptionSelection({option: 4, interactionType: 'keyboard'});
-      selectedOptions = listboxTester.selectedOptions;
+      selectedOptions = listboxTester.getSelectedOptions();
       expect(selectedOptions[0]).toHaveAttribute('aria-selected', 'true');
       itemText = within(selectedOptions[0]).getByText('Bleh');
       expect(itemText).toBeTruthy();
@@ -238,7 +238,7 @@ describe('ListBox', function () {
       let checkmarks = tree.getAllByRole('img', {hidden: true});
       expect(checkmarks.length).toBe(1);
 
-      expect(onSelectionChange).toBeCalledTimes(1);
+      expect(onSelectionChange).toHaveBeenCalledTimes(1);
       expect(onSelectionChange.mock.calls[0][0].has('Bleh')).toBeTruthy();
     });
 
@@ -273,7 +273,7 @@ describe('ListBox', function () {
       let checkmarks = tree.getAllByRole('img', {hidden: true});
       expect(checkmarks.length).toBe(1);
 
-      expect(onSelectionChange).toBeCalledTimes(1);
+      expect(onSelectionChange).toHaveBeenCalledTimes(1);
       expect(onSelectionChange.mock.calls[0][0].has('Bleh')).toBeTruthy();
     });
 
@@ -282,7 +282,7 @@ describe('ListBox', function () {
       let listboxTester = testUtilUser.createTester('ListBox', {root: tree.getByRole('listbox')});
 
       // Trigger a menu item via space
-      let options = listboxTester.options();
+      let options = listboxTester.getOptions();
       await listboxTester.toggleOptionSelection({
         option: 4,
         keyboardActivation: 'Space',
@@ -297,7 +297,7 @@ describe('ListBox', function () {
       expect(checkmarks.length).toBe(1);
 
       // Verify onSelectionChange is called
-      expect(onSelectionChange).toBeCalledTimes(1);
+      expect(onSelectionChange).toHaveBeenCalledTimes(1);
       expect(onSelectionChange.mock.calls[0][0].has('Bleh')).toBeTruthy();
     });
 
@@ -319,7 +319,7 @@ describe('ListBox', function () {
       expect(checkmarks.length).toBe(1);
 
       // Verify onSelectionChange is called
-      expect(onSelectionChange).toBeCalledTimes(1);
+      expect(onSelectionChange).toHaveBeenCalledTimes(1);
       expect(onSelectionChange.mock.calls[0][0].has('Bleh')).toBeTruthy();
     });
 
@@ -345,7 +345,7 @@ describe('ListBox', function () {
       expect(checkmarks.length).toBe(0);
 
       // Verify onSelectionChange is not called
-      expect(onSelectionChange).toBeCalledTimes(0);
+      expect(onSelectionChange).toHaveBeenCalledTimes(0);
 
       // Verify that keyboard navigation skips disabled items
       expect(document.activeElement).toBe(options[0]);
@@ -389,7 +389,7 @@ describe('ListBox', function () {
       checkmarks = tree.getAllByRole('img', {hidden: true});
       expect(checkmarks.length).toBe(2);
 
-      expect(onSelectionChange).toBeCalledTimes(2);
+      expect(onSelectionChange).toHaveBeenCalledTimes(2);
       expect(onSelectionChange.mock.calls[0][0].has('Blah')).toBeTruthy();
       expect(onSelectionChange.mock.calls[1][0].has('Bar')).toBeTruthy();
     });
@@ -434,7 +434,7 @@ describe('ListBox', function () {
       checkmarks = tree.getAllByRole('img', {hidden: true});
       expect(checkmarks.length).toBe(3);
 
-      expect(onSelectionChange).toBeCalledTimes(1);
+      expect(onSelectionChange).toHaveBeenCalledTimes(1);
       expect(onSelectionChange.mock.calls[0][0].has('Bleh')).toBeTruthy();
       expect(onSelectionChange.mock.calls[0][0].has('Foo')).toBeTruthy();
       expect(onSelectionChange.mock.calls[0][0].has('Bar')).toBeTruthy();
@@ -480,7 +480,7 @@ describe('ListBox', function () {
       checkmarks = tree.getAllByRole('img', {hidden: true});
       expect(checkmarks.length).toBe(2);
 
-      expect(onSelectionChange).toBeCalledTimes(1);
+      expect(onSelectionChange).toHaveBeenCalledTimes(1);
       expect(onSelectionChange.mock.calls[0][0].has('Bleh')).toBeTruthy();
     });
 
@@ -523,7 +523,7 @@ describe('ListBox', function () {
       checkmarks = tree.getAllByRole('img', {hidden: true});
       expect(checkmarks.length).toBe(1);
 
-      expect(onSelectionChange).toBeCalledTimes(1);
+      expect(onSelectionChange).toHaveBeenCalledTimes(1);
       expect(onSelectionChange.mock.calls[0][0].has('Bar')).toBeTruthy();
     });
 
@@ -550,7 +550,7 @@ describe('ListBox', function () {
       let checkmarks = tree.getAllByRole('img', {hidden: true});
       expect(checkmarks.length).toBe(2);
 
-      expect(onSelectionChange).toBeCalledTimes(0);
+      expect(onSelectionChange).toHaveBeenCalledTimes(0);
     });
 
     it('should prevent Esc from clearing selection if escapeKeyBehavior is "none"', async function () {
@@ -571,12 +571,12 @@ describe('ListBox', function () {
       await user.click(secondItem);
       expect(secondItem).toHaveAttribute('aria-selected', 'true');
 
-      expect(onSelectionChange).toBeCalledTimes(2);
+      expect(onSelectionChange).toHaveBeenCalledTimes(2);
       expect(onSelectionChange.mock.calls[0][0].has('Blah')).toBeTruthy();
       expect(onSelectionChange.mock.calls[1][0].has('Bar')).toBeTruthy();
 
       await user.keyboard('{Escape}');
-      expect(onSelectionChange).toBeCalledTimes(2);
+      expect(onSelectionChange).toHaveBeenCalledTimes(2);
       expect(onSelectionChange.mock.calls[0][0].has('Blah')).toBeTruthy();
       expect(onSelectionChange.mock.calls[1][0].has('Bar')).toBeTruthy();
     });
@@ -607,7 +607,7 @@ describe('ListBox', function () {
       // Make sure nothing is still checked
       checkmarks = tree.queryAllByRole('img');
       expect(checkmarks.length).toBe(0);
-      expect(onSelectionChange).toBeCalledTimes(0);
+      expect(onSelectionChange).toHaveBeenCalledTimes(0);
     });
   });
 
@@ -686,7 +686,7 @@ describe('ListBox', function () {
       expect(checkmarks.length).toBe(0);
 
       // Verify onSelectionChange was not called
-      expect(onSelectionChange).toBeCalledTimes(0);
+      expect(onSelectionChange).toHaveBeenCalledTimes(0);
 
       // Continue the search
       fireEvent.keyDown(listbox, {key: 'B'});
@@ -709,7 +709,7 @@ describe('ListBox', function () {
       expect(checkmarks.length).toBe(1);
 
       // Verify onSelectionChange is called
-      expect(onSelectionChange).toBeCalledTimes(1);
+      expect(onSelectionChange).toHaveBeenCalledTimes(1);
       expect(onSelectionChange.mock.calls[0][0].has('Foo Bar')).toBeTruthy();
     });
 
@@ -781,7 +781,7 @@ describe('ListBox', function () {
   });
 
   it('warns user if no aria-label is provided', () => {
-    let spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    using spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
     renderComponent({'aria-labelledby': undefined});
     expect(spyWarn).toHaveBeenCalledWith(
       'If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility'
@@ -890,9 +890,9 @@ describe('ListBox', function () {
 
     let {rerender, getByRole, getByLabelText} = render(<Example sections={sections} />);
     let listboxTester = testUtilUser.createTester('ListBox', {root: getByRole('listbox')});
-    let item = listboxTester.findOption({optionIndexOrText: 'Foo 1'});
-    let listboxSections = listboxTester.sections;
-    expect(listboxTester.options({element: listboxSections[0]})).toContain(item);
+    let item = listboxTester.findOption({indexOrText: 'Foo 1'});
+    let listboxSections = listboxTester.getSections();
+    expect(listboxTester.getOptions({element: listboxSections[0]})).toContain(item);
     expect(listboxSections[0]).toBe(getByLabelText('Section 1'));
 
     let sections2 = [
@@ -908,9 +908,9 @@ describe('ListBox', function () {
 
     rerender(<Example sections={sections2} />);
     listboxTester = testUtilUser.createTester('ListBox', {root: getByRole('listbox')});
-    item = listboxTester.findOption({optionIndexOrText: 'Foo 1'});
-    listboxSections = listboxTester.sections;
-    expect(listboxTester.options({element: listboxSections[1]})).toContain(item);
+    item = listboxTester.findOption({indexOrText: 'Foo 1'});
+    listboxSections = listboxTester.getSections();
+    expect(listboxTester.getOptions({element: listboxSections[1]})).toContain(item);
     expect(listboxSections[1]).toBe(getByLabelText('Section 2'));
   });
 

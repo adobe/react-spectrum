@@ -11,7 +11,6 @@
  */
 
 import {AriaDatePickerProps, DateValue, useDatePicker} from 'react-aria/useDatePicker';
-
 import {Calendar} from '../calendar/Calendar';
 import CalendarIcon from '@spectrum-icons/workflow/Calendar';
 import {CalendarIdentifier, Calendar as ICalendar} from '@internationalized/date';
@@ -26,7 +25,6 @@ import {FieldButton} from '../button/FieldButton';
 import {FocusableRef, SpectrumLabelableProps, StyleProps} from '@react-types/shared';
 import {Input} from './Input';
 import intlMessages from '../../intl/datepicker/*.json';
-// @ts-ignore
 import {mergeProps} from 'react-aria/mergeProps';
 import React, {ReactElement, useRef} from 'react';
 import {SpectrumDateFieldBase} from './DateField';
@@ -50,18 +48,22 @@ import {useProviderProps} from '../provider/Provider';
 export interface SpectrumDatePickerBase<T extends DateValue>
   extends SpectrumDateFieldBase<T>, SpectrumLabelableProps, StyleProps {
   /**
-   * The maximum number of months to display at once in the calendar popover, if screen space permits.
+   * The maximum number of months to display at once in the calendar popover, if screen space
+   * permits.
+   *
    * @default 1
    */
   maxVisibleMonths?: number;
   /**
    * Whether the calendar popover should automatically flip direction when space is limited.
+   *
    * @default true
    */
   shouldFlip?: boolean;
   /**
-   * A function to create a new [Calendar](https://react-spectrum.adobe.com/internationalized/date/Calendar.html)
-   * object for a given calendar identifier. This will be used for the popover calendar. If not provided, the
+   * A function to create a new
+   * [Calendar](https://react-spectrum.adobe.com/internationalized/date/Calendar.html) object for a
+   * given calendar identifier. This will be used for the popover calendar. If not provided, the
    * `createCalendar` function from `@internationalized/date` will be used.
    */
   createCalendar?: (identifier: CalendarIdentifier) => ICalendar;
@@ -73,7 +75,8 @@ export interface SpectrumDatePickerProps<T extends DateValue>
     SpectrumDatePickerBase<T> {}
 
 /**
- * DatePickers combine a DateField and a Calendar popover to allow users to enter or select a date and time value.
+ * DatePickers combine a DateField and a Calendar popover to allow users to enter or select a date
+ * and time value.
  */
 export const DatePicker = React.forwardRef(function DatePicker<T extends DateValue>(
   props: SpectrumDatePickerProps<T>,

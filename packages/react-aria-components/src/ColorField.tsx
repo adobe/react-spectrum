@@ -53,26 +53,31 @@ import {useLocale} from 'react-aria/I18nProvider';
 export interface ColorFieldRenderProps {
   /**
    * Whether the color field is disabled.
+   *
    * @selector [data-disabled]
    */
   isDisabled: boolean;
   /**
    * Whether the color field is invalid.
+   *
    * @selector [data-invalid]
    */
   isInvalid: boolean;
   /**
    * Whether the color field is read only.
+   *
    * @selector [data-readonly]
    */
   isReadOnly: boolean;
   /**
    * Whether the color field is required.
+   *
    * @selector [data-required]
    */
   isRequired: boolean;
   /**
    * The color channel that this field edits, or "hex" if no `channel` prop is set.
+   *
    * @selector [data-channel="hex | hue | saturation | ..."]
    */
   channel: ColorChannel | 'hex';
@@ -99,7 +104,9 @@ export interface ColorFieldProps
     SlotProps,
     GlobalDOMAttributes<HTMLDivElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-ColorField'
    */
   className?: ClassNameOrFunction<ColorFieldRenderProps>;

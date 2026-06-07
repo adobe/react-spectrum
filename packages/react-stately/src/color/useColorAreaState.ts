@@ -20,8 +20,9 @@ import {ValueBase} from '@react-types/shared';
 
 export interface ColorAreaProps extends Omit<ValueBase<string | Color>, 'onChange'> {
   /**
-   * The color space that the color area operates in. The `xChannel` and `yChannel` must be in this color space.
-   * If not provided, this defaults to the color space of the `color` or `defaultColor` value.
+   * The color space that the color area operates in. The `xChannel` and `yChannel` must be in this
+   * color space. If not provided, this defaults to the color space of the `color` or `defaultColor`
+   * value.
    */
   colorSpace?: ColorSpace;
   /** Color channel for the horizontal axis. */
@@ -46,17 +47,29 @@ export interface ColorAreaState {
 
   /** The current value of the horizontal axis channel displayed by the color area. */
   xValue: number;
-  /** Sets the value for the horizontal axis channel displayed by the color area, and triggers `onChange`. */
+  /**
+   * Sets the value for the horizontal axis channel displayed by the color area, and triggers
+   * `onChange`.
+   */
   setXValue(value: number): void;
 
   /** The current value of the vertical axis channel displayed by the color area. */
   yValue: number;
-  /** Sets the value for the vertical axis channel displayed by the color area, and triggers `onChange`. */
+  /**
+   * Sets the value for the vertical axis channel displayed by the color area, and triggers
+   * `onChange`.
+   */
   setYValue(value: number): void;
 
-  /** Sets the x and y channels of the current color value based on a percentage of the width and height of the color area, and triggers `onChange`. */
+  /**
+   * Sets the x and y channels of the current color value based on a percentage of the width and
+   * height of the color area, and triggers `onChange`.
+   */
   setColorFromPoint(x: number, y: number): void;
-  /** Returns the coordinates of the thumb relative to the upper left corner of the color area as a percentage. */
+  /**
+   * Returns the coordinates of the thumb relative to the upper left corner of the color area as a
+   * percentage.
+   */
   getThumbPosition(): {x: number; y: number};
 
   /** Increments the value of the horizontal axis channel by the channel step or page amount. */
@@ -91,8 +104,8 @@ export interface ColorAreaState {
 
 const DEFAULT_COLOR = parseColor('#ffffff');
 /**
- * Provides state management for a color area component.
- * Color area allows users to adjust two channels of an HSL, HSB or RGB color value against a two-dimensional gradient background.
+ * Provides state management for a color area component. Color area allows users to adjust two
+ * channels of an HSL, HSB or RGB color value against a two-dimensional gradient background.
  */
 export function useColorAreaState(props: ColorAreaProps): ColorAreaState {
   let {value, defaultValue, colorSpace, xChannel, yChannel, onChange, onChangeEnd} = props;

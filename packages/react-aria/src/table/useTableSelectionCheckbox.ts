@@ -12,7 +12,6 @@
 
 import {AriaCheckboxProps} from '../checkbox/useCheckbox';
 import {getRowLabelledBy} from './utils';
-// @ts-ignore
 import intlMessages from '../../intl/table/*.json';
 import {Key} from '@react-types/shared';
 import {TableState} from 'react-stately/useTableState';
@@ -36,6 +35,7 @@ export interface TableSelectAllCheckboxAria {
 
 /**
  * Provides the behavior and accessibility implementation for a selection checkbox in a table.
+ *
  * @param props - Props for the selection checkbox.
  * @param state - State of the table, as returned by `useTableState`.
  */
@@ -56,6 +56,7 @@ export function useTableSelectionCheckbox<T>(
 
 /**
  * Provides the behavior and accessibility implementation for the select all checkbox in a table.
+ *
  * @param props - Props for the select all checkbox.
  * @param state - State of the table, as returned by `useTableState`.
  */

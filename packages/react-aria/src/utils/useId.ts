@@ -33,6 +33,7 @@ if (typeof FinalizationRegistry !== 'undefined') {
 
 /**
  * If a default is not provided, generate an id.
+ *
  * @param defaultId - Default component id.
  */
 export function useId(defaultId?: string): string {
@@ -112,6 +113,7 @@ export function mergeIds(idA: string, idB: string): string {
 /**
  * Used to generate an id, and after render, check if that id is rendered so we know
  * if we can use it in places such as labelledby.
+ *
  * @param depArray - When to recalculate if the id is in the DOM.
  */
 export function useSlotId(depArray: ReadonlyArray<any> = []): string {

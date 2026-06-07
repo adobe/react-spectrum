@@ -11,12 +11,10 @@
  */
 
 import {AriaButtonProps} from '../button/useButton';
-
 import {AriaMenuOptions} from './useMenu';
 import {FocusableElement, RefObject} from '@react-types/shared';
 import {focusWithoutScrolling} from '../utils/focusWithoutScrolling';
 import intlMessages from '../../intl/menu/*.json';
-// @ts-ignore
 import {MenuTriggerState, MenuTriggerType} from 'react-stately/useMenuTriggerState';
 import {PressProps} from '../interactions/usePress';
 import {useId} from '../utils/useId';
@@ -43,6 +41,7 @@ export interface MenuTriggerAria<T> {
 
 /**
  * Provides the behavior and accessibility implementation for a menu trigger.
+ *
  * @param props - Props for the menu trigger.
  * @param state - State for the menu trigger.
  * @param ref - Ref to the HTML element trigger for the menu.

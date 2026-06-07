@@ -36,16 +36,17 @@ import {useSyncExternalStore as useSyncExternalStoreShim} from 'use-sync-externa
 const ShallowRenderContext = createContext(false);
 const CollectionDocumentContext = createContext<Document<any, BaseCollection<any>> | null>(null);
 
-export interface CollectionBuilderProps<C extends BaseCollection<object>> {
+export interface CollectionBuilderProps<C extends BaseCollection<any>> {
   content: ReactNode;
   children: (collection: C) => ReactNode;
   createCollection?: () => C;
 }
 
 /**
- * Builds a `Collection` from the children provided to the `content` prop, and passes it to the child render prop function.
+ * Builds a `Collection` from the children provided to the `content` prop, and passes it to the
+ * child render prop function.
  */
-export function CollectionBuilder<C extends BaseCollection<object>>(
+export function CollectionBuilder<C extends BaseCollection<any>>(
   props: CollectionBuilderProps<C>
 ): ReactElement {
   // If a document was provided above us, we're already in a hidden tree. Just render the content.
@@ -98,7 +99,7 @@ function useSyncExternalStoreFallback<C>(
   // This is read immediately inside the wrapper, which also runs during render.
   // We just need a ref to avoid invalidating the callback itself, which
   // would cause React to re-run the callback more than necessary.
-  // eslint-disable-next-line rulesdir/pure-render
+  // eslint-disable-next-line rsp-rules/pure-render
   isSSRRef.current = isSSR;
 
   let getSnapshotWrapper = useCallback(() => {
@@ -197,11 +198,11 @@ function useSSRCollectionNode<T extends Element>(
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function createLeafComponent<T extends object, P extends object, E extends Element>(
+export function createLeafComponent<T, P extends object, E extends Element>(
   CollectionNodeClass: CollectionNodeClass<any> | string,
   render: (props: P, ref: ForwardedRef<E>) => ReactElement | null
 ): (props: P & React.RefAttributes<E>) => ReactElement | null;
-export function createLeafComponent<T extends object, P extends object, E extends Element>(
+export function createLeafComponent<T, P extends object, E extends Element>(
   CollectionNodeClass: CollectionNodeClass<any> | string,
   render: (props: P, ref: ForwardedRef<E>, node: Node<T>) => ReactElement | null
 ): (props: P & React.RefAttributes<E>) => ReactElement | null;
@@ -239,11 +240,7 @@ export function createLeafComponent<P extends object, E extends Element>(
   return Result;
 }
 
-export function createBranchComponent<
-  T extends object,
-  P extends {children?: any},
-  E extends Element
->(
+export function createBranchComponent<T, P extends {children?: any}, E extends Element>(
   CollectionNodeClass: CollectionNodeClass<any> | string,
   render: (props: P, ref: ForwardedRef<E>, node: Node<T>) => ReactElement | null,
   useChildren: (props: P) => ReactNode = useCollectionChildren
@@ -262,7 +259,7 @@ export function createBranchComponent<
   return Result;
 }
 
-function useCollectionChildren<T extends object>(options: CachedChildrenOptions<T>) {
+function useCollectionChildren<T>(options: CachedChildrenOptions<T>) {
   return useCachedChildren({...options, addIdAndValue: true});
 }
 
@@ -271,7 +268,7 @@ export interface CollectionProps<T> extends CachedChildrenOptions<T> {}
 const CollectionContext = createContext<CachedChildrenOptions<unknown> | null>(null);
 
 /** A Collection renders a list of items, automatically managing caching and keys. */
-export function Collection<T extends object>(props: CollectionProps<T>): JSX.Element {
+export function Collection<T>(props: CollectionProps<T>): JSX.Element {
   let ctx = useContext(CollectionContext)!;
   let dependencies = (ctx?.dependencies || []).concat(props.dependencies);
   let idScope = props.idScope ?? ctx?.idScope;
@@ -291,8 +288,8 @@ export function Collection<T extends object>(props: CollectionProps<T>): JSX.Ele
     () => ({
       dependencies,
       idScope
-      // eslint-disable-next-line react-hooks/exhaustive-deps
     }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [idScope, ...dependencies]
   );
 

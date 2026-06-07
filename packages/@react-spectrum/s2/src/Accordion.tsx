@@ -39,11 +39,13 @@ export interface AccordionProps extends UnsafeStyles, DOMProps, SlotProps {
   styles?: StylesPropWithHeight;
   /**
    * The size of the accordion.
+   *
    * @default 'M'
    */
   size?: 'S' | 'M' | 'L' | 'XL';
   /**
    * The amount of space between the accordion items.
+   *
    * @default 'regular'
    */
   density?: 'compact' | 'regular' | 'spacious';
@@ -111,16 +113,19 @@ export interface AccordionItemState {
 export interface AccordionItemRenderProps {
   /**
    * Whether the accordion item is expanded.
+   *
    * @selector [data-expanded]
    */
   isExpanded: boolean;
   /**
    * Whether the accordion item has keyboard focus.
+   *
    * @selector [data-focus-visible-within]
    */
   isFocusVisibleWithin: boolean;
   /**
    * Whether the accordion item is disabled.
+   *
    * @selector [data-disabled]
    */
   isDisabled: boolean;
@@ -137,17 +142,22 @@ export interface AccordionItemProps
     StyleProps {
   /**
    * The size of the accordion item.
+   *
    * @default 'M'
    */
   size?: 'S' | 'M' | 'L' | 'XL';
   /**
    * The amount of space between the accordion item.
+   *
    * @default 'regular'
    */
   density?: 'compact' | 'regular' | 'spacious';
   /** Whether the accordion item should be displayed with a quiet style. */
   isQuiet?: boolean;
-  /** The contents of the accordion item, consisting of a accordion item title and accordion item panel. */
+  /**
+   * The contents of the accordion item, consisting of a accordion item title and accordion item
+   * panel.
+   */
   children: ReactNode;
   /** An id for the accordion item, matching the id used in `expandedKeys`. */
   id?: Key;
@@ -162,7 +172,8 @@ export interface AccordionItemProps
 }
 
 /**
- * A accordion item is a collapsible section of content. It is composed of a header with a heading and trigger button, and a panel that contains the content.
+ * A accordion item is a collapsible section of content. It is composed of a header with a heading
+ * and trigger button, and a panel that contains the content.
  */
 export const AccordionItem = forwardRef(function AccordionItem(
   props: AccordionItemProps,
@@ -172,7 +183,8 @@ export const AccordionItem = forwardRef(function AccordionItem(
 });
 
 export interface AccordionItemTitleProps extends UnsafeStyles, DOMProps {
-  /** The heading level of the accordion item title.
+  /**
+   * The heading level of the accordion item title.
    *
    * @default 3
    */
@@ -182,7 +194,8 @@ export interface AccordionItemTitleProps extends UnsafeStyles, DOMProps {
 }
 
 /**
- * An accordion item title consisting of a heading and a trigger button to expand/collapse the panel.
+ * An accordion item title consisting of a heading and a trigger button to expand/collapse the
+ * panel.
  */
 export const AccordionItemTitle = forwardRef(function AccordionItemTitle(
   props: AccordionItemTitleProps,
@@ -197,7 +210,8 @@ export interface AccordionItemHeaderProps extends UnsafeStyles, DOMProps {
 }
 
 /**
- * A wrapper element for the accordion item title that can contain other elements not part of the trigger.
+ * A wrapper element for the accordion item title that can contain other elements not part of the
+ * trigger.
  */
 export const AccordionItemHeader = forwardRef(function AccordionItemHeader(
   props: AccordionItemHeaderProps,
@@ -211,13 +225,15 @@ export interface AccordionItemPanelProps extends UnsafeStyles, DOMProps, AriaLab
   children: React.ReactNode;
   /**
    * The accessibility role for the accordion item panel.
+   *
    * @default 'group'
    */
   role?: 'group' | 'region';
 }
 
 /**
- * An accordion item panel is a collapsible section of content that is hidden until the accordion item is expanded.
+ * An accordion item panel is a collapsible section of content that is hidden until the accordion
+ * item is expanded.
  */
 export const AccordionItemPanel = forwardRef(function AccordionItemPanel(
   props: AccordionItemPanelProps,

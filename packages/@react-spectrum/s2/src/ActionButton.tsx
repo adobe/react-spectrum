@@ -12,7 +12,14 @@
 
 import {ActionButtonGroupContext} from './ActionButtonGroup';
 import {AvatarContext} from './Avatar';
-import {baseColor, focusRing, fontRelative, lightDark, style} from '../style' with {type: 'macro'};
+import {
+  baseColor,
+  focusRing,
+  fontRelative,
+  lightDark,
+  space,
+  style
+} from '../style' with {type: 'macro'};
 import {ButtonProps, ButtonRenderProps, Button as RACButton} from 'react-aria-components/Button';
 import {centerBaseline} from './CenterBaseline';
 import {ContextValue, Provider, useSlottedContext} from 'react-aria-components/slots';
@@ -22,12 +29,12 @@ import {
   staticColor,
   StyleProps
 } from './style-utils' with {type: 'macro'};
+import CornerTriangle from '../ui-icons/CornerTriangle';
 import {createContext, forwardRef, ReactNode, useContext} from 'react';
 import {FocusableRef, FocusableRefValue, GlobalDOMAttributes} from '@react-types/shared';
 import {IconContext} from './Icon';
 import {ImageContext} from './Image';
 import intlMessages from '../intl/*.json';
-// @ts-ignore
 import {NotificationBadgeContext} from './NotificationBadge';
 import {OverlayTriggerStateContext} from 'react-aria-components/Dialog';
 import {pressScale} from './pressScale';
@@ -36,6 +43,7 @@ import {SkeletonContext} from './Skeleton';
 import {Text, TextContext} from './Content';
 import {useFocusableRef} from './useDOMRef';
 import {useFormProps} from './Form';
+import {useLocale} from 'react-aria/I18nProvider';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {usePendingState} from './Button';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
@@ -49,14 +57,20 @@ export interface ActionButtonStyleProps {
   size?: 'XS' | 'S' | 'M' | 'L' | 'XL';
   /** The static color style to apply. Useful when the ActionButton appears over a color background. */
   staticColor?: 'black' | 'white' | 'auto';
-  /** Whether the button should be displayed with a [quiet style](https://spectrum.adobe.com/page/action-button/#Quiet). */
+  /**
+   * Whether the button should be displayed with a [quiet
+   * style](https://spectrum.adobe.com/page/action-button/#Quiet).
+   */
   isQuiet?: boolean;
 }
 
 interface ToggleButtonStyleProps {
   /** Whether the ActionButton should be selected (controlled). */
   isSelected?: boolean;
-  /** Whether the button should be displayed with an [emphasized style](https://spectrum.adobe.com/page/action-button/#Emphasis). */
+  /**
+   * Whether the button should be displayed with an [emphasized
+   * style](https://spectrum.adobe.com/page/action-button/#Emphasis).
+   */
   isEmphasized?: boolean;
 }
 
@@ -181,7 +195,7 @@ export const btnStyles = style<
       },
       isDisabled: 'disabled',
       isStaticColor: {
-        default: baseColor('transparent-overlay-800'),
+        default: 'transparent-overlay-1000',
         isSelected: 'auto',
         isDisabled: 'transparent-overlay-400'
       },
@@ -301,14 +315,17 @@ const avatarSize: Record<NonNullable<ActionButtonStyleProps['size']>, number> = 
   XL: 26
 } as const;
 
+interface ActionButtonContextProps extends Partial<ActionButtonProps> {
+  holdAffordance?: boolean;
+}
+
 export const ActionButtonContext =
-  createContext<ContextValue<Partial<ActionButtonProps>, FocusableRefValue<HTMLButtonElement>>>(
-    null
-  );
+  createContext<ContextValue<ActionButtonContextProps, FocusableRefValue<HTMLButtonElement>>>(null);
 
 /**
- * ActionButtons allow users to perform an action.
- * They're used for similar, task-based options within a workflow, and are ideal for interfaces where buttons aren't meant to draw a lot of attention.
+ * ActionButtons allow users to perform an action. They're used for similar, task-based options
+ * within a workflow, and are ideal for interfaces where buttons aren't meant to draw a lot of
+ * attention.
  */
 export const ActionButton = forwardRef(function ActionButton(
   props: ActionButtonProps,
@@ -317,7 +334,7 @@ export const ActionButton = forwardRef(function ActionButton(
   [props, ref] = useSpectrumContextProps(props, ref, ActionButtonContext);
   props = useFormProps(props as any);
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
-  let {isPending = false} = props;
+  let {isPending = false, holdAffordance} = props as ActionButtonContextProps;
   let domRef = useFocusableRef(ref);
   let overlayTriggerState = useContext(OverlayTriggerStateContext);
   let ctx = useSlottedContext(ActionButtonGroupContext);
@@ -333,6 +350,7 @@ export const ActionButton = forwardRef(function ActionButton(
   } = ctx || {};
 
   let {isProgressVisible} = usePendingState(isPending);
+  let {direction} = useLocale();
 
   return (
     <RACButton
@@ -463,6 +481,37 @@ export const ActionButton = forwardRef(function ActionButton(
               </div>
             )}
           </Provider>
+          {holdAffordance && (
+            <CornerTriangle
+              size={size === 'XS' ? 'S' : size}
+              className={style({
+                position: 'absolute',
+                insetEnd: {
+                  size: {
+                    XS: space(3),
+                    S: space(3),
+                    M: 4,
+                    L: space(5),
+                    XL: space(6)
+                  }
+                },
+                bottom: {
+                  size: {
+                    XS: space(3),
+                    S: space(3),
+                    M: 4,
+                    L: space(5),
+                    XL: space(6)
+                  }
+                },
+                scaleX: {
+                  direction: {
+                    rtl: -1
+                  }
+                }
+              })({direction, size})}
+            />
+          )}
         </>
       )}
     </RACButton>

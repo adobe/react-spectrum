@@ -20,7 +20,6 @@ import {DialogTrigger} from '../dialog/DialogTrigger';
 import HelpOutline from '@spectrum-icons/workflow/HelpOutline';
 import helpStyles from '@adobe/spectrum-css-temp/components/contextualhelp/vars.css';
 import InfoOutline from '@spectrum-icons/workflow/InfoOutline';
-// @ts-ignore
 import intlMessages from '../../intl/contextualhelp/*.json';
 import {mergeProps} from 'react-aria/mergeProps';
 import {OverlayTriggerProps} from 'react-stately/useOverlayTriggerState';
@@ -35,18 +34,21 @@ export interface SpectrumContextualHelpProps
   children: ReactNode;
   /**
    * Indicates whether contents are informative or provides helpful guidance.
+   *
    * @default 'help'
    */
   variant?: 'help' | 'info';
   /**
    * The placement of the popover with respect to the action button.
+   *
    * @default 'bottom start'
    */
   placement?: Placement;
 }
 
 /**
- * Contextual help shows a user extra information about the state of an adjacent component, or a total view.
+ * Contextual help shows a user extra information about the state of an adjacent component, or a
+ * total view.
  */
 export const ContextualHelp = React.forwardRef(function ContextualHelp(
   props: SpectrumContextualHelpProps,

@@ -11,7 +11,6 @@
  */
 
 import {AriaLabelingProps, DOMProps} from '@react-types/shared';
-// @ts-ignore
 import intlMessages from '../../intl/overlays/*.json';
 import React, {JSX} from 'react';
 import {useLabels} from '../utils/useLabels';

@@ -18,7 +18,6 @@ import intlMessages from '../../intl/toast/*.json';
 import {mergeProps} from '../utils/mergeProps';
 import {ToastState} from 'react-stately/useToastState';
 import {useCallback, useEffect, useRef} from 'react';
-// @ts-ignore
 import {useFocusWithin} from '../interactions/useFocusWithin';
 import {useHover} from '../interactions/useHover';
 import {useLandmark} from '../landmark/useLandmark';
@@ -28,7 +27,8 @@ import {useLocalizedStringFormatter} from '../i18n/useLocalizedStringFormatter';
 export interface AriaToastRegionProps extends AriaLabelingProps {
   /**
    * An accessibility label for the toast region.
-   * @default "Notifications"
+   *
+   * @default 'Notifications'
    */
   'aria-label'?: string;
 }
@@ -39,8 +39,9 @@ export interface ToastRegionAria {
 }
 
 /**
- * Provides the behavior and accessibility implementation for a toast region containing one or more toasts.
- * Toasts display brief, temporary notifications of actions, errors, or other events in an application.
+ * Provides the behavior and accessibility implementation for a toast region containing one or more
+ * toasts. Toasts display brief, temporary notifications of actions, errors, or other events in an
+ * application.
  */
 export function useToastRegion<T>(
   props: AriaToastRegionProps,

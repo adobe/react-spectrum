@@ -14,7 +14,6 @@ import {announce, clearAnnouncer} from '../live-announcer/LiveAnnouncer';
 
 import {AriaButtonProps} from '../button/useButton';
 import {DOMAttributes, InputBase, RangeInputBase, Validation, ValueBase} from '@react-types/shared';
-// @ts-ignore
 import intlMessages from '../../intl/spinbutton/*.json';
 import {useCallback, useEffect, useRef, useState} from 'react';
 import {useEffectEvent} from '../utils/useEffectEvent';
@@ -219,6 +218,8 @@ export function useSpinButton(props: SpinButtonProps): SpinbuttonAria {
       onIncrementPressStartEvent(600);
     } else if (isIncrementPressed) {
       onIncrementPressStartEvent(400);
+    } else if (!isIncrementPressed) {
+      clearAsyncEvent();
     }
   }, [isIncrementPressed]);
 
@@ -228,6 +229,8 @@ export function useSpinButton(props: SpinButtonProps): SpinbuttonAria {
       onDecrementPressStartEvent(600);
     } else if (isDecrementPressed) {
       onDecrementPressStartEvent(400);
+    } else if (!isDecrementPressed) {
+      clearAsyncEvent();
     }
   }, [isDecrementPressed]);
 

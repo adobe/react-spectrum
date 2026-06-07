@@ -146,9 +146,15 @@ export function Provider<A, B, C, D, E, F, G, H, I, J, K, L>({
 }
 
 export interface StyleProps {
-  /** The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. */
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element.
+   */
   className?: string;
-  /** The inline [style](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/style) for the element. */
+  /**
+   * The inline [style](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/style) for the
+   * element.
+   */
   style?: CSSProperties;
 }
 
@@ -168,9 +174,15 @@ export interface StyleRenderProps<
   T,
   E extends keyof React.JSX.IntrinsicElements = 'div'
 > extends DOMRenderProps<E, T> {
-  /** The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state. */
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   */
   className?: ClassNameOrFunction<T>;
-  /** The inline [style](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/style) for the element. A function may be provided to compute the style based on component state. */
+  /**
+   * The inline [style](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/style) for the
+   * element. A function may be provided to compute the style based on component state.
+   */
   style?: StyleOrFunction<T>;
 }
 
@@ -182,7 +194,10 @@ export interface RenderProps<
   T,
   E extends keyof React.JSX.IntrinsicElements = 'div'
 > extends StyleRenderProps<T, E> {
-  /** The children of the component. A function may be provided to alter the children based on component state. */
+  /**
+   * The children of the component. A function may be provided to alter the children based on
+   * component state.
+   */
   children?: ChildrenOrFunction<T>;
 }
 
@@ -252,8 +267,8 @@ export function useRenderProps<T, E extends keyof React.JSX.IntrinsicElements>(
 }
 
 /**
- * A helper function that accepts a user-provided render prop value (either a static value or a function),
- * and combines it with another value to create a final result.
+ * A helper function that accepts a user-provided render prop value (either a static value or a
+ * function), and combines it with another value to create a final result.
  */
 export function composeRenderProps<T, U, V extends T>(
   // https://stackoverflow.com/questions/60898079/typescript-type-t-or-function-t-usage
@@ -266,8 +281,9 @@ export function composeRenderProps<T, U, V extends T>(
 export type WithRef<T, E> = T & {ref?: ForwardedRef<E>};
 export interface SlotProps {
   /**
-   * A slot name for the component. Slots allow the component to receive props from a parent component.
-   * An explicit `null` value indicates that the local props completely override all props received from a parent.
+   * A slot name for the component. Slots allow the component to receive props from a parent
+   * component. An explicit `null` value indicates that the local props completely override all
+   * props received from a parent.
    */
   slot?: string | null;
 }
@@ -357,6 +373,7 @@ export function useSlot(
 
 /**
  * Filters out `data-*` attributes to keep them from being passed down and duplicated.
+ *
  * @param props
  */
 export function removeDataAttributes<T>(props: T): T {
@@ -378,6 +395,7 @@ export interface RACValidation {
    * Whether to use native HTML form validation to prevent form submission
    * when the value is missing or invalid, or mark the field as required
    * or invalid via ARIA.
+   *
    * @default 'native'
    */
   validationBehavior?: 'native' | 'aria';
@@ -395,9 +413,11 @@ export interface DOMRenderProps<E extends keyof React.JSX.IntrinsicElements, T> 
    *
    * Requirements:
    *
-   * * You must render the expected element type (e.g. if `<button>` is expected, you cannot render an `<a>`).
-   * * Only a single root DOM element can be rendered (no fragments).
-   * * You must pass through props and ref to the underlying DOM element, merging with your own prop as appropriate.
+   * - You must render the expected element type (e.g. if `<button>` is expected, you cannot render an
+   *   `<a>`).
+   * - Only a single root DOM element can be rendered (no fragments).
+   * - You must pass through props and ref to the underlying DOM element, merging with your own prop
+   *   as appropriate.
    */
   render?: DOMRenderFunction<E, T>;
 }
@@ -417,9 +437,11 @@ export interface PossibleLinkDOMRenderProps<Fallback extends keyof React.JSX.Int
    *
    * Requirements:
    *
-   * * You must render the expected element type (e.g. if `<a>` is expected, you cannot render a `<button>`).
-   * * Only a single root DOM element can be rendered (no fragments).
-   * * You must pass through props and ref to the underlying DOM element, merging with your own prop as appropriate.
+   * - You must render the expected element type (e.g. if `<a>` is expected, you cannot render a
+   *   `<button>`).
+   * - Only a single root DOM element can be rendered (no fragments).
+   * - You must pass through props and ref to the underlying DOM element, merging with your own prop
+   *   as appropriate.
    */
   render?: (
     props:

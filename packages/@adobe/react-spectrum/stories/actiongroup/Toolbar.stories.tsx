@@ -38,6 +38,7 @@ export interface SpectrumToolbarProps extends AriaLabelingProps {
   children: ReactNode | ReactElement[];
   /**
    * The orientation of the entire toolbar.
+   *
    * @default 'horizontal'
    */
   orientation?: Orientation;

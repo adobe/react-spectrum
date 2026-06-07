@@ -42,21 +42,25 @@ import {useLocale} from 'react-aria/I18nProvider';
 export interface NumberFieldRenderProps {
   /**
    * Whether the number field is disabled.
+   *
    * @selector [data-disabled]
    */
   isDisabled: boolean;
   /**
    * Whether the number field is invalid.
+   *
    * @selector [data-invalid]
    */
   isInvalid: boolean;
   /**
    * Whether the number field is read only.
+   *
    * @selector [data-readonly]
    */
   isReadOnly: boolean;
   /**
    * Whether the number field is required.
+   *
    * @selector [data-required]
    */
   isRequired: boolean;
@@ -83,7 +87,9 @@ export interface NumberFieldProps
     SlotProps,
     GlobalDOMAttributes<HTMLDivElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-NumberField'
    */
   className?: ClassNameOrFunction<NumberFieldRenderProps>;
@@ -94,7 +100,8 @@ export const NumberFieldContext =
 export const NumberFieldStateContext = createContext<NumberFieldState | null>(null);
 
 /**
- * A number field allows a user to enter a number, and increment or decrement the value using stepper buttons.
+ * A number field allows a user to enter a number, and increment or decrement the value using
+ * stepper buttons.
  */
 export const NumberField = /*#__PURE__*/ (forwardRef as forwardRefType)(function NumberField(
   props: NumberFieldProps,

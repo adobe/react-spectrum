@@ -30,8 +30,9 @@ export interface ViewProps<C extends ColorVersion> extends ViewStyleProps<C>, DO
 }
 
 /**
- * View is a general purpose container with no specific semantics that can be used for custom styling purposes.
- * It supports Spectrum style props to ensure consistency with other Spectrum components.
+ * View is a general purpose container with no specific semantics that can be used for custom
+ * styling purposes. It supports Spectrum style props to ensure consistency with other Spectrum
+ * components.
  */
 export const View = forwardRef(function View<C extends ColorVersion>(
   props: ViewProps<C>,

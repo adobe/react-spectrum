@@ -27,6 +27,7 @@ import {useSlotId} from '../utils/useId';
 export interface AriaDialogProps extends DOMProps, AriaLabelingProps {
   /**
    * The accessibility role for the dialog.
+   *
    * @default 'dialog'
    */
   role?: 'dialog' | 'alertdialog';

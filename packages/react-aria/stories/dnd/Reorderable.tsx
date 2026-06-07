@@ -20,7 +20,7 @@ import {FocusRing} from '../../src/focus/FocusRing';
 import Folder from '@spectrum-icons/workflow/Folder';
 import {GridCollection} from 'react-stately/private/grid/GridCollection';
 import {Item} from 'react-stately/Item';
-import {ItemDropTarget, Key} from '@react-types/shared';
+import {ItemDropTarget, Key, Node} from '@react-types/shared';
 import {ListDropTargetDelegate} from '../../src/dnd/ListDropTargetDelegate';
 import {ListKeyboardDelegate} from '../../src/selection/ListKeyboardDelegate';
 import {mergeProps} from '../../src/utils/mergeProps';
@@ -85,22 +85,25 @@ function ReorderableGrid(props) {
       () =>
         new GridCollection<object>({
           columnCount: 1,
-          items: [...state.collection].map(item => ({
-            ...item,
-            childNodes: [
-              {
-                key: `cell-${item.key}`,
-                type: 'cell',
-                index: 0,
-                value: null,
-                level: 0,
-                rendered: null,
-                textValue: item.textValue,
-                hasChildNodes: false,
-                childNodes: []
-              }
-            ]
-          }))
+          items: [...state.collection].map(
+            item =>
+              ({
+                ...item,
+                childNodes: [
+                  {
+                    key: `cell-${item.key}`,
+                    type: 'cell',
+                    index: 0,
+                    value: null,
+                    level: 0,
+                    rendered: null,
+                    textValue: item.textValue,
+                    hasChildNodes: false,
+                    childNodes: []
+                  }
+                ]
+              }) as Node<any>
+          )
         }),
       [state.collection]
     )

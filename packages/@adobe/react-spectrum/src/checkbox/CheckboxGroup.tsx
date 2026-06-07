@@ -44,6 +44,7 @@ export interface SpectrumCheckboxGroupProps
   children: ReactElement<SpectrumCheckboxProps> | ReactElement<SpectrumCheckboxProps>[];
   /**
    * The axis the checkboxes should align with.
+   *
    * @default 'vertical'
    */
   orientation?: Orientation;

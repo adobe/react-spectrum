@@ -11,7 +11,6 @@
  */
 
 import {announce} from '../live-announcer/LiveAnnouncer';
-
 import {AriaButtonProps} from '../button/useButton';
 import {ariaHideOutside} from '../overlays/ariaHideOutside';
 import {
@@ -54,7 +53,6 @@ import {privateValidationStateProp} from 'react-stately/private/form/useFormVali
 import {useEvent} from '../utils/useEvent';
 import {useFormReset} from '../utils/useFormReset';
 import {useId} from '../utils/useId';
-// @ts-ignore
 import {useLabels} from '../utils/useLabels';
 import {useLocalizedStringFormatter} from '../i18n/useLocalizedStringFormatter';
 import {useMenuTrigger} from '../menu/useMenuTrigger';
@@ -79,7 +77,7 @@ export interface AriaComboBoxOptions<T, M extends SelectionMode = 'single'> exte
   popoverRef: RefObject<Element | null>;
   /** The ref for the list box. */
   listBoxRef: RefObject<HTMLElement | null>;
-  /** The ref for the optional list box popup trigger button.  */
+  /** The ref for the optional list box popup trigger button. */
   buttonRef?: RefObject<Element | null>;
   /** An optional keyboard delegate implementation, to override the default. */
   keyboardDelegate?: KeyboardDelegate;
@@ -109,8 +107,10 @@ export interface ComboBoxAria<T> extends ValidationResult {
 }
 
 /**
- * Provides the behavior and accessibility implementation for a combo box component.
- * A combo box combines a text input with a listbox, allowing users to filter a list of options to items matching a query.
+ * Provides the behavior and accessibility implementation for a combo box component. A combo box
+ * combines a text input with a listbox, allowing users to filter a list of options to items
+ * matching a query.
+ *
  * @param props - Props for the combo box.
  * @param state - State for the select, as returned by `useComboBoxState`.
  */
@@ -518,7 +518,7 @@ function useValueId(depArray: ReadonlyArray<any> = []): string | undefined {
 
   useEffect(() => {
     if (exists && !document.getElementById(id)) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
+      // oxlint-disable-next-line react-hooks-js/set-state-in-effect
       setExists(false);
     }
   }, [id, exists, lastDeps]);

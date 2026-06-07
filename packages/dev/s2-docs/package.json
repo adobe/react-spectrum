@@ -10,7 +10,8 @@
     "build:s2": "LIBRARY=s2 parcel build 'pages/s2/**/*.mdx' --config .parcelrc-s2-docs --dist-dir dist/s2 --cache-dir ../../../.parcel-cache/s2",
     "build:react-aria": "LIBRARY=react-aria parcel build 'pages/react-aria/**/*.mdx' --config .parcelrc-s2-docs --dist-dir dist/react-aria --cache-dir ../../../.parcel-cache/react-aria",
     "generate:og": "node scripts/generateOGImages.mjs",
-    "generate:md": "node scripts/generateMarkdownDocs.mjs"
+    "generate:md": "node scripts/generateMarkdownDocs.mjs",
+    "generate:mcpb": "node scripts/generateMcpb.mjs"
   },
   "dependencies": {
     "@babel/parser": "^7.26.3",

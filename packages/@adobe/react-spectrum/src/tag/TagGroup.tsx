@@ -11,7 +11,6 @@
  */
 
 import {ActionButton} from '../button/ActionButton';
-
 import {AriaTagGroupProps, useTagGroup} from 'react-aria/useTagGroup';
 import {classNames} from '../utils/classNames';
 import {
@@ -26,7 +25,6 @@ import {Field} from '../label/Field';
 import {FocusRing} from 'react-aria/FocusRing';
 import {FocusScope} from 'react-aria/FocusScope';
 import intlMessages from '../../intl/tag/*.json';
-// @ts-ignore
 import {ListCollection} from 'react-stately/private/list/ListCollection';
 import {ListKeyboardDelegate} from 'react-aria/ListKeyboardDelegate';
 import {Provider, useProvider, useProviderProps} from '../provider/Provider';
@@ -69,17 +67,23 @@ export interface SpectrumTagGroupProps<T>
     StyleProps,
     Omit<SpectrumLabelableProps, 'isRequired' | 'necessityIndicator'>,
     Pick<Validation<any>, 'isInvalid' | 'validationState'> {
-  /** The label to display on the action button.  */
+  /** The label to display on the action button. */
   actionLabel?: string;
   /** Handler that is called when the action button is pressed. */
   onAction?: () => void;
   /** Sets what the TagGroup should render when there are no tags to display. */
   renderEmptyState?: () => JSX.Element;
-  /** Limit the number of rows initially shown. This will render a button that allows the user to expand to show all tags. */
+  /**
+   * Limit the number of rows initially shown. This will render a button that allows the user to
+   * expand to show all tags.
+   */
   maxRows?: number;
 }
 
-/** Tags allow users to categorize content. They can represent keywords or people, and are grouped to describe an item or a search request. */
+/**
+ * Tags allow users to categorize content. They can represent keywords or people, and are grouped to
+ * describe an item or a search request.
+ */
 export const TagGroup = React.forwardRef(function TagGroup<T extends object>(
   props: SpectrumTagGroupProps<T>,
   ref: DOMRef<HTMLDivElement>

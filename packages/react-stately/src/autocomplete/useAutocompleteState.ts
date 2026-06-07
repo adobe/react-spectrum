@@ -31,7 +31,10 @@ export interface AutocompleteProps {
   defaultInputValue?: string;
   /** Handler that is called when the autocomplete input value changes. */
   onInputChange?: (value: string) => void;
-  /** The children wrapped by the autocomplete. Consists of at least an input element and a collection element to filter. */
+  /**
+   * The children wrapped by the autocomplete. Consists of at least an input element and a
+   * collection element to filter.
+   */
   children: ReactNode;
 }
 

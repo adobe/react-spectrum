@@ -23,17 +23,19 @@ import {useLocale} from 'react-aria/I18nProvider';
 import {useProviderProps} from '../provider/Provider';
 
 export interface SpectrumCalendarProps<T extends DateValue>
-  extends AriaCalendarProps<T>, StyleProps {
+  extends Omit<AriaCalendarProps<T>, 'selectionMode' | 'weeksInMonth'>, StyleProps {
   /**
    * The number of months to display at once. Up to 3 months are supported.
+   *
    * @default 1
    */
   visibleMonths?: number;
 
   /**
-   * A function to create a new [Calendar](https://react-spectrum.adobe.com/internationalized/date/Calendar.html)
-   * object for a given calendar identifier. If not provided, the `createCalendar` function
-   * from `@internationalized/date` will be used.
+   * A function to create a new
+   * [Calendar](https://react-spectrum.adobe.com/internationalized/date/Calendar.html) object for a
+   * given calendar identifier. If not provided, the `createCalendar` function from
+   * `@internationalized/date` will be used.
    */
   createCalendar?: (identifier: CalendarIdentifier) => ICalendar;
 }
@@ -50,7 +52,7 @@ export const Calendar = React.forwardRef(function Calendar<T extends DateValue>(
   visibleMonths = Math.max(visibleMonths, 1);
   let visibleDuration = useMemo(() => ({months: visibleMonths}), [visibleMonths]);
   let {locale} = useLocale();
-  let state = useCalendarState({
+  let state = useCalendarState<T, 'single'>({
     ...props,
     locale,
     visibleDuration,

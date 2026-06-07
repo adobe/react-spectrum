@@ -1,20 +1,23 @@
 #!/usr/bin/env node
 const {parseArgs} = require('node:util');
 import {s1_to_s2} from './s1-to-s2/src';
+import {test_utils_rc_update} from './test-utils-rc-update/src';
 import {use_monopackages} from './use-monopackages/src';
 import {use_subpaths} from './use-subpaths/src';
 
 interface JSCodeshiftOptions {
   /**
-   * The parser for jscodeshift to use for parsing the source files: https://github.com/facebook/jscodeshift?tab=readme-ov-file#parser.
+   * The parser for jscodeshift to use for parsing the source files:
+   * https://github.com/facebook/jscodeshift?tab=readme-ov-file#parser.
    *
    * @default 'tsx'
    */
   parser?: 'babel' | 'babylon' | 'flow' | 'ts' | ' tsx';
   /**
-   * A glob pattern of files to ignore: https://github.com/facebook/jscodeshift?tab=readme-ov-file#ignoring-files-and-directories.
+   * A glob pattern of files to ignore:
+   * https://github.com/facebook/jscodeshift?tab=readme-ov-file#ignoring-files-and-directories.
    *
-   * @default '*\*\/node_modules/*\*\'
+   * @default '_\_\/node_modules/_\_\'
    */
   ignorePattern?: string;
   /**
@@ -55,15 +58,22 @@ export interface UseMonopackagesCodemodOptions extends JSCodeshiftOptions {
 
 export interface UseSubpathsCodemodOptions extends JSCodeshiftOptions {}
 
+export interface TestUtilsRcUpdateOptions extends JSCodeshiftOptions {}
+
 const codemods: Record<
   string,
   (
-    options: S1ToS2CodemodOptions | UseMonopackagesCodemodOptions | UseSubpathsCodemodOptions
+    options:
+      | S1ToS2CodemodOptions
+      | UseMonopackagesCodemodOptions
+      | UseSubpathsCodemodOptions
+      | TestUtilsRcUpdateOptions
   ) => void
 > = {
   's1-to-s2': s1_to_s2,
   'use-monopackages': use_monopackages,
-  'use-subpaths': use_subpaths
+  'use-subpaths': use_subpaths,
+  'test-utils-rc-update': test_utils_rc_update
 };
 
 // https://github.com/facebook/jscodeshift?tab=readme-ov-file#usage-cli

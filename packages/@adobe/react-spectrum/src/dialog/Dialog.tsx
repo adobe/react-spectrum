@@ -11,7 +11,6 @@
  */
 
 import {ActionButton} from '../button/ActionButton';
-
 import {AriaDialogProps, useDialog} from 'react-aria/useDialog';
 import {classNames} from '../utils/classNames';
 import CrossLarge from '@spectrum-icons/ui/CrossLarge';
@@ -22,7 +21,6 @@ import intlMessages from '../../intl/dialog/*.json';
 import {mergeProps} from 'react-aria/mergeProps';
 import React, {ReactNode, useContext, useMemo, useRef} from 'react';
 import {SlotProvider, useSlotProps} from '../utils/Slots';
-// @ts-ignore
 import styles from '@adobe/spectrum-css-temp/components/dialog/vars.css';
 import {unwrapDOMRef, useDOMRef} from '../utils/useDOMRef';
 import {useHasChild} from '../utils/useHasChild';
@@ -49,8 +47,9 @@ let sizeMap = {
 };
 
 /**
- * Dialogs are windows containing contextual information, tasks, or workflows that appear over the user interface.
- * Depending on the kind of Dialog, further interactions may be blocked until the Dialog is acknowledged.
+ * Dialogs are windows containing contextual information, tasks, or workflows that appear over the
+ * user interface. Depending on the kind of Dialog, further interactions may be blocked until the
+ * Dialog is acknowledged.
  */
 export const Dialog = React.forwardRef(function Dialog(props: SpectrumDialogProps, ref: DOMRef) {
   props = useSlotProps(props, 'dialog');
@@ -104,8 +103,8 @@ export const Dialog = React.forwardRef(function Dialog(props: SpectrumDialogProp
         }),
         align: 'end'
       }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
     }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [hasFooter, hasHeader, titleProps, contentProps]
   );
 

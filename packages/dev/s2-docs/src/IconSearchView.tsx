@@ -1,4 +1,4 @@
-/* eslint-disable rulesdir/imports */
+/* eslint-disable rsp-rules/imports */
 'use client';
 
 import {

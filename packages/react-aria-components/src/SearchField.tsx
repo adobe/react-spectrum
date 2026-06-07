@@ -42,26 +42,31 @@ import {TextContext} from './Text';
 export interface SearchFieldRenderProps {
   /**
    * Whether the search field is empty.
+   *
    * @selector [data-empty]
    */
   isEmpty: boolean;
   /**
    * Whether the search field is disabled.
+   *
    * @selector [data-disabled]
    */
   isDisabled: boolean;
   /**
    * Whether the search field is invalid.
+   *
    * @selector [data-invalid]
    */
   isInvalid: boolean;
   /**
    * Whether the search field is read only.
+   *
    * @selector [data-readonly]
    */
   isReadOnly: boolean;
   /**
    * Whether the search field is required.
+   *
    * @selector [data-required]
    */
   isRequired: boolean;
@@ -87,7 +92,9 @@ export interface SearchFieldProps
     SlotProps,
     GlobalDOMAttributes<HTMLDivElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-SearchField'
    */
   className?: ClassNameOrFunction<SearchFieldRenderProps>;

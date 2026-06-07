@@ -14,15 +14,23 @@ import {
   ColorField as AriaColorField,
   ColorFieldProps as AriaColorFieldProps
 } from 'react-aria-components/ColorField';
-
 import {ContextValue} from 'react-aria-components/slots';
-import {createContext, forwardRef, Ref, useContext, useImperativeHandle, useRef} from 'react';
+import {
+  createContext,
+  forwardRef,
+  ReactNode,
+  Ref,
+  useContext,
+  useImperativeHandle,
+  useRef
+} from 'react';
 import {createFocusableRef} from './useDOMRef';
 import {field, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText, Input} from './Field';
 import {FormContext, useFormProps} from './Form';
 import {GlobalDOMAttributes, HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
-import {InputProps} from 'react-aria-components/Input';
+import {InputContext, InputProps} from 'react-aria-components/Input';
+import {mergeRefs} from 'react-aria/mergeRefs';
 import {style} from '../style' with {type: 'macro'};
 import {TextFieldRef} from './TextField';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
@@ -43,6 +51,11 @@ export interface ColorFieldProps
    * @default 'M'
    */
   size?: 'S' | 'M' | 'L' | 'XL';
+  /**
+   * The prefix to display in the ColorField. A non-interactive element that appears before the
+   * input.
+   */
+  prefix?: ReactNode;
 }
 
 export const ColorFieldContext =
@@ -114,8 +127,18 @@ export const ColorField = forwardRef(function ColorField(
             contextualHelp={props.contextualHelp}>
             {label}
           </FieldLabel>
-          <FieldGroup size={props.size}>
-            <Input ref={inputRef} />
+          <FieldGroup prefix={props.prefix} size={props.size}>
+            <InputContext.Consumer>
+              {ctx => (
+                <InputContext.Provider
+                  value={{
+                    ...ctx,
+                    ref: mergeRefs((ctx as any)?.ref, inputRef)
+                  }}>
+                  <Input />
+                </InputContext.Provider>
+              )}
+            </InputContext.Consumer>
             {isInvalid && <FieldErrorIcon isDisabled={isDisabled} />}
           </FieldGroup>
           <HelpText

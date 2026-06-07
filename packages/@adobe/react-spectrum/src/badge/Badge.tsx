@@ -42,7 +42,8 @@ export interface SpectrumBadgeProps extends DOMProps, StyleProps, AriaLabelingPr
 }
 
 /**
- * Badges are used for showing a small amount of color-categorized metadata, ideal for getting a user's attention.
+ * Badges are used for showing a small amount of color-categorized metadata, ideal for getting a
+ * user's attention.
  */
 export const Badge = forwardRef(function Badge(
   props: SpectrumBadgeProps,

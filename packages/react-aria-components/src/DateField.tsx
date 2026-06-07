@@ -69,21 +69,25 @@ export interface DateFieldRenderProps {
   state: DateFieldState;
   /**
    * Whether the date field is invalid.
+   *
    * @selector [data-invalid]
    */
   isInvalid: boolean;
   /**
    * Whether the date field is disabled.
+   *
    * @selector [data-disabled]
    */
   isDisabled: boolean;
   /**
    * Whether the date field is read only.
+   *
    * @selector [data-readonly]
    */
   isReadOnly: boolean;
   /**
    * Whether the date field is required.
+   *
    * @selector [data-required]
    */
   isRequired: boolean;
@@ -99,7 +103,9 @@ export interface DateFieldProps<T extends DateValue>
     SlotProps,
     GlobalDOMAttributes<HTMLDivElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-DateField'
    */
   className?: ClassNameOrFunction<DateFieldRenderProps>;
@@ -115,7 +121,9 @@ export interface TimeFieldProps<T extends TimeValue>
     SlotProps,
     GlobalDOMAttributes<HTMLDivElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-TimeField'
    */
   className?: ClassNameOrFunction<DateFieldRenderProps>;
@@ -302,27 +310,32 @@ export const TimeField = /*#__PURE__*/ (forwardRef as forwardRefType)(function T
 export interface DateInputRenderProps {
   /**
    * Whether the date input is currently hovered with a mouse.
+   *
    * @selector [data-hovered]
    */
   isHovered: boolean;
   /**
    * Whether an element within the date input is focused, either via a mouse or keyboard.
+   *
    * @selector [data-focus-within]
    */
   isFocusWithin: boolean;
   /**
    * Whether an element within the date input is keyboard focused.
+   *
    * @selector [data-focus-visible]
    */
   isFocusVisible: boolean;
   /**
    * Whether the date input is disabled.
+   *
    * @selector [data-disabled]
    */
   isDisabled: boolean;
 
   /**
    * Whether the date input is invalid.
+   *
    * @selector [data-invalid]
    */
   isInvalid: boolean;
@@ -331,7 +344,9 @@ export interface DateInputRenderProps {
 export interface DateInputProps
   extends SlotProps, StyleRenderProps<DateInputRenderProps>, GlobalDOMAttributes<HTMLDivElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-DateInput'
    */
   className?: ClassNameOrFunction<DateInputRenderProps>;
@@ -415,41 +430,49 @@ const DateInputInner = forwardRef((props: DateInputProps, ref: ForwardedRef<HTML
 export interface DateSegmentRenderProps extends Omit<IDateSegment, 'isEditable'> {
   /**
    * Whether the segment is currently hovered with a mouse.
+   *
    * @selector [data-hovered]
    */
   isHovered: boolean;
   /**
    * Whether the segment is focused, either via a mouse or keyboard.
+   *
    * @selector [data-focused]
    */
   isFocused: boolean;
   /**
    * Whether the segment is keyboard focused.
+   *
    * @selector [data-focus-visible]
    */
   isFocusVisible: boolean;
   /**
    * Whether the value is a placeholder.
+   *
    * @selector [data-placeholder]
    */
   isPlaceholder: boolean;
   /**
    * Whether the segment is read only.
+   *
    * @selector [data-readonly]
    */
   isReadOnly: boolean;
   /**
    * Whether the date field is disabled.
+   *
    * @selector [data-disabled]
    */
   isDisabled: boolean;
   /**
    * Whether the date field is in an invalid state.
+   *
    * @selector [data-invalid]
    */
   isInvalid: boolean;
   /**
    * The type of segment. Values include `literal`, `year`, `month`, `day`, etc.
+   *
    * @selector [data-type="..."]
    */
   type: DateSegmentType;
@@ -461,7 +484,9 @@ export interface DateSegmentProps
     HoverEvents,
     GlobalDOMAttributes<HTMLSpanElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-DateSegment'
    */
   className?: ClassNameOrFunction<DateSegmentRenderProps>;

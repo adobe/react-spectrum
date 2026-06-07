@@ -35,6 +35,7 @@ export interface AvatarProps extends UnsafeStyles, DOMProps, SlotProps {
   styles?: StylesPropWithoutWidth;
   /**
    * The size of the avatar.
+   *
    * @default 24
    */
   size?: 16 | 20 | 24 | 28 | 32 | 36 | 40 | 44 | 48 | 56 | 64 | 80 | 96 | 112 | (number & {});

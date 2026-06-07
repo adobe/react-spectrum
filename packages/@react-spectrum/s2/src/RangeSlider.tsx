@@ -11,7 +11,6 @@
  */
 
 import {ContextValue} from 'react-aria-components/slots';
-
 import {createContext, forwardRef, useContext, useRef} from 'react';
 import {
   filledTrack,
@@ -26,21 +25,21 @@ import {
 import {FocusableRef, FocusableRefValue, RangeValue} from '@react-types/shared';
 import {FormContext, useFormProps} from './Form';
 import intlMessages from '../intl/*.json';
-// @ts-ignore
 import {pressScale} from './pressScale';
-import {SliderThumb, SliderTrack} from 'react-aria-components/Slider';
+import {SliderFill, SliderThumb, SliderTrack} from 'react-aria-components/Slider';
 import {useFocusableRef} from './useDOMRef';
-import {useLocale} from 'react-aria/I18nProvider';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface RangeSliderProps extends Omit<SliderBaseProps<RangeValue<number>>, 'children'> {
   /**
-   * The name of the start input element, used when submitting an HTML form. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefname).
+   * The name of the start input element, used when submitting an HTML form. See
+   * [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefname).
    */
   startName?: string;
   /**
-   * The name of the end input element, used when submitting an HTML form. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefname).
+   * The name of the end input element, used when submitting an HTML form. See
+   * [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefname).
    */
   endName?: string;
   /**
@@ -55,7 +54,8 @@ export const RangeSliderContext =
   createContext<ContextValue<Partial<RangeSliderProps>, FocusableRefValue<HTMLDivElement>>>(null);
 
 /**
- * RangeSliders allow users to quickly select a subset range. They should be used when the upper and lower bounds to the range are invariable.
+ * RangeSliders allow users to quickly select a subset range. They should be used when the upper and
+ * lower bounds to the range are invariable.
  */
 export const RangeSlider = /*#__PURE__*/ forwardRef(function RangeSlider(
   props: RangeSliderProps,
@@ -77,8 +77,6 @@ export const RangeSlider = /*#__PURE__*/ forwardRef(function RangeSlider(
   let inputRef = useRef(null); // TODO: need to pass inputRef to SliderThumb when we release the next version of RAC 1.3.0
   let domRef = useFocusableRef(ref, inputRef);
 
-  let {direction} = useLocale();
-  let cssDirection = direction === 'rtl' ? 'right' : 'left';
   let defaultThumbValues: number[] | undefined = undefined;
   if (props.defaultValue != null) {
     defaultThumbValues = [props.defaultValue.start, props.defaultValue.end];
@@ -98,14 +96,9 @@ export const RangeSlider = /*#__PURE__*/ forwardRef(function RangeSlider(
       <SliderTrack className={track({size, labelPosition, isInForm: !!formContext})}>
         {({state, isDisabled}) => (
           <>
-            <div className={upperTrack({isDisabled, trackStyle})} />
-            <div
-              style={{
-                width: `${Math.abs(state.getThumbPercent(0) - state.getThumbPercent(1)) * 100}%`,
-                [cssDirection]: `${state.getThumbPercent(0) * 100}%`
-              }}
-              className={filledTrack({isDisabled, isEmphasized, trackStyle})}
-            />
+            <div className={upperTrack({isDisabled, trackStyle})}>
+              <SliderFill className={filledTrack({isDisabled, isEmphasized, trackStyle})} />
+            </div>
             <SliderThumb
               className={thumbContainer}
               index={0}

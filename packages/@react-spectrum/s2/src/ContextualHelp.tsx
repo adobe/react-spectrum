@@ -17,7 +17,6 @@ import intlMessages from '../intl/*.json';
 import {mergeProps} from 'react-aria/mergeProps';
 import {mergeStyles} from '../style/runtime';
 import {Placement} from 'react-aria-components/Popover';
-// @ts-ignore
 import {Popover, PopoverDialogProps} from './Popover';
 import {space, style} from '../style' with {type: 'macro'};
 import {StyleProps} from './style-utils' with {type: 'macro'};
@@ -29,7 +28,8 @@ import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface ContextualHelpPopoverProps extends PopoverDialogProps {
   /**
-   * The children of the contextual help popover. Supports Heading, Content, and Footer elements. */
+   * The children of the contextual help popover. Supports Heading, Content, and Footer elements.
+   */
   children: ReactNode;
 }
 
@@ -135,6 +135,7 @@ export interface ContextualHelpProps
     AriaLabelingProps {
   /**
    * The placement of the popover with respect to the action button.
+   *
    * @default 'bottom start'
    */
   placement?: Placement;
@@ -154,7 +155,8 @@ export const ContextualHelpContext =
   );
 
 /**
- * Contextual help shows a user extra information about the state of an adjacent component, or a total view.
+ * Contextual help shows a user extra information about the state of an adjacent component, or a
+ * total view.
  */
 export const ContextualHelp = forwardRef(function ContextualHelp(
   props: ContextualHelpProps,

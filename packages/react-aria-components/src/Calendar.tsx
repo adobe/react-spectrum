@@ -82,6 +82,7 @@ import {VisuallyHidden} from 'react-aria/VisuallyHidden';
 export interface CalendarRenderProps<M extends CalendarSelectionMode = 'single'> {
   /**
    * Whether the calendar is disabled.
+   *
    * @selector [data-disabled]
    */
   isDisabled: boolean;
@@ -91,6 +92,7 @@ export interface CalendarRenderProps<M extends CalendarSelectionMode = 'single'>
   state: CalendarState<M>;
   /**
    * Whether the calendar is invalid.
+   *
    * @selector [data-invalid]
    */
   isInvalid: boolean;
@@ -110,19 +112,23 @@ export interface CalendarProps<T extends DateValue, M extends CalendarSelectionM
     SlotProps,
     GlobalDOMAttributes<HTMLDivElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-Calendar'
    */
   className?: ClassNameOrFunction<CalendarRenderProps<M>>;
   /**
    * The amount of days that will be displayed at once. This affects how pagination works.
-   * @default {months: 1}
+   *
+   * @default { months: 1 }
    */
   visibleDuration?: DateDuration;
   /**
-   * A function to create a new [Calendar](https://react-spectrum.adobe.com/internationalized/date/Calendar.html)
-   * object for a given calendar identifier. If not provided, the `createCalendar` function
-   * from `@internationalized/date` will be used.
+   * A function to create a new
+   * [Calendar](https://react-spectrum.adobe.com/internationalized/date/Calendar.html) object for a
+   * given calendar identifier. If not provided, the `createCalendar` function from
+   * `@internationalized/date` will be used.
    */
   createCalendar?: (identifier: CalendarIdentifier) => ICalendar;
 }
@@ -134,19 +140,23 @@ export interface RangeCalendarProps<T extends DateValue>
     SlotProps,
     GlobalDOMAttributes<HTMLDivElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-RangeCalendar'
    */
   className?: ClassNameOrFunction<RangeCalendarRenderProps>;
   /**
    * The amount of days that will be displayed at once. This affects how pagination works.
-   * @default {months: 1}
+   *
+   * @default { months: 1 }
    */
   visibleDuration?: DateDuration;
   /**
-   * A function to create a new [Calendar](https://react-spectrum.adobe.com/internationalized/date/Calendar.html)
-   * object for a given calendar identifier. If not provided, the `createCalendar` function
-   * from `@internationalized/date` will be used.
+   * A function to create a new
+   * [Calendar](https://react-spectrum.adobe.com/internationalized/date/Calendar.html) object for a
+   * given calendar identifier. If not provided, the `createCalendar` function from
+   * `@internationalized/date` will be used.
    */
   createCalendar?: (identifier: CalendarIdentifier) => ICalendar;
 }
@@ -248,7 +258,8 @@ export const Calendar = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ca
 });
 
 /**
- * A range calendar displays one or more date grids and allows users to select a contiguous range of dates.
+ * A range calendar displays one or more date grids and allows users to select a contiguous range of
+ * dates.
  */
 export const RangeCalendar = /*#__PURE__*/ (forwardRef as forwardRefType)(function RangeCalendar<
   T extends DateValue
@@ -338,61 +349,72 @@ export interface CalendarCellRenderProps {
   formattedDate: string;
   /**
    * Whether the cell is currently hovered with a mouse.
+   *
    * @selector [data-hovered]
    */
   isHovered: boolean;
   /**
    * Whether the cell is currently being pressed.
+   *
    * @selector [data-pressed]
    */
   isPressed: boolean;
   /**
    * Whether the cell is selected.
+   *
    * @selector [data-selected]
    */
   isSelected: boolean;
   /**
    * Whether the cell is the first date in a range selection.
+   *
    * @selector [data-selection-start]
    */
   isSelectionStart: boolean;
   /**
    * Whether the cell is the last date in a range selection.
+   *
    * @selector [data-selection-end]
    */
   isSelectionEnd: boolean;
   /**
    * Whether the cell is focused.
+   *
    * @selector [data-focused]
    */
   isFocused: boolean;
   /**
    * Whether the cell is keyboard focused.
+   *
    * @selector [data-focus-visible]
    */
   isFocusVisible: boolean;
   /**
-   * Whether the cell is disabled, according to the calendar's `minValue`, `maxValue`, and `isDisabled` props.
-   * Disabled dates are not focusable, and cannot be selected by the user. They are typically
-   * displayed with a dimmed appearance.
+   * Whether the cell is disabled, according to the calendar's `minValue`, `maxValue`, and
+   * `isDisabled` props. Disabled dates are not focusable, and cannot be selected by the user. They
+   * are typically displayed with a dimmed appearance.
+   *
    * @selector [data-disabled]
    */
   isDisabled: boolean;
   /**
    * Whether the cell is outside the visible range of the calendar.
    * For example, dates before the first day of a month in the same week.
+   *
    * @selector [data-outside-visible-range]
    */
   isOutsideVisibleRange: boolean;
   /**
    * Whether the cell is outside the current month.
+   *
    * @selector [data-outside-month]
    */
   isOutsideMonth: boolean;
   /**
-   * Whether the cell is unavailable, according to the calendar's `isDateUnavailable` prop. Unavailable dates remain
-   * focusable, but cannot be selected by the user. They should be displayed with a visual affordance to indicate they
-   * are unavailable, such as a different color or a strikethrough.
+   * Whether the cell is unavailable, according to the calendar's `isDateUnavailable` prop.
+   * Unavailable dates remain focusable, but cannot be selected by the user. They should be
+   * displayed with a visual affordance to indicate they are unavailable, such as a different color
+   * or a strikethrough.
    *
    * Note that because they are focusable, unavailable dates must meet a 4.5:1 color contrast ratio,
    * [as defined by WCAG](https://www.w3.org/WAI/WCAG21/Understanding/contrast-minimum.html).
@@ -402,11 +424,13 @@ export interface CalendarCellRenderProps {
   isUnavailable: boolean;
   /**
    * Whether the cell is part of an invalid selection.
+   *
    * @selector [data-invalid]
    */
   isInvalid: boolean;
   /**
    * Whether the cell is today.
+   *
    * @selector [data-today]
    */
   isToday: boolean;
@@ -415,7 +439,9 @@ export interface CalendarCellRenderProps {
 export interface CalendarGridProps
   extends StyleProps, DOMRenderProps<'table', undefined>, GlobalDOMAttributes<HTMLTableElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element.
+   *
    * @default 'react-aria-CalendarGrid'
    */
   className?: string;
@@ -434,7 +460,8 @@ export interface CalendarGridProps
   /**
    * The style of weekday names to display in the calendar grid header,
    * e.g. single letter, abbreviation, or full day name.
-   * @default "narrow"
+   *
+   * @default 'narrow'
    */
   weekdayStyle?: 'narrow' | 'short' | 'long';
 }
@@ -510,7 +537,9 @@ export interface CalendarGridHeaderProps
     DOMRenderProps<'thead', undefined>,
     GlobalDOMAttributes<HTMLTableSectionElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element.
+   *
    * @default 'react-aria-CalendarGridHeader'
    */
   className?: string;
@@ -552,7 +581,9 @@ export interface CalendarHeaderCellProps
     DOMRenderProps<'th', undefined>,
     GlobalDOMAttributes<HTMLTableHeaderCellElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element.
+   *
    * @default 'react-aria-CalendarHeaderCell'
    */
   className?: string;
@@ -588,7 +619,9 @@ export interface CalendarGridBodyProps
     DOMRenderProps<'tbody', undefined>,
     GlobalDOMAttributes<HTMLTableSectionElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element.
+   *
    * @default 'react-aria-CalendarGridBody'
    */
   className?: string;
@@ -639,7 +672,9 @@ export interface CalendarCellProps
     HoverEvents,
     GlobalDOMAttributes<HTMLTableCellElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-CalendarCell'
    */
   className?: ClassNameOrFunction<CalendarCellRenderProps>;
@@ -762,7 +797,9 @@ export function CalendarMonthPicker(props: CalendarMonthPickerProps): JSX.Elemen
 
 export interface CalendarHeadingProps extends AriaCalendarHeadingProps, HeadingProps {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element.
+   *
    * @default 'react-aria-CalendarHeading'
    */
   className?: string;

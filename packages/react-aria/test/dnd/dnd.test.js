@@ -25,6 +25,7 @@ import {Draggable, Droppable} from './examples';
 import {DragTypes} from '../../src/dnd/utils';
 import React, {useEffect} from 'react';
 import ReactDOM from 'react-dom';
+import {setMedia} from 'mock-match-media';
 import userEvent from '@testing-library/user-event';
 
 function pointerEvent(type, opts) {
@@ -3239,7 +3240,7 @@ describe('useDrag and useDrop', function () {
     });
 
     it('should use touch specific aria descriptions when available', async () => {
-      window.ontouchstart = () => {};
+      setMedia({pointer: 'coarse'});
 
       let tree = render(
         <>
@@ -3273,8 +3274,6 @@ describe('useDrag and useDrop', function () {
       expect(document.getElementById(droppable.getAttribute('aria-describedby'))).toHaveTextContent(
         'Double tap to drop.'
       );
-
-      delete window.ontouchstart;
     });
   });
 });

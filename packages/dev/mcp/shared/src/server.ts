@@ -9,13 +9,30 @@ import {z} from 'zod';
 export async function startServer(
   library: Library,
   version: string,
-  registerAdditionalTools?: (server: McpServer) => void | Promise<void>
+  options: {
+    additionalLibraries?: Library[];
+    registerAdditionalTools?: (server: McpServer) => void | Promise<void>;
+  } = {}
 ) {
   const server = new McpServer({
     name: library === 's2' ? 's2-docs-server' : 'react-aria-docs-server',
     version
   });
 
+  const libraries: Library[] = [library, ...(options.additionalLibraries ?? [])];
+  for (const lib of libraries) {
+    await registerLibraryDocsTools(server, lib);
+  }
+
+  if (options.registerAdditionalTools) {
+    await options.registerAdditionalTools(server);
+  }
+
+  const transport = new StdioServerTransport();
+  await server.connect(transport);
+}
+
+async function registerLibraryDocsTools(server: McpServer, library: Library) {
   // Build page index at startup.
   try {
     await buildPageIndex(library);
@@ -33,7 +50,8 @@ export async function startServer(
           ? 'List React Spectrum (@react-spectrum/s2) docs pages'
           : 'List React Aria docs pages',
       description: `Returns a list of available pages in the ${library} docs.`,
-      inputSchema: {includeDescription: z.boolean().optional()}
+      inputSchema: {includeDescription: z.boolean().optional()},
+      annotations: {readOnlyHint: true, openWorldHint: true}
     },
     async ({includeDescription}) => {
       const pages = await buildPageIndex(library);
@@ -53,7 +71,8 @@ export async function startServer(
     {
       title: 'Get page info',
       description: 'Returns page description and list of sections for a given page.',
-      inputSchema: {page_name: z.string()}
+      inputSchema: {page_name: z.string()},
+      annotations: {readOnlyHint: true, openWorldHint: true}
     },
     async ({page_name}) => {
       const ref = await resolvePageRef(library, page_name);
@@ -73,7 +92,8 @@ export async function startServer(
       title: 'Get page markdown',
       description:
         'Returns the full markdown content for a page, or a specific section if provided.',
-      inputSchema: {page_name: z.string(), section_name: z.string().optional()}
+      inputSchema: {page_name: z.string(), section_name: z.string().optional()},
+      annotations: {readOnlyHint: true, openWorldHint: true}
     },
     async ({page_name, section_name}) => {
       const ref = await resolvePageRef(library, page_name);
@@ -100,11 +120,4 @@ export async function startServer(
       return {content: [{type: 'text', text: snippet}]} as const;
     }
   );
-
-  if (registerAdditionalTools) {
-    await registerAdditionalTools(server);
-  }
-
-  const transport = new StdioServerTransport();
-  await server.connect(transport);
 }

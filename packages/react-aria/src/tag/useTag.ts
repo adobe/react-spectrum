@@ -11,7 +11,6 @@
  */
 
 import {AriaButtonProps} from '../button/useButton';
-
 import {DOMAttributes, FocusableElement, Node, RefObject} from '@react-types/shared';
 import {filterDOMProps} from '../utils/filterDOMProps';
 import {hookData} from './useTagGroup';
@@ -19,7 +18,6 @@ import intlMessages from '../../intl/tag/*.json';
 import {KeyboardEvent} from 'react';
 import type {ListState} from 'react-stately/useListState';
 import {mergeProps} from '../utils/mergeProps';
-// @ts-ignore
 import {SelectableItemStates} from '../selection/useSelectableItem';
 import {useDescription} from '../utils/useDescription';
 import {useFocusable} from '../interactions/useFocusable';
@@ -47,6 +45,7 @@ export interface AriaTagProps<T> {
 
 /**
  * Provides the behavior and accessibility implementation for a tag component.
+ *
  * @param props - Props to be applied to the tag.
  * @param state - State for the tag group, as returned by `useListState`.
  * @param ref - A ref to a DOM element for the tag.
