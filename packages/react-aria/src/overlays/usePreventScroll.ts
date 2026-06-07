@@ -143,12 +143,7 @@ function preventScrollMobileSafari() {
   if (nonce) {
     style.nonce = nonce;
   }
-  style.textContent = `
-@layer {
-  * {
-    overscroll-behavior: contain;
-  }
-}`.trim();
+  style.textContent='@layer{*{overscroll-behavior:contain}}'
   document.head.prepend(style);
 
   let onTouchMove = (e: TouchEvent) => {
