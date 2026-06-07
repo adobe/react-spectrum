@@ -42,9 +42,15 @@ export function useId(defaultId?: string): string {
 
   let res = useSSRSafeId(value);
   let cleanupRef = useRef(null);
+  let registeredRef = useRef<string | null>(null);
+  let cleanupTokenRef = useRef<any>(undefined);
 
   if (registry) {
-    registry.register(cleanupRef, res);
+    if (registeredRef.current !== res) {
+      cleanupTokenRef.current = {};
+      registry.register(cleanupRef, res, cleanupTokenRef.current);
+      registeredRef.current = res;
+    }
   }
 
   if (canUseDOM) {
@@ -58,11 +64,12 @@ export function useId(defaultId?: string): string {
 
   useLayoutEffect(() => {
     let r = res;
+    let token = cleanupTokenRef.current;
     return () => {
       // In Suspense, the cleanup function may be not called
       // when it is though, also remove it from the finalization registry.
-      if (registry) {
-        registry.unregister(cleanupRef);
+      if (registry && token) {
+        registry.unregister(token);
       }
       idsUpdaterMap.delete(r);
     };
