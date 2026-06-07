@@ -14,9 +14,9 @@ import {Collection} from 'react-aria/Collection';
 import {expect, it, vi} from 'vitest';
 import {ListBox, ListBoxItem, ListBoxLoadMoreItem} from '../src/ListBox';
 import {ListLayout} from 'react-stately/useVirtualizerState';
-import React from 'react';
-import {useAsyncList} from 'react-stately/useAsyncList';
+import React, {act} from 'react';
 import {render} from 'vitest-browser-react';
+import {useAsyncList} from 'react-stately/useAsyncList';
 import {User} from '@react-aria/test-utils';
 import {userEvent} from 'vitest/browser';
 import {Virtualizer} from '../src/Virtualizer';
@@ -163,7 +163,7 @@ it('moves focus and scrolls to the last loaded item with End in a virtualized as
   await vi.waitFor(() => {
     expect(listbox.querySelector('[role=option]')?.textContent).toBe('Item 0');
   });
-  listbox.focus();
+  act(() => listbox.focus());
 
   for (let page = 1; page <= 6; page++) {
     await userEvent.keyboard('{End}');
@@ -181,7 +181,7 @@ it('keeps the focused item visible while paging through a virtualized async list
   await vi.waitFor(() => {
     expect(listbox.querySelector('[role=option]')?.textContent).toBe('Item 0');
   });
-  listbox.focus();
+  act(() => listbox.focus());
 
   for (let i = 0; i < 40; i++) {
     await userEvent.keyboard('{PageDown}');
