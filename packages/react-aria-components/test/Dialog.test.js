@@ -107,7 +107,7 @@ describe('Dialog', () => {
     let button = getByRole('button');
     let dialogTester = testUtilUser.createTester('Dialog', {root: button, overlayType: 'modal'});
     await dialogTester.open();
-    let dialog = dialogTester.dialog;
+    let dialog = dialogTester.getDialog();
     expect(dialog).toHaveAttribute('role', 'alertdialog');
     expect(dialog).toHaveAttribute('aria-describedby');
     let descId = dialog.getAttribute('aria-describedby');
