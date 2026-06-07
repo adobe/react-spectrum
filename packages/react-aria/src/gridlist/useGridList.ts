@@ -74,7 +74,7 @@ export interface AriaGridListProps<T> extends GridListProps<T>, DOMProps, AriaLa
 export interface AriaGridListOptions<T> extends Omit<AriaGridListProps<T>, 'children'> {
   /** Whether the list uses virtual scrolling. */
   isVirtualized?: boolean;
-  /** @private Refreshes the virtualizer visible rect after programmatic scrolling. */
+  /** @private Refreshes The virtualizer visible rect after programmatic scrolling. */
   UNSTABLE_virtualizerRefresh?: () => void;
   /**
    * Whether typeahead navigation is disabled.

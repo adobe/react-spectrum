@@ -16,22 +16,26 @@ import {Rect} from '../../src/virtualizer/Rect';
 import {Size} from '../../src/virtualizer/Size';
 
 function makeCollection(itemCount: number) {
-  let items: Node<unknown>[] = Array.from({length: itemCount}, (_, index) => ({
-    type: 'item',
-    key: index,
-    value: null,
-    level: 0,
-    hasChildNodes: false,
-    rendered: null,
-    textValue: `Item ${index}`,
-    'aria-label': undefined,
-    index,
-    parentKey: null,
-    prevKey: index > 0 ? index - 1 : null,
-    nextKey: index < itemCount - 1 ? index + 1 : null,
-    childNodes: [],
-    props: {}
-  } as unknown as Node<unknown>));
+  let items: Node<unknown>[] = Array.from(
+    {length: itemCount},
+    (_, index) =>
+      ({
+        type: 'item',
+        key: index,
+        value: null,
+        level: 0,
+        hasChildNodes: false,
+        rendered: null,
+        textValue: `Item ${index}`,
+        'aria-label': undefined,
+        index,
+        parentKey: null,
+        prevKey: index > 0 ? index - 1 : null,
+        nextKey: index < itemCount - 1 ? index + 1 : null,
+        childNodes: [],
+        props: {}
+      }) as unknown as Node<unknown>
+  );
 
   return {
     size: items.length,
@@ -86,7 +90,9 @@ describe('ListLayout', () => {
       layoutOptionsChanged: true
     });
 
-    expect(layout.getVisibleLayoutInfos(virtualizer.visibleRect).map(info => info.key)).toContain(74);
+    expect(layout.getVisibleLayoutInfos(virtualizer.visibleRect).map(info => info.key)).toContain(
+      74
+    );
 
     // Simulate a previous random access such as End, which can expand the requested rect
     // to the full content size before additional async items are appended.

@@ -112,7 +112,11 @@ export interface AriaSelectableCollectionOptions {
    * Whether the collection items are contained in a virtual scroller.
    */
   isVirtualized?: boolean;
-  /** @private Refreshes the virtualizer visible rect after programmatic scrolling. */
+  /**
+   * Refreshes the virtualizer visible rect after programmatic scrolling.
+   *
+   * @private
+   */
   UNSTABLE_virtualizerRefresh?: () => void;
   /**
    * The ref attached to the scrollable body. Used to provide automatic scrolling on item focus for

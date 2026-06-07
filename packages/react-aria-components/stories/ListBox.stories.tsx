@@ -948,7 +948,8 @@ export const AsyncListBoxVirtualizedEndKey: StoryFn<typeof AsyncListBoxRender> =
   return (
     <div style={{display: 'flex', flexDirection: 'column', gap: 8}}>
       <p style={{margin: 0, maxWidth: 520}}>
-        Focus the listbox, press End, wait for more items to load, and repeat. The focused item should move to the last loaded item and scroll into view after each load.
+        Focus the listbox, press End, wait for more items to load, and repeat. The focused item
+        should move to the last loaded item and scroll into view after each load.
       </p>
       <Virtualizer
         layout={ListLayout}

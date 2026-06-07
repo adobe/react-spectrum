@@ -37,7 +37,7 @@ import {useSelectableCollection} from '../selection/useSelectableCollection';
 export interface GridProps extends DOMProps, AriaLabelingProps {
   /** Whether the grid uses virtual scrolling. */
   isVirtualized?: boolean;
-  /** @private Refreshes the virtualizer visible rect after programmatic scrolling. */
+  /** @private Refreshes The virtualizer visible rect after programmatic scrolling. */
   UNSTABLE_virtualizerRefresh?: () => void;
   /**
    * Whether typeahead navigation is disabled.

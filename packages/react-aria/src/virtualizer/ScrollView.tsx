@@ -143,7 +143,10 @@ export function useScrollView(
 
   let updateScrollPosition = useCallback(() => {
     state.scrollPosition = new Point(
-      Math.max(0, Math.min(getScrollLeft(ref.current!, direction), contentSize.width - state.size.width)),
+      Math.max(
+        0,
+        Math.min(getScrollLeft(ref.current!, direction), contentSize.width - state.size.width)
+      ),
       Math.max(0, Math.min(ref.current!.scrollTop, contentSize.height - state.size.height))
     );
   }, [contentSize, direction, ref, state]);

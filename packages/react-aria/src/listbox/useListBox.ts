@@ -82,7 +82,7 @@ export interface ListBoxAria {
 export interface AriaListBoxOptions<T> extends Omit<AriaListBoxProps<T>, 'children'> {
   /** Whether the listbox uses virtual scrolling. */
   isVirtualized?: boolean;
-  /** @private Refreshes the virtualizer visible rect after programmatic scrolling. */
+  /** @private Refreshes The virtualizer visible rect after programmatic scrolling. */
   UNSTABLE_virtualizerRefresh?: () => void;
 
   /**

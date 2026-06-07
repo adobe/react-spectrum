@@ -102,7 +102,9 @@ function AsyncVirtualizedListBox() {
             </ListBoxItem>
           )}
         </Collection>
-        <ListBoxLoadMoreItem isLoading={list.loadingState === 'loadingMore'} onLoadMore={list.loadMore}>
+        <ListBoxLoadMoreItem
+          isLoading={list.loadingState === 'loadingMore'}
+          onLoadMore={list.loadMore}>
           Loading...
         </ListBoxLoadMoreItem>
       </ListBox>
