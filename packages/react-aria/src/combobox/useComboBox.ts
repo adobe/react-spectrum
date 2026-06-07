@@ -53,6 +53,7 @@ import {privateValidationStateProp} from 'react-stately/private/form/useFormVali
 import {useEvent} from '../utils/useEvent';
 import {useFormReset} from '../utils/useFormReset';
 import {useId} from '../utils/useId';
+import {useInteractOutside} from '../interactions/useInteractOutside';
 import {useLabels} from '../utils/useLabels';
 import {useLocalizedStringFormatter} from '../i18n/useLocalizedStringFormatter';
 import {useMenuTrigger} from '../menu/useMenuTrigger';
@@ -456,6 +457,20 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(
         }
       : undefined
   );
+
+  // usePopover -> useOverlay calls useInteractOutside, but ComboBox is non-modal, so `isDismissable` is false
+  // Because of this, onInteractOutside is not passed to useInteractOutside, so we need to call it here.
+  useInteractOutside({
+    ref: popoverRef,
+    onInteractOutside: (e) => {
+      let target = getEventTarget(e) as Element;
+      if (nodeContains(buttonRef?.current, target) || nodeContains(inputRef.current, target)) {
+        return;
+      }
+      state.close();
+    },
+    isDisabled: !state.isOpen
+  });
 
   return {
     labelProps,
