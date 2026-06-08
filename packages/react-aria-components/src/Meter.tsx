@@ -11,6 +11,7 @@
  */
 
 import {AriaMeterProps, useMeter} from 'react-aria/useMeter';
+import {useNumberFormatter} from 'react-aria/useNumberFormatter';
 
 import {clamp} from 'react-stately/private/utils/number';
 import {
@@ -59,6 +60,8 @@ export interface MeterRenderProps {
 
 export const MeterContext = createContext<ContextValue<MeterProps, HTMLDivElement>>(null);
 
+const DEFAULT_FORMAT_OPTIONS: Intl.NumberFormatOptions = {style: 'percent'};
+
 /**
  * A meter represents a quantity within a known range, or a fractional value.
  */
@@ -69,12 +72,19 @@ export const Meter = /*#__PURE__*/ (forwardRef as forwardRefType)(function Meter
   [props, ref] = useContextProps(props, ref, MeterContext);
   let {value = 0, minValue = 0, maxValue = 100} = props;
   value = clamp(value, minValue, maxValue);
+  let range = maxValue - minValue;
+  let formatOptions = props.formatOptions ?? DEFAULT_FORMAT_OPTIONS;
+  let formatter = useNumberFormatter(formatOptions);
 
   let [labelRef, label] = useSlot(!props['aria-label'] && !props['aria-labelledby']);
-  let {meterProps, labelProps} = useMeter({...props, label});
+  let valueLabel =
+    range === 0 && !props.valueLabel && formatOptions.style === 'percent'
+      ? formatter.format(0)
+      : props.valueLabel;
+  let {meterProps, labelProps} = useMeter({...props, label, valueLabel});
 
   // Calculate the width of the progress bar as a percentage
-  let percentage = ((value - minValue) / (maxValue - minValue)) * 100;
+  let percentage = range === 0 ? 0 : ((value - minValue) / range) * 100;
 
   let renderProps = useRenderProps({
     ...props,
