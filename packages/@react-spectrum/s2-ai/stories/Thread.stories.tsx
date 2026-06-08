@@ -402,8 +402,7 @@ export function StreamingThread() {
               overflow: 'auto',
               padding: 8,
               scrollPadding: 8,
-              rowGap: 16,
-              alignItems: 'start'
+              rowGap: 16
             })}>
             {(msg: StreamingMessage) => {
               if (msg.type === 'user') {
@@ -411,7 +410,12 @@ export function StreamingThread() {
                 return (
                   <ThreadItem
                     textValue={msg.content}
-                    className={style({...focusRing(), borderRadius: 'default', alignSelf: 'end'})}>
+                    className={style({
+                      ...focusRing(),
+                      borderRadius: 'default',
+                      display: 'flex',
+                      justifyContent: 'end'
+                    })}>
                     <UserMessage>{msg.content}</UserMessage>
                   </ThreadItem>
                 );
@@ -534,7 +538,12 @@ export function VirtualizedThread() {
               return (
                 <ThreadItem
                   textValue={msg.content}
-                  className={style({...focusRing(), borderRadius: 'lg', alignSelf: 'end'})}>
+                  className={style({
+                    ...focusRing(),
+                    borderRadius: 'lg',
+                    display: 'flex',
+                    justifyContent: 'end'
+                  })}>
                   <UserMessage>{msg.content}</UserMessage>
                 </ThreadItem>
               );

@@ -82,7 +82,22 @@ export const Thread = /*#__PURE__*/ (forwardRef as forwardRefType)(function Thre
 
   let scrollRef = useRef<HTMLElement | null>(null);
   let scrollToBottom = useCallback(() => {
-    scrollRef.current?.scrollTo({top: 0, behavior: 'smooth'});
+    let el = scrollRef.current;
+    if (!el) {
+      return;
+    }
+    // TODO: will need some kind of api to programatically set the focused item to
+    // the newest item in the gridlist in the virtualizer case. this works for
+    // non-virtualized for now though
+    el.addEventListener(
+      'scrollend',
+      () => {
+        let firstRow = el.querySelector<HTMLElement>('[role="row"]');
+        (firstRow ?? el).focus();
+      },
+      {once: true}
+    );
+    el.scrollTo({top: 0, behavior: 'smooth'});
   }, []);
   let [isNearBottom, setIsNearBottom] = useState(true);
 
