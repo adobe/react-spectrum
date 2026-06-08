@@ -29,14 +29,59 @@ function replace(segments: TokenFieldSegment[], start: Position, end: Position, 
   return new TokenSegmentList(segments).replaceRange(start, end, insert);
 }
 
+class TokenizingSegmentList extends TokenSegmentList {
+  tokenRegex: RegExp;
+
+  constructor(tokens: TokenFieldSegment[], tokenRegex: RegExp) {
+    super(tokens);
+    this.tokenRegex = tokenRegex;
+  }
+
+  static tokenize(text: string, tokenRegex: RegExp): TokenSegmentList {
+    let list = new this([], tokenRegex);
+    let segments = list.tokenize(text);
+    return new this(segments, tokenRegex);
+  }
+
+  createSegmentList(segments: TokenFieldSegment[]): TokenSegmentList {
+    return new TokenizingSegmentList(segments, this.tokenRegex);
+  }
+
+  tokenize(text: string): TokenFieldSegment[] {
+    if (text.length === 0) {
+      return [{type: 'text', text}];
+    }
+
+    let tokenRegex = this.tokenRegex;
+    tokenRegex.lastIndex = 0;
+
+    let match: RegExpExecArray | null = null;
+    let start = 0;
+    let segments: TokenFieldSegment[] = [];
+    while ((match = tokenRegex.exec(text))) {
+      if (match.index > start) {
+        segments.push({type: 'text', text: text.slice(start, match.index)});
+      }
+      segments.push({type: 'token', text: match[0]});
+      start = match.index + match[0].length;
+    }
+
+    if (start < text.length) {
+      segments.push({type: 'text', text: text.slice(start)});
+    }
+
+    return segments;
+  }
+}
+
 function replaceWithRegex(
   segments: TokenFieldSegment[],
   start: Position,
   end: Position,
   insert: string,
-  regex: RegExp | null
+  regex: RegExp
 ) {
-  return new TokenSegmentList(segments, {tokenRegex: regex}).replaceRange(start, end, insert);
+  return new TokenizingSegmentList(segments, regex).replaceRange(start, end, insert);
 }
 
 function replaceSeg(
@@ -53,13 +98,9 @@ function replaceSegWithRegex(
   start: Position,
   end: Position,
   insert: TokenFieldSegment[],
-  regex: RegExp | null
+  regex: RegExp
 ) {
-  return new TokenSegmentList(segments, {tokenRegex: regex}).replaceRangeWithSegments(
-    start,
-    end,
-    insert
-  );
+  return new TokenizingSegmentList(segments, regex).replaceRangeWithSegments(start, end, insert);
 }
 
 describe('TokenSegmentList', () => {
@@ -695,6 +736,148 @@ describe('TokenSegmentList', () => {
     });
   });
 
+  describe('findText', () => {
+    describe('string search', () => {
+      it('finds text forward in same segment', () => {
+        let list = new TokenSegmentList([text('hello world')]);
+        expect(list.findText({index: 0, offset: 0}, Direction.Forward, 'world')).toEqual({
+          index: 0,
+          offset: 6
+        });
+      });
+
+      it('finds text forward starting at caret offset', () => {
+        let list = new TokenSegmentList([text('hello hello')]);
+        expect(list.findText({index: 0, offset: 6}, Direction.Forward, 'hello')).toEqual({
+          index: 0,
+          offset: 6
+        });
+      });
+
+      it('finds text backward in same segment', () => {
+        let list = new TokenSegmentList([text('hello world')]);
+        expect(list.findText({index: 0, offset: 11}, Direction.Backward, 'hello')).toEqual({
+          index: 0,
+          offset: 0
+        });
+      });
+
+      it('finds text backward before caret offset', () => {
+        let list = new TokenSegmentList([text('hello hello')]);
+        expect(list.findText({index: 0, offset: 6}, Direction.Backward, 'hello')).toEqual({
+          index: 0,
+          offset: 0
+        });
+      });
+
+      it('finds text in a later segment when searching forward', () => {
+        let list = new TokenSegmentList([text('ab'), token('T'), text('cd')]);
+        expect(list.findText({index: 0, offset: 2}, Direction.Forward, 'cd')).toEqual({
+          index: 2,
+          offset: 0
+        });
+      });
+
+      it('finds text in an earlier segment when searching backward', () => {
+        let list = new TokenSegmentList([text('ab'), token('T'), text('cd')]);
+        expect(list.findText({index: 2, offset: 0}, Direction.Backward, 'ab')).toEqual({
+          index: 0,
+          offset: 0
+        });
+      });
+
+      it('returns null when not found', () => {
+        let list = new TokenSegmentList([text('hello')]);
+        expect(list.findText({index: 0, offset: 0}, Direction.Forward, 'x')).toBeNull();
+      });
+
+      it('returns null for empty list', () => {
+        let list = new TokenSegmentList([]);
+        expect(list.findText({index: 0, offset: 0}, Direction.Forward, 'a')).toBeNull();
+      });
+    });
+
+    describe('regex search', () => {
+      it('finds regex forward in same segment', () => {
+        let list = new TokenSegmentList([text('hello @alice world')]);
+        expect(list.findText({index: 0, offset: 0}, Direction.Forward, / @/)).toEqual({
+          index: 0,
+          offset: 5
+        });
+      });
+
+      it('finds regex backward for mention anchor', () => {
+        let list = new TokenSegmentList([text('hello @alice')]);
+        expect(list.findText({index: 0, offset: 13}, Direction.Backward, / @/)).toEqual({
+          index: 0,
+          offset: 5
+        });
+      });
+
+      it('finds regex forward starting at caret offset', () => {
+        let list = new TokenSegmentList([text('a @b @c')]);
+        expect(list.findText({index: 0, offset: 4}, Direction.Forward, / @\w/)).toEqual({
+          index: 0,
+          offset: 4
+        });
+      });
+
+      it('finds last regex match backward before caret', () => {
+        let list = new TokenSegmentList([text('a @b @c')]);
+        expect(list.findText({index: 0, offset: 7}, Direction.Backward, / @\w/)).toEqual({
+          index: 0,
+          offset: 4
+        });
+      });
+
+      it('finds regex in a later segment when searching forward', () => {
+        let list = new TokenSegmentList([text('no match '), text('@here')]);
+        expect(list.findText({index: 0, offset: 9}, Direction.Forward, /@\w+/)).toEqual({
+          index: 1,
+          offset: 0
+        });
+      });
+
+      it('does not mutate global regex lastIndex', () => {
+        let re = / @/g;
+        let list = new TokenSegmentList([text(' @ @')]);
+        list.findText({index: 0, offset: 4}, Direction.Backward, re);
+        expect(re.lastIndex).toBe(0);
+      });
+
+      it('returns null when regex does not match', () => {
+        let list = new TokenSegmentList([text('hello')]);
+        expect(list.findText({index: 0, offset: 5}, Direction.Backward, / @/)).toBeNull();
+      });
+    });
+
+    describe('findLineBoundary', () => {
+      it('finds newline via findText when searching backward', () => {
+        let list = new TokenSegmentList([text('hello\nworld')]);
+        expect(list.findLineBoundary({index: 0, offset: 8}, Direction.Backward)).toEqual({
+          index: 0,
+          offset: 5
+        });
+      });
+
+      it('falls back to document start when no newline before caret', () => {
+        let list = new TokenSegmentList([text('hello')]);
+        expect(list.findLineBoundary({index: 0, offset: 3}, Direction.Backward)).toEqual({
+          index: 0,
+          offset: 0
+        });
+      });
+
+      it('falls back to document end when no newline after caret', () => {
+        let list = new TokenSegmentList([text('hello')]);
+        expect(list.findLineBoundary({index: 0, offset: 3}, Direction.Forward)).toEqual({
+          index: 0,
+          offset: 5
+        });
+      });
+    });
+  });
+
   describe('deleteLine (forward)', () => {
     it('deletes from caret through character before newline in same segment', () => {
       let list = new TokenSegmentList([text('hello\nworld')]);
@@ -822,11 +1005,7 @@ describe('TokenSegmentList', () => {
 
     it('undo restores the prior list and redo returns to the newer list', () => {
       let initial = new TokenSegmentList([text('hello')]);
-      let updated = initial.replaceRange(
-        {index: 0, offset: 0},
-        {index: 0, offset: 5},
-        'hi'
-      );
+      let updated = initial.replaceRange({index: 0, offset: 0}, {index: 0, offset: 5}, 'hi');
       expect(updated.toString()).toBe('hi');
       let undone = updated.undo();
       expect(undone).toBe(initial);
@@ -894,12 +1073,7 @@ describe('TokenSegmentList', () => {
     it('replaceRange with coalesce false does not merge into the prior coalesced group', () => {
       let empty = new TokenSegmentList([text('')]);
       let afterA = empty.replaceRange({index: 0, offset: 0}, {index: 0, offset: 0}, 'a');
-      let afterAB = afterA.replaceRange(
-        {index: 0, offset: 1},
-        {index: 0, offset: 1},
-        'b',
-        false
-      );
+      let afterAB = afterA.replaceRange({index: 0, offset: 1}, {index: 0, offset: 1}, 'b', false);
       expect(afterAB.toString()).toBe('ab');
       expect(afterAB.undo()).toBe(afterA);
       expect(afterA.undo()).toBe(empty);
@@ -937,7 +1111,7 @@ describe('TokenSegmentList', () => {
     });
   });
 
-  describe('tokenRegex', () => {
+  describe('tokenize', () => {
     const mentionRe = /@\S+(?=\s)/g;
 
     it('tokenizes mention when trailing space is part of the insert (lookahead in window)', () => {
@@ -974,26 +1148,6 @@ describe('TokenSegmentList', () => {
       );
       expect(value).toEqual([token('@a'), text(' '), token('@b'), text(' ')]);
       expect(caret).toEqual({index: 3, offset: 1});
-    });
-
-    it('with tokenRegex null, behaves like replace without tokenization', () => {
-      let withRegex = replaceWithRegex(
-        [text('hello  world')],
-        {index: 0, offset: 6},
-        {index: 0, offset: 6},
-        '@alice ',
-        mentionRe
-      );
-      let withNull = replaceWithRegex(
-        [text('hello  world')],
-        {index: 0, offset: 6},
-        {index: 0, offset: 6},
-        '@alice ',
-        null
-      );
-      expect(withRegex.segments).not.toEqual(withNull.segments);
-      expect(withNull.segments).toEqual([text('hello @alice  world')]);
-      expect(withNull.caretPosition).toEqual({index: 0, offset: 13});
     });
 
     it('does not run tokenization on empty insert even when pattern would match full string', () => {

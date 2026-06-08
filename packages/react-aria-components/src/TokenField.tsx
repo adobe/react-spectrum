@@ -1,8 +1,17 @@
 import {announce} from 'react-aria/private/live-announcer/LiveAnnouncer';
-import {Direction, Position, TokenFieldSegment, TokenSegmentList} from './TokenSegmentList';
+import {
+  Direction,
+  Position,
+  TokenFieldSegment,
+  TokenSegment,
+  TokenSegmentList
+} from './TokenSegmentList';
+import {dom, RenderProps, StyleRenderProps, useRenderProps} from './utils';
 import {FieldInputContext} from './Autocomplete';
+import {FocusableProps} from '@react-types/shared';
 import {isCtrlKeyPressed} from 'react-aria/private/utils/keyboard';
 import {isMac} from 'react-aria/private/utils/platform';
+import {mergeProps} from 'react-aria/mergeProps';
 import {mergeRefs} from 'react-aria/mergeRefs';
 import React, {
   ForwardedRef,
@@ -13,10 +22,10 @@ import React, {
   useRef,
   useState
 } from 'react';
-import {RenderProps, StyleRenderProps, useRenderProps} from './utils';
 import {SlotProps, useSlottedContext} from './utils';
 import {useControlledState} from 'react-stately/useControlledState';
 import {useEvent} from 'react-aria/private/utils/useEvent';
+import {useFocusable} from 'react-aria/useFocusable';
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
 import {useObjectRef} from 'react-aria/useObjectRef';
@@ -30,17 +39,20 @@ interface TokenFieldRenderProps {
   isFocusVisible: boolean;
 }
 
-export interface TokenFieldProps extends StyleRenderProps<TokenFieldRenderProps>, SlotProps {
+export interface TokenFieldProps
+  extends StyleRenderProps<TokenFieldRenderProps>, SlotProps, FocusableProps {
   value?: TokenSegmentList;
   defaultValue?: TokenSegmentList;
   onChange?: (value: TokenSegmentList) => void;
-  children: (segment: TokenFieldSegment) => React.ReactElement;
+  children: (segment: TokenSegment) => React.ReactElement;
   multiline?: boolean;
   isReadOnly?: boolean;
   isDisabled?: boolean;
   'aria-label'?: string;
   'aria-labelledby'?: string;
   'aria-describedby'?: string;
+  onPaste?: (e: ClipboardEvent) => void;
+  onSubmit?: () => void;
 }
 
 export const CLIPBOARD_MIME_TYPE = 'application/vnd.react-aria.tokens+json';
@@ -64,7 +76,7 @@ export const TokenField = forwardRef(function TokenField(
 
   let fieldCtx = useSlottedContext(FieldInputContext, props.slot);
   let {
-    value: autocompleteValue,
+    value: _autocompleteValue,
     onChange: onAutocompleteChange,
     ref: autocompleteRef,
     ...autocompleteProps
@@ -137,10 +149,17 @@ export const TokenField = forwardRef(function TokenField(
         );
         break;
       }
-      case 'insertLineBreak':
       case 'insertParagraph': {
-        // apply((tokens) => tokens.replaceRange(start, end, '\n'));
-        apply(tokens => tokens.insertToken(start));
+        if (props.onSubmit) {
+          props.onSubmit();
+          break;
+        }
+        // fallthrough
+      }
+      case 'insertLineBreak': {
+        if (multiline) {
+          apply(tokens => tokens.replaceRange(start, end, '\n'));
+        }
         break;
       }
       case 'deleteContentBackward':
@@ -359,6 +378,7 @@ export const TokenField = forwardRef(function TokenField(
   });
 
   let {isFocused, isFocusVisible, focusProps} = useFocusRing();
+  let {focusableProps} = useFocusable(props, ref);
 
   let renderProps = useRenderProps({
     ...props,
@@ -374,13 +394,18 @@ export const TokenField = forwardRef(function TokenField(
 
   return (
     <div
-      {...renderProps}
-      {...focusProps}
-      {...(autocompleteProps as HTMLAttributes<HTMLDivElement>)}
+      {...mergeProps(
+        renderProps,
+        focusProps,
+        focusableProps,
+        autocompleteProps as HTMLAttributes<HTMLDivElement>,
+        {onPaste: props.onPaste}
+      )}
       ref={mergeRefs(ref, autocompleteRef as any)}
       role="textbox"
       contentEditable="true"
       suppressContentEditableWarning
+      aria-multiline={multiline}
       aria-label={ariaLabel}
       aria-labelledby={ariaLabelledBy}
       aria-describedby={ariaDescribedBy}
@@ -408,7 +433,7 @@ interface TokenRenderProps {
   isDisabled: boolean;
 }
 
-interface TokenProps extends RenderProps<TokenRenderProps> {}
+interface TokenProps extends RenderProps<TokenRenderProps, 'span'> {}
 
 export const Token = forwardRef(function Token(
   props: TokenProps,
@@ -441,7 +466,7 @@ export const Token = forwardRef(function Token(
   });
 
   return (
-    <span
+    <dom.span
       ref={objectRef}
       {...renderProps}
       contentEditable="false"
@@ -453,7 +478,7 @@ export const Token = forwardRef(function Token(
         WebkitUserSelect: 'all'
       }}>
       {renderProps.children}
-    </span>
+    </dom.span>
   );
 });
 

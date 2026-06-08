@@ -1,6 +1,14 @@
-export interface TokenFieldSegment {
-  type: 'token' | 'text';
+export type TokenFieldSegment = TextSegment | TokenSegment;
+
+export interface TextSegment {
+  type: 'text';
   text: string;
+}
+
+export interface TokenSegment {
+  type: 'token';
+  text: string;
+  value?: any;
 }
 
 export interface Position {
@@ -17,6 +25,7 @@ export enum Direction {
 
 export interface TokenSegmentListOptions {
   tokenRegex?: RegExp | null;
+  caretPosition?: Position | null;
 }
 
 /**
@@ -24,7 +33,6 @@ export interface TokenSegmentListOptions {
  */
 export class TokenSegmentList {
   readonly segments: readonly TokenFieldSegment[];
-  readonly tokenRegex: RegExp | null = null;
   caretPosition: Position = {index: 0, offset: 0};
   // Linked list representing the undo/redo history.
   private previous: TokenSegmentList | null = null;
@@ -33,9 +41,15 @@ export class TokenSegmentList {
 
   constructor(tokens: TokenFieldSegment[], options?: TokenSegmentListOptions) {
     this.segments = tokens;
-    if (options && 'tokenRegex' in options) {
-      this.tokenRegex = options.tokenRegex ?? null;
-    }
+    this.caretPosition = options?.caretPosition ?? {index: 0, offset: 0};
+  }
+
+  protected createSegmentList(segments: TokenFieldSegment[]): TokenSegmentList {
+    const Constructor = this.constructor as new (
+      segments: TokenFieldSegment[],
+      options?: TokenSegmentListOptions
+    ) => TokenSegmentList;
+    return new Constructor(segments);
   }
 
   private splitSegment(
@@ -57,34 +71,12 @@ export class TokenSegmentList {
     ];
   }
 
-  private createTextSegment(text: string): TokenFieldSegment {
+  private createTextSegment(text: string): TextSegment {
     return {type: 'text', text};
   }
 
-  private tokenize(text: string): TokenFieldSegment[] {
-    let tokenRegex = this.tokenRegex;
-    if (!tokenRegex || text.length === 0) {
-      return [this.createTextSegment(text)];
-    }
-
-    tokenRegex.lastIndex = 0;
-
-    let match: RegExpExecArray | null = null;
-    let start = 0;
-    let segments: TokenFieldSegment[] = [];
-    while ((match = tokenRegex.exec(text))) {
-      if (match.index > start) {
-        segments.push({type: 'text', text: text.slice(start, match.index)});
-      }
-      segments.push({type: 'token', text: match[0]});
-      start = match.index + match[0].length;
-    }
-
-    if (start < text.length) {
-      segments.push({type: 'text', text: text.slice(start)});
-    }
-
-    return segments;
+  protected tokenize(text: string): TokenFieldSegment[] {
+    return [this.createTextSegment(text)];
   }
 
   private clampPosition(position: Position): Position {
@@ -146,7 +138,7 @@ export class TokenSegmentList {
 
     appendSegments(newSegments, this.segments.slice(end.index + 1));
 
-    if (this.tokenRegex && insert.length > 0) {
+    if (insert.length > 0) {
       let i = caret.index;
       let seg = newSegments[i];
       if (seg?.type === 'text') {
@@ -162,7 +154,7 @@ export class TokenSegmentList {
       }
     }
 
-    let segments = new TokenSegmentList(newSegments);
+    let segments = this.createSegmentList(newSegments);
     segments.caretPosition = caret;
     segments.isCoalescing = coalesce;
     if (this.isCoalescing && coalesce && this.previous) {
@@ -234,6 +226,19 @@ export class TokenSegmentList {
   }
 
   findLineBoundary(position: Position, direction: Direction): Position | null {
+    let res = this.findText(position, direction, '\n');
+    if (res) {
+      return res;
+    }
+    return direction === Direction.Backward
+      ? {index: 0, offset: 0}
+      : {
+          index: this.segments.length - 1,
+          offset: this.segments[this.segments.length - 1].text.length
+        };
+  }
+
+  findText(position: Position, direction: Direction, search: string | RegExp): Position | null {
     if (this.segments.length === 0) {
       return null;
     }
@@ -243,13 +248,12 @@ export class TokenSegmentList {
       if (segment.type !== 'text') {
         continue;
       }
-      let offset =
-        direction === Direction.Backward
-          ? segment.text.lastIndexOf(
-              '\n',
-              i === position.index ? position.offset - 1 : segment.text.length - 1
-            )
-          : segment.text.indexOf('\n', i === position.index ? position.offset : 0);
+      let offset = findInText(
+        segment.text,
+        search,
+        direction,
+        i === position.index ? position.offset : undefined
+      );
       if (offset >= 0) {
         return {
           index: i,
@@ -258,12 +262,7 @@ export class TokenSegmentList {
       }
     }
 
-    return direction === Direction.Backward
-      ? {index: 0, offset: 0}
-      : {
-          index: this.segments.length - 1,
-          offset: this.segments[this.segments.length - 1].text.length
-        };
+    return null;
   }
 
   /** Delete text at a position using a segmenter. */
@@ -326,16 +325,16 @@ export class TokenSegmentList {
     start = this.clampPosition(start);
     end = this.clampPosition(end);
     if (start.index === end.index && start.offset === end.offset) {
-      return new TokenSegmentList([]);
+      return this.createSegmentList([]);
     }
     if (start.index === end.index) {
       let segment = this.segments[start.index];
       if (segment.type === 'text') {
-        return new TokenSegmentList([
+        return this.createSegmentList([
           {type: 'text', text: segment.text.slice(start.offset, end.offset)}
         ]);
       }
-      return new TokenSegmentList([segment]);
+      return this.createSegmentList([segment]);
     }
     let startSegment = this.segments[start.index];
     let endSegment = this.segments[end.index];
@@ -350,7 +349,7 @@ export class TokenSegmentList {
     if (endSplit) {
       result.push(endSplit);
     }
-    return new TokenSegmentList(result);
+    return this.createSegmentList(result);
   }
 
   toString(): string {
@@ -368,6 +367,35 @@ export class TokenSegmentList {
   endCoalescing(): void {
     this.isCoalescing = false;
   }
+}
+
+function findInText(
+  text: string,
+  search: string | RegExp,
+  direction: Direction,
+  fromOffset?: number
+): number {
+  if (typeof search === 'string') {
+    if (direction === Direction.Backward) {
+      return text.lastIndexOf(search, fromOffset !== undefined ? fromOffset - 1 : text.length - 1);
+    }
+    return text.indexOf(search, fromOffset ?? 0);
+  }
+
+  if (direction === Direction.Forward) {
+    let start = fromOffset ?? 0;
+    let index = text.slice(start).search(search);
+    return index >= 0 ? start + index : -1;
+  }
+
+  let limit = fromOffset !== undefined ? fromOffset : text.length;
+  if (limit < 0) {
+    return -1;
+  }
+
+  let re = search.flags.includes('g') ? search : new RegExp(search.source, search.flags + 'g');
+  let matches = Array.from(text.slice(0, limit).matchAll(re));
+  return matches.at(-1)?.index ?? -1;
 }
 
 function appendSegments(

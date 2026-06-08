@@ -479,28 +479,3 @@
     scale: 0.85;
   }
 }
-
-:global(.react-aria-TokenField) {
-  padding: 8px;
-  outline: none;
-
-  &[data-focused] {
-    outline: 2px solid blue;
-  }
-}
-
-:global(.react-aria-Token) {
-  border: 1px solid gray;
-  border-radius: 4px;
-  padding: 0 2px;
-  margin: 0 2px;
-
-  &[data-selected] {
-    background-color: blue;
-    color: white;
-  }
-
-  &::selection {
-    background-color: transparent;
-  }
-}

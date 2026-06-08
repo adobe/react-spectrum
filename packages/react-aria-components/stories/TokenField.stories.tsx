@@ -11,16 +11,21 @@
  */
 
 import {Meta, StoryFn} from '@storybook/react';
-import React, {useMemo, useRef, useState} from 'react';
-import './styles.css';
-import styles from '../example/index.css';
-import {TokenField, Token, positionToDOMRange} from '../src/TokenField';
+import React, {useContext, useMemo, useRef, useState} from 'react';
+import './styles.global.css';
 import {Autocomplete} from '../src/Autocomplete';
-import {Popover} from '../src/Popover';
-import {Menu} from '../src/Menu';
-import {MyMenuItem} from './utils';
-import {flushSync} from 'react-dom';
-import {TokenSegmentList} from '../src/TokenSegmentList';
+import {ChevronDown} from 'lucide-react';
+import {Collection, ComboBox, ComboBoxStateContext} from 'react-aria-components';
+import {ComboBoxItem, ComboBoxListBox} from 'vanilla-starter/ComboBox';
+import {Direction, type TokenFieldSegment, TokenSegmentList} from '../src/TokenSegmentList';
+import {FieldButton, Label} from 'vanilla-starter/Form';
+import {Header, Menu, MenuItem, MenuSection} from 'vanilla-starter/Menu';
+import {InputContext} from 'react-aria-components/Input';
+import {Popover} from 'vanilla-starter/Popover';
+import {positionToDOMRange, Token, TokenField} from '../src/TokenField';
+import 'vanilla-starter/TagGroup.css';
+import {Text} from '../src/Text';
+import {useSlottedContext} from 'react-aria-components/slots';
 
 export default {
   title: 'React Aria Components/TokenField',
@@ -29,87 +34,158 @@ export default {
 
 export type TokenFieldStory = StoryFn<typeof TokenField>;
 
-const sample = new TokenSegmentList([
-  {type: 'token', text: 'Hello'},
-  {type: 'text', text: ' tokens testing '},
-  {type: 'token', text: 'World'},
-  {type: 'token', text: 'Testing'},
-  {type: 'text', text: ' test'}
-]);
+class TokenizingSegmentList extends TokenSegmentList {
+  tokenRegex: RegExp;
 
-const mentionTokenRegex = /(?<=\s|^)@\S+(?=\s)/g;
+  constructor(tokens: TokenFieldSegment[], tokenRegex: RegExp) {
+    super(tokens);
+    this.tokenRegex = tokenRegex;
+  }
 
-export const TokenFieldExample: TokenFieldStory = () => {
+  static tokenize(text: string, tokenRegex: RegExp): TokenSegmentList {
+    let list = new this([], tokenRegex);
+    let segments = list.tokenize(text);
+    return new this(segments, tokenRegex);
+  }
+
+  createSegmentList(segments: TokenFieldSegment[]): TokenSegmentList {
+    return new TokenizingSegmentList(segments, this.tokenRegex);
+  }
+
+  tokenize(text: string): TokenFieldSegment[] {
+    if (text.length === 0) {
+      return [{type: 'text', text}];
+    }
+
+    let tokenRegex = this.tokenRegex;
+    tokenRegex.lastIndex = 0;
+
+    let match: RegExpExecArray | null = null;
+    let start = 0;
+    let segments: TokenFieldSegment[] = [];
+    while ((match = tokenRegex.exec(text))) {
+      if (match.index > start) {
+        segments.push({type: 'text', text: text.slice(start, match.index)});
+      }
+      segments.push({type: 'token', text: match[0]});
+      start = match.index + match[0].length;
+    }
+
+    if (start < text.length) {
+      segments.push({type: 'text', text: text.slice(start)});
+    }
+
+    return segments;
+  }
+}
+
+export const AutoTokenize: TokenFieldStory = () => {
   return (
-    <TokenField defaultValue={sample} aria-label="Message">
+    <TokenField
+      multiline
+      defaultValue={TokenizingSegmentList.tokenize(
+        'This example automatically tokenizes #hashtags and @usernames in the text.',
+        /(?<=\s|^)[#@]\S+(?=\s)/g
+      )}
+      aria-label="Message">
+      {segment => <Token>{segment.text}</Token>}
+    </TokenField>
+  );
+};
+
+export const Template: TokenFieldStory = () => {
+  return (
+    <TokenField
+      multiline
+      defaultValue={TokenizingSegmentList.tokenize(
+        "Hello {{firstName}}, it's nice to meet you!",
+        /(?<=\s|^)\{\{.+?\}\}/g
+      )}
+      aria-label="Message">
       {segment => <Token>{segment.text}</Token>}
     </TokenField>
   );
 };
 
 const usernames = [
-  {id: 1, username: 'alexmiller'},
-  {id: 2, username: 'sarahjones'},
-  {id: 3, username: 'davidkim'},
-  {id: 4, username: 'emmawatson'},
-  {id: 5, username: 'oliverliu'},
-  {id: 6, username: 'ellagreen'},
-  {id: 7, username: 'lucasbrown'},
-  {id: 8, username: 'amandarivera'},
-  {id: 9, username: 'masonlee'},
-  {id: 10, username: 'nataliasmith'},
-  {id: 11, username: 'benjamintaylor'},
-  {id: 12, username: 'zoewilson'},
-  {id: 13, username: 'henrywalker'},
-  {id: 14, username: 'madelineyoung'},
-  {id: 15, username: 'noahscott'},
-  {id: 16, username: 'lucygonzalez'},
-  {id: 17, username: 'jacobmartin'},
-  {id: 18, username: 'averymoore'},
-  {id: 19, username: 'loganmurphy'},
-  {id: 20, username: 'miahernandez'},
-  {id: 21, username: 'danieladair'},
-  {id: 22, username: 'sofiacox'},
-  {id: 23, username: 'jackharris'},
-  {id: 24, username: 'chloebaker'},
-  {id: 25, username: 'liamrodriguez'}
+  {username: 'alexmiller'},
+  {username: 'sarahjones'},
+  {username: 'davidkim'},
+  {username: 'emmawatson'},
+  {username: 'oliverliu'},
+  {username: 'ellagreen'},
+  {username: 'lucasbrown'},
+  {username: 'amandarivera'},
+  {username: 'masonlee'},
+  {username: 'nataliasmith'},
+  {username: 'benjamintaylor'},
+  {username: 'zoewilson'},
+  {username: 'henrywalker'},
+  {username: 'madelineyoung'},
+  {username: 'noahscott'},
+  {username: 'lucygonzalez'},
+  {username: 'jacobmartin'},
+  {username: 'averymoore'},
+  {username: 'loganmurphy'},
+  {username: 'miahernandez'},
+  {username: 'danieladair'},
+  {username: 'sofiacox'},
+  {username: 'jackharris'},
+  {username: 'chloebaker'},
+  {username: 'liamrodriguez'}
+];
+const slashCommands = [
+  {
+    command: 'gif',
+    description: 'Insert a GIF'
+  },
+  {
+    command: 'todo',
+    description: 'Add a todo list item'
+  },
+  {
+    command: 'mention',
+    description: 'Mention a user with @username'
+  },
+  {
+    command: 'date',
+    description: 'Insert the current date'
+  },
+  {
+    command: 'quote',
+    description: 'Insert a quote block'
+  }
 ];
 
-export const WithPopover: TokenFieldStory = () => {
-  let inputRef = useRef(null);
-  let [value, setValue] = useState(sample);
-  let filterAnchor = useMemo(() => {
-    if (value.caretPosition != null) {
-      let segment = value.segments[value.caretPosition.index];
-      if (!segment) {
-        return null;
-      }
-      let filterAnchor = value.caretPosition.offset;
-      while (filterAnchor >= 0) {
-        if (segment.text[filterAnchor] === '@') {
-          break;
-        }
-        filterAnchor--;
-      }
-      return {index: value.caretPosition.index, offset: filterAnchor};
-    }
-    return null;
-  }, [value]);
-  let filterValue = useMemo(() => {
-    if (filterAnchor != null && value.caretPosition != null) {
-      let segment = value.segments[value.caretPosition.index];
-      if (
-        filterAnchor.offset === 0 ||
-        (filterAnchor.offset > 0 && segment.text[filterAnchor.offset - 1] === ' ')
-      ) {
-        return segment.text.slice(filterAnchor.offset + 1, value.caretPosition.offset);
-      }
-    }
-    return null;
-  }, [filterAnchor, value]);
+type Item = {username: string} | {command: string; description: string};
 
-  let items =
-    filterValue == null ? [] : usernames.filter(emoji => emoji.username.includes(filterValue));
+export const WithAutocomplete: TokenFieldStory = () => {
+  let inputRef = useRef(null);
+  let [value, setValue] = useState(
+    new TokenSegmentList([
+      {type: 'text', text: 'This example has autocomplete for '},
+      {type: 'token', text: '@usernames'},
+      {type: 'text', text: ' and '},
+      {type: 'token', text: '/commands'}
+    ])
+  );
+
+  let [filterAnchor, filterValue] = useMemo(() => {
+    let filterAnchor = value.findText(value.caretPosition, Direction.Backward, /(?<=^|\s)[@/]/);
+    if (filterAnchor != null) {
+      let filterValue = value.slice(filterAnchor, value.caretPosition).toString();
+      return [filterAnchor, filterValue];
+    }
+    return [null, null];
+  }, [value]);
+
+  let items: Item[] = [];
+  if (filterValue != null && filterValue.startsWith('/')) {
+    items = slashCommands.filter(item => item.command.includes(filterValue.slice(1)));
+  } else if (filterValue != null && filterValue.startsWith('@')) {
+    items = usernames.filter(item => item.username.includes(filterValue.slice(1)));
+  }
+
   return (
     <Autocomplete>
       <TokenField value={value} onChange={setValue} aria-label="Message" ref={inputRef}>
@@ -119,35 +195,269 @@ export const WithPopover: TokenFieldStory = () => {
         triggerRef={inputRef}
         isOpen={filterAnchor != null && items.length > 0}
         isNonModal
+        hideArrow
         placement="bottom start"
+        trigger="MenuTrigger"
         getTargetRect={target => {
           return positionToDOMRange(target, filterAnchor!).getBoundingClientRect();
-        }}
-        style={{
-          background: 'Canvas',
-          color: 'CanvasText'
         }}>
-        <Menu className={styles.menu} items={items} dependencies={[filterAnchor]}>
+        <Menu items={items} dependencies={[filterAnchor]}>
           {item => (
-            <MyMenuItem
+            <MenuItem
+              id={'username' in item ? item.username : item.command}
               onAction={() => {
                 setValue(value =>
                   value.replaceRangeWithSegments(
                     filterAnchor!,
                     value.caretPosition,
                     [
-                      {type: 'token', text: '@' + item.username},
+                      {
+                        type: 'token',
+                        text: 'username' in item ? '@' + item.username : item.command
+                      },
                       {type: 'text', text: ' '}
                     ],
                     false // Don't coalesce in undo/redo history.
                   )
                 );
               }}>
-              {item.username}
-            </MyMenuItem>
+              <Text slot="label">{'username' in item ? item.username : item.command}</Text>
+              {'description' in item ? <Text slot="description">{item.description}</Text> : null}
+            </MenuItem>
           )}
         </Menu>
       </Popover>
     </Autocomplete>
   );
 };
+
+class TagFieldSegmentList extends TokenSegmentList {
+  tokenize(text: string): TokenFieldSegment[] {
+    let parts = text.split(/[, \n]/);
+
+    let segments: TokenFieldSegment[] = parts.map((part, i) => {
+      if (i === parts.length - 1 || part.length === 0) {
+        return {type: 'text', text: part};
+      }
+      return {type: 'token', text: part};
+    });
+
+    if (parts.at(-1)?.length === 0) {
+      segments.pop();
+    }
+    return segments;
+  }
+
+  toString(): string {
+    return this.segments.map(seg => seg.text).join(', ');
+  }
+}
+
+export const TagField: TokenFieldStory = () => {
+  return (
+    <TokenField
+      defaultValue={
+        new TagFieldSegmentList([
+          {type: 'token', text: 'Architecture'},
+          {type: 'token', text: 'Design'},
+          {type: 'token', text: 'Development'},
+          {type: 'token', text: 'Marketing'},
+          {type: 'token', text: 'Sales'}
+        ])
+      }
+      aria-label="Categories">
+      {segment => <Token>{segment.text}</Token>}
+    </TokenField>
+  );
+};
+
+export const Search: TokenFieldStory = () => {
+  let inputRef = useRef(null);
+  let [value, setValue] = useState(
+    new TokenSegmentList([{type: 'token', text: 'From: Alice Smith'}])
+  );
+
+  let last = value.segments.at(-1);
+  let filterText = last?.type === 'text' ? last.text : null;
+  let suggestions: {name: string; items: string[]}[] = [];
+  if (filterText != null) {
+    let users = usernames
+      .filter(item => item.username.includes(filterText))
+      .map(u => u.username)
+      .slice(0, 5);
+    if (users.length > 0) {
+      if (
+        !value.segments.some(
+          segment => segment.type === 'token' && segment.text.startsWith('From: ')
+        )
+      ) {
+        suggestions.push({
+          name: 'From',
+          items: users
+        });
+      }
+
+      suggestions.push({
+        name: 'To',
+        items: users
+      });
+    }
+
+    suggestions.push({
+      name: 'Subject',
+      items: [filterText]
+    });
+  }
+
+  return (
+    <Autocomplete>
+      <TokenField ref={inputRef} value={value} onChange={setValue} aria-label="Search">
+        {segment => <Token>{segment.text}</Token>}
+      </TokenField>
+      <Popover
+        triggerRef={inputRef}
+        isOpen={suggestions.length > 0}
+        isNonModal
+        hideArrow
+        placement="bottom start"
+        style={{width: 'var(--trigger-width)'}}
+        trigger="MenuTrigger">
+        <Menu items={suggestions}>
+          {section => (
+            <MenuSection>
+              <Header>{section.name}</Header>
+              <Collection items={section.items}>
+                {item => (
+                  <MenuItem
+                    id={section.name + '-' + item}
+                    onAction={() => {
+                      setValue(value =>
+                        value.replaceRangeWithSegments(
+                          {index: value.caretPosition.index, offset: 0},
+                          value.caretPosition,
+                          [{type: 'token', text: section.name + ': ' + item}],
+                          false
+                        )
+                      );
+                    }}>
+                    {item}
+                  </MenuItem>
+                )}
+              </Collection>
+            </MenuSection>
+          )}
+        </Menu>
+      </Popover>
+    </Autocomplete>
+  );
+};
+
+export const ComboBoxExample: TokenFieldStory = () => {
+  return (
+    <ComboBox selectionMode="multiple" style={{width: 500}}>
+      <Label>Users</Label>
+      <div className="combobox-field">
+        <ComboBoxTagInput />
+        <FieldButton>
+          <ChevronDown />
+        </FieldButton>
+      </div>
+      <Popover hideArrow className="combobox-popover">
+        <ComboBoxListBox items={usernames}>
+          {state => <ComboBoxItem>{state.username}</ComboBoxItem>}
+        </ComboBoxListBox>
+      </Popover>
+    </ComboBox>
+  );
+};
+
+function ComboBoxTagInput() {
+  let state = useContext(ComboBoxStateContext);
+  let inputCtx = useSlottedContext(InputContext);
+  let [value, setValue] = useState(() => {
+    let selectedItems: TokenFieldSegment[] =
+      state?.selectedItems.map(item => ({
+        type: 'token' as const,
+        text: item.textValue,
+        value: item.value
+      })) ?? [];
+    selectedItems.push({type: 'text', text: state?.inputValue ?? ''});
+    return new TokenSegmentList(selectedItems);
+  });
+
+  let [lastSelectedItems, setLastSelectedItems] = useState(state?.selectedItems || []);
+  let [lastInputValue, setLastInputValue] = useState(state?.inputValue ?? '');
+
+  if (
+    state &&
+    (state?.selectedItems !== lastSelectedItems || lastInputValue !== state?.inputValue)
+  ) {
+    setValue(value => {
+      let selected = state?.selectedItems ?? [];
+      let selectedValues = new Set(selected.map(item => item.value));
+
+      let segments = value.segments.filter(
+        seg => seg.type === 'text' || selectedValues.has(seg.value)
+      );
+
+      let existingValues = new Set(
+        segments.filter(seg => seg.type === 'token').map(seg => seg.value)
+      );
+
+      let newTokens: TokenFieldSegment[] = selected
+        .filter(item => !existingValues.has(item.value))
+        .map(item => ({
+          type: 'token' as const,
+          text: item.textValue,
+          value: item.value
+        }));
+
+      let caret = value.caretPosition;
+      let removedBeforeCaret = 0;
+      for (let i = 0; i < caret.index && i < value.segments.length; i++) {
+        let seg = value.segments[i];
+        if (seg.type === 'token' && !selectedValues.has(seg.value)) {
+          removedBeforeCaret++;
+        }
+      }
+
+      let insertIndex = Math.min(caret.index - removedBeforeCaret, segments.length);
+      segments.splice(insertIndex, 0, ...newTokens);
+
+      if (!segments.some(seg => seg.type === 'text')) {
+        segments.push({type: 'text', text: state?.inputValue ?? ''});
+      }
+
+      let caretIndex = Math.min(insertIndex + newTokens.length, segments.length - 1);
+      if (segments[caretIndex]?.type === 'text') {
+        segments[caretIndex] = {type: 'text', text: state?.inputValue ?? ''};
+      }
+
+      let caretPosition = {
+        index: caretIndex,
+        offset:
+          segments[caretIndex]?.type === 'text' ? (state?.inputValue ?? '').length : caret.offset
+      };
+
+      return new TokenSegmentList(segments, {caretPosition});
+    });
+    setLastSelectedItems(state?.selectedItems || []);
+    setLastInputValue(state?.inputValue ?? '');
+  }
+
+  return (
+    <TokenField
+      {...(inputCtx as any)}
+      defaultValue={undefined}
+      value={value}
+      onChange={list => {
+        let segment = list.segments[list.caretPosition.index];
+        state?.setInputValue(segment?.type === 'text' ? segment.text : '');
+        setValue(list);
+      }}
+      aria-label="Users"
+      style={{paddingInlineEnd: 36}}>
+      {segment => <Token>{segment.text}</Token>}
+    </TokenField>
+  );
+}
