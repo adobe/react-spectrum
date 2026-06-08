@@ -1,0 +1,86 @@
+{/* Copyright 2026 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '../../../src/Layout';
+export default Layout;
+import {FunctionAPI} from '../../../src/FunctionAPI';
+import {InterfaceType} from '../../../src/types';
+import docs from 'docs:@react-aria/checkbox';
+
+export const section = 'Hooks';
+export const description = 'Provides the behavior and accessibility implementation for a checkbox.';
+export const isSubpage = true;
+
+# useCheckbox
+
+<PageDescription>{docs.exports.useCheckbox.description}</PageDescription>
+
+This example uses `useCheckbox` to build a checkbox from a native `<input type="checkbox">`, wrapped in a label.
+
+```tsx render
+"use client";
+import React from 'react';
+import {useCheckbox} from 'react-aria/useCheckbox';
+import {useFocusRing} from 'react-aria/useFocusRing';
+import {mergeProps} from 'react-aria/mergeProps';
+import {useToggleState} from 'react-stately/useToggleState';
+import 'vanilla-starter/theme.css';
+
+function Checkbox(props) {
+  // useToggleState tracks the checked state.
+  let state = useToggleState(props);
+  let ref = React.useRef(null);
+  let {inputProps, labelProps} = useCheckbox(props, state, ref);
+  // Show a focus ring when focused via the keyboard.
+  let {isFocusVisible, focusProps} = useFocusRing();
+
+  return (
+    <label {...labelProps} style={{display: 'flex', alignItems: 'center', gap: 8, color: 'var(--text-color)'}}>
+      <span
+        style={{
+          display: 'inline-flex',
+          borderRadius: 4,
+          outline: isFocusVisible ? '2px solid var(--focus-ring-color)' : 'none',
+          outlineOffset: 2
+        }}>
+        <input {...mergeProps(inputProps, focusProps)} ref={ref} style={{margin: 0, outline: 'none'}} />
+      </span>
+      {props.children}
+    </label>
+  );
+}
+
+<Checkbox>Unsubscribe</Checkbox>
+```
+
+## Features
+
+Checkboxes can be built with the [&lt;input&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input) HTML element, but this can be difficult to style. `useCheckbox` helps achieve accessible checkboxes that can be styled as needed.
+
+* Built with a native HTML `<input>` element, which is visually hidden when styling custom checkboxes
+* Full support for browser features like form autofill
+* Keyboard focus management and cross browser normalization
+* Labeling support for assistive technology
+* Indeterminate state support
+
+## State management
+
+`useCheckbox` requires a `state` object created with the `useToggleState` hook from `react-stately`, which tracks whether the checkbox is selected and exposes a method to toggle it.
+
+## API
+
+<FunctionAPI function={docs.exports.useCheckbox} links={docs.links} />
+
+### AriaCheckboxProps
+
+<InterfaceType {...docs.exports.AriaCheckboxProps} />
+
+### CheckboxAria
+
+<InterfaceType {...docs.exports.CheckboxAria} />
