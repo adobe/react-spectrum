@@ -1,0 +1,130 @@
+{/* Copyright 2026 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '../../../src/Layout';
+export default Layout;
+import {FunctionAPI} from '../../../src/FunctionAPI';
+import {InterfaceType} from '../../../src/types';
+import docs from 'docs:@react-aria/overlays';
+
+export const section = 'Hooks';
+export const description = 'Provides the behavior and accessibility implementation for a modal overlay.';
+export const isSubpage = true;
+
+# useModalOverlay
+
+<PageDescription>{docs.exports.useModalOverlay.description}</PageDescription>
+
+`useModalOverlay` is the modal primitive itself, so the overlay and underlay are built from scratch using an [&lt;Overlay&gt;](../Popover) portal. The trigger and close action reuse the [Button](../Button) component, and the content reuses the [Dialog](../Modal/useDialog) component, both from React Aria Components.
+
+```tsx render
+"use client";
+import React from 'react';
+import {useModalOverlay} from 'react-aria/useModalOverlay';
+import {useOverlayTrigger} from 'react-aria/useOverlayTrigger';
+import {Overlay} from 'react-aria/Overlay';
+import {useOverlayTriggerState} from 'react-stately/useOverlayTriggerState';
+import {Provider} from 'react-aria-components/slots';
+import {ButtonContext} from 'react-aria-components/Button';
+import {Button} from 'vanilla-starter/Button';
+import {Dialog, Heading} from 'vanilla-starter/Dialog';
+
+function Modal({state, children, ...props}) {
+  // useModalOverlay handles scroll locking, focus containment, and optional
+  // dismiss behavior. The state comes from useOverlayTriggerState.
+  let ref = React.useRef(null);
+  let {modalProps, underlayProps} = useModalOverlay(props, state, ref);
+
+  return (
+    // Overlay renders into a portal and contains focus while the modal is open.
+    <Overlay>
+      <div
+        {...underlayProps}
+        style={{
+          position: 'fixed',
+          inset: 0,
+          background: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}>
+        <div
+          {...modalProps}
+          ref={ref}
+          style={{
+            background: 'var(--overlay-background)',
+            border: '1px solid var(--gray-300)',
+            borderRadius: 8
+          }}>
+          {children}
+        </div>
+      </div>
+    </Overlay>
+  );
+}
+
+function ModalTrigger({label, children, ...props}) {
+  // useOverlayTrigger connects the trigger button to the modal via ARIA.
+  let state = useOverlayTriggerState(props);
+  let {triggerProps, overlayProps} = useOverlayTrigger({type: 'dialog'}, state);
+
+  return (
+    <>
+      {/* Provide the trigger props to the reused Button via context. */}
+      <Provider values={[[ButtonContext, {...triggerProps}]]}>
+        <Button>{label}</Button>
+      </Provider>
+      {state.isOpen &&
+        <Modal {...props} state={state}>
+          {React.cloneElement(children(state.close), overlayProps)}
+        </Modal>}
+    </>
+  );
+}
+
+<ModalTrigger label="Open dialog">
+  {close =>
+    <Dialog>
+      <Heading slot="title">Enter your name</Heading>
+      <form style={{display: 'flex', flexDirection: 'column', gap: 8}}>
+        <label>First Name: <input /></label>
+        <label>Last Name: <input /></label>
+        <Button onPress={close} style={{marginTop: 8}}>Submit</Button>
+      </form>
+    </Dialog>}
+</ModalTrigger>
+```
+
+## Features
+
+The HTML [&lt;dialog&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/dialog) element can be used to build modal overlays. However, it is not yet widely supported across browsers, and can be difficult to style and customize. `useModalOverlay` helps achieve accessible modal overlays that can be styled as needed.
+
+* **Accessible** – Content outside the modal is hidden from assistive technologies while it is open. The modal optionally closes when interacting outside, or pressing the <kbd>Escape</kbd> key.
+* **Focus management** – Focus is moved into the modal on mount, and restored to the trigger element on unmount. While open, focus is contained within the modal, preventing the user from tabbing outside.
+* **Scroll locking** – Scrolling the page behind the modal is prevented while it is open, including in mobile browsers.
+
+**Note**: `useModalOverlay` only handles the overlay itself. It should be combined with [useDialog](../Modal/useDialog) to create fully accessible modal dialogs. Other overlays such as menus may also be placed in a modal overlay.
+
+## Anatomy
+
+A modal overlay consists of an overlay container element, and an underlay. The overlay may contain a [dialog](../Modal/useDialog), or another element such as a [menu](../Menu/useMenu) or [listbox](../ListBox/useListBox). The underlay is typically a partially transparent element that covers the rest of the screen behind the overlay, and prevents the user from interacting with the elements behind it.
+
+State is managed by the `useOverlayTriggerState` hook in `react-stately`. The state object should be passed as an argument to `useModalOverlay`.
+
+## API
+
+<FunctionAPI function={docs.exports.useModalOverlay} links={docs.links} />
+
+### AriaModalOverlayProps
+
+<InterfaceType {...docs.exports.AriaModalOverlayProps} />
+
+### ModalOverlayAria
+
+<InterfaceType {...docs.exports.ModalOverlayAria} />
