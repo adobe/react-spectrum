@@ -1,0 +1,122 @@
+{/* Copyright 2026 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '../../../src/Layout';
+export default Layout;
+import {FunctionAPI} from '../../../src/FunctionAPI';
+import {InterfaceType} from '../../../src/types';
+import docs from 'docs:@react-aria/tag';
+
+export const section = 'Hooks';
+export const description = 'Provides the behavior and accessibility implementation for a tag group component.';
+export const isSubpage = true;
+
+# useTagGroup
+
+<PageDescription>{docs.exports.useTagGroup.description}</PageDescription>
+
+This example uses `useTagGroup` for the container and `useTag` for each tag, building the collection from scratch with `useListState` and items from `react-stately`. The remove button reuses the [Button](../Button) component from React Aria Components.
+
+```tsx render
+"use client";
+import React from 'react';
+import {useTagGroup, useTag} from 'react-aria/useTagGroup';
+import {useListState} from 'react-stately/useListState';
+import {Item} from 'react-stately/Item';
+import {useFocusRing} from 'react-aria/useFocusRing';
+import {mergeProps} from 'react-aria/mergeProps';
+import {Button} from 'vanilla-starter/Button';
+import {X} from 'lucide-react';
+import 'vanilla-starter/theme.css';
+
+function TagGroup(props) {
+  let ref = React.useRef(null);
+  let state = useListState(props);
+  let {gridProps, labelProps} = useTagGroup(props, state, ref);
+
+  return (
+    <div style={{color: 'var(--text-color)'}}>
+      <div {...labelProps} style={{marginBottom: 4}}>{props.label}</div>
+      <div {...gridProps} ref={ref} style={{display: 'flex', flexWrap: 'wrap', gap: 8}}>
+        {[...state.collection].map(item => (
+          <Tag key={item.key} item={item} state={state} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function Tag({item, state}) {
+  let ref = React.useRef(null);
+  let {focusProps, isFocusVisible} = useFocusRing();
+  let {rowProps, gridCellProps, removeButtonProps, allowsRemoving} = useTag({item}, state, ref);
+
+  return (
+    <div
+      ref={ref}
+      {...mergeProps(rowProps, focusProps)}
+      style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        padding: '2px 4px 2px 12px',
+        borderRadius: 9999,
+        background: 'var(--gray-200)',
+        outline: isFocusVisible ? '2px solid var(--focus-ring-color)' : 'none',
+        outlineOffset: 2
+      }}>
+      <div {...gridCellProps} style={{display: 'inline-flex', alignItems: 'center', gap: 4}}>
+        {item.rendered}
+        {allowsRemoving && <Button {...removeButtonProps} variant="quiet"><X size={14} /></Button>}
+      </div>
+    </div>
+  );
+}
+
+<TagGroup label="Categories" onRemove={keys => alert(`Remove ${[...keys]}`)}>
+  <Item>News</Item>
+  <Item>Travel</Item>
+  <Item>Gaming</Item>
+  <Item>Shopping</Item>
+</TagGroup>
+```
+
+## Features
+
+There is no native HTML element for a tag group. `useTagGroup` and `useTag` help achieve an accessible tag group that can be styled as needed, following the [ARIA grid pattern](https://www.w3.org/WAI/ARIA/apg/patterns/grid/).
+
+* Exposed to assistive technology as a grid using ARIA
+* Keyboard navigation between tags via the arrow keys, with a single tab stop (roving tabindex)
+* Support for removing tags via an optional remove button or the keyboard
+* Support for single, multiple, or no selection
+* Labeling support for accessibility, and support for description and error message help text
+
+## State management
+
+`useTagGroup` requires a `state` object created with the `useListState` hook from `react-stately`, which builds a `Collection` from the items and manages selection. The state is passed to each `useTag`.
+
+## API
+
+<FunctionAPI function={docs.exports.useTagGroup} links={docs.links} />
+<FunctionAPI function={docs.exports.useTag} links={docs.links} />
+
+### AriaTagGroupProps
+
+<InterfaceType {...docs.exports.AriaTagGroupProps} />
+
+### TagGroupAria
+
+<InterfaceType {...docs.exports.TagGroupAria} />
+
+### AriaTagProps
+
+<InterfaceType {...docs.exports.AriaTagProps} />
+
+### TagAria
+
+<InterfaceType {...docs.exports.TagAria} />
