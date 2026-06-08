@@ -1,0 +1,85 @@
+{/* Copyright 2026 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '../../../src/Layout';
+export default Layout;
+import {FunctionAPI} from '../../../src/FunctionAPI';
+import {InterfaceType} from '../../../src/types';
+import docs from 'docs:@react-aria/disclosure';
+
+export const section = 'Hooks';
+export const description = 'Provides the behavior and accessibility implementation for a disclosure component.';
+export const isSubpage = true;
+
+# useDisclosure
+
+<PageDescription>{docs.exports.useDisclosure.description}</PageDescription>
+
+This example builds a disclosure from scratch with `useDisclosure`, reusing the [Button](../Button) component from React Aria Components for the trigger that expands and collapses the panel.
+
+```tsx render
+"use client";
+import React from 'react';
+import {useDisclosure} from 'react-aria/useDisclosure';
+import {useDisclosureState} from 'react-stately/useDisclosureState';
+import {Button} from 'vanilla-starter/Button';
+import {ChevronRight} from 'lucide-react';
+import 'vanilla-starter/Button.css';
+
+function Disclosure(props) {
+  // useDisclosureState tracks whether the panel is expanded.
+  let state = useDisclosureState(props);
+  let panelRef = React.useRef(null);
+  let {buttonProps, panelProps} = useDisclosure(props, state, panelRef);
+
+  return (
+    <div style={{minWidth: 300}}>
+      <h3 style={{margin: 0}}>
+        <Button {...buttonProps} variant="quiet">
+          <ChevronRight
+            style={{rotate: state.isExpanded ? '90deg' : '0deg', transition: 'rotate 200ms'}} />
+          <span>{props.title}</span>
+        </Button>
+      </h3>
+      <div {...panelProps} ref={panelRef} style={{padding: '8px 12px'}}>
+        {props.children}
+      </div>
+    </div>
+  );
+}
+
+<Disclosure title="System Requirements">
+  Details about system requirements here.
+</Disclosure>
+```
+
+## Features
+
+Disclosures can be built with the HTML [&lt;details&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/details) and [&lt;summary&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/summary) elements, but these are difficult to style, especially when animating. `useDisclosure` helps achieve accessible disclosures that can be styled as needed.
+
+* Support for controlled and uncontrolled expanded state
+* Exposes the trigger and panel relationship to assistive technology via ARIA
+* Keyboard support for toggling the panel with the trigger button
+* Can be composed into a disclosure group (accordion)
+
+## State management
+
+`useDisclosure` requires a `state` object created with the `useDisclosureState` hook from `react-stately`, which tracks whether the panel is expanded and exposes methods to toggle it.
+
+## API
+
+<FunctionAPI function={docs.exports.useDisclosure} links={docs.links} />
+
+### AriaDisclosureProps
+
+<InterfaceType {...docs.exports.AriaDisclosureProps} />
+
+### DisclosureAria
+
+<InterfaceType {...docs.exports.DisclosureAria} />
