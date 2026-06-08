@@ -1,0 +1,151 @@
+{/* Copyright 2026 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '../../../src/Layout';
+export default Layout;
+import {FunctionAPI} from '../../../src/FunctionAPI';
+import {InterfaceType} from '../../../src/types';
+import docs from 'docs:@react-aria/combobox';
+
+export const section = 'Hooks';
+export const description = 'Provides the behavior and accessibility implementation for a combo box component.';
+export const isSubpage = true;
+
+# useComboBox
+
+<PageDescription>{docs.exports.useComboBox.description}</PageDescription>
+
+This example uses `useComboBox` to provide the behavior for a custom combo box, and reuses the [Input](../TextField), [Button](../Button), [Popover](../Popover), and [ListBox](../ListBox) components from React Aria Components to render the text field, trigger, popup, and list of options. The values returned by the hook are passed to these components via context, following the [Reusing children](../customization#reusing-children) pattern. A "contains" filter from [useFilter](../useFilter) filters the options as the user types.
+
+```tsx render
+"use client";
+import React from 'react';
+import {useComboBox} from 'react-aria/useComboBox';
+import {useFilter} from 'react-aria/useFilter';
+import {useComboBoxState} from 'react-stately/useComboBoxState';
+import {CollectionBuilder} from 'react-aria/CollectionBuilder';
+import {Provider} from 'react-aria-components/slots';
+import {ComboBoxStateContext} from 'react-aria-components/ComboBox';
+import {Collection} from 'react-aria-components/Collection';
+import {LabelContext} from 'react-aria-components/Label';
+import {ButtonContext} from 'react-aria-components/Button';
+import {Input, InputContext} from 'react-aria-components/Input';
+import {OverlayTriggerStateContext} from 'react-aria-components/Dialog';
+import {PopoverContext} from 'react-aria-components/Popover';
+import {ListBoxContext, ListStateContext} from 'react-aria-components/ListBox';
+import {Label, FieldButton} from 'vanilla-starter/Form';
+import {Popover} from 'vanilla-starter/Popover';
+import {ComboBoxListBox, ComboBoxItem} from 'vanilla-starter/ComboBox';
+import {ChevronDown} from 'lucide-react';
+import 'vanilla-starter/ComboBox.css';
+
+function ComboBox(props) {
+  // useComboBoxState needs a collection built from the items. CollectionBuilder
+  // renders a hidden copy of them to construct it before rendering.
+  return (
+    <CollectionBuilder content={<Collection>{props.children}</Collection>}>
+      {collection => <ComboBoxInner {...props} collection={collection} />}
+    </CollectionBuilder>
+  );
+}
+
+function ComboBoxInner({collection, ...props}) {
+  // Create state based on the collection and incoming props. A "contains"
+  // filter from useFilter filters the options against the current input text.
+  let {contains} = useFilter({sensitivity: 'base'});
+  let state = useComboBoxState({...props, defaultFilter: contains, collection, children: undefined});
+
+  // Get props for child elements from useComboBox.
+  let fieldRef = React.useRef(null);
+  let inputRef = React.useRef(null);
+  let buttonRef = React.useRef(null);
+  let listBoxRef = React.useRef(null);
+  let popoverRef = React.useRef(null);
+  let {labelProps, inputProps, buttonProps, listBoxProps} =
+    useComboBox({...props, inputRef, buttonRef, listBoxRef, popoverRef}, state);
+
+  // Provide the values returned by the hook to the reused components via context.
+  return (
+    <Provider
+      values={[
+        [ComboBoxStateContext, state],
+        [LabelContext, labelProps],
+        [ButtonContext, {...buttonProps, ref: buttonRef, isPressed: state.isOpen}],
+        [InputContext, {...inputProps, ref: inputRef}],
+        [OverlayTriggerStateContext, state],
+        [PopoverContext, {ref: popoverRef, triggerRef: fieldRef, scrollRef: listBoxRef, trigger: 'ComboBox', placement: 'bottom start', isNonModal: true}],
+        [ListBoxContext, {...listBoxProps, ref: listBoxRef}],
+        [ListStateContext, state]
+      ]}>
+      <div className="react-aria-ComboBox">
+        <Label>{props.label}</Label>
+        <div className="combobox-field" ref={fieldRef}>
+          <Input className="react-aria-Input inset" />
+          <FieldButton>
+            <ChevronDown />
+          </FieldButton>
+        </div>
+        <Popover hideArrow className="combobox-popover">
+          {/* Rendered from the collection in state, provided via ListStateContext. */}
+          <ComboBoxListBox />
+        </Popover>
+      </div>
+    </Provider>
+  );
+}
+
+<ComboBox label="Favorite Animal">
+  <ComboBoxItem>Aardvark</ComboBoxItem>
+  <ComboBoxItem>Cat</ComboBoxItem>
+  <ComboBoxItem>Dog</ComboBoxItem>
+  <ComboBoxItem>Kangaroo</ComboBoxItem>
+  <ComboBoxItem>Panda</ComboBoxItem>
+  <ComboBoxItem>Snake</ComboBoxItem>
+</ComboBox>
+```
+
+## Features
+
+A combo box can be built using the [&lt;datalist&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/datalist) HTML element, but this is limited in functionality and difficult to style. `useComboBox` helps achieve accessible combo box and autocomplete components that can be styled as needed. It follows the [ARIA combobox pattern](https://www.w3.org/WAI/ARIA/apg/patterns/combobox/).
+
+* Support for filtering a list of options by typing
+* Support for selecting a single option
+* Support for disabled options
+* Support for groups of items in sections
+* Support for custom user input values
+* Support for controlled and uncontrolled options, selection, input value, and open state
+* Support for custom filter functions
+* Async loading and infinite scrolling support
+* Support for virtualized lists
+* Exposed to assistive technology as a `combobox` with ARIA
+* Labeling support for accessibility
+* Required and invalid states exposed to assistive technology via ARIA
+* Support for mouse, touch, and keyboard interactions
+* Keyboard support for opening the list box using the arrow keys, including automatically focusing the first or last item accordingly
+* Support for opening the list box when typing, on focus, or manually
+* Custom localized announcements for option focusing, filtering, and selection using an ARIA live region to work around VoiceOver bugs
+* Support for native HTML constraint validation with customizable UI, custom validation functions, realtime validation, and server-side validation errors
+
+## State management
+
+`useComboBox` requires knowledge of the options in the combo box in order to handle keyboard navigation and other interactions. It does this using the `Collection` interface, which is a generic interface to access sequential unique keyed data. You can implement this interface yourself, e.g. by using a prop to pass a list of item objects, but `useComboBoxState` from `react-stately` implements a JSX based interface for building collections instead. See [Collection Components](../collections) for more information.
+
+In addition, `useComboBoxState` manages the state necessary for single selection and exposes a `SelectionManager`, which makes use of the collection to provide an interface to update the selection state. It also holds state to track if the popup is open, if the combo box is focused, and the current input value. For more information about selection, see [Selection](../selection).
+
+## API
+
+<FunctionAPI function={docs.exports.useComboBox} links={docs.links} />
+
+### AriaComboBoxOptions
+
+<InterfaceType {...docs.exports.AriaComboBoxOptions} />
+
+### ComboBoxAria
+
+<InterfaceType {...docs.exports.ComboBoxAria} />
