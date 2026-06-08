@@ -1,0 +1,78 @@
+{/* Copyright 2026 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '../../../src/Layout';
+export default Layout;
+import {FunctionAPI} from '../../../src/FunctionAPI';
+import {InterfaceType} from '../../../src/types';
+import docs from 'docs:@react-aria/separator';
+
+export const section = 'Hooks';
+export const description = 'Provides the accessibility implementation for a separator.';
+export const isSubpage = true;
+
+# useSeparator
+
+<PageDescription>{docs.exports.useSeparator.description}</PageDescription>
+
+This example uses `useSeparator` to build a visual divider that is correctly exposed to assistive technology, in both horizontal and vertical orientations.
+
+```tsx render
+"use client";
+import React from 'react';
+import {useSeparator} from 'react-aria/useSeparator';
+import 'vanilla-starter/theme.css';
+
+function Separator(props) {
+  let {separatorProps} = useSeparator(props);
+
+  return (
+    <div
+      {...separatorProps}
+      style={{
+        background: 'var(--border-color)',
+        width: props.orientation === 'vertical' ? 1 : '100%',
+        height: props.orientation === 'vertical' ? '100%' : 1,
+        margin: props.orientation === 'vertical' ? '0 8px' : '8px 0'
+      }} />
+  );
+}
+
+<div style={{color: 'var(--text-color)'}}>
+  <div style={{display: 'flex', flexDirection: 'column', textAlign: 'center'}}>
+    Content above
+    <Separator />
+    Content below
+  </div>
+  <div style={{display: 'flex', flexDirection: 'row', marginTop: 16, height: 40, alignItems: 'center'}}>
+    Content left
+    <Separator orientation="vertical" />
+    Content right
+  </div>
+</div>
+```
+
+## Features
+
+A separator is a visual divider between two groups of content, e.g. groups of menu items or sections of a page. There is no native HTML element for a separator. `useSeparator` exposes one to assistive technology as a [separator](https://www.w3.org/TR/wai-aria-1.2/#separator) using ARIA.
+
+* Support for horizontal and vertical orientation
+* Exposed to assistive technology via ARIA
+
+## API
+
+<FunctionAPI function={docs.exports.useSeparator} links={docs.links} />
+
+### SeparatorProps
+
+<InterfaceType {...docs.exports.SeparatorProps} />
+
+### SeparatorAria
+
+<InterfaceType {...docs.exports.SeparatorAria} />
