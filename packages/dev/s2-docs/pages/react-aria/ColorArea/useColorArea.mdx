@@ -1,0 +1,96 @@
+{/* Copyright 2026 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '../../../src/Layout';
+export default Layout;
+import {FunctionAPI} from '../../../src/FunctionAPI';
+import {InterfaceType} from '../../../src/types';
+import docs from 'docs:@react-aria/color';
+
+export const section = 'Hooks';
+export const description = 'Provides the behavior and accessibility implementation for a color area.';
+export const isSubpage = true;
+
+# useColorArea
+
+<PageDescription>{docs.exports.useColorArea.description}</PageDescription>
+
+This example builds a color area from scratch with `useColorArea`. It adjusts two channels of a color at once via a draggable thumb over a two-dimensional gradient. The thumb grows when focused via the keyboard.
+
+```tsx render
+"use client";
+import React from 'react';
+import {useColorArea} from 'react-aria/useColorArea';
+import {useColorAreaState} from 'react-stately/useColorAreaState';
+import {useFocusRing} from 'react-aria/useFocusRing';
+
+const SIZE = 192;
+const THUMB_SIZE = 20;
+const FOCUSED_THUMB_SIZE = 28;
+
+function ColorArea(props) {
+  let inputXRef = React.useRef(null);
+  let inputYRef = React.useRef(null);
+  let containerRef = React.useRef(null);
+  let state = useColorAreaState(props);
+  let {colorAreaProps, xInputProps, yInputProps, thumbProps} =
+    useColorArea({...props, inputXRef, inputYRef, containerRef}, state);
+  let {focusProps, isFocusVisible} = useFocusRing();
+
+  return (
+    <div
+      ref={containerRef}
+      {...colorAreaProps}
+      style={{...colorAreaProps.style, width: SIZE, height: SIZE, borderRadius: 4}}>
+      <div
+        {...thumbProps}
+        style={{
+          ...thumbProps.style,
+          boxSizing: 'border-box',
+          width: isFocusVisible ? FOCUSED_THUMB_SIZE : THUMB_SIZE,
+          height: isFocusVisible ? FOCUSED_THUMB_SIZE : THUMB_SIZE,
+          borderRadius: '50%',
+          border: '2px solid white',
+          boxShadow: '0 0 0 1px black, inset 0 0 0 1px black',
+          background: state.getDisplayColor().toString('css')
+        }}>
+        <input ref={inputXRef} {...xInputProps} {...focusProps} />
+        <input ref={inputYRef} {...yInputProps} {...focusProps} />
+      </div>
+    </div>
+  );
+}
+
+<ColorArea defaultValue="hsl(30, 100%, 50%)" xChannel="saturation" yChannel="lightness" />
+```
+
+## Features
+
+A color area allows users to adjust two channels of an RGB, HSL, or HSB color value against a two-dimensional gradient background. There is no native HTML element to implement this, so `useColorArea` helps achieve an accessible color area that can be styled as needed.
+
+* Support for adjusting two color channels at once with a draggable thumb
+* Two visually hidden `<input>` elements expose each channel to assistive technology as a slider
+* Support for mouse, touch, and keyboard interactions, with arrow key support for each channel
+* Internationalized color descriptions and channel value announcements
+
+## State management
+
+`useColorArea` requires a `state` object created with the `useColorAreaState` hook from `react-stately`, which holds the `Color` value and the two channels being edited, and converts between values and thumb positions.
+
+## API
+
+<FunctionAPI function={docs.exports.useColorArea} links={docs.links} />
+
+### AriaColorAreaOptions
+
+<InterfaceType {...docs.exports.AriaColorAreaOptions} />
+
+### ColorAreaAria
+
+<InterfaceType {...docs.exports.ColorAreaAria} />
