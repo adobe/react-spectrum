@@ -1,0 +1,91 @@
+{/* Copyright 2026 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '../../../src/Layout';
+export default Layout;
+import {FunctionAPI} from '../../../src/FunctionAPI';
+import {InterfaceType} from '../../../src/types';
+import docs from 'docs:@react-aria/color';
+
+export const section = 'Hooks';
+export const description = 'Provides the behavior and accessibility implementation for a color wheel.';
+export const isSubpage = true;
+
+# useColorWheel
+
+<PageDescription>{docs.exports.useColorWheel.description}</PageDescription>
+
+This example builds a color wheel from scratch with `useColorWheel`, which adjusts the hue channel along a circular gradient track. The thumb grows when focused via the keyboard.
+
+```tsx render
+"use client";
+import React from 'react';
+import {useColorWheel} from 'react-aria/useColorWheel';
+import {useColorWheelState} from 'react-stately/useColorWheelState';
+import {useFocusRing} from 'react-aria/useFocusRing';
+
+const RADIUS = 100;
+const TRACK_THICKNESS = 28;
+const THUMB_SIZE = 20;
+
+function ColorWheel(props) {
+  let state = useColorWheelState(props);
+  let inputRef = React.useRef(null);
+  let {trackProps, thumbProps, inputProps} =
+    useColorWheel({...props, outerRadius: RADIUS, innerRadius: RADIUS - TRACK_THICKNESS}, state, inputRef);
+  let {focusProps, isFocusVisible} = useFocusRing();
+
+  return (
+    <div style={{position: 'relative', display: 'inline-block'}}>
+      <div {...trackProps} style={trackProps.style} />
+      <div
+        {...thumbProps}
+        style={{
+          ...thumbProps.style,
+          boxSizing: 'border-box',
+          width: isFocusVisible ? TRACK_THICKNESS + 4 : THUMB_SIZE,
+          height: isFocusVisible ? TRACK_THICKNESS + 4 : THUMB_SIZE,
+          borderRadius: '50%',
+          border: '2px solid white',
+          boxShadow: '0 0 0 1px black, inset 0 0 0 1px black',
+          background: state.getDisplayColor().toString('css')
+        }}>
+        <input ref={inputRef} {...inputProps} {...focusProps} />
+      </div>
+    </div>
+  );
+}
+
+<ColorWheel defaultValue="hsl(30, 100%, 50%)" />
+```
+
+## Features
+
+There is no native HTML element to implement a color wheel. `useColorWheel` helps achieve an accessible color wheel that can be styled as needed, typically combined with a [color area](../ColorArea/useColorArea) to adjust saturation and brightness.
+
+* Adjusts the hue channel of an HSB color along a circular gradient track
+* A visually hidden `<input type="range">` exposes the value to assistive technology
+* Support for mouse, touch, and keyboard interactions
+* Internationalized hue value announcements
+
+## State management
+
+`useColorWheel` requires a `state` object created with the `useColorWheelState` hook from `react-stately`, which holds the `Color` value, converts between the hue angle and thumb position, and renders the circular gradient track.
+
+## API
+
+<FunctionAPI function={docs.exports.useColorWheel} links={docs.links} />
+
+### AriaColorWheelOptions
+
+<InterfaceType {...docs.exports.AriaColorWheelOptions} />
+
+### ColorWheelAria
+
+<InterfaceType {...docs.exports.ColorWheelAria} />
