@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMRef} from '@react-types/shared';
+import {AriaLabelingProps, DOMRef, forwardRefType} from '@react-types/shared';
 import {baseColor, focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {BasicHorizontalCard} from './HorizontalCard';
 import {Button} from 'react-aria-components/Button';
@@ -20,7 +20,8 @@ import {forwardRef, useRef} from 'react';
 import {iconStyle} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
 import {pressScale} from '@react-spectrum/s2/pressScale';
-import {Tag, TagGroup, TagList} from 'react-aria-components/TagGroup';
+import {StyleProps, TagProps} from '@react-spectrum/s2';
+import {Tag, TagGroup, TagGroupProps, TagList, TagListProps} from 'react-aria-components/TagGroup';
 import {useDOMRef} from './useDOMRef';
 
 const controlSizeM = {
@@ -103,14 +104,15 @@ const CloseButton = function CloseButton(props) {
   );
 };
 
-export const AttachmentList = forwardRef(function AttachmentList(
-  props: any,
+export const AttachmentList = (forwardRef as forwardRefType)(function AttachmentList<T>(
+  props: Omit<TagGroupProps, 'children'> & StyleProps & Pick<TagListProps<T>, 'items' | 'children'>,
   ref: DOMRef<HTMLDivElement>
 ) {
   let domRef = useDOMRef(ref);
   return (
     <TagGroup {...props} className={props.styles} ref={domRef}>
       <TagList
+        items={props.items}
         className={style({
           display: 'flex',
           flexDirection: 'row',
@@ -126,10 +128,11 @@ export const AttachmentList = forwardRef(function AttachmentList(
 });
 
 export const Attachment = forwardRef(function Attachment(
-  props: CardProps & AriaLabelingProps,
+  props: CardProps & AriaLabelingProps & Pick<TagProps, 'id' | 'textValue'>,
   ref: DOMRef<HTMLDivElement>
 ) {
   let {
+    id,
     textValue,
     'aria-label': ariaLabel,
     'aria-labelledby': ariaLabelledby,
@@ -139,6 +142,7 @@ export const Attachment = forwardRef(function Attachment(
   let domRef = useDOMRef(ref);
   return (
     <Tag
+      id={id}
       textValue={textValue}
       aria-label={ariaLabel}
       aria-labelledby={ariaLabelledby}
