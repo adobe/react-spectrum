@@ -1,0 +1,144 @@
+{/* Copyright 2026 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '../../src/Layout';
+export default Layout;
+import {FunctionAPI} from '../../src/FunctionAPI';
+import {InterfaceType} from '../../src/types';
+import docs from 'docs:@react-aria/dnd';
+import statelyDocs from 'docs:@react-stately/dnd';
+
+export const section = 'Interactions';
+export const description = 'Provides the behavior and accessibility implementation for dragging items within a collection.';
+
+# useDraggableCollection
+
+<PageDescription>{docs.exports.useDraggableCollection.description}</PageDescription>
+
+Collection components built with hooks such as [useListBox](ListBox/useListBox), [useTable](Table/useTable), and [useGridList](GridList/useGridList) can support dragging items. `useDraggableCollection` adds drag interactions to a collection, using state from `useDraggableCollectionState`, and `useDraggableItem` makes each item a drag source. This example adds dragging to a list box built with [useListBox](ListBox/useListBox). See the [drag and drop guide](dnd) for more details.
+
+```tsx render
+"use client";
+import React from 'react';
+import {useListBox, useOption} from 'react-aria/useListBox';
+import {useListState} from 'react-stately/useListState';
+import {Item} from 'react-stately/Item';
+import {useFocusRing} from 'react-aria/useFocusRing';
+import {mergeProps} from 'react-aria/mergeProps';
+import {useDraggableCollectionState} from 'react-stately/useDraggableCollectionState';
+import {useDraggableCollection, useDraggableItem} from 'react-aria/useDraggableCollection';
+import {useDrop} from 'react-aria/useDrop';
+import {useButton} from 'react-aria/useButton';
+import 'vanilla-starter/theme.css';
+
+function ListBox(props) {
+  // Set up the list box as normal. See the useListBox docs for details.
+  let state = useListState(props);
+  let ref = React.useRef(null);
+  let {listBoxProps} = useListBox({...props, shouldSelectOnPressUp: true}, state, ref);
+
+  // Set up drag state for the collection, providing data for each dragged item.
+  let dragState = useDraggableCollectionState({
+    ...props,
+    collection: state.collection,
+    selectionManager: state.selectionManager,
+    getItems: keys => [...keys].map(key => ({'text/plain': state.collection.getItem(key)?.textValue ?? ''}))
+  });
+  useDraggableCollection(props, dragState, ref);
+
+  return (
+    <ul
+      {...listBoxProps}
+      ref={ref}
+      style={{padding: 0, margin: 0, listStyle: 'none', width: 180, border: '1px solid var(--gray-300)', borderRadius: 8, color: 'var(--text-color)'}}>
+      {[...state.collection].map(item => (
+        <Option key={item.key} item={item} state={state} dragState={dragState} />
+      ))}
+    </ul>
+  );
+}
+
+function Option({item, state, dragState}) {
+  let ref = React.useRef(null);
+  let {optionProps} = useOption({key: item.key}, state, ref);
+  let {isFocusVisible, focusProps} = useFocusRing();
+  // Register the item as a drag source.
+  let {dragProps} = useDraggableItem({key: item.key}, dragState);
+
+  return (
+    <li
+      {...mergeProps(optionProps, dragProps, focusProps)}
+      ref={ref}
+      style={{padding: '8px 12px', cursor: 'grab', outline: isFocusVisible ? '2px solid var(--focus-ring-color)' : 'none', outlineOffset: -2}}>
+      {item.rendered}
+    </li>
+  );
+}
+
+function DropTarget() {
+  let [dropped, setDropped] = React.useState('');
+  let ref = React.useRef(null);
+  let {dropProps, isDropTarget} = useDrop({
+    ref,
+    async onDrop(e) {
+      let texts = await Promise.all(
+        e.items.map(item => item.kind === 'text' ? item.getText('text/plain') : null)
+      );
+      setDropped(texts.filter(Boolean).join(', '));
+    }
+  });
+  let {buttonProps} = useButton({elementType: 'div'}, ref);
+
+  return (
+    <div
+      {...mergeProps(dropProps, buttonProps)}
+      ref={ref}
+      style={{
+        width: 180,
+        height: 100,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: 8,
+        color: 'var(--text-color)',
+        border: `2px dashed ${isDropTarget ? 'var(--focus-ring-color)' : 'var(--gray-300)'}`
+      }}>
+      {dropped || 'Drop here'}
+    </div>
+  );
+}
+
+<div style={{display: 'flex', gap: 16, alignItems: 'start'}}>
+  <ListBox aria-label="Categories" selectionMode="multiple">
+    <Item>Animals</Item>
+    <Item>People</Item>
+    <Item>Plants</Item>
+  </ListBox>
+  <DropTarget />
+</div>
+```
+
+## Features
+
+There is no built in way to make a collection draggable in HTML. `useDraggableCollection` and `useDraggableItem` help achieve accessible drag interactions within a collection that can be styled as needed.
+
+* Support for dragging multiple selected items at once, or individual non-selected items
+* Integrates with React Aria's [selection](selection) system
+* Support for mouse, touch, keyboard, and screen reader interactions
+* Works with any collection component, such as a [list box](ListBox/useListBox), [grid list](GridList/useGridList), or [table](Table/useTable)
+
+## State management
+
+`useDraggableCollection` requires a `state` object created with the `useDraggableCollectionState` hook from `react-stately`, which is given the collection and selection manager from the collection component's own state. The `getItems` option provides the drag data for each item.
+
+## API
+
+<FunctionAPI function={statelyDocs.exports.useDraggableCollectionState} links={statelyDocs.links} />
+<FunctionAPI function={docs.exports.useDraggableCollection} links={docs.links} />
+<FunctionAPI function={docs.exports.useDraggableItem} links={docs.links} />
