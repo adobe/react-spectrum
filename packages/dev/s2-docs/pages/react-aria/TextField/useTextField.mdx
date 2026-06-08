@@ -1,0 +1,75 @@
+{/* Copyright 2026 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '../../../src/Layout';
+export default Layout;
+import {FunctionAPI} from '../../../src/FunctionAPI';
+import {InterfaceType} from '../../../src/types';
+import docs from 'docs:@react-aria/textfield';
+
+export const section = 'Hooks';
+export const description = 'Provides the behavior and accessibility implementation for a text field.';
+export const isSubpage = true;
+
+# useTextField
+
+<PageDescription>{docs.exports.useTextField.description}</PageDescription>
+
+This example builds a text field from scratch with `useTextField`. `useFocus` toggles a `data-focused` attribute so the field shows the focus ring from the reused styles.
+
+```tsx render
+"use client";
+import React from 'react';
+import {useTextField} from 'react-aria/useTextField';
+import {useFocus} from 'react-aria/useFocus';
+import {mergeProps} from 'react-aria/mergeProps';
+import {Label} from 'vanilla-starter/Form';
+import 'vanilla-starter/TextField.css';
+
+function TextField(props) {
+  let ref = React.useRef(null);
+  let {labelProps, inputProps} = useTextField(props, ref);
+  let [isFocused, setFocused] = React.useState(false);
+  let {focusProps} = useFocus({onFocusChange: setFocused});
+
+  return (
+    <div className="react-aria-TextField" style={{width: 200, gap: 4}}>
+      <Label {...labelProps}>{props.label}</Label>
+      <input
+        {...mergeProps(inputProps, focusProps)}
+        ref={ref}
+        className="react-aria-Input inset"
+        data-focused={isFocused || undefined} />
+    </div>
+  );
+}
+
+<TextField label="Email" />
+```
+
+## Features
+
+Text fields can be built with the [&lt;input&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input) or [&lt;textarea&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/textarea) HTML elements, but those can be difficult to style consistently. `useTextField` helps achieve accessible text fields that can be styled as needed.
+
+* Support for both `<input>` and `<textarea>` via the `inputElementType` prop
+* Labeling support for accessibility, and support for description and error message help text
+* Support for native HTML constraint validation with customizable UI, custom validation functions, realtime validation, and server-side validation errors
+* Keyboard focus management and cross browser normalization
+
+## API
+
+<FunctionAPI function={docs.exports.useTextField} links={docs.links} />
+
+### AriaTextFieldProps
+
+<InterfaceType {...docs.exports.AriaTextFieldProps} />
+
+### TextFieldAria
+
+<InterfaceType {...docs.exports.TextFieldAria} />
