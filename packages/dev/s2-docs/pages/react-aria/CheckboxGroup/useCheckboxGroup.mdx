@@ -1,0 +1,111 @@
+{/* Copyright 2026 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '../../../src/Layout';
+export default Layout;
+import {FunctionAPI} from '../../../src/FunctionAPI';
+import {InterfaceType} from '../../../src/types';
+import docs from 'docs:@react-aria/checkbox';
+
+export const section = 'Hooks';
+export const description = 'Provides the behavior and accessibility implementation for a checkbox group component.';
+export const isSubpage = true;
+
+# useCheckboxGroup
+
+<PageDescription>{docs.exports.useCheckboxGroup.description}</PageDescription>
+
+This example uses `useCheckboxGroup` for the group and `useCheckboxGroupItem` for each checkbox. The group state is shared with each item through React context.
+
+```tsx render
+"use client";
+import React from 'react';
+import {useCheckboxGroup, useCheckboxGroupItem} from 'react-aria/useCheckboxGroup';
+import {useFocusRing} from 'react-aria/useFocusRing';
+import {mergeProps} from 'react-aria/mergeProps';
+import {useCheckboxGroupState} from 'react-stately/useCheckboxGroupState';
+import 'vanilla-starter/theme.css';
+
+let CheckboxGroupContext = React.createContext<any>(null);
+
+function CheckboxGroup(props) {
+  let {children, label} = props;
+  let state = useCheckboxGroupState(props);
+  let {groupProps, labelProps} = useCheckboxGroup(props, state);
+
+  return (
+    <div {...groupProps} style={{color: 'var(--text-color)'}}>
+      <span {...labelProps}>{label}</span>
+      <CheckboxGroupContext.Provider value={state}>
+        {children}
+      </CheckboxGroupContext.Provider>
+    </div>
+  );
+}
+
+function Checkbox(props) {
+  let state = React.useContext(CheckboxGroupContext);
+  let ref = React.useRef(null);
+  let {inputProps, labelProps} = useCheckboxGroupItem(props, state, ref);
+  let {isFocusVisible, focusProps} = useFocusRing();
+  let isDisabled = state.isDisabled || props.isDisabled;
+
+  return (
+    <label {...labelProps} style={{display: 'flex', alignItems: 'center', gap: 8, opacity: isDisabled ? 0.4 : 1}}>
+      <span
+        style={{
+          display: 'inline-flex',
+          borderRadius: 4,
+          outline: isFocusVisible ? '2px solid var(--focus-ring-color)' : 'none',
+          outlineOffset: 2
+        }}>
+        <input {...mergeProps(inputProps, focusProps)} ref={ref} style={{margin: 0, outline: 'none'}} />
+      </span>
+      {props.children}
+    </label>
+  );
+}
+
+<CheckboxGroup label="Favorite sports">
+  <Checkbox value="soccer" isDisabled>Soccer</Checkbox>
+  <Checkbox value="baseball">Baseball</Checkbox>
+  <Checkbox value="basketball">Basketball</Checkbox>
+</CheckboxGroup>
+```
+
+## Features
+
+Checkbox groups can be built with the [&lt;fieldset&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/fieldset) and [&lt;input&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input) HTML elements, but this can be difficult to style. `useCheckboxGroup` and `useCheckboxGroupItem` help achieve accessible checkbox groups that can be styled as needed.
+
+* Checkbox groups are exposed to assistive technology via ARIA, built with native HTML `<input>` elements
+* Support for native HTML constraint validation with customizable UI, custom validation functions, realtime validation, and server-side validation errors
+* Keyboard focus management and cross browser normalization
+* Labeling support for accessibility, and support for description and error message help text
+* Group and individual checkbox disabled states
+
+## State management
+
+`useCheckboxGroup` requires a `state` object created with the `useCheckboxGroupState` hook from `react-stately`, which tracks the set of selected values. The state is passed to each `useCheckboxGroupItem`, typically via React context.
+
+## API
+
+<FunctionAPI function={docs.exports.useCheckboxGroup} links={docs.links} />
+<FunctionAPI function={docs.exports.useCheckboxGroupItem} links={docs.links} />
+
+### AriaCheckboxGroupProps
+
+<InterfaceType {...docs.exports.AriaCheckboxGroupProps} />
+
+### CheckboxGroupAria
+
+<InterfaceType {...docs.exports.CheckboxGroupAria} />
+
+### AriaCheckboxGroupItemProps
+
+<InterfaceType {...docs.exports.AriaCheckboxGroupItemProps} />
