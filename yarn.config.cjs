@@ -26,7 +26,8 @@ function enforceConsistentDependenciesAcrossTheProject({Yarn}) {
           dependency.update('*');
         } else if (
           dependency.workspace.ident === '@react-spectrum/s2' ||
-          dependency.workspace.ident === '@react-spectrum/s2-icon-builder'
+          dependency.workspace.ident === '@react-spectrum/s2-icon-builder' ||
+          dependency.workspace.ident === '@react-spectrum/s2-ai'
         ) {
           dependency.update('^19.0.0-rc.1');
         } else if (dependency.workspace.ident === '@react-spectrum/codemods') {
@@ -57,6 +58,7 @@ function enforceConsistentDependenciesAcrossTheProject({Yarn}) {
       workspace.ident !== '@internationalized/string-compiler' &&
       workspace.ident !== 'tailwindcss-react-aria-components' &&
       workspace.ident !== '@react-spectrum/s2' &&
+      workspace.ident !== '@react-spectrum/s2-ai' &&
       workspace.manifest.rsp?.type !== 'cli'
     ) {
       workspace.set('dependencies.@swc/helpers', '^0.5.0');
