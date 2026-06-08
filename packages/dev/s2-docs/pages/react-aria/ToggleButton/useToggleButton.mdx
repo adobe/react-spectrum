@@ -1,0 +1,87 @@
+{/* Copyright 2026 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '../../../src/Layout';
+export default Layout;
+import {FunctionAPI} from '../../../src/FunctionAPI';
+import {InterfaceType} from '../../../src/types';
+import docs from 'docs:@react-aria/button';
+
+export const section = 'Hooks';
+export const description = 'Provides the behavior and accessibility implementation for a toggle button.';
+export const isSubpage = true;
+
+# useToggleButton
+
+<PageDescription>{docs.exports.useToggleButton.description}</PageDescription>
+
+This example uses `useToggleButton` to build a button that toggles between selected and unselected states, reflecting both the press and selection state in its styling.
+
+```tsx render
+"use client";
+import React from 'react';
+import {useToggleButton} from 'react-aria/useToggleButton';
+import {useFocusRing} from 'react-aria/useFocusRing';
+import {mergeProps} from 'react-aria/mergeProps';
+import {useToggleState} from 'react-stately/useToggleState';
+import 'vanilla-starter/theme.css';
+
+function ToggleButton(props) {
+  let ref = React.useRef(null);
+  let state = useToggleState(props);
+  let {buttonProps, isPressed} = useToggleButton(props, state, ref);
+  // Show a focus ring when focused via the keyboard.
+  let {isFocusVisible, focusProps} = useFocusRing();
+
+  return (
+    <button
+      {...mergeProps(buttonProps, focusProps)}
+      ref={ref}
+      style={{
+        border: 'none',
+        borderRadius: 8,
+        padding: '8px 16px',
+        font: 'inherit',
+        cursor: 'default',
+        userSelect: 'none',
+        background: state.isSelected ? 'var(--highlight-background)' : 'var(--gray-200)',
+        color: state.isSelected ? 'var(--highlight-foreground)' : 'var(--text-color)',
+        scale: isPressed ? '0.96' : '1',
+        transition: 'scale 200ms',
+        outline: isFocusVisible ? '2px solid var(--focus-ring-color)' : 'none',
+        outlineOffset: 2
+      }}>
+      {props.children}
+    </button>
+  );
+}
+
+<ToggleButton>Pin</ToggleButton>
+```
+
+## Features
+
+Toggle buttons are similar to action buttons, but support an additional selection state that is toggled when a user presses the button. There is no native HTML element with toggle button styling, so `useToggleButton` helps achieve accessible toggle buttons that can be styled as needed.
+
+* Native HTML `<button>` support, with `<a>` and custom element type support via ARIA
+* Selected state exposed to assistive technology via `aria-pressed`
+* Mouse, touch, and keyboard interactions, with cross browser normalization
+* Support for disabled state
+
+## State management
+
+`useToggleButton` requires a `state` object created with the `useToggleState` hook from `react-stately`, which tracks whether the button is selected and exposes a method to toggle it.
+
+## API
+
+<FunctionAPI function={docs.exports.useToggleButton} links={docs.links} />
+
+### AriaToggleButtonProps
+
+<InterfaceType {...docs.exports.AriaToggleButtonProps} />
