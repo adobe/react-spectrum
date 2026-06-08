@@ -1,0 +1,77 @@
+{/* Copyright 2026 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '../../../src/Layout';
+export default Layout;
+import {FunctionAPI} from '../../../src/FunctionAPI';
+import {InterfaceType} from '../../../src/types';
+import docs from 'docs:@react-aria/progress';
+
+export const section = 'Hooks';
+export const description = 'Provides the accessibility implementation for a progress bar component.';
+export const isSubpage = true;
+
+# useProgressBar
+
+<PageDescription>{docs.exports.useProgressBar.description}</PageDescription>
+
+This example uses `useProgressBar` to build a labeled progress bar that displays the completion progress of a task, with an accessible value label.
+
+```tsx render
+"use client";
+import React from 'react';
+import {useProgressBar} from 'react-aria/useProgressBar';
+import 'vanilla-starter/theme.css';
+
+function ProgressBar(props) {
+  let {label, showValueLabel = !!label, value, minValue = 0, maxValue = 100} = props;
+  let {progressBarProps, labelProps} = useProgressBar(props);
+
+  // Calculate the width of the progress bar as a percentage.
+  let percentage = (value - minValue) / (maxValue - minValue);
+  let barWidth = `${Math.round(percentage * 100)}%`;
+
+  return (
+    <div {...progressBarProps} style={{width: 200, color: 'var(--text-color)'}}>
+      <div style={{display: 'flex', justifyContent: 'space-between'}}>
+        {label && <span {...labelProps}>{label}</span>}
+        {showValueLabel && <span>{progressBarProps['aria-valuetext']}</span>}
+      </div>
+      <div style={{height: 10, marginTop: 6, borderRadius: 5, background: 'var(--gray-200)', overflow: 'hidden'}}>
+        <div style={{width: barWidth, height: 10, background: 'var(--highlight-background)'}} />
+      </div>
+    </div>
+  );
+}
+
+<ProgressBar label="Loading…" value={80} />
+```
+
+## Features
+
+The [&lt;progress&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/progress) HTML element can be used to build a progress bar, however it is very difficult to style cross browser. `useProgressBar` helps achieve accessible progress bars that can be styled as needed.
+
+* Exposed to assistive technology as a `progressbar` via ARIA
+* Labeling support for accessibility
+* Internationalized number formatting as a percentage or value
+* Determinate and indeterminate progress support
+
+Note: A progress bar represents the completion progress of a task. To represent a quantity within a known range, such as disk usage, use a [meter](../Meter/useMeter) instead.
+
+## API
+
+<FunctionAPI function={docs.exports.useProgressBar} links={docs.links} />
+
+### AriaProgressBarProps
+
+<InterfaceType {...docs.exports.AriaProgressBarProps} />
+
+### ProgressBarAria
+
+<InterfaceType {...docs.exports.ProgressBarAria} />
