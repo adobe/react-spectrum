@@ -1,0 +1,121 @@
+{/* Copyright 2026 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '../../../src/Layout';
+export default Layout;
+import {FunctionAPI} from '../../../src/FunctionAPI';
+import {InterfaceType} from '../../../src/types';
+import docs from 'docs:@react-aria/slider';
+
+export const section = 'Hooks';
+export const description = 'Provides the behavior and accessibility implementation for a slider component.';
+export const isSubpage = true;
+
+# useSlider
+
+<PageDescription>{docs.exports.useSlider.description}</PageDescription>
+
+This example builds a slider from scratch with `useSlider` for the track and `useSliderThumb` for the thumb. The thumb wraps a visually hidden native `<input>` and shows a focus ring when focused.
+
+```tsx render
+"use client";
+import React from 'react';
+import {useSlider, useSliderThumb} from 'react-aria/useSlider';
+import {useSliderState} from 'react-stately/useSliderState';
+import {useFocusRing} from 'react-aria/useFocusRing';
+import {useNumberFormatter} from 'react-aria/useNumberFormatter';
+import {VisuallyHidden} from 'react-aria/VisuallyHidden';
+import {mergeProps} from 'react-aria/mergeProps';
+import 'vanilla-starter/theme.css';
+
+function Slider(props) {
+  let trackRef = React.useRef(null);
+  let numberFormatter = useNumberFormatter(props.formatOptions);
+  let state = useSliderState({...props, numberFormatter});
+  let {groupProps, trackProps, labelProps, outputProps} = useSlider(props, state, trackRef);
+
+  return (
+    <div {...groupProps} style={{width: 300, color: 'var(--text-color)'}}>
+      {props.label &&
+        <div style={{display: 'flex', justifyContent: 'space-between'}}>
+          <label {...labelProps}>{props.label}</label>
+          <output {...outputProps}>{state.getThumbValueLabel(0)}</output>
+        </div>}
+      <div {...trackProps} ref={trackRef} style={{position: 'relative', height: 30, width: '100%'}}>
+        <div style={{position: 'absolute', top: '50%', transform: 'translateY(-50%)', height: 4, width: '100%', borderRadius: 2, background: 'var(--gray-300)'}} />
+        <Thumb index={0} state={state} trackRef={trackRef} />
+      </div>
+    </div>
+  );
+}
+
+function Thumb({state, trackRef, index}) {
+  let inputRef = React.useRef(null);
+  let {thumbProps, inputProps, isDragging} = useSliderThumb({index, trackRef, inputRef}, state);
+  let {focusProps, isFocusVisible} = useFocusRing();
+
+  return (
+    <div
+      {...thumbProps}
+      style={{
+        ...thumbProps.style,
+        top: '50%',
+        width: 20,
+        height: 20,
+        borderRadius: '50%',
+        background: 'var(--highlight-background)',
+        boxShadow: isDragging ? '0 1px 4px rgba(0, 0, 0, 0.4)' : '0 1px 3px rgba(0, 0, 0, 0.3)',
+        // outlineOffset gives a gap between the thumb and the ring; the div rounds its outline.
+        outline: isFocusVisible ? '2px solid var(--focus-ring-color)' : 'none',
+        outlineOffset: 2
+      }}>
+      <VisuallyHidden>
+        <input ref={inputRef} {...mergeProps(inputProps, focusProps)} />
+      </VisuallyHidden>
+    </div>
+  );
+}
+
+<Slider label="Opacity" defaultValue={60} />
+```
+
+## Features
+
+The [&lt;input type="range"&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/range) HTML element can be used to build a slider, but it is very difficult to style cross browser. `useSlider` helps achieve accessible sliders that can be styled as needed.
+
+* Support for one or multiple thumbs, with single or range values
+* Support for mouse, touch, and keyboard interactions on the thumbs, with cross browser normalization
+* Support for both horizontal and vertical orientations
+* Internationalized number formatting of the value label, including units and currencies
+* Built with native `<input type="range">` elements, exposing the value to assistive technology
+
+## State management
+
+`useSlider` requires a `state` object created with the `useSliderState` hook from `react-stately`, which holds the current value(s) and converts between values and track percentages. The same state is passed to each `useSliderThumb`.
+
+## API
+
+<FunctionAPI function={docs.exports.useSlider} links={docs.links} />
+<FunctionAPI function={docs.exports.useSliderThumb} links={docs.links} />
+
+### AriaSliderProps
+
+<InterfaceType {...docs.exports.AriaSliderProps} />
+
+### SliderAria
+
+<InterfaceType {...docs.exports.SliderAria} />
+
+### AriaSliderThumbOptions
+
+<InterfaceType {...docs.exports.AriaSliderThumbOptions} />
+
+### SliderThumbAria
+
+<InterfaceType {...docs.exports.SliderThumbAria} />
