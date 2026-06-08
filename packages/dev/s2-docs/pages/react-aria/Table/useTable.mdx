@@ -1,0 +1,185 @@
+{/* Copyright 2026 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '../../../src/Layout';
+export default Layout;
+import {FunctionAPI} from '../../../src/FunctionAPI';
+import {InterfaceType} from '../../../src/types';
+import docs from 'docs:@react-aria/table';
+
+export const section = 'Hooks';
+export const description = 'Provides the behavior and accessibility implementation for a table component.';
+export const isSubpage = true;
+
+# useTable
+
+<PageDescription>{docs.exports.useTable.description}</PageDescription>
+
+A table is composed from several hooks — `useTable`, `useTableRowGroup`, `useTableHeaderRow`, `useTableColumnHeader`, `useTableRow`, and `useTableCell` — applied to native HTML table elements. The collection is built from `Column`, `Row`, and `Cell` elements via `useTableState`.
+
+```tsx render
+"use client";
+import React from 'react';
+import {
+  useTable,
+  useTableRowGroup,
+  useTableHeaderRow,
+  useTableColumnHeader,
+  useTableRow,
+  useTableCell
+} from 'react-aria/useTable';
+import {useTableState, Cell, Column, Row, TableBody, TableHeader} from 'react-stately/useTableState';
+import {useFocusRing} from 'react-aria/useFocusRing';
+import {mergeProps} from 'react-aria/mergeProps';
+import 'vanilla-starter/theme.css';
+
+function Table(props) {
+  // showSelectionCheckboxes: false keeps the example focused (rows select on click).
+  let state = useTableState({...props, showSelectionCheckboxes: false});
+  let ref = React.useRef(null);
+  let {collection} = state;
+  let {gridProps} = useTable(props, state, ref);
+
+  return (
+    <table {...gridProps} ref={ref} style={{borderCollapse: 'collapse', color: 'var(--text-color)'}}>
+      <TableRowGroup type="thead">
+        {collection.headerRows.map(headerRow => (
+          <TableHeaderRow key={headerRow.key} item={headerRow} state={state}>
+            {[...headerRow.childNodes].map(column => (
+              <TableColumnHeader key={column.key} column={column} state={state} />
+            ))}
+          </TableHeaderRow>
+        ))}
+      </TableRowGroup>
+      <TableRowGroup type="tbody">
+        {[...collection.body.childNodes].map(row => (
+          <TableRow key={row.key} item={row} state={state}>
+            {[...row.childNodes].map(cell => (
+              <TableCell key={cell.key} cell={cell} state={state} />
+            ))}
+          </TableRow>
+        ))}
+      </TableRowGroup>
+    </table>
+  );
+}
+
+function TableRowGroup({type: Element, children}) {
+  let {rowGroupProps} = useTableRowGroup();
+  return (
+    <Element {...rowGroupProps} style={Element === 'thead' ? {borderBottom: '2px solid var(--gray-300)'} : undefined}>
+      {children}
+    </Element>
+  );
+}
+
+function TableHeaderRow({item, state, children}) {
+  let ref = React.useRef(null);
+  let {rowProps} = useTableHeaderRow({node: item}, state, ref);
+  return <tr {...rowProps} ref={ref}>{children}</tr>;
+}
+
+function TableColumnHeader({column, state}) {
+  let ref = React.useRef(null);
+  let {columnHeaderProps} = useTableColumnHeader({node: column}, state, ref);
+  let {isFocusVisible, focusProps} = useFocusRing();
+  return (
+    <th
+      {...mergeProps(columnHeaderProps, focusProps)}
+      ref={ref}
+      style={{textAlign: 'start', padding: '6px 12px', cursor: 'default', outline: isFocusVisible ? '2px solid var(--focus-ring-color)' : 'none', outlineOffset: -2}}>
+      {column.rendered}
+    </th>
+  );
+}
+
+function TableRow({item, children, state}) {
+  let ref = React.useRef(null);
+  let isSelected = state.selectionManager.isSelected(item.key);
+  let {rowProps} = useTableRow({node: item}, state, ref);
+  let {isFocusVisible, focusProps} = useFocusRing();
+  return (
+    <tr
+      {...mergeProps(rowProps, focusProps)}
+      ref={ref}
+      style={{
+        cursor: 'default',
+        background: isSelected ? 'var(--highlight-background)' : 'transparent',
+        color: isSelected ? 'var(--highlight-foreground)' : 'var(--text-color)',
+        outline: isFocusVisible ? '2px solid var(--focus-ring-color)' : 'none',
+        outlineOffset: -2
+      }}>
+      {children}
+    </tr>
+  );
+}
+
+function TableCell({cell, state}) {
+  let ref = React.useRef(null);
+  let {gridCellProps} = useTableCell({node: cell}, state, ref);
+  let {isFocusVisible, focusProps} = useFocusRing();
+  return (
+    <td
+      {...mergeProps(gridCellProps, focusProps)}
+      ref={ref}
+      style={{padding: '6px 12px', outline: isFocusVisible ? '2px solid var(--focus-ring-color)' : 'none', outlineOffset: -2}}>
+      {cell.rendered}
+    </td>
+  );
+}
+
+<Table aria-label="Pokémon" selectionMode="multiple" selectionBehavior="replace">
+  <TableHeader>
+    <Column isRowHeader>Name</Column>
+    <Column>Type</Column>
+    <Column>Level</Column>
+  </TableHeader>
+  <TableBody>
+    <Row key="charizard"><Cell>Charizard</Cell><Cell>Fire, Flying</Cell><Cell>67</Cell></Row>
+    <Row key="blastoise"><Cell>Blastoise</Cell><Cell>Water</Cell><Cell>56</Cell></Row>
+    <Row key="venusaur"><Cell>Venusaur</Cell><Cell>Grass, Poison</Cell><Cell>83</Cell></Row>
+    <Row key="pikachu"><Cell>Pikachu</Cell><Cell>Electric</Cell><Cell>100</Cell></Row>
+  </TableBody>
+</Table>
+```
+
+## Features
+
+Tables can be built with the [&lt;table&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/table) HTML element, but native tables don't support rich interactions like selection, sorting, or keyboard navigation. `useTable` and its companion hooks help achieve accessible interactive tables following the [ARIA grid pattern](https://www.w3.org/WAI/ARIA/apg/patterns/grid/).
+
+* Exposed to assistive technology as a grid using ARIA, built with semantic table elements
+* Keyboard navigation between cells and rows via the arrow keys
+* Support for single, multiple, or no row selection, with optional selection checkboxes
+* Support for column sorting, row actions, and column resizing
+* Async loading, drag and drop, and empty state support
+
+## State management
+
+`useTable` requires a `state` object created with the `useTableState` hook from `react-stately`, which builds the column and row `Collection` from `TableHeader`/`Column`/`TableBody`/`Row`/`Cell` elements and manages selection and sort state. The state is passed to each of the table's companion hooks.
+
+## API
+
+<FunctionAPI function={docs.exports.useTable} links={docs.links} />
+<FunctionAPI function={docs.exports.useTableRowGroup} links={docs.links} />
+<FunctionAPI function={docs.exports.useTableHeaderRow} links={docs.links} />
+<FunctionAPI function={docs.exports.useTableColumnHeader} links={docs.links} />
+<FunctionAPI function={docs.exports.useTableRow} links={docs.links} />
+<FunctionAPI function={docs.exports.useTableCell} links={docs.links} />
+
+### AriaTableProps
+
+<InterfaceType {...docs.exports.AriaTableProps} />
+
+### AriaTableColumnHeaderProps
+
+<InterfaceType {...docs.exports.AriaTableColumnHeaderProps} />
+
+### AriaTableCellProps
+
+<InterfaceType {...docs.exports.AriaTableCellProps} />
