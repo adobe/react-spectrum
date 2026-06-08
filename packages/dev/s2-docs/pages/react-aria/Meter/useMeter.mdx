@@ -1,0 +1,77 @@
+{/* Copyright 2026 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '../../../src/Layout';
+export default Layout;
+import {FunctionAPI} from '../../../src/FunctionAPI';
+import {InterfaceType} from '../../../src/types';
+import docs from 'docs:@react-aria/meter';
+
+export const section = 'Hooks';
+export const description = 'Provides the accessibility implementation for a meter component.';
+export const isSubpage = true;
+
+# useMeter
+
+<PageDescription>{docs.exports.useMeter.description}</PageDescription>
+
+This example uses `useMeter` to build a labeled meter that displays a value within a range, with an accessible value label.
+
+```tsx render
+"use client";
+import React from 'react';
+import {useMeter} from 'react-aria/useMeter';
+import 'vanilla-starter/theme.css';
+
+function Meter(props) {
+  let {label, showValueLabel = !!label, value, minValue = 0, maxValue = 100} = props;
+  let {meterProps, labelProps} = useMeter(props);
+
+  // Calculate the width of the meter bar as a percentage.
+  let percentage = (value - minValue) / (maxValue - minValue);
+  let barWidth = `${Math.round(percentage * 100)}%`;
+
+  return (
+    <div {...meterProps} style={{width: 200, color: 'var(--text-color)'}}>
+      <div style={{display: 'flex', justifyContent: 'space-between'}}>
+        {label && <span {...labelProps}>{label}</span>}
+        {showValueLabel && <span>{meterProps['aria-valuetext']}</span>}
+      </div>
+      <div style={{height: 10, marginTop: 6, borderRadius: 5, background: 'var(--gray-200)', overflow: 'hidden'}}>
+        <div style={{width: barWidth, height: 10, background: 'var(--highlight-background)'}} />
+      </div>
+    </div>
+  );
+}
+
+<Meter label="Storage space" value={25} />
+```
+
+## Features
+
+The [&lt;meter&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/meter) HTML element can be used to build a meter, however it is very difficult to style cross browser. `useMeter` helps achieve accessible meters that can be styled as needed.
+
+* Exposed to assistive technology as a `meter` via ARIA
+* Labeling support for accessibility
+* Internationalized number formatting as a percentage or value
+* Determinate progress display
+
+Note: A meter represents a quantity within a known range, such as disk usage. For task progress, use a [progress bar](../ProgressBar/useProgressBar) instead.
+
+## API
+
+<FunctionAPI function={docs.exports.useMeter} links={docs.links} />
+
+### AriaMeterProps
+
+<InterfaceType {...docs.exports.AriaMeterProps} />
+
+### MeterAria
+
+<InterfaceType {...docs.exports.MeterAria} />
