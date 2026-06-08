@@ -1,0 +1,130 @@
+{/* Copyright 2026 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '../../../src/Layout';
+export default Layout;
+import {FunctionAPI} from '../../../src/FunctionAPI';
+import {InterfaceType} from '../../../src/types';
+import docs from 'docs:@react-aria/toast';
+
+export const section = 'Hooks';
+export const description = 'Provides the behavior and accessibility implementation for a toast notification.';
+export const isSubpage = true;
+
+# useToast
+
+<PageDescription>{docs.exports.useToast.description}</PageDescription>
+
+Toasts are built from scratch with `useToastRegion` (the landmark region) and `useToast` (an individual toast), since those hooks are the toast primitives. The trigger and the close button reuse the [Button](../Button) component from React Aria Components.
+
+```tsx render
+"use client";
+import React from 'react';
+import {useToast, useToastRegion} from 'react-aria/useToast';
+import {useToastState} from 'react-stately/useToastState';
+import {Button} from 'vanilla-starter/Button';
+import {X} from 'lucide-react';
+import 'vanilla-starter/Button.css';
+
+function ToastProvider({children}) {
+  // useToastState manages the queue of visible toasts.
+  let state = useToastState({maxVisibleToasts: 5});
+
+  return (
+    <>
+      {children(state)}
+      {state.visibleToasts.length > 0 && <ToastRegion state={state} />}
+    </>
+  );
+}
+
+function ToastRegion({state, ...props}) {
+  // useToastRegion creates an ARIA landmark so users can navigate to the toasts.
+  let ref = React.useRef(null);
+  let {regionProps} = useToastRegion(props, state, ref);
+
+  return (
+    <div
+      {...regionProps}
+      ref={ref}
+      style={{position: 'fixed', bottom: 16, right: 16, display: 'flex', flexDirection: 'column-reverse', gap: 8}}>
+      {state.visibleToasts.map(toast => (
+        <Toast key={toast.key} toast={toast} state={state} />
+      ))}
+    </div>
+  );
+}
+
+function Toast({state, toast, ...props}) {
+  // useToast provides the props for an individual toast and its close button.
+  let ref = React.useRef(null);
+  let {toastProps, contentProps, titleProps, closeButtonProps} = useToast({...props, toast}, state, ref);
+
+  return (
+    <div
+      {...toastProps}
+      ref={ref}
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: 16,
+        background: 'var(--highlight-background)',
+        color: 'var(--highlight-foreground)',
+        padding: '8px 8px 8px 16px',
+        borderRadius: 8
+      }}>
+      <div {...contentProps}>
+        <div {...titleProps}>{toast.content}</div>
+      </div>
+      <Button {...closeButtonProps} variant="quiet"><X /></Button>
+    </div>
+  );
+}
+
+<ToastProvider>
+  {state => (
+    <Button onPress={() => state.add('Toast is done!')}>Show toast</Button>
+  )}
+</ToastProvider>
+```
+
+## Features
+
+There is no built in way to display toast notifications in HTML. `useToastRegion` and `useToast` help achieve accessible toasts that can be styled as needed.
+
+* Toasts display in a landmark region, which keyboard and screen reader users can navigate to
+* Support for a queue with a configurable maximum number of visible toasts
+* Toasts can be programmatically added and removed, and automatically restore focus when dismissed
+* Exposed to assistive technology following the [ARIA alert pattern](https://www.w3.org/WAI/ARIA/apg/patterns/alert/)
+* Support for mouse, touch, and keyboard interactions
+
+## State management
+
+The toast queue is managed by the `useToastState` hook from `react-stately`, which exposes the list of `visibleToasts` along with `add` and `close` methods. The same state object is passed to `useToastRegion` and `useToast`. A global queue can also be used to trigger toasts from anywhere in an application.
+
+## API
+
+<FunctionAPI function={docs.exports.useToastRegion} links={docs.links} />
+<FunctionAPI function={docs.exports.useToast} links={docs.links} />
+
+### AriaToastRegionProps
+
+<InterfaceType {...docs.exports.AriaToastRegionProps} />
+
+### ToastRegionAria
+
+<InterfaceType {...docs.exports.ToastRegionAria} />
+
+### AriaToastProps
+
+<InterfaceType {...docs.exports.AriaToastProps} />
+
+### ToastAria
+
+<InterfaceType {...docs.exports.ToastAria} />
