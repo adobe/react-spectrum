@@ -1,0 +1,123 @@
+{/* Copyright 2026 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '../../../src/Layout';
+export default Layout;
+import {FunctionAPI} from '../../../src/FunctionAPI';
+import {InterfaceType} from '../../../src/types';
+import docs from 'docs:@react-aria/tooltip';
+
+export const section = 'Hooks';
+export const description = 'Provides the behavior and accessibility implementation for a tooltip component.';
+export const isSubpage = true;
+
+# useTooltipTrigger
+
+<PageDescription>{docs.exports.useTooltipTrigger.description}</PageDescription>
+
+`useTooltipTrigger` and `useTooltip` are the tooltip primitives, so the tooltip is built from scratch and positioned next to its trigger. The trigger receives the hook's props directly; here it is styled to match the [Button](../Button) component from React Aria Components.
+
+```tsx render
+"use client";
+import React from 'react';
+import {useTooltip, useTooltipTrigger} from 'react-aria/useTooltipTrigger';
+import {useTooltipTriggerState} from 'react-stately/useTooltipTriggerState';
+import {mergeProps} from 'react-aria/mergeProps';
+import 'vanilla-starter/Button.css';
+
+function Tooltip({state, ...props}) {
+  // useTooltip applies the tooltip ARIA role and connects it to the trigger.
+  let {tooltipProps} = useTooltip(props, state);
+
+  return (
+    <span
+      {...mergeProps(props, tooltipProps)}
+      style={{
+        position: 'absolute',
+        left: 0,
+        top: '100%',
+        marginTop: 6,
+        background: 'var(--overlay-background)',
+        color: 'var(--text-color)',
+        border: '1px solid var(--gray-300)',
+        borderRadius: 6,
+        padding: '4px 8px',
+        fontSize: 14,
+        whiteSpace: 'nowrap',
+        zIndex: 1
+      }}>
+      {props.children}
+    </span>
+  );
+}
+
+function TooltipButton(props) {
+  let state = useTooltipTriggerState(props);
+  let ref = React.useRef(null);
+
+  // Get props for the trigger and its tooltip.
+  let {triggerProps, tooltipProps} = useTooltipTrigger(props, state, ref);
+
+  return (
+    <span style={{position: 'relative', display: 'inline-block'}}>
+      <button
+        {...triggerProps}
+        ref={ref}
+        className="react-aria-Button button-base"
+        data-variant="secondary">
+        {props.children}
+      </button>
+      {state.isOpen &&
+        <Tooltip state={state} {...tooltipProps}>{props.tooltip}</Tooltip>}
+    </span>
+  );
+}
+
+<div style={{display: 'flex', gap: 8}}>
+  <TooltipButton tooltip="Edit">Edit</TooltipButton>
+  <TooltipButton tooltip="Delete">Delete</TooltipButton>
+</div>
+```
+
+## Features
+
+The HTML `title` attribute can be used to create a tooltip, but it cannot be styled. Custom styled tooltips can be hard to build in an accessible way. `useTooltipTrigger` and `useTooltip` help build fully accessible tooltips that can be styled as needed.
+
+* Keyboard focus management and cross browser normalization
+* Hover management and cross browser normalization
+* Labeling support for screen readers (`aria-describedby`)
+* Exposed as a tooltip to assistive technology via ARIA
+* Matches native tooltip behavior with delay on hover of first tooltip and no delay on subsequent tooltips
+
+## Anatomy
+
+A tooltip consists of two parts: the trigger element and the tooltip itself. Users may reveal the tooltip by hovering or focusing the trigger.
+
+Tooltip state is managed by the `useTooltipTriggerState` hook in `react-stately`. The state object should be passed as an option to `useTooltipTrigger` and `useTooltip`.
+
+## API
+
+<FunctionAPI function={docs.exports.useTooltipTrigger} links={docs.links} />
+<FunctionAPI function={docs.exports.useTooltip} links={docs.links} />
+
+### TooltipTriggerProps
+
+<InterfaceType {...docs.exports.TooltipTriggerProps} />
+
+### TooltipTriggerAria
+
+<InterfaceType {...docs.exports.TooltipTriggerAria} />
+
+### AriaTooltipProps
+
+<InterfaceType {...docs.exports.AriaTooltipProps} />
+
+### TooltipAria
+
+<InterfaceType {...docs.exports.TooltipAria} />
