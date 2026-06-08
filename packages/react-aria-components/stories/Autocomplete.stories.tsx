@@ -33,7 +33,7 @@ import {MyTag} from './TagGroup.stories';
 import {Node} from '@react-types/shared';
 import {OverlayArrow} from '../src/OverlayArrow';
 import {Popover} from '../src/Popover';
-import React, {useContext, useMemo, useRef, useState} from 'react';
+import React, {useState} from 'react';
 import {SearchField} from '../src/SearchField';
 import {Select, SelectValue} from '../src/Select';
 import {Separator} from '../src/Separator';
@@ -50,7 +50,6 @@ import {useListData} from 'react-stately/useListData';
 import {useTreeData} from 'react-stately/useTreeData';
 import {Virtualizer} from '../src/Virtualizer';
 import './styles.css';
-import {flushSync} from 'react-dom';
 
 export default {
   title: 'React Aria Components/Autocomplete',
@@ -1442,116 +1441,3 @@ export function AutocompleteGrid() {
     </AutocompleteWrapper>
   );
 }
-
-const emojis = [
-  {id: 1, emoji: '😀', name: 'grinning face'},
-  {id: 2, emoji: '😂', name: 'face with tears of joy'},
-  {id: 3, emoji: '😍', name: 'heart eyes'},
-  {id: 4, emoji: '🥰', name: 'smiling face with hearts'},
-  {id: 5, emoji: '😎', name: 'sunglasses'},
-  {id: 6, emoji: '😭', name: 'loudly crying face'},
-  {id: 7, emoji: '😅', name: 'grinning face with sweat'},
-  {id: 8, emoji: '😉', name: 'winking face'},
-  {id: 9, emoji: '😊', name: 'blush'},
-  {id: 10, emoji: '😇', name: 'smiling face with halo'},
-  {id: 11, emoji: '🤔', name: 'thinking face'},
-  {id: 12, emoji: '😋', name: 'yum'},
-  {id: 13, emoji: '😏', name: 'smirk'},
-  {id: 14, emoji: '🙄', name: 'face with rolling eyes'},
-  {id: 15, emoji: '😜', name: 'winking face with tongue'},
-  {id: 16, emoji: '🥳', name: 'partying face'},
-  {id: 17, emoji: '😡', name: 'pouting face'},
-  {id: 18, emoji: '😱', name: 'screaming in fear'},
-  {id: 19, emoji: '🤗', name: 'hugging face'},
-  {id: 20, emoji: '🤩', name: 'star-struck'},
-  {id: 21, emoji: '😤', name: 'face with steam from nose'},
-  {id: 22, emoji: '😴', name: 'sleeping face'},
-  {id: 23, emoji: '😬', name: 'grimacing face'},
-  {id: 24, emoji: '😷', name: 'face with medical mask'},
-  {id: 25, emoji: '🥺', name: 'pleading face'}
-];
-
-export const AutocompleteWithPopover: AutocompleteStory = {
-  render: args => {
-    let triggerRef = useRef(null);
-    let inputRef = useRef<HTMLTextAreaElement>(null);
-    let [inputValue, setInputValue] = useState('');
-    let [selectionStart, setSelectionStart] = useState<number | null>(null);
-    let filterAnchor = useMemo(() => {
-      if (selectionStart != null) {
-        let filterAnchor = selectionStart;
-        while (filterAnchor >= 0) {
-          if (inputValue[filterAnchor] === ':') {
-            break;
-          }
-          filterAnchor--;
-        }
-        return filterAnchor;
-      }
-      return null;
-    }, [selectionStart, inputValue]);
-    let filterValue = useMemo(() => {
-      if (filterAnchor != null && selectionStart != null) {
-        if (filterAnchor === 0 || (filterAnchor > 0 && inputValue[filterAnchor - 1] === ' ')) {
-          return inputValue.slice(filterAnchor + 1, selectionStart);
-        }
-      }
-      return null;
-    }, [filterAnchor, selectionStart]);
-
-    let items = filterValue == null ? [] : emojis.filter(emoji => emoji.name.includes(filterValue));
-    return (
-      <Autocomplete
-        inputValue={inputValue}
-        onInputChange={value => {
-          setInputValue(value);
-          setSelectionStart(inputRef.current?.selectionStart ?? null);
-        }}>
-        <div>
-          <TextField
-            autoFocus
-            data-testid="autocomplete-example"
-            ref={triggerRef}
-            onBlur={e => {
-              if (document.activeElement !== e.target) {
-                setSelectionStart(null);
-              }
-            }}>
-            <Label style={{display: 'block'}}>Test</Label>
-            <TextArea ref={inputRef} />
-          </TextField>
-          <Popover
-            triggerRef={triggerRef}
-            isOpen={inputValue.length > 0 && items.length > 0}
-            isNonModal
-            style={{
-              background: 'Canvas',
-              color: 'CanvasText',
-              border: '1px solid gray',
-              padding: 5
-            }}>
-            <Menu className={styles.menu} items={items}>
-              {item => (
-                <MyMenuItem
-                  onAction={() => {
-                    let prefix = inputValue.slice(0, filterAnchor!) + item.emoji + ' ';
-                    let suffix = inputValue.slice(selectionStart!);
-                    let caretPosition = prefix.length;
-                    setInputValue(prefix + suffix);
-                    flushSync(() => {
-                      setSelectionStart(caretPosition);
-                    });
-                    inputRef.current!.selectionStart = inputRef.current!.selectionEnd =
-                      caretPosition;
-                  }}>
-                  {item.emoji + ' ' + item.name}
-                </MyMenuItem>
-              )}
-            </Menu>
-          </Popover>
-        </div>
-      </Autocomplete>
-    );
-  },
-  name: 'Autocomplete with popover'
-};
