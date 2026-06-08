@@ -206,10 +206,7 @@ export type {
   AriaToggleButtonGroupItemProps,
   AriaToggleButtonGroupItemOptions
 } from '../src/button/useToggleButtonGroup';
-export type {
-  AriaActionGroupProps,
-  ActionGroupAria
-} from '../src/actiongroup/useActionGroup';
+export type {AriaActionGroupProps, ActionGroupAria} from '../src/actiongroup/useActionGroup';
 export type {
   AriaActionGroupItemProps,
   ActionGroupItemAria

@@ -9,13 +9,10 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-export { useActionGroup } from "../src/actiongroup/useActionGroup";
-export type {
-  ActionGroupAria,
-  AriaActionGroupProps,
-} from "../src/actiongroup/useActionGroup";
-export { useActionGroupItem } from "../src/actiongroup/useActionGroupItem";
+export {useActionGroup} from '../src/actiongroup/useActionGroup';
+export type {ActionGroupAria, AriaActionGroupProps} from '../src/actiongroup/useActionGroup';
+export {useActionGroupItem} from '../src/actiongroup/useActionGroupItem';
 export type {
   ActionGroupItemAria,
-  AriaActionGroupItemProps,
-} from "../src/actiongroup/useActionGroupItem";
+  AriaActionGroupItemProps
+} from '../src/actiongroup/useActionGroupItem';
