@@ -1,0 +1,118 @@
+{/* Copyright 2026 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '../../../src/Layout';
+export default Layout;
+import {FunctionAPI} from '../../../src/FunctionAPI';
+import {InterfaceType} from '../../../src/types';
+import docs from 'docs:@react-aria/datepicker';
+
+export const section = 'Hooks';
+export const description = 'Provides the behavior and accessibility implementation for a date picker component.';
+export const isSubpage = true;
+
+# useDatePicker
+
+<PageDescription>{docs.exports.useDatePicker.description}</PageDescription>
+
+This example uses `useDatePicker` to combine a date field and a calendar popover, and reuses the [DateField](../DateField), [Button](../Button), [Popover](../Popover), and [Calendar](../Calendar) components from React Aria Components to render each part. The values returned by the hook are passed to these components via context, following the [Reusing children](../customization#reusing-children) pattern. Date values use the [@internationalized/date](../internationalized/date/) library.
+
+```tsx render
+"use client";
+import React from 'react';
+import {useDatePicker} from 'react-aria/useDatePicker';
+import {useDatePickerState} from 'react-stately/useDatePickerState';
+import {Provider} from 'react-aria-components/slots';
+import {Group, GroupContext} from 'react-aria-components/Group';
+import {DateFieldContext} from 'react-aria-components/DateField';
+import {ButtonContext} from 'react-aria-components/Button';
+import {LabelContext} from 'react-aria-components/Label';
+import {CalendarContext} from 'react-aria-components/Calendar';
+import {DialogContext, OverlayTriggerStateContext} from 'react-aria-components/Dialog';
+import {PopoverContext} from 'react-aria-components/Popover';
+import {DateInput, DateSegment} from 'vanilla-starter/DateField';
+import {Label, FieldButton} from 'vanilla-starter/Form';
+import {Calendar} from 'vanilla-starter/Calendar';
+import {Popover} from 'vanilla-starter/Popover';
+import {ChevronDown} from 'lucide-react';
+import 'vanilla-starter/DatePicker.css';
+
+function DatePicker(props) {
+  // Create state based on the incoming props.
+  let state = useDatePickerState(props);
+
+  // Get props for the child elements from useDatePicker.
+  let groupRef = React.useRef(null);
+  let {groupProps, labelProps, fieldProps, buttonProps, dialogProps, calendarProps} =
+    useDatePicker(props, state, groupRef);
+
+  // Provide the values returned by the hook to the reused components via context.
+  return (
+    <Provider
+      values={[
+        [GroupContext, {...groupProps, ref: groupRef}],
+        [DateFieldContext, fieldProps],
+        [ButtonContext, {...buttonProps, isPressed: state.isOpen}],
+        [LabelContext, {...labelProps, elementType: 'span'}],
+        [CalendarContext, calendarProps as any],
+        [DialogContext, dialogProps],
+        [OverlayTriggerStateContext, state],
+        [PopoverContext, {trigger: 'DatePicker', triggerRef: groupRef, placement: 'bottom start'}]
+      ]}>
+      <div className="react-aria-DatePicker">
+        <Label>{props.label}</Label>
+        <Group>
+          {/* The DateInput builds its own field state from fieldProps, provided via DateFieldContext. */}
+          <DateInput>{segment => <DateSegment segment={segment} />}</DateInput>
+          <FieldButton>
+            <ChevronDown />
+          </FieldButton>
+        </Group>
+        <Popover hideArrow>
+          {/* Rendered from calendarProps, provided via CalendarContext. */}
+          <Calendar />
+        </Popover>
+      </div>
+    </Provider>
+  );
+}
+
+<DatePicker label="Event date" />
+```
+
+## Features
+
+A date picker can be built using `<input type="date">`, but this is very limited in functionality, lacking in internationalization capabilities, inconsistent between browsers, and difficult to style. `useDatePicker` helps achieve accessible and international date and time pickers that can be styled as needed.
+
+* **Dates and times** – Support for dates and times with configurable granularity.
+* **International** – Support for 13 calendar systems used around the world, including Gregorian, Buddhist, Islamic, Persian, and more. Locale-specific formatting, number systems, hour cycles, and right-to-left support are available as well.
+* **Time zone aware** – Dates and times can optionally include a time zone. All modifications follow time zone rules such as daylight saving time.
+* **Accessible** – Each date and time unit is displayed as an individually focusable and editable segment, which allows users an easy way to edit dates using the keyboard, in any date format and locale. Users can also open a calendar popover to select dates in a standard month grid. Localized screen reader messages are included to announce when the selection and visible date range change.
+* **Touch friendly** – Date segments are editable using an easy to use numeric keypad, and all interactions are accessible using touch-based screen readers.
+* **Customizable** – As with all of React Aria, the DOM structure and styling of all elements can be fully customized.
+
+## Anatomy
+
+A date picker consists of a label, and a group containing a [date field](../DateField) and a button. Clicking the button opens a [calendar](../Calendar) popup. The date field includes segments representing each unit of a date and time (e.g. years, months, days, etc.), each of which is individually focusable and editable using the keyboard. The calendar popup offers a more visual way of choosing a date.
+
+State is managed by the `useDatePickerState` hook from `react-stately`, which holds the selected date value and tracks whether the calendar popover is open. The state object should be passed as an argument to `useDatePicker`.
+
+If the date picker does not have a visible label, an `aria-label` or `aria-labelledby` prop must be passed instead to identify it to assistive technology.
+
+## API
+
+<FunctionAPI function={docs.exports.useDatePicker} links={docs.links} />
+
+### AriaDatePickerProps
+
+<InterfaceType {...docs.exports.AriaDatePickerProps} />
+
+### DatePickerAria
+
+<InterfaceType {...docs.exports.DatePickerAria} />
