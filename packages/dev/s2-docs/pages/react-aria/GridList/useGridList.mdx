@@ -1,0 +1,127 @@
+{/* Copyright 2026 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '../../../src/Layout';
+export default Layout;
+import {FunctionAPI} from '../../../src/FunctionAPI';
+import {InterfaceType} from '../../../src/types';
+import docs from 'docs:@react-aria/gridlist';
+
+export const section = 'Hooks';
+export const description = 'Provides the behavior and accessibility implementation for a list component with interactive children.';
+export const isSubpage = true;
+
+# useGridList
+
+<PageDescription>{docs.exports.useGridList.description}</PageDescription>
+
+This example uses `useGridList` for the list and `useGridListItem` for each row, building the collection from scratch with `useListState` and items from `react-stately`. Unlike a listbox, each row can contain interactive elements such as the [Button](../Button) reused here.
+
+```tsx render
+"use client";
+import React from 'react';
+import {useGridList, useGridListItem} from 'react-aria/useGridList';
+import {useListState} from 'react-stately/useListState';
+import {Item} from 'react-stately/Item';
+import {useFocusRing} from 'react-aria/useFocusRing';
+import {mergeProps} from 'react-aria/mergeProps';
+import {Button} from 'vanilla-starter/Button';
+import 'vanilla-starter/theme.css';
+
+function GridList(props) {
+  let state = useListState(props);
+  let ref = React.useRef(null);
+  let {gridProps} = useGridList(props, state, ref);
+
+  return (
+    <ul
+      {...gridProps}
+      ref={ref}
+      style={{padding: 0, margin: 0, listStyle: 'none', width: 280, border: '1px solid var(--gray-300)', borderRadius: 8, overflow: 'hidden', color: 'var(--text-color)'}}>
+      {[...state.collection].map(item => (
+        <ListItem key={item.key} item={item} state={state} />
+      ))}
+    </ul>
+  );
+}
+
+function ListItem({item, state}) {
+  let ref = React.useRef(null);
+  let {rowProps, gridCellProps} = useGridListItem({node: item}, state, ref);
+  let {isFocusVisible, focusProps} = useFocusRing();
+  let isSelected = state.selectionManager.isSelected(item.key);
+
+  return (
+    <li
+      {...mergeProps(rowProps, focusProps)}
+      ref={ref}
+      style={{
+        cursor: 'default',
+        background: isSelected ? 'var(--highlight-background)' : 'transparent',
+        color: isSelected ? 'var(--highlight-foreground)' : 'var(--text-color)',
+        outline: isFocusVisible ? '2px solid var(--focus-ring-color)' : 'none',
+        outlineOffset: -2
+      }}>
+      <div {...gridCellProps} style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, padding: '8px 12px'}}>
+        {item.rendered}
+      </div>
+    </li>
+  );
+}
+
+<GridList aria-label="Pokémon" selectionMode="multiple" selectionBehavior="replace">
+  <Item textValue="Charizard">
+    Charizard
+    <Button variant="secondary" onPress={() => alert('Info for Charizard')}>Info</Button>
+  </Item>
+  <Item textValue="Blastoise">
+    Blastoise
+    <Button variant="secondary" onPress={() => alert('Info for Blastoise')}>Info</Button>
+  </Item>
+  <Item textValue="Venusaur">
+    Venusaur
+    <Button variant="secondary" onPress={() => alert('Info for Venusaur')}>Info</Button>
+  </Item>
+</GridList>
+```
+
+## Features
+
+A grid list is a list of rows that, unlike a [listbox](../ListBox/useListBox), can contain interactive elements (buttons, links, etc.) within each row. There is no native HTML element for this, so `useGridList` and `useGridListItem` help achieve an accessible list following the [ARIA grid pattern](https://www.w3.org/WAI/ARIA/apg/patterns/grid/).
+
+* Exposed to assistive technology as a grid using ARIA
+* Support for interactive children within each row, navigable via the keyboard
+* Support for single, multiple, or no selection, and row actions
+* Keyboard navigation between rows and the focusable elements within them
+* Async loading, drag and drop, and empty state support
+
+## State management
+
+`useGridList` requires a `state` object created with the `useListState` hook from `react-stately`, which builds a `Collection` from the items and manages selection. The state is passed to each `useGridListItem`.
+
+## API
+
+<FunctionAPI function={docs.exports.useGridList} links={docs.links} />
+<FunctionAPI function={docs.exports.useGridListItem} links={docs.links} />
+
+### AriaGridListProps
+
+<InterfaceType {...docs.exports.AriaGridListProps} />
+
+### GridListAria
+
+<InterfaceType {...docs.exports.GridListAria} />
+
+### AriaGridListItemOptions
+
+<InterfaceType {...docs.exports.AriaGridListItemOptions} />
+
+### GridListItemAria
+
+<InterfaceType {...docs.exports.GridListItemAria} />
