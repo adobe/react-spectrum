@@ -1,0 +1,86 @@
+{/* Copyright 2026 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '../../../src/Layout';
+export default Layout;
+import {FunctionAPI} from '../../../src/FunctionAPI';
+import {InterfaceType} from '../../../src/types';
+import docs from 'docs:@react-aria/switch';
+
+export const section = 'Hooks';
+export const description = 'Provides the behavior and accessibility implementation for a switch.';
+export const isSubpage = true;
+
+# useSwitch
+
+<PageDescription>{docs.exports.useSwitch.description}</PageDescription>
+
+This example uses `useSwitch` to build a switch with a visually hidden native `<input>` and a custom SVG toggle, including a keyboard focus ring.
+
+```tsx render
+"use client";
+import React from 'react';
+import {useSwitch} from 'react-aria/useSwitch';
+import {VisuallyHidden} from 'react-aria/VisuallyHidden';
+import {useFocusRing} from 'react-aria/useFocusRing';
+import {useToggleState} from 'react-stately/useToggleState';
+import 'vanilla-starter/theme.css';
+
+function Switch(props) {
+  let state = useToggleState(props);
+  let ref = React.useRef(null);
+  let {inputProps} = useSwitch(props, state, ref);
+  let {isFocusVisible, focusProps} = useFocusRing();
+
+  return (
+    <label style={{display: 'flex', alignItems: 'center', gap: 8, color: 'var(--text-color)', opacity: props.isDisabled ? 0.4 : 1}}>
+      <VisuallyHidden>
+        <input {...inputProps} {...focusProps} ref={ref} />
+      </VisuallyHidden>
+      <svg width={40} height={24} aria-hidden="true">
+        <rect x={4} y={4} width={32} height={16} rx={8}
+          fill={state.isSelected ? 'var(--highlight-background)' : 'var(--gray-400)'} />
+        <circle cx={state.isSelected ? 28 : 12} cy={12} r={5} fill="white" />
+        {isFocusVisible &&
+          <rect x={1} y={1} width={38} height={22} rx={11} fill="none"
+            stroke="var(--focus-ring-color)" strokeWidth={2} />}
+      </svg>
+      {props.children}
+    </label>
+  );
+}
+
+<Switch>Low power mode</Switch>
+```
+
+## Features
+
+Switches can be built with the [&lt;input&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input) HTML element, but this can be difficult to style. `useSwitch` helps achieve accessible switches that can be styled as needed.
+
+* Built with a native HTML `<input>` element, which is visually hidden when styling custom switches
+* Full support for browser features like form autofill
+* Keyboard focus management and cross browser normalization
+* Exposed to assistive technology as a `switch` via ARIA
+* Labeling support for assistive technology
+
+## State management
+
+`useSwitch` requires a `state` object created with the `useToggleState` hook from `react-stately`, which tracks whether the switch is selected and exposes a method to toggle it.
+
+## API
+
+<FunctionAPI function={docs.exports.useSwitch} links={docs.links} />
+
+### AriaSwitchProps
+
+<InterfaceType {...docs.exports.AriaSwitchProps} />
+
+### SwitchAria
+
+<InterfaceType {...docs.exports.SwitchAria} />
