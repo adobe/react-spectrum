@@ -1,0 +1,89 @@
+{/* Copyright 2026 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '../../../src/Layout';
+export default Layout;
+import {FunctionAPI} from '../../../src/FunctionAPI';
+import {InterfaceType} from '../../../src/types';
+import docs from 'docs:@react-aria/searchfield';
+
+export const section = 'Hooks';
+export const description = 'Provides the behavior and accessibility implementation for a search field.';
+export const isSubpage = true;
+
+# useSearchField
+
+<PageDescription>{docs.exports.useSearchField.description}</PageDescription>
+
+This example builds a search field from scratch with `useSearchField`, reusing the [Button](../Button) component from React Aria Components for the clear button, which appears once text is entered.
+
+```tsx render
+"use client";
+import React from 'react';
+import {useSearchField} from 'react-aria/useSearchField';
+import {useFocus} from 'react-aria/useFocus';
+import {mergeProps} from 'react-aria/mergeProps';
+import {useSearchFieldState} from 'react-stately/useSearchFieldState';
+import {Button} from 'react-aria-components/Button';
+import {Label} from 'vanilla-starter/Form';
+import {Search, X} from 'lucide-react';
+import 'vanilla-starter/SearchField.css';
+
+function SearchField(props) {
+  // useSearchFieldState tracks the current text value.
+  let state = useSearchFieldState(props);
+  let ref = React.useRef(null);
+  let {labelProps, inputProps, clearButtonProps} = useSearchField(props, state, ref);
+  let [isFocused, setFocused] = React.useState(false);
+  let {focusProps} = useFocus({onFocusChange: setFocused});
+
+  return (
+    <div className="react-aria-SearchField" data-empty={state.value === '' || undefined} style={{width: 250}}>
+      <Label {...labelProps}>{props.label}</Label>
+      <Search size={18} aria-hidden="true" />
+      <input
+        {...mergeProps(inputProps, focusProps)}
+        ref={ref}
+        className="react-aria-Input inset"
+        data-focused={isFocused || undefined} />
+      {/* The clear button shows when there is text (hidden via [data-empty] in the CSS). */}
+      <Button {...clearButtonProps} className="clear-button">
+        <X size={14} />
+      </Button>
+    </div>
+  );
+}
+
+<SearchField label="Search" onSubmit={text => alert(text)} />
+```
+
+## Features
+
+Search fields can be built with the [&lt;input type="search"&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/search) HTML element, but this can be difficult to style consistently across browsers. `useSearchField` helps achieve accessible search fields that can be styled as needed.
+
+* Built with a native `<input type="search">` element
+* Support for submitting and clearing the field, with a clear button
+* Labeling support for accessibility, and support for description and error message help text
+* Keyboard support for submitting on <kbd>Enter</kbd> and clearing on <kbd>Escape</kbd>
+
+## State management
+
+`useSearchField` requires a `state` object created with the `useSearchFieldState` hook from `react-stately`, which tracks the current text value.
+
+## API
+
+<FunctionAPI function={docs.exports.useSearchField} links={docs.links} />
+
+### AriaSearchFieldProps
+
+<InterfaceType {...docs.exports.AriaSearchFieldProps} />
+
+### SearchFieldAria
+
+<InterfaceType {...docs.exports.SearchFieldAria} />
