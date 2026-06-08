@@ -11,14 +11,24 @@
  */
 
 import {ActionButton} from '@react-spectrum/s2/ActionButton';
+import Attach from '@react-spectrum/s2/icons/Attach';
 import {Attachment, AttachmentList} from './AttachmentList';
 import {Autocomplete} from 'react-aria-components/Autocomplete';
 import {baseColor, css, iconStyle, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import Brand from '@react-spectrum/s2/icons/Brand';
 import {Button} from '@react-spectrum/s2/Button';
 import {CenterBaseline} from '@react-spectrum/s2/CenterBaseline';
-import {Collection, Header, Heading, Menu, MenuItem, MenuSection} from '@react-spectrum/s2/Menu';
-import {Image, Text} from '@react-spectrum/s2/Card';
+import {
+  Collection,
+  Header,
+  Heading,
+  Menu,
+  MenuItem,
+  MenuSection,
+  MenuTrigger,
+  SubmenuTrigger
+} from '@react-spectrum/s2/Menu';
+import Data from '@react-spectrum/s2/icons/Data';
 // eslint-disable-next-line
 import {
   Direction,
@@ -26,6 +36,7 @@ import {
   TokenSegmentList
 } from '/packages/react-aria-components/src/TokenSegmentList';
 import {Group} from 'react-aria-components/Group';
+import {Image, Text} from '@react-spectrum/s2/Card';
 import {isFileDropItem, useDrop} from 'react-aria-components/useDrop';
 import {Link} from '@react-spectrum/s2/Link';
 import LinkIcon from '@react-spectrum/s2/icons/Link';
@@ -58,7 +69,7 @@ export function PromptField({
   onSend?: (text: string) => void;
   isDisabled?: boolean;
 }) {
-  let [text, setText] = useState('');
+  let [value, setValue] = useState<TokenSegmentList>(new AutoLinkingSegmentList([]));
   let [attachments, setAttachments] = useState<Attachment[]>([]);
 
   // Not using RAC DropZone because it adds its own focusable button,
@@ -80,6 +91,29 @@ export function PromptField({
       setAttachments(attachments => [...attachments, ...files]);
     }
   });
+
+  let onAction = (item: Item) => {
+    setValue(value =>
+      value.replaceRangeWithSegments(
+        value.caretPosition,
+        value.caretPosition,
+        [
+          {
+            type: 'token',
+            text: 'command' in item ? item.command : item.title,
+            value: item
+          },
+          {type: 'text', text: ' '}
+        ],
+        false // Don't coalesce in undo/redo history.
+      )
+    );
+
+    // Wait for popover animation
+    setTimeout(() => {
+      inputRef.current?.focus();
+    }, 400);
+  };
 
   return (
     <div>
@@ -127,6 +161,9 @@ export function PromptField({
           </AttachmentList>
         )}
         <PromptTokenField
+          ref={inputRef}
+          value={value}
+          onChange={setValue}
           onPaste={e => {
             let clipboardData = e.clipboardData as DataTransfer;
             for (let item of clipboardData.items) {
@@ -148,16 +185,95 @@ export function PromptField({
             alignItems: 'center',
             marginTop: 16
           })}>
-          <ActionButton isQuiet aria-label="Add">
-            <Plus />
-          </ActionButton>
+          <MenuTrigger>
+            <ActionButton isQuiet aria-label="Add">
+              <Plus />
+            </ActionButton>
+            <Menu>
+              <MenuItem
+                onAction={() => {
+                  let input = document.createElement('input');
+                  input.type = 'file';
+                  input.accept = 'image/*';
+                  input.multiple = true;
+                  input.onchange = e => {
+                    let files = (e.currentTarget as HTMLInputElement).files;
+                    if (files) {
+                      setAttachments(attachments => [
+                        ...attachments,
+                        ...Array.from(files).map(file => ({
+                          id: crypto.randomUUID(),
+                          image: URL.createObjectURL(file),
+                          title: file.name,
+                          description: file.type
+                        }))
+                      ]);
+                    }
+                  };
+                  input.click();
+                }}>
+                <Attach />
+                <Text>Attach a file</Text>
+              </MenuItem>
+              <SubmenuTrigger>
+                <MenuItem>
+                  <Prompt />
+                  <Text>Commands</Text>
+                </MenuItem>
+                <Menu items={slashCommands.filter(item => item.type === 'command')}>
+                  {item => (
+                    <MenuItem id={item.command} onAction={() => onAction(item)}>
+                      <Text slot="label">{item.command}</Text>
+                      <Text slot="description">{item.description}</Text>
+                    </MenuItem>
+                  )}
+                </Menu>
+              </SubmenuTrigger>
+              <SubmenuTrigger>
+                <MenuItem>
+                  <Plugin />
+                  <Text>Skills</Text>
+                </MenuItem>
+                <Menu items={slashCommands.filter(item => item.type === 'skill')}>
+                  {item => (
+                    <MenuItem id={item.command} onAction={() => onAction(item)}>
+                      <Text slot="label">{item.command}</Text>
+                      <Text slot="description">{item.description}</Text>
+                    </MenuItem>
+                  )}
+                </Menu>
+              </SubmenuTrigger>
+              <SubmenuTrigger>
+                <MenuItem>
+                  <Data />
+                  <Text>Reference an object</Text>
+                </MenuItem>
+                <Menu items={objects}>
+                  {item => (
+                    <MenuSection>
+                      <Header>
+                        <Heading>{item.section}</Heading>
+                      </Header>
+                      <Collection items={item.items}>
+                        {item => (
+                          <MenuItem id={item.title} onAction={() => onAction(item)}>
+                            {item.title}
+                          </MenuItem>
+                        )}
+                      </Collection>
+                    </MenuSection>
+                  )}
+                </Menu>
+              </SubmenuTrigger>
+            </Menu>
+          </MenuTrigger>
           <Button
             variant="primary"
             aria-label="Send"
             isDisabled={isDisabled}
             onPress={() => {
-              onSend?.(text);
-              setText('');
+              onSend?.(value.toString());
+              setValue(new AutoLinkingSegmentList([]));
               inputRef.current?.focus();
             }}>
             <Send />
@@ -264,8 +380,7 @@ class AutoLinkingSegmentList extends TokenSegmentList {
 }
 
 function PromptTokenField(props) {
-  let inputRef = useRef(null);
-  let [value, setValue] = useState<TokenSegmentList>(new AutoLinkingSegmentList([]));
+  let {value, onChange, ref: inputRef} = props;
 
   let [filterAnchor, filterValue] = useMemo(() => {
     let filterAnchor = value.findText(value.caretPosition, Direction.Backward, /(?<=^|\s)[@/]/);
@@ -298,7 +413,7 @@ function PromptTokenField(props) {
   }
 
   let onAction = (item: Item) => {
-    setValue(value =>
+    onChange(value =>
       value.replaceRangeWithSegments(
         filterAnchor!,
         value.caretPosition,
@@ -319,7 +434,7 @@ function PromptTokenField(props) {
     <Autocomplete>
       <TokenField
         value={value}
-        onChange={setValue}
+        onChange={onChange}
         aria-label="Prompt"
         ref={inputRef}
         onPaste={props.onPaste}
