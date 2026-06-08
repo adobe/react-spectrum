@@ -1,0 +1,159 @@
+{/* Copyright 2026 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '../../../src/Layout';
+export default Layout;
+import {FunctionAPI} from '../../../src/FunctionAPI';
+import {InterfaceType} from '../../../src/types';
+import docs from 'docs:@react-aria/calendar';
+
+export const section = 'Hooks';
+export const description = 'Provides the behavior and accessibility implementation for a range calendar component.';
+export const isSubpage = true;
+
+# useRangeCalendar
+
+<PageDescription>{docs.exports.useRangeCalendar.description}</PageDescription>
+
+A range calendar is built from scratch with `useRangeCalendar`, `useCalendarGrid`, and `useCalendarCell`. It shares its grid and cell components with [useCalendar](../Calendar/useCalendar) — only the wrapper differs, using `useRangeCalendarState` and `useRangeCalendar`. The navigation buttons reuse the [Button](../Button) component from React Aria Components.
+
+```tsx render
+"use client";
+import React from 'react';
+import {useRangeCalendar, useCalendarGrid, useCalendarCell} from 'react-aria/useRangeCalendar';
+import {useRangeCalendarState} from 'react-stately/useRangeCalendarState';
+import {useLocale} from 'react-aria/I18nProvider';
+import {useFocusRing} from 'react-aria/useFocusRing';
+import {mergeProps} from 'react-aria/mergeProps';
+import {createCalendar} from '@internationalized/date';
+import {Button} from 'vanilla-starter/Button';
+import {ChevronLeft, ChevronRight} from 'lucide-react';
+import 'vanilla-starter/Button.css';
+
+function RangeCalendar(props) {
+  // useRangeCalendarState tracks the selected range and visible date range.
+  let {locale} = useLocale();
+  let state = useRangeCalendarState({...props, locale, createCalendar});
+  let ref = React.useRef(null);
+  let {calendarProps, prevButtonProps, nextButtonProps, title} = useRangeCalendar(props, state, ref);
+
+  return (
+    <div {...calendarProps} ref={ref} style={{width: 280}}>
+      <div style={{display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8}}>
+        <Button {...prevButtonProps} variant="quiet"><ChevronLeft /></Button>
+        <h2 style={{flex: 1, margin: 0, textAlign: 'center', fontSize: 'var(--font-size-lg)'}}>{title}</h2>
+        <Button {...nextButtonProps} variant="quiet"><ChevronRight /></Button>
+      </div>
+      <CalendarGrid state={state} />
+    </div>
+  );
+}
+
+function CalendarGrid({state, ...props}) {
+  // useCalendarGrid renders the table of dates for a single month.
+  let {gridProps, headerProps, weekDays, weeksInMonth} = useCalendarGrid(props, state);
+
+  return (
+    <table {...gridProps} style={{width: '100%', borderCollapse: 'collapse'}}>
+      <thead {...headerProps}>
+        <tr>
+          {weekDays.map((day, i) => (
+            <th key={i} style={{fontWeight: 'normal', fontSize: 'var(--font-size-sm)', color: 'var(--text-color-placeholder)'}}>{day}</th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>
+        {[...new Array(weeksInMonth).keys()].map(weekIndex => (
+          <tr key={weekIndex}>
+            {state.getDatesInWeek(weekIndex).map((date, i) => (
+              date
+                ? <CalendarCell key={i} state={state} date={date} />
+                : <td key={i} />
+            ))}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+}
+
+function CalendarCell({state, date}) {
+  // isSelected covers every date within the selected range.
+  let ref = React.useRef(null);
+  let {cellProps, buttonProps, isSelected, isOutsideVisibleRange, isDisabled, formattedDate} =
+    useCalendarCell({date}, state, ref);
+
+  // Show a focus ring when the cell is focused via the keyboard.
+  let {focusProps, isFocusVisible} = useFocusRing();
+
+  return (
+    <td {...cellProps} style={{textAlign: 'center', padding: 0}}>
+      <div
+        {...mergeProps(buttonProps, focusProps)}
+        ref={ref}
+        hidden={isOutsideVisibleRange}
+        style={{
+          width: 32,
+          height: 32,
+          lineHeight: '32px',
+          margin: '2px auto',
+          borderRadius: '50%',
+          cursor: 'default',
+          outline: isFocusVisible ? '2px solid var(--focus-ring-color)' : 'none',
+          outlineOffset: 2,
+          background: isSelected ? 'var(--highlight-background)' : 'transparent',
+          color: isSelected ? 'var(--highlight-foreground)' : isDisabled ? 'var(--text-color-disabled)' : 'var(--text-color)'
+        }}>
+        {formattedDate}
+      </div>
+    </td>
+  );
+}
+
+<RangeCalendar aria-label="Trip dates" />
+```
+
+## Features
+
+There is no standalone calendar element in HTML. `useRangeCalendar` helps achieve accessible range calendar components that can be styled as needed.
+
+* Support for selecting a range of dates
+* Support for 13 calendar systems used around the world, including Gregorian, Buddhist, Islamic, Persian, and more
+* Locale-specific formatting, number systems, and right-to-left support
+* Date values are provided using objects from the [@internationalized/date](../internationalized/date/) library
+* Support for minimum and maximum values, disabled and unavailable dates
+* Localized screen reader messages announce the selected and visible date ranges
+* Keyboard navigation between dates with arrow keys, including wrapping and validation
+* Full keyboard and screen reader accessibility following the [ARIA grid pattern](https://www.w3.org/WAI/ARIA/apg/patterns/grid/)
+
+## State management
+
+`useRangeCalendar` requires a `state` object created with the `useRangeCalendarState` hook from `react-stately`, which holds the selected range and visible date range. Like [useCalendar](../Calendar/useCalendar), it requires a `createCalendar` function from [@internationalized/date](../internationalized/date/) to implement date manipulation across calendar systems.
+
+## API
+
+<FunctionAPI function={docs.exports.useRangeCalendar} links={docs.links} />
+<FunctionAPI function={docs.exports.useCalendarGrid} links={docs.links} />
+<FunctionAPI function={docs.exports.useCalendarCell} links={docs.links} />
+
+### AriaRangeCalendarProps
+
+<InterfaceType {...docs.exports.AriaRangeCalendarProps} />
+
+### CalendarAria
+
+<InterfaceType {...docs.exports.CalendarAria} />
+
+### AriaCalendarGridProps
+
+<InterfaceType {...docs.exports.AriaCalendarGridProps} />
+
+### AriaCalendarCellProps
+
+<InterfaceType {...docs.exports.AriaCalendarCellProps} />
