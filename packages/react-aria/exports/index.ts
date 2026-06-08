@@ -17,6 +17,7 @@ export {
   createBranchComponent
 } from '../src/collections/CollectionBuilder';
 export {useAutocomplete} from '../src/autocomplete/useAutocomplete';
+export {useSearchAutocomplete} from '../src/autocomplete/useSearchAutocomplete';
 export {useBreadcrumbItem} from '../src/breadcrumbs/useBreadcrumbItem';
 export {useBreadcrumbs} from '../src/breadcrumbs/useBreadcrumbs';
 export {useButton} from '../src/button/useButton';
@@ -173,6 +174,11 @@ export type {
   CollectionOptions,
   InputProps
 } from '../src/autocomplete/useAutocomplete';
+export type {
+  AriaSearchAutocompleteProps,
+  AriaSearchAutocompleteOptions,
+  SearchAutocompleteAria
+} from '../src/autocomplete/useSearchAutocomplete';
 export type {CollectionProps, CollectionBuilderProps} from '../src/collections/CollectionBuilder';
 export type {
   AriaBreadcrumbItemProps,
