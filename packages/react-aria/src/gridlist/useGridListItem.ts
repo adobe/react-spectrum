@@ -188,36 +188,10 @@ export function useGridListItem<T>(
     let walker = getFocusableTreeWalker(ref.current);
     walker.currentNode = activeElement;
 
-    if ('expandedKeys' in state && activeElement === ref.current) {
-      if (
-        e.key === EXPANSION_KEYS['expand'][direction] &&
-        state.selectionManager.focusedKey === node.key &&
-        hasChildRows &&
-        !state.expandedKeys.has(node.key)
-      ) {
-        state.toggleKey(node.key);
-        e.stopPropagation();
-        return;
-      } else if (
-        e.key === EXPANSION_KEYS['collapse'][direction] &&
-        state.selectionManager.focusedKey === node.key
-      ) {
-        // If item is collapsible, collapse it; else move to parent
-        if (hasChildRows && state.expandedKeys.has(node.key)) {
-          state.toggleKey(node.key);
-          e.stopPropagation();
-          return;
-        } else if (
-          !state.expandedKeys.has(node.key) &&
-          node.parentKey &&
-          state.collection.getItem(node.parentKey)?.type === 'item'
-        ) {
-          // Item is a leaf or already collapsed, move focus to parent
-          state.selectionManager.setFocusedKey(node.parentKey);
-          e.stopPropagation();
-          return;
-        }
-      }
+    if (
+      handleTreeExpansionKeys(e, state, node, hasChildRows, direction, activeElement, ref.current)
+    ) {
+      return;
     }
 
     switch (e.key) {
@@ -341,39 +315,10 @@ export function useGridListItem<T>(
         return;
       }
 
-      // TODO: for tree expansion since we turn off the capturing listener if keyboardNavigationBehavior = tab
-      // copied from above, extract into helper later
-      // need to support tab keyboard navigation in tree
-      if ('expandedKeys' in state && activeElement === ref.current) {
-        if (
-          e.key === EXPANSION_KEYS['expand'][direction] &&
-          state.selectionManager.focusedKey === node.key &&
-          hasChildRows &&
-          !state.expandedKeys.has(node.key)
-        ) {
-          state.toggleKey(node.key);
-          e.stopPropagation();
-          return;
-        } else if (
-          e.key === EXPANSION_KEYS['collapse'][direction] &&
-          state.selectionManager.focusedKey === node.key
-        ) {
-          // If item is collapsible, collapse it; else move to parent
-          if (hasChildRows && state.expandedKeys.has(node.key)) {
-            state.toggleKey(node.key);
-            e.stopPropagation();
-            return;
-          } else if (
-            !state.expandedKeys.has(node.key) &&
-            node.parentKey &&
-            state.collection.getItem(node.parentKey)?.type === 'item'
-          ) {
-            // Item is a leaf or already collapsed, move focus to parent
-            state.selectionManager.setFocusedKey(node.parentKey);
-            e.stopPropagation();
-            return;
-          }
-        }
+      if (
+        handleTreeExpansionKeys(e, state, node, hasChildRows, direction, activeElement, ref.current)
+      ) {
+        return;
       }
     }
 
@@ -482,6 +427,50 @@ export function useGridListItem<T>(
     },
     ...itemStates
   };
+}
+
+function handleTreeExpansionKeys<T>(
+  e: ReactKeyboardEvent,
+  state: ListState<T> | TreeState<T>,
+  node: RSNode<unknown>,
+  hasChildRows: boolean | undefined,
+  direction: string,
+  activeElement: Element | null,
+  rowRef: FocusableElement | null
+): boolean {
+  if (!('expandedKeys' in state) || activeElement !== rowRef) {
+    return false;
+  }
+  if (
+    e.key === EXPANSION_KEYS['expand'][direction] &&
+    state.selectionManager.focusedKey === node.key &&
+    hasChildRows &&
+    !state.expandedKeys.has(node.key)
+  ) {
+    state.toggleKey(node.key);
+    e.stopPropagation();
+    return true;
+  } else if (
+    e.key === EXPANSION_KEYS['collapse'][direction] &&
+    state.selectionManager.focusedKey === node.key
+  ) {
+    // If item is collapsible, collapse it; else move to parent
+    if (hasChildRows && state.expandedKeys.has(node.key)) {
+      state.toggleKey(node.key);
+      e.stopPropagation();
+      return true;
+    } else if (
+      !state.expandedKeys.has(node.key) &&
+      node.parentKey &&
+      state.collection.getItem(node.parentKey)?.type === 'item'
+    ) {
+      // Item is a leaf or already collapsed, move focus to parent
+      state.selectionManager.setFocusedKey(node.parentKey);
+      e.stopPropagation();
+      return true;
+    }
+  }
+  return false;
 }
 
 function last(walker: TreeWalker) {
