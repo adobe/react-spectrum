@@ -1,0 +1,82 @@
+{/* Copyright 2026 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '../../../src/Layout';
+export default Layout;
+import {FunctionAPI} from '../../../src/FunctionAPI';
+import {InterfaceType} from '../../../src/types';
+import docs from 'docs:@react-aria/color';
+
+export const section = 'Hooks';
+export const description = 'Provides the behavior and accessibility implementation for a color field.';
+export const isSubpage = true;
+
+# useColorField
+
+<PageDescription>{docs.exports.useColorField.description}</PageDescription>
+
+This example builds a color field from scratch with `useColorField`, which parses and formats a hex color value as the user types. `useFocus` toggles a `data-focused` attribute so the field shows the focus ring from the reused styles.
+
+```tsx render
+"use client";
+import React from 'react';
+import {useColorField} from 'react-aria/useColorField';
+import {useColorFieldState} from 'react-stately/useColorFieldState';
+import {useFocus} from 'react-aria/useFocus';
+import {mergeProps} from 'react-aria/mergeProps';
+import {Label} from 'vanilla-starter/Form';
+import 'vanilla-starter/TextField.css';
+
+function ColorField(props) {
+  // useColorFieldState parses the text into a Color and formats it back.
+  let state = useColorFieldState(props);
+  let inputRef = React.useRef(null);
+  let {labelProps, inputProps} = useColorField(props, state, inputRef);
+  let [isFocused, setFocused] = React.useState(false);
+  let {focusProps} = useFocus({onFocusChange: setFocused});
+
+  return (
+    <div className="react-aria-TextField" style={{width: 200, gap: 4}}>
+      <Label {...labelProps}>{props.label}</Label>
+      <input
+        {...mergeProps(inputProps, focusProps)}
+        ref={inputRef}
+        className="react-aria-Input inset"
+        data-focused={isFocused || undefined} />
+    </div>
+  );
+}
+
+<ColorField label="Primary Color" defaultValue="#ff0000" />
+```
+
+## Features
+
+A color field can be built with an `<input>`, but it must validate and parse the entered value into a color, handle keyboard increment/decrement, and expose the value accessibly. `useColorField` helps achieve accessible color fields that can be styled as needed.
+
+* Parses and formats the value as a hex color in the field
+* Validates and clamps the input, reverting invalid values on blur
+* Support for the arrow keys to increment and decrement the value
+* Labeling support for accessibility, and support for description and error message help text
+
+## State management
+
+`useColorField` requires a `state` object created with the `useColorFieldState` hook from `react-stately`, which manages the `Color` value and handles parsing and formatting the text representation.
+
+## API
+
+<FunctionAPI function={docs.exports.useColorField} links={docs.links} />
+
+### AriaColorFieldProps
+
+<InterfaceType {...docs.exports.AriaColorFieldProps} />
+
+### ColorFieldAria
+
+<InterfaceType {...docs.exports.ColorFieldAria} />
