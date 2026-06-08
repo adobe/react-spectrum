@@ -1,0 +1,107 @@
+{/* Copyright 2026 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '../../../src/Layout';
+export default Layout;
+import {FunctionAPI} from '../../../src/FunctionAPI';
+import {InterfaceType} from '../../../src/types';
+import docs from 'docs:@react-aria/color';
+
+export const section = 'Hooks';
+export const description = 'Provides the behavior and accessibility implementation for a color slider.';
+export const isSubpage = true;
+
+# useColorSlider
+
+<PageDescription>{docs.exports.useColorSlider.description}</PageDescription>
+
+This example builds a color slider from scratch with `useColorSlider`, which adjusts a single channel of a color along a gradient track. The label and value default to the localized channel name and formatted value.
+
+```tsx render
+"use client";
+import React from 'react';
+import {useColorSlider} from 'react-aria/useColorSlider';
+import {useColorSliderState} from 'react-stately/useColorSliderState';
+import {useLocale} from 'react-aria/I18nProvider';
+import {useFocusRing} from 'react-aria/useFocusRing';
+import 'vanilla-starter/theme.css';
+
+const TRACK_THICKNESS = 28;
+const THUMB_SIZE = 20;
+
+function ColorSlider(props) {
+  let {locale} = useLocale();
+  let state = useColorSliderState({...props, locale});
+  let trackRef = React.useRef(null);
+  let inputRef = React.useRef(null);
+
+  // Default the label to the channel name in the current locale.
+  let label = props.label || state.value.getChannelName(props.channel, locale);
+  let {trackProps, thumbProps, inputProps, labelProps, outputProps} =
+    useColorSlider({...props, label, trackRef, inputRef}, state);
+  let {focusProps, isFocusVisible} = useFocusRing();
+
+  return (
+    <div style={{display: 'flex', flexDirection: 'column', width: 300, color: 'var(--text-color)'}}>
+      <div style={{display: 'flex', justifyContent: 'space-between'}}>
+        <label {...labelProps}>{label}</label>
+        <output {...outputProps}>{state.value.formatChannelValue(props.channel, locale)}</output>
+      </div>
+      <div
+        {...trackProps}
+        ref={trackRef}
+        style={{...trackProps.style, height: TRACK_THICKNESS, width: '100%', borderRadius: 4}}>
+        <div
+          {...thumbProps}
+          style={{
+            ...thumbProps.style,
+            top: TRACK_THICKNESS / 2,
+            boxSizing: 'border-box',
+            width: isFocusVisible ? TRACK_THICKNESS + 4 : THUMB_SIZE,
+            height: isFocusVisible ? TRACK_THICKNESS + 4 : THUMB_SIZE,
+            borderRadius: '50%',
+            border: '2px solid white',
+            boxShadow: '0 0 0 1px black, inset 0 0 0 1px black',
+            background: state.getDisplayColor().toString('css')
+          }}>
+          <input ref={inputRef} {...inputProps} {...focusProps} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+<ColorSlider channel="hue" defaultValue="hsl(0, 100%, 50%)" />
+```
+
+## Features
+
+There is no native HTML element to implement a color slider. `useColorSlider` helps achieve an accessible color slider that can be styled as needed.
+
+* Adjusts a single channel (e.g. hue, saturation, alpha) of a color along a gradient track
+* A visually hidden `<input type="range">` exposes the value to assistive technology
+* Support for both horizontal and vertical orientations
+* Support for mouse, touch, and keyboard interactions
+* Internationalized channel names and value formatting
+
+## State management
+
+`useColorSlider` requires a `state` object created with the `useColorSliderState` hook from `react-stately`, which holds the `Color` value and the channel being edited, and renders the gradient track background.
+
+## API
+
+<FunctionAPI function={docs.exports.useColorSlider} links={docs.links} />
+
+### AriaColorSliderOptions
+
+<InterfaceType {...docs.exports.AriaColorSliderOptions} />
+
+### ColorSliderAria
+
+<InterfaceType {...docs.exports.ColorSliderAria} />
