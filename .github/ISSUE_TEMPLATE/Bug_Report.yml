@@ -25,7 +25,7 @@ body:
     attributes:
       label: 😯 Current Behavior
       description: |
-        Tell us what happens instead of the expected behavior. Please include a link to the storybook if possible.
+        Tell us what happens instead of the expected behavior. Please include a link to our docs, our storybook, or a StackBlitz reproduction if possible.
         If you are seeing an error, please include the full error message and stack trace.
     validations:
       required: true
@@ -44,7 +44,7 @@ body:
         Providing context helps us come up with a solution that is most useful in the real world.
         How has this issue affected you? What are you trying to accomplish?
     validations:
-      required: false
+      required: true
   - type: textarea
     id: base-reproduction
     attributes:
