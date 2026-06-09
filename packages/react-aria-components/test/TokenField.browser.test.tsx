@@ -237,6 +237,15 @@ describe('TokenField browser interactions', () => {
       await expect.poll(() => tokenEl.getAttribute('data-selected')).toBe('true');
     });
 
+    it('selects entire line including tokens on triple-click', async () => {
+      let lineWithToken = segments(text('hello '), token('TOK'), text(' world\nsecond'));
+      let {textbox} = await renderControlledTokenField(lineWithToken);
+      let tokenEl = textbox.getByText('TOK').element();
+      await userEvent.tripleClick(textbox.getByText('TOK'));
+      await waitForSelection(textbox, {index: 0, offset: 0}, {index: 2, offset: 6});
+      await expect(tokenEl.getAttribute('data-selected')).toBe('true');
+    });
+
     it('select-all then typing replaces entire field', async () => {
       let {textbox, getValue} = await renderControlledTokenField(abTokCd);
       let mod = modKey();

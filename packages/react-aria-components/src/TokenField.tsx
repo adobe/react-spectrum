@@ -9,7 +9,6 @@ import {
 import {dom, RenderProps, StyleRenderProps, useRenderProps} from './utils';
 import {FieldInputContext} from './Autocomplete';
 import {FocusableProps} from '@react-types/shared';
-import {isCtrlKeyPressed} from 'react-aria/private/utils/keyboard';
 import {isMac} from 'react-aria/private/utils/platform';
 import {mergeProps} from 'react-aria/mergeProps';
 import {mergeRefs} from 'react-aria/mergeRefs';
@@ -300,6 +299,24 @@ export const TokenField = forwardRef(function TokenField(
         if (segment?.type === 'token') {
           announce(segment.text, 'assertive');
         }
+      }
+    }
+  });
+
+  // Override the default triple click behavior to ensure that tokens get selected.
+  // Some browsers only select the text between tokens instead of the entire line.
+  useEvent(ref, 'mousedown', e => {
+    if (e.detail === 3) {
+      let selection = getSelection(ref.current!);
+      if (!selection) {
+        return;
+      }
+
+      let start = state.findLineBoundary(selection[0], Direction.Backward);
+      let end = state.findLineBoundary(selection[1], Direction.Forward);
+      if (start && end) {
+        e.preventDefault();
+        setSelection(ref.current!, start, end, true);
       }
     }
   });
