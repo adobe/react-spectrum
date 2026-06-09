@@ -12,6 +12,7 @@ export default Layout;
 import {FunctionAPI} from '../../../src/FunctionAPI';
 import {InterfaceType} from '../../../src/types';
 import docs from 'docs:@react-aria/gridlist';
+import statelyDocs from 'docs:@react-stately/list';
 
 export const section = 'Hooks';
 export const description = 'Provides the behavior and accessibility implementation for a list component with interactive children.';
@@ -91,23 +92,10 @@ function ListItem({item, state}) {
 </GridList>
 ```
 
-## Features
-
-A grid list is a list of rows that, unlike a [listbox](../ListBox/useListBox), can contain interactive elements (buttons, links, etc.) within each row. There is no native HTML element for this, so `useGridList` and `useGridListItem` help achieve an accessible list following the [ARIA grid pattern](https://www.w3.org/WAI/ARIA/apg/patterns/grid/).
-
-* Exposed to assistive technology as a grid using ARIA
-* Support for interactive children within each row, navigable via the keyboard
-* Support for single, multiple, or no selection, and row actions
-* Keyboard navigation between rows and the focusable elements within them
-* Async loading, drag and drop, and empty state support
-
-## State management
-
-`useGridList` requires a `state` object created with the `useListState` hook from `react-stately`, which builds a `Collection` from the items and manages selection. The state is passed to each `useGridListItem`.
-
 ## API
 
-<FunctionAPI function={docs.exports.useGridList} links={docs.links} /> <br />
+<FunctionAPI function={statelyDocs.exports.useListState} links={statelyDocs.links} />
+<FunctionAPI function={docs.exports.useGridList} links={docs.links} />
 <FunctionAPI function={docs.exports.useGridListItem} links={docs.links} />
 
 ### AriaGridListProps

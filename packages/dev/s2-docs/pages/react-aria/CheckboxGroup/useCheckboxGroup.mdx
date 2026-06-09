@@ -12,6 +12,7 @@ export default Layout;
 import {FunctionAPI} from '../../../src/FunctionAPI';
 import {InterfaceType} from '../../../src/types';
 import docs from 'docs:@react-aria/checkbox';
+import statelyDocs from 'docs:@react-stately/checkbox';
 
 export const section = 'Hooks';
 export const description = 'Provides the behavior and accessibility implementation for a checkbox group component.';
@@ -79,23 +80,10 @@ function Checkbox(props) {
 </CheckboxGroup>
 ```
 
-## Features
-
-Checkbox groups can be built with the [&lt;fieldset&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/fieldset) and [&lt;input&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input) HTML elements, but this can be difficult to style. `useCheckboxGroup` and `useCheckboxGroupItem` help achieve accessible checkbox groups that can be styled as needed.
-
-* Checkbox groups are exposed to assistive technology via ARIA, built with native HTML `<input>` elements
-* Support for native HTML constraint validation with customizable UI, custom validation functions, realtime validation, and server-side validation errors
-* Keyboard focus management and cross browser normalization
-* Labeling support for accessibility, and support for description and error message help text
-* Group and individual checkbox disabled states
-
-## State management
-
-`useCheckboxGroup` requires a `state` object created with the `useCheckboxGroupState` hook from `react-stately`, which tracks the set of selected values. The state is passed to each `useCheckboxGroupItem`, typically via React context.
-
 ## API
 
-<FunctionAPI function={docs.exports.useCheckboxGroup} links={docs.links} /> <br />
+<FunctionAPI function={statelyDocs.exports.useCheckboxGroupState} links={statelyDocs.links} />
+<FunctionAPI function={docs.exports.useCheckboxGroup} links={docs.links} />
 <FunctionAPI function={docs.exports.useCheckboxGroupItem} links={docs.links} />
 
 ### AriaCheckboxGroupProps

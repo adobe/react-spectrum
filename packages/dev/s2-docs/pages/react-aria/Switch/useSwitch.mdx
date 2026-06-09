@@ -12,6 +12,7 @@ export default Layout;
 import {FunctionAPI} from '../../../src/FunctionAPI';
 import {InterfaceType} from '../../../src/types';
 import docs from 'docs:@react-aria/switch';
+import statelyDocs from 'docs:@react-stately/toggle';
 
 export const section = 'Hooks';
 export const description = 'Provides the behavior and accessibility implementation for a switch.';
@@ -59,22 +60,9 @@ function Switch(props) {
 <Switch>Low power mode</Switch>
 ```
 
-## Features
-
-Switches can be built with the [&lt;input&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input) HTML element, but this can be difficult to style. `useSwitch` helps achieve accessible switches that can be styled as needed.
-
-* Built with a native HTML `<input>` element, which is visually hidden when styling custom switches
-* Full support for browser features like form autofill
-* Keyboard focus management and cross browser normalization
-* Exposed to assistive technology as a `switch` via ARIA
-* Labeling support for assistive technology
-
-## State management
-
-`useSwitch` requires a `state` object created with the `useToggleState` hook from `react-stately`, which tracks whether the switch is selected and exposes a method to toggle it.
-
 ## API
 
+<FunctionAPI function={statelyDocs.exports.useToggleState} links={statelyDocs.links} />
 <FunctionAPI function={docs.exports.useSwitch} links={docs.links} />
 
 ### AriaSwitchProps

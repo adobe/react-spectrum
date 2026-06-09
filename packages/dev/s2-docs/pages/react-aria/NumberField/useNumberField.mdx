@@ -12,6 +12,7 @@ export default Layout;
 import {FunctionAPI} from '../../../src/FunctionAPI';
 import {InterfaceType} from '../../../src/types';
 import docs from 'docs:@react-aria/numberfield';
+import statelyDocs from 'docs:@react-stately/numberfield';
 
 export const section = 'Hooks';
 export const description = 'Provides the behavior and accessibility implementation for a number field component.';
@@ -59,23 +60,9 @@ function NumberField(props) {
 <NumberField label="Price" defaultValue={6} formatOptions={{style: 'currency', currency: 'USD'}} />
 ```
 
-## Features
-
-Number fields can be built with `<input type="number">`, but the behavior is very inconsistent across browsers and devices, supports limited localized formatting options, and is challenging to style. `useNumberField` helps achieve accessible number fields that support internationalized formatting and can be styled as needed.
-
-* Support for internationalized number formatting and parsing, including currencies, percentages, and units
-* Support for the arrow keys and scroll wheel to increment and decrement the value
-* Support for stepper buttons, with auto-repeat on press and hold
-* Validation against minimum and maximum values, and a configurable step
-* Support for native HTML constraint validation with customizable UI, custom validation functions, realtime validation, and server-side validation errors
-* Exposed to assistive technology as a spinbutton via ARIA
-
-## State management
-
-`useNumberField` requires a `state` object created with the `useNumberFieldState` hook from `react-stately`, which manages the numeric value and handles parsing and formatting it according to the user's locale and the provided `formatOptions`.
-
 ## API
 
+<FunctionAPI function={statelyDocs.exports.useNumberFieldState} links={statelyDocs.links} />
 <FunctionAPI function={docs.exports.useNumberField} links={docs.links} />
 
 ### AriaNumberFieldProps

@@ -12,6 +12,7 @@ export default Layout;
 import {FunctionAPI} from '../../../src/FunctionAPI';
 import {InterfaceType} from '../../../src/types';
 import docs from 'docs:@react-aria/listbox';
+import statelyDocs from 'docs:@react-stately/list';
 
 export const section = 'Hooks';
 export const description = 'Provides the behavior and accessibility implementation for a listbox component.';
@@ -90,34 +91,11 @@ function Option({item, state}) {
 </ListBox>
 ```
 
-## Features
-
-A listbox can be built using the [&lt;select&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/select) and [&lt;option&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/option) HTML elements, but this is not possible to style consistently cross browser. `useListBox` helps achieve accessible listbox components that can be styled as needed. It follows the [ARIA listbox pattern](https://www.w3.org/WAI/ARIA/apg/patterns/listbox/).
-
-Note: `useListBox` only handles the list itself. For a dropdown similar to a `<select>`, see [useSelect](../Select/useSelect).
-
-* Exposed to assistive technology as a `listbox` using ARIA
-* Support for single, multiple, or no selection
-* Support for disabled items
-* Support for sections
-* Labeling support for accessibility
-* Support for mouse, touch, and keyboard interactions
-* Tab stop focus management
-* Keyboard navigation support including arrow keys, home/end, page up/down, select all, and clear
-* Automatic scrolling support during keyboard navigation
-* Typeahead to allow focusing options by typing text
-* Support for use with virtualized lists
-
-## State management
-
-`useListBox` requires knowledge of the options in the listbox in order to handle keyboard navigation and other interactions. It does this using the `Collection` interface, which is a generic interface to access sequential unique keyed data. You can implement this interface yourself, e.g. by using a prop to pass a list of item objects, but `useListState` from `react-stately` implements a JSX based interface for building collections instead. See [Collection Components](../collections) for more information.
-
-In addition, `useListState` manages the state necessary for multiple selection and exposes a `SelectionManager`, which makes use of the collection to provide an interface to update the selection state. For more information, see [Selection](../selection).
-
 ## API
 
-<FunctionAPI function={docs.exports.useListBox} links={docs.links} /> <br />
-<FunctionAPI function={docs.exports.useOption} links={docs.links} /> <br />
+<FunctionAPI function={statelyDocs.exports.useListState} links={statelyDocs.links} />
+<FunctionAPI function={docs.exports.useListBox} links={docs.links} />
+<FunctionAPI function={docs.exports.useOption} links={docs.links} />
 <FunctionAPI function={docs.exports.useListBoxSection} links={docs.links} />
 
 ### AriaListBoxOptions

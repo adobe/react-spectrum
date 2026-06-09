@@ -12,6 +12,8 @@ export default Layout;
 import {FunctionAPI} from '../../../src/FunctionAPI';
 import {InterfaceType} from '../../../src/types';
 import docs from 'docs:@react-aria/menu';
+import menuStatelyDocs from 'docs:@react-stately/menu';
+import treeStatelyDocs from 'docs:@react-stately/tree';
 
 export const section = 'Hooks';
 export const description = 'Provides the behavior and accessibility implementation for a menu component.';
@@ -113,32 +115,13 @@ function MenuItem({item, state}) {
 </MenuButton>
 ```
 
-## Features
-
-There is no native element to implement a menu in HTML that is widely supported. `useMenuTrigger` and `useMenu` help achieve accessible menu components that can be styled as needed. It follows the [ARIA menu pattern](https://www.w3.org/WAI/ARIA/apg/patterns/menu/).
-
-* Exposed to assistive technology as a button with a `menu` using ARIA
-* Support for single, multiple, or no selection
-* Support for disabled items
-* Support for sections
-* Complex item labeling support for accessibility
-* Keyboard navigation support including arrow keys, home/end, page up/down
-* Automatic scrolling support during keyboard navigation
-* Keyboard support for opening the menu using the arrow keys, including automatically focusing the first or last item accordingly
-* Typeahead to allow focusing items by typing text
-* Support for use with virtualized lists
-
-## State management
-
-A menu trigger consists of a button or other trigger element combined with a popup menu containing a list of items or groups. State for the trigger is managed by the `useMenuTriggerState` hook from `react-stately`, which tracks whether the menu is open. State for the menu itself is managed by the `useTreeState` hook from `react-stately`, which builds a `Collection` from the items and exposes a `SelectionManager` to handle selection. See [Collection Components](../collections) for more information about collections, and [Selection](../selection) for more about selection.
-
-If a menu, menu item, or group does not have a visible label, an `aria-label` or `aria-labelledby` prop must be passed instead to identify the element to assistive technology.
-
 ## API
 
-<FunctionAPI function={docs.exports.useMenuTrigger} links={docs.links} /> <br />
-<FunctionAPI function={docs.exports.useMenu} links={docs.links} /> <br />
-<FunctionAPI function={docs.exports.useMenuItem} links={docs.links} /> <br />
+<FunctionAPI function={menuStatelyDocs.exports.useMenuTriggerState} links={menuStatelyDocs.links} />
+<FunctionAPI function={treeStatelyDocs.exports.useTreeState} links={treeStatelyDocs.links} />
+<FunctionAPI function={docs.exports.useMenuTrigger} links={docs.links} />
+<FunctionAPI function={docs.exports.useMenu} links={docs.links} />
+<FunctionAPI function={docs.exports.useMenuItem} links={docs.links} />
 <FunctionAPI function={docs.exports.useMenuSection} links={docs.links} />
 
 ### AriaMenuTriggerProps

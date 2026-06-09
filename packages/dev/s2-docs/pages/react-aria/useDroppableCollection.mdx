@@ -149,23 +149,9 @@ function Draggable() {
 </div>
 ```
 
-## Features
-
-There is no built in way to make a collection a drop target in HTML. `useDroppableCollection`, `useDroppableItem`, and `useDropIndicator` help achieve accessible drop interactions within a collection that can be styled as needed.
-
-* Support for dropping on the collection as a whole, on individual items, or inserting between items
-* Keyboard and screen reader accessible drop positioning via the `KeyboardDelegate` and `DropTargetDelegate` interfaces
-* Default delegate implementations (`ListKeyboardDelegate`, `ListDropTargetDelegate`) for common list layouts
-* Support for mouse, touch, keyboard, and screen reader interactions
-* Works with any collection component, such as a [list box](ListBox/useListBox), [grid list](GridList/useGridList), or [table](Table/useTable)
-
-## State management
-
-`useDroppableCollection` requires a `state` object created with the `useDroppableCollectionState` hook from `react-stately`, given the collection and selection manager from the collection component's own state. Drop positioning is handled by the `keyboardDelegate` and `dropTargetDelegate` options.
-
 ## API
 
-<FunctionAPI function={statelyDocs.exports.useDroppableCollectionState} links={statelyDocs.links} /> <br />
-<FunctionAPI function={docs.exports.useDroppableCollection} links={docs.links} /> <br />
-<FunctionAPI function={docs.exports.useDroppableItem} links={docs.links} /> <br />
+<FunctionAPI function={statelyDocs.exports.useDroppableCollectionState} links={statelyDocs.links} />
+<FunctionAPI function={docs.exports.useDroppableCollection} links={docs.links} />
+<FunctionAPI function={docs.exports.useDroppableItem} links={docs.links} />
 <FunctionAPI function={docs.exports.useDropIndicator} links={docs.links} />

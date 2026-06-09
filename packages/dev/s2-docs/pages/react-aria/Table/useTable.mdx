@@ -12,6 +12,7 @@ export default Layout;
 import {FunctionAPI} from '../../../src/FunctionAPI';
 import {InterfaceType} from '../../../src/types';
 import docs from 'docs:@react-aria/table';
+import statelyDocs from 'docs:@react-stately/table';
 
 export const section = 'Hooks';
 export const description = 'Provides the behavior and accessibility implementation for a table component.';
@@ -149,27 +150,14 @@ function TableCell({cell, state}) {
 </Table>
 ```
 
-## Features
-
-Tables can be built with the [&lt;table&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/table) HTML element, but native tables don't support rich interactions like selection, sorting, or keyboard navigation. `useTable` and its companion hooks help achieve accessible interactive tables following the [ARIA grid pattern](https://www.w3.org/WAI/ARIA/apg/patterns/grid/).
-
-* Exposed to assistive technology as a grid using ARIA, built with semantic table elements
-* Keyboard navigation between cells and rows via the arrow keys
-* Support for single, multiple, or no row selection, with optional selection checkboxes
-* Support for column sorting, row actions, and column resizing
-* Async loading, drag and drop, and empty state support
-
-## State management
-
-`useTable` requires a `state` object created with the `useTableState` hook from `react-stately`, which builds the column and row `Collection` from `TableHeader`/`Column`/`TableBody`/`Row`/`Cell` elements and manages selection and sort state. The state is passed to each of the table's companion hooks.
-
 ## API
 
-<FunctionAPI function={docs.exports.useTable} links={docs.links} /> <br />
-<FunctionAPI function={docs.exports.useTableRowGroup} links={docs.links} /> <br />
-<FunctionAPI function={docs.exports.useTableHeaderRow} links={docs.links} /> <br />
-<FunctionAPI function={docs.exports.useTableColumnHeader} links={docs.links} /> <br />
-<FunctionAPI function={docs.exports.useTableRow} links={docs.links} /> <br />
+<FunctionAPI function={statelyDocs.exports.useTableState} links={statelyDocs.links} />
+<FunctionAPI function={docs.exports.useTable} links={docs.links} />
+<FunctionAPI function={docs.exports.useTableRowGroup} links={docs.links} />
+<FunctionAPI function={docs.exports.useTableHeaderRow} links={docs.links} />
+<FunctionAPI function={docs.exports.useTableColumnHeader} links={docs.links} />
+<FunctionAPI function={docs.exports.useTableRow} links={docs.links} />
 <FunctionAPI function={docs.exports.useTableCell} links={docs.links} />
 
 ### AriaTableProps

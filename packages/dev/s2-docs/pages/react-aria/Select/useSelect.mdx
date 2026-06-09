@@ -12,6 +12,7 @@ export default Layout;
 import {FunctionAPI} from '../../../src/FunctionAPI';
 import {InterfaceType} from '../../../src/types';
 import docs from 'docs:@react-aria/select';
+import statelyDocs from 'docs:@react-stately/select';
 
 export const section = 'Hooks';
 export const description = 'Provides the behavior and accessibility implementation for a select component.';
@@ -104,31 +105,9 @@ function SelectInner({collection, ...props}) {
 </Select>
 ```
 
-## Features
-
-A select can be built using the [&lt;select&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/select) and [&lt;option&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/option) HTML elements, but this is not possible to style consistently cross browser, especially the options. `useSelect` helps achieve accessible select components that can be styled as needed without compromising on high quality interactions. It follows the [ARIA listbox pattern](https://www.w3.org/WAI/ARIA/apg/patterns/listbox/).
-
-* Exposed to assistive technology as a button with a `listbox` popup using ARIA (combined with [useListBox](../ListBox/useListBox))
-* Support for selecting a single option
-* Support for disabled options
-* Support for sections
-* Labeling support for accessibility
-* Support for native HTML constraint validation with customizable UI, custom validation functions, realtime validation, and server-side validation errors
-* Support for mouse, touch, and keyboard interactions
-* Tab stop focus management
-* Keyboard support for opening the listbox using the arrow keys, including automatically focusing the first or last item accordingly
-* Typeahead to allow selecting options by typing text, even without opening the listbox
-* Browser autofill integration via a hidden native `<select>` element
-* Mobile screen reader listbox dismissal support
-
-## State management
-
-`useSelect` requires knowledge of the options in the select in order to handle keyboard navigation and other interactions. It does this using the `Collection` interface, which is a generic interface to access sequential unique keyed data. You can implement this interface yourself, e.g. by using a prop to pass a list of item objects, but `useSelectState` from `react-stately` implements a JSX based interface for building collections instead. See [Collection Components](../collections) for more information.
-
-In addition, `useSelectState` manages the state necessary for selection and exposes a `SelectionManager`, which makes use of the collection to provide an interface to update the selection state. It also holds state to track if the popup is open. For more information about selection, see [Selection](../selection).
-
 ## API
 
+<FunctionAPI function={statelyDocs.exports.useSelectState} links={statelyDocs.links} />
 <FunctionAPI function={docs.exports.useSelect} links={docs.links} />
 
 ### AriaSelectOptions

@@ -12,7 +12,11 @@
 
 import {styles as codeStyles} from './Code';
 import {Indent, JoinList, setLinks, Type, TypeParameters} from './types';
+import {mergeStyles} from '../../../@react-spectrum/s2/style/runtime';
 import React from 'react';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+const block = style({display: 'block', marginBottom: 8});
 
 export function FunctionAPI({function: func, links}) {
   let {name, parameters, return: returnType, typeParameters} = func;
@@ -20,7 +24,7 @@ export function FunctionAPI({function: func, links}) {
     setLinks(links);
   }
   return (
-    <code className={codeStyles.function}>
+    <code className={mergeStyles(codeStyles.function, block)}>
       <span className={codeStyles.attribute}>{name}</span>
       <TypeParameters typeParameters={typeParameters} />
       <Indent params={parameters} open="(" close=")">

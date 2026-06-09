@@ -12,6 +12,7 @@ export default Layout;
 import {FunctionAPI} from '../../../src/FunctionAPI';
 import {InterfaceType} from '../../../src/types';
 import docs from 'docs:@react-aria/color';
+import statelyDocs from 'docs:@react-stately/color';
 
 export const section = 'Hooks';
 export const description = 'Provides the behavior and accessibility implementation for a color wheel.';
@@ -65,21 +66,9 @@ function ColorWheel(props) {
 <ColorWheel defaultValue="hsl(30, 100%, 50%)" />
 ```
 
-## Features
-
-There is no native HTML element to implement a color wheel. `useColorWheel` helps achieve an accessible color wheel that can be styled as needed, typically combined with a [color area](../ColorArea/useColorArea) to adjust saturation and brightness.
-
-* Adjusts the hue channel of an HSB color along a circular gradient track
-* A visually hidden `<input type="range">` exposes the value to assistive technology
-* Support for mouse, touch, and keyboard interactions
-* Internationalized hue value announcements
-
-## State management
-
-`useColorWheel` requires a `state` object created with the `useColorWheelState` hook from `react-stately`, which holds the `Color` value, converts between the hue angle and thumb position, and renders the circular gradient track.
-
 ## API
 
+<FunctionAPI function={statelyDocs.exports.useColorWheelState} links={statelyDocs.links} />
 <FunctionAPI function={docs.exports.useColorWheel} links={docs.links} />
 
 ### AriaColorWheelOptions

@@ -12,6 +12,7 @@ export default Layout;
 import {FunctionAPI} from '../../../src/FunctionAPI';
 import {InterfaceType} from '../../../src/types';
 import docs from 'docs:@react-aria/datepicker';
+import statelyDocs from 'docs:@react-stately/datepicker';
 
 export const section = 'Hooks';
 export const description = 'Provides the behavior and accessibility implementation for a date field component.';
@@ -80,23 +81,10 @@ function DateSegment({segment, state}) {
 <DateField label="Event date" />
 ```
 
-## Features
-
-The [&lt;input type="date"&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/date) HTML element can be used to build a date field, but this is very limited in functionality, lacking in internationalization capabilities, inconsistent between browsers, and difficult to style. `useDateField` helps achieve accessible and international date fields that can be styled as needed.
-
-* Support for dates and times with configurable granularity
-* Support for 13 calendar systems used around the world, with locale-specific formatting, number systems, and right-to-left support
-* Each date and time unit is an individually focusable and editable segment
-* Date values use the [@internationalized/date](../internationalized/date/) library
-* Validation against minimum and maximum values and unavailable dates
-
-## State management
-
-`useDateField` requires a `state` object created with the `useDateFieldState` hook from `react-stately`, which splits the value into segments and handles editing. It requires a `createCalendar` function from [@internationalized/date](../internationalized/date/) to implement date manipulation across calendar systems.
-
 ## API
 
-<FunctionAPI function={docs.exports.useDateField} links={docs.links} /> <br />
+<FunctionAPI function={statelyDocs.exports.useDateFieldState} links={statelyDocs.links} />
+<FunctionAPI function={docs.exports.useDateField} links={docs.links} />
 <FunctionAPI function={docs.exports.useDateSegment} links={docs.links} />
 
 ### AriaDateFieldProps

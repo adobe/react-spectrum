@@ -12,6 +12,8 @@ export default Layout;
 import {FunctionAPI} from '../../../src/FunctionAPI';
 import {InterfaceType} from '../../../src/types';
 import docs from 'docs:@react-aria/datepicker';
+import statelyDocs from 'docs:@react-stately/datepicker';
+import Anatomy from '/packages/react-aria/docs/datepicker/datepicker-anatomy.svg';
 
 export const section = 'Hooks';
 export const description = 'Provides the behavior and accessibility implementation for a date picker component.';
@@ -86,27 +88,26 @@ function DatePicker(props) {
 <DatePicker label="Event date" />
 ```
 
-## Features
-
-A date picker can be built using `<input type="date">`, but this is very limited in functionality, lacking in internationalization capabilities, inconsistent between browsers, and difficult to style. `useDatePicker` helps achieve accessible and international date and time pickers that can be styled as needed.
-
-* **Dates and times** – Support for dates and times with configurable granularity.
-* **International** – Support for 13 calendar systems used around the world, including Gregorian, Buddhist, Islamic, Persian, and more. Locale-specific formatting, number systems, hour cycles, and right-to-left support are available as well.
-* **Time zone aware** – Dates and times can optionally include a time zone. All modifications follow time zone rules such as daylight saving time.
-* **Accessible** – Each date and time unit is displayed as an individually focusable and editable segment, which allows users an easy way to edit dates using the keyboard, in any date format and locale. Users can also open a calendar popover to select dates in a standard month grid. Localized screen reader messages are included to announce when the selection and visible date range change.
-* **Touch friendly** – Date segments are editable using an easy to use numeric keypad, and all interactions are accessible using touch-based screen readers.
-* **Customizable** – As with all of React Aria, the DOM structure and styling of all elements can be fully customized.
-
-## Anatomy
-
-A date picker consists of a label, and a group containing a [date field](../DateField) and a button. Clicking the button opens a [calendar](../Calendar) popup. The date field includes segments representing each unit of a date and time (e.g. years, months, days, etc.), each of which is individually focusable and editable using the keyboard. The calendar popup offers a more visual way of choosing a date.
-
-State is managed by the `useDatePickerState` hook from `react-stately`, which holds the selected date value and tracks whether the calendar popover is open. The state object should be passed as an argument to `useDatePicker`.
-
-If the date picker does not have a visible label, an `aria-label` or `aria-labelledby` prop must be passed instead to identify it to assistive technology.
-
 ## API
 
+<Anatomy />
+
+```tsx links={{DateInput: '../DateField', DateSegment: '../DateField', Button: '../Button', Popover: '../Popover', Calendar: '../Calendar'}}
+<DatePicker>
+  <Label />
+  <Group>
+    <DateInput>
+      {segment => <DateSegment segment={segment} />}
+    </DateInput>
+    <Button />
+  </Group>
+  <Popover>
+    <Calendar />
+  </Popover>
+</DatePicker>
+```
+
+<FunctionAPI function={statelyDocs.exports.useDatePickerState} links={statelyDocs.links} />
 <FunctionAPI function={docs.exports.useDatePicker} links={docs.links} />
 
 ### AriaDatePickerProps

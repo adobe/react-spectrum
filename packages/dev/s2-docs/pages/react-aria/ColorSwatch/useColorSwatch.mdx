@@ -48,14 +48,6 @@ function ColorSwatch(props) {
 <ColorSwatch color="#f00a" />
 ```
 
-## Features
-
-A color swatch may seem simple to build with a `<div>`, but communicating the color value to assistive technology and handling transparency can be challenging. `useColorSwatch` helps achieve an accessible color swatch.
-
-* Exposes the color value to assistive technology as a localized, human-readable string (e.g. "dark vibrant blue") rather than a raw hex value
-* Accepts color values in many formats (hex, `rgb`, `hsl`, `hsb`), parsed into `Color` objects from `react-stately`
-* Can be styled to communicate transparency with a checkerboard pattern
-
 ## API
 
 <FunctionAPI function={docs.exports.useColorSwatch} links={docs.links} />

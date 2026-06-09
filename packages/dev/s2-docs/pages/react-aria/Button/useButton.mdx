@@ -51,18 +51,6 @@ function Button(props) {
 <Button onPress={() => alert('Button pressed!')}>Press me</Button>
 ```
 
-## Features
-
-On the surface, building a custom styled button seems simple. However, there are many cross browser inconsistencies in interactions and accessibility features to consider. `useButton` handles all of these interactions for you, so you can focus on the styling. It follows the [ARIA button pattern](https://www.w3.org/WAI/ARIA/apg/patterns/button/).
-
-* Native HTML `<button>` support
-* `<a>` and custom element type support via ARIA
-* Mouse and touch event handling, and press state management
-* Keyboard focus management and cross browser normalization
-* Keyboard event support for <Keyboard>Space</Keyboard> and <Keyboard>Enter</Keyboard> keys
-
-Read our [blog post](../blog/building-a-button-part-1) about the complexities of building buttons that work well across devices and interaction methods.
-
 ## API
 
 <FunctionAPI function={docs.exports.useButton} links={docs.links} />

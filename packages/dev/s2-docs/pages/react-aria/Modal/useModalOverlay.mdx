@@ -12,6 +12,8 @@ export default Layout;
 import {FunctionAPI} from '../../../src/FunctionAPI';
 import {InterfaceType} from '../../../src/types';
 import docs from 'docs:@react-aria/overlays';
+import statelyDocs from 'docs:@react-stately/overlays';
+import Anatomy from '/packages/react-aria/docs/overlays/modal-anatomy.svg';
 
 export const section = 'Hooks';
 export const description = 'Provides the behavior and accessibility implementation for a modal overlay.';
@@ -101,26 +103,15 @@ function ModalTrigger({label, children, ...props}) {
 </ModalTrigger>
 ```
 
-## Features
-
-The HTML [&lt;dialog&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/dialog) element can be used to build modal overlays. However, it is not yet widely supported across browsers, and can be difficult to style and customize. `useModalOverlay` helps achieve accessible modal overlays that can be styled as needed.
-
-* **Accessible** – Content outside the modal is hidden from assistive technologies while it is open. The modal optionally closes when interacting outside, or pressing the <kbd>Escape</kbd> key.
-* **Focus management** – Focus is moved into the modal on mount, and restored to the trigger element on unmount. While open, focus is contained within the modal, preventing the user from tabbing outside.
-* **Scroll locking** – Scrolling the page behind the modal is prevented while it is open, including in mobile browsers.
-
 **Note**: `useModalOverlay` only handles the overlay itself. It should be combined with [useDialog](../Modal/useDialog) to create fully accessible modal dialogs. Other overlays such as menus may also be placed in a modal overlay.
 
 Focus containment must be enabled from a component rendered _inside_ the [&lt;Overlay&gt;](../Popover) — [useDialog](../Modal/useDialog) does this automatically, which is why focus is contained in the example above. If you render content that does not use `useDialog` (or another hook that enables containment), make sure `useModalOverlay` is called from a component rendered inside `<Overlay>` so that focus is properly contained.
 
-## Anatomy
-
-A modal overlay consists of an overlay container element, and an underlay. The overlay may contain a [dialog](../Modal/useDialog), or another element such as a [menu](../Menu/useMenu) or [listbox](../ListBox/useListBox). The underlay is typically a partially transparent element that covers the rest of the screen behind the overlay, and prevents the user from interacting with the elements behind it.
-
-State is managed by the `useOverlayTriggerState` hook in `react-stately`. The state object should be passed as an argument to `useModalOverlay`.
-
 ## API
 
+<Anatomy />
+
+<FunctionAPI function={statelyDocs.exports.useOverlayTriggerState} links={statelyDocs.links} />
 <FunctionAPI function={docs.exports.useModalOverlay} links={docs.links} />
 
 ### AriaModalOverlayProps

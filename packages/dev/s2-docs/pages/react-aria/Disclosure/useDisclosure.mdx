@@ -12,6 +12,7 @@ export default Layout;
 import {FunctionAPI} from '../../../src/FunctionAPI';
 import {InterfaceType} from '../../../src/types';
 import docs from 'docs:@react-aria/disclosure';
+import statelyDocs from 'docs:@react-stately/disclosure';
 
 export const section = 'Hooks';
 export const description = 'Provides the behavior and accessibility implementation for a disclosure component.';
@@ -59,21 +60,9 @@ function Disclosure(props) {
 </Disclosure>
 ```
 
-## Features
-
-Disclosures can be built with the HTML [&lt;details&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/details) and [&lt;summary&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/summary) elements, but these are difficult to style, especially when animating. `useDisclosure` helps achieve accessible disclosures that can be styled as needed.
-
-* Support for controlled and uncontrolled expanded state
-* Exposes the trigger and panel relationship to assistive technology via ARIA
-* Keyboard support for toggling the panel with the trigger button
-* Can be composed into a disclosure group (accordion)
-
-## State management
-
-`useDisclosure` requires a `state` object created with the `useDisclosureState` hook from `react-stately`, which tracks whether the panel is expanded and exposes methods to toggle it.
-
 ## API
 
+<FunctionAPI function={statelyDocs.exports.useDisclosureState} links={statelyDocs.links} />
 <FunctionAPI function={docs.exports.useDisclosure} links={docs.links} />
 
 ### AriaDisclosureProps

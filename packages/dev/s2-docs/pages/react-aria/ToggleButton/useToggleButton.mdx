@@ -12,6 +12,7 @@ export default Layout;
 import {FunctionAPI} from '../../../src/FunctionAPI';
 import {InterfaceType} from '../../../src/types';
 import docs from 'docs:@react-aria/button';
+import statelyDocs from 'docs:@react-stately/toggle';
 
 export const section = 'Hooks';
 export const description = 'Provides the behavior and accessibility implementation for a toggle button.';
@@ -65,21 +66,9 @@ function ToggleButton(props) {
 <ToggleButton>Pin</ToggleButton>
 ```
 
-## Features
-
-Toggle buttons are similar to action buttons, but support an additional selection state that is toggled when a user presses the button. There is no native HTML element with toggle button styling, so `useToggleButton` helps achieve accessible toggle buttons that can be styled as needed.
-
-* Native HTML `<button>` support, with `<a>` and custom element type support via ARIA
-* Selected state exposed to assistive technology via `aria-pressed`
-* Mouse, touch, and keyboard interactions, with cross browser normalization
-* Support for disabled state
-
-## State management
-
-`useToggleButton` requires a `state` object created with the `useToggleState` hook from `react-stately`, which tracks whether the button is selected and exposes a method to toggle it.
-
 ## API
 
+<FunctionAPI function={statelyDocs.exports.useToggleState} links={statelyDocs.links} />
 <FunctionAPI function={docs.exports.useToggleButton} links={docs.links} />
 
 ### AriaToggleButtonProps

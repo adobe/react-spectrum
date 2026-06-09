@@ -12,6 +12,7 @@ export default Layout;
 import {FunctionAPI} from '../../../src/FunctionAPI';
 import {InterfaceType} from '../../../src/types';
 import docs from 'docs:@react-aria/combobox';
+import statelyDocs from 'docs:@react-stately/combobox';
 
 export const section = 'Hooks';
 export const description = 'Provides the behavior and accessibility implementation for a combo box component.';
@@ -110,36 +111,9 @@ function ComboBoxInner({collection, ...props}) {
 </ComboBox>
 ```
 
-## Features
-
-A combo box can be built using the [&lt;datalist&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/datalist) HTML element, but this is limited in functionality and difficult to style. `useComboBox` helps achieve accessible combo box and autocomplete components that can be styled as needed. It follows the [ARIA combobox pattern](https://www.w3.org/WAI/ARIA/apg/patterns/combobox/).
-
-* Support for filtering a list of options by typing
-* Support for selecting a single option
-* Support for disabled options
-* Support for groups of items in sections
-* Support for custom user input values
-* Support for controlled and uncontrolled options, selection, input value, and open state
-* Support for custom filter functions
-* Async loading and infinite scrolling support
-* Support for virtualized lists
-* Exposed to assistive technology as a `combobox` with ARIA
-* Labeling support for accessibility
-* Required and invalid states exposed to assistive technology via ARIA
-* Support for mouse, touch, and keyboard interactions
-* Keyboard support for opening the list box using the arrow keys, including automatically focusing the first or last item accordingly
-* Support for opening the list box when typing, on focus, or manually
-* Custom localized announcements for option focusing, filtering, and selection using an ARIA live region to work around VoiceOver bugs
-* Support for native HTML constraint validation with customizable UI, custom validation functions, realtime validation, and server-side validation errors
-
-## State management
-
-`useComboBox` requires knowledge of the options in the combo box in order to handle keyboard navigation and other interactions. It does this using the `Collection` interface, which is a generic interface to access sequential unique keyed data. You can implement this interface yourself, e.g. by using a prop to pass a list of item objects, but `useComboBoxState` from `react-stately` implements a JSX based interface for building collections instead. See [Collection Components](../collections) for more information.
-
-In addition, `useComboBoxState` manages the state necessary for single selection and exposes a `SelectionManager`, which makes use of the collection to provide an interface to update the selection state. It also holds state to track if the popup is open, if the combo box is focused, and the current input value. For more information about selection, see [Selection](../selection).
-
 ## API
 
+<FunctionAPI function={statelyDocs.exports.useComboBoxState} links={statelyDocs.links} />
 <FunctionAPI function={docs.exports.useComboBox} links={docs.links} />
 
 ### AriaComboBoxOptions

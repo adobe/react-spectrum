@@ -12,6 +12,7 @@ export default Layout;
 import {FunctionAPI} from '../../../src/FunctionAPI';
 import {InterfaceType} from '../../../src/types';
 import docs from 'docs:@react-aria/checkbox';
+import statelyDocs from 'docs:@react-stately/toggle';
 
 export const section = 'Hooks';
 export const description = 'Provides the behavior and accessibility implementation for a checkbox.';
@@ -59,22 +60,9 @@ function Checkbox(props) {
 <Checkbox>Unsubscribe</Checkbox>
 ```
 
-## Features
-
-Checkboxes can be built with the [&lt;input&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input) HTML element, but this can be difficult to style. `useCheckbox` helps achieve accessible checkboxes that can be styled as needed.
-
-* Built with a native HTML `<input>` element, which is visually hidden when styling custom checkboxes
-* Full support for browser features like form autofill
-* Keyboard focus management and cross browser normalization
-* Labeling support for assistive technology
-* Indeterminate state support
-
-## State management
-
-`useCheckbox` requires a `state` object created with the `useToggleState` hook from `react-stately`, which tracks whether the checkbox is selected and exposes a method to toggle it.
-
 ## API
 
+<FunctionAPI function={statelyDocs.exports.useToggleState} links={statelyDocs.links} />
 <FunctionAPI function={docs.exports.useCheckbox} links={docs.links} />
 
 ### AriaCheckboxProps

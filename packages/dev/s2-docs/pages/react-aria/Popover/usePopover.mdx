@@ -12,6 +12,8 @@ export default Layout;
 import {FunctionAPI} from '../../../src/FunctionAPI';
 import {InterfaceType} from '../../../src/types';
 import docs from 'docs:@react-aria/overlays';
+import statelyDocs from 'docs:@react-stately/overlays';
+import Anatomy from '/packages/react-aria/docs/overlays/popover-anatomy.svg';
 
 export const section = 'Hooks';
 export const description = 'Provides the behavior and accessibility implementation for a popover overlay.';
@@ -92,24 +94,13 @@ function PopoverTrigger({label, children, ...props}) {
 </PopoverTrigger>
 ```
 
-## Features
-
-There is no built in way to create popovers in HTML. `usePopover` helps achieve accessible popovers that can be styled as needed.
-
-* **Accessible** – The trigger and popover are automatically associated semantically via ARIA. Content outside the popover is hidden from assistive technologies while it is open. The popover closes when interacting outside, or pressing the <kbd>Escape</kbd> key.
-* **Focus management** – Focus is moved into the popover on mount, and restored to the trigger element on unmount.
-* **Positioning** – The popover is positioned relative to the trigger element, and automatically flips and adjusts to avoid overlapping with the edge of the browser window. Scrolling is prevented outside the popover to avoid unintentionally repositioning or closing it.
-
 **Note**: `usePopover` only handles the overlay itself. It should be combined with [useDialog](../Modal/useDialog) to create fully accessible popovers. Other overlays such as menus may also be placed in a popover.
-
-## Anatomy
-
-A popover consists of a trigger element (e.g. button) and an overlay, which is positioned relative to the trigger. The overlay may contain a [dialog](../Modal/useDialog), or another element such as a [menu](../Menu/useMenu) or [listbox](../ListBox/useListBox) when used within a component such as a [select](../Select/useSelect) or [combobox](../ComboBox/useComboBox).
-
-State is managed by the `useOverlayTriggerState` hook in `react-stately`. The state object should be passed as an argument to `usePopover`.
 
 ## API
 
+<Anatomy />
+
+<FunctionAPI function={statelyDocs.exports.useOverlayTriggerState} links={statelyDocs.links} />
 <FunctionAPI function={docs.exports.usePopover} links={docs.links} />
 
 ### AriaPopoverProps

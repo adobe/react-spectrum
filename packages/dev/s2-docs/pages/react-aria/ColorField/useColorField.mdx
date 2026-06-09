@@ -12,6 +12,7 @@ export default Layout;
 import {FunctionAPI} from '../../../src/FunctionAPI';
 import {InterfaceType} from '../../../src/types';
 import docs from 'docs:@react-aria/color';
+import statelyDocs from 'docs:@react-stately/color';
 
 export const section = 'Hooks';
 export const description = 'Provides the behavior and accessibility implementation for a color field.';
@@ -56,21 +57,9 @@ function ColorField(props) {
 <ColorField label="Primary Color" defaultValue="#ff0000" />
 ```
 
-## Features
-
-A color field can be built with an `<input>`, but it must validate and parse the entered value into a color, handle keyboard increment/decrement, and expose the value accessibly. `useColorField` helps achieve accessible color fields that can be styled as needed.
-
-* Parses and formats the value as a hex color in the field
-* Validates and clamps the input, reverting invalid values on blur
-* Support for the arrow keys to increment and decrement the value
-* Labeling support for accessibility, and support for description and error message help text
-
-## State management
-
-`useColorField` requires a `state` object created with the `useColorFieldState` hook from `react-stately`, which manages the `Color` value and handles parsing and formatting the text representation.
-
 ## API
 
+<FunctionAPI function={statelyDocs.exports.useColorFieldState} links={statelyDocs.links} />
 <FunctionAPI function={docs.exports.useColorField} links={docs.links} />
 
 ### AriaColorFieldProps

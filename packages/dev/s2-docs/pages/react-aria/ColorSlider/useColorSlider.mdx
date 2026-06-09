@@ -12,6 +12,7 @@ export default Layout;
 import {FunctionAPI} from '../../../src/FunctionAPI';
 import {InterfaceType} from '../../../src/types';
 import docs from 'docs:@react-aria/color';
+import statelyDocs from 'docs:@react-stately/color';
 
 export const section = 'Hooks';
 export const description = 'Provides the behavior and accessibility implementation for a color slider.';
@@ -80,22 +81,9 @@ function ColorSlider(props) {
 <ColorSlider channel="hue" defaultValue="hsl(0, 100%, 50%)" />
 ```
 
-## Features
-
-There is no native HTML element to implement a color slider. `useColorSlider` helps achieve an accessible color slider that can be styled as needed.
-
-* Adjusts a single channel (e.g. hue, saturation, alpha) of a color along a gradient track
-* A visually hidden `<input type="range">` exposes the value to assistive technology
-* Support for both horizontal and vertical orientations
-* Support for mouse, touch, and keyboard interactions
-* Internationalized channel names and value formatting
-
-## State management
-
-`useColorSlider` requires a `state` object created with the `useColorSliderState` hook from `react-stately`, which holds the `Color` value and the channel being edited, and renders the gradient track background.
-
 ## API
 
+<FunctionAPI function={statelyDocs.exports.useColorSliderState} links={statelyDocs.links} />
 <FunctionAPI function={docs.exports.useColorSlider} links={docs.links} />
 
 ### AriaColorSliderOptions

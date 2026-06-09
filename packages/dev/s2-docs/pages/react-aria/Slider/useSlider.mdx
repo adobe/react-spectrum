@@ -12,6 +12,7 @@ export default Layout;
 import {FunctionAPI} from '../../../src/FunctionAPI';
 import {InterfaceType} from '../../../src/types';
 import docs from 'docs:@react-aria/slider';
+import statelyDocs from 'docs:@react-stately/slider';
 
 export const section = 'Hooks';
 export const description = 'Provides the behavior and accessibility implementation for a slider component.';
@@ -85,23 +86,10 @@ function Thumb({state, trackRef, index}) {
 <Slider label="Opacity" defaultValue={60} />
 ```
 
-## Features
-
-The [&lt;input type="range"&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/range) HTML element can be used to build a slider, but it is very difficult to style cross browser. `useSlider` helps achieve accessible sliders that can be styled as needed.
-
-* Support for one or multiple thumbs, with single or range values
-* Support for mouse, touch, and keyboard interactions on the thumbs, with cross browser normalization
-* Support for both horizontal and vertical orientations
-* Internationalized number formatting of the value label, including units and currencies
-* Built with native `<input type="range">` elements, exposing the value to assistive technology
-
-## State management
-
-`useSlider` requires a `state` object created with the `useSliderState` hook from `react-stately`, which holds the current value(s) and converts between values and track percentages. The same state is passed to each `useSliderThumb`.
-
 ## API
 
-<FunctionAPI function={docs.exports.useSlider} links={docs.links} /> <br />
+<FunctionAPI function={statelyDocs.exports.useSliderState} links={statelyDocs.links} />
+<FunctionAPI function={docs.exports.useSlider} links={docs.links} />
 <FunctionAPI function={docs.exports.useSliderThumb} links={docs.links} />
 
 ### AriaSliderProps

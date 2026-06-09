@@ -12,6 +12,8 @@ export default Layout;
 import {FunctionAPI} from '../../../src/FunctionAPI';
 import {InterfaceType} from '../../../src/types';
 import docs from 'docs:@react-aria/tooltip';
+import statelyDocs from 'docs:@react-stately/tooltip';
+import Anatomy from '/packages/react-aria/docs/tooltip/anatomy.svg';
 
 export const section = 'Hooks';
 export const description = 'Provides the behavior and accessibility implementation for a tooltip component.';
@@ -85,25 +87,12 @@ function TooltipButton(props) {
 </div>
 ```
 
-## Features
-
-The HTML `title` attribute can be used to create a tooltip, but it cannot be styled. Custom styled tooltips can be hard to build in an accessible way. `useTooltipTrigger` and `useTooltip` help build fully accessible tooltips that can be styled as needed.
-
-* Keyboard focus management and cross browser normalization
-* Hover management and cross browser normalization
-* Labeling support for screen readers (`aria-describedby`)
-* Exposed as a tooltip to assistive technology via ARIA
-* Matches native tooltip behavior with delay on hover of first tooltip and no delay on subsequent tooltips
-
-## Anatomy
-
-A tooltip consists of two parts: the trigger element and the tooltip itself. Users may reveal the tooltip by hovering or focusing the trigger.
-
-Tooltip state is managed by the `useTooltipTriggerState` hook in `react-stately`. The state object should be passed as an option to `useTooltipTrigger` and `useTooltip`.
-
 ## API
 
-<FunctionAPI function={docs.exports.useTooltipTrigger} links={docs.links} /> <br />
+<Anatomy />
+
+<FunctionAPI function={statelyDocs.exports.useTooltipTriggerState} links={statelyDocs.links} />
+<FunctionAPI function={docs.exports.useTooltipTrigger} links={docs.links} />
 <FunctionAPI function={docs.exports.useTooltip} links={docs.links} />
 
 ### TooltipTriggerProps

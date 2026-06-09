@@ -12,6 +12,7 @@ export default Layout;
 import {FunctionAPI} from '../../../src/FunctionAPI';
 import {InterfaceType} from '../../../src/types';
 import docs from 'docs:@react-aria/tag';
+import statelyDocs from 'docs:@react-stately/list';
 
 export const section = 'Hooks';
 export const description = 'Provides the behavior and accessibility implementation for a tag group component.';
@@ -86,23 +87,10 @@ function Tag({item, state}) {
 </TagGroup>
 ```
 
-## Features
-
-There is no native HTML element for a tag group. `useTagGroup` and `useTag` help achieve an accessible tag group that can be styled as needed, following the [ARIA grid pattern](https://www.w3.org/WAI/ARIA/apg/patterns/grid/).
-
-* Exposed to assistive technology as a grid using ARIA
-* Keyboard navigation between tags via the arrow keys, with a single tab stop (roving tabindex)
-* Support for removing tags via an optional remove button or the keyboard
-* Support for single, multiple, or no selection
-* Labeling support for accessibility, and support for description and error message help text
-
-## State management
-
-`useTagGroup` requires a `state` object created with the `useListState` hook from `react-stately`, which builds a `Collection` from the items and manages selection. The state is passed to each `useTag`.
-
 ## API
 
-<FunctionAPI function={docs.exports.useTagGroup} links={docs.links} /> <br />
+<FunctionAPI function={statelyDocs.exports.useListState} links={statelyDocs.links} />
+<FunctionAPI function={docs.exports.useTagGroup} links={docs.links} />
 <FunctionAPI function={docs.exports.useTag} links={docs.links} />
 
 ### AriaTagGroupProps

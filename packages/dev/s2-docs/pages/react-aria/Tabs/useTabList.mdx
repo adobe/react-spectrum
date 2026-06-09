@@ -12,6 +12,7 @@ export default Layout;
 import {FunctionAPI} from '../../../src/FunctionAPI';
 import {InterfaceType} from '../../../src/types';
 import docs from 'docs:@react-aria/tabs';
+import statelyDocs from 'docs:@react-stately/tabs';
 
 export const section = 'Hooks';
 export const description = 'Provides the behavior and accessibility implementation for a tabs component.';
@@ -97,26 +98,11 @@ function TabPanel({state, ...props}) {
 </Tabs>
 ```
 
-## Features
-
-Tabs can be built using the HTML [&lt;a&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a) element, but this does not handle keyboard navigation or the relationship between tabs and panels. `useTabList`, `useTab`, and `useTabPanel` help achieve accessible tabs that can be styled as needed. They follow the [ARIA tabs pattern](https://www.w3.org/WAI/ARIA/apg/patterns/tabpanel/).
-
-* Support for mouse, touch, and keyboard interactions on tabs
-* Support for LTR and RTL keyboard navigation
-* Support for disabled tabs
-* Follows the tabs ARIA pattern, semantically linking tabs and their associated tab panels
-* Focus management for tab panels without any focusable children
-
-## State management
-
-`useTabList` requires knowledge of the tabs in order to handle keyboard navigation and other interactions. It does this using the `Collection` interface, which is a generic interface to access sequential unique keyed data. You can implement this interface yourself, e.g. by using a prop to pass a list of item objects, but `useTabListState` from `react-stately` implements a JSX based interface for building collections instead. The [Item](../collections) component represents each tab. See [Collection Components](../collections) for more information.
-
-`useTabListState` also manages the selection state and exposes the currently selected tab via `selectedItem`. The state object should be passed as an option to `useTabList`, `useTab`, and `useTabPanel`.
-
 ## API
 
-<FunctionAPI function={docs.exports.useTabList} links={docs.links} /> <br />
-<FunctionAPI function={docs.exports.useTab} links={docs.links} /> <br />
+<FunctionAPI function={statelyDocs.exports.useTabListState} links={statelyDocs.links} />
+<FunctionAPI function={docs.exports.useTabList} links={docs.links} />
+<FunctionAPI function={docs.exports.useTab} links={docs.links} />
 <FunctionAPI function={docs.exports.useTabPanel} links={docs.links} />
 
 ### AriaTabListOptions

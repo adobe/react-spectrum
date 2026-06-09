@@ -12,6 +12,7 @@ export default Layout;
 import {FunctionAPI} from '../../../src/FunctionAPI';
 import {InterfaceType} from '../../../src/types';
 import docs from 'docs:@react-aria/button';
+import statelyDocs from 'docs:@react-stately/toggle';
 
 export const section = 'Hooks';
 export const description = 'Provides the behavior and accessibility implementation for a group of toggle buttons.';
@@ -83,23 +84,10 @@ function ToggleButton(props) {
 </ToggleButtonGroup>
 ```
 
-## Features
-
-There is no native HTML element for a group of toggle buttons. `useToggleButtonGroup` and `useToggleButtonGroupItem` help achieve an accessible group of related toggle buttons that can be styled as needed.
-
-* Exposed to assistive technology as a toolbar or radio group via ARIA, depending on the selection mode
-* Support for single or multiple selection
-* Arrow key navigation between buttons, with a single tab stop (roving tabindex)
-* Support for horizontal and vertical orientations
-* Mouse, touch, and keyboard interactions, with cross browser normalization
-
-## State management
-
-`useToggleButtonGroup` requires a `state` object created with the `useToggleGroupState` hook from `react-stately`, which tracks the set of selected button ids. The state is passed to each `useToggleButtonGroupItem`, typically via React context.
-
 ## API
 
-<FunctionAPI function={docs.exports.useToggleButtonGroup} links={docs.links} /> <br />
+<FunctionAPI function={statelyDocs.exports.useToggleGroupState} links={statelyDocs.links} />
+<FunctionAPI function={docs.exports.useToggleButtonGroup} links={docs.links} />
 <FunctionAPI function={docs.exports.useToggleButtonGroupItem} links={docs.links} />
 
 ### AriaToggleButtonGroupProps

@@ -12,6 +12,7 @@ export default Layout;
 import {FunctionAPI} from '../../../src/FunctionAPI';
 import {InterfaceType} from '../../../src/types';
 import docs from 'docs:@react-aria/radio';
+import statelyDocs from 'docs:@react-stately/radio';
 
 export const section = 'Hooks';
 export const description = 'Provides the behavior and accessibility implementation for a radio group component.';
@@ -77,23 +78,10 @@ function Radio(props) {
 </RadioGroup>
 ```
 
-## Features
-
-Radio groups can be built with the [&lt;input&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input) HTML element and the `radio` type, but this can be difficult to style. `useRadioGroup` and `useRadio` help achieve accessible radio groups that can be styled as needed.
-
-* Radio groups are exposed to assistive technology via ARIA, built with native HTML `<input>` elements
-* Full support for browser features like form autofill
-* Keyboard focus management and cross browser normalization, including arrow key navigation between radios
-* Labeling support for accessibility, and support for description and error message help text
-* Support for native HTML constraint validation with customizable UI, custom validation functions, realtime validation, and server-side validation errors
-
-## State management
-
-`useRadioGroup` requires a `state` object created with the `useRadioGroupState` hook from `react-stately`, which tracks the selected value. The state is passed to each `useRadio`, typically via React context.
-
 ## API
 
-<FunctionAPI function={docs.exports.useRadioGroup} links={docs.links} /> <br />
+<FunctionAPI function={statelyDocs.exports.useRadioGroupState} links={statelyDocs.links} />
+<FunctionAPI function={docs.exports.useRadioGroup} links={docs.links} />
 <FunctionAPI function={docs.exports.useRadio} links={docs.links} />
 
 ### AriaRadioGroupProps

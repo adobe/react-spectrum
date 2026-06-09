@@ -12,6 +12,7 @@ export default Layout;
 import {FunctionAPI} from '../../../src/FunctionAPI';
 import {InterfaceType} from '../../../src/types';
 import docs from 'docs:@react-aria/datepicker';
+import statelyDocs from 'docs:@react-stately/datepicker';
 
 export const section = 'Hooks';
 export const description = 'Provides the behavior and accessibility implementation for a time field component.';
@@ -79,22 +80,9 @@ function DateSegment({segment, state}) {
 <TimeField label="Event time" />
 ```
 
-## Features
-
-The [&lt;input type="time"&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/time) HTML element can be used to build a time field, but this is very limited in functionality, lacking in internationalization capabilities, inconsistent between browsers, and difficult to style. `useTimeField` helps achieve accessible and international time fields that can be styled as needed.
-
-* Support for times with configurable granularity (hour, minute, second)
-* Locale-aware 12 or 24 hour formatting, number systems, and right-to-left support
-* Each time unit is an individually focusable and editable segment
-* Time zone aware, with values from the [@internationalized/date](../internationalized/date/) library
-* Validation against minimum and maximum values
-
-## State management
-
-`useTimeField` requires a `state` object created with the `useTimeFieldState` hook from `react-stately`, which splits the time value into segments and handles editing.
-
 ## API
 
+<FunctionAPI function={statelyDocs.exports.useTimeFieldState} links={statelyDocs.links} />
 <FunctionAPI function={docs.exports.useTimeField} links={docs.links} />
 
 ### AriaTimeFieldProps

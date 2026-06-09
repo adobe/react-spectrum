@@ -12,6 +12,7 @@ export default Layout;
 import {FunctionAPI} from '../../../src/FunctionAPI';
 import {InterfaceType} from '../../../src/types';
 import docs from 'docs:@react-aria/color';
+import statelyDocs from 'docs:@react-stately/color';
 
 export const section = 'Hooks';
 export const description = 'Provides the behavior and accessibility implementation for a color area.';
@@ -70,21 +71,9 @@ function ColorArea(props) {
 <ColorArea defaultValue="hsl(30, 100%, 50%)" xChannel="saturation" yChannel="lightness" />
 ```
 
-## Features
-
-A color area allows users to adjust two channels of an RGB, HSL, or HSB color value against a two-dimensional gradient background. There is no native HTML element to implement this, so `useColorArea` helps achieve an accessible color area that can be styled as needed.
-
-* Support for adjusting two color channels at once with a draggable thumb
-* Two visually hidden `<input>` elements expose each channel to assistive technology as a slider
-* Support for mouse, touch, and keyboard interactions, with arrow key support for each channel
-* Internationalized color descriptions and channel value announcements
-
-## State management
-
-`useColorArea` requires a `state` object created with the `useColorAreaState` hook from `react-stately`, which holds the `Color` value and the two channels being edited, and converts between values and thumb positions.
-
 ## API
 
+<FunctionAPI function={statelyDocs.exports.useColorAreaState} links={statelyDocs.links} />
 <FunctionAPI function={docs.exports.useColorArea} links={docs.links} />
 
 ### AriaColorAreaOptions

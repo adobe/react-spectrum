@@ -12,6 +12,7 @@ export default Layout;
 import {FunctionAPI} from '../../../src/FunctionAPI';
 import {InterfaceType} from '../../../src/types';
 import docs from 'docs:@react-aria/searchfield';
+import statelyDocs from 'docs:@react-stately/searchfield';
 
 export const section = 'Hooks';
 export const description = 'Provides the behavior and accessibility implementation for a search field.';
@@ -63,21 +64,9 @@ function SearchField(props) {
 <SearchField label="Search" onSubmit={text => alert(text)} />
 ```
 
-## Features
-
-Search fields can be built with the [&lt;input type="search"&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/search) HTML element, but this can be difficult to style consistently across browsers. `useSearchField` helps achieve accessible search fields that can be styled as needed.
-
-* Built with a native `<input type="search">` element
-* Support for submitting and clearing the field, with a clear button
-* Labeling support for accessibility, and support for description and error message help text
-* Keyboard support for submitting on <kbd>Enter</kbd> and clearing on <kbd>Escape</kbd>
-
-## State management
-
-`useSearchField` requires a `state` object created with the `useSearchFieldState` hook from `react-stately`, which tracks the current text value.
-
 ## API
 
+<FunctionAPI function={statelyDocs.exports.useSearchFieldState} links={statelyDocs.links} />
 <FunctionAPI function={docs.exports.useSearchField} links={docs.links} />
 
 ### AriaSearchFieldProps

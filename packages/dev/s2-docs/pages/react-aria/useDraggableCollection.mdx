@@ -124,21 +124,8 @@ function DropTarget() {
 </div>
 ```
 
-## Features
-
-There is no built in way to make a collection draggable in HTML. `useDraggableCollection` and `useDraggableItem` help achieve accessible drag interactions within a collection that can be styled as needed.
-
-* Support for dragging multiple selected items at once, or individual non-selected items
-* Integrates with React Aria's [selection](selection) system
-* Support for mouse, touch, keyboard, and screen reader interactions
-* Works with any collection component, such as a [list box](ListBox/useListBox), [grid list](GridList/useGridList), or [table](Table/useTable)
-
-## State management
-
-`useDraggableCollection` requires a `state` object created with the `useDraggableCollectionState` hook from `react-stately`, which is given the collection and selection manager from the collection component's own state. The `getItems` option provides the drag data for each item.
-
 ## API
 
-<FunctionAPI function={statelyDocs.exports.useDraggableCollectionState} links={statelyDocs.links} /> <br />
-<FunctionAPI function={docs.exports.useDraggableCollection} links={docs.links} /> <br />
+<FunctionAPI function={statelyDocs.exports.useDraggableCollectionState} links={statelyDocs.links} />
+<FunctionAPI function={docs.exports.useDraggableCollection} links={docs.links} />
 <FunctionAPI function={docs.exports.useDraggableItem} links={docs.links} />

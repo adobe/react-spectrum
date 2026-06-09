@@ -63,14 +63,6 @@ function CloseButton() {
 </DialogTrigger>
 ```
 
-## Features
-
-The HTML [&lt;dialog&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/dialog) element can be used to build dialogs. However, it is not yet widely supported across browsers, and building fully accessible custom dialogs from scratch is very difficult and error prone. `useDialog` helps achieve accessible dialogs that can be styled as needed.
-
-* **Flexible** – Dialogs can be used within a [modal](useModalOverlay) or [popover](../Popover/usePopover) to create many types of overlay elements.
-* **Accessible** – Exposed to assistive technology as a `dialog` or `alertdialog` with ARIA. The dialog is labeled by its title element, and content outside the dialog is hidden from assistive technologies while it is open.
-* **Focus management** – Focus is moved into the dialog on mount, and restored to the trigger element on unmount. While open, focus is contained within the dialog, preventing the user from tabbing outside.
-
 ## Anatomy
 
 A dialog consists of a container element and an optional title. `useDialog` handles exposing this to assistive technology using ARIA. It can be combined with [useModalOverlay](useModalOverlay) or [usePopover](../Popover/usePopover) to create modal dialogs, popovers, and other types of overlays.
