@@ -44,6 +44,69 @@ The `render` prop is also useful for rendering link components from client-side 
   </Content>
 </InlineAlert>
 
+## Render props
+
+Many React Aria components allow you to customize their rendering based on their current state. The `className`, `style`, and `children` props accept a function that receives the component's states (its _render props_) and returns the value to render. This avoids the need for CSS attribute selectors in many cases, and enables dynamic rendering based on state.
+
+For example, a `Checkbox` can render different content depending on whether it is selected:
+
+```tsx
+import {Checkbox} from 'react-aria-components/Checkbox';
+
+<Checkbox>
+  {({isSelected}) => isSelected ? 'Selected' : 'Not selected'}
+</Checkbox>
+```
+
+The available render props differ per component — see each component's documentation for the values it provides.
+
+### composeRenderProps
+
+When building a custom component that wraps a React Aria component, use <TypeLink links={docs.links} type={docs.exports.composeRenderProps} /> to extend the `className`, `style`, or `children` while still allowing the user to pass their own value or function. It accepts the value provided by the user (which may itself be a value or a render props function), along with a function to wrap it. The result is a new render props function that receives the component's states.
+
+This example adds a default class name to a custom `Button`, while preserving any `className` the user passes (whether a string or a function):
+
+```tsx
+import {Button, ButtonProps, composeRenderProps} from 'react-aria-components';
+
+function MyButton(props: ButtonProps) {
+  return (
+    <Button
+      {...props}
+      /*- begin highlight -*/
+      className={composeRenderProps(props.className, (className, {isPressed}) =>
+        `my-button ${isPressed ? 'pressed' : ''} ${className ?? ''}`
+      )} />
+      /*- end highlight -*/
+  );
+}
+```
+
+### useRenderProps
+
+To support the render props API in a fully custom component — for example one built with [Hooks](#hooks) — use <TypeLink links={docs.links} type={docs.exports.useRenderProps} />. It resolves the `className`, `style`, and `children` props (each of which may be a value or a function) against the `values` you provide, and returns the computed `className`, `style`, and `children` to spread onto your element.
+
+```tsx
+import {useRenderProps} from 'react-aria-components';
+
+function MyComponent(props) {
+  // Compute the rendered output from the user's props and the current state.
+  /*- begin highlight -*/
+  let renderProps = useRenderProps({
+    className: props.className,
+    style: props.style,
+    children: props.children,
+    defaultClassName: 'my-component',
+    values: {isSelected: props.isSelected}
+  });
+  /*- end highlight -*/
+
+  return <div {...renderProps} />;
+}
+```
+
+The `values` object is passed to each render props function, so consumers of `MyComponent` can style and render based on `isSelected`, just like a built-in component.
+
 ## Contexts
 
 The React Aria Components API is designed around composition. Components are reused between patterns to build larger composite components. For example, there is no dedicated `NumberFieldIncrementButton` or `SelectPopover` component. Instead, the standalone [Button](Button) and [Popover](Popover) components are reused within [NumberField](NumberField) and [Select](Select). This reduces the amount of duplicate styling code you need to write and maintain, and provides powerful composition capabilities you can use in your own components.
