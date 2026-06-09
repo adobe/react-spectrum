@@ -52,7 +52,7 @@ body:
       description: |
         Provide a minimal test case that can reproduce the problem. Include a StackBlitz, link to sample repos, or specific doc examples to help us test your issue more easily.
 
-        To get a StackBlitz template, go to an example in the docs and press the "Open in StackBlitz" option.
+        To get a StackBlitz template, go to an example in the docs and select the "Open in StackBlitz" option in the menu next to the example.
         Be sure to fork/save the StackBlitz project before sharing the link.
     validations:
       required: true
