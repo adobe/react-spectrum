@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Updates Well to be div with style macro 1`] = `
 "import { style } from "@react-spectrum/s2/style" with { type: "macro" };

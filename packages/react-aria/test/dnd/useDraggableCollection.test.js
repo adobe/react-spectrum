@@ -25,6 +25,7 @@ import {Droppable} from './examples';
 import {Item} from 'react-stately/Item';
 import {Provider} from '@adobe/react-spectrum/Provider';
 import React from 'react';
+import {setMedia} from 'mock-match-media';
 import {defaultTheme as theme} from '@adobe/react-spectrum/defaultTheme';
 import userEvent from '@testing-library/user-event';
 
@@ -1036,7 +1037,7 @@ describe('useDraggableCollection', () => {
     });
 
     it('should work with a listbox without a drag button', async () => {
-      window.ontouchstart = () => {};
+      setMedia({pointer: 'coarse'});
       let onDragStart = jest.fn();
       let onDragEnd = jest.fn();
       let onDrop = jest.fn();
@@ -1124,12 +1125,10 @@ describe('useDraggableCollection', () => {
         keys: new Set(['foo', 'bar']),
         isInternal: false
       });
-
-      delete window.ontouchstart;
     });
 
     it('should support row actions', async () => {
-      window.ontouchstart = () => {};
+      setMedia({pointer: 'coarse'});
       let onDragStart = jest.fn();
       let onDragEnd = jest.fn();
       let onDrop = jest.fn();
@@ -1233,8 +1232,6 @@ describe('useDraggableCollection', () => {
         keys: new Set(['foo', 'bar']),
         isInternal: false
       });
-
-      delete window.ontouchstart;
     });
   });
 });

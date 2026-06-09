@@ -23,7 +23,6 @@ import {DOMProps, DOMRef, StyleProps} from '@react-types/shared';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {Heading} from '../text/Heading';
 import intlMessages from '../../intl/dialog/*.json';
-// @ts-ignore
 import React, {forwardRef, ReactNode, useContext} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/dialog/vars.css';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';

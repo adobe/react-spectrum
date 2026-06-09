@@ -67,7 +67,6 @@ import {
 } from 'react-aria-components/GridList';
 import {IconContext} from './Icon';
 import {ImageContext} from './Image';
-// @ts-ignore
 import intlMessages from '../intl/*.json';
 import {Key} from '@react-types/shared';
 import {LayoutInfo, Virtualizer} from 'react-aria-components/Virtualizer';

@@ -41,6 +41,11 @@ module.exports = {
   // The test environment that will be used for testing
   testEnvironment: 'jsdom',
 
+  // Match jest.config.js so the in-repo `"source"` export condition wins over `require`.
+  testEnvironmentOptions: {
+    customExportConditions: ['source']
+  },
+
   setupFilesAfterEnv: ['<rootDir>scripts/setupTests.js'],
 
   // The glob patterns Jest uses to detect test files

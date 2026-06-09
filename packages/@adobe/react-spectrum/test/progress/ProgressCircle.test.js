@@ -155,7 +155,7 @@ describe('ProgressCircle', function () {
   });
 
   it('warns user if no aria-label is provided', () => {
-    let spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    using spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
     render(<ProgressCircle value={25} />);
     expect(spyWarn).toHaveBeenCalledWith(
       'ProgressCircle requires an aria-label or aria-labelledby attribute for accessibility'

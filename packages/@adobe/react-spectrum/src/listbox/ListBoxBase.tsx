@@ -23,7 +23,6 @@ import {AriaListBoxOptions, AriaListBoxPropsBase, useListBox} from 'react-aria/u
 import {classNames} from '../utils/classNames';
 import {FocusScope} from 'react-aria/FocusScope';
 import intlMessages from '../../intl/listbox/*.json';
-// @ts-ignore
 import {ListBoxContext} from './ListBoxContext';
 import {ListBoxLayout} from './ListBoxLayout';
 import {ListBoxOption} from './ListBoxOption';

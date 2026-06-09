@@ -77,7 +77,6 @@ import {forwardRefType} from './types';
 import {HeaderContext, HeadingContext, Text, TextContext} from './Content';
 import {IconContext} from './Icon';
 import {InputContext, InputProps} from 'react-aria-components/Input';
-// @ts-ignore
 import intlMessages from '../intl/*.json';
 import {ListLayout} from 'react-stately/useVirtualizerState';
 import {mergeRefs} from 'react-aria/mergeRefs';

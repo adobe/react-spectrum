@@ -90,7 +90,7 @@ describe('Picker/Select ', function () {
 
       let listbox = await findByRole('listbox');
       expect(listbox).toBeVisible();
-      expect(onOpenChange).toBeCalledTimes(1);
+      expect(onOpenChange).toHaveBeenCalledTimes(1);
       expect(onOpenChange).toHaveBeenCalledWith(true);
       expect(picker).toHaveAttribute('aria-expanded', 'true');
       expect(picker).toHaveAttribute('aria-controls', listbox.id);
@@ -206,7 +206,7 @@ describe('Picker/Select ', function () {
 
       let listbox = getByRole('listbox');
       expect(listbox).toBeVisible();
-      expect(onOpenChange).toBeCalledTimes(1);
+      expect(onOpenChange).toHaveBeenCalledTimes(1);
       expect(onOpenChange).toHaveBeenCalledWith(true);
       expect(picker).toHaveAttribute('aria-expanded', 'true');
       expect(picker).toHaveAttribute('aria-controls', listbox.id);

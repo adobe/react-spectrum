@@ -346,7 +346,7 @@ describe('CheckboxGroup', () => {
     'warns if %s is passed to an individual checkbox',
     prop => {
       let props = {[prop]: true};
-      let spy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+      using spy = jest.spyOn(console, 'warn').mockImplementation(() => {});
       render(
         <Provider theme={theme}>
           <CheckboxGroup label="Favorite Pet">

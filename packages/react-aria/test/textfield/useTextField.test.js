@@ -22,7 +22,7 @@ describe('useTextField hook', () => {
 
   describe('should return textFieldProps', () => {
     it('with default textfield props if no props are provided', () => {
-      let consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+      using consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
       let props = renderTextFieldHook({});
       expect(props.type).toBe('text');
       expect(props.disabled).toBeFalsy();
@@ -103,7 +103,12 @@ describe('useTextField hook', () => {
     it('without type prop if inputElementType is textarea', () => {
       let type = 'search';
       let pattern = /pattern/;
-      let props = renderTextFieldHook({type, pattern, inputElementType: 'textarea'});
+      let props = renderTextFieldHook({
+        type,
+        pattern,
+        inputElementType: 'textarea',
+        'aria-label': 'mandatory label'
+      });
       expect(props.type).toBeUndefined();
       expect(props.pattern).toBeUndefined();
     });

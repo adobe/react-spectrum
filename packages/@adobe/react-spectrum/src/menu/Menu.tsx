@@ -11,7 +11,6 @@
  */
 
 import {ActionButton} from '../button/ActionButton';
-
 import {AriaMenuProps, useMenu} from 'react-aria/useMenu';
 import ArrowDownSmall from '@spectrum-icons/ui/ArrowDownSmall';
 import {classNames} from '../utils/classNames';
@@ -20,7 +19,6 @@ import {FocusScope} from 'react-aria/FocusScope';
 import intlMessages from '../../intl/menu/*.json';
 import {MenuContext, MenuStateContext, useMenuStateContext} from './context';
 import {MenuItem} from './MenuItem';
-// @ts-ignore
 import {MenuSection} from './MenuSection';
 import {mergeProps} from 'react-aria/mergeProps';
 import React, {

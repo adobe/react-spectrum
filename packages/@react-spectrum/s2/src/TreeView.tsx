@@ -41,7 +41,6 @@ import {
   UnsafeStyles
 } from './style-utils' with {type: 'macro'};
 import {IconContext} from './Icon';
-// @ts-ignore
 import intlMessages from '../intl/*.json';
 import {ProgressCircle} from './ProgressCircle';
 import {Provider, useContextProps} from 'react-aria-components/slots';

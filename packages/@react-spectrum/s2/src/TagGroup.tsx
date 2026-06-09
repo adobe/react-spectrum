@@ -63,7 +63,6 @@ import {TextContext as RACTextContext} from 'react-aria-components/Text';
 import {Text, TextContext} from './Content';
 import {useDOMRef} from './useDOMRef';
 import {useEffectEvent} from 'react-aria/private/utils/useEffectEvent';
-// @ts-ignore
 import {useId} from 'react-aria/useId';
 import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
 import {useLocale} from 'react-aria/I18nProvider';

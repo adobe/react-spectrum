@@ -28,7 +28,6 @@ import {Flex} from '../layout/Flex';
 import {FocusableRef} from '@react-types/shared';
 import {Input} from './Input';
 import intlMessages from '../../intl/datepicker/*.json';
-// @ts-ignore
 import {mergeProps} from 'react-aria/mergeProps';
 import {RangeCalendar} from '../calendar/RangeCalendar';
 import React, {ReactElement, useRef} from 'react';

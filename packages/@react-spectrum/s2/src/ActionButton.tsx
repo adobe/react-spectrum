@@ -34,7 +34,6 @@ import {createContext, forwardRef, ReactNode, useContext} from 'react';
 import {FocusableRef, FocusableRefValue, GlobalDOMAttributes} from '@react-types/shared';
 import {IconContext} from './Icon';
 import {ImageContext} from './Image';
-// @ts-ignore
 import intlMessages from '../intl/*.json';
 import {NotificationBadgeContext} from './NotificationBadge';
 import {OverlayTriggerStateContext} from 'react-aria-components/Dialog';

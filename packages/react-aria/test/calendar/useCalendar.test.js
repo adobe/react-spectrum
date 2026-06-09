@@ -12,7 +12,7 @@
 
 import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import {CalendarDate} from '@internationalized/date';
-import {Custom454Calendar} from '@internationalized/date/tests/customCalendarImpl';
+import {Custom454Calendar} from '../../../@internationalized/date/tests/customCalendarImpl';
 import {Example, ExampleCustomFirstDay} from '../../stories/calendar/Example';
 import {I18nProvider} from '../../src/i18n/I18nProvider';
 import React from 'react';

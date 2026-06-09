@@ -13,7 +13,6 @@
 import {classNames} from '../utils/classNames';
 
 import {FocusableRef, RangeValue} from '@react-types/shared';
-// @ts-ignore
 import intlMessages from '../../intl/slider/*.json';
 import React from 'react';
 import {

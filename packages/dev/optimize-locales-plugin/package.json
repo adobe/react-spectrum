@@ -7,6 +7,6 @@
     "access": "public"
   },
   "dependencies": {
-    "unplugin": "^1.4.0"
+    "unplugin": "^2.3.11"
   }
 }
