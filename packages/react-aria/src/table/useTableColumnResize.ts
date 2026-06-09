@@ -26,7 +26,6 @@ import {useId} from '../utils/useId';
 import {useInteractionModality} from '../interactions/useFocusVisible';
 import {useKeyboard} from '../interactions/useKeyboard';
 import {useLocale} from '../i18n/I18nProvider';
-// @ts-ignore
 import {useLocalizedStringFormatter} from '../i18n/useLocalizedStringFormatter';
 import {useMove} from '../interactions/useMove';
 import {usePress} from '../interactions/usePress';

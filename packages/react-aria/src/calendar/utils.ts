@@ -18,7 +18,6 @@ import {
   startOfMonth
 } from '@internationalized/date';
 import {CalendarSelectionMode, CalendarState} from 'react-stately/useCalendarState';
-// @ts-ignore
 import intlMessages from '../../intl/calendar/*.json';
 import type {LocalizedStringFormatter} from '@internationalized/string';
 import {RangeCalendarState} from 'react-stately/useRangeCalendarState';

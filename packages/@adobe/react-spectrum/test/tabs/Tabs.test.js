@@ -279,7 +279,7 @@ describe('Tabs', function () {
     expect(secondItem).toHaveAttribute('aria-selected', 'false');
     expect(thirdItem).toHaveAttribute('aria-selected', 'true');
 
-    expect(onSelectionChange).toBeCalledTimes(1);
+    expect(onSelectionChange).toHaveBeenCalledTimes(1);
   });
 
   it('supports using click to change tab', async function () {
@@ -302,7 +302,7 @@ describe('Tabs', function () {
     expect(tabpanel).toHaveAttribute('aria-labelledby', secondItem.id);
     expect(tabpanel).toHaveAttribute('role', 'tabpanel');
     expect(tabpanel).toHaveTextContent(defaultItems[1].children);
-    expect(onSelectionChange).toBeCalledTimes(1);
+    expect(onSelectionChange).toHaveBeenCalledTimes(1);
   });
 
   it('does not generate conflicting ids between multiple tabs instances', function () {
@@ -378,7 +378,7 @@ describe('Tabs', function () {
     expect(document.activeElement).toBe(tabs[0]);
     fireEvent.keyDown(tabs[1], {key: 'ArrowRight'});
     fireEvent.keyUp(tabs[1], {key: 'ArrowRight'});
-    expect(onSelectionChange).toBeCalledWith(defaultItems[2].name);
+    expect(onSelectionChange).toHaveBeenCalledWith(defaultItems[2].name);
   });
 
   it('disabled tabs cannot be pressed', async function () {
@@ -393,7 +393,7 @@ describe('Tabs', function () {
     let tabs = within(tablist).getAllByRole('tab');
     expect(document.activeElement).toBe(tabs[0]);
     await user.click(tabs[1]);
-    expect(onSelectionChange).not.toBeCalled();
+    expect(onSelectionChange).not.toHaveBeenCalled();
   });
 
   it('finds the first non-disabled tab if the currently selected one is removed', async function () {
@@ -409,7 +409,7 @@ describe('Tabs', function () {
     expect(document.activeElement).toBe(tabs[1]);
     fireEvent.keyDown(tabs[1], {key: 'ArrowRight'});
     fireEvent.keyUp(tabs[1], {key: 'ArrowRight'});
-    expect(onSelectionChange).toBeCalledWith(defaultItems[2].name);
+    expect(onSelectionChange).toHaveBeenCalledWith(defaultItems[2].name);
 
     tree.rerender(
       <Provider theme={theme}>
@@ -429,7 +429,7 @@ describe('Tabs', function () {
         </Tabs>
       </Provider>
     );
-    expect(onSelectionChange).toBeCalledWith(defaultItems[1].name);
+    expect(onSelectionChange).toHaveBeenCalledWith(defaultItems[1].name);
   });
 
   it('selects first tab if all tabs are disabled', async function () {
@@ -444,7 +444,7 @@ describe('Tabs', function () {
     let tabs = within(tablist).getAllByRole('tab');
     let tabpanel = tree.getByRole('tabpanel');
     expect(tabs[0]).toHaveAttribute('aria-selected', 'true');
-    expect(onSelectionChange).toBeCalledWith(defaultItems[0].name);
+    expect(onSelectionChange).toHaveBeenCalledWith(defaultItems[0].name);
     expect(document.activeElement).toBe(tabpanel);
   });
 
@@ -505,7 +505,7 @@ describe('Tabs', function () {
     await user.click(option);
     act(() => jest.runAllTimers());
 
-    expect(onSelectionChange).toBeCalledTimes(1);
+    expect(onSelectionChange).toHaveBeenCalledTimes(1);
     expect(onSelectionChange).toHaveBeenCalledWith('Tab 3');
 
     tabpanel = getByRole('tabpanel');
@@ -904,7 +904,7 @@ describe('Tabs', function () {
     expect(firstItem).toHaveAttribute('aria-selected', 'true');
 
     await user.click(firstItem);
-    expect(onSelectionChange).toBeCalledTimes(1);
+    expect(onSelectionChange).toHaveBeenCalledTimes(1);
     expect(onSelectionChange).toHaveBeenCalledWith(defaultItems[0].name);
   });
 

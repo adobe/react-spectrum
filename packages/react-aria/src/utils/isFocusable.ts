@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {getOwnerWindow} from './domHelpers';
 import {isElementVisible} from './isElementVisible';
 
 const focusableElements = [
@@ -52,7 +53,7 @@ export function isTabbable(element: Element): boolean {
 function isInert(element: Element): boolean {
   let node: Element | null = element;
   while (node != null) {
-    if (node instanceof node.ownerDocument.defaultView!.HTMLElement && node.inert) {
+    if (node instanceof getOwnerWindow(node).HTMLElement && node.inert) {
       return true;
     }
 

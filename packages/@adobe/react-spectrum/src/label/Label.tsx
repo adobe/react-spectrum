@@ -23,7 +23,6 @@ import {classNames} from '../utils/classNames';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import intlMessages from '../../intl/label/*.json';
 import React, {ElementType, HTMLAttributes, ReactNode} from 'react';
-// @ts-ignore
 import styles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {useDOMRef} from '../utils/useDOMRef';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';

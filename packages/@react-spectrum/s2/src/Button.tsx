@@ -29,7 +29,6 @@ import {FocusableRef, FocusableRefValue, GlobalDOMAttributes} from '@react-types
 import {IconContext} from './Icon';
 import intlMessages from '../intl/*.json';
 import {linearGradient} from '../style/spectrum-theme' with {type: 'macro'};
-// @ts-ignore
 import {Link, LinkProps} from 'react-aria-components/Link';
 import {OverlayTriggerStateContext} from 'react-aria-components/Dialog';
 import {pressScale} from './pressScale';

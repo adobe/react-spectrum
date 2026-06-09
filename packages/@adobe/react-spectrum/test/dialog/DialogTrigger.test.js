@@ -831,7 +831,7 @@ describe('DialogTrigger', function () {
   });
 
   it('should warn when unmounting a dialog trigger while a modal is open', async function () {
-    let warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    using warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
     let {getByRole, queryByRole} = render(
       <Provider theme={theme}>
         <MenuTrigger>

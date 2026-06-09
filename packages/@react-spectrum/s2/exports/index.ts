@@ -164,7 +164,7 @@ export {
   isFileDropItem,
   isTextDropItem
 } from 'react-aria/useDrop';
-export {useDragAndDrop} from 'react-aria-components/useDragAndDrop';
+export {useDragAndDrop} from './useDragAndDrop';
 
 export type {
   AccordionProps,
@@ -315,7 +315,8 @@ export type {
   AsyncListLoadOptions,
   AsyncListStateUpdate
 } from 'react-stately/useAsyncList';
-export type {DragAndDropHooks, DragAndDropOptions} from 'react-aria-components/useDragAndDrop';
+export type {DragAndDropHooks} from 'react-aria-components/useDragAndDrop';
+export type {DragAndDropOptions} from './useDragAndDrop';
 export type {
   DirectoryDropItem,
   DraggableCollectionEndEvent,

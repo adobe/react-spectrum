@@ -11,7 +11,6 @@
  */
 
 import {AriaGridListProps, useGridList} from 'react-aria/useGridList';
-
 import {
   AsyncLoadable,
   DOMRef,
@@ -34,7 +33,6 @@ import intlMessages from '../../intl/list/*.json';
 import {ListKeyboardDelegate} from 'react-aria/ListKeyboardDelegate';
 import {ListState, useListState} from 'react-stately/useListState';
 import listStyles from './styles.css';
-// @ts-ignore
 import {ListViewItem} from './ListViewItem';
 import {ListViewLayout} from './ListViewLayout';
 import {mergeProps} from 'react-aria/mergeProps';

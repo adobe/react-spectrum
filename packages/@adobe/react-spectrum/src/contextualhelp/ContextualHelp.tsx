@@ -20,7 +20,6 @@ import {DialogTrigger} from '../dialog/DialogTrigger';
 import HelpOutline from '@spectrum-icons/workflow/HelpOutline';
 import helpStyles from '@adobe/spectrum-css-temp/components/contextualhelp/vars.css';
 import InfoOutline from '@spectrum-icons/workflow/InfoOutline';
-// @ts-ignore
 import intlMessages from '../../intl/contextualhelp/*.json';
 import {mergeProps} from 'react-aria/mergeProps';
 import {OverlayTriggerProps} from 'react-stately/useOverlayTriggerState';

@@ -67,7 +67,6 @@ import {
 } from 'react-aria-components/GridList';
 import {IconContext} from './Icon';
 import {ImageContext} from './Image';
-// @ts-ignore
 import intlMessages from '../intl/*.json';
 import {Key} from '@react-types/shared';
 import {LayoutInfo, Virtualizer} from 'react-aria-components/Virtualizer';
@@ -223,7 +222,10 @@ const listView = style<GridListRenderProps & {isQuiet?: boolean; isDropTarget?: 
     default: 'default',
     isQuiet: 'none'
   },
-  borderColor: 'gray-300',
+  borderColor: {
+    default: 'gray-300',
+    forcedColors: 'ButtonBorder'
+  },
   borderWidth: {
     default: 1,
     isQuiet: 0
@@ -435,6 +437,11 @@ const listitem = style<
     isDisabled: 'disabled',
     forcedColors: {
       default: 'ButtonText',
+      isSelected: {
+        selectionStyle: {
+          highlight: 'HighlightText'
+        }
+      },
       isDisabled: 'GrayText'
     }
   },
@@ -590,7 +597,14 @@ const listRowBackground = style<
         }
       }
     },
-    forcedColors: 'transparent',
+    forcedColors: {
+      default: 'transparent',
+      selectionStyle: {
+        highlight: {
+          isSelected: 'Highlight'
+        }
+      }
+    },
     ':is([role="grid"][data-drop-target] *)': rootRowDropStyles,
     isDropTarget: rowDropStyles
   },

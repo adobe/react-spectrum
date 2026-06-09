@@ -2027,10 +2027,10 @@ describe('ListBox', () => {
       let items = getAllByRole('option');
 
       await user.pointer({target: items[0], keys: '[MouseLeft>]'});
-      expect(onSelectionChange).toBeCalledTimes(1);
+      expect(onSelectionChange).toHaveBeenCalledTimes(1);
 
       await user.pointer({target: items[0], keys: '[/MouseLeft]'});
-      expect(onSelectionChange).toBeCalledTimes(1);
+      expect(onSelectionChange).toHaveBeenCalledTimes(1);
     });
 
     it('should select an item on pressing down when shouldSelectOnPressUp is false', async () => {
@@ -2043,10 +2043,10 @@ describe('ListBox', () => {
       let items = getAllByRole('option');
 
       await user.pointer({target: items[0], keys: '[MouseLeft>]'});
-      expect(onSelectionChange).toBeCalledTimes(1);
+      expect(onSelectionChange).toHaveBeenCalledTimes(1);
 
       await user.pointer({target: items[0], keys: '[/MouseLeft]'});
-      expect(onSelectionChange).toBeCalledTimes(1);
+      expect(onSelectionChange).toHaveBeenCalledTimes(1);
     });
 
     it('should select an item on pressing up when shouldSelectOnPressUp is true', async () => {
@@ -2059,10 +2059,10 @@ describe('ListBox', () => {
       let items = getAllByRole('option');
 
       await user.pointer({target: items[0], keys: '[MouseLeft>]'});
-      expect(onSelectionChange).toBeCalledTimes(0);
+      expect(onSelectionChange).toHaveBeenCalledTimes(0);
 
       await user.pointer({target: items[0], keys: '[/MouseLeft]'});
-      expect(onSelectionChange).toBeCalledTimes(1);
+      expect(onSelectionChange).toHaveBeenCalledTimes(1);
     });
   });
 

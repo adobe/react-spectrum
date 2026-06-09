@@ -1,6 +1,6 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "jsx-a11y"],
+  "plugins": ["react", "jsx-a11y", "jest"],
   "jsPlugins": [
     "eslint-plugin-rsp-rules",
     {
@@ -192,6 +192,7 @@
     "rsp-rules/imports": ["error"],
     "rsp-rules/use-layout-effect-rule": ["error"],
     "rsp-rules/pure-render": ["error"],
+    "jest/no-alias-methods": "error",
     "jsx-a11y/alt-text": "error",
     "jsx-a11y/anchor-has-content": "error",
     "jsx-a11y/anchor-is-valid": "error",
@@ -371,7 +372,11 @@
       }
     },
     {
-      "files": ["packages/@react-spectrum/s2/**", "packages/dev/s2-docs/**"],
+      "files": [
+        "packages/@react-spectrum/s2/**",
+        "packages/dev/s2-docs/**",
+        "packages/@react-spectrum/s2-ai/**"
+      ],
       "rules": {
         "react/react-in-jsx-scope": "off"
       }

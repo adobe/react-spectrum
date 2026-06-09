@@ -11,7 +11,6 @@
  */
 
 import {ActionButton} from '../button/ActionButton';
-
 import {AriaButtonProps} from 'react-aria/useButton';
 import {CalendarDate} from '@internationalized/date';
 import {CalendarMonth} from './CalendarMonth';
@@ -23,7 +22,6 @@ import {DOMProps, RefObject, StyleProps} from '@react-types/shared';
 import {HelpText} from '../label/HelpText';
 import intlMessages from '../../intl/calendar/*.json';
 import {RangeCalendarState} from 'react-stately/useRangeCalendarState';
-// @ts-ignore
 import React, {HTMLAttributes, JSX} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/calendar/vars.css';
 import {useDateFormatter} from 'react-aria/useDateFormatter';

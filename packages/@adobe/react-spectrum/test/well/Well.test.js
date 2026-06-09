@@ -80,7 +80,7 @@ describe('Well', () => {
   });
 
   it('v3 warns user if label is provided without a role', function () {
-    let spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    using spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
     render(<Well aria-label="well">Well</Well>);
     expect(spyWarn).toHaveBeenCalledWith('A labelled Well must have a role.');
   });

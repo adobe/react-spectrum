@@ -11,6 +11,11 @@
  */
 
 // setup file
+// oxlint-disable-next-line
+import 'mock-match-media/jest-setup';
+// oxlint-disable-next-line
+import {cleanup as cleanupMatchMedia} from 'mock-match-media';
+// oxlint-disable-next-line
 import '@testing-library/jest-dom';
 
 // this prints a nice stack like this
@@ -122,4 +127,5 @@ afterEach(() => {
   // Clean up the clientWidth/clientHeight properties
   delete document.documentElement.clientWidth;
   delete document.documentElement.clientHeight;
+  cleanupMatchMedia();
 });

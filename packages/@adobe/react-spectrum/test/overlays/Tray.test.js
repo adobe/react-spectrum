@@ -100,11 +100,12 @@ describe('Tray', function () {
 
   it('hides the tray on blur when shouldCloseOnBlur is true', async function () {
     let onOpenChange = jest.fn();
-    let {getByRole} = render(
+    let {getByRole, getByTestId} = render(
       <Provider theme={theme}>
         <TestTray isOpen onOpenChange={onOpenChange} shouldCloseOnBlur>
           <Dialog aria-label="Test dialog">contents</Dialog>
         </TestTray>
+        <button data-testid="outside">Outside</button>
       </Provider>
     );
 
@@ -116,13 +117,42 @@ describe('Tray', function () {
     });
 
     let dialog = await getByRole('dialog');
+    let outside = getByTestId('outside');
     expect(document.activeElement).toBe(dialog);
     expect(onOpenChange).toHaveBeenCalledTimes(0);
 
     act(() => {
-      dialog.blur();
+      outside.focus();
     });
     expect(onOpenChange).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not close when focus is lost with no replacement, such as switching tabs', async function () {
+    let onOpenChange = jest.fn();
+    let {getByRole} = render(
+      <Provider theme={theme}>
+        <TestTray isOpen onOpenChange={onOpenChange} shouldCloseOnBlur>
+          <Dialog aria-label="Test dialog">contents</Dialog>
+        </TestTray>
+      </Provider>
+    );
+
+    await waitFor(() => {
+      expect(getByRole('dialog')).toBeVisible();
+    });
+    act(() => {
+      jest.runAllTimers();
+    });
+
+    let dialog = getByRole('dialog');
+    expect(document.activeElement).toBe(dialog);
+    expect(onOpenChange).not.toHaveBeenCalled();
+
+    act(() => {
+      dialog.blur();
+    });
+    expect(onOpenChange).not.toHaveBeenCalled();
+    expect(dialog).toBeVisible();
   });
 
   it('should have hidden dismiss buttons for screen readers', function () {

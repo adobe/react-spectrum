@@ -11,14 +11,12 @@
  */
 
 import {AriaButtonProps} from '../button/useButton';
-
 import {DOMAttributes, FocusableElement, Node, RefObject} from '@react-types/shared';
 import {filterDOMProps} from '../utils/filterDOMProps';
 import {hookData} from './useTagGroup';
 import intlMessages from '../../intl/tag/*.json';
 import type {ListState} from 'react-stately/useListState';
 import {mergeProps} from '../utils/mergeProps';
-// @ts-ignore
 import {SelectableItemStates} from '../selection/useSelectableItem';
 import {useDescription} from '../utils/useDescription';
 import {useFocusable} from '../interactions/useFocusable';

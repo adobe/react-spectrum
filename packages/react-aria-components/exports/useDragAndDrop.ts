@@ -27,6 +27,7 @@ export {
   isTextDropItem
 } from 'react-aria/useDrop';
 export type {
+  DragAndDrop,
   DragAndDropHooks,
   DragAndDropOptions,
   DropIndicatorProps,
