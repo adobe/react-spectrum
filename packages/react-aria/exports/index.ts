@@ -23,8 +23,6 @@ export {useBreadcrumbs} from '../src/breadcrumbs/useBreadcrumbs';
 export {useButton} from '../src/button/useButton';
 export {useToggleButton} from '../src/button/useToggleButton';
 export {useToggleButtonGroup, useToggleButtonGroupItem} from '../src/button/useToggleButtonGroup';
-export {useActionGroup} from '../src/actiongroup/useActionGroup';
-export {useActionGroupItem} from '../src/actiongroup/useActionGroupItem';
 export {useCalendar} from '../src/calendar/useCalendar';
 export {useCalendarCell} from '../src/calendar/useCalendarCell';
 export {useCalendarGrid} from '../src/calendar/useCalendarGrid';
@@ -206,11 +204,6 @@ export type {
   AriaToggleButtonGroupItemProps,
   AriaToggleButtonGroupItemOptions
 } from '../src/button/useToggleButtonGroup';
-export type {AriaActionGroupProps, ActionGroupAria} from '../src/actiongroup/useActionGroup';
-export type {
-  AriaActionGroupItemProps,
-  ActionGroupItemAria
-} from '../src/actiongroup/useActionGroupItem';
 export type {AriaCalendarCellProps, CalendarCellAria} from '../src/calendar/useCalendarCell';
 export type {AriaCalendarGridProps, CalendarGridAria} from '../src/calendar/useCalendarGrid';
 export type {AriaCalendarProps} from '../src/calendar/useCalendar';
