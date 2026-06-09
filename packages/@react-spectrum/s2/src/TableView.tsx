@@ -690,7 +690,7 @@ function CellFocusRing() {
       className={style({
         ...cellFocus,
         position: 'absolute',
-        top: 'var(--topFocusRing)',
+        top: 'var(--topFocusRing, 0)',
         bottom: 0,
         insetStart: 0,
         insetEnd: 0,
@@ -1216,11 +1216,9 @@ export const TableHeader = /*#__PURE__*/ (forwardRef as forwardRefType)(function
           className={selectAllCheckboxColumn({isQuiet})}>
           {({isFocusVisible}) => (
             <>
+              {isFocusVisible && <CellFocusRing />}
               {selectionMode === 'single' && (
-                <>
-                  {isFocusVisible && <CellFocusRing />}
-                  <VisuallyHiddenSelectAllLabel />
-                </>
+                <VisuallyHiddenSelectAllLabel />
               )}
               {selectionMode === 'multiple' && (
                 <Checkbox styles={selectAllCheckbox} slot="selection" />
