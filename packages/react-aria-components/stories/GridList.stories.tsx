@@ -979,7 +979,7 @@ export const GridListWithTextfield: GridListStory = args => {
   let isHorizontalStack = args.orientation === 'horizontal' && args.layout !== 'grid';
   return (
     <div style={{display: 'flex', flexDirection: 'column'}}>
-      <input />
+      <input aria-label="input before gridlist" />
       <GridList
         className={styles.menu}
         aria-label="gridlist with textfield"
@@ -1103,7 +1103,7 @@ export const GridListWithTextfield: GridListStory = args => {
           </ComboBox>
         </MyGridListItem>
       </GridList>
-      <input />
+      <input aria-label="input after gridlist" />
     </div>
   );
 };

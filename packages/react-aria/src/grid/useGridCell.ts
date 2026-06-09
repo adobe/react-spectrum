@@ -27,8 +27,14 @@ import {
 import {gridMap} from './utils';
 import {GridState} from 'react-stately/private/grid/useGridState';
 import {isFocusVisible} from '../interactions/useFocusVisible';
+import {isTabbable} from '../utils/isFocusable';
 import {mergeProps} from '../utils/mergeProps';
-import {KeyboardEvent as ReactKeyboardEvent, useRef} from 'react';
+import {
+  KeyboardEvent as ReactKeyboardEvent,
+  MouseEvent as ReactMouseEvent,
+  PointerEvent as ReactPointerEvent,
+  useRef
+} from 'react';
 import {scrollIntoViewport} from '../utils/scrollIntoView';
 import {useLocale} from '../i18n/I18nProvider';
 import {useSelectableItem} from '../selection/useSelectableItem';
@@ -82,8 +88,13 @@ export function useGridCell<T, C extends GridCollection<T>>(
   let {direction} = useLocale();
   let {
     keyboardDelegate,
-    actions: {onCellAction}
+    actions: {onCellAction},
+    keyboardNavigationBehavior
   } = gridMap.get(state)!;
+
+  if (keyboardNavigationBehavior === 'tab') {
+    focusMode = 'cell';
+  }
 
   // We need to track the key of the item at the time it was last focused so that we force
   // focus to go to the item when the DOM node is reused for a different item in a virtualizer.
@@ -252,6 +263,44 @@ export function useGridCell<T, C extends GridCollection<T>>(
     }
   };
 
+  let onKeyDown = (e: ReactKeyboardEvent) => {
+    let activeElement = getActiveElement();
+    if (
+      !nodeContains(e.currentTarget, getEventTarget(e) as Element) ||
+      state.isKeyboardNavigationDisabled ||
+      !ref.current ||
+      !activeElement
+    ) {
+      return;
+    }
+
+    if (keyboardNavigationBehavior === 'tab') {
+      if (
+        getEventTarget(e) !== ref.current &&
+        (isArrowKey(e.key) || isCharacterKey(e.key) || e.key === 'Enter')
+      ) {
+        e.stopPropagation();
+        return;
+      }
+    }
+
+    switch (e.key) {
+      case 'Tab': {
+        if (keyboardNavigationBehavior === 'tab') {
+          // If there is another focusable element within this item, stop propagation so the tab key
+          // is handled by the browser and not by useSelectableCollection (which would take us out of the list).
+          let walker = getFocusableTreeWalker(ref.current, {tabbable: true});
+          walker.currentNode = activeElement;
+          let next = e.shiftKey ? walker.previousNode() : walker.nextNode();
+
+          if (next) {
+            e.stopPropagation();
+          }
+        }
+      }
+    }
+  };
+
   // Grid cells can have focusable elements inside them. In this case, focus should
   // be marshalled to that element rather than focusing the cell itself.
   let onFocus = e => {
@@ -280,7 +329,8 @@ export function useGridCell<T, C extends GridCollection<T>>(
 
   let gridCellProps: DOMAttributes = mergeProps(itemProps, {
     role: 'gridcell',
-    onKeyDownCapture,
+    onKeyDownCapture: keyboardNavigationBehavior === 'tab' ? undefined : onKeyDownCapture,
+    onKeyDown: keyboardNavigationBehavior === 'tab' ? onKeyDown : undefined,
     'aria-colspan': node.colSpan,
     'aria-colindex': node.colIndex != null ? node.colIndex + 1 : undefined, // aria-colindex is 1-based
     colSpan: isVirtualized ? undefined : node.colSpan,
@@ -290,6 +340,29 @@ export function useGridCell<T, C extends GridCollection<T>>(
   if (isVirtualized) {
     gridCellProps['aria-colindex'] = (node.colIndex ?? node.index) + 1; // aria-colindex is 1-based
   }
+
+  // TODO: same logic as in useGridListItem
+  // doesn't have the keydown handler part since we don't seem to have the same problem where Enter
+  // triggers selection when in a textfield
+  let baseOnPointerDown = gridCellProps.onPointerDown;
+  gridCellProps.onPointerDown = (e: ReactPointerEvent<FocusableElement>) => {
+    let target = getEventTarget(e) as Element | null;
+    if (target && target !== ref.current && isTabbable(target)) {
+      e.stopPropagation();
+      return;
+    }
+    baseOnPointerDown?.(e);
+  };
+
+  let baseOnMouseDown = gridCellProps.onMouseDown;
+  gridCellProps.onMouseDown = (e: ReactMouseEvent<FocusableElement>) => {
+    let target = getEventTarget(e) as Element | null;
+    if (target && target !== ref.current && isTabbable(target)) {
+      e.stopPropagation();
+      return;
+    }
+    baseOnMouseDown?.(e);
+  };
 
   // When pressing with a pointer and cell selection is not enabled, usePress will be applied to the
   // row rather than the cell. However, when the row is draggable, usePress cannot preventDefault
@@ -328,4 +401,12 @@ function last(walker: TreeWalker) {
     }
   } while (last);
   return next;
+}
+
+function isArrowKey(key: string): boolean {
+  return key === 'ArrowUp' || key === 'ArrowDown' || key === 'ArrowLeft' || key === 'ArrowRight';
+}
+
+function isCharacterKey(key: string): boolean {
+  return key.length === 1 || !/^[A-Z]/i.test(key);
 }

@@ -2194,176 +2194,173 @@ let comboboxEmptyState = () => {
 
 export const TableWithTextfield: TableStory = args => {
   return (
-    <Table
-      aria-label="Table with textfield"
-      selectionMode="multiple"
-      keyboardNavigationBehavior="tab"
-      {...args}>
-      <TableHeader>
-        <Column>
-          <MyCheckbox slot="selection" />
-        </Column>
-        <Column isRowHeader>Col 1</Column>
-        <Column>Col 2</Column>
-        <Column>Col 3</Column>
-        <Column>Col 4</Column>
-      </TableHeader>
-      <TableBody>
-        <Row>
-          <Cell>
+    <div style={{display: 'flex', flexDirection: 'column'}}>
+      <input aria-label="input before table" />
+      <Table
+        aria-label="Table with textfield"
+        selectionMode="multiple"
+        keyboardNavigationBehavior="tab"
+        {...args}>
+        <TableHeader>
+          <Column>
             <MyCheckbox slot="selection" />
-          </Cell>
-          <Cell>RAC Textfield</Cell>
-          <Cell>
-            <TextField aria-label="Name">
-              <Input />
-            </TextField>
-          </Cell>
-          <Cell>Raw input</Cell>
-          <Cell>
-            <input aria-label="Raw text input" style={{marginLeft: 4}} />
-          </Cell>
-        </Row>
-        <Row>
-          <Cell>
-            <MyCheckbox slot="selection" />
-          </Cell>
-          <Cell> TextField + Button</Cell>
-          <Cell>
-            {' '}
-            <TextField aria-label="Search">
-              <Input />
-            </TextField>{' '}
-            <Button>Go</Button>
-          </Cell>
-          <Cell> Toolbar</Cell>
-          <Cell>
-            {' '}
-            <Toolbar aria-label="Text formatting" style={{gap: 4}}>
-              <Button onPress={action('Bold press')}>Bold</Button>
-              <Button onPress={action('Italics press')}>Italic</Button>
-              <Button onPress={action('Underline press')}>Underline</Button>
-            </Toolbar>
-          </Cell>
-        </Row>
-
-        <Row>
-          <Cell>
-            <MyCheckbox slot="selection" />
-          </Cell>
-          <Cell>Menu</Cell>
-          <Cell>
-            {' '}
-            <MenuTrigger>
-              <Button aria-label="Options">▾</Button>
-              <Popover>
-                <Menu className={styles.menu}>
-                  <MenuItem>Cut</MenuItem>
-                  <MenuItem>Copy</MenuItem>
-                  <MenuItem>Paste</MenuItem>
-                </Menu>
-              </Popover>
-            </MenuTrigger>
-          </Cell>
-          <Cell>RadioGroup</Cell>
-          <Cell>
-            {' '}
-            <RadioGroup
-              aria-label="Radiogroup"
-              className={styles.radiogroup}
-              style={{flexDirection: 'row'}}>
-              <Radio className={styles.radio} value="dogs" data-testid="radio-dog">
-                Dog
-              </Radio>
-              <Radio className={styles.radio} value="cats">
-                Cat
-              </Radio>
-              <Radio className={styles.radio} value="dragon">
-                Dragon
-              </Radio>
-            </RadioGroup>
-          </Cell>
-        </Row>
-        <Row>
-          <Cell>
-            <MyCheckbox slot="selection" />
-          </Cell>
-          <Cell>CheckboxGroup</Cell>
-          <Cell>
-            {' '}
-            <CheckboxGroup
-              aria-label="Checkboxgroup"
-              style={{display: 'flex', flexDirection: 'row'}}>
-              <Checkbox value="soccer">
-                <div className="checkbox" aria-hidden="true">
-                  <svg viewBox="0 0 18 18">
-                    <polyline points="1 9 7 14 15 4" />
-                  </svg>
-                </div>
-                Soccer
-              </Checkbox>
-              <Checkbox value="baseball">
-                <div className="checkbox" aria-hidden="true">
-                  <svg viewBox="0 0 18 18">
-                    <polyline points="1 9 7 14 15 4" />
-                  </svg>
-                </div>
-                Baseball
-              </Checkbox>
-              <Checkbox value="basketball">
-                <div className="checkbox" aria-hidden="true">
-                  <svg viewBox="0 0 18 18">
-                    <polyline points="1 9 7 14 15 4" />
-                  </svg>
-                </div>
-                Basketball
-              </Checkbox>
-            </CheckboxGroup>
-          </Cell>
-          <Cell>ComboBox</Cell>
-          <Cell>
-            <ComboBox aria-label="combobox" allowsEmptyCollection>
-              <div style={{display: 'flex'}}>
+          </Column>
+          <Column isRowHeader>Col 1</Column>
+          <Column>Col 2</Column>
+          <Column>Col 3</Column>
+          <Column>Col 4</Column>
+        </TableHeader>
+        <TableBody>
+          <Row>
+            <Cell>
+              <MyCheckbox slot="selection" />
+            </Cell>
+            <Cell>RAC Textfield</Cell>
+            <Cell>
+              <TextField aria-label="Name">
                 <Input />
-                <Button>
-                  <span aria-hidden="true" style={{padding: '0 2px'}}>
-                    ▼
-                  </span>
-                </Button>
-              </div>
-              <Popover>
-                <ListBox
-                  renderEmptyState={comboboxEmptyState}
-                  data-testid="combo-box-list-box"
-                  className={styles.menu}
-                  style={{width: 'var(--trigger-width)'}}>
-                  <MyListBoxItem>Foo</MyListBoxItem>
-                  <MyListBoxItem>Bar</MyListBoxItem>
-                  <MyListBoxItem>Baz</MyListBoxItem>
-                  <MyListBoxItem href="http://google.com">Google</MyListBoxItem>
-                </ListBox>
-              </Popover>
-            </ComboBox>
-          </Cell>
-        </Row>
-      </TableBody>
-    </Table>
+              </TextField>
+            </Cell>
+            <Cell>Raw input</Cell>
+            <Cell>
+              <input aria-label="Raw text input" style={{marginLeft: 4}} />
+            </Cell>
+          </Row>
+          <Row>
+            <Cell>
+              <MyCheckbox slot="selection" />
+            </Cell>
+            <Cell>TextField + Button</Cell>
+            <Cell>
+              <TextField aria-label="Search">
+                <Input />
+              </TextField>
+              <Button>Go</Button>
+            </Cell>
+            <Cell> Toolbar</Cell>
+            <Cell>
+              <Toolbar aria-label="Text formatting" style={{gap: 4}}>
+                <Button onPress={action('Bold press')}>Bold</Button>
+                <Button onPress={action('Italics press')}>Italic</Button>
+                <Button onPress={action('Underline press')}>Underline</Button>
+              </Toolbar>
+            </Cell>
+          </Row>
+
+          <Row>
+            <Cell>
+              <MyCheckbox slot="selection" />
+            </Cell>
+            <Cell>Menu</Cell>
+            <Cell>
+              <MenuTrigger>
+                <Button aria-label="Options">▾</Button>
+                <Popover>
+                  <Menu className={styles.menu}>
+                    <MenuItem>Cut</MenuItem>
+                    <MenuItem>Copy</MenuItem>
+                    <MenuItem>Paste</MenuItem>
+                  </Menu>
+                </Popover>
+              </MenuTrigger>
+            </Cell>
+            <Cell>RadioGroup</Cell>
+            <Cell>
+              <RadioGroup
+                aria-label="Radiogroup"
+                className={styles.radiogroup}
+                style={{flexDirection: 'row'}}>
+                <Radio className={styles.radio} value="dogs" data-testid="radio-dog">
+                  Dog
+                </Radio>
+                <Radio className={styles.radio} value="cats">
+                  Cat
+                </Radio>
+                <Radio className={styles.radio} value="dragon">
+                  Dragon
+                </Radio>
+              </RadioGroup>
+            </Cell>
+          </Row>
+          <Row>
+            <Cell>
+              <MyCheckbox slot="selection" />
+            </Cell>
+            <Cell>CheckboxGroup</Cell>
+            <Cell>
+              <CheckboxGroup
+                aria-label="Checkboxgroup"
+                style={{display: 'flex', flexDirection: 'row'}}>
+                <Checkbox value="soccer">
+                  <div className="checkbox" aria-hidden="true">
+                    <svg viewBox="0 0 18 18">
+                      <polyline points="1 9 7 14 15 4" />
+                    </svg>
+                  </div>
+                  Soccer
+                </Checkbox>
+                <Checkbox value="baseball">
+                  <div className="checkbox" aria-hidden="true">
+                    <svg viewBox="0 0 18 18">
+                      <polyline points="1 9 7 14 15 4" />
+                    </svg>
+                  </div>
+                  Baseball
+                </Checkbox>
+                <Checkbox value="basketball">
+                  <div className="checkbox" aria-hidden="true">
+                    <svg viewBox="0 0 18 18">
+                      <polyline points="1 9 7 14 15 4" />
+                    </svg>
+                  </div>
+                  Basketball
+                </Checkbox>
+              </CheckboxGroup>
+            </Cell>
+            <Cell>ComboBox</Cell>
+            <Cell>
+              <ComboBox aria-label="combobox" allowsEmptyCollection>
+                <div style={{display: 'flex'}}>
+                  <Input />
+                  <Button>
+                    <span aria-hidden="true" style={{padding: '0 2px'}}>
+                      ▼
+                    </span>
+                  </Button>
+                </div>
+                <Popover>
+                  <ListBox
+                    renderEmptyState={comboboxEmptyState}
+                    data-testid="combo-box-list-box"
+                    className={styles.menu}
+                    style={{width: 'var(--trigger-width)'}}>
+                    <MyListBoxItem>Foo</MyListBoxItem>
+                    <MyListBoxItem>Bar</MyListBoxItem>
+                    <MyListBoxItem>Baz</MyListBoxItem>
+                    <MyListBoxItem href="http://google.com">Google</MyListBoxItem>
+                  </ListBox>
+                </Popover>
+              </ComboBox>
+            </Cell>
+          </Row>
+        </TableBody>
+      </Table>
+      <input aria-label="input after table" />
+    </div>
   );
 };
 
-TableWithTextfield.story = {
-  argTypes: {
-    keyboardNavigationBehavior: {
-      control: 'radio',
-      options: ['arrow', 'tab']
-    },
-    selectionMode: {
-      control: 'radio',
-      options: ['none', 'single', 'multiple']
-    },
-    selectionBehavior: {
-      control: 'radio',
-      options: ['toggle', 'replace']
-    }
+TableWithTextfield.argTypes = {
+  keyboardNavigationBehavior: {
+    control: 'radio',
+    options: ['arrow', 'tab']
+  },
+  selectionMode: {
+    control: 'radio',
+    options: ['none', 'single', 'multiple']
+  },
+  selectionBehavior: {
+    control: 'radio',
+    options: ['toggle', 'replace']
   }
 };

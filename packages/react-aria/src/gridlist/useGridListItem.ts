@@ -307,6 +307,7 @@ export function useGridListItem<T>(
       // (note that this breaks TagGroup's old behavior of using arrow keys to move from "x" button to next tag and typeselect when inside a card/row)
       // should it just stop propagation for all events since we can't rely on non-RAC components stopping propagation even they handled the event
       // Will need to do something similar for click?
+      // TODO: have it stop on all events that bubbled up from the cell (will need to let Tab go through since we need useSelectableCollection to handle that)
       if (
         getEventTarget(e) !== ref.current &&
         (isArrowKey(e.key) || isCharacterKey(e.key) || e.key === 'Enter')

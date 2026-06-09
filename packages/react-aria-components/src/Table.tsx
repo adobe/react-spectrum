@@ -607,13 +607,6 @@ export interface TableProps
    * @default 'all'
    */
   disabledBehavior?: DisabledBehavior;
-  /**
-   * Whether keyboard navigation to focusable elements within the cells is
-   * via the left/right arrow keys or the tab key.
-   *
-   * @default 'arrow'
-   */
-  keyboardNavigationBehavior?: 'arrow' | 'tab';
   /** Handler that is called when a user performs an action on the row. */
   onRowAction?: (key: Key) => void;
   /**
