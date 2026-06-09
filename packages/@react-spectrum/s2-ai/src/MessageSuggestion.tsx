@@ -12,7 +12,12 @@
 
 import {AriaLabelingProps, DOMProps, DOMRef} from '@react-types/shared';
 import ArrowCurved from '@react-spectrum/s2/icons/ArrowCurved';
-import {baseColor, centerPadding, focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {
+  baseColor,
+  centerPadding,
+  focusRing,
+  style
+} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {ButtonProps, Button as RACButton} from 'react-aria-components/Button';
 import {CenterBaseline} from '@react-spectrum/s2/CenterBaseline';
 import {createContext, forwardRef, ReactNode, useContext} from 'react';
