@@ -111,6 +111,8 @@ The HTML [&lt;dialog&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Elem
 
 **Note**: `useModalOverlay` only handles the overlay itself. It should be combined with [useDialog](../Modal/useDialog) to create fully accessible modal dialogs. Other overlays such as menus may also be placed in a modal overlay.
 
+Focus containment must be enabled from a component rendered _inside_ the [&lt;Overlay&gt;](../Popover) — [useDialog](../Modal/useDialog) does this automatically, which is why focus is contained in the example above. If you render content that does not use `useDialog` (or another hook that enables containment), make sure `useModalOverlay` is called from a component rendered inside `<Overlay>` so that focus is properly contained.
+
 ## Anatomy
 
 A modal overlay consists of an overlay container element, and an underlay. The overlay may contain a [dialog](../Modal/useDialog), or another element such as a [menu](../Menu/useMenu) or [listbox](../ListBox/useListBox). The underlay is typically a partially transparent element that covers the rest of the screen behind the overlay, and prevents the user from interacting with the elements behind it.
