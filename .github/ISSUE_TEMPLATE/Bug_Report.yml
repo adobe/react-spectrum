@@ -50,13 +50,10 @@ body:
     attributes:
       label: 🖥️ Steps to Reproduce
       description: |
-        Provide a minimal test case that can reproduce the problem. Include a CodeSandBox, link to sample repos, or specific doc examples to help us test your issue more easily.
+        Provide a minimal test case that can reproduce the problem. Include a StackBlitz, link to sample repos, or specific doc examples to help us test your issue more easily.
 
-        To get started, you can use the following CodeSandBox templates:
-        For React Spectrum: https://codesandbox.io/s/react-spectrum-template-syueo
-        For React Aria: https://codesandbox.io/s/react-aria-template-389r79
-        For React Aria Components: https://codesandbox.io/s/react-aria-components-template-g7wmmk
-        For React Spectrum S2 with Style Macros: https://codesandbox.io/p/devbox/react-spectrum-s2-style-macro-template-h6fpsq
+        To get a StackBlitz template, go to an example in the docs and press the "Open in StackBlitz" option.
+        Be sure to fork/save the StackBlitz project before sharing the link.
     validations:
       required: true
   - type: markdown
