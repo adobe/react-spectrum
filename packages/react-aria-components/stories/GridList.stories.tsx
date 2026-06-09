@@ -1112,9 +1112,7 @@ GridListWithTextfield.story = {
   args: {
     layout: 'stack',
     orientation: 'vertical',
-    escapeKeyBehavior: 'clearSelection',
-    shouldSelectOnPressUp: false,
-    disallowTypeAhead: false
+    escapeKeyBehavior: 'clearSelection'
   },
   argTypes: {
     layout: {
