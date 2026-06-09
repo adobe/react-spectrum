@@ -1217,9 +1217,7 @@ export const TableHeader = /*#__PURE__*/ (forwardRef as forwardRefType)(function
           {({isFocusVisible}) => (
             <>
               {isFocusVisible && <CellFocusRing />}
-              {selectionMode === 'single' && (
-                <VisuallyHiddenSelectAllLabel />
-              )}
+              {selectionMode === 'single' && <VisuallyHiddenSelectAllLabel />}
               {selectionMode === 'multiple' && (
                 <Checkbox styles={selectAllCheckbox} slot="selection" />
               )}
