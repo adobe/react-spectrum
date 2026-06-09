@@ -1,0 +1,144 @@
+{/* Copyright 2026 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '../../../src/Layout';
+export default Layout;
+import {FunctionAPI} from '../../../src/FunctionAPI';
+import {InterfaceType} from '../../../src/types';
+import docs from 'docs:@react-aria/tabs';
+
+export const section = 'Hooks';
+export const description = 'Provides the behavior and accessibility implementation for a tabs component.';
+export const isSubpage = true;
+
+# useTabList
+
+<PageDescription>{docs.exports.useTabList.description}</PageDescription>
+
+`useTabList`, `useTab`, and `useTabPanel` are the tabs primitives, so the tab list, tabs, and tab panel are built from scratch. The currently selected tab is the only tab stop in the tab list (roving tabindex), and `useTab`/`useTabPanel` handle associating each tab with its panel for assistive technology.
+
+```tsx render
+"use client";
+import React from 'react';
+import {useTab, useTabList, useTabPanel} from 'react-aria/useTabList';
+import {useTabListState} from 'react-stately/useTabListState';
+import {Item} from 'react-stately/Item';
+import {useFocusRing} from 'react-aria/useFocusRing';
+import {mergeProps} from 'react-aria/mergeProps';
+import 'vanilla-starter/theme.css';
+
+function Tabs(props) {
+  // useTabListState tracks which tab is selected.
+  let state = useTabListState(props);
+  let ref = React.useRef(null);
+  let {tabListProps} = useTabList(props, state, ref);
+
+  return (
+    <div style={{display: 'flex', flexDirection: 'column', color: 'var(--text-color)'}}>
+      <div
+        {...tabListProps}
+        ref={ref}
+        style={{display: 'flex', borderBottom: '1px solid var(--border-color)'}}>
+        {[...state.collection].map(item => (
+          <Tab key={item.key} item={item} state={state} />
+        ))}
+      </div>
+      {/* Re-mount the panel when the selection changes so DOM state isn't shared between tabs. */}
+      <TabPanel key={state.selectedItem?.key} state={state} />
+    </div>
+  );
+}
+
+function Tab({item, state}) {
+  let ref = React.useRef(null);
+  let {tabProps, isSelected, isDisabled} = useTab({key: item.key}, state, ref);
+
+  // Determine whether we should show a keyboard focus ring for accessibility.
+  let {focusProps, isFocusVisible} = useFocusRing();
+
+  return (
+    <div
+      {...mergeProps(tabProps, focusProps)}
+      ref={ref}
+      style={{
+        padding: '8px 12px',
+        cursor: 'default',
+        borderBottom: `3px solid ${isSelected ? 'var(--highlight-background)' : 'transparent'}`,
+        color: isDisabled ? 'var(--text-color-disabled)' : 'var(--text-color)',
+        outline: isFocusVisible ? '2px solid var(--focus-ring-color)' : 'none',
+        outlineOffset: -2
+      }}>
+      {item.rendered}
+    </div>
+  );
+}
+
+function TabPanel({state, ...props}) {
+  let ref = React.useRef(null);
+  let {tabPanelProps} = useTabPanel(props, state, ref);
+
+  return (
+    <div {...tabPanelProps} ref={ref} style={{padding: 12}}>
+      {state.selectedItem?.props.children}
+    </div>
+  );
+}
+
+<Tabs aria-label="History of Ancient Rome">
+  <Item key="FoR" title="Founding of Rome">Arma virumque cano, Troiae qui primus ab oris.</Item>
+  <Item key="MaR" title="Monarchy and Republic">Senatus Populusque Romanus.</Item>
+  <Item key="Emp" title="Empire">Alea jacta est.</Item>
+</Tabs>
+```
+
+## Features
+
+Tabs can be built using the HTML [&lt;a&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a) element, but this does not handle keyboard navigation or the relationship between tabs and panels. `useTabList`, `useTab`, and `useTabPanel` help achieve accessible tabs that can be styled as needed. They follow the [ARIA tabs pattern](https://www.w3.org/WAI/ARIA/apg/patterns/tabpanel/).
+
+* Support for mouse, touch, and keyboard interactions on tabs
+* Support for LTR and RTL keyboard navigation
+* Support for disabled tabs
+* Follows the tabs ARIA pattern, semantically linking tabs and their associated tab panels
+* Focus management for tab panels without any focusable children
+
+## State management
+
+`useTabList` requires knowledge of the tabs in order to handle keyboard navigation and other interactions. It does this using the `Collection` interface, which is a generic interface to access sequential unique keyed data. You can implement this interface yourself, e.g. by using a prop to pass a list of item objects, but `useTabListState` from `react-stately` implements a JSX based interface for building collections instead. The [Item](../collections) component represents each tab. See [Collection Components](../collections) for more information.
+
+`useTabListState` also manages the selection state and exposes the currently selected tab via `selectedItem`. The state object should be passed as an option to `useTabList`, `useTab`, and `useTabPanel`.
+
+## API
+
+<FunctionAPI function={docs.exports.useTabList} links={docs.links} /> <br />
+<FunctionAPI function={docs.exports.useTab} links={docs.links} /> <br />
+<FunctionAPI function={docs.exports.useTabPanel} links={docs.links} />
+
+### AriaTabListOptions
+
+<InterfaceType {...docs.exports.AriaTabListOptions} />
+
+### TabListAria
+
+<InterfaceType {...docs.exports.TabListAria} />
+
+### AriaTabProps
+
+<InterfaceType {...docs.exports.AriaTabProps} />
+
+### TabAria
+
+<InterfaceType {...docs.exports.TabAria} />
+
+### AriaTabPanelProps
+
+<InterfaceType {...docs.exports.AriaTabPanelProps} />
+
+### TabPanelAria
+
+<InterfaceType {...docs.exports.TabPanelAria} />
