@@ -435,6 +435,7 @@ function PromptTokenField(props) {
       <TokenField
         value={value}
         onChange={onChange}
+        multiline
         aria-label="Prompt"
         ref={inputRef}
         onPaste={props.onPaste}

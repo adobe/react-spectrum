@@ -343,14 +343,14 @@ export const TokenField = forwardRef(function TokenField(
     return false;
   };
 
-  const wordModKey = isMac() ? 'Alt' : 'Ctrl';
+  const wordModKey = isMac() ? 'Alt' : 'Control';
   let {keyboardProps} = useKeyboard({
     allowRepeats: true,
     shortcuts: {
       'mod+z': () => {
         apply(state => state.undo());
       },
-      [isMac() ? 'meta+shift+z' : 'ctrl+y']: () => {
+      [isMac() ? 'meta+shift+z' : 'Control+y']: () => {
         apply(state => state.redo());
       },
       ArrowLeft: () => {
@@ -460,6 +460,8 @@ export const TokenField = forwardRef(function TokenField(
             return v.text;
         }
       })}
+      {/* Force cursor to the next line if the last segment ends with a newline. */}
+      {state.segments.at(-1)?.text.endsWith('\n') && <br />}
     </div>
   );
 });
