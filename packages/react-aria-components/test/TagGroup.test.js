@@ -662,7 +662,7 @@ describe('TagGroup', () => {
 
     // TODO: a change in behavior since taggroup is a gridlist with "tab" keyboard navigation behavior
     // previously you could go to the next tab via arrow keys when you were focused on the close button
-    await user.keyboard('{Shift>}{Tab}{/Shift}');
+    await user.tab({shift: true});
     expect(tags[0]).toHaveFocus();
 
     await user.keyboard('{ArrowRight}');

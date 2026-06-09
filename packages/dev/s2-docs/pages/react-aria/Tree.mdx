@@ -325,6 +325,7 @@ function Example(props) {
 ## Keyboard navigation
 
 By default, Tree uses arrow key navigation to move focus into rows. Set `keyboardNavigationBehavior="tab"` to have <Keyboard>Option</Keyboard> move focus in and out of a row.
+Use this when rows contain interactive elements such as text fields, where arrow keys and typing in the field should not trigger grid navigation or selection.
 
 ```tsx render
 "use client";

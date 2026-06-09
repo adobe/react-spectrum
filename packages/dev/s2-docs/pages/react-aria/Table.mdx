@@ -217,7 +217,7 @@ function FileTable() {
             <Row columns={visibleColumns}>
               {column => (
                 <Cell>
-                  {column.id === 'price' 
+                  {column.id === 'price'
                     ? item.price.toLocaleString('en-US', {style: 'currency', currency: 'USD', maximumFractionDigits: 0})
                     : item[column.id]}
                 </Cell>
@@ -723,6 +723,67 @@ function subscribe(fn) {
   window.addEventListener('storage', onStorage);
   return () => window.removeEventListener('storage', onStorage);
 }
+```
+
+## Keyboard navigation
+
+By default, Table uses arrow key navigation to move focus into cells. Set `keyboardNavigationBehavior="tab"` to have <Keyboard>Tab</Keyboard> move focus in and out of a cell.
+Use this when cells contain interactive elements such as text fields, where arrow keys and typing in the field should not trigger grid navigation or selection.
+
+```tsx render
+"use client";
+import {Table, TableHeader, Column, Row, TableBody, Cell} from 'vanilla-starter/Table';
+import {ComboBox, ComboBoxItem} from 'vanilla-starter/ComboBox';
+
+function PermissionPicker({label}) {
+  return (
+    <ComboBox aria-label={label} defaultSelectedKey="view" placeholder="Permission">
+      <ComboBoxItem id="view">Can view</ComboBoxItem>
+      <ComboBoxItem id="comment">Can comment</ComboBoxItem>
+      <ComboBoxItem id="edit">Can edit</ComboBoxItem>
+    </ComboBox>
+  );
+}
+
+<Table
+  /*- begin highlight -*/
+  keyboardNavigationBehavior="tab"
+  /*- end highlight -*/
+  selectionMode="multiple"
+  aria-label="Shared files">
+  <TableHeader>
+    <Column id="name" isRowHeader>Name</Column>
+    <Column id="type">Type</Column>
+    <Column id="date">Date Modified</Column>
+    <Column id="permission">Permission</Column>
+  </TableHeader>
+  <TableBody>
+    <Row id="games">
+      <Cell>Games</Cell>
+      <Cell>Folder</Cell>
+      <Cell>6/7/2023</Cell>
+      <Cell><PermissionPicker label="Games permission" /></Cell>
+    </Row>
+    <Row id="apps">
+      <Cell>Applications</Cell>
+      <Cell>Folder</Cell>
+      <Cell>4/7/2025</Cell>
+      <Cell><PermissionPicker label="Applications permission" /></Cell>
+    </Row>
+    <Row id="report">
+      <Cell>2024 Financial Report</Cell>
+      <Cell>PDF Document</Cell>
+      <Cell>12/30/2024</Cell>
+      <Cell><PermissionPicker label="2024 Financial Report permission" /></Cell>
+    </Row>
+    <Row id="job">
+      <Cell>Job Posting</Cell>
+      <Cell>Text Document</Cell>
+      <Cell>1/18/2025</Cell>
+      <Cell><PermissionPicker label="Job Posting permission" /></Cell>
+    </Row>
+  </TableBody>
+</Table>
 ```
 
 ## Drag and drop
