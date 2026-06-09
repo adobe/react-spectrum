@@ -111,46 +111,56 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
 
   let currentPosition = useRef<{x: number; y: number} | null>(null);
 
+  let keyboardUpdate = (cb, inputRef: RefObject<HTMLInputElement | null>, input: 'x' | 'y') => {
+    state.setDragging(true);
+    setValueChangedViaKeyboard(true);
+    cb();
+    state.setDragging(false);
+    focusInput(inputRef);
+    setFocusedInput(input);
+  };
+
   let {keyboardProps} = useKeyboard({
-    onKeyDown(e) {
-      // these are the cases that useMove doesn't handle
-      if (!/^(PageUp|PageDown|Home|End)$/.test(e.key)) {
-        e.continuePropagation();
-        return;
-      }
-      // same handling as useMove, don't need to stop propagation, useKeyboard will do that for us
-      e.preventDefault();
-      // remember to set this and unset it so that onChangeEnd is fired
-      state.setDragging(true);
-      setValueChangedViaKeyboard(true);
-      let dir;
-      switch (e.key) {
-        case 'PageUp':
-          state.incrementY(state.yChannelPageStep);
-          dir = 'y';
-          break;
-        case 'PageDown':
-          state.decrementY(state.yChannelPageStep);
-          dir = 'y';
-          break;
-        case 'Home':
-          direction === 'rtl'
-            ? state.incrementX(state.xChannelPageStep)
-            : state.decrementX(state.xChannelPageStep);
-          dir = 'x';
-          break;
-        case 'End':
-          direction === 'rtl'
-            ? state.decrementX(state.xChannelPageStep)
-            : state.incrementX(state.xChannelPageStep);
-          dir = 'x';
-          break;
-      }
-      state.setDragging(false);
-      if (dir) {
-        let input = dir === 'x' ? inputXRef : inputYRef;
-        focusInput(input);
-        setFocusedInput(dir);
+    shortcuts: {
+      PageUp: () => {
+        return keyboardUpdate(
+          () => {
+            state.incrementY(state.yChannelPageStep);
+          },
+          inputYRef,
+          'y'
+        );
+      },
+      PageDown: () => {
+        return keyboardUpdate(
+          () => {
+            state.decrementY(state.yChannelPageStep);
+          },
+          inputYRef,
+          'y'
+        );
+      },
+      Home: () => {
+        return keyboardUpdate(
+          () => {
+            direction === 'rtl'
+              ? state.incrementX(state.xChannelPageStep)
+              : state.decrementX(state.xChannelPageStep);
+          },
+          inputXRef,
+          'x'
+        );
+      },
+      End: () => {
+        return keyboardUpdate(
+          () => {
+            direction === 'rtl'
+              ? state.decrementX(state.xChannelPageStep)
+              : state.incrementX(state.xChannelPageStep);
+          },
+          inputXRef,
+          'x'
+        );
       }
     }
   });
