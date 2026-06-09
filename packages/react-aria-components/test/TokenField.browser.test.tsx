@@ -79,7 +79,7 @@ describe('TokenField browser interactions', () => {
       let {textbox} = await renderControlledTokenField(adjacentTokensSample);
       // Place caret at end of text before "World" (segment index 1, offset 18)
       await focusField(textbox);
-      await userEvent.keyboard('{Control>}{Home}{/Control}');
+      await userEvent.keyboard('{Home}');
       // Navigate to end of " tokens testing " via many arrow rights
       await userEvent.keyboard('{ArrowRight>18}');
       await userEvent.keyboard('{ArrowRight}');

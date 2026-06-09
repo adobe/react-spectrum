@@ -13,20 +13,13 @@ import {isCtrlKeyPressed} from 'react-aria/private/utils/keyboard';
 import {isMac} from 'react-aria/private/utils/platform';
 import {mergeProps} from 'react-aria/mergeProps';
 import {mergeRefs} from 'react-aria/mergeRefs';
-import React, {
-  ForwardedRef,
-  forwardRef,
-  Fragment,
-  HTMLAttributes,
-  useMemo,
-  useRef,
-  useState
-} from 'react';
+import React, {ForwardedRef, forwardRef, HTMLAttributes, useMemo, useRef, useState} from 'react';
 import {SlotProps, useSlottedContext} from './utils';
 import {useControlledState} from 'react-stately/useControlledState';
 import {useEvent} from 'react-aria/private/utils/useEvent';
 import {useFocusable} from 'react-aria/useFocusable';
 import {useFocusRing} from 'react-aria/useFocusRing';
+import {useKeyboard} from 'react-aria/useKeyboard';
 import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
 import {useObjectRef} from 'react-aria/useObjectRef';
 
@@ -311,74 +304,86 @@ export const TokenField = forwardRef(function TokenField(
     }
   });
 
-  useEvent(ref, 'keydown', e => {
-    if (e.key === 'z' && isCtrlKeyPressed(e) && !e.shiftKey) {
-      e.preventDefault();
-      e.stopPropagation();
-      apply(state => state.undo());
-    } else if (isMac() ? e.key === 'z' && e.metaKey && e.shiftKey : e.key === 'y' && e.ctrlKey) {
-      e.preventDefault();
-      e.stopPropagation();
-      apply(state => state.redo());
-    } else if (e.key === 'ArrowLeft' && !e.metaKey) {
-      // Firefox does not allow placing the cursor between adjacent tokens, so navigate manually.
-      let selection = getSelection(ref.current!);
-      if (!selection) {
-        return;
-      }
-      let start =
-        e.shiftKey || isCollapsed(selection[0], selection[1])
-          ? state.findBoundaryWithSegmenter(
-              selection[0],
-              e.altKey ? wordSegmenter : graphemeSegmenter,
-              Direction.Backward
-            )
-          : selection[0];
-      if (start) {
-        e.preventDefault();
-        e.stopPropagation();
-        setSelection(ref.current!, start, e.shiftKey ? selection[1] : start, true);
-      }
-    } else if (e.key === 'ArrowRight' && !e.metaKey) {
-      let selection = getSelection(ref.current!);
-      if (!selection) {
-        return;
-      }
-      let end =
-        e.shiftKey || isCollapsed(selection[0], selection[1])
-          ? state.findBoundaryWithSegmenter(
-              selection[1],
-              e.altKey ? wordSegmenter : graphemeSegmenter,
-              Direction.Forward
-            )
-          : selection[1];
-      if (end) {
-        e.preventDefault();
-        e.stopPropagation();
-        setSelection(ref.current!, e.shiftKey ? selection[0] : end, end, true);
-      }
-    } else if (e.key === 'Home') {
-      // Browsers do not behave consistently when there are tokens.
-      let selection = getSelection(ref.current!);
-      if (!selection) {
-        return;
-      }
-      let boundary = state.findLineBoundary(selection[0], Direction.Backward);
-      if (boundary) {
-        e.preventDefault();
-        e.stopPropagation();
-        setCursor(ref.current!, boundary, true);
-      }
-    } else if (e.key === 'End') {
-      let selection = getSelection(ref.current!);
-      if (!selection) {
-        return;
-      }
-      let boundary = state.findLineBoundary(selection[1], Direction.Forward);
-      if (boundary) {
-        e.preventDefault();
-        e.stopPropagation();
-        setCursor(ref.current!, boundary, true);
+  // Firefox does not allow placing the cursor between adjacent tokens, so navigate manually.
+  let moveSelection = (segmenter: Intl.Segmenter, direction: Direction, extend = false) => {
+    let selection = getSelection(ref.current!);
+    if (!selection) {
+      return false;
+    }
+    let originalPos = direction === Direction.Backward ? selection[0] : selection[1];
+    let pos =
+      extend || isCollapsed(selection[0], selection[1])
+        ? state.findBoundaryWithSegmenter(originalPos, segmenter, direction)
+        : originalPos;
+    if (pos) {
+      let [start, end] =
+        direction === Direction.Backward
+          ? [pos, extend ? selection[1] : pos]
+          : [extend ? selection[0] : pos, pos];
+      setSelection(ref.current!, start, end, true);
+      return true;
+    }
+    return false;
+  };
+
+  const wordModKey = isMac() ? 'Alt' : 'Ctrl';
+  let {keyboardProps} = useKeyboard({
+    allowRepeats: true,
+    shortcuts: {
+      'mod+z': () => {
+        apply(state => state.undo());
+      },
+      [isMac() ? 'meta+shift+z' : 'ctrl+y']: () => {
+        apply(state => state.redo());
+      },
+      ArrowLeft: () => {
+        return moveSelection(graphemeSegmenter, Direction.Backward);
+      },
+      [`${wordModKey}+ArrowLeft`]: () => {
+        return moveSelection(wordSegmenter, Direction.Backward);
+      },
+      'Shift+ArrowLeft': () => {
+        return moveSelection(graphemeSegmenter, Direction.Backward, true);
+      },
+      [`Shift+${wordModKey}+ArrowLeft`]: () => {
+        return moveSelection(wordSegmenter, Direction.Backward, true);
+      },
+      ArrowRight: () => {
+        return moveSelection(graphemeSegmenter, Direction.Forward);
+      },
+      [`${wordModKey}+ArrowRight`]: () => {
+        return moveSelection(wordSegmenter, Direction.Forward);
+      },
+      'Shift+ArrowRight': () => {
+        return moveSelection(graphemeSegmenter, Direction.Forward, true);
+      },
+      [`Shift+${wordModKey}+ArrowRight`]: () => {
+        return moveSelection(wordSegmenter, Direction.Forward, true);
+      },
+      Home: () => {
+        // Browsers do not behave consistently when there are tokens.
+        let selection = getSelection(ref.current!);
+        if (!selection) {
+          return false;
+        }
+        let boundary = state.findLineBoundary(selection[0], Direction.Backward);
+        if (boundary) {
+          setCursor(ref.current!, boundary, true);
+          return true;
+        }
+        return false;
+      },
+      End: () => {
+        let selection = getSelection(ref.current!);
+        if (!selection) {
+          return false;
+        }
+        let boundary = state.findLineBoundary(selection[1], Direction.Forward);
+        if (boundary) {
+          setCursor(ref.current!, boundary, true);
+          return true;
+        }
+        return false;
       }
     }
   });
@@ -405,6 +410,7 @@ export const TokenField = forwardRef(function TokenField(
         focusProps,
         focusableProps,
         autocompleteProps as HTMLAttributes<HTMLDivElement>,
+        keyboardProps,
         {onPaste: props.onPaste}
       )}
       ref={mergeRefs(ref, autocompleteRef as any)}
