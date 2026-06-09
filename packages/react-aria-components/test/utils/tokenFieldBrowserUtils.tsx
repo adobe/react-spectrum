@@ -11,9 +11,15 @@
  */
 
 import {expect} from 'vitest';
+import {
+  getSelection,
+  setSelection,
+  Token,
+  TokenField,
+  type TokenFieldProps
+} from '../../src/TokenField';
 import {type Locator, userEvent} from 'vitest/browser';
 import {Position, TokenFieldSegment, TokenSegmentList} from '../../src/TokenSegmentList';
-import {positionToDOMRange, Token, TokenField, type TokenFieldProps} from '../../src/TokenField';
 import React, {useEffect, useState} from 'react';
 import {render} from 'vitest-browser-react';
 
@@ -53,39 +59,8 @@ export function positionsEqual(a: Position, b: Position) {
   return a.index === b.index && a.offset === b.offset;
 }
 
-// Mirrors getSelection / rangeToPositions in TokenField.tsx
-function indexOfNode(node: Node) {
-  let index = 0;
-  let n: Node | null = node;
-  while ((n = n.previousSibling)) {
-    index++;
-  }
-  return index;
-}
-
-function getPosition(container: Element, node: Node, offset: number, end = false): Position {
-  if (node === container) {
-    return {index: offset, offset: 0};
-  }
-  let index = indexOfNode(node);
-  if (node.nodeType === Node.ELEMENT_NODE) {
-    return {index, offset: end ? (node.textContent?.length ?? 0) : 0};
-  }
-  return {index, offset};
-}
-
-function rangeToPositions(container: Element, range: Range): [Position, Position] {
-  let start = getPosition(container, range.startContainer, range.startOffset, false);
-  let end = getPosition(container, range.endContainer, range.endOffset, !range.collapsed);
-  return [start, end];
-}
-
 export function getFieldSelection(textboxEl: Element): [Position, Position] | null {
-  let selection = window.getSelection();
-  if (!selection || selection.rangeCount === 0) {
-    return null;
-  }
-  return rangeToPositions(textboxEl, selection.getRangeAt(0));
+  return getSelection(textboxEl);
 }
 
 /** Tests run in the browser; matches TokenField isMac() platform detection. */
@@ -119,14 +94,7 @@ export async function focusField(locator: Locator) {
 }
 
 export function setFieldSelection(textboxEl: Element, start: Position, end: Position): void {
-  let range = positionToDOMRange(textboxEl, start);
-  let endRange = positionToDOMRange(textboxEl, end);
-  range.setEnd(endRange.startContainer, endRange.startOffset);
-  let selection = window.getSelection();
-  if (selection) {
-    selection.removeAllRanges();
-    selection.addRange(range);
-  }
+  setSelection(textboxEl, start, end);
 }
 
 export async function navigateCaret(textbox: Locator, list: TokenSegmentList, target: Position) {

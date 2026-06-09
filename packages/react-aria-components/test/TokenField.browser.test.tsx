@@ -354,6 +354,7 @@ describe('TokenField browser interactions', () => {
     it('replaces token when typing after clicking token', async () => {
       let {textbox, getValue} = await renderControlledTokenField(abTokCd);
       await userEvent.click(textbox.getByText('TOK'));
+      await waitForSelection(textbox, {index: 1, offset: 0}, {index: 1, offset: 3});
       await userEvent.keyboard('NEW');
       await waitForFieldText(getValue, 'abNEWcd');
     });

@@ -326,11 +326,14 @@ export const TokenField = forwardRef(function TokenField(
       if (!selection) {
         return;
       }
-      let start = state.findBoundaryWithSegmenter(
-        selection[0],
-        e.altKey ? wordSegmenter : graphemeSegmenter,
-        Direction.Backward
-      );
+      let start =
+        e.shiftKey || isCollapsed(selection[0], selection[1])
+          ? state.findBoundaryWithSegmenter(
+              selection[0],
+              e.altKey ? wordSegmenter : graphemeSegmenter,
+              Direction.Backward
+            )
+          : selection[0];
       if (start) {
         e.preventDefault();
         e.stopPropagation();
@@ -341,11 +344,14 @@ export const TokenField = forwardRef(function TokenField(
       if (!selection) {
         return;
       }
-      let end = state.findBoundaryWithSegmenter(
-        selection[1],
-        e.altKey ? wordSegmenter : graphemeSegmenter,
-        Direction.Forward
-      );
+      let end =
+        e.shiftKey || isCollapsed(selection[0], selection[1])
+          ? state.findBoundaryWithSegmenter(
+              selection[1],
+              e.altKey ? wordSegmenter : graphemeSegmenter,
+              Direction.Forward
+            )
+          : selection[1];
       if (end) {
         e.preventDefault();
         e.stopPropagation();
@@ -418,7 +424,14 @@ export const TokenField = forwardRef(function TokenField(
         switch (v.type) {
           case 'token': {
             let token = children(v);
-            return <Fragment key={i}>{token}</Fragment>;
+            return (
+              // Wrap tokens in zero-width spaces so the cursor is placed correctly.
+              <span key={i}>
+                {'\u200b'}
+                {token}
+                {'\u200b'}
+              </span>
+            );
           }
           case 'text':
             return v.text;
@@ -492,7 +505,7 @@ function indexOfNode(node: Node) {
   return index;
 }
 
-function getSelection(container: Element): [Position, Position] | null {
+export function getSelection(container: Element): [Position, Position] | null {
   let selection = window.getSelection();
   if (!selection || selection.rangeCount === 0) {
     return null;
@@ -501,31 +514,51 @@ function getSelection(container: Element): [Position, Position] | null {
   return rangeToPositions(container, range);
 }
 
-function rangeToPositions(container: Element, range: Range | StaticRange): [Position, Position] {
-  let start = getPosition(container, range.startContainer, range.startOffset, false);
-  let end = getPosition(container, range.endContainer, range.endOffset, !range.collapsed);
+export function rangeToPositions(
+  container: Element,
+  range: Range | StaticRange
+): [Position, Position] {
+  let start = getPosition(container, range.startContainer, range.startOffset);
+  let end = getPosition(container, range.endContainer, range.endOffset);
   return [start, end];
 }
 
-function getPosition(container: Element, node: Node, offset: number, end = false): Position {
+function getPosition(container: Element, node: Node, offset: number): Position {
   if (node === container) {
     return {index: offset, offset: 0};
   }
 
+  let originalNode = node;
+  while (node.parentNode !== container) {
+    node = node.parentNode!;
+  }
+
   let index = indexOfNode(node);
   if (node.nodeType === Node.ELEMENT_NODE) {
-    return {index, offset: end ? (node.textContent?.length ?? 0) : 0};
+    let tokenNode = node.childNodes[1];
+    if (originalNode === tokenNode) {
+      // Cursors is inside the token.
+      offset = offset > 0 ? (tokenNode?.textContent?.length ?? 0) : 0;
+    } else if (originalNode === node) {
+      // Cursor is inside the wrapper element.
+      offset = offset <= 1 ? 0 : (tokenNode?.textContent?.length ?? 0);
+    } else {
+      // Cursor is on one of the zero width spaces.
+      offset =
+        originalNode === tokenNode.previousSibling ? 0 : (tokenNode?.textContent?.length ?? 0);
+    }
+    return {index, offset};
   }
   return {index, offset};
 }
 
 let isProgrammaticSelectionChange = false;
 
-function setCursor(root: Element, pos: Position, fireEvent = false) {
+export function setCursor(root: Element, pos: Position, fireEvent = false) {
   setSelection(root, pos, pos, fireEvent);
 }
 
-function setSelection(root: Element, start: Position, end: Position, fireEvent = false) {
+export function setSelection(root: Element, start: Position, end: Position, fireEvent = false) {
   let selection = window.getSelection();
   if (selection) {
     let range = createDOMRange(root, start, end);
@@ -543,14 +576,20 @@ export function positionToDOMRange(root: Element, pos: Position): Range {
 function createDOMRange(root: Element, start: Position, end: Position): Range {
   let range = document.createRange();
   let child = root.childNodes[start.index];
-  if (!child || child.nodeType === Node.ELEMENT_NODE) {
-    range.setStart(root, start.offset > 0 ? start.index + 1 : start.index);
+  if (!child) {
+    range.setStart(root, Math.min(root.childNodes.length, start.index));
+  } else if (child.nodeType === Node.ELEMENT_NODE) {
+    // Place the cursor in one of the zero width space nodes.
+    range.setStart(child, start.offset > 0 ? 2 : 0);
   } else {
+    // Place the cursor in the text node.
     range.setStart(child, start.offset);
   }
   child = root.childNodes[end.index];
-  if (!child || child.nodeType === Node.ELEMENT_NODE) {
-    range.setEnd(root, end.offset > 0 ? end.index + 1 : end.index);
+  if (!child) {
+    range.setEnd(root, Math.min(root.childNodes.length, end.index));
+  } else if (child.nodeType === Node.ELEMENT_NODE) {
+    range.setEnd(child, end.offset > 0 ? 2 : 0);
   } else {
     range.setEnd(child, end.offset);
   }
@@ -574,4 +613,8 @@ function useSelectionChange(ref: React.RefObject<Element | null>, handler: () =>
       handler();
     }
   });
+}
+
+function isCollapsed(pos1: Position, pos2: Position) {
+  return pos1.index === pos2.index && pos1.offset === pos2.offset;
 }
