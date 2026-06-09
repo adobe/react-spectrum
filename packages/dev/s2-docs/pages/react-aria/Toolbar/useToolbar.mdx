@@ -26,13 +26,13 @@ This example uses `useToolbar` on a container to manage arrow-key navigation bet
 ```tsx render
 "use client";
 import React from 'react';
-import {useToolbar} from 'react-aria/useToolbar';
+import {useToolbar, type AriaToolbarProps} from 'react-aria/useToolbar';
 import {Button} from 'vanilla-starter/Button';
 import 'vanilla-starter/Button.css';
 
-function Toolbar(props) {
+function Toolbar(props: AriaToolbarProps & {children?: React.ReactNode}) {
   // useToolbar manages focus and arrow-key navigation between the children.
-  let ref = React.useRef(null);
+  let ref = React.useRef<HTMLDivElement>(null);
   let {toolbarProps} = useToolbar(props, ref);
 
   return (

@@ -27,17 +27,18 @@ This example uses `useTagGroup` for the container and `useTag` for each tag, bui
 ```tsx render
 "use client";
 import React from 'react';
-import {useTagGroup, useTag} from 'react-aria/useTagGroup';
-import {useListState} from 'react-stately/useListState';
+import {useTagGroup, useTag, type AriaTagGroupProps} from 'react-aria/useTagGroup';
+import {useListState, type ListProps, type ListState} from 'react-stately/useListState';
 import {Item} from 'react-stately/Item';
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {mergeProps} from 'react-aria/mergeProps';
 import {Button} from 'vanilla-starter/Button';
 import {X} from 'lucide-react';
+import type {Node} from '@react-types/shared';
 import 'vanilla-starter/theme.css';
 
-function TagGroup(props) {
-  let ref = React.useRef(null);
+function TagGroup(props: AriaTagGroupProps<object> & ListProps<object> & {label?: React.ReactNode}) {
+  let ref = React.useRef<HTMLDivElement>(null);
   let state = useListState(props);
   let {gridProps, labelProps} = useTagGroup(props, state, ref);
 
@@ -53,8 +54,8 @@ function TagGroup(props) {
   );
 }
 
-function Tag({item, state}) {
-  let ref = React.useRef(null);
+function Tag({item, state}: {item: Node<object>, state: ListState<object>}) {
+  let ref = React.useRef<HTMLDivElement>(null);
   let {focusProps, isFocusVisible} = useFocusRing();
   let {rowProps, gridCellProps, removeButtonProps, allowsRemoving} = useTag({item}, state, ref);
 

@@ -27,16 +27,16 @@ This example builds a disclosure from scratch with `useDisclosure`, reusing the 
 ```tsx render
 "use client";
 import React from 'react';
-import {useDisclosure} from 'react-aria/useDisclosure';
+import {useDisclosure, type AriaDisclosureProps} from 'react-aria/useDisclosure';
 import {useDisclosureState} from 'react-stately/useDisclosureState';
 import {Button} from 'vanilla-starter/Button';
 import {ChevronRight} from 'lucide-react';
 import 'vanilla-starter/Button.css';
 
-function Disclosure(props) {
+function Disclosure(props: AriaDisclosureProps & {title?: React.ReactNode, children?: React.ReactNode}) {
   // useDisclosureState tracks whether the panel is expanded.
   let state = useDisclosureState(props);
-  let panelRef = React.useRef(null);
+  let panelRef = React.useRef<HTMLDivElement>(null);
   let {buttonProps, panelProps} = useDisclosure(props, state, panelRef);
 
   return (

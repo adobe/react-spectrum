@@ -26,12 +26,12 @@ This example uses `useBreadcrumbs` for the navigation landmark and `useBreadcrum
 ```tsx render
 "use client";
 import React from 'react';
-import {useBreadcrumbs, useBreadcrumbItem} from 'react-aria/useBreadcrumbs';
+import {useBreadcrumbs, useBreadcrumbItem, type AriaBreadcrumbsProps, type AriaBreadcrumbItemProps} from 'react-aria/useBreadcrumbs';
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {mergeProps} from 'react-aria/mergeProps';
 import 'vanilla-starter/theme.css';
 
-function Breadcrumbs(props) {
+function Breadcrumbs(props: AriaBreadcrumbsProps & {children?: React.ReactNode}) {
   let {navProps} = useBreadcrumbs(props);
   let childCount = React.Children.count(props.children);
 
@@ -39,15 +39,15 @@ function Breadcrumbs(props) {
     <nav {...navProps}>
       <ol style={{display: 'flex', listStyle: 'none', margin: 0, padding: 0, color: 'var(--text-color)'}}>
         {React.Children.map(props.children, (child, i) =>
-          React.cloneElement(child, {isCurrent: i === childCount - 1})
+          React.cloneElement(child as React.ReactElement<any>, {isCurrent: i === childCount - 1})
         )}
       </ol>
     </nav>
   );
 }
 
-function BreadcrumbItem(props) {
-  let ref = React.useRef(null);
+function BreadcrumbItem(props: AriaBreadcrumbItemProps) {
+  let ref = React.useRef<HTMLSpanElement>(null);
   let {itemProps} = useBreadcrumbItem({...props, elementType: 'span'}, ref);
   let {isFocusVisible, focusProps} = useFocusRing();
 

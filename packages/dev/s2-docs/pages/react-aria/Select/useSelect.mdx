@@ -30,6 +30,7 @@ import React from 'react';
 import {HiddenSelect, useSelect} from 'react-aria/useSelect';
 import {useSelectState} from 'react-stately/useSelectState';
 import {CollectionBuilder} from 'react-aria/CollectionBuilder';
+import type {Collection as ICollection, Node} from '@react-types/shared';
 import {Provider} from 'react-aria-components/slots';
 import {SelectValue, SelectContext, SelectStateContext, SelectValueContext} from 'react-aria-components/Select';
 import {Collection} from 'react-aria-components/Collection';
@@ -45,7 +46,7 @@ import {SelectListBox, SelectItem} from 'vanilla-starter/Select';
 import {ChevronDown} from 'lucide-react';
 import 'vanilla-starter/Select.css';
 
-function Select(props) {
+function Select(props: Parameters<typeof useSelectState>[0] & {label?: React.ReactNode, children?: React.ReactNode}) {
   // useSelectState needs a collection built from the items. CollectionBuilder
   // renders a hidden copy of them to construct it before rendering.
   return (
@@ -55,13 +56,13 @@ function Select(props) {
   );
 }
 
-function SelectInner({collection, ...props}) {
+function SelectInner({collection, ...props}: {collection: ICollection<Node<object>>} & Parameters<typeof useSelect>[0] & {label?: React.ReactNode}) {
   // Create state based on the collection and incoming props.
   let state = useSelectState({...props, collection, children: undefined});
 
   // Get props for child elements from useSelect.
-  let buttonRef = React.useRef(null);
-  let scrollRef = React.useRef(null);
+  let buttonRef = React.useRef<HTMLButtonElement>(null);
+  let scrollRef = React.useRef<HTMLDivElement>(null);
   let {labelProps, triggerProps, valueProps, menuProps, hiddenSelectProps} =
     useSelect(props, state, buttonRef);
 

@@ -27,21 +27,21 @@ A range calendar is built from scratch with `useRangeCalendar`, `useCalendarGrid
 ```tsx render
 "use client";
 import React from 'react';
-import {useRangeCalendar, useCalendarGrid, useCalendarCell} from 'react-aria/useRangeCalendar';
+import {useRangeCalendar, useCalendarGrid, useCalendarCell, type AriaRangeCalendarProps, type AriaCalendarGridProps} from 'react-aria/useRangeCalendar';
 import {useRangeCalendarState} from 'react-stately/useRangeCalendarState';
 import {useLocale} from 'react-aria/I18nProvider';
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {mergeProps} from 'react-aria/mergeProps';
-import {createCalendar} from '@internationalized/date';
+import {createCalendar, type CalendarDate, type DateValue} from '@internationalized/date';
 import {Button} from 'vanilla-starter/Button';
 import {ChevronLeft, ChevronRight} from 'lucide-react';
 import 'vanilla-starter/Button.css';
 
-function RangeCalendar(props) {
+function RangeCalendar(props: AriaRangeCalendarProps<DateValue>) {
   // useRangeCalendarState tracks the selected range and visible date range.
   let {locale} = useLocale();
   let state = useRangeCalendarState({...props, locale, createCalendar});
-  let ref = React.useRef(null);
+  let ref = React.useRef<HTMLDivElement>(null);
   let {calendarProps, prevButtonProps, nextButtonProps, title} = useRangeCalendar(props, state, ref);
 
   return (
@@ -56,7 +56,7 @@ function RangeCalendar(props) {
   );
 }
 
-function CalendarGrid({state, ...props}) {
+function CalendarGrid({state, ...props}: AriaCalendarGridProps & {state: ReturnType<typeof useRangeCalendarState>}) {
   // useCalendarGrid renders the table of dates for a single month.
   let {gridProps, headerProps, weekDays, weeksInMonth} = useCalendarGrid(props, state);
 
@@ -84,9 +84,9 @@ function CalendarGrid({state, ...props}) {
   );
 }
 
-function CalendarCell({state, date}) {
+function CalendarCell({state, date}: {state: ReturnType<typeof useRangeCalendarState>, date: CalendarDate}) {
   // isSelected covers every date within the selected range.
-  let ref = React.useRef(null);
+  let ref = React.useRef<HTMLDivElement>(null);
   let {cellProps, buttonProps, isSelected, isOutsideVisibleRange, isDisabled, formattedDate} =
     useCalendarCell({date}, state, ref);
 

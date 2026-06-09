@@ -27,7 +27,7 @@ This example builds a color wheel from scratch with `useColorWheel`, which adjus
 ```tsx render
 "use client";
 import React from 'react';
-import {useColorWheel} from 'react-aria/useColorWheel';
+import {useColorWheel, type AriaColorWheelProps} from 'react-aria/useColorWheel';
 import {useColorWheelState} from 'react-stately/useColorWheelState';
 import {useFocusRing} from 'react-aria/useFocusRing';
 
@@ -35,9 +35,9 @@ const RADIUS = 100;
 const TRACK_THICKNESS = 28;
 const THUMB_SIZE = 20;
 
-function ColorWheel(props) {
+function ColorWheel(props: AriaColorWheelProps) {
   let state = useColorWheelState(props);
-  let inputRef = React.useRef(null);
+  let inputRef = React.useRef<HTMLInputElement>(null);
   let {trackProps, thumbProps, inputProps} =
     useColorWheel({...props, outerRadius: RADIUS, innerRadius: RADIUS - TRACK_THICKNESS}, state, inputRef);
   let {focusProps, isFocusVisible} = useFocusRing();

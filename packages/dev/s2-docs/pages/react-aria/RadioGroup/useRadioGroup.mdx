@@ -27,7 +27,7 @@ This example uses `useRadioGroup` for the group and `useRadio` for each option. 
 ```tsx render
 "use client";
 import React from 'react';
-import {useRadioGroup, useRadio} from 'react-aria/useRadioGroup';
+import {useRadioGroup, useRadio, type AriaRadioGroupProps, type AriaRadioProps} from 'react-aria/useRadioGroup';
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {mergeProps} from 'react-aria/mergeProps';
 import {useRadioGroupState} from 'react-stately/useRadioGroupState';
@@ -35,7 +35,7 @@ import 'vanilla-starter/theme.css';
 
 let RadioContext = React.createContext<any>(null);
 
-function RadioGroup(props) {
+function RadioGroup(props: AriaRadioGroupProps & {children?: React.ReactNode}) {
   let {children, label} = props;
   let state = useRadioGroupState(props);
   let {radioGroupProps, labelProps} = useRadioGroup(props, state);
@@ -50,9 +50,9 @@ function RadioGroup(props) {
   );
 }
 
-function Radio(props) {
+function Radio(props: AriaRadioProps) {
   let state = React.useContext(RadioContext);
-  let ref = React.useRef(null);
+  let ref = React.useRef<HTMLInputElement>(null);
   let {inputProps} = useRadio(props, state, ref);
   let {isFocusVisible, focusProps} = useFocusRing();
 

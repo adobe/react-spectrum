@@ -27,17 +27,18 @@ export const isSubpage = true;
 ```tsx render
 "use client";
 import React from 'react';
-import {useTab, useTabList, useTabPanel} from 'react-aria/useTabList';
+import {useTab, useTabList, useTabPanel, type AriaTabListOptions} from 'react-aria/useTabList';
 import {useTabListState} from 'react-stately/useTabListState';
 import {Item} from 'react-stately/Item';
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {mergeProps} from 'react-aria/mergeProps';
+import type {Node} from '@react-types/shared';
 import 'vanilla-starter/theme.css';
 
-function Tabs(props) {
+function Tabs(props: AriaTabListOptions<object> & Parameters<typeof useTabListState>[0]) {
   // useTabListState tracks which tab is selected.
   let state = useTabListState(props);
-  let ref = React.useRef(null);
+  let ref = React.useRef<HTMLDivElement>(null);
   let {tabListProps} = useTabList(props, state, ref);
 
   return (
@@ -56,8 +57,8 @@ function Tabs(props) {
   );
 }
 
-function Tab({item, state}) {
-  let ref = React.useRef(null);
+function Tab({item, state}: {item: Node<object>, state: ReturnType<typeof useTabListState>}) {
+  let ref = React.useRef<HTMLDivElement>(null);
   let {tabProps, isSelected, isDisabled} = useTab({key: item.key}, state, ref);
 
   // Determine whether we should show a keyboard focus ring for accessibility.
@@ -80,8 +81,8 @@ function Tab({item, state}) {
   );
 }
 
-function TabPanel({state, ...props}) {
-  let ref = React.useRef(null);
+function TabPanel({state, ...props}: {state: ReturnType<typeof useTabListState>}) {
+  let ref = React.useRef<HTMLDivElement>(null);
   let {tabPanelProps} = useTabPanel(props, state, ref);
 
   return (

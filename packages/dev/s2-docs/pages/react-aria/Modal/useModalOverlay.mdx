@@ -37,10 +37,10 @@ import {ButtonContext} from 'react-aria-components/Button';
 import {Button} from 'vanilla-starter/Button';
 import {Dialog, Heading} from 'vanilla-starter/Dialog';
 
-function Modal({state, children, ...props}) {
+function Modal({state, children, ...props}: Parameters<typeof useModalOverlay>[0] & {state: ReturnType<typeof useOverlayTriggerState>, children: React.ReactNode}) {
   // useModalOverlay handles scroll locking, focus containment, and optional
   // dismiss behavior. The state comes from useOverlayTriggerState.
-  let ref = React.useRef(null);
+  let ref = React.useRef<HTMLDivElement>(null);
   let {modalProps, underlayProps} = useModalOverlay(props, state, ref);
 
   return (
@@ -71,7 +71,7 @@ function Modal({state, children, ...props}) {
   );
 }
 
-function ModalTrigger({label, children, ...props}) {
+function ModalTrigger({label, children, ...props}: Parameters<typeof useOverlayTriggerState>[0] & {label: React.ReactNode, children: (close: () => void) => React.ReactElement}) {
   // useOverlayTrigger connects the trigger button to the modal via ARIA.
   let state = useOverlayTriggerState(props);
   let {triggerProps, overlayProps} = useOverlayTrigger({type: 'dialog'}, state);

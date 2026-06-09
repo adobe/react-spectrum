@@ -33,7 +33,7 @@ import {useTooltipTriggerState} from 'react-stately/useTooltipTriggerState';
 import {mergeProps} from 'react-aria/mergeProps';
 import 'vanilla-starter/Button.css';
 
-function Tooltip({state, ...props}) {
+function Tooltip({state, ...props}: Parameters<typeof useTooltip>[0] & {state: ReturnType<typeof useTooltipTriggerState>, children?: React.ReactNode}) {
   // useTooltip applies the tooltip ARIA role and connects it to the trigger.
   let {tooltipProps} = useTooltip(props, state);
 
@@ -59,9 +59,9 @@ function Tooltip({state, ...props}) {
   );
 }
 
-function TooltipButton(props) {
+function TooltipButton(props: Parameters<typeof useTooltipTrigger>[0] & {children?: React.ReactNode, tooltip?: React.ReactNode}) {
   let state = useTooltipTriggerState(props);
-  let ref = React.useRef(null);
+  let ref = React.useRef<HTMLButtonElement>(null);
 
   // Get props for the trigger and its tooltip.
   let {triggerProps, tooltipProps} = useTooltipTrigger(props, state, ref);

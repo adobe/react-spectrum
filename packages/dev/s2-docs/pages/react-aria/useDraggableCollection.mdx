@@ -29,6 +29,7 @@ import React from 'react';
 import {useListBox, useOption} from 'react-aria/useListBox';
 import {useListState} from 'react-stately/useListState';
 import {Item} from 'react-stately/Item';
+import type {Node} from '@react-types/shared';
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {mergeProps} from 'react-aria/mergeProps';
 import {useDraggableCollectionState} from 'react-stately/useDraggableCollectionState';
@@ -37,10 +38,10 @@ import {useDrop} from 'react-aria/useDrop';
 import {useButton} from 'react-aria/useButton';
 import 'vanilla-starter/theme.css';
 
-function ListBox(props) {
+function ListBox(props: Parameters<typeof useListState>[0] & Parameters<typeof useListBox>[0] & {label?: React.ReactNode}) {
   // Set up the list box as normal. See the useListBox docs for details.
   let state = useListState(props);
-  let ref = React.useRef(null);
+  let ref = React.useRef<HTMLUListElement>(null);
   let {listBoxProps} = useListBox({...props, shouldSelectOnPressUp: true}, state, ref);
 
   // Set up drag state for the collection, providing data for each dragged item.
@@ -64,8 +65,8 @@ function ListBox(props) {
   );
 }
 
-function Option({item, state, dragState}) {
-  let ref = React.useRef(null);
+function Option({item, state, dragState}: {item: Node<unknown>, state: ReturnType<typeof useListState>, dragState: ReturnType<typeof useDraggableCollectionState>}) {
+  let ref = React.useRef<HTMLLIElement>(null);
   let {optionProps} = useOption({key: item.key}, state, ref);
   let {isFocusVisible, focusProps} = useFocusRing();
   // Register the item as a drag source.
@@ -83,7 +84,7 @@ function Option({item, state, dragState}) {
 
 function DropTarget() {
   let [dropped, setDropped] = React.useState('');
-  let ref = React.useRef(null);
+  let ref = React.useRef<HTMLDivElement>(null);
   let {dropProps, isDropTarget} = useDrop({
     ref,
     async onDrop(e) {

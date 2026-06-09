@@ -26,11 +26,11 @@ This example uses `useMeter` to build a labeled meter that displays a value with
 ```tsx render
 "use client";
 import React from 'react';
-import {useMeter} from 'react-aria/useMeter';
+import {useMeter, type AriaMeterProps} from 'react-aria/useMeter';
 import 'vanilla-starter/theme.css';
 
-function Meter(props) {
-  let {label, showValueLabel = !!label, value, minValue = 0, maxValue = 100} = props;
+function Meter(props: AriaMeterProps & {showValueLabel?: boolean}) {
+  let {label, showValueLabel = !!label, value = 0, minValue = 0, maxValue = 100} = props;
   let {meterProps, labelProps} = useMeter(props);
 
   // Calculate the width of the meter bar as a percentage.

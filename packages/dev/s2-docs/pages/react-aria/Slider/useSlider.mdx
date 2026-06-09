@@ -27,7 +27,7 @@ This example builds a slider from scratch with `useSlider` for the track and `us
 ```tsx render
 "use client";
 import React from 'react';
-import {useSlider, useSliderThumb} from 'react-aria/useSlider';
+import {useSlider, useSliderThumb, type AriaSliderProps, type AriaSliderThumbOptions} from 'react-aria/useSlider';
 import {useSliderState} from 'react-stately/useSliderState';
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {useNumberFormatter} from 'react-aria/useNumberFormatter';
@@ -35,8 +35,8 @@ import {VisuallyHidden} from 'react-aria/VisuallyHidden';
 import {mergeProps} from 'react-aria/mergeProps';
 import 'vanilla-starter/theme.css';
 
-function Slider(props) {
-  let trackRef = React.useRef(null);
+function Slider(props: AriaSliderProps & {formatOptions?: Intl.NumberFormatOptions}) {
+  let trackRef = React.useRef<HTMLDivElement>(null);
   let numberFormatter = useNumberFormatter(props.formatOptions);
   let state = useSliderState({...props, numberFormatter});
   let {groupProps, trackProps, labelProps, outputProps} = useSlider(props, state, trackRef);
@@ -56,8 +56,8 @@ function Slider(props) {
   );
 }
 
-function Thumb({state, trackRef, index}) {
-  let inputRef = React.useRef(null);
+function Thumb({state, trackRef, index}: Omit<AriaSliderThumbOptions, 'inputRef'> & {state: ReturnType<typeof useSliderState>}) {
+  let inputRef = React.useRef<HTMLInputElement>(null);
   let {thumbProps, inputProps, isDragging} = useSliderThumb({index, trackRef, inputRef}, state);
   let {focusProps, isFocusVisible} = useFocusRing();
 

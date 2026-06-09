@@ -27,15 +27,15 @@ Toasts are built from scratch with `useToastRegion` (the landmark region) and `u
 ```tsx render
 "use client";
 import React from 'react';
-import {useToast, useToastRegion} from 'react-aria/useToast';
+import {useToast, useToastRegion, type AriaToastProps, type AriaToastRegionProps} from 'react-aria/useToast';
 import {useToastState} from 'react-stately/useToastState';
 import {Button} from 'vanilla-starter/Button';
 import {X} from 'lucide-react';
 import 'vanilla-starter/Button.css';
 
-function ToastProvider({children}) {
+function ToastProvider({children}: {children: (state: ReturnType<typeof useToastState<string>>) => React.ReactNode}) {
   // useToastState manages the queue of visible toasts.
-  let state = useToastState({maxVisibleToasts: 5});
+  let state = useToastState<string>({maxVisibleToasts: 5});
 
   return (
     <>
@@ -45,9 +45,9 @@ function ToastProvider({children}) {
   );
 }
 
-function ToastRegion({state, ...props}) {
+function ToastRegion({state, ...props}: AriaToastRegionProps & {state: ReturnType<typeof useToastState<string>>}) {
   // useToastRegion creates an ARIA landmark so users can navigate to the toasts.
-  let ref = React.useRef(null);
+  let ref = React.useRef<HTMLDivElement>(null);
   let {regionProps} = useToastRegion(props, state, ref);
 
   return (
@@ -62,9 +62,9 @@ function ToastRegion({state, ...props}) {
   );
 }
 
-function Toast({state, toast, ...props}) {
+function Toast({state, toast, ...props}: AriaToastProps<string> & {state: ReturnType<typeof useToastState<string>>}) {
   // useToast provides the props for an individual toast and its close button.
-  let ref = React.useRef(null);
+  let ref = React.useRef<HTMLDivElement>(null);
   let {toastProps, contentProps, titleProps, closeButtonProps} = useToast({...props, toast}, state, ref);
 
   return (

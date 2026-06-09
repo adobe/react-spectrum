@@ -27,7 +27,7 @@ This example uses `useCheckboxGroup` for the group and `useCheckboxGroupItem` fo
 ```tsx render
 "use client";
 import React from 'react';
-import {useCheckboxGroup, useCheckboxGroupItem} from 'react-aria/useCheckboxGroup';
+import {useCheckboxGroup, useCheckboxGroupItem, type AriaCheckboxGroupProps, type AriaCheckboxGroupItemProps} from 'react-aria/useCheckboxGroup';
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {mergeProps} from 'react-aria/mergeProps';
 import {useCheckboxGroupState} from 'react-stately/useCheckboxGroupState';
@@ -35,7 +35,7 @@ import 'vanilla-starter/theme.css';
 
 let CheckboxGroupContext = React.createContext<any>(null);
 
-function CheckboxGroup(props) {
+function CheckboxGroup(props: AriaCheckboxGroupProps & {children?: React.ReactNode}) {
   let {children, label} = props;
   let state = useCheckboxGroupState(props);
   let {groupProps, labelProps} = useCheckboxGroup(props, state);
@@ -50,9 +50,9 @@ function CheckboxGroup(props) {
   );
 }
 
-function Checkbox(props) {
+function Checkbox(props: AriaCheckboxGroupItemProps) {
   let state = React.useContext(CheckboxGroupContext);
-  let ref = React.useRef(null);
+  let ref = React.useRef<HTMLInputElement>(null);
   let {inputProps, labelProps} = useCheckboxGroupItem(props, state, ref);
   let {isFocusVisible, focusProps} = useFocusRing();
   let isDisabled = state.isDisabled || props.isDisabled;

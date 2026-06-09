@@ -27,7 +27,7 @@ This example builds a date field from scratch with `useDateField` and `useDateSe
 ```tsx render
 "use client";
 import React from 'react';
-import {useDateField, useDateSegment} from 'react-aria/useDateField';
+import {useDateField, useDateSegment, type AriaDateFieldProps, type DateValue} from 'react-aria/useDateField';
 import {useDateFieldState} from 'react-stately/useDateFieldState';
 import {useLocale} from 'react-aria/I18nProvider';
 import {useFocusWithin} from 'react-aria/useFocusWithin';
@@ -36,11 +36,11 @@ import {createCalendar} from '@internationalized/date';
 import {Label} from 'vanilla-starter/Form';
 import 'vanilla-starter/DateField.css';
 
-function DateField(props) {
+function DateField(props: AriaDateFieldProps<DateValue> & {label?: React.ReactNode}) {
   // useDateFieldState parses the value into editable segments per the locale.
   let {locale} = useLocale();
   let state = useDateFieldState({...props, locale, createCalendar});
-  let ref = React.useRef(null);
+  let ref = React.useRef<HTMLDivElement>(null);
   let {labelProps, fieldProps} = useDateField(props, state, ref);
   let [isFocusWithin, setFocusWithin] = React.useState(false);
   let {focusWithinProps} = useFocusWithin({onFocusWithinChange: setFocusWithin});
@@ -61,9 +61,9 @@ function DateField(props) {
   );
 }
 
-function DateSegment({segment, state}) {
+function DateSegment({segment, state}: {segment: ReturnType<typeof useDateFieldState>['segments'][number], state: ReturnType<typeof useDateFieldState>}) {
   // useDateSegment makes the segment focusable and editable; the focus style is native :focus.
-  let ref = React.useRef(null);
+  let ref = React.useRef<HTMLSpanElement>(null);
   let {segmentProps} = useDateSegment(segment, state, ref);
 
   return (

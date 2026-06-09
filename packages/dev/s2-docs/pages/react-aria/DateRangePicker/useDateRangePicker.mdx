@@ -28,8 +28,9 @@ This example uses `useDateRangePicker` to combine two date fields and a calendar
 ```tsx render
 "use client";
 import React from 'react';
-import {useDateRangePicker} from 'react-aria/useDateRangePicker';
+import {useDateRangePicker, type AriaDateRangePickerProps} from 'react-aria/useDateRangePicker';
 import {useDateRangePickerState} from 'react-stately/useDateRangePickerState';
+import type {DateValue} from '@internationalized/date';
 import {Provider} from 'react-aria-components/slots';
 import {Group, GroupContext} from 'react-aria-components/Group';
 import {DateFieldContext} from 'react-aria-components/DateField';
@@ -45,12 +46,12 @@ import {Popover} from 'vanilla-starter/Popover';
 import {ChevronDown} from 'lucide-react';
 import 'vanilla-starter/DateRangePicker.css';
 
-function DateRangePicker(props) {
+function DateRangePicker(props: AriaDateRangePickerProps<DateValue>) {
   // Create state based on the incoming props.
   let state = useDateRangePickerState(props);
 
   // Get props for the child elements from useDateRangePicker.
-  let groupRef = React.useRef(null);
+  let groupRef = React.useRef<HTMLDivElement>(null);
   let {
     groupProps,
     labelProps,

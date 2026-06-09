@@ -27,7 +27,7 @@ This example builds a time field from scratch with `useTimeField` and `useDateSe
 ```tsx render
 "use client";
 import React from 'react';
-import {useTimeField} from 'react-aria/useTimeField';
+import {useTimeField, type AriaTimeFieldProps, type TimeValue} from 'react-aria/useTimeField';
 import {useDateSegment} from 'react-aria/useDateField';
 import {useTimeFieldState} from 'react-stately/useTimeFieldState';
 import {useLocale} from 'react-aria/I18nProvider';
@@ -36,11 +36,11 @@ import {mergeProps} from 'react-aria/mergeProps';
 import {Label} from 'vanilla-starter/Form';
 import 'vanilla-starter/DateField.css';
 
-function TimeField(props) {
+function TimeField(props: AriaTimeFieldProps<TimeValue> & {label?: React.ReactNode}) {
   // useTimeFieldState parses the value into editable hour/minute/etc. segments.
   let {locale} = useLocale();
   let state = useTimeFieldState({...props, locale});
-  let ref = React.useRef(null);
+  let ref = React.useRef<HTMLDivElement>(null);
   let {labelProps, fieldProps} = useTimeField(props, state, ref);
   let [isFocusWithin, setFocusWithin] = React.useState(false);
   let {focusWithinProps} = useFocusWithin({onFocusWithinChange: setFocusWithin});
@@ -61,8 +61,8 @@ function TimeField(props) {
   );
 }
 
-function DateSegment({segment, state}) {
-  let ref = React.useRef(null);
+function DateSegment({segment, state}: {segment: ReturnType<typeof useTimeFieldState>['segments'][number], state: ReturnType<typeof useTimeFieldState>}) {
+  let ref = React.useRef<HTMLSpanElement>(null);
   let {segmentProps} = useDateSegment(segment, state, ref);
 
   return (

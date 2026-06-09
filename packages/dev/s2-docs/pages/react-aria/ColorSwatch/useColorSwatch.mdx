@@ -26,9 +26,9 @@ This example uses `useColorSwatch` to display a preview of a color value. A chec
 ```tsx render
 "use client";
 import React from 'react';
-import {useColorSwatch} from 'react-aria/useColorSwatch';
+import {useColorSwatch, type AriaColorSwatchProps} from 'react-aria/useColorSwatch';
 
-function ColorSwatch(props) {
+function ColorSwatch(props: AriaColorSwatchProps) {
   let {colorSwatchProps, color} = useColorSwatch(props);
 
   return (

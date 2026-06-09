@@ -32,6 +32,7 @@ import {useMenuTrigger, useMenu, useMenuItem} from 'react-aria/useMenu';
 import {useMenuTriggerState} from 'react-stately/useMenuTriggerState';
 import {useTreeState} from 'react-stately/useTreeState';
 import {Item} from 'react-stately/Item';
+import type {Node} from '@react-types/shared';
 import {Provider} from 'react-aria-components/slots';
 import {OverlayTriggerStateContext} from 'react-aria-components/Dialog';
 import {PopoverContext} from 'react-aria-components/Popover';
@@ -40,12 +41,12 @@ import {Button} from 'vanilla-starter/Button';
 import {Popover} from 'vanilla-starter/Popover';
 import {Ellipsis} from 'lucide-react';
 
-function MenuButton(props) {
+function MenuButton(props: Parameters<typeof useMenuTriggerState>[0] & Parameters<typeof useMenu>[0] & Parameters<typeof useTreeState>[0] & {children?: React.ReactNode}) {
   // Create state to track whether the menu is open.
   let state = useMenuTriggerState(props);
 
   // Get props for the menu trigger and menu elements.
-  let ref = React.useRef(null);
+  let ref = React.useRef<HTMLButtonElement>(null);
   let {menuTriggerProps, menuProps} = useMenuTrigger({}, state, ref);
 
   // Provide the trigger props to the reused Button and Popover via context.
@@ -66,12 +67,12 @@ function MenuButton(props) {
   );
 }
 
-function Menu(props) {
+function Menu(props: Parameters<typeof useMenu>[0] & Parameters<typeof useTreeState>[0] & {children?: React.ReactNode}) {
   // Create menu state based on the incoming props, building a collection from the items.
   let state = useTreeState(props);
 
   // Get props for the menu element.
-  let ref = React.useRef(null);
+  let ref = React.useRef<HTMLUListElement>(null);
   let {menuProps} = useMenu(props, state, ref);
 
   return (
@@ -86,9 +87,9 @@ function Menu(props) {
   );
 }
 
-function MenuItem({item, state}) {
+function MenuItem({item, state}: {item: Node<unknown>, state: ReturnType<typeof useTreeState>}) {
   // Get props for the individual menu item.
-  let ref = React.useRef(null);
+  let ref = React.useRef<HTMLLIElement>(null);
   let {menuItemProps, isFocused, isDisabled} = useMenuItem({key: item.key}, state, ref);
 
   return (

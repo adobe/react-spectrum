@@ -31,6 +31,7 @@ import {useComboBox} from 'react-aria/useComboBox';
 import {useFilter} from 'react-aria/useFilter';
 import {useComboBoxState} from 'react-stately/useComboBoxState';
 import {CollectionBuilder} from 'react-aria/CollectionBuilder';
+import type {Collection as ICollection, Node} from '@react-types/shared';
 import {Provider} from 'react-aria-components/slots';
 import {ComboBoxStateContext} from 'react-aria-components/ComboBox';
 import {Collection} from 'react-aria-components/Collection';
@@ -46,7 +47,7 @@ import {ComboBoxListBox, ComboBoxItem} from 'vanilla-starter/ComboBox';
 import {ChevronDown} from 'lucide-react';
 import 'vanilla-starter/ComboBox.css';
 
-function ComboBox(props) {
+function ComboBox(props: Parameters<typeof useComboBoxState>[0] & {label?: React.ReactNode, children?: React.ReactNode}) {
   // useComboBoxState needs a collection built from the items. CollectionBuilder
   // renders a hidden copy of them to construct it before rendering.
   return (
@@ -56,18 +57,18 @@ function ComboBox(props) {
   );
 }
 
-function ComboBoxInner({collection, ...props}) {
+function ComboBoxInner({collection, ...props}: {collection: ICollection<Node<object>>} & Parameters<typeof useComboBoxState>[0] & {label?: React.ReactNode}) {
   // Create state based on the collection and incoming props. A "contains"
   // filter from useFilter filters the options against the current input text.
   let {contains} = useFilter({sensitivity: 'base'});
   let state = useComboBoxState({...props, defaultFilter: contains, collection, children: undefined});
 
   // Get props for child elements from useComboBox.
-  let fieldRef = React.useRef(null);
-  let inputRef = React.useRef(null);
-  let buttonRef = React.useRef(null);
-  let listBoxRef = React.useRef(null);
-  let popoverRef = React.useRef(null);
+  let fieldRef = React.useRef<HTMLDivElement>(null);
+  let inputRef = React.useRef<HTMLInputElement>(null);
+  let buttonRef = React.useRef<HTMLButtonElement>(null);
+  let listBoxRef = React.useRef<HTMLDivElement>(null);
+  let popoverRef = React.useRef<HTMLDivElement>(null);
   let {labelProps, inputProps, buttonProps, listBoxProps} =
     useComboBox({...props, inputRef, buttonRef, listBoxRef, popoverRef}, state);
 

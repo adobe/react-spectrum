@@ -27,16 +27,16 @@ This example uses `useCheckbox` to build a checkbox from a native `<input type="
 ```tsx render
 "use client";
 import React from 'react';
-import {useCheckbox} from 'react-aria/useCheckbox';
+import {useCheckbox, type AriaCheckboxProps} from 'react-aria/useCheckbox';
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {mergeProps} from 'react-aria/mergeProps';
 import {useToggleState} from 'react-stately/useToggleState';
 import 'vanilla-starter/theme.css';
 
-function Checkbox(props) {
+function Checkbox(props: AriaCheckboxProps) {
   // useToggleState tracks the checked state.
   let state = useToggleState(props);
-  let ref = React.useRef(null);
+  let ref = React.useRef<HTMLInputElement>(null);
   let {inputProps, labelProps} = useCheckbox(props, state, ref);
   // Show a focus ring when focused via the keyboard.
   let {isFocusVisible, focusProps} = useFocusRing();

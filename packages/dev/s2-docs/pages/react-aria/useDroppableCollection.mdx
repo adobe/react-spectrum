@@ -29,6 +29,7 @@ import React from 'react';
 import {useListBox, useOption} from 'react-aria/useListBox';
 import {useListState} from 'react-stately/useListState';
 import {Item} from 'react-stately/Item';
+import type {Node} from '@react-types/shared';
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {mergeProps} from 'react-aria/mergeProps';
 import {useDroppableCollectionState} from 'react-stately/useDroppableCollectionState';
@@ -38,10 +39,10 @@ import {ListKeyboardDelegate} from 'react-aria/ListKeyboardDelegate';
 import {ListDropTargetDelegate} from 'react-aria/ListDropTargetDelegate';
 import 'vanilla-starter/theme.css';
 
-function ListBox(props) {
+function ListBox(props: Parameters<typeof useListState>[0] & Parameters<typeof useListBox>[0] & {label?: React.ReactNode, onItemDrop?: Parameters<typeof useDroppableCollection>[0]['onItemDrop']}) {
   // Set up the list box as normal. See the useListBox docs for details.
   let state = useListState(props);
-  let ref = React.useRef(null);
+  let ref = React.useRef<HTMLUListElement>(null);
   let {listBoxProps} = useListBox(props, state, ref);
 
   // Set up the drop state and keyboard/drop target delegates.
@@ -71,8 +72,8 @@ function ListBox(props) {
   );
 }
 
-function Option({item, state, dropState}) {
-  let ref = React.useRef(null);
+function Option({item, state, dropState}: {item: Node<unknown>, state: ReturnType<typeof useListState>, dropState: ReturnType<typeof useDroppableCollectionState>}) {
+  let ref = React.useRef<HTMLLIElement>(null);
   let {optionProps} = useOption({key: item.key}, state, ref);
   let {isFocusVisible, focusProps} = useFocusRing();
   // Register the item as a drop target.
@@ -103,9 +104,9 @@ function Option({item, state, dropState}) {
   );
 }
 
-function DropIndicator(props) {
+function DropIndicator(props: Parameters<typeof useDropIndicator>[0] & {dropState: ReturnType<typeof useDroppableCollectionState>}) {
   // Drop indicators must use role="option" inside a listbox to keep the ARIA tree valid.
-  let ref = React.useRef(null);
+  let ref = React.useRef<HTMLLIElement>(null);
   let {dropIndicatorProps, isHidden, isDropTarget} = useDropIndicator(props, props.dropState, ref);
   if (isHidden) {
     return null;

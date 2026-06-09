@@ -28,8 +28,9 @@ This example uses `useDatePicker` to combine a date field and a calendar popover
 ```tsx render
 "use client";
 import React from 'react';
-import {useDatePicker} from 'react-aria/useDatePicker';
+import {useDatePicker, type AriaDatePickerProps} from 'react-aria/useDatePicker';
 import {useDatePickerState} from 'react-stately/useDatePickerState';
+import type {DateValue} from '@internationalized/date';
 import {Provider} from 'react-aria-components/slots';
 import {Group, GroupContext} from 'react-aria-components/Group';
 import {DateFieldContext} from 'react-aria-components/DateField';
@@ -45,12 +46,12 @@ import {Popover} from 'vanilla-starter/Popover';
 import {ChevronDown} from 'lucide-react';
 import 'vanilla-starter/DatePicker.css';
 
-function DatePicker(props) {
+function DatePicker(props: AriaDatePickerProps<DateValue>) {
   // Create state based on the incoming props.
   let state = useDatePickerState(props);
 
   // Get props for the child elements from useDatePicker.
-  let groupRef = React.useRef(null);
+  let groupRef = React.useRef<HTMLDivElement>(null);
   let {groupProps, labelProps, fieldProps, buttonProps, dialogProps, calendarProps} =
     useDatePicker(props, state, groupRef);
 

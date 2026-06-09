@@ -26,10 +26,10 @@ This example uses `useSeparator` to build a visual divider that is correctly exp
 ```tsx render
 "use client";
 import React from 'react';
-import {useSeparator} from 'react-aria/useSeparator';
+import {useSeparator, type SeparatorProps} from 'react-aria/useSeparator';
 import 'vanilla-starter/theme.css';
 
-function Separator(props) {
+function Separator(props: SeparatorProps) {
   let {separatorProps} = useSeparator(props);
 
   return (

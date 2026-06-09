@@ -28,7 +28,7 @@ export const isSubpage = true;
 ```tsx render
 "use client";
 import React from 'react';
-import {usePopover} from 'react-aria/usePopover';
+import {usePopover, type AriaPopoverProps} from 'react-aria/usePopover';
 import {useOverlayTrigger} from 'react-aria/useOverlayTrigger';
 import {Overlay, DismissButton} from 'react-aria/Overlay';
 import {useOverlayTriggerState} from 'react-stately/useOverlayTriggerState';
@@ -37,10 +37,10 @@ import {ButtonContext} from 'react-aria-components/Button';
 import {Button} from 'vanilla-starter/Button';
 import {Dialog, Heading} from 'vanilla-starter/Dialog';
 
-function Popover({state, children, triggerRef, ...props}) {
+function Popover({state, children, triggerRef, ...props}: Omit<Parameters<typeof usePopover>[0], 'popoverRef'> & {state: ReturnType<typeof useOverlayTriggerState>, children: React.ReactNode}) {
   // usePopover positions the overlay relative to the trigger and closes it on
   // outside interaction or Escape. The state comes from useOverlayTriggerState.
-  let popoverRef = React.useRef(null);
+  let popoverRef = React.useRef<HTMLDivElement>(null);
   let {popoverProps, underlayProps} = usePopover({...props, triggerRef, popoverRef}, state);
 
   return (
@@ -66,9 +66,9 @@ function Popover({state, children, triggerRef, ...props}) {
   );
 }
 
-function PopoverTrigger({label, children, ...props}) {
+function PopoverTrigger({label, children, ...props}: Parameters<typeof useOverlayTriggerState>[0] & {label: React.ReactNode, children: React.ReactElement, placement?: AriaPopoverProps['placement']}) {
   // useOverlayTrigger connects the trigger button to the popover via ARIA.
-  let triggerRef = React.useRef(null);
+  let triggerRef = React.useRef<HTMLButtonElement>(null);
   let state = useOverlayTriggerState(props);
   let {triggerProps, overlayProps} = useOverlayTrigger({type: 'dialog'}, state, triggerRef);
 

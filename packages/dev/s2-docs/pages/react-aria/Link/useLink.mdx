@@ -26,13 +26,13 @@ This example uses `useLink` to build a navigation link from an `<a>` element, wi
 ```tsx render
 "use client";
 import React from 'react';
-import {useLink} from 'react-aria/useLink';
+import {useLink, type AriaLinkOptions} from 'react-aria/useLink';
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {mergeProps} from 'react-aria/mergeProps';
 import 'vanilla-starter/theme.css';
 
-function Link(props) {
-  let ref = React.useRef(null);
+function Link(props: AriaLinkOptions & {children?: React.ReactNode}) {
+  let ref = React.useRef<HTMLAnchorElement>(null);
   let {linkProps} = useLink(props, ref);
   // Show a focus ring when focused via the keyboard.
   let {isFocusVisible, focusProps} = useFocusRing();

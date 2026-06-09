@@ -27,7 +27,7 @@ This example builds a color area from scratch with `useColorArea`. It adjusts tw
 ```tsx render
 "use client";
 import React from 'react';
-import {useColorArea} from 'react-aria/useColorArea';
+import {useColorArea, type AriaColorAreaProps} from 'react-aria/useColorArea';
 import {useColorAreaState} from 'react-stately/useColorAreaState';
 import {useFocusRing} from 'react-aria/useFocusRing';
 
@@ -35,10 +35,10 @@ const SIZE = 192;
 const THUMB_SIZE = 20;
 const FOCUSED_THUMB_SIZE = 28;
 
-function ColorArea(props) {
-  let inputXRef = React.useRef(null);
-  let inputYRef = React.useRef(null);
-  let containerRef = React.useRef(null);
+function ColorArea(props: AriaColorAreaProps) {
+  let inputXRef = React.useRef<HTMLInputElement>(null);
+  let inputYRef = React.useRef<HTMLInputElement>(null);
+  let containerRef = React.useRef<HTMLDivElement>(null);
   let state = useColorAreaState(props);
   let {colorAreaProps, xInputProps, yInputProps, thumbProps} =
     useColorArea({...props, inputXRef, inputYRef, containerRef}, state);

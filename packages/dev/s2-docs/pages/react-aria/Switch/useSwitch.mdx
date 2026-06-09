@@ -27,15 +27,15 @@ This example uses `useSwitch` to build a switch with a visually hidden native `<
 ```tsx render
 "use client";
 import React from 'react';
-import {useSwitch} from 'react-aria/useSwitch';
+import {useSwitch, type AriaSwitchProps} from 'react-aria/useSwitch';
 import {VisuallyHidden} from 'react-aria/VisuallyHidden';
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {useToggleState} from 'react-stately/useToggleState';
 import 'vanilla-starter/theme.css';
 
-function Switch(props) {
+function Switch(props: AriaSwitchProps) {
   let state = useToggleState(props);
-  let ref = React.useRef(null);
+  let ref = React.useRef<HTMLInputElement>(null);
   let {inputProps} = useSwitch(props, state, ref);
   let {isFocusVisible, focusProps} = useFocusRing();
 

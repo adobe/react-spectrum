@@ -36,14 +36,15 @@ import {
   useTableCell
 } from 'react-aria/useTable';
 import {useTableState, Cell, Column, Row, TableBody, TableHeader} from 'react-stately/useTableState';
+import type {Node} from '@react-types/shared';
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {mergeProps} from 'react-aria/mergeProps';
 import 'vanilla-starter/theme.css';
 
-function Table(props) {
+function Table(props: Parameters<typeof useTableState>[0] & Parameters<typeof useTable>[0] & {children?: React.ReactNode}) {
   // showSelectionCheckboxes: false keeps the example focused (rows select on click).
   let state = useTableState({...props, showSelectionCheckboxes: false});
-  let ref = React.useRef(null);
+  let ref = React.useRef<HTMLTableElement>(null);
   let {collection} = state;
   let {gridProps} = useTable(props, state, ref);
 
@@ -71,7 +72,7 @@ function Table(props) {
   );
 }
 
-function TableRowGroup({type: Element, children}) {
+function TableRowGroup({type: Element, children}: {type: 'thead' | 'tbody', children: React.ReactNode}) {
   let {rowGroupProps} = useTableRowGroup();
   return (
     <Element {...rowGroupProps} style={Element === 'thead' ? {borderBottom: '2px solid var(--gray-300)'} : undefined}>
@@ -80,14 +81,14 @@ function TableRowGroup({type: Element, children}) {
   );
 }
 
-function TableHeaderRow({item, state, children}) {
-  let ref = React.useRef(null);
+function TableHeaderRow({item, state, children}: {item: Node<object>, state: ReturnType<typeof useTableState>, children: React.ReactNode}) {
+  let ref = React.useRef<HTMLTableRowElement>(null);
   let {rowProps} = useTableHeaderRow({node: item}, state, ref);
   return <tr {...rowProps} ref={ref}>{children}</tr>;
 }
 
-function TableColumnHeader({column, state}) {
-  let ref = React.useRef(null);
+function TableColumnHeader({column, state}: {column: Node<object>, state: ReturnType<typeof useTableState>}) {
+  let ref = React.useRef<HTMLTableCellElement>(null);
   let {columnHeaderProps} = useTableColumnHeader({node: column}, state, ref);
   let {isFocusVisible, focusProps} = useFocusRing();
   return (
@@ -100,8 +101,8 @@ function TableColumnHeader({column, state}) {
   );
 }
 
-function TableRow({item, children, state}) {
-  let ref = React.useRef(null);
+function TableRow({item, children, state}: {item: Node<object>, children: React.ReactNode, state: ReturnType<typeof useTableState>}) {
+  let ref = React.useRef<HTMLTableRowElement>(null);
   let isSelected = state.selectionManager.isSelected(item.key);
   let {rowProps} = useTableRow({node: item}, state, ref);
   let {isFocusVisible, focusProps} = useFocusRing();
@@ -121,8 +122,8 @@ function TableRow({item, children, state}) {
   );
 }
 
-function TableCell({cell, state}) {
-  let ref = React.useRef(null);
+function TableCell({cell, state}: {cell: Node<object>, state: ReturnType<typeof useTableState>}) {
+  let ref = React.useRef<HTMLTableCellElement>(null);
   let {gridCellProps} = useTableCell({node: cell}, state, ref);
   let {isFocusVisible, focusProps} = useFocusRing();
   return (

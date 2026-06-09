@@ -27,14 +27,14 @@ This example uses `useToggleButton` to build a button that toggles between selec
 ```tsx render
 "use client";
 import React from 'react';
-import {useToggleButton} from 'react-aria/useToggleButton';
+import {useToggleButton, type AriaToggleButtonProps} from 'react-aria/useToggleButton';
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {mergeProps} from 'react-aria/mergeProps';
 import {useToggleState} from 'react-stately/useToggleState';
 import 'vanilla-starter/theme.css';
 
-function ToggleButton(props) {
-  let ref = React.useRef(null);
+function ToggleButton(props: AriaToggleButtonProps) {
+  let ref = React.useRef<HTMLButtonElement>(null);
   let state = useToggleState(props);
   let {buttonProps, isPressed} = useToggleButton(props, state, ref);
   // Show a focus ring when focused via the keyboard.

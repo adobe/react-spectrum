@@ -27,17 +27,18 @@ This example uses `useGridList` for the list and `useGridListItem` for each row,
 ```tsx render
 "use client";
 import React from 'react';
-import {useGridList, useGridListItem} from 'react-aria/useGridList';
-import {useListState} from 'react-stately/useListState';
+import {useGridList, useGridListItem, type AriaGridListProps} from 'react-aria/useGridList';
+import {useListState, type ListProps, type ListState} from 'react-stately/useListState';
 import {Item} from 'react-stately/Item';
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {mergeProps} from 'react-aria/mergeProps';
 import {Button} from 'vanilla-starter/Button';
+import type {Node} from '@react-types/shared';
 import 'vanilla-starter/theme.css';
 
-function GridList(props) {
+function GridList(props: AriaGridListProps<object> & ListProps<object>) {
   let state = useListState(props);
-  let ref = React.useRef(null);
+  let ref = React.useRef<HTMLUListElement>(null);
   let {gridProps} = useGridList(props, state, ref);
 
   return (
@@ -52,8 +53,8 @@ function GridList(props) {
   );
 }
 
-function ListItem({item, state}) {
-  let ref = React.useRef(null);
+function ListItem({item, state}: {item: Node<object>, state: ListState<object>}) {
+  let ref = React.useRef<HTMLLIElement>(null);
   let {rowProps, gridCellProps} = useGridListItem({node: item}, state, ref);
   let {isFocusVisible, focusProps} = useFocusRing();
   let isSelected = state.selectionManager.isSelected(item.key);

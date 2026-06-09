@@ -27,7 +27,7 @@ This example builds a color slider from scratch with `useColorSlider`, which adj
 ```tsx render
 "use client";
 import React from 'react';
-import {useColorSlider} from 'react-aria/useColorSlider';
+import {useColorSlider, type AriaColorSliderProps} from 'react-aria/useColorSlider';
 import {useColorSliderState} from 'react-stately/useColorSliderState';
 import {useLocale} from 'react-aria/I18nProvider';
 import {useFocusRing} from 'react-aria/useFocusRing';
@@ -36,11 +36,11 @@ import 'vanilla-starter/theme.css';
 const TRACK_THICKNESS = 28;
 const THUMB_SIZE = 20;
 
-function ColorSlider(props) {
+function ColorSlider(props: AriaColorSliderProps) {
   let {locale} = useLocale();
   let state = useColorSliderState({...props, locale});
-  let trackRef = React.useRef(null);
-  let inputRef = React.useRef(null);
+  let trackRef = React.useRef<HTMLDivElement>(null);
+  let inputRef = React.useRef<HTMLInputElement>(null);
 
   // Default the label to the channel name in the current locale.
   let label = props.label || state.value.getChannelName(props.channel, locale);

@@ -32,9 +32,9 @@ import {DialogTrigger} from 'vanilla-starter/Dialog';
 import {Modal} from 'vanilla-starter/Modal';
 import {Button} from 'vanilla-starter/Button';
 
-function Dialog({title, children, ...props}) {
+function Dialog({title, children, ...props}: Parameters<typeof useDialog>[0] & {title?: React.ReactNode, children?: React.ReactNode}) {
   // useDialog applies the dialog ARIA role and labels it by its title element.
-  let ref = React.useRef(null);
+  let ref = React.useRef<HTMLDivElement>(null);
   let {dialogProps, titleProps} = useDialog(props, ref);
 
   return (

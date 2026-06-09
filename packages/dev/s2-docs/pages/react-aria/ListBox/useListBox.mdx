@@ -25,16 +25,17 @@ export const isSubpage = true;
 ```tsx render
 "use client";
 import React from 'react';
-import {useListBox, useOption} from 'react-aria/useListBox';
-import {useListState} from 'react-stately/useListState';
+import {useListBox, useOption, type AriaListBoxOptions} from 'react-aria/useListBox';
+import {useListState, type ListProps, type ListState} from 'react-stately/useListState';
 import {Item} from 'react-stately/Item';
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {mergeProps} from 'react-aria/mergeProps';
+import type {Node} from '@react-types/shared';
 
-function ListBox(props) {
+function ListBox(props: AriaListBoxOptions<object> & ListProps<object> & {label?: React.ReactNode}) {
   // Create state based on the incoming props.
   let state = useListState(props);
-  let ref = React.useRef(null);
+  let ref = React.useRef<HTMLUListElement>(null);
   let {listBoxProps, labelProps} = useListBox(props, state, ref);
 
   return (
@@ -60,8 +61,8 @@ function ListBox(props) {
   );
 }
 
-function Option({item, state}) {
-  let ref = React.useRef(null);
+function Option({item, state}: {item: Node<object>, state: ListState<object>}) {
+  let ref = React.useRef<HTMLLIElement>(null);
   let {optionProps, isSelected, isDisabled} = useOption({key: item.key}, state, ref);
 
   // Determine whether we should show a keyboard focus ring for accessibility.

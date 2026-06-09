@@ -27,7 +27,7 @@ This example builds a number field from scratch with `useNumberField`, reusing t
 ```tsx render
 "use client";
 import React from 'react';
-import {useNumberField} from 'react-aria/useNumberField';
+import {useNumberField, type AriaNumberFieldProps} from 'react-aria/useNumberField';
 import {useNumberFieldState} from 'react-stately/useNumberFieldState';
 import {useLocale} from 'react-aria/I18nProvider';
 import {Group} from 'react-aria-components/Group';
@@ -36,11 +36,11 @@ import {Label} from 'vanilla-starter/Form';
 import {Minus, Plus} from 'lucide-react';
 import 'vanilla-starter/NumberField.css';
 
-function NumberField(props) {
+function NumberField(props: AriaNumberFieldProps) {
   // useNumberFieldState handles parsing and formatting numbers for the locale.
   let {locale} = useLocale();
   let state = useNumberFieldState({...props, locale});
-  let inputRef = React.useRef(null);
+  let inputRef = React.useRef<HTMLInputElement>(null);
   let {labelProps, groupProps, inputProps, incrementButtonProps, decrementButtonProps} =
     useNumberField(props, state, inputRef);
 

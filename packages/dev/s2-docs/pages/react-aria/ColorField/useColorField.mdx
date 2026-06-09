@@ -27,17 +27,17 @@ This example builds a color field from scratch with `useColorField`, which parse
 ```tsx render
 "use client";
 import React from 'react';
-import {useColorField} from 'react-aria/useColorField';
+import {useColorField, type AriaColorFieldProps} from 'react-aria/useColorField';
 import {useColorFieldState} from 'react-stately/useColorFieldState';
 import {useFocus} from 'react-aria/useFocus';
 import {mergeProps} from 'react-aria/mergeProps';
 import {Label} from 'vanilla-starter/Form';
 import 'vanilla-starter/TextField.css';
 
-function ColorField(props) {
+function ColorField(props: AriaColorFieldProps) {
   // useColorFieldState parses the text into a Color and formats it back.
   let state = useColorFieldState(props);
-  let inputRef = React.useRef(null);
+  let inputRef = React.useRef<HTMLInputElement>(null);
   let {labelProps, inputProps} = useColorField(props, state, inputRef);
   let [isFocused, setFocused] = React.useState(false);
   let {focusProps} = useFocus({onFocusChange: setFocused});

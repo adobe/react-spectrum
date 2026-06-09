@@ -26,11 +26,11 @@ This example uses `useProgressBar` to build a labeled progress bar that displays
 ```tsx render
 "use client";
 import React from 'react';
-import {useProgressBar} from 'react-aria/useProgressBar';
+import {useProgressBar, type AriaProgressBarProps} from 'react-aria/useProgressBar';
 import 'vanilla-starter/theme.css';
 
-function ProgressBar(props) {
-  let {label, showValueLabel = !!label, value, minValue = 0, maxValue = 100} = props;
+function ProgressBar(props: AriaProgressBarProps & {showValueLabel?: boolean}) {
+  let {label, showValueLabel = !!label, value = 0, minValue = 0, maxValue = 100} = props;
   let {progressBarProps, labelProps} = useProgressBar(props);
 
   // Calculate the width of the progress bar as a percentage.

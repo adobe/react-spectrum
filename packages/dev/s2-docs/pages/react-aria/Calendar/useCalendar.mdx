@@ -27,17 +27,17 @@ A calendar is built from scratch with `useCalendar`, `useCalendarGrid`, and `use
 ```tsx render
 "use client";
 import React from 'react';
-import {useCalendar, useCalendarGrid, useCalendarCell} from 'react-aria/useCalendar';
+import {useCalendar, useCalendarGrid, useCalendarCell, type AriaCalendarProps, type AriaCalendarGridProps} from 'react-aria/useCalendar';
 import {useCalendarState} from 'react-stately/useCalendarState';
 import {useLocale} from 'react-aria/I18nProvider';
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {mergeProps} from 'react-aria/mergeProps';
-import {createCalendar} from '@internationalized/date';
+import {createCalendar, type CalendarDate, type DateValue} from '@internationalized/date';
 import {Button} from 'vanilla-starter/Button';
 import {ChevronLeft, ChevronRight} from 'lucide-react';
 import 'vanilla-starter/Button.css';
 
-function Calendar(props) {
+function Calendar(props: AriaCalendarProps<DateValue>) {
   // useCalendarState handles date manipulation across calendar systems.
   let {locale} = useLocale();
   let state = useCalendarState({...props, locale, createCalendar});
@@ -55,7 +55,7 @@ function Calendar(props) {
   );
 }
 
-function CalendarGrid({state, ...props}) {
+function CalendarGrid({state, ...props}: AriaCalendarGridProps & {state: ReturnType<typeof useCalendarState>}) {
   // useCalendarGrid renders the table of dates for a single month.
   let {gridProps, headerProps, weekDays, weeksInMonth} = useCalendarGrid(props, state);
 
@@ -83,9 +83,9 @@ function CalendarGrid({state, ...props}) {
   );
 }
 
-function CalendarCell({state, date}) {
+function CalendarCell({state, date}: {state: ReturnType<typeof useCalendarState>, date: CalendarDate}) {
   // useCalendarCell provides the props and state for an individual date cell.
-  let ref = React.useRef(null);
+  let ref = React.useRef<HTMLDivElement>(null);
   let {cellProps, buttonProps, isSelected, isOutsideVisibleRange, isDisabled, formattedDate} =
     useCalendarCell({date}, state, ref);
 
