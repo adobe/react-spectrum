@@ -141,20 +141,31 @@ export function useTableColumnResize<T>(
     [state, triggerRef, onResizeEnd]
   );
 
-  let {keyboardProps} = useKeyboard({
-    onKeyDown: e => {
-      if (editModeEnabled) {
-        if (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ' || e.key === 'Tab') {
-          e.preventDefault();
-          endResize(item);
-        }
-      } else {
-        // Continue propagation on keydown events so they still bubbles to useSelectableCollection and are handled there
-        e.continuePropagation();
+  let endResizeEvent = () => {
+    if (editModeEnabled) {
+      endResize(item);
+      return;
+    }
+    return false;
+  };
 
-        if (e.key === 'Enter') {
+  let {keyboardProps} = useKeyboard({
+    shortcuts: {
+      Escape: () => {
+        return endResizeEvent();
+      },
+      Enter: () => {
+        if (editModeEnabled) {
+          endResize(item);
+        } else {
           startResize(item);
         }
+      },
+      ' ': () => {
+        return endResizeEvent();
+      },
+      Tab: () => {
+        return endResizeEvent();
       }
     }
   });
