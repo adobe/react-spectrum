@@ -123,12 +123,12 @@ export function useToolbar(
       Tab: () => {
         lastFocused.current = getActiveElement() as HTMLElement;
         focusManager.focusLast();
-        return {shouldPreventDefault: false, shouldContinuePropagation: false};
+        return false;
       },
       'Shift+Tab': () => {
         lastFocused.current = getActiveElement() as HTMLElement;
         focusManager.focusFirst();
-        return {shouldPreventDefault: false, shouldContinuePropagation: false};
+        return false;
       }
     }
   });
