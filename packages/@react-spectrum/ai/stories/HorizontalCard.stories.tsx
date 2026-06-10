@@ -12,15 +12,8 @@
 
 import {ActionButton} from '@react-spectrum/s2/ActionButton';
 import {ActionMenu} from '@react-spectrum/s2/ActionMenu';
-import {
-  Attachment as AttachmentComponent,
-  AttachmentList
-} from '/packages/@react-spectrum/s2-ai/exports/AttachmentList';
-import {
-  BasicHorizontalCard,
-  CardPreview,
-  HorizontalCard
-} from '@react-spectrum/s2-ai/HorizontalCard';
+import {Attachment as AttachmentComponent, AttachmentList} from '@react-spectrum/ai/AttachmentList';
+import {BasicHorizontalCard, CardPreview, HorizontalCard} from '@react-spectrum/ai/HorizontalCard';
 import {Card, CardProps} from '@react-spectrum/s2/Card';
 import ChevronRight from '@react-spectrum/s2/icons/ChevronRight';
 import {Content} from '@react-spectrum/s2/Content';
@@ -59,7 +52,7 @@ const meta: Meta<CardProps & {isLoading?: boolean}> = {
   decorators: (children, {args}) => (
     <Skeleton isLoading={args.isLoading || false}>{children(args)}</Skeleton>
   ),
-  title: 'S2-AI/HorizontalCard'
+  title: 'AI/HorizontalCard'
 };
 
 export default meta;
