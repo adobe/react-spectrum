@@ -456,7 +456,10 @@ const actionButtonSize = {
 } as const;
 
 const Card = forwardRef(function Card(
-  props: CardProps & {isBasic?: boolean},
+  props: Omit<CardProps, 'variant'> & {
+    isBasic?: boolean;
+    variant?: 'primary' | 'secondary' | 'tertiary' | 'quiet';
+  },
   ref: DOMRef<HTMLDivElement>
 ) {
   let {ElementType} = useContext(InternalCardViewContext);

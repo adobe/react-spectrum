@@ -13,8 +13,12 @@
 import {ActionButton} from '@react-spectrum/s2/ActionButton';
 import {ActionMenu} from '@react-spectrum/s2/ActionMenu';
 import {Attachment as AttachmentComponent, AttachmentList} from '@react-spectrum/ai/AttachmentList';
-import {BasicHorizontalCard, CardPreview, HorizontalCard} from '@react-spectrum/ai/HorizontalCard';
-import {Card, CardProps} from '@react-spectrum/s2/Card';
+import {
+  BasicHorizontalCard,
+  CardPreview,
+  type CardProps,
+  HorizontalCard
+} from '@react-spectrum/ai/HorizontalCard';
 import ChevronRight from '@react-spectrum/s2/icons/ChevronRight';
 import {Content} from '@react-spectrum/s2/Content';
 import {Footer} from '@react-spectrum/s2/Footer';
@@ -57,7 +61,7 @@ const meta: Meta<CardProps & {isLoading?: boolean}> = {
 
 export default meta;
 
-type Story = StoryObj<typeof Card>;
+type Story = StoryObj<typeof HorizontalCard>;
 type BasicStory = StoryObj<typeof BasicHorizontalCard>;
 
 export const Horizontal: Story = {
