@@ -24,97 +24,9 @@ export const isSubpage = true;
 
 A calendar is built from scratch with `useCalendar`, `useCalendarGrid`, and `useCalendarCell`, since those hooks are the calendar primitives. The previous and next navigation buttons reuse the [Button](../Button) component from React Aria Components.
 
-```tsx render
+```tsx render files={["starters/hooks/src/Calendar.tsx", "starters/hooks/src/Calendar.css"]}
 "use client";
-import React from 'react';
-import {useCalendar, useCalendarGrid, useCalendarCell, type AriaCalendarProps, type AriaCalendarGridProps} from 'react-aria/useCalendar';
-import {useCalendarState} from 'react-stately/useCalendarState';
-import {useLocale} from 'react-aria/I18nProvider';
-import {useFocusRing} from 'react-aria/useFocusRing';
-import {mergeProps} from 'react-aria/mergeProps';
-import {createCalendar, type CalendarDate, type DateValue} from '@internationalized/date';
-import {Button} from 'vanilla-starter/Button';
-import {ChevronLeft, ChevronRight} from 'lucide-react';
-import 'vanilla-starter/Button.css';
-
-function Calendar(props: AriaCalendarProps<DateValue>) {
-  // useCalendarState handles date manipulation across calendar systems.
-  let {locale} = useLocale();
-  let state = useCalendarState({...props, locale, createCalendar});
-  let {calendarProps, prevButtonProps, nextButtonProps, title} = useCalendar(props, state);
-
-  return (
-    <div {...calendarProps} style={{width: 280}}>
-      <div style={{display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8}}>
-        <Button {...prevButtonProps} variant="quiet"><ChevronLeft /></Button>
-        <h2 style={{flex: 1, margin: 0, textAlign: 'center', fontSize: 'var(--font-size-lg)'}}>{title}</h2>
-        <Button {...nextButtonProps} variant="quiet"><ChevronRight /></Button>
-      </div>
-      <CalendarGrid state={state} />
-    </div>
-  );
-}
-
-function CalendarGrid({state, ...props}: AriaCalendarGridProps & {state: ReturnType<typeof useCalendarState>}) {
-  // useCalendarGrid renders the table of dates for a single month.
-  let {gridProps, headerProps, weekDays, weeksInMonth} = useCalendarGrid(props, state);
-
-  return (
-    <table {...gridProps} style={{width: '100%', borderCollapse: 'collapse'}}>
-      <thead {...headerProps}>
-        <tr>
-          {weekDays.map((day, i) => (
-            <th key={i} style={{fontWeight: 'normal', fontSize: 'var(--font-size-sm)', color: 'var(--text-color-placeholder)'}}>{day}</th>
-          ))}
-        </tr>
-      </thead>
-      <tbody>
-        {[...new Array(weeksInMonth).keys()].map(weekIndex => (
-          <tr key={weekIndex}>
-            {state.getDatesInWeek(weekIndex).map((date, i) => (
-              date
-                ? <CalendarCell key={i} state={state} date={date} />
-                : <td key={i} />
-            ))}
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  );
-}
-
-function CalendarCell({state, date}: {state: ReturnType<typeof useCalendarState>, date: CalendarDate}) {
-  // useCalendarCell provides the props and state for an individual date cell.
-  let ref = React.useRef<HTMLDivElement>(null);
-  let {cellProps, buttonProps, isSelected, isOutsideVisibleRange, isDisabled, formattedDate} =
-    useCalendarCell({date}, state, ref);
-
-  // Show a focus ring when the cell is focused via the keyboard.
-  let {focusProps, isFocusVisible} = useFocusRing();
-
-  return (
-    <td {...cellProps} style={{textAlign: 'center', padding: 0}}>
-      <div
-        {...mergeProps(buttonProps, focusProps)}
-        ref={ref}
-        hidden={isOutsideVisibleRange}
-        style={{
-          width: 32,
-          height: 32,
-          lineHeight: '32px',
-          margin: '2px auto',
-          borderRadius: '50%',
-          cursor: 'default',
-          outline: isFocusVisible ? '2px solid var(--focus-ring-color)' : 'none',
-          outlineOffset: 2,
-          background: isSelected ? 'var(--highlight-background)' : 'transparent',
-          color: isSelected ? 'var(--highlight-foreground)' : isDisabled ? 'var(--text-color-disabled)' : 'var(--text-color)'
-        }}>
-        {formattedDate}
-      </div>
-    </td>
-  );
-}
+import {Calendar} from 'hooks-starter/Calendar';
 
 <Calendar aria-label="Event date" />
 ```

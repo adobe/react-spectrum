@@ -24,58 +24,9 @@ export const isSubpage = true;
 
 This example uses `useToggleButtonGroup` for the container and `useToggleButtonGroupItem` for each button. The group state, shared via React context, manages single or multiple selection and arrow-key navigation.
 
-```tsx render
+```tsx render files={["starters/hooks/src/ToggleButtonGroup.tsx", "starters/hooks/src/ToggleButtonGroup.css", "starters/hooks/src/ToggleButton.css"]}
 "use client";
-import React from 'react';
-import {useToggleButtonGroup, useToggleButtonGroupItem, type AriaToggleButtonGroupProps, type AriaToggleButtonGroupItemProps} from 'react-aria/useToggleButtonGroup';
-import {useFocusRing} from 'react-aria/useFocusRing';
-import {mergeProps} from 'react-aria/mergeProps';
-import {useToggleGroupState} from 'react-stately/useToggleGroupState';
-import 'vanilla-starter/theme.css';
-
-let ToggleButtonGroupContext = React.createContext<any>(null);
-
-function ToggleButtonGroup(props: AriaToggleButtonGroupProps & {children?: React.ReactNode}) {
-  let state = useToggleGroupState(props);
-  let ref = React.useRef<HTMLDivElement>(null);
-  let {groupProps} = useToggleButtonGroup(props, state, ref);
-
-  return (
-    <div {...groupProps} ref={ref} style={{display: 'flex', gap: 1}}>
-      <ToggleButtonGroupContext.Provider value={state}>
-        {props.children}
-      </ToggleButtonGroupContext.Provider>
-    </div>
-  );
-}
-
-function ToggleButton(props: AriaToggleButtonGroupItemProps) {
-  let ref = React.useRef<HTMLButtonElement>(null);
-  let state = React.useContext(ToggleButtonGroupContext);
-  let {buttonProps, isSelected} = useToggleButtonGroupItem(props, state, ref);
-  // Show a focus ring when focused via the keyboard.
-  let {isFocusVisible, focusProps} = useFocusRing();
-
-  return (
-    <button
-      {...mergeProps(buttonProps, focusProps)}
-      ref={ref}
-      style={{
-        position: 'relative',
-        zIndex: isFocusVisible ? 1 : undefined,
-        border: 'none',
-        padding: '8px 16px',
-        font: 'inherit',
-        cursor: 'default',
-        background: isSelected ? 'var(--highlight-background)' : 'var(--gray-200)',
-        color: isSelected ? 'var(--highlight-foreground)' : 'var(--text-color)',
-        outline: isFocusVisible ? '2px solid var(--focus-ring-color)' : 'none',
-        outlineOffset: 2
-      }}>
-      {props.children}
-    </button>
-  );
-}
+import {ToggleButtonGroup, ToggleButton} from 'hooks-starter/ToggleButtonGroup';
 
 <ToggleButtonGroup>
   <ToggleButton id="left">Left</ToggleButton>

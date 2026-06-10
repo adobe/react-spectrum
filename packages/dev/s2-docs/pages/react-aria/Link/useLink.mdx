@@ -23,36 +23,9 @@ export const isSubpage = true;
 
 This example uses `useLink` to build a navigation link from an `<a>` element, with consistent press behavior across browsers and devices.
 
-```tsx render
+```tsx render files={["starters/hooks/src/Link.tsx", "starters/hooks/src/Link.css"]}
 "use client";
-import React from 'react';
-import {useLink, type AriaLinkOptions} from 'react-aria/useLink';
-import {useFocusRing} from 'react-aria/useFocusRing';
-import {mergeProps} from 'react-aria/mergeProps';
-import 'vanilla-starter/theme.css';
-
-function Link(props: AriaLinkOptions & {children?: React.ReactNode}) {
-  let ref = React.useRef<HTMLAnchorElement>(null);
-  let {linkProps} = useLink(props, ref);
-  // Show a focus ring when focused via the keyboard.
-  let {isFocusVisible, focusProps} = useFocusRing();
-
-  return (
-    <a
-      {...mergeProps(linkProps, focusProps)}
-      ref={ref}
-      href={props.href}
-      target={props.target}
-      style={{
-        color: 'var(--link-color)',
-        borderRadius: 4,
-        outline: isFocusVisible ? '2px solid var(--focus-ring-color)' : 'none',
-        outlineOffset: 2
-      }}>
-      {props.children}
-    </a>
-  );
-}
+import {Link} from 'hooks-starter/Link';
 
 <Link href="https://adobe.com" target="_blank">Adobe</Link>
 ```

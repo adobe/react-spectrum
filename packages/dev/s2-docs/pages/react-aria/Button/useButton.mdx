@@ -21,32 +21,9 @@ export const isSubpage = true;
 
 <PageDescription>{docs.exports.useButton.description}</PageDescription>
 
-```tsx render
+```tsx render files={["starters/hooks/src/Button.tsx", "starters/hooks/src/Button.css"]}
 "use client";
-import React from 'react';
-import {useButton, type AriaButtonProps} from 'react-aria/useButton';
-
-function Button(props: AriaButtonProps) {
-  let ref = React.useRef<HTMLButtonElement>(null);
-  let {buttonProps, isPressed} = useButton(props, ref);
-
-  return (
-    <button
-      {...buttonProps}
-      ref={ref}
-      style={{
-        background: isPressed ? 'darkgreen' : 'green',
-        color: 'white',
-        border: 'none',
-        padding: '8px 12px',
-        borderRadius: 8,
-        fontSize: 14,
-        cursor: 'pointer'
-      }}>
-      {props.children}
-    </button>
-  );
-}
+import {Button} from 'hooks-starter/Button';
 
 <Button onPress={() => alert('Button pressed!')}>Press me</Button>
 ```

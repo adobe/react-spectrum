@@ -23,32 +23,9 @@ export const isSubpage = true;
 
 This example builds a text field from scratch with `useTextField`. `useFocus` toggles a `data-focused` attribute so the field shows the focus ring from the reused styles.
 
-```tsx render
+```tsx render files={["starters/hooks/src/TextField.tsx", "starters/hooks/src/TextField.css", "starters/hooks/src/Form.css"]}
 "use client";
-import React from 'react';
-import {useTextField, type AriaTextFieldProps} from 'react-aria/useTextField';
-import {useFocus} from 'react-aria/useFocus';
-import {mergeProps} from 'react-aria/mergeProps';
-import {Label} from 'vanilla-starter/Form';
-import 'vanilla-starter/TextField.css';
-
-function TextField(props: AriaTextFieldProps) {
-  let ref = React.useRef<HTMLInputElement>(null);
-  let {labelProps, inputProps} = useTextField(props, ref);
-  let [isFocused, setFocused] = React.useState(false);
-  let {focusProps} = useFocus({onFocusChange: setFocused});
-
-  return (
-    <div className="react-aria-TextField" style={{width: 200, gap: 4}}>
-      <Label {...labelProps}>{props.label}</Label>
-      <input
-        {...mergeProps(inputProps, focusProps)}
-        ref={ref}
-        className="react-aria-Input inset"
-        data-focused={isFocused || undefined} />
-    </div>
-  );
-}
+import {TextField} from 'hooks-starter/TextField';
 
 <TextField label="Email" />
 ```

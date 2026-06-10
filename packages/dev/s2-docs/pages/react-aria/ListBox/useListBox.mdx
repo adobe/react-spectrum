@@ -22,70 +22,12 @@ export const isSubpage = true;
 
 <PageDescription>{docs.exports.useListBox.description}</PageDescription>
 
-```tsx render
+```tsx render files={["starters/hooks/src/ListBox.tsx", "starters/hooks/src/ListBox.css"]}
 "use client";
-import React from 'react';
-import {useListBox, useOption, type AriaListBoxOptions} from 'react-aria/useListBox';
-import {useListState, type ListProps, type ListState} from 'react-stately/useListState';
+import {ListBox} from 'hooks-starter/ListBox';
 import {Item} from 'react-stately/Item';
-import {useFocusRing} from 'react-aria/useFocusRing';
-import {mergeProps} from 'react-aria/mergeProps';
-import type {Node} from '@react-types/shared';
 
-function ListBox(props: AriaListBoxOptions<object> & ListProps<object> & {label?: React.ReactNode}) {
-  // Create state based on the incoming props.
-  let state = useListState(props);
-  let ref = React.useRef<HTMLUListElement>(null);
-  let {listBoxProps, labelProps} = useListBox(props, state, ref);
-
-  return (
-    <>
-      <div {...labelProps}>{props.label}</div>
-      <ul
-        {...listBoxProps}
-        ref={ref}
-        style={{
-          padding: 0,
-          margin: '5px 0',
-          listStyle: 'none',
-          border: '1px solid gray',
-          maxWidth: 250,
-          maxHeight: 300,
-          overflow: 'auto'
-        }}>
-        {[...state.collection].map(item => (
-          <Option key={item.key} item={item} state={state} />
-        ))}
-      </ul>
-    </>
-  );
-}
-
-function Option({item, state}: {item: Node<object>, state: ListState<object>}) {
-  let ref = React.useRef<HTMLLIElement>(null);
-  let {optionProps, isSelected, isDisabled} = useOption({key: item.key}, state, ref);
-
-  // Determine whether we should show a keyboard focus ring for accessibility.
-  let {isFocusVisible, focusProps} = useFocusRing();
-
-  return (
-    <li
-      {...mergeProps(optionProps, focusProps)}
-      ref={ref}
-      style={{
-        display: 'block',
-        padding: '2px 5px',
-        outline: isFocusVisible ? '2px solid orange' : 'none',
-        background: isSelected ? 'blueviolet' : 'transparent',
-        color: isSelected ? 'white' : isDisabled ? '#aaa' : 'inherit',
-        cursor: 'default'
-      }}>
-      {item.rendered}
-    </li>
-  );
-}
-
-<ListBox label="Alignment" selectionMode="single">
+<ListBox aria-label="Alignment" selectionMode="single">
   <Item>Left</Item>
   <Item>Middle</Item>
   <Item>Right</Item>

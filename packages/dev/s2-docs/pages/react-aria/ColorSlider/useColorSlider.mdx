@@ -24,59 +24,9 @@ export const isSubpage = true;
 
 This example builds a color slider from scratch with `useColorSlider`, which adjusts a single channel of a color along a gradient track. The label and value default to the localized channel name and formatted value.
 
-```tsx render
+```tsx render files={["starters/hooks/src/ColorSlider.tsx", "starters/hooks/src/ColorSlider.css", "starters/hooks/src/ColorThumb.css"]}
 "use client";
-import React from 'react';
-import {useColorSlider, type AriaColorSliderProps} from 'react-aria/useColorSlider';
-import {useColorSliderState} from 'react-stately/useColorSliderState';
-import {useLocale} from 'react-aria/I18nProvider';
-import {useFocusRing} from 'react-aria/useFocusRing';
-import 'vanilla-starter/theme.css';
-
-const TRACK_THICKNESS = 28;
-const THUMB_SIZE = 20;
-
-function ColorSlider(props: AriaColorSliderProps) {
-  let {locale} = useLocale();
-  let state = useColorSliderState({...props, locale});
-  let trackRef = React.useRef<HTMLDivElement>(null);
-  let inputRef = React.useRef<HTMLInputElement>(null);
-
-  // Default the label to the channel name in the current locale.
-  let label = props.label || state.value.getChannelName(props.channel, locale);
-  let {trackProps, thumbProps, inputProps, labelProps, outputProps} =
-    useColorSlider({...props, label, trackRef, inputRef}, state);
-  let {focusProps, isFocusVisible} = useFocusRing();
-
-  return (
-    <div style={{display: 'flex', flexDirection: 'column', width: 300, color: 'var(--text-color)'}}>
-      <div style={{display: 'flex', justifyContent: 'space-between'}}>
-        <label {...labelProps}>{label}</label>
-        <output {...outputProps}>{state.value.formatChannelValue(props.channel, locale)}</output>
-      </div>
-      <div
-        {...trackProps}
-        ref={trackRef}
-        style={{...trackProps.style, height: TRACK_THICKNESS, width: '100%', borderRadius: 4}}>
-        <div
-          {...thumbProps}
-          style={{
-            ...thumbProps.style,
-            top: TRACK_THICKNESS / 2,
-            boxSizing: 'border-box',
-            width: isFocusVisible ? TRACK_THICKNESS + 4 : THUMB_SIZE,
-            height: isFocusVisible ? TRACK_THICKNESS + 4 : THUMB_SIZE,
-            borderRadius: '50%',
-            border: '2px solid white',
-            boxShadow: '0 0 0 1px black, inset 0 0 0 1px black',
-            background: state.getDisplayColor().toString('css')
-          }}>
-          <input ref={inputRef} {...inputProps} {...focusProps} />
-        </div>
-      </div>
-    </div>
-  );
-}
+import {ColorSlider} from 'hooks-starter/ColorSlider';
 
 <ColorSlider channel="hue" defaultValue="hsl(0, 100%, 50%)" />
 ```

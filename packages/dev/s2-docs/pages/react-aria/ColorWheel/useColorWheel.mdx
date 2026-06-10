@@ -24,44 +24,9 @@ export const isSubpage = true;
 
 This example builds a color wheel from scratch with `useColorWheel`, which adjusts the hue channel along a circular gradient track. The thumb grows when focused via the keyboard.
 
-```tsx render
+```tsx render files={["starters/hooks/src/ColorWheel.tsx", "starters/hooks/src/ColorWheel.css", "starters/hooks/src/ColorThumb.css"]}
 "use client";
-import React from 'react';
-import {useColorWheel, type AriaColorWheelProps} from 'react-aria/useColorWheel';
-import {useColorWheelState} from 'react-stately/useColorWheelState';
-import {useFocusRing} from 'react-aria/useFocusRing';
-
-const RADIUS = 100;
-const TRACK_THICKNESS = 28;
-const THUMB_SIZE = 20;
-
-function ColorWheel(props: AriaColorWheelProps) {
-  let state = useColorWheelState(props);
-  let inputRef = React.useRef<HTMLInputElement>(null);
-  let {trackProps, thumbProps, inputProps} =
-    useColorWheel({...props, outerRadius: RADIUS, innerRadius: RADIUS - TRACK_THICKNESS}, state, inputRef);
-  let {focusProps, isFocusVisible} = useFocusRing();
-
-  return (
-    <div style={{position: 'relative', display: 'inline-block'}}>
-      <div {...trackProps} style={trackProps.style} />
-      <div
-        {...thumbProps}
-        style={{
-          ...thumbProps.style,
-          boxSizing: 'border-box',
-          width: isFocusVisible ? TRACK_THICKNESS + 4 : THUMB_SIZE,
-          height: isFocusVisible ? TRACK_THICKNESS + 4 : THUMB_SIZE,
-          borderRadius: '50%',
-          border: '2px solid white',
-          boxShadow: '0 0 0 1px black, inset 0 0 0 1px black',
-          background: state.getDisplayColor().toString('css')
-        }}>
-        <input ref={inputRef} {...inputProps} {...focusProps} />
-      </div>
-    </div>
-  );
-}
+import {ColorWheel} from 'hooks-starter/ColorWheel';
 
 <ColorWheel defaultValue="hsl(30, 100%, 50%)" />
 ```

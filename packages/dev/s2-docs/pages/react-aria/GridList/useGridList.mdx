@@ -24,58 +24,11 @@ export const isSubpage = true;
 
 This example uses `useGridList` for the list and `useGridListItem` for each row, building the collection from scratch with `useListState` and items from `react-stately`. Unlike a listbox, each row can contain interactive elements such as the [Button](../Button) reused here.
 
-```tsx render
+```tsx render files={["starters/hooks/src/GridList.tsx", "starters/hooks/src/GridList.css"]}
 "use client";
-import React from 'react';
-import {useGridList, useGridListItem, type AriaGridListProps} from 'react-aria/useGridList';
-import {useListState, type ListProps, type ListState} from 'react-stately/useListState';
+import {GridList} from 'hooks-starter/GridList';
+import {Button} from 'hooks-starter/Button';
 import {Item} from 'react-stately/Item';
-import {useFocusRing} from 'react-aria/useFocusRing';
-import {mergeProps} from 'react-aria/mergeProps';
-import {Button} from 'vanilla-starter/Button';
-import type {Node} from '@react-types/shared';
-import 'vanilla-starter/theme.css';
-
-function GridList(props: AriaGridListProps<object> & ListProps<object>) {
-  let state = useListState(props);
-  let ref = React.useRef<HTMLUListElement>(null);
-  let {gridProps} = useGridList(props, state, ref);
-
-  return (
-    <ul
-      {...gridProps}
-      ref={ref}
-      style={{padding: 0, margin: 0, listStyle: 'none', width: 280, border: '1px solid var(--gray-300)', borderRadius: 8, overflow: 'hidden', color: 'var(--text-color)'}}>
-      {[...state.collection].map(item => (
-        <ListItem key={item.key} item={item} state={state} />
-      ))}
-    </ul>
-  );
-}
-
-function ListItem({item, state}: {item: Node<object>, state: ListState<object>}) {
-  let ref = React.useRef<HTMLLIElement>(null);
-  let {rowProps, gridCellProps} = useGridListItem({node: item}, state, ref);
-  let {isFocusVisible, focusProps} = useFocusRing();
-  let isSelected = state.selectionManager.isSelected(item.key);
-
-  return (
-    <li
-      {...mergeProps(rowProps, focusProps)}
-      ref={ref}
-      style={{
-        cursor: 'default',
-        background: isSelected ? 'var(--highlight-background)' : 'transparent',
-        color: isSelected ? 'var(--highlight-foreground)' : 'var(--text-color)',
-        outline: isFocusVisible ? '2px solid var(--focus-ring-color)' : 'none',
-        outlineOffset: -2
-      }}>
-      <div {...gridCellProps} style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, padding: '8px 12px'}}>
-        {item.rendered}
-      </div>
-    </li>
-  );
-}
 
 <GridList aria-label="Pokémon" selectionMode="multiple" selectionBehavior="replace">
   <Item textValue="Charizard">

@@ -24,38 +24,9 @@ export const isSubpage = true;
 
 This example uses `useCheckbox` to build a checkbox from a native `<input type="checkbox">`, wrapped in a label.
 
-```tsx render
+```tsx render files={["starters/hooks/src/Checkbox.tsx", "starters/hooks/src/Checkbox.css"]}
 "use client";
-import React from 'react';
-import {useCheckbox, type AriaCheckboxProps} from 'react-aria/useCheckbox';
-import {useFocusRing} from 'react-aria/useFocusRing';
-import {mergeProps} from 'react-aria/mergeProps';
-import {useToggleState} from 'react-stately/useToggleState';
-import 'vanilla-starter/theme.css';
-
-function Checkbox(props: AriaCheckboxProps) {
-  // useToggleState tracks the checked state.
-  let state = useToggleState(props);
-  let ref = React.useRef<HTMLInputElement>(null);
-  let {inputProps, labelProps} = useCheckbox(props, state, ref);
-  // Show a focus ring when focused via the keyboard.
-  let {isFocusVisible, focusProps} = useFocusRing();
-
-  return (
-    <label {...labelProps} style={{display: 'flex', alignItems: 'center', gap: 8, color: 'var(--text-color)'}}>
-      <span
-        style={{
-          display: 'inline-flex',
-          borderRadius: 4,
-          outline: isFocusVisible ? '2px solid var(--focus-ring-color)' : 'none',
-          outlineOffset: 2
-        }}>
-        <input {...mergeProps(inputProps, focusProps)} ref={ref} style={{margin: 0, outline: 'none'}} />
-      </span>
-      {props.children}
-    </label>
-  );
-}
+import {Checkbox} from 'hooks-starter/Checkbox';
 
 <Checkbox>Unsubscribe</Checkbox>
 ```

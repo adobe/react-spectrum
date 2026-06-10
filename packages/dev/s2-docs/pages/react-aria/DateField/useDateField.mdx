@@ -24,59 +24,9 @@ export const isSubpage = true;
 
 This example builds a date field from scratch with `useDateField` and `useDateSegment`, where each date and time unit is an individually editable segment. `useFocusWithin` toggles a `data-focus-within` attribute so the field shows a focus ring while editing.
 
-```tsx render
+```tsx render files={["starters/hooks/src/DateField.tsx", "starters/hooks/src/DateField.css", "starters/hooks/src/Form.css"]}
 "use client";
-import React from 'react';
-import {useDateField, useDateSegment, type AriaDateFieldProps, type DateValue} from 'react-aria/useDateField';
-import {useDateFieldState} from 'react-stately/useDateFieldState';
-import {useLocale} from 'react-aria/I18nProvider';
-import {useFocusWithin} from 'react-aria/useFocusWithin';
-import {mergeProps} from 'react-aria/mergeProps';
-import {createCalendar} from '@internationalized/date';
-import {Label} from 'vanilla-starter/Form';
-import 'vanilla-starter/DateField.css';
-
-function DateField(props: AriaDateFieldProps<DateValue> & {label?: React.ReactNode}) {
-  // useDateFieldState parses the value into editable segments per the locale.
-  let {locale} = useLocale();
-  let state = useDateFieldState({...props, locale, createCalendar});
-  let ref = React.useRef<HTMLDivElement>(null);
-  let {labelProps, fieldProps} = useDateField(props, state, ref);
-  let [isFocusWithin, setFocusWithin] = React.useState(false);
-  let {focusWithinProps} = useFocusWithin({onFocusWithinChange: setFocusWithin});
-
-  return (
-    <div style={{display: 'inline-flex', flexDirection: 'column', gap: 4}}>
-      <Label {...labelProps}>{props.label}</Label>
-      <div
-        {...mergeProps(fieldProps, focusWithinProps)}
-        ref={ref}
-        className="react-aria-DateInput inset"
-        data-focus-within={isFocusWithin || undefined}>
-        {state.segments.map((segment, i) => (
-          <DateSegment key={i} segment={segment} state={state} />
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function DateSegment({segment, state}: {segment: ReturnType<typeof useDateFieldState>['segments'][number], state: ReturnType<typeof useDateFieldState>}) {
-  // useDateSegment makes the segment focusable and editable; the focus style is native :focus.
-  let ref = React.useRef<HTMLSpanElement>(null);
-  let {segmentProps} = useDateSegment(segment, state, ref);
-
-  return (
-    <span
-      {...segmentProps}
-      ref={ref}
-      className="react-aria-DateSegment"
-      data-type={segment.type}
-      data-placeholder={segment.isPlaceholder || undefined}>
-      {segment.text}
-    </span>
-  );
-}
+import {DateField} from 'hooks-starter/DateField';
 
 <DateField label="Event date" />
 ```

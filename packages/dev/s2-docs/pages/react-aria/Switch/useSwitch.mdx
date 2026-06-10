@@ -24,38 +24,9 @@ export const isSubpage = true;
 
 This example uses `useSwitch` to build a switch with a visually hidden native `<input>` and a custom SVG toggle, including a keyboard focus ring.
 
-```tsx render
+```tsx render files={["starters/hooks/src/Switch.tsx", "starters/hooks/src/Switch.css"]}
 "use client";
-import React from 'react';
-import {useSwitch, type AriaSwitchProps} from 'react-aria/useSwitch';
-import {VisuallyHidden} from 'react-aria/VisuallyHidden';
-import {useFocusRing} from 'react-aria/useFocusRing';
-import {useToggleState} from 'react-stately/useToggleState';
-import 'vanilla-starter/theme.css';
-
-function Switch(props: AriaSwitchProps) {
-  let state = useToggleState(props);
-  let ref = React.useRef<HTMLInputElement>(null);
-  let {inputProps} = useSwitch(props, state, ref);
-  let {isFocusVisible, focusProps} = useFocusRing();
-
-  return (
-    <label style={{display: 'flex', alignItems: 'center', gap: 8, color: 'var(--text-color)', opacity: props.isDisabled ? 0.4 : 1}}>
-      <VisuallyHidden>
-        <input {...inputProps} {...focusProps} ref={ref} />
-      </VisuallyHidden>
-      <svg width={40} height={24} aria-hidden="true">
-        <rect x={4} y={4} width={32} height={16} rx={8}
-          fill={state.isSelected ? 'var(--highlight-background)' : 'var(--gray-400)'} />
-        <circle cx={state.isSelected ? 28 : 12} cy={12} r={5} fill="white" />
-        {isFocusVisible &&
-          <rect x={1} y={1} width={38} height={22} rx={11} fill="none"
-            stroke="var(--focus-ring-color)" strokeWidth={2} />}
-      </svg>
-      {props.children}
-    </label>
-  );
-}
+import {Switch} from 'hooks-starter/Switch';
 
 <Switch>Low power mode</Switch>
 ```

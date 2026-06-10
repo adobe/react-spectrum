@@ -21,26 +21,12 @@ export const isSubpage = true;
 
 <PageDescription>{docs.exports.useToolbar.description}</PageDescription>
 
-This example uses `useToolbar` on a container to manage arrow-key navigation between its interactive children, which reuse the [Button](../Button) component from React Aria Components.
+This example uses `useToolbar` on a container to manage arrow-key navigation between its interactive children, which reuse the [Button](../Button/useButton) component built from `useButton`.
 
-```tsx render
+```tsx render files={["starters/hooks/src/Toolbar.tsx", "starters/hooks/src/Toolbar.css", "starters/hooks/src/Button.tsx", "starters/hooks/src/Button.css"]}
 "use client";
-import React from 'react';
-import {useToolbar, type AriaToolbarProps} from 'react-aria/useToolbar';
-import {Button} from 'vanilla-starter/Button';
-import 'vanilla-starter/Button.css';
-
-function Toolbar(props: AriaToolbarProps & {children?: React.ReactNode}) {
-  // useToolbar manages focus and arrow-key navigation between the children.
-  let ref = React.useRef<HTMLDivElement>(null);
-  let {toolbarProps} = useToolbar(props, ref);
-
-  return (
-    <div {...toolbarProps} ref={ref} style={{display: 'flex', gap: 8}}>
-      {props.children}
-    </div>
-  );
-}
+import {Toolbar} from 'hooks-starter/Toolbar';
+import {Button} from 'hooks-starter/Button';
 
 <Toolbar aria-label="Actions">
   <Button variant="secondary">Copy</Button>

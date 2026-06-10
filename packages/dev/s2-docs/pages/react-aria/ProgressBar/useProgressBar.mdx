@@ -23,32 +23,9 @@ export const isSubpage = true;
 
 This example uses `useProgressBar` to build a labeled progress bar that displays the completion progress of a task, with an accessible value label.
 
-```tsx render
+```tsx render files={["starters/hooks/src/ProgressBar.tsx", "starters/hooks/src/ProgressBar.css", "starters/hooks/src/Form.css"]}
 "use client";
-import React from 'react';
-import {useProgressBar, type AriaProgressBarProps} from 'react-aria/useProgressBar';
-import 'vanilla-starter/theme.css';
-
-function ProgressBar(props: AriaProgressBarProps & {showValueLabel?: boolean}) {
-  let {label, showValueLabel = !!label, value = 0, minValue = 0, maxValue = 100} = props;
-  let {progressBarProps, labelProps} = useProgressBar(props);
-
-  // Calculate the width of the progress bar as a percentage.
-  let percentage = (value - minValue) / (maxValue - minValue);
-  let barWidth = `${Math.round(percentage * 100)}%`;
-
-  return (
-    <div {...progressBarProps} style={{width: 200, color: 'var(--text-color)'}}>
-      <div style={{display: 'flex', justifyContent: 'space-between'}}>
-        {label && <span {...labelProps}>{label}</span>}
-        {showValueLabel && <span>{progressBarProps['aria-valuetext']}</span>}
-      </div>
-      <div style={{height: 10, marginTop: 6, borderRadius: 5, background: 'var(--gray-200)', overflow: 'hidden'}}>
-        <div style={{width: barWidth, height: 10, background: 'var(--highlight-background)'}} />
-      </div>
-    </div>
-  );
-}
+import {ProgressBar} from 'hooks-starter/ProgressBar';
 
 <ProgressBar label="Loading…" value={80} />
 ```

@@ -24,58 +24,9 @@ export const isSubpage = true;
 
 This example builds a time field from scratch with `useTimeField` and `useDateSegment`. It shares its segment rendering with [useDateField](../DateField/useDateField) — only the state hook differs, using `useTimeFieldState`.
 
-```tsx render
+```tsx render files={["starters/hooks/src/TimeField.tsx", "starters/hooks/src/DateField.css", "starters/hooks/src/TimeField.css", "starters/hooks/src/Form.css"]}
 "use client";
-import React from 'react';
-import {useTimeField, type AriaTimeFieldProps, type TimeValue} from 'react-aria/useTimeField';
-import {useDateSegment} from 'react-aria/useDateField';
-import {useTimeFieldState} from 'react-stately/useTimeFieldState';
-import {useLocale} from 'react-aria/I18nProvider';
-import {useFocusWithin} from 'react-aria/useFocusWithin';
-import {mergeProps} from 'react-aria/mergeProps';
-import {Label} from 'vanilla-starter/Form';
-import 'vanilla-starter/DateField.css';
-
-function TimeField(props: AriaTimeFieldProps<TimeValue> & {label?: React.ReactNode}) {
-  // useTimeFieldState parses the value into editable hour/minute/etc. segments.
-  let {locale} = useLocale();
-  let state = useTimeFieldState({...props, locale});
-  let ref = React.useRef<HTMLDivElement>(null);
-  let {labelProps, fieldProps} = useTimeField(props, state, ref);
-  let [isFocusWithin, setFocusWithin] = React.useState(false);
-  let {focusWithinProps} = useFocusWithin({onFocusWithinChange: setFocusWithin});
-
-  return (
-    <div style={{display: 'inline-flex', flexDirection: 'column', gap: 4}}>
-      <Label {...labelProps}>{props.label}</Label>
-      <div
-        {...mergeProps(fieldProps, focusWithinProps)}
-        ref={ref}
-        className="react-aria-DateInput inset"
-        data-focus-within={isFocusWithin || undefined}>
-        {state.segments.map((segment, i) => (
-          <DateSegment key={i} segment={segment} state={state} />
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function DateSegment({segment, state}: {segment: ReturnType<typeof useTimeFieldState>['segments'][number], state: ReturnType<typeof useTimeFieldState>}) {
-  let ref = React.useRef<HTMLSpanElement>(null);
-  let {segmentProps} = useDateSegment(segment, state, ref);
-
-  return (
-    <span
-      {...segmentProps}
-      ref={ref}
-      className="react-aria-DateSegment"
-      data-type={segment.type}
-      data-placeholder={segment.isPlaceholder || undefined}>
-      {segment.text}
-    </span>
-  );
-}
+import {TimeField} from 'hooks-starter/TimeField';
 
 <TimeField label="Event time" />
 ```

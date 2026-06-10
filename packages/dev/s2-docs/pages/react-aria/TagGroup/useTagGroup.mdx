@@ -24,61 +24,10 @@ export const isSubpage = true;
 
 This example uses `useTagGroup` for the container and `useTag` for each tag, building the collection from scratch with `useListState` and items from `react-stately`. The remove button reuses the [Button](../Button) component from React Aria Components.
 
-```tsx render
+```tsx render files={["starters/hooks/src/TagGroup.tsx", "starters/hooks/src/TagGroup.css"]}
 "use client";
-import React from 'react';
-import {useTagGroup, useTag, type AriaTagGroupProps} from 'react-aria/useTagGroup';
-import {useListState, type ListProps, type ListState} from 'react-stately/useListState';
+import {TagGroup} from 'hooks-starter/TagGroup';
 import {Item} from 'react-stately/Item';
-import {useFocusRing} from 'react-aria/useFocusRing';
-import {mergeProps} from 'react-aria/mergeProps';
-import {Button} from 'vanilla-starter/Button';
-import {X} from 'lucide-react';
-import type {Node} from '@react-types/shared';
-import 'vanilla-starter/theme.css';
-
-function TagGroup(props: AriaTagGroupProps<object> & ListProps<object> & {label?: React.ReactNode}) {
-  let ref = React.useRef<HTMLDivElement>(null);
-  let state = useListState(props);
-  let {gridProps, labelProps} = useTagGroup(props, state, ref);
-
-  return (
-    <div style={{color: 'var(--text-color)'}}>
-      <div {...labelProps} style={{marginBottom: 4}}>{props.label}</div>
-      <div {...gridProps} ref={ref} style={{display: 'flex', flexWrap: 'wrap', gap: 8}}>
-        {[...state.collection].map(item => (
-          <Tag key={item.key} item={item} state={state} />
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function Tag({item, state}: {item: Node<object>, state: ListState<object>}) {
-  let ref = React.useRef<HTMLDivElement>(null);
-  let {focusProps, isFocusVisible} = useFocusRing();
-  let {rowProps, gridCellProps, removeButtonProps, allowsRemoving} = useTag({item}, state, ref);
-
-  return (
-    <div
-      ref={ref}
-      {...mergeProps(rowProps, focusProps)}
-      style={{
-        display: 'inline-flex',
-        alignItems: 'center',
-        padding: '2px 4px 2px 12px',
-        borderRadius: 9999,
-        background: 'var(--gray-200)',
-        outline: isFocusVisible ? '2px solid var(--focus-ring-color)' : 'none',
-        outlineOffset: 2
-      }}>
-      <div {...gridCellProps} style={{display: 'inline-flex', alignItems: 'center', gap: 4}}>
-        {item.rendered}
-        {allowsRemoving && <Button {...removeButtonProps} variant="quiet"><X size={14} /></Button>}
-      </div>
-    </div>
-  );
-}
 
 <TagGroup label="Categories" onRemove={keys => alert(`Remove ${[...keys]}`)}>
   <Item>News</Item>

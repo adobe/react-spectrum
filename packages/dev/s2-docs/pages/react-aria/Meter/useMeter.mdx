@@ -23,32 +23,9 @@ export const isSubpage = true;
 
 This example uses `useMeter` to build a labeled meter that displays a value within a range, with an accessible value label.
 
-```tsx render
+```tsx render files={["starters/hooks/src/Meter.tsx", "starters/hooks/src/Meter.css", "starters/hooks/src/Form.css"]}
 "use client";
-import React from 'react';
-import {useMeter, type AriaMeterProps} from 'react-aria/useMeter';
-import 'vanilla-starter/theme.css';
-
-function Meter(props: AriaMeterProps & {showValueLabel?: boolean}) {
-  let {label, showValueLabel = !!label, value = 0, minValue = 0, maxValue = 100} = props;
-  let {meterProps, labelProps} = useMeter(props);
-
-  // Calculate the width of the meter bar as a percentage.
-  let percentage = (value - minValue) / (maxValue - minValue);
-  let barWidth = `${Math.round(percentage * 100)}%`;
-
-  return (
-    <div {...meterProps} style={{width: 200, color: 'var(--text-color)'}}>
-      <div style={{display: 'flex', justifyContent: 'space-between'}}>
-        {label && <span {...labelProps}>{label}</span>}
-        {showValueLabel && <span>{meterProps['aria-valuetext']}</span>}
-      </div>
-      <div style={{height: 10, marginTop: 6, borderRadius: 5, background: 'var(--gray-200)', overflow: 'hidden'}}>
-        <div style={{width: barWidth, height: 10, background: 'var(--highlight-background)'}} />
-      </div>
-    </div>
-  );
-}
+import {Meter} from 'hooks-starter/Meter';
 
 <Meter label="Storage space" value={25} />
 ```

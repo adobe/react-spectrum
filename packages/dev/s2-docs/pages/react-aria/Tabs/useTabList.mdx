@@ -24,73 +24,10 @@ export const isSubpage = true;
 
 `useTabList`, `useTab`, and `useTabPanel` are the tabs primitives, so the tab list, tabs, and tab panel are built from scratch. The currently selected tab is the only tab stop in the tab list (roving tabindex), and `useTab`/`useTabPanel` handle associating each tab with its panel for assistive technology.
 
-```tsx render
+```tsx render files={["starters/hooks/src/Tabs.tsx", "starters/hooks/src/Tabs.css"]}
 "use client";
-import React from 'react';
-import {useTab, useTabList, useTabPanel, type AriaTabListOptions} from 'react-aria/useTabList';
-import {useTabListState} from 'react-stately/useTabListState';
+import {Tabs} from 'hooks-starter/Tabs';
 import {Item} from 'react-stately/Item';
-import {useFocusRing} from 'react-aria/useFocusRing';
-import {mergeProps} from 'react-aria/mergeProps';
-import type {Node} from '@react-types/shared';
-import 'vanilla-starter/theme.css';
-
-function Tabs(props: AriaTabListOptions<object> & Parameters<typeof useTabListState>[0]) {
-  // useTabListState tracks which tab is selected.
-  let state = useTabListState(props);
-  let ref = React.useRef<HTMLDivElement>(null);
-  let {tabListProps} = useTabList(props, state, ref);
-
-  return (
-    <div style={{display: 'flex', flexDirection: 'column', color: 'var(--text-color)'}}>
-      <div
-        {...tabListProps}
-        ref={ref}
-        style={{display: 'flex', borderBottom: '1px solid var(--border-color)'}}>
-        {[...state.collection].map(item => (
-          <Tab key={item.key} item={item} state={state} />
-        ))}
-      </div>
-      {/* Re-mount the panel when the selection changes so DOM state isn't shared between tabs. */}
-      <TabPanel key={state.selectedItem?.key} state={state} />
-    </div>
-  );
-}
-
-function Tab({item, state}: {item: Node<object>, state: ReturnType<typeof useTabListState>}) {
-  let ref = React.useRef<HTMLDivElement>(null);
-  let {tabProps, isSelected, isDisabled} = useTab({key: item.key}, state, ref);
-
-  // Determine whether we should show a keyboard focus ring for accessibility.
-  let {focusProps, isFocusVisible} = useFocusRing();
-
-  return (
-    <div
-      {...mergeProps(tabProps, focusProps)}
-      ref={ref}
-      style={{
-        padding: '8px 12px',
-        cursor: 'default',
-        borderBottom: `3px solid ${isSelected ? 'var(--highlight-background)' : 'transparent'}`,
-        color: isDisabled ? 'var(--text-color-disabled)' : 'var(--text-color)',
-        outline: isFocusVisible ? '2px solid var(--focus-ring-color)' : 'none',
-        outlineOffset: -2
-      }}>
-      {item.rendered}
-    </div>
-  );
-}
-
-function TabPanel({state, ...props}: {state: ReturnType<typeof useTabListState>}) {
-  let ref = React.useRef<HTMLDivElement>(null);
-  let {tabPanelProps} = useTabPanel(props, state, ref);
-
-  return (
-    <div {...tabPanelProps} ref={ref} style={{padding: 12}}>
-      {state.selectedItem?.props.children}
-    </div>
-  );
-}
 
 <Tabs aria-label="History of Ancient Rome">
   <Item key="FoR" title="Founding of Rome">Arma virumque cano, Troiae qui primus ab oris.</Item>

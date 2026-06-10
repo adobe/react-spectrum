@@ -24,69 +24,9 @@ export const isSubpage = true;
 
 Toasts are built from scratch with `useToastRegion` (the landmark region) and `useToast` (an individual toast), since those hooks are the toast primitives. The trigger and the close button reuse the [Button](../Button) component from React Aria Components.
 
-```tsx render
+```tsx render files={["starters/hooks/src/Toast.tsx", "starters/hooks/src/Toast.css", "starters/hooks/src/Button.tsx", "starters/hooks/src/Button.css"]}
 "use client";
-import React from 'react';
-import {useToast, useToastRegion, type AriaToastProps, type AriaToastRegionProps} from 'react-aria/useToast';
-import {useToastState} from 'react-stately/useToastState';
-import {Button} from 'vanilla-starter/Button';
-import {X} from 'lucide-react';
-import 'vanilla-starter/Button.css';
-
-function ToastProvider({children}: {children: (state: ReturnType<typeof useToastState<string>>) => React.ReactNode}) {
-  // useToastState manages the queue of visible toasts.
-  let state = useToastState<string>({maxVisibleToasts: 5});
-
-  return (
-    <>
-      {children(state)}
-      {state.visibleToasts.length > 0 && <ToastRegion state={state} />}
-    </>
-  );
-}
-
-function ToastRegion({state, ...props}: AriaToastRegionProps & {state: ReturnType<typeof useToastState<string>>}) {
-  // useToastRegion creates an ARIA landmark so users can navigate to the toasts.
-  let ref = React.useRef<HTMLDivElement>(null);
-  let {regionProps} = useToastRegion(props, state, ref);
-
-  return (
-    <div
-      {...regionProps}
-      ref={ref}
-      style={{position: 'fixed', bottom: 16, right: 16, display: 'flex', flexDirection: 'column-reverse', gap: 8}}>
-      {state.visibleToasts.map(toast => (
-        <Toast key={toast.key} toast={toast} state={state} />
-      ))}
-    </div>
-  );
-}
-
-function Toast({state, toast, ...props}: AriaToastProps<string> & {state: ReturnType<typeof useToastState<string>>}) {
-  // useToast provides the props for an individual toast and its close button.
-  let ref = React.useRef<HTMLDivElement>(null);
-  let {toastProps, contentProps, titleProps, closeButtonProps} = useToast({...props, toast}, state, ref);
-
-  return (
-    <div
-      {...toastProps}
-      ref={ref}
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: 16,
-        background: 'var(--highlight-background)',
-        color: 'var(--highlight-foreground)',
-        padding: '8px 8px 8px 16px',
-        borderRadius: 8
-      }}>
-      <div {...contentProps}>
-        <div {...titleProps}>{toast.content}</div>
-      </div>
-      <Button {...closeButtonProps} variant="quiet"><X /></Button>
-    </div>
-  );
-}
+import {ToastProvider, Button} from 'hooks-starter/Toast';
 
 <ToastProvider>
   {state => (

@@ -24,35 +24,9 @@ export const isSubpage = true;
 
 This example builds a color field from scratch with `useColorField`, which parses and formats a hex color value as the user types. `useFocus` toggles a `data-focused` attribute so the field shows the focus ring from the reused styles.
 
-```tsx render
+```tsx render files={["starters/hooks/src/ColorField.tsx", "starters/hooks/src/ColorField.css", "starters/hooks/src/TextField.css", "starters/hooks/src/Form.css"]}
 "use client";
-import React from 'react';
-import {useColorField, type AriaColorFieldProps} from 'react-aria/useColorField';
-import {useColorFieldState} from 'react-stately/useColorFieldState';
-import {useFocus} from 'react-aria/useFocus';
-import {mergeProps} from 'react-aria/mergeProps';
-import {Label} from 'vanilla-starter/Form';
-import 'vanilla-starter/TextField.css';
-
-function ColorField(props: AriaColorFieldProps) {
-  // useColorFieldState parses the text into a Color and formats it back.
-  let state = useColorFieldState(props);
-  let inputRef = React.useRef<HTMLInputElement>(null);
-  let {labelProps, inputProps} = useColorField(props, state, inputRef);
-  let [isFocused, setFocused] = React.useState(false);
-  let {focusProps} = useFocus({onFocusChange: setFocused});
-
-  return (
-    <div className="react-aria-TextField" style={{width: 200, gap: 4}}>
-      <Label {...labelProps}>{props.label}</Label>
-      <input
-        {...mergeProps(inputProps, focusProps)}
-        ref={inputRef}
-        className="react-aria-Input inset"
-        data-focused={isFocused || undefined} />
-    </div>
-  );
-}
+import {ColorField} from 'hooks-starter/ColorField';
 
 <ColorField label="Primary Color" defaultValue="#ff0000" />
 ```

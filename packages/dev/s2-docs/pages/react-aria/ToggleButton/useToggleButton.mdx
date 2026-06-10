@@ -24,44 +24,9 @@ export const isSubpage = true;
 
 This example uses `useToggleButton` to build a button that toggles between selected and unselected states, reflecting both the press and selection state in its styling.
 
-```tsx render
+```tsx render files={["starters/hooks/src/ToggleButton.tsx", "starters/hooks/src/ToggleButton.css"]}
 "use client";
-import React from 'react';
-import {useToggleButton, type AriaToggleButtonProps} from 'react-aria/useToggleButton';
-import {useFocusRing} from 'react-aria/useFocusRing';
-import {mergeProps} from 'react-aria/mergeProps';
-import {useToggleState} from 'react-stately/useToggleState';
-import 'vanilla-starter/theme.css';
-
-function ToggleButton(props: AriaToggleButtonProps) {
-  let ref = React.useRef<HTMLButtonElement>(null);
-  let state = useToggleState(props);
-  let {buttonProps, isPressed} = useToggleButton(props, state, ref);
-  // Show a focus ring when focused via the keyboard.
-  let {isFocusVisible, focusProps} = useFocusRing();
-
-  return (
-    <button
-      {...mergeProps(buttonProps, focusProps)}
-      ref={ref}
-      style={{
-        border: 'none',
-        borderRadius: 8,
-        padding: '8px 16px',
-        font: 'inherit',
-        cursor: 'default',
-        userSelect: 'none',
-        background: state.isSelected ? 'var(--highlight-background)' : 'var(--gray-200)',
-        color: state.isSelected ? 'var(--highlight-foreground)' : 'var(--text-color)',
-        scale: isPressed ? '0.96' : '1',
-        transition: 'scale 200ms',
-        outline: isFocusVisible ? '2px solid var(--focus-ring-color)' : 'none',
-        outlineOffset: 2
-      }}>
-      {props.children}
-    </button>
-  );
-}
+import {ToggleButton} from 'hooks-starter/ToggleButton';
 
 <ToggleButton>Pin</ToggleButton>
 ```

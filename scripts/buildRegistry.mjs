@@ -107,6 +107,54 @@ for (let file of globSync('starters/docs/src/*.{ts,tsx}').sort()) {
 }
 
 fs.writeFileSync(path.join(distDir, 'css.json'), JSON.stringify(css, null, 2) + '\n');
+
+let hooks = {
+  $schema: 'https://ui.shadcn.com/schema/registry-item.json',
+  name: 'hooks',
+  type: 'registry:style',
+  registryDependencies: []
+};
+items.push(hooks);
+
+for (let file of globSync('starters/hooks/src/*.{ts,tsx}').sort()) {
+  let name = path.basename(file, path.extname(file));
+  let {dependencies, registryDependencies, content} = analyzeDeps(file, 'hooks');
+  let type = name === 'utils' ? 'registry:lib' : 'registry:ui';
+  let item = {
+    $schema: 'https://ui.shadcn.com/schema/registry-item.json',
+    name: `hooks-${name.toLowerCase()}`,
+    type,
+    title: name,
+    dependencies: [...dependencies],
+    registryDependencies: [...registryDependencies],
+    files: [
+      {
+        path: name === 'utils' ? 'lib/react-aria-utils.ts' : 'components/ui/' + path.basename(file),
+        type,
+        content
+      }
+    ]
+  };
+
+  let cssFile = file.slice(0, -path.extname(file).length) + '.css';
+  if (fs.existsSync(cssFile)) {
+    item.files.push(...analyzeCss(cssFile));
+  }
+
+  fs.writeFileSync(
+    path.join(distDir, `hooks-${name.toLowerCase()}.json`),
+    JSON.stringify(item, null, 2) + '\n'
+  );
+
+  for (let file of item.files) {
+    delete file.content;
+  }
+
+  items.push(item);
+  hooks.registryDependencies.push(`${publicUrl}/hooks-${name.toLowerCase()}.json`);
+}
+
+fs.writeFileSync(path.join(distDir, 'hooks.json'), JSON.stringify(hooks, null, 2) + '\n');
 fs.writeFileSync(
   path.join(distDir, 'registry.json'),
   JSON.stringify(

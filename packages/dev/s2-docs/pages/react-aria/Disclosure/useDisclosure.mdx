@@ -22,38 +22,11 @@ export const isSubpage = true;
 
 <PageDescription>{docs.exports.useDisclosure.description}</PageDescription>
 
-This example builds a disclosure from scratch with `useDisclosure`, reusing the [Button](../Button) component from React Aria Components for the trigger that expands and collapses the panel.
+This example builds a disclosure from scratch with `useDisclosure`, with a button trigger that expands and collapses the panel.
 
-```tsx render
+```tsx render files={["starters/hooks/src/Disclosure.tsx", "starters/hooks/src/Disclosure.css", "starters/hooks/src/Content.css"]}
 "use client";
-import React from 'react';
-import {useDisclosure, type AriaDisclosureProps} from 'react-aria/useDisclosure';
-import {useDisclosureState} from 'react-stately/useDisclosureState';
-import {Button} from 'vanilla-starter/Button';
-import {ChevronRight} from 'lucide-react';
-import 'vanilla-starter/Button.css';
-
-function Disclosure(props: AriaDisclosureProps & {title?: React.ReactNode, children?: React.ReactNode}) {
-  // useDisclosureState tracks whether the panel is expanded.
-  let state = useDisclosureState(props);
-  let panelRef = React.useRef<HTMLDivElement>(null);
-  let {buttonProps, panelProps} = useDisclosure(props, state, panelRef);
-
-  return (
-    <div style={{minWidth: 300}}>
-      <h3 style={{margin: 0}}>
-        <Button {...buttonProps} variant="quiet">
-          <ChevronRight
-            style={{rotate: state.isExpanded ? '90deg' : '0deg', transition: 'rotate 200ms'}} />
-          <span>{props.title}</span>
-        </Button>
-      </h3>
-      <div {...panelProps} ref={panelRef} style={{padding: '8px 12px'}}>
-        {props.children}
-      </div>
-    </div>
-  );
-}
+import {Disclosure} from 'hooks-starter/Disclosure';
 
 <Disclosure title="System Requirements">
   Details about system requirements here.

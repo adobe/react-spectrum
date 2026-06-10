@@ -24,53 +24,9 @@ export const isSubpage = true;
 
 This example uses `useRadioGroup` for the group and `useRadio` for each option. The group state is shared with each radio through React context.
 
-```tsx render
+```tsx render files={["starters/hooks/src/RadioGroup.tsx", "starters/hooks/src/RadioGroup.css"]}
 "use client";
-import React from 'react';
-import {useRadioGroup, useRadio, type AriaRadioGroupProps, type AriaRadioProps} from 'react-aria/useRadioGroup';
-import {useFocusRing} from 'react-aria/useFocusRing';
-import {mergeProps} from 'react-aria/mergeProps';
-import {useRadioGroupState} from 'react-stately/useRadioGroupState';
-import 'vanilla-starter/theme.css';
-
-let RadioContext = React.createContext<any>(null);
-
-function RadioGroup(props: AriaRadioGroupProps & {children?: React.ReactNode}) {
-  let {children, label} = props;
-  let state = useRadioGroupState(props);
-  let {radioGroupProps, labelProps} = useRadioGroup(props, state);
-
-  return (
-    <div {...radioGroupProps} style={{color: 'var(--text-color)'}}>
-      <span {...labelProps}>{label}</span>
-      <RadioContext.Provider value={state}>
-        {children}
-      </RadioContext.Provider>
-    </div>
-  );
-}
-
-function Radio(props: AriaRadioProps) {
-  let state = React.useContext(RadioContext);
-  let ref = React.useRef<HTMLInputElement>(null);
-  let {inputProps} = useRadio(props, state, ref);
-  let {isFocusVisible, focusProps} = useFocusRing();
-
-  return (
-    <label style={{display: 'flex', alignItems: 'center', gap: 8}}>
-      <span
-        style={{
-          display: 'inline-flex',
-          borderRadius: '50%',
-          outline: isFocusVisible ? '2px solid var(--focus-ring-color)' : 'none',
-          outlineOffset: 2
-        }}>
-        <input {...mergeProps(inputProps, focusProps)} ref={ref} style={{margin: 0, outline: 'none'}} />
-      </span>
-      {props.children}
-    </label>
-  );
-}
+import {RadioGroup, Radio} from 'hooks-starter/RadioGroup';
 
 <RadioGroup label="Favorite pet">
   <Radio value="dogs">Dogs</Radio>

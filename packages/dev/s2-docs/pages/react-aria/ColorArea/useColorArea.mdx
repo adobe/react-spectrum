@@ -24,49 +24,9 @@ export const isSubpage = true;
 
 This example builds a color area from scratch with `useColorArea`. It adjusts two channels of a color at once via a draggable thumb over a two-dimensional gradient. The thumb grows when focused via the keyboard.
 
-```tsx render
+```tsx render files={["starters/hooks/src/ColorArea.tsx", "starters/hooks/src/ColorArea.css", "starters/hooks/src/ColorThumb.css"]}
 "use client";
-import React from 'react';
-import {useColorArea, type AriaColorAreaProps} from 'react-aria/useColorArea';
-import {useColorAreaState} from 'react-stately/useColorAreaState';
-import {useFocusRing} from 'react-aria/useFocusRing';
-
-const SIZE = 192;
-const THUMB_SIZE = 20;
-const FOCUSED_THUMB_SIZE = 28;
-
-function ColorArea(props: AriaColorAreaProps) {
-  let inputXRef = React.useRef<HTMLInputElement>(null);
-  let inputYRef = React.useRef<HTMLInputElement>(null);
-  let containerRef = React.useRef<HTMLDivElement>(null);
-  let state = useColorAreaState(props);
-  let {colorAreaProps, xInputProps, yInputProps, thumbProps} =
-    useColorArea({...props, inputXRef, inputYRef, containerRef}, state);
-  let {focusProps, isFocusVisible} = useFocusRing();
-
-  return (
-    <div
-      ref={containerRef}
-      {...colorAreaProps}
-      style={{...colorAreaProps.style, width: SIZE, height: SIZE, borderRadius: 4}}>
-      <div
-        {...thumbProps}
-        style={{
-          ...thumbProps.style,
-          boxSizing: 'border-box',
-          width: isFocusVisible ? FOCUSED_THUMB_SIZE : THUMB_SIZE,
-          height: isFocusVisible ? FOCUSED_THUMB_SIZE : THUMB_SIZE,
-          borderRadius: '50%',
-          border: '2px solid white',
-          boxShadow: '0 0 0 1px black, inset 0 0 0 1px black',
-          background: state.getDisplayColor().toString('css')
-        }}>
-        <input ref={inputXRef} {...xInputProps} {...focusProps} />
-        <input ref={inputYRef} {...yInputProps} {...focusProps} />
-      </div>
-    </div>
-  );
-}
+import {ColorArea} from 'hooks-starter/ColorArea';
 
 <ColorArea defaultValue="hsl(30, 100%, 50%)" xChannel="saturation" yChannel="lightness" />
 ```

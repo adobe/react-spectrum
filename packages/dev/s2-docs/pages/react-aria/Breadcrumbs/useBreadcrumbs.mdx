@@ -23,60 +23,14 @@ export const isSubpage = true;
 
 This example uses `useBreadcrumbs` for the navigation landmark and `useBreadcrumbItem` for each item, marking the last item as the current page.
 
-```tsx render
+```tsx render files={["starters/hooks/src/Breadcrumbs.tsx", "starters/hooks/src/Breadcrumbs.css", "starters/hooks/src/Link.css"]}
 "use client";
-import React from 'react';
-import {useBreadcrumbs, useBreadcrumbItem, type AriaBreadcrumbsProps, type AriaBreadcrumbItemProps} from 'react-aria/useBreadcrumbs';
-import {useFocusRing} from 'react-aria/useFocusRing';
-import {mergeProps} from 'react-aria/mergeProps';
-import 'vanilla-starter/theme.css';
-
-function Breadcrumbs(props: AriaBreadcrumbsProps & {children?: React.ReactNode}) {
-  let {navProps} = useBreadcrumbs(props);
-  let childCount = React.Children.count(props.children);
-
-  return (
-    <nav {...navProps}>
-      <ol style={{display: 'flex', listStyle: 'none', margin: 0, padding: 0, color: 'var(--text-color)'}}>
-        {React.Children.map(props.children, (child, i) =>
-          React.cloneElement(child as React.ReactElement<any>, {isCurrent: i === childCount - 1})
-        )}
-      </ol>
-    </nav>
-  );
-}
-
-function BreadcrumbItem(props: AriaBreadcrumbItemProps) {
-  let ref = React.useRef<HTMLSpanElement>(null);
-  let {itemProps} = useBreadcrumbItem({...props, elementType: 'span'}, ref);
-  let {isFocusVisible, focusProps} = useFocusRing();
-
-  return (
-    <li>
-      <span
-        {...mergeProps(itemProps, focusProps)}
-        ref={ref}
-        style={{
-          color: props.isCurrent ? 'var(--text-color)' : 'var(--link-color)',
-          textDecoration: props.isCurrent ? 'none' : 'underline',
-          fontWeight: props.isCurrent ? 'bold' : 'normal',
-          cursor: props.isCurrent ? 'default' : 'pointer',
-          borderRadius: 4,
-          outline: isFocusVisible ? '2px solid var(--focus-ring-color)' : 'none',
-          outlineOffset: 2
-        }}>
-        {props.children}
-      </span>
-      {!props.isCurrent &&
-        <span aria-hidden="true" style={{padding: '0 8px'}}>{'›'}</span>}
-    </li>
-  );
-}
+import {Breadcrumbs, Breadcrumb} from 'hooks-starter/Breadcrumbs';
 
 <Breadcrumbs>
-  <BreadcrumbItem onPress={() => alert('Pressed Folder 1')}>Folder 1</BreadcrumbItem>
-  <BreadcrumbItem onPress={() => alert('Pressed Folder 2')}>Folder 2</BreadcrumbItem>
-  <BreadcrumbItem>Folder 3</BreadcrumbItem>
+  <Breadcrumb onPress={() => alert('Pressed Folder 1')}>Folder 1</Breadcrumb>
+  <Breadcrumb onPress={() => alert('Pressed Folder 2')}>Folder 2</Breadcrumb>
+  <Breadcrumb>Folder 3</Breadcrumb>
 </Breadcrumbs>
 ```
 
