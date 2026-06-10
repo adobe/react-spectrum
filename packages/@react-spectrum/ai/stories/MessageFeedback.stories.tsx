@@ -12,7 +12,7 @@
 
 import {ComponentProps, ReactElement, useState} from 'react';
 import {fn} from 'storybook/test';
-import {MessageFeedback} from '@react-spectrum/s2-ai/MessageFeedback';
+import {MessageFeedback} from '@react-spectrum/ai/MessageFeedback';
 import type {Meta, StoryObj} from '@storybook/react';
 
 const meta: Meta<typeof MessageFeedback> = {
@@ -30,7 +30,7 @@ const meta: Meta<typeof MessageFeedback> = {
     'aria-label': 'Rate this response',
     onChange: fn()
   },
-  title: 'S2-AI/MessageFeedback'
+  title: 'AI/MessageFeedback'
 };
 
 export default meta;
