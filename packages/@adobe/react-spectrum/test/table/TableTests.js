@@ -3313,7 +3313,7 @@ export let tableTests = () => {
       });
 
       it('will add to the current selection if the command key is pressed', async function () {
-        let uaMock = jest.spyOn(navigator, 'platform', 'get').mockImplementation(() => 'Mac');
+        using uaMock = jest.spyOn(navigator, 'platform', 'get').mockImplementation(() => 'Mac');
         let onSelectionChange = jest.fn();
         let tree = renderTable({onSelectionChange, selectionStyle: 'highlight'});
 
@@ -4893,7 +4893,7 @@ export let tableTests = () => {
     });
 
     it("should add sort direction info to the column header's aria-describedby for Android", async function () {
-      let uaMock = jest.spyOn(navigator, 'userAgent', 'get').mockImplementation(() => 'Android');
+      using uaMock = jest.spyOn(navigator, 'userAgent', 'get').mockImplementation(() => 'Android');
       let tree = render(<ExampleSortTable />);
       let tableTester = testUtilUser.createTester('Table', {root: tree.getByRole('grid')});
       tableTester.setInteractionType('keyboard');

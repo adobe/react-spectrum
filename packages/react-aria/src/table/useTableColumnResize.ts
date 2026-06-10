@@ -26,7 +26,6 @@ import {useId} from '../utils/useId';
 import {useInteractionModality} from '../interactions/useFocusVisible';
 import {useKeyboard} from '../interactions/useKeyboard';
 import {useLocale} from '../i18n/I18nProvider';
-// @ts-ignore
 import {useLocalizedStringFormatter} from '../i18n/useLocalizedStringFormatter';
 import {useMove} from '../interactions/useMove';
 import {usePress} from '../interactions/usePress';
@@ -142,20 +141,31 @@ export function useTableColumnResize<T>(
     [state, triggerRef, onResizeEnd]
   );
 
-  let {keyboardProps} = useKeyboard({
-    onKeyDown: e => {
-      if (editModeEnabled) {
-        if (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ' || e.key === 'Tab') {
-          e.preventDefault();
-          endResize(item);
-        }
-      } else {
-        // Continue propagation on keydown events so they still bubbles to useSelectableCollection and are handled there
-        e.continuePropagation();
+  let endResizeEvent = () => {
+    if (editModeEnabled) {
+      endResize(item);
+      return;
+    }
+    return false;
+  };
 
-        if (e.key === 'Enter') {
+  let {keyboardProps} = useKeyboard({
+    shortcuts: {
+      Escape: () => {
+        return endResizeEvent();
+      },
+      Enter: () => {
+        if (editModeEnabled) {
+          endResize(item);
+        } else {
           startResize(item);
         }
+      },
+      ' ': () => {
+        return endResizeEvent();
+      },
+      Tab: () => {
+        return endResizeEvent();
       }
     }
   });

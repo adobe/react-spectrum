@@ -64,7 +64,6 @@ import {IconContext} from './Icon';
 import {ImageContext} from './Image';
 import InfoCircleIcon from '../s2wf-icons/S2_Icon_InfoCircle_20_N.svg'; // chevron right removed??
 import {InPopoverContext, Popover, PopoverContext} from './Popover';
-// @ts-ignore
 import intlMessages from '../intl/*.json';
 import LinkOutIcon from '../ui-icons/LinkOut';
 import {mergeStyles} from '../style/runtime';

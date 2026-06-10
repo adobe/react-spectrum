@@ -20,7 +20,6 @@ import InfoMedium from '@spectrum-icons/ui/InfoMedium';
 import intlMessages from '../../intl/inlinealert/*.json';
 import React, {ReactNode, useEffect, useRef} from 'react';
 import {SlotProvider} from '../utils/Slots';
-// @ts-ignore
 import styles from '@adobe/spectrum-css-temp/components/inlinealert/vars.css';
 import SuccessMedium from '@spectrum-icons/ui/SuccessMedium';
 import {useDOMRef} from '../utils/useDOMRef';

@@ -751,12 +751,12 @@ describe('Submenu', function () {
       let menuItems = within(menu).getAllByRole('menuitemcheckbox');
       expect(document.activeElement).toBe(menuItems[0]);
       await user.keyboard('[Space]');
-      expect(onSelectionChange).toBeCalledTimes(1);
+      expect(onSelectionChange).toHaveBeenCalledTimes(1);
       expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(['Lvl 1 Item 1']));
       await user.keyboard('[ArrowDown]');
       await user.keyboard('[ArrowDown]');
       await user.keyboard('[Space]');
-      expect(onSelectionChange).toBeCalledTimes(2);
+      expect(onSelectionChange).toHaveBeenCalledTimes(2);
       expect(new Set(onSelectionChange.mock.calls[1][0])).toEqual(
         new Set(['Lvl 1 Item 1', 'Lvl 1 Item 3'])
       );
@@ -770,17 +770,17 @@ describe('Submenu', function () {
         jest.runAllTimers();
       });
 
-      expect(onSelectionChange).toBeCalledTimes(2);
+      expect(onSelectionChange).toHaveBeenCalledTimes(2);
       let menus = tree.getAllByRole('menu', {hidden: true});
       let submenu1Items = within(menus[1]).getAllByRole('menuitemradio');
       expect(document.activeElement).toBe(submenu1Items[0]);
       await user.keyboard('[Space]');
-      expect(onSelectionChange).toBeCalledTimes(2);
-      expect(submenuOnSelectionChange).toBeCalledTimes(1);
+      expect(onSelectionChange).toHaveBeenCalledTimes(2);
+      expect(submenuOnSelectionChange).toHaveBeenCalledTimes(1);
       expect(new Set(submenuOnSelectionChange.mock.calls[0][0])).toEqual(new Set(['Lvl 2 Item 1']));
       await user.keyboard('[ArrowDown]');
       await user.keyboard('[Space]');
-      expect(submenuOnSelectionChange).toBeCalledTimes(2);
+      expect(submenuOnSelectionChange).toHaveBeenCalledTimes(2);
       expect(new Set(submenuOnSelectionChange.mock.calls[1][0])).toEqual(new Set(['Lvl 2 Item 2']));
     });
 

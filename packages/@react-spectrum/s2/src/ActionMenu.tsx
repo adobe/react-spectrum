@@ -16,7 +16,6 @@ import {ContextValue} from 'react-aria-components/slots';
 import {createContext, forwardRef} from 'react';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {forwardRefType} from './types';
-// @ts-ignore
 import intlMessages from '../intl/*.json';
 import {Menu, MenuProps, MenuTrigger, MenuTriggerProps} from './Menu';
 import MoreIcon from '../s2wf-icons/S2_Icon_More_20_N.svg';

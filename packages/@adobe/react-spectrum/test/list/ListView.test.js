@@ -1100,7 +1100,7 @@ describe('ListView', function () {
     describe('selectionStyle highlight', function () {
       installPointerEvent();
       it('should toggle items in selection highlight with meta-click on Mac', async function () {
-        let uaMock = jest.spyOn(navigator, 'platform', 'get').mockImplementation(() => 'Mac');
+        using uaMock = jest.spyOn(navigator, 'platform', 'get').mockImplementation(() => 'Mac');
         let tree = renderSelectionList({
           onSelectionChange,
           selectionMode: 'multiple',
@@ -1143,7 +1143,9 @@ describe('ListView', function () {
       });
 
       it('should allow multiple items to be selected in selection highlight with ctrl-click on Windows', async function () {
-        let uaMock = jest.spyOn(navigator, 'userAgent', 'get').mockImplementation(() => 'Windows');
+        using uaMock = jest
+          .spyOn(navigator, 'userAgent', 'get')
+          .mockImplementation(() => 'Windows');
         let tree = renderSelectionList({
           onSelectionChange,
           selectionMode: 'multiple',
@@ -1178,7 +1180,9 @@ describe('ListView', function () {
       });
 
       it('should toggle items in selection highlight with ctrl-click on Windows', async function () {
-        let uaMock = jest.spyOn(navigator, 'userAgent', 'get').mockImplementation(() => 'Windows');
+        using uaMock = jest
+          .spyOn(navigator, 'userAgent', 'get')
+          .mockImplementation(() => 'Windows');
         let tree = renderSelectionList({
           onSelectionChange,
           selectionMode: 'multiple',

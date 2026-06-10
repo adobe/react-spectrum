@@ -1528,7 +1528,8 @@ describe('TableViewSizing', function () {
     });
 
     it('should prevent columns with child columns from being resizable', function () {
-      let warn = jest.spyOn(global.console, 'warn').mockImplementation();
+      using warn = jest.spyOn(global.console, 'warn').mockImplementation() as jest.SpyInstance &
+        Disposable;
       let tree = render(
         <TableView aria-label="Table" selectionMode="multiple">
           <TableHeader columns={nestedColumns}>

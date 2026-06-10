@@ -34,7 +34,7 @@ import {
   startOfWeek,
   today
 } from '@internationalized/date';
-import {Custom454Calendar} from '@internationalized/date/tests/customCalendarImpl';
+import {Custom454Calendar} from '/packages/@internationalized/date/tests/customCalendarImpl';
 import {ListBox, ListBoxItem} from '../src/ListBox';
 import {Popover} from '../src/Popover';
 import React, {useContext, useState} from 'react';
@@ -775,5 +775,75 @@ describe('Calendar', () => {
         .getAllByRole('option')
         .map(o => o.textContent)
     ).toEqual(['Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan']);
+  });
+
+  it('supports minValue and maxValue', async () => {
+    function YearPickerExample({calendarProps, yearPickerProps}) {
+      return (
+        <Calendar {...calendarProps} aria-label="Appointment date">
+          <header>
+            <Button slot="previous">◀</Button>
+            <CalendarYearPicker {...yearPickerProps}>
+              {({items, value, onChange, 'aria-label': ariaLabel}) => (
+                <select
+                  aria-label={ariaLabel}
+                  value={value}
+                  onChange={e => onChange(e.target.value)}>
+                  {items.map(item => (
+                    <option key={item.id} value={item.id}>
+                      {item.formatted}
+                    </option>
+                  ))}
+                </select>
+              )}
+            </CalendarYearPicker>
+            <Button slot="next">▶</Button>
+          </header>
+          <CalendarGrid>{date => <CalendarCell date={date} />}</CalendarGrid>
+        </Calendar>
+      );
+    }
+
+    let tree = render(
+      <YearPickerExample calendarProps={{maxValue: new CalendarDate(2026, 6, 30)}} />
+    );
+    expect(
+      within(tree.getByLabelText('year'))
+        .getAllByRole('option')
+        .map(o => o.textContent)
+    ).toEqual(Array.from({length: 20}, (_, i) => String(2026 - i)).reverse());
+
+    tree.rerender(<YearPickerExample calendarProps={{minValue: new CalendarDate(2020, 6, 30)}} />);
+    expect(
+      within(tree.getByLabelText('year'))
+        .getAllByRole('option')
+        .map(o => o.textContent)
+    ).toEqual(Array.from({length: 20}, (_, i) => String(i + 2020)));
+
+    tree.rerender(
+      <YearPickerExample
+        calendarProps={{
+          minValue: new CalendarDate(2020, 6, 30),
+          maxValue: new CalendarDate(2026, 6, 30)
+        }}
+      />
+    );
+    expect(
+      within(tree.getByLabelText('year'))
+        .getAllByRole('option')
+        .map(o => o.textContent)
+    ).toEqual(Array.from({length: 7}, (_, i) => String(i + 2020)));
+
+    tree.rerender(
+      <YearPickerExample
+        calendarProps={{defaultFocusedValue: new CalendarDate(2026, 6, 30)}}
+        yearPickerProps={{visibleYears: 1}}
+      />
+    );
+    expect(
+      within(tree.getByLabelText('year'))
+        .getAllByRole('option')
+        .map(o => o.textContent)
+    ).toEqual(['2026']);
   });
 });

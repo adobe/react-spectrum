@@ -20,7 +20,6 @@ import {Dialog} from './Dialog';
 import {DOMProps, DOMRef} from '@react-types/shared';
 import {forwardRef, ReactNode} from 'react';
 import {IconContext} from './Icon';
-// @ts-ignore
 import intlMessages from '../intl/*.json';
 import NoticeSquare from '../s2wf-icons/S2_Icon_AlertDiamond_20_N.svg';
 import {Provider} from 'react-aria-components/slots';

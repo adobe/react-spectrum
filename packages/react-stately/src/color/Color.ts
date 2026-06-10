@@ -19,7 +19,6 @@ import {
   ColorSpace,
   Color as IColor
 } from './types';
-// @ts-ignore
 import intlMessages from '../../intl/color/*.json';
 import {LocalizedStringDictionary, LocalizedStringFormatter} from '@internationalized/string';
 import {NumberFormatter} from '@internationalized/number';

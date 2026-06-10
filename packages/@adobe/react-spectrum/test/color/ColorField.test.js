@@ -64,7 +64,7 @@ describe('ColorField', function () {
   });
 
   it('should allow placeholder and show warning', function () {
-    let spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    using spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
     let {getByPlaceholderText, getByRole} = renderComponent({placeholder: 'Enter a color'});
     expect(getByRole('textbox')).toBe(getByPlaceholderText('Enter a color'));
     expect(spyWarn).toHaveBeenCalledWith(
@@ -392,7 +392,7 @@ describe('ColorField', function () {
       let [value, setValue] = React.useState(parseColor('#7f0000'));
       return (
         <form>
-          <ColorField value={value} onChange={setValue} />
+          <ColorField value={value} onChange={setValue} aria-label="mandatory label" />
           <input type="reset" data-testid="reset" />
         </form>
       );
@@ -419,7 +419,7 @@ describe('ColorField', function () {
 
         return (
           <form action={formAction}>
-            <ColorField defaultValue={value} />
+            <ColorField defaultValue={value} aria-label="mandatory label" />
             <input type="submit" data-testid="submit" />
           </form>
         );

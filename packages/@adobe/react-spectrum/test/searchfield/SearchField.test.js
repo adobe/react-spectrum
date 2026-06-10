@@ -105,7 +105,7 @@ describe('Search', () => {
     let tree = renderComponent(Component, {defaultValue: inputText, onSubmit});
     let input = tree.getByTestId(testId);
     fireEvent.keyDown(input, {key: 'Enter', code: 13, charCode: 13});
-    expect(onSubmit).toBeCalledTimes(1);
+    expect(onSubmit).toHaveBeenCalledTimes(1);
     expect(onSubmit).toHaveBeenLastCalledWith(inputText);
 
     act(() => {
@@ -114,7 +114,7 @@ describe('Search', () => {
     act(() => {
       fireEvent.keyDown(input, {key: 'Enter', code: 13, charCode: 13});
     });
-    expect(onSubmit).toBeCalledTimes(2);
+    expect(onSubmit).toHaveBeenCalledTimes(2);
     expect(onSubmit).toHaveBeenLastCalledWith('');
   });
 
@@ -127,7 +127,7 @@ describe('Search', () => {
       let tree = renderComponent(Component, {defaultValue: inputText, onSubmit, ...props});
       let input = tree.getByTestId(testId);
       fireEvent.keyDown(input, {key: 'Enter', code: 13, charCode: 13});
-      expect(onSubmit).toBeCalledTimes(0);
+      expect(onSubmit).toHaveBeenCalledTimes(0);
     }
   );
 
@@ -141,14 +141,14 @@ describe('Search', () => {
       let input = tree.getByTestId(testId);
       expect(input.value).toBe(inputText);
       fireEvent.keyDown(input, {key: 'Escape', code: 27, charCode: 27});
-      expect(onChange).toBeCalledTimes(1);
+      expect(onChange).toHaveBeenCalledTimes(1);
       expect(onChange).toHaveBeenLastCalledWith('');
       expect(input.value).toBe('');
       expect(document.activeElement).toBe(document.body);
 
       // onClear was added in v3
       if (Component === SearchField) {
-        expect(onClear).toBeCalledTimes(1);
+        expect(onClear).toHaveBeenCalledTimes(1);
         expect(onChange).toHaveBeenLastCalledWith(expect.anything());
       }
     }
@@ -164,12 +164,12 @@ describe('Search', () => {
       let input = tree.getByTestId(testId);
       expect(input.value).toBe(inputText);
       fireEvent.keyDown(input, {key: 'Escape', code: 27, charCode: 27});
-      expect(onChange).toBeCalledTimes(1);
+      expect(onChange).toHaveBeenCalledTimes(1);
       expect(onChange).toHaveBeenLastCalledWith('');
       expect(input.value).toBe(inputText);
       expect(document.activeElement).toBe(document.body);
 
-      expect(onClear).toBeCalledTimes(1);
+      expect(onClear).toHaveBeenCalledTimes(1);
       expect(onChange).toHaveBeenLastCalledWith(expect.anything());
     }
   );
@@ -184,10 +184,10 @@ describe('Search', () => {
       let input = tree.getByTestId(testId);
       expect(input.value).toBe(inputText);
       fireEvent.keyDown(input, {key: 'Escape', code: 27, charCode: 27});
-      expect(onChange).toBeCalledTimes(0);
+      expect(onChange).toHaveBeenCalledTimes(0);
       expect(input.value).toBe(inputText);
 
-      expect(onClear).toBeCalledTimes(0);
+      expect(onClear).toHaveBeenCalledTimes(0);
     }
   );
 
@@ -203,14 +203,14 @@ describe('Search', () => {
       let clearButton = tree.getByLabelText('Clear search');
       expect(input.value).toBe(inputText);
       await user.click(clearButton);
-      expect(onChange).toBeCalledTimes(1);
+      expect(onChange).toHaveBeenCalledTimes(1);
 
       expect(onChange).toHaveBeenLastCalledWith('');
 
       expect(input.value).toBe('');
       expect(document.activeElement).toBe(input);
 
-      expect(onClear).toBeCalledTimes(1);
+      expect(onClear).toHaveBeenCalledTimes(1);
       expect(onChange).toHaveBeenLastCalledWith(expect.anything());
     }
   );
@@ -226,14 +226,14 @@ describe('Search', () => {
       let clearButton = tree.getByLabelText('Clear search');
       expect(input.value).toBe(inputText);
       await user.click(clearButton);
-      expect(onChange).toBeCalledTimes(1);
+      expect(onChange).toHaveBeenCalledTimes(1);
 
       expect(onChange).toHaveBeenLastCalledWith('');
 
       expect(input.value).toBe(inputText);
       expect(document.activeElement).toBe(input);
 
-      expect(onClear).toBeCalledTimes(1);
+      expect(onClear).toHaveBeenCalledTimes(1);
       expect(onChange).toHaveBeenLastCalledWith(expect.anything());
     }
   );
@@ -249,10 +249,10 @@ describe('Search', () => {
       let clearButton = tree.getByLabelText('Clear search');
       expect(input.value).toBe(inputText);
       await user.click(clearButton);
-      expect(onChange).toBeCalledTimes(0);
+      expect(onChange).toHaveBeenCalledTimes(0);
       expect(input.value).toBe(inputText);
 
-      expect(onClear).toBeCalledTimes(0);
+      expect(onClear).toHaveBeenCalledTimes(0);
     }
   );
 

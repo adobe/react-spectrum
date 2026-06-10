@@ -83,7 +83,7 @@ describe('ProgressBar', function () {
   });
 
   it('warns user if no aria-label is provided', () => {
-    let spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    using spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
     render(<ProgressBar value={25} />);
     expect(spyWarn).toHaveBeenCalledWith(
       'If you do not provide a visible label via children, you must specify an aria-label or aria-labelledby attribute for accessibility'

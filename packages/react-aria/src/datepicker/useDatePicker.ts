@@ -11,7 +11,6 @@
  */
 
 import {AriaButtonProps} from '../button/useButton';
-
 import {AriaDialogProps} from '../dialog/useDialog';
 import {
   AriaLabelingProps,
@@ -31,7 +30,6 @@ import intlMessages from '../../intl/datepicker/*.json';
 import {mergeProps} from '../utils/mergeProps';
 import {nodeContains} from '../utils/shadowdom/DOMFunctions';
 import {privateValidationStateProp} from 'react-stately/private/form/useFormValidationState';
-// @ts-ignore
 import {roleSymbol} from './useDateField';
 import {useDatePickerGroup} from './useDatePickerGroup';
 import {useDescription} from '../utils/useDescription';

@@ -48,7 +48,6 @@ import {
   SpectrumLabelableProps
 } from '@react-types/shared';
 import {IconContext} from './Icon';
-// @ts-ignore
 import intlMessages from '../intl/*.json';
 import {Popover} from './Popover';
 import {PopoverProps} from 'react-aria-components/Popover';

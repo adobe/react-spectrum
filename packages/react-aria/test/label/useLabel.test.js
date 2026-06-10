@@ -75,7 +75,7 @@ describe('useLabel hook', () => {
   });
 
   it('should warn if no visible label or aria labels are provided', () => {
-    let spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    using spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
     renderLabelHook({});
     expect(spyWarn).toHaveBeenCalledWith(
       'If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility'

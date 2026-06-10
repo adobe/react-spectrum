@@ -36,7 +36,7 @@ describe('Image', () => {
     );
     fireEvent.error(screen.getByAltText('Sky and roof'));
 
-    expect(mockOnErrorCallback).toBeCalled();
+    expect(mockOnErrorCallback).toHaveBeenCalled();
   });
 
   describe('crossorigin attribute', () => {
