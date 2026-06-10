@@ -414,7 +414,7 @@ jobs:
   test-browser:
     docker:
       - image: mcr.microsoft.com/playwright:v1.60.0-noble
-    working_directory: ~/react-spectrum
+    working_directory: /home/circleci/react-spectrum
     steps:
       - restore_cache:
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
