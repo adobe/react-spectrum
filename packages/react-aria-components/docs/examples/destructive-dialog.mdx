@@ -50,8 +50,9 @@ function ModalExample() {
           ${isEntering ? 'animate-in fade-in duration-300 ease-out' : ''}
           ${isExiting ? 'animate-out fade-out duration-200 ease-in' : ''}
         `}>
-          <Modal className={({isEntering, isExiting}) => `
+          <Modal className={({isEntering, isExiting, isOpen}) => `
             sticky top-0 left-0 w-full h-(--visual-viewport-height) flex items-center justify-center p-4 box-border text-center
+            ${!isOpen ? 'opacity-0' : ''}
             ${isEntering ? 'animate-in zoom-in-95 ease-out duration-300' : ''}
             ${isExiting ? 'animate-out zoom-out-95 ease-in duration-200' : ''}
           `}>

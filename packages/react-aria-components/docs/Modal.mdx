@@ -111,6 +111,10 @@ import {DialogTrigger, Modal, Dialog, Button, Heading, TextField, Label, Input} 
   width: max-content;
   max-width: 300px;
 
+  &:not([data-open]) {
+    opacity: 0;
+  }
+
   &[data-entering] {
     animation: modal-zoom 300ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
   }

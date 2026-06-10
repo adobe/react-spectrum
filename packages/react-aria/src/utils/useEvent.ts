@@ -14,24 +14,44 @@ import {RefObject} from '@react-types/shared';
 import {useEffect} from 'react';
 import {useEffectEvent} from './useEffectEvent';
 
-export function useEvent<K extends keyof GlobalEventHandlersEventMap>(
-  ref: RefObject<EventTarget | null>,
-  event: K | (string & {}),
-  handler?: (this: Document, ev: GlobalEventHandlersEventMap[K]) => any,
+type EventHandlerMap<T extends EventTarget> = T extends Window
+  ? WindowEventMap
+  : T extends Document
+    ? DocumentEventMap
+    : T extends Element
+      ? HTMLElementEventMap
+      : T extends VisualViewport
+        ? VisualViewportEventMap
+        : GlobalEventHandlersEventMap;
+
+export function useEvent<T extends EventTarget, K extends keyof EventHandlerMap<T>>(
+  ref: RefObject<T | null>,
+  event: Extract<K, string> | (string & {}),
+  listener?: (this: T, ev: EventHandlerMap<Exclude<T, null>>[K]) => any,
   options?: boolean | AddEventListenerOptions
 ): void {
-  let handleEvent = useEffectEvent(handler);
-  let isDisabled = handler == null;
+  let handleEvent = useEffectEvent(listener);
+  let isDisabled = listener == null;
 
   useEffect(() => {
-    if (isDisabled || !ref.current) {
+    if (isDisabled || ref.current == null) {
       return;
     }
 
-    let element = ref.current;
-    element.addEventListener(event, handleEvent as EventListener, options);
-    return () => {
-      element.removeEventListener(event, handleEvent as EventListener, options);
-    };
+    return addEvent(ref.current, event, handleEvent, options);
   }, [ref, event, options, isDisabled]);
+}
+
+export function addEvent<T extends EventTarget, K extends keyof EventHandlerMap<Exclude<T, null>>>(
+  target: T | null,
+  event: Extract<K, string> | (string & {}),
+  listener?: (this: T, ev: EventHandlerMap<Exclude<T, null>>[K]) => any,
+  options?: boolean | AddEventListenerOptions
+): () => void {
+  if (listener == null || target == null) {
+    return () => {};
+  }
+
+  target.addEventListener(event, listener as EventListener, options);
+  return () => target.removeEventListener(event, listener as EventListener, options);
 }

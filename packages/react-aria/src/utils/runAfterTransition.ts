@@ -10,88 +10,87 @@
  * governing permissions and limitations under the License.
  */
 
+import {addEvent} from './useEvent';
+import {getEventTarget} from './shadowdom/DOMFunctions';
+import {getOwnerDocument, getOwnerWindow} from './domHelpers';
+
 // We store a global list of elements that are currently transitioning,
 // mapped to a set of CSS properties that are transitioning for that element.
 // This is necessary rather than a simple count of transitions because of browser
 // bugs, e.g. Chrome sometimes fires both transitionend and transitioncancel rather
 // than one or the other. So we need to track what's actually transitioning so that
 // we can ignore these duplicate events.
-import {getEventTarget} from './shadowdom/DOMFunctions';
-let transitionsByElement = new Map<EventTarget, Set<string>>();
+const transitionsByElement = new Map<EventTarget, Set<string>>();
+const transitionCallbacks = new Set<QueuedCallback>();
 
-// A list of callbacks to call once there are no transitioning elements.
-let transitionCallbacks = new Set<() => void>();
+interface QueuedCallback {
+  (isTransition: boolean): void;
+}
 
-function setupGlobalEvents() {
-  if (typeof window === 'undefined') {
+function isTransitionEvent(event: Event): event is TransitionEvent {
+  return 'propertyName' in event;
+}
+
+function onTransitionStart(e: Event) {
+  let eventTarget = getEventTarget(e);
+
+  if (!isTransitionEvent(e) || !eventTarget) {
     return;
   }
 
-  function isTransitionEvent(event: Event): event is TransitionEvent {
-    return 'propertyName' in event;
+  // Add the transitioning property to the list for this element.
+  let transitions = transitionsByElement.get(eventTarget);
+
+  if (!transitions) {
+    transitions = new Set();
+    transitionsByElement.set(eventTarget, transitions);
+
+    // The transitioncancel event must be registered on the element itself, rather than as a global
+    // event. This enables us to handle when the node is deleted from the document while it is transitioning.
+    // In that case, the cancel event would have nowhere to bubble to so we need to handle it directly.
+    eventTarget.addEventListener('transitioncancel', onTransitionEnd, {once: true});
   }
 
-  let onTransitionStart = (e: Event) => {
-    let eventTarget = getEventTarget(e);
-    if (!isTransitionEvent(e) || !eventTarget) {
-      return;
-    }
-    // Add the transitioning property to the list for this element.
-    let transitions = transitionsByElement.get(eventTarget);
-    if (!transitions) {
-      transitions = new Set();
-      transitionsByElement.set(eventTarget, transitions);
-
-      // The transitioncancel event must be registered on the element itself, rather than as a global
-      // event. This enables us to handle when the node is deleted from the document while it is transitioning.
-      // In that case, the cancel event would have nowhere to bubble to so we need to handle it directly.
-      eventTarget.addEventListener('transitioncancel', onTransitionEnd, {
-        once: true
-      });
-    }
-
-    transitions.add(e.propertyName);
-  };
-
-  let onTransitionEnd = (e: Event) => {
-    let eventTarget = getEventTarget(e);
-    if (!isTransitionEvent(e) || !eventTarget) {
-      return;
-    }
-    // Remove property from list of transitioning properties.
-    let properties = transitionsByElement.get(eventTarget);
-    if (!properties) {
-      return;
-    }
-
-    properties.delete(e.propertyName);
-
-    // If empty, remove transitioncancel event, and remove the element from the list of transitioning elements.
-    if (properties.size === 0) {
-      eventTarget.removeEventListener('transitioncancel', onTransitionEnd);
-      transitionsByElement.delete(eventTarget);
-    }
-
-    // If no transitioning elements, call all of the queued callbacks.
-    if (transitionsByElement.size === 0) {
-      for (let cb of transitionCallbacks) {
-        cb();
-      }
-
-      transitionCallbacks.clear();
-    }
-  };
-
-  document.body.addEventListener('transitionrun', onTransitionStart);
-  document.body.addEventListener('transitionend', onTransitionEnd);
+  transitions.add(e.propertyName);
 }
 
-if (typeof document !== 'undefined') {
-  if (document.readyState !== 'loading') {
-    setupGlobalEvents();
-  } else {
-    document.addEventListener('DOMContentLoaded', setupGlobalEvents);
+function onTransitionEnd(e: Event) {
+  let eventTarget = getEventTarget(e);
+  let ownerDocument = getOwnerDocument(eventTarget);
+
+  if (!isTransitionEvent(e) || !eventTarget) {
+    return;
   }
+
+  // Remove property from list of transitioning properties.
+  let properties = transitionsByElement.get(eventTarget);
+
+  if (!properties) {
+    return;
+  }
+
+  properties.delete(e.propertyName);
+
+  // If empty, remove transitioncancel event, and remove the element from the list of transitioning elements.
+  if (properties.size === 0) {
+    eventTarget.removeEventListener('transitioncancel', onTransitionEnd);
+    transitionsByElement.delete(eventTarget);
+  }
+
+  // If no transitioning elements, call all of the queued callbacks.
+  if (transitionsByElement.size === 0) {
+    for (let callback of transitionCallbacks) {
+      callback(true);
+      transitionCallbacks.delete(callback);
+    }
+  }
+}
+
+function setupGlobalEvents() {
+  let ownerDocument = getOwnerDocument();
+
+  addEvent(ownerDocument, 'transitionrun', onTransitionStart);
+  addEvent(ownerDocument, 'transitionend', onTransitionEnd);
 }
 
 /**
@@ -109,16 +108,30 @@ function cleanupDetachedElements() {
   }
 }
 
-export function runAfterTransition(fn: () => void): void {
+if (typeof document !== 'undefined') {
+  if (document.readyState !== 'loading') {
+    setupGlobalEvents();
+  } else {
+    addEvent(document, 'DOMContentLoaded', setupGlobalEvents);
+  }
+}
+
+/**
+ * Delays a callback execution until all elements finished their transition.
+ */
+export function runAfterTransition(fn: QueuedCallback): void {
+  let ownerWindow = getOwnerWindow();
+
   // Wait one frame to see if an animation starts, e.g. a transition on mount.
-  requestAnimationFrame(() => {
+  ownerWindow.requestAnimationFrame(() => {
     cleanupDetachedElements();
+
     // If no transitions are running, call the function immediately.
     // Otherwise, add it to a list of callbacks to run at the end of the animation.
     if (transitionsByElement.size === 0) {
-      fn();
-    } else {
-      transitionCallbacks.add(fn);
+      return fn(false);
     }
+
+    transitionCallbacks.add(fn);
   });
 }

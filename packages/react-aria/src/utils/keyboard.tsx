@@ -10,21 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {isMac} from './platform';
+import {addEvent} from './useEvent';
+import {getActiveElement, getEventTarget} from './shadowdom/DOMFunctions';
+import {getOwnerDocument, getOwnerViewport, getOwnerWindow} from './domHelpers';
+import {isFirefox, isIOS, isMac} from './platform';
 
-interface Event {
-  altKey: boolean;
-  ctrlKey: boolean;
-  metaKey: boolean;
-}
-
-export function isCtrlKeyPressed(e: Event): boolean {
-  if (isMac()) {
-    return e.metaKey;
-  }
-
-  return e.ctrlKey;
-}
+// Tracks layout status of the on-screen keyboard.
+const cache = new WeakMap<EventTarget, KeyboardStatus>();
 
 // HTML input types that do not cause the software keyboard to appear.
 const nonTextInputTypes = new Set([
@@ -39,10 +31,112 @@ const nonTextInputTypes = new Set([
   'reset'
 ]);
 
-export function willOpenKeyboard(target: Element) {
-  return (
-    (target instanceof HTMLInputElement && !nonTextInputTypes.has(target.type)) ||
-    target instanceof HTMLTextAreaElement ||
-    (target instanceof HTMLElement && target.isContentEditable)
-  );
+interface KeyboardStatus {
+  isOpen: boolean;
+  innerHeight?: number;
+  resizeTimeStamp?: number;
+  resizeTimeout?: number;
+}
+
+interface KeyPressEvent {
+  altKey: boolean;
+  ctrlKey: boolean;
+  metaKey: boolean;
+}
+
+function onResize(e: Event): void {
+  let target = getEventTarget(e);
+  let ownerWindow = getOwnerWindow(target);
+
+  let status = cache.get(ownerWindow);
+  let timeStamp = Number(status?.resizeTimeStamp ?? 0);
+
+  if (status && timeStamp <= e.timeStamp + 50) {
+    status.resizeTimeStamp = e.timeStamp + 150;
+
+    ownerWindow.clearTimeout(status.resizeTimeout);
+
+    status.resizeTimeout = ownerWindow.setTimeout(() => {
+      status.isOpen = isKeyboardVisible();
+      delete status.resizeTimeout;
+      delete status.resizeTimeStamp;
+    }, 150);
+  }
+}
+
+function onIOSResize(e: Event): void {
+  let target = getEventTarget(e);
+  let ownerWindow = getOwnerWindow(target);
+
+  let status = cache.get(ownerWindow);
+
+  if (status) {
+    status.isOpen = isKeyboardVisible();
+  }
+}
+
+function setupGlobalEvents(): void {
+  let ownerWindow = getOwnerWindow();
+  let ownerViewport = getOwnerViewport();
+
+  let status: KeyboardStatus = {isOpen: false};
+
+  if (ownerWindow == null || ownerViewport == null) return;
+
+  // https://github.com/mozilla-mobile/firefox-ios/issues/33806
+  if (isIOS() && isFirefox()) {
+    status.innerHeight = ownerWindow.innerHeight;
+  }
+
+  addEvent(ownerViewport, 'resize', isIOS() ? onIOSResize : onResize);
+  cache.set(ownerWindow, status);
+}
+
+if (typeof document !== 'undefined') {
+  if (document.readyState !== 'loading') {
+    setupGlobalEvents();
+  } else {
+    addEvent(document, 'DOMContentLoaded', setupGlobalEvents);
+  }
+}
+
+export function willOpenKeyboard(target: EventTarget | null): boolean {
+  let isTextArea = target instanceof HTMLTextAreaElement;
+  let isEditable = target instanceof HTMLElement && target.isContentEditable;
+  let isTextInput = target instanceof HTMLInputElement && !nonTextInputTypes.has(target.type);
+
+  return isTextArea || isEditable || isTextInput;
+}
+
+export function isCtrlKeyPressed(event: KeyPressEvent): boolean {
+  return isMac() ? event.metaKey : event.ctrlKey;
+}
+
+export function isKeyboardOpen(): boolean {
+  let ownerWindow = getOwnerWindow();
+  let ownerViewport = getOwnerViewport();
+
+  if (ownerWindow == null || ownerViewport == null) return false;
+
+  let status = cache.get(ownerWindow);
+
+  return !!status?.isOpen;
+}
+
+export function isKeyboardVisible(): boolean {
+  let ownerWindow = getOwnerWindow();
+  let ownerDocument = getOwnerDocument();
+  let ownerViewport = getOwnerViewport();
+
+  if (ownerWindow == null || ownerViewport == null) return false;
+
+  let status = cache.get(ownerWindow);
+
+  let activeElement = getActiveElement(ownerDocument);
+  let willKeyboardOpen = ownerDocument.hasFocus() && willOpenKeyboard(activeElement);
+
+  let minHeight = Number(ownerViewport?.height) * Number(ownerViewport?.scale);
+  let maxHeight = Number(status?.innerHeight) || Number(ownerWindow.innerHeight);
+
+  return (willKeyboardOpen || !!status?.isOpen) && maxHeight - minHeight > 150;
 }

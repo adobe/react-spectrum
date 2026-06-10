@@ -193,6 +193,10 @@ This is a quick way to get started, but you can also create your own custom clas
     --origin: translateY(-8px);
   }
 
+  &:not([data-open]) {
+    opacity: 0;
+  }
+
   &[data-entering] {
     animation: slide 200ms;
   }

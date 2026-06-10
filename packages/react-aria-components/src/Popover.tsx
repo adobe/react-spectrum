@@ -52,6 +52,7 @@ import React, {
   useRef,
   useState
 } from 'react';
+import {runAfterKeyboard} from 'react-aria/private/utils/runAfterKeyboard';
 import {useEnterAnimation, useExitAnimation} from 'react-aria/private/utils/animation';
 import {useIsHidden} from 'react-aria/private/collections/Hidden';
 import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
@@ -220,6 +221,8 @@ function PopoverInner({
   let containerRef = useRef<HTMLDivElement | null>(null);
   let groupCtx = useContext(PopoverGroupContext);
   let isSubPopover = groupCtx && props.trigger === 'SubmenuTrigger';
+  let unmountRef = useRef(false);
+  let [isOpen, setIsOpen] = useState(false);
 
   let {popoverProps, underlayProps, arrowProps, placement, triggerAnchorPoint} = usePopover(
     {
@@ -234,7 +237,7 @@ function PopoverInner({
   );
 
   let ref = props.popoverRef as RefObject<HTMLDivElement | null>;
-  let isEntering = useEnterAnimation(ref, !!placement) || props.isEntering || false;
+  let isEntering = useEnterAnimation(ref, !!placement && isOpen) || props.isEntering || false;
   let renderProps = useRenderProps({
     ...props,
     defaultClassName: 'react-aria-Popover',
@@ -301,6 +304,19 @@ function PopoverInner({
     '--trigger-width': renderProps.style?.['--trigger-width'] || triggerWidth
   };
 
+  // Since an auto-focused input may open the OSK, we defer the reveal, as a courtesy, to avoid layout shift.
+  // TODO: This can cause native focus scroll-into-view to abort, so we might want to do that manually?
+  useLayoutEffect(() => {
+    runAfterKeyboard(() => {
+      if (unmountRef.current) return;
+      setIsOpen(true);
+    });
+
+    return () => {
+      unmountRef.current = true;
+    };
+  }, []);
+
   let overlay = (
     <dom.div
       {...mergeProps(filterDOMProps(props, {global: true}), popoverProps)}
@@ -315,6 +331,7 @@ function PopoverInner({
       dir={props.dir}
       data-trigger={props.trigger}
       data-placement={placement}
+      data-open={isOpen || undefined}
       data-entering={isEntering || undefined}
       data-exiting={isExiting || undefined}>
       {!props.isNonModal && <DismissButton onDismiss={state.close} />}

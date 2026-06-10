@@ -24,7 +24,6 @@ import {
 import {DismissButton, Overlay} from 'react-aria/Overlay';
 import {DOMAttributes, forwardRefType, GlobalDOMAttributes, RefObject} from '@react-types/shared';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
-import {getActiveElement} from 'react-aria/private/utils/shadowdom/DOMFunctions';
 import {isScrollable} from 'react-aria/private/utils/isScrollable';
 import {mergeProps} from 'react-aria/mergeProps';
 import {mergeRefs} from 'react-aria/mergeRefs';
@@ -43,13 +42,12 @@ import React, {
   useRef,
   useState
 } from 'react';
+import {runAfterKeyboard} from 'react-aria/private/utils/runAfterKeyboard';
 import {useEnterAnimation, useExitAnimation} from 'react-aria/private/utils/animation';
 import {useIsSSR} from 'react-aria/SSRProvider';
 import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
 import {useObjectRef} from 'react-aria/useObjectRef';
 import {useViewportSize} from 'react-aria/private/utils/useViewportSize';
-import {useVisuallyHidden} from 'react-aria/VisuallyHidden';
-import {willOpenKeyboard} from 'react-aria/private/utils/keyboard';
 
 export interface ModalOverlayProps
   extends
@@ -86,6 +84,7 @@ export interface ModalOverlayProps
 interface InternalModalContextValue {
   modalProps: DOMAttributes;
   modalRef: RefObject<HTMLDivElement | null>;
+  isOpen: boolean;
   isExiting: boolean;
   isDismissable?: boolean;
 }
@@ -94,6 +93,12 @@ export const ModalContext = createContext<ContextValue<ModalOverlayProps, HTMLDi
 const InternalModalContext = createContext<InternalModalContextValue | null>(null);
 
 export interface ModalRenderProps {
+  /**
+   * Whether the modal is ready to be displayed. Use this to avoid layout shift.
+   *
+   * @selector [data-open]
+   */
+  isOpen: boolean;
   /**
    * Whether the modal is currently entering. Use this to apply animations.
    *
@@ -240,11 +245,14 @@ function ModalOverlayInner({UNSTABLE_portalContainer, ...props}: ModalOverlayInn
   let {state} = props;
   let {modalProps, underlayProps} = useModalOverlay(props, state, modalRef);
 
-  let entering = useEnterAnimation(props.overlayRef) || props.isEntering || false;
+  let unmountRef = useRef(false);
+  let [isOpen, setIsOpen] = useState(false);
+  let entering = useEnterAnimation(props.overlayRef, isOpen) || props.isEntering || false;
   let renderProps = useRenderProps({
     ...props,
     defaultClassName: 'react-aria-ModalOverlay',
     values: {
+      isOpen,
       isEntering: entering,
       isExiting: props.isExiting,
       state
@@ -273,6 +281,19 @@ function ModalOverlayInner({UNSTABLE_portalContainer, ...props}: ModalOverlayInn
     '--page-height': pageHeight !== undefined ? pageHeight + 'px' : undefined
   };
 
+  // Since an auto-focused input may open the OSK, we defer the reveal, as a courtesy, to avoid layout shift.
+  // TODO: This can cause native focus scroll-into-view to abort, so we might want to do that manually?
+  useLayoutEffect(() => {
+    runAfterKeyboard(() => {
+      if (unmountRef.current) return;
+      setIsOpen(true);
+    });
+
+    return () => {
+      unmountRef.current = true;
+    };
+  }, []);
+
   return (
     <Overlay isExiting={props.isExiting} portalContainer={UNSTABLE_portalContainer}>
       <dom.div
@@ -280,13 +301,20 @@ function ModalOverlayInner({UNSTABLE_portalContainer, ...props}: ModalOverlayInn
         {...renderProps}
         style={style}
         ref={props.overlayRef}
+        data-open={isOpen || undefined}
         data-entering={entering || undefined}
         data-exiting={props.isExiting || undefined}>
         <Provider
           values={[
             [
               InternalModalContext,
-              {modalProps, modalRef, isExiting: props.isExiting, isDismissable: props.isDismissable}
+              {
+                modalProps,
+                modalRef,
+                isExiting: props.isExiting,
+                isOpen,
+                isDismissable: props.isDismissable
+              }
             ],
             [OverlayTriggerStateContext, state]
           ]}>
@@ -310,8 +338,7 @@ interface ModalContentProps
 }
 
 function ModalContent(props: ModalContentProps) {
-  let {modalProps, modalRef, isExiting, isDismissable} = useContext(InternalModalContext)!;
-  let [isOpen, setOpen] = useState(false);
+  let {modalProps, modalRef, isExiting, isOpen, isDismissable} = useContext(InternalModalContext)!;
   let state = useContext(OverlayTriggerStateContext)!;
   let mergedRefs = useMemo(() => mergeRefs(props.modalRef, modalRef), [props.modalRef, modalRef]);
 
@@ -321,46 +348,23 @@ function ModalContent(props: ModalContentProps) {
     ...props,
     defaultClassName: 'react-aria-Modal',
     values: {
+      isOpen,
       isEntering: entering,
       isExiting,
       state
     }
   });
 
-  // Hide the modal initially, since an auto-focused input may cause a viewport resize in the next frame.
-  // If so, delay the reveal by another frame to avoid layout shift when the viewport settles.
-  useLayoutEffect(() => {
-    let frame: number, frame2: number;
-
-    frame = requestAnimationFrame(() => {
-      let activeElement = getActiveElement();
-      if (activeElement && willOpenKeyboard(activeElement)) {
-        frame2 = requestAnimationFrame(() => setOpen(true));
-      } else {
-        setOpen(true);
-      }
-    });
-
-    return () => {
-      cancelAnimationFrame(frame);
-      cancelAnimationFrame(frame2);
-    };
-  }, []);
-
-  let {visuallyHiddenProps} = useVisuallyHidden();
-  let contentStyle = isOpen ? {display: 'contents'} : visuallyHiddenProps.style;
-
   return (
-    <dom.div style={contentStyle}>
-      <dom.div
-        {...mergeProps(filterDOMProps(props, {global: true}), modalProps)}
-        {...renderProps}
-        ref={ref}
-        data-entering={entering || undefined}
-        data-exiting={isExiting || undefined}>
-        {isDismissable && <DismissButton onDismiss={state.close} />}
-        {renderProps.children}
-      </dom.div>
+    <dom.div
+      {...mergeProps(filterDOMProps(props, {global: true}), modalProps)}
+      {...renderProps}
+      ref={ref}
+      data-open={isOpen || undefined}
+      data-entering={entering || undefined}
+      data-exiting={isExiting || undefined}>
+      {isDismissable && <DismissButton onDismiss={state.close} />}
+      {renderProps.children}
     </dom.div>
   );
 }
