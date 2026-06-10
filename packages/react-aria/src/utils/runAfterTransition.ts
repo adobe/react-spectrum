@@ -56,7 +56,6 @@ function onTransitionStart(e: Event) {
 
 function onTransitionEnd(e: Event) {
   let eventTarget = getEventTarget(e);
-  let ownerDocument = getOwnerDocument(eventTarget);
 
   if (!isTransitionEvent(e) || !eventTarget) {
     return;
