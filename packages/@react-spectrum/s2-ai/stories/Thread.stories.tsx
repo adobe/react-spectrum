@@ -24,11 +24,12 @@ import {MessageFeedback} from '../src/MessageFeedback';
 import {MessageSource, SourceList, SourceListItem} from '../src/MessageSource';
 import {MessageSuggestion, MessageSuggestionList} from '../src/MessageSuggestion';
 import type {Meta} from '@storybook/react';
-import {PromptField} from '../src/PromptField';
+import {PromptField, PromptFieldSubmitButton, PromptTokenField} from '../src/PromptField';
 import {ReactNode, useRef, useState} from 'react';
 import {ResponseStatus, ResponseStatusPanel, ResponseStatusTitle} from '../src/ResponseStatus';
 import {Text} from '@react-spectrum/s2/Text';
 import {Thread, ThreadItem, ThreadList, ThreadScrollButton} from '../src/Thread';
+import type {TokenSegmentList} from '/packages/react-aria-components/src/TokenSegmentList';
 import {UserMessage} from '../src/UserMessage';
 import {Virtualizer} from 'react-aria-components/Virtualizer';
 
@@ -142,17 +143,16 @@ export function StreamingThread() {
   );
   let nextId = useRef(initialResponses.length);
   let lastMessage = messages.at(-1);
-  let isDisabled =
+  let isGenerating =
     (lastMessage?.type === 'status' && lastMessage.isStreaming) ||
     (lastMessage?.type === 'system' && lastMessage.isStreaming);
 
-  function handleSend(text: string) {
-    if (!text.trim()) {
-      return;
-    }
-
+  function handleSend(prompt: TokenSegmentList) {
     // user message added first so its announcement plays before
-    setMessages(prev => [...prev, {id: nextId.current++, type: 'user', content: text}]);
+    setMessages(prev => [
+      ...prev,
+      {id: nextId.current++, type: 'user', content: prompt.toString()}
+    ]);
 
     function addTool(label: string, replaceStatus = false) {
       setMessages(prev =>
@@ -462,7 +462,12 @@ export function StreamingThread() {
             }}
           </ThreadList>
         </div>
-        <PromptField onSend={handleSend} isDisabled={!!isDisabled} />
+        <PromptField onSubmit={handleSend} isGenerating={!!isGenerating}>
+          <div className={style({display: 'flex', gap: 16, alignItems: 'center'})}>
+            <PromptTokenField />
+            <PromptFieldSubmitButton />
+          </div>
+        </PromptField>
       </Thread>
     </div>
   );
@@ -474,13 +479,10 @@ export function VirtualizedThread() {
   let nextId = useRef(initialResponses.length);
   let lastMessage = messages.at(-1);
   let isPending = lastMessage?.type === 'status' && lastMessage.status === 'pending';
-  function handleSend(text: string) {
-    if (!text.trim()) {
-      return;
-    }
+  function handleSend(prompt: TokenSegmentList) {
     setMessages(prev => [
       ...prev,
-      {id: nextId.current++, type: 'user', content: text},
+      {id: nextId.current++, type: 'user', content: prompt.toString()},
       {id: nextId.current++, type: 'status', status: 'pending'}
     ]);
     setTimeout(() => {
@@ -548,7 +550,12 @@ export function VirtualizedThread() {
           }}
         </GridList>
       </Virtualizer>
-      <PromptField onSend={handleSend} isDisabled={isPending} />
+      <PromptField onSubmit={handleSend} isGenerating={isPending}>
+        <div className={style({display: 'flex', gap: 16, alignItems: 'center'})}>
+          <PromptTokenField />
+          <PromptFieldSubmitButton />
+        </div>
+      </PromptField>
     </div>
   );
 }

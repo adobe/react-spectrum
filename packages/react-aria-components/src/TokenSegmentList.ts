@@ -39,17 +39,33 @@ export class TokenSegmentList {
   private next: TokenSegmentList | null = null;
   private isCoalescing = true;
 
-  constructor(tokens: TokenFieldSegment[], options?: TokenSegmentListOptions) {
+  constructor(tokens: readonly TokenFieldSegment[], options?: TokenSegmentListOptions) {
     this.segments = tokens;
     this.caretPosition = options?.caretPosition ?? {index: 0, offset: 0};
   }
 
-  protected createSegmentList(segments: TokenFieldSegment[]): TokenSegmentList {
+  protected createSegmentList(segments: readonly TokenFieldSegment[]): TokenSegmentList {
     const Constructor = this.constructor as new (
-      segments: TokenFieldSegment[],
+      segments: readonly TokenFieldSegment[],
       options?: TokenSegmentListOptions
     ) => TokenSegmentList;
     return new Constructor(segments);
+  }
+
+  withCaretPosition(caretPosition: Position): TokenSegmentList {
+    if (
+      this.caretPosition.index === caretPosition.index &&
+      this.caretPosition.offset === caretPosition.offset
+    ) {
+      return this;
+    }
+
+    let result = this.createSegmentList(this.segments);
+    result.caretPosition = caretPosition;
+    result.previous = this.previous;
+    result.next = this.next;
+    result.isCoalescing = this.isCoalescing;
+    return result;
   }
 
   private splitSegment(

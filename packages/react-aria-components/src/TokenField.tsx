@@ -8,6 +8,7 @@ import {
 } from './TokenSegmentList';
 import {dom, RenderProps, StyleRenderProps, useRenderProps} from './utils';
 import {FieldInputContext} from './Autocomplete';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {FocusableProps} from '@react-types/shared';
 import {isMac} from 'react-aria/private/utils/platform';
 import {mergeProps} from 'react-aria/mergeProps';
@@ -300,6 +301,8 @@ export const TokenField = forwardRef(function TokenField(
           announce(segment.text, 'assertive');
         }
       }
+
+      setState(value => value.withCaretPosition(end));
     }
   });
 
@@ -420,9 +423,12 @@ export const TokenField = forwardRef(function TokenField(
     }
   });
 
+  let DOMProps = filterDOMProps(props, {global: true});
+
   return (
     <div
       {...mergeProps(
+        DOMProps,
         renderProps,
         focusProps,
         focusableProps,
@@ -471,7 +477,7 @@ interface TokenRenderProps {
   isDisabled: boolean;
 }
 
-interface TokenProps extends RenderProps<TokenRenderProps, 'span'> {}
+export interface TokenProps extends RenderProps<TokenRenderProps, 'span'> {}
 
 export const Token = forwardRef(function Token(
   props: TokenProps,

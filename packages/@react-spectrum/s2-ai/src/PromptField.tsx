@@ -14,342 +14,64 @@ import {ActionButton} from '@react-spectrum/s2/ActionButton';
 import Attach from '@react-spectrum/s2/icons/Attach';
 import {Attachment, AttachmentList} from './AttachmentList';
 import {Autocomplete} from 'react-aria-components/Autocomplete';
-import {baseColor, css, iconStyle, style} from '@react-spectrum/s2/style' with {type: 'macro'};
-import Brand from '@react-spectrum/s2/icons/Brand';
+import {baseColor, css, style, StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Button} from '@react-spectrum/s2/Button';
 import {CenterBaseline} from '@react-spectrum/s2/CenterBaseline';
-import {
-  Collection,
-  Header,
-  Heading,
-  Menu,
-  MenuItem,
-  MenuSection,
-  MenuTrigger,
-  SubmenuTrigger
-} from '@react-spectrum/s2/Menu';
-import Data from '@react-spectrum/s2/icons/Data';
+import {createContext, createRef, useContext, useMemo, useRef, useState} from 'react';
 // eslint-disable-next-line
 import {
   Direction,
   TokenFieldSegment,
+  TokenSegment,
   TokenSegmentList
 } from '/packages/react-aria-components/src/TokenSegmentList';
 import {Group} from 'react-aria-components/Group';
+import {IconContext, mergeStyles, UnsafeStyles} from '@react-spectrum/s2';
 import {Image, Text} from '@react-spectrum/s2/Card';
 import {isFileDropItem, useDrop} from 'react-aria-components/useDrop';
 import {Link} from '@react-spectrum/s2/Link';
-import LinkIcon from '@react-spectrum/s2/icons/Link';
-import Plugin from '@react-spectrum/s2/icons/Plugin';
+import {Menu, MenuItem, MenuItemProps, MenuTrigger} from '@react-spectrum/s2/Menu';
 import Plus from '@react-spectrum/s2/icons/Add';
 import {Popover} from '@react-spectrum/s2/Popover';
 // eslint-disable-next-line
 import {
   positionToDOMRange,
   Token,
-  TokenField
+  TokenField,
+  TokenProps
 } from '/packages/react-aria-components/src/TokenField';
-import Prompt from '@react-spectrum/s2/icons/Prompt';
 import Send from '@react-spectrum/s2/icons/ArrowUpSend';
-import SocialNetwork from '@react-spectrum/s2/icons/SocialNetwork';
-import {useMemo, useRef, useState} from 'react';
-import UserGroup from '@react-spectrum/s2/icons/UserGroup';
+import Stop from '@react-spectrum/s2/icons/StopProcessing';
 
 interface Attachment {
   id: string;
+  file: File;
   image: string;
-  title: string;
-  description: string;
 }
 
-export function PromptField({
-  onSend,
-  isDisabled
-}: {
-  onSend?: (text: string) => void;
-  isDisabled?: boolean;
-}) {
-  let [value, setValue] = useState<TokenSegmentList>(new AutoLinkingSegmentList([]));
-  let [attachments, setAttachments] = useState<Attachment[]>([]);
-
-  // Not using RAC DropZone because it adds its own focusable button,
-  // and we want to avoid an extra tab stop by attaching to the input.
-  // TODO: support clipboard too (without messing up pasting text)
-  let inputRef = useRef<HTMLTextAreaElement>(null);
-  let {dropProps, isDropTarget} = useDrop({
-    ref: inputRef,
-    hasDropButton: true,
-    async onDrop(e) {
-      let files = await Promise.all(
-        e.items.filter(isFileDropItem).map(async item => ({
-          id: crypto.randomUUID(),
-          image: item.type.startsWith('image/') ? URL.createObjectURL(await item.getFile()) : '',
-          title: item.name,
-          description: item.type
-        }))
-      );
-      setAttachments(attachments => [...attachments, ...files]);
-    }
-  });
-
-  let onAction = (item: Item) => {
-    setValue(value =>
-      value.replaceRangeWithSegments(
-        value.caretPosition,
-        value.caretPosition,
-        [
-          {
-            type: 'token',
-            text: 'command' in item ? item.command : item.title,
-            value: item
-          },
-          {type: 'text', text: ' '}
-        ],
-        false // Don't coalesce in undo/redo history.
-      )
-    );
-
-    // Wait for popover animation
-    setTimeout(() => {
-      inputRef.current?.focus();
-    }, 400);
-  };
-
-  return (
-    <div>
-      <Group
-        {...dropProps}
-        role="group"
-        className={renderProps =>
-          style({
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 16,
-            padding: 16,
-            boxShadow: 'emphasized',
-            backgroundColor: {
-              default: 'elevated',
-              isDropTarget: 'blue-200'
-            },
-            borderRadius: 'lg',
-            borderWidth: 2,
-            borderStyle: 'solid',
-            borderColor: {
-              default: 'transparent',
-              isDropTarget: 'blue-800'
-            }
-          })({...renderProps, isDropTarget})
-        }>
-        {attachments.length > 0 && (
-          <AttachmentList
-            aria-label="Attachments"
-            onRemove={keys => {
-              setAttachments(attachments =>
-                attachments.filter(attachment => !keys.has(attachment.id))
-              );
-            }}
-            items={attachments}>
-            {attachment => (
-              <Attachment>
-                {attachment.image && <Image src={attachment.image} slot="thumbnail" />}
-                {/* <Content>
-                  <Text slot="title">{attachment.title}</Text>
-                  <Text slot="description">{attachment.description}</Text>
-                </Content> */}
-              </Attachment>
-            )}
-          </AttachmentList>
-        )}
-        <PromptTokenField
-          ref={inputRef}
-          value={value}
-          onChange={setValue}
-          onPaste={e => {
-            let clipboardData = e.clipboardData as DataTransfer;
-            for (let item of clipboardData.items) {
-              if (item.type.startsWith('image/')) {
-                let file = item.getAsFile()!;
-                let image = URL.createObjectURL(file);
-                setAttachments(attachments => [
-                  ...attachments,
-                  {id: crypto.randomUUID(), image, title: file.name, description: file.type}
-                ]);
-              }
-            }
-          }}
-        />
-        <div
-          className={style({
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginTop: 16
-          })}>
-          <MenuTrigger>
-            <ActionButton isQuiet aria-label="Add">
-              <Plus />
-            </ActionButton>
-            <Menu>
-              <MenuItem
-                onAction={() => {
-                  let input = document.createElement('input');
-                  input.type = 'file';
-                  input.accept = 'image/*';
-                  input.multiple = true;
-                  input.onchange = e => {
-                    let files = (e.currentTarget as HTMLInputElement).files;
-                    if (files) {
-                      setAttachments(attachments => [
-                        ...attachments,
-                        ...Array.from(files).map(file => ({
-                          id: crypto.randomUUID(),
-                          image: URL.createObjectURL(file),
-                          title: file.name,
-                          description: file.type
-                        }))
-                      ]);
-                    }
-                  };
-                  input.click();
-                }}>
-                <Attach />
-                <Text>Attach a file</Text>
-              </MenuItem>
-              <SubmenuTrigger>
-                <MenuItem>
-                  <Prompt />
-                  <Text>Commands</Text>
-                </MenuItem>
-                <Menu items={slashCommands.filter(item => item.type === 'command')}>
-                  {item => (
-                    <MenuItem id={item.command} onAction={() => onAction(item)}>
-                      <Text slot="label">{item.command}</Text>
-                      <Text slot="description">{item.description}</Text>
-                    </MenuItem>
-                  )}
-                </Menu>
-              </SubmenuTrigger>
-              <SubmenuTrigger>
-                <MenuItem>
-                  <Plugin />
-                  <Text>Skills</Text>
-                </MenuItem>
-                <Menu items={slashCommands.filter(item => item.type === 'skill')}>
-                  {item => (
-                    <MenuItem id={item.command} onAction={() => onAction(item)}>
-                      <Text slot="label">{item.command}</Text>
-                      <Text slot="description">{item.description}</Text>
-                    </MenuItem>
-                  )}
-                </Menu>
-              </SubmenuTrigger>
-              <SubmenuTrigger>
-                <MenuItem>
-                  <Data />
-                  <Text>Reference an object</Text>
-                </MenuItem>
-                <Menu items={objects}>
-                  {item => (
-                    <MenuSection>
-                      <Header>
-                        <Heading>{item.section}</Heading>
-                      </Header>
-                      <Collection items={item.items}>
-                        {item => (
-                          <MenuItem id={item.title} onAction={() => onAction(item)}>
-                            {item.title}
-                          </MenuItem>
-                        )}
-                      </Collection>
-                    </MenuSection>
-                  )}
-                </Menu>
-              </SubmenuTrigger>
-            </Menu>
-          </MenuTrigger>
-          <Button
-            variant="primary"
-            aria-label="Send"
-            isDisabled={isDisabled}
-            onPress={() => {
-              onSend?.(value.toString());
-              setValue(new AutoLinkingSegmentList([]));
-              inputRef.current?.focus();
-            }}>
-            <Send />
-          </Button>
-        </div>
-      </Group>
-      <p className={style({font: 'ui-sm', textAlign: 'center'})}>
-        Responses are generated using AI, and may be inaccurate. Check before using.{' '}
-        <Link
-          variant="secondary"
-          href="https://www.adobe.com/legal/licenses-terms/adobe-gen-ai-user-guidelines.html"
-          target="_blank">
-          AI User Guidelines
-        </Link>
-      </p>
-    </div>
-  );
+interface PromptFieldProps extends UnsafeStyles {
+  children: React.ReactNode;
+  acceptedAttachmentTypes?: string[];
+  onSubmit?: (prompt: TokenSegmentList, attachments: Attachment[]) => void;
+  isGenerating?: boolean;
+  onStop?: () => void;
+  // To trigger uploads??
+  onAddAttachments?: (attachments: Attachment[]) => void;
+  onRemoveAttachments?: (attachments: Attachment[]) => void;
+  styles?: StyleString;
 }
 
-const slashCommands = [
-  {
-    command: '/audience-explainer',
-    type: 'skill',
-    description: 'Explain an AEP audience in english'
-  },
-  {command: '/clear', type: 'command', description: 'Clear the context'},
-  {command: '/compact', type: 'command', description: 'Summarize conversation history'},
-  {command: '/dataset-usage', type: 'skill', description: 'Explain how to use a dataset'},
-  {command: '/plan', type: 'command', description: 'Create a plan before executing'},
-  {command: '/visual-artifact', type: 'skill', description: 'Generate a chart or graph'}
-];
-
-const icons = {
-  command: <Prompt styles={iconStyle({size: 'S'})} />,
-  skill: <Plugin styles={iconStyle({size: 'S'})} />,
-  audience: <UserGroup styles={iconStyle({size: 'S'})} />,
-  campaign: <Brand styles={iconStyle({size: 'S'})} />,
-  journey: <SocialNetwork styles={iconStyle({size: 'S'})} />,
-  url: <LinkIcon styles={iconStyle({size: 'S'})} />
-} as const;
-
-const objects = [
-  {
-    section: 'Audiences',
-    items: [
-      {type: 'audience', title: 'New Customers'},
-      {type: 'audience', title: 'Returning Customers'},
-      {type: 'audience', title: 'Loyal Customers'},
-      {type: 'audience', title: 'High-Value Customers'},
-      {type: 'audience', title: 'Low-Value Customers'}
-    ]
-  },
-  {
-    section: 'Campaigns',
-    items: [
-      {type: 'campaign', title: 'Spring Launch 2026'},
-      {type: 'campaign', title: 'Holiday Cheer'},
-      {type: 'campaign', title: 'Back to School'},
-      {type: 'campaign', title: 'Summer Adventure'},
-      {type: 'campaign', title: 'Tech Trends Expo'}
-    ]
-  },
-  {
-    section: 'Journeys',
-    items: [
-      {type: 'journey', title: 'Welcome Flow'},
-      {type: 'journey', title: 'Abandoned Cart Recovery'},
-      {type: 'journey', title: 'Post-Purchase Follow-up'},
-      {type: 'journey', title: 'Re-engagement Campaign'},
-      {type: 'journey', title: 'Birthday Surprise Journey'}
-    ]
-  }
-];
-
-type CommandOrSection = (typeof slashCommands)[number] | (typeof objects)[number];
-type Item = (typeof slashCommands)[number] | (typeof objects)[number]['items'][number];
+interface PromptFieldState {
+  attachments: Attachment[];
+  setAttachments: React.Dispatch<React.SetStateAction<Attachment[]>>;
+  acceptedAttachmentTypes?: string[];
+  prompt: TokenSegmentList;
+  setPrompt: React.Dispatch<React.SetStateAction<TokenSegmentList>>;
+  inputRef: React.RefObject<HTMLDivElement | null>;
+  onSubmit?: () => void;
+  onStop?: () => void;
+  isGenerating: boolean;
+}
 
 const tokenRegex = /(?<=\s|^)(https?:\/\/)?(www\.)?([^/\s]+\.[a-z]{2,}(\/\S+)?)(?=\s)/g;
 class AutoLinkingSegmentList extends TokenSegmentList {
@@ -379,41 +101,187 @@ class AutoLinkingSegmentList extends TokenSegmentList {
   }
 }
 
-function PromptTokenField(props) {
-  let {value, onChange, ref: inputRef} = props;
+const PromptFieldContext = createContext<PromptFieldState>({
+  attachments: [],
+  setAttachments: () => {},
+  prompt: new AutoLinkingSegmentList([]),
+  setPrompt: () => {},
+  inputRef: createRef(),
+  isGenerating: false
+});
+
+function matchMimeType(mimeType: string, acceptedMimeTypes: string[]): boolean {
+  return acceptedMimeTypes.some(type => {
+    if (type === '*/*') {
+      return true;
+    }
+    if (type.endsWith('/*')) {
+      return mimeType.startsWith(type.slice(0, -2));
+    }
+    return mimeType === type;
+  });
+}
+
+export function PromptField(props: PromptFieldProps) {
+  let {
+    children,
+    acceptedAttachmentTypes,
+    isGenerating,
+    onStop,
+    UNSAFE_className = '',
+    UNSAFE_style,
+    styles
+  } = props;
+  let [prompt, setPrompt] = useState<TokenSegmentList>(new AutoLinkingSegmentList([]));
+  let [attachments, setAttachments] = useState<Attachment[]>([]);
+
+  // Not using RAC DropZone because it adds its own focusable button,
+  // and we want to avoid an extra tab. We support pasting files directly into the input.
+  let inputRef = useRef<HTMLDivElement>(null);
+  let {dropProps, isDropTarget} = useDrop({
+    ref: inputRef,
+    hasDropButton: true,
+    isDisabled: !acceptedAttachmentTypes,
+    getDropOperation(types) {
+      return acceptedAttachmentTypes && types.has(acceptedAttachmentTypes) ? 'copy' : 'cancel';
+    },
+    async onDrop(e) {
+      let files = await Promise.all(
+        e.items
+          .filter(isFileDropItem)
+          .filter(item => matchMimeType(item.type, acceptedAttachmentTypes!))
+          .map(async item => ({
+            id: crypto.randomUUID(),
+            file: await item.getFile(),
+            image: item.type.startsWith('image/') ? URL.createObjectURL(await item.getFile()) : ''
+          }))
+      );
+      setAttachments(attachments => [...attachments, ...files]);
+    }
+  });
+
+  let onSubmit = () => {
+    if (prompt.segments.length === 0) {
+      return;
+    }
+
+    props.onSubmit?.(prompt, attachments);
+    setPrompt(new AutoLinkingSegmentList([]));
+    inputRef.current?.focus();
+  };
+
+  return (
+    <PromptFieldContext.Provider
+      value={{
+        attachments,
+        setAttachments,
+        acceptedAttachmentTypes,
+        prompt,
+        setPrompt,
+        inputRef,
+        onSubmit,
+        isGenerating: isGenerating ?? false,
+        onStop
+      }}>
+      <div>
+        <Group
+          {...dropProps}
+          role="group"
+          style={UNSAFE_style}
+          className={renderProps =>
+            UNSAFE_className +
+            mergeStyles(
+              style({
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 16,
+                padding: 16,
+                boxShadow: 'emphasized',
+                backgroundColor: {
+                  default: 'elevated',
+                  isDropTarget: 'blue-200'
+                },
+                borderRadius: 'lg',
+                borderWidth: 2,
+                borderStyle: 'solid',
+                borderColor: {
+                  default: 'transparent',
+                  isDropTarget: 'blue-800'
+                }
+              })({...renderProps, isDropTarget}),
+              styles
+            )
+          }>
+          {children}
+        </Group>
+        <p className={style({font: 'ui-sm', textAlign: 'center'})}>
+          Responses are generated using AI, and may be inaccurate. Check before using.{' '}
+          <Link
+            variant="secondary"
+            href="https://www.adobe.com/legal/licenses-terms/adobe-gen-ai-user-guidelines.html"
+            target="_blank">
+            AI User Guidelines
+          </Link>
+        </p>
+      </div>
+    </PromptFieldContext.Provider>
+  );
+}
+
+interface PromptFieldAttachmentListProps {
+  children?: (attachment: Attachment) => React.ReactNode;
+}
+
+export function PromptFieldAttachmentList(props: PromptFieldAttachmentListProps) {
+  let {children} = props;
+  let {attachments, setAttachments} = useContext(PromptFieldContext);
+  if (attachments.length === 0) {
+    return null;
+  }
+
+  return (
+    <AttachmentList
+      aria-label="Attachments"
+      onRemove={keys => {
+        setAttachments(attachments => attachments.filter(attachment => !keys.has(attachment.id)));
+      }}
+      items={attachments}>
+      {children ||
+        (attachment => (
+          <Attachment>
+            {attachment.image && <Image src={attachment.image} slot="thumbnail" />}
+          </Attachment>
+        ))}
+    </AttachmentList>
+  );
+}
+
+interface PromptTokenFieldProps {
+  renderCompletions?: (filterValue: string) => React.ReactNode[] | null;
+  children?: (segment: TokenSegment) => React.ReactElement;
+}
+
+export function PromptTokenField(props: PromptTokenFieldProps) {
+  let {renderCompletions, children} = props;
+  let {prompt, setPrompt, acceptedAttachmentTypes, setAttachments, inputRef, onSubmit} =
+    useContext(PromptFieldContext);
+  let [isFocused, setFocused] = useState(false);
 
   let [filterAnchor, filterValue] = useMemo(() => {
-    let filterAnchor = value.findText(value.caretPosition, Direction.Backward, /(?<=^|\s)[@/]/);
+    let filterAnchor = prompt.findText(prompt.caretPosition, Direction.Backward, /(?<=^|\s)[@/]/);
     if (filterAnchor != null) {
-      let filterValue = value.slice(filterAnchor, value.caretPosition).toString();
+      let filterValue = prompt.slice(filterAnchor, prompt.caretPosition).toString();
       return [filterAnchor, filterValue];
     }
     return [null, null];
-  }, [value]);
+  }, [prompt]);
 
-  let items: CommandOrSection[] = [];
-  if (filterValue != null && filterValue.startsWith('/')) {
-    items = slashCommands.filter(item => item.command.includes(filterValue.slice(1)));
-  } else if (filterValue != null && filterValue.startsWith('@')) {
-    items = objects
-      .map(section => {
-        let matchingItems = section.items.filter(item =>
-          item.title.toLowerCase().includes(filterValue.slice(1).toLowerCase())
-        );
-        if (matchingItems.length > 0) {
-          return {
-            section: section.section,
-            items: matchingItems
-          };
-        } else {
-          return null;
-        }
-      })
-      .filter(v => v != null);
-  }
+  let items = useMemo(() => {
+    return filterValue != null ? renderCompletions?.(filterValue) : null;
+  }, [filterValue, renderCompletions]);
 
-  let onAction = (item: Item) => {
-    onChange(value =>
+  let onAction = (item: any) => {
+    setPrompt(value =>
       value.replaceRangeWithSegments(
         filterAnchor!,
         value.caretPosition,
@@ -430,19 +298,56 @@ function PromptTokenField(props) {
     );
   };
 
+  let isOpen = isFocused && filterAnchor != null && items != null && items.length > 0;
+
+  // Cache items so that popover content doesn't flicker to empty while animating out
+  let [menuItems, setMenuItems] = useState(items);
+  if (items !== menuItems && items != null && items.length > 0) {
+    setMenuItems(items);
+  }
+
   return (
     <Autocomplete>
       <TokenField
-        value={value}
-        onChange={onChange}
+        value={prompt}
+        onChange={setPrompt}
         multiline
         aria-label="Prompt"
+        data-placeholder="Ready to get started? Ask a question, share an idea, or add a task."
         ref={inputRef}
-        onPaste={props.onPaste}
+        onFocus={e => {
+          if (e.isTrusted) {
+            setFocused(true);
+          }
+        }}
+        onBlur={e => {
+          if (e.isTrusted) {
+            setFocused(false);
+          }
+        }}
+        onPaste={
+          acceptedAttachmentTypes
+            ? e => {
+                let clipboardData = e.clipboardData as DataTransfer;
+                for (let item of clipboardData.items) {
+                  if (matchMimeType(item.type, acceptedAttachmentTypes)) {
+                    let file = item.getAsFile()!;
+                    setAttachments(attachments => [
+                      ...attachments,
+                      {
+                        id: crypto.randomUUID(),
+                        file,
+                        image: file.type.startsWith('image/') ? URL.createObjectURL(file) : ''
+                      }
+                    ]);
+                  }
+                }
+              }
+            : undefined
+        }
+        onSubmit={onSubmit}
         className={renderProps =>
-          css(
-            '&:empty::before { content: "Ready to get started? Ask a question, share an idea, or add a task."; }'
-          ) +
+          css('&:empty::before { content: attr(data-placeholder); }') +
           style({
             font: 'body',
             color: {
@@ -457,75 +362,165 @@ function PromptTokenField(props) {
             cursor: 'text'
           })(renderProps)
         }>
-        {segment => (
-          <Token
-            className={style({
-              backgroundColor: {
-                default: 'blue-300',
-                isSelected: 'blue-900',
-                '::selection': 'transparent'
-              },
-              color: {
-                default: 'blue-1000',
-                isSelected: 'white'
-              },
-              borderRadius: 'sm',
-              paddingX: 4,
-              paddingY: 2,
-              lineHeight: '[1em]',
-              cursor: 'default',
-              '--iconPrimary': {
-                type: 'fill',
-                value: 'currentColor'
-              },
-              display: 'inline-flex',
-              alignItems: 'baseline',
-              gap: 4,
-              verticalAlign: 'baseline'
-            })}>
-            <CenterBaseline>{icons[segment.value?.type]}</CenterBaseline>
-            {segment.text}
-          </Token>
-        )}
+        {children || (segment => <PromptToken>{segment.text}</PromptToken>)}
       </TokenField>
       <Popover
         triggerRef={inputRef}
-        isOpen={filterAnchor != null && items.length > 0}
+        isOpen={isOpen}
         isNonModal
         hideArrow
         placement="bottom start"
         getTargetRect={target => {
           return positionToDOMRange(target, filterAnchor!).getBoundingClientRect();
         }}>
-        <Menu items={items} dependencies={[onAction]}>
-          {item => {
-            if ('command' in item) {
-              return (
-                <MenuItem id={item.command} onAction={() => onAction(item)}>
-                  {item.type === 'skill' ? <Plugin /> : <Prompt />}
-                  <Text slot="label">{item.command}</Text>
-                  <Text slot="description">{item.description}</Text>
-                </MenuItem>
-              );
-            } else {
-              return (
-                <MenuSection>
-                  <Header>
-                    <Heading>{item.section}</Heading>
-                  </Header>
-                  <Collection items={item.items} dependencies={[onAction]}>
-                    {item => (
-                      <MenuItem id={item.title} onAction={() => onAction(item)}>
-                        {item.title}
-                      </MenuItem>
-                    )}
-                  </Collection>
-                </MenuSection>
-              );
-            }
-          }}
-        </Menu>
+        <Menu onAction={(key, value) => onAction(value)}>{menuItems}</Menu>
       </Popover>
     </Autocomplete>
   );
+}
+
+export interface PromptTokenProps extends Omit<TokenProps, 'children'> {
+  children: React.ReactNode;
+}
+
+export function PromptToken(props: PromptTokenProps) {
+  return (
+    <Token
+      {...props}
+      className={style({
+        backgroundColor: {
+          default: 'blue-300',
+          isSelected: 'blue-800',
+          '::selection': 'transparent'
+        },
+        color: {
+          default: 'blue-1000',
+          isSelected: 'white'
+        },
+        borderRadius: 'sm',
+        paddingX: 4,
+        paddingY: 2,
+        lineHeight: '[1em]',
+        cursor: 'default',
+        '--iconPrimary': {
+          type: 'fill',
+          value: 'currentColor'
+        },
+        display: 'inline-flex',
+        alignItems: 'baseline',
+        gap: 4,
+        verticalAlign: 'baseline'
+      })}>
+      <IconContext.Provider value={{render: icon => <CenterBaseline>{icon}</CenterBaseline>}}>
+        {props.children}
+      </IconContext.Provider>
+    </Token>
+  );
+}
+
+interface PromptFieldToolbarProps {
+  children: React.ReactNode;
+}
+
+export function PromptFieldToolbar(props: PromptFieldToolbarProps) {
+  let {children} = props;
+  return (
+    <div
+      className={style({
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginTop: 16
+      })}>
+      {children}
+    </div>
+  );
+}
+
+export function PromptFieldSubmitButton() {
+  let {isGenerating, onSubmit, onStop} = useContext(PromptFieldContext);
+  return (
+    <Button
+      variant="primary"
+      aria-label={isGenerating ? 'Stop' : 'Send'}
+      onPress={isGenerating ? onStop : onSubmit}>
+      {isGenerating ? <Stop /> : <Send />}
+    </Button>
+  );
+}
+
+interface InsertMenuItemProps {
+  children: React.ReactNode;
+}
+
+export function InsertMenuButton(props: InsertMenuItemProps) {
+  let {children} = props;
+  return (
+    <MenuTrigger>
+      <ActionButton isQuiet aria-label="Add">
+        <Plus />
+      </ActionButton>
+      <Menu>{children}</Menu>
+    </MenuTrigger>
+  );
+}
+
+export function AttachFileMenuItem() {
+  let {acceptedAttachmentTypes, setAttachments} = useContext(PromptFieldContext);
+  return (
+    <MenuItem
+      onAction={() => {
+        let input = document.createElement('input');
+        input.type = 'file';
+        input.accept = 'image/*';
+        input.multiple = true;
+        input.onchange = e => {
+          let files = (e.currentTarget as HTMLInputElement).files;
+          if (files && acceptedAttachmentTypes) {
+            setAttachments(attachments => [
+              ...attachments,
+              ...Array.from(files)
+                .filter(file => matchMimeType(file.type, acceptedAttachmentTypes))
+                .map(file => ({
+                  id: crypto.randomUUID(),
+                  file,
+                  image: file.type.startsWith('image/') ? URL.createObjectURL(file) : ''
+                }))
+            ]);
+          }
+        };
+        input.click();
+      }}>
+      <Attach />
+      <Text>Attach a file</Text>
+    </MenuItem>
+  );
+}
+
+export function InsertTokenMenuItem(props: MenuItemProps) {
+  let {setPrompt, inputRef} = useContext(PromptFieldContext);
+  let onAction = (item: any) => {
+    setPrompt(value =>
+      value.replaceRangeWithSegments(
+        value.caretPosition,
+        value.caretPosition,
+        [
+          {
+            type: 'token',
+            text: 'command' in item ? item.command : item.title,
+            value: item
+          },
+          {type: 'text', text: ' '}
+        ],
+        false // Don't coalesce in undo/redo history.
+      )
+    );
+
+    // Wait for popover animation
+    setTimeout(() => {
+      inputRef.current?.focus();
+    }, 400);
+  };
+
+  return <MenuItem {...props} onAction={() => onAction(props.value)} />;
 }
