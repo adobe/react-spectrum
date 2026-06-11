@@ -549,6 +549,7 @@ const listRowBackground = style<
     isNextNotSelected?: boolean;
     selectionStyle?: 'highlight' | 'checkbox';
     isDropTarget?: boolean;
+    isNotSelected?: boolean;
   }
 >({
   position: 'absolute',
@@ -612,56 +613,40 @@ const listRowBackground = style<
     isQuiet: 'default',
     isSelected: 'none',
     isPrevNotSelected: {
-      isSelected: {
-        selectionStyle: {
-          checkbox: 'none',
-          highlight: insetBorderRadius
-        }
-      },
+      isSelected: insetBorderRadius,
       isQuiet: 'default'
     },
+    isNotSelected: insetBorderRadius,
     isDropTarget: insetBorderRadius
   },
   borderTopEndRadius: {
     isQuiet: 'default',
     isSelected: 'none',
     isPrevNotSelected: {
-      isSelected: {
-        selectionStyle: {
-          checkbox: 'none',
-          highlight: insetBorderRadius
-        }
-      },
+      isSelected: insetBorderRadius,
       isQuiet: 'default'
     },
-    isDropTarget: insetBorderRadius
+    isNotSelected: insetBorderRadius,
+    isDropTarget: insetBorderRadius,
   },
   borderBottomStartRadius: {
     isQuiet: 'default',
     isSelected: 'none',
     isNextNotSelected: {
-      isSelected: {
-        selectionStyle: {
-          checkbox: 'none',
-          highlight: insetBorderRadius
-        }
-      },
+      isSelected: insetBorderRadius,
       isQuiet: 'default'
     },
+    isNotSelected: insetBorderRadius,
     isDropTarget: insetBorderRadius
   },
   borderBottomEndRadius: {
     isQuiet: 'default',
     isSelected: 'none',
     isNextNotSelected: {
-      isSelected: {
-        selectionStyle: {
-          checkbox: 'none',
-          highlight: insetBorderRadius
-        }
-      },
+      isSelected: insetBorderRadius,
       isQuiet: 'default'
     },
+    isNotSelected: insetBorderRadius,
     isDropTarget: insetBorderRadius
   },
   borderTopWidth: {
@@ -965,7 +950,8 @@ export function ListViewItem(props: ListViewItemProps): ReactNode {
                   isPrevNotSelected: !isPrevSelected(id, state),
                   isNextNotSelected: !isNextSelected(id, state),
                   isFirstItem: isFirstItem(id, state),
-                  isLastItem: isLastItem(id, state)
+                  isLastItem: isLastItem(id, state),
+                  isNotSelected: !renderProps.isSelected
                 })}
               />
               {renderProps.isFocusVisible && (
