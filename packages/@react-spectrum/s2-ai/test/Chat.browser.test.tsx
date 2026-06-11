@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
+import {Chat, Thread, ThreadItem} from '../src/Chat';
 import {describe, expect, it} from 'vitest';
 import React from 'react';
 import {render} from 'vitest-browser-react';
-import {Thread, ThreadItem, ThreadList} from '../src/Thread';
 import {userEvent} from '@vitest/browser/context';
 
 interface Message {
@@ -31,11 +31,11 @@ describe('Thread browser', () => {
       ];
 
       let {container} = await render(
-        <Thread>
-          <ThreadList focusOnEntry="first" items={[...messages].reverse()} aria-label="Chat">
+        <Chat>
+          <Thread UNSTABLE_focusonEntry="first" items={[...messages].reverse()} aria-label="Chat">
             {(item: Message) => <ThreadItem textValue={item.text}>{item.text}</ThreadItem>}
-          </ThreadList>
-        </Thread>
+          </Thread>
+        </Chat>
       );
 
       let gridlist = container.querySelector('[role=grid]') as HTMLElement;

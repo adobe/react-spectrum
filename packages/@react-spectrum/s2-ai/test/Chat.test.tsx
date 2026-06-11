@@ -15,8 +15,8 @@ jest.mock('react-aria/src/live-announcer/LiveAnnouncer');
 import {act, fireEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import {announce} from 'react-aria/private/live-announcer/LiveAnnouncer';
 import {Button, Input, TextField} from 'react-aria-components';
+import {Chat, Thread, ThreadItem, ThreadScrollButton} from '../src/Chat';
 import React from 'react';
-import {Thread, ThreadItem, ThreadList, ThreadScrollButton} from '../src/Thread';
 import userEvent from '@testing-library/user-event';
 
 interface Message {
@@ -27,33 +27,33 @@ interface Message {
 
 function TestThread({
   messages,
-  focusOnEntry
+  UNSTABLE_focusonEntry
 }: {
   messages: Message[];
-  focusOnEntry?: 'first' | 'last';
+  UNSTABLE_focusonEntry?: 'first' | 'last';
 }) {
   return (
-    <Thread>
+    <Chat>
       <ThreadScrollButton>
         <Button slot="scroll">Scroll to bottom</Button>
       </ThreadScrollButton>
-      <ThreadList items={messages} aria-label="Chat" focusOnEntry={focusOnEntry}>
+      <Thread items={messages} aria-label="Chat" UNSTABLE_focusonEntry={UNSTABLE_focusonEntry}>
         {(item: Message) => (
           <ThreadItem textValue={item.text} isStreaming={item.isStreaming}>
             {item.text}
           </ThreadItem>
         )}
-      </ThreadList>
+      </Thread>
       <TextField slot="prompt" aria-label="Prompt input">
         <Input />
       </TextField>
-    </Thread>
+    </Chat>
   );
 }
 
 let mockAnnounce = announce as jest.MockedFunction<typeof announce>;
 
-describe('Thread', () => {
+describe('Chat', () => {
   let user;
 
   beforeAll(() => {
@@ -245,10 +245,10 @@ describe('Thread', () => {
   });
 
   describe('focus behavior', () => {
-    it('focuses the first item in the list when tabbing in if focusOnEntry="first"', async () => {
+    it('focuses the first item in the list when tabbing in if UNSTABLE_focusonEntry="first"', async () => {
       let {getByRole} = render(
         <TestThread
-          focusOnEntry="first"
+          UNSTABLE_focusonEntry="first"
           messages={[
             {id: '1', text: 'Hello'},
             {id: '2', text: 'World'}
@@ -273,10 +273,10 @@ describe('Thread', () => {
       expect(document.activeElement).toBe(rows[0]);
     });
 
-    it('focuses the last item in the list when tabbing in if focusOnEntry="last"', async () => {
+    it('focuses the last item in the list when tabbing in if UNSTABLE_focusonEntry="last"', async () => {
       let {getByRole} = render(
         <TestThread
-          focusOnEntry="last"
+          UNSTABLE_focusonEntry="last"
           messages={[
             {id: '1', text: 'Hello'},
             {id: '2', text: 'World'}

@@ -210,7 +210,7 @@ export interface GridListProps<T>
    *
    * @private
    */
-  focusOnEntry?: 'first' | 'last';
+  UNSTABLE_focusonEntry?: 'first' | 'last';
 }
 
 export const GridListContext =
@@ -242,9 +242,14 @@ interface GridListInnerProps<T> {
 
 function GridListInner<T>({props, collection, gridListRef: ref}: GridListInnerProps<T>) {
   [props, ref] = useContextProps(props, ref, SelectableCollectionContext);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  let {shouldUseVirtualFocus, filter, disallowTypeAhead, focusOnEntry, ...DOMCollectionProps} =
-    props;
+  let {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    shouldUseVirtualFocus,
+    filter,
+    disallowTypeAhead,
+    UNSTABLE_focusonEntry,
+    ...DOMCollectionProps
+  } = props;
   let {
     dragAndDropHooks,
     keyboardNavigationBehavior = 'arrow',
@@ -303,7 +308,7 @@ function GridListInner<T>({props, collection, gridListRef: ref}: GridListInnerPr
       isVirtualized,
       shouldSelectOnPressUp: props.shouldSelectOnPressUp,
       disallowTypeAhead,
-      focusOnEntry
+      UNSTABLE_focusonEntry
     },
     filteredState,
     ref

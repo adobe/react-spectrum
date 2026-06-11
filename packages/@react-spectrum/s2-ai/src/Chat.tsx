@@ -36,14 +36,14 @@ import {TextFieldContext} from 'react-aria-components/TextField';
 import {useDOMRef} from './useDOMRef';
 import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
 
-interface InternalThreadContextValue {
+interface InternalChatContextValue {
   announceItem: (text: string) => void;
   setGridListFocused: (isFocused: boolean) => void;
   setIsNearBottom: (isNear: boolean) => void;
   setScrollElement: (element: HTMLElement | null) => void;
 }
 
-const InternalThreadContext = createContext<InternalThreadContextValue>({
+const InternalChatContext = createContext<InternalChatContextValue>({
   announceItem: text => announce(text, 'polite'),
   setGridListFocused: () => {},
   setIsNearBottom: () => {},
@@ -61,7 +61,7 @@ const ThreadScrollButtonContext = createContext<ThreadScrollButtonContextValue>(
 });
 
 // TODO: make this more RAC like (aka default class name and other RAC prop)
-interface ThreadProps {
+interface ChatProps {
   className?: string;
   style?: CSSProperties;
   children?: ReactNode;
@@ -69,8 +69,8 @@ interface ThreadProps {
 
 // TODO: tabbing is a bit broken as well since we hit the child elements of the gridlist rows in opposite order... This seems to be due to the
 // tabIndex = 0 of the ToggleButtons in the ToggleButtonGroup
-export const Thread = /*#__PURE__*/ (forwardRef as forwardRefType)(function Thread(
-  props: ThreadProps,
+export const Chat = /*#__PURE__*/ (forwardRef as forwardRefType)(function Chat(
+  props: ChatProps,
   ref: DOMRef<HTMLDivElement>
 ) {
   let {children, className, style} = props;
@@ -102,7 +102,7 @@ export const Thread = /*#__PURE__*/ (forwardRef as forwardRefType)(function Thre
   let [isNearBottom, setIsNearBottom] = useState(true);
 
   // only announce new items if user is in the prompt field, otherwise if they
-  // are in the thread only announce there are new responses. If not in thread, don't announce
+  // are outside the field, only announce there are new responses. If not in chat at all, don't announce
   let announceItem = useCallback((text: string) => {
     if (isGridListFocusedRef.current) {
       // TODO: ideally announce number of new messages, but only count system messages? maybe threaditem needs
@@ -146,7 +146,7 @@ export const Thread = /*#__PURE__*/ (forwardRef as forwardRefType)(function Thre
     <Provider
       values={[
         [
-          InternalThreadContext,
+          InternalChatContext,
           {announceItem, setGridListFocused, setIsNearBottom, setScrollElement}
         ],
         [ThreadScrollButtonContext, {isNearBottom, scrollToBottom}],
@@ -172,22 +172,22 @@ export const Thread = /*#__PURE__*/ (forwardRef as forwardRefType)(function Thre
 });
 
 // TODO: update the items/className/children/etc type to reflect a thread specific classname once we finalize API
-interface ThreadListProps<T extends object> extends Pick<
+interface ThreadProps<T extends object> extends Pick<
   GridListProps<T>,
-  'items' | 'children' | 'focusOnEntry' | 'aria-label' | 'aria-labelledby' | 'className'
+  'items' | 'children' | 'UNSTABLE_focusonEntry' | 'aria-label' | 'aria-labelledby' | 'className'
 > {}
 
-export function ThreadList<T extends object>(props: ThreadListProps<T>) {
+export function Thread<T extends object>(props: ThreadProps<T>) {
   let {
     items,
     children,
     className,
-    focusOnEntry,
+    UNSTABLE_focusonEntry,
     'aria-label': ariaLabel,
     'aria-labelledby': ariaLabelledby
   } = props;
 
-  let {setGridListFocused, setIsNearBottom, setScrollElement} = useContext(InternalThreadContext);
+  let {setGridListFocused, setIsNearBottom, setScrollElement} = useContext(InternalChatContext);
   let isNearBottomRef = useRef(true);
   let gridListRef = useRef<HTMLDivElement | null>(null);
 
@@ -252,7 +252,7 @@ export function ThreadList<T extends object>(props: ThreadListProps<T>) {
       disallowTypeAhead
       onScroll={handleScroll}
       keyboardNavigationBehavior="tab"
-      focusOnEntry={focusOnEntry}
+      UNSTABLE_focusonEntry={UNSTABLE_focusonEntry}
       items={items}
       aria-label={ariaLabel}
       aria-labelledby={ariaLabelledby}
@@ -295,7 +295,7 @@ interface ThreadItemProps extends Pick<GridListItemProps, 'className' | 'childre
 
 export function ThreadItem(props: ThreadItemProps) {
   let {className, children, textValue = ' ', isStreaming, shouldAnnounceOnMount} = props;
-  let {announceItem} = useContext(InternalThreadContext);
+  let {announceItem} = useContext(InternalChatContext);
 
   // TODO: using aria-live on the gridlist item was pretty chatty and the streaming causes the text announcement
   // to constantly reset. If we used a live region and updated its contents when streaming finished that worked decently
