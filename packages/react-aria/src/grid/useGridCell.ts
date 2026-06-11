@@ -130,7 +130,9 @@ export function useGridCell<T, C extends GridCollection<T>>(
     isDisabled: state.collection.size === 0
   });
 
-  // TODO: move away from capturing
+  // TODO: decide move away from capturing. We may not want to because it
+  // prevents events from reaching content of cells, which can't have interactive children anyways.
+  // So by preventing them, users are alerted to the fact that this isn't an allowed pattern.
   let onKeyDownCapture = (e: ReactKeyboardEvent) => {
     let activeElement = getActiveElement();
     if (
