@@ -16,7 +16,9 @@ import {Checkbox, CheckboxProps} from '../src/Checkbox';
 import {classNames} from '@adobe/react-spectrum/private/utils/classNames';
 import {Collection} from 'react-aria/Collection';
 import {ComboBox} from '../src/ComboBox';
+import {createPortal} from 'react-dom';
 import {DroppableCollectionReorderEvent, Key} from '@react-types/shared';
+import {enableShadowDOM} from 'react-stately/private/flags/flags';
 import {Input} from '../src/Input';
 import {isTextDropItem, useDragAndDrop} from '../exports/useDragAndDrop';
 import {ListBox} from '../src/ListBox';
@@ -25,7 +27,7 @@ import {Menu, MenuItem, MenuTrigger} from '../src/Menu';
 import {Meta, StoryFn, StoryObj} from '@storybook/react';
 import {MyListBoxItem, MyMenuItem} from './utils';
 import {Popover} from '../src/Popover';
-import React, {JSX, ReactNode, useCallback, useState} from 'react';
+import React, {JSX, ReactNode, useCallback, useRef, useState} from 'react';
 import styles from '../example/index.css';
 import {Text} from '../src/Text';
 import {TextField} from '../src/TextField';
@@ -49,7 +51,7 @@ import './styles.css';
 export default {
   title: 'React Aria Components/Tree',
   component: Tree,
-  excludeStories: ['TreeExampleStaticRender', 'TreeWithTextField']
+  excludeStories: ['TreeExampleStaticRender', 'TreeWithTextField', 'VirtualizedTreeInShadowDOM']
 } as Meta<typeof Tree>;
 
 export type TreeStory = StoryFn<typeof Tree>;
@@ -1957,4 +1959,91 @@ export const TreeWithTextFieldStory: StoryObj<typeof TreeWithTextField> = {
     }
   },
   name: 'Tree with Textfield'
+};
+
+export function VirtualizedTreeInShadowDOM(props: TreeProps<ITreeItem>) {
+  enableShadowDOM();
+  const [portalNode] = useState<HTMLElement>(() => document.createElement('div'));
+  const onMountCleanup = useRef<null | (() => void)>(null);
+  const onMount = useCallback(
+    (mountPoint: HTMLDivElement | null) => {
+      onMountCleanup.current?.();
+      onMountCleanup.current = null;
+      if (mountPoint) {
+        /** ShadowRoot may already exist if React strict mode has run this callback twice. */
+        const shadowRoot = mountPoint.shadowRoot || mountPoint.attachShadow({mode: 'open'});
+
+        /**
+         * CSS does not cross the shadow boundary, so the styles Parcel injects into the
+         * document head never reach the portaled content. Copy the already-processed
+         * style nodes (with their hashed CSS-module selectors intact) into the shadow root
+         * so the tree renders with the same styling as the light-DOM stories.
+         */
+        const styleClones = Array.from(
+          document.head.querySelectorAll('style, link[rel="stylesheet"]')
+        ).map(node => node.cloneNode(true) as HTMLElement);
+        styleClones.forEach(clone => shadowRoot.appendChild(clone));
+
+        shadowRoot.appendChild(portalNode);
+
+        onMountCleanup.current = () => {
+          styleClones.forEach(clone => shadowRoot.removeChild(clone));
+          shadowRoot.removeChild(portalNode);
+        };
+      }
+    },
+    [portalNode]
+  );
+  return (
+    <>
+      <div ref={onMount} />
+      {createPortal(
+        <div
+          style={{
+            fontFamily: 'sans-serif',
+            padding: 16,
+            display: 'grid',
+            gap: 16
+          }}>
+          <p style={{margin: 0, fontSize: 13, color: '#c00'}}>Rendered inside a shadow root.</p>
+
+          <div>
+            <strong>+Tree + Virtualizer</strong>
+            <Virtualizer layout={ListLayout}>
+              <TreeExampleDynamicRender {...props} />
+            </Virtualizer>
+          </div>
+        </div>,
+        portalNode
+      )}
+    </>
+  );
+}
+export const VirtualizedTreeInShadowDOMStory: StoryObj<typeof VirtualizedTreeInShadowDOM> = {
+  render: args => <VirtualizedTreeInShadowDOM {...args} />,
+  args: {
+    selectionMode: 'none',
+    selectionBehavior: 'toggle',
+    disabledBehavior: 'selection',
+    items: treeData
+  },
+  argTypes: {
+    keyboardNavigationBehavior: {
+      control: 'radio',
+      options: ['arrow', 'tab']
+    },
+    selectionMode: {
+      control: 'radio',
+      options: ['none', 'single', 'multiple']
+    },
+    selectionBehavior: {
+      control: 'radio',
+      options: ['toggle', 'replace']
+    },
+    disabledBehavior: {
+      control: 'radio',
+      options: ['selection', 'all']
+    }
+  },
+  name: 'Virtualized Tree in Shadow DOM'
 };

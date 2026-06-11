@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-// @ts-ignore
+import {addEvent} from '../utils/domHelpers';
 import {flushSync} from 'react-dom';
-import {getEventTarget, nodeContains} from '../utils/shadowdom/DOMFunctions';
+import {getEventTarget, getPropagationTargets, nodeContains} from '../utils/shadowdom/DOMFunctions';
 import {getScrollLeft} from './utils';
 import {Point, Rect, Size} from 'react-stately/useVirtualizerState';
 import React, {
@@ -220,9 +220,8 @@ export function useScrollView(
 
   // Attach a document-level capturing scroll listener so we can account for scrollable ancestors.
   useEffect(() => {
-    document.addEventListener('scroll', onScroll, true);
-    return () => document.removeEventListener('scroll', onScroll, true);
-  }, [onScroll]);
+    return addEvent(getPropagationTargets(ref.current), 'scroll', onScroll, true);
+  }, [onScroll, ref]);
 
   useEffect(() => {
     return () => {

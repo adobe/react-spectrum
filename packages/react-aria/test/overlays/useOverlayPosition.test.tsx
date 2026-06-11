@@ -245,11 +245,11 @@ describe('useOverlayPosition', function () {
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 
-  it('should close the overlay when target is window in a scroll event', function () {
+  it('should close the overlay when the page scrolls', function () {
     let onClose = jest.fn();
     render(<Example isOpen onClose={onClose} />);
 
-    fireEvent.scroll(window);
+    fireEvent.scroll(document);
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 
