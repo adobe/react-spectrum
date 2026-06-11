@@ -19,7 +19,6 @@ import {
 } from './utils';
 import {DraggableCollectionState} from 'react-stately/useDraggableCollectionState';
 import {HTMLAttributes} from 'react';
-// @ts-ignore
 import intlMessages from '../../intl/dnd/*.json';
 import {Key} from '@react-types/shared';
 import {useDescription} from '../utils/useDescription';

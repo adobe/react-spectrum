@@ -10,7 +10,6 @@
  * governing permissions and limitations under the License.
  */
 import {AriaButtonProps} from 'react-aria/useButton';
-
 import {
   AriaSearchAutocompleteProps,
   useSearchAutocomplete
@@ -36,7 +35,6 @@ import intlMessages from '../../intl/autocomplete/*.json';
 import {ListBoxBase, useListBoxLayout} from '../listbox/ListBoxBase';
 import Magnifier from '@spectrum-icons/ui/Magnifier';
 import {MenuTriggerAction, useComboBoxState} from 'react-stately/useComboBoxState';
-// @ts-ignore
 import {MobileSearchAutocomplete} from './MobileSearchAutocomplete';
 import {Popover} from '../overlays/Popover';
 import {ProgressCircle} from '../progress/ProgressCircle';

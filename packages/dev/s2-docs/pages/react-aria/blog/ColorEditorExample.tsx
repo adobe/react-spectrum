@@ -24,7 +24,6 @@ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {getColorChannels} from '@react-stately/color';
 import {useState} from 'react';
 import type {ColorSpace} from 'react-aria-components';
-// @ts-ignore
 import intlMessages from './intl/*.json';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 

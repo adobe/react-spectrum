@@ -13,7 +13,6 @@
 import {AriaButtonProps} from '../button/useButton';
 import {DOMAttributes} from 'react';
 import * as DragManager from './DragManager';
-// @ts-ignore
 import intlMessages from '../../intl/dnd/*.json';
 import {useDescription} from '../utils/useDescription';
 import {useDragModality} from './utils';

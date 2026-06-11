@@ -11,7 +11,6 @@
  */
 
 import {ActionButton} from '../button/ActionButton';
-
 import {AriaDialogProps, useDialog} from 'react-aria/useDialog';
 import {classNames} from '../utils/classNames';
 import CrossLarge from '@spectrum-icons/ui/CrossLarge';
@@ -22,7 +21,6 @@ import intlMessages from '../../intl/dialog/*.json';
 import {mergeProps} from 'react-aria/mergeProps';
 import React, {ReactNode, useContext, useMemo, useRef} from 'react';
 import {SlotProvider, useSlotProps} from '../utils/Slots';
-// @ts-ignore
 import styles from '@adobe/spectrum-css-temp/components/dialog/vars.css';
 import {unwrapDOMRef, useDOMRef} from '../utils/useDOMRef';
 import {useHasChild} from '../utils/useHasChild';

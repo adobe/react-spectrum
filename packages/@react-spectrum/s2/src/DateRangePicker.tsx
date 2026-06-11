@@ -33,7 +33,6 @@ import {
   HelpTextProps,
   SpectrumLabelableProps
 } from '@react-types/shared';
-// @ts-ignore
 import intlMessages from '../intl/*.json';
 import {PopoverProps} from 'react-aria-components/Popover';
 import {RangeCalendar, RangeCalendarProps} from './RangeCalendar';

@@ -39,7 +39,6 @@ import React, {
 } from 'react';
 import searchAutocompleteStyles from './searchautocomplete.css';
 import searchStyles from '@adobe/spectrum-css-temp/components/search/vars.css';
-// @ts-ignore
 import {setInteractionModality} from 'react-aria/private/interactions/useFocusVisible';
 import {SpectrumSearchAutocompleteProps} from './SearchAutocomplete';
 import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';

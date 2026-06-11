@@ -16,7 +16,6 @@ import {
   DOMProps,
   GroupDOMAttributes,
   InputDOMProps,
-  KeyboardEvent,
   RefObject,
   ValidationResult
 } from '@react-types/shared';
@@ -28,7 +27,6 @@ import intlMessages from '../../intl/datepicker/*.json';
 import {mergeProps} from '../utils/mergeProps';
 import {TimeFieldState, TimePickerProps, TimeValue} from 'react-stately/useTimeFieldState';
 import {useDatePickerGroup} from './useDatePickerGroup';
-// @ts-ignore
 import {useDescription} from '../utils/useDescription';
 import {useField} from '../label/useField';
 import {useFocusWithin} from '../interactions/useFocusWithin';
@@ -215,16 +213,8 @@ export function useDateField<T extends DateValue>(
       }
     },
     fieldProps: mergeProps(domProps, fieldDOMProps, groupProps, focusWithinProps, {
-      onKeyDown(e: KeyboardEvent) {
-        if (props.onKeyDown) {
-          props.onKeyDown(e);
-        }
-      },
-      onKeyUp(e: KeyboardEvent) {
-        if (props.onKeyUp) {
-          props.onKeyUp(e);
-        }
-      },
+      onKeyDown: props.onKeyDown,
+      onKeyUp: props.onKeyUp,
       style: {
         unicodeBidi: 'isolate'
       }
