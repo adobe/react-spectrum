@@ -627,7 +627,7 @@ const listRowBackground = style<
       isQuiet: 'default'
     },
     isNotSelected: insetBorderRadius,
-    isDropTarget: insetBorderRadius,
+    isDropTarget: insetBorderRadius
   },
   borderBottomStartRadius: {
     isQuiet: 'default',
