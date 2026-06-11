@@ -495,6 +495,7 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(
       spellCheck: 'false'
     }),
     listBoxProps: mergeProps(menuProps, listBoxProps, {
+      onAction: undefined,
       autoFocus: state.focusStrategy || true,
       shouldUseVirtualFocus: true,
       shouldSelectOnPressUp: true,
