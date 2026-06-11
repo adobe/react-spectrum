@@ -287,7 +287,14 @@ export function useAutocomplete<T>(
   let onChange = (value: string) => {
     // Tell wrapped collection to focus the first element in the list when typing forward and to clear focused key when modifying the text via
     // copy paste/backspacing/undo/redo for screen reader announcements
-    if (lastInputType.current === 'insertText' && !disableAutoFocusFirst) {
+    if (
+      (lastInputType.current === 'insertText' ||
+        // IME composition (e.g. CJK input) reports 'insertCompositionText'/'insertFromComposition'
+        // instead of 'insertText'. Treat these as forward typing so the first item gets virtual focus.
+        lastInputType.current === 'insertCompositionText' ||
+        lastInputType.current === 'insertFromComposition') &&
+      !disableAutoFocusFirst
+    ) {
       focusFirstItem();
     } else if (
       lastInputType.current &&
