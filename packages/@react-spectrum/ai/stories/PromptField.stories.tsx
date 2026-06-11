@@ -47,7 +47,7 @@ const meta: Meta<typeof PromptField> = {
     layout: 'centered'
   },
   tags: ['autodocs'],
-  title: 'S2-AI/PromptField',
+  title: 'AI/PromptField',
   decorators: [
     Story => (
       <div style={{width: '800px'}}>

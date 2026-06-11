@@ -39,7 +39,7 @@ const meta: Meta<typeof Thread> = {
     layout: 'centered'
   },
   tags: ['autodocs'],
-  title: 'S2-AI/Thread',
+  title: 'AI/Thread',
   decorators: [
     Story => (
       <div style={{width: '800px', height: '700px'}}>

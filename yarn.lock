@@ -7370,6 +7370,30 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@react-spectrum/ai@workspace:packages/@react-spectrum/ai":
+  version: 0.0.0-use.local
+  resolution: "@react-spectrum/ai@workspace:packages/@react-spectrum/ai"
+  dependencies:
+    "@react-aria/test-utils": "npm:^1.0.0-alpha.8"
+    "@storybook/jest": "npm:^0.2.3"
+    "@testing-library/dom": "npm:^10.1.0"
+    "@testing-library/react": "npm:^16.0.0"
+    "@testing-library/user-event": "npm:^14.0.0"
+    react: "npm:^19.0.0-rc.1"
+    react-dom: "npm:^19.0.0-rc.1"
+  peerDependencies:
+    "@internationalized/date": ^3.12.2
+    "@internationalized/number": ^3.6.7
+    "@react-spectrum/s2": ^1.4.0
+    "@react-types/shared": ^3.35.0
+    react: ^19.0.0-rc.1
+    react-aria: 3.49.0
+    react-aria-components: 1.18.0
+    react-dom: ^19.0.0-rc.1
+    react-stately: 3.47.0
+  languageName: unknown
+  linkType: soft
+
 "@react-spectrum/autocomplete@npm:^3.0.0-alpha.54, @react-spectrum/autocomplete@npm:^3.0.0-alpha.55, @react-spectrum/autocomplete@workspace:packages/@react-spectrum/autocomplete":
   version: 0.0.0-use.local
   resolution: "@react-spectrum/autocomplete@workspace:packages/@react-spectrum/autocomplete"
@@ -8003,30 +8027,6 @@ __metadata:
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
-  languageName: unknown
-  linkType: soft
-
-"@react-spectrum/s2-ai@workspace:packages/@react-spectrum/s2-ai":
-  version: 0.0.0-use.local
-  resolution: "@react-spectrum/s2-ai@workspace:packages/@react-spectrum/s2-ai"
-  dependencies:
-    "@react-aria/test-utils": "npm:^1.0.0-alpha.8"
-    "@storybook/jest": "npm:^0.2.3"
-    "@testing-library/dom": "npm:^10.1.0"
-    "@testing-library/react": "npm:^16.0.0"
-    "@testing-library/user-event": "npm:^14.0.0"
-    react: "npm:^19.0.0-rc.1"
-    react-dom: "npm:^19.0.0-rc.1"
-  peerDependencies:
-    "@internationalized/date": ^3.12.2
-    "@internationalized/number": ^3.6.7
-    "@react-spectrum/s2": ^1.4.0
-    "@react-types/shared": ^3.35.0
-    react: ^19.0.0-rc.1
-    react-aria: 3.49.0
-    react-aria-components: 1.18.0
-    react-dom: ^19.0.0-rc.1
-    react-stately: 3.47.0
   languageName: unknown
   linkType: soft
 
