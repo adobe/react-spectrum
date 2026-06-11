@@ -32,15 +32,17 @@ async function compareBuildAppSize() {
     ]);
 
     await Promise.all([
-      !fs.existsSync(lastAppStatPath) && download(
-        // TODO: placeholder until we get some real stats. Hardcoded URL pointing to a commit with actual data
-        `https://reactspectrum.blob.core.windows.net/reactspectrum/2504f8ad927d0d0ad55e7e6db8a22fec16a67b6f/verdaccio/publish-stats/${currentAppStatsFile}`,
-        lastAppStatPath
-      ),
-      !fs.existsSync(lastPublishStatPath) && download(
-        `https://reactspectrum.blob.core.windows.net/reactspectrum/2504f8ad927d0d0ad55e7e6db8a22fec16a67b6f/verdaccio/publish-stats/${currentPublishStatsFile}`,
-        lastPublishStatPath
-      )
+      !fs.existsSync(lastAppStatPath) &&
+        download(
+          // TODO: placeholder until we get some real stats. Hardcoded URL pointing to a commit with actual data
+          `https://reactspectrum.blob.core.windows.net/reactspectrum/2504f8ad927d0d0ad55e7e6db8a22fec16a67b6f/verdaccio/publish-stats/${currentAppStatsFile}`,
+          lastAppStatPath
+        ),
+      !fs.existsSync(lastPublishStatPath) &&
+        download(
+          `https://reactspectrum.blob.core.windows.net/reactspectrum/2504f8ad927d0d0ad55e7e6db8a22fec16a67b6f/verdaccio/publish-stats/${currentPublishStatsFile}`,
+          lastPublishStatPath
+        )
     ]);
 
     // Extract the built example app size from the current commit and the last publish commit data
