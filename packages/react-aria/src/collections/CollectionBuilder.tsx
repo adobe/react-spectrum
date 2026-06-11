@@ -167,6 +167,9 @@ function useSSRCollectionNode<T extends Element>(
     CollectionNodeClass = createCollectionNodeClass(CollectionNodeClass);
   }
 
+  // @ts-ignore
+  const key = props.id ?? undefined;
+
   // During SSR, portals are not supported, so the collection children will be wrapped in an SSRContext.
   // Since SSR occurs only once, we assume that the elements are rendered in order and never re-render.
   // Therefore we can create elements in our collection document during render so that they are in the
@@ -184,6 +187,9 @@ function useSSRCollectionNode<T extends Element>(
     let element = parentNode.ownerDocument.nodesByProps.get(props);
     if (!element) {
       element = parentNode.ownerDocument.createElement(CollectionNodeClass.type);
+      if (key != null) {
+        element.setAttribute('data-key', '' + key);
+      }
       element.setProps(props, ref, CollectionNodeClass, rendered, render);
       parentNode.appendChild(element);
       parentNode.ownerDocument.updateCollection();
@@ -193,8 +199,12 @@ function useSSRCollectionNode<T extends Element>(
     return children ? <SSRContext.Provider value={element}>{children}</SSRContext.Provider> : null;
   }
 
-  // @ts-ignore
-  return <CollectionNodeClass.type ref={itemRef}>{children}</CollectionNodeClass.type>;
+  return (
+    // @ts-ignore
+    <CollectionNodeClass.type data-key={key} ref={itemRef}>
+      {children}
+    </CollectionNodeClass.type>
+  );
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

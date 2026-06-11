@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {MessageFeedback} from '@react-spectrum/s2-ai/MessageFeedback';
+import {MessageFeedback} from '@react-spectrum/ai/MessageFeedback';
 import {pointerMap, render} from '@react-spectrum/test-utils-internal';
 import React, {useState} from 'react';
 import userEvent from '@testing-library/user-event';

@@ -54,7 +54,7 @@ const meta: Meta<typeof Chat> = {
     layout: 'centered'
   },
   tags: ['autodocs'],
-  title: 'S2-AI/Chat',
+  title: 'AI/Chat',
   decorators: [
     Story => (
       <div style={{width: '800px', height: '700px'}}>
