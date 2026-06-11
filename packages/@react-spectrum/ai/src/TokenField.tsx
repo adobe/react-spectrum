@@ -6,15 +6,15 @@ import {
   TokenSegment,
   TokenSegmentList
 } from './TokenSegmentList';
-import {dom, RenderProps, StyleRenderProps, useRenderProps} from './utils';
-import {FieldInputContext} from './Autocomplete';
+import {FieldInputContext} from 'react-aria-components/Autocomplete';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {FocusableProps} from '@react-types/shared';
 import {isMac} from 'react-aria/private/utils/platform';
 import {mergeProps} from 'react-aria/mergeProps';
 import {mergeRefs} from 'react-aria/mergeRefs';
 import React, {ForwardedRef, forwardRef, HTMLAttributes, useMemo, useRef, useState} from 'react';
-import {SlotProps, useSlottedContext} from './utils';
+import {RenderProps, StyleRenderProps, useRenderProps} from 'react-aria-components/useRenderProps';
+import {SlotProps, useSlottedContext} from 'react-aria-components/slots';
 import {useControlledState} from 'react-stately/useControlledState';
 import {useEvent} from 'react-aria/private/utils/useEvent';
 import {useFocusable} from 'react-aria/useFocusable';
@@ -510,7 +510,7 @@ export const Token = forwardRef(function Token(
   });
 
   return (
-    <dom.span
+    <span
       ref={objectRef}
       {...renderProps}
       contentEditable="false"
@@ -522,7 +522,7 @@ export const Token = forwardRef(function Token(
         WebkitUserSelect: 'all'
       }}>
       {renderProps.children}
-    </dom.span>
+    </span>
   );
 });
 

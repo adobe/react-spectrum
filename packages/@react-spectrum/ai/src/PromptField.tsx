@@ -19,12 +19,7 @@ import {Button} from '@react-spectrum/s2/Button';
 import {CenterBaseline} from '@react-spectrum/s2/CenterBaseline';
 import {createContext, createRef, useContext, useMemo, useRef, useState} from 'react';
 // eslint-disable-next-line
-import {
-  Direction,
-  TokenFieldSegment,
-  TokenSegment,
-  TokenSegmentList
-} from '/packages/react-aria-components/src/TokenSegmentList';
+import {Direction, TokenFieldSegment, TokenSegment, TokenSegmentList} from './TokenSegmentList';
 import {Group} from 'react-aria-components/Group';
 import {IconContext, mergeStyles, UnsafeStyles} from '@react-spectrum/s2';
 import {Image, Text} from '@react-spectrum/s2/Card';
@@ -34,12 +29,7 @@ import {Menu, MenuItem, MenuItemProps, MenuTrigger} from '@react-spectrum/s2/Men
 import Plus from '@react-spectrum/s2/icons/Add';
 import {Popover} from '@react-spectrum/s2/Popover';
 // eslint-disable-next-line
-import {
-  positionToDOMRange,
-  Token,
-  TokenField,
-  TokenProps
-} from '/packages/react-aria-components/src/TokenField';
+import {positionToDOMRange, Token, TokenField, TokenProps} from './TokenField';
 import Send from '@react-spectrum/s2/icons/ArrowUpSend';
 import Stop from '@react-spectrum/s2/icons/StopProcessing';
 

@@ -13,7 +13,7 @@
 import {Meta, StoryFn} from '@storybook/react';
 import React, {useContext, useMemo, useRef, useState} from 'react';
 import './styles.global.css';
-import {Autocomplete} from '../src/Autocomplete';
+import {Autocomplete} from 'react-aria-components/Autocomplete';
 import {ChevronDown} from 'lucide-react';
 import {Collection, ComboBox, ComboBoxStateContext} from 'react-aria-components';
 import {ComboBoxItem, ComboBoxListBox} from 'vanilla-starter/ComboBox';
@@ -24,11 +24,11 @@ import {InputContext} from 'react-aria-components/Input';
 import {Popover} from 'vanilla-starter/Popover';
 import {positionToDOMRange, Token, TokenField} from '../src/TokenField';
 import 'vanilla-starter/TagGroup.css';
-import {Text} from '../src/Text';
+import {Text} from 'react-aria-components/Text';
 import {useSlottedContext} from 'react-aria-components/slots';
 
 export default {
-  title: 'React Aria Components/TokenField',
+  title: 'AI/TokenField',
   component: TokenField
 } as Meta<typeof TokenField>;
 
