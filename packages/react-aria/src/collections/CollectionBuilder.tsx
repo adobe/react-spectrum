@@ -199,8 +199,12 @@ function useSSRCollectionNode<T extends Element>(
     return children ? <SSRContext.Provider value={element}>{children}</SSRContext.Provider> : null;
   }
 
-  // @ts-ignore
-  return <CollectionNodeClass.type data-key={key} ref={itemRef}>{children}</CollectionNodeClass.type>;
+  return (
+    // @ts-ignore
+    <CollectionNodeClass.type data-key={key} ref={itemRef}>
+      {children}
+    </CollectionNodeClass.type>
+  );
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

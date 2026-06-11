@@ -1786,7 +1786,7 @@ describe('Table', () => {
       const TreeGridTableDnd = stories.TreeGridTableDnd;
       let {getAllByRole} = render(<TreeGridTableDnd />);
       let tableTester = testUtilUser.createTester('Table', {root: getAllByRole('treegrid')[0]});
-      expect(tableTester.rows).toHaveLength(7);
+      expect(tableTester.getRows()).toHaveLength(7);
       await user.tab();
       for (let i = 0; i < 3; i++) {
         await user.keyboard('{ArrowDown}');
@@ -1802,8 +1802,8 @@ describe('Table', () => {
         fireEvent.keyUp(document.activeElement, {key: 'Enter'});
       });
       act(() => jest.runAllTimers());
-      expect(tableTester.rows).toHaveLength(7);
-      expect(document.activeElement).toBe(tableTester.rows[3]);
+      expect(tableTester.getRows()).toHaveLength(7);
+      expect(document.activeElement).toBe(tableTester.getRows()[3]);
       await user.keyboard('{ArrowRight}');
       await user.keyboard('{Enter}');
       act(() => jest.runAllTimers());
@@ -1816,8 +1816,8 @@ describe('Table', () => {
         fireEvent.keyUp(document.activeElement, {key: 'Enter'});
       });
       act(() => jest.runAllTimers());
-      expect(tableTester.rows).toHaveLength(7);
-      expect(document.activeElement).toBe(tableTester.rows[4]);
+      expect(tableTester.getRows()).toHaveLength(7);
+      expect(document.activeElement).toBe(tableTester.getRows()[4]);
     });
   });
 

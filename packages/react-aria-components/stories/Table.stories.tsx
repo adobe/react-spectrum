@@ -2185,23 +2185,41 @@ export const TableSectionDnd: TableStory = args => {
 export const TreeGridTableDnd: TableStory = () => {
   let tree = useTreeData({
     initialItems: [
-      {id: '1', title: 'Documents', type: 'Directory', date: '10/20/2025', children: [
-        {id: '2', title: 'Project', type: 'Directory', date: '8/2/2025', children: [
-          {id: '3', title: 'Weekly Report', type: 'File', date: '7/10/2025', children: []},
-          {id: '4', title: 'Budget', type: 'File', date: '8/20/2025', children: []}
-        ]}
-      ]},
-      {id: '5', title: 'Photos', type: 'Directory', date: '2/3/2026', children: [
-        {id: '6', title: 'Image 1', type: 'File', date: '1/23/2026', children: []},
-        {id: '7', title: 'Image 2', type: 'File', date: '2/3/2026', children: []}
-      ]}
+      {
+        id: '1',
+        title: 'Documents',
+        type: 'Directory',
+        date: '10/20/2025',
+        children: [
+          {
+            id: '2',
+            title: 'Project',
+            type: 'Directory',
+            date: '8/2/2025',
+            children: [
+              {id: '3', title: 'Weekly Report', type: 'File', date: '7/10/2025', children: []},
+              {id: '4', title: 'Budget', type: 'File', date: '8/20/2025', children: []}
+            ]
+          }
+        ]
+      },
+      {
+        id: '5',
+        title: 'Photos',
+        type: 'Directory',
+        date: '2/3/2026',
+        children: [
+          {id: '6', title: 'Image 1', type: 'File', date: '1/23/2026', children: []},
+          {id: '7', title: 'Image 2', type: 'File', date: '2/3/2026', children: []}
+        ]
+      }
     ]
   });
 
   let {dragAndDropHooks} = useDragAndDrop({
     getItems(_keys, items: typeof tree.items) {
-      return items.map((item) => {
-        let serializeItem = (nodeItem) => ({
+      return items.map(item => {
+        let serializeItem = nodeItem => ({
           ...nodeItem.value,
           children: nodeItem.children?.map(serializeItem) ?? []
         });
@@ -2235,13 +2253,17 @@ export const TreeGridTableDnd: TableStory = () => {
       aria-label="Files"
       selectionMode="multiple"
       treeColumn="name"
-      className={styles.treeGridTable} 
+      className={styles.treeGridTable}
       defaultExpandedKeys={['1', '2', '5']}
       dragAndDropHooks={dragAndDropHooks}>
       <TableHeader>
         <Column />
-        <Column><MyCheckbox slot="selection" /></Column>
-        <Column id="name" isRowHeader>Name</Column>
+        <Column>
+          <MyCheckbox slot="selection" />
+        </Column>
+        <Column id="name" isRowHeader>
+          Name
+        </Column>
         <Column id="type">Type</Column>
         <Column id="date">Date Modified</Column>
       </TableHeader>
@@ -2249,8 +2271,12 @@ export const TreeGridTableDnd: TableStory = () => {
         {function renderItem(item) {
           return (
             <Row id={item.key} textValue={item.value.title}>
-              <Cell><Button slot="drag">≡</Button></Cell>
-              <Cell><MyCheckbox slot="selection" /></Cell>
+              <Cell>
+                <Button slot="drag">≡</Button>
+              </Cell>
+              <Cell>
+                <MyCheckbox slot="selection" />
+              </Cell>
               <NameCell>{item.value.title}</NameCell>
               <Cell>{item.value.type}</Cell>
               <Cell>{item.value.date}</Cell>
