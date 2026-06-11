@@ -31,6 +31,11 @@ export function useVirtualizerItem(options: VirtualizerItemOptions): {updateSize
 
   let updateSize = useCallback(() => {
     if (key != null && ref.current) {
+      // offsetParent is null if element or ancestor has display: none
+      // see https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/offsetParent
+      if (ref.current.offsetParent === null) {
+        return;
+      }
       let size = getSize(ref.current);
       virtualizer.updateItemSize(key, size);
     }

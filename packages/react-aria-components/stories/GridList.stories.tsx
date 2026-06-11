@@ -393,7 +393,7 @@ const VirtualizedGridListRender = (args: GridListProps<any> & {isLoading: boolea
         className={styles.menu}
         selectionMode="multiple"
         dragAndDropHooks={dragAndDropHooks}
-        style={{height: 400}}
+        style={{height: 400, width: 400}}
         aria-label="virtualized gridlist"
         items={list.items}>
         <Collection items={list.items}>
@@ -950,6 +950,30 @@ export const AsyncGridListGridVirtualized: StoryObj<typeof AsyncGridListGridVirt
     loadingState: {
       control: 'select',
       options: ['idle', 'loadingMore']
+    }
+  }
+};
+
+function VirtualizedDisplayNoneToggleRender() {
+  let [visible, setVisible] = useState(true);
+
+  return (
+    <div>
+      <Button onPress={() => setVisible(v => !v)} style={{marginBottom: 8}}>
+        {visible ? 'Hide' : 'Show'}
+      </Button>
+      <div style={{display: visible ? undefined : 'none'}}>
+        <VirtualizedGridDnD />
+      </div>
+    </div>
+  );
+}
+
+export const VirtualizedDisplayNoneToggle: StoryObj = {
+  render: VirtualizedDisplayNoneToggleRender,
+  parameters: {
+    description: {
+      data: 'toggling hide and show should not cause the items to disappear'
     }
   }
 };

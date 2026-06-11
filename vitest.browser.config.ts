@@ -162,6 +162,10 @@ function iconWrapperPlugin(): Plugin {
 }
 
 export default defineConfig({
+  define: {
+    // make sure virtualizer actually runs since this is in browser
+    'process.env.VIRT_ON': '"1"'
+  },
   plugins: [
     // @ts-expect-error
     macros.vite(), // Must be first!
