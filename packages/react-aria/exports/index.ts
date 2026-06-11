@@ -157,6 +157,7 @@ export {useTooltipTrigger} from '../src/tooltip/useTooltipTrigger';
 export {useTree} from '../src/tree/useTree';
 export {useTreeItem} from '../src/tree/useTreeItem';
 export {chain} from '../src/utils/chain';
+export {getOwnerDocument, getOwnerWindow, isShadowRoot, addEvent} from '../src/utils/domHelpers';
 export {mergeProps} from '../src/utils/mergeProps';
 export {mergeRefs} from '../src/utils/mergeRefs';
 export {useId} from '../src/utils/useId';

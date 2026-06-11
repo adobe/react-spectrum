@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {getEventTarget, nodeContains} from '../utils/shadowdom/DOMFunctions';
+import {addEvent} from '../utils/domHelpers';
+import {getEventTarget, getPropagationTargets, nodeContains} from '../utils/shadowdom/DOMFunctions';
 import {RefObject} from '@react-types/shared';
 import {useEffect} from 'react';
 
@@ -60,9 +61,6 @@ export function useCloseOnScroll(opts: CloseOnScrollOptions): void {
       }
     };
 
-    window.addEventListener('scroll', onScroll, true);
-    return () => {
-      window.removeEventListener('scroll', onScroll, true);
-    };
+    return addEvent(getPropagationTargets(window, triggerRef.current), 'scroll', onScroll, true);
   }, [isOpen, onClose, triggerRef]);
 }

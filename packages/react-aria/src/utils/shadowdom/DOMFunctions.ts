@@ -84,6 +84,51 @@ export function getEventTarget<T extends Event | SyntheticEvent>(event: T): Even
 }
 
 /**
+ * Returns the set of event targets a listener must be attached to for an event
+ * to be observed at `global`, given an element `refNode` that may live inside
+ * one or more shadow roots.
+ *
+ * Returns `[global, ...shadowRoots]`, where shadowRoots are the ShadowRoots
+ * enclosing `refNode` that lie between it and `global`. Needed for events that
+ * are `composed: false` and do not propagate out of shadow roots even in the
+ * capture phase. Pass the result straight to `addEvent` (react-aria/domHelpers).
+ *
+ * Known `composed: false` events (non-exhaustive):
+ * - `scroll`
+ * - `scrollend`
+ * - `change`
+ * - `submit`
+ * - `reset`
+ * - `select`
+ * - `selectstart`
+ * - `slotchange`
+ */
+export function getPropagationTargets(
+  global: EventTarget,
+  refNode: Node | null | undefined
+): EventTarget[] {
+  let targets: EventTarget[] = [global];
+  if (!shadowDOM() || refNode == null) {
+    return targets;
+  }
+
+  // The root `global` itself lives in. The event already reaches `global` once
+  // it is inside this root, so we must NOT collect this root or anything above
+  // it — only the shadow roots strictly between `refNode` and `global`.
+  // `window` has no getRootNode; its boundary is the document, which the walk
+  // reaches naturally (the document is not a ShadowRoot, so the loop exits).
+  let globalRoot = 'getRootNode' in global ? (global as Node).getRootNode() : null;
+  let current: Node | null = refNode.getRootNode() ?? null;
+
+  while (isShadowRoot(current) && current !== globalRoot) {
+    targets.push(current);
+    current = current.host.getRootNode();
+  }
+
+  return targets;
+}
+
+/**
  * ShadowDOM safe fast version of node.contains(document.activeElement).
  *
  * @param node
