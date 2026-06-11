@@ -118,11 +118,11 @@ if (typeof document !== 'undefined') {
 /**
  * Delays a callback execution until all elements finished their transition.
  */
-export function runAfterTransition(fn: QueuedCallback): void {
+export function runAfterTransition(fn: QueuedCallback): () => void {
   let ownerWindow = getOwnerWindow();
 
   // Wait one frame to see if an animation starts, e.g. a transition on mount.
-  ownerWindow.requestAnimationFrame(() => {
+  let frame = ownerWindow.requestAnimationFrame(() => {
     cleanupDetachedElements();
 
     // If no transitions are running, call the function immediately.
@@ -133,4 +133,9 @@ export function runAfterTransition(fn: QueuedCallback): void {
 
     transitionCallbacks.add(fn);
   });
+
+  return () => {
+    ownerWindow.cancelAnimationFrame(frame);
+    transitionCallbacks.delete(fn);
+  };
 }

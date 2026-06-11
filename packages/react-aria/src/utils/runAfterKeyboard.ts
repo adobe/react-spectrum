@@ -97,19 +97,22 @@ function onTransitionEnd(): void {
  * Delays a callback execution until a keyboard transition may no longer impact layout.
  * Guarantees an invocation if an expected transition did not finish within 300ms.
  */
-export function runAfterKeyboard(fn: QueuedCallback): void {
+export function runAfterKeyboard(fn: QueuedCallback): () => void {
   let ownerWindow = getOwnerWindow();
   let ownerDocument = getOwnerDocument();
   let ownerViewport = getOwnerViewport();
 
-  if (ownerViewport == null) return fn(false);
+  // Flush synchronously when the viewport API is unsupported.
+  if (ownerViewport == null) {
+    return fn(false) ?? (() => {});
+  }
 
   // Assert based on geometry rather than focus to support intermediate states, in which
   // document.activeElement can't be used to reliably infer the open state of the OSK.
   let wasKeyboardOpen = isKeyboardOpen();
 
   // Wait one frame to see if focus lands on an input.
-  ownerWindow.requestAnimationFrame(() => {
+  let frame = ownerWindow.requestAnimationFrame(() => {
     let activeElement = getActiveElement(ownerDocument);
     let willKeyboardOpen = ownerDocument.hasFocus() && willOpenKeyboard(activeElement);
 
@@ -126,25 +129,33 @@ export function runAfterKeyboard(fn: QueuedCallback): void {
     resizeCallbacks.add(fn);
     onTransitionStart();
   });
+
+  return () => {
+    ownerWindow.cancelAnimationFrame(frame);
+    resizeCallbacks.delete(fn);
+  };
 }
 
 /**
  * Delays a callback execution until the on-screen keyboard has finished its transition.
  * Guarantees an invocation if an expected transition did not finish within 600ms.
  */
-export function runAfterKeyboardTransition(fn: QueuedCallback): void {
+export function runAfterKeyboardTransition(fn: QueuedCallback): () => void {
   let ownerWindow = getOwnerWindow();
   let ownerDocument = getOwnerDocument();
   let ownerViewport = getOwnerViewport();
 
-  if (ownerViewport == null) return fn(false);
+  // Flush synchronously when the viewport API is unsupported.
+  if (ownerViewport == null) {
+    return fn(false) ?? (() => {});
+  }
 
   // Assert based on geometry rather than focus to support intermediate states, in which
   // document.activeElement can't be used to reliably infer the open state of the OSK.
   let wasKeyboardOpen = isKeyboardOpen();
 
   // Wait one frame to see if focus lands on an input.
-  ownerWindow.requestAnimationFrame(() => {
+  let frame = ownerWindow.requestAnimationFrame(() => {
     let activeElement = getActiveElement(ownerDocument);
     let willKeyboardOpen = ownerDocument.hasFocus() && willOpenKeyboard(activeElement);
 
@@ -156,4 +167,9 @@ export function runAfterKeyboardTransition(fn: QueuedCallback): void {
     transitionCallbacks.add(fn);
     onTransitionStart();
   });
+
+  return () => {
+    ownerWindow.cancelAnimationFrame(frame);
+    transitionCallbacks.delete(fn);
+  };
 }

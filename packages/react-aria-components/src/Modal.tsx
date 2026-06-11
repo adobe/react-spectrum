@@ -245,7 +245,6 @@ function ModalOverlayInner({UNSTABLE_portalContainer, ...props}: ModalOverlayInn
   let {state} = props;
   let {modalProps, underlayProps} = useModalOverlay(props, state, modalRef);
 
-  let unmountRef = useRef(false);
   let [isOpen, setIsOpen] = useState(false);
   let entering = useEnterAnimation(props.overlayRef, isOpen) || props.isEntering || false;
   let renderProps = useRenderProps({
@@ -283,16 +282,7 @@ function ModalOverlayInner({UNSTABLE_portalContainer, ...props}: ModalOverlayInn
 
   // Since an auto-focused input may open the OSK, we defer the reveal, as a courtesy, to avoid layout shift.
   // TODO: This can cause native focus scroll-into-view to abort, so we might want to do that manually?
-  useLayoutEffect(() => {
-    runAfterKeyboard(() => {
-      if (unmountRef.current) return;
-      setIsOpen(true);
-    });
-
-    return () => {
-      unmountRef.current = true;
-    };
-  }, []);
+  useLayoutEffect(() => runAfterKeyboard(() => setIsOpen(true)), []);
 
   return (
     <Overlay isExiting={props.isExiting} portalContainer={UNSTABLE_portalContainer}>

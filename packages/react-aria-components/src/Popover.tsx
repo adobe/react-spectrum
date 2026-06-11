@@ -221,8 +221,9 @@ function PopoverInner({
   let containerRef = useRef<HTMLDivElement | null>(null);
   let groupCtx = useContext(PopoverGroupContext);
   let isSubPopover = groupCtx && props.trigger === 'SubmenuTrigger';
-  let unmountRef = useRef(false);
+
   let [isOpen, setIsOpen] = useState(false);
+  let [isDialog, setIsDialog] = useState(false);
 
   let {popoverProps, underlayProps, arrowProps, placement, triggerAnchorPoint} = usePopover(
     {
@@ -252,10 +253,9 @@ function PopoverInner({
   // Automatically render Popover with role=dialog except when isNonModal is true,
   // or a dialog is already nested inside the popover.
   let shouldBeDialog = !props.isNonModal || props.trigger === 'SubmenuTrigger';
-  let [isDialog, setDialog] = useState(false);
   useLayoutEffect(() => {
     if (ref.current) {
-      setDialog(shouldBeDialog && !ref.current.querySelector('[role=dialog]'));
+      setIsDialog(shouldBeDialog && !ref.current.querySelector('[role=dialog]'));
     }
   }, [ref, shouldBeDialog]);
 
@@ -306,16 +306,7 @@ function PopoverInner({
 
   // Since an auto-focused input may open the OSK, we defer the reveal, as a courtesy, to avoid layout shift.
   // TODO: This can cause native focus scroll-into-view to abort, so we might want to do that manually?
-  useLayoutEffect(() => {
-    runAfterKeyboard(() => {
-      if (unmountRef.current) return;
-      setIsOpen(true);
-    });
-
-    return () => {
-      unmountRef.current = true;
-    };
-  }, []);
+  useLayoutEffect(() => runAfterKeyboard(() => setIsOpen(true)), []);
 
   let overlay = (
     <dom.div
@@ -331,7 +322,7 @@ function PopoverInner({
       dir={props.dir}
       data-trigger={props.trigger}
       data-placement={placement}
-      data-open={isOpen || undefined}
+      data-open={(!!placement && isOpen) || undefined}
       data-entering={isEntering || undefined}
       data-exiting={isExiting || undefined}>
       {!props.isNonModal && <DismissButton onDismiss={state.close} />}
