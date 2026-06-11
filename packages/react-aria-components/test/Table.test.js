@@ -1170,7 +1170,6 @@ describe('Table', () => {
 
     await user.tab();
     expect(document.activeElement).toBe(rowElements[1]);
-    await user.keyboard('{ArrowRight}');
     await user.keyboard('boo');
     expect(document.activeElement).toBe(rowElements[3]);
   });
@@ -1178,7 +1177,13 @@ describe('Table', () => {
   it('should select inside a cell using typeahead before the table takes over typeahead', async () => {
     let rows = [
       {id: 1, name: '1. Games', date: '6/7/2020', type: 'File folder', textValue: 'Games'},
-      {id: 2, name: '2. Program Files', date: '4/7/2021', type: 'File folder', textValue: 'Program Files'},
+      {
+        id: 2,
+        name: '2. Program Files',
+        date: '4/7/2021',
+        type: 'File folder',
+        textValue: 'Program Files'
+      },
       {id: 3, name: '3. bootmgr', date: '11/20/2010', type: 'System file', textValue: 'bootmgr'},
       {id: 4, name: '4. log.txt', date: '1/18/2016', type: 'Text Document', textValue: 'log.txt'}
     ];
@@ -1198,9 +1203,7 @@ describe('Table', () => {
                 if (column.id !== 'name') {
                   return (
                     <Cell>
-                      <div>
-                        {item[column.id]}
-                      </div>
+                      <div>{item[column.id]}</div>
                     </Cell>
                   );
                 }

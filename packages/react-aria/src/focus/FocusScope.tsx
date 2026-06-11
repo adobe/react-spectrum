@@ -44,7 +44,7 @@ export interface FocusScopeProps {
 
 export interface FocusManagerOptions {
   /** The action that triggered the focus movement. */
-  action?: string,
+  action?: string;
   /** The element to start searching from. The currently focused element by default. */
   from?: Element;
   /** Whether to only include tabbable elements, or all focusable elements. */
@@ -924,7 +924,11 @@ export function createFocusManager(
         walker.currentNode = root;
         nextNode = walker.nextNode() as FocusableElement;
         if (nextNode) {
-          let event = new CustomEvent('focus-manager-focus-wrap', {bubbles: true, cancelable: true, detail: {action: opts.action}});
+          let event = new CustomEvent('focus-manager-focus-wrap', {
+            bubbles: true,
+            cancelable: true,
+            detail: {action: opts.action}
+          });
           let target = from || getActiveElement(getOwnerDocument(root))!;
           target.dispatchEvent(event);
           if (event.defaultPrevented) {
@@ -969,7 +973,11 @@ export function createFocusManager(
         }
         previousNode = lastNode;
         if (previousNode) {
-          let event = new CustomEvent('focus-manager-focus-wrap', {bubbles: true, cancelable: true, detail: {action: opts.action}});
+          let event = new CustomEvent('focus-manager-focus-wrap', {
+            bubbles: true,
+            cancelable: true,
+            detail: {action: opts.action}
+          });
           let target = from || getActiveElement(getOwnerDocument(root))!;
           target.dispatchEvent(event);
           if (event.defaultPrevented) {

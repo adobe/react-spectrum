@@ -57,7 +57,10 @@ export function useTypeSelect(options: AriaTypeSelectOptions): TypeSelectAria {
     // since we handle this one in a capture phase, we should ignore it in the bubble phase
     if (state.current.search.length > 0 && e.key === ' ') {
       e.preventDefault();
-      if (!('continuePropagation' in e) || (('continuePropagation' in e) && !e.isPropagationStopped())) {
+      if (
+        !('continuePropagation' in e) ||
+        ('continuePropagation' in e && !e.isPropagationStopped())
+      ) {
         e.stopPropagation();
       }
       state.current.search += ' ';
@@ -65,7 +68,10 @@ export function useTypeSelect(options: AriaTypeSelectOptions): TypeSelectAria {
       if (keyboardDelegate.getKeyForSearch != null) {
         // Use the delegate to find a key to focus.
         // Prioritize items after the currently focused item, falling back to searching the whole list.
-        let key = keyboardDelegate.getKeyForSearch(state.current.search, selectionManager.focusedKey);
+        let key = keyboardDelegate.getKeyForSearch(
+          state.current.search,
+          selectionManager.focusedKey
+        );
 
         // If no key found, search from the top.
         if (key == null) {
