@@ -21,22 +21,18 @@ import {
   Node as RSNode
 } from '@react-types/shared';
 import {focusSafely} from '../interactions/focusSafely';
-import {
-  getActiveElement,
-  getEventTarget,
-  isFocusWithin,
-  nodeContains
-} from '../utils/shadowdom/DOMFunctions';
+import {getActiveElement, getEventTarget, isFocusWithin} from '../utils/shadowdom/DOMFunctions';
 import {getFocusableTreeWalker} from '../focus/FocusScope';
 import {getRowId, listMap} from './utils';
 import {getScrollParent} from '../utils/getScrollParent';
-import {HTMLAttributes, KeyboardEvent as ReactKeyboardEvent, useRef} from 'react';
+import {HTMLAttributes, useEffect, useRef} from 'react';
 import {isFocusVisible} from '../interactions/useFocusVisible';
 import type {ListState} from 'react-stately/useListState';
 import {mergeProps} from '../utils/mergeProps';
 import {scrollIntoViewport} from '../utils/scrollIntoView';
 import {SelectableItemStates, useSelectableItem} from '../selection/useSelectableItem';
 import type {TreeState} from 'react-stately/useTreeState';
+import {useKeyboard} from '../interactions/useKeyboard';
 import {useLocale} from '../i18n/I18nProvider';
 import {useSlotId} from '../utils/useId';
 import {useSyntheticLinkProps} from '../utils/openLink';
@@ -63,17 +59,6 @@ export interface GridListItemAria extends SelectableItemStates {
   /** Props for the list item description element, if any. */
   descriptionProps: DOMAttributes;
 }
-
-const EXPANSION_KEYS = {
-  expand: {
-    ltr: 'ArrowRight',
-    rtl: 'ArrowLeft'
-  },
-  collapse: {
-    ltr: 'ArrowLeft',
-    rtl: 'ArrowRight'
-  }
-};
 
 /**
  * Provides the behavior and accessibility implementation for a row in a grid list.
@@ -168,87 +153,57 @@ export function useGridListItem<T>(
     linkBehavior
   });
 
-  // TODO: move away from capturing
-  let onKeyDownCapture = (e: ReactKeyboardEvent) => {
-    let activeElement = getActiveElement();
-    if (
-      !nodeContains(e.currentTarget, getEventTarget(e) as Element) ||
-      !ref.current ||
-      !activeElement
-    ) {
-      return;
+  useEffect(() => {
+    let element = ref.current;
+    let handleFocusManagerFocusWrap = (e: Event) => {
+      e.preventDefault();
+    };
+    if (element) {
+      element.addEventListener('focus-manager-focus-wrap', handleFocusManagerFocusWrap);
     }
-
-    let walker = getFocusableTreeWalker(ref.current);
-    walker.currentNode = activeElement;
-
-    if ('expandedKeys' in state && activeElement === ref.current) {
-      if (
-        e.key === EXPANSION_KEYS['expand'][direction] &&
-        state.selectionManager.focusedKey === node.key &&
-        hasChildRows &&
-        !state.expandedKeys.has(node.key)
-      ) {
-        state.toggleKey(node.key);
-        e.stopPropagation();
-        return;
-      } else if (
-        e.key === EXPANSION_KEYS['collapse'][direction] &&
-        state.selectionManager.focusedKey === node.key
-      ) {
-        // If item is collapsible, collapse it; else move to parent
-        if (hasChildRows && state.expandedKeys.has(node.key)) {
-          state.toggleKey(node.key);
-          e.stopPropagation();
-          return;
-        } else if (
-          !state.expandedKeys.has(node.key) &&
-          node.parentKey &&
-          state.collection.getItem(node.parentKey)?.type === 'item'
-        ) {
-          // Item is a leaf or already collapsed, move focus to parent
-          state.selectionManager.setFocusedKey(node.parentKey);
-          e.stopPropagation();
-          return;
-        }
+    return () => {
+      if (element) {
+        element.removeEventListener('focus-manager-focus-wrap', handleFocusManagerFocusWrap);
       }
-    }
+    };
+  }, [ref]);
 
-    switch (e.key) {
-      case 'ArrowLeft': {
-        if (keyboardNavigationBehavior === 'arrow') {
-          // Find the next focusable element within the row.
-          let focusable =
-            direction === 'rtl'
-              ? (walker.nextNode() as FocusableElement)
-              : (walker.previousNode() as FocusableElement);
-
-          if (focusable) {
-            e.preventDefault();
-            e.stopPropagation();
-            focusSafely(focusable);
-            scrollIntoViewport(focusable, {containingElement: getScrollParent(ref.current)});
-          } else {
-            // If there is no next focusable child, then return focus back to the row
-            e.preventDefault();
-            e.stopPropagation();
-            if (direction === 'rtl') {
-              focusSafely(ref.current);
-              scrollIntoViewport(ref.current, {containingElement: getScrollParent(ref.current)});
-            } else {
-              walker.currentNode = ref.current;
-              let lastElement = last(walker);
-              // oxlint-disable-next-line max-depth
-              if (lastElement) {
-                focusSafely(lastElement);
-                scrollIntoViewport(lastElement, {containingElement: getScrollParent(ref.current)});
-              }
+  let {keyboardProps} = useKeyboard({
+    shortcuts: {
+      ArrowRight: () => {
+        let activeElement = getActiveElement();
+        if (!activeElement || !ref.current) {
+          return false;
+        }
+        if ('expandedKeys' in state && activeElement === ref.current) {
+          if (
+            direction === 'ltr' &&
+            state.selectionManager.focusedKey === node.key &&
+            hasChildRows &&
+            !state.expandedKeys.has(node.key)
+          ) {
+            state.toggleKey(node.key);
+            return true;
+          } else if (direction === 'rtl' && state.selectionManager.focusedKey === node.key) {
+            // If item is collapsible, collapse it; else move to parent
+            if (hasChildRows && state.expandedKeys.has(node.key)) {
+              state.toggleKey(node.key);
+              return true;
+            } else if (
+              !state.expandedKeys.has(node.key) &&
+              node.parentKey &&
+              state.collection.getItem(node.parentKey)?.type === 'item'
+            ) {
+              // Item is a leaf or already collapsed, move focus to parent
+              state.selectionManager.setFocusedKey(node.parentKey);
+              return true;
             }
           }
         }
-        break;
-      }
-      case 'ArrowRight': {
+
+        let walker = getFocusableTreeWalker(ref.current);
+        walker.currentNode = activeElement;
+
         if (keyboardNavigationBehavior === 'arrow') {
           let focusable =
             direction === 'rtl'
@@ -256,13 +211,10 @@ export function useGridListItem<T>(
               : (walker.nextNode() as FocusableElement);
 
           if (focusable) {
-            e.preventDefault();
-            e.stopPropagation();
             focusSafely(focusable);
             scrollIntoViewport(focusable, {containingElement: getScrollParent(ref.current)});
+            return true;
           } else {
-            e.preventDefault();
-            e.stopPropagation();
             if (direction === 'ltr') {
               focusSafely(ref.current);
               scrollIntoViewport(ref.current, {containingElement: getScrollParent(ref.current)});
@@ -275,25 +227,105 @@ export function useGridListItem<T>(
                 scrollIntoViewport(lastElement, {containingElement: getScrollParent(ref.current)});
               }
             }
+            return true;
           }
         }
-        break;
-      }
-      case 'ArrowUp':
-      case 'ArrowDown':
-        // Prevent this event from reaching row children, e.g. menu buttons. We want arrow keys to navigate
-        // to the row above/below instead. We need to re-dispatch the event from a higher parent so it still
-        // bubbles and gets handled by useSelectableCollection.
-        if (!e.altKey && nodeContains(ref.current, getEventTarget(e) as Element)) {
-          e.stopPropagation();
-          e.preventDefault();
-          ref.current.parentElement?.dispatchEvent(
-            new KeyboardEvent(e.nativeEvent.type, e.nativeEvent)
-          );
+        return false;
+      },
+      ArrowLeft: () => {
+        let activeElement = getActiveElement();
+        if (!activeElement || !ref.current) {
+          return false;
         }
-        break;
+        if ('expandedKeys' in state && activeElement === ref.current) {
+          if (
+            direction === 'rtl' &&
+            state.selectionManager.focusedKey === node.key &&
+            hasChildRows &&
+            !state.expandedKeys.has(node.key)
+          ) {
+            state.toggleKey(node.key);
+            return true;
+          } else if (direction === 'ltr' && state.selectionManager.focusedKey === node.key) {
+            // If item is collapsible, collapse it; else move to parent
+            if (hasChildRows && state.expandedKeys.has(node.key)) {
+              state.toggleKey(node.key);
+              return true;
+            } else if (
+              !state.expandedKeys.has(node.key) &&
+              node.parentKey &&
+              state.collection.getItem(node.parentKey)?.type === 'item'
+            ) {
+              // Item is a leaf or already collapsed, move focus to parent
+              state.selectionManager.setFocusedKey(node.parentKey);
+              return true;
+            }
+          }
+        }
+
+        let walker = getFocusableTreeWalker(ref.current);
+        walker.currentNode = activeElement;
+
+        if (keyboardNavigationBehavior === 'arrow') {
+          let focusable =
+            direction === 'ltr'
+              ? (walker.previousNode() as FocusableElement)
+              : (walker.nextNode() as FocusableElement);
+
+          if (focusable) {
+            focusSafely(focusable);
+            scrollIntoViewport(focusable, {containingElement: getScrollParent(ref.current)});
+            return true;
+          } else {
+            if (direction === 'rtl') {
+              focusSafely(ref.current);
+              scrollIntoViewport(ref.current, {containingElement: getScrollParent(ref.current)});
+            } else {
+              walker.currentNode = ref.current;
+              let lastElement = last(walker);
+              // oxlint-disable-next-line max-depth
+              if (lastElement) {
+                focusSafely(lastElement);
+                scrollIntoViewport(lastElement, {containingElement: getScrollParent(ref.current)});
+              }
+            }
+            return true;
+          }
+        }
+        return false;
+      },
+      Tab: () => {
+        let activeElement = getActiveElement();
+        if (keyboardNavigationBehavior === 'tab' && ref.current && activeElement) {
+          // If there is another focusable element within this item, stop propagation so the tab key
+          // is handled by the browser and not by useSelectableCollection (which would take us out of the list).
+          let walker = getFocusableTreeWalker(ref.current, {tabbable: true});
+          walker.currentNode = activeElement;
+          let next = walker.nextNode();
+
+          if (next) {
+            return {shouldPreventDefault: false, shouldContinuePropagation: false};
+          }
+        }
+        return false;
+      },
+      'Shift+Tab': () => {
+        let activeElement = getActiveElement();
+        if (keyboardNavigationBehavior === 'tab' && ref.current && activeElement) {
+          // If there is another focusable element within this item, stop propagation so the tab key
+          // is handled by the browser and not by useSelectableCollection (which would take us out of the list).
+          let walker = getFocusableTreeWalker(ref.current, {tabbable: true});
+          walker.currentNode = activeElement;
+          let next = walker.previousNode();
+
+          if (next) {
+            return {shouldPreventDefault: false, shouldContinuePropagation: false};
+          }
+        }
+        return false;
+      }
     }
-  };
+  });
 
   let onFocus = e => {
     keyWhenFocused.current = node.key;
@@ -311,33 +343,6 @@ export function useGridListItem<T>(
     }
   };
 
-  let onKeyDown = e => {
-    let activeElement = getActiveElement();
-    if (
-      !nodeContains(e.currentTarget, getEventTarget(e) as Element) ||
-      !ref.current ||
-      !activeElement
-    ) {
-      return;
-    }
-
-    switch (e.key) {
-      case 'Tab': {
-        if (keyboardNavigationBehavior === 'tab') {
-          // If there is another focusable element within this item, stop propagation so the tab key
-          // is handled by the browser and not by useSelectableCollection (which would take us out of the list).
-          let walker = getFocusableTreeWalker(ref.current, {tabbable: true});
-          walker.currentNode = activeElement;
-          let next = e.shiftKey ? walker.previousNode() : walker.nextNode();
-
-          if (next) {
-            e.stopPropagation();
-          }
-        }
-      }
-    }
-  };
-
   let syntheticLinkProps = useSyntheticLinkProps(node.props);
   let linkProps = itemStates.hasAction ? syntheticLinkProps : {};
   // TODO: re-add when we get translations and fix this for iOS VO
@@ -352,8 +357,7 @@ export function useGridListItem<T>(
 
   let rowProps: DOMAttributes = mergeProps(itemProps, linkProps, {
     role: 'row',
-    onKeyDownCapture,
-    onKeyDown,
+    ...keyboardProps,
     onFocus,
     // 'aria-label': [(node.textValue || undefined), rowAnnouncement].filter(Boolean).join(', '),
     'aria-label': node['aria-label'] || node.textValue || undefined,
