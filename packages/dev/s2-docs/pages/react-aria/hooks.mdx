@@ -21,12 +21,12 @@ export const tags = ['hooks', 'standalone', 'composition', 'low-level', 'react-s
 
 ## When to use hooks
 
-Most applications should start with [React Aria Components](index). They provide accessible, fully featured building blocks with minimal code, and offer extensive [styling](styling) and [customization](customization) options — including the `render` prop, slots, and contexts — that cover the majority of use cases.
+Most applications should start with [React Aria Components](index). They provide accessible, fully featured building blocks with minimal code, and offer extensive [styling](styling) and [customization](customization) options that cover the majority of use cases.
 
 Reach for hooks when you need to go further:
 
-* **Full control over the DOM.** Hooks return DOM props (event handlers, ARIA attributes, and ids); you render your own elements and decide the exact structure, so nothing is rendered that you didn't write.
-* **Integrating with an existing system.** Layer React Aria's behavior and accessibility onto components you already have, or onto a third party design system.
+* **Full control over the DOM.** Hooks return DOM props (event handlers, ARIA attributes, and ids). You'll render your own elements and decide the exact structure.
+* **Integrating with an existing system.** Layer React Aria's behavior and accessibility onto components you already have, or onto a third party library.
 * **Rendering control beyond components.** When render props and contexts aren't enough, a hook gives you direct access to the underlying behavior.
 
 Hooks and components share the same foundations: both follow the same [ARIA patterns](https://www.w3.org/WAI/ARIA/apg/patterns/) and manage state with the same React Stately hooks. In fact, every React Aria Component is implemented on top of these hooks, so you can move between the two APIs as your needs change.
@@ -46,7 +46,7 @@ function Button(props) {
 }
 ```
 
-See [useButton](Button/useButton) and [useCalendar](Calendar/useCalendar) for complete from-scratch examples. The examples throughout these hook docs are available as a downloadable starter — each component is built from React Aria hooks and styled to match the Vanilla CSS starter:
+See [useButton](Button/useButton) and [useCalendar](Calendar/useCalendar) for complete from-scratch examples. The examples throughout these hook docs are available as a downloadable starter:
 
 <HooksStarterKit />
 
@@ -54,10 +54,4 @@ See [useButton](Button/useButton) and [useCalendar](Calendar/useCalendar) for co
 
 Using hooks isn't all-or-nothing. A hook returns props that you can pass to React Aria Components via context, following the [Reusing children](customization#reusing-children) pattern. This lets you implement a component's behavior with a hook while reusing the styled sub-components you already have for the individual parts.
 
-For example, [useSelect](Select/useSelect), [useComboBox](ComboBox/useComboBox), and [useDateRangePicker](DateRangePicker/useDateRangePicker) build the overall component with a hook, then render React Aria Components for the button, popover, listbox, and calendar — passing the values returned by the hook to each via context.
-
-## Mixing approaches
-
-Because the two APIs are built on the same foundation, they interoperate freely. Use React Aria Components throughout your app and drop down to a hook for a single bespoke component, or build a component with a hook and render React Aria Components inside it. Pick the level of abstraction that fits each part of your interface.
-
-Every component's page links to its corresponding hook under **Related**, so you can compare the component and hook implementations side by side.
+For example, [useSelect](Select/useSelect), [useComboBox](ComboBox/useComboBox), and [useDateRangePicker](DateRangePicker/useDateRangePicker) build the overall component with a hook, then render React Aria Components for the button, popover, listbox, and calendar.
