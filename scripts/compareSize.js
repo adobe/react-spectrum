@@ -26,23 +26,22 @@ async function compareBuildAppSize() {
     let lastPublishStatUrl = `https://reactspectrum.blob.core.windows.net/reactspectrum/${commit}/verdaccio/rsp-cra-18/publish-stats/${currentPublishStatsFile}`;
     let lastAppStatPath = path.join(__dirname, '..', lastAppStatsFile);
     let lastPublishStatPath = path.join(__dirname, '..', lastPublishStatsFile);
-    await download(lastAppStatUrl, lastAppStatPath);
-    await download(lastPublishStatUrl, lastPublishStatPath);
+    await Promise.all([
+      download(lastAppStatUrl, lastAppStatPath),
+      download(lastPublishStatUrl, lastPublishStatPath)
+    ]);
 
-    if (!fs.existsSync(lastAppStatPath)) {
-      // TODO: placeholder until we get some real stats. Hardcoded URL pointing to a commit with actual data
-      await download(
+    await Promise.all([
+      !fs.existsSync(lastAppStatPath) && download(
+        // TODO: placeholder until we get some real stats. Hardcoded URL pointing to a commit with actual data
         `https://reactspectrum.blob.core.windows.net/reactspectrum/2504f8ad927d0d0ad55e7e6db8a22fec16a67b6f/verdaccio/publish-stats/${currentAppStatsFile}`,
         lastAppStatPath
-      );
-    }
-
-    if (!fs.existsSync(lastPublishStatPath)) {
-      await download(
+      ),
+      !fs.existsSync(lastPublishStatPath) && download(
         `https://reactspectrum.blob.core.windows.net/reactspectrum/2504f8ad927d0d0ad55e7e6db8a22fec16a67b6f/verdaccio/publish-stats/${currentPublishStatsFile}`,
         lastPublishStatPath
-      );
-    }
+      )
+    ]);
 
     // Extract the built example app size from the current commit and the last publish commit data
     let lastAppStats = fs.readFileSync(lastAppStatsFile, 'utf8');
@@ -109,11 +108,25 @@ function download(url, dest) {
               });
             }
           });
+          response.on('error', err => {
+            file.close();
+            fs.unlink(dest, () => {
+              console.error(err);
+              resolve();
+            });
+          });
           response.pipe(file);
         } else {
           console.error(`Server responded with ${response.statusCode}: ${response.statusMessage}`);
+          response.resume(); // drain the response so the socket is released
           resolve();
         }
+      });
+
+      request.setTimeout(30000, () => {
+        request.destroy();
+        console.error(`Request timed out: ${url}`);
+        resolve();
       });
 
       request.on('error', err => {
