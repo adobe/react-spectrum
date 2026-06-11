@@ -10,7 +10,20 @@
  * governing permissions and limitations under the License.
  */
 
-import {BackgroundColorValue, BorderColorValue, BorderRadiusValue, BorderSizeValue, ColorValue, ColorVersion, DimensionValue, Direction, Responsive, ResponsiveProp, StyleProps, ViewStyleProps} from '@react-types/shared';
+import {
+  BackgroundColorValue,
+  BorderColorValue,
+  BorderRadiusValue,
+  BorderSizeValue,
+  ColorValue,
+  ColorVersion,
+  DimensionValue,
+  Direction,
+  Responsive,
+  ResponsiveProp,
+  StyleProps,
+  ViewStyleProps
+} from '@react-types/shared';
 import {CSSProperties, HTMLAttributes} from 'react';
 import {useBreakpoint} from './BreakpointProvider';
 import {useLocale} from 'react-aria/I18nProvider';
@@ -19,7 +32,7 @@ type Breakpoint = 'base' | 'S' | 'M' | 'L' | string;
 type StyleName = string | string[] | ((dir: Direction) => string);
 type StyleHandler = (value: any, colorVersion?: number) => string | undefined;
 export interface StyleHandlers {
-  [key: string]: [StyleName, StyleHandler]
+  [key: string]: [StyleName, StyleHandler];
 }
 
 export const baseStyleProps: StyleHandlers = {
@@ -87,8 +100,14 @@ export const viewStyleProps: StyleHandlers = {
   borderRadius: ['borderRadius', borderRadiusValue],
   borderTopStartRadius: [rtl('borderTopLeftRadius', 'borderTopRightRadius'), borderRadiusValue],
   borderTopEndRadius: [rtl('borderTopRightRadius', 'borderTopLeftRadius'), borderRadiusValue],
-  borderBottomStartRadius: [rtl('borderBottomLeftRadius', 'borderBottomRightRadius'), borderRadiusValue],
-  borderBottomEndRadius: [rtl('borderBottomRightRadius', 'borderBottomLeftRadius'), borderRadiusValue],
+  borderBottomStartRadius: [
+    rtl('borderBottomLeftRadius', 'borderBottomRightRadius'),
+    borderRadiusValue
+  ],
+  borderBottomEndRadius: [
+    rtl('borderBottomRightRadius', 'borderBottomLeftRadius'),
+    borderRadiusValue
+  ],
   borderTopLeftRadius: ['borderTopLeftRadius', borderRadiusValue],
   borderTopRightRadius: ['borderTopRightRadius', borderRadiusValue],
   borderBottomLeftRadius: ['borderBottomLeftRadius', borderRadiusValue],
@@ -114,9 +133,7 @@ const borderStyleProps = {
 };
 
 function rtl(ltr: string, rtl: string) {
-  return (direction: Direction) => (
-    direction === 'rtl' ? rtl : ltr
-  );
+  return (direction: Direction) => (direction === 'rtl' ? rtl : ltr);
 }
 
 const UNIT_RE = /(%|px|em|rem|vw|vh|auto|cm|mm|in|pt|pc|ex|ch|rem|vmin|vmax|fr)$/;
@@ -137,13 +154,19 @@ export function dimensionValue(value: DimensionValue): string | undefined {
   }
 
   if (FUNC_RE.test(value)) {
-    return value.replace(SPECTRUM_VARIABLE_RE, 'var(--spectrum-global-dimension-$&, var(--spectrum-alias-$&))');
+    return value.replace(
+      SPECTRUM_VARIABLE_RE,
+      'var(--spectrum-global-dimension-$&, var(--spectrum-alias-$&))'
+    );
   }
 
   return `var(--spectrum-global-dimension-${value}, var(--spectrum-alias-${value}))`;
 }
 
-export function responsiveDimensionValue(value: Responsive<DimensionValue>, matchedBreakpoints: Breakpoint[]): string | undefined {
+export function responsiveDimensionValue(
+  value: Responsive<DimensionValue>,
+  matchedBreakpoints: Breakpoint[]
+): string | undefined {
   let responsiveValue = getResponsiveProp(value, matchedBreakpoints);
   if (responsiveValue != null) {
     return dimensionValue(responsiveValue);
@@ -168,7 +191,7 @@ function backgroundColorValue(value: BackgroundColorValue, version = 5): string 
 }
 
 function borderColorValue(value: BorderColorValue, version = 5): string | undefined {
-  if (!value)  {
+  if (!value) {
     return undefined;
   }
 
@@ -180,9 +203,7 @@ function borderColorValue(value: BorderColorValue, version = 5): string | undefi
 }
 
 function borderSizeValue(value?: BorderSizeValue | null): string {
-  return value && value !== 'none'
-    ? `var(--spectrum-alias-border-size-${value})`
-    : '0';
+  return value && value !== 'none' ? `var(--spectrum-alias-border-size-${value})` : '0';
 }
 
 function borderRadiusValue(value: BorderRadiusValue): string | undefined {
@@ -209,7 +230,12 @@ function flexValue(value: boolean | number | string): string | undefined {
   return '' + value;
 }
 
-export function convertStyleProps<C extends ColorVersion>(props: ViewStyleProps<C>, handlers: StyleHandlers, direction: Direction, matchedBreakpoints: Breakpoint[]): CSSProperties {
+export function convertStyleProps<C extends ColorVersion>(
+  props: ViewStyleProps<C>,
+  handlers: StyleHandlers,
+  direction: Direction,
+  matchedBreakpoints: Breakpoint[]
+): CSSProperties {
   let style: CSSProperties = {};
   for (let key in props) {
     let styleProp = handlers[key];
@@ -244,7 +270,7 @@ export function convertStyleProps<C extends ColorVersion>(props: ViewStyleProps<
 }
 
 type StylePropsOptions = {
-  matchedBreakpoints?: Breakpoint[]
+  matchedBreakpoints?: Breakpoint[];
 };
 
 export function useStyleProps<T extends StyleProps>(
@@ -252,16 +278,10 @@ export function useStyleProps<T extends StyleProps>(
   handlers: StyleHandlers = baseStyleProps,
   options: StylePropsOptions = {}
 ): {styleProps: HTMLAttributes<HTMLElement>} {
-  let {
-    UNSAFE_className,
-    UNSAFE_style,
-    ...otherProps
-  } = props;
+  let {UNSAFE_className, UNSAFE_style, ...otherProps} = props;
   let breakpointProvider = useBreakpoint();
   let {direction} = useLocale();
-  let {
-    matchedBreakpoints = breakpointProvider?.matchedBreakpoints || ['base']
-  } = options;
+  let {matchedBreakpoints = breakpointProvider?.matchedBreakpoints || ['base']} = options;
   let styles = convertStyleProps(props, handlers, direction, matchedBreakpoints);
   let style = {...UNSAFE_style, ...styles};
 
@@ -269,8 +289,8 @@ export function useStyleProps<T extends StyleProps>(
   if (otherProps.className && process.env.NODE_ENV !== 'production') {
     console.warn(
       'The className prop is unsafe and is unsupported in React Spectrum v3. ' +
-      'Please use style props with Spectrum variables, or UNSAFE_className if you absolutely must do something custom. ' +
-      'Note that this may break in future versions due to DOM structure changes.'
+        'Please use style props with Spectrum variables, or UNSAFE_className if you absolutely must do something custom. ' +
+        'Note that this may break in future versions due to DOM structure changes.'
     );
   }
 
@@ -278,8 +298,8 @@ export function useStyleProps<T extends StyleProps>(
   if (otherProps.style && process.env.NODE_ENV !== 'production') {
     console.warn(
       'The style prop is unsafe and is unsupported in React Spectrum v3. ' +
-      'Please use style props with Spectrum variables, or UNSAFE_style if you absolutely must do something custom. ' +
-      'Note that this may break in future versions due to DOM structure changes.'
+        'Please use style props with Spectrum variables, or UNSAFE_style if you absolutely must do something custom. ' +
+        'Note that this may break in future versions due to DOM structure changes.'
     );
   }
 
@@ -301,7 +321,10 @@ export function passthroughStyle<T>(value: T): T {
   return value;
 }
 
-export function getResponsiveProp<T>(prop: Responsive<T>, matchedBreakpoints: Breakpoint[]): T | undefined {
+export function getResponsiveProp<T>(
+  prop: Responsive<T>,
+  matchedBreakpoints: Breakpoint[]
+): T | undefined {
   if (prop && typeof prop === 'object' && !Array.isArray(prop)) {
     for (let i = 0; i < matchedBreakpoints.length; i++) {
       let breakpoint = matchedBreakpoints[i];

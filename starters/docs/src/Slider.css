@@ -1,10 +1,11 @@
-@import "./theme.css";
-@import "./utilities.css";
+@import './theme.css';
+@import './utilities.css';
 
 .react-aria-Slider {
   display: grid;
-  grid-template-areas: "label output"
-                       "track track";
+  grid-template-areas:
+    'label output'
+    'track track';
   grid-template-columns: 1fr auto;
   max-width: min(calc(100% - 12px), 300px);
   font: var(--font-size) system-ui;
@@ -29,9 +30,7 @@
       border-radius: 9999px;
     }
 
-    .fill {
-      position: absolute;
-      margin: 1px 0 0 1px;
+    .react-aria-SliderFill {
       border-radius: inherit;
       background: var(--tint-900);
 
@@ -54,7 +53,7 @@
     }
   }
 
-  &[data-orientation=horizontal] {
+  &[data-orientation='horizontal'] {
     flex-direction: column;
     width: 100%;
 
@@ -69,14 +68,19 @@
         transform: translateY(-50%);
       }
 
-      .fill {
-        inset-inline-start: var(--start, 0);
-        width: var(--size);
-        height: calc(100% - 2px);
-        box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.3), inset 0 2px 2px rgb(255 255 255 / 0.2), 0 1px 0 lch(from var(--tint) 42% c h), 0 0 0 1px var(--tint-900);
-    
+      .react-aria-SliderFill {
+        box-shadow:
+          inset 0 -1px 0 lch(from var(--tint) 42% c h),
+          inset 0 0 0 1px var(--tint-900),
+          inset 0 2px 0 rgb(255 255 255 / 0.3),
+          inset 0 3px 2px rgb(255 255 255 / 0.2);
+
         @media (prefers-color-scheme: dark) {
-          box-shadow: 0 -1px 0 rgb(255 255 255 / 0.6), inset 0 2px 2px rgb(255 255 255 / 0.2), 0 1px 0 lch(from var(--tint) 42% c h), 0 0 0 1px var(--tint-900);
+          box-shadow:
+            inset 0 -1px 0 lch(from var(--tint) 42% c h),
+            inset 0 1px 0 rgb(255 255 255 / 0.6),
+            inset 0 0 0 1px var(--tint-900),
+            inset 0 3px 2px rgb(255 255 255 / 0.2);
         }
 
         @media (forced-colors: active) {
@@ -90,7 +94,7 @@
     }
   }
 
-  &[data-orientation=vertical] {
+  &[data-orientation='vertical'] {
     height: 150px;
     display: block;
     margin: var(--spacing-3) 0;
@@ -111,14 +115,19 @@
         transform: translateX(-50%);
       }
 
-      .fill {
-        inset-block-end: var(--start, 0);
-        height: var(--size);
-        width: calc(100% - 2px);
-        box-shadow: inset 1px 0 0 rgb(255 255 255 / 0.3), inset 2px 0 2px rgb(255 255 255 / 0.2), 1px 0 0 lch(from var(--tint) 42% c h), 0 0 0 1px var(--tint-900);
-    
+      .react-aria-SliderFill {
+        box-shadow:
+          inset -1px 0 0 lch(from var(--tint) 42% c h),
+          inset 0 0 0 1px var(--tint-900),
+          inset 2px 0 0 rgb(255 255 255 / 0.3),
+          inset 3px 0 2px rgb(255 255 255 / 0.2);
+
         @media (prefers-color-scheme: dark) {
-          box-shadow: -1px 0 0 rgb(255 255 255 / 0.6), inset 2px 0 2px rgb(255 255 255 / 0.2), 1px 0 0 lch(from var(--tint) 42% c h), 0 0 0 1px var(--tint-900);
+          box-shadow:
+            inset -1px 0 0 lch(from var(--tint) 42% c h),
+            inset 1px 0 0 rgb(255 255 255 / 0.6),
+            inset 0 0 0 1px var(--tint-900),
+            inset 3px 0 2px rgb(255 255 255 / 0.2);
         }
 
         @media (forced-colors: active) {
@@ -139,7 +148,7 @@
         --border-color: var(--border-color-disabled);
       }
 
-      .fill {
+      .react-aria-SliderFill {
         background: var(--border-color-disabled);
         box-shadow: none;
       }

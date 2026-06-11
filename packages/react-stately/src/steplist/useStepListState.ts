@@ -15,72 +15,95 @@ import {SingleSelectListState, useSingleSelectListState} from '../list/useSingle
 import {useCallback, useEffect, useMemo} from 'react';
 import {useControlledState} from '../utils/useControlledState';
 
-export interface StepListProps<T> extends CollectionBase<T>, Omit<SingleSelection, 'onSelectionChange'> {
+export interface StepListProps<T>
+  extends CollectionBase<T>, Omit<SingleSelection, 'onSelectionChange'> {
   /** The key of the last completed step (controlled). */
-  lastCompletedStep?: Key,
+  lastCompletedStep?: Key;
   /** The key of the initially last completed step (uncontrolled). */
-  defaultLastCompletedStep?: Key,
+  defaultLastCompletedStep?: Key;
   /** Callback for when the last completed step changes. */
-  onLastCompletedStepChange?: (key: Key | null) => void,
+  onLastCompletedStepChange?: (key: Key | null) => void;
   /** Whether the step list is disabled. Steps will not be focusable or interactive. */
-  isDisabled?: boolean,
+  isDisabled?: boolean;
   /** Whether the step list is read only. Steps will be focusable but non-interactive. */
-  isReadOnly?: boolean,
+  isReadOnly?: boolean;
   /** Handler that is called when the selection changes. */
-  onSelectionChange?: (key: Key) => void
+  onSelectionChange?: (key: Key) => void;
 }
 
 export interface StepListState<T> extends SingleSelectListState<T> {
-  readonly lastCompletedStep?: Key,
-  setLastCompletedStep(key: Key): void,
-  isCompleted(key: Key): boolean,
-  isSelectable(key: Key): boolean
+  readonly lastCompletedStep?: Key;
+  setLastCompletedStep(key: Key): void;
+  isCompleted(key: Key): boolean;
+  isSelectable(key: Key): boolean;
 }
 
 export function useStepListState<T extends object>(props: StepListProps<T>): StepListState<T> {
   let state = useSingleSelectListState<T>({
     ...props,
-    onSelectionChange: props.onSelectionChange ? (key => {
-      if (key != null) {
-        props.onSelectionChange?.(key);
-      }
-    }) : undefined
+    onSelectionChange: props.onSelectionChange
+      ? key => {
+          if (key != null) {
+            props.onSelectionChange?.(key);
+          }
+        }
+      : undefined
   });
 
-  let [lastCompletedStep, setLastCompletedStep] = useControlledState<Key | null>(props.lastCompletedStep, props.defaultLastCompletedStep ?? null, props.onLastCompletedStepChange);
+  let [lastCompletedStep, setLastCompletedStep] = useControlledState<Key | null>(
+    props.lastCompletedStep,
+    props.defaultLastCompletedStep ?? null,
+    props.onLastCompletedStepChange
+  );
   const {setSelectedKey: realSetSelectedKey, selectedKey, collection} = state;
   const {indexMap, keysLinkedList} = useMemo(() => buildKeysMaps(collection), [collection]);
   const selectedIdx = selectedKey != null ? indexMap.get(selectedKey) : 0;
 
-  const isCompleted = useCallback((step: Key | null | undefined) => {
-    if (step === undefined) {
-      return false;
-    }
-
-    return (step !== null &&
-      lastCompletedStep !== null &&
-      indexMap.has(step) &&
-      indexMap.has(lastCompletedStep) &&
-      indexMap.get(step)! <= indexMap.get(lastCompletedStep)!);
-  }, [indexMap, lastCompletedStep]);
-
-  const findDefaultSelectedKey = useCallback((collection: Collection<Node<T>> | null, disabledKeys: Set<Key>) => {
-    let selectedKey: Key | null = null;
-    if (collection && collection.size > 0) {
-      selectedKey = collection.getFirstKey();
-      // loop over keys until we find one that isn't completed or disabled and select that
-      while (selectedKey !== collection.getLastKey() && selectedKey && (disabledKeys.has(selectedKey) || isCompleted(selectedKey))) {
-        selectedKey = collection.getKeyAfter(selectedKey);
+  const isCompleted = useCallback(
+    (step: Key | null | undefined) => {
+      if (step === undefined) {
+        return false;
       }
-    }
 
-    return selectedKey;
-  }, [isCompleted]);
+      return (
+        step !== null &&
+        lastCompletedStep !== null &&
+        indexMap.has(step) &&
+        indexMap.has(lastCompletedStep) &&
+        indexMap.get(step)! <= indexMap.get(lastCompletedStep)!
+      );
+    },
+    [indexMap, lastCompletedStep]
+  );
+
+  const findDefaultSelectedKey = useCallback(
+    (collection: Collection<Node<T>> | null, disabledKeys: Set<Key>) => {
+      let selectedKey: Key | null = null;
+      if (collection && collection.size > 0) {
+        selectedKey = collection.getFirstKey();
+        // loop over keys until we find one that isn't completed or disabled and select that
+        while (
+          selectedKey !== collection.getLastKey() &&
+          selectedKey &&
+          (disabledKeys.has(selectedKey) || isCompleted(selectedKey))
+        ) {
+          selectedKey = collection.getKeyAfter(selectedKey);
+        }
+      }
+
+      return selectedKey;
+    },
+    [isCompleted]
+  );
 
   useEffect(() => {
     // Ensure a step is always selected (in case no selected key was specified or if selected item was deleted from collection)
     let selectedKey: Key | null = state.selectedKey;
-    if (state.selectionManager.isEmpty || selectedKey == null || !state.collection.getItem(selectedKey)) {
+    if (
+      state.selectionManager.isEmpty ||
+      selectedKey == null ||
+      !state.collection.getItem(selectedKey)
+    ) {
       selectedKey = findDefaultSelectedKey(state.collection, state.disabledKeys);
       if (selectedKey !== null) {
         state.selectionManager.replaceSelection(selectedKey);
@@ -92,7 +115,13 @@ export function useStepListState<T extends object>(props: StepListProps<T>): Ste
     }
 
     let lcs = (lastCompletedStep !== null ? indexMap.get(lastCompletedStep) : -1) ?? -1;
-    if (selectedIdx !== undefined && selectedIdx > 0 && selectedIdx > lcs + 1 && selectedKey !== null && keysLinkedList.has(selectedKey)) {
+    if (
+      selectedIdx !== undefined &&
+      selectedIdx > 0 &&
+      selectedIdx > lcs + 1 &&
+      selectedKey !== null &&
+      keysLinkedList.has(selectedKey)
+    ) {
       setLastCompletedStep(keysLinkedList.get(selectedKey)!);
     }
   });

@@ -24,14 +24,15 @@ describe('nodeContains with shadow DOM', function () {
 
   it('can tell if a node is contained even if it is within a shadow DOM', function () {
     const {shadowRoot, shadowHost, cleanup} = createShadowRoot();
-    let Wrapper = () => ReactDOM.createPortal(
-      <div>
-        <input type="checkbox" />
-        <button>Button</button>
-        <input type="checkbox" />
-      </div>,
-      shadowRoot
-    );
+    let Wrapper = () =>
+      ReactDOM.createPortal(
+        <div>
+          <input type="checkbox" />
+          <button>Button</button>
+          <input type="checkbox" />
+        </div>,
+        shadowRoot
+      );
     render(<Wrapper />);
 
     let button = screen.getByShadowRole('button');
@@ -42,4 +43,3 @@ describe('nodeContains with shadow DOM', function () {
     cleanup();
   });
 });
-

@@ -13,72 +13,91 @@
 import {AriaLabelingProps} from '@react-types/shared';
 import {ContextValue, SlotProps} from 'react-aria-components/slots';
 import {createContext, ForwardedRef, forwardRef, ReactNode} from 'react';
-import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
+import {
+  getAllowedOverrides,
+  StylesPropWithHeight,
+  UnsafeStyles
+} from './style-utils' with {type: 'macro'};
 import {style} from '../style' with {type: 'macro'};
 import {Toolbar} from 'react-aria-components/Toolbar';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface ActionButtonGroupProps extends AriaLabelingProps, UnsafeStyles, SlotProps {
   /** Spectrum-defined styles, returned by the `style()` macro. */
-  styles?: StylesPropWithHeight,
+  styles?: StylesPropWithHeight;
   /** The children of the group. */
-  children: ReactNode,
+  children: ReactNode;
   /**
    * Size of the buttons.
-   * @default "M"
+   *
+   * @default 'M'
    */
-  size?: 'XS' | 'S' | 'M' | 'L' | 'XL',
+  size?: 'XS' | 'S' | 'M' | 'L' | 'XL';
   /**
    * Spacing between the buttons.
-   * @default "regular"
+   *
+   * @default 'regular'
    */
-  density?: 'compact' | 'regular',
-  /** Whether the button should be displayed with a [quiet style](https://spectrum.adobe.com/page/action-button/#Quiet). */
-  isQuiet?: boolean,
+  density?: 'compact' | 'regular';
+  /**
+   * Whether the button should be displayed with a [quiet
+   * style](https://spectrum.adobe.com/page/action-button/#Quiet).
+   */
+  isQuiet?: boolean;
   /** Whether the buttons should divide the container width equally. */
-  isJustified?: boolean,
-  /** The static color style to apply. Useful when the ActionButtonGroup appears over a color background. */
-  staticColor?: 'white' | 'black' | 'auto',
+  isJustified?: boolean;
+  /**
+   * The static color style to apply. Useful when the ActionButtonGroup appears over a color
+   * background.
+   */
+  staticColor?: 'white' | 'black' | 'auto';
   /**
    * The axis the group should align with.
+   *
    * @default 'horizontal'
    */
-  orientation?: 'horizontal' | 'vertical',
+  orientation?: 'horizontal' | 'vertical';
   /** Whether the group is disabled. */
-  isDisabled?: boolean
+  isDisabled?: boolean;
 }
 
-export const actionGroupStyle = style({
-  display: 'flex',
-  flexDirection: {
-    orientation: {
-      horizontal: 'row',
-      vertical: 'column'
-    }
-  },
-  gap: {
-    density: {
-      compact: 2,
-      regular: {
-        size: {
-          XS: 4,
-          S: 4,
-          M: 8,
-          L: 8,
-          XL: 8
+export const actionGroupStyle = style(
+  {
+    display: 'flex',
+    flexDirection: {
+      orientation: {
+        horizontal: 'row',
+        vertical: 'column'
+      }
+    },
+    gap: {
+      density: {
+        compact: 2,
+        regular: {
+          size: {
+            XS: 4,
+            S: 4,
+            M: 8,
+            L: 8,
+            XL: 8
+          }
         }
       }
     }
-  }
-}, getAllowedOverrides({height: true}));
+  },
+  getAllowedOverrides({height: true})
+);
 
-
-export const ActionButtonGroupContext = createContext<ContextValue<Partial<ActionButtonGroupProps>, HTMLDivElement>>(null);
+export const ActionButtonGroupContext =
+  createContext<ContextValue<Partial<ActionButtonGroupProps>, HTMLDivElement>>(null);
 
 /**
  * An ActionButtonGroup is a grouping of related ActionButtons.
  */
-export const ActionButtonGroup = forwardRef(function ActionButtonGroup(props: ActionButtonGroupProps, ref: ForwardedRef<HTMLDivElement>) {
+export const ActionButtonGroup = forwardRef(function ActionButtonGroup(
+  props: ActionButtonGroupProps,
+  ref: ForwardedRef<HTMLDivElement>
+) {
   [props, ref] = useSpectrumContextProps(props, ref, ActionButtonGroupContext);
   let {
     density = 'regular',
@@ -96,7 +115,9 @@ export const ActionButtonGroup = forwardRef(function ActionButtonGroup(props: Ac
       {...props}
       ref={ref}
       style={UNSAFE_style}
-      className={UNSAFE_className + actionGroupStyle({size, density, orientation, isJustified}, styles)}>
+      className={
+        UNSAFE_className + actionGroupStyle({size, density, orientation, isJustified}, styles)
+      }>
       <ActionButtonGroupContext.Provider value={props}>
         {children}
       </ActionButtonGroupContext.Provider>

@@ -13,7 +13,12 @@
 import {AriaRadioGroupProps, RadioProps, useRadioGroup} from 'react-aria/useRadioGroup';
 
 import {classNames} from '../utils/classNames';
-import {DOMRef, SpectrumHelpTextProps, SpectrumLabelableProps, StyleProps} from '@react-types/shared';
+import {
+  DOMRef,
+  SpectrumHelpTextProps,
+  SpectrumLabelableProps,
+  StyleProps
+} from '@react-types/shared';
 import {Field} from '../label/Field';
 import {RadioContext} from './context';
 import React, {ReactElement} from 'react';
@@ -23,30 +28,30 @@ import {useFormProps} from '../form/Form';
 import {useProviderProps} from '../provider/Provider';
 import {useRadioGroupState} from 'react-stately/useRadioGroupState';
 
-export interface SpectrumRadioGroupProps extends AriaRadioGroupProps, SpectrumLabelableProps, StyleProps, SpectrumHelpTextProps {
+export interface SpectrumRadioGroupProps
+  extends AriaRadioGroupProps, SpectrumLabelableProps, StyleProps, SpectrumHelpTextProps {
   /**
    * The Radio(s) contained within the RadioGroup.
    */
-  children: ReactElement<RadioProps> | ReactElement<RadioProps>[],
+  children: ReactElement<RadioProps> | ReactElement<RadioProps>[];
   /**
    * By default, radio buttons are not emphasized (gray).
    * The emphasized (blue) version provides visual prominence.
    */
-  isEmphasized?: boolean
+  isEmphasized?: boolean;
 }
 
 /**
  * Radio groups allow users to select a single option from a list of mutually exclusive options.
  * All possible options are exposed up front for users to compare.
  */
-export const RadioGroup = React.forwardRef(function RadioGroup(props: SpectrumRadioGroupProps, ref: DOMRef<HTMLElement>) {
+export const RadioGroup = React.forwardRef(function RadioGroup(
+  props: SpectrumRadioGroupProps,
+  ref: DOMRef<HTMLElement>
+) {
   props = useProviderProps(props);
   props = useFormProps(props);
-  let {
-    isEmphasized,
-    children,
-    orientation = 'vertical'
-  } = props;
+  let {isEmphasized, children, orientation = 'vertical'} = props;
 
   let domRef = useDOMRef(ref);
   let state = useRadioGroupState(props);
@@ -61,15 +66,9 @@ export const RadioGroup = React.forwardRef(function RadioGroup(props: SpectrumRa
       elementType="span">
       <div
         {...radioGroupProps}
-        className={
-          classNames(
-            styles,
-            'spectrum-FieldGroup-group',
-            {
-              'spectrum-FieldGroup-group--horizontal': orientation === 'horizontal'
-            }
-          )
-        }>
+        className={classNames(styles, 'spectrum-FieldGroup-group', {
+          'spectrum-FieldGroup-group--horizontal': orientation === 'horizontal'
+        })}>
         <RadioContext.Provider
           value={{
             isEmphasized,

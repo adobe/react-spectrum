@@ -1,7 +1,9 @@
 import {NodePath} from '@babel/traverse';
 import * as t from '@babel/types';
 
-export function getPropValue(node: t.JSXAttribute['value'] | t.ObjectProperty['value']): t.Expression | null | undefined {
+export function getPropValue(
+  node: t.JSXAttribute['value'] | t.ObjectProperty['value']
+): t.Expression | null | undefined {
   if (node?.type === 'JSXExpressionContainer') {
     if (node.expression.type === 'JSXEmptyExpression') {
       return null;
@@ -41,7 +43,9 @@ export function nameFromExpression(expr: t.Node): string {
     case 'ParenthesizedExpression':
       return nameFromExpression(expr.expression);
     case 'JSXExpressionContainer':
-      return expr.expression.type !== 'JSXEmptyExpression' ? nameFromExpression(expr.expression) : '';
+      return expr.expression.type !== 'JSXEmptyExpression'
+        ? nameFromExpression(expr.expression)
+        : '';
     case 'BinaryExpression':
     case 'LogicalExpression':
     case 'AssignmentExpression':
@@ -74,9 +78,11 @@ export function addComment(node: any, comment: string): void {
 }
 
 export function addComponentImport(path: NodePath<t.Program>, newComponentName: string): string {
-  let existingImport = path.node.body.find((node) => t.isImportDeclaration(node) && node.source.value === '@react-spectrum/s2');
+  let existingImport = path.node.body.find(
+    node => t.isImportDeclaration(node) && node.source.value === '@react-spectrum/s2'
+  );
   if (existingImport && t.isImportDeclaration(existingImport)) {
-    let existingSpecifier = existingImport.specifiers.find((specifier) => {
+    let existingSpecifier = existingImport.specifiers.find(specifier => {
       return (
         t.isImportSpecifier(specifier) &&
         specifier.imported.type === 'Identifier' &&
@@ -107,12 +113,7 @@ export function addComponentImport(path: NodePath<t.Program>, newComponentName: 
     );
   } else {
     let importDeclaration = t.importDeclaration(
-      [
-        t.importSpecifier(
-          t.identifier(localName),
-          t.identifier(newComponentName)
-        )
-      ],
+      [t.importSpecifier(t.identifier(localName), t.identifier(newComponentName))],
       t.stringLiteral('@react-spectrum/s2')
     );
     path.node.body.unshift(importDeclaration);
@@ -122,25 +123,26 @@ export function addComponentImport(path: NodePath<t.Program>, newComponentName: 
 
 export function removeComponentImport(path: NodePath<t.Program>, component: string): void {
   let imports = path.node.body.filter((node): node is t.ImportDeclaration => {
-    return t.isImportDeclaration(node)
-      && (
-        node.source.value === '@adobe/react-spectrum'
-        || (node.source.value.startsWith('@react-spectrum/') && node.source.value !== '@react-spectrum/s2')
-      );
+    return (
+      t.isImportDeclaration(node) &&
+      (node.source.value === '@adobe/react-spectrum' ||
+        (node.source.value.startsWith('@react-spectrum/') &&
+          node.source.value !== '@react-spectrum/s2'))
+    );
   });
 
   for (let importDecl of imports) {
     let previousLength = importDecl.specifiers.length;
-    importDecl.specifiers = importDecl.specifiers.filter((specifier) => {
+    importDecl.specifiers = importDecl.specifiers.filter(specifier => {
       return !(
-        t.isImportSpecifier(specifier)
-        && specifier.imported.type === 'Identifier'
-        && specifier.imported.name === component
+        t.isImportSpecifier(specifier) &&
+        specifier.imported.type === 'Identifier' &&
+        specifier.imported.name === component
       );
     });
 
     if (importDecl.specifiers.length === 0 && previousLength > 0) {
-      path.node.body = path.node.body.filter((node) => node !== importDecl);
+      path.node.body = path.node.body.filter(node => node !== importDecl);
     }
   }
 }
@@ -149,20 +151,20 @@ export function removeComponentImportIfUnused(path: NodePath<t.Program>, compone
   path.scope.crawl();
 
   let imports = path.node.body.filter((node): node is t.ImportDeclaration => {
-    return t.isImportDeclaration(node)
-      && (
-        node.source.value === '@adobe/react-spectrum'
-        || node.source.value.startsWith('@react-spectrum/')
-      );
+    return (
+      t.isImportDeclaration(node) &&
+      (node.source.value === '@adobe/react-spectrum' ||
+        node.source.value.startsWith('@react-spectrum/'))
+    );
   });
 
   for (let importDecl of imports) {
     let previousLength = importDecl.specifiers.length;
-    importDecl.specifiers = importDecl.specifiers.filter((specifier) => {
+    importDecl.specifiers = importDecl.specifiers.filter(specifier => {
       if (
-        t.isImportSpecifier(specifier)
-        && specifier.imported.type === 'Identifier'
-        && specifier.imported.name === component
+        t.isImportSpecifier(specifier) &&
+        specifier.imported.type === 'Identifier' &&
+        specifier.imported.name === component
       ) {
         let localName = specifier.local?.name ?? specifier.imported.name;
         let binding = path.scope.getBinding(localName);
@@ -173,7 +175,7 @@ export function removeComponentImportIfUnused(path: NodePath<t.Program>, compone
     });
 
     if (importDecl.specifiers.length === 0 && previousLength > 0) {
-      path.node.body = path.node.body.filter((node) => node !== importDecl);
+      path.node.body = path.node.body.filter(node => node !== importDecl);
     }
   }
 }
@@ -188,11 +190,11 @@ export function removeUnusedImports(path: NodePath<t.Program>, sources: string[]
 
   for (let importDecl of imports) {
     let previousLength = importDecl.specifiers.length;
-    importDecl.specifiers = importDecl.specifiers.filter((specifier) => {
+    importDecl.specifiers = importDecl.specifiers.filter(specifier => {
       if (
-        t.isImportSpecifier(specifier)
-        || t.isImportDefaultSpecifier(specifier)
-        || t.isImportNamespaceSpecifier(specifier)
+        t.isImportSpecifier(specifier) ||
+        t.isImportDefaultSpecifier(specifier) ||
+        t.isImportNamespaceSpecifier(specifier)
       ) {
         let binding = path.scope.getBinding(specifier.local.name);
         return !!binding?.referencePaths.length;
@@ -202,7 +204,7 @@ export function removeUnusedImports(path: NodePath<t.Program>, sources: string[]
     });
 
     if (importDecl.specifiers.length === 0 && previousLength > 0) {
-      path.node.body = path.node.body.filter((node) => node !== importDecl);
+      path.node.body = path.node.body.filter(node => node !== importDecl);
     }
   }
 }
@@ -213,7 +215,11 @@ export function removeUnusedImports(path: NodePath<t.Program>, sources: string[]
  */
 export function getName(path: NodePath<t.JSXElement>, identifier: t.JSXIdentifier): string {
   let binding = path.scope.getBinding(identifier.name);
-  if (binding && t.isImportSpecifier(binding.path.node) && t.isIdentifier(binding.path.node.imported)) {
+  if (
+    binding &&
+    t.isImportSpecifier(binding.path.node) &&
+    t.isIdentifier(binding.path.node.imported)
+  ) {
     return binding.path.node.imported.name;
   }
   return identifier.name;

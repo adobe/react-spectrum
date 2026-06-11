@@ -10,7 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-// @ts-ignore
 import intlMessages from '../../intl/datepicker/*.json';
 import {LocalizedStringDictionary} from '@internationalized/string';
 import {useLocale} from '../i18n/I18nProvider';
@@ -19,7 +18,7 @@ import {useMemo} from 'react';
 
 type Field = Intl.DateTimeFormatPartTypes;
 interface DisplayNames {
-  of(field: Field): string | undefined
+  of(field: Field): string | undefined;
 }
 
 /** @private */

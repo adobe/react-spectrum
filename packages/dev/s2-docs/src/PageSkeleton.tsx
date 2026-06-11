@@ -28,7 +28,8 @@ function SkeletonVisualExample() {
         },
         objectFit: 'cover'
       })}
-      alt="Loading example" />
+      alt="Loading example"
+    />
   );
 }
 
@@ -53,33 +54,42 @@ const skeletonArticle = style({
 export function PageSkeleton() {
   let {currentPage, pages} = useRouter();
   let isSubpage = currentPage.exports?.isSubpage;
-  let section = currentPage.exports?.section || 'Components';;
+  let section = currentPage.exports?.section || 'Components';
   let isLongForm = isSubpage && section === 'Blog';
-  let hasToC = (!currentPage.exports?.hideNav || section === 'Blog' || section === 'Releases') && currentPage.tableOfContents?.[0]?.children && currentPage.tableOfContents?.[0]?.children?.length > 0;
+  let hasToC =
+    (!currentPage.exports?.hideNav || section === 'Blog' || section === 'Releases') &&
+    currentPage.tableOfContents?.[0]?.children &&
+    currentPage.tableOfContents?.[0]?.children?.length > 0;
   let isWide = !hasToC && !isLongForm && section !== 'Blog' && section !== 'Releases';
   let parentUrl = new URL('./', currentPage.url);
   let parentIndex = parentUrl.href;
   let parentPageUrl = parentUrl.href.slice(0, -1);
   let parentPage = pages.find(p => p.url === parentIndex || p.url === parentPageUrl);
   let isComponents = section === 'Components';
-  
+
   return (
     <article className={skeletonArticle({isLongForm, isWide})}>
       {currentPage.exports?.version && <VersionBadge version={currentPage.exports.version} />}
-      {currentPage.exports?.isSubpage
-        ? <SubpageHeader currentPage={currentPage} parentPage={parentPage} isLongForm={isLongForm} />
-        : currentPage.tableOfContents?.[0]?.level === 1 && <H1 isLongForm={isLongForm}>{currentPage.tableOfContents?.[0].title}</H1>
-      }
+      {currentPage.exports?.isSubpage ? (
+        <SubpageHeader currentPage={currentPage} parentPage={parentPage} isLongForm={isLongForm} />
+      ) : (
+        currentPage.tableOfContents?.[0]?.level === 1 && (
+          <H1 isLongForm={isLongForm}>{currentPage.tableOfContents?.[0].title}</H1>
+        )
+      )}
       <Skeleton isLoading>
         <PageDescription>
-          <Text>This is placeholder content for the page description that approximates the typical length of component descriptions.</Text>
+          <Text>
+            This is placeholder content for the page description that approximates the typical
+            length of component descriptions.
+          </Text>
         </PageDescription>
-        
+
         {isComponents ? (
           <>
             {/* VisualExample */}
             <SkeletonVisualExample />
-            
+
             {/* A few sections with visual examples */}
             {[1, 2, 3].map(i => (
               <React.Fragment key={i}>
@@ -87,7 +97,10 @@ export function PageSkeleton() {
                   <Text>Section Heading</Text>
                 </H2>
                 <P>
-                  <Text>Placeholder content for a section that describes various aspects of the component or feature being documented.</Text>
+                  <Text>
+                    Placeholder content for a section that describes various aspects of the
+                    component or feature being documented.
+                  </Text>
                 </P>
                 <SkeletonVisualExample />
               </React.Fragment>
@@ -102,7 +115,10 @@ export function PageSkeleton() {
                   <Text>Section Heading</Text>
                 </H2>
                 <P>
-                  <Text>Placeholder content for a section that describes various aspects of the topic being documented.</Text>
+                  <Text>
+                    Placeholder content for a section that describes various aspects of the topic
+                    being documented.
+                  </Text>
                 </P>
               </React.Fragment>
             ))}

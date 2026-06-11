@@ -36,9 +36,17 @@ export {BuddhistCalendar} from './calendars/BuddhistCalendar';
 export {TaiwanCalendar} from './calendars/TaiwanCalendar';
 export {PersianCalendar} from './calendars/PersianCalendar';
 export {IndianCalendar} from './calendars/IndianCalendar';
-export {IslamicCivilCalendar, IslamicTabularCalendar, IslamicUmalquraCalendar} from './calendars/IslamicCalendar';
+export {
+  IslamicCivilCalendar,
+  IslamicTabularCalendar,
+  IslamicUmalquraCalendar
+} from './calendars/IslamicCalendar';
 export {HebrewCalendar} from './calendars/HebrewCalendar';
-export {EthiopicCalendar, EthiopicAmeteAlemCalendar, CopticCalendar} from './calendars/EthiopicCalendar';
+export {
+  EthiopicCalendar,
+  EthiopicAmeteAlemCalendar,
+  CopticCalendar
+} from './calendars/EthiopicCalendar';
 export {createCalendar} from './createCalendar';
 export {
   toCalendarDate,

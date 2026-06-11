@@ -28,13 +28,13 @@ const switcher = style({
 });
 
 export interface BundlerSwitcherProps {
-  children: ReactNode
+  children: ReactNode;
 }
 
 export interface BundlerSwitcherItemProps {
-  id: SwitcherKey,
-  label: string,
-  children: ReactNode
+  id: SwitcherKey;
+  label: string;
+  children: ReactNode;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -65,9 +65,14 @@ export function BundlerSwitcher({children}: BundlerSwitcherProps) {
   return (
     <div className={container} data-example-switcher>
       <div className={style({overflowX: 'auto', width: 'auto', flexGrow: 1})}>
-        <SegmentedControl selectedKey={active?.id} onSelectionChange={onSelectionChange} styles={switcher}>
+        <SegmentedControl
+          selectedKey={active?.id}
+          onSelectionChange={onSelectionChange}
+          styles={switcher}>
           {items.map(it => (
-            <SegmentedControlItem key={it.id} id={it.id}>{it.label}</SegmentedControlItem>
+            <SegmentedControlItem key={it.id} id={it.id}>
+              {it.label}
+            </SegmentedControlItem>
           ))}
         </SegmentedControl>
       </div>

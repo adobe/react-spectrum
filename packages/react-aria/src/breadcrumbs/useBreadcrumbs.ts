@@ -12,7 +12,6 @@
 
 import {AriaLabelingProps, DOMAttributes, DOMProps} from '@react-types/shared';
 import {filterDOMProps} from '../utils/filterDOMProps';
-// @ts-ignore
 import intlMessages from '../../intl/breadcrumbs/*.json';
 import {useLocalizedStringFormatter} from '../i18n/useLocalizedStringFormatter';
 
@@ -20,7 +19,7 @@ export interface AriaBreadcrumbsProps extends DOMProps, AriaLabelingProps {}
 
 export interface BreadcrumbsAria {
   /** Props for the breadcrumbs navigation element. */
-  navProps: DOMAttributes
+  navProps: DOMAttributes;
 }
 
 /**
@@ -28,10 +27,7 @@ export interface BreadcrumbsAria {
  * Breadcrumbs display a hierarchy of links to the current page or resource in an application.
  */
 export function useBreadcrumbs(props: AriaBreadcrumbsProps): BreadcrumbsAria {
-  let {
-    'aria-label': ariaLabel,
-    ...otherProps
-  } = props;
+  let {'aria-label': ariaLabel, ...otherProps} = props;
 
   let strings = useLocalizedStringFormatter(intlMessages, '@react-aria/breadcrumbs');
   return {

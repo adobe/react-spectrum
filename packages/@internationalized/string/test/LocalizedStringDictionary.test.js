@@ -13,21 +13,20 @@
 import {LocalizedStringDictionary} from '..';
 
 describe('LocalizedStringDictionary', function () {
-
   describe('getStringForLocale', function () {
     const messages = Object.freeze({
       'en-US': {
-        'hello': 'Hello',
-        'goodbye': 'Good bye'
+        hello: 'Hello',
+        goodbye: 'Good bye'
       },
       'ja-JP': undefined,
       'es-ES': {
-        'hello': 'Hola',
-        'goodbye': 'Adiós'
+        hello: 'Hola',
+        goodbye: 'Adiós'
       },
       'it-IT': {
-        'hello': 'Ciao',
-        'goodbye': 'Arrivederci'
+        hello: 'Ciao',
+        goodbye: 'Arrivederci'
       }
     });
 

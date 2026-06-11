@@ -1,4 +1,4 @@
-@import "./theme.css";
+@import './theme.css';
 
 .react-aria-ToastRegion {
   position: fixed;
@@ -40,18 +40,18 @@
     min-width: 0;
     font: var(--font-size) system-ui;
 
-    [slot=title] {
+    [slot='title'] {
       font-weight: 600;
       color: var(--highlight-foreground);
     }
 
-    [slot=description] {
+    [slot='description'] {
       font-size: var(--font-size-sm);
       color: var(--highlight-foreground);
     }
   }
 
-  .react-aria-Button[slot=close] {
+  .react-aria-Button[slot='close'] {
     flex: 0 0 auto;
     background: none;
     border: none;

@@ -12,7 +12,7 @@ const meta: Meta<typeof ColorSwatch> = {
 export default meta;
 type Story = StoryFn<typeof ColorSwatch>;
 
-export const Example: Story = (args) => <ColorSwatch {...args} />;
+export const Example: Story = args => <ColorSwatch {...args} />;
 
 Example.args = {
   color: '#f00a'

@@ -1,4 +1,4 @@
-@import "./theme.css";
+@import './theme.css';
 
 .react-aria-Dialog {
   outline: none;
@@ -7,7 +7,7 @@
   overflow: auto;
   padding: var(--spacing-10);
 
-  .react-aria-Heading[slot=title] {
+  .react-aria-Heading[slot='title'] {
     margin-top: 0;
     margin-bottom: 1em;
   }

@@ -11,9 +11,9 @@
  */
 
 interface ShadowRootReturnValue {
-  shadowHost: HTMLElement,
-  shadowRoot: ShadowRoot,
-  cleanup: () => void
+  shadowHost: HTMLElement;
+  shadowRoot: ShadowRoot;
+  cleanup: () => void;
 }
 
 export function createShadowRoot(attachTo: HTMLElement = document.body): ShadowRootReturnValue {

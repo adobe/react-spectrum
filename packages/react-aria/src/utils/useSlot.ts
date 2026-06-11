@@ -14,7 +14,9 @@ import {RefCallback, useCallback, useRef, useState} from 'react';
 import {useId} from './useId';
 import {useLayoutEffect} from './useLayoutEffect';
 
-export function useSlot(initialState: boolean | (() => boolean) = true): [RefCallback<any>, boolean] {
+export function useSlot(
+  initialState: boolean | (() => boolean) = true
+): [RefCallback<any>, boolean] {
   // Initial state is typically based on the parent having an aria-label or aria-labelledby.
   // If it does, this value should be false so that we don't update the state and cause a rerender when we go through the layoutEffect
   let [hasSlot, setHasSlot] = useState(initialState);
@@ -38,8 +40,8 @@ export function useSlot(initialState: boolean | (() => boolean) = true): [RefCal
 }
 
 interface SlotAria {
-  id: string | undefined,
-  ref: RefCallback<any>
+  id: string | undefined;
+  ref: RefCallback<any>;
 }
 
 export function useSlotId2(initialState: boolean | (() => boolean) = true): SlotAria {

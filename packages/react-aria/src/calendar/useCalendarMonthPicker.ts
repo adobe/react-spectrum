@@ -22,23 +22,26 @@ export interface CalendarMonthPickerProps {
   /**
    * The format of the month.
    */
-  format?: 'numeric' | '2-digit' | 'long' | 'short' | 'narrow'
+  format?: 'numeric' | '2-digit' | 'long' | 'short' | 'narrow';
 }
 
 export interface CalendarMonthPickerAria {
-  'aria-label': string,
-  value: Key,
-  onChange: (key: Key | null) => void,
-  items: CalendarMonthPickerItem[]
+  'aria-label': string;
+  value: Key;
+  onChange: (key: Key | null) => void;
+  items: CalendarMonthPickerItem[];
 }
 
 export interface CalendarMonthPickerItem {
-  id: number,
-  date: CalendarDate,
-  formatted: string
+  id: number;
+  date: CalendarDate;
+  formatted: string;
 }
 
-export function useCalendarMonthPicker(props: CalendarMonthPickerProps, state: CalendarState<CalendarSelectionMode> | RangeCalendarState): CalendarMonthPickerAria {
+export function useCalendarMonthPicker(
+  props: CalendarMonthPickerProps,
+  state: CalendarState<CalendarSelectionMode> | RangeCalendarState
+): CalendarMonthPickerAria {
   let formatter = useDateFormatter({
     month: props.format || 'short',
     calendar: state.focusedDate.calendar.identifier,
@@ -53,15 +56,23 @@ export function useCalendarMonthPicker(props: CalendarMonthPickerProps, state: C
   let numMonths = state.focusedDate.calendar.getMonthsInYear(state.focusedDate);
   for (let i = 1; i <= numMonths; i++) {
     let date = state.focusedDate.set({month: i});
+    // Calendars like the 4-5-4 fiscal calendar use getFormattableMonth to map
+    // their internal month back to the Gregorian month that should be displayed.
+    let displayDate = date.calendar.getFormattableMonth
+      ? date.calendar.getFormattableMonth(date)
+      : date;
     months.push({
       id: i,
       date,
-      formatted: formatter.format(date.toDate(state.timeZone))
+      formatted: formatter.format(displayDate.toDate(state.timeZone))
     });
   }
 
   let {locale} = useLocale();
-  let ariaLabel = useMemo(() => new Intl.DisplayNames(locale, {type: 'dateTimeField'}).of('month')!, [locale]);
+  let ariaLabel = useMemo(
+    () => new Intl.DisplayNames(locale, {type: 'dateTimeField'}).of('month')!,
+    [locale]
+  );
 
   return {
     'aria-label': ariaLabel,
