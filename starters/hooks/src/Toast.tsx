@@ -21,7 +21,6 @@ export function ToastProvider({
 }: {
   children: (state: ReturnType<typeof useToastState<string>>) => React.ReactNode;
 }) {
-  // useToastState manages the queue of visible toasts.
   let state = useToastState<string>({maxVisibleToasts: 5});
 
   return (
@@ -36,7 +35,6 @@ function ToastRegion({
   state,
   ...props
 }: AriaToastRegionProps & {state: ReturnType<typeof useToastState<string>>}) {
-  // useToastRegion creates an ARIA landmark so users can navigate to the toasts.
   let ref = useRef<HTMLDivElement>(null);
   let {regionProps} = useToastRegion(props, state, ref);
   let {focusProps, isFocusVisible} = useFocusRing();
@@ -59,7 +57,6 @@ function Toast({
   toast,
   ...props
 }: AriaToastProps<string> & {state: ReturnType<typeof useToastState<string>>}) {
-  // useToast provides the props for an individual toast and its close button.
   let ref = useRef<HTMLDivElement>(null);
   let {toastProps, contentProps, titleProps, closeButtonProps} = useToast(
     {...props, toast},

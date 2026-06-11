@@ -6,7 +6,6 @@ import './Toolbar.css';
 
 export function Toolbar(props: AriaToolbarProps & {children?: ReactNode}) {
   let {orientation = 'horizontal'} = props;
-  // useToolbar manages focus and arrow-key navigation between the children.
   let ref = useRef<HTMLDivElement>(null);
   let {toolbarProps} = useToolbar(props, ref);
 

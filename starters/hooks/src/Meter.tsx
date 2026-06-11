@@ -5,7 +5,6 @@ import './Form.css';
 
 export function Meter(props: AriaMeterProps) {
   let {label, value = 0, minValue = 0, maxValue = 100} = props;
-  // useMeter provides the ARIA attributes and an accessible value label.
   let {meterProps, labelProps} = useMeter(props);
 
   // Calculate the width of the meter fill as a percentage.

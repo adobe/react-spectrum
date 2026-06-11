@@ -21,7 +21,6 @@ interface RadioGroupProps extends AriaRadioGroupProps {
 let RadioContext = React.createContext<RadioGroupState | null>(null);
 
 export function RadioGroup({children, ...props}: RadioGroupProps) {
-  // useRadioGroupState manages the selected value for the group.
   let state = useRadioGroupState(props);
   let {radioGroupProps, labelProps} = useRadioGroup(props, state);
 

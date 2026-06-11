@@ -15,12 +15,10 @@ import './DateField.css';
 import './Form.css';
 
 export function DateField(props: AriaDateFieldProps<DateValue> & {label?: React.ReactNode}) {
-  // useDateFieldState parses the value into editable segments per the locale.
   let {locale} = useLocale();
   let state = useDateFieldState({...props, locale, createCalendar});
   let ref = useRef<HTMLDivElement>(null);
   let {labelProps, fieldProps} = useDateField(props, state, ref);
-  // The vanilla field CSS draws its focus ring from [data-focus-within]; useFocusWithin tracks it.
   let [isFocusWithin, setFocusWithin] = useState(false);
   let {focusWithinProps} = useFocusWithin({onFocusWithinChange: setFocusWithin});
 
@@ -49,7 +47,6 @@ export function DateSegment({
   segment: ReturnType<typeof useDateFieldState>['segments'][number];
   state: ReturnType<typeof useDateFieldState>;
 }) {
-  // useDateSegment makes the segment focusable and editable; the focus style is native :focus.
   let ref = useRef<HTMLSpanElement>(null);
   let {segmentProps} = useDateSegment(segment, state, ref);
 

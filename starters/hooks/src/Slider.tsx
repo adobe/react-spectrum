@@ -32,7 +32,6 @@ interface SliderProps extends AriaSliderProps {
 export function Slider({label, thumbLabels, fillOffset, formatOptions, ...props}: SliderProps) {
   let trackRef = useRef<HTMLDivElement>(null);
   let numberFormatter = useNumberFormatter(formatOptions);
-  // useSliderState manages the thumb values and converts between values and percentages.
   let state = useSliderState({...props, numberFormatter});
   let {groupProps, trackProps, labelProps, outputProps} = useSlider(props, state, trackRef);
 
@@ -88,7 +87,6 @@ function Thumb({
   ...props
 }: Omit<AriaSliderThumbOptions, 'inputRef'> & {state: ReturnType<typeof useSliderState>}) {
   let inputRef = useRef<HTMLInputElement>(null);
-  // useSliderThumb positions the thumb and wires drag/keyboard interactions.
   let {thumbProps, inputProps, isDragging} = useSliderThumb(
     {...props, index, trackRef, inputRef},
     state

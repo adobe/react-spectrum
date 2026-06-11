@@ -18,7 +18,6 @@ const ToggleButtonGroupContext = createContext<ToggleGroupState | null>(null);
 
 export function ToggleButtonGroup(props: AriaToggleButtonGroupProps & {children?: ReactNode}) {
   let {orientation = 'horizontal'} = props;
-  // useToggleGroupState manages single or multiple selection across the items.
   let state = useToggleGroupState(props);
   let ref = useRef<HTMLDivElement>(null);
   let {groupProps} = useToggleButtonGroup(props, state, ref);
@@ -46,7 +45,6 @@ export function ToggleButton(props: AriaToggleButtonGroupItemProps) {
     ref
   );
   let {hoverProps, isHovered} = useHover(props);
-  // Show a focus ring only when interacting with the keyboard.
   let {focusProps, isFocusVisible} = useFocusRing();
 
   return (

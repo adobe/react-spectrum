@@ -12,12 +12,10 @@ import './Disclosure.css';
 import './Content.css';
 
 export function Disclosure(props: AriaDisclosureProps & {title?: ReactNode; children?: ReactNode}) {
-  // useDisclosureState tracks whether the panel is expanded.
   let state = useDisclosureState(props);
   let panelRef = useRef<HTMLDivElement>(null);
   let buttonRef = useRef<HTMLButtonElement>(null);
   let {buttonProps, panelProps} = useDisclosure(props, state, panelRef);
-  // useButton supplies the cross-browser press behavior for the trigger.
   let {buttonProps: pressProps, isPressed} = useButton(buttonProps, buttonRef);
   let {hoverProps, isHovered} = useHover({});
   let {focusProps, isFocusVisible} = useFocusRing();

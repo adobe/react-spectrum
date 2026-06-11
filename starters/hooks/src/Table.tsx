@@ -24,14 +24,10 @@ import './Table.css';
 
 export {Cell, Column, Row, TableBody, TableHeader};
 
-// Table's vanilla CSS targets a hybrid CSS-grid DOM, which doesn't match the
-// native <table> rendered from the hooks here, so this component is styled with
-// inline styles using theme tokens instead of reusing Table.css.
 export function Table(
   props: Parameters<typeof useTableState>[0] &
     Parameters<typeof useTable>[0] & {children?: ReactNode}
 ) {
-  // showSelectionCheckboxes: false keeps the example focused (rows select on click).
   let state = useTableState({...props, showSelectionCheckboxes: false});
   let ref = useRef<HTMLTableElement>(null);
   let {collection} = state;

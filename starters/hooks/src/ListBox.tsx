@@ -8,7 +8,6 @@ import {useRef} from 'react';
 import './ListBox.css';
 
 export function ListBox(props: AriaListBoxOptions<object> & ListProps<object>) {
-  // useListState builds the collection and manages selection.
   let state = useListState(props);
   let ref = useRef<HTMLDivElement>(null);
   let {listBoxProps} = useListBox(props, state, ref);

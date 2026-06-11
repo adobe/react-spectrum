@@ -12,7 +12,7 @@ export function ColorArea(props: AriaColorAreaProps) {
   let containerRef = useRef<HTMLDivElement>(null);
   // useColorAreaState manages the two channel values behind the 2D gradient.
   let state = useColorAreaState(props);
-  // colorAreaProps.style carries the 2D gradient background; thumbProps.style positions the thumb.
+  // colorAreaProps.style carries the 2D gradient background, while thumbProps.style positions the thumb.
   let {colorAreaProps, xInputProps, yInputProps, thumbProps} = useColorArea(
     {...props, inputXRef, inputYRef, containerRef},
     state

@@ -8,9 +8,7 @@ import './Form.css';
 
 export function TextField(props: AriaTextFieldProps & {label?: React.ReactNode}) {
   let ref = useRef<HTMLInputElement>(null);
-  // useTextField provides the input and label props with accessibility wiring.
   let {labelProps, inputProps} = useTextField(props, ref);
-  // The vanilla field CSS draws its focus ring from [data-focused]; useFocus tracks it.
   let [isFocused, setFocused] = useState(false);
   let {focusProps} = useFocus({onFocusChange: setFocused});
 

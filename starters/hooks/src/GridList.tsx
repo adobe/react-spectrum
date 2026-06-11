@@ -7,11 +7,7 @@ import type {Node} from '@react-types/shared';
 import {useRef} from 'react';
 import './GridList.css';
 
-// GridList's vanilla CSS targets a card/grid DOM with images and sections, which
-// doesn't match the from-scratch stack rendered here, so this component is styled
-// with inline styles using theme tokens instead of reusing GridList.css.
 export function GridList(props: AriaGridListProps<object> & ListProps<object>) {
-  // useListState builds the collection and manages selection.
   let state = useListState(props);
   let ref = useRef<HTMLUListElement>(null);
   let {gridProps} = useGridList(props, state, ref);

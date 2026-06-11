@@ -5,7 +5,6 @@ import './Form.css';
 
 export function ProgressBar(props: AriaProgressBarProps) {
   let {label, value = 0, minValue = 0, maxValue = 100, isIndeterminate} = props;
-  // useProgressBar provides the ARIA attributes and an accessible value label.
   let {progressBarProps, labelProps} = useProgressBar(props);
 
   // Calculate the width of the progress fill as a percentage.

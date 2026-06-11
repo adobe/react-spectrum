@@ -15,7 +15,6 @@ import './Breadcrumbs.css';
 import './Link.css';
 
 export function Breadcrumbs(props: AriaBreadcrumbsProps & {children?: ReactNode}) {
-  // useBreadcrumbs provides the navigation landmark for the list.
   let {navProps} = useBreadcrumbs(props);
   let childCount = Children.count(props.children);
 

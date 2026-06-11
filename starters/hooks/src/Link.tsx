@@ -9,17 +9,14 @@ import './Link.css';
 
 export function Link(props: AriaLinkOptions & {children?: ReactNode}) {
   let ref = useRef<HTMLAnchorElement>(null);
-  // useLink provides consistent press behavior across browsers and devices.
   let {linkProps, isPressed} = useLink(props, ref);
   let {hoverProps, isHovered} = useHover(props);
-  // Show a focus ring only when interacting with the keyboard.
   let {focusProps, isFocusVisible} = useFocusRing();
 
   return (
     <a
       {...mergeProps(linkProps, hoverProps, focusProps)}
       ref={ref}
-      // Re-pass href/target since the untyped param drops them.
       href={props.href}
       target={props.target}
       className="react-aria-Link"

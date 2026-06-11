@@ -9,7 +9,6 @@ import {useRef} from 'react';
 import './Tabs.css';
 
 export function Tabs(props: AriaTabListOptions<object> & Parameters<typeof useTabListState>[0]) {
-  // useTabListState tracks which tab is selected.
   let state = useTabListState(props);
   let ref = useRef<HTMLDivElement>(null);
   let {tabListProps} = useTabList(props, state, ref);
@@ -36,7 +35,6 @@ function Tab({item, state}: {item: Node<object>; state: ReturnType<typeof useTab
   let ref = useRef<HTMLDivElement>(null);
   let {tabProps, isSelected, isDisabled} = useTab({key: item.key}, state, ref);
   let {hoverProps, isHovered} = useHover({});
-  // Determine whether we should show a keyboard focus ring for accessibility.
   let {focusProps, isFocusVisible} = useFocusRing();
 
   return (

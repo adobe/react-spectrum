@@ -20,11 +20,9 @@ import {useHover} from 'react-aria/useHover';
 import {useLocale} from 'react-aria/I18nProvider';
 import {useRef} from 'react';
 import {Button} from './Button';
-// RangeCalendar.css @imports Calendar.css for the shared grid/cell sizing.
 import './RangeCalendar.css';
 
 export function RangeCalendar(props: AriaRangeCalendarProps<DateValue>) {
-  // useRangeCalendarState tracks the selected range and visible date range.
   let {locale} = useLocale();
   let state = useRangeCalendarState({...props, locale, createCalendar});
   let ref = useRef<HTMLDivElement>(null);
@@ -37,7 +35,6 @@ export function RangeCalendar(props: AriaRangeCalendarProps<DateValue>) {
   return (
     <div {...calendarProps} ref={ref} className="react-aria-RangeCalendar">
       <header>
-        {/* The nav buttons reuse the Button component from this starter. */}
         <Button {...prevButtonProps} variant="quiet">
           <ChevronLeft size={18} />
         </Button>
@@ -47,7 +44,6 @@ export function RangeCalendar(props: AriaRangeCalendarProps<DateValue>) {
         </Button>
       </header>
       <div className="months">
-        {/* The .month wrapper provides the container query the cell sizing relies on. */}
         <div className="month">
           <CalendarGrid state={state} />
         </div>
@@ -60,7 +56,6 @@ function CalendarGrid({
   state,
   ...props
 }: AriaCalendarGridProps & {state: ReturnType<typeof useRangeCalendarState>}) {
-  // useCalendarGrid renders the table of dates for a single month.
   let {gridProps, headerProps, weekDays, weeksInMonth} = useCalendarGrid(props, state);
 
   return (
@@ -96,7 +91,6 @@ function CalendarCell({
   state: ReturnType<typeof useRangeCalendarState>;
   date: CalendarDate;
 }) {
-  // useCalendarCell provides the props and state for an individual date cell.
   let ref = useRef<HTMLDivElement>(null);
   let {
     cellProps,
@@ -111,8 +105,7 @@ function CalendarCell({
   let {hoverProps, isHovered} = useHover({});
   let {focusProps, isFocusVisible} = useFocusRing();
 
-  // The hook doesn't return these for ranges, so compute the range endpoints from
-  // the highlighted range (this is what React Aria Components does internally).
+  // Compute the range endpoints from the highlighted range.
   let isSelectionStart = state.highlightedRange
     ? isSameDay(date, state.highlightedRange.start)
     : false;
@@ -132,7 +125,6 @@ function CalendarCell({
         data-unavailable={isUnavailable || undefined}
         data-pressed={isPressed || undefined}
         data-focus-visible={isFocusVisible || undefined}>
-        {/* The inner span draws the round endpoint pill via the button-base utility. */}
         <span
           {...hoverProps}
           className="button-base"

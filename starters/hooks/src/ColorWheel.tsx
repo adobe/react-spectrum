@@ -13,7 +13,7 @@ export function ColorWheel(props: Omit<AriaColorWheelProps, 'outerRadius' | 'inn
   // useColorWheelState manages the hue value behind the circular gradient track.
   let state = useColorWheelState(props);
   let inputRef = useRef<HTMLInputElement>(null);
-  // trackProps.style carries the conic gradient; thumbProps.style positions the thumb on the ring.
+  // trackProps.style carries the conic gradient, while thumbProps.style positions the thumb on the ring.
   let {trackProps, thumbProps, inputProps} = useColorWheel(
     {...props, outerRadius: RADIUS, innerRadius: RADIUS - TRACK_THICKNESS},
     state,

@@ -1,6 +1,5 @@
 @import './theme.css';
 @import './utilities.css';
-@import './Calendar.css';
 
 .react-aria-RangeCalendar {
   display: flex;
@@ -40,6 +39,17 @@
   .react-aria-CalendarGrid {
     border-collapse: collapse;
     border-spacing: 0;
+    width: 100%;
+    table-layout: fixed;
+
+    td,
+    th {
+      padding: 0;
+    }
+  }
+
+  .react-aria-CalendarHeaderCell {
+    font-size: var(--font-size-sm);
   }
 
   [slot='errorMessage'] {
@@ -48,11 +58,37 @@
   }
 
   .react-aria-CalendarCell {
+    --gap: var(--spacing-1);
+    width: calc(100cqw / 7);
+    box-sizing: border-box;
+    aspect-ratio: 1;
     margin: 2px 0;
     padding: 0 calc(var(--gap) / 2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--font-size);
+    text-align: center;
+    border-radius: 9999px;
+    cursor: default;
+    forced-color-adjust: none;
+    transition: scale 200ms;
+    -webkit-tap-highlight-color: transparent;
     position: relative;
     z-index: 1;
     outline: none;
+    /* Reserve border space so row height stays stable when selected. */
+    border-style: solid;
+    border-color: transparent;
+    border-width: 0;
+    border-top-width: 0.5px;
+    border-bottom-width: 0.5px;
+
+    @media (min-resolution: 200dpi) {
+      @container (width < 300px) {
+        --gap: 0px;
+      }
+    }
 
     span {
       display: flex;
@@ -64,15 +100,25 @@
       transition: scale 200ms;
     }
 
+    &[data-disabled] {
+      opacity: 0.5;
+    }
+
+    &[data-unavailable] {
+      text-decoration: line-through;
+      color: var(--invalid-color);
+    }
+
+    &[data-invalid] {
+      --button-color: var(--invalid-color);
+    }
+
     &[data-selected] {
       border-radius: 0;
       background: var(--button-background);
       border-color: var(--tint-700);
-      border-style: solid;
-      border-width: 0;
       border-top-width: 0.5px;
       border-bottom-width: 0.5px;
-      margin: 1.5px 0;
 
       @media (forced-colors: active) {
         border-color: Highlight;

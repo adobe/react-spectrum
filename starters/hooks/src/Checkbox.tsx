@@ -9,7 +9,6 @@ import {useRef} from 'react';
 import './Checkbox.css';
 
 export function Checkbox(props: AriaCheckboxProps) {
-  // useToggleState tracks the checked state.
   let state = useToggleState(props);
   let ref = useRef<HTMLInputElement>(null);
   let {inputProps, isSelected, isPressed, isDisabled, isReadOnly, isInvalid} = useCheckbox(
@@ -18,7 +17,6 @@ export function Checkbox(props: AriaCheckboxProps) {
     ref
   );
   let {hoverProps, isHovered} = useHover({isDisabled: isDisabled || isReadOnly});
-  // Show a focus ring when focused via the keyboard.
   let {isFocused, isFocusVisible, focusProps} = useFocusRing();
   let isIndeterminate = props.isIndeterminate || false;
 

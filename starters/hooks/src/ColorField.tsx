@@ -8,11 +8,9 @@ import './ColorField.css';
 import './Form.css';
 
 export function ColorField(props: AriaColorFieldProps & {label?: React.ReactNode}) {
-  // useColorFieldState parses the text into a Color and formats it back.
   let state = useColorFieldState(props);
   let inputRef = useRef<HTMLInputElement>(null);
   let {labelProps, inputProps} = useColorField(props, state, inputRef);
-  // The vanilla field CSS draws its focus ring from [data-focused]; useFocus tracks it.
   let [isFocused, setFocused] = useState(false);
   let {focusProps} = useFocus({onFocusChange: setFocused});
 

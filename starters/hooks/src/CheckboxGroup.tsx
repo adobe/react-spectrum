@@ -12,7 +12,6 @@ import {useCheckboxGroupState, type CheckboxGroupState} from 'react-stately/useC
 import {VisuallyHidden} from 'react-aria/VisuallyHidden';
 import React, {useRef} from 'react';
 import './CheckboxGroup.css';
-// The group items reuse the checkbox button styling.
 import './Checkbox.css';
 
 interface CheckboxGroupProps extends AriaCheckboxGroupProps {

@@ -18,7 +18,6 @@ import {Button} from './Button';
 import './Calendar.css';
 
 export function Calendar(props: AriaCalendarProps<DateValue>) {
-  // useCalendarState handles date manipulation across calendar systems.
   let {locale} = useLocale();
   let state = useCalendarState({...props, locale, createCalendar});
   let {calendarProps, prevButtonProps, nextButtonProps, title} = useCalendar(props, state);
@@ -26,7 +25,6 @@ export function Calendar(props: AriaCalendarProps<DateValue>) {
   return (
     <div {...calendarProps} className="react-aria-Calendar">
       <header>
-        {/* The nav buttons reuse the Button component from this starter. */}
         <Button {...prevButtonProps} variant="quiet">
           <ChevronLeft size={18} />
         </Button>
@@ -36,7 +34,6 @@ export function Calendar(props: AriaCalendarProps<DateValue>) {
         </Button>
       </header>
       <div className="months">
-        {/* The .month wrapper provides the container query the cell sizing relies on. */}
         <div className="month">
           <CalendarGrid state={state} />
         </div>
@@ -49,7 +46,6 @@ function CalendarGrid({
   state,
   ...props
 }: AriaCalendarGridProps & {state: ReturnType<typeof useCalendarState>}) {
-  // useCalendarGrid renders the table of dates for a single month.
   let {gridProps, headerProps, weekDays, weeksInMonth} = useCalendarGrid(props, state);
 
   return (
@@ -85,7 +81,6 @@ function CalendarCell({
   state: ReturnType<typeof useCalendarState>;
   date: CalendarDate;
 }) {
-  // useCalendarCell provides the props and state for an individual date cell.
   let ref = useRef<HTMLDivElement>(null);
   let {
     cellProps,

@@ -14,7 +14,6 @@ import './TagGroup.css';
 export function TagGroup(
   props: AriaTagGroupProps<object> & ListProps<object> & {label?: ReactNode}
 ) {
-  // useListState builds the collection and manages selection.
   let ref = useRef<HTMLDivElement>(null);
   let state = useListState(props);
   let {gridProps, labelProps} = useTagGroup(props, state, ref);
@@ -66,7 +65,6 @@ function Tag({item, state}: {item: Node<object>; state: ListState<object>}) {
   );
 }
 
-// The remove button reuses the vanilla `.remove-button` styling, driven by useButton.
 function RemoveButton(props: AriaButtonProps) {
   let ref = useRef<HTMLButtonElement>(null);
   let {buttonProps, isPressed} = useButton(props, ref);

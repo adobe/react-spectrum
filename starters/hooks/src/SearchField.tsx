@@ -10,11 +10,9 @@ import './SearchField.css';
 import './Form.css';
 
 export function SearchField(props: AriaSearchFieldProps & {label?: React.ReactNode}) {
-  // useSearchFieldState tracks the current text value.
   let state = useSearchFieldState(props);
   let ref = useRef<HTMLInputElement>(null);
   let {labelProps, inputProps, clearButtonProps} = useSearchField(props, state, ref);
-  // The vanilla field CSS draws its focus ring from [data-focused]; useFocus tracks it.
   let [isFocused, setFocused] = useState(false);
   let {focusProps} = useFocus({onFocusChange: setFocused});
 
@@ -32,7 +30,6 @@ export function SearchField(props: AriaSearchFieldProps & {label?: React.ReactNo
         className="react-aria-Input inset"
         data-focused={isFocused || undefined}
       />
-      {/* The clear button shows when there is text (hidden via [data-empty] in the CSS). */}
       <ClearButton {...clearButtonProps}>
         <X size={14} />
       </ClearButton>

@@ -9,7 +9,6 @@ import {useRef} from 'react';
 import './Switch.css';
 
 export function Switch(props: AriaSwitchProps) {
-  // useToggleState tracks the on/off state.
   let state = useToggleState(props);
   let ref = useRef<HTMLInputElement>(null);
   let {inputProps, isSelected, isPressed, isDisabled, isReadOnly, isInvalid} = useSwitch(
@@ -18,7 +17,6 @@ export function Switch(props: AriaSwitchProps) {
     ref
   );
   let {hoverProps, isHovered} = useHover({isDisabled: isDisabled || isReadOnly});
-  // Show a focus ring when focused via the keyboard.
   let {isFocused, isFocusVisible, focusProps} = useFocusRing();
 
   return (

@@ -17,10 +17,8 @@ interface ButtonProps extends AriaButtonProps {
 
 export function Button({variant = 'primary', ...props}: ButtonProps) {
   let ref = useRef<HTMLButtonElement>(null);
-  // useButton handles cross-browser interactions and accessibility.
   let {buttonProps, isPressed} = useButton(props, ref);
   let {hoverProps, isHovered} = useHover(props);
-  // Show a focus ring only when interacting with the keyboard.
   let {focusProps, isFocusVisible} = useFocusRing();
 
   return (

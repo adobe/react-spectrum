@@ -3,7 +3,6 @@ import {useColorSwatch, type AriaColorSwatchProps} from 'react-aria/useColorSwat
 import './ColorSwatch.css';
 
 export function ColorSwatch(props: AriaColorSwatchProps) {
-  // useColorSwatch resolves the color value and provides accessibility props.
   let {colorSwatchProps, color} = useColorSwatch(props);
 
   return (

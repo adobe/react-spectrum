@@ -9,13 +9,11 @@ import {mergeProps} from 'react-aria/mergeProps';
 import {useNumberField, type AriaNumberFieldProps} from 'react-aria/useNumberField';
 import {useNumberFieldState} from 'react-stately/useNumberFieldState';
 import {useRef} from 'react';
-// Button.css provides the base styling for the plain stepper buttons below.
 import './Button.css';
 import './NumberField.css';
 import './Form.css';
 
 export function NumberField(props: AriaNumberFieldProps & {label?: React.ReactNode}) {
-  // useNumberFieldState handles parsing and formatting numbers for the locale.
   let {locale} = useLocale();
   let state = useNumberFieldState({...props, locale});
   let inputRef = useRef<HTMLInputElement>(null);
@@ -49,7 +47,6 @@ function StepperButton({slot, ...props}: AriaButtonProps & {slot: string}) {
   let {focusProps, isFocusVisible} = useFocusRing();
 
   return (
-    // The slot is a DOM attribute the vanilla NumberField CSS targets ([slot='increment']).
     <button
       {...mergeProps(buttonProps, hoverProps, focusProps)}
       ref={ref}
