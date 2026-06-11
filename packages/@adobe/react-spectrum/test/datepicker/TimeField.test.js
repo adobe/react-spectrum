@@ -420,20 +420,16 @@ describe('TimeField', function () {
     });
 
     it('should clear the hidden input value when a segment is cleared making the field partial (Bug #9801)', async () => {
-      // Regression: clearing one TimeField segment leaves the committed state.value
-      // unchanged, but the field is now visually incomplete. The hidden input — read by
-      // forms on submit — should reflect the missing value as '', not the stale committed
-      // time. Root cause: useDateField.ts uses state.timeValue?.toString() which is
-      // derived from the committed value, not from displayValue.
       function Test() {
         return (
           <form>
-            <TimeField name="time" label="Time" defaultValue={new Time(13, 30)} />
+            <TimeField name="time" label="Time" isRequired defaultValue={new Time(13, 30)} />
           </form>
         );
       }
 
-      let {getAllByRole} = render(<Test />);
+      let {getAllByRole, getByRole} = render(<Test />);
+      let group = getByRole('group');
       let input = document.querySelector('input[name=time]');
       let segments = getAllByRole('spinbutton');
 
@@ -443,12 +439,21 @@ describe('TimeField', function () {
       act(() => {
         segments[0].focus();
       });
-      fireEvent.keyDown(document.activeElement, {key: 'Backspace'});
-      fireEvent.keyUp(document.activeElement, {key: 'Backspace'});
+      await user.keyboard('{Backspace}');
       expect(segments[0]).toHaveAttribute('aria-valuetext', 'Empty');
 
-      // Field is partial — hidden input should not carry the stale committed time
+      // Field is partial
       expect(input).toHaveValue('');
+      await user.tab();
+      await user.tab();
+
+      let getDescription = () =>
+        group
+          .getAttribute('aria-describedby')
+          .split(' ')
+          .map(d => document.getElementById(d).textContent)
+          .join(' ');
+      expect(getDescription()).toContain('Please enter a value.');
     });
 
     if (parseInt(React.version, 10) >= 19) {

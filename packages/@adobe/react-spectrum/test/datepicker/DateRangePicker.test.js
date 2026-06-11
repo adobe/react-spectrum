@@ -1924,9 +1924,8 @@ describe('DateRangePicker', function () {
           expect(getDescription()).not.toContain('Constraints not satisfied');
         });
 
-        it('should signal validation when an endpoint date is made partial by clearing a segment (Bug #9958 followup)', async () => {
-          // Locks transitive coverage of DateRangePicker: each endpoint has its own
-          // DateFieldState with isValuePartial. Clearing a segment of either endpoint should
+        it('should signal validation when an endpoint date is made partial by clearing a segment (Bug #9958)', async () => {
+          // each endpoint has its own DateFieldState with isValuePartial. Clearing a segment of either endpoint should
           // fire validation on blur.
           let {getByRole} = render(
             <Provider theme={theme}>
@@ -1969,6 +1968,14 @@ describe('DateRangePicker', function () {
               .map(d => document.getElementById(d)?.textContent || '')
               .join(' ');
           expect(getDescription()).toContain('Please enter a value.');
+
+          act(() => {
+            segments[0].focus();
+          });
+          await user.keyboard('4');
+          expect(getDescription()).not.toContain('Please enter a value.');
+
+          // add check to verify the same result for the end date as well
         });
 
         it('supports minValue and maxValue', async () => {
@@ -2262,11 +2269,7 @@ describe('DateRangePicker', function () {
           expect(getDescription()).not.toContain('Constraints not satisfied');
         });
 
-        it('should clear the partial-value error on the first calendar selection that completes the range (Bug #9958 follow-up)', async () => {
-          // Repro of the "takes two interactions" bug for DateRangePicker: after a partial start
-          // endpoint surfaces "Please enter a value.", selecting a complete range from the calendar
-          // must clear it on the FIRST selection. Both setStartIsValuePartial and
-          // setEndIsValuePartial must be reset synchronously before commitValidation().
+        it('should clear the partial-value error on the first calendar selection that completes the range (Bug #9958)', async () => {
           let {getByRole} = render(
             <Provider theme={theme}>
               <Form>
@@ -2317,7 +2320,7 @@ describe('DateRangePicker', function () {
           await user.click(document.activeElement);
           await user.click(document.activeElement);
 
-          // The range is now complete and valid -> error must be gone after ONE selection sequence.
+          // The range is now complete and valid
           expect(startInput.validity.valid).toBe(true);
           expect(getDescription()).not.toContain('Please enter a value.');
         });

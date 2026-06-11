@@ -803,42 +803,6 @@ describe('DateField', function () {
 
           // The hidden input should reflect missing value and validation should surface
           expect(input.validity.valid).toBe(false);
-          let getDescriptionAfter = () =>
-            (group.getAttribute('aria-describedby') || '')
-              .split(' ')
-              .map(d => document.getElementById(d)?.textContent || '')
-              .join(' ');
-          expect(getDescriptionAfter()).toContain('Please enter a value.');
-        });
-
-        it('should clear the validation error after a partial field is completed (Bug #9624 round-trip)', async () => {
-          // Locks the lifecycle: complete -> clear segment (error) -> re-complete with a new
-          // valid value (error clears). Verifies the fix does not leave the field stuck invalid.
-          let {getByRole} = render(
-            <Provider theme={theme}>
-              <Form data-testid="form">
-                <DateField label="Date" name="date" isRequired validationBehavior="native" />
-              </Form>
-            </Provider>
-          );
-
-          let group = getByRole('group');
-          let input = document.querySelector('input[name=date]');
-
-          await user.tab();
-          await user.keyboard('4');
-          await user.keyboard('28');
-          await user.keyboard('2026');
-
-          let segments = within(group).getAllByRole('spinbutton');
-          act(() => {
-            segments[0].focus();
-          });
-          await user.keyboard('{Backspace}');
-          await user.tab();
-          await user.tab();
-          await user.tab();
-
           let getDescription = () =>
             (group.getAttribute('aria-describedby') || '')
               .split(' ')
@@ -860,9 +824,7 @@ describe('DateField', function () {
         });
 
         it('should signal validation for partial values regardless of isRequired (Bug #9958)', async () => {
-          // Per LFDanLu: "invalidate the field if the date is incomplete in general."
-          // The earlier scope-guard test asserted the opposite; updated to lock the new
-          // behavior — partial values are flagged invalid even without isRequired so that
+          // partial values are flagged invalid even without isRequired so that
           // min/max/unavailable/validate configurations also block submission.
           let {getByRole} = render(
             <Provider theme={theme}>
@@ -1017,6 +979,18 @@ describe('DateField', function () {
           expect(segments[0]).toHaveAttribute('aria-valuetext', 'Empty');
 
           expect(input).toHaveValue('');
+          let description = (group.getAttribute('aria-describedby') || '')
+            .split(' ')
+            .map(d => document.getElementById(d)?.textContent || '')
+            .join(' ');
+          expect(description).toContain('Please enter a value.');
+
+          await user.keyboard('5');
+          await user.tab();
+          await user.tab();
+          await user.tab();
+          expect(input).toHaveValue('2026-05-28');
+          expect(description).not.toContain('Please enter a value.');
         });
       });
     });
