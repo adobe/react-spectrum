@@ -215,6 +215,10 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(
         if (e.key === 'Enter' || state.isOpen) {
           state.commit();
         }
+        if (e.key === 'Tab') {
+          e.continuePropagation();
+        }
+
         break;
       case 'Escape':
         if (!state.selectionManager.isEmpty || state.inputValue === '' || props.allowsCustomValue) {
