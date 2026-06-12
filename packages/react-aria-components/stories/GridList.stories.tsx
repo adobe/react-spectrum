@@ -1008,6 +1008,31 @@ export const GridListWithTextfield: GridListStory = args => {
           </TextField>{' '}
           <Button>Go</Button>
         </MyGridListItem>
+        <MyGridListItem textValue="Combobox">
+          ComboBox
+          <ComboBox aria-label="combobox" allowsEmptyCollection>
+            <div style={{display: 'flex'}}>
+              <Input />
+              <Button>
+                <span aria-hidden="true" style={{padding: '0 2px'}}>
+                  ▼
+                </span>
+              </Button>
+            </div>
+            <Popover>
+              <ListBox
+                renderEmptyState={comboboxEmptyState}
+                data-testid="combo-box-list-box"
+                className={styles.menu}
+                style={{width: 'var(--trigger-width)'}}>
+                <MyListBoxItem>Foo</MyListBoxItem>
+                <MyListBoxItem>Bar</MyListBoxItem>
+                <MyListBoxItem>Baz</MyListBoxItem>
+                <MyListBoxItem href="http://google.com">Google</MyListBoxItem>
+              </ListBox>
+            </Popover>
+          </ComboBox>
+        </MyGridListItem>
         <MyGridListItem textValue="Toolbar">
           Toolbar
           <Toolbar aria-label="Text formatting" style={{gap: 4}}>
@@ -1076,31 +1101,6 @@ export const GridListWithTextfield: GridListStory = args => {
               Basketball
             </Checkbox>
           </CheckboxGroup>
-        </MyGridListItem>
-        <MyGridListItem textValue="Combobox">
-          ComboBox
-          <ComboBox aria-label="combobox" allowsEmptyCollection>
-            <div style={{display: 'flex'}}>
-              <Input />
-              <Button>
-                <span aria-hidden="true" style={{padding: '0 2px'}}>
-                  ▼
-                </span>
-              </Button>
-            </div>
-            <Popover>
-              <ListBox
-                renderEmptyState={comboboxEmptyState}
-                data-testid="combo-box-list-box"
-                className={styles.menu}
-                style={{width: 'var(--trigger-width)'}}>
-                <MyListBoxItem>Foo</MyListBoxItem>
-                <MyListBoxItem>Bar</MyListBoxItem>
-                <MyListBoxItem>Baz</MyListBoxItem>
-                <MyListBoxItem href="http://google.com">Google</MyListBoxItem>
-              </ListBox>
-            </Popover>
-          </ComboBox>
         </MyGridListItem>
       </GridList>
       <input aria-label="input after gridlist" />

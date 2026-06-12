@@ -223,7 +223,7 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(
         if (state.isOpen) {
           state.commit();
         }
-        return {shouldPreventDefault: false};
+        return {shouldPreventDefault: false, shouldContinuePropagation: true};
       },
       Escape: () => {
         let shouldContinuePropagation = false;
