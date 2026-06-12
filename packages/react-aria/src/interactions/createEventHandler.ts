@@ -24,8 +24,8 @@ export function createEventHandler<T extends SyntheticEvent>(
     return undefined;
   }
 
+  let shouldStopPropagation = true;
   return (e: T) => {
-    let shouldStopPropagation = true;
     let event: BaseEvent<T> = {
       ...e,
       preventDefault() {
@@ -53,11 +53,7 @@ export function createEventHandler<T extends SyntheticEvent>(
 
     handler(event);
 
-    // nested createEventHandler calls may already have stopped propagation
-    if (
-      shouldStopPropagation &&
-      !(typeof e.isPropagationStopped === 'function' && e.isPropagationStopped())
-    ) {
+    if (shouldStopPropagation) {
       e.stopPropagation();
     }
   };

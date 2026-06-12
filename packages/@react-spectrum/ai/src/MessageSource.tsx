@@ -163,7 +163,7 @@ export const SourceListItem = (forwardRef as forwardRefType)(function SourceList
 
   return (
     <li ref={itemRef} className={mergeStyles(itemStyles, props.styles)}>
-      <NumberBadge value={index} />
+      <NumberBadge value={index} size={size} />
       <Link {...otherProps} className={renderProps => linkStyles({size, ...renderProps})}>
         {children}
       </Link>
@@ -244,7 +244,7 @@ export const NumberBadge = forwardRef(function NumberBadge(
   props: NumberBadgeProps,
   ref: DOMRef<HTMLSpanElement>
 ) {
-  let {size = 'S', value, ...otherProps} = props;
+  let {size = 'M', value, ...otherProps} = props;
   let domRef = useDOMRef(ref);
   let {locale} = useLocale();
   let formattedValue = '';
