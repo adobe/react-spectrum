@@ -448,6 +448,7 @@ export const TableView = forwardRef(function TableView(
     selectionStyle = 'checkbox',
     dragAndDropHooks,
     disabledBehavior = 'all',
+    keyboardNavigationBehavior = 'arrow',
     ...otherProps
   } = props;
 
@@ -494,7 +495,8 @@ export const TableView = forwardRef(function TableView(
       setIsInResizeMode,
       selectionMode,
       selectionStyle,
-      disabledBehavior
+      disabledBehavior,
+      keyboardNavigationBehavior
     }),
     [
       isQuiet,
@@ -506,7 +508,8 @@ export const TableView = forwardRef(function TableView(
       setIsInResizeMode,
       selectionMode,
       selectionStyle,
-      disabledBehavior
+      disabledBehavior,
+      keyboardNavigationBehavior
     ]
   );
 
@@ -561,6 +564,7 @@ export const TableView = forwardRef(function TableView(
             onRowAction={onAction}
             dragAndDropHooks={dragAndDropHooks}
             disabledBehavior={disabledBehavior}
+            keyboardNavigationBehavior={keyboardNavigationBehavior}
             {...otherProps}
             selectedKeys={selectedKeys}
             defaultSelectedKeys={undefined}
@@ -1643,7 +1647,7 @@ function EditableCellInner(
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   let dialogRef = useRef<DOMRefValue<HTMLElement>>(null);
 
-  let {density} = useContext(InternalTableContext);
+  let {density, keyboardNavigationBehavior} = useContext(InternalTableContext);
   let size: 'XS' | 'S' | 'M' | 'L' | 'XL' | undefined = 'M';
   if (density === 'compact') {
     size = 'S';
@@ -1728,7 +1732,7 @@ function EditableCellInner(
                 isPending: isSaving,
                 isQuiet: !isSaving,
                 size,
-                excludeFromTabOrder: true,
+                excludeFromTabOrder: keyboardNavigationBehavior === 'arrow',
                 styles: style({
                   // TODO: really need access to display here instead, but not possible right now
                   // will be addressable with displayOuter
