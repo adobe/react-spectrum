@@ -15,6 +15,7 @@ import {
   baseColor,
   focusRing,
   iconStyle,
+  lightDark,
   space,
   style
 } from '@react-spectrum/s2/style' with {type: 'macro'};
@@ -151,6 +152,7 @@ const buttonStyles = style({
   },
   color: {
     default: baseColor('neutral'),
+    isLoading: 'neutral',
     forcedColors: 'ButtonText',
     isDisabled: {
       default: 'disabled',
@@ -195,7 +197,13 @@ const buttonStyles = style({
     }
   },
   width: 'full',
-  backgroundColor: 'transparent',
+  backgroundColor: {
+    default: 'transparent',
+    isFocusVisible: lightDark('transparent-black-100', 'transparent-white-100'),
+    isHovered: lightDark('transparent-black-100', 'transparent-white-100'),
+    isPressed: lightDark('transparent-black-300', 'transparent-white-300'),
+    isLoading: 'transparent'
+  },
   transition: 'default',
   borderWidth: 0,
   borderRadius: 'default',
@@ -256,7 +264,7 @@ export const ResponseStatusTitle = forwardRef(function ResponseStatusTitle(
   return (
     <Heading {...domProps} level={level} ref={domRef} className={mergeStyles(headingStyle, styles)}>
       <Button
-        className={renderProps => buttonStyles({...renderProps, size, density})}
+        className={renderProps => buttonStyles({...renderProps, size, density, isLoading})}
         slot="trigger">
         {isLoading ? (
           <CenterBaseline>
