@@ -21,6 +21,7 @@ import {
   PromptToken,
   PromptTokenField
 } from '../src/PromptField';
+import {Attachment} from '../src/AttachmentList';
 import Brand from '@react-spectrum/s2/icons/Brand';
 import {
   Collection,
@@ -34,12 +35,15 @@ import {
 } from '@react-spectrum/s2/Menu';
 import Data from '@react-spectrum/s2/icons/Data';
 import {iconStyle, style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {Image} from '@react-spectrum/s2/Image';
 import LinkIcon from '@react-spectrum/s2/icons/Link';
 import type {Meta} from '@storybook/react';
 import Plugin from '@react-spectrum/s2/icons/Plugin';
+import {ProgressCircle} from '@react-spectrum/s2/ProgressCircle';
 import Prompt from '@react-spectrum/s2/icons/Prompt';
 import SocialNetwork from '@react-spectrum/s2/icons/SocialNetwork';
 import UserGroup from '@react-spectrum/s2/icons/UserGroup';
+import {useState} from 'react';
 
 const meta: Meta<typeof PromptField> = {
   component: PromptField,
@@ -154,71 +158,151 @@ function renderCompletions(filterValue: string) {
   return null;
 }
 
-export const Everything = () => (
-  <PromptField acceptedAttachmentTypes={['image/*']}>
-    <PromptFieldAttachmentList />
-    <PromptTokenField completionTrigger={/(?<=^|\s)[@/]/} renderCompletions={renderCompletions}>
-      {segment => (
-        <PromptToken>
-          {icons[segment.value?.type]}
-          {segment.text}
-        </PromptToken>
-      )}
-    </PromptTokenField>
-    <PromptFieldToolbar>
-      <InsertMenuButton>
-        <AttachFileMenuItem />
-        <SubmenuTrigger>
-          <MenuItem>
-            <Prompt />
-            <Text>Commands</Text>
-          </MenuItem>
-          <Menu items={slashCommands.filter(item => item.type === 'command')}>
-            {item => (
-              <InsertTokenMenuItem id={item.command}>
-                <Text slot="label">{item.command}</Text>
-                <Text slot="description">{item.description}</Text>
-              </InsertTokenMenuItem>
-            )}
-          </Menu>
-        </SubmenuTrigger>
-        <SubmenuTrigger>
-          <MenuItem>
-            <Plugin />
-            <Text>Skills</Text>
-          </MenuItem>
-          <Menu items={slashCommands.filter(item => item.type === 'skill')}>
-            {item => (
-              <InsertTokenMenuItem id={item.command}>
-                <Text slot="label">{item.command}</Text>
-                <Text slot="description">{item.description}</Text>
-              </InsertTokenMenuItem>
-            )}
-          </Menu>
-        </SubmenuTrigger>
-        <SubmenuTrigger>
-          <MenuItem>
-            <Data />
-            <Text>Reference an object</Text>
-          </MenuItem>
-          <Menu items={objects}>
-            {item => (
-              <MenuSection>
-                <Header>
-                  <Heading>{item.section}</Heading>
-                </Header>
-                <Collection items={item.items}>
-                  {item => <InsertTokenMenuItem id={item.title}>{item.title}</InsertTokenMenuItem>}
-                </Collection>
-              </MenuSection>
-            )}
-          </Menu>
-        </SubmenuTrigger>
-      </InsertMenuButton>
-      <PromptFieldSubmitButton />
-    </PromptFieldToolbar>
-  </PromptField>
-);
+interface UploadState {
+  status: 'uploading' | 'completed';
+  progress?: number;
+}
+
+export const Everything = () => {
+  let [attachmentState, setAttachmentState] = useState<Map<string, UploadState>>(new Map());
+
+  let mockUpload = async (id: string) => {
+    await new Promise(resolve => setTimeout(resolve, Math.random() * 30));
+    setAttachmentState(prev => {
+      let item = prev.get(id);
+      if (!item || item.status === 'completed') {
+        return prev;
+      }
+      let newState = new Map(prev);
+      let progress = (item.progress ?? 0) + 1;
+      if (progress >= 100) {
+        newState.set(id, {status: 'completed'});
+      } else {
+        newState.set(id, {status: 'uploading', progress});
+        mockUpload(id);
+      }
+      return newState;
+    });
+  };
+
+  return (
+    <PromptField
+      acceptedAttachmentTypes={['image/*']}
+      onAddAttachments={attachments => {
+        setAttachmentState(prev => {
+          let newState = new Map(prev);
+          attachments.forEach(attachment => {
+            newState.set(attachment.id, {status: 'uploading', progress: 0});
+            mockUpload(attachment.id);
+          });
+          return newState;
+        });
+      }}
+      onRemoveAttachments={attachments => {
+        setAttachmentState(prev => {
+          let newState = new Map(prev);
+          attachments.forEach(attachment => {
+            newState.delete(attachment.id);
+          });
+          return newState;
+        });
+      }}>
+      <PromptFieldAttachmentList dependencies={[attachmentState]}>
+        {attachment => {
+          let state = attachmentState.get(attachment.id);
+          return (
+            <Attachment>
+              {/* TODO: what about non-image attachments? */}
+              {attachment.image && (
+                <Image
+                  src={attachment.image}
+                  slot="thumbnail"
+                  styles={style({opacity: {default: 1, isUploading: 0.15}, transition: 'default'})({
+                    isUploading: state?.status === 'uploading'
+                  })}
+                />
+              )}
+              {/* TODO: should this be part of the Attachment component? */}
+              {state?.status === 'uploading' && (
+                <div
+                  className={style({
+                    position: 'absolute',
+                    top: '50%',
+                    insetStart: '50%',
+                    transform: 'translate(-50%, -50%)'
+                  })}>
+                  <ProgressCircle aria-label="Uploading" value={state.progress} size="S" />
+                </div>
+              )}
+            </Attachment>
+          );
+        }}
+      </PromptFieldAttachmentList>
+      <PromptTokenField completionTrigger={/(?<=^|\s)[@/]/} renderCompletions={renderCompletions}>
+        {segment => (
+          <PromptToken>
+            {icons[segment.value?.type]}
+            {segment.text}
+          </PromptToken>
+        )}
+      </PromptTokenField>
+      <PromptFieldToolbar>
+        <InsertMenuButton>
+          <AttachFileMenuItem />
+          <SubmenuTrigger>
+            <MenuItem>
+              <Prompt />
+              <Text>Commands</Text>
+            </MenuItem>
+            <Menu items={slashCommands.filter(item => item.type === 'command')}>
+              {item => (
+                <InsertTokenMenuItem id={item.command}>
+                  <Text slot="label">{item.command}</Text>
+                  <Text slot="description">{item.description}</Text>
+                </InsertTokenMenuItem>
+              )}
+            </Menu>
+          </SubmenuTrigger>
+          <SubmenuTrigger>
+            <MenuItem>
+              <Plugin />
+              <Text>Skills</Text>
+            </MenuItem>
+            <Menu items={slashCommands.filter(item => item.type === 'skill')}>
+              {item => (
+                <InsertTokenMenuItem id={item.command}>
+                  <Text slot="label">{item.command}</Text>
+                  <Text slot="description">{item.description}</Text>
+                </InsertTokenMenuItem>
+              )}
+            </Menu>
+          </SubmenuTrigger>
+          <SubmenuTrigger>
+            <MenuItem>
+              <Data />
+              <Text>Reference an object</Text>
+            </MenuItem>
+            <Menu items={objects}>
+              {item => (
+                <MenuSection>
+                  <Header>
+                    <Heading>{item.section}</Heading>
+                  </Header>
+                  <Collection items={item.items}>
+                    {item => (
+                      <InsertTokenMenuItem id={item.title}>{item.title}</InsertTokenMenuItem>
+                    )}
+                  </Collection>
+                </MenuSection>
+              )}
+            </Menu>
+          </SubmenuTrigger>
+        </InsertMenuButton>
+        <PromptFieldSubmitButton />
+      </PromptFieldToolbar>
+    </PromptField>
+  );
+};
 
 export const Basic = () => (
   <PromptField>

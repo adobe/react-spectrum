@@ -436,6 +436,10 @@ function appendSegments(
   insert: TokenFieldSegment[]
 ): TokenFieldSegment[] {
   for (let segment of insert) {
+    if (segment.type === 'text' && segment.text.length === 0) {
+      continue;
+    }
+
     let last = segments[segments.length - 1];
     if (last && last.type === 'text' && segment.type === 'text') {
       segments[segments.length - 1] = {type: 'text', text: last.text + segment.text};

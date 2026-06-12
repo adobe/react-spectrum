@@ -12,7 +12,7 @@
 
 import {ActionButton} from '@react-spectrum/s2/ActionButton';
 import Attach from '@react-spectrum/s2/icons/Attach';
-import {Attachment, AttachmentList} from './AttachmentList';
+import {Attachment, AttachmentList, AttachmentListProps} from './AttachmentList';
 import {Autocomplete} from 'react-aria-components/Autocomplete';
 import {baseColor, css, style, StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Button} from '@react-spectrum/s2/Button';
@@ -60,7 +60,6 @@ interface PromptFieldProps extends UnsafeStyles {
   onSubmit?: (prompt: TokenSegmentList, attachments: Attachment[]) => void;
   isGenerating?: boolean;
   onStop?: () => void;
-  // To trigger uploads??
   onAddAttachments?: (attachments: Attachment[]) => void;
   onRemoveAttachments?: (attachments: Attachment[]) => void;
   styles?: StyleString;
@@ -76,6 +75,8 @@ interface PromptFieldState {
   onSubmit?: () => void;
   onStop?: () => void;
   isGenerating: boolean;
+  onAddAttachments?: (attachments: Attachment[]) => void;
+  onRemoveAttachments?: (attachments: Attachment[]) => void;
 }
 
 // TODO: make this customizable
@@ -136,7 +137,9 @@ export function PromptField(props: PromptFieldProps) {
     onStop,
     UNSAFE_className = '',
     UNSAFE_style,
-    styles
+    styles,
+    onAddAttachments,
+    onRemoveAttachments
   } = props;
   let [prompt, setPrompt] = useState<TokenSegmentList>(new AutoLinkingSegmentList([]));
   let [attachments, setAttachments] = useState<Attachment[]>([]);
@@ -162,6 +165,7 @@ export function PromptField(props: PromptFieldProps) {
             image: item.type.startsWith('image/') ? URL.createObjectURL(await item.getFile()) : ''
           }))
       );
+      onAddAttachments?.(files);
       setAttachments(attachments => [...attachments, ...files]);
     }
   });
@@ -187,7 +191,9 @@ export function PromptField(props: PromptFieldProps) {
         inputRef,
         onSubmit,
         isGenerating: isGenerating ?? false,
-        onStop
+        onStop,
+        onAddAttachments,
+        onRemoveAttachments
       }}>
       <div>
         <Group
@@ -234,21 +240,24 @@ export function PromptField(props: PromptFieldProps) {
   );
 }
 
-interface PromptFieldAttachmentListProps {
+interface PromptFieldAttachmentListProps extends AttachmentListProps<Attachment> {
   children?: (attachment: Attachment) => React.ReactNode;
 }
 
 export function PromptFieldAttachmentList(props: PromptFieldAttachmentListProps) {
   let {children} = props;
-  let {attachments, setAttachments} = useContext(PromptFieldContext);
+  let {attachments, setAttachments, onRemoveAttachments} = useContext(PromptFieldContext);
   if (attachments.length === 0) {
     return null;
   }
 
   return (
     <AttachmentList
+      {...props}
       aria-label="Attachments"
       onRemove={keys => {
+        let removedAttachments = attachments.filter(attachment => keys.has(attachment.id));
+        onRemoveAttachments?.(removedAttachments);
         setAttachments(attachments => attachments.filter(attachment => !keys.has(attachment.id)));
       }}
       items={attachments}>
@@ -272,8 +281,15 @@ interface PromptTokenFieldProps {
 
 export function PromptTokenField(props: PromptTokenFieldProps) {
   let {completionTrigger, renderCompletions, children} = props;
-  let {prompt, setPrompt, acceptedAttachmentTypes, setAttachments, inputRef, onSubmit} =
-    useContext(PromptFieldContext);
+  let {
+    prompt,
+    setPrompt,
+    acceptedAttachmentTypes,
+    setAttachments,
+    onAddAttachments,
+    inputRef,
+    onSubmit
+  } = useContext(PromptFieldContext);
   let [isFocused, setFocused] = useState(false);
 
   let [filterAnchor, filterValue] = useMemo(() => {
@@ -318,18 +334,20 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
           acceptedAttachmentTypes
             ? e => {
                 let clipboardData = e.clipboardData as DataTransfer;
+                let attachments: Attachment[] = [];
                 for (let item of clipboardData.items) {
                   if (matchMimeType(item.type, acceptedAttachmentTypes)) {
                     let file = item.getAsFile()!;
-                    setAttachments(attachments => [
-                      ...attachments,
-                      {
-                        id: crypto.randomUUID(),
-                        file,
-                        image: file.type.startsWith('image/') ? URL.createObjectURL(file) : ''
-                      }
-                    ]);
+                    attachments.push({
+                      id: crypto.randomUUID(),
+                      file,
+                      image: file.type.startsWith('image/') ? URL.createObjectURL(file) : ''
+                    });
                   }
+                }
+                if (attachments.length > 0) {
+                  onAddAttachments?.(attachments);
+                  setAttachments(prev => [...prev, ...attachments]);
                 }
               }
             : undefined
@@ -474,10 +492,12 @@ export function PromptFieldToolbar(props: PromptFieldToolbarProps) {
 }
 
 export function PromptFieldSubmitButton() {
-  let {isGenerating, onSubmit, onStop} = useContext(PromptFieldContext);
+  let {prompt, isGenerating, onSubmit, onStop} = useContext(PromptFieldContext);
   return (
     <Button
       variant="primary"
+      // TODO: should it be possible to submit a prompt with only attachments?
+      isDisabled={prompt.segments.length === 0}
       aria-label={isGenerating ? 'Stop' : 'Send'}
       onPress={isGenerating ? onStop : onSubmit}>
       {isGenerating ? <Stop /> : <Send />}
@@ -502,7 +522,7 @@ export function InsertMenuButton(props: InsertMenuItemProps) {
 }
 
 export function AttachFileMenuItem() {
-  let {acceptedAttachmentTypes, setAttachments} = useContext(PromptFieldContext);
+  let {acceptedAttachmentTypes, setAttachments, onAddAttachments} = useContext(PromptFieldContext);
   return (
     <MenuItem
       onAction={() => {
@@ -513,16 +533,17 @@ export function AttachFileMenuItem() {
         input.onchange = e => {
           let files = (e.currentTarget as HTMLInputElement).files;
           if (files && acceptedAttachmentTypes) {
-            setAttachments(attachments => [
-              ...attachments,
-              ...Array.from(files)
-                .filter(file => matchMimeType(file.type, acceptedAttachmentTypes))
-                .map(file => ({
-                  id: crypto.randomUUID(),
-                  file,
-                  image: file.type.startsWith('image/') ? URL.createObjectURL(file) : ''
-                }))
-            ]);
+            let attachments = Array.from(files)
+              .filter(file => matchMimeType(file.type, acceptedAttachmentTypes))
+              .map(file => ({
+                id: crypto.randomUUID(),
+                file,
+                image: file.type.startsWith('image/') ? URL.createObjectURL(file) : ''
+              }));
+            if (attachments.length > 0) {
+              onAddAttachments?.(attachments);
+              setAttachments(prev => [...prev, ...attachments]);
+            }
           }
         };
         input.click();

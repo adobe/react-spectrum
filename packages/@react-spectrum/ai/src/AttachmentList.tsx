@@ -104,8 +104,14 @@ const CloseButton = function CloseButton(props) {
   );
 };
 
+export interface AttachmentListProps<T>
+  extends
+    Omit<TagGroupProps, 'children'>,
+    StyleProps,
+    Pick<TagListProps<T>, 'items' | 'children' | 'dependencies'> {}
+
 export const AttachmentList = (forwardRef as forwardRefType)(function AttachmentList<T>(
-  props: Omit<TagGroupProps, 'children'> & StyleProps & Pick<TagListProps<T>, 'items' | 'children'>,
+  props: AttachmentListProps<T>,
   ref: DOMRef<HTMLDivElement>
 ) {
   let domRef = useDOMRef(ref);
@@ -113,6 +119,7 @@ export const AttachmentList = (forwardRef as forwardRefType)(function Attachment
     <TagGroup {...props} className={props.styles} ref={domRef}>
       <TagList
         items={props.items}
+        dependencies={props.dependencies}
         className={style({
           display: 'flex',
           flexDirection: 'row',
@@ -127,8 +134,13 @@ export const AttachmentList = (forwardRef as forwardRefType)(function Attachment
   );
 });
 
+export interface AttachmentProps
+  extends CardProps, AriaLabelingProps, Pick<TagProps, 'id' | 'textValue'> {
+  uploadProgress?: number;
+}
+
 export const Attachment = forwardRef(function Attachment(
-  props: CardProps & AriaLabelingProps & Pick<TagProps, 'id' | 'textValue'>,
+  props: AttachmentProps,
   ref: DOMRef<HTMLDivElement>
 ) {
   let {
