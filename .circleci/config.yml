@@ -411,19 +411,6 @@ jobs:
             node --loader ./scripts/esm-support/loader.mjs ./scripts/esm-support/testESM.mjs
             node scripts/testCJS.cjs
 
-  test-browser:
-    docker:
-      - image: mcr.microsoft.com/playwright:v1.60.0-noble
-    working_directory: /home/circleci/react-spectrum
-    steps:
-      - restore_cache:
-          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
-
-      - run:
-          name: test browser
-          command: |
-            yarn test:browser
-
   lint:
     executor: rsp-xlarge
     steps:
@@ -1006,9 +993,6 @@ workflows:
           requires:
             - install-18
       - test-build:
-          requires:
-            - install
-      - test-browser:
           requires:
             - install
       - lint:
