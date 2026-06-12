@@ -114,51 +114,50 @@ const objects = [
   }
 ];
 
+function renderCompletions(filterValue: string) {
+  if (filterValue.startsWith('/')) {
+    return slashCommands
+      .filter(item => item.command.includes(filterValue.slice(1)))
+      .map(item => (
+        <MenuItem key={item.command} id={item.command} value={item}>
+          {item.type === 'skill' ? <Plugin /> : <Prompt />}
+          <Text slot="label">{item.command}</Text>
+          <Text slot="description">{item.description}</Text>
+        </MenuItem>
+      ));
+  } else if (filterValue.startsWith('@')) {
+    return objects
+      .map(section => {
+        let matchingItems = section.items
+          .filter(item => item.title.toLowerCase().includes(filterValue.slice(1).toLowerCase()))
+          .map(item => (
+            <MenuItem key={item.title} id={item.title} value={item}>
+              {item.title}
+            </MenuItem>
+          ));
+
+        if (matchingItems.length > 0) {
+          return (
+            <MenuSection key={section.section} id={section.section}>
+              <Header>
+                <Heading>{section.section}</Heading>
+              </Header>
+              {matchingItems}
+            </MenuSection>
+          );
+        } else {
+          return null;
+        }
+      })
+      .filter(v => v != null);
+  }
+  return null;
+}
+
 export const Everything = () => (
   <PromptField acceptedAttachmentTypes={['image/*']}>
     <PromptFieldAttachmentList />
-    <PromptTokenField
-      renderCompletions={filterValue => {
-        if (filterValue.startsWith('/')) {
-          return slashCommands
-            .filter(item => item.command.includes(filterValue.slice(1)))
-            .map(item => (
-              <MenuItem key={item.command} id={item.command} value={item}>
-                {item.type === 'skill' ? <Plugin /> : <Prompt />}
-                <Text slot="label">{item.command}</Text>
-                <Text slot="description">{item.description}</Text>
-              </MenuItem>
-            ));
-        } else if (filterValue.startsWith('@')) {
-          return objects
-            .map(section => {
-              let matchingItems = section.items
-                .filter(item =>
-                  item.title.toLowerCase().includes(filterValue.slice(1).toLowerCase())
-                )
-                .map(item => (
-                  <MenuItem key={item.title} id={item.title} value={item}>
-                    {item.title}
-                  </MenuItem>
-                ));
-
-              if (matchingItems.length > 0) {
-                return (
-                  <MenuSection key={section.section}>
-                    <Header>
-                      <Heading>{section.section}</Heading>
-                    </Header>
-                    {matchingItems}
-                  </MenuSection>
-                );
-              } else {
-                return null;
-              }
-            })
-            .filter(v => v != null);
-        }
-        return null;
-      }}>
+    <PromptTokenField completionTrigger={/(?<=^|\s)[@/]/} renderCompletions={renderCompletions}>
       {segment => (
         <PromptToken>
           {icons[segment.value?.type]}
@@ -225,6 +224,27 @@ export const Basic = () => (
   <PromptField>
     <div className={style({display: 'flex', gap: 16, alignItems: 'center'})}>
       <PromptTokenField />
+      <PromptFieldSubmitButton />
+    </div>
+  </PromptField>
+);
+
+export const AsyncCompletions = () => (
+  <PromptField>
+    <div className={style({display: 'flex', gap: 16, alignItems: 'center'})}>
+      <PromptTokenField
+        completionTrigger={/(?<=^|\s)[@/]/}
+        renderCompletions={async filterValue => {
+          await new Promise(resolve => setTimeout(resolve, 500));
+          return renderCompletions(filterValue);
+        }}>
+        {segment => (
+          <PromptToken>
+            {icons[segment.value?.type]}
+            {segment.text}
+          </PromptToken>
+        )}
+      </PromptTokenField>
       <PromptFieldSubmitButton />
     </div>
   </PromptField>

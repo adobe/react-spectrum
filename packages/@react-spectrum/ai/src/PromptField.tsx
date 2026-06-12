@@ -17,9 +17,24 @@ import {Autocomplete} from 'react-aria-components/Autocomplete';
 import {baseColor, css, style, StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Button} from '@react-spectrum/s2/Button';
 import {CenterBaseline} from '@react-spectrum/s2/CenterBaseline';
-import {createContext, createRef, useContext, useMemo, useRef, useState} from 'react';
+import {
+  createContext,
+  createRef,
+  use,
+  useContext,
+  useDeferredValue,
+  useMemo,
+  useRef,
+  useState
+} from 'react';
 // eslint-disable-next-line
-import {Direction, TokenFieldSegment, TokenSegment, TokenSegmentList} from './TokenSegmentList';
+import {
+  Direction,
+  Position,
+  TokenFieldSegment,
+  TokenSegment,
+  TokenSegmentList
+} from './TokenSegmentList';
 import {Group} from 'react-aria-components/Group';
 import {IconContext, mergeStyles, UnsafeStyles} from '@react-spectrum/s2';
 import {Image, Text} from '@react-spectrum/s2/Card';
@@ -27,7 +42,7 @@ import {isFileDropItem, useDrop} from 'react-aria-components/useDrop';
 import {Link} from '@react-spectrum/s2/Link';
 import {Menu, MenuItem, MenuItemProps, MenuTrigger} from '@react-spectrum/s2/Menu';
 import Plus from '@react-spectrum/s2/icons/Add';
-import {Popover} from '@react-spectrum/s2/Popover';
+import {Popover, PopoverProps} from '@react-spectrum/s2/Popover';
 // eslint-disable-next-line
 import {positionToDOMRange, Token, TokenField, TokenProps} from './TokenField';
 import Send from '@react-spectrum/s2/icons/ArrowUpSend';
@@ -63,6 +78,7 @@ interface PromptFieldState {
   isGenerating: boolean;
 }
 
+// TODO: make this customizable
 const tokenRegex = /(?<=\s|^)(https?:\/\/)?(www\.)?([^/\s]+\.[a-z]{2,}(\/\S+)?)(?=\s)/g;
 class AutoLinkingSegmentList extends TokenSegmentList {
   tokenize(text: string): TokenFieldSegment[] {
@@ -247,54 +263,37 @@ export function PromptFieldAttachmentList(props: PromptFieldAttachmentListProps)
 }
 
 interface PromptTokenFieldProps {
-  renderCompletions?: (filterValue: string) => React.ReactNode[] | null;
+  completionTrigger?: RegExp;
+  renderCompletions?: (
+    filterValue: string
+  ) => React.ReactNode[] | null | Promise<React.ReactNode[] | null>;
   children?: (segment: TokenSegment) => React.ReactElement;
 }
 
 export function PromptTokenField(props: PromptTokenFieldProps) {
-  let {renderCompletions, children} = props;
+  let {completionTrigger, renderCompletions, children} = props;
   let {prompt, setPrompt, acceptedAttachmentTypes, setAttachments, inputRef, onSubmit} =
     useContext(PromptFieldContext);
   let [isFocused, setFocused] = useState(false);
 
   let [filterAnchor, filterValue] = useMemo(() => {
-    let filterAnchor = prompt.findText(prompt.caretPosition, Direction.Backward, /(?<=^|\s)[@/]/);
-    if (filterAnchor != null) {
-      let filterValue = prompt.slice(filterAnchor, prompt.caretPosition).toString();
-      return [filterAnchor, filterValue];
+    if (completionTrigger) {
+      let filterAnchor = prompt.findText(
+        prompt.caretPosition,
+        Direction.Backward,
+        completionTrigger
+      );
+      if (filterAnchor != null) {
+        let filterValue = prompt.slice(filterAnchor, prompt.caretPosition).toString();
+        return [filterAnchor, filterValue];
+      }
     }
     return [null, null];
-  }, [prompt]);
+  }, [completionTrigger, prompt]);
 
   let items = useMemo(() => {
     return filterValue != null ? renderCompletions?.(filterValue) : null;
   }, [filterValue, renderCompletions]);
-
-  let onAction = (item: any) => {
-    setPrompt(value =>
-      value.replaceRangeWithSegments(
-        filterAnchor!,
-        value.caretPosition,
-        [
-          {
-            type: 'token',
-            text: 'command' in item ? item.command : item.title,
-            value: item
-          },
-          {type: 'text', text: ' '}
-        ],
-        false // Don't coalesce in undo/redo history.
-      )
-    );
-  };
-
-  let isOpen = isFocused && filterAnchor != null && items != null && items.length > 0;
-
-  // Cache items so that popover content doesn't flicker to empty while animating out
-  let [menuItems, setMenuItems] = useState(items);
-  if (items !== menuItems && items != null && items.length > 0) {
-    setMenuItems(items);
-  }
 
   return (
     <Autocomplete>
@@ -354,18 +353,65 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
         }>
         {children || (segment => <PromptToken>{segment.text}</PromptToken>)}
       </TokenField>
-      <Popover
-        triggerRef={inputRef}
-        isOpen={isOpen}
-        isNonModal
-        hideArrow
-        placement="bottom start"
-        getTargetRect={target => {
-          return positionToDOMRange(target, filterAnchor!).getBoundingClientRect();
-        }}>
-        <Menu onAction={(key, value) => onAction(value)}>{menuItems}</Menu>
-      </Popover>
+      <PromptTokenFieldPopover
+        filterAnchor={filterAnchor}
+        items={useDeferredValue(items)}
+        isFocused={isFocused}
+      />
     </Autocomplete>
+  );
+}
+
+interface PromptTokenFieldPopoverProps extends PopoverProps {
+  filterAnchor?: Position | null;
+  items?: React.ReactNode[] | null | Promise<React.ReactNode[] | null>;
+  isFocused?: boolean;
+}
+
+function PromptTokenFieldPopover(props: PromptTokenFieldPopoverProps) {
+  let {filterAnchor, items, isFocused} = props;
+  let {inputRef, setPrompt} = useContext(PromptFieldContext);
+
+  let resolvedItems = items instanceof Promise ? use(items) : items;
+  let isOpen =
+    isFocused && filterAnchor != null && resolvedItems != null && resolvedItems.length > 0;
+
+  // Cache items so that popover content doesn't flicker to empty while animating out
+  let [menuItems, setMenuItems] = useState(resolvedItems);
+  if (resolvedItems !== menuItems && resolvedItems != null && resolvedItems.length > 0) {
+    setMenuItems(resolvedItems);
+  }
+
+  let onAction = (item: any) => {
+    setPrompt(value =>
+      value.replaceRangeWithSegments(
+        filterAnchor!,
+        value.caretPosition,
+        [
+          {
+            type: 'token',
+            text: 'command' in item ? item.command : item.title,
+            value: item
+          },
+          {type: 'text', text: ' '}
+        ],
+        false // Don't coalesce in undo/redo history.
+      )
+    );
+  };
+
+  return (
+    <Popover
+      triggerRef={inputRef}
+      isOpen={isOpen}
+      isNonModal
+      hideArrow
+      placement="bottom start"
+      getTargetRect={target => {
+        return positionToDOMRange(target, filterAnchor!).getBoundingClientRect();
+      }}>
+      <Menu onAction={(key, value) => onAction(value)}>{menuItems}</Menu>
+    </Popover>
   );
 }
 
