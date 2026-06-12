@@ -660,8 +660,6 @@ describe('TagGroup', () => {
     expect(onRemove).toHaveBeenCalledTimes(2);
     expect(onRemove).toHaveBeenLastCalledWith(new Set(['cat']));
 
-    // TODO: a change in behavior since taggroup is a gridlist with "tab" keyboard navigation behavior
-    // previously you could go to the next tab via arrow keys when you were focused on the close button
     await user.tab({shift: true});
     expect(tags[0]).toHaveFocus();
 
