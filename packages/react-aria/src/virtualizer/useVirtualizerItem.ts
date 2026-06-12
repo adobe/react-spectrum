@@ -31,9 +31,11 @@ export function useVirtualizerItem(options: VirtualizerItemOptions): {updateSize
 
   let updateSize = useCallback(() => {
     if (key != null && ref.current) {
-      // offsetParent is null if element or ancestor has display: none
-      // see https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/offsetParent
-      if (ref.current.offsetParent === null) {
+      // offsetParent is null if element or ancestor has display: none, see https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/offsetParent
+      // for that case we want to avoid reporting size 0 otherwise we get into a state
+      // where the virtualizer renders 0 items when it is hidden and thus won't remeasure when it is is unhidden
+      // in jsdom tests, offsetParent can be null, so skip the check there.
+      if (!navigator.userAgent.includes('jsdom') && ref.current.offsetParent === null) {
         return;
       }
       let size = getSize(ref.current);
