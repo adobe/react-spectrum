@@ -264,6 +264,7 @@ export class ElementNode<T> extends BaseNode<T> {
   node: CollectionNode<T> | null;
   isMutated = true;
   private _index: number = 0;
+  private _attributesByNameMap = new Map<string, string>();
   isHidden = false;
 
   constructor(type: string, ownerDocument: Document<T, any>) {
@@ -344,7 +345,7 @@ export class ElementNode<T> extends BaseNode<T> {
     let node;
     let {value, textValue, id, ...props} = obj;
     if (this.node == null) {
-      node = new CollectionNodeClass(id ?? `react-aria-${++this.ownerDocument.nodeId}`);
+      node = new CollectionNodeClass(id ?? makeId(this));
       this.node = node;
     } else {
       node = this.getMutableNode();
@@ -416,9 +417,20 @@ export class ElementNode<T> extends BaseNode<T> {
   }
 
   hasAttribute(): void {}
-  setAttribute(): void {}
+
+  setAttribute(qualifiedName: string, value: string): void {
+    this._attributesByNameMap.set(qualifiedName, '' + value);
+  }
+
+  getAttribute(qualifiedName: string): string | null {
+    return this._attributesByNameMap.get(qualifiedName) ?? null;
+  }
+
   setAttributeNS(): void {}
-  removeAttribute(): void {}
+
+  removeAttribute(qualifiedName: string): void {
+    this._attributesByNameMap.delete(qualifiedName);
+  }
 }
 
 /**
@@ -588,4 +600,16 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
       this.nodeId = 0;
     }
   }
+}
+
+function makeId(node: ElementNode<unknown>, identifierPrefix = 'react-aria') {
+  if (node.parentNode instanceof ElementNode) {
+    const parentKey = node.parentNode.getAttribute('data-key');
+    if (parentKey != null) {
+      // If parentNode specifies a key, generate a stable id based on parentKey
+      // so that useDroppableCollection can keep track of each child even if it is recreated
+      return identifierPrefix + '-' + parentKey + '-' + node.index.toString(32);
+    }
+  }
+  return identifierPrefix + '-' + (++node.ownerDocument.nodeId).toString(32);
 }

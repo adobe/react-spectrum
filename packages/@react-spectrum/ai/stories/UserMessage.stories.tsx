@@ -17,7 +17,7 @@ import {MenuItem} from '@react-spectrum/s2/Menu';
 import type {Meta, StoryObj} from '@storybook/react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Text} from '@react-spectrum/s2/Text';
-import {UserMessage} from '@react-spectrum/s2-ai/UserMessage';
+import {UserMessage} from '@react-spectrum/ai/UserMessage';
 
 const meta: Meta<typeof UserMessage> = {
   component: UserMessage,
@@ -28,7 +28,7 @@ const meta: Meta<typeof UserMessage> = {
     children: {table: {disable: true}}
   },
   tags: ['autodocs'],
-  title: 'S2-AI/UserMessage'
+  title: 'AI/UserMessage'
 };
 
 export default meta;
