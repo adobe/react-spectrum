@@ -33,6 +33,7 @@ import {useFocusable} from 'react-aria/useFocusable';
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {useKeyboard} from 'react-aria/useKeyboard';
 import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
+import {useLocale} from 'react-aria/I18nProvider';
 import {useObjectRef} from 'react-aria/useObjectRef';
 
 export type {TokenFieldSegment};
@@ -89,8 +90,12 @@ export const TokenField = forwardRef(function TokenField(
 
   let ref = useObjectRef(forwardedRef);
   let [state, setState] = useControlledState(valueProp, defaultValueProp, onChange);
-  let graphemeSegmenter = useMemo(() => new Intl.Segmenter('en-US', {granularity: 'grapheme'}), []);
-  let wordSegmenter = useMemo(() => new Intl.Segmenter('en-US', {granularity: 'word'}), []);
+  let {locale} = useLocale();
+  let graphemeSegmenter = useMemo(
+    () => new Intl.Segmenter(locale, {granularity: 'grapheme'}),
+    [locale]
+  );
+  let wordSegmenter = useMemo(() => new Intl.Segmenter(locale, {granularity: 'word'}), [locale]);
 
   let dropPosition = useRef<Position | null>(null);
   let transferredData = useRef<TokenFieldSegment[] | null>(null);
