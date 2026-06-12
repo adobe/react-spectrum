@@ -35,17 +35,21 @@ import {Image} from '@react-spectrum/s2/Image';
 import {Link} from '@react-spectrum/s2/Link';
 import {ListLayout} from 'react-stately/useVirtualizerState';
 import {MenuItem} from '@react-spectrum/s2/Menu';
-import {MessageFeedback} from '../src/MessageFeedback';
-import {MessageSource, SourceList, SourceListItem} from '../src/MessageSource';
-import {MessageSuggestion, MessageSuggestionList} from '../src/MessageSuggestion';
+import {MessageFeedback} from '@react-spectrum/ai/MessageFeedback';
+import {MessageSource, SourceList, SourceListItem} from '@react-spectrum/ai/MessageSource';
+import {MessageSuggestion, MessageSuggestionList} from '@react-spectrum/ai/MessageSuggestion';
 import type {Meta} from '@storybook/react';
 import Plus from '@react-spectrum/s2/icons/Add';
 import {ReactNode, useRef, useState} from 'react';
-import {ResponseStatus, ResponseStatusPanel, ResponseStatusTitle} from '../src/ResponseStatus';
+import {
+  ResponseStatus,
+  ResponseStatusPanel,
+  ResponseStatusTitle
+} from '@react-spectrum/ai/ResponseStatus';
 import Send from '@react-spectrum/s2/icons/ArrowUpSend';
 import {Text} from '@react-spectrum/s2/Text';
-import {Thread, ThreadItem, ThreadList, ThreadScrollButton} from '../src/Thread';
-import {UserMessage} from '../src/UserMessage';
+import {Thread, ThreadItem, ThreadList, ThreadScrollButton} from '@react-spectrum/ai/Thread';
+import {UserMessage} from '@react-spectrum/ai/UserMessage';
 import {Virtualizer} from 'react-aria-components/Virtualizer';
 
 const meta: Meta<typeof Thread> = {

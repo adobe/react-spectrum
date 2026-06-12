@@ -16,12 +16,21 @@ import {BasicHorizontalCard} from './HorizontalCard';
 import {Button} from 'react-aria-components/Button';
 import {CardProps} from '@react-spectrum/s2/Card';
 import Close from '@react-spectrum/s2/icons/Close';
-import {forwardRef, useRef} from 'react';
+import {forwardRef, ReactNode, useRef} from 'react';
 import {iconStyle} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
 import {pressScale} from '@react-spectrum/s2/pressScale';
-import {Tag, TagGroup, TagList} from 'react-aria-components/TagGroup';
+import type {StyleProps} from '@react-spectrum/s2';
+import {Tag, TagGroup, TagGroupProps, TagList} from 'react-aria-components/TagGroup';
 import {useDOMRef} from './useDOMRef';
+
+export interface AttachmentListProps extends TagGroupProps, StyleProps {
+  children: ReactNode;
+}
+
+export interface AttachmentProps extends CardProps {
+  children: ReactNode;
+}
 
 const controlSizeM = {
   default: 32,
@@ -104,7 +113,7 @@ const CloseButton = function CloseButton(props) {
 };
 
 export const AttachmentList = forwardRef(function AttachmentList(
-  props: any,
+  props: AttachmentListProps,
   ref: DOMRef<HTMLDivElement>
 ) {
   let domRef = useDOMRef(ref);

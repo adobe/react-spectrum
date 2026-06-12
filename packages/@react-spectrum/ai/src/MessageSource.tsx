@@ -28,6 +28,7 @@ import {SlotProps} from 'react-aria-components/slots';
 import {StyleString} from './types';
 import {useDOMRef} from './useDOMRef';
 import {useLocale} from 'react-aria/I18nProvider';
+
 export interface MessageSourceProps extends Omit<
   DisclosureProps,
   'isQuiet' | 'styles' | 'UNSAFE_className' | 'UNSAFE_style'
