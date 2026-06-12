@@ -18,8 +18,10 @@ import {CardProps} from '@react-spectrum/s2/Card';
 import Close from '@react-spectrum/s2/icons/Close';
 import {forwardRef, useRef} from 'react';
 import {iconStyle} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {ImageContext} from '@react-spectrum/s2/Image';
 import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
 import {pressScale} from '@react-spectrum/s2/pressScale';
+import {ProgressCircle} from '@react-spectrum/s2/ProgressCircle';
 import {StyleProps, TagProps} from '@react-spectrum/s2';
 import {Tag, TagGroup, TagGroupProps, TagList, TagListProps} from 'react-aria-components/TagGroup';
 import {useDOMRef} from './useDOMRef';
@@ -167,7 +169,47 @@ export const Attachment = forwardRef(function Attachment(
         ...focusRing(),
         borderRadius: 'default'
       })}>
-      <BasicHorizontalCard {...otherProps}>{props.children}</BasicHorizontalCard>
+      <BasicHorizontalCard {...otherProps}>
+        {props.uploadProgress != null && props.uploadProgress < 100 && (
+          <div
+            className={style({
+              position: 'absolute',
+              top: '50%',
+              insetStart: {
+                default: '50%',
+                ':has(~ [data-slot=content])': 32
+              },
+              transform: 'translate(-50%, -50%)'
+            })}>
+            <ProgressCircle aria-label="Uploading" value={props.uploadProgress} size="S" />
+          </div>
+        )}
+        {/* Reduce opacity of the thumbnail if upload is in progress */}
+        <ImageContext.Consumer>
+          {ctx => (
+            <ImageContext.Provider
+              value={{
+                ...ctx,
+                slots: {
+                  thumbnail: {
+                    ...(ctx && 'slots' in ctx ? ctx.slots?.thumbnail : {}),
+                    styles: mergeStyles(
+                      ctx && 'slots' in ctx ? ctx.slots?.thumbnail?.styles : undefined,
+                      style({
+                        opacity: {default: 1, isUploading: 0.15},
+                        transition: 'default'
+                      })({isUploading: props.uploadProgress != null && props.uploadProgress < 100})
+                    )
+                  }
+                }
+              }}>
+              {typeof props.children === 'function'
+                ? props.children({size: otherProps.size || 'M'})
+                : props.children}
+            </ImageContext.Provider>
+          )}
+        </ImageContext.Consumer>
+      </BasicHorizontalCard>
       {/** Definitely not a close button, though looks like one. */}
       <div
         className={style({

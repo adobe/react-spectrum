@@ -39,7 +39,6 @@ import {Image} from '@react-spectrum/s2/Image';
 import LinkIcon from '@react-spectrum/s2/icons/Link';
 import type {Meta} from '@storybook/react';
 import Plugin from '@react-spectrum/s2/icons/Plugin';
-import {ProgressCircle} from '@react-spectrum/s2/ProgressCircle';
 import Prompt from '@react-spectrum/s2/icons/Prompt';
 import SocialNetwork from '@react-spectrum/s2/icons/SocialNetwork';
 import UserGroup from '@react-spectrum/s2/icons/UserGroup';
@@ -211,29 +210,10 @@ export const Everything = () => {
         {attachment => {
           let state = attachmentState.get(attachment.id);
           return (
-            <Attachment>
+            <Attachment
+              uploadProgress={state?.status === 'uploading' ? state?.progress : undefined}>
               {/* TODO: what about non-image attachments? */}
-              {attachment.image && (
-                <Image
-                  src={attachment.image}
-                  slot="thumbnail"
-                  styles={style({opacity: {default: 1, isUploading: 0.15}, transition: 'default'})({
-                    isUploading: state?.status === 'uploading'
-                  })}
-                />
-              )}
-              {/* TODO: should this be part of the Attachment component? */}
-              {state?.status === 'uploading' && (
-                <div
-                  className={style({
-                    position: 'absolute',
-                    top: '50%',
-                    insetStart: '50%',
-                    transform: 'translate(-50%, -50%)'
-                  })}>
-                  <ProgressCircle aria-label="Uploading" value={state.progress} size="S" />
-                </div>
-              )}
+              {attachment.image && <Image src={attachment.image} slot="thumbnail" />}
             </Attachment>
           );
         }}
