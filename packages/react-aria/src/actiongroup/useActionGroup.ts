@@ -24,11 +24,11 @@ import {
 } from '@react-types/shared';
 import {createFocusManager} from '../focus/FocusScope';
 import {filterDOMProps} from '../utils/filterDOMProps';
+import {getEventTarget, nodeContains} from '../utils/shadowdom/DOMFunctions';
+import {KeyboardEventHandler, useState} from 'react';
 import {ListState} from 'react-stately/useListState';
-import {useKeyboard} from '../interactions/useKeyboard';
 import {useLayoutEffect} from '../utils/useLayoutEffect';
 import {useLocale} from '../i18n/I18nProvider';
-import {useState} from 'react';
 
 const BUTTON_GROUP_ROLES = {
   none: 'toolbar',
@@ -91,30 +91,34 @@ export function useActionGroup<T>(
   let {direction} = useLocale();
   let focusManager = createFocusManager(ref);
   let flipDirection = direction === 'rtl' && orientation === 'horizontal';
-  let {keyboardProps} = useKeyboard({
-    shortcuts: {
-      ArrowRight: () => {
-        if (flipDirection) {
-          focusManager.focusPrevious({wrap: true});
-        } else {
-          focusManager.focusNext({wrap: true});
-        }
-      },
-      ArrowDown: () => {
-        focusManager.focusNext({wrap: true});
-      },
-      ArrowLeft: () => {
-        if (flipDirection) {
-          focusManager.focusNext({wrap: true});
-        } else {
-          focusManager.focusPrevious({wrap: true});
-        }
-      },
-      ArrowUp: () => {
-        focusManager.focusPrevious({wrap: true});
-      }
+  let onKeyDown: KeyboardEventHandler = e => {
+    if (!nodeContains(e.currentTarget, getEventTarget(e))) {
+      return;
     }
-  });
+
+    switch (e.key) {
+      case 'ArrowRight':
+      case 'ArrowDown':
+        e.preventDefault();
+        e.stopPropagation();
+        if (e.key === 'ArrowRight' && flipDirection) {
+          focusManager.focusPrevious({wrap: true});
+        } else {
+          focusManager.focusNext({wrap: true});
+        }
+        break;
+      case 'ArrowLeft':
+      case 'ArrowUp':
+        e.preventDefault();
+        e.stopPropagation();
+        if (e.key === 'ArrowLeft' && flipDirection) {
+          focusManager.focusNext({wrap: true});
+        } else {
+          focusManager.focusPrevious({wrap: true});
+        }
+        break;
+    }
+  };
 
   let role: string | undefined = BUTTON_GROUP_ROLES[state.selectionManager.selectionMode];
   if (isInToolbar && role === 'toolbar') {
@@ -126,7 +130,7 @@ export function useActionGroup<T>(
       role,
       'aria-orientation': role === 'toolbar' ? orientation : undefined,
       'aria-disabled': isDisabled,
-      ...keyboardProps
+      onKeyDown
     }
   };
 }
