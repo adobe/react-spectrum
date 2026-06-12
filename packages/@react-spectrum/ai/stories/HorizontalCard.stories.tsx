@@ -13,8 +13,12 @@
 import {ActionButton} from '@react-spectrum/s2/ActionButton';
 import {ActionMenu} from '@react-spectrum/s2/ActionMenu';
 import {Attachment as AttachmentComponent, AttachmentList} from '@react-spectrum/ai/AttachmentList';
-import {BasicHorizontalCard, CardPreview, HorizontalCard} from '@react-spectrum/ai/HorizontalCard';
-import {Card, CardProps} from '@react-spectrum/s2/Card';
+import {
+  BasicHorizontalCard,
+  CardPreview,
+  type CardProps,
+  HorizontalCard
+} from '@react-spectrum/ai/HorizontalCard';
 import ChevronRight from '@react-spectrum/s2/icons/ChevronRight';
 import {Content} from '@react-spectrum/s2/Content';
 import {Footer} from '@react-spectrum/s2/Footer';
@@ -57,7 +61,8 @@ const meta: Meta<CardProps & {isLoading?: boolean}> = {
 
 export default meta;
 
-type Story = StoryObj<typeof Card>;
+type Story = StoryObj<typeof HorizontalCard>;
+type BasicStory = StoryObj<typeof BasicHorizontalCard>;
 
 export const Horizontal: Story = {
   render: args => (
@@ -109,6 +114,27 @@ export const Horizontal: Story = {
           </Text>
         </Content>
       </HorizontalCard>
+    </div>
+  )
+};
+
+export const Basic: BasicStory = {
+  render: args => (
+    <div
+      className={style({
+        display: 'flex',
+        gap: 16,
+        flexWrap: 'wrap',
+        alignItems: 'start',
+        justifyContent: 'center',
+        padding: 16,
+        backgroundColor: {
+          default: 'layer-1',
+          variant: {
+            secondary: 'layer-2'
+          }
+        }
+      })({variant: args.variant})}>
       <BasicHorizontalCard {...args} styles={style({maxWidth: 400})}>
         <Image
           slot="thumbnail"
@@ -166,7 +192,13 @@ export const Horizontal: Story = {
         />
       </BasicHorizontalCard>
     </div>
-  )
+  ),
+  argTypes: {
+    variant: {
+      control: 'radio',
+      options: ['primary', 'secondary', 'tertiary', 'quiet']
+    }
+  }
 };
 
 export const AIAttachmentList: Story = {
