@@ -365,65 +365,82 @@ export const TokenField = forwardRef(function TokenField(
     return false;
   };
 
-  const wordModKey = isMac() ? 'Alt' : 'Control';
-  let {keyboardProps} = useKeyboard({
-    allowRepeats: true,
-    shortcuts: {
-      'mod+z': () => {
-        apply(state => state.undo());
-      },
-      [isMac() ? 'meta+shift+z' : 'Control+y']: () => {
-        apply(state => state.redo());
-      },
-      ArrowLeft: () => {
-        return moveSelection(graphemeSegmenter, Direction.Backward);
-      },
-      [`${wordModKey}+ArrowLeft`]: () => {
-        return moveSelection(wordSegmenter, Direction.Backward);
-      },
-      'Shift+ArrowLeft': () => {
-        return moveSelection(graphemeSegmenter, Direction.Backward, true);
-      },
-      [`Shift+${wordModKey}+ArrowLeft`]: () => {
-        return moveSelection(wordSegmenter, Direction.Backward, true);
-      },
-      ArrowRight: () => {
-        return moveSelection(graphemeSegmenter, Direction.Forward);
-      },
-      [`${wordModKey}+ArrowRight`]: () => {
-        return moveSelection(wordSegmenter, Direction.Forward);
-      },
-      'Shift+ArrowRight': () => {
-        return moveSelection(graphemeSegmenter, Direction.Forward, true);
-      },
-      [`Shift+${wordModKey}+ArrowRight`]: () => {
-        return moveSelection(wordSegmenter, Direction.Forward, true);
-      },
-      Home: () => {
-        // Browsers do not behave consistently when there are tokens.
-        let selection = getSelection(ref.current!);
-        if (!selection) {
-          return false;
-        }
-        let boundary = state.findLineBoundary(selection[0], Direction.Backward);
-        if (boundary) {
-          setCursor(ref.current!, boundary, true);
-          return true;
-        }
-        return false;
-      },
-      End: () => {
-        let selection = getSelection(ref.current!);
-        if (!selection) {
-          return false;
-        }
-        let boundary = state.findLineBoundary(selection[1], Direction.Forward);
-        if (boundary) {
-          setCursor(ref.current!, boundary, true);
-          return true;
-        }
+  let mod = isMac() ? 'Meta' : 'Control';
+  let wordModKey = isMac() ? 'Alt' : 'Control';
+  let shortcuts: Record<string, () => boolean | undefined> = {
+    [`${mod}+z`]: () => {
+      apply(state => state.undo());
+    },
+    [isMac() ? 'Shift+Meta+z' : 'Control+y']: () => {
+      apply(state => state.redo());
+    },
+    ArrowLeft: () => {
+      return moveSelection(graphemeSegmenter, Direction.Backward);
+    },
+    [`${wordModKey}+ArrowLeft`]: () => {
+      return moveSelection(wordSegmenter, Direction.Backward);
+    },
+    'Shift+ArrowLeft': () => {
+      return moveSelection(graphemeSegmenter, Direction.Backward, true);
+    },
+    [`Shift+${wordModKey}+ArrowLeft`]: () => {
+      return moveSelection(wordSegmenter, Direction.Backward, true);
+    },
+    ArrowRight: () => {
+      return moveSelection(graphemeSegmenter, Direction.Forward);
+    },
+    [`${wordModKey}+ArrowRight`]: () => {
+      return moveSelection(wordSegmenter, Direction.Forward);
+    },
+    'Shift+ArrowRight': () => {
+      return moveSelection(graphemeSegmenter, Direction.Forward, true);
+    },
+    [`Shift+${wordModKey}+ArrowRight`]: () => {
+      return moveSelection(wordSegmenter, Direction.Forward, true);
+    },
+    Home: () => {
+      // Browsers do not behave consistently when there are tokens.
+      let selection = getSelection(ref.current!);
+      if (!selection) {
         return false;
       }
+      let boundary = state.findLineBoundary(selection[0], Direction.Backward);
+      if (boundary) {
+        setCursor(ref.current!, boundary, true);
+        return true;
+      }
+      return false;
+    },
+    End: () => {
+      let selection = getSelection(ref.current!);
+      if (!selection) {
+        return false;
+      }
+      let boundary = state.findLineBoundary(selection[1], Direction.Forward);
+      if (boundary) {
+        setCursor(ref.current!, boundary, true);
+        return true;
+      }
+      return false;
+    }
+  };
+
+  let {keyboardProps} = useKeyboard({
+    onKeyDown: e => {
+      // mini version of useKeyboard shortcuts until it is merged.
+      let modifiers = ['Shift', 'Control', 'Alt', 'Meta'] satisfies React.ModifierKey[];
+      let modifierKeys = modifiers.filter(modifier => e.getModifierState(modifier));
+      let keys = modifierKeys.length > 0 ? `${modifierKeys.join('+')}+${e.key}` : e.key;
+      let handler = shortcuts[keys];
+      if (handler) {
+        let result = handler();
+        if (result === true || result === undefined) {
+          e.preventDefault();
+          return;
+        }
+      }
+
+      e.continuePropagation();
     }
   });
 
