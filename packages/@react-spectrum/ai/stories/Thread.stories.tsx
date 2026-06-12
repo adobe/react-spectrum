@@ -29,7 +29,7 @@ import {ReactNode, useRef, useState} from 'react';
 import {ResponseStatus, ResponseStatusPanel, ResponseStatusTitle} from '../src/ResponseStatus';
 import {Text} from '@react-spectrum/s2/Text';
 import {Thread, ThreadItem, ThreadList, ThreadScrollButton} from '../src/Thread';
-import type {TokenSegmentList} from '/packages/react-aria-components/src/TokenSegmentList';
+import type {TokenSegmentList} from '../src/TokenSegmentList';
 import {UserMessage} from '../src/UserMessage';
 import {Virtualizer} from 'react-aria-components/Virtualizer';
 

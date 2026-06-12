@@ -1,3 +1,15 @@
+/*
+ * Copyright 2026 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
 export type TokenFieldSegment = TextSegment | TokenSegment;
 
 export interface TextSegment {
@@ -8,13 +20,14 @@ export interface TextSegment {
 export interface TokenSegment {
   type: 'token';
   text: string;
+  /** An arbitrary value associated with the token. */
   value?: any;
 }
 
 export interface Position {
   /** Index of the segment in the list. */
   index: number;
-  /** Text offset within the segment. */
+  /** Text offset within the segment in UTF-16 code units. */
   offset: number;
 }
 
@@ -24,7 +37,6 @@ export enum Direction {
 }
 
 export interface TokenSegmentListOptions {
-  tokenRegex?: RegExp | null;
   caretPosition?: Position | null;
 }
 
@@ -119,6 +131,7 @@ export class TokenSegmentList {
     );
   }
 
+  /** Replace the text between two positions with new segments. */
   replaceRangeWithSegments(
     start: Position,
     end: Position,
@@ -184,6 +197,7 @@ export class TokenSegmentList {
     return segments;
   }
 
+  /** Find the boundary before or after a position using an Intl.Segmenter. */
   findBoundaryWithSegmenter(
     position: Position,
     segmenter: Intl.Segmenter,
@@ -241,6 +255,7 @@ export class TokenSegmentList {
     return null;
   }
 
+  /** Find a line boundary before or after a position. */
   findLineBoundary(position: Position, direction: Direction): Position | null {
     let res = this.findText(position, direction, '\n');
     if (res) {
@@ -254,6 +269,7 @@ export class TokenSegmentList {
         };
   }
 
+  /** Find a string or regular expression match before or after a position. */
   findText(position: Position, direction: Direction, search: string | RegExp): Position | null {
     if (this.segments.length === 0) {
       return null;
@@ -337,6 +353,7 @@ export class TokenSegmentList {
     return this;
   }
 
+  /** Create a new list containing a subset of the segments. */
   slice(start: Position, end: Position): TokenSegmentList {
     start = this.clampPosition(start);
     end = this.clampPosition(end);

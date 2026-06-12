@@ -1,3 +1,15 @@
+/*
+ * Copyright 2026 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
 import {announce} from 'react-aria/private/live-announcer/LiveAnnouncer';
 import {
   Direction,
@@ -99,6 +111,7 @@ export const TokenField = forwardRef(function TokenField(
     }
   });
 
+  // Handle text editing commands and prevent browser default behavior.
   useEvent(ref, 'beforeinput', e => {
     let selection = window.getSelection();
     if (!selection || selection.rangeCount === 0) {
@@ -108,7 +121,6 @@ export const TokenField = forwardRef(function TokenField(
     let [start, end] = rangeToPositions(ref.current!, range);
 
     // https://www.w3.org/TR/input-events-2/#interface-InputEvent-Attributes
-    // console.log(e.inputType);
     switch (e.inputType) {
       case 'insertText':
       case 'insertReplacementText':
@@ -218,6 +230,7 @@ export const TokenField = forwardRef(function TokenField(
     e.preventDefault();
   });
 
+  // Composition events are not cancelable, so we need to store the start position and update the value in the compositionend event.
   let compositionStart = useRef<[Position, Position] | null>(null);
   useEvent(ref, 'compositionstart', () => {
     let selection = window.getSelection();
@@ -302,6 +315,7 @@ export const TokenField = forwardRef(function TokenField(
         }
       }
 
+      // Update the caret position in the value.
       setState(value => value.withCaretPosition(end));
     }
   });
@@ -568,7 +582,7 @@ function getPosition(container: Element, node: Node, offset: number): Position {
   if (node.nodeType === Node.ELEMENT_NODE) {
     let tokenNode = node.childNodes[1];
     if (originalNode === tokenNode) {
-      // Cursors is inside the token.
+      // Cursor is inside the token.
       offset = offset > 0 ? (tokenNode?.textContent?.length ?? 0) : 0;
     } else if (originalNode === node) {
       // Cursor is inside the wrapper element.
@@ -585,6 +599,7 @@ function getPosition(container: Element, node: Node, offset: number): Position {
 
 let isProgrammaticSelectionChange = false;
 
+// TODO: do we want to export these?
 export function setCursor(root: Element, pos: Position, fireEvent = false) {
   setSelection(root, pos, pos, fireEvent);
 }
@@ -599,7 +614,6 @@ export function setSelection(root: Element, start: Position, end: Position, fire
   }
 }
 
-// TODO: do we want to export this?
 export function positionToDOMRange(root: Element, pos: Position): Range {
   return createDOMRange(root, pos, pos);
 }

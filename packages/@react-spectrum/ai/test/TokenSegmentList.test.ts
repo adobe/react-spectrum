@@ -10,11 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-/**
- * Positions use JavaScript UTF-16 code unit indices (same as DOM Range offsets in text nodes),
- * not Unicode code points or grapheme clusters, except where `delete` applies `Intl.Segmenter`.
- */
-
 import {Direction, Position, TokenFieldSegment, TokenSegmentList} from '../src/TokenSegmentList';
 
 function text(s: string): TokenFieldSegment {
@@ -1151,7 +1146,7 @@ describe('TokenSegmentList', () => {
     });
 
     it('does not run tokenization on empty insert even when pattern would match full string', () => {
-      let list = new TokenSegmentList([text('@alice  ')], {tokenRegex: mentionRe});
+      let list = new TokenizingSegmentList([text('@alice  ')], mentionRe);
       let {segments: value, caretPosition: caret} = list.replaceRange(
         {index: 0, offset: 7},
         {index: 0, offset: 8},
