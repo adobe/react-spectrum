@@ -14,13 +14,12 @@ import {CalendarDate, startOfWeek, today} from '@internationalized/date';
 import {CalendarSelectionMode, CalendarState} from 'react-stately/useCalendarState';
 import {DOMAttributes} from '@react-types/shared';
 import {hookData, useVisibleRangeDescription} from './utils';
+import {KeyboardEvent, useMemo} from 'react';
 import {mergeProps} from '../utils/mergeProps';
 import {RangeCalendarState} from 'react-stately/useRangeCalendarState';
 import {useDateFormatter} from '../i18n/useDateFormatter';
-import {useKeyboard} from '../interactions/useKeyboard';
 import {useLabels} from '../utils/useLabels';
 import {useLocale} from '../i18n/I18nProvider';
-import {useMemo} from 'react';
 
 export interface AriaCalendarGridProps {
   /**
@@ -79,61 +78,70 @@ export function useCalendarGrid(
 
   let {direction} = useLocale();
 
-  let {keyboardProps} = useKeyboard({
-    shortcuts: {
-      Enter: () => {
+  let onKeyDown = (e: KeyboardEvent) => {
+    switch (e.key) {
+      case 'Enter':
+      case ' ':
+        e.preventDefault();
         state.selectFocusedDate();
-      },
-      ' ': () => {
-        state.selectFocusedDate();
-      },
-      PageUp: () => {
-        state.focusPreviousSection();
-      },
-      'Shift+PageUp': () => {
-        state.focusPreviousSection(true);
-      },
-      PageDown: () => {
-        state.focusNextSection();
-      },
-      'Shift+PageDown': () => {
-        state.focusNextSection(true);
-      },
-      End: () => {
+        break;
+      case 'PageUp':
+        e.preventDefault();
+        e.stopPropagation();
+        state.focusPreviousSection(e.shiftKey);
+        break;
+      case 'PageDown':
+        e.preventDefault();
+        e.stopPropagation();
+        state.focusNextSection(e.shiftKey);
+        break;
+      case 'End':
+        e.preventDefault();
+        e.stopPropagation();
         state.focusSectionEnd();
-      },
-      Home: () => {
+        break;
+      case 'Home':
+        e.preventDefault();
+        e.stopPropagation();
         state.focusSectionStart();
-      },
-      ArrowLeft: () => {
+        break;
+      case 'ArrowLeft':
+        e.preventDefault();
+        e.stopPropagation();
         if (direction === 'rtl') {
           state.focusNextDay();
         } else {
           state.focusPreviousDay();
         }
-      },
-      ArrowUp: () => {
+        break;
+      case 'ArrowUp':
+        e.preventDefault();
+        e.stopPropagation();
         state.focusPreviousRow();
-      },
-      ArrowRight: () => {
+        break;
+      case 'ArrowRight':
+        e.preventDefault();
+        e.stopPropagation();
         if (direction === 'rtl') {
           state.focusPreviousDay();
         } else {
           state.focusNextDay();
         }
-      },
-      ArrowDown: () => {
+        break;
+      case 'ArrowDown':
+        e.preventDefault();
+        e.stopPropagation();
         state.focusNextRow();
-      },
-      Escape: () => {
+        break;
+      case 'Escape':
         // Cancel the selection.
         if ('setAnchorDate' in state) {
+          e.preventDefault();
           state.setAnchorDate(null);
         }
-        return false; // TODO: is this really correct? or should it return true when we cancel and only propagate if there's nothing to do
-      }
+        break;
     }
-  });
+  };
 
   let visibleRangeDescription = useVisibleRangeDescription(
     startDate,
@@ -174,7 +182,7 @@ export function useCalendarGrid(
       'aria-disabled': state.isDisabled || undefined,
       'aria-multiselectable':
         'highlightedRange' in state || state.selectionMode === 'multiple' || undefined,
-      ...keyboardProps,
+      onKeyDown,
       onFocus: () => state.setFocused(true),
       onBlur: () => state.setFocused(false)
     }),

@@ -18,7 +18,6 @@ import intlMessages from '../../intl/spinbutton/*.json';
 import {useCallback, useEffect, useRef, useState} from 'react';
 import {useEffectEvent} from '../utils/useEffectEvent';
 import {useGlobalListeners} from '../utils/useGlobalListeners';
-import {useKeyboard} from '../interactions/useKeyboard';
 import {useLocalizedStringFormatter} from '../i18n/useLocalizedStringFormatter';
 
 const noop = () => {};
@@ -72,61 +71,61 @@ export function useSpinButton(props: SpinButtonProps): SpinbuttonAria {
     return () => clearAsyncEvent();
   }, []);
 
-  let {keyboardProps} = useKeyboard({
-    isDisabled: isDisabled || isReadOnly,
-    shortcuts: {
-      PageUp: () => {
-        if (onIncrementPage) {
-          onIncrementPage();
-          return;
-        }
-        if (onIncrement) {
-          onIncrement();
-          return;
-        }
-        return false;
-      },
-      ArrowUp: () => {
-        if (onIncrement) {
-          onIncrement();
-          return;
-        }
-        return false;
-      },
-      PageDown: () => {
-        if (onDecrementPage) {
-          onDecrementPage();
-          return;
-        }
-        if (onDecrement) {
-          onDecrement();
-          return;
-        }
-        return false;
-      },
-      ArrowDown: () => {
-        if (onDecrement) {
-          onDecrement();
-          return;
-        }
-        return false;
-      },
-      Home: () => {
-        if (onDecrementToMin) {
-          onDecrementToMin();
-          return;
-        }
-        return false;
-      },
-      End: () => {
-        if (onIncrementToMax) {
-          onIncrementToMax();
-          return;
-        }
-        return false;
-      }
+  let onKeyDown = e => {
+    if (
+      e.ctrlKey ||
+      e.metaKey ||
+      e.shiftKey ||
+      e.altKey ||
+      isReadOnly ||
+      e.nativeEvent.isComposing
+    ) {
+      return;
     }
-  });
+
+    switch (e.key) {
+      case 'PageUp':
+        if (onIncrementPage) {
+          e.preventDefault();
+          onIncrementPage?.();
+          break;
+        }
+      // fallthrough!
+      case 'ArrowUp':
+      case 'Up':
+        if (onIncrement) {
+          e.preventDefault();
+          onIncrement?.();
+        }
+        break;
+      case 'PageDown':
+        if (onDecrementPage) {
+          e.preventDefault();
+          onDecrementPage?.();
+          break;
+        }
+      // fallthrough
+      case 'ArrowDown':
+      case 'Down':
+        if (onDecrement) {
+          e.preventDefault();
+          onDecrement?.();
+        }
+        break;
+      case 'Home':
+        if (onDecrementToMin) {
+          e.preventDefault();
+          onDecrementToMin?.();
+        }
+        break;
+      case 'End':
+        if (onIncrementToMax) {
+          e.preventDefault();
+          onIncrementToMax?.();
+        }
+        break;
+    }
+  };
 
   let isFocused = useRef(false);
   let onFocus = () => {
@@ -245,7 +244,7 @@ export function useSpinButton(props: SpinButtonProps): SpinbuttonAria {
       'aria-disabled': isDisabled || undefined,
       'aria-readonly': isReadOnly || undefined,
       'aria-required': isRequired || undefined,
-      ...keyboardProps,
+      onKeyDown,
       onFocus,
       onBlur
     },
