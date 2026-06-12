@@ -19,11 +19,10 @@ import {
   FocusStrategy,
   Key,
   KeyboardDelegate,
-  KeyboardEvent,
   RefObject
 } from '@react-types/shared';
 import {flushSync} from 'react-dom';
-import {FocusEvent, useEffect, useRef} from 'react';
+import {FocusEvent, KeyboardEvent, useEffect, useRef} from 'react';
 import {focusSafely} from '../interactions/focusSafely';
 import {focusWithoutScrolling} from '../utils/focusWithoutScrolling';
 import {
@@ -36,13 +35,11 @@ import {getFocusableTreeWalker} from '../focus/FocusScope';
 import {getInteractionModality} from '../interactions/useFocusVisible';
 import {getItemElement, isNonContiguousSelectionModifier, useCollectionId} from './utils';
 import {isCtrlKeyPressed} from '../utils/keyboard';
-import {isMac} from '../utils/platform';
 import {isTabbable} from '../utils/isFocusable';
 import {mergeProps} from '../utils/mergeProps';
 import {MultipleSelectionManager} from 'react-stately/useMultipleSelectionState';
 import {scrollIntoView, scrollIntoViewport} from '../utils/scrollIntoView';
 import {useEvent} from '../utils/useEvent';
-import {useKeyboard} from '../interactions/useKeyboard';
 import {useLocale} from '../i18n/I18nProvider';
 import {useRouter} from '../utils/openLink';
 import {useTypeSelect} from './useTypeSelect';
@@ -170,266 +167,234 @@ export function useSelectableCollection(
   let {direction} = useLocale();
   let router = useRouter();
 
-  const navigateToKey = (
-    e: KeyboardEvent,
-    key: Key | undefined,
-    childFocus?: FocusStrategy
-  ): boolean | void => {
-    if (key != null) {
-      if (
-        manager.isLink(key) &&
-        linkBehavior === 'selection' &&
-        selectOnFocus &&
-        !isNonContiguousSelectionModifier(e)
-      ) {
-        // Set focused key and re-render synchronously to bring item into view if needed.
-        flushSync(() => {
-          manager.setFocusedKey(key, childFocus);
-        });
-
-        let item = getItemElement(ref, key);
-        let itemProps = manager.getItemProps(key);
-        if (item) {
-          router.open(item, e, itemProps.href, itemProps.routerOptions);
-          return;
-        }
-
-        return false;
-      }
-
-      manager.setFocusedKey(key, childFocus);
-
-      if (manager.isLink(key) && linkBehavior === 'override') {
-        return false;
-      }
-
-      if (e.shiftKey && manager.selectionMode === 'multiple') {
-        manager.extendSelection(key);
-        return;
-      } else if (selectOnFocus && !isNonContiguousSelectionModifier(e)) {
-        manager.replaceSelection(key);
-        return;
-      }
+  let onKeyDown = (e: KeyboardEvent) => {
+    // Prevent option + tab from doing anything since it doesn't move focus to the cells, only buttons/checkboxes
+    if (e.altKey && e.key === 'Tab') {
+      e.preventDefault();
     }
-    return false;
-  };
 
-  let arrowDown = (e: KeyboardEvent) => {
-    if (delegate.getKeyBelow) {
-      let nextKey =
-        manager.focusedKey != null
-          ? delegate.getKeyBelow?.(manager.focusedKey)
-          : delegate.getFirstKey?.();
-      if (nextKey == null && shouldFocusWrap) {
-        nextKey = delegate.getFirstKey?.(manager.focusedKey);
-      }
-      if (nextKey != null) {
-        navigateToKey(e, nextKey);
-        return {shouldPreventDefault: true, shouldContinuePropagation: true};
-      }
-    }
-    return false;
-  };
-
-  let arrowUp = (e: KeyboardEvent) => {
-    if (delegate.getKeyAbove) {
-      let nextKey =
-        manager.focusedKey != null
-          ? delegate.getKeyAbove?.(manager.focusedKey)
-          : delegate.getLastKey?.();
-      if (nextKey == null && shouldFocusWrap) {
-        nextKey = delegate.getLastKey?.(manager.focusedKey);
-      }
-      if (nextKey != null) {
-        navigateToKey(e, nextKey);
-        return {shouldPreventDefault: true, shouldContinuePropagation: true};
-      }
-    }
-    return false;
-  };
-
-  let home = (e: KeyboardEvent) => {
-    if (delegate.getFirstKey) {
-      if (manager.focusedKey === null && e.shiftKey) {
-        return false;
-      }
-      // TODO: should Home and End also be reversed in column reverse aka Home goes to top? Or should Home always to to the "first" (bottom)
-      let firstKey: Key | null = delegate.getFirstKey(manager.focusedKey, isCtrlKeyPressed(e));
-      manager.setFocusedKey(firstKey);
-      if (firstKey != null) {
-        if (isCtrlKeyPressed(e) && e.shiftKey && manager.selectionMode === 'multiple') {
-          manager.extendSelection(firstKey);
-          return;
-        } else if (selectOnFocus) {
-          manager.replaceSelection(firstKey);
-          return;
-        }
-      }
-    }
-    return false;
-  };
-
-  let arrowLeft = (e: KeyboardEvent) => {
-    if (delegate.getKeyLeftOf) {
-      let nextKey: Key | undefined | null =
-        manager.focusedKey != null
-          ? delegate.getKeyLeftOf?.(manager.focusedKey)
-          : delegate.getFirstKey?.();
-      if (nextKey == null && shouldFocusWrap) {
-        nextKey =
-          direction === 'rtl'
-            ? delegate.getFirstKey?.(manager.focusedKey)
-            : delegate.getLastKey?.(manager.focusedKey);
-      }
-      if (nextKey != null) {
-        navigateToKey(e, nextKey, direction === 'rtl' ? 'first' : 'last');
-        return {shouldPreventDefault: true, shouldContinuePropagation: true};
-      }
-    }
-    return false;
-  };
-
-  let arrowRight = (e: KeyboardEvent) => {
-    if (delegate.getKeyRightOf) {
-      let nextKey: Key | undefined | null =
-        manager.focusedKey != null
-          ? delegate.getKeyRightOf?.(manager.focusedKey)
-          : delegate.getFirstKey?.();
-      if (nextKey == null && shouldFocusWrap) {
-        nextKey =
-          direction === 'rtl'
-            ? delegate.getLastKey?.(manager.focusedKey)
-            : delegate.getFirstKey?.(manager.focusedKey);
-      }
-      if (nextKey != null) {
-        navigateToKey(e, nextKey, direction === 'rtl' ? 'last' : 'first');
-        return {shouldPreventDefault: true, shouldContinuePropagation: true};
-      }
-    }
-    return false;
-  };
-
-  let end = (e: KeyboardEvent) => {
-    if (delegate.getLastKey) {
-      if (manager.focusedKey === null && e.shiftKey) {
-        return false;
-      }
-      let lastKey = delegate.getLastKey(manager.focusedKey, isCtrlKeyPressed(e));
-      manager.setFocusedKey(lastKey);
-      if (lastKey != null) {
-        if (isCtrlKeyPressed(e) && e.shiftKey && manager.selectionMode === 'multiple') {
-          manager.extendSelection(lastKey);
-          return;
-        } else if (selectOnFocus) {
-          manager.replaceSelection(lastKey);
-          return;
-        }
-      }
-    }
-    return false;
-  };
-
-  let pageDown = (e: KeyboardEvent) => {
-    if (delegate.getKeyPageBelow && manager.focusedKey != null) {
-      let nextKey = delegate.getKeyPageBelow(manager.focusedKey);
-      if (nextKey != null) {
-        return navigateToKey(e, nextKey);
-      }
-    }
-    return false;
-  };
-
-  let pageUp = (e: KeyboardEvent) => {
-    if (delegate.getKeyPageAbove && manager.focusedKey != null) {
-      let nextKey = delegate.getKeyPageAbove(manager.focusedKey);
-      if (nextKey != null) {
-        return navigateToKey(e, nextKey);
-      }
-    }
-    return false;
-  };
-
-  let aHandler = () => {
-    if (manager.selectionMode === 'multiple' && disallowSelectAll !== true) {
-      manager.selectAll();
+    // Keyboard events bubble through portals. Don't handle keyboard events
+    // for elements outside the collection (e.g. menus).
+    if (!ref.current || !nodeContains(ref.current, getEventTarget(e) as Element)) {
       return;
     }
-    return false;
-  };
 
-  let escape = () => {
-    if (
-      escapeKeyBehavior === 'clearSelection' &&
-      !disallowEmptySelection &&
-      manager.selectedKeys.size !== 0
-    ) {
-      manager.clearSelection();
-      return;
-    }
-    return false;
-  };
+    const navigateToKey = (key: Key | undefined, childFocus?: FocusStrategy) => {
+      if (key != null) {
+        if (
+          manager.isLink(key) &&
+          linkBehavior === 'selection' &&
+          selectOnFocus &&
+          !isNonContiguousSelectionModifier(e)
+        ) {
+          // Set focused key and re-render synchronously to bring item into view if needed.
+          flushSync(() => {
+            manager.setFocusedKey(key, childFocus);
+          });
 
-  let tab = () => {
-    if (!allowsTabNavigation && ref.current) {
-      // There may be elements that are "tabbable" inside a collection (e.g. in a grid cell).
-      // However, collections should be treated as a single tab stop, with arrow key navigation internally.
-      // We don't control the rendering of these, so we can't override the tabIndex to prevent tabbing.
-      // Instead, we handle the Tab key, and move focus manually to the first/last tabbable element
-      // in the collection, so that the browser default behavior will apply starting from that element
-      // rather than the currently focused one.
+          let item = getItemElement(ref, key);
+          let itemProps = manager.getItemProps(key);
+          if (item) {
+            router.open(item, e, itemProps.href, itemProps.routerOptions);
+          }
 
-      let walker = getFocusableTreeWalker(ref.current, {tabbable: true});
-      let next: FocusableElement | undefined = undefined;
-      let last: FocusableElement;
-      do {
-        last = walker.lastChild() as FocusableElement;
-        if (last) {
-          next = last;
+          return;
         }
-      } while (last);
 
-      // If the active element is NOT tabbable but is contained by an element that IS tabbable (aka the cell), the browser will actually move focus to
-      // the containing element. We need to special case this so that tab will move focus out of the grid instead of looping between
-      // focusing the containing cell and back to the non-tabbable child element
-      let activeElement = getActiveElement();
-      if (next && (!isFocusWithin(next) || (activeElement && !isTabbable(activeElement)))) {
-        focusWithoutScrolling(next);
+        manager.setFocusedKey(key, childFocus);
+
+        if (manager.isLink(key) && linkBehavior === 'override') {
+          return;
+        }
+
+        if (e.shiftKey && manager.selectionMode === 'multiple') {
+          manager.extendSelection(key);
+        } else if (selectOnFocus && !isNonContiguousSelectionModifier(e)) {
+          manager.replaceSelection(key);
+        }
       }
-    }
-    return {shouldContinuePropagation: true, shouldPreventDefault: false};
-  };
-
-  let shiftTab = () => {
-    if (!allowsTabNavigation && ref.current) {
-      ref.current.focus();
-    }
-    return {shouldContinuePropagation: true, shouldPreventDefault: false};
-  };
-
-  let withShiftSel = (key, callback) => {
-    return {
-      [isMac() ? key + '+Shift+Alt' : key + '+Shift+Control']: callback,
-      [key + '+Shift']: callback,
-      [isMac() ? key + '+Alt' : key + '+Control']: callback,
-      [key]: callback
     };
-  };
-  let {keyboardProps} = useKeyboard({
-    shortcuts: {
-      ...withShiftSel('ArrowDown', arrowDown),
-      ...withShiftSel('ArrowUp', arrowUp),
-      ...withShiftSel('ArrowLeft', arrowLeft),
-      ...withShiftSel('ArrowRight', arrowRight),
-      ...withShiftSel('Home', home),
-      ...withShiftSel('End', end),
-      ...withShiftSel('PageDown', pageDown),
-      ...withShiftSel('PageUp', pageUp),
-      [isMac() ? 'a+Alt' : 'a+Control']: aHandler,
-      Escape: escape,
-      Tab: tab,
-      'Tab+Shift': shiftTab
+
+    switch (e.key) {
+      case 'ArrowDown': {
+        if (delegate.getKeyBelow) {
+          let nextKey =
+            manager.focusedKey != null
+              ? delegate.getKeyBelow?.(manager.focusedKey)
+              : delegate.getFirstKey?.();
+          if (nextKey == null && shouldFocusWrap) {
+            nextKey = delegate.getFirstKey?.(manager.focusedKey);
+          }
+          if (nextKey != null) {
+            e.preventDefault();
+            navigateToKey(nextKey);
+          }
+        }
+        break;
+      }
+      case 'ArrowUp': {
+        if (delegate.getKeyAbove) {
+          let nextKey =
+            manager.focusedKey != null
+              ? delegate.getKeyAbove?.(manager.focusedKey)
+              : delegate.getLastKey?.();
+          if (nextKey == null && shouldFocusWrap) {
+            nextKey = delegate.getLastKey?.(manager.focusedKey);
+          }
+          if (nextKey != null) {
+            e.preventDefault();
+            navigateToKey(nextKey);
+          }
+        }
+        break;
+      }
+      case 'ArrowLeft': {
+        if (delegate.getKeyLeftOf) {
+          let nextKey: Key | undefined | null =
+            manager.focusedKey != null
+              ? delegate.getKeyLeftOf?.(manager.focusedKey)
+              : delegate.getFirstKey?.();
+          if (nextKey == null && shouldFocusWrap) {
+            nextKey =
+              direction === 'rtl'
+                ? delegate.getFirstKey?.(manager.focusedKey)
+                : delegate.getLastKey?.(manager.focusedKey);
+          }
+          if (nextKey != null) {
+            e.preventDefault();
+            navigateToKey(nextKey, direction === 'rtl' ? 'first' : 'last');
+          }
+        }
+        break;
+      }
+      case 'ArrowRight': {
+        if (delegate.getKeyRightOf) {
+          let nextKey: Key | undefined | null =
+            manager.focusedKey != null
+              ? delegate.getKeyRightOf?.(manager.focusedKey)
+              : delegate.getFirstKey?.();
+          if (nextKey == null && shouldFocusWrap) {
+            nextKey =
+              direction === 'rtl'
+                ? delegate.getLastKey?.(manager.focusedKey)
+                : delegate.getFirstKey?.(manager.focusedKey);
+          }
+          if (nextKey != null) {
+            e.preventDefault();
+            navigateToKey(nextKey, direction === 'rtl' ? 'last' : 'first');
+          }
+        }
+        break;
+      }
+      case 'Home':
+        if (delegate.getFirstKey) {
+          if (manager.focusedKey === null && e.shiftKey) {
+            return;
+          }
+          // TODO: should Home and End also be reversed in column reverse aka Home goes to top? Or should Home always to to the "first" (bottom)
+          e.preventDefault();
+          let firstKey: Key | null = delegate.getFirstKey(manager.focusedKey, isCtrlKeyPressed(e));
+          manager.setFocusedKey(firstKey);
+          if (firstKey != null) {
+            if (isCtrlKeyPressed(e) && e.shiftKey && manager.selectionMode === 'multiple') {
+              manager.extendSelection(firstKey);
+            } else if (selectOnFocus) {
+              manager.replaceSelection(firstKey);
+            }
+          }
+        }
+        break;
+      case 'End':
+        if (delegate.getLastKey) {
+          if (manager.focusedKey === null && e.shiftKey) {
+            return;
+          }
+          e.preventDefault();
+          let lastKey = delegate.getLastKey(manager.focusedKey, isCtrlKeyPressed(e));
+          manager.setFocusedKey(lastKey);
+          if (lastKey != null) {
+            if (isCtrlKeyPressed(e) && e.shiftKey && manager.selectionMode === 'multiple') {
+              manager.extendSelection(lastKey);
+            } else if (selectOnFocus) {
+              manager.replaceSelection(lastKey);
+            }
+          }
+        }
+        break;
+      case 'PageDown':
+        if (delegate.getKeyPageBelow && manager.focusedKey != null) {
+          let nextKey = delegate.getKeyPageBelow(manager.focusedKey);
+          if (nextKey != null) {
+            e.preventDefault();
+            navigateToKey(nextKey);
+          }
+        }
+        break;
+      case 'PageUp':
+        if (delegate.getKeyPageAbove && manager.focusedKey != null) {
+          let nextKey = delegate.getKeyPageAbove(manager.focusedKey);
+          if (nextKey != null) {
+            e.preventDefault();
+            navigateToKey(nextKey);
+          }
+        }
+        break;
+      case 'a':
+        if (
+          isCtrlKeyPressed(e) &&
+          manager.selectionMode === 'multiple' &&
+          disallowSelectAll !== true
+        ) {
+          e.preventDefault();
+          manager.selectAll();
+        }
+        break;
+      case 'Escape':
+        if (
+          escapeKeyBehavior === 'clearSelection' &&
+          !disallowEmptySelection &&
+          manager.selectedKeys.size !== 0
+        ) {
+          e.stopPropagation();
+          e.preventDefault();
+          manager.clearSelection();
+        }
+        break;
+      case 'Tab': {
+        if (!allowsTabNavigation) {
+          // There may be elements that are "tabbable" inside a collection (e.g. in a grid cell).
+          // However, collections should be treated as a single tab stop, with arrow key navigation internally.
+          // We don't control the rendering of these, so we can't override the tabIndex to prevent tabbing.
+          // Instead, we handle the Tab key, and move focus manually to the first/last tabbable element
+          // in the collection, so that the browser default behavior will apply starting from that element
+          // rather than the currently focused one.
+          if (e.shiftKey) {
+            ref.current.focus();
+          } else {
+            let walker = getFocusableTreeWalker(ref.current, {tabbable: true});
+            let next: FocusableElement | undefined = undefined;
+            let last: FocusableElement;
+            do {
+              last = walker.lastChild() as FocusableElement;
+              // oxlint-disable-next-line max-depth
+              if (last) {
+                next = last;
+              }
+            } while (last);
+
+            // If the active element is NOT tabbable but is contained by an element that IS tabbable (aka the cell), the browser will actually move focus to
+            // the containing element. We need to special case this so that tab will move focus out of the grid instead of looping between
+            // focusing the containing cell and back to the non-tabbable child element
+            let activeElement = getActiveElement();
+            if (next && (!isFocusWithin(next) || (activeElement && !isTabbable(activeElement)))) {
+              focusWithoutScrolling(next);
+            }
+          }
+          break;
+        }
+      }
     }
-  });
+  };
 
   // Store the scroll position so we can restore it later.
   /// TODO: should this happen all the time??
@@ -695,7 +660,7 @@ export function useSelectableCollection(
   });
 
   let handlers = {
-    ...keyboardProps,
+    onKeyDown,
     onFocus,
     onBlur,
     onMouseDown(e) {
