@@ -185,50 +185,48 @@ export function useSubmenuTrigger<T>(
     })
   };
 
-  let {keyboardProps: submenuTriggerKeyboardProps} = useKeyboard({
-    shortcuts: {
-      ArrowRight: () => {
-        if (!isDisabled) {
-          if (direction === 'ltr') {
-            if (!state.isOpen) {
-              onSubmenuOpen('first');
-            }
-
-            if (type === 'menu' && !!submenuRef?.current && getActiveElement() === ref?.current) {
-              focusWithoutScrolling(submenuRef.current);
-            }
-            return;
-          } else if (state.isOpen) {
-            onSubmenuClose();
-            return;
-          } else {
-            return false;
+  let submenuTriggerShortcuts = {
+    ArrowRight: () => {
+      if (!isDisabled) {
+        if (direction === 'ltr') {
+          if (!state.isOpen) {
+            onSubmenuOpen('first');
           }
-        }
-        return false;
-      },
-      ArrowLeft: () => {
-        if (!isDisabled) {
-          if (direction === 'rtl') {
-            if (!state.isOpen) {
-              onSubmenuOpen('first');
-            }
 
-            if (type === 'menu' && !!submenuRef?.current && getActiveElement() === ref?.current) {
-              focusWithoutScrolling(submenuRef.current);
-            }
-            return;
-          } else if (state.isOpen) {
-            onSubmenuClose();
-            return;
-          } else {
-            return false;
+          if (type === 'menu' && !!submenuRef?.current && getActiveElement() === ref?.current) {
+            focusWithoutScrolling(submenuRef.current);
           }
+          return;
+        } else if (state.isOpen) {
+          onSubmenuClose();
+          return;
+        } else {
+          return false;
         }
-        return false;
       }
+      return false;
+    },
+    ArrowLeft: () => {
+      if (!isDisabled) {
+        if (direction === 'rtl') {
+          if (!state.isOpen) {
+            onSubmenuOpen('first');
+          }
+
+          if (type === 'menu' && !!submenuRef?.current && getActiveElement() === ref?.current) {
+            focusWithoutScrolling(submenuRef.current);
+          }
+          return;
+        } else if (state.isOpen) {
+          onSubmenuClose();
+          return;
+        } else {
+          return false;
+        }
+      }
+      return false;
     }
-  });
+  };
 
   let onPressStart = (e: PressEvent) => {
     if (!isDisabled && (e.pointerType === 'virtual' || e.pointerType === 'keyboard')) {
@@ -288,7 +286,7 @@ export function useSubmenuTrigger<T>(
 
   return {
     submenuTriggerProps: {
-      ...(submenuTriggerKeyboardProps as any), // TODO: fix this
+      shortcuts: submenuTriggerShortcuts,
       id: submenuTriggerId,
       'aria-controls': state.isOpen ? overlayId : undefined,
       'aria-haspopup': !isDisabled ? type : undefined,

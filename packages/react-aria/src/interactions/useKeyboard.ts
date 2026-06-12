@@ -24,7 +24,9 @@ export interface KeyboardProps extends KeyboardEvents {
   isDisabled?: boolean;
   /** Keyboard shortcuts to handle. */
   shortcuts?: KeyboardShortcutBindings;
+  /** Whether to allow repeating keys. */
   allowRepeats?: boolean;
+  /** Whether to allow composing keys. */
   allowComposing?: boolean;
 }
 
@@ -57,8 +59,8 @@ export function useKeyboard(props: KeyboardProps): KeyboardResult {
         return;
       }
 
-      shortcutHandler(e);
       props.onKeyDown?.(e);
+      shortcutHandler(e);
     });
     onKeyUp = createEventHandler<ReactKeyboardEvent<any>>(e => {
       // If keyboard event didn't originate from a child of the current target,
@@ -74,9 +76,9 @@ export function useKeyboard(props: KeyboardProps): KeyboardResult {
         e.continuePropagation();
         return;
       }
+      props.onKeyUp?.(e);
       // implement shortcut handler on keyup, what should the map be called? or should it be another syntax on shortcuts?
       e.continuePropagation();
-      props.onKeyUp?.(e);
     });
   } else {
     onKeyDown = createEventHandler(props.onKeyDown);
