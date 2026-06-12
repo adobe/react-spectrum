@@ -117,9 +117,7 @@ describe('useComboBox', function () {
     let {inputProps} = result.current;
 
     act(() => {
-      inputProps.onKeyDown(
-        event({key: 'Enter', target: {}, currentTarget: {contains: () => true}})
-      );
+      inputProps.onKeyDown(event({key: 'Enter'}));
     });
 
     expect(preventDefault).toHaveBeenCalledTimes(1);
@@ -151,9 +149,7 @@ describe('useComboBox', function () {
       initialProps: props
     });
     act(() => {
-      openResult.current.inputProps.onKeyDown(
-        event({key: 'Tab', target: {}, currentTarget: {contains: () => true}})
-      );
+      openResult.current.inputProps.onKeyDown(event({key: 'Tab'}));
     });
     expect(commitSpy).toHaveBeenCalledTimes(1);
   });
@@ -165,15 +161,11 @@ describe('useComboBox', function () {
 
     let {result} = renderHook(props => useComboBox(props, state.current), {initialProps: props});
     let {inputProps, buttonProps} = result.current;
-    inputProps.onKeyDown(
-      event({key: 'ArrowDown', target: {}, currentTarget: {contains: () => true}})
-    );
+    inputProps.onKeyDown(event({key: 'ArrowDown'}));
     expect(openSpy).toHaveBeenCalledTimes(1);
     expect(openSpy).toHaveBeenLastCalledWith('first', 'manual');
     expect(toggleSpy).toHaveBeenCalledTimes(0);
-    inputProps.onKeyDown(
-      event({key: 'ArrowUp', target: {}, currentTarget: {contains: () => true}})
-    );
+    inputProps.onKeyDown(event({key: 'ArrowUp'}));
     expect(openSpy).toHaveBeenCalledTimes(2);
     expect(openSpy).toHaveBeenLastCalledWith('last', 'manual');
     expect(toggleSpy).toHaveBeenCalledTimes(0);
@@ -198,4 +190,36 @@ describe('useComboBox', function () {
 
     expect(onBlurMock).toHaveBeenCalledTimes(1);
   });
+
+  it.each`
+    Name          | componentProps
+    ${'disabled'} | ${{isDisabled: true}}
+    ${'readonly'} | ${{isReadOnly: true}}
+  `(
+    "press and keyboard events on the button doesn't toggle the menu if $Name",
+    function ({componentProps}) {
+      let additionalProps = {
+        ...props,
+        ...componentProps
+      };
+
+      let {result: state} = renderHook(props => useComboBoxState(props), {
+        initialProps: additionalProps
+      });
+      state.current.open = openSpy;
+      state.current.toggle = toggleSpy;
+
+      let {result} = renderHook(props => useComboBox(props, state.current), {
+        initialProps: additionalProps
+      });
+      let {buttonProps} = result.current;
+      buttonProps.onKeyDown(event({key: 'ArrowDown'}));
+      expect(openSpy).toHaveBeenCalledTimes(0);
+      expect(toggleSpy).toHaveBeenCalledTimes(0);
+      buttonProps.onKeyDown(event({key: 'ArrowUp'}));
+      expect(openSpy).toHaveBeenCalledTimes(0);
+      expect(toggleSpy).toHaveBeenCalledTimes(0);
+      expect(buttonProps.isDisabled).toBeTruthy();
+    }
+  );
 });
