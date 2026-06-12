@@ -367,7 +367,7 @@ export const TokenField = forwardRef(function TokenField(
 
   let mod = isMac() ? 'Meta' : 'Control';
   let wordModKey = isMac() ? 'Alt' : 'Control';
-  let shortcuts: Record<string, () => boolean | undefined> = {
+  let shortcuts: Record<string, () => boolean | void> = {
     [`${mod}+z`]: () => {
       apply(state => state.undo());
     },
