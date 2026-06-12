@@ -1908,7 +1908,7 @@ describe('GridList', () => {
       ['keyboardNavigationBehavior="tab"', {keyboardNavigationBehavior: 'tab'}],
       ['layout="grid"', {layout: 'grid'}]
     ])(
-      'should not trigger selection when pressing Space in a text input child (%s)',
+      'should not trigger selection when pressing Space or Enter in a text input child (%s)',
       async (_, listProps) => {
         let onSelectionChange = jest.fn();
         let {getByRole} = render(
@@ -1937,6 +1937,9 @@ describe('GridList', () => {
 
         await user.keyboard(' ');
         expect(input).toHaveValue(' ');
+        expect(onSelectionChange).not.toHaveBeenCalled();
+
+        await user.keyboard('{Enter}');
         expect(onSelectionChange).not.toHaveBeenCalled();
       }
     );

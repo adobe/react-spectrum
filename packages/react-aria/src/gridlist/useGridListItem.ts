@@ -11,7 +11,6 @@
  */
 
 import {chain} from '../utils/chain';
-
 import {
   Collection,
   DOMAttributes,
@@ -302,15 +301,10 @@ export function useGridListItem<T>(
     }
 
     if (keyboardNavigationBehavior === 'tab') {
-      // TODO: Added Rob's useTypeSelect changes, but that only stops if type select is in progress
-      // This will stop arrow key navigation and typeselect from bubbling up
-      // (note that this breaks TagGroup's old behavior of using arrow keys to move from "x" button to next tag and typeselect when inside a card/row)
-      // should it just stop propagation for all events since we can't rely on non-RAC components stopping propagation even they handled the event
-      // Will need to do something similar for click?
-      if (
-        getEventTarget(e) !== ref.current &&
-        (isArrowKey(e.key) || isCharacterKey(e.key) || e.key === 'Enter')
-      ) {
+      // Stop propagation for all events that originate from the children of the gridlist item since we don't want to trigger
+      // grid level interactions (row navigation/typeselect/etc)
+      // exception made for Tab since that needs to propagate to useSelectableCollection to tab out of the gridlist, might be others?
+      if (getEventTarget(e) !== ref.current && e.key !== 'Tab') {
         e.stopPropagation();
         return;
       }
@@ -497,13 +491,4 @@ function getDirectChildren<T>(parent: RSNode<T>, collection: Collection<RSNode<T
     node = node.nextKey != null ? collection.getItem(node.nextKey) : null;
   }
   return siblings;
-}
-
-function isArrowKey(key: string) {
-  return key === 'ArrowUp' || key === 'ArrowDown' || key === 'ArrowLeft' || key === 'ArrowRight';
-}
-
-// same logic as in useTypeSelect getStringForKey
-function isCharacterKey(key: string) {
-  return key.length === 1 || !/^[A-Z]/i.test(key);
 }
