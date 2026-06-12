@@ -35,15 +35,17 @@ import {
   TokenSegment,
   TokenSegmentList
 } from './TokenSegmentList';
+import {getEventTarget} from 'react-aria/private/utils/shadowdom/DOMFunctions';
 import {Group} from 'react-aria-components/Group';
 import {IconContext, mergeStyles, UnsafeStyles} from '@react-spectrum/s2';
 import {Image, Text} from '@react-spectrum/s2/Card';
 import {isFileDropItem, useDrop} from 'react-aria-components/useDrop';
+import {isFocusable} from 'react-aria/private/utils/isFocusable';
 import {Link} from '@react-spectrum/s2/Link';
 import {Menu, MenuItem, MenuItemProps, MenuTrigger} from '@react-spectrum/s2/Menu';
+// eslint-disable-next-line
 import Plus from '@react-spectrum/s2/icons/Add';
 import {Popover, PopoverProps} from '@react-spectrum/s2/Popover';
-// eslint-disable-next-line
 import {positionToDOMRange, Token, TokenField, TokenProps} from './TokenField';
 import Send from '@react-spectrum/s2/icons/ArrowUpSend';
 import Stop from '@react-spectrum/s2/icons/StopProcessing';
@@ -177,6 +179,7 @@ export function PromptField(props: PromptFieldProps) {
 
     props.onSubmit?.(prompt, attachments);
     setPrompt(new AutoLinkingSegmentList([]));
+    setAttachments([]);
     inputRef.current?.focus();
   };
 
@@ -219,11 +222,24 @@ export function PromptField(props: PromptFieldProps) {
                 borderColor: {
                   default: 'transparent',
                   isDropTarget: 'blue-800'
-                }
+                },
+                cursor: 'text'
               })({...renderProps, isDropTarget}),
               styles
             )
-          }>
+          }
+          onPointerDown={e => {
+            // If not clicking on something focusable within the prompt field, focus the input.
+            let target = getEventTarget(e) as Element | null;
+            while (target && target !== e.currentTarget && !isFocusable(target)) {
+              target = target.parentElement;
+            }
+
+            if (target === e.currentTarget) {
+              e.preventDefault();
+              inputRef.current?.focus();
+            }
+          }}>
           {children}
         </Group>
         <p className={style({font: 'ui-sm', textAlign: 'center'})}>
@@ -246,7 +262,7 @@ interface PromptFieldAttachmentListProps extends AttachmentListProps<Attachment>
 
 export function PromptFieldAttachmentList(props: PromptFieldAttachmentListProps) {
   let {children} = props;
-  let {attachments, setAttachments, onRemoveAttachments} = useContext(PromptFieldContext);
+  let {attachments, setAttachments, onRemoveAttachments, inputRef} = useContext(PromptFieldContext);
   if (attachments.length === 0) {
     return null;
   }
@@ -259,6 +275,9 @@ export function PromptFieldAttachmentList(props: PromptFieldAttachmentListProps)
         let removedAttachments = attachments.filter(attachment => keys.has(attachment.id));
         onRemoveAttachments?.(removedAttachments);
         setAttachments(attachments => attachments.filter(attachment => !keys.has(attachment.id)));
+        if (removedAttachments.length === attachments.length) {
+          inputRef.current?.focus();
+        }
       }}
       items={attachments}>
       {children ||
@@ -497,7 +516,7 @@ export function PromptFieldSubmitButton() {
     <Button
       variant="primary"
       // TODO: should it be possible to submit a prompt with only attachments?
-      isDisabled={prompt.segments.length === 0}
+      isDisabled={prompt.segments.length === 0 && !isGenerating}
       aria-label={isGenerating ? 'Stop' : 'Send'}
       onPress={isGenerating ? onStop : onSubmit}>
       {isGenerating ? <Stop /> : <Send />}
@@ -528,7 +547,9 @@ export function AttachFileMenuItem() {
       onAction={() => {
         let input = document.createElement('input');
         input.type = 'file';
-        input.accept = 'image/*';
+        if (acceptedAttachmentTypes) {
+          input.accept = acceptedAttachmentTypes.join(',');
+        }
         input.multiple = true;
         input.onchange = e => {
           let files = (e.currentTarget as HTMLInputElement).files;

@@ -142,12 +142,11 @@ export function StreamingThread() {
     initialResponses as StreamingMessage[]
   );
   let nextId = useRef(initialResponses.length);
-  let lastMessage = messages.at(-1);
-  let isGenerating =
-    (lastMessage?.type === 'status' && lastMessage.isStreaming) ||
-    (lastMessage?.type === 'system' && lastMessage.isStreaming);
+  let [isGenerating, setGenerating] = useState(false);
+  let timeouts = useRef<NodeJS.Timeout[]>([]);
 
   function handleSend(prompt: TokenSegmentList) {
+    setGenerating(true);
     // user message added first so its announcement plays before
     setMessages(prev => [
       ...prev,
@@ -215,13 +214,19 @@ export function StreamingThread() {
       });
     }
 
+    let addTimeout = (callback: () => void, delay: number) => {
+      let timeout = setTimeout(callback, delay);
+      timeouts.current.push(timeout);
+      return timeout;
+    };
+
     // TODO: these durations are quite generous in order to accomodate for announcements, but realistically it might be
     // faster and thus the announcements will get cut off even with polite...
     // first batch, does tool calls with text response
     let timestamp = 0;
     let toolCallDuration = 4000;
     // Status added after short delay so user message announcement plays first
-    setTimeout(
+    addTimeout(
       () => {
         setMessages(prev => [
           ...prev,
@@ -236,25 +241,25 @@ export function StreamingThread() {
       },
       (timestamp += 1000)
     );
-    setTimeout(() => addTool('Thinking', true), (timestamp += 1000));
-    setTimeout(
+    addTimeout(() => addTool('Thinking', true), (timestamp += 1000));
+    addTimeout(
       () =>
         completeTool(
           'Reviewed conversation context and identified the user is searching for Hilton brand assets.'
         ),
       (timestamp += toolCallDuration)
     );
-    setTimeout(() => addTool('Loading tool'), (timestamp += 1000));
-    setTimeout(
+    addTimeout(() => addTool('Loading tool'), (timestamp += 1000));
+    addTimeout(
       () => completeTool('Asset search tool loaded with access to the Hilton brand library.'),
       (timestamp += toolCallDuration)
     );
-    setTimeout(() => addTool('Searching'), (timestamp += 1000));
-    setTimeout(
+    addTimeout(() => addTool('Searching'), (timestamp += 1000));
+    addTimeout(
       () => completeTool('Found 15 assets matching the brand criteria across 3 campaigns.'),
       (timestamp += toolCallDuration)
     );
-    setTimeout(
+    addTimeout(
       () =>
         streamText(
           'I found some relevant assets that match your request. Let me pull up the details.'
@@ -263,21 +268,21 @@ export function StreamingThread() {
     );
 
     // then does searching, streaming more text, returning a card and sources
-    setTimeout(() => addTool('Searching'), (timestamp += 4000));
-    setTimeout(
+    addTimeout(() => addTool('Searching'), (timestamp += 4000));
+    addTimeout(
       () =>
         completeTool('Identified additional brand materials related to the presentation context.'),
       (timestamp += toolCallDuration)
     );
-    setTimeout(() => addTool('Querying database'), (timestamp += 1000));
-    setTimeout(
+    addTimeout(() => addTool('Querying database'), (timestamp += 1000));
+    addTimeout(
       () =>
         completeTool(
           'Retrieved asset records including metadata, previews, and usage rights for 12 items.'
         ),
       (timestamp += toolCallDuration)
     );
-    setTimeout(
+    addTimeout(
       () =>
         setMessages(prev => [
           ...prev,
@@ -291,7 +296,7 @@ export function StreamingThread() {
         ]),
       (timestamp += 500)
     );
-    setTimeout(
+    addTimeout(
       () =>
         setMessages(prev => [
           ...prev.slice(0, -1),
@@ -306,7 +311,7 @@ export function StreamingThread() {
         ]),
       (timestamp += 2000)
     );
-    setTimeout(
+    addTimeout(
       () =>
         streamText(
           'Based on the assets you shared, I recommend focusing on the narrative arc first, then ' +
@@ -318,10 +323,10 @@ export function StreamingThread() {
     );
 
     let streamEndTimestamp = timestamp + 8000;
-    setTimeout(() => {
+    addTimeout(() => {
       setMessages(prev => [...prev, {id: nextId.current++, type: 'card', ...MOCK_CARD}]);
     }, streamEndTimestamp);
-    setTimeout(() => {
+    addTimeout(() => {
       setMessages(prev => [
         ...prev,
         {
@@ -331,6 +336,7 @@ export function StreamingThread() {
           suggestions: MOCK_SUGGESTIONS
         }
       ]);
+      setGenerating(false);
     }, streamEndTimestamp + 1000);
   }
 
@@ -462,7 +468,14 @@ export function StreamingThread() {
             }}
           </ThreadList>
         </div>
-        <PromptField onSubmit={handleSend} isGenerating={!!isGenerating}>
+        <PromptField
+          onSubmit={handleSend}
+          isGenerating={isGenerating}
+          onStop={() => {
+            setGenerating(false);
+            timeouts.current.forEach(clearTimeout);
+            timeouts.current = [];
+          }}>
           <div className={style({display: 'flex', gap: 16, alignItems: 'center'})}>
             <PromptTokenField />
             <PromptFieldSubmitButton />
