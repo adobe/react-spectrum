@@ -55,5 +55,5 @@ it.each`
   });
   await tester.open();
   await tester.toggleOptionSelection({option: 2});
-  expect(onAction).toHaveBeenCalledWith(3);
+  expect(onAction).toHaveBeenCalledWith(3, {id: 3, name: 'Dog'});
 });

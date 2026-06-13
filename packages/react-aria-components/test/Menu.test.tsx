@@ -643,7 +643,7 @@ describe('Menu', () => {
     expect(popover).toHaveAttribute('data-trigger', 'MenuTrigger');
 
     await user.click(getAllByRole('menuitem')[1]);
-    expect(onAction).toHaveBeenLastCalledWith('rename');
+    expect(onAction).toHaveBeenLastCalledWith('rename', undefined);
   });
 
   it('should support onScroll', () => {
@@ -893,7 +893,7 @@ describe('Menu', () => {
 
       // Click a submenu item
       await user.click(getAllByRole('menuitem')[5]);
-      expect(onAction).toHaveBeenLastCalledWith('email');
+      expect(onAction).toHaveBeenLastCalledWith('email', undefined);
       expect(menu).not.toBeInTheDocument();
       expect(submenu).not.toBeInTheDocument();
     });
@@ -990,7 +990,7 @@ describe('Menu', () => {
 
       // Click a nested submenu item
       await user.click(getAllByRole('menuitem')[8]);
-      expect(onAction).toHaveBeenLastCalledWith('work');
+      expect(onAction).toHaveBeenLastCalledWith('work', undefined);
       expect(nestedSubmenu).not.toBeInTheDocument();
       expect(submenu).not.toBeInTheDocument();
     });
@@ -1433,7 +1433,7 @@ describe('Menu', () => {
       });
 
       expect(onAction).toHaveBeenCalledTimes(1);
-      expect(onAction).toHaveBeenLastCalledWith('email-work');
+      expect(onAction).toHaveBeenLastCalledWith('email-work', undefined);
 
       expect(submenu).not.toBeInTheDocument();
       expect(menu).not.toBeInTheDocument();

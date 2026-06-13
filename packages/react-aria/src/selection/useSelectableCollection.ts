@@ -505,13 +505,12 @@ export function useSelectableCollection(
   );
 
   // update active descendant
+  let firstKey = delegate.getFirstKey?.() ?? null;
   useUpdateLayoutEffect(() => {
     if (shouldVirtualFocusFirst.current) {
-      let keyToFocus = delegate.getFirstKey?.() ?? null;
-
       // If no focusable items exist in the list, make sure to clear any activedescendant that may still exist and move focus back to
       // the original active element (e.g. the autocomplete input)
-      if (keyToFocus == null) {
+      if (firstKey == null) {
         let previousActiveElement = getActiveElement();
         moveVirtualFocus(ref.current);
         dispatchVirtualFocus(previousActiveElement!, null);
@@ -522,14 +521,14 @@ export function useSelectableCollection(
           shouldVirtualFocusFirst.current = false;
         }
       } else {
-        manager.setFocusedKey(keyToFocus);
+        manager.setFocusedKey(firstKey);
         // Only set shouldVirtualFocusFirst to false if we've successfully set the first key as the focused key
         // If there wasn't a key to focus, we might be in a temporary loading state so we'll want to still focus the first key
         // after the collection updates after load
         shouldVirtualFocusFirst.current = false;
       }
     }
-  }, [manager.collection]);
+  }, [firstKey, manager.collection.size]);
 
   // reset focus first flag
   useUpdateLayoutEffect(() => {
