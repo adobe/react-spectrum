@@ -86,7 +86,7 @@ function Example() {
 
 ## Pending
 
-Buttons can indicate that a quick progress task is taking place (e.g., saving settings on a server). After a 1 second delay, an indeterminate spinner will be displayed in place of the button label and icon. You can trigger this behavior with the `isPending` prop. Button events are disabled while `isPending` is true.
+Buttons can indicate that a quick progress task is taking place (e.g., saving settings on a server). After a delay, an indeterminate spinner will be displayed in place of the button label and icon. You can trigger this behavior with the `isPending` prop. Button events are disabled while `isPending` is true. By default, the spinner appears after 1 second; use `pendingDelay` to customize this (set to `0` for an instant spinner).
 
 ```tsx example
 function Example() {
@@ -104,6 +104,27 @@ function Example() {
 
   return (
     <Button variant="primary" isPending={isLoading} onPress={handlePress}>Click me!</Button>
+  );
+}
+```
+
+### Custom pending delay
+
+Use `pendingDelay` to control how long to wait before showing the spinner. Interaction is still disabled immediately when `isPending` is true.
+
+```tsx example
+function Example() {
+  let [isLoading, setIsLoading] = React.useState(false);
+
+  let handlePress = () => {
+    setIsLoading(true);
+    setTimeout(() => setIsLoading(false), 3000);
+  };
+
+  return (
+    <Button variant="primary" isPending={isLoading} pendingDelay={0} onPress={handlePress}>
+      Save
+    </Button>
   );
 }
 ```
