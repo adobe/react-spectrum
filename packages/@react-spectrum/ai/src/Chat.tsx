@@ -100,7 +100,7 @@ export const Chat = /*#__PURE__*/ (forwardRef as forwardRefType)(function Chat(
   let isChatFocusWithinRef = useRef(false);
   let hasNewMessagesRef = useRef(false);
   let timeout = useRef<ReturnType<typeof setTimeout> | null>(null);
-  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
 
   let scrollRef = useRef<HTMLElement | null>(null);
   let scrollToBottom = useCallback(() => {
@@ -198,7 +198,7 @@ export const Chat = /*#__PURE__*/ (forwardRef as forwardRefType)(function Chat(
 // TODO: update the items/className/children/etc type to reflect a thread specific classname once we finalize API
 interface ThreadProps<T extends object> extends Pick<
   GridListProps<T>,
-  'items' | 'children' | 'UNSTABLE_focusonEntry' | 'aria-label' | 'aria-labelledby' | 'className'
+  'items' | 'children' | 'UNSTABLE_focusOnEntry' | 'aria-label' | 'aria-labelledby' | 'className'
 > {}
 
 export function Thread<T extends object>(props: ThreadProps<T>) {
@@ -206,7 +206,7 @@ export function Thread<T extends object>(props: ThreadProps<T>) {
     items,
     children,
     className,
-    UNSTABLE_focusonEntry,
+    UNSTABLE_focusOnEntry,
     'aria-label': ariaLabel,
     'aria-labelledby': ariaLabelledby
   } = props;
@@ -254,7 +254,7 @@ export function Thread<T extends object>(props: ThreadProps<T>) {
       disallowTypeAhead
       onScroll={handleScroll}
       keyboardNavigationBehavior="tab"
-      UNSTABLE_focusonEntry={UNSTABLE_focusonEntry}
+      UNSTABLE_focusOnEntry={UNSTABLE_focusOnEntry}
       items={items}
       aria-label={ariaLabel}
       aria-labelledby={ariaLabelledby}
