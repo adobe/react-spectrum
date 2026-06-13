@@ -35,7 +35,6 @@ import {
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
-import {TextFieldContext} from 'react-aria-components/TextField';
 import {useDOMRef} from './useDOMRef';
 import {useEnterAnimation, useExitAnimation} from 'react-aria/private/utils/animation';
 import {useFocusWithin} from 'react-aria/useFocusWithin';
@@ -59,6 +58,14 @@ const scrollButtonWrapper = style({
   pointerEvents: {
     isExiting: 'none'
   }
+});
+
+export interface PromptFocusContextValue {
+  onFocusChange: (isFocused: boolean) => void;
+}
+
+export const PromptFocusContext = createContext<PromptFocusContextValue>({
+  onFocusChange: () => {}
 });
 
 interface InternalChatContextValue {
@@ -175,15 +182,10 @@ export const Chat = /*#__PURE__*/ (forwardRef as forwardRefType)(function Chat(
         [InternalChatContext, {announceItem, setIsNearBottom, setScrollElement}],
         [ThreadScrollButtonContext, {isNearBottom, scrollToBottom}],
         [
-          TextFieldContext,
+          PromptFocusContext,
           {
-            slots: {
-              [DEFAULT_SLOT]: {},
-              prompt: {
-                onFocusChange: (focused: boolean) => {
-                  isFieldFocusedRef.current = focused;
-                }
-              }
+            onFocusChange: (focused: boolean) => {
+              isFieldFocusedRef.current = focused;
             }
           }
         ]

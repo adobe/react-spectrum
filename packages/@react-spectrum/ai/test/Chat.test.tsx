@@ -14,8 +14,9 @@ jest.mock('react-aria/src/live-announcer/LiveAnnouncer');
 
 import {act, fireEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import {announce} from 'react-aria/private/live-announcer/LiveAnnouncer';
-import {Button, Input, TextField} from 'react-aria-components';
+import {Button} from 'react-aria-components';
 import {Chat, Thread, ThreadItem, ThreadScrollButton} from '../src/Chat';
+import {PromptField, PromptTokenField} from '../src/PromptField';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
@@ -44,9 +45,9 @@ function TestThread({
           </ThreadItem>
         )}
       </Thread>
-      <TextField slot="prompt" aria-label="Prompt input">
-        <Input />
-      </TextField>
+      <PromptField>
+        <PromptTokenField />
+      </PromptField>
     </Chat>
   );
 }
