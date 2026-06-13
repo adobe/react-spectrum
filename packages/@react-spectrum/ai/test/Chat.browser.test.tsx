@@ -32,7 +32,7 @@ describe('Thread browser', () => {
 
       let {container} = await render(
         <Chat>
-          <Thread UNSTABLE_focusonEntry="first" items={[...messages].reverse()} aria-label="Chat">
+          <Thread UNSTABLE_focusOnEntry="first" items={[...messages].reverse()} aria-label="Chat">
             {(item: Message) => <ThreadItem textValue={item.text}>{item.text}</ThreadItem>}
           </Thread>
         </Chat>

@@ -27,17 +27,17 @@ interface Message {
 
 function TestThread({
   messages,
-  UNSTABLE_focusonEntry
+  UNSTABLE_focusOnEntry
 }: {
   messages: Message[];
-  UNSTABLE_focusonEntry?: 'first' | 'last';
+  UNSTABLE_focusOnEntry?: 'first' | 'last';
 }) {
   return (
     <Chat>
       <ThreadScrollButton>
         <Button slot="scroll">Scroll to bottom</Button>
       </ThreadScrollButton>
-      <Thread items={messages} aria-label="Chat" UNSTABLE_focusonEntry={UNSTABLE_focusonEntry}>
+      <Thread items={messages} aria-label="Chat" UNSTABLE_focusOnEntry={UNSTABLE_focusOnEntry}>
         {(item: Message) => (
           <ThreadItem textValue={item.text} isStreaming={item.isStreaming}>
             {item.text}
@@ -245,10 +245,10 @@ describe('Chat', () => {
   });
 
   describe('focus behavior', () => {
-    it('focuses the first item in the list when tabbing in if UNSTABLE_focusonEntry="first"', async () => {
+    it('focuses the first item in the list when tabbing in if UNSTABLE_focusOnEntry="first"', async () => {
       let {getByRole} = render(
         <TestThread
-          UNSTABLE_focusonEntry="first"
+          UNSTABLE_focusOnEntry="first"
           messages={[
             {id: '1', text: 'Hello'},
             {id: '2', text: 'World'}
@@ -273,10 +273,10 @@ describe('Chat', () => {
       expect(document.activeElement).toBe(rows[0]);
     });
 
-    it('focuses the last item in the list when tabbing in if UNSTABLE_focusonEntry="last"', async () => {
+    it('focuses the last item in the list when tabbing in if UNSTABLE_focusOnEntry="last"', async () => {
       let {getByRole} = render(
         <TestThread
-          UNSTABLE_focusonEntry="last"
+          UNSTABLE_focusOnEntry="last"
           messages={[
             {id: '1', text: 'Hello'},
             {id: '2', text: 'World'}

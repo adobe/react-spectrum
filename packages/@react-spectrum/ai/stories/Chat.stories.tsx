@@ -395,7 +395,7 @@ export function StreamingChat() {
           </div>
           <Thread
             items={[...messages].reverse()}
-            UNSTABLE_focusonEntry="first"
+            UNSTABLE_focusOnEntry="first"
             aria-label="Chat thread"
             className={style({
               flexGrow: 1,
@@ -525,7 +525,7 @@ export function VirtualizedChat() {
         <GridList
           aria-label="Chat thread"
           keyboardNavigationBehavior="tab"
-          UNSTABLE_focusonEntry="last"
+          UNSTABLE_focusOnEntry="last"
           items={messages}
           className={style({
             height: 400,

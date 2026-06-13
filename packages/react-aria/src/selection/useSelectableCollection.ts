@@ -132,7 +132,7 @@ export interface AriaSelectableCollectionOptions {
    *
    * @private
    */
-  UNSTABLE_focusonEntry?: 'first' | 'last';
+  UNSTABLE_focusOnEntry?: 'first' | 'last';
 }
 
 export interface SelectableCollectionAria {
@@ -162,7 +162,7 @@ export function useSelectableCollection(
     // If no scrollRef is provided, assume the collection ref is the scrollable region
     scrollRef = ref,
     linkBehavior = 'action',
-    UNSTABLE_focusonEntry
+    UNSTABLE_focusOnEntry
   } = options;
   let {direction} = useLocale();
   let router = useRouter();
@@ -433,11 +433,11 @@ export function useSelectableCollection(
 
     // we need the "virtual" modality case checks here because shift tabbing from the prompt field's attachment card back into the
     // thread is a virtual focus event (the tab handler in onKeyDown focuses the ref of the AttachementList aka TagGroup via a focus() call, hence the virtual modality)
-    if (UNSTABLE_focusonEntry && (modality === 'keyboard' || modality === 'virtual')) {
+    if (UNSTABLE_focusOnEntry && (modality === 'keyboard' || modality === 'virtual')) {
       // always go to the first item in the Thread when tabbing forwards/backwards into the collection
       // since it is probably more important to the user to see the new prompt reply rather than go to the last focused key
       navigateToKey(
-        UNSTABLE_focusonEntry === 'first' ? delegate.getFirstKey?.() : delegate.getLastKey?.()
+        UNSTABLE_focusOnEntry === 'first' ? delegate.getFirstKey?.() : delegate.getLastKey?.()
       );
     } else if (manager.focusedKey == null) {
       // If the user hasn't yet interacted with the collection, there will be no focusedKey set.
@@ -467,7 +467,7 @@ export function useSelectableCollection(
           focusWithoutScrolling(element);
         }
 
-        if (modality === 'keyboard' || (UNSTABLE_focusonEntry && modality === 'virtual')) {
+        if (modality === 'keyboard' || (UNSTABLE_focusOnEntry && modality === 'virtual')) {
           scrollIntoViewport(element, {containingElement: ref.current});
         }
       }

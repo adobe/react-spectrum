@@ -210,7 +210,7 @@ export interface GridListProps<T>
    *
    * @private
    */
-  UNSTABLE_focusonEntry?: 'first' | 'last';
+  UNSTABLE_focusOnEntry?: 'first' | 'last';
 }
 
 export const GridListContext =
@@ -247,7 +247,7 @@ function GridListInner<T>({props, collection, gridListRef: ref}: GridListInnerPr
     shouldUseVirtualFocus,
     filter,
     disallowTypeAhead,
-    UNSTABLE_focusonEntry,
+    UNSTABLE_focusOnEntry,
     ...DOMCollectionProps
   } = props;
   let {
@@ -308,7 +308,7 @@ function GridListInner<T>({props, collection, gridListRef: ref}: GridListInnerPr
       isVirtualized,
       shouldSelectOnPressUp: props.shouldSelectOnPressUp,
       disallowTypeAhead,
-      UNSTABLE_focusonEntry
+      UNSTABLE_focusOnEntry
     },
     filteredState,
     ref
