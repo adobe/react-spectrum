@@ -57,7 +57,7 @@ export const MessageFeedback = forwardRef(function MessageFeedback(
   props: MessageFeedbackProps,
   ref: DOMRef<HTMLDivElement>
 ) {
-  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2-ai');
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
   let domRef = useDOMRef(ref);
   let {value, defaultValue, onChange, isDisabled, thumbUpLabel, thumbDownLabel, styles} = props;
 

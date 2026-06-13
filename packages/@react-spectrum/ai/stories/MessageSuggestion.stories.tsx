@@ -11,7 +11,7 @@
  */
 
 import {getActionArgs} from '../../s2/stories/utils';
-import {MessageSuggestion, MessageSuggestionList} from '@react-spectrum/s2-ai/MessageSuggestion';
+import {MessageSuggestion, MessageSuggestionList} from '@react-spectrum/ai/MessageSuggestion';
 import type {Meta, StoryObj} from '@storybook/react';
 
 const events = ['onPress'];
@@ -25,7 +25,7 @@ const meta: Meta<typeof MessageSuggestionList> = {
   args: {
     ...getActionArgs(events)
   },
-  title: 'S2-AI/MessageSuggestionList'
+  title: 'AI/MessageSuggestionList'
 };
 
 export default meta;

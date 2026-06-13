@@ -15,7 +15,7 @@ import {TreeState} from 'react-stately/useTreeState';
 
 interface MenuData {
   onClose?: () => void;
-  onAction?: (key: Key) => void;
+  onAction?: (key: Key, value: any) => void;
   shouldUseVirtualFocus?: boolean;
 }
 

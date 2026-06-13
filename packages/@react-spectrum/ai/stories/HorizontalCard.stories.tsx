@@ -12,16 +12,13 @@
 
 import {ActionButton} from '@react-spectrum/s2/ActionButton';
 import {ActionMenu} from '@react-spectrum/s2/ActionMenu';
-import {
-  Attachment as AttachmentComponent,
-  AttachmentList
-} from '/packages/@react-spectrum/s2-ai/exports/AttachmentList';
+import {Attachment as AttachmentComponent, AttachmentList} from '@react-spectrum/ai/AttachmentList';
 import {
   BasicHorizontalCard,
   CardPreview,
+  type CardProps,
   HorizontalCard
-} from '@react-spectrum/s2-ai/HorizontalCard';
-import {Card, CardProps} from '@react-spectrum/s2/Card';
+} from '@react-spectrum/ai/HorizontalCard';
 import ChevronRight from '@react-spectrum/s2/icons/ChevronRight';
 import {Content} from '@react-spectrum/s2/Content';
 import {Footer} from '@react-spectrum/s2/Footer';
@@ -59,12 +56,13 @@ const meta: Meta<CardProps & {isLoading?: boolean}> = {
   decorators: (children, {args}) => (
     <Skeleton isLoading={args.isLoading || false}>{children(args)}</Skeleton>
   ),
-  title: 'S2-AI/HorizontalCard'
+  title: 'AI/HorizontalCard'
 };
 
 export default meta;
 
-type Story = StoryObj<typeof Card>;
+type Story = StoryObj<typeof HorizontalCard>;
+type BasicStory = StoryObj<typeof BasicHorizontalCard>;
 
 export const Horizontal: Story = {
   render: args => (
@@ -116,6 +114,27 @@ export const Horizontal: Story = {
           </Text>
         </Content>
       </HorizontalCard>
+    </div>
+  )
+};
+
+export const Basic: BasicStory = {
+  render: args => (
+    <div
+      className={style({
+        display: 'flex',
+        gap: 16,
+        flexWrap: 'wrap',
+        alignItems: 'start',
+        justifyContent: 'center',
+        padding: 16,
+        backgroundColor: {
+          default: 'layer-1',
+          variant: {
+            secondary: 'layer-2'
+          }
+        }
+      })({variant: args.variant})}>
       <BasicHorizontalCard {...args} styles={style({maxWidth: 400})}>
         <Image
           slot="thumbnail"
@@ -173,31 +192,37 @@ export const Horizontal: Story = {
         />
       </BasicHorizontalCard>
     </div>
-  )
+  ),
+  argTypes: {
+    variant: {
+      control: 'radio',
+      options: ['primary', 'secondary', 'tertiary', 'quiet']
+    }
+  }
 };
 
-export const AIAttachmentList: Story = {
+export const AIAttachmentList = {
   render: args => (
-    <AttachmentList {...args} styles={style({width: 500})}>
-      <AttachmentComponent aria-label="Demo file.pdf">
+    <AttachmentList {...(args as any)} styles={style({width: 500})}>
+      <AttachmentComponent aria-label="Demo file.pdf" uploadProgress={args.uploadProgress}>
         <Image
           slot="thumbnail"
           src={new URL('../../s2/stories/assets/placeholder.png', import.meta.url).toString()}
         />
       </AttachmentComponent>
-      <AttachmentComponent aria-label="Alligator.pdf">
+      <AttachmentComponent aria-label="Alligator.pdf" uploadProgress={args.uploadProgress}>
         <Image
           slot="thumbnail"
           src={new URL('../../s2/stories/assets/placeholder.png', import.meta.url).toString()}
         />
       </AttachmentComponent>
-      <AttachmentComponent aria-label="Rules.pdf">
+      <AttachmentComponent aria-label="Rules.pdf" uploadProgress={args.uploadProgress}>
         <Image
           slot="thumbnail"
           src={new URL('../../s2/stories/assets/placeholder.png', import.meta.url).toString()}
         />
       </AttachmentComponent>
-      <AttachmentComponent aria-label="Echidna.pdf">
+      <AttachmentComponent aria-label="Echidna.pdf" uploadProgress={args.uploadProgress}>
         <Image
           slot="thumbnail"
           src={new URL('../../s2/stories/assets/placeholder.png', import.meta.url).toString()}
@@ -208,5 +233,14 @@ export const AIAttachmentList: Story = {
         </Content>
       </AttachmentComponent>
     </AttachmentList>
-  )
+  ),
+  argTypes: {
+    uploadProgress: {
+      control: {
+        type: 'range',
+        min: 0,
+        max: 100
+      }
+    }
+  }
 };

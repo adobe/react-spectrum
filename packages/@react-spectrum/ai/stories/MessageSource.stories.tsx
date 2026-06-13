@@ -10,13 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
+import {MessageSource, SourceList, SourceListItem} from '../src/MessageSource';
 import type {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
-import {ResponseStatus, ResponseStatusPanel, ResponseStatusTitle} from '../src/ResponseStatus';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
-const meta: Meta<typeof ResponseStatus> = {
-  component: ResponseStatus,
+const meta: Meta<typeof MessageSource> = {
+  component: MessageSource,
   parameters: {
     layout: 'centered'
   },
@@ -30,32 +30,32 @@ const meta: Meta<typeof ResponseStatus> = {
       control: 'radio',
       options: ['compact', 'regular', 'spacious']
     },
-    isLoading: {
+    isDisabled: {
       control: {type: 'boolean'}
     },
     children: {table: {disable: true}}
   },
-  args: {
-    isLoading: true
-  },
-  title: 'S2-AI/ResponseStatus'
+  title: 'AI/MessageSource'
 };
 
 export default meta;
-type Story = StoryObj<typeof ResponseStatus>;
+type Story = StoryObj<typeof MessageSource>;
 
 export const Example: Story = {
-  render: args => (
-    <div className={style({width: 320, minHeight: 240})}>
-      <ResponseStatus {...args}>
-        <ResponseStatusTitle>
-          {args.isLoading ? 'Generating response' : 'Response generated'}
-        </ResponseStatusTitle>
-        <ResponseStatusPanel>
-          Here is the generated response content. This area is hidden until the disclosure is
-          expanded, and cannot be expanded while loading.
-        </ResponseStatusPanel>
-      </ResponseStatus>
-    </div>
-  )
+  args: {
+    label: 'Sources'
+  },
+  render: args => {
+    return (
+      <div className={style({minHeight: 240})}>
+        <MessageSource {...args}>
+          <SourceList>
+            <SourceListItem href="#">Hilton email</SourceListItem>
+            <SourceListItem href="#">Market research</SourceListItem>
+            <SourceListItem href="#">User research</SourceListItem>
+          </SourceList>
+        </MessageSource>
+      </div>
+    );
+  }
 };
