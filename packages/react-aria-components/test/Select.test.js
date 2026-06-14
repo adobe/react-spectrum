@@ -10,30 +10,20 @@
  * governing permissions and limitations under the License.
  */
 
-import {
-  act,
-  pointerMap,
-  render,
-  within,
-} from "@react-spectrum/test-utils-internal";
-import { Button } from "../src/Button";
-import { FieldError } from "../src/FieldError";
-import { Form } from "../src/Form";
-import { Label } from "../src/Label";
-import { ListBox, ListBoxItem, ListBoxLoadMoreItem } from "../src/ListBox";
-import { Popover } from "../src/Popover";
-import React, { useEffect, useRef, useState } from "react";
-import {
-  Select,
-  SelectContext,
-  SelectStateContext,
-  SelectValue,
-} from "../src/Select";
-import { Text } from "../src/Text";
-import { User } from "@react-aria/test-utils";
-import userEvent from "@testing-library/user-event";
+import {act, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
+import {Button} from '../src/Button';
+import {FieldError} from '../src/FieldError';
+import {Form} from '../src/Form';
+import {Label} from '../src/Label';
+import {ListBox, ListBoxItem, ListBoxLoadMoreItem} from '../src/ListBox';
+import {Popover} from '../src/Popover';
+import React, {useEffect, useRef, useState} from 'react';
+import {Select, SelectContext, SelectStateContext, SelectValue} from '../src/Select';
+import {Text} from '../src/Text';
+import {User} from '@react-aria/test-utils';
+import userEvent from '@testing-library/user-event';
 
-let TestSelect = (props) => (
+let TestSelect = props => (
   <Select data-testid="select" data-foo="bar" {...props}>
     <Label>Favorite Animal</Label>
     <Button>
@@ -51,109 +41,96 @@ let TestSelect = (props) => (
   </Select>
 );
 
-describe("Select", () => {
+describe('Select', () => {
   let user;
   let testUtilUser = new User();
 
   beforeAll(() => {
-    user = userEvent.setup({ delay: null, pointerMap });
+    user = userEvent.setup({delay: null, pointerMap});
   });
 
-  it("provides slots", async () => {
-    let { getByTestId } = render(<TestSelect />);
-    let wrapper = getByTestId("select");
-    let selectTester = testUtilUser.createTester("Select", { root: wrapper });
+  it('provides slots', async () => {
+    let {getByTestId} = render(<TestSelect />);
+    let wrapper = getByTestId('select');
+    let selectTester = testUtilUser.createTester('Select', {root: wrapper});
 
     let trigger = selectTester.getTrigger();
-    expect(trigger).toHaveTextContent("Select an item");
-    expect(trigger).not.toHaveAttribute("data-pressed");
+    expect(trigger).toHaveTextContent('Select an item');
+    expect(trigger).not.toHaveAttribute('data-pressed');
 
-    expect(wrapper).toHaveAttribute("data-foo", "bar");
+    expect(wrapper).toHaveAttribute('data-foo', 'bar');
 
-    expect(trigger).toHaveAttribute("aria-labelledby");
-    let label = document.getElementById(
-      trigger.getAttribute("aria-labelledby").split(" ")[1],
-    );
-    expect(label).toHaveAttribute("class", "react-aria-Label");
-    expect(label).toHaveTextContent("Favorite Animal");
+    expect(trigger).toHaveAttribute('aria-labelledby');
+    let label = document.getElementById(trigger.getAttribute('aria-labelledby').split(' ')[1]);
+    expect(label).toHaveAttribute('class', 'react-aria-Label');
+    expect(label).toHaveTextContent('Favorite Animal');
 
     let valueOrPlaceholder = document.getElementById(
-      trigger.getAttribute("aria-labelledby").split(" ")[0],
+      trigger.getAttribute('aria-labelledby').split(' ')[0]
     );
-    expect(valueOrPlaceholder).toHaveAttribute(
-      "class",
-      "react-aria-SelectValue",
-    );
-    expect(valueOrPlaceholder).toHaveTextContent("Select an item");
+    expect(valueOrPlaceholder).toHaveAttribute('class', 'react-aria-SelectValue');
+    expect(valueOrPlaceholder).toHaveTextContent('Select an item');
 
-    expect(trigger).toHaveAttribute("aria-describedby");
+    expect(trigger).toHaveAttribute('aria-describedby');
     expect(
       trigger
-        .getAttribute("aria-describedby")
-        .split(" ")
-        .map((id) => document.getElementById(id).textContent)
-        .join(" "),
-    ).toBe("Description Error");
+        .getAttribute('aria-describedby')
+        .split(' ')
+        .map(id => document.getElementById(id).textContent)
+        .join(' ')
+    ).toBe('Description Error');
 
     await selectTester.open();
 
-    expect(trigger).toHaveAttribute("data-pressed", "true");
+    expect(trigger).toHaveAttribute('data-pressed', 'true');
     let listbox = selectTester.getListbox();
-    expect(listbox).toHaveAttribute("class", "react-aria-ListBox");
-    expect(listbox.closest(".react-aria-Popover")).toBeInTheDocument();
-    expect(listbox.closest(".react-aria-Popover")).toHaveAttribute(
-      "data-trigger",
-      "Select",
-    );
+    expect(listbox).toHaveAttribute('class', 'react-aria-ListBox');
+    expect(listbox.closest('.react-aria-Popover')).toBeInTheDocument();
+    expect(listbox.closest('.react-aria-Popover')).toHaveAttribute('data-trigger', 'Select');
 
     let options = selectTester.getOptions();
     expect(options).toHaveLength(3);
 
     await user.click(options[1]);
-    expect(trigger).toHaveTextContent("Dog");
+    expect(trigger).toHaveTextContent('Dog');
   });
 
-  it("should support slot", () => {
-    let { getByTestId } = render(
-      <SelectContext.Provider
-        value={{ slots: { test: { "aria-label": "test" } } }}
-      >
+  it('should support slot', () => {
+    let {getByTestId} = render(
+      <SelectContext.Provider value={{slots: {test: {'aria-label': 'test'}}}}>
         <TestSelect slot="test" />
-      </SelectContext.Provider>,
+      </SelectContext.Provider>
     );
 
-    let selectTester = testUtilUser.createTester("Select", {
-      root: getByTestId("select"),
+    let selectTester = testUtilUser.createTester('Select', {
+      root: getByTestId('select')
     });
     let trigger = selectTester.getTrigger();
-    expect(trigger.closest(".react-aria-Select")).toHaveAttribute(
-      "slot",
-      "test",
-    );
-    expect(trigger).toHaveAttribute("aria-label", "test");
+    expect(trigger.closest('.react-aria-Select')).toHaveAttribute('slot', 'test');
+    expect(trigger).toHaveAttribute('aria-label', 'test');
   });
 
-  it("should support custom render function", () => {
-    let { getByTestId } = render(
-      <TestSelect render={(props) => <div {...props} data-custom="true" />} />,
+  it('should support custom render function', () => {
+    let {getByTestId} = render(
+      <TestSelect render={props => <div {...props} data-custom="true" />} />
     );
-    let field = getByTestId("select");
-    expect(field).toHaveAttribute("data-custom", "true");
+    let field = getByTestId('select');
+    expect(field).toHaveAttribute('data-custom', 'true');
   });
 
-  it("supports items with render props", () => {
-    let MyItem = (props) => (
+  it('supports items with render props', () => {
+    let MyItem = props => (
       <ListBoxItem {...props}>
-        {({ isSelected }) => (
+        {({isSelected}) => (
           <>
             {props.children}
-            {isSelected ? " (selected)" : ""}
+            {isSelected ? ' (selected)' : ''}
           </>
         )}
       </ListBoxItem>
     );
 
-    let { getByTestId } = render(
+    let {getByTestId} = render(
       <Select data-testid="select" defaultSelectedKey="cat">
         <Label>Favorite Animal</Label>
         <Button>
@@ -166,93 +143,89 @@ describe("Select", () => {
             <MyItem id="kangaroo">Kangaroo</MyItem>
           </ListBox>
         </Popover>
-      </Select>,
+      </Select>
     );
 
-    let selectTester = testUtilUser.createTester("Select", {
-      root: getByTestId("select"),
+    let selectTester = testUtilUser.createTester('Select', {
+      root: getByTestId('select')
     });
     let trigger = selectTester.getTrigger();
-    expect(trigger).toHaveTextContent("Cat");
+    expect(trigger).toHaveTextContent('Cat');
   });
 
-  it("supports custom select value", () => {
+  it('supports custom select value', () => {
     let items = [
-      { id: 1, name: "Cat" },
-      { id: 2, name: "Dog" },
+      {id: 1, name: 'Cat'},
+      {id: 2, name: 'Dog'}
     ];
 
-    let { getByTestId } = render(
+    let {getByTestId} = render(
       <Select data-testid="select" defaultSelectedKey={1}>
         <Label>Favorite Animal</Label>
         <Button>
           <SelectValue>
-            {({ selectedItem, selectedText }) => (
-              <span>
-                {selectedItem ? `${selectedItem.id} - ${selectedText}` : ""}
-              </span>
+            {({selectedItem, selectedText}) => (
+              <span>{selectedItem ? `${selectedItem.id} - ${selectedText}` : ''}</span>
             )}
           </SelectValue>
         </Button>
         <Popover>
-          <ListBox items={items}>
-            {(item) => <ListBoxItem>{item.name}</ListBoxItem>}
-          </ListBox>
+          <ListBox items={items}>{item => <ListBoxItem>{item.name}</ListBoxItem>}</ListBox>
         </Popover>
-      </Select>,
+      </Select>
     );
 
-    let selectTester = testUtilUser.createTester("Select", {
-      root: getByTestId("select"),
+    let selectTester = testUtilUser.createTester('Select', {
+      root: getByTestId('select')
     });
     let trigger = selectTester.getTrigger();
-    expect(trigger).toHaveTextContent("1 - Cat");
+    expect(trigger).toHaveTextContent('1 - Cat');
   });
 
-  it("supports placeholder", () => {
-    let { getByTestId } = render(<TestSelect placeholder="Select an animal" />);
-    let selectTester = testUtilUser.createTester("Select", {
-      root: getByTestId("select"),
+  it('supports placeholder', () => {
+    let {getByTestId} = render(<TestSelect placeholder="Select an animal" />);
+    let selectTester = testUtilUser.createTester('Select', {
+      root: getByTestId('select')
     });
     let trigger = selectTester.getTrigger();
-    expect(trigger).toHaveTextContent("Select an animal");
+    expect(trigger).toHaveTextContent('Select an animal');
   });
 
-  it("should support empty state", async () => {
-    let { getByTestId, getByRole } = render(
+  it('should support empty state', async () => {
+    let {getByTestId, getByRole} = render(
       <Select data-testid="select" allowsEmptyCollection>
         <Label>Favorite Animal</Label>
         <Button>
           <SelectValue />
         </Button>
         <Popover>
-          <ListBox aria-label="Test" renderEmptyState={() => "No results"}>
+          <ListBox aria-label="Test" renderEmptyState={() => 'No results'}>
             {[]}
           </ListBox>
         </Popover>
-      </Select>,
+      </Select>
     );
-    let selectTester = testUtilUser.createTester("Select", {
-      root: getByTestId("select"),
+    let selectTester = testUtilUser.createTester('Select', {
+      root: getByTestId('select')
     });
     await selectTester.open();
 
-    let listbox = getByRole("listbox");
-    expect(listbox).toHaveAttribute("data-empty", "true");
+    let listbox = getByRole('listbox');
+    expect(listbox).toHaveAttribute('data-empty', 'true');
 
-    let option = getByRole("option");
-    expect(option).toHaveTextContent("No results");
+    let option = getByRole('option');
+    expect(option).toHaveTextContent('No results');
   });
 
-  it("should support render props", async () => {
-    let { getByTestId } = render(
+  it('should support render props', async () => {
+    let {getByTestId} = render(
       <Select data-testid="select">
-        {({ isOpen }) => (
+        {({isOpen}) => (
           <>
             <Label>Favorite Animal</Label>
             <Button>
               <SelectValue />
-              <span aria-hidden>{isOpen ? "close" : "open"}</span>
+              <span aria-hidden>{isOpen ? 'close' : 'open'}</span>
             </Button>
             <Popover>
               <ListBox>
@@ -263,21 +236,21 @@ describe("Select", () => {
             </Popover>
           </>
         )}
-      </Select>,
+      </Select>
     );
 
-    let selectTester = testUtilUser.createTester("Select", {
-      root: getByTestId("select"),
+    let selectTester = testUtilUser.createTester('Select', {
+      root: getByTestId('select')
     });
     let trigger = selectTester.getTrigger();
-    expect(trigger).toHaveTextContent("open");
+    expect(trigger).toHaveTextContent('open');
 
     await selectTester.open();
-    expect(trigger).toHaveTextContent("close");
+    expect(trigger).toHaveTextContent('close');
   });
 
-  it("should stay open on selecting an option if shouldCloseOnSelect is false and single selection mode", async () => {
-    let { getByTestId } = render(
+  it('should stay open on selecting an option if shouldCloseOnSelect is false and single selection mode', async () => {
+    let {getByTestId} = render(
       <Select data-testid="select" shouldCloseOnSelect={false}>
         <Label>Favorite Animal</Label>
         <Button>
@@ -290,27 +263,27 @@ describe("Select", () => {
             <ListBoxItem>Kangaroo</ListBoxItem>
           </ListBox>
         </Popover>
-      </Select>,
+      </Select>
     );
 
-    let selectTester = testUtilUser.createTester("Select", {
-      root: getByTestId("select"),
+    let selectTester = testUtilUser.createTester('Select', {
+      root: getByTestId('select')
     });
     let trigger = selectTester.getTrigger();
 
     await selectTester.open();
-    expect(trigger).toHaveAttribute("data-pressed", "true");
+    expect(trigger).toHaveAttribute('data-pressed', 'true');
 
     await selectTester.toggleOptionSelection({
-      option: "Dog",
-      closesOnSelect: false,
+      option: 'Dog',
+      closesOnSelect: false
     });
-    expect(trigger).toHaveTextContent("Dog");
-    expect(trigger).toHaveAttribute("data-pressed", "true");
+    expect(trigger).toHaveTextContent('Dog');
+    expect(trigger).toHaveAttribute('data-pressed', 'true');
   });
 
-  it("should close on selecting an option if shouldCloseOnSelect is true and multiple selection mode", async () => {
-    let { getByTestId } = render(
+  it('should close on selecting an option if shouldCloseOnSelect is true and multiple selection mode', async () => {
+    let {getByTestId} = render(
       <Select data-testid="select" shouldCloseOnSelect selectionMode="multiple">
         <Label>Favorite Animal</Label>
         <Button>
@@ -323,41 +296,41 @@ describe("Select", () => {
             <ListBoxItem>Kangaroo</ListBoxItem>
           </ListBox>
         </Popover>
-      </Select>,
+      </Select>
     );
 
-    let selectTester = testUtilUser.createTester("Select", {
-      root: getByTestId("select"),
+    let selectTester = testUtilUser.createTester('Select', {
+      root: getByTestId('select')
     });
     let trigger = selectTester.getTrigger();
 
     await selectTester.open();
-    expect(trigger).toHaveAttribute("data-pressed", "true");
+    expect(trigger).toHaveAttribute('data-pressed', 'true');
 
     await selectTester.toggleOptionSelection({
-      option: "Dog",
-      closesOnSelect: true,
+      option: 'Dog',
+      closesOnSelect: true
     });
-    expect(trigger).toHaveTextContent("Dog");
-    expect(trigger).not.toHaveAttribute("data-pressed", "true");
+    expect(trigger).toHaveTextContent('Dog');
+    expect(trigger).not.toHaveAttribute('data-pressed', 'true');
   });
 
-  it("should send disabled prop to the hidden field", () => {
+  it('should send disabled prop to the hidden field', () => {
     render(<TestSelect name="select" isDisabled />);
 
-    let input = document.querySelector("[name=select]");
+    let input = document.querySelector('[name=select]');
     expect(input).toBeDisabled();
   });
 
-  it("should render data- attributes only on the outer element", () => {
-    let { getAllByTestId } = render(<TestSelect data-testid="select-test" />);
-    let outerEl = getAllByTestId("select-test");
+  it('should render data- attributes only on the outer element', () => {
+    let {getAllByTestId} = render(<TestSelect data-testid="select-test" />);
+    let outerEl = getAllByTestId('select-test');
     expect(outerEl).toHaveLength(1);
-    expect(outerEl[0]).toHaveClass("react-aria-Select");
+    expect(outerEl[0]).toHaveClass('react-aria-Select');
   });
 
-  it("supports validation errors", async () => {
-    let { getByTestId } = render(
+  it('supports validation errors', async () => {
+    let {getByTestId} = render(
       <form data-testid="form">
         <Select data-testid="test-select" name="select" isRequired>
           <Label>Favorite Animal</Label>
@@ -373,70 +346,69 @@ describe("Select", () => {
             </ListBox>
           </Popover>
         </Select>
-      </form>,
+      </form>
     );
 
-    let wrapper = getByTestId("test-select");
-    let selectTester = testUtilUser.createTester("Select", { root: wrapper });
+    let wrapper = getByTestId('test-select');
+    let selectTester = testUtilUser.createTester('Select', {root: wrapper});
     let trigger = selectTester.getTrigger();
     let select = wrapper;
-    let input = document.querySelector("[name=select]");
-    expect(input).toHaveAttribute("required");
-    expect(trigger).not.toHaveAttribute("aria-describedby");
+    let input = document.querySelector('[name=select]');
+    expect(input).toHaveAttribute('required');
+    expect(trigger).not.toHaveAttribute('aria-describedby');
     expect(input.validity.valid).toBe(false);
-    expect(select).not.toHaveAttribute("data-invalid");
+    expect(select).not.toHaveAttribute('data-invalid');
 
     act(() => {
-      getByTestId("form").checkValidity();
+      getByTestId('form').checkValidity();
     });
 
-    expect(trigger).toHaveAttribute("aria-describedby");
-    expect(
-      document.getElementById(trigger.getAttribute("aria-describedby")),
-    ).toHaveTextContent("Constraints not satisfied");
-    expect(select).toHaveAttribute("data-invalid");
+    expect(trigger).toHaveAttribute('aria-describedby');
+    expect(document.getElementById(trigger.getAttribute('aria-describedby'))).toHaveTextContent(
+      'Constraints not satisfied'
+    );
+    expect(select).toHaveAttribute('data-invalid');
     expect(document.activeElement).toBe(trigger);
 
-    await selectTester.toggleOptionSelection({ option: "Cat" });
-    expect(selectTester.getTrigger()).not.toHaveAttribute("aria-describedby");
-    expect(select).not.toHaveAttribute("data-invalid");
+    await selectTester.toggleOptionSelection({option: 'Cat'});
+    expect(selectTester.getTrigger()).not.toHaveAttribute('aria-describedby');
+    expect(select).not.toHaveAttribute('data-invalid');
   });
 
-  it("should support arrow key navigation to a falsy key", async () => {
+  it('should support arrow key navigation to a falsy key', async () => {
     let onSelectionChange = jest.fn();
-    let { getByRole } = render(
+    let {getByRole} = render(
       <Select onSelectionChange={onSelectionChange} aria-label="Pick a number">
         <Button>
           <SelectValue />
         </Button>
         <Popover>
           <ListBox
-            items={Array.from({ length: 3 }).map((_, i) => ({
+            items={Array.from({length: 3}).map((_, i) => ({
               id: i,
-              label: `${i}`,
-            }))}
-          >
-            {(item) => (
+              label: `${i}`
+            }))}>
+            {item => (
               <ListBoxItem id={item.id} textValue={item.label}>
                 {item.label}
               </ListBoxItem>
             )}
           </ListBox>
         </Popover>
-      </Select>,
+      </Select>
     );
 
-    let button = getByRole("button");
+    let button = getByRole('button');
     act(() => button.focus());
 
-    await user.keyboard("{ArrowRight}");
+    await user.keyboard('{ArrowRight}');
     expect(onSelectionChange).toHaveBeenCalledTimes(1);
     expect(onSelectionChange).toHaveBeenLastCalledWith(0);
-    expect(button).toHaveTextContent("0");
+    expect(button).toHaveTextContent('0');
   });
 
-  it("should support falsy (0) as a valid default value", async () => {
-    let { getByRole } = render(
+  it('should support falsy (0) as a valid default value', async () => {
+    let {getByRole} = render(
       <Select placeholder="pick a number">
         <Label>Pick a number</Label>
         <Button>
@@ -444,32 +416,31 @@ describe("Select", () => {
         </Button>
         <Popover>
           <ListBox
-            items={Array.from({ length: 5 }).map((_, i) => ({
+            items={Array.from({length: 5}).map((_, i) => ({
               id: i,
-              label: i,
-            }))}
-          >
-            {(item) => (
+              label: i
+            }))}>
+            {item => (
               <ListBoxItem id={item.id} textValue={`${item.label}`}>
                 {item.label}
               </ListBoxItem>
             )}
           </ListBox>
         </Popover>
-      </Select>,
+      </Select>
     );
 
-    let button = getByRole("button");
+    let button = getByRole('button');
     await user.click(button);
 
-    let listbox = getByRole("listbox");
-    let options = within(listbox).getAllByRole("option");
+    let listbox = getByRole('listbox');
+    let options = within(listbox).getAllByRole('option');
     await user.click(options[0]);
 
-    expect(button).toHaveTextContent("0");
+    expect(button).toHaveTextContent('0');
   });
 
-  it("should support extra children for use with the state", async () => {
+  it('should support extra children for use with the state', async () => {
     let onChangeSpy = jest.fn();
 
     function SelectClearButton() {
@@ -479,15 +450,14 @@ describe("Select", () => {
           data-testid="clear"
           // Don't inherit behavior from Select.
           slot={null}
-          style={{ fontSize: "small", marginTop: 6, padding: 4 }}
-          onPress={() => state?.setSelectedKey(null)}
-        >
+          style={{fontSize: 'small', marginTop: 6, padding: 4}}
+          onPress={() => state?.setSelectedKey(null)}>
           Clear
         </Button>
       );
     }
 
-    let { getByTestId } = render(
+    let {getByTestId} = render(
       <>
         <input data-testid="before" />
         <Select onSelectionChange={onChangeSpy}>
@@ -506,14 +476,14 @@ describe("Select", () => {
           </Popover>
         </Select>
         <input data-testid="after" />
-      </>,
+      </>
     );
 
-    let beforeInput = getByTestId("before");
-    let afterInput = getByTestId("after");
-    let wrapper = getByTestId("select");
-    let clearButton = getByTestId("clear");
-    let selectTester = testUtilUser.createTester("Select", { root: wrapper });
+    let beforeInput = getByTestId('before');
+    let afterInput = getByTestId('after');
+    let wrapper = getByTestId('select');
+    let clearButton = getByTestId('clear');
+    let selectTester = testUtilUser.createTester('Select', {root: wrapper});
 
     await user.tab();
     await user.tab();
@@ -525,43 +495,43 @@ describe("Select", () => {
     await user.tab();
     expect(document.activeElement).toBe(afterInput);
 
-    await user.tab({ shift: true });
+    await user.tab({shift: true});
     expect(document.activeElement).toBe(clearButton);
 
-    await user.tab({ shift: true });
+    await user.tab({shift: true});
     expect(document.activeElement).toBe(selectTester.getTrigger());
 
-    await user.tab({ shift: true });
+    await user.tab({shift: true});
     expect(document.activeElement).toBe(beforeInput);
 
     await user.tab();
-    await selectTester.toggleOptionSelection({ option: "Dog" });
+    await selectTester.toggleOptionSelection({option: 'Dog'});
 
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
-    expect(onChangeSpy).toHaveBeenLastCalledWith("dog");
+    expect(onChangeSpy).toHaveBeenLastCalledWith('dog');
 
     await user.click(clearButton);
     expect(onChangeSpy).toHaveBeenCalledTimes(2);
     expect(onChangeSpy).toHaveBeenLastCalledWith(null);
   });
 
-  it("select can select an option via keyboard", async function () {
-    let { getByTestId } = render(<TestSelect name="select" />);
+  it('select can select an option via keyboard', async function () {
+    let {getByTestId} = render(<TestSelect name="select" />);
 
-    let wrapper = getByTestId("select");
-    let selectTester = testUtilUser.createTester("Select", {
+    let wrapper = getByTestId('select');
+    let selectTester = testUtilUser.createTester('Select', {
       root: wrapper,
-      interactionType: "keyboard",
+      interactionType: 'keyboard'
     });
     let trigger = selectTester.getTrigger();
-    expect(trigger).toHaveTextContent("Select an item");
-    expect(trigger).not.toHaveAttribute("data-pressed");
+    expect(trigger).toHaveTextContent('Select an item');
+    expect(trigger).not.toHaveAttribute('data-pressed');
 
-    await selectTester.toggleOptionSelection({ option: "Kangaroo" });
-    expect(trigger).toHaveTextContent("Kangaroo");
+    await selectTester.toggleOptionSelection({option: 'Kangaroo'});
+    expect(trigger).toHaveTextContent('Kangaroo');
   });
 
-  describe("typeahead", () => {
+  describe('typeahead', () => {
     beforeEach(() => {
       jest.useFakeTimers();
     });
@@ -570,8 +540,8 @@ describe("Select", () => {
       jest.useRealTimers();
     });
 
-    it("can select an option via typeahead", async function () {
-      let { getByTestId } = render(
+    it('can select an option via typeahead', async function () {
+      let {getByTestId} = render(
         <Select data-testid="select">
           <Label>Favorite Animal</Label>
           <Button>
@@ -591,23 +561,23 @@ describe("Select", () => {
               <ListBoxItem>Western Australia</ListBoxItem>
             </ListBox>
           </Popover>
-        </Select>,
+        </Select>
       );
 
-      let wrapper = getByTestId("select");
+      let wrapper = getByTestId('select');
       await user.tab();
-      await user.keyboard("Northern Terr");
-      let selectTester = testUtilUser.createTester("Select", {
+      await user.keyboard('Northern Terr');
+      let selectTester = testUtilUser.createTester('Select', {
         root: wrapper,
-        interactionType: "keyboard",
+        interactionType: 'keyboard'
       });
       let trigger = selectTester.getTrigger();
-      expect(trigger).toHaveTextContent("Northern Territory");
-      expect(trigger).not.toHaveAttribute("data-pressed");
+      expect(trigger).toHaveTextContent('Northern Territory');
+      expect(trigger).not.toHaveAttribute('data-pressed');
     });
 
-    it("should move to the next matching item when the same letter is typed again after timeout", async function () {
-      let { getByTestId } = render(
+    it('should move to the next matching item when the same letter is typed again after timeout', async function () {
+      let {getByTestId} = render(
         <Select data-testid="select">
           <Label>Favorite Fruit</Label>
           <Button>
@@ -620,31 +590,31 @@ describe("Select", () => {
               <ListBoxItem>Blueberry</ListBoxItem>
             </ListBox>
           </Popover>
-        </Select>,
+        </Select>
       );
 
-      let wrapper = getByTestId("select");
+      let wrapper = getByTestId('select');
 
-      let selectTester = testUtilUser.createTester("Select", {
+      let selectTester = testUtilUser.createTester('Select', {
         root: wrapper,
-        interactionType: "keyboard",
+        interactionType: 'keyboard'
       });
       let trigger = selectTester.getTrigger();
 
       await user.tab();
-      await user.keyboard("B");
-      expect(trigger).toHaveTextContent("Banana");
+      await user.keyboard('B');
+      expect(trigger).toHaveTextContent('Banana');
 
       act(() => {
         jest.advanceTimersByTime(1001);
       });
 
-      await user.keyboard("B");
-      expect(trigger).toHaveTextContent("Blackberry");
+      await user.keyboard('B');
+      expect(trigger).toHaveTextContent('Blackberry');
     });
 
-    it("should cycle to the next matching item when the same letter is typed twice quickly", async function () {
-      let { getByTestId } = render(
+    it('should cycle to the next matching item when the same letter is typed twice quickly', async function () {
+      let {getByTestId} = render(
         <Select data-testid="select">
           <Label>Favorite Fruit</Label>
           <Button>
@@ -657,24 +627,24 @@ describe("Select", () => {
               <ListBoxItem>Blueberry</ListBoxItem>
             </ListBox>
           </Popover>
-        </Select>,
+        </Select>
       );
 
-      let wrapper = getByTestId("select");
+      let wrapper = getByTestId('select');
 
-      let selectTester = testUtilUser.createTester("Select", {
+      let selectTester = testUtilUser.createTester('Select', {
         root: wrapper,
-        interactionType: "keyboard",
+        interactionType: 'keyboard'
       });
       let trigger = selectTester.getTrigger();
 
       await user.tab();
-      await user.keyboard("bb");
-      expect(trigger).toHaveTextContent("Blackberry");
+      await user.keyboard('bb');
+      expect(trigger).toHaveTextContent('Blackberry');
     });
 
-    it("should wrap if typeahead is not found after the current key", async function () {
-      let { getByTestId } = render(
+    it('should wrap if typeahead is not found after the current key', async function () {
+      let {getByTestId} = render(
         <Select defaultSelectedKey="blueberry" data-testid="select">
           <Label>Favorite Fruit</Label>
           <Button>
@@ -687,25 +657,25 @@ describe("Select", () => {
               <ListBoxItem id="blueberry">Blueberry</ListBoxItem>
             </ListBox>
           </Popover>
-        </Select>,
+        </Select>
       );
 
-      let wrapper = getByTestId("select");
-      let selectTester = testUtilUser.createTester("Select", {
+      let wrapper = getByTestId('select');
+      let selectTester = testUtilUser.createTester('Select', {
         root: wrapper,
-        interactionType: "keyboard",
+        interactionType: 'keyboard'
       });
       let trigger = selectTester.getTrigger();
 
       await user.tab();
-      await user.keyboard("b");
-      expect(trigger).toHaveTextContent("Banana");
+      await user.keyboard('b');
+      expect(trigger).toHaveTextContent('Banana');
     });
 
     // This matches the three main browsers behavior. Even though it seems like it should go to double "b" blackberry,
     // it's just cycling through the items that start with "b".
-    it("searches the next item that starts with the same letter, not the next item that starts with the same letter twice", async function () {
-      let { getByTestId } = render(
+    it('searches the next item that starts with the same letter, not the next item that starts with the same letter twice', async function () {
+      let {getByTestId} = render(
         <Select data-testid="select">
           <Label>Favorite Fruit</Label>
           <Button>
@@ -719,33 +689,33 @@ describe("Select", () => {
               <ListBoxItem id="blueberry">Blueberry</ListBoxItem>
             </ListBox>
           </Popover>
-        </Select>,
+        </Select>
       );
 
-      let wrapper = getByTestId("select");
-      let selectTester = testUtilUser.createTester("Select", {
+      let wrapper = getByTestId('select');
+      let selectTester = testUtilUser.createTester('Select', {
         root: wrapper,
-        interactionType: "keyboard",
+        interactionType: 'keyboard'
       });
       let trigger = selectTester.getTrigger();
 
       await user.tab();
-      await user.keyboard("bb");
-      expect(trigger).toHaveTextContent("Boisenberry");
+      await user.keyboard('bb');
+      expect(trigger).toHaveTextContent('Boisenberry');
     });
   });
 
-  it("should support autoFocus", () => {
-    let { getByTestId } = render(<TestSelect autoFocus />);
-    let selectTester = testUtilUser.createTester("Select", {
-      root: getByTestId("select"),
+  it('should support autoFocus', () => {
+    let {getByTestId} = render(<TestSelect autoFocus />);
+    let selectTester = testUtilUser.createTester('Select', {
+      root: getByTestId('select')
     });
     let trigger = selectTester.getTrigger();
     expect(document.activeElement).toBe(trigger);
   });
 
-  it("should clear contexts inside popover", async () => {
-    let { getByTestId } = render(
+  it('should clear contexts inside popover', async () => {
+    let {getByTestId} = render(
       <Select data-testid="select" defaultSelectedKey="cat">
         <Label>Favorite Animal</Label>
         <Button>
@@ -761,27 +731,27 @@ describe("Select", () => {
             <ListBoxItem id="kangaroo">Kangaroo</ListBoxItem>
           </ListBox>
         </Popover>
-      </Select>,
+      </Select>
     );
 
-    let wrapper = getByTestId("select");
-    let selectTester = testUtilUser.createTester("Select", { root: wrapper });
+    let wrapper = getByTestId('select');
+    let selectTester = testUtilUser.createTester('Select', {root: wrapper});
 
     await selectTester.open();
 
-    let popover = await getByTestId("popover");
-    let label = popover.querySelector(".react-aria-Label");
-    expect(label).not.toHaveAttribute("for");
+    let popover = await getByTestId('popover');
+    let label = popover.querySelector('.react-aria-Label');
+    expect(label).not.toHaveAttribute('for');
 
-    let button = popover.querySelector(".react-aria-Button");
-    expect(button).not.toHaveAttribute("aria-expanded");
+    let button = popover.querySelector('.react-aria-Button');
+    expect(button).not.toHaveAttribute('aria-expanded');
 
-    let text = popover.querySelector(".react-aria-Text");
-    expect(text).not.toHaveAttribute("id");
+    let text = popover.querySelector('.react-aria-Text');
+    expect(text).not.toHaveAttribute('id');
   });
 
   it("shouldn't allow the user to open the select if there are no items", async function () {
-    let { getByTestId, queryByTestId, rerender } = render(
+    let {getByTestId, queryByTestId, rerender} = render(
       <Select data-testid="select" defaultSelectedKey="cat">
         <Label>Favorite Animal</Label>
         <Button>
@@ -793,14 +763,14 @@ describe("Select", () => {
           <Text>hi</Text>
           <ListBox>{[]}</ListBox>
         </Popover>
-      </Select>,
+      </Select>
     );
 
-    let wrapper = getByTestId("select");
-    let selectTester = testUtilUser.createTester("Select", { root: wrapper });
+    let wrapper = getByTestId('select');
+    let selectTester = testUtilUser.createTester('Select', {root: wrapper});
     await user.click(selectTester.getTrigger());
 
-    let popover = queryByTestId("popover");
+    let popover = queryByTestId('popover');
     expect(popover).toBeFalsy();
 
     rerender(
@@ -817,23 +787,23 @@ describe("Select", () => {
             <ListBoxLoadMoreItem isLoading>Loading more</ListBoxLoadMoreItem>
           </ListBox>
         </Popover>
-      </Select>,
+      </Select>
     );
 
     await user.click(selectTester.getTrigger());
-    popover = queryByTestId("popover");
+    popover = queryByTestId('popover');
     expect(popover).toBeFalsy();
   });
 
-  it("should support form prop", () => {
+  it('should support form prop', () => {
     render(<TestSelect name="select" form="test" />);
 
-    let input = document.querySelector("[name=select]");
-    expect(input).toHaveAttribute("form", "test");
+    let input = document.querySelector('[name=select]');
+    expect(input).toHaveAttribute('form', 'test');
   });
 
-  it("should not submit if required and selectedKey is null", async () => {
-    const onSubmit = jest.fn().mockImplementation((e) => e.preventDefault());
+  it('should not submit if required and selectedKey is null', async () => {
+    const onSubmit = jest.fn().mockImplementation(e => e.preventDefault());
 
     function Test() {
       const [selectedKey, setSelectedKey] = React.useState(null);
@@ -855,148 +825,117 @@ describe("Select", () => {
       );
     }
 
-    const { getByTestId } = render(<Test />);
-    const wrapper = getByTestId("select");
-    const selectTester = testUtilUser.createTester("Select", { root: wrapper });
+    const {getByTestId} = render(<Test />);
+    const wrapper = getByTestId('select');
+    const selectTester = testUtilUser.createTester('Select', {root: wrapper});
     const trigger = selectTester.getTrigger();
-    const submit = getByTestId("submit");
+    const submit = getByTestId('submit');
 
-    expect(trigger).toHaveTextContent("Select an item");
-    await selectTester.toggleOptionSelection({ option: "Cat" });
-    expect(trigger).toHaveTextContent("Cat");
+    expect(trigger).toHaveTextContent('Select an item');
+    await selectTester.toggleOptionSelection({option: 'Cat'});
+    expect(trigger).toHaveTextContent('Cat');
     await user.click(submit);
     expect(onSubmit).toHaveBeenCalledTimes(1);
-    await user.click(getByTestId("clear"));
-    expect(trigger).toHaveTextContent("Select an item");
+    await user.click(getByTestId('clear'));
+    expect(trigger).toHaveTextContent('Select an item');
     await user.click(submit);
     expect(onSubmit).toHaveBeenCalledTimes(1);
-    expect(document.querySelector("[name=select]").value).toBe("");
+    expect(document.querySelector('[name=select]').value).toBe('');
   });
 
-  it("should support multiple selection", async () => {
+  it('should support multiple selection', async () => {
     let onChange = jest.fn();
-    let { getByTestId } = render(
+    let {getByTestId} = render(
       <Form data-testid="form">
-        <TestSelect
-          name="select"
-          selectionMode="multiple"
-          onChange={onChange}
-        />
-      </Form>,
+        <TestSelect name="select" selectionMode="multiple" onChange={onChange} />
+      </Form>
     );
-    let wrapper = getByTestId("select");
-    let selectTester = testUtilUser.createTester("Select", { root: wrapper });
+    let wrapper = getByTestId('select');
+    let selectTester = testUtilUser.createTester('Select', {root: wrapper});
 
     let trigger = selectTester.getTrigger();
-    expect(trigger).toHaveTextContent("Select an item");
+    expect(trigger).toHaveTextContent('Select an item');
 
     await selectTester.open();
 
     let listbox = selectTester.getListbox();
-    expect(listbox).toHaveAttribute("aria-multiselectable", "true");
+    expect(listbox).toHaveAttribute('aria-multiselectable', 'true');
 
     let options = selectTester.getOptions();
     expect(options).toHaveLength(3);
 
-    await selectTester.toggleOptionSelection({ option: options[0] });
-    await selectTester.toggleOptionSelection({ option: options[1] });
-    expect(trigger).toHaveTextContent("Cat and Dog");
+    await selectTester.toggleOptionSelection({option: options[0]});
+    await selectTester.toggleOptionSelection({option: options[1]});
+    expect(trigger).toHaveTextContent('Cat and Dog');
     await selectTester.close();
 
     expect(onChange).toHaveBeenCalledTimes(2);
-    expect(onChange).toHaveBeenLastCalledWith(["cat", "dog"]);
+    expect(onChange).toHaveBeenLastCalledWith(['cat', 'dog']);
 
-    let formData = new FormData(getByTestId("form"));
-    expect(formData.getAll("select")).toEqual(["cat", "dog"]);
+    let formData = new FormData(getByTestId('form'));
+    expect(formData.getAll('select')).toEqual(['cat', 'dog']);
   });
 
-  it("should support deselection if multiple selection is enabled", async () => {
+  it('should support deselection if multiple selection is enabled', async () => {
     let onChange = jest.fn();
-    let { getByTestId } = render(
-      <TestSelect selectionMode="multiple" onChange={onChange} />,
-    );
-    let selectTester = testUtilUser.createTester("Select", {
-      root: getByTestId("select"),
+    let {getByTestId} = render(<TestSelect selectionMode="multiple" onChange={onChange} />);
+    let selectTester = testUtilUser.createTester('Select', {
+      root: getByTestId('select')
     });
 
-    await selectTester.toggleOptionSelection({ option: "Cat" });
-    await selectTester.toggleOptionSelection({ option: "Dog" });
-    expect(selectTester.getOptions()[0]).toHaveAttribute(
-      "aria-selected",
-      "true",
-    );
-    expect(selectTester.getOptions()[1]).toHaveAttribute(
-      "aria-selected",
-      "true",
-    );
-    expect(onChange).toHaveBeenLastCalledWith(["cat", "dog"]);
+    await selectTester.toggleOptionSelection({option: 'Cat'});
+    await selectTester.toggleOptionSelection({option: 'Dog'});
+    expect(selectTester.getOptions()[0]).toHaveAttribute('aria-selected', 'true');
+    expect(selectTester.getOptions()[1]).toHaveAttribute('aria-selected', 'true');
+    expect(onChange).toHaveBeenLastCalledWith(['cat', 'dog']);
 
-    await selectTester.toggleOptionSelection({ option: "Cat" });
-    expect(selectTester.getOptions()[0]).toHaveAttribute(
-      "aria-selected",
-      "false",
-    );
-    expect(selectTester.getOptions()[1]).toHaveAttribute(
-      "aria-selected",
-      "true",
-    );
-    expect(onChange).toHaveBeenLastCalledWith(["dog"]);
+    await selectTester.toggleOptionSelection({option: 'Cat'});
+    expect(selectTester.getOptions()[0]).toHaveAttribute('aria-selected', 'false');
+    expect(selectTester.getOptions()[1]).toHaveAttribute('aria-selected', 'true');
+    expect(onChange).toHaveBeenLastCalledWith(['dog']);
 
-    await selectTester.toggleOptionSelection({ option: "Dog" });
-    expect(selectTester.getOptions()[0]).toHaveAttribute(
-      "aria-selected",
-      "false",
-    );
-    expect(selectTester.getOptions()[1]).toHaveAttribute(
-      "aria-selected",
-      "false",
-    );
+    await selectTester.toggleOptionSelection({option: 'Dog'});
+    expect(selectTester.getOptions()[0]).toHaveAttribute('aria-selected', 'false');
+    expect(selectTester.getOptions()[1]).toHaveAttribute('aria-selected', 'false');
     expect(onChange).toHaveBeenLastCalledWith([]);
 
     await selectTester.close();
   });
 
-  it("should support multiple selection form integration with many items", async () => {
+  it('should support multiple selection form integration with many items', async () => {
     let items = [];
     for (let i = 0; i < 320; i++) {
-      items.push({ id: i, name: "item" + i });
+      items.push({id: i, name: 'item' + i});
     }
 
-    let { getByTestId } = render(
-      <Form data-testid="form" onSubmit={(e) => e.preventDefault()}>
-        <Select
-          data-testid="select"
-          name="select"
-          selectionMode="multiple"
-          isRequired
-        >
+    let {getByTestId} = render(
+      <Form data-testid="form" onSubmit={e => e.preventDefault()}>
+        <Select data-testid="select" name="select" selectionMode="multiple" isRequired>
           <Label>Select</Label>
           <Button>
             <SelectValue />
           </Button>
           <FieldError />
           <Popover>
-            <ListBox items={items}>
-              {(item) => <ListBoxItem>{item.name}</ListBoxItem>}
-            </ListBox>
+            <ListBox items={items}>{item => <ListBoxItem>{item.name}</ListBoxItem>}</ListBox>
           </Popover>
         </Select>
         <Button data-testid="submit" type="submit">
           Submit
         </Button>
-      </Form>,
+      </Form>
     );
-    let wrapper = getByTestId("select");
-    let selectTester = testUtilUser.createTester("Select", { root: wrapper });
+    let wrapper = getByTestId('select');
+    let selectTester = testUtilUser.createTester('Select', {root: wrapper});
 
     let trigger = selectTester.getTrigger();
-    expect(trigger).toHaveTextContent("Select an item");
+    expect(trigger).toHaveTextContent('Select an item');
 
-    let submit = getByTestId("submit");
+    let submit = getByTestId('submit');
     await user.click(submit);
 
-    let fieldError = document.querySelector(".react-aria-FieldError");
-    expect(fieldError).toHaveTextContent("Constraints not satisfied");
+    let fieldError = document.querySelector('.react-aria-FieldError');
+    expect(fieldError).toHaveTextContent('Constraints not satisfied');
 
     await selectTester.open();
 
@@ -1004,47 +943,45 @@ describe("Select", () => {
     await user.click(options[0]);
     await user.click(options[1]);
     await selectTester.close();
-    expect(trigger).toHaveTextContent("item0 and item1");
+    expect(trigger).toHaveTextContent('item0 and item1');
 
-    let formData = new FormData(getByTestId("form"));
-    expect(formData.getAll("select")).toEqual(["0", "1"]);
+    let formData = new FormData(getByTestId('form'));
+    expect(formData.getAll('select')).toEqual(['0', '1']);
 
     await user.click(submit);
-    fieldError = document.querySelector(".react-aria-FieldError");
+    fieldError = document.querySelector('.react-aria-FieldError');
     expect(fieldError).toBe(null);
   });
 
-  it("should support controlled multi-selection", async () => {
-    let { getByTestId } = render(
-      <TestSelect selectionMode="multiple" value={["dog", "kangaroo"]} />,
-    );
+  it('should support controlled multi-selection', async () => {
+    let {getByTestId} = render(<TestSelect selectionMode="multiple" value={['dog', 'kangaroo']} />);
 
-    let wrapper = getByTestId("select");
-    let selectTester = testUtilUser.createTester("Select", { root: wrapper });
+    let wrapper = getByTestId('select');
+    let selectTester = testUtilUser.createTester('Select', {root: wrapper});
 
     let trigger = selectTester.getTrigger();
-    expect(trigger).toHaveTextContent("Dog and Kangaroo");
+    expect(trigger).toHaveTextContent('Dog and Kangaroo');
 
     await selectTester.open();
 
     let options = selectTester.getOptions();
-    expect(options[0]).toHaveAttribute("aria-selected", "false");
-    expect(options[1]).toHaveAttribute("aria-selected", "true");
-    expect(options[2]).toHaveAttribute("aria-selected", "true");
+    expect(options[0]).toHaveAttribute('aria-selected', 'false');
+    expect(options[1]).toHaveAttribute('aria-selected', 'true');
+    expect(options[2]).toHaveAttribute('aria-selected', 'true');
   });
 
-  it("supports custom select value with multi-selection", async () => {
+  it('supports custom select value with multi-selection', async () => {
     let items = [
-      { id: 1, name: "Cat" },
-      { id: 2, name: "Dog" },
+      {id: 1, name: 'Cat'},
+      {id: 2, name: 'Dog'}
     ];
 
-    let { getByTestId } = render(
+    let {getByTestId} = render(
       <Select data-testid="select" selectionMode="multiple" defaultValue={[1]}>
         <Label>Favorite Animal</Label>
         <Button>
           <SelectValue>
-            {({ selectedItems }) =>
+            {({selectedItems}) =>
               selectedItems.length === 1
                 ? selectedItems[0]?.name
                 : `${selectedItems.length} selected items`
@@ -1052,21 +989,19 @@ describe("Select", () => {
           </SelectValue>
         </Button>
         <Popover>
-          <ListBox items={items}>
-            {(item) => <ListBoxItem>{item.name}</ListBoxItem>}
-          </ListBox>
+          <ListBox items={items}>{item => <ListBoxItem>{item.name}</ListBoxItem>}</ListBox>
         </Popover>
-      </Select>,
+      </Select>
     );
 
-    let selectTester = testUtilUser.createTester("Select", {
-      root: getByTestId("select"),
+    let selectTester = testUtilUser.createTester('Select', {
+      root: getByTestId('select')
     });
     let trigger = selectTester.getTrigger();
-    expect(trigger).toHaveTextContent("Cat");
+    expect(trigger).toHaveTextContent('Cat');
 
-    await selectTester.toggleOptionSelection({ option: "Dog" });
-    expect(trigger).toHaveTextContent("2 selected items");
+    await selectTester.toggleOptionSelection({option: 'Dog'});
+    expect(trigger).toHaveTextContent('2 selected items');
   });
 
   it('supports shift+click to select a range in multi-selection', async () => {
@@ -1124,10 +1059,10 @@ describe("Select", () => {
         }
       }, []);
 
-      const selectValue = formData.get("select");
+      const selectValue = formData.get('select');
 
       if (selectValue instanceof File) {
-        throw new Error("");
+        throw new Error('');
       }
 
       return (
@@ -1147,8 +1082,8 @@ describe("Select", () => {
         </form>
       );
     }
-    let { getByTestId } = render(<Example />);
-    let selectValue = getByTestId("select-value");
-    expect(selectValue).toHaveTextContent("select value: 1");
+    let {getByTestId} = render(<Example />);
+    let selectValue = getByTestId('select-value');
+    expect(selectValue).toHaveTextContent('select value: 1');
   });
 });
