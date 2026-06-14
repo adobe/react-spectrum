@@ -21,7 +21,6 @@ import {
   space,
   style
 } from '../style' with {type: 'macro'};
-import {Button} from 'react-aria-components/Button';
 import {centerBaseline} from './CenterBaseline';
 import {Checkbox} from './Checkbox';
 import {CheckboxContext} from 'react-aria-components/Checkbox';
@@ -56,8 +55,7 @@ import {
   ItemDropTarget,
   LoadingState
 } from '@react-types/shared';
-import DragHandle from '../ui-icons/DragHandle';
-import {DropIndicator} from 'react-aria-components/useDragAndDrop';
+import {DragHandleButton, InsertionIndicator} from './dnd-utils';
 import {
   GridList,
   GridListItem,
@@ -69,7 +67,6 @@ import {
 } from 'react-aria-components/GridList';
 import {IconContext} from './Icon';
 import {ImageContext} from './Image';
-// @ts-ignore
 import intlMessages from '../intl/*.json';
 import {Key} from '@react-types/shared';
 import {LayoutInfo, Virtualizer} from 'react-aria-components/Virtualizer';
@@ -80,12 +77,10 @@ import {ProgressCircle} from './ProgressCircle';
 import {Text, TextContext} from './Content';
 import {useActionBarContainer} from './ActionBar';
 import {useDOMRef} from './useDOMRef';
-import {useFocusRing} from 'react-aria/useFocusRing';
 import {useLocale} from 'react-aria/I18nProvider';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useScale} from './utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
-import {useVisuallyHidden} from 'react-aria/VisuallyHidden';
 
 export interface ListViewProps<T>
   extends
@@ -227,7 +222,10 @@ const listView = style<GridListRenderProps & {isQuiet?: boolean; isDropTarget?: 
     default: 'default',
     isQuiet: 'none'
   },
-  borderColor: 'gray-300',
+  borderColor: {
+    default: 'gray-300',
+    forcedColors: 'ButtonBorder'
+  },
   borderWidth: {
     default: 1,
     isQuiet: 0
@@ -426,20 +424,7 @@ const listitem = style<
   }
 >({
   outlineStyle: {
-    default: 'none',
-    isDropTarget: 'solid'
-  },
-  outlineWidth: {
-    isDropTarget: 2
-  },
-  outlineOffset: {
-    isDropTarget: -2
-  },
-  outlineColor: {
-    isDropTarget: 'blue-800',
-    forcedColors: {
-      isDropTarget: 'Highlight'
-    }
+    default: 'none'
   },
   boxSizing: 'border-box',
   columnGap: 0,
@@ -452,6 +437,11 @@ const listitem = style<
     isDisabled: 'disabled',
     forcedColors: {
       default: 'ButtonText',
+      isSelected: {
+        selectionStyle: {
+          highlight: 'HighlightText'
+        }
+      },
       isDisabled: 'GrayText'
     }
   },
@@ -495,13 +485,16 @@ const listitem = style<
     type: 'borderColor',
     value: {
       default: 'gray-300',
+      forcedColors: 'ButtonBorder',
       isSelected: {
         selectionStyle: {
-          highlight: 'blue-900',
+          highlight: {
+            default: 'blue-900',
+            forcedColors: 'Highlight'
+          },
           checkbox: 'gray-300'
         }
-      },
-      forcedColors: 'ButtonBorder'
+      }
     }
   },
   borderTopWidth: 0,
@@ -524,16 +517,6 @@ const listitem = style<
   '--radius': {
     type: 'borderTopStartRadius',
     value: 'default'
-  },
-  borderTopStartRadius: {
-    isDropTarget: {
-      isFirstItem: 'default'
-    }
-  },
-  borderTopEndRadius: {
-    isDropTarget: {
-      isFirstItem: 'default'
-    }
   },
   forcedColorAdjust: 'none'
 });
@@ -614,7 +597,14 @@ const listRowBackground = style<
         }
       }
     },
-    forcedColors: 'transparent',
+    forcedColors: {
+      default: 'transparent',
+      selectionStyle: {
+        highlight: {
+          isSelected: 'Highlight'
+        }
+      }
+    },
     ':is([role="grid"][data-drop-target] *)': rootRowDropStyles,
     isDropTarget: rowDropStyles
   },
@@ -629,7 +619,8 @@ const listRowBackground = style<
         }
       },
       isQuiet: 'default'
-    }
+    },
+    isDropTarget: insetBorderRadius
   },
   borderTopEndRadius: {
     isQuiet: 'default',
@@ -642,7 +633,8 @@ const listRowBackground = style<
         }
       },
       isQuiet: 'default'
-    }
+    },
+    isDropTarget: insetBorderRadius
   },
   borderBottomStartRadius: {
     isQuiet: 'default',
@@ -655,7 +647,8 @@ const listRowBackground = style<
         }
       },
       isQuiet: 'default'
-    }
+    },
+    isDropTarget: insetBorderRadius
   },
   borderBottomEndRadius: {
     isQuiet: 'default',
@@ -668,7 +661,8 @@ const listRowBackground = style<
         }
       },
       isQuiet: 'default'
-    }
+    },
+    isDropTarget: insetBorderRadius
   },
   borderTopWidth: {
     default: {
@@ -677,7 +671,8 @@ const listRowBackground = style<
         highlight: 1
       }
     },
-    isPrevSelected: 0
+    isPrevSelected: 0,
+    isDropTarget: 2
   },
   borderBottomWidth: {
     default: {
@@ -686,7 +681,8 @@ const listRowBackground = style<
         highlight: 1
       }
     },
-    isNextSelected: 0
+    isNextSelected: 0,
+    isDropTarget: 2
   },
   borderStartWidth: {
     default: {
@@ -694,7 +690,8 @@ const listRowBackground = style<
         checkbox: 0,
         highlight: 1
       }
-    }
+    },
+    isDropTarget: 2
   },
   borderEndWidth: {
     default: {
@@ -702,7 +699,8 @@ const listRowBackground = style<
         checkbox: 0,
         highlight: 1
       }
-    }
+    },
+    isDropTarget: 2
   },
   borderStyle: 'solid',
   borderColor: {
@@ -712,6 +710,10 @@ const listRowBackground = style<
         checkbox: 'transparent',
         highlight: '--borderColor'
       }
+    },
+    isDropTarget: 'blue-800',
+    forcedColors: {
+      isDropTarget: 'Highlight'
     }
   }
 });
@@ -828,91 +830,6 @@ let dragButtonContainer = style({
   width: 10
 });
 
-let dragButton = style<{isFocusVisible?: boolean}>({
-  color: 'inherit',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  // TODO: arbitrary, basically taken from v3
-  height: 22,
-  width: 10,
-  padding: 0,
-  margin: 0,
-  backgroundColor: 'transparent',
-  borderStyle: 'none',
-  borderRadius: 'sm',
-  // TODO: this mimicks v3 too, do we want halo focus ring?
-  outlineStyle: {
-    default: 'none',
-    isFocusVisible: 'solid'
-  },
-  outlineColor: {
-    default: 'focus-ring',
-    forcedColors: 'Highlight'
-  },
-  outlineWidth: 2,
-  '--iconPrimary': {
-    type: 'fill',
-    value: 'currentColor'
-  }
-});
-
-let insertionIndicatorWrapper = style({
-  position: 'absolute',
-  inset: 0,
-  display: 'flex',
-  alignItems: 'center'
-});
-
-export let insertionIndicatorBar = style<{isDropTarget?: boolean}>({
-  flexGrow: 1,
-  height: 2,
-  backgroundColor: {
-    default: 'transparent',
-    isDropTarget: 'blue-800',
-    forcedColors: {
-      isDropTarget: 'Highlight'
-    }
-  },
-  borderBottomWidth: {
-    default: 0,
-    isDropTarget: 2
-  },
-  borderColor: {
-    isDropTarget: 'blue-800',
-    forcedColors: {
-      isDropTarget: 'Highlight'
-    }
-  },
-  forcedColorAdjust: 'none'
-});
-
-export let insertionIndicatorCircle = style<{isDropTarget: boolean}>({
-  width: 8,
-  height: 8,
-  borderRadius: 'full',
-  borderWidth: {
-    isDropTarget: 2
-  },
-  borderStyle: {
-    isDropTarget: 'solid'
-  },
-  borderColor: {
-    isDropTarget: 'blue-800',
-    forcedColors: {
-      isDropTarget: 'Highlight'
-    }
-  },
-  backgroundColor: {
-    isDropTarget: 'gray-25',
-    forcedColors: {
-      default: 'transparent',
-      isDropTarget: 'Background'
-    }
-  },
-  forcedColorAdjust: 'none'
-});
-
 const centeredWrapper = style({
   display: 'flex',
   alignItems: 'center',
@@ -934,20 +851,6 @@ const emptyStateWrapper = style({
   boxSizing: 'border-box',
   padding: 16
 });
-
-export function InsertionIndicator({target}: {target: ItemDropTarget}) {
-  return (
-    <DropIndicator className="" target={target}>
-      {({isDropTarget}) => (
-        <div className={insertionIndicatorWrapper}>
-          <div className={insertionIndicatorCircle({isDropTarget})} />
-          <div className={insertionIndicatorBar({isDropTarget})} />
-          <div className={insertionIndicatorCircle({isDropTarget})} />
-        </div>
-      )}
-    </DropIndicator>
-  );
-}
 
 function ListSelectionCheckbox({isDisabled}: {isDisabled: boolean}) {
   let selectionContext = useSlottedContext(CheckboxContext, 'selection');
@@ -975,10 +878,6 @@ export function ListViewItem(props: ListViewItemProps): ReactNode {
     props.textValue || (typeof props.children === 'string' ? props.children : undefined);
   let {direction} = useLocale();
   let hasTrailingIcon = hasChildItems || (isLinkOut && !hideLinkOutIcon);
-  let {visuallyHiddenProps} = useVisuallyHidden();
-  let {isFocusVisible: isFocusVisibleWithin, focusProps: focusWithinProps} = useFocusRing({
-    within: true
-  });
 
   return (
     <GridListItem
@@ -1009,7 +908,7 @@ export function ListViewItem(props: ListViewItemProps): ReactNode {
           id,
           state,
           allowsDragging,
-          isFocusVisible
+          isFocusVisibleWithin
         } = renderProps;
         return (
           <Provider
@@ -1054,7 +953,7 @@ export function ListViewItem(props: ListViewItemProps): ReactNode {
                 }
               ]
             ]}>
-            <div className={rowWrapper} {...focusWithinProps}>
+            <div className={rowWrapper}>
               <div
                 className={listRowBackground({
                   ...renderProps,
@@ -1086,18 +985,7 @@ export function ListViewItem(props: ListViewItemProps): ReactNode {
               )}
               {allowsDragging && (
                 <div className={dragButtonContainer}>
-                  {!isDisabled && (
-                    <Button
-                      slot="drag"
-                      style={
-                        !isFocusVisibleWithin && !isFocusVisible
-                          ? {...visuallyHiddenProps.style}
-                          : {}
-                      }
-                      className={dragButton}>
-                      <DragHandle size="M" />
-                    </Button>
-                  )}
+                  {!isDisabled && <DragHandleButton isFocusVisibleWithin={isFocusVisibleWithin} />}
                 </div>
               )}
               {selectionMode !== 'none' && selectionBehavior === 'toggle' && (

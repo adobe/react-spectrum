@@ -21,7 +21,6 @@ import InfoMedium from '@spectrum-icons/ui/InfoMedium';
 import intlMessages from '../../intl/toast/*.json';
 import {mergeProps} from 'react-aria/mergeProps';
 import {QueuedToast, ToastState} from 'react-stately/useToastState';
-// @ts-ignore
 import React from 'react';
 import styles from '@adobe/spectrum-css-temp/components/toast/vars.css';
 import SuccessMedium from '@spectrum-icons/ui/SuccessMedium';

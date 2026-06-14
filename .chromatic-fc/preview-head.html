@@ -188,6 +188,38 @@ governing permissions and limitations under the License.
   crossorigin="anonymous" />
 
 <!--
+  Noto Sans Ethiopic: Adobe Clean does not cover the Ethiopic script (U+1200-137F),
+  so without an explicit @font-face the browser falls through to a system font
+  whose loading is not tracked by document.fonts.ready. That makes Amharic
+  stories (e.g. DateField > Amharic Preferences) flaky in Chromatic. 
+  Declaring it under font-family: adobe-clean with a unicode-range
+  for Ethiopic extends the adobe-clean family for those code points, and
+  font-display: block ensures Chromatic waits for it before snapshotting.
+  
+  This font is what Chrome falls back to anyways, we're just making sure Chromatic
+  waits for it before snapshotting.
+-->
+<link
+  rel="preload"
+  href="https://fonts.gstatic.com/s/notosansethiopic/v50/7cHPv50vjIepfJVOZZgcpQ5B9FBTH9KGNfhSTgtoow1KVnIvyBoMSzUMacb-T35OK5D1yGb8bJ9vaUNpog.woff2"
+  as="font"
+  type="font/woff2"
+  crossorigin="anonymous" />
+<style>
+  @font-face {
+    font-family: 'adobe-clean';
+    font-style: normal;
+    font-weight: 400;
+    font-display: block;
+    src: url('https://fonts.gstatic.com/s/notosansethiopic/v50/7cHPv50vjIepfJVOZZgcpQ5B9FBTH9KGNfhSTgtoow1KVnIvyBoMSzUMacb-T35OK5D1yGb8bJ9vaUNpog.woff2')
+      format('woff2');
+    unicode-range:
+      U+030E, U+1200-1399, U+2D80-2DDE, U+AB01-AB2E, U+1E7E0-1E7E6, U+1E7E8-1E7EB, U+1E7ED-1E7EE,
+      U+1E7F0-1E7FE;
+  }
+</style>
+
+<!--
   fe1ce2 font: adobe-clean-serif, weight: 900
   f46796 font: adobe-clean-serif, style: italic, weight: 900
   51ce83 font: adobe-clean-serif, weight: 700

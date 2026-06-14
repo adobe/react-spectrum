@@ -40,7 +40,6 @@ import {forwardRefType, GlobalDOMAttributes} from '@react-types/shared';
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {Header, HeaderContext, HeadingContext} from './Content';
 import {helpTextStyles} from './Field';
-// @ts-ignore
 import intlMessages from '../intl/*.json';
 import {pressScale} from './pressScale';
 import {RangeCalendarContext, RangeCalendarStateContext} from 'react-aria-components/RangeCalendar';

@@ -33,8 +33,7 @@ import {
   Key,
   LoadingState
 } from '@react-types/shared';
-import {DragAndDropContext, DropIndicator} from 'react-aria-components/useDragAndDrop';
-import DragHandle from '../ui-icons/DragHandle';
+import {DragHandleButton, InsertionIndicator} from './dnd-utils';
 import {DragPreview} from './DragPreview';
 import {
   getAllowedOverrides,
@@ -42,8 +41,6 @@ import {
   UnsafeStyles
 } from './style-utils' with {type: 'macro'};
 import {IconContext} from './Icon';
-import {insertionIndicatorBar, insertionIndicatorCircle, S2ListLayout} from './ListView';
-// @ts-ignore
 import intlMessages from '../intl/*.json';
 import {ProgressCircle} from './ProgressCircle';
 import {Provider, useContextProps} from 'react-aria-components/slots';
@@ -68,6 +65,7 @@ import React, {
   useContext,
   useRef
 } from 'react';
+import {S2ListLayout} from './ListView';
 import {Text, TextContext} from './Content';
 import {TreeState} from 'react-stately/useTreeState';
 import {useActionBarContainer} from './ActionBar';
@@ -75,7 +73,6 @@ import {useDOMRef} from './useDOMRef';
 import {useLocale} from 'react-aria/I18nProvider';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useScale} from './utils';
-import {useVisuallyHidden} from 'react-aria/VisuallyHidden';
 import {Virtualizer} from 'react-aria-components/Virtualizer';
 
 interface S2TreeProps {
@@ -155,7 +152,7 @@ const treeViewWrapper = style(
     },
     '--root-drop-radius': {
       type: 'borderTopStartRadius',
-      value: 'default'
+      value: 'sm'
     }
   },
   getAllowedOverrides({height: true})
@@ -230,38 +227,6 @@ const tree = style<TreeRenderProps>({
 
 let InternalTreeViewContext = createContext<{selectionStyle?: 'highlight' | 'checkbox'}>({});
 
-const insertionIndicatorWrapper = style({
-  position: 'absolute',
-  inset: 0,
-  display: 'flex',
-  alignItems: 'center',
-  marginStart: {
-    default:
-      'calc((var(--tree-item-level, 1) - 1) * var(--indent) + var(--indicator-level-padding, 0px))',
-    isRoot: 0
-  }
-});
-
-function TreeInsertionIndicator({target}: {target: ItemDropTarget}) {
-  let {dropState} = useContext(DragAndDropContext) ?? {};
-  let level = 0;
-  if (target.type === 'item' && dropState?.collection) {
-    level = dropState.collection.getItem(target.key)?.level ?? 0;
-  }
-
-  return (
-    <DropIndicator className="" target={target}>
-      {({isDropTarget}) => (
-        <div className={insertionIndicatorWrapper({isRoot: level === 0})}>
-          <div className={insertionIndicatorCircle({isDropTarget})} />
-          <div className={insertionIndicatorBar({isDropTarget})} />
-          <div className={insertionIndicatorCircle({isDropTarget})} />
-        </div>
-      )}
-    </DropIndicator>
-  );
-}
-
 /**
  * A tree view provides users with a way to navigate nested hierarchical information.
  */
@@ -286,7 +251,7 @@ export const TreeView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Tr
 
   if (dragAndDropHooks) {
     dragAndDropHooks.renderDropIndicator = target => (
-      <TreeInsertionIndicator target={target as ItemDropTarget} />
+      <InsertionIndicator target={target as ItemDropTarget} />
     );
   }
   let renderer;
@@ -476,8 +441,6 @@ const treeRowBackground = style({
   backgroundColor: {
     default: '--rowBackgroundColor',
     forcedColors: 'Background',
-    ':is([role="treegrid"][data-drop-target] *)': rootRowDropStyles,
-    isDropTarget: rowDropStyles,
     selectionStyle: {
       highlight: {
         default: '--rowBackgroundColor',
@@ -489,7 +452,9 @@ const treeRowBackground = style({
           forcedColors: 'Highlight'
         }
       }
-    }
+    },
+    ':is([role="treegrid"][data-drop-target] *)': rootRowDropStyles,
+    isDropTarget: rowDropStyles
   },
   borderTopStartRadius: {
     default: '--borderRadiusTreeItem',
@@ -582,33 +547,6 @@ const treeDragButtonContainer = style({
   width: 10
 });
 
-const treeDragButton = style({
-  color: 'inherit',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  height: 22,
-  width: 10,
-  padding: 0,
-  margin: 0,
-  backgroundColor: 'transparent',
-  borderStyle: 'none',
-  borderRadius: 'sm',
-  outlineStyle: {
-    default: 'none',
-    isFocusVisible: 'solid'
-  },
-  outlineColor: {
-    default: 'focus-ring',
-    forcedColors: 'Highlight'
-  },
-  outlineWidth: 2,
-  '--iconPrimary': {
-    type: 'fill',
-    value: 'currentColor'
-  }
-});
-
 let treeRowFocusRing = style({
   ...focusRing(),
   outlineOffset: {
@@ -679,7 +617,6 @@ export const TreeViewItemContent = (props: TreeViewItemContentProps): ReactNode 
   let scale = useScale();
 
   let {selectionStyle} = useContext(InternalTreeViewContext);
-  let {visuallyHiddenProps} = useVisuallyHidden();
 
   return (
     <TreeItemContent>
@@ -730,16 +667,7 @@ export const TreeViewItemContent = (props: TreeViewItemContentProps): ReactNode 
             )}
             {allowsDragging && (
               <div className={treeDragButtonContainer}>
-                {!isDisabled && (
-                  <Button
-                    slot="drag"
-                    style={
-                      !isFocusVisibleWithin && !isFocusVisible ? {...visuallyHiddenProps.style} : {}
-                    }
-                    className={treeDragButton}>
-                    <DragHandle size="M" />
-                  </Button>
-                )}
+                {!isDisabled && <DragHandleButton isFocusVisibleWithin={isFocusVisibleWithin} />}
               </div>
             )}
             {selectionMode !== 'none' &&

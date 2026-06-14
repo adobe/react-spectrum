@@ -239,6 +239,35 @@ describe('Popover', function () {
           <TestPopover isOpen onOpenChange={onOpenChange} shouldCloseOnBlur>
             <button autoFocus>Focus me</button>
           </TestPopover>
+          <button data-testid="outside">Outside</button>
+        </Provider>
+      );
+
+      act(() => {
+        jest.runAllTimers();
+      });
+      let button = getAllByRole('button')[1];
+      let outside = getByTestId('outside');
+      let popover = getByTestId('popover');
+      expect(document.activeElement).toBe(button);
+
+      await waitFor(() => {
+        expect(popover).toBeVisible();
+      }); // wait for animation
+
+      act(() => {
+        outside.focus();
+      });
+      expect(onOpenChange).toHaveBeenCalledTimes(1);
+    });
+
+    it('does not close when focus is lost with no replacement, such as switching tabs', async function () {
+      let onOpenChange = jest.fn();
+      let {getAllByRole, getByTestId} = render(
+        <Provider theme={theme}>
+          <TestPopover isOpen onOpenChange={onOpenChange} shouldCloseOnBlur>
+            <button autoFocus>Focus me</button>
+          </TestPopover>
         </Provider>
       );
 
@@ -248,15 +277,15 @@ describe('Popover', function () {
       let button = getAllByRole('button')[1];
       let popover = getByTestId('popover');
       expect(document.activeElement).toBe(button);
-
       await waitFor(() => {
         expect(popover).toBeVisible();
-      }); // wait for animation
+      });
 
       act(() => {
         button.blur();
       });
-      expect(onOpenChange).toHaveBeenCalledTimes(1);
+      expect(onOpenChange).not.toHaveBeenCalled();
+      expect(popover).toBeVisible();
     });
 
     it('should have hidden dismiss buttons for screen readers', function () {

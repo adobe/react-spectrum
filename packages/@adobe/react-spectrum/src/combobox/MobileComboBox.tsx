@@ -44,7 +44,6 @@ import React, {
 } from 'react';
 import searchStyles from '@adobe/spectrum-css-temp/components/search/vars.css';
 import {setInteractionModality} from 'react-aria/private/interactions/useFocusVisible';
-// @ts-ignore
 import {SpectrumComboBoxProps} from './ComboBox';
 import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {TextFieldBase} from '../textfield/TextFieldBase';

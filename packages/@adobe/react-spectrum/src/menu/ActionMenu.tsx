@@ -20,7 +20,6 @@ import {
   StyleProps
 } from '@react-types/shared';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
-// @ts-ignore
 import intlMessages from '../../intl/menu/*.json';
 import {Menu} from './Menu';
 import {MenuTrigger, SpectrumMenuTriggerProps} from './MenuTrigger';

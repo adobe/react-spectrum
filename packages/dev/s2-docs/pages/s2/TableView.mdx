@@ -949,16 +949,16 @@ function subscribe(fn) {
 
 ## Drag and drop
 
-Table supports drag and drop interactions when the `dragAndDropHooks` prop is provided using the <TypeLink links={docs.links} type={docs.exports.useDragAndDrop} /> hook. Users can drop data on the table as a whole, on individual rows, insert new rows between existing ones, or reorder rows. See the [drag and drop guide](../react-aria/dnd?component=Table) to learn more.
+Table supports drag and drop interactions when the `dragAndDropHooks` prop is provided using the <TypeLink links={docs.links} type={docs.exports.useDragAndDrop} /> hook. Users can drop data on the table as a whole, on individual rows, insert new rows between existing ones, or reorder rows. See the [drag and drop guide](dnd?component=TableView) to learn more.
 
 You can customize the drag preview by passing <TypeLink links={docs.links} type={docs.exports.DragPreview} /> or your own custom drag preview element to `useDragAndDrop`'s `renderDragPreview`. `DragPreview` supports leading icons and `Text` with `label` and `description` slots.
 
 ```tsx render type="s2"
 "use client";
-import {TableView, TableHeader, TableBody, Column, Row, Cell, Collection, DragPreview} from '@react-spectrum/s2/TableView';
+import {TableView, TableHeader, TableBody, Column, Row, Cell, Collection} from '@react-spectrum/s2/TableView';
 import {Text} from '@react-spectrum/s2';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
-import {useDragAndDrop} from '@react-spectrum/s2/useDragAndDrop';
+import {DragPreview, useDragAndDrop} from '@react-spectrum/s2/useDragAndDrop';
 import {useTreeData} from '@react-spectrum/s2/useTreeData';
 import File from '@react-spectrum/s2/icons/File';
 import Folder from '@react-spectrum/s2/icons/Folder';

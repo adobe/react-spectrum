@@ -69,7 +69,7 @@ describe('Button', () => {
   });
 
   it('should warn when rendering the wrong element type', () => {
-    let warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    using warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
     render(<Button render={props => <div {...props} data-custom="bar" />}>Test</Button>);
     expect(warn).toHaveBeenCalledWith(
       'Unexpected DOM element returned by custom `render` function. Expected <button>, got <div>. This may break the component behavior and accessibility.'
@@ -78,7 +78,7 @@ describe('Button', () => {
   });
 
   it('should warn when ref is not passed through', () => {
-    let warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    using warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
     render(<Button render={() => <div data-custom="bar" />}>Test</Button>);
     expect(warn).toHaveBeenCalledWith(
       'Ref was not connected to DOM element returned by custom `render` function. Did you forget to pass through or merge the `ref`?'

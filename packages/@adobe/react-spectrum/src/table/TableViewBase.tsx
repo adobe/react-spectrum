@@ -51,7 +51,6 @@ import {Menu} from '../menu/Menu';
 import {MenuTrigger} from '../menu/MenuTrigger';
 import {mergeProps} from 'react-aria/mergeProps';
 import {Nubbin} from './Nubbin';
-// @ts-ignore
 import {ProgressCircle} from '../progress/ProgressCircle';
 import React, {
   DOMAttributes,

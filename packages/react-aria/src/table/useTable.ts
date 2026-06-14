@@ -14,7 +14,6 @@ import {announce} from '../live-announcer/LiveAnnouncer';
 
 import {GridAria, GridProps, useGrid} from '../grid/useGrid';
 import {gridIds} from './utils';
-// @ts-ignore
 import intlMessages from '../../intl/table/*.json';
 import {Key, LayoutDelegate, Rect, RefObject, Size} from '@react-types/shared';
 import {mergeProps} from '../utils/mergeProps';

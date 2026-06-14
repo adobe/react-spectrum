@@ -81,7 +81,7 @@ import {
   LoadingState,
   Node
 } from '@react-types/shared';
-import DragHandle from '../ui-icons/DragHandle';
+import {DragHandleButton, InsertionIndicator} from './dnd-utils';
 import {DragPreview} from './DragPreview';
 import {Form} from 'react-aria-components/Form';
 import {
@@ -92,8 +92,6 @@ import {
 import {getOwnerDocument} from 'react-aria/private/utils/domHelpers';
 import {GridNode} from 'react-stately/private/grid/GridCollection';
 import {IconContext} from './Icon';
-import {InsertionIndicator} from './ListView';
-// @ts-ignore
 import intlMessages from '../intl/*.json';
 import {Key} from '@react-types/shared';
 import {LayoutInfo, Rect, TableLayout, Virtualizer} from 'react-aria-components/Virtualizer';
@@ -102,7 +100,6 @@ import {Menu, MenuItem, MenuSection, MenuTrigger} from './Menu';
 import Nubbin from '../ui-icons/S2_MoveHorizontalTableWidget.svg';
 import {OverlayTriggerStateContext} from 'react-aria-components/Dialog';
 import {ProgressCircle} from './ProgressCircle';
-// @ts-ignore
 import {CheckboxContext as RACCheckboxContext} from 'react-aria-components/Checkbox';
 import {Popover as RACPopover} from 'react-aria-components/Popover';
 import React, {
@@ -271,6 +268,7 @@ const table = style<
     default: 'gray-300',
     isDropTarget: 'blue-800',
     forcedColors: {
+      default: 'ButtonBorder',
       isDropTarget: 'Highlight'
     }
   },
@@ -299,7 +297,19 @@ const table = style<
       isCheckboxSelection: 56
     }
   },
-  forcedColorAdjust: 'none'
+  forcedColorAdjust: 'none',
+  '--indicator-level-padding': {
+    type: 'width',
+    value: {
+      // 16 (drag cell width) + 14 (chevron start padding + half of chevron (5) - radius of drop indicator circle (6) - 1 (fudge factor)) + 40 (checkbox cell width)
+      default: 30,
+      isCheckboxSelection: 71
+    }
+  },
+  '--indent': {
+    type: 'width',
+    value: 16
+  }
 });
 
 // component-height-100
@@ -503,7 +513,6 @@ export const TableView = forwardRef(function TableView(
   let scrollRef = useRef<HTMLElement | null>(null);
   let isCheckboxSelection = selectionMode === 'multiple' || selectionMode === 'single';
   let isDragAndDrop = !!dragAndDropHooks?.useDraggableCollectionState;
-
   let {selectedKeys, onSelectionChange, actionBar, actionBarHeight} = useActionBarContainer({
     ...props,
     scrollRef
@@ -678,7 +687,15 @@ function CellFocusRing() {
   return (
     <div
       role="presentation"
-      className={style({...cellFocus, position: 'absolute', inset: 0, pointerEvents: 'none'})({
+      className={style({
+        ...cellFocus,
+        position: 'absolute',
+        top: 'var(--topFocusRing, 0)',
+        bottom: 0,
+        insetStart: 0,
+        insetEnd: 0,
+        pointerEvents: 'none'
+      })({
         isFocusVisible: true
       })}
     />
@@ -1092,7 +1109,10 @@ function ResizerIndicator({isFocusVisible, isResizing}) {
 const tableHeader = style({
   height: 'full',
   width: 'full',
-  backgroundColor: 'gray-75',
+  backgroundColor: {
+    default: 'gray-75',
+    forcedColors: 'transparent'
+  },
   // Attempt to prevent 1px area where you can see scrolled cell content between the table outline and the table header
   marginTop: '[-1px]',
   '--resizerDisplay': {
@@ -1135,7 +1155,10 @@ const selectAllCheckboxColumn = style({
   },
   borderBottomWidth: 1,
   borderStyle: 'solid',
-  backgroundColor: 'gray-75'
+  backgroundColor: {
+    default: 'gray-75',
+    forcedColors: 'transparent'
+  }
 });
 
 export interface TableHeaderProps<T> extends Omit<
@@ -1227,10 +1250,6 @@ const commonCellStyles = {
 } as const;
 
 const treeColumnStyles = {
-  '--indent': {
-    type: 'width',
-    value: 16
-  },
   '--treeColumnPadding': {
     type: 'width',
     value: {
@@ -1302,55 +1321,6 @@ const dragCellStyle = style({
   height: 'calc(100% - 1px)',
   borderBottomWidth: 0,
   backgroundColor: '--rowBackgroundColor'
-});
-
-const dragButton = style({
-  color: 'inherit',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  padding: 0,
-  backgroundColor: 'transparent',
-  borderStyle: 'none',
-  borderRadius: 'sm',
-  outlineStyle: {
-    default: 'none',
-    isFocusVisible: 'solid'
-  },
-  outlineColor: {
-    default: 'focus-ring',
-    forcedColors: 'Highlight'
-  },
-  outlineWidth: 2,
-  '--iconPrimary': {
-    type: 'fill',
-    value: 'currentColor'
-  },
-  // note that this doesn't have clip or clipPath, but this seems to be sufficient
-  height: {
-    default: 1,
-    ':is([role="row"][data-focus-visible-within] *)': 22
-  },
-  width: {
-    default: 1,
-    ':is([role="row"][data-focus-visible-within] *)': 10
-  },
-  margin: {
-    default: '[-1]',
-    ':is([role="row"][data-focus-visible-within] *)': 0
-  },
-  overflow: {
-    default: 'hidden',
-    ':is([role="row"][data-focus-visible-within] *)': 'visible'
-  },
-  position: {
-    default: 'absolute',
-    ':is([role="row"][data-focus-visible-within] *)': 'relative'
-  },
-  whiteSpace: {
-    default: 'nowrap',
-    ':is([role="row"][data-focus-visible-within] *)': 'normal'
-  }
 });
 
 const cellContent = style({
@@ -1913,6 +1883,9 @@ const rowBackgroundColor = {
     default: 'gray-25',
     isQuiet: '--s2-container-bg'
   },
+  forcedColors: {
+    default: 'Background'
+  },
   isHovered: colorMix('gray-25', 'gray-900', 7), // table-row-hover-color
   isPressed: colorMix('gray-25', 'gray-900', 10), // table-row-hover-color
   isSelected: {
@@ -1924,6 +1897,7 @@ const rowBackgroundColor = {
   selectionStyle: {
     highlight: {
       default: 'gray-25',
+      isQuiet: '--s2-container-bg',
       isHovered: colorMix('gray-25', 'gray-900', 7), // table-row-hover-color
       isPressed: colorMix('gray-25', 'gray-900', 10), // table-row-hover-color
       isSelected: {
@@ -1935,9 +1909,6 @@ const rowBackgroundColor = {
     }
   },
   isInFooter: 'gray-200',
-  forcedColors: {
-    default: 'Background'
-  },
   ':is([role="grid"][data-drop-target] *)': rootRowDropStyles,
   isDropTarget: rowDropStyles
 } as const;
@@ -1945,7 +1916,14 @@ const rowBackgroundColor = {
 const rowTextColor = {
   default: baseColor('neutral-subdued'),
   isSelected: baseColor('neutral'),
-  forcedColors: 'ButtonText',
+  forcedColors: {
+    default: 'ButtonText',
+    isSelected: {
+      selectionStyle: {
+        highlight: 'HighlightText'
+      }
+    }
+  },
   isDisabled: {
     default: 'disabled',
     forcedColors: 'GrayText'
@@ -1955,7 +1933,12 @@ const rowTextColor = {
 
 const row = style<
   RowRenderProps &
-    S2TableProps & {isInFooter?: boolean; isNextSelected?: boolean; isPrevSelected?: boolean}
+    S2TableProps & {
+      isInFooter?: boolean;
+      isNextSelected?: boolean;
+      isPrevSelected?: boolean;
+      isFirstItem?: boolean;
+    }
 >({
   height: 'full',
   position: 'relative',
@@ -2058,21 +2041,22 @@ const row = style<
       }
     }
   },
-  // When checkbox selection, render the gray divider between rows as a border
   borderTopWidth: 0,
-  borderBottomWidth: {
-    selectionStyle: {
-      highlight: 0,
-      checkbox: 1
-    }
-  },
+  borderBottomWidth: 1,
   borderStartWidth: 0,
   borderEndWidth: 0,
   borderStyle: 'solid',
   borderColor: {
     selectionStyle: {
-      highlight: 'transparent',
-      checkbox: 'gray-300'
+      highlight: {
+        default: 'gray-300',
+        isSelected: 'transparent',
+        isNextSelected: 'transparent'
+      },
+      checkbox: {
+        default: 'gray-300',
+        forcedColors: 'ButtonBorder'
+      }
     }
   },
   '--borderColorGray': {
@@ -2099,20 +2083,11 @@ const row = style<
       isSelected: '--borderColorBlue'
     }
   },
-  // When highlight selection, render gray dividers as box shadow
-  boxShadow: {
-    selectionStyle: {
-      highlight: {
-        default: '[inset 0 -1px 0px var(--borderColorGray)]',
-        isNextSelected: '[inset 0 0 0 var(--borderColorGray)]'
-        // TODO: Determine if we want to support gray dividers between selected grouped rows
-        // isSelected: {
-        //   isNextSelected: '[inset 0 -1px 0px var(--borderColorGray)]'
-        // }
-      }
-    },
-    forcedColors: {
-      isFocusVisible: '[inset 0 0 0 2px Highlight]'
+  '--focusRingColor': {
+    type: 'outlineColor',
+    value: {
+      default: 'focus-ring',
+      forcedColors: 'Highlight'
     }
   },
   fontWeight: {
@@ -2120,20 +2095,50 @@ const row = style<
     isInFooter: 'bold'
   },
   isolation: 'isolate',
-  forcedColorAdjust: 'none'
+  forcedColorAdjust: 'none',
+  '--topFocusRing': {
+    type: 'top',
+    value: {
+      default: '[-1px]',
+      isFirstItem: 0
+    }
+  },
+  '--topHighlightBorder': {
+    type: 'top',
+    value: {
+      default: 0,
+      isSelected: '[-1px]',
+      // Don't overlap focus ring of row above.
+      isPrevSelected: 0,
+      isFirstItem: 0,
+      forcedColors: 0
+    }
+  },
+  '--bottomPosition': {
+    type: 'bottom',
+    value: {
+      selectionStyle: {
+        checkbox: {
+          default: '[-1px]',
+          // Avoid the next row's selected background covering this row's focus ring.
+          isNextSelected: 0
+        },
+        highlight: '[-1px]'
+      }
+    }
+  }
 });
 
 // Sticky cells (the drag cell, and the checkbox cell when present) get an inline z-index=2 applied by the virtualizer's layout
-// To ensure that the highlight selection border is painted above the stick cells, set z-index to 3
+// To ensure that the highlight selection border is painted above the sticky cells, set z-index to 3
 const highlightSelectionBorder = css(
   `&:before {
     content: "";
-    width: 100%;
-    height: 100%;
+    top: var(--topHighlightBorder);
+    bottom: -1px;
+    inset-inline: 0;
     position: absolute;
-    inset: 0;
     z-index: 3;
-    box-sizing: border-box;
     border-style: solid;
     border-color: var(--borderColor);
     border-top-width: var(--borderTopWidth);
@@ -2152,15 +2157,15 @@ const highlightSelectionBorder = css(
 const focusIndicator = css(
   `&:after {
     content: "";
-    width: 100%;
-    height: 100%;
-    top: 0;
-    z-index: 2;
+    top: var(--topFocusRing);
+    bottom: var(--bottomPosition);
+    z-index: 3;
     inset-inline-start: 0;
+    inset-inline-end: 0;
     border-radius: 5px;
     position: absolute;
     outline-style: solid;
-    outline-color: var(--borderColorBlue);
+    outline-color: var(--focusRingColor);
     outline-width: 2px;
     outline-offset: -2px;
     pointer-events: none;
@@ -2216,6 +2221,7 @@ export const Row = /*#__PURE__*/ (forwardRef as forwardRefType)(function Row<T>(
           ...tableVisualOptions,
           selectionStyle,
           isInFooter,
+          isFirstItem: isFirstItem(renderProps.id, renderProps.state),
           isNextSelected: isNextSelected(renderProps.id, renderProps.state),
           isPrevSelected: isPrevSelected(renderProps.id, renderProps.state)
         }) +
@@ -2224,14 +2230,16 @@ export const Row = /*#__PURE__*/ (forwardRef as forwardRefType)(function Row<T>(
       }
       {...otherProps}>
       {allowsDragging && (
-        // @ts-ignore
-        <Cell isSticky className={dragCellStyle}>
-          {!(otherProps.isDisabled && tableVisualOptions.disabledBehavior === 'all') && (
-            <Button slot="drag" className={dragButton}>
-              <DragHandle size="M" />
-            </Button>
-          )}
-        </Cell>
+        <RACCell
+          // @ts-ignore
+          isSticky
+          className={dragCellStyle}>
+          {({isFocusVisibleWithinRow}) =>
+            !(otherProps.isDisabled && tableVisualOptions.disabledBehavior === 'all') && (
+              <DragHandleButton isFocusVisibleWithin={isFocusVisibleWithinRow} />
+            )
+          }
+        </RACCell>
       )}
       {selectionMode !== 'none' &&
         selectionBehavior === 'toggle' &&
@@ -2293,4 +2301,11 @@ export function isPrevSelected(id: Key | undefined, state: TableState<unknown>) 
   }
   let keyBefore = state.collection.getKeyBefore(id);
   return keyBefore != null && state.selectionManager.isSelected(keyBefore);
+}
+
+function isFirstItem(id: Key | undefined, state: TableState<unknown>) {
+  if (id == null || !state) {
+    return false;
+  }
+  return state.collection.getFirstKey() === id;
 }

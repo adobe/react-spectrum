@@ -34,7 +34,6 @@ import {FieldErrorContext} from './FieldError';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {FormContext} from './Form';
 import {GlobalDOMAttributes} from '@react-types/shared';
-// @ts-ignore
 import intlMessages from '../intl/*.json';
 import {ItemRenderProps} from './Collection';
 import {LabelContext} from './Label';

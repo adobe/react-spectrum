@@ -126,6 +126,13 @@ export interface AriaSelectableCollectionOptions {
    * @default 'action'
    */
   linkBehavior?: 'action' | 'selection' | 'override';
+  /**
+   * Which item in the collection to focus when tabbing into the collection. Overrides default
+   * roving tab index like behavior.
+   *
+   * @private
+   */
+  focusOnEntry?: 'first' | 'last';
 }
 
 export interface SelectableCollectionAria {
@@ -154,7 +161,8 @@ export function useSelectableCollection(
     allowsTabNavigation = false,
     // If no scrollRef is provided, assume the collection ref is the scrollable region
     scrollRef = ref,
-    linkBehavior = 'action'
+    linkBehavior = 'action',
+    focusOnEntry
   } = options;
   let {direction} = useLocale();
   let router = useRouter();
@@ -283,6 +291,7 @@ export function useSelectableCollection(
           if (manager.focusedKey === null && e.shiftKey) {
             return;
           }
+          // TODO: should Home and End also be reversed in column reverse aka Home goes to top? Or should Home always to to the "first" (bottom)
           e.preventDefault();
           let firstKey: Key | null = delegate.getFirstKey(manager.focusedKey, isCtrlKeyPressed(e));
           manager.setFocusedKey(firstKey);
@@ -403,7 +412,6 @@ export function useSelectableCollection(
       if (!nodeContains(e.currentTarget, getEventTarget(e))) {
         manager.setFocused(false);
       }
-
       return;
     }
 
@@ -412,16 +420,24 @@ export function useSelectableCollection(
       return;
     }
 
+    let modality = getInteractionModality();
     manager.setFocused(true);
-    if (manager.focusedKey == null) {
-      let navigateToKey = (key: Key | undefined | null) => {
-        if (key != null) {
-          manager.setFocusedKey(key);
-          if (selectOnFocus && !manager.isSelected(key)) {
-            manager.replaceSelection(key);
-          }
+    let navigateToKey = (key: Key | undefined | null) => {
+      if (key != null) {
+        manager.setFocusedKey(key);
+        if (selectOnFocus && !manager.isSelected(key)) {
+          manager.replaceSelection(key);
         }
-      };
+      }
+    };
+
+    // we need the "virtual" modality case checks here because shift tabbing from the prompt field's asset card back into the
+    // thread is a virtual focus event (the tab handler in onKeyDown focuses the ref of the AttachementList aka TagGroup via a focus() call, hence the virtual modality)
+    if (focusOnEntry && (modality === 'keyboard' || modality === 'virtual')) {
+      // always go to the first item in the Thread when tabbing forwards/backwards into the collection
+      // since it is probably more important to the user to see the new prompt reply rather than go to the last focused key
+      navigateToKey(focusOnEntry === 'first' ? delegate.getFirstKey?.() : delegate.getLastKey?.());
+    } else if (manager.focusedKey == null) {
       // If the user hasn't yet interacted with the collection, there will be no focusedKey set.
       // Attempt to detect whether the user is tabbing forward or backward into the collection
       // and either focus the first or last item accordingly.
@@ -449,8 +465,7 @@ export function useSelectableCollection(
           focusWithoutScrolling(element);
         }
 
-        let modality = getInteractionModality();
-        if (modality === 'keyboard') {
+        if (modality === 'keyboard' || modality === 'virtual') {
           scrollIntoViewport(element, {containingElement: ref.current});
         }
       }
@@ -488,13 +503,12 @@ export function useSelectableCollection(
   );
 
   // update active descendant
+  let firstKey = delegate.getFirstKey?.() ?? null;
   useUpdateLayoutEffect(() => {
     if (shouldVirtualFocusFirst.current) {
-      let keyToFocus = delegate.getFirstKey?.() ?? null;
-
       // If no focusable items exist in the list, make sure to clear any activedescendant that may still exist and move focus back to
       // the original active element (e.g. the autocomplete input)
-      if (keyToFocus == null) {
+      if (firstKey == null) {
         let previousActiveElement = getActiveElement();
         moveVirtualFocus(ref.current);
         dispatchVirtualFocus(previousActiveElement!, null);
@@ -505,14 +519,14 @@ export function useSelectableCollection(
           shouldVirtualFocusFirst.current = false;
         }
       } else {
-        manager.setFocusedKey(keyToFocus);
+        manager.setFocusedKey(firstKey);
         // Only set shouldVirtualFocusFirst to false if we've successfully set the first key as the focused key
         // If there wasn't a key to focus, we might be in a temporary loading state so we'll want to still focus the first key
         // after the collection updates after load
         shouldVirtualFocusFirst.current = false;
       }
     }
-  }, [manager.collection]);
+  }, [firstKey, manager.collection.size]);
 
   // reset focus first flag
   useUpdateLayoutEffect(() => {

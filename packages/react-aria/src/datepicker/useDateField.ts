@@ -28,7 +28,6 @@ import intlMessages from '../../intl/datepicker/*.json';
 import {mergeProps} from '../utils/mergeProps';
 import {TimeFieldState, TimePickerProps, TimeValue} from 'react-stately/useTimeFieldState';
 import {useDatePickerGroup} from './useDatePickerGroup';
-// @ts-ignore
 import {useDescription} from '../utils/useDescription';
 import {useField} from '../label/useField';
 import {useFocusWithin} from '../interactions/useFocusWithin';

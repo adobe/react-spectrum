@@ -34,6 +34,7 @@ If the user does not specify which component they would like to use, choose one 
 
 ## Text and value input
 
+- Use `LabeledValue` to display a non-editable value with a label (string, number, date, time, range, or list of strings) — prefer it over a disabled `TextField` or hand-rolled label-plus-text markup. It applies locale-aware formatting to numbers, dates, and times via `formatOptions`.
 - Use `TextField` for single-line plain text input.
 - Use `SearchField` for a search query with search-specific clear and submit behavior.
 - Use `TextArea` for multi-line text.

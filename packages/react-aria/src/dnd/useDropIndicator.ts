@@ -15,7 +15,6 @@ import {DroppableCollectionState} from 'react-stately/useDroppableCollectionStat
 import {DropTarget, FocusableElement, Key, RefObject} from '@react-types/shared';
 import {getDroppableCollectionId} from './utils';
 import {HTMLAttributes} from 'react';
-// @ts-ignore
 import intlMessages from '../../intl/dnd/*.json';
 import {useDroppableItem} from './useDroppableItem';
 import {useId} from '../utils/useId';

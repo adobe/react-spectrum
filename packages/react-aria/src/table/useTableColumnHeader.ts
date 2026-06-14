@@ -13,7 +13,6 @@
 import {DOMAttributes, FocusableElement, RefObject} from '@react-types/shared';
 import {getColumnHeaderId} from './utils';
 import {GridNode} from 'react-stately/private/grid/GridCollection';
-// @ts-ignore
 import intlMessages from '../../intl/table/*.json';
 import {isAndroid} from '../utils/platform';
 import {mergeProps} from '../utils/mergeProps';

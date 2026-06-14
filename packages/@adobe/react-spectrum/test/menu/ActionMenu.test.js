@@ -133,7 +133,7 @@ describe('ActionMenu', function () {
     act(() => {
       jest.runAllTimers();
     });
-    expect(onOpenChange).toBeCalledTimes(0);
+    expect(onOpenChange).toHaveBeenCalledTimes(0);
 
     let menu = tree.getByRole('menu');
     expect(menu).toBeTruthy();
@@ -146,7 +146,7 @@ describe('ActionMenu', function () {
 
     menu = tree.getByRole('menu');
     expect(menu).toBeTruthy();
-    expect(onOpenChange).toBeCalledTimes(1);
+    expect(onOpenChange).toHaveBeenCalledTimes(1);
     expect(triggerButton).toHaveAttribute('aria-expanded', 'true');
   });
 
@@ -164,7 +164,7 @@ describe('ActionMenu', function () {
     act(() => {
       jest.runAllTimers();
     });
-    expect(onOpenChange).toBeCalledTimes(0);
+    expect(onOpenChange).toHaveBeenCalledTimes(0);
 
     let menu = tree.getByRole('menu');
     expect(menu).toBeTruthy();
@@ -176,7 +176,7 @@ describe('ActionMenu', function () {
     });
 
     expect(menu).not.toBeInTheDocument();
-    expect(onOpenChange).toBeCalledTimes(1);
+    expect(onOpenChange).toHaveBeenCalledTimes(1);
     expect(triggerButton).toHaveAttribute('aria-expanded', 'false');
   });
 

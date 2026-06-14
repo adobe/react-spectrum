@@ -1,7 +1,6 @@
 import {AriaCheckboxProps} from '../checkbox/useCheckbox';
 import {IGridCollection as GridCollection} from 'react-stately/private/grid/GridCollection';
 import {GridState} from 'react-stately/private/grid/useGridState';
-// @ts-ignore
 import intlMessages from '../../intl/grid/*.json';
 import {Key} from '@react-types/shared';
 import {useId} from '../utils/useId';

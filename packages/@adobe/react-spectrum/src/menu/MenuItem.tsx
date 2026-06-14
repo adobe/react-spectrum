@@ -19,7 +19,6 @@ import {DOMAttributes, Node} from '@react-types/shared';
 import {FocusRing} from 'react-aria/FocusRing';
 import {Grid} from '../layout/Grid';
 import InfoOutline from '@spectrum-icons/workflow/InfoOutline';
-// @ts-ignore
 import intlMessages from '../../intl/menu/*.json';
 import {mergeRefs} from 'react-aria/mergeRefs';
 import React, {JSX, useMemo, useRef} from 'react';

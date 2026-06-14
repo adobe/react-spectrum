@@ -35,7 +35,6 @@ import {useFocusRing} from 'react-aria/useFocusRing';
 import {useHover} from 'react-aria/useHover';
 import {useLabels} from 'react-aria/private/utils/useLabels';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
-// @ts-ignore
 import {useObjectRef} from 'react-aria/useObjectRef';
 import {useSlotId} from 'react-aria/private/utils/useId';
 import {VisuallyHidden} from 'react-aria/VisuallyHidden';

@@ -388,16 +388,16 @@ function Example(props) {
 
 ## Drag and drop
 
-TreeView supports drag and drop interactions when the `dragAndDropHooks` prop is provided using the <TypeLink links={docs.links} type={docs.exports.useDragAndDrop} /> hook. Users can drop data on the tree as a whole, on individual items, insert new items between existing ones, or reorder items. The insertion indicator is level-aware, so drop positions reflect the target item's nesting depth. React Aria supports drag and drop via mouse, touch, keyboard, and screen reader interactions. See the [drag and drop guide](../react-aria/dnd?component=Tree) to learn more.
+TreeView supports drag and drop interactions when the `dragAndDropHooks` prop is provided using the <TypeLink links={docs.links} type={docs.exports.useDragAndDrop} /> hook. Users can drop data on the tree as a whole, on individual items, insert new items between existing ones, or reorder items. React Spectrum supports drag and drop via mouse, touch, keyboard, and screen reader interactions. See the [drag and drop guide](dnd?component=TreeView) to learn more.
 
 You can customize the drag preview by passing <TypeLink links={docs.links} type={docs.exports.DragPreview} /> or your own custom drag preview element to `useDragAndDrop`'s `renderDragPreview`. `DragPreview` supports leading icons and `Text` with `label` and `description` slots.
 
 ```tsx render type="s2"
 "use client";
 import {Text} from '@react-spectrum/s2';
-import {TreeView, TreeViewItem, TreeViewItemContent, DragPreview} from '@react-spectrum/s2/TreeView';
+import {TreeView, TreeViewItem, TreeViewItemContent} from '@react-spectrum/s2/TreeView';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
-import {useDragAndDrop} from '@react-spectrum/s2/useDragAndDrop';
+import {DragPreview, useDragAndDrop} from '@react-spectrum/s2/useDragAndDrop';
 import {useTreeData} from '@react-spectrum/s2/useTreeData';
 import {Collection} from '@react-spectrum/s2';
 import Folder from '@react-spectrum/s2/icons/Folder';
