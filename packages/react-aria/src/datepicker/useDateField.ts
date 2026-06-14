@@ -16,7 +16,6 @@ import {
   DOMProps,
   GroupDOMAttributes,
   InputDOMProps,
-  KeyboardEvent,
   RefObject,
   ValidationResult
 } from '@react-types/shared';
@@ -214,16 +213,8 @@ export function useDateField<T extends DateValue>(
       }
     },
     fieldProps: mergeProps(domProps, fieldDOMProps, groupProps, focusWithinProps, {
-      onKeyDown(e: KeyboardEvent) {
-        if (props.onKeyDown) {
-          props.onKeyDown(e);
-        }
-      },
-      onKeyUp(e: KeyboardEvent) {
-        if (props.onKeyUp) {
-          props.onKeyUp(e);
-        }
-      },
+      onKeyDown: props.onKeyDown,
+      onKeyUp: props.onKeyUp,
       style: {
         unicodeBidi: 'isolate'
       }
