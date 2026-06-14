@@ -235,15 +235,19 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(
       },
       ArrowDown: () => {
         state.open('first', 'manual');
+        return {shouldPreventDefault: false};
       },
       ArrowUp: () => {
         state.open('last', 'manual');
+        return {shouldPreventDefault: false};
       },
       ArrowLeft: () => {
         state.selectionManager.setFocusedKey(null);
+        return {shouldPreventDefault: false};
       },
       ArrowRight: () => {
         state.selectionManager.setFocusedKey(null);
+        return {shouldPreventDefault: false};
       }
     }
   });
