@@ -63,6 +63,7 @@ export function useTypeSelect(options: AriaTypeSelectOptions): TypeSelectAria {
       !character ||
       e.ctrlKey ||
       e.metaKey ||
+      e.altKey ||
       !nodeContains(e.currentTarget, getEventTarget(e) as HTMLElement) ||
       (state.search.length === 0 && character === ' ')
     ) {
