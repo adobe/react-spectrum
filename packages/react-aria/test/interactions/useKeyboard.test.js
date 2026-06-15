@@ -113,6 +113,37 @@ describe('useKeyboard', function () {
       let {keyboardProps} = useKeyboard(props);
       return <button {...keyboardProps}>Save</button>;
     };
+
+    it('should respect previous called properties', async () => {
+      let Component = () => {
+        let {keyboardProps} = useKeyboard({
+          shortcuts: {
+            ArrowLeft: () => {
+              return {shouldContinuePropagation: false};
+            }
+          }
+        });
+        let {keyboardProps: keyboardProps2} = useKeyboard({
+          shortcuts: {
+            Enter: () => {
+              return;
+            }
+          },
+          ...keyboardProps
+        });
+        return <button {...keyboardProps2}>Save</button>;
+      };
+      let onKeyDown = jest.fn();
+      render(
+        <div onKeyDown={onKeyDown}>
+          <Component />
+        </div>
+      );
+      await user.tab();
+      await user.keyboard('{ArrowLeft}');
+      expect(onKeyDown).not.toHaveBeenCalled();
+    });
+
     describe('Mac (Mod = Meta)', () => {
       beforeEach(() => {
         platformMock = jest

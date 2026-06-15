@@ -23,12 +23,14 @@ export function useDatePickerGroup(
       'Alt+ArrowDown': () => {
         if ('setOpen' in state) {
           state.setOpen(true);
+          return;
         }
         return false;
       },
       'Alt+ArrowUp': () => {
         if ('setOpen' in state) {
           state.setOpen(true);
+          return;
         }
         return false;
       },

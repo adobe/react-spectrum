@@ -225,7 +225,7 @@ export function useSelectableCollection(
       }
       if (nextKey != null) {
         navigateToKey(e, nextKey);
-        return {shouldPreventDefault: true, shouldContinuePropagation: true};
+        return;
       }
     }
     return false;
@@ -242,7 +242,7 @@ export function useSelectableCollection(
       }
       if (nextKey != null) {
         navigateToKey(e, nextKey);
-        return {shouldPreventDefault: true, shouldContinuePropagation: true};
+        return;
       }
     }
     return false;
@@ -283,7 +283,7 @@ export function useSelectableCollection(
       }
       if (nextKey != null) {
         navigateToKey(e, nextKey, direction === 'rtl' ? 'first' : 'last');
-        return {shouldPreventDefault: true, shouldContinuePropagation: true};
+        return;
       }
     }
     return false;
@@ -303,7 +303,7 @@ export function useSelectableCollection(
       }
       if (nextKey != null) {
         navigateToKey(e, nextKey, direction === 'rtl' ? 'last' : 'first');
-        return {shouldPreventDefault: true, shouldContinuePropagation: true};
+        return;
       }
     }
     return false;

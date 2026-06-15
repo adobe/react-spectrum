@@ -263,6 +263,7 @@ export function useNumberField(
           commit();
         });
         commitValidation();
+        return {shouldPreventDefault: false};
       }
     },
     onKeyDown,
