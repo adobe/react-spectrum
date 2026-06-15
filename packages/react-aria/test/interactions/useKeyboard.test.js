@@ -164,7 +164,10 @@ describe('useKeyboard', function () {
           });
           return <button {...keyboardProps2}>Save</button>;
         };
-        let onKeyDown = jest.fn();
+        let key;
+        let onKeyDown = jest.fn(e => {
+          key = e.key;
+        });
         render(
           <div onKeyDown={onKeyDown}>
             <Component />
@@ -173,7 +176,7 @@ describe('useKeyboard', function () {
         await user.tab();
         await user.keyboard('{ArrowLeft}');
         expect(onKeyDown).toHaveBeenCalledTimes(1);
-        expect(onKeyDown).toHaveBeenCalledWith(expect.objectContaining({key: 'ArrowLeft'}));
+        expect(key).toBe('ArrowLeft');
       });
 
       it('should stop propagation if any shortcut stops propagation', async () => {
@@ -225,7 +228,10 @@ describe('useKeyboard', function () {
           });
           return <button {...keyboardProps2}>Save</button>;
         };
-        let onKeyDown = jest.fn();
+        let key;
+        let onKeyDown = jest.fn(e => {
+          key = e.key;
+        });
         render(
           <div onKeyDown={onKeyDown}>
             <Component />
@@ -234,7 +240,7 @@ describe('useKeyboard', function () {
         await user.tab();
         await user.keyboard('{ArrowLeft}');
         expect(onKeyDown).toHaveBeenCalledTimes(1);
-        expect(onKeyDown).toHaveBeenCalledWith(expect.objectContaining({key: 'ArrowLeft'}));
+        expect(key).toBe('ArrowLeft');
       });
     });
 
