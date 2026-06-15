@@ -91,7 +91,7 @@ const ThreadScrollButtonContext = createContext<ThreadScrollButtonContextValue>(
 });
 
 // TODO: make this more RAC like (aka default class name and other RAC prop)
-interface ChatProps {
+export interface ChatProps {
   className?: string;
   style?: CSSProperties;
   children?: ReactNode;
@@ -198,7 +198,7 @@ export const Chat = /*#__PURE__*/ (forwardRef as forwardRefType)(function Chat(
 });
 
 // TODO: update the items/className/children/etc type to reflect a thread specific classname once we finalize API
-interface ThreadProps<T extends object> extends Pick<
+export interface ThreadProps<T extends object> extends Pick<
   GridListProps<T>,
   'items' | 'children' | 'UNSTABLE_focusOnEntry' | 'aria-label' | 'aria-labelledby' | 'className'
 > {}
