@@ -105,13 +105,7 @@ export interface MenuProps<T>
   extends
     Omit<
       AriaMenuProps<T>,
-      | 'children'
-      | 'style'
-      | 'className'
-      | 'render'
-      | 'dependencies'
-      | 'renderEmptyState'
-      | keyof GlobalDOMAttributes
+      'children' | 'style' | 'className' | 'render' | 'renderEmptyState' | keyof GlobalDOMAttributes
     >,
     StyleProps {
   /**

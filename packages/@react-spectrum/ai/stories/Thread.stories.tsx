@@ -12,27 +12,13 @@
 
 import {ActionButton} from '@react-spectrum/s2/ActionButton';
 import {ActionMenu} from '@react-spectrum/s2/ActionMenu';
-import {AssetCard, Card, CardPreview} from '@react-spectrum/s2/Card';
-import {baseColor, focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
-import {Button} from '@react-spectrum/s2/Button';
-import {
-  ButtonContext,
-  GridList,
-  Group,
-  isFileDropItem,
-  Label,
-  Tag,
-  TagGroup,
-  TagList,
-  TextArea,
-  TextField,
-  useDrop
-} from 'react-aria-components';
+import {AssetCard, CardPreview} from '@react-spectrum/s2/Card';
+import {categorizeArgTypes} from '../../s2/stories/utils';
 import ChevronDown from '@react-spectrum/s2/icons/ChevronDown';
-import {CloseButton} from '@react-spectrum/s2/CloseButton';
 import {Content} from '@react-spectrum/s2/Content';
+import {focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {GridList} from 'react-aria-components';
 import {Image} from '@react-spectrum/s2/Image';
-import {Link} from '@react-spectrum/s2/Link';
 import {ListLayout} from 'react-stately/useVirtualizerState';
 import {MenuItem} from '@react-spectrum/s2/Menu';
 import {
@@ -40,6 +26,9 @@ import {
   MessageSource,
   MessageSuggestion,
   MessageSuggestionList,
+  PromptField,
+  PromptFieldSubmitButton,
+  PromptTokenField,
   ResponseStatus,
   ResponseStatusPanel,
   ResponseStatusTitle,
@@ -49,14 +38,15 @@ import {
   ThreadItem,
   ThreadList,
   ThreadScrollButton,
+  TokenSegmentList,
   UserMessage
 } from '@react-spectrum/ai';
 import type {Meta} from '@storybook/react';
-import Plus from '@react-spectrum/s2/icons/Add';
 import {ReactNode, useRef, useState} from 'react';
-import Send from '@react-spectrum/s2/icons/ArrowUpSend';
 import {Text} from '@react-spectrum/s2/Text';
 import {Virtualizer} from 'react-aria-components/Virtualizer';
+
+const events: string[] = [];
 
 const meta: Meta<typeof Thread> = {
   component: Thread,
@@ -64,6 +54,10 @@ const meta: Meta<typeof Thread> = {
     layout: 'centered'
   },
   tags: ['autodocs'],
+  argTypes: {
+    ...categorizeArgTypes('Events', events),
+    children: {table: {disable: true}}
+  },
   title: 'AI/Thread',
   decorators: [
     Story => (
@@ -167,18 +161,16 @@ export function StreamingThread() {
     initialResponses as StreamingMessage[]
   );
   let nextId = useRef(initialResponses.length);
-  let lastMessage = messages.at(-1);
-  let isDisabled =
-    (lastMessage?.type === 'status' && lastMessage.isStreaming) ||
-    (lastMessage?.type === 'system' && lastMessage.isStreaming);
+  let [isGenerating, setGenerating] = useState(false);
+  let timeouts = useRef<NodeJS.Timeout[]>([]);
 
-  function handleSend(text: string) {
-    if (!text.trim()) {
-      return;
-    }
-
+  function handleSend(prompt: TokenSegmentList) {
+    setGenerating(true);
     // user message added first so its announcement plays before
-    setMessages(prev => [...prev, {id: nextId.current++, type: 'user', content: text}]);
+    setMessages(prev => [
+      ...prev,
+      {id: nextId.current++, type: 'user', content: prompt.toString()}
+    ]);
 
     function addTool(label: string, replaceStatus = false) {
       setMessages(prev =>
@@ -241,13 +233,19 @@ export function StreamingThread() {
       });
     }
 
+    let addTimeout = (callback: () => void, delay: number) => {
+      let timeout = setTimeout(callback, delay);
+      timeouts.current.push(timeout);
+      return timeout;
+    };
+
     // TODO: these durations are quite generous in order to accomodate for announcements, but realistically it might be
     // faster and thus the announcements will get cut off even with polite...
     // first batch, does tool calls with text response
     let timestamp = 0;
     let toolCallDuration = 4000;
     // Status added after short delay so user message announcement plays first
-    setTimeout(
+    addTimeout(
       () => {
         setMessages(prev => [
           ...prev,
@@ -262,25 +260,25 @@ export function StreamingThread() {
       },
       (timestamp += 1000)
     );
-    setTimeout(() => addTool('Thinking', true), (timestamp += 1000));
-    setTimeout(
+    addTimeout(() => addTool('Thinking', true), (timestamp += 1000));
+    addTimeout(
       () =>
         completeTool(
           'Reviewed conversation context and identified the user is searching for Hilton brand assets.'
         ),
       (timestamp += toolCallDuration)
     );
-    setTimeout(() => addTool('Loading tool'), (timestamp += 1000));
-    setTimeout(
+    addTimeout(() => addTool('Loading tool'), (timestamp += 1000));
+    addTimeout(
       () => completeTool('Asset search tool loaded with access to the Hilton brand library.'),
       (timestamp += toolCallDuration)
     );
-    setTimeout(() => addTool('Searching'), (timestamp += 1000));
-    setTimeout(
+    addTimeout(() => addTool('Searching'), (timestamp += 1000));
+    addTimeout(
       () => completeTool('Found 15 assets matching the brand criteria across 3 campaigns.'),
       (timestamp += toolCallDuration)
     );
-    setTimeout(
+    addTimeout(
       () =>
         streamText(
           'I found some relevant assets that match your request. Let me pull up the details.'
@@ -289,21 +287,21 @@ export function StreamingThread() {
     );
 
     // then does searching, streaming more text, returning a card and sources
-    setTimeout(() => addTool('Searching'), (timestamp += 4000));
-    setTimeout(
+    addTimeout(() => addTool('Searching'), (timestamp += 4000));
+    addTimeout(
       () =>
         completeTool('Identified additional brand materials related to the presentation context.'),
       (timestamp += toolCallDuration)
     );
-    setTimeout(() => addTool('Querying database'), (timestamp += 1000));
-    setTimeout(
+    addTimeout(() => addTool('Querying database'), (timestamp += 1000));
+    addTimeout(
       () =>
         completeTool(
           'Retrieved asset records including metadata, previews, and usage rights for 12 items.'
         ),
       (timestamp += toolCallDuration)
     );
-    setTimeout(
+    addTimeout(
       () =>
         setMessages(prev => [
           ...prev,
@@ -317,7 +315,7 @@ export function StreamingThread() {
         ]),
       (timestamp += 500)
     );
-    setTimeout(
+    addTimeout(
       () =>
         setMessages(prev => [
           ...prev.slice(0, -1),
@@ -332,7 +330,7 @@ export function StreamingThread() {
         ]),
       (timestamp += 2000)
     );
-    setTimeout(
+    addTimeout(
       () =>
         streamText(
           'Based on the assets you shared, I recommend focusing on the narrative arc first, then ' +
@@ -344,10 +342,10 @@ export function StreamingThread() {
     );
 
     let streamEndTimestamp = timestamp + 8000;
-    setTimeout(() => {
+    addTimeout(() => {
       setMessages(prev => [...prev, {id: nextId.current++, type: 'card', ...MOCK_CARD}]);
     }, streamEndTimestamp);
-    setTimeout(() => {
+    addTimeout(() => {
       setMessages(prev => [
         ...prev,
         {
@@ -357,6 +355,7 @@ export function StreamingThread() {
           suggestions: MOCK_SUGGESTIONS
         }
       ]);
+      setGenerating(false);
     }, streamEndTimestamp + 1000);
   }
 
@@ -494,7 +493,19 @@ export function StreamingThread() {
             }}
           </ThreadList>
         </div>
-        <PromptField onSend={handleSend} isDisabled={!!isDisabled} />
+        <PromptField
+          onSubmit={handleSend}
+          isGenerating={isGenerating}
+          onStop={() => {
+            setGenerating(false);
+            timeouts.current.forEach(clearTimeout);
+            timeouts.current = [];
+          }}>
+          <div className={style({display: 'flex', gap: 16, alignItems: 'center'})}>
+            <PromptTokenField />
+            <PromptFieldSubmitButton />
+          </div>
+        </PromptField>
       </Thread>
     </div>
   );
@@ -506,13 +517,10 @@ export function VirtualizedThread() {
   let nextId = useRef(initialResponses.length);
   let lastMessage = messages.at(-1);
   let isPending = lastMessage?.type === 'status' && lastMessage.status === 'pending';
-  function handleSend(text: string) {
-    if (!text.trim()) {
-      return;
-    }
+  function handleSend(prompt: TokenSegmentList) {
     setMessages(prev => [
       ...prev,
-      {id: nextId.current++, type: 'user', content: text},
+      {id: nextId.current++, type: 'user', content: prompt.toString()},
       {id: nextId.current++, type: 'status', status: 'pending'}
     ]);
     setTimeout(() => {
@@ -586,210 +594,13 @@ export function VirtualizedThread() {
           }}
         </GridList>
       </Virtualizer>
-      <PromptField onSend={handleSend} isDisabled={isPending} />
-    </div>
-  );
-}
-
-// TODO: all of the below was copied from rsp-prototypes, just filler for now
-// some modifications for streaming and what not
-function PromptField({
-  onSend,
-  isDisabled
-}: {
-  onSend?: (text: string) => void;
-  isDisabled?: boolean;
-}) {
-  let [text, setText] = useState('');
-  let [attachments, setAttachments] = useState([
-    {
-      image: 'https://react-spectrum.adobe.com/preview.c3b340d3.png',
-      title: 'Hilton assets',
-      description: '2026'
-    }
-  ]);
-
-  // Not using RAC DropZone because it adds its own focusable button,
-  // and we want to avoid an extra tab stop by attaching to the input.
-  // TODO: support clipboard too (without messing up pasting text)
-  let inputRef = useRef<HTMLTextAreaElement>(null);
-  let {dropProps, dropButtonProps, isDropTarget} = useDrop({
-    ref: inputRef,
-    hasDropButton: true,
-    async onDrop(e) {
-      let files = await Promise.all(
-        e.items.filter(isFileDropItem).map(async item => ({
-          image: item.type.startsWith('image/') ? URL.createObjectURL(await item.getFile()) : '',
-          title: item.name,
-          description: item.type
-        }))
-      );
-      setAttachments(attachments => [...attachments, ...files]);
-    }
-  });
-
-  return (
-    <div>
-      <Group
-        {...dropProps}
-        role="group"
-        className={renderProps =>
-          style({
-            ...focusRing(),
-            padding: 16,
-            boxShadow: 'emphasized',
-            backgroundColor: {
-              default: 'elevated',
-              isDropTarget: 'blue-200'
-            },
-            borderRadius: 'lg',
-            borderWidth: 2,
-            borderStyle: 'solid',
-            borderColor: {
-              default: 'transparent',
-              isFocusWithin: 'gray-900',
-              isDropTarget: 'blue-800'
-            }
-          })({...renderProps, isDropTarget})
-        }>
-        <AttachmentList>
-          {attachments.map((attachment, i) => (
-            <Attachment
-              {...attachment}
-              key={i}
-              id={i}
-              onRemove={() => {
-                setAttachments(attachments.slice(0, i).concat(attachments.slice(i + 1)));
-              }}
-            />
-          ))}
-        </AttachmentList>
-        <TextField value={text} onChange={value => setText(value)} slot="prompt">
-          <Label
-            className={style({
-              display: 'block',
-              font: 'ui',
-              color: 'neutral-subdued',
-              marginBottom: 4
-            })}>
-            Prompt
-          </Label>
-          <TextArea
-            {...dropButtonProps}
-            ref={inputRef}
-            placeholder="Ready to get started? Ask a question, share an idea, or add a task."
-            style={{resize: 'none'}}
-            className={style({
-              font: 'ui',
-              color: {
-                default: baseColor('neutral'),
-                '::placeholder': {
-                  default: 'gray-600',
-                  forcedColors: 'GrayText'
-                }
-              },
-              padding: 0,
-              backgroundColor: 'transparent',
-              width: 'full',
-              outlineStyle: 'none',
-              borderStyle: 'none'
-            })}
-          />
-        </TextField>
-        <div
-          className={style({
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginTop: 16
-          })}>
-          <ActionButton isQuiet aria-label="Add">
-            <Plus />
-          </ActionButton>
-          <Button
-            variant="accent"
-            aria-label="Send"
-            isDisabled={isDisabled}
-            onPress={() => {
-              onSend?.(text);
-              setText('');
-              inputRef.current?.focus();
-            }}>
-            <Send />
-          </Button>
+      <PromptField onSubmit={handleSend} isGenerating={isPending}>
+        <div className={style({display: 'flex', gap: 16, alignItems: 'center'})}>
+          <PromptTokenField />
+          <PromptFieldSubmitButton />
         </div>
-      </Group>
-      <p className={style({font: 'ui-sm', textAlign: 'center'})}>
-        Responses are generated using AI, and may be inaccurate. Check before using.{' '}
-        <Link
-          variant="secondary"
-          href="https://www.adobe.com/legal/licenses-terms/adobe-gen-ai-user-guidelines.html"
-          target="_blank">
-          AI User Guidelines
-        </Link>
-      </p>
+      </PromptField>
     </div>
-  );
-}
-
-function AttachmentList({children}: {children: ReactNode}) {
-  return (
-    <TagGroup aria-label="Attachments">
-      <TagList
-        className={style({
-          display: 'flex',
-          gap: 16,
-          flexWrap: 'wrap',
-          marginBottom: 16
-        })}>
-        {children}
-      </TagList>
-    </TagGroup>
-  );
-}
-
-function Attachment({
-  id,
-  image,
-  title,
-  description,
-  onRemove
-}: {
-  id: number;
-  image: string;
-  title: string;
-  description: string;
-  onRemove: () => void;
-}) {
-  return (
-    <Tag id={id} textValue={title} className={style({...focusRing(), borderRadius: 'default'})}>
-      {/* TODO: support rendering cards as tags/gridlist items directly */}
-      <Card variant="secondary">
-        {/* TODO: horizontal cards */}
-        <div
-          className={style({display: 'flex', flexDirection: 'row', gap: 16, alignItems: 'center'})}>
-          {image && (
-            <Image
-              src={image}
-              styles={style({borderRadius: 'default', objectFit: 'cover', height: 50, width: 50})}
-            />
-          )}
-          <Content styles={style({padding: 0})}>
-            <Text slot="title">{title}</Text>
-            <Text slot="description">{description}</Text>
-          </Content>
-          {/* TODO: allow overriding slot in CloseButton */}
-          <ButtonContext value={null}>
-            <CloseButton
-              size="S"
-              aria-label="Remove attachment"
-              onPress={onRemove}
-              styles={style({alignSelf: 'start', marginTop: -12, marginEnd: -12})}
-            />
-          </ButtonContext>
-        </div>
-      </Card>
-    </Tag>
   );
 }
 

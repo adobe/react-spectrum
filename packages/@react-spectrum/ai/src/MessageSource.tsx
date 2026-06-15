@@ -10,7 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMProps, DOMRef, forwardRefType} from '@react-types/shared';
+import {
+  AriaLabelingProps,
+  DOMProps,
+  DOMRef,
+  forwardRefType,
+  GlobalDOMAttributes
+} from '@react-types/shared';
 import {baseColor, focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {
   Disclosure,
@@ -140,7 +146,8 @@ const linkStyles = style({
   disableTapHighlight: true
 });
 
-export interface SourceListItemProps extends Omit<LinkProps, 'className' | 'style'>, DOMProps {
+export interface SourceListItemProps
+  extends Omit<LinkProps, 'className' | 'style' | keyof GlobalDOMAttributes>, DOMProps {
   /** The content of the source list item. */
   children: React.ReactNode;
   /**
@@ -164,7 +171,7 @@ export const SourceListItem = (forwardRef as forwardRefType)(function SourceList
 
   return (
     <li ref={itemRef} className={mergeStyles(itemStyles, props.styles)}>
-      <NumberBadge value={index} />
+      <NumberBadge value={index} size={size} />
       <Link {...otherProps} className={renderProps => linkStyles({size, ...renderProps})}>
         {children}
       </Link>
@@ -245,7 +252,7 @@ export const NumberBadge = forwardRef(function NumberBadge(
   props: NumberBadgeProps,
   ref: DOMRef<HTMLSpanElement>
 ) {
-  let {size = 'S', value, ...otherProps} = props;
+  let {size = 'M', value, ...otherProps} = props;
   let domRef = useDOMRef(ref);
   let {locale} = useLocale();
   let formattedValue = '';

@@ -193,8 +193,7 @@ let card = style({
         XL: 80
       }
     },
-    isCardView: 'full',
-    [onlyPreview]: 68
+    isCardView: 'full'
   },
   width: {
     default: 'full',

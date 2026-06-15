@@ -10,26 +10,27 @@
  * governing permissions and limitations under the License.
  */
 
-import {
-  Attachment as AttachmentComponent,
-  AttachmentList,
-  type AttachmentListProps
-} from '@react-spectrum/ai';
+import {Attachment as AttachmentComponent, AttachmentList} from '../src/AttachmentList';
+import {categorizeArgTypes, getActionArgs} from '../../s2/stories/utils';
 import {Content} from '@react-spectrum/s2/Content';
 import {Image} from '@react-spectrum/s2/Image';
 import type {Meta, StoryObj} from '@storybook/react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Text} from '@react-spectrum/s2/Text';
 
-const meta: Meta<AttachmentListProps> = {
+const events = ['onRemove'];
+
+const meta: Meta<typeof AttachmentList> = {
   component: AttachmentList,
   parameters: {
     layout: 'centered'
   },
   tags: ['autodocs'],
   argTypes: {
+    ...categorizeArgTypes('Events', events),
     children: {table: {disable: true}}
   },
+  args: {...getActionArgs(events)},
   title: 'AI/AttachmentList'
 };
 

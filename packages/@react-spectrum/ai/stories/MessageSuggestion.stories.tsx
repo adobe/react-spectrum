@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {getActionArgs} from '../../s2/stories/utils';
+import {categorizeArgTypes, getActionArgs} from '../../s2/stories/utils';
 import {MessageSuggestion, MessageSuggestionList} from '@react-spectrum/ai';
 import type {Meta, StoryObj} from '@storybook/react';
 
@@ -22,6 +22,9 @@ const meta: Meta<typeof MessageSuggestionList> = {
     layout: 'centered'
   },
   tags: ['autodocs'],
+  argTypes: {
+    ...categorizeArgTypes('Events', events)
+  },
   args: {
     ...getActionArgs(events)
   },

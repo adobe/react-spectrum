@@ -10,11 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMProps, DOMRef} from '@react-types/shared';
+import {AriaLabelingProps, DOMProps, DOMRef, GlobalDOMAttributes} from '@react-types/shared';
 import ArrowCurved from '@react-spectrum/s2/icons/ArrowCurved';
+import {
+  baseColor,
+  centerPadding,
+  focusRing,
+  style
+} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {ButtonProps, Button as RACButton} from 'react-aria-components/Button';
 import {CenterBaseline} from '@react-spectrum/s2/CenterBaseline';
-import {centerPadding, focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {createContext, forwardRef, ReactNode, useContext} from 'react';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {IconContext} from '@react-spectrum/s2/Icon';
@@ -37,7 +42,7 @@ const controlSizeM = {
 
 export interface MessageSuggestionProps extends Omit<
   ButtonProps,
-  'style' | 'className' | 'isPending' | 'isDisabled'
+  'style' | 'className' | 'isPending' | 'isDisabled' | keyof GlobalDOMAttributes
 > {
   /** The text content of the suggestion. */
   children: ReactNode;
@@ -79,14 +84,11 @@ const suggestionStyles = style<{
       XL: 'body-xl'
     }
   },
-  backgroundColor: {
-    default: 'gray-100',
-    isHovered: 'gray-200',
-    isPressed: 'gray-300'
-  },
+  backgroundColor: baseColor('gray-100'),
   color: 'neutral',
   borderStyle: 'none',
   disableTapHighlight: true,
+  transition: 'default',
   ...focusRing()
 });
 

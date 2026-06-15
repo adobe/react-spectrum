@@ -11,12 +11,15 @@
  */
 
 import {CardPreview, HorizontalCard, type HorizontalCardProps} from '@react-spectrum/ai';
+import {categorizeArgTypes, getActionArgs} from '../../s2/stories/utils';
 import {Content} from '@react-spectrum/s2/Content';
 import {Image} from '@react-spectrum/s2/Image';
 import type {Meta, StoryObj} from '@storybook/react';
 import {Skeleton} from '@react-spectrum/s2/Skeleton';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Text} from '@react-spectrum/s2/Text';
+
+const events = ['onAction'];
 
 const meta: Meta<HorizontalCardProps & {isLoading?: boolean}> = {
   component: HorizontalCard,
@@ -25,9 +28,11 @@ const meta: Meta<HorizontalCardProps & {isLoading?: boolean}> = {
   },
   tags: ['autodocs'],
   args: {
-    isLoading: false
+    isLoading: false,
+    ...getActionArgs(events)
   },
   argTypes: {
+    ...categorizeArgTypes('Events', events),
     href: {table: {disable: true}},
     download: {table: {disable: true}},
     hrefLang: {table: {disable: true}},
@@ -38,7 +43,7 @@ const meta: Meta<HorizontalCardProps & {isLoading?: boolean}> = {
     target: {table: {disable: true}},
     value: {table: {disable: true}},
     textValue: {table: {disable: true}},
-    onAction: {table: {disable: true}},
+    onAction: {table: {disable: true, category: 'Events'}},
     isDisabled: {table: {disable: true}},
     children: {table: {disable: true}}
   },

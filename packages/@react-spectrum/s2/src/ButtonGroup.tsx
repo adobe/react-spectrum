@@ -65,6 +65,7 @@ const buttongroup = style<ButtonGroupStyleProps>(
   {
     display: 'inline-flex',
     position: 'relative',
+    maxWidth: 'full',
     gap: {
       size: {
         S: 8,
