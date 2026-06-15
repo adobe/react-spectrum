@@ -12,7 +12,6 @@
 
 import {describe, expect, it} from 'vitest';
 import React from 'react';
-import {REACT_VERSION} from 'react-dom/client';
 import {render} from 'vitest-browser-react';
 import {Thread, ThreadItem, ThreadList} from '@react-spectrum/ai';
 import {userEvent} from 'vitest/browser';
@@ -23,7 +22,7 @@ interface Message {
 }
 
 // Conditionally skip the suite
-const describeOrSkip = parseInt(REACT_VERSION, 10) < 19 ? describe.skip : describe;
+const describeOrSkip = parseInt(React.version, 10) < 19 ? describe.skip : describe;
 describeOrSkip('Thread browser', () => {
   describe('spatial navigation', () => {
     // This test is flaky in Firefox. Skipping for now.

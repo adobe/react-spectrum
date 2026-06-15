@@ -13,11 +13,10 @@
 import {MessageFeedback} from '@react-spectrum/ai';
 import {pointerMap, render} from '@react-spectrum/test-utils-internal';
 import React, {useState} from 'react';
-import {REACT_VERSION} from 'react-dom/client';
 import userEvent from '@testing-library/user-event';
 
 // Conditionally skip the suite
-const describeOrSkip = parseInt(REACT_VERSION, 10) < 19 ? describe.skip : describe;
+const describeOrSkip = parseInt(React.version, 10) < 19 ? describe.skip : describe;
 describeOrSkip('MessageFeedback', () => {
   let user;
   beforeAll(() => {

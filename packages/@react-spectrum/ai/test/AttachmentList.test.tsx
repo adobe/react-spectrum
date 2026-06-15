@@ -12,11 +12,11 @@
 
 import {Attachment, AttachmentList} from '@react-spectrum/ai';
 import {Image} from '@react-spectrum/s2/Image';
-import {REACT_VERSION} from 'react-dom/client';
+import React from 'react';
 import {render} from '@react-spectrum/test-utils-internal';
 
 // Conditionally skip the suite
-const describeOrSkip = parseInt(REACT_VERSION, 10) < 19 ? describe.skip : describe;
+const describeOrSkip = parseInt(React.version, 10) < 19 ? describe.skip : describe;
 describeOrSkip('AttachmentList', () => {
   it('should render', () => {
     let {getByRole} = render(

@@ -11,7 +11,7 @@
  */
 
 import {Direction, Position, TokenFieldSegment, TokenSegmentList} from '../src/TokenSegmentList';
-import {REACT_VERSION} from 'react-dom/client';
+import React from 'react';
 
 function text(s: string): TokenFieldSegment {
   return {type: 'text', text: s};
@@ -100,7 +100,7 @@ function replaceSegWithRegex(
 }
 
 // Conditionally skip the suite
-const describeOrSkip = parseInt(REACT_VERSION, 10) < 19 ? describe.skip : describe;
+const describeOrSkip = parseInt(React.version, 10) < 19 ? describe.skip : describe;
 describeOrSkip('TokenSegmentList', () => {
   let graphemeSegmenter: Intl.Segmenter;
   let wordSegmenter: Intl.Segmenter;
