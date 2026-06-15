@@ -35,7 +35,7 @@ A collection of framework-agnostic internationalization libraries for the web.
 
 ## Getting started
 
-React Spectrum includes several libraries, which you can choose depending on your usecase.
+React Spectrum includes several libraries, which you can choose depending on your use case.
 
 * [React Spectrum](https://react-spectrum.adobe.com/react-spectrum/getting-started.html) is an implementation of Adobe's design system. If you’re integrating with Adobe software or would like a complete component library to use in your project, look no further!
 * [React Aria](https://react-spectrum.adobe.com/react-aria/getting-started.html) is a collection of unstyled React components and hooks that helps you build accessible, high quality UI components for your own application or design system. If you're building a component library for the web from scratch with your own styling, start here.
