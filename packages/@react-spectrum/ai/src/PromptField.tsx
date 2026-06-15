@@ -50,7 +50,7 @@ import {positionToDOMRange, Token, TokenField, TokenProps} from './TokenField';
 import Send from '@react-spectrum/s2/icons/ArrowUpSend';
 import Stop from '@react-spectrum/s2/icons/StopProcessing';
 
-interface PromptFieldAttachment {
+export interface PromptFieldAttachment {
   id: string;
   file: File;
   image: string;
@@ -256,7 +256,7 @@ export function PromptField(props: PromptFieldProps) {
   );
 }
 
-interface PromptFieldAttachmentListProps extends AttachmentListProps<PromptFieldAttachment> {
+export interface PromptFieldAttachmentListProps extends AttachmentListProps<PromptFieldAttachment> {
   children?: (attachment: PromptFieldAttachment) => React.ReactNode;
 }
 
@@ -399,7 +399,7 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
   );
 }
 
-interface PromptTokenFieldPopoverProps extends PopoverProps {
+export interface PromptTokenFieldPopoverProps extends PopoverProps {
   filterAnchor?: Position | null;
   items?: React.ReactNode[] | null | Promise<React.ReactNode[] | null>;
   isFocused?: boolean;
@@ -491,7 +491,7 @@ export function PromptToken(props: PromptTokenProps) {
   );
 }
 
-interface PromptFieldToolbarProps {
+export interface PromptFieldToolbarProps {
   children: React.ReactNode;
 }
 
@@ -527,7 +527,7 @@ export function PromptFieldSubmitButton(props: PromptFieldSubmitButtonProps) {
   );
 }
 
-interface InsertMenuItemProps {
+export interface InsertMenuItemProps {
   children: React.ReactNode;
 }
 

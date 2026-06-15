@@ -3,7 +3,17 @@ export {BasicHorizontalCard, CardPreview, HorizontalCard} from '../src/Horizonta
 export {MessageFeedback} from '../src/MessageFeedback';
 export {MessageSource, SourceList, SourceListItem} from '../src/MessageSource';
 export {MessageSuggestion, MessageSuggestionList} from '../src/MessageSuggestion';
-export {PromptField, PromptFieldSubmitButton, PromptTokenField} from '../src/PromptField';
+export {
+  PromptField,
+  PromptFieldSubmitButton,
+  PromptTokenField,
+  AttachFileMenuItem,
+  InsertMenuButton,
+  InsertTokenMenuItem,
+  PromptFieldAttachmentList,
+  PromptFieldToolbar,
+  PromptToken
+} from '../src/PromptField';
 export {ResponseStatus, ResponseStatusTitle, ResponseStatusPanel} from '../src/ResponseStatus';
 export {Thread, ThreadItem, ThreadList, ThreadScrollButton} from '../src/Thread';
 export {TokenSegmentList} from '../src/TokenSegmentList';
@@ -14,7 +24,13 @@ export type {HorizontalCardProps, BasicCardProps} from '../src/HorizontalCard';
 export type {
   PromptFieldProps,
   PromptFieldSubmitButtonProps,
-  PromptTokenFieldProps
+  PromptTokenFieldProps,
+  PromptTokenProps,
+  PromptFieldAttachment,
+  PromptFieldAttachmentListProps,
+  PromptTokenFieldPopoverProps,
+  PromptFieldToolbarProps,
+  InsertMenuItemProps
 } from '../src/PromptField';
 export type {MessageFeedbackProps} from '../src/MessageFeedback';
 export type {MessageSourceProps, SourceListProps, SourceListItemProps} from '../src/MessageSource';
