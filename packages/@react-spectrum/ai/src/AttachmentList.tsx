@@ -165,13 +165,7 @@ export const AttachmentList = (forwardRef as forwardRefType)(function Attachment
 });
 
 export interface AttachmentProps
-  extends
-    Omit<CardProps, 'children'>,
-    AriaLabelingProps,
-    Pick<
-      TagProps,
-      'id' | 'textValue' | 'children' | 'style' | 'className' | 'render' | keyof GlobalDOMAttributes
-    > {
+  extends CardProps, AriaLabelingProps, Pick<TagProps, 'id' | 'textValue'> {
   /** The children of the Attachment. */
   children: ReactNode | ((renderProps: AttachmentRenderProps) => ReactNode);
   uploadProgress?: number;
