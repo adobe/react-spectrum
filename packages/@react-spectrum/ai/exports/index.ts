@@ -15,7 +15,7 @@ export {
   PromptToken
 } from '../src/PromptField';
 export {ResponseStatus, ResponseStatusTitle, ResponseStatusPanel} from '../src/ResponseStatus';
-export {Thread, ThreadItem, ThreadList, ThreadScrollButton} from '../src/Thread';
+export {Chat, Thread, ThreadItem, ThreadScrollButton} from '../src/Chat';
 export {TokenSegmentList} from '../src/TokenSegmentList';
 export {UserMessage} from '../src/UserMessage';
 
@@ -40,11 +40,6 @@ export type {
   ResponseStatusTitleProps,
   ResponseStatusPanelProps
 } from '../src/ResponseStatus';
-export type {
-  ThreadProps,
-  ThreadItemProps,
-  ThreadListProps,
-  ThreadScrollButtonProps
-} from '../src/Thread';
+export type {ChatProps, ThreadProps, ThreadItemProps, ThreadScrollButtonProps} from '../src/Chat';
 export type {TokenSegmentListOptions} from '../src/TokenSegmentList';
 export type {UserMessageProps} from '../src/UserMessage';
