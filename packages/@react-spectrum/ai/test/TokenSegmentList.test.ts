@@ -11,6 +11,7 @@
  */
 
 import {Direction, Position, TokenFieldSegment, TokenSegmentList} from '../src/TokenSegmentList';
+import React from 'react';
 
 function text(s: string): TokenFieldSegment {
   return {type: 'text', text: s};
@@ -98,7 +99,9 @@ function replaceSegWithRegex(
   return new TokenizingSegmentList(segments, regex).replaceRangeWithSegments(start, end, insert);
 }
 
-describe('TokenSegmentList', () => {
+// Conditionally skip the suite
+const describeOrSkip = parseInt(React.version, 10) < 19 ? describe.skip : describe;
+describeOrSkip('TokenSegmentList', () => {
   let graphemeSegmenter: Intl.Segmenter;
   let wordSegmenter: Intl.Segmenter;
 

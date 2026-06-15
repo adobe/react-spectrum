@@ -91,7 +91,7 @@ const ThreadScrollButtonContext = createContext<ThreadScrollButtonContextValue>(
 });
 
 // TODO: make this more RAC like (aka default class name and other RAC prop)
-interface ChatProps {
+export interface ChatProps {
   className?: string;
   style?: CSSProperties;
   children?: ReactNode;
@@ -198,7 +198,7 @@ export const Chat = /*#__PURE__*/ (forwardRef as forwardRefType)(function Chat(
 });
 
 // TODO: update the items/className/children/etc type to reflect a thread specific classname once we finalize API
-interface ThreadProps<T extends object> extends Pick<
+export interface ThreadProps<T extends object> extends Pick<
   GridListProps<T>,
   'items' | 'children' | 'UNSTABLE_focusOnEntry' | 'aria-label' | 'aria-labelledby' | 'className'
 > {}
@@ -261,14 +261,19 @@ export function Thread<T extends object>(props: ThreadProps<T>) {
       aria-label={ariaLabel}
       aria-labelledby={ariaLabelledby}
       // TODO: for now we enforce this, but to be configurable?
-      style={{display: 'flex', flexDirection: 'column-reverse'}}
+      style={{
+        display: 'flex',
+        flexDirection: 'column-reverse',
+        boxSizing: 'border-box',
+        minWidth: 0
+      }}
       className={className}>
       {children}
     </GridList>
   );
 }
 
-interface ThreadScrollButtonProps {
+export interface ThreadScrollButtonProps {
   children?: ReactNode;
 }
 
@@ -310,7 +315,10 @@ function ThreadScrollButtonInner({domRef, isExiting, children}: ThreadScrollButt
 }
 
 // TODO: update the className type to reflect a thread specific classname once we finalize API
-interface ThreadItemProps extends Pick<GridListItemProps, 'className' | 'children' | 'textValue'> {
+export interface ThreadItemProps extends Pick<
+  GridListItemProps,
+  'className' | 'children' | 'textValue'
+> {
   /** Whether or not the item's content is currently being streamed in. */
   isStreaming?: boolean;
   /** Announce textValue on mount even when isStreaming is provided. */

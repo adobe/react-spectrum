@@ -52,26 +52,26 @@ import Send from '@react-spectrum/s2/icons/ArrowUpSend';
 import Stop from '@react-spectrum/s2/icons/StopProcessing';
 import {useFocusWithin} from 'react-aria/useFocusWithin';
 
-interface Attachment {
+export interface PromptFieldAttachment {
   id: string;
   file: File;
   image: string;
 }
 
-interface PromptFieldProps extends UnsafeStyles {
+export interface PromptFieldProps extends UnsafeStyles {
   children: React.ReactNode;
   acceptedAttachmentTypes?: string[];
-  onSubmit?: (prompt: TokenSegmentList, attachments: Attachment[]) => void;
+  onSubmit?: (prompt: TokenSegmentList, attachments: PromptFieldAttachment[]) => void;
   isGenerating?: boolean;
   onStop?: () => void;
-  onAddAttachments?: (attachments: Attachment[]) => void;
-  onRemoveAttachments?: (attachments: Attachment[]) => void;
+  onAddAttachments?: (attachments: PromptFieldAttachment[]) => void;
+  onRemoveAttachments?: (attachments: PromptFieldAttachment[]) => void;
   styles?: StyleString;
 }
 
 interface PromptFieldState {
-  attachments: Attachment[];
-  setAttachments: React.Dispatch<React.SetStateAction<Attachment[]>>;
+  attachments: PromptFieldAttachment[];
+  setAttachments: React.Dispatch<React.SetStateAction<PromptFieldAttachment[]>>;
   acceptedAttachmentTypes?: string[];
   prompt: TokenSegmentList;
   setPrompt: React.Dispatch<React.SetStateAction<TokenSegmentList>>;
@@ -79,8 +79,8 @@ interface PromptFieldState {
   onSubmit?: () => void;
   onStop?: () => void;
   isGenerating: boolean;
-  onAddAttachments?: (attachments: Attachment[]) => void;
-  onRemoveAttachments?: (attachments: Attachment[]) => void;
+  onAddAttachments?: (attachments: PromptFieldAttachment[]) => void;
+  onRemoveAttachments?: (attachments: PromptFieldAttachment[]) => void;
 }
 
 // TODO: make this customizable
@@ -146,7 +146,7 @@ export function PromptField(props: PromptFieldProps) {
     onRemoveAttachments
   } = props;
   let [prompt, setPrompt] = useState<TokenSegmentList>(new AutoLinkingSegmentList([]));
-  let [attachments, setAttachments] = useState<Attachment[]>([]);
+  let [attachments, setAttachments] = useState<PromptFieldAttachment[]>([]);
 
   // Not using RAC DropZone because it adds its own focusable button,
   // and we want to avoid an extra tab. We support pasting files directly into the input.
@@ -261,8 +261,8 @@ export function PromptField(props: PromptFieldProps) {
   );
 }
 
-interface PromptFieldAttachmentListProps extends AttachmentListProps<Attachment> {
-  children?: (attachment: Attachment) => React.ReactNode;
+export interface PromptFieldAttachmentListProps extends AttachmentListProps<PromptFieldAttachment> {
+  children?: (attachment: PromptFieldAttachment) => React.ReactNode;
 }
 
 export function PromptFieldAttachmentList(props: PromptFieldAttachmentListProps) {
@@ -295,7 +295,7 @@ export function PromptFieldAttachmentList(props: PromptFieldAttachmentListProps)
   );
 }
 
-interface PromptTokenFieldProps {
+export interface PromptTokenFieldProps {
   completionTrigger?: RegExp;
   renderCompletions?: (
     filterValue: string
@@ -358,7 +358,7 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
           acceptedAttachmentTypes
             ? e => {
                 let clipboardData = e.clipboardData as DataTransfer;
-                let attachments: Attachment[] = [];
+                let attachments: PromptFieldAttachment[] = [];
                 for (let item of clipboardData.items) {
                   if (matchMimeType(item.type, acceptedAttachmentTypes)) {
                     let file = item.getAsFile()!;
@@ -404,7 +404,7 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
   );
 }
 
-interface PromptTokenFieldPopoverProps extends PopoverProps {
+export interface PromptTokenFieldPopoverProps extends PopoverProps {
   filterAnchor?: Position | null;
   items?: React.ReactNode[] | null | Promise<React.ReactNode[] | null>;
   isFocused?: boolean;
@@ -496,7 +496,7 @@ export function PromptToken(props: PromptTokenProps) {
   );
 }
 
-interface PromptFieldToolbarProps {
+export interface PromptFieldToolbarProps {
   children: React.ReactNode;
 }
 
@@ -515,7 +515,10 @@ export function PromptFieldToolbar(props: PromptFieldToolbarProps) {
   );
 }
 
-export function PromptFieldSubmitButton() {
+export interface PromptFieldSubmitButtonProps {}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function PromptFieldSubmitButton(props: PromptFieldSubmitButtonProps) {
   let {prompt, isGenerating, onSubmit, onStop} = useContext(PromptFieldContext);
   return (
     <Button
@@ -529,7 +532,7 @@ export function PromptFieldSubmitButton() {
   );
 }
 
-interface InsertMenuItemProps {
+export interface InsertMenuItemProps {
   children: React.ReactNode;
 }
 

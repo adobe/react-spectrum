@@ -13,7 +13,7 @@
 import {ActionButton} from '@react-spectrum/s2/ActionButton';
 import {ActionMenu} from '@react-spectrum/s2/ActionMenu';
 import {AssetCard, CardPreview} from '@react-spectrum/s2/Card';
-import {Chat, Thread, ThreadItem, ThreadScrollButton} from '../src/Chat';
+import {Chat} from '../src/Chat';
 import ChevronDown from '@react-spectrum/s2/icons/ChevronDown';
 import {Content} from '@react-spectrum/s2/Content';
 import {focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
@@ -21,16 +21,28 @@ import {GridList} from 'react-aria-components';
 import {Image} from '@react-spectrum/s2/Image';
 import {ListLayout} from 'react-stately/useVirtualizerState';
 import {MenuItem} from '@react-spectrum/s2/Menu';
-import {MessageFeedback} from '../src/MessageFeedback';
-import {MessageSource, SourceList, SourceListItem} from '../src/MessageSource';
-import {MessageSuggestion, MessageSuggestionList} from '../src/MessageSuggestion';
+import {
+  MessageFeedback,
+  MessageSource,
+  MessageSuggestion,
+  MessageSuggestionList,
+  PromptField,
+  PromptFieldSubmitButton,
+  PromptTokenField,
+  ResponseStatus,
+  ResponseStatusPanel,
+  ResponseStatusTitle,
+  SourceList,
+  SourceListItem,
+  Thread,
+  ThreadItem,
+  ThreadScrollButton,
+  TokenSegmentList,
+  UserMessage
+} from '@react-spectrum/ai';
 import type {Meta} from '@storybook/react';
-import {PromptField, PromptFieldSubmitButton, PromptTokenField} from '../src/PromptField';
 import {ReactNode, useRef, useState} from 'react';
-import {ResponseStatus, ResponseStatusPanel, ResponseStatusTitle} from '../src/ResponseStatus';
 import {Text} from '@react-spectrum/s2/Text';
-import type {TokenSegmentList} from '../src/TokenSegmentList';
-import {UserMessage} from '../src/UserMessage';
 import {Virtualizer} from 'react-aria-components/Virtualizer';
 
 const meta: Meta<typeof Chat> = {
@@ -359,7 +371,9 @@ export function StreamingChat() {
           overflow: 'hidden',
           flexGrow: 1,
           gap: 16,
-          paddingX: 16
+          paddingX: 16,
+          boxSizing: 'border-box',
+          minWidth: 0
         })}>
         <div
           className={style({
@@ -367,7 +381,8 @@ export function StreamingChat() {
             flexGrow: 1,
             overflow: 'hidden',
             display: 'flex',
-            flexDirection: 'column'
+            flexDirection: 'column',
+            minWidth: 0
           })}>
           <div
             className={style({
@@ -389,7 +404,8 @@ export function StreamingChat() {
             aria-label="Chat thread"
             className={style({
               flexGrow: 1,
-              overflow: 'auto',
+              overflowX: 'hidden',
+              overflowY: 'auto',
               padding: 8,
               scrollPadding: 8,
               rowGap: 16
@@ -518,7 +534,9 @@ export function VirtualizedChat() {
         display: 'flex',
         flexDirection: 'column',
         overflow: 'hidden',
-        flexGrow: 1
+        flexGrow: 1,
+        boxSizing: 'border-box',
+        minWidth: 0
       })}>
       <Virtualizer layout={ListLayout} layoutOptions={{estimatedRowHeight: 100}}>
         <GridList
@@ -529,8 +547,12 @@ export function VirtualizedChat() {
           className={style({
             height: 400,
             paddingX: 4,
-            overflow: 'auto',
-            marginBottom: 8
+            overflowX: 'hidden',
+            overflowY: 'auto',
+            marginBottom: 8,
+            boxSizing: 'border-box',
+            minWidth: 0,
+            width: 'full'
           })}>
           {msg => {
             if (msg.type === 'user') {
