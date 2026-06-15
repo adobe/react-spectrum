@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
+import {Chat, Thread, ThreadItem} from '../src/Chat';
 import {describe, expect, it} from 'vitest';
 import React from 'react';
 import {render} from 'vitest-browser-react';
-import {Thread, ThreadItem, ThreadList} from '@react-spectrum/ai';
 import {userEvent} from 'vitest/browser';
 
 interface Message {
@@ -21,9 +21,8 @@ interface Message {
   text: string;
 }
 
-// Conditionally skip the suite
 const describeOrSkip = parseInt(React.version, 10) < 19 ? describe.skip : describe;
-describeOrSkip('Thread browser', () => {
+describeOrSkip('Chat browser', () => {
   describe('spatial navigation', () => {
     // This test is flaky in Firefox. Skipping for now.
     it.skip('navigates between items in spatial order via arrow keys', async () => {
@@ -34,11 +33,11 @@ describeOrSkip('Thread browser', () => {
       ];
 
       let {container} = await render(
-        <Thread>
-          <ThreadList focusOnEntry="first" items={[...messages].reverse()} aria-label="Chat">
+        <Chat>
+          <Thread UNSTABLE_focusOnEntry="first" items={[...messages].reverse()} aria-label="Chat">
             {(item: Message) => <ThreadItem textValue={item.text}>{item.text}</ThreadItem>}
-          </ThreadList>
-        </Thread>
+          </Thread>
+        </Chat>
       );
 
       let gridlist = container.querySelector('[role=grid]') as HTMLElement;
