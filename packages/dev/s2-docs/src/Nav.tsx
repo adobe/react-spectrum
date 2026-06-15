@@ -294,6 +294,7 @@ export function SideNavLink(props) {
   }, [props.isSelected]);
 
   return (
+    // oxlint-disable react/react-compiler
     <BaseLink
       {...linkProps}
       ref={linkRef}
@@ -336,6 +337,7 @@ export function SideNavLink(props) {
             })(renderProps)}
           />
           {props.children}
+    // oxlint-enable react/react-compiler
           {isExternal && (
             <LinkOutIcon
               aria-label="(opens in a new tab)"

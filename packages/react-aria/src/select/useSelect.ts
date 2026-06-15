@@ -187,7 +187,9 @@ export function useSelect<T, M extends SelectionMode = 'single'>(
     errorMessage: props.errorMessage || validationErrors
   });
 
+  // oxlint-disable-next-line react/react-compiler
   typeSelectProps.onKeyDown = typeSelectProps.onKeyDownCapture;
+  // oxlint-disable-next-line react/react-compiler
   delete typeSelectProps.onKeyDownCapture;
   if (state.selectionManager.selectionMode === 'multiple') {
     typeSelectProps = {};

@@ -81,6 +81,7 @@ function ColorSchemeToggle() {
   let isDark = colorScheme === 'dark';
 
   return (
+    // oxlint-disable react/react-compiler
     <Button
       ref={ref}
       aria-label={label}

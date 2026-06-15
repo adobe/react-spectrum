@@ -153,6 +153,7 @@ export function HeaderLink(
   let {staticColor, styles, ...otherProps} = props;
   let ref = useRef(null);
   return (
+    // oxlint-disable react/react-compiler
     <BaseLink
       {...otherProps}
       ref={ref}
@@ -160,4 +161,5 @@ export function HeaderLink(
       style={pressScale(ref)}
     />
   );
+    // oxlint-enable react/react-compiler
 }

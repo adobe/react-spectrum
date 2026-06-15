@@ -146,6 +146,7 @@ function RippleButton(props) {
   }, []);
 
   return (
+    // oxlint-disable-next-line react/react-compiler
     <Button {...mergeProps(props, {onPress})} className={styles['ripple-button']}>
       {isRippling ? (
         <span

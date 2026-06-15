@@ -331,6 +331,7 @@ export const ActionButton = forwardRef(function ActionButton(
   props: ActionButtonProps,
   ref: FocusableRef<HTMLButtonElement>
 ) {
+  // oxlint-disable-next-line react/react-compiler
   [props, ref] = useSpectrumContextProps(props, ref, ActionButtonContext);
   props = useFormProps(props as any);
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
@@ -353,6 +354,7 @@ export const ActionButton = forwardRef(function ActionButton(
   let {direction} = useLocale();
 
   return (
+    // oxlint-disable react/react-compiler
     <RACButton
       {...props}
       isDisabled={props.isDisabled ?? isDisabled}

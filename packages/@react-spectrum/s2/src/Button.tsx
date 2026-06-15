@@ -381,6 +381,7 @@ export function usePendingState(isPending: boolean) {
         setIsProgressVisible(true);
       }, 1000);
     } else {
+      // oxlint-disable-next-line react/react-compiler
       setIsProgressVisible(false);
     }
     return () => {
@@ -399,6 +400,7 @@ export const Button = forwardRef(function Button(
   props: ButtonProps,
   ref: FocusableRef<HTMLButtonElement>
 ) {
+  // oxlint-disable-next-line react/react-compiler
   [props, ref] = useSpectrumContextProps(props, ref, ButtonContext);
   props = useFormProps(props);
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
@@ -409,6 +411,7 @@ export const Button = forwardRef(function Button(
   let {isProgressVisible} = usePendingState(isPending);
 
   return (
+    // oxlint-disable react/react-compiler
     <RACButton
       {...props}
       ref={domRef}
@@ -443,6 +446,7 @@ export const Button = forwardRef(function Button(
               })}
             />
           ) : null}
+    // oxlint-enable react/react-compiler
           <Provider
             values={[
               [SkeletonContext, null],
@@ -521,6 +525,7 @@ export const LinkButton = forwardRef(function LinkButton(
   props: LinkButtonProps,
   ref: FocusableRef<HTMLAnchorElement>
 ) {
+  // oxlint-disable-next-line react/react-compiler
   [props, ref] = useSpectrumContextProps(props, ref, LinkButtonContext);
   props = useFormProps(props);
   let domRef = useFocusableRef(ref);
@@ -528,6 +533,7 @@ export const LinkButton = forwardRef(function LinkButton(
   let {fillStyle = 'fill', size = 'M', variant = 'primary', staticColor, styles, children} = props;
 
   return (
+    // oxlint-disable react/react-compiler
     <Link
       {...props}
       ref={domRef}
@@ -561,6 +567,7 @@ export const LinkButton = forwardRef(function LinkButton(
               })}
             />
           ) : null}
+    // oxlint-enable react/react-compiler
           <Provider
             values={[
               [SkeletonContext, null],

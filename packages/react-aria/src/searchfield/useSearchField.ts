@@ -115,6 +115,7 @@ export function useSearchField(
       ...props,
       value: state.value,
       onChange: state.setValue,
+      // oxlint-disable-next-line react/react-compiler
       onKeyDown: !isReadOnly ? chain(onKeyDown, props.onKeyDown) : props.onKeyDown,
       type
     },

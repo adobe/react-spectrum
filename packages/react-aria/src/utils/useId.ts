@@ -44,14 +44,18 @@ export function useId(defaultId?: string): string {
   let cleanupRef = useRef(null);
 
   if (registry) {
+    // oxlint-disable-next-line react/react-compiler
     registry.register(cleanupRef, res);
   }
 
   if (canUseDOM) {
     const cacheIdRef = idsUpdaterMap.get(res);
+    // oxlint-disable-next-line react/react-compiler
     if (cacheIdRef && !cacheIdRef.includes(nextId)) {
+      // oxlint-disable-next-line react/react-compiler
       cacheIdRef.push(nextId);
     } else {
+      // oxlint-disable-next-line react/react-compiler
       idsUpdaterMap.set(res, [nextId]);
     }
   }
@@ -125,6 +129,7 @@ export function useSlotId(depArray: ReadonlyArray<any> = []): string {
 
       yield document.getElementById(id) ? id : undefined;
     });
+  // oxlint-disable-next-line react/react-compiler
   }, [id, setResolvedId]);
 
   useLayoutEffect(updateId, [id, updateId, ...depArray]);

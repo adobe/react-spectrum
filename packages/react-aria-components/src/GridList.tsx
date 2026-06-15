@@ -241,6 +241,7 @@ interface GridListInnerProps<T> {
 }
 
 function GridListInner<T>({props, collection, gridListRef: ref}: GridListInnerProps<T>) {
+  // oxlint-disable-next-line react/react-compiler
   [props, ref] = useContextProps(props, ref, SelectableCollectionContext);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let {shouldUseVirtualFocus, filter, disallowTypeAhead, focusOnEntry, ...DOMCollectionProps} =
@@ -264,6 +265,7 @@ function GridListInner<T>({props, collection, gridListRef: ref}: GridListInnerPr
     layoutDelegate
   });
 
+  // oxlint-disable-next-line react/react-compiler
   let filteredState = UNSTABLE_useFilteredListState(gridlistState as ListState<T>, filter);
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let {disabledBehavior, disabledKeys} = filteredState.selectionManager;
@@ -338,11 +340,13 @@ function GridListInner<T>({props, collection, gridListRef: ref}: GridListInnerPr
   let preview = useRef<DragPreviewRenderer>(null);
 
   if (isListDraggable && dragAndDropHooks) {
+    // oxlint-disable-next-line react/react-compiler
     dragState = dragAndDropHooks.useDraggableCollectionState!({
       collection: filteredState.collection,
       selectionManager,
       preview: dragAndDropHooks.renderDragPreview ? preview : undefined
     });
+    // oxlint-disable-next-line react/react-compiler
     dragAndDropHooks.useDraggableCollection!({}, dragState, ref);
 
     let DragPreview = dragAndDropHooks.DragPreview!;
@@ -352,6 +356,7 @@ function GridListInner<T>({props, collection, gridListRef: ref}: GridListInnerPr
   }
 
   if (isListDroppable && dragAndDropHooks) {
+    // oxlint-disable-next-line react/react-compiler
     dropState = dragAndDropHooks.useDroppableCollectionState!({
       collection: filteredState.collection,
       selectionManager
@@ -365,6 +370,7 @@ function GridListInner<T>({props, collection, gridListRef: ref}: GridListInnerPr
         direction,
         orientation
       });
+    // oxlint-disable-next-line react/react-compiler
     droppableCollection = dragAndDropHooks.useDroppableCollection!(
       {
         keyboardDelegate,
@@ -710,6 +716,7 @@ function GridListDropIndicatorWrapper(props: DropIndicatorProps, ref: ForwardedR
   ref = useObjectRef(ref);
   let {dragAndDropHooks, dropState} = useContext(DragAndDropContext);
   let buttonRef = useRef<HTMLDivElement>(null);
+  // oxlint-disable-next-line react/react-compiler
   let {dropIndicatorProps, isHidden, isDropTarget} = dragAndDropHooks!.useDropIndicator!(
     props,
     dropState!,
@@ -768,6 +775,7 @@ const GridListDropIndicatorForwardRef = forwardRef(GridListDropIndicator);
 function RootDropIndicator() {
   let {dragAndDropHooks, dropState} = useContext(DragAndDropContext);
   let ref = useRef<HTMLDivElement>(null);
+  // oxlint-disable-next-line react/react-compiler
   let {dropIndicatorProps} = dragAndDropHooks!.useDropIndicator!(
     {
       target: {type: 'root'}

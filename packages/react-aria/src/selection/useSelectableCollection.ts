@@ -677,6 +677,7 @@ export function useSelectableCollection(
   });
 
   if (!disallowTypeAhead) {
+    // oxlint-disable-next-line react/react-compiler
     handlers = mergeProps(typeSelectProps, handlers);
   }
 
@@ -689,6 +690,7 @@ export function useSelectableCollection(
 
   let collectionId = useCollectionId(manager.collection);
   return {
+    // oxlint-disable-next-line react/react-compiler
     collectionProps: mergeProps(handlers, {
       tabIndex,
       'data-collection': collectionId

@@ -255,6 +255,7 @@ function ComboBoxInner<T>({props, collection, comboBoxRef: ref}: ComboBoxInnerPr
         return groupRef.current || inputRef.current;
       }
     }),
+    // oxlint-disable-next-line react/react-compiler
     [groupRef, inputRef]
   );
 

@@ -69,6 +69,7 @@ export const Checkbox = forwardRef(function Checkbox(
   let groupState = useContext(CheckboxGroupContext);
   let {labelProps, inputProps, isInvalid, isDisabled} = groupState
     ? // eslint-disable-next-line react-hooks/rules-of-hooks
+      // oxlint-disable-next-line react/react-compiler, react-hooks/rules-of-hooks
       useCheckboxGroupItem(
         {
           ...props,
@@ -86,6 +87,7 @@ export const Checkbox = forwardRef(function Checkbox(
         inputRef
       )
     : // eslint-disable-next-line react-hooks/rules-of-hooks
+      // oxlint-disable-next-line react/react-compiler, react-hooks/rules-of-hooks
       useCheckbox(props, useToggleState(props), inputRef);
 
   let {hoverProps, isHovered} = useHover({isDisabled});

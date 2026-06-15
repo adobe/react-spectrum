@@ -204,6 +204,7 @@ export function useSelectState<T, M extends SelectionMode = 'single'>(
   // still matches `value`.
   let lastSelection = useRef<Set<Key> | null>(null);
 
+  // oxlint-disable-next-line react/react-compiler
   let listState = useListState({
     ...props,
     selectionMode,
@@ -211,7 +212,9 @@ export function useSelectState<T, M extends SelectionMode = 'single'>(
     allowDuplicateSelectionEvents: true,
     selectedKeys: useMemo(() => {
       let selectedKeys = convertValue(displayValue);
+      // oxlint-disable-next-line react/react-compiler
       let last = lastSelection.current;
+      // oxlint-disable-next-line react/react-compiler
       if (last != null && Array.isArray(selectedKeys) && isSameSelection(last, selectedKeys)) {
         return last;
       }

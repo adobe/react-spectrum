@@ -361,6 +361,7 @@ export function SliderBase<T extends number | number[]>(
   props: SliderBaseProps<T> & {sliderRef: RefObject<HTMLDivElement | null>}
 ): ReactNode {
   let formContext = useContext(FormContext);
+  // oxlint-disable-next-line react/react-compiler
   props = useFormProps(props);
   let {
     label,
@@ -373,6 +374,7 @@ export function SliderBase<T extends number | number[]>(
   let {direction} = useLocale();
 
   return (
+    // oxlint-disable react/react-compiler
     <AriaSlider
       {...props}
       ref={props.sliderRef}
@@ -412,6 +414,7 @@ export function SliderBase<T extends number | number[]>(
             className={output({direction, labelPosition, isInForm: !!formContext})}
           />
         );
+    // oxlint-enable react/react-compiler
 
         return (
           <>
@@ -451,6 +454,7 @@ export const Slider = /*#__PURE__*/ forwardRef(function Slider(
   props: SliderProps,
   ref: FocusableRef<HTMLDivElement>
 ) {
+  // oxlint-disable-next-line react/react-compiler
   [props, ref] = useSpectrumContextProps(props, ref, SliderContext);
   let formContext = useContext(FormContext);
   props = useFormProps(props);

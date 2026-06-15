@@ -183,6 +183,7 @@ function IconItem({item, isCopied = false}: {item: (typeof iconList)[number]; is
   let Icon = item.icon;
   let ref = useRef(null);
   return (
+    // oxlint-disable react/react-compiler
     <ListBoxItem
       id={item.id}
       value={item}
@@ -206,6 +207,7 @@ function IconItem({item, isCopied = false}: {item: (typeof iconList)[number]; is
       </div>
     </ListBoxItem>
   );
+    // oxlint-enable react/react-compiler
 }
 
 export function SkeletonIconItem({item}: {item: {id: string}}) {

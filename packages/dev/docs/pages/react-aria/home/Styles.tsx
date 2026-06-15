@@ -272,6 +272,7 @@ function AnimatedTabs({tabs}: {tabs: TabOptions[]}) {
   }, [selectedKey]);
 
   return (
+    // oxlint-disable react/react-compiler
     <Tabs
       className="-mx-8 md:-mx-2"
       selectedKey={selectedKey}
@@ -292,6 +293,7 @@ function AnimatedTabs({tabs}: {tabs: TabOptions[]}) {
                       style={{x, width}}
                     />
                   )}
+    // oxlint-enable react/react-compiler
                 </>
               )}
             </Tab>

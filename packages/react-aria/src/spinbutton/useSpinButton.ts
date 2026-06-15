@@ -169,6 +169,7 @@ export function useSpinButton(props: SpinButtonProps): SpinbuttonAria {
       value < maxValue
     ) {
       onIncrementEvent();
+      // oxlint-disable-next-line react/react-compiler
       onIncrementPressStartEvent(60);
     }
   });
@@ -189,6 +190,7 @@ export function useSpinButton(props: SpinButtonProps): SpinbuttonAria {
       value > minValue
     ) {
       onDecrementEvent();
+      // oxlint-disable-next-line react/react-compiler
       onDecrementPressStartEvent(60);
     }
   });

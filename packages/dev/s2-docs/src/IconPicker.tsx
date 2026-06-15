@@ -154,6 +154,7 @@ function IconItem({item}) {
   let Icon = item.icon;
   let ref = useRef(null);
   return (
+    // oxlint-disable react/react-compiler
     <ListBoxItem
       id={item.id}
       value={item}
@@ -164,4 +165,5 @@ function IconItem({item}) {
       <Icon />
     </ListBoxItem>
   );
+    // oxlint-enable react/react-compiler
 }

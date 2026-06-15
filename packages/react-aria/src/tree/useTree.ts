@@ -56,6 +56,7 @@ export function useTree<T>(
   ref: RefObject<HTMLElement | null>
 ): TreeAria {
   let {gridProps} = useGridList(props, state, ref);
+  // oxlint-disable-next-line react/react-compiler
   gridProps.role = 'treegrid';
 
   return {

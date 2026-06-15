@@ -591,6 +591,7 @@ export function MenuItem(props: MenuItemProps): ReactNode {
   let infoIconId = useId();
 
   return (
+    // oxlint-disable react/react-compiler
     <AriaMenuItem
       {...props}
       aria-describedby={isUnavailable ? infoIconId : undefined}
@@ -658,6 +659,7 @@ export function MenuItem(props: MenuItemProps): ReactNode {
                   className={checkmark({...renderProps, size})}
                 />
               )}
+    // oxlint-enable react/react-compiler
               {renderProps.selectionMode === 'multiple' && !renderProps.hasSubmenu && (
                 <div className={mergeStyles(checkbox, box(checkboxRenderProps))}>
                   <CheckmarkIcon size={size} className={iconStyles} />

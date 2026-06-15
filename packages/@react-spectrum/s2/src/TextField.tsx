@@ -137,6 +137,7 @@ export const TextFieldBase = forwardRef(function TextFieldBase(
   let inputRef = useRef<HTMLInputElement>(null);
   let domRef = useRef<HTMLDivElement>(null);
   let formContext = useContext(FormContext);
+  // oxlint-disable-next-line react/react-compiler
   props = useFormProps(props);
   let {
     label,

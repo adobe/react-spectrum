@@ -489,6 +489,7 @@ export function usePress(props: PressHookProps): PressResult {
             state.isOverTarget = false;
             triggerClick(e);
             // eslint-disable-next-line react-hooks/rules-of-hooks
+            // oxlint-disable-next-line react/react-compiler
             cancelEvent(e);
           }
 
@@ -1028,6 +1029,7 @@ export function usePress(props: PressHookProps): PressResult {
 
   return {
     isPressed: isPressedProp || isPressed,
+    // oxlint-disable-next-line react/react-compiler
     pressProps: mergeProps(domProps, pressProps, {[PRESSABLE_ATTRIBUTE]: true})
   };
 }

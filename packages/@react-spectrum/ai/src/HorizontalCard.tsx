@@ -517,6 +517,7 @@ const Card = forwardRef(function Card(
     </Provider>
   );
 
+  // oxlint-disable-next-line react/react-compiler
   let press = pressScale(domRef);
   if (ElementType === 'div' && !isSkeleton && props.href) {
     // Standalone Card that has an href should be rendered as a Link.
@@ -677,6 +678,7 @@ export const CardPreview = forwardRef(function CardPreview(
     useContext(InternalCardContext);
   let domRef = useDOMRef(ref);
   return (
+    // oxlint-disable react/react-compiler
     <div
       {...filterDOMProps(props)}
       slot="preview"

@@ -471,6 +471,7 @@ export function ComboBoxItem(props: ComboBoxItemProps): ReactNode {
   let isLink = props.href != null;
   let {size} = useContext(InternalComboboxContext);
   return (
+    // oxlint-disable react/react-compiler
     <ListBoxItem
       {...props}
       ref={ref}
@@ -523,6 +524,7 @@ export function ComboBoxItem(props: ComboBoxItemProps): ReactNode {
                   className={checkmark({...renderProps, size})}
                 />
               )}
+    // oxlint-enable react/react-compiler
               {typeof children === 'string' ? <Text slot="label">{children}</Text> : children}
             </Provider>
           </>
@@ -635,6 +637,7 @@ const ComboboxInner = forwardRef(function ComboboxInner(
       }
     } else if (!isLoadingOrFiltering) {
       // If loading is no longer happening, clear any timers and hide the loading circle
+      // oxlint-disable-next-line react/react-compiler
       setShowLoading(false);
       if (timeout.current) {
         clearTimeout(timeout.current);

@@ -790,6 +790,7 @@ export function PickerItem(props: PickerItemProps): ReactNode {
   let isLink = props.href != null;
   let {size} = useContext(InternalPickerContext);
   return (
+    // oxlint-disable react/react-compiler
     <ListBoxItem
       {...props}
       ref={ref}
@@ -846,6 +847,7 @@ export function PickerItem(props: PickerItemProps): ReactNode {
                     className={checkmark({...renderProps, size})}
                   />
                 )}
+    // oxlint-enable react/react-compiler
                 {renderProps.selectionMode === 'multiple' && !isLink && (
                   <div className={mergeStyles(checkbox, box(checkboxRenderProps))}>
                     <CheckmarkIcon size={size} className={checkboxIconStyles} />

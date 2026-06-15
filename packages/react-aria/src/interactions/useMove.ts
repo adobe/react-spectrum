@@ -123,6 +123,7 @@ export function useMove(props: MoveEvents): MoveResult {
       let onMouseUp = (e: MouseEvent) => {
         if (e.button === 0) {
           // eslint-disable-next-line react-hooks/rules-of-hooks
+          // oxlint-disable-next-line react/react-compiler
           endEvent(e, 'mouse');
           let ownerWindow = getOwnerWindow(getEventTarget(e) as Element);
           removeGlobalListener(ownerWindow, 'mousemove', onMouseMove, false);

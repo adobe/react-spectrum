@@ -211,6 +211,7 @@ export function useTableColumnResize<T>(
     modality = 'touch';
   }
   let description =
+    // oxlint-disable-next-line react/react-compiler
     triggerRef?.current == null &&
     (modality === 'keyboard' || modality === 'virtual') &&
     !isResizing
@@ -309,6 +310,7 @@ export function useTableColumnResize<T>(
     }),
     inputProps: mergeProps(
       visuallyHiddenProps,
+      // oxlint-disable-next-line react/react-compiler
       {
         id,
         onBlur: () => {

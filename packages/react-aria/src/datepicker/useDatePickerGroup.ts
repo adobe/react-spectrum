@@ -15,6 +15,7 @@ export function useDatePickerGroup(
   disableArrowNavigation?: boolean
 ): DOMAttributes<FocusableElement> {
   let {direction} = useLocale();
+  // oxlint-disable-next-line react/react-compiler
   let focusManager = useMemo(() => createFocusManager(ref), [ref]);
 
   // Open the popover on alt + arrow down
@@ -123,6 +124,7 @@ export function useDatePickerGroup(
     }
   });
 
+  // oxlint-disable-next-line react/react-compiler
   return mergeProps(pressProps, {onKeyDown});
 }
 

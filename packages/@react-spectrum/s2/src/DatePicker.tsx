@@ -321,6 +321,7 @@ export function CalendarButton(props: {
   let buttonRef = useRef<HTMLButtonElement>(null);
   let {isOpen, size, setButtonHasFocus} = props;
   return (
+    // oxlint-disable react/react-compiler
     <Button
       ref={buttonRef}
       // Prevent press scale from sticking while DatePicker is open.
@@ -354,4 +355,5 @@ export function CalendarButton(props: {
       </Provider>
     </Button>
   );
+    // oxlint-enable react/react-compiler
 }

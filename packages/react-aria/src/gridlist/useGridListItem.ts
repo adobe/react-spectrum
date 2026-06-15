@@ -349,6 +349,7 @@ export function useGridListItem<T>(
   //   });
   // }
 
+  // oxlint-disable-next-line react/react-compiler
   let rowProps: DOMAttributes = mergeProps(itemProps, linkProps, {
     role: 'row',
     onKeyDownCapture,

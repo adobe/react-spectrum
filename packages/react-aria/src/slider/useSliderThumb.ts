@@ -257,6 +257,7 @@ export function useSliderThumb(opts: AriaSliderThumbOptions, state: SliderState)
   }
 
   let interactions = !isDisabled
+    // oxlint-disable-next-line react/react-compiler
     ? mergeProps(keyboardProps, moveProps, {
         onMouseDown: (e: React.MouseEvent) => {
           if (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey) {

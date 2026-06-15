@@ -166,13 +166,16 @@ function Button(props) {
   let {focusProps, isFocusVisible} = useFocusRing();
   let {buttonProps} = useButton(props, ref);
   return (
+    // oxlint-disable react/react-compiler
     <button
       {...mergeProps(buttonProps, focusProps)}
       ref={ref}
       className={classNames(ariaStyles, props.className, {focus: isFocusVisible})}>
+      {/* oxlint-disable-next-line react/react-compiler */}
       {props.children}
     </button>
   );
+    // oxlint-enable react/react-compiler
 }
 
 function Resizer(props) {
