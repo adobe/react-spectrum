@@ -277,8 +277,8 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(
           : props.isRequired,
       onChange: state.setInputValue,
       onKeyDown: !isReadOnly
-        // oxlint-disable-next-line react/react-compiler
-        ? chain(state.isOpen && collectionProps.onKeyDown, onKeyDown, props.onKeyDown)
+        ? // oxlint-disable-next-line react/react-compiler
+          chain(state.isOpen && collectionProps.onKeyDown, onKeyDown, props.onKeyDown)
         : props.onKeyDown,
       onBlur,
       value: state.inputValue,

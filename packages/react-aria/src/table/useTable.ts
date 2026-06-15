@@ -127,8 +127,8 @@ export function useTable<T>(
   let sortDescription = useMemo(() => {
     let columnName = state.collection.columns.find(c => c.key === column)?.textValue ?? '';
     return sortDirection && column
-      // oxlint-disable-next-line react/react-compiler
-      ? stringFormatter.format(`${sortDirection}Sort`, {columnName})
+      ? // oxlint-disable-next-line react/react-compiler
+        stringFormatter.format(`${sortDirection}Sort`, {columnName})
       : undefined;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sortDirection, column, state.collection.columns]);

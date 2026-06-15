@@ -130,5 +130,5 @@ export const CloseButton = forwardRef(function CloseButton(
       <CrossIcon size={({S: 'L', M: 'XL', L: 'XXL', XL: 'XXXL'} as const)[props.size || 'M']} />
     </Button>
   );
-    // oxlint-enable react/react-compiler
+  // oxlint-enable react/react-compiler
 });

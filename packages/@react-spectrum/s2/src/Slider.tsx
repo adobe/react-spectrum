@@ -414,7 +414,7 @@ export function SliderBase<T extends number | number[]>(
             className={output({direction, labelPosition, isInForm: !!formContext})}
           />
         );
-    // oxlint-enable react/react-compiler
+        // oxlint-enable react/react-compiler
 
         return (
           <>

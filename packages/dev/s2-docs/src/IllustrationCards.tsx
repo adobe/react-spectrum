@@ -255,7 +255,7 @@ function IllustrationItem({
       </div>
     </ListBoxItem>
   );
-    // oxlint-enable react/react-compiler
+  // oxlint-enable react/react-compiler
 }
 
 const cache = new Map();

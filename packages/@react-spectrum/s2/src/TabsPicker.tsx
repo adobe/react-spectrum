@@ -386,7 +386,7 @@ export function PickerItem(props: PickerItemProps): ReactNode {
       }}
     </ListBoxItem>
   );
-    // oxlint-enable react/react-compiler
+  // oxlint-enable react/react-compiler
 }
 // A Context.Provider that only sets a value if not inside SelectValue.
 function DefaultProvider({

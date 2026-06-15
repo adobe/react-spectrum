@@ -175,7 +175,7 @@ function Button(props) {
       {props.children}
     </button>
   );
-    // oxlint-enable react/react-compiler
+  // oxlint-enable react/react-compiler
 }
 
 function Resizer(props) {

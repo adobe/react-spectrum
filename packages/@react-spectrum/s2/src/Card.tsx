@@ -614,7 +614,7 @@ export const CardPreview = forwardRef(function CardPreview(
       <div className={style({borderRadius: 'inherit', overflow: 'clip'})}>{props.children}</div>
     </div>
   );
-    // oxlint-enable react/react-compiler
+  // oxlint-enable react/react-compiler
 });
 
 const collection = style({

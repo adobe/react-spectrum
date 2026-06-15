@@ -241,5 +241,5 @@ function TooltipInner(
       </OverlayArrowContext.Provider>
     </dom.div>
   );
-    // oxlint-enable react/react-compiler
+  // oxlint-enable react/react-compiler
 }

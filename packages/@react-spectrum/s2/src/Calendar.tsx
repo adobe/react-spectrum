@@ -721,7 +721,7 @@ const CalendarCellInner = (
         {isUnavailable && <div className={unavailableStyles} role="presentation" />}
       </div>
       {isBackgroundStyleApplied && (
-      // oxlint-enable react/react-compiler
+        // oxlint-enable react/react-compiler
         <div
           className={selectionBackgroundStyles({
             isInvalid,

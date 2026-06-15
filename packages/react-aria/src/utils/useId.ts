@@ -129,7 +129,7 @@ export function useSlotId(depArray: ReadonlyArray<any> = []): string {
 
       yield document.getElementById(id) ? id : undefined;
     });
-  // oxlint-disable-next-line react/react-compiler
+    // oxlint-disable-next-line react/react-compiler
   }, [id, setResolvedId]);
 
   useLayoutEffect(updateId, [id, updateId, ...depArray]);

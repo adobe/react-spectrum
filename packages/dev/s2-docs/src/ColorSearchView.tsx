@@ -434,5 +434,5 @@ function ColorItem({
       )}
     </ListBoxItem>
   );
-    // oxlint-enable react/react-compiler
+  // oxlint-enable react/react-compiler
 }

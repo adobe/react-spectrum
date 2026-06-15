@@ -659,7 +659,7 @@ export function MenuItem(props: MenuItemProps): ReactNode {
                   className={checkmark({...renderProps, size})}
                 />
               )}
-    // oxlint-enable react/react-compiler
+              // oxlint-enable react/react-compiler
               {renderProps.selectionMode === 'multiple' && !renderProps.hasSubmenu && (
                 <div className={mergeStyles(checkbox, box(checkboxRenderProps))}>
                   <CheckmarkIcon size={size} className={iconStyles} />

@@ -293,7 +293,7 @@ function AnimatedTabs({tabs}: {tabs: TabOptions[]}) {
                       style={{x, width}}
                     />
                   )}
-    // oxlint-enable react/react-compiler
+                  // oxlint-enable react/react-compiler
                 </>
               )}
             </Tab>

@@ -163,7 +163,7 @@ export const ToggleButton = forwardRef(function ToggleButton(
           })({direction, size})}
         />
       )}
-    // oxlint-enable react/react-compiler
+      // oxlint-enable react/react-compiler
     </RACToggleButton>
   );
 });

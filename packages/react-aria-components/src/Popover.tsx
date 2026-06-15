@@ -274,7 +274,7 @@ function PopoverInner({
     ) {
       focusSafely(ref.current);
     }
-  // oxlint-disable-next-line react/react-compiler
+    // oxlint-disable-next-line react/react-compiler
   }, [isDialog, ref, props.trigger]);
 
   let children = useMemo(() => {
@@ -337,7 +337,7 @@ function PopoverInner({
       <DismissButton onDismiss={state.close} />
     </dom.div>
   );
-    // oxlint-enable react/react-compiler
+  // oxlint-enable react/react-compiler
 
   // If this is a root popover, render an extra div to act as the portal container for submenus/subdialogs.
   if (!isSubPopover) {
@@ -359,7 +359,7 @@ function PopoverInner({
         </div>
       </Overlay>
     );
-      // oxlint-enable react/react-compiler
+    // oxlint-enable react/react-compiler
   }
 
   // Submenus/subdialogs are mounted into the root popover's container.
@@ -373,5 +373,5 @@ function PopoverInner({
       {overlay}
     </Overlay>
   );
-    // oxlint-enable react/react-compiler
+  // oxlint-enable react/react-compiler
 }

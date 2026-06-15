@@ -137,7 +137,7 @@ export const MessageSuggestion = forwardRef(function MessageSuggestion(
       </Provider>
     </RACButton>
   );
-    // oxlint-enable react/react-compiler
+  // oxlint-enable react/react-compiler
 });
 
 export interface MessageSuggestionListProps extends DOMProps, AriaLabelingProps, SlotProps {

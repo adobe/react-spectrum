@@ -524,7 +524,7 @@ export function ComboBoxItem(props: ComboBoxItemProps): ReactNode {
                   className={checkmark({...renderProps, size})}
                 />
               )}
-    // oxlint-enable react/react-compiler
+              // oxlint-enable react/react-compiler
               {typeof children === 'string' ? <Text slot="label">{children}</Text> : children}
             </Provider>
           </>

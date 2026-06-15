@@ -75,5 +75,5 @@ export const ClearButton = forwardRef(function ClearButton(
       <CrossIcon size={props.size} />
     </Button>
   );
-    // oxlint-enable react/react-compiler
+  // oxlint-enable react/react-compiler
 });

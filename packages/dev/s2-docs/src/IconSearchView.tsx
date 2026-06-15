@@ -207,7 +207,7 @@ function IconItem({item, isCopied = false}: {item: (typeof iconList)[number]; is
       </div>
     </ListBoxItem>
   );
-    // oxlint-enable react/react-compiler
+  // oxlint-enable react/react-compiler
 }
 
 export function SkeletonIconItem({item}: {item: {id: string}}) {

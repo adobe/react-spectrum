@@ -847,7 +847,7 @@ export function PickerItem(props: PickerItemProps): ReactNode {
                     className={checkmark({...renderProps, size})}
                   />
                 )}
-    // oxlint-enable react/react-compiler
+                // oxlint-enable react/react-compiler
                 {renderProps.selectionMode === 'multiple' && !isLink && (
                   <div className={mergeStyles(checkbox, box(checkboxRenderProps))}>
                     <CheckmarkIcon size={size} className={checkboxIconStyles} />

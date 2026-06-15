@@ -165,5 +165,5 @@ function IconItem({item}) {
       <Icon />
     </ListBoxItem>
   );
-    // oxlint-enable react/react-compiler
+  // oxlint-enable react/react-compiler
 }

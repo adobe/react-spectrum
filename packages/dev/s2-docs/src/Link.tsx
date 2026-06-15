@@ -161,5 +161,5 @@ export function HeaderLink(
       style={pressScale(ref)}
     />
   );
-    // oxlint-enable react/react-compiler
+  // oxlint-enable react/react-compiler
 }

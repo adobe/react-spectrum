@@ -790,7 +790,7 @@ export function useDroppableCollection(
         localState.props.onKeyDown?.(e);
       }
     });
-  // oxlint-disable-next-line react/react-compiler
+    // oxlint-disable-next-line react/react-compiler
   }, [localState, ref, onDrop, direction]);
 
   let id = useId();

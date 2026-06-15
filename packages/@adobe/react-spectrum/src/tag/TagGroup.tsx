@@ -214,7 +214,7 @@ export const TagGroup = React.forwardRef(function TagGroup<T extends object>(
         yield computeVisibleTagCount();
       });
     }
-  // oxlint-disable-next-line react/react-compiler
+    // oxlint-disable-next-line react/react-compiler
   }, [maxRows, setTagState, direction, scale, state.collection.size]);
 
   useResizeObserver({ref: containerRef, onResize: updateVisibleTagCount});
