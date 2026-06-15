@@ -31,16 +31,22 @@ export default meta;
 type Story = StoryObj<typeof Switch>;
 
 export const Example: Story = {
-  render: (args) => <Switch {...args}>Wi-Fi</Switch>
+  render: args => <Switch {...args}>Wi-Fi</Switch>
 };
 
 export const LongLabel: Story = {
-  render: (args) => <Switch {...args} styles={style({maxWidth: 128})}>Switch with very long label so we can see wrapping</Switch>
+  render: args => (
+    <Switch {...args} styles={style({maxWidth: 128})}>
+      Switch with very long label so we can see wrapping
+    </Switch>
+  )
 };
 
 export const HelpText: Story = {
-  render: (args) => (
-    <Switch {...args} styles={style({width: 300})}>Product updates</Switch>
+  render: args => (
+    <Switch {...args} styles={style({width: 300})}>
+      Product updates
+    </Switch>
   ),
   args: {
     description: 'Your organization requires two-factor authentication.',

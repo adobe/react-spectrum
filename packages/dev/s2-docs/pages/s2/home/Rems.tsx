@@ -1,8 +1,8 @@
 'use client';
-import { style } from "@react-spectrum/s2/style" with {type: 'macro'};
-import { ExampleApp2 } from "./ExampleApp2";
-import { Slider } from "@react-spectrum/s2";
-import { useState } from "react";
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {ExampleApp2} from './ExampleApp2';
+import {Slider} from '@react-spectrum/s2';
+import {useState} from 'react';
 
 export function Rems() {
   let [value, setValue] = useState(16);
@@ -20,7 +20,8 @@ export function Rems() {
         PRIVATE_staticColor
         styles={style({
           maxWidth: 400
-        })} />
+        })}
+      />
       <div
         className={style({
           boxSizing: 'border-box',

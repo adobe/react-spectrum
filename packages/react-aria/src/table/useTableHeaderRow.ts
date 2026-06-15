@@ -16,16 +16,21 @@ import {TableState} from 'react-stately/useTableState';
 
 export interface TableHeaderRowAria {
   /** Props for the grid row element. */
-  rowProps: DOMAttributes
+  rowProps: DOMAttributes;
 }
 
 /**
  * Provides the behavior and accessibility implementation for a header row in a table.
+ *
  * @param props - Props for the row.
  * @param state - State of the table, as returned by `useTableState`.
  */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function useTableHeaderRow<T>(props: GridRowProps<T>, state: TableState<T>, ref: RefObject<Element | null>): TableHeaderRowAria {
+export function useTableHeaderRow<T>(
+  props: GridRowProps<T>,
+  state: TableState<T>,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  ref: RefObject<Element | null>
+): TableHeaderRowAria {
   let {node, isVirtualized} = props;
   let rowProps = {
     role: 'row'

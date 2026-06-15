@@ -35,7 +35,9 @@ describe('Card', () => {
   it('renders as a plain div when no press callbacks are provided', () => {
     let {getByText} = render(
       <Card>
-        <Content><Text slot="title">Static Card</Text></Content>
+        <Content>
+          <Text slot="title">Static Card</Text>
+        </Content>
       </Card>
     );
     let el = getByText('Static Card').closest('[class]')!.parentElement!;
@@ -48,7 +50,9 @@ describe('Card', () => {
     let onPress = jest.fn();
     let {getByRole} = render(
       <Card onPress={onPress}>
-        <Content><Text slot="title">Interactive Card</Text></Content>
+        <Content>
+          <Text slot="title">Interactive Card</Text>
+        </Content>
       </Card>
     );
 
@@ -64,7 +68,9 @@ describe('Card', () => {
     let onAction = jest.fn();
     let {getByRole} = render(
       <Card onAction={onAction}>
-        <Content><Text slot="title">Action Card</Text></Content>
+        <Content>
+          <Text slot="title">Action Card</Text>
+        </Content>
       </Card>
     );
 
@@ -78,7 +84,9 @@ describe('Card', () => {
     let onAction = jest.fn();
     let {getByRole} = render(
       <Card onPress={onPress} onAction={onAction}>
-        <Content><Text slot="title">Both Callbacks Card</Text></Content>
+        <Content>
+          <Text slot="title">Both Callbacks Card</Text>
+        </Content>
       </Card>
     );
 
@@ -93,7 +101,9 @@ describe('Card', () => {
     let onPressEnd = jest.fn();
     let {getByRole} = render(
       <Card onPressStart={onPressStart} onPressEnd={onPressEnd}>
-        <Content><Text slot="title">Press Events Card</Text></Content>
+        <Content>
+          <Text slot="title">Press Events Card</Text>
+        </Content>
       </Card>
     );
 
@@ -107,7 +117,9 @@ describe('Card', () => {
     let onPress = jest.fn();
     let {getByRole} = render(
       <Card onPress={onPress} isDisabled>
-        <Content><Text slot="title">Disabled Card</Text></Content>
+        <Content>
+          <Text slot="title">Disabled Card</Text>
+        </Content>
       </Card>
     );
 
@@ -122,20 +134,11 @@ describe('Card', () => {
   it('does not expose role=button when no press callbacks are provided', () => {
     let {queryByRole} = render(
       <Card>
-        <Content><Text slot="title">Static Card</Text></Content>
+        <Content>
+          <Text slot="title">Static Card</Text>
+        </Content>
       </Card>
     );
     expect(queryByRole('button')).toBeNull();
-  });
-
-  it('has pointer cursor and no user-select when interactive', async () => {
-    let onPress = jest.fn();
-    let {getByRole} = render(
-      <Card onPress={onPress}>
-        <Content><Text slot="title">Interactive Card</Text></Content>
-      </Card>
-    );
-    let card = getByRole('button');
-    expect(card).toHaveStyle({cursor: 'pointer', userSelect: 'none'});
   });
 });

@@ -41,27 +41,44 @@ import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 interface CardRenderProps {
   /** The size of the Card. */
-  size: 'XS' | 'S' | 'M' | 'L' | 'XL'
+  size: 'XS' | 'S' | 'M' | 'L' | 'XL';
 }
 
-export interface CardProps extends Omit<GridListItemProps, 'className' | 'style' | 'render' | 'children' | 'onHoverChange' | 'onHoverStart' | 'onHoverEnd' | 'onClick' | keyof GlobalDOMAttributes>, StyleProps {
+export interface CardProps
+  extends
+    Omit<
+      GridListItemProps,
+      | 'className'
+      | 'style'
+      | 'render'
+      | 'children'
+      | 'onHoverChange'
+      | 'onHoverStart'
+      | 'onHoverEnd'
+      | 'onClick'
+      | keyof GlobalDOMAttributes
+    >,
+    StyleProps {
   /** The children of the Card. */
-  children: ReactNode | ((renderProps: CardRenderProps) => ReactNode),
+  children: ReactNode | ((renderProps: CardRenderProps) => ReactNode);
   /**
    * The size of the Card.
+   *
    * @default 'M'
    */
-  size?: 'XS' | 'S' | 'M' | 'L' | 'XL',
+  size?: 'XS' | 'S' | 'M' | 'L' | 'XL';
   /**
    * The amount of internal padding within the Card.
+   *
    * @default 'regular'
    */
-  density?: 'compact' | 'regular' | 'spacious',
+  density?: 'compact' | 'regular' | 'spacious';
   /**
    * The visual style of the Card.
+   *
    * @default 'primary'
    */
-  variant?: 'primary' | 'secondary' | 'tertiary' | 'quiet'
+  variant?: 'primary' | 'secondary' | 'tertiary' | 'quiet';
 }
 
 const borderRadius = {
@@ -72,142 +89,145 @@ const borderRadius = {
   }
 } as const;
 
-let card = style({
-  display: 'flex',
-  flexDirection: 'column',
-  position: 'relative',
-  borderRadius,
-  '--s2-container-bg': {
-    type: 'backgroundColor',
-    value: {
-      variant: {
-        primary: 'elevated',
-        secondary: 'layer-1'
-      },
-      forcedColors: 'ButtonFace'
-    }
-  },
-  backgroundColor: {
-    default: '--s2-container-bg',
-    variant: {
-      tertiary: 'transparent',
-      quiet: 'transparent'
-    }
-  },
-  boxShadow: {
-    default: 'emphasized',
-    isHovered: 'elevated',
-    isFocusVisible: 'elevated',
-    isSelected: 'elevated',
-    forcedColors: '[0 0 0 1px var(--hcm-buttonborder, ButtonBorder)]',
-    variant: {
-      tertiary: {
-        // Render border with box-shadow to avoid affecting layout.
-        default: `[0 0 0 2px ${color('gray-100')}]`,
-        isHovered: `[0 0 0 2px ${color('gray-200')}]`,
-        isFocusVisible: `[0 0 0 2px ${color('gray-200')}]`,
-        isSelected: 'none',
-        forcedColors: '[0 0 0 2px var(--hcm-buttonborder, ButtonBorder)]'
-      },
-      quiet: 'none'
-    }
-  },
-  forcedColorAdjust: 'none',
-  transition: 'default',
-  fontFamily: 'sans',
-  textDecoration: 'none',
-  overflow: {
-    default: 'clip',
-    variant: {
-      quiet: 'visible'
-    }
-  },
-  contain: 'layout',
-  disableTapHighlight: true,
-  userSelect: {
-    isCardView: 'none',
-    isInteractive: 'none'
-  },
-  cursor: {
-    isLink: 'pointer',
-    isInteractive: 'pointer'
-  },
-  width: {
-    size: {
-      XS: 112,
-      S: 192,
-      M: 240,
-      L: 320,
-      XL: 400
+let card = style(
+  {
+    display: 'flex',
+    flexDirection: 'column',
+    position: 'relative',
+    borderRadius,
+    '--s2-container-bg': {
+      type: 'backgroundColor',
+      value: {
+        variant: {
+          primary: 'elevated',
+          secondary: 'layer-1'
+        },
+        forcedColors: 'ButtonFace'
+      }
     },
-    isCardView: 'full'
-  },
-  height: 'full',
-  '--card-spacing': {
-    type: 'paddingTop',
-    value: {
-      density: {
-        compact: {
-          size: {
-            XS: '[6px]',
-            S: 8,
-            M: 12,
-            L: 16,
-            XL: 20
-          }
+    backgroundColor: {
+      default: '--s2-container-bg',
+      variant: {
+        tertiary: 'transparent',
+        quiet: 'transparent'
+      }
+    },
+    boxShadow: {
+      default: 'emphasized',
+      isHovered: 'elevated',
+      isFocusVisible: 'elevated',
+      isSelected: 'elevated',
+      forcedColors: '[0 0 0 1px var(--hcm-buttonborder, ButtonBorder)]',
+      variant: {
+        tertiary: {
+          // Render border with box-shadow to avoid affecting layout.
+          default: `[0 0 0 2px ${color('gray-100')}]`,
+          isHovered: `[0 0 0 2px ${color('gray-200')}]`,
+          isFocusVisible: `[0 0 0 2px ${color('gray-200')}]`,
+          isSelected: 'none',
+          forcedColors: '[0 0 0 2px var(--hcm-buttonborder, ButtonBorder)]'
         },
-        regular: {
-          size: {
-            XS: 8,
-            S: 12,
-            M: 16,
-            L: 20,
-            XL: 24
-          }
-        },
-        spacious: {
-          size: {
-            XS: 12,
-            S: 16,
-            M: 20,
-            L: 24,
-            XL: 28
+        quiet: 'none'
+      }
+    },
+    forcedColorAdjust: 'none',
+    transition: 'default',
+    fontFamily: 'sans',
+    textDecoration: 'none',
+    overflow: {
+      default: 'clip',
+      variant: {
+        quiet: 'visible'
+      }
+    },
+    contain: 'layout',
+    disableTapHighlight: true,
+    userSelect: {
+      isCardView: 'none',
+      isInteractive: 'none'
+    },
+    cursor: {
+      isLink: 'pointer',
+      isInteractive: 'pointer'
+    },
+    width: {
+      size: {
+        XS: 112,
+        S: 192,
+        M: 240,
+        L: 320,
+        XL: 400
+      },
+      isCardView: 'full'
+    },
+    height: 'full',
+    '--card-spacing': {
+      type: 'paddingTop',
+      value: {
+        density: {
+          compact: {
+            size: {
+              XS: '[6px]',
+              S: 8,
+              M: 12,
+              L: 16,
+              XL: 20
+            }
+          },
+          regular: {
+            size: {
+              XS: 8,
+              S: 12,
+              M: 16,
+              L: 20,
+              XL: 24
+            }
+          },
+          spacious: {
+            size: {
+              XS: 12,
+              S: 16,
+              M: 20,
+              L: 24,
+              XL: 28
+            }
           }
         }
       }
-    }
-  },
-  '--card-padding-y': {
-    type: 'paddingTop',
-    value: {
-      default: '--card-spacing',
+    },
+    '--card-padding-y': {
+      type: 'paddingTop',
+      value: {
+        default: '--card-spacing',
+        variant: {
+          quiet: 0
+        }
+      }
+    },
+    '--card-padding-x': {
+      type: 'paddingStart',
+      value: {
+        default: '--card-spacing',
+        variant: {
+          quiet: 0
+        }
+      }
+    },
+    paddingY: '--card-padding-y',
+    paddingX: '--card-padding-x',
+    boxSizing: 'border-box',
+    ...focusRing(),
+    outlineStyle: {
+      default: 'none',
+      isFocusVisible: 'solid',
+      // Focus ring moves to preview when quiet.
       variant: {
-        quiet: 0
+        quiet: 'none'
       }
     }
   },
-  '--card-padding-x': {
-    type: 'paddingStart',
-    value: {
-      default: '--card-spacing',
-      variant: {
-        quiet: 0
-      }
-    }
-  },
-  paddingY: '--card-padding-y',
-  paddingX: '--card-padding-x',
-  boxSizing: 'border-box',
-  ...focusRing(),
-  outlineStyle: {
-    default: 'none',
-    isFocusVisible: 'solid',
-    // Focus ring moves to preview when quiet.
-    variant: {
-      quiet: 'none'
-    }
-  }
-}, getAllowedOverrides());
+  getAllowedOverrides()
+);
 
 let selectionIndicator = style({
   position: 'absolute',
@@ -313,14 +333,8 @@ let content = style({
     ':has([data-slot=menu])': ['minmax(0, 1fr)', 'auto']
   },
   gridTemplateAreas: {
-    default: [
-      'title',
-      'description'
-    ],
-    ':has([data-slot=menu])': [
-      'title menu',
-      'description description'
-    ]
+    default: ['title', 'description'],
+    ':has([data-slot=menu])': ['title menu', 'description description']
   },
   columnGap: 4,
   flexGrow: 1,
@@ -365,16 +379,17 @@ export const InternalCardViewContext = createContext({
   ElementType: 'div' as 'div' | typeof GridListItem,
   layout: 'grid' as 'grid' | 'waterfall'
 });
-export const CardContext = createContext<ContextValue<Partial<CardProps>, DOMRefValue<HTMLDivElement>>>(null);
+export const CardContext =
+  createContext<ContextValue<Partial<CardProps>, DOMRefValue<HTMLDivElement>>>(null);
 
 interface InternalCardContextValue {
-  isQuiet: boolean,
-  size: 'XS' | 'S' | 'M' | 'L' | 'XL',
-  isSelected: boolean,
-  isHovered: boolean,
-  isFocusVisible: boolean,
-  isPressed: boolean,
-  isCheckboxSelection: boolean
+  isQuiet: boolean;
+  size: 'XS' | 'S' | 'M' | 'L' | 'XL';
+  isSelected: boolean;
+  isHovered: boolean;
+  isFocusVisible: boolean;
+  isPressed: boolean;
+  isCheckboxSelection: boolean;
 }
 
 const InternalCardContext = createContext<InternalCardContextValue>({
@@ -424,7 +439,10 @@ export const Card = forwardRef(function Card(props: CardProps, ref: DOMRef<HTMLD
 
   // True when the card is used standalone (not inside CardView) and the caller
   // has provided at least one press/action callback.
-  let isInteractiveStandalone = ElementType === 'div' && !isSkeleton && !props.href &&
+  let isInteractiveStandalone =
+    ElementType === 'div' &&
+    !isSkeleton &&
+    !props.href &&
     !!(onPress || onPressStart || onPressEnd || onPressChange || onPressUp || onAction);
 
   // Hooks must be called unconditionally (React rules of hooks).
@@ -432,7 +450,7 @@ export const Card = forwardRef(function Card(props: CardProps, ref: DOMRef<HTMLD
   // hooks are effectively no-ops in those code paths.
   let {pressProps, isPressed: isInteractivePressed} = usePress({
     ref: domRef,
-    onPress: (e) => {
+    onPress: e => {
       onPress?.(e);
       onAction?.();
     },
@@ -451,24 +469,30 @@ export const Card = forwardRef(function Card(props: CardProps, ref: DOMRef<HTMLD
     <Provider
       values={[
         [ImageContext, {alt: '', styles: image({layout})}],
-        [TextContext, {
-          slots: {
-            [DEFAULT_SLOT]: {},
-            title: {styles: title({size})},
-            description: {styles: description({size})}
+        [
+          TextContext,
+          {
+            slots: {
+              [DEFAULT_SLOT]: {},
+              title: {styles: title({size})},
+              description: {styles: description({size})}
+            }
           }
-        }],
+        ],
         [ContentContext, {styles: content({size})}],
         [DividerContext, {size: 'S'}],
         [FooterContext, {styles: footer}],
-        [ActionMenuContext, {
-          isQuiet: true,
-          size: actionButtonSize[size],
-          isDisabled: isSkeleton,
-          // @ts-ignore
-          'data-slot': 'menu',
-          styles: actionMenu
-        }],
+        [
+          ActionMenuContext,
+          {
+            isQuiet: true,
+            size: actionButtonSize[size],
+            isDisabled: isSkeleton,
+            // @ts-ignore
+            'data-slot': 'menu',
+            styles: actionMenu
+          }
+        ],
         [SkeletonContext, isSkeleton]
       ]}>
       <ImageCoordinator>
@@ -485,13 +509,17 @@ export const Card = forwardRef(function Card(props: CardProps, ref: DOMRef<HTMLD
       <Link
         {...filterDOMProps(otherProps, {isLink: true})}
         ref={domRef as any}
-        className={renderProps => UNSAFE_className + card({...renderProps, size, density, variant, isCardView: false, isLink: true}, styles)}
+        className={renderProps =>
+          UNSAFE_className +
+          card({...renderProps, size, density, variant, isCardView: false, isLink: true}, styles)
+        }
         style={renderProps =>
           // Only the preview in quiet cards scales down on press
           variant === 'quiet' ? UNSAFE_style : press(renderProps)
         }>
-        {(renderProps) => (
-          <InternalCardContext.Provider value={{size, isQuiet, isCheckboxSelection: false, isSelected: false, ...renderProps}}>
+        {renderProps => (
+          <InternalCardContext.Provider
+            value={{size, isQuiet, isCheckboxSelection: false, isSelected: false, ...renderProps}}>
             {children}
           </InternalCardContext.Provider>
         )}
@@ -510,27 +538,32 @@ export const Card = forwardRef(function Card(props: CardProps, ref: DOMRef<HTMLD
           tabIndex={isDisabled ? undefined : 0}
           aria-disabled={isDisabled ? true : undefined}
           className={
-            UNSAFE_className + card({
-              size,
-              density,
-              variant,
-              isCardView: false,
-              isInteractive: true,
-              isHovered: isInteractiveHovered,
-              isFocusVisible: isInteractiveFocusVisible,
-              isSelected: false
-            }, styles)
+            UNSAFE_className +
+            card(
+              {
+                size,
+                density,
+                variant,
+                isCardView: false,
+                isInteractive: true,
+                isHovered: isInteractiveHovered,
+                isFocusVisible: isInteractiveFocusVisible,
+                isSelected: false
+              },
+              styles
+            )
           }
           style={variant === 'quiet' ? UNSAFE_style : press({isPressed: isInteractivePressed})}>
-          <InternalCardContext.Provider value={{
-            size,
-            isQuiet,
-            isCheckboxSelection: false,
-            isHovered: isInteractiveHovered,
-            isFocusVisible: isInteractiveFocusVisible,
-            isSelected: false,
-            isPressed: isInteractivePressed
-          }}>
+          <InternalCardContext.Provider
+            value={{
+              size,
+              isQuiet,
+              isCheckboxSelection: false,
+              isHovered: isInteractiveHovered,
+              isFocusVisible: isInteractiveFocusVisible,
+              isSelected: false,
+              isPressed: isInteractivePressed
+            }}>
             {children}
           </InternalCardContext.Provider>
         </div>
@@ -544,9 +577,21 @@ export const Card = forwardRef(function Card(props: CardProps, ref: DOMRef<HTMLD
         // @ts-ignore - React < 19 compat
         inert={inertValue(isSkeleton)}
         ref={domRef}
-        className={UNSAFE_className + card({size, density, variant, isCardView: ElementType !== 'div'}, styles)}
+        className={
+          UNSAFE_className +
+          card({size, density, variant, isCardView: ElementType !== 'div'}, styles)
+        }
         style={UNSAFE_style}>
-        <InternalCardContext.Provider value={{size, isQuiet, isCheckboxSelection: false, isHovered: false, isFocusVisible: false, isSelected: false, isPressed: false}}>
+        <InternalCardContext.Provider
+          value={{
+            size,
+            isQuiet,
+            isCheckboxSelection: false,
+            isHovered: false,
+            isFocusVisible: false,
+            isSelected: false,
+            isPressed: false
+          }}>
           {children}
         </InternalCardContext.Provider>
       </div>
@@ -557,22 +602,35 @@ export const Card = forwardRef(function Card(props: CardProps, ref: DOMRef<HTMLD
     <ElementType
       {...props}
       ref={domRef}
-      className={renderProps => UNSAFE_className + card({...renderProps, isCardView: true, isLink: !!props.href, size, density, variant}, styles)}
+      className={renderProps =>
+        UNSAFE_className +
+        card(
+          {...renderProps, isCardView: true, isLink: !!props.href, size, density, variant},
+          styles
+        )
+      }
       style={renderProps =>
         // Only the preview in quiet cards scales down on press
         variant === 'quiet' ? UNSAFE_style : press(renderProps)
       }>
       {({selectionMode, selectionBehavior, isHovered, isFocusVisible, isSelected, isPressed}) => (
-        <InternalCardContext.Provider value={{size, isQuiet, isCheckboxSelection: selectionMode !== 'none' && selectionBehavior === 'toggle', isHovered, isFocusVisible, isSelected, isPressed}}>
+        <InternalCardContext.Provider
+          value={{
+            size,
+            isQuiet,
+            isCheckboxSelection: selectionMode !== 'none' && selectionBehavior === 'toggle',
+            isHovered,
+            isFocusVisible,
+            isSelected,
+            isPressed
+          }}>
           {/* Selection indicator and checkbox move inside the preview for quiet cards */}
           {!isQuiet && <SelectionIndicator />}
-          {!isQuiet && selectionMode !== 'none' && selectionBehavior === 'toggle' &&
+          {!isQuiet && selectionMode !== 'none' && selectionBehavior === 'toggle' && (
             <CardCheckbox />
-          }
+          )}
           {/* this makes the :first-child selector work even with the checkbox */}
-          <div className={style({display: 'contents'})}>
-            {children}
-          </div>
+          <div className={style({display: 'contents'})}>{children}</div>
         </InternalCardContext.Provider>
       )}
     </ElementType>
@@ -589,7 +647,8 @@ function SelectionIndicator() {
         // Add an inner stroke only for quiet cards with no checkbox to
         // help distinguish the selected state from the preview.
         isStrokeInner: isQuiet && !isCheckboxSelection
-      })} />
+      })}
+    />
   );
 }
 
@@ -607,20 +666,21 @@ function CardCheckbox() {
         borderRadius: 'default',
         boxShadow: 'emphasized'
       })}>
-      <Checkbox
-        slot="selection"
-        excludeFromTabOrder
-        size={size === 'XS' ? 'S' : size} />
+      <Checkbox slot="selection" excludeFromTabOrder size={size === 'XS' ? 'S' : size} />
     </div>
   );
 }
 
 export interface CardPreviewProps extends UnsafeStyles, DOMProps {
-  children: ReactNode
+  children: ReactNode;
 }
 
-export const CardPreview = forwardRef(function CardPreview(props: CardPreviewProps, ref: DOMRef<HTMLDivElement>) {
-  let {size, isQuiet, isHovered, isFocusVisible, isSelected, isPressed, isCheckboxSelection} = useContext(InternalCardContext);
+export const CardPreview = forwardRef(function CardPreview(
+  props: CardPreviewProps,
+  ref: DOMRef<HTMLDivElement>
+) {
+  let {size, isQuiet, isHovered, isFocusVisible, isSelected, isPressed, isCheckboxSelection} =
+    useContext(InternalCardContext);
   let {UNSAFE_className = '', UNSAFE_style} = props;
   let domRef = useDOMRef(ref);
   return (
@@ -632,9 +692,7 @@ export const CardPreview = forwardRef(function CardPreview(props: CardPreviewPro
       style={isQuiet ? pressScale(domRef)({isPressed}) : UNSAFE_style}>
       {isQuiet && <SelectionIndicator />}
       {isQuiet && isCheckboxSelection && <CardCheckbox />}
-      <div className={style({borderRadius: 'inherit', overflow: 'clip'})}>
-        {props.children}
-      </div>
+      <div className={style({borderRadius: 'inherit', overflow: 'clip'})}>{props.children}</div>
     </div>
   );
 });
@@ -665,7 +723,10 @@ const collectionImage = style({
   userSelect: 'none'
 });
 
-export const CollectionCardPreview = forwardRef(function CollectionCardPreview(props: CardPreviewProps, ref: DOMRef<HTMLDivElement>) {
+export const CollectionCardPreview = forwardRef(function CollectionCardPreview(
+  props: CardPreviewProps,
+  ref: DOMRef<HTMLDivElement>
+) {
   let {size} = useContext(InternalCardContext)!;
   return (
     <CardPreview {...props} ref={ref}>
@@ -680,51 +741,60 @@ export const CollectionCardPreview = forwardRef(function CollectionCardPreview(p
 
 export interface AssetCardProps extends Omit<CardProps, 'density'> {}
 
-export const AssetCard = forwardRef(function AssetCard(props: AssetCardProps, ref: DOMRef<HTMLDivElement>) {
+export const AssetCard = forwardRef(function AssetCard(
+  props: AssetCardProps,
+  ref: DOMRef<HTMLDivElement>
+) {
   let {layout} = useContext(InternalCardViewContext);
   return (
     <Card {...props} ref={ref} density="regular">
       {composeRenderProps(props.children, children => (
         <Provider
           values={[
-            [ImageContext, {
-              alt: '',
-              styles: style({
-                width: 'full',
-                aspectRatio: {
-                  layout: {
-                    grid: 'square'
-                  }
+            [
+              ImageContext,
+              {
+                alt: '',
+                styles: style({
+                  width: 'full',
+                  aspectRatio: {
+                    layout: {
+                      grid: 'square'
+                    }
+                  },
+                  objectFit: 'contain',
+                  pointerEvents: 'none',
+                  userSelect: 'none'
+                })({layout})
+              }
+            ],
+            [
+              IllustrationContext,
+              {
+                render(icon) {
+                  return (
+                    <SkeletonWrapper>
+                      <div
+                        className={style({
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          backgroundColor: 'gray-100',
+                          aspectRatio: 'square'
+                        })}>
+                        {icon}
+                      </div>
+                    </SkeletonWrapper>
+                  );
                 },
-                objectFit: 'contain',
-                pointerEvents: 'none',
-                userSelect: 'none'
-              })({layout})
-            }],
-            [IllustrationContext, {
-              render(icon) {
-                return (
-                  <SkeletonWrapper>
-                    <div
-                      className={style({
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        backgroundColor: 'gray-100',
-                        aspectRatio: 'square'
-                      })}>
-                      {icon}
-                    </div>
-                  </SkeletonWrapper>
-                );
-              },
-              styles: style({
-                height: 'auto',
-                maxSize: 160,
-                // TODO: this is made up.
-                width: '50%'
-              })
-            }]
+                styles: style({
+                  height: 'auto',
+                  maxSize: 160,
+                  // TODO: this is made up.
+                  width: '50%'
+                })
+              }
+            ]
           ]}>
           {children}
         </Provider>
@@ -744,40 +814,49 @@ const avatarSize = {
 export interface UserCardProps extends Omit<CardProps, 'density' | 'variant'> {
   // Quiet is not supported due to lack of indent between preview and avatar.
   /** The visual style of the Card. */
-  variant?: 'primary' | 'secondary' | 'tertiary'
+  variant?: 'primary' | 'secondary' | 'tertiary';
 }
 
-export const UserCard = forwardRef(function UserCard(props: UserCardProps, ref: DOMRef<HTMLDivElement>) {
+export const UserCard = forwardRef(function UserCard(
+  props: UserCardProps,
+  ref: DOMRef<HTMLDivElement>
+) {
   let {size = 'M'} = props;
   return (
     <Card {...props} ref={ref} density="spacious">
       {composeRenderProps(props.children, children => (
         <Provider
           values={[
-            [ImageContext, {
-              alt: '',
-              styles: style({
-                width: 'full',
-                aspectRatio: '3/1',
-                objectFit: 'cover',
-                pointerEvents: 'none',
-                userSelect: 'none'
-              })
-            }],
-            [AvatarContext, {
-              size: avatarSize[size],
-              UNSAFE_style: {
-                '--size': (avatarSize[size] / 16) + 'rem'
-              } as CSSProperties,
-              styles: style({
-                position: 'relative',
-                marginTop: {
-                  default: 0,
-                  ':is([slot=preview] + *)': 'calc(var(--size) / -2)'
-                }
-              }),
-              isOverBackground: true
-            }]
+            [
+              ImageContext,
+              {
+                alt: '',
+                styles: style({
+                  width: 'full',
+                  aspectRatio: '3/1',
+                  objectFit: 'cover',
+                  pointerEvents: 'none',
+                  userSelect: 'none'
+                })
+              }
+            ],
+            [
+              AvatarContext,
+              {
+                size: avatarSize[size],
+                UNSAFE_style: {
+                  '--size': avatarSize[size] / 16 + 'rem'
+                } as CSSProperties,
+                styles: style({
+                  position: 'relative',
+                  marginTop: {
+                    default: 0,
+                    ':is([slot=preview] + *)': 'calc(var(--size) / -2)'
+                  }
+                }),
+                isOverBackground: true
+              }
+            ]
           ]}>
           {children}
         </Provider>
@@ -797,72 +876,84 @@ const buttonSize = {
 export interface ProductCardProps extends Omit<CardProps, 'density' | 'variant'> {
   // Quiet is not supported due to lack of indent between preview and thumbnail.
   /** The visual style of the Card. */
-  variant?: 'primary' | 'secondary' | 'tertiary'
+  variant?: 'primary' | 'secondary' | 'tertiary';
 }
 
-export const ProductCard = forwardRef(function ProductCard(props: ProductCardProps, ref: DOMRef<HTMLDivElement>) {
+export const ProductCard = forwardRef(function ProductCard(
+  props: ProductCardProps,
+  ref: DOMRef<HTMLDivElement>
+) {
   let {size = 'M'} = props;
   return (
     <Card {...props} ref={ref} density="spacious">
       {composeRenderProps(props.children, children => (
         <Provider
           values={[
-            [ImageContext, {
-              slots: {
-                preview: {
-                  alt: '',
-                  styles: style({
-                    width: 'full',
-                    aspectRatio: '5/1',
-                    objectFit: 'cover',
-                    pointerEvents: 'none',
-                    userSelect: 'none'
-                  })
-                },
-                thumbnail: {
-                  alt: '',
-                  styles: style({
-                    position: 'relative',
-                    pointerEvents: 'none',
-                    userSelect: 'none',
-                    size: {
+            [
+              ImageContext,
+              {
+                slots: {
+                  preview: {
+                    alt: '',
+                    styles: style({
+                      width: 'full',
+                      aspectRatio: '5/1',
+                      objectFit: 'cover',
+                      pointerEvents: 'none',
+                      userSelect: 'none'
+                    })
+                  },
+                  thumbnail: {
+                    alt: '',
+                    styles: style({
+                      position: 'relative',
+                      pointerEvents: 'none',
+                      userSelect: 'none',
                       size: {
-                        XS: 24,
-                        S: 36,
-                        M: 40,
-                        L: 44,
-                        XL: 56
-                      }
-                    },
-                    borderRadius: {
-                      default: 'default',
-                      size: {
-                        XS: 'sm',
-                        S: 'sm'
-                      }
-                    },
-                    objectFit: 'cover',
-                    marginTop: {
-                      default: 0,
-                      ':is([slot=preview] + *)': 'calc(self(height) / -2)'
-                    },
-                    outlineStyle: 'solid',
-                    outlineWidth: {
-                      default: 2,
-                      size: {
-                        XS: 1
-                      }
-                    },
-                    outlineColor: '--s2-container-bg'
-                  })({size})
+                        size: {
+                          XS: 24,
+                          S: 36,
+                          M: 40,
+                          L: 44,
+                          XL: 56
+                        }
+                      },
+                      borderRadius: {
+                        default: 'default',
+                        size: {
+                          XS: 'sm',
+                          S: 'sm'
+                        }
+                      },
+                      objectFit: 'cover',
+                      marginTop: {
+                        default: 0,
+                        ':is([slot=preview] + *)': 'calc(self(height) / -2)'
+                      },
+                      outlineStyle: 'solid',
+                      outlineWidth: {
+                        default: 2,
+                        size: {
+                          XS: 1
+                        }
+                      },
+                      outlineColor: '--s2-container-bg'
+                    })({size})
+                  }
                 }
               }
-            }],
-            [FooterContext, {
-              styles: mergeStyles(footer, style({
-                justifyContent: 'end'
-              }))
-            }],
+            ],
+            [
+              FooterContext,
+              {
+                styles: mergeStyles(
+                  footer,
+                  style({
+                    justifyContent: 'end'
+                  })
+                )
+              }
+            ],
             [ButtonContext, {size: buttonSize[size]}],
             [LinkButtonContext, {size: buttonSize[size]}]
           ]}>

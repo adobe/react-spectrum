@@ -46,7 +46,9 @@ describe('useGrid', () => {
   });
   afterEach(() => {
     // run out notifications
-    act(() => {jest.runAllTimers();});
+    act(() => {
+      jest.runAllTimers();
+    });
   });
   it('gridFocusMode = row, cellFocusMode = cell', async () => {
     let tree = renderGrid({gridFocusMode: 'row', cellFocusMode: 'cell'});

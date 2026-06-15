@@ -19,7 +19,7 @@ describe('mergeRefs', () => {
     let ref1;
     let ref2;
 
-    const TextField = (props) => {
+    const TextField = props => {
       let internalRef1 = useRef(null);
       let internalRef2 = useRef(null);
       useEffect(() => {
@@ -44,14 +44,14 @@ describe('mergeRefs', () => {
       let ref2;
       let target = null;
 
-      const TextField = (props) => {
+      const TextField = props => {
         let internalRef1 = useRef(null);
         let internalRef2 = useRef(null);
         useEffect(() => {
           ref1 = internalRef1;
           ref2 = internalRef2;
         }, [internalRef1, internalRef2]);
-        let ref3 = useCallback((node) => {
+        let ref3 = useCallback(node => {
           target = node;
           return cleanUp;
         }, []);

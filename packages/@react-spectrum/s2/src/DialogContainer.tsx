@@ -17,9 +17,9 @@ import {useSlottedContext} from 'react-aria-components/slots';
 
 export interface DialogContainerProps {
   /** The Dialog to display, if any. */
-  children: ReactNode,
+  children: ReactNode;
   /** Handler that is called when the 'x' button of a dismissable Dialog is clicked. */
-  onDismiss: () => void
+  onDismiss: () => void;
 }
 
 /**
@@ -28,10 +28,7 @@ export interface DialogContainerProps {
  * or when the trigger unmounts while the dialog is open.
  */
 export function DialogContainer(props: DialogContainerProps): ReactNode {
-  let {
-    children,
-    onDismiss
-  } = props;
+  let {children, onDismiss} = props;
 
   let childArray = React.Children.toArray(children);
   if (childArray.length > 1) {
@@ -70,7 +67,7 @@ export interface DialogContainerValue {
   /**
    * A handler to programmatically dismiss the dialog.
    */
-  dismiss(): void
+  dismiss(): void;
 }
 
 export function useDialogContainer(): DialogContainerValue {

@@ -31,10 +31,7 @@ let states = [
   {UNSAFE_className: classNames(styles, 'focus-ring')}
 ];
 
-let combinations = generatePowerset(
-  states,
-  (merged) => merged.isDisabled && merged.UNSAFE_className
-);
+let combinations = generatePowerset(states, merged => merged.isDisabled && merged.UNSAFE_className);
 
 export default {
   title: 'Button/ToggleButton'
@@ -45,13 +42,13 @@ export type ToggleButtonStory = StoryFn<typeof ToggleButton>;
 export const AllPossibleStates: ToggleButtonStory = () => (
   <Flex direction={'column'} gap={'size-300'}>
     <Grid columns={repeat(states.length, '1fr')} autoFlow="row" gap="size-300">
-      {combinations.map((c) => (
+      {combinations.map(c => (
         <ToggleButton {...c}>Button</ToggleButton>
       ))}
     </Grid>
     <View backgroundColor="static-yellow-400" padding="size-1000">
       <Grid columns={repeat(states.length, '1fr')} autoFlow="row" gap="size-300">
-        {combinations.map((c) => (
+        {combinations.map(c => (
           <ToggleButton {...c} staticColor="black">
             Button
           </ToggleButton>
@@ -60,7 +57,7 @@ export const AllPossibleStates: ToggleButtonStory = () => (
     </View>
     <View backgroundColor="static-blue-700" padding="size-1000">
       <Grid columns={repeat(states.length, '1fr')} autoFlow="row" gap="size-300">
-        {combinations.map((c) => (
+        {combinations.map(c => (
           <ToggleButton {...c} staticColor="white">
             Button
           </ToggleButton>

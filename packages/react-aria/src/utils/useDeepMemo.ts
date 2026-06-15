@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-/* eslint-disable rulesdir/pure-render */
+/* eslint-disable rsp-rules/pure-render */
 
 import {useRef} from 'react';
 

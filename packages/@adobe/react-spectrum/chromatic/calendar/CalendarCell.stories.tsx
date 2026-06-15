@@ -82,15 +82,28 @@ export function AllStates(): JSX.Element {
   let size = scale === 'medium' ? 40 : 50;
   return (
     <Grid columns={repeat(10, scale === 'medium' ? 100 : 120)}>
-      {generatePowerset(states, (merged) =>
-        (merged.isDisabled && (merged.isFocused || merged.isHovered || merged.isPressed || merged.isInvalid || merged.isSelected)) ||
-        (merged.isUnavailable && (merged.isHovered || merged.isPressed || merged.isDisabled)) ||
-        (merged.isSelected && merged.isUnavailable && !merged.isInvalid) ||
-        (!merged.isSelected && (merged.isRangeSelection || merged.isSelectionStart || merged.isSelectionEnd || merged.isRangeStart || merged.isRangeEnd || merged.isInvalid)) ||
-        ((merged.isRangeStart || merged.isRangeEnd) && !merged.isRangeSelection) ||
-        (merged.isRangeStart && merged.isRangeEnd) ||
-        (merged.isSelectionStart && !merged.isRangeStart) ||
-        (merged.isSelectionEnd && !merged.isRangeEnd)
+      {generatePowerset(
+        states,
+        merged =>
+          (merged.isDisabled &&
+            (merged.isFocused ||
+              merged.isHovered ||
+              merged.isPressed ||
+              merged.isInvalid ||
+              merged.isSelected)) ||
+          (merged.isUnavailable && (merged.isHovered || merged.isPressed || merged.isDisabled)) ||
+          (merged.isSelected && merged.isUnavailable && !merged.isInvalid) ||
+          (!merged.isSelected &&
+            (merged.isRangeSelection ||
+              merged.isSelectionStart ||
+              merged.isSelectionEnd ||
+              merged.isRangeStart ||
+              merged.isRangeEnd ||
+              merged.isInvalid)) ||
+          ((merged.isRangeStart || merged.isRangeEnd) && !merged.isRangeSelection) ||
+          (merged.isRangeStart && merged.isRangeEnd) ||
+          (merged.isSelectionStart && !merged.isRangeStart) ||
+          (merged.isSelectionEnd && !merged.isRangeEnd)
       ).map(props => (
         <div style={{whiteSpace: 'pre-wrap'}}>
           {Object.keys(props).join('\n')}
@@ -104,7 +117,21 @@ export function AllStates(): JSX.Element {
 }
 
 // Fake cell for testing css
-function Cell({isToday, isSelected, isFocused, isHovered, isPressed, isDisabled, isRangeStart, isRangeEnd, isRangeSelection, isSelectionStart, isSelectionEnd, isInvalid, isUnavailable}) {
+function Cell({
+  isToday,
+  isSelected,
+  isFocused,
+  isHovered,
+  isPressed,
+  isDisabled,
+  isRangeStart,
+  isRangeEnd,
+  isRangeSelection,
+  isSelectionStart,
+  isSelectionEnd,
+  isInvalid,
+  isUnavailable
+}) {
   return (
     <span
       className={classNames(styles, 'spectrum-Calendar-date', {
@@ -122,7 +149,9 @@ function Cell({isToday, isSelected, isFocused, isHovered, isPressed, isDisabled,
         'is-pressed': isPressed,
         'is-invalid': isInvalid
       })}>
-      <span className={classNames(styles, 'spectrum-Calendar-dateText')}><span>12</span></span>
+      <span className={classNames(styles, 'spectrum-Calendar-dateText')}>
+        <span>12</span>
+      </span>
     </span>
   );
 }

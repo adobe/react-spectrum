@@ -1,14 +1,19 @@
 'use client';
 import React from 'react';
-import { SwitchField, SwitchButton, type SwitchFieldProps, type ValidationResult } from 'react-aria-components/Switch';
-import { tv } from 'tailwind-variants';
-import { composeTailwindRenderProps, focusRing } from './utils';
-import { Description, FieldError } from './Field';
+import {
+  SwitchField,
+  SwitchButton,
+  type SwitchFieldProps,
+  type ValidationResult
+} from 'react-aria-components/Switch';
+import {tv} from 'tailwind-variants';
+import {composeTailwindRenderProps, focusRing} from './utils';
+import {Description, FieldError} from './Field';
 
 export interface SwitchProps extends Omit<SwitchFieldProps, 'children'> {
-  children: React.ReactNode,
-  description?: string,
-  errorMessage?: string | ((validation: ValidationResult) => string)
+  children: React.ReactNode;
+  description?: string;
+  errorMessage?: string | ((validation: ValidationResult) => string);
 }
 
 const track = tv({
@@ -16,11 +21,12 @@ const track = tv({
   base: 'flex h-5 w-9 box-border px-px items-center shrink-0 cursor-default rounded-full transition duration-200 ease-in-out shadow-inner border border-transparent font-sans',
   variants: {
     isSelected: {
-      false: 'bg-neutral-100 dark:bg-neutral-800 group-pressed:bg-neutral-200 dark:group-pressed:bg-neutral-700 border-neutral-400 dark:border-neutral-400',
-      true: 'bg-neutral-700 dark:bg-neutral-300 forced-colors:bg-[Highlight]! group-pressed:bg-neutral-800 dark:group-pressed:bg-neutral-200',
+      false:
+        'bg-neutral-100 dark:bg-neutral-800 group-pressed:bg-neutral-200 dark:group-pressed:bg-neutral-700 border-neutral-400 dark:border-neutral-400',
+      true: 'bg-neutral-700 dark:bg-neutral-300 forced-colors:bg-[Highlight]! group-pressed:bg-neutral-800 dark:group-pressed:bg-neutral-200'
     },
     isDisabled: {
-      true: 'bg-neutral-100 dark:bg-neutral-800 group-selected:bg-neutral-300 dark:group-selected:bg-neutral-800 forced-colors:group-selected:bg-[GrayText]! border-neutral-300 dark:border-neutral-900 forced-colors:border-[GrayText]',
+      true: 'bg-neutral-100 dark:bg-neutral-800 group-selected:bg-neutral-300 dark:group-selected:bg-neutral-800 forced-colors:group-selected:bg-[GrayText]! border-neutral-300 dark:border-neutral-900 forced-colors:border-[GrayText]'
     }
   }
 });
@@ -50,11 +56,15 @@ const handle = tv({
   ]
 });
 
-export function Switch({ children, ...props }: SwitchProps) {
+export function Switch({children, ...props}: SwitchProps) {
   return (
     <SwitchField {...props} className="flex flex-col gap-1 group">
-      <SwitchButton className={composeTailwindRenderProps(props.className, 'group relative flex gap-2 items-center text-neutral-800 disabled:text-neutral-300 dark:text-neutral-200 dark:disabled:text-neutral-600 forced-colors:disabled:text-[GrayText] text-sm transition [-webkit-tap-highlight-color:transparent]')}>
-        {(renderProps) => (
+      <SwitchButton
+        className={composeTailwindRenderProps(
+          props.className,
+          'group relative flex gap-2 items-center text-neutral-800 disabled:text-neutral-300 dark:text-neutral-200 dark:disabled:text-neutral-600 forced-colors:disabled:text-[GrayText] text-sm transition [-webkit-tap-highlight-color:transparent]'
+        )}>
+        {renderProps => (
           <>
             <div className={track(renderProps)}>
               <span className={handle(renderProps)} />

@@ -21,13 +21,15 @@ describe('useSliderState', () => {
       currency: 'USD'
     };
     let numberFormatter = new Intl.NumberFormat('en-US', formatOptions);
-    let result = renderHook(() => useSliderState({
-      defaultValue: [50],
-      minValue: 10,
-      maxValue: 200,
-      step: 10,
-      numberFormatter
-    })).result;
+    let result = renderHook(() =>
+      useSliderState({
+        defaultValue: [50],
+        minValue: 10,
+        maxValue: 200,
+        step: 10,
+        numberFormatter
+      })
+    ).result;
 
     expect(result.current.getThumbValue(0)).toBe(50);
     expect(result.current.getThumbPercent(0)).toBe(40 / 190);
@@ -60,12 +62,14 @@ describe('useSliderState', () => {
   });
 
   it('should enforce maxValue and minValue for multiple thumbs', () => {
-    let result = renderHook(() => useSliderState({
-      defaultValue: [50, 70, 90],
-      minValue: 10,
-      maxValue: 200,
-      numberFormatter
-    })).result;
+    let result = renderHook(() =>
+      useSliderState({
+        defaultValue: [50, 70, 90],
+        minValue: 10,
+        maxValue: 200,
+        numberFormatter
+      })
+    ).result;
 
     expect(result.current.values).toEqual([50, 70, 90]);
 
@@ -88,13 +92,15 @@ describe('useSliderState', () => {
   });
 
   it('should round values to nearest step with two thumbs', () => {
-    let result = renderHook(() => useSliderState({
-      minValue: 1,
-      maxValue: 15,
-      step: 2.5,
-      defaultValue: [1, 13],
-      numberFormatter
-    })).result;
+    let result = renderHook(() =>
+      useSliderState({
+        minValue: 1,
+        maxValue: 15,
+        step: 2.5,
+        defaultValue: [1, 13],
+        numberFormatter
+      })
+    ).result;
 
     expect(result.current.values).toEqual([1, 13.5]);
     expect(result.current.getThumbMinValue(1)).toBe(1);
@@ -110,13 +116,15 @@ describe('useSliderState', () => {
   });
 
   it('should round values to nearest step with three thumbs', () => {
-    let result = renderHook(() => useSliderState({
-      minValue: 1,
-      maxValue: 15,
-      step: 2.5,
-      defaultValue: [1, 6, 13],
-      numberFormatter
-    })).result;
+    let result = renderHook(() =>
+      useSliderState({
+        minValue: 1,
+        maxValue: 15,
+        step: 2.5,
+        defaultValue: [1, 6, 13],
+        numberFormatter
+      })
+    ).result;
 
     expect(result.current.values).toEqual([1, 6, 13.5]);
     expect(result.current.getThumbMinValue(1)).toBe(1);
@@ -138,11 +146,13 @@ describe('useSliderState', () => {
   it('should call onChange and onChangeEnd appropriately', () => {
     let onChangeEndSpy = jest.fn();
     let onChangeSpy = jest.fn();
-    let result = renderHook(() => useSliderState({
-      onChangeEnd: onChangeEndSpy,
-      onChange: onChangeSpy,
-      numberFormatter
-    })).result;
+    let result = renderHook(() =>
+      useSliderState({
+        onChangeEnd: onChangeEndSpy,
+        onChange: onChangeSpy,
+        numberFormatter
+      })
+    ).result;
 
     expect(result.current.values).toEqual([0]);
     act(() => result.current.setThumbDragging(0, true));
@@ -170,11 +180,13 @@ describe('useSliderState', () => {
   it('should not call onChange and onChangeEnd if not being moved', () => {
     let onChangeEndSpy = jest.fn();
     let onChangeSpy = jest.fn();
-    let result = renderHook(() => useSliderState({
-      onChangeEnd: onChangeEndSpy,
-      onChange: onChangeSpy,
-      numberFormatter
-    })).result;
+    let result = renderHook(() =>
+      useSliderState({
+        onChangeEnd: onChangeEndSpy,
+        onChange: onChangeSpy,
+        numberFormatter
+      })
+    ).result;
 
     expect(result.current.values).toEqual([0]);
     act(() => result.current.setThumbValue(0, 0));

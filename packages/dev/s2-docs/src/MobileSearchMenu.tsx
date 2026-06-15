@@ -1,6 +1,20 @@
 'use client';
 
-import {Autocomplete, OverlayTriggerStateContext, Provider, Dialog as RACDialog, DialogProps as RACDialogProps, Tab as RACTab, TabList as RACTabList, TabPanel as RACTabPanel, TabPanelProps as RACTabPanelProps, TabProps as RACTabProps, Tabs as RACTabs, SelectionIndicator, TabRenderProps} from 'react-aria-components';
+import {
+  Autocomplete,
+  OverlayTriggerStateContext,
+  Provider,
+  Dialog as RACDialog,
+  DialogProps as RACDialogProps,
+  Tab as RACTab,
+  TabList as RACTabList,
+  TabPanel as RACTabPanel,
+  TabPanelProps as RACTabPanelProps,
+  TabProps as RACTabProps,
+  Tabs as RACTabs,
+  SelectionIndicator,
+  TabRenderProps
+} from 'react-aria-components';
 import {baseColor, focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {CloseButton, SearchField, TextContext} from '@react-spectrum/s2';
 import {ColorSearchSkeleton} from './colorSearchData';
@@ -15,17 +29,27 @@ import {
 } from './searchUtils';
 import {IconSearchSkeleton, useIconFilter} from './IconSearchView';
 import {type Library} from './constants';
-import React, {cloneElement, CSSProperties, ReactElement, ReactNode, Suspense, useContext, useEffect, useRef, useState} from 'react';
+import React, {
+  cloneElement,
+  CSSProperties,
+  ReactElement,
+  ReactNode,
+  Suspense,
+  useContext,
+  useEffect,
+  useRef,
+  useState
+} from 'react';
 import {SearchTagGroups} from './SearchTagGroups';
 import {TypographySearchView} from './TypographySearchView';
 import {useId} from '@react-aria/utils';
 import {useRouter} from './Router';
 
 interface MobileDialogProps extends Omit<RACDialogProps, 'className' | 'style'> {
-  size?: 'S' | 'M' | 'L' | 'fullscreen' | 'fullscreenTakeover',
-  isDismissible?: boolean,
-  isKeyboardDismissDisabled?: boolean,
-  padding?: 'default' | 'none'
+  size?: 'S' | 'M' | 'L' | 'fullscreen' | 'fullscreenTakeover';
+  isDismissible?: boolean;
+  isKeyboardDismissDisabled?: boolean;
+  padding?: 'default' | 'none';
 }
 
 const dialogStyle = style({
@@ -144,14 +168,15 @@ const stickySearchContainer = style({
 function MobileTab(props: Omit<RACTabProps, 'children'> & {children: ReactNode}) {
   let contentId = useId();
   return (
-    <RACTab
-      {...props}
-      className={renderProps => mobileTab(renderProps)}>
+    <RACTab {...props} className={renderProps => mobileTab(renderProps)}>
       <Provider
         values={[
-          [TextContext, {
-            id: contentId
-          }]
+          [
+            TextContext,
+            {
+              id: contentId
+            }
+          ]
         ]}>
         {props.children}
       </Provider>
@@ -161,16 +186,14 @@ function MobileTab(props: Omit<RACTabProps, 'children'> & {children: ReactNode})
 }
 
 interface MobileTabListProps {
-  children: ReactNode
+  children: ReactNode;
 }
 
 function MobileTabList({children}: MobileTabListProps) {
   return (
     <div className={mobileTabListWrapper}>
       <div className={style({position: 'relative', flexGrow: 1, overflow: 'hidden'})}>
-        <RACTabList className={mobileTabList}>
-          {children}
-        </RACTabList>
+        <RACTabList className={mobileTabList}>{children}</RACTabList>
       </div>
       <div className={style({paddingEnd: 12, flexShrink: 0})}>
         <Provider values={[[OverlayTriggerStateContext, null]]}>
@@ -183,9 +206,7 @@ function MobileTabList({children}: MobileTabListProps) {
 
 function MobileTabPanel(props: Omit<RACTabPanelProps, 'children'> & {children: ReactNode}) {
   return (
-    <RACTabPanel
-      {...props}
-      className={mobileTabPanel}>
+    <RACTabPanel {...props} className={mobileTabPanel}>
       {props.children}
     </RACTabPanel>
   );
@@ -200,14 +221,10 @@ export function MobileSearchMenu({initialTag}: {initialTag?: string}) {
 }
 
 const MobileCustomDialog = function MobileCustomDialog(props: MobileDialogProps) {
-  let {
-    padding = 'default'
-  } = props;
+  let {padding = 'default'} = props;
 
   return (
-    <RACDialog
-      {...props}
-      className={dialogStyle({padding})}>
+    <RACDialog {...props} className={dialogStyle({padding})}>
       {props.children}
     </RACDialog>
   );
@@ -284,7 +301,7 @@ function MobileNav({initialTag}: {initialTag?: string}) {
           className={style({height: 'full', display: 'flex', flexDirection: 'column'})}
           aria-label="Libraries"
           selectedKey={selectedLibrary}
-          onSelectionChange={(key) => {
+          onSelectionChange={key => {
             let newLib = key as Library;
             setSelectedLibrary(newLib);
             if (!searchFocused) {
@@ -297,10 +314,20 @@ function MobileNav({initialTag}: {initialTag?: string}) {
                 <MobileTab key={library.id} id={library.id}>
                   <div
                     className={style({display: 'flex', alignItems: 'center', gap: 8})}
-                    style={{viewTransitionName: (i === 0 && isOpen) ? 'search-menu-icon' : 'none'} as CSSProperties}>
+                    style={
+                      {
+                        viewTransitionName: i === 0 && isOpen ? 'search-menu-icon' : 'none'
+                      } as CSSProperties
+                    }>
                     {cloneElement(library.icon as ReactElement<any>, {styles: style({size: 20})})}
                   </div>
-                  <span style={{viewTransitionName: (i === 0 && isOpen && window.scrollY === 0) ? 'search-menu-label' : 'none'} as CSSProperties}>
+                  <span
+                    style={
+                      {
+                        viewTransitionName:
+                          i === 0 && isOpen && window.scrollY === 0 ? 'search-menu-label' : 'none'
+                      } as CSSProperties
+                    }>
                     {library.label}
                   </span>
                 </MobileTab>
@@ -325,7 +352,8 @@ function MobileNav({initialTag}: {initialTag?: string}) {
                       onFocus={handleSearchFocus}
                       onBlur={handleSearchBlur}
                       placeholder={placeholderText}
-                      styles={style({marginX: 16})} />
+                      styles={style({marginX: 16})}
+                    />
                     <div className={style({overflow: 'auto', paddingX: 8, paddingBottom: 8})}>
                       <SearchTagGroups
                         sectionTags={sectionTags}
@@ -334,7 +362,14 @@ function MobileNav({initialTag}: {initialTag?: string}) {
                         onSectionSelectionChange={handleTagSelectionChange}
                         onResourceSelectionChange={handleTagSelectionChange}
                         wrapperClassName={style({paddingTop: 0})}
-                        contentClassName={style({display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 8, marginX: 0})} />
+                        contentClassName={style({
+                          display: 'flex',
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          gap: 8,
+                          marginX: 0
+                        })}
+                      />
                     </div>
                   </div>
                   <div
@@ -356,7 +391,8 @@ function MobileNav({initialTag}: {initialTag?: string}) {
                             overflow: 'auto',
                             width: '100%',
                             scrollPaddingY: 4
-                          })} />
+                          })}
+                        />
                       </Suspense>
                     )}
                     {!showIcons && isColorsSelected && library.id === 'react-spectrum' && (
@@ -370,7 +406,8 @@ function MobileNav({initialTag}: {initialTag?: string}) {
                             overflow: 'auto',
                             width: '100%',
                             scrollPaddingY: 4
-                          })} />
+                          })}
+                        />
                       </Suspense>
                     )}
                     {!showIcons && isTypographySelected && library.id === 'react-spectrum' && (
@@ -390,8 +427,10 @@ function MobileNav({initialTag}: {initialTag?: string}) {
                         renderEmptyState={() => (
                           <SearchEmptyState
                             searchValue={searchValue}
-                            libraryLabel={library.label} />
-                        )} />
+                            libraryLabel={library.label}
+                          />
+                        )}
+                      />
                     )}
                   </div>
                 </Autocomplete>

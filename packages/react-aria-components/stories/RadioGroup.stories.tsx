@@ -32,16 +32,32 @@ export type RadioGroupStory = StoryFn<typeof RadioGroup>;
 export type RadioGroupStoryObj = StoryObj<typeof RadioGroup>;
 
 export const RadioGroupExample: RadioGroupStoryObj = {
-  render: (props) => {
+  render: props => {
     return (
-      <RadioGroup
-        {...props}
-        data-testid="radio-group-example"
-        className={styles.radiogroup}>
+      <RadioGroup {...props} data-testid="radio-group-example" className={styles.radiogroup}>
         <Label>Favorite pet</Label>
-        <Radio onFocus={action('radio focus')} onBlur={action('radio blur')} className={styles.radio} value="dogs" data-testid="radio-dog">Dog</Radio>
-        <Radio onFocus={action('radio focus')} onBlur={action('radio blur')} className={styles.radio} value="cats">Cat</Radio>
-        <Radio onFocus={action('radio focus')} onBlur={action('radio blur')} className={styles.radio} value="dragon">Dragon</Radio>
+        <Radio
+          onFocus={action('radio focus')}
+          onBlur={action('radio blur')}
+          className={styles.radio}
+          value="dogs"
+          data-testid="radio-dog">
+          Dog
+        </Radio>
+        <Radio
+          onFocus={action('radio focus')}
+          onBlur={action('radio blur')}
+          className={styles.radio}
+          value="cats">
+          Cat
+        </Radio>
+        <Radio
+          onFocus={action('radio focus')}
+          onBlur={action('radio blur')}
+          className={styles.radio}
+          value="dragon">
+          Dragon
+        </Radio>
       </RadioGroup>
     );
   },
@@ -51,8 +67,8 @@ export const RadioGroupExample: RadioGroupStoryObj = {
   }
 };
 
-export const RadioGroupControlledExample: RadioGroupStory = (props) => {
-  let [selected, setSelected] = useState<string|null>(null);
+export const RadioGroupControlledExample: RadioGroupStory = props => {
+  let [selected, setSelected] = useState<string | null>(null);
 
   return (
     <RadioGroup
@@ -62,14 +78,20 @@ export const RadioGroupControlledExample: RadioGroupStory = (props) => {
       value={selected}
       onChange={setSelected}>
       <Label>Favorite pet (controlled)</Label>
-      <Radio className={styles.radio} value="dogs" data-testid="radio-dog">Dog</Radio>
-      <Radio className={styles.radio} value="cats">Cat</Radio>
-      <Radio className={styles.radio} value="dragon">Dragon</Radio>
+      <Radio className={styles.radio} value="dogs" data-testid="radio-dog">
+        Dog
+      </Radio>
+      <Radio className={styles.radio} value="cats">
+        Cat
+      </Radio>
+      <Radio className={styles.radio} value="dragon">
+        Dragon
+      </Radio>
     </RadioGroup>
   );
 };
 
-export const RadioGroupInDialogExample: RadioGroupStory = (props) => {
+export const RadioGroupInDialogExample: RadioGroupStory = props => {
   return (
     <DialogTrigger>
       <Button>Open dialog</Button>
@@ -108,9 +130,15 @@ export const RadioGroupInDialogExample: RadioGroupStory = (props) => {
                       data-testid="radio-group-example"
                       className={styles.radiogroup}>
                       <Label>Favorite pet</Label>
-                      <Radio className={styles.radio} value="dogs" data-testid="radio-dog">Dog</Radio>
-                      <Radio className={styles.radio} value="cats">Cat</Radio>
-                      <Radio className={styles.radio} value="dragon">Dragon</Radio>
+                      <Radio className={styles.radio} value="dogs" data-testid="radio-dog">
+                        Dog
+                      </Radio>
+                      <Radio className={styles.radio} value="cats">
+                        Cat
+                      </Radio>
+                      <Radio className={styles.radio} value="dragon">
+                        Dragon
+                      </Radio>
                     </RadioGroup>
                   </div>
                   <Form>
@@ -119,11 +147,17 @@ export const RadioGroupInDialogExample: RadioGroupStory = (props) => {
                       data-testid="radio-group-example-2"
                       isRequired>
                       <Label>Second Favorite pet</Label>
-                      <Radio className={styles.radio} value="dogs" data-testid="radio-dog">Dog</Radio>
+                      <Radio className={styles.radio} value="dogs" data-testid="radio-dog">
+                        Dog
+                      </Radio>
                       <Button>About dogs</Button>
-                      <Radio className={styles.radio} value="cats">Cat</Radio>
+                      <Radio className={styles.radio} value="cats">
+                        Cat
+                      </Radio>
                       <Button>About cats</Button>
-                      <Radio className={styles.radio} value="dragon">Dragon</Radio>
+                      <Radio className={styles.radio} value="dragon">
+                        Dragon
+                      </Radio>
                       <Button>About dragons</Button>
                       <FieldError className={styles.errorMessage} />
                     </RadioGroup>
@@ -135,11 +169,17 @@ export const RadioGroupInDialogExample: RadioGroupStory = (props) => {
                       defaultValue="dragon"
                       isRequired>
                       <Label>Third Favorite pet</Label>
-                      <Radio className={styles.radio} value="dogs" data-testid="radio-dog">Dog</Radio>
+                      <Radio className={styles.radio} value="dogs" data-testid="radio-dog">
+                        Dog
+                      </Radio>
                       <Button>About dogs</Button>
-                      <Radio className={styles.radio} value="cats">Cat</Radio>
+                      <Radio className={styles.radio} value="cats">
+                        Cat
+                      </Radio>
                       <Button>About cats</Button>
-                      <Radio className={styles.radio} value="dragon">Dragon</Radio>
+                      <Radio className={styles.radio} value="dragon">
+                        Dragon
+                      </Radio>
                       <Button>About dragons</Button>
                       <FieldError className={styles.errorMessage} />
                     </RadioGroup>
@@ -159,7 +199,7 @@ export const RadioGroupInDialogExample: RadioGroupStory = (props) => {
   );
 };
 
-export const RadioGroupSubmitExample: RadioGroupStory = (props) => {
+export const RadioGroupSubmitExample: RadioGroupStory = props => {
   return (
     <Form>
       <RadioGroup
@@ -168,9 +208,15 @@ export const RadioGroupSubmitExample: RadioGroupStory = (props) => {
         data-testid="radio-group-example"
         isRequired>
         <Label>Favorite pet</Label>
-        <Radio className={styles.radio} value="dogs" data-testid="radio-dog">Dog</Radio>
-        <Radio className={styles.radio} value="cats">Cat</Radio>
-        <Radio className={styles.radio} value="dragon">Dragon</Radio>
+        <Radio className={styles.radio} value="dogs" data-testid="radio-dog">
+          Dog
+        </Radio>
+        <Radio className={styles.radio} value="cats">
+          Cat
+        </Radio>
+        <Radio className={styles.radio} value="dragon">
+          Dragon
+        </Radio>
         <FieldError className={styles.errorMessage} />
       </RadioGroup>
       <Button type="submit">Submit</Button>

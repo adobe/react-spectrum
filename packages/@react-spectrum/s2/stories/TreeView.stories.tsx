@@ -19,14 +19,14 @@ import {Collection} from 'react-aria/Collection';
 import {Content, Heading, Text} from '../src/Content';
 import Copy from '../s2wf-icons/S2_Icon_Copy_20_N.svg';
 import Delete from '../s2wf-icons/S2_Icon_Delete_20_N.svg';
-
+import {DragPreview} from '../src/DragPreview';
+import {DroppableCollectionReorderEvent, Key} from '@react-types/shared';
 import Edit from '../s2wf-icons/S2_Icon_Edit_20_N.svg';
-
 import FileTxt from '../s2wf-icons/S2_Icon_FileText_20_N.svg';
 import Folder from '../s2wf-icons/S2_Icon_Folder_20_N.svg';
 import FolderOpen from '../spectrum-illustrations/linear/FolderOpen';
 import {IllustratedMessage} from '../src/IllustratedMessage';
-import {Key} from '@react-types/shared';
+import {isTextDropItem, useDragAndDrop} from 'react-aria-components/useDragAndDrop';
 import {Link} from '../src/Link';
 import {MenuItem} from '../src/Menu';
 import type {Meta, StoryObj} from '@storybook/react';
@@ -43,6 +43,7 @@ import {
 } from '../src/TreeView';
 import {useAsyncList} from 'react-stately/useAsyncList';
 import {useListData} from 'react-stately/useListData';
+import {useTreeData} from 'react-stately/useTreeData';
 
 let onActionFunc = action('onAction');
 let noOnAction = undefined;
@@ -59,6 +60,7 @@ const meta: Meta<typeof TreeView> = {
   argTypes: {
     ...categorizeArgTypes('Events', ['onAction', ...events]),
     children: {table: {disable: true}},
+    dragAndDropHooks: {table: {disable: true}},
     onAction: {
       options: Object.keys(onActionOptions), // An array of serializable values
       mapping: onActionOptions, // Maps serializable option values to complex arg values
@@ -365,44 +367,83 @@ export const ExampleNoActions: StoryObj<typeof TreeExampleStaticNoActions> = {
 };
 
 interface TreeViewItemType {
-  id?: string,
-  name: string,
-  icon?: ReactElement,
-  childItems?: TreeViewItemType[]
+  id?: string;
+  name: string;
+  icon?: ReactElement;
+  childItems?: TreeViewItemType[];
 }
 
 let rows: TreeViewItemType[] = [
-  {id: 'projects', name: 'Projects', icon: <Folder />, childItems: [
-    {id: 'project-1', name: 'Project 1 Level 1', icon: <FileTxt />},
-    {id: 'project-2', name: 'Project 2 Level 1', icon: <Folder />, childItems: [
-      {id: 'project-2A', name: 'Project 2A Level 2', icon: <FileTxt />},
-      {id: 'project-2B', name: 'Project 2B Level 2', icon: <FileTxt />},
-      {id: 'project-2C', name: 'Project 2C Level 3', icon: <FileTxt />}
-    ]},
-    {id: 'project-3', name: 'Project 3', icon: <FileTxt />},
-    {id: 'project-4', name: 'Project 4', icon: <FileTxt />},
-    {id: 'project-5', name: 'Project 5', icon: <Folder />, childItems: [
-      {id: 'project-5A', name: 'Project 5A', icon: <FileTxt />},
-      {id: 'project-5B', name: 'Project 5B', icon: <FileTxt />},
-      {id: 'project-5C', name: 'Project 5C', icon: <FileTxt />}
-    ]}
-  ]},
-  {id: 'reports', name: 'Reports', icon: <Folder />, childItems: [
-    {id: 'reports-1', name: 'Reports 1', icon: <Folder />, childItems: [
-      {id: 'reports-1A', name: 'Reports 1A', icon: <Folder />, childItems: [
-        {id: 'reports-1AB', name: 'Reports 1AB', icon: <Folder />, childItems: [
-          {id: 'reports-1ABC', name: 'Reports 1ABC', icon: <FileTxt />}
-        ]}
-      ]},
-      {id: 'reports-1B', name: 'Reports 1B', icon: <FileTxt />},
-      {id: 'reports-1C', name: 'Reports 1C', icon: <FileTxt />}
-    ]},
-    {id: 'reports-2', name: 'Reports 2', icon: <FileTxt />},
-    ...Array.from({length: 100}, (_, i) => ({id: `reports-repeat-${i}`, name: `Reports ${i}`, icon: <FileTxt />}))
-  ]}
+  {
+    id: 'projects',
+    name: 'Projects',
+    icon: <Folder />,
+    childItems: [
+      {id: 'project-1', name: 'Project 1 Level 1', icon: <FileTxt />},
+      {
+        id: 'project-2',
+        name: 'Project 2 Level 1',
+        icon: <Folder />,
+        childItems: [
+          {id: 'project-2A', name: 'Project 2A Level 2', icon: <FileTxt />},
+          {id: 'project-2B', name: 'Project 2B Level 2', icon: <FileTxt />},
+          {id: 'project-2C', name: 'Project 2C Level 3', icon: <FileTxt />}
+        ]
+      },
+      {id: 'project-3', name: 'Project 3', icon: <FileTxt />},
+      {id: 'project-4', name: 'Project 4', icon: <FileTxt />},
+      {
+        id: 'project-5',
+        name: 'Project 5',
+        icon: <Folder />,
+        childItems: [
+          {id: 'project-5A', name: 'Project 5A', icon: <FileTxt />},
+          {id: 'project-5B', name: 'Project 5B', icon: <FileTxt />},
+          {id: 'project-5C', name: 'Project 5C', icon: <FileTxt />}
+        ]
+      }
+    ]
+  },
+  {
+    id: 'reports',
+    name: 'Reports',
+    icon: <Folder />,
+    childItems: [
+      {
+        id: 'reports-1',
+        name: 'Reports 1',
+        icon: <Folder />,
+        childItems: [
+          {
+            id: 'reports-1A',
+            name: 'Reports 1A',
+            icon: <Folder />,
+            childItems: [
+              {
+                id: 'reports-1AB',
+                name: 'Reports 1AB',
+                icon: <Folder />,
+                childItems: [{id: 'reports-1ABC', name: 'Reports 1ABC', icon: <FileTxt />}]
+              }
+            ]
+          },
+          {id: 'reports-1B', name: 'Reports 1B', icon: <FileTxt />},
+          {id: 'reports-1C', name: 'Reports 1C', icon: <FileTxt />}
+        ]
+      },
+      {id: 'reports-2', name: 'Reports 2', icon: <FileTxt />},
+      ...Array.from({length: 100}, (_, i) => ({
+        id: `reports-repeat-${i + 3}`,
+        name: `Reports ${i + 3}`,
+        icon: <FileTxt />
+      }))
+    ]
+  }
 ];
 
-const DynamicTreeItem = (props: Omit<TreeViewItemProps, 'children'> & TreeViewItemType & TreeViewLoadMoreItemProps): ReactElement => {
+const DynamicTreeItem = (
+  props: Omit<TreeViewItemProps, 'children'> & TreeViewItemType & TreeViewLoadMoreItemProps
+): ReactElement => {
   let {childItems, name, icon = <FileTxt />, loadingState, onLoadMore} = props;
   return (
     <>
@@ -422,32 +463,50 @@ const DynamicTreeItem = (props: Omit<TreeViewItemProps, 'children'> & TreeViewIt
           </ActionMenu>
         </TreeViewItemContent>
         <Collection items={childItems}>
-          {(item) => (
+          {item => (
             <DynamicTreeItem
               id={item.id || item.name}
               icon={item.icon}
               childItems={item.childItems}
               textValue={item.name}
               name={item.name}
-              href={props.href} />
+              href={props.href}
+            />
           )}
         </Collection>
-        {onLoadMore && loadingState && <TreeViewLoadMoreItem loadingState={loadingState} onLoadMore={onLoadMore} /> }
+        {onLoadMore && loadingState && (
+          <TreeViewLoadMoreItem loadingState={loadingState} onLoadMore={onLoadMore} />
+        )}
       </TreeViewItem>
     </>
   );
 };
 
 const TreeExampleDynamic = (args: TreeViewProps<TreeViewItemType>): ReactElement => (
-  <div style={{width: '300px', resize: 'both', height: '320px', overflow: 'auto', display: 'flex', flexDirection: 'column'}}>
-    <TreeView disabledKeys={['reports-1AB']} aria-label="test dynamic tree" items={rows} onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')} {...args}>
-      {(item) => (
+  <div
+    style={{
+      width: '300px',
+      resize: 'both',
+      height: '320px',
+      overflow: 'auto',
+      display: 'flex',
+      flexDirection: 'column'
+    }}>
+    <TreeView
+      disabledKeys={['reports-1AB']}
+      aria-label="test dynamic tree"
+      items={rows}
+      onExpandedChange={action('onExpandedChange')}
+      onSelectionChange={action('onSelectionChange')}
+      {...args}>
+      {item => (
         <DynamicTreeItem
           id={item.id}
           icon={item.icon}
           childItems={item.childItems}
           textValue={item.name}
-          name={item.name} />
+          name={item.name}
+        />
       )}
     </TreeView>
   </div>
@@ -523,11 +582,15 @@ function renderEmptyState(): ReactElement {
   return (
     <IllustratedMessage>
       <FolderOpen />
-      <Heading>
-        No results
-      </Heading>
+      <Heading>No results</Heading>
       <Content>
-        <Content>No results found, press <Link href="https://adobe.com" onPress={action('linkPress')}>here</Link> for more info.</Content>
+        <Content>
+          No results found, press{' '}
+          <Link href="https://adobe.com" onPress={action('linkPress')}>
+            here
+          </Link>{' '}
+          for more info.
+        </Content>
       </Content>
     </IllustratedMessage>
   );
@@ -579,15 +642,22 @@ function renderEmptyState(): ReactElement {
 
 const TreeExampleWithLinks = (args: TreeViewProps<TreeViewItemType>): ReactElement => (
   <div style={{width: '300px', resize: 'both', height: '320px', overflow: 'auto'}}>
-    <TreeView {...args} disabledKeys={['reports-1AB']} aria-label="test dynamic tree" items={rows} onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
-      {(item) => (
+    <TreeView
+      {...args}
+      disabledKeys={['reports-1AB']}
+      aria-label="test dynamic tree"
+      items={rows}
+      onExpandedChange={action('onExpandedChange')}
+      onSelectionChange={action('onSelectionChange')}>
+      {item => (
         <DynamicTreeItem
           id={item.id}
           icon={item.icon}
           childItems={item.childItems}
           textValue={item.name}
           name={item.name}
-          href="https://adobe.com/" />
+          href="https://adobe.com/"
+        />
       )}
     </TreeView>
   </div>
@@ -608,10 +678,10 @@ export const WithLinks: StoryObj<typeof TreeExampleWithLinks> = {
 };
 
 interface Character {
-  name: string,
-  height: number,
-  mass: number,
-  birth_year: number
+  name: string;
+  height: number;
+  mass: number;
+  birth_year: number;
 }
 
 const AsyncTree = (args: TreeViewProps<any> & {delay: number}): ReactElement => {
@@ -636,7 +706,9 @@ const AsyncTree = (args: TreeViewProps<any> & {delay: number}): ReactElement => 
 
       action('starwars loading')();
       await new Promise(resolve => setTimeout(resolve, args.delay));
-      let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search=${filterText}`, {signal});
+      let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search=${filterText}`, {
+        signal
+      });
       let json = await res.json();
 
       return {
@@ -652,10 +724,13 @@ const AsyncTree = (args: TreeViewProps<any> & {delay: number}): ReactElement => 
       action('root loading')();
       setRootLoading(true);
       setTimeout(() => {
-        let dataToAppend: {id: string, name: string}[] = [];
+        let dataToAppend: {id: string; name: string}[] = [];
         let rootLength = rootData.items.length;
         for (let i = 0; i < 5; i++) {
-          dataToAppend.push({id: `photos-${i + rootLength + 1}`, name: `Photos-${i + rootLength + 1}`});
+          dataToAppend.push({
+            id: `photos-${i + rootLength + 1}`,
+            name: `Photos-${i + rootLength + 1}`
+          });
         }
         rootData.append(...dataToAppend);
         setRootLoading(false);
@@ -665,7 +740,11 @@ const AsyncTree = (args: TreeViewProps<any> & {delay: number}): ReactElement => 
 
   return (
     <div style={{width: '300px', resize: 'both', height: '320px', overflow: 'auto'}}>
-      <TreeView aria-label="async loading tree" onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')} {...args}>
+      <TreeView
+        aria-label="async loading tree"
+        onExpandedChange={action('onExpandedChange')}
+        onSelectionChange={action('onSelectionChange')}
+        {...args}>
         <DynamicTreeItem
           id="starwars"
           icon={<Folder />}
@@ -673,17 +752,22 @@ const AsyncTree = (args: TreeViewProps<any> & {delay: number}): ReactElement => 
           textValue="Star Wars"
           childItems={starWarsList.items}
           loadingState={starWarsList.loadingState}
-          onLoadMore={starWarsList.loadMore} />
+          onLoadMore={starWarsList.loadMore}
+        />
         <Collection items={rootData.items}>
           {(item: any) => (
             <DynamicTreeItem
               id={item.id}
               icon={<FileTxt />}
               name={item.name}
-              textValue={item.name} />
+              textValue={item.name}
+            />
           )}
         </Collection>
-        <TreeViewLoadMoreItem loadingState={isRootLoading ? 'loading' : 'idle'} onLoadMore={onRootLoadMore} />
+        <TreeViewLoadMoreItem
+          loadingState={isRootLoading ? 'loading' : 'idle'}
+          onLoadMore={onRootLoadMore}
+        />
       </TreeView>
     </div>
   );
@@ -779,7 +863,7 @@ function ActionBarExample(args: TreeViewProps<any>) {
         onSelectionChange={setSelectedKeys as any}
         onExpandedChange={action('onExpandedChange')}
         styles={style({width: 'full', height: 'full'})}
-        renderActionBar={(keys) => {
+        renderActionBar={keys => {
           let selection = keys === 'all' ? 'all' : [...keys].join(', ');
           return (
             <ActionBar>
@@ -860,7 +944,7 @@ function ActionBarEmphasizedExample(args: TreeViewProps<any>) {
         onSelectionChange={setSelectedKeys as any}
         onExpandedChange={action('onExpandedChange')}
         styles={style({width: 'full', height: 'full'})}
-        renderActionBar={(keys) => {
+        renderActionBar={keys => {
           let selection = keys === 'all' ? 'all' : [...keys].join(', ');
           return (
             <ActionBar isEmphasized>
@@ -926,4 +1010,283 @@ export const WithActionBarEmphasized: StoryObj<typeof ActionBarEmphasizedExample
     selectionMode: 'multiple'
   },
   name: 'with ActionBar (emphasized)'
+};
+
+function CustomDragPreview(props) {
+  let {items, parentList} = props;
+  let id = items[0].id;
+  let item = parentList.getItem(id);
+  return (
+    <DragPreview {...props}>
+      {item.value.icon}
+      <Text>{item.value.name}</Text>
+      {item.value.childItems && (
+        <Text slot="description">{`${item.value.childItems.length} item(s)`}</Text>
+      )}
+    </DragPreview>
+  );
+}
+
+function ReorderableTree(props: TreeViewProps<any>) {
+  let treeData = useTreeData<TreeViewItemType>({
+    initialItems: rows,
+    getKey: item => item.id as Key,
+    getChildren: item => item.childItems as TreeViewItemType[]
+  });
+
+  let processItem = item => ({
+    ...item.value,
+    id: item.key,
+    childItems: item.children ? item.children.map(processItem) : []
+  });
+
+  let items = treeData.items.map(processItem);
+
+  let getItems = keys =>
+    [...keys].map(key => {
+      let item = treeData.getItem(key)!;
+
+      let serializeItem = nodeItem => ({
+        ...nodeItem.value,
+        childItems: nodeItem.children ? [...nodeItem.children].map(serializeItem) : []
+      });
+
+      return {
+        id: item.value.id!.toString(),
+        'text/plain': item.value.name,
+        'tree-item': JSON.stringify(serializeItem(item))
+      };
+    });
+
+  let {dragAndDropHooks} = useDragAndDrop({
+    getItems,
+    getAllowedDropOperations: () => ['move'],
+    onMove(e: DroppableCollectionReorderEvent) {
+      try {
+        if (e.target.dropPosition === 'before') {
+          treeData.moveBefore(e.target.key, e.keys);
+        } else if (e.target.dropPosition === 'after') {
+          treeData.moveAfter(e.target.key, e.keys);
+        } else if (e.target.dropPosition === 'on') {
+          let targetNode = treeData.getItem(e.target.key);
+          if (targetNode) {
+            let targetIndex = targetNode.children ? targetNode.children.length : 0;
+            let keyArray = Array.from(e.keys);
+            for (let i = 0; i < keyArray.length; i++) {
+              treeData.move(keyArray[i], e.target.key, targetIndex + i);
+            }
+          } else {
+            console.error('Target node not found for drop on:', e.target.key);
+          }
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    renderDragPreview: items => <CustomDragPreview parentList={treeData} items={items} />
+  });
+
+  return (
+    <TreeView
+      {...props}
+      styles={style({width: 300, height: 300})}
+      aria-label="Reorderable tree"
+      items={items}
+      dragAndDropHooks={dragAndDropHooks}>
+      {item => (
+        <DynamicTreeItem
+          id={item.id}
+          icon={item.icon}
+          childItems={item.childItems}
+          textValue={item.name}
+          name={item.name}
+        />
+      )}
+    </TreeView>
+  );
+}
+
+export const Reorderable: StoryObj<typeof ReorderableTree> = {
+  render: args => <ReorderableTree {...args} />,
+  name: 'Drag and drop reordering'
+};
+
+function BetweenTrees(props: TreeViewProps<any>) {
+  let treeData1 = useTreeData<TreeViewItemType>({
+    initialItems: rows,
+    getKey: item => item.id as Key,
+    getChildren: item => item.childItems as TreeViewItemType[]
+  });
+
+  let treeData2 = useTreeData<TreeViewItemType>({
+    initialItems: [],
+    getKey: item => item.id as Key,
+    getChildren: item => item.childItems as TreeViewItemType[]
+  });
+
+  let processItem = item => ({
+    ...item.value,
+    id: item.key,
+    childItems: item.children ? item.children.map(processItem) : []
+  });
+
+  let serializeNode = node => ({
+    ...node.value,
+    // can't serialize icons so need to do this approach
+    icon: undefined,
+    iconType: node.value.icon?.type === Folder ? 'folder' : 'file',
+    childItems: node.children ? [...node.children].map(serializeNode) : []
+  });
+
+  let processIncomingItems = async e => {
+    let convertItem = i => ({
+      ...i,
+      id: Math.random().toString(36),
+      icon: i.iconType === 'folder' ? <Folder /> : <FileTxt />,
+      childItems: i.childItems?.map(convertItem)
+    });
+    let textItems = e.items.filter(isTextDropItem);
+    let parsedItems: any[] = [];
+    for (let item of textItems) {
+      if (item.types.has('tree-item')) {
+        parsedItems.push(JSON.parse(await item.getText('tree-item')));
+      } else if (item.types.size === 1 && item.types.has('text/plain')) {
+        // Fallback for Chrome Android case: https://bugs.chromium.org/p/chromium/issues/detail?id=1293803
+        // Multiple drag items are contained in a single string so we need to split them out
+        let text = await item.getText('text/plain');
+        parsedItems = text.split('\n').map(val => JSON.parse(val));
+        break;
+      }
+    }
+    return parsedItems.map(convertItem);
+  };
+
+  let makeOnMove = treeData => (e: DroppableCollectionReorderEvent) => {
+    try {
+      if (e.target.dropPosition === 'before') {
+        treeData.moveBefore(e.target.key, e.keys);
+      } else if (e.target.dropPosition === 'after') {
+        treeData.moveAfter(e.target.key, e.keys);
+      } else if (e.target.dropPosition === 'on') {
+        let targetNode = treeData.getItem(e.target.key);
+        if (targetNode) {
+          let targetIndex = targetNode.children ? targetNode.children.length : 0;
+          let keyArray = Array.from(e.keys);
+          for (let i = 0; i < keyArray.length; i++) {
+            treeData.move(keyArray[i], e.target.key, targetIndex + i);
+          }
+        }
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  let makeDropHandlers = treeData => ({
+    acceptedDragTypes: ['tree-item', 'text/plain'] as string[],
+    async onInsert(e) {
+      let items = await processIncomingItems(e);
+      if (e.target.dropPosition === 'before') {
+        treeData.insertBefore(e.target.key, ...items);
+      } else if (e.target.dropPosition === 'after') {
+        treeData.insertAfter(e.target.key, ...items);
+      }
+    },
+    async onItemDrop(e) {
+      let items = await processIncomingItems(e);
+      treeData.insert(e.target.key, 0, ...items);
+    },
+    async onRootDrop(e) {
+      let items = await processIncomingItems(e);
+      treeData.insert(null, 0, ...items);
+    }
+  });
+
+  let makeGetItems = treeData => keys =>
+    [...keys].map(key => {
+      let item = treeData.getItem(key)!;
+      let serialized = JSON.stringify(serializeNode(item));
+      return {
+        id: item.value.id!.toString(),
+        'text/plain': serialized,
+        'tree-item': serialized
+      };
+    });
+
+  let {dragAndDropHooks: dragHooksTree1} = useDragAndDrop({
+    getItems: makeGetItems(treeData1),
+    getAllowedDropOperations: () => ['move', 'copy'],
+    onDragEnd(e) {
+      if (e.dropOperation === 'move' && !e.isInternal) {
+        treeData1.remove(...e.keys);
+      }
+    },
+    onMove: makeOnMove(treeData1),
+    ...makeDropHandlers(treeData1),
+    renderDragPreview: items => <CustomDragPreview parentList={treeData1} items={items} />
+  });
+
+  let {dragAndDropHooks: dragHooksTree2} = useDragAndDrop({
+    getItems: makeGetItems(treeData2),
+    getAllowedDropOperations: () => ['move', 'copy'],
+    onDragEnd(e) {
+      if (e.dropOperation === 'move' && !e.isInternal) {
+        treeData2.remove(...e.keys);
+      }
+    },
+    onMove: makeOnMove(treeData2),
+    ...makeDropHandlers(treeData2),
+    renderDragPreview: items => <CustomDragPreview parentList={treeData2} items={items} />
+  });
+
+  let items1 = treeData1.items.map(processItem);
+  let items2 = treeData2.items.map(processItem);
+
+  return (
+    <div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
+      <TreeView
+        {...props}
+        styles={style({width: 300, height: 300})}
+        aria-label="first draggable tree"
+        items={items1}
+        dragAndDropHooks={dragHooksTree1}>
+        {item => (
+          <DynamicTreeItem
+            id={item.id}
+            icon={item.icon}
+            childItems={item.childItems}
+            textValue={item.name}
+            name={item.name}
+          />
+        )}
+      </TreeView>
+      <TreeView
+        {...props}
+        styles={style({width: 300, height: 300})}
+        renderEmptyState={renderEmptyState}
+        aria-label="second draggable tree"
+        items={items2}
+        dragAndDropHooks={dragHooksTree2}>
+        {item => (
+          <DynamicTreeItem
+            id={item.id}
+            icon={item.icon}
+            childItems={item.childItems}
+            textValue={item.name}
+            name={item.name}
+          />
+        )}
+      </TreeView>
+    </div>
+  );
+}
+
+export const DragBetweenTrees: StoryObj<typeof BetweenTrees> = {
+  render: args => <BetweenTrees {...args} />,
+  name: 'Drag between trees',
+  parameters: {
+    docs: {
+      disable: true
+    }
+  }
 };

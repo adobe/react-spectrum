@@ -145,7 +145,9 @@ export const MenuScrollPaddingExample: MenuStory = () => (
   </MenuTrigger>
 );
 
-function SubmenuExampleRender(args: Omit<SubmenuTriggerProps, 'children'> & {delay: number}): JSX.Element {
+function SubmenuExampleRender(
+  args: Omit<SubmenuTriggerProps, 'children'> & {delay: number}
+): JSX.Element {
   return (
     <MenuTrigger>
       <Button aria-label="Menu">☰</Button>
@@ -163,7 +165,9 @@ function SubmenuExampleRender(args: Omit<SubmenuTriggerProps, 'children'> & {del
             </Popover>
           </SubmenuTrigger>
           <MyMenuItem id="Baz">Baz</MyMenuItem>
-          <MyMenuItem id="Google" href="https://google.com">Google</MyMenuItem>
+          <MyMenuItem id="Google" href="https://google.com">
+            Google
+          </MyMenuItem>
         </Menu>
       </Popover>
     </MenuTrigger>
@@ -171,7 +175,7 @@ function SubmenuExampleRender(args: Omit<SubmenuTriggerProps, 'children'> & {del
 }
 type SubmenuExampleStory = StoryObj<typeof SubmenuExampleRender>;
 export const SubmenuExample: SubmenuExampleStory = {
-  render: (args) => <SubmenuExampleRender {...args} />,
+  render: args => <SubmenuExampleRender {...args} />,
   args: {
     delay: 200
   },
@@ -183,7 +187,7 @@ export const SubmenuExample: SubmenuExampleStory = {
 };
 
 export const SubmenuNestedExample: SubmenuExampleStory = {
-  render: (args) => (
+  render: args => (
     <MenuTrigger>
       <Button aria-label="Menu">☰</Button>
       <Popover>
@@ -209,7 +213,9 @@ export const SubmenuNestedExample: SubmenuExampleStory = {
             </Popover>
           </SubmenuTrigger>
           <MyMenuItem id="Baz">Baz</MyMenuItem>
-          <MyMenuItem id="Google" href="https://google.com">Google</MyMenuItem>
+          <MyMenuItem id="Google" href="https://google.com">
+            Google
+          </MyMenuItem>
         </Menu>
       </Popover>
     </MenuTrigger>
@@ -226,14 +232,22 @@ export const SubmenuNestedExample: SubmenuExampleStory = {
 
 let manyItemsSubmenu = [
   {id: 'Lvl 1 Item 1', name: 'Lvl 1 Item 1'},
-  {id: 'Lvl 1 Item 2', name: 'Lvl 1 Item 2', children: [
-    ...[...Array(30)].map((_, i) => ({id: `Lvl 2 Item ${i + 1}`, name: `Lvl 2 Item ${i + 1}`})),
-    {id: 'Lvl 2 Item 31', name: 'Lvl 2 Item 31', children: [
-      {id: 'Lvl 3 Item 1', name: 'Lvl 3 Item 1'},
-      {id: 'Lvl 3 Item 2', name: 'Lvl 3 Item 2'},
-      {id: 'Lvl 3 Item 3', name: 'Lvl 3 Item 3'}
-    ]}
-  ]},
+  {
+    id: 'Lvl 1 Item 2',
+    name: 'Lvl 1 Item 2',
+    children: [
+      ...[...Array(30)].map((_, i) => ({id: `Lvl 2 Item ${i + 1}`, name: `Lvl 2 Item ${i + 1}`})),
+      {
+        id: 'Lvl 2 Item 31',
+        name: 'Lvl 2 Item 31',
+        children: [
+          {id: 'Lvl 3 Item 1', name: 'Lvl 3 Item 1'},
+          {id: 'Lvl 3 Item 2', name: 'Lvl 3 Item 2'},
+          {id: 'Lvl 3 Item 3', name: 'Lvl 3 Item 3'}
+        ]
+      }
+    ]
+  },
   ...[...Array(30)].map((_, i) => ({id: `Lvl 1 Item ${i + 3}`, name: `Lvl 1 Item ${i + 3}`}))
 ];
 
@@ -244,7 +258,7 @@ let dynamicRenderFunc = (item, args) => {
         <MyMenuItem key={item.name}>{item.name}</MyMenuItem>
         <Popover className={styles.popover}>
           <Menu items={item.children} className={styles.menu} onAction={action('onAction')}>
-            {(item) => dynamicRenderFunc(item, args)}
+            {item => dynamicRenderFunc(item, args)}
           </Menu>
         </Popover>
       </SubmenuTrigger>
@@ -255,12 +269,12 @@ let dynamicRenderFunc = (item, args) => {
 };
 
 export const SubmenuManyItemsExample: SubmenuExampleStory = {
-  render: (args) => (
+  render: args => (
     <MenuTrigger>
       <Button aria-label="Menu">☰</Button>
       <Popover>
         <Menu items={manyItemsSubmenu} className={styles.menu} onAction={action('onAction')}>
-          {(item) => dynamicRenderFunc(item, args)}
+          {item => dynamicRenderFunc(item, args)}
         </Menu>
       </Popover>
     </MenuTrigger>
@@ -276,7 +290,7 @@ export const SubmenuManyItemsExample: SubmenuExampleStory = {
 };
 
 export const SubmenuDisabledExample: SubmenuExampleStory = {
-  render: (args) => (
+  render: args => (
     <MenuTrigger>
       <Button aria-label="Menu">☰</Button>
       <Popover>
@@ -293,7 +307,9 @@ export const SubmenuDisabledExample: SubmenuExampleStory = {
             </Popover>
           </SubmenuTrigger>
           <MyMenuItem id="Baz">Baz</MyMenuItem>
-          <MyMenuItem id="Google" href="https://google.com">Google</MyMenuItem>
+          <MyMenuItem id="Google" href="https://google.com">
+            Google
+          </MyMenuItem>
         </Menu>
       </Popover>
     </MenuTrigger>
@@ -309,7 +325,7 @@ export const SubmenuDisabledExample: SubmenuExampleStory = {
 };
 
 export const SubmenuSectionsExample: SubmenuExampleStory = {
-  render: (args) => (
+  render: args => (
     <MenuTrigger>
       <Button aria-label="Menu">☰</Button>
       <Popover>
@@ -356,7 +372,7 @@ export const SubmenuSectionsExample: SubmenuExampleStory = {
 
 // TODO: figure out why it is autofocusing the Menu in the SubDialog
 export const SubdialogExample: SubmenuExampleStory = {
-  render: (args) => (
+  render: args => (
     <MenuTrigger>
       <Button aria-label="Menu">☰</Button>
       <Popover>
@@ -417,22 +433,20 @@ export const SubdialogExample: SubmenuExampleStory = {
                           <Label>Contact number: </Label>
                           <Input />
                         </TextField>
-                        <Button style={{marginTop: 10}}>
-                          Submit
-                        </Button>
+                        <Button style={{marginTop: 10}}>Submit</Button>
                       </form>
                     </Popover>
                   </SubmenuTrigger>
                   <MyMenuItem>C</MyMenuItem>
                 </Menu>
-                <Button style={{marginTop: 10}}>
-                  Submit
-                </Button>
+                <Button style={{marginTop: 10}}>Submit</Button>
               </form>
             </Popover>
           </SubmenuTrigger>
           <MyMenuItem id="Baz">Baz</MyMenuItem>
-          <MyMenuItem id="Google" href="https://google.com">Google</MyMenuItem>
+          <MyMenuItem id="Google" href="https://google.com">
+            Google
+          </MyMenuItem>
         </Menu>
       </Popover>
     </MenuTrigger>
@@ -468,13 +482,25 @@ function MenuItemWithCustomElement(props: MenuItemProps) {
   return (
     <MyMenuItem
       {...props}
-      render={domProps => 'href' in domProps ? <RouterLink {...domProps} /> : <div {...domProps} />} />
+      render={domProps =>
+        'href' in domProps ? <RouterLink {...domProps} /> : <div {...domProps} />
+      }
+    />
   );
 }
 
 function RouterLink(props: React.AnchorHTMLAttributes<HTMLAnchorElement>) {
-  // eslint-disable-next-line jsx-a11y/anchor-has-content
-  return <a {...mergeProps(props, {onClick: e => {e.preventDefault(); console.log('click');}})} />;
+  return (
+    // eslint-disable-next-line jsx-a11y/anchor-has-content
+    <a
+      {...mergeProps(props, {
+        onClick: e => {
+          e.preventDefault();
+          console.log('click');
+        }
+      })}
+    />
+  );
 }
 
 let items = Array.from({length: 600}, (_, index) => {
@@ -488,15 +514,11 @@ let items = Array.from({length: 600}, (_, index) => {
 export const VirtualizedExample: MenuStory = () => {
   return (
     <MenuTrigger>
-      <Button aria-label="Actions">
-        Menu ☰
-      </Button>
+      <Button aria-label="Actions">Menu ☰</Button>
       <Popover>
-        <Virtualizer
-          layout={ListLayout}
-          layoutOptions={{estimatedRowHeight: 36}}>
+        <Virtualizer layout={ListLayout} layoutOptions={{estimatedRowHeight: 36}}>
           <Menu className={styles.menu} items={items}>
-            {(item) => {
+            {item => {
               return <MyMenuItem>{item.name}</MyMenuItem>;
             }}
           </Menu>
@@ -508,16 +530,14 @@ export const VirtualizedExample: MenuStory = () => {
 
 let UnavailableContext = createContext(false);
 
-function UnavailableMenuItemTrigger(props: {isUnavailable?: boolean, children: ReactElement[]}) {
+function UnavailableMenuItemTrigger(props: {isUnavailable?: boolean; children: ReactElement[]}) {
   let {isUnavailable = false, children} = props;
   if (isUnavailable) {
     return (
       <UnavailableContext.Provider value>
         <SubmenuTrigger>
           {children[0]}
-          <Popover className={classNames(styles, 'unavailable-popover')}>
-            {children[1]}
-          </Popover>
+          <Popover className={classNames(styles, 'unavailable-popover')}>{children[1]}</Popover>
         </SubmenuTrigger>
       </UnavailableContext.Provider>
     );
@@ -530,16 +550,27 @@ function UnavailableMenuItem(props: MenuItemProps) {
   return (
     <MenuItem
       {...props}
-      className={({isFocused, isSelected, isOpen, isFocusVisible}) => classNames(styles, 'item', {
-        focused: isFocused,
-        selected: isSelected,
-        open: isOpen,
-        focusVisible: isFocusVisible
-      }, isUnavailable ? 'unavailable' : undefined)}>
-      {(renderProps) => (
+      className={({isFocused, isSelected, isOpen, isFocusVisible}) =>
+        classNames(
+          styles,
+          'item',
+          {
+            focused: isFocused,
+            selected: isSelected,
+            open: isOpen,
+            focusVisible: isFocusVisible
+          },
+          isUnavailable ? 'unavailable' : undefined
+        )
+      }>
+      {renderProps => (
         <>
           {typeof props.children === 'function' ? props.children(renderProps) : props.children}
-          {renderProps.hasSubmenu && isUnavailable && <span style={{justifySelf: 'end'}} aria-hidden>ⓘ</span>}
+          {renderProps.hasSubmenu && isUnavailable && (
+            <span style={{justifySelf: 'end'}} aria-hidden>
+              ⓘ
+            </span>
+          )}
         </>
       )}
     </MenuItem>

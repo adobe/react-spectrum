@@ -59,30 +59,37 @@ export default {
 } as Meta<typeof Checkbox>;
 
 export const Default: CheckboxStory = {
-  render: (args) => render(args)
+  render: args => render(args)
 };
 
 export const CustomLabel: CheckboxStory = {
-  render: (args) => renderCustomLabel(args)
+  render: args => renderCustomLabel(args)
 };
 
 export const LongLabel: CheckboxStory = {
-  render: (args) => (
-    <Checkbox
-      {...args}>
-      Super long checkbox label. Sample text. Arma virumque cano, Troiae qui primus ab oris. Italiam, fato profugus, Laviniaque venit.
+  render: args => (
+    <Checkbox {...args}>
+      Super long checkbox label. Sample text. Arma virumque cano, Troiae qui primus ab oris.
+      Italiam, fato profugus, Laviniaque venit.
     </Checkbox>
   )
 };
 
 export const NoLabel: CheckboxStory = {
-  render: (args) => renderNoLabel(args)
+  render: args => renderNoLabel(args)
 };
 
 export const WHCM: CheckboxStory = {
   render: () => (
     <Flex direction="column" gap="size-200">
-      <Flex gap="size-200">Shows the different states from <Link><a href="https://spectrum.adobe.com/static/Windows-High-Contrast-Kits/Checkbox-WindowsHighContrast.xd">spectrum</a></Link></Flex>
+      <Flex gap="size-200">
+        Shows the different states from{' '}
+        <Link>
+          <a href="https://spectrum.adobe.com/static/Windows-High-Contrast-Kits/Checkbox-WindowsHighContrast.xd">
+            spectrum
+          </a>
+        </Link>
+      </Flex>
       {renderRow()}
       {renderRow({isSelected: true, isEmphasized: true})}
       {renderRow({isIndeterminate: true, isEmphasized: true})}
@@ -95,33 +102,27 @@ export const WHCM: CheckboxStory = {
 };
 
 function render(props = {}) {
-  return (
-    <Checkbox {...props}>
-      Checkbox Label
-    </Checkbox>
-  );
+  return <Checkbox {...props}>Checkbox Label</Checkbox>;
 }
 
 function renderCustomLabel(props = {}) {
   return (
     <Checkbox {...props}>
-      <span><i>Italicized</i> Checkbox Label</span>
+      <span>
+        <i>Italicized</i> Checkbox Label
+      </span>
     </Checkbox>
   );
 }
 
 function renderNoLabel(props = {}) {
-  return (
-    <Checkbox aria-label="checkbox with no visible label" {...props} />
-  );
+  return <Checkbox aria-label="checkbox with no visible label" {...props} />;
 }
 
 function renderRow(props = {}) {
   return (
     <Flex gap="size-200">
-      <Checkbox {...props}>
-        Option
-      </Checkbox>
+      <Checkbox {...props}>Option</Checkbox>
       <Checkbox isDisabled {...props}>
         Option
       </Checkbox>

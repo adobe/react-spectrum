@@ -1,4 +1,19 @@
-import {Flex, Divider, Badge, InlineAlert, Heading, Content, LabeledValue, Meter, ProgressBar, ProgressCircle, StatusLight, Button, ToastContainer, ToastQueue} from '@adobe/react-spectrum';
+import {
+  Flex,
+  Divider,
+  Badge,
+  InlineAlert,
+  Heading,
+  Content,
+  LabeledValue,
+  Meter,
+  ProgressBar,
+  ProgressCircle,
+  StatusLight,
+  Button,
+  ToastContainer,
+  ToastQueue
+} from '@adobe/react-spectrum';
 
 export default function StatusExamples() {
   return (
@@ -9,7 +24,10 @@ export default function StatusExamples() {
         <Badge variant="positive">Licensed</Badge>
         <InlineAlert width="700px">
           <Heading>Payment Information</Heading>
-          <Content>Enter your billing address, shipping address, and payment method to complete your purchase.</Content>
+          <Content>
+            Enter your billing address, shipping address, and payment method to complete your
+            purchase.
+          </Content>
         </InlineAlert>
         <LabeledValue label="File name" value="Budget.xls" />
         <Meter label="Storage space" variant="positive" value={35} />

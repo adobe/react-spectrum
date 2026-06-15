@@ -15,22 +15,26 @@ import React, {JSX} from 'react';
 import {Text} from '../../src/text/Text';
 import {useDialogContainer} from '../../src/dialog/useDialogContainer';
 
-export function DialogContainerExample(props: Omit<SpectrumDialogContainerProps, 'children' | 'onDismiss'> & Omit<SpectrumDialogProps, 'children'>): JSX.Element {
+export function DialogContainerExample(
+  props: Omit<SpectrumDialogContainerProps, 'children' | 'onDismiss'> &
+    Omit<SpectrumDialogProps, 'children'>
+): JSX.Element {
   let [isOpen, setOpen] = React.useState(false);
 
   return (
     <>
       <ActionButton onPress={() => setOpen(true)}>Open dialog</ActionButton>
       <DialogContainer {...props} onDismiss={() => setOpen(false)}>
-        {isOpen &&
-          <ExampleDialog {...props} />
-        }
+        {isOpen && <ExampleDialog {...props} />}
       </DialogContainer>
     </>
   );
 }
 
-export function MenuExample(props: Omit<SpectrumDialogContainerProps, 'children' | 'onDismiss'> & Omit<SpectrumDialogProps, 'children'>): JSX.Element {
+export function MenuExample(
+  props: Omit<SpectrumDialogContainerProps, 'children' | 'onDismiss'> &
+    Omit<SpectrumDialogProps, 'children'>
+): JSX.Element {
   let [isOpen, setOpen] = React.useState(false);
 
   return (
@@ -42,15 +46,16 @@ export function MenuExample(props: Omit<SpectrumDialogContainerProps, 'children'
         </Menu>
       </MenuTrigger>
       <DialogContainer {...props} onDismiss={() => setOpen(false)}>
-        {isOpen &&
-          <ExampleDialog {...props} />
-        }
+        {isOpen && <ExampleDialog {...props} />}
       </DialogContainer>
     </>
   );
 }
 
-function ExampleDialog(props: Omit<SpectrumDialogContainerProps, 'children' | 'onDismiss'> & Omit<SpectrumDialogProps, 'children'>): JSX.Element {
+function ExampleDialog(
+  props: Omit<SpectrumDialogContainerProps, 'children' | 'onDismiss'> &
+    Omit<SpectrumDialogProps, 'children'>
+): JSX.Element {
   let container = useDialogContainer();
 
   return (
@@ -58,13 +63,25 @@ function ExampleDialog(props: Omit<SpectrumDialogContainerProps, 'children' | 'o
       <Heading>The Heading</Heading>
       <Header>The Header</Header>
       <Divider />
-      <Content><Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet tristique risus. In sit amet suscipit lorem. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In condimentum imperdiet metus non condimentum. Duis eu velit et quam accumsan tempus at id velit. Duis elementum elementum purus, id tempus mauris posuere a. Nunc vestibulum sapien pellentesque lectus commodo ornare.</Text></Content>
-      {!props.isDismissable &&
+      <Content>
+        <Text>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet tristique risus.
+          In sit amet suscipit lorem. Orci varius natoque penatibus et magnis dis parturient montes,
+          nascetur ridiculus mus. In condimentum imperdiet metus non condimentum. Duis eu velit et
+          quam accumsan tempus at id velit. Duis elementum elementum purus, id tempus mauris posuere
+          a. Nunc vestibulum sapien pellentesque lectus commodo ornare.
+        </Text>
+      </Content>
+      {!props.isDismissable && (
         <ButtonGroup>
-          <Button variant="secondary" onPress={container.dismiss}>Cancel</Button>
-          <Button variant="cta" onPress={container.dismiss}>Confirm</Button>
+          <Button variant="secondary" onPress={container.dismiss}>
+            Cancel
+          </Button>
+          <Button variant="cta" onPress={container.dismiss}>
+            Confirm
+          </Button>
         </ButtonGroup>
-      }
+      )}
     </Dialog>
   );
 }
@@ -83,19 +100,19 @@ export function NestedDialogContainerExample(): JSX.Element {
         </Menu>
       </MenuTrigger>
       <DialogContainer onDismiss={dismiss}>
-        {dialog !== null &&
-          <Dialog
-            onDismiss={dismiss}
-            isDismissable>
-            <Heading>{dialog === 'doThis' ? 'This' : 'That' }</Heading>
+        {dialog !== null && (
+          <Dialog onDismiss={dismiss} isDismissable>
+            <Heading>{dialog === 'doThis' ? 'This' : 'That'}</Heading>
             <Divider />
             <Content>
               <ActionButton
                 onPress={() => setDialog(dialog === 'doThis' ? 'doThat' : 'doThis')}
-                autoFocus>{dialog === 'doThis' ? 'Do that' : 'Do this' }</ActionButton>
+                autoFocus>
+                {dialog === 'doThis' ? 'Do that' : 'Do this'}
+              </ActionButton>
             </Content>
           </Dialog>
-        }
+        )}
       </DialogContainer>
     </>
   );

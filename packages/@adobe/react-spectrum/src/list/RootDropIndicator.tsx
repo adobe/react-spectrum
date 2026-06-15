@@ -5,9 +5,13 @@ import {useVisuallyHidden} from 'react-aria/VisuallyHidden';
 export default function RootDropIndicator(): JSX.Element | null {
   let {dropState, dragAndDropHooks} = useContext(ListViewContext)!;
   let ref = useRef<HTMLDivElement | null>(null);
-  let {dropIndicatorProps} = dragAndDropHooks!.useDropIndicator!({
-    target: {type: 'root'}
-  }, dropState!, ref);
+  let {dropIndicatorProps} = dragAndDropHooks!.useDropIndicator!(
+    {
+      target: {type: 'root'}
+    },
+    dropState!,
+    ref
+  );
   let isDropTarget = dropState!.isDropTarget({type: 'root'});
   let {visuallyHiddenProps} = useVisuallyHidden();
 
@@ -17,9 +21,7 @@ export default function RootDropIndicator(): JSX.Element | null {
 
   return (
     <div role="row" aria-hidden={dropIndicatorProps['aria-hidden']}>
-      <div
-        role="gridcell"
-        aria-selected="false">
+      <div role="gridcell" aria-selected="false">
         <div role="button" {...visuallyHiddenProps} {...dropIndicatorProps} ref={ref} />
       </div>
     </div>

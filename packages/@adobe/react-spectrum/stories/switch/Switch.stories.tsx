@@ -79,22 +79,26 @@ export const AutoFocus: SwitchStory = {
 
 export const CustomLabel: SwitchStory = {
   ...Default,
-  args: {children: (
-    <span>
-      <i>Italicized</i> Switch Label
-    </span>
-  )},
+  args: {
+    children: (
+      <span>
+        <i>Italicized</i> Switch Label
+      </span>
+    )
+  },
   name: 'custom label'
 };
 
 export const LongLabel: SwitchStory = {
   ...Default,
-  args: {children: (
-    <>
-      Super long checkbox label. Sample text. Arma virumque cano, Troiae qui primus ab oris. Italiam,
-      fato profugus, Laviniaque venit.
-    </>
-  )},
+  args: {
+    children: (
+      <>
+        Super long checkbox label. Sample text. Arma virumque cano, Troiae qui primus ab oris.
+        Italiam, fato profugus, Laviniaque venit.
+      </>
+    )
+  },
   name: 'long label'
 };
 
@@ -107,7 +111,7 @@ export const NoLabel: SwitchStory = {
 
 export const ControlledImplementation: SwitchStory = {
   ...Default,
-  render: (args) => <ControlledSwitch {...args} />
+  render: args => <ControlledSwitch {...args} />
 };
 
 function ControlledSwitch(props) {
@@ -123,12 +127,18 @@ export const WHCMTest: SwitchStory = {
         <Switch isDisabled>Option</Switch>
       </Flex>
       <Flex gap="size-200">
-        <Switch isSelected isEmphasized>Option</Switch>
-        <Switch isSelected isEmphasized isDisabled>Option</Switch>
+        <Switch isSelected isEmphasized>
+          Option
+        </Switch>
+        <Switch isSelected isEmphasized isDisabled>
+          Option
+        </Switch>
       </Flex>
       <Flex gap="size-200">
         <Switch isSelected>Option</Switch>
-        <Switch isSelected isDisabled>Option</Switch>
+        <Switch isSelected isDisabled>
+          Option
+        </Switch>
       </Flex>
     </Flex>
   ),

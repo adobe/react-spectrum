@@ -8,16 +8,17 @@ export function Video(props: VideoHTMLAttributes<HTMLVideoElement>) {
     <video
       {...props}
       tabIndex={props.autoPlay && !props.controls ? 0 : undefined}
-      onClick={(e) => {
+      onClick={e => {
         if (props.autoPlay && !props.controls) {
           e.currentTarget.paused ? e.currentTarget.play() : e.currentTarget.pause();
         }
       }}
-      onKeyDown={(e) => {
+      onKeyDown={e => {
         if (props.autoPlay && !props.controls && e.key === ' ') {
           e.preventDefault();
           e.currentTarget.paused ? e.currentTarget.play() : e.currentTarget.pause();
         }
-      }} />
+      }}
+    />
   );
 }

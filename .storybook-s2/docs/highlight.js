@@ -6,7 +6,7 @@ function colorToken(name) {
   return `light-dark(${token.sets.light.value}, ${token.sets.dark.value})`;
 }
 
-exports.highlight = function(code, lang = 'JSX') {
+exports.highlight = function (code, lang = 'JSX') {
   this.addAsset({
     type: 'css',
     content: `
@@ -35,4 +35,4 @@ exports.highlight = function(code, lang = 'JSX') {
   });
 
   return treeSitter.highlight(code, treeSitter.Language[lang]);
-}
+};

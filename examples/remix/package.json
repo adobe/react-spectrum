@@ -1,9 +1,14 @@
 {
   "name": "remix",
   "private": true,
-  "sideEffects": false,
+  "workspaces": [
+    "../../packages/react-aria-components",
+    "../../packages/react-aria",
+    "../../packages/react-stately",
+    "../../packages/*/*"
+  ],
   "type": "module",
-  "packageManager": "yarn@4.2.2",
+  "sideEffects": false,
   "scripts": {
     "build": "vite build && vite build --ssr",
     "dev": "vite dev",
@@ -29,17 +34,12 @@
     "vite": "^5.0.0",
     "vite-tsconfig-paths": "^4.2.1"
   },
-  "engines": {
-    "node": ">=24.0.0"
-  },
-  "workspaces": [
-    "../../packages/react-aria-components",
-    "../../packages/react-aria",
-    "../../packages/react-stately",
-    "../../packages/*/*"
-  ],
   "resolutions": {
     "react": "link:../../node_modules/react",
     "react-dom": "link:../../node_modules/react-dom"
-  }
+  },
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "packageManager": "yarn@4.2.2"
 }
