@@ -38,6 +38,7 @@ import {
 import {commands, userEvent} from 'vitest/browser';
 import {describe, expect, it} from 'vitest';
 import {isFirefox, isWebKit} from 'react-aria/private/utils/platform';
+import {REACT_VERSION} from 'react-dom/client';
 import {render} from 'vitest-browser-react';
 import {Token, TokenField} from '../src/TokenField';
 
@@ -48,7 +49,9 @@ declare module 'vitest/browser' {
   }
 }
 
-describe('TokenField browser interactions', () => {
+// Conditionally skip the suite
+const describeOrSkip = parseInt(REACT_VERSION, 10) < 19 ? describe.skip : describe;
+describeOrSkip('TokenField browser interactions', () => {
   describe('rendering', () => {
     it('should render textbox and tokens', async () => {
       let screen = await render(

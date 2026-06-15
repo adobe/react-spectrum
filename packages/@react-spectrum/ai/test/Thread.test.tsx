@@ -16,6 +16,7 @@ import {act, fireEvent, pointerMap, render} from '@react-spectrum/test-utils-int
 import {announce} from 'react-aria/private/live-announcer/LiveAnnouncer';
 import {Button, Input, TextField} from 'react-aria-components';
 import React from 'react';
+import {REACT_VERSION} from 'react-dom/client';
 import {Thread, ThreadItem, ThreadList, ThreadScrollButton} from '@react-spectrum/ai';
 import userEvent from '@testing-library/user-event';
 
@@ -53,7 +54,9 @@ function TestThread({
 
 let mockAnnounce = announce as jest.MockedFunction<typeof announce>;
 
-describe('Thread', () => {
+// Conditionally skip the suite
+const describeOrSkip = parseInt(REACT_VERSION, 10) < 19 ? describe.skip : describe;
+describeOrSkip('Thread', () => {
   let user;
 
   beforeAll(() => {

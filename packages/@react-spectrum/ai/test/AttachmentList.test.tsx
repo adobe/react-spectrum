@@ -12,9 +12,12 @@
 
 import {Attachment, AttachmentList} from '@react-spectrum/ai';
 import {Image} from '@react-spectrum/s2/Image';
+import {REACT_VERSION} from 'react-dom/client';
 import {render} from '@react-spectrum/test-utils-internal';
 
-describe('AttachmentList', () => {
+// Conditionally skip the suite
+const describeOrSkip = parseInt(REACT_VERSION, 10) < 19 ? describe.skip : describe;
+describeOrSkip('AttachmentList', () => {
   it('should render', () => {
     let {getByRole} = render(
       <AttachmentList aria-label="Uploaded files">
