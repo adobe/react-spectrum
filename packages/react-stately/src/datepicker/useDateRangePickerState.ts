@@ -25,17 +25,14 @@ import {
   getFormatOptions,
   getPlaceholderTime,
   getRangeValidationResult,
-  useDefaultProps
+  useDefaultProps,
+  usePartialFormValidationState
 } from './utils';
-import {
-  FormValidationState,
-  privateSetIsValuePartialProp,
-  useFormValidationState
-} from '../form/useFormValidationState';
+import {FormValidationState, privateSetIsValuePartialProp} from '../form/useFormValidationState';
 import {OverlayTriggerState, useOverlayTriggerState} from '../overlays/useOverlayTriggerState';
 import {RangeValue, ValidationState} from '@react-types/shared';
+import {useCallback, useMemo, useState} from 'react';
 import {useControlledState} from '../utils/useControlledState';
-import {useMemo, useState} from 'react';
 
 export interface DateRangePickerStateOptions<
   T extends DateValue = DateValue
@@ -243,16 +240,19 @@ export function useDateRangePickerState<T extends DateValue = DateValue>(
 
   let {minValue, maxValue, isDateUnavailable} = props;
 
-  let builtinValidation = useMemo(
-    () =>
+  // The display flag from usePartialFormValidationState is `(start || end) && armed`;
+  // `startIsValuePartial && displayPartialError` reduces to `startIsValuePartial && armed`,
+  // recovering the per-endpoint gating (same for end).
+  let getBuiltinValidation = useCallback(
+    (displayPartialError: boolean) =>
       getRangeValidationResult(
         value,
         minValue,
         maxValue,
         isDateUnavailable ? date => isDateUnavailable(date, null) : undefined,
         formatOpts,
-        startIsValuePartial,
-        endIsValuePartial
+        startIsValuePartial && displayPartialError,
+        endIsValuePartial && displayPartialError
       ),
     [
       value,
@@ -265,15 +265,18 @@ export function useDateRangePickerState<T extends DateValue = DateValue>(
     ]
   );
 
-  let validation = useFormValidationState({
-    ...props,
-    value: controlledValue as RangeValue<MappedDateValue<T>> | null,
-    name: useMemo(
-      () => [props.startName, props.endName].filter(n => n != null),
-      [props.startName, props.endName]
-    ),
-    builtinValidation
-  });
+  let validation = usePartialFormValidationState(
+    {
+      ...props,
+      value: controlledValue as RangeValue<MappedDateValue<T>> | null,
+      name: useMemo(
+        () => [props.startName, props.endName].filter(n => n != null),
+        [props.startName, props.endName]
+      )
+    },
+    startIsValuePartial || endIsValuePartial,
+    getBuiltinValidation
+  );
 
   let isValueInvalid = validation.displayValidation.isInvalid;
   let validationState: ValidationState | null =

@@ -3237,12 +3237,9 @@ describe('DatePicker', function () {
           expect(description).toContain('Please enter a value.');
         });
 
-        it('should surface the descriptive constraint error (not the generic incomplete message) when a min-violating value is made partial (Bug #9958)', async () => {
-          // A partial value that still violates a constraint (minValue/maxValue/unavailableDate)
-          // surfaces the descriptive error ("Value must be … or later.") rather than the generic
-          // fallback ("Please enter a value."). The generic fallback only appears when the partial
-          // value has no constraint violation — e.g. a field with no min/max where the user clears
-          // a segment.
+        it('should surface the generic incomplete message (not a constraint error) when a min-violating value is made partial (Bug #9958)', async () => {
+          // Constraints can't be evaluated against the stale committed value while partial;
+          // see getValidationResult.
           let {getByRole} = render(
             <Provider theme={theme}>
               <Form>
@@ -3277,8 +3274,8 @@ describe('DatePicker', function () {
             .join(' ');
 
           expect(input.validity.valid).toBe(false);
-          expect(description).toContain('Value must be 1/1/2030 or later.');
-          expect(description).not.toContain('Please enter a value.');
+          expect(description).toContain('Please enter a value.');
+          expect(description).not.toContain('Value must be 1/1/2030 or later.');
         });
 
         it('should clear the partial-value error on the first calendar selection that completes the date (Bug #9958)', async () => {
@@ -3325,6 +3322,136 @@ describe('DatePicker', function () {
 
           // The value is now complete and valid
           expect(input.validity.valid).toBe(true);
+          expect(getDescription()).not.toContain('Please enter a value.');
+        });
+
+        it('should keep the partial-value error when the calendar is closed without a selection (Bug #9958)', async () => {
+          let {getByRole} = render(
+            <Provider theme={theme}>
+              <Form>
+                <DatePicker
+                  label="Date"
+                  name="date"
+                  defaultValue={new CalendarDate(2019, 2, 3)}
+                  validationBehavior="native"
+                />
+              </Form>
+            </Provider>
+          );
+
+          let group = getByRole('group');
+          let input = document.querySelector('input[name=date]');
+          let segments = within(group).getAllByRole('spinbutton');
+          let getDescription = () =>
+            (group.getAttribute('aria-describedby') || '')
+              .split(' ')
+              .map(d => document.getElementById(d)?.textContent || '')
+              .join(' ');
+
+          // Clear the month segment, then blur the field -> partial error appears.
+          act(() => {
+            segments[0].focus();
+          });
+          await user.keyboard('{Backspace}');
+          await user.tab();
+          await user.tab();
+          await user.tab();
+          expect(getDescription()).toContain('Please enter a value.');
+
+          // Open the calendar, then dismiss it without selecting -> the error must remain.
+          await user.click(getByRole('button'));
+          expect(getByRole('dialog')).toBeVisible();
+          await user.keyboard('{Escape}');
+          act(() => jest.runAllTimers());
+
+          expect(getDescription()).toContain('Please enter a value.');
+          expect(input.validity.valid).toBe(false);
+        });
+
+        it('should clear the partial-value error when re-selecting the previously committed date (Bug #9958)', async () => {
+          let {getByRole, getAllByRole} = render(
+            <Provider theme={theme}>
+              <Form>
+                <DatePicker
+                  label="Date"
+                  name="date"
+                  defaultValue={new CalendarDate(2019, 2, 3)}
+                  validationBehavior="native"
+                />
+              </Form>
+            </Provider>
+          );
+
+          let group = getByRole('group');
+          let input = document.querySelector('input[name=date]');
+          let segments = within(group).getAllByRole('spinbutton');
+          let getDescription = () =>
+            (group.getAttribute('aria-describedby') || '')
+              .split(' ')
+              .map(d => document.getElementById(d)?.textContent || '')
+              .join(' ');
+
+          // Clear the month segment, then blur the field -> partial error appears.
+          act(() => {
+            segments[0].focus();
+          });
+          await user.keyboard('{Backspace}');
+          await user.tab();
+          await user.tab();
+          await user.tab();
+          expect(getDescription()).toContain('Please enter a value.');
+
+          // Select the SAME date that was previously committed. Even though the committed
+          // value does not change, the selection completes the display and clears the error.
+          await user.click(getByRole('button'));
+          let cells = getAllByRole('gridcell');
+          let selected = cells.find(cell => cell.getAttribute('aria-selected') === 'true');
+          await user.click(selected.children[0]);
+
+          expect(input).toHaveValue('2019-02-03');
+          expect(input.validity.valid).toBe(true);
+          expect(getDescription()).not.toContain('Please enter a value.');
+        });
+
+        it('should clear the partial-value error on form reset (Bug #9958)', async () => {
+          let {getByRole, getByTestId} = render(
+            <Provider theme={theme}>
+              <Form data-testid="form">
+                <DatePicker
+                  label="Date"
+                  name="date"
+                  defaultValue={new CalendarDate(2019, 2, 3)}
+                  validationBehavior="native"
+                />
+                <Button type="reset" data-testid="reset">
+                  Reset
+                </Button>
+              </Form>
+            </Provider>
+          );
+
+          let group = getByRole('group');
+          let input = document.querySelector('input[name=date]');
+          let segments = within(group).getAllByRole('spinbutton');
+          let getDescription = () =>
+            (group.getAttribute('aria-describedby') || '')
+              .split(' ')
+              .map(d => document.getElementById(d)?.textContent || '')
+              .join(' ');
+
+          // Clear the month segment, then blur the field -> partial error appears.
+          act(() => {
+            segments[0].focus();
+          });
+          await user.keyboard('{Backspace}');
+          await user.tab();
+          await user.tab();
+          await user.tab();
+          expect(getDescription()).toContain('Please enter a value.');
+
+          // Reset restores the default value and clears the displayed error.
+          await user.click(getByTestId('reset'));
+          expect(input).toHaveValue('2019-02-03');
           expect(getDescription()).not.toContain('Please enter a value.');
         });
 
@@ -3814,12 +3941,9 @@ describe('DatePicker', function () {
           expect(description).toContain('Please enter a value.');
         });
 
-        it('should surface the descriptive constraint error (not the generic incomplete message) when a min-violating value is made partial (Bug #9958)', async () => {
-          // A partial value that still violates a constraint (minValue/maxValue/unavailableDate)
-          // surfaces the descriptive error ("Value must be … or later.") rather than the generic
-          // fallback ("Please enter a value."). The generic fallback only appears when the partial
-          // value has no constraint violation — e.g. a field with no min/max where the user clears
-          // a segment.
+        it('should surface the generic incomplete message (not a constraint error) when a min-violating value is made partial (Bug #9958)', async () => {
+          // Constraints can't be evaluated against the stale committed value while partial;
+          // see getValidationResult.
           let {getByRole} = render(
             <Provider theme={theme}>
               <Form>
@@ -3852,8 +3976,8 @@ describe('DatePicker', function () {
             .map(d => document.getElementById(d)?.textContent || '')
             .join(' ');
 
-          expect(description).toContain('Value must be 1/1/2030 or later.');
-          expect(description).not.toContain('Please enter a value.');
+          expect(description).toContain('Please enter a value.');
+          expect(description).not.toContain('Value must be 1/1/2030 or later.');
         });
 
         it('should clear the partial-value error on the first calendar selection that completes the date (Bug #9958)', async () => {

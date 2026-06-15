@@ -23,16 +23,13 @@ import {
   getFormatOptions,
   getPlaceholderTime,
   getValidationResult,
-  useDefaultProps
+  useDefaultProps,
+  usePartialFormValidationState
 } from './utils';
-import {
-  FormValidationState,
-  privateSetIsValuePartialProp,
-  useFormValidationState
-} from '../form/useFormValidationState';
+import {FormValidationState, privateSetIsValuePartialProp} from '../form/useFormValidationState';
 import {OverlayTriggerState, useOverlayTriggerState} from '../overlays/useOverlayTriggerState';
+import {useCallback, useMemo, useState} from 'react';
 import {useControlledState} from '../utils/useControlledState';
-import {useMemo, useState} from 'react';
 import {ValidationState} from '@react-types/shared';
 
 export interface DatePickerStateOptions<T extends DateValue> extends DatePickerProps<T> {
@@ -161,17 +158,24 @@ export function useDatePickerState<T extends DateValue = DateValue>(
     setValueInternal(newValue);
   };
 
-  let builtinValidation = useMemo(
-    () =>
-      getValidationResult(value, minValue, maxValue, isDateUnavailable, formatOpts, isValuePartial),
-    [value, minValue, maxValue, isDateUnavailable, formatOpts, isValuePartial]
+  let getBuiltinValidation = useCallback(
+    (displayPartialError: boolean) =>
+      getValidationResult(
+        value,
+        minValue,
+        maxValue,
+        isDateUnavailable,
+        formatOpts,
+        displayPartialError
+      ),
+    [value, minValue, maxValue, isDateUnavailable, formatOpts]
   );
 
-  let validation = useFormValidationState({
-    ...props,
-    value: value as MappedDateValue<T> | null,
-    builtinValidation
-  });
+  let validation = usePartialFormValidationState(
+    {...props, value: value as MappedDateValue<T> | null},
+    isValuePartial,
+    getBuiltinValidation
+  );
 
   let isValueInvalid = validation.displayValidation.isInvalid;
   let validationState: ValidationState | null =

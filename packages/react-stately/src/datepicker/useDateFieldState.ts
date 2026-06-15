@@ -25,15 +25,16 @@ import {
   FormatterOptions,
   getFormatOptions,
   getValidationResult,
-  useDefaultProps
+  useDefaultProps,
+  usePartialFormValidationState
 } from './utils';
 import {DatePickerProps, DateValue, Granularity, MappedDateValue} from './types';
-import {FormValidationState, useFormValidationState} from '../form/useFormValidationState';
+import {FormValidationState} from '../form/useFormValidationState';
 import {getPlaceholder} from './placeholders';
 import {IncompleteDate} from './IncompleteDate';
 import {NumberFormatter} from '@internationalized/number';
+import {useCallback, useMemo, useState} from 'react';
 import {useControlledState} from '../utils/useControlledState';
-import {useMemo, useState} from 'react';
 import {ValidationState} from '@react-types/shared';
 
 export type DateSegmentType =
@@ -373,17 +374,24 @@ export function useDateFieldState<T extends DateValue = DateValue>(
   let isValuePartial =
     !displayValue.isComplete(displaySegments) && !displayValue.isCleared(displaySegments);
 
-  let builtinValidation = useMemo(
-    () =>
-      getValidationResult(value, minValue, maxValue, isDateUnavailable, formatOpts, isValuePartial),
-    [value, minValue, maxValue, isDateUnavailable, formatOpts, isValuePartial]
+  let getBuiltinValidation = useCallback(
+    (displayPartialError: boolean) =>
+      getValidationResult(
+        value,
+        minValue,
+        maxValue,
+        isDateUnavailable,
+        formatOpts,
+        displayPartialError
+      ),
+    [value, minValue, maxValue, isDateUnavailable, formatOpts]
   );
 
-  let validation = useFormValidationState({
-    ...props,
-    value: value as MappedDateValue<T> | null,
-    builtinValidation
-  });
+  let validation = usePartialFormValidationState(
+    {...props, value: value as MappedDateValue<T> | null},
+    isValuePartial,
+    getBuiltinValidation
+  );
 
   let isValueInvalid = validation.displayValidation.isInvalid;
   let validationState: ValidationState | null =

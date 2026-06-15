@@ -66,6 +66,41 @@ describe('TimeField', function () {
     }
   });
 
+  it('should not announce a fabricated selected time while the value is partial (Bug #9801)', async function () {
+    let {getByRole, getAllByRole} = render(
+      <TimeField label="Time" defaultValue={new Time(13, 30)} />
+    );
+
+    let group = getByRole('group');
+    let segments = getAllByRole('spinbutton');
+    let getDescription = () =>
+      (group.getAttribute('aria-describedby') || '')
+        .split(' ')
+        .map(d => document.getElementById(d)?.textContent || '')
+        .join(' ');
+    expect(getDescription()).toContain('Selected Time: 1:30 PM');
+
+    // Clear the AM/PM segment. The display buffer now has hour=1 with no day period, which
+    // previously formatted as the fabricated "1:30 AM". While partial, no selected-value
+    // description must be announced at all.
+    act(() => {
+      segments[2].focus();
+    });
+    await user.keyboard('{Backspace}');
+    expect(segments[2]).toHaveAttribute('aria-valuetext', 'Empty');
+    expect(getDescription()).not.toContain('Selected Time:');
+    expect(getDescription()).not.toContain('1:30 AM');
+
+    // Refilling the segment restores the real description. (Backspace moves focus to the
+    // previous segment, so refocus the day period first.)
+    act(() => {
+      segments[2].focus();
+    });
+    await user.keyboard('p');
+    expect(getDescription()).toContain('Selected Time: 1:30 PM');
+    expect(getDescription()).not.toContain('1:30 AM');
+  });
+
   it('should support focusing via a ref', function () {
     let ref = React.createRef();
     let {getAllByRole} = render(<TimeField label="Time" ref={ref} />);
@@ -444,15 +479,20 @@ describe('TimeField', function () {
 
       // Field is partial
       expect(input).toHaveValue('');
-      await user.tab();
-      await user.tab();
 
       let getDescription = () =>
-        group
-          .getAttribute('aria-describedby')
+        (group.getAttribute('aria-describedby') || '')
           .split(' ')
-          .map(d => document.getElementById(d).textContent)
+          .map(d => document.getElementById(d)?.textContent || '')
           .join(' ');
+
+      // No error while still editing — it appears once the field is blurred.
+      expect(getDescription()).not.toContain('Please enter a value.');
+
+      // Tab out of the group (hour -> minute -> dayPeriod -> out).
+      await user.tab();
+      await user.tab();
+      await user.tab();
       expect(getDescription()).toContain('Please enter a value.');
     });
 
@@ -828,6 +868,95 @@ describe('TimeField', function () {
 
           await user.keyboard('[Tab][ArrowUp][Tab][Tab][Tab]');
           expect(getDescription()).not.toContain('Invalid value');
+        });
+
+        it('should signal validation only after blur when a time segment is cleared (Bug #9801)', async () => {
+          let {getByRole} = render(
+            <Provider theme={theme}>
+              <Form>
+                <TimeField
+                  label="Time"
+                  name="time"
+                  defaultValue={new Time(13, 30)}
+                  validationBehavior="aria"
+                />
+              </Form>
+            </Provider>
+          );
+
+          let group = getByRole('group');
+          let segments = within(group).getAllByRole('spinbutton');
+          let getDescription = () =>
+            (group.getAttribute('aria-describedby') || '')
+              .split(' ')
+              .map(d => document.getElementById(d)?.textContent || '')
+              .join(' ');
+
+          // Clear the hour segment ('1 PM' -> single digit, one Backspace).
+          act(() => {
+            segments[0].focus();
+          });
+          await user.keyboard('{Backspace}');
+          expect(segments[0]).toHaveAttribute('aria-valuetext', 'Empty');
+
+          // No error while still editing — aria validation must not flash mid-edit.
+          expect(getDescription()).not.toContain('Please enter a value.');
+
+          // Tab out of the group (hour -> minute -> dayPeriod -> out) -> error appears.
+          await user.tab();
+          await user.tab();
+          await user.tab();
+          expect(getDescription()).toContain('Please enter a value.');
+
+          // Refilling the hour completes the value and clears the error in realtime.
+          act(() => {
+            segments[0].focus();
+          });
+          await user.keyboard('1');
+          expect(getDescription()).not.toContain('Please enter a value.');
+        });
+
+        it('should signal validation when only the dayPeriod segment is cleared (Bug #9801)', async () => {
+          let {getByRole} = render(
+            <Provider theme={theme}>
+              <Form>
+                <TimeField
+                  label="Time"
+                  name="time"
+                  defaultValue={new Time(13, 30)}
+                  validationBehavior="aria"
+                />
+              </Form>
+            </Provider>
+          );
+
+          let group = getByRole('group');
+          let segments = within(group).getAllByRole('spinbutton');
+          let getDescription = () =>
+            (group.getAttribute('aria-describedby') || '')
+              .split(' ')
+              .map(d => document.getElementById(d)?.textContent || '')
+              .join(' ');
+
+          // Clear only the dayPeriod (AM/PM) segment — hour and minute stay filled.
+          let dayPeriod = segments[2];
+          act(() => {
+            dayPeriod.focus();
+          });
+          await user.keyboard('{Backspace}');
+          expect(dayPeriod).toHaveAttribute('aria-valuetext', 'Empty');
+
+          // No error while still editing; the error appears after blurring out.
+          expect(getDescription()).not.toContain('Please enter a value.');
+          act(() => document.activeElement.blur());
+          expect(getDescription()).toContain('Please enter a value.');
+
+          // Refilling the dayPeriod completes the value and clears the error in realtime.
+          act(() => {
+            dayPeriod.focus();
+          });
+          await user.keyboard('p');
+          expect(getDescription()).not.toContain('Please enter a value.');
         });
       });
     });

@@ -55,7 +55,7 @@ export const privateValidationStateProp: string = '__reactAriaFormValidationStat
 // from its inner DateField(s). See useDateFieldState.isValuePartial.
 export const privateSetIsValuePartialProp: string = '__reactAriaDatePickerSetIsValuePartial';
 
-interface FormValidationProps<T> extends Validation<T> {
+export interface FormValidationProps<T> extends Validation<T> {
   builtinValidation?: ValidationResult;
   name?: string | string[];
   value: T | null;

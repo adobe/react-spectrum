@@ -123,9 +123,13 @@ export function useDateField<T extends DateValue>(
   let message =
     state.maxGranularity === 'hour' ? 'selectedTimeDescription' : 'selectedDateDescription';
   let field = state.maxGranularity === 'hour' ? 'time' : 'date';
-  let description = state.value
-    ? stringFormatter.format(message, {[field]: state.formatValue({month: 'long'})})
-    : '';
+  // While the display is partial, formatValue would describe a chimera of display segments
+  // and committed-value fallbacks (e.g. "1:30 AM" after clearing AM/PM on "1:30 PM"), so
+  // announce no selected value — matching the field's empty submission value.
+  let description =
+    state.value && !state.isValuePartial
+      ? stringFormatter.format(message, {[field]: state.formatValue({month: 'long'})})
+      : '';
   let descProps = useDescription(description);
 
   // If within a date picker or date range picker, the date field will have role="presentation" and an aria-describedby
@@ -216,7 +220,9 @@ export function useDateField<T extends DateValue>(
     // so that an empty value blocks HTML form submission when the field is required.
     inputProps.type = 'text';
     inputProps.hidden = true;
-    inputProps.required = props.isRequired;
+    // A partial value is also required: its input value is empty (see above), so this blocks
+    // submission natively even before the partial error has been committed for display.
+    inputProps.required = props.isRequired || state.isValuePartial;
     // Ignore react warning.
     inputProps.onChange = () => {};
   }
