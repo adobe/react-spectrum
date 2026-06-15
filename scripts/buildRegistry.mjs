@@ -30,7 +30,7 @@ for (let file of globSync('starters/tailwind/src/*.{ts,tsx}').sort()) {
     name: `tailwind-${name.toLowerCase()}`,
     type,
     title: name,
-    dependencies: [...dependencies, 'tailwindcss-react-aria-components', 'tailwindcss-animate'],
+    dependencies: [...dependencies, 'tailwindcss-react-aria-components', 'tw-animate-css'],
     registryDependencies: [...registryDependencies],
     files: [
       {
@@ -41,7 +41,7 @@ for (let file of globSync('starters/tailwind/src/*.{ts,tsx}').sort()) {
     ],
     css: {
       '@plugin "tailwindcss-react-aria-components"': {},
-      '@plugin "tailwindcss-animate"': {}
+      '@import "tw-animate-css"': {}
     }
   };
 
