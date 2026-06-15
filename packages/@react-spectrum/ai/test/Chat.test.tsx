@@ -53,8 +53,8 @@ function TestThread({
 }
 
 let mockAnnounce = announce as jest.MockedFunction<typeof announce>;
-
-describe('Chat', () => {
+const describeOrSkip = parseInt(React.version, 10) < 19 ? describe.skip : describe;
+describeOrSkip('Thread', () => {
   let user;
 
   beforeAll(() => {

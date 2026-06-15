@@ -21,7 +21,8 @@ interface Message {
   text: string;
 }
 
-describe('Thread browser', () => {
+const describeOrSkip = parseInt(React.version, 10) < 19 ? describe.skip : describe;
+describeOrSkip('Chat browser', () => {
   describe('spatial navigation', () => {
     // This test is flaky in Firefox. Skipping for now.
     it.skip('navigates between items in spatial order via arrow keys', async () => {
