@@ -47,8 +47,10 @@ import {Menu, MenuItem, MenuItemProps, MenuTrigger} from '@react-spectrum/s2/Men
 import Plus from '@react-spectrum/s2/icons/Add';
 import {Popover, PopoverProps} from '@react-spectrum/s2/Popover';
 import {positionToDOMRange, Token, TokenField, TokenProps} from './TokenField';
+import {PromptFocusContext} from './Chat';
 import Send from '@react-spectrum/s2/icons/ArrowUpSend';
 import Stop from '@react-spectrum/s2/icons/StopProcessing';
+import {useFocusWithin} from 'react-aria/useFocusWithin';
 
 interface Attachment {
   id: string;
@@ -172,6 +174,9 @@ export function PromptField(props: PromptFieldProps) {
     }
   });
 
+  let {onFocusChange} = useContext(PromptFocusContext);
+  let {focusWithinProps} = useFocusWithin({onFocusWithinChange: onFocusChange});
+
   let onSubmit = () => {
     if (prompt.segments.length === 0) {
       return;
@@ -198,7 +203,7 @@ export function PromptField(props: PromptFieldProps) {
         onAddAttachments,
         onRemoveAttachments
       }}>
-      <div>
+      <div {...focusWithinProps}>
         <Group
           {...dropProps}
           role="group"
