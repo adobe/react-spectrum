@@ -50,7 +50,7 @@ import {positionToDOMRange, Token, TokenField, TokenProps} from './TokenField';
 import Send from '@react-spectrum/s2/icons/ArrowUpSend';
 import Stop from '@react-spectrum/s2/icons/StopProcessing';
 
-interface Attachment {
+interface PromptFieldAttachment {
   id: string;
   file: File;
   image: string;
@@ -59,17 +59,17 @@ interface Attachment {
 export interface PromptFieldProps extends UnsafeStyles {
   children: React.ReactNode;
   acceptedAttachmentTypes?: string[];
-  onSubmit?: (prompt: TokenSegmentList, attachments: Attachment[]) => void;
+  onSubmit?: (prompt: TokenSegmentList, attachments: PromptFieldAttachment[]) => void;
   isGenerating?: boolean;
   onStop?: () => void;
-  onAddAttachments?: (attachments: Attachment[]) => void;
-  onRemoveAttachments?: (attachments: Attachment[]) => void;
+  onAddAttachments?: (attachments: PromptFieldAttachment[]) => void;
+  onRemoveAttachments?: (attachments: PromptFieldAttachment[]) => void;
   styles?: StyleString;
 }
 
 interface PromptFieldState {
-  attachments: Attachment[];
-  setAttachments: React.Dispatch<React.SetStateAction<Attachment[]>>;
+  attachments: PromptFieldAttachment[];
+  setAttachments: React.Dispatch<React.SetStateAction<PromptFieldAttachment[]>>;
   acceptedAttachmentTypes?: string[];
   prompt: TokenSegmentList;
   setPrompt: React.Dispatch<React.SetStateAction<TokenSegmentList>>;
@@ -77,8 +77,8 @@ interface PromptFieldState {
   onSubmit?: () => void;
   onStop?: () => void;
   isGenerating: boolean;
-  onAddAttachments?: (attachments: Attachment[]) => void;
-  onRemoveAttachments?: (attachments: Attachment[]) => void;
+  onAddAttachments?: (attachments: PromptFieldAttachment[]) => void;
+  onRemoveAttachments?: (attachments: PromptFieldAttachment[]) => void;
 }
 
 // TODO: make this customizable
@@ -144,7 +144,7 @@ export function PromptField(props: PromptFieldProps) {
     onRemoveAttachments
   } = props;
   let [prompt, setPrompt] = useState<TokenSegmentList>(new AutoLinkingSegmentList([]));
-  let [attachments, setAttachments] = useState<Attachment[]>([]);
+  let [attachments, setAttachments] = useState<PromptFieldAttachment[]>([]);
 
   // Not using RAC DropZone because it adds its own focusable button,
   // and we want to avoid an extra tab. We support pasting files directly into the input.
@@ -256,8 +256,8 @@ export function PromptField(props: PromptFieldProps) {
   );
 }
 
-interface PromptFieldAttachmentListProps extends AttachmentListProps<Attachment> {
-  children?: (attachment: Attachment) => React.ReactNode;
+interface PromptFieldAttachmentListProps extends AttachmentListProps<PromptFieldAttachment> {
+  children?: (attachment: PromptFieldAttachment) => React.ReactNode;
 }
 
 export function PromptFieldAttachmentList(props: PromptFieldAttachmentListProps) {
@@ -353,7 +353,7 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
           acceptedAttachmentTypes
             ? e => {
                 let clipboardData = e.clipboardData as DataTransfer;
-                let attachments: Attachment[] = [];
+                let attachments: PromptFieldAttachment[] = [];
                 for (let item of clipboardData.items) {
                   if (matchMimeType(item.type, acceptedAttachmentTypes)) {
                     let file = item.getAsFile()!;
