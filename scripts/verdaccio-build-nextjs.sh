@@ -34,6 +34,7 @@ echo 'build nextjs test app'
 # install packages in NextJS test app
 cd examples/rsp-next-ts
 yarn config set npmRegistryServer $registry
+cp yarn.lock yarn.lock.orig
 yarn install --no-immutable
 yarn up @adobe/react-spectrum
 yarn up @react-aria/optimize-locales-plugin
@@ -41,6 +42,12 @@ yarn up @react-spectrum/provider
 yarn up @spectrum-icons/illustrations
 yarn up @spectrum-icons/workflow
 yarn up react-aria-components
+
+echo '===== yarn.lock unified diff ====='
+diff -u yarn.lock.orig yarn.lock || true
+echo '===== end yarn.lock unified diff ====='
+node ../../scripts/verdaccio-lockfile-diff.js yarn.lock.orig yarn.lock || true
+
 yarn test
 
 # Build NextJS test app and move to dist folder. Store the size of the build in a text file.
