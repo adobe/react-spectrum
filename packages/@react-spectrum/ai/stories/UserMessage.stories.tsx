@@ -17,7 +17,7 @@ import {MenuItem} from '@react-spectrum/s2/Menu';
 import type {Meta, StoryObj} from '@storybook/react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Text} from '@react-spectrum/s2/Text';
-import {UserMessage} from '@react-spectrum/ai/UserMessage';
+import {UserMessage} from '@react-spectrum/ai';
 
 const meta: Meta<typeof UserMessage> = {
   component: UserMessage,

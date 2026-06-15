@@ -12,7 +12,7 @@
 
 import {ComponentProps, ReactElement, useState} from 'react';
 import {fn} from 'storybook/test';
-import {MessageFeedback} from '@react-spectrum/ai/MessageFeedback';
+import {MessageFeedback} from '@react-spectrum/ai';
 import type {Meta, StoryObj} from '@storybook/react';
 
 const meta: Meta<typeof MessageFeedback> = {

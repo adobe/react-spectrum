@@ -16,7 +16,7 @@ import {act, fireEvent, pointerMap, render} from '@react-spectrum/test-utils-int
 import {announce} from 'react-aria/private/live-announcer/LiveAnnouncer';
 import {Button, Input, TextField} from 'react-aria-components';
 import React from 'react';
-import {Thread, ThreadItem, ThreadList, ThreadScrollButton} from '../src/Thread';
+import {Thread, ThreadItem, ThreadList, ThreadScrollButton} from '@react-spectrum/ai';
 import userEvent from '@testing-library/user-event';
 
 interface Message {

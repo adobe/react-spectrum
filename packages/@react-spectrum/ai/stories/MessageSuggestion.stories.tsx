@@ -11,7 +11,7 @@
  */
 
 import {getActionArgs} from '../../s2/stories/utils';
-import {MessageSuggestion, MessageSuggestionList} from '@react-spectrum/ai/MessageSuggestion';
+import {MessageSuggestion, MessageSuggestionList} from '@react-spectrum/ai';
 import type {Meta, StoryObj} from '@storybook/react';
 
 const events = ['onPress'];

@@ -242,7 +242,12 @@ export function ThreadList<T extends object>(props: ThreadListProps<T>) {
       aria-label={ariaLabel}
       aria-labelledby={ariaLabelledby}
       // TODO: for now we enforce this, but to be configurable?
-      style={{display: 'flex', flexDirection: 'column-reverse'}}
+      style={{
+        display: 'flex',
+        flexDirection: 'column-reverse',
+        boxSizing: 'border-box',
+        minWidth: 0
+      }}
       className={className}>
       {children}
     </GridList>

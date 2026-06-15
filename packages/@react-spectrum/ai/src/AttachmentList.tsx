@@ -20,12 +20,23 @@ import {forwardRef, ReactNode, useRef} from 'react';
 import {iconStyle} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
 import {pressScale} from '@react-spectrum/s2/pressScale';
-import type {StyleProps} from '@react-spectrum/s2';
+import type {StyleString} from '@react-spectrum/s2';
 import {Tag, TagGroup, TagGroupProps, TagList} from 'react-aria-components/TagGroup';
 import {useDOMRef} from './useDOMRef';
 
-export interface AttachmentListProps extends TagGroupProps, StyleProps {
+export interface AttachmentListProps extends Omit<
+  TagGroupProps,
+  | 'selectionMode'
+  | 'defaultSelectedKeys'
+  | 'selectionBehavior'
+  | 'selectedKeys'
+  | 'disallowEmptySelection'
+  | 'escapeKeyBehavior'
+  | 'onSelectionChange'
+  | 'shouldSelectOnPressUp'
+> {
   children: ReactNode;
+  styles?: StyleString;
 }
 
 export interface AttachmentProps extends CardProps {

@@ -14,7 +14,7 @@ import {
   Attachment as AttachmentComponent,
   AttachmentList,
   type AttachmentListProps
-} from '@react-spectrum/ai/AttachmentList';
+} from '@react-spectrum/ai';
 import {Content} from '@react-spectrum/s2/Content';
 import {Image} from '@react-spectrum/s2/Image';
 import type {Meta, StoryObj} from '@storybook/react';

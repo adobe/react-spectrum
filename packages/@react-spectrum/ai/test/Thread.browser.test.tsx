@@ -13,7 +13,7 @@
 import {describe, expect, it} from 'vitest';
 import React from 'react';
 import {render} from 'vitest-browser-react';
-import {Thread, ThreadItem, ThreadList} from '../src/Thread';
+import {Thread, ThreadItem, ThreadList} from '@react-spectrum/ai';
 import {userEvent} from '@vitest/browser/context';
 
 interface Message {

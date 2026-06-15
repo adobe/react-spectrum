@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {MessageSource, SourceList, SourceListItem} from '@react-spectrum/ai/MessageSource';
+import {MessageSource, SourceList, SourceListItem} from '@react-spectrum/ai';
 import type {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};

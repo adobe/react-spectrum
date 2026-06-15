@@ -12,11 +12,7 @@
 
 import type {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
-import {
-  ResponseStatus,
-  ResponseStatusPanel,
-  ResponseStatusTitle
-} from '@react-spectrum/ai/ResponseStatus';
+import {ResponseStatus, ResponseStatusPanel, ResponseStatusTitle} from '@react-spectrum/ai';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 const meta: Meta<typeof ResponseStatus> = {

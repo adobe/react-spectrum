@@ -35,21 +35,27 @@ import {Image} from '@react-spectrum/s2/Image';
 import {Link} from '@react-spectrum/s2/Link';
 import {ListLayout} from 'react-stately/useVirtualizerState';
 import {MenuItem} from '@react-spectrum/s2/Menu';
-import {MessageFeedback} from '@react-spectrum/ai/MessageFeedback';
-import {MessageSource, SourceList, SourceListItem} from '@react-spectrum/ai/MessageSource';
-import {MessageSuggestion, MessageSuggestionList} from '@react-spectrum/ai/MessageSuggestion';
+import {
+  MessageFeedback,
+  MessageSource,
+  MessageSuggestion,
+  MessageSuggestionList,
+  ResponseStatus,
+  ResponseStatusPanel,
+  ResponseStatusTitle,
+  SourceList,
+  SourceListItem,
+  Thread,
+  ThreadItem,
+  ThreadList,
+  ThreadScrollButton,
+  UserMessage
+} from '@react-spectrum/ai';
 import type {Meta} from '@storybook/react';
 import Plus from '@react-spectrum/s2/icons/Add';
 import {ReactNode, useRef, useState} from 'react';
-import {
-  ResponseStatus,
-  ResponseStatusPanel,
-  ResponseStatusTitle
-} from '@react-spectrum/ai/ResponseStatus';
 import Send from '@react-spectrum/s2/icons/ArrowUpSend';
 import {Text} from '@react-spectrum/s2/Text';
-import {Thread, ThreadItem, ThreadList, ThreadScrollButton} from '@react-spectrum/ai/Thread';
-import {UserMessage} from '@react-spectrum/ai/UserMessage';
 import {Virtualizer} from 'react-aria-components/Virtualizer';
 
 const meta: Meta<typeof Thread> = {
@@ -373,7 +379,9 @@ export function StreamingThread() {
           overflow: 'hidden',
           flexGrow: 1,
           gap: 16,
-          paddingX: 16
+          paddingX: 16,
+          boxSizing: 'border-box',
+          minWidth: 0
         })}>
         <div
           className={style({
@@ -381,7 +389,8 @@ export function StreamingThread() {
             flexGrow: 1,
             overflow: 'hidden',
             display: 'flex',
-            flexDirection: 'column'
+            flexDirection: 'column',
+            minWidth: 0
           })}>
           <div
             className={style({
@@ -403,11 +412,14 @@ export function StreamingThread() {
             aria-label="Chat thread"
             className={style({
               flexGrow: 1,
-              overflow: 'auto',
+              overflowX: 'hidden',
+              overflowY: 'auto',
               padding: 8,
               scrollPadding: 8,
               rowGap: 16,
-              alignItems: 'start'
+              alignItems: 'start',
+              boxSizing: 'border-box',
+              minWidth: 0
             })}>
             {(msg: StreamingMessage) => {
               if (msg.type === 'user') {
@@ -519,7 +531,9 @@ export function VirtualizedThread() {
         display: 'flex',
         flexDirection: 'column',
         overflow: 'hidden',
-        flexGrow: 1
+        flexGrow: 1,
+        boxSizing: 'border-box',
+        minWidth: 0
       })}>
       <Virtualizer layout={ListLayout} layoutOptions={{estimatedRowHeight: 100}}>
         <GridList
@@ -530,8 +544,12 @@ export function VirtualizedThread() {
           className={style({
             height: 400,
             paddingX: 4,
-            overflow: 'auto',
-            marginBottom: 8
+            overflowX: 'hidden',
+            overflowY: 'auto',
+            marginBottom: 8,
+            boxSizing: 'border-box',
+            minWidth: 0,
+            width: 'full'
           })}>
           {msg => {
             if (msg.type === 'user') {
