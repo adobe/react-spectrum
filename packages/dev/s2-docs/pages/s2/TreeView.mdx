@@ -395,43 +395,9 @@ Use this when rows contain interactive elements such as text fields, where arrow
 "use client";
 import {Text} from '@react-spectrum/s2';
 import {TreeView, TreeViewItem, TreeViewItemContent} from '@react-spectrum/s2/TreeView';
-import {ComboBox, ComboBoxItem} from '@react-spectrum/s2/ComboBox';
+import {TextField} from '@react-spectrum/s2/TextField';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
-///- begin collapse -///
-function PermissionPicker({label}) {
-  return (
-    <ComboBox
-      styles={style({maxWidth: 120})}
-      aria-label={label}
-      defaultSelectedKey="view"
-      placeholder="Permission">
-      <ComboBoxItem id="view">Can view</ComboBoxItem>
-      <ComboBoxItem id="comment">Can comment</ComboBoxItem>
-      <ComboBoxItem id="edit">Can edit</ComboBoxItem>
-    </ComboBox>
-  );
-}
-
-function TreeItemTextWithPicker({label}) {
-  return (
-    <Text>
-      <div
-        className={style({
-          display: 'flex',
-          flexDirection: 'row',
-          alignItems: 'center',
-          gap: 8,
-          padding: 4,
-          justifyContent: 'space-between'
-        })}>
-        {label}
-        <PermissionPicker label={`${label} permission`} />
-      </div>
-    </Text>
-  );
-}
-///- end collapse -///
 
 <TreeView
   /*- begin highlight -*/
@@ -442,23 +408,37 @@ function TreeItemTextWithPicker({label}) {
   aria-label="Shared files"
   styles={style({height: 250, width: 'full', maxWidth: 400})}>
   <TreeViewItem id="documents" textValue="Documents">
-    <TreeViewItemContent>Documents</TreeViewItemContent>
+    <TreeViewItemContent>
+      <Text>
+        <TextField styles={style({margin: 4})} aria-label="title" defaultValue="Documents" />
+      </Text>
+    </TreeViewItemContent>
     <TreeViewItem id="weekly" textValue="Weekly Report.pdf">
       <TreeViewItemContent>
-        <TreeItemTextWithPicker label="Weekly Report.pdf" />
+        <Text>
+          <TextField styles={style({margin: 4})} aria-label="title" defaultValue="Weekly Report.pdf" />
+        </Text>
       </TreeViewItemContent>
     </TreeViewItem>
     <TreeViewItem id="budget" textValue="Budget.xlsx">
       <TreeViewItemContent>
-        <TreeItemTextWithPicker label="Budget.xlsx" />
+        <Text>
+          <TextField styles={style({margin: 4})} aria-label="title" defaultValue="Budget.xlsx" />
+        </Text>
       </TreeViewItemContent>
     </TreeViewItem>
   </TreeViewItem>
   <TreeViewItem id="photos" textValue="Photos">
-    <TreeViewItemContent>Photos</TreeViewItemContent>
+    <TreeViewItemContent>
+      <Text>
+        <TextField styles={style({margin: 4})} aria-label="title" defaultValue="Photos" />
+      </Text>
+    </TreeViewItemContent>
     <TreeViewItem id="sunset" textValue="Sunset.jpg">
       <TreeViewItemContent>
-        <TreeItemTextWithPicker label="Sunset.jpg" />
+        <Text>
+          <TextField styles={style({margin: 4})} aria-label="title" defaultValue="Sunset.jpg" />
+        </Text>
       </TreeViewItemContent>
     </TreeViewItem>
   </TreeViewItem>

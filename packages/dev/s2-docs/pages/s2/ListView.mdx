@@ -388,7 +388,7 @@ Use this when rows contain interactive elements such as text fields, where arrow
 ```tsx render
 "use client";
 import {ListView, ListViewItem, Text} from '@react-spectrum/s2/ListView';
-import {ComboBox, ComboBoxItem} from '@react-spectrum/s2/ComboBox';
+import {TextField} from '@react-spectrum/s2/TextField';
 import File from '@react-spectrum/s2/icons/File';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
@@ -398,20 +398,6 @@ let documents = [
   {id: 'quarterly-report', name: 'Quarterly report.docx'},
   {id: 'budget', name: 'Budget.xlsx'}
 ];
-
-function PermissionPicker({label}) {
-  return (
-    <ComboBox
-      styles={style({maxWidth: 120})}
-      aria-label={label}
-      defaultSelectedKey="view"
-      placeholder="Permission">
-      <ComboBoxItem id="view">Can view</ComboBoxItem>
-      <ComboBoxItem id="comment">Can comment</ComboBoxItem>
-      <ComboBoxItem id="edit">Can edit</ComboBoxItem>
-    </ComboBox>
-  );
-}
 ///- end collapse -///
 
 <ListView
@@ -426,18 +412,7 @@ function PermissionPicker({label}) {
     <ListViewItem textValue={item.name}>
       <File />
       <Text>
-        <div
-          className={style({
-            display: 'flex',
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: 8,
-            padding: 4,
-            justifyContent: 'space-between'
-          })}>
-          {item.name}
-          <PermissionPicker label={`${item.name} permission`} />
-        </div>
+        <TextField styles={style({margin: 4})} aria-label="title" defaultValue={item.name} />
       </Text>
     </ListViewItem>
   )}
