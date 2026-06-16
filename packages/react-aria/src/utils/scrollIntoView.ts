@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {getScrollParents} from './getScrollParents';
-import {isIOS} from './platform';
+import { getScrollParents } from './getScrollParents';
+import { isIOS } from './platform';
 
 interface ScrollIntoViewOpts {
   /** The position to align items along the block axis in. */
@@ -35,7 +35,7 @@ export function scrollIntoView(
   element: HTMLElement,
   opts: ScrollIntoViewOpts = {}
 ): void {
-  let {block = 'nearest', inline = 'nearest'} = opts;
+  let { block = 'nearest', inline = 'nearest' } = opts;
 
   if (scrollView === element) {
     return;
@@ -129,7 +129,7 @@ export function scrollIntoView(
     return;
   }
 
-  scrollView.scrollTo({left: x, top: y});
+  scrollView.scrollTo({ left: x, top: y });
 }
 
 /**
@@ -143,40 +143,71 @@ export function scrollIntoViewport(
   targetElement: Element | null,
   opts: ScrollIntoViewportOpts = {}
 ): void {
-  let {containingElement} = opts;
+  let { containingElement } = opts;
   if (targetElement && targetElement.isConnected) {
     let root = document.scrollingElement || document.documentElement;
     let isScrollPrevented = window.getComputedStyle(root).overflow === 'hidden';
     if (!isScrollPrevented) {
-      let {left: originalLeft, top: originalTop} = targetElement.getBoundingClientRect();
+      let { left: originalLeft, top: originalTop } = targetElement.getBoundingClientRect();
 
       // use scrollIntoView({block: 'nearest'}) instead of .focus to check if the element is fully in view or not since .focus()
       // won't cause a scroll if the element is already focused and doesn't behave consistently when an element is partially out of view horizontally vs vertically
-      targetElement?.scrollIntoView?.({block: 'nearest'});
-      let {left: newLeft, top: newTop} = targetElement.getBoundingClientRect();
-      // Account for sub pixel differences from rounding
+      targetElement?.scrollIntoView?.({ block: 'nearest' });
+      let { left: newLeft, top: newTop } = targetElement.getBoundingClientRect();
+
       if (Math.abs(originalLeft - newLeft) > 1 || Math.abs(originalTop - newTop) > 1) {
-        containingElement?.scrollIntoView?.({block: 'center', inline: 'center'});
-        targetElement.scrollIntoView?.({block: 'nearest'});
+        // --- ADDED FIX 1: Check window viewport boundary ---
+        let shouldCenter = true;
+        if (containingElement) {
+          const containerRect = containingElement.getBoundingClientRect();
+          if (containerRect.height > window.innerHeight) {
+            shouldCenter = false;
+          }
+        }
+
+        if (shouldCenter) {
+          containingElement?.scrollIntoView?.({ block: 'center', inline: 'center' });
+        } else {
+          containingElement?.scrollIntoView?.({ block: 'nearest', inline: 'nearest' });
+        }
+        // --- END FIX 1 ---
+
+        targetElement.scrollIntoView?.({ block: 'nearest' });
       }
     } else {
-      let {left: originalLeft, top: originalTop} = targetElement.getBoundingClientRect();
+      let { left: originalLeft, top: originalTop } = targetElement.getBoundingClientRect();
 
       // If scrolling is prevented, we don't want to scroll the body since it might move the overlay partially offscreen and the user can't scroll it back into view.
       let scrollParents = getScrollParents(targetElement, true);
       for (let scrollParent of scrollParents) {
         scrollIntoView(scrollParent as HTMLElement, targetElement as HTMLElement);
       }
-      let {left: newLeft, top: newTop} = targetElement.getBoundingClientRect();
+      let { left: newLeft, top: newTop } = targetElement.getBoundingClientRect();
       // Account for sub pixel differences from rounding
       if (Math.abs(originalLeft - newLeft) > 1 || Math.abs(originalTop - newTop) > 1) {
         scrollParents = containingElement ? getScrollParents(containingElement, true) : [];
         // scroll containing element into view first, then rescroll target element into view like the non chrome flow above
         for (let scrollParent of scrollParents) {
-          scrollIntoView(scrollParent as HTMLElement, containingElement as HTMLElement, {
-            block: 'center',
-            inline: 'center'
-          });
+          // --- ADDED FIX 2: Check custom scroll container boundary ---
+          const parentEl = scrollParent as HTMLElement;
+          const containerEl = containingElement as HTMLElement;
+
+          const isContainerSmallerThanViewport =
+            containerEl &&
+            containerEl.offsetHeight <= parentEl.clientHeight;
+
+          if (isContainerSmallerThanViewport) {
+            scrollIntoView(parentEl, containerEl, {
+              block: 'center',
+              inline: 'center'
+            });
+          } else {
+            scrollIntoView(parentEl, containerEl, {
+              block: 'nearest',
+              inline: 'nearest'
+            });
+          }
+          // --- END FIX 2 ---
         }
         for (let scrollParent of getScrollParents(targetElement, true)) {
           scrollIntoView(scrollParent as HTMLElement, targetElement as HTMLElement);

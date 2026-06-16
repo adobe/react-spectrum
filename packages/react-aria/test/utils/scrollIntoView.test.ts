@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {scrollIntoView} from '../../src/utils/scrollIntoView';
+import { scrollIntoView } from '../../src/utils/scrollIntoView';
 
 describe('scrollIntoView', () => {
   let target: HTMLElement;
@@ -71,10 +71,10 @@ describe('scrollIntoView', () => {
         } as CSSStyleDeclaration;
       });
 
-      Object.defineProperty(scrollView, 'clientHeight', {get: () => 500, configurable: true});
-      Object.defineProperty(scrollView, 'clientWidth', {get: () => 500, configurable: true});
+      Object.defineProperty(scrollView, 'clientHeight', { get: () => 500, configurable: true });
+      Object.defineProperty(scrollView, 'clientWidth', { get: () => 500, configurable: true });
 
-      scrollIntoView(scrollView, target, {block: 'start', inline: 'start'});
+      scrollIntoView(scrollView, target, { block: 'start', inline: 'start' });
       expect(scrollView.scrollLeft).toBe(100);
       expect(scrollView.scrollTop).toBe(2100);
     });
@@ -92,7 +92,7 @@ describe('scrollIntoView', () => {
         height: 1000,
         x: 100,
         y: 2100,
-        toJSON: () => {}
+        toJSON: () => { }
       } as DOMRect);
 
       jest.spyOn(window, 'getComputedStyle').mockImplementation(el => {
@@ -117,12 +117,71 @@ describe('scrollIntoView', () => {
         } as CSSStyleDeclaration;
       });
 
-      Object.defineProperty(scrollView, 'clientHeight', {get: () => 500, configurable: true});
-      Object.defineProperty(scrollView, 'clientWidth', {get: () => 500, configurable: true});
+      Object.defineProperty(scrollView, 'clientHeight', { get: () => 500, configurable: true });
+      Object.defineProperty(scrollView, 'clientWidth', { get: () => 500, configurable: true });
 
-      scrollIntoView(scrollView, target, {block: 'end', inline: 'end'});
+      scrollIntoView(scrollView, target, { block: 'end', inline: 'end' });
       expect(scrollView.scrollLeft).toBe(600);
       expect(scrollView.scrollTop).toBe(2600);
+    });
+  });
+
+  // ==========================================
+  // NEW TEST BLOCK FOR TABLE SCROLLING
+  // ==========================================
+  describe('scrollIntoViewport', () => {
+    let containingElement: HTMLElement;
+
+    beforeEach(() => {
+      containingElement = document.createElement('div');
+      document.body.appendChild(containingElement);
+      containingElement.appendChild(target);
+
+      // Mock target connections to look active in DOM
+      Object.defineProperty(target, 'isConnected', { get: () => true });
+    });
+
+    it('should fall back to nearest block alignment if containingElement is larger than the viewport', () => {
+      const scrollIntoViewSpy = jest.fn();
+      containingElement.scrollIntoView = scrollIntoViewSpy;
+      target.scrollIntoView = jest.fn();
+
+      // Mock window height
+      const originalInnerHeight = window.innerHeight;
+      window.innerHeight = 500;
+
+      // Mock container element to be taller than the window viewport (e.g., 2000px)
+      jest.spyOn(containingElement, 'getBoundingClientRect').mockReturnValue({
+        height: 2000,
+        top: 0,
+        bottom: 2000,
+        left: 0,
+        right: 1000,
+        width: 1000
+      } as DOMRect);
+
+      // Force a positional shift to trigger container alignment block
+      let getBoundingClientRectCallCount = 0;
+      jest.spyOn(target, 'getBoundingClientRect').mockImplementation(() => {
+        getBoundingClientRectCallCount++;
+        // Return changing coordinates to trick the layout difference checker
+        return {
+          top: getBoundingClientRectCallCount === 1 ? 100 : 200,
+          left: 0,
+          right: 100,
+          bottom: 200,
+          width: 100,
+          height: 100
+        } as DOMRect;
+      });
+
+      scrollIntoViewport(target, { containingElement });
+
+      // Verification: Ensure it used 'nearest' rather than 'center' because it was too large
+      expect(scrollIntoViewSpy).toHaveBeenCalledWith({ block: 'nearest', inline: 'nearest' });
+
+      // Clean up global mock
+      window.innerHeight = originalInnerHeight;
     });
   });
 });
