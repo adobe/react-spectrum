@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack -p 3456",
-    "build": "next build",
+    "dev": "next dev --webpack -p 3456",
+    "build": "next build --webpack",
     "start": "next start",
     "lint": "next lint"
   },
