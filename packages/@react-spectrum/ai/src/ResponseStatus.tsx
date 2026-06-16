@@ -259,7 +259,7 @@ export const ResponseStatusTitle = forwardRef(function ResponseStatusTitle(
   let {isExpanded} = useContext(DisclosureStateContext)!;
   let {size = 'M', density, isLoading} = useContext(ResponseStatusContext)!;
   let isRTL = direction === 'rtl';
-  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
 
   return (
     <Heading {...domProps} level={level} ref={domRef} className={mergeStyles(headingStyle, styles)}>

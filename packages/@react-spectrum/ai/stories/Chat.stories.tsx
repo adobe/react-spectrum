@@ -13,6 +13,7 @@
 import {ActionButton} from '@react-spectrum/s2/ActionButton';
 import {ActionMenu} from '@react-spectrum/s2/ActionMenu';
 import {AssetCard, CardPreview} from '@react-spectrum/s2/Card';
+import {Chat} from '../src/Chat';
 import ChevronDown from '@react-spectrum/s2/icons/ChevronDown';
 import {Content} from '@react-spectrum/s2/Content';
 import {focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
@@ -20,26 +21,37 @@ import {GridList} from 'react-aria-components';
 import {Image} from '@react-spectrum/s2/Image';
 import {ListLayout} from 'react-stately/useVirtualizerState';
 import {MenuItem} from '@react-spectrum/s2/Menu';
-import {MessageFeedback} from '../src/MessageFeedback';
-import {MessageSource, SourceList, SourceListItem} from '../src/MessageSource';
-import {MessageSuggestion, MessageSuggestionList} from '../src/MessageSuggestion';
+import {
+  MessageFeedback,
+  MessageSource,
+  MessageSuggestion,
+  MessageSuggestionList,
+  PromptField,
+  PromptFieldSubmitButton,
+  PromptTokenField,
+  ResponseStatus,
+  ResponseStatusPanel,
+  ResponseStatusTitle,
+  SourceList,
+  SourceListItem,
+  Thread,
+  ThreadItem,
+  ThreadScrollButton,
+  TokenSegmentList,
+  UserMessage
+} from '@react-spectrum/ai';
 import type {Meta} from '@storybook/react';
-import {PromptField, PromptFieldSubmitButton, PromptTokenField} from '../src/PromptField';
 import {ReactNode, useRef, useState} from 'react';
-import {ResponseStatus, ResponseStatusPanel, ResponseStatusTitle} from '../src/ResponseStatus';
 import {Text} from '@react-spectrum/s2/Text';
-import {Thread, ThreadItem, ThreadList, ThreadScrollButton} from '../src/Thread';
-import type {TokenSegmentList} from '../src/TokenSegmentList';
-import {UserMessage} from '../src/UserMessage';
 import {Virtualizer} from 'react-aria-components/Virtualizer';
 
-const meta: Meta<typeof Thread> = {
-  component: Thread,
+const meta: Meta<typeof Chat> = {
+  component: Chat,
   parameters: {
     layout: 'centered'
   },
   tags: ['autodocs'],
-  title: 'AI/Thread',
+  title: 'AI/Chat',
   decorators: [
     Story => (
       <div style={{width: '800px', height: '700px'}}>
@@ -137,7 +149,7 @@ function CardMessage({
   );
 }
 
-export function StreamingThread() {
+export function StreamingChat() {
   let [messages, setMessages] = useState<StreamingMessage[]>(
     initialResponses as StreamingMessage[]
   );
@@ -352,14 +364,16 @@ export function StreamingThread() {
         gap: 32,
         height: '100%'
       })}>
-      <Thread
+      <Chat
         className={style({
           display: 'flex',
           flexDirection: 'column',
           overflow: 'hidden',
           flexGrow: 1,
           gap: 16,
-          paddingX: 16
+          paddingX: 16,
+          boxSizing: 'border-box',
+          minWidth: 0
         })}>
         <div
           className={style({
@@ -367,7 +381,8 @@ export function StreamingThread() {
             flexGrow: 1,
             overflow: 'hidden',
             display: 'flex',
-            flexDirection: 'column'
+            flexDirection: 'column',
+            minWidth: 0
           })}>
           <div
             className={style({
@@ -383,17 +398,17 @@ export function StreamingThread() {
               </ActionButton>
             </ThreadScrollButton>
           </div>
-          <ThreadList
+          <Thread
             items={[...messages].reverse()}
-            focusOnEntry="first"
+            UNSTABLE_focusOnEntry="first"
             aria-label="Chat thread"
             className={style({
               flexGrow: 1,
-              overflow: 'auto',
+              overflowX: 'hidden',
+              overflowY: 'auto',
               padding: 8,
               scrollPadding: 8,
-              rowGap: 16,
-              alignItems: 'start'
+              rowGap: 16
             })}>
             {(msg: StreamingMessage) => {
               if (msg.type === 'user') {
@@ -401,7 +416,12 @@ export function StreamingThread() {
                 return (
                   <ThreadItem
                     textValue={msg.content}
-                    className={style({...focusRing(), borderRadius: 'default', alignSelf: 'end'})}>
+                    className={style({
+                      ...focusRing(),
+                      borderRadius: 'default',
+                      display: 'flex',
+                      justifyContent: 'end'
+                    })}>
                     <UserMessage>{msg.content}</UserMessage>
                   </ThreadItem>
                 );
@@ -466,7 +486,7 @@ export function StreamingThread() {
                 </SystemMessage>
               );
             }}
-          </ThreadList>
+          </Thread>
         </div>
         <PromptField
           onSubmit={handleSend}
@@ -481,13 +501,13 @@ export function StreamingThread() {
             <PromptFieldSubmitButton />
           </div>
         </PromptField>
-      </Thread>
+      </Chat>
     </div>
   );
 }
 
 // Ignore this story, just here for local testing
-export function VirtualizedThread() {
+export function VirtualizedChat() {
   let [messages, setMessages] = useState<Message[]>(initialResponses);
   let nextId = useRef(initialResponses.length);
   let lastMessage = messages.at(-1);
@@ -514,26 +534,37 @@ export function VirtualizedThread() {
         display: 'flex',
         flexDirection: 'column',
         overflow: 'hidden',
-        flexGrow: 1
+        flexGrow: 1,
+        boxSizing: 'border-box',
+        minWidth: 0
       })}>
       <Virtualizer layout={ListLayout} layoutOptions={{estimatedRowHeight: 100}}>
         <GridList
           aria-label="Chat thread"
           keyboardNavigationBehavior="tab"
-          focusOnEntry="last"
+          UNSTABLE_focusOnEntry="last"
           items={messages}
           className={style({
             height: 400,
             paddingX: 4,
-            overflow: 'auto',
-            marginBottom: 8
+            overflowX: 'hidden',
+            overflowY: 'auto',
+            marginBottom: 8,
+            boxSizing: 'border-box',
+            minWidth: 0,
+            width: 'full'
           })}>
           {msg => {
             if (msg.type === 'user') {
               return (
                 <ThreadItem
                   textValue={msg.content}
-                  className={style({...focusRing(), borderRadius: 'lg', alignSelf: 'end'})}>
+                  className={style({
+                    ...focusRing(),
+                    borderRadius: 'lg',
+                    display: 'flex',
+                    justifyContent: 'end'
+                  })}>
                   <UserMessage>{msg.content}</UserMessage>
                 </ThreadItem>
               );

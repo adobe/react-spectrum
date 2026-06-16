@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {categorizeArgTypes, getActionArgs} from '../../s2/stories/utils';
 import {Meta, StoryFn} from '@storybook/react';
 import React, {useContext, useMemo, useRef, useState} from 'react';
 import './styles.global.css';
@@ -27,9 +28,17 @@ import 'vanilla-starter/TagGroup.css';
 import {Text} from 'react-aria-components/Text';
 import {useSlottedContext} from 'react-aria-components/slots';
 
+const events = ['onChange', 'onPaste', 'onSubmit', 'onFocus', 'onBlur', 'onFocusChange'];
+
 export default {
   title: 'AI/TokenField',
-  component: TokenField
+  component: TokenField,
+  tags: ['autodocs'],
+  argTypes: {
+    ...categorizeArgTypes('Events', events),
+    children: {table: {disable: true}}
+  },
+  args: {...getActionArgs(events)}
 } as Meta<typeof TokenField>;
 
 export type TokenFieldStory = StoryFn<typeof TokenField>;

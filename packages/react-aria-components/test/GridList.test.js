@@ -22,6 +22,7 @@ import {
 import {Checkbox as AriaCheckbox, CheckboxButton, CheckboxField} from '../src/Checkbox';
 import {Button} from '../src/Button';
 import {Collection} from 'react-aria/Collection';
+import {ComboBox} from '../src/ComboBox';
 import {Dialog, DialogTrigger} from '../src/Dialog';
 import {DropIndicator, useDragAndDrop} from '../src/useDragAndDrop';
 import {getFocusableTreeWalker} from 'react-aria/private/focus/FocusScope';
@@ -33,13 +34,17 @@ import {
   GridListSection
 } from '../src/GridList';
 import {GridListLoadMoreItem} from '../src/GridList';
+import {Input} from '../src/Input';
 import {installPointerEvent, User} from '@react-aria/test-utils';
 import {Label} from '../src/Label';
+import {ListBox, ListBoxItem} from '../src/ListBox';
 import {ListLayout} from 'react-stately/useVirtualizerState';
 import {Modal} from '../src/Modal';
+import {Popover} from '../src/Popover';
 import React from 'react';
 import {RouterProvider} from 'react-aria/private/utils/openLink';
 import {Tag, TagGroup, TagList} from '../src/TagGroup';
+import {Toolbar} from '../src/Toolbar';
 import userEvent from '@testing-library/user-event';
 import {Virtualizer} from '../src/Virtualizer';
 
@@ -1830,6 +1835,250 @@ describe('GridList', () => {
         expect(onPressEnd).toHaveBeenCalledTimes(1);
         expect(onPress).toHaveBeenCalledTimes(1);
         expect(onClick).toHaveBeenCalledTimes(1);
+      }
+    );
+  });
+
+  describe('tab navigation and textfields', () => {
+    it.each([
+      ['keyboardNavigationBehavior="tab"', {keyboardNavigationBehavior: 'tab'}],
+      ['layout="grid"', {layout: 'grid'}]
+    ])(
+      'should not navigate rows when arrow keys are pressed while a text input child has focus (%s)',
+      async (_, listProps) => {
+        let {getByRole} = render(
+          <GridList aria-label="Test" {...listProps}>
+            <GridListItem id="item1" textValue="Apple">
+              Apple <input aria-label="input 1" />
+            </GridListItem>
+            <GridListItem id="item2" textValue="Banana">
+              Banana
+            </GridListItem>
+          </GridList>
+        );
+
+        let gridListTester = testUtilUser.createTester('GridList', {root: getByRole('grid')});
+        let rows = gridListTester.getRows();
+        let input = getByRole('textbox');
+
+        await user.tab();
+        expect(document.activeElement).toBe(rows[0]);
+        await user.tab();
+        expect(document.activeElement).toBe(input);
+
+        await user.keyboard('{ArrowDown}');
+        expect(document.activeElement).toBe(input);
+        await user.keyboard('{ArrowUp}');
+        expect(document.activeElement).toBe(input);
+        await user.keyboard('{ArrowRight}');
+        expect(document.activeElement).toBe(input);
+        await user.keyboard('{ArrowLeft}');
+        expect(document.activeElement).toBe(input);
+      }
+    );
+
+    it.each([
+      ['keyboardNavigationBehavior="tab"', {keyboardNavigationBehavior: 'tab'}],
+      ['layout="grid"', {layout: 'grid'}]
+    ])(
+      'should not trigger typeahead when typing in a text input child (%s)',
+      async (_, listProps) => {
+        let {getByRole} = render(
+          <GridList aria-label="Test" {...listProps}>
+            <GridListItem id="item1" textValue="Apple">
+              Apple <input aria-label="input 1" />
+            </GridListItem>
+            <GridListItem id="item2" textValue="Banana">
+              Banana
+            </GridListItem>
+          </GridList>
+        );
+
+        let gridListTester = testUtilUser.createTester('GridList', {root: getByRole('grid')});
+        let rows = gridListTester.getRows();
+        let input = getByRole('textbox');
+
+        await user.tab();
+        expect(document.activeElement).toBe(rows[0]);
+        await user.tab();
+        expect(document.activeElement).toBe(input);
+
+        await user.keyboard('b');
+        expect(document.activeElement).toBe(input);
+        expect(input).toHaveValue('b');
+      }
+    );
+
+    it.each([
+      ['keyboardNavigationBehavior="tab"', {keyboardNavigationBehavior: 'tab'}],
+      ['layout="grid"', {layout: 'grid'}]
+    ])(
+      'should not trigger selection when pressing Space or Enter in a text input child (%s)',
+      async (_, listProps) => {
+        let onSelectionChange = jest.fn();
+        let {getByRole} = render(
+          <GridList
+            aria-label="Test"
+            {...listProps}
+            selectionMode="multiple"
+            onSelectionChange={onSelectionChange}>
+            <GridListItem id="item1" textValue="Apple">
+              Apple <input aria-label="input 1" />
+            </GridListItem>
+            <GridListItem id="item2" textValue="Banana">
+              Banana
+            </GridListItem>
+          </GridList>
+        );
+
+        let gridListTester = testUtilUser.createTester('GridList', {root: getByRole('grid')});
+        let rows = gridListTester.getRows();
+        let input = getByRole('textbox');
+
+        await user.tab();
+        expect(document.activeElement).toBe(rows[0]);
+        await user.tab();
+        expect(document.activeElement).toBe(input);
+
+        await user.keyboard(' ');
+        expect(input).toHaveValue(' ');
+        expect(onSelectionChange).not.toHaveBeenCalled();
+
+        await user.keyboard('{Enter}');
+        expect(onSelectionChange).not.toHaveBeenCalled();
+      }
+    );
+
+    it.each([
+      ['keyboardNavigationBehavior="tab"', {keyboardNavigationBehavior: 'tab'}],
+      ['layout="grid"', {layout: 'grid'}]
+    ])(
+      'should not trigger selection when clicking on a tabbable child element (%s)',
+      async (_, listProps) => {
+        let onSelectionChange = jest.fn();
+        let {getByRole} = render(
+          <GridList
+            aria-label="Test"
+            {...listProps}
+            selectionMode="multiple"
+            onSelectionChange={onSelectionChange}>
+            <GridListItem id="item1" textValue="Apple">
+              Apple <input aria-label="input 1" />
+            </GridListItem>
+            <GridListItem id="item2" textValue="Banana">
+              Banana
+            </GridListItem>
+          </GridList>
+        );
+
+        let input = getByRole('textbox');
+        await user.click(input);
+        expect(document.activeElement).toBe(input);
+        expect(onSelectionChange).not.toHaveBeenCalled();
+      }
+    );
+
+    it.each([
+      ['keyboardNavigationBehavior="tab"', {keyboardNavigationBehavior: 'tab'}],
+      ['layout="grid"', {layout: 'grid'}]
+    ])(
+      'should still trigger selection when clicking on a row with no tabbable children (%s)',
+      async (_, listProps) => {
+        let onSelectionChange = jest.fn();
+        let {getByRole} = render(
+          <GridList
+            aria-label="Test"
+            {...listProps}
+            selectionMode="multiple"
+            onSelectionChange={onSelectionChange}>
+            <GridListItem id="item1" textValue="Apple">
+              Apple
+            </GridListItem>
+            <GridListItem id="item2" textValue="Banana">
+              Banana
+            </GridListItem>
+          </GridList>
+        );
+
+        let gridListTester = testUtilUser.createTester('GridList', {root: getByRole('grid')});
+        let rows = gridListTester.getRows();
+        await user.click(rows[0]);
+        expect(onSelectionChange).toHaveBeenCalledTimes(1);
+        expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(['item1']));
+      }
+    );
+
+    it.each([
+      ['keyboardNavigationBehavior="tab"', {keyboardNavigationBehavior: 'tab'}],
+      ['layout="grid"', {layout: 'grid'}]
+    ])(
+      'should exit the grid when tabbing from a combobox or toolbar, not focus the next row  (%s)',
+      async (_, listProps) => {
+        let {getByRole} = render(
+          <div>
+            <input aria-label="before" />
+            <GridList aria-label="Test" {...listProps}>
+              <GridListItem id="1" textValue="combobox">
+                <ComboBox aria-label="combobox">
+                  <Input />
+                  <Button>▼</Button>
+                  <Popover>
+                    <ListBox>
+                      <ListBoxItem>Foo</ListBoxItem>
+                      <ListBoxItem>Bar</ListBoxItem>
+                    </ListBox>
+                  </Popover>
+                </ComboBox>
+              </GridListItem>
+              <GridListItem id="2" textValue="formatting">
+                <Toolbar aria-label="formatting">
+                  <Button>Bold</Button>
+                  <Button>Italic</Button>
+                </Toolbar>
+              </GridListItem>
+              <GridListItem id="3" textValue="plain input row">
+                <input aria-label="row 2 input" />
+              </GridListItem>
+            </GridList>
+            <input aria-label="after" />
+          </div>
+        );
+
+        let combobox = getByRole('combobox');
+        let afterInput = getByRole('textbox', {name: 'after'});
+        let boldButton = getByRole('button', {name: 'Bold'});
+        let row2Input = getByRole('textbox', {name: 'row 2 input'});
+
+        let gridListTester = testUtilUser.createTester('GridList', {root: getByRole('grid')});
+        let rows = gridListTester.getRows();
+
+        await user.tab();
+        await user.tab();
+        await user.tab();
+        expect(document.activeElement).toBe(combobox);
+
+        await user.tab();
+        expect(document.activeElement).toBe(afterInput);
+
+        // note that shift tabbing move focus back to gridlist item not the combobox itself,
+        // will need to look into this later
+        await user.tab({shift: true});
+        expect(document.activeElement).toBe(rows[0]);
+        await user.keyboard(listProps.layout === 'grid' ? '{ArrowRight}' : '{ArrowDown}');
+        expect(document.activeElement).toBe(rows[1]);
+        await user.tab();
+        expect(document.activeElement).toBe(boldButton);
+        await user.tab();
+        expect(document.activeElement).toBe(afterInput);
+
+        await user.tab({shift: true});
+        expect(document.activeElement).toBe(rows[1]);
+        await user.keyboard(listProps.layout === 'grid' ? '{ArrowRight}' : '{ArrowDown}');
+        expect(document.activeElement).toBe(rows[2]);
+        await user.tab();
+        expect(document.activeElement).toBe(row2Input);
+        await user.tab();
+        expect(document.activeElement).toBe(afterInput);
       }
     );
   });
