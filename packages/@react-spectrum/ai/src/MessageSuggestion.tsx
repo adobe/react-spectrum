@@ -89,6 +89,7 @@ const suggestionStyles = style<{
   borderStyle: 'none',
   disableTapHighlight: true,
   transition: 'default',
+  textAlign: 'start',
   ...focusRing()
 });
 
