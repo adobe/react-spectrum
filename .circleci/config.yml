@@ -1028,6 +1028,9 @@ workflows:
             branches:
               only: main
       - verdaccio:
+          filters:
+            branches:
+              only: main
           requires:
             - install
       - v-webpack-4:
