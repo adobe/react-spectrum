@@ -19,7 +19,7 @@ module.exports = new Transformer({
     asset.setEnvironment({
       context: 'browser',
       engines: {
-        browsers: 'baseline widely available'
+        browsers: 'chrome >= 79, firefox >= 85, safari >= 13'
       },
       shouldOptimize: asset.env.shouldOptimize,
       outputFormat: asset.env.outputFormat,
