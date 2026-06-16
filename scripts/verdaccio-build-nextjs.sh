@@ -50,22 +50,7 @@ yarn install --no-immutable
 snapshot_diff 'yarn install --no-immutable'
 
 yarn up @adobe/react-spectrum
-snapshot_diff 'yarn up @adobe/react-spectrum'
-
-yarn up @react-aria/optimize-locales-plugin
-snapshot_diff 'yarn up @react-aria/optimize-locales-plugin'
-
-yarn up @react-spectrum/provider
-snapshot_diff 'yarn up @react-spectrum/provider'
-
-yarn up @spectrum-icons/illustrations
-snapshot_diff 'yarn up @spectrum-icons/illustrations'
-
-yarn up @spectrum-icons/workflow
-snapshot_diff 'yarn up @spectrum-icons/workflow'
-
-yarn up react-aria-components
-snapshot_diff 'yarn up react-aria-components'
+snapshot_diff 'yarn up @adobe/react-spectrum @react-aria/optimize-locales-plugin @spectrum-icons/illustrations @spectrum-icons/workflow react-aria-components'
 
 echo '===== cumulative lockfile diff (orig -> final) ====='
 node ../../scripts/verdaccio-lockfile-diff.js yarn.lock.orig yarn.lock || true
