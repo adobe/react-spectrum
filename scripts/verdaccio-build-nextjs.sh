@@ -34,42 +34,19 @@ echo 'build nextjs test app'
 # install packages in NextJS test app
 cd examples/rsp-next-ts
 yarn config set npmRegistryServer $registry
-
 cp yarn.lock yarn.lock.orig
-cp yarn.lock yarn.lock.prev
-
-snapshot_diff() {
-  local label="$1"
-  echo "===== lockfile delta after: $label ====="
-  node ../../scripts/verdaccio-lockfile-diff.js yarn.lock.prev yarn.lock || true
-  echo "===== end delta ====="
-  cp yarn.lock yarn.lock.prev
-}
-
 yarn install --no-immutable
-snapshot_diff 'yarn install --no-immutable'
-
 yarn up @adobe/react-spectrum
-snapshot_diff 'yarn up @adobe/react-spectrum'
-
 yarn up @react-aria/optimize-locales-plugin
-snapshot_diff 'yarn up @react-aria/optimize-locales-plugin'
-
 yarn up @react-spectrum/provider
-snapshot_diff 'yarn up @react-spectrum/provider'
-
 yarn up @spectrum-icons/illustrations
-snapshot_diff 'yarn up @spectrum-icons/illustrations'
-
 yarn up @spectrum-icons/workflow
-snapshot_diff 'yarn up @spectrum-icons/workflow'
-
 yarn up react-aria-components
-snapshot_diff 'yarn up react-aria-components'
 
-echo '===== cumulative lockfile diff (orig -> final) ====='
+echo '===== yarn.lock unified diff ====='
+diff -u yarn.lock.orig yarn.lock || true
+echo '===== end yarn.lock unified diff ====='
 node ../../scripts/verdaccio-lockfile-diff.js yarn.lock.orig yarn.lock || true
-echo '===== end cumulative diff ====='
 
 yarn test
 
