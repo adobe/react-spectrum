@@ -64,7 +64,6 @@ export function CollectionBuilder<C extends BaseCollection<any>>(
   // This should always come before the real DOM content so we have built the collection by the time it renders during SSR.
 
   // This is fine. CollectionDocumentContext never changes after mounting.
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   // oxlint-disable-next-line react/react-compiler, react-hooks/rules-of-hooks
   let {collection, document} = useCollectionDocument(props.createCollection);
   return (

@@ -41,7 +41,6 @@ export function useGridState<T extends object, C extends IGridCollection<T>>(
   props: GridStateOptions<T, C>
 ): GridState<T, C> {
   let {collection, focusMode} = props;
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   // oxlint-disable-next-line react/react-compiler, react-hooks/rules-of-hooks
   let selectionState = props.UNSAFE_selectionState || useMultipleSelectionState(props);
   let disabledKeys = useMemo(

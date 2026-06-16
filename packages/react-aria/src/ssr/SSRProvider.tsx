@@ -64,7 +64,6 @@ function LegacySSRProvider(props: SSRProviderProps): JSX.Element {
   if (typeof document !== 'undefined') {
     // This if statement technically breaks the rules of hooks, but is safe
     // because the condition never changes after mounting.
-    // eslint-disable-next-line react-hooks/rules-of-hooks
     // oxlint-disable-next-line react/react-compiler, react-hooks/rules-of-hooks
     useLayoutEffect(() => {
       // oxlint-disable-next-line react/react-compiler
@@ -215,7 +214,6 @@ export function useIsSSR(): boolean {
     return React['useSyncExternalStore'](subscribe, getSnapshot, getServerSnapshot);
   }
 
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   // oxlint-disable-next-line react/react-compiler, react-hooks/rules-of-hooks
   return useContext(IsSSRContext);
 }
