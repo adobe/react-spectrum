@@ -171,7 +171,6 @@ function Button(props) {
       {...mergeProps(buttonProps, focusProps)}
       ref={ref}
       className={classNames(ariaStyles, props.className, {focus: isFocusVisible})}>
-      {/* oxlint-disable-next-line react/react-compiler */}
       {props.children}
     </button>
   );

@@ -265,6 +265,7 @@ function PopoverInner({
 
   // Focus the popover itself on mount, unless a child element is already focused.
   // Skip this for submenus since hovering a submenutrigger should keep focus on the trigger
+  // oxlint-disable react/react-compiler
   useEffect(() => {
     if (
       isDialog &&
@@ -274,8 +275,8 @@ function PopoverInner({
     ) {
       focusSafely(ref.current);
     }
-    // oxlint-disable-next-line react/react-compiler
   }, [isDialog, ref, props.trigger]);
+  // oxlint-enable react/react-compiler
 
   let children = useMemo(() => {
     let children = renderProps.children;

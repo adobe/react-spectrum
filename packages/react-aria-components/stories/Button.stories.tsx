@@ -145,8 +145,8 @@ function RippleButton(props) {
     };
   }, []);
 
+  // oxlint-disable react/react-compiler
   return (
-    // oxlint-disable-next-line react/react-compiler
     <Button {...mergeProps(props, {onPress})} className={styles['ripple-button']}>
       {isRippling ? (
         <span
@@ -162,6 +162,7 @@ function RippleButton(props) {
       <span className="content">{props.children}</span>
     </Button>
   );
+  // oxlint-enable react/react-compiler
 }
 
 function ButtonPerformanceExample() {
