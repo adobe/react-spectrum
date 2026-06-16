@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMProps, DOMRef} from '@react-types/shared';
+import {AriaLabelingProps, DOMProps, DOMRef, GlobalDOMAttributes} from '@react-types/shared';
 import ArrowCurved from '@react-spectrum/s2/icons/ArrowCurved';
 import {
   baseColor,
@@ -42,7 +42,7 @@ const controlSizeM = {
 
 export interface MessageSuggestionProps extends Omit<
   ButtonProps,
-  'style' | 'className' | 'isPending' | 'isDisabled'
+  'style' | 'className' | 'isPending' | 'isDisabled' | keyof GlobalDOMAttributes
 > {
   /** The text content of the suggestion. */
   children: ReactNode;
@@ -89,6 +89,7 @@ const suggestionStyles = style<{
   borderStyle: 'none',
   disableTapHighlight: true,
   transition: 'default',
+  textAlign: 'start',
   ...focusRing()
 });
 
