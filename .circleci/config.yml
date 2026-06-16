@@ -968,9 +968,6 @@ workflows:
       - verdaccio:
           requires:
             - install
-      - v-rsp-cra-18:
-          requires:
-            - verdaccio
       - v-webpack-4:
           requires:
             - verdaccio
@@ -979,7 +976,6 @@ workflows:
             - verdaccio
       - deploy-verdaccio:
           requires:
-            - v-rsp-cra-18
             - v-webpack-4
             - v-nextjs
       - comment:
