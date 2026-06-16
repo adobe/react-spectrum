@@ -21,10 +21,7 @@ import {TreeState} from 'react-stately/useTreeState';
 
 export interface TreeProps<T> extends GridListProps<T> {}
 
-export interface AriaTreeProps<T> extends Omit<
-  AriaGridListProps<T>,
-  'keyboardNavigationBehavior'
-> {}
+export interface AriaTreeProps<T> extends AriaGridListProps<T> {}
 export interface AriaTreeOptions<T> extends Omit<
   AriaGridListOptions<T>,
   'children' | 'shouldFocusWrap'

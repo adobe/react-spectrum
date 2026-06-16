@@ -90,7 +90,6 @@ export function useToolbar(
       // out of the entire toolbar. To do this, move focus
       // to the first or last focusable child, and let the
       // browser handle the Tab key as usual from there.
-      e.stopPropagation();
       lastFocused.current = getActiveElement() as HTMLElement;
       if (e.shiftKey) {
         focusManager.focusFirst();
