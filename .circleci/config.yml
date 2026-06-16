@@ -1054,11 +1054,6 @@ workflows:
       - v-icon-builder:
           requires:
             - verdaccio
-      - v-publish-stats:
-          requires:
-            - verdaccio
-            - v-webpack-4
-            - v-nextjs
       - v-starters:
           requires:
             - verdaccio
@@ -1102,7 +1097,6 @@ workflows:
             - v-s2-webpack
             - v-s2-next
             - v-icon-builder
-            - v-publish-stats
       - comment:
           name: comment-pr
           filters:
