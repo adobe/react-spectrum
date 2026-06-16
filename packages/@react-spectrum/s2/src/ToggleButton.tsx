@@ -92,8 +92,8 @@ export const ToggleButton = forwardRef(function ToggleButton(
   let {holdAffordance} = props as ToggleButtonContextProps;
   let {direction} = useLocale();
 
+  // oxlint-disable react/react-compiler
   return (
-    // oxlint-disable react/react-compiler
     <RACToggleButton
       {...props}
       isDisabled={isDisabled}
@@ -163,7 +163,7 @@ export const ToggleButton = forwardRef(function ToggleButton(
           })({direction, size})}
         />
       )}
-      // oxlint-enable react/react-compiler
     </RACToggleButton>
   );
+  // oxlint-enable react/react-compiler
 });

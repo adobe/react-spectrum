@@ -601,8 +601,8 @@ export const CardPreview = forwardRef(function CardPreview(
     useContext(InternalCardContext);
   let {UNSAFE_className = '', UNSAFE_style} = props;
   let domRef = useDOMRef(ref);
+  // oxlint-disable react/react-compiler
   return (
-    // oxlint-disable react/react-compiler
     <div
       {...filterDOMProps(props)}
       slot="preview"

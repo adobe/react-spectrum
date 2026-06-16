@@ -677,8 +677,8 @@ export const CardPreview = forwardRef(function CardPreview(
   let {size, isQuiet, isHovered, isFocusVisible, isSelected, isPressed, isCheckboxSelection} =
     useContext(InternalCardContext);
   let domRef = useDOMRef(ref);
+  // oxlint-disable react/react-compiler
   return (
-    // oxlint-disable react/react-compiler
     <div
       {...filterDOMProps(props)}
       slot="preview"
@@ -695,6 +695,7 @@ export const CardPreview = forwardRef(function CardPreview(
       </div>
     </div>
   );
+  // oxlint-enable react/react-compiler
 });
 
 const collection = style({

@@ -152,8 +152,8 @@ export function HeaderLink(
 ) {
   let {staticColor, styles, ...otherProps} = props;
   let ref = useRef(null);
+  // oxlint-disable react/react-compiler
   return (
-    // oxlint-disable react/react-compiler
     <BaseLink
       {...otherProps}
       ref={ref}

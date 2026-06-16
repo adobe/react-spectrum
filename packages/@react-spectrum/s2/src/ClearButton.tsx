@@ -65,8 +65,8 @@ export const ClearButton = forwardRef(function ClearButton(
 ) {
   let {size = 'M', isStaticColor = false, ...rest} = props;
   let domRef = useFocusableRef(ref);
+  // oxlint-disable react/react-compiler
   return (
-    // oxlint-disable react/react-compiler
     <Button
       {...rest}
       ref={domRef}

@@ -165,8 +165,8 @@ function Button(props) {
   let ref = props.buttonRef;
   let {focusProps, isFocusVisible} = useFocusRing();
   let {buttonProps} = useButton(props, ref);
+  // oxlint-disable react/react-compiler
   return (
-    // oxlint-disable react/react-compiler
     <button
       {...mergeProps(buttonProps, focusProps)}
       ref={ref}

@@ -373,8 +373,8 @@ export function SliderBase<T extends number | number[]>(
   } = props;
   let {direction} = useLocale();
 
+  // oxlint-disable react/react-compiler
   return (
-    // oxlint-disable react/react-compiler
     <AriaSlider
       {...props}
       ref={props.sliderRef}
@@ -414,7 +414,6 @@ export function SliderBase<T extends number | number[]>(
             className={output({direction, labelPosition, isInForm: !!formContext})}
           />
         );
-        // oxlint-enable react/react-compiler
 
         return (
           <>
@@ -444,6 +443,7 @@ export function SliderBase<T extends number | number[]>(
       }}
     </AriaSlider>
   );
+  // oxlint-enable react/react-compiler
 }
 
 /**

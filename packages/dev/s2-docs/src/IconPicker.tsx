@@ -153,8 +153,8 @@ export function IconPicker({value, onChange, label, contextualHelp}: IconPickerP
 function IconItem({item}) {
   let Icon = item.icon;
   let ref = useRef(null);
+  // oxlint-disable react/react-compiler
   return (
-    // oxlint-disable react/react-compiler
     <ListBoxItem
       id={item.id}
       value={item}

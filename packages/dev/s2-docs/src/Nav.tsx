@@ -293,8 +293,8 @@ export function SideNavLink(props) {
     link.scrollIntoView({block: 'start'});
   }, [props.isSelected]);
 
+  // oxlint-disable react/react-compiler
   return (
-    // oxlint-disable react/react-compiler
     <BaseLink
       {...linkProps}
       ref={linkRef}
@@ -337,7 +337,6 @@ export function SideNavLink(props) {
             })(renderProps)}
           />
           {props.children}
-          // oxlint-enable react/react-compiler
           {isExternal && (
             <LinkOutIcon
               aria-label="(opens in a new tab)"
@@ -348,6 +347,7 @@ export function SideNavLink(props) {
       )}
     </BaseLink>
   );
+  // oxlint-enable react/react-compiler
 }
 
 function useCurrentSection() {

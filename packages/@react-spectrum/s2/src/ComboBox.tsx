@@ -470,8 +470,8 @@ export function ComboBoxItem(props: ComboBoxItemProps): ReactNode {
   let ref = useRef(null);
   let isLink = props.href != null;
   let {size} = useContext(InternalComboboxContext);
+  // oxlint-disable react/react-compiler
   return (
-    // oxlint-disable react/react-compiler
     <ListBoxItem
       {...props}
       ref={ref}
@@ -524,7 +524,6 @@ export function ComboBoxItem(props: ComboBoxItemProps): ReactNode {
                   className={checkmark({...renderProps, size})}
                 />
               )}
-              // oxlint-enable react/react-compiler
               {typeof children === 'string' ? <Text slot="label">{children}</Text> : children}
             </Provider>
           </>
@@ -532,6 +531,7 @@ export function ComboBoxItem(props: ComboBoxItemProps): ReactNode {
       }}
     </ListBoxItem>
   );
+  // oxlint-enable react/react-compiler
 }
 
 export interface ComboBoxSectionProps<T> extends Omit<

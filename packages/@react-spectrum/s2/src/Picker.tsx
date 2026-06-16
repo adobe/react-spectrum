@@ -789,8 +789,8 @@ export function PickerItem(props: PickerItemProps): ReactNode {
   let ref = useRef(null);
   let isLink = props.href != null;
   let {size} = useContext(InternalPickerContext);
+  // oxlint-disable react/react-compiler
   return (
-    // oxlint-disable react/react-compiler
     <ListBoxItem
       {...props}
       ref={ref}
@@ -847,7 +847,6 @@ export function PickerItem(props: PickerItemProps): ReactNode {
                     className={checkmark({...renderProps, size})}
                   />
                 )}
-                // oxlint-enable react/react-compiler
                 {renderProps.selectionMode === 'multiple' && !isLink && (
                   <div className={mergeStyles(checkbox, box(checkboxRenderProps))}>
                     <CheckmarkIcon size={size} className={checkboxIconStyles} />
@@ -861,6 +860,7 @@ export function PickerItem(props: PickerItemProps): ReactNode {
       }}
     </ListBoxItem>
   );
+  // oxlint-enable react/react-compiler
 }
 
 // A Context.Provider that only sets a value if not inside SelectValue.

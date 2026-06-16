@@ -80,8 +80,8 @@ function ColorSchemeToggle() {
   let ref = useRef(null);
   let isDark = colorScheme === 'dark';
 
+  // oxlint-disable react/react-compiler
   return (
-    // oxlint-disable react/react-compiler
     <Button
       ref={ref}
       aria-label={label}
@@ -110,6 +110,7 @@ function ColorSchemeToggle() {
       </span>
     </Button>
   );
+  // oxlint-enable react/react-compiler
 }
 
 export default function Header() {
@@ -216,6 +217,7 @@ export default function Header() {
             <Link
               href={homepage}
               ref={ref}
+              // oxlint-disable-next-line react/react-compiler
               style={pressScale(ref, {visibility: searchOpen ? 'hidden' : 'visible'})}
               className={renderProps => libraryStyles({...renderProps})}>
               <div ref={iconRef}>{getButtonIcon(currentPage)}</div>

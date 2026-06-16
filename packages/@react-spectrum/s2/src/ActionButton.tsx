@@ -353,8 +353,8 @@ export const ActionButton = forwardRef(function ActionButton(
   let {isProgressVisible} = usePendingState(isPending);
   let {direction} = useLocale();
 
+  // oxlint-disable react/react-compiler
   return (
-    // oxlint-disable react/react-compiler
     <RACButton
       {...props}
       isDisabled={props.isDisabled ?? isDisabled}
@@ -518,4 +518,5 @@ export const ActionButton = forwardRef(function ActionButton(
       )}
     </RACButton>
   );
+  // oxlint-enable react/react-compiler
 });

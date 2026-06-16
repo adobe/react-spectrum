@@ -182,8 +182,8 @@ export function IconSearchView({filteredItems, listBoxClassName}: IconSearchView
 function IconItem({item, isCopied = false}: {item: (typeof iconList)[number]; isCopied?: boolean}) {
   let Icon = item.icon;
   let ref = useRef(null);
+  // oxlint-disable react/react-compiler
   return (
-    // oxlint-disable react/react-compiler
     <ListBoxItem
       id={item.id}
       value={item}

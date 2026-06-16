@@ -590,8 +590,8 @@ export function MenuItem(props: MenuItemProps): ReactNode {
   let isUnavailable = useContext(UnavailableContext);
   let infoIconId = useId();
 
+  // oxlint-disable react/react-compiler
   return (
-    // oxlint-disable react/react-compiler
     <AriaMenuItem
       {...props}
       aria-describedby={isUnavailable ? infoIconId : undefined}
@@ -659,7 +659,6 @@ export function MenuItem(props: MenuItemProps): ReactNode {
                   className={checkmark({...renderProps, size})}
                 />
               )}
-              // oxlint-enable react/react-compiler
               {renderProps.selectionMode === 'multiple' && !renderProps.hasSubmenu && (
                 <div className={mergeStyles(checkbox, box(checkboxRenderProps))}>
                   <CheckmarkIcon size={size} className={iconStyles} />
@@ -703,6 +702,7 @@ export function MenuItem(props: MenuItemProps): ReactNode {
       }}
     </AriaMenuItem>
   );
+  // oxlint-enable react/react-compiler
 }
 
 /**

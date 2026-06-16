@@ -235,8 +235,8 @@ function IllustrationItem({
 }) {
   let Illustration = item.Component;
   let ref = useRef(null);
+  // oxlint-disable react/react-compiler
   return (
-    // oxlint-disable react/react-compiler
     <ListBoxItem
       id={item.id}
       value={item}

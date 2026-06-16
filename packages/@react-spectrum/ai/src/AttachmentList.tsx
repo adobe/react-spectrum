@@ -92,8 +92,8 @@ const closeIconStyle = ({size = 'M'}) => {
 
 const CloseButton = function CloseButton(props) {
   let ref = useRef(null);
+  // oxlint-disable react/react-compiler
   return (
-    // oxlint-disable react/react-compiler
     <Button
       {...props}
       ref={ref}

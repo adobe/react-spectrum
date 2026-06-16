@@ -410,8 +410,8 @@ export const Button = forwardRef(function Button(
 
   let {isProgressVisible} = usePendingState(isPending);
 
+  // oxlint-disable react/react-compiler
   return (
-    // oxlint-disable react/react-compiler
     <RACButton
       {...props}
       ref={domRef}
@@ -446,7 +446,6 @@ export const Button = forwardRef(function Button(
               })}
             />
           ) : null}
-          // oxlint-enable react/react-compiler
           <Provider
             values={[
               [SkeletonContext, null],
@@ -515,6 +514,7 @@ export const Button = forwardRef(function Button(
       )}
     </RACButton>
   );
+  // oxlint-enable react/react-compiler
 });
 
 /**
@@ -532,8 +532,8 @@ export const LinkButton = forwardRef(function LinkButton(
   let overlayTriggerState = useContext(OverlayTriggerStateContext);
   let {fillStyle = 'fill', size = 'M', variant = 'primary', staticColor, styles, children} = props;
 
+  // oxlint-disable react/react-compiler
   return (
-    // oxlint-disable react/react-compiler
     <Link
       {...props}
       ref={domRef}
@@ -567,7 +567,6 @@ export const LinkButton = forwardRef(function LinkButton(
               })}
             />
           ) : null}
-          // oxlint-enable react/react-compiler
           <Provider
             values={[
               [SkeletonContext, null],
@@ -597,4 +596,5 @@ export const LinkButton = forwardRef(function LinkButton(
       )}
     </Link>
   );
+  // oxlint-enable react/react-compiler
 });

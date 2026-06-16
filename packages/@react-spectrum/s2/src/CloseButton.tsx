@@ -112,8 +112,8 @@ export const CloseButton = forwardRef(function CloseButton(
   let {UNSAFE_style, UNSAFE_className = ''} = props;
   let domRef = useFocusableRef(ref);
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
+  // oxlint-disable react/react-compiler
   return (
-    // oxlint-disable react/react-compiler
     <Button
       {...props}
       ref={domRef}

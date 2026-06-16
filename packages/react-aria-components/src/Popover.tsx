@@ -312,8 +312,8 @@ function PopoverInner({
     '--trigger-width': renderProps.style?.['--trigger-width'] || triggerWidth
   };
 
+  // oxlint-disable react/react-compiler
   let overlay = (
-    // oxlint-disable react/react-compiler
     <dom.div
       {...mergeProps(filterDOMProps(props, {global: true}), popoverProps)}
       {...renderProps}
@@ -341,8 +341,8 @@ function PopoverInner({
 
   // If this is a root popover, render an extra div to act as the portal container for submenus/subdialogs.
   if (!isSubPopover) {
+    // oxlint-disable react/react-compiler
     return (
-      // oxlint-disable react/react-compiler
       <Overlay
         {...props}
         shouldContainFocus={isDialog}
@@ -363,8 +363,8 @@ function PopoverInner({
   }
 
   // Submenus/subdialogs are mounted into the root popover's container.
+  // oxlint-disable react/react-compiler
   return (
-    // oxlint-disable react/react-compiler
     <Overlay
       {...props}
       shouldContainFocus={isDialog}

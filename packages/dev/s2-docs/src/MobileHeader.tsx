@@ -103,8 +103,8 @@ function ColorSchemeToggle() {
   let ref = useRef(null);
   let isDark = colorScheme === 'dark';
 
+  // oxlint-disable react/react-compiler
   return (
-    // oxlint-disable react/react-compiler
     <Button
       ref={ref}
       aria-label={label}
@@ -133,6 +133,7 @@ function ColorSchemeToggle() {
       </span>
     </Button>
   );
+  // oxlint-enable react/react-compiler
 }
 
 export function MobileHeader({toc}) {
@@ -265,6 +266,7 @@ export function MobileHeader({toc}) {
         <Link
           href={homepage}
           ref={linkRef}
+          // oxlint-disable-next-line react/react-compiler
           style={pressScale(linkRef)}
           className={style({
             ...focusRing(),

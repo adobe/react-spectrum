@@ -107,8 +107,8 @@ export const MessageSuggestion = forwardRef(function MessageSuggestion(
   let {groupSize} = useContext(MessageSuggestionContext);
   size = groupSize ? groupSize : size;
 
+  // oxlint-disable react/react-compiler
   return (
-    // oxlint-disable react/react-compiler
     <RACButton
       {...filterDOMProps(props, {labelable: true})}
       {...otherProps}

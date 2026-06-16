@@ -699,6 +699,7 @@ const CalendarCellInner = (
     (isInvalid || !isUnavailable) &&
     (isDateInRange(prevDay) || (nextDay.month === date.month && isDateInRange(nextDay)));
 
+  // oxlint-disable react/react-compiler
   return (
     <div
       className={style({
@@ -708,7 +709,6 @@ const CalendarCellInner = (
       })}>
       <div
         ref={ref}
-        // oxlint-disable-next-line react/react-compiler
         style={pressScale(ref, {})(renderProps!)}
         className={cellInnerStyles({
           ...renderProps!,
@@ -721,7 +721,6 @@ const CalendarCellInner = (
         {isUnavailable && <div className={unavailableStyles} role="presentation" />}
       </div>
       {isBackgroundStyleApplied && (
-        // oxlint-enable react/react-compiler
         <div
           className={selectionBackgroundStyles({
             isInvalid,
@@ -751,6 +750,7 @@ const CalendarCellInner = (
       )}
     </div>
   );
+  // oxlint-enable react/react-compiler
 };
 
 type DayOfWeek = 'sun' | 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat';
