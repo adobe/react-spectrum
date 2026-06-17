@@ -26,6 +26,11 @@ Canonical rules: `react-spectrum-s2` skill → `SKILL.md` (Component composition
 - **Detect:** items lacking `id`; non-text item children without `textValue`; an `overflow*` wrapper around `TableView`/`ListView`/`CardView`/`TreeView`/`Menu`/`ListBox`; hand-rolled empty/spinner/bulk-action UI replacing the built-ins.
 - **Severity:** High for missing `id` / `textValue` (breaks selection, keyboard nav, screen readers); Medium for the rest.
 
+### Interactive components in ListView / TreeView
+- **Rule:** When a `ListView` or `TreeView` row contains interactive children whose keyboard handling conflicts with arrow-key row navigation (e.g. `TextField`, `ComboBox`, `Picker`), set `keyboardNavigationBehavior="tab"` on the collection so Tab moves focus in and out of rows. See `react-spectrum-s2` skill → `references/components/ListView.md` and `references/components/TreeView.md`.
+- **Detect:** `TextField`, `ComboBox`, `Picker`, or other keyboard-interactive components rendered inside a `ListViewItem` / `TreeViewItem` while the parent `ListView` / `TreeView` does not have `keyboardNavigationBehavior="tab"`.
+- **Severity:** High.
+
 ### Don't reinvent Card / CardView
 - **Rule:** For grids of objects/files/products/people, use `CardView` with a variant (`AssetCard`, `UserCard`, `ProductCard`) or `Card` composed from `CardPreview`/`Content`/`Text`/`Footer`.
 - **Detect:** hand-rolled card `<div>` / `<article>` grids reproducing card layout.
