@@ -19,12 +19,12 @@ export const section = 'Releases';
 export const tags = ['release', 'S2'];
 export const date = 'June 18, 2026';
 export const title = 'v1.5.0';
-export const description = 'Adds `keyboardNavigationBehavior` to ListView and TreeView for Tab-key navigation with embedded interactive elements, fixes ButtonGroup overflow detection and an infinite render loop in Tabs, and exposes new `isNonModal` and `dependencies` props.';
+export const description = 'This release supports full interactions with embedded text fields and other interactive elements in ListView and TreeView and additional bug fixes!';
 export const isSubpage = true;
 
 # v1.5.0
 
-This release adds support for full interaction with embedded text fields and other interactive elements in [ListView](/s2/ListView#keyboard-navigation.html) and [TreeView](/s2/TreeView#keyboard-navigation.html) with the new keyboardNavigationBehavior prop. Menu exposes a dependencies prop for dynamic item collections, and CenterBaseline is now exported from Spectrum 2 to help make custom styles even easier.
+This release adds support for full interaction with embedded text fields and other interactive elements in [ListView](/s2/ListView#keyboard-navigation.html) and [TreeView](/s2/TreeView#keyboard-navigation.html) with the new `keyboardNavigationBehavior` prop. Menu exposes a `dependencies` prop for dynamic item collections, and `CenterBaseline` is now exported from Spectrum 2 to help make custom styles even easier.
 
 ## Changelog
 
@@ -35,7 +35,7 @@ This release adds support for full interaction with embedded text fields and oth
 - Fix overflow detection for buttons whose labels contain no line-break - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/10186), [PR](https://github.com/adobe/react-spectrum/pull/10210)
 
 ### ListView
-- Add `keyboardNavigationBehavior` prop to support textifelds and other interactive elements inside rows - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/10206)
+- Add `keyboardNavigationBehavior` prop to support textfield's and other interactive elements inside rows - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/10206)
 
 ### Menu
 - Expose `dependencies` prop on Menu to allow dynamic item collections to re-render in response to external state changes - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/10191)
@@ -50,7 +50,7 @@ This release adds support for full interaction with embedded text fields and oth
 - Fix infinite render loop when Tabs are rendered inside a DropZone - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/10090)
 
 ### TreeView
-- Add `keyboardNavigationBehavior` prop to support textfields and other interactive elements inside rows - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/10206)
+- Add `keyboardNavigationBehavior` prop to support textfield's and other interactive elements inside rows - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/10206)
 
 ## Released packages
 

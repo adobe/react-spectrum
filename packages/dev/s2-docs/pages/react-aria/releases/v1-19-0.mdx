@@ -19,16 +19,16 @@ export const section = 'Releases';
 export const tags = ['release', 'React Aria'];
 export const date = 'June 18, 2026';
 export const title = 'v1.19.0';
-export const description = 'Adds `keyboardNavigationBehavior` to GridList and Tree for Tab-key navigation with embedded interactive elements, improves Autocomplete IME input and inline mode, and adds `getTargetRect` to Popover for precise overlay positioning.';
+export const description = 'This release supports full interactions with embedded text fields and other interactive elements in GridList and Tree, brings Autocomplete and Popover improvements to allow inline completion, and much more!';
 export const isSubpage = true;
 
 # v1.19.0
 
-This release adds support for full interaction with embedded text fields and other interactive elements in [GridList](/react-aria/GridList.html) and [Tree](/react-aria/Tree.html) with the [keyboardNavigationBehavior](/react-aria/GridList.html#keyboard-navigation-behavior) prop. [Autocomplete](/react-aria/Autocomplete.html) and  [Popover](/react-aria/Popover.html) gain several improvements to support [inline completions](/react-aria/Autocomplete#inline-completions.html), including a new getTargetRect prop on Popover for positioning overlays relative to arbitrary character positions. Menu's onAction callback now provides both the item key and value, and DragTypes.has() accepts multiple MIME types and wildcards.
+This release adds support for full interaction with embedded text fields and other interactive elements in [GridList](/react-aria/GridList.html) and [Tree](/react-aria/Tree.html) with the `keyboardNavigationBehavior` prop. [Autocomplete](/react-aria/Autocomplete.html) and  [Popover](/react-aria/Popover.html) gain several improvements to support [inline completions](/react-aria/Autocomplete#inline-completions.html), including a new getTargetRect prop on Popover for positioning overlays relative to arbitrary character positions. Menu's onAction callback now provides both the item key and value, and DragTypes.has() accepts multiple MIME types and wildcards.
 
 ### Breaking Changes
 
-@react-aria/optimize-locales-plugin has been bumped to a major version due to upgrading from unplugin@1 to unplugin@2. This was necessary to support Node 26, which removed a deprecated API used by unplugin@1. If you are using webpack 4, you will need to either stay on the previous version of the plugin or upgrade to webpack 5.
+`@react-aria/optimize-locales-plugin` has been bumped to a major version due to upgrading from `unplugin@1` to `unplugin@2`. This was necessary to support Node 26, which removed a deprecated API used by `unplugin@1`. If you are using webpack 4, you will need to either stay on the previous version of the plugin or upgrade to webpack 5.
 
 ## Changelog
 
