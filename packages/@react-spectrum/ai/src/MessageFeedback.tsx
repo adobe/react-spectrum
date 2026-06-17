@@ -16,7 +16,7 @@ import {forwardRef} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {SlotProps} from 'react-aria-components/slots';
-import {StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {StylesPropWithHeight} from '@react-spectrum/s2';
 import ThumbDown from '@react-spectrum/s2/icons/ThumbDown';
 import ThumbUp from '@react-spectrum/s2/icons/ThumbUp';
 import {ToggleButton} from '@react-spectrum/s2/ToggleButton';
@@ -40,7 +40,7 @@ export interface MessageFeedbackProps extends DOMProps, AriaLabelingProps, SlotP
   /** Accessible label for the thumbs down button. */
   thumbDownLabel?: string;
   /** Spectrum-defined styles, returned by the `style()` macro. */
-  styles?: StyleString;
+  styles?: StylesPropWithHeight;
 }
 
 function selectionToValue(selection: Selection): MessageFeedbackValue {
@@ -81,8 +81,7 @@ export const MessageFeedback = forwardRef(function MessageFeedback(
       defaultSelectedKeys={defaultSelectedKeys}
       onSelectionChange={handleSelectionChange}
       isDisabled={isDisabled}
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      styles={styles as any}>
+      styles={styles}>
       <ToggleButton
         id="up"
         isQuiet
