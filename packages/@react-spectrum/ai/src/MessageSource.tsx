@@ -31,19 +31,12 @@ import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
 import {NumberFormatter} from '@internationalized/number';
 import React, {createContext, forwardRef, useContext} from 'react';
 import {SlotProps} from 'react-aria-components/slots';
-import {StyleString} from './types';
+import {StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {useDOMRef} from './useDOMRef';
 import {useLocale} from 'react-aria/I18nProvider';
 
-export interface MessageSourceProps extends Omit<
-  DisclosureProps,
-  'isQuiet' | 'styles' | 'UNSAFE_className' | 'UNSAFE_style'
-> {
+export interface MessageSourceProps extends Omit<DisclosureProps, 'isQuiet'> {
   label: string;
-  /**
-   * Spectrum-defined styles, returned by the `style()` macro.
-   */
-  styles?: StyleString;
 }
 
 const MessageSourceInternalContext = createContext<{size: 'S' | 'M' | 'L' | 'XL'}>({size: 'M'});
@@ -57,15 +50,24 @@ export const MessageSource = (forwardRef as forwardRefType)(function MessageSour
   ref: DOMRef<HTMLDivElement>
 ) {
   // [props, ref] = useSpectrumContextProps(props, ref, MessageSourceContext);
-  let {label, children, size = 'M', styles, ...otherProps} = props;
+  let {
+    label,
+    children,
+    size = 'M',
+    styles,
+    UNSAFE_className = '',
+    UNSAFE_style,
+    ...otherProps
+  } = props;
 
   return (
     <MessageSourceInternalContext.Provider value={{size}}>
       <NumberBadgeContext.Provider value={{size}}>
         <Disclosure
           {...otherProps}
-          //@ts-ignore
-          UNSAFE_className={styles}
+          styles={styles}
+          UNSAFE_className={UNSAFE_className}
+          UNSAFE_style={UNSAFE_style}
           size={size}
           ref={ref}
           isQuiet>
@@ -147,7 +149,7 @@ const linkStyles = style({
 });
 
 export interface SourceListItemProps
-  extends Omit<LinkProps, 'className' | 'style' | keyof GlobalDOMAttributes>, DOMProps {
+  extends Omit<LinkProps, 'className' | 'style' | 'render' | keyof GlobalDOMAttributes>, DOMProps {
   /** The content of the source list item. */
   children: React.ReactNode;
   /**

@@ -39,14 +39,18 @@ import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
 import {ProgressCircle} from '@react-spectrum/s2/ProgressCircle';
 import {Provider} from 'react-aria-components/slots';
 import React, {createContext, forwardRef, ReactNode, useContext} from 'react';
-import {StyleString} from './types';
+import {StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {UnsafeStyles} from '@react-spectrum/s2';
 import {useDOMRef} from './useDOMRef';
 import {useLocale} from 'react-aria/I18nProvider';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
-export interface ResponseStatusProps extends Omit<
-  RACDisclosureProps,
-  'className' | 'style' | 'render' | 'children' | keyof GlobalDOMAttributes
-> {
+export interface ResponseStatusProps
+  extends
+    Omit<
+      RACDisclosureProps,
+      'className' | 'style' | 'render' | 'children' | keyof GlobalDOMAttributes
+    >,
+    UnsafeStyles {
   /**
    * The size of the response status.
    *
@@ -94,7 +98,14 @@ export const ResponseStatus = forwardRef(function ResponseStatus(
   props: ResponseStatusProps,
   ref: DOMRef<HTMLDivElement>
 ) {
-  let {size = 'M', density = 'regular', isLoading, styles} = props;
+  let {
+    size = 'M',
+    density = 'regular',
+    isLoading,
+    styles,
+    UNSAFE_className = '',
+    UNSAFE_style
+  } = props;
   let domRef = useDOMRef(ref);
 
   let disclosureProps: Partial<RACDisclosureProps> = {};
@@ -109,14 +120,15 @@ export const ResponseStatus = forwardRef(function ResponseStatus(
         {...props}
         {...disclosureProps}
         ref={domRef}
-        className={mergeStyles(responseStatus, styles)}>
+        style={UNSAFE_style}
+        className={UNSAFE_className + mergeStyles(responseStatus, styles)}>
         {props.children}
       </RACDisclosure>
     </Provider>
   );
 });
 
-export interface ResponseStatusTitleProps extends DOMProps {
+export interface ResponseStatusTitleProps extends DOMProps, UnsafeStyles {
   /**
    * The heading level of the response status header.
    *
@@ -252,7 +264,7 @@ export const ResponseStatusTitle = forwardRef(function ResponseStatusTitle(
   props: ResponseStatusTitleProps,
   ref: DOMRef<HTMLDivElement>
 ) {
-  let {level = 3, styles, ...otherProps} = props;
+  let {level = 3, styles, UNSAFE_className = '', UNSAFE_style, ...otherProps} = props;
   let domRef = useDOMRef(ref);
   const domProps = filterDOMProps(otherProps);
   let {direction} = useLocale();
@@ -262,7 +274,12 @@ export const ResponseStatusTitle = forwardRef(function ResponseStatusTitle(
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
 
   return (
-    <Heading {...domProps} level={level} ref={domRef} className={mergeStyles(headingStyle, styles)}>
+    <Heading
+      {...domProps}
+      level={level}
+      ref={domRef}
+      style={UNSAFE_style}
+      className={UNSAFE_className + mergeStyles(headingStyle, styles)}>
       <Button
         className={renderProps => buttonStyles({...renderProps, size, density, isLoading})}
         slot="trigger">
@@ -319,7 +336,8 @@ export interface ResponseStatusPanelProps
   extends
     Omit<RACDisclosurePanelProps, 'className' | 'style' | 'render' | 'children'>,
     DOMProps,
-    AriaLabelingProps {
+    AriaLabelingProps,
+    UnsafeStyles {
   children: React.ReactNode;
   styles?: StyleString;
 }
@@ -355,6 +373,7 @@ export const ResponseStatusPanel = forwardRef(function ResponseStatusPanel(
   props: ResponseStatusPanelProps,
   ref: DOMRef<HTMLDivElement>
 ) {
+  let {UNSAFE_style, UNSAFE_className = '', styles} = props;
   let {size = 'M'} = useContext(ResponseStatusContext)!;
   const domProps = filterDOMProps(props);
   let panelRef = useDOMRef(ref);
@@ -362,7 +381,8 @@ export const ResponseStatusPanel = forwardRef(function ResponseStatusPanel(
     <RACDisclosurePanel
       {...domProps}
       ref={panelRef}
-      className={mergeStyles(panelStyles, props.styles)}>
+      style={UNSAFE_style}
+      className={UNSAFE_className + mergeStyles(panelStyles, styles)}>
       <div className={panelInner({size})}>{props.children}</div>
     </RACDisclosurePanel>
   );

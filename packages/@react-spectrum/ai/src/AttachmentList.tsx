@@ -10,7 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMRef, forwardRefType, GlobalDOMAttributes} from '@react-types/shared';
+import {
+  AriaLabelingProps,
+  DOMProps,
+  DOMRef,
+  forwardRefType,
+  GlobalDOMAttributes
+} from '@react-types/shared';
 import {baseColor, focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {BasicHorizontalCard} from './HorizontalCard';
 import {Button} from 'react-aria-components/Button';
@@ -22,7 +28,8 @@ import {ImageContext} from '@react-spectrum/s2/Image';
 import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
 import {pressScale} from '@react-spectrum/s2/pressScale';
 import {ProgressCircle} from '@react-spectrum/s2/ProgressCircle';
-import {StyleString} from './types';
+import {StyleProps} from './types';
+import {StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {
   Tag,
   TagGroup,
@@ -31,6 +38,7 @@ import {
   TagListProps,
   TagProps
 } from 'react-aria-components/TagGroup';
+import {UnsafeStyles} from '@react-spectrum/s2';
 import {useDOMRef} from './useDOMRef';
 
 interface AttachmentRenderProps {
@@ -120,6 +128,7 @@ const CloseButton = function CloseButton(props) {
 
 export interface AttachmentListProps<T>
   extends
+    DOMProps,
     Omit<
       TagGroupProps,
       | 'children'
@@ -137,10 +146,9 @@ export interface AttachmentListProps<T>
       | 'className'
       | keyof GlobalDOMAttributes
     >,
-    Pick<TagListProps<T>, 'items' | 'children' | 'dependencies'> {
-  /**
-   * Spectrum-defined styles, returned by the `style()` macro.
-   */
+    Pick<TagListProps<T>, 'items' | 'children' | 'dependencies'>,
+    UnsafeStyles {
+  /** Spectrum-defined styles, returned by the `style()` macro. */
   styles?: StyleString;
 }
 
@@ -150,7 +158,11 @@ export const AttachmentList = (forwardRef as forwardRefType)(function Attachment
 ) {
   let domRef = useDOMRef(ref);
   return (
-    <TagGroup {...props} className={props.styles} ref={domRef}>
+    <TagGroup
+      {...props}
+      style={props.UNSAFE_style}
+      className={(props.UNSAFE_className ?? '') + props.styles}
+      ref={domRef}>
       <TagList
         items={props.items}
         dependencies={props.dependencies}
@@ -172,14 +184,11 @@ export interface AttachmentProps
   extends
     Omit<CardProps, 'styles' | 'UNSAFE_className' | 'UNSAFE_style'>,
     AriaLabelingProps,
-    Pick<TagProps, 'id' | 'textValue'> {
+    Pick<TagProps, 'id' | 'textValue' | 'render'>,
+    StyleProps {
   /** The children of the Attachment. */
   children: ReactNode | ((renderProps: AttachmentRenderProps) => ReactNode);
   uploadProgress?: number;
-  /**
-   * Spectrum-defined styles, returned by the `style()` macro.
-   */
-  styles?: StyleString;
 }
 
 const tagStyles = style({
@@ -200,6 +209,9 @@ export const Attachment = forwardRef(function Attachment(
     'aria-label': ariaLabel,
     'aria-labelledby': ariaLabelledby,
     'aria-describedby': ariaDescribedby,
+    UNSAFE_style,
+    UNSAFE_className = '',
+    styles,
     ...otherProps
   } = props;
   let domRef = useDOMRef(ref);
@@ -211,7 +223,10 @@ export const Attachment = forwardRef(function Attachment(
       aria-labelledby={ariaLabelledby}
       aria-describedby={ariaDescribedby}
       ref={domRef}
-      className={renderProps => mergeStyles(tagStyles({...renderProps}), props.styles)}>
+      style={UNSAFE_style}
+      className={renderProps =>
+        UNSAFE_className + mergeStyles(tagStyles({...renderProps}), styles)
+      }>
       <BasicHorizontalCard {...otherProps}>
         {props.uploadProgress != null && props.uploadProgress < 100 && (
           <div

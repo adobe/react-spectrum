@@ -26,7 +26,8 @@ import {IconContext} from '@react-spectrum/s2/Icon';
 import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
 import {pressScale} from '@react-spectrum/s2';
 import {Provider, SlotProps} from 'react-aria-components/slots';
-import {StyleString} from './types';
+import {StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {UnsafeStyles} from '@react-spectrum/s2';
 import {useDOMRef} from './useDOMRef';
 import {useLocale} from 'react-aria/I18nProvider';
 
@@ -40,17 +41,22 @@ const controlSizeM = {
   }
 } as const;
 
-export interface MessageSuggestionProps extends Omit<
-  ButtonProps,
-  'style' | 'className' | 'isPending' | 'isDisabled' | keyof GlobalDOMAttributes
-> {
+export interface MessageSuggestionProps
+  extends
+    Omit<
+      ButtonProps,
+      'style' | 'className' | 'isPending' | 'isDisabled' | 'render' | keyof GlobalDOMAttributes
+    >,
+    UnsafeStyles {
   /** The text content of the suggestion. */
   children: ReactNode;
-  /** The size of the MessageSuggestion. */
-  size?: 'S' | 'M' | 'L' | 'XL';
   /**
-   * Spectrum-defined styles, returned by the `style()` macro.
+   * The size of the MessageSuggestion.
+   *
+   * @default 'M'
    */
+  size?: 'S' | 'M' | 'L' | 'XL';
+  /** Spectrum-defined styles, returned by the `style()` macro. */
   styles?: StyleString;
 }
 
@@ -101,7 +107,7 @@ export const MessageSuggestion = forwardRef(function MessageSuggestion(
   ref: DOMRef<HTMLButtonElement>
 ) {
   let domRef = useDOMRef<HTMLButtonElement>(ref);
-  let {children, styles, size = 'M', ...otherProps} = props;
+  let {children, styles, UNSAFE_style, UNSAFE_className = '', size = 'M', ...otherProps} = props;
   let {direction} = useLocale();
   let isRTL = direction === 'rtl';
 
@@ -113,8 +119,10 @@ export const MessageSuggestion = forwardRef(function MessageSuggestion(
       {...filterDOMProps(props, {labelable: true})}
       {...otherProps}
       ref={domRef}
-      style={pressScale(domRef)}
-      className={renderProps => mergeStyles(suggestionStyles({...renderProps, size}), styles)}>
+      style={pressScale(domRef, UNSAFE_style)}
+      className={renderProps =>
+        UNSAFE_className + mergeStyles(suggestionStyles({...renderProps, size}), styles)
+      }>
       <Provider
         values={[
           [
