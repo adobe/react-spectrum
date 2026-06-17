@@ -40,7 +40,7 @@ const styles = style({
  *   import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
  *   import CheckmarkIcon from '@react-spectrum/s2/icons/Checkmark';
  *
- *   <span className={style({display: 'flex', gap: 4})}>
+ *   <span className={style({display: 'flex', gap: 4, alignItems: 'baseline'})}>
  *     <CenterBaseline>
  *       <CheckmarkIcon />
  *     </CenterBaseline>
