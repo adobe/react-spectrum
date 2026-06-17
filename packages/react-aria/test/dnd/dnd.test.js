@@ -2882,6 +2882,9 @@ describe('useDrag and useDrop', function () {
     });
 
     it('should support clicking the original drag target to cancel drag (virtual pointer event)', async () => {
+      // oxlint-disable-next-line no-unused-vars
+      using uaMock = jest.spyOn(navigator, 'userAgent', 'get').mockImplementation(() => 'Android');
+
       let tree = render(
         <>
           <Draggable />
@@ -2942,6 +2945,9 @@ describe('useDrag and useDrop', function () {
     });
 
     it('should support double tapping the drop target to complete drag (virtual pointer event)', async () => {
+      // oxlint-disable-next-line no-unused-vars
+      using uaMock = jest.spyOn(navigator, 'userAgent', 'get').mockImplementation(() => 'Android');
+
       let onDrop = jest.fn();
       let tree = render(
         <>
