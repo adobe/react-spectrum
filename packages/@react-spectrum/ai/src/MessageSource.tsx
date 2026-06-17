@@ -35,7 +35,10 @@ import {StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {useDOMRef} from './useDOMRef';
 import {useLocale} from 'react-aria/I18nProvider';
 
-export interface MessageSourceProps extends Omit<DisclosureProps, 'isQuiet'> {
+export interface MessageSourceProps extends Omit<
+  DisclosureProps,
+  'isQuiet' | 'UNSAFE_className' | 'UNSAFE_style'
+> {
   label: string;
 }
 
@@ -50,27 +53,12 @@ export const MessageSource = (forwardRef as forwardRefType)(function MessageSour
   ref: DOMRef<HTMLDivElement>
 ) {
   // [props, ref] = useSpectrumContextProps(props, ref, MessageSourceContext);
-  let {
-    label,
-    children,
-    size = 'M',
-    styles,
-    UNSAFE_className = '',
-    UNSAFE_style,
-    ...otherProps
-  } = props;
+  let {label, children, size = 'M', styles, ...otherProps} = props;
 
   return (
     <MessageSourceInternalContext.Provider value={{size}}>
       <NumberBadgeContext.Provider value={{size}}>
-        <Disclosure
-          {...otherProps}
-          styles={styles}
-          UNSAFE_className={UNSAFE_className}
-          UNSAFE_style={UNSAFE_style}
-          size={size}
-          ref={ref}
-          isQuiet>
+        <Disclosure {...otherProps} styles={styles} size={size} ref={ref} isQuiet>
           <DisclosureTitle>{label}</DisclosureTitle>
           {children}
         </Disclosure>

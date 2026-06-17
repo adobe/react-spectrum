@@ -362,8 +362,6 @@ export function useGridListItem<T>(
     id: getRowId(state, node.key)
   });
 
-  // TODO: guarding against selection when firing space/enter/click on a element in a row is technically not only limited to textfields so I
-  // am not making it specific to keyboardNavigationBehavior = tab, but maybe we should still?
   // we need to guard against space/enter triggering selection/row link via usePress (from itemProps) so check if propagation
   // is stopped. this also fixes space not working in a textfield in a tree parent row
   let baseOnKeyDown = rowProps.onKeyDown;

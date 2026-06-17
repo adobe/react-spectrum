@@ -37,7 +37,7 @@ import {
 } from './TokenSegmentList';
 import {getEventTarget} from 'react-aria/private/utils/shadowdom/DOMFunctions';
 import {Group} from 'react-aria-components/Group';
-import {IconContext, mergeStyles, UnsafeStyles} from '@react-spectrum/s2';
+import {IconContext, mergeStyles} from '@react-spectrum/s2';
 import {Image, Text} from '@react-spectrum/s2/Card';
 import {isFileDropItem, useDrop} from 'react-aria-components/useDrop';
 import {isFocusable} from 'react-aria/private/utils/isFocusable';
@@ -58,7 +58,7 @@ export interface PromptFieldAttachment {
   image: string;
 }
 
-export interface PromptFieldProps extends UnsafeStyles {
+export interface PromptFieldProps {
   children: React.ReactNode;
   acceptedAttachmentTypes?: string[];
   onSubmit?: (prompt: TokenSegmentList, attachments: PromptFieldAttachment[]) => void;
@@ -139,8 +139,6 @@ export function PromptField(props: PromptFieldProps) {
     acceptedAttachmentTypes,
     isGenerating,
     onStop,
-    UNSAFE_className = '',
-    UNSAFE_style,
     styles,
     onAddAttachments,
     onRemoveAttachments
@@ -207,9 +205,7 @@ export function PromptField(props: PromptFieldProps) {
         <Group
           {...dropProps}
           role="group"
-          style={UNSAFE_style}
           className={renderProps =>
-            UNSAFE_className +
             mergeStyles(
               style({
                 display: 'flex',

@@ -16,18 +16,17 @@ import {forwardRef} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {SlotProps} from 'react-aria-components/slots';
-import {StylesPropWithHeight} from './types';
+import {StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
 import ThumbDown from '@react-spectrum/s2/icons/ThumbDown';
 import ThumbUp from '@react-spectrum/s2/icons/ThumbUp';
 import {ToggleButton} from '@react-spectrum/s2/ToggleButton';
 import {ToggleButtonGroup} from '@react-spectrum/s2/ToggleButtonGroup';
-import {UnsafeStyles} from '@react-spectrum/s2';
 import {useDOMRef} from './useDOMRef';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 
 export type MessageFeedbackValue = 'up' | 'down' | null;
 
-export interface MessageFeedbackProps extends DOMProps, AriaLabelingProps, SlotProps, UnsafeStyles {
+export interface MessageFeedbackProps extends DOMProps, AriaLabelingProps, SlotProps {
   /** The selected feedback value (controlled). */
   value?: MessageFeedbackValue;
   /** The default feedback value (uncontrolled). */
@@ -41,7 +40,7 @@ export interface MessageFeedbackProps extends DOMProps, AriaLabelingProps, SlotP
   /** Accessible label for the thumbs down button. */
   thumbDownLabel?: string;
   /** Spectrum-defined styles, returned by the `style()` macro. */
-  styles?: StylesPropWithHeight;
+  styles?: StyleString;
 }
 
 function selectionToValue(selection: Selection): MessageFeedbackValue {
@@ -58,17 +57,7 @@ export const MessageFeedback = forwardRef(function MessageFeedback(
 ) {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
   let domRef = useDOMRef(ref);
-  let {
-    value,
-    defaultValue,
-    onChange,
-    isDisabled,
-    thumbUpLabel,
-    thumbDownLabel,
-    UNSAFE_className = '',
-    UNSAFE_style,
-    styles
-  } = props;
+  let {value, defaultValue, onChange, isDisabled, thumbUpLabel, thumbDownLabel, styles} = props;
 
   let handleSelectionChange = (selection: Selection): void => {
     onChange?.(selectionToValue(selection));
@@ -92,9 +81,8 @@ export const MessageFeedback = forwardRef(function MessageFeedback(
       defaultSelectedKeys={defaultSelectedKeys}
       onSelectionChange={handleSelectionChange}
       isDisabled={isDisabled}
-      styles={styles}
-      UNSAFE_className={UNSAFE_className}
-      UNSAFE_style={UNSAFE_style}>
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      styles={styles as any}>
       <ToggleButton
         id="up"
         isQuiet

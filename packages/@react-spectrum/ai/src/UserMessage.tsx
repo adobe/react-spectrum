@@ -18,10 +18,9 @@ import {ImageContext} from '@react-spectrum/s2/Image';
 import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
-import {UnsafeStyles} from '@react-spectrum/s2';
 import {useDOMRef} from './useDOMRef';
 
-export interface UserMessageProps extends DOMProps, AriaLabelingProps, SlotProps, UnsafeStyles {
+export interface UserMessageProps extends DOMProps, AriaLabelingProps, SlotProps {
   /** The contents of the user message bubble. */
   children: ReactNode;
   /**
@@ -77,14 +76,13 @@ export const UserMessage = forwardRef(function UserMessage(
   ref: DOMRef<HTMLDivElement>
 ) {
   let domRef = useDOMRef(ref);
-  let {children, styles, UNSAFE_className = '', UNSAFE_style} = props;
+  let {children, styles} = props;
 
   return (
     <div
       {...filterDOMProps(props, {labelable: true})}
       ref={domRef}
-      style={UNSAFE_style}
-      className={UNSAFE_className + mergeStyles(bubble, styles)}>
+      className={mergeStyles(bubble, styles)}>
       <Provider
         values={[
           [
