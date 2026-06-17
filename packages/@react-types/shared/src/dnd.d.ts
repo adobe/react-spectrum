@@ -185,9 +185,10 @@ export interface DroppableCollectionReorderEvent {
   target: ItemDropTarget;
 }
 
+export type DragType = string | symbol;
 export interface DragTypes {
   /** Returns whether the drag contains data of the given type. */
-  has(type: string | symbol): boolean;
+  has(type: DragType | DragType[]): boolean;
 }
 
 export interface DropTargetDelegate {

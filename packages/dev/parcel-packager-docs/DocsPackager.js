@@ -440,6 +440,7 @@ function visitChildren(obj, fn) {
         typeParameters: obj.typeParameters.map(i => fn(i, 'typeParameters')),
         ref: obj.ref ? fn(obj.ref, 'ref') : null,
         description: obj.description,
+        examples: obj.examples,
         access: obj.access
       };
     case 'conditional':
