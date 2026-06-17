@@ -375,7 +375,7 @@
       "files": [
         "packages/@react-spectrum/s2/**",
         "packages/dev/s2-docs/**",
-        "packages/@react-spectrum/s2-ai/**"
+        "packages/@react-spectrum/ai/**"
       ],
       "rules": {
         "react/react-in-jsx-scope": "off"

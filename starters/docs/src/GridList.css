@@ -22,8 +22,11 @@
 
   &[data-layout='grid']:not(:has(.react-aria-GridListSection)):not([data-empty]) {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(100px, var(--grid-item-size)));
     grid-auto-rows: min-content;
+
+    &:not([data-orientation='horizontal']) {
+      grid-template-columns: repeat(auto-fit, minmax(100px, var(--grid-item-size)));
+    }
   }
 
   &[data-layout='grid'] > .react-aria-GridListSection {

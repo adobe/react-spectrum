@@ -264,6 +264,7 @@ export function useSelect<T, M extends SelectionMode = 'single'>(
     },
     menuProps: {
       ...menuProps,
+      onAction: undefined,
       autoFocus: state.focusStrategy || true,
       shouldSelectOnPressUp: true,
       shouldFocusOnHover: true,

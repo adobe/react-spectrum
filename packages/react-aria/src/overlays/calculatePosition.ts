@@ -61,6 +61,7 @@ interface PositionOpts {
   crossOffset: number;
   maxHeight?: number;
   arrowBoundaryOffset?: number;
+  targetRect?: Offset | null | undefined;
 }
 
 type HeightGrowthDirection = 'top' | 'bottom';
@@ -655,7 +656,8 @@ export function calculatePosition(opts: PositionOpts): PositionResult {
     crossOffset,
     maxHeight,
     arrowSize = 0,
-    arrowBoundaryOffset = 0
+    arrowBoundaryOffset = 0,
+    targetRect
   } = opts;
 
   let visualViewport = getVisualViewport();
@@ -665,8 +667,8 @@ export function calculatePosition(opts: PositionOpts): PositionResult {
   const containerPositionStyle = window.getComputedStyle(container).position;
   let isContainerPositioned = !!containerPositionStyle && containerPositionStyle !== 'static';
   let childOffset: Offset = isViewportContainer
-    ? getOffset(targetNode, false)
-    : getPosition(targetNode, container, false);
+    ? getOffset(targetNode, false, targetRect)
+    : getPosition(targetNode, container, false, targetRect);
 
   if (!isViewportContainer) {
     let {marginTop, marginLeft} = window.getComputedStyle(targetNode);
@@ -757,8 +759,12 @@ export function getRect(node: Element, ignoreScale: boolean) {
   return {top, left, width, height};
 }
 
-function getOffset(node: Element, ignoreScale: boolean): Offset {
-  let {top, left, width, height} = getRect(node, ignoreScale);
+function getOffset(
+  node: Element,
+  ignoreScale: boolean,
+  overrideRect?: Offset | null | undefined
+): Offset {
+  let {top, left, width, height} = overrideRect || getRect(node, ignoreScale);
   let {scrollTop, scrollLeft, clientTop, clientLeft} = document.documentElement;
   return {
     top: top + scrollTop - clientTop,
@@ -768,13 +774,18 @@ function getOffset(node: Element, ignoreScale: boolean): Offset {
   };
 }
 
-function getPosition(node: Element, parent: Element, ignoreScale: boolean): Offset {
+function getPosition(
+  node: Element,
+  parent: Element,
+  ignoreScale: boolean,
+  overrideRect?: Offset | null | undefined
+): Offset {
   let style = window.getComputedStyle(node);
   let offset: Offset;
   if (style.position === 'fixed') {
-    offset = getRect(node, ignoreScale);
+    offset = overrideRect || getRect(node, ignoreScale);
   } else {
-    offset = getOffset(node, ignoreScale);
+    offset = getOffset(node, ignoreScale, overrideRect);
     let parentOffset = getOffset(parent, ignoreScale);
     let parentStyle = window.getComputedStyle(parent);
     parentOffset.top += (parseInt(parentStyle.borderTopWidth, 10) || 0) - parent.scrollTop;

@@ -91,19 +91,6 @@ then
   mkdir -p $verdaccio_path
   mv dist/production/docs $verdaccio_path
 
-  echo 'build rsp-cra-18'
-  # install packages in CRA test app
-  cd examples/rsp-cra-18
-  yarn config set npmRegistryServer $registry
-  yarn install --no-immutable
-
-  # Build CRA test app and move to dist folder. Store the size of the build in a text file.
-  yarn build | tee build-stats.txt
-  du -ka build/ | tee -a build-stats.txt
-  mkdir -p ../../$verdaccio_path/publish-stats
-  mv build-stats.txt ../../
-  mv build ../../$verdaccio_path
-
   echo 'build webpack 4 test app'
   # install packages in webpack 4 test app
   cd ../../examples/rsp-webpack-4

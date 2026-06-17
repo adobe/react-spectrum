@@ -11,7 +11,6 @@
  */
 
 import {chain} from '../utils/chain';
-
 import {
   Collection,
   DOMAttributes,
@@ -302,16 +301,10 @@ export function useGridListItem<T>(
     }
 
     if (keyboardNavigationBehavior === 'tab') {
-      // TODO: Added Rob's useTypeSelect changes, but that only stops if type select is in progress
-      // This will stop arrow key navigation and typeselect from bubbling up
-      // (note that this breaks TagGroup's old behavior of using arrow keys to move from "x" button to next tag and typeselect when inside a card/row)
-      // should it just stop propagation for all events since we can't rely on non-RAC components stopping propagation even they handled the event
-      // Will need to do something similar for click?
-      // TODO: have it stop on all events that bubbled up from the cell (will need to let Tab go through since we need useSelectableCollection to handle that)
-      if (
-        getEventTarget(e) !== ref.current &&
-        (isArrowKey(e.key) || isCharacterKey(e.key) || e.key === 'Enter')
-      ) {
+      // Stop propagation for all events that originate from the children of the gridlist item since we don't want to trigger
+      // grid level interactions (row navigation/typeselect/etc)
+      // exception made for Tab since that needs to propagate to useSelectableCollection to tab out of the gridlist, might be others?
+      if (getEventTarget(e) !== ref.current && e.key !== 'Tab') {
         e.stopPropagation();
         return;
       }
@@ -369,8 +362,6 @@ export function useGridListItem<T>(
     id: getRowId(state, node.key)
   });
 
-  // TODO: guarding against selection when firing space/enter/click on a element in a row is technically not only limited to textfields so I
-  // am not making it specific to keyboardNavigationBehavior = tab, but maybe we should still?
   // we need to guard against space/enter triggering selection/row link via usePress (from itemProps) so check if propagation
   // is stopped. this also fixes space not working in a textfield in a tree parent row
   let baseOnKeyDown = rowProps.onKeyDown;

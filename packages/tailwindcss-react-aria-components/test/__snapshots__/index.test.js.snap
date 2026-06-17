@@ -2,22 +2,97 @@
 
 exports[`variants 1`] = `
 "/*! tailwindcss v4.0.17 | MIT License | https://tailwindcss.com */
-.group-hover\\:bg-red {
-  &:is(:where(.group):where([data-rac])[data-hovered] *) {
+.not-group-hover\\:bg-red {
+  &:not(*:is(:where(.group):is(:where([data-rac])[data-hovered], :where(:not([data-rac])):hover) *)) {
     background-color: var(--color-red);
   }
+  @media not (hover: hover) {
+    background-color: var(--color-red);
+  }
+}
+.not-open\\:bg-red {
+  &:not(*:is(:where([data-rac])[data-open], :where(:not([data-rac]))[open])) {
+    background-color: var(--color-red);
+  }
+}
+.not-placeholder-shown\\:bg-red {
+  &:not(*:is([data-placeholder], :placeholder-shown)) {
+    background-color: var(--color-red);
+  }
+}
+.not-required\\:bg-red {
+  &:not(*:is(:where([data-rac])[data-required], :where(:not([data-rac])):required)) {
+    background-color: var(--color-red);
+  }
+}
+.not-invalid\\:bg-red {
+  &:not(*:is(:where([data-rac])[data-invalid], :where(:not([data-rac])):invalid)) {
+    background-color: var(--color-red);
+  }
+}
+.not-empty\\:bg-red {
+  &:not(*:is(:where([data-rac])[data-empty], :where(:not([data-rac])):empty)) {
+    background-color: var(--color-red);
+  }
+}
+.not-focus-within\\:bg-red {
+  &:not(*:is(:where([data-rac])[data-focus-within], :where(:not([data-rac])):focus-within)) {
+    background-color: var(--color-red);
+  }
+}
+.not-hover\\:bg-red {
+  &:not(*:is(:where([data-rac])[data-hovered], :where(:not([data-rac])):hover)) {
+    background-color: var(--color-red);
+  }
+  @media not (hover: hover) {
+    background-color: var(--color-red);
+  }
+}
+.not-focus\\:bg-red {
+  &:not(*:is(:where([data-rac])[data-focused], :where(:not([data-rac])):focus)) {
+    background-color: var(--color-red);
+  }
+}
+.not-focus-visible\\:bg-red {
+  &:not(*:is(:where([data-rac])[data-focus-visible], :where(:not([data-rac])):focus-visible)) {
+    background-color: var(--color-red);
+  }
+}
+.not-disabled\\:bg-red {
+  &:not(*:is(:where([data-rac])[data-disabled], :where(:not([data-rac])):disabled)) {
+    background-color: var(--color-red);
+  }
+}
+.not-expanded\\:bg-red {
+  &:not(*:is(:where([data-rac])[data-expanded], :where(:not([data-rac]))[expanded])) {
+    background-color: var(--color-red);
+  }
+}
+.group-not-invalid\\:bg-red {
+  &:is(:where(.group):not(*:is(:where([data-rac])[data-invalid], :where(:not([data-rac])):invalid)) *) {
+    background-color: var(--color-red);
+  }
+}
+.group-not-disabled\\:bg-red {
+  &:is(:where(.group):not(*:is(:where([data-rac])[data-disabled], :where(:not([data-rac])):disabled)) *) {
+    background-color: var(--color-red);
+  }
+}
+.group-not-pressed\\:bg-red {
+  &:is(:where(.group):not(*[data-pressed]) *) {
+    background-color: var(--color-red);
+  }
+}
+.group-hover\\:bg-red {
   @media (hover: hover) {
-    &:is(:where(.group):where(:not([data-rac])):hover *) {
+    &:is(:where(.group):is(:where([data-rac])[data-hovered], :where(:not([data-rac])):hover) *) {
       background-color: var(--color-red);
     }
   }
 }
 .group-hover\\/custom-name\\:bg-red {
-  &:is(:where(.group\\/custom-name):where([data-rac])[data-hovered] *) {
-    background-color: var(--color-red);
-  }
   @media (hover: hover) {
-    &:is(:where(.group\\/custom-name):where(:not([data-rac])):hover *) {
+    &:is(:where(.group\\/custom-name):is(:where([data-rac])[data-hovered], :where(:not([data-rac])):hover) *) {
       background-color: var(--color-red);
     }
   }
@@ -25,6 +100,18 @@ exports[`variants 1`] = `
 .group-pressed\\:bg-red {
   &:is(:where(.group)[data-pressed] *) {
     background-color: var(--color-red);
+  }
+}
+.peer-not-disabled\\:bg-red {
+  &:is(:where(.peer):not(*:is(:where([data-rac])[data-disabled], :where(:not([data-rac])):disabled)) ~ *) {
+    background-color: var(--color-red);
+  }
+}
+.peer-hover\\:bg-red {
+  @media (hover: hover) {
+    &:is(:where(.peer):is(:where([data-rac])[data-hovered], :where(:not([data-rac])):hover) ~ *) {
+      background-color: var(--color-red);
+    }
   }
 }
 .peer-pressed\\:bg-red {
@@ -38,108 +125,101 @@ exports[`variants 1`] = `
   }
 }
 .open\\:bg-red {
-  &:where([data-rac])[data-open] {
-    background-color: var(--color-red);
-  }
-  &:where(:not([data-rac]))[open] {
+  &:is(:where([data-rac])[data-open], :where(:not([data-rac]))[open]) {
     background-color: var(--color-red);
   }
 }
 .indeterminate\\:bg-red {
-  &:where([data-rac])[data-indeterminate] {
-    background-color: var(--color-red);
-  }
-  &:where(:not([data-rac])):indeterminate {
+  &:is(:where([data-rac])[data-indeterminate], :where(:not([data-rac])):indeterminate) {
     background-color: var(--color-red);
   }
 }
 .placeholder-shown\\:bg-red {
-  &[data-placeholder] {
-    background-color: var(--color-red);
-  }
-  &:placeholder-shown {
+  &:is([data-placeholder], :placeholder-shown) {
     background-color: var(--color-red);
   }
 }
 .required\\:bg-red {
-  &:where([data-rac])[data-required] {
-    background-color: var(--color-red);
-  }
-  &:where(:not([data-rac])):required {
+  &:is(:where([data-rac])[data-required], :where(:not([data-rac])):required) {
     background-color: var(--color-red);
   }
 }
 .invalid\\:bg-red {
-  &:where([data-rac])[data-invalid] {
-    background-color: var(--color-red);
-  }
-  &:where(:not([data-rac])):invalid {
+  &:is(:where([data-rac])[data-invalid], :where(:not([data-rac])):invalid) {
     background-color: var(--color-red);
   }
 }
 .read-only\\:bg-red {
-  &:where([data-rac])[data-readonly] {
-    background-color: var(--color-red);
-  }
-  &:where(:not([data-rac])):read-only {
+  &:is(:where([data-rac])[data-readonly], :where(:not([data-rac])):read-only) {
     background-color: var(--color-red);
   }
 }
 .empty\\:bg-red {
-  &:where([data-rac])[data-empty] {
-    background-color: var(--color-red);
-  }
-  &:where(:not([data-rac])):empty {
+  &:is(:where([data-rac])[data-empty], :where(:not([data-rac])):empty) {
     background-color: var(--color-red);
   }
 }
 .focus-within\\:bg-red {
-  &:where([data-rac])[data-focus-within] {
-    background-color: var(--color-red);
-  }
-  &:where(:not([data-rac])):focus-within {
+  &:is(:where([data-rac])[data-focus-within], :where(:not([data-rac])):focus-within) {
     background-color: var(--color-red);
   }
 }
 .hover\\:bg-red {
-  &:where([data-rac])[data-hovered] {
-    background-color: var(--color-red);
-  }
   @media (hover: hover) {
-    &:where(:not([data-rac])):hover {
+    &:is(:where([data-rac])[data-hovered], :where(:not([data-rac])):hover) {
       background-color: var(--color-red);
     }
   }
 }
 .focus\\:bg-red {
-  &:where([data-rac])[data-focused] {
-    background-color: var(--color-red);
-  }
-  &:where(:not([data-rac])):focus {
+  &:is(:where([data-rac])[data-focused], :where(:not([data-rac])):focus) {
     background-color: var(--color-red);
   }
 }
 .focus-visible\\:bg-red {
-  &:where([data-rac])[data-focus-visible] {
-    background-color: var(--color-red);
-  }
-  &:where(:not([data-rac])):focus-visible {
+  &:is(:where([data-rac])[data-focus-visible], :where(:not([data-rac])):focus-visible) {
     background-color: var(--color-red);
   }
 }
 .active\\:bg-red {
-  &:where([data-rac])[data-active] {
-    background-color: var(--color-red);
-  }
-  &:where(:not([data-rac])):active {
+  &:is(:where([data-rac])[data-active], :where(:not([data-rac])):active) {
     background-color: var(--color-red);
   }
 }
 .disabled\\:bg-red {
-  &:where([data-rac])[data-disabled] {
+  &:is(:where([data-rac])[data-disabled], :where(:not([data-rac])):disabled) {
     background-color: var(--color-red);
   }
-  &:where(:not([data-rac])):disabled {
+}
+.in-hover\\:bg-red {
+  @media (hover: hover) {
+    :where(*:is(:where([data-rac])[data-hovered], :where(:not([data-rac])):hover)) & {
+      background-color: var(--color-red);
+    }
+  }
+}
+.in-disabled\\:bg-red {
+  :where(*:is(:where([data-rac])[data-disabled], :where(:not([data-rac])):disabled)) & {
+    background-color: var(--color-red);
+  }
+}
+.has-not-disabled\\:bg-red {
+  &:has(*:not(*:is(:where([data-rac])[data-disabled], :where(:not([data-rac])):disabled))) {
+    background-color: var(--color-red);
+  }
+}
+.has-invalid\\:bg-red {
+  &:has(*:is(:where([data-rac])[data-invalid], :where(:not([data-rac])):invalid)) {
+    background-color: var(--color-red);
+  }
+}
+.has-focus\\:bg-red {
+  &:has(*:is(:where([data-rac])[data-focused], :where(:not([data-rac])):focus)) {
+    background-color: var(--color-red);
+  }
+}
+.has-disabled\\:bg-red {
+  &:has(*:is(:where([data-rac])[data-disabled], :where(:not([data-rac])):disabled)) {
     background-color: var(--color-red);
   }
 }
@@ -264,10 +344,7 @@ exports[`variants 1`] = `
   }
 }
 .expanded\\:bg-red {
-  &:where([data-rac])[data-expanded] {
-    background-color: var(--color-red);
-  }
-  &:where(:not([data-rac]))[expanded] {
+  &:is(:where([data-rac])[data-expanded], :where(:not([data-rac]))[expanded]) {
     background-color: var(--color-red);
   }
 }
