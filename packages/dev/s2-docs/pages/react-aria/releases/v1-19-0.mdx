@@ -24,7 +24,11 @@ export const isSubpage = true;
 
 # v1.19.0
 
-This release adds a new [`keyboardNavigationBehavior`](/react-aria/GridList.html#keyboard-navigation-behavior) prop to [GridList](/react-aria/GridList.html) and [Tree](/react-aria/Tree.html), enabling Tab-key navigation between rows and full interaction with embedded text fields and other focusable elements. [Autocomplete](/react-aria/Autocomplete.html) receives two keyboard fixes: CJK IME input now correctly applies virtual focus to the first matching item, and arrow keys properly move the cursor in inline mode. [Popover](/react-aria/Popover.html) gains a new `getTargetRect` prop for positioning overlays relative to arbitrary rectangles or character positions. Menu's `onAction` callback now provides both the item key and value, and `DragTypes.has()` accepts multiple MIME types and wildcards.
+This release adds support for full interaction with embedded text fields and other interactive elements in [GridList](/react-aria/GridList.html) and [Tree](/react-aria/Tree.html) with the [keyboardNavigationBehavior](/react-aria/GridList.html#keyboard-navigation-behavior) prop. [Autocomplete](/react-aria/Autocomplete.html) and  [Popover](/react-aria/Popover.html) gain several improvements to support [inline completions](/react-aria/Autocomplete#inline-completions.html), including a new getTargetRect prop on Popover for positioning overlays relative to arbitrary character positions. Menu's onAction callback now provides both the item key and value, and DragTypes.has() accepts multiple MIME types and wildcards.
+
+### Breaking Changes
+
+@react-aria/optimize-locales-plugin has been bumped to a major version due to upgrading from unplugin@1 to unplugin@2. This was necessary to support Node 26, which removed a deprecated API used by unplugin@1. If you are using webpack 4, you will need to either stay on the previous version of the plugin or upgrade to webpack 5.
 
 ## Changelog
 
@@ -46,7 +50,7 @@ This release adds a new [`keyboardNavigationBehavior`](/react-aria/GridList.html
 - Allow `DragTypes.has()` to accept multiple MIME types and wildcard patterns such as `image/*` - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/10191)
 
 ### GridList
-- Add `keyboardNavigationBehavior` prop to support interactive elements inside of rows - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/10195), [PR](https://github.com/adobe/react-spectrum/pull/10206)
+- Add `keyboardNavigationBehavior` prop to support textfields and other interactive elements inside of rows - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/10195), [PR](https://github.com/adobe/react-spectrum/pull/10206)
 
 ### Menu
 - Update `onAction` to receive both the item's `key` and its `value` as arguments - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/10191)
@@ -55,7 +59,7 @@ This release adds a new [`keyboardNavigationBehavior`](/react-aria/GridList.html
 - Add `getTargetRect` prop to Popover for positioning relative to an arbitrary rectangle or character position within a text field - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/10191)
 
 ### Tree
-- Add `keyboardNavigationBehavior` prop support interactive elements inside of rows - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/10195), [PR](https://github.com/adobe/react-spectrum/pull/10206)
+- Add `keyboardNavigationBehavior` prop support textfields and other interactive elements inside of rows - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/10195), [PR](https://github.com/adobe/react-spectrum/pull/10206)
 
 ## Released packages
 
