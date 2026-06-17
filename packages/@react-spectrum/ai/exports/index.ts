@@ -1,5 +1,4 @@
 export {Attachment, AttachmentList} from '../src/AttachmentList';
-export {BasicHorizontalCard, CardPreview, HorizontalCard} from '../src/HorizontalCard';
 export {MessageFeedback} from '../src/MessageFeedback';
 export {MessageSource, SourceList, SourceListItem} from '../src/MessageSource';
 export {MessageSuggestion, MessageSuggestionList} from '../src/MessageSuggestion';
@@ -20,7 +19,6 @@ export {TokenSegmentList} from '../src/TokenSegmentList';
 export {UserMessage} from '../src/UserMessage';
 
 export type {AttachmentProps, AttachmentListProps} from '../src/AttachmentList';
-export type {HorizontalCardProps, BasicCardProps} from '../src/HorizontalCard';
 export type {
   PromptFieldProps,
   PromptFieldSubmitButtonProps,
