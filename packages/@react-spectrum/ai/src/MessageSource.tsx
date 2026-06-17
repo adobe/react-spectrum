@@ -98,15 +98,7 @@ const itemStyles = style({
   gap: 8
 });
 
-export interface SourceListProps extends Omit<
-  DisclosurePanelProps,
-  'styles' | 'UNSAFE_className' | 'UNSAFE_style'
-> {
-  /**
-   * Spectrum-defined styles, returned by the `style()` macro.
-   */
-  styles?: StyleString;
-}
+export interface SourceListProps extends DisclosurePanelProps {}
 
 /**
  * A SourceList displays an ordered list of sources inside a MessageSource.
@@ -116,18 +108,14 @@ export const SourceList = (forwardRef as forwardRefType)(function SourceList(
   props: SourceListProps,
   ref: DOMRef<HTMLDivElement>
 ) {
-  let {children, styles, ...otherProps} = props;
+  let {children, ...otherProps} = props;
 
   let numberedChildren = React.Children.map(children, (child, i) => (
     <SourceListIndexContext.Provider value={i + 1}>{child}</SourceListIndexContext.Provider>
   ));
 
   return (
-    <DisclosurePanel
-      {...otherProps}
-      // @ts-ignore
-      UNSAFE_className={styles}
-      ref={ref}>
+    <DisclosurePanel {...otherProps} ref={ref}>
       <ol className={listStyles}>{numberedChildren}</ol>
     </DisclosurePanel>
   );
