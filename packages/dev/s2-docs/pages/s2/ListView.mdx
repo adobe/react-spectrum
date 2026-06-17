@@ -380,6 +380,45 @@ function NavigationExample() {
 }
 ```
 
+## Keyboard navigation
+
+By default, ListView uses arrow key navigation to move focus into rows. Set `keyboardNavigationBehavior="tab"` to have <Keyboard>Tab</Keyboard> move focus in and out of a row.
+Use this when rows contain interactive elements such as text fields, where arrow keys and typing in the field should not trigger grid navigation or selection.
+
+```tsx render
+"use client";
+import {ListView, ListViewItem, Text} from '@react-spectrum/s2/ListView';
+import {TextField} from '@react-spectrum/s2/TextField';
+import File from '@react-spectrum/s2/icons/File';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+///- begin collapse -///
+let documents = [
+  {id: 'project-brief', name: 'Project brief.pdf'},
+  {id: 'quarterly-report', name: 'Quarterly report.docx'},
+  {id: 'budget', name: 'Budget.xlsx'}
+];
+///- end collapse -///
+
+<ListView
+  /*- begin highlight -*/
+  keyboardNavigationBehavior="tab"
+  /*- end highlight -*/
+  items={documents}
+  selectionMode="multiple"
+  aria-label="Shared files"
+  styles={style({width: 'full', maxWidth: 400, height: 320})}>
+  {item => (
+    <ListViewItem textValue={item.name}>
+      <File />
+      <Text>
+        <TextField styles={style({margin: 4})} aria-label="title" defaultValue={item.name} />
+      </Text>
+    </ListViewItem>
+  )}
+</ListView>
+```
+
 ## Drag and drop
 
 ListView supports drag and drop interactions when the `dragAndDropHooks` prop is provided using the <TypeLink links={docs.links} type={docs.exports.useDragAndDrop} /> hook. Users can drop data on the list as a whole, on individual items, insert new items between existing ones, or reorder items. See the [drag and drop guide](dnd?component=ListView) to learn more.

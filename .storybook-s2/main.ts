@@ -21,7 +21,7 @@ const config: StorybookConfig = {
   stories: [
     './docs/*.mdx',
     '../packages/@react-spectrum/s2/stories/*.stories.@(js|jsx|mjs|ts|tsx)',
-    '../packages/@react-spectrum/s2-ai/stories/*.stories.@(js|jsx|mjs|ts|tsx)'
+    '../packages/@react-spectrum/ai/stories/*.stories.@(js|jsx|mjs|ts|tsx)'
   ],
   addons: [
     localAddon('./custom-addons/provider/preset.ts'),

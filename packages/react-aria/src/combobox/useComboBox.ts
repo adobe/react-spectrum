@@ -215,6 +215,10 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(
         if (e.key === 'Enter' || state.isOpen) {
           state.commit();
         }
+        if (e.key === 'Tab') {
+          e.continuePropagation();
+        }
+
         break;
       case 'Escape':
         if (!state.selectionManager.isEmpty || state.inputValue === '' || props.allowsCustomValue) {
@@ -482,6 +486,7 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(
       spellCheck: 'false'
     }),
     listBoxProps: mergeProps(menuProps, listBoxProps, {
+      onAction: undefined,
       autoFocus: state.focusStrategy || true,
       shouldUseVirtualFocus: true,
       shouldSelectOnPressUp: true,
