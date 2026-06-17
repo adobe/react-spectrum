@@ -163,8 +163,8 @@ function iconWrapperPlugin(): Plugin {
 
 export default defineConfig({
   define: {
-    // make sure virtualizer actually runs since this is in browser
-    'process.env.VIRT_ON': '"1"'
+    // run in dev mode so virtualizer and other test-env shortcuts are disabled
+    'process.env.NODE_ENV': '"development"'
   },
   plugins: [
     // @ts-expect-error

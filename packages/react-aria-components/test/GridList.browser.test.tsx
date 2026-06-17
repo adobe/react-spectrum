@@ -109,14 +109,14 @@ it('virtualizer renders items after toggling display:none', async () => {
     layout: 'grid'
   });
 
-  await expect.poll(() => tester.getRows().length).toBeGreaterThan(0);
+  await expect(tester.getRows().length).toBeGreaterThan(0);
   let button = container.querySelector('[data-testid=toggle]') as HTMLElement;
 
   await button.click();
   await button.click();
-  await expect.poll(() => tester.getRows().length).toBeGreaterThan(0);
+  await expect(tester.getRows().length).toBeGreaterThan(0);
 
   await button.click();
   await button.click();
-  await expect.poll(() => tester.getRows().length).toBeGreaterThan(0);
+  await expect(tester.getRows().length).toBeGreaterThan(0);
 });
