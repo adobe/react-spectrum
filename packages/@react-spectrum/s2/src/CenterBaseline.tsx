@@ -41,9 +41,11 @@ const styles = style({
  *   import CheckmarkIcon from '@react-spectrum/s2/icons/Checkmark';
  *
  *   <span className={style({display: 'flex', gap: 4})}>
- *     <CenterBaseline><CheckmarkIcon /></CenterBaseline>
+ *     <CenterBaseline>
+ *       <CheckmarkIcon />
+ *     </CenterBaseline>
  *     <span>Done</span>
- *   </span>
+ *   </span>;
  */
 export function CenterBaseline(props: CenterBaselineProps): ReactNode {
   let domProps = filterDOMProps(props);
