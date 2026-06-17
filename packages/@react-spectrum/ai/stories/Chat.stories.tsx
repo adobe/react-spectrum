@@ -16,7 +16,6 @@ import {AssetCard, CardPreview} from '@react-spectrum/s2/Card';
 import {Chat} from '../src/Chat';
 import ChevronDown from '@react-spectrum/s2/icons/ChevronDown';
 import {Content} from '@react-spectrum/s2/Content';
-import {focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {GridList} from 'react-aria-components';
 import {Image} from '@react-spectrum/s2/Image';
 import {ListLayout} from 'react-stately/useVirtualizerState';
@@ -42,6 +41,7 @@ import {
 } from '@react-spectrum/ai';
 import type {Meta} from '@storybook/react';
 import {ReactNode, useRef, useState} from 'react';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Text} from '@react-spectrum/s2/Text';
 import {Virtualizer} from 'react-aria-components/Virtualizer';
 
@@ -130,7 +130,7 @@ function CardMessage({
   imageUrl: string;
 }) {
   return (
-    <ThreadItem textValue={title} className={style({...focusRing(), borderRadius: 'default'})}>
+    <ThreadItem textValue={title}>
       <AssetCard>
         <CardPreview>
           <Image src={imageUrl} />
@@ -365,7 +365,7 @@ export function StreamingChat() {
         height: '100%'
       })}>
       <Chat
-        className={style({
+        styles={style({
           display: 'flex',
           flexDirection: 'column',
           overflow: 'hidden',
@@ -402,7 +402,7 @@ export function StreamingChat() {
             items={[...messages].reverse()}
             UNSTABLE_focusOnEntry="first"
             aria-label="Chat thread"
-            className={style({
+            styles={style({
               flexGrow: 1,
               overflowX: 'hidden',
               overflowY: 'auto',
@@ -416,12 +416,7 @@ export function StreamingChat() {
                 return (
                   <ThreadItem
                     textValue={msg.content}
-                    className={style({
-                      ...focusRing(),
-                      borderRadius: 'default',
-                      display: 'flex',
-                      justifyContent: 'end'
-                    })}>
+                    styles={style({display: 'flex', justifyContent: 'end'})}>
                     <UserMessage>{msg.content}</UserMessage>
                   </ThreadItem>
                 );
@@ -437,8 +432,7 @@ export function StreamingChat() {
                   <ThreadItem
                     textValue={announcement}
                     isStreaming={msg.isStreaming}
-                    shouldAnnounceOnMount
-                    className={style({...focusRing(), borderRadius: 'default'})}>
+                    shouldAnnounceOnMount>
                     <ResponseStatus isLoading={msg.isStreaming}>
                       <ResponseStatusTitle>{title}</ResponseStatusTitle>
                       <ResponseStatusPanel>
@@ -463,9 +457,7 @@ export function StreamingChat() {
                 // TODO: probably should have ThreadItem auto wrap MessageSuggestionList as well
                 // but this one I could see perhaps being a standalone component to be used outside of thread
                 return (
-                  <ThreadItem
-                    textValue={msg.title}
-                    className={style({...focusRing(), borderRadius: 'default'})}>
+                  <ThreadItem textValue={msg.title}>
                     <MessageSuggestionList title={msg.title}>
                       {msg.suggestions.map((s, i) => (
                         <MessageSuggestion key={i}>{s}</MessageSuggestion>
@@ -559,12 +551,7 @@ export function VirtualizedChat() {
               return (
                 <ThreadItem
                   textValue={msg.content}
-                  className={style({
-                    ...focusRing(),
-                    borderRadius: 'lg',
-                    display: 'flex',
-                    justifyContent: 'end'
-                  })}>
+                  styles={style({borderRadius: 'lg', display: 'flex', justifyContent: 'end'})}>
                   <UserMessage>{msg.content}</UserMessage>
                 </ThreadItem>
               );
@@ -574,9 +561,7 @@ export function VirtualizedChat() {
               let message = isPending ? 'Generating response' : 'Response generated';
 
               return (
-                <ThreadItem
-                  textValue={message}
-                  className={style({...focusRing(), borderRadius: 'default'})}>
+                <ThreadItem textValue={message}>
                   <ResponseStatus isLoading={isPending}>
                     <ResponseStatusTitle>{message}</ResponseStatusTitle>
                   </ResponseStatus>
@@ -616,10 +601,7 @@ function SystemMessage({
   sources?: string[];
 }) {
   return (
-    <ThreadItem
-      textValue={textValue}
-      isStreaming={isStreaming}
-      className={style({...focusRing(), borderRadius: 'default'})}>
+    <ThreadItem textValue={textValue} isStreaming={isStreaming}>
       {children}
       {sources && sources.length > 0 && (
         <MessageSource label="Sources">
