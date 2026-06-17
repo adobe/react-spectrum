@@ -1,6 +1,6 @@
 # Check 03 — Styling
 
-Validates that styling goes through S2 components and the `style` macro with tokens — not escape hatches, raw CSS, or third-party styling systems. Canonical rules: `../docs-implementation-guidance.md` (Styling and Icons sections).
+Validates that styling goes through S2 components and the `style` macro with tokens — not escape hatches, raw CSS, or third-party styling systems. Canonical rules: `react-spectrum-s2` skill → `SKILL.md` (Styling and Icons sections).
 
 Search the source globs (e.g. `**/*.{tsx,jsx,ts,js}`) for the patterns below.
 
@@ -37,9 +37,9 @@ Search the source globs (e.g. `**/*.{tsx,jsx,ts,js}`) for the patterns below.
 - **Severity:** Low.
 
 ### No third-party icon or design-system libraries
-- **Rule:** Use S2 icons/illustrations and components. Don't introduce `lucide-react`, `heroicons`, `phosphor-icons`, `react-icons`, or whole design systems (MUI, Chakra, Radix, shadcn/ui, Ant Design) in S2 code.
+- **Rule:** Use S2 icons/illustrations and components. Don't introduce `lucide-react`, `heroicons`, `phosphor-icons`, `react-icons`, or whole design systems (MUI, Chakra, Radix UI kits, shadcn/ui, Ant Design) in S2 code. `react-aria-components` is fine for custom components — this check targets pre-styled UI kits, not RAC primitives.
 - **Detect:** imports from those packages.
-- **Severity:** Medium for icon libraries; High for a competing design system (overlaps with [02-component-usage](02-component-usage.md)).
+- **Severity:** Medium for icon libraries; High for a competing design system. If the same import also triggers [02-component-usage](02-component-usage.md), record **one** finding here (Styling) only.
 
 ### Don't restate default prop values
 - **Rule:** Setting a prop to its default — `variant="primary"`, `size="M"`, `density="regular"` — is noise.

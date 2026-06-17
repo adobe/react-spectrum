@@ -1,8 +1,8 @@
 # Check 01 — Setup & configuration
 
-Validates that the project is configured the way [Getting started](../docs-getting-started.md) specifies. Misconfiguration here is high-impact: the `style` macro silently no-ops, CSS bloats, or strings for 30+ languages ship to every user.
+Validates that the project is configured the way the `react-spectrum-s2` skill specifies.
 
-Read first: `../docs-getting-started.md` (canonical setup), plus the project's `package.json` and bundler config file.
+Read first: `react-spectrum-s2` skill → `references/guides/getting-started.md` (canonical setup), plus the project's `package.json` and bundler config file.
 
 ## Detection inputs (gathered in Phase 0)
 

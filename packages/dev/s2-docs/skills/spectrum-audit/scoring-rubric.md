@@ -30,8 +30,8 @@ The overall score is the weighted average of the six category scores:
 | Category | Weight |
 |----------|--------|
 | Setup & configuration | 25% |
-| Styling | 20% |
 | Component usage | 20% |
+| Styling | 20% |
 | Accessibility | 20% |
 | Versioning & maintenance | 10% |
 | Testing | 5% |
@@ -54,3 +54,4 @@ overall = round( Σ (categoryScore × categoryWeight) )
 
 - If a category does not apply (e.g. the project has no tests), score it **100** and label it "not applicable" rather than penalizing the project.
 - Always show the raw finding counts next to the score. The number is a summary, not a substitute for reading the findings.
+- **Deduplicate findings:** count each distinct root cause at a `file:line` once. If multiple checks could apply (e.g. a missing collection `aria-label`, or a third-party design system import), assign it to the most specific check and category only.

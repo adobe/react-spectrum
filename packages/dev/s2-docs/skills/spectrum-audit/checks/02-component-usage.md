@@ -1,8 +1,8 @@
 # Check 02 — Component usage
 
-Validates that the project uses S2 components where they exist, builds custom components on React Aria Components + the `style` macro, and follows S2 composition and collection conventions. This is the most judgment-heavy category — read the component's docs (via the `react-spectrum-s2` skill, if installed) before flagging.
+Validates that the project uses S2 components where they exist, builds custom components on React Aria Components + the `style` macro, and follows S2 composition and collection conventions. This is the most judgment-heavy category — read the component's docs in the `react-spectrum-s2` skill (`references/components/`) before flagging.
 
-Canonical rules: `../docs-implementation-guidance.md` (Component composition, Collections, Typography, Form fields). Reverse-lookup help ("is there an S2 component for this?"): `../docs-component-decision-tree.md`.
+Canonical rules: `react-spectrum-s2` skill → `SKILL.md` (Component composition, Collections, Typography, Form fields). Reverse-lookup help ("is there an S2 component for this?"): `references/guides/component-decision-tree.md`.
 
 ## Checks
 
@@ -17,14 +17,14 @@ Canonical rules: `../docs-implementation-guidance.md` (Component composition, Co
 - **Severity:** High (accessibility regressions).
 
 ### Typed item components
-- **Rule:** Each collection has its own item export — `MenuItem`, `PickerItem`, `ComboBoxItem`, `ListViewItem`, `TreeViewItem`, `Row`/`Cell`/`Column`, `Tag`, `Breadcrumb`, `AccordionItem`, etc. There is no generic `Item`.
-- **Detect:** a generic `Item`/`Section` import in S2 code (usually a Spectrum 1 leftover), or the wrong item type nested inside a collection.
+- **Rule:** Each collection has its own item export — `MenuItem`, `PickerItem`, `ComboBoxItem`, `ListViewItem`, `TreeViewItem`, `Row`/`Cell`/`Column`, `Tag`, `Breadcrumb`, `AccordionItem`, etc. There is no generic `Item`. Typed section exports (`MenuSection`, `PickerSection`, `ComboBoxSection`, …) are valid — only a **generic** `Section` import is wrong.
+- **Detect:** `import {Item}` or `import {Section}` (or `Item`/`Section` from `react-stately` / Spectrum 1 packages); a generic `<Item>` / `<Section>` element in S2 code (usually a Spectrum 1 leftover); or the wrong item type nested inside a collection. Do **not** flag typed `*Section` components such as `MenuSection`.
 - **Severity:** Medium.
 
 ### Collection conventions
-- **Rule:** Collection items need an `id` (and React `key` when built with `.map`); items whose children aren't plain text need `textValue`; the collection container needs `aria-label`/`aria-labelledby`; virtualized collections must not be wrapped in an `overflow` container; empty/loading/bulk-action UI uses the built-in `renderEmptyState` / `loadingState` / `renderActionBar`.
-- **Detect:** items lacking `id`; non-text item children without `textValue`; a collection with no accessible name; an `overflow*` wrapper around `TableView`/`ListView`/`CardView`/`TreeView`/`Menu`/`ListBox`; hand-rolled empty/spinner/bulk-action UI replacing the built-ins.
-- **Severity:** High for missing `id` / `aria-label` / `textValue` (breaks selection, keyboard nav, screen readers); Medium for the rest.
+- **Rule:** Collection items need an `id` (and React `key` when built with `.map`); items whose children aren't plain text need `textValue`; virtualized collections must not be wrapped in an `overflow` container; empty/loading/bulk-action UI uses the built-in `renderEmptyState` / `loadingState` / `renderActionBar`. Accessible names on collections are covered in [04-accessibility](04-accessibility.md) — record those findings there, not here.
+- **Detect:** items lacking `id`; non-text item children without `textValue`; an `overflow*` wrapper around `TableView`/`ListView`/`CardView`/`TreeView`/`Menu`/`ListBox`; hand-rolled empty/spinner/bulk-action UI replacing the built-ins.
+- **Severity:** High for missing `id` / `textValue` (breaks selection, keyboard nav, screen readers); Medium for the rest.
 
 ### Don't reinvent Card / CardView
 - **Rule:** For grids of objects/files/products/people, use `CardView` with a variant (`AssetCard`, `UserCard`, `ProductCard`) or `Card` composed from `CardPreview`/`Content`/`Text`/`Footer`.

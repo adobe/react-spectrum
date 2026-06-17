@@ -14,5 +14,5 @@
 
 ### No deprecated props
 - **Rule:** Avoid props marked deprecated in the current S2 docs.
-- **Detect:** cross-check the props in use against the component docs (via the `react-spectrum-s2` skill).
+- **Detect:** cross-check the props in use against the component docs in the `react-spectrum-s2` skill (`references/components/`).
 - **Severity:** Medium.

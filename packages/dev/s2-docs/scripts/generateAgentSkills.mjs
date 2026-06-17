@@ -29,10 +29,6 @@ const MDX_PAGES_DIR = path.join(REPO_ROOT, 'packages/dev/s2-docs/pages');
 const MARKDOWN_DOCS_SCRIPT = path.join(__dirname, 'generateMarkdownDocs.mjs');
 const MIGRATION_REFS_DIR = path.join(REPO_ROOT, 'packages/dev/s2-docs/migration-references');
 const AUDIT_SKILL_SOURCE_DIR = path.join(REPO_ROOT, 'packages/dev/s2-docs/skills/spectrum-audit');
-const RSP_S2_SKILL_SOURCE_DIR = path.join(
-  REPO_ROOT,
-  'packages/dev/s2-docs/skills/react-spectrum-s2'
-);
 const WELL_KNOWN_DIR = '.well-known';
 const WELL_KNOWN_SKILLS_DIR = 'skills';
 
@@ -704,10 +700,11 @@ Run these phases in order.
 - Identify the project — or, in a monorepo, the specific package — to audit. Audit the package, not the workspace root.
 - Detect the package manager from the lockfile, the bundler (Vite / webpack / Next.js / Parcel / Rollup / ESBuild), and read \`package.json\` dependencies.
 - Confirm \`@react-spectrum/s2\` is installed. Establish the source globs to scan (e.g. \`src/**/*.{tsx,jsx,ts,js}\`).
+- Check whether the \`react-spectrum-s2\` skill is available (listed among the agent's installed skills, or present under a local skills directory such as \`.cursor/skills/\` or \`.agents/skills/\`). Record whether it was found — the report template uses this.
 
 ### Phase 1 — Run the checks
 
-Work through each check file in \`references/checks/\`, in order. For every violation, record a finding: \`{file:line, rule, severity, category, fix}\`. Cite only line numbers you actually read or grepped — never invent locations.
+Work through each check file in \`references/checks/\`, in order. For every violation, record a finding: \`{file:line, rule, severity, category, fix}\`. Cite only line numbers you actually read or grepped — never invent locations. Record **one finding per distinct root cause** at a \`file:line\` — if multiple check files cover the same issue (e.g. a missing collection \`aria-label\` or a third-party design system), assign it to the most specific check and do not duplicate it across categories.
 
 - [01 — Setup & configuration](references/checks/01-setup-config.md)
 - [02 — Component usage](references/checks/02-component-usage.md)
@@ -716,7 +713,7 @@ Work through each check file in \`references/checks/\`, in order. For every viol
 - [05 — Versioning & maintenance](references/checks/05-versioning.md)
 - [06 — Testing](references/checks/06-testing.md)
 
-The canonical rules behind these checks live in [Implementation guidance](references/docs-implementation-guidance.md) and [Getting started](references/docs-getting-started.md). When you need a component's API or the canonical component list to judge a finding, use the \`react-spectrum-s2\` skill if it is installed.
+The canonical rules behind these checks live in the \`react-spectrum-s2\` skill — read its \`SKILL.md\` (implementation guidance) and \`references/guides/getting-started.md\`, \`references/guides/component-decision-tree.md\`, and \`references/components/\` as needed. If that skill is not installed, proceed using the check files alone, but note the limitation in the report (see Phase 3).
 
 ### Phase 2 — Score
 
@@ -724,13 +721,18 @@ Apply the [scoring rubric](references/scoring-rubric.md) to the recorded finding
 
 ### Phase 3 — Report
 
-Write \`SPECTRUM-AUDIT.md\` to the audited project following the [report template](references/report-template.md): headline score, grade, and severity counts; a summary; scores by category; findings grouped by severity (each with a clickable \`file:line\` and a link to its check file); prioritized action items; and what looks good.
+Write \`SPECTRUM-AUDIT.md\` to the audited project following the [report template](references/report-template.md): headline score, grade, and severity counts; a summary; scores by category; findings grouped by severity (each with a clickable \`file:line\` and the check name that defines its rule); prioritized action items; what looks good; and — if \`react-spectrum-s2\` was not detected in Phase 0 — a recommendation to install it.
 
 ### Phase 4 — Hand off
 
 This skill does not edit code. Recommend:
 
-- The \`react-spectrum-s2\` skill to implement the fixes.
+- The \`react-spectrum-s2\` skill to implement the fixes. If it is not installed:
+
+  \`\`\`bash
+  npx skills add https://react-spectrum.adobe.com --skill react-spectrum-s2
+  \`\`\`
+
 - The \`migrate-react-spectrum-v3-to-s2\` skill if Spectrum 1 packages (\`@adobe/react-spectrum\`, \`@react-spectrum/*\`, \`@spectrum-icons/*\`) are present.
 `.trimEnd() + '\n'
   );
@@ -894,7 +896,7 @@ function writeMigrationReferences(skillDir, sourceDir) {
   ]);
 }
 
-function writeAuditReferences(skillDir, sourceDir) {
+function writeAuditReferences(skillDir) {
   const refsDir = path.join(skillDir, 'references');
   fs.mkdirSync(refsDir, {recursive: true});
 
@@ -912,32 +914,6 @@ function writeAuditReferences(skillDir, sourceDir) {
   for (const file of ['scoring-rubric.md', 'report-template.md']) {
     fs.copyFileSync(path.join(AUDIT_SKILL_SOURCE_DIR, file), path.join(refsDir, file));
   }
-
-  // Reuse the generated getting-started doc as the canonical setup reference.
-  copyFocusedDocs(sourceDir, skillDir, [['getting-started.md', 'docs-getting-started.md']]);
-
-  // Reuse the canonical S2 implementation guidance and component decision tree (single source of
-  // truth — don't restate the rules in the audit). Resolve the {{...}} doc-link tokens to the
-  // co-generated react-spectrum-s2 skill's references, which share this skill's parent directory.
-  const guidanceReplacements = {
-    '{{guidesBase}}': '../react-spectrum-s2/references/guides/',
-    '{{componentsBase}}': '../react-spectrum-s2/references/components/',
-    '{{testingBase}}': '../react-spectrum-s2/references/testing/'
-  };
-  fs.writeFileSync(
-    path.join(refsDir, 'docs-implementation-guidance.md'),
-    renderCustomMarkdown(
-      path.join(RSP_S2_SKILL_SOURCE_DIR, 'implementation-guidance.md'),
-      guidanceReplacements
-    ) + '\n'
-  );
-  fs.writeFileSync(
-    path.join(refsDir, 'docs-component-decision-tree.md'),
-    renderCustomMarkdown(
-      path.join(RSP_S2_SKILL_SOURCE_DIR, 'component-decision-tree.md'),
-      guidanceReplacements
-    ) + '\n'
-  );
 }
 
 function collectSkillFiles(skillDir) {
@@ -1039,7 +1015,7 @@ function generateSkill(skillConfig, wellKnownRoot) {
     fs.writeFileSync(path.join(skillDir, 'SKILL.md'), generateAuditSkillMd(skillConfig));
     console.log(`Generated ${path.relative(REPO_ROOT, path.join(skillDir, 'SKILL.md'))}`);
 
-    writeAuditReferences(skillDir, skillConfig.sourceDir);
+    writeAuditReferences(skillDir);
     console.log(
       `Copied audit references to ${path.relative(REPO_ROOT, path.join(skillDir, 'references'))}`
     );

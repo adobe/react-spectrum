@@ -1,6 +1,6 @@
 # Check 04 — Accessibility & correctness
 
-Catches accessibility regressions and slot / Provider misuse that S2 otherwise handles for you. Canonical rules: `../docs-implementation-guidance.md` (Buttons with text and icon, Typography, Form fields, Provider scope).
+Catches accessibility regressions and slot / Provider misuse that S2 otherwise handles for you. Canonical rules: `react-spectrum-s2` skill → `SKILL.md` (Buttons with text and icon, Typography, Form fields, Provider scope).
 
 ## Checks
 
