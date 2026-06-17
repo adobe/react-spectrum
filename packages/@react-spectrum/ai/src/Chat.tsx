@@ -92,7 +92,13 @@ const ThreadScrollButtonContext = createContext<ThreadScrollButtonContextValue>(
 
 // TODO: make this more RAC like (aka default class name and other RAC prop)
 export interface ChatProps {
+  /**
+   * Spectrum-defined styles, returned by the `style()` macro.
+   */
   styles?: StyleString;
+  /**
+   * Children of the chat, such as Thread, PromptField, and ThreadScrollButton.
+   */
   children?: ReactNode;
 }
 
@@ -200,6 +206,9 @@ export interface ThreadProps<T extends object> extends Pick<
   GridListProps<T>,
   'items' | 'children' | 'UNSTABLE_focusOnEntry' | 'aria-label' | 'aria-labelledby'
 > {
+  /**
+   * Spectrum-defined styles, returned by the `style()` macro.
+   */
   styles?: StyleString;
 }
 
@@ -320,6 +329,9 @@ const threadItemBase = style({
 });
 
 export interface ThreadItemProps extends Pick<GridListItemProps, 'children' | 'textValue'> {
+  /**
+   * Spectrum-defined styles, returned by the `style()` macro.
+   */
   styles?: StyleString;
   /** Whether or not the item's content is currently being streamed in. */
   isStreaming?: boolean;

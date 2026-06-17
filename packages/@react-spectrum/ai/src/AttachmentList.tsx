@@ -145,7 +145,9 @@ export interface AttachmentListProps<T>
       | keyof GlobalDOMAttributes
     >,
     Pick<TagListProps<T>, 'items' | 'children' | 'dependencies'> {
-  /** Spectrum-defined styles, returned by the `style()` macro. */
+  /**
+   * Spectrum-defined styles, returned by the `style()` macro.
+   */
   styles?: StyleString;
 }
 
@@ -179,10 +181,13 @@ export interface AttachmentProps
     Omit<CardProps, 'styles' | 'UNSAFE_className' | 'UNSAFE_style'>,
     AriaLabelingProps,
     Pick<TagProps, 'id' | 'textValue' | 'render'> {
-  styles?: StyleString;
   /** The children of the Attachment. */
   children: ReactNode | ((renderProps: AttachmentRenderProps) => ReactNode);
   uploadProgress?: number;
+  /**
+   * Spectrum-defined styles, returned by the `style()` macro.
+   */
+  styles?: StyleString;
 }
 
 const tagStyles = style({

@@ -321,6 +321,9 @@ export interface ResponseStatusPanelProps
     DOMProps,
     AriaLabelingProps {
   children: React.ReactNode;
+  /**
+   * Spectrum-defined styles, returned by the `style()` macro.
+   */
   styles?: StyleString;
 }
 
