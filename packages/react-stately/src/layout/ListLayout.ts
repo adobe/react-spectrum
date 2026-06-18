@@ -528,7 +528,7 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
     let nodes: LayoutNode[] = new Array(itemNodes.length);
     let currentBottom = contentHeight - this.padding;
 
-    for (let i = itemNodes.length - 1; i >= 0; i--) {
+    for (let i = 0; i < itemNodes.length; i++) {
       let node = itemNodes[i];
       let y = currentBottom - itemHeights[i];
       let cached = this.layoutNodes.get(node.key);
@@ -561,8 +561,8 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
     }
 
     if (loaderCollectionNode) {
-      // Build the loader at a placeholder y=0, then position it above the first item using
-      // currentBottom (which ends just above item[0] after the loop above).
+      // Build the loader at a placeholder y=0, then position it above the oldest item using
+      // currentBottom (which ends just above item[N-1], the oldest/topmost item, after the loop above).
       let loaderNode = this.buildNode(loaderCollectionNode, this.padding, 0);
       loaderNode.layoutInfo.rect.y = currentBottom - loaderNode.layoutInfo.rect.height;
       loaderNode.layoutInfo.parentKey = null;
@@ -1074,15 +1074,15 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
       let wasNearBottom = distanceFromEnd <= this.scrollEndThreshold;
       let contentHeightDelta = this.contentSize.height - previousContentHeight;
 
-      // Older history was inserted at the start of the collection (e.g. infinite scroll up).
-      // Shift scroll down by the height added so the same messages stay on screen.
-      // This runs before the near-bottom check so a slight scroll-up still preserves position
-      // even when within scrollEndThreshold of the bottom.
+      // Older history was appended at the end of the collection (Thread's internal reversal
+      // maps a user-array prepend → collection append). Shift scroll down by the added height
+      // so the same messages stay on screen. This runs before the near-bottom check so a slight
+      // scroll-up still preserves position even when within scrollEndThreshold of the bottom.
       if (
         previousCollection &&
         this.virtualizer!.collection !== previousCollection &&
         contentHeightDelta !== 0 &&
-        this.didPrependItems(previousCollection, this.virtualizer!.collection)
+        this.didAppendItems(previousCollection, this.virtualizer!.collection)
       ) {
         nextVisibleRect = new Rect(
           previousVisibleRect.x,
@@ -1115,10 +1115,11 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
     }
   }
 
-  // Best-effort heuristic for chat/history lists: this only treats an update as a prepend
-  // when nextCollection is exactly `newPrefix + previousCollection` with stable key order.
+  // Best-effort heuristic for chat/history lists: this only treats an update as a history load
+  // (append at the collection end, which corresponds to a prepend in the user's natural-order array)
+  // when nextCollection is exactly `previousCollection + newSuffix` with stable key order.
   // It intentionally does not handle middle insertions, re-keying, removals, or arbitrary reordering.
-  private didPrependItems(
+  private didAppendItems(
     previousCollection: Collection<Node<T>>,
     nextCollection: Collection<Node<T>>
   ): boolean {
@@ -1128,15 +1129,9 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
       return false;
     }
 
-    let offset = nextSize - prevSize;
     let nextIter = nextCollection.getKeys()[Symbol.iterator]();
 
-    // Skip the newly prepended keys.
-    for (let i = 0; i < offset; i++) {
-      nextIter.next();
-    }
-
-    // The remaining next keys must match all previous keys.
+    // The first prevSize keys of nextCollection must exactly match previousCollection.
     for (let prevKey of previousCollection.getKeys()) {
       let {value: nextKey, done} = nextIter.next();
       if (done || prevKey !== nextKey) {

@@ -20,6 +20,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useRef,
   useState
 } from 'react';
@@ -221,6 +222,7 @@ export interface ThreadProps<T extends object> extends Pick<
    * @default 100
    */
   scrollEndThreshold?: number;
+  anchorTo?: 'end';
 }
 
 export function Thread<T extends object>(props: ThreadProps<T>) {
@@ -229,10 +231,13 @@ export function Thread<T extends object>(props: ThreadProps<T>) {
     children,
     styles,
     UNSTABLE_focusOnEntry,
+    anchorTo,
     scrollEndThreshold = 100,
     'aria-label': ariaLabel,
     'aria-labelledby': ariaLabelledby
   } = props;
+
+  let reversedItems = useMemo(() => (items != null ? [...items].reverse() : undefined), [items]);
 
   let {setIsNearBottom, setScrollElement} = useContext(InternalChatContext);
   let isNearBottomRef = useRef(true);
@@ -263,14 +268,15 @@ export function Thread<T extends object>(props: ThreadProps<T>) {
       disallowTypeAhead
       onScroll={handleScroll}
       keyboardNavigationBehavior="tab"
-      UNSTABLE_focusOnEntry={UNSTABLE_focusOnEntry}
-      items={items}
+      UNSTABLE_focusOnEntry={UNSTABLE_focusOnEntry ?? 'first'}
+      items={reversedItems}
       aria-label={ariaLabel}
       aria-labelledby={ariaLabelledby}
       // TODO: for now we enforce this, but to be configurable?
       style={{
         display: 'flex',
         boxSizing: 'border-box',
+        flexDirection: 'column-reverse',
         minWidth: 0
       }}
       className={styles}>
@@ -278,20 +284,41 @@ export function Thread<T extends object>(props: ThreadProps<T>) {
     </GridList>
   );
 
-  return (
-    <Virtualizer
-      layout={ListLayout}
-      layoutOptions={{
-        estimatedRowHeight: 100,
-        padding: 4,
-        gap: 8,
-        anchorTo: 'end',
-        scrollEndThreshold: scrollEndThreshold
-      }}
-      shouldObserveItemSize>
-      {gridList}
-    </Virtualizer>
-  );
+  if (anchorTo === 'end') {
+    return (
+      <Virtualizer
+        layout={ListLayout}
+        layoutOptions={{
+          estimatedRowHeight: 100,
+          padding: 4,
+          gap: 8,
+          anchorTo: 'end',
+          scrollEndThreshold: scrollEndThreshold
+        }}
+        shouldObserveItemSize>
+        <GridList
+          ref={callbackRef}
+          disallowTypeAhead
+          onScroll={handleScroll}
+          keyboardNavigationBehavior="tab"
+          UNSTABLE_focusOnEntry={UNSTABLE_focusOnEntry ?? 'first'}
+          items={reversedItems}
+          aria-label={ariaLabel}
+          aria-labelledby={ariaLabelledby}
+          // TODO: for now we enforce this, but to be configurable?
+          style={{
+            display: 'flex',
+            boxSizing: 'border-box',
+            minWidth: 0
+          }}
+          className={styles}>
+          {children}
+        </GridList>
+      </Virtualizer>
+    );
+  }
+
+  return gridList;
 }
 
 export interface ThreadScrollButtonProps {
