@@ -41,7 +41,6 @@ import type {Meta} from '@storybook/react';
 import {ReactNode, useRef, useState} from 'react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Text} from '@react-spectrum/s2/Text';
-import {Virtualizer} from 'react-aria-components/Virtualizer';
 
 const meta: Meta<typeof Chat> = {
   component: Chat,
@@ -451,8 +450,7 @@ export function StreamingChat() {
             </ThreadScrollButton>
           </div>
           <Thread
-            items={[...messages]}
-            anchorTo="end"
+            items={messages}
             UNSTABLE_focusOnEntry="last"
             aria-label="Chat thread"
             styles={style({

@@ -204,6 +204,7 @@ export const Chat = /*#__PURE__*/ (forwardRef as forwardRefType)(function Chat(
   );
 });
 
+// TODO: do we want UNSTABLE_focusOnEntry on ThreadProps or do we just want to set it on Thread for users so they don't have to do it themselves?
 export interface ThreadProps<T extends object> extends Pick<
   GridListProps<T>,
   'items' | 'children' | 'UNSTABLE_focusOnEntry' | 'aria-label' | 'aria-labelledby'
@@ -212,7 +213,14 @@ export interface ThreadProps<T extends object> extends Pick<
    * Spectrum-defined styles, returned by the `style()` macro.
    */
   styles?: StyleString;
-  anchorTo?: 'end';
+  /**
+   * The maximum distance in px from the bottom of the content for the
+   * viewport to be considered "near the end". While near the end, appended content and streaming
+   * size changes will keep the viewport pinned to the latest output.
+   *
+   * @default 100
+   */
+  scrollEndThreshold?: number;
 }
 
 export function Thread<T extends object>(props: ThreadProps<T>) {
@@ -221,7 +229,7 @@ export function Thread<T extends object>(props: ThreadProps<T>) {
     children,
     styles,
     UNSTABLE_focusOnEntry,
-    anchorTo = 'end',
+    scrollEndThreshold = 100,
     'aria-label': ariaLabel,
     'aria-labelledby': ariaLabelledby
   } = props;
@@ -244,10 +252,10 @@ export function Thread<T extends object>(props: ThreadProps<T>) {
       return;
     }
 
-    let nearBottom = el.scrollTop >= el.scrollHeight - el.clientHeight - 100;
+    let nearBottom = el.scrollTop >= el.scrollHeight - el.clientHeight - scrollEndThreshold;
     isNearBottomRef.current = nearBottom;
     setIsNearBottom(nearBottom);
-  }, [setIsNearBottom]);
+  }, [setIsNearBottom, scrollEndThreshold]);
 
   let gridList = (
     <GridList
@@ -270,27 +278,20 @@ export function Thread<T extends object>(props: ThreadProps<T>) {
     </GridList>
   );
 
-  if (anchorTo === 'end') {
-    // ListLayout with anchorTo="end" positions items from the bottom up and adjusts the
-    // scroll offset automatically as content grows (e.g. during streaming), so no manual
-    // scroll-on-append logic is needed here.
-    return (
-      <Virtualizer
-        layout={ListLayout}
-        layoutOptions={{
-          estimatedRowHeight: 100,
-          padding: 4,
-          gap: 8,
-          anchorTo: 'end',
-          scrollEndThreshold: 100
-        }}
-        shouldObserveItemSize>
-        {gridList}
-      </Virtualizer>
-    );
-  }
-
-  return gridList;
+  return (
+    <Virtualizer
+      layout={ListLayout}
+      layoutOptions={{
+        estimatedRowHeight: 100,
+        padding: 4,
+        gap: 8,
+        anchorTo: 'end',
+        scrollEndThreshold: scrollEndThreshold
+      }}
+      shouldObserveItemSize>
+      {gridList}
+    </Virtualizer>
+  );
 }
 
 export interface ThreadScrollButtonProps {
