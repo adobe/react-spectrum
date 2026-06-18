@@ -174,7 +174,9 @@ function RedBox({box}: {box: MarginBox}) {
           left: box.left + box.width + 6,
           top: box.top,
           font: '11px/1.3 monospace',
-          whiteSpace: 'nowrap'
+          whiteSpace: 'nowrap',
+          paddingLeft: '4px',
+          paddingRight: '4px'
         }}
         className={style({backgroundColor: 'red-700', color: 'black'})}>
         <div>
@@ -214,7 +216,8 @@ function BlueLine({box}: {box: MarginBox}) {
           font: '10px/1.3 monospace',
           whiteSpace: 'nowrap',
           textAlign: 'right',
-          paddingX: '4px'
+          paddingLeft: '4px',
+          paddingRight: '4px'
         }}
         className={style({backgroundColor: 'blue-700', color: 'black'})}>
         <div>
