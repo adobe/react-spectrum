@@ -10,28 +10,28 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMAttributes, FocusableElement, Key, RefObject} from '@react-types/shared';
-import {focusSafely} from '../interactions/focusSafely';
+import { DOMAttributes, FocusableElement, Key, RefObject } from '@react-types/shared';
+import { focusSafely } from '../interactions/focusSafely';
 import {
   getActiveElement,
   getEventTarget,
   isFocusWithin,
   nodeContains
 } from '../utils/shadowdom/DOMFunctions';
-import {getFocusableTreeWalker} from '../focus/FocusScope';
-import {getScrollParent} from '../utils/getScrollParent';
+import { getFocusableTreeWalker } from '../focus/FocusScope';
+import { getScrollParent } from '../utils/getScrollParent';
 import {
   IGridCollection as GridCollection,
   GridNode
 } from 'react-stately/private/grid/GridCollection';
-import {gridMap} from './utils';
-import {GridState} from 'react-stately/private/grid/useGridState';
-import {isFocusVisible} from '../interactions/useFocusVisible';
-import {mergeProps} from '../utils/mergeProps';
-import {KeyboardEvent as ReactKeyboardEvent, useRef} from 'react';
-import {scrollIntoViewport} from '../utils/scrollIntoView';
-import {useLocale} from '../i18n/I18nProvider';
-import {useSelectableItem} from '../selection/useSelectableItem';
+import { gridMap } from './utils';
+import { GridState } from 'react-stately/private/grid/useGridState';
+import { isFocusVisible } from '../interactions/useFocusVisible';
+import { mergeProps } from '../utils/mergeProps';
+import { KeyboardEvent as ReactKeyboardEvent, useRef } from 'react';
+import { scrollIntoViewport } from '../utils/scrollIntoView';
+import { useLocale } from '../i18n/I18nProvider';
+import { useSelectableItem } from '../selection/useSelectableItem';
 
 export interface GridCellProps {
   /**
@@ -77,12 +77,12 @@ export function useGridCell<T, C extends GridCollection<T>>(
   state: GridState<T, C>,
   ref: RefObject<FocusableElement | null>
 ): GridCellAria {
-  let {node, isVirtualized, focusMode = 'child', shouldSelectOnPressUp, onAction} = props;
+  let { node, isVirtualized, focusMode = 'child', shouldSelectOnPressUp, onAction } = props;
 
-  let {direction} = useLocale();
+  let { direction } = useLocale();
   let {
     keyboardDelegate,
-    actions: {onCellAction}
+    actions: { onCellAction }
   } = gridMap.get(state)!;
 
   // We need to track the key of the item at the time it was last focused so that we force
@@ -119,7 +119,7 @@ export function useGridCell<T, C extends GridCollection<T>>(
     }
   };
 
-  let {itemProps, isPressed} = useSelectableItem({
+  let { itemProps, isPressed } = useSelectableItem({
     selectionManager: state.selectionManager,
     key: node.key,
     ref,
@@ -161,7 +161,7 @@ export function useGridCell<T, C extends GridCollection<T>>(
         e.stopPropagation();
         if (focusable) {
           focusSafely(focusable);
-          scrollIntoViewport(focusable, {containingElement: getScrollParent(ref.current)});
+          scrollIntoViewport(focusable, { containingElement: getScrollParent(ref.current) });
         } else {
           // If there is no next focusable child, then move to the next cell to the left of this one.
           // This will be handled by useSelectableCollection. However, if there is no cell to the left
@@ -181,14 +181,14 @@ export function useGridCell<T, C extends GridCollection<T>>(
 
           if (focusMode === 'cell' && direction === 'rtl') {
             focusSafely(ref.current);
-            scrollIntoViewport(ref.current, {containingElement: getScrollParent(ref.current)});
+            scrollIntoViewport(ref.current, { containingElement: getScrollParent(ref.current) });
           } else {
             walker.currentNode = ref.current;
             focusable =
               direction === 'rtl' ? (walker.firstChild() as FocusableElement) : last(walker);
             if (focusable) {
               focusSafely(focusable);
-              scrollIntoViewport(focusable, {containingElement: getScrollParent(ref.current)});
+              scrollIntoViewport(focusable, { containingElement: getScrollParent(ref.current) });
             }
           }
         }
@@ -208,7 +208,7 @@ export function useGridCell<T, C extends GridCollection<T>>(
         e.stopPropagation();
         if (focusable) {
           focusSafely(focusable);
-          scrollIntoViewport(focusable, {containingElement: getScrollParent(ref.current)});
+          scrollIntoViewport(focusable, { containingElement: getScrollParent(ref.current) });
         } else {
           let next = keyboardDelegate.getKeyRightOf?.(node.key);
           if (next !== node.key) {
@@ -223,14 +223,14 @@ export function useGridCell<T, C extends GridCollection<T>>(
 
           if (focusMode === 'cell' && direction === 'ltr') {
             focusSafely(ref.current);
-            scrollIntoViewport(ref.current, {containingElement: getScrollParent(ref.current)});
+            scrollIntoViewport(ref.current, { containingElement: getScrollParent(ref.current) });
           } else {
             walker.currentNode = ref.current;
             focusable =
               direction === 'rtl' ? last(walker) : (walker.firstChild() as FocusableElement);
             if (focusable) {
               focusSafely(focusable);
-              scrollIntoViewport(focusable, {containingElement: getScrollParent(ref.current)});
+              scrollIntoViewport(focusable, { containingElement: getScrollParent(ref.current) });
             }
           }
         }
@@ -254,28 +254,29 @@ export function useGridCell<T, C extends GridCollection<T>>(
 
   // Grid cells can have focusable elements inside them. In this case, focus should
   // be marshalled to that element rather than focusing the cell itself.
-  let onFocus = e => {
+  let onFocus = (e: any) => {
     keyWhenFocused.current = node.key;
+
+    // FIX: If focus is moving directly to a specific inner child element 
+    // (like our restored Open Dialog button), update the selection state 
+    // and exit early. Do not call focus(), which resets to the first child.
     if (getEventTarget(e) !== ref.current) {
-      // useSelectableItem only handles setting the focused key when
-      // the focused element is the gridcell itself. We also want to
-      // set the focused key when a child element receives focus.
-      // If focus is currently visible (e.g. the user is navigating with the keyboard),
-      // then skip this. We want to restore focus to the previously focused row/cell
-      // in that case since the table should act like a single tab stop.
       if (!isFocusVisible()) {
         state.selectionManager.setFocusedKey(node.key);
       }
       return;
     }
 
-    // If the cell itself is focused, wait a frame so that focus finishes propagatating
-    // up to the tree, and move focus to a focusable child if possible.
-    requestAnimationFrame(() => {
-      if (focusMode === 'child' && getActiveElement() === ref.current) {
-        focus();
+    if (focusMode === 'child') {
+      // Safeguard: Check if the browser's active element has already shifted 
+      // into a nested child node during this event loop tick before forcing a reset.
+      let activeElement = getActiveElement();
+      if (ref.current && isFocusWithin(ref.current) && activeElement !== ref.current) {
+        return;
       }
-    });
+
+      focus();
+    }
   };
 
   let gridCellProps: DOMAttributes = mergeProps(itemProps, {
