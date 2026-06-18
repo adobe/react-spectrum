@@ -20,6 +20,7 @@ import {Virtualizer} from './Virtualizer';
 /**
  * One-shot report produced by `update()` and consumed by `Virtualizer.relayout()`.
  * Null for all non-anchored layouts.
+ *
  * @internal
  */
 export interface PostLayoutReport {
@@ -51,6 +52,7 @@ export abstract class Layout<T extends object = Node<any>, O = any> implements L
    * Alternative: `update()` could return `PostLayoutReport | void` instead, eliminating
    * this mutable field entirely. Deferred because it requires a more visible base-class
    * signature change.
+   *
    * @internal
    */
   postLayoutReport: PostLayoutReport | null = null;
