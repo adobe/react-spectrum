@@ -167,7 +167,6 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
   protected lastCollection: Collection<Node<T>> | null;
   protected rootNodes: LayoutNode[];
   private invalidateEverything: boolean;
-  private hasInitializedScrollPosition: boolean;
   /** The rectangle containing currently valid layout infos. */
   protected validRect: Rect;
   /** The rectangle of requested layout infos so far. */
@@ -195,7 +194,6 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
     this.rootNodes = [];
     this.lastCollection = null;
     this.invalidateEverything = false;
-    this.hasInitializedScrollPosition = false;
     this.validRect = new Rect();
     this.requestedRect = new Rect();
     this.contentSize = new Size();
@@ -385,6 +383,7 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
     this.gap = options?.gap ?? this.gap;
     this.padding = options?.padding ?? this.padding;
 
+    this.postLayoutReport = null;
     this.rootNodes = this.buildCollection();
     this.adjustVisibleRectReversed(
       previousCollection,
@@ -1050,12 +1049,15 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
     // Largest scroll offset that keeps the viewport bottom aligned with content bottom.
     let maxVisibleY = Math.max(0, this.contentSize.height - previousVisibleRect.height);
 
-    // On the very first update where the container has been sized, unconditionally snap to the bottom
-    if (!this.hasInitializedScrollPosition) {
+    // On the very first update where the container has been sized, unconditionally snap to the bottom.
+    if (!invalidationContext.hasInitializedReverseAnchor) {
       if (previousVisibleRect.area === 0) {
         return;
       }
-      this.hasInitializedScrollPosition = true;
+      // Report the initialization event — virtualizer commits the flag.
+      // Set regardless of whether a viewport move is needed so the flag is
+      // always marked done when this branch is reached on a sized viewport.
+      this.postLayoutReport = {didInitializeReverseAnchor: true};
       nextVisibleRect = new Rect(
         previousVisibleRect.x,
         maxVisibleY,
@@ -1106,28 +1108,41 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
     }
 
     if (nextVisibleRect && !nextVisibleRect.equals(this.virtualizer!.visibleRect)) {
-      this.virtualizer!.delegate.setVisibleRect(nextVisibleRect);
+      this.postLayoutReport = {
+        ...(this.postLayoutReport ?? {}),
+        viewportAdjustment: nextVisibleRect
+      };
     }
   }
 
-  // Detects whether items were prepended (e.g. loading older history via infinite scroll up).
+  // Best-effort heuristic for chat/history lists: this only treats an update as a prepend
+  // when nextCollection is exactly `newPrefix + previousCollection` with stable key order.
+  // It intentionally does not handle middle insertions, re-keying, removals, or arbitrary reordering.
   private didPrependItems(
     previousCollection: Collection<Node<T>>,
     nextCollection: Collection<Node<T>>
   ): boolean {
-    let previousKeys = [...previousCollection.getKeys()];
-    let nextKeys = [...nextCollection.getKeys()];
-    if (nextKeys.length <= previousKeys.length) {
+    let prevSize = previousCollection.size;
+    let nextSize = nextCollection.size;
+    if (nextSize <= prevSize) {
       return false;
     }
 
-    let offset = nextKeys.length - previousKeys.length;
-    for (let i = 0; i < previousKeys.length; i++) {
-      if (previousKeys[i] !== nextKeys[i + offset]) {
+    let offset = nextSize - prevSize;
+    let nextIter = nextCollection.getKeys()[Symbol.iterator]();
+
+    // Skip the newly prepended keys.
+    for (let i = 0; i < offset; i++) {
+      nextIter.next();
+    }
+
+    // The remaining next keys must match all previous keys.
+    for (let prevKey of previousCollection.getKeys()) {
+      let {value: nextKey, done} = nextIter.next();
+      if (done || prevKey !== nextKey) {
         return false;
       }
     }
-
     return true;
   }
 }

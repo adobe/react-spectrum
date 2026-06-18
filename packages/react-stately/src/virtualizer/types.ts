@@ -23,6 +23,7 @@ export interface InvalidationContext<O = any> {
   layoutOptionsChanged?: boolean;
   layoutOptions?: O;
   isScrolling?: boolean;
+  hasInitializedReverseAnchor?: boolean;
 }
 
 export interface VirtualizerDelegate<T extends object, V> {

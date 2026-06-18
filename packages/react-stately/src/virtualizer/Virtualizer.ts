@@ -70,6 +70,7 @@ export class Virtualizer<T extends object, V> {
   private _isScrolling: boolean;
   private _invalidationContext: InvalidationContext;
   private _overscanManager: OverscanManager;
+  private _hasInitializedReverseAnchor: boolean;
 
   constructor(options: VirtualizerOptions<T, V>) {
     this.delegate = options.delegate;
@@ -85,6 +86,7 @@ export class Virtualizer<T extends object, V> {
     this._isScrolling = false;
     this._invalidationContext = {};
     this._overscanManager = new OverscanManager();
+    this._hasInitializedReverseAnchor = false;
   }
 
   /** Returns whether the given key, or an ancestor, is persisted. */
@@ -170,6 +172,34 @@ export class Virtualizer<T extends object, V> {
     // Update the layout
     this.layout.update(context);
     (this as Mutable<this>).contentSize = this.layout.getContentSize();
+
+    // Consume the one-shot report from layout. Clear immediately so it doesn't survive
+    // a missed read (e.g. an early return below).
+    let report = this.layout.postLayoutReport;
+    this.layout.postLayoutReport = null;
+
+    if (report?.didInitializeReverseAnchor) {
+      // Layout only reports the event; virtualizer owns the lifecycle flag.
+      // Committed before applying any viewport adjustment so the flag is set
+      // even when the snap target already matches the current scroll position.
+      this._hasInitializedReverseAnchor = true;
+    }
+    if (report?.viewportAdjustment) {
+      let visibleRect = this.visibleRect;
+      let x = Math.max(
+        0,
+        Math.min(this.contentSize.width - visibleRect.width, report.viewportAdjustment.x)
+      );
+      let y = Math.max(
+        0,
+        Math.min(this.contentSize.height - visibleRect.height, report.viewportAdjustment.y)
+      );
+      let clamped = new Rect(x, y, visibleRect.width, visibleRect.height);
+      if (!clamped.equals(visibleRect)) {
+        this.delegate.setVisibleRect(clamped);
+        return; // re-render will trigger a new relayout() → updateSubviews()
+      }
+    }
 
     // Constrain scroll position.
     // If the content changed, scroll to the top.
@@ -298,6 +328,7 @@ export class Virtualizer<T extends object, V> {
 
       opts.layout.virtualizer = this;
       mutableThis.layout = opts.layout;
+      this._hasInitializedReverseAnchor = false;
       needsLayout = true;
     }
 
@@ -370,7 +401,8 @@ export class Virtualizer<T extends object, V> {
         itemSizeChanged,
         layoutOptionsChanged,
         layoutOptions: this._invalidationContext.layoutOptions,
-        isScrolling: this._isScrolling
+        isScrolling: this._isScrolling,
+        hasInitializedReverseAnchor: this._hasInitializedReverseAnchor
       });
     } else if (needsUpdate) {
       this.updateSubviews();
