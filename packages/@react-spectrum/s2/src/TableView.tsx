@@ -772,13 +772,15 @@ export interface ColumnProps extends Omit<
  * A column within a `<Table>`.
  */
 export const Column = forwardRef(function Column(props: ColumnProps, ref: DOMRef<HTMLDivElement>) {
-  let {isQuiet} = useContext(InternalTableContext);
+  let {isQuiet, keyboardNavigationBehavior} = useContext(InternalTableContext);
   let {allowsResizing, children, align = 'start'} = props;
   let domRef = useDOMRef(ref);
   let isMenu = allowsResizing || !!props.menuItems;
 
   return (
     <RACColumn
+      // TODO: check behavior
+      focusMode={keyboardNavigationBehavior === 'tab' ? 'child' : undefined}
       {...props}
       ref={domRef}
       style={{borderInlineEndColor: 'transparent'}}
@@ -1185,7 +1187,7 @@ export const TableHeader = /*#__PURE__*/ (forwardRef as forwardRefType)(function
 ) {
   let scale = useScale();
   let {selectionBehavior, selectionMode, allowsDragging} = useTableOptions();
-  let {isQuiet, selectionStyle} = useContext(InternalTableContext);
+  let {isQuiet, selectionStyle, keyboardNavigationBehavior} = useContext(InternalTableContext);
   let domRef = useDOMRef(ref);
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
 
@@ -1217,6 +1219,8 @@ export const TableHeader = /*#__PURE__*/ (forwardRef as forwardRefType)(function
           isSticky
           width={scale === 'medium' ? 40 : 52}
           minWidth={scale === 'medium' ? 40 : 52}
+          // TODO: feels awkward/disruptive when navigating through the headers when in tab keyboard nav
+          focusMode={keyboardNavigationBehavior === 'tab' ? 'child' : undefined}
           className={selectAllCheckboxColumn({isQuiet})}>
           {({isFocusVisible}) => (
             <>
@@ -2203,7 +2207,8 @@ export const Row = /*#__PURE__*/ (forwardRef as forwardRefType)(function Row<T>(
   ref: DOMRef<HTMLDivElement>
 ) {
   let {selectionBehavior, selectionMode, allowsDragging} = useTableOptions();
-  let {selectionStyle, ...tableVisualOptions} = useContext(InternalTableContext);
+  let {selectionStyle, keyboardNavigationBehavior, ...tableVisualOptions} =
+    useContext(InternalTableContext);
   let domRef = useDOMRef(ref);
   let isInFooter = useContext(FooterContext);
 
@@ -2233,6 +2238,9 @@ export const Row = /*#__PURE__*/ (forwardRef as forwardRefType)(function Row<T>(
         <RACCell
           // @ts-ignore
           isSticky
+          // TODO: to be discussed, IMO it feels awkward to have the drag handle and checkbox auto focused in tab nav mode, especially
+          // if the user was just trying to get to a cell further in the row
+          focusMode={keyboardNavigationBehavior === 'tab' ? 'child' : undefined}
           className={dragCellStyle}>
           {({isFocusVisibleWithinRow}) =>
             !(otherProps.isDisabled && tableVisualOptions.disabledBehavior === 'all') && (
@@ -2246,8 +2254,11 @@ export const Row = /*#__PURE__*/ (forwardRef as forwardRefType)(function Row<T>(
         selectionStyle === 'checkbox' && (
           // Not sure what we want to do with this className, in Cell it currently overrides the className that would have been applied.
           // The `spread` otherProps must be after className in Cell.
-          // @ts-ignore
-          <Cell isSticky className={checkboxCellStyle}>
+          <Cell
+            isSticky
+            // @ts-ignore
+            className={checkboxCellStyle}
+            focusMode={keyboardNavigationBehavior === 'tab' ? 'child' : undefined}>
             <Checkbox slot="selection" styles={selectionCheckbox} />
           </Cell>
         )}

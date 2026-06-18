@@ -2193,6 +2193,8 @@ let comboboxEmptyState = () => {
 };
 
 export const TableWithTextfield: TableStory = args => {
+  // @ts-ignore
+  let {autoFocusChildren} = args;
   return (
     <div style={{display: 'flex', flexDirection: 'column'}}>
       <input aria-label="input before table" />
@@ -2202,7 +2204,7 @@ export const TableWithTextfield: TableStory = args => {
         keyboardNavigationBehavior="tab"
         {...args}>
         <TableHeader>
-          <Column>
+          <Column focusMode={autoFocusChildren && 'child'}>
             <MyCheckbox slot="selection" />
           </Column>
           <Column isRowHeader>Col 1</Column>
@@ -2212,33 +2214,33 @@ export const TableWithTextfield: TableStory = args => {
         </TableHeader>
         <TableBody>
           <Row>
-            <Cell>
+            <Cell focusMode={autoFocusChildren && 'child'}>
               <MyCheckbox slot="selection" />
             </Cell>
             <Cell>RAC Textfield</Cell>
-            <Cell>
+            <Cell focusMode={autoFocusChildren && 'child'}>
               <TextField aria-label="Name">
                 <Input />
               </TextField>
             </Cell>
             <Cell>Raw input</Cell>
-            <Cell>
+            <Cell focusMode={autoFocusChildren && 'child'}>
               <input aria-label="Raw text input" style={{marginLeft: 4}} />
             </Cell>
           </Row>
           <Row>
-            <Cell>
+            <Cell focusMode={autoFocusChildren && 'child'}>
               <MyCheckbox slot="selection" />
             </Cell>
             <Cell>TextField + Button</Cell>
-            <Cell>
+            <Cell focusMode={autoFocusChildren && 'child'}>
               <TextField aria-label="Search">
                 <Input />
               </TextField>
               <Button>Go</Button>
             </Cell>
             <Cell> Toolbar</Cell>
-            <Cell>
+            <Cell focusMode={autoFocusChildren && 'child'}>
               <Toolbar aria-label="Text formatting" style={{gap: 4}}>
                 <Button onPress={action('Bold press')}>Bold</Button>
                 <Button onPress={action('Italics press')}>Italic</Button>
@@ -2246,13 +2248,12 @@ export const TableWithTextfield: TableStory = args => {
               </Toolbar>
             </Cell>
           </Row>
-
           <Row>
-            <Cell>
+            <Cell focusMode={autoFocusChildren && 'child'}>
               <MyCheckbox slot="selection" />
             </Cell>
             <Cell>Menu</Cell>
-            <Cell>
+            <Cell focusMode={autoFocusChildren && 'child'}>
               <MenuTrigger>
                 <Button aria-label="Options">▾</Button>
                 <Popover>
@@ -2265,7 +2266,7 @@ export const TableWithTextfield: TableStory = args => {
               </MenuTrigger>
             </Cell>
             <Cell>RadioGroup</Cell>
-            <Cell>
+            <Cell focusMode={autoFocusChildren && 'child'}>
               <RadioGroup
                 aria-label="Radiogroup"
                 className={styles.radiogroup}
@@ -2283,11 +2284,11 @@ export const TableWithTextfield: TableStory = args => {
             </Cell>
           </Row>
           <Row>
-            <Cell>
+            <Cell focusMode={autoFocusChildren && 'child'}>
               <MyCheckbox slot="selection" />
             </Cell>
             <Cell>CheckboxGroup</Cell>
-            <Cell>
+            <Cell focusMode={autoFocusChildren && 'child'}>
               <CheckboxGroup
                 aria-label="Checkboxgroup"
                 style={{display: 'flex', flexDirection: 'row'}}>
@@ -2318,7 +2319,7 @@ export const TableWithTextfield: TableStory = args => {
               </CheckboxGroup>
             </Cell>
             <Cell>ComboBox</Cell>
-            <Cell>
+            <Cell focusMode={autoFocusChildren && 'child'}>
               <ComboBox aria-label="combobox" allowsEmptyCollection>
                 <div style={{display: 'flex'}}>
                   <Input />
@@ -2362,5 +2363,9 @@ TableWithTextfield.argTypes = {
   selectionBehavior: {
     control: 'radio',
     options: ['toggle', 'replace']
+  },
+  // @ts-ignore
+  autoFocusChildren: {
+    control: 'boolean'
   }
 };

@@ -1181,6 +1181,12 @@ export interface ColumnProps
    * `<ResizableTableContainer>`.
    */
   maxWidth?: ColumnStaticSize | null;
+  /**
+   * Whether the column header or its first focusable child element should be focused when the
+   * column header is focused. Defaults to 'child' in arrow keyboard navigation mode and 'cell' in
+   * tab keyboard navigation mode.
+   */
+  focusMode?: 'child' | 'cell';
 }
 
 class TableColumnNode extends CollectionNode<unknown> {
@@ -1212,7 +1218,7 @@ export const Column = /*#__PURE__*/ createLeafComponent(
     let state = useContext(TableStateContext)!;
     let {isVirtualized} = useContext(CollectionRendererContext);
     let {columnHeaderProps, isPressed} = useTableColumnHeader(
-      {node: column, isVirtualized},
+      {node: column, isVirtualized, focusMode: props.focusMode},
       state,
       ref
     );
@@ -2062,6 +2068,12 @@ export interface CellProps
   textValue?: string;
   /** Indicates how many columns the data cell spans. */
   colSpan?: number;
+  /**
+   * Whether the cell or its first focusable child element should be focused when the cell is
+   * focused. Defaults to 'child' in arrow keyboard navigation mode and 'cell' in tab keyboard
+   * navigation mode.
+   */
+  focusMode?: 'child' | 'cell';
 }
 
 class TableCellNode extends CollectionNode<unknown> {
@@ -2100,7 +2112,8 @@ export const Cell = /*#__PURE__*/ createLeafComponent(
       {
         node: cell,
         shouldSelectOnPressUp: !!dragState,
-        isVirtualized
+        isVirtualized,
+        focusMode: props.focusMode
       },
       state,
       ref

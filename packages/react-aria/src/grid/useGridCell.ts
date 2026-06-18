@@ -49,7 +49,8 @@ export interface GridCellProps {
   isVirtualized?: boolean;
   /**
    * Whether the cell or its first focusable child element should be focused when the grid cell is
-   * focused.
+   * focused. Defaults to 'child' in arrow keyboard navigation mode and 'cell' in
+   * tab keyboard navigation mode.
    */
   focusMode?: 'child' | 'cell';
   /** Whether selection should occur on press up instead of press down. */
@@ -83,7 +84,7 @@ export function useGridCell<T, C extends GridCollection<T>>(
   state: GridState<T, C>,
   ref: RefObject<FocusableElement | null>
 ): GridCellAria {
-  let {node, isVirtualized, focusMode = 'child', shouldSelectOnPressUp, onAction} = props;
+  let {node, isVirtualized, focusMode: focusModeProp, shouldSelectOnPressUp, onAction} = props;
 
   let {direction} = useLocale();
   let {
@@ -91,10 +92,7 @@ export function useGridCell<T, C extends GridCollection<T>>(
     actions: {onCellAction},
     keyboardNavigationBehavior
   } = gridMap.get(state)!;
-
-  if (keyboardNavigationBehavior === 'tab') {
-    focusMode = 'cell';
-  }
+  let focusMode = focusModeProp ?? (keyboardNavigationBehavior === 'tab' ? 'cell' : 'child');
 
   // We need to track the key of the item at the time it was last focused so that we force
   // focus to go to the item when the DOM node is reused for a different item in a virtualizer.
@@ -315,7 +313,17 @@ export function useGridCell<T, C extends GridCollection<T>>(
       return;
     }
 
-    // If the cell itself is focused, wait a frame so that focus finishes propagatating
+    // if focus goes back to cell from child, make sure we don't refocus the cell if we are in focusMode=child
+    // since that would be a focus trap
+    if (
+      focusMode === 'child' &&
+      e.relatedTarget &&
+      nodeContains(ref.current, e.relatedTarget as Element)
+    ) {
+      return;
+    }
+
+    // If the cell itself is focused, wait a frame so that focus finishes propagating
     // up to the tree, and move focus to a focusable child if possible.
     requestAnimationFrame(() => {
       if (focusMode === 'child' && getActiveElement() === ref.current) {

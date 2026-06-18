@@ -35,6 +35,12 @@ export interface AriaTableColumnHeaderProps<T> {
    * virtual scroller.
    */
   isVirtualized?: boolean;
+  /**
+   * Whether the column header or its first focusable child element should be focused when the
+   * column header is focused. Defaults to 'child' in arrow keyboard navigation mode and 'cell' in
+   * tab keyboard navigation mode.
+   */
+  focusMode?: 'child' | 'cell';
 }
 
 export interface TableColumnHeaderAria {
@@ -58,8 +64,10 @@ export function useTableColumnHeader<T>(
 ): TableColumnHeaderAria {
   let {node} = props;
   let allowsSorting = node.props.allowsSorting;
-  // if there are no focusable children, the column header will focus the cell
-  let {gridCellProps} = useGridCell({...props, focusMode: 'child'}, state, ref);
+  // TODO: I removed the default here so that in tab navigation will default to 'cell' rather than 'child'
+  // TBH it feels a bit disruptive to autofocus the child in tab navigation since you might just
+  // want to go through the cells but will then unexpectedly fall into a random cell and need to shift tab out
+  let {gridCellProps} = useGridCell(props, state, ref);
 
   let isSelectionCellDisabled =
     node.props.isSelectionCell && state.selectionManager.selectionMode === 'single';
