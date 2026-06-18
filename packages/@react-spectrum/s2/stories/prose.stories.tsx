@@ -33,7 +33,7 @@ export const Example = () => (
   </MarginVisualizer>
 );
 
-let componentMapping = {
+let componentMapping: Record<string, string> = {
   h1: 'font:heading-xl; margin:heading',
   h2: 'font:heading-lg; margin:heading',
   h3: 'font:heading; margin:heading',
@@ -242,7 +242,7 @@ function computeBoxes(root: HTMLElement): MarginBox[] {
     let cs = getComputedStyle(el);
     let rect = el.getBoundingClientRect();
     for (let side of ['top', 'bottom'] as const) {
-      let prop = side === 'top' ? 'margin-top' : 'margin-bottom';
+      let prop: 'margin-top' | 'margin-bottom' = side === 'top' ? 'margin-top' : 'margin-bottom';
       let size = parseFloat(cs.getPropertyValue(prop));
       if (!size || size <= 0) {
         continue;
