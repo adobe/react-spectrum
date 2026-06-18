@@ -59,6 +59,13 @@ export interface AriaGridListItemOptions {
   shouldSelectOnPressUp?: boolean;
   /** Whether this item has children, even if not loaded yet. */
   hasChildItems?: boolean;
+  /**
+   * Whether the row or its first focusable child element should be focused when the row is
+   * focused.
+   *
+   * @default 'row'
+   */
+  focusMode?: 'child' | 'row';
 }
 
 export interface GridListItemAria extends SelectableItemStates {
@@ -94,7 +101,7 @@ export function useGridListItem<T>(
   ref: RefObject<FocusableElement | null>
 ): GridListItemAria {
   // Copied from useGridCell + some modifications to make it not so grid specific
-  let {node, isVirtualized} = props;
+  let {node, isVirtualized, focusMode = 'row'} = props;
 
   // let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/gridlist');
   let {direction} = useLocale();
@@ -106,12 +113,29 @@ export function useGridListItem<T>(
   // focus to go to the item when the DOM node is reused for a different item in a virtualizer.
   let keyWhenFocused = useRef<Key | null>(null);
   let focus = () => {
+    if (ref.current === null) {
+      return;
+    }
+
+    if (focusMode === 'child') {
+      // If focus is already on a focusable child within the row, early return so we don't shift focus
+      if (isFocusWithin(ref.current) && ref.current !== getActiveElement()) {
+        return;
+      }
+
+      let treeWalker = getFocusableTreeWalker(ref.current);
+      let focusable = treeWalker.firstChild() as FocusableElement;
+      if (focusable) {
+        focusSafely(focusable);
+        return;
+      }
+    }
+
     // Don't shift focus to the row if the active element is a element within the row already
     // (e.g. clicking on a row button)
     if (
-      ref.current !== null &&
-      ((keyWhenFocused.current != null && node.key !== keyWhenFocused.current) ||
-        !isFocusWithin(ref.current))
+      (keyWhenFocused.current != null && node.key !== keyWhenFocused.current) ||
+      !isFocusWithin(ref.current)
     ) {
       focusSafely(ref.current);
     }
@@ -288,6 +312,24 @@ export function useGridListItem<T>(
       }
       return;
     }
+
+    // if focus goes back to cell from child, make sure we don't refocus the cell if we are in focusMode=child
+    // since that would be a focus trap
+    if (
+      focusMode === 'child' &&
+      e.relatedTarget &&
+      nodeContains(ref.current, e.relatedTarget as Element)
+    ) {
+      return;
+    }
+
+    // If the cell itself is focused, wait a frame so that focus finishes propagating
+    // up to the tree, and move focus to a focusable child if possible.
+    requestAnimationFrame(() => {
+      if (focusMode === 'child' && getActiveElement() === ref.current) {
+        focus();
+      }
+    });
   };
 
   let onKeyDown = (e: ReactKeyboardEvent) => {

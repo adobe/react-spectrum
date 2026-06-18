@@ -504,6 +504,11 @@ export interface GridListItemProps<T = object>
    * on the collection's `selectionBehavior` prop and the interaction modality.
    */
   onAction?: () => void;
+  /**
+   * Whether the row or its first focusable child element should be focused when the row is
+   * focused. Defaults to 'row'.
+   */
+  focusMode?: 'child' | 'row';
 }
 
 /**
@@ -522,7 +527,8 @@ export const GridListItem = /*#__PURE__*/ createLeafComponent(ItemNode, function
     {
       node: item,
       shouldSelectOnPressUp: !!dragState,
-      isVirtualized
+      isVirtualized,
+      focusMode: props.focusMode
     },
     state,
     ref

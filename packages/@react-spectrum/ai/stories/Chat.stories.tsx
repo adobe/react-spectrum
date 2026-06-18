@@ -490,6 +490,8 @@ export function StreamingChat() {
                 // (aka it would make sense to auto focus children here but not for a system message that has text and other focusable children)
                 return (
                   <ThreadItem
+                    // TODO: tentative, tbh feels awkward to me
+                    focusMode="child"
                     textValue={announcement}
                     isStreaming={msg.isStreaming}
                     shouldAnnounceOnMount>
@@ -621,7 +623,8 @@ export function VirtualizedChat() {
               let message = isPending ? 'Generating response' : 'Response generated';
 
               return (
-                <ThreadItem textValue={message}>
+                // TODO: tentative, tbh feels awkward to me
+                <ThreadItem focusMode="child" textValue={message}>
                   <ResponseStatus isLoading={isPending}>
                     <ResponseStatusTitle>{message}</ResponseStatusTitle>
                   </ResponseStatus>

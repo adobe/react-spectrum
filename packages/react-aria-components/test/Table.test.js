@@ -268,6 +268,36 @@ let TabModeTable = props => (
   </Table>
 );
 
+let TabModeFocusModeChildTable = props => (
+  <Table aria-label="Tab mode table" keyboardNavigationBehavior="tab" {...props}>
+    <TableHeader>
+      <Column isRowHeader>Name</Column>
+      <Column>Type</Column>
+      <Column>Action</Column>
+    </TableHeader>
+    <TableBody>
+      <Row id="1" textValue="Games">
+        <Cell>Games</Cell>
+        <Cell>File folder</Cell>
+        <Cell focusMode="child">
+          <button tabIndex={0} aria-label="Games action">
+            Go
+          </button>
+        </Cell>
+      </Row>
+      <Row id="2" textValue="Program Files">
+        <Cell>Program Files</Cell>
+        <Cell>File folder</Cell>
+        <Cell focusMode="child">
+          <button tabIndex={0} aria-label="Program Files action">
+            Go
+          </button>
+        </Cell>
+      </Row>
+    </TableBody>
+  </Table>
+);
+
 let DraggableTable = props => {
   let {dragAndDropHooks} = useDragAndDrop({
     getItems: keys => [...keys].map(key => ({'text/plain': key})),
@@ -3648,6 +3678,40 @@ describe('Table', () => {
       await user.click(row);
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
       expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(['1']));
+    });
+
+    describe("focusMode='child'", () => {
+      it('arrow navigating to a focusMode="child" cell focuses the child directly', async () => {
+        let {getByRole} = render(<TabModeFocusModeChildTable />);
+        await user.tab();
+        await user.keyboard('{ArrowLeft}');
+        act(() => jest.runAllTimers());
+        expect(document.activeElement).toBe(getByRole('button', {name: 'Games action'}));
+      });
+
+      // TODO: for some reason the cell containing the button doesn't get refocused when we shift tab in the test but it
+      // works in browser...
+      it.skip('Shift+Tab from a focusMode="child" child returns focus to the cell without redirecting back to child', async () => {
+        let {getByRole} = render(<TabModeFocusModeChildTable />);
+        let tableTester = testUtilUser.createTester('Table', {root: getByRole('grid')});
+        let row = tableTester.getRows()[0];
+        let cells = tableTester.getCells({element: row});
+        let actionCell = cells[cells.length - 1];
+        let button = getByRole('button', {name: 'Games action'});
+
+        await user.tab();
+        await user.keyboard('{ArrowLeft}');
+        act(() => jest.runAllTimers());
+        expect(document.activeElement).toBe(button);
+
+        await user.tab({shift: true});
+        expect(document.activeElement).toBe(actionCell);
+        act(() => {
+          actionCell.focus();
+        });
+        act(() => jest.runAllTimers());
+        expect(document.activeElement).toBe(actionCell);
+      });
     });
   });
 });

@@ -328,7 +328,7 @@ const threadItemBase = style({
   borderRadius: 'default'
 });
 
-export interface ThreadItemProps extends Pick<GridListItemProps, 'children' | 'textValue'> {
+export interface ThreadItemProps extends Pick<GridListItemProps, 'children' | 'textValue' | 'focusMode'> {
   /**
    * Spectrum-defined styles, returned by the `style()` macro.
    */
@@ -340,7 +340,7 @@ export interface ThreadItemProps extends Pick<GridListItemProps, 'children' | 't
 }
 
 export function ThreadItem(props: ThreadItemProps) {
-  let {styles, children, textValue = ' ', isStreaming, shouldAnnounceOnMount} = props;
+  let {styles, children, textValue = ' ', isStreaming, shouldAnnounceOnMount, focusMode} = props;
   let {announceItem} = useContext(InternalChatContext);
 
   // TODO: using aria-live on the gridlist item was pretty chatty and the streaming causes the text announcement
@@ -370,6 +370,7 @@ export function ThreadItem(props: ThreadItemProps) {
   return (
     <GridListItem
       textValue={textValue}
+      focusMode={focusMode}
       className={renderProps => mergeStyles(threadItemBase({...renderProps}), styles)}>
       {children}
     </GridListItem>
