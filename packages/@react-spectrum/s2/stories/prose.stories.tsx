@@ -254,12 +254,8 @@ function computeBoxes(root: HTMLElement): MarginBox[] {
         continue;
       }
       // The tags on either side of the margin gap. For a bottom margin the
-      // element sits above and its next sibling below; vice versa for top.
-      let neighbor =
-        (side === 'top'
-          ? el.previousElementSibling
-          : el.nextElementSibling
-        )?.tagName.toLowerCase() ?? '∅';
+      // element sits above and the next flow element below; vice versa for top.
+      let neighbor = adjacentTag(el, side === 'top' ? 'previous' : 'next', prose);
       let pair = side === 'top' ? `${neighbor} + ${tag}` : `${tag} + ${neighbor}`;
       entries.push({
         side,
@@ -279,6 +275,23 @@ function computeBoxes(root: HTMLElement): MarginBox[] {
   }
 
   return resolveOverlaps(entries);
+}
+
+// The tag of the element across the margin gap from `el` in the given
+// direction. Climbs to ancestors when there's no sibling (e.g. the last <p>
+// inside an <li> borders whatever follows the enclosing list), stopping at the
+// prose root.
+function adjacentTag(el: Element, direction: 'previous' | 'next', root: Element): string {
+  let current: Element | null = el;
+  while (current && current !== root) {
+    let sibling: Element | null =
+      direction === 'next' ? current.nextElementSibling : current.previousElementSibling;
+    if (sibling) {
+      return sibling.tagName.toLowerCase();
+    }
+    current = current.parentElement;
+  }
+  return '∅';
 }
 
 // Group margins that overlap (sharing both horizontal and vertical space). The
