@@ -74,7 +74,12 @@ let componentMapping: Record<string, string> = {
 interface MarginBox {
   side: 'top' | 'bottom';
   size: number;
+  // Margin value in em (its authored unit), relative to the element's font-size.
+  em: number;
   selector: string;
+  // The pair of tags the margin sits between, e.g. "p + p" or "h3 + p".
+  pair: string;
+  element: Element;
   mapping: string;
   // Document coordinates.
   left: number;
@@ -179,12 +184,9 @@ function RedBox({box}: {box: MarginBox}) {
           paddingRight: '4px'
         }}
         className={style({backgroundColor: 'red-700', color: 'black'})}>
+        <div>{box.pair}</div>
         <div>
-          {box.selector}
-          {box.mapping && <span> {box.mapping}</span>}
-        </div>
-        <div>
-          {box.side === 'top' ? 'margin-top' : 'margin-bottom'}: {box.size}px
+          {box.side === 'top' ? 'margin-top' : 'margin-bottom'}: {box.em}em
         </div>
       </div>
     </>
@@ -199,6 +201,7 @@ function BlueLine({box}: {box: MarginBox}) {
     <>
       <div
         style={{
+          display: 'none',
           position: 'absolute',
           left: x,
           top: box.top,
@@ -209,6 +212,7 @@ function BlueLine({box}: {box: MarginBox}) {
       />
       <div
         style={{
+          display: 'none',
           position: 'absolute',
           left: x - 4,
           top: box.top,
@@ -221,11 +225,11 @@ function BlueLine({box}: {box: MarginBox}) {
         }}
         className={style({backgroundColor: 'blue-700', color: 'black'})}>
         <div>
-          {box.selector}
+          {box.pair}
           {box.mapping && <span> {box.mapping}</span>}
         </div>
         <div>
-          {box.side === 'top' ? 'margin-top' : 'margin-bottom'}: {box.size}px
+          {box.side === 'top' ? 'margin-top' : 'margin-bottom'}: {box.em}em
         </div>
       </div>
     </>
@@ -241,16 +245,30 @@ function computeBoxes(root: HTMLElement): MarginBox[] {
   for (let el of prose.querySelectorAll<HTMLElement>('*')) {
     let cs = getComputedStyle(el);
     let rect = el.getBoundingClientRect();
+    let fontSize = parseFloat(cs.fontSize);
+    let tag = el.tagName.toLowerCase();
     for (let side of ['top', 'bottom'] as const) {
       let prop: 'margin-top' | 'margin-bottom' = side === 'top' ? 'margin-top' : 'margin-bottom';
       let size = parseFloat(cs.getPropertyValue(prop));
       if (!size || size <= 0) {
         continue;
       }
+      // The tags on either side of the margin gap. For a bottom margin the
+      // element sits above and its next sibling below; vice versa for top.
+      let neighbor =
+        (side === 'top'
+          ? el.previousElementSibling
+          : el.nextElementSibling
+        )?.tagName.toLowerCase() ?? '∅';
+      let pair = side === 'top' ? `${neighbor} + ${tag}` : `${tag} + ${neighbor}`;
       entries.push({
         side,
         size,
+        // em resolves against the element's own font-size.
+        em: Math.round((size / fontSize) * 1000) / 1000,
         selector: findSelector(el, prop),
+        pair,
+        element: el,
         mapping: componentMapping[el.tagName.toLowerCase()] ?? '',
         left: rect.left + scrollX,
         width: rect.width,
@@ -296,9 +314,20 @@ function resolveOverlaps(entries: Omit<MarginBox, 'type' | 'groupIndex'>[]): Mar
   }
 
   let result: MarginBox[] = [];
+  let seen = new Set<string>();
   for (let group of groups.values()) {
     // Tallest margin first wins as the red box.
     group.sort((a, b) => b.size - a.size);
+    // Only show one box per unique combination of selectors (e.g. every
+    // `.prose p` followed by `.prose hr` collapses to a single representative).
+    let key = group
+      .map(e => `${e.selector}|${e.side}`)
+      .sort()
+      .join(' >> ');
+    if (seen.has(key)) {
+      continue;
+    }
+    seen.add(key);
     group.forEach((entry, index) => {
       result.push({...entry, type: index === 0 ? 'red' : 'blue', groupIndex: index});
     });
