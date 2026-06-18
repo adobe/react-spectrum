@@ -12,7 +12,8 @@
 
 import {Key, RefObject} from '@react-types/shared';
 import {LayoutInfo, Size} from 'react-stately/useVirtualizerState';
-import {useCallback} from 'react';
+import {useCallback, useEffect} from 'react';
+import {useEffectEvent} from '../utils/useEffectEvent';
 import {useLayoutEffect} from '../utils/useLayoutEffect';
 
 interface IVirtualizer {
@@ -23,10 +24,11 @@ export interface VirtualizerItemOptions {
   layoutInfo: LayoutInfo | null;
   virtualizer: IVirtualizer;
   ref: RefObject<HTMLElement | null>;
+  shouldObserveItemSize?: boolean;
 }
 
 export function useVirtualizerItem(options: VirtualizerItemOptions): {updateSize: () => void} {
-  let {layoutInfo, virtualizer, ref} = options;
+  let {layoutInfo, virtualizer, ref, shouldObserveItemSize} = options;
   let key = layoutInfo?.key;
 
   let updateSize = useCallback(() => {
@@ -40,7 +42,38 @@ export function useVirtualizerItem(options: VirtualizerItemOptions): {updateSize
     if (layoutInfo?.estimatedSize) {
       updateSize();
     }
-  });
+  }, [layoutInfo?.estimatedSize, updateSize]);
+
+  // TODO: Consider using a MutationObserver in addition to ResizeObserver to detect
+  // when inner DOM structure changes cause an item's height to change.
+  // The current ResizeObserver only observes direct children,
+  // so mutations deeper in the tree won't trigger a remeasure, leading to stale cached heights and overlapping items.
+  let updateSizeEvent = useEffectEvent(updateSize);
+  // useResizeObserver observes one element via ref, but the wrapper height is fixed by layout
+  // and won't change when content grows. Observe direct children instead, then remeasure the
+  // wrapper in updateSize.
+  useEffect(() => {
+    if (!shouldObserveItemSize) {
+      return;
+    }
+
+    let el = ref.current;
+    if (!el || typeof ResizeObserver === 'undefined') {
+      return;
+    }
+
+    let resizeObserver = new ResizeObserver(() => {
+      updateSizeEvent();
+    });
+
+    for (let child of el.children) {
+      resizeObserver.observe(child);
+    }
+
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, [shouldObserveItemSize, ref, key]);
 
   return {updateSize};
 }
