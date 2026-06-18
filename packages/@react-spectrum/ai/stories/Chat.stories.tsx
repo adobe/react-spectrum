@@ -452,7 +452,7 @@ export function StreamingChat() {
           </div>
           <Thread
             items={[...messages]}
-            isReversed
+            anchorTo="end"
             UNSTABLE_focusOnEntry="last"
             aria-label="Chat thread"
             styles={style({

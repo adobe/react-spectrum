@@ -212,7 +212,7 @@ export interface ThreadProps<T extends object> extends Pick<
    * Spectrum-defined styles, returned by the `style()` macro.
    */
   styles?: StyleString;
-  isReversed?: boolean;
+  anchorTo?: 'end';
 }
 
 export function Thread<T extends object>(props: ThreadProps<T>) {
@@ -221,7 +221,7 @@ export function Thread<T extends object>(props: ThreadProps<T>) {
     children,
     styles,
     UNSTABLE_focusOnEntry,
-    isReversed = true,
+    anchorTo = 'end',
     'aria-label': ariaLabel,
     'aria-labelledby': ariaLabelledby
   } = props;
@@ -270,8 +270,8 @@ export function Thread<T extends object>(props: ThreadProps<T>) {
     </GridList>
   );
 
-  if (isReversed) {
-    // The ListLayout with isReversed positions items from the bottom up and adjusts the
+  if (anchorTo === 'end') {
+    // ListLayout with anchorTo="end" positions items from the bottom up and adjusts the
     // scroll offset automatically as content grows (e.g. during streaming), so no manual
     // scroll-on-append logic is needed here.
     return (
@@ -281,7 +281,7 @@ export function Thread<T extends object>(props: ThreadProps<T>) {
           estimatedRowHeight: 100,
           padding: 4,
           gap: 8,
-          isReversed: true,
+          anchorTo: 'end',
           scrollEndThreshold: 100
         }}
         shouldObserveItemSize>
