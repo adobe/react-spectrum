@@ -34,12 +34,14 @@ import {
 } from 'react-aria-components/GridList';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
+import {ListLayout} from 'react-stately/useVirtualizerState';
 import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
 import {useDOMRef} from './useDOMRef';
 import {useEnterAnimation, useExitAnimation} from 'react-aria/private/utils/animation';
 import {useFocusWithin} from 'react-aria/useFocusWithin';
 import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
+import {Virtualizer} from 'react-aria-components/Virtualizer';
 
 const scrollButtonWrapper = style({
   opacity: {
@@ -131,7 +133,7 @@ export const Chat = /*#__PURE__*/ (forwardRef as forwardRefType)(function Chat(
       },
       {once: true}
     );
-    el.scrollTo({top: 0, behavior: 'smooth'});
+    el.scrollTo({top: el.scrollHeight - el.clientHeight, behavior: 'smooth'});
   }, []);
   let [isNearBottom, setIsNearBottom] = useState(true);
 
@@ -210,6 +212,7 @@ export interface ThreadProps<T extends object> extends Pick<
    * Spectrum-defined styles, returned by the `style()` macro.
    */
   styles?: StyleString;
+  isReversed?: boolean;
 }
 
 export function Thread<T extends object>(props: ThreadProps<T>) {
@@ -218,6 +221,7 @@ export function Thread<T extends object>(props: ThreadProps<T>) {
     children,
     styles,
     UNSTABLE_focusOnEntry,
+    isReversed = true,
     'aria-label': ariaLabel,
     'aria-labelledby': ariaLabelledby
   } = props;
@@ -240,26 +244,12 @@ export function Thread<T extends object>(props: ThreadProps<T>) {
       return;
     }
 
-    // because column reversed scrollTop=0 is the bottom and the scrollTop goes negative as you move up
-    let nearBottom = el.scrollTop > -100;
+    let nearBottom = el.scrollTop >= el.scrollHeight - el.clientHeight - 100;
     isNearBottomRef.current = nearBottom;
     setIsNearBottom(nearBottom);
   }, [setIsNearBottom]);
 
-  useEffect(() => {
-    // scrolls to bottom on first render cuz we initialize isNearBottomRef to true,
-    // otherwise handles scrolling new prompts/etc into view unless you are scrolled up above
-    // 100px
-    if (isNearBottomRef.current) {
-      requestAnimationFrame(() => {
-        if (gridListRef.current) {
-          gridListRef.current.scrollTop = 0;
-        }
-      });
-    }
-  }, [items]);
-
-  return (
+  let gridList = (
     <GridList
       ref={callbackRef}
       disallowTypeAhead
@@ -272,7 +262,6 @@ export function Thread<T extends object>(props: ThreadProps<T>) {
       // TODO: for now we enforce this, but to be configurable?
       style={{
         display: 'flex',
-        flexDirection: 'column-reverse',
         boxSizing: 'border-box',
         minWidth: 0
       }}
@@ -280,6 +269,28 @@ export function Thread<T extends object>(props: ThreadProps<T>) {
       {children}
     </GridList>
   );
+
+  if (isReversed) {
+    // The ListLayout with isReversed positions items from the bottom up and adjusts the
+    // scroll offset automatically as content grows (e.g. during streaming), so no manual
+    // scroll-on-append logic is needed here.
+    return (
+      <Virtualizer
+        layout={ListLayout}
+        layoutOptions={{
+          estimatedRowHeight: 100,
+          padding: 4,
+          gap: 8,
+          isReversed: true,
+          scrollEndThreshold: 100
+        }}
+        shouldObserveItemSize>
+        {gridList}
+      </Virtualizer>
+    );
+  }
+
+  return gridList;
 }
 
 export interface ThreadScrollButtonProps {
