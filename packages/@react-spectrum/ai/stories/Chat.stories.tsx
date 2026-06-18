@@ -16,9 +16,7 @@ import {AssetCard, CardPreview} from '@react-spectrum/s2/Card';
 import {Chat} from '../src/Chat';
 import ChevronDown from '@react-spectrum/s2/icons/ChevronDown';
 import {Content} from '@react-spectrum/s2/Content';
-import {GridList} from 'react-aria-components';
 import {Image} from '@react-spectrum/s2/Image';
-import {ListLayout} from 'react-stately/useVirtualizerState';
 import {MenuItem} from '@react-spectrum/s2/Menu';
 import {
   MessageFeedback,
@@ -62,12 +60,6 @@ const meta: Meta<typeof Chat> = {
 };
 
 export default meta;
-
-let dummyResponses = [
-  "Sure! Here's a summary of the key points based on the assets you shared. The main themes revolve around brand consistency, audience engagement, and clear calls to action across all touchpoints.",
-  'Great question. Based on the context provided, I recommend focusing on the narrative arc first, then layering in supporting visuals and data to reinforce the core message.',
-  "I've analyzed the content and identified three main opportunities: improving visual hierarchy, strengthening the headline, and adding a clearer value proposition in the opening section."
-];
 
 type Message =
   | {id: number; type: 'user' | 'system'; content: string}
@@ -459,8 +451,9 @@ export function StreamingChat() {
             </ThreadScrollButton>
           </div>
           <Thread
-            items={[...messages].reverse()}
-            UNSTABLE_focusOnEntry="first"
+            items={[...messages]}
+            isReversed
+            UNSTABLE_focusOnEntry="last"
             aria-label="Chat thread"
             styles={style({
               flexGrow: 1,
@@ -554,97 +547,6 @@ export function StreamingChat() {
           </div>
         </PromptField>
       </Chat>
-    </div>
-  );
-}
-
-// Ignore this story, just here for local testing
-export function VirtualizedChat() {
-  let [messages, setMessages] = useState<Message[]>(initialResponses);
-  let nextId = useRef(initialResponses.length);
-  let lastMessage = messages.at(-1);
-  let isPending = lastMessage?.type === 'status' && lastMessage.status === 'pending';
-  function handleSend(prompt: TokenSegmentList) {
-    setMessages(prev => [
-      ...prev,
-      {id: nextId.current++, type: 'user', content: prompt.toString()},
-      {id: nextId.current++, type: 'status', status: 'pending'}
-    ]);
-    setTimeout(() => {
-      let response = dummyResponses[Math.floor(Math.random() * dummyResponses.length)];
-      setMessages(prev => [
-        ...prev.slice(0, -1),
-        {id: nextId.current++, type: 'system', content: response}
-      ]);
-    }, 1500);
-  }
-
-  return (
-    <div
-      className={style({
-        position: 'relative',
-        display: 'flex',
-        flexDirection: 'column',
-        overflow: 'hidden',
-        flexGrow: 1,
-        boxSizing: 'border-box',
-        minWidth: 0
-      })}>
-      <Virtualizer layout={ListLayout} layoutOptions={{estimatedRowHeight: 100}}>
-        <GridList
-          aria-label="Chat thread"
-          keyboardNavigationBehavior="tab"
-          UNSTABLE_focusOnEntry="last"
-          items={messages}
-          className={style({
-            height: 400,
-            paddingX: 4,
-            overflowX: 'hidden',
-            overflowY: 'auto',
-            marginBottom: 8,
-            boxSizing: 'border-box',
-            minWidth: 0,
-            width: 'full'
-          })}>
-          {msg => {
-            if (msg.type === 'user') {
-              return (
-                <ThreadItem
-                  textValue={msg.content}
-                  styles={style({borderRadius: 'lg', display: 'flex', justifyContent: 'end'})}>
-                  <UserMessage>{msg.content}</UserMessage>
-                </ThreadItem>
-              );
-            }
-            if (msg.type === 'status') {
-              let isPending = msg.status === 'pending';
-              let message = isPending ? 'Generating response' : 'Response generated';
-
-              return (
-                <ThreadItem textValue={message}>
-                  <ResponseStatus isLoading={isPending}>
-                    <ResponseStatusTitle>{message}</ResponseStatusTitle>
-                  </ResponseStatus>
-                </ThreadItem>
-              );
-            }
-            return (
-              <SystemMessage textValue={msg.content}>
-                <div role="document">
-                  <p className={style({font: 'body'})}>{msg.content}</p>
-                </div>
-                <MessageFeedback />
-              </SystemMessage>
-            );
-          }}
-        </GridList>
-      </Virtualizer>
-      <PromptField onSubmit={handleSend} isGenerating={isPending}>
-        <div className={style({display: 'flex', gap: 16, alignItems: 'center'})}>
-          <PromptTokenField />
-          <PromptFieldSubmitButton />
-        </div>
-      </PromptField>
     </div>
   );
 }
