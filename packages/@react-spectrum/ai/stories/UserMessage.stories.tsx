@@ -11,13 +11,16 @@
  */
 
 import {ActionMenu} from '@react-spectrum/s2/ActionMenu';
+import {categorizeArgTypes} from '../../s2/stories/utils';
 import {Heading} from '@react-spectrum/s2/Heading';
 import {Image} from '@react-spectrum/s2/Image';
 import {MenuItem} from '@react-spectrum/s2/Menu';
 import type {Meta, StoryObj} from '@storybook/react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Text} from '@react-spectrum/s2/Text';
-import {UserMessage} from '@react-spectrum/ai/UserMessage';
+import {UserMessage} from '@react-spectrum/ai';
+
+const events: string[] = [];
 
 const meta: Meta<typeof UserMessage> = {
   component: UserMessage,
@@ -25,6 +28,7 @@ const meta: Meta<typeof UserMessage> = {
     layout: 'centered'
   },
   argTypes: {
+    ...categorizeArgTypes('Events', events),
     children: {table: {disable: true}}
   },
   tags: ['autodocs'],

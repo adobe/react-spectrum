@@ -167,9 +167,12 @@ const ActionBarInner = forwardRef(function ActionBarInner(
   });
 
   let {keyboardProps} = useKeyboard({
-    shortcuts: {
-      Escape: () => {
+    onKeyDown(e) {
+      if (e.key === 'Escape') {
+        e.preventDefault();
         onClearSelection?.();
+      } else {
+        e.continuePropagation();
       }
     }
   });

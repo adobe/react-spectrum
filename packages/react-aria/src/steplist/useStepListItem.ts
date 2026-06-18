@@ -47,9 +47,21 @@ export function useStepListItem<T>(
 
   const isSelected = selectedKey === key;
 
+  let onKeyDown = event => {
+    const {key: eventKey} = event;
+
+    if (eventKey === 'ArrowDown' || eventKey === 'ArrowUp') {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+
+    itemProps.onKeyDown?.(event);
+  };
+
   return {
     stepProps: {
       ...itemProps,
+      onKeyDown,
       role: 'link',
       'aria-current': isSelected ? 'step' : undefined,
       'aria-disabled': isDisabled ? true : undefined,

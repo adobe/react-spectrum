@@ -112,7 +112,7 @@ export interface AriaGridListOptions<T> extends Omit<AriaGridListProps<T>, 'chil
    *
    * @private
    */
-  focusOnEntry?: 'first' | 'last';
+  UNSTABLE_focusOnEntry?: 'first' | 'last';
 }
 
 export interface GridListAria {
@@ -164,7 +164,7 @@ export function useGridList<T>(
     disallowTypeAhead,
     autoFocus: props.autoFocus,
     escapeKeyBehavior,
-    focusOnEntry: props.focusOnEntry
+    UNSTABLE_focusOnEntry: props.UNSTABLE_focusOnEntry
   });
 
   let id = useId(props.id);

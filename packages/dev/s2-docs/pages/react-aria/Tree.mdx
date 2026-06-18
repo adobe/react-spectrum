@@ -257,7 +257,7 @@ import {Tree, TreeHeader, TreeItem, TreeSection} from 'vanilla-starter/Tree';
     <TreeItem id="shared-photos" title="Shared Photos">
       <TreeItem id="shared-photo-1" title="Shared Photo 1" />
       <TreeItem id="shared-photo-2" title="Shared Photo 2" />
-    </TreeItem> 
+    </TreeItem>
   </TreeSection>
   <TreeSection>
     <TreeHeader>Documents</TreeHeader>
@@ -320,6 +320,51 @@ function Example(props) {
     </div>
   );
 }
+```
+
+## Keyboard navigation
+
+By default, Tree uses arrow key navigation to move focus into rows. Set `keyboardNavigationBehavior="tab"` to have <Keyboard>Tab</Keyboard> move focus in and out of a row.
+Use this when rows contain interactive elements such as text fields, where arrow keys and typing in the field should not trigger grid navigation or selection.
+
+```tsx render
+"use client";
+import {Tree, TreeItem, TreeItemContent} from 'vanilla-starter/Tree';
+import {TextField} from 'vanilla-starter/TextField';
+
+<Tree
+  /*- begin highlight -*/
+  keyboardNavigationBehavior="tab"
+  /*- end highlight -*/
+  selectionMode="multiple"
+  defaultExpandedKeys={['documents', 'photos']}
+  aria-label="Shared files">
+  <TreeItem id="documents" textValue="Documents">
+    <TreeItemContent>
+      <TextField aria-label="title" defaultValue="Documents" />
+    </TreeItemContent>
+    <TreeItem id="weekly" textValue="Weekly Report.pdf">
+      <TreeItemContent>
+        <TextField aria-label="title" defaultValue="Weekly Report.pdf" />
+      </TreeItemContent>
+    </TreeItem>
+    <TreeItem id="budget" textValue="Budget.xlsx">
+      <TreeItemContent>
+        <TextField aria-label="title" defaultValue="Budget.xlsx" />
+      </TreeItemContent>
+    </TreeItem>
+  </TreeItem>
+  <TreeItem id="photos">
+    <TreeItemContent>
+      <TextField aria-label="title" defaultValue="Photos" />
+    </TreeItemContent>
+    <TreeItem id="sunset" textValue="Sunset.jpg">
+      <TreeItemContent>
+        <TextField aria-label="title" defaultValue="Sunset.jpg" />
+      </TreeItemContent>
+    </TreeItem>
+  </TreeItem>
+</Tree>
 ```
 
 ## Drag and drop

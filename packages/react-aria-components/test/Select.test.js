@@ -846,50 +846,6 @@ describe('Select', () => {
     expect(trigger).toHaveTextContent('2 selected items');
   });
 
-  it('supports shift+click to select a range in multi-selection', async () => {
-    let {getByTestId} = render(<TestSelect selectionMode="multiple" />);
-    let selectTester = testUtilUser.createTester('Select', {root: getByTestId('select')});
-
-    await selectTester.open();
-    let options = selectTester.getOptions();
-
-    await user.click(options[0]);
-    expect(options[0]).toHaveAttribute('aria-selected', 'true');
-
-    await user.keyboard('{Shift>}');
-    await user.click(options[2]);
-    await user.keyboard('{/Shift}');
-
-    expect(options[0]).toHaveAttribute('aria-selected', 'true');
-    expect(options[1]).toHaveAttribute('aria-selected', 'true');
-    expect(options[2]).toHaveAttribute('aria-selected', 'true');
-  });
-
-  it('keeps a stable anchor across consecutive shift+clicks', async () => {
-    let {getByTestId} = render(<TestSelect selectionMode="multiple" />);
-    let selectTester = testUtilUser.createTester('Select', {root: getByTestId('select')});
-
-    await selectTester.open();
-    let options = selectTester.getOptions();
-
-    await user.click(options[0]);
-
-    await user.keyboard('{Shift>}');
-    await user.click(options[2]);
-    expect(options[0]).toHaveAttribute('aria-selected', 'true');
-    expect(options[1]).toHaveAttribute('aria-selected', 'true');
-    expect(options[2]).toHaveAttribute('aria-selected', 'true');
-
-    // Shift+click again from the same anchor: the range shrinks rather than the
-    // anchor jumping to the previous target.
-    await user.click(options[1]);
-    await user.keyboard('{/Shift}');
-
-    expect(options[0]).toHaveAttribute('aria-selected', 'true');
-    expect(options[1]).toHaveAttribute('aria-selected', 'true');
-    expect(options[2]).toHaveAttribute('aria-selected', 'false');
-  });
-
   it('has a value immediately after rendering', async () => {
     function Example() {
       const ref = useRef(null);

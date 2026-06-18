@@ -34,7 +34,12 @@ export function useFormValidation<T>(
 
   // This is a useLayoutEffect so that it runs before the useEffect in useFormValidationState, which commits the validation change.
   useLayoutEffect(() => {
-    if (validationBehavior === 'native' && ref?.current && !ref.current.disabled) {
+    if (
+      validationBehavior === 'native' &&
+      ref?.current &&
+      'setCustomValidity' in ref.current &&
+      !ref.current.disabled
+    ) {
       let errorMessage = state.realtimeValidation.isInvalid
         ? state.realtimeValidation.validationErrors.join(' ') || 'Invalid value.'
         : '';

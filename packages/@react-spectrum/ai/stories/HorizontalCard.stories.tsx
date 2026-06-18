@@ -10,31 +10,29 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionButton} from '@react-spectrum/s2/ActionButton';
-import {ActionMenu} from '@react-spectrum/s2/ActionMenu';
-import {Attachment as AttachmentComponent, AttachmentList} from '@react-spectrum/ai/AttachmentList';
-import {BasicHorizontalCard, CardPreview, HorizontalCard} from '@react-spectrum/ai/HorizontalCard';
-import {Card, CardProps} from '@react-spectrum/s2/Card';
-import ChevronRight from '@react-spectrum/s2/icons/ChevronRight';
+import {CardPreview, HorizontalCard, type HorizontalCardProps} from '../src/HorizontalCard';
+import {categorizeArgTypes, getActionArgs} from '../../s2/stories/utils';
 import {Content} from '@react-spectrum/s2/Content';
-import {Footer} from '@react-spectrum/s2/Footer';
 import {Image} from '@react-spectrum/s2/Image';
-import {MenuItem} from '@react-spectrum/s2/Menu';
 import type {Meta, StoryObj} from '@storybook/react';
 import {Skeleton} from '@react-spectrum/s2/Skeleton';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Text} from '@react-spectrum/s2/Text';
 
-const meta: Meta<CardProps & {isLoading?: boolean}> = {
+const events = ['onAction'];
+
+const meta: Meta<HorizontalCardProps & {isLoading?: boolean}> = {
   component: HorizontalCard,
   parameters: {
     layout: 'centered'
   },
   tags: ['autodocs'],
   args: {
-    isLoading: false
+    isLoading: false,
+    ...getActionArgs(events)
   },
   argTypes: {
+    ...categorizeArgTypes('Events', events),
     href: {table: {disable: true}},
     download: {table: {disable: true}},
     hrefLang: {table: {disable: true}},
@@ -45,7 +43,7 @@ const meta: Meta<CardProps & {isLoading?: boolean}> = {
     target: {table: {disable: true}},
     value: {table: {disable: true}},
     textValue: {table: {disable: true}},
-    onAction: {table: {disable: true}},
+    onAction: {table: {disable: true, category: 'Events'}},
     isDisabled: {table: {disable: true}},
     children: {table: {disable: true}}
   },
@@ -57,7 +55,7 @@ const meta: Meta<CardProps & {isLoading?: boolean}> = {
 
 export default meta;
 
-type Story = StoryObj<typeof Card>;
+type Story = StoryObj<typeof HorizontalCard>;
 
 export const Horizontal: Story = {
   render: args => (
@@ -109,97 +107,6 @@ export const Horizontal: Story = {
           </Text>
         </Content>
       </HorizontalCard>
-      <BasicHorizontalCard {...args} styles={style({maxWidth: 400})}>
-        <Image
-          slot="thumbnail"
-          src={new URL('../../s2/stories/assets/placeholder.png', import.meta.url).toString()}
-        />
-        <Content>
-          <Text slot="title">Card title</Text>
-          <Text slot="description">Card description.</Text>
-        </Content>
-        <Footer>
-          <ActionMenu>
-            <MenuItem>Test</MenuItem>
-          </ActionMenu>
-        </Footer>
-      </BasicHorizontalCard>
-      <BasicHorizontalCard {...args} styles={style({maxWidth: 400})}>
-        <Image
-          slot="thumbnail"
-          src={new URL('../../s2/stories/assets/placeholder.png', import.meta.url).toString()}
-        />
-        <Content>
-          <Text slot="title">Card title</Text>
-          <Text slot="description">Card description.</Text>
-        </Content>
-        <Footer>
-          <ActionButton isQuiet>
-            <ChevronRight />
-          </ActionButton>
-        </Footer>
-      </BasicHorizontalCard>
-      <BasicHorizontalCard {...args} styles={style({maxWidth: 400})}>
-        <Image
-          slot="thumbnail"
-          src={new URL('../../s2/stories/assets/placeholder.png', import.meta.url).toString()}
-        />
-        <Content>
-          <Text slot="title">Card title</Text>
-          <Text slot="description">Card description.</Text>
-        </Content>
-      </BasicHorizontalCard>
-      <BasicHorizontalCard {...args} styles={style({maxWidth: 400})}>
-        <Image
-          slot="thumbnail"
-          src={new URL('../../s2/stories/assets/placeholder.png', import.meta.url).toString()}
-        />
-        <Content>
-          <Text slot="title">Card title</Text>
-          <Text slot="description">Card description.</Text>
-        </Content>
-      </BasicHorizontalCard>
-      <BasicHorizontalCard {...args} aria-label="Demo file.pdf">
-        <Image
-          slot="thumbnail"
-          src={new URL('../../s2/stories/assets/placeholder.png', import.meta.url).toString()}
-        />
-      </BasicHorizontalCard>
     </div>
-  )
-};
-
-export const AIAttachmentList: Story = {
-  render: args => (
-    <AttachmentList {...args} styles={style({width: 500})}>
-      <AttachmentComponent aria-label="Demo file.pdf">
-        <Image
-          slot="thumbnail"
-          src={new URL('../../s2/stories/assets/placeholder.png', import.meta.url).toString()}
-        />
-      </AttachmentComponent>
-      <AttachmentComponent aria-label="Alligator.pdf">
-        <Image
-          slot="thumbnail"
-          src={new URL('../../s2/stories/assets/placeholder.png', import.meta.url).toString()}
-        />
-      </AttachmentComponent>
-      <AttachmentComponent aria-label="Rules.pdf">
-        <Image
-          slot="thumbnail"
-          src={new URL('../../s2/stories/assets/placeholder.png', import.meta.url).toString()}
-        />
-      </AttachmentComponent>
-      <AttachmentComponent aria-label="Echidna.pdf">
-        <Image
-          slot="thumbnail"
-          src={new URL('../../s2/stories/assets/placeholder.png', import.meta.url).toString()}
-        />
-        <Content>
-          <Text slot="title">Card title</Text>
-          <Text slot="description">Card description.</Text>
-        </Content>
-      </AttachmentComponent>
-    </AttachmentList>
   )
 };

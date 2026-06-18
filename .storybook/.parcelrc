@@ -3,6 +3,8 @@
   "resolvers": ["@parcel/resolver-glob", "..."],
   "transformers": {
     "packages/**/intl/**/*.json": ["parcel-transformer-intl"],
+    "starters/**/*.css": ["@parcel/transformer-css"],
+    "packages/react-aria-components/stories/styles.global.css": ["@parcel/transformer-css"],
     "raw:*": ["@parcel/transformer-raw"]
   }
 }
