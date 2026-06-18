@@ -1187,6 +1187,12 @@ export interface ColumnProps
    * tab keyboard navigation mode.
    */
   focusMode?: 'child' | 'cell';
+  /**
+   * Whether the column should support arrow key navigation even when the containing table uses tab
+   * keyboard navigation. Allows users to navigate between columns and rows with arrow keys while
+   * focus is on an interactive child element within the column header.
+   */
+  allowsArrowNavigation?: boolean;
 }
 
 class TableColumnNode extends CollectionNode<unknown> {
@@ -1218,7 +1224,12 @@ export const Column = /*#__PURE__*/ createLeafComponent(
     let state = useContext(TableStateContext)!;
     let {isVirtualized} = useContext(CollectionRendererContext);
     let {columnHeaderProps, isPressed} = useTableColumnHeader(
-      {node: column, isVirtualized, focusMode: props.focusMode},
+      {
+        node: column,
+        isVirtualized,
+        focusMode: props.focusMode,
+        allowsArrowNavigation: props.allowsArrowNavigation
+      },
       state,
       ref
     );
@@ -2074,6 +2085,12 @@ export interface CellProps
    * navigation mode.
    */
   focusMode?: 'child' | 'cell';
+  /**
+   * Whether the cell should support arrow key navigation even when the containing table uses
+   * tab keyboard navigation. Allows users to navigate between cells and rows with arrow keys while
+   * focus is on an interactive child element within the cell.
+   */
+  allowsArrowNavigation?: boolean;
 }
 
 class TableCellNode extends CollectionNode<unknown> {
@@ -2113,7 +2130,8 @@ export const Cell = /*#__PURE__*/ createLeafComponent(
         node: cell,
         shouldSelectOnPressUp: !!dragState,
         isVirtualized,
-        focusMode: props.focusMode
+        focusMode: props.focusMode,
+        allowsArrowNavigation: props.allowsArrowNavigation
       },
       state,
       ref

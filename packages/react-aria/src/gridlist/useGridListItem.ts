@@ -66,6 +66,12 @@ export interface AriaGridListItemOptions {
    * @default 'row'
    */
   focusMode?: 'child' | 'row';
+  /**
+   * Whether the row should support arrow key navigation even when the containing collection uses
+   * tab keyboard navigation. Allows users to navigate between rows with arrow keys while
+   * focus is on an interactive child element within the row.
+   */
+  allowsArrowNavigation?: boolean;
 }
 
 export interface GridListItemAria extends SelectableItemStates {
@@ -101,7 +107,7 @@ export function useGridListItem<T>(
   ref: RefObject<FocusableElement | null>
 ): GridListItemAria {
   // Copied from useGridCell + some modifications to make it not so grid specific
-  let {node, isVirtualized, focusMode = 'row'} = props;
+  let {node, isVirtualized, focusMode = 'row', allowsArrowNavigation} = props;
 
   // let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/gridlist');
   let {direction} = useLocale();
@@ -389,7 +395,10 @@ export function useGridListItem<T>(
 
   let rowProps: DOMAttributes = mergeProps(itemProps, linkProps, {
     role: 'row',
-    onKeyDownCapture: keyboardNavigationBehavior === 'arrow' ? onKeyDownCapture : undefined,
+    onKeyDownCapture:
+      keyboardNavigationBehavior === 'arrow' || allowsArrowNavigation
+        ? onKeyDownCapture
+        : undefined,
     onFocus,
     // 'aria-label': [(node.textValue || undefined), rowAnnouncement].filter(Boolean).join(', '),
     'aria-label': node['aria-label'] || node.textValue || undefined,

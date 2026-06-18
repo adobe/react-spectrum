@@ -779,8 +779,10 @@ export const Column = forwardRef(function Column(props: ColumnProps, ref: DOMRef
 
   return (
     <RACColumn
-      // TODO: check behavior
+      // will need to make sure that focusMode and allowsArrowNavigation are only both set if said cell
+      // doesn't have a textfield/interactive component that will need the arrow keys
       focusMode={keyboardNavigationBehavior === 'tab' ? 'child' : undefined}
+      allowsArrowNavigation={keyboardNavigationBehavior === 'tab' || undefined}
       {...props}
       ref={domRef}
       style={{borderInlineEndColor: 'transparent'}}
@@ -1219,8 +1221,8 @@ export const TableHeader = /*#__PURE__*/ (forwardRef as forwardRefType)(function
           isSticky
           width={scale === 'medium' ? 40 : 52}
           minWidth={scale === 'medium' ? 40 : 52}
-          // TODO: feels awkward/disruptive when navigating through the headers when in tab keyboard nav
           focusMode={keyboardNavigationBehavior === 'tab' ? 'child' : undefined}
+          allowsArrowNavigation={keyboardNavigationBehavior === 'tab' || undefined}
           className={selectAllCheckboxColumn({isQuiet})}>
           {({isFocusVisible}) => (
             <>
@@ -2238,9 +2240,8 @@ export const Row = /*#__PURE__*/ (forwardRef as forwardRefType)(function Row<T>(
         <RACCell
           // @ts-ignore
           isSticky
-          // TODO: to be discussed, IMO it feels awkward to have the drag handle and checkbox auto focused in tab nav mode, especially
-          // if the user was just trying to get to a cell further in the row
           focusMode={keyboardNavigationBehavior === 'tab' ? 'child' : undefined}
+          allowsArrowNavigation={keyboardNavigationBehavior === 'tab' || undefined}
           className={dragCellStyle}>
           {({isFocusVisibleWithinRow}) =>
             !(otherProps.isDisabled && tableVisualOptions.disabledBehavior === 'all') && (
@@ -2258,7 +2259,8 @@ export const Row = /*#__PURE__*/ (forwardRef as forwardRefType)(function Row<T>(
             isSticky
             // @ts-ignore
             className={checkboxCellStyle}
-            focusMode={keyboardNavigationBehavior === 'tab' ? 'child' : undefined}>
+            focusMode={keyboardNavigationBehavior === 'tab' ? 'child' : undefined}
+            allowsArrowNavigation={keyboardNavigationBehavior === 'tab' || undefined}>
             <Checkbox slot="selection" styles={selectionCheckbox} />
           </Cell>
         )}

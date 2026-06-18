@@ -39,6 +39,12 @@ export interface AriaTableCellProps {
    * tab keyboard navigation mode.
    */
   focusMode?: 'child' | 'cell';
+  /**
+   * Whether the cell should support arrow key navigation even when the containing table uses
+   * tab keyboard navigation.Allows users to navigate between rows and cells with arrow keys while
+   * focus is on an interactive child element within the cell.
+   */
+  allowsArrowNavigation?: boolean;
 }
 
 export interface TableCellAria {

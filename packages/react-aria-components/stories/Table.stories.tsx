@@ -2193,18 +2193,29 @@ let comboboxEmptyState = () => {
 };
 
 export const TableWithTextfield: TableStory = args => {
-  // @ts-ignore
-  let {autoFocusChildren} = args;
+  let {
+    // @ts-ignore
+    autoFocusChildren,
+    keyboardNavigationBehavior = 'tab',
+    selectionMode = 'multiple',
+    ...otherArgs
+  } = args;
+  let focusMode =
+    autoFocusChildren && keyboardNavigationBehavior === 'tab'
+      ? 'child'
+      : (undefined as 'child' | undefined);
+  let allowsArrowNavigation =
+    autoFocusChildren && keyboardNavigationBehavior === 'tab' ? true : undefined;
   return (
     <div style={{display: 'flex', flexDirection: 'column'}}>
       <input aria-label="input before table" />
       <Table
         aria-label="Table with textfield"
-        selectionMode="multiple"
-        keyboardNavigationBehavior="tab"
-        {...args}>
+        selectionMode={selectionMode}
+        keyboardNavigationBehavior={keyboardNavigationBehavior}
+        {...otherArgs}>
         <TableHeader>
-          <Column focusMode={autoFocusChildren && 'child'}>
+          <Column focusMode={focusMode} allowsArrowNavigation={allowsArrowNavigation}>
             <MyCheckbox slot="selection" />
           </Column>
           <Column isRowHeader>Col 1</Column>
@@ -2214,33 +2225,33 @@ export const TableWithTextfield: TableStory = args => {
         </TableHeader>
         <TableBody>
           <Row>
-            <Cell focusMode={autoFocusChildren && 'child'}>
+            <Cell focusMode={focusMode} allowsArrowNavigation={allowsArrowNavigation}>
               <MyCheckbox slot="selection" />
             </Cell>
             <Cell>RAC Textfield</Cell>
-            <Cell focusMode={autoFocusChildren && 'child'}>
+            <Cell focusMode={focusMode}>
               <TextField aria-label="Name">
                 <Input />
               </TextField>
             </Cell>
             <Cell>Raw input</Cell>
-            <Cell focusMode={autoFocusChildren && 'child'}>
+            <Cell focusMode={focusMode}>
               <input aria-label="Raw text input" style={{marginLeft: 4}} />
             </Cell>
           </Row>
           <Row>
-            <Cell focusMode={autoFocusChildren && 'child'}>
+            <Cell focusMode={focusMode} allowsArrowNavigation={allowsArrowNavigation}>
               <MyCheckbox slot="selection" />
             </Cell>
             <Cell>TextField + Button</Cell>
-            <Cell focusMode={autoFocusChildren && 'child'}>
+            <Cell focusMode={focusMode}>
               <TextField aria-label="Search">
                 <Input />
               </TextField>
               <Button>Go</Button>
             </Cell>
             <Cell> Toolbar</Cell>
-            <Cell focusMode={autoFocusChildren && 'child'}>
+            <Cell focusMode={focusMode}>
               <Toolbar aria-label="Text formatting" style={{gap: 4}}>
                 <Button onPress={action('Bold press')}>Bold</Button>
                 <Button onPress={action('Italics press')}>Italic</Button>
@@ -2249,11 +2260,11 @@ export const TableWithTextfield: TableStory = args => {
             </Cell>
           </Row>
           <Row>
-            <Cell focusMode={autoFocusChildren && 'child'}>
+            <Cell focusMode={focusMode} allowsArrowNavigation={allowsArrowNavigation}>
               <MyCheckbox slot="selection" />
             </Cell>
             <Cell>Menu</Cell>
-            <Cell focusMode={autoFocusChildren && 'child'}>
+            <Cell focusMode={focusMode} allowsArrowNavigation={allowsArrowNavigation}>
               <MenuTrigger>
                 <Button aria-label="Options">▾</Button>
                 <Popover>
@@ -2266,7 +2277,7 @@ export const TableWithTextfield: TableStory = args => {
               </MenuTrigger>
             </Cell>
             <Cell>RadioGroup</Cell>
-            <Cell focusMode={autoFocusChildren && 'child'}>
+            <Cell focusMode={focusMode}>
               <RadioGroup
                 aria-label="Radiogroup"
                 className={styles.radiogroup}
@@ -2284,11 +2295,11 @@ export const TableWithTextfield: TableStory = args => {
             </Cell>
           </Row>
           <Row>
-            <Cell focusMode={autoFocusChildren && 'child'}>
+            <Cell focusMode={focusMode} allowsArrowNavigation={allowsArrowNavigation}>
               <MyCheckbox slot="selection" />
             </Cell>
             <Cell>CheckboxGroup</Cell>
-            <Cell focusMode={autoFocusChildren && 'child'}>
+            <Cell focusMode={focusMode}>
               <CheckboxGroup
                 aria-label="Checkboxgroup"
                 style={{display: 'flex', flexDirection: 'row'}}>
@@ -2319,7 +2330,7 @@ export const TableWithTextfield: TableStory = args => {
               </CheckboxGroup>
             </Cell>
             <Cell>ComboBox</Cell>
-            <Cell focusMode={autoFocusChildren && 'child'}>
+            <Cell focusMode={focusMode}>
               <ComboBox aria-label="combobox" allowsEmptyCollection>
                 <div style={{display: 'flex'}}>
                   <Input />
@@ -2351,21 +2362,31 @@ export const TableWithTextfield: TableStory = args => {
   );
 };
 
-TableWithTextfield.argTypes = {
-  keyboardNavigationBehavior: {
-    control: 'radio',
-    options: ['arrow', 'tab']
+TableWithTextfield.story = {
+  args: {
+    keyboardNavigationBehavior: 'tab'
   },
-  selectionMode: {
-    control: 'radio',
-    options: ['none', 'single', 'multiple']
+  argTypes: {
+    keyboardNavigationBehavior: {
+      control: 'radio',
+      options: ['arrow', 'tab']
+    },
+    // @ts-ignore
+    autoFocusChildren: {
+      control: 'boolean'
+    },
+    selectionMode: {
+      control: 'radio',
+      options: ['none', 'single', 'multiple']
+    },
+    selectionBehavior: {
+      control: 'radio',
+      options: ['toggle', 'replace']
+    }
   },
-  selectionBehavior: {
-    control: 'radio',
-    options: ['toggle', 'replace']
-  },
-  // @ts-ignore
-  autoFocusChildren: {
-    control: 'boolean'
+  parameters: {
+    description: {
+      data: 'Note that toggling autoFocusChildren will make each cell automatically focus its children. For the selection checkboxes and menu, allowsArrowNavigation is also applied so that arrow keys can be used to move focus between cells and rows'
+    }
   }
 };

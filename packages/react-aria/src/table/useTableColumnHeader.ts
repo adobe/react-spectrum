@@ -41,6 +41,12 @@ export interface AriaTableColumnHeaderProps<T> {
    * tab keyboard navigation mode.
    */
   focusMode?: 'child' | 'cell';
+  /**
+   * Whether the column header should support arrow key navigation even when the containing table
+   * uses tab keyboard navigation. Allows users to navigate between columns with arrow keys while
+   * focus is on an interactive child element within the cell.
+   */
+  allowsArrowNavigation?: boolean;
 }
 
 export interface TableColumnHeaderAria {

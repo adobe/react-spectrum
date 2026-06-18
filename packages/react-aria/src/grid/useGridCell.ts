@@ -53,6 +53,12 @@ export interface GridCellProps {
    * tab keyboard navigation mode.
    */
   focusMode?: 'child' | 'cell';
+  /**
+   * Whether the cell should support arrow key navigation even when the containing collection uses
+   * tab keyboard navigation. Allows users to navigate between rows and cells with arrow keys while
+   * focus is on an interactive child element within the cell.
+   */
+  allowsArrowNavigation?: boolean;
   /** Whether selection should occur on press up instead of press down. */
   shouldSelectOnPressUp?: boolean;
   /** Indicates how many columns the data cell spans. */
@@ -84,7 +90,14 @@ export function useGridCell<T, C extends GridCollection<T>>(
   state: GridState<T, C>,
   ref: RefObject<FocusableElement | null>
 ): GridCellAria {
-  let {node, isVirtualized, focusMode: focusModeProp, shouldSelectOnPressUp, onAction} = props;
+  let {
+    node,
+    isVirtualized,
+    focusMode: focusModeProp,
+    allowsArrowNavigation,
+    shouldSelectOnPressUp,
+    onAction
+  } = props;
 
   let {direction} = useLocale();
   let {
@@ -334,7 +347,8 @@ export function useGridCell<T, C extends GridCollection<T>>(
 
   let gridCellProps: DOMAttributes = mergeProps(itemProps, {
     role: 'gridcell',
-    onKeyDownCapture: keyboardNavigationBehavior === 'tab' ? undefined : onKeyDownCapture,
+    onKeyDownCapture:
+      keyboardNavigationBehavior !== 'tab' || allowsArrowNavigation ? onKeyDownCapture : undefined,
     onKeyDown: keyboardNavigationBehavior === 'tab' ? onKeyDown : undefined,
     'aria-colspan': node.colSpan,
     'aria-colindex': node.colIndex != null ? node.colIndex + 1 : undefined, // aria-colindex is 1-based
