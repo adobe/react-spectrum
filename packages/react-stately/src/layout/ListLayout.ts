@@ -28,6 +28,21 @@ import {Size} from '../virtualizer/Size';
 
 export interface ListLayoutOptions {
   /**
+   * Whether to anchor vertical list content to the bottom of the viewport when there is extra
+   * available space.
+   *
+   * @default false
+   */
+  isReversed?: boolean;
+  /**
+   * When `isReversed` is true, the maximum distance in px from the bottom of the content for the
+   * viewport to be considered "near the end". While near the end, appended content and streaming
+   * size changes will keep the viewport pinned to the latest output.
+   *
+   * @default 100
+   */
+  scrollEndThreshold?: number;
+  /**
    * The primary orientation of the items. Usually this is the direction that the collection
    * scrolls.
    *
@@ -147,11 +162,14 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
   protected dropIndicatorThickness: number;
   protected gap: number;
   protected padding: number;
+  protected isReversed: boolean;
+  protected scrollEndThreshold: number;
   protected layoutNodes: Map<Key, LayoutNode>;
   protected contentSize: Size;
   protected lastCollection: Collection<Node<T>> | null;
   protected rootNodes: LayoutNode[];
   private invalidateEverything: boolean;
+  private hasInitializedScrollPosition: boolean;
   /** The rectangle containing currently valid layout infos. */
   protected validRect: Rect;
   /** The rectangle of requested layout infos so far. */
@@ -163,6 +181,8 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
    */
   constructor(options: ListLayoutOptions = {}) {
     super();
+    this.isReversed = options.isReversed ?? false;
+    this.scrollEndThreshold = options.scrollEndThreshold ?? 100;
     this.rowSize = options?.rowSize ?? options?.rowHeight ?? null;
     this.orientation = options.orientation ?? 'vertical';
     this.estimatedRowSize = options?.estimatedRowSize ?? options?.estimatedRowHeight ?? null;
@@ -177,6 +197,7 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
     this.rootNodes = [];
     this.lastCollection = null;
     this.invalidateEverything = false;
+    this.hasInitializedScrollPosition = false;
     this.validRect = new Rect();
     this.requestedRect = new Rect();
     this.contentSize = new Size();
@@ -309,6 +330,7 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
       invalidationContext.sizeChanged ||
       this.rowSize !== (options?.rowSize ?? options?.rowHeight ?? this.rowSize) ||
       this.orientation !== (options?.orientation ?? this.orientation) ||
+      this.isReversed !== (options?.isReversed ?? this.isReversed) ||
       this.headingSize !== (options?.headingSize ?? options?.headingHeight ?? this.headingSize) ||
       this.loaderSize !== (options?.loaderSize ?? options?.loaderHeight ?? this.loaderSize) ||
       this.gap !== (options?.gap ?? this.gap) ||
@@ -321,6 +343,7 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
       (newOptions?.rowSize ?? newOptions?.rowHeight) !==
         (oldOptions?.rowSize ?? oldOptions?.rowHeight) ||
       newOptions.orientation !== oldOptions.orientation ||
+      newOptions.isReversed !== oldOptions.isReversed ||
       (newOptions?.estimatedRowSize ?? newOptions?.estimatedRowHeight) !==
         (oldOptions?.estimatedRowSize ?? oldOptions?.estimatedRowHeight) ||
       (newOptions?.headingSize ?? newOptions?.headingHeight) !==
@@ -337,6 +360,9 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
 
   update(invalidationContext: InvalidationContext<O>): void {
     let collection = this.virtualizer!.collection;
+    let previousCollection = this.lastCollection;
+    let previousContentHeight = this.contentSize.height;
+    let previousVisibleRect = this.virtualizer!.visibleRect.copy();
 
     // Reset valid rect if we will have to invalidate everything.
     // Otherwise we can reuse cached layout infos outside the current visible rect.
@@ -349,6 +375,8 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
     let options = invalidationContext.layoutOptions;
     this.rowSize = options?.rowSize ?? options?.rowHeight ?? this.rowSize;
     this.orientation = options?.orientation ?? this.orientation;
+    this.isReversed = options?.isReversed ?? this.isReversed;
+    this.scrollEndThreshold = options?.scrollEndThreshold ?? this.scrollEndThreshold;
     this.estimatedRowSize =
       options?.estimatedRowSize ?? options?.estimatedRowHeight ?? this.estimatedRowSize;
     this.headingSize = options?.headingSize ?? options?.headingHeight ?? this.headingSize;
@@ -360,6 +388,12 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
     this.padding = options?.padding ?? this.padding;
 
     this.rootNodes = this.buildCollection();
+    this.adjustVisibleRectReversed(
+      previousCollection,
+      previousContentHeight,
+      previousVisibleRect,
+      invalidationContext
+    );
 
     // Remove deleted layout nodes
     if (this.lastCollection && collection !== this.lastCollection) {
@@ -379,6 +413,10 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
   }
 
   protected buildCollection(offset: number = this.padding): LayoutNode[] {
+    if (this.isReversed && this.orientation === 'vertical') {
+      return this.buildReversedCollection();
+    }
+
     let collection = this.virtualizer!.collection;
     let offsetProperty = this.orientation === 'horizontal' ? 'x' : 'y';
     let maxOffsetProperty = this.orientation === 'horizontal' ? 'maxX' : 'maxY';
@@ -445,10 +483,98 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
 
     offset = Math.max(offset - this.gap, 0);
     offset += isEmptyOrLoading ? 0 : this.padding;
+    let contentLength = offset;
     this.contentSize =
       this.orientation === 'horizontal'
         ? new Size(offset, this.virtualizer!.size.height)
-        : new Size(this.virtualizer!.size.width, offset);
+        : new Size(this.virtualizer!.size.width, contentLength);
+
+    return nodes;
+  }
+
+  private buildReversedCollection(): LayoutNode[] {
+    let collectionNodes = toArray(this.virtualizer!.collection, node => node.type !== 'content');
+    this.assertReversedCollectionSupported(collectionNodes);
+
+    // Separate the optional loader from item nodes. The loader is built after contentSize is set
+    // because buildLoader reads this.virtualizer!.contentSize.width to size its rect.
+    let itemNodes = collectionNodes.filter(node => node.type !== 'loader');
+    let loaderCollectionNode = collectionNodes.find(node => node.type === 'loader') ?? null;
+
+    // Height pass: collect item heights from the cache without calling buildNode.
+    // For measured items use their real height; for unmeasured/uncached items fall back to the
+    // estimated row height. This lets us compute all y positions before deciding which items
+    // need a full build, enabling the windowing optimization below.
+    let itemHeights = itemNodes.map(node => {
+      let cached = this.layoutNodes.get(node.key);
+      return cached
+        ? cached.layoutInfo.rect.height
+        : (this.rowSize ?? this.estimatedRowSize ?? DEFAULT_HEIGHT);
+    });
+
+    let contentLength = itemHeights.reduce(
+      (total, height, index) => total + height + (index < itemHeights.length - 1 ? this.gap : 0),
+      0
+    );
+    if (itemHeights.length > 0) {
+      contentLength += this.padding * 2;
+    }
+
+    let contentHeight = Math.max(contentLength, this.virtualizer!.size.height);
+    this.contentSize = new Size(this.virtualizer!.size.width, contentHeight);
+
+    // Bottom-up position pass: assign y to every item and build LayoutNodes.
+    // Measured items are cheaply copied from cache with an updated y.
+    // Unmeasured items only get a full buildNode call if they intersect requestedRect;
+    // items outside the visible window get a cheap estimated LayoutNode instead.
+    let width = this.virtualizer!.size.width - this.padding * 2;
+    let nodes: LayoutNode[] = new Array(itemNodes.length);
+    let currentBottom = contentHeight - this.padding;
+
+    for (let i = itemNodes.length - 1; i >= 0; i--) {
+      let node = itemNodes[i];
+      let y = currentBottom - itemHeights[i];
+      let cached = this.layoutNodes.get(node.key);
+      let layoutNode: LayoutNode;
+
+      if (cached && !cached.layoutInfo.estimatedSize) {
+        // Already measured: reuse the real height, update y only
+        let newLayoutInfo = cached.layoutInfo.copy();
+        newLayoutInfo.rect.y = y;
+        layoutNode = {layoutInfo: newLayoutInfo, validRect: new Rect(0, 0, 0, 0), children: []};
+      } else {
+        let itemRect = new Rect(this.padding, y, width, itemHeights[i]);
+        if (itemRect.intersects(this.requestedRect)) {
+          // In the visible window and unmeasured: full build so useVirtualizerItem can measure it
+          layoutNode = this.buildNode(node, this.padding, y);
+        } else {
+          // Outside the visible window and unmeasured: skip buildNode
+          let layoutInfo = new LayoutInfo(node.type, node.key, itemRect);
+          layoutInfo.estimatedSize = true;
+          layoutNode = {layoutInfo, validRect: new Rect(0, 0, 0, 0), children: [], node};
+        }
+      }
+
+      layoutNode.layoutInfo.parentKey = null;
+      layoutNode.layoutInfo.allowOverflow = true;
+      layoutNode.validRect = layoutNode.layoutInfo.rect.intersection(this.requestedRect);
+      this.layoutNodes.set(layoutNode.layoutInfo.key, layoutNode);
+      nodes[i] = layoutNode;
+      currentBottom = y - this.gap;
+    }
+
+    if (loaderCollectionNode) {
+      // Build the loader at a placeholder y=0, then position it above the first item using
+      // currentBottom (which ends just above item[0] after the loop above).
+      let loaderNode = this.buildNode(loaderCollectionNode, this.padding, 0);
+      loaderNode.layoutInfo.rect.y = currentBottom - loaderNode.layoutInfo.rect.height;
+      loaderNode.layoutInfo.parentKey = null;
+      loaderNode.layoutInfo.allowOverflow = true;
+      loaderNode.validRect = loaderNode.layoutInfo.rect.intersection(this.requestedRect);
+      this.layoutNodes.set(loaderNode.layoutInfo.key, loaderNode);
+      nodes.unshift(loaderNode);
+    }
+
     return nodes;
   }
 
@@ -520,6 +646,12 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
   }
 
   protected buildSection(node: Node<T>, x: number, y: number): LayoutNode {
+    if (this.isReversed && this.orientation === 'vertical') {
+      throw new Error(
+        'ListLayout with isReversed only supports flat root-level items and an optional root loader.'
+      );
+    }
+
     let collection = this.virtualizer!.collection;
     let width = this.virtualizer!.size.width - this.padding - x;
     let height = this.virtualizer!.size.height - this.padding - y;
@@ -576,6 +708,12 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
   }
 
   protected buildSectionHeader(node: Node<T>, x: number, y: number): LayoutNode {
+    if (this.isReversed && this.orientation === 'vertical') {
+      throw new Error(
+        'ListLayout with isReversed only supports flat root-level items and an optional root loader.'
+      );
+    }
+
     let widthProperty = this.orientation === 'horizontal' ? 'height' : 'width';
     let heightProperty = this.orientation === 'horizontal' ? 'width' : 'height';
     let width =
@@ -683,6 +821,23 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
     let offsetProperty = this.orientation === 'horizontal' ? 'x' : 'y';
     let heightProperty = this.orientation === 'horizontal' ? 'width' : 'height';
     layoutInfo.estimatedSize = false;
+
+    // buildReversedCollection recomputes all positions from scratch each pass, so the
+    // normal path's validRect/requestedRect adjustments don't apply here.
+    // Just record the new height and trigger a relayout.
+    if (this.isReversed && this.orientation === 'vertical') {
+      if (layoutInfo.rect[heightProperty] !== size[heightProperty]) {
+        let newLayoutInfo = layoutInfo.copy();
+        newLayoutInfo.rect[heightProperty] = size[heightProperty];
+        newLayoutInfo.estimatedSize = false;
+        layoutNode.layoutInfo = newLayoutInfo;
+        this.layoutNodes.set(key, layoutNode);
+        return true;
+      }
+
+      return false;
+    }
+
     if (layoutInfo.rect[heightProperty] !== size[heightProperty]) {
       // Copy layout info rather than mutating so that later caches are invalidated.
       let newLayoutInfo = layoutInfo.copy();
@@ -739,6 +894,10 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
     y: number,
     isValidDropTarget: (target: DropTarget) => boolean
   ): DropTarget | null {
+    if (this.isReversed && this.orientation === 'vertical') {
+      throw new Error('Drag and drop is not supported for ListLayout with isReversed.');
+    }
+
     x += this.virtualizer!.visibleRect.x;
     y += this.virtualizer!.visibleRect.y;
 
@@ -797,6 +956,10 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
   }
 
   getDropTargetLayoutInfo(target: ItemDropTarget): LayoutInfo {
+    if (this.isReversed && this.orientation === 'vertical') {
+      throw new Error('Drag and drop is not supported for ListLayout with isReversed.');
+    }
+
     let layoutInfo = this.getLayoutInfo(target.key)!;
     let rect: Rect;
     if (target.dropPosition === 'before') {
@@ -850,6 +1013,124 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
     }
 
     return new LayoutInfo('dropIndicator', target.key + ':' + target.dropPosition, rect);
+  }
+
+  private assertReversedCollectionSupported(nodes: Node<T>[]) {
+    for (let node of nodes) {
+      if (node.type !== 'item' && node.type !== 'loader' && node.type !== 'separator') {
+        throw new Error(
+          'ListLayout with isReversed only supports flat root-level items and an optional root loader.'
+        );
+      }
+
+      if (node.parentKey != null || node.level > 0 || node.hasChildNodes) {
+        throw new Error(
+          'ListLayout with isReversed only supports flat root-level items and an optional root loader.'
+        );
+      }
+    }
+  }
+
+  /**
+   * Keeps scroll position stable for bottom-anchored (chat-style) lists after layout changes.
+   *
+   * Normal top-anchored lists leave scrollTop unchanged and let the browser handle growth.
+   * Reversed layout recomputes item y positions from the bottom, so visibleRect must be
+   * adjusted when content height changes or the viewport will drift away from the latest output.
+   */
+  private adjustVisibleRectReversed(
+    previousCollection: Collection<Node<T>> | null,
+    previousContentHeight: number,
+    previousVisibleRect: Rect,
+    invalidationContext: InvalidationContext<O>
+  ) {
+    if (!(this.isReversed && this.orientation === 'vertical')) {
+      return;
+    }
+
+    let nextVisibleRect: Rect | null = null;
+    // Largest scroll offset that keeps the viewport bottom aligned with content bottom.
+    let maxVisibleY = Math.max(0, this.contentSize.height - previousVisibleRect.height);
+
+    // On the very first update where the container has been sized, unconditionally snap to the bottom
+    if (!this.hasInitializedScrollPosition) {
+      if (previousVisibleRect.area === 0) {
+        return;
+      }
+      this.hasInitializedScrollPosition = true;
+      nextVisibleRect = new Rect(
+        previousVisibleRect.x,
+        maxVisibleY,
+        previousVisibleRect.width,
+        previousVisibleRect.height
+      );
+    } else {
+      if (previousVisibleRect.area === 0) {
+        return;
+      }
+
+      // How far the viewport bottom was from the content bottom before this update.
+      let distanceFromEnd = previousContentHeight - previousVisibleRect.maxY;
+      let wasNearBottom = distanceFromEnd <= this.scrollEndThreshold;
+      let contentHeightDelta = this.contentSize.height - previousContentHeight;
+
+      // Older history was inserted at the start of the collection (e.g. infinite scroll up).
+      // Shift scroll down by the height added so the same messages stay on screen.
+      // This runs before the near-bottom check so a slight scroll-up still preserves position
+      // even when within scrollEndThreshold of the bottom.
+      if (
+        previousCollection &&
+        this.virtualizer!.collection !== previousCollection &&
+        contentHeightDelta !== 0 &&
+        this.didPrependItems(previousCollection, this.virtualizer!.collection)
+      ) {
+        nextVisibleRect = new Rect(
+          previousVisibleRect.x,
+          Math.max(0, Math.min(maxVisibleY, previousVisibleRect.y + contentHeightDelta)),
+          previousVisibleRect.width,
+          previousVisibleRect.height
+        );
+      } else if (
+        wasNearBottom &&
+        !invalidationContext.isScrolling &&
+        (contentHeightDelta !== 0 || invalidationContext.itemSizeChanged)
+      ) {
+        // User was reading the latest output: stay pinned to the bottom when new items are
+        // appended or a row grows (e.g. streaming). itemSizeChanged covers measured height
+        // updates that may not yet change contentHeightDelta on the same frame.
+        nextVisibleRect = new Rect(
+          previousVisibleRect.x,
+          maxVisibleY,
+          previousVisibleRect.width,
+          previousVisibleRect.height
+        );
+      }
+    }
+
+    if (nextVisibleRect && !nextVisibleRect.equals(this.virtualizer!.visibleRect)) {
+      this.virtualizer!.delegate.setVisibleRect(nextVisibleRect);
+    }
+  }
+
+  // Detects whether items were prepended (e.g. loading older history via infinite scroll up).
+  private didPrependItems(
+    previousCollection: Collection<Node<T>>,
+    nextCollection: Collection<Node<T>>
+  ): boolean {
+    let previousKeys = [...previousCollection.getKeys()];
+    let nextKeys = [...nextCollection.getKeys()];
+    if (nextKeys.length <= previousKeys.length) {
+      return false;
+    }
+
+    let offset = nextKeys.length - previousKeys.length;
+    for (let i = 0; i < previousKeys.length; i++) {
+      if (previousKeys[i] !== nextKeys[i + offset]) {
+        return false;
+      }
+    }
+
+    return true;
   }
 }
 

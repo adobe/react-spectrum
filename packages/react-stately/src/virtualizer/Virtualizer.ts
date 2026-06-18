@@ -369,7 +369,8 @@ export class Virtualizer<T extends object, V> {
         sizeChanged,
         itemSizeChanged,
         layoutOptionsChanged,
-        layoutOptions: this._invalidationContext.layoutOptions
+        layoutOptions: this._invalidationContext.layoutOptions,
+        isScrolling: this._isScrolling
       });
     } else if (needsUpdate) {
       this.updateSubviews();
