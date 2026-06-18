@@ -10,21 +10,39 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMRef, forwardRefType} from '@react-types/shared';
+import {
+  AriaLabelingProps,
+  DOMProps,
+  DOMRef,
+  forwardRefType,
+  GlobalDOMAttributes
+} from '@react-types/shared';
 import {baseColor, focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {BasicHorizontalCard} from './HorizontalCard';
 import {Button} from 'react-aria-components/Button';
 import {CardProps} from '@react-spectrum/s2/Card';
 import Close from '@react-spectrum/s2/icons/Close';
-import {forwardRef, useRef} from 'react';
+import {forwardRef, ReactNode, useRef} from 'react';
 import {iconStyle} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {ImageContext} from '@react-spectrum/s2/Image';
 import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
 import {pressScale} from '@react-spectrum/s2/pressScale';
 import {ProgressCircle} from '@react-spectrum/s2/ProgressCircle';
-import {StyleProps, TagProps} from '@react-spectrum/s2';
-import {Tag, TagGroup, TagGroupProps, TagList, TagListProps} from 'react-aria-components/TagGroup';
+import {StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {
+  Tag,
+  TagGroup,
+  TagGroupProps,
+  TagList,
+  TagListProps,
+  TagProps
+} from 'react-aria-components/TagGroup';
 import {useDOMRef} from './useDOMRef';
+
+interface AttachmentRenderProps {
+  /** The size of the Card. */
+  size: 'XS' | 'S' | 'M' | 'L' | 'XL';
+}
 
 const controlSizeM = {
   default: 32,
@@ -108,20 +126,42 @@ const CloseButton = function CloseButton(props) {
 
 export interface AttachmentListProps<T>
   extends
-    Omit<TagGroupProps, 'children'>,
-    StyleProps,
-    Pick<TagListProps<T>, 'items' | 'children' | 'dependencies'> {}
+    DOMProps,
+    Omit<
+      TagGroupProps,
+      | 'children'
+      | 'selectionMode'
+      | 'defaultSelectedKeys'
+      | 'selectionBehavior'
+      | 'selectedKeys'
+      | 'disallowEmptySelection'
+      | 'escapeKeyBehavior'
+      | 'onSelectionChange'
+      | 'shouldSelectOnPressUp'
+      | 'onAction'
+      | 'render'
+      | 'style'
+      | 'className'
+      | keyof GlobalDOMAttributes
+    >,
+    Pick<TagListProps<T>, 'items' | 'children' | 'dependencies'> {
+  /**
+   * Spectrum-defined styles, returned by the `style()` macro.
+   */
+  styles?: StyleString;
+}
 
 export const AttachmentList = (forwardRef as forwardRefType)(function AttachmentList<T>(
   props: AttachmentListProps<T>,
   ref: DOMRef<HTMLDivElement>
 ) {
+  let {styles, items, children, dependencies, ...otherProps} = props;
   let domRef = useDOMRef(ref);
   return (
-    <TagGroup {...props} className={props.styles} ref={domRef}>
+    <TagGroup {...otherProps} className={styles} ref={domRef}>
       <TagList
-        items={props.items}
-        dependencies={props.dependencies}
+        items={items}
+        dependencies={dependencies}
         className={style({
           display: 'flex',
           flexDirection: 'row',
@@ -130,16 +170,33 @@ export const AttachmentList = (forwardRef as forwardRefType)(function Attachment
           alignItems: 'center',
           width: 'full'
         })}>
-        {props.children}
+        {children}
       </TagList>
     </TagGroup>
   );
 });
 
 export interface AttachmentProps
-  extends CardProps, AriaLabelingProps, Pick<TagProps, 'id' | 'textValue'> {
+  extends
+    Omit<CardProps, 'styles' | 'UNSAFE_className' | 'UNSAFE_style'>,
+    AriaLabelingProps,
+    Pick<TagProps, 'id' | 'textValue' | 'render'> {
+  /** The children of the Attachment. */
+  children: ReactNode | ((renderProps: AttachmentRenderProps) => ReactNode);
   uploadProgress?: number;
+  /**
+   * Spectrum-defined styles, returned by the `style()` macro.
+   */
+  styles?: StyleString;
 }
+
+const tagStyles = style({
+  flexShrink: 0,
+  flexGrow: 0,
+  position: 'relative',
+  ...focusRing(),
+  borderRadius: 'default'
+});
 
 export const Attachment = forwardRef(function Attachment(
   props: AttachmentProps,
@@ -151,6 +208,7 @@ export const Attachment = forwardRef(function Attachment(
     'aria-label': ariaLabel,
     'aria-labelledby': ariaLabelledby,
     'aria-describedby': ariaDescribedby,
+    styles,
     ...otherProps
   } = props;
   let domRef = useDOMRef(ref);
@@ -162,13 +220,7 @@ export const Attachment = forwardRef(function Attachment(
       aria-labelledby={ariaLabelledby}
       aria-describedby={ariaDescribedby}
       ref={domRef}
-      className={style({
-        flexShrink: 0,
-        flexGrow: 0,
-        position: 'relative',
-        ...focusRing(),
-        borderRadius: 'default'
-      })}>
+      className={renderProps => mergeStyles(tagStyles({...renderProps}), styles)}>
       <BasicHorizontalCard {...otherProps}>
         {props.uploadProgress != null && props.uploadProgress < 100 && (
           <div

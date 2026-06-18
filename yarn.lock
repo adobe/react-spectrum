@@ -8066,6 +8066,7 @@ __metadata:
     remark-stringify: "npm:^11.0.0"
     satori: "npm:^0.16.1"
     sharp: "npm:^0.33.5"
+    textarea-caret: "npm:^3.1.0"
     tree-sitter-highlight: "npm:^1.0.1"
     ts-morph: "npm:^26.0.0"
     unified: "npm:^11.0.5"
@@ -29635,6 +29636,13 @@ __metadata:
   version: 2.0.0
   resolution: "text-extensions@npm:2.0.0"
   checksum: 10c0/d20fb458c6c2c77319b8e1a39fae1d61d89d590abebc78a28cdda71855b4c9b209bfcb27e10165d2402afbce7f9c2e336bc781001c366f982db90e01f91a6820
+  languageName: node
+  linkType: hard
+
+"textarea-caret@npm:^3.1.0":
+  version: 3.1.0
+  resolution: "textarea-caret@npm:3.1.0"
+  checksum: 10c0/ae6a9d31eb337d0e5925642718484a56664cd94d88adeb7e68498a0149a0d3359bba8a21790f286f95843407ba9622dad10c092a429165587427270792071709
   languageName: node
   linkType: hard
 

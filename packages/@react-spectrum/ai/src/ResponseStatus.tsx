@@ -39,7 +39,7 @@ import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
 import {ProgressCircle} from '@react-spectrum/s2/ProgressCircle';
 import {Provider} from 'react-aria-components/slots';
 import React, {createContext, forwardRef, ReactNode, useContext} from 'react';
-import {StyleString} from './types';
+import {StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {useDOMRef} from './useDOMRef';
 import {useLocale} from 'react-aria/I18nProvider';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
@@ -259,7 +259,7 @@ export const ResponseStatusTitle = forwardRef(function ResponseStatusTitle(
   let {isExpanded} = useContext(DisclosureStateContext)!;
   let {size = 'M', density, isLoading} = useContext(ResponseStatusContext)!;
   let isRTL = direction === 'rtl';
-  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/ai');
 
   return (
     <Heading {...domProps} level={level} ref={domRef} className={mergeStyles(headingStyle, styles)}>
@@ -321,6 +321,9 @@ export interface ResponseStatusPanelProps
     DOMProps,
     AriaLabelingProps {
   children: React.ReactNode;
+  /**
+   * Spectrum-defined styles, returned by the `style()` macro.
+   */
   styles?: StyleString;
 }
 
@@ -355,14 +358,12 @@ export const ResponseStatusPanel = forwardRef(function ResponseStatusPanel(
   props: ResponseStatusPanelProps,
   ref: DOMRef<HTMLDivElement>
 ) {
+  let {styles} = props;
   let {size = 'M'} = useContext(ResponseStatusContext)!;
   const domProps = filterDOMProps(props);
   let panelRef = useDOMRef(ref);
   return (
-    <RACDisclosurePanel
-      {...domProps}
-      ref={panelRef}
-      className={mergeStyles(panelStyles, props.styles)}>
+    <RACDisclosurePanel {...domProps} ref={panelRef} className={mergeStyles(panelStyles, styles)}>
       <div className={panelInner({size})}>{props.children}</div>
     </RACDisclosurePanel>
   );
