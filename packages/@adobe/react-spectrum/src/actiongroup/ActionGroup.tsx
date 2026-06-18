@@ -286,7 +286,7 @@ export const ActionGroup = forwardRef(function ActionGroup<T extends object>(
       <ActionGroupMenu
         {...menuProps}
         items={menuChildren}
-        onAction={onAction}
+        onAction={key => onAction?.(key)}
         isDisabled={isDisabled}
         isEmphasized={isEmphasized}
         staticColor={staticColor}

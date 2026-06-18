@@ -690,7 +690,7 @@ function CellFocusRing() {
       className={style({
         ...cellFocus,
         position: 'absolute',
-        top: 'var(--topFocusRing)',
+        top: 'var(--topFocusRing, 0)',
         bottom: 0,
         insetStart: 0,
         insetEnd: 0,
