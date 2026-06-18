@@ -275,10 +275,7 @@ export function useGridCell<T, C extends GridCollection<T>>(
     }
 
     if (keyboardNavigationBehavior === 'tab') {
-      if (
-        getEventTarget(e) !== ref.current &&
-        (isArrowKey(e.key) || isCharacterKey(e.key) || e.key === 'Enter')
-      ) {
+      if (getEventTarget(e) !== ref.current && e.key !== 'Tab') {
         e.stopPropagation();
         return;
       }
@@ -401,12 +398,4 @@ function last(walker: TreeWalker) {
     }
   } while (last);
   return next;
-}
-
-function isArrowKey(key: string): boolean {
-  return key === 'ArrowUp' || key === 'ArrowDown' || key === 'ArrowLeft' || key === 'ArrowRight';
-}
-
-function isCharacterKey(key: string): boolean {
-  return key.length === 1 || !/^[A-Z]/i.test(key);
 }

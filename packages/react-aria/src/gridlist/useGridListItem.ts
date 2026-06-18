@@ -490,12 +490,3 @@ function getDirectChildren<T>(parent: RSNode<T>, collection: Collection<RSNode<T
   }
   return siblings;
 }
-
-function isArrowKey(key: string) {
-  return key === 'ArrowUp' || key === 'ArrowDown' || key === 'ArrowLeft' || key === 'ArrowRight';
-}
-
-// same logic as in useTypeSelect getStringForKey
-function isCharacterKey(key: string) {
-  return key.length === 1 || !/^[A-Z]/i.test(key);
-}
