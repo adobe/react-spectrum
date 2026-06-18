@@ -117,7 +117,7 @@ export interface ComboBoxProps<T, M extends SelectionMode = 'single'>
   className?: ClassNameOrFunction<ComboBoxRenderProps>;
   /**
    * The filter function used to determine if an option should be included in the combo box list.
-   * By default, a "contains" filter from `useFilter` is used.
+   * By default, a language-sensitive "contains" filter from `useFilter` is used.
    */
   defaultFilter?: (textValue: string, inputValue: string) => boolean;
   /**
