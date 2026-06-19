@@ -17,6 +17,7 @@ import {focusWithoutScrolling} from '../utils/focusWithoutScrolling';
 import intlMessages from '../../intl/menu/*.json';
 import {MenuTriggerState, MenuTriggerType} from 'react-stately/useMenuTriggerState';
 import {PressProps} from '../interactions/usePress';
+import {useContextMenu} from '../interactions/useContextMenu';
 import {useId} from '../utils/useId';
 import {useLocalizedStringFormatter} from '../i18n/useLocalizedStringFormatter';
 import {useLongPress} from '../interactions/useLongPress';
@@ -139,13 +140,30 @@ export function useMenuTrigger<T>(
   // omit onPress from triggerProps since we override it above.
   delete triggerProps.onPress;
 
+  let {contextMenuProps} = useContextMenu({
+    onContextMenu(e) {
+      // eslint-disable-next-line rsp-rules/safe-event-target
+      let rect = e.target.getBoundingClientRect();
+      state.setPoint({x: rect.x + e.x, y: rect.y + e.y});
+      state.open();
+    }
+  });
+
+  let interactionProps;
+  if (trigger === 'press') {
+    interactionProps = {...pressProps, onKeyDown};
+  } else if (trigger === 'longPress') {
+    interactionProps = {...longPressProps, onKeyDown};
+  } else if (trigger === 'contextMenu') {
+    interactionProps = contextMenuProps;
+  }
+
   return {
     // @ts-ignore - TODO we pass out both DOMAttributes AND AriaButtonProps, but useButton will discard the longPress event handlers, it's only through PressResponder magic that this works for RSP and RAC. it does not work in aria examples
     menuTriggerProps: {
       ...triggerProps,
-      ...(trigger === 'press' ? pressProps : longPressProps),
-      id: menuTriggerId,
-      onKeyDown
+      ...interactionProps,
+      id: menuTriggerId
     },
     menuProps: {
       ...overlayProps,

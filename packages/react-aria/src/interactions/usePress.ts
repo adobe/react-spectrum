@@ -1183,6 +1183,11 @@ function shouldPreventDefaultUp(target: Element) {
 }
 
 function shouldPreventDefaultKeyboard(target: Element, key: string) {
+  // Don't prevent the contextmenu shortcut on mac.
+  if (isMac() && key === 'Enter') {
+    return false;
+  }
+
   if (target instanceof HTMLInputElement) {
     return !isValidInputKey(target, key);
   }
