@@ -358,15 +358,15 @@
       "ob-hue": {
         "stop-1": {
           "light": "rgba(236, 105, 255, 0.6)",
-          "dark": null
+          "dark": "rgb(50, 0, 61)"
         },
         "stop-2": {
           "light": "rgba(255, 81, 61, 0.5)",
-          "dark": null
+          "dark": "rgb(30, 0, 93)"
         },
         "stop-3": {
           "light": "rgba(255, 162, 19, 0.4)",
-          "dark": null
+          "dark": "rgb(30, 0, 93)"
         }
       }
     },

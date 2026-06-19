@@ -1,5 +1,10 @@
 import {color, css, style, StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
-import {defineProperties, stops, token} from './tokens.macro' with {type: 'macro'};
+import {
+  defineProperties,
+  outerBorderStops,
+  stops,
+  token
+} from './tokens.macro' with {type: 'macro'};
 import {getEventTarget} from 'react-aria/private/utils/shadowdom/DOMFunctions';
 import {Group, GroupProps} from 'react-aria-components/Group';
 import {isFocusable} from 'react-aria/private/utils/isFocusable';
@@ -14,25 +19,25 @@ defineProperties(`
     inherits: false;
   }
 
-  @property --con-bg-stop-1 {
+  @property --bg-stop-1 {
     syntax: '<color>';
     initial-value: #0000;
     inherits: false;
   }
 
-  @property --con-bg-stop-2 {
+  @property --bg-stop-2 {
     syntax: '<color>';
     initial-value: #0000;
     inherits: false;  
   }
 
-  @property --con-bg-stop-3 {
+  @property --bg-stop-3 {
     syntax: '<color>';
     initial-value: #0000;
     inherits: false;
   }
 
-  @property --con-bg-stop-4 {
+  @property --bg-stop-4 {
     syntax: '<color>';
     initial-value: #0000;
     inherits: false;
@@ -40,13 +45,13 @@ defineProperties(`
 `);
 
 const containerBackground = css(`
-  transition: --con-hue-opacity ${STATE_TRANSITION}, --con-bg-stop-1 ${STATE_TRANSITION}, --con-bg-stop-2 ${STATE_TRANSITION}, --con-bg-stop-3 ${STATE_TRANSITION}, --con-bg-stop-4 ${STATE_TRANSITION}, box-shadow ${STATE_TRANSITION};
+  transition: --con-hue-opacity ${STATE_TRANSITION}, --bg-stop-1 ${STATE_TRANSITION}, --bg-stop-2 ${STATE_TRANSITION}, --bg-stop-3 ${STATE_TRANSITION}, --bg-stop-4 ${STATE_TRANSITION}, box-shadow ${STATE_TRANSITION};
   
   background:
     linear-gradient(
       to bottom,
-      light-dark(rgb(255 255 255 / 40%), rgb(0 0 0 / 40%)), 37%,
-      light-dark(rgb(255 255 255 / 12%), rgb(0 0 0 / 12%)) 83%
+      light-dark(rgb(255 255 255 / 75%), rgb(0 0 0 / 40%)) 0% 37%,
+      light-dark(rgb(255 255 255 / 15%), rgb(0 0 0 / 12%)) 83% 100%
     ),
     radial-gradient(
       50% 50% at -20% 100%,
@@ -65,43 +70,23 @@ const containerBackground = css(`
     ),
     radial-gradient(
       circle at right bottom,
-      var(--con-bg-stop-1) 0%,
-      var(--con-bg-stop-2) 35%,
-      var(--con-bg-stop-3) 82%,
-      var(--con-bg-stop-4) 100%
+      var(--bg-stop-1) 0%,
+      var(--bg-stop-2) 35%,
+      var(--bg-stop-3) 82%,
+      var(--bg-stop-4) 100%
     );
 
   --border-color: ${token(`container.border.default`)};
   --inset-shadow-color: ${color('transparent-white-50')};
   --drop-shadow-color: ${color('fuchsia-900/5')};
-  --outer-border-color: ${token('outer-border.gradient.ob-border.stop-1')};
-  
+
   box-shadow:
     inset 0 0 0 1px var(--border-color),
     inset 0 6px 15px 0 var(--inset-shadow-color),
+    inset 0 0 0 0 transparent, /* placeholder for generating state so transition is smooth */
     inset 0 -5px 21.6px 0 ${color('transparent-white-50')},
     inset 0 24px 32px 0 ${color('transparent-white-50')},
-    0 -3px 10px 1px var(--drop-shadow-color),
-    0 0 0 6px var(--outer-border-color),
-    0 6px 16px -6px var(--outer-border-hue);
-
-  &[data-variant=balanced] {
-    --outer-border-hue: light-dark(
-      rgb(from ${token('outer-border.gradient.ob-hue.stop-1')} r g b / ${token('outer-border.opacity.ob-hue-balanced.light')}%),
-      rgb(from ${token('outer-border.gradient.ob-hue.stop-1')} r g b / ${token('outer-border.opacity.ob-hue-balanced.dark')}%)
-    );
-  }
-  
-  &[data-variant=prominent] {
-    --outer-border-hue: rgb(from ${token('outer-border.gradient.ob-hue.stop-1')} r g b / ${token('outer-border.opacity.ob-hue-prominent')}%);
-  }
-
-  &[data-variant=subtle] {
-    --outer-border-hue: light-dark(
-      rgb(from ${token('outer-border.gradient.ob-hue.stop-1')} r g b / ${token('outer-border.opacity.ob-hue-subtle.light')}%),
-      rgb(from ${token('outer-border.gradient.ob-hue.stop-1')} r g b / ${token('outer-border.opacity.ob-hue-subtle.dark')}%)
-    );
-  }
+    0 -3px 10px 1px var(--drop-shadow-color);
 
   &[data-state=idle] {
     &[data-variant=balanced] {
@@ -122,28 +107,27 @@ const containerBackground = css(`
 
     &[data-variant=subtle] {
       --con-hue-opacity: 0%;
-      --con-bg-stop-1: light-dark(white, ${color('gray-75')});
-      --con-bg-stop-2: light-dark(white, ${color('gray-75')});
-      --con-bg-stop-3: light-dark(white, ${color('gray-75')});
-      --con-bg-stop-4: light-dark(white, ${color('gray-75')});
+      --bg-stop-1: light-dark(white, ${color('gray-75')});
+      --bg-stop-2: light-dark(white, ${color('gray-75')});
+      --bg-stop-3: light-dark(white, ${color('gray-75')});
+      --bg-stop-4: light-dark(white, ${color('gray-75')});
+      --border-color: ${token(`container.border.focus`)};
 
       &[data-hovered] {
         ${stops('idle', 'hover', 'subtle')}
+        --border-color: ${token(`container.border.default`)};
       }
     }
 
     &[data-focus-within][data-focus-within] {
       --con-hue-opacity: 0%;
-      --con-bg-stop-1: light-dark(white, ${color('gray-75')});
-      --con-bg-stop-2: light-dark(white, ${color('gray-75')});
-      --con-bg-stop-3: light-dark(white, ${color('gray-75')});
-      --con-bg-stop-4: light-dark(white, ${color('gray-75')});
-
+      --bg-stop-1: light-dark(white, ${color('gray-75')});
+      --bg-stop-2: light-dark(white, ${color('gray-75')});
+      --bg-stop-3: light-dark(white, ${color('gray-75')});
+      --bg-stop-4: light-dark(white, ${color('gray-75')});
       --border-color: ${token(`container.border.focus`)};
       --inset-shadow-color: transparent;
       --drop-shadow-color: transparent;
-      --outer-border-color: ${token('outer-border.gradient.ob-border.focus.stop-1')};
-      --outer-border-hue: transparent;
     }
   }
 
@@ -155,11 +139,10 @@ const containerBackground = css(`
       inset 0 -5px 21.6px 0 ${color('transparent-white-50')},
       inset 0 24px 32px 0 ${color('transparent-white-50')},
       0 -3px 10px 1px var(--drop-shadow-color),
-      0 6px 16px -6px var(--outer-border-hue),
-      0 6px 83px rgb(from ${token('outer-border.gradient.ob-spread-shadow.generating.stop-3')} r g b / ${token('outer-border.opacity.spread-bg-balanced')}%),
-      0 0 0 6px var(--outer-border-color);
+      0 6px 83px rgb(from ${token('outer-border.gradient.ob-spread-shadow.generating.stop-3')} r g b / var(--spread-shadow-opacity));
 
     &[data-variant=balanced] {
+      --spread-shadow-opacity: ${token('outer-border.opacity.spread-bg-balanced')}%;
       ${stops('generating', 'default', 'balanced')}
 
       &[data-hovered] {
@@ -168,6 +151,7 @@ const containerBackground = css(`
     }
 
     &[data-variant=prominent] {
+      --spread-shadow-opacity: ${token('outer-border.opacity.spread-bg-prominent')}%;
       ${stops('generating', 'default', 'prominent')}
 
       &[data-hovered] {
@@ -176,12 +160,66 @@ const containerBackground = css(`
     }
 
     &[data-variant=subtle] {
+      --spread-shadow-opacity: ${token('outer-border.opacity.spread-bg-subtle')}%;
       ${stops('generating', 'default', 'subtle')}
 
       &[data-hovered] {
         ${stops('generating', 'hover', 'subtle')}
       }
     }
+  }
+`);
+
+const outerBorder = css(`
+  --outer-drop-shadow-color: ${token('outer-border.color.drop-shadow.ob-border.default')};
+
+  padding: 6px;
+  border-radius: calc(24px + 6px);
+  transition: --bg-stop-1 ${STATE_TRANSITION}, --bg-stop-2 ${STATE_TRANSITION}, --bg-stop-3 ${STATE_TRANSITION}, box-shadow ${STATE_TRANSITION};
+  background: linear-gradient(
+    to right,
+    var(--bg-stop-1) 0%,
+    var(--bg-stop-2) 37%,
+    var(--bg-stop-3) 77%
+  );
+
+  box-shadow:
+    0 2px 4px var(--outer-drop-shadow-color),
+    0 6px 16px -10px var(--outer-border-hue);
+
+  &[data-variant=balanced] {
+    ${outerBorderStops('balanced')}
+  }
+  
+  &[data-variant=prominent] {
+    ${outerBorderStops('prominent')}
+
+    &[data-state=idle][data-focus-within] {
+      --bg-stop-1: ${token('outer-border.gradient.ob-border.stop-1')};
+      --bg-stop-2: ${token('outer-border.gradient.ob-border.stop-1')};
+      --bg-stop-3: ${token('outer-border.gradient.ob-border.stop-1')};
+    }
+  }
+
+  &[data-variant=subtle] {
+    --outer-drop-shadow-color: ${token('outer-border.color.drop-shadow.ob-border.subtle')};
+    --outer-border-hue: transparent;
+    --bg-stop-1: ${token('outer-border.gradient.ob-border.stop-1')};
+    --bg-stop-2: ${token('outer-border.gradient.ob-border.stop-1')};
+    --bg-stop-3: ${token('outer-border.gradient.ob-border.stop-1')};
+
+    &[data-hovered] {
+      --outer-drop-shadow-color: ${token('outer-border.color.drop-shadow.ob-border.default')};
+      ${outerBorderStops('subtle')}
+    }
+  }
+
+  &[data-state=idle][data-focus-within] {
+    --bg-stop-1: ${token('outer-border.gradient.ob-border.stop-1')};
+    --bg-stop-2: ${token('outer-border.gradient.ob-border.stop-1')};
+    --bg-stop-3: ${token('outer-border.gradient.ob-border.stop-1')};
+    --outer-border-hue: transparent;
+    --outer-drop-shadow-color: ${token('outer-border.color.drop-shadow.ob-border.focus')};
   }
 `);
 
@@ -200,22 +238,7 @@ export function PromptFieldContainer(props: PropFieldContainerProps) {
       role="group"
       data-variant={variant}
       data-state={isGenerating ? 'generating' : 'idle'}
-      className={
-        (props.className || '') +
-        ' ' +
-        containerBackground +
-        mergeStyles(
-          style({
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 16,
-            padding: 16,
-            cursor: 'text',
-            borderRadius: '[24px]'
-          }),
-          styles
-        )
-      }
+      className={outerBorder}
       onPointerDown={e => {
         // If not clicking on something focusable within the prompt field, focus the input.
         let target = getEventTarget(e) as Element | null;
@@ -228,7 +251,31 @@ export function PromptFieldContainer(props: PropFieldContainerProps) {
           inputRef.current?.focus();
         }
       }}>
-      {props.children}
+      {({isHovered, isFocusWithin}) => (
+        <div
+          data-hovered={isHovered || undefined}
+          data-focus-within={isFocusWithin || undefined}
+          data-variant={variant}
+          data-state={isGenerating ? 'generating' : 'idle'}
+          className={
+            (props.className || '') +
+            ' ' +
+            containerBackground +
+            mergeStyles(
+              style({
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 16,
+                padding: 16,
+                cursor: 'text',
+                borderRadius: '[24px]'
+              }),
+              styles
+            )
+          }>
+          {props.children}
+        </div>
+      )}
     </Group>
   );
 }

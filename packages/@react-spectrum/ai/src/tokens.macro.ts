@@ -20,16 +20,6 @@ export function token(name: string) {
   }
 }
 
-export function alphaToGrayscale(name: string) {
-  let token = name.split('.').reduce((acc, curr) => acc[curr], tokens) as any;
-  let match = token.match(/^rgba\((.+?),\s*(.+?),\s*(.+?),\s*(.+?)\)$/);
-  if (match && match[1] === match[2] && match[2] === match[3]) {
-    return [`rgb(${match[1]}, ${match[2]}, ${match[3]})`, Number(match[4]) * 100];
-  } else {
-    return token;
-  }
-}
-
 export function mix(gray: string, stop: string, opacity: string) {
   let stopColor = token(stop);
   let stopOpacity = token(opacity);
@@ -52,9 +42,41 @@ export function defineProperties(this: any, css: string) {
 export function stops(generating: string, state: string, variant: string) {
   return `
     --con-hue-opacity: ${token(`container.opacity.con-hue.${generating}.${state}-${variant}`)}%;
-    --con-bg-stop-1: ${stop('container.bg.default', `container.gradient.con-bg.${generating}.stop-1`, `container.opacity.con-bg.${generating}.${state}-${variant}`)};
-    --con-bg-stop-2: ${stop('container.bg.default', `container.gradient.con-bg.${generating}.stop-2`, `container.opacity.con-bg.${generating}.${state}-${variant}`)};
-    --con-bg-stop-3: ${stop('container.bg.default', `container.gradient.con-bg.${generating}.stop-3`, `container.opacity.con-bg.${generating}.${state}-${variant}`)};
-    --con-bg-stop-4: ${stop('container.bg.default', `container.gradient.con-bg.${generating}.stop-4`, `container.opacity.con-bg.${generating}.${state}-${variant}`)};
+    --bg-stop-1: ${stop('container.bg.default', `container.gradient.con-bg.${generating}.stop-1`, `container.opacity.con-bg.${generating}.${state}-${variant}`)};
+    --bg-stop-2: ${stop('container.bg.default', `container.gradient.con-bg.${generating}.stop-2`, `container.opacity.con-bg.${generating}.${state}-${variant}`)};
+    --bg-stop-3: ${stop('container.bg.default', `container.gradient.con-bg.${generating}.stop-3`, `container.opacity.con-bg.${generating}.${state}-${variant}`)};
+    --bg-stop-4: ${stop('container.bg.default', `container.gradient.con-bg.${generating}.stop-4`, `container.opacity.con-bg.${generating}.${state}-${variant}`)};
   `;
+}
+
+export function outerBorderStops(variant: string) {
+  let border = token('outer-border.gradient.ob-border.stop-1');
+  return `
+    --outer-border-hue: light-dark(
+      ${outerBorderStop(2, variant, 'light', 1)},
+      ${outerBorderStop(2, variant, 'dark', 1)}
+    );
+    --bg-stop-1: light-dark(
+      ${outerBorderStop(1, variant, 'light')},
+      ${variant === 'prominent' ? outerBorderStop(1, variant, 'dark') : border}
+    );
+    --bg-stop-2: light-dark(
+      ${outerBorderStop(2, variant, 'light')},
+      ${variant === 'prominent' ? outerBorderStop(2, variant, 'dark') : border}
+    );
+    --bg-stop-3: light-dark(
+      ${outerBorderStop(3, variant, 'light')},
+      ${variant === 'prominent' ? outerBorderStop(3, variant, 'dark') : border}
+    );
+  `;
+}
+
+function outerBorderStop(stop: number, variant: string, colorScheme: string, div = 10) {
+  let opacity = token(
+    `outer-border.opacity.ob-hue-${variant}.${variant === 'prominent' ? 'value' : colorScheme}`
+  );
+  if (colorScheme === 'light') {
+    opacity = opacity / div;
+  }
+  return `rgb(from ${token(`outer-border.gradient.ob-hue.stop-${stop}.${colorScheme}`)} r g b / ${opacity}%)`;
 }
