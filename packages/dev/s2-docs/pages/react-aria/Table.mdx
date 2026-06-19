@@ -730,7 +730,7 @@ function subscribe(fn) {
 By default, Table uses arrow key navigation to move focus into cells. Set `keyboardNavigationBehavior="tab"` to have <Keyboard>Tab</Keyboard> move focus in and out of a cell.
 Use this when cells contain interactive elements such as text fields, where arrow keys and typing in the field should not trigger grid navigation or selection.
 
-```tsx render
+```tsx render files={["starters/docs/src/Table.tsx", "starters/docs/src/Table.css"]}
 "use client";
 import {Table, TableHeader, Column, Row, TableBody, Cell} from 'vanilla-starter/Table';
 import {TextField} from 'vanilla-starter/TextField';
@@ -768,6 +768,11 @@ let files = [
   </TableBody>
 </Table>
 ```
+
+You can further control if a cell automatically focuses itself or its children on keyboard focus via `focusMode`. Futhermore, `allowsArrowNavigation` can be used to allow arrow key navigation from the cell's children to adjacent cells.
+This allows keyboard users to navigate to the selection checkboxes without needing to tab in and out of the selection cell even when in tab keyboard navigation.
+The vanilla CSS starter applies these to selection cells automatically, see the **Table.tsx** tab above.
+Be sure to only set `allowsArrowNavigation` on cells whose interactive content don't use arrow keys.
 
 ## Drag and drop
 

@@ -75,6 +75,10 @@ export function TableHeader<T>({columns, children, ...otherProps}: TableHeaderPr
           width={32}
           minWidth={32}
           style={{width: 32}}
+          ///- begin highlight -///
+          focusMode="child"
+          allowsArrowNavigation
+          ///- end highlight -///
           className="react-aria-Column button-base">
           {selectionMode === 'multiple' && <Checkbox slot="selection" />}
         </AriaColumn>
@@ -97,7 +101,12 @@ export function Row<T>({id, columns, children, ...otherProps}: RowProps<T>) {
         </Cell>
       )}
       {selectionBehavior === 'toggle' && (
-        <Cell>
+        <Cell
+          ///- begin highlight -///
+          focusMode="child"
+          allowsArrowNavigation
+          ///- end highlight -///
+        >
           <Checkbox slot="selection" />
         </Cell>
       )}
