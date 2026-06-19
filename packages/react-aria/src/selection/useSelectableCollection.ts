@@ -584,13 +584,19 @@ export function useSelectableCollection(
       }
 
       if (focusedKey == null || manager.disabledKeys.has(focusedKey)) {
-        focusedKey = delegate.getFirstKey?.() ?? null;
+        let firstEnabledKey = delegate.getFirstKey?.() ?? null;
+
+        if (firstEnabledKey != null) {
+          focusedKey = firstEnabledKey;
+        }
       }
 
       manager.setFocused(true);
-      manager.setFocusedKey(focusedKey);
 
-      // If no default focus key is selected, focus the collection itself.
+      if (focusedKey != null) {
+        manager.setFocusedKey(focusedKey);
+      }
+
       if (focusedKey == null && !shouldUseVirtualFocus && ref.current) {
         focusSafely(ref.current);
       }
