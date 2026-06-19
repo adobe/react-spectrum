@@ -456,7 +456,14 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
   let baseOnPointerDown = mergedItemProps.onPointerDown;
   mergedItemProps.onPointerDown = e => {
     let target = getEventTarget(e) as Element | null;
-    if (target && target !== ref.current && isTabbable(target)) {
+    // skip if the target is itself a collection item aka a cell in a row
+    // TODO: is checking data-key too brittle?
+    if (
+      target &&
+      target !== ref.current &&
+      isTabbable(target) &&
+      !target.hasAttribute('data-key')
+    ) {
       e.stopPropagation();
       return;
     }
@@ -466,7 +473,12 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
   let baseOnMouseDown = mergedItemProps.onMouseDown;
   mergedItemProps.onMouseDown = e => {
     let target = getEventTarget(e) as Element | null;
-    if (target && target !== ref.current && isTabbable(target)) {
+    if (
+      target &&
+      target !== ref.current &&
+      isTabbable(target) &&
+      !target.hasAttribute('data-key')
+    ) {
       e.stopPropagation();
       return;
     }
