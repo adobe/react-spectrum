@@ -17,6 +17,7 @@ import {useContextMenu} from '../../src/interactions/useContextMenu';
 function Example(props) {
   let {contextMenuProps} = useContextMenu(props);
   return (
+    // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
     <div {...contextMenuProps} tabIndex={0} style={{width: 100, height: 50}}>
       test
     </div>
