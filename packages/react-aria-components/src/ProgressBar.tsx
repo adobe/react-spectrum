@@ -11,7 +11,6 @@
  */
 
 import {AriaProgressBarProps, useProgressBar} from 'react-aria/useProgressBar';
-
 import {clamp} from 'react-stately/private/utils/number';
 import {
   ClassNameOrFunction,
@@ -81,8 +80,16 @@ export const ProgressBar = forwardRef(function ProgressBar(
   let [labelRef, label] = useSlot(!props['aria-label'] && !props['aria-labelledby']);
   let {progressBarProps, labelProps} = useProgressBar({...props, label});
 
+  let range = maxValue - minValue;
   // Calculate the width of the progress bar as a percentage
-  let percentage = isIndeterminate ? undefined : ((value - minValue) / (maxValue - minValue)) * 100;
+  let percentage: number | undefined = undefined;
+  if (!isIndeterminate) {
+    if (range === 0) {
+      percentage = 0;
+    } else {
+      percentage = ((value - minValue) / range) * 100;
+    }
+  }
 
   let renderProps = useRenderProps({
     ...props,

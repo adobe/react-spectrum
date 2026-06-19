@@ -1218,6 +1218,9 @@ describe('usePress', function () {
     });
 
     it('should detect Android TalkBack double tap', function () {
+      // oxlint-disable-next-line no-unused-vars
+      using uaMock = jest.spyOn(navigator, 'userAgent', 'get').mockImplementation(() => 'Android');
+
       let events = [];
       let addEvent = e => events.push(e);
       let res = render(
@@ -1309,6 +1312,45 @@ describe('usePress', function () {
           target: el
         }
       ]);
+    });
+
+    it('should fire if pressure is 0 but is not android', function () {
+      let events = [];
+      let addEvent = e => events.push(e);
+      let res = render(
+        <Example
+          onPressStart={addEvent}
+          onPressEnd={addEvent}
+          onPress={addEvent}
+          onPressUp={addEvent}
+          onClick={e => addEvent({type: e.type, target: e.target})}
+        />
+      );
+
+      let el = res.getByText('test');
+      fireEvent(
+        el,
+        pointerEvent('pointerdown', {
+          pointerId: 1,
+          width: 1,
+          height: 1,
+          pressure: 0,
+          detail: 0,
+          pointerType: 'mouse'
+        })
+      );
+      fireEvent(
+        el,
+        pointerEvent('pointerup', {
+          pointerId: 1,
+          width: 1,
+          height: 1,
+          pressure: 0,
+          detail: 0,
+          pointerType: 'mouse'
+        })
+      );
+      expect(events).not.toEqual([]);
     });
 
     it('should not fire press/click events for disabled elements', function () {
@@ -5038,6 +5080,9 @@ describe('usePress', function () {
     });
 
     it('should detect Android TalkBack double tap', function () {
+      // oxlint-disable-next-line no-unused-vars
+      using uaMock = jest.spyOn(navigator, 'userAgent', 'get').mockImplementation(() => 'Android');
+
       const shadowRoot = setupShadowDOMTest({onPressChange: null});
 
       const el = shadowRoot.getElementById('testElement');
@@ -5109,6 +5154,46 @@ describe('usePress', function () {
           altKey: false
         })
       ]);
+    });
+
+    it('should fire if pressure is 0 but is not android', function () {
+      let events = [];
+      let addEvent = e => events.push(e);
+      let res = render(
+        <Example
+          onPressStart={addEvent}
+          onPressEnd={addEvent}
+          onPress={addEvent}
+          onPressUp={addEvent}
+          onClick={e => addEvent({type: e.type, target: e.target})}
+        />
+      );
+
+      let el = res.getByText('test');
+      fireEvent(
+        el,
+        pointerEvent('pointerdown', {
+          pointerId: 1,
+          width: 1,
+          height: 1,
+          pressure: 0,
+          detail: 0,
+          pointerType: 'mouse'
+        })
+      );
+      fireEvent(
+        el,
+        pointerEvent('pointerup', {
+          pointerId: 1,
+          width: 1,
+          height: 1,
+          pressure: 0,
+          detail: 0,
+          pointerType: 'mouse'
+        })
+      );
+
+      expect(events).not.toEqual([]);
     });
 
     it('should not fire press/click events for disabled elements', function () {

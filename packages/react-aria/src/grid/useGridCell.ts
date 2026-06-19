@@ -254,16 +254,8 @@ export function useGridCell<T, C extends GridCollection<T>>(
 
   // Grid cells can have focusable elements inside them. In this case, focus should
   // be marshalled to that element rather than focusing the cell itself.
-  let onFocus = (e: any) => {
+  let onFocus = (e: FocusEvent) => {
     keyWhenFocused.current = node.key;
-
-    // FIX: If focus is moving directly to a specific inner child element
-    // (like our restored Open Dialog button), update the selection state
-    // and exit early. Do not call focus(), which resets to the first child.
-
-    // FIX: If focus is moving directly to a specific inner child element
-    // (like our restored Open Dialog button), update the selection state
-    // and exit early. Do not call focus(), which resets to the first child.
     if (getEventTarget(e) !== ref.current) {
       if (!isFocusVisible()) {
         state.selectionManager.setFocusedKey(node.key);
@@ -272,17 +264,19 @@ export function useGridCell<T, C extends GridCollection<T>>(
     }
 
     if (focusMode === 'child') {
-      // Safeguard: Check if the browser's active element has already shifted
-      // into a nested child node during this event loop tick before forcing a reset.
-      let activeElement = getActiveElement();
-      if (ref.current && isFocusWithin(ref.current) && activeElement !== ref.current) {
-        return;
-      }
-
-      focus();
+      // Wrap in requestAnimationFrame to ensure real browsers have fully
+      // updated document.activeElement after focus propagation completes.
+      requestAnimationFrame(() => {
+        let activeElement = getActiveElement();
+        if (ref.current && isFocusWithin(ref.current) && activeElement !== ref.current) {
+          return;
+        }
+        focus();
+      });
     }
   };
 
+  // oxlint-disable-next-line react/react-compiler
   let gridCellProps: DOMAttributes = mergeProps(itemProps, {
     role: 'gridcell',
     onKeyDownCapture,

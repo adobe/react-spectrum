@@ -50,6 +50,7 @@ export interface SliderAria {
  *   accepts click and drag motions, so that the closest thumb will follow clicks and drags on
  *   the track.
  */
+// oxlint-disable-next-line react/react-compiler
 export function useSlider<T extends number | number[]>(
   props: AriaSliderProps<T>,
   state: SliderState,
