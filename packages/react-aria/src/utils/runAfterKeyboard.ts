@@ -45,14 +45,14 @@ function onTransitionStart(): void {
 
     if (wasOpen !== isOpen) {
       for (let callback of resizeCallbacks) {
-        callback(isKeyboardOpen());
+        callback(isOpen);
         resizeCallbacks.delete(callback);
       }
     }
 
     if ((!isIOS() && wasVisible !== isVisible) || (wasVisible && !isVisible)) {
       for (let callback of transitionCallbacks) {
-        callback(isKeyboardVisible());
+        callback(isVisible);
         transitionCallbacks.delete(callback);
       }
     }
@@ -63,13 +63,16 @@ function onTransitionStart(): void {
   }, 50);
 
   transitionTimeout = ownerWindow.setTimeout(() => {
+    let isOpen = isKeyboardOpen();
+    let isVisible = isKeyboardVisible();
+
     for (let callback of resizeCallbacks) {
-      callback(isKeyboardOpen());
+      callback(isOpen);
       resizeCallbacks.delete(callback);
     }
 
     for (let callback of transitionCallbacks) {
-      callback(isKeyboardVisible());
+      callback(isVisible);
       transitionCallbacks.delete(callback);
     }
 

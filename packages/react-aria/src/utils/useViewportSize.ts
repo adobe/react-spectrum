@@ -26,13 +26,11 @@ let visualViewport = typeof document !== 'undefined' && window.visualViewport;
 
 export function useViewportSize(): ViewportSize {
   let isSSR = useIsSSR();
-  let unmountRef = useRef(false);
+  let unmountRef = useRef<Function>(null);
   let [size, setSize] = useState(() => (isSSR ? {width: 0, height: 0} : getViewportSize()));
 
   useEffect(() => {
     let updateSize = (newSize: ViewportSize) => {
-      if (unmountRef.current) return;
-
       setSize(size => {
         if (newSize.width === size.width && newSize.height === size.height) {
           return size;
@@ -62,7 +60,7 @@ export function useViewportSize(): ViewportSize {
         return;
       }
 
-      runAfterKeyboard(isOpen => {
+      unmountRef.current = runAfterKeyboard(isOpen => {
         if (isOpen) return;
 
         updateSize({
@@ -85,7 +83,7 @@ export function useViewportSize(): ViewportSize {
     }
 
     return () => {
-      unmountRef.current = true;
+      unmountRef.current?.();
       if (isIOS()) {
         window.removeEventListener('blur', onBlur, true);
       }
