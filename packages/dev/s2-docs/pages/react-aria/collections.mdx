@@ -232,6 +232,21 @@ function MyItem(props: MyItemProps) {
 
 Note that adding dependencies will result in the _entire_ list being invalidated when a dependency changes. To avoid this and invalidate only an individual item, update the item object itself rather than accessing external state.
 
+### Updating the collection structure
+
+The `dependencies` prop covers cases where external state affects _how_ an item renders, but a different rule applies when state controls _which_ items exist. To conditionally add, remove, or reorder items, the state that drives those changes must live **above** the collection component, not inside its children.
+
+This is a consequence of how collections are built. Rather than reading the output of your render function, the collection is built by parsing the JSX tree itself. To do this, the component renders a hidden copy of its children up to each item boundary, and uses it to construct the collection document. Only once that document is built does the real, interactive content render. As a result, the children are effectively rendered twice: once in a hidden subtree to determine the structure, and again to display the content you interact with.
+
+Because these are two separate renders, a state update inside the collection's children only re-renders the visible content. It does not re-run the hidden pass that determines the structure, so adding or removing an item from that state has no effect on the collection. Lifting the state above the collection re-runs both passes, which allows the structure to update.
+
+This applies to all collection components, including those that render their children inside a popover or other deferred subtree, such as `Select` and `ComboBox`. For example, reading state from a context like `SelectStateContext` within a `Menu` or `ListBox` cannot add or remove items, because that state lives below the point where the collection is built. Move the state above the `Select`, and pass the resulting items down, to control the collection's structure.
+
+<InlineAlert variant="notice">
+  <Heading>Structure vs. rendering</Heading>
+  <Content>Use the `dependencies` prop when external state changes how existing items render. Lift state above the collection when it determines which items exist. Static structural changes triggered from below the collection, such as toggling a `useState` value inside a popover, will not update the collection.</Content>
+</InlineAlert>
+
 ### Combining collections
 
 To combine multiple sources of data, or mix static and dynamic items, use the `<Collection>` component.
