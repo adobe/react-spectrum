@@ -450,7 +450,11 @@ export function useSelectableCollection(
       ) {
         navigateToKey(manager.lastSelectedKey ?? delegate.getLastKey?.());
       } else {
-        navigateToKey(manager.firstSelectedKey ?? delegate.getFirstKey?.());
+        let firstKey = manager.firstSelectedKey ?? delegate.getFirstKey?.();
+        if (firstKey && manager.disabledKeys.has(firstKey)) {
+          firstKey = delegate.getFirstKey?.();
+        }
+        navigateToKey(firstKey);
       }
     } else if (scrollRef.current) {
       // Restore the scroll position to what it was before.
@@ -572,11 +576,15 @@ export function useSelectableCollection(
       let selectedKeys = manager.selectedKeys;
       if (selectedKeys.size) {
         for (let key of selectedKeys) {
-          if (manager.canSelectItem(key)) {
+          if (manager.canSelectItem(key) && !manager.disabledKeys.has(key)) {
             focusedKey = key;
             break;
           }
         }
+      }
+
+      if (focusedKey == null || manager.disabledKeys.has(focusedKey)) {
+        focusedKey = delegate.getFirstKey?.() ?? null;
       }
 
       manager.setFocused(true);

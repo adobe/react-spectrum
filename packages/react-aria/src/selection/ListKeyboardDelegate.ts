@@ -277,14 +277,14 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
     return null;
   }
 
-  getFirstKey(): Key | null {
-    let key = this.collection.getFirstKey();
-    return this.findNextNonDisabled(key, key => this.collection.getKeyAfter(key));
+  getFirstKey(key?: Key, includeDisabled?: boolean): Key | null {
+    let firstKey = this.collection.getFirstKey();
+    return this.findNextNonDisabled(firstKey, k => this.collection.getKeyAfter(k), includeDisabled);
   }
 
-  getLastKey(): Key | null {
-    let key = this.collection.getLastKey();
-    return this.findNextNonDisabled(key, key => this.collection.getKeyBefore(key));
+  getLastKey(key?: Key, includeDisabled?: boolean): Key | null {
+    let lastKey = this.collection.getLastKey();
+    return this.findNextNonDisabled(lastKey, k => this.collection.getKeyBefore(k), includeDisabled);
   }
 
   getKeyPageAbove(key: Key): Key | null {

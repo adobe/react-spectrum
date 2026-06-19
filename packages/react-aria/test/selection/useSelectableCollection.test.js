@@ -157,4 +157,43 @@ describe('useSelectableCollection', () => {
       expect(onSelectionChange2).not.toHaveBeenCalled();
     });
   });
+  // =========================================================================
+  // ADDED: Tests for skipping disabled items automatically on mount/focus
+  // =========================================================================
+  describe('with disabled items boundary keys', () => {
+    it('should automatically focus the first available option when the first 2 options are disabled on autoFocus', () => {
+      let {getAllByRole} = render(
+        <List selectionMode="single" autoFocus="first" disabledKeys={['i1', 'i2']}>
+          <Item key="i1">Disabled Item 1</Item>
+          <Item key="i2">Disabled Item 2</Item>
+          <Item key="i3">First Enabled Item</Item>
+          <Item key="i4">Second Enabled Item</Item>
+        </List>
+      );
+
+      let options = getAllByRole('option');
+      // Verifies that programmatic focus skips 'i1' and 'i2' entirely, landing straight on 'i3' immediately
+      expect(document.activeElement).toBe(options[2]);
+      expect(options[2].textContent).toBe('First Enabled Item');
+    });
+
+    it('should automatically focus the first available option when tabbing into the collection with leading disabled keys', async () => {
+      let {getAllByRole} = render(
+        <List selectionMode="single" disabledKeys={['i1', 'i2']}>
+          <Item key="i1">Disabled Item 1</Item>
+          <Item key="i2">Disabled Item 2</Item>
+          <Item key="i3">First Enabled Item</Item>
+          <Item key="i4">Second Enabled Item</Item>
+        </List>
+      );
+
+      let options = getAllByRole('option');
+      // User presses 'Tab' to move focus into the collection container stop
+      await user.tab();
+
+      // Focus should land straight on the third item ('i3') because the first two are disabled
+      expect(document.activeElement).toBe(options[2]);
+      expect(options[2].textContent).toBe('First Enabled Item');
+    });
+  });
 });
