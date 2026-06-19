@@ -954,18 +954,17 @@ By default, TableView uses arrow key navigation to move focus into cells. Set `k
 ```tsx render type="s2"
 "use client";
 import {TableView, TableHeader, Column, TableBody, Row, Cell} from '@react-spectrum/s2/TableView';
-import {ComboBox, ComboBoxItem} from '@react-spectrum/s2/ComboBox';
+import {TextField} from '@react-spectrum/s2/TextField';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
-function PermissionPicker({label}) {
-  return (
-    <ComboBox aria-label={label} defaultSelectedKey="view" placeholder="Permission">
-      <ComboBoxItem id="view">Can view</ComboBoxItem>
-      <ComboBoxItem id="comment">Can comment</ComboBoxItem>
-      <ComboBoxItem id="edit">Can edit</ComboBoxItem>
-    </ComboBox>
-  );
-}
+///- begin collapse -///
+let files = [
+  {id: 'games', name: 'Games', type: 'Folder', date: '6/7/2023'},
+  {id: 'apps', name: 'Applications', type: 'Folder', date: '4/7/2025'},
+  {id: 'report', name: '2024 Financial Report', type: 'PDF Document', date: '12/30/2024'},
+  {id: 'job', name: 'Job Posting', type: 'Text Document', date: '1/18/2025'},
+];
+///- end collapse -///
 
 <TableView
   /*- begin highlight -*/
@@ -978,33 +977,17 @@ function PermissionPicker({label}) {
     <Column id="name" isRowHeader>Name</Column>
     <Column id="type">Type</Column>
     <Column id="date">Date Modified</Column>
-    <Column id="permission">Permission</Column>
+    <Column id="notes">Notes</Column>
   </TableHeader>
-  <TableBody>
-    <Row id="games">
-      <Cell>Games</Cell>
-      <Cell>Folder</Cell>
-      <Cell>6/7/2023</Cell>
-      <Cell><PermissionPicker label="Games permission" /></Cell>
-    </Row>
-    <Row id="apps">
-      <Cell>Applications</Cell>
-      <Cell>Folder</Cell>
-      <Cell>4/7/2025</Cell>
-      <Cell><PermissionPicker label="Applications permission" /></Cell>
-    </Row>
-    <Row id="report">
-      <Cell>2024 Financial Report</Cell>
-      <Cell>PDF Document</Cell>
-      <Cell>12/30/2024</Cell>
-      <Cell><PermissionPicker label="2024 Financial Report permission" /></Cell>
-    </Row>
-    <Row id="job">
-      <Cell>Job Posting</Cell>
-      <Cell>Text Document</Cell>
-      <Cell>1/18/2025</Cell>
-      <Cell><PermissionPicker label="Job Posting permission" /></Cell>
-    </Row>
+  <TableBody items={files}>
+    {item => (
+      <Row id={item.id}>
+        <Cell>{item.name}</Cell>
+        <Cell>{item.type}</Cell>
+        <Cell>{item.date}</Cell>
+        <Cell><TextField aria-label={`${item.name} notes`} defaultValue="" /></Cell>
+      </Row>
+    )}
   </TableBody>
 </TableView>
 ```

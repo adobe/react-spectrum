@@ -2192,9 +2192,15 @@ let comboboxEmptyState = () => {
   return <div style={{height: 30, width: '100%'}}>No results</div>;
 };
 
-export const TableWithTextfield: TableStory = args => {
+type TableWithTextfieldArgs = {
+  autoFocusChildren?: boolean;
+  keyboardNavigationBehavior?: 'tab' | 'arrow';
+  selectionMode?: 'none' | 'single' | 'multiple';
+  selectionBehavior?: 'toggle' | 'replace';
+};
+
+const TableWithTextfieldRender = (args: TableWithTextfieldArgs) => {
   let {
-    // @ts-ignore
     autoFocusChildren,
     keyboardNavigationBehavior = 'tab',
     selectionMode = 'multiple',
@@ -2362,7 +2368,8 @@ export const TableWithTextfield: TableStory = args => {
   );
 };
 
-TableWithTextfield.story = {
+export const TableWithTextfield: StoryObj<typeof TableWithTextfieldRender> = {
+  render: args => <TableWithTextfieldRender {...args} />,
   args: {
     keyboardNavigationBehavior: 'tab'
   },
@@ -2371,7 +2378,6 @@ TableWithTextfield.story = {
       control: 'radio',
       options: ['arrow', 'tab']
     },
-    // @ts-ignore
     autoFocusChildren: {
       control: 'boolean'
     },

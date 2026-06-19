@@ -2925,6 +2925,67 @@ describe('Tree', () => {
       expect(onSelectionChange).not.toHaveBeenCalled();
     });
   });
+
+  describe('focusMode and allowsArrowNavigation', () => {
+    it('focusMode="child" auto-focuses first child when item receives focus', async () => {
+      let {getByRole} = render(
+        <Tree aria-label="Tab mode tree" keyboardNavigationBehavior="tab">
+          <TreeItem id="item1" textValue="Item 1" focusMode="child">
+            <TreeItemContent>
+              {() => (
+                <button tabIndex={0} aria-label="Item 1 action">
+                  Go
+                </button>
+              )}
+            </TreeItemContent>
+          </TreeItem>
+          <TreeItem id="item2" textValue="Item 2" focusMode="child">
+            <TreeItemContent>
+              {() => (
+                <button tabIndex={0} aria-label="Item 2 action">
+                  Go
+                </button>
+              )}
+            </TreeItemContent>
+          </TreeItem>
+        </Tree>
+      );
+      await user.tab();
+      expect(document.activeElement).toBe(getByRole('button', {name: 'Item 1 action'}));
+      await user.tab({shift: true});
+      await user.keyboard('{ArrowDown}');
+      expect(document.activeElement).toBe(getByRole('button', {name: 'Item 2 action'}));
+    });
+
+    it('allowsArrowNavigation allows arrow key navigation when focused on child', async () => {
+      let {getByRole} = render(
+        <Tree aria-label="Tab mode tree" keyboardNavigationBehavior="tab">
+          <TreeItem id="item1" textValue="Item 1" focusMode="child" allowsArrowNavigation>
+            <TreeItemContent>
+              {() => (
+                <button tabIndex={0} aria-label="Item 1 action">
+                  Go
+                </button>
+              )}
+            </TreeItemContent>
+          </TreeItem>
+          <TreeItem id="item2" textValue="Item 2" focusMode="child" allowsArrowNavigation>
+            <TreeItemContent>
+              {() => (
+                <button tabIndex={0} aria-label="Item 2 action">
+                  Go
+                </button>
+              )}
+            </TreeItemContent>
+          </TreeItem>
+        </Tree>
+      );
+      await user.tab();
+      expect(document.activeElement).toBe(getByRole('button', {name: 'Item 1 action'}));
+      await user.keyboard('{ArrowDown}');
+      expect(document.activeElement).toBe(getByRole('button', {name: 'Item 2 action'}));
+    });
+  });
 });
 
 AriaTreeTests({

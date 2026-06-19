@@ -975,14 +975,11 @@ let comboboxEmptyState = () => {
   return <div style={{height: 30, width: '100%'}}>No results</div>;
 };
 
-export const GridListWithTextfield: GridListStory = args => {
+type GridListWithTextfieldArgs = GridListProps<any> & {autoFocusChildren?: boolean};
+
+const GridListWithTextfieldRender = (args: GridListWithTextfieldArgs) => {
   let isHorizontalStack = args.orientation === 'horizontal' && args.layout !== 'grid';
-  let {
-    // @ts-ignore
-    autoFocusChildren,
-    keyboardNavigationBehavior,
-    ...otherArgs
-  } = args;
+  let {autoFocusChildren, keyboardNavigationBehavior, ...otherArgs} = args;
 
   let focusMode =
     autoFocusChildren && keyboardNavigationBehavior === 'tab'
@@ -1125,7 +1122,8 @@ export const GridListWithTextfield: GridListStory = args => {
   );
 };
 
-GridListWithTextfield.story = {
+export const GridListWithTextfield: StoryObj<typeof GridListWithTextfieldRender> = {
+  render: args => <GridListWithTextfieldRender {...args} />,
   args: {
     layout: 'stack',
     orientation: 'vertical',
@@ -1145,7 +1143,6 @@ GridListWithTextfield.story = {
       control: 'radio',
       options: ['arrow', 'tab']
     },
-    // @ts-ignore
     autoFocusChildren: {
       control: 'boolean'
     },

@@ -2082,4 +2082,61 @@ describe('GridList', () => {
       }
     );
   });
+
+  describe('focusMode and allowsArrowNavigation', () => {
+    it('focusMode="child" auto-focuses first child when item receives focus', async () => {
+      let {getByRole} = render(
+        <GridList aria-label="Tab mode list" keyboardNavigationBehavior="tab">
+          <GridListItem id="1" textValue="Item 1" focusMode="child">
+            <button tabIndex={0} aria-label="Item 1 action">
+              Go
+            </button>
+          </GridListItem>
+          <GridListItem id="2" textValue="Item 2" focusMode="child">
+            <button tabIndex={0} aria-label="Item 2 action">
+              Go
+            </button>
+          </GridListItem>
+          <GridListItem id="3" textValue="Item 3" focusMode="child">
+            <button tabIndex={0} aria-label="Item 3 action">
+              Go
+            </button>
+          </GridListItem>
+        </GridList>
+      );
+
+      await user.tab();
+      expect(document.activeElement).toBe(getByRole('button', {name: 'Item 1 action'}));
+      await user.tab({shift: true});
+      await user.keyboard('{ArrowDown}');
+      expect(document.activeElement).toBe(getByRole('button', {name: 'Item 2 action'}));
+    });
+
+    it('allowsArrowNavigation allows arrow key row navigation when focused on child', async () => {
+      let {getByRole} = render(
+        <GridList aria-label="Tab mode list" keyboardNavigationBehavior="tab">
+          <GridListItem id="1" textValue="Item 1" focusMode="child" allowsArrowNavigation>
+            <button tabIndex={0} aria-label="Item 1 action">
+              Go
+            </button>
+          </GridListItem>
+          <GridListItem id="2" textValue="Item 2" focusMode="child" allowsArrowNavigation>
+            <button tabIndex={0} aria-label="Item 2 action">
+              Go
+            </button>
+          </GridListItem>
+          <GridListItem id="3" textValue="Item 3" focusMode="child" allowsArrowNavigation>
+            <button tabIndex={0} aria-label="Item 3 action">
+              Go
+            </button>
+          </GridListItem>
+        </GridList>
+      );
+
+      await user.tab();
+      expect(document.activeElement).toBe(getByRole('button', {name: 'Item 1 action'}));
+      await user.keyboard('{ArrowDown}');
+      expect(document.activeElement).toBe(getByRole('button', {name: 'Item 2 action'}));
+    });
+  });
 });

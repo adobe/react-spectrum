@@ -298,6 +298,36 @@ let TabModeFocusModeChildTable = props => (
   </Table>
 );
 
+let TabModeFocusModeChildWithArrowNavTable = props => (
+  <Table aria-label="Tab mode table" keyboardNavigationBehavior="tab" {...props}>
+    <TableHeader>
+      <Column isRowHeader>Name</Column>
+      <Column>Type</Column>
+      <Column>Action</Column>
+    </TableHeader>
+    <TableBody>
+      <Row id="1" textValue="Games">
+        <Cell>Games</Cell>
+        <Cell>File folder</Cell>
+        <Cell focusMode="child" allowsArrowNavigation>
+          <button tabIndex={0} aria-label="Games action">
+            Go
+          </button>
+        </Cell>
+      </Row>
+      <Row id="2" textValue="Program Files">
+        <Cell>Program Files</Cell>
+        <Cell>File folder</Cell>
+        <Cell focusMode="child" allowsArrowNavigation>
+          <button tabIndex={0} aria-label="Program Files action">
+            Go
+          </button>
+        </Cell>
+      </Row>
+    </TableBody>
+  </Table>
+);
+
 let DraggableTable = props => {
   let {dragAndDropHooks} = useDragAndDrop({
     getItems: keys => [...keys].map(key => ({'text/plain': key})),
@@ -3685,8 +3715,16 @@ describe('Table', () => {
         let {getByRole} = render(<TabModeFocusModeChildTable />);
         await user.tab();
         await user.keyboard('{ArrowLeft}');
-        act(() => jest.runAllTimers());
         expect(document.activeElement).toBe(getByRole('button', {name: 'Games action'}));
+      });
+
+      it('allowsArrowNavigation allows arrow key row navigation when focused on child', async () => {
+        let {getByRole} = render(<TabModeFocusModeChildWithArrowNavTable />);
+        await user.tab();
+        await user.keyboard('{ArrowLeft}');
+        expect(document.activeElement).toBe(getByRole('button', {name: 'Games action'}));
+        await user.keyboard('{ArrowDown}');
+        expect(document.activeElement).toBe(getByRole('button', {name: 'Program Files action'}));
       });
 
       // TODO: for some reason the cell containing the button doesn't get refocused when we shift tab in the test but it
@@ -3706,6 +3744,7 @@ describe('Table', () => {
 
         await user.tab({shift: true});
         expect(document.activeElement).toBe(actionCell);
+        // TODO: even this doesn't work
         act(() => {
           actionCell.focus();
         });
