@@ -386,6 +386,65 @@ function Example(props) {
 }
 ```
 
+## Keyboard navigation
+
+By default, TreeView uses arrow key navigation to move focus into rows. Set `keyboardNavigationBehavior="tab"` to have <Keyboard>Tab</Keyboard> move focus in and out of a row.
+Use this when rows contain interactive elements such as text fields, where arrow keys and typing in the field should not trigger grid navigation or selection.
+
+```tsx render
+"use client";
+import {Text} from '@react-spectrum/s2';
+import {TreeView, TreeViewItem, TreeViewItemContent} from '@react-spectrum/s2/TreeView';
+import {TextField} from '@react-spectrum/s2/TextField';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+
+<TreeView
+  /*- begin highlight -*/
+  keyboardNavigationBehavior="tab"
+  /*- end highlight -*/
+  selectionMode="multiple"
+  defaultExpandedKeys={['documents', 'photos']}
+  aria-label="Shared files"
+  styles={style({height: 250, width: 'full', maxWidth: 400})}>
+  <TreeViewItem id="documents" textValue="Documents">
+    <TreeViewItemContent>
+      <Text>
+        <TextField styles={style({margin: 4})} aria-label="title" defaultValue="Documents" />
+      </Text>
+    </TreeViewItemContent>
+    <TreeViewItem id="weekly" textValue="Weekly Report.pdf">
+      <TreeViewItemContent>
+        <Text>
+          <TextField styles={style({margin: 4})} aria-label="title" defaultValue="Weekly Report.pdf" />
+        </Text>
+      </TreeViewItemContent>
+    </TreeViewItem>
+    <TreeViewItem id="budget" textValue="Budget.xlsx">
+      <TreeViewItemContent>
+        <Text>
+          <TextField styles={style({margin: 4})} aria-label="title" defaultValue="Budget.xlsx" />
+        </Text>
+      </TreeViewItemContent>
+    </TreeViewItem>
+  </TreeViewItem>
+  <TreeViewItem id="photos" textValue="Photos">
+    <TreeViewItemContent>
+      <Text>
+        <TextField styles={style({margin: 4})} aria-label="title" defaultValue="Photos" />
+      </Text>
+    </TreeViewItemContent>
+    <TreeViewItem id="sunset" textValue="Sunset.jpg">
+      <TreeViewItemContent>
+        <Text>
+          <TextField styles={style({margin: 4})} aria-label="title" defaultValue="Sunset.jpg" />
+        </Text>
+      </TreeViewItemContent>
+    </TreeViewItem>
+  </TreeViewItem>
+</TreeView>
+```
+
 ## Drag and drop
 
 TreeView supports drag and drop interactions when the `dragAndDropHooks` prop is provided using the <TypeLink links={docs.links} type={docs.exports.useDragAndDrop} /> hook. Users can drop data on the tree as a whole, on individual items, insert new items between existing ones, or reorder items. React Spectrum supports drag and drop via mouse, touch, keyboard, and screen reader interactions. See the [drag and drop guide](dnd?component=TreeView) to learn more.
