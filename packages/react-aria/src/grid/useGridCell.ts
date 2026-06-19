@@ -27,14 +27,8 @@ import {
 import {gridMap} from './utils';
 import {GridState} from 'react-stately/private/grid/useGridState';
 import {isFocusVisible} from '../interactions/useFocusVisible';
-import {isTabbable} from '../utils/isFocusable';
 import {mergeProps} from '../utils/mergeProps';
-import {
-  KeyboardEvent as ReactKeyboardEvent,
-  MouseEvent as ReactMouseEvent,
-  PointerEvent as ReactPointerEvent,
-  useRef
-} from 'react';
+import {KeyboardEvent as ReactKeyboardEvent, useRef} from 'react';
 import {scrollIntoViewport} from '../utils/scrollIntoView';
 import {useLocale} from '../i18n/I18nProvider';
 import {useSelectableItem} from '../selection/useSelectableItem';
@@ -359,29 +353,6 @@ export function useGridCell<T, C extends GridCollection<T>>(
   if (isVirtualized) {
     gridCellProps['aria-colindex'] = (node.colIndex ?? node.index) + 1; // aria-colindex is 1-based
   }
-
-  // TODO: same logic as in useGridListItem
-  // doesn't have the keydown handler part since we don't seem to have the same problem where Enter
-  // triggers selection when in a textfield
-  let baseOnPointerDown = gridCellProps.onPointerDown;
-  gridCellProps.onPointerDown = (e: ReactPointerEvent<FocusableElement>) => {
-    let target = getEventTarget(e) as Element | null;
-    if (target && target !== ref.current && isTabbable(target)) {
-      e.stopPropagation();
-      return;
-    }
-    baseOnPointerDown?.(e);
-  };
-
-  let baseOnMouseDown = gridCellProps.onMouseDown;
-  gridCellProps.onMouseDown = (e: ReactMouseEvent<FocusableElement>) => {
-    let target = getEventTarget(e) as Element | null;
-    if (target && target !== ref.current && isTabbable(target)) {
-      e.stopPropagation();
-      return;
-    }
-    baseOnMouseDown?.(e);
-  };
 
   // When pressing with a pointer and cell selection is not enabled, usePress will be applied to the
   // row rather than the cell. However, when the row is draggable, usePress cannot preventDefault

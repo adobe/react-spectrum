@@ -26,6 +26,7 @@ import {focusSafely} from '../interactions/focusSafely';
 import {getActiveElement, getEventTarget} from '../utils/shadowdom/DOMFunctions';
 import {getCollectionId, isNonContiguousSelectionModifier} from './utils';
 import {isCtrlKeyPressed} from '../utils/keyboard';
+import {isTabbable} from '../utils/isFocusable';
 import {mergeProps} from '../utils/mergeProps';
 import {moveVirtualFocus} from '../focus/virtualFocus';
 import {MultipleSelectionManager} from 'react-stately/useMultipleSelectionState';
@@ -442,17 +443,38 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
         }
       : undefined;
 
+  let mergedItemProps = mergeProps(
+    itemProps,
+    allowsSelection || hasPrimaryAction || (shouldUseVirtualFocus && !isDisabled) ? pressProps : {},
+    longPressEnabled ? longPressProps : {},
+    {onDoubleClick, onDragStartCapture, onClick, id},
+    // Prevent DOM focus from moving on mouse down when using virtual focus
+    shouldUseVirtualFocus ? {onMouseDown: e => e.preventDefault()} : undefined
+  );
+
+  // Guard against presses triggering selection when they happen on interactive children.
+  let baseOnPointerDown = mergedItemProps.onPointerDown;
+  mergedItemProps.onPointerDown = e => {
+    let target = getEventTarget(e) as Element | null;
+    if (target && target !== ref.current && isTabbable(target)) {
+      e.stopPropagation();
+      return;
+    }
+    baseOnPointerDown?.(e);
+  };
+
+  let baseOnMouseDown = mergedItemProps.onMouseDown;
+  mergedItemProps.onMouseDown = e => {
+    let target = getEventTarget(e) as Element | null;
+    if (target && target !== ref.current && isTabbable(target)) {
+      e.stopPropagation();
+      return;
+    }
+    baseOnMouseDown?.(e);
+  };
+
   return {
-    itemProps: mergeProps(
-      itemProps,
-      allowsSelection || hasPrimaryAction || (shouldUseVirtualFocus && !isDisabled)
-        ? pressProps
-        : {},
-      longPressEnabled ? longPressProps : {},
-      {onDoubleClick, onDragStartCapture, onClick, id},
-      // Prevent DOM focus from moving on mouse down when using virtual focus
-      shouldUseVirtualFocus ? {onMouseDown: e => e.preventDefault()} : undefined
-    ),
+    itemProps: mergedItemProps,
     isPressed,
     isSelected: manager.isSelected(key),
     isFocused: manager.isFocused && manager.focusedKey === key,
