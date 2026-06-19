@@ -170,7 +170,7 @@ interface UploadState {
   progress?: number;
 }
 
-export const Everything = () => {
+export const Everything = args => {
   let [attachmentState, setAttachmentState] = useState<Map<string, UploadState>>(new Map());
 
   let mockUpload = async (id: string) => {
@@ -194,6 +194,7 @@ export const Everything = () => {
 
   return (
     <PromptField
+      {...args}
       acceptedAttachmentTypes={['image/*']}
       onAddAttachments={attachments => {
         setAttachmentState(prev => {

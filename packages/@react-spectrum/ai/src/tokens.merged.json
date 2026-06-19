@@ -1,0 +1,441 @@
+{
+  "send-button": {
+    "bg": {
+      "default": {
+        "light": "rgba(0, 0, 0, 0.85)",
+        "dark": "rgba(255, 255, 255, 0.85)"
+      },
+      "disabled": {
+        "light": "rgba(0, 0, 0, 0.05)",
+        "dark": "rgba(255, 255, 255, 0.05)"
+      }
+    },
+    "icon": {
+      "default": {
+        "light": "rgba(255, 255, 255, 1)",
+        "dark": "rgba(0, 0, 0, 1)"
+      },
+      "disabled": {
+        "light": "rgba(0, 0, 0, 0.15)",
+        "dark": "rgba(255, 255, 255, 0.15)"
+      }
+    }
+  },
+  "content": {
+    "default": {
+      "light": "rgba(0, 0, 0, 0.56)",
+      "dark": "rgba(255, 255, 255, 0.51)"
+    },
+    "focus": {
+      "light": "rgba(41, 41, 41, 1)",
+      "dark": "rgba(41, 41, 41, 1)"
+    }
+  },
+  "container": {
+    "bg": {
+      "default": {
+        "light": "rgba(255, 255, 255, 0.85)",
+        "dark": "rgba(255, 255, 255, 0.05)"
+      },
+      "focus": {
+        "light": "rgba(255, 255, 255, 0.85)",
+        "dark": "rgba(255, 255, 255, 0.02)"
+      }
+    },
+    "opacity": {
+      "con-overlay": {
+        "idle": {
+          "default-balanced": {
+            "value": 40
+          },
+          "default-prominent": {
+            "value": 60
+          },
+          "default-subtle": {
+            "value": 40
+          },
+          "hover-balanced": {
+            "light": 50,
+            "dark": 40
+          },
+          "hover-prominent": {
+            "light": 75,
+            "dark": 60
+          },
+          "hover-subtle": {
+            "light": 50,
+            "dark": 40
+          }
+        },
+        "generating": {
+          "default-balanced": {
+            "light": 50,
+            "dark": 40
+          },
+          "default-subtle": {
+            "light": 60,
+            "dark": 40
+          },
+          "default-prominent": {
+            "light": 50,
+            "dark": 40
+          },
+          "focus": {
+            "light": 40,
+            "dark": 50
+          },
+          "inner-shadow": {
+            "value": 100
+          }
+        }
+      },
+      "con-hue": {
+        "generating": {
+          "default-balanced": {
+            "value": 50
+          },
+          "default-prominent": {
+            "value": 75
+          },
+          "default-subtle": {
+            "value": 20
+          },
+          "hover-balanced": {
+            "value": 100
+          },
+          "hover-prominent": {
+            "value": 100
+          },
+          "hover-subtle": {
+            "value": 75
+          }
+        },
+        "idle": {
+          "default-balanced": {
+            "value": 12.5
+          },
+          "default-prominent": {
+            "value": 75
+          },
+          "default-subtle": {
+            "value": 40
+          },
+          "hover-balanced": {
+            "value": 20
+          },
+          "hover-prominent": {
+            "value": 100
+          },
+          "hover-subtle": {
+            "value": 12.5
+          }
+        }
+      },
+      "gradient-bg": {
+        "generating": {
+          "default-balanced": {
+            "value": 30
+          },
+          "default-prominent": {
+            "value": 50
+          },
+          "default-subtle": {
+            "value": 30
+          },
+          "hover-balanced": {
+            "light": 40,
+            "dark": 50
+          },
+          "hover-prominent": {
+            "value": 75
+          },
+          "hover-subtle": {
+            "value": 40
+          }
+        },
+        "idle": {
+          "default-balanced": {
+            "value": 30
+          },
+          "default-prominent": {
+            "value": 40
+          },
+          "default-subtle": {
+            "value": 20
+          },
+          "hover-balanced": {
+            "light": 30,
+            "dark": 40
+          },
+          "hover-subtle": {
+            "value": 30
+          },
+          "hover-prominent": {
+            "value": 50
+          }
+        }
+      },
+      "con-bg": {
+        "generating": {
+          "default-balanced": {
+            "light": 50,
+            "dark": 50
+          },
+          "default-subtle": {
+            "light": 20,
+            "dark": 20
+          },
+          "default-prominent": {
+            "light": 100,
+            "dark": 75
+          },
+          "hover-balanced": {
+            "light": 75,
+            "dark": 75
+          },
+          "hover-subtle": {
+            "light": 20,
+            "dark": 20
+          },
+          "hover-prominent": {
+            "light": 100,
+            "dark": 100
+          }
+        },
+        "idle": {
+          "default-balanced": {
+            "light": 12.5,
+            "dark": 20
+          },
+          "default-prominent": {
+            "light": 30,
+            "dark": 20
+          },
+          "default-subtle": {
+            "light": 12.5,
+            "dark": 20
+          },
+          "hover-balanced": {
+            "light": 30,
+            "dark": 40
+          },
+          "hover-prominent": {
+            "light": 30,
+            "dark": 40
+          },
+          "hover-subtle": {
+            "light": 30,
+            "dark": 40
+          }
+        }
+      },
+      "con-bg-inner-shadow": {
+        "generating": {
+          "default": {
+            "value": 50
+          }
+        },
+        "idle": {
+          "default": {
+            "value": 50
+          }
+        }
+      }
+    },
+    "border": {
+      "default": {
+        "light": "rgba(236, 105, 255, 0.1)",
+        "dark": "rgba(255, 255, 255, 0.05)"
+      },
+      "focus": {
+        "light": "rgba(0, 0, 0, 0.05)",
+        "dark": "rgba(255, 255, 255, 0.05)"
+      }
+    },
+    "gradient": {
+      "con-bg": {
+        "idle": {
+          "stop-1": {
+            "light": "rgb(235, 238, 255)",
+            "dark": "rgb(0, 0, 0)"
+          },
+          "stop-2": {
+            "light": "rgb(250, 211, 255)",
+            "dark": "rgb(30, 0, 93)"
+          },
+          "stop-3": {
+            "light": "rgb(255, 235, 232)",
+            "dark": "rgb(50, 0, 61)"
+          },
+          "stop-4": {
+            "light": "rgb(255, 236, 207)",
+            "dark": "rgb(54, 10, 3)"
+          }
+        },
+        "generating": {
+          "stop-1": {
+            "light": "rgb(216, 222, 255)",
+            "dark": "rgb(0, 0, 0)"
+          },
+          "stop-2": {
+            "light": "rgb(253, 233, 255)",
+            "dark": "rgb(35, 0, 110)"
+          },
+          "stop-3": {
+            "light": "rgb(255, 236, 207)",
+            "dark": "rgb(68, 13, 5)"
+          },
+          "stop-4": {
+            "light": "rgb(247, 181, 255)",
+            "dark": "rgb(102, 9, 120)"
+          }
+        }
+      },
+      "con-hue": {
+        "generating": {
+          "stop-1": {
+            "light": "rgb(253, 233, 255)",
+            "dark": "rgb(64, 0, 122)"
+          },
+          "stop-2": {
+            "light": "rgb(254, 246, 255)",
+            "dark": "rgb(127, 23, 146)"
+          },
+          "stop-3": {
+            "light": "rgb(255, 232, 240)",
+            "dark": "rgb(181, 19, 76)"
+          }
+        }
+      }
+    },
+    "color": {
+      "inner-shadow": {
+        "generating": {
+          "light": "rgb(254, 246, 255)",
+          "dark": "rgb(127, 23, 146)"
+        }
+      }
+    }
+  },
+  "outer-border": {
+    "gradient": {
+      "ob-spread-shadow": {
+        "generating": {
+          "stop-1": {
+            "light": "rgb(253, 233, 255)",
+            "dark": "rgb(30, 0, 93)"
+          },
+          "stop-2": {
+            "light": "rgb(250, 211, 255)",
+            "dark": "rgb(61, 0, 74)"
+          },
+          "stop-3": {
+            "light": "rgb(255, 185, 208)",
+            "dark": "rgb(74, 0, 27)"
+          }
+        }
+      },
+      "ob-border": {
+        "stop-1": {
+          "light": "rgb(255, 255, 255)",
+          "dark": "rgba(255, 255, 255, 0.02)"
+        },
+        "stop-2": {
+          "light": "rgba(255, 255, 255, 0.51)",
+          "dark": "rgba(255, 255, 255, 0.03)"
+        },
+        "focus": {
+          "stop-1": {
+            "light": "rgba(255, 255, 255, 0.51)",
+            "dark": "rgba(133, 133, 133, 0.04)"
+          },
+          "stop-2": {
+            "light": "rgba(255, 255, 255, 0.51)",
+            "dark": "rgba(133, 133, 133, 0.05)"
+          }
+        }
+      },
+      "ob-hue": {
+        "stop-1": {
+          "light": "rgba(236, 105, 255, 0.6)",
+          "dark": null
+        },
+        "stop-2": {
+          "light": "rgba(255, 81, 61, 0.5)",
+          "dark": null
+        },
+        "stop-3": {
+          "light": "rgba(255, 162, 19, 0.4)",
+          "dark": null
+        }
+      }
+    },
+    "color": {
+      "drop-shadow": {
+        "ob-border": {
+          "default": {
+            "light": "rgba(236, 105, 255, 0.1)",
+            "dark": "rgba(213, 73, 235, 0)"
+          },
+          "subtle": {
+            "light": "rgba(0, 0, 0, 0.05)",
+            "dark": "rgba(0, 0, 0, 0.1)"
+          },
+          "focus": {
+            "light": "rgba(0, 0, 0, 0.05)",
+            "dark": "rgba(0, 0, 0, 0.03)"
+          }
+        }
+      }
+    },
+    "opacity": {
+      "spread-bg-balanced": {
+        "value": 50
+      },
+      "spread-bg-prominent": {
+        "value": 50
+      },
+      "spread-bg-subtle": {
+        "value": 30
+      },
+      "spread-gradient": {
+        "value": 50
+      },
+      "border-gradient": {
+        "value": 100
+      },
+      "border-generating": {
+        "value": 30
+      },
+      "ob-hue-balanced": {
+        "light": 30,
+        "dark": 0
+      },
+      "ob-hue-subtle": {
+        "light": 20,
+        "dark": 0
+      },
+      "ob-hue-prominent": {
+        "value": 40
+      }
+    }
+  },
+  "outline-glow": {
+    "gradient": {
+      "generating": {
+        "stop-1": {
+          "light": "rgb(254, 246, 255)",
+          "dark": "rgb(50, 0, 61)"
+        },
+        "stop-2": {
+          "light": "rgb(253, 233, 255)",
+          "dark": "rgb(61, 0, 74)"
+        },
+        "stop-3": {
+          "light": "rgb(247, 181, 255)",
+          "dark": "rgb(102, 9, 120)"
+        }
+      }
+    }
+  }
+}

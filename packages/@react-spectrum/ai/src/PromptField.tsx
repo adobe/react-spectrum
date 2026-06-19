@@ -14,7 +14,6 @@ import {ActionButton} from '@react-spectrum/s2/ActionButton';
 import Attach from '@react-spectrum/s2/icons/Attach';
 import {Attachment, AttachmentList, AttachmentListProps} from './AttachmentList';
 import {Autocomplete} from 'react-aria-components/Autocomplete';
-import {baseColor, css, style, StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Button} from '@react-spectrum/s2/Button';
 import {CenterBaseline} from '@react-spectrum/s2/CenterBaseline';
 import {
@@ -27,7 +26,7 @@ import {
   useRef,
   useState
 } from 'react';
-// eslint-disable-next-line
+import {css, style, StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {
   Direction,
   Position,
@@ -35,18 +34,15 @@ import {
   TokenSegment,
   TokenSegmentList
 } from './TokenSegmentList';
-import {getEventTarget} from 'react-aria/private/utils/shadowdom/DOMFunctions';
-import {Group} from 'react-aria-components/Group';
-import {IconContext, mergeStyles} from '@react-spectrum/s2';
+import {IconContext} from '@react-spectrum/s2';
 import {Image, Text} from '@react-spectrum/s2/Card';
 import {isFileDropItem, useDrop} from 'react-aria-components/useDrop';
-import {isFocusable} from 'react-aria/private/utils/isFocusable';
 import {Link} from '@react-spectrum/s2/Link';
 import {Menu, MenuItem, MenuItemProps, MenuTrigger} from '@react-spectrum/s2/Menu';
-// eslint-disable-next-line
 import Plus from '@react-spectrum/s2/icons/Add';
 import {Popover, PopoverProps} from '@react-spectrum/s2/Popover';
 import {positionToDOMRange, Token, TokenField, TokenProps} from './TokenField';
+import {PromptFieldContainer} from './PromptFieldContainer';
 import {PromptFocusContext} from './Chat';
 import Send from '@react-spectrum/s2/icons/ArrowUpSend';
 import Stop from '@react-spectrum/s2/icons/StopProcessing';
@@ -67,6 +63,7 @@ export interface PromptFieldProps {
   onAddAttachments?: (attachments: PromptFieldAttachment[]) => void;
   onRemoveAttachments?: (attachments: PromptFieldAttachment[]) => void;
   styles?: StyleString;
+  variant?: 'balanced' | 'prominent' | 'subtle';
 }
 
 interface PromptFieldState {
@@ -141,7 +138,8 @@ export function PromptField(props: PromptFieldProps) {
     onStop,
     styles,
     onAddAttachments,
-    onRemoveAttachments
+    onRemoveAttachments,
+    variant = 'balanced'
   } = props;
   let [prompt, setPrompt] = useState<TokenSegmentList>(new AutoLinkingSegmentList([]));
   let [attachments, setAttachments] = useState<PromptFieldAttachment[]>([]);
@@ -149,7 +147,7 @@ export function PromptField(props: PromptFieldProps) {
   // Not using RAC DropZone because it adds its own focusable button,
   // and we want to avoid an extra tab. We support pasting files directly into the input.
   let inputRef = useRef<HTMLDivElement>(null);
-  let {dropProps, isDropTarget} = useDrop({
+  let {dropProps} = useDrop({
     ref: inputRef,
     hasDropButton: true,
     isDisabled: !acceptedAttachmentTypes,
@@ -202,47 +200,15 @@ export function PromptField(props: PromptFieldProps) {
         onRemoveAttachments
       }}>
       <div {...focusWithinProps}>
-        <Group
+        <PromptFieldContainer
           {...dropProps}
           role="group"
-          className={renderProps =>
-            mergeStyles(
-              style({
-                display: 'flex',
-                flexDirection: 'column',
-                gap: 16,
-                padding: 16,
-                boxShadow: 'emphasized',
-                backgroundColor: {
-                  default: 'elevated',
-                  isDropTarget: 'blue-200'
-                },
-                borderRadius: 'lg',
-                borderWidth: 2,
-                borderStyle: 'solid',
-                borderColor: {
-                  default: 'transparent',
-                  isDropTarget: 'blue-800'
-                },
-                cursor: 'text'
-              })({...renderProps, isDropTarget}),
-              styles
-            )
-          }
-          onPointerDown={e => {
-            // If not clicking on something focusable within the prompt field, focus the input.
-            let target = getEventTarget(e) as Element | null;
-            while (target && target !== e.currentTarget && !isFocusable(target)) {
-              target = target.parentElement;
-            }
-
-            if (target === e.currentTarget) {
-              e.preventDefault();
-              inputRef.current?.focus();
-            }
-          }}>
+          variant={variant}
+          isGenerating={isGenerating ?? false}
+          styles={styles}
+          inputRef={inputRef}>
           {children}
-        </Group>
+        </PromptFieldContainer>
         <p className={style({font: 'ui-sm', textAlign: 'center'})}>
           Responses are generated using AI, and may be inaccurate. Check before using.{' '}
           <Link
@@ -373,21 +339,21 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
             : undefined
         }
         onSubmit={onSubmit}
-        className={renderProps =>
+        className={
           css('&:empty::before { content: attr(data-placeholder); }') +
           style({
             font: 'body',
             color: {
-              default: baseColor('neutral'),
+              default: 'gray-800',
               ':empty': {
-                default: 'gray-600',
+                default: 'transparent-overlay-600',
                 forcedColors: 'GrayText'
               }
             },
             width: 'full',
             outlineStyle: 'none',
             cursor: 'text'
-          })(renderProps)
+          })
         }>
         {children || (segment => <PromptToken>{segment.text}</PromptToken>)}
       </TokenField>
@@ -519,6 +485,7 @@ export function PromptFieldSubmitButton(props: PromptFieldSubmitButtonProps) {
   return (
     <Button
       variant="primary"
+      staticColor="auto"
       // TODO: should it be possible to submit a prompt with only attachments?
       isDisabled={prompt.segments.length === 0 && !isGenerating}
       aria-label={isGenerating ? 'Stop' : 'Send'}
@@ -536,7 +503,7 @@ export function InsertMenuButton(props: InsertMenuItemProps) {
   let {children} = props;
   return (
     <MenuTrigger>
-      <ActionButton isQuiet aria-label="Add">
+      <ActionButton isQuiet staticColor="auto" aria-label="Add">
         <Plus />
       </ActionButton>
       <Menu>{children}</Menu>
