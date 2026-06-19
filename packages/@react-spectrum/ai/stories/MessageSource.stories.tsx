@@ -10,10 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {MessageSource, SourceList, SourceListItem} from '../src/MessageSource';
+import {categorizeArgTypes, getActionArgs} from '../../s2/stories/utils';
+import {MessageSource, SourceList, SourceListItem} from '@react-spectrum/ai';
 import type {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+const events = ['onExpandedChange'];
 
 const meta: Meta<typeof MessageSource> = {
   component: MessageSource,
@@ -22,6 +25,7 @@ const meta: Meta<typeof MessageSource> = {
   },
   tags: ['autodocs'],
   argTypes: {
+    ...categorizeArgTypes('Events', events),
     size: {
       control: 'radio',
       options: ['S', 'M', 'L', 'XL']
@@ -35,6 +39,7 @@ const meta: Meta<typeof MessageSource> = {
     },
     children: {table: {disable: true}}
   },
+  args: {...getActionArgs(events)},
   title: 'AI/MessageSource'
 };
 

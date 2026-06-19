@@ -36,15 +36,15 @@ import {LinkButtonContext} from '@react-spectrum/s2/LinkButton';
 import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
 import {pressScale} from '@react-spectrum/s2/pressScale';
 import {SkeletonContext, useIsSkeleton} from '@react-spectrum/s2/Skeleton';
-import {StyleString} from './types';
+import {StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {TextContext} from '@react-spectrum/s2/Text';
 import {useDOMRef} from './useDOMRef';
-interface CardRenderProps {
+interface HorizontalCardRenderProps {
   /** The size of the Card. */
   size: 'XS' | 'S' | 'M' | 'L' | 'XL';
 }
 
-export interface CardProps extends Omit<
+export interface HorizontalCardProps extends Omit<
   GridListItemProps,
   | 'className'
   | 'style'
@@ -57,7 +57,7 @@ export interface CardProps extends Omit<
   | keyof GlobalDOMAttributes
 > {
   /** The children of the Card. */
-  children: ReactNode | ((renderProps: CardRenderProps) => ReactNode);
+  children: ReactNode | ((renderProps: HorizontalCardRenderProps) => ReactNode);
   /**
    * The size of the Card.
    *
@@ -82,7 +82,7 @@ export interface CardProps extends Omit<
   styles?: StyleString;
 }
 
-export interface BasicCardProps extends Omit<CardProps, 'variant'> {
+export interface BasicCardProps extends Omit<HorizontalCardProps, 'variant'> {
   /**
    * The visual style of the Card.
    *
@@ -193,8 +193,7 @@ let card = style({
         XL: 80
       }
     },
-    isCardView: 'full',
-    [onlyPreview]: 68
+    isCardView: 'full'
   },
   width: {
     default: 'full',
@@ -456,7 +455,7 @@ const actionButtonSize = {
 } as const;
 
 const Card = forwardRef(function Card(
-  props: Omit<CardProps, 'variant'> & {
+  props: Omit<HorizontalCardProps, 'variant'> & {
     isBasic?: boolean;
     variant?: 'primary' | 'secondary' | 'tertiary' | 'quiet';
   },
@@ -669,6 +668,7 @@ export interface CardPreviewProps extends DOMProps {
   styles?: StyleString;
 }
 
+// TODO: this should be the same component as the one in @react-spectrum/s2/Card
 export const CardPreview = forwardRef(function CardPreview(
   props: CardPreviewProps,
   ref: DOMRef<HTMLDivElement>
@@ -681,10 +681,7 @@ export const CardPreview = forwardRef(function CardPreview(
       {...filterDOMProps(props)}
       slot="preview"
       ref={domRef}
-      className={mergeStyles(
-        preview({size, isQuiet, isHovered, isFocusVisible, isSelected}),
-        props.styles
-      )}
+      className={preview({size, isQuiet, isHovered, isFocusVisible, isSelected})}
       style={isQuiet ? pressScale(domRef)({isPressed}) : undefined}>
       {isQuiet && <SelectionIndicator />}
       {isQuiet && isCheckboxSelection && <CardCheckbox />}
@@ -742,7 +739,7 @@ const buttonSize = {
 } as const;
 
 export const HorizontalCard = forwardRef(function HorizontalCard(
-  props: CardProps,
+  props: HorizontalCardProps,
   ref: DOMRef<HTMLDivElement>
 ) {
   let {size = 'M'} = props;

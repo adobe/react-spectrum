@@ -217,13 +217,13 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(
           } else if (collectionItem?.props.onAction) {
             collectionItem.props.onAction();
             state.close();
-            return {shouldPreventDefault: false};
+            return {shouldPreventDefault: false, shouldContinuePropagation: true};
           }
         }
         if (state.isOpen) {
           state.commit();
         }
-        return {shouldPreventDefault: false};
+        return {shouldPreventDefault: false, shouldContinuePropagation: true};
       },
       Escape: () => {
         let shouldContinuePropagation = false;
