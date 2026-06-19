@@ -328,7 +328,11 @@ export type {HoverProps, HoverResult} from '../src/interactions/useHover';
 export type {InteractOutsideProps} from '../src/interactions/useInteractOutside';
 export type {KeyboardProps, KeyboardResult} from '../src/interactions/useKeyboard';
 export type {LongPressProps, LongPressResult} from '../src/interactions/useLongPress';
-export type {ContextMenuProps, ContextMenuAria, ContextMenuEvent} from '../src/interactions/useContextMenu';
+export type {
+  ContextMenuProps,
+  ContextMenuAria,
+  ContextMenuEvent
+} from '../src/interactions/useContextMenu';
 export type {
   MoveEvents,
   PressEvent,
