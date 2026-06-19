@@ -40,11 +40,13 @@ export function stop(gray: string, stop: string, opacity: string) {
   return `light-dark(${mix('white', stop + '.light', opacity + '.light')}, ${mix(color('gray-75'), stop + '.dark', opacity + '.dark')})`;
 }
 
-export function defineProperties(css: string) {
-  this.addAsset({
-    type: 'css',
-    content: css
-  });
+export function defineProperties(this: any, css: string) {
+  if (this && typeof this.addAsset === 'function') {
+    this.addAsset({
+      type: 'css',
+      content: css
+    });
+  }
 }
 
 export function stops(generating: string, state: string, variant: string) {
