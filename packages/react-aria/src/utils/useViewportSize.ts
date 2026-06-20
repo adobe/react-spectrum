@@ -15,7 +15,7 @@ import {isIOS} from './platform';
 import {runAfterKeyboard} from './runAfterKeyboard';
 import {useEffect, useRef, useState} from 'react';
 import {useIsSSR} from '../ssr/SSRProvider';
-import {willOpenKeyboard} from './keyboard';
+import {willOpenKeyboard} from './isKeyboardVisible';
 
 interface ViewportSize {
   width: number;

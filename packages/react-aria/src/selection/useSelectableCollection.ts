@@ -34,7 +34,7 @@ import {
 import {getFocusableTreeWalker} from '../focus/FocusScope';
 import {getInteractionModality} from '../interactions/useFocusVisible';
 import {getItemElement, isNonContiguousSelectionModifier, useCollectionId} from './utils';
-import {isCtrlKeyPressed} from '../utils/keyboard';
+import {isCtrlKeyPressed} from '../utils/isKeyboardVisible';
 import {isTabbable} from '../utils/isFocusable';
 import {mergeProps} from '../utils/mergeProps';
 import {MultipleSelectionManager} from 'react-stately/useMultipleSelectionState';

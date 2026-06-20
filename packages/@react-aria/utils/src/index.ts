@@ -79,7 +79,7 @@ export {
   useLoadMoreSentinel as UNSTABLE_useLoadMoreSentinel
 } from 'react-aria/private/utils/useLoadMoreSentinel';
 export {inertValue} from 'react-aria/private/utils/inertValue';
-export {isCtrlKeyPressed, willOpenKeyboard} from 'react-aria/private/utils/keyboard';
+export {isCtrlKeyPressed, isKeyboardOpen, isKeyboardVisible, willOpenKeyboard} from 'react-aria/private/utils/isKeyboardVisible';
 export {useEnterAnimation, useExitAnimation} from 'react-aria/private/utils/animation';
 export {isFocusable, isTabbable} from 'react-aria/private/utils/isFocusable';
 export {getNonce} from 'react-aria/private/utils/getNonce';

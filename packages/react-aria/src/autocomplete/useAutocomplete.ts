@@ -38,7 +38,7 @@ import {getInteractionModality, getPointerType} from '../interactions/useFocusVi
 import {getOwnerDocument} from '../utils/domHelpers';
 import intlMessages from '../../intl/autocomplete/*.json';
 import {isAndroid, isIOS} from '../utils/platform';
-import {isCtrlKeyPressed} from '../utils/keyboard';
+import {isCtrlKeyPressed} from '../utils/isKeyboardVisible';
 import {mergeProps} from '../utils/mergeProps';
 import {mergeRefs} from '../utils/mergeRefs';
 import {

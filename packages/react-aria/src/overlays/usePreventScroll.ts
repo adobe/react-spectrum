@@ -19,7 +19,7 @@ import {isIOS, isWebKit} from '../utils/platform';
 import {isScrollable} from '../utils/isScrollable';
 import {runAfterKeyboard} from '../utils/runAfterKeyboard';
 import {useLayoutEffect} from '../utils/useLayoutEffect';
-import {willOpenKeyboard} from '../utils/keyboard';
+import {willOpenKeyboard} from '../utils/isKeyboardVisible';
 
 interface PreventScrollOptions {
   /** Whether the scroll lock is disabled. */

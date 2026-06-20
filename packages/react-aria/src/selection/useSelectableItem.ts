@@ -25,7 +25,7 @@ import {
 import {focusSafely} from '../interactions/focusSafely';
 import {getActiveElement, getEventTarget} from '../utils/shadowdom/DOMFunctions';
 import {getCollectionId, isNonContiguousSelectionModifier} from './utils';
-import {isCtrlKeyPressed} from '../utils/keyboard';
+import {isCtrlKeyPressed} from '../utils/isKeyboardVisible';
 import {mergeProps} from '../utils/mergeProps';
 import {moveVirtualFocus} from '../focus/virtualFocus';
 import {MultipleSelectionManager} from 'react-stately/useMultipleSelectionState';
