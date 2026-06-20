@@ -47,6 +47,7 @@ import {PromptFocusContext} from './Chat';
 import Send from '@react-spectrum/s2/icons/ArrowUpSend';
 import Stop from '@react-spectrum/s2/icons/StopProcessing';
 import {useFocusWithin} from 'react-aria/useFocusWithin';
+import {PixelLoader} from './loader/react';
 
 export interface PromptFieldAttachment {
   id: string;
@@ -274,7 +275,8 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
     setAttachments,
     onAddAttachments,
     inputRef,
-    onSubmit
+    onSubmit,
+    isGenerating
   } = useContext(PromptFieldContext);
   let [isFocused, setFocused] = useState(false);
 
@@ -298,71 +300,85 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
   }, [filterValue, renderCompletions]);
 
   return (
-    <Autocomplete>
-      <TokenField
-        value={prompt}
-        onChange={setPrompt}
-        multiline
-        aria-label="Prompt"
-        data-placeholder="Ready to get started? Ask a question, share an idea, or add a task."
-        ref={inputRef}
-        onFocus={e => {
-          if (e.isTrusted) {
-            setFocused(true);
-          }
-        }}
-        onBlur={e => {
-          if (e.isTrusted) {
-            setFocused(false);
-          }
-        }}
-        onPaste={
-          acceptedAttachmentTypes
-            ? e => {
-                let clipboardData = e.clipboardData as DataTransfer;
-                let attachments: PromptFieldAttachment[] = [];
-                for (let item of clipboardData.items) {
-                  if (matchMimeType(item.type, acceptedAttachmentTypes)) {
-                    let file = item.getAsFile()!;
-                    attachments.push({
-                      id: crypto.randomUUID(),
-                      file,
-                      image: file.type.startsWith('image/') ? URL.createObjectURL(file) : ''
-                    });
+    <div
+      className={style({
+        display: 'flex',
+        gap: 12,
+        alignItems: 'baseline',
+        color: 'body',
+        paddingStart: 4,
+        width: 'full'
+      })}>
+      <CenterBaseline>
+        <PixelLoader size={24} playing={isGenerating} preset="exp" />
+      </CenterBaseline>
+      <Autocomplete>
+        <TokenField
+          value={prompt}
+          onChange={setPrompt}
+          multiline
+          aria-label="Prompt"
+          data-placeholder="Ready to get started? Ask a question, share an idea, or add a task."
+          ref={inputRef}
+          onFocus={e => {
+            if (e.isTrusted) {
+              setFocused(true);
+            }
+          }}
+          onBlur={e => {
+            if (e.isTrusted) {
+              setFocused(false);
+            }
+          }}
+          onPaste={
+            acceptedAttachmentTypes
+              ? e => {
+                  let clipboardData = e.clipboardData as DataTransfer;
+                  let attachments: PromptFieldAttachment[] = [];
+                  for (let item of clipboardData.items) {
+                    if (matchMimeType(item.type, acceptedAttachmentTypes)) {
+                      let file = item.getAsFile()!;
+                      attachments.push({
+                        id: crypto.randomUUID(),
+                        file,
+                        image: file.type.startsWith('image/') ? URL.createObjectURL(file) : ''
+                      });
+                    }
+                  }
+                  if (attachments.length > 0) {
+                    onAddAttachments?.(attachments);
+                    setAttachments(prev => [...prev, ...attachments]);
                   }
                 }
-                if (attachments.length > 0) {
-                  onAddAttachments?.(attachments);
-                  setAttachments(prev => [...prev, ...attachments]);
+              : undefined
+          }
+          onSubmit={onSubmit}
+          className={
+            css('&:empty::before { content: attr(data-placeholder); }') +
+            style({
+              flexGrow: 1,
+              font: 'body',
+              color: {
+                default: 'gray-800',
+                ':empty': {
+                  default: 'transparent-overlay-600',
+                  forcedColors: 'GrayText'
                 }
-              }
-            : undefined
-        }
-        onSubmit={onSubmit}
-        className={
-          css('&:empty::before { content: attr(data-placeholder); }') +
-          style({
-            font: 'body',
-            color: {
-              default: 'gray-800',
-              ':empty': {
-                default: 'transparent-overlay-600',
-                forcedColors: 'GrayText'
-              }
-            },
-            width: 'full',
-            outlineStyle: 'none',
-            cursor: 'text'
-          })
-        }>
-        {children || (segment => <PromptToken>{segment.text}</PromptToken>)}
-      </TokenField>
-      <PromptTokenFieldPopover
-        filterAnchor={filterAnchor}
-        items={useDeferredValue(items)}
-        isFocused={isFocused}
-      />
-    </Autocomplete>
+              },
+              width: 'full',
+              outlineStyle: 'none',
+              cursor: 'text'
+            })
+          }>
+          {children || (segment => <PromptToken>{segment.text}</PromptToken>)}
+        </TokenField>
+        <PromptTokenFieldPopover
+          filterAnchor={filterAnchor}
+          items={useDeferredValue(items)}
+          isFocused={isFocused}
+        />
+      </Autocomplete>
+    </div>
   );
 }
 
