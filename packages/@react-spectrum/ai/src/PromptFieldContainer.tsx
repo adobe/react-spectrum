@@ -223,7 +223,8 @@ const outerBorder = css(`
   }
 `);
 
-interface PropFieldContainerProps extends GroupProps {
+interface PropFieldContainerProps extends Omit<GroupProps, 'children'> {
+  children: React.ReactNode;
   variant: 'balanced' | 'prominent' | 'subtle';
   isGenerating: boolean;
   styles?: StyleString;
