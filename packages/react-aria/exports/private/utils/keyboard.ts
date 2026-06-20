@@ -1,1 +1,6 @@
-export {isCtrlKeyPressed, isKeyboardOpen, isKeyboardVisible, willOpenKeyboard} from '../../../src/utils/isKeyboardVisible';
+export {
+  isCtrlKeyPressed,
+  isKeyboardOpen,
+  isKeyboardVisible,
+  willOpenKeyboard
+} from '../../../src/utils/isKeyboardVisible';
