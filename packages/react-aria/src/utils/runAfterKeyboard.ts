@@ -13,7 +13,7 @@
 import {getActiveElement} from './shadowdom/DOMFunctions';
 import {getOwnerDocument, getOwnerViewport, getOwnerWindow} from './domHelpers';
 import {isIOS, isWebKit} from './platform';
-import {isKeyboardOpen, isKeyboardVisible, willOpenKeyboard} from './keyboard';
+import {isKeyboardOpen, isKeyboardVisible, willOpenKeyboard} from './isKeyboardVisible';
 
 const intervalByWindow = new WeakMap<EventTarget, number | undefined>();
 const timeoutByWindow = new WeakMap<EventTarget, number | undefined>();
