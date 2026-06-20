@@ -10,10 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
+import {categorizeArgTypes, getActionArgs} from '../../s2/stories/utils';
 import type {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
-import {ResponseStatus, ResponseStatusPanel, ResponseStatusTitle} from '../src/ResponseStatus';
+import {ResponseStatus, ResponseStatusPanel, ResponseStatusTitle} from '@react-spectrum/ai';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+const events = ['onExpandedChange'];
 
 const meta: Meta<typeof ResponseStatus> = {
   component: ResponseStatus,
@@ -22,6 +25,7 @@ const meta: Meta<typeof ResponseStatus> = {
   },
   tags: ['autodocs'],
   argTypes: {
+    ...categorizeArgTypes('Events', events),
     size: {
       control: 'radio',
       options: ['S', 'M', 'L', 'XL']
@@ -36,7 +40,8 @@ const meta: Meta<typeof ResponseStatus> = {
     children: {table: {disable: true}}
   },
   args: {
-    isLoading: true
+    isLoading: true,
+    ...getActionArgs(events)
   },
   title: 'AI/ResponseStatus'
 };

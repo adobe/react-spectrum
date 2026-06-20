@@ -441,12 +441,12 @@ export const AriaAutocompleteTests = ({
           expect(input).toHaveAttribute('aria-activedescendant', options[0].id);
           await user.keyboard('{Enter}');
           expect(actionListener).toHaveBeenCalledTimes(1);
-          expect(actionListener).toHaveBeenLastCalledWith('1');
+          expect(actionListener).toHaveBeenLastCalledWith('1', undefined);
 
           await user.keyboard('{ArrowDown}');
           await user.keyboard('{Enter}');
           expect(actionListener).toHaveBeenCalledTimes(2);
-          expect(actionListener).toHaveBeenLastCalledWith('2');
+          expect(actionListener).toHaveBeenLastCalledWith('2', undefined);
         });
 
         it("should not trigger the wrapped element's actionListener when hitting Space", async function () {

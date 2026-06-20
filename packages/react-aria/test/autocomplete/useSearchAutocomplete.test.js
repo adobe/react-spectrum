@@ -25,9 +25,7 @@ describe('useSearchAutocomplete', function () {
       isComposing: false
     },
     preventDefault,
-    stopPropagation,
-    target: {},
-    currentTarget: {contains: () => true}
+    stopPropagation
   });
 
   let defaultProps = {

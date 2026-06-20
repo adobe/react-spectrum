@@ -15,6 +15,7 @@ import {AriaButtonProps} from '../button/useButton';
 import {ariaHideOutside} from '../overlays/ariaHideOutside';
 import {
   AriaLabelingProps,
+  BaseEvent,
   DOMAttributes,
   DOMProps,
   InputDOMProps,
@@ -32,6 +33,7 @@ import {dispatchVirtualFocus} from '../focus/virtualFocus';
 import {
   FocusEvent,
   InputHTMLAttributes,
+  KeyboardEvent,
   TouchEvent,
   useEffect,
   useMemo,
@@ -51,7 +53,6 @@ import {privateValidationStateProp} from 'react-stately/private/form/useFormVali
 import {useEvent} from '../utils/useEvent';
 import {useFormReset} from '../utils/useFormReset';
 import {useId} from '../utils/useId';
-import {useKeyboard} from '../interactions/useKeyboard';
 import {useLabels} from '../utils/useLabels';
 import {useLocalizedStringFormatter} from '../i18n/useLocalizedStringFormatter';
 import {useMenuTrigger} from '../menu/useMenuTrigger';
@@ -175,12 +176,19 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(
 
   let router = useRouter();
 
-  // for textfield specific operations
-  let {keyboardProps} = useKeyboard({
-    shortcuts: {
-      Enter: e => {
-        // Prevent default form submission if menu is open since we may be selecting a option
-        let shouldPreventDefault = state.isOpen;
+  // For textfield specific keydown operations
+  let onKeyDown = (e: BaseEvent<KeyboardEvent<any>>) => {
+    if (e.nativeEvent.isComposing) {
+      return;
+    }
+    switch (e.key) {
+      case 'Enter':
+      case 'Tab':
+        // Prevent form submission if menu is open since we may be selecting a option
+        if (state.isOpen && e.key === 'Enter') {
+          e.preventDefault();
+        }
+
         // If the focused item is a link, trigger opening it. Items that are links are not selectable.
         if (state.isOpen && listBoxRef.current && state.selectionManager.focusedKey != null) {
           let collectionItem = state.collection.getItem(state.selectionManager.focusedKey);
@@ -188,7 +196,7 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(
             let item = listBoxRef.current.querySelector(
               `[data-key="${CSS.escape(state.selectionManager.focusedKey.toString())}"]`
             );
-            if (item instanceof HTMLAnchorElement) {
+            if (e.key === 'Enter' && item instanceof HTMLAnchorElement) {
               router.open(
                 item,
                 e,
@@ -197,56 +205,39 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(
               );
             }
             state.close();
-            return {shouldPreventDefault};
+            break;
           } else if (collectionItem?.props.onAction) {
             collectionItem.props.onAction();
             state.close();
-            return {shouldPreventDefault};
+            break;
           }
         }
-        state.commit();
-        return {shouldPreventDefault};
-      },
-      Tab: () => {
-        // If the focused item is a link, trigger opening it. Items that are links are not selectable.
-        if (state.isOpen && listBoxRef.current && state.selectionManager.focusedKey != null) {
-          let collectionItem = state.collection.getItem(state.selectionManager.focusedKey);
-          if (collectionItem?.props.href) {
-            state.close();
-            return {shouldPreventDefault: false};
-          } else if (collectionItem?.props.onAction) {
-            collectionItem.props.onAction();
-            state.close();
-            return {shouldPreventDefault: false};
-          }
-        }
-        if (state.isOpen) {
+        if (e.key === 'Enter' || state.isOpen) {
           state.commit();
         }
-        return {shouldPreventDefault: false};
-      },
-      Escape: () => {
-        let shouldContinuePropagation = false;
+        if (e.key === 'Tab') {
+          e.continuePropagation();
+        }
+
+        break;
+      case 'Escape':
         if (!state.selectionManager.isEmpty || state.inputValue === '' || props.allowsCustomValue) {
-          shouldContinuePropagation = true;
+          e.continuePropagation();
         }
         state.revert();
-        return {shouldContinuePropagation};
-      },
-      ArrowDown: () => {
+        break;
+      case 'ArrowDown':
         state.open('first', 'manual');
-      },
-      ArrowUp: () => {
+        break;
+      case 'ArrowUp':
         state.open('last', 'manual');
-      },
-      ArrowLeft: () => {
+        break;
+      case 'ArrowLeft':
+      case 'ArrowRight':
         state.selectionManager.setFocusedKey(null);
-      },
-      ArrowRight: () => {
-        state.selectionManager.setFocusedKey(null);
-      }
+        break;
     }
-  });
+  };
 
   let onBlur = (e: FocusEvent<HTMLInputElement>) => {
     let blurFromButton = buttonRef?.current && buttonRef.current === e.relatedTarget;
@@ -290,7 +281,7 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(
           : props.isRequired,
       onChange: state.setInputValue,
       onKeyDown: !isReadOnly
-        ? chain(state.isOpen && collectionProps.onKeyDown, keyboardProps.onKeyDown, props.onKeyDown)
+        ? chain(state.isOpen && collectionProps.onKeyDown, onKeyDown, props.onKeyDown)
         : props.onKeyDown,
       onBlur,
       value: state.inputValue,
@@ -495,6 +486,7 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(
       spellCheck: 'false'
     }),
     listBoxProps: mergeProps(menuProps, listBoxProps, {
+      onAction: undefined,
       autoFocus: state.focusStrategy || true,
       shouldUseVirtualFocus: true,
       shouldSelectOnPressUp: true,

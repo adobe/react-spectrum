@@ -16,7 +16,7 @@ import {forwardRef} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {SlotProps} from 'react-aria-components/slots';
-import {StyleString} from './types';
+import {StylesPropWithHeight} from '@react-spectrum/s2';
 import ThumbDown from '@react-spectrum/s2/icons/ThumbDown';
 import ThumbUp from '@react-spectrum/s2/icons/ThumbUp';
 import {ToggleButton} from '@react-spectrum/s2/ToggleButton';
@@ -39,10 +39,8 @@ export interface MessageFeedbackProps extends DOMProps, AriaLabelingProps, SlotP
   thumbUpLabel?: string;
   /** Accessible label for the thumbs down button. */
   thumbDownLabel?: string;
-  /**
-   * Spectrum-defined styles, returned by the `style()` macro.
-   */
-  styles?: StyleString;
+  /** Spectrum-defined styles, returned by the `style()` macro. */
+  styles?: StylesPropWithHeight;
 }
 
 function selectionToValue(selection: Selection): MessageFeedbackValue {
@@ -83,9 +81,7 @@ export const MessageFeedback = forwardRef(function MessageFeedback(
       defaultSelectedKeys={defaultSelectedKeys}
       onSelectionChange={handleSelectionChange}
       isDisabled={isDisabled}
-      // Pass styles to UNSAFE because S2 ToggleButtonGroup styles have type StylesPropWithHeight which restrict what can be overridden
-      //@ts-ignore
-      UNSAFE_className={styles}>
+      styles={styles}>
       <ToggleButton
         id="up"
         isQuiet
