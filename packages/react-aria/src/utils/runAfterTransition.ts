@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {getEventTarget} from './shadowdom/DOMFunctions';
 import {addEvent, getOwnerDocument, getOwnerWindow} from './domHelpers';
+import {getEventTarget} from './shadowdom/DOMFunctions';
 
 // We store a global list of elements that are currently transitioning,
 // mapped to a set of CSS properties that are transitioning for that element.
