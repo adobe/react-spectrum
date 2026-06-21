@@ -10,9 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {addEvent} from './useEvent';
 import {getActiveElement, getEventTarget} from './shadowdom/DOMFunctions';
-import {getOwnerDocument, getOwnerViewport, getOwnerWindow} from './domHelpers';
+import {addEvent, getOwnerDocument, getOwnerViewport, getOwnerWindow} from './domHelpers';
 import {isFirefox, isIOS, isMac} from './platform';
 
 // Tracks layout status of the on-screen keyboard.

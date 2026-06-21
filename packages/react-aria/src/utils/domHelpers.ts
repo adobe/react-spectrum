@@ -10,6 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+import type {EventMapType} from '@react-types/shared';
+
 export const getOwnerDocument = (target?: EventTarget | null): Document => {
   if (isWindow(target)) return target.document;
 
@@ -46,7 +48,7 @@ export function isNode(value?: unknown): value is Node {
     value !== null &&
     typeof value === 'object' &&
     'nodeType' in value &&
-    typeof (value as Node).nodeType === 'number'
+    typeof value.nodeType === 'number'
   );
 }
 
@@ -59,33 +61,93 @@ export function isWindow(value?: unknown): value is Window & typeof globalThis {
 }
 
 /**
+ * Type guard that checks if a value is a Document. Uses nodeType and documentElement checks to
+ * distinguish Document from other values.
+ */
+export function isDocument(value?: unknown): value is Document {
+  return isNode(value) && value.nodeType === 9 && 'documentElement' in value;
+}
+
+/**
  * Type guard that checks if a value is an Element. Uses nodeType and tagName property checks to
- * distinguish Element from other ElementNodes.
+ * distinguish Element from other values.
  */
 export function isElement(value?: unknown): value is Element {
-  return isNode(value) && value.nodeType === Node.ELEMENT_NODE && 'tagName' in value;
+  return isNode(value) && value.nodeType === 1 && 'tagName' in value;
 }
 
 /**
  * Type guard that checks if a value is an HTMLElement. Uses prototype checks to
- * distinguish Element from other Elements.
+ * distinguish Element from other values.
  */
 export function isHTMLElement(value?: unknown): value is HTMLElement {
-  return isElement(value) && value instanceof getOwnerWindow(value).HTMLElement;
-}
-
-/**
- * Type guard that checks if a value is an SVGElement. Uses prototype checks to
- * distinguish SVGElement from other Elements.
- */
-export function isSVGElement(value?: unknown): value is SVGElement {
-  return isElement(value) && value instanceof getOwnerWindow(value).SVGAElement;
+  return isElement(value) && value.namespaceURI === 'http://www.w3.org/1999/xhtml';
 }
 
 /**
  * Type guard that checks if a value is a ShadowRoot. Uses nodeType and host property checks to
- * distinguish ShadowRoot from other DocumentFragments.
+ * distinguish ShadowRoot from other values.
  */
 export function isShadowRoot(value?: unknown): value is ShadowRoot {
-  return isNode(value) && value.nodeType === Node.DOCUMENT_FRAGMENT_NODE && 'host' in value;
+  return isNode(value) && value.nodeType === 11 && 'host' in value;
+}
+
+/**
+ * Type guard that checks if a value is a SlotElement. Uses prototype and assignedElements checks to
+ * distinguish SlotElements from other values.
+ */
+export function isSlotElement(value?: unknown): value is HTMLSlotElement {
+  return isHTMLElement(value) && 'assignedElements' in value;
+}
+
+/**
+ * Attaches an event listener on target(s) and returns a cleanup function.
+ */
+export function addEvent<T extends EventTarget, K extends keyof EventMapType<Exclude<T, null>>>(
+  target: T | EventTarget[] | null,
+  event: Extract<K, string> | (string & {}),
+  listener?: (this: T, ev: EventMapType<Exclude<T, null>>[K]) => any,
+  options?: boolean | AddEventListenerOptions
+): () => void {
+  if (listener == null || target == null) {
+    return () => {};
+  }
+
+  let eventTargets = Array.isArray(target) ? target : [target];
+
+  for (let eventTarget of eventTargets) {
+    eventTarget.addEventListener(event, listener as EventListener, options);
+  }
+
+  return () => {
+    for (let eventTarget of eventTargets) {
+      eventTarget.removeEventListener(event, listener as EventListener, options);
+    }
+  };
+}
+
+/**
+ * Sets a CSS property on an element and returns a cleanup function.
+ */
+export function setStyle(
+  target: HTMLElement | HTMLElement[] | null,
+  property: string,
+  value: string,
+  priority?: string
+): () => void {
+  if (target == null) {
+    return () => {};
+  }
+
+  let styleTargets = Array.isArray(target) ? target : [target];
+
+  for (let styleTarget of styleTargets) {
+    styleTarget.style.setProperty(property, value, priority);
+  }
+
+  return () => {
+    for (let styleTarget of styleTargets) {
+      styleTarget.style.removeProperty(property);
+    }
+  };
 }

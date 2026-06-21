@@ -10,24 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-import {RefObject} from '@react-types/shared';
+import {addEvent} from './domHelpers';
+import {EventMapType, RefObject} from '@react-types/shared';
 import {useEffect} from 'react';
 import {useEffectEvent} from './useEffectEvent';
 
-type EventHandlerMap<T extends EventTarget> = T extends Window
-  ? WindowEventMap
-  : T extends Document
-    ? DocumentEventMap
-    : T extends Element
-      ? HTMLElementEventMap
-      : T extends VisualViewport
-        ? VisualViewportEventMap
-        : GlobalEventHandlersEventMap;
-
-export function useEvent<T extends EventTarget, K extends keyof EventHandlerMap<T>>(
+export function useEvent<T extends EventTarget, K extends keyof EventMapType<T>>(
   ref: RefObject<T | null>,
   event: Extract<K, string> | (string & {}),
-  listener?: (this: T, ev: EventHandlerMap<Exclude<T, null>>[K]) => any,
+  listener?: (this: T, ev: EventMapType<Exclude<T, null>>[K]) => any,
   options?: boolean | AddEventListenerOptions
 ): void {
   let handleEvent = useEffectEvent(listener);
@@ -40,18 +31,4 @@ export function useEvent<T extends EventTarget, K extends keyof EventHandlerMap<
 
     return addEvent(ref.current, event, handleEvent, options);
   }, [ref, event, options, isDisabled]);
-}
-
-export function addEvent<T extends EventTarget, K extends keyof EventHandlerMap<Exclude<T, null>>>(
-  target: T | null,
-  event: Extract<K, string> | (string & {}),
-  listener?: (this: T, ev: EventHandlerMap<Exclude<T, null>>[K]) => any,
-  options?: boolean | AddEventListenerOptions
-): () => void {
-  if (listener == null || target == null) {
-    return () => {};
-  }
-
-  target.addEventListener(event, listener as EventListener, options);
-  return () => target.removeEventListener(event, listener as EventListener, options);
 }

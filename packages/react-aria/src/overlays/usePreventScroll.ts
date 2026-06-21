@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {addEvent} from '../utils/useEvent';
+import {addEvent, setStyle} from '../utils/domHelpers';
 import {chain} from '../utils/chain';
 import {getEventTarget} from '../utils/shadowdom/DOMFunctions';
 import {getNonce} from '../utils/getNonce';
@@ -226,16 +226,6 @@ function preventScrollMobileSafari() {
       writable: true,
       value: focus
     });
-  };
-}
-
-// Sets a CSS property on an element, and returns a function to revert it to the previous value.
-function setStyle(element: HTMLElement, style: string, value: string) {
-  let cur = element.style[style];
-  element.style[style] = value;
-
-  return () => {
-    element.style[style] = cur;
   };
 }
 
