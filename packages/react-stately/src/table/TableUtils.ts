@@ -113,6 +113,12 @@ export function calculateColumnSizes(
   getDefaultWidth?: (index: number) => ColumnSize | null | undefined,
   getDefaultMinWidth?: (index: number) => ColumnSize | null | undefined
 ): number[] {
+  // Column widths must be whole numbers, and cascadeRounding below assumes the
+  // target sizes sum to an integer. When the table width is fractional (e.g. a
+  // percentage-based size), that invariant breaks and the columns can round up
+  // past the available width, producing a horizontal scrollbar. Flooring the
+  // available width here keeps the sum integral so columns never overflow (#9448).
+  availableWidth = Math.floor(availableWidth);
   let hasNonFrozenItems = false;
   let flexItems: FlexItem[] = columns.map((column, index) => {
     let width: ColumnSize = (
