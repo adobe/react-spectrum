@@ -260,10 +260,7 @@ describe('Select', () => {
     await selectTester.open();
     expect(trigger).toHaveAttribute('data-pressed', 'true');
 
-    await selectTester.toggleOptionSelection({
-      option: 'Dog',
-      closesOnSelect: false
-    });
+    await selectTester.toggleOptionSelection({option: 'Dog', closesOnSelect: false});
     expect(trigger).toHaveTextContent('Dog');
     expect(trigger).toHaveAttribute('data-pressed', 'true');
   });
@@ -291,10 +288,7 @@ describe('Select', () => {
     await selectTester.open();
     expect(trigger).toHaveAttribute('data-pressed', 'true');
 
-    await selectTester.toggleOptionSelection({
-      option: 'Dog',
-      closesOnSelect: true
-    });
+    await selectTester.toggleOptionSelection({option: 'Dog', closesOnSelect: true});
     expect(trigger).toHaveTextContent('Dog');
     expect(trigger).not.toHaveAttribute('data-pressed', 'true');
   });
@@ -367,11 +361,7 @@ describe('Select', () => {
           <SelectValue />
         </Button>
         <Popover>
-          <ListBox
-            items={Array.from({length: 3}).map((_, i) => ({
-              id: i,
-              label: `${i}`
-            }))}>
+          <ListBox items={Array.from({length: 3}).map((_, i) => ({id: i, label: `${i}`}))}>
             {item => (
               <ListBoxItem id={item.id} textValue={item.label}>
                 {item.label}
