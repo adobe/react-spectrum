@@ -853,9 +853,7 @@ describe('Select', () => {
   it('should support deselection if multiple selection is enabled', async () => {
     let onChange = jest.fn();
     let {getByTestId} = render(<TestSelect selectionMode="multiple" onChange={onChange} />);
-    let selectTester = testUtilUser.createTester('Select', {
-      root: getByTestId('select')
-    });
+    let selectTester = testUtilUser.createTester('Select', {root: getByTestId('select')});
 
     await selectTester.toggleOptionSelection({option: 'Cat'});
     await selectTester.toggleOptionSelection({option: 'Dog'});
@@ -968,9 +966,7 @@ describe('Select', () => {
       </Select>
     );
 
-    let selectTester = testUtilUser.createTester('Select', {
-      root: getByTestId('select')
-    });
+    let selectTester = testUtilUser.createTester('Select', {root: getByTestId('select')});
     let trigger = selectTester.getTrigger();
     expect(trigger).toHaveTextContent('Cat');
 
