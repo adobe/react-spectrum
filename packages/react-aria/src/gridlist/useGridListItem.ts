@@ -27,6 +27,7 @@ import {
   nodeContains
 } from '../utils/shadowdom/DOMFunctions';
 import {getFocusableTreeWalker} from '../focus/FocusScope';
+import {getOwnerDocument} from '../utils/domHelpers';
 import {getRowId, listMap} from './utils';
 import {getScrollParent} from '../utils/getScrollParent';
 import {HTMLAttributes, KeyboardEvent as ReactKeyboardEvent, useRef} from 'react';
@@ -118,14 +119,18 @@ export function useGridListItem<T>(
 
     if (focusMode === 'child') {
       // If focus is already on a focusable child within the row, early return so we don't shift focus
-      if (isFocusWithin(ref.current) && ref.current !== getActiveElement()) {
+      if (
+        isFocusWithin(ref.current) &&
+        ref.current !== getActiveElement(getOwnerDocument(ref.current))
+      ) {
         return;
       }
 
-      let treeWalker = getFocusableTreeWalker(ref.current);
+      let treeWalker = getFocusableTreeWalker(ref.current, {tabbable: true});
       let focusable = treeWalker.firstChild() as FocusableElement;
       if (focusable) {
         focusSafely(focusable);
+        scrollIntoViewport(focusable, {containingElement: getScrollParent(focusable)});
         return;
       }
     }
@@ -198,7 +203,7 @@ export function useGridListItem<T>(
   });
 
   let onKeyDownCapture = (e: ReactKeyboardEvent) => {
-    let activeElement = getActiveElement();
+    let activeElement = getActiveElement(getOwnerDocument(ref.current));
     if (
       !nodeContains(e.currentTarget, getEventTarget(e) as Element) ||
       !ref.current ||
@@ -325,14 +330,17 @@ export function useGridListItem<T>(
     // If the cell itself is focused, wait a frame so that focus finishes propagating
     // up to the tree, and move focus to a focusable child if possible.
     requestAnimationFrame(() => {
-      if (focusMode === 'child' && getActiveElement() === ref.current) {
+      if (
+        focusMode === 'child' &&
+        getActiveElement(getOwnerDocument(ref.current)) === ref.current
+      ) {
         focus();
       }
     });
   };
 
   let onKeyDown = (e: ReactKeyboardEvent) => {
-    let activeElement = getActiveElement();
+    let activeElement = getActiveElement(getOwnerDocument(ref.current));
     if (
       !nodeContains(e.currentTarget, getEventTarget(e) as Element) ||
       !ref.current ||

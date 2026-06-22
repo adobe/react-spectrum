@@ -328,6 +328,38 @@ let TabModeFocusModeChildWithArrowNavTable = props => (
   </Table>
 );
 
+let TableWithTagGroupInCell = props => (
+  <Table aria-label="Tag group table" selectionMode="multiple" {...props}>
+    <TableHeader>
+      <Column isRowHeader>Name</Column>
+      <Column>Tags</Column>
+    </TableHeader>
+    <TableBody>
+      <Row id="1" textValue="Games">
+        <Cell>Games</Cell>
+        <Cell>
+          <TagGroup aria-label="Games tags">
+            <TagList>
+              <Tag id="tag-action">Action</Tag>
+              <Tag id="tag-rpg">RPG</Tag>
+            </TagList>
+          </TagGroup>
+        </Cell>
+      </Row>
+      <Row id="2" textValue="Movies">
+        <Cell>Movies</Cell>
+        <Cell>
+          <TagGroup aria-label="Movies tags">
+            <TagList>
+              <Tag id="tag-drama">Drama</Tag>
+            </TagList>
+          </TagGroup>
+        </Cell>
+      </Row>
+    </TableBody>
+  </Table>
+);
+
 let DraggableTable = props => {
   let {dragAndDropHooks} = useDragAndDrop({
     getItems: keys => [...keys].map(key => ({'text/plain': key})),
@@ -3695,6 +3727,19 @@ describe('Table', () => {
 
       await user.click(input);
       expect(document.activeElement).toBe(input);
+      expect(onSelectionChange).not.toHaveBeenCalled();
+    });
+
+    it('should not trigger row selection when clicking a TagGroup tag nested inside a cell', async () => {
+      let {getByRole} = render(<TableWithTagGroupInCell onSelectionChange={onSelectionChange} />);
+
+      // click on actual grid cell since that mimics what would happen in browser
+      // note that grid cell is not tabbable nor has the data-collection/etc attributes since those
+      // are on a wrapping div
+      let tagGrid = getByRole('grid', {name: 'Games tags'});
+      let tagInnerCell = within(tagGrid).getAllByRole('gridcell')[0];
+
+      await user.click(tagInnerCell);
       expect(onSelectionChange).not.toHaveBeenCalled();
     });
 

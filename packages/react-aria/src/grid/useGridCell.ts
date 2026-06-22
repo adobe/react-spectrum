@@ -19,6 +19,7 @@ import {
   nodeContains
 } from '../utils/shadowdom/DOMFunctions';
 import {getFocusableTreeWalker} from '../focus/FocusScope';
+import {getOwnerDocument} from '../utils/domHelpers';
 import {getScrollParent} from '../utils/getScrollParent';
 import {
   IGridCollection as GridCollection,
@@ -112,7 +113,10 @@ export function useGridCell<T, C extends GridCollection<T>>(
       let treeWalker = getFocusableTreeWalker(ref.current);
       if (focusMode === 'child') {
         // If focus is already on a focusable child within the cell, early return so we don't shift focus
-        if (isFocusWithin(ref.current) && ref.current !== getActiveElement()) {
+        if (
+          isFocusWithin(ref.current) &&
+          ref.current !== getActiveElement(getOwnerDocument(ref.current))
+        ) {
           return;
         }
 
@@ -147,7 +151,7 @@ export function useGridCell<T, C extends GridCollection<T>>(
   });
 
   let onKeyDownCapture = (e: ReactKeyboardEvent) => {
-    let activeElement = getActiveElement();
+    let activeElement = getActiveElement(getOwnerDocument(ref.current));
     if (
       !nodeContains(e.currentTarget, getEventTarget(e) as Element) ||
       state.isKeyboardNavigationDisabled ||
@@ -269,7 +273,7 @@ export function useGridCell<T, C extends GridCollection<T>>(
   };
 
   let onKeyDown = (e: ReactKeyboardEvent) => {
-    let activeElement = getActiveElement();
+    let activeElement = getActiveElement(getOwnerDocument(ref.current));
     if (
       !nodeContains(e.currentTarget, getEventTarget(e) as Element) ||
       state.isKeyboardNavigationDisabled ||
@@ -333,7 +337,10 @@ export function useGridCell<T, C extends GridCollection<T>>(
     // If the cell itself is focused, wait a frame so that focus finishes propagating
     // up to the tree, and move focus to a focusable child if possible.
     requestAnimationFrame(() => {
-      if (focusMode === 'child' && getActiveElement() === ref.current) {
+      if (
+        focusMode === 'child' &&
+        getActiveElement(getOwnerDocument(ref.current)) === ref.current
+      ) {
         focus();
       }
     });

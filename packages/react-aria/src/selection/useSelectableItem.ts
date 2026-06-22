@@ -359,7 +359,8 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     };
   }
 
-  itemProps['data-collection'] = getCollectionId(manager.collection);
+  let collectionId = getCollectionId(manager.collection);
+  itemProps['data-collection'] = collectionId;
   itemProps['data-key'] = key;
   itemPressProps.preventFocusOnPress = shouldUseVirtualFocus;
 
@@ -452,18 +453,25 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     shouldUseVirtualFocus ? {onMouseDown: e => e.preventDefault()} : undefined
   );
 
-  // Guard against presses triggering selection when they happen on interactive children.
+  // Guard against presses triggering selection when they happen on interactive children or collection items from different collections
+  // will need to trigger selection if the target is itself a collection item belonging to the same collection parent (aka a cell in a row) but
+  // not if the target is a child of a different collections aka taggroup in table cell.
+  let isChildInteraction = (target: Element) => {
+    let el: Element | null = target;
+    while (el && el !== ref.current) {
+      let elCollection = el.getAttribute('data-collection');
+      if (elCollection != null) {
+        return elCollection !== collectionId;
+      }
+      el = el.parentElement;
+    }
+    return isTabbable(target);
+  };
+
   let baseOnPointerDown = mergedItemProps.onPointerDown;
   mergedItemProps.onPointerDown = e => {
     let target = getEventTarget(e) as Element | null;
-    // skip if the target is itself a collection item aka a cell in a row
-    // TODO: is checking data-key too brittle?
-    if (
-      target &&
-      target !== ref.current &&
-      isTabbable(target) &&
-      !target.hasAttribute('data-key')
-    ) {
+    if (target && target !== ref.current && isChildInteraction(target)) {
       e.stopPropagation();
       return;
     }
@@ -473,12 +481,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
   let baseOnMouseDown = mergedItemProps.onMouseDown;
   mergedItemProps.onMouseDown = e => {
     let target = getEventTarget(e) as Element | null;
-    if (
-      target &&
-      target !== ref.current &&
-      isTabbable(target) &&
-      !target.hasAttribute('data-key')
-    ) {
+    if (target && target !== ref.current && isChildInteraction(target)) {
       e.stopPropagation();
       return;
     }
