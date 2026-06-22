@@ -960,7 +960,8 @@ describe('Table', () => {
     rerender(
       <DynamicTable
         tableProps={{disabledBehavior: 'all', disabledKeys: remaining.map(r => r.id)}}
-        tableBodyProps={{items: remaining}} />
+        tableBodyProps={{items: remaining}}
+      />
     );
 
     // Completes without hanging; focus left the now-removed row.
