@@ -8,30 +8,38 @@
 // the CPU because additive/stacked animations fall back to the main
 // thread — composited residency matters far more than keyframe count.)
 //
-// The curve math in runtime.ts is the single source of truth: the
-// keyframe values/easings below are emitted from it, and the paused
-// "poster" frame is rendered from the same samplers, so playing and
-// paused states match exactly.
+// The easing control points and Y offsets are the single
+// source of truth — the keyframes below are emitted from them. When not
+// playing, cells render with no animation: settled (translateY 0) and
+// opaque, i.e. the fully-assembled poster pose.
 //
 // Multi-icon sequences (presets) play one icon per 2.4s cycle and
 // advance via a single timer — only the current icon's cells are in the
 // DOM. A single-icon loader stays a pure infinite CSS loop with no JS.
 
-import {aiLogo, type Cell} from './data.js';
-import {
-  EASE,
-  FPS,
-  getOpacity,
-  getY,
-  POSTER_FRAME,
-  TOTAL_FRAMES,
-  Y_EXIT,
-  Y_OVERSHOOT,
-  Y_START
-} from './runtime.js';
+import {aiLogo, type Cell} from './data';
 import * as React from 'react';
 
+// Easing control points, formatted into `cubic-bezier(...)` in the
+// generated keyframes. `fade` is intentionally linear — its control
+// points lie on y=x.
+const EASE = {
+  drop: [0.333, 0, 0.667, 1],
+  recover: [0.333, 0, 0.833, 1],
+  exit: [0.563, 0, 0.906, 0.757],
+  fade: [0.167, 0.167, 0.833, 0.833]
+};
+
+// One full cycle is 72 frames at 30fps (2.4s).
+const TOTAL_FRAMES = 72;
+const FPS = 30;
 const DURATION_MS = (TOTAL_FRAMES / FPS) * 1000;
+
+// Per-cell vertical offsets in the 1000-unit VIEWBOX space: start off
+// the top, overshoot just past the settled position, exit off the bottom.
+const Y_START = -876.156;
+const Y_OVERSHOOT = 18;
+const Y_EXIT = 1015;
 
 // The animation lives in a fixed VIEWBOX-sized coordinate space (matching
 // the source Lottie's 1000×1000 canvas) that is scaled down to the
@@ -42,10 +50,10 @@ const VIEWBOX = 1000;
 const CELL = 100;
 
 // ─────────────────────────────────────────────────────────────
-// CSS @keyframes generation. Each piecewise segment of the runtime
-// curves becomes one keyframe stop whose `animation-timing-function`
-// is the matching cubic-bezier — CSS interpolates it identically to
-// `getY`/`getOpacity`.
+// CSS @keyframes generation. Each piecewise segment of the motion
+// becomes one keyframe stop whose `animation-timing-function` is the
+// matching cubic-bezier (from EASE), so the browser interpolates the
+// drop/recover/exit/fade curves natively.
 // ─────────────────────────────────────────────────────────────
 
 function pct(frame) {
@@ -232,33 +240,28 @@ export function PixelLoader(props: PixelLoaderProps) {
           transformOrigin: '0 0',
           transform: `scale(${scaleFactor})`
         }}>
-        {cells.map((c, i) => {
-          const cellStyle = playing
-            ? {
+        {cells.map((c, i) => (
+          // When not playing, cells render with no animation — at their
+          // settled position (left/top) and fully opaque, i.e. the
+          // fully-assembled poster pose.
+          <div
+            key={i}
+            style={{
+              position: 'absolute',
+              left: c.cx - CELL / 2,
+              top: c.cy - CELL / 2,
+              width: CELL,
+              height: CELL,
+              backgroundColor: color,
+              ...(playing && {
                 animation:
                   `${animId}-${i}-y ${duration}ms linear ${iteration}, ` +
                   `${animId}-${i}-o ${duration}ms linear ${iteration}`,
                 willChange: 'transform, opacity'
-              }
-            : {
-                transform: `translateY(${getY(POSTER_FRAME - c.stagger, c.exitStart - c.stagger)}px)`,
-                opacity: getOpacity(POSTER_FRAME, c)
-              };
-          return (
-            <div
-              key={i}
-              style={{
-                position: 'absolute',
-                left: c.cx - CELL / 2,
-                top: c.cy - CELL / 2,
-                width: CELL,
-                height: CELL,
-                backgroundColor: color,
-                ...cellStyle
-              }}
-            />
-          );
-        })}
+              })
+            }}
+          />
+        ))}
       </div>
     </div>
   );
