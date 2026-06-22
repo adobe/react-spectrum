@@ -102,9 +102,7 @@ describe('Select', () => {
       </SelectContext.Provider>
     );
 
-    let selectTester = testUtilUser.createTester('Select', {
-      root: getByTestId('select')
-    });
+    let selectTester = testUtilUser.createTester('Select', {root: getByTestId('select')});
     let trigger = selectTester.getTrigger();
     expect(trigger.closest('.react-aria-Select')).toHaveAttribute('slot', 'test');
     expect(trigger).toHaveAttribute('aria-label', 'test');
@@ -146,9 +144,7 @@ describe('Select', () => {
       </Select>
     );
 
-    let selectTester = testUtilUser.createTester('Select', {
-      root: getByTestId('select')
-    });
+    let selectTester = testUtilUser.createTester('Select', {root: getByTestId('select')});
     let trigger = selectTester.getTrigger();
     expect(trigger).toHaveTextContent('Cat');
   });
@@ -175,18 +171,14 @@ describe('Select', () => {
       </Select>
     );
 
-    let selectTester = testUtilUser.createTester('Select', {
-      root: getByTestId('select')
-    });
+    let selectTester = testUtilUser.createTester('Select', {root: getByTestId('select')});
     let trigger = selectTester.getTrigger();
     expect(trigger).toHaveTextContent('1 - Cat');
   });
 
   it('supports placeholder', () => {
     let {getByTestId} = render(<TestSelect placeholder="Select an animal" />);
-    let selectTester = testUtilUser.createTester('Select', {
-      root: getByTestId('select')
-    });
+    let selectTester = testUtilUser.createTester('Select', {root: getByTestId('select')});
     let trigger = selectTester.getTrigger();
     expect(trigger).toHaveTextContent('Select an animal');
   });
@@ -205,9 +197,7 @@ describe('Select', () => {
         </Popover>
       </Select>
     );
-    let selectTester = testUtilUser.createTester('Select', {
-      root: getByTestId('select')
-    });
+    let selectTester = testUtilUser.createTester('Select', {root: getByTestId('select')});
     await selectTester.open();
 
     let listbox = getByRole('listbox');
@@ -239,9 +229,7 @@ describe('Select', () => {
       </Select>
     );
 
-    let selectTester = testUtilUser.createTester('Select', {
-      root: getByTestId('select')
-    });
+    let selectTester = testUtilUser.createTester('Select', {root: getByTestId('select')});
     let trigger = selectTester.getTrigger();
     expect(trigger).toHaveTextContent('open');
 
@@ -266,9 +254,7 @@ describe('Select', () => {
       </Select>
     );
 
-    let selectTester = testUtilUser.createTester('Select', {
-      root: getByTestId('select')
-    });
+    let selectTester = testUtilUser.createTester('Select', {root: getByTestId('select')});
     let trigger = selectTester.getTrigger();
 
     await selectTester.open();
@@ -299,9 +285,7 @@ describe('Select', () => {
       </Select>
     );
 
-    let selectTester = testUtilUser.createTester('Select', {
-      root: getByTestId('select')
-    });
+    let selectTester = testUtilUser.createTester('Select', {root: getByTestId('select')});
     let trigger = selectTester.getTrigger();
 
     await selectTester.open();
