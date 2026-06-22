@@ -1171,6 +1171,48 @@ describe('Table', () => {
     expect(document.activeElement).toBe(rowElements[3]);
   });
 
+  it('should cycle through matching rows when the same letter is typed repeatedly', async () => {
+    let {getAllByRole} = render(
+      <Table aria-label="Fruit">
+        <TableHeader>
+          <Column isRowHeader>Name</Column>
+        </TableHeader>
+        <TableBody>
+          <Row id="banana">
+            <Cell>Banana</Cell>
+          </Row>
+          <Row id="blackberry">
+            <Cell>Blackberry</Cell>
+          </Row>
+          <Row id="blueberry">
+            <Cell>Blueberry</Cell>
+          </Row>
+        </TableBody>
+      </Table>
+    );
+    let rowElements = getAllByRole('row');
+
+    await user.tab();
+    // First press keeps the already focused first row since it matches.
+    await user.keyboard('b');
+    expect(document.activeElement).toBe(rowElements[1]);
+
+    // Repeating the same letter advances to each subsequent match, then wraps around.
+    await user.keyboard('b');
+    expect(document.activeElement).toBe(rowElements[2]);
+    await user.keyboard('b');
+    expect(document.activeElement).toBe(rowElements[3]);
+    await user.keyboard('b');
+    expect(document.activeElement).toBe(rowElements[1]);
+
+    // Resets after the timeout and keeps the focused row when it still matches.
+    act(() => {
+      jest.advanceTimersByTime(1001);
+    });
+    await user.keyboard('b');
+    expect(document.activeElement).toBe(rowElements[1]);
+  });
+
   it('should support updating columns', () => {
     let tree = render(
       <DynamicTable

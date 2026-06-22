@@ -47,15 +47,38 @@ export interface TypeSelectAria {
  */
 export function useTypeSelect(options: AriaTypeSelectOptions): TypeSelectAria {
   let {keyboardDelegate, selectionManager, onTypeSelect} = options;
-  let state = useRef<{
-    search: string;
-    timeout: ReturnType<typeof setTimeout> | undefined;
-    startKey: Key | null;
-  }>({
+  let state = useRef<{search: string; timeout: ReturnType<typeof setTimeout> | undefined}>({
     search: '',
-    timeout: undefined,
-    startKey: null
+    timeout: undefined
   });
+
+  // Resolves the key to focus for the current search string. The delegates search
+  // inclusively (matching `fromKey` itself) and wrap around, so a plain search from the
+  // focused item naturally keeps it when it still matches, or moves to the next match.
+  // When `advance` is true (a single letter pressed repeatedly), we instead start the
+  // search after the focused item so each press cycles to the next match.
+  let getKeyForSearch = (advance: boolean): Key | null => {
+    let {search} = state.current;
+    let focusedKey = selectionManager.focusedKey;
+    let key: Key | null = null;
+
+    if (advance) {
+      let nextKey =
+        focusedKey != null ? (keyboardDelegate.getKeyBelow?.(focusedKey) ?? null) : null;
+      if (nextKey != null) {
+        key = keyboardDelegate.getKeyForSearch?.(search, nextKey) ?? null;
+      }
+    } else {
+      key = keyboardDelegate.getKeyForSearch?.(search, focusedKey) ?? null;
+    }
+
+    // If no key found, search the whole list from the top so the search wraps around.
+    if (key == null) {
+      key = keyboardDelegate.getKeyForSearch?.(search) ?? null;
+    }
+
+    return key;
+  };
 
   let onKeyDownCapture = (e: KeyboardEvent) => {
     // if we're in the middle of a search, then a spacebar should be treated as a search and we should not propagate the event
@@ -71,18 +94,8 @@ export function useTypeSelect(options: AriaTypeSelectOptions): TypeSelectAria {
       state.current.search += ' ';
 
       if (keyboardDelegate.getKeyForSearch != null) {
-        // Use the delegate to find a key to focus.
-        // Prioritize items after the currently focused item, falling back to searching the whole list.
-        let key = keyboardDelegate.getKeyForSearch(
-          state.current.search,
-          selectionManager.focusedKey
-        );
-
-        // If no key found, search from the top.
-        if (key == null) {
-          key = keyboardDelegate.getKeyForSearch(state.current.search);
-        }
-
+        // A space always continues a multi-character search, so never advance past the match.
+        let key = getKeyForSearch(false);
         if (key != null) {
           selectionManager.setFocusedKey(key);
           if (onTypeSelect) {
@@ -111,47 +124,24 @@ export function useTypeSelect(options: AriaTypeSelectOptions): TypeSelectAria {
       return;
     }
 
+    // A fresh search, or the same single letter pressed repeatedly, searches for just that
+    // letter rather than literally accumulating "aa", "aaa", etc.
     let isFreshSearch = state.current.search.length === 0;
-
-    if (isFreshSearch || state.current.search.split('').every(c => c === character)) {
+    let isRepeatedLetter =
+      !isFreshSearch && state.current.search.split('').every(c => c === character);
+    if (isFreshSearch || isRepeatedLetter) {
       state.current.search = character;
-      state.current.startKey = selectionManager.focusedKey;
     } else {
       state.current.search += character;
     }
 
+    // Advance past the focused item when cycling on a repeated letter. A fresh letter only
+    // advances when the collection isn't focused (e.g. a closed Select, which has no visible
+    // focus to keep); a focused collection keeps the focused item if it still matches.
+    let advance = isRepeatedLetter || (isFreshSearch && !selectionManager.isFocused);
+
     if (keyboardDelegate.getKeyForSearch != null) {
-      // Use the delegate to find a key to focus.
-      // Prioritize items after the starting focused item for the active search,
-      // falling back to searching the whole list.
-      let key: Key | null = null;
-
-      if (
-        selectionManager.focusedKey != null &&
-        selectionManager.isFocused &&
-        (state.current.search.length > 1 || isFreshSearch)
-      ) {
-        let focusedItem = selectionManager.collection.getItem(selectionManager.focusedKey);
-        if (focusedItem?.textValue) {
-          let searchValue = state.current.search.toLowerCase();
-          let itemValue = focusedItem.textValue.slice(0, state.current.search.length).toLowerCase();
-          if (itemValue === searchValue) {
-            key = selectionManager.focusedKey;
-          }
-        }
-      }
-
-      if (key == null) {
-        key = keyboardDelegate.getKeyForSearch(
-          state.current.search,
-          state.current.startKey ?? selectionManager.focusedKey
-        );
-      }
-
-      if (key == null) {
-        key = keyboardDelegate.getKeyForSearch(state.current.search);
-      }
-
+      let key = getKeyForSearch(advance);
       if (key != null) {
         selectionManager.setFocusedKey(key);
         if (onTypeSelect) {
@@ -173,7 +163,6 @@ export function useTypeSelect(options: AriaTypeSelectOptions): TypeSelectAria {
     clearTimeout(state.current.timeout);
     state.current.timeout = setTimeout(() => {
       state.current.search = '';
-      state.current.startKey = null;
     }, TYPEAHEAD_DEBOUNCE_WAIT_MS);
   };
 
