@@ -127,6 +127,12 @@ export interface PopoverRenderProps {
    */
   placement: PlacementAxis | null;
   /**
+   * Whether the modal is ready to be displayed. Use this to avoid layout shift.
+   *
+   * @selector [data-open]
+   */
+  isOpen: boolean;
+  /**
    * Whether the popover is currently entering. Use this to apply animations.
    *
    * @selector [data-entering]
@@ -173,6 +179,7 @@ export const Popover = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pop
       children = children({
         trigger: props.trigger || null,
         placement: 'bottom',
+        isOpen: false,
         isEntering: false,
         isExiting: false,
         defaultChildren: null
@@ -245,6 +252,7 @@ function PopoverInner({
     values: {
       trigger: props.trigger || null,
       placement,
+      isOpen: !!placement && isOpen,
       isEntering,
       isExiting
     }
