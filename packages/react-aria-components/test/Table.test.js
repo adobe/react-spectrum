@@ -232,111 +232,18 @@ let EditableTable = ({
   </Table>
 );
 
-let TabModeTable = props => (
-  <Table aria-label="Tab mode files" keyboardNavigationBehavior="tab" {...props}>
-    <MyTableHeader>
-      <MyColumn id="name" isRowHeader>
-        Name
-      </MyColumn>
-      <MyColumn id="type">Type</MyColumn>
-      <MyColumn id="actions">Notes</MyColumn>
-    </MyTableHeader>
-    <TableBody>
-      <MyRow id="1" textValue="Games">
-        <Cell>Games</Cell>
-        <Cell>File folder</Cell>
-        <Cell>
-          <input aria-label="Games notes" />
-          <button>Button next to input</button>
-        </Cell>
-      </MyRow>
-      <MyRow id="2" textValue="Program Files">
-        <Cell>Program Files</Cell>
-        <Cell>File folder</Cell>
-        <Cell>
-          <input aria-label="Program Files notes" />
-        </Cell>
-      </MyRow>
-      <MyRow id="3" textValue="bootmgr">
-        <Cell>bootmgr</Cell>
-        <Cell>System file</Cell>
-        <Cell>
-          <input aria-label="bootmgr notes" />
-        </Cell>
-      </MyRow>
-    </TableBody>
-  </Table>
-);
-
-let TabModeFocusModeChildTable = props => (
-  <Table aria-label="Tab mode table" keyboardNavigationBehavior="tab" {...props}>
+let TabModeTable = ({actionCellProps = {}, ...tableProps}) => (
+  <Table aria-label="Tab mode table" keyboardNavigationBehavior="tab" {...tableProps}>
     <TableHeader>
       <Column isRowHeader>Name</Column>
       <Column>Type</Column>
-      <Column>Action</Column>
-    </TableHeader>
-    <TableBody>
-      <Row id="1" textValue="Games">
-        <Cell>Games</Cell>
-        <Cell>File folder</Cell>
-        <Cell focusMode="child">
-          <button tabIndex={0} aria-label="Games action">
-            Go
-          </button>
-        </Cell>
-      </Row>
-      <Row id="2" textValue="Program Files">
-        <Cell>Program Files</Cell>
-        <Cell>File folder</Cell>
-        <Cell focusMode="child">
-          <button tabIndex={0} aria-label="Program Files action">
-            Go
-          </button>
-        </Cell>
-      </Row>
-    </TableBody>
-  </Table>
-);
-
-let TabModeFocusModeChildWithArrowNavTable = props => (
-  <Table aria-label="Tab mode table" keyboardNavigationBehavior="tab" {...props}>
-    <TableHeader>
-      <Column isRowHeader>Name</Column>
-      <Column>Type</Column>
-      <Column>Action</Column>
-    </TableHeader>
-    <TableBody>
-      <Row id="1" textValue="Games">
-        <Cell>Games</Cell>
-        <Cell>File folder</Cell>
-        <Cell focusMode="child" allowsArrowNavigation>
-          <button tabIndex={0} aria-label="Games action">
-            Go
-          </button>
-        </Cell>
-      </Row>
-      <Row id="2" textValue="Program Files">
-        <Cell>Program Files</Cell>
-        <Cell>File folder</Cell>
-        <Cell focusMode="child" allowsArrowNavigation>
-          <button tabIndex={0} aria-label="Program Files action">
-            Go
-          </button>
-        </Cell>
-      </Row>
-    </TableBody>
-  </Table>
-);
-
-let TableWithTagGroupInCell = props => (
-  <Table aria-label="Tag group table" selectionMode="multiple" {...props}>
-    <TableHeader>
-      <Column isRowHeader>Name</Column>
       <Column>Tags</Column>
+      <Column>Notes</Column>
     </TableHeader>
     <TableBody>
       <Row id="1" textValue="Games">
         <Cell>Games</Cell>
+        <Cell>File folder</Cell>
         <Cell>
           <TagGroup aria-label="Games tags">
             <TagList>
@@ -345,15 +252,37 @@ let TableWithTagGroupInCell = props => (
             </TagList>
           </TagGroup>
         </Cell>
+        <Cell {...actionCellProps}>
+          <input aria-label="Games notes" />
+          <button>Button next to input</button>
+        </Cell>
       </Row>
-      <Row id="2" textValue="Movies">
-        <Cell>Movies</Cell>
+      <Row id="2" textValue="Program Files">
+        <Cell>Program Files</Cell>
+        <Cell>File folder</Cell>
         <Cell>
-          <TagGroup aria-label="Movies tags">
+          <TagGroup aria-label="Program Files tags">
             <TagList>
-              <Tag id="tag-drama">Drama</Tag>
+              <Tag id="tag-office">Office</Tag>
             </TagList>
           </TagGroup>
+        </Cell>
+        <Cell {...actionCellProps}>
+          <input aria-label="Program Files notes" />
+        </Cell>
+      </Row>
+      <Row id="3" textValue="bootmgr">
+        <Cell>bootmgr</Cell>
+        <Cell>System file</Cell>
+        <Cell>
+          <TagGroup aria-label="bootmgr tags">
+            <TagList>
+              <Tag id="tag-boot">Boot</Tag>
+            </TagList>
+          </TagGroup>
+        </Cell>
+        <Cell {...actionCellProps}>
+          <input aria-label="bootmgr notes" />
         </Cell>
       </Row>
     </TableBody>
@@ -3599,7 +3528,9 @@ describe('Table', () => {
   describe("keyboardNavigationBehavior='tab' and textfields in row", () => {
     it('Tab from a focused cell moves focus to the first tabbable child', async () => {
       let {getByRole} = render(<TabModeTable />);
-      let tableTester = testUtilUser.createTester('Table', {root: getByRole('grid')});
+      let tableTester = testUtilUser.createTester('Table', {
+        root: getByRole('grid', {name: 'Tab mode table'})
+      });
       let row = tableTester.getRows()[0];
       let cells = tableTester.getCells({element: row});
       await user.tab();
@@ -3617,7 +3548,9 @@ describe('Table', () => {
           <button>After</button>
         </div>
       );
-      let tableTester = testUtilUser.createTester('Table', {root: getByRole('grid')});
+      let tableTester = testUtilUser.createTester('Table', {
+        root: getByRole('grid', {name: 'Tab mode table'})
+      });
       let rowheader = tableTester.getRowHeaders()[0];
       let row = tableTester.getRows()[0];
       let cells = tableTester.getCells({element: row});
@@ -3643,7 +3576,9 @@ describe('Table', () => {
 
     it('Shift+Tab from a child returns focus to the cell', async () => {
       let {getByRole} = render(<TabModeTable />);
-      let tableTester = testUtilUser.createTester('Table', {root: getByRole('grid')});
+      let tableTester = testUtilUser.createTester('Table', {
+        root: getByRole('grid', {name: 'Tab mode table'})
+      });
       let row = tableTester.getRows()[0];
       let cells = tableTester.getCells({element: row});
       await user.tab();
@@ -3657,7 +3592,9 @@ describe('Table', () => {
 
     it('should not navigate to next cell when arrow keys are pressed while a text input child has focus', async () => {
       let {getByRole} = render(<TabModeTable />);
-      let tableTester = testUtilUser.createTester('Table', {root: getByRole('grid')});
+      let tableTester = testUtilUser.createTester('Table', {
+        root: getByRole('grid', {name: 'Tab mode table'})
+      });
       let row = tableTester.getRows()[0];
       let cells = tableTester.getCells({element: row});
 
@@ -3680,7 +3617,9 @@ describe('Table', () => {
 
     it('should not trigger typeahead when typing in a text input child', async () => {
       let {getByRole} = render(<TabModeTable />);
-      let tableTester = testUtilUser.createTester('Table', {root: getByRole('grid')});
+      let tableTester = testUtilUser.createTester('Table', {
+        root: getByRole('grid', {name: 'Tab mode table'})
+      });
       let row = tableTester.getRows()[0];
       let cells = tableTester.getCells({element: row});
 
@@ -3700,7 +3639,9 @@ describe('Table', () => {
       let {getByRole} = render(
         <TabModeTable selectionMode="multiple" onSelectionChange={onSelectionChange} />
       );
-      let tableTester = testUtilUser.createTester('Table', {root: getByRole('grid')});
+      let tableTester = testUtilUser.createTester('Table', {
+        root: getByRole('grid', {name: 'Tab mode table'})
+      });
       let row = tableTester.getRows()[0];
       let cells = tableTester.getCells({element: row});
 
@@ -3731,7 +3672,9 @@ describe('Table', () => {
     });
 
     it('should not trigger row selection when clicking a TagGroup tag nested inside a cell', async () => {
-      let {getByRole} = render(<TableWithTagGroupInCell onSelectionChange={onSelectionChange} />);
+      let {getByRole} = render(
+        <TabModeTable selectionMode="multiple" onSelectionChange={onSelectionChange} />
+      );
 
       // click on actual grid cell since that mimics what would happen in browser
       // note that grid cell is not tabbable nor has the data-collection/etc attributes since those
@@ -3747,7 +3690,9 @@ describe('Table', () => {
       let {getByRole} = render(
         <TabModeTable selectionMode="multiple" onSelectionChange={onSelectionChange} />
       );
-      let tableTester = testUtilUser.createTester('Table', {root: getByRole('grid')});
+      let tableTester = testUtilUser.createTester('Table', {
+        root: getByRole('grid', {name: 'Tab mode table'})
+      });
       let row = tableTester.getRows()[0];
 
       await user.click(row);
@@ -3757,30 +3702,35 @@ describe('Table', () => {
 
     describe("focusMode='child'", () => {
       it('arrow navigating to a focusMode="child" cell focuses the child directly', async () => {
-        let {getByRole} = render(<TabModeFocusModeChildTable />);
+        let {getByRole} = render(<TabModeTable actionCellProps={{focusMode: 'child'}} />);
         await user.tab();
+        // ArrowLeft navigation uses childFocusStrategy='last', so focuses the last child (button)
         await user.keyboard('{ArrowLeft}');
-        expect(document.activeElement).toBe(getByRole('button', {name: 'Games action'}));
+        expect(document.activeElement).toBe(getByRole('button', {name: 'Button next to input'}));
       });
 
       it('allowsArrowNavigation allows arrow key row navigation when focused on child', async () => {
-        let {getByRole} = render(<TabModeFocusModeChildWithArrowNavTable />);
+        let {getByRole} = render(
+          <TabModeTable actionCellProps={{focusMode: 'child', allowsArrowNavigation: true}} />
+        );
         await user.tab();
         await user.keyboard('{ArrowLeft}');
-        expect(document.activeElement).toBe(getByRole('button', {name: 'Games action'}));
+        expect(document.activeElement).toBe(getByRole('button', {name: 'Button next to input'}));
         await user.keyboard('{ArrowDown}');
-        expect(document.activeElement).toBe(getByRole('button', {name: 'Program Files action'}));
+        expect(document.activeElement).toBe(getByRole('textbox', {name: 'Program Files notes'}));
       });
 
-      // TODO: for some reason the cell containing the button doesn't get refocused when we shift tab in the test but it
+      // TODO: for some reason the cell containing the input doesn't get refocused when we shift tab in the test but it
       // works in browser...
       it.skip('Shift+Tab from a focusMode="child" child returns focus to the cell without redirecting back to child', async () => {
-        let {getByRole} = render(<TabModeFocusModeChildTable />);
-        let tableTester = testUtilUser.createTester('Table', {root: getByRole('grid')});
+        let {getByRole} = render(<TabModeTable actionCellProps={{focusMode: 'child'}} />);
+        let tableTester = testUtilUser.createTester('Table', {
+          root: getByRole('grid', {name: 'Tab mode table'})
+        });
         let row = tableTester.getRows()[0];
         let cells = tableTester.getCells({element: row});
-        let actionCell = cells[cells.length - 1];
-        let button = getByRole('button', {name: 'Games action'});
+        let notesCell = cells[cells.length - 1];
+        let button = getByRole('button', {name: 'Button next to input'});
 
         await user.tab();
         await user.keyboard('{ArrowLeft}');
@@ -3788,13 +3738,13 @@ describe('Table', () => {
         expect(document.activeElement).toBe(button);
 
         await user.tab({shift: true});
-        expect(document.activeElement).toBe(actionCell);
+        expect(document.activeElement).toBe(notesCell);
         // TODO: even this doesn't work
         act(() => {
-          actionCell.focus();
+          notesCell.focus();
         });
         act(() => jest.runAllTimers());
-        expect(document.activeElement).toBe(actionCell);
+        expect(document.activeElement).toBe(notesCell);
       });
     });
   });
