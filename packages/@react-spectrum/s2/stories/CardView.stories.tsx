@@ -27,6 +27,7 @@ import {MenuItem} from '../src/Menu';
 import type {Meta, StoryObj} from '@storybook/react';
 import {SkeletonCollection} from '../src/SkeletonCollection';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {TextField} from '../src/TextField';
 import {useAsyncList} from 'react-stately/useAsyncList';
 
 const meta: Meta<typeof CardView> = {
@@ -72,7 +73,15 @@ const avatarSize = {
   XL: 32
 } as const;
 
-export function PhotoCard({item, layout}: {item: Item; layout: string}) {
+export function PhotoCard({
+  item,
+  layout,
+  interactive
+}: {
+  item: Item;
+  layout: string;
+  interactive?: React.ReactNode;
+}) {
   return (
     <Card id={item.id} textValue={item.description || item.alt_description}>
       {({size}) => (
@@ -112,12 +121,20 @@ export function PhotoCard({item, layout}: {item: Item; layout: string}) {
             <div
               className={style({
                 display: 'flex',
-                alignItems: 'center',
+                flexDirection: 'column',
                 gap: 8,
                 gridArea: 'description'
               })}>
-              <Avatar src={item.user.profile_image.small} size={avatarSize[size]} />
-              <Text slot="description">{item.user.name}</Text>
+              <div
+                className={style({
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 8
+                })}>
+                <Avatar src={item.user.profile_image.small} size={avatarSize[size]} />
+                <Text slot="description">{item.user.name}</Text>
+              </div>
+              {interactive}
             </div>
           </Content>
         </>
@@ -126,7 +143,7 @@ export function PhotoCard({item, layout}: {item: Item; layout: string}) {
   );
 }
 
-export const ExampleRender = (args: CardViewProps<any>) => {
+export const ExampleRender = (args: CardViewProps<any> & {interactive?: React.ReactNode}) => {
   let list = useAsyncList<Item, number | null>({
     async load({signal, cursor, items}) {
       let page = cursor || 1;
@@ -155,7 +172,9 @@ export const ExampleRender = (args: CardViewProps<any>) => {
       onLoadMore={args.loadingState === 'idle' ? list.loadMore : undefined}
       styles={cardViewStyles}>
       <Collection items={items} dependencies={[args.layout]}>
-        {item => <PhotoCard item={item} layout={args.layout || 'grid'} />}
+        {item => (
+          <PhotoCard interactive={args.interactive} item={item} layout={args.layout || 'grid'} />
+        )}
       </Collection>
       {(loadingState === 'loading' || loadingState === 'loadingMore') && (
         <SkeletonCollection>
@@ -286,5 +305,16 @@ export const CollectionCards: Story = {
   args: {
     loadingState: 'idle',
     onAction: undefined
+  }
+};
+
+export const CardViewWithTextField: Story = {
+  render: args => (
+    <ExampleRender {...args} interactive={<TextField aria-label="search photos" />} />
+  ),
+  args: {
+    loadingState: 'idle',
+    onAction: undefined,
+    selectionMode: 'multiple'
   }
 };
