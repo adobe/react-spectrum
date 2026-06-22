@@ -13,14 +13,23 @@
 import {act} from '@testing-library/react';
 import {Button} from '../src/Button';
 import {ComboBox, ComboBoxContext, ComboBoxValue} from '../src/ComboBox';
+import {Dialog, DialogTrigger} from '../src/Dialog';
 import {FieldError} from '../src/FieldError';
-import {fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
+import {
+  fireEvent,
+  installPointerEvent,
+  pointerMap,
+  render,
+  within
+} from '@react-spectrum/test-utils-internal';
 import {Form} from '../src/Form';
 import {Header} from '../src/Header';
+import {Heading} from '../src/Heading';
 import {Input} from '../src/Input';
 import {Label} from '../src/Label';
 import {ListBox, ListBoxItem, ListBoxLoadMoreItem, ListBoxSection} from '../src/ListBox';
 import {ListLayout} from 'react-stately/useVirtualizerState';
+import {Modal} from '../src/Modal';
 import {Popover} from '../src/Popover';
 import React, {useState} from 'react';
 import {Text} from '../src/Text';
@@ -1061,5 +1070,54 @@ describe('ComboBox', () => {
     expect(input.closest('.react-aria-ComboBox')).not.toHaveAttribute('data-readonly');
     rerender(<TestComboBox isReadOnly />);
     expect(input.closest('.react-aria-ComboBox')).toHaveAttribute('data-readonly');
+  });
+
+  describe('inside dialog', () => {
+    installPointerEvent();
+    it('should close a focus triggered combobox when clicking outside the dialog', async () => {
+      let onFocusChange = jest.fn();
+      let {container} = render(
+        <DialogTrigger>
+          <Button>Open</Button>
+          <Modal>
+            <Dialog>
+              <Heading slot="title">Subscribe to our newsletter</Heading>
+              <TestComboBox menuTrigger="focus" onFocusChange={onFocusChange} />
+            </Dialog>
+          </Modal>
+        </DialogTrigger>
+      );
+      let dialogTester = testUtilUser.createTester('Dialog', {root: container});
+      await dialogTester.open();
+      let comboboxTester = testUtilUser.createTester('ComboBox', {root: dialogTester.getDialog()});
+      await user.tab();
+      await act(() => {
+        jest.runAllTimers();
+      });
+      expect(comboboxTester.getListbox()).toBeVisible();
+      expect(onFocusChange).toHaveBeenCalledTimes(1);
+      expect(onFocusChange).toHaveBeenLastCalledWith(true);
+      let overlay = document.querySelector('.react-aria-ModalOverlay');
+      await user.pointer({target: overlay, keys: '[MouseLeft>]'});
+      // user event runs all the events in order, but focus scope needs a moment to restore focus
+      await act(() => {
+        jest.runAllTimers();
+      });
+      await user.pointer({target: overlay, keys: '[/MouseLeft]'});
+      act(() => jest.runAllTimers());
+      expect(comboboxTester.getListbox()).toBeNull();
+      expect(onFocusChange).toHaveBeenCalledTimes(3);
+      expect(onFocusChange).toHaveBeenLastCalledWith(true);
+      overlay = document.querySelector('.react-aria-ModalOverlay');
+      await user.pointer({target: overlay, keys: '[MouseLeft>]'});
+      await act(() => {
+        jest.runAllTimers();
+      });
+      await user.pointer({target: overlay, keys: '[/MouseLeft]'});
+      act(() => jest.runAllTimers());
+      expect(comboboxTester.getListbox()).toBeNull();
+      expect(onFocusChange).toHaveBeenCalledTimes(5);
+      expect(onFocusChange).toHaveBeenLastCalledWith(true);
+    });
   });
 });
