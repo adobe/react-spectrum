@@ -23,6 +23,7 @@ import {
 } from '../src/PromptField';
 import {Attachment} from '../src/AttachmentList';
 import Brand from '@react-spectrum/s2/icons/Brand';
+import {categorizeArgTypes, getActionArgs} from '../../s2/stories/utils';
 import {
   Collection,
   Header,
@@ -44,12 +45,19 @@ import SocialNetwork from '@react-spectrum/s2/icons/SocialNetwork';
 import UserGroup from '@react-spectrum/s2/icons/UserGroup';
 import {useState} from 'react';
 
+const events = ['onSubmit', 'onStop', 'onAddAttachments', 'onRemoveAttachments'];
+
 const meta: Meta<typeof PromptField> = {
   component: PromptField,
   parameters: {
     layout: 'centered'
   },
   tags: ['autodocs'],
+  argTypes: {
+    ...categorizeArgTypes('Events', events),
+    children: {table: {disable: true}}
+  },
+  args: {...getActionArgs(events)},
   title: 'AI/PromptField',
   decorators: [
     Story => (
