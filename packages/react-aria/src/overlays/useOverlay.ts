@@ -16,7 +16,6 @@ import {isElementInChildOfActiveScope} from '../focus/FocusScope';
 import {useEffect, useRef} from 'react';
 import {useFocusWithin} from '../interactions/useFocusWithin';
 import {useInteractOutside} from '../interactions/useInteractOutside';
-import {useKeyboard} from '../interactions/useKeyboard';
 
 export interface AriaOverlayProps {
   /** Whether the overlay is currently open. */
@@ -126,17 +125,13 @@ export function useOverlay(props: AriaOverlayProps, ref: RefObject<Element | nul
   };
 
   // Handle the escape key
-  let {keyboardProps} = useKeyboard({
-    shortcuts: {
-      Escape: () => {
-        if (!isKeyboardDismissDisabled) {
-          onHide();
-          return;
-        }
-        return false;
-      }
+  let onKeyDown = e => {
+    if (e.key === 'Escape' && !isKeyboardDismissDisabled && !e.nativeEvent.isComposing) {
+      e.stopPropagation();
+      e.preventDefault();
+      onHide();
     }
-  });
+  };
 
   // Handle clicking outside the overlay to close it
   useInteractOutside({
@@ -172,7 +167,7 @@ export function useOverlay(props: AriaOverlayProps, ref: RefObject<Element | nul
 
   return {
     overlayProps: {
-      ...keyboardProps,
+      onKeyDown,
       ...focusWithinProps
     },
     underlayProps: {}
