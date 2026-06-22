@@ -52,25 +52,12 @@ export function useTypeSelect(options: AriaTypeSelectOptions): TypeSelectAria {
     timeout: undefined
   });
 
-  // Resolves the key to focus for the current search string. The delegates search
-  // inclusively (matching `fromKey` itself) and wrap around, so a plain search from the
-  // focused item naturally keeps it when it still matches, or moves to the next match.
-  // When `advance` is true (a single letter pressed repeatedly), we instead start the
-  // search after the focused item so each press cycles to the next match.
+  // Resolves the key to focus for the current search string. When `advance` is true, the
+  // delegate starts the search after the focused item so each press moves to the next match;
+  // otherwise it searches inclusively from the focused item, keeping it when it still matches.
   let getKeyForSearch = (advance: boolean): Key | null => {
     let {search} = state.current;
-    let focusedKey = selectionManager.focusedKey;
-    let key: Key | null = null;
-
-    if (advance) {
-      let nextKey =
-        focusedKey != null ? (keyboardDelegate.getKeyBelow?.(focusedKey) ?? null) : null;
-      if (nextKey != null) {
-        key = keyboardDelegate.getKeyForSearch?.(search, nextKey) ?? null;
-      }
-    } else {
-      key = keyboardDelegate.getKeyForSearch?.(search, focusedKey) ?? null;
-    }
+    let key = keyboardDelegate.getKeyForSearch?.(search, selectionManager.focusedKey, {advance}) ?? null;
 
     // If no key found, search the whole list from the top so the search wraps around.
     if (key == null) {
@@ -135,10 +122,10 @@ export function useTypeSelect(options: AriaTypeSelectOptions): TypeSelectAria {
       state.current.search += character;
     }
 
-    // Advance past the focused item when cycling on a repeated letter. A fresh letter only
-    // advances when the collection isn't focused (e.g. a closed Select, which has no visible
-    // focus to keep); a focused collection keeps the focused item if it still matches.
-    let advance = isRepeatedLetter || (isFreshSearch && !selectionManager.isFocused);
+    // A single-letter search (fresh or a repeated letter) always advances past the focused
+    // item to the next match. Only an extended multi-character search stays on the focused
+    // item when it still matches.
+    let advance = isFreshSearch || isRepeatedLetter;
 
     if (keyboardDelegate.getKeyForSearch != null) {
       let key = getKeyForSearch(advance);

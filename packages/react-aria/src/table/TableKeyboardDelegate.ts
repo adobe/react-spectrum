@@ -154,7 +154,7 @@ export class TableKeyboardDelegate<T> extends GridKeyboardDelegate<T, ITableColl
     return super.getKeyLeftOf(key);
   }
 
-  getKeyForSearch(search: string, fromKey?: Key): Key | null {
+  getKeyForSearch(search: string, fromKey?: Key | null, options?: {advance?: boolean}): Key | null {
     if (!this.collator) {
       return null;
     }
@@ -172,6 +172,18 @@ export class TableKeyboardDelegate<T> extends GridKeyboardDelegate<T, ITableColl
     }
 
     let hasWrapped = false;
+
+    // When advancing, start the search after `fromKey` so each call moves to the next match,
+    // wrapping back to the first key when `fromKey` is the last one. Wrapping here (rather than
+    // relying on the caller) keeps `fromKey` available for the cell-vs-row result below.
+    if (options?.advance && fromKey != null && key != null) {
+      let nextKey = this.getKeyBelow(key);
+      if (nextKey == null) {
+        nextKey = this.getFirstKey();
+        hasWrapped = true;
+      }
+      key = nextKey;
+    }
     while (key != null) {
       let item = collection.getItem(key);
       if (!item) {

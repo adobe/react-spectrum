@@ -1193,24 +1193,24 @@ describe('Table', () => {
     let rowElements = getAllByRole('row');
 
     await user.tab();
-    // First press keeps the already focused first row since it matches.
-    await user.keyboard('b');
-    expect(document.activeElement).toBe(rowElements[1]);
-
-    // Repeating the same letter advances to each subsequent match, then wraps around.
+    // The first press advances past the already focused first row to the next match.
     await user.keyboard('b');
     expect(document.activeElement).toBe(rowElements[2]);
+
+    // Repeating the same letter advances to each subsequent match, then wraps around.
     await user.keyboard('b');
     expect(document.activeElement).toBe(rowElements[3]);
     await user.keyboard('b');
     expect(document.activeElement).toBe(rowElements[1]);
+    await user.keyboard('b');
+    expect(document.activeElement).toBe(rowElements[2]);
 
-    // Resets after the timeout and keeps the focused row when it still matches.
+    // Resets after the timeout, then a fresh press advances past the focused row again.
     act(() => {
       jest.advanceTimersByTime(1001);
     });
     await user.keyboard('b');
-    expect(document.activeElement).toBe(rowElements[1]);
+    expect(document.activeElement).toBe(rowElements[3]);
   });
 
   it('should support updating columns', () => {

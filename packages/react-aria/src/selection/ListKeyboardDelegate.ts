@@ -364,13 +364,17 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
     return nextKey ?? (reversed ? this.getFirstKey() : this.getLastKey());
   }
 
-  getKeyForSearch(search: string, fromKey?: Key): Key | null {
+  getKeyForSearch(search: string, fromKey?: Key | null, options?: {advance?: boolean}): Key | null {
     if (!this.collator) {
       return null;
     }
 
     let collection = this.collection;
     let key = fromKey ?? this.getFirstKey();
+    // When advancing, start the search after `fromKey` so each call moves to the next match.
+    if (options?.advance && fromKey != null) {
+      key = this.getNextKey(fromKey);
+    }
     while (key != null) {
       let item = collection.getItem(key);
       if (!item) {
