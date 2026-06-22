@@ -204,6 +204,13 @@ export interface GridListProps<T>
    * @default 'vertical'
    */
   orientation?: Orientation;
+  /**
+   * Which item in the collection to focus when tabbing into the collection. Overrides default
+   * roving tab index like behavior.
+   *
+   * @private
+   */
+  UNSTABLE_focusOnEntry?: 'first' | 'last';
 }
 
 export const GridListContext =
@@ -235,8 +242,14 @@ interface GridListInnerProps<T> {
 
 function GridListInner<T>({props, collection, gridListRef: ref}: GridListInnerProps<T>) {
   [props, ref] = useContextProps(props, ref, SelectableCollectionContext);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  let {shouldUseVirtualFocus, filter, disallowTypeAhead, ...DOMCollectionProps} = props;
+  let {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    shouldUseVirtualFocus,
+    filter,
+    disallowTypeAhead,
+    UNSTABLE_focusOnEntry,
+    ...DOMCollectionProps
+  } = props;
   let {
     dragAndDropHooks,
     keyboardNavigationBehavior = 'arrow',
@@ -294,7 +307,8 @@ function GridListInner<T>({props, collection, gridListRef: ref}: GridListInnerPr
       keyboardNavigationBehavior: layout === 'grid' ? 'tab' : keyboardNavigationBehavior,
       isVirtualized,
       shouldSelectOnPressUp: props.shouldSelectOnPressUp,
-      disallowTypeAhead
+      disallowTypeAhead,
+      UNSTABLE_focusOnEntry
     },
     filteredState,
     ref

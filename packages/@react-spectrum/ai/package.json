@@ -1,0 +1,87 @@
+{
+  "name": "@react-spectrum/ai",
+  "version": "0.1.0",
+  "description": "Spectrum 2 UI AI components in React",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adobe/react-spectrum"
+  },
+  "source": "exports/index.ts",
+  "files": [
+    "dist",
+    "src",
+    "exports",
+    "*.js"
+  ],
+  "sideEffects": [
+    "*.css"
+  ],
+  "main": "./dist/exports/index.cjs",
+  "module": "./dist/exports/index.mjs",
+  "types": "./dist/types/exports/index.d.ts",
+  "exports": {
+    ".": {
+      "source": "./exports/index.ts",
+      "types": "./dist/types/exports/index.d.ts",
+      "module": "./dist/exports/index.mjs",
+      "import": "./dist/exports/index.mjs",
+      "require": "./dist/exports/index.cjs"
+    },
+    "./package.json": "./package.json",
+    "./*": {
+      "source": "./exports/*.ts",
+      "types": "./dist/types/exports/*.d.ts",
+      "import": "./dist/exports/*.mjs",
+      "require": "./dist/exports/*.cjs"
+    },
+    "./private/*": null
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "prepack": "npm pkg delete scripts devDependencies resolutions alias targets",
+    "postpack": "git checkout -- package.json"
+  },
+  "devDependencies": {
+    "@react-aria/test-utils": "^1.0.0-alpha.8",
+    "@storybook/jest": "^0.2.3",
+    "@testing-library/dom": "^10.1.0",
+    "@testing-library/react": "^16.0.0",
+    "@testing-library/user-event": "^14.0.0",
+    "react": "^19.0.0-rc.1",
+    "react-dom": "^19.0.0-rc.1"
+  },
+  "peerDependencies": {
+    "@internationalized/date": "^3.12.2",
+    "@internationalized/number": "^3.6.7",
+    "@react-spectrum/s2": "^1.4.0",
+    "@react-types/shared": "^3.35.0",
+    "react": "^19.0.0-rc.1",
+    "react-aria": "3.49.0",
+    "react-aria-components": "1.18.0",
+    "react-dom": "^19.0.0-rc.1",
+    "react-stately": "3.47.0"
+  },
+  "browserslist": "last 2 Chrome versions, last 2 Safari versions, last 2 Firefox versions, last 2 Edge versions",
+  "targets": {
+    "module": false,
+    "main": false,
+    "types": false,
+    "exports-module": {
+      "source": "exports/*.ts",
+      "distDir": "dist",
+      "isLibrary": true,
+      "outputFormat": "esmodule",
+      "includeNodeModules": false
+    },
+    "exports-main": {
+      "source": "exports/*.ts",
+      "distDir": "dist",
+      "isLibrary": true,
+      "outputFormat": "commonjs",
+      "includeNodeModules": false
+    }
+  }
+}

@@ -190,7 +190,7 @@ export function useMenuItem<T>(
     if (data.onAction) {
       // Must reassign to variable otherwise `this` binding gets messed up. Something to do with WeakMap.
       let onAction = data.onAction;
-      onAction(key);
+      onAction(key, item?.value);
     }
   };
 
