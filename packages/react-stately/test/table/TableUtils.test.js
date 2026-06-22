@@ -112,10 +112,12 @@ describe('TableUtils', () => {
       expect(widths).toStrictEqual([133, 134, 533]);
     });
 
-    it('floors a fractional table width so columns never overflow', () => {
-      // A percentage-based table width can be fractional. Column widths must
-      // still sum to <= the available width, otherwise the rounding can push
-      // them over and produce a horizontal scrollbar.
+    it('keeps columns flush with a fractional table width', () => {
+      // A percentage-based table width can be fractional. Rounding every column
+      // to an integer would push the sum past the available width and produce a
+      // horizontal scrollbar; flooring would leave a gap at the table edge.
+      // Instead the leftover fraction goes to the last column so the widths sum
+      // exactly to the table width.
       // https://github.com/adobe/react-spectrum/issues/9448
       let tableWidth = 1000.5;
       let widths = calculateColumnSizes(
@@ -128,8 +130,8 @@ describe('TableUtils', () => {
         () => 150,
         () => 50
       );
-      expect(widths).toStrictEqual([500, 500]);
-      expect(widths.reduce((a, b) => a + b, 0)).toBeLessThanOrEqual(Math.floor(tableWidth));
+      expect(widths).toStrictEqual([500, 500.5]);
+      expect(widths.reduce((a, b) => a + b, 0)).toBe(tableWidth);
     });
   });
 

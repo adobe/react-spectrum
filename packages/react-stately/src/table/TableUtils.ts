@@ -113,12 +113,6 @@ export function calculateColumnSizes(
   getDefaultWidth?: (index: number) => ColumnSize | null | undefined,
   getDefaultMinWidth?: (index: number) => ColumnSize | null | undefined
 ): number[] {
-  // Column widths must be whole numbers, and cascadeRounding below assumes the
-  // target sizes sum to an integer. When the table width is fractional (e.g. a
-  // percentage-based size), that invariant breaks and the columns can round up
-  // past the available width, producing a horizontal scrollbar. Flooring the
-  // available width here keeps the sum integral so columns never overflow (#9448).
-  availableWidth = Math.floor(availableWidth);
   let hasNonFrozenItems = false;
   let flexItems: FlexItem[] = columns.map((column, index) => {
     let width: ColumnSize = (
@@ -265,8 +259,13 @@ export function calculateColumnSizes(
 
 function cascadeRounding(flexItems: FlexItem[]): number[] {
   /*
-  Given an array of floats that sum to an integer, this rounds the floats
-  and returns an array of integers with the same sum.
+  Rounds the target sizes and returns an array whose sum matches the sum of the
+  target sizes. When the targets sum to an integer (the common case) every
+  returned value is a whole number. When the table width is fractional (e.g. a
+  percentage-based size) the integer-rounded values would otherwise sum past the
+  available width and produce a horizontal scrollbar (#9448), so the leftover
+  fraction is assigned to the last column instead, keeping the columns flush
+  with the edge of the table.
   */
 
   let fpTotal = 0;
@@ -279,6 +278,13 @@ function cascadeRounding(flexItems: FlexItem[]): number[] {
     intTotal += integer;
     roundedArray.push(integer);
   });
+
+  // `intTotal` is now `Math.round(fpTotal)`; if the targets summed to a
+  // fractional width, give the remaining fraction to the last column so the
+  // column widths sum exactly to the available width.
+  if (roundedArray.length > 0 && fpTotal !== intTotal) {
+    roundedArray[roundedArray.length - 1] += fpTotal - intTotal;
+  }
 
   return roundedArray;
 }
