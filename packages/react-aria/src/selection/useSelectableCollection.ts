@@ -576,27 +576,23 @@ export function useSelectableCollection(
       let selectedKeys = manager.selectedKeys;
       if (selectedKeys.size) {
         for (let key of selectedKeys) {
-          if (manager.canSelectItem(key) && !manager.disabledKeys.has(key)) {
+          if (manager.canSelectItem(key)) {
             focusedKey = key;
             break;
           }
         }
       }
 
-      if (focusedKey == null || manager.disabledKeys.has(focusedKey)) {
-        let firstEnabledKey = delegate.getFirstKey?.() ?? null;
-
-        if (firstEnabledKey != null) {
-          focusedKey = firstEnabledKey;
-        }
+      // Safety check: If the resolved target item is explicitly disabled,
+      // fallback immediately to the first available enabled option.
+      if (focusedKey && manager.disabledKeys.has(focusedKey)) {
+        focusedKey = delegate.getFirstKey?.() ?? null;
       }
 
       manager.setFocused(true);
+      manager.setFocusedKey(focusedKey); // Fires consistently now (even if null)
 
-      if (focusedKey != null) {
-        manager.setFocusedKey(focusedKey);
-      }
-
+      // If no default focus key is selected, focus the collection container itself.
       if (focusedKey == null && !shouldUseVirtualFocus && ref.current) {
         focusSafely(ref.current);
       }
