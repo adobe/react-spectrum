@@ -98,7 +98,9 @@ export function useGridState<T extends object, C extends IGridCollection<T>>(
       );
       let newRow: GridNode<T> | null = null;
       // Find the nearest focusable row at or after the deleted position...
-      for (let i = index; i < rows.length; i++) {
+      // (Math.max(0, index) keeps an empty `rows` — index === -1 — from reading
+      // rows[-1], matching the old `while (index >= 0)` no-op.)
+      for (let i = Math.max(0, index); i < rows.length; i++) {
         if (!selectionManager.isDisabled(rows[i].key) && rows[i].type !== 'headerrow') {
           newRow = rows[i];
           break;
@@ -109,7 +111,7 @@ export function useGridState<T extends object, C extends IGridCollection<T>>(
       // `index` and the end and never terminated when every row in range was
       // disabled or a headerrow — hanging the main thread.
       if (newRow == null) {
-        for (let i = Math.min(index, rows.length - 1) - 1; i >= 0; i--) {
+        for (let i = index - 1; i >= 0; i--) {
           if (!selectionManager.isDisabled(rows[i].key) && rows[i].type !== 'headerrow') {
             newRow = rows[i];
             break;
