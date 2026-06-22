@@ -15,6 +15,7 @@ import Attach from '@react-spectrum/s2/icons/Attach';
 import {Attachment, AttachmentList, AttachmentListProps} from './AttachmentList';
 import {Autocomplete} from 'react-aria-components/Autocomplete';
 import {Button} from '@react-spectrum/s2/Button';
+import {Cell} from './loader/data';
 import {CenterBaseline} from '@react-spectrum/s2/CenterBaseline';
 import {
   createContext,
@@ -39,6 +40,7 @@ import {Image, Text} from '@react-spectrum/s2/Card';
 import {isFileDropItem, useDrop} from 'react-aria-components/useDrop';
 import {Link} from '@react-spectrum/s2/Link';
 import {Menu, MenuItem, MenuItemProps, MenuTrigger} from '@react-spectrum/s2/Menu';
+import {PixelLoader} from './loader/react';
 import Plus from '@react-spectrum/s2/icons/Add';
 import {Popover, PopoverProps} from '@react-spectrum/s2/Popover';
 import {positionToDOMRange, Token, TokenField, TokenProps} from './TokenField';
@@ -47,7 +49,6 @@ import {PromptFocusContext} from './Chat';
 import Send from '@react-spectrum/s2/icons/ArrowUpSend';
 import Stop from '@react-spectrum/s2/icons/StopProcessing';
 import {useFocusWithin} from 'react-aria/useFocusWithin';
-import {PixelLoader} from './loader/react';
 
 export interface PromptFieldAttachment {
   id: string;
@@ -264,10 +265,11 @@ export interface PromptTokenFieldProps {
     filterValue: string
   ) => React.ReactNode[] | null | Promise<React.ReactNode[] | null>;
   children?: (segment: TokenSegment) => React.ReactElement;
+  pixelLoader?: Cell[] | Cell[][];
 }
 
 export function PromptTokenField(props: PromptTokenFieldProps) {
-  let {completionTrigger, renderCompletions, children} = props;
+  let {completionTrigger, renderCompletions, children, pixelLoader} = props;
   let {
     prompt,
     setPrompt,
@@ -310,7 +312,7 @@ export function PromptTokenField(props: PromptTokenFieldProps) {
         width: 'full'
       })}>
       <CenterBaseline>
-        <PixelLoader size={24} playing={isGenerating} preset="exp" />
+        <PixelLoader size={24} playing={isGenerating} icon={pixelLoader} />
       </CenterBaseline>
       <Autocomplete>
         <TokenField

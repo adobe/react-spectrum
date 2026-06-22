@@ -35,6 +35,7 @@ import {
   Text
 } from '@react-spectrum/s2/Menu';
 import Data from '@react-spectrum/s2/icons/Data';
+import * as data from '../src/loader/data';
 import {iconStyle, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Image} from '@react-spectrum/s2/Image';
 import LinkIcon from '@react-spectrum/s2/icons/Link';
@@ -55,13 +56,30 @@ const meta: Meta<typeof PromptField> = {
   tags: ['autodocs'],
   argTypes: {
     ...categorizeArgTypes('Events', events),
-    children: {table: {disable: true}}
+    children: {table: {disable: true}},
+    brand: {
+      control: 'color',
+      description:
+        'Sets the --brand custom property to retheme the PromptField. Only the hue is used; lightness and chroma come from the design tokens.',
+      table: {category: 'Theming'}
+    },
+    pixelLoader: {
+      control: 'select',
+      options: Object.keys(data),
+      description: 'Sets the icon to use for the pixel loader.',
+      table: {category: 'Theming'}
+    }
   },
-  args: {...getActionArgs(events)},
+  args: {brand: 'rgb(236, 105, 255)', pixelLoader: 'aiLogo', ...getActionArgs(events)},
   title: 'AI/PromptField',
   decorators: [
-    Story => (
-      <div style={{width: '800px'}}>
+    (Story, {args}) => (
+      <div
+        style={{
+          width: '800px',
+          // @ts-ignore
+          '--brand': args.brand
+        }}>
         <Story />
       </div>
     )
@@ -227,7 +245,10 @@ export const Everything = args => {
           );
         }}
       </PromptFieldAttachmentList>
-      <PromptTokenField completionTrigger={/(?<=^|\s)[@/]/} renderCompletions={renderCompletions}>
+      <PromptTokenField
+        completionTrigger={/(?<=^|\s)[@/]/}
+        renderCompletions={renderCompletions}
+        pixelLoader={data[args.pixelLoader]}>
         {segment => (
           <PromptToken>
             {icons[segment.value?.type]}

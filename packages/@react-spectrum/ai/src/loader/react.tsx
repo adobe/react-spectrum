@@ -17,8 +17,7 @@
 // advance via a single timer — only the current icon's cells are in the
 // DOM. A single-icon loader stays a pure infinite CSS loop with no JS.
 
-import * as React from 'react';
-import {cellSets, LOADER_PRESETS} from './data.js';
+import {aiLogo, type Cell} from './data.js';
 import {
   EASE,
   FPS,
@@ -30,6 +29,7 @@ import {
   Y_OVERSHOOT,
   Y_START
 } from './runtime.js';
+import * as React from 'react';
 
 const DURATION_MS = (TOTAL_FRAMES / FPS) * 1000;
 
@@ -106,52 +106,56 @@ function cellOpacityKeyframes(name, c) {
   ]);
 }
 
-const cssCache = new Map();
-function keyframesFor(iconName, cells) {
-  let css = cssCache.get(iconName);
-  if (!css) {
+// Stable per-icon id, keyed by the cell-array reference (icons are
+// module-level consts, so the reference is stable). Used to namespace
+// each icon's @keyframes and to cache its generated CSS.
+let nextIconId = 0;
+const iconIds = new WeakMap<object, string>();
+function iconId(cells: object): string {
+  let id = iconIds.get(cells);
+  if (id === undefined) {
+    id = `pl${nextIconId++}`;
+    iconIds.set(cells, id);
+  }
+  return id;
+}
+
+const cssCache = new WeakMap<object, string>();
+function keyframesFor(cells: Cell[]): string {
+  let css = cssCache.get(cells);
+  if (css === undefined) {
+    const id = iconId(cells);
     css = cells
-      .map(
-        (c, i) =>
-          cellYKeyframes(`pl-${iconName}-${i}-y`, c) +
-          cellOpacityKeyframes(`pl-${iconName}-${i}-o`, c)
-      )
+      .map((c, i) => cellYKeyframes(`${id}-${i}-y`, c) + cellOpacityKeyframes(`${id}-${i}-o`, c))
       .join('');
-    cssCache.set(iconName, css);
+    cssCache.set(cells, css);
   }
   return css;
 }
 
-// Resolve a sequence of icon names from the icon-selection props, in
-// precedence order: explicit `icons` list, single `icon`, then `preset`.
-// Falls back to the ai-logo. Unknown names are dropped.
-function resolveSequence({preset, icon, icons}): string[] {
-  if (icons && icons.length) {
-    const names = icons.filter(n => cellSets[n]);
-    if (names.length) return names;
-  }
-  if (icon && cellSets[icon]) return [icon];
-  if (preset && LOADER_PRESETS[preset]) {
-    const names = LOADER_PRESETS[preset].icons.filter(n => cellSets[n]);
-    if (names.length) return names;
-  }
-  return ['ai-logo'];
+interface PixelLoaderProps {
+  size?: number;
+  playing?: boolean;
+  icon?: Cell[] | Cell[][];
+  speed?: number;
+  color?: string;
+  className?: string;
+  style?: React.CSSProperties;
 }
 
 // ─────────────────────────────────────────────────────────────
 // Component. Only `size` and `playing` are load-bearing for the
-// PromptField usage; `icon`/`icons`/`preset`, `speed`, `color`,
+// PromptField usage. `icon` takes a single icon (`Cell[]`) or a
+// sequence (`Cell[][]`) imported from ./data; `speed`, `color`,
 // `className`, and `style` are supported because they're free. When not
 // playing, the loader renders a single static poster frame (no
 // animation).
 // ─────────────────────────────────────────────────────────────
-export function PixelLoader(props) {
+export function PixelLoader(props: PixelLoaderProps) {
   const {
     size = 64,
     playing = true,
-    preset,
-    icon,
-    icons,
+    icon = aiLogo,
     speed = 1,
     color = 'currentColor',
     className,
@@ -159,22 +163,26 @@ export function PixelLoader(props) {
     ...rest
   } = props;
 
-  // The icon sequence (1+ names). A single-icon sequence loops forever
-  // in pure CSS; a multi-icon sequence advances one icon per cycle via
-  // the timer below, so only the current icon's cells are ever in the DOM.
-  const sequence = resolveSequence({preset, icon, icons});
+  // Normalize to a sequence. A `Cell[][]` (first element is itself an
+  // array) is already a sequence; a flat `Cell[]` is wrapped. A single-
+  // icon sequence loops forever in pure CSS; a multi-icon sequence
+  // advances one icon per cycle via the timer below, so only the current
+  // icon's cells are ever in the DOM.
+  const sequence = React.useMemo(
+    () => (Array.isArray(icon[0]) ? icon : [icon]) as Cell[][],
+    [icon]
+  );
   const isSequence = sequence.length > 1;
   const duration = DURATION_MS / (speed || 1);
 
   // `tick` increments once per cycle; the current icon is `tick % len`.
   // It's also the remount key, so each swap restarts the animation cleanly.
   const [tick, setTick] = React.useState(0);
-  const seqKey = sequence.join(',');
 
-  // Restart the sequence from the first icon whenever the sequence changes.
+  // Restart from the first icon whenever the sequence changes.
   React.useEffect(() => {
     setTick(0);
-  }, [seqKey]);
+  }, [sequence]);
 
   // Advance the sequence one icon per cycle while playing. Single-icon
   // loaders never start a timer — they're a pure infinite CSS loop.
@@ -184,11 +192,11 @@ export function PixelLoader(props) {
     }
     const id = setInterval(() => setTick(t => t + 1), duration);
     return () => clearInterval(id);
-  }, [playing, isSequence, duration, seqKey]);
+  }, [playing, isSequence, duration, sequence]);
 
-  const iconName = sequence[isSequence ? tick % sequence.length : 0];
-  const cells = cellSets[iconName];
-  const css = keyframesFor(iconName, cells);
+  const cells = sequence[isSequence ? tick % sequence.length : 0];
+  const animId = iconId(cells);
+  const css = keyframesFor(cells);
   // Sequences play each icon once and hold its faded-out final frame
   // (`forwards`) until the next remount; a single icon loops forever.
   const iteration = isSequence ? '1 forwards' : 'infinite';
@@ -206,9 +214,7 @@ export function PixelLoader(props) {
         width: size,
         height: size,
         lineHeight: 0,
-        // Cells fly far outside the box (off-top on entry, off-bottom on
-        // exit) — clip them, like the SVG viewBox did.
-        overflow: 'hidden',
+        overflow: 'clip',
         position: 'relative',
         ...style
       }}
@@ -230,8 +236,8 @@ export function PixelLoader(props) {
           const cellStyle = playing
             ? {
                 animation:
-                  `pl-${iconName}-${i}-y ${duration}ms linear ${iteration}, ` +
-                  `pl-${iconName}-${i}-o ${duration}ms linear ${iteration}`,
+                  `${animId}-${i}-y ${duration}ms linear ${iteration}, ` +
+                  `${animId}-${i}-o ${duration}ms linear ${iteration}`,
                 willChange: 'transform, opacity'
               }
             : {
