@@ -127,7 +127,7 @@ export interface PopoverRenderProps {
    */
   placement: PlacementAxis | null;
   /**
-   * Whether the modal is ready to be displayed. Use this to avoid layout shift.
+   * Whether the popover is ready to be displayed. Use this to avoid layout shift.
    *
    * @selector [data-open]
    */
