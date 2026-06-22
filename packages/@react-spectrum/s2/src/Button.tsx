@@ -253,7 +253,7 @@ const button = style<ButtonRenderProps & ButtonStyleProps & {isStaticColor: bool
           fill: {
             variant: {
               primary: 'auto',
-              secondary: 'white',
+              secondary: 'auto',
               premium: 'white',
               genai: 'white'
             }
@@ -263,7 +263,7 @@ const button = style<ButtonRenderProps & ButtonStyleProps & {isStaticColor: bool
               premium: 'white',
               genai: 'white'
             },
-            default: 'white'
+            default: 'auto'
           }
         },
         isDisabled: 'transparent-overlay-400'
