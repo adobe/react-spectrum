@@ -107,9 +107,7 @@ export function useGridState<T extends object, C extends IGridCollection<T>>(
         }
       }
       // ...otherwise the nearest focusable row before it. (Mirrors useListState's
-      // getKeyAfter/getKeyBefore walk.) The previous single loop bounced between
-      // `index` and the end and never terminated when every row in range was
-      // disabled or a headerrow — hanging the main thread.
+      // getKeyAfter/getKeyBefore walk.)
       if (newRow == null) {
         for (let i = index - 1; i >= 0; i--) {
           if (!selectionManager.isDisabled(rows[i].key) && rows[i].type !== 'headerrow') {
