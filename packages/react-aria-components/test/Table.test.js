@@ -940,6 +940,35 @@ describe('Table', () => {
     expect(document.activeElement).toBe(cell);
   });
 
+  it('does not hang restoring focus when no focusable row remains', async () => {
+    let {rerender, getByRole} = render(<DynamicTable tableBodyProps={{rows}} />);
+
+    let tableTester = testUtilUser.createTester('Table', {root: getByRole('grid')});
+    await user.tab();
+    await user.keyboard('{ArrowDown}');
+    await user.keyboard('{ArrowRight}');
+
+    let gridRows = tableTester.getRows();
+    let cell = within(gridRows[1]).getAllByRole('rowheader')[0];
+    expect(cell).toHaveTextContent('Program Files');
+    expect(document.activeElement).toBe(cell);
+
+    // Remove the focused row and disable every remaining row. Restoring focus
+    // previously infinite-looped (the search bounced between the focused index
+    // and the end and never terminated when no focusable row existed).
+    let remaining = [rows[0], ...rows.slice(2)];
+    rerender(
+      <DynamicTable
+        tableProps={{disabledBehavior: 'all', disabledKeys: remaining.map(r => r.id)}}
+        tableBodyProps={{items: remaining}} />
+    );
+
+    // Completes without hanging; focus left the now-removed row.
+    gridRows = tableTester.getRows();
+    expect(gridRows).toHaveLength(3);
+    expect(document.activeElement).not.toBe(cell);
+  });
+
   it('should support refs', () => {
     let tableRef = React.createRef();
     let headerRef = React.createRef();
