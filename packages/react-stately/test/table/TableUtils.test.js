@@ -133,6 +133,23 @@ describe('TableUtils', () => {
       expect(widths).toStrictEqual([500, 500.5]);
       expect(widths.reduce((a, b) => a + b, 0)).toBe(tableWidth);
     });
+
+    it('keeps integer table widths as whole-number columns', () => {
+      // An integer table width must not pick up a fractional last column from
+      // floating-point accumulation; column widths stay whole numbers.
+      let widths = calculateColumnSizes(
+        1000,
+        [
+          {key: 'name', width: '1fr'},
+          {key: 'type', width: '1fr'}
+        ],
+        new Map(),
+        () => 150,
+        () => 50
+      );
+      expect(widths).toStrictEqual([500, 500]);
+      expect(widths.every(Number.isInteger)).toBe(true);
+    });
   });
 
   describe('table column layout', () => {
