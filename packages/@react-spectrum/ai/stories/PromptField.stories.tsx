@@ -77,6 +77,8 @@ const meta: Meta<typeof PromptField> = {
       <div
         style={{
           width: '800px',
+          maxWidth: '90vw',
+          margin: '0 auto',
           // @ts-ignore
           '--brand': args.brand
         }}>

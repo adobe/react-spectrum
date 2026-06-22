@@ -1,10 +1,12 @@
-import {color, css, style, StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {
+  brand,
+  defaultBrand,
   defineProperties,
   outerBorderStops,
   stops,
   token
 } from './tokens.macro' with {type: 'macro'};
+import {color, css, style, StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {getEventTarget} from 'react-aria/private/utils/shadowdom/DOMFunctions';
 import {Group, GroupProps} from 'react-aria-components/Group';
 import {isFocusable} from 'react-aria/private/utils/isFocusable';
@@ -12,7 +14,17 @@ import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
 
 const STATE_TRANSITION = '700ms cubic-bezier(0.32, 0.72, 0, 1)';
 
+/* The brand color drives the hue of the entire component. Override --brand on
+   the PromptField (or any ancestor) to retheme it — all gradients, shadows, and
+   borders are derived from this hue via OKLCH relative colors in tokens.macro.
+   The default is the fuchsia primary, rgb(236, 105, 255). */
 defineProperties(`
+  @property --brand {
+    syntax: '<color>';
+    initial-value: ${defaultBrand()};
+    inherits: true;
+  }
+
   @property --con-hue-opacity {
     syntax: '<percentage>';
     initial-value: 0%;
@@ -78,7 +90,7 @@ const containerBackground = css(`
 
   --border-color: ${token(`container.border.default`)};
   --inset-shadow-color: ${color('transparent-white-50')};
-  --drop-shadow-color: ${color('fuchsia-900/5')};
+  --drop-shadow-color: light-dark(${brand(0.5826, 0.2265, -0.4, 0.05)}, ${brand(0.6617, 0.2508, -0.5, 0.05)});
 
   box-shadow:
     inset 0 0 0 1px var(--border-color),
