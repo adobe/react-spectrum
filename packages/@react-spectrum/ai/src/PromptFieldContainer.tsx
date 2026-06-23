@@ -11,6 +11,7 @@ import {getEventTarget} from 'react-aria/private/utils/shadowdom/DOMFunctions';
 import {Group, GroupProps} from 'react-aria-components/Group';
 import {isFocusable} from 'react-aria/private/utils/isFocusable';
 import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
+import {useState} from 'react';
 
 const STATE_TRANSITION = '700ms cubic-bezier(0.32, 0.72, 0, 1)';
 
@@ -131,7 +132,7 @@ const containerBackground = css(`
       }
     }
 
-    &[data-focus-within][data-focus-within] {
+    &[data-focused][data-focused] {
       --con-hue-opacity: 0%;
       --bg-stop-1: light-dark(white, ${color('gray-75')});
       --bg-stop-2: light-dark(white, ${color('gray-75')});
@@ -206,7 +207,7 @@ const outerBorder = css(`
   &[data-variant=prominent] {
     ${outerBorderStops('prominent')}
 
-    &[data-state=idle][data-focus-within] {
+    &[data-state=idle][data-focused] {
       --bg-stop-1: ${token('outer-border.gradient.ob-border.stop-1')};
       --bg-stop-2: ${token('outer-border.gradient.ob-border.stop-1')};
       --bg-stop-3: ${token('outer-border.gradient.ob-border.stop-1')};
@@ -226,7 +227,7 @@ const outerBorder = css(`
     }
   }
 
-  &[data-state=idle][data-focus-within] {
+  &[data-state=idle][data-focused] {
     --bg-stop-1: ${token('outer-border.gradient.ob-border.stop-1')};
     --bg-stop-2: ${token('outer-border.gradient.ob-border.stop-1')};
     --bg-stop-3: ${token('outer-border.gradient.ob-border.stop-1')};
@@ -245,13 +246,26 @@ interface PropFieldContainerProps extends Omit<GroupProps, 'children'> {
 
 export function PromptFieldContainer(props: PropFieldContainerProps) {
   let {variant, isGenerating, styles, inputRef, ...otherProps} = props;
+  let [isFocused, setFocused] = useState(false);
+
   return (
     <Group
       {...otherProps}
       role="group"
       data-variant={variant}
       data-state={isGenerating ? 'generating' : 'idle'}
+      data-focused={isFocused || undefined}
       className={outerBorder}
+      onFocus={e => {
+        if (e.isTrusted) {
+          setFocused(true);
+        }
+      }}
+      onBlur={e => {
+        if (e.isTrusted) {
+          setFocused(false);
+        }
+      }}
       onPointerDown={e => {
         // If not clicking on something focusable within the prompt field, focus the input.
         let target = getEventTarget(e) as Element | null;
@@ -264,10 +278,10 @@ export function PromptFieldContainer(props: PropFieldContainerProps) {
           inputRef.current?.focus();
         }
       }}>
-      {({isHovered, isFocusWithin}) => (
+      {({isHovered}) => (
         <div
           data-hovered={isHovered || undefined}
-          data-focus-within={isFocusWithin || undefined}
+          data-focused={isFocused || undefined}
           data-variant={variant}
           data-state={isGenerating ? 'generating' : 'idle'}
           className={

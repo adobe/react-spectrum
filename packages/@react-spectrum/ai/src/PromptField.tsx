@@ -17,6 +17,7 @@ import {Autocomplete} from 'react-aria-components/Autocomplete';
 import {Button} from '@react-spectrum/s2/Button';
 import {Cell} from './loader/data';
 import {CenterBaseline} from '@react-spectrum/s2/CenterBaseline';
+import {color, css, style, StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {
   createContext,
   createRef,
@@ -27,7 +28,6 @@ import {
   useRef,
   useState
 } from 'react';
-import {color, css, space, style, StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {
   Direction,
   Position,
