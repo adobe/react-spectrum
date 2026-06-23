@@ -140,6 +140,61 @@ export interface SelectableCollectionAria {
   collectionProps: DOMAttributes;
 }
 
+function getPreviousTabStopOutside(
+  collectionRoot: HTMLElement,
+  from: HTMLElement
+): FocusableElement | null {
+  let walker = getFocusableTreeWalker(collectionRoot.ownerDocument.body, {tabbable: true});
+  walker.currentNode = from;
+  let prev = walker.previousNode() as FocusableElement | null;
+  while (prev && nodeContains(collectionRoot, prev)) {
+    prev = walker.previousNode() as FocusableElement | null;
+  }
+  return prev;
+}
+
+function canFocusPreviousTabStopDirectly(
+  prev: FocusableElement,
+  prevFromRoot: FocusableElement,
+  collectionRoot: HTMLElement
+): boolean {
+  if (prev !== prevFromRoot) {
+    return false;
+  }
+
+  let owner = prev.closest('[data-collection]');
+  if (owner !== null && !nodeContains(collectionRoot, owner)) {
+    return false;
+  }
+
+  // Tab stops within the same menu dialog (e.g. the mobile submenu back button) should use the
+  // default Shift+Tab behavior instead of focusing them directly.
+  let menuDialog = collectionRoot.closest('[role="dialog"]');
+  if (menuDialog && nodeContains(menuDialog, prev) && !nodeContains(collectionRoot, prev)) {
+    return false;
+  }
+
+  return true;
+}
+
+function handleShiftTabFromCollection(e: KeyboardEvent, collectionRoot: HTMLElement): void {
+  let activeElement = getActiveElement();
+  if (!(activeElement instanceof HTMLElement)) {
+    return;
+  }
+
+  let prev = getPreviousTabStopOutside(collectionRoot, activeElement);
+  let prevFromRoot = getPreviousTabStopOutside(collectionRoot, collectionRoot);
+
+  if (prev && prevFromRoot && canFocusPreviousTabStopDirectly(prev, prevFromRoot, collectionRoot)) {
+    e.preventDefault();
+    focusWithoutScrolling(prev);
+    return;
+  }
+
+  collectionRoot.focus();
+}
+
 /**
  * Handles interactions with selectable collections.
  */
@@ -369,7 +424,9 @@ export function useSelectableCollection(
           // in the collection, so that the browser default behavior will apply starting from that element
           // rather than the currently focused one.
           if (e.shiftKey) {
-            ref.current.focus();
+            if (ref.current) {
+              handleShiftTabFromCollection(e, ref.current);
+            }
           } else {
             let walker = getFocusableTreeWalker(ref.current, {tabbable: true});
             let next: FocusableElement | undefined = undefined;

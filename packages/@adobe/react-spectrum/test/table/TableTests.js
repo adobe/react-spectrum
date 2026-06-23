@@ -1940,13 +1940,9 @@ export let tableTests = () => {
         await user.click(tree.getAllByRole('switch')[1]);
         expect(document.activeElement).toBe(tree.getAllByRole('switch')[1]);
 
-        // Simulate shift tabbing within the table
+        // useSelectableCollection's Tab handler moves focus to the previous tab stop outside the table.
+        // jsdom does not perform default tabbing after preventDefault (see useSelectableCollection.test.js).
         fireEvent.keyDown(document.activeElement, {key: 'Tab', shiftKey: true});
-        let walker = getFocusableTreeWalker(document.body, {tabbable: true});
-        walker.currentNode = document.activeElement;
-        act(() => {
-          walker.previousNode().focus();
-        });
         fireEvent.keyUp(document.activeElement, {key: 'Tab', shiftKey: true});
 
         let before = tree.getByTestId('before');
