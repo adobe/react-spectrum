@@ -40,26 +40,26 @@ describe('style-macro', () => {
 "@layer _.a, _.b, _.c;
 
 @layer _.b {
-  .Jbs14:first-child {
+  .Jbs15:first-child {
     margin-top: 0.25rem;
   }
 }
 
 @layer _.c.p {
   @media (min-width: 64rem) {
-    .Jbpv14:first-child {
+    .Jbpv15:first-child {
       margin-top: 0.5rem;
     }
   }
 }
 
-.-macro-static-I08ui {
-        --macro-data-I08ui: {"style":{"marginTop":{":first-child":{"default":4,"lg":8}}},"loc":"undefined:undefined:undefined"};
+.-macro-static-wxfyDb {
+        --macro-data-wxfyDb: {"style":{"marginTop":{":first-child":{"default":4,"lg":8}}},"loc":"undefined:undefined:undefined"};
       }
 
 "
 `);
-    expect(js).toMatchInlineSnapshot(`" Jbs14 Jbpv14 -macro-static-I08ui"`);
+    expect(js).toMatchInlineSnapshot(`" Jbs15 Jbpv15 -macro-static-wxfyDb"`);
   });
 
   it('should support self references', () => {
@@ -73,60 +73,60 @@ describe('style-macro', () => {
 "@layer _.a;
 
 @layer _.a {
-  ._kc14 {
+  ._kc15 {
     border-top-width: 2px;
   }
 
 
-  .hc14 {
+  .hc15 {
     border-bottom-width: 2px;
   }
 
 
-  .mCPFGYc14 {
+  .mCPFGYc15 {
     border-inline-start-width: var(--m);
   }
 
 
-  .lc14 {
+  .lc15 {
     border-inline-end-width: 2px;
   }
 
 
-  .SMBFGYc14 {
+  .SMBFGYc15 {
     padding-inline-start: var(--S);
   }
 
 
-  .Rv14 {
+  .Rv15 {
     padding-inline-end: calc(var(--F, var(--M)) * 3 / 8);
   }
 
 
-  .ZjUQgKd14 {
+  .ZjUQgKd15 {
     width: calc(200px - var(--m) - var(--S));
   }
 
 
-  .-m_-mc14 {
+  .-m_-mc15 {
     --m: 2px;
   }
 
 
-  .-S_-Sv14 {
+  .-S_-Sv15 {
     --S: calc(var(--F, var(--M)) * 3 / 8);
   }
 }
 
-.-macro-static-e1GIg {
-        --macro-data-e1GIg: {"style":{"borderWidth":2,"paddingX":"edge-to-text","width":"calc(200px - self(borderStartWidth) - self(paddingStart))"},"loc":"undefined:undefined:undefined"};
+.-macro-static-vBpT2 {
+        --macro-data-vBpT2: {"style":{"borderWidth":2,"paddingX":"edge-to-text","width":"calc(200px - self(borderStartWidth) - self(paddingStart))"},"loc":"undefined:undefined:undefined"};
       }
 
 "
 `);
 
     expect(js).toMatchInlineSnapshot(
-      `" _kc14 hc14 mCPFGYc14 lc14 SMBFGYc14 Rv14 ZjUQgKd14 -m_-mc14 -S_-Sv14 -macro-static-e1GIg"`
+      `" _kc15 hc15 mCPFGYc15 lc15 SMBFGYc15 Rv15 ZjUQgKd15 -m_-mc15 -S_-Sv15 -macro-static-vBpT2"`
     );
   });
 
@@ -144,9 +144,9 @@ describe('style-macro', () => {
       color: 'green-400'
     });
 
-    expect(js()).toMatchInlineSnapshot(`"  gw14 pg14 -macro-dynamic-1hksi7i"`);
-    expect(overrides).toMatchInlineSnapshot(`" g8tmWqb14 pHJ3AUd14 -macro-static-QgnkJd"`);
-    expect(js({}, overrides)).toMatchInlineSnapshot(`"  g8tmWqb14 pg14 -macro-dynamic-7jtiyi"`);
+    expect(js()).toMatchInlineSnapshot(`"  gw15 pg15 -macro-dynamic-16fgbv4"`);
+    expect(overrides).toMatchInlineSnapshot(`" g8tmWqb15 pHJ3AUd15 -macro-static-4cOIRb"`);
+    expect(js({}, overrides)).toMatchInlineSnapshot(`"  g8tmWqb15 pg15 -macro-dynamic-1vflel8"`);
   });
 
   it('should support allowed overrides for properties that expand into multiple', () => {
@@ -161,10 +161,10 @@ describe('style-macro', () => {
       translateX: 40
     });
 
-    expect(js()).toMatchInlineSnapshot(`"  -_7PloMd-B14 __Ya14 -macro-dynamic-1hkkiwv"`);
-    expect(overrides).toMatchInlineSnapshot(`" -_7PloMd-D14 __Ya14 -macro-static-F3q0Dd"`);
+    expect(js()).toMatchInlineSnapshot(`"  -_7PloMd-B15 __Ya15 -macro-dynamic-2u33z5"`);
+    expect(overrides).toMatchInlineSnapshot(`" -_7PloMd-D15 __Ya15 -macro-static-poioi"`);
     expect(js({}, overrides)).toMatchInlineSnapshot(
-      `"  -_7PloMd-D14 __Ya14 -macro-dynamic-j53z9d"`
+      `"  -_7PloMd-D15 __Ya15 -macro-dynamic-13fqmar"`
     );
   });
 
@@ -180,10 +180,10 @@ describe('style-macro', () => {
       padding: 40
     });
 
-    expect(js()).toMatchInlineSnapshot(`"  Tk14 Qk14 Sk14 Rk14 -macro-dynamic-10enpkp"`);
-    expect(overrides).toMatchInlineSnapshot(`" Tm14 Qm14 Sm14 Rm14 -macro-static-rawlJc"`);
+    expect(js()).toMatchInlineSnapshot(`"  Tk15 Qk15 Sk15 Rk15 -macro-dynamic-2rom7x"`);
+    expect(overrides).toMatchInlineSnapshot(`" Tm15 Qm15 Sm15 Rm15 -macro-static-FXaHv"`);
     expect(js({}, overrides)).toMatchInlineSnapshot(
-      `"  Tm14 Qm14 Sm14 Rm14 -macro-dynamic-5anb29"`
+      `"  Tm15 Qm15 Sm15 Rm15 -macro-dynamic-16os9ol"`
     );
   });
 
@@ -199,9 +199,9 @@ describe('style-macro', () => {
       fontSize: 'ui-xs'
     });
 
-    expect(js()).toMatchInlineSnapshot(`"  -_6BNtrc-woabcc14 vx14 -macro-dynamic-bw4d5q"`);
-    expect(overrides).toMatchInlineSnapshot(`" -_6BNtrc-a14 vx14 -macro-static-cD4zjb"`);
-    expect(js({}, overrides)).toMatchInlineSnapshot(`"  -_6BNtrc-a14 vx14 -macro-dynamic-1yik7yo"`);
+    expect(js()).toMatchInlineSnapshot(`"  -_6BNtrc-woabcc15 vx15 -macro-dynamic-qs6tc"`);
+    expect(overrides).toMatchInlineSnapshot(`" -_6BNtrc-a15 vx15 -macro-static-yXDXz"`);
+    expect(js({}, overrides)).toMatchInlineSnapshot(`"  -_6BNtrc-a15 vx15 -macro-dynamic-1nd81ma"`);
   });
 
   it("should support allowed overrides for values that aren't defined", () => {
@@ -216,9 +216,9 @@ describe('style-macro', () => {
       minWidth: 32
     });
 
-    expect(js()).toMatchInlineSnapshot(`"  gE14 -macro-dynamic-1tvo6tc"`);
-    expect(overrides).toMatchInlineSnapshot(`" Nk14 -macro-static-1ozQQc"`);
-    expect(js({}, overrides)).toMatchInlineSnapshot(`"  Nk14 gE14 -macro-dynamic-1fyk7lq"`);
+    expect(js()).toMatchInlineSnapshot(`"  gE15 -macro-dynamic-11gtfdt"`);
+    expect(overrides).toMatchInlineSnapshot(`" Nk15 -macro-static-Io0zY"`);
+    expect(js({}, overrides)).toMatchInlineSnapshot(`"  Nk15 gE15 -macro-dynamic-14t819c"`);
   });
 
   it('should support runtime conditions', () => {
@@ -239,32 +239,32 @@ describe('style-macro', () => {
 "@layer _.a;
 
 @layer _.a {
-  .gH14 {
+  .gH15 {
     background-color: light-dark(rgb(233, 233, 233), rgb(44, 44, 44));
   }
 
 
-  .gF14 {
+  .gF15 {
     background-color: light-dark(rgb(225, 225, 225), rgb(50, 50, 50));
   }
 
 
-  .gE14 {
+  .gE15 {
     background-color: light-dark(rgb(218, 218, 218), rgb(57, 57, 57));
   }
 
 
-  .pt14 {
+  .pt15 {
     color: light-dark(rgb(41, 41, 41), rgb(219, 219, 219));
   }
 
 
-  .po14 {
+  .po15 {
     color: light-dark(rgb(19, 19, 19), rgb(242, 242, 242));
   }
 
 
-  .pm14 {
+  .pm15 {
     color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));
   }
 }
@@ -272,9 +272,9 @@ describe('style-macro', () => {
 "
 `);
 
-    expect(js({})).toMatchInlineSnapshot(`"  gH14 pt14 -macro-dynamic-1bsdq7g"`);
-    expect(js({isHovered: true})).toMatchInlineSnapshot(`"  gF14 po14 -macro-dynamic-mtyglh"`);
-    expect(js({isPressed: true})).toMatchInlineSnapshot(`"  gE14 pm14 -macro-dynamic-1nxkx1e"`);
+    expect(js({})).toMatchInlineSnapshot(`"  gH15 pt15 -macro-dynamic-10n1jv2"`);
+    expect(js({isHovered: true})).toMatchInlineSnapshot(`"  gF15 po15 -macro-dynamic-boma93"`);
+    expect(js({isPressed: true})).toMatchInlineSnapshot(`"  gE15 pm15 -macro-dynamic-1cs8qp0"`);
   });
 
   it('should support nested runtime conditions', () => {
@@ -293,33 +293,33 @@ describe('style-macro', () => {
 "@layer _.a;
 
 @layer _.a {
-  .gH14 {
+  .gH15 {
     background-color: light-dark(rgb(233, 233, 233), rgb(44, 44, 44));
   }
 
 
-  .gF14 {
+  .gF15 {
     background-color: light-dark(rgb(225, 225, 225), rgb(50, 50, 50));
   }
 
 
-  .g_h14 {
+  .g_h15 {
     background-color: light-dark(rgb(75, 117, 255), rgb(64, 105, 253));
   }
 
 
-  .g314 {
+  .g315 {
     background-color: light-dark(rgb(59, 99, 251), rgb(86, 129, 255));
   }
 }
 
 "
 `);
-    expect(js({})).toMatchInlineSnapshot(`"  gH14 -macro-dynamic-874gf7"`);
-    expect(js({isHovered: true})).toMatchInlineSnapshot(`"  gF14 -macro-dynamic-mz49cx"`);
-    expect(js({isSelected: true})).toMatchInlineSnapshot(`"  g_h14 -macro-dynamic-15g8h7m"`);
+    expect(js({})).toMatchInlineSnapshot(`"  gH15 -macro-dynamic-1etdqys"`);
+    expect(js({isHovered: true})).toMatchInlineSnapshot(`"  gF15 -macro-dynamic-1tldjwi"`);
+    expect(js({isSelected: true})).toMatchInlineSnapshot(`"  g_h15 -macro-dynamic-d1dps3"`);
     expect(js({isSelected: true, isHovered: true})).toMatchInlineSnapshot(
-      `"  g314 -macro-dynamic-1ktebam"`
+      `"  g315 -macro-dynamic-sejjv3"`
     );
   });
 
@@ -334,9 +334,9 @@ describe('style-macro', () => {
       }
     });
 
-    expect(js({variant: 'accent'})).toMatchInlineSnapshot(`"  gY14 -macro-dynamic-1o5y9ec"`);
-    expect(js({variant: 'primary'})).toMatchInlineSnapshot(`"  gjQquMe14 -macro-dynamic-1nrp3ym"`);
-    expect(js({variant: 'secondary'})).toMatchInlineSnapshot(`"  gw14 -macro-dynamic-1fldd9u"`);
+    expect(js({variant: 'accent'})).toMatchInlineSnapshot(`"  gY15 -macro-dynamic-vr3hyt"`);
+    expect(js({variant: 'primary'})).toMatchInlineSnapshot(`"  gjQquMe15 -macro-dynamic-vcucj3"`);
+    expect(js({variant: 'secondary'})).toMatchInlineSnapshot(`"  gw15 -macro-dynamic-n6ilub"`);
   });
 
   it('supports runtime conditions nested inside css conditions', () => {
@@ -354,14 +354,14 @@ describe('style-macro', () => {
 
 @layer _.b.l {
   @media (forced-colors: active) {
-    .plb14 {
+    .plb15 {
       color: ButtonText;
     }
   }
 
 
   @media (forced-colors: active) {
-    .ple14 {
+    .ple15 {
       color: HighlightText;
     }
   }
@@ -370,8 +370,8 @@ describe('style-macro', () => {
 "
 `);
 
-    expect(js({})).toMatchInlineSnapshot(`"  plb14 -macro-dynamic-42tseq"`);
-    expect(js({isSelected: true})).toMatchInlineSnapshot(`"  ple14 -macro-dynamic-hfe3zp"`);
+    expect(js({})).toMatchInlineSnapshot(`"  plb15 -macro-dynamic-1ap32yb"`);
+    expect(js({isSelected: true})).toMatchInlineSnapshot(`"  ple15 -macro-dynamic-1o1neja"`);
   });
 
   it('inherits parent default when nested branch has no default key', () => {
@@ -387,9 +387,9 @@ describe('style-macro', () => {
     });
     // forcedColors.default should apply when variant=highlight but !isSelected
     expect(css).toContain('ButtonText');
-    expect(js({variant: 'highlight'})).toMatchInlineSnapshot(`"  plb14 -macro-dynamic-42tseq"`);
+    expect(js({variant: 'highlight'})).toMatchInlineSnapshot(`"  plb15 -macro-dynamic-1ap32yb"`);
     expect(js({variant: 'highlight', isSelected: true})).toMatchInlineSnapshot(
-      `"  ple14 -macro-dynamic-hfe3zp"`
+      `"  ple15 -macro-dynamic-1o1neja"`
     );
   });
 
@@ -398,33 +398,33 @@ describe('style-macro', () => {
       padding: 24
     });
 
-    expect(js).toMatchInlineSnapshot(`" Th14 Qh14 Sh14 Rh14 -macro-static-xbQCP"`);
+    expect(js).toMatchInlineSnapshot(`" Th15 Qh15 Sh15 Rh15 -macro-static-PaKDid"`);
     expect(css).toMatchInlineSnapshot(`
 "@layer _.a;
 
 @layer _.a {
-  .Th14 {
+  .Th15 {
     padding-top: 24px;
   }
 
 
-  .Qh14 {
+  .Qh15 {
     padding-bottom: 24px;
   }
 
 
-  .Sh14 {
+  .Sh15 {
     padding-inline-start: 24px;
   }
 
 
-  .Rh14 {
+  .Rh15 {
     padding-inline-end: 24px;
   }
 }
 
-.-macro-static-xbQCP {
-        --macro-data-xbQCP: {"style":{"padding":24},"loc":"undefined:undefined:undefined"};
+.-macro-static-PaKDid {
+        --macro-data-PaKDid: {"style":{"padding":24},"loc":"undefined:undefined:undefined"};
       }
 
 "
@@ -440,13 +440,13 @@ describe('style-macro', () => {
 "@layer _.a;
 
 @layer _.a {
-  .gpQzfVb14 {
+  .gpQzfVb15 {
     background-color: rgb(from light-dark(rgb(39, 77, 234), rgb(105, 149, 254)) r g b / 50%);
   }
 }
 
-.-macro-static-mwnohc {
-        --macro-data-mwnohc: {"style":{"backgroundColor":"blue-1000/50"},"loc":"undefined:undefined:undefined"};
+.-macro-static-3vO7o {
+        --macro-data-3vO7o: {"style":{"backgroundColor":"blue-1000/50"},"loc":"undefined:undefined:undefined"};
       }
 
 "
@@ -465,13 +465,13 @@ describe('style-macro', () => {
 "@layer _.a;
 
 @layer _.a {
-  .-FUeYm-gE14 {
+  .-FUeYm-gE15 {
     --foo: light-dark(rgb(218, 218, 218), rgb(57, 57, 57));
   }
 }
 
-.-macro-static-OWe9Jb {
-        --macro-data-OWe9Jb: {"style":{"--foo":{"type":"backgroundColor","value":"gray-300"}},"loc":"undefined:undefined:undefined"};
+.-macro-static-z8Uxye {
+        --macro-data-z8Uxye: {"style":{"--foo":{"type":"backgroundColor","value":"gray-300"}},"loc":"undefined:undefined:undefined"};
       }
 
 "
