@@ -97,6 +97,26 @@ export function setFieldSelection(textboxEl: Element, start: Position, end: Posi
   setSelection(textboxEl, start, end);
 }
 
+/**
+ * Double clicks on the character at the given offset within a DOM node, selecting the word
+ * under the cursor. Used to create a real (directionless) word selection, since selecting
+ * programmatically via addRange sets a direction in some browsers.
+ */
+export async function dblClickAt(textbox: Locator, node: Node, offset: number): Promise<void> {
+  let el = textbox.element();
+  let range = document.createRange();
+  range.setStart(node, offset);
+  range.setEnd(node, offset + 1);
+  let elRect = el.getBoundingClientRect();
+  let charRect = range.getBoundingClientRect();
+  await userEvent.dblClick(textbox, {
+    position: {
+      x: charRect.left - elRect.left + charRect.width / 2,
+      y: charRect.top - elRect.top + charRect.height / 2
+    }
+  });
+}
+
 export async function navigateCaret(textbox: Locator, list: TokenSegmentList, target: Position) {
   await focusField(textbox);
   await userEvent.keyboard('{Home}');

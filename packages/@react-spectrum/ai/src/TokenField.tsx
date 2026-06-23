@@ -345,23 +345,40 @@ export const TokenField = forwardRef(function TokenField(
 
   // Firefox does not allow placing the cursor between adjacent tokens, so navigate manually.
   let moveSelection = (segmenter: Intl.Segmenter, direction: Direction, extend = false) => {
-    let selection = getSelection(ref.current!);
-    if (!selection) {
+    let selection = window.getSelection();
+    if (!selection || selection.rangeCount === 0) {
       return false;
     }
-    let originalPos = direction === Direction.Backward ? selection[0] : selection[1];
-    let pos =
-      extend || isCollapsed(selection[0], selection[1])
-        ? state.findBoundaryWithSegmenter(originalPos, segmenter, direction)
-        : originalPos;
+
+    // If the selection is directionless, swap the focus and anchor according to the direction.
+    // For example if you double click a word and then shift select.
+    let {focusNode, focusOffset, anchorNode, anchorOffset} = selection;
+    if (
+      extend &&
+      selection.direction === 'none' &&
+      direction !== getSelectionDirection(selection)
+    ) {
+      [focusNode, focusOffset, anchorNode, anchorOffset] = [
+        anchorNode,
+        anchorOffset,
+        focusNode,
+        focusOffset
+      ];
+    }
+
+    // Extend or move the selection.
+    let originalPos = getPosition(ref.current!, focusNode, focusOffset);
+    let pos = state.findBoundaryWithSegmenter(originalPos, segmenter, direction);
     if (pos) {
-      let [start, end] =
-        direction === Direction.Backward
-          ? [pos, extend ? selection[1] : pos]
-          : [extend ? selection[0] : pos, pos];
-      setSelection(ref.current!, start, end, true);
+      let [node, offset] = getDOMOffset(ref.current!, pos);
+      if (extend) {
+        selection.setBaseAndExtent(anchorNode, anchorOffset, node, offset);
+      } else {
+        selection.collapse(node, offset);
+      }
       return true;
     }
+
     return false;
   };
 
@@ -642,25 +659,37 @@ export function positionToDOMRange(root: Element, pos: Position): Range {
 
 function createDOMRange(root: Element, start: Position, end: Position): Range {
   let range = document.createRange();
-  let child = root.childNodes[start.index];
+  let [startChild, startOffset] = getDOMOffset(root, start);
+  let [endChild, endOffset] = getDOMOffset(root, end);
+  range.setStart(startChild, startOffset);
+  range.setEnd(endChild, endOffset);
+  return range;
+}
+
+function getDOMOffset(root: Element, pos: Position): [Node, number] {
+  let child = root.childNodes[pos.index];
   if (!child) {
-    range.setStart(root, Math.min(root.childNodes.length, start.index));
+    return [root, Math.min(root.childNodes.length, pos.index)];
   } else if (child.nodeType === Node.ELEMENT_NODE) {
     // Place the cursor in one of the zero width space nodes.
-    range.setStart(child, start.offset > 0 ? 2 : 0);
+    return [child, pos.offset > 0 ? 2 : 0];
   } else {
     // Place the cursor in the text node.
-    range.setStart(child, start.offset);
+    return [child, pos.offset];
   }
-  child = root.childNodes[end.index];
-  if (!child) {
-    range.setEnd(root, Math.min(root.childNodes.length, end.index));
-  } else if (child.nodeType === Node.ELEMENT_NODE) {
-    range.setEnd(child, end.offset > 0 ? 2 : 0);
+}
+
+function getSelectionDirection(selection: Selection): Direction | null {
+  let {focusNode, anchorNode, focusOffset, anchorOffset} = selection;
+  if (focusNode == null || anchorNode == null) {
+    return null;
+  } else if (focusNode === anchorNode) {
+    return focusOffset > anchorOffset ? Direction.Forward : Direction.Backward;
   } else {
-    range.setEnd(child, end.offset);
+    return anchorNode.compareDocumentPosition(focusNode) & Node.DOCUMENT_POSITION_FOLLOWING
+      ? Direction.Forward
+      : Direction.Backward;
   }
-  return range;
 }
 
 function useSelectionChange(ref: React.RefObject<Element | null>, handler: () => void) {
@@ -680,8 +709,4 @@ function useSelectionChange(ref: React.RefObject<Element | null>, handler: () =>
       handler();
     }
   });
-}
-
-function isCollapsed(pos1: Position, pos2: Position) {
-  return pos1.index === pos2.index && pos1.offset === pos2.offset;
 }
