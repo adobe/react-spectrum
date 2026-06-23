@@ -161,7 +161,6 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
   protected gap: number;
   protected padding: number;
   protected anchorTo: 'end' | undefined;
-  protected scrollEndThreshold: number;
   protected layoutNodes: Map<Key, LayoutNode>;
   protected contentSize: Size;
   protected lastCollection: Collection<Node<T>> | null;
@@ -180,6 +179,7 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
     super();
     this.anchorTo = options.anchorTo;
     this.scrollEndThreshold = options.scrollEndThreshold ?? 100;
+    this.anchorScrollPosition = options?.anchorTo === 'end' && (options?.orientation ?? 'vertical') === 'vertical';
     this.rowSize = options?.rowSize ?? options?.rowHeight ?? null;
     this.orientation = options.orientation ?? 'vertical';
     this.estimatedRowSize = options?.estimatedRowSize ?? options?.estimatedRowHeight ?? null;
@@ -356,9 +356,6 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
 
   update(invalidationContext: InvalidationContext<O>): void {
     let collection = this.virtualizer!.collection;
-    let previousCollection = this.lastCollection;
-    let previousContentHeight = this.contentSize.height;
-    let previousVisibleRect = this.virtualizer!.visibleRect.copy();
 
     // Reset valid rect if we will have to invalidate everything.
     // Otherwise we can reuse cached layout infos outside the current visible rect.
@@ -373,6 +370,7 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
     this.orientation = options?.orientation ?? this.orientation;
     this.anchorTo = options?.anchorTo ?? this.anchorTo;
     this.scrollEndThreshold = options?.scrollEndThreshold ?? this.scrollEndThreshold;
+    this.anchorScrollPosition = this.anchorTo === 'end' && this.orientation === 'vertical';
     this.estimatedRowSize =
       options?.estimatedRowSize ?? options?.estimatedRowHeight ?? this.estimatedRowSize;
     this.headingSize = options?.headingSize ?? options?.headingHeight ?? this.headingSize;
@@ -383,14 +381,7 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
     this.gap = options?.gap ?? this.gap;
     this.padding = options?.padding ?? this.padding;
 
-    this.postLayoutReport = null;
     this.rootNodes = this.buildCollection();
-    this.adjustVisibleRectReversed(
-      previousCollection,
-      previousContentHeight,
-      previousVisibleRect,
-      invalidationContext
-    );
 
     // Remove deleted layout nodes
     if (this.lastCollection && collection !== this.lastCollection) {
@@ -1028,118 +1019,6 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
     }
   }
 
-  /**
-   * Keeps scroll position stable for bottom-anchored (chat-style) lists after layout changes.
-   *
-   * Normal top-anchored lists leave scrollTop unchanged and let the browser handle growth.
-   * Reversed layout recomputes item y positions from the bottom, so visibleRect must be
-   * adjusted when content height changes or the viewport will drift away from the latest output.
-   */
-  private adjustVisibleRectReversed(
-    previousCollection: Collection<Node<T>> | null,
-    previousContentHeight: number,
-    previousVisibleRect: Rect,
-    invalidationContext: InvalidationContext<O>
-  ) {
-    if (!(this.anchorTo === 'end' && this.orientation === 'vertical')) {
-      return;
-    }
-
-    let nextVisibleRect: Rect | null = null;
-    // Largest scroll offset that keeps the viewport bottom aligned with content bottom.
-    let maxVisibleY = Math.max(0, this.contentSize.height - previousVisibleRect.height);
-
-    // On the very first update where the container has been sized, unconditionally snap to the bottom.
-    if (!invalidationContext.hasInitializedReverseAnchor) {
-      if (previousVisibleRect.area === 0) {
-        return;
-      }
-      // Report the initialization event — virtualizer commits the flag.
-      // Set regardless of whether a viewport move is needed so the flag is
-      // always marked done when this branch is reached on a sized viewport.
-      this.postLayoutReport = {didInitializeReverseAnchor: true};
-      nextVisibleRect = new Rect(
-        previousVisibleRect.x,
-        maxVisibleY,
-        previousVisibleRect.width,
-        previousVisibleRect.height
-      );
-    } else {
-      if (previousVisibleRect.area === 0) {
-        return;
-      }
-
-      // How far the viewport bottom was from the content bottom before this update.
-      let distanceFromEnd = previousContentHeight - previousVisibleRect.maxY;
-      let wasNearBottom = distanceFromEnd <= this.scrollEndThreshold;
-      let contentHeightDelta = this.contentSize.height - previousContentHeight;
-
-      // Older history was appended at the end of the collection (Thread's internal reversal
-      // maps a user-array prepend → collection append). Shift scroll down by the added height
-      // so the same messages stay on screen. This runs before the near-bottom check so a slight
-      // scroll-up still preserves position even when within scrollEndThreshold of the bottom.
-      if (
-        previousCollection &&
-        this.virtualizer!.collection !== previousCollection &&
-        contentHeightDelta !== 0 &&
-        this.didAppendItems(previousCollection, this.virtualizer!.collection)
-      ) {
-        nextVisibleRect = new Rect(
-          previousVisibleRect.x,
-          Math.max(0, Math.min(maxVisibleY, previousVisibleRect.y + contentHeightDelta)),
-          previousVisibleRect.width,
-          previousVisibleRect.height
-        );
-      } else if (
-        wasNearBottom &&
-        !invalidationContext.isScrolling &&
-        (contentHeightDelta !== 0 || invalidationContext.itemSizeChanged)
-      ) {
-        // User was reading the latest output: stay pinned to the bottom when new items are
-        // appended or a row grows (e.g. streaming). itemSizeChanged covers measured height
-        // updates that may not yet change contentHeightDelta on the same frame.
-        nextVisibleRect = new Rect(
-          previousVisibleRect.x,
-          maxVisibleY,
-          previousVisibleRect.width,
-          previousVisibleRect.height
-        );
-      }
-    }
-
-    if (nextVisibleRect && !nextVisibleRect.equals(this.virtualizer!.visibleRect)) {
-      this.postLayoutReport = {
-        ...(this.postLayoutReport ?? {}),
-        viewportAdjustment: nextVisibleRect
-      };
-    }
-  }
-
-  // Best-effort heuristic for chat/history lists: this only treats an update as a history load
-  // (append at the collection end, which corresponds to a prepend in the user's natural-order array)
-  // when nextCollection is exactly `previousCollection + newSuffix` with stable key order.
-  // It intentionally does not handle middle insertions, re-keying, removals, or arbitrary reordering.
-  private didAppendItems(
-    previousCollection: Collection<Node<T>>,
-    nextCollection: Collection<Node<T>>
-  ): boolean {
-    let prevSize = previousCollection.size;
-    let nextSize = nextCollection.size;
-    if (nextSize <= prevSize) {
-      return false;
-    }
-
-    let nextIter = nextCollection.getKeys()[Symbol.iterator]();
-
-    // The first prevSize keys of nextCollection must exactly match previousCollection.
-    for (let prevKey of previousCollection.getKeys()) {
-      let {value: nextKey, done} = nextIter.next();
-      if (done || prevKey !== nextKey) {
-        return false;
-      }
-    }
-    return true;
-  }
 }
 
 function toArray<T>(
