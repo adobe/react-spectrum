@@ -424,7 +424,7 @@ export function useSelectableCollection(
       ...withShiftSel('End', end),
       ...withShiftSel('PageDown', pageDown),
       ...withShiftSel('PageUp', pageUp),
-      [isMac() ? 'a+Alt' : 'a+Control']: aHandler,
+      'Mod+A': aHandler,
       Escape: escape,
       Tab: tab,
       'Tab+Shift': shiftTab

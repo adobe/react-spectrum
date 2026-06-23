@@ -487,6 +487,19 @@ describe('Table', () => {
     }
   );
 
+  it('should support select all with Mod+A', async () => {
+    // eslint-disable-next-line no-unused-vars
+    using _spy = jest.spyOn(navigator, 'platform', 'get').mockReturnValue('MacIntel');
+    let onSelectionChange = jest.fn();
+    renderTable({
+      tableProps: {selectionMode: 'multiple', onSelectionChange}
+    });
+    await user.tab();
+    await user.keyboard('{Meta>}a{/Meta}');
+    expect(onSelectionChange).toHaveBeenCalledTimes(1);
+    expect(onSelectionChange).toHaveBeenLastCalledWith('all');
+  });
+
   it('should prevent Esc from clearing selection if escapeKeyBehavior is "none"', async () => {
     let onSelectionChange = jest.fn();
     let {getAllByRole} = renderTable({
