@@ -27,7 +27,7 @@ import {
   useRef,
   useState
 } from 'react';
-import {css, style, StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {color, css, space, style, StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {
   Direction,
   Position,
@@ -446,18 +446,24 @@ export function PromptToken(props: PromptTokenProps) {
     <Token
       {...props}
       className={style({
+        font: 'ui',
         backgroundColor: {
-          default: 'blue-300',
+          default: 'transparent-overlay-1000/10',
           isSelected: 'blue-800',
           '::selection': 'transparent'
         },
         color: {
-          default: 'blue-1000',
+          default: 'body',
           isSelected: 'white'
         },
-        borderRadius: 'sm',
-        paddingX: 4,
-        paddingY: 2,
+        outlineStyle: 'solid',
+        outlineWidth: 1,
+        outlineColor: 'transparent-overlay-1000/10',
+        outlineOffset: -1,
+        borderRadius: 'pill',
+        boxShadow: `[inset 0 24px 32px 0 ${color('transparent-white-50')}, 0 8px 32px 0 ${color('transparent-black-50')}]`,
+        paddingX: 8,
+        paddingY: 4,
         lineHeight: '[1em]',
         cursor: 'default',
         '--iconPrimary': {
