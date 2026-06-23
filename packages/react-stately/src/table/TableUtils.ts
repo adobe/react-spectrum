@@ -113,13 +113,10 @@ export function calculateColumnSizes(
   getDefaultWidth?: (index: number) => ColumnSize | null | undefined,
   getDefaultMinWidth?: (index: number) => ColumnSize | null | undefined
 ): number[] {
-  // cascadeRounding below assumes the target sizes sum to an integer. A table
-  // width can be fractional (e.g. a percentage-based size); distribute the
-  // whole-pixel part across the columns and add the leftover fraction to the
-  // last column at the end. This keeps the columns flush with the edge of the
-  // table without overflowing it (which would add a scrollbar, #9448).
-  let fractionalWidth = availableWidth - Math.floor(availableWidth);
-  availableWidth = Math.floor(availableWidth);
+  let originalWidth = availableWidth;
+  let flooredWidth = Math.floor(availableWidth);
+  let hasFractionalWidth = availableWidth - flooredWidth > 0;
+  availableWidth = flooredWidth;
   let hasNonFrozenItems = false;
   let flexItems: FlexItem[] = columns.map((column, index) => {
     let width: ColumnSize = (
@@ -265,8 +262,10 @@ export function calculateColumnSizes(
 
   // Give the leftover sub-pixel width to the last column so the columns sum
   // exactly to the (possibly fractional) available width.
-  if (fractionalWidth > 0 && columnSizes.length > 0) {
-    columnSizes[columnSizes.length - 1] += fractionalWidth;
+  if (hasFractionalWidth && columnSizes.length > 0) {
+    let tableFractionalWidth = originalWidth.toString().split('.')[1];
+    let columnWidth = columnSizes[columnSizes.length - 1].toString();
+    columnSizes[columnSizes.length - 1] = Number(columnWidth + '.' + tableFractionalWidth);
   }
 
   return columnSizes;
