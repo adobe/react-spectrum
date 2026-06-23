@@ -78,17 +78,17 @@ describe('createKeyboardShortcutHandler', () => {
     });
 
     it.each`
-      alias        | canonical
-      ${'space'}   | ${' '}
-      ${'esc'}     | ${'escape'}
-      ${'del'}     | ${'delete'}
-      ${'ins'}     | ${'insert'}
-      ${'left'}    | ${'arrowleft'}
-      ${'right'}   | ${'arrowright'}
-      ${'up'}      | ${'arrowup'}
-      ${'down'}    | ${'arrowdown'}
-      ${'pageup'}  | ${'pageup'}
-      ${'pagedown'}| ${'pagedown'}
+      alias         | canonical
+      ${'space'}    | ${' '}
+      ${'esc'}      | ${'escape'}
+      ${'del'}      | ${'delete'}
+      ${'ins'}      | ${'insert'}
+      ${'left'}     | ${'arrowleft'}
+      ${'right'}    | ${'arrowright'}
+      ${'up'}       | ${'arrowup'}
+      ${'down'}     | ${'arrowdown'}
+      ${'pageup'}   | ${'pageup'}
+      ${'pagedown'} | ${'pagedown'}
     `('maps key alias "$alias" to "$canonical"', ({alias, canonical}) => {
       expect(canonicalKeyboardShortcut(parseKeyboardShortcut(alias))).toBe(canonical);
     });
@@ -96,9 +96,9 @@ describe('createKeyboardShortcutHandler', () => {
 
   describe('keyboardEventToCanonicalShortcut', () => {
     it('lowercases the key and sorts modifiers into canonical order', () => {
-      expect(
-        keyboardEventToCanonicalShortcut(makeEvent('A', {shift: true, meta: true}))
-      ).toBe('Meta+Shift+a');
+      expect(keyboardEventToCanonicalShortcut(makeEvent('A', {shift: true, meta: true}))).toBe(
+        'Meta+Shift+a'
+      );
     });
   });
 
