@@ -36,7 +36,7 @@ let states = [
   {isQuiet: true},
   {isDisabled: true},
   {size: ['S', 'M', 'L', 'XL']},
-  {staticColor: ['black', 'white', 'auto']},
+  {staticColor: ['black', 'white']},
   {variant: ['accent', 'negative', 'primary', 'secondary']}
 ];
 
