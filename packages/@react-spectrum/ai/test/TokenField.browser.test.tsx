@@ -18,6 +18,7 @@
 import {
   abTokCd,
   adjacentTokensSample,
+  dblClickAt,
   expectCaret,
   focusField,
   getFieldSelection,
@@ -283,6 +284,84 @@ describeOrSkip('TokenField browser interactions', () => {
       await userEvent.keyboard('{Shift>}{ArrowLeft}{ArrowLeft}{ArrowLeft}{/Shift}');
       await waitForSelection(textbox, {index: 0, offset: 1}, {index: 2, offset: 1});
       await expect(tokenEl.getAttribute('data-selected')).toBe('true');
+    });
+
+    it('extends selection to the left with Shift+ArrowLeft', async () => {
+      let list = segments(text('abcde'));
+      let {textbox} = await renderControlledTokenField(list);
+      await navigateCaret(textbox, list, {index: 0, offset: 3});
+      await userEvent.keyboard('{Shift>}{ArrowLeft}{ArrowLeft}{/Shift}');
+      await waitForSelection(textbox, {index: 0, offset: 1}, {index: 0, offset: 3});
+    });
+
+    it('moves selection back to the right with Shift+ArrowRight without extending past the anchor', async () => {
+      let list = segments(text('abcde'));
+      let {textbox} = await renderControlledTokenField(list);
+      await navigateCaret(textbox, list, {index: 0, offset: 3});
+      // Extend left to select "bc".
+      await userEvent.keyboard('{Shift>}{ArrowLeft}{ArrowLeft}{/Shift}');
+      await waitForSelection(textbox, {index: 0, offset: 1}, {index: 0, offset: 3});
+      // Shift+ArrowRight shrinks the selection from the left rather than extending it to the right.
+      await userEvent.keyboard('{Shift>}{ArrowRight}{/Shift}');
+      await waitForSelection(textbox, {index: 0, offset: 2}, {index: 0, offset: 3});
+    });
+
+    it('extends back to the left after moving right with Shift+ArrowLeft', async () => {
+      let list = segments(text('abcde'));
+      let {textbox} = await renderControlledTokenField(list);
+      await navigateCaret(textbox, list, {index: 0, offset: 3});
+      // Extend left, move back right, then extend left again. The anchor stays fixed at offset 3.
+      await userEvent.keyboard('{Shift>}{ArrowLeft}{ArrowLeft}{/Shift}');
+      await waitForSelection(textbox, {index: 0, offset: 1}, {index: 0, offset: 3});
+      await userEvent.keyboard('{Shift>}{ArrowRight}{/Shift}');
+      await waitForSelection(textbox, {index: 0, offset: 2}, {index: 0, offset: 3});
+      await userEvent.keyboard('{Shift>}{ArrowLeft}{/Shift}');
+      await waitForSelection(textbox, {index: 0, offset: 1}, {index: 0, offset: 3});
+    });
+
+    it('keeps direction when shrinking a selection across a token', async () => {
+      let {textbox} = await renderControlledTokenField(abTokCd);
+      let tokenEl = textbox.getByText('TOK').element();
+      // Caret after the token (start of "cd"). Extend left across the token to select it.
+      await navigateCaretFromEnd(textbox, abTokCd, {index: 2, offset: 0});
+      await userEvent.keyboard('{Shift>}{ArrowLeft}{/Shift}');
+      await waitForSelection(textbox, {index: 0, offset: 2}, {index: 2, offset: 0});
+      await expect.poll(() => tokenEl.getAttribute('data-selected')).toBe('true');
+      // Shift+ArrowRight shrinks back across the token rather than extending to the right.
+      await userEvent.keyboard('{Shift>}{ArrowRight}{/Shift}');
+      await waitForSelection(textbox, {index: 2, offset: 0}, {index: 2, offset: 0});
+      await expect.poll(() => tokenEl.getAttribute('data-selected')).toBe(null);
+    });
+
+    it('extends a double-clicked word to the left with Shift+ArrowLeft', async () => {
+      // Double clicking a word creates a directionless selection. Shift+ArrowLeft should
+      // extend it to the left rather than shrinking it from the right.
+      let list = segments(text('aaaa bbbb cccc'));
+      let {textbox} = await renderControlledTokenField(list);
+      let el = textbox.element();
+      await focusField(textbox);
+      await dblClickAt(textbox, el.childNodes[0], 6); // inside "bbbb"
+      let sel = getFieldSelection(el)!;
+      let [start, end] = sel;
+      // The double click should have selected a whole word away from the field boundaries.
+      expect(start.offset).toBeGreaterThan(0);
+      expect(end.offset).toBeGreaterThan(start.offset);
+      await userEvent.keyboard('{Shift>}{ArrowLeft}{/Shift}');
+      await waitForSelection(textbox, {index: start.index, offset: start.offset - 1}, end);
+    });
+
+    it('extends a double-clicked word to the right with Shift+ArrowRight', async () => {
+      let list = segments(text('aaaa bbbb cccc'));
+      let {textbox} = await renderControlledTokenField(list);
+      let el = textbox.element();
+      await focusField(textbox);
+      await dblClickAt(textbox, el.childNodes[0], 6); // inside "bbbb"
+      let sel = getFieldSelection(el)!;
+      let [start, end] = sel;
+      expect(end.offset).toBeGreaterThan(start.offset);
+      expect(end.offset).toBeLessThan(14);
+      await userEvent.keyboard('{Shift>}{ArrowRight}{/Shift}');
+      await waitForSelection(textbox, start, {index: end.index, offset: end.offset + 1});
     });
 
     it('extends selection backward by word with word selection shortcut', async () => {
