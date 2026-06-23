@@ -37,8 +37,9 @@ import {
   TokenSegmentList,
   UserMessage
 } from '@react-spectrum/ai';
+import type {Key} from '@react-types/shared';
 import type {Meta} from '@storybook/react';
-import {ReactNode, useRef, useState} from 'react';
+import {ReactNode, useEffect, useRef, useState} from 'react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Text} from '@react-spectrum/s2/Text';
 
@@ -807,7 +808,6 @@ export function VirtualizedStreamingChat() {
               flexGrow: 1,
               overflowX: 'hidden',
               overflowY: 'auto',
-              padding: 8,
               scrollPadding: 8,
               rowGap: 16
             })}>
@@ -872,6 +872,499 @@ export function VirtualizedStreamingChat() {
                   textValue={msg.content}
                   isStreaming={msg.isStreaming}
                   sources={msg.sources}>
+                  <div role="document">
+                    <p className={style({font: 'body'})}>{msg.content || ''}</p>
+                  </div>
+                  {!msg.isStreaming && <MessageFeedback />}
+                </SystemMessage>
+              );
+            }}
+          </Thread>
+        </div>
+        <PromptField
+          onSubmit={handleSend}
+          isGenerating={isGenerating}
+          onStop={() => {
+            setGenerating(false);
+            timeouts.current.forEach(clearTimeout);
+            timeouts.current = [];
+          }}>
+          <div className={style({display: 'flex', gap: 16, alignItems: 'center'})}>
+            <PromptTokenField />
+            <PromptFieldSubmitButton />
+          </div>
+        </PromptField>
+      </Chat>
+    </div>
+  );
+}
+
+export function VirtualizedScrollAnchorChat() {
+  let [messages, setMessages] = useState<StreamingMessage[]>(
+    initialResponses as StreamingMessage[]
+  );
+  let nextId = useRef(initialResponses.length);
+  let [isGenerating, setGenerating] = useState(false);
+  let [submittedKey, setSubmittedKey] = useState<Key | null>(null);
+  let timeouts = useRef<NodeJS.Timeout[]>([]);
+
+  useEffect(() => {
+    if (!isGenerating) {
+      setSubmittedKey(null);
+    }
+  }, [isGenerating]);
+
+  function handleSend(prompt: TokenSegmentList) {
+    setGenerating(true);
+    let userMessageId = nextId.current;
+    setMessages(prev => [...prev, {id: userMessageId, type: 'user', content: prompt.toString()}]);
+    nextId.current++;
+    setSubmittedKey(userMessageId);
+
+    function addTool(label: string, replaceStatus = false) {
+      setMessages(prev =>
+        replaceStatus
+          ? [
+              ...prev.slice(0, -1),
+              {
+                id: nextId.current++,
+                type: 'status',
+                label,
+                isStreaming: true,
+                details: ''
+              }
+            ]
+          : [
+              ...prev,
+              {
+                id: nextId.current++,
+                type: 'status',
+                label,
+                isStreaming: true,
+                details: ''
+              }
+            ]
+      );
+    }
+
+    function completeTool(details: string) {
+      setMessages(prev =>
+        prev.map(m =>
+          m.type === 'status' && m.isStreaming ? {...m, isStreaming: false, details} : m
+        )
+      );
+    }
+
+    function streamText(content: string, sources?: string[]) {
+      setMessages(prev => [
+        ...prev,
+        {id: nextId.current++, type: 'system', content: '', isStreaming: true}
+      ]);
+      let tokens = content.split(' ');
+      let accumulated = '';
+      tokens.forEach((token, i) => {
+        setTimeout(() => {
+          accumulated += (i === 0 ? '' : ' ') + token;
+          let isLastToken = i === tokens.length - 1;
+          setMessages(prev =>
+            prev.map(m =>
+              m.type === 'system' && m.isStreaming
+                ? {
+                    ...m,
+                    content: accumulated,
+                    isStreaming: !isLastToken,
+                    ...(isLastToken && sources ? {sources} : {})
+                  }
+                : m
+            )
+          );
+        }, i * 80);
+      });
+    }
+
+    let addTimeout = (callback: () => void, delay: number) => {
+      let timeout = setTimeout(callback, delay);
+      timeouts.current.push(timeout);
+      return timeout;
+    };
+
+    let timestamp = 0;
+    let toolCallDuration = 1000;
+    addTimeout(
+      () => {
+        setMessages(prev => [
+          ...prev,
+          {
+            id: nextId.current++,
+            type: 'status',
+            label: 'Generating response',
+            isStreaming: true,
+            details: ''
+          }
+        ]);
+      },
+      (timestamp += 500)
+    );
+    addTimeout(() => addTool('Thinking', true), (timestamp += 500));
+    addTimeout(
+      () =>
+        completeTool(
+          'Reviewed conversation context and identified the user is searching for Hilton brand assets.'
+        ),
+      (timestamp += toolCallDuration)
+    );
+    addTimeout(() => addTool('Loading tool'), (timestamp += 500));
+    addTimeout(
+      () => completeTool('Asset search tool loaded with access to the Hilton brand library.'),
+      (timestamp += toolCallDuration)
+    );
+    addTimeout(() => addTool('Searching'), (timestamp += 500));
+    addTimeout(
+      () => completeTool('Found 15 assets matching the brand criteria across 3 campaigns.'),
+      (timestamp += toolCallDuration)
+    );
+    addTimeout(
+      () =>
+        streamText(
+          'I found some relevant assets that match your request. Let me pull up the details.'
+        ),
+      (timestamp += 500)
+    );
+
+    addTimeout(() => addTool('Searching'), (timestamp += 1000));
+    addTimeout(
+      () =>
+        completeTool('Identified additional brand materials related to the presentation context.'),
+      (timestamp += toolCallDuration)
+    );
+    addTimeout(() => addTool('Querying database'), (timestamp += 1000));
+    addTimeout(
+      () =>
+        completeTool(
+          'Retrieved asset records including metadata, previews, and usage rights for 12 items.'
+        ),
+      (timestamp += toolCallDuration)
+    );
+    addTimeout(
+      () =>
+        setMessages(prev => [
+          ...prev,
+          {
+            id: nextId.current++,
+            type: 'status',
+            label: 'Generating response',
+            isStreaming: true,
+            details: ''
+          }
+        ]),
+      (timestamp += 500)
+    );
+    addTimeout(
+      () =>
+        setMessages(prev => [
+          ...prev.slice(0, -1),
+          {
+            id: nextId.current++,
+            type: 'status',
+            label: 'Response generated',
+            isStreaming: false,
+            details:
+              'The user shared Hilton brand assets and is asking for a presentation outline. I analyzed the visual themes and brand guidelines to suggest a narrative structure that aligns with the hospitality brand identity.'
+          }
+        ]),
+      (timestamp += 1000)
+    );
+    addTimeout(
+      () =>
+        streamText(
+          'Based on the assets you shared, I recommend focusing on the narrative arc first, then ' +
+            'layering in supporting visuals and data to reinforce the core message. The main themes ' +
+            'revolve around brand consistency, audience engagement, and clear calls to action.',
+          MOCK_SOURCES
+        ),
+      (timestamp += 500)
+    );
+
+    let streamEndTimestamp = timestamp + 500;
+    addTimeout(() => {
+      setMessages(prev => [...prev, {id: nextId.current++, type: 'card', ...MOCK_CARD}]);
+    }, streamEndTimestamp);
+    addTimeout(() => {
+      setMessages(prev => [
+        ...prev,
+        {
+          id: nextId.current++,
+          type: 'suggestions',
+          title: 'Suggested follow-ups',
+          suggestions: MOCK_SUGGESTIONS
+        }
+      ]);
+      setGenerating(false);
+    }, streamEndTimestamp + 1000);
+  }
+
+  return (
+    <div
+      className={style({
+        margin: 0,
+        marginX: 'auto',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 32,
+        height: '100%'
+      })}>
+      <Chat
+        styles={style({
+          display: 'flex',
+          flexDirection: 'column',
+          overflow: 'hidden',
+          flexGrow: 1,
+          gap: 16,
+          paddingX: 16,
+          boxSizing: 'border-box',
+          minWidth: 0
+        })}>
+        <div
+          className={style({
+            position: 'relative',
+            flexGrow: 1,
+            overflow: 'hidden',
+            display: 'flex',
+            flexDirection: 'column',
+            minWidth: 0
+          })}>
+          <div
+            className={style({
+              position: 'absolute',
+              bottom: 16,
+              left: '50%',
+              transform: 'translateX(-50%)',
+              zIndex: 1
+            })}>
+            <ThreadScrollButton>
+              <ActionButton slot="scroll" aria-label="Scroll to bottom">
+                <ChevronDown />
+              </ActionButton>
+            </ThreadScrollButton>
+          </div>
+          <Thread
+            items={messages}
+            anchorTo="end"
+            submittedKey={submittedKey}
+            UNSTABLE_focusOnEntry="first"
+            aria-label="Chat thread"
+            styles={style({
+              flexGrow: 1,
+              overflowX: 'hidden',
+              overflowY: 'auto',
+              scrollPadding: 8,
+              rowGap: 16
+            })}>
+            {(msg: StreamingMessage) => {
+              if (msg.type === 'user') {
+                return (
+                  <ThreadItem
+                    id={msg.id}
+                    textValue={msg.content}
+                    styles={style({display: 'flex', justifyContent: 'end'})}>
+                    <UserMessage>{msg.content}</UserMessage>
+                  </ThreadItem>
+                );
+              }
+              if (msg.type === 'status') {
+                let announcement = msg.isStreaming ? `${msg.label}…` : `${msg.label} complete`;
+                let title = msg.isStreaming ? `${msg.label}…` : msg.label;
+                return (
+                  <ThreadItem
+                    textValue={announcement}
+                    isStreaming={msg.isStreaming}
+                    shouldAnnounceOnMount>
+                    <ResponseStatus isLoading={msg.isStreaming}>
+                      <ResponseStatusTitle>{title}</ResponseStatusTitle>
+                      <ResponseStatusPanel>
+                        {msg.details && (
+                          <p className={style({font: 'body-sm', margin: 0})}>{msg.details}</p>
+                        )}
+                      </ResponseStatusPanel>
+                    </ResponseStatus>
+                  </ThreadItem>
+                );
+              }
+              if (msg.type === 'card') {
+                return (
+                  <CardMessage
+                    title={msg.title}
+                    description={msg.description}
+                    imageUrl={msg.imageUrl}
+                  />
+                );
+              }
+              if (msg.type === 'suggestions') {
+                return (
+                  <ThreadItem textValue={msg.title}>
+                    <MessageSuggestionList title={msg.title}>
+                      {msg.suggestions.map((s, i) => (
+                        <MessageSuggestion key={i}>{s}</MessageSuggestion>
+                      ))}
+                    </MessageSuggestionList>
+                  </ThreadItem>
+                );
+              }
+              return (
+                <SystemMessage
+                  textValue={msg.content}
+                  isStreaming={msg.isStreaming}
+                  sources={msg.sources}>
+                  <div role="document">
+                    <p className={style({font: 'body'})}>{msg.content || ''}</p>
+                  </div>
+                  {!msg.isStreaming && <MessageFeedback />}
+                </SystemMessage>
+              );
+            }}
+          </Thread>
+        </div>
+        <PromptField
+          onSubmit={handleSend}
+          isGenerating={isGenerating}
+          onStop={() => {
+            setGenerating(false);
+            timeouts.current.forEach(clearTimeout);
+            timeouts.current = [];
+          }}>
+          <div className={style({display: 'flex', gap: 16, alignItems: 'center'})}>
+            <PromptTokenField />
+            <PromptFieldSubmitButton />
+          </div>
+        </PromptField>
+      </Chat>
+    </div>
+  );
+}
+
+let DUMMY_RESPONSES = [
+  "That's a great question! I'm here to help. Could you give me a bit more context so I can provide a more tailored response?",
+  'Sure! Here is a quick summary: the key points are clarity, brevity, and relevance. Let me know if you want me to expand on any of these.',
+  "Interesting topic. Here's what I know: this area has been evolving rapidly, and there are a few different perspectives worth considering. Want me to dive deeper?",
+  "I've processed your message. Based on what you've shared, I'd suggest starting with a clear goal, then breaking it into smaller actionable steps. Does that help?",
+  'Great point! I think the best approach here depends on your specific situation. Can you tell me more about your constraints or priorities?'
+];
+
+export function EmptyChat() {
+  let [messages, setMessages] = useState<StreamingMessage[]>([]);
+  let nextId = useRef(0);
+  let [isGenerating, setGenerating] = useState(false);
+  let timeouts = useRef<NodeJS.Timeout[]>([]);
+
+  function handleSend(prompt: TokenSegmentList) {
+    setGenerating(true);
+    setMessages(prev => [
+      ...prev,
+      {id: nextId.current++, type: 'user', content: prompt.toString()}
+    ]);
+
+    let addTimeout = (callback: () => void, delay: number) => {
+      let timeout = setTimeout(callback, delay);
+      timeouts.current.push(timeout);
+      return timeout;
+    };
+
+    let response = DUMMY_RESPONSES[Math.floor(Math.random() * DUMMY_RESPONSES.length)];
+
+    addTimeout(() => {
+      setMessages(prev => [
+        ...prev,
+        {id: nextId.current++, type: 'system', content: '', isStreaming: true}
+      ]);
+      let tokens = response.split(' ');
+      let accumulated = '';
+      tokens.forEach((token, i) => {
+        addTimeout(() => {
+          accumulated += (i === 0 ? '' : ' ') + token;
+          let isLastToken = i === tokens.length - 1;
+          setMessages(prev =>
+            prev.map(m =>
+              m.type === 'system' && m.isStreaming
+                ? {...m, content: accumulated, isStreaming: !isLastToken}
+                : m
+            )
+          );
+          if (isLastToken) {
+            setGenerating(false);
+          }
+        }, i * 60);
+      });
+    }, 600);
+  }
+
+  return (
+    <div
+      className={style({
+        margin: 0,
+        marginX: 'auto',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 32,
+        height: '100%'
+      })}>
+      <Chat
+        styles={style({
+          display: 'flex',
+          flexDirection: 'column',
+          overflow: 'hidden',
+          flexGrow: 1,
+          gap: 16,
+          paddingX: 16,
+          boxSizing: 'border-box',
+          minWidth: 0
+        })}>
+        <div
+          className={style({
+            position: 'relative',
+            flexGrow: 1,
+            overflow: 'hidden',
+            display: 'flex',
+            flexDirection: 'column',
+            minWidth: 0
+          })}>
+          <div
+            className={style({
+              position: 'absolute',
+              bottom: 16,
+              left: '50%',
+              transform: 'translateX(-50%)',
+              zIndex: 1
+            })}>
+            <ThreadScrollButton>
+              <ActionButton slot="scroll" aria-label="Scroll to bottom">
+                <ChevronDown />
+              </ActionButton>
+            </ThreadScrollButton>
+          </div>
+          <Thread
+            items={messages}
+            anchorTo="end"
+            UNSTABLE_focusOnEntry="first"
+            aria-label="Chat thread"
+            styles={style({
+              flexGrow: 1,
+              overflowX: 'hidden',
+              overflowY: 'auto',
+              scrollPadding: 8,
+              rowGap: 16
+            })}>
+            {(msg: StreamingMessage) => {
+              if (msg.type === 'user') {
+                return (
+                  <ThreadItem
+                    textValue={msg.content}
+                    styles={style({display: 'flex', justifyContent: 'end'})}>
+                    <UserMessage>{msg.content}</UserMessage>
+                  </ThreadItem>
+                );
+              }
+              return (
+                <SystemMessage textValue={msg.content} isStreaming={msg.isStreaming}>
                   <div role="document">
                     <p className={style({font: 'body'})}>{msg.content || ''}</p>
                   </div>
