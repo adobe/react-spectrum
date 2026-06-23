@@ -94,7 +94,11 @@ const Template = (args: ButtonProps & {combos?: any[]}): ReactNode => {
           </Button>
         );
         if (c.staticColor != null) {
-          return <StaticColorProvider staticColor={c.staticColor}>{button}</StaticColorProvider>;
+          return (
+            <StaticColorProvider key={`static-${key}`} staticColor={c.staticColor} hideColorPicker>
+              {button}
+            </StaticColorProvider>
+          );
         }
 
         return button;
