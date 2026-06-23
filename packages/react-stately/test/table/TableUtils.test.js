@@ -150,6 +150,30 @@ describe('TableUtils', () => {
       expect(widths).toStrictEqual([500, 500]);
       expect(widths.every(Number.isInteger)).toBe(true);
     });
+
+    it('handles js fp rounding errors', () => {
+      let widths = calculateColumnSizes(
+        1000.7,
+        [
+          {key: 'name', width: '1fr'},
+          {key: 'type', width: '1fr'}
+        ],
+        new Map(),
+        () => 150,
+        () => 50
+      );
+      // Every column but the last is a whole number.
+      expect(widths.slice(0, -1).every(Number.isInteger)).toBe(true);
+      // The columns sum exactly to the available width, so the table never
+      // overflows (no horizontal scrollbar) regardless of the sub-pixel value
+      // of the last column.
+      expect(widths.reduce((a, b) => a + b, 0)).toBe(1000.7);
+      expect(widths[0]).toBe(500);
+      // The last column carries the fractional remainder. It cannot be exactly
+      // 500.7 in floating point (1000.7 - 500 !== 500.7), but it is within one
+      // ULP, which is far below a device pixel.
+      expect(widths[widths.length - 1]).toBeCloseTo(500.7, 10);
+    });
   });
 
   describe('table column layout', () => {
