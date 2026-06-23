@@ -664,6 +664,9 @@ describe('Menu', () => {
     );
 
     let button = getByRole('button');
+    expect(button).not.toHaveAttribute('aria-haspopup');
+    expect(button).not.toHaveAttribute('aria-expanded');
+    expect(button).not.toHaveAttribute('aria-controls');
     expect(queryByRole('menu')).not.toBeInTheDocument();
 
     // A regular press should not open a context menu trigger.
@@ -678,6 +681,8 @@ describe('Menu', () => {
 
     let menu = getByRole('menu');
     expect(getAllByRole('menuitem')).toHaveLength(5);
+    expect(button).not.toHaveAttribute('aria-expanded');
+    expect(button).not.toHaveAttribute('aria-controls');
 
     let popover = menu.closest('.react-aria-Popover');
     expect(popover).toBeInTheDocument();

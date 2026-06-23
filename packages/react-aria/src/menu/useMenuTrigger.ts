@@ -173,6 +173,16 @@ export function useMenuTrigger<T>(
     interactionProps = {...longPressProps, onKeyDown};
   } else if (trigger === 'contextMenu') {
     interactionProps = contextMenuProps;
+
+    // Remove aria-haspopup and associated attributes from context menu triggers.
+    // aria-haspopup indicates that the trigger opens a menu on activation (i.e. click/Enter),
+    // which is not the case for context menus, so this would lead to confusing announcements.
+    // Context menus are equally discoverable (or not) by sighted and non-sighted users,
+    // so we don't need a screen reader specific announcement.
+    // See https://github.com/w3c/aria/issues/1971 for further discussion.
+    delete triggerProps['aria-haspopup'];
+    delete triggerProps['aria-expanded'];
+    delete triggerProps['aria-controls'];
   }
 
   return {
