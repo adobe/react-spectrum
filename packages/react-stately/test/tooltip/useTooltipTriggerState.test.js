@@ -359,6 +359,74 @@ describe('useTooltipTriggerState', function () {
     });
   });
 
+  describe('instant warmup', () => {
+    function InstantTrigger(props) {
+      let state = useTooltipTriggerState(props);
+      let ref = React.useRef();
+      let {triggerProps, tooltipProps} = useTooltipTrigger(props, state, ref);
+
+      return (
+        <span>
+          <button
+            aria-label={props.label}
+            ref={ref}
+            {...triggerProps}
+            data-instant={String(state.isInstant)}>
+            {props.children}
+          </button>
+          {state.isOpen && (
+            <span role="tooltip" data-testid={`${props.label}-tip`} {...tooltipProps}>
+              {props.tooltip}
+            </span>
+          )}
+        </span>
+      );
+    }
+
+    it('animates the first, swaps subsequent instantly, and animates out the last', () => {
+      let {getByLabelText, queryByTestId} = render(
+        <>
+          <InstantTrigger tooltip="First" label="trigger1">
+            Trigger 1
+          </InstantTrigger>
+          <InstantTrigger tooltip="Second" label="trigger2">
+            Trigger 2
+          </InstantTrigger>
+        </>
+      );
+
+      fireEvent.mouseDown(document.body);
+      fireEvent.mouseUp(document.body);
+
+      let button1 = getByLabelText('trigger1');
+      let button2 = getByLabelText('trigger2');
+
+      // First tooltip opens after the warmup delay and should animate in (not instant).
+      fireEvent.mouseEnter(button1);
+      fireEvent.mouseMove(button1);
+      act(() => jest.advanceTimersByTime(TOOLTIP_DELAY));
+      expect(queryByTestId('trigger1-tip')).toBeVisible();
+      expect(button1).toHaveAttribute('data-instant', 'false');
+
+      // Moving to the second trigger while warm: the first closes instantly (no exit animation)
+      // and the second opens instantly (no entry animation).
+      fireEvent.mouseLeave(button1);
+      fireEvent.mouseEnter(button2);
+      fireEvent.mouseMove(button2);
+      expect(queryByTestId('trigger1-tip')).toBeNull();
+      expect(queryByTestId('trigger2-tip')).toBeVisible();
+      expect(button1).toHaveAttribute('data-instant', 'true');
+      expect(button2).toHaveAttribute('data-instant', 'true');
+
+      // Leaving the last tooltip animates out (not instant).
+      fireEvent.mouseLeave(button2);
+      expect(button2).toHaveAttribute('data-instant', 'false');
+      expect(queryByTestId('trigger2-tip')).toBeVisible();
+      act(() => jest.advanceTimersByTime(TOOLTIP_COOLDOWN));
+      expect(queryByTestId('trigger2-tip')).toBeNull();
+    });
+  });
+
   describe('multiple controlled tooltips', () => {
     it('closes previus tooltip when opening a new one', () => {
       let secondOnOpenChange = jest.fn();
