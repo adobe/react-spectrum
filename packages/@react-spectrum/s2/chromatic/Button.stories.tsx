@@ -50,6 +50,18 @@ let genaiStates = [{isDisabled: true}, {size: ['S', 'M', 'L', 'XL']}];
 
 let genaiCombinations = generatePowerset(genaiStates);
 
+let staticColorAutoStates = [
+  {isQuiet: true},
+  {isDisabled: true},
+  {size: ['S', 'M', 'L', 'XL']},
+  {staticColor: ['auto']},
+  {variant: ['accent', 'negative', 'primary', 'secondary']}
+];
+
+let staticColorAutoCombinations = generatePowerset(staticColorAutoStates).filter(
+  c => c.staticColor != null
+);
+
 const Template = (args: ButtonProps & {combos?: any[]}): ReactNode => {
   let {children, combos = combinations, variant, ...otherArgs} = args;
   return (
@@ -93,6 +105,10 @@ const Template = (args: ButtonProps & {combos?: any[]}): ReactNode => {
 
 export const Default: StoryObj<typeof Button> = {
   render: args => <Template {...args} />
+};
+
+export const StaticColorAuto: StoryObj<typeof Button> = {
+  render: args => <Template {...args} combos={staticColorAutoCombinations} />
 };
 
 export const WithIcon: StoryObj<typeof Button> = {
