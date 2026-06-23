@@ -18,19 +18,6 @@ import {Size} from './Size';
 import {Virtualizer} from './Virtualizer';
 
 /**
- * One-shot report produced by `update()` and consumed by `Virtualizer.relayout()`.
- * Null for all non-anchored layouts.
- *
- * @internal
- */
-export interface PostLayoutReport {
-  /** A viewport rectangle to apply after layout. Virtualizer clamps and calls setVisibleRect. */
-  viewportAdjustment?: Rect;
-  /** True when the reverse-anchor initial snap has been processed. Virtualizer commits the flag. */
-  didInitializeReverseAnchor?: boolean;
-}
-
-/**
  * Virtualizer supports arbitrary layout objects, which compute what items are visible, and how
  * to position and style them. However, layouts do not render items directly. Instead,
  * layouts produce lightweight LayoutInfo objects which describe various properties of an item,
@@ -44,18 +31,6 @@ export interface PostLayoutReport {
 export abstract class Layout<T extends object = Node<any>, O = any> implements LayoutDelegate {
   /** The Virtualizer the layout is currently attached to. */
   virtualizer: Virtualizer<T, any> | null = null;
-
-  /**
-   * Set during `update()`, consumed once by `Virtualizer.relayout()`, then cleared.
-   * Null for all non-anchored layouts.
-   *
-   * Alternative: `update()` could return `PostLayoutReport | void` instead, eliminating
-   * this mutable field entirely. Deferred because it requires a more visible base-class
-   * signature change.
-   *
-   * @internal
-   */
-  postLayoutReport: PostLayoutReport | null = null;
 
   /**
    * Returns an array of `LayoutInfo` objects which are inside the given rectangle.
