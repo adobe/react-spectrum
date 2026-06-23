@@ -33,14 +33,6 @@ export interface ListLayoutOptions {
    */
   anchorTo?: 'end';
   /**
-   * When `anchorTo` is `'end'`, the maximum distance in px from the bottom of the content for the
-   * viewport to be considered "near the end". While near the end, appended content and streaming
-   * size changes will keep the viewport pinned to the latest output.
-   *
-   * @default 100
-   */
-  scrollEndThreshold?: number;
-  /**
    * The primary orientation of the items. Usually this is the direction that the collection
    * scrolls.
    *
@@ -178,8 +170,6 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
   constructor(options: ListLayoutOptions = {}) {
     super();
     this.anchorTo = options.anchorTo;
-    this.scrollEndThreshold = options.scrollEndThreshold ?? 100;
-    this.anchorScrollPosition = options?.anchorTo === 'end' && (options?.orientation ?? 'vertical') === 'vertical';
     this.rowSize = options?.rowSize ?? options?.rowHeight ?? null;
     this.orientation = options.orientation ?? 'vertical';
     this.estimatedRowSize = options?.estimatedRowSize ?? options?.estimatedRowHeight ?? null;
@@ -369,8 +359,6 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
     this.rowSize = options?.rowSize ?? options?.rowHeight ?? this.rowSize;
     this.orientation = options?.orientation ?? this.orientation;
     this.anchorTo = options?.anchorTo ?? this.anchorTo;
-    this.scrollEndThreshold = options?.scrollEndThreshold ?? this.scrollEndThreshold;
-    this.anchorScrollPosition = this.anchorTo === 'end' && this.orientation === 'vertical';
     this.estimatedRowSize =
       options?.estimatedRowSize ?? options?.estimatedRowHeight ?? this.estimatedRowSize;
     this.headingSize = options?.headingSize ?? options?.headingHeight ?? this.headingSize;
@@ -517,7 +505,7 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
     // items outside the visible window get a cheap estimated LayoutNode instead.
     let width = this.virtualizer!.size.width - this.padding * 2;
     let nodes: LayoutNode[] = new Array(itemNodes.length);
-    let currentBottom = contentHeight - this.padding;
+    let currentBottom = contentLength - this.padding;
 
     for (let i = 0; i < itemNodes.length; i++) {
       let node = itemNodes[i];
