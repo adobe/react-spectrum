@@ -139,15 +139,27 @@ export function setStyle(
     return () => {};
   }
 
+  let restore = new Array<Function>();
   let styleTargets = Array.isArray(target) ? target : [target];
 
   for (let styleTarget of styleTargets) {
+    let initialValue = styleTarget.style.getPropertyValue(property);
+    let initialPriority = styleTarget.style.getPropertyPriority(property);
+
     styleTarget.style.setProperty(property, value, priority);
+
+    restore.unshift(() => {
+      if (initialValue) {
+        styleTarget.style.setProperty(property, initialValue, initialPriority);
+      } else {
+        styleTarget.style.removeProperty(property);
+      }
+    });
   }
 
   return () => {
-    for (let styleTarget of styleTargets) {
-      styleTarget.style.removeProperty(property);
+    for (let cleanup of restore) {
+      cleanup();
     }
   };
 }
