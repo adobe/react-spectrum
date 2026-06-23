@@ -14,10 +14,12 @@ import {AriaButtonProps} from '../button/useButton';
 import {AriaMenuOptions} from './useMenu';
 import {FocusableElement, RefObject} from '@react-types/shared';
 import {focusWithoutScrolling} from '../utils/focusWithoutScrolling';
+import {getEventTarget} from '../utils/shadowdom/DOMFunctions';
 import intlMessages from '../../intl/menu/*.json';
 import {MenuTriggerState, MenuTriggerType} from 'react-stately/useMenuTriggerState';
 import {PressProps} from '../interactions/usePress';
 import {useContextMenu} from '../interactions/useContextMenu';
+import {useEffect} from 'react';
 import {useId} from '../utils/useId';
 import {useLocalizedStringFormatter} from '../i18n/useLocalizedStringFormatter';
 import {useLongPress} from '../interactions/useLongPress';
@@ -142,12 +144,27 @@ export function useMenuTrigger<T>(
 
   let {contextMenuProps} = useContextMenu({
     onContextMenu(e) {
+      // This is not a DOM event, so the linter is incorrect.
       // eslint-disable-next-line rsp-rules/safe-event-target
       let rect = e.target.getBoundingClientRect();
       state.setPoint({x: rect.x + e.x, y: rect.y + e.y});
       state.open();
     }
   });
+
+  useEffect(() => {
+    // Close context menus when right clicking outside. The browser's context menu will appear instead.
+    if (state.isOpen && trigger === 'contextMenu') {
+      let onContextMenu = (e: MouseEvent) => {
+        // Checking if the target is the body works because everything outside the menu is inert.
+        if (e.button === 2 && getEventTarget(e) === document.body) {
+          state.close();
+        }
+      };
+      document.addEventListener('mousedown', onContextMenu);
+      return () => document.removeEventListener('mousedown', onContextMenu);
+    }
+  }, [state, trigger]);
 
   let interactionProps;
   if (trigger === 'press') {

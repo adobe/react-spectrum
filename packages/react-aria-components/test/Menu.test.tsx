@@ -671,18 +671,10 @@ describe('Menu', () => {
     expect(queryByRole('menu')).not.toBeInTheDocument();
 
     // Right click opens the menu at the pointer position.
-    let event = new MouseEvent('contextmenu', {
-      bubbles: true,
-      cancelable: true,
-      clientX: 10,
-      clientY: 20
-    });
-    let preventDefault = jest.spyOn(event, 'preventDefault');
-    fireEvent(button, event);
+    await user.pointer({target: button, keys: '[MouseRight]', coords: {clientX: 10, clientY: 20}});
     act(() => {
       jest.runAllTimers();
     });
-    expect(preventDefault).toHaveBeenCalled();
 
     let menu = getByRole('menu');
     expect(getAllByRole('menuitem')).toHaveLength(5);
@@ -693,6 +685,45 @@ describe('Menu', () => {
 
     await user.click(getAllByRole('menuitem')[1]);
     expect(onAction).toHaveBeenLastCalledWith('rename', undefined);
+    act(() => {
+      jest.runAllTimers();
+    });
+    expect(queryByRole('menu')).not.toBeInTheDocument();
+  });
+
+  it('should close a context menu when right clicking outside', async () => {
+    let {getByRole, queryByRole} = render(
+      <MenuTrigger trigger="contextMenu">
+        <Button>Right click here</Button>
+        <Popover>
+          <Menu>
+            <MenuItem id="open">Open</MenuItem>
+            <MenuItem id="rename">Rename…</MenuItem>
+            <MenuItem id="duplicate">Duplicate</MenuItem>
+          </Menu>
+        </Popover>
+      </MenuTrigger>
+    );
+
+    let button = getByRole('button');
+    expect(queryByRole('menu')).not.toBeInTheDocument();
+
+    // Right click opens the menu at the pointer position.
+    await user.pointer({target: button, keys: '[MouseRight]'});
+    act(() => {
+      jest.runAllTimers();
+    });
+    expect(getByRole('menu')).toBeInTheDocument();
+
+    // Right clicking inside the menu should not close it.
+    await user.pointer({target: getByRole('menu'), keys: '[MouseRight]'});
+    act(() => {
+      jest.runAllTimers();
+    });
+    expect(getByRole('menu')).toBeInTheDocument();
+
+    // Right clicking outside (on the body) closes the menu so the browser's context menu can appear.
+    await user.pointer({target: document.body, keys: '[MouseRight]'});
     act(() => {
       jest.runAllTimers();
     });
