@@ -32,6 +32,7 @@ import {ListBoxLoadMoreItem} from '../src/ListBox';
 import {ListLayout} from 'react-stately/useVirtualizerState';
 import {Modal} from '../src/Modal';
 import React, {useEffect, useState} from 'react';
+import {Selection} from 'react-stately/src/selection/Selection';
 import {Text} from '../src/Text';
 import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
@@ -2430,6 +2431,148 @@ describe('keyboard modifier keys', () => {
       expect(document.activeElement).toBe(options[1]);
       await user.keyboard('{Control>}{Home}{/Control}');
       expect(document.activeElement).toBe(options[1]);
+    });
+
+    describe('multiple selection, replace behavior', () => {
+      it('replaces selection as focus moves with arrow keys', async () => {
+        let onSelectionChange = jest.fn();
+        let {getByRole} = renderListbox({
+          selectionMode: 'multiple',
+          selectionBehavior: 'replace',
+          onSelectionChange
+        });
+        let options = within(getByRole('listbox')).getAllByRole('option');
+        await user.tab();
+        await user.keyboard('{ArrowDown}');
+        expect(document.activeElement).toBe(options[1]);
+        expect(onSelectionChange).toHaveBeenLastCalledWith(new Selection(['dog'], 'dog', 'dog'));
+      });
+
+      it('navigates focus without changing selection when Alt is held (non-contiguous)', async () => {
+        let onSelectionChange = jest.fn();
+        let {getByRole} = renderListbox({
+          selectionMode: 'multiple',
+          selectionBehavior: 'replace',
+          onSelectionChange
+        });
+        let options = within(getByRole('listbox')).getAllByRole('option');
+        await user.tab();
+        onSelectionChange.mockClear();
+        await user.keyboard('{Alt>}{ArrowDown}{/Alt}');
+        expect(document.activeElement).toBe(options[1]);
+        expect(onSelectionChange).not.toHaveBeenCalled();
+      });
+
+      it('extends selection when Shift is held', async () => {
+        let onSelectionChange = jest.fn();
+        let {getByRole} = renderListbox({
+          selectionMode: 'multiple',
+          selectionBehavior: 'replace',
+          onSelectionChange
+        });
+        let options = within(getByRole('listbox')).getAllByRole('option');
+        await user.tab();
+        await user.keyboard('{Shift>}{ArrowDown}{/Shift}');
+        expect(document.activeElement).toBe(options[1]);
+        expect(onSelectionChange).toHaveBeenLastCalledWith(
+          new Selection(['cat', 'dog'], 'cat', 'dog')
+        );
+      });
+
+      it('replaces selection with Home and End', async () => {
+        let onSelectionChange = jest.fn();
+        let {getByRole} = renderListbox({
+          selectionMode: 'multiple',
+          selectionBehavior: 'replace',
+          onSelectionChange
+        });
+        let options = within(getByRole('listbox')).getAllByRole('option');
+        await user.tab();
+        await user.keyboard('{End}');
+        expect(document.activeElement).toBe(options[2]);
+        expect(onSelectionChange).toHaveBeenLastCalledWith(
+          new Selection(['kangaroo'], 'kangaroo', 'kangaroo')
+        );
+        await user.keyboard('{Home}');
+        expect(document.activeElement).toBe(options[0]);
+        expect(onSelectionChange).toHaveBeenLastCalledWith(new Selection(['cat'], 'cat', 'cat'));
+      });
+    });
+
+    it('selects all with Mod+A (Meta) in multiple selection mode', async () => {
+      let onSelectionChange = jest.fn();
+      renderListbox({selectionMode: 'multiple', onSelectionChange});
+      await user.tab();
+      await user.keyboard('{Meta>}a{/Meta}');
+      expect(onSelectionChange).toHaveBeenLastCalledWith('all');
+    });
+
+    it('does not select all with Mod+A when selection mode is single', async () => {
+      let onSelectionChange = jest.fn();
+      renderListbox({selectionMode: 'single', onSelectionChange});
+      await user.tab();
+      await user.keyboard('{Meta>}a{/Meta}');
+      expect(onSelectionChange).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('windows', () => {
+    beforeAll(() => {
+      platformMock = jest.spyOn(navigator, 'platform', 'get').mockImplementation(() => 'Win32');
+    });
+    afterAll(() => {
+      platformMock.mockRestore();
+    });
+
+    it('should not navigate when using unsupported modifier keys', async () => {
+      let {getByRole} = renderListbox({selectionMode: 'none'});
+      await user.tab();
+      let options = within(getByRole('listbox')).getAllByRole('option');
+      await user.keyboard('{ArrowDown}');
+      expect(document.activeElement).toBe(options[1]);
+      await user.keyboard('{Meta>}{ArrowDown}{/Meta}');
+      expect(document.activeElement).toBe(options[1]);
+    });
+
+    it('navigates focus when Control is held (non-contiguous)', async () => {
+      let onSelectionChange = jest.fn();
+      let {getByRole} = renderListbox({selectionMode: 'multiple', onSelectionChange});
+      let options = within(getByRole('listbox')).getAllByRole('option');
+      await user.tab();
+      onSelectionChange.mockClear();
+      await user.keyboard('{Control>}{ArrowDown}{/Control}');
+      expect(document.activeElement).toBe(options[1]);
+      expect(onSelectionChange).not.toHaveBeenCalled();
+    });
+
+    it('extends selection with Control+Shift+End and Control+Shift+Home', async () => {
+      let onSelectionChange = jest.fn();
+      let {getByRole} = renderListbox({
+        selectionMode: 'multiple',
+        defaultSelectedKeys: ['cat'],
+        onSelectionChange
+      });
+      let options = within(getByRole('listbox')).getAllByRole('option');
+      await user.tab();
+      await user.keyboard('{Control>}{Shift>}{End}{/Shift}{/Control}');
+      expect(document.activeElement).toBe(options[2]);
+      // extendSelection adds to the selection rather than replacing it (cat stays selected).
+      expect(onSelectionChange).toHaveBeenLastCalledWith(
+        new Selection(['cat', 'kangaroo'], 'kangaroo', 'kangaroo')
+      );
+      await user.keyboard('{Control>}{Shift>}{Home}{/Shift}{/Control}');
+      expect(document.activeElement).toBe(options[0]);
+      expect(onSelectionChange).toHaveBeenLastCalledWith(
+        new Selection(['cat', 'dog', 'kangaroo'], 'kangaroo', 'cat')
+      );
+    });
+
+    it('selects all with Mod+A (Control) in multiple selection mode', async () => {
+      let onSelectionChange = jest.fn();
+      renderListbox({selectionMode: 'multiple', onSelectionChange});
+      await user.tab();
+      await user.keyboard('{Control>}a{/Control}');
+      expect(onSelectionChange).toHaveBeenLastCalledWith('all');
     });
   });
 });
