@@ -502,13 +502,13 @@ export const TokenField = forwardRef(function TokenField(
         {onPaste: props.onPaste}
       )}
       ref={mergeRefs(ref, autocompleteRef as any)}
-      role="textbox"
+      role={autocompleteProps.role || 'textbox'}
       contentEditable={!isDisabled && !isReadOnly}
       suppressContentEditableWarning
       aria-multiline={multiline}
-      aria-label={ariaLabel}
-      aria-labelledby={ariaLabelledBy}
-      aria-describedby={ariaDescribedBy}
+      aria-label={ariaLabel ?? autocompleteProps['aria-label']}
+      aria-labelledby={ariaLabelledBy ?? autocompleteProps['aria-labelledby']}
+      aria-describedby={ariaDescribedBy ?? autocompleteProps['aria-describedby']}
       aria-readonly={isReadOnly || undefined}
       aria-disabled={isDisabled || undefined}
       data-focused={isFocused || undefined}

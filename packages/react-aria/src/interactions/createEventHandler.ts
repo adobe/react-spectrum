@@ -58,7 +58,7 @@ export function createEventHandler<T extends SyntheticEvent>(
 
     handler(event);
 
-    if (shouldStopPropagation) {
+    if (shouldStopPropagation && !('continuePropagation' in e)) {
       e.stopPropagation();
     }
   };
