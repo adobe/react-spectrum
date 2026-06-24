@@ -174,7 +174,7 @@
     "motion": "^12.23.6",
     "npm-cli-login": "^1.0.0",
     "oxfmt": "^0.48.0",
-    "oxlint": "^1.70.0",
+    "oxlint": "^1.71.0",
     "parcel": "^2.16.3",
     "parcel-optimizer-strict-mode": "workspace:^",
     "patch-package": "^6.2.0",
