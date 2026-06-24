@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import { getScrollParents } from './getScrollParents';
-import { isIOS } from './platform';
+import {getScrollParents} from './getScrollParents';
+import {isIOS} from './platform';
 
 interface ScrollIntoViewOpts {
   /** The position to align items along the block axis in. */
@@ -98,7 +98,7 @@ export function scrollIntoView(
   element: HTMLElement,
   opts: ScrollIntoViewOpts = {}
 ): void {
-  let { block = 'nearest', inline = 'nearest' } = opts;
+  let {block = 'nearest', inline = 'nearest'} = opts;
 
   if (scrollView === element) {
     return;
@@ -192,7 +192,7 @@ export function scrollIntoView(
     return;
   }
 
-  scrollView.scrollTo({ left: x, top: y });
+  scrollView.scrollTo({left: x, top: y});
 }
 
 /**
@@ -206,7 +206,7 @@ export function scrollIntoViewport(
   targetElement: Element | null,
   opts: ScrollIntoViewportOpts = {}
 ): void {
-  let { containingElement } = opts;
+  let {containingElement} = opts;
   if (!targetElement || !targetElement.isConnected) {
     return;
   }
@@ -247,7 +247,7 @@ export function scrollIntoViewport(
     }
 
     // Step 3: Final pass to ensure target element is perfectly pinned
-    targetElement.scrollIntoView?.({ block: 'nearest' });
+    targetElement.scrollIntoView?.({block: 'nearest'});
   } else {
     // Isolated popup/modal overlay path
     let scrollParents = getScrollParents(targetElement, true);

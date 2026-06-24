@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import { scrollIntoView, scrollIntoViewport } from '../../src/utils/scrollIntoView';
+import {scrollIntoView, scrollIntoViewport} from '../../src/utils/scrollIntoView';
 
 describe('scrollIntoView', () => {
   let target: HTMLElement;
@@ -22,7 +22,7 @@ describe('scrollIntoView', () => {
 
     // 1. Manually attach a mock function to the jsdom prototype so it exists globally for all test blocks
     if (!HTMLElement.prototype.scrollIntoView) {
-      HTMLElement.prototype.scrollIntoView = () => { };
+      HTMLElement.prototype.scrollIntoView = () => {};
     }
     // 2. Safely spy on it
     scrollIntoViewSpy = jest.spyOn(HTMLElement.prototype, 'scrollIntoView');
@@ -57,32 +57,24 @@ describe('scrollIntoView', () => {
         y: 2100
       } as DOMRect);
 
-      jest.spyOn(window, 'getComputedStyle').mockImplementation(el => {
-        if (el === scrollView) {
-          return {
-            borderTopWidth: '100px',
-            borderBottomWidth: '100px',
-            borderLeftWidth: '100px',
-            borderRightWidth: '100px',
-            scrollPaddingTop: '0px',
-            scrollPaddingBottom: '0px',
-            scrollPaddingLeft: '0px',
-            scrollPaddingRight: '0px',
-            direction: 'ltr'
-          } as CSSStyleDeclaration;
-        }
+      jest.spyOn(window, 'getComputedStyle').mockImplementation(_el => {
         return {
-          scrollMarginTop: '0px',
-          scrollMarginBottom: '0px',
-          scrollMarginLeft: '0px',
-          scrollMarginRight: '0px'
-        } as CSSStyleDeclaration;
+          borderTopWidth: '100px',
+          borderBottomWidth: '100px',
+          borderLeftWidth: '100px',
+          borderRightWidth: '100px',
+          scrollPaddingTop: '0px',
+          scrollPaddingBottom: '0px',
+          scrollPaddingLeft: '0px',
+          scrollPaddingRight: '0px',
+          direction: 'ltr'
+        } as unknown as CSSStyleDeclaration;
       });
 
-      Object.defineProperty(scrollView, 'clientHeight', { get: () => 500, configurable: true });
-      Object.defineProperty(scrollView, 'clientWidth', { get: () => 500, configurable: true });
+      Object.defineProperty(scrollView, 'clientHeight', {get: () => 500, configurable: true});
+      Object.defineProperty(scrollView, 'clientWidth', {get: () => 500, configurable: true});
 
-      scrollIntoView(scrollView, target, { block: 'start', inline: 'start' });
+      scrollIntoView(scrollView, target, {block: 'start', inline: 'start'});
       expect(scrollView.scrollLeft).toBe(100);
       expect(scrollView.scrollTop).toBe(2100);
     });
@@ -100,35 +92,27 @@ describe('scrollIntoView', () => {
         height: 1000,
         x: 100,
         y: 2100,
-        toJSON: () => { }
+        toJSON: () => {}
       } as DOMRect);
 
-      jest.spyOn(window, 'getComputedStyle').mockImplementation(el => {
-        if (el === scrollView) {
-          return {
-            borderTopWidth: '100px',
-            borderBottomWidth: '100px',
-            borderLeftWidth: '100px',
-            borderRightWidth: '100px',
-            scrollPaddingTop: '0px',
-            scrollPaddingBottom: '0px',
-            scrollPaddingLeft: '0px',
-            scrollPaddingRight: '0px',
-            direction: 'ltr'
-          } as CSSStyleDeclaration;
-        }
+      jest.spyOn(window, 'getComputedStyle').mockImplementation(_el => {
         return {
-          scrollMarginTop: '0px',
-          scrollMarginBottom: '0px',
-          scrollMarginLeft: '0px',
-          scrollMarginRight: '0px'
-        } as CSSStyleDeclaration;
+          borderTopWidth: '100px',
+          borderBottomWidth: '100px',
+          borderLeftWidth: '100px',
+          borderRightWidth: '100px',
+          scrollPaddingTop: '0px',
+          scrollPaddingBottom: '0px',
+          scrollPaddingLeft: '0px',
+          scrollPaddingRight: '0px',
+          direction: 'ltr'
+        } as unknown as CSSStyleDeclaration;
       });
 
-      Object.defineProperty(scrollView, 'clientHeight', { get: () => 500, configurable: true });
-      Object.defineProperty(scrollView, 'clientWidth', { get: () => 500, configurable: true });
+      Object.defineProperty(scrollView, 'clientHeight', {get: () => 500, configurable: true});
+      Object.defineProperty(scrollView, 'clientWidth', {get: () => 500, configurable: true});
 
-      scrollIntoView(scrollView, target, { block: 'end', inline: 'end' });
+      scrollIntoView(scrollView, target, {block: 'end', inline: 'end'});
       expect(scrollView.scrollLeft).toBe(600);
       expect(scrollView.scrollTop).toBe(2600);
     });
@@ -144,11 +128,11 @@ describe('scrollIntoView', () => {
       containingElement.appendChild(target);
       document.body.appendChild(containingElement);
 
-      jest.spyOn(window, 'getComputedStyle').mockImplementation((_el) => {
-        return { overflow: 'visible' } as CSSStyleDeclaration;
+      jest.spyOn(window, 'getComputedStyle').mockImplementation(_el => {
+        return {overflow: 'visible'} as CSSStyleDeclaration;
       });
 
-      scrollIntoViewport(target, { containingElement });
+      scrollIntoViewport(target, {containingElement});
 
       // Verification: Ensure it used 'nearest' rather than 'center' because it was too large
       const containerCalls = scrollIntoViewSpy.mock.calls.filter(
@@ -217,12 +201,12 @@ describe('scrollIntoView', () => {
         } as DOMRect); // After displacement
 
       // Mock window overflow properties to bypass the isScrollPrevented flag track smoothly
-      jest.spyOn(window, 'getComputedStyle').mockImplementation((_el) => {
-        return { overflow: 'visible' } as CSSStyleDeclaration;
+      jest.spyOn(window, 'getComputedStyle').mockImplementation(_el => {
+        return {overflow: 'visible'} as CSSStyleDeclaration;
       });
 
       // Execute viewport routing
-      scrollIntoViewport(targetElement, { containingElement });
+      scrollIntoViewport(targetElement, {containingElement});
 
       // VERIFICATION: The containingElement should NEVER be forced to 'center' since it's already fully visible.
       // Native scrollIntoView shouldn't be called with block: 'center' on the container frame.
