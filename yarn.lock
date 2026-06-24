@@ -7377,7 +7377,7 @@ __metadata:
     "@internationalized/date": "npm:^3.12.2"
     "@internationalized/number": "npm:^3.6.7"
     "@react-aria/test-utils": "npm:^1.0.0-alpha.8"
-    "@react-spectrum/s2": "npm:1.5.0"
+    "@react-spectrum/s2": "npm:1.5.1"
     "@react-types/shared": "npm:^3.36.0"
     "@storybook/jest": "npm:^0.2.3"
     "@testing-library/dom": "npm:^10.1.0"
@@ -7530,7 +7530,7 @@ __metadata:
     "@babel/parser": "npm:^7.24.5"
     "@babel/traverse": "npm:^7.24.5"
     "@babel/types": "npm:^7.24.5"
-    "@react-spectrum/s2": "npm:1.5.0"
+    "@react-spectrum/s2": "npm:1.5.1"
     "@react-types/shared": "npm:^3.34.0"
     "@types/jscodeshift": "npm:^0.11.11"
     "@types/node": "npm:^24"
@@ -8107,7 +8107,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-spectrum/s2@npm:1.5.0, @react-spectrum/s2@npm:^1.0.0, @react-spectrum/s2@workspace:packages/@react-spectrum/s2":
+"@react-spectrum/s2@npm:1.5.1, @react-spectrum/s2@npm:^1.0.0, @react-spectrum/s2@workspace:packages/@react-spectrum/s2":
   version: 0.0.0-use.local
   resolution: "@react-spectrum/s2@workspace:packages/@react-spectrum/s2"
   dependencies:
