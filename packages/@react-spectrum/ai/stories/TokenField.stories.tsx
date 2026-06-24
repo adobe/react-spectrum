@@ -265,6 +265,7 @@ class TagFieldSegmentList extends TokenSegmentList {
 export const TagField: TokenFieldStory = () => {
   return (
     <TokenField
+      multiline
       defaultValue={
         new TagFieldSegmentList([
           {type: 'token', text: 'Architecture'},

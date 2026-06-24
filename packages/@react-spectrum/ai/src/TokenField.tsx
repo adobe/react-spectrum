@@ -691,7 +691,7 @@ function getDOMOffset(root: Element, pos: Position): [Node, number] {
     return [root, Math.min(root.childNodes.length, pos.index)];
   } else if (child.nodeType === Node.ELEMENT_NODE) {
     // Place the cursor in one of the zero width space nodes.
-    return [child, 0];
+    return [child, pos.offset > 0 ? 2 : 0];
   } else {
     // Place the cursor in the text node.
     return [child, pos.offset];
