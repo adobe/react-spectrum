@@ -30,24 +30,30 @@ interface StatusLightStyleProps {
    * @default 'neutral'
    */
   variant?:
+    | 'accent'
     | 'informative'
     | 'neutral'
     | 'positive'
     | 'notice'
     | 'negative'
-    | 'celery'
-    | 'chartreuse'
-    | 'cyan'
-    | 'fuchsia'
-    | 'purple'
-    | 'magenta'
-    | 'indigo'
-    | 'seafoam'
+    | 'gray'
+    | 'red'
+    | 'orange'
     | 'yellow'
+    | 'chartreuse'
+    | 'celery'
+    | 'green'
+    | 'seafoam'
+    | 'cyan'
+    | 'blue'
+    | 'indigo'
+    | 'purple'
+    | 'fuchsia'
+    | 'magenta'
     | 'pink'
     | 'turquoise'
-    | 'cinnamon'
     | 'brown'
+    | 'cinnamon'
     | 'silver';
   /**
    * The size of the StatusLight.
@@ -103,24 +109,30 @@ const light = style<StatusLightStyleProps & {isSkeleton: boolean}>({
   },
   fill: {
     variant: {
+      accent: 'accent',
       informative: 'informative',
       neutral: 'neutral',
       positive: 'positive',
       notice: 'notice',
       negative: 'negative',
-      celery: 'celery',
-      chartreuse: 'chartreuse',
-      cyan: 'cyan',
-      fuchsia: 'fuchsia',
-      purple: 'purple',
-      magenta: 'magenta',
-      indigo: 'indigo',
-      seafoam: 'seafoam',
+      gray: 'gray',
+      red: 'red',
+      orange: 'orange',
       yellow: 'yellow',
+      chartreuse: 'chartreuse',
+      celery: 'celery',
+      green: 'green',
+      seafoam: 'seafoam',
+      cyan: 'cyan',
+      blue: 'blue',
+      indigo: 'indigo',
+      purple: 'purple',
+      fuchsia: 'fuchsia',
+      magenta: 'magenta',
       pink: 'pink',
       turquoise: 'turquoise',
-      cinnamon: 'cinnamon',
       brown: 'brown',
+      cinnamon: 'cinnamon',
       silver: 'silver'
     },
     isSkeleton: 'gray-200'
