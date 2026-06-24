@@ -86,6 +86,38 @@ describeOrSkip('TokenField browser interactions', () => {
     });
   });
 
+  describe('focus management', () => {
+    function FocusHarness() {
+      let [value, setValue] = React.useState(() => segments(text('hello')));
+      return (
+        <>
+          <input
+            aria-label="Other field"
+            onChange={e => setValue(segments(text(e.target.value)))} />
+          <TokenField aria-label="Focus test" value={value} onChange={setValue}>
+            {segment => <Token>{segment.text}</Token>}
+          </TokenField>
+        </>
+      );
+    }
+
+    it('does not focus the field on mount', async () => {
+      let screen = await render(<FocusHarness />);
+      await expect.element(screen.getByRole('textbox', {name: 'Focus test'})).not.toHaveFocus();
+    });
+
+    it('does not steal focus when the value changes while another element is focused', async () => {
+      let screen = await render(<FocusHarness />);
+      let other = screen.getByRole('textbox', {name: 'Other field'});
+      await userEvent.click(other);
+      await expect.element(other).toHaveFocus();
+      // Typing into the other input updates the TokenField value; focus must stay on the input.
+      await userEvent.type(other, 'x');
+      await expect.element(other).toHaveFocus();
+      await expect.element(screen.getByRole('textbox', {name: 'Focus test'})).not.toHaveFocus();
+    });
+  });
+
   describe('caret movement', () => {
     it('skips over token with ArrowRight from end of preceding text', async () => {
       let {textbox} = await renderControlledTokenField(abTokCd);
@@ -603,6 +635,7 @@ describeOrSkip('TokenField browser interactions', () => {
 
     it('inserts at clicked position in text', async () => {
       let {textbox, getValue} = await renderControlledTokenField(segments(text('hello')));
+      await focusField(textbox);
       let el = textbox.element();
       let textNode = Array.from(el.childNodes).find(n => n.nodeType === Node.TEXT_NODE) as Text;
       let range = document.createRange();
@@ -617,6 +650,7 @@ describeOrSkip('TokenField browser interactions', () => {
 
     it('replaces token when typing after clicking token', async () => {
       let {textbox, getValue} = await renderControlledTokenField(abTokCd);
+      await focusField(textbox);
       await userEvent.click(textbox.getByText('TOK'));
       await waitForSelection(textbox, {index: 0, offset: 2}, {index: 2, offset: 0});
       await userEvent.keyboard('NEW');
