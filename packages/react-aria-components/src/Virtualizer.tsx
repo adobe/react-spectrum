@@ -56,19 +56,15 @@ export interface VirtualizerProps<O> {
   scrollEndThreshold?: number;
 }
 
-interface LayoutContextValue {
+interface VirtualizerOptionsContextValue {
   layout: ILayout<any>;
   layoutOptions?: any;
   shouldObserveItemSize?: boolean;
-}
-
-interface ScrollContextValue {
   scrollEndThreshold?: number;
 }
 
 const VirtualizerContext = createContext<VirtualizerState<any, any> | null>(null);
-const LayoutContext = createContext<LayoutContextValue | null>(null);
-const ScrollContext = createContext<ScrollContextValue | null>(null);
+const VirtualizerOptionsContext = createContext<VirtualizerOptionsContextValue | null>(null);
 
 /**
  * A Virtualizer renders a scrollable collection of data using customizable layouts.
@@ -102,9 +98,9 @@ export function Virtualizer<O>(props: VirtualizerProps<O>): JSX.Element {
 
   return (
     <CollectionRendererContext.Provider value={renderer}>
-      <LayoutContext.Provider value={{layout, layoutOptions, shouldObserveItemSize}}>
-        <ScrollContext.Provider value={{scrollEndThreshold}}>{children}</ScrollContext.Provider>
-      </LayoutContext.Provider>
+      <VirtualizerOptionsContext.Provider value={{layout, layoutOptions, shouldObserveItemSize, scrollEndThreshold}}>
+        {children}
+      </VirtualizerOptionsContext.Provider>
     </CollectionRendererContext.Provider>
   );
 }
@@ -115,8 +111,7 @@ function CollectionRoot({
   scrollRef,
   renderDropIndicator
 }: CollectionRootProps) {
-  let {layout, layoutOptions, shouldObserveItemSize} = useContext(LayoutContext)!;
-  let {scrollEndThreshold} = useContext(ScrollContext)!;
+  let {layout, layoutOptions, shouldObserveItemSize, scrollEndThreshold} = useContext(VirtualizerOptionsContext)!;
   let layoutOptions2 = layout.useLayoutOptions?.();
   let state = useVirtualizerState({
     allowsWindowScrolling: true,
@@ -166,7 +161,7 @@ function CollectionRoot({
 function CollectionBranch({parent, renderDropIndicator}: CollectionBranchProps) {
   let virtualizer = useContext(VirtualizerContext);
   let parentView = virtualizer!.virtualizer.getVisibleView(parent.key)!;
-  let {shouldObserveItemSize} = useContext(LayoutContext)!;
+  let {shouldObserveItemSize} = useContext(VirtualizerOptionsContext)!;
   return renderChildren(
     parentView,
     Array.from(parentView.children),
@@ -186,10 +181,6 @@ function renderChildren(
   );
 }
 
-// Rather than prop drilling shouldObserveItemSize, an alternative would be to create
-// a small context (e.g. VirtualizerOptionsContext) provided in Virtualizer and consumed
-// directly by VirtualizerItem, which would keep these helpers parameter-free and make
-// it easier to pass additional virtualizer-level options in the future.
 function renderWrapper(
   parent: View | null,
   reusableView: View,

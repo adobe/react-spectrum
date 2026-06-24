@@ -256,10 +256,13 @@ export function Thread<T extends object>(props: ThreadProps<T>) {
       return;
     }
 
-    let nearBottom = el.scrollTop >= el.scrollHeight - el.clientHeight - scrollEndThreshold;
+    let nearBottom =
+      anchorTo === 'end'
+        ? el.scrollTop >= el.scrollHeight - el.clientHeight - scrollEndThreshold
+        : el.scrollTop > -100;
     isNearBottomRef.current = nearBottom;
     setIsNearBottom(nearBottom);
-  }, [setIsNearBottom, scrollEndThreshold]);
+  }, [setIsNearBottom, scrollEndThreshold, anchorTo]);
 
   let gridList = (
     <GridList

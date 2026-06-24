@@ -22,7 +22,6 @@ export interface InvalidationContext<O = any> {
   itemSizeChanged?: boolean;
   layoutOptionsChanged?: boolean;
   layoutOptions?: O;
-  isScrolling?: boolean;
 }
 
 export interface ScrollAnchor {

@@ -595,8 +595,7 @@ export class Virtualizer<T extends object, V> {
           sizeChanged,
           itemSizeChanged,
           layoutOptionsChanged,
-          layoutOptions: this._invalidationContext.layoutOptions,
-          isScrolling: this._isScrolling
+          layoutOptions: this._invalidationContext.layoutOptions
         },
         {anchorScrollPosition, scrollEndThreshold}
       );

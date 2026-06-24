@@ -475,6 +475,7 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
     return nodes;
   }
 
+  // TODO: promote to protected once the reversed layout API is more stable and tested
   private buildReversedCollection(): LayoutNode[] {
     let collectionNodes = toArray(this.virtualizer!.collection, node => node.type !== 'content');
     this.assertReversedCollectionSupported(collectionNodes);
@@ -511,7 +512,9 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
     // Unmeasured items only get a full buildNode call if they intersect requestedRect;
     // items outside the visible window get a cheap estimated LayoutNode instead.
     let width = this.virtualizer!.size.width - this.padding * 2;
-    let nodes: LayoutNode[] = new Array(itemNodes.length);
+    let hasLoader = loaderCollectionNode != null;
+    let offset = hasLoader ? 1 : 0;
+    let nodes: LayoutNode[] = new Array(itemNodes.length + offset);
     let currentBottom = contentLength - this.padding;
 
     for (let i = 0; i < itemNodes.length; i++) {
@@ -542,7 +545,7 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
       layoutNode.layoutInfo.allowOverflow = true;
       layoutNode.validRect = layoutNode.layoutInfo.rect.intersection(this.requestedRect);
       this.layoutNodes.set(layoutNode.layoutInfo.key, layoutNode);
-      nodes[i] = layoutNode;
+      nodes[i + offset] = layoutNode;
       currentBottom = y - this.gap;
     }
 
@@ -555,7 +558,7 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
       loaderNode.layoutInfo.allowOverflow = true;
       loaderNode.validRect = loaderNode.layoutInfo.rect.intersection(this.requestedRect);
       this.layoutNodes.set(loaderNode.layoutInfo.key, loaderNode);
-      nodes.unshift(loaderNode);
+      nodes[0] = loaderNode;
     }
 
     return nodes;
