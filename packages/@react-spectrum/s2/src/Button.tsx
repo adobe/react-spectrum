@@ -554,7 +554,8 @@ export const LinkButton = forwardRef(function LinkButton(
             size,
             staticColor,
             isStaticColor: !!staticColor,
-            isPending: false
+            isPending: false,
+            actionError: null
           },
           styles
         )

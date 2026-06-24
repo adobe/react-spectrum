@@ -23,7 +23,7 @@ import {
 import {FormValidationState, useFormValidationState} from '../form/useFormValidationState';
 import {parseColor} from './Color';
 import {useColor} from './useColor';
-import {useControlledState} from '../utils/useControlledState';
+import {useControlledStateAction} from '../utils/useControlledStateAction';
 import {useMemo, useState} from 'react';
 
 export interface ColorFieldProps
@@ -37,6 +37,12 @@ export interface ColorFieldProps
     HelpTextProps {
   /** Handler that is called when the value changes. */
   onChange?: (color: Color | null) => void;
+  /**
+   * Async action that is called when the color changes.
+   * During the action, the field is in a pending state.
+   * Only supported in React 19 and later.
+   */
+  changeAction?: (color: Color | null) => void | Promise<void>;
 }
 
 export interface ColorFieldState extends FormValidationState {
@@ -50,6 +56,8 @@ export interface ColorFieldState extends FormValidationState {
    * Updated based on the `inputValue` as the user types.
    */
   readonly colorValue: Color | null;
+  /** Whether the change action is pending. */
+  readonly isPending: boolean;
   /** The default value of the color field. */
   readonly defaultColorValue: Color | null;
   /** Sets the color value of the field. */
@@ -90,10 +98,11 @@ export function useColorFieldState(props: ColorFieldProps): ColorFieldState {
   let {step} = MIN_COLOR.getChannelRange('red');
 
   let initialDefaultValue = useColor(defaultValue);
-  let [colorValue, setColorValue] = useControlledState<Color | null>(
+  let [colorValue, isPending, setColorValue] = useControlledStateAction<Color | null>(
     useColor(value),
     initialDefaultValue!,
-    onChange
+    onChange,
+    props.changeAction
   );
   let [initialValue] = useState(colorValue);
   let [inputValue, setInputValue] = useState(() =>
@@ -193,6 +202,7 @@ export function useColorFieldState(props: ColorFieldProps): ColorFieldState {
     ...validation,
     validate,
     colorValue,
+    isPending,
     defaultColorValue: initialDefaultValue ?? initialValue,
     setColorValue,
     inputValue,

@@ -175,11 +175,21 @@ export const Tooltip = /*#__PURE__*/ (forwardRef as forwardRefType)(function Too
     return null;
   }
 
-  return (
+  let res = (
     <OverlayContainer portalContainer={UNSTABLE_portalContainer}>
       <TooltipInner {...props} tooltipRef={ref} isExiting={isExiting} />
     </OverlayContainer>
   );
+
+  if (!contextState) {
+    res = (
+      <TooltipTriggerStateContext.Provider value={localState}>
+        {res}
+      </TooltipTriggerStateContext.Provider>
+    );
+  }
+
+  return res;
 });
 
 function TooltipInner(

@@ -68,6 +68,8 @@ export interface DateRangePickerAria extends ValidationResult {
   descriptionProps: DOMAttributes;
   /** Props for the error message element, if any. */
   errorMessageProps: DOMAttributes;
+  /** Props for the progress bar element shown when the action is pending. */
+  progressBarProps: DOMProps;
   /** Props for the popover dialog. */
   dialogProps: AriaDialogProps;
   /** Props for the range calendar within the popover dialog. */
@@ -86,9 +88,10 @@ export function useDateRangePicker<T extends DateValue>(
 ): DateRangePickerAria {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/datepicker');
   let {isInvalid, validationErrors, validationDetails} = state.displayValidation;
-  let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
+  let {labelProps, fieldProps, descriptionProps, errorMessageProps, progressBarProps} = useField({
     ...props,
     labelElementType: 'span',
+    isPending: state.isPending,
     isInvalid,
     errorMessage: props.errorMessage || validationErrors
   });
@@ -260,6 +263,7 @@ export function useDateRangePicker<T extends DateValue>(
     },
     descriptionProps,
     errorMessageProps,
+    progressBarProps,
     calendarProps: {
       autoFocus: true,
       value: state.dateRange?.start && state.dateRange.end ? (state.dateRange as DateRange) : null,

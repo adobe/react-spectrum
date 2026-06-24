@@ -88,12 +88,14 @@ import React, {
   createContext,
   ForwardedRef,
   forwardRef,
+  HTMLAttributes,
   JSX,
   ReactNode,
   useContext,
   useEffect,
   useMemo,
-  useRef
+  useRef,
+  useState
 } from 'react';
 import {SelectableCollectionContext, SelectableCollectionContextValue} from './Autocomplete';
 import {SelectionIndicatorContext} from './SelectionIndicator';
@@ -752,11 +754,35 @@ export const ListBoxLoadMoreItem = createLeafComponent(
       [onLoadMore, scrollOffset, state?.collection]
     );
     useLoadMoreSentinel(memoedLoadMoreProps, sentinelRef);
+
+    return (
+      <>
+        {/* Alway render the sentinel. For now onus is on the user for styling when using flex + gap (this would introduce a gap even though it doesn't take room) */}
+        {/* @ts-ignore - compatibility with React < 19 */}
+        <div style={{position: 'relative', width: 0, height: 0}} inert={inertValue(true)}>
+          <div
+            data-testid="loadMoreSentinel"
+            ref={sentinelRef}
+            style={{position: 'absolute', height: 1, width: 1}}
+          />
+        </div>
+        {isLoading && (
+          <ListBoxLoader {...otherProps} ref={ref}>
+            {item.rendered}
+          </ListBoxLoader>
+        )}
+      </>
+    );
+  }
+);
+
+const ListBoxLoader = createLeafComponent(
+  LoaderNode,
+  function ListBoxLoader(props: HTMLAttributes<HTMLDivElement>, ref: ForwardedRef<HTMLDivElement>) {
     let renderProps = useRenderProps({
-      ...otherProps,
+      ...props,
       id: undefined,
-      children: item.rendered,
-      defaultClassName: 'react-aria-ListBoxLoadingIndicator',
+      defaultClassName: 'react-aria-ListBoxLoadMoreItem',
       values: undefined
     });
 
@@ -770,30 +796,75 @@ export const ListBoxLoadMoreItem = createLeafComponent(
 
     return (
       <>
-        {/* Alway render the sentinel. For now onus is on the user for styling when using flex + gap (this would introduce a gap even though it doesn't take room) */}
-        {/* @ts-ignore - compatibility with React < 19 */}
-        <div style={{position: 'relative', width: 0, height: 0}} inert={inertValue(true)}>
-          <div
-            data-testid="loadMoreSentinel"
-            ref={sentinelRef}
-            style={{position: 'absolute', height: 1, width: 1}}
-          />
-        </div>
-        {isLoading && renderProps.children && (
-          <>
-            {/* oxlint-disable jsx-a11y/role-has-required-aria-props -- loader row is not selectable */}
-            <dom.div
-              {...mergeProps(filterDOMProps(props, {global: true}), optionProps)}
-              {...renderProps}
-              // aria-selected isn't needed here since this option is not selectable.
-              role="option"
-              ref={ref as ForwardedRef<HTMLDivElement>}>
-              {renderProps.children}
-            </dom.div>
-            {/* oxlint-enable jsx-a11y/role-has-required-aria-props */}
-          </>
-        )}
+        {/* oxlint-disable jsx-a11y/role-has-required-aria-props -- loader row is not selectable */}
+        <dom.div
+          {...mergeProps(filterDOMProps(props, {global: true}), optionProps)}
+          {...renderProps}
+          // aria-selected isn't needed here since this option is not selectable.
+          role="option"
+          ref={ref}>
+          {renderProps.children}
+        </dom.div>
+        {/* oxlint-enable jsx-a11y/role-has-required-aria-props */}
       </>
     );
   }
 );
+
+export interface ListBoxSuspenseProps {
+  fallback: ReactNode;
+  renderError?: (error: unknown) => ReactNode;
+  loading?: 'eager' | 'lazy';
+  children: ReactNode;
+}
+
+export function ListBoxSuspense({fallback, renderError, loading, children}: ListBoxSuspenseProps) {
+  let [isVisible, setVisible] = useState(false);
+
+  if (loading === 'lazy' && !isVisible) {
+    return <ListBoxLoadMoreItem onLoadMore={() => setVisible(true)} />;
+  }
+
+  let res = (
+    <React.Suspense fallback={<ListBoxLoader>{fallback}</ListBoxLoader>}>{children}</React.Suspense>
+  );
+
+  if (renderError) {
+    res = (
+      <ErrorBoundary renderError={err => <ListBoxLoader>{renderError(err)}</ListBoxLoader>}>
+        {res}
+      </ErrorBoundary>
+    );
+  }
+
+  return res;
+}
+
+interface ErrorBoundaryProps {
+  children: ReactNode;
+  renderError: (error: unknown) => ReactNode;
+}
+
+interface ErrorBoundaryState {
+  error: unknown | null;
+}
+
+class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
+  state = {
+    error: null
+  };
+
+  static getDerivedStateFromError(error: unknown) {
+    return {error};
+  }
+
+  componentDidCatch(): void {}
+
+  render(): ReactNode {
+    if (this.state.error) {
+      return this.props.renderError(this.state.error);
+    }
+
+    return this.props.children;
+  }
+}

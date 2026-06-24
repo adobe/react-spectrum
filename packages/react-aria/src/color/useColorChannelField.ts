@@ -31,6 +31,7 @@ export function useColorChannelField(
   return useNumberField(
     {
       ...props,
+      changeAction: undefined,
       value: undefined,
       defaultValue: undefined,
       onChange: undefined,

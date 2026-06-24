@@ -96,7 +96,8 @@ module.exports = {
     '^@react-spectrum/s2/icons/.+$': '<rootDir>/__mocks__/svg.js',
     '\\.(jpg|jpeg|png|gif|eot|otf|webp|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$':
       '<rootDir>/__mocks__/fileMock.js',
-    '\\.(css|styl)$': 'identity-obj-proxy'
+    '\\.(css|styl)$': 'identity-obj-proxy',
+    'vanilla-starter/(.*)': '<rootDir>/starters/docs/src/$1'
   },
 
   // An array of regexp pattern strings, matched against all module paths before considered 'visible' to the module loader

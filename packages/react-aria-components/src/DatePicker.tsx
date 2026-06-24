@@ -49,6 +49,7 @@ import {HiddenDateInput} from './HiddenDateInput';
 import {LabelContext} from './Label';
 import {mergeProps} from 'react-aria/mergeProps';
 import {PopoverContext} from './Popover';
+import {ProgressBarContext} from './ProgressBar';
 import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
 import {TextContext} from './Text';
 import {useFocusRing} from 'react-aria/useFocusRing';
@@ -90,6 +91,12 @@ export interface DatePickerRenderProps {
    * @selector [data-required]
    */
   isRequired: boolean;
+  /**
+   * Whether the date picker is currently in a pending state.
+   *
+   * @selector [data-pending]
+   */
+  isPending: boolean;
   /**
    * Whether the date picker's popover is currently open.
    *
@@ -181,6 +188,7 @@ export const DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
     buttonProps,
     dialogProps,
     calendarProps,
+    progressBarProps,
     descriptionProps,
     errorMessageProps,
     ...validation
@@ -203,6 +211,7 @@ export const DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
       isFocusVisible,
       isDisabled: props.isDisabled || false,
       isInvalid: state.isInvalid,
+      isPending: state.isPending,
       isOpen: state.isOpen,
       isReadOnly: props.isReadOnly || false,
       isRequired: props.isRequired || false
@@ -242,7 +251,8 @@ export const DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
             }
           }
         ],
-        [FieldErrorContext, validation]
+        [FieldErrorContext, validation],
+        [ProgressBarContext, progressBarProps]
       ]}>
       <dom.div
         {...mergeProps(DOMProps, renderProps, focusProps)}
@@ -252,6 +262,7 @@ export const DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
         data-invalid={state.isInvalid || undefined}
         data-focus-visible={isFocusVisible || undefined}
         data-disabled={props.isDisabled || undefined}
+        data-pending={state.isPending || undefined}
         data-readonly={props.isReadOnly || undefined}
         data-required={props.isRequired || undefined}
         data-open={state.isOpen || undefined}
@@ -293,6 +304,7 @@ export const DateRangePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(
       buttonProps,
       dialogProps,
       calendarProps,
+      progressBarProps,
       descriptionProps,
       errorMessageProps,
       ...validation
@@ -315,6 +327,7 @@ export const DateRangePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(
         isFocusVisible,
         isDisabled: props.isDisabled || false,
         isInvalid: state.isInvalid,
+        isPending: state.isPending,
         isOpen: state.isOpen,
         isReadOnly: props.isReadOnly || false,
         isRequired: props.isRequired || false
@@ -362,7 +375,8 @@ export const DateRangePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(
               }
             }
           ],
-          [FieldErrorContext, validation]
+          [FieldErrorContext, validation],
+          [ProgressBarContext, progressBarProps]
         ]}>
         <dom.div
           {...mergeProps(DOMProps, renderProps, focusProps)}
@@ -372,6 +386,7 @@ export const DateRangePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(
           data-invalid={state.isInvalid || undefined}
           data-focus-visible={isFocusVisible || undefined}
           data-disabled={props.isDisabled || undefined}
+          data-pending={state.isPending || undefined}
           data-readonly={props.isReadOnly || undefined}
           data-required={props.isRequired || undefined}
           data-open={state.isOpen || undefined}

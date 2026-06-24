@@ -20,6 +20,7 @@ import {useEffectEvent} from '../utils/useEffectEvent';
 interface FormattedTextFieldState {
   validate: (val: string) => boolean;
   setInputValue: (val: string) => void;
+  isPending?: boolean;
 }
 
 function supportsNativeBeforeInputEvent() {
@@ -135,8 +136,15 @@ export function useFormattedTextField(
     inputProps: textFieldProps,
     descriptionProps,
     errorMessageProps,
+    progressBarProps,
     ...validation
-  } = useTextField(props, inputRef);
+  } = useTextField(
+    {
+      ...props,
+      isPending: state.isPending
+    },
+    inputRef
+  );
 
   let compositionStartState = useRef<{
     value: string;
@@ -176,6 +184,7 @@ export function useFormattedTextField(
     labelProps,
     descriptionProps,
     errorMessageProps,
+    progressBarProps,
     ...validation
   };
 }

@@ -32,7 +32,7 @@ import {FormValidationState, useFormValidationState} from '../form/useFormValida
 import {getPlaceholder} from './placeholders';
 import {IncompleteDate} from './IncompleteDate';
 import {NumberFormatter} from '@internationalized/number';
-import {useControlledState} from '../utils/useControlledState';
+import {useControlledStateAction} from '../utils/useControlledStateAction';
 import {useMemo, useState} from 'react';
 import {ValidationState} from '@react-types/shared';
 
@@ -71,6 +71,8 @@ export interface DateFieldState extends FormValidationState {
   value: DateValue | null;
   /** The default field value. */
   defaultValue: DateValue | null;
+  /** Whether the change action is pending. */
+  isPending: boolean;
   /** The current value, converted to a native JavaScript `Date` object. */
   dateValue: Date;
   /** The calendar system currently in use. */
@@ -227,11 +229,10 @@ export function useDateFieldState<T extends DateValue = DateValue>(
     return [calendar, opts.hourCycle!];
   }, [locale, props.hourCycle, createCalendar]);
 
-  let [value, setDate] = useControlledState<DateValue | null, MappedDateValue<T> | null>(
-    props.value,
-    props.defaultValue ?? null,
-    props.onChange
-  );
+  let [value, isPending, setDate] = useControlledStateAction<
+    DateValue | null,
+    MappedDateValue<T> | null
+  >(props.value, props.defaultValue ?? null, props.onChange, props.changeAction);
 
   let [initialValue] = useState(value);
   let calendarValue = useMemo(() => convertValue(value, calendar) ?? null, [value, calendar]);
@@ -382,6 +383,7 @@ export function useDateFieldState<T extends DateValue = DateValue>(
     ...validation,
     value: calendarValue,
     defaultValue: props.defaultValue ?? initialValue,
+    isPending,
     dateValue,
     calendar,
     setValue,

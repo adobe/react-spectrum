@@ -27,7 +27,7 @@ import {AriaSearchFieldProps, useSearchField} from '../searchfield/useSearchFiel
 import {ComboBoxState, MenuTriggerAction} from 'react-stately/useComboBoxState';
 import {InputHTMLAttributes} from 'react';
 import {mergeProps} from '../utils/mergeProps';
-import {SearchFieldProps} from 'react-stately/useSearchFieldState';
+import {SearchFieldProps, useSearchFieldState} from 'react-stately/useSearchFieldState';
 import {useComboBox} from '../combobox/useComboBox';
 
 export interface SearchAutocompleteProps<T>
@@ -135,31 +135,31 @@ export function useSearchAutocomplete<T>(
     ...otherProps
   } = props;
 
+  let searchState = useSearchFieldState({
+    value: state.inputValue,
+    onChange: state.setInputValue,
+    onClear: () => {
+      state.setInputValue('');
+      if (onClear) {
+        onClear();
+      }
+    },
+    onSubmit: value => {
+      // Prevent submission from search field if menu item was selected
+      if (state.selectionManager.focusedKey === null) {
+        onSubmit(value, null);
+      }
+    }
+  });
+
   let {inputProps, clearButtonProps} = useSearchField(
     {
       ...otherProps,
-      value: state.inputValue,
-      onChange: state.setInputValue,
       autoComplete: 'off',
-      onClear: () => {
-        state.setInputValue('');
-        if (onClear) {
-          onClear();
-        }
-      },
-      onSubmit: value => {
-        // Prevent submission from search field if menu item was selected
-        if (state.selectionManager.focusedKey === null) {
-          onSubmit(value, null);
-        }
-      },
       onKeyDown,
       onKeyUp
     },
-    {
-      value: state.inputValue,
-      setValue: state.setInputValue
-    },
+    searchState,
     inputRef
   );
 

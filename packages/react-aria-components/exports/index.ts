@@ -14,6 +14,7 @@
 // to import it from a React Server Component in a framework like Next.js.
 import 'client-only';
 
+export {Alert, AlertContext} from '../src/Alert';
 export {
   Autocomplete,
   AutocompleteContext,
@@ -294,6 +295,7 @@ export type {CollectionProps} from 'react-aria/Collection';
 export type {Placement} from 'react-aria/useOverlayPosition';
 export type {VisuallyHiddenProps} from 'react-aria/VisuallyHidden';
 
+export type {AlertProps, AlertRenderProps} from '../src/Alert';
 export type {AutocompleteProps, SelectableCollectionContextValue} from '../src/Autocomplete';
 export type {BreadcrumbsProps, BreadcrumbProps, BreadcrumbRenderProps} from '../src/Breadcrumbs';
 export type {ButtonProps, ButtonRenderProps} from '../src/Button';

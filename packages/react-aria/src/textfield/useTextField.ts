@@ -14,16 +14,10 @@ import {
   AriaLabelingProps,
   AriaValidationProps,
   DOMAttributes,
+  DOMProps,
   FocusableDOMProps,
-  FocusableProps,
-  HelpTextProps,
-  InputBase,
-  LabelableProps,
-  TextInputBase,
   TextInputDOMProps,
-  Validation,
-  ValidationResult,
-  ValueBase
+  ValidationResult
 } from '@react-types/shared';
 import {filterDOMProps} from '../utils/filterDOMProps';
 import {getEventTarget} from '../utils/shadowdom/DOMFunctions';
@@ -36,12 +30,11 @@ import React, {
   RefObject,
   useState
 } from 'react';
-import {useControlledState} from 'react-stately/useControlledState';
+import {TextFieldProps, TextFieldState, useTextFieldState} from 'react-stately/useTextFieldState';
 import {useField} from '../label/useField';
 import {useFocusable} from '../interactions/useFocusable';
 import {useFormReset} from '../utils/useFormReset';
 import {useFormValidation} from '../form/useFormValidation';
-import {useFormValidationState} from 'react-stately/private/form/useFormValidationState';
 
 /**
  * A map of HTML element names and their interface types.
@@ -87,15 +80,7 @@ type TextFieldHTMLAttributesType = Pick<IntrinsicHTMLAttributes, TextFieldIntrin
  */
 type TextFieldInputProps<T extends TextFieldIntrinsicElements> = TextFieldHTMLAttributesType[T];
 
-export interface TextFieldProps<T = HTMLInputElement>
-  extends
-    InputBase,
-    Validation<string>,
-    HelpTextProps,
-    FocusableProps<T>,
-    TextInputBase,
-    ValueBase<string>,
-    LabelableProps {}
+export type {TextFieldProps};
 
 export interface AriaTextFieldProps<T = HTMLInputElement>
   extends
@@ -155,6 +140,8 @@ export interface AriaTextFieldOptions<
    * [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/enterkeyhint).
    */
   enterKeyHint?: 'enter' | 'done' | 'go' | 'next' | 'previous' | 'search' | 'send';
+  /** Whether an action is pending. */
+  isPending?: boolean;
 }
 
 /**
@@ -177,6 +164,8 @@ export interface TextFieldAria<
   descriptionProps: DOMAttributes;
   /** Props for the text field's error message element, if any. */
   errorMessageProps: DOMAttributes;
+  /** Props for the progress bar element shown when the action is pending. */
+  progressBarProps: DOMProps;
 }
 
 /**
@@ -188,6 +177,14 @@ export interface TextFieldAria<
 export function useTextField<T extends TextFieldIntrinsicElements = DefaultElementType>(
   props: AriaTextFieldOptions<T>,
   ref: TextFieldRefObject<T>
+): TextFieldAria<T>;
+export function useTextField<T extends TextFieldIntrinsicElements = DefaultElementType>(
+  props: AriaTextFieldOptions<T>,
+  state: TextFieldState,
+  ref: TextFieldRefObject<T>
+): TextFieldAria<T>;
+export function useTextField<T extends TextFieldIntrinsicElements = DefaultElementType>(
+  props: AriaTextFieldOptions<T>
 ): TextFieldAria<T> {
   let {
     inputElementType = 'input',
@@ -197,19 +194,15 @@ export function useTextField<T extends TextFieldIntrinsicElements = DefaultEleme
     type = 'text',
     validationBehavior = 'aria'
   } = props;
-  let [value, setValue] = useControlledState<string>(
-    props.value,
-    props.defaultValue || '',
-    props.onChange
-  );
+  // Backward compatibility - we used to not require the state argument.
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  let state: TextFieldState = arguments.length === 3 ? arguments[1] : useTextFieldState(props);
+  let ref: TextFieldRefObject<T> = arguments.length === 3 ? arguments[2] : arguments[1];
   let {focusableProps} = useFocusable<TextFieldHTMLElementType[T]>(props, ref);
-  let validationState = useFormValidationState({
+  let {isInvalid, validationErrors, validationDetails} = state.displayValidation;
+  let {labelProps, fieldProps, descriptionProps, errorMessageProps, progressBarProps} = useField({
     ...props,
-    value
-  });
-  let {isInvalid, validationErrors, validationDetails} = validationState.displayValidation;
-  let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
-    ...props,
+    isPending: state.isPending || props.isPending,
     isInvalid,
     errorMessage: props.errorMessage || validationErrors
   });
@@ -220,9 +213,9 @@ export function useTextField<T extends TextFieldIntrinsicElements = DefaultEleme
     pattern: props.pattern
   };
 
-  let [initialValue] = useState(value);
-  useFormReset(ref, props.defaultValue ?? initialValue, setValue);
-  useFormValidation(props, validationState, ref);
+  let [initialValue] = useState(state.value);
+  useFormReset(ref, props.defaultValue ?? initialValue, state.setValue);
+  useFormValidation(props, state, ref);
 
   return {
     labelProps,
@@ -237,8 +230,8 @@ export function useTextField<T extends TextFieldIntrinsicElements = DefaultEleme
       'aria-autocomplete': props['aria-autocomplete'],
       'aria-haspopup': props['aria-haspopup'],
       'aria-controls': props['aria-controls'],
-      value,
-      onChange: (e: ChangeEvent<HTMLInputElement>) => setValue(getEventTarget(e).value),
+      value: state.value,
+      onChange: (e: ChangeEvent<HTMLInputElement>) => state.setValue(getEventTarget(e).value),
       autoComplete: props.autoComplete,
       autoCapitalize: props.autoCapitalize,
       maxLength: props.maxLength,
@@ -272,6 +265,7 @@ export function useTextField<T extends TextFieldIntrinsicElements = DefaultEleme
     }),
     descriptionProps,
     errorMessageProps,
+    progressBarProps,
     isInvalid,
     validationErrors,
     validationDetails

@@ -35,6 +35,7 @@ import {
 import {filterDOMProps} from '../utils/filterDOMProps';
 import {flushSync} from 'react-dom';
 import {getActiveElement, getEventTarget} from '../utils/shadowdom/DOMFunctions';
+// @ts-ignore
 import intlMessages from '../../intl/numberfield/*.json';
 import {isAndroid, isIOS, isIPhone} from '../utils/platform';
 import {mergeProps} from '../utils/mergeProps';
@@ -84,6 +85,8 @@ export interface NumberFieldAria extends ValidationResult {
   descriptionProps: DOMAttributes;
   /** Props for the number field's error message element, if any. */
   errorMessageProps: DOMAttributes;
+  /** Props for the progress bar element shown when the action is pending. */
+  progressBarProps: DOMProps;
 }
 
 /**
@@ -278,11 +281,13 @@ export function useNumberField(
     labelProps,
     inputProps: textFieldProps,
     descriptionProps,
-    errorMessageProps
+    errorMessageProps,
+    progressBarProps
   } = useFormattedTextField(
     {
       ...otherProps,
       ...domProps,
+      changeAction: undefined,
       // These props are added to a hidden input rather than the formatted textfield.
       name: undefined,
       form: undefined,
@@ -424,6 +429,7 @@ export function useNumberField(
     decrementButtonProps,
     errorMessageProps,
     descriptionProps,
+    progressBarProps,
     isInvalid,
     validationErrors,
     validationDetails

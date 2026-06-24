@@ -55,6 +55,7 @@ interface FormValidationProps<T> extends Validation<T> {
   builtinValidation?: ValidationResult;
   name?: string | string[];
   value: T | null;
+  actionError?: unknown;
 }
 
 export interface FormValidationState {
@@ -101,6 +102,7 @@ function useFormValidationStateImpl<T>(props: FormValidationProps<T>): FormValid
     isInvalid,
     validationState,
     name,
+    actionError,
     value,
     builtinValidation,
     validate,
@@ -112,12 +114,25 @@ function useFormValidationStateImpl<T>(props: FormValidationProps<T>): FormValid
     isInvalid ||= validationState === 'invalid';
   }
 
+  let actionErrorMessage: string | null = '';
+  if (actionError) {
+    if (
+      typeof actionError === 'object' &&
+      'message' in actionError &&
+      typeof actionError.message === 'string'
+    ) {
+      actionErrorMessage = actionError.message;
+    } else if (typeof actionError === 'string') {
+      actionErrorMessage = actionError;
+    }
+  }
+
   // If the isInvalid prop is controlled, update validation result in realtime.
   let controlledError: ValidationResult | null =
-    isInvalid !== undefined
+    isInvalid !== undefined || actionError != null
       ? {
-          isInvalid,
-          validationErrors: [],
+          isInvalid: isInvalid || actionError != null,
+          validationErrors: actionErrorMessage ? [actionErrorMessage] : [],
           validationDetails: CUSTOM_VALIDITY_STATE
         }
       : null;

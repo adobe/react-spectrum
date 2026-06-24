@@ -58,7 +58,7 @@ export function useToggleButtonGroup(
 
 export interface AriaToggleButtonGroupItemProps<E extends ElementType = 'button'> extends Omit<
   AriaToggleButtonProps<E>,
-  'id' | 'isSelected' | 'defaultSelected' | 'onChange'
+  'id' | 'isSelected' | 'defaultSelected' | 'onChange' | 'changeAction' | 'isPending'
 > {
   /** An identifier for the item in the `selectedKeys` of a ToggleButtonGroup. */
   id: Key;
@@ -113,6 +113,7 @@ export function useToggleButtonGroupItem(
   let toggleState: ToggleState = {
     isSelected: state.selectedKeys.has(props.id),
     defaultSelected: false,
+    isPending: false, // ???
     setSelected(isSelected) {
       state.setSelected(props.id, isSelected);
     },
@@ -121,15 +122,16 @@ export function useToggleButtonGroupItem(
     }
   };
 
-  let {isPressed, isSelected, isDisabled, buttonProps} = useToggleButton(
-    {
-      ...props,
-      id: undefined,
-      isDisabled: props.isDisabled || state.isDisabled
-    },
-    toggleState,
-    ref
-  );
+  let {isPressed, isSelected, isDisabled, isPending, buttonProps, progressBarProps, actionError} =
+    useToggleButton(
+      {
+        ...props,
+        id: undefined,
+        isDisabled: props.isDisabled || state.isDisabled
+      },
+      toggleState,
+      ref
+    );
   if (state.selectionMode === 'single') {
     buttonProps.role = 'radio';
     buttonProps['aria-checked'] = toggleState.isSelected;
@@ -140,6 +142,9 @@ export function useToggleButtonGroupItem(
     isPressed,
     isSelected,
     isDisabled,
-    buttonProps
+    buttonProps,
+    progressBarProps,
+    isPending,
+    actionError
   };
 }

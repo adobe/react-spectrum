@@ -44,6 +44,7 @@ import {HoverEvents} from '@react-types/shared';
 import {Input, InputContext} from './Input';
 import {LabelContext} from './Label';
 import {mergeProps} from 'react-aria/mergeProps';
+import {ProgressBarContext} from './ProgressBar';
 import React, {
   cloneElement,
   createContext,
@@ -91,6 +92,12 @@ export interface DateFieldRenderProps {
    * @selector [data-required]
    */
   isRequired: boolean;
+  /**
+   * Whether the date field is currently in a pending state.
+   *
+   * @selector [data-pending]
+   */
+  isPending: boolean;
 }
 export interface DateFieldProps<T extends DateValue>
   extends
@@ -157,17 +164,24 @@ export const DateField = /*#__PURE__*/ (forwardRef as forwardRefType)(function D
   let fieldRef = useRef<HTMLDivElement>(null);
   let [labelRef, label] = useSlot(!props['aria-label'] && !props['aria-labelledby']);
   let inputRef = useRef<HTMLInputElement>(null);
-  let {labelProps, fieldProps, inputProps, descriptionProps, errorMessageProps, ...validation} =
-    useDateField(
-      {
-        ...removeDataAttributes(props),
-        label,
-        inputRef,
-        validationBehavior
-      },
-      state,
-      fieldRef
-    );
+  let {
+    labelProps,
+    fieldProps,
+    inputProps,
+    progressBarProps,
+    descriptionProps,
+    errorMessageProps,
+    ...validation
+  } = useDateField(
+    {
+      ...removeDataAttributes(props),
+      label,
+      inputRef,
+      validationBehavior
+    },
+    state,
+    fieldRef
+  );
 
   let renderProps = useRenderProps({
     ...removeDataAttributes(props),
@@ -175,6 +189,7 @@ export const DateField = /*#__PURE__*/ (forwardRef as forwardRefType)(function D
       state,
       isInvalid: state.isInvalid,
       isDisabled: state.isDisabled,
+      isPending: state.isPending,
       isReadOnly: state.isReadOnly,
       isRequired: props.isRequired || false
     },
@@ -203,7 +218,8 @@ export const DateField = /*#__PURE__*/ (forwardRef as forwardRefType)(function D
             }
           }
         ],
-        [FieldErrorContext, validation]
+        [FieldErrorContext, validation],
+        [ProgressBarContext, progressBarProps]
       ]}>
       <dom.div
         {...DOMProps}
@@ -212,6 +228,7 @@ export const DateField = /*#__PURE__*/ (forwardRef as forwardRefType)(function D
         slot={props.slot || undefined}
         data-invalid={state.isInvalid || undefined}
         data-disabled={state.isDisabled || undefined}
+        data-pending={state.isPending || undefined}
         data-readonly={state.isReadOnly || undefined}
         data-required={props.isRequired || undefined}
       />
@@ -245,17 +262,24 @@ export const TimeField = /*#__PURE__*/ (forwardRef as forwardRefType)(function T
   let fieldRef = useRef<HTMLDivElement>(null);
   let [labelRef, label] = useSlot(!props['aria-label'] && !props['aria-labelledby']);
   let inputRef = useRef<HTMLInputElement>(null);
-  let {labelProps, fieldProps, inputProps, descriptionProps, errorMessageProps, ...validation} =
-    useTimeField(
-      {
-        ...removeDataAttributes(props),
-        label,
-        inputRef,
-        validationBehavior
-      },
-      state,
-      fieldRef
-    );
+  let {
+    labelProps,
+    fieldProps,
+    inputProps,
+    progressBarProps,
+    descriptionProps,
+    errorMessageProps,
+    ...validation
+  } = useTimeField(
+    {
+      ...removeDataAttributes(props),
+      label,
+      inputRef,
+      validationBehavior
+    },
+    state,
+    fieldRef
+  );
 
   let renderProps = useRenderProps({
     ...props,
@@ -263,6 +287,7 @@ export const TimeField = /*#__PURE__*/ (forwardRef as forwardRefType)(function T
       state,
       isInvalid: state.isInvalid,
       isDisabled: state.isDisabled,
+      isPending: state.isPending,
       isReadOnly: state.isReadOnly,
       isRequired: props.isRequired || false
     },
@@ -291,7 +316,8 @@ export const TimeField = /*#__PURE__*/ (forwardRef as forwardRefType)(function T
             }
           }
         ],
-        [FieldErrorContext, validation]
+        [FieldErrorContext, validation],
+        [ProgressBarContext, progressBarProps]
       ]}>
       <dom.div
         {...DOMProps}
@@ -300,6 +326,7 @@ export const TimeField = /*#__PURE__*/ (forwardRef as forwardRefType)(function T
         slot={props.slot || undefined}
         data-invalid={state.isInvalid || undefined}
         data-disabled={state.isDisabled || undefined}
+        data-pending={state.isPending || undefined}
         data-readonly={state.isReadOnly || undefined}
         data-required={props.isRequired || undefined}
       />

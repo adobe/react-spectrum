@@ -2,7 +2,7 @@ import {Color, ColorChannel, ColorSpace} from './types';
 import {ColorFieldProps} from './useColorFieldState';
 import {NumberFieldState, useNumberFieldState} from '../numberfield/useNumberFieldState';
 import {useColor} from './useColor';
-import {useControlledState} from '../utils/useControlledState';
+import {useControlledStateAction} from '../utils/useControlledStateAction';
 import {useMemo, useState} from 'react';
 
 export interface ColorChannelFieldProps extends ColorFieldProps {
@@ -33,10 +33,11 @@ export function useColorChannelFieldState(
   let {channel, colorSpace, locale} = props;
   let initialValue = useColor(props.value);
   let initialDefaultValue = useColor(props.defaultValue);
-  let [colorValue, setColor] = useControlledState(
+  let [colorValue, isPending, setColor] = useControlledStateAction(
     initialValue,
     initialDefaultValue ?? null,
-    props.onChange
+    props.onChange,
+    props.changeAction
   );
   let color = useConvertColor(colorValue, colorSpace);
   let [initialColorValue] = useState(colorValue);
@@ -67,6 +68,7 @@ export function useColorChannelFieldState(
 
   return {
     ...numberFieldState,
+    isPending,
     colorValue: color,
     defaultColorValue,
     setColorValue: setColor

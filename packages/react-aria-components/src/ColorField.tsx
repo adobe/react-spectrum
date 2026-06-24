@@ -11,7 +11,6 @@
  */
 
 import {AriaColorFieldProps, useColorChannelField, useColorField} from 'react-aria/useColorField';
-
 import {
   ClassNameOrFunction,
   ContextValue,
@@ -27,16 +26,18 @@ import {
 } from './utils';
 import {ColorChannel, ColorSpace} from 'react-stately/Color';
 import {
+  ColorChannelFieldState,
   ColorFieldState,
   useColorChannelFieldState,
   useColorFieldState
 } from 'react-stately/useColorFieldState';
+import {DOMProps, GlobalDOMAttributes, InputDOMProps, ValidationResult} from '@react-types/shared';
 import {FieldErrorContext} from './FieldError';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
-import {GlobalDOMAttributes, InputDOMProps, ValidationResult} from '@react-types/shared';
 import {GroupContext} from './Group';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
+import {ProgressBarContext} from './ProgressBar';
 import React, {
   createContext,
   ForwardedRef,
@@ -82,9 +83,15 @@ export interface ColorFieldRenderProps {
    */
   channel: ColorChannel | 'hex';
   /**
+   * Whether the color field is currently in a pending state.
+   *
+   * @selector [data-pending]
+   */
+  isPending: boolean;
+  /**
    * State of the color field.
    */
-  state: ColorFieldState;
+  state: ColorFieldState | ColorChannelFieldState;
 }
 
 export interface ColorFieldProps
@@ -154,16 +161,22 @@ function ColorChannelField(props: ColorChannelFieldProps) {
 
   let inputRef = useRef<HTMLInputElement>(null);
   let [labelRef, label] = useSlot(!props['aria-label'] && !props['aria-labelledby']);
-  let {labelProps, inputProps, descriptionProps, errorMessageProps, ...validation} =
-    useColorChannelField(
-      {
-        ...removeDataAttributes(props),
-        label,
-        validationBehavior: props.validationBehavior ?? 'native'
-      },
-      state,
-      inputRef
-    );
+  let {
+    labelProps,
+    inputProps,
+    progressBarProps,
+    descriptionProps,
+    errorMessageProps,
+    ...validation
+  } = useColorChannelField(
+    {
+      ...removeDataAttributes(props),
+      label,
+      validationBehavior: props.validationBehavior ?? 'native'
+    },
+    state,
+    inputRef
+  );
 
   return (
     <>
@@ -175,6 +188,7 @@ function ColorChannelField(props: ColorChannelFieldProps) {
         inputRef,
         labelProps,
         labelRef,
+        progressBarProps,
         descriptionProps,
         errorMessageProps,
         validation
@@ -203,7 +217,14 @@ function HexColorField(props: HexColorFieldProps) {
 
   let inputRef = useRef<HTMLInputElement>(null);
   let [labelRef, label] = useSlot(!props['aria-label'] && !props['aria-labelledby']);
-  let {labelProps, inputProps, descriptionProps, errorMessageProps, ...validation} = useColorField(
+  let {
+    labelProps,
+    inputProps,
+    progressBarProps,
+    descriptionProps,
+    errorMessageProps,
+    ...validation
+  } = useColorField(
     {
       ...removeDataAttributes(props),
       label,
@@ -221,6 +242,7 @@ function HexColorField(props: HexColorFieldProps) {
     inputRef,
     labelProps,
     labelRef,
+    progressBarProps,
     descriptionProps,
     errorMessageProps,
     validation
@@ -229,12 +251,13 @@ function HexColorField(props: HexColorFieldProps) {
 
 function useChildren(
   props: ColorFieldProps,
-  state: ColorFieldState,
+  state: ColorFieldState | ColorChannelFieldState,
   ref: ForwardedRef<HTMLDivElement>,
   inputProps: InputHTMLAttributes<HTMLElement>,
   inputRef: Ref<HTMLInputElement>,
   labelProps: LabelHTMLAttributes<HTMLLabelElement>,
   labelRef: Ref<HTMLLabelElement>,
+  progressBarProps: DOMProps,
   descriptionProps: HTMLAttributes<HTMLElement>,
   errorMessageProps: HTMLAttributes<HTMLElement>,
   validation: ValidationResult
@@ -246,6 +269,7 @@ function useChildren(
       channel: props.channel || 'hex',
       isDisabled: props.isDisabled || false,
       isInvalid: validation.isInvalid || false,
+      isPending: state.isPending,
       isReadOnly: props.isReadOnly || false,
       isRequired: props.isRequired || false
     },
@@ -278,7 +302,8 @@ function useChildren(
             }
           }
         ],
-        [FieldErrorContext, validation]
+        [FieldErrorContext, validation],
+        [ProgressBarContext, progressBarProps]
       ]}>
       <dom.div
         {...DOMProps}
@@ -288,6 +313,7 @@ function useChildren(
         data-channel={props.channel || 'hex'}
         data-disabled={props.isDisabled || undefined}
         data-invalid={validation.isInvalid || undefined}
+        data-pending={state.isPending || undefined}
         data-readonly={props.isReadOnly || undefined}
         data-required={props.isRequired || undefined}
       />

@@ -11,7 +11,6 @@
  */
 
 import {AriaToggleButtonProps, useToggleButton} from 'react-aria/useToggleButton';
-
 import {ButtonRenderProps} from './Button';
 import {
   ClassNameOrFunction,
@@ -26,6 +25,7 @@ import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {forwardRefType, GlobalDOMAttributes, Key} from '@react-types/shared';
 import {HoverEvents} from '@react-types/shared';
 import {mergeProps} from 'react-aria/mergeProps';
+import {ProgressBarContext} from './ProgressBar';
 import React, {createContext, ForwardedRef, forwardRef, useContext} from 'react';
 import {SelectionIndicatorContext} from './SelectionIndicator';
 import {ToggleGroupStateContext} from './ToggleButtonGroup';
@@ -34,7 +34,7 @@ import {useFocusRing} from 'react-aria/useFocusRing';
 import {useHover} from 'react-aria/useHover';
 import {useToggleButtonGroupItem} from 'react-aria/useToggleButtonGroup';
 
-export interface ToggleButtonRenderProps extends Omit<ButtonRenderProps, 'isPending'> {
+export interface ToggleButtonRenderProps extends ButtonRenderProps {
   /**
    * Whether the button is currently selected.
    *
@@ -93,7 +93,7 @@ export const ToggleButton = /*#__PURE__*/ (forwardRef as forwardRefType)(functio
       : props
   );
 
-  let {buttonProps, isPressed, isSelected, isDisabled} =
+  let {buttonProps, progressBarProps, isPressed, isSelected, isDisabled, isPending, actionError} =
     groupState && props.id != null
       ? // eslint-disable-next-line react-hooks/rules-of-hooks
         useToggleButtonGroupItem({...props, id: props.id}, groupState, ref)
@@ -116,7 +116,9 @@ export const ToggleButton = /*#__PURE__*/ (forwardRef as forwardRefType)(functio
       isSelected: state.isSelected,
       isFocusVisible,
       isDisabled,
-      state
+      isPending,
+      state,
+      actionError
     },
     defaultClassName: 'react-aria-ToggleButton'
   });
@@ -135,9 +137,12 @@ export const ToggleButton = /*#__PURE__*/ (forwardRef as forwardRefType)(functio
       data-pressed={isPressed || undefined}
       data-selected={isSelected || undefined}
       data-hovered={isHovered || undefined}
-      data-focus-visible={isFocusVisible || undefined}>
+      data-focus-visible={isFocusVisible || undefined}
+      data-pending={state.isPending || undefined}>
       <SelectionIndicatorContext.Provider value={{isSelected}}>
-        {renderProps.children}
+        <ProgressBarContext.Provider value={progressBarProps}>
+          {renderProps.children}
+        </ProgressBarContext.Provider>
       </SelectionIndicatorContext.Provider>
     </dom.button>
   );

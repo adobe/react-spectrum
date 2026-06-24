@@ -93,7 +93,13 @@ export const Button = React.forwardRef(function Button<T extends ElementType = '
     ...otherProps
   } = props;
   let domRef = useFocusableRef(ref);
-  let {buttonProps, isPressed} = useButton(props, domRef);
+  let {buttonProps, isPressed} = useButton(
+    {
+      ...props,
+      isPending: false // handled differently than RAC
+    },
+    domRef
+  );
   let {hoverProps, isHovered} = useHover({isDisabled});
   let [isFocused, onFocusChange] = useState(false);
   let {focusProps} = useFocus({onFocusChange, isDisabled});

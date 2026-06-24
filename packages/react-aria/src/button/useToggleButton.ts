@@ -30,13 +30,19 @@ import {DOMAttributes} from '@react-types/shared';
 import {mergeProps} from '../utils/mergeProps';
 import {ToggleState} from 'react-stately/useToggleState';
 
-export interface ToggleButtonProps extends ButtonProps {
+export interface ToggleButtonProps extends Omit<ButtonProps, 'action'> {
   /** Whether the element should be selected (controlled). */
   isSelected?: boolean;
   /** Whether the element should be selected (uncontrolled). */
   defaultSelected?: boolean;
   /** Handler that is called when the element's selection state changes. */
   onChange?: (isSelected: boolean) => void;
+  /**
+   * Async action that is called when the toggle button's state changes.
+   * During the action, the button is in a pending state.
+   * Only supported in React 19 and later.
+   */
+  changeAction?: (isSelected: boolean) => void | Promise<void>;
 }
 
 export interface AriaToggleButtonProps<T extends ElementType = 'button'>
@@ -111,9 +117,10 @@ export function useToggleButton(
   ref: RefObject<any>
 ): ToggleButtonAria<HTMLAttributes<any>> {
   const {isSelected} = state;
-  const {isPressed, buttonProps} = useButton(
+  const {isPressed, buttonProps, progressBarProps, isPending, actionError} = useButton(
     {
       ...props,
+      isPending: props.isPending || state.isPending,
       onPress: chain(state.toggle, props.onPress)
     },
     ref
@@ -125,6 +132,9 @@ export function useToggleButton(
     isDisabled: props.isDisabled || false,
     buttonProps: mergeProps(buttonProps, {
       'aria-pressed': isSelected
-    })
+    }),
+    progressBarProps,
+    isPending,
+    actionError
   };
 }

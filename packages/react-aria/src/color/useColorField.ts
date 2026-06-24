@@ -14,6 +14,7 @@ import {
   AriaLabelingProps,
   AriaValidationProps,
   DOMAttributes,
+  DOMProps,
   FocusableDOMProps,
   TextInputDOMProps,
   ValidationResult
@@ -59,6 +60,8 @@ export interface ColorFieldAria extends ValidationResult {
   descriptionProps: DOMAttributes;
   /** Props for the text field's error message element, if any. */
   errorMessageProps: DOMAttributes;
+  /** Props for the progress bar element shown when the action is pending. */
+  progressBarProps: DOMProps;
 }
 
 /**
@@ -119,6 +122,7 @@ export function useColorField(
   let {inputProps, ...otherProps} = useFormattedTextField(
     {
       ...props,
+      changeAction: undefined,
       id: inputId,
       value: inputValue,
       // Intentionally invalid value that will be ignored by onChange during form reset
