@@ -62,6 +62,7 @@ export const RangeSlider = /*#__PURE__*/ forwardRef(function RangeSlider(
   ref: FocusableRef<HTMLDivElement>
 ) {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
+  // oxlint-disable-next-line react/react-compiler
   [props, ref] = useSpectrumContextProps(props, ref, RangeSliderContext);
   let formContext = useContext(FormContext);
   props = useFormProps(props);

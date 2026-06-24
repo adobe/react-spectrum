@@ -16,6 +16,7 @@ export function useDatePickerGroup(
   disableArrowNavigation?: boolean
 ): DOMAttributes<FocusableElement> {
   let {direction} = useLocale();
+  // oxlint-disable-next-line react/react-compiler
   let focusManager = useMemo(() => createFocusManager(ref), [ref]);
 
   let {keyboardProps} = useKeyboard({
@@ -131,6 +132,7 @@ export function useDatePickerGroup(
     }
   });
 
+  // oxlint-disable-next-line react/react-compiler
   return mergeProps(pressProps, keyboardProps);
 }
 
