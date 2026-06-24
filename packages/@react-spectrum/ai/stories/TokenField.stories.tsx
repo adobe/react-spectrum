@@ -12,21 +12,19 @@
 
 import {categorizeArgTypes, getActionArgs} from '../../s2/stories/utils';
 import {Meta, StoryFn} from '@storybook/react';
-import React, {useContext, useMemo, useRef, useState} from 'react';
+import React, {useMemo, useRef, useState} from 'react';
 import './styles.global.css';
 import {Autocomplete} from 'react-aria-components/Autocomplete';
 import {ChevronDown} from 'lucide-react';
-import {Collection, ComboBox, ComboBoxStateContext} from 'react-aria-components';
+import {Collection, ComboBox} from 'react-aria-components';
 import {ComboBoxItem, ComboBoxListBox} from 'vanilla-starter/ComboBox';
 import {Direction, type TokenFieldSegment, TokenSegmentList} from '../src/TokenSegmentList';
 import {FieldButton, Label} from 'vanilla-starter/Form';
 import {Header, Menu, MenuItem, MenuSection} from 'vanilla-starter/Menu';
-import {InputContext} from 'react-aria-components/Input';
 import {Popover} from 'vanilla-starter/Popover';
 import {positionToDOMRange, Token, TokenField} from '../src/TokenField';
 import 'vanilla-starter/TagGroup.css';
 import {Text} from 'react-aria-components/Text';
-import {useSlottedContext} from 'react-aria-components/slots';
 
 const events = ['onChange', 'onPaste', 'onSubmit', 'onFocus', 'onBlur', 'onFocusChange'];
 
@@ -363,111 +361,80 @@ export const Search: TokenFieldStory = () => {
 };
 
 export const ComboBoxExample: TokenFieldStory = () => {
+  let [value, setValue] = useState(new TokenSegmentList([]));
+  let selectedKeys = useMemo(
+    () => value.segments.filter(seg => seg.type === 'token').map(seg => seg.value.username),
+    [value]
+  );
+  let segment = value.segments[value.caretPosition.index];
+  let inputValue = segment?.type === 'text' ? segment.text : '';
+
   return (
-    <ComboBox selectionMode="multiple" style={{width: 500}}>
+    <ComboBox
+      selectionMode="multiple"
+      style={{width: 500}}
+      value={selectedKeys}
+      inputValue={inputValue}
+      onChange={keys => {
+        let added = new Set();
+        for (let key of keys) {
+          if (!selectedKeys.includes(key)) {
+            added.add(key);
+          }
+        }
+        let removed = new Set();
+        for (let key of selectedKeys) {
+          if (!keys.includes(key)) {
+            removed.add(key);
+          }
+        }
+
+        setValue(value => {
+          for (let key of removed) {
+            let index = value.segments.findIndex(
+              seg => seg.type === 'token' && seg.value.username === key
+            );
+            value = value.replaceRangeWithSegments(
+              {index: index, offset: 0},
+              {index: index, offset: value.segments[index]?.text.length ?? 0},
+              false
+            );
+          }
+
+          // TODO: if the user selects multiple existing segments and then selects a value from the menu,
+          // should we replace the selected segments?
+          let segment = value.segments[value.caretPosition.index];
+          return value.replaceRangeWithSegments(
+            {index: value.caretPosition.index, offset: 0},
+            // If caret is in a text segment, replace the text segment with the new token. Otherwise, insert it.
+            segment?.type === 'text'
+              ? {
+                  index: value.caretPosition.index,
+                  offset: value.segments[value.caretPosition.index]?.text.length ?? 0
+                }
+              : {index: value.caretPosition.index, offset: 0},
+            [...added].map(key => {
+              let item = usernames.find(user => user.username === key)!;
+              return {type: 'token', text: item.username, value: item};
+            }),
+            false
+          );
+        });
+      }}>
       <Label>Users</Label>
       <div className="combobox-field">
-        <ComboBoxTagInput />
+        <TokenField value={value} onChange={setValue} style={{paddingInlineEnd: 36}}>
+          {segment => <Token>{segment.text}</Token>}
+        </TokenField>
         <FieldButton>
           <ChevronDown />
         </FieldButton>
       </div>
       <Popover hideArrow className="combobox-popover">
         <ComboBoxListBox items={usernames}>
-          {state => <ComboBoxItem>{state.username}</ComboBoxItem>}
+          {state => <ComboBoxItem id={state.username}>{state.username}</ComboBoxItem>}
         </ComboBoxListBox>
       </Popover>
     </ComboBox>
   );
 };
-
-function ComboBoxTagInput() {
-  let state = useContext(ComboBoxStateContext);
-  let inputCtx = useSlottedContext(InputContext);
-  let [value, setValue] = useState(() => {
-    let selectedItems: TokenFieldSegment[] =
-      state?.selectedItems.map(item => ({
-        type: 'token' as const,
-        text: item.textValue,
-        value: item.value
-      })) ?? [];
-    selectedItems.push({type: 'text', text: state?.inputValue ?? ''});
-    return new TokenSegmentList(selectedItems);
-  });
-
-  let [lastSelectedItems, setLastSelectedItems] = useState(state?.selectedItems || []);
-  let [lastInputValue, setLastInputValue] = useState(state?.inputValue ?? '');
-
-  if (
-    state &&
-    (state?.selectedItems !== lastSelectedItems || lastInputValue !== state?.inputValue)
-  ) {
-    setValue(value => {
-      let selected = state?.selectedItems ?? [];
-      let selectedValues = new Set(selected.map(item => item.value));
-
-      let segments = value.segments.filter(
-        seg => seg.type === 'text' || selectedValues.has(seg.value)
-      );
-
-      let existingValues = new Set(
-        segments.filter(seg => seg.type === 'token').map(seg => seg.value)
-      );
-
-      let newTokens: TokenFieldSegment[] = selected
-        .filter(item => !existingValues.has(item.value))
-        .map(item => ({
-          type: 'token' as const,
-          text: item.textValue,
-          value: item.value
-        }));
-
-      let caret = value.caretPosition;
-      let removedBeforeCaret = 0;
-      for (let i = 0; i < caret.index && i < value.segments.length; i++) {
-        let seg = value.segments[i];
-        if (seg.type === 'token' && !selectedValues.has(seg.value)) {
-          removedBeforeCaret++;
-        }
-      }
-
-      let insertIndex = Math.min(caret.index - removedBeforeCaret, segments.length);
-      segments.splice(insertIndex, 0, ...newTokens);
-
-      if (!segments.some(seg => seg.type === 'text')) {
-        segments.push({type: 'text', text: state?.inputValue ?? ''});
-      }
-
-      let caretIndex = Math.min(insertIndex + newTokens.length, segments.length - 1);
-      if (segments[caretIndex]?.type === 'text') {
-        segments[caretIndex] = {type: 'text', text: state?.inputValue ?? ''};
-      }
-
-      let caretPosition = {
-        index: caretIndex,
-        offset:
-          segments[caretIndex]?.type === 'text' ? (state?.inputValue ?? '').length : caret.offset
-      };
-
-      return new TokenSegmentList(segments, {caretPosition});
-    });
-    setLastSelectedItems(state?.selectedItems || []);
-    setLastInputValue(state?.inputValue ?? '');
-  }
-
-  return (
-    <TokenField
-      {...(inputCtx as any)}
-      defaultValue={undefined}
-      value={value}
-      onChange={list => {
-        let segment = list.segments[list.caretPosition.index];
-        state?.setInputValue(segment?.type === 'text' ? segment.text : '');
-        setValue(list);
-      }}
-      aria-label="Users"
-      style={{paddingInlineEnd: 36}}>
-      {segment => <Token>{segment.text}</Token>}
-    </TokenField>
-  );
-}
