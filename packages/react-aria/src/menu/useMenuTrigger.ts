@@ -12,12 +12,13 @@
 
 import {AriaButtonProps} from '../button/useButton';
 import {AriaMenuOptions} from './useMenu';
-import {FocusableElement, RefObject} from '@react-types/shared';
+import {FocusableElement, FocusStrategy, KeyboardEvent, RefObject} from '@react-types/shared';
 import {focusWithoutScrolling} from '../utils/focusWithoutScrolling';
 import intlMessages from '../../intl/menu/*.json';
 import {MenuTriggerState, MenuTriggerType} from 'react-stately/useMenuTriggerState';
 import {PressProps} from '../interactions/usePress';
 import {useId} from '../utils/useId';
+import {useKeyboard} from '../interactions/useKeyboard';
 import {useLocalizedStringFormatter} from '../i18n/useLocalizedStringFormatter';
 import {useLongPress} from '../interactions/useLongPress';
 import {useOverlayTrigger} from '../overlays/useOverlayTrigger';
@@ -56,50 +57,53 @@ export function useMenuTrigger<T>(
   let menuTriggerId = useId();
   let {triggerProps, overlayProps} = useOverlayTrigger({type}, state, ref);
 
-  let onKeyDown = e => {
-    if (isDisabled) {
-      return;
+  let open = (
+    shouldOpen: boolean,
+    e: KeyboardEvent,
+    focusStrategy: FocusStrategy = 'first'
+  ): boolean | void => {
+    if (!shouldOpen || e.isDefaultPrevented()) {
+      return false;
     }
+    state.toggle(focusStrategy);
+  };
 
-    if (trigger === 'longPress' && !e.altKey) {
-      return;
-    }
-
-    if (ref && ref.current) {
-      switch (e.key) {
-        case 'Enter':
-        case ' ':
-          // React puts listeners on the same root, so even if propagation was stopped, immediate propagation is still possible.
-          // useTypeSelect will handle the spacebar first if it's running, so we don't want to open if it's handled it already.
-          // We use isDefaultPrevented() instead of isPropagationStopped() because createEventHandler stops propagation by default.
-          // And default prevented means that the event was handled by something else (typeahead), so we don't want to open the menu.
-          if (trigger === 'longPress' || e.isDefaultPrevented()) {
-            return;
-          }
-        // fallthrough
-        case 'ArrowDown':
-          // Stop propagation, unless it would already be handled by useKeyboard.
-          if (!('continuePropagation' in e)) {
-            e.stopPropagation();
-          }
-          e.preventDefault();
-          state.toggle('first');
-          break;
-        case 'ArrowUp':
-          if (!('continuePropagation' in e)) {
-            e.stopPropagation();
-          }
-          e.preventDefault();
-          state.toggle('last');
-          break;
-        default:
-          // Allow other keys.
-          if ('continuePropagation' in e) {
-            e.continuePropagation();
-          }
+  // React puts listeners on the same root, so even if propagation was stopped, immediate propagation is still possible.
+  // useTypeSelect will handle the spacebar first if it's running, so we don't want to open if it's handled it already.
+  // We use isDefaultPrevented() instead of isPropagationStopped() because createEventHandler stops propagation by default.
+  // And default prevented means that the event was handled by something else (typeahead), so we don't want to open the menu.
+  let {keyboardProps} = useKeyboard({
+    isDisabled,
+    shortcuts: {
+      Enter: e => {
+        return open(trigger !== 'longPress', e, 'first');
+      },
+      ' ': e => {
+        return open(trigger !== 'longPress', e, 'first');
+      },
+      ArrowDown: e => {
+        return open(trigger !== 'longPress', e, 'first');
+      },
+      ArrowUp: e => {
+        return open(trigger !== 'longPress', e, 'last');
+      },
+      'Alt+Enter': e => {
+        return open(trigger === 'longPress', e, 'first');
+      },
+      'Alt+ ': e => {
+        return open(trigger === 'longPress', e, 'first');
+      },
+      // Alt+Arrow* must open for both trigger modes: for `press` it matches the same `e.key` cases as
+      // plain Arrow*; for `longPress`, plain arrows are ignored elsewhere and Alt+Arrow is the opener
+      // (see legacy `if (trigger === 'longPress' && !e.altKey) return` before the ArrowDown/Up switch).
+      'Alt+ArrowDown': e => {
+        return open(true, e, 'first');
+      },
+      'Alt+ArrowUp': e => {
+        return open(true, e, 'last');
       }
     }
-  };
+  });
 
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/menu');
   let {longPressProps} = useLongPress({
@@ -145,8 +149,8 @@ export function useMenuTrigger<T>(
     menuTriggerProps: {
       ...triggerProps,
       ...(trigger === 'press' ? pressProps : longPressProps),
-      id: menuTriggerId,
-      onKeyDown
+      ...keyboardProps,
+      id: menuTriggerId
     },
     menuProps: {
       ...overlayProps,

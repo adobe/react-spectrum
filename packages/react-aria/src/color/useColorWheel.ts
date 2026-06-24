@@ -75,27 +75,17 @@ export function useColorWheel(
   let currentPosition = useRef<{x: number; y: number} | null>(null);
 
   let {keyboardProps} = useKeyboard({
-    onKeyDown(e) {
-      // these are the cases that useMove doesn't handle
-      if (!/^(PageUp|PageDown)$/.test(e.key)) {
-        e.continuePropagation();
-        return;
+    shortcuts: {
+      PageUp: () => {
+        state.setDragging(true);
+        state.increment(state.pageStep);
+        state.setDragging(false);
+      },
+      PageDown: () => {
+        state.setDragging(true);
+        state.decrement(state.pageStep);
+        state.setDragging(false);
       }
-      // same handling as useMove, don't need to stop propagation, useKeyboard will do that for us
-      e.preventDefault();
-      // remember to set this and unset it so that onChangeEnd is fired
-      state.setDragging(true);
-      switch (e.key) {
-        case 'PageUp':
-          e.preventDefault();
-          state.increment(state.pageStep);
-          break;
-        case 'PageDown':
-          e.preventDefault();
-          state.decrement(state.pageStep);
-          break;
-      }
-      state.setDragging(false);
     }
   });
 
