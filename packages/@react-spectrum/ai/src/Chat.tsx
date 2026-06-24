@@ -305,9 +305,9 @@ export function Thread<T extends object>(props: ThreadProps<T>) {
           estimatedRowHeight: 100,
           padding: 4,
           gap: 8,
-          anchorTo: 'end',
-          scrollEndThreshold: scrollEndThreshold
+          anchorTo: 'end'
         }}
+        scrollEndThreshold={scrollEndThreshold}
         shouldObserveItemSize
         getScrollAnchor={submittedKey != null ? getScrollAnchor : undefined}>
         <GridList

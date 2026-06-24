@@ -5,7 +5,7 @@ export {Point} from '../src/virtualizer/Point';
 export {Rect, type RectCorner} from '../src/virtualizer/Rect';
 export {ReusableView} from '../src/virtualizer/ReusableView';
 export {Size} from '../src/virtualizer/Size';
-export {type InvalidationContext} from '../src/virtualizer/types';
+export {type InvalidationContext, type ScrollAnchor, type VirtualizerScrollAnchor} from '../src/virtualizer/types';
 
 export {GridLayout, type GridLayoutOptions} from '../src/layout/GridLayout';
 export {ListLayout, type ListLayoutOptions, type LayoutNode} from '../src/layout/ListLayout';

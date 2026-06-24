@@ -74,6 +74,17 @@ export abstract class Layout<T extends object = Node<any>, O = any> implements L
   }
 
   /**
+   * Returns whether this layout anchors content to the bottom (content grows upward).
+   * When true, the virtualizer preserves scroll position across content shifts and
+   * snaps to the bottom on first render. The `layoutOptions` argument reflects
+   * incoming options before `update()` applies them, ensuring correctness on the
+   * first render when internal fields are not yet set.
+   */
+  isReversed(layoutOptions?: O): boolean { // eslint-disable-line @typescript-eslint/no-unused-vars
+    return false;
+  }
+
+  /**
    * This method allows the layout to perform any pre-computation
    * it needs to in order to prepare LayoutInfos for retrieval.
    * Called by the virtualizer before `getVisibleLayoutInfos`

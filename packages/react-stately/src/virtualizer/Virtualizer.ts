@@ -12,13 +12,13 @@
 
 import {ChildView, ReusableView, RootView} from './ReusableView';
 import {Collection, Key} from '@react-types/shared';
-import {InvalidationContext, Mutable, VirtualizerDelegate, VirtualizerRenderOptions} from './types';
+import {InvalidationContext, Mutable, ScrollAnchor, VirtualizerDelegate, VirtualizerRenderOptions, VirtualizerScrollAnchor} from './types';
 import {isSetEqual} from './utils';
 import {Layout} from './Layout';
 import {LayoutInfo} from './LayoutInfo';
 import {OverscanManager} from './OverscanManager';
 import {Point} from './Point';
-import {Rect} from './Rect';
+import {Rect, RectCorner} from './Rect';
 import {Size} from './Size';
 
 interface VirtualizerOptions<T extends object, V> {
@@ -71,6 +71,9 @@ export class Virtualizer<T extends object, V> {
   private _invalidationContext: InvalidationContext;
   private _overscanManager: OverscanManager;
   private _hasInitializedReverseAnchor: boolean;
+  private _anchorReserve: number;
+  private _anchorScrollPosition: boolean;
+  private _scrollEndThreshold: number;
 
   constructor(options: VirtualizerOptions<T, V>) {
     this.delegate = options.delegate;
@@ -87,6 +90,9 @@ export class Virtualizer<T extends object, V> {
     this._invalidationContext = {};
     this._overscanManager = new OverscanManager();
     this._hasInitializedReverseAnchor = false;
+    this._anchorReserve = 0;
+    this._anchorScrollPosition = false;
+    this._scrollEndThreshold = 0;
   }
 
   /** Returns whether the given key, or an ancestor, is persisted. */
@@ -168,36 +174,131 @@ export class Virtualizer<T extends object, V> {
     return null;
   }
 
-  private relayout(context: InvalidationContext = {}) {
+  private relayout(
+    context: InvalidationContext = {},
+    getScrollAnchor?: () => VirtualizerScrollAnchor | null,
+    scrollOpts?: {anchorScrollPosition?: boolean; scrollEndThreshold?: number}
+  ) {
+    let anchorScrollPosition = scrollOpts?.anchorScrollPosition ?? false;
+    let scrollEndThreshold = scrollOpts?.scrollEndThreshold ?? 0;
+
+    // Capture scroll anchor from current (pre-layout) view positions.
+    // Returns non-null only when anchorScrollPosition is true AND a visible item was found.
+    // On first render _visibleViews is empty so _getScrollAnchor returns null.
+    // Guard anchorScrollPosition before consulting the delegate so getScrollAnchor is not
+    // called on every relayout for non-reverse layouts.
+    let delegateAnchor = anchorScrollPosition
+      ? (getScrollAnchor?.() ?? null)
+      : null;
+    // _getScrollAnchor reads _visibleViews (pre-layout). buildReversedCollection creates new
+    // LayoutInfo objects via copy() on each pass, so these rects are valid pre-layout snapshots.
+    let anchor = this._getScrollAnchor(delegateAnchor);
+    // hasDelegateAnchor is true whenever the delegate returned a key — even if the item is
+    // currently off-screen. This suppresses near-bottom auto-snap when the caller has expressed
+    // intent regardless of whether we can resolve it to a visible view.
+    let hasDelegateAnchor = delegateAnchor != null;
+    let previousRawContentHeight = this.contentSize.height - this._anchorReserve;
+    let previousVisibleRect = this.visibleRect;
+
     // Update the layout
     this.layout.update(context);
-    (this as Mutable<this>).contentSize = this.layout.getContentSize();
 
-    // Consume the one-shot report from layout. Clear immediately so it doesn't survive
-    // a missed read (e.g. an early return below).
-    let report = this.layout.postLayoutReport;
-    this.layout.postLayoutReport = null;
-
-    if (report?.didInitializeReverseAnchor) {
-      // Layout only reports the event; virtualizer owns the lifecycle flag.
-      // Committed before applying any viewport adjustment so the flag is set
-      // even when the snap target already matches the current scroll position.
-      this._hasInitializedReverseAnchor = true;
+    let rawContentSize = this.layout.getContentSize();
+    let rawContentHeight = rawContentSize.height;
+    // Inflate contentSize so the delegate anchor item is immediately reachable as scrollTop.
+    // Guard with previousVisibleRect.area > 0 to avoid using an uninitialized viewport height.
+    if (anchorScrollPosition && previousVisibleRect.area > 0 && delegateAnchor != null) {
+      let desiredTop = this._resolveAnchorTop(delegateAnchor.key, delegateAnchor.offset ?? 0);
+      this._anchorReserve = desiredTop != null
+        ? this._reserveFor(desiredTop, rawContentHeight, previousVisibleRect.height)
+        : 0;
+    } else {
+      this._anchorReserve = 0;
     }
-    if (report?.viewportAdjustment) {
-      let visibleRect = this.visibleRect;
-      let x = Math.max(
-        0,
-        Math.min(this.contentSize.width - visibleRect.width, report.viewportAdjustment.x)
-      );
-      let y = Math.max(
-        0,
-        Math.min(this.contentSize.height - visibleRect.height, report.viewportAdjustment.y)
-      );
-      let clamped = new Rect(x, y, visibleRect.width, visibleRect.height);
-      if (!clamped.equals(visibleRect)) {
-        this.delegate.setVisibleRect(clamped);
-        return; // re-render will trigger a new relayout() → updateSubviews()
+    (this as Mutable<this>).contentSize = new Size(rawContentSize.width, rawContentHeight + this._anchorReserve);
+
+    if (anchorScrollPosition && previousVisibleRect.area > 0) {
+      let maxVisibleY = Math.max(0, this.contentSize.height - previousVisibleRect.height);
+      let contentHeightDelta = rawContentHeight - previousRawContentHeight;
+      let distanceFromEnd = previousRawContentHeight - previousVisibleRect.maxY;
+      let wasNearBottom = distanceFromEnd <= scrollEndThreshold;
+
+      if (!this._hasInitializedReverseAnchor) {
+        // Always snap to bottom on first layout with this config — a chat list should
+        // always show the latest content on open. _visibleViews is empty here so there
+        // is no anchor to restore anyway.
+        this._hasInitializedReverseAnchor = true;
+        let target = new Rect(previousVisibleRect.x, maxVisibleY, previousVisibleRect.width, previousVisibleRect.height);
+        if (!target.equals(this.visibleRect)) {
+          this.delegate.setVisibleRect(target);
+          return;
+        }
+      } else if (contentHeightDelta !== 0 || context.itemSizeChanged) {
+        // Only modify scroll when content actually changed — prevents the setVisibleRect
+        // re-render after the initial snap from triggering a spurious anchor-restore.
+        if (anchor) {
+          // In a reversed bottom-anchored layout, when history loads at the top existing items
+          // shift DOWN (y increases) to make room. When a new message arrives at the bottom,
+          // existing items keep the same absolute y. Direction is the discriminator.
+          let preLayoutCornerY = anchor.offset + previousVisibleRect.y;
+          let freshInfo = this.layout.getLayoutInfo(anchor.key);
+          let anchorShiftedDown = freshInfo != null && freshInfo.rect[anchor.corner].y > preLayoutCornerY;
+
+          if (!hasDelegateAnchor && wasNearBottom && !this._isScrolling && context.itemSizeChanged) {
+            // Streaming growth: the bottom item grew in place, shifting its top y downward in a
+            // reversed layout — which looks identical to anchorShiftedDown. wasNearBottom is the
+            // true discriminator: history loads above require the user to have scrolled up first,
+            // so wasNearBottom is false for history and true only for streaming. This branch must
+            // come before the anchorShiftedDown check.
+            let target = new Rect(previousVisibleRect.x, maxVisibleY, previousVisibleRect.width, previousVisibleRect.height);
+            if (!target.equals(this.visibleRect)) {
+              this.delegate.setVisibleRect(target);
+              return;
+            }
+          } else if (anchorShiftedDown) {
+            // Two cases trigger this:
+            // 1. History load: content inserted above current view shifts items DOWN (y increases).
+            // 2. Delegate anchor with offset=0: item is below viewport top, so
+            //    freshInfo.rect.y > previousVisibleRect.y. _restoreScrollAnchor scrolls the
+            //    viewport toward the item each streaming step until it reaches the top.
+            // Both cases: restore anchor so the view tracks correctly.
+            if (this._restoreScrollAnchor(anchor)) {
+              return;
+            }
+          } else if (!hasDelegateAnchor && wasNearBottom && !this._isScrolling) {
+            // New message arrived below (anchor unchanged), user was near bottom:
+            // pin to latest output.
+            let target = new Rect(previousVisibleRect.x, maxVisibleY, previousVisibleRect.width, previousVisibleRect.height);
+            if (!target.equals(this.visibleRect)) {
+              this.delegate.setVisibleRect(target);
+              return;
+            }
+          } else {
+            // User is scrolled up: preserve position regardless of where new content landed.
+            if (this._restoreScrollAnchor(anchor)) {
+              return;
+            }
+          }
+        } else if (hasDelegateAnchor) {
+          // Delegate returned a key but it wasn't in the visible rect before layout
+          // (e.g. user submitted while scrolled up). After layout.update() we can
+          // locate it and scroll so its top aligns with the desired offset.
+          let desiredTop = this._resolveAnchorTop(delegateAnchor!.key, delegateAnchor!.offset ?? 0);
+          if (desiredTop != null) {
+            let clampedY = Math.max(0, Math.min(maxVisibleY, desiredTop));
+            if (clampedY !== this.visibleRect.y) {
+              this.delegate.setVisibleRect(new Rect(previousVisibleRect.x, clampedY, previousVisibleRect.width, previousVisibleRect.height));
+              return;
+            }
+          }
+        } else if (!hasDelegateAnchor && wasNearBottom && !this._isScrolling) {
+          // No anchor captured (views not yet populated): fall back to near-bottom snap.
+          let target = new Rect(previousVisibleRect.x, maxVisibleY, previousVisibleRect.width, previousVisibleRect.height);
+          if (!target.equals(this.visibleRect)) {
+            this.delegate.setVisibleRect(target);
+            return;
+          }
+        }
       }
     }
 
@@ -222,6 +323,67 @@ export class Virtualizer<T extends object, V> {
     } else {
       this.updateSubviews();
     }
+  }
+
+  private _getScrollAnchor(delegateAnchor: VirtualizerScrollAnchor | null): ScrollAnchor | null {
+    if (!this._anchorScrollPosition) {
+      return null;
+    }
+    let visibleRect = this.visibleRect;
+
+    if (delegateAnchor != null) {
+      let view = this._visibleViews.get(delegateAnchor.key);
+      if (view?.layoutInfo && view.layoutInfo.rect.intersects(visibleRect)) {
+        let corner: RectCorner = 'topLeft';
+        return {key: delegateAnchor.key, corner, offset: delegateAnchor.offset ?? 0};
+      }
+      return null;
+    }
+
+    let best: ScrollAnchor | null = null;
+    for (let [key, view] of this._visibleViews) {
+      let layoutInfo = view.layoutInfo;
+      if (layoutInfo && layoutInfo.rect.area > 0 && layoutInfo.rect.intersects(visibleRect)) {
+        let corner = layoutInfo.rect.getCornerInRect(visibleRect) ?? 'topLeft';
+        // Force top corners: bottom corners on a clipped item can drift if the item resizes.
+        if (corner === 'bottomLeft') { corner = 'topLeft'; }
+        if (corner === 'bottomRight') { corner = 'topRight'; }
+        let offset = layoutInfo.rect[corner].y - visibleRect.y;
+        if (!best || offset < best.offset) {
+          best = {key, corner, offset};
+        }
+      }
+    }
+    return best;
+  }
+
+  private _restoreScrollAnchor(anchor: ScrollAnchor): boolean {
+    let finalInfo = this.layout.getLayoutInfo(anchor.key);
+    if (!finalInfo) {
+      return false;
+    }
+    let visibleRect = this.visibleRect;
+    let adjustment = finalInfo.rect[anchor.corner].y - visibleRect.y - anchor.offset;
+    if (adjustment === 0) {
+      return false;
+    }
+    let targetY = visibleRect.y + adjustment;
+    let maxY = Math.max(0, this.contentSize.height - visibleRect.height);
+    let clampedY = Math.max(0, Math.min(maxY, targetY));
+    this.delegate.setVisibleRect(new Rect(visibleRect.x, clampedY, visibleRect.width, visibleRect.height));
+    return true;
+  }
+
+  // Post-layout y position the viewport top should reach for the given anchor key + offset.
+  private _resolveAnchorTop(key: Key, offset: number): number | null {
+    let info = this.layout.getLayoutInfo(key);
+    return info != null ? info.rect.y - offset : null;
+  }
+
+  // Extra bottom padding so desiredTop is reachable as scrollTop when it exceeds the
+  // natural max (rawHeight - viewportHeight). Returns 0 when no padding is needed.
+  private _reserveFor(desiredTop: number, rawHeight: number, viewportHeight: number): number {
+    return Math.max(0, desiredTop - Math.max(0, rawHeight - viewportHeight));
   }
 
   getVisibleLayoutInfos(): Map<Key, LayoutInfo> {
@@ -316,6 +478,9 @@ export class Virtualizer<T extends object, V> {
     let layoutOptionsChanged = false;
     let needsUpdate = false;
 
+    let anchorScrollPosition = opts.layout.isReversed(opts.layoutOptions);
+    let scrollEndThreshold = opts.scrollEndThreshold ?? 0;
+
     if (opts.collection !== this.collection) {
       mutableThis.collection = opts.collection;
       needsLayout = true;
@@ -329,6 +494,15 @@ export class Virtualizer<T extends object, V> {
       opts.layout.virtualizer = this;
       mutableThis.layout = opts.layout;
       this._hasInitializedReverseAnchor = false;
+      needsLayout = true;
+    }
+
+    if (anchorScrollPosition !== this._anchorScrollPosition || scrollEndThreshold !== this._scrollEndThreshold) {
+      if (!this._anchorScrollPosition && anchorScrollPosition) {
+        this._hasInitializedReverseAnchor = false;
+      }
+      this._anchorScrollPosition = anchorScrollPosition;
+      this._scrollEndThreshold = scrollEndThreshold;
       needsLayout = true;
     }
 
@@ -401,9 +575,8 @@ export class Virtualizer<T extends object, V> {
         itemSizeChanged,
         layoutOptionsChanged,
         layoutOptions: this._invalidationContext.layoutOptions,
-        isScrolling: this._isScrolling,
-        hasInitializedReverseAnchor: this._hasInitializedReverseAnchor
-      });
+        isScrolling: this._isScrolling
+      }, opts.getScrollAnchor, {anchorScrollPosition, scrollEndThreshold});
     } else if (needsUpdate) {
       this.updateSubviews();
     }

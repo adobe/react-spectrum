@@ -12,7 +12,7 @@
 
 import {Collection, Key} from '@react-types/shared';
 import {Layout} from './Layout';
-import {Rect} from './Rect';
+import {Rect, RectCorner} from './Rect';
 import {Size} from './Size';
 
 export interface InvalidationContext<O = any> {
@@ -23,13 +23,28 @@ export interface InvalidationContext<O = any> {
   layoutOptionsChanged?: boolean;
   layoutOptions?: O;
   isScrolling?: boolean;
-  hasInitializedReverseAnchor?: boolean;
+}
+
+export interface ScrollAnchor {
+  key: Key;
+  corner: RectCorner;
+  offset: number;
 }
 
 export interface VirtualizerDelegate<T extends object, V> {
   setVisibleRect(rect: Rect): void;
   renderView(type: string, content: T | null): V;
   invalidate(ctx: InvalidationContext): void;
+}
+
+export interface VirtualizerScrollAnchor {
+  key: Key;
+  /**
+   * Desired pixel distance from the item's top edge to the viewport top.
+   *
+   * @default 0
+   */
+  offset?: number;
 }
 
 export interface VirtualizerRenderOptions<T extends object, O = any> {
@@ -41,6 +56,8 @@ export interface VirtualizerRenderOptions<T extends object, O = any> {
   invalidationContext: InvalidationContext;
   isScrolling: boolean;
   layoutOptions?: O;
+  getScrollAnchor?: () => VirtualizerScrollAnchor | null;
+  scrollEndThreshold?: number;
 }
 
 export type Mutable<T> = {
