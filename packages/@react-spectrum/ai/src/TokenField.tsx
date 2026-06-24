@@ -21,6 +21,8 @@ import {
 import {FieldInputContext} from 'react-aria-components/Autocomplete';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {FocusableProps} from '@react-types/shared';
+import {getActiveElement} from 'react-aria/private/utils/shadowdom/DOMFunctions';
+import {getOwnerDocument} from 'react-aria/private/utils/domHelpers';
 import {isMac} from 'react-aria/private/utils/platform';
 import {mergeProps} from 'react-aria/mergeProps';
 import {mergeRefs} from 'react-aria/mergeRefs';
@@ -110,7 +112,13 @@ export const TokenField = forwardRef(function TokenField(
 
   let caretPosition = useRef<Position | null>(null);
   useLayoutEffect(() => {
-    if (ref.current && state.caretPosition && state.caretPosition !== caretPosition.current) {
+    // Only move the caret when the field is already focused.
+    if (
+      ref.current &&
+      state.caretPosition &&
+      state.caretPosition !== caretPosition.current &&
+      ref.current === getActiveElement(getOwnerDocument(ref.current))
+    ) {
       setCursor(ref.current, state.caretPosition);
       caretPosition.current = state.caretPosition;
     }
