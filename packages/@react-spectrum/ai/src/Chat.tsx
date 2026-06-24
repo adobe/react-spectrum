@@ -23,9 +23,9 @@ import {
   useRef,
   useState
 } from 'react';
-import type {CSSProperties} from 'react';
 import {DEFAULT_SLOT, Provider} from 'react-aria-components/slots';
 import {DOMRef, forwardRefType} from '@react-types/shared';
+import {focusRing, style, StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {
   GridList,
   GridListItem,
@@ -34,7 +34,7 @@ import {
 } from 'react-aria-components/GridList';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
 import {useDOMRef} from './useDOMRef';
 import {useEnterAnimation, useExitAnimation} from 'react-aria/private/utils/animation';
 import {useFocusWithin} from 'react-aria/useFocusWithin';
@@ -92,8 +92,13 @@ const ThreadScrollButtonContext = createContext<ThreadScrollButtonContextValue>(
 
 // TODO: make this more RAC like (aka default class name and other RAC prop)
 export interface ChatProps {
-  className?: string;
-  style?: CSSProperties;
+  /**
+   * Spectrum-defined styles, returned by the `style()` macro.
+   */
+  styles?: StyleString;
+  /**
+   * Children of the chat, such as Thread, PromptField, and ThreadScrollButton.
+   */
   children?: ReactNode;
 }
 
@@ -101,7 +106,7 @@ export const Chat = /*#__PURE__*/ (forwardRef as forwardRefType)(function Chat(
   props: ChatProps,
   ref: DOMRef<HTMLDivElement>
 ) {
-  let {children, className, style} = props;
+  let {children, styles} = props;
   let domRef = useDOMRef(ref);
   let isFieldFocusedRef = useRef(false);
   let isChatFocusWithinRef = useRef(false);
@@ -190,24 +195,28 @@ export const Chat = /*#__PURE__*/ (forwardRef as forwardRefType)(function Chat(
           }
         ]
       ]}>
-      <div ref={domRef} className={className} style={style} {...focusWithinProps}>
+      <div ref={domRef} className={styles} {...focusWithinProps}>
         {children}
       </div>
     </Provider>
   );
 });
 
-// TODO: update the items/className/children/etc type to reflect a thread specific classname once we finalize API
 export interface ThreadProps<T extends object> extends Pick<
   GridListProps<T>,
-  'items' | 'children' | 'UNSTABLE_focusOnEntry' | 'aria-label' | 'aria-labelledby' | 'className'
-> {}
+  'items' | 'children' | 'UNSTABLE_focusOnEntry' | 'aria-label' | 'aria-labelledby'
+> {
+  /**
+   * Spectrum-defined styles, returned by the `style()` macro.
+   */
+  styles?: StyleString;
+}
 
 export function Thread<T extends object>(props: ThreadProps<T>) {
   let {
     items,
     children,
-    className,
+    styles,
     UNSTABLE_focusOnEntry,
     'aria-label': ariaLabel,
     'aria-labelledby': ariaLabelledby
@@ -267,7 +276,7 @@ export function Thread<T extends object>(props: ThreadProps<T>) {
         boxSizing: 'border-box',
         minWidth: 0
       }}
-      className={className}>
+      className={styles}>
       {children}
     </GridList>
   );
@@ -314,11 +323,16 @@ function ThreadScrollButtonInner({domRef, isExiting, children}: ThreadScrollButt
   );
 }
 
-// TODO: update the className type to reflect a thread specific classname once we finalize API
-export interface ThreadItemProps extends Pick<
-  GridListItemProps,
-  'className' | 'children' | 'textValue'
-> {
+const threadItemBase = style({
+  ...focusRing(),
+  borderRadius: 'default'
+});
+
+export interface ThreadItemProps extends Pick<GridListItemProps, 'children' | 'textValue'> {
+  /**
+   * Spectrum-defined styles, returned by the `style()` macro.
+   */
+  styles?: StyleString;
   /** Whether or not the item's content is currently being streamed in. */
   isStreaming?: boolean;
   /** Announce textValue on mount even when isStreaming is provided. */
@@ -326,7 +340,7 @@ export interface ThreadItemProps extends Pick<
 }
 
 export function ThreadItem(props: ThreadItemProps) {
-  let {className, children, textValue = ' ', isStreaming, shouldAnnounceOnMount} = props;
+  let {styles, children, textValue = ' ', isStreaming, shouldAnnounceOnMount} = props;
   let {announceItem} = useContext(InternalChatContext);
 
   // TODO: using aria-live on the gridlist item was pretty chatty and the streaming causes the text announcement
@@ -354,7 +368,9 @@ export function ThreadItem(props: ThreadItemProps) {
   }, [isStreaming, isStreamingNow, textValue, announceItem]);
 
   return (
-    <GridListItem textValue={textValue} className={className}>
+    <GridListItem
+      textValue={textValue}
+      className={renderProps => mergeStyles(threadItemBase({...renderProps}), styles)}>
       {children}
     </GridListItem>
   );

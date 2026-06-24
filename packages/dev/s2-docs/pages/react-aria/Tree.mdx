@@ -330,19 +330,7 @@ Use this when rows contain interactive elements such as text fields, where arrow
 ```tsx render
 "use client";
 import {Tree, TreeItem, TreeItemContent} from 'vanilla-starter/Tree';
-import {ComboBox, ComboBoxItem} from 'vanilla-starter/ComboBox';
-
-///- begin collapse -///
-function PermissionPicker({label}) {
-  return (
-    <ComboBox style={{marginInlineStart: 'auto', flexShrink: 0}} aria-label={label} defaultSelectedKey="view" placeholder="Permission">
-      <ComboBoxItem id="view">Can view</ComboBoxItem>
-      <ComboBoxItem id="comment">Can comment</ComboBoxItem>
-      <ComboBoxItem id="edit">Can edit</ComboBoxItem>
-    </ComboBox>
-  );
-}
-///- end collapse -///
+import {TextField} from 'vanilla-starter/TextField';
 
 <Tree
   /*- begin highlight -*/
@@ -350,27 +338,29 @@ function PermissionPicker({label}) {
   /*- end highlight -*/
   selectionMode="multiple"
   defaultExpandedKeys={['documents', 'photos']}
-  aria-label="Shared files"
-  style={{width: 420}}>
-  <TreeItem id="documents" title="Documents">
+  aria-label="Shared files">
+  <TreeItem id="documents" textValue="Documents">
+    <TreeItemContent>
+      <TextField aria-label="title" defaultValue="Documents" />
+    </TreeItemContent>
     <TreeItem id="weekly" textValue="Weekly Report.pdf">
       <TreeItemContent>
-        Weekly Report.pdf
-        <PermissionPicker label="Weekly Report.pdf permission" />
+        <TextField aria-label="title" defaultValue="Weekly Report.pdf" />
       </TreeItemContent>
     </TreeItem>
     <TreeItem id="budget" textValue="Budget.xlsx">
       <TreeItemContent>
-        Budget.xlsx
-        <PermissionPicker label="Budget.xlsx permission" />
+        <TextField aria-label="title" defaultValue="Budget.xlsx" />
       </TreeItemContent>
     </TreeItem>
   </TreeItem>
-  <TreeItem id="photos" title="Photos">
+  <TreeItem id="photos">
+    <TreeItemContent>
+      <TextField aria-label="title" defaultValue="Photos" />
+    </TreeItemContent>
     <TreeItem id="sunset" textValue="Sunset.jpg">
       <TreeItemContent>
-        Sunset.jpg
-        <PermissionPicker label="Sunset.jpg permission" />
+        <TextField aria-label="title" defaultValue="Sunset.jpg" />
       </TreeItemContent>
     </TreeItem>
   </TreeItem>

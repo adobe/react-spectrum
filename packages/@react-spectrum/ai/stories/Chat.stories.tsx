@@ -16,7 +16,6 @@ import {AssetCard, CardPreview} from '@react-spectrum/s2/Card';
 import {Chat} from '../src/Chat';
 import ChevronDown from '@react-spectrum/s2/icons/ChevronDown';
 import {Content} from '@react-spectrum/s2/Content';
-import {focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {GridList} from 'react-aria-components';
 import {Image} from '@react-spectrum/s2/Image';
 import {ListLayout} from 'react-stately/useVirtualizerState';
@@ -42,6 +41,7 @@ import {
 } from '@react-spectrum/ai';
 import type {Meta} from '@storybook/react';
 import {ReactNode, useRef, useState} from 'react';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Text} from '@react-spectrum/s2/Text';
 import {Virtualizer} from 'react-aria-components/Virtualizer';
 
@@ -74,18 +74,78 @@ type Message =
   | {id: number; type: 'status'; status: 'pending' | 'complete'};
 
 let initialResponses = [
-  {id: 0, type: 'user', content: 'prompt 1'},
-  {id: 1, type: 'system', content: dummyResponses[0]},
-  {id: 2, type: 'user', content: 'prompt 2'},
-  {id: 3, type: 'system', content: dummyResponses[1]},
-  {id: 4, type: 'user', content: 'prompt 3'},
-  {id: 5, type: 'system', content: dummyResponses[2]},
-  {id: 6, type: 'user', content: 'prompt 4'},
-  {id: 7, type: 'system', content: dummyResponses[0]},
-  {id: 8, type: 'user', content: 'prompt 5'},
-  {id: 9, type: 'system', content: dummyResponses[1]},
-  {id: 10, type: 'user', content: 'prompt 6'},
-  {id: 11, type: 'system', content: dummyResponses[2]}
+  {
+    id: 0,
+    type: 'user',
+    content:
+      "I'm launching a new product next month—a sustainable, affordable athletic wear line targeting Gen Z. We have a limited budget and need to figure out our go-to-market strategy. Where do we even start?"
+  },
+  {
+    id: 1,
+    type: 'system',
+    content:
+      "Exciting launch! A few things to clarify so I give you relevant guidance: (1) What's your total marketing budget for the launch month? (2) Do you already have an email list, social following, or any existing audience? (3) Who's your main competitor, and what are they doing? (4) Is this DTC (direct-to-consumer) or are you selling through retailers? These will shape whether we focus on paid ads, influencers, organic content, or a mix."
+  },
+  {
+    id: 2,
+    type: 'user',
+    content:
+      "We have about $15,000 for the first month. We're DTC only, launching on our own website. We have a small email list of about 2,000 people from a waitlist, and basically no social following yet. Our main competitor is Reformation, but they're way more established. We want to emphasize our sustainability angle and lower price point."
+  },
+  {
+    id: 3,
+    type: 'system',
+    content:
+      "Okay, $15K is modest but workable for DTC. Here's my initial take: Since you're starting from zero on social and have a small email list, I'd suggest a three-part approach: (1) Allocate ~$8K to highly targeted paid ads (TikTok and Instagram) reaching eco-conscious Gen Z with strong creative, (2) Use $3K for micro-influencer partnerships (people with 10K-100K followers in the sustainability space—cheaper but authentic), (3) Keep $4K for email and organic content. Before we dive deeper—what's your product's main hook? Is it the materials, the price, the designs, or the transparency of your supply chain?"
+  },
+  {
+    id: 4,
+    type: 'user',
+    content:
+      "The main hook is that we use recycled ocean plastic and sell at 40% lower prices than Reformation. Our supply chain is also fully transparent. We've got 15 styles launching across tops, shorts, and leggings."
+  },
+  {
+    id: 5,
+    type: 'system',
+    content:
+      "Perfect—that's a strong, differentiated message. Here's what I'd focus on: The ocean plastic angle is visually compelling and emotionally resonant with Gen Z; the price-to-quality ratio is your competitive advantage against Reformation. For your first month, I'd recommend this campaign narrative: 'High performance, zero guilt, actual prices.' Now, a strategic question: Do you want to go all-in on one or two channels, or spread across TikTok, Instagram, and YouTube? Gen Z is on TikTok and Instagram, but each requires different content styles. What does your creative team feel most confident producing?"
+  },
+  {
+    id: 6,
+    type: 'user',
+    content:
+      "We can handle both TikTok and Instagram, but honestly TikTok feels more authentic for our brand. We have some behind-the-scenes footage of our production process and some early customer testimonials. Instagram we'd probably do more polished product shots."
+  },
+  {
+    id: 7,
+    type: 'system',
+    content:
+      "Smart instinct—TikTok is perfect for you because behind-the-scenes and authenticity is the content style there, and sustainability messaging performs really well. That said, here's my suggestion: (1) Use TikTok primarily for awareness and virality—behind-the-scenes, sustainability stories, affordability messaging. Spend $5K there. (2) Use Instagram for conversion—polished product shots, customer testimonials, sustainability proof. Spend $3K there. (3) With your micro-influencers ($3K), focus on TikTok creators first since that's where your audience is. One question though: Do you have a clear conversion path ready? Like, when someone clicks your ad, what's the landing page experience? Are you doing a discount code to incentivize first purchase?"
+  },
+  {
+    id: 8,
+    type: 'user',
+    content:
+      "We have the website ready, but we haven't thought about a launch discount. Should we do one? Won't that hurt our perceived value?"
+  },
+  {
+    id: 9,
+    type: 'system',
+    content:
+      "Great question—common concern. For a DTC launch with limited awareness, I'd actually recommend a strategic discount, not a deep one. Something like 15-20% off for the first 48 hours, with messaging like 'Early founder pricing' or 'Launch week exclusive.' Why? It creates urgency, lowers the barrier for first-time buyers trying an unknown brand, and you get email addresses and reviews to leverage later. You're not training people to wait for sales—you're using urgency to convert. Pair it with clear value messaging (ocean plastic, transparent supply chain, high quality) so it doesn't feel cheap. Also, include a referral incentive—Gen Z shares—maybe $10 off for them and the referee. This turns customers into advocates. Does that strategy feel right for your brand?"
+  },
+  {
+    id: 10,
+    type: 'user',
+    content:
+      'That makes sense. Before we move forward, can you summarize the full plan and tell me what could go wrong?'
+  },
+  {
+    id: 11,
+    type: 'system',
+    content:
+      "Absolutely. Your Launch Plan: $8K paid ads (TikTok $5K, Instagram $3K) with behind-the-scenes and product content; $3K micro-influencer partnerships on TikTok; $4K allocated to email nurture and organic/referral growth. 15-20% launch discount for 48 hours. What could go wrong: (1) Creative underperforms—test multiple ad versions early and kill losers fast, (2) Website crashes or checkout breaks—stress test before launch, (3) Influencers don't deliver—vet their audiences carefully and look for engagement rates, not just follower count, (4) You don't have enough inventory—make sure supply matches demand projections, (5) Customer acquisition cost exceeds your margins—monitor CAC closely in week one and adjust spending. My advice: Launch on a Tuesday or Wednesday so you have time to optimize before the weekend. Track everything obsessively in the first 72 hours—CAC, conversion rate, email signup rate. Be ready to shift budget if one channel is outperforming. Want me to help you build a monitoring dashboard or refine your email launch sequence next?"
+  }
 ] as Message[];
 
 type StreamingMessage =
@@ -130,7 +190,7 @@ function CardMessage({
   imageUrl: string;
 }) {
   return (
-    <ThreadItem textValue={title} className={style({...focusRing(), borderRadius: 'default'})}>
+    <ThreadItem textValue={title}>
       <AssetCard>
         <CardPreview>
           <Image src={imageUrl} />
@@ -236,7 +296,7 @@ export function StreamingChat() {
     // faster and thus the announcements will get cut off even with polite...
     // first batch, does tool calls with text response
     let timestamp = 0;
-    let toolCallDuration = 4000;
+    let toolCallDuration = 1000;
     // Status added after short delay so user message announcement plays first
     addTimeout(
       () => {
@@ -251,9 +311,9 @@ export function StreamingChat() {
           }
         ]);
       },
-      (timestamp += 1000)
+      (timestamp += 500)
     );
-    addTimeout(() => addTool('Thinking', true), (timestamp += 1000));
+    addTimeout(() => addTool('Thinking', true), (timestamp += 500));
     addTimeout(
       () =>
         completeTool(
@@ -261,12 +321,12 @@ export function StreamingChat() {
         ),
       (timestamp += toolCallDuration)
     );
-    addTimeout(() => addTool('Loading tool'), (timestamp += 1000));
+    addTimeout(() => addTool('Loading tool'), (timestamp += 500));
     addTimeout(
       () => completeTool('Asset search tool loaded with access to the Hilton brand library.'),
       (timestamp += toolCallDuration)
     );
-    addTimeout(() => addTool('Searching'), (timestamp += 1000));
+    addTimeout(() => addTool('Searching'), (timestamp += 500));
     addTimeout(
       () => completeTool('Found 15 assets matching the brand criteria across 3 campaigns.'),
       (timestamp += toolCallDuration)
@@ -276,11 +336,11 @@ export function StreamingChat() {
         streamText(
           'I found some relevant assets that match your request. Let me pull up the details.'
         ),
-      (timestamp += 1000)
+      (timestamp += 500)
     );
 
     // then does searching, streaming more text, returning a card and sources
-    addTimeout(() => addTool('Searching'), (timestamp += 4000));
+    addTimeout(() => addTool('Searching'), (timestamp += 1000));
     addTimeout(
       () =>
         completeTool('Identified additional brand materials related to the presentation context.'),
@@ -321,7 +381,7 @@ export function StreamingChat() {
               'The user shared Hilton brand assets and is asking for a presentation outline. I analyzed the visual themes and brand guidelines to suggest a narrative structure that aligns with the hospitality brand identity.'
           }
         ]),
-      (timestamp += 2000)
+      (timestamp += 1000)
     );
     addTimeout(
       () =>
@@ -331,10 +391,10 @@ export function StreamingChat() {
             'revolve around brand consistency, audience engagement, and clear calls to action.',
           MOCK_SOURCES
         ),
-      (timestamp += 1000)
+      (timestamp += 500)
     );
 
-    let streamEndTimestamp = timestamp + 8000;
+    let streamEndTimestamp = timestamp + 500;
     addTimeout(() => {
       setMessages(prev => [...prev, {id: nextId.current++, type: 'card', ...MOCK_CARD}]);
     }, streamEndTimestamp);
@@ -365,7 +425,7 @@ export function StreamingChat() {
         height: '100%'
       })}>
       <Chat
-        className={style({
+        styles={style({
           display: 'flex',
           flexDirection: 'column',
           overflow: 'hidden',
@@ -402,7 +462,7 @@ export function StreamingChat() {
             items={[...messages].reverse()}
             UNSTABLE_focusOnEntry="first"
             aria-label="Chat thread"
-            className={style({
+            styles={style({
               flexGrow: 1,
               overflowX: 'hidden',
               overflowY: 'auto',
@@ -416,12 +476,7 @@ export function StreamingChat() {
                 return (
                   <ThreadItem
                     textValue={msg.content}
-                    className={style({
-                      ...focusRing(),
-                      borderRadius: 'default',
-                      display: 'flex',
-                      justifyContent: 'end'
-                    })}>
+                    styles={style({display: 'flex', justifyContent: 'end'})}>
                     <UserMessage>{msg.content}</UserMessage>
                   </ThreadItem>
                 );
@@ -437,8 +492,7 @@ export function StreamingChat() {
                   <ThreadItem
                     textValue={announcement}
                     isStreaming={msg.isStreaming}
-                    shouldAnnounceOnMount
-                    className={style({...focusRing(), borderRadius: 'default'})}>
+                    shouldAnnounceOnMount>
                     <ResponseStatus isLoading={msg.isStreaming}>
                       <ResponseStatusTitle>{title}</ResponseStatusTitle>
                       <ResponseStatusPanel>
@@ -463,9 +517,7 @@ export function StreamingChat() {
                 // TODO: probably should have ThreadItem auto wrap MessageSuggestionList as well
                 // but this one I could see perhaps being a standalone component to be used outside of thread
                 return (
-                  <ThreadItem
-                    textValue={msg.title}
-                    className={style({...focusRing(), borderRadius: 'default'})}>
+                  <ThreadItem textValue={msg.title}>
                     <MessageSuggestionList title={msg.title}>
                       {msg.suggestions.map((s, i) => (
                         <MessageSuggestion key={i}>{s}</MessageSuggestion>
@@ -559,12 +611,7 @@ export function VirtualizedChat() {
               return (
                 <ThreadItem
                   textValue={msg.content}
-                  className={style({
-                    ...focusRing(),
-                    borderRadius: 'lg',
-                    display: 'flex',
-                    justifyContent: 'end'
-                  })}>
+                  styles={style({borderRadius: 'lg', display: 'flex', justifyContent: 'end'})}>
                   <UserMessage>{msg.content}</UserMessage>
                 </ThreadItem>
               );
@@ -574,9 +621,7 @@ export function VirtualizedChat() {
               let message = isPending ? 'Generating response' : 'Response generated';
 
               return (
-                <ThreadItem
-                  textValue={message}
-                  className={style({...focusRing(), borderRadius: 'default'})}>
+                <ThreadItem textValue={message}>
                   <ResponseStatus isLoading={isPending}>
                     <ResponseStatusTitle>{message}</ResponseStatusTitle>
                   </ResponseStatus>
@@ -616,10 +661,7 @@ function SystemMessage({
   sources?: string[];
 }) {
   return (
-    <ThreadItem
-      textValue={textValue}
-      isStreaming={isStreaming}
-      className={style({...focusRing(), borderRadius: 'default'})}>
+    <ThreadItem textValue={textValue} isStreaming={isStreaming}>
       {children}
       {sources && sources.length > 0 && (
         <MessageSource label="Sources">
