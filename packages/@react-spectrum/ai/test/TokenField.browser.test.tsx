@@ -28,6 +28,7 @@ import {
   renderControlledTokenField,
   segments,
   selectRange,
+  setFieldSelection,
   text,
   token,
   waitForCaret,
@@ -127,6 +128,17 @@ describeOrSkip('TokenField browser interactions', () => {
       await waitForSelection(textbox, {index: 0, offset: 0});
     });
 
+    it('moves over an emoji as a single grapheme', async () => {
+      let list = segments(text('a😀b'));
+      let {textbox} = await renderControlledTokenField(list);
+      await navigateCaret(textbox, list, {index: 0, offset: 1});
+      // ArrowRight steps over the whole emoji (2 code units), not into the middle of it.
+      await userEvent.keyboard('{ArrowRight}');
+      await waitForSelection(textbox, {index: 0, offset: 3});
+      await userEvent.keyboard('{ArrowLeft}');
+      await waitForSelection(textbox, {index: 0, offset: 1});
+    });
+
     it('moves to field start with Home on single line', async () => {
       let list = segments(text('hello'));
       let {textbox} = await renderControlledTokenField(list);
@@ -209,6 +221,127 @@ describeOrSkip('TokenField browser interactions', () => {
       let mod = modKey();
       await userEvent.keyboard(`{${mod}>}{ArrowRight}{/${mod}}`);
       await waitForSelection(textbox, {index: 0, offset: 11});
+    });
+  });
+
+  describe('rtl caret movement', () => {
+    // In RTL text the visual arrow keys map to the opposite logical direction: ArrowLeft moves
+    // the caret forward through the text and ArrowRight moves it backward.
+    it('moves the caret in the visual direction in RTL text', async () => {
+      let list = segments(text('אבגד'));
+      let {textbox} = await renderControlledTokenField(list, {dir: 'rtl'} as any);
+      let el = textbox.element();
+      await focusField(textbox);
+      setFieldSelection(el, {index: 0, offset: 2}, {index: 0, offset: 2});
+      await userEvent.keyboard('{ArrowLeft}');
+      await waitForSelection(textbox, {index: 0, offset: 3});
+      setFieldSelection(el, {index: 0, offset: 2}, {index: 0, offset: 2});
+      await userEvent.keyboard('{ArrowRight}');
+      await waitForSelection(textbox, {index: 0, offset: 1});
+    });
+
+    it('skips over a token in the visual direction in RTL text', async () => {
+      let list = segments(text('אב'), token('ך'), text('גד'));
+      let {textbox} = await renderControlledTokenField(list, {dir: 'rtl'} as any);
+      let el = textbox.element();
+      await focusField(textbox);
+      // ArrowLeft (visual left = logical forward) crosses the token to the following text.
+      setFieldSelection(el, {index: 0, offset: 2}, {index: 0, offset: 2});
+      await userEvent.keyboard('{ArrowLeft}');
+      await waitForSelection(textbox, {index: 2, offset: 0});
+      // ArrowRight (visual right = logical backward) crosses back over the token.
+      await userEvent.keyboard('{ArrowRight}');
+      await waitForSelection(textbox, {index: 0, offset: 2});
+    });
+
+    it('extends the selection in the visual direction in RTL text', async () => {
+      let list = segments(text('אבגד'));
+      let {textbox} = await renderControlledTokenField(list, {dir: 'rtl'} as any);
+      let el = textbox.element();
+      await focusField(textbox);
+      setFieldSelection(el, {index: 0, offset: 2}, {index: 0, offset: 2});
+      await userEvent.keyboard('{Shift>}{ArrowLeft}{ArrowLeft}{/Shift}');
+      await waitForSelection(textbox, {index: 0, offset: 2}, {index: 0, offset: 4});
+    });
+
+    it('extends the selection across a token in RTL text', async () => {
+      let list = segments(text('אב'), token('ך'), text('גד'));
+      let {textbox} = await renderControlledTokenField(list, {dir: 'rtl'} as any);
+      let el = textbox.element();
+      await focusField(textbox);
+      setFieldSelection(el, {index: 0, offset: 2}, {index: 0, offset: 2});
+      await userEvent.keyboard('{Shift>}{ArrowLeft}{/Shift}');
+      await waitForSelection(textbox, {index: 0, offset: 2}, {index: 2, offset: 0});
+    });
+
+    it('moves the caret by word in the visual direction in RTL text', async () => {
+      // "שלום עולם" = two words separated by a space (offsets 0-4 and 5-9).
+      let list = segments(text('שלום עולם'));
+      let {textbox} = await renderControlledTokenField(list, {dir: 'rtl'} as any);
+      let el = textbox.element();
+      await focusField(textbox);
+      let mod = wordNavModKey();
+      // Word + ArrowLeft (visual left = logical forward) moves to the end of the first word.
+      setFieldSelection(el, {index: 0, offset: 0}, {index: 0, offset: 0});
+      await userEvent.keyboard(`{${mod}>}{ArrowLeft}{/${mod}}`);
+      await waitForSelection(textbox, {index: 0, offset: 4});
+      // Word + ArrowRight (visual right = logical backward) moves to the start of the last word.
+      setFieldSelection(el, {index: 0, offset: 9}, {index: 0, offset: 9});
+      await userEvent.keyboard(`{${mod}>}{ArrowRight}{/${mod}}`);
+      await waitForSelection(textbox, {index: 0, offset: 5});
+    });
+
+    it('moves to the line boundaries with Home and End in RTL text', async () => {
+      let list = segments(text('שלום עולם'));
+      let {textbox} = await renderControlledTokenField(list, {dir: 'rtl'} as any);
+      let el = textbox.element();
+      await focusField(textbox);
+      setFieldSelection(el, {index: 0, offset: 4}, {index: 0, offset: 4});
+      await userEvent.keyboard('{Home}');
+      await waitForSelection(textbox, {index: 0, offset: 0});
+      await userEvent.keyboard('{End}');
+      await waitForSelection(textbox, {index: 0, offset: 9});
+    });
+  });
+
+  describe('bidirectional text', () => {
+    it('deletes the previous character with Backspace in RTL text', async () => {
+      let list = segments(text('שלום'));
+      let {textbox, getValue} = await renderControlledTokenField(list, {dir: 'rtl'} as any);
+      let el = textbox.element();
+      await focusField(textbox);
+      setFieldSelection(el, {index: 0, offset: 4}, {index: 0, offset: 4});
+      await userEvent.keyboard('{Backspace}');
+      await waitForFieldText(getValue, 'שלו');
+    });
+
+    it('crosses a token atomically in mixed RTL and LTR text', async () => {
+      // RTL text, an LTR token, then RTL text.
+      let list = segments(text('שלום'), token('ABC'), text('עולם'));
+      let {textbox} = await renderControlledTokenField(list, {dir: 'rtl'} as any);
+      let el = textbox.element();
+      await focusField(textbox);
+      // From the boundary before the token, ArrowLeft (logical forward) jumps the whole token.
+      setFieldSelection(el, {index: 0, offset: 4}, {index: 0, offset: 4});
+      await userEvent.keyboard('{ArrowLeft}');
+      await waitForSelection(textbox, {index: 2, offset: 0});
+      // ArrowRight (logical backward) crosses back over the token.
+      await userEvent.keyboard('{ArrowRight}');
+      await waitForSelection(textbox, {index: 0, offset: 4});
+    });
+
+    it('moves through and back across mixed bidirectional text', async () => {
+      // "ab" (LTR) + "גד" (RTL) + "ef" (LTR). The visual path differs across browsers, but the
+      // caret must traverse the whole field and a round trip must return to the start.
+      let list = segments(text('abגדef'));
+      let {textbox} = await renderControlledTokenField(list);
+      await focusField(textbox);
+      await userEvent.keyboard('{Home}');
+      await waitForSelection(textbox, {index: 0, offset: 0});
+      await userEvent.keyboard('{ArrowRight>6}');
+      await waitForSelection(textbox, {index: 0, offset: 6});
+      await userEvent.keyboard('{ArrowLeft>6}');
+      await waitForSelection(textbox, {index: 0, offset: 0});
     });
   });
 
@@ -333,7 +466,27 @@ describeOrSkip('TokenField browser interactions', () => {
       await expect.poll(() => tokenEl.getAttribute('data-selected')).toBe(null);
     });
 
+    it('collapses the selection to the right edge with ArrowRight', async () => {
+      let {textbox} = await renderControlledTokenField(abTokCd);
+      await selectRange(textbox, abTokCd, {index: 0, offset: 1}, {index: 2, offset: 1});
+      // A plain arrow collapses to the edge without moving the caret past it.
+      await userEvent.keyboard('{ArrowRight}');
+      await waitForSelection(textbox, {index: 2, offset: 1});
+    });
+
+    it('collapses the selection to the left edge with ArrowLeft', async () => {
+      let {textbox} = await renderControlledTokenField(abTokCd);
+      await selectRange(textbox, abTokCd, {index: 0, offset: 1}, {index: 2, offset: 1});
+      await userEvent.keyboard('{ArrowLeft}');
+      await waitForSelection(textbox, {index: 0, offset: 1});
+    });
+
     it('extends a double-clicked word to the left with Shift+ArrowLeft', async () => {
+      if (isFirefox()) {
+        // Firefox does not treat double clicks as directionless.
+        return;
+      }
+
       // Double clicking a word creates a directionless selection. Shift+ArrowLeft should
       // extend it to the left rather than shrinking it from the right.
       let list = segments(text('aaaa bbbb cccc'));
@@ -445,7 +598,7 @@ describeOrSkip('TokenField browser interactions', () => {
     it('replaces token when typing after clicking token', async () => {
       let {textbox, getValue} = await renderControlledTokenField(abTokCd);
       await userEvent.click(textbox.getByText('TOK'));
-      await waitForSelection(textbox, {index: 1, offset: 0}, {index: 1, offset: 3});
+      await waitForSelection(textbox, {index: 0, offset: 2}, {index: 2, offset: 0});
       await userEvent.keyboard('NEW');
       await waitForFieldText(getValue, 'abNEWcd');
     });
