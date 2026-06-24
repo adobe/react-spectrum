@@ -1,6 +1,7 @@
 @import 'tailwindcss' source('./');
 
 @config '../tailwind.config.js';
+@import 'tw-animate-css';
 
 * {
   -webkit-tap-highlight-color: transparent;
