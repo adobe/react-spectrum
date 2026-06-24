@@ -37,12 +37,12 @@ import {
   wordDeleteModKey,
   wordNavModKey
 } from './utils/tokenFieldBrowserUtils';
+import {CLIPBOARD_MIME_TYPE, Token, TokenField} from '../src/TokenField';
 import {commands, userEvent} from 'vitest/browser';
 import {describe, expect, it} from 'vitest';
 import {isFirefox, isWebKit} from 'react-aria/private/utils/platform';
 import React from 'react';
 import {render} from 'vitest-browser-react';
-import {Token, TokenField} from '../src/TokenField';
 
 declare module 'vitest/browser' {
   interface BrowserCommands {
@@ -798,6 +798,44 @@ describeOrSkip('TokenField browser interactions', () => {
       } finally {
         await commands.unlockClipboard();
       }
+    });
+
+    it('ignores malformed data under the custom clipboard type without crashing', async () => {
+      let {textbox, getValue} = await renderControlledTokenField(segments(text('hi')));
+      let el = textbox.element();
+      await focusField(textbox);
+      // Simulate another app placing invalid JSON under our custom clipboard type. The field must
+      // not throw (it previously called JSON.parse unguarded) and its value must be unchanged.
+      let dt = new DataTransfer();
+      dt.setData(CLIPBOARD_MIME_TYPE, '{ not valid json');
+      el.dispatchEvent(
+        new ClipboardEvent('paste', {clipboardData: dt, bubbles: true, cancelable: true})
+      );
+      expect(getValue().toString()).toBe('hi');
+    });
+
+    it('ignores valid JSON with invalid segments under the custom clipboard type', async () => {
+      let {textbox, getValue} = await renderControlledTokenField(segments(text('hi')));
+      let el = textbox.element();
+      await focusField(textbox);
+      // Valid JSON that does not match the segment shape must be rejected by validation rather
+      // than trusted and inserted. Covers the non-array and per-segment validation branches.
+      for (let payload of [
+        '{"type":"text","text":"x"}', // not an array
+        '[]', // empty array
+        '[{"type":"evil","text":"x"}]', // invalid segment type
+        '[{"type":"text"}]', // missing text
+        '[{"type":"token","text":42}]', // non-string text
+        '["plain string"]', // not an object
+        '[null]' // null entry
+      ]) {
+        let dt = new DataTransfer();
+        dt.setData(CLIPBOARD_MIME_TYPE, payload);
+        el.dispatchEvent(
+          new ClipboardEvent('paste', {clipboardData: dt, bubbles: true, cancelable: true})
+        );
+      }
+      expect(getValue().toString()).toBe('hi');
     });
   });
 

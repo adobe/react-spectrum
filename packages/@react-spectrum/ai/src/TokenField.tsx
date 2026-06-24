@@ -137,8 +137,11 @@ export const TokenField = forwardRef(function TokenField(
           data = transferredData.current;
           transferredData.current = null;
         } else if (e.dataTransfer) {
-          if (e.dataTransfer.types.includes(CLIPBOARD_MIME_TYPE)) {
-            data = JSON.parse(e.dataTransfer.getData(CLIPBOARD_MIME_TYPE));
+          let parsed = e.dataTransfer.types.includes(CLIPBOARD_MIME_TYPE)
+            ? parseSegments(e.dataTransfer.getData(CLIPBOARD_MIME_TYPE))
+            : null;
+          if (parsed) {
+            data = parsed;
           } else if (e.dataTransfer.types.includes('text/plain')) {
             data[0].text = e.dataTransfer.getData('text/plain');
           }
@@ -278,7 +281,7 @@ export const TokenField = forwardRef(function TokenField(
   useEvent(ref, 'paste', e => {
     // Safari doesn't pass the custom clipboard data type to beforeinput dataTransfer so we handle it here.
     if (e.clipboardData && e.clipboardData.types.includes(CLIPBOARD_MIME_TYPE)) {
-      transferredData.current = JSON.parse(e.clipboardData.getData(CLIPBOARD_MIME_TYPE));
+      transferredData.current = parseSegments(e.clipboardData.getData(CLIPBOARD_MIME_TYPE));
     }
   });
 
@@ -297,7 +300,7 @@ export const TokenField = forwardRef(function TokenField(
     }
 
     if (e.dataTransfer && e.dataTransfer.types.includes(CLIPBOARD_MIME_TYPE)) {
-      transferredData.current = JSON.parse(e.dataTransfer.getData(CLIPBOARD_MIME_TYPE));
+      transferredData.current = parseSegments(e.dataTransfer.getData(CLIPBOARD_MIME_TYPE));
     }
   });
 
@@ -313,7 +316,7 @@ export const TokenField = forwardRef(function TokenField(
         if (segment?.type === 'token') {
           announce(segment.text, 'assertive');
         }
-      } else if (start.offset === state.segments[start.index].text.length) {
+      } else if (start.offset === state.segments[start.index]?.text.length) {
         let segment = state.segments[start.index + 1];
         if (segment?.type === 'token') {
           announce(segment.text, 'assertive');
@@ -689,6 +692,31 @@ function getDOMOffset(root: Element, pos: Position): [Node, number] {
 
 function isSamePosition(a: Position, b: Position): boolean {
   return a.index === b.index && a.offset === b.offset;
+}
+
+// Parse and validate segments from clipboard/drag data. Returns null if the data is not valid
+// JSON or does not match the expected shape, so malformed or untrusted data is ignored rather
+// than throwing or being inserted into the field.
+function parseSegments(json: string): TokenFieldSegment[] | null {
+  try {
+    let data = JSON.parse(json);
+    if (Array.isArray(data) && data.length > 0 && data.every(isValidSegment)) {
+      return data;
+    }
+  } catch {
+    // Ignore invalid clipboard data.
+  }
+  return null;
+}
+
+function isValidSegment(segment: unknown): segment is TokenFieldSegment {
+  return (
+    typeof segment === 'object' &&
+    segment != null &&
+    ((segment as TokenFieldSegment).type === 'text' ||
+      (segment as TokenFieldSegment).type === 'token') &&
+    typeof (segment as TokenFieldSegment).text === 'string'
+  );
 }
 
 function useSelectionChange(ref: React.RefObject<Element | null>, handler: () => void) {
