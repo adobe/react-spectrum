@@ -11,8 +11,43 @@
  */
 
 import type {Meta, StoryObj} from '@storybook/react';
-import {StatusLight} from '../src/StatusLight';
+import {StatusLight, StatusLightProps} from '../src/StatusLight';
 import {style} from '../style' with {type: 'macro'};
+
+const variants: NonNullable<StatusLightProps['variant']>[] = [
+  'accent',
+  'informative',
+  'neutral',
+  'positive',
+  'notice',
+  'negative',
+  'gray',
+  'red',
+  'orange',
+  'yellow',
+  'chartreuse',
+  'celery',
+  'green',
+  'seafoam',
+  'cyan',
+  'blue',
+  'indigo',
+  'purple',
+  'fuchsia',
+  'magenta',
+  'pink',
+  'turquoise',
+  'brown',
+  'cinnamon',
+  'silver'
+];
+
+const column = style({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: 8,
+  alignItems: 'start'
+});
 
 const meta: Meta<typeof StatusLight> = {
   component: StatusLight,
@@ -45,4 +80,16 @@ export const LongLabel: Story = {
   args: {
     variant: 'positive'
   }
+};
+
+export const AllVariants: Story = {
+  render: () => (
+    <div className={column()}>
+      {variants.map(variant => (
+        <StatusLight key={variant} variant={variant}>
+          {variant}
+        </StatusLight>
+      ))}
+    </div>
+  )
 };
