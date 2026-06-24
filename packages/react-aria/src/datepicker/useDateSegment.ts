@@ -264,7 +264,15 @@ export function useDateSegment(
     // Otherwise, when tapping on a segment in Android Chrome and then entering text,
     // composition events will be fired that break the DOM structure and crash the page.
     let selection = window.getSelection();
-    if (selection?.anchorNode && nodeContains(ref.current, selection?.anchorNode)) {
+    // Only collapse while this segment is actually focused. In Firefox, the selection inside a
+    // sibling text input is not reflected in the document selection, so a stale anchor can remain
+    // inside a segment after focus moves away; collapsing onto the contentEditable segment there
+    // steals focus back into it (e.g. while typing in a neighbouring input). See #10259.
+    if (
+      selection?.anchorNode &&
+      nodeContains(ref.current, selection?.anchorNode) &&
+      getActiveElement() === ref.current
+    ) {
       selection.collapse(ref.current);
     }
   });
