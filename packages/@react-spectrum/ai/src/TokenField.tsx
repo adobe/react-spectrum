@@ -20,7 +20,7 @@ import {
 } from './TokenSegmentList';
 import {FieldInputContext} from 'react-aria-components/Autocomplete';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
-import {FocusableProps} from '@react-types/shared';
+import {FocusableProps, forwardRefType} from '@react-types/shared';
 import {getActiveElement} from 'react-aria/private/utils/shadowdom/DOMFunctions';
 import {getOwnerDocument} from 'react-aria/private/utils/domHelpers';
 import {isMac} from 'react-aria/private/utils/platform';
@@ -47,11 +47,11 @@ interface TokenFieldRenderProps {
   isFocusVisible: boolean;
 }
 
-export interface TokenFieldProps
+export interface TokenFieldProps<T extends TokenSegmentList>
   extends StyleRenderProps<TokenFieldRenderProps>, SlotProps, FocusableProps {
-  value?: TokenSegmentList;
-  defaultValue?: TokenSegmentList;
-  onChange?: (value: TokenSegmentList) => void;
+  value?: T;
+  defaultValue?: T;
+  onChange?: (value: T) => void;
   children: (segment: TokenSegment) => React.ReactElement;
   multiline?: boolean;
   isReadOnly?: boolean;
@@ -65,10 +65,9 @@ export interface TokenFieldProps
 
 export const CLIPBOARD_MIME_TYPE = 'application/vnd.react-aria.tokens+json';
 
-export const TokenField = forwardRef(function TokenField(
-  props: TokenFieldProps,
-  forwardedRef: ForwardedRef<HTMLDivElement | null>
-) {
+export const TokenField = /*#__PURE__*/ (forwardRef as forwardRefType)(function TokenField<
+  T extends TokenSegmentList
+>(props: TokenFieldProps<T>, forwardedRef: ForwardedRef<HTMLDivElement | null>) {
   let {
     value: valueProp,
     defaultValue: defaultValueProp = new TokenSegmentList([]),
@@ -502,7 +501,7 @@ export const TokenField = forwardRef(function TokenField(
         {onPaste: props.onPaste}
       )}
       ref={mergeRefs(ref, autocompleteRef as any)}
-      role={autocompleteProps.role || 'textbox'}
+      role={autocompleteProps['role'] || 'textbox'}
       contentEditable={!isDisabled && !isReadOnly}
       suppressContentEditableWarning
       aria-multiline={multiline}

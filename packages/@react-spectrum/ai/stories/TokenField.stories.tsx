@@ -21,6 +21,7 @@ import {ComboBoxItem, ComboBoxListBox} from 'vanilla-starter/ComboBox';
 import {Direction, type TokenFieldSegment, TokenSegmentList} from '../src/TokenSegmentList';
 import {FieldButton, Label} from 'vanilla-starter/Form';
 import {Header, Menu, MenuItem, MenuSection} from 'vanilla-starter/Menu';
+import {Key} from '@react-types/shared';
 import {Popover} from 'vanilla-starter/Popover';
 import {positionToDOMRange, Token, TokenField} from '../src/TokenField';
 import 'vanilla-starter/TagGroup.css';
@@ -360,67 +361,75 @@ export const Search: TokenFieldStory = () => {
   );
 };
 
+class ComboBoxSegmentList extends TokenSegmentList {
+  getSelectedKeys(): Key[] {
+    return this.segments.filter(seg => seg.type === 'token').map(seg => seg.value.username);
+  }
+
+  getInputValue(): string {
+    let segment = this.segments[this.caretPosition.index];
+    return segment?.type === 'text' ? segment.text : '';
+  }
+
+  setSelectedKeys(keys: Key[]): ComboBoxSegmentList {
+    let selectedKeys = this.getSelectedKeys();
+    let added = new Set();
+    for (let key of keys) {
+      if (!selectedKeys.includes(key)) {
+        added.add(key);
+      }
+    }
+    let removed = new Set();
+    for (let key of selectedKeys) {
+      if (!keys.includes(key)) {
+        removed.add(key);
+      }
+    }
+
+    let value = this;
+    for (let key of removed) {
+      let index = value.segments.findIndex(
+        seg => seg.type === 'token' && seg.value.username === key
+      );
+      value = value.replaceRangeWithSegments(
+        {index: index, offset: 0},
+        {index: index, offset: value.segments[index]?.text.length ?? 0},
+        [],
+        false
+      );
+    }
+
+    // TODO: if the user selects multiple existing segments and then selects a value from the menu,
+    // should we replace the selected segments?
+    let segment = value.segments[value.caretPosition.index];
+    return value.replaceRangeWithSegments(
+      {index: value.caretPosition.index, offset: 0},
+      // If caret is in a text segment, replace the text segment with the new token. Otherwise, insert it.
+      segment?.type === 'text'
+        ? {
+            index: value.caretPosition.index,
+            offset: value.segments[value.caretPosition.index]?.text.length ?? 0
+          }
+        : {index: value.caretPosition.index, offset: 0},
+      [...added].map(key => {
+        let item = usernames.find(user => user.username === key)!;
+        return {type: 'token', text: item.username, value: item};
+      }),
+      false
+    );
+  }
+}
+
 export const ComboBoxExample: TokenFieldStory = () => {
-  let [value, setValue] = useState(new TokenSegmentList([]));
-  let selectedKeys = useMemo(
-    () => value.segments.filter(seg => seg.type === 'token').map(seg => seg.value.username),
-    [value]
-  );
-  let segment = value.segments[value.caretPosition.index];
-  let inputValue = segment?.type === 'text' ? segment.text : '';
+  let [value, setValue] = useState(new ComboBoxSegmentList([]));
 
   return (
     <ComboBox
       selectionMode="multiple"
       style={{width: 500}}
-      value={selectedKeys}
-      inputValue={inputValue}
-      onChange={keys => {
-        let added = new Set();
-        for (let key of keys) {
-          if (!selectedKeys.includes(key)) {
-            added.add(key);
-          }
-        }
-        let removed = new Set();
-        for (let key of selectedKeys) {
-          if (!keys.includes(key)) {
-            removed.add(key);
-          }
-        }
-
-        setValue(value => {
-          for (let key of removed) {
-            let index = value.segments.findIndex(
-              seg => seg.type === 'token' && seg.value.username === key
-            );
-            value = value.replaceRangeWithSegments(
-              {index: index, offset: 0},
-              {index: index, offset: value.segments[index]?.text.length ?? 0},
-              false
-            );
-          }
-
-          // TODO: if the user selects multiple existing segments and then selects a value from the menu,
-          // should we replace the selected segments?
-          let segment = value.segments[value.caretPosition.index];
-          return value.replaceRangeWithSegments(
-            {index: value.caretPosition.index, offset: 0},
-            // If caret is in a text segment, replace the text segment with the new token. Otherwise, insert it.
-            segment?.type === 'text'
-              ? {
-                  index: value.caretPosition.index,
-                  offset: value.segments[value.caretPosition.index]?.text.length ?? 0
-                }
-              : {index: value.caretPosition.index, offset: 0},
-            [...added].map(key => {
-              let item = usernames.find(user => user.username === key)!;
-              return {type: 'token', text: item.username, value: item};
-            }),
-            false
-          );
-        });
-      }}>
+      value={value.getSelectedKeys()}
+      inputValue={value.getInputValue()}
+      onChange={keys => setValue(value.setSelectedKeys(keys))}>
       <Label>Users</Label>
       <div className="combobox-field">
         <TokenField value={value} onChange={setValue} style={{paddingInlineEnd: 36}}>

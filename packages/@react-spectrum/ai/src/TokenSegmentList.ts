@@ -47,8 +47,8 @@ export class TokenSegmentList {
   readonly segments: readonly TokenFieldSegment[];
   caretPosition: Position = {index: 0, offset: 0};
   // Linked list representing the undo/redo history.
-  private previous: TokenSegmentList | null = null;
-  private next: TokenSegmentList | null = null;
+  private previous: this | null = null;
+  private next: this | null = null;
   private isCoalescing = true;
 
   constructor(tokens: readonly TokenFieldSegment[], options?: TokenSegmentListOptions) {
@@ -56,15 +56,15 @@ export class TokenSegmentList {
     this.caretPosition = options?.caretPosition ?? {index: 0, offset: 0};
   }
 
-  protected createSegmentList(segments: readonly TokenFieldSegment[]): TokenSegmentList {
+  protected createSegmentList(segments: readonly TokenFieldSegment[]): this {
     const Constructor = this.constructor as new (
       segments: readonly TokenFieldSegment[],
       options?: TokenSegmentListOptions
-    ) => TokenSegmentList;
+    ) => this;
     return new Constructor(segments);
   }
 
-  withCaretPosition(caretPosition: Position): TokenSegmentList {
+  withCaretPosition(caretPosition: Position): this {
     if (
       this.caretPosition.index === caretPosition.index &&
       this.caretPosition.offset === caretPosition.offset
@@ -122,7 +122,7 @@ export class TokenSegmentList {
   }
 
   /** Replace the text between two positions with new text. */
-  replaceRange(start: Position, end: Position, text: string, coalesce = true): TokenSegmentList {
+  replaceRange(start: Position, end: Position, text: string, coalesce = true): this {
     return this.replaceRangeWithSegments(
       start,
       end,
@@ -137,7 +137,7 @@ export class TokenSegmentList {
     end: Position,
     insert: TokenFieldSegment[],
     coalesce = true
-  ): TokenSegmentList {
+  ): this {
     start = this.clampPosition(start);
     end = this.clampPosition(end);
     let startSegment = this.segments[start.index];
@@ -303,7 +303,7 @@ export class TokenSegmentList {
     segmenter: Intl.Segmenter,
     direction: Direction,
     coalesce = true
-  ): TokenSegmentList {
+  ): this {
     let boundary = this.findBoundaryWithSegmenter(position, segmenter, direction);
     if (boundary) {
       return this.replaceRange(
@@ -319,7 +319,7 @@ export class TokenSegmentList {
   }
 
   /** Delete text to the next or previous line break. */
-  deleteLine(position: Position, direction: Direction, coalesce = true): TokenSegmentList {
+  deleteLine(position: Position, direction: Direction, coalesce = true): this {
     if (this.segments.length === 0) {
       return this;
     }
@@ -338,7 +338,7 @@ export class TokenSegmentList {
   }
 
   /** Converts the text at a position into a token. */
-  insertToken(position: Position): TokenSegmentList {
+  insertToken(position: Position): this {
     let segment = this.segments[position.index];
     if (segment && segment.type === 'text') {
       return this.replaceRangeWithSegments(
@@ -354,7 +354,7 @@ export class TokenSegmentList {
   }
 
   /** Create a new list containing a subset of the segments. */
-  slice(start: Position, end: Position): TokenSegmentList {
+  slice(start: Position, end: Position): this {
     start = this.clampPosition(start);
     end = this.clampPosition(end);
     if (start.index === end.index && start.offset === end.offset) {
@@ -389,11 +389,11 @@ export class TokenSegmentList {
     return this.segments.map(seg => seg.text).join('');
   }
 
-  undo(): TokenSegmentList {
+  undo(): this {
     return this.previous ?? this;
   }
 
-  redo(): TokenSegmentList {
+  redo(): this {
     return this.next ?? this;
   }
 
