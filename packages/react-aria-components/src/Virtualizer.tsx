@@ -66,12 +66,16 @@ interface LayoutContextValue {
   layout: ILayout<any>;
   layoutOptions?: any;
   shouldObserveItemSize?: boolean;
+}
+
+interface ScrollContextValue {
   getScrollAnchor?: () => VirtualizerScrollAnchor | null;
   scrollEndThreshold?: number;
 }
 
 const VirtualizerContext = createContext<VirtualizerState<any, any> | null>(null);
 const LayoutContext = createContext<LayoutContextValue | null>(null);
+const ScrollContext = createContext<ScrollContextValue | null>(null);
 
 /**
  * A Virtualizer renders a scrollable collection of data using customizable layouts.
@@ -79,7 +83,14 @@ const LayoutContext = createContext<LayoutContextValue | null>(null);
  * them as the user scrolls.
  */
 export function Virtualizer<O>(props: VirtualizerProps<O>): JSX.Element {
-  let {children, layout: layoutProp, layoutOptions, shouldObserveItemSize, getScrollAnchor, scrollEndThreshold} = props;
+  let {
+    children,
+    layout: layoutProp,
+    layoutOptions,
+    shouldObserveItemSize,
+    getScrollAnchor,
+    scrollEndThreshold
+  } = props;
   let layout = useMemo(
     () => (typeof layoutProp === 'function' ? new layoutProp() : layoutProp),
     [layoutProp]
@@ -99,9 +110,10 @@ export function Virtualizer<O>(props: VirtualizerProps<O>): JSX.Element {
 
   return (
     <CollectionRendererContext.Provider value={renderer}>
-      <LayoutContext.Provider
-        value={{layout, layoutOptions, shouldObserveItemSize, getScrollAnchor, scrollEndThreshold}}>
-        {children}
+      <LayoutContext.Provider value={{layout, layoutOptions, shouldObserveItemSize}}>
+        <ScrollContext.Provider value={{getScrollAnchor, scrollEndThreshold}}>
+          {children}
+        </ScrollContext.Provider>
       </LayoutContext.Provider>
     </CollectionRendererContext.Provider>
   );
@@ -113,7 +125,8 @@ function CollectionRoot({
   scrollRef,
   renderDropIndicator
 }: CollectionRootProps) {
-  let {layout, layoutOptions, shouldObserveItemSize, getScrollAnchor, scrollEndThreshold} = useContext(LayoutContext)!;
+  let {layout, layoutOptions, shouldObserveItemSize} = useContext(LayoutContext)!;
+  let {getScrollAnchor, scrollEndThreshold} = useContext(ScrollContext)!;
   let layoutOptions2 = layout.useLayoutOptions?.();
   let state = useVirtualizerState({
     allowsWindowScrolling: true,
