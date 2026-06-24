@@ -96,6 +96,12 @@ export interface PopoverProps
    */
   isExiting?: boolean;
   /**
+   * Whether the popover should appear and disappear without an entry or exit animation. This is
+   * used by components such as LinkPreview to skip animations when quickly swapping between
+   * overlays.
+   */
+  isInstant?: boolean;
+  /**
    * The container element in which the overlay portal will be placed. This may have unknown
    * behavior depending on where it is portalled to.
    *
@@ -161,7 +167,10 @@ export const Popover = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pop
   let localState = useOverlayTriggerState(props);
   let state =
     props.isOpen != null || props.defaultOpen != null || !contextState ? localState : contextState;
-  let isExiting = useExitAnimation(ref, state.isOpen) || props.isExiting || false;
+  // Skip the automatic exit animation when closing instantly (e.g. swapping between link previews
+  // during warmup). An explicitly provided isExiting prop still takes precedence.
+  let exitAnimation = useExitAnimation(ref, state.isOpen);
+  let isExiting = props.isExiting || (!props.isInstant && exitAnimation) || false;
   let isHidden = useIsHidden();
   let {direction} = useLocale();
 
@@ -201,6 +210,7 @@ interface PopoverInnerProps extends AriaPopoverProps, RenderProps<PopoverRenderP
   state: OverlayTriggerState;
   isEntering?: boolean;
   isExiting: boolean;
+  isInstant?: boolean;
   UNSTABLE_portalContainer?: Element;
   trigger?: string;
   dir?: 'ltr' | 'rtl';
@@ -234,7 +244,10 @@ function PopoverInner({
   );
 
   let ref = props.popoverRef as RefObject<HTMLDivElement | null>;
-  let isEntering = useEnterAnimation(ref, !!placement) || props.isEntering || false;
+  // Skip the automatic entry animation when opening instantly (e.g. swapping between link previews
+  // during warmup). An explicitly provided isEntering prop still takes precedence.
+  let enterAnimation = useEnterAnimation(ref, !!placement);
+  let isEntering = props.isEntering || (!props.isInstant && enterAnimation) || false;
   let renderProps = useRenderProps({
     ...props,
     defaultClassName: 'react-aria-Popover',
@@ -248,8 +261,9 @@ function PopoverInner({
 
   // Automatically render Popover with role=dialog except when isNonModal is true,
   // or a dialog is already nested inside the popover.
-  let shouldBeDialog = !props.isNonModal || props.trigger === 'SubmenuTrigger';
-  let [isDialog, setDialog] = useState(false);
+  let shouldBeDialog =
+    !props.isNonModal || props.trigger === 'SubmenuTrigger' || props.trigger === 'LinkPreview';
+  let [isDialog, setDialog] = useState(props.trigger === 'LinkPreview');
   useLayoutEffect(() => {
     if (ref.current) {
       setDialog(shouldBeDialog && !ref.current.querySelector('[role=dialog]'));
@@ -261,6 +275,7 @@ function PopoverInner({
   useEffect(() => {
     if (
       isDialog &&
+      props.trigger !== 'LinkPreview' &&
       (props.trigger !== 'SubmenuTrigger' || getInteractionModality() !== 'pointer') &&
       ref.current &&
       !isFocusWithin(ref.current)
@@ -330,7 +345,7 @@ function PopoverInner({
     return (
       <Overlay
         {...props}
-        shouldContainFocus={isDialog}
+        shouldContainFocus={isDialog && props.trigger !== 'LinkPreview'}
         isExiting={isExiting}
         portalContainer={UNSTABLE_portalContainer}>
         {!props.isNonModal && state.isOpen && (
@@ -349,7 +364,7 @@ function PopoverInner({
   return (
     <Overlay
       {...props}
-      shouldContainFocus={isDialog}
+      shouldContainFocus={isDialog && props.trigger !== 'LinkPreview'}
       isExiting={isExiting}
       portalContainer={UNSTABLE_portalContainer ?? groupCtx?.current ?? undefined}>
       {overlay}
