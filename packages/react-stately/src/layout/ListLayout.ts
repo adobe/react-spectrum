@@ -1013,7 +1013,6 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
       }
     }
   }
-
 }
 
 function toArray<T>(

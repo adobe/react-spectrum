@@ -103,9 +103,7 @@ export function Virtualizer<O>(props: VirtualizerProps<O>): JSX.Element {
   return (
     <CollectionRendererContext.Provider value={renderer}>
       <LayoutContext.Provider value={{layout, layoutOptions, shouldObserveItemSize}}>
-        <ScrollContext.Provider value={{scrollEndThreshold}}>
-          {children}
-        </ScrollContext.Provider>
+        <ScrollContext.Provider value={{scrollEndThreshold}}>{children}</ScrollContext.Provider>
       </LayoutContext.Provider>
     </CollectionRendererContext.Provider>
   );

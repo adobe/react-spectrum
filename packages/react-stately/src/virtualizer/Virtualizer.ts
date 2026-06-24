@@ -12,7 +12,13 @@
 
 import {ChildView, ReusableView, RootView} from './ReusableView';
 import {Collection, Key} from '@react-types/shared';
-import {InvalidationContext, Mutable, ScrollAnchor, VirtualizerDelegate, VirtualizerRenderOptions} from './types';
+import {
+  InvalidationContext,
+  Mutable,
+  ScrollAnchor,
+  VirtualizerDelegate,
+  VirtualizerRenderOptions
+} from './types';
 import {isSetEqual} from './utils';
 import {Layout} from './Layout';
 import {LayoutInfo} from './LayoutInfo';
@@ -204,7 +210,12 @@ export class Virtualizer<T extends object, V> {
         // always show the latest content on open. _visibleViews is empty here so there
         // is no anchor to restore anyway.
         this._hasInitializedReverseAnchor = true;
-        let target = new Rect(previousVisibleRect.x, maxVisibleY, previousVisibleRect.width, previousVisibleRect.height);
+        let target = new Rect(
+          previousVisibleRect.x,
+          maxVisibleY,
+          previousVisibleRect.width,
+          previousVisibleRect.height
+        );
         if (!target.equals(this.visibleRect)) {
           this.delegate.setVisibleRect(target);
           return;
@@ -218,7 +229,8 @@ export class Virtualizer<T extends object, V> {
           // existing items keep the same absolute y. Direction is the discriminator.
           let preLayoutCornerY = anchor.offset + previousVisibleRect.y;
           let freshInfo = this.layout.getLayoutInfo(anchor.key);
-          let anchorShiftedDown = freshInfo != null && freshInfo.rect[anchor.corner].y > preLayoutCornerY;
+          let anchorShiftedDown =
+            freshInfo != null && freshInfo.rect[anchor.corner].y > preLayoutCornerY;
 
           if (wasNearBottom && !this._isScrolling && context.itemSizeChanged) {
             // Streaming growth: the bottom item grew in place, shifting its top y downward in a
@@ -226,7 +238,12 @@ export class Virtualizer<T extends object, V> {
             // true discriminator: history loads above require the user to have scrolled up first,
             // so wasNearBottom is false for history and true only for streaming. This branch must
             // come before the anchorShiftedDown check.
-            let target = new Rect(previousVisibleRect.x, maxVisibleY, previousVisibleRect.width, previousVisibleRect.height);
+            let target = new Rect(
+              previousVisibleRect.x,
+              maxVisibleY,
+              previousVisibleRect.width,
+              previousVisibleRect.height
+            );
             if (!target.equals(this.visibleRect)) {
               this.delegate.setVisibleRect(target);
               return;
@@ -236,14 +253,24 @@ export class Virtualizer<T extends object, V> {
             // the topmost visible item stays in place.
             let targetY = this._computeScrollAnchorTarget(anchor);
             if (targetY != null) {
-              let rect = new Rect(previousVisibleRect.x, targetY, previousVisibleRect.width, previousVisibleRect.height);
+              let rect = new Rect(
+                previousVisibleRect.x,
+                targetY,
+                previousVisibleRect.width,
+                previousVisibleRect.height
+              );
               this.delegate.setVisibleRect(rect);
               return;
             }
           } else if (wasNearBottom && !this._isScrolling) {
             // New message arrived below (anchor unchanged), user was near bottom:
             // pin to latest output.
-            let target = new Rect(previousVisibleRect.x, maxVisibleY, previousVisibleRect.width, previousVisibleRect.height);
+            let target = new Rect(
+              previousVisibleRect.x,
+              maxVisibleY,
+              previousVisibleRect.width,
+              previousVisibleRect.height
+            );
             if (!target.equals(this.visibleRect)) {
               this.delegate.setVisibleRect(target);
               return;
@@ -256,7 +283,12 @@ export class Virtualizer<T extends object, V> {
           }
         } else if (wasNearBottom && !this._isScrolling) {
           // No anchor captured (views not yet populated): fall back to near-bottom snap.
-          let target = new Rect(previousVisibleRect.x, maxVisibleY, previousVisibleRect.width, previousVisibleRect.height);
+          let target = new Rect(
+            previousVisibleRect.x,
+            maxVisibleY,
+            previousVisibleRect.width,
+            previousVisibleRect.height
+          );
           if (!target.equals(this.visibleRect)) {
             this.delegate.setVisibleRect(target);
             return;
@@ -300,8 +332,12 @@ export class Virtualizer<T extends object, V> {
       if (layoutInfo && layoutInfo.rect.area > 0 && layoutInfo.rect.intersects(visibleRect)) {
         let corner = layoutInfo.rect.getCornerInRect(visibleRect) ?? 'topLeft';
         // Force top corners: bottom corners on a clipped item can drift if the item resizes.
-        if (corner === 'bottomLeft') { corner = 'topLeft'; }
-        if (corner === 'bottomRight') { corner = 'topRight'; }
+        if (corner === 'bottomLeft') {
+          corner = 'topLeft';
+        }
+        if (corner === 'bottomRight') {
+          corner = 'topRight';
+        }
         let offset = layoutInfo.rect[corner].y - visibleRect.y;
         if (!best || offset < best.offset) {
           best = {key, corner, offset};
@@ -332,7 +368,9 @@ export class Virtualizer<T extends object, V> {
       return false;
     }
     let visibleRect = this.visibleRect;
-    this.delegate.setVisibleRect(new Rect(visibleRect.x, targetY, visibleRect.width, visibleRect.height));
+    this.delegate.setVisibleRect(
+      new Rect(visibleRect.x, targetY, visibleRect.width, visibleRect.height)
+    );
     return true;
   }
 
@@ -447,7 +485,10 @@ export class Virtualizer<T extends object, V> {
       needsLayout = true;
     }
 
-    if (anchorScrollPosition !== this._anchorScrollPosition || scrollEndThreshold !== this._scrollEndThreshold) {
+    if (
+      anchorScrollPosition !== this._anchorScrollPosition ||
+      scrollEndThreshold !== this._scrollEndThreshold
+    ) {
       if (!this._anchorScrollPosition && anchorScrollPosition) {
         this._hasInitializedReverseAnchor = false;
       }
@@ -519,14 +560,17 @@ export class Virtualizer<T extends object, V> {
     }
 
     if (needsLayout) {
-      this.relayout({
-        offsetChanged,
-        sizeChanged,
-        itemSizeChanged,
-        layoutOptionsChanged,
-        layoutOptions: this._invalidationContext.layoutOptions,
-        isScrolling: this._isScrolling
-      }, {anchorScrollPosition, scrollEndThreshold});
+      this.relayout(
+        {
+          offsetChanged,
+          sizeChanged,
+          itemSizeChanged,
+          layoutOptionsChanged,
+          layoutOptions: this._invalidationContext.layoutOptions,
+          isScrolling: this._isScrolling
+        },
+        {anchorScrollPosition, scrollEndThreshold}
+      );
     } else if (needsUpdate) {
       this.updateSubviews();
     }
