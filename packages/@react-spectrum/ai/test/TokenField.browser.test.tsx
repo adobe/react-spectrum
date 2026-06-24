@@ -822,6 +822,25 @@ describeOrSkip('TokenField browser interactions', () => {
       await waitForFieldText(getValue, '');
     });
 
+    it('coalesces consecutive typing in a second field instance', async () => {
+      // Reproduces a bug where two instances of a TokenField share state.
+      let tick = () => new Promise(resolve => setTimeout(resolve, 30));
+      await renderControlledTokenField(segments(text('')));
+      let {textbox, getValue} = await renderControlledTokenField(segments(text('')));
+      await focusField(textbox);
+      await userEvent.keyboard('x');
+      await tick();
+      await userEvent.keyboard('y');
+      await tick();
+      await userEvent.keyboard('z');
+      await tick();
+      await waitForFieldText(getValue, 'xyz');
+      let mod = modKey();
+      await userEvent.keyboard(`{${mod}>}z{/${mod}}`);
+      await tick();
+      expect(getValue().toString()).toBe('');
+    });
+
     it('redoes after undo', async () => {
       let {textbox, getValue} = await renderControlledTokenField(segments(text('')));
       await focusField(textbox);

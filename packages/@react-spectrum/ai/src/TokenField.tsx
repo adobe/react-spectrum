@@ -644,7 +644,7 @@ function getPosition(container: Element, node: Node, offset: number): Position {
   return {index, offset};
 }
 
-let isProgrammaticSelectionChange = false;
+let isProgrammaticSelectionChange = Symbol('isProgrammaticSelectionChange');
 
 // TODO: do we want to export these?
 export function setCursor(root: Element, pos: Position, fireEvent = false) {
@@ -655,7 +655,7 @@ export function setSelection(root: Element, start: Position, end: Position, fire
   let selection = window.getSelection();
   if (selection) {
     let range = createDOMRange(root, start, end);
-    isProgrammaticSelectionChange = !fireEvent;
+    root[isProgrammaticSelectionChange] = !fireEvent;
     selection.removeAllRanges();
     selection.addRange(range);
   }
@@ -693,8 +693,8 @@ function isSamePosition(a: Position, b: Position): boolean {
 
 function useSelectionChange(ref: React.RefObject<Element | null>, handler: () => void) {
   useEvent(useRef(document), 'selectionchange', () => {
-    if (isProgrammaticSelectionChange) {
-      isProgrammaticSelectionChange = false;
+    if (ref.current && ref.current[isProgrammaticSelectionChange]) {
+      ref.current[isProgrammaticSelectionChange] = false;
       return;
     }
 
