@@ -1019,6 +1019,45 @@ export function EmptyChat() {
                   </ThreadItem>
                 );
               }
+              if (msg.type === 'status') {
+                let announcement = msg.isStreaming ? `${msg.label}…` : `${msg.label} complete`;
+                let title = msg.isStreaming ? `${msg.label}…` : msg.label;
+                return (
+                  <ThreadItem
+                    textValue={announcement}
+                    isStreaming={msg.isStreaming}
+                    shouldAnnounceOnMount>
+                    <ResponseStatus isLoading={msg.isStreaming}>
+                      <ResponseStatusTitle>{title}</ResponseStatusTitle>
+                      <ResponseStatusPanel>
+                        {msg.details && (
+                          <p className={style({font: 'body-sm', margin: 0})}>{msg.details}</p>
+                        )}
+                      </ResponseStatusPanel>
+                    </ResponseStatus>
+                  </ThreadItem>
+                );
+              }
+              if (msg.type === 'card') {
+                return (
+                  <CardMessage
+                    title={msg.title}
+                    description={msg.description}
+                    imageUrl={msg.imageUrl}
+                  />
+                );
+              }
+              if (msg.type === 'suggestions') {
+                return (
+                  <ThreadItem textValue={msg.title}>
+                    <MessageSuggestionList title={msg.title}>
+                      {msg.suggestions.map((s, i) => (
+                        <MessageSuggestion key={i}>{s}</MessageSuggestion>
+                      ))}
+                    </MessageSuggestionList>
+                  </ThreadItem>
+                );
+              }
               return (
                 <SystemMessage textValue={msg.content} isStreaming={msg.isStreaming}>
                   <div role="document">

@@ -80,8 +80,7 @@ export abstract class Layout<T extends object = Node<any>, O = any> implements L
    * incoming options before `update()` applies them, ensuring correctness on the
    * first render when internal fields are not yet set.
    */
-  isReversed(layoutOptions?: O): boolean {
-    // eslint-disable-line @typescript-eslint/no-unused-vars
+  isReversed(_layoutOptions?: O): boolean {
     return false;
   }
 

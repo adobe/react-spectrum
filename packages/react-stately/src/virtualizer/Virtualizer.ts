@@ -180,7 +180,10 @@ export class Virtualizer<T extends object, V> {
 
   private relayout(
     context: InvalidationContext = {},
-    scrollOpts?: {anchorScrollPosition?: boolean; scrollEndThreshold?: number}
+    scrollOpts?: {
+      anchorScrollPosition?: boolean;
+      scrollEndThreshold?: number;
+    }
   ) {
     let anchorScrollPosition = scrollOpts?.anchorScrollPosition ?? false;
     let scrollEndThreshold = scrollOpts?.scrollEndThreshold ?? 0;
@@ -232,54 +235,20 @@ export class Virtualizer<T extends object, V> {
           let anchorShiftedDown =
             freshInfo != null && freshInfo.rect[anchor.corner].y > preLayoutCornerY;
 
-          if (wasNearBottom && !this._isScrolling && context.itemSizeChanged) {
-            // Streaming growth: the bottom item grew in place, shifting its top y downward in a
-            // reversed layout — which looks identical to anchorShiftedDown. wasNearBottom is the
-            // true discriminator: history loads above require the user to have scrolled up first,
-            // so wasNearBottom is false for history and true only for streaming. This branch must
-            // come before the anchorShiftedDown check.
-            let target = new Rect(
-              previousVisibleRect.x,
+          // Queues a new render cycle.
+          // Return early to skip updateSubviews — running it now would position views against the old visibleRect,
+          // // causing a flash before the incoming relayout corrects them.
+          if (
+            this._applyReverseAnchorScroll(
+              anchor,
+              wasNearBottom,
+              anchorShiftedDown,
               maxVisibleY,
-              previousVisibleRect.width,
-              previousVisibleRect.height
-            );
-            if (!target.equals(this.visibleRect)) {
-              this.delegate.setVisibleRect(target);
-              return;
-            }
-          } else if (anchorShiftedDown) {
-            // History load: content inserted above shifts items DOWN. Restore position so
-            // the topmost visible item stays in place.
-            let targetY = this._computeScrollAnchorTarget(anchor);
-            if (targetY != null) {
-              let rect = new Rect(
-                previousVisibleRect.x,
-                targetY,
-                previousVisibleRect.width,
-                previousVisibleRect.height
-              );
-              this.delegate.setVisibleRect(rect);
-              return;
-            }
-          } else if (wasNearBottom && !this._isScrolling) {
-            // New message arrived below (anchor unchanged), user was near bottom:
-            // pin to latest output.
-            let target = new Rect(
-              previousVisibleRect.x,
-              maxVisibleY,
-              previousVisibleRect.width,
-              previousVisibleRect.height
-            );
-            if (!target.equals(this.visibleRect)) {
-              this.delegate.setVisibleRect(target);
-              return;
-            }
-          } else {
-            // User is scrolled up: preserve position regardless of where new content landed.
-            if (this._restoreScrollAnchor(anchor)) {
-              return;
-            }
+              previousVisibleRect,
+              context.itemSizeChanged
+            )
+          ) {
+            return;
           }
         } else if (wasNearBottom && !this._isScrolling) {
           // No anchor captured (views not yet populated): fall back to near-bottom snap.
@@ -318,6 +287,66 @@ export class Virtualizer<T extends object, V> {
     } else {
       this.updateSubviews();
     }
+  }
+
+  private _applyReverseAnchorScroll(
+    anchor: ScrollAnchor,
+    wasNearBottom: boolean,
+    anchorShiftedDown: boolean,
+    maxVisibleY: number,
+    previousVisibleRect: Rect,
+    itemSizeChanged: boolean | undefined
+  ): boolean {
+    if (wasNearBottom && !this._isScrolling && itemSizeChanged) {
+      // Streaming growth: the bottom item grew in place, shifting its top y downward in a
+      // reversed layout — which looks identical to anchorShiftedDown. wasNearBottom is the
+      // true discriminator: history loads above require the user to have scrolled up first,
+      // so wasNearBottom is false for history and true only for streaming. This branch must
+      // come before the anchorShiftedDown check.
+      let target = new Rect(
+        previousVisibleRect.x,
+        maxVisibleY,
+        previousVisibleRect.width,
+        previousVisibleRect.height
+      );
+      if (!target.equals(this.visibleRect)) {
+        this.delegate.setVisibleRect(target);
+        return true;
+      }
+    } else if (anchorShiftedDown) {
+      // History load: content inserted above shifts items DOWN. Restore position so
+      // the topmost visible item stays in place.
+      let targetY = this._computeScrollAnchorTarget(anchor);
+      if (targetY != null) {
+        let rect = new Rect(
+          previousVisibleRect.x,
+          targetY,
+          previousVisibleRect.width,
+          previousVisibleRect.height
+        );
+        this.delegate.setVisibleRect(rect);
+        return true;
+      }
+    } else if (wasNearBottom && !this._isScrolling) {
+      // New message arrived below (anchor unchanged), user was near bottom:
+      // pin to latest output.
+      let target = new Rect(
+        previousVisibleRect.x,
+        maxVisibleY,
+        previousVisibleRect.width,
+        previousVisibleRect.height
+      );
+      if (!target.equals(this.visibleRect)) {
+        this.delegate.setVisibleRect(target);
+        return true;
+      }
+    } else {
+      // User is scrolled up: preserve position regardless of where new content landed.
+      if (this._restoreScrollAnchor(anchor)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   private _getScrollAnchor(): ScrollAnchor | null {
