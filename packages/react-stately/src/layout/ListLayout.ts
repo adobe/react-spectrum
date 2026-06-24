@@ -189,7 +189,7 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
     this.contentSize = new Size();
   }
 
-  isReversed(layoutOptions?: ListLayoutOptions): boolean {
+  isReversed(layoutOptions?: O): boolean {
     let anchorTo = layoutOptions?.anchorTo ?? this.anchorTo;
     let orientation = layoutOptions?.orientation ?? this.orientation;
     // Guard matches buildCollection's condition: anchorTo: 'end' is only meaningful for vertical orientation
