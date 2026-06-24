@@ -7383,23 +7383,23 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-spectrum/ai@workspace:packages/@react-spectrum/ai"
   dependencies:
+    "@internationalized/date": "npm:^3.12.2"
+    "@internationalized/number": "npm:^3.6.7"
     "@react-aria/test-utils": "npm:^1.0.0-alpha.8"
+    "@react-spectrum/s2": "npm:^1.5.0"
+    "@react-types/shared": "npm:^3.36.0"
     "@storybook/jest": "npm:^0.2.3"
     "@testing-library/dom": "npm:^10.1.0"
     "@testing-library/react": "npm:^16.0.0"
     "@testing-library/user-event": "npm:^14.0.0"
     react: "npm:^19.0.0-rc.1"
+    react-aria: "npm:^3.50.0"
+    react-aria-components: "npm:^1.19.0"
     react-dom: "npm:^19.0.0-rc.1"
+    react-stately: "npm:^3.48.0"
   peerDependencies:
-    "@internationalized/date": ^3.12.2
-    "@internationalized/number": ^3.6.7
-    "@react-spectrum/s2": ^1.4.0
-    "@react-types/shared": ^3.35.0
     react: ^19.0.0-rc.1
-    react-aria: 3.49.0
-    react-aria-components: 1.18.0
     react-dom: ^19.0.0-rc.1
-    react-stately: 3.47.0
   languageName: unknown
   linkType: soft
 
@@ -8116,7 +8116,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-spectrum/s2@npm:1.5.0, @react-spectrum/s2@npm:^1.0.0, @react-spectrum/s2@workspace:packages/@react-spectrum/s2":
+"@react-spectrum/s2@npm:1.5.0, @react-spectrum/s2@npm:^1.0.0, @react-spectrum/s2@npm:^1.5.0, @react-spectrum/s2@workspace:packages/@react-spectrum/s2":
   version: 0.0.0-use.local
   resolution: "@react-spectrum/s2@workspace:packages/@react-spectrum/s2"
   dependencies:
@@ -26411,7 +26411,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-aria-components@npm:1.19.0, react-aria-components@npm:^1.7.1, react-aria-components@workspace:packages/react-aria-components":
+"react-aria-components@npm:1.19.0, react-aria-components@npm:^1.19.0, react-aria-components@npm:^1.7.1, react-aria-components@workspace:packages/react-aria-components":
   version: 0.0.0-use.local
   resolution: "react-aria-components@workspace:packages/react-aria-components"
   dependencies:
@@ -26430,7 +26430,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"react-aria@npm:3.50.0, react-aria@npm:^3.40.0, react-aria@npm:^3.47.0, react-aria@npm:^3.48.0, react-aria@workspace:packages/react-aria":
+"react-aria@npm:3.50.0, react-aria@npm:^3.40.0, react-aria@npm:^3.47.0, react-aria@npm:^3.48.0, react-aria@npm:^3.50.0, react-aria@workspace:packages/react-aria":
   version: 0.0.0-use.local
   resolution: "react-aria@workspace:packages/react-aria"
   dependencies:
@@ -26702,7 +26702,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"react-stately@npm:3.48.0, react-stately@npm:^3.38.0, react-stately@npm:^3.46.0, react-stately@workspace:packages/react-stately":
+"react-stately@npm:3.48.0, react-stately@npm:^3.38.0, react-stately@npm:^3.46.0, react-stately@npm:^3.48.0, react-stately@workspace:packages/react-stately":
   version: 0.0.0-use.local
   resolution: "react-stately@workspace:packages/react-stately"
   dependencies:
