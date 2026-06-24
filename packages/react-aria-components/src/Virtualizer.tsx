@@ -98,7 +98,8 @@ export function Virtualizer<O>(props: VirtualizerProps<O>): JSX.Element {
 
   return (
     <CollectionRendererContext.Provider value={renderer}>
-      <VirtualizerOptionsContext.Provider value={{layout, layoutOptions, shouldObserveItemSize, scrollEndThreshold}}>
+      <VirtualizerOptionsContext.Provider
+        value={{layout, layoutOptions, shouldObserveItemSize, scrollEndThreshold}}>
         {children}
       </VirtualizerOptionsContext.Provider>
     </CollectionRendererContext.Provider>
@@ -111,7 +112,8 @@ function CollectionRoot({
   scrollRef,
   renderDropIndicator
 }: CollectionRootProps) {
-  let {layout, layoutOptions, shouldObserveItemSize, scrollEndThreshold} = useContext(VirtualizerOptionsContext)!;
+  let {layout, layoutOptions, shouldObserveItemSize, scrollEndThreshold} =
+    useContext(VirtualizerOptionsContext)!;
   let layoutOptions2 = layout.useLayoutOptions?.();
   let state = useVirtualizerState({
     allowsWindowScrolling: true,
