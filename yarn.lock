@@ -5715,15 +5715,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@parcel/reporter-turbosnap-stats@npm:0.0.0, @parcel/reporter-turbosnap-stats@workspace:packages/dev/parcel-reporter-turbosnap-stats":
-  version: 0.0.0-use.local
-  resolution: "@parcel/reporter-turbosnap-stats@workspace:packages/dev/parcel-reporter-turbosnap-stats"
-  dependencies:
-    "@parcel/plugin": "npm:^2.16.3"
-    "@parcel/types": "npm:^2.16.3"
-  languageName: unknown
-  linkType: soft
-
 "@parcel/resolver-default@npm:2.16.3, @parcel/resolver-default@npm:^2.16.3":
   version: 2.16.3
   resolution: "@parcel/resolver-default@npm:2.16.3"
@@ -25207,6 +25198,15 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"parcel-reporter-turbosnap-stats@npm:0.0.0, parcel-reporter-turbosnap-stats@workspace:packages/dev/parcel-reporter-turbosnap-stats":
+  version: 0.0.0-use.local
+  resolution: "parcel-reporter-turbosnap-stats@workspace:packages/dev/parcel-reporter-turbosnap-stats"
+  dependencies:
+    "@parcel/plugin": "npm:^2.16.3"
+    "@parcel/types": "npm:^2.16.3"
+  languageName: unknown
+  linkType: soft
+
 "parcel-resolver-build@workspace:packages/dev/parcel-resolver-build":
   version: 0.0.0-use.local
   resolution: "parcel-resolver-build@workspace:packages/dev/parcel-resolver-build"
@@ -28887,9 +28887,9 @@ __metadata:
   dependencies:
     "@parcel/core": "npm:^2.16.3"
     "@parcel/reporter-cli": "npm:^2.16.3"
-    "@parcel/reporter-turbosnap-stats": "npm:0.0.0"
     "@parcel/utils": "npm:^2.16.3"
     http-proxy-middleware: "npm:^2.0.6"
+    parcel-reporter-turbosnap-stats: "npm:0.0.0"
     react: "npm:*"
     storybook: "npm:^10.0.0"
   peerDependencies:
