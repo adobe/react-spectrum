@@ -414,6 +414,7 @@ export function useSelectableCollection(
       [key]: callback
     };
   };
+  // oxlint-disable react/react-compiler
   let {keyboardProps} = useKeyboard({
     shortcuts: {
       ...withShiftSel('ArrowDown', arrowDown),
@@ -430,6 +431,7 @@ export function useSelectableCollection(
       'Tab+Shift': shiftTab
     }
   });
+  // oxlint-enable react/react-compiler
 
   // Store the scroll position so we can restore it later.
   /// TODO: should this happen all the time??
@@ -714,6 +716,7 @@ export function useSelectableCollection(
   });
 
   if (!disallowTypeAhead) {
+    // oxlint-disable-next-line react/react-compiler
     handlers = mergeProps(typeSelectProps, handlers);
   }
 
@@ -726,6 +729,7 @@ export function useSelectableCollection(
 
   let collectionId = useCollectionId(manager.collection);
   return {
+    // oxlint-disable-next-line react/react-compiler
     collectionProps: mergeProps(handlers, {
       tabIndex,
       'data-collection': collectionId

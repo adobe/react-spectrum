@@ -384,6 +384,7 @@ export function useDateSegment(
   }
 
   return {
+    // oxlint-disable-next-line react/react-compiler
     segmentProps: mergeProps(spinButtonProps, labelProps, {
       id,
       ...touchPropOverrides,
