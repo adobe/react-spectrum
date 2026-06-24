@@ -26416,6 +26416,7 @@ __metadata:
   resolution: "react-aria-components@workspace:packages/react-aria-components"
   dependencies:
     "@internationalized/date": "npm:^3.12.2"
+    "@internationalized/string": "npm:^3.2.9"
     "@react-types/shared": "npm:^3.36.0"
     "@swc/helpers": "npm:^0.5.0"
     "@tailwindcss/postcss": "npm:^4.0.0"
