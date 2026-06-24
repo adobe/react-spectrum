@@ -80,6 +80,38 @@ describe('useSelectableCollection', () => {
     expect(options[2]).toHaveAttribute('aria-selected', 'true');
   });
 
+  it('shift+tabs from a collection to the previous tab stop outside via the Tab key handler', async () => {
+    let {getByRole} = render(
+      <>
+        <button>before</button>
+        <List aria-label="Test">
+          <Item key="i1">One</Item>
+          <Item key="i2">Two</Item>
+        </List>
+      </>
+    );
+    let listbox = getByRole('listbox');
+    let before = getByRole('button', {name: 'before'});
+    let options = within(listbox).getAllByRole('option');
+
+    await user.tab();
+    expect(document.activeElement).toBe(before);
+    await user.tab();
+    expect(document.activeElement).toBe(options[0]);
+
+    // userEvent tab does not route through useSelectableCollection's Tab handler
+    // (see GridList.test.js — coercing focus to the collection root).
+    fireEvent.keyDown(document.activeElement, {
+      key: 'Tab',
+      shiftKey: true,
+      code: 'Tab',
+      bubbles: true
+    });
+
+    expect(document.activeElement).toBe(before);
+    expect(document.activeElement).not.toBe(listbox);
+  });
+
   describe.each`
     type | prepare | actions
     ${'VO Events'} | ${installPointerEvent} | ${[el => fireEvent.pointerDown(el, {button: 0, pointerType: 'virtual'}), el => {
