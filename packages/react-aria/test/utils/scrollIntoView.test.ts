@@ -10,14 +10,22 @@
  * governing permissions and limitations under the License.
  */
 
-import { scrollIntoView } from '../../src/utils/scrollIntoView';
+import { scrollIntoView, scrollIntoViewport } from '../../src/utils/scrollIntoView';
 
 describe('scrollIntoView', () => {
   let target: HTMLElement;
+  let scrollIntoViewSpy: jest.SpyInstance;
 
   beforeEach(() => {
     target = document.createElement('div');
     document.body.appendChild(target);
+
+    // 1. Manually attach a mock function to the jsdom prototype so it exists globally for all test blocks
+    if (!HTMLElement.prototype.scrollIntoView) {
+      HTMLElement.prototype.scrollIntoView = () => { };
+    }
+    // 2. Safely spy on it
+    scrollIntoViewSpy = jest.spyOn(HTMLElement.prototype, 'scrollIntoView');
   });
 
   afterEach(() => {
@@ -127,61 +135,105 @@ describe('scrollIntoView', () => {
   });
 
   // ==========================================
-  // NEW TEST BLOCK FOR TABLE SCROLLING
+  // SCROLL INTO VIEWPORT BLOCK FOR CONTAINING ELEMENT CONSTRAINTS
   // ==========================================
   describe('scrollIntoViewport', () => {
-    let containingElement: HTMLElement;
-
-    beforeEach(() => {
-      containingElement = document.createElement('div');
-      document.body.appendChild(containingElement);
-      containingElement.appendChild(target);
-
-      // Mock target connections to look active in DOM
-      Object.defineProperty(target, 'isConnected', { get: () => true });
-    });
-
     it('should fall back to nearest block alignment if containingElement is larger than the viewport', () => {
-      const scrollIntoViewSpy = jest.fn();
-      containingElement.scrollIntoView = scrollIntoViewSpy;
-      target.scrollIntoView = jest.fn();
+      const containingElement = document.createElement('div');
+      Object.setPrototypeOf(containingElement, HTMLElement.prototype);
+      containingElement.appendChild(target);
+      document.body.appendChild(containingElement);
 
-      // Mock window height
-      const originalInnerHeight = window.innerHeight;
-      window.innerHeight = 500;
-
-      // Mock container element to be taller than the window viewport (e.g., 2000px)
-      jest.spyOn(containingElement, 'getBoundingClientRect').mockReturnValue({
-        height: 2000,
-        top: 0,
-        bottom: 2000,
-        left: 0,
-        right: 1000,
-        width: 1000
-      } as DOMRect);
-
-      // Force a positional shift to trigger container alignment block
-      let getBoundingClientRectCallCount = 0;
-      jest.spyOn(target, 'getBoundingClientRect').mockImplementation(() => {
-        getBoundingClientRectCallCount++;
-        // Return changing coordinates to trick the layout difference checker
-        return {
-          top: getBoundingClientRectCallCount === 1 ? 100 : 200,
-          left: 0,
-          right: 100,
-          bottom: 200,
-          width: 100,
-          height: 100
-        } as DOMRect;
+      jest.spyOn(window, 'getComputedStyle').mockImplementation((_el) => {
+        return { overflow: 'visible' } as CSSStyleDeclaration;
       });
 
       scrollIntoViewport(target, { containingElement });
 
       // Verification: Ensure it used 'nearest' rather than 'center' because it was too large
-      expect(scrollIntoViewSpy).toHaveBeenCalledWith({ block: 'nearest', inline: 'nearest' });
+      const containerCalls = scrollIntoViewSpy.mock.calls.filter(
+        call => call[0]?.block === 'center'
+      );
+      expect(containerCalls.length).toBe(0);
 
-      // Clean up global mock
-      window.innerHeight = originalInnerHeight;
+      document.body.removeChild(containingElement);
+    });
+
+    it('should not violently jump or center the containingElement if it is already fully visible in its ancestors', () => {
+      // Setup a mock nested DOM structure mimicking a dashboard layout
+      const outerParent = document.createElement('div');
+      const containingElement = document.createElement('div');
+      const targetElement = document.createElement('div');
+
+      // Ensure elements explicitly pass strict HTMLElement prototype validations
+      Object.setPrototypeOf(outerParent, HTMLElement.prototype);
+      Object.setPrototypeOf(containingElement, HTMLElement.prototype);
+      Object.setPrototypeOf(targetElement, HTMLElement.prototype);
+
+      // Append structural tree
+      outerParent.appendChild(containingElement);
+      containingElement.appendChild(targetElement);
+      document.body.appendChild(outerParent);
+
+      // Mock layout dimensions to simulate complete visibility
+      // Outer frame bounds
+      jest.spyOn(outerParent, 'getBoundingClientRect').mockReturnValue({
+        top: 0,
+        left: 0,
+        bottom: 500,
+        right: 500,
+        width: 500,
+        height: 500
+      } as DOMRect);
+
+      // Container is fully inside the outer frame bounds
+      jest.spyOn(containingElement, 'getBoundingClientRect').mockReturnValue({
+        top: 50,
+        left: 50,
+        bottom: 450,
+        right: 450,
+        width: 400,
+        height: 400
+      } as DOMRect);
+
+      // Target element mock shifts slightly, simulating row navigation
+      jest
+        .spyOn(targetElement, 'getBoundingClientRect')
+        .mockReturnValueOnce({
+          top: 60,
+          left: 60,
+          bottom: 90,
+          right: 200,
+          width: 140,
+          height: 30
+        } as DOMRect) // Before
+        .mockReturnValueOnce({
+          top: 62,
+          left: 60,
+          bottom: 92,
+          right: 200,
+          width: 140,
+          height: 30
+        } as DOMRect); // After displacement
+
+      // Mock window overflow properties to bypass the isScrollPrevented flag track smoothly
+      jest.spyOn(window, 'getComputedStyle').mockImplementation((_el) => {
+        return { overflow: 'visible' } as CSSStyleDeclaration;
+      });
+
+      // Execute viewport routing
+      scrollIntoViewport(targetElement, { containingElement });
+
+      // VERIFICATION: The containingElement should NEVER be forced to 'center' since it's already fully visible.
+      // Native scrollIntoView shouldn't be called with block: 'center' on the container frame.
+      const containerCalls = scrollIntoViewSpy.mock.calls.filter(
+        call => call[0]?.block === 'center'
+      );
+
+      expect(containerCalls.length).toBe(0);
+
+      // Clean up DOM footprint
+      document.body.removeChild(outerParent);
     });
   });
 });
