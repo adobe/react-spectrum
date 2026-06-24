@@ -437,6 +437,7 @@ export const TokenField = forwardRef(function TokenField(
   };
 
   let {keyboardProps} = useKeyboard({
+    isDisabled: isDisabled || isReadOnly,
     onKeyDown: e => {
       // mini version of useKeyboard shortcuts until it is merged.
       let modifiers = ['Shift', 'Control', 'Alt', 'Meta'] satisfies React.ModifierKey[];
@@ -485,12 +486,14 @@ export const TokenField = forwardRef(function TokenField(
       )}
       ref={mergeRefs(ref, autocompleteRef as any)}
       role="textbox"
-      contentEditable="true"
+      contentEditable={!isDisabled && !isReadOnly}
       suppressContentEditableWarning
       aria-multiline={multiline}
       aria-label={ariaLabel}
       aria-labelledby={ariaLabelledBy}
       aria-describedby={ariaDescribedBy}
+      aria-readonly={isReadOnly || undefined}
+      aria-disabled={isDisabled || undefined}
       data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}
       data-disabled={isDisabled || undefined}

@@ -64,6 +64,26 @@ describeOrSkip('TokenField browser interactions', () => {
       await expect.element(screen.getByRole('textbox', {name: 'Message'})).toBeInTheDocument();
       await expect.element(screen.getByText('TOK')).toBeInTheDocument();
     });
+
+    it('does not allow editing when read only', async () => {
+      let {textbox, getValue} = await renderControlledTokenField(abTokCd, {isReadOnly: true});
+      let el = textbox.element();
+      expect(el.getAttribute('contenteditable')).toBe('false');
+      expect(el.getAttribute('aria-readonly')).toBe('true');
+      await focusField(textbox);
+      await userEvent.keyboard('x');
+      let mod = modKey();
+      await userEvent.keyboard(`{${mod}>}z{/${mod}}`);
+      expect(getValue().toString()).toBe('abTOKcd');
+    });
+
+    it('is not editable or focusable when disabled', async () => {
+      let {textbox} = await renderControlledTokenField(abTokCd, {isDisabled: true});
+      let el = textbox.element();
+      expect(el.getAttribute('contenteditable')).toBe('false');
+      expect(el.getAttribute('aria-disabled')).toBe('true');
+      expect(el.getAttribute('tabindex')).toBeNull();
+    });
   });
 
   describe('caret movement', () => {
