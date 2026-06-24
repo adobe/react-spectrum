@@ -26688,8 +26688,8 @@ __metadata:
     storybook-react-parcel: "workspace:^"
     tailwind-variants: "patch:tailwind-variants@npm%3A0.3.1#~/.yarn/patches/tailwind-variants-npm-0.3.1-48888516de.patch"
     tailwindcss: "npm:^4.0.0"
-    tailwindcss-animate: "npm:^1.0.7"
     tempy: "npm:^0.5.0"
+    tw-animate-css: "npm:^1.4.0"
     typescript: "npm:^5.8.2"
     unplugin-parcel-macros: "npm:^0.1.1"
     verdaccio: "npm:^6.0.0"
@@ -29460,15 +29460,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tailwindcss-animate@npm:^1.0.7":
-  version: 1.0.7
-  resolution: "tailwindcss-animate@npm:1.0.7"
-  peerDependencies:
-    tailwindcss: "*"
-  checksum: 10c0/ec7dbd1631076b97d66a1fbaaa06e0725fccfa63119221e8d87a997b02dcede98ad88bb1ef6665b968f5d260fcefb10592e0299ca70208d365b37761edf5e19a
-  languageName: node
-  linkType: hard
-
 "tailwindcss-react-aria-components@workspace:packages/tailwindcss-react-aria-components":
   version: 0.0.0-use.local
   resolution: "tailwindcss-react-aria-components@workspace:packages/tailwindcss-react-aria-components"
@@ -30130,6 +30121,13 @@ __metadata:
   version: 0.0.6
   resolution: "tunnel@npm:0.0.6"
   checksum: 10c0/e27e7e896f2426c1c747325b5f54efebc1a004647d853fad892b46d64e37591ccd0b97439470795e5262b5c0748d22beb4489a04a0a448029636670bfd801b75
+  languageName: node
+  linkType: hard
+
+"tw-animate-css@npm:^1.4.0":
+  version: 1.4.0
+  resolution: "tw-animate-css@npm:1.4.0"
+  checksum: 10c0/6cfbc19ccc73883ec80ef1f9147f43e736cb01ee99c8172968b37eb81b720523d30e38b1a96aef92db3c586d864204db5510b51744ddacbbf0ad8e3c7fb56ec7
   languageName: node
   linkType: hard
 
