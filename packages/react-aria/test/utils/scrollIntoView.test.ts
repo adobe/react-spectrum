@@ -43,9 +43,6 @@ describe('scrollIntoView', () => {
     });
 
     it('excludes root border from scroll port when scrolling to start', () => {
-      // the config here is a window of 500 x 500 with a border of 100
-      // the target top is at 100, 2100 aka border left of scrolling body, border top + 2000
-      // scrollIntoView of block start + inline start should bring us to 100, 2100
       jest.spyOn(target, 'getBoundingClientRect').mockReturnValue({
         top: 2100,
         bottom: 3100,
@@ -80,9 +77,6 @@ describe('scrollIntoView', () => {
     });
 
     it('excludes root border from scroll port when scrolling to end', () => {
-      // the config here is a window of 500 x 500 with a border of 100
-      // the target top is at 100, 2100 aka border left of scrolling body, border top + 2000
-      // scrollIntoView of block end + inline end should bring us to 600, 2600
       jest.spyOn(target, 'getBoundingClientRect').mockReturnValue({
         top: 2100,
         bottom: 3100,
@@ -132,6 +126,15 @@ describe('scrollIntoView', () => {
         return {overflow: 'visible'} as CSSStyleDeclaration;
       });
 
+      jest.spyOn(target, 'getBoundingClientRect').mockReturnValue({
+        top: -100,
+        bottom: -50,
+        left: 0,
+        right: 100,
+        width: 100,
+        height: 50
+      } as DOMRect);
+
       scrollIntoViewport(target, {containingElement});
 
       // Verification: Ensure it used 'nearest' rather than 'center' because it was too large
@@ -180,27 +183,15 @@ describe('scrollIntoView', () => {
         height: 400
       } as DOMRect);
 
-      // Target element mock shifts slightly, simulating row navigation
-      jest
-        .spyOn(targetElement, 'getBoundingClientRect')
-        .mockReturnValueOnce({
-          top: 60,
-          left: 60,
-          bottom: 90,
-          right: 200,
-          width: 140,
-          height: 30
-        } as DOMRect) // Before
-        .mockReturnValueOnce({
-          top: 62,
-          left: 60,
-          bottom: 92,
-          right: 200,
-          width: 140,
-          height: 30
-        } as DOMRect); // After displacement
+      jest.spyOn(targetElement, 'getBoundingClientRect').mockReturnValue({
+        top: 60,
+        left: 60,
+        bottom: 90,
+        right: 200,
+        width: 140,
+        height: 30
+      } as DOMRect);
 
-      // Mock window overflow properties to bypass the isScrollPrevented flag track smoothly
       jest.spyOn(window, 'getComputedStyle').mockImplementation(_el => {
         return {overflow: 'visible'} as CSSStyleDeclaration;
       });

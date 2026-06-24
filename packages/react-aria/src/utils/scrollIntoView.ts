@@ -70,6 +70,20 @@ function isContainerObscured(containerRect: DOMRect, parent: Element): boolean {
   );
 }
 
+// Check ancestry chain for any container boundaries clipping visibility without exceeding max-depth limits
+function checkAncestorsObscureContainer(
+  containingElement: Element,
+  containerRect: DOMRect
+): boolean {
+  let containerParents = getScrollParents(containingElement, true);
+  for (let parent of containerParents) {
+    if (isContainerObscured(containerRect, parent as Element)) {
+      return true;
+    }
+  }
+  return false;
+}
+
 // Extracted utility to shift parents smoothly while avoiding max-depth nesting limits
 function scrollContainerParents(containingElement: Element): void {
   let parentParents = getScrollParents(containingElement, true);
@@ -215,7 +229,7 @@ export function scrollIntoViewport(
   let isScrollPrevented = window.getComputedStyle(root).overflow === 'hidden';
 
   if (!isScrollPrevented) {
-    // Step 1: Handle scroll parents of the target element up to the containing element first
+    // Step 1: Handle internal scroll parents up to but not exceeding the container boundary
     let scrollParents = getScrollParents(targetElement, true);
     for (let scrollParent of scrollParents) {
       if (containingElement && !safeContains(containingElement, scrollParent)) {
@@ -227,26 +241,28 @@ export function scrollIntoViewport(
       });
     }
 
-    // Step 2: Safely verify and adjust containingElement relative to outer structural frames
+    // Step 2: TRUE scrollIntoViewIfNeeded Approach
     if (containingElement) {
       let containerRect = containingElement.getBoundingClientRect();
-      let isObscured = false;
+      let targetRect = targetElement.getBoundingClientRect();
 
-      let containerParents = getScrollParents(containingElement, true);
-      for (let parent of containerParents) {
-        if (isContainerObscured(containerRect, parent as Element)) {
-          isObscured = true;
-          break;
+      let isTargetVisibleInContainer =
+        targetRect.top >= containerRect.top &&
+        targetRect.bottom <= containerRect.bottom &&
+        targetRect.left >= containerRect.left &&
+        targetRect.right <= containerRect.right;
+
+      if (isTargetVisibleInContainer) {
+        if (checkAncestorsObscureContainer(containingElement, containerRect)) {
+          scrollContainerParents(containingElement);
         }
-      }
 
-      // Only adjust container scrolling if it is genuinely clipped out of an outer view frame
-      if (isObscured) {
-        scrollContainerParents(containingElement);
+        // Return early to completely bypass and stop competing browser shifts!
+        return;
       }
     }
 
-    // Step 3: Final pass to ensure target element is perfectly pinned
+    // Step 3: Fallback standard alignment ONLY if the row was hidden/out of view
     targetElement.scrollIntoView?.({block: 'nearest'});
   } else {
     // Isolated popup/modal overlay path
