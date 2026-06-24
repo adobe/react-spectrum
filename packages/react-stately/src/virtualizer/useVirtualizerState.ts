@@ -11,7 +11,7 @@
  */
 
 import {Collection, Key} from '@react-types/shared';
-import {InvalidationContext, VirtualizerScrollAnchor} from './types';
+import {InvalidationContext} from './types';
 import {Layout} from './Layout';
 import React, {useCallback, useMemo, useRef, useState} from 'react';
 import {Rect} from './Rect';
@@ -33,7 +33,6 @@ interface VirtualizerProps<T extends object, V, O> {
   persistedKeys?: Set<Key> | null;
   layoutOptions?: O;
   allowsWindowScrolling?: boolean;
-  getScrollAnchor?: () => VirtualizerScrollAnchor | null;
   scrollEndThreshold?: number;
 }
 
@@ -98,7 +97,6 @@ export function useVirtualizerState<T extends object, V, O = any>(
     size: opts.allowsWindowScrolling ? size : visibleRect,
     invalidationContext: mergedInvalidationContext,
     isScrolling,
-    getScrollAnchor: opts.getScrollAnchor,
     scrollEndThreshold: opts.scrollEndThreshold
   });
 

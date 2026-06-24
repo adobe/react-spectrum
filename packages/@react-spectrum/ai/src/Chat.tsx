@@ -25,7 +25,7 @@ import {
   useState
 } from 'react';
 import {DEFAULT_SLOT, Provider} from 'react-aria-components/slots';
-import {DOMRef, forwardRefType, Key} from '@react-types/shared';
+import {DOMRef, forwardRefType} from '@react-types/shared';
 import {focusRing, style, StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {
   GridList,
@@ -35,7 +35,7 @@ import {
 } from 'react-aria-components/GridList';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {ListLayout, VirtualizerScrollAnchor} from 'react-stately/useVirtualizerState';
+import {ListLayout} from 'react-stately/useVirtualizerState';
 import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
 import {useDOMRef} from './useDOMRef';
 import {useEnterAnimation, useExitAnimation} from 'react-aria/private/utils/animation';
@@ -223,12 +223,6 @@ export interface ThreadProps<T extends object> extends Pick<
    */
   scrollEndThreshold?: number;
   anchorTo?: 'end';
-  /**
-   * The key of the most recently submitted item. When provided, the virtualizer will anchor
-   * scroll to this item so it stays visible as the response streams in. Clears automatically
-   * when the user manually scrolls away from the item.
-   */
-  submittedKey?: Key | null;
 }
 
 export function Thread<T extends object>(props: ThreadProps<T>) {
@@ -239,7 +233,6 @@ export function Thread<T extends object>(props: ThreadProps<T>) {
     UNSTABLE_focusOnEntry,
     anchorTo,
     scrollEndThreshold = 100,
-    submittedKey,
     'aria-label': ariaLabel,
     'aria-labelledby': ariaLabelledby
   } = props;
@@ -255,13 +248,6 @@ export function Thread<T extends object>(props: ThreadProps<T>) {
       setScrollElement(el);
     },
     [setScrollElement]
-  );
-
-  let getScrollAnchor = useCallback(
-    (): VirtualizerScrollAnchor | null => {
-      return submittedKey != null ? {key: submittedKey, offset: 0} : null;
-    },
-    [submittedKey]
   );
 
   let handleScroll = useCallback(() => {
@@ -308,8 +294,7 @@ export function Thread<T extends object>(props: ThreadProps<T>) {
           anchorTo: 'end'
         }}
         scrollEndThreshold={scrollEndThreshold}
-        shouldObserveItemSize
-        getScrollAnchor={submittedKey != null ? getScrollAnchor : undefined}>
+        shouldObserveItemSize>
         <GridList
           ref={callbackRef}
           disallowTypeAhead

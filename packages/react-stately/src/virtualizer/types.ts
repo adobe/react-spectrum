@@ -37,16 +37,6 @@ export interface VirtualizerDelegate<T extends object, V> {
   invalidate(ctx: InvalidationContext): void;
 }
 
-export interface VirtualizerScrollAnchor {
-  key: Key;
-  /**
-   * Desired pixel distance from the item's top edge to the viewport top.
-   *
-   * @default 0
-   */
-  offset?: number;
-}
-
 export interface VirtualizerRenderOptions<T extends object, O = any> {
   layout: Layout<T>;
   collection: Collection<T>;
@@ -56,7 +46,6 @@ export interface VirtualizerRenderOptions<T extends object, O = any> {
   invalidationContext: InvalidationContext;
   isScrolling: boolean;
   layoutOptions?: O;
-  getScrollAnchor?: () => VirtualizerScrollAnchor | null;
   scrollEndThreshold?: number;
 }
 

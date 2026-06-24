@@ -22,7 +22,6 @@ import {
   Layout,
   ReusableView,
   useVirtualizerState,
-  VirtualizerScrollAnchor,
   VirtualizerState
 } from 'react-stately/useVirtualizerState';
 import React, {createContext, JSX, ReactNode, useContext, useMemo} from 'react';
@@ -53,11 +52,6 @@ export interface VirtualizerProps<O> {
    * Whether to observe each item's size with a ResizeObserver and re-measure when it changes.
    */
   shouldObserveItemSize?: boolean;
-  /**
-   * Optional callback invoked before each layout pass to designate a specific item key
-   * to use as the scroll anchor. Return null to use the default topmost-visible-item behavior.
-   */
-  getScrollAnchor?: () => VirtualizerScrollAnchor | null;
   /** Distance from content bottom (px) within which the viewport is considered "near end". */
   scrollEndThreshold?: number;
 }
@@ -69,7 +63,6 @@ interface LayoutContextValue {
 }
 
 interface ScrollContextValue {
-  getScrollAnchor?: () => VirtualizerScrollAnchor | null;
   scrollEndThreshold?: number;
 }
 
@@ -88,7 +81,6 @@ export function Virtualizer<O>(props: VirtualizerProps<O>): JSX.Element {
     layout: layoutProp,
     layoutOptions,
     shouldObserveItemSize,
-    getScrollAnchor,
     scrollEndThreshold
   } = props;
   let layout = useMemo(
@@ -111,7 +103,7 @@ export function Virtualizer<O>(props: VirtualizerProps<O>): JSX.Element {
   return (
     <CollectionRendererContext.Provider value={renderer}>
       <LayoutContext.Provider value={{layout, layoutOptions, shouldObserveItemSize}}>
-        <ScrollContext.Provider value={{getScrollAnchor, scrollEndThreshold}}>
+        <ScrollContext.Provider value={{scrollEndThreshold}}>
           {children}
         </ScrollContext.Provider>
       </LayoutContext.Provider>
@@ -126,7 +118,7 @@ function CollectionRoot({
   renderDropIndicator
 }: CollectionRootProps) {
   let {layout, layoutOptions, shouldObserveItemSize} = useContext(LayoutContext)!;
-  let {getScrollAnchor, scrollEndThreshold} = useContext(ScrollContext)!;
+  let {scrollEndThreshold} = useContext(ScrollContext)!;
   let layoutOptions2 = layout.useLayoutOptions?.();
   let state = useVirtualizerState({
     allowsWindowScrolling: true,
@@ -149,7 +141,6 @@ function CollectionRoot({
       }
       return layoutOptions || layoutOptions2;
     }, [layoutOptions, layoutOptions2]),
-    getScrollAnchor,
     scrollEndThreshold
   });
 
