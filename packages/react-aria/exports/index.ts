@@ -84,6 +84,7 @@ export {useKeyboard} from '../src/interactions/useKeyboard';
 export {useMove} from '../src/interactions/useMove';
 export {usePress} from '../src/interactions/usePress';
 export {useLongPress} from '../src/interactions/useLongPress';
+export {useContextMenu} from '../src/interactions/useContextMenu';
 export {useFocusable, Focusable} from '../src/interactions/useFocusable';
 export {Pressable} from '../src/interactions/Pressable';
 export {useField} from '../src/label/useField';
@@ -327,6 +328,11 @@ export type {HoverProps, HoverResult} from '../src/interactions/useHover';
 export type {InteractOutsideProps} from '../src/interactions/useInteractOutside';
 export type {KeyboardProps, KeyboardResult} from '../src/interactions/useKeyboard';
 export type {LongPressProps, LongPressResult} from '../src/interactions/useLongPress';
+export type {
+  ContextMenuProps,
+  ContextMenuAria,
+  ContextMenuEvent
+} from '../src/interactions/useContextMenu';
 export type {
   MoveEvents,
   PressEvent,
