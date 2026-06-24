@@ -93,7 +93,8 @@ describeOrSkip('TokenField browser interactions', () => {
         <>
           <input
             aria-label="Other field"
-            onChange={e => setValue(segments(text(e.target.value)))} />
+            onChange={e => setValue(segments(text(e.target.value)))}
+          />
           <TokenField aria-label="Focus test" value={value} onChange={setValue}>
             {segment => <Token>{segment.text}</Token>}
           </TokenField>
@@ -762,6 +763,63 @@ describeOrSkip('TokenField browser interactions', () => {
         await userEvent.keyboard('{Control>}Delete{/Control}');
       }
       await waitForFieldText(getValue, 'hello\nw');
+    });
+  });
+
+  describe('multiline', () => {
+    it('does not insert a newline on Enter in a single-line field', async () => {
+      let {textbox, getValue} = await renderControlledTokenField(segments(text('')));
+      await focusField(textbox);
+      await userEvent.type(textbox, 'ab');
+      await userEvent.keyboard('{Enter}');
+      await userEvent.type(textbox, 'c');
+      await waitForFieldText(getValue, 'abc');
+    });
+
+    it('inserts a newline on Enter in a multiline field', async () => {
+      let {textbox, getValue} = await renderControlledTokenField(segments(text('')), {
+        multiline: true
+      });
+      await focusField(textbox);
+      await userEvent.type(textbox, 'ab');
+      await userEvent.keyboard('{Enter}');
+      await userEvent.type(textbox, 'c');
+      await waitForFieldText(getValue, 'ab\nc');
+    });
+
+    it('removes newlines from pasted text in a single-line field', async () => {
+      // Put multiline text on the clipboard by copying it from a source field.
+      let source = await renderControlledTokenField(segments(text('a\nb')), {multiline: true});
+      let target = await renderControlledTokenField(segments(text('')));
+      let mod = modKey();
+      await commands.lockClipboard();
+      try {
+        await focusField(source.textbox);
+        await userEvent.keyboard(`{${mod}>}a{/${mod}}`);
+        await userEvent.copy();
+        await focusField(target.textbox);
+        await userEvent.paste();
+        await waitForFieldText(target.getValue, 'a b');
+      } finally {
+        await commands.unlockClipboard();
+      }
+    });
+
+    it('keeps newlines from pasted text in a multiline field', async () => {
+      let source = await renderControlledTokenField(segments(text('a\nb')), {multiline: true});
+      let target = await renderControlledTokenField(segments(text('')), {multiline: true});
+      let mod = modKey();
+      await commands.lockClipboard();
+      try {
+        await focusField(source.textbox);
+        await userEvent.keyboard(`{${mod}>}a{/${mod}}`);
+        await userEvent.copy();
+        await focusField(target.textbox);
+        await userEvent.paste();
+        await waitForFieldText(target.getValue, 'a\nb');
+      } finally {
+        await commands.unlockClipboard();
+      }
     });
   });
 

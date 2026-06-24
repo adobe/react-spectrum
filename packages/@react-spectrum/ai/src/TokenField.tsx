@@ -160,6 +160,12 @@ export const TokenField = forwardRef(function TokenField(
           dropPosition.current = null;
         }
 
+        if (!multiline) {
+          for (let segment of data) {
+            segment.text = segment.text.replace(/[\r\n]+/g, ' ');
+          }
+        }
+
         apply(tokens =>
           tokens.replaceRangeWithSegments(
             start,
