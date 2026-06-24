@@ -343,43 +343,37 @@ export const TokenField = forwardRef(function TokenField(
     }
   });
 
-  // Firefox does not allow placing the cursor between adjacent tokens, so navigate manually.
-  let moveSelection = (segmenter: Intl.Segmenter, direction: Direction, extend = false) => {
+  let moveSelection = (
+    direction: 'left' | 'right',
+    granularity: 'character' | 'word',
+    extend = false
+  ) => {
     let selection = window.getSelection();
-    if (!selection || selection.rangeCount === 0) {
+    if (!selection || selection.rangeCount === 0 || !selection.focusNode || !selection.anchorNode) {
       return false;
     }
 
-    // If the selection is directionless, swap the focus and anchor according to the direction.
-    // For example if you double click a word and then shift select.
-    let {focusNode, focusOffset, anchorNode, anchorOffset} = selection;
-    if (
-      extend &&
-      selection.direction === 'none' &&
-      direction !== getSelectionDirection(selection)
-    ) {
-      [focusNode, focusOffset, anchorNode, anchorOffset] = [
-        anchorNode,
-        anchorOffset,
-        focusNode,
-        focusOffset
-      ];
+    // Pressing an arrow with a non-empty selection collapses it to the corresponding edge.
+    // The browser handles this natively.
+    if (!extend && !selection.isCollapsed) {
+      return false;
     }
 
-    // Extend or move the selection.
-    let originalPos = getPosition(ref.current!, focusNode, focusOffset);
-    let pos = state.findBoundaryWithSegmenter(originalPos, segmenter, direction);
-    if (pos) {
-      let [node, offset] = getDOMOffset(ref.current!, pos);
-      if (extend) {
-        selection.setBaseAndExtent(anchorNode, anchorOffset, node, offset);
-      } else {
-        selection.collapse(node, offset);
+    // Move the caret using the browser's native caret movement (Selection.modify) so that
+    // bidirectional text is handled correctly. Repeat until the position actually changes
+    // to account for the zero width spaces around tokens.
+    let pos = getPosition(ref.current!, selection.focusNode, selection.focusOffset);
+    while (true) {
+      let {focusNode, focusOffset} = selection;
+      selection.modify(extend ? 'extend' : 'move', direction, granularity);
+      if (selection.focusNode === focusNode && selection.focusOffset === focusOffset) {
+        return false;
       }
-      return true;
+      let newPos = getPosition(ref.current!, selection.focusNode, selection.focusOffset);
+      if (!isSamePosition(pos, newPos)) {
+        return true;
+      }
     }
-
-    return false;
   };
 
   let mod = isMac() ? 'Meta' : 'Control';
@@ -392,28 +386,28 @@ export const TokenField = forwardRef(function TokenField(
       apply(state => state.redo());
     },
     ArrowLeft: () => {
-      return moveSelection(graphemeSegmenter, Direction.Backward);
+      return moveSelection('left', 'character');
     },
     [`${wordModKey}+ArrowLeft`]: () => {
-      return moveSelection(wordSegmenter, Direction.Backward);
+      return moveSelection('left', 'word');
     },
     'Shift+ArrowLeft': () => {
-      return moveSelection(graphemeSegmenter, Direction.Backward, true);
+      return moveSelection('left', 'character', true);
     },
     [`Shift+${wordModKey}+ArrowLeft`]: () => {
-      return moveSelection(wordSegmenter, Direction.Backward, true);
+      return moveSelection('left', 'word', true);
     },
     ArrowRight: () => {
-      return moveSelection(graphemeSegmenter, Direction.Forward);
+      return moveSelection('right', 'character');
     },
     [`${wordModKey}+ArrowRight`]: () => {
-      return moveSelection(wordSegmenter, Direction.Forward);
+      return moveSelection('right', 'word');
     },
     'Shift+ArrowRight': () => {
-      return moveSelection(graphemeSegmenter, Direction.Forward, true);
+      return moveSelection('right', 'character', true);
     },
     [`Shift+${wordModKey}+ArrowRight`]: () => {
-      return moveSelection(wordSegmenter, Direction.Forward, true);
+      return moveSelection('right', 'word', true);
     },
     Home: () => {
       // Browsers do not behave consistently when there are tokens.
@@ -620,18 +614,29 @@ function getPosition(container: Element, node: Node, offset: number): Position {
   let index = indexOfNode(node);
   if (node.nodeType === Node.ELEMENT_NODE) {
     let tokenNode = node.childNodes[1];
+    let atEnd: boolean;
     if (originalNode === tokenNode) {
       // Cursor is inside the token.
-      offset = offset > 0 ? (tokenNode?.textContent?.length ?? 0) : 0;
+      atEnd = offset > 0;
     } else if (originalNode === node) {
       // Cursor is inside the wrapper element.
-      offset = offset <= 1 ? 0 : (tokenNode?.textContent?.length ?? 0);
+      atEnd = offset > 1;
     } else {
       // Cursor is on one of the zero width spaces.
-      offset =
-        originalNode === tokenNode.previousSibling ? 0 : (tokenNode?.textContent?.length ?? 0);
+      atEnd = originalNode !== tokenNode.previousSibling;
     }
-    return {index, offset};
+
+    offset = atEnd ? (tokenNode?.textContent?.length ?? 0) : 0;
+
+    // Several positions are equivalent due to the zero width spaces around tokens.
+    // Normalize offset to the end of the preceding text node, or the beginning of the following node.
+    if (offset === 0 && node.previousSibling?.nodeType === Node.TEXT_NODE) {
+      index--;
+      offset = node.previousSibling?.textContent?.length ?? 0;
+    } else if (atEnd && node.nextSibling) {
+      index++;
+      offset = 0;
+    }
   }
   return {index, offset};
 }
@@ -672,24 +677,15 @@ function getDOMOffset(root: Element, pos: Position): [Node, number] {
     return [root, Math.min(root.childNodes.length, pos.index)];
   } else if (child.nodeType === Node.ELEMENT_NODE) {
     // Place the cursor in one of the zero width space nodes.
-    return [child, pos.offset > 0 ? 2 : 0];
+    return [child, 0];
   } else {
     // Place the cursor in the text node.
     return [child, pos.offset];
   }
 }
 
-function getSelectionDirection(selection: Selection): Direction | null {
-  let {focusNode, anchorNode, focusOffset, anchorOffset} = selection;
-  if (focusNode == null || anchorNode == null) {
-    return null;
-  } else if (focusNode === anchorNode) {
-    return focusOffset > anchorOffset ? Direction.Forward : Direction.Backward;
-  } else {
-    return anchorNode.compareDocumentPosition(focusNode) & Node.DOCUMENT_POSITION_FOLLOWING
-      ? Direction.Forward
-      : Direction.Backward;
-  }
+function isSamePosition(a: Position, b: Position): boolean {
+  return a.index === b.index && a.offset === b.offset;
 }
 
 function useSelectionChange(ref: React.RefObject<Element | null>, handler: () => void) {
