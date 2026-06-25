@@ -12,28 +12,18 @@
 
 import {action} from 'storybook/actions';
 import {categorizeArgTypes, getActionArgs} from './utils';
-import {Collection} from 'react-aria/Collection';
-import {Content, Heading, Text} from '../src/Content';
-import Copy from '../s2wf-icons/S2_Icon_Copy_20_N.svg';
-import Delete from '../s2wf-icons/S2_Icon_Delete_20_N.svg';
-import Edit from '../s2wf-icons/S2_Icon_Edit_20_N.svg';
-import FileTxt from '../s2wf-icons/S2_Icon_FileText_20_N.svg';
 import Folder from '../s2wf-icons/S2_Icon_Folder_20_N.svg';
-import FolderOpen from '../spectrum-illustrations/linear/FolderOpen';
 import type {Meta, StoryObj} from '@storybook/react';
-import React, {ReactElement, useCallback, useState} from 'react';
-import {style} from '../style' with {type: 'macro'};
+import React from 'react';
 import {
   SideNav,
+  SideNavCategory,
+  SideNavHeader,
   SideNavItem,
   SideNavItemContent,
-  SideNavSection,
-  SideNavHeader,
-  SideNavCategory
+  SideNavSection
 } from '../src/SideNav';
-import {useAsyncList} from 'react-stately/useAsyncList';
-import {useListData} from 'react-stately/useListData';
-import {useTreeData} from 'react-stately/useTreeData';
+import {Text} from '../src/Content';
 
 const events = ['onSelectionChange'];
 

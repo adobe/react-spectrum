@@ -783,7 +783,8 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent(
     let {rowProps, gridCellProps, expandButtonProps, descriptionProps, ...states} = useTreeItem(
       {
         node: item,
-        shouldSelectOnPressUp: !!dragState
+        shouldSelectOnPressUp: !!dragState,
+        allowChildKeys: props.allowChildKeys
       },
       state,
       ref

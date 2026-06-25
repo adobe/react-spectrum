@@ -188,7 +188,16 @@ export function useGridListItem<T>(
     walker.currentNode = activeElement;
 
     if (
-      handleTreeExpansionKeys(e, state, node, hasChildRows, direction, activeElement, ref.current)
+      handleTreeExpansionKeys(
+        e,
+        state,
+        node,
+        hasChildRows,
+        direction,
+        activeElement,
+        ref.current,
+        props.allowChildKeys
+      )
     ) {
       return;
     }
@@ -310,7 +319,16 @@ export function useGridListItem<T>(
       }
 
       if (
-        handleTreeExpansionKeys(e, state, node, hasChildRows, direction, activeElement, ref.current)
+        handleTreeExpansionKeys(
+          e,
+          state,
+          node,
+          hasChildRows,
+          direction,
+          activeElement,
+          ref.current,
+          props.allowChildKeys
+        )
       ) {
         return;
       }
@@ -428,9 +446,10 @@ function handleTreeExpansionKeys<T>(
   hasChildRows: boolean | undefined,
   direction: string,
   activeElement: Element | null,
-  rowRef: FocusableElement | null
+  rowRef: FocusableElement | null,
+  allowChildKeys: boolean
 ): boolean {
-  if (!('expandedKeys' in state) || activeElement !== rowRef) {
+  if (!('expandedKeys' in state) || (activeElement !== rowRef && !allowChildKeys)) {
     return false;
   }
   if (
