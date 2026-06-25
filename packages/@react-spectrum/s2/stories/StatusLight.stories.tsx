@@ -46,3 +46,43 @@ export const LongLabel: Story = {
     variant: 'positive'
   }
 };
+
+const variants = [
+  'accent',
+  'informative',
+  'neutral',
+  'positive',
+  'notice',
+  'negative',
+  'gray',
+  'red',
+  'orange',
+  'yellow',
+  'chartreuse',
+  'celery',
+  'green',
+  'seafoam',
+  'cyan',
+  'blue',
+  'indigo',
+  'purple',
+  'fuchsia',
+  'magenta',
+  'pink',
+  'turquoise',
+  'brown',
+  'cinnamon',
+  'silver'
+] as const;
+
+export const AllVariants: Story = {
+  render: () => (
+    <div className={style({display: 'flex', flexDirection: 'column', gap: 8, alignItems: 'start'})}>
+      {variants.map(variant => (
+        <StatusLight key={variant} variant={variant}>
+          {variant}
+        </StatusLight>
+      ))}
+    </div>
+  )
+};
