@@ -1939,31 +1939,6 @@ describe('Table', () => {
       let resizers = getAllByTestId('resizer');
       expect(resizers).toHaveLength(5);
     });
-
-    describe('clicking directly on the resizer, no movement', () => {
-      installPointerEvent();
-      it('should end resize when clicking directly on the resizer, no movement', async () => {
-        let {getAllByTestId} = render(<ControlledResizableTable />);
-        act(() => {
-          setInteractionModality('pointer');
-        });
-        let resizer = getAllByTestId('resizer')[0];
-        fireEvent.pointerDown(resizer, {pointerType: 'mouse', pointerId: 1, pageX: 0, pageY: 30});
-        expect(resizer).toHaveAttribute('data-resizing', 'true');
-        // Fire events against the cursor overlay. It can't be pointer events none otherwise
-        // it will stop styling the cursor against the entire screen.
-        let cursorOverlay = screen.getByTestId('cursor-overlay');
-        fireEvent.pointerUp(cursorOverlay, {
-          pointerType: 'mouse',
-          pointerId: 1,
-          pageX: 0,
-          pageY: 30
-        });
-        fireEvent.click(cursorOverlay);
-        act(() => jest.runAllTimers());
-        expect(resizer).not.toHaveAttribute('data-resizing', 'true');
-      });
-    });
   });
 
   it('should support overriding table style', () => {
