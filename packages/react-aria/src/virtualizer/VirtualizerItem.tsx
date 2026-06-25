@@ -11,6 +11,7 @@
  */
 
 import {Direction} from '@react-types/shared';
+import {getColumnHorizontalStyle} from 'react-stately/useTableState';
 import {LayoutInfo} from 'react-stately/useVirtualizerState';
 import React, {CSSProperties, JSX, ReactNode, useRef} from 'react';
 import {useLocale} from '../i18n/I18nProvider';
@@ -22,10 +23,24 @@ interface VirtualizerItemProps extends Omit<VirtualizerItemOptions, 'ref'> {
   style?: CSSProperties;
   className?: string;
   children: ReactNode;
+  /** When true, horizontal positioning uses CSS custom properties instead of inline styles. */
+  useColumnCSSVariables?: boolean;
+  columnIndex?: number;
+  colSpan?: number;
 }
 
 export function VirtualizerItem(props: VirtualizerItemProps): JSX.Element {
-  let {style, className, layoutInfo, virtualizer, parent, children} = props;
+  let {
+    style,
+    className,
+    layoutInfo,
+    virtualizer,
+    parent,
+    children,
+    useColumnCSSVariables,
+    columnIndex,
+    colSpan
+  } = props;
   let {direction} = useLocale();
   let ref = useRef<HTMLDivElement | null>(null);
   useVirtualizerItem({
@@ -34,12 +49,22 @@ export function VirtualizerItem(props: VirtualizerItemProps): JSX.Element {
     ref
   });
 
+  let columnStyle =
+    useColumnCSSVariables && columnIndex != null
+      ? getColumnHorizontalStyle(columnIndex, colSpan ?? 1)
+      : undefined;
+
   return (
     <div
       role="presentation"
       ref={ref}
       className={className}
-      style={{...layoutInfoToStyle(layoutInfo, direction, parent), ...style}}>
+      data-column-index={columnIndex}
+      style={{
+        ...layoutInfoToStyle(layoutInfo, direction, parent, useColumnCSSVariables),
+        ...columnStyle,
+        ...style
+      }}>
       {children}
     </div>
   );
@@ -49,8 +74,11 @@ let cache = new WeakMap();
 export function layoutInfoToStyle(
   layoutInfo: LayoutInfo,
   dir: Direction,
-  parent?: LayoutInfo | null
+  parent?: LayoutInfo | null,
+  useColumnCSSVariables?: boolean
 ): CSSProperties {
+  let usesColumnCSSVars =
+    useColumnCSSVariables && (layoutInfo.type === 'column' || layoutInfo.type === 'cell');
   let xProperty = dir === 'rtl' ? 'right' : 'left';
   let cached = cache.get(layoutInfo);
   if (cached && cached[xProperty] != null) {
@@ -60,8 +88,8 @@ export function layoutInfoToStyle(
 
     // Invalidate if the parent position changed.
     let top = layoutInfo.rect.y - parent.rect.y;
-    let x = layoutInfo.rect.x - parent.rect.x;
-    if (cached.top === top && cached[xProperty] === x) {
+    let x = usesColumnCSSVars ? undefined : layoutInfo.rect.x - parent.rect.x;
+    if (cached.top === top && (usesColumnCSSVars || cached[xProperty] === x)) {
       return cached;
     }
   }
@@ -74,12 +102,15 @@ export function layoutInfoToStyle(
     top:
       layoutInfo.rect.y -
       (parent && !(parent.allowOverflow && layoutInfo.isSticky) ? parent.rect.y : 0),
-    [xProperty]:
-      layoutInfo.rect.x -
-      (parent && !(parent.allowOverflow && layoutInfo.isSticky) ? parent.rect.x : 0),
-    width: layoutInfo.rect.width,
     height: layoutInfo.rect.height
   };
+
+  if (!usesColumnCSSVars) {
+    rectStyles[xProperty] =
+      layoutInfo.rect.x -
+      (parent && !(parent.allowOverflow && layoutInfo.isSticky) ? parent.rect.x : 0);
+    rectStyles.width = layoutInfo.rect.width;
+  }
 
   // Get rid of any non finite values since they aren't valid css values
   Object.entries(rectStyles).forEach(([key, value]) => {
@@ -96,7 +127,7 @@ export function layoutInfoToStyle(
     opacity: layoutInfo.opacity,
     zIndex: layoutInfo.zIndex,
     transform: layoutInfo.transform ?? undefined,
-    contain: 'size layout style',
+    contain: usesColumnCSSVars ? 'layout style' : 'size layout style',
     ...rectStyles
   };
 
