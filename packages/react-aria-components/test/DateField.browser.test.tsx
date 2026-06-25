@@ -20,7 +20,9 @@ import {userEvent} from 'vitest/browser';
 function DateFieldWithSibling() {
   return (
     <>
-      <button type="button" data-testid="sibling">sibling</button>
+      <button type="button" data-testid="sibling">
+        sibling
+      </button>
       <DateField aria-label="date" defaultValue={new CalendarDate(2020, 2, 3)}>
         <DateInput>{segment => <DateSegment segment={segment} />}</DateInput>
       </DateField>
