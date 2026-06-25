@@ -56,8 +56,12 @@ class TokenizingSegmentList extends TokenSegmentList {
     return new this(segments, tokenRegex);
   }
 
-  createSegmentList(segments: TokenFieldSegment[]): TokenSegmentList {
-    return new TokenizingSegmentList(segments, this.tokenRegex);
+  createSegmentList(segments: TokenFieldSegment[]): this {
+    let Constructor = this.constructor as new (
+      tokens: TokenFieldSegment[],
+      tokenRegex: RegExp
+    ) => this;
+    return new Constructor(segments, this.tokenRegex);
   }
 
   tokenize(text: string): TokenFieldSegment[] {
@@ -361,9 +365,9 @@ export const Search: TokenFieldStory = () => {
   );
 };
 
-class ComboBoxSegmentList extends TokenSegmentList {
+class ComboBoxSegmentList extends TokenSegmentList<Key> {
   getSelectedKeys(): Key[] {
-    return this.segments.filter(seg => seg.type === 'token').map(seg => seg.value.username);
+    return this.segments.filter(seg => seg.type === 'token').map(seg => seg.value!);
   }
 
   getInputValue(): string {
@@ -373,10 +377,10 @@ class ComboBoxSegmentList extends TokenSegmentList {
 
   setSelectedKeys(keys: Key[]): ComboBoxSegmentList {
     let selectedKeys = this.getSelectedKeys();
-    let added = new Set();
+    let added: Key[] = [];
     for (let key of keys) {
       if (!selectedKeys.includes(key)) {
-        added.add(key);
+        added.push(key);
       }
     }
     let removed = new Set();
@@ -388,9 +392,7 @@ class ComboBoxSegmentList extends TokenSegmentList {
 
     let value = this;
     for (let key of removed) {
-      let index = value.segments.findIndex(
-        seg => seg.type === 'token' && seg.value.username === key
-      );
+      let index = value.segments.findIndex(seg => seg.type === 'token' && seg.value! === key);
       value = value.replaceRangeWithSegments(
         {index: index, offset: 0},
         {index: index, offset: value.segments[index]?.text.length ?? 0},
@@ -399,24 +401,28 @@ class ComboBoxSegmentList extends TokenSegmentList {
       );
     }
 
-    // TODO: if the user selects multiple existing segments and then selects a value from the menu,
-    // should we replace the selected segments?
-    let segment = value.segments[value.caretPosition.index];
-    return value.replaceRangeWithSegments(
-      {index: value.caretPosition.index, offset: 0},
-      // If caret is in a text segment, replace the text segment with the new token. Otherwise, insert it.
-      segment?.type === 'text'
-        ? {
-            index: value.caretPosition.index,
-            offset: value.segments[value.caretPosition.index]?.text.length ?? 0
-          }
-        : {index: value.caretPosition.index, offset: 0},
-      [...added].map(key => {
-        let item = usernames.find(user => user.username === key)!;
-        return {type: 'token', text: item.username, value: item};
-      }),
-      false
-    );
+    if (added.length > 0) {
+      // TODO: if the user selects multiple existing segments and then selects a value from the menu,
+      // should we replace the selected segments?
+      let segment = value.segments[value.caretPosition.index];
+      value = value.replaceRangeWithSegments(
+        {index: value.caretPosition.index, offset: 0},
+        // If caret is in a text segment, replace the text segment with the new token. Otherwise, insert it.
+        segment?.type === 'text'
+          ? {
+              index: value.caretPosition.index,
+              offset: value.segments[value.caretPosition.index]?.text.length ?? 0
+            }
+          : {index: value.caretPosition.index, offset: 0},
+        added.map(value => {
+          // TODO: add a way to lookup a custom text value
+          return {type: 'token', text: String(value), value: value};
+        }),
+        false
+      );
+    }
+
+    return value;
   }
 }
 
