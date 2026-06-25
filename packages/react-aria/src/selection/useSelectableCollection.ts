@@ -618,7 +618,9 @@ export function useSelectableCollection(
         }
       }
 
+      let originalStrategyKey = focusedKey;
       let visitedKeys = new Set<Key>();
+      let foundEnabledKey = false;
 
       while (focusedKey != null && !manager.canSelectItem(focusedKey)) {
         if (visitedKeys.has(focusedKey)) {
@@ -631,7 +633,19 @@ export function useSelectableCollection(
         if (nextKey == null || nextKey === focusedKey) {
           break;
         }
+
+        if (manager.canSelectItem(nextKey)) {
+          focusedKey = nextKey;
+          foundEnabledKey = true;
+          break;
+        }
+
         focusedKey = nextKey;
+      }
+
+      // If no enabled key was found, restore original key (this may happen if all items are disabled)
+      if (!foundEnabledKey && focusedKey != null && !manager.canSelectItem(focusedKey)) {
+        focusedKey = originalStrategyKey;
       }
 
       manager.setFocused(true);
