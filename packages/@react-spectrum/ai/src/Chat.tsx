@@ -304,7 +304,7 @@ export function Thread<T extends object>(props: ThreadProps<T>) {
           onScroll={handleScroll}
           keyboardNavigationBehavior="tab"
           UNSTABLE_focusOnEntry={UNSTABLE_focusOnEntry ?? 'first'}
-          items={reversedItems}
+          items={items}
           aria-label={ariaLabel}
           aria-labelledby={ariaLabelledby}
           // TODO: for now we enforce this, but to be configurable?

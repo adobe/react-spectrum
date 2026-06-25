@@ -517,7 +517,10 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
     let nodes: LayoutNode[] = new Array(itemNodes.length + offset);
     let currentBottom = contentLength - this.padding;
 
-    for (let i = 0; i < itemNodes.length; i++) {
+    // Iterate last→first so the last item in the collection (newest) is placed at the visual
+    // bottom and written to nodes[0] (first in DOM) for screen-reader accessibility.
+    let nodesIndex = 0;
+    for (let i = itemNodes.length - 1; i >= 0; i--) {
       let node = itemNodes[i];
       let y = currentBottom - itemHeights[i];
       let cached = this.layoutNodes.get(node.key);
@@ -545,13 +548,12 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
       layoutNode.layoutInfo.allowOverflow = true;
       layoutNode.validRect = layoutNode.layoutInfo.rect.intersection(this.requestedRect);
       this.layoutNodes.set(layoutNode.layoutInfo.key, layoutNode);
-      nodes[i + offset] = layoutNode;
+      nodes[nodesIndex++ + offset] = layoutNode;
       currentBottom = y - this.gap;
     }
 
     if (loaderCollectionNode) {
       // Build the loader at a placeholder y=0, then position it above the oldest item using
-      // currentBottom (which ends just above item[N-1], the oldest/topmost item, after the loop above).
       let loaderNode = this.buildNode(loaderCollectionNode, this.padding, 0);
       loaderNode.layoutInfo.rect.y = currentBottom - loaderNode.layoutInfo.rect.height;
       loaderNode.layoutInfo.parentKey = null;
