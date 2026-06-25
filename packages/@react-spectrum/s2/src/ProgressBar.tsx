@@ -12,10 +12,11 @@
 
 import {
   ProgressBar as AriaProgressBar,
-  ProgressBarProps as AriaProgressBarProps,
-  ContextValue
-} from 'react-aria-components';
-import {bar, track} from './bar-utils'  with {type: 'macro'};
+  ProgressBarProps as AriaProgressBarProps
+} from 'react-aria-components/ProgressBar';
+
+import {bar, track} from './bar-utils' with {type: 'macro'};
+import {ContextValue} from 'react-aria-components/slots';
 import {createContext, forwardRef, ReactNode} from 'react';
 import {DOMRef, DOMRefValue, GlobalDOMAttributes, LabelPosition} from '@react-types/shared';
 import {FieldLabel} from './Field';
@@ -23,8 +24,8 @@ import {fieldLabel, getAllowedOverrides, StyleProps} from './style-utils' with {
 import {keyframes} from '../style/style-macro' with {type: 'macro'};
 import {mergeStyles} from '../style/runtime';
 import {style} from '../style' with {type: 'macro'};
-import {useDOMRef} from '@react-spectrum/utils';
-import {useLocale} from '@react-aria/i18n';
+import {useDOMRef} from './useDOMRef';
+import {useLocale} from 'react-aria/I18nProvider';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 interface ProgressBarStyleProps {
@@ -33,29 +34,37 @@ interface ProgressBarStyleProps {
    *
    * @default 'M'
    */
-  size?: 'S' | 'M' | 'L' | 'XL',
+  size?: 'S' | 'M' | 'L' | 'XL';
   /**
    * Whether presentation is indeterminate when progress isn't known.
    */
-  isIndeterminate?: boolean,
+  isIndeterminate?: boolean;
   /**
    * The static color style to apply. Useful when the button appears over a color background.
    */
-  staticColor?: 'white' | 'black' | 'auto',
+  staticColor?: 'white' | 'black' | 'auto';
   /**
    * The label's overall position relative to the element it is labeling.
+   *
    * @default 'top'
    */
-  labelPosition?: LabelPosition
-
+  labelPosition?: LabelPosition;
 }
 
-export interface ProgressBarProps extends Omit<AriaProgressBarProps, 'children' | 'className' | 'style' | 'render' | keyof GlobalDOMAttributes>, ProgressBarStyleProps, StyleProps {
+export interface ProgressBarProps
+  extends
+    Omit<
+      AriaProgressBarProps,
+      'children' | 'className' | 'style' | 'render' | keyof GlobalDOMAttributes
+    >,
+    ProgressBarStyleProps,
+    StyleProps {
   /** The content to display as the label. */
-  label?: ReactNode
+  label?: ReactNode;
 }
 
-export const ProgressBarContext = createContext<ContextValue<Partial<ProgressBarProps>, DOMRefValue<HTMLDivElement>>>(null);
+export const ProgressBarContext =
+  createContext<ContextValue<Partial<ProgressBarProps>, DOMRefValue<HTMLDivElement>>>(null);
 
 const indeterminateLTR = keyframes(`
   0% {
@@ -75,47 +84,40 @@ const indeterminateRTL = keyframes(`
   }
 `);
 
-const wrapper = style({
-  ...bar(),
-  gridTemplateColumns: {
-    default: {
-      labelPosition: {
-        top: ['1fr', 'auto'],
-        side: ['auto', '1fr']
+const wrapper = style(
+  {
+    ...bar(),
+    gridTemplateColumns: {
+      default: {
+        labelPosition: {
+          top: ['1fr', 'auto'],
+          side: ['auto', '1fr']
+        }
+      },
+      isIndeterminate: {
+        labelPosition: {
+          top: ['1fr'],
+          side: ['auto', '1fr']
+        }
       }
     },
-    isIndeterminate: {
-      labelPosition: {
-        top: ['1fr'],
-        side: ['auto', '1fr']
+    gridTemplateAreas: {
+      default: {
+        labelPosition: {
+          top: ['label value', 'bar bar'],
+          side: ['label bar value']
+        }
+      },
+      isIndeterminate: {
+        labelPosition: {
+          top: ['label', 'bar'],
+          side: ['label bar']
+        }
       }
     }
   },
-  gridTemplateAreas: {
-    default: {
-      labelPosition: {
-        top: [
-          'label value',
-          'bar bar'
-        ],
-        side: [
-          'label bar value'
-        ]
-      }
-    },
-    isIndeterminate: {
-      labelPosition: {
-        top: [
-          'label',
-          'bar'
-        ],
-        side: [
-          'label bar'
-        ]
-      }
-    }
-  }
-}, getAllowedOverrides());
+  getAllowedOverrides()
+);
 
 const valueStyles = style({
   ...fieldLabel(),
@@ -167,13 +169,18 @@ const indeterminateAnimation = style({
 });
 
 /**
- * ProgressBars show the progression of a system operation: downloading, uploading, processing, etc., in a visual way.
- * They can represent either determinate or indeterminate progress.
+ * ProgressBars show the progression of a system operation: downloading, uploading, processing,
+ * etc., in a visual way. They can represent either determinate or indeterminate progress.
  */
-export const ProgressBar = /*#__PURE__*/ forwardRef(function ProgressBar(props: ProgressBarProps, ref: DOMRef<HTMLDivElement>) {
+export const ProgressBar = /*#__PURE__*/ forwardRef(function ProgressBar(
+  props: ProgressBarProps,
+  ref: DOMRef<HTMLDivElement>
+) {
+  // oxlint-disable-next-line react/react-compiler
   [props, ref] = useSpectrumContextProps(props, ref, ProgressBarContext);
   let {
-    label, size = 'M',
+    label,
+    size = 'M',
     staticColor,
     isIndeterminate,
     labelPosition = 'top',
@@ -189,19 +196,36 @@ export const ProgressBar = /*#__PURE__*/ forwardRef(function ProgressBar(props: 
       {...props}
       ref={domRef}
       style={UNSAFE_style}
-      className={UNSAFE_className + wrapper({...props, size, labelPosition, staticColor}, props.styles)}>
+      className={
+        UNSAFE_className + wrapper({...props, size, labelPosition, staticColor}, props.styles)
+      }>
       {({percentage, valueText}) => (
         <>
-          {label && <FieldLabel size={size} labelAlign="start" labelPosition={labelPosition} staticColor={staticColor}>{label}</FieldLabel>}
-          {label && !isIndeterminate && <span className={valueStyles({size, labelAlign: 'end', isStaticColor})}>{valueText}</span>}
+          {label && (
+            <FieldLabel
+              size={size}
+              labelAlign="start"
+              labelPosition={labelPosition}
+              staticColor={staticColor}>
+              {label}
+            </FieldLabel>
+          )}
+          {label && !isIndeterminate && (
+            <span className={valueStyles({size, labelAlign: 'end', isStaticColor})}>
+              {valueText}
+            </span>
+          )}
           <div className={trackStyles({isStaticColor, size})}>
             <div
-              className={mergeStyles(fill({...props, isStaticColor}), (isIndeterminate ? indeterminateAnimation({direction}) : null))}
-              style={{width: isIndeterminate ? undefined : percentage + '%'}} />
+              className={mergeStyles(
+                fill({...props, isStaticColor}),
+                isIndeterminate ? indeterminateAnimation({direction}) : null
+              )}
+              style={{width: isIndeterminate ? undefined : percentage + '%'}}
+            />
           </div>
         </>
       )}
     </AriaProgressBar>
   );
 });
-

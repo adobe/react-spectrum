@@ -10,7 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {ColorSwatch, ColorSwatchPicker, ColorSwatchPickerItem, parseColor} from '../src';
+import {ColorSwatch} from '../src/ColorSwatch';
+
+import {ColorSwatchPicker, ColorSwatchPickerItem} from '../src/ColorSwatchPicker';
+import {parseColor} from 'react-stately/Color';
 import {pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
@@ -26,10 +29,18 @@ describe('ColorSwatchPicker', function () {
     let onChange = jest.fn();
     let {getByRole} = render(
       <ColorSwatchPicker onChange={onChange}>
-        <ColorSwatchPickerItem color="#f00"><ColorSwatch /></ColorSwatchPickerItem>
-        <ColorSwatchPickerItem color="#0f0"><ColorSwatch /></ColorSwatchPickerItem>
-        <ColorSwatchPickerItem color="#0ff"><ColorSwatch /></ColorSwatchPickerItem>
-        <ColorSwatchPickerItem color="#00f"><ColorSwatch /></ColorSwatchPickerItem>
+        <ColorSwatchPickerItem color="#f00">
+          <ColorSwatch />
+        </ColorSwatchPickerItem>
+        <ColorSwatchPickerItem color="#0f0">
+          <ColorSwatch />
+        </ColorSwatchPickerItem>
+        <ColorSwatchPickerItem color="#0ff">
+          <ColorSwatch />
+        </ColorSwatchPickerItem>
+        <ColorSwatchPickerItem color="#00f">
+          <ColorSwatch />
+        </ColorSwatchPickerItem>
       </ColorSwatchPicker>
     );
 
@@ -51,7 +62,9 @@ describe('ColorSwatchPicker', function () {
   it('supports custom class', function () {
     let {getByRole} = render(
       <ColorSwatchPicker className="picker">
-        <ColorSwatchPickerItem color="#f00" className="item"><ColorSwatch /></ColorSwatchPickerItem>
+        <ColorSwatchPickerItem color="#f00" className="item">
+          <ColorSwatch />
+        </ColorSwatchPickerItem>
       </ColorSwatchPicker>
     );
 
@@ -65,10 +78,18 @@ describe('ColorSwatchPicker', function () {
   it('supports custom aria-label', async function () {
     let {getByRole} = render(
       <ColorSwatchPicker aria-label="test">
-        <ColorSwatchPickerItem color="#f00"><ColorSwatch /></ColorSwatchPickerItem>
-        <ColorSwatchPickerItem color="#0f0"><ColorSwatch /></ColorSwatchPickerItem>
-        <ColorSwatchPickerItem color="#0ff"><ColorSwatch /></ColorSwatchPickerItem>
-        <ColorSwatchPickerItem color="#00f"><ColorSwatch /></ColorSwatchPickerItem>
+        <ColorSwatchPickerItem color="#f00">
+          <ColorSwatch />
+        </ColorSwatchPickerItem>
+        <ColorSwatchPickerItem color="#0f0">
+          <ColorSwatch />
+        </ColorSwatchPickerItem>
+        <ColorSwatchPickerItem color="#0ff">
+          <ColorSwatch />
+        </ColorSwatchPickerItem>
+        <ColorSwatchPickerItem color="#00f">
+          <ColorSwatch />
+        </ColorSwatchPickerItem>
       </ColorSwatchPicker>
     );
 
@@ -79,10 +100,18 @@ describe('ColorSwatchPicker', function () {
   it('supports custom aria-labelledby', async function () {
     let {getByRole} = render(
       <ColorSwatchPicker aria-labelledby="test">
-        <ColorSwatchPickerItem color="#f00"><ColorSwatch /></ColorSwatchPickerItem>
-        <ColorSwatchPickerItem color="#0f0"><ColorSwatch /></ColorSwatchPickerItem>
-        <ColorSwatchPickerItem color="#0ff"><ColorSwatch /></ColorSwatchPickerItem>
-        <ColorSwatchPickerItem color="#00f"><ColorSwatch /></ColorSwatchPickerItem>
+        <ColorSwatchPickerItem color="#f00">
+          <ColorSwatch />
+        </ColorSwatchPickerItem>
+        <ColorSwatchPickerItem color="#0f0">
+          <ColorSwatch />
+        </ColorSwatchPickerItem>
+        <ColorSwatchPickerItem color="#0ff">
+          <ColorSwatch />
+        </ColorSwatchPickerItem>
+        <ColorSwatchPickerItem color="#00f">
+          <ColorSwatch />
+        </ColorSwatchPickerItem>
       </ColorSwatchPicker>
     );
 
@@ -94,10 +123,18 @@ describe('ColorSwatchPicker', function () {
   it('supports defaultValue', async function () {
     let {getByRole} = render(
       <ColorSwatchPicker defaultValue="#0ff">
-        <ColorSwatchPickerItem color="#f00"><ColorSwatch /></ColorSwatchPickerItem>
-        <ColorSwatchPickerItem color="#0f0"><ColorSwatch /></ColorSwatchPickerItem>
-        <ColorSwatchPickerItem color="#0ff"><ColorSwatch /></ColorSwatchPickerItem>
-        <ColorSwatchPickerItem color="#00f"><ColorSwatch /></ColorSwatchPickerItem>
+        <ColorSwatchPickerItem color="#f00">
+          <ColorSwatch />
+        </ColorSwatchPickerItem>
+        <ColorSwatchPickerItem color="#0f0">
+          <ColorSwatch />
+        </ColorSwatchPickerItem>
+        <ColorSwatchPickerItem color="#0ff">
+          <ColorSwatch />
+        </ColorSwatchPickerItem>
+        <ColorSwatchPickerItem color="#00f">
+          <ColorSwatch />
+        </ColorSwatchPickerItem>
       </ColorSwatchPicker>
     );
 
@@ -110,10 +147,18 @@ describe('ColorSwatchPicker', function () {
     let onChange = jest.fn();
     let {getByRole} = render(
       <ColorSwatchPicker onChange={onChange}>
-        <ColorSwatchPickerItem color="#f00"><ColorSwatch /></ColorSwatchPickerItem>
-        <ColorSwatchPickerItem color="#0f0"><ColorSwatch /></ColorSwatchPickerItem>
-        <ColorSwatchPickerItem color="#0ff"><ColorSwatch /></ColorSwatchPickerItem>
-        <ColorSwatchPickerItem color="#00f"><ColorSwatch /></ColorSwatchPickerItem>
+        <ColorSwatchPickerItem color="#f00">
+          <ColorSwatch />
+        </ColorSwatchPickerItem>
+        <ColorSwatchPickerItem color="#0f0">
+          <ColorSwatch />
+        </ColorSwatchPickerItem>
+        <ColorSwatchPickerItem color="#0ff">
+          <ColorSwatch />
+        </ColorSwatchPickerItem>
+        <ColorSwatchPickerItem color="#00f">
+          <ColorSwatch />
+        </ColorSwatchPickerItem>
       </ColorSwatchPicker>
     );
 

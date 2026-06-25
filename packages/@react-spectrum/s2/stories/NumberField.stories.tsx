@@ -10,18 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {
-  Button,
-  Content,
-  ContextualHelp,
-  Footer,
-  Form,
-  Heading,
-  Link,
-  NumberField,
-  Text
-} from '../src';
+import {Button} from '../src/Button';
+
+import {Content, Footer, Heading, Text} from '../src/Content';
+import {ContextualHelp} from '../src/ContextualHelp';
+import {Form} from '../src/Form';
+import {Link} from '../src/Link';
 import type {Meta, StoryObj} from '@storybook/react';
+import {NumberField} from '../src/NumberField';
 import {style} from '../style' with {type: 'macro'};
 
 const meta: Meta<typeof NumberField> = {
@@ -47,19 +43,19 @@ export default meta;
 type Story = StoryObj<typeof NumberField>;
 
 export const Example: Story = {
-  render: (args) => (
-    <NumberField {...args} />
-  ),
+  render: args => <NumberField {...args} />,
   args: {
     label: 'Quantity'
   }
 };
 
 export const Validation: Story = {
-  render: (args) => (
+  render: args => (
     <Form>
       <NumberField {...args} />
-      <Button type="submit" variant="primary">Submit</Button>
+      <Button type="submit" variant="primary">
+        Submit
+      </Button>
     </Form>
   ),
   args: {
@@ -69,7 +65,7 @@ export const Validation: Story = {
 };
 
 export const CustomWidth: Story = {
-  render: (args) => <NumberField {...args} styles={style({width: 384})} />,
+  render: args => <NumberField {...args} styles={style({width: 384})} />,
   args: {
     label: 'Large quantity'
   },
@@ -80,29 +76,40 @@ export const CustomWidth: Story = {
   }
 };
 
-
 export const ContextualHelpExample: Story = {
-  render: (args) => (
+  render: args => (
     <NumberField
       {...args}
       contextualHelp={
         <ContextualHelp>
           <Heading>Quantity</Heading>
           <Content>
-            <Text>
-              Pick a number between negative infinity and positive infinity.
-            </Text>
+            <Text>Pick a number between negative infinity and positive infinity.</Text>
           </Content>
           <Footer>
-            <Link
-              isStandalone
-              href="https://en.wikipedia.org/wiki/Quantity"
-              target="_blank">Learn more about quantity</Link>
+            <Link isStandalone href="https://en.wikipedia.org/wiki/Quantity" target="_blank">
+              Learn more about quantity
+            </Link>
           </Footer>
         </ContextualHelp>
-      } />
+      }
+    />
   ),
   args: {
     label: 'Quantity'
+  }
+};
+
+export const WithPrefix: Story = {
+  render: args => (
+    <NumberField
+      {...args}
+      formatOptions={{style: 'currency', currency: 'USD', currencyDisplay: 'narrowSymbol'}}
+    />
+  ),
+  args: {
+    label: 'Value',
+    placeholder: '0.00',
+    prefix: 'USD'
   }
 };

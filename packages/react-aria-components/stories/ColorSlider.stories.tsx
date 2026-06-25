@@ -10,9 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {ColorSlider, ColorSliderProps, ColorThumb, Label, SliderOutput, SliderTrack} from '../src';
+import {ColorSlider, ColorSliderProps} from '../src/ColorSlider';
+
+import {ColorThumb} from '../src/ColorThumb';
+import {Label} from '../src/Label';
 import {Meta, StoryObj} from '@storybook/react';
 import React, {JSX} from 'react';
+import {SliderOutput, SliderTrack} from '../src/Slider';
 import './styles.css';
 
 export default {
@@ -59,14 +63,15 @@ export function ColorSliderExampleRender(args: ColorSliderProps): JSX.Element {
             borderRadius: '50%',
             boxSizing: 'border-box',
             background: color.toString()
-          })} />
+          })}
+        />
       </SliderTrack>
     </ColorSlider>
   );
 }
 
 export const ColorSliderExample: ColorSliderStory = {
-  render: (args) => <ColorSliderExampleRender {...args} />,
+  render: args => <ColorSliderExampleRender {...args} />,
   args: {
     channel: 'hue',
     defaultValue: 'hsl(0, 100%, 50%)'

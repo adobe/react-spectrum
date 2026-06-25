@@ -11,21 +11,31 @@
  */
 
 import {fireEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
-import {Label, Slider, SliderContext, SliderOutput, SliderThumb, SliderTrack} from '../';
+import {Label} from '../src/Label';
 import React, {useState} from 'react';
+import {
+  Slider,
+  SliderContext,
+  SliderFill,
+  SliderOutput,
+  SliderThumb,
+  SliderTrack
+} from '../src/Slider';
 import userEvent from '@testing-library/user-event';
 
-let TestSlider = ({sliderProps, thumbProps, trackProps, outputProps}) => (
+let TestSlider = ({sliderProps, thumbProps, trackProps, outputProps, fillProps}) => (
   <Slider {...sliderProps}>
     <Label>Opacity</Label>
     <SliderOutput {...outputProps} />
     <SliderTrack {...trackProps}>
+      <SliderFill {...fillProps} />
       <SliderThumb {...thumbProps} />
     </SliderTrack>
   </Slider>
 );
 
-let renderSlider = (sliderProps, thumbProps, trackProps, outputProps) => render(<TestSlider {...{sliderProps, thumbProps, trackProps, outputProps}} />);
+let renderSlider = (sliderProps, thumbProps, trackProps, outputProps) =>
+  render(<TestSlider {...{sliderProps, thumbProps, trackProps, outputProps}} />);
 
 describe('Slider', () => {
   let user;
@@ -38,10 +48,13 @@ describe('Slider', () => {
     let group = getByRole('group');
     expect(group).toHaveAttribute('class', 'react-aria-Slider');
     expect(group).toHaveAttribute('aria-labelledby');
-    expect(document.getElementById(group.getAttribute('aria-labelledby'))).toHaveTextContent('Opacity');
+    expect(document.getElementById(group.getAttribute('aria-labelledby'))).toHaveTextContent(
+      'Opacity'
+    );
     expect(getByRole('status')).toHaveTextContent('0');
     expect(group.querySelector('.react-aria-SliderTrack')).toBeInTheDocument();
     expect(group.querySelector('.react-aria-SliderThumb')).toBeInTheDocument();
+    expect(group.querySelector('.react-aria-SliderFill')).toBeInTheDocument();
   });
 
   it('should render a slider with custom class', () => {
@@ -51,12 +64,20 @@ describe('Slider', () => {
   });
 
   it('should support DOM props', () => {
-    let {getByRole} = renderSlider({'data-foo': 'bar'}, {'data-bar': 'foo'}, {'data-test': 'test'}, {'data-output': 'output'});
+    let {getByRole} = renderSlider(
+      {'data-foo': 'bar'},
+      {'data-bar': 'foo'},
+      {'data-test': 'test'},
+      {'data-output': 'output'}
+    );
     let group = getByRole('group');
     expect(group).toHaveAttribute('data-foo', 'bar');
     expect(group.querySelector('.react-aria-SliderThumb')).toHaveAttribute('data-bar', 'foo');
     expect(group.querySelector('.react-aria-SliderTrack')).toHaveAttribute('data-test', 'test');
-    expect(group.querySelector('.react-aria-SliderOutput')).toHaveAttribute('data-output', 'output');
+    expect(group.querySelector('.react-aria-SliderOutput')).toHaveAttribute(
+      'data-output',
+      'output'
+    );
   });
 
   it('should support custom render function', () => {
@@ -103,7 +124,10 @@ describe('Slider', () => {
   });
 
   it('should support focus ring', async () => {
-    let {getByRole} = renderSlider({}, {className: ({isFocusVisible}) => `thumb ${isFocusVisible ? 'focus' : ''}`});
+    let {getByRole} = renderSlider(
+      {},
+      {className: ({isFocusVisible}) => `thumb ${isFocusVisible ? 'focus' : ''}`}
+    );
     let slider = getByRole('slider');
     let thumb = slider.closest('.thumb');
 
@@ -121,7 +145,10 @@ describe('Slider', () => {
   });
 
   it('should support dragging state', () => {
-    let {getByRole} = renderSlider({}, {className: ({isDragging}) => `thumb ${isDragging ? 'dragging' : ''}`});
+    let {getByRole} = renderSlider(
+      {},
+      {className: ({isDragging}) => `thumb ${isDragging ? 'dragging' : ''}`}
+    );
     let thumb = getByRole('slider').closest('.thumb');
 
     expect(thumb).not.toHaveAttribute('data-dragging');
@@ -143,7 +170,21 @@ describe('Slider', () => {
     let hoverStartThumbSpy = jest.fn();
     let hoverChangeThumbSpy = jest.fn();
     let hoverEndThumbSpy = jest.fn();
-    let {getByRole} = renderSlider({}, {className: ({isHovered}) => `thumb ${isHovered ? 'hovered' : ''}`, onHoverStart: hoverStartThumbSpy, onHoverChange: hoverChangeThumbSpy, onHoverEnd: hoverEndThumbSpy}, {className: ({isHovered}) => `track ${isHovered ? 'hovered' : ''}`, onHoverStart: hoverStartTrackSpy, onHoverChange: hoverChangeTrackSpy, onHoverEnd: hoverEndTrackSpy});
+    let {getByRole} = renderSlider(
+      {},
+      {
+        className: ({isHovered}) => `thumb ${isHovered ? 'hovered' : ''}`,
+        onHoverStart: hoverStartThumbSpy,
+        onHoverChange: hoverChangeThumbSpy,
+        onHoverEnd: hoverEndThumbSpy
+      },
+      {
+        className: ({isHovered}) => `track ${isHovered ? 'hovered' : ''}`,
+        onHoverStart: hoverStartTrackSpy,
+        onHoverChange: hoverChangeTrackSpy,
+        onHoverEnd: hoverEndTrackSpy
+      }
+    );
     let thumb = getByRole('slider').closest('.thumb');
     let track = getByRole('slider').closest('.track');
 
@@ -178,7 +219,10 @@ describe('Slider', () => {
   });
 
   it('should support disabled state', () => {
-    let {getByRole} = renderSlider({isDisabled: true, className: ({isDisabled}) => isDisabled ? 'disabled' : ''}, {className: ({isDisabled}) => `thumb ${isDisabled ? 'disabled' : ''}`});
+    let {getByRole} = renderSlider(
+      {isDisabled: true, className: ({isDisabled}) => (isDisabled ? 'disabled' : '')},
+      {className: ({isDisabled}) => `thumb ${isDisabled ? 'disabled' : ''}`}
+    );
     let group = getByRole('group');
     let slider = getByRole('slider');
     let thumb = slider.closest('.thumb');
@@ -192,7 +236,10 @@ describe('Slider', () => {
   });
 
   it('should support orientation', () => {
-    let {getByRole} = renderSlider({orientation: 'vertical', className: ({orientation}) => orientation});
+    let {getByRole} = renderSlider({
+      orientation: 'vertical',
+      className: ({orientation}) => orientation
+    });
     let group = getByRole('group');
     let slider = getByRole('slider');
 
@@ -201,13 +248,11 @@ describe('Slider', () => {
     expect(slider).toHaveAttribute('aria-orientation', 'vertical');
   });
 
-  it('should support multiple thumbs', () => {
+  it('should support two thumbs', () => {
     let {getByRole, getAllByRole} = render(
       <Slider defaultValue={[30, 60]}>
         <Label>Test</Label>
-        <SliderOutput>
-          {({state}) => state.values.map((_, i) => state.getThumbValueLabel(i)).join(' – ')}
-        </SliderOutput>
+        <SliderOutput />
         <SliderTrack>
           {({state}) => state.values.map((_, i) => <SliderThumb key={i} index={i} />)}
         </SliderTrack>
@@ -220,30 +265,55 @@ describe('Slider', () => {
     expect(sliders[1]).toHaveValue('60');
 
     let output = getByRole('status');
-    expect(output).toHaveTextContent('30 – 60');
+    expect(output).toHaveTextContent('30–60');
+  });
+
+  it('should support three thumbs', () => {
+    let {getByRole, getAllByRole} = render(
+      <Slider defaultValue={[30, 60, 80]}>
+        <Label>Test</Label>
+        <SliderOutput />
+        <SliderTrack>
+          {({state}) => state.values.map((_, i) => <SliderThumb key={i} index={i} />)}
+        </SliderTrack>
+      </Slider>
+    );
+
+    let sliders = getAllByRole('slider');
+    expect(sliders).toHaveLength(3);
+    expect(sliders[0]).toHaveValue('30');
+    expect(sliders[1]).toHaveValue('60');
+    expect(sliders[2]).toHaveValue('80');
+
+    let output = getByRole('status');
+    expect(output).toHaveTextContent('30, 60, 80');
   });
 
   it('should support multiple thumbs (controlled)', async () => {
     function SliderClient() {
       const [value, setValue] = useState([30, 60]);
-      return (<div>
-        <Slider value={value} onChange={setValue}>
-          <Label>Test</Label>
-          <SliderOutput>
-            {({state}) => state.values.map((_, i) => state.getThumbValueLabel(i)).join(' – ')}
-          </SliderOutput>
-          <SliderTrack>
-            {({state}) => state.values.map((_, i) => <SliderThumb key={i} index={i} className="thumb" />)}
-          </SliderTrack>
-        </Slider>
-        <button data-testid="reset-button" onClick={() => setValue([0, 100])}>reset</button>
-      </div>);
+      return (
+        <div>
+          <Slider value={value} onChange={setValue}>
+            <Label>Test</Label>
+            <SliderOutput />
+            <SliderTrack>
+              {({state}) =>
+                state.values.map((_, i) => <SliderThumb key={i} index={i} className="thumb" />)
+              }
+            </SliderTrack>
+          </Slider>
+          <button data-testid="reset-button" onClick={() => setValue([0, 100])}>
+            reset
+          </button>
+        </div>
+      );
     }
 
     let {getAllByRole, getByTestId} = render(<SliderClient />);
 
     let sliders = getAllByRole('slider');
-    
+
     expect(sliders).toHaveLength(2);
     expect(sliders[0]).toHaveValue('30');
     expect(sliders[1]).toHaveValue('60');
@@ -253,10 +323,10 @@ describe('Slider', () => {
     expect(sliders[0]).toHaveValue('0');
     expect(sliders[1]).toHaveValue('100');
 
-    await user.tab();  // body (because we've clicked the reset button?)
+    await user.tab(); // body (because we've clicked the reset button?)
     await user.tab();
     expect(document.activeElement).toBe(sliders[0]);
-    
+
     await user.keyboard('{ArrowRight}');
     await user.keyboard('{ArrowRight}');
     await user.keyboard('{ArrowRight}');
@@ -267,11 +337,11 @@ describe('Slider', () => {
     expect(sliders[0]).toHaveValue('0');
     expect(sliders[1]).toHaveValue('100');
 
-    await user.tab();  // body
-    await user.tab();  // sliders[0]
+    await user.tab(); // body
+    await user.tab(); // sliders[0]
     await user.tab();
     expect(document.activeElement).toBe(sliders[1]);
-    
+
     await user.keyboard('{ArrowLeft}');
     await user.keyboard('{ArrowLeft}');
     await user.keyboard('{ArrowLeft}');
@@ -291,7 +361,7 @@ describe('Slider', () => {
 
   it('should support input ref', () => {
     let inputRef = React.createRef();
-  
+
     let {getByRole} = render(
       <Slider>
         <Label>Test</Label>
@@ -301,7 +371,7 @@ describe('Slider', () => {
         </SliderTrack>
       </Slider>
     );
-  
+
     let group = getByRole('group');
     let thumbInput = group.querySelector('input');
     expect(inputRef.current).toBe(thumbInput);
@@ -312,5 +382,63 @@ describe('Slider', () => {
     let input = getByRole('slider');
     expect(input).toHaveAttribute('form', 'test');
   });
-});
 
+  it('should support horizontal SliderFill', () => {
+    let {getByRole} = render(<TestSlider sliderProps={{value: 30}} />);
+    let group = getByRole('group');
+    let fill = group.querySelector('.react-aria-SliderFill');
+    expect(fill).toHaveAttribute('data-orientation', 'horizontal');
+    expect(fill).toHaveStyle({
+      position: 'absolute',
+      insetInlineStart: '0%',
+      width: '30%',
+      height: '100%'
+    });
+  });
+
+  it('should support horizontal SliderFill with offset', () => {
+    let {getByRole, rerender} = render(
+      <TestSlider sliderProps={{value: 30}} fillProps={{offset: 50}} />
+    );
+    let group = getByRole('group');
+    let fill = group.querySelector('.react-aria-SliderFill');
+    expect(fill).toHaveAttribute('data-orientation', 'horizontal');
+    expect(fill).toHaveStyle({
+      position: 'absolute',
+      insetInlineStart: '30%',
+      width: '20%',
+      height: '100%'
+    });
+
+    rerender(<TestSlider sliderProps={{value: 80}} fillProps={{offset: 50}} />);
+    expect(fill).toHaveStyle({
+      position: 'absolute',
+      insetInlineStart: '50%',
+      width: '30%',
+      height: '100%'
+    });
+  });
+
+  it('should support vertical SliderFill', () => {
+    let {getByRole} = render(<TestSlider sliderProps={{value: 30, orientation: 'vertical'}} />);
+    let group = getByRole('group');
+    let fill = group.querySelector('.react-aria-SliderFill');
+    expect(fill).toHaveAttribute('data-orientation', 'vertical');
+    expect(fill).toHaveStyle({position: 'absolute', bottom: '0%', height: '30%', width: '100%'});
+  });
+
+  it('should support vertical SliderFill with offset', () => {
+    let {getByRole, rerender} = render(
+      <TestSlider sliderProps={{value: 30, orientation: 'vertical'}} fillProps={{offset: 50}} />
+    );
+    let group = getByRole('group');
+    let fill = group.querySelector('.react-aria-SliderFill');
+    expect(fill).toHaveAttribute('data-orientation', 'vertical');
+    expect(fill).toHaveStyle({position: 'absolute', bottom: '30%', height: '20%', width: '100%'});
+
+    rerender(
+      <TestSlider sliderProps={{value: 80, orientation: 'vertical'}} fillProps={{offset: 50}} />
+    );
+    expect(fill).toHaveStyle({position: 'absolute', bottom: '50%', height: '30%', width: '100%'});
+  });
+});

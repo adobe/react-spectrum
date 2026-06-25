@@ -12,31 +12,36 @@
 
 import {
   ListBoxSection as AriaListBoxSection,
-  PopoverProps as AriaPopoverProps,
-  Select as AriaSelect,
-  SelectProps as AriaSelectProps,
-  SelectRenderProps as AriaSelectRenderProps,
-  Button,
-  ButtonRenderProps,
-  Collection,
-  ContextValue,
-  DEFAULT_SLOT,
   ListBox,
   ListBoxItem,
   ListBoxItemProps,
   ListBoxLoadMoreItem,
   ListBoxProps,
-  ListLayout,
-  Provider,
-  SectionProps,
+  ListBoxSectionProps
+} from 'react-aria-components/ListBox';
+import {PopoverProps as AriaPopoverProps} from 'react-aria-components/Popover';
+import {
+  Select as AriaSelect,
+  SelectProps as AriaSelectProps,
+  SelectRenderProps as AriaSelectRenderProps,
   SelectStateContext,
-  SelectValue,
-  Virtualizer
-} from 'react-aria-components';
-import {AsyncLoadable, FocusableRef, FocusableRefValue, GlobalDOMAttributes, HelpTextProps, LoadingState, PressEvent, RefObject, SpectrumLabelableProps} from '@react-types/shared';
+  SelectValue
+} from 'react-aria-components/Select';
+import {
+  AsyncLoadable,
+  FocusableRef,
+  FocusableRefValue,
+  GlobalDOMAttributes,
+  HelpTextProps,
+  LoadingState,
+  PressEvent,
+  RefObject,
+  SpectrumLabelableProps
+} from '@react-types/shared';
 import {AvatarContext} from './Avatar';
 import {baseColor, focusRing, style} from '../style' with {type: 'macro'};
 import {box, iconStyles as checkboxIconStyles} from './Checkbox';
+import {Button, ButtonRenderProps} from 'react-aria-components/Button';
 import {centerBaseline} from './CenterBaseline';
 import {
   checkbox,
@@ -49,40 +54,55 @@ import {
 } from './Menu';
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronIcon from '../ui-icons/Chevron';
-import {control, controlBorderRadius, controlFont, field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
-import {createHideableComponent} from '@react-aria/collections';
-import {createShadowTreeWalker, getOwnerDocument, isFocusable, useGlobalListeners, useSlotId} from '@react-aria/utils';
+import {Collection} from 'react-aria/Collection';
+import {ContextValue, DEFAULT_SLOT, Provider} from 'react-aria-components/slots';
+import {
+  control,
+  controlBorderRadius,
+  controlFont,
+  field,
+  fieldInput,
+  getAllowedOverrides,
+  StyleProps
+} from './style-utils' with {type: 'macro'};
+import {createHideableComponent} from 'react-aria/private/collections/Hidden';
+import {createShadowTreeWalker} from 'react-aria/private/utils/shadowdom/ShadowTreeWalker';
 import {css} from '../style/style-macro' with {type: 'macro'};
-import {
-  Divider,
-  listbox,
-  listboxHeader,
-  listboxItem,
-  LOADER_ROW_HEIGHTS
-} from './ComboBox';
+import {Divider, listbox, listboxHeader, listboxItem, LOADER_ROW_HEIGHTS} from './ComboBox';
 import {edgeToText} from '../style/spectrum-theme' with {type: 'macro'};
-import {
-  FieldErrorIcon,
-  FieldLabel,
-  HelpText
-} from './Field';
+import {FieldErrorIcon, FieldLabel, HelpText} from './Field';
 import {FormContext, useFormProps} from './Form';
 import {forwardRefType} from './types';
+import {getOwnerDocument} from 'react-aria/private/utils/domHelpers';
 import {HeaderContext, HeadingContext, Text, TextContext} from './Content';
 import {IconContext} from './Icon';
-// @ts-ignore
 import intlMessages from '../intl/*.json';
+import {isFocusable} from 'react-aria/private/utils/isFocusable';
+import {ListLayout} from 'react-stately/useVirtualizerState';
 import {mergeStyles} from '../style/runtime';
-import {Placement} from 'react-aria';
+import {Placement} from 'react-aria-components/Popover';
 import {Popover} from './Popover';
-import {PressResponder} from '@react-aria/interactions';
+import {PressResponder} from 'react-aria/private/interactions/PressResponder';
 import {pressScale} from './pressScale';
 import {ProgressCircle} from './ProgressCircle';
-import React, {createContext, forwardRef, ReactNode, useContext, useEffect, useMemo, useRef, useState} from 'react';
-import {useFocusableRef} from '@react-spectrum/utils';
-import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
+import React, {
+  createContext,
+  forwardRef,
+  ReactNode,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState
+} from 'react';
+import {useFocusableRef} from './useDOMRef';
+import {useGlobalListeners} from 'react-aria/private/utils/useGlobalListeners';
+import {useLocale} from 'react-aria/I18nProvider';
+import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useScale} from './utils';
+import {useSlotId} from 'react-aria/private/utils/useId';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
+import {Virtualizer} from 'react-aria-components/Virtualizer';
 
 export interface PickerStyleProps {
   /**
@@ -90,52 +110,68 @@ export interface PickerStyleProps {
    *
    * @default 'M'
    */
-  size?: 'S' | 'M' | 'L' | 'XL',
+  size?: 'S' | 'M' | 'L' | 'XL';
   /**
    * Whether the picker should be displayed with a quiet style.
    */
-  isQuiet?: boolean
+  isQuiet?: boolean;
 }
 
 type SelectionMode = 'single' | 'multiple';
-export interface PickerProps<T extends object, M extends SelectionMode = 'single'> extends
-  Omit<AriaSelectProps<T, M>, 'children' | 'style' | 'className' | 'render' | 'allowsEmptyCollection' | keyof GlobalDOMAttributes>,
-  PickerStyleProps,
-  StyleProps,
-  SpectrumLabelableProps,
-  HelpTextProps,
-  Pick<ListBoxProps<T>, 'items' | 'dependencies'>,
-  Pick<AriaPopoverProps, 'shouldFlip'>,
-  Pick<AsyncLoadable, 'onLoadMore'> {
-    /** The contents of the collection. */
-    children: ReactNode | ((item: T) => ReactNode),
-    /**
-     * Direction the menu will render relative to the Picker.
-     *
-     * @default 'bottom'
-     */
-    direction?: 'bottom' | 'top',
-    /**
-     * Alignment of the menu relative to the input target.
-     *
-     * @default 'start'
-     */
-    align?: 'start' | 'end',
-    /** Width of the menu. By default, matches width of the trigger. Note that the minimum width of the dropdown is always equal to the trigger's width. */
-    menuWidth?: number,
-    /** The current loading state of the Picker. */
-    loadingState?: LoadingState,
-    /**
-     * Custom renderer for the picker value. Allows one to provide a custom element to render selected items.
-     *
-     * @note The returned ReactNode should not have interactable elements as it will break accessibility.
-     */
-    renderValue?: (selectedItems: T[]) => ReactNode
+export interface PickerProps<T, M extends SelectionMode = 'single'>
+  extends
+    Omit<
+      AriaSelectProps<T, M>,
+      | 'children'
+      | 'style'
+      | 'className'
+      | 'render'
+      | 'allowsEmptyCollection'
+      | keyof GlobalDOMAttributes
+    >,
+    PickerStyleProps,
+    StyleProps,
+    SpectrumLabelableProps,
+    HelpTextProps,
+    Pick<ListBoxProps<T>, 'items' | 'dependencies'>,
+    Pick<AriaPopoverProps, 'shouldFlip'>,
+    Pick<AsyncLoadable, 'onLoadMore'> {
+  /** The contents of the collection. */
+  children: ReactNode | ((item: T) => ReactNode);
+  /**
+   * Direction the menu will render relative to the Picker.
+   *
+   * @default 'bottom'
+   */
+  direction?: 'bottom' | 'top';
+  /**
+   * Alignment of the menu relative to the input target.
+   *
+   * @default 'start'
+   */
+  align?: 'start' | 'end';
+  /**
+   * Width of the menu. By default, matches width of the trigger. Note that the minimum width of the
+   * dropdown is always equal to the trigger's width.
+   */
+  menuWidth?: number;
+  /** The current loading state of the Picker. */
+  loadingState?: LoadingState;
+  /**
+   * Custom renderer for the picker value. Allows one to provide a custom element to render selected
+   * items.
+   *
+   * @note The returned ReactNode should not have interactable elements as it will break accessibility.
+   */
+  renderValue?: (selectedItems: T[]) => ReactNode;
 }
 
 interface PickerButtonProps extends PickerStyleProps, ButtonRenderProps {}
 
-export const PickerContext = createContext<ContextValue<Partial<PickerProps<any>>, FocusableRefValue<HTMLButtonElement>>>(null);
+export const PickerContext =
+  createContext<ContextValue<Partial<PickerProps<any>>, FocusableRefValue<HTMLButtonElement>>>(
+    null
+  );
 
 const inputButton = style<PickerButtonProps | AriaSelectRenderProps>({
   ...focusRing(),
@@ -279,9 +315,13 @@ let InternalPickerContext = createContext<{size: 'S' | 'M' | 'L' | 'XL'}>({size:
 let InsideSelectValueContext = createContext(false);
 
 /**
- * Pickers allow users to choose a single option from a collapsible list of options when space is limited.
+ * Pickers allow users to choose a single option from a collapsible list of options when space is
+ * limited.
  */
-export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Picker<T extends object, M extends SelectionMode = 'single'>(props: PickerProps<T, M>, ref: FocusableRef<HTMLButtonElement>) {
+export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Picker<
+  T,
+  M extends SelectionMode = 'single'
+>(props: PickerProps<T, M>, ref: FocusableRef<HTMLButtonElement>) {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   [props, ref] = useSpectrumContextProps(props, ref, PickerContext);
   let domRef = useFocusableRef(ref);
@@ -363,11 +403,17 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
       aria-describedby={spinnerId}
       placeholder={placeholder}
       style={UNSAFE_style}
-      className={UNSAFE_className + style(field(), getAllowedOverrides())({
-        isInForm: !!formContext,
-        labelPosition,
-        size
-      }, props.styles)}>
+      className={
+        UNSAFE_className +
+        style(field(), getAllowedOverrides())(
+          {
+            isInForm: !!formContext,
+            labelPosition,
+            size
+          },
+          props.styles
+        )
+      }>
       {({isDisabled, isOpen, isFocusVisible, isInvalid, isRequired}) => (
         <>
           <InternalPickerContext.Provider value={{size}}>
@@ -397,8 +443,10 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
                 <PickerProgressCircle
                   id={spinnerId}
                   size={size}
-                  aria-label={stringFormatter.format('table.loading')} />
-              } />
+                  aria-label={stringFormatter.format('table.loading')}
+                />
+              }
+            />
             <HelpText
               size={size}
               isDisabled={isDisabled}
@@ -412,7 +460,8 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
                 estimatedRowHeight: 32,
                 estimatedHeadingHeight: 50,
                 padding: 8,
-                loaderHeight: LOADER_ROW_HEIGHTS[size][scale]}}>
+                loaderHeight: LOADER_ROW_HEIGHTS[size][scale]
+              }}>
               <Popover
                 hideArrow
                 padding="none"
@@ -441,16 +490,24 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
                   <Provider
                     values={[
                       [HeaderContext, {styles: listboxHeader({size})}],
-                      [HeadingContext, {
-                        // @ts-ignore
-                        role: 'presentation',
-                        styles: sectionHeading
-                      }],
-                      [TextContext, {
-                        slots: {
-                          'description': {styles: description({size, isFocused: false, isDisabled: false})}
+                      [
+                        HeadingContext,
+                        {
+                          // @ts-ignore
+                          role: 'presentation',
+                          styles: sectionHeading
                         }
-                      }]
+                      ],
+                      [
+                        TextContext,
+                        {
+                          slots: {
+                            description: {
+                              styles: description({size, isFocused: false, isDisabled: false})
+                            }
+                          }
+                        }
+                      ]
                     ]}>
                     <ListBox
                       dependencies={props.dependencies}
@@ -470,18 +527,15 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
 });
 
 function PickerProgressCircle(props) {
-  let {
-    id,
-    size,
-    'aria-label': ariaLabel
-  } = props;
+  let {id, size, 'aria-label': ariaLabel} = props;
   return (
     <ProgressCircle
       id={id}
       isIndeterminate
       size="S"
       aria-label={ariaLabel}
-      styles={progressCircleStyles({size})} />
+      styles={progressCircleStyles({size})}
+    />
   );
 }
 
@@ -494,18 +548,40 @@ const avatarSize = {
 
 // https://w3c.github.io/aria/#widget_roles
 let INTERACTIVE_ARIA_ROLES = new Set([
-  'application', 'button', 'checkbox', 'combobox', 'gridcell', 'link', 'menuitem',
-  'menuitemcheckbox', 'menuitemradio', 'option', 'radio', 'searchbox', 'separator',
-  'slider', 'spinbutton', 'switch', 'tab', 'textbox', 'treeitem'
+  'application',
+  'button',
+  'checkbox',
+  'combobox',
+  'gridcell',
+  'link',
+  'menuitem',
+  'menuitemcheckbox',
+  'menuitemradio',
+  'option',
+  'radio',
+  'searchbox',
+  'separator',
+  'slider',
+  'spinbutton',
+  'switch',
+  'tab',
+  'textbox',
+  'treeitem'
 ]);
 
-interface PickerButtonInnerProps<T extends object> extends PickerStyleProps, Omit<AriaSelectRenderProps, 'isRequired' | 'isFocused'>, Pick<PickerProps<T>, 'loadingState' | 'renderValue'> {
-  loadingCircle: ReactNode,
-  buttonRef: RefObject<HTMLButtonElement | null>
+interface PickerButtonInnerProps<T>
+  extends
+    PickerStyleProps,
+    Omit<AriaSelectRenderProps, 'isRequired' | 'isFocused'>,
+    Pick<PickerProps<T>, 'loadingState' | 'renderValue'> {
+  loadingCircle: ReactNode;
+  buttonRef: RefObject<HTMLButtonElement | null>;
 }
 
 // Needs to be hidable component or otherwise the PressResponder throws a warning when rendered in the fake DOM and tries to register
-const PickerButton = createHideableComponent(function PickerButton<T extends object>(props: PickerButtonInnerProps<T>) {
+const PickerButton = createHideableComponent(function PickerButton<T>(
+  props: PickerButtonInnerProps<T>
+) {
   let {
     isOpen,
     isQuiet,
@@ -532,21 +608,16 @@ const PickerButton = createHideableComponent(function PickerButton<T extends obj
     }
 
     let doc = getOwnerDocument(renderValueRef.current);
-    let walker = createShadowTreeWalker(
-      doc,
-      renderValueRef.current,
-      NodeFilter.SHOW_ELEMENT,
-      {
-        acceptNode(node: Element) {
-          let role = node.getAttribute('role');
-          let interactive = isFocusable(node) || (role != null && INTERACTIVE_ARIA_ROLES.has(role));
-          return interactive ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_SKIP;
-        }
+    let walker = createShadowTreeWalker(doc, renderValueRef.current, NodeFilter.SHOW_ELEMENT, {
+      acceptNode(node: Element) {
+        let role = node.getAttribute('role');
+        let interactive = isFocusable(node) || (role != null && INTERACTIVE_ARIA_ROLES.has(role));
+        return interactive ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_SKIP;
       }
-    );
+    });
     let next = walker.nextNode();
     if (next) {
-      console.warn('Picker\'s value should not have interactive children for accessibility.');
+      console.warn("Picker's value should not have interactive children for accessibility.");
     }
   }, [state.selectedItems, renderValue]);
 
@@ -560,9 +631,14 @@ const PickerButton = createHideableComponent(function PickerButton<T extends obj
       return;
     }
     setPressed(true);
-    addGlobalListener(document, 'pointerup', () => {
-      setPressed(false);
-    }, {once: true, capture: true});
+    addGlobalListener(
+      document,
+      'pointerup',
+      () => {
+        setPressed(false);
+      },
+      {once: true, capture: true}
+    );
   };
 
   return (
@@ -573,77 +649,103 @@ const PickerButton = createHideableComponent(function PickerButton<T extends obj
         // Prevent press scale from sticking while Picker is open.
         // @ts-ignore
         isPressed={false}
-        className={renderProps => inputButton({
-          ...renderProps,
-          size: size,
-          isOpen,
-          isQuiet
-        })}>
-        {(renderProps) => (
+        className={renderProps =>
+          inputButton({
+            ...renderProps,
+            size: size,
+            isOpen,
+            isQuiet
+          })
+        }>
+        {renderProps => (
           <>
             <SelectValue
               className={
                 valueStyles({isQuiet}) +
-                (renderValue ? '' : ' ' + css('&> :not([slot=icon], [slot=avatar], [slot=label], [data-slot=label]) {display: none;}'))
+                (renderValue
+                  ? ''
+                  : ' ' +
+                    css(
+                      '&> :not([slot=icon], [slot=avatar], [slot=label], [data-slot=label]) {display: none;}'
+                    ))
               }>
               {({selectedItems, defaultChildren}) => {
                 const selectedValues = selectedItems.filter((item): item is T => item != null);
-                const defaultRenderedValue = selectedItems.length <= 1
-                  ? defaultChildren
-                  : <Text slot="label">{stringFormatter.format('picker.selectedCount', {count: selectedItems.length})}</Text>;
-                const renderedValue = selectedItems.length > 0 && renderValue
-                  ? renderValue(selectedValues)
-                  : defaultRenderedValue;
+                const defaultRenderedValue =
+                  selectedItems.length <= 1 ? (
+                    defaultChildren
+                  ) : (
+                    <Text slot="label">
+                      {stringFormatter.format('picker.selectedCount', {
+                        count: selectedItems.length
+                      })}
+                    </Text>
+                  );
+                const renderedValue =
+                  selectedItems.length > 0 && renderValue
+                    ? renderValue(selectedValues)
+                    : defaultRenderedValue;
 
                 return (
                   <Provider
                     values={[
-                      [IconContext, {
-                        slots: {
-                          icon: {
-                            render: centerBaseline({slot: 'icon', styles: iconCenterWrapper}),
-                            styles: icon
+                      [
+                        IconContext,
+                        {
+                          slots: {
+                            icon: {
+                              render: centerBaseline({slot: 'icon', styles: iconCenterWrapper}),
+                              styles: icon
+                            }
                           }
                         }
-                      }],
-                      [AvatarContext, {
-                        slots: {
-                          avatar: {
-                            size: avatarSize[size ?? 'M'],
-                            styles: avatar
+                      ],
+                      [
+                        AvatarContext,
+                        {
+                          slots: {
+                            avatar: {
+                              size: avatarSize[size ?? 'M'],
+                              styles: avatar
+                            }
                           }
                         }
-                      }],
-                      [TextContext, {
-                        slots: {
-                          description: {},
-                          [DEFAULT_SLOT]: {
-                            styles: style({
-                              display: 'block',
-                              flexGrow: 1,
-                              truncate: true
-                            }),
-                            // @ts-ignore
-                            'data-slot': 'label'
-                          },
-                          label: {
-                            styles: style({
-                              display: 'block',
-                              flexGrow: 1,
-                              truncate: true
-                            }),
-                            // @ts-ignore not technically necessary, but good for consistency
-                            'data-slot': 'label'
+                      ],
+                      [
+                        TextContext,
+                        {
+                          slots: {
+                            description: {},
+                            [DEFAULT_SLOT]: {
+                              styles: style({
+                                display: 'block',
+                                flexGrow: 1,
+                                truncate: true
+                              }),
+                              // @ts-ignore
+                              'data-slot': 'label'
+                            },
+                            label: {
+                              styles: style({
+                                display: 'block',
+                                flexGrow: 1,
+                                truncate: true
+                              }),
+                              // @ts-ignore not technically necessary, but good for consistency
+                              'data-slot': 'label'
+                            }
                           }
                         }
-                      }],
+                      ],
                       [InsideSelectValueContext, true]
                     ]}>
                     {renderValue ? (
                       <div ref={renderValueRef} style={{display: 'contents'}}>
                         {renderedValue}
                       </div>
-                      ) : renderedValue}
+                    ) : (
+                      renderedValue
+                    )}
                   </Provider>
                 );
               }}
@@ -652,12 +754,13 @@ const PickerButton = createHideableComponent(function PickerButton<T extends obj
             {loadingState === 'loading' && !isOpen && loadingCircle}
             <ChevronIcon
               size={size}
-              className={iconStyles({isLoading: loadingState === 'loading'})} />
-            {isFocusVisible && isQuiet && <span className={quietFocusLine} /> }
-            {isInvalid && !isDisabled && !isQuiet &&
+              className={iconStyles({isLoading: loadingState === 'loading'})}
+            />
+            {isFocusVisible && isQuiet && <span className={quietFocusLine} />}
+            {isInvalid && !isDisabled && !isQuiet && (
               // @ts-ignore known limitation detecting functions from the theme
               <div className={invalidBorder({...renderProps, size})} />
-            }
+            )}
           </>
         )}
       </Button>
@@ -665,8 +768,14 @@ const PickerButton = createHideableComponent(function PickerButton<T extends obj
   );
 });
 
-export interface PickerItemProps extends Omit<ListBoxItemProps, 'children' | 'style' | 'className' | 'render' | 'onClick' | keyof GlobalDOMAttributes>, StyleProps {
-  children: ReactNode
+export interface PickerItemProps
+  extends
+    Omit<
+      ListBoxItemProps,
+      'children' | 'style' | 'className' | 'render' | 'onClick' | keyof GlobalDOMAttributes
+    >,
+    StyleProps {
+  children: ReactNode;
 }
 
 const checkmarkIconSize = {
@@ -680,27 +789,49 @@ export function PickerItem(props: PickerItemProps): ReactNode {
   let ref = useRef(null);
   let isLink = props.href != null;
   let {size} = useContext(InternalPickerContext);
+  // oxlint-disable react/react-compiler
   return (
     <ListBoxItem
       {...props}
       ref={ref}
-      textValue={props.textValue || (typeof props.children === 'string' ? props.children as string : undefined)}
+      textValue={
+        props.textValue ||
+        (typeof props.children === 'string' ? (props.children as string) : undefined)
+      }
       style={pressScale(ref, props.UNSAFE_style)}
-      className={renderProps => (props.UNSAFE_className || '') + listboxItem({...renderProps, size, isLink}, props.styles)}>
-      {(renderProps) => {
+      className={renderProps =>
+        (props.UNSAFE_className || '') + listboxItem({...renderProps, size, isLink}, props.styles)
+      }>
+      {renderProps => {
         let {children} = props;
-        let checkboxRenderProps = {...renderProps, size, isFocused: false, isFocusVisible: false, isIndeterminate: false, isReadOnly: false, isInvalid: false, isRequired: false};
+        let checkboxRenderProps = {
+          ...renderProps,
+          size,
+          isFocused: false,
+          isFocusVisible: false,
+          isIndeterminate: false,
+          isReadOnly: false,
+          isInvalid: false,
+          isRequired: false
+        };
         return (
           <DefaultProvider
             context={IconContext}
-            value={{slots: {
-              icon: {render: centerBaseline({slot: 'icon', styles: iconCenterWrapper}), styles: icon}
-            }}}>
+            value={{
+              slots: {
+                icon: {
+                  render: centerBaseline({slot: 'icon', styles: iconCenterWrapper}),
+                  styles: icon
+                }
+              }
+            }}>
             <DefaultProvider
               context={AvatarContext}
-              value={{slots: {
-                avatar: {size: avatarSize[size], styles: avatar}
-              }}}>
+              value={{
+                slots: {
+                  avatar: {size: avatarSize[size], styles: avatar}
+                }
+              }}>
               <DefaultProvider
                 context={TextContext}
                 value={{
@@ -710,12 +841,17 @@ export function PickerItem(props: PickerItemProps): ReactNode {
                     description: {styles: description({...renderProps, size})}
                   }
                 }}>
-                {renderProps.selectionMode === 'single' && !isLink && <CheckmarkIcon size={checkmarkIconSize[size]} className={checkmark({...renderProps, size})} />}
+                {renderProps.selectionMode === 'single' && !isLink && (
+                  <CheckmarkIcon
+                    size={checkmarkIconSize[size]}
+                    className={checkmark({...renderProps, size})}
+                  />
+                )}
                 {renderProps.selectionMode === 'multiple' && !isLink && (
                   <div className={mergeStyles(checkbox, box(checkboxRenderProps))}>
                     <CheckmarkIcon size={size} className={checkboxIconStyles} />
                   </div>
-              )}
+                )}
                 {typeof children === 'string' ? <Text slot="label">{children}</Text> : children}
               </DefaultProvider>
             </DefaultProvider>
@@ -724,10 +860,19 @@ export function PickerItem(props: PickerItemProps): ReactNode {
       }}
     </ListBoxItem>
   );
+  // oxlint-enable react/react-compiler
 }
 
 // A Context.Provider that only sets a value if not inside SelectValue.
-function DefaultProvider({context, value, children}: {context: React.Context<any>, value: any, children: any}) {
+function DefaultProvider({
+  context,
+  value,
+  children
+}: {
+  context: React.Context<any>;
+  value: any;
+  children: any;
+}) {
   let inSelectValue = useContext(InsideSelectValueContext);
   if (inSelectValue) {
     return children;
@@ -736,15 +881,15 @@ function DefaultProvider({context, value, children}: {context: React.Context<any
   return <context.Provider value={value}>{children}</context.Provider>;
 }
 
-export interface PickerSectionProps<T extends object> extends Omit<SectionProps<T>, 'style' | 'className' | 'render' | keyof GlobalDOMAttributes>, StyleProps {}
-export function PickerSection<T extends object>(props: PickerSectionProps<T>): ReactNode {
+export interface PickerSectionProps<T> extends Omit<
+  ListBoxSectionProps<T>,
+  'style' | 'className' | 'render' | keyof GlobalDOMAttributes
+> {}
+export function PickerSection<T>(props: PickerSectionProps<T>): ReactNode {
   let {size} = useContext(InternalPickerContext);
   return (
     <>
-      <AriaListBoxSection
-        {...props}>
-        {props.children}
-      </AriaListBoxSection>
+      <AriaListBoxSection {...props}>{props.children}</AriaListBoxSection>
       <Divider size={size} />
     </>
   );

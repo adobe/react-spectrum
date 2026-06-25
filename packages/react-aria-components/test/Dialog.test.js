@@ -11,26 +11,20 @@
  */
 
 import {act, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
-import {
-  Button,
-  Dialog,
-  DialogTrigger,
-  Heading,
-  Input,
-  Label,
-  Menu,
-  MenuItem,
-  MenuTrigger,
-  Modal,
-  ModalOverlay,
-  OverlayArrow,
-  Popover,
-  TextField
-} from '../';
+import {Button} from '../src/Button';
 import {composeStories} from '@storybook/react';
+import {Dialog, DialogTrigger} from '../src/Dialog';
+import {Heading} from '../src/Heading';
+import {Input} from '../src/Input';
+import {Label} from '../src/Label';
+import {Menu, MenuItem, MenuTrigger} from '../src/Menu';
+import {Modal, ModalOverlay} from '../src/Modal';
+import {OverlayArrow} from '../src/OverlayArrow';
+import {Popover} from '../src/Popover';
 import React, {useRef} from 'react';
 import * as stories from '../stories/Modal.stories';
-import {UNSAFE_PortalProvider} from '@react-aria/overlays';
+import {TextField} from '../src/TextField';
+import {UNSAFE_PortalProvider} from 'react-aria/PortalProvider';
 import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
 
@@ -76,7 +70,7 @@ describe('Dialog', () => {
     let button = getByRole('button');
     let dialogTester = testUtilUser.createTester('Dialog', {root: button, overlayType: 'modal'});
     await dialogTester.open();
-    let dialog = dialogTester.dialog;
+    let dialog = dialogTester.getDialog();
     expect(dialog).toHaveAttribute('role', 'alertdialog');
     let heading = getByRole('heading');
     expect(dialog).toHaveAttribute('aria-labelledby', heading.id);
@@ -161,7 +155,9 @@ describe('Dialog', () => {
         <Button aria-label="Help">?⃝</Button>
         <Popover data-test="popover">
           <OverlayArrow data-test="arrow">
-            <svg width={12} height={12}><path d="M0 0,L6 6,L12 0" /></svg>
+            <svg width={12} height={12}>
+              <path d="M0 0,L6 6,L12 0" />
+            </svg>
           </OverlayArrow>
           <Dialog data-test="dialog">
             <Heading slot="title">Help</Heading>
@@ -178,7 +174,7 @@ describe('Dialog', () => {
     await dialogTester.open();
     expect(button).toHaveAttribute('data-pressed');
 
-    let dialog = dialogTester.dialog;
+    let dialog = dialogTester.getDialog();
     let heading = getByRole('heading');
     expect(dialog).toHaveAttribute('aria-labelledby', heading.id);
     expect(dialog).toHaveAttribute('data-test', 'dialog');
@@ -267,14 +263,16 @@ describe('Dialog', () => {
 
   it('isOpen and defaultOpen should override state from context', async () => {
     let onOpenChange = jest.fn();
-    let {getByRole} = render(<>
-      <DialogTrigger>
-        <Button />
-        <Modal isDismissable isOpen onOpenChange={onOpenChange}>
-          <Dialog aria-label="Modal">A modal</Dialog>
-        </Modal>
-      </DialogTrigger>
-    </>);
+    let {getByRole} = render(
+      <>
+        <DialogTrigger>
+          <Button />
+          <Modal isDismissable isOpen onOpenChange={onOpenChange}>
+            <Dialog aria-label="Modal">A modal</Dialog>
+          </Modal>
+        </DialogTrigger>
+      </>
+    );
 
     let dialog = getByRole('dialog');
     expect(dialog).toHaveTextContent('A modal');
@@ -351,7 +349,9 @@ describe('Dialog', () => {
       let button = getByRole('button');
       await user.click(button);
 
-      expect(getByRole('alertdialog').closest('[data-testid="custom-container"]')).toBe(getByTestId('custom-container'));
+      expect(getByRole('alertdialog').closest('[data-testid="custom-container"]')).toBe(
+        getByTestId('custom-container')
+      );
       await user.click(document.body);
     });
   });
@@ -389,7 +389,9 @@ describe('Dialog', () => {
       let button = getByRole('button');
       await user.click(button);
 
-      expect(getByRole('alertdialog').closest('[data-testid="custom-container"]')).toBe(getByTestId('custom-container'));
+      expect(getByRole('alertdialog').closest('[data-testid="custom-container"]')).toBe(
+        getByTestId('custom-container')
+      );
       await user.click(document.body);
     });
   });

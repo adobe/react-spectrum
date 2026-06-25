@@ -10,10 +10,25 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, installPointerEvent, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
-import {Button, Text, UNSTABLE_Toast as Toast, UNSTABLE_ToastContent as ToastContent, UNSTABLE_ToastQueue as ToastQueue, UNSTABLE_ToastRegion as ToastRegion} from 'react-aria-components';
+import {
+  act,
+  installPointerEvent,
+  pointerMap,
+  render,
+  within
+} from '@react-spectrum/test-utils-internal';
+import {Button} from '../src/Button';
 import React, {useRef} from 'react';
-import {UNSAFE_PortalProvider} from '@react-aria/overlays';
+
+import {Text} from '../src/Text';
+
+import {
+  UNSTABLE_Toast as Toast,
+  UNSTABLE_ToastContent as ToastContent,
+  UNSTABLE_ToastRegion as ToastRegion
+} from '../src/Toast';
+import {ToastQueue} from 'react-stately/useToastState';
+import {UNSAFE_PortalProvider} from 'react-aria/PortalProvider';
 import userEvent from '@testing-library/user-event';
 
 function Example(options) {
@@ -31,7 +46,9 @@ function Example(options) {
           </Toast>
         )}
       </ToastRegion>
-      <Button onPress={() => queue.add({title: 'Toast', description: 'Description'}, options)}>Toast</Button>
+      <Button onPress={() => queue.add({title: 'Toast', description: 'Description'}, options)}>
+        Toast
+      </Button>
     </>
   );
 }
@@ -71,9 +88,13 @@ describe('Toast', () => {
     expect(toast).toBeVisible();
     expect(toast).toHaveAttribute('class', 'react-aria-Toast');
     expect(toast).toHaveAttribute('aria-labelledby');
-    expect(document.getElementById(toast.getAttribute('aria-labelledby'))).toHaveTextContent('Toast');
+    expect(document.getElementById(toast.getAttribute('aria-labelledby'))).toHaveTextContent(
+      'Toast'
+    );
     expect(toast).toHaveAttribute('aria-describedby');
-    expect(document.getElementById(toast.getAttribute('aria-describedby'))).toHaveTextContent('Description');
+    expect(document.getElementById(toast.getAttribute('aria-describedby'))).toHaveTextContent(
+      'Description'
+    );
     expect(toast).toHaveAttribute('aria-modal', 'false');
 
     let alert = within(toast).getByRole('alert');

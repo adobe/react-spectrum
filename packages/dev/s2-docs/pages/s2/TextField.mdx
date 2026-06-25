@@ -20,7 +20,7 @@ export const description = 'Allows a user to enter a plain text value with a key
     label: 'Name',
     placeholder: 'Enter your full name'
   }}
-  importSource="@react-spectrum/s2"
+  importSource="@react-spectrum/s2/TextField"
   type="s2" />
 
 ## Value
@@ -29,7 +29,7 @@ Use the `value` or `defaultValue` prop to set the text value, and `onChange` to 
 
 ```tsx render
 "use client";
-import {TextField} from '@react-spectrum/s2';
+import {TextField} from '@react-spectrum/s2/TextField';
 import {useState} from 'react';
 
 function Example() {
@@ -50,13 +50,37 @@ function Example() {
 }
 ```
 
+## Prefix
+
+Use the `prefix` prop to display an additional element before the input in the text field.
+
+```tsx render
+"use client";
+import {TextField} from '@react-spectrum/s2/TextField';
+import MentionIcon from '@react-spectrum/s2/icons/Mention';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {Avatar} from '@react-spectrum/s2/Avatar';
+
+function Example() {
+  return (
+    <div className={style({display: 'flex', flexDirection: 'column', gap: 8})}>
+      <TextField label="URL" prefix="https://" placeholder="example.com" />
+      <TextField label="Mention" prefix={<MentionIcon />} placeholder="username" />
+      <TextField label="User Email" prefix={<Avatar size={20} src="https://i.imgur.com/xIe7Wlb.png" />} placeholder="contact@example.com" />
+    </div>
+  );
+}
+```
+
 ## Forms
 
 Use the `name` prop to submit the text value to the server. Set the `isRequired`, `minLength`, `maxLength`, `pattern`, or `type` props to validate the value, or implement custom client or server-side validation. See the [Forms](forms) guide to learn more.
 
 ```tsx render docs={docs.exports.TextField} links={docs.links} props={['isRequired', 'necessityIndicator', 'type', 'pattern', 'minLength', 'maxLength']} initialProps={{isRequired: true, type: 'email'}}
 "use client";
-import {TextField, Button, Form} from '@react-spectrum/s2';
+import {TextField} from '@react-spectrum/s2/TextField';
+import {Button} from '@react-spectrum/s2/Button';
+import {Form} from '@react-spectrum/s2/Form';
 
 function Example(props) {
   return (

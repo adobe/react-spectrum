@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {Avatar} from '../src';
+import {Avatar} from '../src/Avatar';
 import type {Meta, StoryObj} from '@storybook/react';
-import {style} from '../style' with { type: 'macro' };
+import {style} from '../style' with {type: 'macro'};
 
 const meta: Meta<typeof Avatar> = {
   component: Avatar,

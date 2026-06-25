@@ -9,6 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-export type {TreeProps, TreeState} from './useTreeState';
-export {useTreeState} from './useTreeState';
-export {TreeCollection} from './TreeCollection';
+export {useTreeState} from 'react-stately/useTreeState';
+
+export {TreeCollection} from 'react-stately/private/tree/TreeCollection';
+export type {TreeProps, TreeState} from 'react-stately/useTreeState';

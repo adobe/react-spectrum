@@ -12,30 +12,39 @@
 
 import {ButtonGroupContext} from './ButtonGroup';
 import {CloseButton} from './CloseButton';
-import {composeRenderProps, OverlayTriggerStateContext, Provider, Dialog as RACDialog, DialogProps as RACDialogProps} from 'react-aria-components';
+import {composeRenderProps} from 'react-aria-components/composeRenderProps';
 import {ContentContext, FooterContext, HeaderContext, HeadingContext} from './Content';
 import {DOMRef, GlobalDOMAttributes} from '@react-types/shared';
 import {forwardRef} from 'react';
 import {ImageContext} from './Image';
 import {Modal} from './Modal';
+import {
+  OverlayTriggerStateContext,
+  Dialog as RACDialog,
+  DialogProps as RACDialogProps
+} from 'react-aria-components/Dialog';
+import {Provider} from 'react-aria-components/slots';
 import {style} from '../style' with {type: 'macro'};
 import {StyleProps} from './style-utils';
-import {useDOMRef} from '@react-spectrum/utils';
+import {useDOMRef} from './useDOMRef';
 
 // TODO: what style overrides should be allowed?
-export interface DialogProps extends Omit<RACDialogProps, 'className' | 'style' | 'render' | keyof GlobalDOMAttributes>, StyleProps {
+export interface DialogProps
+  extends
+    Omit<RACDialogProps, 'className' | 'style' | 'render' | keyof GlobalDOMAttributes>,
+    StyleProps {
   /**
    * Whether the Dialog is dismissible.
    */
-  isDismissible?: boolean,
+  isDismissible?: boolean;
   /**
    * The size of the Dialog.
    *
    * @default 'M'
    */
-  size?: 'S' | 'M' | 'L' | 'XL',
+  size?: 'S' | 'M' | 'L' | 'XL';
   /** Whether pressing the escape key to close the dialog should be disabled. */
-  isKeyboardDismissDisabled?: boolean
+  isKeyboardDismissDisabled?: boolean;
 }
 
 const image = style({
@@ -55,7 +64,7 @@ const header = style({
   font: 'body'
 });
 
-const content =  style({
+const content = style({
   flexGrow: 1,
   flexShrink: {
     [`@container (height < ${500 / 16}rem)`]: 0
@@ -95,21 +104,25 @@ export const dialogInner = style({
 });
 
 /**
- * Dialogs are windows containing contextual information, tasks, or workflows that appear over the user interface.
- * Depending on the kind of Dialog, further interactions may be blocked until the Dialog is acknowledged.
+ * Dialogs are windows containing contextual information, tasks, or workflows that appear over the
+ * user interface. Depending on the kind of Dialog, further interactions may be blocked until the
+ * Dialog is acknowledged.
  */
 export const Dialog = forwardRef(function Dialog(props: DialogProps, ref: DOMRef) {
   let {size = 'M', isDismissible, isKeyboardDismissDisabled} = props;
   let domRef = useDOMRef(ref);
 
   return (
-    <Modal size={size} isDismissable={isDismissible} isKeyboardDismissDisabled={isKeyboardDismissDisabled}>
+    <Modal
+      size={size}
+      isDismissable={isDismissible}
+      isKeyboardDismissDisabled={isKeyboardDismissDisabled}>
       <RACDialog
         {...props}
         ref={domRef}
         style={props.UNSAFE_style}
         className={(props.UNSAFE_className || '') + dialogInner}>
-        {composeRenderProps(props.children, (children) => (
+        {composeRenderProps(props.children, children => (
           // Render the children multiple times inside the wrappers we need to implement the layout.
           // Each instance hides certain children so that they are all rendered in the correct locations.
           // Reset OverlayTriggerStateContext so the buttons inside the dialog don't retain their hover state.
@@ -181,9 +194,7 @@ export const Dialog = forwardRef(function Dialog(props: DialogProps, ref: DOMRef
                   {children}
                 </Provider>
               </div>
-              {props.isDismissible &&
-                <CloseButton styles={style({marginBottom: 12})} />
-              }
+              {props.isDismissible && <CloseButton styles={style({marginBottom: 12})} />}
             </div>
             {/* Main content */}
             <Provider
@@ -222,7 +233,10 @@ export const Dialog = forwardRef(function Dialog(props: DialogProps, ref: DOMRef
                   [HeaderContext, {isHidden: true}],
                   [ContentContext, {isHidden: true}],
                   [FooterContext, {styles: footer}],
-                  [ButtonGroupContext, {isHidden: props.isDismissible, styles: buttonGroup, align: 'end'}]
+                  [
+                    ButtonGroupContext,
+                    {isHidden: props.isDismissible, styles: buttonGroup, align: 'end'}
+                  ]
                 ]}>
                 {children}
               </Provider>

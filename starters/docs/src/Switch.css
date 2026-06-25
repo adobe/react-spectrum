@@ -1,7 +1,17 @@
-@import "./theme.css";
-@import "./utilities.css";
+@import './theme.css';
+@import './utilities.css';
 
-.react-aria-Switch {
+.react-aria-SwitchField {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+
+  &[data-disabled] [slot='description'] {
+    color: var(--text-color-disabled);
+  }
+}
+
+.react-aria-SwitchButton {
   display: flex;
   /* This is needed so the HiddenInput is positioned correctly */
   position: relative;
@@ -38,13 +48,25 @@
     background: var(--button-background-pressed);
   }
 
+  &[data-invalid] {
+    .handle {
+      --indicator-color: var(--invalid-color);
+    }
+
+    &[data-pressed] .handle {
+      background: transparent;
+    }
+  }
+
   &[data-selected] {
     --border-color: var(--highlight-background-pressed);
     .handle {
       transform: translateX(var(--spacing-4));
       transform-origin: var(--spacing-9) 50%;
       background: white;
-      box-shadow: inset 0 0 0 1px var(--border-color), inset 0 -4px 4px oklch(from var(--tint) 85% c h / 0.3);
+      box-shadow:
+        inset 0 0 0 1px var(--border-color),
+        inset 0 -4px 4px oklch(from var(--tint) 85% c h / 0.3);
 
       @media (forced-colors: active) {
         background: HighlightText;

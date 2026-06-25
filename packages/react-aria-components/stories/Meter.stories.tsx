@@ -10,8 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {Label, Meter} from 'react-aria-components';
+import {Label} from '../src/Label';
+
 import {Meta, StoryFn} from '@storybook/react';
+import {Meter} from '../src/Meter';
 import React from 'react';
 import './styles.css';
 
@@ -30,7 +32,7 @@ export default {
 
 export type MeterStory = StoryFn<typeof Meter>;
 
-export const MeterExample: MeterStory = (args) => {
+export const MeterExample: MeterStory = args => {
   return (
     <Meter {...args}>
       {({percentage, valueText}) => (

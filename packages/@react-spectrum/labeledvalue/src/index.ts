@@ -12,5 +12,6 @@
 
 /// <reference types="css-module-types" />
 
-export type {SpectrumLabeledValueProps} from './LabeledValue';
-export {LabeledValue} from './LabeledValue';
+export {LabeledValue} from '@adobe/react-spectrum/LabeledValue';
+
+export type {SpectrumLabeledValueProps} from '@adobe/react-spectrum/LabeledValue';

@@ -12,7 +12,9 @@ export const description = 'Summarizes an object that a user can select or navig
 
 ```tsx render docs={docs.exports.Card} links={docs.links} props={['variant', 'size', 'density']} type="s2" wide
 "use client";
-import {Card, CardPreview, Image, Content, Text, ActionMenu, MenuItem, Footer, StatusLight} from '@react-spectrum/s2';
+import {Card, CardPreview, Image, Content, Text, Footer} from '@react-spectrum/s2/Card';
+import {ActionMenu, MenuItem} from '@react-spectrum/s2/ActionMenu';
+import {StatusLight} from '@react-spectrum/s2/StatusLight';
 import preview from 'url:./assets/preview.png';
 
 <Card/* PROPS */>
@@ -46,7 +48,8 @@ A `AssetCard` represents an asset such as an image, video, document, or folder. 
 
 ```tsx render docs={docs.exports.AssetCard} links={docs.links} props={['variant', 'size']} type="s2" wide
 "use client";
-import {AssetCard, CardPreview, Image, Content, Text, ActionMenu, MenuItem} from '@react-spectrum/s2';
+import {AssetCard, CardPreview, Image, Content, Text} from '@react-spectrum/s2/Card';
+import {ActionMenu, MenuItem} from '@react-spectrum/s2/ActionMenu';
 
 <AssetCard/* PROPS */>
   <CardPreview>
@@ -66,7 +69,8 @@ import {AssetCard, CardPreview, Image, Content, Text, ActionMenu, MenuItem} from
 
 ```tsx render docs={docs.exports.AssetCard} links={docs.links} props={['variant', 'size']} type="s2" wide
 "use client";
-import {AssetCard, CardPreview, Content, Text, ActionMenu, MenuItem} from '@react-spectrum/s2';
+import {AssetCard, CardPreview, Content, Text} from '@react-spectrum/s2/Card';
+import {ActionMenu, MenuItem} from '@react-spectrum/s2/ActionMenu';
 import FolderGradient from '@react-spectrum/s2/illustrations/gradient/generic2/FolderClose';
 
 <AssetCard/* PROPS */>
@@ -93,7 +97,9 @@ A `UserCard` represents a user profile. It includes an [Avatar](Avatar) and a `C
 
 ```tsx render docs={docs.exports.UserCard} links={docs.links} props={['variant', 'size']} type="s2" wide
 "use client";
-import {UserCard, CardPreview, Image, Avatar, Content, Text, Footer, StatusLight} from '@react-spectrum/s2';
+import {UserCard, CardPreview, Image, Content, Text, Footer} from '@react-spectrum/s2/Card';
+import {Avatar} from '@react-spectrum/s2/Avatar';
+import {StatusLight} from '@react-spectrum/s2/StatusLight';
 import preview from 'url:./assets/preview.png';
 
 <UserCard/* PROPS */>
@@ -117,7 +123,8 @@ A `ProductCard` represents a product a user can take action on. It has a a thumb
 
 ```tsx render docs={docs.exports.ProductCard} links={docs.links} props={['variant', 'size']} type="s2" wide
 "use client";
-import {ProductCard, CardPreview, Image, Content, Text, Footer, Button} from '@react-spectrum/s2';
+import {ProductCard, CardPreview, Image, Content, Text, Footer} from '@react-spectrum/s2/Card';
+import {Button} from '@react-spectrum/s2/Button';
 import preview from 'url:./assets/preview.png';
 import logo from 'url:./assets/logo.svg';
 
@@ -142,7 +149,7 @@ A `CollectionCardPreview` displays up to 4 images in a collection of assets. Whe
 
 ```tsx render docs={docs.exports.Card} links={docs.links} props={['variant', 'size']} type="s2" wide
 "use client";
-import {Card, CollectionCardPreview, Image, Content, Text} from '@react-spectrum/s2';
+import {Card, CollectionCardPreview, Image, Content, Text} from '@react-spectrum/s2/Card';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import Folder from '@react-spectrum/s2/icons/Folder';
 
@@ -169,7 +176,9 @@ A card can omit its `Content` section and display only a preview to create a gal
 
 ```tsx render docs={docs.exports.Card} links={docs.links} props={['size']} type="s2" wide
 "use client";
-import {Card, CardPreview, Image, Badge, Avatar} from '@react-spectrum/s2';
+import {Card, CardPreview, Image} from '@react-spectrum/s2/Card';
+import {Badge} from '@react-spectrum/s2/Badge';
+import {Avatar} from '@react-spectrum/s2/Avatar';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 <Card/* PROPS */>
@@ -206,7 +215,7 @@ Combine the `CardPreview`, `Content`, and `Footer` components to create custom c
 
 ```tsx render docs={docs.exports.Card} links={docs.links} props={['variant', 'density']} type="s2" wide
 "use client";
-import {Card, CardPreview, Image, Content, Text} from '@react-spectrum/s2';
+import {Card, CardPreview, Image, Content, Text} from '@react-spectrum/s2/Card';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import Select from '@react-spectrum/s2/icons/Select';
 
@@ -237,7 +246,8 @@ Wrap a card in a [Skeleton](Skeleton) to display a loading state. Placeholder te
 
 ```tsx render docs={docs.exports.Skeleton} links={docs.links} props={['isLoading']} initialProps={{isLoading: true}} type="s2" wide
 "use client";
-import {Skeleton, Card, CardPreview, Image, Content, Text} from '@react-spectrum/s2';
+import {Skeleton} from '@react-spectrum/s2/Skeleton';
+import {Card, CardPreview, Image, Content, Text} from '@react-spectrum/s2/Card';
 
 <Skeleton isLoading>
   <Card>

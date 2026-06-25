@@ -1,5 +1,4 @@
 import {SearchField} from '../src/SearchField';
-
 import type {Meta, StoryFn} from '@storybook/react';
 
 const meta: Meta<typeof SearchField> = {
@@ -14,7 +13,7 @@ export default meta;
 
 type Story = StoryFn<typeof SearchField>;
 
-export const Example: Story = (args) => <SearchField {...args} />;
+export const Example: Story = args => <SearchField {...args} />;
 
 Example.args = {
   label: 'Search',

@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Adobe. All rights reserved.
+ * Copyright 2026 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -20,4 +20,16 @@ if (typeof React.act === 'function') {
   actImpl = ReactDOMTestUtils.act;
 }
 
-export const act = actImpl;
+export const act: typeof actImpl = fn => {
+  // only wrap in act if in test environment, breaks vite browser test if test utils are used otherwise
+  if (
+    // @ts-ignore
+    typeof IS_REACT_ACT_ENVIRONMENT === 'boolean'
+      ? // @ts-ignore
+        IS_REACT_ACT_ENVIRONMENT
+      : typeof jest !== 'undefined'
+  ) {
+    return actImpl(fn);
+  }
+  return fn();
+};

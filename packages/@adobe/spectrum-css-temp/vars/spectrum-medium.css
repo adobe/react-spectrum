@@ -82,20 +82,34 @@
   --spectrum-actionbutton-emphasized-touch-hit-y: var(--spectrum-global-dimension-static-size-100);
   --spectrum-actionbutton-quiet-touch-hit-x: var(--spectrum-global-dimension-static-size-100);
   --spectrum-actionbutton-quiet-touch-hit-y: var(--spectrum-global-dimension-static-size-100);
-  --spectrum-actionbutton-quiet-emphasized-touch-hit-x: var(--spectrum-global-dimension-static-size-100);
-  --spectrum-actionbutton-quiet-emphasized-touch-hit-y: var(--spectrum-global-dimension-static-size-100);
+  --spectrum-actionbutton-quiet-emphasized-touch-hit-x: var(
+    --spectrum-global-dimension-static-size-100
+  );
+  --spectrum-actionbutton-quiet-emphasized-touch-hit-y: var(
+    --spectrum-global-dimension-static-size-100
+  );
   --spectrum-barloader-large-border-radius: 3px;
   --spectrum-barloader-large-indeterminate-border-radius: 3px;
   --spectrum-barloader-large-over-background-border-radius: 3px;
   --spectrum-barloader-small-border-radius: var(--spectrum-global-dimension-static-size-25);
-  --spectrum-barloader-small-indeterminate-border-radius: var(--spectrum-global-dimension-static-size-25);
-  --spectrum-barloader-small-over-background-border-radius: var(--spectrum-global-dimension-static-size-25);
+  --spectrum-barloader-small-indeterminate-border-radius: var(
+    --spectrum-global-dimension-static-size-25
+  );
+  --spectrum-barloader-small-over-background-border-radius: var(
+    --spectrum-global-dimension-static-size-25
+  );
   --spectrum-breadcrumb-compact-item-touch-hit-y: var(--spectrum-global-dimension-static-size-100);
-  --spectrum-breadcrumb-compact-button-touch-hit-y: var(--spectrum-global-dimension-static-size-100);
+  --spectrum-breadcrumb-compact-button-touch-hit-y: var(
+    --spectrum-global-dimension-static-size-100
+  );
   --spectrum-breadcrumb-item-touch-hit-y: var(--spectrum-global-dimension-static-size-100);
   --spectrum-breadcrumb-button-touch-hit-y: var(--spectrum-global-dimension-static-size-100);
-  --spectrum-breadcrumb-multiline-item-touch-hit-y: var(--spectrum-global-dimension-static-size-100);
-  --spectrum-breadcrumb-multiline-button-touch-hit-y: var(--spectrum-global-dimension-static-size-100);
+  --spectrum-breadcrumb-multiline-item-touch-hit-y: var(
+    --spectrum-global-dimension-static-size-100
+  );
+  --spectrum-breadcrumb-multiline-button-touch-hit-y: var(
+    --spectrum-global-dimension-static-size-100
+  );
   --spectrum-button-cta-text-padding-bottom: var(--spectrum-global-dimension-size-85);
   --spectrum-button-cta-min-width: var(--spectrum-global-dimension-size-900);
   --spectrum-button-cta-touch-hit-x: var(--spectrum-global-dimension-static-size-100);
@@ -108,11 +122,19 @@
   --spectrum-button-primary-min-width: var(--spectrum-global-dimension-size-900);
   --spectrum-button-primary-touch-hit-x: var(--spectrum-global-dimension-static-size-100);
   --spectrum-button-primary-touch-hit-y: var(--spectrum-global-dimension-static-size-100);
-  --spectrum-button-quiet-over-background-text-padding-bottom: var(--spectrum-global-dimension-size-85);
+  --spectrum-button-quiet-over-background-text-padding-bottom: var(
+    --spectrum-global-dimension-size-85
+  );
   --spectrum-button-quiet-over-background-min-width: var(--spectrum-global-dimension-size-900);
-  --spectrum-button-quiet-over-background-touch-hit-x: var(--spectrum-global-dimension-static-size-200);
-  --spectrum-button-quiet-over-background-touch-hit-y: var(--spectrum-global-dimension-static-size-100);
-  --spectrum-button-quiet-over-background-cursor-hit-x: var(--spectrum-global-dimension-static-size-200);
+  --spectrum-button-quiet-over-background-touch-hit-x: var(
+    --spectrum-global-dimension-static-size-200
+  );
+  --spectrum-button-quiet-over-background-touch-hit-y: var(
+    --spectrum-global-dimension-static-size-100
+  );
+  --spectrum-button-quiet-over-background-cursor-hit-x: var(
+    --spectrum-global-dimension-static-size-200
+  );
   --spectrum-button-quiet-primary-text-padding-bottom: var(--spectrum-global-dimension-size-85);
   --spectrum-button-quiet-primary-min-width: var(--spectrum-global-dimension-size-900);
   --spectrum-button-quiet-primary-touch-hit-x: var(--spectrum-global-dimension-static-size-200);
@@ -138,29 +160,59 @@
   --spectrum-button-warning-touch-hit-y: var(--spectrum-global-dimension-static-size-100);
   --spectrum-checkbox-text-gap-key-focus: var(--spectrum-global-dimension-static-size-115);
   --spectrum-checkbox-text-gap-selected-key-focus: var(--spectrum-global-dimension-static-size-115);
-  --spectrum-checkbox-text-gap-indeterminate-key-focus: var(--spectrum-global-dimension-static-size-115);
+  --spectrum-checkbox-text-gap-indeterminate-key-focus: var(
+    --spectrum-global-dimension-static-size-115
+  );
   --spectrum-checkbox-text-gap-error-key-focus: var(--spectrum-global-dimension-static-size-115);
-  --spectrum-checkbox-text-gap-error-selected-key-focus: var(--spectrum-global-dimension-static-size-115);
-  --spectrum-checkbox-text-gap-error-indeterminate-key-focus: var(--spectrum-global-dimension-static-size-115);
+  --spectrum-checkbox-text-gap-error-selected-key-focus: var(
+    --spectrum-global-dimension-static-size-115
+  );
+  --spectrum-checkbox-text-gap-error-indeterminate-key-focus: var(
+    --spectrum-global-dimension-static-size-115
+  );
   --spectrum-checkbox-touch-hit-y: var(--spectrum-global-dimension-static-size-100);
-  --spectrum-checkbox-emphasized-text-gap-key-focus: var(--spectrum-global-dimension-static-size-115);
-  --spectrum-checkbox-emphasized-text-gap-selected-key-focus: var(--spectrum-global-dimension-static-size-115);
-  --spectrum-checkbox-emphasized-text-gap-indeterminate-key-focus: var(--spectrum-global-dimension-static-size-115);
-  --spectrum-checkbox-emphasized-text-gap-error-key-focus: var(--spectrum-global-dimension-static-size-115);
-  --spectrum-checkbox-emphasized-text-gap-error-selected-key-focus: var(--spectrum-global-dimension-static-size-115);
-  --spectrum-checkbox-emphasized-text-gap-error-indeterminate-key-focus: var(--spectrum-global-dimension-static-size-115);
+  --spectrum-checkbox-emphasized-text-gap-key-focus: var(
+    --spectrum-global-dimension-static-size-115
+  );
+  --spectrum-checkbox-emphasized-text-gap-selected-key-focus: var(
+    --spectrum-global-dimension-static-size-115
+  );
+  --spectrum-checkbox-emphasized-text-gap-indeterminate-key-focus: var(
+    --spectrum-global-dimension-static-size-115
+  );
+  --spectrum-checkbox-emphasized-text-gap-error-key-focus: var(
+    --spectrum-global-dimension-static-size-115
+  );
+  --spectrum-checkbox-emphasized-text-gap-error-selected-key-focus: var(
+    --spectrum-global-dimension-static-size-115
+  );
+  --spectrum-checkbox-emphasized-text-gap-error-indeterminate-key-focus: var(
+    --spectrum-global-dimension-static-size-115
+  );
   --spectrum-checkbox-emphasized-touch-hit-y: var(--spectrum-global-dimension-static-size-100);
   --spectrum-checkbox-quiet-text-gap-key-focus: var(--spectrum-global-dimension-static-size-115);
-  --spectrum-checkbox-quiet-text-gap-selected-key-focus: var(--spectrum-global-dimension-static-size-115);
-  --spectrum-checkbox-quiet-text-gap-indeterminate-key-focus: var(--spectrum-global-dimension-static-size-115);
-  --spectrum-checkbox-quiet-text-gap-error-key-focus: var(--spectrum-global-dimension-static-size-115);
-  --spectrum-checkbox-quiet-text-gap-error-selected-key-focus: var(--spectrum-global-dimension-static-size-115);
-  --spectrum-checkbox-quiet-text-gap-error-indeterminate-key-focus: var(--spectrum-global-dimension-static-size-115);
+  --spectrum-checkbox-quiet-text-gap-selected-key-focus: var(
+    --spectrum-global-dimension-static-size-115
+  );
+  --spectrum-checkbox-quiet-text-gap-indeterminate-key-focus: var(
+    --spectrum-global-dimension-static-size-115
+  );
+  --spectrum-checkbox-quiet-text-gap-error-key-focus: var(
+    --spectrum-global-dimension-static-size-115
+  );
+  --spectrum-checkbox-quiet-text-gap-error-selected-key-focus: var(
+    --spectrum-global-dimension-static-size-115
+  );
+  --spectrum-checkbox-quiet-text-gap-error-indeterminate-key-focus: var(
+    --spectrum-global-dimension-static-size-115
+  );
   --spectrum-checkbox-quiet-touch-hit-y: var(--spectrum-global-dimension-static-size-100);
   --spectrum-circleloader-medium-border-size: 3px;
   --spectrum-circleloader-medium-over-background-border-size: 3px;
   --spectrum-circleloader-small-border-size: var(--spectrum-global-dimension-static-size-25);
-  --spectrum-circleloader-small-over-background-border-size: var(--spectrum-global-dimension-static-size-25);
+  --spectrum-circleloader-small-over-background-border-size: var(
+    --spectrum-global-dimension-static-size-25
+  );
   --spectrum-colorhandle-loupe-margin: var(--spectrum-global-dimension-static-size-125);
   --spectrum-colorloupe-colorhandle-gap: var(--spectrum-global-dimension-static-size-125);
   --spectrum-colorslider-touch-hit-y: var(--spectrum-global-dimension-size-150);
@@ -174,7 +226,9 @@
   --spectrum-dialog-confirm-title-text-size: var(--spectrum-global-dimension-font-size-300);
   --spectrum-dialog-confirm-description-text-size: var(--spectrum-global-dimension-font-size-100);
   --spectrum-dialog-confirm-padding: var(--spectrum-global-dimension-static-size-500);
-  --spectrum-dialog-confirm-description-margin-bottom: var(--spectrum-global-dimension-static-size-600);
+  --spectrum-dialog-confirm-description-margin-bottom: var(
+    --spectrum-global-dimension-static-size-600
+  );
   --spectrum-dialog-max-width: var(--spectrum-global-dimension-static-size-6000);
   --spectrum-dialog-title-text-size: var(--spectrum-global-dimension-font-size-300);
   --spectrum-dialog-content-text-size: var(--spectrum-global-dimension-font-size-100);
@@ -182,19 +236,27 @@
   --spectrum-dialog-content-margin-bottom: var(--spectrum-global-dimension-static-size-600);
   --spectrum-dialog-destructive-max-width: var(--spectrum-global-dimension-static-size-6000);
   --spectrum-dialog-destructive-title-text-size: var(--spectrum-global-dimension-font-size-300);
-  --spectrum-dialog-destructive-description-text-size: var(--spectrum-global-dimension-font-size-100);
+  --spectrum-dialog-destructive-description-text-size: var(
+    --spectrum-global-dimension-font-size-100
+  );
   --spectrum-dialog-destructive-padding: var(--spectrum-global-dimension-static-size-500);
-  --spectrum-dialog-destructive-description-margin-bottom: var(--spectrum-global-dimension-static-size-600);
+  --spectrum-dialog-destructive-description-margin-bottom: var(
+    --spectrum-global-dimension-static-size-600
+  );
   --spectrum-dialog-error-max-width: var(--spectrum-global-dimension-static-size-6000);
   --spectrum-dialog-error-title-text-size: var(--spectrum-global-dimension-font-size-300);
   --spectrum-dialog-error-description-text-size: var(--spectrum-global-dimension-font-size-100);
   --spectrum-dialog-error-padding: var(--spectrum-global-dimension-static-size-500);
-  --spectrum-dialog-error-description-margin-bottom: var(--spectrum-global-dimension-static-size-600);
+  --spectrum-dialog-error-description-margin-bottom: var(
+    --spectrum-global-dimension-static-size-600
+  );
   --spectrum-dialog-info-max-width: var(--spectrum-global-dimension-static-size-6000);
   --spectrum-dialog-info-title-text-size: var(--spectrum-global-dimension-font-size-300);
   --spectrum-dialog-info-description-text-size: var(--spectrum-global-dimension-font-size-100);
   --spectrum-dialog-info-padding: var(--spectrum-global-dimension-static-size-500);
-  --spectrum-dialog-info-description-margin-bottom: var(--spectrum-global-dimension-static-size-600);
+  --spectrum-dialog-info-description-margin-bottom: var(
+    --spectrum-global-dimension-static-size-600
+  );
   --spectrum-dropdown-touch-hit-x: var(--spectrum-global-dimension-static-size-100);
   --spectrum-dropdown-touch-hit-y: var(--spectrum-global-dimension-static-size-100);
   --spectrum-dropdown-quiet-touch-hit-y: var(--spectrum-global-dimension-static-size-400);
@@ -225,10 +287,18 @@
   --spectrum-listitem-option-icon-margin-top: var(--spectrum-global-dimension-static-size-65);
   --spectrum-listitem-option-height: var(--spectrum-global-dimension-static-size-400);
   --spectrum-listitem-option-icon-padding-y: var(--spectrum-global-dimension-static-size-125);
-  --spectrum-listitem-thumbnail-option-icon-margin-top: var(--spectrum-global-dimension-static-size-65);
-  --spectrum-listitem-thumbnail-option-icon-padding-y: var(--spectrum-global-dimension-static-size-125);
-  --spectrum-selectlist-thumbnail-small-option-icon-margin-top: var(--spectrum-global-dimension-static-size-65);
-  --spectrum-selectlist-thumbnail-small-option-icon-padding-y: var(--spectrum-global-dimension-static-size-125);
+  --spectrum-listitem-thumbnail-option-icon-margin-top: var(
+    --spectrum-global-dimension-static-size-65
+  );
+  --spectrum-listitem-thumbnail-option-icon-padding-y: var(
+    --spectrum-global-dimension-static-size-125
+  );
+  --spectrum-selectlist-thumbnail-small-option-icon-margin-top: var(
+    --spectrum-global-dimension-static-size-65
+  );
+  --spectrum-selectlist-thumbnail-small-option-icon-padding-y: var(
+    --spectrum-global-dimension-static-size-125
+  );
   --spectrum-selectlist-option-icon-size: var(--spectrum-global-dimension-static-size-150);
   --spectrum-selectlist-option-icon-padding-y: var(--spectrum-global-dimension-static-size-125);
   --spectrum-selectlist-option-icon-margin-top: var(--spectrum-global-dimension-static-size-65);
@@ -241,15 +311,21 @@
   */
   --spectrum-selectlist-option-padding-height: 7px;
   /* END RSP PATCH */
-  --spectrum-selectlist-thumbnail-option-icon-padding-y: var(--spectrum-global-dimension-static-size-125);
+  --spectrum-selectlist-thumbnail-option-icon-padding-y: var(
+    --spectrum-global-dimension-static-size-125
+  );
   --spectrum-loader-bar-large-border-radius: 3px;
   --spectrum-loader-bar-large-over-background-border-radius: 3px;
   --spectrum-loader-bar-small-border-radius: var(--spectrum-global-dimension-static-size-25);
-  --spectrum-loader-bar-small-over-background-border-radius: var(--spectrum-global-dimension-static-size-25);
+  --spectrum-loader-bar-small-over-background-border-radius: var(
+    --spectrum-global-dimension-static-size-25
+  );
   --spectrum-loader-circle-medium-border-size: 3px;
   --spectrum-loader-circle-medium-over-background-border-size: 3px;
   --spectrum-loader-circle-small-border-size: var(--spectrum-global-dimension-static-size-25);
-  --spectrum-loader-circle-small-over-background-border-size: var(--spectrum-global-dimension-static-size-25);
+  --spectrum-loader-circle-small-over-background-border-size: var(
+    --spectrum-global-dimension-static-size-25
+  );
   --spectrum-meter-large-border-radius: 3px;
   --spectrum-meter-small-border-radius: var(--spectrum-global-dimension-static-size-25);
   --spectrum-pagination-page-button-line-height: 26px;
@@ -268,30 +344,50 @@
   --spectrum-progressbar-large-indeterminate-border-radius: 3px;
   --spectrum-progressbar-large-over-background-border-radius: 3px;
   --spectrum-progressbar-small-border-radius: var(--spectrum-global-dimension-static-size-25);
-  --spectrum-progressbar-small-indeterminate-border-radius: var(--spectrum-global-dimension-static-size-25);
-  --spectrum-progressbar-small-over-background-border-radius: var(--spectrum-global-dimension-static-size-25);
+  --spectrum-progressbar-small-indeterminate-border-radius: var(
+    --spectrum-global-dimension-static-size-25
+  );
+  --spectrum-progressbar-small-over-background-border-radius: var(
+    --spectrum-global-dimension-static-size-25
+  );
   --spectrum-progresscircle-medium-border-size: 3px;
   --spectrum-progresscircle-medium-over-background-border-size: 3px;
   --spectrum-progresscircle-small-border-size: var(--spectrum-global-dimension-static-size-25);
-  --spectrum-progresscircle-small-indeterminate-border-size: var(--spectrum-global-dimension-static-size-25);
-  --spectrum-progresscircle-small-over-background-border-size: var(--spectrum-global-dimension-static-size-25);
+  --spectrum-progresscircle-small-indeterminate-border-size: var(
+    --spectrum-global-dimension-static-size-25
+  );
+  --spectrum-progresscircle-small-over-background-border-size: var(
+    --spectrum-global-dimension-static-size-25
+  );
   --spectrum-progresscircle-medium-indeterminate-border-size: 3px;
   --spectrum-radio-text-gap-key-focus: var(--spectrum-global-dimension-static-size-115);
   --spectrum-radio-text-gap-selected-key-focus: var(--spectrum-global-dimension-static-size-115);
   --spectrum-radio-text-gap-error-key-focus: var(--spectrum-global-dimension-static-size-115);
-  --spectrum-radio-text-gap-error-selected-key-focus: var(--spectrum-global-dimension-static-size-115);
+  --spectrum-radio-text-gap-error-selected-key-focus: var(
+    --spectrum-global-dimension-static-size-115
+  );
   --spectrum-radio-margin-bottom: 0px;
   --spectrum-radio-touch-hit-y: var(--spectrum-global-dimension-static-size-100);
   --spectrum-radio-emphasized-text-gap-key-focus: var(--spectrum-global-dimension-static-size-115);
-  --spectrum-radio-emphasized-text-gap-selected-key-focus: var(--spectrum-global-dimension-static-size-115);
-  --spectrum-radio-emphasized-text-gap-error-key-focus: var(--spectrum-global-dimension-static-size-115);
-  --spectrum-radio-emphasized-text-gap-error-selected-key-focus: var(--spectrum-global-dimension-static-size-115);
+  --spectrum-radio-emphasized-text-gap-selected-key-focus: var(
+    --spectrum-global-dimension-static-size-115
+  );
+  --spectrum-radio-emphasized-text-gap-error-key-focus: var(
+    --spectrum-global-dimension-static-size-115
+  );
+  --spectrum-radio-emphasized-text-gap-error-selected-key-focus: var(
+    --spectrum-global-dimension-static-size-115
+  );
   --spectrum-radio-emphasized-margin-bottom: 0px;
   --spectrum-radio-emphasized-touch-hit-y: var(--spectrum-global-dimension-static-size-100);
   --spectrum-radio-quiet-text-gap-key-focus: var(--spectrum-global-dimension-static-size-115);
-  --spectrum-radio-quiet-text-gap-selected-key-focus: var(--spectrum-global-dimension-static-size-115);
+  --spectrum-radio-quiet-text-gap-selected-key-focus: var(
+    --spectrum-global-dimension-static-size-115
+  );
   --spectrum-radio-quiet-text-gap-error-key-focus: var(--spectrum-global-dimension-static-size-115);
-  --spectrum-radio-quiet-text-gap-error-selected-key-focus: var(--spectrum-global-dimension-static-size-115);
+  --spectrum-radio-quiet-text-gap-error-selected-key-focus: var(
+    --spectrum-global-dimension-static-size-115
+  );
   --spectrum-radio-quiet-margin-bottom: 0px;
   --spectrum-radio-quiet-touch-hit-y: var(--spectrum-global-dimension-static-size-100);
   --spectrum-rating-icon-width: 24px;
@@ -310,7 +406,9 @@
   --spectrum-search-quiet-touch-hit-y: var(--spectrum-global-dimension-static-size-100);
   --spectrum-search-quiet-icon-frame: var(--spectrum-global-dimension-static-size-400);
   --spectrum-sidenav-item-touch-hit-bottom: var(--spectrum-global-dimension-static-size-25);
-  --spectrum-sidenav-multilevel-item-touch-hit-bottom: var(--spectrum-global-dimension-static-size-25);
+  --spectrum-sidenav-multilevel-item-touch-hit-bottom: var(
+    --spectrum-global-dimension-static-size-25
+  );
   --spectrum-slider-track-touch-hit-y: var(--spectrum-global-dimension-static-size-100);
   --spectrum-slider-handle-touch-hit-x: var(--spectrum-global-dimension-static-size-200);
   --spectrum-slider-handle-touch-hit-y: var(--spectrum-global-dimension-static-size-200);
@@ -320,11 +418,15 @@
   --spectrum-slider-fill-track-touch-hit-y: var(--spectrum-global-dimension-static-size-100);
   --spectrum-slider-fill-handle-touch-hit-x: var(--spectrum-global-dimension-static-size-200);
   --spectrum-slider-fill-handle-touch-hit-y: var(--spectrum-global-dimension-static-size-200);
-  --spectrum-switch-focus-ring-border-radius-key-focus: var(--spectrum-global-dimension-static-size-130);
+  --spectrum-switch-focus-ring-border-radius-key-focus: var(
+    --spectrum-global-dimension-static-size-130
+  );
   --spectrum-switch-text-gap-key-focus: var(--spectrum-global-dimension-static-size-115);
   --spectrum-switch-text-gap-selected-key-focus: var(--spectrum-global-dimension-static-size-115);
   --spectrum-switch-text-gap-error-key-focus: var(--spectrum-global-dimension-static-size-115);
-  --spectrum-switch-text-gap-error-selected-key-focus: var(--spectrum-global-dimension-static-size-115);
+  --spectrum-switch-text-gap-error-selected-key-focus: var(
+    --spectrum-global-dimension-static-size-115
+  );
   --spectrum-switch-track-width: 26px;
   --spectrum-switch-handle-border-radius: 7px;
   /* BEGIN RSP PATCH */
@@ -333,19 +435,35 @@
   --spectrum-switch-handle-transform-x-rtl: -12px;
   /* END RSP PATCH */
   --spectrum-switch-touch-hit-y: var(--spectrum-global-dimension-static-size-100);
-  --spectrum-switch-emphasized-focus-ring-border-radius-key-focus: var(--spectrum-global-dimension-static-size-130);
+  --spectrum-switch-emphasized-focus-ring-border-radius-key-focus: var(
+    --spectrum-global-dimension-static-size-130
+  );
   --spectrum-switch-emphasized-text-gap-key-focus: var(--spectrum-global-dimension-static-size-115);
-  --spectrum-switch-emphasized-text-gap-selected-key-focus: var(--spectrum-global-dimension-static-size-115);
-  --spectrum-switch-emphasized-text-gap-error-key-focus: var(--spectrum-global-dimension-static-size-115);
-  --spectrum-switch-emphasized-text-gap-error-selected-key-focus: var(--spectrum-global-dimension-static-size-115);
+  --spectrum-switch-emphasized-text-gap-selected-key-focus: var(
+    --spectrum-global-dimension-static-size-115
+  );
+  --spectrum-switch-emphasized-text-gap-error-key-focus: var(
+    --spectrum-global-dimension-static-size-115
+  );
+  --spectrum-switch-emphasized-text-gap-error-selected-key-focus: var(
+    --spectrum-global-dimension-static-size-115
+  );
   --spectrum-switch-emphasized-track-width: 26px;
   --spectrum-switch-emphasized-handle-border-radius: 7px;
   --spectrum-switch-emphasized-touch-hit-y: var(--spectrum-global-dimension-static-size-100);
-  --spectrum-switch-quiet-focus-ring-border-radius-key-focus: var(--spectrum-global-dimension-static-size-130);
+  --spectrum-switch-quiet-focus-ring-border-radius-key-focus: var(
+    --spectrum-global-dimension-static-size-130
+  );
   --spectrum-switch-quiet-text-gap-key-focus: var(--spectrum-global-dimension-static-size-115);
-  --spectrum-switch-quiet-text-gap-selected-key-focus: var(--spectrum-global-dimension-static-size-115);
-  --spectrum-switch-quiet-text-gap-error-key-focus: var(--spectrum-global-dimension-static-size-115);
-  --spectrum-switch-quiet-text-gap-error-selected-key-focus: var(--spectrum-global-dimension-static-size-115);
+  --spectrum-switch-quiet-text-gap-selected-key-focus: var(
+    --spectrum-global-dimension-static-size-115
+  );
+  --spectrum-switch-quiet-text-gap-error-key-focus: var(
+    --spectrum-global-dimension-static-size-115
+  );
+  --spectrum-switch-quiet-text-gap-error-selected-key-focus: var(
+    --spectrum-global-dimension-static-size-115
+  );
   --spectrum-switch-quiet-track-width: 26px;
   --spectrum-switch-quiet-handle-border-radius: 7px;
   --spectrum-switch-quiet-touch-hit-y: var(--spectrum-global-dimension-static-size-100);

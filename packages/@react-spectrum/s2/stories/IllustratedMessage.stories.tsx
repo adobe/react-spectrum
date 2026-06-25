@@ -10,9 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, ButtonGroup, Content, Heading, IllustratedMessage} from '../src';
+import {Button} from '../src/Button';
+
+import {ButtonGroup} from '../src/ButtonGroup';
 import Cloud from '../spectrum-illustrations/linear/Cloud';
+import {Content, Heading} from '../src/Content';
 import Folder from '../spectrum-illustrations/gradient/generic2/FolderOpen';
+import {IllustratedMessage} from '../src/IllustratedMessage';
 import type {Meta, StoryObj} from '@storybook/react';
 
 const meta: Meta<typeof IllustratedMessage> = {
@@ -32,62 +36,57 @@ export default meta;
 type Story = StoryObj<typeof IllustratedMessage>;
 
 export const Example: Story = {
-  render: (args) => (
+  render: args => (
     <IllustratedMessage {...args}>
       <Cloud />
-      <Heading>
-        Illustrated message title
-      </Heading>
+      <Heading>Illustrated message title</Heading>
       <Content>
-        Illustrated message description. Give more information about what a user can do, expect, or how to make items appear.    </Content>
+        Illustrated message description. Give more information about what a user can do, expect, or
+        how to make items appear.{' '}
+      </Content>
       <ButtonGroup>
-        <Button variant="secondary" >Label</Button>
-        <Button variant="accent" >Label</Button>
+        <Button variant="secondary">Label</Button>
+        <Button variant="accent">Label</Button>
       </ButtonGroup>
     </IllustratedMessage>
   )
 };
 
 export const NoButtonLongText: Story = {
-  render: (args) => (
+  render: args => (
     <IllustratedMessage {...args}>
       <Cloud />
-      <Heading>
-        Error 403: Access not allowed
-      </Heading>
+      <Heading>Error 403: Access not allowed</Heading>
       <Content>
-        You do not have permission to access this page. Try checking the URL or visit a different page.
+        You do not have permission to access this page. Try checking the URL or visit a different
+        page.
       </Content>
     </IllustratedMessage>
   )
 };
 
 export const NoButtonShortText: Story = {
-  render: (args) => (
+  render: args => (
     <IllustratedMessage {...args}>
       <Cloud />
-      <Heading>
-        Error 504: Server timeout
-      </Heading>
-      <Content>
-        The server took too long. Please try again later.
-      </Content>
+      <Heading>Error 504: Server timeout</Heading>
+      <Content>The server took too long. Please try again later.</Content>
     </IllustratedMessage>
   )
 };
 
 export const Gradient: Story = {
-  render: (args) => (
+  render: args => (
     <IllustratedMessage {...args}>
       <Folder />
-      <Heading>
-        Illustrated message title
-      </Heading>
+      <Heading>Illustrated message title</Heading>
       <Content>
-        Illustrated message description. Give more information about what a user can do, expect, or how to make items appear.    </Content>
+        Illustrated message description. Give more information about what a user can do, expect, or
+        how to make items appear.{' '}
+      </Content>
       <ButtonGroup>
-        <Button variant="secondary" >Label</Button>
-        <Button variant="accent" >Label</Button>
+        <Button variant="secondary">Label</Button>
+        <Button variant="accent">Label</Button>
       </ButtonGroup>
     </IllustratedMessage>
   )

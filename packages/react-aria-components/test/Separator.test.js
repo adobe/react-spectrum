@@ -12,7 +12,7 @@
 
 import React from 'react';
 import {render} from '@react-spectrum/test-utils-internal';
-import {Separator, SeparatorContext} from '../';
+import {Separator, SeparatorContext} from '../src/Separator';
 
 describe('Separator', () => {
   it('should render a separator with default class', () => {
@@ -35,7 +35,7 @@ describe('Separator', () => {
   });
 
   it('should support custom render function', () => {
-    let {getByRole} =  render(<Separator render={props => <hr {...props} data-custom="true" />} />);
+    let {getByRole} = render(<Separator render={props => <hr {...props} data-custom="true" />} />);
     let separator = getByRole('separator');
     expect(separator).toHaveAttribute('data-custom', 'true');
   });

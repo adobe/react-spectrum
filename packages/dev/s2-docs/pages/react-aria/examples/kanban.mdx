@@ -16,7 +16,9 @@ export const description = 'A kanban board with accessible drag and drop, styled
 
 ```tsx render type="tailwind" expanded
 "use client";
-import {Button, DropIndicator, GridList, GridListItem, isTextDropItem, Text, useDragAndDrop, ListData, useListData} from 'react-aria-components';
+import {Button, GridList, GridListItem, Text} from 'react-aria-components/GridList';
+import {useDragAndDrop, DropIndicator, isTextDropItem} from 'react-aria-components/useDragAndDrop';
+import {useListData, type ListData} from 'react-aria-components/useListData';
 import React, {ReactNode} from 'react';
 
 ///- begin collapse -///

@@ -12,5 +12,6 @@
 
 /// <reference types="css-module-types" />
 
-export {Meter} from './Meter';
-export type {SpectrumMeterProps} from '@react-types/meter';
+export {Meter} from '@adobe/react-spectrum/Meter';
+
+export type {SpectrumMeterProps} from '@adobe/react-spectrum/Meter';

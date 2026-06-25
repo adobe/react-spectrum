@@ -1,6 +1,6 @@
 import {MyToastRegion, queue} from '../src/Toast';
 import {Button} from '../src/Button';
-import {Meta, StoryObj} from '@storybook/react';
+import {type Meta, type StoryObj} from '@storybook/react';
 import React from 'react';
 
 interface ToastStoryArgs {
@@ -45,13 +45,16 @@ export default meta;
 type Story = StoryObj<ToastStoryArgs>;
 
 export const Example: Story = {
-  render: (args) => (
+  render: args => (
     <>
       <MyToastRegion />
-      <Button onPress={() => queue.add(
-        {title: args.title, description: args.description},
-        args.timeout ? {timeout: args.timeout} : undefined
-      )}>
+      <Button
+        onPress={() =>
+          queue.add(
+            {title: args.title, description: args.description},
+            args.timeout ? {timeout: args.timeout} : undefined
+          )
+        }>
         {args.buttonLabel}
       </Button>
     </>

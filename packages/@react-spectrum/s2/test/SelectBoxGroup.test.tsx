@@ -1,8 +1,9 @@
 import {act, pointerMap, render, screen, waitFor} from '@react-spectrum/test-utils-internal';
 import Calendar from '../spectrum-illustrations/linear/Calendar';
 import React from 'react';
-import {SelectBox, SelectBoxGroup, Text} from '../src';
+import {SelectBox, SelectBoxGroup} from '../src/SelectBoxGroup';
 import {Selection} from '@react-types/shared';
+import {Text} from '../src/Content';
 import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
 
@@ -48,11 +49,13 @@ function ControlledMultiSelectBox() {
   );
 }
 
-function UncontrolledSelectBox({selectionMode = 'single'}: {selectionMode?: 'single' | 'multiple'}) {
+function UncontrolledSelectBox({
+  selectionMode = 'single'
+}: {
+  selectionMode?: 'single' | 'multiple';
+}) {
   return (
-    <SelectBoxGroup
-      aria-label="Uncontrolled selection test"
-      selectionMode={selectionMode}>
+    <SelectBoxGroup aria-label="Uncontrolled selection test" selectionMode={selectionMode}>
       <SelectBox id="option1" textValue="Option 1">
         <Text slot="label">Option 1</Text>
       </SelectBox>
@@ -124,7 +127,7 @@ describe('SelectBoxGroup', () => {
       let listboxTester = testUtilUser.createTester('ListBox', {root: screen.getByRole('listbox')});
 
       await listboxTester.toggleOptionSelection({option: 0});
-      expect(listboxTester.options()[0]).toHaveAttribute('aria-selected', 'true');
+      expect(listboxTester.getOptions()[0]).toHaveAttribute('aria-selected', 'true');
     });
 
     it('handles uncontrolled click selection in multiple mode', async () => {
@@ -134,8 +137,8 @@ describe('SelectBoxGroup', () => {
       await listboxTester.toggleOptionSelection({option: 0});
       await listboxTester.toggleOptionSelection({option: 1});
 
-      expect(listboxTester.options()[0]).toHaveAttribute('aria-selected', 'true');
-      expect(listboxTester.options()[1]).toHaveAttribute('aria-selected', 'true');
+      expect(listboxTester.getOptions()[0]).toHaveAttribute('aria-selected', 'true');
+      expect(listboxTester.getOptions()[1]).toHaveAttribute('aria-selected', 'true');
     });
 
     it('handles uncontrolled selection toggle', async () => {
@@ -143,12 +146,12 @@ describe('SelectBoxGroup', () => {
       let listboxTester = testUtilUser.createTester('ListBox', {root: screen.getByRole('listbox')});
 
       await listboxTester.toggleOptionSelection({option: 0});
-      expect(listboxTester.options()[0]).toHaveAttribute('aria-selected', 'true');
+      expect(listboxTester.getOptions()[0]).toHaveAttribute('aria-selected', 'true');
 
       // Toggle off in single mode by selecting another
       await listboxTester.toggleOptionSelection({option: 1});
-      expect(listboxTester.options()[0]).toHaveAttribute('aria-selected', 'false');
-      expect(listboxTester.options()[1]).toHaveAttribute('aria-selected', 'true');
+      expect(listboxTester.getOptions()[0]).toHaveAttribute('aria-selected', 'false');
+      expect(listboxTester.getOptions()[1]).toHaveAttribute('aria-selected', 'true');
     });
 
     it('handles uncontrolled keyboard selection', async () => {
@@ -170,7 +173,7 @@ describe('SelectBoxGroup', () => {
       let listboxTester = testUtilUser.createTester('ListBox', {root: screen.getByRole('listbox')});
 
       await listboxTester.toggleOptionSelection({option: 0});
-      expect(listboxTester.options()[0]).toHaveAttribute('aria-selected', 'true');
+      expect(listboxTester.getOptions()[0]).toHaveAttribute('aria-selected', 'true');
     });
 
     it('handles controlled multiple selection', async () => {
@@ -180,8 +183,8 @@ describe('SelectBoxGroup', () => {
       await listboxTester.toggleOptionSelection({option: 0});
       await listboxTester.toggleOptionSelection({option: 1});
 
-      expect(listboxTester.options()[0]).toHaveAttribute('aria-selected', 'true');
-      expect(listboxTester.options()[1]).toHaveAttribute('aria-selected', 'true');
+      expect(listboxTester.getOptions()[0]).toHaveAttribute('aria-selected', 'true');
+      expect(listboxTester.getOptions()[1]).toHaveAttribute('aria-selected', 'true');
     });
 
     it('calls onSelectionChange when selection changes in controlled mode', async () => {
@@ -192,7 +195,7 @@ describe('SelectBoxGroup', () => {
           <SelectBoxGroup
             aria-label="Selection change test"
             selectionMode="single"
-            onSelectionChange={(keys) => {
+            onSelectionChange={keys => {
               setSelectedKeys(keys);
               onSelectionChange(keys);
             }}
@@ -224,7 +227,7 @@ describe('SelectBoxGroup', () => {
           <SelectBoxGroup
             aria-label="Multiple selection change test"
             selectionMode="multiple"
-            onSelectionChange={(keys) => {
+            onSelectionChange={keys => {
               setSelectedKeys(keys);
               onSelectionChange(keys);
             }}
@@ -289,10 +292,7 @@ describe('SelectBoxGroup', () => {
 
     it('prevents uncontrolled interaction when group is disabled', async () => {
       render(
-        <SelectBoxGroup
-          aria-label="Uncontrolled disabled test"
-          selectionMode="single"
-          isDisabled>
+        <SelectBoxGroup aria-label="Uncontrolled disabled test" selectionMode="single" isDisabled>
           <SelectBox id="option1" textValue="Option 1">
             <Text slot="label">Option 1</Text>
           </SelectBox>
@@ -615,9 +615,7 @@ describe('SelectBoxGroup', () => {
 
         return (
           <div>
-            <button onClick={() => setSelectedKeys(new Set(['option2']))}>
-              Select Option 2
-            </button>
+            <button onClick={() => setSelectedKeys(new Set(['option2']))}>Select Option 2</button>
             <SelectBoxGroup
               aria-label="Controlled test"
               selectionMode="single"
@@ -886,9 +884,7 @@ describe('SelectBoxGroup', () => {
 
     it('prevents uncontrolled interaction with individually disabled items', async () => {
       render(
-        <SelectBoxGroup
-          aria-label="Uncontrolled disabled interaction test"
-          selectionMode="single">
+        <SelectBoxGroup aria-label="Uncontrolled disabled interaction test" selectionMode="single">
           <SelectBox id="option1" textValue="Option 1" isDisabled>
             <Text slot="label">Option 1</Text>
           </SelectBox>

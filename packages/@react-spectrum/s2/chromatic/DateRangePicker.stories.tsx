@@ -11,7 +11,7 @@
  */
 
 import {CalendarDate, CalendarDateTime} from '@internationalized/date';
-import {DateRangePicker} from '../';
+import {DateRangePicker} from '../src/DateRangePicker';
 import type {Meta, StoryObj} from '@storybook/react';
 import {userEvent} from 'storybook/test';
 
@@ -90,7 +90,10 @@ export const OpenPicker: Story = {
 export const OpenPickerWithTime: Story = {
   args: {
     label: 'Date of birth',
-    value: {start: new CalendarDateTime(2022, 2, 3, 12, 0, 0), end: new CalendarDateTime(2022, 2, 10, 18, 40, 35)},
+    value: {
+      start: new CalendarDateTime(2022, 2, 3, 12, 0, 0),
+      end: new CalendarDateTime(2022, 2, 10, 18, 40, 35)
+    },
     granularity: 'second'
   },
   play: async () => {

@@ -10,7 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionButton, AlertDialog, DialogTrigger} from '../src';
+import {ActionButton} from '../src/ActionButton';
+
+import {AlertDialog} from '../src/AlertDialog';
+import {DialogTrigger} from '../src/DialogTrigger';
 import type {Meta, StoryObj} from '@storybook/react';
 
 const meta: Meta<typeof AlertDialog> = {
@@ -27,13 +30,13 @@ export default meta;
 type Story = StoryObj<typeof AlertDialog>;
 
 export const Example: Story = {
-  render: (args) => {
+  render: args => {
     return (
       <DialogTrigger>
         <ActionButton>Save</ActionButton>
-        <AlertDialog {...args} >
-          You have not saved your profile information
-          for this account. Would you like to register now?
+        <AlertDialog {...args}>
+          You have not saved your profile information for this account. Would you like to register
+          now?
         </AlertDialog>
       </DialogTrigger>
     );

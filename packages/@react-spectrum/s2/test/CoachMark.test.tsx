@@ -11,19 +11,14 @@
  */
 
 import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
-import {
-  ActionMenu,
-  Button,
-  CardPreview,
-  Checkbox,
-  Content,
-  Footer,
-  Image,
-  Keyboard,
-  MenuItem,
-  Text
-} from '../src';
+import {ActionMenu} from '../src/ActionMenu';
+import {Button} from '../src/Button';
+import {CardPreview} from '../src/Card';
+import {Checkbox} from '../src/Checkbox';
 import {CoachMark, CoachMarkTrigger} from '../src/CoachMark';
+import {Content, Footer, Keyboard, Text} from '../src/Content';
+import {Image} from '../src/Image';
+import {MenuItem} from '../src/Menu';
 import React from 'react';
 import userEvent, {UserEvent} from '@testing-library/user-event';
 
@@ -41,7 +36,9 @@ describe('CoachMark', () => {
     user = userEvent.setup({delay: null, pointerMap});
   });
   afterAll(() => {
-    act(() => {jest.runAllTimers();});
+    act(() => {
+      jest.runAllTimers();
+    });
   });
 
   it('renders a coachmark', async () => {
@@ -64,13 +61,19 @@ describe('CoachMark', () => {
           </Content>
           <Footer>
             <Text slot="steps">1 of 10</Text>
-            <Button fillStyle="outline" variant="secondary">Previous</Button>
-            <Button variant="primary" onPress={onPress}>Next</Button>
+            <Button fillStyle="outline" variant="secondary">
+              Previous
+            </Button>
+            <Button variant="primary" onPress={onPress}>
+              Next
+            </Button>
           </Footer>
         </CoachMark>
       </CoachMarkTrigger>
     );
-    act(() => {jest.runAllTimers();});
+    act(() => {
+      jest.runAllTimers();
+    });
     expect(getAllByRole('button').length).toBe(4); // 2 Dismiss + 2 actions
     await user?.click(getAllByRole('button')[2]);
     expect(onPress).toHaveBeenCalled();

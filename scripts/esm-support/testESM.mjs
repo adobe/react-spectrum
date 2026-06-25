@@ -12,4 +12,6 @@
 
 export * from 'react-aria';
 export * from 'react-stately';
+export * from 'react-aria-components';
 export * from '@adobe/react-spectrum';
+export * from '@react-spectrum/s2';

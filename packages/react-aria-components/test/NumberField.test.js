@@ -10,14 +10,22 @@
  * governing permissions and limitations under the License.
  */
 
-jest.mock('@react-aria/live-announcer');
-import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
-import {announce} from '@react-aria/live-announcer';
-import {Button, FieldError, Form, Group, I18nProvider, Input, Label, NumberField, NumberFieldContext, Text} from '../';
-import React from 'react';
+jest.mock('react-aria/src/live-announcer/LiveAnnouncer');
+import {act, fireEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
+import {announce} from 'react-aria/private/live-announcer/LiveAnnouncer';
+import {Button} from '../src/Button';
+import {FieldError} from '../src/FieldError';
+import {Form} from '../src/Form';
+import {Group} from '../src/Group';
+import {I18nProvider} from 'react-aria/I18nProvider';
+import {Input} from '../src/Input';
+import {Label} from '../src/Label';
+import {NumberField, NumberFieldContext} from '../src/NumberField';
+import React, {useState} from 'react';
+import {Text} from '../src/Text';
 import userEvent from '@testing-library/user-event';
 
-let TestNumberField = (props) => (
+let TestNumberField = props => (
   <NumberField defaultValue={1024} minValue={0} data-foo="bar" {...props}>
     <Label>Width</Label>
     <Group {...props.groupProps}>
@@ -53,7 +61,13 @@ describe('NumberField', () => {
     expect(label).toHaveTextContent('Width');
 
     expect(input).toHaveAttribute('aria-describedby');
-    expect(input.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ')).toBe('Description Error');
+    expect(
+      input
+        .getAttribute('aria-describedby')
+        .split(' ')
+        .map(id => document.getElementById(id).textContent)
+        .join(' ')
+    ).toBe('Description Error');
 
     let buttons = getAllByRole('button');
     expect(buttons[0]).toHaveAttribute('aria-label', 'Decrease');
@@ -73,13 +87,17 @@ describe('NumberField', () => {
   });
 
   it('should support custom render function', () => {
-    let {getByRole} = render(<TestNumberField render={props => <div {...props} data-custom="true" />} />);
+    let {getByRole} = render(
+      <TestNumberField render={props => <div {...props} data-custom="true" />} />
+    );
     let field = getByRole('textbox').closest('.react-aria-NumberField');
     expect(field).toHaveAttribute('data-custom', 'true');
   });
 
   it('should support hover state', async () => {
-    let {getByRole} = render(<TestNumberField groupProps={{className: ({isHovered}) => isHovered ? 'hover' : ''}} />);
+    let {getByRole} = render(
+      <TestNumberField groupProps={{className: ({isHovered}) => (isHovered ? 'hover' : '')}} />
+    );
     let group = getByRole('group');
 
     expect(group).not.toHaveAttribute('data-hovered');
@@ -95,7 +113,11 @@ describe('NumberField', () => {
   });
 
   it('should support focus visible state', async () => {
-    let {getByRole} = render(<TestNumberField groupProps={{className: ({isFocusVisible}) => isFocusVisible ? 'focus' : ''}} />);
+    let {getByRole} = render(
+      <TestNumberField
+        groupProps={{className: ({isFocusVisible}) => (isFocusVisible ? 'focus' : '')}}
+      />
+    );
     let group = getByRole('group');
     let input = getByRole('textbox');
 
@@ -112,12 +134,24 @@ describe('NumberField', () => {
     expect(group).not.toHaveClass('focus');
   });
 
+  it('should support read-only state', async () => {
+    let {getByRole, rerender} = render(<TestNumberField />);
+
+    let input = getByRole('textbox');
+
+    expect(input.closest('.react-aria-NumberField')).not.toHaveAttribute('data-readonly');
+    rerender(<TestNumberField isReadOnly />);
+    expect(input.closest('.react-aria-NumberField')).toHaveAttribute('data-readonly');
+  });
+
   it('should support render props', () => {
     let {getByRole} = render(
       <NumberField defaultValue={1024} minValue={300} maxValue={1400}>
         {({state}) => (
           <>
-            <Label>Width (min: {state.minValue}, max: {state.maxValue})</Label>
+            <Label>
+              Width (min: {state.minValue}, max: {state.maxValue})
+            </Label>
             <Group>
               <Button slot="decrement">-</Button>
               <Input />
@@ -134,25 +168,45 @@ describe('NumberField', () => {
   });
 
   it('should support form value', () => {
-    let {rerender} = render(<TestNumberField name="test" form="test" value={25} formatOptions={{style: 'currency', currency: 'USD'}} />);
+    let {rerender} = render(
+      <TestNumberField
+        name="test"
+        form="test"
+        value={25}
+        formatOptions={{style: 'currency', currency: 'USD'}}
+      />
+    );
     let input = document.querySelector('input[name=test]');
     expect(input).toHaveValue('25');
     expect(input).toHaveAttribute('form', 'test');
 
-    rerender(<TestNumberField name="test" form="test" value={null} formatOptions={{style: 'currency', currency: 'USD'}} />);
+    rerender(
+      <TestNumberField
+        name="test"
+        form="test"
+        value={null}
+        formatOptions={{style: 'currency', currency: 'USD'}}
+      />
+    );
     expect(input).toHaveValue('');
   });
 
   it('should support disabled when having a form value', () => {
-    render(<TestNumberField isDisabled name="test" form="test" value={25} formatOptions={{style: 'currency', currency: 'USD'}} />);
+    render(
+      <TestNumberField
+        isDisabled
+        name="test"
+        form="test"
+        value={25}
+        formatOptions={{style: 'currency', currency: 'USD'}}
+      />
+    );
     let input = document.querySelector('input[name=test]');
     expect(input).toBeDisabled();
   });
 
   it('should render data- attributes only on the outer element', () => {
-    let {getAllByTestId} = render(
-      <TestNumberField data-testid="number-field" />
-    );
+    let {getAllByTestId} = render(<TestNumberField data-testid="number-field" />);
     let outerEl = getAllByTestId('number-field');
     expect(outerEl).toHaveLength(1);
     expect(outerEl[0]).toHaveClass('react-aria-NumberField');
@@ -181,10 +235,14 @@ describe('NumberField', () => {
     expect(input.validity.valid).toBe(false);
     expect(numberfield).not.toHaveAttribute('data-invalid');
 
-    act(() => {getByTestId('form').checkValidity();});
+    act(() => {
+      getByTestId('form').checkValidity();
+    });
 
     expect(input).toHaveAttribute('aria-describedby');
-    expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
+    expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent(
+      'Constraints not satisfied'
+    );
     expect(numberfield).toHaveAttribute('data-invalid');
     expect(document.activeElement).toBe(input);
 
@@ -230,7 +288,10 @@ describe('NumberField', () => {
     });
     await user.paste('1,000');
     await user.keyboard('{Enter}');
-    expect(input).toHaveValue('$1,000.00', 'Ambiguous value should be parsed using the current locale');
+    expect(input).toHaveValue(
+      '$1,000.00',
+      'Ambiguous value should be parsed using the current locale'
+    );
 
     act(() => {
       input.setSelectionRange(0, input.value.length);
@@ -245,7 +306,10 @@ describe('NumberField', () => {
     let onChange = jest.fn();
     let {getByRole} = render(
       <I18nProvider locale="ar-AE">
-        <NumberField defaultValue={0} onChange={onChange} formatOptions={{style: 'unit', unit: 'day', unitDisplay: 'long'}}>
+        <NumberField
+          defaultValue={0}
+          onChange={onChange}
+          formatOptions={{style: 'unit', unit: 'day', unitDisplay: 'long'}}>
           <Label>Test</Label>
           <Group style={{display: 'flex'}}>
             <Button slot="decrement">-</Button>
@@ -284,11 +348,14 @@ describe('NumberField', () => {
     await user.paste('1,024');
     await user.tab();
     expect(input).toHaveAttribute('value', '1024');
-
   });
 
   it('should not type the grouping characters when useGrouping is false and in German locale', async () => {
-    let {getByRole} = render(<I18nProvider locale="de-DE"><TestNumberField formatOptions={{useGrouping: false}} /></I18nProvider>);
+    let {getByRole} = render(
+      <I18nProvider locale="de-DE">
+        <TestNumberField formatOptions={{useGrouping: false}} />
+      </I18nProvider>
+    );
     let input = getByRole('textbox');
 
     await user.keyboard('102.4');
@@ -308,9 +375,7 @@ describe('NumberField', () => {
 
   it('should trigger onChange via programmatic click() on stepper buttons', () => {
     const onChange = jest.fn();
-    const {container} = render(
-      <TestNumberField defaultValue={1024} onChange={onChange} />
-    );
+    const {container} = render(<TestNumberField defaultValue={1024} onChange={onChange} />);
     act(() => {
       container.querySelector('[slot=increment]').click();
     });
@@ -324,7 +389,9 @@ describe('NumberField', () => {
   });
 
   it('should allow you to delete the first digit in a number if it is followed by a group separator', async () => {
-    let {getByRole} = render(<TestNumberField defaultValue={1024} formatOptions={{useGrouping: true}} />);
+    let {getByRole} = render(
+      <TestNumberField defaultValue={1024} formatOptions={{useGrouping: true}} />
+    );
     let input = getByRole('textbox');
     await user.tab();
     await user.keyboard('{ArrowLeft}');
@@ -348,7 +415,13 @@ describe('NumberField', () => {
 
   it('should support pasting into a format', async () => {
     let onChange = jest.fn();
-    let {getByRole} = render(<TestNumberField defaultValue={200} onChange={onChange} formatOptions={{style: 'currency', currency: 'USD'}} />);
+    let {getByRole} = render(
+      <TestNumberField
+        defaultValue={200}
+        onChange={onChange}
+        formatOptions={{style: 'currency', currency: 'USD'}}
+      />
+    );
     let input = getByRole('textbox');
     await user.tab();
     await user.clear(input);
@@ -392,25 +465,39 @@ describe('NumberField', () => {
     // Validation error should be displayed
     expect(numberfield).toHaveAttribute('data-invalid');
     expect(input).toHaveAttribute('aria-describedby');
-    expect(document.getElementById(input.getAttribute('aria-describedby').split(' ')[0])).toHaveTextContent('This field has an error.');
+    expect(
+      document.getElementById(input.getAttribute('aria-describedby').split(' ')[0])
+    ).toHaveTextContent('This field has an error.');
 
     // Focus the field without changing the value
-    act(() => { input.focus(); });
+    act(() => {
+      input.focus();
+    });
     expect(numberfield).toHaveAttribute('data-invalid');
 
     // Blur the field without changing the value
-    act(() => { input.blur(); });
+    act(() => {
+      input.blur();
+    });
 
     // Validation error should still be displayed because the value didn't change
     expect(numberfield).toHaveAttribute('data-invalid');
     expect(input).toHaveAttribute('aria-describedby');
-    expect(document.getElementById(input.getAttribute('aria-describedby').split(' ')[0])).toHaveTextContent('This field has an error.');
+    expect(
+      document.getElementById(input.getAttribute('aria-describedby').split(' ')[0])
+    ).toHaveTextContent('This field has an error.');
   });
 
   it('should not change the edited input value when value snapping is disabled', async () => {
     let {getByRole, getByTestId} = render(
       <form data-testid="form">
-        <NumberField isRequired defaultValue={20} minValue={10} step={10} maxValue={50} commitBehavior="validate">
+        <NumberField
+          isRequired
+          defaultValue={20}
+          minValue={10}
+          step={10}
+          maxValue={50}
+          commitBehavior="validate">
           <Label>Width</Label>
           <Group>
             <Button slot="decrement">-</Button>
@@ -435,9 +522,13 @@ describe('NumberField', () => {
     expect(input).toHaveAttribute('aria-invalid', 'true');
     expect(input.validity.valid).toBe(false);
     expect(input).toHaveAttribute('aria-describedby');
-    expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
+    expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent(
+      'Constraints not satisfied'
+    );
 
-    act(() => {getByTestId('form').checkValidity();});
+    act(() => {
+      getByTestId('form').checkValidity();
+    });
     expect(document.activeElement).toBe(input);
 
     // Valid
@@ -458,7 +549,9 @@ describe('NumberField', () => {
     expect(input.validity.valid).toBe(false);
     expect(input).toHaveAttribute('aria-describedby');
 
-    act(() => {getByTestId('form').checkValidity();});
+    act(() => {
+      getByTestId('form').checkValidity();
+    });
     expect(document.activeElement).toBe(input);
 
     // Not on step
@@ -470,7 +563,9 @@ describe('NumberField', () => {
     expect(input.validity.valid).toBe(false);
     expect(input).toHaveAttribute('aria-describedby');
 
-    act(() => {getByTestId('form').checkValidity();});
+    act(() => {
+      getByTestId('form').checkValidity();
+    });
     expect(document.activeElement).toBe(input);
 
     // Required
@@ -487,5 +582,48 @@ describe('NumberField', () => {
     expect(input).toHaveValue('30');
     expect(input.validity.valid).toBe(true);
     expect(input).not.toHaveAttribute('aria-describedby');
+  });
+
+  describe('auto spinning', () => {
+    beforeAll(() => {
+      jest.useFakeTimers();
+    });
+    afterEach(() => {
+      act(() => {
+        jest.runAllTimers();
+      });
+    });
+
+    it('stops spinning if the associated button is disabled', async () => {
+      function NumberFieldDisabledButtons({label}) {
+        const [value, setValue] = useState(4);
+
+        return (
+          <NumberField value={value} onChange={setValue}>
+            <Label>{label}</Label>
+            <Group>
+              <Input className="react-aria-Input inset" />
+              <Button slot="decrement" isDisabled={value <= 4}>
+                -
+              </Button>
+              <Button slot="increment" isDisabled={value >= 8}>
+                +
+              </Button>
+            </Group>
+          </NumberField>
+        );
+      }
+      let {getByRole} = render(<NumberFieldDisabledButtons />);
+      let input = getByRole('textbox');
+      let decrementButton = getByRole('button', {name: 'Decrease'});
+      let incrementButton = getByRole('button', {name: 'Increase'});
+      await user.click(incrementButton);
+      // manually fire these events because user.click will refuse to fire the up event if the button is disabled
+      fireEvent.mouseDown(decrementButton, {button: 0});
+      fireEvent.mouseUp(decrementButton, {button: 0});
+      await act(async () => jest.runAllTimers());
+      expect(decrementButton).toBeDisabled();
+      expect(input).toHaveValue('4');
+    });
   });
 });

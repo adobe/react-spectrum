@@ -23,7 +23,7 @@ function getVarsFromCSS(css) {
   let root = postcss.parse(css);
 
   root.walkRules((rule, ruleIndex) => {
-    rule.walkDecls((decl) => {
+    rule.walkDecls(decl => {
       let matches = decl.value.match(/var\(.*?\)/g);
       if (matches) {
         matches.forEach(function (match) {
@@ -43,7 +43,7 @@ function getVarValues(css) {
   let variables = {};
 
   root.walkRules((rule, ruleIndex) => {
-    rule.walkDecls((decl) => {
+    rule.walkDecls(decl => {
       variables[decl.prop] = decl.value;
     });
   });
@@ -86,8 +86,8 @@ function getVariableDeclarations(classNames, vars) {
   let varNames = Object.keys(vars);
   if (varNames.length) {
     return `
-${classNames.map((className) => `${className}`).join(',\n')} {
-${varNames.map((varName) => `  ${varName}: ${vars[varName]};`).join('\n')}
+${classNames.map(className => `${className}`).join(',\n')} {
+${varNames.map(varName => `  ${varName}: ${vars[varName]};`).join('\n')}
 }
 `;
   }
@@ -99,18 +99,21 @@ function getAllVars() {
   return new Promise((resolve, reject) => {
     let variableList;
 
-    gulp.src([
-      `${varDir}/css/themes/*.css`,
-      `${varDir}/css/scales/*.css`,
-      `${varDir}/css/components/*.css`,
-      `${varDir}/css/globals/*.css`
-    ])
+    gulp
+      .src([
+        `${varDir}/css/themes/*.css`,
+        `${varDir}/css/scales/*.css`,
+        `${varDir}/css/components/*.css`,
+        `${varDir}/css/globals/*.css`
+      ])
       .pipe(concat('everything.css'))
-      .pipe(through.obj(function getAllVars(file, enc, cb) {
-        variableList = getVarValues(file.contents.toString());
+      .pipe(
+        through.obj(function getAllVars(file, enc, cb) {
+          variableList = getVarValues(file.contents.toString());
 
-        cb(null, file);
-      }))
+          cb(null, file);
+        })
+      )
       .on('finish', () => {
         resolve(variableList);
       })
@@ -122,16 +125,16 @@ function getAllComponentVars() {
   return new Promise((resolve, reject) => {
     let variableList;
 
-    gulp.src([
-      `${varDir}/css/components/*.css`,
-      `${varDir}/css/globals/*.css`
-    ])
+    gulp
+      .src([`${varDir}/css/components/*.css`, `${varDir}/css/globals/*.css`])
       .pipe(concat('everything.css'))
-      .pipe(through.obj(function getAllVars(file, enc, cb) {
-        variableList = getVarValues(file.contents.toString());
+      .pipe(
+        through.obj(function getAllVars(file, enc, cb) {
+          variableList = getVarValues(file.contents.toString());
 
-        cb(null, file);
-      }))
+          cb(null, file);
+        })
+      )
       .on('finish', () => {
         resolve(variableList);
       })

@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-export {ListView} from './ListView';
-export {Item} from '@react-stately/collections';
-export type {SpectrumListViewProps} from './ListView';
+export {ListView} from '@adobe/react-spectrum/ListView';
+
+export type {SpectrumListViewProps} from '@adobe/react-spectrum/ListView';
+export {Item} from 'react-stately/Item';

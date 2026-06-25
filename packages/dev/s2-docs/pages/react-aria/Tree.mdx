@@ -67,7 +67,7 @@ export const description = 'Provides users with a way to navigate nested hierarc
 ```tsx render
 "use client";
 import {Tree, TreeItem} from 'vanilla-starter/Tree';
-import {Collection} from 'react-aria-components';
+import {Collection} from 'react-aria-components/Collection';
 
 ///- begin collapse -///
 let items = [
@@ -112,7 +112,8 @@ Use [renderEmptyState](#empty-state) to display a spinner during initial load. T
 "use client";
 import {Tree, TreeItem, TreeLoadMoreItem} from 'vanilla-starter/Tree';
 import {ProgressCircle} from 'vanilla-starter/ProgressCircle';
-import {Collection, useAsyncList} from 'react-aria-components';
+import {Collection} from 'react-aria-components/Collection';
+import {useAsyncList} from 'react-aria-components/useAsyncList';
 
 interface Character {
   name: string
@@ -256,7 +257,7 @@ import {Tree, TreeHeader, TreeItem, TreeSection} from 'vanilla-starter/Tree';
     <TreeItem id="shared-photos" title="Shared Photos">
       <TreeItem id="shared-photo-1" title="Shared Photo 1" />
       <TreeItem id="shared-photo-2" title="Shared Photo 2" />
-    </TreeItem> 
+    </TreeItem>
   </TreeSection>
   <TreeSection>
     <TreeHeader>Documents</TreeHeader>
@@ -278,7 +279,7 @@ Use the `selectionMode` prop to enable single or multiple selection. The selecte
 
 ```tsx render docs={docs.exports.Tree} links={docs.links} props={['selectionMode', 'selectionBehavior', 'disabledBehavior', 'disallowEmptySelection']} initialProps={{selectionMode: 'multiple'}} wide
 "use client";
-import type {Selection} from 'react-aria-components';
+import type {Selection} from 'react-aria-components/Tree';
 import {Tree, TreeItem} from 'vanilla-starter/Tree';
 import {useState} from 'react';
 
@@ -321,6 +322,51 @@ function Example(props) {
 }
 ```
 
+## Keyboard navigation
+
+By default, Tree uses arrow key navigation to move focus into rows. Set `keyboardNavigationBehavior="tab"` to have <Keyboard>Tab</Keyboard> move focus in and out of a row.
+Use this when rows contain interactive elements such as text fields, where arrow keys and typing in the field should not trigger grid navigation or selection.
+
+```tsx render
+"use client";
+import {Tree, TreeItem, TreeItemContent} from 'vanilla-starter/Tree';
+import {TextField} from 'vanilla-starter/TextField';
+
+<Tree
+  /*- begin highlight -*/
+  keyboardNavigationBehavior="tab"
+  /*- end highlight -*/
+  selectionMode="multiple"
+  defaultExpandedKeys={['documents', 'photos']}
+  aria-label="Shared files">
+  <TreeItem id="documents" textValue="Documents">
+    <TreeItemContent>
+      <TextField aria-label="title" defaultValue="Documents" />
+    </TreeItemContent>
+    <TreeItem id="weekly" textValue="Weekly Report.pdf">
+      <TreeItemContent>
+        <TextField aria-label="title" defaultValue="Weekly Report.pdf" />
+      </TreeItemContent>
+    </TreeItem>
+    <TreeItem id="budget" textValue="Budget.xlsx">
+      <TreeItemContent>
+        <TextField aria-label="title" defaultValue="Budget.xlsx" />
+      </TreeItemContent>
+    </TreeItem>
+  </TreeItem>
+  <TreeItem id="photos">
+    <TreeItemContent>
+      <TextField aria-label="title" defaultValue="Photos" />
+    </TreeItemContent>
+    <TreeItem id="sunset" textValue="Sunset.jpg">
+      <TreeItemContent>
+        <TextField aria-label="title" defaultValue="Sunset.jpg" />
+      </TreeItemContent>
+    </TreeItem>
+  </TreeItem>
+</Tree>
+```
+
 ## Drag and drop
 
 Tree supports drag and drop interactions when the `dragAndDropHooks` prop is provided using the <TypeLink links={docs.links} type={docs.exports.useDragAndDrop} /> hook. Users can drop data on the list as a whole, on individual items, insert new items between existing ones, or reorder items. React Aria supports drag and drop via mouse, touch, keyboard, and screen reader interactions. See the [drag and drop guide](dnd?component=Tree) to learn more.
@@ -328,7 +374,9 @@ Tree supports drag and drop interactions when the `dragAndDropHooks` prop is pro
 ```tsx render
 "use client";
 import {Tree, TreeItem} from 'vanilla-starter/Tree';
-import {useDragAndDrop, Collection, useTreeData} from 'react-aria-components';
+import {useDragAndDrop} from 'react-aria-components/useDragAndDrop';
+import {Collection} from 'react-aria-components/Collection';
+import {useTreeData} from 'react-aria-components/useTreeData';
 
 function Example() {
   ///- begin collapse -///

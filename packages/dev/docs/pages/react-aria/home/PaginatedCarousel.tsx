@@ -26,4 +26,3 @@ export function PaginatedCarousel({children, className, paginationClassName}) {
     </>
   );
 }
-

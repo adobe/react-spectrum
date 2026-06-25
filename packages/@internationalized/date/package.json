@@ -1,34 +1,49 @@
 {
   "name": "@internationalized/date",
-  "version": "3.12.0",
+  "version": "3.12.2",
   "description": "Internationalized calendar, date, and time manipulation utilities",
   "license": "Apache-2.0",
-  "main": "dist/main.js",
-  "module": "dist/module.js",
-  "exports": {
-    "source": "./src/index.ts",
-    "types": [
-      "./dist/types.d.ts",
-      "./src/index.ts"
-    ],
-    "import": "./dist/import.mjs",
-    "require": "./dist/main.js"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adobe/react-spectrum/tree/main/packages/@internationalized/date"
   },
-  "types": "dist/types.d.ts",
   "source": "src/index.ts",
   "files": [
     "dist",
     "src"
   ],
   "sideEffects": false,
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/adobe/react-spectrum/tree/main/packages/@internationalized/date"
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
+  "types": "./dist/types/src/index.d.ts",
+  "exports": {
+    "source": "./src/index.ts",
+    "types": "./dist/types/src/index.d.ts",
+    "import": "./dist/index.mjs",
+    "require": "./dist/index.cjs"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "dependencies": {
     "@swc/helpers": "^0.5.0"
   },
-  "publishConfig": {
-    "access": "public"
+  "import": "dist/index.mjs",
+  "targets": {
+    "types": false,
+    "module": {
+      "engines": {
+        "browsers": [
+          "chrome >= 79",
+          "firefox >= 85",
+          "safari >= 13"
+        ]
+      }
+    },
+    "import": {
+      "isLibrary": true,
+      "outputFormat": "esmodule",
+      "includeNodeModules": false
+    }
   }
 }

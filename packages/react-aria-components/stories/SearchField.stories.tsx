@@ -10,10 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Input, Label, SearchField} from 'react-aria-components';
-import {classNames} from '@react-spectrum/utils';
+import {Button} from '../src/Button';
+
+import {classNames} from '@adobe/react-spectrum/private/utils/classNames';
+import {Input} from '../src/Input';
+import {Label} from '../src/Label';
 import {Meta, StoryFn} from '@storybook/react';
 import React from 'react';
+import {SearchField} from '../src/SearchField';
 import styles from '../example/index.css';
 import './styles.css';
 
@@ -26,7 +30,9 @@ export type SearchFieldStory = StoryFn<typeof SearchField>;
 
 export const SearchFieldExample: SearchFieldStory = () => {
   return (
-    <SearchField className={classNames(styles, 'searchFieldExample')} data-testid="search-field-example">
+    <SearchField
+      className={classNames(styles, 'searchFieldExample')}
+      data-testid="search-field-example">
       <Label>Search</Label>
       <Input />
       <Button>✕</Button>

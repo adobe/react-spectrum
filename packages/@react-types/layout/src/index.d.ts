@@ -10,5 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './flex';
-export * from './grid';
+export {FlexProps, GridProps} from '@react-spectrum/layout';
+
+// Backward compatibility.
+export type Slots = {[key: string]: any};

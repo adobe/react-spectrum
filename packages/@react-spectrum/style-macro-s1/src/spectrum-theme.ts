@@ -9,7 +9,12 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {createArbitraryProperty, createColorProperty, createMappedProperty, createTheme} from './style-macro';
+import {
+  createArbitraryProperty,
+  createColorProperty,
+  createMappedProperty,
+  createTheme
+} from './style-macro';
 import type * as CSS from 'csstype';
 
 const color = {
@@ -253,10 +258,10 @@ const color = {
 };
 
 interface ColorStates {
-  default: keyof typeof color,
-  isHovered: keyof typeof color,
-  isFocusVisible: keyof typeof color,
-  isPressed: keyof typeof color
+  default: keyof typeof color;
+  isHovered: keyof typeof color;
+  isFocusVisible: keyof typeof color;
+  isPressed: keyof typeof color;
 }
 
 export function baseColor(base: keyof typeof color): ColorStates {
@@ -323,16 +328,18 @@ const spacing = {
   ...baseSpacing,
 
   // font-size relative values
-  'text-to-control': (10 / 14) + 'em',
-  'text-to-visual': (8 / 14) + 'em', // -> 6px, 7px, 8px, 9px, 10px
+  'text-to-control': 10 / 14 + 'em',
+  'text-to-visual': 8 / 14 + 'em', // -> 6px, 7px, 8px, 9px, 10px
   'edge-to-text': 'calc(self(height, self(minHeight)) * 3 / 8)',
-  'pill': 'calc(self(height, self(minHeight)) / 2)'
+  pill: 'calc(self(height, self(minHeight)) / 2)'
 };
 
-const scaledSpacing: {[key in keyof typeof baseSpacing]: string} =
-  Object.fromEntries(Object.entries(baseSpacing).map(([k, v]) =>
-    [k, `calc(${v} * var(--spectrum-global-dimension-scale-factor))`])
-  ) as any;
+const scaledSpacing: {[key in keyof typeof baseSpacing]: string} = Object.fromEntries(
+  Object.entries(baseSpacing).map(([k, v]) => [
+    k,
+    `calc(${v} * var(--spectrum-global-dimension-scale-factor))`
+  ])
+) as any;
 
 const sizing = {
   ...scaledSpacing,
@@ -360,10 +367,11 @@ const sizing = {
 };
 
 // TODO: make the keys into numbers in typescript somehow?
-const negativeSpacing: {[Key in keyof typeof scaledSpacing as `-${Key}`]: (typeof scaledSpacing)[Key]} =
-  Object.fromEntries(Object.entries(scaledSpacing).map(([k, v]) =>
-    [`-${k}`, `calc(${v} * -1)`]
-  )) as any;
+const negativeSpacing: {
+  [Key in keyof typeof scaledSpacing as `-${Key}`]: (typeof scaledSpacing)[Key];
+} = Object.fromEntries(
+  Object.entries(scaledSpacing).map(([k, v]) => [`-${k}`, `calc(${v} * -1)`])
+) as any;
 
 const margin = {
   ...spacing,
@@ -401,7 +409,14 @@ const radius = {
 };
 
 type GridTrack = 'none' | 'subgrid' | (string & {}) | readonly GridTrackSize[];
-type GridTrackSize = 'auto' | 'min-content' | 'max-content' | `${number}fr` | `minmax(${string}, ${string})` | keyof typeof baseSpacing | (string & {});
+type GridTrackSize =
+  | 'auto'
+  | 'min-content'
+  | 'max-content'
+  | `${number}fr`
+  | `minmax(${string}, ${string})`
+  | keyof typeof baseSpacing
+  | (string & {});
 
 let gridTrack = (value: GridTrack) => {
   if (typeof value === 'string') {
@@ -416,7 +431,8 @@ let gridTrackSize = (value: GridTrackSize) => {
 
 // TODO
 const transitionProperty = {
-  default: 'color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, scale, filter, backdrop-filter',
+  default:
+    'color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, scale, filter, backdrop-filter',
   colors: 'color, background-color, border-color, text-decoration-color, fill, stroke',
   opacity: 'opacity',
   shadow: 'box-shadow',
@@ -435,19 +451,22 @@ const timingFunction = {
 };
 
 // TODO: do these need tokens or are arbitrary values ok?
-let durationProperty = createArbitraryProperty((value: number | string, property) => ({[property]: typeof value === 'number' ? value + 'ms' : value}));
+let durationProperty = createArbitraryProperty((value: number | string, property) => ({
+  [property]: typeof value === 'number' ? value + 'ms' : value
+}));
 
 const colorWithAlpha = createColorProperty(color);
 
-export const focusRing = () => ({
-  outlineStyle: {
-    default: 'none',
-    isFocusVisible: 'solid'
-  },
-  outlineColor: 'focus-ring',
-  outlineWidth: 2,
-  outlineOffset: 2
-} as const);
+export const focusRing = () =>
+  ({
+    outlineStyle: {
+      default: 'none',
+      isFocusVisible: 'solid'
+    },
+    outlineColor: 'focus-ring',
+    outlineWidth: 2,
+    outlineOffset: 2
+  }) as const;
 
 export const style = createTheme({
   properties: {
@@ -516,8 +535,7 @@ export const style = createTheme({
       ...color,
       negative: 'var(--spectrum-semantic-negative-color-border)',
       disabled: 'var(--spectrum-alias-border-color-disabled)'
-        // forcedColors: 'GrayText'
-
+      // forcedColors: 'GrayText'
     }),
     outlineColor: createColorProperty({
       ...color,
@@ -600,11 +618,17 @@ export const style = createTheme({
     paddingEnd: createMappedProperty(value => ({paddingInlineEnd: value}), spacing),
     paddingTop: spacing,
     paddingBottom: spacing,
-    scrollMarginStart: createMappedProperty(value => ({scrollMarginInlineStart: value}), baseSpacing),
+    scrollMarginStart: createMappedProperty(
+      value => ({scrollMarginInlineStart: value}),
+      baseSpacing
+    ),
     scrollMarginEnd: createMappedProperty(value => ({scrollMarginInlineEnd: value}), baseSpacing),
     scrollMarginTop: baseSpacing,
     scrollMarginBottom: baseSpacing,
-    scrollPaddingStart: createMappedProperty(value => ({scrollPaddingInlineStart: value}), baseSpacing),
+    scrollPaddingStart: createMappedProperty(
+      value => ({scrollPaddingInlineStart: value}),
+      baseSpacing
+    ),
     scrollPaddingEnd: createMappedProperty(value => ({scrollPaddingInlineEnd: value}), baseSpacing),
     scrollPaddingTop: baseSpacing,
     scrollPaddingBottom: baseSpacing,
@@ -620,7 +644,11 @@ export const style = createTheme({
       '3/4': '75%',
       full: '100%'
     },
-    rotate: createArbitraryProperty((value: number | `${number}deg` | `${number}rad` | `${number}grad` | `${number}turn`) => ({rotate: typeof value === 'number' ? `${value}deg` : value})),
+    rotate: createArbitraryProperty(
+      (value: number | `${number}deg` | `${number}rad` | `${number}grad` | `${number}turn`) => ({
+        rotate: typeof value === 'number' ? `${value}deg` : value
+      })
+    ),
     scale: createArbitraryProperty((value: number) => ({scale: value})),
     transform: createArbitraryProperty((value: string) => ({transform: value})),
     position: ['absolute', 'fixed', 'relative', 'sticky', 'static'] as const,
@@ -642,12 +670,17 @@ export const style = createTheme({
         default: 'adobe-clean, ui-sans-serif, system-ui, sans-serif',
         ':lang(ar)': 'myriad-arabic, ui-sans-serif, system-ui, sans-serif',
         ':lang(he)': 'myriad-hebrew, ui-sans-serif, system-ui, sans-serif',
-        ':lang(ja)': "adobe-clean-han-japanese, 'Hiragino Kaku Gothic ProN', 'ヒラギノ角ゴ ProN W3', Osaka, YuGothic, 'Yu Gothic', 'メイリオ', Meiryo, 'ＭＳ Ｐゴシック', 'MS PGothic', sans-serif",
-        ':lang(ko)': "adobe-clean-han-korean, source-han-korean, 'Malgun Gothic', 'Apple Gothic', sans-serif",
-        ':lang(zh)': "adobe-clean-han-traditional, source-han-traditional, 'MingLiu', 'Heiti TC Light', sans-serif",
+        ':lang(ja)':
+          "adobe-clean-han-japanese, 'Hiragino Kaku Gothic ProN', 'ヒラギノ角ゴ ProN W3', Osaka, YuGothic, 'Yu Gothic', 'メイリオ', Meiryo, 'ＭＳ Ｐゴシック', 'MS PGothic', sans-serif",
+        ':lang(ko)':
+          "adobe-clean-han-korean, source-han-korean, 'Malgun Gothic', 'Apple Gothic', sans-serif",
+        ':lang(zh)':
+          "adobe-clean-han-traditional, source-han-traditional, 'MingLiu', 'Heiti TC Light', sans-serif",
         // TODO: are these fallbacks supposed to be different than above?
-        ':lang(zh-hant)': "adobe-clean-han-traditional, source-han-traditional, 'MingLiu', 'Microsoft JhengHei UI', 'Microsoft JhengHei', 'Heiti TC Light', sans-serif",
-        ':lang(zh-Hans, zh-CN, zh-SG)': "adobe-clean-han-simplified-c, source-han-simplified-c, 'SimSun', 'Heiti SC Light', sans-serif"
+        ':lang(zh-hant)':
+          "adobe-clean-han-traditional, source-han-traditional, 'MingLiu', 'Microsoft JhengHei UI', 'Microsoft JhengHei', 'Heiti TC Light', sans-serif",
+        ':lang(zh-Hans, zh-CN, zh-SG)':
+          "adobe-clean-han-simplified-c, source-han-simplified-c, 'SimSun', 'Heiti SC Light', sans-serif"
       },
       serif: 'ui-serif, Georgia, Cambria, "Times New Roman", Times, serif',
       mono: 'ui-monospace, Menlo, Monaco, Consalas, "Courier New", monospace'
@@ -682,11 +715,23 @@ export const style = createTheme({
     listStylePosition: ['inside', 'outside'] as const,
     textTransform: ['uppercase', 'lowercase', 'capitalize', 'none'] as const,
     textAlign: ['start', 'center', 'end', 'justify'] as const,
-    verticalAlign: ['baseline', 'top', 'middle', 'bottom', 'text-top', 'text-bottom', 'sub', 'super'] as const,
-    textDecoration: createMappedProperty((value) => ({
-      textDecoration: value === 'none' ? 'none' : `${value} 1px`,
-      textUnderlineOffset: value === 'underline' ? '1px' : undefined
-    }), ['underline', 'overline', 'line-through', 'none'] as const),
+    verticalAlign: [
+      'baseline',
+      'top',
+      'middle',
+      'bottom',
+      'text-top',
+      'text-bottom',
+      'sub',
+      'super'
+    ] as const,
+    textDecoration: createMappedProperty(
+      value => ({
+        textDecoration: value === 'none' ? 'none' : `${value} 1px`,
+        textUnderlineOffset: value === 'underline' ? '1px' : undefined
+      }),
+      ['underline', 'overline', 'line-through', 'none'] as const
+    ),
     textOverflow: ['ellipsis', 'clip'] as const,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     truncate: createArbitraryProperty((_value: true) => ({
@@ -725,25 +770,74 @@ export const style = createTheme({
     borderBottomEndRadius: createMappedProperty(value => ({borderEndEndRadius: value}), radius),
     forcedColorAdjust: ['auto', 'none'] as const,
     colorScheme: ['light', 'dark', 'light dark'] as const,
-    backgroundPosition: ['bottom', 'center', 'left', 'left bottom', 'left top', 'right', 'right bottom', 'right top', 'top'] as const,
+    backgroundPosition: [
+      'bottom',
+      'center',
+      'left',
+      'left bottom',
+      'left top',
+      'right',
+      'right bottom',
+      'right top',
+      'top'
+    ] as const,
     backgroundSize: ['auto', 'cover', 'contain'] as const,
     backgroundAttachment: ['fixed', 'local', 'scroll'] as const,
     backgroundClip: ['border-box', 'padding-box', 'content-box', 'text'] as const,
     backgroundRepeat: ['repeat', 'no-repeat', 'repeat-x', 'repeat-y', 'round', 'space'] as const,
     backgroundOrigin: ['border-box', 'padding-box', 'content-box'] as const,
-    backgroundBlendMode: ['normal', 'multiply', 'screen', 'overlay', 'darken', 'lighten', 'color-dodge', 'color-burn', 'hard-light', 'soft-light', 'difference', 'exclusion', 'hue', 'saturation', 'color', 'luminosity'] as const,
-    mixBlendMode: ['normal', 'multiply', 'screen', 'overlay', 'darken', 'lighten', 'color-dodge', 'color-burn', 'hard-light', 'soft-light', 'difference', 'exclusion', 'hue', 'saturation', 'color', 'luminosity', 'plus-darker', 'plus-lighter'] as const,
+    backgroundBlendMode: [
+      'normal',
+      'multiply',
+      'screen',
+      'overlay',
+      'darken',
+      'lighten',
+      'color-dodge',
+      'color-burn',
+      'hard-light',
+      'soft-light',
+      'difference',
+      'exclusion',
+      'hue',
+      'saturation',
+      'color',
+      'luminosity'
+    ] as const,
+    mixBlendMode: [
+      'normal',
+      'multiply',
+      'screen',
+      'overlay',
+      'darken',
+      'lighten',
+      'color-dodge',
+      'color-burn',
+      'hard-light',
+      'soft-light',
+      'difference',
+      'exclusion',
+      'hue',
+      'saturation',
+      'color',
+      'luminosity',
+      'plus-darker',
+      'plus-lighter'
+    ] as const,
     opacity: createArbitraryProperty((value: number) => ({opacity: value})),
 
     outlineStyle: ['none', 'solid', 'dashed', 'dotted', 'double'] as const,
     outlineOffset: borderWidth,
     outlineWidth: borderWidth,
 
-    transition: createMappedProperty(value => ({
-      transitionProperty: value,
-      transitionDuration: '150ms',
-      transitionTimingFunction: timingFunction.default
-    }), transitionProperty),
+    transition: createMappedProperty(
+      value => ({
+        transitionProperty: value,
+        transitionDuration: '150ms',
+        transitionTimingFunction: timingFunction.default
+      }),
+      transitionProperty
+    ),
     transitionDelay: durationProperty,
     transitionDuration: durationProperty,
     transitionTimingFunction: timingFunction,
@@ -756,38 +850,105 @@ export const style = createTheme({
     animationDelay: durationProperty,
     animationDirection: ['normal', 'reverse', 'alternate', 'alternate-reverse'] as const,
     animationFillMode: ['none', 'forwards', 'backwards', 'both'] as const,
-    animationIterationCount: createArbitraryProperty((value: string) => ({animationIterationCount: value})),
+    animationIterationCount: createArbitraryProperty((value: string) => ({
+      animationIterationCount: value
+    })),
     animationTimingFunction: timingFunction,
 
     // layout
-    display: ['block', 'inline-block', 'inline', 'flex', 'inline-flex', 'grid', 'inline-grid', 'contents', 'list-item', 'none'] as const, // tables?
-    alignContent: ['normal', 'center', 'start', 'end', 'space-between', 'space-around', 'space-evenly', 'baseline', 'stretch'] as const,
+    display: [
+      'block',
+      'inline-block',
+      'inline',
+      'flex',
+      'inline-flex',
+      'grid',
+      'inline-grid',
+      'contents',
+      'list-item',
+      'none'
+    ] as const, // tables?
+    alignContent: [
+      'normal',
+      'center',
+      'start',
+      'end',
+      'space-between',
+      'space-around',
+      'space-evenly',
+      'baseline',
+      'stretch'
+    ] as const,
     alignItems: ['start', 'end', 'center', 'baseline', 'stretch'] as const,
-    justifyContent: ['normal', 'start', 'end', 'center', 'space-between', 'space-around', 'space-evenly', 'stretch'] as const,
+    justifyContent: [
+      'normal',
+      'start',
+      'end',
+      'center',
+      'space-between',
+      'space-around',
+      'space-evenly',
+      'stretch'
+    ] as const,
     justifyItems: ['start', 'end', 'center', 'stretch'] as const,
     alignSelf: ['auto', 'start', 'end', 'center', 'stretch', 'baseline'] as const,
     justifySelf: ['auto', 'start', 'end', 'center', 'stretch'] as const,
     flexDirection: ['row', 'column', 'row-reverse', 'column-reverse'] as const,
     flexWrap: ['wrap', 'wrap-reverse', 'nowrap'] as const,
     flex: createArbitraryProperty((value: CSS.Property.Flex, property) => ({[property]: value})),
-    flexShrink: createArbitraryProperty((value: CSS.Property.FlexShrink, property) => ({[property]: value})),
-    flexGrow: createArbitraryProperty((value: CSS.Property.FlexGrow, property) => ({[property]: value})),
-    gridColumn: createArbitraryProperty((value: CSS.Property.GridColumn, property) => ({[property]: value})),
-    gridColumnStart: createArbitraryProperty((value: CSS.Property.GridColumnStart, property) => ({[property]: value})),
-    gridColumnEnd: createArbitraryProperty((value: CSS.Property.GridColumnEnd, property) => ({[property]: value})),
-    gridRow: createArbitraryProperty((value: CSS.Property.GridRow, property) => ({[property]: value})),
-    gridRowStart: createArbitraryProperty((value: CSS.Property.GridRowStart, property) => ({[property]: value})),
-    gridRowEnd: createArbitraryProperty((value: CSS.Property.GridRowEnd, property) => ({[property]: value})),
+    flexShrink: createArbitraryProperty((value: CSS.Property.FlexShrink, property) => ({
+      [property]: value
+    })),
+    flexGrow: createArbitraryProperty((value: CSS.Property.FlexGrow, property) => ({
+      [property]: value
+    })),
+    gridColumn: createArbitraryProperty((value: CSS.Property.GridColumn, property) => ({
+      [property]: value
+    })),
+    gridColumnStart: createArbitraryProperty((value: CSS.Property.GridColumnStart, property) => ({
+      [property]: value
+    })),
+    gridColumnEnd: createArbitraryProperty((value: CSS.Property.GridColumnEnd, property) => ({
+      [property]: value
+    })),
+    gridRow: createArbitraryProperty((value: CSS.Property.GridRow, property) => ({
+      [property]: value
+    })),
+    gridRowStart: createArbitraryProperty((value: CSS.Property.GridRowStart, property) => ({
+      [property]: value
+    })),
+    gridRowEnd: createArbitraryProperty((value: CSS.Property.GridRowEnd, property) => ({
+      [property]: value
+    })),
     gridAutoFlow: ['row', 'column', 'dense', 'row dense', 'column dense'] as const,
-    gridAutoRows: createArbitraryProperty((value: GridTrackSize, property) => ({[property]: gridTrackSize(value)})),
-    gridAutoColumns: createArbitraryProperty((value: GridTrackSize, property) => ({[property]: gridTrackSize(value)})),
-    gridTemplateColumns: createArbitraryProperty((value: GridTrack, property) => ({[property]: gridTrack(value)})),
-    gridTemplateRows: createArbitraryProperty((value: GridTrack, property) => ({[property]: gridTrack(value)})),
-    gridTemplateAreas: createArbitraryProperty((value: readonly string[], property) => ({[property]: value.map(v => `"${v}"`).join('')})),
+    gridAutoRows: createArbitraryProperty((value: GridTrackSize, property) => ({
+      [property]: gridTrackSize(value)
+    })),
+    gridAutoColumns: createArbitraryProperty((value: GridTrackSize, property) => ({
+      [property]: gridTrackSize(value)
+    })),
+    gridTemplateColumns: createArbitraryProperty((value: GridTrack, property) => ({
+      [property]: gridTrack(value)
+    })),
+    gridTemplateRows: createArbitraryProperty((value: GridTrack, property) => ({
+      [property]: gridTrack(value)
+    })),
+    gridTemplateAreas: createArbitraryProperty((value: readonly string[], property) => ({
+      [property]: value.map(v => `"${v}"`).join('')
+    })),
     gridArea: createArbitraryProperty((value: string, property) => ({[property]: value})),
     float: ['inline-start', 'inline-end', 'right', 'left', 'none'] as const,
     clear: ['inline-start', 'inline-end', 'left', 'right', 'both', 'none'] as const,
-    contain: ['none', 'strict', 'content', 'size', 'inline-size', 'layout', 'style', 'paint'] as const,
+    contain: [
+      'none',
+      'strict',
+      'content',
+      'size',
+      'inline-size',
+      'layout',
+      'style',
+      'paint'
+    ] as const,
     boxSizing: ['border-box', 'content-box'] as const,
     tableLayout: ['auto', 'fixed'] as const,
     captionSide: ['top', 'bottom'] as const,
@@ -835,15 +996,71 @@ export const style = createTheme({
     userSelect: ['none', 'text', 'all', 'auto'] as const,
     visibility: ['visible', 'hidden', 'collapse'] as const,
     isolation: ['isolate', 'auto'] as const,
-    transformOrigin: ['center', 'top', 'top right', 'right', 'bottom right', 'bottom', 'bottom left', 'left', 'top right'] as const,
-    cursor: ['auto', 'default', 'pointer', 'wait', 'text', 'move', 'help', 'not-allowed', 'none', 'context-menu', 'progress', 'cell', 'crosshair', 'vertical-text', 'alias', 'copy', 'no-drop', 'grab', 'grabbing', 'all-scroll', 'col-resize', 'row-resize', 'n-resize', 'e-resize', 's-resize', 'w-resize', 'ne-resize', 'nw-resize', 'se-resize', 'ew-resize', 'ns-resize', 'nesw-resize', 'nwse-resize', 'zoom-in', 'zoom-out'] as const,
+    transformOrigin: [
+      'center',
+      'top',
+      'top right',
+      'right',
+      'bottom right',
+      'bottom',
+      'bottom left',
+      'left',
+      'top right'
+    ] as const,
+    cursor: [
+      'auto',
+      'default',
+      'pointer',
+      'wait',
+      'text',
+      'move',
+      'help',
+      'not-allowed',
+      'none',
+      'context-menu',
+      'progress',
+      'cell',
+      'crosshair',
+      'vertical-text',
+      'alias',
+      'copy',
+      'no-drop',
+      'grab',
+      'grabbing',
+      'all-scroll',
+      'col-resize',
+      'row-resize',
+      'n-resize',
+      'e-resize',
+      's-resize',
+      'w-resize',
+      'ne-resize',
+      'nw-resize',
+      'se-resize',
+      'ew-resize',
+      'ns-resize',
+      'nesw-resize',
+      'nwse-resize',
+      'zoom-in',
+      'zoom-out'
+    ] as const,
     resize: ['none', 'vertical', 'horizontal', 'both'] as const,
     scrollSnapType: ['x', 'y', 'both', 'x mandatory', 'y mandatory', 'both mandatory'] as const,
     scrollSnapAlign: ['start', 'end', 'center', 'none'] as const,
     scrollSnapStop: ['normal', 'always'] as const,
     appearance: ['none', 'auto'] as const,
     objectFit: ['contain', 'cover', 'fill', 'none', 'scale-down'] as const,
-    objectPosition: ['bottom', 'center', 'left', 'left bottom', 'left top', 'right', 'right bottom', 'right top', 'top'] as const,
+    objectPosition: [
+      'bottom',
+      'center',
+      'left',
+      'left bottom',
+      'left top',
+      'right',
+      'right bottom',
+      'right top',
+      'top'
+    ] as const,
     willChange: ['auto', 'scroll-position', 'contents', 'transform'] as const,
     zIndex: createArbitraryProperty((value: number) => ({zIndex: value}))
   },
@@ -854,16 +1071,36 @@ export const style = createTheme({
     margin: ['marginTop', 'marginBottom', 'marginStart', 'marginEnd'] as const,
     marginX: ['marginStart', 'marginEnd'] as const,
     marginY: ['marginTop', 'marginBottom'] as const,
-    scrollPadding: ['scrollPaddingTop', 'scrollPaddingBottom', 'scrollPaddingStart', 'scrollPaddingEnd'] as const,
+    scrollPadding: [
+      'scrollPaddingTop',
+      'scrollPaddingBottom',
+      'scrollPaddingStart',
+      'scrollPaddingEnd'
+    ] as const,
     scrollPaddingX: ['scrollPaddingStart', 'scrollPaddingEnd'] as const,
     scrollPaddingY: ['scrollPaddingTop', 'scrollPaddingBottom'] as const,
-    scrollMargin: ['scrollMarginTop', 'scrollMarginBottom', 'scrollMarginStart', 'scrollMarginEnd'] as const,
+    scrollMargin: [
+      'scrollMarginTop',
+      'scrollMarginBottom',
+      'scrollMarginStart',
+      'scrollMarginEnd'
+    ] as const,
     scrollMarginX: ['scrollMarginStart', 'scrollMarginEnd'] as const,
     scrollMarginY: ['scrollMarginTop', 'scrollMarginBottom'] as const,
-    borderWidth: ['borderTopWidth', 'borderBottomWidth', 'borderStartWidth', 'borderEndWidth'] as const,
+    borderWidth: [
+      'borderTopWidth',
+      'borderBottomWidth',
+      'borderStartWidth',
+      'borderEndWidth'
+    ] as const,
     borderXWidth: ['borderStartWidth', 'borderEndWidth'] as const,
     borderYWidth: ['borderTopWidth', 'borderBottomWidth'] as const,
-    borderRadius: ['borderTopStartRadius', 'borderTopEndRadius', 'borderBottomStartRadius', 'borderBottomEndRadius'] as const,
+    borderRadius: [
+      'borderTopStartRadius',
+      'borderTopEndRadius',
+      'borderBottomStartRadius',
+      'borderBottomEndRadius'
+    ] as const,
     borderTopRadius: ['borderTopStartRadius', 'borderTopEndRadius'] as const,
     borderBottomRadius: ['borderBottomStartRadius', 'borderBottomEndRadius'] as const,
     borderStartRadius: ['borderTopStartRadius', 'borderBottomStartRadius'] as const,

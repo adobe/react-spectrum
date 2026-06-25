@@ -11,8 +11,13 @@
  */
 
 import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
-import {Button, FieldError, Form, Input, Label, TextField} from '../';
+import {Button} from '../src/Button';
+import {FieldError} from '../src/FieldError';
+import {Form} from '../src/Form';
+import {Input} from '../src/Input';
+import {Label} from '../src/Label';
 import React from 'react';
+import {TextField} from '../src/TextField';
 import userEvent from '@testing-library/user-event';
 
 describe('Form', () => {
@@ -52,19 +57,27 @@ describe('Form', () => {
     expect(input).not.toHaveAttribute('aria-describedby');
 
     await user.click(getByRole('button'));
-    act(() => {form.checkValidity();});
+    act(() => {
+      form.checkValidity();
+    });
 
     expect(input).toHaveAttribute('aria-describedby');
-    expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Invalid name.');
+    expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent(
+      'Invalid name.'
+    );
     expect(input.validity.valid).toBe(false);
     expect(document.activeElement).toBe(input);
 
     // Clicking twice doesn't clear server errors.
     await user.click(getByRole('button'));
-    act(() => {form.checkValidity();});
+    act(() => {
+      form.checkValidity();
+    });
 
     expect(input).toHaveAttribute('aria-describedby');
-    expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Invalid name.');
+    expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent(
+      'Invalid name.'
+    );
     expect(input.validity.valid).toBe(false);
     expect(document.activeElement).toBe(input);
 
@@ -115,7 +128,6 @@ describe('Form', () => {
       );
     }
 
-
     let {getByTestId, getByRole} = render(<Test />);
 
     let form = getByTestId('form');
@@ -141,7 +153,6 @@ describe('Form', () => {
       );
     }
 
-
     let {getByTestId, getByRole} = render(<Test />);
 
     let form = getByTestId('form');
@@ -166,7 +177,6 @@ describe('Form', () => {
         </Form>
       );
     }
-
 
     let {getByTestId, getByRole} = render(<Test />);
 
@@ -209,7 +219,7 @@ describe('Form', () => {
 
     // Mock form.elements to include an element without validity property (simulates Web Component)
     let originalElements = form.elements;
-    let mockElement = {name: 'custom-element'};  // No validity property
+    let mockElement = {name: 'custom-element'}; // No validity property
     Object.defineProperty(form, 'elements', {
       get: () => ({
         length: originalElements.length + 1,

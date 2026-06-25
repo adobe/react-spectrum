@@ -1,7 +1,9 @@
-@import "./theme.css";
-@import "./TextField.css";
+@import './theme.css';
+@import './TextField.css';
 
 .react-aria-ComboBox {
+  display: flex;
+  flex-direction: column;
   color: var(--text-color);
   width: calc(var(--spacing) * 50);
 
@@ -24,7 +26,7 @@
   }
 }
 
-.combobox-popover[data-trigger=ComboBox] {
+.combobox-popover[data-trigger='ComboBox'] {
   width: var(--trigger-width);
   padding: 0;
 }

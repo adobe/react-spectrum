@@ -50,7 +50,7 @@ The `styles` prop accepts a limited set of CSS properties, including layout, spa
 
 ```tsx
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
-import {Button} from '@react-spectrum/s2';
+import {Button} from '@react-spectrum/s2/Button';
 
 <Button styles={style({marginStart: 8})}>Edit</Button>
 ```
@@ -155,7 +155,7 @@ const styles = style({
 Runtime conditions work well with render props in React Aria Components. If you inline styles, you’ll get autocomplete for available conditions.
 
 ```tsx
-import {Checkbox} from 'react-aria-components';
+import {Checkbox} from 'react-aria-components/Checkbox';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 <Checkbox
@@ -243,7 +243,7 @@ The style macro system includes built-in utilities for common patterns like focu
 ```tsx
 "use client";
 import {style, focusRing} from '@react-spectrum/s2/style' with {type: 'macro'};
-import {Button} from 'react-aria-components';
+import {Button} from 'react-aria-components/Button';
 
 const buttonStyle = style({
   ...focusRing(),
@@ -299,7 +299,7 @@ CSS resets are strongly discouraged. Global CSS selectors can unintentionally af
 If you want to build custom components that follow Spectrum styling, you can use the `style` macro with [React Aria Components](react-aria:).
 
 ```tsx
-import {Checkbox} from 'react-aria-components';
+import {Checkbox} from 'react-aria-components/Checkbox';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 <Checkbox

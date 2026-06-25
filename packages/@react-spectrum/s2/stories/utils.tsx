@@ -10,12 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
+import {Collection} from 'react-aria/Collection';
 
-import {Collection, Header, Heading, Picker, PickerItem, PickerSection, Provider} from '../src';
 import {fn} from 'storybook/test';
-import {Key, useLocale} from 'react-aria';
+import {Header, Heading} from '../src/Content';
+import {Key} from '@react-types/shared';
+import {Picker, PickerItem, PickerSection} from '../src/Picker';
 import {PropsWithChildren, ReactElement, ReactNode, useMemo, useState} from 'react';
+import {Provider} from '../src/Provider';
 import {style} from '../style' with {type: 'macro'};
+import {useLocale} from 'react-aria/I18nProvider';
 
 type StaticColor = 'black' | 'white' | 'auto' | undefined;
 
@@ -28,7 +32,11 @@ function getBackgroundColor(staticColor: StaticColor) {
   return undefined;
 }
 
-export function StaticColorProvider(props: {children: ReactNode, staticColor?: StaticColor}): ReactElement {
+export function StaticColorProvider(props: {
+  children: ReactNode;
+  staticColor?: StaticColor;
+  hideColorPicker?: boolean;
+}): ReactElement {
   let [autoBg, setAutoBg] = useState('#5131c4');
   return (
     <>
@@ -41,7 +49,7 @@ export function StaticColorProvider(props: {children: ReactNode, staticColor?: S
         }}>
         {props.children}
       </div>
-      {props.staticColor === 'auto' && (
+      {props.staticColor === 'auto' && !props.hideColorPicker && (
         <label
           className={style({
             display: 'flex',
@@ -51,10 +59,7 @@ export function StaticColorProvider(props: {children: ReactNode, staticColor?: S
             font: 'ui'
           })}>
           Background:
-          <input
-            type="color"
-            value={autoBg}
-            onChange={e => setAutoBg(e.target.value)} />
+          <input type="color" value={autoBg} onChange={e => setAutoBg(e.target.value)} />
         </label>
       )}
     </>
@@ -84,14 +89,49 @@ export function getActionArgs(args: string[]): any {
 // https://github.com/unicode-org/cldr/blob/22af90ae3bb04263f651323ce3d9a71747a75ffb/common/supplemental/supplementalData.xml#L4649-L4664
 const preferences = [
   {locale: '', label: 'Default', ordering: 'gregory'},
-  {label: 'Arabic (Algeria)', locale: 'ar-DZ', territories: 'DJ DZ EH ER IQ JO KM LB LY MA MR OM PS SD SY TD TN YE', ordering: 'gregory islamic islamic-civil islamic-tbla'},
-  {label: 'Arabic (United Arab Emirates)', locale: 'ar-AE', territories: 'AE BH KW QA', ordering: 'gregory islamic-umalqura islamic islamic-civil islamic-tbla'},
-  {label: 'Arabic (Egypt)', locale: 'AR-EG', territories: 'EG', ordering: 'gregory coptic islamic islamic-civil islamic-tbla'},
-  {label: 'Arabic (Saudi Arabia)', locale: 'ar-SA', territories: 'SA', ordering: 'islamic-umalqura gregory islamic islamic-rgsa'},
-  {label: 'Farsi (Afghanistan)', locale: 'fa-AF', territories: 'AF IR', ordering: 'persian gregory islamic islamic-civil islamic-tbla'},
+  {
+    label: 'Arabic (Algeria)',
+    locale: 'ar-DZ',
+    territories: 'DJ DZ EH ER IQ JO KM LB LY MA MR OM PS SD SY TD TN YE',
+    ordering: 'gregory islamic islamic-civil islamic-tbla'
+  },
+  {
+    label: 'Arabic (United Arab Emirates)',
+    locale: 'ar-AE',
+    territories: 'AE BH KW QA',
+    ordering: 'gregory islamic-umalqura islamic islamic-civil islamic-tbla'
+  },
+  {
+    label: 'Arabic (Egypt)',
+    locale: 'AR-EG',
+    territories: 'EG',
+    ordering: 'gregory coptic islamic islamic-civil islamic-tbla'
+  },
+  {
+    label: 'Arabic (Saudi Arabia)',
+    locale: 'ar-SA',
+    territories: 'SA',
+    ordering: 'islamic-umalqura gregory islamic islamic-rgsa'
+  },
+  {
+    label: 'Farsi (Afghanistan)',
+    locale: 'fa-AF',
+    territories: 'AF IR',
+    ordering: 'persian gregory islamic islamic-civil islamic-tbla'
+  },
   // {territories: 'CN CX HK MO SG', ordering: 'gregory chinese'},
-  {label: 'Amharic (Ethiopia)', locale: 'am-ET', territories: 'ET', ordering: 'gregory ethiopic ethioaa'},
-  {label: 'Hebrew (Israel)', locale: 'he-IL', territories: 'IL', ordering: 'gregory hebrew islamic islamic-civil islamic-tbla'},
+  {
+    label: 'Amharic (Ethiopia)',
+    locale: 'am-ET',
+    territories: 'ET',
+    ordering: 'gregory ethiopic ethioaa'
+  },
+  {
+    label: 'Hebrew (Israel)',
+    locale: 'he-IL',
+    territories: 'IL',
+    ordering: 'gregory hebrew islamic islamic-civil islamic-tbla'
+  },
   {label: 'Hindi (India)', locale: 'hi-IN', territories: 'IN', ordering: 'gregory indian'},
   {label: 'Japanese (Japan)', locale: 'ja-JP', territories: 'JP', ordering: 'gregory japanese'},
   // {territories: 'KR', ordering: 'gregory dangi'},
@@ -99,8 +139,8 @@ const preferences = [
   {label: 'Chinese (Taiwan)', locale: 'zh-TW', territories: 'TW', ordering: 'gregory roc chinese'}
 ];
 type Calendar = {
-  id: string,
-  name: string
+  id: string;
+  name: string;
 };
 const calendars: Calendar[] = [
   {id: 'gregory', name: 'Gregorian'},
@@ -124,8 +164,20 @@ export function CalendarSwitcher(props: PropsWithChildren): ReactElement {
   let {locale: defaultLocale} = useLocale();
 
   let pref = preferences.find(p => p.locale === locale)!;
-  let preferredCalendars: Calendar[] = useMemo(() => pref ? pref.ordering.split(' ').map(p => calendars.find(c => c.id === p)).filter(c => c !== undefined) : [calendars[0]], [pref]);
-  let otherCalendars: Calendar[] = useMemo(() => calendars.filter(c => !preferredCalendars.some(p => p!.id === c.id)), [preferredCalendars]);
+  let preferredCalendars: Calendar[] = useMemo(
+    () =>
+      pref
+        ? pref.ordering
+            .split(' ')
+            .map(p => calendars.find(c => c.id === p))
+            .filter(c => c !== undefined)
+        : [calendars[0]],
+    [pref]
+  );
+  let otherCalendars: Calendar[] = useMemo(
+    () => calendars.filter(c => !preferredCalendars.some(p => p!.id === c.id)),
+    [preferredCalendars]
+  );
 
   let updateLocale = locale => {
     setLocale(locale);
@@ -135,9 +187,14 @@ export function CalendarSwitcher(props: PropsWithChildren): ReactElement {
     }
   };
   return (
-    <div className={style({display: 'flex', flexDirection: 'column', gap: 16, alignItems: 'center'})}>
+    <div
+      className={style({display: 'flex', flexDirection: 'column', gap: 16, alignItems: 'center'})}>
       <div className={style({display: 'flex', flexDirection: 'row', gap: 16})}>
-        <Picker label="Locale" items={preferences} selectedKey={locale} onSelectionChange={updateLocale}>
+        <Picker
+          label="Locale"
+          items={preferences}
+          selectedKey={locale}
+          onSelectionChange={updateLocale}>
           {item => <PickerItem id={item.locale}>{item.label}</PickerItem>}
         </Picker>
         <Picker label="Calendar" selectedKey={calendar} onSelectionChange={setCalendar}>
@@ -159,7 +216,11 @@ export function CalendarSwitcher(props: PropsWithChildren): ReactElement {
           </PickerSection>
         </Picker>
       </div>
-      <Provider locale={(locale || defaultLocale) + (calendar && calendar !== preferredCalendars[0].id ? '-u-ca-' + calendar : '')}>
+      <Provider
+        locale={
+          (locale || defaultLocale) +
+          (calendar && calendar !== preferredCalendars[0].id ? '-u-ca-' + calendar : '')
+        }>
         {props.children}
       </Provider>
     </div>

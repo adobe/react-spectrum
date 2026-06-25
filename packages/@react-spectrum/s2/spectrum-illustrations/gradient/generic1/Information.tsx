@@ -15,7 +15,7 @@ import Information_M from 'illustration:./S2_fill_information_generic1_96.svg';
 import Information_S from 'illustration:./S2_fill_information_generic1_48.svg';
 import {ReactNode} from 'react';
 import {IconProps, IllustrationContext} from '../../../src/Icon';
-import {useContextProps} from 'react-aria-components';
+import {useContextProps} from 'react-aria-components/slots';
 
 export default function Information(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);

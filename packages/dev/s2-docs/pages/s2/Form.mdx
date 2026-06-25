@@ -14,7 +14,10 @@ export const description = 'Provides layout and alignment for a grouping of fiel
 
 ```tsx render docs={docs.exports.Form} links={docs.links} props={['size', 'labelPosition', 'labelAlign', 'necessityIndicator', 'isRequired', 'isDisabled', 'isEmphasized']} type="s2"
 "use client";
-import {Form, TextField, Checkbox, ButtonGroup, Button} from '@react-spectrum/s2';
+import {Form} from '@react-spectrum/s2/Form';
+import {TextField} from '@react-spectrum/s2/TextField';
+import {Checkbox} from '@react-spectrum/s2/Checkbox';
+import {ButtonGroup, Button} from '@react-spectrum/s2/ButtonGroup';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 <Form/* PROPS */>
@@ -36,7 +39,9 @@ When using React 19, use the `action` prop to handle form submission. This recei
 
 ```tsx render
 "use client";
-import {Form, TextField, Button} from '@react-spectrum/s2';
+import {Form} from '@react-spectrum/s2/Form';
+import {TextField} from '@react-spectrum/s2/TextField';
+import {Button} from '@react-spectrum/s2/Button';
 
 <Form
   /*- begin highlight -*/
@@ -52,7 +57,9 @@ import {Form, TextField, Button} from '@react-spectrum/s2';
 
 ```tsx render
 "use client";
-import {Form, TextField, Button} from '@react-spectrum/s2';
+import {Form} from '@react-spectrum/s2/Form';
+import {TextField} from '@react-spectrum/s2/TextField';
+import {Button} from '@react-spectrum/s2/Button';
 
 <Form
   /*- begin highlight -*/
@@ -83,7 +90,9 @@ Use validation props on each form field to prevent submission of invalid values.
 
 ```tsx render docs={docs.exports.Form} links={docs.links} props={['validationBehavior']} type="s2" wide
 "use client";
-import {Form, TextField, Button} from '@react-spectrum/s2';
+import {Form} from '@react-spectrum/s2/Form';
+import {TextField} from '@react-spectrum/s2/TextField';
+import {Button} from '@react-spectrum/s2/Button';
 
 <Form/* PROPS */>
   <TextField
@@ -103,7 +112,8 @@ Use the `validationErrors` prop to provide server validation errors to the field
 
 ```tsx render
 "use client";
-import {Form, TextField} from '@react-spectrum/s2';
+import {Form} from '@react-spectrum/s2/Form';
+import {TextField} from '@react-spectrum/s2/TextField';
 
 <Form
   /*- begin highlight -*/
@@ -125,7 +135,10 @@ By default, after a user submits a form with validation errors, the first invali
 
 ```tsx render
 "use client";
-import {Form, TextField, Button, InlineAlert, Heading, Content} from '@react-spectrum/s2';
+import {Form} from '@react-spectrum/s2/Form';
+import {TextField} from '@react-spectrum/s2/TextField';
+import {Button} from '@react-spectrum/s2/Button';
+import {InlineAlert, Heading, Content} from '@react-spectrum/s2/InlineAlert';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'}
 import {useState} from 'react';
 

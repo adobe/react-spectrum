@@ -10,41 +10,55 @@
  * governing permissions and limitations under the License.
  */
 
-import {ColorSwatchPicker as AriaColorSwatchPicker, ColorSwatchPickerItem as AriaColorSwatchPickerItem, Color, ContextValue, SlotProps} from 'react-aria-components';
+import {
+  ColorSwatchPicker as AriaColorSwatchPicker,
+  ColorSwatchPickerItem as AriaColorSwatchPickerItem,
+  Color
+} from 'react-aria-components/ColorSwatchPicker';
+
 import {ColorSwatchProps, InternalColorSwatchContext} from './ColorSwatch';
+import {ContextValue, SlotProps} from 'react-aria-components/slots';
 import {createContext, forwardRef, ReactElement, ReactNode} from 'react';
 import {DOMRef, DOMRefValue, ValueBase} from '@react-types/shared';
 import {focusRing, space, style} from '../style' with {type: 'macro'};
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
-import {useDOMRef} from '@react-spectrum/utils';
+import {useDOMRef} from './useDOMRef';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface ColorSwatchPickerProps extends ValueBase<string | Color, Color>, StyleProps, SlotProps {
+export interface ColorSwatchPickerProps
+  extends ValueBase<string | Color, Color>, StyleProps, SlotProps {
   /** The ColorSwatches within the ColorSwatchPicker. */
-  children: ReactNode,
+  children: ReactNode;
   /**
    * The amount of padding between the swatches.
+   *
    * @default 'regular'
    */
-  density?: 'compact' | 'regular' | 'spacious',
+  density?: 'compact' | 'regular' | 'spacious';
   /**
    * The size of the color swatches.
+   *
    * @default 'M'
    */
-  size?: 'XS' | 'S' | 'M' | 'L',
+  size?: 'XS' | 'S' | 'M' | 'L';
   /**
    * The corner rounding of the color swatches.
+   *
    * @default 'none'
    */
-  rounding?: 'none' | 'default' | 'full'
+  rounding?: 'none' | 'default' | 'full';
 }
 
-export const ColorSwatchPickerContext = createContext<ContextValue<Partial<ColorSwatchPickerProps>, DOMRefValue<HTMLDivElement>>>(null);
+export const ColorSwatchPickerContext =
+  createContext<ContextValue<Partial<ColorSwatchPickerProps>, DOMRefValue<HTMLDivElement>>>(null);
 
 /**
  * A ColorSwatchPicker displays a list of color swatches and allows a user to select one of them.
  */
-export const ColorSwatchPicker = forwardRef(function ColorSwatchPicker(props: ColorSwatchPickerProps, ref: DOMRef<HTMLDivElement>) {
+export const ColorSwatchPicker = forwardRef(function ColorSwatchPicker(
+  props: ColorSwatchPickerProps,
+  ref: DOMRef<HTMLDivElement>
+) {
   [props, ref] = useSpectrumContextProps(props, ref, ColorSwatchPickerContext);
   let {
     density = 'regular',
@@ -59,17 +73,24 @@ export const ColorSwatchPicker = forwardRef(function ColorSwatchPicker(props: Co
     <AriaColorSwatchPicker
       {...otherProps}
       ref={domRef}
-      className={UNSAFE_className + style({
-        display: 'flex',
-        flexWrap: 'wrap',
-        gap: {
-          density: {
-            compact: space(2),
-            regular: 4,
-            spacious: space(6)
-          }
-        }
-      }, getAllowedOverrides())({density}, props.styles)}>
+      className={
+        UNSAFE_className +
+        style(
+          {
+            display: 'flex',
+            flexWrap: 'wrap',
+            gap: {
+              density: {
+                compact: space(2),
+                regular: 4,
+                spacious: space(6)
+              }
+            }
+          },
+          getAllowedOverrides()
+        )({density}, props.styles)
+      }>
+      {/* oxlint-disable-next-line react/react-compiler */}
       <InternalColorSwatchContext.Provider value={{useWrapper, size, rounding}}>
         {props.children}
       </InternalColorSwatchContext.Provider>
@@ -81,40 +102,45 @@ function useWrapper(swatch: ReactElement, color: Color, rounding: ColorSwatchPro
   return (
     <AriaColorSwatchPickerItem
       color={color}
-      className={renderProps => style({
-        ...focusRing(),
-        position: 'relative',
-        borderRadius: {
-          rounding: {
-            none: 'none',
-            default: 'sm',
-            full: 'full'
-          }
-        },
-        disableTapHighlight: true
-      })({...renderProps, rounding})}>
-      {({isSelected}) => (<>
-        {swatch}
-        {isSelected && (
-          <div
-            aria-hidden
-            className={style({
-              position: 'absolute',
-              pointerEvents: 'none',
-              inset: 0,
-              boxSizing: 'border-box',
-              borderColor: 'gray-900',
-              borderStyle: 'solid',
-              borderWidth: 2,
-              outlineColor: 'gray-25',
-              outlineStyle: 'solid',
-              outlineWidth: 2,
-              outlineOffset: -4,
-              forcedColorAdjust: 'none',
-              borderRadius: 'inherit'
-            })} />
-        )}
-      </>)}
+      className={renderProps =>
+        style({
+          ...focusRing(),
+          position: 'relative',
+          borderRadius: {
+            rounding: {
+              none: 'none',
+              default: 'sm',
+              full: 'full'
+            }
+          },
+          disableTapHighlight: true
+        })({...renderProps, rounding})
+      }>
+      {({isSelected}) => (
+        <>
+          {swatch}
+          {isSelected && (
+            <div
+              aria-hidden
+              className={style({
+                position: 'absolute',
+                pointerEvents: 'none',
+                inset: 0,
+                boxSizing: 'border-box',
+                borderColor: 'gray-900',
+                borderStyle: 'solid',
+                borderWidth: 2,
+                outlineColor: 'gray-25',
+                outlineStyle: 'solid',
+                outlineWidth: 2,
+                outlineOffset: -4,
+                forcedColorAdjust: 'none',
+                borderRadius: 'inherit'
+              })}
+            />
+          )}
+        </>
+      )}
     </AriaColorSwatchPickerItem>
   );
 }

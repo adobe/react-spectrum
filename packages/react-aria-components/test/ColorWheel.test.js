@@ -10,7 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {ColorThumb, ColorWheel, ColorWheelContext} from '../';
+import {ColorThumb} from '../src/ColorThumb';
+
+import {ColorWheel, ColorWheelContext} from '../src/ColorWheel';
 import {fireEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
@@ -21,7 +23,8 @@ let TestColorWheel = ({wheelProps, thumbProps}) => (
   </ColorWheel>
 );
 
-let renderColorWheel = (wheelProps, thumbProps) => render(<TestColorWheel wheelProps={wheelProps} thumbProps={thumbProps} />);
+let renderColorWheel = (wheelProps, thumbProps) =>
+  render(<TestColorWheel wheelProps={wheelProps} thumbProps={thumbProps} />);
 
 describe('ColorWheel', () => {
   let user;
@@ -34,7 +37,9 @@ describe('ColorWheel', () => {
     let slider = getByRole('slider');
     expect(slider.parentElement.parentElement).toHaveAttribute('class', 'react-aria-ColorWheel');
     expect(slider).toHaveAttribute('aria-label', 'Hue');
-    expect(slider.parentElement.parentElement.querySelector('.react-aria-ColorThumb')).toBeInTheDocument();
+    expect(
+      slider.parentElement.parentElement.querySelector('.react-aria-ColorThumb')
+    ).toBeInTheDocument();
   });
 
   it('should render a color wheel with custom class', () => {
@@ -50,9 +55,7 @@ describe('ColorWheel', () => {
   });
 
   it('should support custom render function', () => {
-    let {getByRole} = renderColorWheel(
-      {render: props => <div {...props} data-custom="true" />}
-    );
+    let {getByRole} = renderColorWheel({render: props => <div {...props} data-custom="true" />});
     let wrapper = getByRole('slider').parentElement.parentElement;
     expect(wrapper).toHaveAttribute('data-custom', 'true');
   });
@@ -83,7 +86,10 @@ describe('ColorWheel', () => {
   });
 
   it('should support focus ring', async () => {
-    let {getByRole} = renderColorWheel({}, {className: ({isFocusVisible}) => `thumb ${isFocusVisible ? 'focus' : ''}`});
+    let {getByRole} = renderColorWheel(
+      {},
+      {className: ({isFocusVisible}) => `thumb ${isFocusVisible ? 'focus' : ''}`}
+    );
     let slider = getByRole('slider');
     let thumb = slider.closest('.thumb');
 
@@ -101,7 +107,10 @@ describe('ColorWheel', () => {
   });
 
   it('should support dragging state', () => {
-    let {getByRole} = renderColorWheel({}, {className: ({isDragging}) => `thumb ${isDragging ? 'dragging' : ''}`});
+    let {getByRole} = renderColorWheel(
+      {},
+      {className: ({isDragging}) => `thumb ${isDragging ? 'dragging' : ''}`}
+    );
     let thumb = getByRole('slider').closest('.thumb');
 
     expect(thumb).not.toHaveAttribute('data-dragging');
@@ -120,7 +129,15 @@ describe('ColorWheel', () => {
     let hoverStartThumbSpy = jest.fn();
     let hoverChangeThumbSpy = jest.fn();
     let hoverEndThumbSpy = jest.fn();
-    let {getByRole} = renderColorWheel({}, {className: ({isHovered}) => `thumb ${isHovered ? 'hovered' : ''}`, onHoverStart: hoverStartThumbSpy, onHoverChange: hoverChangeThumbSpy, onHoverEnd: hoverEndThumbSpy});
+    let {getByRole} = renderColorWheel(
+      {},
+      {
+        className: ({isHovered}) => `thumb ${isHovered ? 'hovered' : ''}`,
+        onHoverStart: hoverStartThumbSpy,
+        onHoverChange: hoverChangeThumbSpy,
+        onHoverEnd: hoverEndThumbSpy
+      }
+    );
     let thumb = getByRole('slider').closest('.thumb');
 
     expect(thumb).not.toHaveAttribute('data-hovered');
@@ -140,7 +157,10 @@ describe('ColorWheel', () => {
   });
 
   it('should support disabled state', () => {
-    let {getByRole} = renderColorWheel({isDisabled: true, className: ({isDisabled}) => isDisabled ? 'disabled' : ''}, {className: ({isDisabled}) => `thumb ${isDisabled ? 'disabled' : ''}`});
+    let {getByRole} = renderColorWheel(
+      {isDisabled: true, className: ({isDisabled}) => (isDisabled ? 'disabled' : '')},
+      {className: ({isDisabled}) => `thumb ${isDisabled ? 'disabled' : ''}`}
+    );
     let slider = getByRole('slider');
     let wrapper = slider.parentElement.parentElement;
     let thumb = slider.closest('.thumb');

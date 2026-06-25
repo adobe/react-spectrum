@@ -10,8 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Heading} from 'react-aria-components';
+import {Button} from '../src/Button';
+
 import {Disclosure, DisclosurePanel} from '../src/Disclosure';
+import {Heading} from '../src/Heading';
 import {Meta, StoryFn} from '@storybook/react';
 import React from 'react';
 import './styles.css';
@@ -23,7 +25,7 @@ export default {
 
 export type DisclosureStory = StoryFn<typeof Disclosure>;
 
-export const DisclosureExample: DisclosureStory = (args) => (
+export const DisclosureExample: DisclosureStory = args => (
   <Disclosure {...args}>
     {({isExpanded}) => (
       <>
@@ -38,7 +40,7 @@ export const DisclosureExample: DisclosureStory = (args) => (
   </Disclosure>
 );
 
-export const DisclosureControlledExample: DisclosureStory = (args) => {
+export const DisclosureControlledExample: DisclosureStory = args => {
   let [isExpanded, setExpanded] = React.useState(false);
   return (
     <Disclosure {...args} isExpanded={isExpanded} onExpandedChange={setExpanded}>

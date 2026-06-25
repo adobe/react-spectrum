@@ -10,9 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {Link, LinkContext, RouterProvider} from '../';
+import {Link, LinkContext} from '../src/Link';
+
 import {pointerMap, render} from '@react-spectrum/test-utils-internal';
 import React from 'react';
+import {RouterProvider} from 'react-aria/private/utils/openLink';
 import userEvent from '@testing-library/user-event';
 
 describe('Link', () => {
@@ -47,7 +49,7 @@ describe('Link', () => {
   });
 
   it('should support render props', async () => {
-    let {getByRole} = render(<Link>{({isHovered}) => isHovered ? 'Hovered' : 'Test'}</Link>);
+    let {getByRole} = render(<Link>{({isHovered}) => (isHovered ? 'Hovered' : 'Test')}</Link>);
     let link = getByRole('link');
     expect(link).toHaveTextContent('Test');
     await user.hover(link);
@@ -55,14 +57,16 @@ describe('Link', () => {
   });
 
   it('should support custom render function', () => {
-    // eslint-disable-next-line jsx-a11y/anchor-has-content
-    let {getByRole} =  render(<Link href="#foo" render={props => <a {...props} data-custom="true" />} />);
+    let {getByRole} = render(
+      // eslint-disable-next-line jsx-a11y/anchor-has-content
+      <Link href="#foo" render={props => <a {...props} data-custom="true" />} />
+    );
     let link = getByRole('link');
     expect(link).toHaveAttribute('data-custom', 'true');
   });
 
   it('should support custom render function without href', () => {
-    let {getByRole} =  render(<Link render={props => <span {...props} data-custom="true" />} />);
+    let {getByRole} = render(<Link render={props => <span {...props} data-custom="true" />} />);
     let link = getByRole('link');
     expect(link).toHaveAttribute('data-custom', 'true');
   });
@@ -90,7 +94,15 @@ describe('Link', () => {
     let hoverStartSpy = jest.fn();
     let hoverChangeSpy = jest.fn();
     let hoverEndSpy = jest.fn();
-    let {getByRole} = render(<Link className={({isHovered}) => isHovered ? 'hover' : ''} onHoverStart={hoverStartSpy} onHoverChange={hoverChangeSpy} onHoverEnd={hoverEndSpy}>Test</Link>);
+    let {getByRole} = render(
+      <Link
+        className={({isHovered}) => (isHovered ? 'hover' : '')}
+        onHoverStart={hoverStartSpy}
+        onHoverChange={hoverChangeSpy}
+        onHoverEnd={hoverEndSpy}>
+        Test
+      </Link>
+    );
     let link = getByRole('link');
 
     expect(link).not.toHaveAttribute('data-hovered');
@@ -110,7 +122,9 @@ describe('Link', () => {
   });
 
   it('should support focus ring', async () => {
-    let {getByRole} = render(<Link className={({isFocusVisible}) => isFocusVisible ? 'focus' : ''}>Test</Link>);
+    let {getByRole} = render(
+      <Link className={({isFocusVisible}) => (isFocusVisible ? 'focus' : '')}>Test</Link>
+    );
     let link = getByRole('link');
 
     expect(link).not.toHaveAttribute('data-focus-visible');
@@ -130,7 +144,15 @@ describe('Link', () => {
     let onPress = jest.fn();
     let onClick = jest.fn();
     let onClickCapture = jest.fn();
-    let {getByRole} = render(<Link className={({isPressed}) => isPressed ? 'pressed' : ''} onPress={onPress} onClick={onClick} onClickCapture={onClickCapture}>Test</Link>);
+    let {getByRole} = render(
+      <Link
+        className={({isPressed}) => (isPressed ? 'pressed' : '')}
+        onPress={onPress}
+        onClick={onClick}
+        onClickCapture={onClickCapture}>
+        Test
+      </Link>
+    );
     let link = getByRole('link');
 
     expect(link).not.toHaveAttribute('data-pressed');
@@ -150,7 +172,11 @@ describe('Link', () => {
   });
 
   it('should support disabled state', () => {
-    let {getByRole} = render(<Link isDisabled className={({isDisabled}) => isDisabled ? 'disabled' : ''}>Test</Link>);
+    let {getByRole} = render(
+      <Link isDisabled className={({isDisabled}) => (isDisabled ? 'disabled' : '')}>
+        Test
+      </Link>
+    );
     let link = getByRole('link');
 
     expect(link).toHaveAttribute('aria-disabled', 'true');
@@ -162,7 +188,9 @@ describe('Link', () => {
     let useHref = href => '/base' + href;
     let {getByRole} = render(
       <RouterProvider navigate={navigate} useHref={useHref}>
-        <Link href="/foo" routerOptions={{foo: 'bar'}}>Test</Link>
+        <Link href="/foo" routerOptions={{foo: 'bar'}}>
+          Test
+        </Link>
       </RouterProvider>
     );
     let link = getByRole('link');
@@ -177,7 +205,9 @@ describe('Link', () => {
     let onClick = jest.fn();
     let {getByRole} = render(
       <RouterProvider navigate={navigate} useHref={useHref}>
-        <Link isDisabled href="/foo" routerOptions={{foo: 'bar'}} onClick={onClick}>Test</Link>
+        <Link isDisabled href="/foo" routerOptions={{foo: 'bar'}} onClick={onClick}>
+          Test
+        </Link>
       </RouterProvider>
     );
     let link = getByRole('link');

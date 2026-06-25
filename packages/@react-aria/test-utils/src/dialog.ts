@@ -16,9 +16,10 @@ import {waitFor, within} from '@testing-library/dom';
 
 interface DialogOpenOpts {
   /**
-   * What interaction type to use when opening the dialog. Defaults to the interaction type set on the tester.
+   * What interaction type to use when opening the dialog. Defaults to the interaction type set on
+   * the tester.
    */
-  interactionType?: UserOpts['interactionType']
+  interactionType?: UserOpts['interactionType'];
 }
 
 export class DialogTester {
@@ -34,13 +35,17 @@ export class DialogTester {
     this._interactionType = interactionType || 'mouse';
     this._overlayType = overlayType || 'modal';
 
-    // Handle case where element provided is a wrapper of the trigger button
-    let trigger = within(root).queryByRole('button');
-    if (trigger) {
-      this._trigger = trigger;
+    // Handle case where element provided is a wrapper of the trigger button.
+    let buttons = within(root).queryAllByRole('button');
+    let triggerButton: HTMLElement | undefined;
+    if (buttons.length === 0) {
+      triggerButton = root;
+    } else if (buttons.length === 1) {
+      triggerButton = buttons[0];
     } else {
-      this._trigger = root;
+      triggerButton = buttons.find(button => button.hasAttribute('aria-haspopup'));
     }
+    this._trigger = triggerButton ?? root;
   }
 
   /**
@@ -54,10 +59,8 @@ export class DialogTester {
    * Opens the dialog. Defaults to using the interaction type set on the dialog tester.
    */
   async open(opts: DialogOpenOpts = {}): Promise<void> {
-    let {
-      interactionType = this._interactionType
-    } = opts;
-    let trigger = this.trigger;
+    let {interactionType = this._interactionType} = opts;
+    let trigger = this.getTrigger();
     if (!trigger.hasAttribute('disabled')) {
       if (interactionType === 'mouse') {
         await this.user.click(trigger);
@@ -93,16 +96,24 @@ export class DialogTester {
         await waitFor(() => {
           dialog = document.querySelector('[role=dialog], [role=alertdialog]');
           if (dialog == null) {
-            throw new Error('No dialog of type role="dialog" or role="alertdialog" found after pressing the trigger.');
+            throw new Error(
+              'No dialog of type role="dialog" or role="alertdialog" found after pressing the trigger.'
+            );
           } else {
             return true;
           }
         });
 
-        if (dialog && document.activeElement !== this._trigger && dialog.contains(document.activeElement)) {
+        if (
+          dialog &&
+          document.activeElement !== this._trigger &&
+          dialog.contains(document.activeElement)
+        ) {
           this._dialog = dialog;
         } else {
-          throw new Error('New modal dialog doesnt contain the active element OR the active element is still the trigger. Uncertain if the proper modal dialog was found');
+          throw new Error(
+            'New modal dialog doesnt contain the active element OR the active element is still the trigger. Uncertain if the proper modal dialog was found'
+          );
         }
       }
     }
@@ -129,7 +140,7 @@ export class DialogTester {
   /**
    * Returns the dialog's trigger.
    */
-  get trigger(): HTMLElement {
+  getTrigger(): HTMLElement {
     if (!this._trigger) {
       throw new Error('No trigger element found for dialog.');
     }
@@ -140,7 +151,7 @@ export class DialogTester {
   /**
    * Returns the dialog if present.
    */
-  get dialog(): HTMLElement | null {
+  getDialog(): HTMLElement | null {
     return this._dialog && document.contains(this._dialog) ? this._dialog : null;
   }
 }

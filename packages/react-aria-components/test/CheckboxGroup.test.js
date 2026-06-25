@@ -11,38 +11,78 @@
  */
 
 import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
-import {Checkbox, CheckboxGroup, CheckboxGroupContext, FieldError, Label, Text} from '../';
-import React from 'react';
+import {
+  Checkbox as AriaCheckbox,
+  CheckboxButton,
+  CheckboxField,
+  CheckboxGroup,
+  CheckboxGroupContext
+} from '../src/Checkbox';
+import {FieldError} from '../src/FieldError';
+import {Label} from '../src/Label';
+import React, {forwardRef} from 'react';
+import {Text} from '../src/Text';
 import userEvent from '@testing-library/user-event';
 
-let TestCheckboxGroup = ({groupProps, checkboxProps}) => (
-  <CheckboxGroup {...groupProps}>
-    <Label>Test</Label>
-    <Checkbox {...checkboxProps} value="a">A</Checkbox>
-    <Checkbox {...checkboxProps} value="b">B</Checkbox>
-    <Checkbox {...checkboxProps} value="c">C</Checkbox>
-  </CheckboxGroup>
-);
+const CheckboxExample = forwardRef(function CheckboxExample(props, ref) {
+  return (
+    <CheckboxField {...props} ref={ref}>
+      <CheckboxButton
+        className={props.buttonClassName}
+        onHoverStart={props.onHoverStart}
+        onHoverEnd={props.onHoverEnd}
+        onHoverChange={props.onHoverChange}>
+        {props.children}
+      </CheckboxButton>
+      {props.description && <Text slot="description">{props.description}</Text>}
+      <FieldError />
+    </CheckboxField>
+  );
+});
 
-let renderGroup = (groupProps, checkboxProps) => render(<TestCheckboxGroup {...{groupProps, checkboxProps}} />);
+const CheckboxLegacy = forwardRef(function CheckboxLegacy(props, ref) {
+  return <AriaCheckbox {...props} ref={ref} className={props.className || props.buttonClassName} />;
+});
 
-describe('CheckboxGroup', () => {
+describe.each(['CheckboxField', 'Checkbox'])('CheckboxGroup with %s', comp => {
   let user;
   beforeAll(() => {
     user = userEvent.setup({delay: null, pointerMap});
   });
+
+  let Checkbox = comp === 'CheckboxField' ? CheckboxExample : CheckboxLegacy;
+  let findRoot = el =>
+    comp === 'CheckboxField' ? el.closest('label').parentElement : el.closest('label');
+  let TestCheckboxGroup = ({groupProps, checkboxProps}) => (
+    <CheckboxGroup {...groupProps}>
+      <Label>Test</Label>
+      <Checkbox {...checkboxProps} value="a">
+        A
+      </Checkbox>
+      <Checkbox {...checkboxProps} value="b">
+        B
+      </Checkbox>
+      <Checkbox {...checkboxProps} value="c">
+        C
+      </Checkbox>
+    </CheckboxGroup>
+  );
+
+  let renderGroup = (groupProps, checkboxProps) =>
+    render(<TestCheckboxGroup {...{groupProps, checkboxProps}} />);
 
   it('should render a checkbox group with default classes', () => {
     let {getByRole, getAllByRole} = renderGroup();
     let group = getByRole('group');
     expect(group).toHaveAttribute('class', 'react-aria-CheckboxGroup');
     expect(group).toHaveAttribute('aria-labelledby');
-    expect(document.getElementById(group.getAttribute('aria-labelledby'))).toHaveTextContent('Test');
+    expect(document.getElementById(group.getAttribute('aria-labelledby'))).toHaveTextContent(
+      'Test'
+    );
 
     let checkboxes = getAllByRole('checkbox');
     for (let checkbox of checkboxes) {
-      let label = checkbox.closest('label');
-      expect(label).toHaveAttribute('class', 'react-aria-Checkbox');
+      expect(findRoot(checkbox)).toHaveAttribute('class', `react-aria-${comp}`);
     }
   });
 
@@ -52,8 +92,7 @@ describe('CheckboxGroup', () => {
     expect(group).toHaveAttribute('class', 'group');
     let checkboxes = getAllByRole('checkbox');
     for (let checkbox of checkboxes) {
-      let label = checkbox.closest('label');
-      expect(label).toHaveAttribute('class', 'checkbox');
+      expect(findRoot(checkbox)).toHaveAttribute('class', 'checkbox');
     }
   });
 
@@ -82,17 +121,21 @@ describe('CheckboxGroup', () => {
   });
 
   it('should support disabled state on checkbox', () => {
-    let {getAllByRole} = renderGroup({}, {isDisabled: true, className: ({isDisabled}) => isDisabled ? 'disabled' : ''});
+    let {getAllByRole} = renderGroup(
+      {},
+      {isDisabled: true, className: ({isDisabled}) => (isDisabled ? 'disabled' : '')}
+    );
     let checkbox = getAllByRole('checkbox')[0];
     let label = checkbox.closest('label');
 
     expect(checkbox).toBeDisabled();
     expect(label).toHaveAttribute('data-disabled', 'true');
-    expect(label).toHaveClass('disabled');
+    expect(findRoot(checkbox)).toHaveAttribute('data-disabled', 'true');
+    expect(findRoot(checkbox)).toHaveClass('disabled');
   });
 
   it('should support disabled state on group', () => {
-    let className = ({isDisabled}) => isDisabled ? 'disabled' : '';
+    let className = ({isDisabled}) => (isDisabled ? 'disabled' : '');
     let {getByRole, getAllByRole} = renderGroup({isDisabled: true, className}, {className});
     let group = getByRole('group');
     let checkbox = getAllByRole('checkbox')[0];
@@ -103,12 +146,16 @@ describe('CheckboxGroup', () => {
 
     expect(checkbox).toBeDisabled();
     expect(label).toHaveAttribute('data-disabled', 'true');
-    expect(label).toHaveClass('disabled');
+    expect(findRoot(checkbox)).toHaveAttribute('data-disabled', 'true');
+    expect(findRoot(checkbox)).toHaveClass('disabled');
   });
 
   it('should support selected state', async () => {
     let onChange = jest.fn();
-    let {getAllByRole} = renderGroup({onChange}, {className: ({isSelected}) => isSelected ? 'selected' : ''});
+    let {getAllByRole} = renderGroup(
+      {onChange},
+      {className: ({isSelected}) => (isSelected ? 'selected' : '')}
+    );
     let checkboxes = getAllByRole('checkbox');
     let label = checkboxes[0].closest('label');
 
@@ -120,30 +167,34 @@ describe('CheckboxGroup', () => {
     expect(onChange).toHaveBeenLastCalledWith(['a']);
     expect(checkboxes[0]).toBeChecked();
     expect(label).toHaveAttribute('data-selected', 'true');
-    expect(label).toHaveClass('selected');
+    expect(findRoot(checkboxes[0])).toHaveAttribute('data-selected', 'true');
+    expect(findRoot(checkboxes[0])).toHaveClass('selected');
 
     await user.click(checkboxes[0]);
     expect(onChange).toHaveBeenLastCalledWith([]);
     expect(checkboxes[0]).not.toBeChecked();
     expect(label).not.toHaveAttribute('data-selected');
-    expect(label).not.toHaveClass('selected');
+    expect(findRoot(checkboxes[0])).not.toHaveAttribute('data-selected');
+    expect(findRoot(checkboxes[0])).not.toHaveClass('selected');
   });
 
   it('should support read only state', () => {
-    let className = ({isReadOnly}) => isReadOnly ? 'readonly' : '';
+    let className = ({isReadOnly}) => (isReadOnly ? 'readonly' : '');
     let {getByRole, getAllByRole} = renderGroup({isReadOnly: true, className}, {className});
     let group = getByRole('group');
-    let label = getAllByRole('checkbox')[0].closest('label');
+    let checkbox = getAllByRole('checkbox')[0];
+    let label = checkbox.closest('label');
 
     expect(group).toHaveAttribute('data-readonly');
     expect(group).toHaveClass('readonly');
 
     expect(label).toHaveAttribute('data-readonly');
-    expect(label).toHaveClass('readonly');
+    expect(findRoot(checkbox)).toHaveAttribute('data-readonly');
+    expect(findRoot(checkbox)).toHaveClass('readonly');
   });
 
   it('should support validation state', () => {
-    let className = ({isInvalid}) => isInvalid ? 'invalid' : null;
+    let className = ({isInvalid}) => (isInvalid ? 'invalid' : null);
     let {getByRole, getAllByRole} = renderGroup({isInvalid: true, className}, {className});
     let group = getByRole('group');
     let checkbox = getAllByRole('checkbox')[0];
@@ -153,12 +204,16 @@ describe('CheckboxGroup', () => {
     expect(group).toHaveClass('invalid');
 
     expect(label).toHaveAttribute('data-invalid', 'true');
-    expect(label).toHaveClass('invalid');
+    expect(findRoot(checkbox)).toHaveAttribute('data-invalid', 'true');
+    expect(findRoot(checkbox)).toHaveClass('invalid');
   });
 
   it('should support required state', () => {
-    let className = ({isRequired}) => isRequired ? 'required' : '';
-    let {getByRole, getAllByRole} = renderGroup({isRequired: true, className}, {isRequired: true, className});
+    let className = ({isRequired}) => (isRequired ? 'required' : '');
+    let {getByRole, getAllByRole} = renderGroup(
+      {isRequired: true, className},
+      {isRequired: true, className}
+    );
     let group = getByRole('group');
     let checkbox = getAllByRole('checkbox')[0];
     let label = checkbox.closest('label');
@@ -167,14 +222,17 @@ describe('CheckboxGroup', () => {
     expect(group).toHaveClass('required');
 
     expect(label).toHaveAttribute('data-required', 'true');
-    expect(label).toHaveClass('required');
+    expect(findRoot(checkbox)).toHaveAttribute('data-required', 'true');
+    expect(findRoot(checkbox)).toHaveClass('required');
   });
 
   it('supports help text', () => {
     let {getByRole, getAllByRole} = render(
       <CheckboxGroup isInvalid>
         <Label>Test</Label>
-        <Checkbox value="a">A</Checkbox>
+        <Checkbox value="a" description="hello">
+          A
+        </Checkbox>
         <Text slot="description">Description</Text>
         <Text slot="errorMessage">Error</Text>
       </CheckboxGroup>
@@ -182,11 +240,23 @@ describe('CheckboxGroup', () => {
 
     let group = getByRole('group');
     expect(group).toHaveAttribute('aria-describedby');
-    expect(group.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ')).toBe('Description Error');
+    expect(
+      group
+        .getAttribute('aria-describedby')
+        .split(' ')
+        .map(id => document.getElementById(id).textContent)
+        .join(' ')
+    ).toBe('Description Error');
 
     let checkbox = getAllByRole('checkbox')[0];
     expect(checkbox).toHaveAttribute('aria-describedby');
-    expect(checkbox.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ')).toBe('Error Description');
+    expect(
+      checkbox
+        .getAttribute('aria-describedby')
+        .split(' ')
+        .map(id => document.getElementById(id).textContent)
+        .join(' ')
+    ).toBe(comp === 'CheckboxField' ? 'hello Error Description' : 'Error Description');
   });
 
   it('should support render props', () => {
@@ -229,24 +299,28 @@ describe('CheckboxGroup', () => {
     expect(group).not.toHaveAttribute('aria-describedby');
     expect(group).not.toHaveAttribute('data-invalid');
     for (let checkbox of checkboxes) {
-      expect(checkbox.closest('.react-aria-Checkbox')).not.toHaveAttribute('data-invalid');
+      expect(findRoot(checkbox)).not.toHaveAttribute('data-invalid');
     }
 
-    act(() => {getByTestId('form').checkValidity();});
+    act(() => {
+      getByTestId('form').checkValidity();
+    });
 
     expect(group).toHaveAttribute('aria-describedby');
-    expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
+    expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent(
+      'Constraints not satisfied'
+    );
     expect(group).toHaveAttribute('data-invalid');
 
     for (let checkbox of checkboxes) {
-      expect(checkbox.closest('.react-aria-Checkbox')).toHaveAttribute('data-invalid');
+      expect(findRoot(checkbox)).toHaveAttribute('data-invalid');
     }
 
     await user.click(checkboxes[0]);
     expect(group).not.toHaveAttribute('aria-describedby');
     expect(group).not.toHaveAttribute('data-invalid');
     for (let checkbox of checkboxes) {
-      expect(checkbox.closest('.react-aria-Checkbox')).not.toHaveAttribute('data-invalid');
+      expect(findRoot(checkbox)).not.toHaveAttribute('data-invalid');
     }
   });
 
@@ -268,7 +342,7 @@ describe('CheckboxGroup', () => {
     expect(document.activeElement).toBe(checkboxes[0]);
     expect(onBlur).not.toHaveBeenCalled();
     expect(onFocus).toHaveBeenCalledTimes(1);
-    expect(onFocusChange).toHaveBeenCalledTimes(1);  // triggered by onFocus
+    expect(onFocusChange).toHaveBeenCalledTimes(1); // triggered by onFocus
     expect(onFocusChange).toHaveBeenLastCalledWith(true);
 
     // inner focus changes shouldn't call the callbacks.
@@ -284,7 +358,7 @@ describe('CheckboxGroup', () => {
     expect(document.activeElement).toBe(button);
     expect(onBlur).toHaveBeenCalled();
     expect(onFocus).toHaveBeenCalledTimes(1);
-    expect(onFocusChange).toHaveBeenCalledTimes(2);  // triggered by onBlur
+    expect(onFocusChange).toHaveBeenCalledTimes(2); // triggered by onBlur
     expect(onFocusChange).toHaveBeenLastCalledWith(false);
   });
 

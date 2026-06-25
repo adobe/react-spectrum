@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Checkbox} from '../src';
+import {Checkbox} from '../src/Checkbox';
 import type {Meta, StoryObj} from '@storybook/react';
 import {style} from '../style' with {type: 'macro'};
 
@@ -33,9 +33,30 @@ export default meta;
 type Story = StoryObj<typeof Checkbox>;
 
 export const Example: Story = {
-  render: (args) => (<Checkbox {...args}>Unsubscribe</Checkbox>)
+  render: args => <Checkbox {...args}>Unsubscribe</Checkbox>
 };
 
 export const LongLabel: Story = {
-  render: (args) => (<Checkbox {...args} styles={style({maxWidth: 128})}>Checkbox with very long label so we can see wrapping</Checkbox>)
+  render: args => (
+    <Checkbox {...args} styles={style({maxWidth: 128})}>
+      Checkbox with very long label so we can see wrapping
+    </Checkbox>
+  )
+};
+
+export const HelpText: Story = {
+  render: args => (
+    <Checkbox {...args} styles={style({width: 300})}>
+      Product updates
+    </Checkbox>
+  ),
+  args: {
+    description: 'Get notified about new features and improvements',
+    errorMessage: 'You must agree to the terms'
+  },
+  parameters: {
+    docs: {
+      disable: true
+    }
+  }
 };

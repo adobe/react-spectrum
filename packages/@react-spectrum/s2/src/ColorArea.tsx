@@ -12,26 +12,38 @@
 
 import {
   ColorArea as AriaColorArea,
-  ColorAreaProps as AriaColorAreaProps,
-  ContextValue,
-  useLocale
-} from 'react-aria-components';
+  ColorAreaProps as AriaColorAreaProps
+} from 'react-aria-components/ColorArea';
+
 import {ColorHandle} from './ColorHandle';
+import {ContextValue} from 'react-aria-components/slots';
 import {createContext, forwardRef} from 'react';
 import {DOMRef, DOMRefValue, GlobalDOMAttributes} from '@react-types/shared';
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {style} from '../style' with {type: 'macro'};
-import {useDOMRef} from '@react-spectrum/utils';
+import {useDOMRef} from './useDOMRef';
+import {useLocale} from 'react-aria/I18nProvider';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface ColorAreaProps extends Omit<AriaColorAreaProps, 'children' | 'className' | 'style' | 'render' | keyof GlobalDOMAttributes>, StyleProps {}
+export interface ColorAreaProps
+  extends
+    Omit<
+      AriaColorAreaProps,
+      'children' | 'className' | 'style' | 'render' | keyof GlobalDOMAttributes
+    >,
+    StyleProps {}
 
-export const ColorAreaContext = createContext<ContextValue<Partial<ColorAreaProps>, DOMRefValue<HTMLDivElement>>>(null);
+export const ColorAreaContext =
+  createContext<ContextValue<Partial<ColorAreaProps>, DOMRefValue<HTMLDivElement>>>(null);
 
 /**
- * A ColorArea allows users to adjust two channels of an RGB, HSL or HSB color value against a two-dimensional gradient background.
+ * A ColorArea allows users to adjust two channels of an RGB, HSL or HSB color value against a
+ * two-dimensional gradient background.
  */
-export const ColorArea = forwardRef(function ColorArea(props: ColorAreaProps, ref: DOMRef<HTMLDivElement>) {
+export const ColorArea = forwardRef(function ColorArea(
+  props: ColorAreaProps,
+  ref: DOMRef<HTMLDivElement>
+) {
   [props, ref] = useSpectrumContextProps(props, ref, ColorAreaContext);
   let {UNSAFE_className = '', UNSAFE_style, styles} = props;
   let containerRef = useDOMRef(ref);
@@ -47,27 +59,33 @@ export const ColorArea = forwardRef(function ColorArea(props: ColorAreaProps, re
         position: undefined,
         ...UNSAFE_style
       })}
-      className={renderProps => UNSAFE_className + style({
-        position: 'relative',
-        size: 192,
-        minSize: 64,
-        borderRadius: 'default',
-        outlineColor: {
-          default: 'gray-1000/10',
-          forcedColors: 'ButtonBorder'
-        },
-        outlineWidth: 1,
-        outlineOffset: -1,
-        outlineStyle: {
-          default: 'solid',
-          isDisabled: 'none'
-        },
-        backgroundColor: {
-          isDisabled: 'disabled'
-        }
-      }, getAllowedOverrides({height: true}))(renderProps, styles)}>
-      {({state}) =>
-        (<ColorHandle
+      className={renderProps =>
+        UNSAFE_className +
+        style(
+          {
+            position: 'relative',
+            size: 192,
+            minSize: 64,
+            borderRadius: 'default',
+            outlineColor: {
+              default: 'gray-1000/10',
+              forcedColors: 'ButtonBorder'
+            },
+            outlineWidth: 1,
+            outlineOffset: -1,
+            outlineStyle: {
+              default: 'solid',
+              isDisabled: 'none'
+            },
+            backgroundColor: {
+              isDisabled: 'disabled'
+            }
+          },
+          getAllowedOverrides({height: true})
+        )(renderProps, styles)
+      }>
+      {({state}) => (
+        <ColorHandle
           containerRef={containerRef}
           getPosition={() => {
             let {x, y} = state.getThumbPosition();
@@ -75,8 +93,9 @@ export const ColorArea = forwardRef(function ColorArea(props: ColorAreaProps, re
               x: direction === 'ltr' ? x : 1 - x,
               y
             };
-          }} />)
-      }
+          }}
+        />
+      )}
     </AriaColorArea>
   );
 });

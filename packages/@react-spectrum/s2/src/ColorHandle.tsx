@@ -11,11 +11,12 @@
  */
 
 import {cloneElement, JSX, ReactNode, RefObject, useState} from 'react';
-import {ColorThumb} from 'react-aria-components';
+import {ColorThumb} from 'react-aria-components/ColorThumb';
 import {createPortal} from 'react-dom';
 import {keyframes} from '../style/style-macro' with {type: 'macro'};
 import {style} from '../style' with {type: 'macro'};
-import {useId, useLayoutEffect} from '@react-aria/utils';
+import {useId} from 'react-aria/useId';
+import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
 
 const HANDLE_SIZE = 16;
 const LOUPE_HEIGHT = 64; // Does not include borders
@@ -24,8 +25,8 @@ const LOUPE_BORDER_WIDTH = 1;
 const LOUPE_OFFSET = 12; // Offset from handle to loupe
 
 interface ColorHandleProps {
-  containerRef: RefObject<HTMLElement | null>,
-  getPosition: () => {x: number, y: number}
+  containerRef: RefObject<HTMLElement | null>;
+  getPosition: () => {x: number; y: number};
 }
 
 export function ColorHandle({containerRef, getPosition}: ColorHandleProps): ReactNode {
@@ -56,34 +57,39 @@ export function ColorHandle({containerRef, getPosition}: ColorHandleProps): Reac
         }
       })}
       style={({defaultStyle, isDisabled}) => ({
-        background: isDisabled ? undefined : `linear-gradient(${defaultStyle.backgroundColor}, ${defaultStyle.backgroundColor}), repeating-conic-gradient(#E1E1E1 0% 25%, white 0% 50%) 50% / 16px 16px`,
+        background: isDisabled
+          ? undefined
+          : `linear-gradient(${defaultStyle.backgroundColor}, ${defaultStyle.backgroundColor}), repeating-conic-gradient(#E1E1E1 0% 25%, white 0% 50%) 50% / 16px 16px`,
         backgroundColor: undefined,
         top: defaultStyle.top || '50%',
         left: defaultStyle.left || '50%'
       })}>
-      {({isDragging, color}) => (<>
-        <div
-          className={style({
-            size: 'full',
-            borderRadius: 'full',
-            boxSizing: 'border-box',
-            borderStyle: 'solid',
-            borderWidth: 1,
-            borderColor: {
-              default: 'black/42',
-              forcedColors: 'ButtonBorder'
-            }
-          })} />
-        <ColorLoupePortal isOpen={isDragging}>
-          <ColorLoupe containerRef={containerRef} color={color} getPosition={getPosition} />
-        </ColorLoupePortal>
-      </>)}
+      {({isDragging, color}) => (
+        <>
+          <div
+            className={style({
+              size: 'full',
+              borderRadius: 'full',
+              boxSizing: 'border-box',
+              borderStyle: 'solid',
+              borderWidth: 1,
+              borderColor: {
+                default: 'black/42',
+                forcedColors: 'ButtonBorder'
+              }
+            })}
+          />
+          <ColorLoupePortal isOpen={isDragging}>
+            <ColorLoupe containerRef={containerRef} color={color} getPosition={getPosition} />
+          </ColorLoupePortal>
+        </>
+      )}
     </ColorThumb>
   );
 }
 
 // ColorLoupe is rendered in a portal so that it breaks out of clipped/scrolling containers (e.g. popovers).
-function ColorLoupePortal({isOpen, children}: { isOpen: boolean, children: JSX.Element }) {
+function ColorLoupePortal({isOpen, children}: {isOpen: boolean; children: JSX.Element}) {
   let [state, setState] = useState(isOpen ? 'open' : 'closed');
   if (isOpen && state === 'closed') {
     setState('open');
@@ -94,7 +100,10 @@ function ColorLoupePortal({isOpen, children}: { isOpen: boolean, children: JSX.E
   }
 
   if (isOpen || state === 'exiting') {
-    return createPortal(cloneElement(children, {isExiting: state === 'exiting', onExited: () => setState('closed')}), document.body);
+    return createPortal(
+      cloneElement(children, {isExiting: state === 'exiting', onExited: () => setState('closed')}),
+      document.body
+    );
   }
 
   return null;
@@ -169,10 +178,12 @@ function ColorLoupe({isExiting, onExited, containerRef, loupeRef, getPosition, c
       </pattern>
       <path
         d="M25 1a24 24 0 0124 24c0 16.255-24 40-24 40S1 41.255 1 25A24 24 0 0125 1z"
-        fill={`url(#${patternId})`} />
+        fill={`url(#${patternId})`}
+      />
       <path
         d="M25 1a24 24 0 0124 24c0 16.255-24 40-24 40S1 41.255 1 25A24 24 0 0125 1z"
-        fill={color.toString()} />
+        fill={color.toString()}
+      />
       <path
         className={style({
           strokeWidth: 1,
@@ -182,7 +193,8 @@ function ColorLoupe({isExiting, onExited, containerRef, loupeRef, getPosition, c
           },
           fill: 'white'
         })}
-        d="M25 3A21.98 21.98 0 003 25c0 6.2 4 14.794 11.568 24.853A144.233 144.233 0 0025 62.132a144.085 144.085 0 0010.4-12.239C42.99 39.816 47 31.209 47 25A21.98 21.98 0 0025 3m0-2a24 24 0 0124 24c0 16.255-24 40-24 40S1 41.255 1 25A24 24 0 0125 1z" />
+        d="M25 3A21.98 21.98 0 003 25c0 6.2 4 14.794 11.568 24.853A144.233 144.233 0 0025 62.132a144.085 144.085 0 0010.4-12.239C42.99 39.816 47 31.209 47 25A21.98 21.98 0 0025 3m0-2a24 24 0 0124 24c0 16.255-24 40-24 40S1 41.255 1 25A24 24 0 0125 1z"
+      />
     </svg>
   );
 }

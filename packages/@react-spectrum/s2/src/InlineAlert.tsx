@@ -14,111 +14,116 @@ import AlertTriangle from '../s2wf-icons/S2_Icon_AlertTriangle_20_N.svg';
 import CheckmarkCircle from '../s2wf-icons/S2_Icon_CheckmarkCircle_20_N.svg';
 import {ComponentType, createContext, forwardRef, ReactNode, useEffect, useRef} from 'react';
 import {ContentContext, HeadingContext} from './Content';
-import {ContextValue, Provider, SlotProps} from 'react-aria-components';
+import {ContextValue, Provider, SlotProps} from 'react-aria-components/slots';
 import {DOMProps, DOMRef, DOMRefValue} from '@react-types/shared';
-import {filterDOMProps} from '@react-aria/utils';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {focusRing, style} from '../style' with {type: 'macro'};
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {IconContext} from './Icon';
 import InfoCircle from '../s2wf-icons/S2_Icon_InfoCircle_20_N.svg';
-// @ts-ignore
 import intlMessages from '../intl/*.json';
 import NoticeSquare from '../s2wf-icons/S2_Icon_AlertDiamond_20_N.svg';
-import {useDOMRef} from '@react-spectrum/utils';
-import {useFocusRing} from 'react-aria';
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useDOMRef} from './useDOMRef';
+import {useFocusRing} from 'react-aria/useFocusRing';
+import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface InlineAlertProps extends DOMProps, StyleProps, InlineStylesProps, SlotProps {
   /**
    * The contents of the Inline Alert.
    */
-  children: ReactNode,
+  children: ReactNode;
   /**
    * Whether to automatically focus the Inline Alert when it first renders.
    */
-  autoFocus?: boolean
+  autoFocus?: boolean;
 }
 
 interface InlineStylesProps {
   /**
    * The semantic tone of a Inline Alert.
+   *
    * @default neutral
    */
-  variant?: 'informative' | 'positive' | 'notice' | 'negative' | 'neutral',
+  variant?: 'informative' | 'positive' | 'notice' | 'negative' | 'neutral';
   /**
    * The visual style of the Inline Alert.
+   *
    * @default border
    */
-  fillStyle?: 'border' | 'subtleFill' | 'boldFill'
+  fillStyle?: 'border' | 'subtleFill' | 'boldFill';
 }
 
-export const InlineAlertContext = createContext<ContextValue<Partial<InlineAlertProps>, DOMRefValue<HTMLDivElement>>>(null);
+export const InlineAlertContext =
+  createContext<ContextValue<Partial<InlineAlertProps>, DOMRefValue<HTMLDivElement>>>(null);
 
-const inlineAlert = style<InlineStylesProps & {isFocusVisible?: boolean}>({
-  ...focusRing(),
-  display: 'inline-block',
-  position: 'relative',
-  boxSizing: 'border-box',
-  padding: 24,
-  borderRadius: 'lg',
-  borderStyle: 'solid',
-  borderWidth: 2,
-  borderColor: {
-    fillStyle: {
-      border: {
-        variant: {
-          informative: 'informative-800',
-          positive: 'positive-700',
-          notice: 'notice-700',
-          negative: 'negative-800',
-          neutral: 'gray-700' // is there a semantic color name for neutral?
-        }
-      },
-      subtleFill: 'transparent',
-      boldFill: 'transparent'
-    }
-  },
-  backgroundColor: {
-    variant: {
-      informative: {
-        fillStyle: {
-          border: 'gray-25',
-          subtleFill: 'informative-subtle',
-          boldFill: 'informative'
-        }
-      },
-      positive: {
-        fillStyle: {
-          border: 'gray-25',
-          subtleFill: 'positive-subtle',
-          boldFill: 'positive'
-        }
-      },
-      notice: {
-        fillStyle: {
-          border: 'gray-25',
-          subtleFill: 'notice-subtle',
-          boldFill: 'notice'
-        }
-      },
-      negative: {
-        fillStyle: {
-          border: 'gray-25',
-          subtleFill: 'negative-subtle',
-          boldFill: 'negative'
-        }
-      },
-      neutral: {
-        fillStyle: {
-          border: 'gray-25',
-          subtleFill: 'neutral-subtle',
-          boldFill: 'neutral-subdued'
+const inlineAlert = style<InlineStylesProps & {isFocusVisible?: boolean}>(
+  {
+    ...focusRing(),
+    display: 'inline-block',
+    position: 'relative',
+    boxSizing: 'border-box',
+    padding: 24,
+    borderRadius: 'lg',
+    borderStyle: 'solid',
+    borderWidth: 2,
+    borderColor: {
+      fillStyle: {
+        border: {
+          variant: {
+            informative: 'informative-800',
+            positive: 'positive-700',
+            notice: 'notice-700',
+            negative: 'negative-800',
+            neutral: 'gray-700' // is there a semantic color name for neutral?
+          }
+        },
+        subtleFill: 'transparent',
+        boldFill: 'transparent'
+      }
+    },
+    backgroundColor: {
+      variant: {
+        informative: {
+          fillStyle: {
+            border: 'gray-25',
+            subtleFill: 'informative-subtle',
+            boldFill: 'informative'
+          }
+        },
+        positive: {
+          fillStyle: {
+            border: 'gray-25',
+            subtleFill: 'positive-subtle',
+            boldFill: 'positive'
+          }
+        },
+        notice: {
+          fillStyle: {
+            border: 'gray-25',
+            subtleFill: 'notice-subtle',
+            boldFill: 'notice'
+          }
+        },
+        negative: {
+          fillStyle: {
+            border: 'gray-25',
+            subtleFill: 'negative-subtle',
+            boldFill: 'negative'
+          }
+        },
+        neutral: {
+          fillStyle: {
+            border: 'gray-25',
+            subtleFill: 'neutral-subtle',
+            boldFill: 'neutral-subdued'
+          }
         }
       }
     }
-  }
-}, getAllowedOverrides());
+  },
+  getAllowedOverrides()
+);
 
 const icon = style<InlineStylesProps>({
   float: 'inline-end',
@@ -195,18 +200,16 @@ const content = style({
 });
 
 /**
- * Inline alerts display a non-modal message associated with objects in a view.
- * These are often used in form validation, providing a place to aggregate feedback related to multiple fields.
+ * Inline alerts display a non-modal message associated with objects in a view. These are often used
+ * in form validation, providing a place to aggregate feedback related to multiple fields.
  */
-export const InlineAlert = /*#__PURE__*/ forwardRef(function InlineAlert(props: InlineAlertProps, ref: DOMRef<HTMLDivElement>) {
+export const InlineAlert = /*#__PURE__*/ forwardRef(function InlineAlert(
+  props: InlineAlertProps,
+  ref: DOMRef<HTMLDivElement>
+) {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   [props, ref] = useSpectrumContextProps(props, ref, InlineAlertContext);
-  let {
-    children,
-    variant = 'neutral',
-    fillStyle = 'border',
-    autoFocus
-  } = props;
+  let {children, variant = 'neutral', fillStyle = 'border', autoFocus} = props;
 
   let domRef = useDOMRef(ref);
 
@@ -237,11 +240,17 @@ export const InlineAlert = /*#__PURE__*/ forwardRef(function InlineAlert(props: 
       autoFocus={autoFocus}
       role="alert"
       style={props.UNSAFE_style}
-      className={(props.UNSAFE_className || '') + inlineAlert({
-        variant,
-        fillStyle,
-        isFocusVisible
-      }, props.styles)}>
+      className={
+        (props.UNSAFE_className || '') +
+        inlineAlert(
+          {
+            variant,
+            fillStyle,
+            isFocusVisible
+          },
+          props.styles
+        )
+      }>
       <Provider
         values={[
           [HeadingContext, {styles: heading({fillStyle})}],

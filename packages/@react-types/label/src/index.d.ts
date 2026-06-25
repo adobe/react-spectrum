@@ -10,33 +10,4 @@
  * governing permissions and limitations under the License.
  */
 
-import {Alignment, DOMProps, LabelPosition, NecessityIndicator, SpectrumFieldValidation, SpectrumHelpTextProps, StyleProps, Validation, ValidationResult} from '@react-types/shared';
-import {ElementType, HTMLAttributes, LabelHTMLAttributes, ReactElement, ReactNode} from 'react';
-
-export interface LabelProps {
-  children?: ReactNode,
-  htmlFor?: string, // for compatibility with React
-  for?: string,
-  elementType?: ElementType
-}
-
-interface SpectrumLabelPropsBase extends LabelProps, DOMProps, StyleProps {
-  labelPosition?: LabelPosition, // default top
-  labelAlign?: Alignment, // default start
-  isRequired?: boolean,
-  necessityIndicator?: NecessityIndicator, // default icon
-  includeNecessityIndicatorInAccessibilityName?: boolean
-}
-
-export interface SpectrumLabelProps extends SpectrumLabelPropsBase, HTMLAttributes<HTMLElement> {}
-
-export interface SpectrumFieldProps extends SpectrumLabelPropsBase, SpectrumHelpTextProps, Omit<Validation<any>, 'validationState'>, SpectrumFieldValidation<any>, Partial<ValidationResult> {
-  children: ReactElement,
-  label?: ReactNode,
-  contextualHelp?: ReactNode,
-  labelProps?: LabelHTMLAttributes<HTMLLabelElement>,
-  descriptionProps?: HTMLAttributes<HTMLElement>,
-  errorMessageProps?: HTMLAttributes<HTMLElement>,
-  wrapperClassName?: string,
-  wrapperProps?: HTMLAttributes<HTMLElement>
-}
+export {LabelProps, SpectrumLabelProps, SpectrumFieldProps} from '@react-spectrum/label';

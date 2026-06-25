@@ -12,8 +12,10 @@
 
 /// <reference types="css-module-types" />
 
-export {Overlay} from './Overlay';
-export {Popover} from './Popover';
-export {Modal} from './Modal';
-export {Tray} from './Tray';
-export {OpenTransition} from './OpenTransition';
+export {Overlay} from '@adobe/react-spectrum/private/overlays/Overlay';
+
+export {Popover} from '@adobe/react-spectrum/private/overlays/Popover';
+export {Modal} from '@adobe/react-spectrum/private/overlays/Modal';
+export {Tray} from '@adobe/react-spectrum/private/overlays/Tray';
+export {OpenTransition} from '@adobe/react-spectrum/private/overlays/OpenTransition';
+export type {OverlayProps} from '@adobe/react-spectrum/private/overlays/Overlay';

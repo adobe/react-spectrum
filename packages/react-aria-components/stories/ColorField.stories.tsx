@@ -10,7 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {ColorField, ColorFieldProps, FieldError, Input, Label} from 'react-aria-components';
+import {ColorField, ColorFieldProps} from '../src/ColorField';
+
+import {FieldError} from '../src/FieldError';
+import {Input} from '../src/Input';
+import {Label} from '../src/Label';
 import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
 import './styles.css';
@@ -30,12 +34,15 @@ export default {
   component: ColorField
 } as Meta<typeof ColorField>;
 
-;
-export type ColorFieldStory = StoryObj<(props: ColorFieldProps & {label: string}) => ReturnType<typeof ColorField>>;
+export type ColorFieldStory = StoryObj<
+  (props: ColorFieldProps & {label: string}) => ReturnType<typeof ColorField>
+>;
 
 export const ColorFieldExample: ColorFieldStory = {
-  render: (args) => (
-    <ColorField {...args} validate={(v) => (v?.getChannelValue('red') === 0 ? 'Invalid value' : null)}>
+  render: args => (
+    <ColorField
+      {...args}
+      validate={v => (v?.getChannelValue('red') === 0 ? 'Invalid value' : null)}>
       <Label>{args.label}</Label>
       <Input style={{display: 'block'}} />
       <FieldError />

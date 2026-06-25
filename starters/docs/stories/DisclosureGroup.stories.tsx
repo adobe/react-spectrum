@@ -1,6 +1,5 @@
 import {DisclosureGroup} from '../src/DisclosureGroup';
 import {Disclosure, DisclosureHeader, DisclosurePanel} from '../src/Disclosure';
-
 import type {Meta, StoryFn} from '@storybook/react';
 
 const meta: Meta<typeof DisclosureGroup> = {
@@ -14,7 +13,7 @@ const meta: Meta<typeof DisclosureGroup> = {
 export default meta;
 type Story = StoryFn<typeof DisclosureGroup>;
 
-export const Example: Story = (args) => (
+export const Example: Story = args => (
   <DisclosureGroup {...args}>
     <Disclosure id="personal">
       <DisclosureHeader>Personal Information</DisclosureHeader>

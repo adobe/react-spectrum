@@ -13,11 +13,11 @@
 import {MacroContext} from '@parcel/macros';
 import tokens from '@adobe/spectrum-tokens/dist/json/variables.json';
 
-function colorToken(token: typeof tokens['gray-25']) {
+function colorToken(token: (typeof tokens)['gray-25']) {
   return `light-dark(${token.sets.light.value}, ${token.sets.dark.value})`;
 }
 
-function weirdColorToken(token: typeof tokens['background-layer-2-color']) {
+function weirdColorToken(token: (typeof tokens)['background-layer-2-color']) {
   return `light-dark(${token.sets.light.sets.light.value}, ${token.sets.dark.sets.dark.value})`;
 }
 
@@ -26,11 +26,23 @@ export function generatePageStyles(this: MacroContext | void): void {
     this.addAsset({
       type: 'css',
       content: `:where(:root, :host) {
-        color-scheme: light dark;
+        --s2-color-scheme: light dark;
+        color-scheme: var(--s2-color-scheme);
         --s2-container-bg: ${colorToken(tokens['background-base-color'])};
         background: var(--s2-container-bg);
         --s2-scale: 1;
         --s2-font-size-base: 14;
+
+        /* For backward compatibility in two cases:
+         *   1. When a component compiled with an earlier version of S2 is embedded in a newer provider.
+         *   2. When S2 CSS is compiled with lightningcss, setting color-scheme via a variable does not work. */
+        --lightningcss-light: initial;
+        --lightningcss-dark: ;
+
+        @media (prefers-color-scheme: dark) {
+          --lightningcss-light: ;
+          --lightningcss-dark: initial;
+        }
 
         @media not ((hover: hover) and (pointer: fine)) {
           --s2-scale: 1.25;
@@ -38,11 +50,15 @@ export function generatePageStyles(this: MacroContext | void): void {
         }
 
         &[data-color-scheme=light] {
-          color-scheme: light;
+          --s2-color-scheme: light;
+          --lightningcss-light: initial;
+          --lightningcss-dark: ;
         }
 
         &[data-color-scheme=dark] {
-          color-scheme: dark;
+          --s2-color-scheme: dark;
+          --lightningcss-light: ;
+          --lightningcss-dark: initial;
         }
 
         &[data-background=layer-1] {
@@ -57,8 +73,8 @@ export function generatePageStyles(this: MacroContext | void): void {
   }
 }
 
-// This generates a low specificity rule to define default values for
-// --lightningcss-light and --lightningcss-dark. This is used when rendering
+// This generates a low specificity rule to define a default value for
+// --s2-color-scheme. This is used when rendering
 // a <Provider> without setting a colorScheme prop, and when page.css is not present.
 // It is equivalent to setting `color-scheme: light dark`, but without overriding
 // the browser default for content outside the provider.
@@ -69,10 +85,15 @@ export function generateDefaultColorSchemeStyles(this: MacroContext | void): voi
       type: 'css',
       content: `@layer _.a {
         :where(:root, :host) {
-          --lightningcss-light: initial;
-          --lightningcss-dark: ;
+          --s2-color-scheme: light dark;
           --s2-scale: 1;
           --s2-font-size-base: 14;
+
+          /* For backward compatibility in two cases:
+           *   1. When a component compiled with an earlier version of S2 is embedded in a newer provider.
+           *   2. When S2 CSS is compiled with lightningcss, setting color-scheme via a variable does not work. */
+          --lightningcss-light: initial;
+          --lightningcss-dark: ;
 
           @media (prefers-color-scheme: dark) {
             --lightningcss-light: ;

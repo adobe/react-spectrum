@@ -23,9 +23,8 @@ module.exports = new Transformer({
     let hash = crypto.createHash('md5');
     hash.update(iconName);
     let prefix = hash.digest('hex').slice(-6);
-    let optimized = (await transform(
-      contents,
-      {
+    let optimized = (
+      await transform(contents, {
         jsxRuntime: 'automatic',
         svgoConfig: {
           plugins: [
@@ -59,10 +58,10 @@ module.exports = new Transformer({
           ]
         },
         replaceAttrValues: {
-          'var(--iconPrimary, #222)': `var(--iconPrimary, var(--lightningcss-light, ${tokens['gray-800'].sets.light.value}) var(--lightningcss-dark, ${tokens['gray-800'].sets.dark.value}))`,
-          'var(--iconPrimary, #222222)': `var(--iconPrimary, var(--lightningcss-light, ${tokens['gray-800'].sets.light.value}) var(--lightningcss-dark, ${tokens['gray-800'].sets.dark.value}))`,
-          'var(--iconPrimary, #292929)': `var(--iconPrimary, var(--lightningcss-light, ${tokens['gray-800'].sets.light.value}) var(--lightningcss-dark, ${tokens['gray-800'].sets.dark.value}))`,
-          'var(--spectrum-global-color-gray-800, #292929)': `var(--iconPrimary, var(--lightningcss-light, ${tokens['gray-800'].sets.light.value}) var(--lightningcss-dark, ${tokens['gray-800'].sets.dark.value}))`
+          'var(--iconPrimary, #222)': `var(--iconPrimary, light-dark(${tokens['gray-800'].sets.light.value}, ${tokens['gray-800'].sets.dark.value}))`,
+          'var(--iconPrimary, #222222)': `var(--iconPrimary, light-dark(${tokens['gray-800'].sets.light.value}, ${tokens['gray-800'].sets.dark.value}))`,
+          'var(--iconPrimary, #292929)': `var(--iconPrimary, light-dark(${tokens['gray-800'].sets.light.value}, ${tokens['gray-800'].sets.dark.value}))`,
+          'var(--spectrum-global-color-gray-800, #292929)': `var(--iconPrimary, light-dark(${tokens['gray-800'].sets.light.value}, ${tokens['gray-800'].sets.dark.value}))`
         },
         typescript: true,
         ref: true,
@@ -70,26 +69,30 @@ module.exports = new Transformer({
       })
     ).replace('export default ForwardRef;', '');
     let newFile = template(asset, optimized);
-    return [{
-      type: 'tsx',
-      content: newFile,
-      meta: {
-        isRSPIcon: true
+    return [
+      {
+        type: 'tsx',
+        content: newFile,
+        meta: {
+          isRSPIcon: true
+        }
       }
-    }];
+    ];
   }
 });
 
 function template(asset, svg) {
   let normalizedPath = asset.filePath.replaceAll('\\', '/');
-  let fn = asset.pipeline === 'illustration' || normalizedPath.includes('@react-spectrum/s2/spectrum-illustrations') ? 'createIllustration' : 'createIcon';
-  return (
-`"use client";
+  let fn =
+    asset.pipeline === 'illustration' ||
+    normalizedPath.includes('@react-spectrum/s2/spectrum-illustrations')
+      ? 'createIllustration'
+      : 'createIcon';
+  return `"use client";
 import {${fn}} from '${normalizedPath.includes('@react-spectrum/s2') ? '~/src/Icon' : '@react-spectrum/s2'}';
 
 ${svg.replace('import { SVGProps } from "react";', '')}
 
 export default /*#__PURE__*/ ${fn}(ForwardRef);
-`
-  );
+`;
 }

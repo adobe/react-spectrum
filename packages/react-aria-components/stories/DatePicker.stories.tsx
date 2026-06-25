@@ -11,12 +11,23 @@
  */
 
 import {action} from 'storybook/actions';
-import {Button, Calendar, CalendarCell, CalendarGrid, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, Form, Group, Heading, Input, Label, Popover, RangeCalendar, TextField} from 'react-aria-components';
+import {Button} from '../src/Button';
+import {Calendar, CalendarCell, CalendarGrid, RangeCalendar} from '../src/Calendar';
 import clsx from 'clsx';
+import {DateInput, DateSegment} from '../src/DateField';
+import {DatePicker, DateRangePicker} from '../src/DatePicker';
+import {Dialog} from '../src/Dialog';
+import {Form} from '../src/Form';
+import {Group} from '../src/Group';
+import {Heading} from '../src/Heading';
+import {Input} from '../src/Input';
+import {Label} from '../src/Label';
 import {Meta, StoryFn} from '@storybook/react';
 import {parseAbsoluteToLocal} from '@internationalized/date';
+import {Popover} from '../src/Popover';
 import React from 'react';
 import styles from '../example/index.css';
+import {TextField} from '../src/TextField';
 import './styles.css';
 
 export default {
@@ -54,12 +65,17 @@ export default {
 export type DatePickerStory = StoryFn<typeof DatePicker>;
 export type DateRangePickerStory = StoryFn<typeof DateRangePicker>;
 
-export const DatePickerExample: DatePickerStory = (args) => (
+export const DatePickerExample: DatePickerStory = args => (
   <DatePicker data-testid="date-picker-example" {...args}>
     <Label style={{display: 'block'}}>Date</Label>
     <Group style={{display: 'inline-flex'}}>
       <DateInput className={styles.field}>
-        {segment => <DateSegment segment={segment} className={clsx(styles.segment, {[styles.placeholder]: segment.isPlaceholder})} />}
+        {segment => (
+          <DateSegment
+            segment={segment}
+            className={clsx(styles.segment, {[styles.placeholder]: segment.isPlaceholder})}
+          />
+        )}
       </DateInput>
       <Button>🗓</Button>
     </Group>
@@ -79,7 +95,17 @@ export const DatePickerExample: DatePickerStory = (args) => (
             <Button slot="next">&gt;</Button>
           </div>
           <CalendarGrid style={{width: '100%'}}>
-            {date => <CalendarCell date={date} style={({isSelected, isOutsideMonth}) => ({display: isOutsideMonth ? 'none' : '', textAlign: 'center', cursor: 'default', background: isSelected ? 'blue' : ''})} />}
+            {date => (
+              <CalendarCell
+                date={date}
+                style={({isSelected, isOutsideMonth}) => ({
+                  display: isOutsideMonth ? 'none' : '',
+                  textAlign: 'center',
+                  cursor: 'default',
+                  background: isSelected ? 'blue' : ''
+                })}
+              />
+            )}
           </CalendarGrid>
         </Calendar>
       </Dialog>
@@ -87,12 +113,17 @@ export const DatePickerExample: DatePickerStory = (args) => (
   </DatePicker>
 );
 
-export const DatePickerTriggerWidthExample: DatePickerStory = (args) => (
+export const DatePickerTriggerWidthExample: DatePickerStory = args => (
   <DatePicker data-testid="date-picker-example" {...args}>
     <Label style={{display: 'block'}}>Date</Label>
     <Group style={{display: 'inline-flex', width: 300}}>
       <DateInput className={styles.field} style={{flex: 1}}>
-        {segment => <DateSegment segment={segment} className={clsx(styles.segment, {[styles.placeholder]: segment.isPlaceholder})} />}
+        {segment => (
+          <DateSegment
+            segment={segment}
+            className={clsx(styles.segment, {[styles.placeholder]: segment.isPlaceholder})}
+          />
+        )}
       </DateInput>
       <Button>🗓</Button>
     </Group>
@@ -114,7 +145,17 @@ export const DatePickerTriggerWidthExample: DatePickerStory = (args) => (
             <Button slot="next">&gt;</Button>
           </div>
           <CalendarGrid style={{width: '100%'}}>
-            {date => <CalendarCell date={date} style={({isSelected, isOutsideMonth}) => ({display: isOutsideMonth ? 'none' : '', textAlign: 'center', cursor: 'default', background: isSelected ? 'blue' : ''})} />}
+            {date => (
+              <CalendarCell
+                date={date}
+                style={({isSelected, isOutsideMonth}) => ({
+                  display: isOutsideMonth ? 'none' : '',
+                  textAlign: 'center',
+                  cursor: 'default',
+                  background: isSelected ? 'blue' : ''
+                })}
+              />
+            )}
           </CalendarGrid>
         </Calendar>
       </Dialog>
@@ -122,17 +163,32 @@ export const DatePickerTriggerWidthExample: DatePickerStory = (args) => (
   </DatePicker>
 );
 
-export const DateRangePickerExample: DateRangePickerStory = (args) => (
+export const DateRangePickerExample: DateRangePickerStory = args => (
   <DateRangePicker data-testid="date-range-picker-example" {...args}>
     <Label style={{display: 'block'}}>Date</Label>
     <Group style={{display: 'inline-flex'}}>
       <div className={styles.field}>
-        <DateInput data-testid="date-range-picker-date-input" slot="start" style={{display: 'inline'}}>
-          {segment => <DateSegment segment={segment} className={clsx(styles.segment, {[styles.placeholder]: segment.isPlaceholder})} />}
+        <DateInput
+          data-testid="date-range-picker-date-input"
+          slot="start"
+          style={{display: 'inline'}}>
+          {segment => (
+            <DateSegment
+              segment={segment}
+              className={clsx(styles.segment, {[styles.placeholder]: segment.isPlaceholder})}
+            />
+          )}
         </DateInput>
-        <span aria-hidden="true" style={{padding: '0 4px'}}>–</span>
+        <span aria-hidden="true" style={{padding: '0 4px'}}>
+          –
+        </span>
         <DateInput slot="end" style={{display: 'inline'}}>
-          {segment => <DateSegment segment={segment} className={clsx(styles.segment, {[styles.placeholder]: segment.isPlaceholder})} />}
+          {segment => (
+            <DateSegment
+              segment={segment}
+              className={clsx(styles.segment, {[styles.placeholder]: segment.isPlaceholder})}
+            />
+          )}
         </DateInput>
       </div>
       <Button>🗓</Button>
@@ -153,7 +209,17 @@ export const DateRangePickerExample: DateRangePickerStory = (args) => (
             <Button slot="next">&gt;</Button>
           </div>
           <CalendarGrid style={{width: '100%'}}>
-            {date => <CalendarCell date={date} style={({isSelected, isOutsideMonth}) => ({display: isOutsideMonth ? 'none' : '', textAlign: 'center', cursor: 'default', background: isSelected ? 'blue' : ''})} />}
+            {date => (
+              <CalendarCell
+                date={date}
+                style={({isSelected, isOutsideMonth}) => ({
+                  display: isOutsideMonth ? 'none' : '',
+                  textAlign: 'center',
+                  cursor: 'default',
+                  background: isSelected ? 'blue' : ''
+                })}
+              />
+            )}
           </CalendarGrid>
         </RangeCalendar>
       </Dialog>
@@ -161,17 +227,32 @@ export const DateRangePickerExample: DateRangePickerStory = (args) => (
   </DateRangePicker>
 );
 
-export const DateRangePickerTriggerWidthExample: DateRangePickerStory = (args) => (
+export const DateRangePickerTriggerWidthExample: DateRangePickerStory = args => (
   <DateRangePicker data-testid="date-range-picker-example" {...args}>
     <Label style={{display: 'block'}}>Date</Label>
     <Group style={{display: 'inline-flex', width: 300}}>
       <div className={styles.field} style={{flex: 1}}>
-        <DateInput data-testid="date-range-picker-date-input" slot="start" style={{display: 'inline'}}>
-          {segment => <DateSegment segment={segment} className={clsx(styles.segment, {[styles.placeholder]: segment.isPlaceholder})} />}
+        <DateInput
+          data-testid="date-range-picker-date-input"
+          slot="start"
+          style={{display: 'inline'}}>
+          {segment => (
+            <DateSegment
+              segment={segment}
+              className={clsx(styles.segment, {[styles.placeholder]: segment.isPlaceholder})}
+            />
+          )}
         </DateInput>
-        <span aria-hidden="true" style={{padding: '0 4px'}}>–</span>
+        <span aria-hidden="true" style={{padding: '0 4px'}}>
+          –
+        </span>
         <DateInput slot="end" style={{display: 'inline'}}>
-          {segment => <DateSegment segment={segment} className={clsx(styles.segment, {[styles.placeholder]: segment.isPlaceholder})} />}
+          {segment => (
+            <DateSegment
+              segment={segment}
+              className={clsx(styles.segment, {[styles.placeholder]: segment.isPlaceholder})}
+            />
+          )}
         </DateInput>
       </div>
       <Button>🗓</Button>
@@ -194,7 +275,17 @@ export const DateRangePickerTriggerWidthExample: DateRangePickerStory = (args) =
             <Button slot="next">&gt;</Button>
           </div>
           <CalendarGrid style={{width: '100%'}}>
-            {date => <CalendarCell date={date} style={({isSelected, isOutsideMonth}) => ({display: isOutsideMonth ? 'none' : '', textAlign: 'center', cursor: 'default', background: isSelected ? 'blue' : ''})} />}
+            {date => (
+              <CalendarCell
+                date={date}
+                style={({isSelected, isOutsideMonth}) => ({
+                  display: isOutsideMonth ? 'none' : '',
+                  textAlign: 'center',
+                  cursor: 'default',
+                  background: isSelected ? 'blue' : ''
+                })}
+              />
+            )}
           </CalendarGrid>
         </RangeCalendar>
       </Dialog>
@@ -202,7 +293,7 @@ export const DateRangePickerTriggerWidthExample: DateRangePickerStory = (args) =
   </DateRangePicker>
 );
 
-export const DatePickerAutofill = (props) => (
+export const DatePickerAutofill = props => (
   <Form
     onSubmit={e => {
       action('onSubmit')(Object.fromEntries(new FormData(e.target as HTMLFormElement).entries()));
@@ -212,11 +303,21 @@ export const DatePickerAutofill = (props) => (
       <Label>Name</Label>
       <Input name="firstName" type="name" id="name" autoComplete="name" />
     </TextField>
-    <DatePicker data-testid="date-picker-example" name="bday" autoComplete="bday" defaultValue={parseAbsoluteToLocal('2021-04-07T18:45:22Z')} {...props}>
+    <DatePicker
+      data-testid="date-picker-example"
+      name="bday"
+      autoComplete="bday"
+      defaultValue={parseAbsoluteToLocal('2021-04-07T18:45:22Z')}
+      {...props}>
       <Label style={{display: 'block'}}>Date</Label>
       <Group style={{display: 'inline-flex'}}>
         <DateInput className={styles.field}>
-          {segment => <DateSegment segment={segment} className={clsx(styles.segment, {[styles.placeholder]: segment.isPlaceholder})} />}
+          {segment => (
+            <DateSegment
+              segment={segment}
+              className={clsx(styles.segment, {[styles.placeholder]: segment.isPlaceholder})}
+            />
+          )}
         </DateInput>
         <Button>🗓</Button>
       </Group>
@@ -236,7 +337,17 @@ export const DatePickerAutofill = (props) => (
               <Button slot="next">&gt;</Button>
             </div>
             <CalendarGrid style={{width: '100%'}}>
-              {date => <CalendarCell date={date} style={({isSelected, isOutsideMonth}) => ({display: isOutsideMonth ? 'none' : '', textAlign: 'center', cursor: 'default', background: isSelected ? 'blue' : ''})} />}
+              {date => (
+                <CalendarCell
+                  date={date}
+                  style={({isSelected, isOutsideMonth}) => ({
+                    display: isOutsideMonth ? 'none' : '',
+                    textAlign: 'center',
+                    cursor: 'default',
+                    background: isSelected ? 'blue' : ''
+                  })}
+                />
+              )}
             </CalendarGrid>
           </Calendar>
         </Dialog>

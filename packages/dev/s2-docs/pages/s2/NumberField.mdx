@@ -22,7 +22,7 @@ export const description = 'Allows a user to enter, increment, or decrement a nu
     defaultValue: 1024,
     minValue: 0
   }}
-  importSource="@react-spectrum/s2"
+  importSource="@react-spectrum/s2/NumberField"
   type="s2" />
 
 ## Value
@@ -31,7 +31,7 @@ Use the `value` or `defaultValue` prop to set the number value. The `onChange` e
 
 ```tsx render
 "use client";
-import {NumberField} from '@react-spectrum/s2';
+import {NumberField} from '@react-spectrum/s2/NumberField';
 import {useState} from 'react';
 
 function Example() {
@@ -99,7 +99,8 @@ By default, `NumberField` displays the value using the numbering system for the 
 
 ```tsx render wide docs={docs.exports.Provider} links={docs.links} props={['locale']} initialProps={{locale: 'hi-IN-u-nu-deva'}} controlOptions={{locale: 'numberingSystem'}} type="s2"
 "use client";
-import {Provider, NumberField} from '@react-spectrum/s2';
+import {Provider} from '@react-spectrum/s2/Provider';
+import {NumberField} from '@react-spectrum/s2/NumberField';
 
 <Provider/* PROPS */>
   <NumberField
@@ -109,13 +110,55 @@ import {Provider, NumberField} from '@react-spectrum/s2';
 </Provider>
 ```
 
+## Prefix
+
+Use the `prefix` prop to display an additional element before the input in the number field.
+
+```tsx render
+"use client";
+import {NumberField} from '@react-spectrum/s2/NumberField';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+function Example() {
+  return (
+    <div className={style({display: 'flex', flexDirection: 'column', gap: 8})}>
+      <div style={{font: 'title'}}>Dimensions</div>
+      <div className={style({display: 'flex', flexDirection: 'row', gap: 8})}>
+        <NumberField
+          aria-label="Width"
+          /*- begin highlight -*/
+          prefix="W"
+          /*- end highlight -*/
+          formatOptions={{style: 'unit', unit: 'inch'}}
+          defaultValue={10}
+          placeholder="0"
+          styles={style({width: 100})}
+          hideStepper />
+        <NumberField
+          aria-label="Height"
+          /*- begin highlight -*/
+          prefix="H"
+          /*- end highlight -*/
+          formatOptions={{style: 'unit', unit: 'inch'}}
+          defaultValue={10}
+          placeholder="0"
+          styles={style({width: 100})}
+          hideStepper />
+      </div>
+    </div>
+  );
+}
+```
+
 ## Forms
 
 Use the `name` prop to submit the raw number value (not a formatted string) to the server. Set the `isRequired` prop to validate that the user enters a value, or implement custom client or server-side validation. See the [Forms](forms) guide to learn more.
 
 ```tsx render docs={docs.exports.NumberField} links={docs.links} props={['isRequired', 'necessityIndicator']} initialProps={{isRequired: true, placeholder: 'Enter a number'}} type="s2" wide
 "use client";
-import {NumberField, Button, Form} from '@react-spectrum/s2';
+import {NumberField} from '@react-spectrum/s2/NumberField';
+import {Button} from '@react-spectrum/s2/Button';
+import {Form} from '@react-spectrum/s2/Form';
 
 function Example(props) {
   return (

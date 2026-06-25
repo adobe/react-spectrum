@@ -12,6 +12,7 @@
 
 /// <reference types="css-module-types" />
 
-export {StepList} from './StepList';
-export {Item} from '@react-stately/collections';
-export type {SpectrumStepListProps} from './StepList';
+export {StepList} from '@adobe/react-spectrum/private/steplist/StepList';
+
+export type {SpectrumStepListProps} from '@adobe/react-spectrum/private/steplist/StepList';
+export {Item} from 'react-stately/Item';

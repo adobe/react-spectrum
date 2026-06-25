@@ -29,7 +29,8 @@ callback ref or object ref was passed in. This is useful for passing refs to Rea
 ```tsx render
 'use client';
 import React from 'react';
-import {useObjectRef, useButton, AriaButtonProps} from 'react-aria';
+import {useObjectRef} from 'react-aria/useObjectRef';
+import {useButton, type AriaButtonProps} from 'react-aria/useButton';
 
 let Button = React.forwardRef((props: AriaButtonProps, ref: React.ForwardedRef<HTMLButtonElement>) => {
   let objRef = useObjectRef(ref);

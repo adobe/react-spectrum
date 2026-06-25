@@ -10,11 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, OverlayArrow, Tab, TabList, TabPanel, TabProps, Tabs, Tooltip, TooltipTrigger} from 'react-aria-components';
+import {Button} from '../src/Button';
+
 import {Meta, StoryFn} from '@storybook/react';
-import {Orientation} from 'react-aria';
+import {Orientation} from '@react-types/shared';
+import {OverlayArrow} from '../src/OverlayArrow';
 import React, {useState} from 'react';
-import {RouterProvider} from '@react-aria/utils';
+import {RouterProvider} from 'react-aria/private/utils/openLink';
+import {Tab, TabList, TabPanel, TabProps, Tabs} from '../src/Tabs';
+import {Tooltip, TooltipTrigger} from '../src/Tooltip';
 import './styles.css';
 
 export default {
@@ -31,10 +35,16 @@ export const TabsExample: TabsStory = () => {
     <RouterProvider navigate={setUrl}>
       <Tabs selectedKey={url}>
         <TabList aria-label="History of Ancient Rome" style={{display: 'flex', gap: 8}}>
-          <CustomTab id="/FoR" href="/FoR">Founding of Rome</CustomTab>
-          <CustomTab id="/MaR" href="/MaR">Monarchy and Republic</CustomTab>
+          <CustomTab id="/FoR" href="/FoR">
+            Founding of Rome
+          </CustomTab>
+          <CustomTab id="/MaR" href="/MaR">
+            Monarchy and Republic
+          </CustomTab>
           <TooltipTrigger>
-            <CustomTab id="/Emp" href="/Emp">Empire</CustomTab>
+            <CustomTab id="/Emp" href="/Emp">
+              Empire
+            </CustomTab>
             <Tooltip
               offset={5}
               style={{
@@ -53,15 +63,9 @@ export const TabsExample: TabsStory = () => {
             </Tooltip>
           </TooltipTrigger>
         </TabList>
-        <TabPanel id="/FoR">
-          Arma virumque cano, Troiae qui primus ab oris.
-        </TabPanel>
-        <TabPanel id="/MaR">
-          Senatus Populusque Romanus.
-        </TabPanel>
-        <TabPanel id="/Emp">
-          Alea jacta est.
-        </TabPanel>
+        <TabPanel id="/FoR">Arma virumque cano, Troiae qui primus ab oris.</TabPanel>
+        <TabPanel id="/MaR">Senatus Populusque Romanus.</TabPanel>
+        <TabPanel id="/Emp">Alea jacta est.</TabPanel>
       </Tabs>
     </RouterProvider>
   );
@@ -73,29 +77,35 @@ export const TabsRenderProps: TabsStory = () => {
 
   return (
     <div style={{display: 'flex', flexDirection: 'row', gap: 8}}>
-      <Button onPress={() => setTabOrientation((current) => current === 'vertical' ? 'horizontal' : 'vertical')}>
+      <Button
+        onPress={() =>
+          setTabOrientation(current => (current === 'vertical' ? 'horizontal' : 'vertical'))
+        }>
         Change Orientation
       </Button>
       <Tabs orientation={tabOrientation}>
         {({orientation}) => (
           <div>
-            <div style={{display: 'flex', flexDirection: orientation === 'vertical' ? 'row' : 'column', gap: 8}}>
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: orientation === 'vertical' ? 'row' : 'column',
+                gap: 8
+              }}>
               <TabList
                 aria-label="History of Ancient Rome"
-                style={{display: 'flex', flexDirection: orientation === 'vertical' ? 'column' : 'row', gap: 8}}>
+                style={{
+                  display: 'flex',
+                  flexDirection: orientation === 'vertical' ? 'column' : 'row',
+                  gap: 8
+                }}>
                 <CustomTab id="FoR">Founding of Rome</CustomTab>
                 <CustomTab id="MaR">Monarchy and Republic</CustomTab>
                 <CustomTab id="Emp">Empire</CustomTab>
               </TabList>
-              <TabPanel id="FoR">
-                Arma virumque cano, Troiae qui primus ab oris.
-              </TabPanel>
-              <TabPanel id="MaR">
-                Senatus Populusque Romanus.
-              </TabPanel>
-              <TabPanel id="Emp">
-                Alea jacta est.
-              </TabPanel>
+              <TabPanel id="FoR">Arma virumque cano, Troiae qui primus ab oris.</TabPanel>
+              <TabPanel id="MaR">Senatus Populusque Romanus.</TabPanel>
+              <TabPanel id="Emp">Alea jacta est.</TabPanel>
             </div>
           </div>
         )}
@@ -110,7 +120,8 @@ const CustomTab = (props: TabProps) => {
       {...props}
       style={({isSelected}) => ({
         borderBottom: '2px solid ' + (isSelected ? 'slateblue' : 'transparent')
-      })} />
+      })}
+    />
   );
 };
 

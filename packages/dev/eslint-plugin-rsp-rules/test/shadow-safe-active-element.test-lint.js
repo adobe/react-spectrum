@@ -21,41 +21,37 @@ const ruleTester = new RuleTester({
 });
 
 // Throws error if the tests in ruleTester.run() do not pass
-ruleTester.run(
-  'shadow-safe-active-element',
-  shadowSafeActiveElementRule,
-  {
-    // 'valid' checks cases that should pass
-    valid: [
-      {
-        code: `
+ruleTester.run('shadow-safe-active-element', shadowSafeActiveElementRule, {
+  // 'valid' checks cases that should pass
+  valid: [
+    {
+      code: `
 import {getActiveElement} from '@react-aria/utils';
 if (getActiveElement()) {
   console.log('active element');
 }`
-      },
-      {
-        code: `
+    },
+    {
+      code: `
 import {getActiveElement} from '@react-aria/utils';
 if (getActiveElement(element)) {
   console.log('active element');
 }`
-      }
-    ],
-    // 'invalid' checks cases that should not pass
-    invalid: [
-      {
-        code: `
+    }
+  ],
+  // 'invalid' checks cases that should not pass
+  invalid: [
+    {
+      code: `
 if (document.activeElement) {
   console.log('active element');
 }`,
-        output: `
+      output: `
 import {getActiveElement} from '@react-aria/utils';
 if (getActiveElement()) {
   console.log('active element');
 }`,
-        errors: 1
-      }
-    ]
-  }
-);
+      errors: 1
+    }
+  ]
+});

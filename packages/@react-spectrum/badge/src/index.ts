@@ -12,5 +12,6 @@
 
 /// <reference types="css-module-types" />
 
-export {Badge} from './Badge';
-export type {SpectrumBadgeProps} from '@react-types/badge';
+export {Badge} from '@adobe/react-spectrum/Badge';
+
+export type {SpectrumBadgeProps} from '@adobe/react-spectrum/Badge';

@@ -1,5 +1,4 @@
 import {Column, Row, Table, TableHeader, TableBody, Cell} from '../src/Table';
-
 import type {Meta, StoryFn} from '@storybook/react';
 
 const meta: Meta<typeof Table> = {
@@ -14,7 +13,7 @@ export default meta;
 
 type Story = StoryFn<typeof Table>;
 
-export const Example: Story = (args) => (
+export const Example: Story = args => (
   <Table aria-label="Files" {...args}>
     <TableHeader>
       <Column isRowHeader>Name</Column>

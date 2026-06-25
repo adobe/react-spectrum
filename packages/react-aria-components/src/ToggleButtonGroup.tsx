@@ -9,7 +9,8 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {AriaToggleButtonGroupProps, useToggleButtonGroup} from 'react-aria';
+import {AriaToggleButtonGroupProps, useToggleButtonGroup} from 'react-aria/useToggleButtonGroup';
+
 import {
   ClassNameOrFunction,
   ContextValue,
@@ -19,72 +20,85 @@ import {
   useContextProps,
   useRenderProps
 } from './utils';
-import {filterDOMProps, mergeProps} from '@react-aria/utils';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {forwardRefType, GlobalDOMAttributes, Orientation} from '@react-types/shared';
+import {mergeProps} from 'react-aria/mergeProps';
 import React, {createContext, ForwardedRef, forwardRef} from 'react';
 import {SharedElementTransition} from './SharedElementTransition';
-import {ToggleGroupState, useToggleGroupState} from 'react-stately';
+import {ToggleGroupState, useToggleGroupState} from 'react-stately/useToggleGroupState';
 
 export interface ToggleButtonGroupRenderProps {
   /**
    * The orientation of the toggle button group.
+   *
    * @selector [data-orientation="horizontal | vertical"]
    */
-  orientation: Orientation,
+  orientation: Orientation;
   /**
    * Whether the toggle button group is disabled.
+   *
    * @selector [data-disabled]
    */
-  isDisabled: boolean,
+  isDisabled: boolean;
   /**
    * State of the toggle button group.
    */
-  state: ToggleGroupState
+  state: ToggleGroupState;
 }
 
-export interface ToggleButtonGroupProps extends AriaToggleButtonGroupProps, RenderProps<ToggleButtonGroupRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
+export interface ToggleButtonGroupProps
+  extends
+    AriaToggleButtonGroupProps,
+    RenderProps<ToggleButtonGroupRenderProps>,
+    SlotProps,
+    GlobalDOMAttributes<HTMLDivElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-ToggleButtonGroup'
    */
-  className?: ClassNameOrFunction<ToggleButtonGroupRenderProps>
+  className?: ClassNameOrFunction<ToggleButtonGroupRenderProps>;
 }
 
-export const ToggleButtonGroupContext = createContext<ContextValue<ToggleButtonGroupProps, HTMLDivElement>>({});
+export const ToggleButtonGroupContext = createContext<
+  ContextValue<ToggleButtonGroupProps, HTMLDivElement>
+>({});
 export const ToggleGroupStateContext = createContext<ToggleGroupState | null>(null);
 
 /**
- * A toggle button group allows a user to toggle multiple options, with single or multiple selection.
+ * A toggle button group allows a user to toggle multiple options, with single or multiple
+ * selection.
  */
-export const ToggleButtonGroup = /*#__PURE__*/ (forwardRef as forwardRefType)(function ToggleButtonGroup(props: ToggleButtonGroupProps, ref: ForwardedRef<HTMLDivElement>) {
-  [props, ref] = useContextProps(props, ref, ToggleButtonGroupContext);
-  let state = useToggleGroupState(props);
-  let {groupProps} = useToggleButtonGroup(props, state, ref);
+export const ToggleButtonGroup = /*#__PURE__*/ (forwardRef as forwardRefType)(
+  function ToggleButtonGroup(props: ToggleButtonGroupProps, ref: ForwardedRef<HTMLDivElement>) {
+    [props, ref] = useContextProps(props, ref, ToggleButtonGroupContext);
+    let state = useToggleGroupState(props);
+    let {groupProps} = useToggleButtonGroup(props, state, ref);
 
-  let renderProps = useRenderProps({
-    ...props,
-    values: {
-      orientation: props.orientation || 'horizontal',
-      isDisabled: state.isDisabled,
-      state
-    },
-    defaultClassName: 'react-aria-ToggleButtonGroup'
-  });
+    let renderProps = useRenderProps({
+      ...props,
+      values: {
+        orientation: props.orientation || 'horizontal',
+        isDisabled: state.isDisabled,
+        state
+      },
+      defaultClassName: 'react-aria-ToggleButtonGroup'
+    });
 
-  let DOMProps = filterDOMProps(props, {global: true});
+    let DOMProps = filterDOMProps(props, {global: true});
 
-  return (
-    <dom.div
-      {...mergeProps(DOMProps, renderProps, groupProps)}
-      ref={ref}
-      slot={props.slot || undefined}
-      data-orientation={props.orientation || 'horizontal'}
-      data-disabled={props.isDisabled || undefined}>
-      <ToggleGroupStateContext.Provider value={state}>
-        <SharedElementTransition>
-          {renderProps.children}
-        </SharedElementTransition>
-      </ToggleGroupStateContext.Provider>
-    </dom.div>
-  );
-});
+    return (
+      <dom.div
+        {...mergeProps(DOMProps, renderProps, groupProps)}
+        ref={ref}
+        slot={props.slot || undefined}
+        data-orientation={props.orientation || 'horizontal'}
+        data-disabled={props.isDisabled || undefined}>
+        <ToggleGroupStateContext.Provider value={state}>
+          <SharedElementTransition>{renderProps.children}</SharedElementTransition>
+        </ToggleGroupStateContext.Provider>
+      </dom.div>
+    );
+  }
+);

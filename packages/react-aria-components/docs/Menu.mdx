@@ -11,7 +11,7 @@ import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
 import docs from 'docs:react-aria-components';
-import menuUtil from 'docs:@react-aria/test-utils/src/menu.ts';
+import menuUtil from 'docs:@react-aria/test-utils';
 import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable, ClassAPI, VersionBadge} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
@@ -1247,16 +1247,16 @@ it('Menu can open its submenu via keyboard', async function () {
   let menuTester = testUtilUser.createTester('Menu', {root: getByTestId('test-menutrigger'), interactionType: 'keyboard'});
 
   await menuTester.open();
-  expect(menuTester.menu).toBeInTheDocument();
-  let submenuTriggers = menuTester.submenuTriggers;
+  expect(menuTester.getMenu()).toBeInTheDocument();
+  let submenuTriggers = menuTester.getSubmenuTriggers();
   expect(submenuTriggers).toHaveLength(1);
 
   let submenuTester = await menuTester.openSubmenu({submenuTrigger: 'Share…'});
-  expect(submenuTester.menu).toBeInTheDocument();
+  expect(submenuTester.getMenu()).toBeInTheDocument();
 
-  await submenuTester.selectOption({option: submenuTester.options()[0]});
-  expect(submenuTester.menu).not.toBeInTheDocument();
-  expect(menuTester.menu).not.toBeInTheDocument();
+  await submenuTester.toggleOptionSelection({option: submenuTester.getOptions()[0]});
+  expect(submenuTester.getMenu()).not.toBeInTheDocument();
+  expect(menuTester.getMenu()).not.toBeInTheDocument();
 });
 ```
 

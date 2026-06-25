@@ -10,19 +10,26 @@
  * governing permissions and limitations under the License.
  */
 
-import {TableLayout as BaseTableLayout, TableLayoutProps} from '@react-stately/layout';
+import {TableLayout as BaseTableLayout, TableLayoutProps} from 'react-stately/useVirtualizerState';
 import {LayoutOptionsDelegate} from './Virtualizer';
 import {TableColumnResizeStateContext} from './Table';
 import {useContext, useMemo} from 'react';
 
-export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps> extends BaseTableLayout<T, O> implements LayoutOptionsDelegate<TableLayoutProps> {
+export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps>
+  extends BaseTableLayout<T, O>
+  implements LayoutOptionsDelegate<TableLayoutProps>
+{
   // Invalidate the layout whenever the column widths change.
   useLayoutOptions(): TableLayoutProps {
     // This is not a React class component, just a regular class.
-    /* eslint-disable react-hooks/rules-of-hooks */
+    // oxlint-disable react/react-compiler, react-hooks/rules-of-hooks
     let colResizeState = useContext(TableColumnResizeStateContext);
-    return useMemo(() => ({
-      columnWidths: colResizeState?.columnWidths
-    }), [colResizeState?.columnWidths]);
+    return useMemo(
+      () => ({
+        columnWidths: colResizeState?.columnWidths
+      }),
+      [colResizeState?.columnWidths]
+    );
+    // oxlint-enable react/react-compiler, react-hooks/rules-of-hooks
   }
 }

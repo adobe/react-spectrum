@@ -10,24 +10,4 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMProps, Orientation, StyleProps} from '@react-types/shared';
-
-export interface SpectrumDividerProps extends DOMProps, AriaLabelingProps, StyleProps {
-  /**
-   * How thick the Divider should be.
-   * @default 'L'
-   */
-  size?: 'S' | 'M' | 'L',
-
-  /**
-   * The axis the Divider should align with.
-   * @default 'horizontal'
-   */
-  orientation?: Orientation,
-
-  /**
-   * A slot to place the divider in.
-   * @default 'divider'
-   */
-  slot?: string
-}
+export {SpectrumDividerProps} from '@react-spectrum/divider';

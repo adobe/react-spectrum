@@ -1,0 +1,131 @@
+{/* Copyright 2026 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {InstallCommand} from '../../../src/InstallCommand';
+
+import {Layout} from '../../../src/Layout';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/s2';
+
+export const hideNav = true;
+export const section = 'Releases';
+export const tags = ['release', 'React Aria'];
+export const date = 'May 28, 2026';
+export const title = 'v1.18.0';
+export const description = 'This release packs a serious punch with several exciting new features! Highlights include major Calendar enhancements, support for table footers, a new SliderFill component, support for a description and error messages in Checkbox, Radio, and Switch, and a wide range of bug fixes!';
+export const isSubpage = true;
+
+# v1.18.0
+
+This release packs in several new features! [Calendar](../Calendar) now supports multiple date selection, as well as new [CalendarHeading](../Calendar#calendarheading), [CalendarMonthPicker](../Calendar#month-and-year-pickers), and [CalendarYearPicker](../Calendar#month-and-year-pickers) components that allow the user to jump to a different month or year. [RangeCalendar](../RangeCalendar#validation) now supports determining the available dates based on the first date a user selects. We have also added a [TableFooter](../Table#content) component, description and error messages for [Checkbox](../Checkbox#forms), [Radio](../RadioGroup), and [Switch](../Switch#forms), and a [SliderFill](../Slider#value-scale) component that simplifies the process of styling the fill portion in a Slider.
+
+As always, thank you to all our contributors!
+
+## Checkbox, Radio, and Switch API updates
+
+We have added support for description and error message slots to individual checkboxes, switches, and radios. Because this requires introducing a new DOM wrapper around the label element we currently render, we are deprecating the `Checkbox`, `Radio`, and `Switch` components and introducing [CheckboxField](../Checkbox#checkboxfield), [RadioField](../RadioGroup#radiofield), and [SwitchField](../Switch#switchfield) as replacements. These accept [CheckboxButton](../Checkbox#checkboxbutton), [RadioButton](../RadioGroup#radiobutton), and [SwitchButton](../Switch#switchbutton) as children, along with `<Text slot="description">` and `<FieldError>`.
+
+To add support for description and error message in your implementation, update your component as shown below.
+
+```diff
+-<Checkbox>Label</Checkbox>
++<CheckboxField>
++  <CheckboxButton>Label</CheckboxButton>
++  <Text slot="description">Description</Text>
++  <FieldError />
++</CheckboxField>
+```
+
+## Test utils RC
+
+We are pleased to announce that our [test utils](../testing#react-aria-test-utils) have advanced to RC! Alongside improvements such as RTL support and handling grid navigation, the API for the testers has been updated for consistency and thus various breaking changes have been made. To migrate from beta to RC, run the `test-utils-rc-update` codemod via:
+
+<InstallCommand isCommand pkg="@react-spectrum/codemods" flags="test-utils-rc-update --path /path/to/tests" />
+
+## Changelog
+
+### General Changes
+- Re-export `mergeRefs` from the `react-aria` package index - [@lixiaoyan](https://github.com/lixiaoyan) - [PR](https://github.com/adobe/react-spectrum/pull/9976)
+- Fix the `optimize-locales-plugin` to correctly tree-shake the `react-aria` package - [@wojtekmaj](https://github.com/wojtekmaj) - [PR](https://github.com/adobe/react-spectrum/pull/10023)
+- Fix scrolling the document body when keyboard-focusing an item that has no other scroll parents - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/9780)
+### Calendar
+- Add support for `selectionMode="multiple"` - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/9948)
+- Add new CalendarHeading component to handle formatting headings with an offset - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/9948)
+- Add new CalendarMonthPicker and CalendarYearPicker components to format a list of month and year names - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/9948)
+- Add `weeksInMonth` prop to override locale default number of weeks to display in a month - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/9948)
+- Add `anchorDate` as an argument to `isDateUnavailable` in RangeCalendar to determine available dates based on the first date the user picks - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/9948)
+### Checkbox
+- Add support for description and error message - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/9877)
+### Collections
+- Fix handling of falsy keys - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/9993)
+- Allow collection `items` to be non-object values such as strings and numbers - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/10047)
+### ComboBox
+- Fix preservation of multi-select selections when using a custom input value - [@romansndlr](https://github.com/romansndlr) - [PR](https://github.com/adobe/react-spectrum/pull/9945)
+- Fix ComboBox rendered inside Tabs - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/10019)
+- Fix `--trigger-width` when Input and Button are wrapped in a `<Group>` - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/9913)
+### DateField
+- Add `sr-Latn` placeholder to DateField for the Serbian Latin locale - [@nklaasse](https://github.com/nklaasse) - [PR](https://github.com/adobe/react-spectrum/pull/10034)
+### Drag and Drop
+- Fix RTL drop target positioning in GridLayout - [@miguelcalderon](https://github.com/miguelcalderon) - [PR](https://github.com/adobe/react-spectrum/pull/9848)
+### Link
+- Add a client-side routing guide to the Link documentation - [@RobHannay](https://github.com/RobHannay) - [PR](https://github.com/adobe/react-spectrum/pull/9992)
+### Menu
+- Fix MenuSection exposing `disabledKeys`; set disabled keys at the Menu or item level instead - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/9997)
+- Fix MenuItem render function receiving an `href` when the item is not a link - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/10018)
+- Fix Menu rendered inside Tabs - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/10019)
+### Modal
+- Fix layout shift in Sheet example on Modal docs - [@nwidynski](https://github.com/nwidynski) - [PR](https://github.com/adobe/react-spectrum/pull/9956)
+### NumberField
+- Allow `formatOptions` to be passed as an inline object without resetting user input - [@Wonchang0314](https://github.com/Wonchang0314) - [PR](https://github.com/adobe/react-spectrum/pull/9905)
+- Fix SpinButton spinning indefinitely when value results in a disabled button - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/9813)
+### Popover
+- Add `--trigger-width` for standalone Popovers - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/9913)
+### RadioGroup
+- Add support for description and error message - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/9877)
+### Select
+- Fix Select rendered inside Tabs - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/10019)
+### Slider
+- Add `SliderFill` component to render a filled track - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/10021)
+- Improve default `SliderOutput` value formatting to handle ranges - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/10021)
+### Switch
+- Add support for description and error message - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/9877)
+### Table
+- Add `TableFooter` component - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/9943)
+- Fix virtualized Table loader width not updating when the table width changes - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/9961)
+- Add `state` to `RowRenderProps` - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/9883)
+### Tabs
+- Support CSS logical properties (e.g. `block-size`, `inline-size`) for TabPanel animations - [@SupaSeeka](https://github.com/SupaSeeka) - [PR](https://github.com/adobe/react-spectrum/pull/9951)
+### TextField
+- Fix a type mismatch in `useTextField` for `<textarea>` elements - [@nami8824](https://github.com/nami8824) - [PR](https://github.com/adobe/react-spectrum/pull/9884)
+### Tree
+- Fix Tree incorrectly setting `focusedKey` to a section node key - [@chirokas](https://github.com/chirokas) - [PR](https://github.com/adobe/react-spectrum/pull/10020)
+
+## Under Construction
+### Test utils
+- Update test utils API with additional coverage for RTL, grid navigation, and more - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/9998)
+
+## Released packages
+
+```
+ - @internationalized/date => 3.12.2
+ - @internationalized/message => 3.1.10
+ - @internationalized/number => 3.6.7
+ - @internationalized/string-compiler => 3.4.1
+ - @internationalized/string => 3.2.9
+ - @react-aria/test-utils => 1.0.0-rc.0
+ - @react-types/shared => 3.35.0
+ - @react-aria/optimize-locales-plugin => 1.2.1
+ - @react-aria/parcel-resolver-optimize-locales => 1.3.1
+ - @react-aria/mcp => 1.2.0
+ - react-aria => 3.49.0
+ - react-aria-components => 1.18.0
+ - react-stately => 3.47.0
+ - tailwindcss-react-aria-components => 2.1.1
+```

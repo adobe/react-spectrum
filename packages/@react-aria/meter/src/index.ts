@@ -9,6 +9,6 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-export {useMeter} from './useMeter';
-export type {AriaMeterProps} from '@react-types/meter';
-export type {MeterAria} from './useMeter';
+export {useMeter} from 'react-aria/useMeter';
+
+export type {MeterProps, AriaMeterProps, MeterAria} from 'react-aria/useMeter';

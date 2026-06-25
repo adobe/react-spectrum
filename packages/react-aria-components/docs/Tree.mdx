@@ -26,7 +26,7 @@ import Selection from '@react-spectrum/docs/pages/assets/component-illustrations
 import DragAndDrop from '@react-spectrum/docs/pages/assets/component-illustrations/DragAndDrop.svg';
 import Checkbox from '@react-spectrum/docs/pages/assets/component-illustrations/Checkbox.svg';
 import Button from '@react-spectrum/docs/pages/assets/component-illustrations/Button.svg';
-import treeUtils from 'docs:@react-aria/test-utils/src/tree.ts';
+import treeUtils from 'docs:@react-aria/test-utils';
 import {StarterKits} from '@react-spectrum/docs/src/StarterKits';
 
 ---
@@ -2193,16 +2193,16 @@ it('Tree can select a item via keyboard', async function () {
   let treeTester = testUtilUser.createTester('Tree', {root: getByTestId('test-tree'), interactionType: 'keyboard'});
 
   await treeTester.toggleRowSelection({row: 0});
-  expect(treeTester.selectedRows).toHaveLength(1);
-  expect(within(treeTester.rows[0]).getByRole('checkbox')).toBeChecked();
+  expect(treeTester.getSelectedRows()).toHaveLength(1);
+  expect(within(treeTester.getRows()[0]).getByRole('checkbox')).toBeChecked();
 
   await treeTester.toggleRowSelection({row: 1});
-  expect(treeTester.selectedRows).toHaveLength(2);
-  expect(within(treeTester.rows[1]).getByRole('checkbox')).toBeChecked();
+  expect(treeTester.getSelectedRows()).toHaveLength(2);
+  expect(within(treeTester.getRows()[1]).getByRole('checkbox')).toBeChecked();
 
   await treeTester.toggleRowSelection({row: 0});
-  expect(treeTester.selectedRows).toHaveLength(1);
-  expect(within(treeTester.rows[0]).getByRole('checkbox')).not.toBeChecked();
+  expect(treeTester.getSelectedRows()).toHaveLength(1);
+  expect(within(treeTester.getRows()[0]).getByRole('checkbox')).not.toBeChecked();
 });
 ```
 

@@ -38,9 +38,8 @@ Sections or groups of items can be constructed by wrapping the items in a sectio
 
 ```tsx render
 "use client";
-import {MenuTrigger, Menu, MenuItem, MenuSection} from 'vanilla-starter/Menu';
+import {MenuTrigger, Menu, MenuItem, MenuSection, Header} from 'vanilla-starter/Menu';
 import {Button} from 'vanilla-starter/Button';
-import {Header} from 'react-aria-components';
 
 <MenuTrigger>
   <Button>Menu</Button>
@@ -64,8 +63,7 @@ import {Header} from 'react-aria-components';
 
 ```tsx render
 "use client";
-import {ListBox, ListBoxItem, ListBoxSection} from 'vanilla-starter/ListBox';
-import {Header} from 'react-aria-components';
+import {ListBox, ListBoxItem, ListBoxSection, Header} from 'vanilla-starter/ListBox';
 
 <ListBox aria-label="Text style" selectionMode="multiple">
   {/*- begin highlight -*/}
@@ -163,8 +161,7 @@ Dynamic collections are automatically memoized to improve performance. Rendered 
 
 ```tsx render
 "use client";
-import {ListBox, ListBoxItem} from 'vanilla-starter/ListBox';
-import {Text} from 'react-aria-components';
+import {ListBox, ListBoxItem, Text} from 'vanilla-starter/ListBox';
 import {ToggleButtonGroup} from 'vanilla-starter/ToggleButtonGroup';
 import {ToggleButton} from 'vanilla-starter/ToggleButton';
 import {useState} from 'react';
@@ -241,8 +238,8 @@ To combine multiple sources of data, or mix static and dynamic items, use the `<
 
 ```tsx render
 "use client";
-import {ListBox, ListBoxSection, ListBoxItem} from 'vanilla-starter/ListBox';
-import {Collection, Header} from 'react-aria-components';
+import {ListBox, ListBoxSection, ListBoxItem, Header} from 'vanilla-starter/ListBox';
+import {Collection} from 'react-aria-components/Collection';
 
 let animals = [
   {id: 1, species: 'Aardvark'},
@@ -287,8 +284,9 @@ Several components also support infinite scrolling by rendering a `LoadMoreItem`
 
 ```tsx render
 "use client";
-import {Collection, ListBoxLoadMoreItem, useAsyncList} from 'react-aria-components';
-import {ListBox, ListBoxItem} from 'vanilla-starter/ListBox';
+import {Collection} from 'react-aria-components/Collection';
+import {useAsyncList} from 'react-aria-components/useAsyncList';
+import {ListBox, ListBoxItem, ListBoxLoadMoreItem} from 'vanilla-starter/ListBox';
 import {ProgressCircle} from 'vanilla-starter/ProgressCircle';
 
 interface Character {

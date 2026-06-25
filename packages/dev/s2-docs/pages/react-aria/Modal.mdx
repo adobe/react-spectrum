@@ -4,7 +4,7 @@ export default Layout;
 import docs from 'docs:react-aria-components';
 import vanillaDocs from 'docs:vanilla-starter/Modal';
 import '../../tailwind/tailwind.css';
-import Anatomy from '@react-aria/overlays/docs/modal-anatomy.svg';
+import Anatomy from '/packages/react-aria/docs/overlays/modal-anatomy.svg';
 import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
 
 export const tags = ['dialog', 'popup', 'overlay'];
@@ -18,9 +18,9 @@ export const description = 'An overlay element which blocks interaction with ele
 <ExampleSwitcher>
   ```tsx render docs={vanillaDocs.exports.Modal} links={vanillaDocs.links} props={['isDismissable', 'isKeyboardDismissDisabled']}  type="vanilla" files={["starters/docs/src/Modal.tsx", "starters/docs/src/Modal.css"]}
   "use client";
-  import {DialogTrigger, Heading} from 'react-aria-components';
+  import {DialogTrigger} from 'react-aria-components/Modal';
   import {Modal} from 'vanilla-starter/Modal';
-  import {Dialog} from 'vanilla-starter/Dialog';
+  import {Dialog, Heading} from 'vanilla-starter/Dialog';
   import {Form} from 'vanilla-starter/Form';
   import {TextField} from 'vanilla-starter/TextField';
   import {Button} from 'vanilla-starter/Button';
@@ -50,9 +50,9 @@ export const description = 'An overlay element which blocks interaction with ele
 
   ```tsx render docs={vanillaDocs.exports.Modal} links={vanillaDocs.links} props={['isDismissable', 'isKeyboardDismissDisabled']} type="tailwind" files={["starters/tailwind/src/Modal.tsx"]}
   "use client";
-  import {DialogTrigger, Heading} from 'react-aria-components';
+  import {DialogTrigger} from 'react-aria-components/Modal';
   import {Modal} from 'tailwind-starter/Modal';
-  import {Dialog} from 'tailwind-starter/Dialog';
+  import {Dialog, Heading} from 'tailwind-starter/Dialog';
   import {Form} from 'tailwind-starter/Form';
   import {TextField} from 'tailwind-starter/TextField';
   import {Button} from 'tailwind-starter/Button';
@@ -87,8 +87,8 @@ Overlays such as trays, drawers, and sheets can be built using a `Modal` with cu
 
 ```tsx render type="vanilla" files={["starters/docs/src/Sheet.tsx", "starters/docs/src/Sheet.css"]}
 "use client";
-import {DialogTrigger, Heading} from 'react-aria-components';
-import {Sheet} from 'vanilla-starter/Sheet';
+import {DialogTrigger} from 'react-aria-components/Modal';
+import {Sheet, Heading} from 'vanilla-starter/Sheet';
 import {Button} from 'vanilla-starter/Button';
 
 <DialogTrigger>
@@ -108,10 +108,9 @@ Use the `isOpen` prop to show a modal programmatically or mount in a different p
 ```tsx render
 "use client";
 import {useState} from 'react';
-import {Heading} from 'react-aria-components';
 import {MenuTrigger, Menu, MenuItem} from 'vanilla-starter/Menu';
 import {Modal} from 'vanilla-starter/Modal';
-import {Dialog} from 'vanilla-starter/Dialog';
+import {Dialog, Heading} from 'vanilla-starter/Dialog';
 import {Button} from 'vanilla-starter/Button';
 
 function Example() {
@@ -142,9 +141,9 @@ function Example() {
 
 ```tsx render
 "use client"
-import {Pressable, DialogTrigger, Heading} from 'react-aria-components';
+import {Pressable, DialogTrigger} from 'react-aria-components/Modal';
 import {Modal} from 'vanilla-starter/Modal';
-import {Dialog} from 'vanilla-starter/Dialog';
+import {Dialog, Heading} from 'vanilla-starter/Dialog';
 import {Button} from 'vanilla-starter/Button';
 
 <DialogTrigger>
@@ -212,7 +211,9 @@ const CustomTrigger = React.forwardRef((props, ref) => (
   showDescription
   cssVariables={{
     '--visual-viewport-height': 'The height of the [Visual Viewport](https://developer.mozilla.org/en-US/docs/Web/API/Visual_Viewport_API), i.e. space above the software keyboard.',
-    '--page-height': 'The height of the `<body>` element. Useful for sizing the modal backdrop.'
+    '--visual-viewport-width': 'The width of the [Visual Viewport](https://developer.mozilla.org/en-US/docs/Web/API/Visual_Viewport_API).',
+    '--page-height': 'The height of the `<body>` element. Useful for sizing and positioning the modal backdrop.',
+    '--page-width': 'The width of the `<body>` element. Useful for sizing and positioning the modal backdrop.'
   }} />
 
 ### Dialog

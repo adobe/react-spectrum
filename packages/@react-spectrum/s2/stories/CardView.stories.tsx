@@ -10,30 +10,25 @@
  * governing permissions and limitations under the License.
  */
 
-import {
-  ActionMenu,
-  Avatar,
-  Card,
-  CardPreview,
-  CardView,
-  CardViewProps,
-  Collection,
-  CollectionCardPreview,
-  Content,
-  Heading,
-  IllustratedMessage,
-  Image,
-  MenuItem,
-  SkeletonCollection,
-  Text
-} from '../src';
+import {ActionMenu} from '../src/ActionMenu';
+
+import {Avatar} from '../src/Avatar';
+import {Card, CardPreview, CollectionCardPreview} from '../src/Card';
+import {CardView, CardViewProps} from '../src/CardView';
+import {Collection} from 'react-aria/Collection';
+import {Content, Heading, Text} from '../src/Content';
 import EmptyIcon from '../spectrum-illustrations/gradient/generic1/Image';
 import ErrorIcon from '../spectrum-illustrations/linear/AlertNotice';
 import {fn} from 'storybook/test';
 import Folder from '../s2wf-icons/S2_Icon_Folder_20_N.svg';
+import {IllustratedMessage} from '../src/IllustratedMessage';
+import {Image} from '../src/Image';
+import {MenuItem} from '../src/Menu';
 import type {Meta, StoryObj} from '@storybook/react';
+import {SkeletonCollection} from '../src/SkeletonCollection';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
-import {useAsyncList} from 'react-stately';
+import {TextField} from '../src/TextField';
+import {useAsyncList} from 'react-stately/useAsyncList';
 
 const meta: Meta<typeof CardView> = {
   component: CardView,
@@ -58,16 +53,16 @@ const cardViewStyles = style({
 });
 
 type Item = {
-  id: number,
+  id: number;
   user: {
-    name: string,
-    profile_image: { small: string }
-  },
-  urls: { regular: string },
-  description: string,
-  alt_description: string,
-  width: number,
-  height: number
+    name: string;
+    profile_image: {small: string};
+  };
+  urls: {regular: string};
+  description: string;
+  alt_description: string;
+  width: number;
+  height: number;
 };
 
 const avatarSize = {
@@ -78,44 +73,77 @@ const avatarSize = {
   XL: 32
 } as const;
 
-export function PhotoCard({item, layout}: {item: Item, layout: string}) {
+export function PhotoCard({
+  item,
+  layout,
+  interactive
+}: {
+  item: Item;
+  layout: string;
+  interactive?: React.ReactNode;
+}) {
   return (
     <Card id={item.id} textValue={item.description || item.alt_description}>
-      {({size}) => (<>
-        <CardPreview>
-          <Image
-            src={item.urls.regular}
-            styles={style({
-              width: 'full',
-              pointerEvents: 'none'
-            })}
-            // TODO - should we have a safe `dynamicStyles` or something for this?
-            UNSAFE_style={{
-              aspectRatio: layout === 'waterfall' ? `${item.width} / ${item.height}` : '4/3',
-              objectFit: layout === 'waterfall' ? 'contain' : 'cover'
-            }}
-            renderError={() => (
-              <div className={style({display: 'flex', alignItems: 'center', justifyContent: 'center', size: 'full'})}>
-                <ErrorIcon size="S" />
+      {({size}) => (
+        <>
+          <CardPreview>
+            <Image
+              src={item.urls.regular}
+              styles={style({
+                width: 'full',
+                pointerEvents: 'none'
+              })}
+              // TODO - should we have a safe `dynamicStyles` or something for this?
+              UNSAFE_style={{
+                aspectRatio: layout === 'waterfall' ? `${item.width} / ${item.height}` : '4/3',
+                objectFit: layout === 'waterfall' ? 'contain' : 'cover'
+              }}
+              renderError={() => (
+                <div
+                  className={style({
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    size: 'full'
+                  })}>
+                  <ErrorIcon size="S" />
+                </div>
+              )}
+            />
+          </CardPreview>
+          <Content>
+            <Text slot="title">{item.description || item.alt_description}</Text>
+            {size !== 'XS' && (
+              <ActionMenu>
+                <MenuItem>Test</MenuItem>
+              </ActionMenu>
+            )}
+            <div
+              className={style({
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 8,
+                gridArea: 'description'
+              })}>
+              <div
+                className={style({
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 8
+                })}>
+                <Avatar src={item.user.profile_image.small} size={avatarSize[size]} />
+                <Text slot="description">{item.user.name}</Text>
               </div>
-            )} />
-        </CardPreview>
-        <Content>
-          <Text slot="title">{item.description || item.alt_description}</Text>
-          {size !== 'XS' && <ActionMenu>
-            <MenuItem>Test</MenuItem>
-          </ActionMenu>}
-          <div className={style({display: 'flex', alignItems: 'center', gap: 8, gridArea: 'description'})}>
-            <Avatar src={item.user.profile_image.small} size={avatarSize[size]} />
-            <Text slot="description">{item.user.name}</Text>
-          </div>
-        </Content>
-      </>)}
+              {interactive}
+            </div>
+          </Content>
+        </>
+      )}
     </Card>
   );
 }
 
-export const ExampleRender = (args: CardViewProps<any>) => {
+export const ExampleRender = (args: CardViewProps<any> & {interactive?: React.ReactNode}) => {
   let list = useAsyncList<Item, number | null>({
     async load({signal, cursor, items}) {
       let page = cursor || 1;
@@ -126,7 +154,9 @@ export const ExampleRender = (args: CardViewProps<any>) => {
       let nextItems = await res.json();
       // Filter duplicates which might be returned by the API.
       let existingKeys = new Set(items.map(i => i.id));
-      nextItems = nextItems.filter(i => !existingKeys.has(i.id) && (i.description || i.alt_description));
+      nextItems = nextItems.filter(
+        i => !existingKeys.has(i.id) && (i.description || i.alt_description)
+      );
       return {items: nextItems, cursor: nextItems.length ? page + 1 : null};
     }
   });
@@ -142,22 +172,27 @@ export const ExampleRender = (args: CardViewProps<any>) => {
       onLoadMore={args.loadingState === 'idle' ? list.loadMore : undefined}
       styles={cardViewStyles}>
       <Collection items={items} dependencies={[args.layout]}>
-        {item => <PhotoCard item={item} layout={args.layout || 'grid'} />}
+        {item => (
+          <PhotoCard interactive={args.interactive} item={item} layout={args.layout || 'grid'} />
+        )}
       </Collection>
       {(loadingState === 'loading' || loadingState === 'loadingMore') && (
         <SkeletonCollection>
           {() => (
             <PhotoCard
               item={{
+                // oxlint-disable-next-line react/react-compiler
                 id: Math.random(),
                 user: {name: 'Devon Govett', profile_image: {small: ''}},
                 urls: {regular: ''},
                 description: 'This is a fake description. Kinda long so it wraps to a new line.',
                 alt_description: '',
                 width: 400,
+                // oxlint-disable-next-line react/react-compiler
                 height: 200 + Math.max(0, Math.round(Math.random() * 400))
               }}
-              layout={args.layout || 'grid'} />
+              layout={args.layout || 'grid'}
+            />
           )}
         </SkeletonCollection>
       )}
@@ -166,7 +201,7 @@ export const ExampleRender = (args: CardViewProps<any>) => {
 };
 
 export const Example: Story = {
-  render: (args) => <ExampleRender {...args} />,
+  render: args => <ExampleRender {...args} />,
   args: {
     loadingState: 'idle',
     onAction: undefined,
@@ -193,11 +228,11 @@ export const Empty: Story = {
 };
 
 interface Topic {
-  id: string,
-  title: string,
-  total_photos: number,
-  links: {html: string},
-  preview_photos: {id: string, urls: {small: string}}[]
+  id: string;
+  title: string;
+  total_photos: number;
+  links: {html: string};
+  preview_photos: {id: string; urls: {small: string}}[];
 }
 
 function TopicCard({topic}: {topic: Topic}) {
@@ -242,14 +277,13 @@ const CollectionCardsRender = (args: CardViewProps<any>) => {
       loadingState={loadingState}
       onLoadMore={args.loadingState === 'idle' ? list.loadMore : undefined}
       styles={cardViewStyles}>
-      <Collection items={items}>
-        {topic => <TopicCard topic={topic} />}
-      </Collection>
+      <Collection items={items}>{topic => <TopicCard topic={topic} />}</Collection>
       {(loadingState === 'loading' || loadingState === 'loadingMore') && (
         <SkeletonCollection>
           {() => (
             <TopicCard
               topic={{
+                // oxlint-disable-next-line react/react-compiler
                 id: Math.random().toString(36),
                 title: 'Topic title',
                 total_photos: 80,
@@ -260,7 +294,8 @@ const CollectionCardsRender = (args: CardViewProps<any>) => {
                   {id: 'c', urls: {small: ''}},
                   {id: 'd', urls: {small: ''}}
                 ]
-              }} />
+              }}
+            />
           )}
         </SkeletonCollection>
       )}
@@ -269,9 +304,20 @@ const CollectionCardsRender = (args: CardViewProps<any>) => {
 };
 
 export const CollectionCards: Story = {
-  render: (args) => <CollectionCardsRender {...args} />,
+  render: args => <CollectionCardsRender {...args} />,
   args: {
     loadingState: 'idle',
     onAction: undefined
+  }
+};
+
+export const CardViewWithTextField: Story = {
+  render: args => (
+    <ExampleRender {...args} interactive={<TextField aria-label="search photos" />} />
+  ),
+  args: {
+    loadingState: 'idle',
+    onAction: undefined,
+    selectionMode: 'multiple'
   }
 };

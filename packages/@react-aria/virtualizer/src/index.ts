@@ -10,10 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-export type {RTLOffsetType} from './utils';
-export type {VirtualizerItemOptions} from './useVirtualizerItem';
-export {Virtualizer} from './Virtualizer';
-export {useVirtualizerItem} from './useVirtualizerItem';
-export {VirtualizerItem, layoutInfoToStyle} from './VirtualizerItem';
-export {ScrollView, useScrollView} from './ScrollView';
-export {getRTLOffsetType, getScrollLeft, setScrollLeft} from './utils';
+export {Virtualizer} from 'react-aria/private/virtualizer/Virtualizer';
+
+export {useVirtualizerItem} from 'react-aria/private/virtualizer/useVirtualizerItem';
+export {VirtualizerItem, layoutInfoToStyle} from 'react-aria/private/virtualizer/VirtualizerItem';
+export {ScrollView, useScrollView} from 'react-aria/private/virtualizer/ScrollView';
+export {getRTLOffsetType, getScrollLeft, setScrollLeft} from 'react-aria/private/virtualizer/utils';
+export type {RTLOffsetType} from 'react-aria/private/virtualizer/utils';
+export type {VirtualizerItemOptions} from 'react-aria/private/virtualizer/useVirtualizerItem';

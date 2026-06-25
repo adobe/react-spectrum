@@ -11,7 +11,8 @@
  */
 
 import clsx from 'clsx';
-import {DateInput, DateSegment, Label, TimeField} from 'react-aria-components';
+import {DateInput, DateSegment, TimeField} from '../src/DateField';
+import {Label} from '../src/Label';
 import {Meta, StoryFn} from '@storybook/react';
 import React from 'react';
 import styles from '../example/index.css';
@@ -28,7 +29,12 @@ export const TimeFieldExample: TimeFieldStory = () => (
   <TimeField data-testid="time-field-example">
     <Label style={{display: 'block'}}>Time</Label>
     <DateInput className={styles.field}>
-      {segment => <DateSegment segment={segment} className={clsx(styles.segment, {[styles.placeholder]: segment.isPlaceholder})} />}
+      {segment => (
+        <DateSegment
+          segment={segment}
+          className={clsx(styles.segment, {[styles.placeholder]: segment.isPlaceholder})}
+        />
+      )}
     </DateInput>
   </TimeField>
 );

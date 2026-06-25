@@ -10,9 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionMenu, MenuItem} from '../src';
+import {ActionMenu} from '../src/ActionMenu';
 
 import {categorizeArgTypes, getActionArgs} from './utils';
+
+import {MenuItem} from '../src/Menu';
 import type {Meta, StoryObj} from '@storybook/react';
 
 const events = ['onAction', 'onOpenChange'];
@@ -35,7 +37,7 @@ export default meta;
 type Story = StoryObj<typeof ActionMenu<any>>;
 
 export const Example: Story = {
-  render: (args) => {
+  render: args => {
     return (
       <ActionMenu {...args}>
         <MenuItem>Cut</MenuItem>
@@ -47,8 +49,8 @@ export const Example: Story = {
 };
 
 interface IExampleItem {
-  id: string,
-  label: string
+  id: string;
+  label: string;
 }
 let items: IExampleItem[] = [
   {id: 'cut', label: 'Cut'},
@@ -56,10 +58,10 @@ let items: IExampleItem[] = [
   {id: 'paste', label: 'Paste'}
 ];
 export const DynamicExample: Story = {
-  render: (args) => {
+  render: args => {
     return (
       <ActionMenu {...args}>
-        {(item) => <MenuItem id={(item as IExampleItem).id}>{(item as IExampleItem).label}</MenuItem>}
+        {item => <MenuItem id={(item as IExampleItem).id}>{(item as IExampleItem).label}</MenuItem>}
       </ActionMenu>
     );
   },

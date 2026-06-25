@@ -10,10 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {Autocomplete} from 'react-aria-components';
-import {Menu, MenuItem, SearchField} from '../src';
+import {Autocomplete} from 'react-aria-components/Autocomplete';
+
+import {Menu, MenuItem} from '../src/Menu';
 import {pointerMap, render} from '@react-spectrum/test-utils-internal';
 import React from 'react';
+import {SearchField} from '../src/SearchField';
 import userEvent from '@testing-library/user-event';
 
 describe('SearchField', () => {

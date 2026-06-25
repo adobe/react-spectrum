@@ -69,13 +69,16 @@ export function DisclosureRow({title, children, defaultExpanded}) {
   let state = useDisclosureState({defaultExpanded});
   let ref = useRef(null);
   let {buttonProps} = useDisclosure({}, state, ref);
+  // oxlint-disable-next-line react/react-compiler
   delete buttonProps['aria-controls']; // there is no panel element in this implementation
 
   return (
     <TableBody>
       <TableRow>
         <td colSpan={3} className={tableCell}>
-          <Button {...buttonProps} className={p => buttonStyles({...p, isExpanded: state.isExpanded})}>
+          <Button
+            {...buttonProps}
+            className={p => buttonStyles({...p, isExpanded: state.isExpanded})}>
             {/* @ts-ignore */}
             <Chevron styles={chevronStyles({isExpanded: state.isExpanded})} />
             {title}

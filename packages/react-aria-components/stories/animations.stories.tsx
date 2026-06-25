@@ -1,15 +1,9 @@
-
-import {
-  Button,
-  Dialog,
-  DialogTrigger,
-  Heading,
-  Modal,
-  ModalOverlay
-} from 'react-aria-components';
+import {Button} from '../src/Button';
+import {Dialog, DialogTrigger} from '../src/Dialog';
+import {Heading} from '../src/Heading';
+import {Modal, ModalOverlay} from '../src/Modal';
 import React from 'react';
 import styles from './styles.css';
-
 
 export default {
   title: 'React Aria Components - Animations'

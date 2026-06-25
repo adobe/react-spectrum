@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Link} from 'react-aria-components';
+import {Link} from '../src/Link';
 import {Meta, StoryFn} from '@storybook/react';
 import React from 'react';
 import './styles.css';
@@ -24,7 +24,11 @@ export type LinkStory = StoryFn<typeof Link>;
 
 export const LinkExample: LinkStory = () => {
   return (
-    <Link data-testid="link-example" href="https://www.imdb.com/title/tt6348138/" hrefLang="en"  target="_blank">
+    <Link
+      data-testid="link-example"
+      href="https://www.imdb.com/title/tt6348138/"
+      hrefLang="en"
+      target="_blank">
       The missing link
     </Link>
   );

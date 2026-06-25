@@ -10,12 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Heading} from 'react-aria-components';
-import {
-  Disclosure,
-  DisclosureGroup,
-  DisclosurePanel
-} from '../src/Disclosure';
+import {Button} from '../src/Button';
+
+import {Disclosure, DisclosureGroup, DisclosurePanel} from '../src/Disclosure';
+import {Heading} from '../src/Heading';
 import {Meta, StoryFn} from '@storybook/react';
 import React from 'react';
 import './styles.css';
@@ -27,9 +25,9 @@ export default {
 
 export type DisclosureGroupStory = StoryFn<typeof DisclosureGroup>;
 
-export const DisclosureGroupExample: DisclosureGroupStory = (args) => {
+export const DisclosureGroupExample: DisclosureGroupStory = args => {
   const [isDisabled, setIsDisabled] = React.useState(false);
-  const toggleDisabled = () => setIsDisabled((d) => !d);
+  const toggleDisabled = () => setIsDisabled(d => !d);
 
   return (
     <>

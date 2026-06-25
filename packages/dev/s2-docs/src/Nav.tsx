@@ -86,7 +86,8 @@ export function Nav() {
     <nav
       onScroll={e => setMaskSize(Math.min(e.currentTarget.scrollTop, 32))}
       style={{
-        maskImage: maskSize > 0 ? `linear-gradient(to bottom, transparent, black ${maskSize}px)` : undefined
+        maskImage:
+          maskSize > 0 ? `linear-gradient(to bottom, transparent, black ${maskSize}px)` : undefined
       }}
       className={style({
         position: 'sticky',
@@ -124,7 +125,10 @@ export function Nav() {
                       .filter(page => !page.exports?.isSubpage)
                       .map(page => (
                         <SideNavItem key={page.url}>
-                          <SideNavLink href={page.url} page={page} isSelected={page.url === displayPage.url}>
+                          <SideNavLink
+                            href={page.url}
+                            page={page}
+                            isSelected={page.url === displayPage.url}>
                             {title(page)}
                           </SideNavLink>
                         </SideNavItem>
@@ -151,8 +155,12 @@ export function Nav() {
                 })
                 .filter(page => !page.exports?.isSubpage)
                 .map(page => (
-                  <SideNavItem key={page.url}><SideNavLink href={page.url} isSelected={page.url === displayPage.url}>{title(page)}</SideNavLink></SideNavItem>
-              ))}
+                  <SideNavItem key={page.url}>
+                    <SideNavLink href={page.url} isSelected={page.url === displayPage.url}>
+                      {title(page)}
+                    </SideNavLink>
+                  </SideNavItem>
+                ))}
             </SideNav>
           );
         }
@@ -188,15 +196,24 @@ export function Nav() {
           );
         }
         return (
-          <Disclosure id={name} key={name} isQuiet density="spacious" defaultExpanded={name === 'Components' || name === currentPage.exports?.section || name === currentPage.exports?.group} styles={style({minWidth: 185})}>
+          <Disclosure
+            id={name}
+            key={name}
+            isQuiet
+            density="spacious"
+            defaultExpanded={
+              name === 'Components' ||
+              name === currentPage.exports?.section ||
+              name === currentPage.exports?.group
+            }
+            styles={style({minWidth: 185})}>
             <DisclosureTitle>{name}</DisclosureTitle>
             <DisclosurePanel>
               <div className={style({paddingStart: space(18)})}>{nav}</div>
             </DisclosurePanel>
           </Disclosure>
         );
-      }
-      )}
+      })}
     </nav>
   );
 }
@@ -212,7 +229,17 @@ function isIntroduction(page) {
 function SideNavSection({title, children}) {
   return (
     <section className={style({marginBottom: 16})}>
-      <div className={style({font: 'ui-sm', color: 'gray-600', minHeight: 32, paddingX: 12, display: 'flex', alignItems: 'center'})}>{title}</div>
+      <div
+        className={style({
+          font: 'ui-sm',
+          color: 'gray-600',
+          minHeight: 32,
+          paddingX: 12,
+          display: 'flex',
+          alignItems: 'center'
+        })}>
+        {title}
+      </div>
       {children}
     </section>
   );
@@ -247,27 +274,26 @@ export function SideNav({children, isNested = false}) {
 }
 
 export function SideNavItem(props) {
-  return (
-    <li>
-      {props.children}
-    </li>
-  );
+  return <li>{props.children}</li>;
 }
 
 export function SideNavLink(props) {
   let linkRef = useRef<HTMLAnchorElement | null>(null);
+  let shouldAutoScrollOnMount = useRef(props.isSelected);
   let selected = useContext(SideNavContext);
   let {isExternal, ...linkProps} = props;
 
   useEffect(() => {
     let link = linkRef.current;
-    if (!link || !props.isSelected) {
+    if (!link || !props.isSelected || !shouldAutoScrollOnMount.current) {
       return;
     }
 
-    link.scrollIntoView({block: 'start', behavior: 'smooth'});
+    shouldAutoScrollOnMount.current = false;
+    link.scrollIntoView({block: 'start'});
   }, [props.isSelected]);
 
+  // oxlint-disable react/react-compiler
   return (
     <BaseLink
       {...linkProps}
@@ -295,28 +321,33 @@ export function SideNavLink(props) {
         transition: 'default',
         scrollMarginTop: 64
       })}>
-      {(renderProps) => (<>
-        <span
-          className={style({
-            width: 2,
-            height: '[1lh]',
-            borderRadius: 'full',
-            transition: 'default',
-            backgroundColor: {
-              default: 'transparent',
-              isHovered: 'gray-400',
-              isCurrent: 'gray-800'
-            }
-          })(renderProps)} />
-        {props.children}
-        {isExternal && (
-          <LinkOutIcon
-            aria-label="(opens in a new tab)"
-            className={style({color: 'neutral', marginStart: 'auto', flexShrink: 0, paddingX: 8})} />
-        )}
-      </>)}
+      {renderProps => (
+        <>
+          <span
+            className={style({
+              width: 2,
+              height: '[1lh]',
+              borderRadius: 'full',
+              transition: 'default',
+              backgroundColor: {
+                default: 'transparent',
+                isHovered: 'gray-400',
+                isCurrent: 'gray-800'
+              }
+            })(renderProps)}
+          />
+          {props.children}
+          {isExternal && (
+            <LinkOutIcon
+              aria-label="(opens in a new tab)"
+              className={style({color: 'neutral', marginStart: 'auto', flexShrink: 0, paddingX: 8})}
+            />
+          )}
+        </>
+      )}
     </BaseLink>
   );
+  // oxlint-enable react/react-compiler
 }
 
 function useCurrentSection() {
@@ -326,20 +357,23 @@ function useCurrentSection() {
   useEffect(() => {
     let elements = Array.from(document.querySelectorAll('article [data-anchor-link]'));
     let visible = new Set();
-    let observer = new IntersectionObserver(entries => {
-      for (let entry of entries) {
-        if (entry.isIntersecting) {
-          visible.add(entry.target);
-        } else {
-          visible.delete(entry.target);
-        }
+    let observer = new IntersectionObserver(
+      entries => {
+        for (let entry of entries) {
+          if (entry.isIntersecting) {
+            visible.add(entry.target);
+          } else {
+            visible.delete(entry.target);
+          }
 
-        let firstVisible = elements.find(e => visible.has(e));
-        if (firstVisible) {
-          setSelected('#' + firstVisible.id);
+          let firstVisible = elements.find(e => visible.has(e));
+          if (firstVisible) {
+            setSelected('#' + firstVisible.id);
+          }
         }
-      }
-    }, {rootMargin: '0px 0px -50% 0px'});
+      },
+      {rootMargin: '0px 0px -50% 0px'}
+    );
 
     for (let element of elements) {
       observer.observe(element);
@@ -354,11 +388,7 @@ function useCurrentSection() {
 export function OnPageNav({children}) {
   let selected = useCurrentSection();
 
-  return (
-    <SideNavContext.Provider value={selected}>
-      {children}
-    </SideNavContext.Provider>
-  );
+  return <SideNavContext.Provider value={selected}>{children}</SideNavContext.Provider>;
 }
 
 export function MobileOnPageNav({children}) {
@@ -368,27 +398,30 @@ export function MobileOnPageNav({children}) {
     let elements = Array.from(document.querySelectorAll('article [data-anchor-link]'));
     elements.reverse();
     let visible = new Set();
-    let observer = new IntersectionObserver(entries => {
-      for (let entry of entries) {
-        if (entry.isIntersecting) {
-          visible.add(entry.target);
-        } else {
-          visible.delete(entry.target);
+    let observer = new IntersectionObserver(
+      entries => {
+        for (let entry of entries) {
+          if (entry.isIntersecting) {
+            visible.add(entry.target);
+          } else {
+            visible.delete(entry.target);
+          }
         }
-      }
 
-      let lastVisible = elements.find(e => visible.has(e));
-      if (lastVisible) {
-        setSelected('#' + lastVisible.id!);
-      } else {
-        setSelected('#' + elements.at(-1)!.id);
+        let lastVisible = elements.find(e => visible.has(e));
+        if (lastVisible) {
+          setSelected('#' + lastVisible.id!);
+        } else {
+          setSelected('#' + elements.at(-1)!.id);
+        }
+      },
+      {
+        rootMargin: '9999999px 0px -100% 0px',
+        // @ts-ignore
+        scrollMargin: '0px 0px 62px 0px',
+        threshold: 0.5
       }
-    }, {
-      rootMargin: '9999999px 0px -100% 0px',
-      // @ts-ignore
-      scrollMargin: '0px 0px 62px 0px',
-      threshold: 0.5
-    });
+    );
 
     for (let element of elements) {
       observer.observe(element);

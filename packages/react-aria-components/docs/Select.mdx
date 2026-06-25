@@ -12,7 +12,7 @@ export default Layout;
 
 import docs from 'docs:react-aria-components';
 import statelyDocs from 'docs:@react-stately/select';
-import selectUtil from 'docs:@react-aria/test-utils/src/select.ts';
+import selectUtil from 'docs:@react-aria/test-utils';
 import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable, ClassAPI, VersionBadge} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
@@ -1364,10 +1364,10 @@ it('Select can select an option via keyboard', async function () {
     </Select>
   );
   let selectTester = testUtilUser.createTester('Select', {root: getByTestId('test-select'), interactionType: 'keyboard'});
-  let trigger = selectTester.trigger;
+  let trigger = selectTester.getTrigger();
   expect(trigger).toHaveTextContent('Select an item');
 
-  await selectTester.selectOption({option: 'Cat'});
+  await selectTester.toggleOptionSelection({option: 'Cat'});
   expect(trigger).toHaveTextContent('Cat');
 });
 ```

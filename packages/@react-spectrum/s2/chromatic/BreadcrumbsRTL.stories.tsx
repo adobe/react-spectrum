@@ -10,14 +10,19 @@
  * governing permissions and limitations under the License.
  */
 
-import {Breadcrumbs} from '../src';
+import {Breadcrumbs} from '../src/Breadcrumbs';
 
 import type {Meta} from '@storybook/react';
 
 const meta: Meta<typeof Breadcrumbs> = {
   component: Breadcrumbs,
   parameters: {
-    chromaticProvider: {colorSchemes: ['dark'], backgrounds: ['base'], locales: ['ar-AE'], disableAnimations: true}
+    chromaticProvider: {
+      colorSchemes: ['dark'],
+      backgrounds: ['base'],
+      locales: ['ar-AE'],
+      disableAnimations: true
+    }
   },
   title: 'S2 Chromatic/BreadcrumbsRTL'
 };

@@ -11,5 +11,5 @@
  */
 
 interface Document {
-  startViewTransition(update: (() => void) | {update: () => void, types: string[]}): ViewTransition;
+  startViewTransition(update: (() => void) | {update: () => void; types: string[]}): ViewTransition;
 }

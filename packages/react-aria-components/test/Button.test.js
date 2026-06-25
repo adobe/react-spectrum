@@ -11,8 +11,13 @@
  */
 
 import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
-import {Button, ButtonContext, Dialog, DialogTrigger, Heading, Modal, ProgressBar, Text} from '../';
+import {Button, ButtonContext} from '../src/Button';
+import {Dialog, DialogTrigger} from '../src/Dialog';
+import {Heading} from '../src/Heading';
+import {Modal} from '../src/Modal';
+import {ProgressBar} from '../src/ProgressBar';
 import React, {useState} from 'react';
+import {Text} from '../src/Text';
 import userEvent from '@testing-library/user-event';
 
 describe('Button', () => {
@@ -45,7 +50,14 @@ describe('Button', () => {
   });
 
   it('should support custom render function', async () => {
-    let {getByRole} = render(<Button render={(props, {isPressed}) => <button {...props} data-custom={isPressed ? 'pressed' : 'bar'} />}>Test</Button>);
+    let {getByRole} = render(
+      <Button
+        render={(props, {isPressed}) => (
+          <button {...props} data-custom={isPressed ? 'pressed' : 'bar'} />
+        )}>
+        Test
+      </Button>
+    );
     let button = getByRole('button');
     expect(button).toHaveAttribute('data-custom', 'bar');
 
@@ -57,21 +69,31 @@ describe('Button', () => {
   });
 
   it('should warn when rendering the wrong element type', () => {
-    let warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    using warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
     render(<Button render={props => <div {...props} data-custom="bar" />}>Test</Button>);
-    expect(warn).toHaveBeenCalledWith('Unexpected DOM element returned by custom `render` function. Expected <button>, got <div>. This may break the component behavior and accessibility.');
+    expect(warn).toHaveBeenCalledWith(
+      'Unexpected DOM element returned by custom `render` function. Expected <button>, got <div>. This may break the component behavior and accessibility.'
+    );
     warn.mockRestore();
   });
 
   it('should warn when ref is not passed through', () => {
-    let warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    using warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
     render(<Button render={() => <div data-custom="bar" />}>Test</Button>);
-    expect(warn).toHaveBeenCalledWith('Ref was not connected to DOM element returned by custom `render` function. Did you forget to pass through or merge the `ref`?');
+    expect(warn).toHaveBeenCalledWith(
+      'Ref was not connected to DOM element returned by custom `render` function. Did you forget to pass through or merge the `ref`?'
+    );
     warn.mockRestore();
   });
 
   it('should support form props', () => {
-    let {getByRole} = render(<form id="foo"><Button form="foo" formMethod="post">Test</Button></form>);
+    let {getByRole} = render(
+      <form id="foo">
+        <Button form="foo" formMethod="post">
+          Test
+        </Button>
+      </form>
+    );
     let button = getByRole('button');
     expect(button).toHaveAttribute('form', 'foo');
     expect(button).toHaveAttribute('formMethod', 'post');
@@ -111,7 +133,15 @@ describe('Button', () => {
     let hoverStartSpy = jest.fn();
     let hoverChangeSpy = jest.fn();
     let hoverEndSpy = jest.fn();
-    let {getByRole} = render(<Button className={({isHovered}) => isHovered ? 'hover' : ''} onHoverStart={hoverStartSpy} onHoverChange={hoverChangeSpy} onHoverEnd={hoverEndSpy}>Test</Button>);
+    let {getByRole} = render(
+      <Button
+        className={({isHovered}) => (isHovered ? 'hover' : '')}
+        onHoverStart={hoverStartSpy}
+        onHoverChange={hoverChangeSpy}
+        onHoverEnd={hoverEndSpy}>
+        Test
+      </Button>
+    );
     let button = getByRole('button');
 
     expect(button).not.toHaveAttribute('data-hovered');
@@ -131,7 +161,9 @@ describe('Button', () => {
   });
 
   it('should support focus ring', async () => {
-    let {getByRole} = render(<Button className={({isFocusVisible}) => isFocusVisible ? 'focus' : ''}>Test</Button>);
+    let {getByRole} = render(
+      <Button className={({isFocusVisible}) => (isFocusVisible ? 'focus' : '')}>Test</Button>
+    );
     let button = getByRole('button');
 
     expect(button).not.toHaveAttribute('data-focus-visible');
@@ -151,7 +183,15 @@ describe('Button', () => {
     let onPress = jest.fn();
     let onClick = jest.fn();
     let onClickCapture = jest.fn();
-    let {getByRole} = render(<Button className={({isPressed}) => isPressed ? 'pressed' : ''} onPress={onPress} onClick={onClick} onClickCapture={onClickCapture}>Test</Button>);
+    let {getByRole} = render(
+      <Button
+        className={({isPressed}) => (isPressed ? 'pressed' : '')}
+        onPress={onPress}
+        onClick={onClick}
+        onClickCapture={onClickCapture}>
+        Test
+      </Button>
+    );
     let button = getByRole('button');
 
     expect(button).not.toHaveAttribute('data-pressed');
@@ -171,7 +211,11 @@ describe('Button', () => {
   });
 
   it('should support disabled state', () => {
-    let {getByRole} = render(<Button isDisabled className={({isDisabled}) => isDisabled ? 'disabled' : ''}>Test</Button>);
+    let {getByRole} = render(
+      <Button isDisabled className={({isDisabled}) => (isDisabled ? 'disabled' : '')}>
+        Test
+      </Button>
+    );
     let button = getByRole('button');
 
     expect(button).toBeDisabled();
@@ -179,7 +223,7 @@ describe('Button', () => {
   });
 
   it('should support render props', async () => {
-    let {getByRole} = render(<Button>{({isPressed}) => isPressed ? 'Pressed' : 'Test'}</Button>);
+    let {getByRole} = render(<Button>{({isPressed}) => (isPressed ? 'Pressed' : 'Test')}</Button>);
     let button = getByRole('button');
 
     expect(button).toHaveTextContent('Test');
@@ -349,24 +393,26 @@ describe('Button', () => {
       return (
         // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
         <form
-          onSubmit={(e) => {
+          onSubmit={e => {
             // forms are submitted implicitly on keydown, so we need to wait to set pending until after to set pending
             props.onSubmit(e);
           }}
-          onKeyDown={(e) => {
+          onKeyDown={e => {
             if (e.key === 'Enter') {
               // keyup could theoretically happen elsewhere if focus is moved during submission
-              document.body.addEventListener('keyup', () => {
-                setPending(true);
-              }, {capture: true, once: true});
+              document.body.addEventListener(
+                'keyup',
+                () => {
+                  setPending(true);
+                },
+                {capture: true, once: true}
+              );
             }
           }}>
           <label htmlFor="foo">Test</label>
           <input id="foo" type="text" />
           <input id="bar" type="text" />
-          <Button
-            type="submit"
-            isPending={pending}>
+          <Button type="submit" isPending={pending}>
             {({isPending}) => (
               <>
                 <Text style={{opacity: isPending ? '0' : undefined}}>Test</Text>
@@ -382,9 +428,7 @@ describe('Button', () => {
         </form>
       );
     }
-    render(
-      <TestComponent onSubmit={onSubmitSpy} />
-    );
+    render(<TestComponent onSubmit={onSubmitSpy} />);
     await user.tab();
     await user.keyboard('{Enter}');
     expect(onSubmitSpy).toHaveBeenCalled();
@@ -399,7 +443,9 @@ describe('Button', () => {
     let onBlurSpy = jest.fn();
     let {getByRole, queryByRole} = render(
       <DialogTrigger>
-        <Button isPending onFocus={onFocusSpy} onBlur={onBlurSpy}>Delete…</Button>
+        <Button isPending onFocus={onFocusSpy} onBlur={onBlurSpy}>
+          Delete…
+        </Button>
         <Modal data-test="modal">
           <Dialog role="alertdialog" data-test="dialog">
             {({close}) => (

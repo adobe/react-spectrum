@@ -12,7 +12,7 @@ export default Layout;
 
 import docs from 'docs:react-aria-components';
 import sharedDocs from 'docs:@react-types/shared';
-import tableUtil from 'docs:@react-aria/test-utils/src/table.ts';
+import tableUtil from 'docs:@react-aria/test-utils';
 import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable, ClassAPI, VersionBadge} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
@@ -2695,22 +2695,22 @@ it('Table can toggle row selection', async function () {
     </Table>
   );
   let tableTester = testUtilUser.createTester('Table', {root: getByTestId('test-table')});
-  expect(tableTester.selectedRows).toHaveLength(0);
+  expect(tableTester.getSelectedRows()).toHaveLength(0);
 
   await tableTester.toggleSelectAll();
-  expect(tableTester.selectedRows).toHaveLength(10);
+  expect(tableTester.getSelectedRows()).toHaveLength(10);
 
   await tableTester.toggleRowSelection({row: 2});
-  expect(tableTester.selectedRows).toHaveLength(9);
-  let checkbox = within(tableTester.rows[2]).getByRole('checkbox');
+  expect(tableTester.getSelectedRows()).toHaveLength(9);
+  let checkbox = within(tableTester.getRows()[2]).getByRole('checkbox');
   expect(checkbox).not.toBeChecked();
 
   await tableTester.toggleSelectAll();
-  expect(tableTester.selectedRows).toHaveLength(10);
+  expect(tableTester.getSelectedRows()).toHaveLength(10);
   expect(checkbox).toBeChecked();
 
   await tableTester.toggleSelectAll();
-  expect(tableTester.selectedRows).toHaveLength(0);
+  expect(tableTester.getSelectedRows()).toHaveLength(0);
 });
 ```
 

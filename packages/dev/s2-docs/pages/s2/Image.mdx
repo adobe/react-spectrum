@@ -13,7 +13,7 @@ export const description = 'Displays an image with support for skeleton loading 
 
 ```tsx render docs={docs.exports.Image} links={docs.links} props={['src', 'alt']} initialProps={{src: 'https://images.unsplash.com/photo-1705034598432-1694e203cdf3?q=80&w=1200&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', alt: 'Desert Sunset', width: 1200, height: 800}} type="s2" wide
 "use client";
-import {Image} from '@react-spectrum/s2';
+import {Image} from '@react-spectrum/s2/Image';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 <Image
@@ -27,7 +27,8 @@ Set the `src` prop to an array of objects describing conditional images, e.g. me
 
 ```tsx render type="s2" wide docs={docs.exports.Provider} links={docs.links} props={['colorScheme']}
 "use client";
-import {Image, Provider} from '@react-spectrum/s2';
+import {Image} from '@react-spectrum/s2/Image';
+import {Provider} from '@react-spectrum/s2/Provider';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 <Provider/* PROPS */>
@@ -50,7 +51,7 @@ Use `renderError` to display a custom error UI when an image fails to load.
 
 ```tsx render
 "use client";
-import {Image} from '@react-spectrum/s2';
+import {Image} from '@react-spectrum/s2/Image';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import ErrorIcon from '@react-spectrum/s2/illustrations/linear/AlertNotice';
 
@@ -73,7 +74,8 @@ An `ImageCoordinator` coordinates loading behavior for a group of images. Images
 
 ```tsx render
 "use client";
-import {ImageCoordinator, Image} from '@react-spectrum/s2';
+import {ImageCoordinator} from '@react-spectrum/s2/ImageCoordinator';
+import {Image} from '@react-spectrum/s2/Image';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 <ImageCoordinator>

@@ -1,12 +1,17 @@
 {
   "name": "@react-spectrum/parcel-transformer-s2-icon",
-  "version": "1.0.1",
+  "version": "1.1.1",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adobe/react-spectrum"
+  },
   "main": "IconTransformer.js",
-  "engines": {
-    "parcel": "^2.0.0"
+  "publishConfig": {
+    "access": "public"
   },
   "dependencies": {
-    "@adobe/spectrum-tokens": "^14.0.0",
+    "@adobe/spectrum-tokens": "14.0.0",
     "@parcel/plugin": "^2.0.0",
     "@svgr/core": "^8.1.0",
     "@svgr/plugin-jsx": "^8.1.0",
@@ -16,15 +21,10 @@
   "devDependencies": {
     "prettier": "^3.3.3"
   },
+  "engines": {
+    "parcel": "^2.0.0"
+  },
   "rsp": {
     "type": "cli"
-  },
-  "license": "Apache-2.0",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/adobe/react-spectrum"
-  },
-  "publishConfig": {
-    "access": "public"
   }
 }

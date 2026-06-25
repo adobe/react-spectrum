@@ -11,7 +11,7 @@
  */
 
 import type {Meta, StoryObj} from '@storybook/react';
-import {StatusLight} from '../src';
+import {StatusLight} from '../src/StatusLight';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 
 const meta: Meta<typeof StatusLight> = {
@@ -26,14 +26,18 @@ export default meta;
 type Story = StoryObj<typeof StatusLight>;
 
 export const Example: Story = {
-  render: (args) => <StatusLight {...args}>Status</StatusLight>,
+  render: args => <StatusLight {...args}>Status</StatusLight>,
   args: {
     variant: 'positive'
   }
 };
 
 export const LongLabel: Story = {
-  render: (args) => <StatusLight {...args} styles={style({maxWidth: 128})}>StatusLight with very long label so we can see wrapping</StatusLight>,
+  render: args => (
+    <StatusLight {...args} styles={style({maxWidth: 128})}>
+      StatusLight with very long label so we can see wrapping
+    </StatusLight>
+  ),
   args: {
     variant: 'positive'
   }

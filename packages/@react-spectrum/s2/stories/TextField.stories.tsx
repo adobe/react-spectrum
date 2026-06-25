@@ -10,12 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Form, TextArea, TextField} from '../src';
+import {Avatar} from '../src/Avatar';
+import {Button} from '../src/Button';
+import {ColorSwatch} from '../src/ColorSwatch';
 import {Content, Footer, Heading, Text} from '../src/Content';
 import {ContextualHelp} from '../src/ContextualHelp';
+import {Form} from '../src/Form';
 import {Link} from '../src/Link';
+import MentionIcon from '../s2wf-icons/S2_Icon_Mention_20_N.svg';
 import type {Meta, StoryObj} from '@storybook/react';
 import {style} from '../style' with {type: 'macro'};
+import {TextArea, TextField} from '../src/TextField';
 
 const meta: Meta<typeof TextField> = {
   component: TextField,
@@ -52,10 +57,12 @@ Example.args = {
 };
 
 export const Validation: StoryTextField = {
-  render: (args) => (
+  render: args => (
     <Form>
       <TextField {...args} />
-      <Button type="submit" variant="primary">Submit</Button>
+      <Button type="submit" variant="primary">
+        Submit
+      </Button>
     </Form>
   ),
   args: {
@@ -65,7 +72,7 @@ export const Validation: StoryTextField = {
 };
 
 export const ContextualHelpExample: StoryTextField = {
-  render: (args) => (
+  render: args => (
     <TextField
       {...args}
       contextualHelp={
@@ -73,18 +80,21 @@ export const ContextualHelpExample: StoryTextField = {
           <Heading>What is a segment?</Heading>
           <Content>
             <Text>
-              Segments identify who your visitors are, what devices and services they
-              use, where they navigated from, and much more.
+              Segments identify who your visitors are, what devices and services they use, where
+              they navigated from, and much more.
             </Text>
           </Content>
           <Footer>
             <Link
               isStandalone
               href="https://experienceleague.adobe.com/en/docs/experience-manager-65/content/sites/administering/personalization/campaign-segmentation"
-              target="_blank">Learn more about segments</Link>
+              target="_blank">
+              Learn more about segments
+            </Link>
           </Footer>
         </ContextualHelp>
-      } />
+      }
+    />
   ),
   args: {
     label: 'Segment',
@@ -93,7 +103,7 @@ export const ContextualHelpExample: StoryTextField = {
 };
 
 export const TextAreaExample: StoryTextArea = {
-  render: (args) => <TextArea {...args} />,
+  render: args => <TextArea {...args} />,
   args: {
     label: 'Comment',
     placeholder: 'Enter a comment'
@@ -101,7 +111,7 @@ export const TextAreaExample: StoryTextArea = {
 };
 
 export const CustomWidth: StoryTextField = {
-  render: (args) => <TextField {...args} styles={style({width: 384})} />,
+  render: args => <TextField {...args} styles={style({width: 384})} />,
   args: {
     label: 'Name'
   },
@@ -113,7 +123,7 @@ export const CustomWidth: StoryTextField = {
 };
 
 export const SmallWidth: StoryTextField = {
-  render: (args) => <TextField {...args} styles={style({width: 48})} />,
+  render: args => <TextField {...args} styles={style({width: 48})} />,
   args: {
     label: 'Name'
   },
@@ -125,7 +135,7 @@ export const SmallWidth: StoryTextField = {
 };
 
 export const UNSAFEWidth: StoryTextField = {
-  render: (args) => <TextField {...args} UNSAFE_style={{width: 384}} />,
+  render: args => <TextField {...args} UNSAFE_style={{width: 384}} />,
   args: {
     label: 'Name'
   },
@@ -137,10 +147,12 @@ export const UNSAFEWidth: StoryTextField = {
 };
 
 export const InForm: StoryTextField = {
-  render: (args) => (
+  render: args => (
     <Form>
       <TextField {...args} />
-      <Button type="submit" variant="primary">Submit</Button>
+      <Button type="submit" variant="primary">
+        Submit
+      </Button>
     </Form>
   ),
   args: {
@@ -155,10 +167,12 @@ export const InForm: StoryTextField = {
 };
 
 export const FormCustomWidth: StoryTextField = {
-  render: (args) => (
+  render: args => (
     <Form styles={style({width: 384})} labelPosition={args.labelPosition}>
       <TextField {...args} />
-      <Button type="submit" variant="primary">Submit</Button>
+      <Button type="submit" variant="primary">
+        Submit
+      </Button>
     </Form>
   ),
   args: {
@@ -169,5 +183,50 @@ export const FormCustomWidth: StoryTextField = {
     docs: {
       disable: true
     }
+  }
+};
+
+export const TextFieldWithAddons: StoryTextField = {
+  render: args => (
+    <Form>
+      <TextField {...args} label="Phone Number" prefix="#" placeholder="(000) 000-0000" />
+      <TextField {...args} label="URL" prefix="https://" placeholder="example.com" />
+      <TextField {...args} label="Mention" prefix={<MentionIcon />} placeholder="username" />
+      <TextField
+        {...args}
+        label="User"
+        prefix={<Avatar size={20} src="https://i.imgur.com/xIe7Wlb.png" />}
+        placeholder="username"
+      />
+      <TextField
+        {...args}
+        label="Color"
+        prefix={<ColorSwatch size="XS" color="rgb(255, 0, 255)" />}
+        placeholder="#FF00FF"
+      />
+      <Button type="submit" variant="primary">
+        Submit
+      </Button>
+    </Form>
+  ),
+  args: {
+    ...Example.args,
+    isRequired: true
+  }
+};
+
+export const TextAreaWithAddons: StoryTextArea = {
+  render: args => (
+    <Form>
+      <TextArea {...args} label="Phone Number" prefix="#" placeholder="(000) 000-0000" />
+      <TextArea {...args} label="Mention" prefix={<MentionIcon />} placeholder="username" />
+      <Button type="submit" variant="primary">
+        Submit
+      </Button>
+    </Form>
+  ),
+  args: {
+    ...TextAreaExample.args,
+    isRequired: true
   }
 };

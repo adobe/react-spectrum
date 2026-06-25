@@ -17,7 +17,7 @@ export const description = 'Allows a user to toggle between two states.';
   props={['children', 'size', 'staticColor', 'isQuiet', 'isEmphasized', 'isDisabled']}
   initialProps={{children: 'Pin'}}
   slots={{icon: true, avatar: true}}
-  importSource="@react-spectrum/s2"
+  importSource="@react-spectrum/s2/ToggleButton"
   type="s2" />
 
 ## Selection
@@ -26,7 +26,7 @@ Use the `isSelected` or `defaultSelected` prop to set the selection state, and `
 
 ```tsx render
 "use client";
-import {ToggleButton} from '@react-spectrum/s2';
+import {ToggleButton} from '@react-spectrum/s2/ToggleButton';
 import {useState} from 'react';
 import Star from '@react-spectrum/s2/icons/Star';
 

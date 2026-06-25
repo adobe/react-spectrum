@@ -11,19 +11,25 @@
  */
 
 import {render} from '@react-spectrum/test-utils-internal';
-import {Text, ToggleButton, ToggleButtonGroup} from '../src';
+import {Text} from '../src/Content';
+import {ToggleButton} from '../src/ToggleButton';
+import {ToggleButtonGroup} from '../src/ToggleButtonGroup';
 
 describe('ToggleButtonGroup', () => {
-
   it('can disable all buttons from the group', async () => {
     let {getAllByRole} = render(
       <ToggleButtonGroup isDisabled>
-        <ToggleButton id={1}><Text slot="label">Bold</Text></ToggleButton>
-        <ToggleButton id={2}><Text slot="label">Italic</Text></ToggleButton>
-        <ToggleButton id={3}><Text slot="label">Underline</Text></ToggleButton>
+        <ToggleButton id={1}>
+          <Text slot="label">Bold</Text>
+        </ToggleButton>
+        <ToggleButton id={2}>
+          <Text slot="label">Italic</Text>
+        </ToggleButton>
+        <ToggleButton id={3}>
+          <Text slot="label">Underline</Text>
+        </ToggleButton>
       </ToggleButtonGroup>
     );
-
 
     let buttons = getAllByRole('radio');
     expect(buttons[0]).toBeDisabled();

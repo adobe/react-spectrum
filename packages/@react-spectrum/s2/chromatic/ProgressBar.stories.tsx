@@ -11,7 +11,7 @@
  */
 
 import type {Meta, StoryObj} from '@storybook/react';
-import {ProgressBar} from '../src';
+import {ProgressBar} from '../src/ProgressBar';
 import {StaticColorDecorator} from '../stories/utils';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 
@@ -44,7 +44,7 @@ export const LabelPositionSide: Story = {
 };
 
 export const Size: Story = {
-  render: (args) => (
+  render: args => (
     <div className={style({display: 'flex', flexDirection: 'column', gap: 24})}>
       <ProgressBar label="S" size="S" {...args} />
       <ProgressBar label="M" size="M" {...args} />

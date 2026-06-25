@@ -10,11 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import {ModalContext, useSlottedContext} from 'react-aria-components';
-import React, {ReactElement, ReactNode, useState} from 'react';
-import {SpectrumDialogContainerProps} from '@react-types/dialog';
+import {ModalContext} from 'react-aria-components/Modal';
 
-export interface DialogContainerProps extends Omit<SpectrumDialogContainerProps, 'type' | 'isDismissable' | 'isKeyboardDismissDisabled'> {}
+import React, {ReactElement, ReactNode, useState} from 'react';
+import {useSlottedContext} from 'react-aria-components/slots';
+
+export interface DialogContainerProps {
+  /** The Dialog to display, if any. */
+  children: ReactNode;
+  /** Handler that is called when the 'x' button of a dismissable Dialog is clicked. */
+  onDismiss: () => void;
+}
 
 /**
  * A DialogContainer accepts a single Dialog as a child, and manages showing and hiding
@@ -22,10 +28,7 @@ export interface DialogContainerProps extends Omit<SpectrumDialogContainerProps,
  * or when the trigger unmounts while the dialog is open.
  */
 export function DialogContainer(props: DialogContainerProps): ReactNode {
-  let {
-    children,
-    onDismiss
-  } = props;
+  let {children, onDismiss} = props;
 
   let childArray = React.Children.toArray(children);
   if (childArray.length > 1) {
@@ -64,7 +67,7 @@ export interface DialogContainerValue {
   /**
    * A handler to programmatically dismiss the dialog.
    */
-  dismiss(): void
+  dismiss(): void;
 }
 
 export function useDialogContainer(): DialogContainerValue {

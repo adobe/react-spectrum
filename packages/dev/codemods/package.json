@@ -1,32 +1,32 @@
 {
   "name": "@react-spectrum/codemods",
-  "version": "1.1.0",
-  "main": "dist/index.js",
-  "source": "src/index.ts",
-  "bin": "dist/index.js",
-  "targets": {
-    "main": false
-  },
-  "scripts": {
-    "build": "tsc",
-    "prepublishOnly": "yarn build"
-  },
-  "files": [
-    "dist"
-  ],
-  "type": "commonjs",
+  "version": "1.2.4",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/adobe/react-spectrum"
   },
+  "bin": "dist/index.js",
+  "source": "src/index.ts",
+  "files": [
+    "dist"
+  ],
+  "type": "commonjs",
+  "main": "dist/index.js",
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "yarn build"
+  },
   "dependencies": {
-    "@adobe/react-spectrum": "^3.46.2",
+    "@adobe/react-spectrum": "^3.47.0",
     "@babel/parser": "^7.24.5",
     "@babel/traverse": "^7.24.5",
     "@babel/types": "^7.24.5",
-    "@react-spectrum/s2": "^1.2.0",
-    "@react-types/shared": "^3.33.1",
+    "@react-spectrum/s2": "1.5.1",
+    "@react-types/shared": "^3.34.0",
     "@types/node": "^24",
     "boxen": "^5.1.2",
     "chalk": "^4.0.0",
@@ -38,16 +38,21 @@
   },
   "devDependencies": {
     "@types/jscodeshift": "^0.11.11",
+    "react": "^18.0.0 || ^19.0.0-rc.1",
+    "react-dom": "^18.0.0 || ^19.0.0-rc.1",
     "typescript": "^5.8.2"
   },
   "peerDependencies": {
     "react": "^18.0.0 || ^19.0.0-rc.1",
     "react-dom": "^18.0.0 || ^19.0.0-rc.1"
   },
+  "engines": {
+    "node": ">=22.14.0"
+  },
   "rsp": {
     "type": "cli"
   },
-  "publishConfig": {
-    "access": "public"
+  "targets": {
+    "main": false
   }
 }

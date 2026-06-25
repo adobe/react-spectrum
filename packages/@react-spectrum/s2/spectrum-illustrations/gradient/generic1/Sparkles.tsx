@@ -15,7 +15,7 @@ import {IconProps, IllustrationContext} from '../../../src/Icon';
 import Sparkles_L from 'illustration:./S2_fill_sparkles_generic1_160.svg';
 import Sparkles_M from 'illustration:./S2_fill_sparkles_generic1_96.svg';
 import Sparkles_S from 'illustration:./S2_fill_sparkles_generic1_48.svg';
-import {useContextProps} from 'react-aria-components';
+import {useContextProps} from 'react-aria-components/slots';
 
 export default function Sparkles(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);

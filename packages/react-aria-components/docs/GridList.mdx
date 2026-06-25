@@ -12,7 +12,7 @@ export default Layout;
 
 import docs from 'docs:react-aria-components';
 import sharedDocs from 'docs:@react-types/shared';
-import gridlistUtil from 'docs:@react-aria/test-utils/src/gridlist.ts';
+import gridlistUtil from 'docs:@react-aria/test-utils';
 import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable, ClassAPI, VersionBadge} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
@@ -2107,17 +2107,17 @@ it('GridList can select a row via keyboard', async function () {
   );
   let gridListTester = testUtilUser.createTester('GridList', {root: getByTestId('test-gridlist'), interactionType: 'keyboard'});
 
-  let row = gridListTester.rows[0];
+  let row = gridListTester.getRows()[0];
   expect(within(row).getByRole('checkbox')).not.toBeChecked();
-  expect(gridListTester.selectedRows).toHaveLength(0);
+  expect(gridListTester.getSelectedRows()).toHaveLength(0);
 
   await gridListTester.toggleRowSelection({row: 0});
   expect(within(row).getByRole('checkbox')).toBeChecked();
-  expect(gridListTester.selectedRows).toHaveLength(1);
+  expect(gridListTester.getSelectedRows()).toHaveLength(1);
 
   await gridListTester.toggleRowSelection({row: 0});
   expect(within(row).getByRole('checkbox')).not.toBeChecked();
-  expect(gridListTester.selectedRows).toHaveLength(0);
+  expect(gridListTester.getSelectedRows()).toHaveLength(0);
 });
 ```
 

@@ -19,44 +19,57 @@ import {
   useRenderProps
 } from './utils';
 import {DOMProps, forwardRefType} from '@react-types/shared';
-import {filterDOMProps} from '@react-aria/utils';
-import {PlacementAxis} from 'react-aria';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
+import {PlacementAxis} from 'react-aria/useOverlayPosition';
 import React, {createContext, CSSProperties, ForwardedRef, forwardRef, HTMLAttributes} from 'react';
 
 interface OverlayArrowContextValue extends OverlayArrowProps {
-  placement: PlacementAxis | null
+  placement: PlacementAxis | null;
 }
 
-export const OverlayArrowContext = createContext<ContextValue<OverlayArrowContextValue, HTMLDivElement>>({
+export const OverlayArrowContext = createContext<
+  ContextValue<OverlayArrowContextValue, HTMLDivElement>
+>({
   placement: 'bottom'
 });
 
-export interface OverlayArrowProps extends Omit<HTMLAttributes<HTMLDivElement>, 'className' | 'style' | 'render' | 'children'>, RenderProps<OverlayArrowRenderProps>, DOMProps {
+export interface OverlayArrowProps
+  extends
+    Omit<HTMLAttributes<HTMLDivElement>, 'className' | 'style' | 'render' | 'children'>,
+    RenderProps<OverlayArrowRenderProps>,
+    DOMProps {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-OverlayArrow'
    */
-  className?: ClassNameOrFunction<OverlayArrowRenderProps>
+  className?: ClassNameOrFunction<OverlayArrowRenderProps>;
 }
 
 export interface OverlayArrowRenderProps {
   /**
    * The placement of the overlay relative to the trigger.
+   *
    * @selector [data-placement="left | right | top | bottom"]
    */
-  placement: PlacementAxis | null
+  placement: PlacementAxis | null;
 }
 
 /**
  * An OverlayArrow renders a custom arrow element relative to an overlay element
  * such as a popover or tooltip such that it aligns with a trigger element.
  */
-export const OverlayArrow = /*#__PURE__*/ (forwardRef as forwardRefType)(function OverlayArrow(props: OverlayArrowProps, ref: ForwardedRef<HTMLDivElement>) {
+export const OverlayArrow = /*#__PURE__*/ (forwardRef as forwardRefType)(function OverlayArrow(
+  props: OverlayArrowProps,
+  ref: ForwardedRef<HTMLDivElement>
+) {
   [props, ref] = useContextProps(props, ref, OverlayArrowContext);
   let placement = (props as OverlayArrowContextValue).placement;
   let style: CSSProperties = {
     position: 'absolute',
-    transform: placement === 'top' || placement === 'bottom' ? 'translateX(-50%)' : 'translateY(-50%)'
+    transform:
+      placement === 'top' || placement === 'bottom' ? 'translateX(-50%)' : 'translateY(-50%)'
   };
   if (placement != null) {
     style[placement] = '100%';
@@ -72,7 +85,9 @@ export const OverlayArrow = /*#__PURE__*/ (forwardRef as forwardRefType)(functio
   // remove undefined values from renderProps.style object so that it can be
   // spread merged with the other style object
   if (renderProps.style) {
-    Object.keys(renderProps.style).forEach(key => renderProps.style![key] === undefined && delete renderProps.style![key]);
+    Object.keys(renderProps.style).forEach(
+      key => renderProps.style![key] === undefined && delete renderProps.style![key]
+    );
   }
 
   let DOMProps = filterDOMProps(props);
@@ -86,6 +101,7 @@ export const OverlayArrow = /*#__PURE__*/ (forwardRef as forwardRefType)(functio
         ...renderProps.style
       }}
       ref={ref}
-      data-placement={placement} />
+      data-placement={placement}
+    />
   );
 });

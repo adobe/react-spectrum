@@ -10,23 +10,45 @@
  * governing permissions and limitations under the License.
  */
 
+import {
+  act,
+  installPointerEvent,
+  pointerMap,
+  render,
+  User
+} from '@react-spectrum/test-utils-internal';
+import {ActionButton} from '../src/ActionButton';
 import {AriaMenuTests} from '../../../react-aria-components/test/AriaMenu.test-util';
-import {Button, Collection, Content, ContextualHelpPopover, Header, Heading, Menu, MenuItem, MenuSection, MenuTrigger, SubmenuTrigger, UnavailableMenuItemTrigger} from '../src';
-import {pointerMap} from '@react-aria/test-utils';
+import {Button} from '../src/Button';
+import {Collection} from 'react-aria/Collection';
+import {Content, Header, Heading} from '../src/Content';
+import {ContextualHelpPopover} from '../src/ContextualHelp';
+import {
+  Menu,
+  MenuItem,
+  MenuSection,
+  MenuTrigger,
+  SubmenuTrigger,
+  UnavailableMenuItemTrigger
+} from '../src/Menu';
 import React from 'react';
-import {render} from '@react-spectrum/test-utils-internal';
 import {Selection} from '@react-types/shared';
+import {ToggleButton} from '../src/ToggleButton';
 import userEvent from '@testing-library/user-event';
 
 // better to accept items from the test? or just have the test have a requirement that you render a certain-ish structure?
 // what about the button label?
 // where and how can i define the requirements/assumptions for setup for the test?
 let withSection = [
-  {id: 'heading 1', name: 'Heading 1', children: [
-    {id: 'foo', name: 'Foo'},
-    {id: 'bar', name: 'Bar'},
-    {id: 'baz', name: 'Baz'}
-  ]}
+  {
+    id: 'heading 1',
+    name: 'Heading 1',
+    children: [
+      {id: 'foo', name: 'Foo'},
+      {id: 'bar', name: 'Bar'},
+      {id: 'baz', name: 'Baz'}
+    ]
+  }
 ];
 
 let items = [
@@ -35,7 +57,7 @@ let items = [
   {id: 'baz', name: 'Baz'}
 ];
 
-function SelectionStatic(props)  {
+function SelectionStatic(props) {
   let {selectionMode = 'single'} = props;
   let [selected, setSelected] = React.useState<Selection>(new Set());
   return (
@@ -85,7 +107,9 @@ describe('Menu unavailable', () => {
     await user.click(getByRole('button'));
     let items = getAllByRole('menuitem');
     await user.click(items[0]);
-    expect(await findByText('Contact your administrator for permissions to delete.')).toBeInTheDocument();
+    expect(
+      await findByText('Contact your administrator for permissions to delete.')
+    ).toBeInTheDocument();
     expect(onAction).not.toHaveBeenCalled();
 
     let dialog = getAllByRole('dialog')[1];
@@ -121,135 +145,210 @@ describe('Menu unavailable', () => {
   });
 });
 
+describe('long press support', function () {
+  let testUtilUser = new User({advanceTimer: jest.advanceTimersByTime});
+  let user;
+  installPointerEvent();
+
+  beforeAll(function () {
+    user = userEvent.setup({delay: null, pointerMap});
+    jest.useFakeTimers();
+  });
+
+  afterEach(() => {
+    act(() => jest.runAllTimers());
+    jest.clearAllMocks();
+  });
+
+  it('should open the menu on longPress (ActionButton)', async function () {
+    let {getByRole} = render(
+      <MenuTrigger trigger="longPress">
+        <ActionButton>Menu Button</ActionButton>
+        <Menu>
+          <MenuItem>Cut</MenuItem>
+        </Menu>
+      </MenuTrigger>
+    );
+
+    let menuTester = testUtilUser.createTester('Menu', {root: getByRole('button')});
+    await user.click(menuTester.getTrigger());
+    act(() => {
+      jest.runAllTimers();
+    });
+    expect(menuTester.getMenu()).toBeFalsy();
+    await menuTester.open({needsLongPress: true});
+    expect(menuTester.getMenu()).toBeTruthy();
+  });
+
+  it('should open the menu on longPress (ToggleButton)', async function () {
+    let {getByRole} = render(
+      <MenuTrigger trigger="longPress">
+        <ToggleButton>Menu Button</ToggleButton>
+        <Menu>
+          <MenuItem>Cut</MenuItem>
+        </Menu>
+      </MenuTrigger>
+    );
+
+    let menuTester = testUtilUser.createTester('Menu', {root: getByRole('button')});
+    await user.click(menuTester.getTrigger());
+    act(() => {
+      jest.runAllTimers();
+    });
+    expect(menuTester.getMenu()).toBeFalsy();
+    expect(menuTester.getTrigger()).toHaveAttribute('data-selected', 'true');
+    await menuTester.open({needsLongPress: true});
+    expect(menuTester.getMenu()).toBeTruthy();
+  });
+});
+
 AriaMenuTests({
   prefix: 'spectrum2-static',
   renderers: {
-    standard: () => render(
-      <MenuTrigger>
-        <Button variant="primary">Menu Button</Button>
-        <Menu aria-label="Test">
-          <MenuSection>
-            <Header><Heading>Heading 1</Heading></Header>
-            <MenuItem>Foo</MenuItem>
-            <MenuItem>Bar</MenuItem>
-            <MenuItem>Baz</MenuItem>
-          </MenuSection>
-        </Menu>
-      </MenuTrigger>
-    ),
-    disabledTrigger: () => render(
-      <MenuTrigger>
-        <Button variant="primary" isDisabled>Menu Button</Button>
-        <Menu aria-label="Test">
-          <MenuSection>
-            <Header><Heading>Heading 1</Heading></Header>
-            <MenuItem>Foo</MenuItem>
-            <MenuItem>Bar</MenuItem>
-            <MenuItem>Baz</MenuItem>
-          </MenuSection>
-        </Menu>
-      </MenuTrigger>
-    ),
-    singleSelection: () => render(
-      <SelectionStatic />
-    ),
-    multipleSelection: () => render(
-      <SelectionStatic selectionMode="multiple" />
-    ),
-    submenus: () => render(
-      <MenuTrigger>
-        <Button variant="primary">Menu Button</Button>
-        <Menu aria-label="Test">
-          <MenuSection>
-            <Header><Heading>Heading 1</Heading></Header>
+    standard: () =>
+      render(
+        <MenuTrigger>
+          <Button variant="primary">Menu Button</Button>
+          <Menu aria-label="Test">
+            <MenuSection>
+              <Header>
+                <Heading>Heading 1</Heading>
+              </Header>
+              <MenuItem>Foo</MenuItem>
+              <MenuItem>Bar</MenuItem>
+              <MenuItem>Baz</MenuItem>
+            </MenuSection>
+          </Menu>
+        </MenuTrigger>
+      ),
+    disabledTrigger: () =>
+      render(
+        <MenuTrigger>
+          <Button variant="primary" isDisabled>
+            Menu Button
+          </Button>
+          <Menu aria-label="Test">
+            <MenuSection>
+              <Header>
+                <Heading>Heading 1</Heading>
+              </Header>
+              <MenuItem>Foo</MenuItem>
+              <MenuItem>Bar</MenuItem>
+              <MenuItem>Baz</MenuItem>
+            </MenuSection>
+          </Menu>
+        </MenuTrigger>
+      ),
+    singleSelection: () => render(<SelectionStatic />),
+    multipleSelection: () => render(<SelectionStatic selectionMode="multiple" />),
+    submenus: () =>
+      render(
+        <MenuTrigger>
+          <Button variant="primary">Menu Button</Button>
+          <Menu aria-label="Test">
+            <MenuSection>
+              <Header>
+                <Heading>Heading 1</Heading>
+              </Header>
 
-            <MenuItem id="open">Open</MenuItem>
-            <MenuItem id="rename">Rename…</MenuItem>
-            <MenuItem id="duplicate">Duplicate</MenuItem>
-            <SubmenuTrigger>
-              <MenuItem id="share">Share…</MenuItem>
-              <Menu>
-                <MenuSection>
-                  <Header><Heading>Subheading 1</Heading></Header>
-                  <MenuItem id="email">Email…</MenuItem>
-                  <SubmenuTrigger>
-                    <MenuItem id="share">Share…</MenuItem>
-                    <Menu>
-                      <MenuSection>
-                        <Header><Heading>Subheading 1</Heading></Header>
-                        <MenuItem id="work">Work</MenuItem>
-                        <MenuItem id="personal">Personal</MenuItem>
-                      </MenuSection>
-                    </Menu>
-                  </SubmenuTrigger>
-                  <MenuItem id="sms">SMS</MenuItem>
-                  <MenuItem id="x">X</MenuItem>
-                </MenuSection>
-              </Menu>
-            </SubmenuTrigger>
-          </MenuSection>
-        </Menu>
-      </MenuTrigger>
-    )
+              <MenuItem id="open">Open</MenuItem>
+              <MenuItem id="rename">Rename…</MenuItem>
+              <MenuItem id="duplicate">Duplicate</MenuItem>
+              <SubmenuTrigger>
+                <MenuItem id="share">Share…</MenuItem>
+                <Menu>
+                  <MenuSection>
+                    <Header>
+                      <Heading>Subheading 1</Heading>
+                    </Header>
+                    <MenuItem id="email">Email…</MenuItem>
+                    <SubmenuTrigger>
+                      <MenuItem id="share">Share…</MenuItem>
+                      <Menu>
+                        <MenuSection>
+                          <Header>
+                            <Heading>Subheading 1</Heading>
+                          </Header>
+                          <MenuItem id="work">Work</MenuItem>
+                          <MenuItem id="personal">Personal</MenuItem>
+                        </MenuSection>
+                      </Menu>
+                    </SubmenuTrigger>
+                    <MenuItem id="sms">SMS</MenuItem>
+                    <MenuItem id="x">X</MenuItem>
+                  </MenuSection>
+                </Menu>
+              </SubmenuTrigger>
+            </MenuSection>
+          </Menu>
+        </MenuTrigger>
+      )
   }
 });
 
 AriaMenuTests({
   prefix: 'spectrum2-dynamic',
   renderers: {
-    standard: () => render(
-      <MenuTrigger>
-        <Button variant="primary">Menu Button</Button>
-        <Menu aria-label="Test" items={withSection}>
-          {(section) => {
-            return (
-              <MenuSection>
-                <Header><Heading>{section.name}</Heading></Header>
-                <Collection items={section.children}>
-                  {item => {
-                    return <MenuItem>{item.name}</MenuItem>;
-                  }}
-                </Collection>
-              </MenuSection>
-            );
-          }}
-        </Menu>
-      </MenuTrigger>
-    ),
-    disabledTrigger: () => render(
-      <MenuTrigger>
-        <Button variant="primary" isDisabled>Menu Button</Button>
-        <Menu aria-label="Test" items={withSection}>
-          {(section) => {
-            return (
-              <MenuSection>
-                <Header><Heading>{section.name}</Heading></Header>
-                <Collection items={section.children}>
-                  {item => {
-                    return <MenuItem>{item.name}</MenuItem>;
-                  }}
-                </Collection>
-              </MenuSection>
-            );
-          }}
-        </Menu>
-      </MenuTrigger>
-    )
+    standard: () =>
+      render(
+        <MenuTrigger>
+          <Button variant="primary">Menu Button</Button>
+          <Menu aria-label="Test" items={withSection}>
+            {section => {
+              return (
+                <MenuSection>
+                  <Header>
+                    <Heading>{section.name}</Heading>
+                  </Header>
+                  <Collection items={section.children}>
+                    {item => {
+                      return <MenuItem>{item.name}</MenuItem>;
+                    }}
+                  </Collection>
+                </MenuSection>
+              );
+            }}
+          </Menu>
+        </MenuTrigger>
+      ),
+    disabledTrigger: () =>
+      render(
+        <MenuTrigger>
+          <Button variant="primary" isDisabled>
+            Menu Button
+          </Button>
+          <Menu aria-label="Test" items={withSection}>
+            {section => {
+              return (
+                <MenuSection>
+                  <Header>
+                    <Heading>{section.name}</Heading>
+                  </Header>
+                  <Collection items={section.children}>
+                    {item => {
+                      return <MenuItem>{item.name}</MenuItem>;
+                    }}
+                  </Collection>
+                </MenuSection>
+              );
+            }}
+          </Menu>
+        </MenuTrigger>
+      )
   }
 });
 
 AriaMenuTests({
   prefix: 'spectrum2-dynamic-no-section',
   renderers: {
-    standard: () => render(
-      <MenuTrigger>
-        <Button variant="primary">Menu Button</Button>
-        <Menu aria-label="Test" items={items}>
-          {(item) =>
-            <MenuItem>{item.name}</MenuItem>
-          }
-        </Menu>
-      </MenuTrigger>
-    )
+    standard: () =>
+      render(
+        <MenuTrigger>
+          <Button variant="primary">Menu Button</Button>
+          <Menu aria-label="Test" items={items}>
+            {item => <MenuItem>{item.name}</MenuItem>}
+          </Menu>
+        </MenuTrigger>
+      )
   }
 });
