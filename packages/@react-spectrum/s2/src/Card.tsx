@@ -408,6 +408,7 @@ const actionButtonSize = {
  * A Card summarizes an object that a user can select or navigate to.
  */
 export const Card = forwardRef(function Card(props: CardProps, ref: DOMRef<HTMLDivElement>) {
+  // oxlint-disable-next-line react/react-compiler
   [props] = useSpectrumContextProps(props, ref, CardContext);
   let {ElementType, layout} = useContext(InternalCardViewContext);
   let domRef = useDOMRef(ref);
@@ -459,6 +460,7 @@ export const Card = forwardRef(function Card(props: CardProps, ref: DOMRef<HTMLD
     </Provider>
   );
 
+  // oxlint-disable-next-line react/react-compiler
   let press = pressScale(domRef, UNSAFE_style);
   if (ElementType === 'div' && !isSkeleton && props.href) {
     // Standalone Card that has an href should be rendered as a Link.
@@ -599,6 +601,7 @@ export const CardPreview = forwardRef(function CardPreview(
     useContext(InternalCardContext);
   let {UNSAFE_className = '', UNSAFE_style} = props;
   let domRef = useDOMRef(ref);
+  // oxlint-disable react/react-compiler
   return (
     <div
       {...filterDOMProps(props)}
@@ -611,6 +614,7 @@ export const CardPreview = forwardRef(function CardPreview(
       <div className={style({borderRadius: 'inherit', overflow: 'clip'})}>{props.children}</div>
     </div>
   );
+  // oxlint-enable react/react-compiler
 });
 
 const collection = style({

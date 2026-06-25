@@ -659,15 +659,15 @@ describe('Menu', function () {
       ];
 
       await user.click(item1);
-      expect(onAction).toHaveBeenCalledWith('One');
+      expect(onAction).toHaveBeenCalledWith('One', null);
       expect(onSelectionChange).toHaveBeenCalledTimes(0);
 
       await user.click(item2);
-      expect(onAction).toHaveBeenCalledWith('Two');
+      expect(onAction).toHaveBeenCalledWith('Two', null);
       expect(onSelectionChange).toHaveBeenCalledTimes(0);
 
       await user.click(item3);
-      expect(onAction).toHaveBeenCalledWith('Three');
+      expect(onAction).toHaveBeenCalledWith('Three', null);
       expect(onSelectionChange).toHaveBeenCalledTimes(0);
     });
 
@@ -701,15 +701,15 @@ describe('Menu', function () {
       ];
 
       await user.click(item1);
-      expect(onAction).toHaveBeenCalledWith('One');
+      expect(onAction).toHaveBeenCalledWith('One', {name: 'One'});
       expect(onSelectionChange).toHaveBeenCalledTimes(0);
 
       await user.click(item2);
-      expect(onAction).toHaveBeenCalledWith('Two');
+      expect(onAction).toHaveBeenCalledWith('Two', {name: 'Two'});
       expect(onSelectionChange).toHaveBeenCalledTimes(0);
 
       await user.click(item3);
-      expect(onAction).toHaveBeenCalledWith('Three');
+      expect(onAction).toHaveBeenCalledWith('Three', {name: 'Three'});
       expect(onSelectionChange).toHaveBeenCalledTimes(0);
     });
 

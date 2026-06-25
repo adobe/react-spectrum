@@ -34,6 +34,7 @@ import {setInteractionModality} from '../interactions/useFocusVisible';
 import {useCollator} from '../i18n/useCollator';
 import {useField} from '../label/useField';
 import {useId} from '../utils/useId';
+import {useKeyboard} from '../interactions/useKeyboard';
 import {useMenuTrigger} from '../menu/useMenuTrigger';
 import {useTypeSelect} from '../selection/useTypeSelect';
 
@@ -136,16 +137,12 @@ export function useSelect<T, M extends SelectionMode = 'single'>(
     ref
   );
 
-  let onKeyDown = (e: KeyboardEvent) => {
-    if (state.selectionManager.selectionMode === 'multiple') {
-      return;
-    }
-
-    switch (e.key) {
-      case 'ArrowLeft': {
-        // prevent scrolling containers
-        e.preventDefault();
-
+  let {keyboardProps} = useKeyboard({
+    shortcuts: {
+      ArrowLeft: () => {
+        if (state.selectionManager.selectionMode === 'multiple') {
+          return false;
+        }
         let key =
           state.selectedKey != null
             ? delegate.getKeyAbove?.(state.selectedKey)
@@ -153,12 +150,11 @@ export function useSelect<T, M extends SelectionMode = 'single'>(
         if (key != null) {
           state.setSelectedKey(key);
         }
-        break;
-      }
-      case 'ArrowRight': {
-        // prevent scrolling containers
-        e.preventDefault();
-
+      },
+      ArrowRight: () => {
+        if (state.selectionManager.selectionMode === 'multiple') {
+          return false;
+        }
         let key =
           state.selectedKey != null
             ? delegate.getKeyBelow?.(state.selectedKey)
@@ -166,10 +162,11 @@ export function useSelect<T, M extends SelectionMode = 'single'>(
         if (key != null) {
           state.setSelectedKey(key);
         }
-        break;
       }
-    }
-  };
+    },
+    onKeyDown: props.onKeyDown,
+    onKeyUp: props.onKeyUp
+  });
 
   let {typeSelectProps} = useTypeSelect({
     keyboardDelegate: delegate,
@@ -187,8 +184,6 @@ export function useSelect<T, M extends SelectionMode = 'single'>(
     errorMessage: props.errorMessage || validationErrors
   });
 
-  typeSelectProps.onKeyDown = typeSelectProps.onKeyDownCapture;
-  delete typeSelectProps.onKeyDownCapture;
   if (state.selectionManager.selectionMode === 'multiple') {
     typeSelectProps = {};
   }
@@ -221,8 +216,8 @@ export function useSelect<T, M extends SelectionMode = 'single'>(
     triggerProps: mergeProps(domProps, {
       ...triggerProps,
       isDisabled,
-      onKeyDown: chain(triggerProps.onKeyDown, onKeyDown, props.onKeyDown),
-      onKeyUp: props.onKeyUp,
+      onKeyDown: chain(triggerProps.onKeyDown, keyboardProps.onKeyDown),
+      onKeyUp: keyboardProps.onKeyUp,
       'aria-labelledby': [
         valueId,
         triggerProps['aria-labelledby'],
@@ -266,6 +261,7 @@ export function useSelect<T, M extends SelectionMode = 'single'>(
     },
     menuProps: {
       ...menuProps,
+      onAction: undefined,
       autoFocus: state.focusStrategy || true,
       shouldSelectOnPressUp: true,
       shouldFocusOnHover: true,

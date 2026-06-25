@@ -85,7 +85,7 @@ export class TabsKeyboardDelegate<T> implements KeyboardDelegate {
       if (key == null) {
         key = this.collection.getFirstKey();
       }
-    } while (key != null && this.isDisabled(key));
+    } while (key != null && this.isDisabled(key) && key !== startKey);
     return key;
   }
 
@@ -96,7 +96,7 @@ export class TabsKeyboardDelegate<T> implements KeyboardDelegate {
       if (key == null) {
         key = this.collection.getLastKey();
       }
-    } while (key != null && this.isDisabled(key));
+    } while (key != null && this.isDisabled(key) && key !== startKey);
     return key;
   }
 }

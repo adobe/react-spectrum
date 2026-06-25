@@ -1,0 +1,74 @@
+{/* Copyright 2026 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {InstallCommand} from '../../../src/InstallCommand';
+
+import {Layout} from '../../../src/Layout';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/s2';
+
+export const hideNav = true;
+export const section = 'Releases';
+export const tags = ['release', 'React Aria'];
+export const date = 'June 18, 2026';
+export const title = 'v1.19.0';
+export const description = 'This release supports full interactions with embedded text fields and other interactive elements in GridList and Tree, brings Autocomplete and Popover improvements to allow inline completion, and much more!';
+export const isSubpage = true;
+
+# v1.19.0
+
+This release adds support for full interaction with embedded text fields and other interactive elements in [GridList](../GridList#keyboard-navigation) and [Tree](../Tree#keyboard-navigation) with the `keyboardNavigationBehavior` prop. [Autocomplete](../Autocomplete) and  [Popover](../Popover) gain several improvements to support [inline completions](../Autocomplete#inline-completions), including a new `getTargetRect` prop on Popover for positioning overlays relative to arbitrary character positions. Menu's `onAction` callback now provides both the item key and value, and `DragTypes.has()` accepts multiple MIME types and wildcards.
+
+### Breaking Changes
+
+`@react-aria/optimize-locales-plugin` has been bumped by a major version due to upgrading from `unplugin@1` to `unplugin@2`. This was necessary to support Node 26, which removed a deprecated API used by `unplugin@1`. If you are using webpack 4, you will need to either stay on the previous version of the plugin or upgrade to webpack 5.
+
+## Changelog
+
+### General Changes
+- Fix crash in `isFocusable` and `isElementVisible` when called on a node detached from a browsing context - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/10142)
+- Improve tree shaking in the `optimizeLocales` build plugin - [@bhovhannes](https://github.com/bhovhannes) - [PR](https://github.com/adobe/react-spectrum/pull/10144)
+- Fix crash in test environments where `HTMLElement.prototype.focus` is defined as a getter-only accessor property - [@antododo](https://github.com/antododo) - [PR](https://github.com/adobe/react-spectrum/pull/10041)
+- Update `optimize-locales-plugin` compatibility with Node.js 26 - [@bhovhannes](https://github.com/bhovhannes) - [PR](https://github.com/adobe/react-spectrum/pull/10152)
+- Support `not-*` variants in `tailwindcss-react-aria-components` - [@mehdibha](https://github.com/mehdibha) - [PR](https://github.com/adobe/react-spectrum/pull/9974)
+
+### Autocomplete
+- Fix virtual focus not being applied to the first matching item when typing with a CJK IME - [@Lucas20000903](https://github.com/Lucas20000903) - [PR](https://github.com/adobe/react-spectrum/pull/10156)
+- Add inline completions example to Autocomplete documentation - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/10205), [PR](https://github.com/adobe/react-spectrum/pull/10212)
+
+### Calendar
+- Fix CalendarYearPicker to include the `maxValue` year in its selectable range - [@chirokas](https://github.com/chirokas) - [PR](https://github.com/adobe/react-spectrum/pull/10149)
+
+### Drag and Drop
+- Allow `DragTypes.has()` to accept multiple MIME types and wildcard patterns such as `image/*` - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/10191)
+
+### GridList
+- Add `keyboardNavigationBehavior` prop to support textfields and other interactive elements inside of rows - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/10195), [PR](https://github.com/adobe/react-spectrum/pull/10206)
+
+### Menu
+- Update `onAction` to receive both the item's `key` and its `value` as arguments - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/10191)
+
+### Popover
+- Add `getTargetRect` prop to Popover for positioning relative to an arbitrary rectangle or character position within a text field - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/10191)
+
+### Tree
+- Add `keyboardNavigationBehavior` prop support textfields and other interactive elements inside of rows - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/10195), [PR](https://github.com/adobe/react-spectrum/pull/10206)
+
+## Released packages
+
+```
+ - @react-types/shared@3.36.0
+ - @react-aria/optimize-locales-plugin@2.0.0
+ - @react-aria/parcel-resolver-optimize-locales@1.4.0
+ - react-aria@3.50.0
+ - react-aria-components@1.19.0
+ - react-stately@3.48.0
+ - tailwindcss-react-aria-components@2.2.0
+```

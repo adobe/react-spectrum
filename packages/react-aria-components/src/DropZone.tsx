@@ -27,7 +27,7 @@ import {getEventTarget, nodeContains} from 'react-aria/private/utils/shadowdom/D
 import intlMessages from '../intl/*.json';
 import {isFocusable} from 'react-aria/private/utils/isFocusable';
 import {mergeProps} from 'react-aria/mergeProps';
-import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
+import React, {createContext, CSSProperties, ForwardedRef, forwardRef, useRef} from 'react';
 import {TextContext} from './Text';
 import {useButton} from 'react-aria/useButton';
 import {useClipboard} from 'react-aria/useClipboard';
@@ -87,6 +87,11 @@ export interface DropZoneProps
    * @default 'react-aria-DropZone'
    */
   className?: ClassNameOrFunction<DropZoneRenderProps>;
+  /**
+   * The inline style for the visually hidden drop button used for keyboard and screen reader drop
+   * interactions.
+   */
+  dropButtonStyle?: CSSProperties;
 }
 
 export const DropZoneContext = createContext<ContextValue<DropZoneProps, HTMLDivElement>>(null);
@@ -99,7 +104,9 @@ export const DropZone = forwardRef(function DropZone(
   ref: ForwardedRef<HTMLDivElement>
 ) {
   let {isDisabled = false} = props;
+  // oxlint-disable-next-line react/react-compiler
   [props, ref] = useContextProps(props, ref, DropZoneContext);
+  let {dropButtonStyle} = props;
   let dropzoneRef = useObjectRef(ref);
   let buttonRef = useRef<HTMLButtonElement>(null);
   let {dropProps, dropButtonProps, isDropTarget} = useDrop({
@@ -162,7 +169,7 @@ export const DropZone = forwardRef(function DropZone(
         data-focus-visible={isFocusVisible || undefined}
         data-drop-target={isDropTarget || undefined}
         data-disabled={isDisabled || undefined}>
-        <VisuallyHidden>
+        <VisuallyHidden style={dropButtonStyle}>
           <button
             {...mergeProps(buttonProps, focusProps, clipboardProps, labelProps)}
             ref={buttonRef}

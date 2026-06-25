@@ -71,9 +71,13 @@ export const Dialog = React.forwardRef(function Dialog(props: SpectrumDialogProp
   let sizeVariant = sizeMap[type] || sizeMap[size];
   let {dialogProps, titleProps, contentProps} = useDialog(mergeProps(contextProps, props), domRef);
 
+  // oxlint-disable-next-line react/react-compiler
   let hasHeader = useHasChild(`.${styles['spectrum-Dialog-header']}`, unwrapDOMRef(gridRef));
+  // oxlint-disable-next-line react/react-compiler
   let hasHeading = useHasChild(`.${styles['spectrum-Dialog-heading']}`, unwrapDOMRef(gridRef));
+  // oxlint-disable-next-line react/react-compiler
   let hasFooter = useHasChild(`.${styles['spectrum-Dialog-footer']}`, unwrapDOMRef(gridRef));
+  // oxlint-disable-next-line react/react-compiler
   let hasTypeIcon = useHasChild(`.${styles['spectrum-Dialog-typeIcon']}`, unwrapDOMRef(gridRef));
 
   let slots = useMemo(
@@ -89,6 +93,7 @@ export const Dialog = React.forwardRef(function Dialog(props: SpectrumDialogProp
       },
       header: {
         UNSAFE_className: classNames(styles, 'spectrum-Dialog-header', {
+          // oxlint-disable-next-line react/react-compiler
           'spectrum-Dialog-header--noHeading': !hasHeading,
           'spectrum-Dialog-header--noTypeIcon': !hasTypeIcon
         })

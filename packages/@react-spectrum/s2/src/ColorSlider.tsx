@@ -53,6 +53,7 @@ export const ColorSlider = forwardRef(function ColorSlider(
   props: ColorSliderProps,
   ref: DOMRef<HTMLDivElement>
 ) {
+  // oxlint-disable-next-line react/react-compiler
   [props, ref] = useSpectrumContextProps(props, ref, ColorSliderContext);
   let {UNSAFE_className = '', UNSAFE_style, styles} = props;
   let containerRef = useDOMRef(ref);
