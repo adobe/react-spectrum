@@ -69,6 +69,7 @@ export function DisclosureRow({title, children, defaultExpanded}) {
   let state = useDisclosureState({defaultExpanded});
   let ref = useRef(null);
   let {buttonProps} = useDisclosure({}, state, ref);
+  // oxlint-disable-next-line react/react-compiler
   delete buttonProps['aria-controls']; // there is no panel element in this implementation
 
   return (

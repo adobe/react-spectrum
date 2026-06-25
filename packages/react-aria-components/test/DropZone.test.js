@@ -420,6 +420,18 @@ describe('DropZone', () => {
         await user.click(button);
         expect(document.activeElement).toBe(button);
       });
+
+      it('should support custom styles on the visually hidden drop button wrapper', () => {
+        let {getByRole} = render(
+          <DropZone dropButtonStyle={{position: 'fixed', top: 0, left: 0}} />
+        );
+
+        expect(getByRole('button').parentElement).toHaveStyle({
+          position: 'fixed',
+          top: '0px',
+          left: '0px'
+        });
+      });
     });
 
     describe('via keyboard', function () {
