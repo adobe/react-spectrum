@@ -374,18 +374,13 @@ export function StreamingChat() {
         ]),
       (timestamp += 1000)
     );
-    addTimeout(
-      () =>
-        streamText(
-          'Based on the assets you shared, I recommend focusing on the narrative arc first, then ' +
-            'layering in supporting visuals and data to reinforce the core message. The main themes ' +
-            'revolve around brand consistency, audience engagement, and clear calls to action.',
-          MOCK_SOURCES
-        ),
-      (timestamp += 500)
-    );
+    let secondStreamContent =
+      'Based on the assets you shared, I recommend focusing on the narrative arc first, then ' +
+      'layering in supporting visuals and data to reinforce the core message. The main themes ' +
+      'revolve around brand consistency, audience engagement, and clear calls to action.';
+    addTimeout(() => streamText(secondStreamContent, MOCK_SOURCES), (timestamp += 500));
 
-    let streamEndTimestamp = timestamp + 500;
+    let streamEndTimestamp = timestamp + (secondStreamContent.split(' ').length - 1) * 80 + 500;
     addTimeout(() => {
       setMessages(prev => [...prev, {id: nextId.current++, type: 'card', ...MOCK_CARD}]);
     }, streamEndTimestamp);
@@ -723,18 +718,13 @@ export function VirtualizedStreamingChat() {
         ]),
       (timestamp += 1000)
     );
-    addTimeout(
-      () =>
-        streamText(
-          'Based on the assets you shared, I recommend focusing on the narrative arc first, then ' +
-            'layering in supporting visuals and data to reinforce the core message. The main themes ' +
-            'revolve around brand consistency, audience engagement, and clear calls to action.',
-          MOCK_SOURCES
-        ),
-      (timestamp += 500)
-    );
+    let secondStreamContent =
+      'Based on the assets you shared, I recommend focusing on the narrative arc first, then ' +
+      'layering in supporting visuals and data to reinforce the core message. The main themes ' +
+      'revolve around brand consistency, audience engagement, and clear calls to action.';
+    addTimeout(() => streamText(secondStreamContent, MOCK_SOURCES), (timestamp += 500));
 
-    let streamEndTimestamp = timestamp + 500;
+    let streamEndTimestamp = timestamp + (secondStreamContent.split(' ').length - 1) * 80 + 500;
     addTimeout(() => {
       setMessages(prev => [...prev, {id: nextId.current++, type: 'card', ...MOCK_CARD}]);
     }, streamEndTimestamp);
