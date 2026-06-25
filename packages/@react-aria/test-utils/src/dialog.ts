@@ -87,7 +87,7 @@ export class DialogTester {
           } else {
             let el = document.getElementById(dialogId)!;
             let nestedDialog = el.querySelector('[role=dialog], [role=alertdialog]');
-            this._dialog = nestedDialog as HTMLElement || el;
+            this._dialog = (nestedDialog as HTMLElement) || el;
             return true;
           }
         });
