@@ -27,7 +27,6 @@ import {getEventTarget} from '../utils/shadowdom/DOMFunctions';
 import {getItemCount} from 'react-stately/private/collections/getItemCount';
 import {handleLinkClick, useLinkProps, useRouter} from '../utils/openLink';
 import {isFocusVisible, setInteractionModality} from '../interactions/useFocusVisible';
-import {KeyboardShortcutBindings} from '../interactions/createKeyboardShortcutHandler';
 import {menuData} from './utils';
 import {mergeProps} from '../utils/mergeProps';
 import {MouseEvent, useRef} from 'react';
@@ -131,9 +130,6 @@ export interface AriaMenuItemProps
 
   /** Override of the selection manager. By default, `state.selectionManager` is used. */
   selectionManager?: SelectionManager;
-
-  /** Keyboard shortcuts to handle. */
-  shortcuts?: KeyboardShortcutBindings;
 }
 
 /**
@@ -319,7 +315,6 @@ export function useMenuItem<T>(
 
   let {keyboardProps} = useKeyboard({
     shortcuts: {
-      ...props.shortcuts,
       ' ': e => {
         interaction.current = {pointerType: 'keyboard', key: ' '};
         (getEventTarget(e) as HTMLElement).click();
