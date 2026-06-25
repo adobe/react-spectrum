@@ -77,6 +77,21 @@ export function SettingsContextProvider({children, elementType, locale}: Setting
   );
 }
 
+export function RACSettingsProvider({children}: Pick<SettingsProviderProps, 'children'>) {
+  let {colorScheme, toggleColorScheme, systemColorScheme} = useSettingsState();
+
+  return (
+    <SettingsContext.Provider
+      value={{
+        colorScheme,
+        toggleColorScheme,
+        systemColorScheme
+      }}>
+      {children}
+    </SettingsContext.Provider>
+  );
+}
+
 export function SettingsProvider({children}: SettingsProviderProps) {
   let {colorScheme, toggleColorScheme, systemColorScheme, providerColorScheme} = useSettingsState();
 
