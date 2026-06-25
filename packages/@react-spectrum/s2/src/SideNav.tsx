@@ -416,6 +416,8 @@ export const SideNavItemContent = (props: SideNavItemContentProps): ReactNode =>
               {isHovered && <div className={hoveredIndicator} />}
               <SelectionIndicator ref={ref} className={selectedIndicator({isDisabled})} />
               <Link
+                aria-current={isSelected ? 'page' : undefined}
+                aria-expanded={isExpanded ? 'true' : hasChildItems ? 'false' : undefined}
                 href={href}
                 target={target}
                 hrefLang={hrefLang}

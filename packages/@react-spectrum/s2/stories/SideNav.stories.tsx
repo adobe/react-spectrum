@@ -52,13 +52,13 @@ const SideNavExampleStatic = args => (
       aria-label="test static tree"
       onExpandedChange={action('onExpandedChange')}
       onSelectionChange={action('onSelectionChange')}>
-      <SideNavItem id="Photos" textValue="Photos" href="https://www.adobe.com">
+      <SideNavItem id="Photos" textValue="Your files" href="https://www.adobe.com">
         <SideNavItemContent>
           <Text>Your files</Text>
           <Folder />
         </SideNavItemContent>
       </SideNavItem>
-      <SideNavItem id="projects" textValue="Projects" href="https://www.google.com">
+      <SideNavItem id="projects" textValue="Your libraries" href="https://www.google.com">
         <SideNavItemContent>
           <Text>Your libraries</Text>
         </SideNavItemContent>
