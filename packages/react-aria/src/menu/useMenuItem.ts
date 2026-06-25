@@ -28,7 +28,6 @@ import {getItemCount} from 'react-stately/private/collections/getItemCount';
 import {handleLinkClick, useLinkProps, useRouter} from '../utils/openLink';
 import {isFocusVisible, setInteractionModality} from '../interactions/useFocusVisible';
 import {menuData} from './utils';
-import {mergeProps} from '../utils/mergeProps';
 import {MouseEvent, useRef} from 'react';
 import {SelectionManager} from 'react-stately/private/selection/SelectionManager';
 import {TreeState} from 'react-stately/useTreeState';
@@ -353,27 +352,21 @@ export function useMenuItem<T>(
   return {
     menuItemProps: {
       ...ariaProps,
-      ...mergeProps(
-        domProps,
-        linkProps,
-        isTrigger
-          ? {
-              onFocus: itemProps.onFocus,
-              'data-collection': itemProps['data-collection'],
-              'data-key': itemProps['data-key']
-            }
-          : itemProps,
-        pressProps,
-        hoverProps,
-        keyboardProps,
-        focusableProps,
-        // Prevent DOM focus from moving on mouse down when using virtual focus or this is a submenu/subdialog trigger.
-        data.shouldUseVirtualFocus || isTrigger
-          ? {onMouseDown: e => e.preventDefault()}
-          : undefined,
-        // oxlint-disable-next-line react/react-compiler
-        isDisabled ? undefined : {onClick}
-      ),
+      ...domProps,
+      ...linkProps,
+      ...(isTrigger
+        ? {
+            onFocus: itemProps.onFocus,
+            'data-collection': itemProps['data-collection'],
+            'data-key': itemProps['data-key']
+          }
+        : itemProps),
+      ...pressProps,
+      ...hoverProps,
+      ...keyboardProps,
+      ...focusableProps,
+      ...(data.shouldUseVirtualFocus || isTrigger ? {onMouseDown: e => e.preventDefault()} : {}),
+      ...(isDisabled ? {} : {onClick}),
       // If a submenu is expanded, set the tabIndex to -1 so that shift tabbing goes out of the menu instead of the parent menu item.
       tabIndex:
         itemProps.tabIndex != null && isTriggerExpanded && !data.shouldUseVirtualFocus

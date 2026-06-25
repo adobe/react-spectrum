@@ -133,6 +133,9 @@ export function useToggle(
 
   // Handle press state on the label.
   let [isLabelPressed, setLabelPressed] = useState(false);
+  let groupValidationState = (props as Record<string, unknown>)[privateValidationStateProp];
+  let validationForCommit = groupValidationState ?? validationState;
+  let commitValidation = (validationForCommit as {commitValidation?: () => void}).commitValidation;
   let {pressProps: labelProps} = usePress({
     onPressStart(e) {
       // Keyboard interactions are handled directly on the input.
@@ -174,14 +177,7 @@ export function useToggle(
       onPress?.(e);
       state.toggle();
       ref.current?.focus();
-
-      // @ts-expect-error
-      let {[privateValidationStateProp]: groupValidationState} = props;
-
-      // oxlint-disable-next-line react/react-compiler
-      let {commitValidation} = groupValidationState ? groupValidationState : validationState;
-
-      commitValidation();
+      commitValidation?.();
     },
     isDisabled: isDisabled || isReadOnly
   });

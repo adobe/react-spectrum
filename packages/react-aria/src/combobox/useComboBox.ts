@@ -46,7 +46,6 @@ import {getOwnerDocument} from '../utils/domHelpers';
 import intlMessages from '../../intl/combobox/*.json';
 import {isAppleDevice} from '../utils/platform';
 import {ListKeyboardDelegate} from '../selection/ListKeyboardDelegate';
-import {mergeProps} from '../utils/mergeProps';
 import {privateValidationStateProp} from 'react-stately/private/form/useFormValidationState';
 import {useEvent} from '../utils/useEvent';
 import {useFormReset} from '../utils/useFormReset';
@@ -294,8 +293,7 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(
           : props.isRequired,
       onChange: state.setInputValue,
       onKeyDown: !isReadOnly
-        ? // oxlint-disable-next-line react/react-compiler
-          chain(state.isOpen && collectionProps.onKeyDown, keyboardProps.onKeyDown, props.onKeyDown)
+        ? chain(state.isOpen && collectionProps.onKeyDown, keyboardProps.onKeyDown, props.onKeyDown)
         : props.onKeyDown,
       onBlur,
       value: state.inputValue,
@@ -486,8 +484,8 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(
       onPressStart,
       isDisabled: isDisabled || isReadOnly
     },
-    // oxlint-disable-next-line react/react-compiler
-    inputProps: mergeProps(inputProps, {
+    inputProps: {
+      ...inputProps,
       role: 'combobox',
       'aria-expanded': menuTriggerProps['aria-expanded'],
       'aria-controls': state.isOpen ? menuProps.id : undefined,
@@ -499,8 +497,10 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(
       autoCorrect: 'off',
       // This disable's the macOS Safari spell check auto corrections.
       spellCheck: 'false'
-    }),
-    listBoxProps: mergeProps(menuProps, listBoxProps, {
+    },
+    listBoxProps: {
+      ...menuProps,
+      ...listBoxProps,
       onAction: undefined,
       autoFocus: state.focusStrategy || true,
       shouldUseVirtualFocus: true,
@@ -508,7 +508,7 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(
       shouldFocusOnHover: true,
       linkBehavior: 'selection' as const,
       ['UNSTABLE_itemBehavior']: 'action'
-    }),
+    } as typeof listBoxProps,
     valueProps: {
       id: valueId
     },
@@ -528,20 +528,20 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(
 function useValueId(depArray: ReadonlyArray<any> = []): string | undefined {
   let id = useId();
   let [exists, setExists] = useState(true);
-  let [lastDeps, setLastDeps] = useState(depArray);
+  let depArrayRef = useRef(depArray);
 
-  // If the deps changed, set exists to true so we can test whether the element exists.
-  if (lastDeps.some((v, i) => !Object.is(v, depArray[i]))) {
-    setExists(true);
-    setLastDeps(depArray);
-  }
+  useEffect(() => {
+    if (depArray.some((v, i) => !Object.is(v, depArrayRef.current[i]))) {
+      setExists(true);
+      depArrayRef.current = depArray;
+    }
+  }, [depArray]);
 
   useEffect(() => {
     if (exists && !document.getElementById(id)) {
-      // oxlint-disable-next-line react/react-compiler
-      setExists(false);
+      queueMicrotask(() => setExists(false));
     }
-  }, [id, exists, lastDeps]);
+  }, [id, exists, depArray]);
 
   return exists ? id : undefined;
 }

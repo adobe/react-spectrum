@@ -34,7 +34,7 @@ import {inertValue} from 'react-aria/private/utils/inertValue';
 import {Link} from 'react-aria-components/Link';
 import {LinkButtonContext} from '@react-spectrum/s2/LinkButton';
 import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
-import {pressScale} from '@react-spectrum/s2/pressScale';
+import {pressScale, pressScaleStyle} from '@react-spectrum/s2/pressScale';
 import {SkeletonContext, useIsSkeleton} from '@react-spectrum/s2/Skeleton';
 import {StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {TextContext} from '@react-spectrum/s2/Text';
@@ -516,8 +516,6 @@ const Card = forwardRef(function Card(
     </Provider>
   );
 
-  // oxlint-disable-next-line react/react-compiler
-  let press = pressScale(domRef);
   if (ElementType === 'div' && !isSkeleton && props.href) {
     // Standalone Card that has an href should be rendered as a Link.
     // NOTE: In this case, the card must not contain interactive elements.
@@ -541,7 +539,7 @@ const Card = forwardRef(function Card(
         }
         style={renderProps =>
           // Only the preview in quiet cards scales down on press
-          variant === 'quiet' ? undefined : press(renderProps)
+          variant === 'quiet' ? undefined : pressScale(domRef)(renderProps)
         }>
         {renderProps => (
           <InternalCardContext.Provider
@@ -601,7 +599,7 @@ const Card = forwardRef(function Card(
       }
       style={renderProps =>
         // Only the preview in quiet cards scales down on press
-        variant === 'quiet' ? undefined : press(renderProps)
+        variant === 'quiet' ? undefined : pressScale(domRef)(renderProps)
       }>
       {({selectionMode, selectionBehavior, isHovered, isFocusVisible, isSelected, isPressed}) => (
         <InternalCardContext.Provider
@@ -677,14 +675,13 @@ export const CardPreview = forwardRef(function CardPreview(
   let {size, isQuiet, isHovered, isFocusVisible, isSelected, isPressed, isCheckboxSelection} =
     useContext(InternalCardContext);
   let domRef = useDOMRef(ref);
-  // oxlint-disable react/react-compiler
   return (
     <div
       {...filterDOMProps(props)}
       slot="preview"
       ref={domRef}
       className={preview({size, isQuiet, isHovered, isFocusVisible, isSelected})}
-      style={isQuiet ? pressScale(domRef)({isPressed}) : undefined}>
+      style={isQuiet ? pressScaleStyle(isPressed) : undefined}>
       {isQuiet && <SelectionIndicator />}
       {isQuiet && isCheckboxSelection && <CardCheckbox />}
       <div className={style({borderRadius: 'inherit', overflow: 'clip', height: 'full'})}>
@@ -692,7 +689,6 @@ export const CardPreview = forwardRef(function CardPreview(
       </div>
     </div>
   );
-  // oxlint-enable react/react-compiler
 });
 
 const collection = style({

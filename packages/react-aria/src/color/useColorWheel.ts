@@ -20,7 +20,6 @@ import {
 import {ColorWheelProps, ColorWheelState} from 'react-stately/useColorWheelState';
 import {focusWithoutScrolling} from '../utils/focusWithoutScrolling';
 import {getEventTarget} from '../utils/shadowdom/DOMFunctions';
-import {mergeProps} from '../utils/mergeProps';
 import React, {ChangeEvent, InputHTMLAttributes, useCallback, useRef} from 'react';
 import {useFormReset} from '../utils/useFormReset';
 import {useGlobalListeners} from '../utils/useGlobalListeners';
@@ -221,73 +220,67 @@ export function useColorWheel(
 
   let trackInteractions = isDisabled
     ? {}
-    : mergeProps(
-        // oxlint-disable-next-line react/react-compiler
-        {
-          ...(typeof PointerEvent !== 'undefined'
-            ? {
-                onPointerDown: (e: React.PointerEvent) => {
-                  if (
-                    e.pointerType === 'mouse' &&
-                    (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey)
-                  ) {
-                    return;
-                  }
-                  onTrackDown(e.currentTarget, e.pointerId, e.clientX, e.clientY);
+    : {
+        ...(typeof PointerEvent !== 'undefined'
+          ? {
+              onPointerDown: (e: React.PointerEvent) => {
+                if (
+                  e.pointerType === 'mouse' &&
+                  (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey)
+                ) {
+                  return;
                 }
+                onTrackDown(e.currentTarget, e.pointerId, e.clientX, e.clientY);
               }
-            : {
-                onMouseDown: (e: React.MouseEvent) => {
-                  if (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey) {
-                    return;
-                  }
-                  onTrackDown(e.currentTarget, undefined, e.clientX, e.clientY);
-                },
-                onTouchStart: (e: React.TouchEvent) => {
-                  onTrackDown(
-                    e.currentTarget,
-                    e.changedTouches[0].identifier,
-                    e.changedTouches[0].clientX,
-                    e.changedTouches[0].clientY
-                  );
+            }
+          : {
+              onMouseDown: (e: React.MouseEvent) => {
+                if (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey) {
+                  return;
                 }
-              })
-        },
-        movePropsContainer
-      );
+                onTrackDown(e.currentTarget, undefined, e.clientX, e.clientY);
+              },
+              onTouchStart: (e: React.TouchEvent) => {
+                onTrackDown(
+                  e.currentTarget,
+                  e.changedTouches[0].identifier,
+                  e.changedTouches[0].clientX,
+                  e.changedTouches[0].clientY
+                );
+              }
+            }),
+        ...movePropsContainer
+      };
 
   let thumbInteractions = isDisabled
     ? {}
-    : mergeProps(
-        // oxlint-disable-next-line react/react-compiler
-        {
-          ...(typeof PointerEvent !== 'undefined'
-            ? {
-                onPointerDown: (e: React.PointerEvent) => {
-                  if (
-                    e.pointerType === 'mouse' &&
-                    (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey)
-                  ) {
-                    return;
-                  }
-                  onThumbDown(e.pointerId);
+    : {
+        ...(typeof PointerEvent !== 'undefined'
+          ? {
+              onPointerDown: (e: React.PointerEvent) => {
+                if (
+                  e.pointerType === 'mouse' &&
+                  (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey)
+                ) {
+                  return;
                 }
+                onThumbDown(e.pointerId);
               }
-            : {
-                onMouseDown: (e: React.MouseEvent) => {
-                  if (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey) {
-                    return;
-                  }
-                  onThumbDown(undefined);
-                },
-                onTouchStart: (e: React.TouchEvent) => {
-                  onThumbDown(e.changedTouches[0].identifier);
+            }
+          : {
+              onMouseDown: (e: React.MouseEvent) => {
+                if (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey) {
+                  return;
                 }
-              })
-        },
-        keyboardProps,
-        movePropsThumb
-      );
+                onThumbDown(undefined);
+              },
+              onTouchStart: (e: React.TouchEvent) => {
+                onThumbDown(e.changedTouches[0].identifier);
+              }
+            }),
+        ...keyboardProps,
+        ...movePropsThumb
+      };
   let {x, y} = state.getThumbPosition(thumbRadius);
 
   // Provide a default aria-label if none is given
@@ -357,7 +350,8 @@ export function useColorWheel(
         ...forcedColorAdjustNoneStyle
       }
     },
-    inputProps: mergeProps(inputLabellingProps, {
+    inputProps: {
+      ...inputLabellingProps,
       type: 'range',
       min: String(minValue),
       max: String(maxValue),
@@ -374,7 +368,7 @@ export function useColorWheel(
       'aria-errormessage': props['aria-errormessage'],
       'aria-describedby': props['aria-describedby'],
       'aria-details': props['aria-details']
-    })
+    }
   };
 }
 

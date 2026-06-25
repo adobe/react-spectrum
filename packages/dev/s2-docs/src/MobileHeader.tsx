@@ -102,15 +102,13 @@ function ColorSchemeToggle() {
     : `Using system ${systemColorScheme} mode (press to switch)`;
   let ref = useRef(null);
   let isDark = colorScheme === 'dark';
-
-  // oxlint-disable react/react-compiler
   return (
     <Button
       ref={ref}
       aria-label={label}
       onPress={toggleColorScheme}
       className={renderProps => colorSchemeToggleStyles(renderProps)}
-      style={pressScale(ref)}>
+      style={renderProps => pressScale(ref)(renderProps)}>
       <span className={iconContainerStyles}>
         <Contrast
           UNSAFE_style={{
@@ -133,7 +131,6 @@ function ColorSchemeToggle() {
       </span>
     </Button>
   );
-  // oxlint-enable react/react-compiler
 }
 
 export function MobileHeader({toc}) {
@@ -266,8 +263,7 @@ export function MobileHeader({toc}) {
         <Link
           href={homepage}
           ref={linkRef}
-          // oxlint-disable-next-line react/react-compiler
-          style={pressScale(linkRef)}
+          style={renderProps => pressScale(linkRef)(renderProps)}
           className={style({
             ...focusRing(),
             display: 'flex',

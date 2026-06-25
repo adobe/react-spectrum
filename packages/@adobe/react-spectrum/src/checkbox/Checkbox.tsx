@@ -45,50 +45,31 @@ export interface SpectrumCheckboxProps extends Omit<AriaCheckboxProps, 'onClick'
   slot?: string | null;
 }
 
-/**
- * Checkboxes allow users to select multiple items from a list of individual items,
- * or to mark one individual item as selected.
- */
-export const Checkbox = forwardRef(function Checkbox(
-  props: SpectrumCheckboxProps,
-  ref: FocusableRef<HTMLLabelElement>
-) {
-  let originalProps = props;
-  let inputRef = useRef<HTMLInputElement>(null);
-  let domRef = useFocusableRef(ref, inputRef);
+interface CheckboxContentProps {
+  props: SpectrumCheckboxProps;
+  originalProps: SpectrumCheckboxProps;
+  domRef: ReturnType<typeof useFocusableRef>;
+  inputRef: React.RefObject<HTMLInputElement | null>;
+  labelProps: React.LabelHTMLAttributes<HTMLLabelElement>;
+  inputProps: React.InputHTMLAttributes<HTMLInputElement>;
+  isInvalid?: boolean;
+  isDisabled?: boolean;
+}
 
-  [props, domRef] = useContextProps(props, domRef, CheckboxContext);
-  props = useProviderProps(props);
-  props = useFormProps(props);
-  let {isIndeterminate = false, isEmphasized = false, autoFocus, children, ...otherProps} = props;
-  let {styleProps} = useStyleProps(otherProps);
-
-  // Swap hooks depending on whether this checkbox is inside a CheckboxGroup.
-  // This is a bit unorthodox. Typically, hooks cannot be called in a conditional,
-  // but since the checkbox won't move in and out of a group, it should be safe.
-  let groupState = useContext(CheckboxGroupContext);
-  let {labelProps, inputProps, isInvalid, isDisabled} = groupState
-    ? // oxlint-disable-next-line react/react-compiler, react-hooks/rules-of-hooks
-      useCheckboxGroupItem(
-        {
-          ...props,
-          // Value is optional for standalone checkboxes, but required for CheckboxGroup items;
-          // it's passed explicitly here to avoid typescript error (requires ignore).
-          // @ts-ignore
-          value: props.value,
-          // Only pass isRequired and validationState to react-aria if they came from
-          // the props for this individual checkbox, and not from the group via context.
-          isRequired: originalProps.isRequired,
-          validationState: originalProps.validationState,
-          isInvalid: originalProps.isInvalid
-        },
-        groupState,
-        inputRef
-      )
-    : // oxlint-disable-next-line react/react-compiler, react-hooks/rules-of-hooks
-      useCheckbox(props, useToggleState(props), inputRef);
-
+function CheckboxContent({
+  props,
+  originalProps,
+  domRef,
+  inputRef,
+  labelProps,
+  inputProps,
+  isInvalid,
+  isDisabled
+}: CheckboxContentProps) {
+  let {isIndeterminate = false, isEmphasized = false, autoFocus, children} = props;
+  let {styleProps} = useStyleProps(props);
   let {hoverProps, isHovered} = useHover({isDisabled});
+  let groupState = useContext(CheckboxGroupContext);
 
   let markIcon = isIndeterminate ? (
     <DashSmall UNSAFE_className={classNames(styles, 'spectrum-Checkbox-partialCheckmark')} />
@@ -114,7 +95,7 @@ export const Checkbox = forwardRef(function Checkbox(
       {...labelProps}
       {...styleProps}
       {...hoverProps}
-      ref={domRef}
+      ref={domRef as React.Ref<HTMLLabelElement>}
       className={classNames(
         styles,
         'spectrum-Checkbox',
@@ -140,5 +121,120 @@ export const Checkbox = forwardRef(function Checkbox(
         <span className={classNames(styles, 'spectrum-Checkbox-label')}>{children}</span>
       )}
     </label>
+  );
+}
+
+function CheckboxStandalone({
+  props,
+  originalProps,
+  domRef,
+  inputRef
+}: {
+  props: SpectrumCheckboxProps;
+  originalProps: SpectrumCheckboxProps;
+  domRef: ReturnType<typeof useFocusableRef>;
+  inputRef: React.RefObject<HTMLInputElement | null>;
+}) {
+  let {labelProps, inputProps, isInvalid, isDisabled} = useCheckbox(
+    props,
+    useToggleState(props),
+    inputRef
+  );
+
+  return (
+    <CheckboxContent
+      props={props}
+      originalProps={originalProps}
+      domRef={domRef}
+      inputRef={inputRef}
+      labelProps={labelProps}
+      inputProps={inputProps}
+      isInvalid={isInvalid}
+      isDisabled={isDisabled}
+    />
+  );
+}
+
+function CheckboxInGroup({
+  props,
+  originalProps,
+  domRef,
+  inputRef,
+  groupState
+}: {
+  props: SpectrumCheckboxProps;
+  originalProps: SpectrumCheckboxProps;
+  domRef: ReturnType<typeof useFocusableRef>;
+  inputRef: React.RefObject<HTMLInputElement | null>;
+  groupState: NonNullable<React.ContextType<typeof CheckboxGroupContext>>;
+}) {
+  let {labelProps, inputProps, isInvalid, isDisabled} = useCheckboxGroupItem(
+    {
+      ...props,
+      // Value is optional for standalone checkboxes, but required for CheckboxGroup items;
+      // it's passed explicitly here to avoid typescript error (requires ignore).
+      // @ts-ignore
+      value: props.value,
+      // Only pass isRequired and validationState to react-aria if they came from
+      // the props for this individual checkbox, and not from the group via context.
+      isRequired: originalProps.isRequired,
+      validationState: originalProps.validationState,
+      isInvalid: originalProps.isInvalid
+    },
+    groupState,
+    inputRef
+  );
+
+  return (
+    <CheckboxContent
+      props={props}
+      originalProps={originalProps}
+      domRef={domRef}
+      inputRef={inputRef}
+      labelProps={labelProps}
+      inputProps={inputProps}
+      isInvalid={isInvalid}
+      isDisabled={isDisabled}
+    />
+  );
+}
+
+/**
+ * Checkboxes allow users to select multiple items from a list of individual items,
+ * or to mark one individual item as selected.
+ */
+export const Checkbox = forwardRef(function Checkbox(
+  propsArg: SpectrumCheckboxProps,
+  ref: FocusableRef<HTMLLabelElement>
+) {
+  let props = propsArg;
+  let originalProps = props;
+  let inputRef = useRef<HTMLInputElement>(null);
+  let domRef = useFocusableRef(ref, inputRef);
+
+  [props, domRef] = useContextProps(props, domRef, CheckboxContext);
+  props = useProviderProps(props);
+  props = useFormProps(props);
+
+  let groupState = useContext(CheckboxGroupContext);
+  if (groupState) {
+    return (
+      <CheckboxInGroup
+        props={props}
+        originalProps={originalProps}
+        domRef={domRef}
+        inputRef={inputRef}
+        groupState={groupState}
+      />
+    );
+  }
+
+  return (
+    <CheckboxStandalone
+      props={props}
+      originalProps={originalProps}
+      domRef={domRef}
+      inputRef={inputRef}
+    />
   );
 });

@@ -28,19 +28,19 @@ export const PressResponder: React.ForwardRefExoticComponent<
   ({children, ...props}: PressResponderProps, ref: ForwardedRef<FocusableElement>) => {
     let isRegistered = useRef(false);
     let prevContext = useContext(PressResponderContext);
-    // oxlint-disable-next-line react/react-compiler
-    let context: any = mergeProps(prevContext || {}, {
-      ...props,
+    let objectRef = useObjectRef(ref);
+    let {ref: _parentRef, register: _parentRegister, ...prevContextProps} = prevContext || {};
+    let contextValue = {
+      ...mergeProps(prevContextProps, props),
       register() {
         isRegistered.current = true;
         if (prevContext) {
           prevContext.register();
         }
-      }
-    });
-
-    context.ref = useObjectRef(ref || prevContext?.ref);
-    useSyncRef(prevContext, context.ref);
+      },
+      ref: objectRef
+    };
+    useSyncRef(prevContext?.ref, objectRef);
 
     useEffect(() => {
       if (!isRegistered.current) {
@@ -55,7 +55,9 @@ export const PressResponder: React.ForwardRefExoticComponent<
     }, []);
 
     return (
-      <PressResponderContext.Provider value={context}>{children}</PressResponderContext.Provider>
+      <PressResponderContext.Provider value={contextValue}>
+        {children}
+      </PressResponderContext.Provider>
     );
   }
 );

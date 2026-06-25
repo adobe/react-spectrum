@@ -28,7 +28,7 @@ import intlMessages from '../../intl/tag/*.json';
 import {ListCollection} from 'react-stately/private/list/ListCollection';
 import {ListKeyboardDelegate} from 'react-aria/ListKeyboardDelegate';
 import {Provider, useProvider, useProviderProps} from '../provider/Provider';
-import React, {JSX, ReactNode, useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import React, {JSX, ReactNode, useEffect, useMemo, useRef, useState} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/tags/vars.css';
 import {Tag} from './Tag';
 import {useDOMRef} from '../utils/useDOMRef';
@@ -85,9 +85,10 @@ export interface SpectrumTagGroupProps<T>
  * describe an item or a search request.
  */
 export const TagGroup = React.forwardRef(function TagGroup<T extends object>(
-  props: SpectrumTagGroupProps<T>,
+  propsArg: SpectrumTagGroupProps<T>,
   ref: DOMRef<HTMLDivElement>
 ) {
+  let props = propsArg;
   props = useProviderProps(props);
   props = useFormProps(props);
   let {
@@ -96,7 +97,8 @@ export const TagGroup = React.forwardRef(function TagGroup<T extends object>(
     actionLabel,
     onAction,
     labelPosition,
-    renderEmptyState = () => stringFormatter.format('noTags')
+    renderEmptyState = () => stringFormatter.format('noTags'),
+    ...tagGroupProps
   } = props;
   let domRef = useDOMRef(ref);
   let containerRef = useRef<HTMLDivElement>(null);
@@ -129,18 +131,15 @@ export const TagGroup = React.forwardRef(function TagGroup<T extends object>(
     tagState.visibleTagCount,
     tagsRef
   ]) as ListKeyboardDelegate<T>;
-  // Remove onAction from props so it doesn't make it into useGridList.
-  // oxlint-disable-next-line react/react-compiler
-  delete props.onAction;
   let {gridProps, labelProps, descriptionProps, errorMessageProps} = useTagGroup(
-    {...props, keyboardDelegate},
+    {...tagGroupProps, keyboardDelegate},
     state,
     tagsRef
   );
   let actionsId = useId();
   let actionsRef = useRef<HTMLDivElement>(null);
 
-  let updateVisibleTagCount = useCallback(() => {
+  let updateVisibleTagCount = () => {
     if (maxRows && maxRows > 0) {
       let computeVisibleTagCount = () => {
         // Refs can be null at runtime.
@@ -214,8 +213,7 @@ export const TagGroup = React.forwardRef(function TagGroup<T extends object>(
         yield computeVisibleTagCount();
       });
     }
-    // oxlint-disable-next-line react/react-compiler
-  }, [maxRows, setTagState, direction, scale, state.collection.size]);
+  };
 
   useResizeObserver({ref: containerRef, onResize: updateVisibleTagCount});
   // eslint-disable-next-line react-hooks/exhaustive-deps

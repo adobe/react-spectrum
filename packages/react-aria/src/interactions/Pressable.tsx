@@ -27,7 +27,8 @@ export interface PressableProps extends PressProps {
 export const Pressable: React.ForwardRefExoticComponent<
   PressableProps & React.RefAttributes<FocusableElement>
 > = React.forwardRef(
-  ({children, ...props}: PressableProps, ref: ForwardedRef<FocusableElement>) => {
+  ({children, ...props}: PressableProps, refArg: ForwardedRef<FocusableElement>) => {
+    let ref = refArg;
     ref = useObjectRef(ref);
     let {pressProps} = usePress({...props, ref});
     let {focusableProps} = useFocusable(props, ref);
@@ -96,8 +97,7 @@ export const Pressable: React.ForwardRefExoticComponent<
     return React.cloneElement(child, {
       ...mergeProps(pressProps, focusableProps, child.props),
       // @ts-ignore
-      // oxlint-disable-next-line react/react-compiler
-      ref: mergeRefs(childRef, ref)
+      ref: (value: FocusableElement | null) => mergeRefs(childRef, ref)(value)
     });
   }
 );

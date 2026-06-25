@@ -130,6 +130,7 @@ export const TextFieldBase = forwardRef(function TextFieldBase(
 
   // Add validation icon IDREF to aria-describedby when validationState is valid
   let inputPropsAriaDescribedBy = inputProps['aria-describedby'];
+  let mergedInputProps = inputProps;
   if (
     !isInvalid &&
     validationState === 'valid' &&
@@ -137,8 +138,10 @@ export const TextFieldBase = forwardRef(function TextFieldBase(
     !isDisabled &&
     (!inputPropsAriaDescribedBy || !inputPropsAriaDescribedBy.includes(validId))
   ) {
-    // oxlint-disable-next-line react/react-compiler
-    inputProps['aria-describedby'] = [inputPropsAriaDescribedBy, validId].join(' ').trim();
+    mergedInputProps = {
+      ...inputProps,
+      'aria-describedby': [inputPropsAriaDescribedBy, validId].join(' ').trim()
+    };
   }
 
   let {focusProps, isFocusVisible} = useFocusRing({
@@ -157,7 +160,7 @@ export const TextFieldBase = forwardRef(function TextFieldBase(
         'focus-ring': !disableFocusRing && isFocusVisible
       })}>
       <ElementType
-        {...mergeProps(inputProps, hoverProps, focusProps)}
+        {...mergeProps(mergedInputProps, hoverProps, focusProps)}
         ref={inputRef as any}
         rows={multiLine ? 1 : undefined}
         className={classNames(

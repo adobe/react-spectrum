@@ -358,10 +358,10 @@ export let filledTrack = style<{
 });
 
 export function SliderBase<T extends number | number[]>(
-  props: SliderBaseProps<T> & {sliderRef: RefObject<HTMLDivElement | null>}
+  propsArg: SliderBaseProps<T> & {sliderRef: RefObject<HTMLDivElement | null>}
 ): ReactNode {
+  let props = propsArg;
   let formContext = useContext(FormContext);
-  // oxlint-disable-next-line react/react-compiler
   props = useFormProps(props);
   let {
     label,
@@ -369,15 +369,16 @@ export function SliderBase<T extends number | number[]>(
     labelAlign = 'start',
     size = 'M',
     minValue = 0,
-    maxValue = 100
+    maxValue = 100,
+    sliderRef,
+    ...sliderProps
   } = props;
   let {direction} = useLocale();
 
-  // oxlint-disable react/react-compiler
   return (
     <AriaSlider
-      {...props}
-      ref={props.sliderRef}
+      {...sliderProps}
+      ref={sliderRef}
       className={renderProps =>
         (props.UNSAFE_className || '') +
         mergeStyles(
@@ -443,7 +444,6 @@ export function SliderBase<T extends number | number[]>(
       }}
     </AriaSlider>
   );
-  // oxlint-enable react/react-compiler
 }
 
 /**
@@ -451,10 +451,11 @@ export function SliderBase<T extends number | number[]>(
  * and lower bounds to the range are invariable.
  */
 export const Slider = /*#__PURE__*/ forwardRef(function Slider(
-  props: SliderProps,
-  ref: FocusableRef<HTMLDivElement>
+  propsArg: SliderProps,
+  refArg: FocusableRef<HTMLDivElement>
 ) {
-  // oxlint-disable-next-line react/react-compiler
+  let props = propsArg;
+  let ref = refArg;
   [props, ref] = useSpectrumContextProps(props, ref, SliderContext);
   let formContext = useContext(FormContext);
   props = useFormProps(props);

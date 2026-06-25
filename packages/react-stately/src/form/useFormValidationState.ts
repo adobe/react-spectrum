@@ -74,26 +74,14 @@ export interface FormValidationState {
 }
 
 export function useFormValidationState<T>(props: FormValidationProps<T>): FormValidationState {
+  let implState = useFormValidationStateImpl(props);
+
   // Private prop for parent components to pass state to children.
   if (props[privateValidationStateProp]) {
-    let {
-      realtimeValidation,
-      displayValidation,
-      updateValidation,
-      resetValidation,
-      commitValidation
-    } = props[privateValidationStateProp] as FormValidationState;
-    return {
-      realtimeValidation,
-      displayValidation,
-      updateValidation,
-      resetValidation,
-      commitValidation
-    };
+    return props[privateValidationStateProp] as FormValidationState;
   }
 
-  // oxlint-disable-next-line react/react-compiler, react-hooks/rules-of-hooks
-  return useFormValidationStateImpl(props);
+  return implState;
 }
 
 function useFormValidationStateImpl<T>(props: FormValidationProps<T>): FormValidationState {

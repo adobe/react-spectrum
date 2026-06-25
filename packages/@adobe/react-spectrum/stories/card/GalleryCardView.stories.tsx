@@ -242,6 +242,5 @@ function CustomGalleryLayout(props: SpectrumCardViewProps<object> & LayoutOption
     [collator, layoutOptions]
   );
 
-  // oxlint-disable-next-line react/react-compiler
-  return CustomLayout({...otherProps, layout: galleryLayout});
+  return <CustomLayout {...otherProps} layout={galleryLayout} />;
 }

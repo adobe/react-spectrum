@@ -32,6 +32,7 @@ import {ToggleGroupStateContext} from './ToggleButtonGroup';
 import {ToggleState, useToggleState} from 'react-stately/useToggleState';
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {useHover} from 'react-aria/useHover';
+import {useObjectRef} from 'react-aria/useObjectRef';
 import {useToggleButtonGroupItem} from 'react-aria/useToggleButtonGroup';
 
 export interface ToggleButtonRenderProps extends Omit<ButtonRenderProps, 'isPending'> {
@@ -72,38 +73,88 @@ export const ToggleButtonContext = createContext<
   ContextValue<ToggleButtonProps, HTMLButtonElement>
 >({});
 
-/**
- * A toggle button allows a user to toggle a selection on or off, for example switching between two
- * states or modes.
- */
-export const ToggleButton = /*#__PURE__*/ (forwardRef as forwardRefType)(function ToggleButton(
-  props: ToggleButtonProps,
-  ref: ForwardedRef<HTMLButtonElement>
-) {
-  [props, ref] = useContextProps(props, ref, ToggleButtonContext);
-  let groupState = useContext(ToggleGroupStateContext);
-  let state = useToggleState(
-    groupState && props.id != null
-      ? {
-          isSelected: groupState.selectedKeys.has(props.id),
-          onChange(isSelected) {
-            groupState.setSelected(props.id!, isSelected);
-          }
-        }
-      : props
+function ToggleButtonStandalone({
+  props,
+  ref
+}: {
+  props: ToggleButtonProps;
+  ref: ForwardedRef<HTMLButtonElement>;
+}) {
+  let state = useToggleState(props);
+  let buttonRef = useObjectRef(ref);
+  let {buttonProps, isPressed, isSelected, isDisabled} = useToggleButton(
+    {...props, id: props.id != null ? String(props.id) : undefined} as Parameters<
+      typeof useToggleButton
+    >[0],
+    state,
+    buttonRef
   );
 
-  let {buttonProps, isPressed, isSelected, isDisabled} =
-    groupState && props.id != null
-      ? // oxlint-disable-next-line react/react-compiler, react-hooks/rules-of-hooks
-        useToggleButtonGroupItem({...props, id: props.id}, groupState, ref)
-      : // oxlint-disable-next-line react/react-compiler, react-hooks/rules-of-hooks
-        useToggleButton(
-          {...props, id: props.id != null ? String(props.id) : undefined},
-          state,
-          ref
-        );
+  return (
+    <ToggleButtonElement
+      props={props}
+      ref={ref}
+      buttonProps={buttonProps}
+      isPressed={isPressed}
+      isSelected={isSelected}
+      isDisabled={isDisabled}
+      state={state}
+    />
+  );
+}
 
+function ToggleButtonInGroup({
+  props,
+  ref,
+  groupState
+}: {
+  props: ToggleButtonProps;
+  ref: ForwardedRef<HTMLButtonElement>;
+  groupState: NonNullable<React.ContextType<typeof ToggleGroupStateContext>>;
+}) {
+  let state = useToggleState({
+    isSelected: groupState.selectedKeys.has(props.id!),
+    onChange(isSelected) {
+      groupState.setSelected(props.id!, isSelected);
+    }
+  });
+  let buttonRef = useObjectRef(ref);
+  let {buttonProps, isPressed, isSelected, isDisabled} = useToggleButtonGroupItem(
+    {...props, id: props.id!} as Parameters<typeof useToggleButtonGroupItem>[0],
+    groupState,
+    buttonRef
+  );
+
+  return (
+    <ToggleButtonElement
+      props={props}
+      ref={ref}
+      buttonProps={buttonProps}
+      isPressed={isPressed}
+      isSelected={isSelected}
+      isDisabled={isDisabled}
+      state={state}
+    />
+  );
+}
+
+function ToggleButtonElement({
+  props,
+  ref,
+  buttonProps,
+  isPressed,
+  isSelected,
+  isDisabled,
+  state
+}: {
+  props: ToggleButtonProps;
+  ref: ForwardedRef<HTMLButtonElement>;
+  buttonProps: ReturnType<typeof useToggleButton>['buttonProps'];
+  isPressed: boolean;
+  isSelected: boolean;
+  isDisabled: boolean;
+  state: ToggleState;
+}) {
   let {focusProps, isFocused, isFocusVisible} = useFocusRing(props);
   let {hoverProps, isHovered} = useHover({...props, isDisabled});
   let renderProps = useRenderProps({
@@ -141,4 +192,24 @@ export const ToggleButton = /*#__PURE__*/ (forwardRef as forwardRefType)(functio
       </SelectionIndicatorContext.Provider>
     </dom.button>
   );
+}
+
+/**
+ * A toggle button allows a user to toggle a selection on or off, for example switching between two
+ * states or modes.
+ */
+export const ToggleButton = /*#__PURE__*/ (forwardRef as forwardRefType)(function ToggleButton(
+  propsArg: ToggleButtonProps,
+  refArg: ForwardedRef<HTMLButtonElement>
+) {
+  let props = propsArg;
+  let ref = refArg;
+  [props, ref] = useContextProps(props, ref, ToggleButtonContext);
+  let groupState = useContext(ToggleGroupStateContext);
+
+  if (groupState && props.id != null) {
+    return <ToggleButtonInGroup props={props} ref={ref} groupState={groupState} />;
+  }
+
+  return <ToggleButtonStandalone props={props} ref={ref} />;
 });

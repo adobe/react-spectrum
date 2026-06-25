@@ -213,7 +213,6 @@ export interface SliderStateOptions<T> extends SliderProps<T> {
  *
  * @param props
  */
-// oxlint-disable-next-line react/react-compiler
 export function useSliderState<T extends number | number[]>(
   props: SliderStateOptions<T>
 ): SliderState {
@@ -275,26 +274,26 @@ export function useSliderState<T extends number | number[]>(
     setDraggingsState(draggings);
   };
 
-  function getValuePercent(value: number) {
+  const getValuePercent = (value: number) => {
     return (value - minValue) / (maxValue - minValue);
-  }
+  };
 
-  function getThumbMinValue(index: number) {
+  const getThumbMinValue = (index: number) => {
     return index === 0 ? minValue : values[index - 1];
-  }
-  function getThumbMaxValue(index: number) {
+  };
+  const getThumbMaxValue = (index: number) => {
     return index === values.length - 1 ? maxValue : values[index + 1];
-  }
+  };
 
-  function isThumbEditable(index: number) {
+  const isThumbEditable = (index: number) => {
     return isEditablesRef.current[index];
-  }
+  };
 
-  function setThumbEditable(index: number, editable: boolean) {
+  const setThumbEditable = (index: number, editable: boolean) => {
     isEditablesRef.current[index] = editable;
-  }
+  };
 
-  function updateValue(index: number, value: number) {
+  const updateValue = (index: number, value: number) => {
     if (isDisabled || !isThumbEditable(index)) {
       return;
     }
@@ -305,9 +304,9 @@ export function useSliderState<T extends number | number[]>(
     value = snapValueToStep(value, thisMin, thisMax, step);
     let newValues = replaceIndex(valuesRef.current, index, value);
     setValues(newValues);
-  }
+  };
 
-  function updateDragging(index: number, dragging: boolean) {
+  const updateDragging = (index: number, dragging: boolean) => {
     if (isDisabled || !isThumbEditable(index)) {
       return;
     }
@@ -323,11 +322,11 @@ export function useSliderState<T extends number | number[]>(
     if (onChangeEnd && wasDragging && !isDraggingsRef.current.some(Boolean)) {
       onChangeEnd(valuesRef.current);
     }
-  }
+  };
 
   let listFormatRef = useRef<Intl.ListFormat | null>(null);
 
-  function getFormattedValue(valueParam: number | number[] = values) {
+  const getFormattedValue = (valueParam: number | number[] = values) => {
     if (typeof valueParam === 'number') {
       valueParam = [valueParam];
     }
@@ -354,30 +353,30 @@ export function useSliderState<T extends number | number[]>(
         return listFormat.format(formatted);
       }
     }
-  }
+  };
 
-  function setThumbPercent(index: number, percent: number) {
+  const setThumbPercent = (index: number, percent: number) => {
     updateValue(index, getPercentValue(percent));
-  }
+  };
 
-  function getRoundedValue(value: number) {
+  const getRoundedValue = (value: number) => {
     return Math.round((value - minValue) / step) * step + minValue;
-  }
+  };
 
-  function getPercentValue(percent: number) {
+  const getPercentValue = (percent: number) => {
     const val = percent * (maxValue - minValue) + minValue;
     return clamp(getRoundedValue(val), minValue, maxValue);
-  }
+  };
 
-  function incrementThumb(index: number, stepSize: number = 1) {
+  const incrementThumb = (index: number, stepSize: number = 1) => {
     let s = Math.max(stepSize, step);
     updateValue(index, snapValueToStep(values[index] + s, minValue, maxValue, step));
-  }
+  };
 
-  function decrementThumb(index: number, stepSize: number = 1) {
+  const decrementThumb = (index: number, stepSize: number = 1) => {
     let s = Math.max(stepSize, step);
     updateValue(index, snapValueToStep(values[index] - s, minValue, maxValue, step));
-  }
+  };
 
   return {
     values: values,

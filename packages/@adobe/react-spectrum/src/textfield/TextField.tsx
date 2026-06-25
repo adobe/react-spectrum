@@ -49,10 +49,10 @@ export interface TextFieldRef<
  * communicate the entry requirements.
  */
 export const TextField = forwardRef(function TextField(
-  props: SpectrumTextFieldProps,
+  propsArg: SpectrumTextFieldProps,
   ref: Ref<TextFieldRef>
 ) {
-  // oxlint-disable-next-line react/react-compiler
+  let props = propsArg;
   props = useProviderProps(props);
   props = useFormProps(props);
 

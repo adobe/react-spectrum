@@ -41,7 +41,7 @@ import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro
 import {Header, HeaderContext, HeadingContext} from './Content';
 import {helpTextStyles} from './Field';
 import intlMessages from '../intl/*.json';
-import {pressScale} from './pressScale';
+import {pressScaleStyle} from './pressScale';
 import {RangeCalendarContext, RangeCalendarStateContext} from 'react-aria-components/RangeCalendar';
 import {RangeCalendarState} from 'react-stately/useRangeCalendarState';
 import React, {
@@ -473,7 +473,9 @@ const selectionBorderStyles = style<{
 export const Calendar = /*#__PURE__*/ (forwardRef as forwardRefType)(function Calendar<
   T extends DateValue,
   M extends CalendarSelectionMode = 'single'
->(props: CalendarProps<T, M>, ref: ForwardedRef<HTMLDivElement>) {
+>(propsArg: CalendarProps<T, M>, refArg: ForwardedRef<HTMLDivElement>) {
+  let props = propsArg;
+  let ref = refArg;
   [props, ref] = useSpectrumContextProps(props, ref, CalendarContext);
   let {
     visibleMonths = 1,
@@ -699,7 +701,6 @@ const CalendarCellInner = (
     (isInvalid || !isUnavailable) &&
     (isDateInRange(prevDay) || (nextDay.month === date.month && isDateInRange(nextDay)));
 
-  // oxlint-disable react/react-compiler
   return (
     <div
       className={style({
@@ -709,7 +710,7 @@ const CalendarCellInner = (
       })}>
       <div
         ref={ref}
-        style={pressScale(ref, {})(renderProps!)}
+        style={pressScaleStyle(renderProps!.isPressed)}
         className={cellInnerStyles({
           ...renderProps!,
           isSelectionStart,
@@ -750,7 +751,6 @@ const CalendarCellInner = (
       )}
     </div>
   );
-  // oxlint-enable react/react-compiler
 };
 
 type DayOfWeek = 'sun' | 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat';

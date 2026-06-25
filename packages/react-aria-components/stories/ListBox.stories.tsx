@@ -1066,7 +1066,7 @@ export let VirtualizedListBoxDndOnAction: ListBoxStory = () => {
 
 interface AlbumListBoxProps {
   items?: Album[];
-  dragAndDropHooks?: DragAndDropHooks<Album>;
+  dragAndDropHooks?: DragAndDropHooks;
 }
 
 function AlbumListBox(props: AlbumListBoxProps) {

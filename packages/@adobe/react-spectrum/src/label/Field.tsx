@@ -49,9 +49,10 @@ export interface SpectrumFieldProps
 }
 
 export const Field = React.forwardRef(function Field(
-  props: SpectrumFieldProps,
+  propsArg: SpectrumFieldProps,
   ref: Ref<HTMLElement>
 ) {
+  let props = propsArg;
   let formProps = useFormProps(props);
   let isInForm = formProps !== props;
   props = formProps;
@@ -101,8 +102,7 @@ export const Field = React.forwardRef(function Field(
 
   let fallbackLabelPropsId = useId();
   if (label && contextualHelp && !labelProps.id) {
-    // oxlint-disable-next-line react/react-compiler
-    labelProps.id = fallbackLabelPropsId;
+    labelProps = mergeProps(labelProps, {id: fallbackLabelPropsId});
   }
 
   let labelWrapperClass = classNames(

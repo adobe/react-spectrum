@@ -138,10 +138,10 @@ export interface SpectrumComboBoxProps<T>
  * the selections matching a query.
  */
 export const ComboBox = React.forwardRef(function ComboBox<T extends object>(
-  props: SpectrumComboBoxProps<T>,
+  propsArg: SpectrumComboBoxProps<T>,
   ref: FocusableRef<HTMLElement>
 ) {
-  // oxlint-disable-next-line react/react-compiler
+  let props = propsArg;
   props = useProviderProps(props);
   props = useFormProps(props);
 

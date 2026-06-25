@@ -16,7 +16,7 @@ import React, {MutableRefObject} from 'react';
 
 interface IPressResponderContext extends PressProps {
   register(): void;
-  ref?: MutableRefObject<FocusableElement>;
+  ref?: MutableRefObject<FocusableElement | null>;
 }
 
 export const PressResponderContext: React.Context<IPressResponderContext> =

@@ -15,7 +15,6 @@ import {focusWithoutScrolling} from '../utils/focusWithoutScrolling';
 import {getEventTarget} from '../utils/shadowdom/DOMFunctions';
 import {getInteractionModality} from '../interactions/useFocusVisible';
 import intlMessages from '../../intl/toast/*.json';
-import {mergeProps} from '../utils/mergeProps';
 import {ToastState} from 'react-stately/useToastState';
 import {useCallback, useEffect, useRef} from 'react';
 import {useFocusWithin} from '../interactions/useFocusWithin';
@@ -61,6 +60,7 @@ export function useToastRegion<T>(
 
   let isHovered = useRef(false);
   let isFocused = useRef(false);
+  let lastFocused = useRef<FocusableElement | null>(null);
   let updateTimers = useCallback(() => {
     if (isHovered.current || isFocused.current) {
       state.pauseAll();
@@ -118,7 +118,6 @@ export function useToastRegion<T>(
     if (removedFocusedToastIndex > -1) {
       // In pointer modality, move focus out of the toast region.
       // Otherwise auto-dismiss timers will appear "stuck".
-      // oxlint-disable-next-line react/react-compiler
       if (getInteractionModality() === 'pointer' && lastFocused.current?.isConnected) {
         focusWithoutScrolling(lastFocused.current);
       } else {
@@ -156,17 +155,14 @@ export function useToastRegion<T>(
     prevVisibleToasts.current = state.visibleToasts;
   }, [state.visibleToasts, ref]);
 
-  let lastFocused = useRef<FocusableElement | null>(null);
   let {focusWithinProps} = useFocusWithin({
     onFocusWithin: e => {
       isFocused.current = true;
-      // oxlint-disable-next-line react/react-compiler
       lastFocused.current = e.relatedTarget as FocusableElement;
       updateTimers();
     },
     onBlurWithin: () => {
       isFocused.current = false;
-      // oxlint-disable-next-line react/react-compiler
       lastFocused.current = null;
       updateTimers();
     }
@@ -184,7 +180,6 @@ export function useToastRegion<T>(
       } else {
         lastFocused.current.focus();
       }
-      // oxlint-disable-next-line react/react-compiler
       lastFocused.current = null;
     }
   }, [ref, state.visibleToasts.length]);
@@ -203,8 +198,10 @@ export function useToastRegion<T>(
   }, [ref]);
 
   return {
-    // oxlint-disable-next-line react/react-compiler
-    regionProps: mergeProps(landmarkProps, hoverProps, focusWithinProps, {
+    regionProps: {
+      ...landmarkProps,
+      ...hoverProps,
+      ...focusWithinProps,
       tabIndex: -1,
       // Mark the toast region as a "top layer", so that it:
       //   - is not aria-hidden when opening an overlay
@@ -221,6 +218,6 @@ export function useToastRegion<T>(
       onBlur: () => {
         focusedToast.current = -1;
       }
-    })
+    }
   };
 }

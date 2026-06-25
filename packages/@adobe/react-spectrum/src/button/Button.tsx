@@ -75,9 +75,10 @@ function disablePendingProps(props) {
  * where a user needs to do something in order to move forward in a flow.
  */
 export const Button = React.forwardRef(function Button<T extends ElementType = 'button'>(
-  props: SpectrumButtonProps<T>,
+  propsArg: SpectrumButtonProps<T>,
   ref: FocusableRef<HTMLElement>
 ) {
+  let props = propsArg;
   props = useProviderProps(props);
   props = useSlotProps(props, 'button');
   props = disablePendingProps(props);
@@ -111,21 +112,15 @@ export const Button = React.forwardRef(function Button<T extends ElementType = '
   let spinnerId = useId();
 
   useEffect(() => {
-    let timeout: ReturnType<typeof setTimeout>;
-
-    if (isPending) {
-      // Start timer when isPending is set to true.
-      timeout = setTimeout(() => {
-        setIsProgressVisible(true);
-      }, 1000);
-    } else {
-      // Exit loading state when isPending is set to false. */
-      // oxlint-disable-next-line react/react-compiler
-      setIsProgressVisible(false);
+    if (!isPending) {
+      return;
     }
+    let timeout = setTimeout(() => {
+      setIsProgressVisible(true);
+    }, 1000);
     return () => {
-      // Clean up on unmount or when user removes isPending prop before entering loading state.
       clearTimeout(timeout);
+      setIsProgressVisible(false);
     };
   }, [isPending]);
 

@@ -131,9 +131,10 @@ const TabContext = React.createContext<TabsContext<any> | null>(null);
 // forwardRef doesn't support generic parameters, so cast the result to the correct type
 // https://stackoverflow.com/questions/58469229/react-with-typescript-generics-while-using-react-forwardref
 export const Tabs = React.forwardRef(function Tabs<T extends object>(
-  props: SpectrumTabsProps<T>,
+  propsArg: SpectrumTabsProps<T>,
   ref: DOMRef<HTMLDivElement>
 ) {
+  let props = propsArg;
   props = useProviderProps(props);
   let {
     orientation = 'horizontal' as Orientation,
@@ -375,7 +376,7 @@ export function TabList<T>(props: SpectrumTabListProps<T>): ReactElement {
   const state = useTabListState({...tabProps, children: props.children});
 
   let {styleProps} = useStyleProps(props);
-  const {tabListProps} = useTabList({...tabProps, ...props}, state, tablistRef);
+  let {tabListProps} = useTabList({...tabProps, ...props}, state, tablistRef);
 
   useEffect(() => {
     // Passing back to root as useTabPanel needs the TabListState
@@ -394,9 +395,9 @@ export function TabList<T>(props: SpectrumTabListProps<T>): ReactElement {
       : {maxWidth: 'calc(100% + 1px)'};
   let stylePropsFinal = orientation === 'vertical' ? styleProps : {style: collapseStyle};
 
+  let finalTabListProps = tabListProps;
   if (collapsed && orientation !== 'vertical') {
-    // oxlint-disable-next-line react/react-compiler
-    tabListProps['aria-hidden'] = true;
+    finalTabListProps = {...tabListProps, 'aria-hidden': true};
   }
 
   let tabListclassName = classNames(styles, 'spectrum-TabsPanel-tabs');
@@ -404,7 +405,7 @@ export function TabList<T>(props: SpectrumTabListProps<T>): ReactElement {
   const tabContent = (
     <div
       {...stylePropsFinal}
-      {...tabListProps}
+      {...finalTabListProps}
       ref={tablistRef}
       className={classNames(
         styles,
@@ -491,16 +492,19 @@ function TabPanel(props: TabPanelProps) {
   const {tabPanelProps} = useTabPanel(props, tabListState, ref);
   let {styleProps} = useStyleProps(props);
 
+  let finalTabPanelProps = tabPanelProps;
   if (ctxTabPanelProps['aria-labelledby']) {
-    // oxlint-disable-next-line react/react-compiler
-    tabPanelProps['aria-labelledby'] = ctxTabPanelProps['aria-labelledby'];
+    finalTabPanelProps = {
+      ...tabPanelProps,
+      'aria-labelledby': ctxTabPanelProps['aria-labelledby']
+    };
   }
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
       <div
         {...styleProps}
-        {...tabPanelProps}
+        {...finalTabPanelProps}
         ref={ref}
         className={classNames(styles, 'spectrum-TabsPanel-tabpanel', styleProps.className)}>
         {props.children}

@@ -12,7 +12,8 @@
 
 import {ColorSchemeContext} from './Provider';
 import {DOMRef, GlobalDOMAttributes} from '@react-types/shared';
-import {forwardRef, MutableRefObject, useCallback, useContext} from 'react';
+import {forwardRef, useCallback, useContext, useMemo} from 'react';
+import {mergeRefs} from 'react-aria/mergeRefs';
 import {ModalOverlay, ModalOverlayProps, Modal as RACModal} from 'react-aria-components/Modal';
 import {setColorScheme, style} from '../style' with {type: 'macro'};
 import {useDOMRef} from './useDOMRef';
@@ -75,17 +76,16 @@ export const Modal = forwardRef(function Modal(props: ModalProps, ref: DOMRef<HT
   let {locale, direction} = useLocale();
 
   // TODO: should we pass through lang and dir props in RAC?
-  let modalRef = useCallback(
+  let localeRef = useCallback(
     (el: HTMLDivElement) => {
-      // oxlint-disable-next-line react/react-compiler
-      (domRef as MutableRefObject<HTMLDivElement>).current = el;
       if (el) {
         el.lang = locale;
         el.dir = direction;
       }
     },
-    [locale, direction, domRef]
+    [locale, direction]
   );
+  let mergedRef = useMemo(() => mergeRefs(localeRef, domRef), [localeRef, domRef]);
 
   return (
     <ModalOverlay
@@ -94,7 +94,7 @@ export const Modal = forwardRef(function Modal(props: ModalProps, ref: DOMRef<HT
       <div className={modalWrapper({size: props.size})} style={{containerType: 'size'} as any}>
         <RACModal
           {...props}
-          ref={modalRef}
+          ref={mergedRef}
           className={renderProps =>
             style({
               display: 'flex',

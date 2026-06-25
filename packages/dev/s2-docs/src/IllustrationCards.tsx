@@ -235,7 +235,6 @@ function IllustrationItem({
 }) {
   let Illustration = item.Component;
   let ref = useRef(null);
-  // oxlint-disable react/react-compiler
   return (
     <ListBoxItem
       id={item.id}
@@ -243,7 +242,7 @@ function IllustrationItem({
       textValue={item.id}
       className={itemStyle}
       ref={ref}
-      style={pressScale(ref)}>
+      style={renderProps => pressScale(ref)(renderProps)}>
       {isCopied ? <Checkmark /> : <Illustration />}
       <div
         className={style({
@@ -255,7 +254,6 @@ function IllustrationItem({
       </div>
     </ListBoxItem>
   );
-  // oxlint-enable react/react-compiler
 }
 
 const cache = new Map();

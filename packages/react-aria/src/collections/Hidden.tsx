@@ -10,7 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-import {forwardRefType} from '@react-types/shared';
 import React, {
   Context,
   createContext,
@@ -18,8 +17,10 @@ import React, {
   JSX,
   ReactElement,
   ReactNode,
+  RefAttributes,
   useContext
 } from 'react';
+import {useObjectRef} from '../utils/useObjectRef';
 
 // React doesn't understand the <template> element, which doesn't have children like a normal element.
 // It will throw an error during hydration when it expects the firstChild to contain content rendered
@@ -84,18 +85,18 @@ export function Hidden(props: {children: ReactNode}): JSX.Element {
 export function createHideableComponent<T, P = {}>(
   fn: (props: P, ref: React.Ref<T>) => ReactElement | null
 ): (props: P & React.RefAttributes<T>) => ReactElement | null {
-  let Wrapper = (props: P, ref: React.Ref<T>) => {
+  let Wrapper = forwardRef<T, P>((props, ref) => {
     let isHidden = useContext(HiddenContext);
+    let objectRef = useObjectRef(ref);
     if (isHidden) {
       return null;
     }
 
-    // oxlint-disable-next-line react/react-compiler
-    return fn(props, ref);
-  };
+    return fn(props as P, objectRef);
+  });
   // @ts-ignore - for react dev tools
   Wrapper.displayName = fn.displayName || fn.name;
-  return (forwardRef as forwardRefType)(Wrapper);
+  return Wrapper as (props: P & RefAttributes<T>) => ReactElement | null;
 }
 
 /** Returns whether the component is in a hidden subtree. */

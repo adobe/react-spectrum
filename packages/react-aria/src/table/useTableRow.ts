@@ -60,13 +60,17 @@ export function useTableRow<T>(
   );
   let {direction} = useLocale();
 
-  if (isVirtualized && state.treeColumn == null) {
-    // oxlint-disable-next-line react/react-compiler
-    rowProps['aria-rowindex'] = node.index + 1 + state.collection.headerRows.length; // aria-rowindex is 1 based
-  } else {
-    // oxlint-disable-next-line react/react-compiler
-    delete rowProps['aria-rowindex'];
-  }
+  let rowPropsWithIndex = (() => {
+    let {'aria-rowindex': _, ...rest} = rowProps;
+    if (isVirtualized && state.treeColumn == null) {
+      return {
+        ...rest,
+        'aria-rowindex': node.index + 1 + state.collection.headerRows.length
+      };
+    }
+    return rest;
+  })();
+  rowProps = rowPropsWithIndex;
 
   let isExpanded =
     state.treeColumn != null && (state.expandedKeys === 'all' || state.expandedKeys.has(node.key));

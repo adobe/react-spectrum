@@ -16,8 +16,7 @@ import {classNames} from '../utils/classNames';
 import {FocusRing} from 'react-aria/FocusRing';
 import {getWrappedElement} from '../utils/getWrappedElement';
 import {mergeProps} from 'react-aria/mergeProps';
-import {mergeRefs} from 'react-aria/mergeRefs';
-import React, {ForwardedRef, JSX, MutableRefObject, ReactNode, useRef} from 'react';
+import React, {JSX, ReactNode, useRef} from 'react';
 import {StyleProps} from '@react-types/shared';
 import styles from '@adobe/spectrum-css-temp/components/link/vars.css';
 import {useHover} from 'react-aria/useHover';
@@ -43,7 +42,8 @@ let isOldReact = parseInt(React.version, 10) <= 18;
  * Links allow users to navigate to a different location.
  * They can be presented inline inside a paragraph or as standalone text.
  */
-export function Link(props: SpectrumLinkProps): JSX.Element {
+export function Link(propsArg: SpectrumLinkProps): JSX.Element {
+  let props = propsArg;
   props = useProviderProps(props);
   props = useSlotProps(props, 'link');
   let {
@@ -87,21 +87,33 @@ export function Link(props: SpectrumLinkProps): JSX.Element {
   } else {
     // Backward compatibility.
     let wrappedChild = getWrappedElement(children);
-    let mergedRef: MutableRefObject<any> | ForwardedRef<any> = ref;
-    if (isOldReact) {
-      // @ts-ignore
-      // oxlint-disable-next-line react/react-compiler
-      mergedRef = mergeRefs(ref, wrappedChild.ref);
-    } else {
-      // @ts-ignore
-      // oxlint-disable-next-line react/react-compiler
-      mergedRef = mergeRefs(ref, wrappedChild.props.ref);
-    }
+    let domRefProp = (domProps as {ref?: React.Ref<Element | null>}).ref;
+    let {ref: childRefProp, ...childPropsWithoutRef} = wrappedChild.props as {
+      ref?: React.Ref<Element | null>;
+      [key: string]: unknown;
+    };
+    let {ref: _domRef, ...domPropsWithoutRef} = domProps as typeof domProps & {
+      ref?: React.Ref<Element | null>;
+    };
     link = React.cloneElement(wrappedChild, {
-      // oxlint-disable-next-line react/react-compiler
-      ...mergeProps(wrappedChild.props, domProps),
+      ...childPropsWithoutRef,
+      ...domPropsWithoutRef,
       // @ts-ignore https://github.com/facebook/react/issues/8873
-      ref: mergedRef
+      ref: (node: Element | null) => {
+        if (typeof domRefProp === 'function') {
+          domRefProp(node);
+        } else if (domRefProp && 'current' in domRefProp) {
+          (domRefProp as React.MutableRefObject<Element | null>).current = node;
+        }
+        let childRef = isOldReact
+          ? (wrappedChild as React.ReactElement & {ref?: React.Ref<Element | null>}).ref
+          : childRefProp;
+        if (typeof childRef === 'function') {
+          childRef(node);
+        } else if (childRef && typeof childRef === 'object' && 'current' in childRef) {
+          childRef.current = node;
+        }
+      }
     });
   }
 

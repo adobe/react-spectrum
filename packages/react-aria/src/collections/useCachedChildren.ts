@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {cloneElement, ReactElement, ReactNode, useMemo} from 'react';
+import {cloneElement, isValidElement, ReactElement, ReactNode, useMemo} from 'react';
 import {Key} from '@react-types/shared';
 
 export interface CachedChildrenOptions<T> {
@@ -43,21 +43,30 @@ export function useCachedChildren<T>(props: CachedChildrenOptions<T>): ReactNode
   );
 
   // Invalidate the cache whenever dependencies change.
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  // oxlint-disable-next-line react/react-compiler, react-hooks/exhaustive-deps
-  let cache = useMemo(() => new WeakMap(), [...dependencies, childrenString]);
+  let invalidationKey = useMemo(
+    () => dependencies.map(String).join('\0') + (childrenString ?? ''),
+    [dependencies, childrenString]
+  );
 
   return useMemo(() => {
+    void invalidationKey;
     if (items && typeof children === 'function') {
+      let cache = new WeakMap<object, ReactElement>();
       let res: ReactElement[] = [];
       for (let item of items) {
-        let cacheKey = isWeakKey(item) ? item : null;
+        let cacheKey = isWeakKey(item) ? (item as object) : null;
         let rendered = cacheKey ? cache.get(cacheKey) : null;
         if (!rendered) {
-          rendered = children(item);
-          // @ts-ignore
-          let id = rendered.props.id ?? item?.key ?? item?.id;
-          if (idScope != null && rendered.props.id == null && id != null) {
+          let child = children(item);
+          if (!isValidElement(child)) {
+            continue;
+          }
+          rendered = child;
+          let id =
+            (rendered.props as {id?: Key}).id ??
+            (item as {key?: Key; id?: Key}).key ??
+            (item as {id?: Key}).id;
+          if (idScope != null && (rendered.props as {id?: Key}).id == null && id != null) {
             id = idScope + ':' + id;
           }
 
@@ -66,7 +75,10 @@ export function useCachedChildren<T>(props: CachedChildrenOptions<T>): ReactNode
           let key = id ?? res.length;
 
           // Note: only works if wrapped Item passes through id...
-          rendered = cloneElement(rendered, addIdAndValue ? {key, id, value: item} : {key});
+          rendered = cloneElement(
+            rendered,
+            (addIdAndValue ? {key, id, value: item} : {key}) as Record<string, unknown>
+          );
           if (cacheKey) {
             cache.set(cacheKey, rendered);
           }
@@ -77,7 +89,9 @@ export function useCachedChildren<T>(props: CachedChildrenOptions<T>): ReactNode
     } else if (typeof children !== 'function') {
       return children;
     }
-  }, [children, items, cache, idScope, addIdAndValue]);
+    // invalidationKey is referenced above to invalidate when dependencies change.
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
+  }, [children, items, idScope, addIdAndValue]);
 }
 
 function isWeakKey(value: any): value is WeakKey {

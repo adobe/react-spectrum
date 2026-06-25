@@ -228,6 +228,5 @@ function CustomWaterfallLayout(props: SpectrumCardViewProps<object> & LayoutOpti
     [collator, layoutOptions]
   );
 
-  // oxlint-disable-next-line react/react-compiler
-  return CustomLayout({...otherProps, layout: galleryLayout});
+  return <CustomLayout {...otherProps} layout={galleryLayout} />;
 }

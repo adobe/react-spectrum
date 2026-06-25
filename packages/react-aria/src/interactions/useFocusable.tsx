@@ -59,7 +59,7 @@ export let FocusableContext: React.Context<FocusableContextValue | null> =
 
 function useFocusableContext(ref: RefObject<FocusableElement | null>): FocusableContextValue {
   let context = useContext(FocusableContext) || {};
-  useSyncRef(context, ref);
+  useSyncRef(context?.ref, ref);
 
   // eslint-disable-next-line
   let {ref: _, ...otherProps} = context;
@@ -135,7 +135,8 @@ export interface FocusableComponentProps extends FocusableOptions {
 export const Focusable: React.ForwardRefExoticComponent<
   FocusableComponentProps & React.RefAttributes<FocusableElement>
 > = forwardRef(
-  ({children, ...props}: FocusableComponentProps, ref: ForwardedRef<FocusableElement>) => {
+  ({children, ...props}: FocusableComponentProps, refArg: ForwardedRef<FocusableElement>) => {
+    let ref = refArg;
     ref = useObjectRef(ref);
     let {focusableProps} = useFocusable(props, ref);
     let child = React.Children.only(children);
@@ -210,8 +211,7 @@ export const Focusable: React.ForwardRefExoticComponent<
     return React.cloneElement(child, {
       ...mergeProps(focusableProps, child.props),
       // @ts-ignore
-      // oxlint-disable-next-line react/react-compiler
-      ref: mergeRefs(childRef, ref)
+      ref: (value: FocusableElement | null) => mergeRefs(childRef, ref)(value)
     });
   }
 );

@@ -75,10 +75,8 @@ export function ControllingResize(props: {
     [onResize, columns, _setWidths]
   );
   let [savedCols, setSavedCols] = useState(widths);
-  let [renderKey, setRenderKey] = useState(() => Math.random());
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  // oxlint-disable-next-line react/react-compiler, react-hooks/exhaustive-deps
-  let cols = useMemo(() => columns.map(col => ({...col})), [columns, widths]);
+  let [renderKey, setRenderKey] = useState(0);
+  let cols = useMemo(() => columns.map(col => ({...col})), [columns]);
 
   return (
     <div>
@@ -89,7 +87,7 @@ export function ControllingResize(props: {
         variant="accent"
         onPress={() => {
           _setWidths(savedCols);
-          setRenderKey(Math.random());
+          setRenderKey(key => key + 1);
         }}>
         Restore Cols
       </Button>

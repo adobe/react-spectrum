@@ -174,10 +174,11 @@ const stepperContainerStyles = style({
  * buttons.
  */
 export const NumberField = forwardRef(function NumberField(
-  props: NumberFieldProps,
-  ref: Ref<TextFieldRef>
+  propsArg: NumberFieldProps,
+  refArg: Ref<TextFieldRef>
 ) {
-  // oxlint-disable-next-line react/react-compiler
+  let props = propsArg;
+  let ref = refArg;
   [props, ref] = useSpectrumContextProps(props, ref, NumberFieldContext);
   props = useFormProps(props);
   let {
@@ -325,7 +326,9 @@ const additionalButtonHTMLAttributes = new Set([
   'value'
 ]);
 
-let StepButton = forwardRef((props: StepButtonProps, ref: ForwardedRef<HTMLDivElement>) => {
+let StepButton = forwardRef((propsArg: StepButtonProps, refArg: ForwardedRef<HTMLDivElement>) => {
+  let props = propsArg;
+  let ref = refArg;
   [props, ref] = useContextProps(props, ref, ButtonContext as any);
   let ctx = props as any;
   /**

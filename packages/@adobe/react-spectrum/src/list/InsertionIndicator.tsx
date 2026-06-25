@@ -3,6 +3,7 @@ import {ItemDropTarget} from '@react-types/shared';
 import listStyles from './styles.css';
 import {ListViewContext} from './ListView';
 import React, {JSX, useContext, useRef} from 'react';
+import {useDropIndicator} from 'react-aria/useDroppableCollection';
 import {useVisuallyHidden} from 'react-aria/VisuallyHidden';
 
 interface InsertionIndicatorProps {
@@ -11,12 +12,11 @@ interface InsertionIndicatorProps {
 }
 
 export default function InsertionIndicator(props: InsertionIndicatorProps): JSX.Element | null {
-  let {dropState, dragAndDropHooks} = useContext(ListViewContext)!;
+  let {dropState} = useContext(ListViewContext)!;
   const {target, isPresentationOnly} = props;
 
   let ref = useRef<HTMLDivElement | null>(null);
-  // oxlint-disable-next-line react/react-compiler
-  let {dropIndicatorProps} = dragAndDropHooks!.useDropIndicator!(props, dropState!, ref);
+  let {dropIndicatorProps} = useDropIndicator(props, dropState!, ref);
   let {visuallyHiddenProps} = useVisuallyHidden();
 
   let isDropTarget = dropState!.isDropTarget(target);

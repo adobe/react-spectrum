@@ -39,7 +39,6 @@ import {PressResponder} from '../../src/interactions/PressResponder';
 import React, {JSX, useRef} from 'react';
 import {ReorderableGridExample} from './Reorderable';
 import ShowMenu from '@spectrum-icons/workflow/ShowMenu';
-import {unwrapDOMRef} from '@adobe/react-spectrum/private/utils/useDOMRef';
 import {useButton} from '../../src/button/useButton';
 import {useClipboard} from '../../src/dnd/useClipboard';
 import {useDrag} from '../../src/dnd/useDrag';
@@ -54,6 +53,7 @@ import {useGridState} from 'react-stately/private/grid/useGridState';
 import {useId} from '../../src/utils/useId';
 import {useListData} from 'react-stately/useListData';
 import {useListState} from 'react-stately/useListState';
+import {useObjectRef} from '../../src/utils/useObjectRef';
 import {VirtualizedListBoxExample} from './VirtualizedListBox';
 
 interface ItemValue {
@@ -369,9 +369,9 @@ DroppableStory.storyName = 'Droppable';
 function DialogButton({children}) {
   let [isOpen, setOpen] = React.useState(false);
   let ref = React.useRef(null);
+  let domRef = useObjectRef(ref);
   let {dropProps, isDropTarget} = useDrop({
-    // oxlint-disable-next-line react/react-compiler
-    ref: unwrapDOMRef(ref),
+    ref: domRef,
     onDropActivate() {
       setOpen(true);
     }

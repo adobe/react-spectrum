@@ -70,10 +70,11 @@ export const ToggleButtonContext =
  * switching between two states or modes.
  */
 export const ToggleButton = forwardRef(function ToggleButton(
-  props: ToggleButtonProps,
-  ref: FocusableRef<HTMLButtonElement>
+  propsArg: ToggleButtonProps,
+  refArg: FocusableRef<HTMLButtonElement>
 ) {
-  // oxlint-disable-next-line react/react-compiler
+  let props = propsArg;
+  let ref = refArg;
   [props, ref] = useSpectrumContextProps(props, ref, ToggleButtonContext);
   props = useFormProps(props as any);
   let domRef = useFocusableRef(ref);
@@ -92,13 +93,12 @@ export const ToggleButton = forwardRef(function ToggleButton(
   let {holdAffordance} = props as ToggleButtonContextProps;
   let {direction} = useLocale();
 
-  // oxlint-disable react/react-compiler
   return (
     <RACToggleButton
       {...props}
       isDisabled={isDisabled}
       ref={domRef}
-      style={pressScale(domRef, props.UNSAFE_style)}
+      style={renderProps => pressScale(domRef, props.UNSAFE_style)(renderProps)}
       className={renderProps =>
         (props.UNSAFE_className || '') +
         btnStyles(
@@ -165,5 +165,4 @@ export const ToggleButton = forwardRef(function ToggleButton(
       )}
     </RACToggleButton>
   );
-  // oxlint-enable react/react-compiler
 });

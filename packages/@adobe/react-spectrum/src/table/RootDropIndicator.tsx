@@ -11,20 +11,14 @@
  */
 
 import React, {ReactNode, useRef} from 'react';
+import {useDropIndicator} from 'react-aria/useDroppableCollection';
 import {useTableContext} from './TableViewBase';
 import {useVisuallyHidden} from 'react-aria/VisuallyHidden';
 
 export function RootDropIndicator(): ReactNode | null {
-  let {dropState, dragAndDropHooks, state} = useTableContext();
+  let {dropState, state} = useTableContext();
   let ref = useRef<HTMLDivElement | null>(null);
-  // oxlint-disable-next-line react/react-compiler
-  let {dropIndicatorProps} = dragAndDropHooks!.useDropIndicator!(
-    {
-      target: {type: 'root'}
-    },
-    dropState!,
-    ref
-  );
+  let {dropIndicatorProps} = useDropIndicator({target: {type: 'root'}}, dropState!, ref);
   let isDropTarget = dropState!.isDropTarget({type: 'root'});
   let {visuallyHiddenProps} = useVisuallyHidden();
 

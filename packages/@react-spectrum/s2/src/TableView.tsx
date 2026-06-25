@@ -427,9 +427,11 @@ export const TableContext =
  * compare, and take action on large amounts of data.
  */
 export const TableView = forwardRef(function TableView(
-  props: TableViewProps,
-  ref: DOMRef<HTMLDivElement>
+  propsArg: TableViewProps,
+  refArg: DOMRef<HTMLDivElement>
 ) {
+  let props = propsArg;
+  let ref = refArg;
   [props, ref] = useSpectrumContextProps(props, ref, TableContext);
   let {
     UNSAFE_style,
@@ -446,24 +448,22 @@ export const TableView = forwardRef(function TableView(
     onLoadMore,
     selectionMode = 'none',
     selectionStyle = 'checkbox',
-    dragAndDropHooks,
+    dragAndDropHooks: propsDragAndDropHooks,
     disabledBehavior = 'all',
     ...otherProps
   } = props;
 
-  if (dragAndDropHooks && dragAndDropHooks.renderDragPreview == null) {
-    // oxlint-disable-next-line react/react-compiler
-    dragAndDropHooks.renderDragPreview = items => (
-      <DragPreview items={items} overflowMode={overflowMode} />
-    );
-  }
-
-  if (dragAndDropHooks) {
-    // oxlint-disable-next-line react/react-compiler
-    dragAndDropHooks.renderDropIndicator = target => (
-      <InsertionIndicator target={target as ItemDropTarget} />
-    );
-  }
+  let dragAndDropHooks = useMemo(() => {
+    if (!propsDragAndDropHooks) {
+      return undefined;
+    }
+    let hooks = {...propsDragAndDropHooks};
+    if (hooks.renderDragPreview == null) {
+      hooks.renderDragPreview = items => <DragPreview items={items} overflowMode={overflowMode} />;
+    }
+    hooks.renderDropIndicator = target => <InsertionIndicator target={target as ItemDropTarget} />;
+    return hooks;
+  }, [propsDragAndDropHooks, overflowMode]);
 
   let domRef = useDOMRef(ref);
   let scale = useScale();
@@ -514,7 +514,7 @@ export const TableView = forwardRef(function TableView(
 
   let scrollRef = useRef<HTMLElement | null>(null);
   let isCheckboxSelection = selectionMode === 'multiple' || selectionMode === 'single';
-  let isDragAndDrop = !!dragAndDropHooks?.useDraggableCollectionState;
+  let isDragAndDrop = !!(dragAndDropHooks?.isDraggable || dragAndDropHooks?.isDroppable);
   let {selectedKeys, onSelectionChange, actionBar, actionBarHeight} = useActionBarContainer({
     ...props,
     scrollRef
@@ -1016,7 +1016,6 @@ function ColumnWithMenu(props: ColumnWithMenuProps) {
     if (isColumnResizable) {
       options = [
         {
-          // oxlint-disable-next-line react/react-compiler
           label: stringFormatter.format('table.resizeColumn'),
           id: 'resize'
         }
@@ -1036,8 +1035,7 @@ function ColumnWithMenu(props: ColumnWithMenuProps) {
       ];
     }
     return options;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [allowsSorting, isColumnResizable]);
+  }, [allowsSorting, isColumnResizable, stringFormatter]);
 
   let buttonAlignment = 'start';
   let menuAlign = 'start' as 'start' | 'end';

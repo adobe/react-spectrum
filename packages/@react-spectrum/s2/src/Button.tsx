@@ -385,20 +385,18 @@ const gradient = style({
 export function usePendingState(isPending: boolean) {
   let [isProgressVisible, setIsProgressVisible] = useState(false);
   useEffect(() => {
-    let timeout: ReturnType<typeof setTimeout>;
-    if (isPending) {
-      timeout = setTimeout(() => {
-        setIsProgressVisible(true);
-      }, 1000);
-    } else {
-      // oxlint-disable-next-line react/react-compiler
-      setIsProgressVisible(false);
+    if (!isPending) {
+      return;
     }
+    let timeout = setTimeout(() => {
+      setIsProgressVisible(true);
+    }, 1000);
     return () => {
       clearTimeout(timeout);
+      setIsProgressVisible(false);
     };
   }, [isPending]);
-  return {isProgressVisible};
+  return {isProgressVisible: isPending && isProgressVisible};
 }
 
 /**
@@ -407,10 +405,11 @@ export function usePendingState(isPending: boolean) {
  * where a user needs to do something in order to move forward in a flow.
  */
 export const Button = forwardRef(function Button(
-  props: ButtonProps,
-  ref: FocusableRef<HTMLButtonElement>
+  propsArg: ButtonProps,
+  refArg: FocusableRef<HTMLButtonElement>
 ) {
-  // oxlint-disable-next-line react/react-compiler
+  let props = propsArg;
+  let ref = refArg;
   [props, ref] = useSpectrumContextProps(props, ref, ButtonContext);
   props = useFormProps(props);
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
@@ -420,12 +419,11 @@ export const Button = forwardRef(function Button(
 
   let {isProgressVisible} = usePendingState(isPending);
 
-  // oxlint-disable react/react-compiler
   return (
     <RACButton
       {...props}
       ref={domRef}
-      style={pressScale(domRef, props.UNSAFE_style)}
+      style={renderProps => pressScale(domRef, props.UNSAFE_style)(renderProps)}
       className={renderProps =>
         (props.UNSAFE_className || '') +
         button(
@@ -524,7 +522,6 @@ export const Button = forwardRef(function Button(
       )}
     </RACButton>
   );
-  // oxlint-enable react/react-compiler
 });
 
 /**
@@ -532,22 +529,22 @@ export const Button = forwardRef(function Button(
  * allowing users to navigate to another page.
  */
 export const LinkButton = forwardRef(function LinkButton(
-  props: LinkButtonProps,
-  ref: FocusableRef<HTMLAnchorElement>
+  propsArg: LinkButtonProps,
+  refArg: FocusableRef<HTMLAnchorElement>
 ) {
-  // oxlint-disable-next-line react/react-compiler
+  let props = propsArg;
+  let ref = refArg;
   [props, ref] = useSpectrumContextProps(props, ref, LinkButtonContext);
   props = useFormProps(props);
   let domRef = useFocusableRef(ref);
   let overlayTriggerState = useContext(OverlayTriggerStateContext);
   let {fillStyle = 'fill', size = 'M', variant = 'primary', staticColor, styles, children} = props;
 
-  // oxlint-disable react/react-compiler
   return (
     <Link
       {...props}
       ref={domRef}
-      style={pressScale(domRef, props.UNSAFE_style)}
+      style={renderProps => pressScale(domRef, props.UNSAFE_style)(renderProps)}
       className={renderProps =>
         (props.UNSAFE_className || '') +
         button(
@@ -606,5 +603,4 @@ export const LinkButton = forwardRef(function LinkButton(
       )}
     </Link>
   );
-  // oxlint-enable react/react-compiler
 });

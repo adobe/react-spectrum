@@ -251,8 +251,9 @@ export function useSliderThumb(opts: AriaSliderThumbOptions, state: SliderState)
   }
 
   let interactions = !isDisabled
-    ? // oxlint-disable-next-line react/react-compiler
-      mergeProps(keyboardProps, moveProps, {
+    ? {
+        ...keyboardProps,
+        ...moveProps,
         onMouseDown: (e: React.MouseEvent) => {
           if (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey) {
             return;
@@ -268,7 +269,7 @@ export function useSliderThumb(opts: AriaSliderThumbOptions, state: SliderState)
         onTouchStart: (e: React.TouchEvent) => {
           onDown(e.changedTouches[0].identifier);
         }
-      })
+      }
     : {};
 
   useFormReset(inputRef, state.defaultValues[index], v => {

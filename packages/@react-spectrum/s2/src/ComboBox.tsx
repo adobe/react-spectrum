@@ -390,9 +390,11 @@ let InternalComboboxContext = createContext<{size: 'S' | 'M' | 'L' | 'XL'}>({siz
  * limited.
  */
 export const ComboBox = /*#__PURE__*/ (forwardRef as forwardRefType)(function ComboBox<T>(
-  props: ComboBoxProps<T>,
-  ref: Ref<TextFieldRef>
+  propsArg: ComboBoxProps<T>,
+  refArg: Ref<TextFieldRef>
 ) {
+  let props = propsArg;
+  let ref = refArg;
   [props, ref] = useSpectrumContextProps(props, ref, ComboBoxContext);
 
   let formContext = useContext(FormContext);
@@ -470,7 +472,6 @@ export function ComboBoxItem(props: ComboBoxItemProps): ReactNode {
   let ref = useRef(null);
   let isLink = props.href != null;
   let {size} = useContext(InternalComboboxContext);
-  // oxlint-disable react/react-compiler
   return (
     <ListBoxItem
       {...props}
@@ -479,7 +480,7 @@ export function ComboBoxItem(props: ComboBoxItemProps): ReactNode {
         props.textValue ||
         (typeof props.children === 'string' ? (props.children as string) : undefined)
       }
-      style={pressScale(ref, props.UNSAFE_style)}
+      style={renderProps => pressScale(ref, props.UNSAFE_style)(renderProps)}
       className={renderProps =>
         (props.UNSAFE_className || '') + listboxItem({...renderProps, size, isLink}, props.styles)
       }>
@@ -531,7 +532,6 @@ export function ComboBoxItem(props: ComboBoxItemProps): ReactNode {
       }}
     </ListBoxItem>
   );
-  // oxlint-enable react/react-compiler
 }
 
 export interface ComboBoxSectionProps<T> extends Omit<
@@ -636,9 +636,7 @@ const ComboboxInner = forwardRef(function ComboboxInner(
         }, 500);
       }
     } else if (!isLoadingOrFiltering) {
-      // If loading is no longer happening, clear any timers and hide the loading circle
-      // oxlint-disable-next-line react/react-compiler
-      setShowLoading(false);
+      // If loading is no longer happening, clear any timers
       if (timeout.current) {
         clearTimeout(timeout.current);
       }
@@ -647,6 +645,12 @@ const ComboboxInner = forwardRef(function ComboboxInner(
 
     lastInputValue.current = inputValue;
   }, [isLoadingOrFiltering, showLoading, inputValue]);
+
+  let [prevIsLoadingOrFiltering, setPrevIsLoadingOrFiltering] = useState(isLoadingOrFiltering);
+  if (prevIsLoadingOrFiltering !== isLoadingOrFiltering && !isLoadingOrFiltering) {
+    setShowLoading(false);
+    setPrevIsLoadingOrFiltering(isLoadingOrFiltering);
+  }
 
   useEffect(() => {
     return () => {

@@ -88,7 +88,7 @@ export interface SpectrumTableProps<T>
    *
    * @version beta
    */
-  dragAndDropHooks?: DragAndDropHooks<NoInfer<T>>['dragAndDropHooks'];
+  dragAndDropHooks?: DragAndDropHooks<any>['dragAndDropHooks'];
   /**
    * Whether the TableView should support expandable rows. Requires the feature flag to be enabled
    * first, see https://react-spectrum.adobe.com/react-spectrum/TableView.html#expandable-rows.

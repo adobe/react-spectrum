@@ -40,7 +40,7 @@ interface SpectrumColorSwatchContextValue extends Pick<
   SpectrumColorSwatchProps,
   'size' | 'rounding'
 > {
-  useWrapper: (
+  wrapSwatch: (
     swatch: ReactElement,
     color: Color,
     rounding: SpectrumColorSwatchProps['rounding']
@@ -55,9 +55,10 @@ export const SpectrumColorSwatchContext = createContext<SpectrumColorSwatchConte
  * A ColorSwatch displays a preview of a selected color.
  */
 export const ColorSwatch = forwardRef(function ColorSwatch(
-  props: SpectrumColorSwatchProps,
+  propsArg: SpectrumColorSwatchProps,
   ref: DOMRef<HTMLDivElement>
 ): JSX.Element {
+  let props = propsArg;
   let domRef = useDOMRef(ref);
   [props, domRef] = useContextProps(props, domRef, ColorSwatchContext);
   let {colorSwatchProps, color} = useColorSwatch(props);
@@ -111,8 +112,7 @@ export const ColorSwatch = forwardRef(function ColorSwatch(
 
   // ColorSwatchPicker needs to wrap the swatch in a ListBoxItem.
   if (ctx) {
-    // oxlint-disable-next-line react/react-compiler
-    return ctx.useWrapper(swatch, color, rounding);
+    return ctx.wrapSwatch(swatch, color, rounding);
   }
 
   return swatch;

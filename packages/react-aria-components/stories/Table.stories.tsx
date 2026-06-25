@@ -2248,6 +2248,25 @@ export const TreeGridTableDnd: TableStory = () => {
     }
   });
 
+  function TreeRow({item}) {
+    return (
+      <Row id={item.key} textValue={item.value.title}>
+        <Cell>
+          <Button slot="drag">≡</Button>
+        </Cell>
+        <Cell>
+          <MyCheckbox slot="selection" />
+        </Cell>
+        <NameCell>{item.value.title}</NameCell>
+        <Cell>{item.value.type}</Cell>
+        <Cell>{item.value.date}</Cell>
+        {item.children && (
+          <Collection items={item.children}>{child => <TreeRow item={child} />}</Collection>
+        )}
+      </Row>
+    );
+  }
+
   return (
     <Table
       aria-label="Files"
@@ -2267,25 +2286,7 @@ export const TreeGridTableDnd: TableStory = () => {
         <Column id="type">Type</Column>
         <Column id="date">Date Modified</Column>
       </TableHeader>
-      <TableBody items={tree.items}>
-        {function renderItem(item) {
-          return (
-            <Row id={item.key} textValue={item.value.title}>
-              <Cell>
-                <Button slot="drag">≡</Button>
-              </Cell>
-              <Cell>
-                <MyCheckbox slot="selection" />
-              </Cell>
-              <NameCell>{item.value.title}</NameCell>
-              <Cell>{item.value.type}</Cell>
-              <Cell>{item.value.date}</Cell>
-              {/* oxlint-disable-next-line react/react-compiler */}
-              {item.children && <Collection items={item.children}>{renderItem}</Collection>}
-            </Row>
-          );
-        }}
-      </TableBody>
+      <TableBody items={tree.items}>{item => <TreeRow item={item} />}</TableBody>
     </Table>
   );
 };

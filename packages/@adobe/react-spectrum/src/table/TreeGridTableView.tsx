@@ -14,7 +14,7 @@ import {DOMRef} from '@react-types/shared';
 import React, {ReactElement, useState} from 'react';
 import {SpectrumTableProps} from './TableView';
 import {TableViewBase} from './TableViewBase';
-import {UNSTABLE_useTreeGridState} from 'react-stately/private/table/useTreeGridState';
+import {UNSTABLE_useTreeGridState as useTreeGridState} from 'react-stately/private/table/useTreeGridState';
 
 export interface TreeGridTableProps<T> extends Omit<
   SpectrumTableProps<T>,
@@ -30,8 +30,7 @@ export const TreeGridTableView = React.forwardRef(function TreeGridTableView<T e
     selectionStyle !== 'highlight'
   );
   let isTableDraggable = !!dragAndDropHooks?.useDraggableCollectionState;
-  // oxlint-disable-next-line react/react-compiler
-  let state = UNSTABLE_useTreeGridState({
+  let state = useTreeGridState({
     ...props,
     showSelectionCheckboxes,
     showDragButtons: isTableDraggable,

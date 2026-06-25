@@ -41,53 +41,57 @@ export function useGridState<T extends object, C extends IGridCollection<T>>(
   props: GridStateOptions<T, C>
 ): GridState<T, C> {
   let {collection, focusMode} = props;
-  // oxlint-disable-next-line react/react-compiler, react-hooks/rules-of-hooks
-  let selectionState = props.UNSAFE_selectionState || useMultipleSelectionState(props);
+  let defaultSelectionState = useMultipleSelectionState(props);
+  let selectionState = props.UNSAFE_selectionState ?? defaultSelectionState;
   let disabledKeys = useMemo(
     () => (props.disabledKeys ? new Set(props.disabledKeys) : new Set<Key>()),
     [props.disabledKeys]
   );
 
-  let setFocusedKey = selectionState.setFocusedKey;
-  // oxlint-disable-next-line react/react-compiler
-  selectionState.setFocusedKey = (key, child) => {
-    // If focusMode is cell and an item is focused, focus a child cell instead.
-    if (focusMode === 'cell' && key != null) {
-      let item = collection.getItem(key);
-      if (item?.type === 'item') {
-        let children = getChildNodes(item, collection);
-        if (child === 'last') {
-          key = getLastItem(children)?.key ?? null;
-        } else {
-          key = getFirstItem(children)?.key ?? null;
+  let selectionStateWithFocus = useMemo(() => {
+    let setFocusedKey = selectionState.setFocusedKey;
+    return {
+      ...selectionState,
+      setFocusedKey(key: Key | null, child?: 'first' | 'last') {
+        // If focusMode is cell and an item is focused, focus a child cell instead.
+        if (focusMode === 'cell' && key != null) {
+          let item = collection.getItem(key);
+          if (item?.type === 'item') {
+            let children = getChildNodes(item, collection);
+            if (child === 'last') {
+              key = getLastItem(children)?.key ?? null;
+            } else {
+              key = getFirstItem(children)?.key ?? null;
+            }
+          }
         }
-      }
-    }
 
-    setFocusedKey(key, child);
-  };
+        setFocusedKey(key, child);
+      }
+    };
+  }, [collection, focusMode, selectionState]);
 
   let selectionManager = useMemo(
-    () => new SelectionManager(collection, selectionState),
-    [collection, selectionState]
+    () => new SelectionManager(collection, selectionStateWithFocus),
+    [collection, selectionStateWithFocus]
   );
 
   // Reset focused key if that item is deleted from the collection.
   const cachedCollection = useRef<C | null>(null);
   useEffect(() => {
     if (
-      selectionState.focusedKey != null &&
+      selectionStateWithFocus.focusedKey != null &&
       cachedCollection.current &&
-      !collection.getItem(selectionState.focusedKey)
+      !collection.getItem(selectionStateWithFocus.focusedKey)
     ) {
-      const node = cachedCollection.current.getItem(selectionState.focusedKey);
+      const node = cachedCollection.current.getItem(selectionStateWithFocus.focusedKey);
       const parentNode =
         node?.parentKey != null &&
         (node.type === 'cell' || node.type === 'rowheader' || node.type === 'column')
           ? cachedCollection.current.getItem(node.parentKey)
           : node;
       if (!parentNode) {
-        selectionState.setFocusedKey(null);
+        selectionStateWithFocus.setFocusedKey(null);
         return;
       }
       const cachedRows = cachedCollection.current.rows;
@@ -120,13 +124,13 @@ export function useGridState<T extends object, C extends IGridCollection<T>>(
           newRow.hasChildNodes && parentNode !== node && node && node.index < childNodes.length
             ? childNodes[node.index].key
             : newRow.key;
-        selectionState.setFocusedKey(keyToFocus);
+        selectionStateWithFocus.setFocusedKey(keyToFocus);
       } else {
-        selectionState.setFocusedKey(null);
+        selectionStateWithFocus.setFocusedKey(null);
       }
     }
     cachedCollection.current = collection;
-  }, [collection, selectionManager, selectionState, selectionState.focusedKey]);
+  }, [collection, selectionManager, selectionStateWithFocus, selectionStateWithFocus.focusedKey]);
 
   return {
     collection,

@@ -417,9 +417,11 @@ let wrappingDiv = style({
  * Menus display a list of actions or options that a user can choose.
  */
 export const Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(function Menu<T>(
-  props: MenuProps<T>,
-  ref: DOMRef<HTMLDivElement>
+  propsArg: MenuProps<T>,
+  refArg: DOMRef<HTMLDivElement>
 ) {
+  let props = propsArg;
+  let ref = refArg;
   [props, ref] = useSpectrumContextProps(props, ref, MenuContext);
   let {isSubmenu, size: ctxSize} = useContext(InternalMenuContext);
   let {
@@ -590,14 +592,13 @@ export function MenuItem(props: MenuItemProps): ReactNode {
   let isUnavailable = useContext(UnavailableContext);
   let infoIconId = useId();
 
-  // oxlint-disable react/react-compiler
   return (
     <AriaMenuItem
       {...props}
       aria-describedby={isUnavailable ? infoIconId : undefined}
       textValue={textValue}
       ref={ref}
-      style={pressScale(ref, props.UNSAFE_style)}
+      style={renderProps => pressScale(ref, props.UNSAFE_style)(renderProps)}
       className={renderProps =>
         (props.UNSAFE_className || '') +
         menuitem(
@@ -702,7 +703,6 @@ export function MenuItem(props: MenuItemProps): ReactNode {
       }}
     </AriaMenuItem>
   );
-  // oxlint-enable react/react-compiler
 }
 
 /**

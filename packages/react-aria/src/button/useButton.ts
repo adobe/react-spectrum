@@ -234,12 +234,11 @@ export function useButton(
   });
 
   let {focusableProps} = useFocusable(props, ref);
-  if (allowFocusWhenDisabled) {
-    // oxlint-disable-next-line react/react-compiler
-    focusableProps.tabIndex = isDisabled ? -1 : focusableProps.tabIndex;
-  }
+  let focusablePropsWithTabIndex = allowFocusWhenDisabled
+    ? {...focusableProps, tabIndex: isDisabled ? -1 : focusableProps.tabIndex}
+    : focusableProps;
   let buttonProps = mergeProps(
-    focusableProps,
+    focusablePropsWithTabIndex,
     pressProps,
     filterDOMProps(props, {labelable: true})
   );

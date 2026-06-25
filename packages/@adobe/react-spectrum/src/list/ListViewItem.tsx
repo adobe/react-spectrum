@@ -27,9 +27,11 @@ import listStyles from './styles.css';
 import {ListViewContext} from './ListView';
 import {mergeProps} from 'react-aria/mergeProps';
 import {Provider} from '../provider/Provider';
-import React, {JSX, useContext, useRef} from 'react';
+import React, {JSX, ReactNode, useContext, useRef} from 'react';
 import {Text} from '../text/Text';
 import {useButton} from 'react-aria/useButton';
+import {useDraggableItem} from 'react-aria/useDraggableCollection';
+import {useDropIndicator} from 'react-aria/useDroppableCollection';
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {useGridListItem, useGridListSelectionCheckbox} from 'react-aria/useGridList';
 import {useHasChild} from '../utils/useHasChild';
@@ -43,21 +45,113 @@ interface ListViewItemProps<T> {
   hasActions: boolean;
 }
 
+function ListViewItemDraggable<T>({
+  item,
+  isDisabled,
+  children
+}: {
+  item: Node<T>;
+  isDisabled: boolean;
+  children: (draggableItem: DraggableItemResult | null) => ReactNode;
+}) {
+  let {dragState} = useContext(ListViewContext)!;
+  let draggableItem = useDraggableItem({key: item.key, hasDragButton: true}, dragState!);
+  return <>{children(isDisabled ? null : draggableItem)}</>;
+}
+
+function ListViewItemDropIndicator<T>({
+  item,
+  children
+}: {
+  item: Node<T>;
+  children: (
+    dropIndicator: DropIndicatorAria,
+    isDropTarget: boolean,
+    dropIndicatorRef: React.RefObject<HTMLDivElement | null>
+  ) => ReactNode;
+}) {
+  let {dropState} = useContext(ListViewContext)!;
+  let dropIndicatorRef = useRef<HTMLDivElement | null>(null);
+  let target = {type: 'item', key: item.key, dropPosition: 'on'} as DropTarget;
+  let isDropTarget = dropState!.isDropTarget(target);
+  let dropIndicator = useDropIndicator({target}, dropState!, dropIndicatorRef);
+  return <>{children(dropIndicator, isDropTarget, dropIndicatorRef)}</>;
+}
+
 export function ListViewItem<T>(props: ListViewItemProps<T>): JSX.Element {
-  let {item, isEmphasized} = props;
+  let {item} = props;
+  let {isListDraggable, dragState, isListDroppable, dropState, state} =
+    useContext(ListViewContext)!;
+  let isDisabled = state.disabledKeys.has(item.key);
+
+  if (isListDraggable && dragState && isListDroppable && dropState) {
+    return (
+      <ListViewItemDraggable item={item} isDisabled={isDisabled}>
+        {draggableItem => (
+          <ListViewItemDropIndicator item={item}>
+            {(dropIndicator, isDropTarget, dropIndicatorRef) => (
+              <ListViewItemContent
+                {...props}
+                draggableItem={draggableItem}
+                dropIndicator={dropIndicator}
+                isDropTarget={isDropTarget}
+                dropIndicatorRef={dropIndicatorRef}
+              />
+            )}
+          </ListViewItemDropIndicator>
+        )}
+      </ListViewItemDraggable>
+    );
+  }
+
+  if (isListDraggable && dragState) {
+    return (
+      <ListViewItemDraggable item={item} isDisabled={isDisabled}>
+        {draggableItem => <ListViewItemContent {...props} draggableItem={draggableItem} />}
+      </ListViewItemDraggable>
+    );
+  }
+
+  if (isListDroppable && dropState) {
+    return (
+      <ListViewItemDropIndicator item={item}>
+        {(dropIndicator, isDropTarget, dropIndicatorRef) => (
+          <ListViewItemContent
+            {...props}
+            dropIndicator={dropIndicator}
+            isDropTarget={isDropTarget}
+            dropIndicatorRef={dropIndicatorRef}
+          />
+        )}
+      </ListViewItemDropIndicator>
+    );
+  }
+
+  return <ListViewItemContent {...props} />;
+}
+
+interface ListViewItemContentProps<T> extends ListViewItemProps<T> {
+  draggableItem?: DraggableItemResult | null;
+  dropIndicator?: DropIndicatorAria;
+  isDropTarget?: boolean;
+  dropIndicatorRef?: React.RefObject<HTMLDivElement | null>;
+}
+
+function ListViewItemContent<T>(props: ListViewItemContentProps<T>): JSX.Element {
   let {
-    state,
-    dragState,
-    dropState,
-    isListDraggable,
-    isListDroppable,
-    layout,
-    dragAndDropHooks,
-    loadingState
-  } = useContext(ListViewContext)!;
+    item,
+    isEmphasized,
+    draggableItem = null,
+    dropIndicator,
+    isDropTarget = false,
+    dropIndicatorRef
+  } = props;
+  let {state, isListDraggable, isListDroppable, layout, dragAndDropHooks, loadingState} =
+    useContext(ListViewContext)!;
   let {direction} = useLocale();
   let rowRef = useRef<HTMLDivElement | null>(null);
   let checkboxWrapperRef = useRef<HTMLDivElement | null>(null);
+  let dragButtonRef = useRef<HTMLDivElement | null>(null);
   let {isFocusVisible: isFocusVisibleWithin, focusProps: focusWithinProps} = useFocusRing({
     within: true
   });
@@ -88,29 +182,6 @@ export function ListViewItem<T>(props: ListViewItemProps<T>): JSX.Element {
     rowRef
   );
 
-  let draggableItem: DraggableItemResult | null = null;
-  if (isListDraggable && dragAndDropHooks && dragState) {
-    // oxlint-disable-next-line react/react-compiler
-    draggableItem = dragAndDropHooks.useDraggableItem!(
-      {key: item.key, hasDragButton: true},
-      dragState
-    );
-    if (isDisabled) {
-      draggableItem = null;
-    }
-  }
-  let isDropTarget = false;
-  let dropIndicator: DropIndicatorAria | null = null;
-  let dropIndicatorRef = useRef<HTMLDivElement | null>(null);
-  if (isListDroppable && dragAndDropHooks && dropState) {
-    let target = {type: 'item', key: item.key, dropPosition: 'on'} as DropTarget;
-    isDropTarget = dropState.isDropTarget(target);
-
-    // oxlint-disable-next-line react/react-compiler
-    dropIndicator = dragAndDropHooks.useDropIndicator!({target}, dropState, dropIndicatorRef);
-  }
-
-  let dragButtonRef = React.useRef<HTMLDivElement | null>(null);
   let {buttonProps} = useButton(
     {
       ...draggableItem?.dragButtonProps,
@@ -148,14 +219,9 @@ export function ListViewItem<T>(props: ListViewItemProps<T>): JSX.Element {
     draggableItem?.dragProps,
     hoverProps,
     focusWithinProps,
-    focusProps
+    focusProps,
+    dragAndDropHooks?.isVirtualDragging?.() ? {tabIndex: undefined} : undefined
   );
-
-  // Remove tab index from list row if performing a screenreader drag. This prevents TalkBack from focusing the row,
-  // allowing for single swipe navigation between row drop indicator
-  if (dragAndDropHooks?.isVirtualDragging?.()) {
-    mergedProps.tabIndex = undefined;
-  }
 
   let isFirstRow = item.prevKey == null;
   let isLastRow = item.nextKey == null;
@@ -240,11 +306,11 @@ export function ListViewItem<T>(props: ListViewItemProps<T>): JSX.Element {
               )}
             </div>
           )}
-          {isListDroppable && !dropIndicator?.isHidden && (
+          {isListDroppable && dropIndicator && !dropIndicator.isHidden && dropIndicatorRef && (
             <div
               role="button"
               {...visuallyHiddenProps}
-              {...dropIndicator?.dropIndicatorProps}
+              {...dropIndicator.dropIndicatorProps}
               ref={dropIndicatorRef}
             />
           )}

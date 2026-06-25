@@ -179,6 +179,10 @@ export function setLinks(links) {
 }
 
 export function Type({type}: {type: TType}) {
+  return renderType(type);
+}
+
+function renderType(type: TType): ReactNode {
   if (!type) {
     return null;
   }
@@ -190,81 +194,57 @@ export function Type({type}: {type: TType}) {
     case 'void':
     case 'unknown':
     case 'never':
-      // oxlint-disable-next-line react/react-compiler
-      return Keyword(type);
+      return keyword(type);
     case 'this':
-      // oxlint-disable-next-line react/react-compiler
-      return Keyword(type);
+      return keyword(type);
     case 'symbol':
-      // oxlint-disable-next-line react/react-compiler
-      return Symbol();
+      return symbolType();
     case 'identifier':
-      // oxlint-disable-next-line react/react-compiler
-      return Identifier(type);
+      return identifier(type);
     case 'string':
       if ('value' in type && type.value != null) {
-        // oxlint-disable-next-line react/react-compiler
-        return StringLiteral(type);
+        return stringLiteral(type);
       }
-      // oxlint-disable-next-line react/react-compiler
-      return Keyword(type);
+      return keyword(type);
     case 'number':
       if ('value' in type && type.value != null) {
-        // oxlint-disable-next-line react/react-compiler
-        return NumberLiteral(type);
+        return numberLiteral(type);
       }
-      // oxlint-disable-next-line react/react-compiler
-      return Keyword(type);
+      return keyword(type);
     case 'boolean':
       if ('value' in type && type.value != null) {
-        // oxlint-disable-next-line react/react-compiler
-        return BooleanLiteral(type);
+        return booleanLiteral(type);
       }
-      // oxlint-disable-next-line react/react-compiler
-      return Keyword(type);
+      return keyword(type);
     case 'union':
-      // oxlint-disable-next-line react/react-compiler
-      return UnionType(type);
+      return unionType(type);
     case 'intersection':
-      // oxlint-disable-next-line react/react-compiler
-      return IntersectionType(type);
+      return intersectionType(type);
     case 'application':
-      // oxlint-disable-next-line react/react-compiler
-      return TypeApplication(type);
+      return typeApplication(type);
     case 'typeOperator':
-      // oxlint-disable-next-line react/react-compiler
-      return TypeOperator(type);
+      return typeOperator(type);
     case 'function':
-      // oxlint-disable-next-line react/react-compiler
-      return FunctionType(type);
+      return functionType(type);
     case 'parameter':
-      // oxlint-disable-next-line react/react-compiler
-      return Parameter(type);
+      return parameter(type);
     case 'link':
-      // oxlint-disable-next-line react/react-compiler
-      return LinkType(type);
+      return linkType(type);
     case 'interface':
-      // oxlint-disable-next-line react/react-compiler
-      return InterfaceType(type);
+      return interfaceType(type);
     case 'object':
       if (type.properties) {
-        // oxlint-disable-next-line react/react-compiler
-        return ObjectType(type);
+        return objectType(type);
       }
-      // oxlint-disable-next-line react/react-compiler
-      return Keyword(type);
+      return keyword(type);
     case 'alias':
-      // oxlint-disable-next-line react/react-compiler
-      return <code className={codeStyle}>{Type({type: type.value})}</code>;
+      return <code className={codeStyle}>{renderType(type.value)}</code>;
     case 'array':
-      // oxlint-disable-next-line react/react-compiler
-      return ArrayType(type);
+      return arrayType(type);
     case 'tuple':
-      // oxlint-disable-next-line react/react-compiler
-      return TupleType(type);
+      return tupleType(type);
     case 'typeParameter':
-      // oxlint-disable-next-line react/react-compiler
-      return TypeParameter(type);
+      return typeParameter(type);
     case 'component': {
       let props = type.props;
       if (props?.type === 'application') {
@@ -274,23 +254,18 @@ export function Type({type}: {type: TType}) {
         props = LINKS[props.id];
       }
       if (props) {
-        // oxlint-disable-next-line react/react-compiler
-        return Type({type: {...props, description: type.description} as any});
+        return renderType({...props, description: type.description} as any);
       }
       return null;
     }
     case 'conditional':
-      // oxlint-disable-next-line react/react-compiler
-      return ConditionalType(type);
+      return conditionalType(type);
     case 'indexedAccess':
-      // oxlint-disable-next-line react/react-compiler
-      return IndexedAccess(type);
+      return indexedAccess(type);
     case 'keyof':
-      // oxlint-disable-next-line react/react-compiler
-      return Keyof(type);
+      return keyofType(type);
     case 'template':
-      // oxlint-disable-next-line react/react-compiler
-      return TemplateLiteral(type);
+      return templateLiteral(type);
     default:
       console.log('no render component for TYPE', type);
       return null;
@@ -300,8 +275,7 @@ export function Type({type}: {type: TType}) {
 function TypeOperator({operator, value}: TTypeOperator) {
   return (
     <span>
-      {/* oxlint-disable-next-line react/react-compiler */}
-      <span className={codeStyles.keyword}>{operator}</span> {Type({type: value})}
+      <span className={codeStyles.keyword}>{operator}</span> {renderType(value)}
     </span>
   );
 }
@@ -309,8 +283,7 @@ function TypeOperator({operator, value}: TTypeOperator) {
 function IndexedAccess({objectType, indexType}: TIndexedAccess) {
   return (
     <span>
-      {/* oxlint-disable-next-line react/react-compiler */}
-      {Type({type: objectType})}[{Type({type: indexType})}]
+      {renderType(objectType)}[{renderType(indexType)}]
     </span>
   );
 }
@@ -334,8 +307,7 @@ function Symbol() {
 function Keyof({keyof}: TKeyof) {
   return (
     <span>
-      {/* oxlint-disable-next-line react/react-compiler */}
-      {Keyword({type: 'keyof'})} {Type({type: keyof})}
+      {keyword({type: 'keyof'})} {renderType(keyof)}
     </span>
   );
 }
@@ -424,25 +396,19 @@ export function Indent({
   let openElement, closeElement;
 
   if (params.length === 0) {
-    // oxlint-disable-next-line react/react-compiler
-    openElement = Punctuation(open);
-    // oxlint-disable-next-line react/react-compiler
-    closeElement = Punctuation(close);
+    openElement = punctuation(open);
+    closeElement = punctuation(close);
   } else if (params.length > 2 || alwaysIndent) {
     // Always indent.
-    // oxlint-disable-next-line react/react-compiler
-    openElement = Punctuation(open.trimEnd() + '\n' + large + '  ');
-    // oxlint-disable-next-line react/react-compiler
-    closeElement = Punctuation('\n' + large + close.trimStart());
+    openElement = punctuation(open.trimEnd() + '\n' + large + '  ');
+    closeElement = punctuation('\n' + large + close.trimStart());
     large += '  ';
     // small += '  ';
   } else {
     // Indent on small screens. Don't indent on large screens.
-    // oxlint-disable-next-line react/react-compiler
-    openElement = <>{Punctuation(open)}</>;
+    openElement = <>{punctuation(open)}</>;
 
-    // oxlint-disable-next-line react/react-compiler
-    closeElement = <>{Punctuation(close)}</>;
+    closeElement = <>{punctuation(close)}</>;
 
     // small += '  ';
   }
@@ -518,8 +484,8 @@ export function JoinList({
     (acc, v, i) => (
       <>
         {acc}
-        {i > 0 ? Punctuation(contents) : null}
-        {Type({type: v})}
+        {i > 0 ? punctuation(contents) : null}
+        {renderType(v)}
       </>
     ),
     <></>
@@ -527,7 +493,7 @@ export function JoinList({
 }
 
 function UnionType({elements}: TUnion) {
-  return JoinList({
+  return joinList({
     elements,
     joiner: ' |\u00a0',
     newlineBefore: true
@@ -535,7 +501,7 @@ function UnionType({elements}: TUnion) {
 }
 
 function IntersectionType({types}: TIntersection) {
-  return JoinList({
+  return joinList({
     elements: types,
     joiner: ' &\u00a0',
     newlineBefore: true
@@ -545,10 +511,8 @@ function IntersectionType({types}: TIntersection) {
 function TypeApplication({base, typeParameters}: TApplication) {
   return (
     <>
-      {/* oxlint-disable-next-line react/react-compiler */}
-      {Type({type: base})}
-      {/* oxlint-disable-next-line react/react-compiler */}
-      {TypeParameters({typeParameters})}
+      {renderType(base)}
+      {renderTypeParameters({typeParameters})}
     </>
   );
 }
@@ -560,12 +524,9 @@ export function TypeParameters({typeParameters}: {typeParameters: TType[]}) {
 
   return (
     <>
-      {/* oxlint-disable-next-line react/react-compiler */}
-      {Punctuation('<')}
-      {/* oxlint-disable-next-line react/react-compiler */}
-      {JoinList({elements: typeParameters, joiner: ', ', neverIndent: true})}
-      {/* oxlint-disable-next-line react/react-compiler */}
-      {Punctuation('>')}
+      {punctuation('<')}
+      {joinList({elements: typeParameters, joiner: ', ', neverIndent: true})}
+      {punctuation('>')}
     </>
   );
 }
@@ -577,16 +538,13 @@ function TypeParameter({name, constraint, default: defaultType}: TTypeParameter)
       {constraint && (
         <>
           {' '}
-          {/* oxlint-disable-next-line react/react-compiler */}
-          <span className={codeStyles.keyword}>extends</span> {Type({type: constraint})}
+          <span className={codeStyles.keyword}>extends</span> {renderType(constraint)}
         </>
       )}
       {defaultType && (
         <>
-          {/* oxlint-disable-next-line react/react-compiler */}
-          {Punctuation(' = ')}
-          {/* oxlint-disable-next-line react/react-compiler */}
-          {Type({type: defaultType})}
+          {punctuation(' = ')}
+          {renderType(defaultType)}
         </>
       )}
     </>
@@ -597,20 +555,15 @@ function FunctionType({name, parameters, return: returnType, typeParameters}: TF
   return (
     <>
       {name && <span className={codeStyles.function}>{name}</span>}
-      {/* oxlint-disable-next-line react/react-compiler */}
-      {TypeParameters({typeParameters})}
-      {/* oxlint-disable-next-line react/react-compiler */}
-      {Indent({
+      {renderTypeParameters({typeParameters})}
+      {indent({
         params: parameters,
         open: '(',
         close: ')',
-        // oxlint-disable-next-line react/react-compiler
-        children: JoinList({elements: parameters, joiner: ', '})
+        children: joinList({elements: parameters, joiner: ', '})
       })}
-      {/* oxlint-disable-next-line react/react-compiler */}
-      {Punctuation(name ? ': ' : ' => ')}
-      {/* oxlint-disable-next-line react/react-compiler */}
-      {Type({type: returnType})}
+      {punctuation(name ? ': ' : ' => ')}
+      {renderType(returnType)}
     </>
   );
 }
@@ -618,23 +571,18 @@ function FunctionType({name, parameters, return: returnType, typeParameters}: TF
 function Parameter({name, value, default: defaultValue, optional, rest}: TParameter) {
   return (
     <>
-      {/* oxlint-disable-next-line react/react-compiler */}
-      {rest && Punctuation('...')}
+      {rest && punctuation('...')}
       {name}
-      {/* oxlint-disable-next-line react/react-compiler */}
-      {optional && Punctuation('?')}
+      {optional && punctuation('?')}
       {value && (
         <>
-          {/* oxlint-disable-next-line react/react-compiler */}
-          {Punctuation(': ')}
-          {/* oxlint-disable-next-line react/react-compiler */}
-          {Type({type: value})}
+          {punctuation(': ')}
+          {renderType(value)}
         </>
       )}
       {defaultValue && (
         <>
-          {/* oxlint-disable-next-line react/react-compiler */}
-          {Punctuation(' = ')}
+          {punctuation(' = ')}
           <span dangerouslySetInnerHTML={{__html: defaultValue}} />
         </>
       )}
@@ -651,8 +599,7 @@ export function LinkType({id}: TLink) {
   }
 
   if (DOC_LINKS[type.name]) {
-    // oxlint-disable-next-line react/react-compiler
-    return Identifier({type: 'identifier', name: type.name});
+    return identifier({type: 'identifier', name: type.name});
   }
 
   return <TypeLink type={type} />;
@@ -674,17 +621,15 @@ export function TypeLink({type}: {type: Extract<TType, {id: string; name: string
       )}
       {type.type === 'interface' && type.extends?.length > 0 && (
         <p className={style({font: 'ui'})}>
-          <strong>Extends</strong>: {/* oxlint-disable-next-line react/react-compiler */}
-          <code className={codeStyle}>{JoinList({elements: type.extends, joiner: ', '})}</code>
+          <strong>Extends</strong>:{' '}
+          <code className={codeStyle}>{joinList({elements: type.extends, joiner: ', '})}</code>
         </p>
       )}
       {type.type === 'component' && <h3 className={style({font: 'title'})}>Props</h3>}
       {type.type === 'interface' || type.type === 'alias' || type.type === 'component' ? (
-        // oxlint-disable-next-line react/react-compiler
-        Type({type})
+        renderType(type)
       ) : (
-        // oxlint-disable-next-line react/react-compiler
-        <code className={codeStyle}>{Type({type})}</code>
+        <code className={codeStyle}>{renderType(type)}</code>
       )}
     </TypePopover>
   );
@@ -717,6 +662,33 @@ const mdComponents = {
     )
   }
 };
+
+const typeOperator = TypeOperator;
+const indexedAccess = IndexedAccess;
+const stringLiteral = StringLiteral;
+const numberLiteral = NumberLiteral;
+const booleanLiteral = BooleanLiteral;
+const symbolType = Symbol;
+const keyofType = Keyof;
+const keyword = Keyword;
+const identifier = Identifier;
+const indent = Indent;
+const punctuation = Punctuation;
+const joinList = JoinList;
+const unionType = UnionType;
+const intersectionType = IntersectionType;
+const typeApplication = TypeApplication;
+const renderTypeParameters = TypeParameters;
+const typeParameter = TypeParameter;
+const functionType = FunctionType;
+const parameter = Parameter;
+const linkType = LinkType;
+const interfaceType = InterfaceType;
+const objectType = ObjectType;
+const arrayType = ArrayType;
+const tupleType = TupleType;
+const conditionalType = ConditionalType;
+const templateLiteral = TemplateLiteral;
 
 export function renderHTMLfromMarkdown(
   description: string | null | undefined,
@@ -758,16 +730,14 @@ export function InterfaceType({
   ) as TMethod[];
 
   // Default to showing required indicators if some properties are optional but not all.
-  // oxlint-disable-next-line react/react-compiler
-  showRequired =
+  let shouldShowRequired =
     showRequired || (!properties.every(p => p.optional) && !properties.every(p => !p.optional));
 
   // Show default values by default if any of the properties have one defined.
-  // oxlint-disable-next-line react/react-compiler
-  showDefault = showDefault || properties.some(p => !!p.default);
+  let shouldShowDefault = showDefault || properties.some(p => !!p.default);
 
   // Sort props so required ones are shown first.
-  if (showRequired) {
+  if (shouldShowRequired) {
     properties.sort((a, b) => {
       if (!a.optional && b.optional) {
         return -1;
@@ -792,7 +762,7 @@ export function InterfaceType({
             <tr>
               <TableColumn>Name</TableColumn>
               {!hideType && <TableColumn>Type</TableColumn>}
-              {showDefault && <TableColumn>Default</TableColumn>}
+              {shouldShowDefault && <TableColumn>Default</TableColumn>}
             </tr>
           </TableHeader>
           <TableBody>
@@ -805,7 +775,7 @@ export function InterfaceType({
                         {prop.name}
                       </span>
                     </code>
-                    {!prop.optional && showRequired ? (
+                    {!prop.optional && shouldShowRequired ? (
                       <Asterisk
                         size="M"
                         className={style({
@@ -821,10 +791,10 @@ export function InterfaceType({
                   </TableCell>
                   {!hideType && (
                     <TableCell hideBorder={!!prop.description}>
-                      <code className={codeStyle}>{Type({type: prop.value})}</code>
+                      <code className={codeStyle}>{renderType(prop.value)}</code>
                     </TableCell>
                   )}
-                  {showDefault && (
+                  {shouldShowDefault && (
                     <TableCell
                       hideBorder={!!prop.description}
                       styles={
@@ -874,15 +844,15 @@ export function InterfaceType({
                   <TableCell role="rowheader" data-column="Name" hideBorder={!!prop.description}>
                     <code className={codeStyle}>
                       <span className={codeStyles.function}>{prop.name}</span>
-                      {TypeParameters({typeParameters: prop.value.typeParameters})}
-                      {Indent({
+                      {renderTypeParameters({typeParameters: prop.value.typeParameters})}
+                      {indent({
                         params: prop.value.parameters,
                         open: '(',
                         close: ')',
-                        children: JoinList({elements: prop.value.parameters, joiner: ', '})
+                        children: joinList({elements: prop.value.parameters, joiner: ', '})
                       })}
-                      {Punctuation(': ')}
-                      {Type({type: prop.value.return})}
+                      {punctuation(': ')}
+                      {renderType(prop.value.return)}
                     </code>
                   </TableCell>
                 </TableRow>
@@ -903,10 +873,8 @@ export function InterfaceType({
 }
 
 function ObjectType({properties}: TObject) {
-  // oxlint-disable-next-line react/react-compiler
-  const startObject = Punctuation('{');
-  // oxlint-disable-next-line react/react-compiler
-  const endObject = Punctuation('}');
+  const startObject = punctuation('{');
+  const endObject = punctuation('}');
   return (
     <>
       {startObject}
@@ -925,13 +893,13 @@ function ObjectType({properties}: TObject) {
         let punc = optional ? '?: ' : ': ';
         return (
           <div key={k ?? i} style={{paddingLeft: '1.5em'}}>
-            {indexType && Punctuation('[')}
+            {indexType && punctuation('[')}
             <span className={`token ${token}`}>{k}</span>
-            {indexType && Punctuation(': ')}
-            {indexType && Type({type: indexType})}
-            {indexType && Punctuation(']')}
-            {Punctuation(punc)}
-            {Type({type: value})}
+            {indexType && punctuation(': ')}
+            {indexType && renderType(indexType)}
+            {indexType && punctuation(']')}
+            {punctuation(punc)}
+            {renderType(value)}
             {i < arr.length - 1 ? ',' : ''}
           </div>
         );
@@ -944,39 +912,31 @@ function ObjectType({properties}: TObject) {
 function ArrayType({elementType}: TArray) {
   return (
     <>
-      {/* oxlint-disable-next-line react/react-compiler */}
-      {Type({type: elementType})}
-      {/* oxlint-disable-next-line react/react-compiler */}
-      {Punctuation('[]')}
+      {renderType(elementType)}
+      {punctuation('[]')}
     </>
   );
 }
 
 function TupleType({elements}: TTuple) {
-  return Indent({
+  return indent({
     params: elements,
     alwaysIndent: true,
     open: '[',
     close: ']',
-    children: JoinList({elements, joiner: ', '})
+    children: joinList({elements, joiner: ', '})
   });
 }
 
 function ConditionalType({checkType, extendsType, trueType, falseType}: TConditional) {
   return (
     <>
-      {/* oxlint-disable-next-line react/react-compiler */}
-      {Type({type: checkType})} <span className={codeStyles.keyword}>extends</span>{' '}
-      {/* oxlint-disable-next-line react/react-compiler */}
-      {Type({type: extendsType})}
-      {/* oxlint-disable-next-line react/react-compiler */}
-      {Punctuation(' ? ')}
-      {/* oxlint-disable-next-line react/react-compiler */}
-      {Type({type: trueType})}
-      {/* oxlint-disable-next-line react/react-compiler */}
-      {Punctuation(' :' + (falseType.type === 'conditional' ? '\n' : ' '))}
-      {/* oxlint-disable-next-line react/react-compiler */}
-      {Type({type: falseType})}
+      {renderType(checkType)} <span className={codeStyles.keyword}>extends</span>{' '}
+      {renderType(extendsType)}
+      {punctuation(' ? ')}
+      {renderType(trueType)}
+      {punctuation(' :' + (falseType.type === 'conditional' ? '\n' : ' '))}
+      {renderType(falseType)}
     </>
   );
 }
@@ -996,9 +956,9 @@ function TemplateLiteral({elements}: TTemplate) {
 
         return (
           <React.Fragment key={i}>
-            {Punctuation('${')}
-            {Type({type: element})}
-            {Punctuation('}')}
+            {punctuation('${')}
+            {renderType(element)}
+            {punctuation('}')}
           </React.Fragment>
         );
       })}

@@ -338,15 +338,13 @@ function ColorItem({
     sectionId === 'text'
       ? textSwatches[item.name]
       : backgroundSwatches[item.name] || scaleSwatches[item.name] || '';
-
-  // oxlint-disable react/react-compiler
   return (
     <ListBoxItem
       id={item.id}
       textValue={item.name}
       className={itemStyle}
       ref={ref}
-      style={pressScale(ref)}>
+      style={renderProps => pressScale(ref)(renderProps)}>
       <div
         className={`${swatchClass || swatchStyle} ${style({position: 'relative'})}`}
         style={
@@ -434,5 +432,4 @@ function ColorItem({
       )}
     </ListBoxItem>
   );
-  // oxlint-enable react/react-compiler
 }

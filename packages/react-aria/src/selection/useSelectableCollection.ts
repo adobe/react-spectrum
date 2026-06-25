@@ -38,9 +38,9 @@ import {getItemElement, isNonContiguousSelectionModifier, useCollectionId} from 
 import {isCtrlKeyPressed} from '../utils/keyboard';
 import {isMac} from '../utils/platform';
 import {isTabbable} from '../utils/isFocusable';
-import {mergeProps} from '../utils/mergeProps';
 import {MultipleSelectionManager} from 'react-stately/useMultipleSelectionState';
 import {scrollIntoView, scrollIntoViewport} from '../utils/scrollIntoView';
+import {useEffectEvent} from '../utils/useEffectEvent';
 import {useEvent} from '../utils/useEvent';
 import {useKeyboard} from '../interactions/useKeyboard';
 import {useLocale} from '../i18n/I18nProvider';
@@ -170,49 +170,47 @@ export function useSelectableCollection(
   let {direction} = useLocale();
   let router = useRouter();
 
-  const navigateToKey = (
-    e: KeyboardEvent,
-    key: Key | undefined,
-    childFocus?: FocusStrategy
-  ): boolean | void => {
-    if (key != null) {
-      if (
-        manager.isLink(key) &&
-        linkBehavior === 'selection' &&
-        selectOnFocus &&
-        !isNonContiguousSelectionModifier(e)
-      ) {
-        // Set focused key and re-render synchronously to bring item into view if needed.
-        flushSync(() => {
-          manager.setFocusedKey(key, childFocus);
-        });
+  const navigateToKey = useEffectEvent(
+    (e: KeyboardEvent, key: Key | undefined, childFocus?: FocusStrategy): boolean | void => {
+      if (key != null) {
+        if (
+          manager.isLink(key) &&
+          linkBehavior === 'selection' &&
+          selectOnFocus &&
+          !isNonContiguousSelectionModifier(e)
+        ) {
+          // Set focused key and re-render synchronously to bring item into view if needed.
+          flushSync(() => {
+            manager.setFocusedKey(key, childFocus);
+          });
 
-        let item = getItemElement(ref, key);
-        let itemProps = manager.getItemProps(key);
-        if (item) {
-          router.open(item, e, itemProps.href, itemProps.routerOptions);
-          return;
+          let item = getItemElement(ref, key);
+          let itemProps = manager.getItemProps(key);
+          if (item) {
+            router.open(item, e, itemProps.href, itemProps.routerOptions);
+            return;
+          }
+
+          return false;
         }
 
-        return false;
-      }
+        manager.setFocusedKey(key, childFocus);
 
-      manager.setFocusedKey(key, childFocus);
+        if (manager.isLink(key) && linkBehavior === 'override') {
+          return false;
+        }
 
-      if (manager.isLink(key) && linkBehavior === 'override') {
-        return false;
+        if (e.shiftKey && manager.selectionMode === 'multiple') {
+          manager.extendSelection(key);
+          return;
+        } else if (selectOnFocus && !isNonContiguousSelectionModifier(e)) {
+          manager.replaceSelection(key);
+          return;
+        }
       }
-
-      if (e.shiftKey && manager.selectionMode === 'multiple') {
-        manager.extendSelection(key);
-        return;
-      } else if (selectOnFocus && !isNonContiguousSelectionModifier(e)) {
-        manager.replaceSelection(key);
-        return;
-      }
+      return false;
     }
-    return false;
-  };
+  );
 
   let arrowDown = (e: KeyboardEvent) => {
     if (delegate.getKeyBelow) {
@@ -369,7 +367,7 @@ export function useSelectableCollection(
     return false;
   };
 
-  let tab = () => {
+  let tab = useEffectEvent(() => {
     if (!allowsTabNavigation && ref.current) {
       // There may be elements that are "tabbable" inside a collection (e.g. in a grid cell).
       // However, collections should be treated as a single tab stop, with arrow key navigation internally.
@@ -397,14 +395,14 @@ export function useSelectableCollection(
       }
     }
     return {shouldContinuePropagation: true, shouldPreventDefault: false};
-  };
+  });
 
-  let shiftTab = () => {
+  let shiftTab = useEffectEvent(() => {
     if (!allowsTabNavigation && ref.current) {
       ref.current.focus();
     }
     return {shouldContinuePropagation: true, shouldPreventDefault: false};
-  };
+  });
 
   let withShiftSel = (key, callback) => {
     return {
@@ -414,7 +412,6 @@ export function useSelectableCollection(
       [key]: callback
     };
   };
-  // oxlint-disable react/react-compiler
   let {keyboardProps} = useKeyboard({
     shortcuts: {
       ...withShiftSel('ArrowDown', arrowDown),
@@ -431,7 +428,6 @@ export function useSelectableCollection(
       'Tab+Shift': shiftTab
     }
   });
-  // oxlint-enable react/react-compiler
 
   // Store the scroll position so we can restore it later.
   /// TODO: should this happen all the time??
@@ -715,24 +711,21 @@ export function useSelectableCollection(
     selectionManager: manager
   });
 
-  if (!disallowTypeAhead) {
-    // oxlint-disable-next-line react/react-compiler
-    handlers = mergeProps(typeSelectProps, handlers);
-  }
-
-  // If nothing is focused within the collection, make the collection itself tabbable.
-  // This will be marshalled to either the first or last item depending on where focus came from.
   let tabIndex: number | undefined = undefined;
   if (!shouldUseVirtualFocus) {
     tabIndex = manager.focusedKey == null ? 0 : -1;
   }
 
   let collectionId = useCollectionId(manager.collection);
+
+  let collectionProps = {
+    ...(disallowTypeAhead ? {} : typeSelectProps),
+    ...handlers,
+    tabIndex,
+    'data-collection': collectionId
+  };
+
   return {
-    // oxlint-disable-next-line react/react-compiler
-    collectionProps: mergeProps(handlers, {
-      tabIndex,
-      'data-collection': collectionId
-    })
+    collectionProps
   };
 }

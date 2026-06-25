@@ -103,12 +103,12 @@ export function CodePlatter({children, type, showCoachMark}: CodePlatterProps) {
   // let [showCodeSandbox, setShowCodeSandbox] = useState(false);
   let getText = () => getTextContent(codeRef.current!.querySelector('pre')!);
   let {library} = useContext(CodePlatterContext);
-  if (!type) {
+  let resolvedType = type;
+  if (!resolvedType) {
     if (library === 'react-aria') {
-      // oxlint-disable-next-line react/react-compiler
-      type = 'vanilla';
+      resolvedType = 'vanilla';
     } else if (library === 'react-spectrum') {
-      type = 's2';
+      resolvedType = 's2';
     }
   }
 
@@ -180,7 +180,7 @@ export function CodePlatter({children, type, showCoachMark}: CodePlatterProps) {
                       let filesToDownload = getCodeSandboxFiles(
                         getExampleFiles(codeRef, files, urls, entry),
                         deps,
-                        type,
+                        resolvedType,
                         entry
                       );
                       let filesToZip = {};
@@ -229,7 +229,7 @@ export function CodePlatter({children, type, showCoachMark}: CodePlatterProps) {
                       createStackBlitz(
                         getExampleFiles(codeRef, files, urls, entry),
                         deps,
-                        type,
+                        resolvedType,
                         entry
                       );
                     }}>
@@ -254,7 +254,7 @@ export function CodePlatter({children, type, showCoachMark}: CodePlatterProps) {
       <div ref={codeRef}>{children}</div>
       {/* <DialogContainer onDismiss={() => setShowCodeSandbox(false)}>
         {showCodeSandbox &&
-          <CodeSandboxDialog getExampleFiles={getExampleFiles} codeRef={codeRef} files={files} urls={urls} entry={entry} deps={deps} type={type} />
+          <CodeSandboxDialog getExampleFiles={getExampleFiles} codeRef={codeRef} files={files} urls={urls} entry={entry} deps={deps} type={resolvedType} />
         }
       </DialogContainer> */}
       <DialogContainer onDismiss={() => setShowShadcn(false)}>

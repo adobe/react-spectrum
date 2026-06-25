@@ -91,7 +91,7 @@ export function useCalendarCell(
   state: CalendarState<CalendarSelectionMode> | RangeCalendarState,
   ref: RefObject<HTMLElement | null>
 ): CalendarCellAria {
-  let {date, isDisabled} = props;
+  let {date, isDisabled: isDisabledProp} = props;
   let {errorMessageId, selectedDateDescription} = hookData.get(state)!;
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/calendar');
   let dateFormatter = useDateFormatter({
@@ -103,10 +103,9 @@ export function useCalendarCell(
     timeZone: state.timeZone
   });
   let isFocused = state.isCellFocused(date) && !props.isOutsideMonth;
-  isDisabled = isDisabled || state.isCellDisabled(date) || !!props.isOutsideMonth;
+  let isDisabled = isDisabledProp || state.isCellDisabled(date) || !!props.isOutsideMonth;
   let isUnavailable = state.isCellUnavailable(date);
   let isSelectable = !isDisabled && !isUnavailable;
-  let isSelected = state.isSelected(date) && isSelectable;
   let isInvalid = false;
   if (state.isValueInvalid) {
     if ('highlightedRange' in state) {
@@ -122,28 +121,29 @@ export function useCalendarCell(
     }
   }
 
-  if (isInvalid && !isDisabled) {
-    isSelected = true;
-  }
+  let isSelected = (state.isSelected(date) && isSelectable) || (isInvalid && !isDisabled);
 
   // For performance, reuse the same date object as before if the new date prop is the same.
   // This allows subsequent useMemo results to be reused.
-  date = useDeepMemo<CalendarDate>(date, isEqualDay);
-  // oxlint-disable-next-line react/react-compiler
-  let nativeDate = useMemo(() => date.toDate(state.timeZone), [date, state.timeZone]);
+  let memoizedDate = useDeepMemo<CalendarDate>(date, isEqualDay);
+  let nativeDate = useMemo(
+    () => memoizedDate.toDate(state.timeZone),
+    [memoizedDate, state.timeZone]
+  );
 
   // aria-label should be localize Day of week, Month, Day and Year without Time.
-  let isDateToday = isToday(date, state.timeZone);
-  let label = useMemo(() => {
+  let isDateToday = isToday(memoizedDate, state.timeZone);
+  let rangeValue = 'highlightedRange' in state ? state.value : null;
+  let anchorDate = 'highlightedRange' in state ? state.anchorDate : null;
+  let label = (() => {
     let label = '';
 
     // If this is a range calendar, add a description of the full selected range
     // to the first and last selected date.
     if (
-      'highlightedRange' in state &&
-      state.value &&
-      !state.anchorDate &&
-      (isSameDay(date, state.value.start) || isSameDay(date, state.value.end))
+      rangeValue &&
+      !anchorDate &&
+      (isSameDay(memoizedDate, rangeValue.start) || isSameDay(memoizedDate, rangeValue.end))
     ) {
       label = selectedDateDescription + ', ';
     }
@@ -161,25 +161,14 @@ export function useCalendarCell(
       });
     }
 
-    if (state.minValue && isSameDay(date, state.minValue)) {
+    if (state.minValue && isSameDay(memoizedDate, state.minValue)) {
       label += ', ' + stringFormatter.format('minimumDate');
-    } else if (state.maxValue && isSameDay(date, state.maxValue)) {
+    } else if (state.maxValue && isSameDay(memoizedDate, state.maxValue)) {
       label += ', ' + stringFormatter.format('maximumDate');
     }
 
     return label;
-  }, [
-    dateFormatter,
-    nativeDate,
-    stringFormatter,
-    // oxlint-disable-next-line react/react-compiler
-    isSelected,
-    isDateToday,
-    // oxlint-disable-next-line react/react-compiler
-    date,
-    state,
-    selectedDateDescription
-  ]);
+  })();
 
   // When a cell is focused and this is a range calendar, add a prompt to help
   // screenreader users know that they are in a range selection mode.

@@ -750,9 +750,7 @@ let CustomFilterComboBox = props => {
 
   let filteredItems = React.useMemo(
     () => customFilterItems.filter(item => startsWith(item.name, filterValue)),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    // oxlint-disable-next-line react/react-compiler, react-hooks/exhaustive-deps
-    [props.items, filterValue, startsWith]
+    [filterValue, startsWith]
   );
 
   return (

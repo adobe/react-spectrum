@@ -104,22 +104,22 @@ export const CloseButtonContext =
  * A CloseButton allows a user to dismiss a dialog.
  */
 export const CloseButton = forwardRef(function CloseButton(
-  props: CloseButtonProps,
-  ref: FocusableRef<HTMLButtonElement>
+  propsArg: CloseButtonProps,
+  refArg: FocusableRef<HTMLButtonElement>
 ) {
-  // oxlint-disable-next-line react/react-compiler
+  let props = propsArg;
+  let ref = refArg;
   [props, ref] = useSpectrumContextProps(props, ref, CloseButtonContext);
   let {UNSAFE_style, UNSAFE_className = ''} = props;
   let domRef = useFocusableRef(ref);
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
-  // oxlint-disable react/react-compiler
   return (
     <Button
       {...props}
       ref={domRef}
       slot="close"
       aria-label={props['aria-label'] || stringFormatter.format('dialog.dismiss')}
-      style={pressScale(domRef, UNSAFE_style)}
+      style={renderProps => pressScale(domRef, UNSAFE_style)(renderProps)}
       className={renderProps =>
         UNSAFE_className +
         styles(
@@ -130,5 +130,4 @@ export const CloseButton = forwardRef(function CloseButton(
       <CrossIcon size={({S: 'L', M: 'XL', L: 'XXL', XL: 'XXXL'} as const)[props.size || 'M']} />
     </Button>
   );
-  // oxlint-enable react/react-compiler
 });

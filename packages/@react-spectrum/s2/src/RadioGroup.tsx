@@ -83,10 +83,11 @@ export const RadioGroupContext =
  * All possible options are exposed up front for users to compare.
  */
 export const RadioGroup = /*#__PURE__*/ forwardRef(function RadioGroup(
-  props: RadioGroupProps,
-  ref: DOMRef<HTMLDivElement>
+  propsArg: RadioGroupProps,
+  refArg: DOMRef<HTMLDivElement>
 ) {
-  // oxlint-disable-next-line react/react-compiler
+  let props = propsArg;
+  let ref = refArg;
   [props, ref] = useSpectrumContextProps(props, ref, RadioGroupContext);
   let formContext = useContext(FormContext);
   props = useFormProps(props);

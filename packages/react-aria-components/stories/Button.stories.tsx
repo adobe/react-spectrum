@@ -15,7 +15,7 @@ import {Button} from '../src/Button';
 import {mergeProps} from 'react-aria/mergeProps';
 import {Meta, StoryObj} from '@storybook/react';
 import {ProgressBar} from '../src/ProgressBar';
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import * as styles from './button-ripple.css';
 import * as styles2 from './button-pending.css';
 import {Text} from '../src/Text';
@@ -130,22 +130,20 @@ export const RippleButtonExample: ButtonStory = {
 function RippleButton(props) {
   const [coords, setCoords] = useState({x: -1, y: -1});
   const [isRippling, setIsRippling] = useState(false);
+  const [timeoutId, setTimeoutId] = useState<ReturnType<typeof setTimeout>>();
 
-  let timeout = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
-  let onPress = e => {
+  let onPress = useCallback(e => {
     setCoords({x: e.x, y: e.y});
     if (e.x !== -1 && e.y !== -1) {
       setIsRippling(true);
-      timeout.current = setTimeout(() => setIsRippling(false), 300);
+      setTimeoutId(setTimeout(() => setIsRippling(false), 300));
     }
-  };
+  }, []);
   useEffect(() => {
     return () => {
-      clearTimeout(timeout.current);
+      clearTimeout(timeoutId);
     };
-  }, []);
-
-  // oxlint-disable react/react-compiler
+  }, [timeoutId]);
   return (
     <Button {...mergeProps(props, {onPress})} className={styles['ripple-button']}>
       {isRippling ? (
@@ -162,7 +160,6 @@ function RippleButton(props) {
       <span className="content">{props.children}</span>
     </Button>
   );
-  // oxlint-enable react/react-compiler
 }
 
 function ButtonPerformanceExample() {

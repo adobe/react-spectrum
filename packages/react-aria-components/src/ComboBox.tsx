@@ -142,7 +142,9 @@ export const ComboBoxStateContext = createContext<ComboBoxState<any, SelectionMo
 export const ComboBox = /*#__PURE__*/ createHideableComponent(function ComboBox<
   T,
   M extends SelectionMode = 'single'
->(props: ComboBoxProps<T, M>, ref: ForwardedRef<HTMLDivElement>) {
+>(propsArg: ComboBoxProps<T, M>, refArg: ForwardedRef<HTMLDivElement>) {
+  let props = propsArg;
+  let ref = refArg;
   [props, ref] = useContextProps(props, ref, ComboBoxContext);
   let {
     children,
@@ -253,13 +255,12 @@ function ComboBoxInner<T>({props, collection, comboBoxRef: ref}: ComboBoxInnerPr
 
   // Position popover relative to group if available, otherwise input.
   let triggerRef = useMemo(
-    () => ({
+    (): RefObject<HTMLElement | null> => ({
       get current() {
         return groupRef.current || inputRef.current;
       }
     }),
-    // oxlint-disable-next-line react/react-compiler
-    [groupRef, inputRef]
+    []
   );
 
   // Only expose a subset of state to renderProps function to avoid infinite render loop
@@ -391,9 +392,11 @@ export const ComboBoxValueContext =
  * to customize this.
  */
 export const ComboBoxValue = /*#__PURE__*/ createHideableComponent(function ComboBoxValue<T>(
-  props: ComboBoxValueProps<T>,
-  ref: ForwardedRef<HTMLDivElement>
+  propsArg: ComboBoxValueProps<T>,
+  refArg: ForwardedRef<HTMLDivElement>
 ) {
+  let props = propsArg;
+  let ref = refArg;
   [props, ref] = useContextProps(props, ref, ComboBoxValueContext);
   let state = useContext(ComboBoxStateContext)!;
   let formatter = useListFormatter();

@@ -321,7 +321,9 @@ let InsideSelectValueContext = createContext(false);
 export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Picker<
   T,
   M extends SelectionMode = 'single'
->(props: PickerProps<T, M>, ref: FocusableRef<HTMLButtonElement>) {
+>(propsArg: PickerProps<T, M>, refArg: FocusableRef<HTMLButtonElement>) {
+  let props = propsArg;
+  let ref = refArg;
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   [props, ref] = useSpectrumContextProps(props, ref, PickerContext);
   let domRef = useFocusableRef(ref);
@@ -789,7 +791,6 @@ export function PickerItem(props: PickerItemProps): ReactNode {
   let ref = useRef(null);
   let isLink = props.href != null;
   let {size} = useContext(InternalPickerContext);
-  // oxlint-disable react/react-compiler
   return (
     <ListBoxItem
       {...props}
@@ -798,7 +799,7 @@ export function PickerItem(props: PickerItemProps): ReactNode {
         props.textValue ||
         (typeof props.children === 'string' ? (props.children as string) : undefined)
       }
-      style={pressScale(ref, props.UNSAFE_style)}
+      style={renderProps => pressScale(ref, props.UNSAFE_style)(renderProps)}
       className={renderProps =>
         (props.UNSAFE_className || '') + listboxItem({...renderProps, size, isLink}, props.styles)
       }>
@@ -860,7 +861,6 @@ export function PickerItem(props: PickerItemProps): ReactNode {
       }}
     </ListBoxItem>
   );
-  // oxlint-enable react/react-compiler
 }
 
 // A Context.Provider that only sets a value if not inside SelectValue.

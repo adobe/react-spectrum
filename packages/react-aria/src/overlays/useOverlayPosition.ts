@@ -15,6 +15,7 @@ import {DOMAttributes, RefObject} from '@react-types/shared';
 import {getActiveElement, isFocusWithin} from '../utils/shadowdom/DOMFunctions';
 import {useCallback, useEffect, useRef, useState} from 'react';
 import {useCloseOnScroll} from './useCloseOnScroll';
+import {useEffectEvent} from '../utils/useEffectEvent';
 import {useLayoutEffect} from '../utils/useLayoutEffect';
 import {useLocale} from '../i18n/I18nProvider';
 import {useResizeObserver} from '../utils/useResizeObserver';
@@ -198,29 +199,6 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
   } = props;
   let [position, setPosition] = useState<PositionResult | null>(null);
 
-  let deps = [
-    shouldUpdatePosition,
-    placement,
-    // oxlint-disable-next-line react/react-compiler
-    overlayRef.current,
-    // oxlint-disable-next-line react/react-compiler
-    targetRef.current,
-    // oxlint-disable-next-line react/react-compiler
-    arrowRef?.current,
-    // oxlint-disable-next-line react/react-compiler
-    scrollRef.current,
-    containerPadding,
-    shouldFlip,
-    boundaryElement,
-    offset,
-    crossOffset,
-    isOpen,
-    direction,
-    maxHeight,
-    arrowBoundaryOffset,
-    arrowSize
-  ];
-
   // Note, the position freezing breaks if body sizes itself dynamicly with the visual viewport but that might
   // just be a non-realistic use case
   // Upon opening a overlay, record the current visual viewport scale so we can freeze the overlay styles
@@ -231,7 +209,7 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
     }
   }, [isOpen]);
 
-  let updatePosition = useCallback(() => {
+  let updatePosition = useEffectEvent(() => {
     if (
       shouldUpdatePosition === false ||
       !isOpen ||
@@ -318,14 +296,26 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
 
     // Trigger a set state for a second render anyway for arrow positioning
     setPosition(position);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    // oxlint-disable-next-line react/react-compiler, react-hooks/exhaustive-deps
-  }, deps);
+  });
 
   // Update position when anything changes
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  // oxlint-disable-next-line react/react-compiler, react-hooks/exhaustive-deps
-  useLayoutEffect(updatePosition, deps);
+  useLayoutEffect(() => {
+    updatePosition();
+  }, [
+    shouldUpdatePosition,
+    placement,
+    containerPadding,
+    shouldFlip,
+    boundaryElement,
+    offset,
+    crossOffset,
+    isOpen,
+    direction,
+    maxHeight,
+    arrowBoundaryOffset,
+    arrowSize,
+    getTargetRect
+  ]);
 
   // Update position on window resize
   useResize(updatePosition);
@@ -372,7 +362,7 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
       visualViewport?.removeEventListener('resize', onResize);
       visualViewport?.removeEventListener('scroll', onScroll);
     };
-  }, [updatePosition]);
+  }, []);
 
   let close = useCallback(() => {
     if (!isResizing.current) {

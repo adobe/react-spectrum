@@ -29,7 +29,7 @@ import {FormValidationState, useFormValidationState} from '../form/useFormValida
 import {ListState, useListState} from '../list/useListState';
 import {OverlayTriggerState, useOverlayTriggerState} from '../overlays/useOverlayTriggerState';
 import {useControlledState} from '../utils/useControlledState';
-import {useMemo, useRef, useState} from 'react';
+import {useMemo, useState} from 'react';
 
 export type SelectionMode = 'single' | 'multiple';
 export type ValueType<M extends SelectionMode> = M extends 'single' ? Key | null : readonly Key[];
@@ -202,24 +202,20 @@ export function useSelectState<T, M extends SelectionMode = 'single'>(
   // (shift+click / shift+arrow) would collapse to just the clicked item. We keep
   // the last Selection produced internally and feed it back while its membership
   // still matches `value`.
-  let lastSelection = useRef<Set<Key> | null>(null);
-
-  // oxlint-disable-next-line react/react-compiler
+  let [lastSelection, setLastSelection] = useState<Set<Key> | null>(null);
+  let selectedKeys = useMemo(() => {
+    let keys = convertValue(displayValue);
+    if (lastSelection != null && Array.isArray(keys) && isSameSelection(lastSelection, keys)) {
+      return lastSelection;
+    }
+    return keys;
+  }, [displayValue, lastSelection]);
   let listState = useListState({
     ...props,
     selectionMode,
     disallowEmptySelection: selectionMode === 'single',
     allowDuplicateSelectionEvents: true,
-    selectedKeys: useMemo(() => {
-      let selectedKeys = convertValue(displayValue);
-      // oxlint-disable-next-line react/react-compiler
-      let last = lastSelection.current;
-      // oxlint-disable-next-line react/react-compiler
-      if (last != null && Array.isArray(selectedKeys) && isSameSelection(last, selectedKeys)) {
-        return last;
-      }
-      return selectedKeys;
-    }, [displayValue]),
+    selectedKeys,
     onSelectionChange: (keys: Selection) => {
       // impossible, but TS doesn't know that
       if (keys === 'all') {
@@ -232,7 +228,7 @@ export function useSelectState<T, M extends SelectionMode = 'single'>(
       } else {
         // Remember the Selection (with its anchor) so it survives the round-trip
         // through the plain `value` array on the next render.
-        lastSelection.current = keys;
+        setLastSelection(keys);
         setValue([...keys]);
       }
       if (shouldCloseOnSelect) {

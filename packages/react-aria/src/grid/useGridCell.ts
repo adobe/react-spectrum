@@ -27,7 +27,6 @@ import {
 import {gridMap} from './utils';
 import {GridState} from 'react-stately/private/grid/useGridState';
 import {isFocusVisible} from '../interactions/useFocusVisible';
-import {mergeProps} from '../utils/mergeProps';
 import {KeyboardEvent as ReactKeyboardEvent, useRef} from 'react';
 import {scrollIntoViewport} from '../utils/scrollIntoView';
 import {useLocale} from '../i18n/I18nProvider';
@@ -278,40 +277,33 @@ export function useGridCell<T, C extends GridCollection<T>>(
     });
   };
 
-  // oxlint-disable-next-line react/react-compiler
-  let gridCellProps: DOMAttributes = mergeProps(itemProps, {
+  let gridCellProps: DOMAttributes = {
+    ...itemProps,
     role: 'gridcell',
     onKeyDownCapture,
-    'aria-colspan': node.colSpan,
-    'aria-colindex': node.colIndex != null ? node.colIndex + 1 : undefined, // aria-colindex is 1-based
+    'aria-colspan': node.colSpan ?? undefined,
+    'aria-colindex': isVirtualized
+      ? (node.colIndex ?? node.index) + 1
+      : node.colIndex != null
+        ? node.colIndex + 1
+        : undefined,
     colSpan: isVirtualized ? undefined : node.colSpan,
-    onFocus
-  });
-
-  if (isVirtualized) {
-    gridCellProps['aria-colindex'] = (node.colIndex ?? node.index) + 1; // aria-colindex is 1-based
-  }
-
-  // When pressing with a pointer and cell selection is not enabled, usePress will be applied to the
-  // row rather than the cell. However, when the row is draggable, usePress cannot preventDefault
-  // on pointer down, so the browser will try to focus the cell which has a tabIndex applied.
-  // To avoid this, remove the tabIndex from the cell briefly on pointer down.
-  if (
-    shouldSelectOnPressUp &&
-    gridCellProps.tabIndex != null &&
-    gridCellProps.onPointerDown == null
-  ) {
-    gridCellProps.onPointerDown = e => {
-      let el = e.currentTarget;
-      let tabindex = el.getAttribute('tabindex');
-      el.removeAttribute('tabindex');
-      requestAnimationFrame(() => {
-        if (tabindex != null) {
-          el.setAttribute('tabindex', tabindex);
+    onFocus,
+    ...(shouldSelectOnPressUp && itemProps.tabIndex != null && itemProps.onPointerDown == null
+      ? {
+          onPointerDown: e => {
+            let el = e.currentTarget;
+            let tabindex = el.getAttribute('tabindex');
+            el.removeAttribute('tabindex');
+            requestAnimationFrame(() => {
+              if (tabindex != null) {
+                el.setAttribute('tabindex', tabindex);
+              }
+            });
+          }
         }
-      });
-    };
-  }
+      : {})
+  } as DOMAttributes<FocusableElement> & {colSpan?: number};
 
   return {
     gridCellProps,

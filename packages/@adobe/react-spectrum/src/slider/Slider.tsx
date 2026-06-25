@@ -101,10 +101,8 @@ export const Slider = React.forwardRef(function Slider(
           trackGradient &&
           `linear-gradient(to ${direction === 'ltr' ? 'right' : 'left'}, ${trackGradient.join(', ')})`
       }}>
-      {/* oxlint-disable-next-line react/react-compiler */}
       {({trackRef, inputRef, state}: SliderBaseChildArguments) => {
-        // oxlint-disable-next-line react/react-compiler
-        fillOffset =
+        let clampedFillOffset =
           fillOffset != null
             ? clamp(fillOffset, state.getThumbMinValue(0), state.getThumbMaxValue(0))
             : fillOffset;
@@ -139,11 +137,11 @@ export const Slider = React.forwardRef(function Slider(
         );
 
         let filledTrack: ReactNode = null;
-        if (isFilled && fillOffset != null) {
-          let width = state.getThumbPercent(0) - state.getValuePercent(fillOffset);
+        if (isFilled && clampedFillOffset != null) {
+          let width = state.getThumbPercent(0) - state.getValuePercent(clampedFillOffset);
           let isRightOfOffset = width > 0;
           let offset = isRightOfOffset
-            ? state.getValuePercent(fillOffset)
+            ? state.getValuePercent(clampedFillOffset)
             : state.getThumbPercent(0);
           filledTrack = (
             <div

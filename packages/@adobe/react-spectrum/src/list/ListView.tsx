@@ -14,6 +14,7 @@ import {AriaGridListProps, useGridList} from 'react-aria/useGridList';
 import {
   AsyncLoadable,
   DOMRef,
+  DragPreviewRenderer,
   Key,
   LoadingState,
   Node,
@@ -22,9 +23,19 @@ import {
 } from '@react-types/shared';
 import {classNames} from '../utils/classNames';
 import type {DragAndDropHooks} from '../dnd/useDragAndDrop';
-import type {DraggableCollectionState} from 'react-stately/useDraggableCollectionState';
-import type {DroppableCollectionResult} from 'react-aria/useDroppableCollection';
-import type {DroppableCollectionState} from 'react-stately/useDroppableCollectionState';
+import {
+  type DraggableCollectionState,
+  useDraggableCollectionState
+} from 'react-stately/useDraggableCollectionState';
+import {DragPreview, useDraggableCollection} from 'react-aria/useDraggableCollection';
+import {
+  type DroppableCollectionResult,
+  useDroppableCollection
+} from 'react-aria/useDroppableCollection';
+import {
+  type DroppableCollectionState,
+  useDroppableCollectionState
+} from 'react-stately/useDroppableCollectionState';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {FocusRing} from 'react-aria/FocusRing';
 import {FocusScope} from 'react-aria/FocusScope';
@@ -40,6 +51,7 @@ import {ProgressCircle} from '../progress/ProgressCircle';
 import React, {
   JSX,
   ReactElement,
+  RefObject,
   useCallback,
   useContext,
   useEffect,
@@ -92,14 +104,14 @@ export interface SpectrumListViewProps<T>
    * The drag and drop hooks returned by `useDragAndDrop` used to enable drag and drop behavior for
    * the ListView.
    */
-  dragAndDropHooks?: DragAndDropHooks<NoInfer<T>>['dragAndDropHooks'];
+  dragAndDropHooks?: DragAndDropHooks<any>['dragAndDropHooks'];
 }
 
 interface ListViewContextValue<T> {
   state: ListState<T>;
   dragState: DraggableCollectionState | null;
   dropState: DroppableCollectionState | null;
-  dragAndDropHooks?: DragAndDropHooks<T>['dragAndDropHooks'];
+  dragAndDropHooks?: DragAndDropHooks<any>['dragAndDropHooks'];
   onAction?: (key: Key) => void;
   isListDraggable: boolean;
   isListDroppable: boolean;
@@ -125,33 +137,187 @@ const ROW_HEIGHTS = {
   }
 };
 
-function useListLayout<T>(
-  state: ListState<T>,
-  density: SpectrumListViewProps<T>['density'],
-  overflowMode: SpectrumListViewProps<T>['overflowMode']
-) {
+function useListLayout<T>(density: SpectrumListViewProps<T>['density']) {
   let {scale} = useProvider();
   let layout = useMemo(
     () =>
       new ListViewLayout<T>({
         estimatedRowHeight: ROW_HEIGHTS[density || 'regular'][scale]
       }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    // oxlint-disable-next-line react/react-compiler, react-hooks/exhaustive-deps
-    [scale, density, overflowMode]
+    [scale, density]
   );
 
   return layout;
 }
 
-/**
- * A ListView displays a list of interactive items, and allows a user to navigate, select, or
- * perform an action.
- */
-export const ListView = React.forwardRef(function ListView<T extends object>(
-  props: SpectrumListViewProps<T>,
-  ref: DOMRef<HTMLDivElement>
-) {
+interface ListViewImplProps<T extends object> {
+  props: SpectrumListViewProps<T>;
+  domRef: RefObject<HTMLDivElement | null>;
+  state: ListState<T>;
+  layout: ListViewLayout<T>;
+  preview: RefObject<DragPreviewRenderer | null> | null;
+  dragState: DraggableCollectionState | null;
+  dropState: DroppableCollectionState | null;
+  droppableCollection: DroppableCollectionResult | null;
+  isRootDropTarget: boolean;
+}
+
+function ListViewWithDragAndDrop<T extends object>({
+  props,
+  domRef
+}: {
+  props: SpectrumListViewProps<T>;
+  domRef: RefObject<HTMLDivElement | null>;
+}) {
+  let {dragAndDropHooks} = props;
+  let options = dragAndDropHooks!.options!;
+  let state = useListState({
+    ...props,
+    selectionBehavior: props.selectionStyle === 'highlight' ? 'replace' : 'toggle'
+  });
+  let preview = useRef(null);
+  let dragState = useDraggableCollectionState({
+    collection: state.collection,
+    selectionManager: state.selectionManager,
+    preview,
+    ...options,
+    getItems: options.getItems!
+  });
+  useDraggableCollection({}, dragState, domRef);
+  let dropState = useDroppableCollectionState({
+    collection: state.collection,
+    selectionManager: state.selectionManager,
+    ...options
+  });
+  let layout = useListLayout<T>(props.density || 'regular');
+  let droppableCollection = useDroppableCollection(
+    {
+      keyboardDelegate: new ListKeyboardDelegate({
+        collection: state.collection,
+        disabledKeys: dragState.draggingKeys.size ? undefined : state.selectionManager.disabledKeys,
+        ref: domRef,
+        layoutDelegate: layout
+      }),
+      dropTargetDelegate: layout,
+      ...options
+    },
+    dropState,
+    domRef
+  );
+  let isRootDropTarget = dropState.isDropTarget({type: 'root'});
+  return (
+    <ListViewImpl
+      props={props}
+      domRef={domRef}
+      state={state}
+      layout={layout}
+      preview={preview}
+      dragState={dragState}
+      dropState={dropState}
+      droppableCollection={droppableCollection}
+      isRootDropTarget={isRootDropTarget}
+    />
+  );
+}
+
+function ListViewWithDrag<T extends object>({
+  props,
+  domRef
+}: {
+  props: SpectrumListViewProps<T>;
+  domRef: RefObject<HTMLDivElement | null>;
+}) {
+  let {dragAndDropHooks} = props;
+  let options = dragAndDropHooks!.options!;
+  let state = useListState({
+    ...props,
+    selectionBehavior: props.selectionStyle === 'highlight' ? 'replace' : 'toggle'
+  });
+  let preview = useRef(null);
+  let dragState = useDraggableCollectionState({
+    collection: state.collection,
+    selectionManager: state.selectionManager,
+    preview,
+    ...options,
+    getItems: options.getItems!
+  });
+  useDraggableCollection({}, dragState, domRef);
+  let layout = useListLayout<T>(props.density || 'regular');
+  return (
+    <ListViewImpl
+      props={props}
+      domRef={domRef}
+      state={state}
+      layout={layout}
+      preview={preview}
+      dragState={dragState}
+      dropState={null}
+      droppableCollection={null}
+      isRootDropTarget={false}
+    />
+  );
+}
+
+function ListViewWithDrop<T extends object>({
+  props,
+  domRef
+}: {
+  props: SpectrumListViewProps<T>;
+  domRef: RefObject<HTMLDivElement | null>;
+}) {
+  let {dragAndDropHooks} = props;
+  let options = dragAndDropHooks!.options!;
+  let state = useListState({
+    ...props,
+    selectionBehavior: props.selectionStyle === 'highlight' ? 'replace' : 'toggle'
+  });
+  let dropState = useDroppableCollectionState({
+    collection: state.collection,
+    selectionManager: state.selectionManager,
+    ...options
+  });
+  let layout = useListLayout<T>(props.density || 'regular');
+  let droppableCollection = useDroppableCollection(
+    {
+      keyboardDelegate: new ListKeyboardDelegate({
+        collection: state.collection,
+        disabledKeys: state.selectionManager.disabledKeys,
+        ref: domRef,
+        layoutDelegate: layout
+      }),
+      dropTargetDelegate: layout,
+      ...options
+    },
+    dropState,
+    domRef
+  );
+  let isRootDropTarget = dropState.isDropTarget({type: 'root'});
+  return (
+    <ListViewImpl
+      props={props}
+      domRef={domRef}
+      state={state}
+      layout={layout}
+      preview={null}
+      dragState={null}
+      dropState={dropState}
+      droppableCollection={droppableCollection}
+      isRootDropTarget={isRootDropTarget}
+    />
+  );
+}
+
+function ListViewImpl<T extends object>({
+  props,
+  domRef,
+  state,
+  layout,
+  preview,
+  dragState,
+  dropState,
+  droppableCollection,
+  isRootDropTarget
+}: ListViewImplProps<T>) {
   let {
     density = 'regular',
     loadingState,
@@ -179,57 +345,10 @@ export const ListView = React.forwardRef(function ListView<T extends object>(
       );
     }
   }, [isListDraggable, isListDroppable]);
-
-  let domRef = useDOMRef(ref);
-  let state = useListState({
-    ...props,
-    selectionBehavior: props.selectionStyle === 'highlight' ? 'replace' : 'toggle'
-  });
   let {collection, selectionManager} = state;
   let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
-
   let {styleProps} = useStyleProps(props);
-  let dragState: DraggableCollectionState | null = null;
-  let preview = useRef(null);
-  if (isListDraggable && dragAndDropHooks) {
-    // oxlint-disable-next-line react/react-compiler
-    dragState = dragAndDropHooks.useDraggableCollectionState!({
-      collection,
-      selectionManager,
-      preview
-    });
-    // oxlint-disable-next-line react/react-compiler
-    dragAndDropHooks.useDraggableCollection!({}, dragState, domRef);
-  }
-  let layout = useListLayout(state, props.density || 'regular', overflowMode);
-
-  let DragPreview = dragAndDropHooks?.DragPreview;
-  let dropState: DroppableCollectionState | null = null;
-  let droppableCollection: DroppableCollectionResult | null = null;
-  let isRootDropTarget = false;
-  if (isListDroppable && dragAndDropHooks) {
-    // oxlint-disable-next-line react/react-compiler
-    dropState = dragAndDropHooks.useDroppableCollectionState!({
-      collection,
-      selectionManager
-    });
-    // oxlint-disable-next-line react/react-compiler
-    droppableCollection = dragAndDropHooks.useDroppableCollection!(
-      {
-        keyboardDelegate: new ListKeyboardDelegate({
-          collection,
-          disabledKeys: dragState?.draggingKeys.size ? undefined : selectionManager.disabledKeys,
-          ref: domRef,
-          layoutDelegate: layout
-        }),
-        dropTargetDelegate: layout
-      },
-      dropState,
-      domRef
-    );
-
-    isRootDropTarget = dropState.isDropTarget({type: 'root'});
-  }
+  let DragPreviewComponent = dragAndDropHooks?.DragPreview ?? DragPreview;
 
   let {gridProps} = useGridList(
     {
@@ -336,8 +455,8 @@ export const ListView = React.forwardRef(function ListView<T extends object>(
           </Virtualizer>
         </FocusRing>
       </FocusScope>
-      {DragPreview && isListDraggable && dragAndDropHooks && dragState && (
-        <DragPreview ref={preview}>
+      {DragPreviewComponent && isListDraggable && dragAndDropHooks && dragState && (
+        <DragPreviewComponent ref={preview}>
           {() => {
             if (dragState.draggedKey == null) {
               return null;
@@ -360,10 +479,63 @@ export const ListView = React.forwardRef(function ListView<T extends object>(
               />
             );
           }}
-        </DragPreview>
+        </DragPreviewComponent>
       )}
     </ListViewContext.Provider>
   );
+}
+
+function ListViewWithoutDragDrop<T extends object>({
+  props,
+  domRef
+}: {
+  props: SpectrumListViewProps<T>;
+  domRef: RefObject<HTMLDivElement | null>;
+}) {
+  let state = useListState({
+    ...props,
+    selectionBehavior: props.selectionStyle === 'highlight' ? 'replace' : 'toggle'
+  });
+  let layout = useListLayout<T>(props.density || 'regular');
+  return (
+    <ListViewImpl
+      props={props}
+      domRef={domRef}
+      state={state}
+      layout={layout}
+      preview={null}
+      dragState={null}
+      dropState={null}
+      droppableCollection={null}
+      isRootDropTarget={false}
+    />
+  );
+}
+
+/**
+ * A ListView displays a list of interactive items, and allows a user to navigate, select, or
+ * perform an action.
+ */
+export const ListView = React.forwardRef(function ListView<T extends object>(
+  props: SpectrumListViewProps<T>,
+  ref: DOMRef<HTMLDivElement>
+) {
+  let domRef = useDOMRef(ref);
+  let {dragAndDropHooks} = props;
+  let isListDraggable = !!dragAndDropHooks?.useDraggableCollectionState;
+  let isListDroppable = !!dragAndDropHooks?.useDroppableCollectionState;
+
+  if (isListDraggable && isListDroppable && dragAndDropHooks) {
+    return <ListViewWithDragAndDrop props={props} domRef={domRef} />;
+  }
+  if (isListDraggable && dragAndDropHooks) {
+    return <ListViewWithDrag props={props} domRef={domRef} />;
+  }
+  if (isListDroppable && dragAndDropHooks) {
+    return <ListViewWithDrop props={props} domRef={domRef} />;
+  }
+
+  return <ListViewWithoutDragDrop props={props} domRef={domRef} />;
 }) as <T>(props: SpectrumListViewProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
 
 function Item({item}: {item: Node<unknown>}) {

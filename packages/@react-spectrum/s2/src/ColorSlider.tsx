@@ -50,10 +50,11 @@ export const ColorSliderContext =
  * A ColorSlider allows users to adjust an individual channel of a color value.
  */
 export const ColorSlider = forwardRef(function ColorSlider(
-  props: ColorSliderProps,
-  ref: DOMRef<HTMLDivElement>
+  propsArg: ColorSliderProps,
+  refArg: DOMRef<HTMLDivElement>
 ) {
-  // oxlint-disable-next-line react/react-compiler
+  let props = propsArg;
+  let ref = refArg;
   [props, ref] = useSpectrumContextProps(props, ref, ColorSliderContext);
   let {UNSAFE_className = '', UNSAFE_style, styles} = props;
   let containerRef = useDOMRef(ref);

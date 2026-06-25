@@ -65,10 +65,11 @@ export const ColorFieldContext =
  * A color field allows users to edit a hex color or individual color channel value.
  */
 export const ColorField = forwardRef(function ColorField(
-  props: ColorFieldProps,
-  ref: Ref<TextFieldRef>
+  propsArg: ColorFieldProps,
+  refArg: Ref<TextFieldRef>
 ) {
-  // oxlint-disable-next-line react/react-compiler
+  let props = propsArg;
+  let ref = refArg;
   [props, ref] = useSpectrumContextProps(props, ref, ColorFieldContext);
   let formContext = useContext(FormContext);
   props = useFormProps(props);

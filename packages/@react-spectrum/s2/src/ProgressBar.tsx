@@ -173,10 +173,11 @@ const indeterminateAnimation = style({
  * etc., in a visual way. They can represent either determinate or indeterminate progress.
  */
 export const ProgressBar = /*#__PURE__*/ forwardRef(function ProgressBar(
-  props: ProgressBarProps,
-  ref: DOMRef<HTMLDivElement>
+  propsArg: ProgressBarProps,
+  refArg: DOMRef<HTMLDivElement>
 ) {
-  // oxlint-disable-next-line react/react-compiler
+  let props = propsArg;
+  let ref = refArg;
   [props, ref] = useSpectrumContextProps(props, ref, ProgressBarContext);
   let {
     label,

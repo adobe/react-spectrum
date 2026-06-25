@@ -91,9 +91,11 @@ export const TextFieldContext =
  * communicate the entry requirements.
  */
 export const TextField = forwardRef(function TextField(
-  props: TextFieldProps,
-  ref: Ref<TextFieldRef>
+  propsArg: TextFieldProps,
+  refArg: Ref<TextFieldRef>
 ) {
+  let props = propsArg;
+  let ref = refArg;
   [props, ref] = useSpectrumContextProps(props, ref, TextFieldContext);
   return (
     <TextFieldBase {...props} ref={ref}>
@@ -113,9 +115,11 @@ export const TextAreaContext =
  * are available to text fields.
  */
 export const TextArea = forwardRef(function TextArea(
-  props: TextAreaProps,
-  ref: Ref<TextFieldRef<HTMLTextAreaElement>>
+  propsArg: TextAreaProps,
+  refArg: Ref<TextFieldRef<HTMLTextAreaElement>>
 ) {
+  let props = propsArg;
+  let ref = refArg;
   [props, ref] = useSpectrumContextProps(props, ref, TextAreaContext);
   return (
     <TextFieldBase
@@ -131,13 +135,13 @@ export const TextArea = forwardRef(function TextArea(
 });
 
 export const TextFieldBase = forwardRef(function TextFieldBase(
-  props: TextFieldProps & {children: ReactNode; fieldGroupCss?: StyleString},
+  propsArg: TextFieldProps & {children: ReactNode; fieldGroupCss?: StyleString},
   ref: Ref<TextFieldRef<HTMLInputElement | HTMLTextAreaElement>>
 ) {
+  let props = propsArg;
   let inputRef = useRef<HTMLInputElement>(null);
   let domRef = useRef<HTMLDivElement>(null);
   let formContext = useContext(FormContext);
-  // oxlint-disable-next-line react/react-compiler
   props = useFormProps(props);
   let {
     label,

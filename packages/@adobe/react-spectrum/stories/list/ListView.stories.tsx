@@ -24,7 +24,7 @@ import {Link} from '../../src/link/Link';
 import {ListView, SpectrumListViewProps} from '../../src/list/ListView';
 import {Meta, StoryObj} from '@storybook/react';
 import NoSearchResults from '@spectrum-icons/illustrations/NoSearchResults';
-import React, {JSX, useEffect, useState} from 'react';
+import React, {JSX, useState} from 'react';
 import {Text} from '../../src/text/Text';
 import {useAsyncList} from 'react-stately/useAsyncList';
 import {useListData} from 'react-stately/useListData';
@@ -454,18 +454,10 @@ function ActionBarExample(props?) {
 
 let i = 0;
 function EmptyTest() {
-  const [items, setItems] = useState<{key: number; name: string}[]>([]);
+  const [items, setItems] = useState<{key: number; name: string}[]>(() =>
+    Array.from({length: 20}, (_, key) => ({key, name: `Item ${key}`}))
+  );
   const [divProps, setDivProps] = useState({});
-
-  useEffect(() => {
-    let newItems: typeof items = [];
-    // oxlint-disable-next-line react/react-compiler
-    for (i = 0; i < 20; i++) {
-      newItems.push({key: i, name: `Item ${i}`});
-    }
-    // oxlint-disable-next-line react/react-compiler
-    setItems(newItems);
-  }, []);
 
   const renderEmpty = () => (
     <IllustratedMessage>

@@ -13,7 +13,6 @@
 import {AriaLabelingProps, DOMAttributes, DOMProps, RefObject} from '@react-types/shared';
 import {clamp} from 'react-stately/private/utils/number';
 import {getSliderThumbId, sliderData} from './utils';
-import {mergeProps} from '../utils/mergeProps';
 import React, {LabelHTMLAttributes, OutputHTMLAttributes, useRef} from 'react';
 import {setInteractionModality} from '../interactions/useFocusVisible';
 import {SliderProps, SliderState} from 'react-stately/useSliderState';
@@ -50,7 +49,6 @@ export interface SliderAria {
  *   accepts click and drag motions, so that the closest thumb will follow clicks and drags on
  *   the track.
  */
-// oxlint-disable-next-line react/react-compiler
 export function useSlider<T extends number | number[]>(
   props: AriaSliderProps<T>,
   state: SliderState,
@@ -99,10 +97,12 @@ export function useSlider<T extends number | number[]>(
         delta = -delta;
       }
 
-      currentPosition.current! += delta;
+      if (currentPosition.current != null) {
+        currentPosition.current += delta;
+      }
 
       if (realTimeTrackDraggingIndex.current != null && trackRef.current) {
-        const percent = clamp(currentPosition.current! / size, 0, 1);
+        const percent = clamp((currentPosition.current ?? 0) / size, 0, 1);
         state.setThumbPercent(realTimeTrackDraggingIndex.current, percent);
       }
     },
@@ -199,12 +199,15 @@ export function useSlider<T extends number | number[]>(
     // causes this to override the `aria-labelledby` on the thumb. This causes the first
     // thumb to only be announced as the slider label rather than its individual name as well.
     // See https://bugs.webkit.org/show_bug.cgi?id=172464.
-    delete labelProps.htmlFor;
-    labelProps.onClick = () => {
-      // Safari does not focus <input type="range"> elements when clicking on an associated <label>,
-      // so do it manually. In addition, make sure we show the focus ring.
-      document.getElementById(getSliderThumbId(state, 0))?.focus();
-      setInteractionModality('keyboard');
+    let {htmlFor: _htmlFor, ...restLabelProps} = labelProps;
+    labelProps = {
+      ...restLabelProps,
+      onClick: () => {
+        // Safari does not focus <input type="range"> elements when clicking on an associated <label>,
+        // so do it manually. In addition, make sure we show the focus ring.
+        document.getElementById(getSliderThumbId(state, 0))?.focus();
+        setInteractionModality('keyboard');
+      }
     };
   }
 
@@ -217,35 +220,33 @@ export function useSlider<T extends number | number[]>(
       role: 'group',
       ...fieldProps
     },
-    trackProps: mergeProps(
-      {
-        onMouseDown(e: React.MouseEvent) {
-          if (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey) {
-            return;
-          }
-          onDownTrack(e, undefined, e.clientX, e.clientY);
-        },
-        onPointerDown(e: React.PointerEvent) {
-          if (e.pointerType === 'mouse' && (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey)) {
-            return;
-          }
-          onDownTrack(e, e.pointerId, e.clientX, e.clientY);
-        },
-        onTouchStart(e: React.TouchEvent) {
-          onDownTrack(
-            e,
-            e.changedTouches[0].identifier,
-            e.changedTouches[0].clientX,
-            e.changedTouches[0].clientY
-          );
-        },
-        style: {
-          position: 'relative',
-          touchAction: 'none'
+    trackProps: {
+      onMouseDown(e: React.MouseEvent) {
+        if (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey) {
+          return;
         }
+        onDownTrack(e, undefined, e.clientX, e.clientY);
       },
-      moveProps
-    ),
+      onPointerDown(e: React.PointerEvent) {
+        if (e.pointerType === 'mouse' && (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey)) {
+          return;
+        }
+        onDownTrack(e, e.pointerId, e.clientX, e.clientY);
+      },
+      onTouchStart(e: React.TouchEvent) {
+        onDownTrack(
+          e,
+          e.changedTouches[0].identifier,
+          e.changedTouches[0].clientX,
+          e.changedTouches[0].clientY
+        );
+      },
+      style: {
+        position: 'relative',
+        touchAction: 'none'
+      },
+      ...moveProps
+    },
     outputProps: {
       htmlFor: state.values.map((_, index) => getSliderThumbId(state, index)).join(' '),
       'aria-live': 'off'

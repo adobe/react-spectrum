@@ -18,7 +18,7 @@ import {ClearButton} from '../button/ClearButton';
 import {ComboBoxState, useComboBoxState} from 'react-stately/useComboBoxState';
 import {DismissButton} from 'react-aria/Overlay';
 import {Field} from '../label/Field';
-import {FocusableRef, ValidationState} from '@react-types/shared';
+import {FocusableElement, FocusableRef, ValidationState} from '@react-types/shared';
 import {focusSafely} from 'react-aria/private/interactions/focusSafely';
 import {FocusScope} from 'react-aria/FocusScope';
 import {getActiveElement} from 'react-aria/private/utils/shadowdom/DOMFunctions';
@@ -60,10 +60,10 @@ import {useProviderProps} from '../provider/Provider';
 import {useSearchAutocomplete} from 'react-aria/private/autocomplete/useSearchAutocomplete';
 
 function ForwardMobileSearchAutocomplete<T extends object>(
-  props: SpectrumSearchAutocompleteProps<T>,
+  propsArg: SpectrumSearchAutocompleteProps<T>,
   ref: FocusableRef<HTMLElement>
 ) {
-  // oxlint-disable-next-line react/react-compiler
+  let props = propsArg;
   props = useProviderProps(props);
 
   let {
@@ -90,7 +90,7 @@ function ForwardMobileSearchAutocomplete<T extends object>(
     onSelectionChange: key => key !== null && onSubmit(null, key),
     selectedKey: undefined,
     defaultSelectedKey: undefined,
-    validate: useCallback(v => validate?.(v.inputValue), [validate])
+    validate: v => validate?.(v.inputValue)
   });
 
   let buttonRef = useRef<HTMLDivElement>(null);
@@ -118,11 +118,13 @@ function ForwardMobileSearchAutocomplete<T extends object>(
   });
 
   // Focus the button and show focus ring when clicking on the label
-  // oxlint-disable-next-line react/react-compiler
-  labelProps.onClick = () => {
-    if (!props.isDisabled && buttonRef.current) {
-      buttonRef.current.focus();
-      setInteractionModality('keyboard');
+  let mergedLabelProps = {
+    ...labelProps,
+    onClick: () => {
+      if (!props.isDisabled) {
+        focusSafely(buttonRef.current as FocusableElement);
+        setInteractionModality('keyboard');
+      }
     }
   };
 
@@ -148,7 +150,7 @@ function ForwardMobileSearchAutocomplete<T extends object>(
     <>
       <Field
         {...props}
-        labelProps={labelProps}
+        labelProps={mergedLabelProps}
         descriptionProps={descriptionProps}
         errorMessageProps={errorMessageProps}
         isInvalid={isInvalid}
@@ -419,12 +421,12 @@ function SearchAutocompleteTray<T>(props: SearchAutocompleteTrayProps<T>) {
   // VoiceOver on iOS reads "double tap to collapse" when focused on the input rather than
   // "double tap to edit text", as with a textbox or searchbox. We'd like double tapping to
   // open the virtual keyboard rather than closing the tray.
-  // oxlint-disable-next-line react/react-compiler
-  inputProps.role = 'searchbox';
-  // oxlint-disable-next-line react/react-compiler
-  inputProps['aria-haspopup'] = 'listbox';
-  // oxlint-disable-next-line react/react-compiler
-  delete inputProps.onTouchEnd;
+  let {onTouchEnd: _inputOnTouchEnd, ...restInputProps} = inputProps;
+  let trayInputProps = {
+    ...restInputProps,
+    role: 'searchbox',
+    'aria-haspopup': 'listbox'
+  };
 
   let clearButton = (
     <ClearButton
@@ -472,10 +474,11 @@ function SearchAutocompleteTray<T>(props: SearchAutocompleteTrayProps<T>) {
     }
   }, [inputRef, popoverRef, isTouchDown]);
 
-  let inputValue = inputProps.value;
+  let inputValue = trayInputProps.value;
   let lastInputValue = useRef(inputValue);
+  let isFiltering = loadingState === 'filtering';
   useEffect(() => {
-    if (loadingState === 'filtering' && !showLoading) {
+    if (isFiltering && !showLoading) {
       if (timeout.current === null) {
         timeout.current = setTimeout(() => {
           setShowLoading(true);
@@ -489,10 +492,7 @@ function SearchAutocompleteTray<T>(props: SearchAutocompleteTrayProps<T>) {
           setShowLoading(true);
         }, 500);
       }
-    } else if (loadingState !== 'filtering') {
-      // If loading is no longer happening, clear any timers and hide the loading circle
-      // oxlint-disable-next-line react/react-compiler
-      setShowLoading(false);
+    } else if (!isFiltering) {
       if (timeout.current !== null) {
         clearTimeout(timeout.current);
         timeout.current = null;
@@ -500,7 +500,13 @@ function SearchAutocompleteTray<T>(props: SearchAutocompleteTrayProps<T>) {
     }
 
     lastInputValue.current = inputValue;
-  }, [loadingState, inputValue, showLoading]);
+  }, [isFiltering, inputValue, showLoading]);
+
+  let [prevIsFiltering, setPrevIsFiltering] = useState(isFiltering);
+  if (prevIsFiltering !== isFiltering && !isFiltering) {
+    setShowLoading(false);
+    setPrevIsFiltering(isFiltering);
+  }
 
   let onKeyDown = e => {
     // Close virtual keyboard, close tray, and fire onSubmit if user hits Enter w/o any focused options
@@ -513,14 +519,13 @@ function SearchAutocompleteTray<T>(props: SearchAutocompleteTrayProps<T>) {
         onSubmit(inputValue == null ? null : inputValue.toString(), null);
       }
     } else {
-      if (inputProps.onKeyDown) {
-        inputProps.onKeyDown(e);
-      }
+      trayInputProps.onKeyDown?.(e);
     }
   };
 
-  if (icon) {
-    icon = React.cloneElement(icon, {
+  let renderedIcon = icon;
+  if (renderedIcon) {
+    renderedIcon = React.cloneElement(renderedIcon, {
       UNSAFE_className: classNames(textfieldStyles, 'spectrum-Textfield-icon'),
       size: 'S'
     });
@@ -536,7 +541,7 @@ function SearchAutocompleteTray<T>(props: SearchAutocompleteTrayProps<T>) {
         <TextFieldBase
           label={label}
           labelProps={labelProps}
-          inputProps={{...inputProps, onKeyDown}}
+          inputProps={{...trayInputProps, onKeyDown} as React.InputHTMLAttributes<HTMLInputElement>}
           inputRef={inputRef}
           isDisabled={isDisabled}
           isLoading={showLoading && loadingState === 'filtering'}
@@ -548,7 +553,7 @@ function SearchAutocompleteTray<T>(props: SearchAutocompleteTrayProps<T>) {
               ? clearButton
               : undefined
           }
-          icon={icon}
+          icon={renderedIcon}
           UNSAFE_className={classNames(
             searchStyles,
             'spectrum-Search',

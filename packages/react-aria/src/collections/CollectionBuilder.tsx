@@ -31,6 +31,7 @@ import React, {
   useState
 } from 'react';
 import {useIsSSR} from '../ssr/SSRProvider';
+import {useLayoutEffect} from '../utils/useLayoutEffect';
 import {useSyncExternalStore as useSyncExternalStoreShim} from 'use-sync-external-store/shim/index.js';
 
 const ShallowRenderContext = createContext(false);
@@ -60,11 +61,14 @@ export function CollectionBuilder<C extends BaseCollection<any>>(
     return props.content as ReactElement;
   }
 
+  return <CollectionBuilderRoot {...props} />;
+}
+
+function CollectionBuilderRoot<C extends BaseCollection<any>>(
+  props: CollectionBuilderProps<C>
+): ReactElement {
   // Otherwise, render a hidden copy of the children so that we can build the collection before constructing the state.
   // This should always come before the real DOM content so we have built the collection by the time it renders during SSR.
-
-  // This is fine. CollectionDocumentContext never changes after mounting.
-  // oxlint-disable-next-line react/react-compiler, react-hooks/rules-of-hooks
   let {collection, document} = useCollectionDocument(props.createCollection);
   return (
     <>
@@ -96,12 +100,9 @@ function useSyncExternalStoreFallback<C>(
 ): C {
   let isSSR = useIsSSR();
   let isSSRRef = useRef(isSSR);
-  // This is read immediately inside the wrapper, which also runs during render.
-  // We just need a ref to avoid invalidating the callback itself, which
-  // would cause React to re-run the callback more than necessary.
-  // eslint-disable-next-line rsp-rules/pure-render
-  // oxlint-disable-next-line react/react-compiler, rsp-rules/pure-render
-  isSSRRef.current = isSSR;
+  useLayoutEffect(() => {
+    isSSRRef.current = isSSR;
+  });
 
   let getSnapshotWrapper = useCallback(() => {
     return isSSRRef.current ? getServerSnapshot() : getSnapshot();
@@ -122,20 +123,21 @@ function useCollectionDocument<T extends object, C extends BaseCollection<T>>(
   let [document] = useState(
     () => new Document<T, C>(createCollection?.() || (new BaseCollection() as C))
   );
+  let isServerSnapshot = useRef(false);
   let subscribe = useCallback((fn: () => void) => document.subscribe(fn), [document]);
   let getSnapshot = useCallback(() => {
     let collection = document.getCollection();
-    if (document.isSSR) {
+    if (isServerSnapshot.current) {
       // After SSR is complete, reset the document to empty so it is ready for React to render the portal into.
       // We do this _after_ getting the collection above so that the collection still has content in it from SSR
       // during the current render, before React has finished the client render.
+      isServerSnapshot.current = false;
       document.resetAfterSSR();
     }
     return collection;
   }, [document]);
   let getServerSnapshot = useCallback(() => {
-    // oxlint-disable-next-line react/react-compiler
-    document.isSSR = true;
+    isServerSnapshot.current = true;
     return document.getCollection();
   }, [document]);
   let collection = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
@@ -165,10 +167,10 @@ function useSSRCollectionNode<T extends Element>(
   render?: (node: Node<any>) => ReactElement
 ) {
   // To prevent breaking change, if CollectionNodeClass is a string, create a CollectionNodeClass using the string as the type
-  if (typeof CollectionNodeClass === 'string') {
-    // oxlint-disable-next-line react/react-compiler
-    CollectionNodeClass = createCollectionNodeClass(CollectionNodeClass);
-  }
+  let resolvedCollectionNodeClass =
+    typeof CollectionNodeClass === 'string'
+      ? createCollectionNodeClass(CollectionNodeClass)
+      : CollectionNodeClass;
 
   // During SSR, portals are not supported, so the collection children will be wrapped in an SSRContext.
   // Since SSR occurs only once, we assume that the elements are rendered in order and never re-render.
@@ -177,17 +179,17 @@ function useSSRCollectionNode<T extends Element>(
   // After hydration, we switch to client rendering using the portal.
   let itemRef = useCallback(
     (element: ElementNode<any> | null) => {
-      element?.setProps(props, ref, CollectionNodeClass, rendered, render);
+      element?.setProps(props, ref, resolvedCollectionNodeClass, rendered, render);
     },
-    [props, ref, rendered, render, CollectionNodeClass]
+    [props, ref, rendered, render, resolvedCollectionNodeClass]
   );
   let parentNode = useContext(SSRContext);
   if (parentNode) {
     // Guard against double rendering in strict mode.
     let element = parentNode.ownerDocument.nodesByProps.get(props);
     if (!element) {
-      element = parentNode.ownerDocument.createElement(CollectionNodeClass.type);
-      element.setProps(props, ref, CollectionNodeClass, rendered, render);
+      element = parentNode.ownerDocument.createElement(resolvedCollectionNodeClass.type);
+      element.setProps(props, ref, resolvedCollectionNodeClass, rendered, render);
       parentNode.appendChild(element);
       parentNode.ownerDocument.updateCollection();
       parentNode.ownerDocument.nodesByProps.set(props, element);
@@ -197,7 +199,8 @@ function useSSRCollectionNode<T extends Element>(
   }
 
   // @ts-ignore
-  return <CollectionNodeClass.type ref={itemRef}>{children}</CollectionNodeClass.type>;
+  let Type = resolvedCollectionNodeClass.type;
+  return <Type {...({ref: itemRef, children} as any)} />;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -289,13 +292,10 @@ export function Collection<T>(props: CollectionProps<T>): JSX.Element {
   // Propagate dependencies and idScope to child collections.
   ctx = useMemo(
     () => ({
-      // oxlint-disable-next-line react-hooks/exhaustive-deps
       dependencies,
       idScope
     }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    // oxlint-disable-next-line react/react-compiler, react-hooks/exhaustive-deps
-    [idScope, ...dependencies]
+    [idScope, dependencies]
   );
 
   return <CollectionContext.Provider value={ctx}>{children}</CollectionContext.Provider>;

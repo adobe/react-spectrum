@@ -141,13 +141,12 @@ export function useMenuTrigger<T>(
   };
 
   // omit onPress from triggerProps since we override it above.
-  // oxlint-disable-next-line react/react-compiler
-  delete triggerProps.onPress;
+  let {onPress: _, ...triggerPropsWithoutPress} = triggerProps;
 
   return {
     // @ts-ignore - TODO we pass out both DOMAttributes AND AriaButtonProps, but useButton will discard the longPress event handlers, it's only through PressResponder magic that this works for RSP and RAC. it does not work in aria examples
     menuTriggerProps: {
-      ...triggerProps,
+      ...triggerPropsWithoutPress,
       ...(trigger === 'press' ? pressProps : longPressProps),
       ...keyboardProps,
       id: menuTriggerId

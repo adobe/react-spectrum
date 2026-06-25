@@ -151,33 +151,47 @@ ResponsiveStyleProps.story = {
   name: 'responsive styleProps'
 };
 
+const customResponsiveWidths = {
+  base: 'size-1600',
+  XS: 'size-2000',
+  S: 'size-2400',
+  M: 'size-3000',
+  L: 'size-3400',
+  XL: 'size-4600',
+  XXL: 'size-6000'
+};
+
+function CustomResponsiveBreakpoint(): React.JSX.Element {
+  let {matchedBreakpoints} = useBreakpoint()!;
+  let breakpoint = matchedBreakpoints[0];
+  return (
+    <>
+      <Button variant="primary" width={customResponsiveWidths}>
+        Button with {breakpoint} breakpoint.
+      </Button>
+      <div>width: {customResponsiveWidths[breakpoint]}</div>
+    </>
+  );
+}
+
+function BreakpointOmittedContent(): React.JSX.Element {
+  let {matchedBreakpoints} = useBreakpoint()!;
+  let breakpoint = matchedBreakpoints[0];
+  let width = {base: 'size-1600', S: 'size-2400', L: 'size-3400'};
+  return (
+    <>
+      <p>button's width will be S: 'size-2400' at M viewport.</p>
+      <Button variant="primary" width={width}>
+        Button with {breakpoint} breakpoint.
+      </Button>
+    </>
+  );
+}
+
 export const CustomResponsiveStyleProps: ProviderStory = () => {
-  let Breakpoint = () => {
-    // oxlint-disable-next-line react/react-compiler
-    let {matchedBreakpoints} = useBreakpoint()!;
-    let breakpoint = matchedBreakpoints[0];
-    let width = {
-      base: 'size-1600',
-      XS: 'size-2000',
-      S: 'size-2400',
-      M: 'size-3000',
-      L: 'size-3400',
-      XL: 'size-4600',
-      XXL: 'size-6000'
-    };
-    return (
-      <>
-        <Button variant="primary" width={width}>
-          Button with {breakpoint} breakpoint.
-        </Button>
-        <div>width: {width[breakpoint]}</div>
-      </>
-    );
-  };
   return (
     <Provider breakpoints={{S: 480, M: 640, L: 1024}} UNSAFE_style={{padding: 50}}>
-      {/* oxlint-disable-next-line react/react-compiler */}
-      <Breakpoint />
+      <CustomResponsiveBreakpoint />
     </Provider>
   );
 };
@@ -187,24 +201,9 @@ CustomResponsiveStyleProps.story = {
 };
 
 export const BreakpointOmitted: ProviderStory = () => {
-  let Breakpoint = () => {
-    // oxlint-disable-next-line react/react-compiler
-    let {matchedBreakpoints} = useBreakpoint()!;
-    let breakpoint = matchedBreakpoints[0];
-    let width = {base: 'size-1600', S: 'size-2400', L: 'size-3400'};
-    return (
-      <>
-        <p>button's width will be S: 'size-2400' at M viewport.</p>
-        <Button variant="primary" width={width}>
-          Button with {breakpoint} breakpoint.
-        </Button>
-      </>
-    );
-  };
   return (
     <Provider UNSAFE_style={{padding: 50}}>
-      {/* oxlint-disable-next-line react/react-compiler */}
-      <Breakpoint />
+      <BreakpointOmittedContent />
     </Provider>
   );
 };

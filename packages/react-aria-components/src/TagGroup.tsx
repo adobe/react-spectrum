@@ -49,7 +49,11 @@ import {
 } from '@react-types/shared';
 import {ItemNode} from 'react-aria/private/collections/BaseCollection';
 import {LabelContext} from './Label';
-import {ListState, UNSTABLE_useFilteredListState, useListState} from 'react-stately/useListState';
+import {
+  ListState,
+  UNSTABLE_useFilteredListState as useFilteredListState,
+  useListState
+} from 'react-stately/useListState';
 import {ListStateContext} from './ListBox';
 import {mergeProps} from 'react-aria/mergeProps';
 import {Node} from '@react-types/shared';
@@ -172,8 +176,7 @@ function TagGroupInner<T>({props, forwardedRef: ref, collection}: TagGroupInnerP
     collection
   });
 
-  // oxlint-disable-next-line react/react-compiler
-  let filteredState = UNSTABLE_useFilteredListState(tagGroupState as ListState<T>, filter);
+  let filteredState = useFilteredListState(tagGroupState as ListState<T>, filter);
 
   // Prevent DOM props from going to two places.
   let domProps = filterDOMProps(otherProps, {global: true});

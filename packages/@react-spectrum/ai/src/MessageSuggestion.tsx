@@ -110,13 +110,12 @@ export const MessageSuggestion = forwardRef(function MessageSuggestion(
   let {groupSize} = useContext(MessageSuggestionContext);
   size = groupSize ? groupSize : size;
 
-  // oxlint-disable react/react-compiler
   return (
     <RACButton
       {...filterDOMProps(props, {labelable: true})}
       {...otherProps}
       ref={domRef}
-      style={pressScale(domRef)}
+      style={renderProps => pressScale(domRef)(renderProps)}
       className={renderProps => mergeStyles(suggestionStyles({...renderProps, size}), styles)}>
       <Provider
         values={[
@@ -140,7 +139,6 @@ export const MessageSuggestion = forwardRef(function MessageSuggestion(
       </Provider>
     </RACButton>
   );
-  // oxlint-enable react/react-compiler
 });
 
 export interface MessageSuggestionListProps extends DOMProps, AriaLabelingProps, SlotProps {

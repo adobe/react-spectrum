@@ -42,6 +42,7 @@ import {
 import intlMessages from '../../intl/dnd/*.json';
 import {isVirtualClick, isVirtualPointerEvent} from '../utils/isVirtualEvent';
 import {useDescription} from '../utils/useDescription';
+import {useEffectEvent} from '../utils/useEffectEvent';
 import {useGlobalListeners} from '../utils/useGlobalListeners';
 import {useLocalizedStringFormatter} from '../i18n/useLocalizedStringFormatter';
 
@@ -107,13 +108,11 @@ const MESSAGES = {
 export function useDrag(options: DragOptions): DragResult {
   let {hasDragButton, isDisabled} = options;
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/dnd');
-  // oxlint-disable-next-line react/react-compiler
-  let state = useRef({
-    options,
+  let getOptions = useEffectEvent(() => options);
+  let stateRef = useRef({
     x: 0,
     y: 0
-  }).current;
-  state.options = options;
+  });
   let isDraggingRef = useRef<Element | null>(null);
   let [isDragging, setDraggingState] = useState(false);
   let setDragging = (element: Element | null) => {
@@ -222,8 +221,8 @@ export function useDrag(options: DragOptions): DragResult {
       },
       {once: true}
     );
-    state.x = e.clientX;
-    state.y = e.clientY;
+    stateRef.current.x = e.clientX;
+    stateRef.current.y = e.clientY;
 
     // Wait a frame before we set dragging to true so that the browser has time to
     // render the preview image before we update the element that has been dragged.
@@ -237,7 +236,7 @@ export function useDrag(options: DragOptions): DragResult {
     // Prevent the drag event from propagating to any parent draggables
     e.stopPropagation();
 
-    if (e.clientX === state.x && e.clientY === state.y) {
+    if (e.clientX === stateRef.current.x && e.clientY === stateRef.current.y) {
       return;
     }
 
@@ -249,8 +248,8 @@ export function useDrag(options: DragOptions): DragResult {
       });
     }
 
-    state.x = e.clientX;
-    state.y = e.clientY;
+    stateRef.current.x = e.clientX;
+    stateRef.current.y = e.clientY;
   };
 
   let onDragEnd = (e: DragEvent) => {
@@ -291,14 +290,14 @@ export function useDrag(options: DragOptions): DragResult {
         isDraggingRef.current &&
         (!isDraggingRef.current.isConnected || parseInt(ReactVersion, 10) < 17)
       ) {
-        if (typeof state.options.onDragEnd === 'function') {
+        if (typeof getOptions().onDragEnd === 'function') {
           let event: DragEndEvent = {
             type: 'dragend',
             x: 0,
             y: 0,
             dropOperation: DROP_EFFECT_TO_DROP_OPERATION[globalDropEffect || 'none']
           };
-          state.options.onDragEnd(event);
+          getOptions().onDragEnd?.(event);
         }
 
         setDragging(null);
@@ -306,7 +305,7 @@ export function useDrag(options: DragOptions): DragResult {
         setGlobalDropEffect(undefined);
       }
     };
-  }, [state]);
+  }, []);
 
   let onPress = (e: PressEvent) => {
     if (e.pointerType !== 'keyboard' && e.pointerType !== 'virtual') {
@@ -317,9 +316,9 @@ export function useDrag(options: DragOptions): DragResult {
   };
 
   let startDragging = (target: HTMLElement) => {
-    if (typeof state.options.onDragStart === 'function') {
+    if (typeof getOptions().onDragStart === 'function') {
       let rect = target.getBoundingClientRect();
-      state.options.onDragStart({
+      getOptions().onDragStart?.({
         type: 'dragstart',
         x: rect.x + rect.width / 2,
         y: rect.y + rect.height / 2
@@ -329,15 +328,15 @@ export function useDrag(options: DragOptions): DragResult {
     DragManager.beginDragging(
       {
         element: target,
-        items: state.options.getItems(),
+        items: getOptions().getItems(),
         allowedDropOperations:
-          typeof state.options.getAllowedDropOperations === 'function'
-            ? state.options.getAllowedDropOperations()
+          typeof getOptions().getAllowedDropOperations === 'function'
+            ? (getOptions().getAllowedDropOperations?.() ?? ['move', 'copy', 'link'])
             : ['move', 'copy', 'link'],
         onDragEnd(e) {
           setDragging(null);
-          if (typeof state.options.onDragEnd === 'function') {
-            state.options.onDragEnd(e);
+          if (typeof getOptions().onDragEnd === 'function') {
+            getOptions().onDragEnd?.(e);
           }
         }
       },

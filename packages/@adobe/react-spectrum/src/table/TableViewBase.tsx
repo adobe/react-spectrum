@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaButtonProps, useButton} from 'react-aria/useButton';
 import ArrowDownSmall from '@spectrum-icons/ui/ArrowDownSmall';
 import {Checkbox} from '../checkbox/Checkbox';
 import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
@@ -19,6 +20,7 @@ import {classNames} from '../utils/classNames';
 import {ColumnSize} from 'react-stately/useTableState';
 import {
   DOMRef,
+  DragPreviewRenderer,
   DropTarget,
   FocusableElement,
   FocusableRef,
@@ -26,10 +28,25 @@ import {
   RefObject
 } from '@react-types/shared';
 import type {DragAndDropHooks} from '../dnd/useDragAndDrop';
-import type {DraggableCollectionState} from 'react-stately/useDraggableCollectionState';
-import type {DraggableItemResult} from 'react-aria/useDraggableCollection';
-import type {DropIndicatorAria, DroppableCollectionResult} from 'react-aria/useDroppableCollection';
-import type {DroppableCollectionState} from 'react-stately/useDroppableCollectionState';
+import {
+  type DraggableCollectionState,
+  useDraggableCollectionState
+} from 'react-stately/useDraggableCollectionState';
+import {
+  type DraggableItemResult,
+  useDraggableCollection,
+  useDraggableItem
+} from 'react-aria/useDraggableCollection';
+import {
+  type DropIndicatorAria,
+  type DroppableCollectionResult,
+  useDropIndicator,
+  useDroppableCollection
+} from 'react-aria/useDroppableCollection';
+import {
+  type DroppableCollectionState,
+  useDroppableCollectionState
+} from 'react-stately/useDroppableCollectionState';
 import {FocusRing} from 'react-aria/FocusRing';
 import {FocusScope} from 'react-aria/FocusScope';
 import {getActiveElement, isFocusWithin} from 'react-aria/private/utils/shadowdom/DOMFunctions';
@@ -43,7 +60,12 @@ import {InsertionIndicator} from './InsertionIndicator';
 import intlMessages from '../../intl/table/*.json';
 import {isAndroid} from 'react-aria/private/utils/platform';
 import {Item} from 'react-stately/Item';
-import {LayoutInfo, Rect, ReusableView} from 'react-stately/useVirtualizerState';
+import {
+  LayoutInfo,
+  Rect,
+  ReusableView,
+  useVirtualizerState
+} from 'react-stately/useVirtualizerState';
 import {layoutInfoToStyle, VirtualizerItem} from 'react-aria/private/virtualizer/VirtualizerItem';
 import ListGripper from '@spectrum-icons/ui/ListGripper';
 import {ListKeyboardDelegate} from 'react-aria/ListKeyboardDelegate';
@@ -80,7 +102,6 @@ import {TableViewLayout} from './TableViewLayout';
 import {Tooltip} from '../tooltip/Tooltip';
 import {TooltipTrigger} from '../tooltip/TooltipTrigger';
 import {TreeGridState} from 'react-stately/private/table/useTreeGridState';
-import {useButton} from 'react-aria/useButton';
 import {useDOMRef, useFocusableRef, useUnwrapDOMRef} from '../utils/useDOMRef';
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {useLoadMore} from 'react-aria/private/utils/useLoadMore';
@@ -99,7 +120,6 @@ import {
   useTableSelectAllCheckbox,
   useTableSelectionCheckbox
 } from 'react-aria/useTable';
-import {useVirtualizerState} from 'react-stately/useVirtualizerState';
 import {useVisuallyHidden, VisuallyHidden} from 'react-aria/VisuallyHidden';
 
 const DEFAULT_HEADER_HEIGHT = {
@@ -146,7 +166,7 @@ export interface TableContextValue<T> {
   state: TableState<T>;
   dragState: DraggableCollectionState | null;
   dropState: DroppableCollectionState | null;
-  dragAndDropHooks?: DragAndDropHooks<T>['dragAndDropHooks'];
+  dragAndDropHooks?: DragAndDropHooks<any>['dragAndDropHooks'];
   isTableDraggable: boolean;
   isTableDroppable: boolean;
   layout: TableViewLayout<T>;
@@ -184,9 +204,197 @@ interface TableBaseProps<T> extends SpectrumTableProps<T> {
 
 type View = ReusableView<GridNode<unknown>, ReactNode>;
 
-function TableViewBase<T extends object>(props: TableBaseProps<T>, ref: DOMRef<HTMLDivElement>) {
-  // oxlint-disable-next-line react/react-compiler
+interface TableViewBaseImplProps<T extends object> {
+  props: TableBaseProps<T>;
+  domRef: RefObject<HTMLDivElement | null>;
+  preview: RefObject<DragPreviewRenderer | null> | null;
+  dragState: DraggableCollectionState | null;
+  dropState: DroppableCollectionState | null;
+  droppableCollection: DroppableCollectionResult | null;
+  isRootDropTarget: boolean;
+}
+
+function TableViewBaseWithDragAndDrop<T extends object>({
+  props,
+  domRef
+}: {
+  props: TableBaseProps<T>;
+  domRef: RefObject<HTMLDivElement | null>;
+}) {
+  let {dragAndDropHooks, state} = props;
+  let options = dragAndDropHooks!.options!;
+  let preview = useRef<DragPreviewRenderer | null>(null);
+  let dragState = useDraggableCollectionState({
+    collection: state.collection,
+    selectionManager: state.selectionManager,
+    preview,
+    ...options,
+    getItems: options.getItems!
+  });
+  useDraggableCollection({}, dragState, domRef);
+  let dropState = useDroppableCollectionState({
+    collection: state.collection,
+    selectionManager: state.selectionManager,
+    ...options
+  });
+  let layout = useTableViewLayout(props);
+  let droppableCollection = useDroppableCollection(
+    {
+      keyboardDelegate: new ListKeyboardDelegate({
+        collection: state.collection,
+        disabledKeys: state.selectionManager.disabledKeys,
+        ref: domRef,
+        layoutDelegate: layout
+      }),
+      dropTargetDelegate: layout,
+      ...options
+    },
+    dropState,
+    domRef
+  );
+  let isRootDropTarget = dropState.isDropTarget({type: 'root'});
+  return (
+    <TableViewBaseImpl
+      props={props}
+      domRef={domRef}
+      preview={preview}
+      dragState={dragState}
+      dropState={dropState}
+      droppableCollection={droppableCollection}
+      isRootDropTarget={isRootDropTarget}
+    />
+  );
+}
+
+function TableViewBaseWithDrag<T extends object>({
+  props,
+  domRef
+}: {
+  props: TableBaseProps<T>;
+  domRef: RefObject<HTMLDivElement | null>;
+}) {
+  let {dragAndDropHooks, state} = props;
+  let options = dragAndDropHooks!.options!;
+  let preview = useRef<DragPreviewRenderer | null>(null);
+  let dragState = useDraggableCollectionState({
+    collection: state.collection,
+    selectionManager: state.selectionManager,
+    preview,
+    ...options,
+    getItems: options.getItems!
+  });
+  useDraggableCollection({}, dragState, domRef);
+  return (
+    <TableViewBaseImpl
+      props={props}
+      domRef={domRef}
+      preview={preview}
+      dragState={dragState}
+      dropState={null}
+      droppableCollection={null}
+      isRootDropTarget={false}
+    />
+  );
+}
+
+function TableViewBaseWithDrop<T extends object>({
+  props,
+  domRef
+}: {
+  props: TableBaseProps<T>;
+  domRef: RefObject<HTMLDivElement | null>;
+}) {
+  let {dragAndDropHooks, state} = props;
+  let options = dragAndDropHooks!.options!;
+  let dropState = useDroppableCollectionState({
+    collection: state.collection,
+    selectionManager: state.selectionManager,
+    ...options
+  });
+  let layout = useTableViewLayout(props);
+  let droppableCollection = useDroppableCollection(
+    {
+      keyboardDelegate: new ListKeyboardDelegate({
+        collection: state.collection,
+        disabledKeys: state.selectionManager.disabledKeys,
+        ref: domRef,
+        layoutDelegate: layout
+      }),
+      dropTargetDelegate: layout,
+      ...options
+    },
+    dropState,
+    domRef
+  );
+  let isRootDropTarget = dropState.isDropTarget({type: 'root'});
+  return (
+    <TableViewBaseImpl
+      props={props}
+      domRef={domRef}
+      preview={null}
+      dragState={null}
+      dropState={dropState}
+      droppableCollection={droppableCollection}
+      isRootDropTarget={isRootDropTarget}
+    />
+  );
+}
+
+function useTableViewLayout<T extends object>(props: TableBaseProps<T>) {
+  let {scale} = useProvider();
+  let density = props.density || 'regular';
+  let overflowMode = props.overflowMode;
+  return useMemo(
+    () =>
+      new TableViewLayout<T>({
+        rowHeight: overflowMode === 'wrap' ? undefined : ROW_HEIGHTS[density][scale],
+        estimatedRowHeight: overflowMode === 'wrap' ? ROW_HEIGHTS[density][scale] : undefined,
+        headingHeight: overflowMode === 'wrap' ? undefined : DEFAULT_HEADER_HEIGHT[scale],
+        estimatedHeadingHeight: overflowMode === 'wrap' ? DEFAULT_HEADER_HEIGHT[scale] : undefined
+      }),
+    [overflowMode, scale, density]
+  );
+}
+
+function TableViewBase<T extends object>(propsArg: TableBaseProps<T>, ref: DOMRef<HTMLDivElement>) {
+  let props = propsArg;
   props = useProviderProps(props);
+  let domRef = useDOMRef(ref);
+  let isTableDraggable = !!props.dragAndDropHooks?.useDraggableCollectionState;
+  let isTableDroppable = !!props.dragAndDropHooks?.useDroppableCollectionState;
+
+  if (isTableDraggable && isTableDroppable && props.dragAndDropHooks) {
+    return <TableViewBaseWithDragAndDrop props={props} domRef={domRef} />;
+  }
+  if (isTableDraggable && props.dragAndDropHooks) {
+    return <TableViewBaseWithDrag props={props} domRef={domRef} />;
+  }
+  if (isTableDroppable && props.dragAndDropHooks) {
+    return <TableViewBaseWithDrop props={props} domRef={domRef} />;
+  }
+
+  return (
+    <TableViewBaseImpl
+      props={props}
+      domRef={domRef}
+      preview={null}
+      dragState={null}
+      dropState={null}
+      droppableCollection={null}
+      isRootDropTarget={false}
+    />
+  );
+}
+
+function TableViewBaseImpl<T extends object>({
+  props,
+  domRef,
+  preview,
+  dragState,
+  dropState,
+  droppableCollection,
+  isRootDropTarget
+}: TableViewBaseImplProps<T>) {
   let {
     isQuiet,
     onAction,
@@ -231,66 +439,13 @@ function TableViewBase<T extends object>(props: TableBaseProps<T>, ref: DOMRef<H
   // with table layout, so we need to track it here
   let [, setIsResizing] = useState(false);
 
-  let domRef = useDOMRef(ref);
   let headerRef = useRef<HTMLDivElement | null>(null);
   let bodyRef = useRef<HTMLDivElement | null>(null);
 
   let density = props.density || 'regular';
-  let layout = useMemo(
-    () =>
-      new TableViewLayout<T>({
-        // If props.rowHeight is auto, then use estimated heights based on scale, otherwise use fixed heights.
-        rowHeight: props.overflowMode === 'wrap' ? undefined : ROW_HEIGHTS[density][scale],
-        estimatedRowHeight: props.overflowMode === 'wrap' ? ROW_HEIGHTS[density][scale] : undefined,
-        headingHeight: props.overflowMode === 'wrap' ? undefined : DEFAULT_HEADER_HEIGHT[scale],
-        estimatedHeadingHeight:
-          props.overflowMode === 'wrap' ? DEFAULT_HEADER_HEIGHT[scale] : undefined
-      }),
-    // don't recompute when state.collection changes, only used for initial value
-
-    [props.overflowMode, scale, density]
-  );
-
-  let dragState: DraggableCollectionState | null = null;
-  let preview = useRef(null);
-  if (isTableDraggable && dragAndDropHooks) {
-    // oxlint-disable-next-line react/react-compiler
-    dragState = dragAndDropHooks.useDraggableCollectionState!({
-      collection: state.collection,
-      selectionManager: state.selectionManager,
-      preview
-    });
-    // oxlint-disable-next-line react/react-compiler
-    dragAndDropHooks.useDraggableCollection!({}, dragState, domRef);
-  }
+  let layout = useTableViewLayout(props);
 
   let DragPreview = dragAndDropHooks?.DragPreview;
-  let dropState: DroppableCollectionState | null = null;
-  let droppableCollection: DroppableCollectionResult | null = null;
-  let isRootDropTarget = false;
-  if (isTableDroppable && dragAndDropHooks) {
-    // oxlint-disable-next-line react/react-compiler
-    dropState = dragAndDropHooks.useDroppableCollectionState!({
-      collection: state.collection,
-      selectionManager: state.selectionManager
-    });
-    // oxlint-disable-next-line react/react-compiler
-    droppableCollection = dragAndDropHooks.useDroppableCollection!(
-      {
-        keyboardDelegate: new ListKeyboardDelegate({
-          collection: state.collection,
-          disabledKeys: state.selectionManager.disabledKeys,
-          ref: domRef,
-          layoutDelegate: layout
-        }),
-        dropTargetDelegate: layout
-      },
-      dropState,
-      domRef
-    );
-
-    isRootDropTarget = dropState.isDropTarget({type: 'root'});
-  }
 
   let {gridProps} = useTable(
     {
@@ -1039,7 +1194,6 @@ function ResizableTableColumnHeader(props) {
     let options: {label: string; id: string}[] = [];
     if (allowsSorting) {
       options.push({
-        // oxlint-disable-next-line react/react-compiler
         label: stringFormatter.format('sortAscending'),
         id: 'sort-asc'
       });
@@ -1053,8 +1207,7 @@ function ResizableTableColumnHeader(props) {
       id: 'resize'
     });
     return options;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [allowsSorting]);
+  }, [allowsSorting, stringFormatter]);
 
   let resizingColumn = columnResizeState.resizingColumn;
   let showResizer =
@@ -1275,6 +1428,39 @@ export function useTableRowContext(): TableRowContextValue {
   return useContext(TableRowContext)!;
 }
 
+function TableRowDraggableItem({
+  item,
+  isDisabled,
+  children
+}: {
+  item: GridNode<unknown>;
+  isDisabled: boolean;
+  children: (draggableItem: DraggableItemResult | null) => ReactNode;
+}) {
+  let {dragState} = useTableContext();
+  let draggableItem = useDraggableItem({key: item.key, hasDragButton: true}, dragState!);
+  return <>{children(isDisabled ? null : draggableItem)}</>;
+}
+
+function TableRowDropIndicator({
+  item,
+  children
+}: {
+  item: GridNode<unknown>;
+  children: (
+    dropIndicator: DropIndicatorAria,
+    isDropTarget: boolean,
+    dropIndicatorRef: RefObject<HTMLDivElement | null>
+  ) => ReactNode;
+}) {
+  let {dropState} = useTableContext();
+  let dropIndicatorRef = useRef<HTMLDivElement | null>(null);
+  let target = {type: 'item', key: item.key, dropPosition: 'on'} as DropTarget;
+  let isDropTarget = dropState!.isDropTarget(target);
+  let dropIndicator = useDropIndicator({target}, dropState!, dropIndicatorRef);
+  return <>{children(dropIndicator, isDropTarget, dropIndicatorRef)}</>;
+}
+
 function TableRow({
   item,
   children,
@@ -1324,34 +1510,205 @@ function TableRow({
     }
   }
 
-  let draggableItem: DraggableItemResult | null = null;
+  let emptyDropIndicatorRef = useRef<HTMLDivElement | null>(null);
   if (isTableDraggable && dragAndDropHooks && dragState) {
-    // oxlint-disable-next-line react/react-compiler
-    draggableItem = dragAndDropHooks.useDraggableItem!(
-      {key: item.key, hasDragButton: true},
-      dragState
-    );
-    if (isDisabled) {
-      draggableItem = null;
+    if (isTableDroppable && dropState) {
+      return (
+        <TableRowDraggableItem item={item} isDisabled={isDisabled}>
+          {draggableItem => (
+            <TableRowDropIndicator item={item}>
+              {(dropIndicator, isDropTarget, dropIndicatorRef) => (
+                <TableRowContent
+                  item={item}
+                  children={children}
+                  layoutInfo={layoutInfo}
+                  parent={parent}
+                  otherProps={otherProps}
+                  ref={ref}
+                  rowProps={rowProps}
+                  focusWithinProps={focusWithinProps}
+                  focusProps={focusProps}
+                  hoverProps={hoverProps}
+                  pressProps={pressProps}
+                  isPressed={isPressed}
+                  isSelected={isSelected}
+                  isFocusVisible={isFocusVisible}
+                  isFocusVisibleWithin={isFocusVisibleWithin}
+                  isHovered={isHovered}
+                  isDisabled={isDisabled}
+                  isFirstRow={isFirstRow}
+                  isLastRow={isLastRow}
+                  isFlushWithContainerBottom={isFlushWithContainerBottom}
+                  draggableItem={draggableItem}
+                  dropIndicator={dropIndicator}
+                  isDropTarget={isDropTarget}
+                  dropIndicatorRef={dropIndicatorRef}
+                  dragButtonProps={draggableItem?.dragButtonProps}
+                />
+              )}
+            </TableRowDropIndicator>
+          )}
+        </TableRowDraggableItem>
+      );
     }
+    return (
+      <TableRowDraggableItem item={item} isDisabled={isDisabled}>
+        {draggableItem => (
+          <TableRowContent
+            item={item}
+            children={children}
+            layoutInfo={layoutInfo}
+            parent={parent}
+            otherProps={otherProps}
+            ref={ref}
+            rowProps={rowProps}
+            focusWithinProps={focusWithinProps}
+            focusProps={focusProps}
+            hoverProps={hoverProps}
+            pressProps={pressProps}
+            isPressed={isPressed}
+            isSelected={isSelected}
+            isFocusVisible={isFocusVisible}
+            isFocusVisibleWithin={isFocusVisibleWithin}
+            isHovered={isHovered}
+            isDisabled={isDisabled}
+            isFirstRow={isFirstRow}
+            isLastRow={isLastRow}
+            isFlushWithContainerBottom={isFlushWithContainerBottom}
+            draggableItem={draggableItem}
+            dropIndicator={null}
+            isDropTarget={false}
+            dropIndicatorRef={emptyDropIndicatorRef}
+            dragButtonProps={draggableItem?.dragButtonProps}
+          />
+        )}
+      </TableRowDraggableItem>
+    );
   }
-  let isDropTarget = false;
-  let dropIndicator: DropIndicatorAria | null = null;
-  let dropIndicatorRef = useRef<HTMLDivElement | null>(null);
   if (isTableDroppable && dragAndDropHooks && dropState) {
-    let target = {type: 'item', key: item.key, dropPosition: 'on'} as DropTarget;
-    isDropTarget = dropState.isDropTarget(target);
-
-    // oxlint-disable-next-line react/react-compiler
-    dropIndicator = dragAndDropHooks.useDropIndicator!({target}, dropState, dropIndicatorRef);
+    return (
+      <TableRowDropIndicator item={item}>
+        {(dropIndicator, isDropTarget, dropIndicatorRef) => (
+          <TableRowContent
+            item={item}
+            children={children}
+            layoutInfo={layoutInfo}
+            parent={parent}
+            otherProps={otherProps}
+            ref={ref}
+            rowProps={rowProps}
+            focusWithinProps={focusWithinProps}
+            focusProps={focusProps}
+            hoverProps={hoverProps}
+            pressProps={pressProps}
+            isPressed={isPressed}
+            isSelected={isSelected}
+            isFocusVisible={isFocusVisible}
+            isFocusVisibleWithin={isFocusVisibleWithin}
+            isHovered={isHovered}
+            isDisabled={isDisabled}
+            isFirstRow={isFirstRow}
+            isLastRow={isLastRow}
+            isFlushWithContainerBottom={isFlushWithContainerBottom}
+            draggableItem={null}
+            dropIndicator={dropIndicator}
+            isDropTarget={isDropTarget}
+            dropIndicatorRef={dropIndicatorRef}
+          />
+        )}
+      </TableRowDropIndicator>
+    );
   }
+  return (
+    <TableRowContent
+      item={item}
+      children={children}
+      layoutInfo={layoutInfo}
+      parent={parent}
+      otherProps={otherProps}
+      ref={ref}
+      rowProps={rowProps}
+      focusWithinProps={focusWithinProps}
+      focusProps={focusProps}
+      hoverProps={hoverProps}
+      pressProps={pressProps}
+      isPressed={isPressed}
+      isSelected={isSelected}
+      isFocusVisible={isFocusVisible}
+      isFocusVisibleWithin={isFocusVisibleWithin}
+      isHovered={isHovered}
+      isDisabled={isDisabled}
+      isFirstRow={isFirstRow}
+      isLastRow={isLastRow}
+      isFlushWithContainerBottom={isFlushWithContainerBottom}
+      draggableItem={null}
+      dropIndicator={null}
+      isDropTarget={false}
+      dropIndicatorRef={emptyDropIndicatorRef}
+    />
+  );
+}
 
+function TableRowContent({
+  item,
+  children,
+  layoutInfo,
+  parent,
+  otherProps,
+  ref,
+  rowProps,
+  focusWithinProps,
+  focusProps,
+  hoverProps,
+  pressProps,
+  isPressed,
+  isSelected,
+  isFocusVisible,
+  isFocusVisibleWithin,
+  isHovered,
+  isDisabled,
+  isFirstRow,
+  isLastRow,
+  isFlushWithContainerBottom,
+  draggableItem,
+  dropIndicator,
+  isDropTarget,
+  dropIndicatorRef,
+  dragButtonProps: dragButtonPropsProp
+}: {
+  item: GridNode<unknown>;
+  children: ReactNode;
+  layoutInfo: LayoutInfo;
+  parent: LayoutInfo | null;
+  otherProps: Record<string, unknown>;
+  ref: RefObject<HTMLDivElement | null>;
+  rowProps: HTMLAttributes<HTMLElement>;
+  focusWithinProps: HTMLAttributes<HTMLElement>;
+  focusProps: HTMLAttributes<HTMLElement>;
+  hoverProps: HTMLAttributes<HTMLElement>;
+  pressProps: HTMLAttributes<HTMLElement>;
+  isPressed: boolean;
+  isSelected: boolean;
+  isFocusVisible: boolean;
+  isFocusVisibleWithin: boolean;
+  isHovered: boolean;
+  isDisabled: boolean;
+  isFirstRow: boolean;
+  isLastRow: boolean;
+  isFlushWithContainerBottom: boolean;
+  draggableItem: DraggableItemResult | null;
+  dropIndicator: DropIndicatorAria | null;
+  isDropTarget: boolean;
+  dropIndicatorRef: RefObject<HTMLDivElement | null>;
+  dragButtonProps?: React.HTMLAttributes<HTMLDivElement>;
+}) {
+  let {state, dragAndDropHooks, isTableDroppable} = useTableContext();
   let dragButtonRef = React.useRef<HTMLDivElement | null>(null);
-  let {buttonProps: dragButtonProps} = useButton(
+  let {buttonProps: resolvedDragButtonProps} = useButton(
     {
-      ...draggableItem?.dragButtonProps,
+      ...(dragButtonPropsProp ?? {}),
       elementType: 'div'
-    },
+    } as AriaButtonProps<'div'>,
     dragButtonRef
   );
 
@@ -1374,7 +1731,8 @@ function TableRow({
   let {visuallyHiddenProps} = useVisuallyHidden();
 
   return (
-    <TableRowContext.Provider value={{dragButtonProps, dragButtonRef, isFocusVisibleWithin}}>
+    <TableRowContext.Provider
+      value={{dragButtonProps: resolvedDragButtonProps, dragButtonRef, isFocusVisibleWithin}}>
       {isTableDroppable && isFirstRow && (
         <InsertionIndicator
           rowProps={props}

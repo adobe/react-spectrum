@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {ChangeEvent, useCallback, useEffect, useRef} from 'react';
+import {ChangeEvent, useCallback, useEffect, useRef, useState} from 'react';
 import {ColumnSize} from 'react-stately/useTableState';
 import {DOMAttributes, FocusableElement, Key, RefObject} from '@react-types/shared';
 import {focusSafely} from '../interactions/focusSafely';
@@ -18,13 +18,13 @@ import {getActiveElement, getEventTarget} from '../utils/shadowdom/DOMFunctions'
 import {getColumnHeaderId} from './utils';
 import {GridNode} from 'react-stately/private/grid/GridCollection';
 import intlMessages from '../../intl/table/*.json';
-import {mergeProps} from '../utils/mergeProps';
 import {TableColumnResizeState} from 'react-stately/useTableState';
 import {useDescription} from '../utils/useDescription';
 import {useEffectEvent} from '../utils/useEffectEvent';
 import {useId} from '../utils/useId';
 import {useInteractionModality} from '../interactions/useFocusVisible';
 import {useKeyboard} from '../interactions/useKeyboard';
+import {useLayoutEffect} from '../utils/useLayoutEffect';
 import {useLocale} from '../i18n/I18nProvider';
 import {useLocalizedStringFormatter} from '../i18n/useLocalizedStringFormatter';
 import {useMove} from '../interactions/useMove';
@@ -221,11 +221,12 @@ export function useTableColumnResize<T>(
   if (modality === 'virtual' && typeof window !== 'undefined' && 'ontouchstart' in window) {
     modality = 'touch';
   }
+  let [hasTrigger, setHasTrigger] = useState(false);
+  useLayoutEffect(() => {
+    setHasTrigger(triggerRef?.current != null);
+  }, [triggerRef, isResizing]);
   let description =
-    // oxlint-disable-next-line react/react-compiler
-    triggerRef?.current == null &&
-    (modality === 'keyboard' || modality === 'virtual') &&
-    !isResizing
+    !hasTrigger && (modality === 'keyboard' || modality === 'virtual') && !isResizing
       ? stringFormatter.format('resizerDescription')
       : undefined;
   let descriptionProps = useDescription(description);
@@ -316,22 +317,23 @@ export function useTableColumnResize<T>(
   let {visuallyHiddenProps} = useVisuallyHidden();
 
   return {
-    resizerProps: mergeProps(keyboardProps, {...moveProps, onKeyDown}, pressProps, {
+    resizerProps: {
+      ...keyboardProps,
+      ...moveProps,
+      onKeyDown,
+      ...pressProps,
       style: {touchAction: 'none'}
-    }),
-    inputProps: mergeProps(
-      visuallyHiddenProps,
-      // oxlint-disable-next-line react/react-compiler
-      {
-        id,
-        onBlur: () => {
-          endResize(item);
-        },
-        onChange,
-        disabled: isDisabled
+    },
+    inputProps: {
+      ...visuallyHiddenProps,
+      id,
+      onBlur: () => {
+        endResize(item);
       },
-      ariaProps
-    ),
+      onChange,
+      disabled: isDisabled,
+      ...ariaProps
+    } as DOMAttributes<FocusableElement> & {disabled?: boolean},
     isResizing
   };
 }

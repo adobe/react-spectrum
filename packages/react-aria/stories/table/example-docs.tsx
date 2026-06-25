@@ -17,6 +17,7 @@ import React, {JSX, useCallback, useRef} from 'react';
 import {TableProps, useTableColumnResizeState, useTableState} from 'react-stately/useTableState';
 import {useButton} from '../../src/button/useButton';
 import {useFocusRing} from '../../src/focus/useFocusRing';
+import {useObjectRef} from '../../src/utils/useObjectRef';
 import {useTable} from '../../src/table/useTable';
 import {useTableCell} from '../../src/table/useTableCell';
 import {useTableColumnHeader} from '../../src/table/useTableColumnHeader';
@@ -161,11 +162,11 @@ function ResizableTableColumnHeader({
   );
 }
 
-function Button(props) {
-  let ref = props.buttonRef;
+function Button(propsArg) {
+  let props = propsArg;
+  let ref = useObjectRef<HTMLButtonElement>(props.buttonRef);
   let {focusProps, isFocusVisible} = useFocusRing();
   let {buttonProps} = useButton(props, ref);
-  // oxlint-disable react/react-compiler
   return (
     <button
       {...mergeProps(buttonProps, focusProps)}
@@ -174,7 +175,6 @@ function Button(props) {
       {props.children}
     </button>
   );
-  // oxlint-enable react/react-compiler
 }
 
 function Resizer(props) {

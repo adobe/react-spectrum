@@ -58,11 +58,12 @@ export const RangeSliderContext =
  * lower bounds to the range are invariable.
  */
 export const RangeSlider = /*#__PURE__*/ forwardRef(function RangeSlider(
-  props: RangeSliderProps,
-  ref: FocusableRef<HTMLDivElement>
+  propsArg: RangeSliderProps,
+  refArg: FocusableRef<HTMLDivElement>
 ) {
+  let props = propsArg;
+  let ref = refArg;
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
-  // oxlint-disable-next-line react/react-compiler
   [props, ref] = useSpectrumContextProps(props, ref, RangeSliderContext);
   let formContext = useContext(FormContext);
   props = useFormProps(props);

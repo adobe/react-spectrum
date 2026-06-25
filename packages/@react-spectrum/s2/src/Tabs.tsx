@@ -180,8 +180,9 @@ const tabs = style(
  * Tabs organize content into multiple sections and allow users to navigate between them. The
  * content under the set of tabs should be related and form a coherent unit.
  */
-export const Tabs = forwardRef(function Tabs(props: TabsProps, ref: DOMRef<HTMLDivElement>) {
-  // oxlint-disable-next-line react/react-compiler
+export const Tabs = forwardRef(function Tabs(propsArg: TabsProps, refArg: DOMRef<HTMLDivElement>) {
+  let props = propsArg;
+  let ref = refArg;
   [props, ref] = useSpectrumContextProps(props, ref, TabsContext);
   let {
     density = 'regular',

@@ -45,7 +45,8 @@ interface ScrollViewProps extends Omit<HTMLAttributes<HTMLElement>, 'onScroll'> 
   allowsWindowScrolling?: boolean;
 }
 
-function ScrollView(props: ScrollViewProps, ref: ForwardedRef<HTMLDivElement | null>) {
+function ScrollView(props: ScrollViewProps, refArg: ForwardedRef<HTMLDivElement | null>) {
+  let ref = refArg;
   ref = useObjectRef(ref);
   let {scrollViewProps, contentProps} = useScrollView(props, ref);
 
@@ -84,8 +85,7 @@ export function useScrollView(
     ...otherProps
   } = props;
 
-  // oxlint-disable-next-line react/react-compiler
-  let state = useRef({
+  let stateRef = useRef({
     // Internal scroll position of the scroll view.
     scrollPosition: new Point(),
     // Size of the scroll view.
@@ -98,7 +98,7 @@ export function useScrollView(
     scrollTimeout: null as ReturnType<typeof setTimeout> | null,
     isScrolling: false,
     lastVisibleRect: new Rect()
-  }).current;
+  });
   let {direction} = useLocale();
 
   let updateVisibleRect = useCallback(() => {
@@ -110,29 +110,35 @@ export function useScrollView(
     // but no more than the entire height of the viewport which is good enough for virtualization use cases.
     let visibleRect = allowsWindowScrolling
       ? new Rect(
-          state.viewportOffset.x + state.scrollPosition.x,
-          state.viewportOffset.y + state.scrollPosition.y,
+          stateRef.current.viewportOffset.x + stateRef.current.scrollPosition.x,
+          stateRef.current.viewportOffset.y + stateRef.current.scrollPosition.y,
           Math.max(
             0,
-            Math.min(state.size.width - state.viewportOffset.x, state.viewportSize.width)
+            Math.min(
+              stateRef.current.size.width - stateRef.current.viewportOffset.x,
+              stateRef.current.viewportSize.width
+            )
           ),
           Math.max(
             0,
-            Math.min(state.size.height - state.viewportOffset.y, state.viewportSize.height)
+            Math.min(
+              stateRef.current.size.height - stateRef.current.viewportOffset.y,
+              stateRef.current.viewportSize.height
+            )
           )
         )
       : new Rect(
-          state.scrollPosition.x,
-          state.scrollPosition.y,
-          state.size.width,
-          state.size.height
+          stateRef.current.scrollPosition.x,
+          stateRef.current.scrollPosition.y,
+          stateRef.current.size.width,
+          stateRef.current.size.height
         );
     // Don't emit updates if the visible area is zero and the last emitted area was also zero.
-    if (visibleRect.area > 0 || state.lastVisibleRect.area > 0) {
+    if (visibleRect.area > 0 || stateRef.current.lastVisibleRect.area > 0) {
       onVisibleRectChange(visibleRect);
-      state.lastVisibleRect = visibleRect;
+      stateRef.current.lastVisibleRect = visibleRect;
     }
-  }, [state, allowsWindowScrolling, onVisibleRectChange]);
+  }, [allowsWindowScrolling, onVisibleRectChange]);
 
   let [isScrolling, setScrolling] = useState(false);
 
@@ -152,27 +158,27 @@ export function useScrollView(
         let boundingRect = ref.current!.getBoundingClientRect();
         let x = boundingRect.x < 0 ? -boundingRect.x : 0;
         let y = boundingRect.y < 0 ? -boundingRect.y : 0;
-        if (x === state.viewportOffset.x && y === state.viewportOffset.y) {
+        if (x === stateRef.current.viewportOffset.x && y === stateRef.current.viewportOffset.y) {
           return;
         }
 
-        state.viewportOffset = new Point(x, y);
+        stateRef.current.viewportOffset = new Point(x, y);
       } else {
         // The scroll view itself was scrolled. Update the local scroll position.
         // Prevent rubber band scrolling from shaking when scrolling out of bounds
         let scrollTop = target.scrollTop;
         let scrollLeft = getScrollLeft(target, direction);
-        state.scrollPosition = new Point(
-          Math.max(0, Math.min(scrollLeft, contentSize.width - state.size.width)),
-          Math.max(0, Math.min(scrollTop, contentSize.height - state.size.height))
+        stateRef.current.scrollPosition = new Point(
+          Math.max(0, Math.min(scrollLeft, contentSize.width - stateRef.current.size.width)),
+          Math.max(0, Math.min(scrollTop, contentSize.height - stateRef.current.size.height))
         );
       }
 
       flushSync(() => {
         updateVisibleRect();
 
-        if (!state.isScrolling) {
-          state.isScrolling = true;
+        if (!stateRef.current.isScrolling) {
+          stateRef.current.isScrolling = true;
           setScrolling(true);
 
           // Pause typekit MutationObserver during scrolling.
@@ -186,17 +192,17 @@ export function useScrollView(
         // keep track of the current timeout time and only reschedule
         // the timer when it is getting close.
         let now = Date.now();
-        if (state.scrollEndTime <= now + 50) {
-          state.scrollEndTime = now + 300;
+        if (stateRef.current.scrollEndTime <= now + 50) {
+          stateRef.current.scrollEndTime = now + 300;
 
-          if (state.scrollTimeout != null) {
-            clearTimeout(state.scrollTimeout);
+          if (stateRef.current.scrollTimeout != null) {
+            clearTimeout(stateRef.current.scrollTimeout);
           }
 
-          state.scrollTimeout = setTimeout(() => {
-            state.isScrolling = false;
+          stateRef.current.scrollTimeout = setTimeout(() => {
+            stateRef.current.isScrolling = false;
             setScrolling(false);
-            state.scrollTimeout = null;
+            stateRef.current.scrollTimeout = null;
 
             window.dispatchEvent(new Event('tk.connect-observer'));
             if (onScrollEnd) {
@@ -206,16 +212,7 @@ export function useScrollView(
         }
       });
     },
-    [
-      onScrollProp,
-      ref,
-      direction,
-      state,
-      contentSize,
-      updateVisibleRect,
-      onScrollStart,
-      onScrollEnd
-    ]
+    [onScrollProp, ref, direction, contentSize, updateVisibleRect, onScrollStart, onScrollEnd]
   );
 
   // Attach a document-level capturing scroll listener so we can account for scrollable ancestors.
@@ -225,19 +222,20 @@ export function useScrollView(
   }, [onScroll]);
 
   useEffect(() => {
+    let state = stateRef;
     return () => {
-      if (state.scrollTimeout != null) {
-        clearTimeout(state.scrollTimeout);
+      if (state.current.scrollTimeout != null) {
+        clearTimeout(state.current.scrollTimeout);
       }
 
-      if (state.isScrolling) {
+      if (state.current.isScrolling) {
         window.dispatchEvent(new Event('tk.connect-observer'));
       }
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   let isUpdatingSize = useRef(false);
+  let [scrollViewWidth, setScrollViewWidth] = useState(0);
   let updateSize = useCallback(
     (flush: typeof flushSync) => {
       let dom = ref.current;
@@ -265,16 +263,22 @@ export function useScrollView(
       let viewportWidth = window.innerWidth;
       let viewportHeight = window.innerHeight;
       let viewportSizeChanged =
-        state.viewportSize.width !== viewportWidth || state.viewportSize.height !== viewportHeight;
+        stateRef.current.viewportSize.width !== viewportWidth ||
+        stateRef.current.viewportSize.height !== viewportHeight;
       if (viewportSizeChanged) {
-        state.viewportSize = new Size(viewportWidth, viewportHeight);
+        stateRef.current.viewportSize = new Size(viewportWidth, viewportHeight);
       }
 
-      if (state.size.width !== w || state.size.height !== h || viewportSizeChanged) {
-        state.size = new Size(w, h);
+      if (
+        stateRef.current.size.width !== w ||
+        stateRef.current.size.height !== h ||
+        viewportSizeChanged
+      ) {
+        stateRef.current.size = new Size(w, h);
+        setScrollViewWidth(w);
         flush(() => {
           updateVisibleRect();
-          onSizeChange?.(state.size);
+          onSizeChange?.(stateRef.current.size);
         });
 
         // If the clientWidth or clientHeight changed, scrollbars appeared or disappeared as
@@ -283,24 +287,25 @@ export function useScrollView(
         // again, resulting in extra padding. We stop after a maximum of two layout passes to avoid
         // an infinite loop. This matches how browsers behavior with native CSS grid layout.
         if ((!isTestEnv && clientWidth !== dom.clientWidth) || clientHeight !== dom.clientHeight) {
-          state.size = new Size(dom.clientWidth, dom.clientHeight);
+          stateRef.current.size = new Size(dom.clientWidth, dom.clientHeight);
+          setScrollViewWidth(dom.clientWidth);
           flush(() => {
             updateVisibleRect();
-            onSizeChange?.(state.size);
+            onSizeChange?.(stateRef.current.size);
           });
         }
       }
 
       isUpdatingSize.current = false;
     },
-    [ref, state, updateVisibleRect, onSizeChange]
+    [ref, updateVisibleRect, onSizeChange]
   );
   let updateSizeEvent = useEffectEvent(updateSize);
 
   // Track the size of the entire window viewport, which is used to bound the size of the virtualizer's visible rectangle.
   useLayoutEffect(() => {
     // Initialize viewportRect before updating size for the first time.
-    state.viewportSize = new Size(window.innerWidth, window.innerHeight);
+    stateRef.current.viewportSize = new Size(window.innerWidth, window.innerHeight);
 
     let onWindowResize = () => {
       updateSizeEvent(flushSync);
@@ -308,7 +313,7 @@ export function useScrollView(
 
     window.addEventListener('resize', onWindowResize);
     return () => window.removeEventListener('resize', onWindowResize);
-  }, [state]);
+  }, []);
 
   // Update visible rect when the content size changes, in case scrollbars need to appear or disappear.
   let lastContentSize = useRef<Size | null>(null);
@@ -368,8 +373,7 @@ export function useScrollView(
   if (scrollDirection === 'horizontal') {
     style.overflowX = 'auto';
     style.overflowY = 'hidden';
-    // oxlint-disable-next-line react/react-compiler
-  } else if (scrollDirection === 'vertical' || contentSize.width === state.size.width) {
+  } else if (scrollDirection === 'vertical' || contentSize.width === scrollViewWidth) {
     // Set overflow-x: hidden if content size is equal to the width of the scroll view.
     // This prevents horizontal scrollbars from flickering during resizing due to resize observer
     // firing slower than the frame rate, which may cause an infinite re-render loop.

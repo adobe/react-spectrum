@@ -121,7 +121,12 @@ export function useToggleButtonGroupItem(
     }
   };
 
-  let {isPressed, isSelected, isDisabled, buttonProps} = useToggleButton(
+  let {
+    isPressed,
+    isSelected,
+    isDisabled,
+    buttonProps: toggleButtonProps
+  } = useToggleButton(
     {
       ...props,
       id: undefined,
@@ -130,13 +135,14 @@ export function useToggleButtonGroupItem(
     toggleState,
     ref
   );
+  let buttonProps = toggleButtonProps;
   if (state.selectionMode === 'single') {
-    // oxlint-disable-next-line react/react-compiler
-    buttonProps.role = 'radio';
-    // oxlint-disable-next-line react/react-compiler
-    buttonProps['aria-checked'] = toggleState.isSelected;
-    // oxlint-disable-next-line react/react-compiler
-    delete buttonProps['aria-pressed'];
+    buttonProps = {
+      ...buttonProps,
+      role: 'radio',
+      'aria-checked': toggleState.isSelected,
+      'aria-pressed': undefined
+    };
   }
 
   return {

@@ -10,8 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-import {chain} from '../utils/chain';
-
 import {
   DOMAttributes,
   DOMProps,
@@ -26,12 +24,12 @@ import {focusSafely} from '../interactions/focusSafely';
 import {getActiveElement, getEventTarget} from '../utils/shadowdom/DOMFunctions';
 import {getCollectionId, isNonContiguousSelectionModifier} from './utils';
 import {isCtrlKeyPressed} from '../utils/keyboard';
-import {mergeProps} from '../utils/mergeProps';
 import {moveVirtualFocus} from '../focus/virtualFocus';
 import {MultipleSelectionManager} from 'react-stately/useMultipleSelectionState';
 import {openLink, useRouter} from '../utils/openLink';
 import {PressHookProps, usePress} from '../interactions/usePress';
 import {useEffect, useRef} from 'react';
+import {useEffectEvent} from '../utils/useEffectEvent';
 import {useId} from '../utils/useId';
 import {useLongPress} from '../interactions/useLongPress';
 
@@ -141,7 +139,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
   } = options;
   let router = useRouter();
   id = useId(id);
-  let onSelect = (e: PressEvent | LongPressEvent | PointerEvent) => {
+  let onSelectHandler = useEffectEvent((e: PressEvent | LongPressEvent | PointerEvent) => {
     if (e.pointerType === 'keyboard' && isNonContiguousSelectionModifier(e)) {
       manager.toggleSelection(key);
     } else {
@@ -179,7 +177,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
         manager.replaceSelection(key);
       }
     }
-  };
+  });
 
   // Focus the associated DOM node when this item becomes the focusedKey
   // TODO: can't make this useLayoutEffect bacause it breaks menus inside dialogs
@@ -261,7 +259,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
   let hadPrimaryActionOnPressStart = useRef(false);
   let collectionItemProps = manager.getItemProps(key);
 
-  let performAction = e => {
+  let performAction = useEffectEvent(e => {
     if (onAction) {
       onAction();
       ref.current?.dispatchEvent(new CustomEvent('react-aria-item-action', {bubbles: true}));
@@ -270,7 +268,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     if (hasLinkAction && ref.current) {
       router.open(ref.current, e, collectionItemProps.href, collectionItemProps.routerOptions);
     }
-  };
+  });
 
   // By default, selection occurs on pointer down. This can be strange if selecting an
   // item causes the UI to disappear immediately (e.g. menus).
@@ -279,132 +277,193 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
   // we want to be able to have the pointer down on the trigger that opens the menu and
   // the pointer up on the menu item rather than requiring a separate press.
   // For keyboard events, selection still occurs on key down.
-  let itemPressProps: PressHookProps = {ref};
-  if (shouldSelectOnPressUp) {
-    // oxlint-disable-next-line react/react-compiler
-    itemPressProps.onPressStart = e => {
-      modality.current = e.pointerType;
-      longPressEnabledOnPressStart.current = longPressEnabled;
-      if (e.pointerType === 'keyboard' && (!hasAction || isSelectionKey(e.key))) {
-        onSelect(e);
-      }
-    };
+  let itemPressProps: PressHookProps = shouldSelectOnPressUp
+    ? !allowsDifferentPressOrigin
+      ? {
+          onPressStart(e) {
+            modality.current = e.pointerType;
+            longPressEnabledOnPressStart.current = longPressEnabled;
+            if (e.pointerType === 'keyboard' && (!hasAction || isSelectionKey(e.key))) {
+              onSelectHandler(e);
+            }
+          },
+          onPress(e) {
+            if (hasPrimaryAction || (hasSecondaryAction && e.pointerType !== 'mouse')) {
+              if (e.pointerType === 'keyboard' && !isActionKey(e.key)) {
+                return;
+              }
 
-    // If allowsDifferentPressOrigin and interacting with mouse, make selection happen on pressUp (e.g. open menu on press down, selection on menu item happens on press up.)
-    // Otherwise, have selection happen onPress (prevents listview row selection when clicking on interactable elements in the row)
-    if (!allowsDifferentPressOrigin) {
-      // oxlint-disable-next-line react/react-compiler
-      itemPressProps.onPress = e => {
-        if (hasPrimaryAction || (hasSecondaryAction && e.pointerType !== 'mouse')) {
-          if (e.pointerType === 'keyboard' && !isActionKey(e.key)) {
-            return;
+              performAction(e);
+            } else if (e.pointerType !== 'keyboard' && allowsSelection) {
+              onSelectHandler(e);
+            }
           }
+        }
+      : {
+          onPressStart(e) {
+            modality.current = e.pointerType;
+            longPressEnabledOnPressStart.current = longPressEnabled;
+            if (e.pointerType === 'keyboard' && (!hasAction || isSelectionKey(e.key))) {
+              onSelectHandler(e);
+            }
+          },
+          onPressUp: hasPrimaryAction
+            ? undefined
+            : e => {
+                if (e.pointerType === 'mouse' && allowsSelection) {
+                  onSelectHandler(e);
+                }
+              },
+          onPress: hasPrimaryAction
+            ? performAction
+            : e => {
+                if (e.pointerType !== 'keyboard' && e.pointerType !== 'mouse' && allowsSelection) {
+                  onSelectHandler(e);
+                }
+              }
+        }
+    : {
+        onPressStart(e) {
+          modality.current = e.pointerType;
+          longPressEnabledOnPressStart.current = longPressEnabled;
+          hadPrimaryActionOnPressStart.current = hasPrimaryAction;
 
-          performAction(e);
-        } else if (e.pointerType !== 'keyboard' && allowsSelection) {
-          onSelect(e);
+          // Select on mouse down unless there is a primary action which will occur on mouse up.
+          // For keyboard, select on key down. If there is an action, the Space key selects on key down,
+          // and the Enter key performs onAction on key up.
+          if (
+            allowsSelection &&
+            ((e.pointerType === 'mouse' && !hasPrimaryAction) ||
+              (e.pointerType === 'keyboard' && (!allowsActions || isSelectionKey(e.key))))
+          ) {
+            onSelectHandler(e);
+          }
+        },
+        onPress(e) {
+          // Selection occurs on touch up. Primary actions always occur on pointer up.
+          // Both primary and secondary actions occur on Enter key up. The only exception
+          // is secondary actions, which occur on double click with a mouse.
+          if (
+            e.pointerType === 'touch' ||
+            e.pointerType === 'pen' ||
+            e.pointerType === 'virtual' ||
+            (e.pointerType === 'keyboard' && hasAction && isActionKey(e.key)) ||
+            (e.pointerType === 'mouse' && hadPrimaryActionOnPressStart.current)
+          ) {
+            if (hasAction) {
+              performAction(e);
+            } else if (allowsSelection) {
+              onSelectHandler(e);
+            }
+          }
         }
       };
-    } else {
-      // oxlint-disable-next-line react/react-compiler
-      itemPressProps.onPressUp = hasPrimaryAction
-        ? undefined
-        : e => {
-            if (e.pointerType === 'mouse' && allowsSelection) {
-              onSelect(e);
-            }
-          };
 
-      // oxlint-disable-next-line react/react-compiler
-      itemPressProps.onPress = hasPrimaryAction
-        ? performAction
-        : e => {
-            if (e.pointerType !== 'keyboard' && e.pointerType !== 'mouse' && allowsSelection) {
-              onSelect(e);
-            }
-          };
-    }
-  } else {
-    // oxlint-disable-next-line react/react-compiler
-    itemPressProps.onPressStart = e => {
-      modality.current = e.pointerType;
-      longPressEnabledOnPressStart.current = longPressEnabled;
-      hadPrimaryActionOnPressStart.current = hasPrimaryAction;
-
-      // Select on mouse down unless there is a primary action which will occur on mouse up.
-      // For keyboard, select on key down. If there is an action, the Space key selects on key down,
-      // and the Enter key performs onAction on key up.
-      if (
-        allowsSelection &&
-        ((e.pointerType === 'mouse' && !hasPrimaryAction) ||
-          (e.pointerType === 'keyboard' && (!allowsActions || isSelectionKey(e.key))))
-      ) {
-        onSelect(e);
-      }
-    };
-
-    // oxlint-disable-next-line react/react-compiler
-    itemPressProps.onPress = e => {
-      // Selection occurs on touch up. Primary actions always occur on pointer up.
-      // Both primary and secondary actions occur on Enter key up. The only exception
-      // is secondary actions, which occur on double click with a mouse.
-      if (
-        e.pointerType === 'touch' ||
-        e.pointerType === 'pen' ||
-        e.pointerType === 'virtual' ||
-        (e.pointerType === 'keyboard' && hasAction && isActionKey(e.key)) ||
-        (e.pointerType === 'mouse' && hadPrimaryActionOnPressStart.current)
-      ) {
-        if (hasAction) {
-          performAction(e);
-        } else if (allowsSelection) {
-          onSelect(e);
-        }
-      }
-    };
-  }
-
-  itemProps['data-collection'] = getCollectionId(manager.collection);
-  itemProps['data-key'] = key;
-  // oxlint-disable-next-line react/react-compiler
-  itemPressProps.preventFocusOnPress = shouldUseVirtualFocus;
-
-  // When using virtual focus, make sure the focused key gets updated on press.
   if (shouldUseVirtualFocus) {
-    // oxlint-disable-next-line react/react-compiler
-    itemPressProps = mergeProps(itemPressProps, {
+    let onPressStart = itemPressProps.onPressStart;
+    let onPress = itemPressProps.onPress;
+    itemPressProps = {
+      ...itemPressProps,
       onPressStart(e) {
         if (e.pointerType !== 'touch') {
           manager.setFocused(true);
           manager.setFocusedKey(key);
         }
+        onPressStart?.(e);
       },
       onPress(e) {
         if (e.pointerType === 'touch') {
           manager.setFocused(true);
           manager.setFocusedKey(key);
         }
+        onPress?.(e);
       }
-    });
+    };
   }
 
   if (collectionItemProps) {
-    for (let key of [
-      'onPressStart',
-      'onPressEnd',
-      'onPressChange',
-      'onPress',
-      'onPressUp',
-      'onClick'
-    ]) {
-      if (collectionItemProps[key]) {
-        // oxlint-disable-next-line react/react-compiler
-        itemPressProps[key] = chain(itemPressProps[key], collectionItemProps[key]);
-      }
+    let {
+      ref: _collectionRef,
+      onPressStart: collectionOnPressStart,
+      onPressEnd: collectionOnPressEnd,
+      onPressChange: collectionOnPressChange,
+      onPress: collectionOnPress,
+      onPressUp: collectionOnPressUp,
+      onClick: collectionOnClick,
+      ..._collectionRest
+    } = collectionItemProps;
+    if (collectionOnPressStart) {
+      let onPressStart = itemPressProps.onPressStart;
+      itemPressProps = {
+        ...itemPressProps,
+        onPressStart: e => {
+          onPressStart?.(e);
+          collectionOnPressStart(e);
+        }
+      };
+    }
+    if (collectionOnPressEnd) {
+      let onPressEnd = itemPressProps.onPressEnd;
+      itemPressProps = {
+        ...itemPressProps,
+        onPressEnd: e => {
+          onPressEnd?.(e);
+          collectionOnPressEnd(e);
+        }
+      };
+    }
+    if (collectionOnPressChange) {
+      let onPressChange = itemPressProps.onPressChange;
+      itemPressProps = {
+        ...itemPressProps,
+        onPressChange: isPressed => {
+          onPressChange?.(isPressed);
+          collectionOnPressChange(isPressed);
+        }
+      };
+    }
+    if (collectionOnPress) {
+      let onPress = itemPressProps.onPress;
+      itemPressProps = {
+        ...itemPressProps,
+        onPress: e => {
+          onPress?.(e);
+          collectionOnPress(e);
+        }
+      };
+    }
+    if (collectionOnPressUp) {
+      let onPressUp = itemPressProps.onPressUp;
+      itemPressProps = {
+        ...itemPressProps,
+        onPressUp: e => {
+          onPressUp?.(e);
+          collectionOnPressUp(e);
+        }
+      };
+    }
+    if (collectionOnClick) {
+      let onClickHandler = itemPressProps.onClick;
+      itemPressProps = {
+        ...itemPressProps,
+        onClick: e => {
+          onClickHandler?.(e);
+          collectionOnClick(e);
+        }
+      };
     }
   }
 
-  let {pressProps, isPressed} = usePress(itemPressProps);
+  let {pressProps, isPressed} = usePress({
+    onPressStart: itemPressProps.onPressStart,
+    onPressEnd: itemPressProps.onPressEnd,
+    onPressChange: itemPressProps.onPressChange,
+    onPress: itemPressProps.onPress,
+    onPressUp: itemPressProps.onPressUp,
+    onClick: itemPressProps.onClick,
+    ref,
+    preventFocusOnPress: shouldUseVirtualFocus
+  });
 
   // Double clicking with a mouse with selectionBehavior = 'replace' performs an action.
   let onDoubleClick = hasSecondaryAction
@@ -424,7 +483,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     isDisabled: !longPressEnabled,
     onLongPress(e) {
       if (e.pointerType === 'touch') {
-        onSelect(e);
+        onSelectHandler(e);
         manager.setSelectionBehavior('toggle');
       }
     }
@@ -451,19 +510,25 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
         }
       : undefined;
 
+  let fullItemProps = {
+    ...itemProps,
+    'data-collection': getCollectionId(manager.collection),
+    'data-key': key
+  };
+
   return {
-    itemProps: mergeProps(
-      // oxlint-disable-next-line react/react-compiler
-      itemProps,
-      allowsSelection || hasPrimaryAction || (shouldUseVirtualFocus && !isDisabled)
+    itemProps: {
+      ...fullItemProps,
+      ...(allowsSelection || hasPrimaryAction || (shouldUseVirtualFocus && !isDisabled)
         ? pressProps
-        : {},
-      longPressEnabled ? longPressProps : {},
-      // oxlint-disable-next-line react/react-compiler
-      {onDoubleClick, onDragStartCapture, onClick, id},
-      // Prevent DOM focus from moving on mouse down when using virtual focus
-      shouldUseVirtualFocus ? {onMouseDown: e => e.preventDefault()} : undefined
-    ),
+        : {}),
+      ...(longPressEnabled ? longPressProps : {}),
+      onDoubleClick,
+      onDragStartCapture,
+      onClick,
+      id,
+      ...(shouldUseVirtualFocus ? {onMouseDown: e => e.preventDefault()} : {})
+    },
     isPressed,
     isSelected: manager.isSelected(key),
     isFocused: manager.isFocused && manager.focusedKey === key,

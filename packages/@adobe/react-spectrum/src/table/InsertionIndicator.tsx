@@ -14,6 +14,7 @@ import {classNames} from '../utils/classNames';
 import {FocusableElement, ItemDropTarget} from '@react-types/shared';
 import React, {DOMAttributes, HTMLAttributes, ReactNode, useRef} from 'react';
 import styles from './table.css';
+import {useDropIndicator} from 'react-aria/useDroppableCollection';
 import {useTableContext} from './TableViewBase';
 import {useVisuallyHidden} from 'react-aria/VisuallyHidden';
 
@@ -23,12 +24,11 @@ interface InsertionIndicatorProps {
 }
 
 export function InsertionIndicator(props: InsertionIndicatorProps): ReactNode | null {
-  let {dropState, dragAndDropHooks} = useTableContext();
+  let {dropState} = useTableContext();
   const {target, rowProps} = props;
 
   let ref = useRef<HTMLDivElement | null>(null);
-  // oxlint-disable-next-line react/react-compiler
-  let {dropIndicatorProps} = dragAndDropHooks!.useDropIndicator!(props, dropState!, ref);
+  let {dropIndicatorProps} = useDropIndicator(props, dropState!, ref);
   let {visuallyHiddenProps} = useVisuallyHidden();
 
   let isDropTarget = dropState!.isDropTarget(target);

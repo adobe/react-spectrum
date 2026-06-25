@@ -79,9 +79,10 @@ export interface SpectrumDatePickerProps<T extends DateValue>
  * and time value.
  */
 export const DatePicker = React.forwardRef(function DatePicker<T extends DateValue>(
-  props: SpectrumDatePickerProps<T>,
+  propsArg: SpectrumDatePickerProps<T>,
   ref: FocusableRef<HTMLElement>
 ) {
+  let props = propsArg;
   props = useProviderProps(props);
   props = useFormProps(props);
   let {autoFocus, isQuiet, isDisabled, placeholderValue, maxVisibleMonths = 1} = props;
@@ -139,8 +140,7 @@ export const DatePicker = React.forwardRef(function DatePicker<T extends DateVal
   // The format help text is unnecessary for screen reader users because each segment already has a label.
   let description = useFormatHelpText(props);
   if (description && !props.description) {
-    // oxlint-disable-next-line react/react-compiler
-    descriptionProps.id = undefined;
+    descriptionProps = mergeProps(descriptionProps, {id: undefined});
   }
 
   let placeholder: DateValue | null | undefined = placeholderValue;

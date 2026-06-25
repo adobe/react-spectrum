@@ -163,10 +163,11 @@ const dashoffsetAnimation = keyframes(`
  * processing, in a visual way. They can represent determinate or indeterminate progress.
  */
 export const ProgressCircle = /*#__PURE__*/ forwardRef(function ProgressCircle(
-  props: ProgressCircleProps,
-  ref: DOMRef<HTMLDivElement>
+  propsArg: ProgressCircleProps,
+  refArg: DOMRef<HTMLDivElement>
 ) {
-  // oxlint-disable-next-line react/react-compiler
+  let props = propsArg;
+  let ref = refArg;
   [props, ref] = useSpectrumContextProps(props, ref, ProgressCircleContext);
   let {size = 'M', staticColor, UNSAFE_style, UNSAFE_className = ''} = props;
   let domRef = useDOMRef(ref);

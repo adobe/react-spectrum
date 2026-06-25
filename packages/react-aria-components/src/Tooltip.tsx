@@ -163,8 +163,9 @@ export function TooltipTrigger(props: TooltipTriggerComponentProps): JSX.Element
  */
 export const Tooltip = /*#__PURE__*/ (forwardRef as forwardRefType)(function Tooltip(
   {UNSTABLE_portalContainer, ...props}: TooltipProps,
-  ref: ForwardedRef<HTMLDivElement>
+  refArg: ForwardedRef<HTMLDivElement>
 ) {
+  let ref = refArg;
   [props, ref] = useContextProps(props, ref, TooltipContext);
   let contextState = useContext(TooltipTriggerStateContext);
   let localState = useTooltipTriggerState(props);
@@ -177,21 +178,29 @@ export const Tooltip = /*#__PURE__*/ (forwardRef as forwardRefType)(function Too
 
   return (
     <OverlayContainer portalContainer={UNSTABLE_portalContainer}>
-      <TooltipInner {...props} tooltipRef={ref} isExiting={isExiting} />
+      <TooltipInner
+        {...props}
+        tooltipRef={ref}
+        triggerRef={props.triggerRef!}
+        isExiting={isExiting}
+      />
     </OverlayContainer>
   );
 });
 
-function TooltipInner(
-  props: TooltipProps & {isExiting: boolean; tooltipRef: RefObject<HTMLDivElement | null>}
-) {
+function TooltipInner({
+  tooltipRef,
+  triggerRef,
+  isExiting,
+  ...props
+}: TooltipProps & {isExiting: boolean; tooltipRef: RefObject<HTMLDivElement | null>}) {
   let state = useContext(TooltipTriggerStateContext)!;
   let arrowRef = useRef<HTMLDivElement>(null);
 
   let {overlayProps, arrowProps, placement, triggerAnchorPoint} = useOverlayPosition({
     placement: props.placement || 'top',
-    targetRef: props.triggerRef!,
-    overlayRef: props.tooltipRef,
+    targetRef: triggerRef!,
+    overlayRef: tooltipRef,
     arrowRef,
     offset: props.offset,
     crossOffset: props.crossOffset,
@@ -202,28 +211,27 @@ function TooltipInner(
     onClose: () => state.close(true)
   });
 
-  let isEntering = useEnterAnimation(props.tooltipRef, !!placement) || props.isEntering || false;
+  let isEntering = useEnterAnimation(tooltipRef, !!placement) || props.isEntering || false;
   let renderProps = useRenderProps({
     ...props,
     defaultClassName: 'react-aria-Tooltip',
     values: {
       placement,
       isEntering,
-      isExiting: props.isExiting,
+      isExiting,
       state
     }
   });
 
-  props = mergeProps(props, overlayProps);
-  let {tooltipProps} = useTooltip(props, state);
+  let tooltipPropsInput = mergeProps(props, overlayProps);
+  let {tooltipProps} = useTooltip(tooltipPropsInput, state);
 
-  let DOMProps = filterDOMProps(props, {global: true});
+  let DOMProps = filterDOMProps(tooltipPropsInput, {global: true});
 
-  // oxlint-disable react/react-compiler
   return (
     <dom.div
       {...mergeProps(DOMProps, renderProps, tooltipProps)}
-      ref={props.tooltipRef}
+      ref={tooltipRef}
       style={
         {
           ...overlayProps.style,
@@ -235,11 +243,10 @@ function TooltipInner(
       }
       data-placement={placement ?? undefined}
       data-entering={isEntering || undefined}
-      data-exiting={props.isExiting || undefined}>
+      data-exiting={isExiting || undefined}>
       <OverlayArrowContext.Provider value={{...arrowProps, placement, ref: arrowRef}}>
         {renderProps.children}
       </OverlayArrowContext.Provider>
     </dom.div>
   );
-  // oxlint-enable react/react-compiler
 }

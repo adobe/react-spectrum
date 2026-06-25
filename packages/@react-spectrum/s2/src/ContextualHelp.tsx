@@ -159,9 +159,11 @@ export const ContextualHelpContext =
  * total view.
  */
 export const ContextualHelp = forwardRef(function ContextualHelp(
-  props: ContextualHelpProps,
-  ref: FocusableRef<HTMLButtonElement>
+  propsArg: ContextualHelpProps,
+  refArg: FocusableRef<HTMLButtonElement>
 ) {
+  let props = propsArg;
+  let ref = refArg;
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   [props, ref] = useSpectrumContextProps(props, ref, ContextualHelpContext);
   let {
@@ -185,10 +187,10 @@ export const ContextualHelp = forwardRef(function ContextualHelp(
   // then ContextualHelp variant
   let labelProps = useLabels(props);
   let label = stringFormatter.format(`contextualhelp.${variant}`);
-  // oxlint-disable-next-line react/react-compiler
-  labelProps['aria-label'] = labelProps['aria-label']
-    ? labelProps['aria-label'] + ' ' + label
-    : label;
+  let mergedLabelProps = {
+    ...labelProps,
+    'aria-label': labelProps['aria-label'] ? labelProps['aria-label'] + ' ' + label : label
+  };
 
   let buttonProps = filterDOMProps(props, {labelable: true});
 
@@ -198,7 +200,7 @@ export const ContextualHelp = forwardRef(function ContextualHelp(
         slot={null}
         ref={ref}
         size={size}
-        {...mergeProps(buttonProps, labelProps)}
+        {...mergeProps(buttonProps, mergedLabelProps)}
         UNSAFE_style={UNSAFE_style}
         UNSAFE_className={UNSAFE_className}
         styles={styles}

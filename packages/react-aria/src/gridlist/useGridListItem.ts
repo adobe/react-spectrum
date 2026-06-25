@@ -39,7 +39,6 @@ import {
 import {isFocusVisible} from '../interactions/useFocusVisible';
 import {isTabbable} from '../utils/isFocusable';
 import type {ListState} from 'react-stately/useListState';
-import {mergeProps} from '../utils/mergeProps';
 import {scrollIntoViewport} from '../utils/scrollIntoView';
 import {SelectableItemStates, useSelectableItem} from '../selection/useSelectableItem';
 import type {TreeState} from 'react-stately/useTreeState';
@@ -345,8 +344,9 @@ export function useGridListItem<T>(
   //   });
   // }
 
-  // oxlint-disable-next-line react/react-compiler
-  let rowProps: DOMAttributes = mergeProps(itemProps, linkProps, {
+  let rowProps: DOMAttributes = {
+    ...itemProps,
+    ...linkProps,
     role: 'row',
     onKeyDownCapture: keyboardNavigationBehavior === 'arrow' ? onKeyDownCapture : undefined,
     onFocus,
@@ -360,50 +360,46 @@ export function useGridListItem<T>(
       descriptionId && (node['aria-label'] || node.textValue)
         ? `${getRowId(state, node.key)} ${descriptionId}`
         : undefined,
-    id: getRowId(state, node.key)
-  });
-
-  // we need to guard against space/enter triggering selection/row link via usePress (from itemProps) so check if propagation
-  // is stopped. this also fixes space not working in a textfield in a tree parent row
-  let baseOnKeyDown = rowProps.onKeyDown;
-  rowProps.onKeyDown = (e: ReactKeyboardEvent<FocusableElement>) => {
-    onKeyDown(e as ReactKeyboardEvent);
-    if (!e.isPropagationStopped()) {
-      baseOnKeyDown?.(e);
+    id: getRowId(state, node.key),
+    onKeyDown: (e: ReactKeyboardEvent<FocusableElement>) => {
+      onKeyDown(e as ReactKeyboardEvent<HTMLElement>);
+      if (!e.isPropagationStopped()) {
+        itemProps.onKeyDown?.(e as ReactKeyboardEvent<HTMLElement>);
+        linkProps.onKeyDown?.(e as ReactKeyboardEvent<HTMLElement>);
+      }
+    },
+    onPointerDown: (e: ReactPointerEvent<FocusableElement>) => {
+      let target = getEventTarget(e) as Element | null;
+      if (target && target !== ref.current && isTabbable(target)) {
+        e.stopPropagation();
+        return;
+      }
+      itemProps.onPointerDown?.(e as ReactPointerEvent<HTMLElement>);
+      linkProps.onPointerDown?.(e as ReactPointerEvent<HTMLElement>);
+    },
+    onMouseDown: (e: ReactMouseEvent<FocusableElement>) => {
+      let target = getEventTarget(e) as Element | null;
+      if (target && target !== ref.current && isTabbable(target)) {
+        e.stopPropagation();
+        return;
+      }
+      itemProps.onMouseDown?.(e as ReactMouseEvent<HTMLElement>);
+      linkProps.onMouseDown?.(e as ReactMouseEvent<HTMLElement>);
     }
-  };
-
-  // guard against presses triggering row selecition when they happen on elements within the row
-  // am currently assuming if it is tabbable it is interactive, but maybe can use a different kind of check
-  let baseOnPointerDown = rowProps.onPointerDown;
-  rowProps.onPointerDown = (e: ReactPointerEvent<FocusableElement>) => {
-    let target = getEventTarget(e) as Element | null;
-    if (target && target !== ref.current && isTabbable(target)) {
-      e.stopPropagation();
-      return;
-    }
-    baseOnPointerDown?.(e);
-  };
-
-  let baseOnMouseDown = rowProps.onMouseDown;
-  rowProps.onMouseDown = (e: ReactMouseEvent<FocusableElement>) => {
-    let target = getEventTarget(e) as Element | null;
-    if (target && target !== ref.current && isTabbable(target)) {
-      e.stopPropagation();
-      return;
-    }
-    baseOnMouseDown?.(e);
   };
 
   if (isVirtualized) {
     let {collection} = state;
     let nodes = [...collection];
     // TODO: refactor ListCollection to store an absolute index of a node's position?
-    rowProps['aria-rowindex'] = nodes.find(node => node.type === 'section')
-      ? [...collection.getKeys()]
-          .filter(key => collection.getItem(key)?.type !== 'section')
-          .findIndex(key => key === node.key) + 1
-      : node.index + 1;
+    rowProps = {
+      ...rowProps,
+      'aria-rowindex': nodes.find(node => node.type === 'section')
+        ? [...collection.getKeys()]
+            .filter(key => collection.getItem(key)?.type !== 'section')
+            .findIndex(key => key === node.key) + 1
+        : node.index + 1
+    };
   }
 
   let gridCellProps = {
@@ -412,16 +408,14 @@ export function useGridListItem<T>(
   };
 
   // TODO: should isExpanded and hasChildRows be a item state that gets returned by the hook?
-  // oxlint-disable react/react-compiler
   return {
-    rowProps: {...mergeProps(rowProps, treeGridRowProps)},
+    rowProps: {...rowProps, ...treeGridRowProps},
     gridCellProps,
     descriptionProps: {
       id: descriptionId
     },
     ...itemStates
   };
-  // oxlint-enable react/react-compiler
 }
 
 function handleTreeExpansionKeys<T>(

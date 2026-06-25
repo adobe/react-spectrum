@@ -30,6 +30,7 @@ import {
   StyleProps
 } from '@react-types/shared';
 import {Input} from './Input';
+import {mergeProps} from 'react-aria/mergeProps';
 import React, {ReactElement, useRef} from 'react';
 import {useDateFieldState} from 'react-stately/useDateFieldState';
 import {useFocusManagerRef, useFormatHelpText, useFormattedDateWidth} from './utils';
@@ -67,9 +68,10 @@ export interface SpectrumDateFieldProps<T extends DateValue>
  * Each part of a date value is displayed in an individually editable segment.
  */
 export const DateField = React.forwardRef(function DateField<T extends DateValue>(
-  props: SpectrumDateFieldProps<T>,
+  propsArg: SpectrumDateFieldProps<T>,
   ref: FocusableRef<HTMLElement>
 ) {
+  let props = propsArg;
   props = useProviderProps(props);
   props = useFormProps(props);
   let {autoFocus, isDisabled, isReadOnly, isRequired, isQuiet} = props;
@@ -106,8 +108,7 @@ export const DateField = React.forwardRef(function DateField<T extends DateValue
   // The format help text is unnecessary for screen reader users because each segment already has a label.
   let description = useFormatHelpText(props);
   if (description && !props.description) {
-    // oxlint-disable-next-line react/react-compiler
-    descriptionProps.id = undefined;
+    descriptionProps = mergeProps(descriptionProps, {id: undefined});
   }
 
   let validationState = state.validationState || (isInvalid ? 'invalid' : null);

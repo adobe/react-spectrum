@@ -100,16 +100,18 @@ export const CardView = React.forwardRef(function CardView<T extends object>(
     focusMode: 'cell'
   });
 
-  // oxlint-disable-next-line react/react-compiler
-  cardViewLayout.collection = gridCollection;
-  // oxlint-disable-next-line react/react-compiler
-  cardViewLayout.disabledKeys = state.disabledKeys;
+  let keyboardDelegate = useMemo(() => {
+    return Object.assign(Object.create(Object.getPrototypeOf(cardViewLayout)), cardViewLayout, {
+      collection: gridCollection,
+      disabledKeys: state.disabledKeys
+    });
+  }, [cardViewLayout, gridCollection, state.disabledKeys]);
 
   let {gridProps} = useGrid(
     {
       ...props,
       isVirtualized: true,
-      keyboardDelegate: cardViewLayout
+      keyboardDelegate
     },
     state,
     domRef
@@ -263,15 +265,14 @@ function InternalCard(props) {
   }
 
   // We don't want to focus the checkbox (or any other focusable elements) within the Card
-  // when pressing the arrow keys so we delete the key down handler here. Arrow key navigation between
+  // when pressing the arrow keys so we omit the key down handler here. Arrow key navigation between
   // the cards in the CardView is handled by useGrid => useSelectableCollection instead.
-  // oxlint-disable-next-line react/react-compiler
-  delete gridCellProps.onKeyDownCapture;
+  let {onKeyDownCapture: _onKeyDownCapture, ...articleProps} = gridCellProps;
   return (
     <div {...rowProps} ref={rowRef} className={classNames(styles, 'spectrum-CardView-row')}>
       <CardBase
         ref={cellRef}
-        articleProps={gridCellProps}
+        articleProps={articleProps}
         isQuiet={isQuiet}
         orientation={cardOrientation}
         item={item}

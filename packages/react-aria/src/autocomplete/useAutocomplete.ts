@@ -47,7 +47,6 @@ import {
   PointerEvent as ReactPointerEvent,
   useCallback,
   useEffect,
-  useMemo,
   useRef,
   useState
 } from 'react';
@@ -243,10 +242,14 @@ export function useAutocomplete<T>(
   }, [collectionNode]);
 
   // Make sure to memo so that React doesn't keep registering a new event listeners on every rerender of the wrapped collection
-  let mergedCollectionRef = useObjectRef(
-    // oxlint-disable-next-line react/react-compiler
-    useMemo(() => mergeRefs(collectionRef, callbackRef), [collectionRef, callbackRef])
-  );
+  let mergedCollectionRef = useObjectRef((value: Element | null) => {
+    let merged = mergeRefs(collectionRef, callbackRef);
+    if (typeof merged === 'function') {
+      merged(value);
+    } else if (merged) {
+      merged.current = value;
+    }
+  });
 
   let focusFirstItem = useCallback(() => {
     if (!collectionRef.current) {
@@ -581,7 +584,7 @@ export function useAutocomplete<T>(
       disallowTypeAhead: shouldUseVirtualFocus,
       autoFocus: autoFocusOnMount ? 'first' : false
     }),
-    collectionRef: mergedCollectionRef,
+    collectionRef: mergedCollectionRef as RefObject<HTMLElement | null>,
     filter: filter != null ? filterFn : undefined
   };
 }

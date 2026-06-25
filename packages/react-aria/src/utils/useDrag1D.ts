@@ -15,7 +15,7 @@
 import {getEventTarget, nodeContains} from './shadowdom/DOMFunctions';
 import {getOffset} from './getOffset';
 import {Orientation} from '@react-types/shared';
-import React, {HTMLAttributes, MutableRefObject, useRef} from 'react';
+import React, {HTMLAttributes, MutableRefObject, useEffect, useRef} from 'react';
 
 interface UseDrag1DProps {
   containerRef: MutableRefObject<HTMLElement>;
@@ -70,10 +70,10 @@ export function useDrag1D(props: UseDrag1DProps): HTMLAttributes<HTMLElement> {
 
   // Keep track of the current handlers in a ref so that the events can access them.
   let handlers = useRef({onPositionChange, onDrag});
-  // oxlint-disable-next-line react/react-compiler
-  handlers.current.onDrag = onDrag;
-  // oxlint-disable-next-line react/react-compiler
-  handlers.current.onPositionChange = onPositionChange;
+  useEffect(() => {
+    handlers.current.onDrag = onDrag;
+    handlers.current.onPositionChange = onPositionChange;
+  });
 
   let onMouseDragged = (e: MouseEvent) => {
     e.preventDefault();

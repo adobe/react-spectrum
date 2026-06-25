@@ -37,7 +37,7 @@ import {NumberField} from '../../src/numberfield/NumberField';
 import {Picker} from '../../src/picker/Picker';
 import {Radio} from '../../src/radio/Radio';
 import {RadioGroup} from '../../src/radio/RadioGroup';
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {SearchAutocomplete} from '../../src/autocomplete/SearchAutocomplete';
 import {SearchField} from '../../src/searchfield/SearchField';
 import {Slider} from '../../src/slider/Slider';
@@ -728,6 +728,28 @@ function FormWithControls(props: any = {}) {
   );
 }
 
+type SubmitFormStatusValue = 'progress' | 'invalid' | 'valid' | 'fixing';
+
+function SubmitFormStatus({formStatus}: {formStatus: SubmitFormStatusValue}) {
+  let variant =
+    formStatus === 'invalid'
+      ? 'negative'
+      : formStatus === 'valid'
+        ? 'positive'
+        : formStatus === 'fixing'
+          ? 'notice'
+          : 'info';
+
+  return (
+    <StatusLight variant={variant as 'info'}>
+      {formStatus === 'progress' && 'In progress'}
+      {formStatus === 'valid' && 'Submitted successfully'}
+      {formStatus === 'invalid' && 'Error'}
+      {formStatus === 'fixing' && 'Fixing mistakes'}
+    </StatusLight>
+  );
+}
+
 function FormWithSubmit() {
   let [policies, setPolicies] = useState<string[]>([]);
   let [policiesDirty, setPoliciesDirty] = useState(false);
@@ -738,57 +760,20 @@ function FormWithSubmit() {
   let [email, setEmail] = useState('');
   let [emailDirty, setEmailDirty] = useState(false);
 
-  let [formStatus, setFormStatus] = useState<'progress' | 'invalid' | 'valid' | 'fixing'>(
-    'progress'
-  );
   let [isSubmitted, setSubmitted] = useState(false); // TODO: really should be isSectionInvalid / 'fixing' for each form field. once form is submitted with mistakes, unchecking an unrelated, previously valid field should not make it look invalid.
 
-  let getValidationState = (isValid: boolean): ValidationState | undefined =>
-    ['invalid', 'fixing'].includes(formStatus) && !isValid ? 'invalid' : undefined;
+  let formDirty = policiesDirty || petDirty || truthDirty || emailDirty;
+  let isValid = policies.length === 3 && !!pet && truth && email.includes('@');
+  let formStatus: 'progress' | 'invalid' | 'valid' | 'fixing' = !isSubmitted
+    ? 'progress'
+    : formDirty
+      ? 'fixing'
+      : isValid
+        ? 'valid'
+        : 'invalid';
 
-  useEffect(() => {
-    let validate = (): boolean => policies.length === 3 && !!pet && truth && email.includes('@');
-    let formDirty = policiesDirty || petDirty || truthDirty || emailDirty;
-
-    if (isSubmitted) {
-      if (formDirty) {
-        // oxlint-disable-next-line react/react-compiler
-        setFormStatus('fixing');
-      } else {
-        setFormStatus(validate() ? 'valid' : 'invalid');
-      }
-    } else {
-      setFormStatus('progress');
-    }
-  }, [policies, policiesDirty, pet, petDirty, truth, truthDirty, email, emailDirty, isSubmitted]);
-
-  let Status = ({formStatus}) => {
-    // oxlint-disable-next-line react/react-compiler
-    let [variant, setVariant] = useState<'info' | 'negative' | 'positive' | 'notice'>('info');
-
-    // oxlint-disable-next-line react/react-compiler
-    useEffect(() => {
-      switch (formStatus) {
-        case 'invalid':
-          return setVariant('negative');
-        case 'valid':
-          return setVariant('positive');
-        case 'fixing':
-          return setVariant('notice');
-        default:
-          return setVariant('info');
-      }
-    }, [formStatus]);
-
-    return (
-      <StatusLight variant={variant}>
-        {formStatus === 'progress' && 'In progress'}
-        {formStatus === 'valid' && 'Submitted successfully'}
-        {formStatus === 'invalid' && 'Error'}
-        {formStatus === 'fixing' && 'Fixing mistakes'}
-      </StatusLight>
-    );
-  };
+  let getValidationState = (fieldValid: boolean): ValidationState | undefined =>
+    ['invalid', 'fixing'].includes(formStatus) && !fieldValid ? 'invalid' : undefined;
 
   let handleSubmit: React.FormEventHandler<Element> = e => {
     e.preventDefault();
@@ -810,7 +795,6 @@ function FormWithSubmit() {
     setTruthDirty(false);
     setEmail('');
     setEmailDirty(false);
-    setFormStatus('progress');
   };
 
   return (
@@ -895,8 +879,7 @@ function FormWithSubmit() {
       <Button variant="secondary" type="reset" onPress={reset}>
         Reset
       </Button>
-      {/* oxlint-disable-next-line react/react-compiler */}
-      <Status formStatus={formStatus} />
+      <SubmitFormStatus formStatus={formStatus} />
     </Form>
   );
 }
