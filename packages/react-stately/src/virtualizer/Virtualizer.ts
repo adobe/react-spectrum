@@ -202,9 +202,7 @@ export class Virtualizer<T extends object, V> {
       let wasNearBottom = distanceFromEnd <= scrollEndThreshold;
 
       if (!this._hasInitializedReverseAnchor) {
-        // Always snap to bottom on first layout with this config — a chat list should
-        // always show the latest content on open. _visibleViews is empty here so there
-        // is no anchor to restore anyway.
+        // Always snap to bottom on first layout
         this._hasInitializedReverseAnchor = true;
         if (this._snapToBottom(previousVisibleRect)) {
           return;
@@ -213,9 +211,10 @@ export class Virtualizer<T extends object, V> {
         // Only modify scroll when content actually changed — prevents the setVisibleRect
         // re-render after the initial snap from triggering a spurious anchor-restore.
         if (anchor) {
-          // In a reversed bottom-anchored layout, when history loads at the top existing items
-          // shift DOWN (y increases) to make room. When a new message arrives at the bottom,
-          // existing items keep the same absolute y. Direction is the discriminator.
+          // Two things can increase content height, and they need different handling.
+          // Old messages prepended at the top push existing items down (y increases) — we must adjust
+          // scroll to compensate so the user's view doesn't jump.
+          // New messages appended at the bottom leave existing items in place (y unchanged) — no adjustment needed.
           let preLayoutCornerY = anchor.offset + previousVisibleRect.y;
           let freshInfo = this.layout.getLayoutInfo(anchor.key);
           let anchorShiftedDown =
@@ -267,6 +266,14 @@ export class Virtualizer<T extends object, V> {
     }
   }
 
+  // Helper function that decides how to adjust the scroll position after content height changes in a reversed layout.
+  // There are four cases:
+  //   1. Streaming (item grew in place, user near bottom): snap to bottom.
+  //   2. History load (old messages prepended, items shifted down): scroll down to keep the
+  //      same item visible.
+  //   3. New message appended, user near bottom: snap to bottom.
+  //   4. User scrolled up: preserve their position regardless of what changed.
+  // Returns true if a scroll adjustment was made, false if no change was needed.
   private _applyReverseAnchorScroll(
     anchor: ScrollAnchor,
     wasNearBottom: boolean,
@@ -275,15 +282,8 @@ export class Virtualizer<T extends object, V> {
     itemSizeChanged: boolean | undefined
   ): boolean {
     if (wasNearBottom && !this._isScrolling && itemSizeChanged) {
-      // Streaming growth: the bottom item grew in place, shifting its top y downward in a
-      // reversed layout — which looks identical to anchorShiftedDown. wasNearBottom is the
-      // true discriminator: history loads above require the user to have scrolled up first,
-      // so wasNearBottom is false for history and true only for streaming. This branch must
-      // come before the anchorShiftedDown check.
       return this._snapToBottom(previousVisibleRect);
     } else if (anchorShiftedDown) {
-      // History load: content inserted above shifts items DOWN. Restore position so
-      // the topmost visible item stays in place.
       let targetY = this._computeScrollAnchorTarget(anchor);
       if (targetY != null) {
         let rect = new Rect(
@@ -296,11 +296,8 @@ export class Virtualizer<T extends object, V> {
         return true;
       }
     } else if (wasNearBottom && !this._isScrolling) {
-      // New message arrived below (anchor unchanged), user was near bottom:
-      // pin to latest output.
       return this._snapToBottom(previousVisibleRect);
     } else {
-      // User is scrolled up: preserve position regardless of where new content landed.
       if (this._restoreScrollAnchor(anchor)) {
         return true;
       }
@@ -308,6 +305,7 @@ export class Virtualizer<T extends object, V> {
     return false;
   }
 
+  // Pins the viewport to the bottom of the content
   private _snapToBottom(previousVisibleRect: Rect): boolean {
     let maxVisibleY = Math.max(0, this.contentSize.height - previousVisibleRect.height);
     let target = new Rect(
@@ -323,6 +321,10 @@ export class Virtualizer<T extends object, V> {
     return false;
   }
 
+  // Captures a reference point before a layout change so the user's scroll position can
+  // be restored afterward. Finds the visible item whose top edge sits closest to the top
+  // of the viewport, and records its key and distance from the viewport top.
+  // Top corners are always used. Returns null if the layout is not reversed.
   private _getScrollAnchor(): ScrollAnchor | null {
     if (!this._isAnchoredToEnd) {
       return null;
@@ -350,6 +352,10 @@ export class Virtualizer<T extends object, V> {
     return best;
   }
 
+  // Computes the viewport y position needed to keep the anchor item at the same relative
+  // position it had before the layout change. Measures how far the anchor item shifted,
+  // then offsets the viewport by the same amount. Clamps to valid scroll bounds.
+  // Returns null if no adjustment is needed, or if clamping would leave the viewport unchanged.
   private _computeScrollAnchorTarget(anchor: ScrollAnchor): number | null {
     let finalInfo = this.layout.getLayoutInfo(anchor.key);
     if (!finalInfo) {
@@ -363,11 +369,11 @@ export class Virtualizer<T extends object, V> {
     let targetY = visibleRect.y + adjustment;
     let maxY = Math.max(0, this.contentSize.height - visibleRect.height);
     let clampedY = Math.max(0, Math.min(maxY, targetY));
-    // Return null when clamping brings the target back to the current position to avoid
-    // a spurious setVisibleRect call and the extra render cycle it triggers.
     return clampedY !== visibleRect.y ? clampedY : null;
   }
 
+  // Applies the scroll adjustment computed from the anchor to keep the user's view stable.
+  // Returns true if scroll changed, false if the anchor item didn't move or is gone.
   private _restoreScrollAnchor(anchor: ScrollAnchor): boolean {
     let targetY = this._computeScrollAnchorTarget(anchor);
     if (targetY == null) {
@@ -491,10 +497,9 @@ export class Virtualizer<T extends object, V> {
       needsLayout = true;
     }
 
+    // If the reversed mode was off and is now being turned on, reset the initialization flag so the initial snap-to-bottom fires.
     if (isReversed !== this._isAnchoredToEnd || scrollEndThreshold !== this._scrollEndThreshold) {
       if (!this._isAnchoredToEnd && isReversed) {
-        // Reset only when enabling — the flag is only consumed while reversed mode is active,
-        // so there is no need to reset it when turning off.
         this._hasInitializedReverseAnchor = false;
       }
       this._isAnchoredToEnd = isReversed;

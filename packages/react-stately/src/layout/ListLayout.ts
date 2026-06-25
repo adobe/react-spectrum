@@ -192,7 +192,7 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
   isReversed(layoutOptions?: O): boolean {
     let anchorTo = layoutOptions?.anchorTo ?? this.anchorTo;
     let orientation = layoutOptions?.orientation ?? this.orientation;
-    // Guard matches buildCollection's condition: anchorTo: 'end' is only meaningful for vertical orientation
+    // reversed layouts are only supported in vertical orientations
     return anchorTo === 'end' && orientation !== 'horizontal';
   }
 
@@ -480,15 +480,12 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
     let collectionNodes = toArray(this.virtualizer!.collection, node => node.type !== 'content');
     this.assertReversedCollectionSupported(collectionNodes);
 
-    // Separate the optional loader from item nodes. The loader is built after contentSize is set
-    // because buildLoader reads this.virtualizer!.contentSize.width to size its rect.
     let itemNodes = collectionNodes.filter(node => node.type !== 'loader');
     let loaderCollectionNode = collectionNodes.find(node => node.type === 'loader') ?? null;
 
-    // Height pass: collect item heights from the cache without calling buildNode.
-    // For measured items use their real height; for unmeasured/uncached items fall back to the
-    // estimated row height. This lets us compute all y positions before deciding which items
-    // need a full build, enabling the windowing optimization below.
+    // Height-only pass: we need the sum of all item heights to compute contentSize before we
+    // can assign y positions. Read cached heights (or estimated fallback) without calling
+    // buildNode — y is unknown here, so calling it would cache items at the wrong position.
     let itemHeights = itemNodes.map(node => {
       let cached = this.layoutNodes.get(node.key);
       return cached
@@ -507,17 +504,14 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
     let contentHeight = Math.max(contentLength, this.virtualizer!.size.height);
     this.contentSize = new Size(this.virtualizer!.size.width, contentHeight);
 
-    // Bottom-up position pass: assign y to every item and build LayoutNodes.
-    // Measured items are cheaply copied from cache with an updated y.
-    // Unmeasured items only get a full buildNode call if they intersect requestedRect;
-    // items outside the visible window get a cheap estimated LayoutNode instead.
+    // Bottom-up position pass: assign y to every item
     let width = this.virtualizer!.size.width - this.padding * 2;
     let hasLoader = loaderCollectionNode != null;
     let offset = hasLoader ? 1 : 0;
-    let nodes: LayoutNode[] = new Array(itemNodes.length + offset);
+    let nodes: LayoutNode[] = Array.from({length: itemNodes.length + offset});
     let currentBottom = contentLength - this.padding;
 
-    // Iterate last→first so the last item in the collection (newest) is placed at the visual
+    // Iterate last → first so the last item in the collection (newest) is placed at the visual
     // bottom and written to nodes[0] (first in DOM) for screen-reader accessibility.
     let nodesIndex = 0;
     for (let i = itemNodes.length - 1; i >= 0; i--) {
@@ -810,9 +804,10 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
     let heightProperty = this.orientation === 'horizontal' ? 'width' : 'height';
     layoutInfo.estimatedSize = false;
 
-    // buildReversedCollection recomputes all positions from scratch each pass, so the
-    // normal path's validRect/requestedRect adjustments don't apply here.
-    // Just record the new height and trigger a relayout.
+    // Store the real measured height and signal a relayout. Unlike the normal path, we don't
+    // adjust validRect/requestedRect because buildReversedCollection always recomputes all
+    // positions from scratch. Items are placed bottom-up, so each item's y depends on the
+    // heights of every item below it, making incremental invalidation impossible.
     if (this.anchorTo === 'end' && this.orientation === 'vertical') {
       if (layoutInfo.rect[heightProperty] !== size[heightProperty]) {
         let newLayoutInfo = layoutInfo.copy();
