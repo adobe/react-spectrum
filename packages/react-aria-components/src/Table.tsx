@@ -43,7 +43,7 @@ import {
   DefaultCollectionRenderer,
   ItemRenderProps
 } from './Collection';
-import {ColumnSize, ColumnStaticSize} from 'react-stately/useTableState';
+import {ColumnSize, ColumnStaticSize, getColumnWidthVarName} from 'react-stately/useTableState';
 import {
   DisabledBehavior,
   Node,
@@ -448,6 +448,7 @@ interface ResizableTableContainerContextValue {
   tableWidth: number;
   tableRef: RefObject<HTMLTableElement | null>;
   scrollRef: RefObject<HTMLElement | null>;
+  columnWidthRootRef: RefObject<HTMLElement | null>;
   // Dependency inject useTableColumnResizeState so it doesn't affect bundle size unless you're using ResizableTableContainer.
   useTableColumnResizeState: typeof useTableColumnResizeState;
   onResizeStart?: (widths: Map<Key, ColumnSize>) => void;
@@ -523,6 +524,7 @@ export const ResizableTableContainer = forwardRef(function ResizableTableContain
     () => ({
       tableRef,
       scrollRef,
+      columnWidthRootRef: containerRef,
       tableWidth: width,
       // oxlint-disable-next-line react/react-compiler
       useTableColumnResizeState,
@@ -530,7 +532,7 @@ export const ResizableTableContainer = forwardRef(function ResizableTableContain
       onResize: props.onResize,
       onResizeEnd: props.onResizeEnd
     }),
-    [tableRef, width, props.onResizeStart, props.onResize, props.onResizeEnd]
+    [tableRef, containerRef, width, props.onResizeStart, props.onResize, props.onResizeEnd]
   );
 
   return (
@@ -679,6 +681,19 @@ let TableElementType = forwardRef(function TableElementType(
   }
   return <dom.table {...props} ref={ref} />;
 });
+
+function TableColGroup() {
+  let state = useContext(TableStateContext)!;
+  let collection = state.collection as TableCollection<unknown>;
+
+  return (
+    <colgroup>
+      {collection.columns.map(column => (
+        <col key={column.key} style={{width: `var(${getColumnWidthVarName(column.index)})`}} />
+      ))}
+    </colgroup>
+  );
+}
 
 const EXPANSION_KEYS = {
   expand: {
@@ -871,7 +886,8 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
     // oxlint-disable-next-line react/react-compiler
     layoutState = tableContainerContext.useTableColumnResizeState(
       {
-        tableWidth: tableContainerContext.tableWidth
+        tableWidth: tableContainerContext.tableWidth,
+        columnWidthRootRef: tableContainerContext.columnWidthRootRef
       },
       filteredState
     );
@@ -915,6 +931,7 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
           data-drop-target={isRootDropTarget || undefined}
           data-focused={isFocused || undefined}
           data-focus-visible={isFocusVisible || undefined}>
+          {!isVirtualized && layoutState ? <TableColGroup /> : null}
           <SharedElementTransition>
             <CollectionRoot
               collection={filteredState.collection}
@@ -1274,9 +1291,6 @@ export const Column = /*#__PURE__*/ createLeafComponent(
     });
 
     let style = renderProps.style;
-    if (layoutState) {
-      style = {...style, width: layoutState.getColumnWidth(column.key)};
-    }
 
     let DOMProps = filterDOMProps(props as any, {global: true});
     delete DOMProps.id;
@@ -1371,7 +1385,9 @@ export const ColumnResizer = forwardRef(function ColumnResizer(
   }
   let stringFormatter = useLocalizedStringFormatter(intlMessages, 'react-aria-components');
 
-  let {onResizeStart, onResize, onResizeEnd} = useContext(ResizableTableContainerContext)!;
+  let {onResizeStart, onResize, onResizeEnd, columnWidthRootRef} = useContext(
+    ResizableTableContainerContext
+  )!;
   let {column, triggerRef} = useContext(ColumnResizerContext)!;
   let inputRef = useRef<HTMLInputElement>(null);
   let {resizerProps, inputProps, isResizing} = useTableColumnResize(
@@ -1381,7 +1397,8 @@ export const ColumnResizer = forwardRef(function ColumnResizer(
       onResizeStart,
       onResize,
       onResizeEnd,
-      triggerRef
+      triggerRef,
+      columnWidthRootRef
     },
     layoutState,
     inputRef

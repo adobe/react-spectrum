@@ -11,6 +11,7 @@
  */
 
 import {act, installPointerEvent} from '@react-spectrum/test-utils-internal';
+import {getColumnWidthsFromRow} from './columnWidthTestUtils';
 
 import React from 'react';
 
@@ -31,9 +32,7 @@ let rows = [
 
 function getColumnWidths(tree) {
   let rows = tree.getAllByRole('row') as HTMLElement[];
-  return Array.from(rows[0].children).map(cell =>
-    Number((cell as HTMLElement).style.width.replace('px', ''))
-  );
+  return getColumnWidthsFromRow(rows[0]);
 }
 
 export let resizingTests = (
@@ -41,9 +40,15 @@ export let resizingTests = (
   rerender: any,
   Table: any,
   ControlledTable: any,
-  resizeCol: any,
+  resizeColImpl: any,
   resizeTable: any
 ): void => {
+  let resizeCol = (tree: any, col: any, delta: any) => {
+    resizeColImpl(tree, col, delta);
+    act(() => {
+      jest.runAllTimers();
+    });
+  };
   // assumption with all these tests
   // 1. the controlling values we pass in aren't actually controlling
   // the sizes, they are instead more like the default values that the controlling logic uses

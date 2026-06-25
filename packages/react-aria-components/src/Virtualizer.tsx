@@ -18,6 +18,7 @@ import {
   renderAfterDropIndicators
 } from './Collection';
 import {DropTargetDelegate, ItemDropTarget, Node} from '@react-types/shared';
+import {GridNode} from 'react-stately/private/grid/GridCollection';
 import {
   Layout,
   ReusableView,
@@ -162,12 +163,21 @@ function renderWrapper(
   reusableView: View,
   renderDropIndicator?: (target: ItemDropTarget) => ReactNode
 ): ReactNode {
+  let layoutInfo = reusableView.layoutInfo!;
+  let useColumnCSSVariables = layoutInfo.type === 'column' || layoutInfo.type === 'cell';
+  let gridNode = reusableView.content as GridNode<unknown> | null | undefined;
+  let columnIndex = gridNode != null ? (gridNode.colIndex ?? gridNode.index) : undefined;
+  let colSpan = gridNode?.colSpan ?? 1;
+
   let rendered = (
     <VirtualizerItem
       key={reusableView.key}
-      layoutInfo={reusableView.layoutInfo!}
+      layoutInfo={layoutInfo}
       virtualizer={reusableView.virtualizer}
-      parent={parent?.layoutInfo}>
+      parent={parent?.layoutInfo}
+      useColumnCSSVariables={useColumnCSSVariables}
+      columnIndex={columnIndex}
+      colSpan={colSpan}>
       {reusableView.rendered}
     </VirtualizerItem>
   );

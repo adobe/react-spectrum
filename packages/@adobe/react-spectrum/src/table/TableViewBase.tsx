@@ -161,6 +161,7 @@ export interface TableContextValue<T> {
   headerMenuOpen: boolean;
   setHeaderMenuOpen: (val: boolean) => void;
   renderEmptyState?: () => ReactElement;
+  columnWidthRootRef: RefObject<HTMLElement | null>;
 }
 
 export const TableContext = React.createContext<TableContextValue<unknown> | null>(null);
@@ -168,14 +169,30 @@ export function useTableContext(): TableContextValue<unknown> {
   return useContext(TableContext)!;
 }
 
-export const VirtualizerContext = React.createContext<{width: number; key: Key | null} | null>(
-  null
-);
-export function useVirtualizerContext(): {
-  width: number;
-  key: Key | null;
-} | null {
-  return useContext(VirtualizerContext);
+function getColumnLayoutIndex(node: GridNode<unknown> | null | undefined): number | undefined {
+  if (!node) {
+    return undefined;
+  }
+  return node.colIndex ?? node.index;
+}
+
+function getColumnResizeIndicatorPosition(
+  resizingColumnKey: Key | null,
+  columns: GridNode<unknown>[],
+  getColumnWidth: (key: Key) => number
+): number {
+  if (resizingColumnKey == null) {
+    return 0;
+  }
+
+  let position = 0;
+  for (let column of columns) {
+    position += getColumnWidth(column.key);
+    if (column.key === resizingColumnKey) {
+      return position - 2;
+    }
+  }
+  return 0;
 }
 
 interface TableBaseProps<T> extends SpectrumTableProps<T> {
@@ -370,7 +387,12 @@ function TableViewBase<T extends object>(props: TableBaseProps<T>, ref: DOMRef<H
           key={reusableView.key}
           layoutInfo={reusableView.layoutInfo!}
           virtualizer={reusableView.virtualizer}
-          parent={parent!}>
+          parent={parent!}
+          columnIndex={getColumnLayoutIndex(reusableView.content)}
+          colSpan={reusableView.content?.colSpan ?? 1}
+          useColumnCSSVariables={
+            reusableView.layoutInfo?.type === 'column' || reusableView.layoutInfo?.type === 'cell'
+          }>
           {reusableView.rendered}
         </TableCellWrapper>
       );
@@ -525,7 +547,8 @@ function TableViewBase<T extends object>(props: TableBaseProps<T>, ref: DOMRef<H
         onFocusedResizer,
         headerMenuOpen,
         setHeaderMenuOpen,
-        renderEmptyState: props.renderEmptyState
+        renderEmptyState: props.renderEmptyState,
+        columnWidthRootRef: domRef
       }}>
       <TableVirtualizer
         {...mergedProps}
@@ -666,11 +689,28 @@ function TableVirtualizer<T>(props: TableVirtualizerProps<T>) {
     [scale]
   );
 
+  let onWidthsApplied = useCallback(
+    (totalWidth: number) => {
+      let width = `${totalWidth}px`;
+      let bodyContent = bodyRef.current?.firstElementChild;
+      if (bodyContent instanceof HTMLElement) {
+        bodyContent.style.width = width;
+      }
+      let headerContent = headerRef.current?.firstElementChild;
+      if (headerContent instanceof HTMLElement) {
+        headerContent.style.width = width;
+      }
+    },
+    [bodyRef, headerRef]
+  );
+
   let columnResizeState = useTableColumnResizeState(
     {
       tableWidth,
       getDefaultWidth,
-      getDefaultMinWidth
+      getDefaultMinWidth,
+      columnWidthRootRef: domRef,
+      onWidthsApplied
     },
     tableState
   );
@@ -737,31 +777,21 @@ function TableVirtualizer<T>(props: TableVirtualizerProps<T>) {
     }
   }, [bodyRef, headerRef]);
 
-  let resizerPosition =
-    columnResizeState.resizingColumn != null
-      ? layout.getLayoutInfo(columnResizeState.resizingColumn)!.rect.maxX - 2
-      : 0;
+  let resizerPosition = getColumnResizeIndicatorPosition(
+    columnResizeState.resizingColumn,
+    collection.columns,
+    columnResizeState.getColumnWidth
+  );
+
+  let totalTableWidth = collection.columns.reduce(
+    (sum, column) => sum + columnResizeState.getColumnWidth(column.key),
+    0
+  );
 
   let resizerAtEdge =
-    resizerPosition >
-    Math.max(state.virtualizer.contentSize.width, state.virtualizer.visibleRect.width) - 3;
-  // this should be fine, every movement of the resizer causes a rerender
-  // scrolling can cause it to lag for a moment, but it's always updated
+    resizerPosition > Math.max(totalTableWidth, state.virtualizer.visibleRect.width) - 3;
   let resizerInVisibleRegion = resizerPosition < state.virtualizer.visibleRect.maxX;
   let shouldHardCornerResizeCorner = resizerAtEdge && resizerInVisibleRegion;
-
-  // minimize re-render caused on Resizers by memoing this
-  let resizingColumnWidth =
-    columnResizeState.resizingColumn != null
-      ? columnResizeState.getColumnWidth(columnResizeState.resizingColumn)
-      : 0;
-  let resizingColumn = useMemo(
-    () => ({
-      width: resizingColumnWidth,
-      key: columnResizeState.resizingColumn
-    }),
-    [resizingColumnWidth, columnResizeState.resizingColumn]
-  );
 
   if (isVirtualDragging) {
     otherProps.tabIndex = undefined;
@@ -776,66 +806,64 @@ function TableVirtualizer<T>(props: TableVirtualizerProps<T>) {
   let visibleViews = renderChildren(null, state.visibleViews, renderWrapper);
 
   return (
-    <VirtualizerContext.Provider value={resizingColumn}>
-      <FocusScope>
-        <div {...otherProps} ref={domRef}>
-          <div
-            role="presentation"
-            className={classNames(styles, 'spectrum-Table-headWrapper')}
-            style={{
-              height: headerHeight,
-              overflow: 'hidden',
-              position: 'relative',
-              willChange: state.isScrolling ? 'scroll-position' : undefined,
-              scrollPaddingInlineStart: scrollPadding
-            }}
-            ref={headerRef}>
-            <ResizeStateContext.Provider value={columnResizeState}>
-              {visibleViews[0]}
-            </ResizeStateContext.Provider>
-          </div>
-          <ScrollView
-            className={classNames(
-              styles,
-              'spectrum-Table-body',
-              {
-                'focus-ring': isFocusVisible,
-                'spectrum-Table-body--resizerAtTableEdge': shouldHardCornerResizeCorner
-              },
-              classNames(stylesOverrides, 'react-spectrum-Table-body', {
-                'react-spectrum-Table-body--dropTarget': !!isRootDropTarget
-              })
-            )}
-            //  Firefox and Chrome make generic elements using CSS overflow 'scroll' or 'auto' tabbable,
-            //  including them within the accessibility tree, which breaks the table structure in Firefox.
-            //  Using tabIndex={-1} prevents the ScrollView from being tabbable, and using role="rowgroup"
-            //  here and role="presentation" on the table body content fixes the table structure.
-            role="rowgroup"
-            tabIndex={isVirtualDragging ? undefined : -1}
-            style={{
-              flex: 1,
-              scrollPaddingInlineStart: scrollPadding
-            }}
-            innerStyle={{overflow: 'visible'}}
-            ref={bodyRef}
-            contentSize={state.contentSize}
-            onVisibleRectChange={onVisibleRectChangeMemo}
-            onScrollStart={state.startScrolling}
-            onScrollEnd={state.endScrolling}
-            onScroll={onScroll}>
-            {visibleViews[1]}
-            <div
-              className={classNames(styles, 'spectrum-Table-bodyResizeIndicator')}
-              style={{
-                [direction === 'ltr' ? 'left' : 'right']: `${resizerPosition}px`,
-                height: `${Math.max(state.virtualizer.contentSize.height, state.virtualizer.visibleRect.height)}px`,
-                display: columnResizeState.resizingColumn ? 'block' : 'none'
-              }}
-            />
-          </ScrollView>
+    <FocusScope>
+      <div {...otherProps} ref={domRef}>
+        <div
+          role="presentation"
+          className={classNames(styles, 'spectrum-Table-headWrapper')}
+          style={{
+            height: headerHeight,
+            overflow: 'hidden',
+            position: 'relative',
+            willChange: state.isScrolling ? 'scroll-position' : undefined,
+            scrollPaddingInlineStart: scrollPadding
+          }}
+          ref={headerRef}>
+          <ResizeStateContext.Provider value={columnResizeState}>
+            {visibleViews[0]}
+          </ResizeStateContext.Provider>
         </div>
-      </FocusScope>
-    </VirtualizerContext.Provider>
+        <ScrollView
+          className={classNames(
+            styles,
+            'spectrum-Table-body',
+            {
+              'focus-ring': isFocusVisible,
+              'spectrum-Table-body--resizerAtTableEdge': shouldHardCornerResizeCorner
+            },
+            classNames(stylesOverrides, 'react-spectrum-Table-body', {
+              'react-spectrum-Table-body--dropTarget': !!isRootDropTarget
+            })
+          )}
+          //  Firefox and Chrome make generic elements using CSS overflow 'scroll' or 'auto' tabbable,
+          //  including them within the accessibility tree, which breaks the table structure in Firefox.
+          //  Using tabIndex={-1} prevents the ScrollView from being tabbable, and using role="rowgroup"
+          //  here and role="presentation" on the table body content fixes the table structure.
+          role="rowgroup"
+          tabIndex={isVirtualDragging ? undefined : -1}
+          style={{
+            flex: 1,
+            scrollPaddingInlineStart: scrollPadding
+          }}
+          innerStyle={{overflow: 'visible'}}
+          ref={bodyRef}
+          contentSize={state.contentSize}
+          onVisibleRectChange={onVisibleRectChangeMemo}
+          onScrollStart={state.startScrolling}
+          onScrollEnd={state.endScrolling}
+          onScroll={onScroll}>
+          {visibleViews[1]}
+          <div
+            className={classNames(styles, 'spectrum-Table-bodyResizeIndicator')}
+            style={{
+              [direction === 'ltr' ? 'left' : 'right']: 'var(--resize-indicator-position, 0px)',
+              height: `${Math.max(state.virtualizer.contentSize.height, state.virtualizer.visibleRect.height)}px`,
+              display: columnResizeState.resizingColumn ? 'block' : 'none'
+            }}
+          />
+        </ScrollView>
+      </div>
+    </FocusScope>
   );
 }
 
@@ -1601,12 +1629,18 @@ function TableCellWrapper({
   layoutInfo,
   virtualizer,
   parent,
-  children
+  children,
+  columnIndex,
+  colSpan = 1,
+  useColumnCSSVariables = false
 }: {
   layoutInfo: LayoutInfo;
   virtualizer: any;
   parent: ReusableView<any, any>;
   children: ReactNode;
+  columnIndex?: number;
+  colSpan?: number;
+  useColumnCSSVariables?: boolean;
 }) {
   let {isTableDroppable, dropState} = useContext(TableContext)!;
   let isDropTarget = false;
@@ -1627,6 +1661,9 @@ function TableCellWrapper({
       layoutInfo={layoutInfo}
       virtualizer={virtualizer}
       parent={parent?.layoutInfo}
+      useColumnCSSVariables={useColumnCSSVariables}
+      columnIndex={columnIndex}
+      colSpan={colSpan}
       className={useMemo(
         () =>
           classNames(
