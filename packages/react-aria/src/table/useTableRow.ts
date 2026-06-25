@@ -61,8 +61,10 @@ export function useTableRow<T>(
   let {direction} = useLocale();
 
   if (isVirtualized && state.treeColumn == null) {
+    // oxlint-disable-next-line react/react-compiler
     rowProps['aria-rowindex'] = node.index + 1 + state.collection.headerRows.length; // aria-rowindex is 1 based
   } else {
+    // oxlint-disable-next-line react/react-compiler
     delete rowProps['aria-rowindex'];
   }
 

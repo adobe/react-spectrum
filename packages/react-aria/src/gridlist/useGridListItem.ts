@@ -11,7 +11,6 @@
  */
 
 import {chain} from '../utils/chain';
-
 import {
   Collection,
   DOMAttributes,
@@ -30,8 +29,15 @@ import {
 import {getFocusableTreeWalker} from '../focus/FocusScope';
 import {getRowId, listMap} from './utils';
 import {getScrollParent} from '../utils/getScrollParent';
-import {HTMLAttributes, KeyboardEvent as ReactKeyboardEvent, useRef} from 'react';
+import {
+  HTMLAttributes,
+  KeyboardEvent as ReactKeyboardEvent,
+  MouseEvent as ReactMouseEvent,
+  PointerEvent as ReactPointerEvent,
+  useRef
+} from 'react';
 import {isFocusVisible} from '../interactions/useFocusVisible';
+import {isTabbable} from '../utils/isFocusable';
 import type {ListState} from 'react-stately/useListState';
 import {mergeProps} from '../utils/mergeProps';
 import {scrollIntoViewport} from '../utils/scrollIntoView';
@@ -181,36 +187,10 @@ export function useGridListItem<T>(
     let walker = getFocusableTreeWalker(ref.current);
     walker.currentNode = activeElement;
 
-    if ('expandedKeys' in state && activeElement === ref.current) {
-      if (
-        e.key === EXPANSION_KEYS['expand'][direction] &&
-        state.selectionManager.focusedKey === node.key &&
-        hasChildRows &&
-        !state.expandedKeys.has(node.key)
-      ) {
-        state.toggleKey(node.key);
-        e.stopPropagation();
-        return;
-      } else if (
-        e.key === EXPANSION_KEYS['collapse'][direction] &&
-        state.selectionManager.focusedKey === node.key
-      ) {
-        // If item is collapsible, collapse it; else move to parent
-        if (hasChildRows && state.expandedKeys.has(node.key)) {
-          state.toggleKey(node.key);
-          e.stopPropagation();
-          return;
-        } else if (
-          !state.expandedKeys.has(node.key) &&
-          node.parentKey &&
-          state.collection.getItem(node.parentKey)?.type === 'item'
-        ) {
-          // Item is a leaf or already collapsed, move focus to parent
-          state.selectionManager.setFocusedKey(node.parentKey);
-          e.stopPropagation();
-          return;
-        }
-      }
+    if (
+      handleTreeExpansionKeys(e, state, node, hasChildRows, direction, activeElement, ref.current)
+    ) {
+      return;
     }
 
     switch (e.key) {
@@ -310,7 +290,7 @@ export function useGridListItem<T>(
     }
   };
 
-  let onKeyDown = e => {
+  let onKeyDown = (e: ReactKeyboardEvent) => {
     let activeElement = getActiveElement();
     if (
       !nodeContains(e.currentTarget, getEventTarget(e) as Element) ||
@@ -318,6 +298,22 @@ export function useGridListItem<T>(
       !activeElement
     ) {
       return;
+    }
+
+    if (keyboardNavigationBehavior === 'tab') {
+      // Stop propagation for all events that originate from the children of the gridlist item since we don't want to trigger
+      // grid level interactions (row navigation/typeselect/etc)
+      // exception made for Tab since that needs to propagate to useSelectableCollection to tab out of the gridlist, might be others?
+      if (getEventTarget(e) !== ref.current && e.key !== 'Tab') {
+        e.stopPropagation();
+        return;
+      }
+
+      if (
+        handleTreeExpansionKeys(e, state, node, hasChildRows, direction, activeElement, ref.current)
+      ) {
+        return;
+      }
     }
 
     switch (e.key) {
@@ -349,10 +345,10 @@ export function useGridListItem<T>(
   //   });
   // }
 
+  // oxlint-disable-next-line react/react-compiler
   let rowProps: DOMAttributes = mergeProps(itemProps, linkProps, {
     role: 'row',
-    onKeyDownCapture,
-    onKeyDown,
+    onKeyDownCapture: keyboardNavigationBehavior === 'arrow' ? onKeyDownCapture : undefined,
     onFocus,
     // 'aria-label': [(node.textValue || undefined), rowAnnouncement].filter(Boolean).join(', '),
     'aria-label': node['aria-label'] || node.textValue || undefined,
@@ -366,6 +362,38 @@ export function useGridListItem<T>(
         : undefined,
     id: getRowId(state, node.key)
   });
+
+  // we need to guard against space/enter triggering selection/row link via usePress (from itemProps) so check if propagation
+  // is stopped. this also fixes space not working in a textfield in a tree parent row
+  let baseOnKeyDown = rowProps.onKeyDown;
+  rowProps.onKeyDown = (e: ReactKeyboardEvent<FocusableElement>) => {
+    onKeyDown(e as ReactKeyboardEvent);
+    if (!e.isPropagationStopped()) {
+      baseOnKeyDown?.(e);
+    }
+  };
+
+  // guard against presses triggering row selecition when they happen on elements within the row
+  // am currently assuming if it is tabbable it is interactive, but maybe can use a different kind of check
+  let baseOnPointerDown = rowProps.onPointerDown;
+  rowProps.onPointerDown = (e: ReactPointerEvent<FocusableElement>) => {
+    let target = getEventTarget(e) as Element | null;
+    if (target && target !== ref.current && isTabbable(target)) {
+      e.stopPropagation();
+      return;
+    }
+    baseOnPointerDown?.(e);
+  };
+
+  let baseOnMouseDown = rowProps.onMouseDown;
+  rowProps.onMouseDown = (e: ReactMouseEvent<FocusableElement>) => {
+    let target = getEventTarget(e) as Element | null;
+    if (target && target !== ref.current && isTabbable(target)) {
+      e.stopPropagation();
+      return;
+    }
+    baseOnMouseDown?.(e);
+  };
 
   if (isVirtualized) {
     let {collection} = state;
@@ -384,6 +412,7 @@ export function useGridListItem<T>(
   };
 
   // TODO: should isExpanded and hasChildRows be a item state that gets returned by the hook?
+  // oxlint-disable react/react-compiler
   return {
     rowProps: {...mergeProps(rowProps, treeGridRowProps)},
     gridCellProps,
@@ -392,6 +421,51 @@ export function useGridListItem<T>(
     },
     ...itemStates
   };
+  // oxlint-enable react/react-compiler
+}
+
+function handleTreeExpansionKeys<T>(
+  e: ReactKeyboardEvent,
+  state: ListState<T> | TreeState<T>,
+  node: RSNode<unknown>,
+  hasChildRows: boolean | undefined,
+  direction: string,
+  activeElement: Element | null,
+  rowRef: FocusableElement | null
+): boolean {
+  if (!('expandedKeys' in state) || activeElement !== rowRef) {
+    return false;
+  }
+  if (
+    e.key === EXPANSION_KEYS['expand'][direction] &&
+    state.selectionManager.focusedKey === node.key &&
+    hasChildRows &&
+    !state.expandedKeys.has(node.key)
+  ) {
+    state.toggleKey(node.key);
+    e.stopPropagation();
+    return true;
+  } else if (
+    e.key === EXPANSION_KEYS['collapse'][direction] &&
+    state.selectionManager.focusedKey === node.key
+  ) {
+    // If item is collapsible, collapse it; else move to parent
+    if (hasChildRows && state.expandedKeys.has(node.key)) {
+      state.toggleKey(node.key);
+      e.stopPropagation();
+      return true;
+    } else if (
+      !state.expandedKeys.has(node.key) &&
+      node.parentKey &&
+      state.collection.getItem(node.parentKey)?.type === 'item'
+    ) {
+      // Item is a leaf or already collapsed, move focus to parent
+      state.selectionManager.setFocusedKey(node.parentKey);
+      e.stopPropagation();
+      return true;
+    }
+  }
+  return false;
 }
 
 function last(walker: TreeWalker) {

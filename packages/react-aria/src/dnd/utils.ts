@@ -14,6 +14,7 @@ import {CUSTOM_DRAG_TYPE, DROP_OPERATION, GENERIC_TYPE, NATIVE_DRAG_TYPES} from 
 import {
   DirectoryDropItem,
   DragItem,
+  DragType,
   DropItem,
   FileDropItem,
   DragTypes as IDragTypes,
@@ -183,15 +184,32 @@ export class DragTypes implements IDragTypes {
     this.includesUnknownTypes = !hasFiles && dataTransfer.types.includes('Files');
   }
 
-  has(type: string | symbol): boolean {
+  has(type: DragType | DragType[]): boolean {
+    if (Array.isArray(type)) {
+      return type.some(t => this.has(t));
+    }
+
     if (
       this.includesUnknownTypes ||
-      (type === DIRECTORY_DRAG_TYPE && this.types.has(GENERIC_TYPE))
+      (type === DIRECTORY_DRAG_TYPE && this.types.has(GENERIC_TYPE)) ||
+      type === '*/*'
     ) {
       return true;
     }
 
-    return typeof type === 'string' && this.types.has(type);
+    if (typeof type === 'string') {
+      if (type.endsWith('/*')) {
+        for (let key of this.types) {
+          if (key.startsWith(type.slice(0, -2))) {
+            return true;
+          }
+        }
+        return false;
+      }
+      return this.types.has(type);
+    }
+
+    return false;
   }
 }
 

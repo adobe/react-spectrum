@@ -2,6 +2,7 @@ import localesPlugin from '@react-aria/optimize-locales-plugin';
 import {glob} from 'glob';
 
 export default {
+  output: 'export',
   transpilePackages: ['@adobe/react-spectrum', '@react-spectrum/*', '@spectrum-icons/*'].flatMap(
     spec => glob.sync(`${spec}`, {cwd: 'node_modules/'})
   ),

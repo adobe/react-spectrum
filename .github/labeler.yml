@@ -20,7 +20,7 @@ v3:
   - all:
       - changed-files:
           - all-globs-to-any-file: ['**/@react-spectrum/**', '!**/*.stories.*', '!**/*.test.*']
-          - all-globs-to-all-files: '!**/@react-spectrum/s2/**'
+          - all-globs-to-all-files: ['!**/@react-spectrum/s2/**', '!**/@react-spectrum/ai/**']
 
 Accordion:
   - changed-files:
