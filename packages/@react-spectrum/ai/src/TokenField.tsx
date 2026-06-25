@@ -121,12 +121,27 @@ export const TokenField = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
       ref.current === getActiveElement(getOwnerDocument(ref.current))
     ) {
       setCursor(ref.current, state.caretPosition);
-      caretPosition.current = state.caretPosition;
     }
+
+    caretPosition.current = state.caretPosition;
   });
+
+  let mutationTracker = useMutationTracker(ref);
+  let compositionStart = useRef<[Position, Position] | null>(null);
 
   // Handle text editing commands and prevent browser default behavior.
   useEvent(ref, 'beforeinput', e => {
+    // Android sometimes doesn't fire a compositionend event before a regular input event.
+    if (compositionStart.current && !e.isComposing) {
+      mutationTracker.stop();
+      compositionStart.current = null;
+    }
+
+    // Ignore events during composition.
+    if (e.isComposing) {
+      return;
+    }
+
     let selection = window.getSelection();
     if (!selection || selection.rangeCount === 0) {
       return;
@@ -254,20 +269,36 @@ export const TokenField = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
   });
 
   // Composition events are not cancelable, so we need to store the start position and update the value in the compositionend event.
-  let compositionStart = useRef<[Position, Position] | null>(null);
   useEvent(ref, 'compositionstart', () => {
-    let selection = window.getSelection();
-    if (!selection || selection.rangeCount === 0) {
-      return;
+    // Track mutations to the DOM during composition so we can undo them in compositionend.
+    mutationTracker.start();
+
+    let range = window.getSelection()?.getRangeAt(0);
+    if (range) {
+      let [start, end] = rangeToPositions(ref.current!, range);
+      compositionStart.current = [start, end];
+
+      // Normalize the range to ensure it is not inside a token, otherwise the browser
+      // will attempt to insert the composed text into the token instead of replacing it.
+      let r = createDOMRange(ref.current!, start, end);
+      if (r.startContainer !== range.startContainer || r.startOffset !== range.startOffset) {
+        range.setStart(r.startContainer, r.startOffset);
+      }
+      if (r.endContainer !== range.endContainer || r.endOffset !== range.endOffset) {
+        range.setEnd(r.endContainer, r.endOffset);
+      }
     }
-    let range = selection.getRangeAt(0);
-    compositionStart.current = rangeToPositions(ref.current!, range);
   });
 
   useEvent(ref, 'compositionend', e => {
+    // Undo all DOM mutations that occurred during composition so that it
+    // matches React's virtual dom, then re-apply the update to React state.
+    mutationTracker.stop();
+
     let range = compositionStart.current;
     if (range) {
-      apply(tokens => tokens.replaceRange(range[0], range[1], e.data));
+      compositionStart.current = null;
+      apply(tokens => tokens.replaceRange(range[0], range[1], e.data || ''));
     }
   });
 
@@ -320,26 +351,28 @@ export const TokenField = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
   });
 
   useSelectionChange(ref, () => {
+    if (compositionStart.current) {
+      return;
+    }
+
     state.endCoalescing();
 
     // When the cursor moves next to a token, announce it.
     // Otherwise the screen reader will only announce the first/last character.
     if (window.getSelection()?.isCollapsed) {
       let [start, end] = getSelection(ref.current!)!;
-      if (start.index === end.index && start.offset === 0) {
+      if (start.offset === 0) {
         let segment = state.segments[start.index];
+        if (segment?.type !== 'token') {
+          segment = state.segments[start.index - 1];
+        }
         if (segment?.type === 'token') {
           announce(segment.text, 'assertive');
         }
-      } else if (start.offset === state.segments[start.index]?.text.length) {
-        let segment = state.segments[start.index + 1];
-        if (segment?.type === 'token') {
-          announce(segment.text, 'assertive');
-        }
-      }
 
-      // Update the caret position in the value.
-      setState(value => value.withCaretPosition(end));
+        // Update the caret position in the value.
+        setState(value => value.withCaretPosition(end));
+      }
     }
   });
 
@@ -654,7 +687,7 @@ function getPosition(container: Element, node: Node, offset: number): Position {
     if (offset === 0 && node.previousSibling?.nodeType === Node.TEXT_NODE) {
       index--;
       offset = node.previousSibling?.textContent?.length ?? 0;
-    } else if (atEnd && node.nextSibling) {
+    } else if (atEnd) {
       index++;
       offset = 0;
     }
@@ -685,24 +718,33 @@ export function positionToDOMRange(root: Element, pos: Position): Range {
 
 function createDOMRange(root: Element, start: Position, end: Position): Range {
   let range = document.createRange();
-  let [startChild, startOffset] = getDOMOffset(root, start);
-  let [endChild, endOffset] = getDOMOffset(root, end);
-  range.setStart(startChild, startOffset);
-  range.setEnd(endChild, endOffset);
-  return range;
-}
-
-function getDOMOffset(root: Element, pos: Position): [Node, number] {
-  let child = root.childNodes[pos.index];
-  if (!child) {
-    return [root, Math.min(root.childNodes.length, pos.index)];
-  } else if (child.nodeType === Node.ELEMENT_NODE) {
-    // Place the cursor in one of the zero width space nodes.
-    return [child, pos.offset > 0 ? 2 : 0];
+  let startChild = root.childNodes[start.index];
+  if (!startChild) {
+    range.setStart(root, Math.min(root.childNodes.length, start.index));
+  } else if (startChild.nodeType === Node.ELEMENT_NODE) {
+    // Place the cursor outside the token wrapper element.
+    if (start.offset > 0) {
+      range.setStartAfter(startChild);
+    } else {
+      range.setStartBefore(startChild);
+    }
   } else {
-    // Place the cursor in the text node.
-    return [child, pos.offset];
+    range.setStart(startChild, start.offset);
   }
+
+  let endChild = root.childNodes[end.index];
+  if (!endChild) {
+    range.setEnd(root, Math.min(root.childNodes.length, end.index));
+  } else if (endChild.nodeType === Node.ELEMENT_NODE) {
+    if (end.offset > 0) {
+      range.setEndAfter(endChild);
+    } else {
+      range.setEndBefore(endChild);
+    }
+  } else {
+    range.setEnd(endChild, end.offset);
+  }
+  return range;
 }
 
 function isSamePosition(a: Position, b: Position): boolean {
@@ -751,4 +793,66 @@ function useSelectionChange(ref: React.RefObject<Element | null>, handler: () =>
       handler();
     }
   });
+}
+
+function useMutationTracker(ref: React.RefObject<Element | null>) {
+  let mutationTracker = useRef<(() => void) | null>(null);
+
+  // Disconnect the mutation observer if the field unmounts mid-composition.
+  useLayoutEffect(
+    () => () => {
+      mutationTracker.current?.();
+      mutationTracker.current = null;
+    },
+    []
+  );
+
+  return {
+    start() {
+      // Android sometimes fires two compositionstart events in a row, without a compositionend.
+      // In that case, reuse the existing tracker.
+      mutationTracker.current ||= trackMutations(ref.current!);
+    },
+    stop() {
+      mutationTracker.current?.();
+      mutationTracker.current = null;
+    }
+  };
+}
+
+// Tracks mutations to the DOM until the returned function is called,
+// at which point the mutations are reverted.
+function trackMutations(element: Element) {
+  let mutations: MutationRecord[] = [];
+  let observer = new MutationObserver(records => {
+    mutations.push(...records);
+  });
+
+  observer.observe(element, {
+    childList: true,
+    subtree: true,
+    characterData: true,
+    characterDataOldValue: true
+  });
+
+  return () => {
+    mutations.push(...observer.takeRecords());
+    observer.disconnect();
+
+    for (let record of mutations.reverse()) {
+      switch (record.type) {
+        case 'childList':
+          for (let node of record.removedNodes) {
+            record.target.insertBefore(node, record.nextSibling);
+          }
+          for (let node of record.addedNodes) {
+            record.target.removeChild(node);
+          }
+          break;
+        case 'characterData':
+          record.target.nodeValue = record.oldValue;
+          break;
+      }
+    }
+  };
 }
