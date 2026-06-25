@@ -38,7 +38,10 @@ export interface TableColumnResizeAria {
   resizerProps: DOMAttributes;
   /** Whether this column is currently being resized. */
   isResizing: boolean;
-  /** Whether this column is currently being resized via a mouse drag (e.g. to render a cursor overlay). */
+  /**
+   * Whether this column is currently being resized via a mouse drag (e.g. to render a cursor
+   * overlay).
+   */
   isMouseResizing: boolean;
 }
 
