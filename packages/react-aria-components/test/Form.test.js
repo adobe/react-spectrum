@@ -82,7 +82,7 @@ describe('Form', () => {
     expect(document.activeElement).toBe(input);
 
     await user.clear(input);
-    await user.keyboard('Devon');
+    await user.keyboard('Adobe');
     await user.tab();
 
     expect(input).not.toHaveAttribute('aria-describedby');
