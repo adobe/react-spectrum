@@ -45,6 +45,11 @@ export function createEventHandler<T extends SyntheticEvent>(
       },
       continuePropagation() {
         shouldStopPropagation = false;
+        // nested createEventHandler might have set continue propagation so we should continue
+        // propagation on wrappers
+        if (typeof (e as any).continuePropagation === 'function') {
+          (e as any).continuePropagation();
+        }
       },
       isPropagationStopped() {
         return shouldStopPropagation;

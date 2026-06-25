@@ -89,6 +89,7 @@ export function useActionGroup<T>(
   }
 
   let {direction} = useLocale();
+  // oxlint-disable-next-line react/react-compiler
   let focusManager = createFocusManager(ref);
   let flipDirection = direction === 'rtl' && orientation === 'horizontal';
   let {keyboardProps} = useKeyboard({

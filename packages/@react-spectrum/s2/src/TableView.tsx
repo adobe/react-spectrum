@@ -452,12 +452,14 @@ export const TableView = forwardRef(function TableView(
   } = props;
 
   if (dragAndDropHooks && dragAndDropHooks.renderDragPreview == null) {
+    // oxlint-disable-next-line react/react-compiler
     dragAndDropHooks.renderDragPreview = items => (
       <DragPreview items={items} overflowMode={overflowMode} />
     );
   }
 
   if (dragAndDropHooks) {
+    // oxlint-disable-next-line react/react-compiler
     dragAndDropHooks.renderDropIndicator = target => (
       <InsertionIndicator target={target as ItemDropTarget} />
     );
@@ -1014,6 +1016,7 @@ function ColumnWithMenu(props: ColumnWithMenuProps) {
     if (isColumnResizable) {
       options = [
         {
+          // oxlint-disable-next-line react/react-compiler
           label: stringFormatter.format('table.resizeColumn'),
           id: 'resize'
         }

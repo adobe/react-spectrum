@@ -135,7 +135,7 @@ export interface AriaSelectableCollectionOptions {
    *
    * @private
    */
-  focusOnEntry?: 'first' | 'last';
+  UNSTABLE_focusOnEntry?: 'first' | 'last';
 }
 
 export interface SelectableCollectionAria {
@@ -165,7 +165,7 @@ export function useSelectableCollection(
     // If no scrollRef is provided, assume the collection ref is the scrollable region
     scrollRef = ref,
     linkBehavior = 'action',
-    focusOnEntry
+    UNSTABLE_focusOnEntry
   } = options;
   let {direction} = useLocale();
   let router = useRouter();
@@ -225,7 +225,7 @@ export function useSelectableCollection(
       }
       if (nextKey != null) {
         navigateToKey(e, nextKey);
-        return {shouldPreventDefault: true, shouldContinuePropagation: true};
+        return;
       }
     }
     return false;
@@ -242,7 +242,7 @@ export function useSelectableCollection(
       }
       if (nextKey != null) {
         navigateToKey(e, nextKey);
-        return {shouldPreventDefault: true, shouldContinuePropagation: true};
+        return;
       }
     }
     return false;
@@ -283,7 +283,7 @@ export function useSelectableCollection(
       }
       if (nextKey != null) {
         navigateToKey(e, nextKey, direction === 'rtl' ? 'first' : 'last');
-        return {shouldPreventDefault: true, shouldContinuePropagation: true};
+        return;
       }
     }
     return false;
@@ -303,7 +303,7 @@ export function useSelectableCollection(
       }
       if (nextKey != null) {
         navigateToKey(e, nextKey, direction === 'rtl' ? 'last' : 'first');
-        return {shouldPreventDefault: true, shouldContinuePropagation: true};
+        return;
       }
     }
     return false;
@@ -414,6 +414,7 @@ export function useSelectableCollection(
       [key]: callback
     };
   };
+  // oxlint-disable react/react-compiler
   let {keyboardProps} = useKeyboard({
     shortcuts: {
       ...withShiftSel('ArrowDown', arrowDown),
@@ -424,12 +425,13 @@ export function useSelectableCollection(
       ...withShiftSel('End', end),
       ...withShiftSel('PageDown', pageDown),
       ...withShiftSel('PageUp', pageUp),
-      [isMac() ? 'a+Alt' : 'a+Control']: aHandler,
+      'Mod+A': aHandler,
       Escape: escape,
       Tab: tab,
       'Tab+Shift': shiftTab
     }
   });
+  // oxlint-enable react/react-compiler
 
   // Store the scroll position so we can restore it later.
   /// TODO: should this happen all the time??
@@ -466,12 +468,14 @@ export function useSelectableCollection(
       }
     };
 
-    // we need the "virtual" modality case checks here because shift tabbing from the prompt field's asset card back into the
+    // we need the "virtual" modality case checks here because shift tabbing from the prompt field's attachment card back into the
     // thread is a virtual focus event (the tab handler in onKeyDown focuses the ref of the AttachementList aka TagGroup via a focus() call, hence the virtual modality)
-    if (focusOnEntry && (modality === 'keyboard' || modality === 'virtual')) {
+    if (UNSTABLE_focusOnEntry && (modality === 'keyboard' || modality === 'virtual')) {
       // always go to the first item in the Thread when tabbing forwards/backwards into the collection
       // since it is probably more important to the user to see the new prompt reply rather than go to the last focused key
-      navigateToKey(focusOnEntry === 'first' ? delegate.getFirstKey?.() : delegate.getLastKey?.());
+      navigateToKey(
+        UNSTABLE_focusOnEntry === 'first' ? delegate.getFirstKey?.() : delegate.getLastKey?.()
+      );
     } else if (manager.focusedKey == null) {
       // If the user hasn't yet interacted with the collection, there will be no focusedKey set.
       // Attempt to detect whether the user is tabbing forward or backward into the collection
@@ -500,7 +504,7 @@ export function useSelectableCollection(
           focusWithoutScrolling(element);
         }
 
-        if (modality === 'keyboard' || modality === 'virtual') {
+        if (modality === 'keyboard' || (UNSTABLE_focusOnEntry && modality === 'virtual')) {
           scrollIntoViewport(element, {containingElement: ref.current});
         }
       }
@@ -538,13 +542,12 @@ export function useSelectableCollection(
   );
 
   // update active descendant
+  let firstKey = delegate.getFirstKey?.() ?? null;
   useUpdateLayoutEffect(() => {
     if (shouldVirtualFocusFirst.current) {
-      let keyToFocus = delegate.getFirstKey?.() ?? null;
-
       // If no focusable items exist in the list, make sure to clear any activedescendant that may still exist and move focus back to
       // the original active element (e.g. the autocomplete input)
-      if (keyToFocus == null) {
+      if (firstKey == null) {
         let previousActiveElement = getActiveElement();
         moveVirtualFocus(ref.current);
         dispatchVirtualFocus(previousActiveElement!, null);
@@ -555,14 +558,14 @@ export function useSelectableCollection(
           shouldVirtualFocusFirst.current = false;
         }
       } else {
-        manager.setFocusedKey(keyToFocus);
+        manager.setFocusedKey(firstKey);
         // Only set shouldVirtualFocusFirst to false if we've successfully set the first key as the focused key
         // If there wasn't a key to focus, we might be in a temporary loading state so we'll want to still focus the first key
         // after the collection updates after load
         shouldVirtualFocusFirst.current = false;
       }
     }
-  }, [manager.collection]);
+  }, [firstKey, manager.collection.size]);
 
   // reset focus first flag
   useUpdateLayoutEffect(() => {
@@ -713,6 +716,7 @@ export function useSelectableCollection(
   });
 
   if (!disallowTypeAhead) {
+    // oxlint-disable-next-line react/react-compiler
     handlers = mergeProps(typeSelectProps, handlers);
   }
 
@@ -725,6 +729,7 @@ export function useSelectableCollection(
 
   let collectionId = useCollectionId(manager.collection);
   return {
+    // oxlint-disable-next-line react/react-compiler
     collectionProps: mergeProps(handlers, {
       tabIndex,
       'data-collection': collectionId

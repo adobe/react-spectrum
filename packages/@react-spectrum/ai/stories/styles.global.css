@@ -1,0 +1,44 @@
+@import '../../../../starters/docs/src/theme.css';
+@import '../../../../starters/docs/src/utilities.css';
+
+.react-aria-TokenField {
+  padding: 4px 8px;
+  outline: none;
+  border-radius: 8px;
+  outline: none;
+  width: 100%;
+  max-width: 500px;
+  border: 2px solid var(--gray-400);
+  background-color: var(--gray-50);
+  font: var(--font-size) system-ui;
+  color: var(--text-color);
+
+  &[aria-multiline='true'] {
+    min-height: 100px;
+  }
+
+  &[data-focused] {
+    border-color: var(--focus-ring-color);
+  }
+}
+
+.react-aria-Token {
+  background-color: var(--tint-200);
+  color: var(--tint-1200);
+  border-radius: 9999px;
+  height: var(--spacing-5);
+  padding: 0 var(--spacing-2);
+  margin: 0 2px;
+  cursor: default;
+  white-space: nowrap;
+  -webkit-tap-highlight-color: transparent;
+
+  &[data-selected] {
+    background-color: var(--highlight-background);
+    color: white;
+  }
+
+  &::selection {
+    background-color: transparent;
+  }
+}

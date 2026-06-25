@@ -141,6 +141,14 @@ export interface AriaPositionProps extends PositionProps {
    * @default 0
    */
   arrowBoundaryOffset?: number;
+  /**
+   * Overrides the target element's bounding rectangle. Useful for positioning relative to
+   * a specific point such as the mouse cursor (e.g. context menus) or text selection.
+   *
+   * @default target.getBoundingClientRect()
+   * @param target - The target element.
+   */
+  getTargetRect?: (target: Element) => DOMRect | null | undefined;
 }
 
 export interface PositionAria {
@@ -185,16 +193,21 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
     isOpen = true,
     onClose,
     maxHeight,
-    arrowBoundaryOffset = 0
+    arrowBoundaryOffset = 0,
+    getTargetRect
   } = props;
   let [position, setPosition] = useState<PositionResult | null>(null);
 
   let deps = [
     shouldUpdatePosition,
     placement,
+    // oxlint-disable-next-line react/react-compiler
     overlayRef.current,
+    // oxlint-disable-next-line react/react-compiler
     targetRef.current,
+    // oxlint-disable-next-line react/react-compiler
     arrowRef?.current,
+    // oxlint-disable-next-line react/react-compiler
     scrollRef.current,
     containerPadding,
     shouldFlip,
@@ -274,7 +287,8 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
       crossOffset,
       maxHeight,
       arrowSize: arrowSize ?? (arrowRef?.current ? getRect(arrowRef.current, true).width : 0),
-      arrowBoundaryOffset
+      arrowBoundaryOffset,
+      targetRect: getTargetRect?.(targetRef.current)
     });
 
     if (!position.position) {
@@ -305,10 +319,12 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
     // Trigger a set state for a second render anyway for arrow positioning
     setPosition(position);
     // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react/react-compiler, react-hooks/exhaustive-deps
   }, deps);
 
   // Update position when anything changes
   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // oxlint-disable-next-line react/react-compiler, react-hooks/exhaustive-deps
   useLayoutEffect(updatePosition, deps);
 
   // Update position on window resize

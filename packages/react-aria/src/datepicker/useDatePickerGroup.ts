@@ -16,6 +16,7 @@ export function useDatePickerGroup(
   disableArrowNavigation?: boolean
 ): DOMAttributes<FocusableElement> {
   let {direction} = useLocale();
+  // oxlint-disable-next-line react/react-compiler
   let focusManager = useMemo(() => createFocusManager(ref), [ref]);
 
   let {keyboardProps} = useKeyboard({
@@ -23,12 +24,14 @@ export function useDatePickerGroup(
       'Alt+ArrowDown': () => {
         if ('setOpen' in state) {
           state.setOpen(true);
+          return;
         }
         return false;
       },
       'Alt+ArrowUp': () => {
         if ('setOpen' in state) {
           state.setOpen(true);
+          return;
         }
         return false;
       },
@@ -129,6 +132,7 @@ export function useDatePickerGroup(
     }
   });
 
+  // oxlint-disable-next-line react/react-compiler
   return mergeProps(pressProps, keyboardProps);
 }
 

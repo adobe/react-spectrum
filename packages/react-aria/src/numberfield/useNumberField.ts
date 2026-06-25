@@ -263,6 +263,7 @@ export function useNumberField(
           commit();
         });
         commitValidation();
+        return {shouldPreventDefault: false};
       }
     },
     onKeyDown,
@@ -384,6 +385,7 @@ export function useNumberField(
   let incrementId = useId();
   let decrementId = useId();
 
+  // oxlint-disable-next-line react/react-compiler
   let incrementButtonProps: AriaButtonProps = mergeProps(incButtonProps, {
     'aria-label': incrementAriaLabel || stringFormatter.format('increase', {fieldLabel}).trim(),
     id: ariaLabelledby && !incrementAriaLabel ? incrementId : null,
@@ -397,6 +399,7 @@ export function useNumberField(
     onPressStart: onButtonPressStart
   });
 
+  // oxlint-disable-next-line react/react-compiler
   let decrementButtonProps: AriaButtonProps = mergeProps(decButtonProps, {
     'aria-label': decrementAriaLabel || stringFormatter.format('decrease', {fieldLabel}).trim(),
     id: ariaLabelledby && !decrementAriaLabel ? decrementId : null,
