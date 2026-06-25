@@ -47,12 +47,14 @@ interface TokenFieldRenderProps {
   isFocusVisible: boolean;
 }
 
-export interface TokenFieldProps<T extends TokenSegmentList>
+export interface TokenFieldProps<T extends TokenSegmentList = TokenSegmentList>
   extends StyleRenderProps<TokenFieldRenderProps>, SlotProps, FocusableProps {
   value?: T;
   defaultValue?: T;
   onChange?: (value: T) => void;
-  children: (segment: TokenSegment) => React.ReactElement;
+  children: (
+    segment: TokenSegment<T extends TokenSegmentList<infer V> ? V : never>
+  ) => React.ReactElement;
   multiline?: boolean;
   isReadOnly?: boolean;
   isDisabled?: boolean;
@@ -66,7 +68,7 @@ export interface TokenFieldProps<T extends TokenSegmentList>
 export const CLIPBOARD_MIME_TYPE = 'application/vnd.react-aria.tokens+json';
 
 export const TokenField = /*#__PURE__*/ (forwardRef as forwardRefType)(function TokenField<
-  T extends TokenSegmentList
+  T extends TokenSegmentList = TokenSegmentList
 >(props: TokenFieldProps<T>, forwardedRef: ForwardedRef<HTMLDivElement | null>) {
   let {
     value: valueProp,

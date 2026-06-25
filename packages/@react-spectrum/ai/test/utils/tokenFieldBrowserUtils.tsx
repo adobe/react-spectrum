@@ -40,11 +40,11 @@ export const abTokCd = segments(text('ab'), token('TOK'), text('cd'));
 
 /** Story sample for adjacent-token arrow navigation. */
 export const adjacentTokensSample = new TokenSegmentList([
-  {type: 'token', text: 'Hello'},
-  {type: 'text', text: ' tokens testing '},
-  {type: 'token', text: 'World'},
-  {type: 'token', text: 'Testing'},
-  {type: 'text', text: ' test'}
+  token('Hello'),
+  text(' tokens testing '),
+  token('World'),
+  token('Testing'),
+  text(' test')
 ]);
 
 export function expectFieldText(value: TokenSegmentList, str: string) {
