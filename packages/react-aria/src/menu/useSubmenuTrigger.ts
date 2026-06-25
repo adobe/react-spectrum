@@ -184,6 +184,7 @@ export function useSubmenuTrigger<T>(
       ...keyboardProps
     })
   };
+
   let {keyboardProps: submenuTriggerKeyboardProps} = useKeyboard({
     shortcuts: {
       ArrowRight: () => {
@@ -192,6 +193,7 @@ export function useSubmenuTrigger<T>(
             if (!state.isOpen) {
               onSubmenuOpen('first');
             }
+
             if (type === 'menu' && !!submenuRef?.current && getActiveElement() === ref?.current) {
               focusWithoutScrolling(submenuRef.current);
             }
@@ -211,6 +213,7 @@ export function useSubmenuTrigger<T>(
             if (!state.isOpen) {
               onSubmenuOpen('first');
             }
+
             if (type === 'menu' && !!submenuRef?.current && getActiveElement() === ref?.current) {
               focusWithoutScrolling(submenuRef.current);
             }
