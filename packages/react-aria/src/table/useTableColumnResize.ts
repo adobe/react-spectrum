@@ -55,6 +55,8 @@ export interface AriaTableColumnResizeProps<T> {
    * resizer and not on focus.
    */
   triggerRef?: RefObject<FocusableElement | null>;
+  /** Ref to the table root element for applying column width CSS custom properties. */
+  columnWidthRootRef?: RefObject<HTMLElement | null>;
   /** If resizing is disabled. */
   isDisabled?: boolean;
   /** Called when resizing starts. */
@@ -81,6 +83,7 @@ export function useTableColumnResize<T>(
   let {
     column: item,
     triggerRef,
+    columnWidthRootRef,
     isDisabled,
     onResizeStart,
     onResize,
@@ -94,29 +97,82 @@ export function useTableColumnResize<T>(
   let lastSize = useRef<Map<Key, ColumnSize> | null>(null);
   let wasFocusedOnResizeStart = useRef(false);
   let editModeEnabled = state.tableState.isKeyboardNavigationDisabled;
+  let pendingOnResize = useRef<Map<Key, ColumnSize> | null>(null);
+  let onResizeFrame = useRef<number | null>(null);
 
   let {direction} = useLocale();
+
+  let applyWidthsToDOM = useCallback(
+    (resizingColumnKey?: Key) => {
+      let root = columnWidthRootRef?.current;
+      if (root) {
+        state.applyToDOM(root, resizingColumnKey ?? state.resizingColumn);
+      }
+    },
+    [columnWidthRootRef, state]
+  );
+
+  let updateResizeInput = useCallback(
+    (width: number) => {
+      if (ref.current) {
+        let value = String(Math.floor(width));
+        ref.current.value = value;
+        ref.current.setAttribute('value', value);
+      }
+    },
+    [ref]
+  );
+
+  let flushOnResize = useCallback(() => {
+    if (pendingOnResize.current) {
+      onResize?.(pendingOnResize.current);
+      pendingOnResize.current = null;
+    }
+    onResizeFrame.current = null;
+  }, [onResize]);
+
+  let scheduleOnResize = useCallback(
+    (sizes: Map<Key, ColumnSize>) => {
+      pendingOnResize.current = sizes;
+      if (onResizeFrame.current == null) {
+        onResizeFrame.current = requestAnimationFrame(flushOnResize);
+      }
+    },
+    [flushOnResize]
+  );
+
+  useEffect(() => {
+    return () => {
+      if (onResizeFrame.current != null) {
+        cancelAnimationFrame(onResizeFrame.current);
+      }
+    };
+  }, []);
 
   let startResize = useCallback(
     item => {
       if (!isResizingRef.current) {
-        lastSize.current = state.updateResizedColumns(item.key, state.getColumnWidth(item.key));
         state.startResize(item.key);
+        lastSize.current = state.updateResizedColumns(item.key, state.getColumnWidth(item.key));
         state.tableState.setKeyboardNavigationDisabled(true);
+        applyWidthsToDOM(item.key);
+        updateResizeInput(state.getColumnWidth(item.key));
         onResizeStart?.(lastSize.current);
       }
       isResizingRef.current = true;
     },
-    [state, onResizeStart]
+    [state, onResizeStart, applyWidthsToDOM, updateResizeInput]
   );
 
   let resize = useCallback(
     (item, newWidth) => {
       let sizes = state.updateResizedColumns(item.key, newWidth);
-      onResize?.(sizes);
+      applyWidthsToDOM(item.key);
+      updateResizeInput(state.getColumnWidth(item.key));
+      scheduleOnResize(sizes);
       lastSize.current = sizes;
     },
-    [state, onResize]
+    [state, applyWidthsToDOM, updateResizeInput, scheduleOnResize]
   );
 
   let endResize = useCallback(
@@ -126,6 +182,12 @@ export function useTableColumnResize<T>(
           lastSize.current = state.updateResizedColumns(item.key, state.getColumnWidth(item.key));
         }
 
+        if (onResizeFrame.current != null) {
+          cancelAnimationFrame(onResizeFrame.current);
+        }
+        flushOnResize();
+
+        applyWidthsToDOM();
         state.endResize();
         state.tableState.setKeyboardNavigationDisabled(false);
         onResizeEnd?.(lastSize.current);
@@ -138,7 +200,7 @@ export function useTableColumnResize<T>(
       }
       lastSize.current = null;
     },
-    [state, triggerRef, onResizeEnd]
+    [state, triggerRef, onResizeEnd, applyWidthsToDOM, flushOnResize]
   );
 
   let {keyboardProps} = useKeyboard({

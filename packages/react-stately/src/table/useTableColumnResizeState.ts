@@ -10,12 +10,29 @@
  * governing permissions and limitations under the License.
  */
 
+import {applyColumnWidthsToDOM, ColumnWidthEntry, columnWidthsEqual} from './columnWidthCSS';
 import {ColumnSize} from './Column';
 import {GridNode} from '../grid/GridCollection';
-import {Key} from '@react-types/shared';
+import {Key, RefObject} from '@react-types/shared';
+import React, {useCallback, useMemo, useRef, useState} from 'react';
 import {TableColumnLayout} from './TableColumnLayout';
 import {TableState} from './useTableState';
-import {useCallback, useMemo, useState} from 'react';
+
+const useLayoutEffect: typeof React.useLayoutEffect =
+  typeof document !== 'undefined' ? React.useLayoutEffect : () => {};
+
+function buildPixelWidths<T>(
+  layout: TableColumnLayout<T>,
+  tableWidth: number,
+  collection: TableState<T>['collection'],
+  sizes: Map<Key, ColumnSize>
+): Map<Key, number> {
+  let snapshot = new TableColumnLayout<T>({
+    getDefaultWidth: layout.getDefaultWidth.bind(layout),
+    getDefaultMinWidth: layout.getDefaultMinWidth.bind(layout)
+  });
+  return snapshot.buildColumnWidths(tableWidth, collection, sizes);
+}
 
 export interface TableColumnResizeStateProps<T> {
   /**
@@ -27,6 +44,16 @@ export interface TableColumnResizeStateProps<T> {
   getDefaultWidth?: (node: GridNode<T>) => ColumnSize | null | undefined;
   /** A function that is called to find the default minWidth for a given column. */
   getDefaultMinWidth?: (node: GridNode<T>) => ColumnSize | null | undefined;
+  /**
+   * Ref to the table root element where column width CSS custom properties
+   * should be applied.
+   */
+  columnWidthRootRef?: RefObject<HTMLElement | null>;
+  /**
+   * Called after column widths are applied to the DOM. Can be used to update
+   * scroll container sizes without a React re-render.
+   */
+  onWidthsApplied?: (totalWidth: number) => void;
 }
 
 export interface TableColumnResizeState<T> {
@@ -49,8 +76,10 @@ export interface TableColumnResizeState<T> {
   resizingColumn: Key | null;
   /** A reference to the table state. */
   tableState: TableState<T>;
-  /** A map of the current column widths. */
+  /** A map of the current committed column widths. */
   columnWidths: Map<Key, number>;
+  /** Applies column width CSS custom properties to the table root element. */
+  applyToDOM: (root: HTMLElement, resizingColumnKey?: Key | null) => void;
 }
 
 /**
@@ -66,9 +95,19 @@ export function useTableColumnResizeState<T>(
   props: TableColumnResizeStateProps<T>,
   state: TableState<T>
 ): TableColumnResizeState<T> {
-  let {getDefaultWidth, getDefaultMinWidth, tableWidth = 0} = props;
+  let {
+    getDefaultWidth,
+    getDefaultMinWidth,
+    tableWidth = 0,
+    columnWidthRootRef,
+    onWidthsApplied
+  } = props;
 
   let [resizingColumn, setResizingColumn] = useState<Key | null>(null);
+  let isResizingRef = useRef(false);
+  let pendingUncontrolledWidthsRef = useRef<Map<Key, ColumnSize>>(new Map());
+  let pendingSizesRef = useRef<Map<Key, ColumnSize> | null>(null);
+
   let columnLayout = useMemo(
     () =>
       new TableColumnLayout({
@@ -101,6 +140,11 @@ export function useTableColumnResizeState<T>(
     setLastColumns(state.collection.columns);
   }
 
+  let columnEntries: ColumnWidthEntry[] = useMemo(
+    () => state.collection.columns.map(column => ({key: column.key, index: column.index})),
+    [state.collection.columns]
+  );
+
   // combine columns back into one map that maintains same order as the columns
   let colWidths = useMemo(
     () =>
@@ -119,37 +163,101 @@ export function useTableColumnResizeState<T>(
     ]
   );
 
+  let columnWidths = useMemo(() => {
+    let sizes = colWidths;
+
+    if (pendingSizesRef.current != null) {
+      if (isResizingRef.current) {
+        sizes = pendingSizesRef.current;
+      } else if (
+        !columnWidthsEqual(
+          buildPixelWidths(columnLayout, tableWidth, state.collection, colWidths),
+          buildPixelWidths(columnLayout, tableWidth, state.collection, pendingSizesRef.current)
+        )
+      ) {
+        sizes = pendingSizesRef.current;
+      } else {
+        pendingSizesRef.current = null;
+      }
+    }
+
+    return columnLayout.buildColumnWidths(tableWidth, state.collection, sizes);
+  }, [tableWidth, state.collection, colWidths, columnLayout]);
+
+  let applyToDOM = useCallback(
+    (root: HTMLElement, activeResizingColumn?: Key | null) => {
+      let totalWidth = applyColumnWidthsToDOM(
+        root,
+        columnEntries,
+        columnLayout.columnWidths,
+        activeResizingColumn ?? resizingColumn
+      );
+      onWidthsApplied?.(totalWidth);
+    },
+    [columnEntries, columnLayout, resizingColumn, onWidthsApplied]
+  );
+
+  // Sync CSS variables when committed widths or table width change.
+  useLayoutEffect(() => {
+    if (columnWidthRootRef?.current && !isResizingRef.current) {
+      applyToDOM(columnWidthRootRef.current);
+    }
+  }, [columnWidths, columnWidthRootRef, applyToDOM, tableWidth]);
+
+  // Rebuild widths when the table is resized during an active column resize.
+  useLayoutEffect(() => {
+    if (isResizingRef.current && columnWidthRootRef?.current && pendingSizesRef.current) {
+      columnLayout.buildColumnWidths(tableWidth, state.collection, pendingSizesRef.current);
+      applyToDOM(columnWidthRootRef.current);
+    }
+  }, [tableWidth, columnWidthRootRef, columnLayout, state.collection, applyToDOM]);
+
   let startResize = useCallback(
     (key: Key) => {
+      isResizingRef.current = true;
+      pendingUncontrolledWidthsRef.current = uncontrolledWidths;
       setResizingColumn(key);
     },
-    [setResizingColumn]
+    [uncontrolledWidths]
   );
 
   let updateResizedColumns = useCallback(
     (key: Key, width: number): Map<Key, ColumnSize> => {
+      let currentUncontrolled = isResizingRef.current
+        ? pendingUncontrolledWidthsRef.current
+        : uncontrolledWidths;
+
       let newSizes = columnLayout.resizeColumnWidth(
         state.collection,
-        uncontrolledWidths,
+        currentUncontrolled,
         key,
         width
       );
-      let map = new Map(Array.from(uncontrolledColumns).map(([key]) => [key, newSizes.get(key)!]));
+      let map = new Map(
+        Array.from(uncontrolledColumns).map(([colKey]) => [colKey, newSizes.get(colKey)!])
+      );
       map.set(key, width);
-      setUncontrolledWidths(map);
+      pendingSizesRef.current = newSizes;
+
+      if (isResizingRef.current) {
+        pendingUncontrolledWidthsRef.current = map;
+        columnLayout.buildColumnWidths(tableWidth, state.collection, newSizes);
+      } else {
+        setUncontrolledWidths(map);
+      }
+
       return newSizes;
     },
-    [uncontrolledColumns, setUncontrolledWidths, columnLayout, state.collection, uncontrolledWidths]
+    [uncontrolledColumns, columnLayout, state.collection, uncontrolledWidths, tableWidth]
   );
 
   let endResize = useCallback(() => {
+    if (isResizingRef.current) {
+      setUncontrolledWidths(pendingUncontrolledWidthsRef.current);
+      isResizingRef.current = false;
+    }
     setResizingColumn(null);
-  }, [setResizingColumn]);
-
-  let columnWidths = useMemo(
-    () => columnLayout.buildColumnWidths(tableWidth, state.collection, colWidths),
-    [tableWidth, state.collection, colWidths, columnLayout]
-  );
+  }, []);
 
   return useMemo(
     () => ({
@@ -161,7 +269,8 @@ export function useTableColumnResizeState<T>(
       getColumnMinWidth: (key: Key) => columnLayout.getColumnMinWidth(key),
       getColumnMaxWidth: (key: Key) => columnLayout.getColumnMaxWidth(key),
       tableState: state,
-      columnWidths
+      columnWidths,
+      applyToDOM
     }),
     [
       columnLayout,
@@ -170,7 +279,8 @@ export function useTableColumnResizeState<T>(
       updateResizedColumns,
       startResize,
       endResize,
-      state
+      state,
+      applyToDOM
     ]
   );
 }

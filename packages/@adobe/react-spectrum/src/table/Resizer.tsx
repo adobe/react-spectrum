@@ -15,7 +15,7 @@ import {useLocale} from 'react-aria/I18nProvider';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useObjectRef} from 'react-aria/useObjectRef';
 import {useTableColumnResize} from 'react-aria/useTable';
-import {useTableContext, useVirtualizerContext} from './TableViewBase';
+import {useTableContext} from './TableViewBase';
 import {useUNSAFE_PortalContext} from 'react-aria/PortalProvider';
 // @ts-ignore
 import wCursor from 'bundle-text:./cursors/Cur_MoveToLeft_9_9.svg';
@@ -54,12 +54,8 @@ export const Resizer = React.forwardRef(function Resizer<T>(
 ) {
   let {column, showResizer} = props;
   let objectRef = useObjectRef(ref);
-  let {isEmpty, onFocusedResizer} = useTableContext();
+  let {isEmpty, onFocusedResizer, columnWidthRootRef} = useTableContext();
   let layout = useContext(ResizeStateContext)!;
-  // Virtualizer re-renders, but these components are all cached
-  // in order to get around that and cause a rerender here, we use context
-  // but we don't actually need any value, they are available on the layout object
-  useVirtualizerContext();
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/table');
   let {direction} = useLocale();
 
@@ -86,7 +82,8 @@ export const Resizer = React.forwardRef(function Resizer<T>(
   let {inputProps, resizerProps} = useTableColumnResize<unknown>(
     mergeProps(props, {
       'aria-label': stringFormatter.format('columnResizer'),
-      isDisabled: isEmpty
+      isDisabled: isEmpty,
+      columnWidthRootRef
     }),
     layout,
     objectRef
