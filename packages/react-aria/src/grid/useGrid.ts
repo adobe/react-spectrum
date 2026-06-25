@@ -37,6 +37,8 @@ import {useSelectableCollection} from '../selection/useSelectableCollection';
 export interface GridProps extends DOMProps, AriaLabelingProps {
   /** Whether the grid uses virtual scrolling. */
   isVirtualized?: boolean;
+  /** @private Refreshes The virtualizer visible rect after programmatic scrolling. */
+  UNSTABLE_virtualizerRefresh?: () => void;
   /**
    * Whether typeahead navigation is disabled.
    *
@@ -105,6 +107,7 @@ export function useGrid<T>(
 ): GridAria {
   let {
     isVirtualized,
+    UNSTABLE_virtualizerRefresh,
     disallowTypeAhead,
     keyboardDelegate,
     focusMode,
@@ -155,6 +158,7 @@ export function useGrid<T>(
     selectionManager: manager,
     keyboardDelegate: delegate,
     isVirtualized,
+    UNSTABLE_virtualizerRefresh,
     scrollRef,
     disallowTypeAhead,
     escapeKeyBehavior

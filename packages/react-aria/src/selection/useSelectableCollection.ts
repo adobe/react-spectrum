@@ -116,6 +116,12 @@ export interface AriaSelectableCollectionOptions {
    */
   isVirtualized?: boolean;
   /**
+   * Refreshes the virtualizer visible rect after programmatic scrolling.
+   *
+   * @private
+   */
+  UNSTABLE_virtualizerRefresh?: () => void;
+  /**
    * The ref attached to the scrollable body. Used to provide automatic scrolling on item focus for
    * non-virtualized collections. If not provided, defaults to the collection ref.
    */
@@ -162,6 +168,8 @@ export function useSelectableCollection(
     disallowTypeAhead = false,
     shouldUseVirtualFocus,
     allowsTabNavigation = false,
+    isVirtualized,
+    UNSTABLE_virtualizerRefresh,
     // If no scrollRef is provided, assume the collection ref is the scrollable region
     scrollRef = ref,
     linkBehavior = 'action',
@@ -634,12 +642,15 @@ export function useSelectableCollection(
 
   // Scroll the focused element into view when the focusedKey changes.
   let lastFocusedKey = useRef(manager.focusedKey);
+  let lastCollection = useRef(manager.collection);
   let raf = useRef<number | null>(null);
   useEffect(() => {
     if (
       manager.isFocused &&
       manager.focusedKey != null &&
-      (manager.focusedKey !== lastFocusedKey.current || didAutoFocusRef.current) &&
+      (manager.focusedKey !== lastFocusedKey.current ||
+        didAutoFocusRef.current ||
+        (isVirtualized && manager.collection !== lastCollection.current)) &&
       scrollRef.current &&
       ref.current
     ) {
@@ -663,6 +674,9 @@ export function useSelectableCollection(
             if (modality !== 'virtual') {
               scrollIntoViewport(element, {containingElement: ref.current});
             }
+            if (isVirtualized) {
+              UNSTABLE_virtualizerRefresh?.();
+            }
           }
         });
       }
@@ -680,6 +694,7 @@ export function useSelectableCollection(
     }
 
     lastFocusedKey.current = manager.focusedKey;
+    lastCollection.current = manager.collection;
     didAutoFocusRef.current = false;
   });
 
