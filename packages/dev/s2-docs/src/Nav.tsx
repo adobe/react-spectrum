@@ -292,8 +292,6 @@ export function SideNavLink(props) {
     shouldAutoScrollOnMount.current = false;
     link.scrollIntoView({block: 'start'});
   }, [props.isSelected]);
-
-  // oxlint-disable react/react-compiler
   return (
     <BaseLink
       {...linkProps}
@@ -301,7 +299,7 @@ export function SideNavLink(props) {
       target={isExternal ? '_blank' : undefined}
       rel={isExternal ? 'noopener noreferrer' : undefined}
       aria-current={props.isSelected || selected === props.href ? 'page' : undefined}
-      style={pressScale(linkRef)}
+      style={renderProps => pressScale(linkRef)(renderProps)}
       className={style({
         ...focusRing(),
         minHeight: 32,
@@ -347,7 +345,6 @@ export function SideNavLink(props) {
       )}
     </BaseLink>
   );
-  // oxlint-enable react/react-compiler
 }
 
 function useCurrentSection() {

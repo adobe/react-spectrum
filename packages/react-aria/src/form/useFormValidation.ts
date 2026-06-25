@@ -99,22 +99,25 @@ export function useFormValidation<T>(
     }
 
     let form = input.form;
+    let originalReset = form?.reset;
 
-    let reset = form?.reset;
-    if (form) {
+    if (form && originalReset) {
       // Try to detect React's automatic form reset behavior so we don't clear
       // validation errors that are returned by server actions.
       // To do this, we ignore programmatic form resets that occur outside a user event.
       // This is best-effort. There may be false positives, e.g. setTimeout.
-      // oxlint-disable-next-line react/react-compiler
-      form.reset = () => {
+      let wrappedReset = function (this: HTMLFormElement) {
         // React uses MessageChannel for scheduling, so ignore 'message' events.
         isIgnoredReset.current =
           !window.event ||
           (window.event.type === 'message' && getEventTarget(window.event) instanceof MessagePort);
-        reset?.call(form);
+        originalReset.call(this);
         isIgnoredReset.current = false;
       };
+      Object.defineProperty(form, 'reset', {
+        configurable: true,
+        value: wrappedReset
+      });
     }
 
     input.addEventListener('invalid', onInvalid);
@@ -124,9 +127,11 @@ export function useFormValidation<T>(
       input!.removeEventListener('invalid', onInvalid);
       input!.removeEventListener('change', onChange);
       form?.removeEventListener('reset', onReset);
-      if (form) {
-        // @ts-ignore
-        form.reset = reset;
+      if (form && originalReset) {
+        Object.defineProperty(form, 'reset', {
+          configurable: true,
+          value: originalReset
+        });
       }
     };
   }, [ref, validationBehavior]);

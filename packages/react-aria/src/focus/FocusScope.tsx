@@ -190,8 +190,15 @@ export function FocusScope(props: FocusScopeProps): JSX.Element {
     };
   }, [scopeRef]);
 
-  // oxlint-disable-next-line react/react-compiler
-  let focusManager = useMemo(() => createFocusManagerForScope(scopeRef), []);
+  let focusRootRef = useMemo(
+    () => ({
+      get current() {
+        return scopeRef.current;
+      }
+    }),
+    []
+  );
+  let focusManager = useMemo(() => createFocusManagerForScope(focusRootRef), [focusRootRef]);
   let value = useMemo(
     () => ({
       focusManager,
@@ -630,14 +637,14 @@ function useRestoreFocus(
 ) {
   // create a ref during render instead of useLayoutEffect so the active element is saved before a child with autoFocus=true mounts.
 
-  const nodeToRestoreRef = useRef(
-    typeof document !== 'undefined'
-      ? (getActiveElement(
-          // oxlint-disable-next-line react/react-compiler
-          getOwnerDocument(scopeRef.current ? scopeRef.current[0] : undefined)
-        ) as FocusableElement)
-      : null
-  );
+  const nodeToRestoreRef = useRef<FocusableElement | null>(null);
+  useLayoutEffect(() => {
+    if (nodeToRestoreRef.current === null && typeof document !== 'undefined') {
+      nodeToRestoreRef.current = getActiveElement(
+        getOwnerDocument(scopeRef.current ? scopeRef.current[0] : undefined)
+      ) as FocusableElement;
+    }
+  }, [scopeRef]);
 
   // restoring scopes should all track if they are active regardless of contain, but contain already tracks it plus logic to contain the focus
   // restoring-non-containing scopes should only care if they become active so they can perform the restore

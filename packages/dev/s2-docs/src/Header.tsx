@@ -79,15 +79,13 @@ function ColorSchemeToggle() {
     : `Using system ${systemColorScheme} mode (press to switch)`;
   let ref = useRef(null);
   let isDark = colorScheme === 'dark';
-
-  // oxlint-disable react/react-compiler
   return (
     <Button
       ref={ref}
       aria-label={label}
       onPress={toggleColorScheme}
       className={renderProps => colorSchemeToggleStyles(renderProps)}
-      style={pressScale(ref)}>
+      style={renderProps => pressScale(ref)(renderProps)}>
       <span className={iconContainerStyles}>
         <Contrast
           UNSAFE_style={{
@@ -110,7 +108,6 @@ function ColorSchemeToggle() {
       </span>
     </Button>
   );
-  // oxlint-enable react/react-compiler
 }
 
 export default function Header() {
@@ -217,8 +214,9 @@ export default function Header() {
             <Link
               href={homepage}
               ref={ref}
-              // oxlint-disable-next-line react/react-compiler
-              style={pressScale(ref, {visibility: searchOpen ? 'hidden' : 'visible'})}
+              style={renderProps =>
+                pressScale(ref, {visibility: searchOpen ? 'hidden' : 'visible'})(renderProps)
+              }
               className={renderProps => libraryStyles({...renderProps})}>
               <div ref={iconRef}>{getButtonIcon(currentPage)}</div>
               <span

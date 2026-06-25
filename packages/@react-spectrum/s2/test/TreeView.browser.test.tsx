@@ -46,6 +46,15 @@ let items = [
   }
 ];
 
+function TreeItem({item}) {
+  return (
+    <TreeViewItem textValue={item.title}>
+      <TreeViewItemContent>{item.title}</TreeViewItemContent>
+      <Collection items={item.children}>{child => <TreeItem item={child} />}</Collection>
+    </TreeViewItem>
+  );
+}
+
 function TreeViewExample() {
   return (
     <TreeView
@@ -53,15 +62,7 @@ function TreeViewExample() {
       items={items}
       selectionMode="multiple"
       styles={style({width: 600})}>
-      {function renderItem(item) {
-        return (
-          <TreeViewItem textValue={item.title}>
-            <TreeViewItemContent>{item.title}</TreeViewItemContent>
-            {/* oxlint-disable-next-line react/react-compiler */}
-            <Collection items={item.children}>{renderItem}</Collection>
-          </TreeViewItem>
-        );
-      }}
+      {item => <TreeItem item={item} />}
     </TreeView>
   );
 }

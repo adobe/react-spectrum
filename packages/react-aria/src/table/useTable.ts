@@ -112,26 +112,22 @@ export function useTable<T>(
   );
 
   // Override to include header rows
-  if (isVirtualized) {
-    // oxlint-disable-next-line react/react-compiler
-    gridProps['aria-rowcount'] = state.collection.size + state.collection.headerRows.length;
-  }
-
-  if (state.treeColumn != null) {
-    // oxlint-disable-next-line react/react-compiler
-    gridProps.role = 'treegrid';
-  }
+  let tableGridProps = {
+    ...gridProps,
+    ...(isVirtualized
+      ? {'aria-rowcount': state.collection.size + state.collection.headerRows.length}
+      : {}),
+    ...(state.treeColumn != null ? {role: 'treegrid' as const} : {})
+  };
 
   let {column, direction: sortDirection} = state.sortDescriptor || {};
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/table');
   let sortDescription = useMemo(() => {
     let columnName = state.collection.columns.find(c => c.key === column)?.textValue ?? '';
     return sortDirection && column
-      ? // oxlint-disable-next-line react/react-compiler
-        stringFormatter.format(`${sortDirection}Sort`, {columnName})
+      ? stringFormatter.format(`${sortDirection}Sort`, {columnName})
       : undefined;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sortDirection, column, state.collection.columns]);
+  }, [sortDirection, column, state.collection.columns, stringFormatter]);
 
   let descriptionProps = useDescription(sortDescription);
 
@@ -143,7 +139,7 @@ export function useTable<T>(
   }, [sortDescription]);
 
   return {
-    gridProps: mergeProps(gridProps, descriptionProps, {
+    gridProps: mergeProps(tableGridProps, descriptionProps, {
       // merge sort description with long press information
       'aria-describedby': [descriptionProps['aria-describedby'], gridProps['aria-describedby']]
         .filter(Boolean)

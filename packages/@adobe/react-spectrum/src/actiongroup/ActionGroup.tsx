@@ -97,9 +97,10 @@ export interface SpectrumActionGroupProps<T> extends AriaActionGroupProps<T>, St
  * An ActionGroup is a grouping of ActionButtons that are related to one another.
  */
 export const ActionGroup = forwardRef(function ActionGroup<T extends object>(
-  props: SpectrumActionGroupProps<T>,
+  propsArg: SpectrumActionGroupProps<T>,
   ref: DOMRef<HTMLDivElement>
 ) {
+  let props = propsArg;
   props = useProviderProps(props);
   props = useSlotProps(props, 'actionGroup');
 
@@ -260,8 +261,7 @@ export const ActionGroup = forwardRef(function ActionGroup<T extends object>(
         return wrapperRef.current?.parentElement;
       }
     }),
-    // oxlint-disable-next-line react/react-compiler
-    [wrapperRef]
+    []
   );
   useResizeObserver({
     ref: overflowMode !== 'wrap' ? parentRef : undefined,
@@ -481,16 +481,14 @@ function ActionGroupMenu<T>({
   // Use the key of the first item within the menu as the key of the button.
   // The key must actually exist in the collection for focus to work correctly.
   let key = items[0].key;
-  let {buttonProps} = useActionGroupItem({key}, state);
+  let {buttonProps: actionGroupButtonProps} = useActionGroupItem({key}, state);
+  let {
+    onPress: _onPress,
+    role: _role,
+    'aria-checked': _ariaChecked,
+    ...buttonProps
+  } = actionGroupButtonProps;
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/actiongroup');
-
-  // The menu button shouldn't act like an actual action group item.
-  // oxlint-disable-next-line react/react-compiler
-  delete buttonProps.onPress;
-  // oxlint-disable-next-line react/react-compiler
-  delete buttonProps.role;
-  // oxlint-disable-next-line react/react-compiler
-  delete buttonProps['aria-checked'];
 
   let {hoverProps, isHovered} = useHover({isDisabled});
 

@@ -23,13 +23,14 @@ import {ColorScheme, ColorSchemeContext} from './Provider';
 import {
   createContext,
   forwardRef,
-  MutableRefObject,
   ReactNode,
   useCallback,
   useContext,
+  useMemo,
   useState
 } from 'react';
 import {DOMProps, DOMRef, GlobalDOMAttributes} from '@react-types/shared';
+import {mergeRefs} from 'react-aria/mergeRefs';
 import {UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {useDOMRef} from './useDOMRef';
 import {useLocale} from 'react-aria/I18nProvider';
@@ -183,10 +184,8 @@ export const Tooltip = forwardRef(function Tooltip(
   let [borderRadius, setBorderRadius] = useState(0);
 
   // TODO: should we pass through lang and dir props in RAC?
-  let tooltipRef = useCallback(
+  let localeRef = useCallback(
     (el: HTMLDivElement) => {
-      // oxlint-disable-next-line react/react-compiler
-      (domRef as MutableRefObject<HTMLDivElement>).current = el;
       if (el) {
         el.lang = locale;
         el.dir = direction;
@@ -197,8 +196,9 @@ export const Tooltip = forwardRef(function Tooltip(
         }
       }
     },
-    [locale, direction, domRef]
+    [locale, direction]
   );
+  let mergedRef = useMemo(() => mergeRefs(localeRef, domRef), [localeRef, domRef]);
 
   return (
     <AriaTooltip
@@ -209,7 +209,7 @@ export const Tooltip = forwardRef(function Tooltip(
       offset={4 + 5} // 4px offset + 5px arrow height
       placement={placement}
       shouldFlip={shouldFlip}
-      ref={tooltipRef}
+      ref={mergedRef}
       style={UNSAFE_style}
       className={renderProps => UNSAFE_className + tooltip({...renderProps, colorScheme})}>
       {renderProps => (

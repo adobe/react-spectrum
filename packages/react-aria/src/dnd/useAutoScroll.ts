@@ -15,7 +15,7 @@ import {getScrollParent} from '../utils/getScrollParent';
 import {isIOS, isWebKit} from '../utils/platform';
 import {isScrollable} from '../utils/isScrollable';
 import {RefObject} from '@react-types/shared';
-import {useCallback, useEffect, useRef} from 'react';
+import {useEffect, useRef} from 'react';
 
 const AUTOSCROLL_AREA_SIZE = 20;
 
@@ -39,8 +39,7 @@ export function useAutoScroll(ref: RefObject<Element | null>): AutoScrollAria {
     }
   }, [ref]);
 
-  // oxlint-disable-next-line react/react-compiler
-  let state = useRef<{
+  let stateRef = useRef<{
     timer: ReturnType<typeof requestAnimationFrame> | undefined;
     dx: number;
     dy: number;
@@ -48,31 +47,37 @@ export function useAutoScroll(ref: RefObject<Element | null>): AutoScrollAria {
     timer: undefined,
     dx: 0,
     dy: 0
-  }).current;
+  });
 
   useEffect(() => {
+    let state = stateRef;
     return () => {
-      if (state.timer) {
-        cancelAnimationFrame(state.timer);
-        state.timer = undefined;
+      if (state.current.timer) {
+        cancelAnimationFrame(state.current.timer);
+        state.current.timer = undefined;
       }
     };
-    // state will become a new object, so it's ok to use in the dependency array for unmount
-  }, [state]);
+  }, []);
 
-  let scroll = useCallback(() => {
+  let scroll = () => {
     if (scrollableX.current && scrollableRef.current) {
-      scrollableRef.current.scrollLeft += state.dx;
+      scrollableRef.current.scrollLeft += stateRef.current.dx;
     }
     if (scrollableY.current && scrollableRef.current) {
-      scrollableRef.current.scrollTop += state.dy;
+      scrollableRef.current.scrollTop += stateRef.current.dy;
     }
 
-    if (state.timer) {
-      // oxlint-disable-next-line react/react-compiler
-      state.timer = requestAnimationFrame(scroll);
+    if (stateRef.current.timer) {
+      stateRef.current.timer = requestAnimationFrame(scroll);
     }
-  }, [scrollableRef, state]);
+  };
+
+  let stop = () => {
+    if (stateRef.current.timer) {
+      cancelAnimationFrame(stateRef.current.timer);
+      stateRef.current.timer = undefined;
+    }
+  };
 
   return {
     move(x, y) {
@@ -89,28 +94,23 @@ export function useAutoScroll(ref: RefObject<Element | null>): AutoScrollAria {
       let right = box.width - AUTOSCROLL_AREA_SIZE;
       if (x < left || x > right || y < top || y > bottom) {
         if (x < left) {
-          state.dx = x - left;
+          stateRef.current.dx = x - left;
         } else if (x > right) {
-          state.dx = x - right;
+          stateRef.current.dx = x - right;
         }
         if (y < top) {
-          state.dy = y - top;
+          stateRef.current.dy = y - top;
         } else if (y > bottom) {
-          state.dy = y - bottom;
+          stateRef.current.dy = y - bottom;
         }
 
-        if (!state.timer) {
-          state.timer = requestAnimationFrame(scroll);
+        if (!stateRef.current.timer) {
+          stateRef.current.timer = requestAnimationFrame(scroll);
         }
       } else {
-        this.stop();
+        stop();
       }
     },
-    stop() {
-      if (state.timer) {
-        cancelAnimationFrame(state.timer);
-        state.timer = undefined;
-      }
-    }
+    stop
   };
 }

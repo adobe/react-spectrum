@@ -49,11 +49,11 @@ import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {TextFieldBase} from '../textfield/TextFieldBase';
 import textfieldStyles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
 import {Tray} from '../overlays/Tray';
-import {unwrapDOMRef, useFocusableRef} from '../utils/useDOMRef';
 import {useComboBox} from 'react-aria/useComboBox';
 import {useDialog} from 'react-aria/useDialog';
 import {useField} from 'react-aria/useField';
 import {useFilter} from 'react-aria/useFilter';
+import {useFocusableRef, useUnwrapDOMRef} from '../utils/useDOMRef';
 import {useFormReset} from 'react-aria/private/utils/useFormReset';
 import {useFormValidation} from 'react-aria/private/form/useFormValidation';
 import {useHover} from 'react-aria/useHover';
@@ -64,10 +64,10 @@ import {useOverlayTrigger} from 'react-aria/useOverlayTrigger';
 import {useProviderProps} from '../provider/Provider';
 
 export const MobileComboBox = React.forwardRef(function MobileComboBox(
-  props: SpectrumComboBoxProps<any>,
+  propsArg: SpectrumComboBoxProps<any>,
   ref: FocusableRef<HTMLElement>
 ) {
-  // oxlint-disable-next-line react/react-compiler
+  let props = propsArg;
   props = useProviderProps(props);
 
   let {
@@ -120,11 +120,13 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox(
   });
 
   // Focus the button and show focus ring when clicking on the label
-  // oxlint-disable-next-line react/react-compiler
-  labelProps.onClick = () => {
-    if (!props.isDisabled) {
-      buttonRef.current?.focus();
-      setInteractionModality('keyboard');
+  let mergedLabelProps = {
+    ...labelProps,
+    onClick: () => {
+      if (!props.isDisabled) {
+        focusSafely(buttonRef.current);
+        setInteractionModality('keyboard');
+      }
     }
   };
 
@@ -154,7 +156,7 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox(
     <>
       <Field
         {...props}
-        labelProps={labelProps}
+        labelProps={mergedLabelProps}
         descriptionProps={descriptionProps}
         errorMessageProps={errorMessageProps}
         validationState={validationState}
@@ -340,13 +342,13 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
   let layout = useListBoxLayout();
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/combobox');
 
+  let unwrappedButtonRef = useUnwrapDOMRef(buttonRef);
   let {inputProps, listBoxProps, labelProps} = useComboBox(
     {
       ...props,
       // completionMode,
       layoutDelegate: layout,
-      // oxlint-disable-next-line react/react-compiler
-      buttonRef: unwrapDOMRef(buttonRef),
+      buttonRef: unwrappedButtonRef,
       popoverRef: popoverRef,
       listBoxRef,
       inputRef,
@@ -385,14 +387,12 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
   // "double tap to edit text", as with a textbox or searchbox. We'd like double tapping to
   // open the virtual keyboard rather than closing the tray.
   // Unlike "combobox", "aria-expanded" is not a valid attribute on "searchbox".
-  // oxlint-disable-next-line react/react-compiler
-  inputProps.role = 'searchbox';
-  // oxlint-disable-next-line react/react-compiler
-  inputProps['aria-haspopup'] = 'listbox';
-  // oxlint-disable-next-line react/react-compiler
-  delete inputProps['aria-expanded'];
-  // oxlint-disable-next-line react/react-compiler
-  delete inputProps.onTouchEnd;
+  let {onTouchEnd: _inputOnTouchEnd, 'aria-expanded': _, ...restInputProps} = inputProps;
+  let trayInputProps = {
+    ...restInputProps,
+    role: 'searchbox',
+    'aria-haspopup': 'listbox'
+  };
 
   let clearButton = (
     <ClearButton
@@ -441,10 +441,11 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
     popoverRef.current?.focus();
   }, [inputRef, popoverRef, isTouchDown]);
 
-  let inputValue = inputProps.value;
+  let inputValue = trayInputProps.value;
   let lastInputValue = useRef(inputValue);
+  let isFiltering = loadingState === 'filtering';
   useEffect(() => {
-    if (loadingState === 'filtering' && !showLoading) {
+    if (isFiltering && !showLoading) {
       if (timeout.current === null) {
         timeout.current = setTimeout(() => {
           setShowLoading(true);
@@ -458,10 +459,7 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
           setShowLoading(true);
         }, 500);
       }
-    } else if (loadingState !== 'filtering') {
-      // If loading is no longer happening, clear any timers and hide the loading circle
-      // oxlint-disable-next-line react/react-compiler
-      setShowLoading(false);
+    } else if (!isFiltering) {
       if (timeout.current) {
         clearTimeout(timeout.current);
       }
@@ -469,14 +467,20 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
     }
 
     lastInputValue.current = inputValue;
-  }, [loadingState, inputValue, showLoading]);
+  }, [isFiltering, inputValue, showLoading]);
+
+  let [prevIsFiltering, setPrevIsFiltering] = useState(isFiltering);
+  if (prevIsFiltering !== isFiltering && !isFiltering) {
+    setShowLoading(false);
+    setPrevIsFiltering(isFiltering);
+  }
 
   let onKeyDown = e => {
     // Close virtual keyboard if user hits Enter w/o any focused options
     if (e.key === 'Enter' && state.selectionManager.focusedKey == null) {
       popoverRef.current?.focus();
     } else {
-      inputProps.onKeyDown?.(e);
+      trayInputProps.onKeyDown?.(e);
     }
   };
 
@@ -490,7 +494,7 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
         <TextFieldBase
           label={label}
           labelProps={labelProps}
-          inputProps={{...inputProps, onKeyDown}}
+          inputProps={{...trayInputProps, onKeyDown}}
           inputRef={inputRef}
           isDisabled={isDisabled}
           isLoading={showLoading && loadingState === 'filtering'}

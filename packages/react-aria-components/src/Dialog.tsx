@@ -82,16 +82,19 @@ export function DialogTrigger(props: DialogTriggerProps): JSX.Element {
   let state = useMenuTriggerState(props);
 
   let buttonRef = useRef<HTMLButtonElement>(null);
-  let {triggerProps, overlayProps} = useOverlayTrigger({type: 'dialog'}, state, buttonRef);
+  let {triggerProps: overlayTriggerProps, overlayProps: dialogOverlayProps} = useOverlayTrigger(
+    {type: 'dialog'},
+    state,
+    buttonRef
+  );
 
   // Label dialog by the trigger as a fallback if there is no title slot.
   // This is done in RAC instead of hooks because otherwise we cannot distinguish
   // between context and props. Normally aria-labelledby overrides the title
   // but when sent by context we want the title to win.
-  // oxlint-disable-next-line react/react-compiler
-  triggerProps.id = useId();
-  // oxlint-disable-next-line react/react-compiler
-  overlayProps['aria-labelledby'] = triggerProps.id;
+  let triggerId = useId();
+  let triggerProps = {...overlayTriggerProps, id: triggerId};
+  let overlayProps = {...dialogOverlayProps, 'aria-labelledby': triggerId};
 
   return (
     <Provider
@@ -119,9 +122,11 @@ export function DialogTrigger(props: DialogTriggerProps): JSX.Element {
  * A dialog is an overlay shown above other content in an application.
  */
 export const Dialog = /*#__PURE__*/ (forwardRef as forwardRefType)(function Dialog(
-  props: DialogProps,
-  ref: ForwardedRef<HTMLElement>
+  propsArg: DialogProps,
+  refArg: ForwardedRef<HTMLElement>
 ) {
+  let props = propsArg;
+  let ref = refArg;
   let originalAriaLabelledby = props['aria-labelledby'];
   [props, ref] = useContextProps(props, ref, DialogContext);
   let {dialogProps, titleProps} = useDialog(

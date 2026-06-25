@@ -13,7 +13,7 @@
 import {AriaTextFieldProps, useTextField} from 'react-aria/useTextField';
 
 import {chain} from 'react-aria/chain';
-import React, {ReactElement, Ref, useCallback, useEffect, useRef} from 'react';
+import React, {ReactElement, Ref, useEffect, useRef} from 'react';
 import {
   SpectrumFieldValidation,
   SpectrumLabelableProps,
@@ -49,10 +49,10 @@ export interface SpectrumTextAreaProps
  * are available to text fields.
  */
 export const TextArea = React.forwardRef(function TextArea(
-  props: SpectrumTextAreaProps,
+  propsArg: SpectrumTextAreaProps,
   ref: Ref<TextFieldRef<HTMLTextAreaElement>>
 ) {
-  // oxlint-disable-next-line react/react-compiler
+  let props = propsArg;
   props = useProviderProps(props);
   props = useFormProps(props);
   let {
@@ -61,6 +61,7 @@ export const TextArea = React.forwardRef(function TextArea(
     isReadOnly = false,
     isRequired = false,
     onChange,
+    height,
     ...otherProps
   } = props;
 
@@ -72,11 +73,14 @@ export const TextArea = React.forwardRef(function TextArea(
   );
   let inputRef = useRef<HTMLTextAreaElement>(null);
 
-  // oxlint-disable-next-line react/react-compiler
-  let onHeightChange = useCallback(() => {
+  useLayoutEffect(() => {
     // Quiet textareas always grow based on their text content.
     // Standard textareas also grow by default, unless an explicit height is set.
-    if ((isQuiet || !props.height) && inputRef.current) {
+    if (!inputRef.current) {
+      return;
+    }
+
+    if (isQuiet || !height) {
       let input = inputRef.current;
       let prevAlignment = input.style.alignSelf;
       let prevOverflow = input.style.overflow;
@@ -94,13 +98,7 @@ export const TextArea = React.forwardRef(function TextArea(
       input.style.overflow = prevOverflow;
       input.style.alignSelf = prevAlignment;
     }
-  }, [isQuiet, inputRef, props.height]);
-
-  useLayoutEffect(() => {
-    if (inputRef.current) {
-      onHeightChange();
-    }
-  }, [onHeightChange, inputValue, inputRef]);
+  }, [isQuiet, height, inputValue]);
 
   let hasWarned = useRef(false);
   useEffect(() => {

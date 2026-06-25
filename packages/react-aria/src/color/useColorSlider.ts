@@ -128,12 +128,11 @@ export function useColorSlider(
 
   let forcedColorAdjustNoneStyle = {forcedColorAdjust: 'none'};
 
+  let ariaValueText = inputProps['aria-valuetext'];
   if (channel === 'hue') {
-    // oxlint-disable-next-line react/react-compiler
-    inputProps['aria-valuetext'] += `, ${value.getHueName(locale)}`;
+    ariaValueText += `, ${value.getHueName(locale)}`;
   } else if (channel !== 'alpha') {
-    // oxlint-disable-next-line react/react-compiler
-    inputProps['aria-valuetext'] += `, ${value.getColorName(locale)}`;
+    ariaValueText += `, ${value.getColorName(locale)}`;
   }
 
   let {visuallyHiddenProps} = useVisuallyHidden({
@@ -156,6 +155,7 @@ export function useColorSlider(
     },
     inputProps: {
       ...inputProps,
+      'aria-valuetext': ariaValueText,
       style: {
         ...inputProps.style,
         ...visuallyHiddenProps.style

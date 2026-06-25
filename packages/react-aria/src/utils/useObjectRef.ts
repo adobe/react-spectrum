@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {MutableRefObject, useCallback, useMemo, useRef} from 'react';
+import {MutableRefObject, useMemo, useRef} from 'react';
+import {useLayoutEffect} from './useLayoutEffect';
 
 /**
  * Offers an object ref for a given callback ref or an object ref. Especially
@@ -22,33 +23,15 @@ import {MutableRefObject, useCallback, useMemo, useRef} from 'react';
  * @see https://react.dev/reference/react/forwardRef
  */
 export function useObjectRef<T>(
-  ref?: ((instance: T | null) => (() => void) | void) | MutableRefObject<T | null> | null
+  refArg?: ((instance: T | null) => (() => void) | void) | MutableRefObject<T | null> | null
 ): MutableRefObject<T | null> {
+  let ref = refArg;
   const objRef: MutableRefObject<T | null> = useRef<T>(null);
   const cleanupRef: MutableRefObject<(() => void) | void> = useRef(undefined);
-
-  const refEffect = useCallback(
-    (instance: T | null) => {
-      if (typeof ref === 'function') {
-        const refCallback = ref;
-        const refCleanup = refCallback(instance);
-        return () => {
-          if (typeof refCleanup === 'function') {
-            refCleanup();
-          } else {
-            refCallback(null);
-          }
-        };
-      } else if (ref) {
-        // oxlint-disable-next-line react/react-compiler
-        ref.current = instance;
-        return () => {
-          ref.current = null;
-        };
-      }
-    },
-    [ref]
-  );
+  const forwardedRef = useRef(ref);
+  useLayoutEffect(() => {
+    forwardedRef.current = ref;
+  });
 
   return useMemo(
     () => ({
@@ -63,11 +46,25 @@ export function useObjectRef<T>(
         }
 
         if (value != null) {
-          cleanupRef.current = refEffect(value);
+          let refValue = forwardedRef.current;
+          if (typeof refValue === 'function') {
+            const refCallback = refValue;
+            const refCleanup = refCallback(value);
+            cleanupRef.current =
+              typeof refCleanup === 'function'
+                ? refCleanup
+                : () => {
+                    refCallback(null);
+                  };
+          } else if (refValue) {
+            refValue.current = value;
+            cleanupRef.current = () => {
+              refValue.current = null;
+            };
+          }
         }
       }
     }),
-    // oxlint-disable-next-line react/react-compiler
-    [refEffect]
+    []
   );
 }

@@ -421,8 +421,7 @@ export function useComboBoxState<T, M extends SelectionMode = 'single'>(
       inputValue !== lastValue &&
       menuTrigger !== 'manual'
     ) {
-      // oxlint-disable-next-line react/react-compiler
-      open(null, 'input');
+      queueMicrotask(() => open(null, 'input'));
     }
 
     // Close the menu if the collection is empty. Don't close menu if filtered collection size is 0
@@ -447,18 +446,20 @@ export function useComboBoxState<T, M extends SelectionMode = 'single'>(
 
     // Clear focused key when input value changes and display filtered collection again.
     if (inputValue !== lastValue) {
-      selectionManager.setFocusedKey(null);
-      setShowAllItems(false);
+      queueMicrotask(() => {
+        selectionManager.setFocusedKey(null);
+        setShowAllItems(false);
 
-      // Set value to null when the user clears the input.
-      // If controlled, this is the application developer's responsibility.
-      if (
-        selectionMode === 'single' &&
-        inputValue === '' &&
-        (props.inputValue === undefined || value === undefined)
-      ) {
-        setValue(null);
-      }
+        // Set value to null when the user clears the input.
+        // If controlled, this is the application developer's responsibility.
+        if (
+          selectionMode === 'single' &&
+          inputValue === '' &&
+          (props.inputValue === undefined || value === undefined)
+        ) {
+          setValue(null);
+        }
+      });
     }
 
     // If the value changed, update the input value.
@@ -470,7 +471,7 @@ export function useComboBoxState<T, M extends SelectionMode = 'single'>(
     ) {
       resetInputValue();
     } else if (lastValue !== inputValue) {
-      setLastValue(inputValue);
+      queueMicrotask(() => setLastValue(inputValue));
     }
 
     // Update the inputValue if the selected item's text changes from its last tracked value.

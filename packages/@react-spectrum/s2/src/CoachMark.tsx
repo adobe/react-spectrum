@@ -321,66 +321,70 @@ export const CoachMarkContext = createContext<ContextValue<Partial<CoachMarkProp
   {}
 );
 
-export const CoachMark = forwardRef((props: CoachMarkProps, ref: ForwardedRef<HTMLElement>) => {
-  let colorScheme = useContext(ColorSchemeContext);
-  [props, ref] = useContextProps(props, ref, CoachMarkContext);
-  let {UNSAFE_style} = props;
-  let {size = 'M'} = props;
-  let popoverRef = useObjectRef(ref);
+export const CoachMark = forwardRef(
+  (propsArg: CoachMarkProps, refArg: ForwardedRef<HTMLElement>) => {
+    let props = propsArg;
+    let ref = refArg;
+    let colorScheme = useContext(ColorSchemeContext);
+    [props, ref] = useContextProps(props, ref, CoachMarkContext);
+    let {UNSAFE_style} = props;
+    let {size = 'M'} = props;
+    let popoverRef = useObjectRef(ref);
 
-  let children = (
-    <Provider
-      values={[
-        [ImageContext, {alt: '', styles: image}],
-        [
-          TextContext,
-          {
-            slots: {
-              [DEFAULT_SLOT]: {},
-              title: {styles: title({size})},
-              description: {styles: description({size})},
-              steps: {styles: steps}
+    let children = (
+      <Provider
+        values={[
+          [ImageContext, {alt: '', styles: image}],
+          [
+            TextContext,
+            {
+              slots: {
+                [DEFAULT_SLOT]: {},
+                title: {styles: title({size})},
+                description: {styles: description({size})},
+                steps: {styles: steps}
+              }
             }
-          }
-        ],
-        [KeyboardContext, {styles: keyboard}],
-        [ContentContext, {styles: content({size})}],
-        [DividerContext, {size: 'S'}],
-        [FooterContext, {styles: footer}],
-        [
-          ActionMenuContext,
-          {
-            isQuiet: true,
-            size: actionButtonSize[size],
-            // @ts-ignore
-            'data-slot': 'menu',
-            styles: actionMenu
-          }
-        ]
-      ]}>
-      <ImageCoordinator>{props.children}</ImageCoordinator>
-    </Provider>
-  );
+          ],
+          [KeyboardContext, {styles: keyboard}],
+          [ContentContext, {styles: content({size})}],
+          [DividerContext, {size: 'S'}],
+          [FooterContext, {styles: footer}],
+          [
+            ActionMenuContext,
+            {
+              isQuiet: true,
+              size: actionButtonSize[size],
+              // @ts-ignore
+              'data-slot': 'menu',
+              styles: actionMenu
+            }
+          ]
+        ]}>
+        <ImageCoordinator>{props.children}</ImageCoordinator>
+      </Provider>
+    );
 
-  return (
-    <AriaPopover
-      {...props}
-      ref={popoverRef}
-      style={{
-        ...UNSAFE_style,
-        // Override default z-index from useOverlayPosition. We use isolation: isolate instead.
-        zIndex: undefined
-      }}
-      className={renderProps => mergeStyles(popover({...renderProps, colorScheme}))}>
-      <Card>
-        {/* }// Reset OverlayTriggerStateContext so the buttons inside the dialog don't retain their hover state. */}
-        <OverlayTriggerStateContext.Provider value={null}>
-          {children}
-        </OverlayTriggerStateContext.Provider>
-      </Card>
-    </AriaPopover>
-  );
-});
+    return (
+      <AriaPopover
+        {...props}
+        ref={popoverRef}
+        style={{
+          ...UNSAFE_style,
+          // Override default z-index from useOverlayPosition. We use isolation: isolate instead.
+          zIndex: undefined
+        }}
+        className={renderProps => mergeStyles(popover({...renderProps, colorScheme}))}>
+        <Card>
+          {/* }// Reset OverlayTriggerStateContext so the buttons inside the dialog don't retain their hover state. */}
+          <OverlayTriggerStateContext.Provider value={null}>
+            {children}
+          </OverlayTriggerStateContext.Provider>
+        </Card>
+      </AriaPopover>
+    );
+  }
+);
 
 export interface CoachMarkTriggerProps extends AriaDialogTriggerProps {}
 
@@ -401,20 +405,19 @@ export function CoachMarkTrigger(props: CoachMarkTriggerProps): ReactNode {
   // This is done in RAC instead of hooks because otherwise we cannot distinguish
   // between context and props. Normally aria-labelledby overrides the title
   // but when sent by context we want the title to win.
-  // oxlint-disable-next-line react/react-compiler
-  triggerProps.id = useId();
-  // oxlint-disable-next-line react/react-compiler
-  overlayProps['aria-labelledby'] = triggerProps.id;
+  let triggerId = useId();
+  let mergedTriggerProps = {...triggerProps, id: triggerId};
+  let mergedOverlayProps = {...overlayProps, 'aria-labelledby': triggerId};
 
   return (
     <Provider
       values={[
         [OverlayTriggerStateContext, state],
         [RootMenuTriggerStateContext, state],
-        [DialogContext, overlayProps],
+        [DialogContext, mergedOverlayProps],
         [PopoverContext, {trigger: 'DialogTrigger', triggerRef, isNonModal: true}] // valid to pass triggerRef?
       ]}>
-      <PressResponder {...triggerProps} isPressed={state.isOpen}>
+      <PressResponder {...mergedTriggerProps} isPressed={state.isOpen}>
         <CoachMarkIndicator ref={triggerRef} isActive={state.isOpen}>
           {props.children}
         </CoachMarkIndicator>

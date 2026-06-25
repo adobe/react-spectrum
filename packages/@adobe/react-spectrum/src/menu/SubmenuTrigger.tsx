@@ -15,12 +15,12 @@ import {classNames} from '../utils/classNames';
 import {isFocusWithin} from 'react-aria/private/utils/shadowdom/DOMFunctions';
 import {Key} from '@react-types/shared';
 import {MenuContext, SubmenuTriggerContext, useMenuStateContext} from './context';
-import {mergeProps} from 'react-aria/mergeProps';
 import {Popover} from '../overlays/Popover';
-import React, {type JSX, ReactElement, useRef} from 'react';
+import React, {type JSX, ReactElement, ReactNode, RefObject, useRef, useState} from 'react';
 import ReactDOM from 'react-dom';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {useIsMobileDevice} from '../utils/useIsMobileDevice';
+import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
 import {useLocale} from 'react-aria/I18nProvider';
 import {useSubmenuTrigger} from 'react-aria/useMenu';
 import {useSubmenuTriggerState} from 'react-stately/useMenuTriggerState';
@@ -34,6 +34,32 @@ interface SubmenuTriggerProps {
 }
 
 export interface SpectrumSubmenuTriggerProps extends Omit<SubmenuTriggerProps, 'targetKey'> {}
+
+function MobileTrayPortal({
+  containerRef,
+  isOpen,
+  children
+}: {
+  containerRef: RefObject<HTMLElement | null | undefined>;
+  isOpen: boolean;
+  children: ReactNode;
+}) {
+  let [container, setContainer] = useState<HTMLElement | null>(null);
+
+  useLayoutEffect(() => {
+    if (isOpen) {
+      setContainer(containerRef.current ?? null);
+    } else {
+      setContainer(null);
+    }
+  }, [isOpen, containerRef]);
+
+  if (!isOpen || !container) {
+    return null;
+  }
+
+  return ReactDOM.createPortal(children, container);
+}
 
 function SubmenuTrigger(props: SubmenuTriggerProps) {
   let triggerRef = useRef<HTMLDivElement>(null);
@@ -82,17 +108,22 @@ function SubmenuTrigger(props: SubmenuTriggerProps) {
 
   let overlay;
 
+  let {
+    onBlur: _onBlur,
+    onHoverChange: _onHoverChange,
+    ...mobileSubmenuTriggerProps
+  } = submenuTriggerProps;
+  let contextSubmenuTriggerProps = isMobile ? mobileSubmenuTriggerProps : submenuTriggerProps;
+  let contextSubmenuProps = isMobile
+    ? {...submenuProps, autoFocus: submenuProps.autoFocus ?? true}
+    : submenuProps;
+
   if (isMobile) {
-    // oxlint-disable-next-line react/react-compiler
-    delete submenuTriggerProps.onBlur;
-    // oxlint-disable-next-line react/react-compiler
-    delete submenuTriggerProps.onHoverChange;
-    submenuProps.autoFocus ??= true;
-    // oxlint-disable-next-line react/react-compiler
-    if (trayContainerRef.current && submenuTriggerState.isOpen) {
-      // oxlint-disable-next-line react/react-compiler
-      overlay = ReactDOM.createPortal(menu, trayContainerRef.current);
-    }
+    overlay = (
+      <MobileTrayPortal containerRef={trayContainerRef} isOpen={submenuTriggerState.isOpen}>
+        {menu}
+      </MobileTrayPortal>
+    );
   } else {
     let onDismissButtonPress = () => {
       submenuTriggerState.close();
@@ -119,26 +150,24 @@ function SubmenuTrigger(props: SubmenuTriggerProps) {
   }
 
   let menuContext = {
-    // oxlint-disable-next-line react/react-compiler
-    ...mergeProps(submenuProps, {
-      ref: menuRef,
-      UNSAFE_style: isMobile
-        ? {
-            width: '100%',
-            maxHeight: 'inherit'
-          }
-        : undefined,
-      UNSAFE_className: classNames(styles, {'spectrum-Menu-popover': !isMobile}),
-      ...(isMobile && {
-        onBackButtonPress,
-        onKeyDown: mobileSubmenuKeyDown
-      })
+    ...contextSubmenuProps,
+    ref: menuRef,
+    UNSAFE_style: isMobile
+      ? {
+          width: '100%',
+          maxHeight: 'inherit'
+        }
+      : undefined,
+    UNSAFE_className: classNames(styles, {'spectrum-Menu-popover': !isMobile}),
+    ...(isMobile && {
+      onBackButtonPress,
+      onKeyDown: mobileSubmenuKeyDown
     })
   };
 
   return (
     <>
-      <SubmenuTriggerContext.Provider value={{triggerRef, ...submenuTriggerProps}}>
+      <SubmenuTriggerContext.Provider value={{triggerRef, ...contextSubmenuTriggerProps}}>
         {menuTrigger}
       </SubmenuTriggerContext.Provider>
       <MenuContext.Provider value={menuContext}>{overlay}</MenuContext.Provider>

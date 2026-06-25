@@ -163,7 +163,9 @@ const iconCenterWrapper = style({
   }
 });
 let InsideSelectValueContext = createContext(false);
-function Picker<T>(props: PickerProps<T>, ref: FocusableRef<HTMLButtonElement>) {
+function Picker<T>(propsArg: PickerProps<T>, refArg: FocusableRef<HTMLButtonElement>) {
+  let props = propsArg;
+  let ref = refArg;
   [props, ref] = useSpectrumContextProps(props, ref, PickerContext);
   let domRef = useFocusableRef(ref);
   props = useFormProps(props);
@@ -343,7 +345,6 @@ export function PickerItem(props: PickerItemProps): ReactNode {
   let ref = useRef(null);
   let isLink = props.href != null;
   const size = 'M';
-  // oxlint-disable react/react-compiler
   return (
     <ListBoxItem
       {...props}
@@ -352,7 +353,7 @@ export function PickerItem(props: PickerItemProps): ReactNode {
         props.textValue ||
         (typeof props.children === 'string' ? (props.children as string) : undefined)
       }
-      style={pressScale(ref, props.UNSAFE_style)}
+      style={renderProps => pressScale(ref, props.UNSAFE_style)(renderProps)}
       className={renderProps =>
         (props.UNSAFE_className || '') + menuitem({...renderProps, size, isLink}, props.styles)
       }>
@@ -386,7 +387,6 @@ export function PickerItem(props: PickerItemProps): ReactNode {
       }}
     </ListBoxItem>
   );
-  // oxlint-enable react/react-compiler
 }
 // A Context.Provider that only sets a value if not inside SelectValue.
 function DefaultProvider({

@@ -56,10 +56,10 @@ export interface SpectrumColorFieldProps
  * A color field allows users to edit a hex color or individual color channel value.
  */
 export const ColorField = React.forwardRef(function ColorField(
-  props: SpectrumColorFieldProps,
+  propsArg: SpectrumColorFieldProps,
   ref: Ref<TextFieldRef>
 ) {
-  // oxlint-disable-next-line react/react-compiler
+  let props = propsArg;
   props = useProviderProps(props);
   props = useFormProps(props);
   [props] = useContextProps(props, null, ColorFieldContext);

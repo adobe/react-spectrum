@@ -11,19 +11,16 @@
  */
 
 import {GridLayout as BaseGridLayout, GridLayoutOptions} from 'react-stately/useVirtualizerState';
-import {LayoutOptionsDelegate} from './Virtualizer';
 import {useLocale} from 'react-aria/I18nProvider';
 import {useMemo} from 'react';
 
-export class GridLayout<T, O extends GridLayoutOptions = GridLayoutOptions>
-  extends BaseGridLayout<T, O>
-  implements LayoutOptionsDelegate<GridLayoutOptions>
-{
-  // Automatically determine the layout direction from the current locale.
-  useLayoutOptions(): GridLayoutOptions {
-    // oxlint-disable react/react-compiler, react-hooks/rules-of-hooks
-    let {direction} = useLocale();
-    return useMemo(() => ({direction}), [direction]);
-    // oxlint-enable react/react-compiler, react-hooks/rules-of-hooks
-  }
+export class GridLayout<T, O extends GridLayoutOptions = GridLayoutOptions> extends BaseGridLayout<
+  T,
+  O
+> {}
+
+// Automatically determine the layout direction from the current locale.
+export function useGridLayoutOptions(): GridLayoutOptions {
+  let {direction} = useLocale();
+  return useMemo(() => ({direction}), [direction]);
 }

@@ -13,7 +13,6 @@
 import {AriaTextFieldProps, TextFieldAria, useTextField} from './useTextField';
 import {getEventTarget} from '../utils/shadowdom/DOMFunctions';
 import {InputEventHandler, useEffect, useRef} from 'react';
-import {mergeProps} from '../utils/mergeProps';
 import {RefObject} from '@react-types/shared';
 import {useEffectEvent} from '../utils/useEffectEvent';
 
@@ -144,8 +143,8 @@ export function useFormattedTextField(
     selectionEnd: number | null;
   } | null>(null);
   return {
-    // oxlint-disable-next-line react/react-compiler
-    inputProps: mergeProps(textFieldProps, {
+    inputProps: {
+      ...textFieldProps,
       onBeforeInput,
       onCompositionStart() {
         // Chrome does not implement Input Events Level 2, which specifies the insertFromComposition
@@ -173,7 +172,7 @@ export function useFormattedTextField(
           state.setInputValue(value);
         }
       }
-    }),
+    },
     labelProps,
     descriptionProps,
     errorMessageProps,

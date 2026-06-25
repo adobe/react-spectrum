@@ -13,7 +13,7 @@
 import {Collection, Key} from '@react-types/shared';
 import {InvalidationContext} from './types';
 import {Layout} from './Layout';
-import React, {useCallback, useMemo, useRef, useState} from 'react';
+import React, {useCallback, useMemo, useState} from 'react';
 import {Rect} from './Rect';
 import {ReusableView} from './ReusableView';
 import {Size} from './Size';
@@ -54,9 +54,8 @@ export function useVirtualizerState<T extends object, V, O = any>(
   let [size, setSize] = useState(new Size());
   let [isScrolling, setScrolling] = useState(false);
   let [invalidationContext, setInvalidationContext] = useState<InvalidationContext>({});
-  let visibleRectChanged = useRef(false);
+  let [pendingVisibleRectNotification, setPendingVisibleRectNotification] = useState(false);
   let [virtualizer] = useState(
-    // oxlint-disable-next-line react/react-compiler
     () =>
       new Virtualizer<T, V>({
         collection: opts.collection,
@@ -64,7 +63,7 @@ export function useVirtualizerState<T extends object, V, O = any>(
         delegate: {
           setVisibleRect(rect) {
             setVisibleRect(rect);
-            visibleRectChanged.current = true;
+            setPendingVisibleRectNotification(true);
           },
           // TODO: should changing these invalidate the entire cache?
           renderView: opts.renderView,
@@ -75,11 +74,11 @@ export function useVirtualizerState<T extends object, V, O = any>(
 
   // onVisibleRectChange must be called from an effect, not during render.
   useLayoutEffect(() => {
-    if (visibleRectChanged.current) {
-      visibleRectChanged.current = false;
+    if (pendingVisibleRectNotification) {
+      setPendingVisibleRectNotification(false);
       opts.onVisibleRectChange(visibleRect);
     }
-  });
+  }, [pendingVisibleRectNotification, visibleRect, opts]);
 
   let mergedInvalidationContext = useMemo(() => {
     if (opts.layoutOptions != null) {

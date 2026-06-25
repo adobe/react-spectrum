@@ -53,16 +53,14 @@ export function useFormProps<T extends FormStyleProps>(props: T): T {
       // This is a subset of mergeProps. We just need to merge non-undefined values.
       for (let key in ctx) {
         if (result[key] === undefined) {
-          // oxlint-disable-next-line react/react-compiler
-          result[key] = ctx[key];
+          result = {...result, [key]: ctx[key]};
         }
       }
     }
 
     // Skeleton always wins over local props.
     if (isSkeleton) {
-      // oxlint-disable-next-line react/react-compiler
-      result.isDisabled = true;
+      result = {...result, isDisabled: true};
     }
 
     return result;

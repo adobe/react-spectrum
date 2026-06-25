@@ -21,7 +21,7 @@ import React, {forwardRef, Fragment, ReactElement, useRef} from 'react';
 import {SlotProvider} from '../utils/Slots';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {Tray} from '../overlays/Tray';
-import {unwrapDOMRef, useDOMRef} from '../utils/useDOMRef';
+import {useDOMRef, useUnwrapDOMRef} from '../utils/useDOMRef';
 import {useInteractOutside} from 'react-aria/useInteractOutside';
 import {useIsMobileDevice} from '../utils/useIsMobileDevice';
 import {useMenuTrigger} from 'react-aria/useMenu';
@@ -116,8 +116,7 @@ export const MenuTrigger = forwardRef(function MenuTrigger(
 
   // Close when clicking outside the root menu when a submenu is open.
   let rootOverlayRef = useRef(null);
-  // oxlint-disable-next-line react/react-compiler
-  let rootOverlayDomRef = unwrapDOMRef(rootOverlayRef);
+  let rootOverlayDomRef = useUnwrapDOMRef(rootOverlayRef);
   useInteractOutside({
     ref: rootOverlayDomRef,
     onInteractOutside: () => {

@@ -165,9 +165,11 @@ const InternalSegmentedControlContext = createContext<InternalSegmentedControlCo
  * A SegmentedControl is a mutually exclusive group of buttons used for view switching.
  */
 export const SegmentedControl = /*#__PURE__*/ forwardRef(function SegmentedControl(
-  props: SegmentedControlProps,
-  ref: DOMRef<HTMLDivElement>
+  propsArg: SegmentedControlProps,
+  refArg: DOMRef<HTMLDivElement>
 ) {
+  let props = propsArg;
+  let ref = refArg;
   [props, ref] = useSpectrumContextProps(props, ref, SegmentedControlContext);
   let {defaultSelectedKey, selectedKey, onSelectionChange} = props;
   let domRef = useDOMRef(ref);
@@ -208,14 +210,15 @@ function DefaultSelectionTracker(props: DefaultSelectionTrackProps) {
   let isRegistered = useRef(!(props.defaultValue == null && props.value == null));
 
   // default select the first available item
-  let register = useCallback((value: Key) => {
-    // oxlint-disable-next-line react/react-compiler
-    if (state && !isRegistered.current) {
-      isRegistered.current = true;
-      state.toggleKey(value);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  let register = useCallback(
+    (value: Key) => {
+      if (state && !isRegistered.current) {
+        isRegistered.current = true;
+        state.toggleKey(value);
+      }
+    },
+    [state]
+  );
 
   return (
     <Provider

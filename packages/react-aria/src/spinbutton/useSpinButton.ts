@@ -19,6 +19,7 @@ import {useCallback, useEffect, useRef, useState} from 'react';
 import {useEffectEvent} from '../utils/useEffectEvent';
 import {useGlobalListeners} from '../utils/useGlobalListeners';
 import {useKeyboard} from '../interactions/useKeyboard';
+import {useLayoutEffect} from '../utils/useLayoutEffect';
 import {useLocalizedStringFormatter} from '../i18n/useLocalizedStringFormatter';
 
 const noop = () => {};
@@ -160,6 +161,8 @@ export function useSpinButton(props: SpinButtonProps): SpinbuttonAria {
 
   const onIncrementEvent = useEffectEvent(onIncrement ?? noop);
   const onDecrementEvent = useEffectEvent(onDecrement ?? noop);
+  let repeatIncrement = useRef<(initialStepDelay: number) => void>(() => {});
+  let repeatDecrement = useRef<(initialStepDelay: number) => void>(() => {});
 
   const stepUpEvent = useEffectEvent(() => {
     if (
@@ -170,8 +173,7 @@ export function useSpinButton(props: SpinButtonProps): SpinbuttonAria {
       value < maxValue
     ) {
       onIncrementEvent();
-      // oxlint-disable-next-line react/react-compiler
-      onIncrementPressStartEvent(60);
+      repeatIncrement.current(60);
     }
   });
 
@@ -191,8 +193,7 @@ export function useSpinButton(props: SpinButtonProps): SpinbuttonAria {
       value > minValue
     ) {
       onDecrementEvent();
-      // oxlint-disable-next-line react/react-compiler
-      onDecrementPressStartEvent(60);
+      repeatDecrement.current(60);
     }
   });
 
@@ -201,6 +202,11 @@ export function useSpinButton(props: SpinButtonProps): SpinbuttonAria {
     isSpinning.current = true;
     // Start spinning after initial delay
     _async.current = window.setTimeout(stepDownEvent, initialStepDelay);
+  });
+
+  useLayoutEffect(() => {
+    repeatIncrement.current = onIncrementPressStartEvent;
+    repeatDecrement.current = onDecrementPressStartEvent;
   });
 
   let cancelContextMenu = e => {

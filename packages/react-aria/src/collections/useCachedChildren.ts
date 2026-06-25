@@ -43,12 +43,15 @@ export function useCachedChildren<T>(props: CachedChildrenOptions<T>): ReactNode
   );
 
   // Invalidate the cache whenever dependencies change.
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  // oxlint-disable-next-line react/react-compiler, react-hooks/exhaustive-deps
-  let cache = useMemo(() => new WeakMap(), [...dependencies, childrenString]);
+  let invalidationKey = useMemo(
+    () => dependencies.map(String).join('\0') + (childrenString ?? ''),
+    [dependencies, childrenString]
+  );
 
   return useMemo(() => {
+    void invalidationKey;
     if (items && typeof children === 'function') {
+      let cache = new WeakMap<object, ReactElement>();
       let res: ReactElement[] = [];
       for (let item of items) {
         let cacheKey = isWeakKey(item) ? item : null;
@@ -77,7 +80,9 @@ export function useCachedChildren<T>(props: CachedChildrenOptions<T>): ReactNode
     } else if (typeof children !== 'function') {
       return children;
     }
-  }, [children, items, cache, idScope, addIdAndValue]);
+    // invalidationKey is referenced above to invalidate when dependencies change.
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
+  }, [children, items, idScope, addIdAndValue]);
 }
 
 function isWeakKey(value: any): value is WeakKey {

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {useCallback, useEffect, useRef, useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import {useLayoutEffect} from './useLayoutEffect';
 import {useSSRSafeId} from '../ssr/SSRProvider';
 import {useValueEffect} from './useValueEffect';
@@ -43,24 +43,20 @@ export function useId(defaultId?: string): string {
   let res = useSSRSafeId(value);
   let cleanupRef = useRef(null);
 
-  if (registry) {
-    // oxlint-disable-next-line react/react-compiler
-    registry.register(cleanupRef, res);
-  }
-
-  if (canUseDOM) {
-    const cacheIdRef = idsUpdaterMap.get(res);
-    // oxlint-disable-next-line react/react-compiler
-    if (cacheIdRef && !cacheIdRef.includes(nextId)) {
-      // oxlint-disable-next-line react/react-compiler
-      cacheIdRef.push(nextId);
-    } else {
-      // oxlint-disable-next-line react/react-compiler
-      idsUpdaterMap.set(res, [nextId]);
-    }
-  }
-
   useLayoutEffect(() => {
+    if (registry) {
+      registry.register(cleanupRef, res);
+    }
+
+    if (canUseDOM) {
+      let cacheIdRef = idsUpdaterMap.get(res);
+      if (cacheIdRef && !cacheIdRef.includes(nextId)) {
+        cacheIdRef.push(nextId);
+      } else {
+        idsUpdaterMap.set(res, [nextId]);
+      }
+    }
+
     let r = res;
     return () => {
       // In Suspense, the cleanup function may be not called
@@ -123,16 +119,14 @@ export function mergeIds(idA: string, idB: string): string {
 export function useSlotId(depArray: ReadonlyArray<any> = []): string {
   let id = useId();
   let [resolvedId, setResolvedId] = useValueEffect(id);
-  let updateId = useCallback(() => {
+
+  useLayoutEffect(() => {
     setResolvedId(function* () {
       yield id;
 
       yield document.getElementById(id) ? id : undefined;
     });
-    // oxlint-disable-next-line react/react-compiler
-  }, [id, setResolvedId]);
-
-  useLayoutEffect(updateId, [id, updateId, ...depArray]);
+  }, [id, setResolvedId, depArray]);
 
   return resolvedId;
 }

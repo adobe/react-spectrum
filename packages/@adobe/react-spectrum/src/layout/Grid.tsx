@@ -52,14 +52,11 @@ const gridStyleProps: StyleHandlers = {
 export const Grid = forwardRef(function Grid(props: GridProps, ref: DOMRef<HTMLDivElement>) {
   let {children, ...otherProps} = props;
   let {styleProps} = useStyleProps(otherProps, gridStyleProps);
-  if (styleProps.style) {
-    // oxlint-disable-next-line react/react-compiler
-    styleProps.style.display = 'grid'; // inline-grid?
-  }
+  let style = styleProps.style ? {...styleProps.style, display: 'grid'} : {display: 'grid'};
   let domRef = useDOMRef(ref);
 
   return (
-    <div {...filterDOMProps(otherProps)} {...styleProps} ref={domRef}>
+    <div {...filterDOMProps(otherProps)} {...styleProps} style={style} ref={domRef}>
       {children}
     </div>
   );

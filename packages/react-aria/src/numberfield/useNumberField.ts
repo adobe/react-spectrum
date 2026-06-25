@@ -36,7 +36,6 @@ import {flushSync} from 'react-dom';
 import {getActiveElement, getEventTarget} from '../utils/shadowdom/DOMFunctions';
 import intlMessages from '../../intl/numberfield/*.json';
 import {isAndroid, isIOS, isIPhone} from '../utils/platform';
-import {mergeProps} from '../utils/mergeProps';
 import {NumberFieldProps, NumberFieldState} from 'react-stately/useNumberFieldState';
 import {privateValidationStateProp} from 'react-stately/private/form/useFormValidationState';
 import {useFocus} from '../interactions/useFocus';
@@ -313,7 +312,7 @@ export function useNumberField(
   // Merge outside useFormattedTextField so useKeyboard's createEventHandler is not nested inside
   // useTextField/useFocusable's createEventHandler (avoids redundant stopPropagation on RS events).
   // Shortcuts run first (mergeProps chains the second argument after the first).
-  let textFieldProps = mergeProps(keyboardProps, textFieldPropsFromHook);
+  let textFieldProps = {...keyboardProps, ...textFieldPropsFromHook};
 
   useFormReset(inputRef, state.defaultNumberValue, state.setNumberValue);
   useNativeValidation(
@@ -327,23 +326,21 @@ export function useNumberField(
     state.numberValue
   );
 
-  let inputProps: InputHTMLAttributes<HTMLInputElement> = mergeProps(
-    spinButtonProps,
-    focusProps,
-    textFieldProps,
-    {
-      // override the spinbutton role, we can't focus a spin button with VO
-      role: null,
-      // ignore aria-roledescription on iOS so that required state will announce when it is present
-      'aria-roledescription': !isIOS() ? stringFormatter.format('numberField') : null,
-      'aria-valuemax': null,
-      'aria-valuemin': null,
-      'aria-valuenow': null,
-      'aria-valuetext': null,
-      autoCorrect: 'off',
-      spellCheck: 'false'
-    }
-  );
+  let inputProps: InputHTMLAttributes<HTMLInputElement> = {
+    ...spinButtonProps,
+    ...focusProps,
+    ...textFieldProps,
+    // override the spinbutton role, we can't focus a spin button with VO
+    role: null,
+    // ignore aria-roledescription on iOS so that required state will announce when it is present
+    'aria-roledescription': !isIOS() ? stringFormatter.format('numberField') : null,
+    'aria-valuemax': null,
+    'aria-valuemin': null,
+    'aria-valuenow': null,
+    'aria-valuetext': null,
+    autoCorrect: 'off',
+    spellCheck: 'false'
+  };
 
   if (props.validationBehavior === 'native') {
     inputProps['aria-required'] = undefined;
@@ -385,8 +382,8 @@ export function useNumberField(
   let incrementId = useId();
   let decrementId = useId();
 
-  // oxlint-disable-next-line react/react-compiler
-  let incrementButtonProps: AriaButtonProps = mergeProps(incButtonProps, {
+  let incrementButtonProps: AriaButtonProps = {
+    ...incButtonProps,
     'aria-label': incrementAriaLabel || stringFormatter.format('increase', {fieldLabel}).trim(),
     id: ariaLabelledby && !incrementAriaLabel ? incrementId : null,
     'aria-labelledby':
@@ -397,10 +394,10 @@ export function useNumberField(
     allowFocusWhenDisabled: true,
     isDisabled: !state.canIncrement,
     onPressStart: onButtonPressStart
-  });
+  };
 
-  // oxlint-disable-next-line react/react-compiler
-  let decrementButtonProps: AriaButtonProps = mergeProps(decButtonProps, {
+  let decrementButtonProps: AriaButtonProps = {
+    ...decButtonProps,
     'aria-label': decrementAriaLabel || stringFormatter.format('decrease', {fieldLabel}).trim(),
     id: ariaLabelledby && !decrementAriaLabel ? decrementId : null,
     'aria-labelledby':
@@ -411,7 +408,7 @@ export function useNumberField(
     allowFocusWhenDisabled: true,
     isDisabled: !state.canDecrement,
     onPressStart: onButtonPressStart
-  });
+  };
 
   return {
     groupProps: {

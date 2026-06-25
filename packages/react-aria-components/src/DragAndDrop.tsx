@@ -79,12 +79,10 @@ export function useRenderDropIndicator(
   dropState?: DroppableCollectionState
 ): RenderDropIndicatorRetValue {
   let renderDropIndicator = dragAndDropHooks?.renderDropIndicator;
-  let isVirtualDragging = dragAndDropHooks?.isVirtualDragging?.();
+  let isVirtualDraggingFn = dragAndDropHooks?.isVirtualDragging;
   let fn = useCallback(
     (target: ItemDropTarget) => {
-      // Only show drop indicators when virtual dragging or this is the current drop target.
-      // oxlint-disable-next-line react/react-compiler
-      if (isVirtualDragging || dropState?.isDropTarget(target)) {
+      if (isVirtualDraggingFn?.() || dropState?.isDropTarget(target)) {
         return renderDropIndicator ? (
           renderDropIndicator(target)
         ) : (
@@ -92,11 +90,9 @@ export function useRenderDropIndicator(
         );
       }
     },
-    // We invalidate whenever the target changes.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [dropState?.target, isVirtualDragging, renderDropIndicator]
+    [dropState, isVirtualDraggingFn, renderDropIndicator]
   );
-  return dragAndDropHooks?.useDropIndicator ? fn : undefined;
+  return dragAndDropHooks?.isDroppable ? fn : undefined;
 }
 
 export function useDndPersistedKeys(

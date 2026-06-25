@@ -14,22 +14,16 @@ import {MutableRefObject} from 'react';
 import {RefObject} from '@react-types/shared';
 import {useLayoutEffect} from './useLayoutEffect';
 
-interface ContextValue<T> {
-  ref?: MutableRefObject<T | null>;
-}
-
 // Syncs ref from context with ref passed to hook
-export function useSyncRef<T>(context?: ContextValue<T> | null, ref?: RefObject<T | null>): void {
-  // oxlint-disable-next-line react/react-compiler
+export function useSyncRef<T>(
+  contextRef?: MutableRefObject<T | null>,
+  ref?: RefObject<T | null>
+): void {
   useLayoutEffect(() => {
-    if (context && context.ref && ref) {
-      // oxlint-disable-next-line react/react-compiler
-      context.ref.current = ref.current;
+    if (contextRef && ref) {
+      contextRef.current = ref.current;
       return () => {
-        if (context.ref) {
-          // oxlint-disable-next-line react-hooks/exhaustive-deps
-          context.ref.current = null;
-        }
+        contextRef.current = null;
       };
     }
   });

@@ -58,9 +58,10 @@ export interface SpectrumDateRangePickerProps<T extends DateValue>
  * to enter or select a date and time range.
  */
 export const DateRangePicker = React.forwardRef(function DateRangePicker<T extends DateValue>(
-  props: SpectrumDateRangePickerProps<T>,
+  propsArg: SpectrumDateRangePickerProps<T>,
   ref: FocusableRef<HTMLElement>
 ) {
+  let props = propsArg;
   props = useProviderProps(props);
   props = useFormProps(props);
   let {isQuiet, isDisabled, autoFocus, placeholderValue, maxVisibleMonths = 1} = props;
@@ -119,8 +120,7 @@ export const DateRangePicker = React.forwardRef(function DateRangePicker<T exten
   // The format help text is unnecessary for screen reader users because each segment already has a label.
   let description = useFormatHelpText(props);
   if (description && !props.description) {
-    // oxlint-disable-next-line react/react-compiler
-    descriptionProps.id = undefined;
+    descriptionProps = mergeProps(descriptionProps, {id: undefined});
   }
 
   let placeholder: DateValue | null | undefined = placeholderValue;

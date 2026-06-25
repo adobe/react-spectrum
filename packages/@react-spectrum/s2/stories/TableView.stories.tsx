@@ -2175,6 +2175,52 @@ export const TableWithNestedRows: StoryObj<typeof TableView> = {
   )
 };
 
+function renderNestedInlineEditRow(item, tree) {
+  return (
+    <Row id={item.key}>
+      <EditableCell
+        aria-label={`Edit ${item.value.title}`}
+        onSubmit={e => {
+          e.preventDefault();
+          let formData = new FormData(e.target as HTMLFormElement);
+          let title = formData.get('name') as string;
+          tree.update(item.key, {
+            ...item.value,
+            title
+          });
+        }}
+        renderEditing={() => (
+          <TextField
+            name="name"
+            aria-label="Edit name"
+            autoFocus
+            isRequired
+            styles={style({flexGrow: 1, flexShrink: 1, minWidth: 0})}
+            defaultValue={item.value.title}
+          />
+        )}>
+        <div
+          className={style({
+            display: 'flex',
+            alignItems: 'center',
+            gap: 8,
+            justifyContent: 'space-between'
+          })}>
+          {item.value.title}
+          <ActionButton slot="edit" aria-label="Edit fruit">
+            <Edit />
+          </ActionButton>
+        </div>
+      </EditableCell>
+      <Cell>{item.value.type}</Cell>
+      <Cell>{item.value.date}</Cell>
+      <Collection items={item.children || []}>
+        {child => renderNestedInlineEditRow(child, tree)}
+      </Collection>
+    </Row>
+  );
+}
+
 function NestedInlineEditExample(args) {
   let tree = useTreeData({
     initialItems: [
@@ -2222,52 +2268,7 @@ function NestedInlineEditExample(args) {
         <Column id="type">Type</Column>
         <Column id="date">Date Modified</Column>
       </TableHeader>
-      <TableBody items={tree.items}>
-        {function renderItem(item) {
-          return (
-            <Row id={item.key}>
-              <EditableCell
-                aria-label={`Edit ${item.value.title}`}
-                onSubmit={e => {
-                  e.preventDefault();
-                  let formData = new FormData(e.target as HTMLFormElement);
-                  let title = formData.get('name') as string;
-                  tree.update(item.key, {
-                    ...item.value,
-                    title
-                  });
-                }}
-                renderEditing={() => (
-                  <TextField
-                    name="name"
-                    aria-label="Edit name"
-                    autoFocus
-                    isRequired
-                    styles={style({flexGrow: 1, flexShrink: 1, minWidth: 0})}
-                    defaultValue={item.value.title}
-                  />
-                )}>
-                <div
-                  className={style({
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 8,
-                    justifyContent: 'space-between'
-                  })}>
-                  {item.value.title}
-                  <ActionButton slot="edit" aria-label="Edit fruit">
-                    <Edit />
-                  </ActionButton>
-                </div>
-              </EditableCell>
-              <Cell>{item.value.type}</Cell>
-              <Cell>{item.value.date}</Cell>
-              {/* oxlint-disable-next-line react/react-compiler */}
-              <Collection items={item.children || []}>{renderItem}</Collection>
-            </Row>
-          );
-        }}
-      </TableBody>
+      <TableBody items={tree.items}>{item => renderNestedInlineEditRow(item, tree)}</TableBody>
     </TableView>
   );
 }
@@ -2393,6 +2394,19 @@ export const DragAndDropReorder: StoryObj<typeof TableView> = {
   name: 'Drag and drop reorder'
 };
 
+function renderReorderableNestedRow(item) {
+  return (
+    <Row id={item.key}>
+      <Cell>{item.value.title}</Cell>
+      <Cell>{item.value.type}</Cell>
+      <Cell>{item.value.date}</Cell>
+      <Collection items={item.children ?? []}>
+        {child => renderReorderableNestedRow(child)}
+      </Collection>
+    </Row>
+  );
+}
+
 function ReorderableTableWithNested(props) {
   let tree = useTreeData({
     initialItems: [
@@ -2471,19 +2485,7 @@ function ReorderableTableWithNested(props) {
         <Column id="type">Type</Column>
         <Column id="date">Date Modified</Column>
       </TableHeader>
-      <TableBody items={tree.items}>
-        {function renderItem(item) {
-          return (
-            <Row id={item.key}>
-              <Cell>{item.value.title}</Cell>
-              <Cell>{item.value.type}</Cell>
-              <Cell>{item.value.date}</Cell>
-              {/* oxlint-disable-next-line react/react-compiler */}
-              <Collection items={item.children ?? []}>{renderItem}</Collection>
-            </Row>
-          );
-        }}
-      </TableBody>
+      <TableBody items={tree.items}>{item => renderReorderableNestedRow(item)}</TableBody>
     </TableView>
   );
 }

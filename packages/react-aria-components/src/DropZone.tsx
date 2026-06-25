@@ -95,11 +95,12 @@ export const DropZoneContext = createContext<ContextValue<DropZoneProps, HTMLDiv
  * A drop zone is an area into which one or multiple objects can be dragged and dropped.
  */
 export const DropZone = forwardRef(function DropZone(
-  props: DropZoneProps,
-  ref: ForwardedRef<HTMLDivElement>
+  propsArg: DropZoneProps,
+  refArg: ForwardedRef<HTMLDivElement>
 ) {
+  let props = propsArg;
+  let ref = refArg;
   let {isDisabled = false} = props;
-  // oxlint-disable-next-line react/react-compiler
   [props, ref] = useContextProps(props, ref, DropZoneContext);
   let dropzoneRef = useObjectRef(ref);
   let buttonRef = useRef<HTMLButtonElement>(null);

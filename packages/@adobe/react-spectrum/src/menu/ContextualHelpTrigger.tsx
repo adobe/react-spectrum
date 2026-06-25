@@ -18,16 +18,25 @@ import {getInteractionModality} from 'react-aria/private/interactions/useFocusVi
 import helpStyles from '@adobe/spectrum-css-temp/components/contextualhelp/vars.css';
 import {isFocusWithin, nodeContains} from 'react-aria/private/utils/shadowdom/DOMFunctions';
 import {Popover} from '../overlays/Popover';
-import React, {JSX, KeyboardEventHandler, ReactElement, useEffect, useRef, useState} from 'react';
+import React, {
+  JSX,
+  KeyboardEventHandler,
+  ReactElement,
+  ReactNode,
+  RefObject,
+  useRef,
+  useState
+} from 'react';
 import ReactDOM from 'react-dom';
 import {SlotProvider} from '../utils/Slots';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {SubmenuTriggerContext, useMenuStateContext} from './context';
 import {TrayHeaderWrapper} from './Menu';
-import {unwrapDOMRef} from '../utils/useDOMRef';
 import {useIsMobileDevice} from '../utils/useIsMobileDevice';
+import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
 import {useSubmenuTrigger} from 'react-aria/useMenu';
 import {useSubmenuTriggerState} from 'react-stately/useMenuTriggerState';
+import {useUnwrapDOMRef} from '../utils/useDOMRef';
 
 interface MenuDialogTriggerProps {
   /** Whether the menu item is currently unavailable. */
@@ -41,6 +50,32 @@ interface InternalMenuDialogTriggerProps extends MenuDialogTriggerProps {
 }
 
 export interface SpectrumMenuDialogTriggerProps extends MenuDialogTriggerProps {}
+
+function MobileTrayPortal({
+  containerRef,
+  isOpen,
+  children
+}: {
+  containerRef: RefObject<HTMLElement | null | undefined>;
+  isOpen: boolean;
+  children: ReactNode;
+}) {
+  let [container, setContainer] = useState<HTMLElement | null>(null);
+
+  useLayoutEffect(() => {
+    if (isOpen) {
+      setContainer(containerRef.current ?? null);
+    } else {
+      setContainer(null);
+    }
+  }, [isOpen, containerRef]);
+
+  if (!isOpen || !container) {
+    return null;
+  }
+
+  return ReactDOM.createPortal(children, container);
+}
 
 function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElement {
   let {isUnavailable = false, targetKey} = props;
@@ -58,8 +93,7 @@ function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElem
     {triggerKey: targetKey},
     {...rootMenuTriggerState!, ...state}
   );
-  // oxlint-disable-next-line react/react-compiler
-  let submenuRef = unwrapDOMRef(popoverRef);
+  let submenuRef = useUnwrapDOMRef(popoverRef);
   let {submenuTriggerProps, popoverProps} = useSubmenuTrigger(
     {
       parentMenuRef,
@@ -72,12 +106,12 @@ function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElem
   );
   let isMobile = useIsMobileDevice();
   let [traySubmenuAnimation, setTraySubmenuAnimation] = useState('');
-  useEffect(() => {
-    if (submenuTriggerState.isOpen) {
-      // oxlint-disable-next-line react/react-compiler
-      setTraySubmenuAnimation('spectrum-TraySubmenu-enter');
-    }
-  }, [submenuTriggerState.isOpen]);
+  let isOpen = submenuTriggerState.isOpen;
+  let [prevIsOpen, setPrevIsOpen] = useState(isOpen);
+  if (prevIsOpen !== isOpen && isOpen) {
+    setTraySubmenuAnimation('spectrum-TraySubmenu-enter');
+    setPrevIsOpen(isOpen);
+  }
   let slots = {};
   if (isUnavailable) {
     slots = {
@@ -126,36 +160,39 @@ function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElem
     }, 220); // Matches transition duration
   };
 
+  let {
+    onBlur: _onBlur,
+    onHoverChange: _onHoverChange,
+    ...mobileSubmenuTriggerProps
+  } = submenuTriggerProps;
+  let contextSubmenuTriggerProps = isMobile ? mobileSubmenuTriggerProps : submenuTriggerProps;
+
   if (isMobile) {
-    // oxlint-disable-next-line react/react-compiler
-    delete submenuTriggerProps.onBlur;
-    // oxlint-disable-next-line react/react-compiler
-    delete submenuTriggerProps.onHoverChange;
-    // oxlint-disable-next-line react/react-compiler
-    if (trayContainerRef.current && submenuTriggerState.isOpen) {
-      let subDialogKeyDown: KeyboardEventHandler = e => {
-        switch (e.key) {
-          case 'Escape':
-            e.stopPropagation();
-            onBackButtonPress();
-            break;
-        }
-      };
+    let subDialogKeyDown: KeyboardEventHandler = e => {
+      switch (e.key) {
+        case 'Escape':
+          e.stopPropagation();
+          onBackButtonPress();
+          break;
+      }
+    };
 
-      tray = (
-        <TrayHeaderWrapper
-          isSubmenu
-          parentMenuTreeState={state}
-          rootMenuTriggerState={rootMenuTriggerState}
-          wrapperKeyDown={subDialogKeyDown}
-          onBackButtonPress={onBackButtonPress}>
-          {content}
-        </TrayHeaderWrapper>
-      );
+    tray = (
+      <TrayHeaderWrapper
+        isSubmenu
+        parentMenuTreeState={state}
+        rootMenuTriggerState={rootMenuTriggerState}
+        wrapperKeyDown={subDialogKeyDown}
+        onBackButtonPress={onBackButtonPress}>
+        {content}
+      </TrayHeaderWrapper>
+    );
 
-      // oxlint-disable-next-line react/react-compiler
-      overlay = ReactDOM.createPortal(tray, trayContainerRef.current);
-    }
+    overlay = (
+      <MobileTrayPortal containerRef={trayContainerRef} isOpen={submenuTriggerState.isOpen}>
+        {tray}
+      </MobileTrayPortal>
+    );
   } else {
     let onDismissButtonPress = () => {
       submenuTriggerState.close();
@@ -186,7 +223,8 @@ function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElem
 
   return (
     <>
-      <SubmenuTriggerContext.Provider value={{isUnavailable, triggerRef, ...submenuTriggerProps}}>
+      <SubmenuTriggerContext.Provider
+        value={{isUnavailable, triggerRef, ...contextSubmenuTriggerProps}}>
         {trigger}
       </SubmenuTriggerContext.Provider>
       <SlotProvider slots={slots}>{submenuTriggerState.isOpen && overlay}</SlotProvider>

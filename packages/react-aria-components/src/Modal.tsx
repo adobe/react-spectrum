@@ -178,7 +178,12 @@ interface ModalOverlayInnerProps extends ModalOverlayProps {
   isExiting: boolean;
 }
 
-function ModalOverlayWithForwardRef(props: ModalOverlayProps, ref: ForwardedRef<HTMLDivElement>) {
+function ModalOverlayWithForwardRef(
+  propsArg: ModalOverlayProps,
+  refArg: ForwardedRef<HTMLDivElement>
+) {
+  let props = propsArg;
+  let ref = refArg;
   [props, ref] = useContextProps(props, ref, ModalContext);
   let contextState = useContext(OverlayTriggerStateContext);
   let localState = useOverlayTriggerState(props);
@@ -224,18 +229,25 @@ export const ModalOverlay = /*#__PURE__*/ (forwardRef as forwardRefType)(
   ModalOverlayWithForwardRef
 );
 
-function ModalOverlayInner({UNSTABLE_portalContainer, ...props}: ModalOverlayInnerProps) {
-  let modalRef = props.modalRef;
-  let {state} = props;
+function ModalOverlayInner({
+  UNSTABLE_portalContainer,
+  overlayRef,
+  modalRef,
+  state,
+  isExiting,
+  isEntering,
+  isDismissable,
+  ...props
+}: ModalOverlayInnerProps) {
   let {modalProps, underlayProps} = useModalOverlay(props, state, modalRef);
 
-  let entering = useEnterAnimation(props.overlayRef) || props.isEntering || false;
+  let entering = useEnterAnimation(overlayRef) || isEntering || false;
   let renderProps = useRenderProps({
     ...props,
     defaultClassName: 'react-aria-ModalOverlay',
     values: {
       isEntering: entering,
-      isExiting: props.isExiting,
+      isExiting,
       state
     }
   });
@@ -262,22 +274,18 @@ function ModalOverlayInner({UNSTABLE_portalContainer, ...props}: ModalOverlayInn
     '--page-height': pageHeight !== undefined ? pageHeight + 'px' : undefined
   };
 
-  // oxlint-disable react/react-compiler
   return (
-    <Overlay isExiting={props.isExiting} portalContainer={UNSTABLE_portalContainer}>
+    <Overlay isExiting={isExiting} portalContainer={UNSTABLE_portalContainer}>
       <dom.div
         {...mergeProps(filterDOMProps(props, {global: true}), underlayProps)}
         {...renderProps}
         style={style}
-        ref={props.overlayRef}
+        ref={overlayRef}
         data-entering={entering || undefined}
-        data-exiting={props.isExiting || undefined}>
+        data-exiting={isExiting || undefined}>
         <Provider
           values={[
-            [
-              InternalModalContext,
-              {modalProps, modalRef, isExiting: props.isExiting, isDismissable: props.isDismissable}
-            ],
+            [InternalModalContext, {modalProps, modalRef, isExiting, isDismissable}],
             [OverlayTriggerStateContext, state]
           ]}>
           {renderProps.children}
@@ -285,7 +293,6 @@ function ModalOverlayInner({UNSTABLE_portalContainer, ...props}: ModalOverlayInn
       </dom.div>
     </Overlay>
   );
-  // oxlint-enable react/react-compiler
 }
 
 interface ModalContentProps

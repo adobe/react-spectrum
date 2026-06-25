@@ -77,15 +77,14 @@ export const ColorSwatchPicker = forwardRef(function ColorSwatchPicker(
           }
         })({density})
       }>
-      {/* oxlint-disable-next-line react/react-compiler */}
-      <SpectrumColorSwatchContext.Provider value={{useWrapper, size, rounding}}>
+      <SpectrumColorSwatchContext.Provider value={{wrapSwatch, size, rounding}}>
         {props.children}
       </SpectrumColorSwatchContext.Provider>
     </AriaColorSwatchPicker>
   );
 });
 
-function useWrapper(
+function wrapSwatch(
   swatch: ReactElement,
   color: Color,
   rounding: SpectrumColorSwatchProps['rounding']

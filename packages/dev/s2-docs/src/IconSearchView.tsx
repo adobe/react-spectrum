@@ -182,7 +182,6 @@ export function IconSearchView({filteredItems, listBoxClassName}: IconSearchView
 function IconItem({item, isCopied = false}: {item: (typeof iconList)[number]; isCopied?: boolean}) {
   let Icon = item.icon;
   let ref = useRef(null);
-  // oxlint-disable react/react-compiler
   return (
     <ListBoxItem
       id={item.id}
@@ -190,7 +189,7 @@ function IconItem({item, isCopied = false}: {item: (typeof iconList)[number]; is
       textValue={item.id}
       className={itemStyle}
       ref={ref}
-      style={pressScale(ref)}>
+      style={renderProps => pressScale(ref)(renderProps)}>
       {isCopied ? (
         <CheckmarkCircle styles={iconStyle({size: 'XL'})} />
       ) : (
@@ -207,7 +206,6 @@ function IconItem({item, isCopied = false}: {item: (typeof iconList)[number]; is
       </div>
     </ListBoxItem>
   );
-  // oxlint-enable react/react-compiler
 }
 
 export function SkeletonIconItem({item}: {item: {id: string}}) {

@@ -184,11 +184,8 @@ function ControlledTableResizing(props: {
     [columns, onResize]
   );
   let [savedCols, setSavedCols] = useState(widths);
-  // oxlint-disable-next-line react/react-compiler
-  let [renderKey, setRenderKey] = useState(Math.random());
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  // oxlint-disable-next-line react/react-compiler, react-hooks/exhaustive-deps
-  let cols = useMemo(() => columns.map(col => ({...col})), [columns, widths]);
+  let [renderKey, setRenderKey] = useState(0);
+  let cols = useMemo(() => columns.map(col => ({...col, renderKey})), [columns, renderKey]);
 
   return (
     <div>
@@ -196,7 +193,7 @@ function ControlledTableResizing(props: {
       <button
         onClick={() => {
           _setWidths(savedCols);
-          setRenderKey(Math.random());
+          setRenderKey(k => k + 1);
         }}>
         Restore Cols
       </button>
@@ -315,10 +312,10 @@ function ControlledDocsTable(props: {
     [columns]
   );
 
-  // Needed to get past column caching so new sizes actually are rendered
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  // oxlint-disable-next-line react/react-compiler, react-hooks/exhaustive-deps
-  let cols = useMemo(() => columns.map(col => ({...col})), [widths, columns]);
+  let cols = useMemo(
+    () => columns.map(col => ({...col, width: widths.get(col.uid as Key) ?? col.width})),
+    [columns, widths]
+  );
   return (
     <DocsTable
       aria-label="Table with selection"

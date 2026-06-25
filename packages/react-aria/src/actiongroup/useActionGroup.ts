@@ -28,7 +28,7 @@ import {ListState} from 'react-stately/useListState';
 import {useKeyboard} from '../interactions/useKeyboard';
 import {useLayoutEffect} from '../utils/useLayoutEffect';
 import {useLocale} from '../i18n/I18nProvider';
-import {useState} from 'react';
+import {useMemo, useState} from 'react';
 
 const BUTTON_GROUP_ROLES = {
   none: 'toolbar',
@@ -89,8 +89,17 @@ export function useActionGroup<T>(
   }
 
   let {direction} = useLocale();
-  // oxlint-disable-next-line react/react-compiler
-  let focusManager = createFocusManager(ref);
+  let focusRootRef = useMemo(
+    () => ({
+      get current() {
+        return ref.current;
+      }
+    }),
+    // ref is read via getter; the ref object is stable.
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
+    []
+  );
+  let focusManager = useMemo(() => createFocusManager(focusRootRef), [focusRootRef]);
   let flipDirection = direction === 'rtl' && orientation === 'horizontal';
   let {keyboardProps} = useKeyboard({
     shortcuts: {

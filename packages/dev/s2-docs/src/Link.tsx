@@ -152,14 +152,12 @@ export function HeaderLink(
 ) {
   let {staticColor, styles, ...otherProps} = props;
   let ref = useRef(null);
-  // oxlint-disable react/react-compiler
   return (
     <BaseLink
       {...otherProps}
       ref={ref}
       className={renderProps => mergeStyles(linkStyle({...renderProps, staticColor}), styles)}
-      style={pressScale(ref)}
+      style={renderProps => pressScale(ref)(renderProps)}
     />
   );
-  // oxlint-enable react/react-compiler
 }

@@ -536,16 +536,14 @@ export function InterfaceType({
       );
 
   // Default to showing required indicators if some properties are optional but not all.
-  // oxlint-disable-next-line react/react-compiler
-  showRequired =
+  let shouldShowRequired =
     showRequired || (!properties.every(p => p.optional) && !properties.every(p => !p.optional));
 
   // Show default values by default if any of the properties have one defined.
-  // oxlint-disable-next-line react/react-compiler
-  showDefault = showDefault || properties.some(p => !!p.default);
+  let shouldShowDefault = showDefault || properties.some(p => !!p.default);
 
   // Sort props so required ones are shown first.
-  if (showRequired) {
+  if (shouldShowRequired) {
     properties.sort((a, b) => {
       if (!a.optional && b.optional) {
         return -1;
@@ -579,7 +577,7 @@ export function InterfaceType({
                   Type
                 </td>
               )}
-              {showDefault && (
+              {shouldShowDefault && (
                 <td role="columnheader" className={tableStyles['spectrum-Table-headCell']}>
                   Default
                 </td>
@@ -601,7 +599,7 @@ export function InterfaceType({
                       {prop.name}
                     </span>
                   </code>
-                  {!prop.optional && showRequired ? (
+                  {!prop.optional && shouldShowRequired ? (
                     <Asterisk
                       size="XXS"
                       UNSAFE_className={styles.requiredIcon}
@@ -618,7 +616,7 @@ export function InterfaceType({
                     </code>
                   </td>
                 )}
-                {showDefault && (
+                {shouldShowDefault && (
                   <td
                     className={`${tableStyles['spectrum-Table-cell']} ${styles.tableCell} ${!prop.default ? styles.noDefault : ''}`}
                     data-column="Default">

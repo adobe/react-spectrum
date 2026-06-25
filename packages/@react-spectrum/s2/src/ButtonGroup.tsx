@@ -12,12 +12,13 @@
 
 import {ButtonContext, LinkButtonContext} from './Button';
 import {ContextValue, Provider, SlotProps} from 'react-aria-components/slots';
-import {createContext, forwardRef, ReactNode, useCallback, useRef} from 'react';
+import {createContext, forwardRef, ReactNode, useRef} from 'react';
 import {DOMProps, DOMRef, DOMRefValue} from '@react-types/shared';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {style} from '../style' with {type: 'macro'};
 import {useDOMRef} from './useDOMRef';
+import {useEffectEvent} from 'react-aria/private/utils/useEffectEvent';
 import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
 import {useResizeObserver} from 'react-aria/private/utils/useResizeObserver';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
@@ -111,9 +112,11 @@ const buttongroup = style<ButtonGroupStyleProps>(
  * ButtonGroup handles overflow for a grouping of buttons whose actions are related to each other.
  */
 export const ButtonGroup = forwardRef(function ButtonGroup(
-  props: ButtonGroupProps,
-  ref: DOMRef<HTMLDivElement>
+  propsArg: ButtonGroupProps,
+  refArg: DOMRef<HTMLDivElement>
 ) {
+  let props = propsArg;
+  let ref = refArg;
   [props, ref] = useSpectrumContextProps(props, ref, ButtonGroupContext);
   let domRef = useDOMRef(ref);
   let {
@@ -127,8 +130,7 @@ export const ButtonGroup = forwardRef(function ButtonGroup(
 
   let [hasOverflow, setHasOverflow] = useValueEffect(false);
 
-  // oxlint-disable react/react-compiler, react-hooks/exhaustive-deps
-  let checkForOverflow = useCallback(() => {
+  let checkForOverflow = useEffectEvent(() => {
     let computeHasOverflow = () => {
       if (domRef.current && orientation === 'horizontal') {
         let buttonGroupChildren = Array.from(domRef.current.children) as HTMLElement[];
@@ -154,24 +156,22 @@ export const ButtonGroup = forwardRef(function ButtonGroup(
         yield computeHasOverflow();
       });
     }
-  }, [domRef, orientation, setHasOverflow, children]);
-  // oxlint-enable react/react-compiler, react-hooks/exhaustive-deps
+  });
 
   // There are two main reasons we need to remeasure:
   // 1. Internal changes: Check for initial overflow or when orientation/scale/children change (from checkForOverflow dep array)
   useLayoutEffect(() => {
     checkForOverflow();
-  }, [checkForOverflow]);
+  }, [orientation]);
 
   // 2. External changes: buttongroup won't change size due to any parents changing size, so listen to its container for size changes to figure out if we should remeasure
   let parent = useRef<HTMLElement | null>(null);
-  // oxlint-disable react/react-compiler, react-hooks/exhaustive-deps
   useLayoutEffect(() => {
-    if (domRef.current) {
-      parent.current = domRef.current.parentElement as HTMLElement;
+    let el = domRef.current;
+    if (el) {
+      parent.current = el.parentElement as HTMLElement;
     }
-  }, [domRef.current]);
-  // oxlint-enable react/react-compiler, react-hooks/exhaustive-deps
+  }, [domRef]);
   useResizeObserver({ref: parent, onResize: checkForOverflow});
 
   if ((props as ButtonGroupContextValue).isHidden) {

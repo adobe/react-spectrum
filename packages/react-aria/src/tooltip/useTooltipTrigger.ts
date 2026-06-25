@@ -12,7 +12,6 @@
 
 import {DOMAttributes, FocusableElement, RefObject} from '@react-types/shared';
 import {getInteractionModality, isFocusVisible} from '../interactions/useFocusVisible';
-import {mergeProps} from '../utils/mergeProps';
 import {TooltipTriggerProps, TooltipTriggerState} from 'react-stately/useTooltipTriggerState';
 import {useEffect, useRef} from 'react';
 import {useFocusable} from '../interactions/useFocusable';
@@ -147,11 +146,10 @@ export function useTooltipTrigger(
   return {
     triggerProps: {
       'aria-describedby': state.isOpen ? tooltipId : undefined,
-      // oxlint-disable-next-line react/react-compiler
-      ...mergeProps(focusableProps, hoverProps, {
-        onPointerDown: onPressStart,
-        onKeyDown: onPressStart
-      }),
+      ...focusableProps,
+      ...hoverProps,
+      onPointerDown: onPressStart,
+      onKeyDown: onPressStart,
       tabIndex: undefined
     },
     tooltipProps: {

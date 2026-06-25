@@ -202,6 +202,11 @@ function AnimatedTabs({tabs}: {tabs: TabOptions[]}) {
   let x = useTransform(scrollXProgress, x => transform(x, 'offsetLeft'));
   let width = useTransform(scrollXProgress, x => transform(x, 'offsetWidth'));
 
+  // When the user clicks on a tab perform an animation of
+  // the scroll position to the newly selected tab panel.
+  let animationRef = useRef<AnimationPlaybackControls | null>(null);
+  let shouldReduceMotion = useReducedMotion();
+
   // When the user scrolls, update the selected key
   // so that the correct tab panel becomes interactive.
   useMotionValueEvent(scrollXProgress, 'change', x => {
@@ -211,45 +216,44 @@ function AnimatedTabs({tabs}: {tabs: TabOptions[]}) {
     setSelectedKey(tabs[getIndex(x)].id);
   });
 
-  // When the user clicks on a tab perform an animation of
-  // the scroll position to the newly selected tab panel.
-  let animationRef = useRef<AnimationPlaybackControls | null>(null);
-  let shouldReduceMotion = useReducedMotion();
-  let onSelectionChange = (selectedKey: Key) => {
-    setSelectedKey(selectedKey);
+  let onSelectionChange = useCallback(
+    (nextSelectedKey: Key) => {
+      setSelectedKey(nextSelectedKey);
 
-    // If the scroll position is already moving but we aren't animating
-    // then the key changed as a result of a user scrolling. Ignore.
-    if (scrollXProgress.getVelocity() && !animationRef.current) {
-      return;
-    }
-
-    let tabPanel = tabPanelsRef.current!;
-    let index = tabs.findIndex(tab => tab.id === selectedKey);
-    let scrollLeft = tabPanel.scrollWidth * (index / tabs.length);
-    if (shouldReduceMotion) {
-      tabPanel.scrollLeft = scrollLeft;
-      return;
-    }
-
-    animationRef.current?.stop();
-    animationRef.current = animate(tabPanel.scrollLeft, scrollLeft, {
-      type: 'spring',
-      bounce: 0.2,
-      duration: 0.6,
-      onUpdate: v => {
-        tabPanel.scrollLeft = v;
-      },
-      onPlay: () => {
-        // Disable scroll snap while the animation is going or weird things happen.
-        tabPanel.style.scrollSnapType = 'none';
-      },
-      onComplete: () => {
-        tabPanel.style.scrollSnapType = '';
-        animationRef.current = null;
+      // If the scroll position is already moving but we aren't animating
+      // then the key changed as a result of a user scrolling. Ignore.
+      if (scrollXProgress.getVelocity() && !animationRef.current) {
+        return;
       }
-    });
-  };
+
+      let tabPanel = tabPanelsRef.current!;
+      let index = tabs.findIndex(tab => tab.id === nextSelectedKey);
+      let scrollLeft = tabPanel.scrollWidth * (index / tabs.length);
+      if (shouldReduceMotion) {
+        tabPanel.scrollLeft = scrollLeft;
+        return;
+      }
+
+      animationRef.current?.stop();
+      animationRef.current = animate(tabPanel.scrollLeft, scrollLeft, {
+        type: 'spring',
+        bounce: 0.2,
+        duration: 0.6,
+        onUpdate: v => {
+          tabPanel.scrollLeft = v;
+        },
+        onPlay: () => {
+          // Disable scroll snap while the animation is going or weird things happen.
+          tabPanel.style.scrollSnapType = 'none';
+        },
+        onComplete: () => {
+          tabPanel.style.scrollSnapType = '';
+          animationRef.current = null;
+        }
+      });
+    },
+    [scrollXProgress, shouldReduceMotion, tabs]
+  );
 
   // Scroll selected tab into view.
   let tabListScrollRef = useRef<HTMLDivElement>(null);
@@ -270,8 +274,6 @@ function AnimatedTabs({tabs}: {tabs: TabOptions[]}) {
       }
     }
   }, [selectedKey]);
-
-  // oxlint-disable react/react-compiler
   return (
     <Tabs
       className="-mx-8 md:-mx-2"
@@ -319,7 +321,6 @@ function AnimatedTabs({tabs}: {tabs: TabOptions[]}) {
       </div>
     </Tabs>
   );
-  // oxlint-enable react/react-compiler
 }
 
 const people = [

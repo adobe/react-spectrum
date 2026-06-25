@@ -44,10 +44,7 @@ export function useFocusRing(props: AriaFocusRingProps = {}): FocusRingAria {
     isFocusVisible: autoFocus || isFocusVisible()
   });
   let [isFocused, setFocused] = useState(false);
-  let [isFocusVisibleState, setFocusVisible] = useState(
-    // oxlint-disable-next-line react/react-compiler
-    () => state.current.isFocused && state.current.isFocusVisible
-  );
+  let [isFocusVisibleState, setFocusVisible] = useState(() => autoFocus || isFocusVisible());
 
   let updateState = useCallback(
     () => setFocusVisible(state.current.isFocused && state.current.isFocusVisible),

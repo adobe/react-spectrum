@@ -12,11 +12,10 @@
 
 import {AriaLabelingProps, DOMProps, StyleProps} from '@react-types/shared';
 import {classNames} from '../utils/classNames';
+import {Context} from '../provider/context';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
-import {ProviderContext} from '../provider/types';
-import React, {JSX, ReactElement} from 'react';
+import React, {JSX, ReactElement, useContext} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/icon/vars.css';
-import {useProvider} from '../provider/Provider';
 import {useSlotProps} from '../utils/Slots';
 import {useStyleProps} from '../utils/styleProps';
 
@@ -31,18 +30,13 @@ export interface UIIconProps extends DOMProps, AriaLabelingProps, StyleProps {
 
 export type UIIconPropsWithoutChildren = Omit<UIIconProps, 'children'>;
 
-export function UIIcon(props: UIIconProps): JSX.Element {
+export function UIIcon(propsArg: UIIconProps): JSX.Element {
+  let props = propsArg;
   props = useSlotProps(props, 'icon');
   let {children, 'aria-label': ariaLabel, 'aria-hidden': ariaHidden, ...otherProps} = props;
 
   let {styleProps} = useStyleProps(otherProps);
-  let provider: undefined | ProviderContext;
-  try {
-    // oxlint-disable-next-line react/react-compiler
-    provider = useProvider();
-  } catch {
-    // ignore
-  }
+  let provider = useContext(Context);
   let scale = 'M';
   if (provider != null) {
     scale = provider.scale === 'large' ? 'L' : 'M';

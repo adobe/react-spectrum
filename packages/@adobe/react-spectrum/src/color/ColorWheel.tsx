@@ -17,10 +17,11 @@ import {ColorThumb} from './ColorThumb';
 import {ColorWheelContext} from 'react-aria-components/ColorWheel';
 import {dimensionValue, useStyleProps} from '../utils/styleProps';
 import {DimensionValue, FocusableRef, StyleProps} from '@react-types/shared';
-import React, {useCallback, useRef, useState} from 'react';
+import React, {useRef, useState} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/colorwheel/vars.css';
 import {useColorWheelState} from 'react-stately/useColorWheelState';
 import {useContextProps} from 'react-aria-components/slots';
+import {useEffectEvent} from 'react-aria/private/utils/useEffectEvent';
 import {useFocusableRef} from '../utils/useDOMRef';
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
@@ -39,9 +40,10 @@ const WHEEL_THICKNESS = 24;
  * ColorWheels allow users to adjust the hue of an HSL or HSB color value on a circular track.
  */
 export const ColorWheel = React.forwardRef(function ColorWheel(
-  props: SpectrumColorWheelProps,
+  propsArg: SpectrumColorWheelProps,
   ref: FocusableRef<HTMLDivElement>
 ) {
+  let props = propsArg;
   props = useProviderProps(props);
   let inputRef = useRef(null);
   let containerRef = useFocusableRef(ref, inputRef);
@@ -54,25 +56,25 @@ export const ColorWheel = React.forwardRef(function ColorWheel(
   let [wheelRadius, setWheelRadius] = useState<number>(0);
   let [wheelThickness, setWheelThickness] = useState(WHEEL_THICKNESS);
 
-  // oxlint-disable-next-line react/react-compiler
-  let resizeHandler = useCallback(() => {
-    if (containerRef.current) {
-      setWheelRadius(containerRef.current.offsetWidth / 2);
+  let resizeHandler = useEffectEvent(() => {
+    let node = containerRef.current;
+    if (node) {
+      setWheelRadius(node.offsetWidth / 2);
       let thickness = window
-        .getComputedStyle(containerRef.current)
+        .getComputedStyle(node)
         .getPropertyValue('--spectrum-colorwheel-track-thickness');
       if (thickness) {
         setWheelThickness(parseInt(thickness, 10));
       }
     }
-  }, [containerRef, setWheelRadius, setWheelThickness]);
+  });
 
   useLayoutEffect(() => {
     // the size observer's fallback to the window resize event doesn't fire on mount
     if (wheelRadius === 0) {
       resizeHandler();
     }
-  }, [wheelRadius, resizeHandler]);
+  }, [wheelRadius]);
 
   useResizeObserver({
     ref: containerRef,

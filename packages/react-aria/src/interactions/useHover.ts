@@ -18,7 +18,7 @@
 import {DOMAttributes, HoverEvents} from '@react-types/shared';
 import {getEventTarget, nodeContains} from '../utils/shadowdom/DOMFunctions';
 import {getOwnerDocument} from '../utils/domHelpers';
-import {useEffect, useMemo, useRef, useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import {useGlobalListeners} from '../utils/useGlobalListeners';
 
 export interface HoverProps extends HoverEvents {
@@ -103,129 +103,117 @@ export function useHover(props: HoverProps): HoverResult {
   useEffect(setupGlobalTouchEvents, []);
   let {addGlobalListener, removeAllGlobalListeners} = useGlobalListeners();
 
-  let {hoverProps, triggerHoverEnd} = useMemo(() => {
-    let triggerHoverStart = (event, pointerType) => {
-      state.pointerType = pointerType;
-      if (
-        isDisabled ||
-        pointerType === 'touch' ||
-        state.isHovered ||
-        !nodeContains(event.currentTarget, getEventTarget(event) as Element)
-      ) {
-        return;
-      }
+  let triggerHoverEnd = (event, pointerType) => {
+    let target = state.target;
+    state.pointerType = '';
+    state.target = null;
 
-      state.isHovered = true;
-      let target = event.currentTarget;
-      state.target = target;
+    if (pointerType === 'touch' || !state.isHovered || !target) {
+      return;
+    }
 
-      // When an element that is hovered over is removed, no pointerleave event is fired by the browser,
-      // even though the originally hovered target may have shrunk in size so it is no longer hovered.
-      // However, a pointerover event will be fired on the new target the mouse is over.
-      // In Chrome this happens immediately. In Safari and Firefox, it happens upon moving the mouse one pixel.
-      addGlobalListener(
-        getOwnerDocument(getEventTarget(event) as Element),
-        'pointerover',
-        e => {
-          if (
-            state.isHovered &&
-            state.target &&
-            !nodeContains(state.target, getEventTarget(e) as Element)
-          ) {
-            // oxlint-disable-next-line react/react-compiler
-            triggerHoverEnd(e, e.pointerType);
-          }
-        },
-        {capture: true}
-      );
+    state.isHovered = false;
+    removeAllGlobalListeners();
 
-      if (onHoverStart) {
-        onHoverStart({
-          type: 'hoverstart',
-          target,
-          pointerType
-        });
-      }
+    if (onHoverEnd) {
+      onHoverEnd({
+        type: 'hoverend',
+        target,
+        pointerType
+      });
+    }
 
-      if (onHoverChange) {
-        onHoverChange(true);
-      }
+    if (onHoverChange) {
+      onHoverChange(false);
+    }
 
-      setHovered(true);
-    };
+    setHovered(false);
+  };
 
-    let triggerHoverEnd = (event, pointerType) => {
-      let target = state.target;
-      state.pointerType = '';
-      state.target = null;
+  let triggerHoverStart = (event, pointerType) => {
+    state.pointerType = pointerType;
+    if (
+      isDisabled ||
+      pointerType === 'touch' ||
+      state.isHovered ||
+      !nodeContains(event.currentTarget, getEventTarget(event) as Element)
+    ) {
+      return;
+    }
 
-      if (pointerType === 'touch' || !state.isHovered || !target) {
-        return;
-      }
+    state.isHovered = true;
+    let target = event.currentTarget;
+    state.target = target;
 
-      state.isHovered = false;
-      removeAllGlobalListeners();
-
-      if (onHoverEnd) {
-        onHoverEnd({
-          type: 'hoverend',
-          target,
-          pointerType
-        });
-      }
-
-      if (onHoverChange) {
-        onHoverChange(false);
-      }
-
-      setHovered(false);
-    };
-
-    let hoverProps: DOMAttributes = {};
-
-    if (typeof PointerEvent !== 'undefined') {
-      hoverProps.onPointerEnter = e => {
-        if (globalIgnoreEmulatedMouseEvents && e.pointerType === 'mouse') {
-          return;
-        }
-
-        triggerHoverStart(e, e.pointerType);
-      };
-
-      hoverProps.onPointerLeave = e => {
-        if (!isDisabled && nodeContains(e.currentTarget, getEventTarget(e) as Element)) {
+    // When an element that is hovered over is removed, no pointerleave event is fired by the browser,
+    // even though the originally hovered target may have shrunk in size so it is no longer hovered.
+    // However, a pointerover event will be fired on the new target the mouse is over.
+    // In Chrome this happens immediately. In Safari and Firefox, it happens upon moving the mouse one pixel.
+    addGlobalListener(
+      getOwnerDocument(getEventTarget(event) as Element),
+      'pointerover',
+      e => {
+        if (
+          state.isHovered &&
+          state.target &&
+          !nodeContains(state.target, getEventTarget(e) as Element)
+        ) {
           triggerHoverEnd(e, e.pointerType);
         }
-      };
-    } else if (process.env.NODE_ENV === 'test') {
-      hoverProps.onTouchStart = () => {
-        state.ignoreEmulatedMouseEvents = true;
-      };
+      },
+      {capture: true}
+    );
 
-      hoverProps.onMouseEnter = e => {
-        if (!state.ignoreEmulatedMouseEvents && !globalIgnoreEmulatedMouseEvents) {
-          triggerHoverStart(e, 'mouse');
-        }
-
-        state.ignoreEmulatedMouseEvents = false;
-      };
-
-      hoverProps.onMouseLeave = e => {
-        if (!isDisabled && nodeContains(e.currentTarget, getEventTarget(e) as Element)) {
-          triggerHoverEnd(e, 'mouse');
-        }
-      };
+    if (onHoverStart) {
+      onHoverStart({
+        type: 'hoverstart',
+        target,
+        pointerType
+      });
     }
-    return {hoverProps, triggerHoverEnd};
-  }, [
-    onHoverStart,
-    onHoverChange,
-    onHoverEnd,
-    isDisabled,
-    state,
-    addGlobalListener,
-    removeAllGlobalListeners
-  ]);
+
+    if (onHoverChange) {
+      onHoverChange(true);
+    }
+
+    setHovered(true);
+  };
+
+  let hoverProps: DOMAttributes = {};
+
+  if (typeof PointerEvent !== 'undefined') {
+    hoverProps.onPointerEnter = e => {
+      if (globalIgnoreEmulatedMouseEvents && e.pointerType === 'mouse') {
+        return;
+      }
+
+      triggerHoverStart(e, e.pointerType);
+    };
+
+    hoverProps.onPointerLeave = e => {
+      if (!isDisabled && nodeContains(e.currentTarget, getEventTarget(e) as Element)) {
+        triggerHoverEnd(e, e.pointerType);
+      }
+    };
+  } else if (process.env.NODE_ENV === 'test') {
+    hoverProps.onTouchStart = () => {
+      state.ignoreEmulatedMouseEvents = true;
+    };
+
+    hoverProps.onMouseEnter = e => {
+      if (!state.ignoreEmulatedMouseEvents && !globalIgnoreEmulatedMouseEvents) {
+        triggerHoverStart(e, 'mouse');
+      }
+
+      state.ignoreEmulatedMouseEvents = false;
+    };
+
+    hoverProps.onMouseLeave = e => {
+      if (!isDisabled && nodeContains(e.currentTarget, getEventTarget(e) as Element)) {
+        triggerHoverEnd(e, 'mouse');
+      }
+    };
+  }
 
   useEffect(() => {
     // Call the triggerHoverEnd as soon as isDisabled changes to true

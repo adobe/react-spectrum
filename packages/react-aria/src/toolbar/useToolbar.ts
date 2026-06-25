@@ -13,7 +13,14 @@
 import {AriaLabelingProps, Orientation, RefObject} from '@react-types/shared';
 import {createFocusManager} from '../focus/FocusScope';
 import {filterDOMProps} from '../utils/filterDOMProps';
-import {FocusEventHandler, HTMLAttributes, KeyboardEventHandler, useRef, useState} from 'react';
+import {
+  FocusEventHandler,
+  HTMLAttributes,
+  KeyboardEventHandler,
+  useMemo,
+  useRef,
+  useState
+} from 'react';
 import {getActiveElement, getEventTarget, nodeContains} from '../utils/shadowdom/DOMFunctions';
 import {useLayoutEffect} from '../utils/useLayoutEffect';
 import {useLocale} from '../i18n/I18nProvider';
@@ -59,8 +66,17 @@ export function useToolbar(
   });
   const {direction} = useLocale();
   const shouldReverse = direction === 'rtl' && orientation === 'horizontal';
-  // oxlint-disable-next-line react/react-compiler
-  let focusManager = createFocusManager(ref);
+  let focusRootRef = useMemo(
+    () => ({
+      get current() {
+        return ref.current;
+      }
+    }),
+    // ref is read via getter; the ref object is stable.
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
+    []
+  );
+  let focusManager = useMemo(() => createFocusManager(focusRootRef), [focusRootRef]);
 
   const onKeyDown: KeyboardEventHandler = e => {
     // don't handle portalled events

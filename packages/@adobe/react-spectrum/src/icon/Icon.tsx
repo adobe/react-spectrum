@@ -13,11 +13,10 @@
 import {AriaLabelingProps, DOMProps, IconColorValue, StyleProps} from '@react-types/shared';
 import {baseStyleProps, StyleHandlers, useStyleProps} from '../utils/styleProps';
 import {classNames} from '../utils/classNames';
+import {Context} from '../provider/context';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
-import {ProviderContext} from '../provider/types';
-import React, {JSX, ReactElement} from 'react';
+import React, {JSX, ReactElement, useContext} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/icon/vars.css';
-import {useProvider} from '../provider/Provider';
 import {useSlotProps} from '../utils/Slots';
 
 export interface IconProps extends DOMProps, AriaLabelingProps, StyleProps {
@@ -64,18 +63,13 @@ const iconStyleProps: StyleHandlers = {
  * Spectrum icons are clear, minimal, and consistent across platforms. They follow the focused and
  * rational principles of the design system in both metaphor and style.
  */
-export function Icon(props: IconProps): JSX.Element {
+export function Icon(propsArg: IconProps): JSX.Element {
+  let props = propsArg;
   props = useSlotProps(props, 'icon');
   let {children, size, 'aria-label': ariaLabel, 'aria-hidden': ariaHidden, ...otherProps} = props;
   let {styleProps} = useStyleProps(otherProps, iconStyleProps);
 
-  let provider: undefined | ProviderContext;
-  try {
-    // oxlint-disable-next-line react/react-compiler
-    provider = useProvider();
-  } catch {
-    // ignore
-  }
+  let provider = useContext(Context);
   let scale = 'M';
   if (provider != null) {
     scale = provider.scale === 'large' ? 'L' : 'M';

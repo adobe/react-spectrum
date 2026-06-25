@@ -56,9 +56,11 @@ export const ColorSwatchPickerContext =
  * A ColorSwatchPicker displays a list of color swatches and allows a user to select one of them.
  */
 export const ColorSwatchPicker = forwardRef(function ColorSwatchPicker(
-  props: ColorSwatchPickerProps,
-  ref: DOMRef<HTMLDivElement>
+  propsArg: ColorSwatchPickerProps,
+  refArg: DOMRef<HTMLDivElement>
 ) {
+  let props = propsArg;
+  let ref = refArg;
   [props, ref] = useSpectrumContextProps(props, ref, ColorSwatchPickerContext);
   let {
     density = 'regular',
@@ -90,15 +92,14 @@ export const ColorSwatchPicker = forwardRef(function ColorSwatchPicker(
           getAllowedOverrides()
         )({density}, props.styles)
       }>
-      {/* oxlint-disable-next-line react/react-compiler */}
-      <InternalColorSwatchContext.Provider value={{useWrapper, size, rounding}}>
+      <InternalColorSwatchContext.Provider value={{wrapSwatch, size, rounding}}>
         {props.children}
       </InternalColorSwatchContext.Provider>
     </AriaColorSwatchPicker>
   );
 });
 
-function useWrapper(swatch: ReactElement, color: Color, rounding: ColorSwatchProps['rounding']) {
+function wrapSwatch(swatch: ReactElement, color: Color, rounding: ColorSwatchProps['rounding']) {
   return (
     <AriaColorSwatchPickerItem
       color={color}

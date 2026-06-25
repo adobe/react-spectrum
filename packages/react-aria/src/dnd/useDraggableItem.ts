@@ -105,6 +105,7 @@ export function useDraggableItem(
 
   // Override description to include selected item count.
   let modality = useDragModality();
+  let omitOnClick = false;
   if (!props.hasDragButton && state.selectionManager.selectionMode !== 'none') {
     let msg = MESSAGES[modality][isSelected ? 'selected' : 'notSelected'];
     if (props.hasAction && modality === 'keyboard') {
@@ -119,8 +120,7 @@ export function useDraggableItem(
 
     // Remove the onClick handler from useDrag. Long pressing will be required on touch devices,
     // and NVDA/JAWS are always in forms mode within collection components.
-    // oxlint-disable-next-line react/react-compiler
-    delete dragProps.onClick;
+    omitOnClick = true;
   } else {
     if (isSelected) {
       dragButtonLabel = stringFormatter.format('dragSelectedItems', {count: numKeysForDrag});
@@ -131,36 +131,40 @@ export function useDraggableItem(
   }
 
   let descriptionProps = useDescription(description);
-  if (description) {
-    Object.assign(dragProps, descriptionProps);
-  }
-
-  if (!props.hasDragButton && props.hasAction) {
-    let {onKeyDownCapture, onKeyUpCapture} = dragProps;
-    if (modality === 'touch') {
-      // Remove long press description if an action is present, because in that case long pressing selects the item.
-      // oxlint-disable-next-line react/react-compiler
-      delete dragProps['aria-describedby'];
-    }
-
-    // Require Alt key if there is a conflicting action.
-    // oxlint-disable-next-line react/react-compiler
-    dragProps.onKeyDownCapture = e => {
-      if (e.altKey) {
-        onKeyDownCapture?.(e);
-      }
-    };
-
-    // oxlint-disable-next-line react/react-compiler
-    dragProps.onKeyUpCapture = e => {
-      if (e.altKey) {
-        onKeyUpCapture?.(e);
-      }
-    };
-  }
+  let {
+    onClick,
+    onKeyDownCapture,
+    onKeyUpCapture,
+    'aria-describedby': ariaDescribedby,
+    ...baseDragProps
+  } = dragProps;
+  let dragPropsWithDescription = {
+    ...baseDragProps,
+    ...(description ? descriptionProps : {}),
+    ...(omitOnClick ? {} : {onClick}),
+    ...(!props.hasDragButton && props.hasAction
+      ? {
+          ...(modality === 'touch' ? {} : {'aria-describedby': ariaDescribedby}),
+          onKeyDownCapture: e => {
+            if (e.altKey) {
+              onKeyDownCapture?.(e);
+            }
+          },
+          onKeyUpCapture: e => {
+            if (e.altKey) {
+              onKeyUpCapture?.(e);
+            }
+          }
+        }
+      : {
+          onKeyDownCapture,
+          onKeyUpCapture,
+          ...(ariaDescribedby ? {'aria-describedby': ariaDescribedby} : {})
+        })
+  };
 
   return {
-    dragProps: isDisabled ? {} : dragProps,
+    dragProps: isDisabled ? {} : dragPropsWithDescription,
     dragButtonProps: {
       ...dragButtonProps,
       isDisabled,

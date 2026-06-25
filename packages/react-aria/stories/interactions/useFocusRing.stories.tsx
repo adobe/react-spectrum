@@ -27,6 +27,7 @@ import {SearchField} from '@adobe/react-spectrum/SearchField';
 import {StoryObj} from '@storybook/react';
 import {useButton} from '../../src/button/useButton';
 import {useFocusRing} from '../../src/focus/useFocusRing';
+import {useObjectRef} from '../../src/utils/useObjectRef';
 
 interface IColumn {
   name: string;
@@ -107,11 +108,11 @@ function SearchExample(): JSX.Element {
   );
 }
 
-function MyButton(props) {
-  const buttonRef = props.btnRef;
+function MyButton(propsArg) {
+  let props = propsArg;
+  let buttonRef = useObjectRef(props.btnRef);
 
   const {focusProps, isFocusVisible, isFocused} = useFocusRing();
-  // oxlint-disable react/react-compiler
   let {buttonProps} = useButton(props, buttonRef);
 
   return (
@@ -120,7 +121,6 @@ function MyButton(props) {
       Focused: {isFocused ? 'true' : 'false'}
     </button>
   );
-  // oxlint-enable react/react-compiler
 }
 
 const IFrameExample = props => {

@@ -290,9 +290,11 @@ export interface MenuProps<T>
  * A menu displays a list of actions or options that a user can choose.
  */
 export const Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(function Menu<T>(
-  props: MenuProps<T>,
-  ref: ForwardedRef<HTMLDivElement>
+  propsArg: MenuProps<T>,
+  refArg: ForwardedRef<HTMLDivElement>
 ) {
+  let props = propsArg;
+  let ref = refArg;
   [props, ref] = useContextProps(props, ref, MenuContext);
 
   // Delay rendering the actual menu until we have the collection so that auto focus works properly.
@@ -327,6 +329,7 @@ function MenuInner<T>({props, collection, menuRef: ref}: MenuInnerProps<T>) {
     children: undefined
   });
   let triggerState = useContext(RootMenuTriggerStateContext);
+  let fallbackTriggerState = useMenuTriggerState({});
   let {isVirtualized, CollectionRoot} = useContext(CollectionRendererContext);
   let {menuProps} = useMenu(
     {...props, isVirtualized, onClose: props.onClose || triggerState?.close},
@@ -377,10 +380,7 @@ function MenuInner<T>({props, collection, menuRef: ref}: MenuInnerProps<T>) {
             [SelectableCollectionContext, null],
             [FieldInputContext, null],
             [SelectionManagerContext, state.selectionManager],
-            /* Ensure root MenuTriggerState is defined, in case Menu is rendered outside a MenuTrigger. */
-            /* We assume the context can never change between defined and undefined. */
-            // oxlint-disable-next-line react/react-compiler, react-hooks/rules-of-hooks
-            [RootMenuTriggerStateContext, triggerState ?? useMenuTriggerState({})]
+            [RootMenuTriggerStateContext, triggerState ?? fallbackTriggerState]
           ]}>
           <SharedElementTransition>
             <CollectionRoot
@@ -552,7 +552,8 @@ const MenuItemContext = createContext<ContextValue<MenuItemProps, HTMLDivElement
  */
 export const MenuItem = /*#__PURE__*/ createLeafComponent(ItemNode, function MenuItem<
   T
->(props: MenuItemProps<T>, forwardedRef: ForwardedRef<HTMLDivElement>, item: Node<T>) {
+>(propsArg: MenuItemProps<T>, forwardedRef: ForwardedRef<HTMLDivElement>, item: Node<T>) {
+  let props = propsArg;
   [props, forwardedRef] = useContextProps(props, forwardedRef, MenuItemContext);
   let id = useSlottedContext(MenuItemContext)?.id as string;
   let state = useContext(MenuStateContext)!;

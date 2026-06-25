@@ -128,11 +128,12 @@ const banner = style({
  * A drop zone is an area into which one or multiple objects can be dragged and dropped.
  */
 export const DropZone = /*#__PURE__*/ forwardRef(function DropZone(
-  props: DropZoneProps,
-  ref: DOMRef<HTMLDivElement>
+  propsArg: DropZoneProps,
+  refArg: DOMRef<HTMLDivElement>
 ) {
+  let props = propsArg;
+  let ref = refArg;
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
-  // oxlint-disable-next-line react/react-compiler
   [props, ref] = useSpectrumContextProps(props, ref, DropZoneContext);
   let {size = 'M'} = props;
   let domRef = useDOMRef(ref);

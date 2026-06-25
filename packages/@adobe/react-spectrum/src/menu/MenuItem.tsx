@@ -20,8 +20,7 @@ import {FocusRing} from 'react-aria/FocusRing';
 import {Grid} from '../layout/Grid';
 import InfoOutline from '@spectrum-icons/workflow/InfoOutline';
 import intlMessages from '../../intl/menu/*.json';
-import {mergeRefs} from 'react-aria/mergeRefs';
-import React, {JSX, useMemo, useRef} from 'react';
+import React, {JSX, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {Text} from '../text/Text';
 import {TreeState} from 'react-stately/useTreeState';
@@ -29,7 +28,6 @@ import {useLocale} from 'react-aria/I18nProvider';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useMenuContext, useSubmenuTriggerContext} from './context';
 import {useMenuItem} from 'react-aria/useMenu';
-import {useObjectRef} from 'react-aria/useObjectRef';
 import {useSlotId} from 'react-aria/private/utils/useId';
 
 interface MenuItemProps<T> {
@@ -63,9 +61,8 @@ export function MenuItem<T>(props: MenuItemProps<T>): JSX.Element {
     (isContextualHelpTrigger ? !isUnavailable : !isSubmenuTrigger) &&
     state.selectionManager.selectionMode !== 'none';
   let isSelected = isSelectable && state.selectionManager.isSelected(key);
-  let itemref = useRef<any>(null);
-  // oxlint-disable-next-line react/react-compiler
-  let ref = useObjectRef(useMemo(() => mergeRefs(itemref, triggerRef), [itemref, triggerRef]));
+  let localRef = useRef<any>(null);
+  let ref = isSubmenuTrigger && triggerRef ? triggerRef : localRef;
   let {menuItemProps, labelProps, descriptionProps, keyboardShortcutProps} = useMenuItem(
     {
       isSelected,
@@ -80,21 +77,21 @@ export function MenuItem<T>(props: MenuItemProps<T>): JSX.Element {
     ref
   );
   let endId = useSlotId();
-  let endProps: DOMAttributes = {};
-  if (endId) {
-    endProps.id = endId;
-    // oxlint-disable-next-line react/react-compiler
-    menuItemProps['aria-describedby'] = [menuItemProps['aria-describedby'], endId]
-      .filter(Boolean)
-      .join(' ');
-  }
+  let endProps: DOMAttributes = endId ? {id: endId} : {};
+  let finalMenuItemProps =
+    endId != null
+      ? {
+          ...menuItemProps,
+          'aria-describedby': [menuItemProps['aria-describedby'], endId].filter(Boolean).join(' ')
+        }
+      : menuItemProps;
 
   let contents = typeof rendered === 'string' ? <Text>{rendered}</Text> : rendered;
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
       <ElementType
-        {...menuItemProps}
+        {...finalMenuItemProps}
         ref={ref}
         className={classNames(styles, 'spectrum-Menu-item', {
           'is-disabled': isDisabled,

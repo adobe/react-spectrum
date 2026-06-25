@@ -16,6 +16,7 @@ import {Button} from '../../src/button/Button';
 import {ButtonGroup} from '../../src/buttongroup/ButtonGroup';
 import {Checkbox} from '../../src/checkbox/Checkbox';
 import {Content} from '../../src/view/Content';
+import {UNSTABLE_createLandmarkController as createLandmarkController} from 'react-aria/private/landmark/useLandmark';
 import {Dialog} from '../../src/dialog/Dialog';
 import {DialogTrigger} from '../../src/dialog/DialogTrigger';
 import {Flex} from '../../src/layout/Flex';
@@ -25,7 +26,6 @@ import React, {JSX, SyntheticEvent, useEffect, useMemo, useRef, useState} from '
 import {SpectrumToastOptions, ToastPlacement} from '../../src/toast/ToastContainer';
 import {ToastContainer, ToastQueue} from '../../src/toast/ToastContainer';
 import {UNSAFE_PortalProvider} from 'react-aria/PortalProvider';
-import {UNSTABLE_createLandmarkController} from 'react-aria/private/landmark/useLandmark';
 import {useLandmark} from 'react-aria/useLandmark';
 
 export default {
@@ -284,9 +284,9 @@ function MultipleInner() {
 }
 
 function IframeExample() {
-  // oxlint-disable-next-line react/react-compiler
-  let controller = useMemo(() => UNSTABLE_createLandmarkController(), []);
+  let controller = useMemo(() => createLandmarkController(), []);
   useEffect(() => () => controller.dispose(), [controller]);
+  let ref = useRef<HTMLIFrameElement | null>(null);
   let onLoad = (e: SyntheticEvent) => {
     let iframe = e.target as HTMLIFrameElement;
     let window = iframe.contentWindow!;
@@ -346,7 +346,6 @@ function IframeExample() {
 
   useEffect(() => {
     let onMessage = (e: MessageEvent) => {
-      // oxlint-disable-next-line react/react-compiler
       let iframe = ref.current!;
       if (e.data.type === 'landmark-navigation') {
         // Move focus to the iframe so that when focus is restored there, and we can redirect it back inside (below).
@@ -361,7 +360,6 @@ function IframeExample() {
     return () => window.removeEventListener('message', onMessage);
   }, [controller]);
 
-  let ref = useRef<HTMLIFrameElement | null>(null);
   let {landmarkProps} = useLandmark(
     {
       role: 'main',

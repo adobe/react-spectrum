@@ -153,9 +153,11 @@ const PopoverGroupContext = createContext<RefObject<Element | null> | null>(null
  * A popover is an overlay element positioned relative to a trigger.
  */
 export const Popover = /*#__PURE__*/ (forwardRef as forwardRefType)(function Popover(
-  props: PopoverProps,
-  ref: ForwardedRef<HTMLElement>
+  propsArg: PopoverProps,
+  refArg: ForwardedRef<HTMLElement>
 ) {
+  let props = propsArg;
+  let ref = refArg;
   [props, ref] = useContextProps(props, ref, PopoverContext);
   let contextState = useContext(OverlayTriggerStateContext);
   let localState = useOverlayTriggerState(props);
@@ -189,8 +191,9 @@ export const Popover = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pop
     <PopoverInner
       {...props}
       triggerRef={props.triggerRef!}
-      state={state}
       popoverRef={ref}
+      trigger={props.trigger}
+      state={state}
       isExiting={isExiting}
       dir={direction}
     />
@@ -203,6 +206,8 @@ interface PopoverInnerProps extends AriaPopoverProps, RenderProps<PopoverRenderP
   isExiting: boolean;
   UNSTABLE_portalContainer?: Element;
   trigger?: string;
+  triggerRef: RefObject<Element | null>;
+  popoverRef: RefObject<HTMLElement | null>;
   dir?: 'ltr' | 'rtl';
   clearContexts?: Context<any>[];
 }
@@ -212,6 +217,10 @@ function PopoverInner({
   isExiting,
   UNSTABLE_portalContainer,
   clearContexts,
+  popoverRef,
+  triggerRef,
+  trigger,
+  dir,
   ...props
 }: PopoverInnerProps) {
   // Calculate the arrow size internally (and remove props.arrowSize from PopoverProps)
@@ -219,11 +228,12 @@ function PopoverInner({
   let arrowRef = useRef<HTMLDivElement>(null);
   let containerRef = useRef<HTMLDivElement | null>(null);
   let groupCtx = useContext(PopoverGroupContext);
-  let isSubPopover = groupCtx && props.trigger === 'SubmenuTrigger';
+  let isSubPopover = groupCtx && trigger === 'SubmenuTrigger';
 
   let {popoverProps, underlayProps, arrowProps, placement, triggerAnchorPoint} = usePopover(
     {
       ...props,
+      triggerRef,
       offset: props.offset ?? 8,
       arrowRef,
       // If this is a submenu/subdialog, use the root popover's container
@@ -233,20 +243,14 @@ function PopoverInner({
     state
   );
 
-  let ref = props.popoverRef as RefObject<HTMLDivElement | null>;
-  // oxlint-disable-next-line react/react-compiler
+  let ref = popoverRef as RefObject<HTMLDivElement | null>;
   let isEntering = useEnterAnimation(ref, !!placement) || props.isEntering || false;
-  // oxlint-disable-next-line react/react-compiler
   let renderProps = useRenderProps({
-    // oxlint-disable-next-line react/react-compiler
     ...props,
     defaultClassName: 'react-aria-Popover',
-    // oxlint-disable-next-line react/react-compiler
     values: {
-      // oxlint-disable-next-line react/react-compiler
-      trigger: props.trigger || null,
+      trigger: trigger || null,
       placement,
-      // oxlint-disable-next-line react/react-compiler
       isEntering,
       isExiting
     }
@@ -254,8 +258,7 @@ function PopoverInner({
 
   // Automatically render Popover with role=dialog except when isNonModal is true,
   // or a dialog is already nested inside the popover.
-  // oxlint-disable-next-line react/react-compiler
-  let shouldBeDialog = !props.isNonModal || props.trigger === 'SubmenuTrigger';
+  let shouldBeDialog = !props.isNonModal || trigger === 'SubmenuTrigger';
   let [isDialog, setDialog] = useState(false);
   useLayoutEffect(() => {
     if (ref.current) {
@@ -265,42 +268,37 @@ function PopoverInner({
 
   // Focus the popover itself on mount, unless a child element is already focused.
   // Skip this for submenus since hovering a submenutrigger should keep focus on the trigger
-  // oxlint-disable react/react-compiler
   useEffect(() => {
     if (
       isDialog &&
-      (props.trigger !== 'SubmenuTrigger' || getInteractionModality() !== 'pointer') &&
+      (trigger !== 'SubmenuTrigger' || getInteractionModality() !== 'pointer') &&
       ref.current &&
       !isFocusWithin(ref.current)
     ) {
       focusSafely(ref.current);
     }
-  }, [isDialog, ref, props.trigger]);
-  // oxlint-enable react/react-compiler
+  }, [isDialog, ref, trigger]);
 
   let children = useMemo(() => {
-    let children = renderProps.children;
+    let content = renderProps.children;
     if (clearContexts) {
       for (let Context of clearContexts) {
-        children = <Context.Provider value={null}>{children}</Context.Provider>;
+        content = <Context.Provider value={null}>{content}</Context.Provider>;
       }
     }
-    return children;
+    return content;
   }, [renderProps.children, clearContexts]);
 
   let [triggerWidth, setTriggerWidth] = useState<string | null>(null);
-  // oxlint-disable-next-line react/react-compiler
   let onResize = useCallback(() => {
-    if (props.triggerRef.current) {
-      setTriggerWidth(props.triggerRef.current.getBoundingClientRect().width + 'px');
+    if (triggerRef.current) {
+      setTriggerWidth(triggerRef.current.getBoundingClientRect().width + 'px');
     }
-  }, [props.triggerRef]);
+  }, [triggerRef]);
 
   useLayoutEffect(onResize, [onResize]);
-  // oxlint-disable-next-line react/react-compiler
   useResizeObserver({
-    // oxlint-disable-next-line react/react-compiler
-    ref: renderProps.style?.['--trigger-width'] ? undefined : props.triggerRef,
+    ref: renderProps.style?.['--trigger-width'] ? undefined : triggerRef,
     onResize: onResize
   });
 
@@ -313,7 +311,6 @@ function PopoverInner({
     '--trigger-width': renderProps.style?.['--trigger-width'] || triggerWidth
   };
 
-  // oxlint-disable react/react-compiler
   let overlay = (
     <dom.div
       {...mergeProps(filterDOMProps(props, {global: true}), popoverProps)}
@@ -325,12 +322,11 @@ function PopoverInner({
       ref={ref}
       slot={props.slot || undefined}
       style={style}
-      dir={props.dir}
-      data-trigger={props.trigger}
+      dir={dir}
+      data-trigger={trigger}
       data-placement={placement}
       data-entering={isEntering || undefined}
       data-exiting={isExiting || undefined}>
-      {/* oxlint-disable-next-line react/react-compiler */}
       {!props.isNonModal && <DismissButton onDismiss={state.close} />}
       <OverlayArrowContext.Provider value={{...arrowProps, placement, ref: arrowRef}}>
         {children}
@@ -338,18 +334,15 @@ function PopoverInner({
       <DismissButton onDismiss={state.close} />
     </dom.div>
   );
-  // oxlint-enable react/react-compiler
 
   // If this is a root popover, render an extra div to act as the portal container for submenus/subdialogs.
   if (!isSubPopover) {
-    // oxlint-disable react/react-compiler
     return (
       <Overlay
         {...props}
         shouldContainFocus={isDialog}
         isExiting={isExiting}
         portalContainer={UNSTABLE_portalContainer}>
-        {/* oxlint-disable-next-line react/react-compiler */}
         {!props.isNonModal && state.isOpen && (
           <div data-testid="underlay" {...underlayProps} style={{position: 'fixed', inset: 0}} />
         )}
@@ -360,11 +353,9 @@ function PopoverInner({
         </div>
       </Overlay>
     );
-    // oxlint-enable react/react-compiler
   }
 
   // Submenus/subdialogs are mounted into the root popover's container.
-  // oxlint-disable react/react-compiler
   return (
     <Overlay
       {...props}
@@ -374,5 +365,4 @@ function PopoverInner({
       {overlay}
     </Overlay>
   );
-  // oxlint-enable react/react-compiler
 }

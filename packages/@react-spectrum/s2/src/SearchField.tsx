@@ -57,10 +57,11 @@ export const SearchFieldContext =
  * A SearchField is a text field designed for searches.
  */
 export const SearchField = /*#__PURE__*/ forwardRef(function SearchField(
-  props: SearchFieldProps,
-  ref: Ref<TextFieldRef>
+  propsArg: SearchFieldProps,
+  refArg: Ref<TextFieldRef>
 ) {
-  // oxlint-disable-next-line react/react-compiler
+  let props = propsArg;
+  let ref = refArg;
   [props, ref] = useSpectrumContextProps(props, ref, SearchFieldContext);
   let formContext = useContext(FormContext);
   props = useFormProps(props);

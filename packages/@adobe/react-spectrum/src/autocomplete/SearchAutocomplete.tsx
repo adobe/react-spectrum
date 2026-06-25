@@ -117,10 +117,10 @@ export interface SpectrumSearchAutocompleteProps<T>
 }
 
 function SearchAutocomplete<T extends object>(
-  props: SpectrumSearchAutocompleteProps<T>,
+  propsArg: SpectrumSearchAutocompleteProps<T>,
   ref: FocusableRef<HTMLElement>
 ) {
-  // oxlint-disable-next-line react/react-compiler
+  let props = propsArg;
   props = useProviderProps(props);
   props = useFormProps(props);
 
@@ -144,9 +144,10 @@ function SearchAutocomplete<T extends object>(
 }
 
 function ForwardSearchAutocompleteBase<T extends object>(
-  props: SpectrumSearchAutocompleteProps<T>,
+  propsArg: SpectrumSearchAutocompleteProps<T>,
   ref: FocusableRef<HTMLElement>
 ) {
+  let props = propsArg;
   props = useProviderProps(props);
 
   let {

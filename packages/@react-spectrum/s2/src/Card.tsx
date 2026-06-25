@@ -407,8 +407,8 @@ const actionButtonSize = {
 /**
  * A Card summarizes an object that a user can select or navigate to.
  */
-export const Card = forwardRef(function Card(props: CardProps, ref: DOMRef<HTMLDivElement>) {
-  // oxlint-disable-next-line react/react-compiler
+export const Card = forwardRef(function Card(propsArg: CardProps, ref: DOMRef<HTMLDivElement>) {
+  let props = propsArg;
   [props] = useSpectrumContextProps(props, ref, CardContext);
   let {ElementType, layout} = useContext(InternalCardViewContext);
   let domRef = useDOMRef(ref);
@@ -460,8 +460,6 @@ export const Card = forwardRef(function Card(props: CardProps, ref: DOMRef<HTMLD
     </Provider>
   );
 
-  // oxlint-disable-next-line react/react-compiler
-  let press = pressScale(domRef, UNSAFE_style);
   if (ElementType === 'div' && !isSkeleton && props.href) {
     // Standalone Card that has an href should be rendered as a Link.
     // NOTE: In this case, the card must not contain interactive elements.
@@ -475,7 +473,7 @@ export const Card = forwardRef(function Card(props: CardProps, ref: DOMRef<HTMLD
         }
         style={renderProps =>
           // Only the preview in quiet cards scales down on press
-          variant === 'quiet' ? UNSAFE_style : press(renderProps)
+          variant === 'quiet' ? UNSAFE_style : pressScale(domRef, UNSAFE_style)(renderProps)
         }>
         {renderProps => (
           <InternalCardContext.Provider
@@ -601,20 +599,20 @@ export const CardPreview = forwardRef(function CardPreview(
     useContext(InternalCardContext);
   let {UNSAFE_className = '', UNSAFE_style} = props;
   let domRef = useDOMRef(ref);
-  // oxlint-disable react/react-compiler
   return (
     <div
       {...filterDOMProps(props)}
       slot="preview"
       ref={domRef}
       className={UNSAFE_className + preview({size, isQuiet, isHovered, isFocusVisible, isSelected})}
-      style={isQuiet ? pressScale(domRef)({isPressed}) : UNSAFE_style}>
+      style={renderProps =>
+        isQuiet ? pressScale(domRef, UNSAFE_style)({...renderProps, isPressed}) : UNSAFE_style
+      }>
       {isQuiet && <SelectionIndicator />}
       {isQuiet && isCheckboxSelection && <CardCheckbox />}
       <div className={style({borderRadius: 'inherit', overflow: 'clip'})}>{props.children}</div>
     </div>
   );
-  // oxlint-enable react/react-compiler
 });
 
 const collection = style({

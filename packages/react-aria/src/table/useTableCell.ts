@@ -54,14 +54,16 @@ export function useTableCell<T>(
   state: TableState<T>,
   ref: RefObject<FocusableElement | null>
 ): TableCellAria {
-  let {gridCellProps, isPressed} = useGridCell(props, state, ref);
+  let {gridCellProps: gridCellPropsFromHook, isPressed} = useGridCell(props, state, ref);
   let columnKey = props.node.column?.key;
-  if (columnKey != null && state.collection.rowHeaderColumnKeys.has(columnKey)) {
-    // oxlint-disable-next-line react/react-compiler
-    gridCellProps.role = 'rowheader';
-    // oxlint-disable-next-line react/react-compiler
-    gridCellProps.id = getCellId(state, props.node.parentKey!, columnKey);
-  }
+  let gridCellProps =
+    columnKey != null && state.collection.rowHeaderColumnKeys.has(columnKey)
+      ? {
+          ...gridCellPropsFromHook,
+          role: 'rowheader',
+          id: getCellId(state, props.node.parentKey!, columnKey)
+        }
+      : gridCellPropsFromHook;
 
   return {
     gridCellProps,

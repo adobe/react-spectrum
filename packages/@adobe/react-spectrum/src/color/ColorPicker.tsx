@@ -21,7 +21,7 @@ import {Dialog} from '../dialog/Dialog';
 import {DialogTrigger} from '../dialog/DialogTrigger';
 import React, {ReactNode, useRef} from 'react';
 import {style} from '@react-spectrum/style-macro-s1' with {type: 'macro'};
-import {unwrapDOMRef, useFocusableRef} from '../utils/useDOMRef';
+import {useFocusableRef, useUnwrapDOMRef} from '../utils/useDOMRef';
 import {useId} from 'react-aria/useId';
 
 export interface SpectrumColorPickerProps
@@ -52,12 +52,12 @@ export const ColorPicker = React.forwardRef(function ColorPicker(
   ref: FocusableRef<HTMLButtonElement>
 ) {
   let swatchRef = useRef(null);
+  let unwrappedSwatchRef = useUnwrapDOMRef(swatchRef);
   let domRef = useFocusableRef(ref);
   let labelId = useId();
   return (
     <AriaColorPicker {...props}>
-      {/* oxlint-disable-next-line react/react-compiler */}
-      <DialogTrigger type="popover" mobileType="tray" targetRef={unwrapDOMRef(swatchRef)}>
+      <DialogTrigger type="popover" mobileType="tray" targetRef={unwrappedSwatchRef}>
         <Button
           ref={domRef}
           className={style({

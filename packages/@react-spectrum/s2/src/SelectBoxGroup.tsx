@@ -337,7 +337,6 @@ export function SelectBox(props: SelectBoxProps): ReactNode {
   const ref = useRef<HTMLDivElement>(null);
   let {isFocusVisible} = useFocusVisible();
 
-  // oxlint-disable react/react-compiler
   return (
     <ListBoxItem
       isDisabled={isDisabled}
@@ -353,7 +352,7 @@ export function SelectBox(props: SelectBoxProps): ReactNode {
           styles
         )
       }
-      style={pressScale(ref, UNSAFE_style)}
+      style={renderProps => pressScale(ref, UNSAFE_style)(renderProps)}
       {...otherProps}>
       {({isSelected, isDisabled, isHovered, selectionMode}) => {
         return (
@@ -410,7 +409,6 @@ export function SelectBox(props: SelectBoxProps): ReactNode {
       }}
     </ListBoxItem>
   );
-  // oxlint-enable react/react-compiler
 }
 
 /**
@@ -418,7 +416,9 @@ export function SelectBox(props: SelectBoxProps): ReactNode {
  */
 export const SelectBoxGroup = /*#__PURE__*/ (forwardRef as forwardRefType)(function SelectBoxGroup<
   T
->(props: SelectBoxGroupProps<T>, ref: DOMRef<HTMLDivElement>) {
+>(propsArg: SelectBoxGroupProps<T>, refArg: DOMRef<HTMLDivElement>) {
+  let props = propsArg;
+  let ref = refArg;
   [props, ref] = useSpectrumContextProps(props, ref, SelectBoxGroupContext);
 
   let {

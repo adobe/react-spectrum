@@ -273,9 +273,11 @@ export const CheckboxGroupStateContext = createContext<CheckboxGroupState | null
  * A checkbox group allows a user to select multiple items from a list of options.
  */
 export const CheckboxGroup = /*#__PURE__*/ (forwardRef as forwardRefType)(function CheckboxGroup(
-  props: CheckboxGroupProps,
-  ref: ForwardedRef<HTMLDivElement>
+  propsArg: CheckboxGroupProps,
+  refArg: ForwardedRef<HTMLDivElement>
 ) {
+  let props = propsArg;
+  let ref = refArg;
   [props, ref] = useContextProps(props, ref, CheckboxGroupContext);
   let {validationBehavior: formValidationBehavior} = useSlottedContext(FormContext) || {};
   let validationBehavior = props.validationBehavior ?? formValidationBehavior ?? 'native';
@@ -351,9 +353,11 @@ const InternalCheckboxContext = createContext<InternalCheckboxContextValue | nul
  * A checkbox allows a user to select an item, with support for validation and help text.
  */
 export const CheckboxField = /*#__PURE__*/ (forwardRef as forwardRefType)(function Checkbox(
-  props: CheckboxFieldProps,
-  ref: ForwardedRef<HTMLDivElement>
+  propsArg: CheckboxFieldProps,
+  refArg: ForwardedRef<HTMLDivElement>
 ) {
+  let props = propsArg;
+  let ref = refArg;
   let {inputRef: userProvidedInputRef = null, ...otherProps} = props;
   [props, ref] = useContextProps(otherProps, ref, CheckboxFieldContext);
   let groupState = useContext(CheckboxGroupStateContext);
@@ -427,13 +431,12 @@ export const CheckboxField = /*#__PURE__*/ (forwardRef as forwardRefType)(functi
   );
 });
 
-function useCheckboxAria(
+function useCheckboxAriaStandalone(
   props: CheckboxProps | CheckboxFieldProps,
   userProvidedInputRef: RefObject<HTMLInputElement | null> | null
 ): [CheckboxAria, RefObject<HTMLInputElement | null>] {
   let {validationBehavior: formValidationBehavior} = useSlottedContext(FormContext) || {};
   let validationBehavior = props.validationBehavior ?? formValidationBehavior ?? 'native';
-  let groupState = useContext(CheckboxGroupStateContext);
   let inputRef = useObjectRef(
     useMemo(
       () => mergeRefs(userProvidedInputRef, props.inputRef !== undefined ? props.inputRef : null),
@@ -446,28 +449,44 @@ function useCheckboxAria(
     value: props.value!,
     validationBehavior
   };
-
-  let aria = groupState
-    ? // oxlint-disable-next-line react/react-compiler, react-hooks/rules-of-hooks
-      useCheckboxGroupItem(checkboxProps, groupState, inputRef)
-    : // oxlint-disable-next-line react/react-compiler, react-hooks/rules-of-hooks
-      useCheckbox(checkboxProps, useToggleState(props), inputRef);
+  let toggleState = useToggleState(props);
+  let aria = useCheckbox(checkboxProps, toggleState, inputRef);
   return [aria, inputRef];
 }
 
-/**
- * A checkbox allows a user to select multiple items from a list of individual items, or
- * to mark one individual item as selected.
- *
- * @deprecated Use CheckboxField + CheckboxButton instead.
- */
-export const Checkbox = /*#__PURE__*/ (forwardRef as forwardRefType)(function Checkbox(
-  props: CheckboxProps,
-  ref: ForwardedRef<HTMLLabelElement>
-) {
-  let {inputRef: userProvidedInputRef = null, ...otherProps} = props;
-  [props, ref] = useContextProps(otherProps, ref, CheckboxContext);
-  let [aria, inputRef] = useCheckboxAria(props, userProvidedInputRef);
+function useCheckboxAriaInGroup(
+  props: CheckboxProps | CheckboxFieldProps,
+  userProvidedInputRef: RefObject<HTMLInputElement | null> | null,
+  groupState: NonNullable<React.ContextType<typeof CheckboxGroupStateContext>>
+): [CheckboxAria, RefObject<HTMLInputElement | null>] {
+  let {validationBehavior: formValidationBehavior} = useSlottedContext(FormContext) || {};
+  let validationBehavior = props.validationBehavior ?? formValidationBehavior ?? 'native';
+  let inputRef = useObjectRef(
+    useMemo(
+      () => mergeRefs(userProvidedInputRef, props.inputRef !== undefined ? props.inputRef : null),
+      [userProvidedInputRef, props.inputRef]
+    )
+  );
+  let checkboxProps = {
+    ...removeDataAttributes(props),
+    children: typeof props.children === 'function' ? true : props.children,
+    value: props.value!,
+    validationBehavior
+  };
+  let aria = useCheckboxGroupItem(checkboxProps, groupState, inputRef);
+  return [aria, inputRef];
+}
+
+function CheckboxStandalone({
+  props,
+  ref,
+  userProvidedInputRef
+}: {
+  props: CheckboxProps;
+  ref: ForwardedRef<HTMLLabelElement>;
+  userProvidedInputRef: RefObject<HTMLInputElement | null> | null;
+}) {
+  let [aria, inputRef] = useCheckboxAriaStandalone(props, userProvidedInputRef);
 
   return (
     <InternalCheckboxContext.Provider
@@ -481,6 +500,63 @@ export const Checkbox = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ch
       <CheckboxButton {...props} ref={ref} />
     </InternalCheckboxContext.Provider>
   );
+}
+
+function CheckboxInGroup({
+  props,
+  ref,
+  userProvidedInputRef,
+  groupState
+}: {
+  props: CheckboxProps;
+  ref: ForwardedRef<HTMLLabelElement>;
+  userProvidedInputRef: RefObject<HTMLInputElement | null> | null;
+  groupState: NonNullable<React.ContextType<typeof CheckboxGroupStateContext>>;
+}) {
+  let [aria, inputRef] = useCheckboxAriaInGroup(props, userProvidedInputRef, groupState);
+
+  return (
+    <InternalCheckboxContext.Provider
+      value={{
+        ...aria,
+        inputRef,
+        defaultClassName: 'react-aria-Checkbox',
+        isIndeterminate: props.isIndeterminate,
+        isRequired: props.isRequired
+      }}>
+      <CheckboxButton {...props} ref={ref} />
+    </InternalCheckboxContext.Provider>
+  );
+}
+
+/**
+ * A checkbox allows a user to select multiple items from a list of individual items, or
+ * to mark one individual item as selected.
+ *
+ * @deprecated Use CheckboxField + CheckboxButton instead.
+ */
+export const Checkbox = /*#__PURE__*/ (forwardRef as forwardRefType)(function Checkbox(
+  propsArg: CheckboxProps,
+  refArg: ForwardedRef<HTMLLabelElement>
+) {
+  let props = propsArg;
+  let ref = refArg;
+  let {inputRef: userProvidedInputRef = null, ...otherProps} = props;
+  [props, ref] = useContextProps(otherProps, ref, CheckboxContext);
+  let groupState = useContext(CheckboxGroupStateContext);
+
+  if (groupState) {
+    return (
+      <CheckboxInGroup
+        props={props}
+        ref={ref}
+        userProvidedInputRef={userProvidedInputRef}
+        groupState={groupState}
+      />
+    );
+  }
+
+  return <CheckboxStandalone props={props} ref={ref} userProvidedInputRef={userProvidedInputRef} />;
 });
 
 /**

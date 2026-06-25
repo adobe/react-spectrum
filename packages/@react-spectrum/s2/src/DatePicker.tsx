@@ -154,7 +154,9 @@ export const timeField = style({
  */
 export const DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function DatePicker<
   T extends DateValue
->(props: DatePickerProps<T>, ref: Ref<HTMLDivElement>): ReactElement {
+>(propsArg: DatePickerProps<T>, refArg: Ref<HTMLDivElement>): ReactElement {
+  let props = propsArg;
+  let ref = refArg;
   [props, ref] = useSpectrumContextProps(props, ref, DatePickerContext);
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   let {
@@ -320,7 +322,6 @@ export function CalendarButton(props: {
 }): ReactElement {
   let buttonRef = useRef<HTMLButtonElement>(null);
   let {isOpen, size, setButtonHasFocus} = props;
-  // oxlint-disable react/react-compiler
   return (
     <Button
       ref={buttonRef}
@@ -328,7 +329,7 @@ export function CalendarButton(props: {
       // @ts-ignore
       isPressed={false}
       onFocusChange={setButtonHasFocus}
-      style={pressScale(buttonRef)}
+      style={renderProps => pressScale(buttonRef)(renderProps)}
       className={renderProps =>
         inputButton({
           ...renderProps,
@@ -355,5 +356,4 @@ export function CalendarButton(props: {
       </Provider>
     </Button>
   );
-  // oxlint-enable react/react-compiler
 }

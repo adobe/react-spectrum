@@ -71,10 +71,11 @@ export const CheckboxGroupContext =
  * A CheckboxGroup allows users to select one or more items from a list of choices.
  */
 export const CheckboxGroup = forwardRef(function CheckboxGroup(
-  props: CheckboxGroupProps,
-  ref: DOMRef<HTMLDivElement>
+  propsArg: CheckboxGroupProps,
+  refArg: DOMRef<HTMLDivElement>
 ) {
-  // oxlint-disable-next-line react/react-compiler
+  let props = propsArg;
+  let ref = refArg;
   [props, ref] = useSpectrumContextProps(props, ref, CheckboxGroupContext);
   let formContext = useContext(FormContext);
   props = useFormProps(props);

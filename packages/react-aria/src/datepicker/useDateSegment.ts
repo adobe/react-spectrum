@@ -16,7 +16,6 @@ import {getActiveElement, nodeContains} from '../utils/shadowdom/DOMFunctions';
 import {getScrollParent} from '../utils/getScrollParent';
 import {hookData} from './useDateField';
 import {isIOS} from '../utils/platform';
-import {mergeProps} from '../utils/mergeProps';
 import {NumberParser} from '@internationalized/number';
 import React, {CSSProperties, useMemo, useRef} from 'react';
 import {RefObject} from '@react-types/shared';
@@ -384,8 +383,9 @@ export function useDateSegment(
   }
 
   return {
-    // oxlint-disable-next-line react/react-compiler
-    segmentProps: mergeProps(spinButtonProps, labelProps, {
+    segmentProps: {
+      ...spinButtonProps,
+      ...labelProps,
       id,
       ...touchPropOverrides,
       ...keyboardProps,
@@ -415,7 +415,7 @@ export function useDateSegment(
       onMouseDown(e) {
         e.stopPropagation();
       }
-    })
+    }
   };
 }
 

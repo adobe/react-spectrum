@@ -21,10 +21,10 @@ let SlotContext = React.createContext<{} | null>(null);
 
 export function useSlotProps<T>(props: T & {id?: string}, defaultSlot?: string): T {
   let slot = (props as SlotProps).slot || defaultSlot;
+  let contextValue = useContext(SlotContext) || {};
   // @ts-ignore TODO why is slot an object and not just string or undefined?
-  let {[slot]: slotProps = {}} = useContext(SlotContext) || {};
+  let slotProps = slot ? contextValue[slot] || {} : {};
 
-  // oxlint-disable-next-line react/react-compiler
   return mergeProps(props, mergeProps(slotProps, {id: props.id})) as T;
 }
 

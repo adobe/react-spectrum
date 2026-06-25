@@ -47,7 +47,7 @@ import {
   useDroppableCollectionState
 } from 'react-stately/useDroppableCollectionState';
 import {isVirtualDragging} from 'react-aria/private/dnd/DragManager';
-import {JSX, useMemo} from 'react';
+import {JSX} from 'react';
 
 interface DraggableCollectionStateOpts<T> extends Omit<
   DraggableCollectionStateOptions<T>,
@@ -97,6 +97,8 @@ export interface DragAndDropHooks<T = object> {
     DropHooks & {
       isVirtualDragging?: () => boolean;
       renderPreview?: (keys: Set<Key>, draggedKey: Key) => JSX.Element;
+      /** @private */
+      options?: DragAndDropOptions<T>;
     };
 }
 
@@ -123,61 +125,52 @@ export interface DragAndDropOptions<T = object>
  * Spectrum component.
  */
 export function useDragAndDrop<T = object>(options: DragAndDropOptions<T>): DragAndDropHooks {
-  let dragAndDropHooks = useMemo(() => {
-    let {onDrop, onInsert, onItemDrop, onReorder, onRootDrop, getItems, renderPreview} = options;
+  let {onDrop, onInsert, onItemDrop, onReorder, onRootDrop, getItems, renderPreview} = options;
 
-    let isDraggable = !!getItems;
-    let isDroppable = !!(onDrop || onInsert || onItemDrop || onReorder || onRootDrop);
+  let isDraggable = !!getItems;
+  let isDroppable = !!(onDrop || onInsert || onItemDrop || onReorder || onRootDrop);
 
-    let hooks = {} as DragHooks &
-      DropHooks & {
-        isVirtualDragging?: () => boolean;
-        renderPreview?: (keys: Set<Key>, draggedKey: Key) => JSX.Element;
-      };
-    if (isDraggable) {
-      hooks.useDraggableCollectionState = function useDraggableCollectionStateOverride(
-        props: DraggableCollectionStateOpts<T>
-      ) {
-        // oxlint-disable-next-line react/react-compiler
-        return useDraggableCollectionState({...props, ...options, getItems: options.getItems!});
-      };
-      // oxlint-disable-next-line react/react-compiler
-      hooks.useDraggableCollection = useDraggableCollection;
-      // oxlint-disable-next-line react/react-compiler
-      hooks.useDraggableItem = useDraggableItem;
-      hooks.DragPreview = DragPreview;
-      hooks.renderPreview = renderPreview;
-    }
+  let hooks = {} as DragHooks &
+    DropHooks & {
+      isVirtualDragging?: () => boolean;
+      renderPreview?: (keys: Set<Key>, draggedKey: Key) => JSX.Element;
+    };
+  if (isDraggable) {
+    hooks.useDraggableCollectionState = function useDraggableCollectionStateOverride(
+      props: DraggableCollectionStateOpts<T>
+    ) {
+      return useDraggableCollectionState({...props, ...options, getItems: options.getItems!});
+    };
+    hooks.useDraggableCollection = (props, state, ref) => useDraggableCollection(props, state, ref);
+    hooks.useDraggableItem = (props, state) => useDraggableItem(props, state);
+    hooks.DragPreview = DragPreview;
+    hooks.renderPreview = renderPreview;
+  }
 
-    if (isDroppable) {
-      hooks.useDroppableCollectionState = function useDroppableCollectionStateOverride(
-        props: DroppableCollectionStateOptions
-      ) {
-        // oxlint-disable-next-line react/react-compiler
-        return useDroppableCollectionState({...props, ...options});
-      };
-      // oxlint-disable-next-line react/react-compiler
-      hooks.useDroppableItem = useDroppableItem;
-      hooks.useDroppableCollection = function useDroppableCollectionOverride(
-        props: DroppableCollectionOptions,
-        state: DroppableCollectionState,
-        ref: RefObject<HTMLElement | null>
-      ) {
-        // oxlint-disable-next-line react/react-compiler
-        return useDroppableCollection({...props, ...options}, state, ref);
-      };
-      // oxlint-disable-next-line react/react-compiler
-      hooks.useDropIndicator = useDropIndicator;
-    }
+  if (isDroppable) {
+    hooks.useDroppableCollectionState = function useDroppableCollectionStateOverride(
+      props: DroppableCollectionStateOptions
+    ) {
+      return useDroppableCollectionState({...props, ...options});
+    };
+    hooks.useDroppableItem = (itemOptions, state, ref) => useDroppableItem(itemOptions, state, ref);
+    hooks.useDroppableCollection = function useDroppableCollectionOverride(
+      props: DroppableCollectionOptions,
+      state: DroppableCollectionState,
+      ref: RefObject<HTMLElement | null>
+    ) {
+      return useDroppableCollection({...props, ...options}, state, ref);
+    };
+    hooks.useDropIndicator = (props, state, ref) => useDropIndicator(props, state, ref);
+  }
 
-    if (isDraggable || isDroppable) {
-      hooks.isVirtualDragging = isVirtualDragging;
-    }
+  if (isDraggable || isDroppable) {
+    hooks.isVirtualDragging = isVirtualDragging;
+  }
 
-    return hooks;
-  }, [options]);
+  hooks.options = options;
 
   return {
-    dragAndDropHooks: dragAndDropHooks
+    dragAndDropHooks: hooks
   };
 }

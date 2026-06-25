@@ -16,7 +16,6 @@ import {ColorChannel} from 'react-stately/Color';
 import {focusWithoutScrolling} from '../utils/focusWithoutScrolling';
 import intlMessages from '../../intl/color/*.json';
 import {isAndroid, isIOS} from '../utils/platform';
-import {mergeProps} from '../utils/mergeProps';
 import React, {ChangeEvent, InputHTMLAttributes, useCallback, useRef, useState} from 'react';
 import {useColorAreaGradient} from './useColorAreaGradient';
 import {useFocus} from '../interactions/useFocus';
@@ -204,9 +203,9 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
         }
         setValueChangedViaKeyboard(valueChanged);
         // set the focused input based on which axis has the greater delta
-        // oxlint-disable-next-line react/react-compiler
-        focusedInput = valueChanged && Math.abs(deltaY) > Math.abs(deltaX) ? 'y' : 'x';
-        setFocusedInput(focusedInput);
+        if (valueChanged) {
+          setFocusedInput(Math.abs(deltaY) > Math.abs(deltaX) ? 'y' : 'x');
+        }
       } else {
         currentPosition.current.x += ((direction === 'rtl' ? -1 : 1) * deltaX) / width;
         currentPosition.current.y += deltaY / height;
@@ -342,74 +341,68 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
 
   let colorAreaInteractions = isDisabled
     ? {}
-    : mergeProps(
-        // oxlint-disable-next-line react/react-compiler
-        {
-          ...(typeof PointerEvent !== 'undefined'
-            ? {
-                onPointerDown: (e: React.PointerEvent) => {
-                  if (
-                    e.pointerType === 'mouse' &&
-                    (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey)
-                  ) {
-                    return;
-                  }
-                  onColorAreaDown(e.currentTarget, e.pointerId, e.clientX, e.clientY);
+    : {
+        ...(typeof PointerEvent !== 'undefined'
+          ? {
+              onPointerDown: (e: React.PointerEvent) => {
+                if (
+                  e.pointerType === 'mouse' &&
+                  (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey)
+                ) {
+                  return;
                 }
+                onColorAreaDown(e.currentTarget, e.pointerId, e.clientX, e.clientY);
               }
-            : {
-                onMouseDown: (e: React.MouseEvent) => {
-                  if (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey) {
-                    return;
-                  }
-                  onColorAreaDown(e.currentTarget, undefined, e.clientX, e.clientY);
-                },
-                onTouchStart: (e: React.TouchEvent) => {
-                  onColorAreaDown(
-                    e.currentTarget,
-                    e.changedTouches[0].identifier,
-                    e.changedTouches[0].clientX,
-                    e.changedTouches[0].clientY
-                  );
+            }
+          : {
+              onMouseDown: (e: React.MouseEvent) => {
+                if (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey) {
+                  return;
                 }
-              })
-        },
-        movePropsContainer
-      );
+                onColorAreaDown(e.currentTarget, undefined, e.clientX, e.clientY);
+              },
+              onTouchStart: (e: React.TouchEvent) => {
+                onColorAreaDown(
+                  e.currentTarget,
+                  e.changedTouches[0].identifier,
+                  e.changedTouches[0].clientX,
+                  e.changedTouches[0].clientY
+                );
+              }
+            }),
+        ...movePropsContainer
+      };
 
   let thumbInteractions = isDisabled
     ? {}
-    : mergeProps(
-        // oxlint-disable-next-line react/react-compiler
-        {
-          ...(typeof PointerEvent !== 'undefined'
-            ? {
-                onPointerDown: (e: React.PointerEvent) => {
-                  if (
-                    e.pointerType === 'mouse' &&
-                    (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey)
-                  ) {
-                    return;
-                  }
-                  onThumbDown(e.pointerId);
+    : {
+        ...(typeof PointerEvent !== 'undefined'
+          ? {
+              onPointerDown: (e: React.PointerEvent) => {
+                if (
+                  e.pointerType === 'mouse' &&
+                  (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey)
+                ) {
+                  return;
                 }
+                onThumbDown(e.pointerId);
               }
-            : {
-                onMouseDown: (e: React.MouseEvent) => {
-                  if (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey) {
-                    return;
-                  }
-                  onThumbDown(undefined);
-                },
-                onTouchStart: (e: React.TouchEvent) => {
-                  onThumbDown(e.changedTouches[0].identifier);
+            }
+          : {
+              onMouseDown: (e: React.MouseEvent) => {
+                if (e.button !== 0 || e.altKey || e.ctrlKey || e.metaKey) {
+                  return;
                 }
-              })
-        },
-        focusWithinProps,
-        keyboardProps,
-        movePropsThumb
-      );
+                onThumbDown(undefined);
+              },
+              onTouchStart: (e: React.TouchEvent) => {
+                onThumbDown(e.changedTouches[0].identifier);
+              }
+            }),
+        ...focusWithinProps,
+        ...keyboardProps,
+        ...movePropsThumb
+      };
 
   let {focusProps: xInputFocusProps} = useFocus({
     onFocus: () => {

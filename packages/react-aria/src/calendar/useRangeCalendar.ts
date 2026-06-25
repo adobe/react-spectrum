@@ -90,14 +90,16 @@ export function useRangeCalendar<T extends DateValue>(
 
   // Also execute method corresponding to `commitBehavior` on blur,
   // e.g. tabbing away from the calendar.
-  // oxlint-disable-next-line react/react-compiler
-  res.calendarProps.onBlur = e => {
-    if (!ref.current) {
-      return;
-    }
+  let calendarProps = {
+    ...res.calendarProps,
+    onBlur: e => {
+      if (!ref.current) {
+        return;
+      }
 
-    if ((!e.relatedTarget || !nodeContains(ref.current, e.relatedTarget)) && state.anchorDate) {
-      commitBehaviorMapping[commitBehavior]();
+      if ((!e.relatedTarget || !nodeContains(ref.current, e.relatedTarget)) && state.anchorDate) {
+        commitBehaviorMapping[commitBehavior]();
+      }
     }
   };
 
@@ -113,5 +115,8 @@ export function useRangeCalendar<T extends DateValue>(
     {passive: false, capture: true}
   );
 
-  return res;
+  return {
+    ...res,
+    calendarProps
+  };
 }

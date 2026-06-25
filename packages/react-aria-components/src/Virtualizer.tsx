@@ -18,13 +18,15 @@ import {
   renderAfterDropIndicators
 } from './Collection';
 import {DropTargetDelegate, ItemDropTarget, Node} from '@react-types/shared';
+import {GridLayout, useGridLayoutOptions} from './GridLayout';
 import {
   Layout,
   ReusableView,
   useVirtualizerState,
   VirtualizerState
 } from 'react-stately/useVirtualizerState';
-import React, {createContext, JSX, ReactNode, useContext, useMemo} from 'react';
+import React, {createContext, JSX, ReactNode, useCallback, useContext, useMemo} from 'react';
+import {TableLayout, useTableLayoutOptions} from './TableLayout';
 import {useScrollView} from 'react-aria/private/virtualizer/ScrollView';
 import {VirtualizerItem} from 'react-aria/private/virtualizer/VirtualizerItem';
 
@@ -89,15 +91,48 @@ export function Virtualizer<O>(props: VirtualizerProps<O>): JSX.Element {
   );
 }
 
-function CollectionRoot({
+function CollectionRoot(props: CollectionRootProps) {
+  let {layout} = useContext(LayoutContext)!;
+  if (layout instanceof GridLayout) {
+    return <GridLayoutCollectionRoot {...props} />;
+  }
+  if (layout instanceof TableLayout) {
+    return <TableLayoutCollectionRoot {...props} />;
+  }
+  return <DefaultCollectionRoot {...props} />;
+}
+
+function GridLayoutCollectionRoot(props: CollectionRootProps) {
+  let layoutOptions2 = useGridLayoutOptions();
+  return <CollectionRootContent {...props} layoutOptions2={layoutOptions2} />;
+}
+
+function TableLayoutCollectionRoot(props: CollectionRootProps) {
+  let layoutOptions2 = useTableLayoutOptions();
+  return <CollectionRootContent {...props} layoutOptions2={layoutOptions2} />;
+}
+
+function DefaultCollectionRoot(props: CollectionRootProps) {
+  return <CollectionRootContent {...props} layoutOptions2={undefined} />;
+}
+
+function CollectionRootContent({
   collection,
   persistedKeys,
   scrollRef,
-  renderDropIndicator
-}: CollectionRootProps) {
+  renderDropIndicator,
+  layoutOptions2
+}: CollectionRootProps & {layoutOptions2?: any}) {
   let {layout, layoutOptions} = useContext(LayoutContext)!;
-  // oxlint-disable-next-line react/react-compiler
-  let layoutOptions2 = layout.useLayoutOptions?.();
+  let onVisibleRectChange = useCallback(
+    (rect: {x: number; y: number}) => {
+      let element = scrollRef?.current;
+      if (element) {
+        element.scrollTo({left: rect.x, top: rect.y});
+      }
+    },
+    [scrollRef]
+  );
   let state = useVirtualizerState({
     allowsWindowScrolling: true,
     layout,
@@ -105,14 +140,7 @@ function CollectionRoot({
     renderView: (type, item) => {
       return item?.render?.(item);
     },
-    onVisibleRectChange(rect) {
-      let element = scrollRef?.current;
-      if (element) {
-        // oxlint-disable-next-line react/react-compiler
-        element.scrollLeft = rect.x;
-        element.scrollTop = rect.y;
-      }
-    },
+    onVisibleRectChange,
     persistedKeys,
     layoutOptions: useMemo(() => {
       if (layoutOptions && layoutOptions2) {

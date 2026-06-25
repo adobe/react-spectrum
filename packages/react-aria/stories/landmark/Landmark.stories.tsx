@@ -14,7 +14,7 @@ import {ActionGroup} from '@adobe/react-spectrum/ActionGroup';
 
 import {
   AriaLandmarkProps,
-  UNSTABLE_createLandmarkController,
+  UNSTABLE_createLandmarkController as createLandmarkController,
   useLandmark
 } from '../../src/landmark/useLandmark';
 import {
@@ -408,8 +408,7 @@ function ApplicationExample() {
 }
 
 function IframeExample(): JSX.Element {
-  // oxlint-disable-next-line react/react-compiler
-  let controller = useMemo(() => UNSTABLE_createLandmarkController(), []);
+  let controller = useMemo(() => createLandmarkController(), []);
   useEffect(() => () => controller.dispose(), [controller]);
   let onLoad = (e: SyntheticEvent) => {
     let iframe = e.target as HTMLIFrameElement;
