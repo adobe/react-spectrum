@@ -17,7 +17,6 @@ import {
   mockClickDefault,
   pointerMap,
   render,
-  screen,
   setupIntersectionObserverMock,
   triggerLongPress,
   within
