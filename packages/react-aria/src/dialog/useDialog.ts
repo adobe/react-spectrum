@@ -112,17 +112,6 @@ export function useDialog(
   });
 
   let ariaDescribedby = props['aria-describedby'] ?? contentId;
-  let hasAriaDescribedbyWarn = useRef(false);
-  useEffect(() => {
-    if (!ariaDescribedby && props['role'] === 'alertdialog') {
-      if (process.env.NODE_ENV !== 'production' && !hasAriaDescribedbyWarn.current) {
-        console.warn(
-          'If a Dialog does not contain a <Text slot="description">, it must have an aria-describedby for accessibility'
-        );
-        hasAriaDescribedbyWarn.current = true;
-      }
-    }
-  });
 
   // We do not use aria-modal due to a Safari bug which forces the first focusable element to be focused
   // on mount when inside an iframe, no matter which element we programmatically focus.
