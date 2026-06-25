@@ -488,8 +488,8 @@ export function useSelectableCollection(
         navigateToKey(manager.lastSelectedKey ?? delegate.getLastKey?.());
       } else {
         let firstKey = manager.firstSelectedKey ?? delegate.getFirstKey?.();
-        if (firstKey && manager.disabledKeys.has(firstKey)) {
-          firstKey = delegate.getFirstKey?.();
+        if (firstKey != null && manager.disabledKeys.has(firstKey)) {
+          firstKey = delegate.getFirstKey?.() ?? null;
         }
         navigateToKey(firstKey);
       }
@@ -601,7 +601,6 @@ export function useSelectableCollection(
     if (autoFocusRef.current) {
       let focusedKey: Key | null = null;
 
-      // Check focus strategy to determine which item to focus
       if (autoFocus === 'first') {
         focusedKey = delegate.getFirstKey?.() ?? null;
       }
@@ -609,7 +608,6 @@ export function useSelectableCollection(
         focusedKey = delegate.getLastKey?.() ?? null;
       }
 
-      // If there are any selected keys, make the first one the new focus target
       let selectedKeys = manager.selectedKeys;
       if (selectedKeys.size) {
         for (let key of selectedKeys) {
@@ -620,21 +618,18 @@ export function useSelectableCollection(
         }
       }
 
-      // Safety check: If the resolved target item is explicitly disabled,
-      // fallback immediately to the first available enabled option.
-      if (focusedKey && manager.disabledKeys.has(focusedKey)) {
-        focusedKey = delegate.getFirstKey?.() ?? null;
+      while (focusedKey != null && !manager.canSelectItem(focusedKey)) {
+        focusedKey = delegate.getKeyBelow?.(focusedKey) ?? null;
       }
 
       manager.setFocused(true);
-      manager.setFocusedKey(focusedKey); // Fires consistently now (even if null)
+      manager.setFocusedKey(focusedKey);
 
-      // If no default focus key is selected, focus the collection container itself.
+      // If no default focus key is selected, focus the collection itself.
       if (focusedKey == null && !shouldUseVirtualFocus && ref.current) {
         focusSafely(ref.current);
       }
 
-      // Wait until the collection has items to autofocus.
       if (manager.collection.size > 0) {
         autoFocusRef.current = false;
         didAutoFocusRef.current = true;

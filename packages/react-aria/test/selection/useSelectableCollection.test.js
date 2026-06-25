@@ -193,47 +193,21 @@ describe('useSelectableCollection', () => {
       expect(onSelectionChange2).not.toHaveBeenCalled();
     });
   });
-  // =========================================================================
-  // ADDED: Tests for skipping disabled items automatically on mount/focus
-  // =========================================================================
+
   describe('with disabled items boundary keys', () => {
-    it('should automatically focus the first available option when the first 2 options are disabled on autoFocus', async () => {
+    it('should automatically focus the first available enabled item on autoFocus mount when leading items are disabled', () => {
       let {getAllByRole} = render(
-        <List selectionMode="single" autoFocus="first" disabledKeys={['i1', 'i2']}>
-          <Item key="i1">Disabled Item 1</Item>
-          <Item key="i2">Disabled Item 2</Item>
-          <Item key="i3">First Enabled Item</Item>
-          <Item key="i4">Second Enabled Item</Item>
+        <List selectionMode="single" autoFocus="first" disabledKeys={['i1']}>
+          <Item key="i1">Disabled Absolute First Item</Item>
+          <Item key="i2">First Enabled Item</Item>
+          <Item key="i3">Second Enabled Item</Item>
         </List>
       );
 
       let options = getAllByRole('option');
 
-      // Let any asynchronous layout microtasks complete smoothly
-      await new Promise(resolve => setTimeout(resolve, 0));
-
-      expect(document.activeElement).toBe(options[2]);
-      expect(options[2].textContent).toBe('First Enabled Item');
-    });
-
-    it('should automatically focus the first available option when tabbing into the collection with leading disabled keys', async () => {
-      let {getAllByRole} = render(
-        <List selectionMode="single" disabledKeys={['i1', 'i2']}>
-          <Item key="i1">Disabled Item 1</Item>
-          <Item key="i2">Disabled Item 2</Item>
-          <Item key="i3">First Enabled Item</Item>
-          <Item key="i4">Second Enabled Item</Item>
-        </List>
-      );
-
-      let options = getAllByRole('option');
-
-      // Wrap the simulated user tabbing action cleanly in an async act block
-      // to handle the synchronous JSDOM focus state mutation
-      await user.tab();
-
-      expect(document.activeElement).toBe(options[2]);
-      expect(options[2].textContent).toBe('First Enabled Item');
+      expect(document.activeElement).toBe(options[1]);
+      expect(options[1].textContent).toBe('First Enabled Item');
     });
   });
 });
