@@ -23,14 +23,13 @@ import {DOMProps, DOMRef, StyleProps} from '@react-types/shared';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {Heading} from '../text/Heading';
 import intlMessages from '../../intl/dialog/*.json';
-// @ts-ignore
 import React, {forwardRef, ReactNode, useContext} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/dialog/vars.css';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useStyleProps} from '../utils/styleProps';
 
 export interface SpectrumAlertDialogProps extends DOMProps, StyleProps {
-  /** The [visual style](https://spectrum.adobe.com/page/alert-dialog/#Options) of the AlertDialog.  */
+  /** The [visual style](https://spectrum.adobe.com/page/alert-dialog/#Options) of the AlertDialog. */
   variant?: 'confirmation' | 'information' | 'destructive' | 'error' | 'warning';
   /** The title of the AlertDialog. */
   title: string;
@@ -58,7 +57,8 @@ export interface SpectrumAlertDialogProps extends DOMProps, StyleProps {
 }
 
 /**
- * AlertDialogs are a specific type of Dialog. They display important information that users need to acknowledge.
+ * AlertDialogs are a specific type of Dialog. They display important information that users need to
+ * acknowledge.
  */
 export const AlertDialog = forwardRef(function AlertDialog(
   props: SpectrumAlertDialogProps,

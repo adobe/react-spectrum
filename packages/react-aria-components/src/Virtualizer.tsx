@@ -96,6 +96,7 @@ function CollectionRoot({
   renderDropIndicator
 }: CollectionRootProps) {
   let {layout, layoutOptions} = useContext(LayoutContext)!;
+  // oxlint-disable-next-line react/react-compiler
   let layoutOptions2 = layout.useLayoutOptions?.();
   let state = useVirtualizerState({
     allowsWindowScrolling: true,
@@ -107,6 +108,7 @@ function CollectionRoot({
     onVisibleRectChange(rect) {
       let element = scrollRef?.current;
       if (element) {
+        // oxlint-disable-next-line react/react-compiler
         element.scrollLeft = rect.x;
         element.scrollTop = rect.y;
       }

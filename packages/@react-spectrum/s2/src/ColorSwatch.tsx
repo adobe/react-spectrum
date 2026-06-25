@@ -34,11 +34,13 @@ export interface ColorSwatchProps
     UnsafeStyles {
   /**
    * The size of the ColorSwatch.
+   *
    * @default 'M'
    */
   size?: 'XS' | 'S' | 'M' | 'L';
   /**
    * The corner rounding of the ColorSwatch.
+   *
    * @default 'default'
    */
   rounding?: 'default' | 'none' | 'full';
@@ -124,6 +126,7 @@ export const ColorSwatch = forwardRef(function ColorSwatch(
 
   // ColorSwatchPicker needs to wrap the swatch in a ListBoxItem.
   if (ctx) {
+    // oxlint-disable-next-line react/react-compiler
     return ctx.useWrapper(swatch, color, rounding);
   }
 

@@ -22,7 +22,9 @@ describe('useNumberField hook', () => {
 
   describe('should return numberFieldProps', () => {
     it('with default numberField props if no props are provided', () => {
-      let consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+      using consoleWarnSpy = jest
+        .spyOn(console, 'warn')
+        .mockImplementation(() => {}) as jest.SpyInstance & Disposable;
       let {inputProps} = renderNumberFieldHook({});
       expect(inputProps.type).toBe('text');
       expect(inputProps.disabled).toBeFalsy();

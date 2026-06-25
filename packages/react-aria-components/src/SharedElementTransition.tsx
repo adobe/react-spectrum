@@ -50,11 +50,13 @@ export function SharedElementTransition(props: SharedElementTransitionProps) {
 export interface SharedElementRenderProps {
   /**
    * Whether the element is currently entering.
+   *
    * @selector [data-entering]
    */
   isEntering: boolean;
   /**
    * Whether the element is currently exiting.
+   *
    * @selector [data-exiting]
    */
   isExiting: boolean;

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-/* eslint-disable rulesdir/pure-render */
+/* eslint-disable rsp-rules/pure-render */
 
 import {getEventTarget, nodeContains} from './shadowdom/DOMFunctions';
 import {getOffset} from './getOffset';
@@ -70,7 +70,9 @@ export function useDrag1D(props: UseDrag1DProps): HTMLAttributes<HTMLElement> {
 
   // Keep track of the current handlers in a ref so that the events can access them.
   let handlers = useRef({onPositionChange, onDrag});
+  // oxlint-disable-next-line react/react-compiler
   handlers.current.onDrag = onDrag;
+  // oxlint-disable-next-line react/react-compiler
   handlers.current.onPositionChange = onPositionChange;
 
   let onMouseDragged = (e: MouseEvent) => {

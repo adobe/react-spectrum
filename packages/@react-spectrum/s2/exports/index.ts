@@ -92,6 +92,7 @@ export {InlineAlert, InlineAlertContext} from '../src/InlineAlert';
 export {LabeledValue, LabeledValueContext} from '../src/LabeledValue';
 export {Link, LinkContext} from '../src/Link';
 export {ListView, ListViewContext, ListViewItem} from '../src/ListView';
+export {DragPreview} from '../src/DragPreview';
 export {
   MenuItem,
   MenuTrigger,
@@ -149,6 +150,8 @@ export {pressScale} from '../src/pressScale';
 
 export {mergeStyles} from '../style/runtime';
 
+export {CenterBaseline} from '../src/CenterBaseline';
+
 export {Autocomplete} from 'react-aria-components/Autocomplete';
 export {Collection} from 'react-aria/Collection';
 export {FileTrigger} from 'react-aria-components/FileTrigger';
@@ -157,6 +160,13 @@ export {useLocale} from 'react-aria/I18nProvider';
 export {useListData} from 'react-stately/useListData';
 export {useTreeData} from 'react-stately/useTreeData';
 export {useAsyncList} from 'react-stately/useAsyncList';
+export {
+  DIRECTORY_DRAG_TYPE,
+  isDirectoryDropItem,
+  isFileDropItem,
+  isTextDropItem
+} from 'react-aria/useDrop';
+export {useDragAndDrop} from './useDragAndDrop';
 
 export type {
   AccordionProps,
@@ -226,6 +236,7 @@ export type {ImageCoordinatorProps} from '../src/ImageCoordinator';
 export type {LabeledValueProps} from '../src/LabeledValue';
 export type {LinkProps} from '../src/Link';
 export type {ListViewProps, ListViewItemProps} from '../src/ListView';
+export type {DragPreviewProps} from '../src/DragPreview';
 export type {
   MenuTriggerProps,
   MenuProps,
@@ -306,6 +317,32 @@ export type {
   AsyncListLoadOptions,
   AsyncListStateUpdate
 } from 'react-stately/useAsyncList';
+export type {DragAndDropHooks} from 'react-aria-components/useDragAndDrop';
+export type {DragAndDropOptions} from './useDragAndDrop';
+export type {
+  DirectoryDropItem,
+  DraggableCollectionEndEvent,
+  DraggableCollectionMoveEvent,
+  DraggableCollectionStartEvent,
+  DragPreviewRenderer,
+  DragTypes,
+  DropItem,
+  DropOperation,
+  DroppableCollectionDropEvent,
+  DroppableCollectionEnterEvent,
+  DroppableCollectionExitEvent,
+  DroppableCollectionInsertDropEvent,
+  DroppableCollectionMoveEvent,
+  DroppableCollectionOnItemDropEvent,
+  DroppableCollectionReorderEvent,
+  DroppableCollectionRootDropEvent,
+  DropPosition,
+  DropTarget,
+  FileDropItem,
+  ItemDropTarget,
+  RootDropTarget,
+  TextDropItem
+} from '@react-types/shared';
 
 export type {
   StylesProp,

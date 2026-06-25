@@ -34,13 +34,15 @@ import {setInteractionModality} from '../interactions/useFocusVisible';
 import {useCollator} from '../i18n/useCollator';
 import {useField} from '../label/useField';
 import {useId} from '../utils/useId';
+import {useKeyboard} from '../interactions/useKeyboard';
 import {useMenuTrigger} from '../menu/useMenuTrigger';
 import {useTypeSelect} from '../selection/useTypeSelect';
 
 export interface AriaSelectProps<T, M extends SelectionMode = 'single'>
   extends SelectProps<T, M>, DOMProps, AriaLabelingProps, FocusableDOMProps {
   /**
-   * Describes the type of autocomplete functionality the input should provide if any. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefautocomplete).
+   * Describes the type of autocomplete functionality the input should provide if any. See
+   * [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefautocomplete).
    */
   autoComplete?: string;
   /**
@@ -105,6 +107,7 @@ export const selectData: WeakMap<SelectState<any, any>, SelectData> = new WeakMa
 /**
  * Provides the behavior and accessibility implementation for a select component.
  * A select displays a collapsible list of options and allows a user to select one of them.
+ *
  * @param props - Props for the select.
  * @param state - State for the select, as returned by `useListState`.
  */
@@ -134,16 +137,12 @@ export function useSelect<T, M extends SelectionMode = 'single'>(
     ref
   );
 
-  let onKeyDown = (e: KeyboardEvent) => {
-    if (state.selectionManager.selectionMode === 'multiple') {
-      return;
-    }
-
-    switch (e.key) {
-      case 'ArrowLeft': {
-        // prevent scrolling containers
-        e.preventDefault();
-
+  let {keyboardProps} = useKeyboard({
+    shortcuts: {
+      ArrowLeft: () => {
+        if (state.selectionManager.selectionMode === 'multiple') {
+          return false;
+        }
         let key =
           state.selectedKey != null
             ? delegate.getKeyAbove?.(state.selectedKey)
@@ -151,12 +150,11 @@ export function useSelect<T, M extends SelectionMode = 'single'>(
         if (key != null) {
           state.setSelectedKey(key);
         }
-        break;
-      }
-      case 'ArrowRight': {
-        // prevent scrolling containers
-        e.preventDefault();
-
+      },
+      ArrowRight: () => {
+        if (state.selectionManager.selectionMode === 'multiple') {
+          return false;
+        }
         let key =
           state.selectedKey != null
             ? delegate.getKeyBelow?.(state.selectedKey)
@@ -164,10 +162,11 @@ export function useSelect<T, M extends SelectionMode = 'single'>(
         if (key != null) {
           state.setSelectedKey(key);
         }
-        break;
       }
-    }
-  };
+    },
+    onKeyDown: props.onKeyDown,
+    onKeyUp: props.onKeyUp
+  });
 
   let {typeSelectProps} = useTypeSelect({
     keyboardDelegate: delegate,
@@ -185,8 +184,6 @@ export function useSelect<T, M extends SelectionMode = 'single'>(
     errorMessage: props.errorMessage || validationErrors
   });
 
-  typeSelectProps.onKeyDown = typeSelectProps.onKeyDownCapture;
-  delete typeSelectProps.onKeyDownCapture;
   if (state.selectionManager.selectionMode === 'multiple') {
     typeSelectProps = {};
   }
@@ -219,8 +216,8 @@ export function useSelect<T, M extends SelectionMode = 'single'>(
     triggerProps: mergeProps(domProps, {
       ...triggerProps,
       isDisabled,
-      onKeyDown: chain(triggerProps.onKeyDown, onKeyDown, props.onKeyDown),
-      onKeyUp: props.onKeyUp,
+      onKeyDown: chain(triggerProps.onKeyDown, keyboardProps.onKeyDown),
+      onKeyUp: keyboardProps.onKeyUp,
       'aria-labelledby': [
         valueId,
         triggerProps['aria-labelledby'],
@@ -264,6 +261,7 @@ export function useSelect<T, M extends SelectionMode = 'single'>(
     },
     menuProps: {
       ...menuProps,
+      onAction: undefined,
       autoFocus: state.focusStrategy || true,
       shouldSelectOnPressUp: true,
       shouldFocusOnHover: true,

@@ -11,21 +11,19 @@
  */
 
 import {AriaButtonProps} from '../button/useButton';
-
 import {DOMAttributes, FocusableElement, Node, RefObject} from '@react-types/shared';
 import {filterDOMProps} from '../utils/filterDOMProps';
 import {hookData} from './useTagGroup';
 import intlMessages from '../../intl/tag/*.json';
-import {KeyboardEvent} from 'react';
 import type {ListState} from 'react-stately/useListState';
 import {mergeProps} from '../utils/mergeProps';
-// @ts-ignore
 import {SelectableItemStates} from '../selection/useSelectableItem';
 import {useDescription} from '../utils/useDescription';
 import {useFocusable} from '../interactions/useFocusable';
 import {useGridListItem} from '../gridlist/useGridListItem';
 import {useId} from '../utils/useId';
 import {useInteractionModality} from '../interactions/useFocusVisible';
+import {useKeyboard} from '../interactions/useKeyboard';
 import {useLocalizedStringFormatter} from '../i18n/useLocalizedStringFormatter';
 import {useSyntheticLinkProps} from '../utils/openLink';
 
@@ -47,6 +45,7 @@ export interface AriaTagProps<T> {
 
 /**
  * Provides the behavior and accessibility implementation for a tag component.
+ *
  * @param props - Props to be applied to the tag.
  * @param state - State for the tag group, as returned by `useListState`.
  * @param ref - A ref to a DOM element for the tag.
@@ -73,20 +72,25 @@ export function useTag<T>(
   let {descriptionProps: _, ...stateWithoutDescription} = states;
 
   let isDisabled = state.disabledKeys.has(item.key) || item.props.isDisabled;
-  let onKeyDown = (e: KeyboardEvent) => {
-    if (e.key === 'Delete' || e.key === 'Backspace') {
-      if (isDisabled) {
-        return;
-      }
-
-      e.preventDefault();
-      if (state.selectionManager.isSelected(item.key)) {
-        onRemove?.(new Set(state.selectionManager.selectedKeys));
-      } else {
-        onRemove?.(new Set([item.key]));
+  let {keyboardProps} = useKeyboard({
+    isDisabled,
+    shortcuts: {
+      Delete: () => {
+        if (state.selectionManager.isSelected(item.key)) {
+          onRemove?.(new Set(state.selectionManager.selectedKeys));
+        } else {
+          onRemove?.(new Set([item.key]));
+        }
+      },
+      Backspace: () => {
+        if (state.selectionManager.isSelected(item.key)) {
+          onRemove?.(new Set(state.selectionManager.selectedKeys));
+        } else {
+          onRemove?.(new Set([item.key]));
+        }
       }
     }
-  };
+  });
 
   let modality = useInteractionModality();
   if (modality === 'virtual' && typeof window !== 'undefined' && 'ontouchstart' in window) {
@@ -125,7 +129,7 @@ export function useTag<T>(
     },
     rowProps: mergeProps(focusableProps, rowProps, domProps, linkProps, {
       tabIndex,
-      onKeyDown: onRemove ? onKeyDown : undefined,
+      ...(onRemove ? keyboardProps : {}),
       'aria-describedby': descProps['aria-describedby']
     }),
     gridCellProps: mergeProps(gridCellProps, {

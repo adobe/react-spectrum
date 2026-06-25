@@ -23,6 +23,7 @@ import {
   RefObject
 } from '@react-types/shared';
 import {DOMLayoutDelegate} from './DOMLayoutDelegate';
+import {getItemElement} from './utils';
 import {isScrollable} from '../utils/isScrollable';
 
 interface ListKeyboardDelegateOptions<T> {
@@ -95,11 +96,15 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
     );
   }
 
-  private findNextNonDisabled(key: Key | null, getNext: (key: Key) => Key | null): Key | null {
+  private findNextNonDisabled(
+    key: Key | null,
+    getNext: (key: Key) => Key | null,
+    includeDisabled = false
+  ): Key | null {
     let nextKey = key;
     while (nextKey != null) {
       let item = this.collection.getItem(nextKey);
-      if (item?.type === 'item' && !this.isDisabled(item)) {
+      if (item?.type === 'item' && (includeDisabled || !this.isDisabled(item))) {
         return nextKey;
       }
 
@@ -109,16 +114,24 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
     return null;
   }
 
-  getNextKey(key: Key): Key | null {
+  getNextKey(key: Key, options?: {includeDisabled?: boolean}): Key | null {
     let nextKey: Key | null = key;
     nextKey = this.collection.getKeyAfter(nextKey);
-    return this.findNextNonDisabled(nextKey, key => this.collection.getKeyAfter(key));
+    return this.findNextNonDisabled(
+      nextKey,
+      key => this.collection.getKeyAfter(key),
+      options?.includeDisabled
+    );
   }
 
-  getPreviousKey(key: Key): Key | null {
+  getPreviousKey(key: Key, options?: {includeDisabled?: boolean}): Key | null {
     let nextKey: Key | null = key;
     nextKey = this.collection.getKeyBefore(nextKey);
-    return this.findNextNonDisabled(nextKey, key => this.collection.getKeyBefore(key));
+    return this.findNextNonDisabled(
+      nextKey,
+      key => this.collection.getKeyBefore(key),
+      options?.includeDisabled
+    );
   }
 
   private findKey(
@@ -153,71 +166,112 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
     return prevRect.x === itemRect.x || prevRect.y !== itemRect.y;
   }
 
-  getKeyBelow(key: Key): Key | null {
+  // checks to see if the next/prev key is spatially above/below the current key. If not, that means we are in
+  // a reversed column layout and need to adjust appropriately
+  // TODO: still need to see how this works with virtualizer once there is handling for the reverse layout
+  // this felt like a simpler approach then changing getKeyAbove/Below to be purely spatial calculations
+  private isReversed(key: Key): boolean {
+    let nextKey = this.getNextKey(key);
+    let currentEl = getItemElement(this.ref, key);
+    if (nextKey != null) {
+      let nextEl = getItemElement(this.ref, nextKey);
+      if (!currentEl || !nextEl) {
+        return false;
+      }
+      return currentEl.getBoundingClientRect().top > nextEl.getBoundingClientRect().top;
+    }
+    let prevKey = this.getPreviousKey(key);
+    if (prevKey != null) {
+      let prevEl = getItemElement(this.ref, prevKey);
+      if (!currentEl || !prevEl) {
+        return false;
+      }
+      return prevEl.getBoundingClientRect().top > currentEl.getBoundingClientRect().top;
+    }
+    return false;
+  }
+
+  getKeyBelow(key: Key, options?: {includeDisabled?: boolean}): Key | null {
     if (this.layout === 'grid' && this.orientation === 'vertical') {
-      return this.findKey(key, key => this.getNextKey(key), this.isSameRow);
+      return this.findKey(key, key => this.getNextKey(key, options), this.isSameRow);
+    } else if (this.orientation === 'vertical') {
+      return this.isReversed(key)
+        ? this.getPreviousKey(key, options)
+        : this.getNextKey(key, options);
     } else {
-      return this.getNextKey(key);
+      return this.getNextKey(key, options);
     }
   }
 
-  getKeyAbove(key: Key): Key | null {
+  getKeyAbove(key: Key, options?: {includeDisabled?: boolean}): Key | null {
     if (this.layout === 'grid' && this.orientation === 'vertical') {
-      return this.findKey(key, key => this.getPreviousKey(key), this.isSameRow);
+      return this.findKey(key, key => this.getPreviousKey(key, options), this.isSameRow);
+    } else if (this.orientation === 'vertical') {
+      return this.isReversed(key)
+        ? this.getNextKey(key, options)
+        : this.getPreviousKey(key, options);
     } else {
-      return this.getPreviousKey(key);
+      return this.getPreviousKey(key, options);
     }
   }
 
-  private getNextColumn(key: Key, right: boolean) {
-    return right ? this.getPreviousKey(key) : this.getNextKey(key);
+  private getNextColumn(key: Key, right: boolean, options?: {includeDisabled?: boolean}) {
+    return right ? this.getPreviousKey(key, options) : this.getNextKey(key, options);
   }
 
-  getKeyRightOf?(key: Key): Key | null {
+  getKeyRightOf?(key: Key, options?: {includeDisabled?: boolean}): Key | null {
     // This is a temporary solution for CardView until we refactor useSelectableCollection.
     // https://github.com/orgs/adobe/projects/19/views/32?pane=issue&itemId=77825042
     let layoutDelegateMethod = this.direction === 'ltr' ? 'getKeyRightOf' : 'getKeyLeftOf';
     if (this.layoutDelegate[layoutDelegateMethod]) {
       key = this.layoutDelegate[layoutDelegateMethod](key);
-      return this.findNextNonDisabled(key, key => this.layoutDelegate[layoutDelegateMethod](key));
+      return this.findNextNonDisabled(
+        key,
+        key => this.layoutDelegate[layoutDelegateMethod](key),
+        options?.includeDisabled
+      );
     }
 
     if (this.layout === 'grid') {
       if (this.orientation === 'vertical') {
-        return this.getNextColumn(key, this.direction === 'rtl');
+        return this.getNextColumn(key, this.direction === 'rtl', options);
       } else {
         return this.findKey(
           key,
-          key => this.getNextColumn(key, this.direction === 'rtl'),
+          key => this.getNextColumn(key, this.direction === 'rtl', options),
           this.isSameColumn
         );
       }
     } else if (this.orientation === 'horizontal') {
-      return this.getNextColumn(key, this.direction === 'rtl');
+      return this.getNextColumn(key, this.direction === 'rtl', options);
     }
 
     return null;
   }
 
-  getKeyLeftOf?(key: Key): Key | null {
+  getKeyLeftOf?(key: Key, options?: {includeDisabled?: boolean}): Key | null {
     let layoutDelegateMethod = this.direction === 'ltr' ? 'getKeyLeftOf' : 'getKeyRightOf';
     if (this.layoutDelegate[layoutDelegateMethod]) {
       key = this.layoutDelegate[layoutDelegateMethod](key);
-      return this.findNextNonDisabled(key, key => this.layoutDelegate[layoutDelegateMethod](key));
+      return this.findNextNonDisabled(
+        key,
+        key => this.layoutDelegate[layoutDelegateMethod](key),
+        options?.includeDisabled
+      );
     }
 
     if (this.layout === 'grid') {
       if (this.orientation === 'vertical') {
-        return this.getNextColumn(key, this.direction === 'ltr');
+        return this.getNextColumn(key, this.direction === 'ltr', options);
       } else {
         return this.findKey(
           key,
-          key => this.getNextColumn(key, this.direction === 'ltr'),
+          key => this.getNextColumn(key, this.direction === 'ltr', options),
           this.isSameColumn
         );
       }
     } else if (this.orientation === 'horizontal') {
-      return this.getNextColumn(key, this.direction === 'ltr');
+      return this.getNextColumn(key, this.direction === 'ltr', options);
     }
 
     return null;
@@ -240,6 +294,7 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
       return null;
     }
 
+    let reversed = this.isReversed(key);
     if (menu && !isScrollable(menu)) {
       return this.getFirstKey();
     }
@@ -256,10 +311,11 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
         itemRect = nextKey == null ? null : this.layoutDelegate.getItemRect(nextKey);
       }
     } else {
-      let pageY = Math.max(
-        0,
-        itemRect.y + itemRect.height - this.layoutDelegate.getVisibleRect().height
-      );
+      let visibleRect = this.layoutDelegate.getVisibleRect();
+      // column reverse makes y negative for items so we need to instead do current pos - height instead
+      let pageY = reversed
+        ? itemRect.y - visibleRect.height
+        : Math.max(0, itemRect.y + itemRect.height - visibleRect.height);
 
       while (itemRect && itemRect.y > pageY && nextKey != null) {
         nextKey = this.getKeyAbove(nextKey);
@@ -267,7 +323,7 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
       }
     }
 
-    return nextKey ?? this.getFirstKey();
+    return nextKey ?? (reversed ? this.getLastKey() : this.getFirstKey());
   }
 
   getKeyPageBelow(key: Key): Key | null {
@@ -277,6 +333,7 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
       return null;
     }
 
+    let reversed = this.isReversed(key);
     if (menu && !isScrollable(menu)) {
       return this.getLastKey();
     }
@@ -304,7 +361,7 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
       }
     }
 
-    return nextKey ?? this.getLastKey();
+    return nextKey ?? (reversed ? this.getFirstKey() : this.getLastKey());
   }
 
   getKeyForSearch(search: string, fromKey?: Key): Key | null {

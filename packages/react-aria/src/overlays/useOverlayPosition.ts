@@ -50,30 +50,35 @@ export type PlacementAxis = Axis | 'center';
 export interface PositionProps {
   /**
    * The placement of the element with respect to its anchor element.
+   *
    * @default 'bottom'
    */
   placement?: Placement;
   /**
    * The placement padding that should be applied between the element and its
    * surrounding container.
+   *
    * @default 12
    */
   containerPadding?: number;
   /**
    * The additional offset applied along the main axis between the element and its
    * anchor element.
+   *
    * @default 0
    */
   offset?: number;
   /**
    * The additional offset applied along the cross axis between the element and its
    * anchor element.
+   *
    * @default 0
    */
   crossOffset?: number;
   /**
    * Whether the element should flip its orientation (e.g. top to bottom or left to right) when
    * there is insufficient room for it to render completely.
+   *
    * @default true
    */
   shouldFlip?: boolean;
@@ -89,11 +94,13 @@ export interface PositionProps {
 export interface AriaPositionProps extends PositionProps {
   /**
    * Cross size of the overlay arrow in pixels.
+   *
    * @default 0
    */
   arrowSize?: number;
   /**
    * Element that that serves as the positioning boundary.
+   *
    * @default document.body
    */
   boundaryElement?: Element;
@@ -111,11 +118,13 @@ export interface AriaPositionProps extends PositionProps {
   arrowRef?: RefObject<Element | null>;
   /**
    * A ref for the scrollable region within the overlay.
+   *
    * @default overlayRef
    */
   scrollRef?: RefObject<Element | null>;
   /**
    * Whether the overlay should update its position automatically.
+   *
    * @default true
    */
   shouldUpdatePosition?: boolean;
@@ -128,9 +137,18 @@ export interface AriaPositionProps extends PositionProps {
   maxHeight?: number;
   /**
    * The minimum distance the arrow's edge should be from the edge of the overlay element.
+   *
    * @default 0
    */
   arrowBoundaryOffset?: number;
+  /**
+   * Overrides the target element's bounding rectangle. Useful for positioning relative to
+   * a specific point such as the mouse cursor (e.g. context menus) or text selection.
+   *
+   * @default target.getBoundingClientRect()
+   * @param target - The target element.
+   */
+  getTargetRect?: (target: Element) => DOMRect | null | undefined;
 }
 
 export interface PositionAria {
@@ -175,16 +193,21 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
     isOpen = true,
     onClose,
     maxHeight,
-    arrowBoundaryOffset = 0
+    arrowBoundaryOffset = 0,
+    getTargetRect
   } = props;
   let [position, setPosition] = useState<PositionResult | null>(null);
 
   let deps = [
     shouldUpdatePosition,
     placement,
+    // oxlint-disable-next-line react/react-compiler
     overlayRef.current,
+    // oxlint-disable-next-line react/react-compiler
     targetRef.current,
+    // oxlint-disable-next-line react/react-compiler
     arrowRef?.current,
+    // oxlint-disable-next-line react/react-compiler
     scrollRef.current,
     containerPadding,
     shouldFlip,
@@ -264,7 +287,8 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
       crossOffset,
       maxHeight,
       arrowSize: arrowSize ?? (arrowRef?.current ? getRect(arrowRef.current, true).width : 0),
-      arrowBoundaryOffset
+      arrowBoundaryOffset,
+      targetRect: getTargetRect?.(targetRef.current)
     });
 
     if (!position.position) {
@@ -295,10 +319,12 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
     // Trigger a set state for a second render anyway for arrow positioning
     setPosition(position);
     // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react/react-compiler, react-hooks/exhaustive-deps
   }, deps);
 
   // Update position when anything changes
   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // oxlint-disable-next-line react/react-compiler, react-hooks/exhaustive-deps
   useLayoutEffect(updatePosition, deps);
 
   // Update position on window resize

@@ -32,12 +32,14 @@ export interface SpectrumColorPickerProps
   children?: ReactNode;
   /**
    * The size of the color swatch.
-   * @default "M"
+   *
+   * @default 'M'
    */
   size?: 'XS' | 'S' | 'M' | 'L';
   /**
    * The corner rounding of the color swatch.
-   * @default "default"
+   *
+   * @default 'default'
    */
   rounding?: 'default' | 'none' | 'full';
 }
@@ -54,6 +56,7 @@ export const ColorPicker = React.forwardRef(function ColorPicker(
   let labelId = useId();
   return (
     <AriaColorPicker {...props}>
+      {/* oxlint-disable-next-line react/react-compiler */}
       <DialogTrigger type="popover" mobileType="tray" targetRef={unwrapDOMRef(swatchRef)}>
         <Button
           ref={domRef}

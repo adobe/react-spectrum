@@ -1,3 +1,16 @@
 .disableAnimations * {
   transition: none !important;
+  animation: none !important;
+}
+
+/*
+  Overlays that use useEnterAnimation/useExitAnimation (Popover, Tooltip, Tabs)
+  render at a translate offset while [data-entering]/[data-exiting] is true,
+  relying on the transition to slide back to translate: 0. With transitions
+  disabled in Chromatic, the slide never happens, so a snapshot taken while
+  isEntering is still true catches the popover ~4px off.
+*/
+.disableAnimations [data-entering],
+.disableAnimations [data-exiting] {
+  translate: none !important;
 }

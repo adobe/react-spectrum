@@ -68,7 +68,8 @@ function triggerChangeHandlers(modality: Modality, e: HandlerEvent) {
 }
 
 /**
- * Helper function to determine if a KeyboardEvent is unmodified and could make keyboard focus styles visible.
+ * Helper function to determine if a KeyboardEvent is unmodified and could make keyboard focus
+ * styles visible.
  */
 function isValidKey(e: KeyboardEvent) {
   // Control and Shift keys trigger when navigating back to the tab with keyboard.
@@ -166,11 +167,18 @@ function setupGlobalFocusEvents(element?: HTMLElement | null) {
   // However, we need to detect other cases when a focus event occurs without
   // a preceding user event (e.g. screen reader focus). Overriding the focus
   // method on HTMLElement.prototype is a bit hacky, but works.
+  // defineProperty (not assignment) so this works even if `focus` is currently
+  // a getter-only accessor — e.g. when @testing-library/user-event's setup()
+  // has instrumented it. Plain assignment throws in that case.
   let focus = windowObject.HTMLElement.prototype.focus;
-  windowObject.HTMLElement.prototype.focus = function () {
-    hasEventBeforeFocus = true;
-    focus.apply(this, arguments as unknown as [options?: FocusOptions | undefined]);
-  };
+  Reflect.defineProperty(windowObject.HTMLElement.prototype, 'focus', {
+    configurable: true,
+    writable: true,
+    value: function () {
+      hasEventBeforeFocus = true;
+      focus.apply(this, arguments as unknown as [options?: FocusOptions | undefined]);
+    }
+  });
 
   documentObject.addEventListener('keydown', handleKeyboardEvent, true);
   documentObject.addEventListener('keyup', handleKeyboardEvent, true);
@@ -212,7 +220,11 @@ const tearDownWindowFocusTracking = (element, loadListener?: () => void) => {
   if (!hasSetupGlobalListeners.has(windowObject)) {
     return;
   }
-  windowObject.HTMLElement.prototype.focus = hasSetupGlobalListeners.get(windowObject)!.focus;
+  Reflect.defineProperty(windowObject.HTMLElement.prototype, 'focus', {
+    configurable: true,
+    writable: true,
+    value: hasSetupGlobalListeners.get(windowObject)!.focus
+  });
 
   documentObject.removeEventListener('keydown', handleKeyboardEvent, true);
   documentObject.removeEventListener('keyup', handleKeyboardEvent, true);
@@ -238,17 +250,19 @@ const tearDownWindowFocusTracking = (element, loadListener?: () => void) => {
  * EXPERIMENTAL
  * Adds a window (i.e. iframe) to the list of windows that are being tracked for focus visible.
  *
- * Sometimes apps render portions of their tree into an iframe. In this case, we cannot accurately track if the focus
- * is visible because we cannot see interactions inside the iframe. If you have this in your application's architecture,
- * then this function will attach event listeners inside the iframe. You should call `addWindowFocusTracking` with an
- * element from inside the window you wish to add. We'll retrieve the relevant elements based on that.
- * Note, you do not need to call this for the default window, as we call it for you.
+ * Sometimes apps render portions of their tree into an iframe. In this case, we cannot accurately
+ * track if the focus is visible because we cannot see interactions inside the iframe. If you have
+ * this in your application's architecture, then this function will attach event listeners inside
+ * the iframe. You should call `addWindowFocusTracking` with an element from inside the window you
+ * wish to add. We'll retrieve the relevant elements based on that. Note, you do not need to call
+ * this for the default window, as we call it for you.
  *
- * When you are ready to stop listening, but you do not wish to unmount the iframe, you may call the cleanup function
- * returned by `addWindowFocusTracking`. Otherwise, when you unmount the iframe, all listeners and state will be cleaned
- * up automatically for you.
+ * When you are ready to stop listening, but you do not wish to unmount the iframe, you may call the
+ * cleanup function returned by `addWindowFocusTracking`. Otherwise, when you unmount the iframe,
+ * all listeners and state will be cleaned up automatically for you.
  *
- * @param element @default document.body - The element provided will be used to get the window to add.
+ * @param element @default document.body - The element provided will be used to get the window to
+ *   add.
  * @returns A function to remove the event listeners and cleanup the state.
  */
 export function addWindowFocusTracking(element?: HTMLElement | null): () => void {
@@ -328,12 +342,12 @@ const nonTextInputTypes = new Set([
 ]);
 
 /**
- * If this is attached to text input component, return if the event is a focus event (Tab/Escape keys pressed) so that
- * focus visible style can be properly set.
+ * If this is attached to text input component, return if the event is a focus event (Tab/Escape
+ * keys pressed) so that focus visible style can be properly set.
  */
 function isKeyboardFocusEvent(isTextInput: boolean, modality: Modality, e: HandlerEvent) {
   let eventTarget = e ? (getEventTarget(e) as Element) : undefined;
-  let document = getOwnerDocument(eventTarget);
+  let ownerDocument = getOwnerDocument(eventTarget);
   let ownerWindow = getOwnerWindow(eventTarget);
   const IHTMLInputElement =
     typeof ownerWindow !== 'undefined' ? ownerWindow.HTMLInputElement : HTMLInputElement;
@@ -345,7 +359,7 @@ function isKeyboardFocusEvent(isTextInput: boolean, modality: Modality, e: Handl
 
   // For keyboard events that occur on a non-input element that will move focus into input element (aka ArrowLeft going from Datepicker button to the main input group)
   // we need to rely on the user passing isTextInput into here. This way we can skip toggling focus visiblity for said input element
-  let activeElement = getActiveElement(document);
+  let activeElement = getActiveElement(ownerDocument);
   isTextInput =
     isTextInput ||
     (activeElement instanceof IHTMLInputElement && !nonTextInputTypes.has(activeElement.type)) ||

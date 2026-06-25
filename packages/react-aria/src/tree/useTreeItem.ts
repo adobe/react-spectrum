@@ -17,14 +17,16 @@ import {
   useGridListItem
 } from '../gridlist/useGridListItem';
 import {DOMAttributes, FocusableElement, Node, RefObject} from '@react-types/shared';
-// @ts-ignore
 import intlMessages from '../../intl/tree/*.json';
 import {TreeState} from 'react-stately/useTreeState';
 import {useLabels} from '../utils/useLabels';
 import {useLocalizedStringFormatter} from '../i18n/useLocalizedStringFormatter';
 
 export interface AriaTreeItemOptions extends Omit<AriaGridListItemOptions, 'isVirtualized'> {
-  /** An object representing the treegrid item. Contains all the relevant information that makes up the treegrid row. */
+  /**
+   * An object representing the treegrid item. Contains all the relevant information that makes up
+   * the treegrid row.
+   */
   node: Node<unknown>;
 }
 
@@ -41,6 +43,7 @@ export interface TreeItemAria extends GridListItemAria {
 
 /**
  * Provides the behavior and accessibility implementation for a row in a tree grid list.
+ *
  * @param props - Props for the row.
  * @param state - State of the parent list, as returned by `useTreeState`.
  * @param ref - The ref attached to the row element.

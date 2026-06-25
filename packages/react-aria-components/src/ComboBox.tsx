@@ -62,32 +62,37 @@ type SelectionMode = 'single' | 'multiple';
 export interface ComboBoxRenderProps {
   /**
    * Whether the combobox is currently open.
+   *
    * @selector [data-open]
    */
   isOpen: boolean;
   /**
    * Whether the combobox is disabled.
+   *
    * @selector [data-disabled]
    */
   isDisabled: boolean;
   /**
    * Whether the combobox is invalid.
+   *
    * @selector [data-invalid]
    */
   isInvalid: boolean;
   /**
    * Whether the combobox is required.
+   *
    * @selector [data-required]
    */
   isRequired: boolean;
   /**
    * Whether the combobox is read only.
+   *
    * @selector [data-readonly]
    */
   isReadOnly: boolean;
 }
 
-export interface ComboBoxProps<T extends object, M extends SelectionMode = 'single'>
+export interface ComboBoxProps<T, M extends SelectionMode = 'single'>
   extends
     Omit<
       AriaComboBoxProps<T, M>,
@@ -104,15 +109,21 @@ export interface ComboBoxProps<T extends object, M extends SelectionMode = 'sing
     SlotProps,
     GlobalDOMAttributes<HTMLDivElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-ComboBox'
    */
   className?: ClassNameOrFunction<ComboBoxRenderProps>;
-  /** The filter function used to determine if a option should be included in the combo box list. */
+  /**
+   * The filter function used to determine if an option should be included in the combo box list.
+   * By default, a language-sensitive "contains" filter from `useFilter` is used.
+   */
   defaultFilter?: (textValue: string, inputValue: string) => boolean;
   /**
-   * Whether the text or key of the selected item is submitted as part of an HTML form.
-   * When `allowsCustomValue` is `true`, this option does not apply and the text is always submitted.
+   * Whether the text or key of the selected item is submitted as part of an HTML form. When
+   * `allowsCustomValue` is `true`, this option does not apply and the text is always submitted.
+   *
    * @default 'key'
    */
   formValue?: 'text' | 'key';
@@ -125,10 +136,11 @@ export const ComboBoxContext =
 export const ComboBoxStateContext = createContext<ComboBoxState<any, SelectionMode> | null>(null);
 
 /**
- * A combo box combines a text input with a listbox, allowing users to filter a list of options to items matching a query.
+ * A combo box combines a text input with a listbox, allowing users to filter a list of options to
+ * items matching a query.
  */
 export const ComboBox = /*#__PURE__*/ createHideableComponent(function ComboBox<
-  T extends object,
+  T,
   M extends SelectionMode = 'single'
 >(props: ComboBoxProps<T, M>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, ComboBoxContext);
@@ -167,17 +179,13 @@ export const ComboBox = /*#__PURE__*/ createHideableComponent(function ComboBox<
 // Contexts to clear inside the popover.
 const CLEAR_CONTEXTS = [LabelContext, ButtonContext, InputContext, GroupContext, TextContext];
 
-interface ComboBoxInnerProps<T extends object> {
+interface ComboBoxInnerProps<T> {
   props: ComboBoxProps<T, SelectionMode>;
   collection: Collection<Node<T>>;
   comboBoxRef: RefObject<HTMLDivElement | null>;
 }
 
-function ComboBoxInner<T extends object>({
-  props,
-  collection,
-  comboBoxRef: ref
-}: ComboBoxInnerProps<T>) {
+function ComboBoxInner<T>({props, collection, comboBoxRef: ref}: ComboBoxInnerProps<T>) {
   let {name, formValue = 'key', allowsCustomValue} = props;
   if (allowsCustomValue) {
     formValue = 'text';
@@ -250,6 +258,7 @@ function ComboBoxInner<T extends object>({
         return groupRef.current || inputRef.current;
       }
     }),
+    // oxlint-disable-next-line react/react-compiler
     [groupRef, inputRef]
   );
 
@@ -346,6 +355,7 @@ function ComboBoxInner<T extends object>({
 export interface ComboBoxValueRenderProps<T> {
   /**
    * Whether the value is a placeholder.
+   *
    * @selector [data-placeholder]
    */
   isPlaceholder: boolean;
@@ -357,12 +367,14 @@ export interface ComboBoxValueRenderProps<T> {
   state: ComboBoxState<T, 'single' | 'multiple'>;
 }
 
-export interface ComboBoxValueProps<T extends object>
+export interface ComboBoxValueProps<T>
   extends
     Omit<HTMLAttributes<HTMLElement>, keyof RenderProps<unknown>>,
     RenderProps<ComboBoxValueRenderProps<T>, 'div'> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-ComboBoxValue'
    */
   className?: ClassNameOrFunction<ComboBoxValueRenderProps<T>>;
@@ -374,12 +386,14 @@ export const ComboBoxValueContext =
   createContext<ContextValue<ComboBoxValueProps<any>, HTMLDivElement>>(null);
 
 /**
- * ComboBoxValue renders the selected values of a ComboBox, or a placeholder if no value is selected.
- * By default, the items are rendered as a comma separated list. Use the render function to customize this.
+ * ComboBoxValue renders the selected values of a ComboBox, or a placeholder if no value is
+ * selected. By default, the items are rendered as a comma separated list. Use the render function
+ * to customize this.
  */
-export const ComboBoxValue = /*#__PURE__*/ createHideableComponent(function ComboBoxValue<
-  T extends object
->(props: ComboBoxValueProps<T>, ref: ForwardedRef<HTMLDivElement>) {
+export const ComboBoxValue = /*#__PURE__*/ createHideableComponent(function ComboBoxValue<T>(
+  props: ComboBoxValueProps<T>,
+  ref: ForwardedRef<HTMLDivElement>
+) {
   [props, ref] = useContextProps(props, ref, ComboBoxValueContext);
   let state = useContext(ComboBoxStateContext)!;
   let formatter = useListFormatter();

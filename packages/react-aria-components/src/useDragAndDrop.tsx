@@ -105,14 +105,16 @@ interface DropHooks {
 export type DragAndDropHooks<T = object> = DragHooks<T> & DropHooks;
 
 export interface DragAndDrop<T = object> {
-  /** Drag and drop hooks for the collection element.  */
+  /** Drag and drop hooks for the collection element. */
   dragAndDropHooks: DragAndDropHooks<T>;
 }
 
 export interface DragAndDropOptions<T = object>
   extends Omit<DraggableCollectionProps, 'preview' | 'getItems'>, DroppableCollectionProps {
   /**
-   * A function that returns the items being dragged. If not specified, we assume that the collection is not draggable.
+   * A function that returns the items being dragged. If not specified, we assume that the
+   * collection is not draggable.
+   *
    * @default () => []
    */
   getItems?: (keys: Set<Key>, items: T[]) => DragItem[];
@@ -129,14 +131,18 @@ export interface DragAndDropOptions<T = object>
    * default DropIndicator is provided.
    */
   renderDropIndicator?: (target: DropTarget) => JSX.Element;
-  /** A custom delegate object that provides drop targets for pointer coordinates within the collection. */
+  /**
+   * A custom delegate object that provides drop targets for pointer coordinates within the
+   * collection.
+   */
   dropTargetDelegate?: DropTargetDelegate;
   /** Whether the drag and drop events should be disabled. */
   isDisabled?: boolean;
 }
 
 /**
- * Provides the hooks required to enable drag and drop behavior for a drag and drop compatible collection component.
+ * Provides the hooks required to enable drag and drop behavior for a drag and drop compatible
+ * collection component.
  */
 export function useDragAndDrop<T = object>(options: DragAndDropOptions<T>): DragAndDrop<T> {
   let dragAndDropHooks = useMemo(() => {
@@ -161,12 +167,15 @@ export function useDragAndDrop<T = object>(options: DragAndDropOptions<T>): Drag
       hooks.useDraggableCollectionState = function useDraggableCollectionStateOverride(
         props: DraggableCollectionStateOpts
       ) {
+        // oxlint-disable-next-line react/react-compiler
         return useDraggableCollectionState({
           ...props,
           ...options
         } as DraggableCollectionStateOptions);
       };
+      // oxlint-disable-next-line react/react-compiler
       hooks.useDraggableCollection = useDraggableCollection;
+      // oxlint-disable-next-line react/react-compiler
       hooks.useDraggableItem = useDraggableItem;
       hooks.DragPreview = DragPreview;
       hooks.renderDragPreview = renderDragPreview;
@@ -177,16 +186,20 @@ export function useDragAndDrop<T = object>(options: DragAndDropOptions<T>): Drag
       hooks.useDroppableCollectionState = function useDroppableCollectionStateOverride(
         props: DroppableCollectionStateOptions
       ) {
+        // oxlint-disable-next-line react/react-compiler
         return useDroppableCollectionState({...props, ...options});
       };
+      // oxlint-disable-next-line react/react-compiler
       hooks.useDroppableItem = useDroppableItem;
       hooks.useDroppableCollection = function useDroppableCollectionOverride(
         props: DroppableCollectionOptions,
         state: DroppableCollectionState,
         ref: RefObject<HTMLElement | null>
       ) {
+        // oxlint-disable-next-line react/react-compiler
         return useDroppableCollection({...props, ...options}, state, ref);
       };
+      // oxlint-disable-next-line react/react-compiler
       hooks.useDropIndicator = useDropIndicator;
       hooks.renderDropIndicator = renderDropIndicator;
       hooks.dropTargetDelegate = dropTargetDelegate;

@@ -29,6 +29,7 @@ export interface BaseLayoutOptions {
   scale?: Scale;
   /**
    * The margin around the grid view between the edges and the items.
+   *
    * @default 24
    */
   margin?: number;
@@ -220,12 +221,12 @@ export class BaseLayout<T>
 
   getFirstKey(): Node<T> | undefined {
     let firstRow = this.collection.getItem(this.collection.getFirstKey());
-    return getFirstItem(getChildNodes(firstRow, this.collection))?.key;
+    return firstRow ? getFirstItem(getChildNodes(firstRow, this.collection))?.key : null;
   }
 
   getLastKey(): Node<T> | undefined {
     let lastRow = this.collection.getItem(this.collection.getLastKey());
-    return getFirstItem(getChildNodes(lastRow, this.collection))?.key;
+    return lastRow ? getFirstItem(getChildNodes(lastRow, this.collection))?.key : null;
   }
 
   // TODO: pretty unwieldy because it needs to bounce back and forth between the parent key and the child key

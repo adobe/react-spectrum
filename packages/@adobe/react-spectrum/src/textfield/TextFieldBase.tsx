@@ -15,7 +15,6 @@ import CheckmarkMedium from '@spectrum-icons/ui/CheckmarkMedium';
 import {classNames} from '../utils/classNames';
 import {createFocusableRef} from '../utils/useDOMRef';
 import {Field} from '../label/Field';
-// @ts-ignore
 import intlMessages from '../../intl/textfield/*.json';
 import {mergeProps} from 'react-aria/mergeProps';
 import {PressEvents, RefObject, ValidationResult} from '@react-types/shared';
@@ -138,6 +137,7 @@ export const TextFieldBase = forwardRef(function TextFieldBase(
     !isDisabled &&
     (!inputPropsAriaDescribedBy || !inputPropsAriaDescribedBy.includes(validId))
   ) {
+    // oxlint-disable-next-line react/react-compiler
     inputProps['aria-describedby'] = [inputPropsAriaDescribedBy, validId].join(' ').trim();
   }
 

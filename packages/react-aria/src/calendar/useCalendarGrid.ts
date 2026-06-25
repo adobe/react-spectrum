@@ -14,12 +14,13 @@ import {CalendarDate, startOfWeek, today} from '@internationalized/date';
 import {CalendarSelectionMode, CalendarState} from 'react-stately/useCalendarState';
 import {DOMAttributes} from '@react-types/shared';
 import {hookData, useVisibleRangeDescription} from './utils';
-import {KeyboardEvent, useMemo} from 'react';
 import {mergeProps} from '../utils/mergeProps';
 import {RangeCalendarState} from 'react-stately/useRangeCalendarState';
 import {useDateFormatter} from '../i18n/useDateFormatter';
+import {useKeyboard} from '../interactions/useKeyboard';
 import {useLabels} from '../utils/useLabels';
 import {useLocale} from '../i18n/I18nProvider';
+import {useMemo} from 'react';
 
 export interface AriaCalendarGridProps {
   /**
@@ -37,7 +38,8 @@ export interface AriaCalendarGridProps {
   /**
    * The style of weekday names to display in the calendar grid header,
    * e.g. single letter, abbreviation, or full day name.
-   * @default "narrow"
+   *
+   * @default 'narrow'
    */
   weekdayStyle?: 'narrow' | 'short' | 'long';
   /**
@@ -51,7 +53,10 @@ export interface CalendarGridAria {
   gridProps: DOMAttributes;
   /** Props for the grid header element (e.g. `<thead>`). */
   headerProps: DOMAttributes;
-  /** A list of week day abbreviations formatted for the current locale, typically used in column headers. */
+  /**
+   * A list of week day abbreviations formatted for the current locale, typically used in column
+   * headers.
+   */
   weekDays: string[];
   /** The number of weeks in the month. */
   weeksInMonth: number;
@@ -74,70 +79,61 @@ export function useCalendarGrid(
 
   let {direction} = useLocale();
 
-  let onKeyDown = (e: KeyboardEvent) => {
-    switch (e.key) {
-      case 'Enter':
-      case ' ':
-        e.preventDefault();
+  let {keyboardProps} = useKeyboard({
+    shortcuts: {
+      Enter: () => {
         state.selectFocusedDate();
-        break;
-      case 'PageUp':
-        e.preventDefault();
-        e.stopPropagation();
-        state.focusPreviousSection(e.shiftKey);
-        break;
-      case 'PageDown':
-        e.preventDefault();
-        e.stopPropagation();
-        state.focusNextSection(e.shiftKey);
-        break;
-      case 'End':
-        e.preventDefault();
-        e.stopPropagation();
+      },
+      ' ': () => {
+        state.selectFocusedDate();
+      },
+      PageUp: () => {
+        state.focusPreviousSection();
+      },
+      'Shift+PageUp': () => {
+        state.focusPreviousSection(true);
+      },
+      PageDown: () => {
+        state.focusNextSection();
+      },
+      'Shift+PageDown': () => {
+        state.focusNextSection(true);
+      },
+      End: () => {
         state.focusSectionEnd();
-        break;
-      case 'Home':
-        e.preventDefault();
-        e.stopPropagation();
+      },
+      Home: () => {
         state.focusSectionStart();
-        break;
-      case 'ArrowLeft':
-        e.preventDefault();
-        e.stopPropagation();
+      },
+      ArrowLeft: () => {
         if (direction === 'rtl') {
           state.focusNextDay();
         } else {
           state.focusPreviousDay();
         }
-        break;
-      case 'ArrowUp':
-        e.preventDefault();
-        e.stopPropagation();
+      },
+      ArrowUp: () => {
         state.focusPreviousRow();
-        break;
-      case 'ArrowRight':
-        e.preventDefault();
-        e.stopPropagation();
+      },
+      ArrowRight: () => {
         if (direction === 'rtl') {
           state.focusPreviousDay();
         } else {
           state.focusNextDay();
         }
-        break;
-      case 'ArrowDown':
-        e.preventDefault();
-        e.stopPropagation();
+      },
+      ArrowDown: () => {
         state.focusNextRow();
-        break;
-      case 'Escape':
+      },
+      Escape: () => {
         // Cancel the selection.
         if ('setAnchorDate' in state) {
-          e.preventDefault();
           state.setAnchorDate(null);
         }
-        break;
+        return false; // TODO: is this really correct? or should it return true when we cancel and only propagate if there's nothing to do
+      }
     }
-  };
+  });
 
   let visibleRangeDescription = useVisibleRangeDescription(
     startDate,
@@ -178,7 +174,7 @@ export function useCalendarGrid(
       'aria-disabled': state.isDisabled || undefined,
       'aria-multiselectable':
         'highlightedRange' in state || state.selectionMode === 'multiple' || undefined,
-      onKeyDown,
+      ...keyboardProps,
       onFocus: () => state.setFocused(true),
       onBlur: () => state.setFocused(false)
     }),

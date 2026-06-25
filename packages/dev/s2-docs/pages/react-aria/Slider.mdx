@@ -2,6 +2,7 @@ import {Layout} from '../../src/Layout';
 export default Layout;
 
 import docs from 'docs:react-aria-components';
+import vanillaDocs from 'docs:vanilla-starter/Slider';
 import {Slider as VanillaSlider} from 'vanilla-starter/Slider';
 import {Slider as TailwindSlider} from 'tailwind-starter/Slider';
 import tailwindDocs from 'docs:tailwind-starter/Slider';
@@ -86,15 +87,16 @@ By default, slider values are percentages between 0 and 100. Use the `minValue`,
 
 <VisualExample
   component={VanillaSlider}
-  docs={docs.exports.Slider}
-  links={docs.links}
-  props={['minValue', 'maxValue', 'step']}
+  docs={vanillaDocs.exports.Slider}
+  links={vanillaDocs.links}
+  props={['minValue', 'maxValue', 'step', 'fillOffset']}
   initialProps={{
     label: 'Amount',
     minValue: 0,
     maxValue: 150,
     defaultValue: 50,
-    step: 5
+    step: 5,
+    fillOffset: 75
   }} />
 
 ## Examples
@@ -105,11 +107,12 @@ By default, slider values are percentages between 0 and 100. Use the `minValue`,
 
 <Anatomy />
 
-```tsx links={{Slider: '#slider', SliderOutput: '#slideroutput', SliderTrack: '#slidertrack', SliderThumb: '#sliderthumb'}}
+```tsx links={{Slider: '#slider', SliderOutput: '#slideroutput', SliderTrack: '#slidertrack', SliderFill: '#sliderfill', SliderThumb: '#sliderthumb'}}
 <Slider>
   <Label />
   <SliderOutput />
   <SliderTrack>
+    <SliderFill />
     <SliderThumb />
     <SliderThumb>
       <Label />
@@ -129,6 +132,10 @@ By default, slider values are percentages between 0 and 100. Use the `minValue`,
 ### SliderTrack
 
 <PropTable component={docs.exports.SliderTrack} links={docs.links} showDescription />
+
+### SliderFill
+
+<PropTable component={docs.exports.SliderFill} links={docs.links} showDescription />
 
 ### SliderThumb
 

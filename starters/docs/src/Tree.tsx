@@ -18,7 +18,7 @@ import {Checkbox} from './Checkbox';
 import {ProgressCircle} from './ProgressCircle';
 import './Tree.css';
 
-export function Tree<T extends object>(props: TreeProps<T>) {
+export function Tree<T>(props: TreeProps<T>) {
   return <AriaTree {...props} />;
 }
 
@@ -48,15 +48,21 @@ export function TreeItemContent(
 }
 
 export interface TreeItemProps extends Partial<AriaTreeItemProps> {
-  title: React.ReactNode;
+  title?: React.ReactNode;
 }
 
 export function TreeItem(props: TreeItemProps) {
   let textValue = typeof props.title === 'string' ? props.title : '';
   return (
     <AriaTreeItem textValue={textValue} {...props}>
-      <TreeItemContent>{props.title}</TreeItemContent>
-      {props.children}
+      {props.title != null ? (
+        <>
+          <TreeItemContent>{props.title}</TreeItemContent>
+          {props.children}
+        </>
+      ) : (
+        props.children
+      )}
     </AriaTreeItem>
   );
 }
@@ -69,7 +75,7 @@ export function TreeLoadMoreItem(props: TreeLoadMoreItemProps) {
   );
 }
 
-export function TreeSection<T extends object>(props: React.ComponentProps<typeof AriaTreeSection>) {
+export function TreeSection(props: React.ComponentProps<typeof AriaTreeSection>) {
   return <AriaTreeSection {...props} />;
 }
 

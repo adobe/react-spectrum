@@ -39,7 +39,6 @@ import React, {
 } from 'react';
 import searchAutocompleteStyles from './searchautocomplete.css';
 import searchStyles from '@adobe/spectrum-css-temp/components/search/vars.css';
-// @ts-ignore
 import {setInteractionModality} from 'react-aria/private/interactions/useFocusVisible';
 import {SpectrumSearchAutocompleteProps} from './SearchAutocomplete';
 import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
@@ -64,6 +63,7 @@ function ForwardMobileSearchAutocomplete<T extends object>(
   props: SpectrumSearchAutocompleteProps<T>,
   ref: FocusableRef<HTMLElement>
 ) {
+  // oxlint-disable-next-line react/react-compiler
   props = useProviderProps(props);
 
   let {
@@ -118,6 +118,7 @@ function ForwardMobileSearchAutocomplete<T extends object>(
   });
 
   // Focus the button and show focus ring when clicking on the label
+  // oxlint-disable-next-line react/react-compiler
   labelProps.onClick = () => {
     if (!props.isDisabled && buttonRef.current) {
       buttonRef.current.focus();
@@ -418,8 +419,11 @@ function SearchAutocompleteTray<T>(props: SearchAutocompleteTrayProps<T>) {
   // VoiceOver on iOS reads "double tap to collapse" when focused on the input rather than
   // "double tap to edit text", as with a textbox or searchbox. We'd like double tapping to
   // open the virtual keyboard rather than closing the tray.
+  // oxlint-disable-next-line react/react-compiler
   inputProps.role = 'searchbox';
+  // oxlint-disable-next-line react/react-compiler
   inputProps['aria-haspopup'] = 'listbox';
+  // oxlint-disable-next-line react/react-compiler
   delete inputProps.onTouchEnd;
 
   let clearButton = (
@@ -487,6 +491,7 @@ function SearchAutocompleteTray<T>(props: SearchAutocompleteTrayProps<T>) {
       }
     } else if (loadingState !== 'filtering') {
       // If loading is no longer happening, clear any timers and hide the loading circle
+      // oxlint-disable-next-line react/react-compiler
       setShowLoading(false);
       if (timeout.current !== null) {
         clearTimeout(timeout.current);

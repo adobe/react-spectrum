@@ -50,8 +50,8 @@ export interface DropOptions {
   /** A ref for the droppable element. */
   ref: RefObject<FocusableElement | null>;
   /**
-   * A function returning the drop operation to be performed when items matching the given types are dropped
-   * on the drop target.
+   * A function returning the drop operation to be performed when items matching the given types are
+   * dropped on the drop target.
    */
   getDropOperation?: (types: IDragTypes, allowedOperations: DropOperation[]) => DropOperation;
   /** A function that returns the drop operation for a specific point within the target. */
@@ -75,8 +75,9 @@ export interface DropOptions {
   /** Handler that is called when a valid drag is dropped on the drop target. */
   onDrop?: (e: DropEvent) => void;
   /**
-   * Whether the item has an explicit focusable drop affordance to initiate accessible drag and drop mode.
-   * If true, the dropProps will omit these event handlers, and they will be applied to dropButtonProps instead.
+   * Whether the item has an explicit focusable drop affordance to initiate accessible drag and drop
+   * mode. If true, the dropProps will omit these event handlers, and they will be applied to
+   * dropButtonProps instead.
    */
   hasDropButton?: boolean;
   /**

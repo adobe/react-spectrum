@@ -40,9 +40,10 @@ build().catch(err => {
 });
 
 /**
- * Building this will run the docs builder using the apiCheck pipeline in .parcelrc
- * This will generate json containing the visible (API/exposed) type definitions for each package
- * This is run against the current branch by copying the current branch into a temporary directory and building there
+ * Building this will run the docs builder using the apiCheck pipeline in .parcelrc This will
+ * generate json containing the visible (API/exposed) type definitions for each package This is run
+ * against the current branch by copying the current branch into a temporary directory and building
+ * there.
  */
 async function build() {
   let backupDir = tempy.directory();
@@ -106,7 +107,7 @@ async function build() {
   // Add dependencies on each published package to the package.json, and
   // copy the docs from the current package into the temp dir.
   let packagesDir = path.join(srcDir, 'packages');
-  let packages = glob.sync('*/**/package.json', {cwd: packagesDir});
+  let packages = glob.sync('*/**/package.json', {cwd: packagesDir, ignore: ['**/node_modules/**']});
 
   pkg.devDependencies['babel-plugin-transform-glob-import'] = '*';
 
@@ -162,6 +163,23 @@ async function build() {
     recursive: true
   });
 
+  // Collect workspace package names so we can strip intra-monorepo dependencies.
+  // Sibling packages may pin exact versions (e.g. "@adobe/react-spectrum": "3.47.0")
+  // that don't match the workspace version being built, causing yarn to install from
+  // npm instead of symlinking to the workspace. Removing these entries lets yarn always
+  // resolve them via the workspace.
+  let workspacePackageNames = new Set(
+    packages
+      .map(p => {
+        try {
+          return JSON.parse(fs.readFileSync(path.join(srcDir, 'packages', p), 'utf8')).name;
+        } catch {
+          return null;
+        }
+      })
+      .filter(Boolean)
+  );
+
   let excludeList = ['@react-spectrum/story-utils'];
   // Copy packages over to temp dir
   console.log('copying over');
@@ -185,6 +203,13 @@ async function build() {
       delete json.main;
       delete json.module;
       delete json.devDependencies;
+      if (json.dependencies) {
+        for (let dep of Object.keys(json.dependencies)) {
+          if (workspacePackageNames.has(dep)) {
+            delete json.dependencies[dep];
+          }
+        }
+      }
       json.apiCheck = 'dist/api.json';
       json.targets = {
         apiCheck: {}

@@ -11,7 +11,6 @@
  */
 
 import {AriaLabelingProps} from '@react-types/shared';
-// @ts-ignore
 import intlMessages from '../../intl/grid/*.json';
 import {MultipleSelectionManager} from 'react-stately/useMultipleSelectionState';
 import {useDescription} from '../utils/useDescription';
@@ -26,6 +25,7 @@ export interface HighlightSelectionDescriptionProps {
 
 /**
  * Computes the description for a grid selectable collection.
+ *
  * @param props
  */
 export function useHighlightSelectionDescription(

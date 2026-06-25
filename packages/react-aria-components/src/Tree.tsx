@@ -281,29 +281,40 @@ class TreeCollection<T> extends BaseCollection<T> {
 export interface TreeRenderProps {
   /**
    * Whether the tree has no items and should display its empty state.
+   *
    * @selector [data-empty]
    */
   isEmpty: boolean;
   /**
    * Whether the tree is currently focused.
+   *
    * @selector [data-focused]
    */
   isFocused: boolean;
   /**
    * Whether the tree is currently keyboard focused.
+   *
    * @selector [data-focus-visible]
    */
   isFocusVisible: boolean;
   /**
    * The type of selection that is allowed in the collection.
+   *
    * @selector [data-selection-mode="single | multiple"]
    */
   selectionMode: SelectionMode;
   /**
    * Whether the tree allows dragging.
+   *
    * @selector [data-allows-dragging]
    */
   allowsDragging: boolean;
+  /**
+   * Whether the tree is currently the active drop target.
+   *
+   * @selector [data-drop-target]
+   */
+  isDropTarget: boolean;
   /**
    * State of the tree.
    */
@@ -322,23 +333,30 @@ export interface TreeProps<T>
     Expandable,
     GlobalDOMAttributes<HTMLDivElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-Tree'
    */
   className?: ClassNameOrFunction<TreeRenderProps>;
   /**
    * How multiple selection should behave in the tree.
-   * @default "toggle"
+   *
+   * @default 'toggle'
    */
   selectionBehavior?: SelectionBehavior;
   /** Provides content to display when there are no items in the list. */
   renderEmptyState?: (props: TreeEmptyStateRenderProps) => ReactNode;
   /**
    * Whether `disabledKeys` applies to all interactions, or only selection.
+   *
    * @default 'all'
    */
   disabledBehavior?: DisabledBehavior;
-  /** The drag and drop hooks returned by `useDragAndDrop` used to enable drag and drop behavior for the Tree. */
+  /**
+   * The drag and drop hooks returned by `useDragAndDrop` used to enable drag and drop behavior for
+   * the Tree.
+   */
   dragAndDropHooks?: DragAndDropHooks<NoInfer<T>>;
 }
 
@@ -346,10 +364,10 @@ export const TreeContext = createContext<ContextValue<TreeProps<any>, HTMLDivEle
 export const TreeStateContext = createContext<TreeState<any> | null>(null);
 
 /**
- * A tree provides users with a way to navigate nested hierarchical information, with support for keyboard navigation
- * and selection.
+ * A tree provides users with a way to navigate nested hierarchical information, with support for
+ * keyboard navigation and selection.
  */
-export const Tree = /*#__PURE__*/ (forwardRef as forwardRefType)(function Tree<T extends object>(
+export const Tree = /*#__PURE__*/ (forwardRef as forwardRefType)(function Tree<T>(
   props: TreeProps<T>,
   ref: ForwardedRef<HTMLDivElement>
 ) {
@@ -376,13 +394,13 @@ const EXPANSION_KEYS = {
   }
 };
 
-interface TreeInnerProps<T extends object> {
+interface TreeInnerProps<T> {
   props: TreeProps<T>;
   collection: TreeCollection<T>;
   treeRef: RefObject<HTMLDivElement | null>;
 }
 
-function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInnerProps<T>) {
+function TreeInner<T>({props, collection, treeRef: ref}: TreeInnerProps<T>) {
   const {dragAndDropHooks} = props;
   let {direction} = useLocale();
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
@@ -466,11 +484,13 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
   let preview = useRef<DragPreviewRenderer>(null);
 
   if (hasDragHooks && dragAndDropHooks) {
+    // oxlint-disable-next-line react/react-compiler
     dragState = dragAndDropHooks.useDraggableCollectionState!({
       collection: state.collection,
       selectionManager: state.selectionManager,
       preview: dragAndDropHooks.renderDragPreview ? preview : undefined
     });
+    // oxlint-disable-next-line react/react-compiler
     dragAndDropHooks.useDraggableCollection!({}, dragState, ref);
 
     let DragPreview = dragAndDropHooks.DragPreview!;
@@ -481,6 +501,7 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
 
   let [treeDropTargetDelegate] = useState(() => new TreeDropTargetDelegate());
   if (hasDropHooks && dragAndDropHooks) {
+    // oxlint-disable-next-line react/react-compiler
     dropState = dragAndDropHooks.useDroppableCollectionState!({
       collection: state.collection,
       selectionManager: state.selectionManager
@@ -501,6 +522,7 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
       layoutDelegate
     });
 
+    // oxlint-disable-next-line react/react-compiler
     droppableCollection = dragAndDropHooks.useDroppableCollection!(
       {
         keyboardDelegate,
@@ -642,21 +664,25 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
 export interface TreeItemRenderProps extends ItemRenderProps {
   /**
    * Whether the tree item is expanded.
+   *
    * @selector [data-expanded]
    */
   isExpanded: boolean;
   /**
    * Whether the tree item has child tree items.
+   *
    * @selector [data-has-child-items]
    */
   hasChildItems: boolean;
   /**
    * What level the tree item has within the tree.
+   *
    * @selector [data-level="number"]
    */
   level: number;
   /**
    * Whether the tree item's children have keyboard focus.
+   *
    * @selector [data-focus-visible-within]
    */
   isFocusVisibleWithin: boolean;
@@ -671,7 +697,10 @@ export interface TreeItemContentRenderProps extends TreeItemRenderProps {}
 // The TreeItemContent is the one that accepts RenderProps because we would get much more complicated logic in TreeItem otherwise since we'd
 // need to do a bunch of check to figure out what is the Content and what are the actual collection elements (aka child rows) of the TreeItem
 export interface TreeItemContentProps {
-  /** The children of the component. A function may be provided to alter the children based on component state. */
+  /**
+   * The children of the component. A function may be provided to alter the children based on
+   * component state.
+   */
   children: ChildrenOrFunction<TreeItemContentRenderProps>;
 }
 
@@ -706,25 +735,33 @@ export interface TreeItemProps<T = object>
     Pick<AriaTreeItemOptions, 'hasChildItems'>,
     Omit<GlobalDOMAttributes<HTMLDivElement>, 'onClick'> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-TreeItem'
    */
   className?: ClassNameOrFunction<TreeItemRenderProps>;
   /** The unique id of the tree row. */
   id?: Key;
-  /** The object value that this tree item represents. When using dynamic collections, this is set automatically. */
+  /**
+   * The object value that this tree item represents. When using dynamic collections, this is set
+   * automatically.
+   */
   value?: T;
   /** A string representation of the tree item's contents, used for features like typeahead. */
   textValue: string;
   /** An accessibility label for this tree item. */
   'aria-label'?: string;
-  /** The content of the tree item along with any nested children. Supports static nested tree items or use of a Collection to dynamically render nested tree items. */
+  /**
+   * The content of the tree item along with any nested children. Supports static nested tree items
+   * or use of a Collection to dynamically render nested tree items.
+   */
   children: ReactNode;
   /** Whether the item is disabled. */
   isDisabled?: boolean;
   /**
-   * Handler that is called when a user performs an action on this tree item. The exact user event depends on
-   * the collection's `selectionBehavior` prop and the interaction modality.
+   * Handler that is called when a user performs an action on this tree item. The exact user event
+   * depends on the collection's `selectionBehavior` prop and the interaction modality.
    */
   onAction?: () => void;
 }
@@ -738,10 +775,12 @@ class TreeItemNode extends CollectionNode<any> {
  */
 export const TreeItem = /*#__PURE__*/ createBranchComponent(
   TreeItemNode,
-  <T extends object>(props: TreeItemProps<T>, ref: ForwardedRef<HTMLDivElement>, item: Node<T>) => {
+  <T extends any>(props: TreeItemProps<T>, ref: ForwardedRef<HTMLDivElement>, item: Node<T>) => {
     let state = useContext(TreeStateContext)!;
     ref = useObjectRef<HTMLDivElement>(ref);
     let {dragAndDropHooks, dragState, dropState} = useContext(DragAndDropContext)!;
+    let isDraggable =
+      dragState && !(dragState.isDisabled || dragState.selectionManager.isDisabled(item.key));
 
     // TODO: remove this when we support description in tree row
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -759,7 +798,9 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent(
     let level = rowProps['aria-level'] || 1;
 
     let {hoverProps, isHovered} = useHover({
-      isDisabled: !states.allowsSelection && !states.hasAction,
+      // because of https://bugs.webkit.org/show_bug.cgi?id=214609, supporting hover styles when a item is ONLY isDraggable
+      // results in hover styles sticking around after a reorder/drop operation...
+      isDisabled: !states.allowsSelection && !states.hasAction && !isDraggable,
       onHoverStart: props.onHoverStart,
       onHoverChange: props.onHoverChange,
       onHoverEnd: props.onHoverEnd
@@ -1016,6 +1057,7 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent(
 export interface TreeLoadMoreItemRenderProps {
   /**
    * What level the tree item has within the tree.
+   *
    * @selector [data-level]
    */
   level: number;
@@ -1024,7 +1066,9 @@ export interface TreeLoadMoreItemRenderProps {
 export interface TreeLoadMoreItemProps
   extends Omit<LoadMoreSentinelProps, 'collection'>, RenderProps<TreeLoadMoreItemRenderProps> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-TreeLoadMoreItem'
    */
   className?: ClassNameOrFunction<TreeLoadMoreItemRenderProps>;
@@ -1039,7 +1083,7 @@ export interface TreeLoadMoreItemProps
 }
 
 export const TreeLoadMoreItem = createLeafComponent(LoaderNode, function TreeLoadingSentinel<
-  T extends object
+  T
 >(props: TreeLoadMoreItemProps, ref: ForwardedRef<HTMLDivElement>, item: Node<T>) {
   let {isVirtualized} = useContext(CollectionRendererContext);
   let state = useContext(TreeStateContext)!;
@@ -1118,6 +1162,7 @@ function TreeDropIndicatorWrapper(
   ref = useObjectRef(ref);
   let {dragAndDropHooks, dropState} = useContext(DragAndDropContext)!;
   let buttonRef = useRef<HTMLDivElement>(null);
+  // oxlint-disable-next-line react/react-compiler
   let {dropIndicatorProps, isHidden, isDropTarget} = dragAndDropHooks!.useDropIndicator!(
     props,
     dropState!,
@@ -1187,6 +1232,7 @@ const TreeDropIndicatorForwardRef = forwardRef(TreeDropIndicator);
 function RootDropIndicator() {
   let {dragAndDropHooks, dropState} = useContext(DragAndDropContext);
   let ref = useRef<HTMLDivElement>(null);
+  // oxlint-disable-next-line react/react-compiler
   let {dropIndicatorProps} = dragAndDropHooks!.useDropIndicator!(
     {
       target: {type: 'root'}
@@ -1218,7 +1264,7 @@ export interface GridListSectionProps<T>
  */
 export const TreeSection = /*#__PURE__*/ createBranchComponent(
   SectionNode,
-  <T extends object>(
+  <T extends any>(
     props: GridListSectionProps<T>,
     ref: ForwardedRef<HTMLDivElement>,
     item: Node<T>

@@ -36,6 +36,7 @@ export interface RadioGroupProps
     FocusEvents {
   /**
    * The axis the Radio Button(s) should align with.
+   *
    * @default 'vertical'
    */
   orientation?: Orientation;
@@ -44,8 +45,9 @@ export interface RadioGroupProps
 export interface RadioGroupState extends FormValidationState {
   /**
    * The name for the group, used for native form submission.
-   * @deprecated
+   *
    * @private
+   * @deprecated
    */
   readonly name: string;
 
@@ -60,6 +62,7 @@ export interface RadioGroupState extends FormValidationState {
 
   /**
    * Whether the radio group is valid or invalid.
+   *
    * @deprecated Use `isInvalid` instead.
    */
   readonly validationState: ValidationState | null;

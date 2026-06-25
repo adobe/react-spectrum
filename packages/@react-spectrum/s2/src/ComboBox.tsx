@@ -77,7 +77,6 @@ import {forwardRefType} from './types';
 import {HeaderContext, HeadingContext, Text, TextContext} from './Content';
 import {IconContext} from './Icon';
 import {InputContext, InputProps} from 'react-aria-components/Input';
-// @ts-ignore
 import intlMessages from '../intl/*.json';
 import {ListLayout} from 'react-stately/useVirtualizerState';
 import {mergeRefs} from 'react-aria/mergeRefs';
@@ -99,8 +98,12 @@ export interface ComboboxStyleProps {
    * @default 'M'
    */
   size?: 'S' | 'M' | 'L' | 'XL';
+  /**
+   * The prefix to display in the ComboBox. A non-interactive element that appears before the input.
+   */
+  prefix?: ReactNode;
 }
-export interface ComboBoxProps<T extends object>
+export interface ComboBoxProps<T>
   extends
     Omit<
       AriaComboBoxProps<T>,
@@ -142,9 +145,15 @@ export interface ComboBoxProps<T extends object>
    * @default 'start'
    */
   align?: 'start' | 'end';
-  /** Width of the menu. By default, matches width of the trigger. Note that the minimum width of the dropdown is always equal to the trigger's width. */
+  /**
+   * Width of the menu. By default, matches width of the trigger. Note that the minimum width of the
+   * dropdown is always equal to the trigger's width.
+   */
   menuWidth?: number;
-  /** The current loading state of the ComboBox. Determines whether or not the progress circle should be shown. */
+  /**
+   * The current loading state of the ComboBox. Determines whether or not the progress circle should
+   * be shown.
+   */
   loadingState?: LoadingState;
 }
 
@@ -377,11 +386,13 @@ export const LOADER_ROW_HEIGHTS = {
 let InternalComboboxContext = createContext<{size: 'S' | 'M' | 'L' | 'XL'}>({size: 'M'});
 
 /**
- * ComboBox allow users to choose a single option from a collapsible list of options when space is limited.
+ * ComboBox allow users to choose a single option from a collapsible list of options when space is
+ * limited.
  */
-export const ComboBox = /*#__PURE__*/ (forwardRef as forwardRefType)(function ComboBox<
-  T extends object
->(props: ComboBoxProps<T>, ref: Ref<TextFieldRef>) {
+export const ComboBox = /*#__PURE__*/ (forwardRef as forwardRefType)(function ComboBox<T>(
+  props: ComboBoxProps<T>,
+  ref: Ref<TextFieldRef>
+) {
   [props, ref] = useSpectrumContextProps(props, ref, ComboBoxContext);
 
   let formContext = useContext(FormContext);
@@ -459,6 +470,7 @@ export function ComboBoxItem(props: ComboBoxItemProps): ReactNode {
   let ref = useRef(null);
   let isLink = props.href != null;
   let {size} = useContext(InternalComboboxContext);
+  // oxlint-disable react/react-compiler
   return (
     <ListBoxItem
       {...props}
@@ -519,13 +531,14 @@ export function ComboBoxItem(props: ComboBoxItemProps): ReactNode {
       }}
     </ListBoxItem>
   );
+  // oxlint-enable react/react-compiler
 }
 
-export interface ComboBoxSectionProps<T extends object> extends Omit<
+export interface ComboBoxSectionProps<T> extends Omit<
   ListBoxSectionProps<T>,
   'style' | 'className' | 'render' | keyof GlobalDOMAttributes
 > {}
-export function ComboBoxSection<T extends object>(props: ComboBoxSectionProps<T>): ReactNode {
+export function ComboBoxSection<T>(props: ComboBoxSectionProps<T>): ReactNode {
   let {size} = useContext(InternalComboboxContext);
   return (
     <>
@@ -624,6 +637,7 @@ const ComboboxInner = forwardRef(function ComboboxInner(
       }
     } else if (!isLoadingOrFiltering) {
       // If loading is no longer happening, clear any timers and hide the loading circle
+      // oxlint-disable-next-line react/react-compiler
       setShowLoading(false);
       if (timeout.current) {
         clearTimeout(timeout.current);
@@ -695,6 +709,7 @@ const ComboboxInner = forwardRef(function ComboboxInner(
           {label}
         </FieldLabel>
         <FieldGroup
+          prefix={props.prefix}
           role="presentation"
           isDisabled={isDisabled}
           isInvalid={isInvalid}
@@ -708,7 +723,11 @@ const ComboboxInner = forwardRef(function ComboboxInner(
           })({size})}>
           <InputContext.Consumer>
             {ctx => (
-              <InputContext.Provider value={{...ctx, ref: mergeRefs((ctx as any)?.ref, inputRef)}}>
+              <InputContext.Provider
+                value={{
+                  ...ctx,
+                  ref: mergeRefs((ctx as any)?.ref, inputRef)
+                }}>
                 <Input aria-describedby={spinnerId} />
               </InputContext.Provider>
             )}

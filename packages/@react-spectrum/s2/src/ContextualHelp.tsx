@@ -17,7 +17,6 @@ import intlMessages from '../intl/*.json';
 import {mergeProps} from 'react-aria/mergeProps';
 import {mergeStyles} from '../style/runtime';
 import {Placement} from 'react-aria-components/Popover';
-// @ts-ignore
 import {Popover, PopoverDialogProps} from './Popover';
 import {space, style} from '../style' with {type: 'macro'};
 import {StyleProps} from './style-utils' with {type: 'macro'};
@@ -27,9 +26,10 @@ import {useLabels} from 'react-aria/private/utils/useLabels';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface ContextualHelpPopoverProps extends PopoverDialogProps {
+export interface ContextualHelpPopoverProps extends Omit<PopoverDialogProps, 'isNonModal'> {
   /**
-   * The children of the contextual help popover. Supports Heading, Content, and Footer elements. */
+   * The children of the contextual help popover. Supports Heading, Content, and Footer elements.
+   */
   children: ReactNode;
 }
 
@@ -135,6 +135,7 @@ export interface ContextualHelpProps
     AriaLabelingProps {
   /**
    * The placement of the popover with respect to the action button.
+   *
    * @default 'bottom start'
    */
   placement?: Placement;
@@ -154,7 +155,8 @@ export const ContextualHelpContext =
   );
 
 /**
- * Contextual help shows a user extra information about the state of an adjacent component, or a total view.
+ * Contextual help shows a user extra information about the state of an adjacent component, or a
+ * total view.
  */
 export const ContextualHelp = forwardRef(function ContextualHelp(
   props: ContextualHelpProps,
@@ -183,6 +185,7 @@ export const ContextualHelp = forwardRef(function ContextualHelp(
   // then ContextualHelp variant
   let labelProps = useLabels(props);
   let label = stringFormatter.format(`contextualhelp.${variant}`);
+  // oxlint-disable-next-line react/react-compiler
   labelProps['aria-label'] = labelProps['aria-label']
     ? labelProps['aria-label'] + ' ' + label
     : label;

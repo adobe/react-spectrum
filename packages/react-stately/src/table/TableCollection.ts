@@ -20,7 +20,10 @@ export interface ITableCollection<T> extends IGridCollection<T> {
   headerRows: GridNode<T>[];
   /** A list of column nodes in the table. */
   columns: GridNode<T>[];
-  /** A set of column keys that serve as the [row header](https://www.w3.org/TR/wai-aria-1.1/#rowheader). */
+  /**
+   * A set of column keys that serve as the [row
+   * header](https://www.w3.org/TR/wai-aria-1.1/#rowheader).
+   */
   rowHeaderColumnKeys: Set<Key>;
   /** The node that makes up the header of the table. */
   head?: GridNode<T>;

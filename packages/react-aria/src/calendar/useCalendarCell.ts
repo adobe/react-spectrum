@@ -18,7 +18,6 @@ import {getActiveElement, getEventTarget} from '../utils/shadowdom/DOMFunctions'
 import {getEraFormat, hookData} from './utils';
 import {getInteractionModality} from '../interactions/useFocusVisible';
 import {getScrollParent} from '../utils/getScrollParent';
-// @ts-ignore
 import intlMessages from '../../intl/calendar/*.json';
 import {mergeProps} from '../utils/mergeProps';
 import {RangeCalendarState} from 'react-stately/useRangeCalendarState';
@@ -57,15 +56,16 @@ export interface CalendarCellAria {
   /** Whether the cell is focused. */
   isFocused: boolean;
   /**
-   * Whether the cell is disabled, according to the calendar's `minValue`, `maxValue`, and `isDisabled` props.
-   * Disabled dates are not focusable, and cannot be selected by the user. They are typically
-   * displayed with a dimmed appearance.
+   * Whether the cell is disabled, according to the calendar's `minValue`, `maxValue`, and
+   * `isDisabled` props. Disabled dates are not focusable, and cannot be selected by the user. They
+   * are typically displayed with a dimmed appearance.
    */
   isDisabled: boolean;
   /**
-   * Whether the cell is unavailable, according to the calendar's `isDateUnavailable` prop. Unavailable dates remain
-   * focusable, but cannot be selected by the user. They should be displayed with a visual affordance to indicate they
-   * are unavailable, such as a different color or a strikethrough.
+   * Whether the cell is unavailable, according to the calendar's `isDateUnavailable` prop.
+   * Unavailable dates remain focusable, but cannot be selected by the user. They should be
+   * displayed with a visual affordance to indicate they are unavailable, such as a different color
+   * or a strikethrough.
    *
    * Note that because they are focusable, unavailable dates must meet a 4.5:1 color contrast ratio,
    * [as defined by WCAG](https://www.w3.org/WAI/WCAG21/Understanding/contrast-minimum.html).
@@ -129,6 +129,7 @@ export function useCalendarCell(
   // For performance, reuse the same date object as before if the new date prop is the same.
   // This allows subsequent useMemo results to be reused.
   date = useDeepMemo<CalendarDate>(date, isEqualDay);
+  // oxlint-disable-next-line react/react-compiler
   let nativeDate = useMemo(() => date.toDate(state.timeZone), [date, state.timeZone]);
 
   // aria-label should be localize Day of week, Month, Day and Year without Time.
@@ -171,8 +172,10 @@ export function useCalendarCell(
     dateFormatter,
     nativeDate,
     stringFormatter,
+    // oxlint-disable-next-line react/react-compiler
     isSelected,
     isDateToday,
+    // oxlint-disable-next-line react/react-compiler
     date,
     state,
     selectedDateDescription

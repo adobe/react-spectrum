@@ -79,10 +79,10 @@ import {
 } from '@react-types/shared';
 import {FocusScope} from 'react-aria/FocusScope';
 import {HeaderContext} from './Header';
-import {Collection as ICollection, Node} from '@react-types/shared';
 import {KeyboardContext} from './Keyboard';
 import {mergeProps} from 'react-aria/mergeProps';
 import {MultipleSelectionState} from 'react-stately/useMultipleSelectionState';
+import {Node} from '@react-types/shared';
 import {OverlayTriggerStateContext} from './Dialog';
 import {PopoverContext} from './Popover';
 import {PressResponder} from 'react-aria/private/interactions/PressResponder';
@@ -164,11 +164,13 @@ export function MenuTrigger(props: MenuTriggerProps): JSX.Element | null {
 
 export interface SubmenuTriggerProps {
   /**
-   * The contents of the SubmenuTrigger. The first child should be an Item (the trigger) and the second child should be the Popover (for the submenu).
+   * The contents of the SubmenuTrigger. The first child should be an Item (the trigger) and the
+   * second child should be the Popover (for the submenu).
    */
   children: ReactElement[];
   /**
    * The delay time in milliseconds for the submenu to appear after hovering over the trigger.
+   *
    * @default 200
    */
   delay?: number;
@@ -258,6 +260,7 @@ export const SubmenuTrigger = /*#__PURE__*/ createBranchComponent(
 export interface MenuRenderProps {
   /**
    * Whether the menu has no items and should display its empty state.
+   *
    * @selector [data-empty]
    */
   isEmpty: boolean;
@@ -271,7 +274,9 @@ export interface MenuProps<T>
     SlotProps,
     GlobalDOMAttributes<HTMLDivElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-Menu'
    */
   className?: ClassNameOrFunction<MenuRenderProps>;
@@ -284,7 +289,7 @@ export interface MenuProps<T>
 /**
  * A menu displays a list of actions or options that a user can choose.
  */
-export const Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(function Menu<T extends object>(
+export const Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(function Menu<T>(
   props: MenuProps<T>,
   ref: ForwardedRef<HTMLDivElement>
 ) {
@@ -305,11 +310,11 @@ interface MenuInnerProps<T> {
     filter?: SelectableCollectionContextValue<object>['filter'];
     shouldUseVirtualFocus?: boolean;
   };
-  collection: BaseCollection<object>;
+  collection: BaseCollection<any>;
   menuRef: RefObject<HTMLElement | null>;
 }
 
-function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInnerProps<T>) {
+function MenuInner<T>({props, collection, menuRef: ref}: MenuInnerProps<T>) {
   [props, ref] = useContextProps(props, ref, SelectableCollectionContext);
   let {filter, ...autocompleteMenuProps} = props;
   let filteredCollection = useMemo(
@@ -318,7 +323,7 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
   );
   let state = useTreeState({
     ...props,
-    collection: filteredCollection as ICollection<Node<object>>,
+    collection: filteredCollection,
     children: undefined
   });
   let triggerState = useContext(RootMenuTriggerStateContext);
@@ -374,7 +379,7 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
             [SelectionManagerContext, state.selectionManager],
             /* Ensure root MenuTriggerState is defined, in case Menu is rendered outside a MenuTrigger. */
             /* We assume the context can never change between defined and undefined. */
-            /* eslint-disable-next-line react-hooks/rules-of-hooks */
+            // oxlint-disable-next-line react/react-compiler, react-hooks/rules-of-hooks
             [RootMenuTriggerStateContext, triggerState ?? useMenuTriggerState({})]
           ]}>
           <SharedElementTransition>
@@ -397,7 +402,9 @@ export interface MenuSectionProps<T>
     Omit<MultipleSelection, 'disabledKeys'>,
     DOMRenderProps<'section', undefined> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element.
+   *
    * @default 'react-aria-MenuSection'
    */
   className?: string;
@@ -436,7 +443,7 @@ class GroupSelectionManager extends SelectionManager {
   }
 }
 
-function MenuSectionInner<T extends object>(
+function MenuSectionInner<T>(
   props: MenuSectionProps<T>,
   ref: ForwardedRef<HTMLElement>,
   section: Node<T>,
@@ -513,13 +520,18 @@ export interface MenuItemProps<T = object>
     PressEvents,
     Omit<GlobalDOMAttributes<HTMLDivElement>, 'onClick'> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-MenuItem'
    */
   className?: ClassNameOrFunction<MenuItemRenderProps>;
   /** The unique id of the item. */
   id?: Key;
-  /** The object value that this item represents. When using dynamic collections, this is set automatically. */
+  /**
+   * The object value that this item represents. When using dynamic collections, this is set
+   * automatically.
+   */
   value?: T;
   /** A string representation of the item's contents, used for features like typeahead. */
   textValue?: string;
@@ -539,7 +551,7 @@ const MenuItemContext = createContext<ContextValue<MenuItemProps, HTMLDivElement
  * A MenuItem represents an individual action in a Menu.
  */
 export const MenuItem = /*#__PURE__*/ createLeafComponent(ItemNode, function MenuItem<
-  T extends object
+  T
 >(props: MenuItemProps<T>, forwardedRef: ForwardedRef<HTMLDivElement>, item: Node<T>) {
   [props, forwardedRef] = useContextProps(props, forwardedRef, MenuItemContext);
   let id = useSlottedContext(MenuItemContext)?.id as string;

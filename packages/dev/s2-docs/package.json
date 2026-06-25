@@ -10,7 +10,8 @@
     "build:s2": "LIBRARY=s2 parcel build 'pages/s2/**/*.mdx' --config .parcelrc-s2-docs --dist-dir dist/s2 --cache-dir ../../../.parcel-cache/s2",
     "build:react-aria": "LIBRARY=react-aria parcel build 'pages/react-aria/**/*.mdx' --config .parcelrc-s2-docs --dist-dir dist/react-aria --cache-dir ../../../.parcel-cache/react-aria",
     "generate:og": "node scripts/generateOGImages.mjs",
-    "generate:md": "node scripts/generateMarkdownDocs.mjs"
+    "generate:md": "node scripts/generateMarkdownDocs.mjs",
+    "generate:mcpb": "node scripts/generateMcpb.mjs"
   },
   "dependencies": {
     "@babel/parser": "^7.26.3",
@@ -43,6 +44,7 @@
     "remark-stringify": "^11.0.0",
     "satori": "^0.16.1",
     "sharp": "^0.33.5",
+    "textarea-caret": "^3.1.0",
     "tree-sitter-highlight": "^1.0.1",
     "ts-morph": "^26.0.0",
     "unified": "^11.0.5",

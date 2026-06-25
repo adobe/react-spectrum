@@ -68,12 +68,14 @@ export interface AriaMenuItemProps
   extends DOMProps, PressEvents, HoverEvents, KeyboardEvents, FocusEvents {
   /**
    * Whether the menu item is disabled.
+   *
    * @deprecated - pass disabledKeys to useTreeState instead.
    */
   isDisabled?: boolean;
 
   /**
    * Whether the menu item is selected.
+   *
    * @deprecated - pass selectedKeys to useTreeState instead.
    */
   isSelected?: boolean;
@@ -86,12 +88,14 @@ export interface AriaMenuItemProps
 
   /**
    * Handler that is called when the menu should close after selecting an item.
+   *
    * @deprecated - pass to the menu instead.
    */
   onClose?: () => void;
 
   /**
    * Whether the menu should close when the menu item is selected.
+   *
    * @deprecated - use shouldCloseOnSelect instead.
    */
   closeOnSelect?: boolean;
@@ -104,6 +108,7 @@ export interface AriaMenuItemProps
 
   /**
    * Handler that is called when the user activates the item.
+   *
    * @deprecated - pass to the menu instead.
    */
   onAction?: (key: Key) => void;
@@ -114,7 +119,10 @@ export interface AriaMenuItemProps
   /** Indicates whether the menu item's popup element is expanded or collapsed. */
   'aria-expanded'?: boolean | 'true' | 'false';
 
-  /** Identifies the menu item's popup element whose contents or presence is controlled by the menu item. */
+  /**
+   * Identifies the menu item's popup element whose contents or presence is controlled by the menu
+   * item.
+   */
   'aria-controls'?: string;
 
   /** Identifies the element(s) that describe the menu item. */
@@ -127,6 +135,7 @@ export interface AriaMenuItemProps
 /**
  * Provides the behavior and accessibility implementation for an item in a menu.
  * See `useMenu` for more details about menus.
+ *
  * @param props - Props for the item.
  * @param state - State for the menu, as returned by `useTreeState`.
  */
@@ -181,7 +190,7 @@ export function useMenuItem<T>(
     if (data.onAction) {
       // Must reassign to variable otherwise `this` binding gets messed up. Something to do with WeakMap.
       let onAction = data.onAction;
-      onAction(key);
+      onAction(key, item?.value);
     }
   };
 
@@ -305,44 +314,34 @@ export function useMenuItem<T>(
   });
 
   let {keyboardProps} = useKeyboard({
-    onKeyDown: e => {
-      // Ignore repeating events, which may have started on the menu trigger before moving
-      // focus to the menu item. We want to wait for a second complete key press sequence.
-      if (e.repeat) {
-        e.continuePropagation();
-        return;
-      }
+    shortcuts: {
+      ' ': e => {
+        interaction.current = {pointerType: 'keyboard', key: ' '};
+        (getEventTarget(e) as HTMLElement).click();
 
-      switch (e.key) {
-        case ' ':
-          interaction.current = {pointerType: 'keyboard', key: ' '};
-          (getEventTarget(e) as HTMLElement).click();
+        // click above sets modality to "virtual", need to set interaction modality back to 'keyboard' so focusSafely calls properly move focus
+        // to the newly opened submenu's first item.
+        setInteractionModality('keyboard');
+      },
+      Enter: e => {
+        interaction.current = {pointerType: 'keyboard', key: 'Enter'};
+        let target = getEventTarget(e) as HTMLElement;
 
-          // click above sets modality to "virtual", need to set interaction modality back to 'keyboard' so focusSafely calls properly move focus
-          // to the newly opened submenu's first item.
+        // Trigger click unless this is a link. Links with real DOM focus activate on Enter natively.
+        // With virtual focus (e.g. Autocomplete) focus stays on the input and useAutocomplete dispatches
+        // keydown here then follows with a synthetic click only if dispatchEvent was not canceled—so
+        // links must not preventDefault on that keydown.
+        if (target.tagName !== 'A') {
+          target.click();
           setInteractionModality('keyboard');
-          break;
-        case 'Enter':
-          interaction.current = {pointerType: 'keyboard', key: 'Enter'};
+          return;
+        }
 
-          // Trigger click unless this is a link. Links trigger click natively.
-          if ((getEventTarget(e) as HTMLElement).tagName !== 'A') {
-            (getEventTarget(e) as HTMLElement).click();
-          }
-
-          // click above sets modality to "virtual", need to set interaction modality back to 'keyboard' so focusSafely calls properly move focus
-          // to the newly opened submenu's first item.
-          setInteractionModality('keyboard');
-          break;
-        default:
-          if (!isTrigger) {
-            e.continuePropagation();
-          }
-
-          onKeyDown?.(e);
-          break;
+        setInteractionModality('keyboard');
+        return {shouldPreventDefault: false, shouldContinuePropagation: false};
       }
     },
+    onKeyDown,
     onKeyUp
   });
 
@@ -372,6 +371,7 @@ export function useMenuItem<T>(
         data.shouldUseVirtualFocus || isTrigger
           ? {onMouseDown: e => e.preventDefault()}
           : undefined,
+        // oxlint-disable-next-line react/react-compiler
         isDisabled ? undefined : {onClick}
       ),
       // If a submenu is expanded, set the tabIndex to -1 so that shift tabbing goes out of the menu instead of the parent menu item.

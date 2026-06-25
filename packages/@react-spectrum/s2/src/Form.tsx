@@ -21,6 +21,7 @@ import {useIsSkeleton} from './Skeleton';
 interface FormStyleProps extends Omit<SpectrumLabelableProps, 'label' | 'contextualHelp'> {
   /**
    * Size of the Form elements.
+   *
    * @default 'M'
    */
   size?: 'S' | 'M' | 'L' | 'XL';
@@ -52,6 +53,7 @@ export function useFormProps<T extends FormStyleProps>(props: T): T {
       // This is a subset of mergeProps. We just need to merge non-undefined values.
       for (let key in ctx) {
         if (result[key] === undefined) {
+          // oxlint-disable-next-line react/react-compiler
           result[key] = ctx[key];
         }
       }
@@ -59,6 +61,7 @@ export function useFormProps<T extends FormStyleProps>(props: T): T {
 
     // Skeleton always wins over local props.
     if (isSkeleton) {
+      // oxlint-disable-next-line react/react-compiler
       result.isDisabled = true;
     }
 
@@ -67,7 +70,8 @@ export function useFormProps<T extends FormStyleProps>(props: T): T {
 }
 
 /**
- * Forms allow users to enter data that can be submitted while providing alignment and styling for form fields.
+ * Forms allow users to enter data that can be submitted while providing alignment and styling for
+ * form fields.
  */
 export const Form = /*#__PURE__*/ forwardRef(function Form(
   props: FormProps,

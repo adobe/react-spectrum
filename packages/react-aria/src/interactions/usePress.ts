@@ -331,6 +331,18 @@ export function usePress(props: PressHookProps): PressResult {
   );
   let cancelEvent = useEffectEvent(cancel);
 
+  useEffect(() => {
+    if (isDisabled && ref.current.isPressed) {
+      cancelEvent({
+        currentTarget: ref.current.target,
+        shiftKey: false,
+        ctrlKey: false,
+        metaKey: false,
+        altKey: false
+      });
+    }
+  }, [isDisabled]);
+
   let cancelOnPointerExit = useCallback(
     (e: EventBase) => {
       if (shouldCancelOnPointerExit) {
@@ -405,7 +417,6 @@ export function usePress(props: PressHookProps): PressResult {
               nodeContains(originalTarget, getEventTarget(e) as Element) &&
               state.target
             ) {
-              // eslint-disable-next-line react-hooks/rules-of-hooks
               triggerPressUpEvent(createEvent(state.target, e), 'keyboard');
             }
           };
@@ -454,9 +465,7 @@ export function usePress(props: PressHookProps): PressResult {
             (state.pointerType === 'virtual' || isVirtualClick(e.nativeEvent))
           ) {
             let stopPressStart = triggerPressStart(e, 'virtual');
-            // eslint-disable-next-line react-hooks/rules-of-hooks
             let stopPressUp = triggerPressUpEvent(e, 'virtual');
-            // eslint-disable-next-line react-hooks/rules-of-hooks
             let stopPressEnd = triggerPressEndEvent(e, 'virtual');
             triggerClick(e);
             shouldStopPropagation = stopPressStart && stopPressUp && stopPressEnd;
@@ -465,9 +474,7 @@ export function usePress(props: PressHookProps): PressResult {
               state.pointerType ||
               ((e.nativeEvent as PointerEvent).pointerType as PointerType) ||
               'virtual';
-            // eslint-disable-next-line react-hooks/rules-of-hooks
             let stopPressUp = triggerPressUpEvent(createEvent(e.currentTarget, e), pointerType);
-            // eslint-disable-next-line react-hooks/rules-of-hooks
             let stopPressEnd = triggerPressEndEvent(
               createEvent(e.currentTarget, e),
               pointerType,
@@ -476,7 +483,7 @@ export function usePress(props: PressHookProps): PressResult {
             shouldStopPropagation = stopPressUp && stopPressEnd;
             state.isOverTarget = false;
             triggerClick(e);
-            // eslint-disable-next-line react-hooks/rules-of-hooks
+            // oxlint-disable-next-line react/react-compiler
             cancelEvent(e);
           }
 
@@ -496,7 +503,6 @@ export function usePress(props: PressHookProps): PressResult {
 
         let target = getEventTarget(e);
         let wasPressed = nodeContains(state.target, target as Element);
-        // eslint-disable-next-line react-hooks/rules-of-hooks
         triggerPressEndEvent(createEvent(state.target, e), 'keyboard', wasPressed);
         if (wasPressed) {
           triggerSyntheticClick(e, state.target);
@@ -614,7 +620,6 @@ export function usePress(props: PressHookProps): PressResult {
 
         // Only handle left clicks. If isPressed is true, delay until onClick.
         if (e.button === 0 && !state.isPressed) {
-          // eslint-disable-next-line react-hooks/rules-of-hooks
           triggerPressUpEvent(e, state.pointerType || e.pointerType);
         }
       };
@@ -639,7 +644,6 @@ export function usePress(props: PressHookProps): PressResult {
           state.pointerType != null
         ) {
           state.isOverTarget = false;
-          // eslint-disable-next-line react-hooks/rules-of-hooks
           triggerPressEndEvent(createEvent(state.target, e), state.pointerType, false);
           cancelOnPointerExit(e);
         }
@@ -670,7 +674,6 @@ export function usePress(props: PressHookProps): PressResult {
             let timeout = setTimeout(() => {
               if (state.isPressed && state.target instanceof HTMLElement) {
                 if (clicked) {
-                  // eslint-disable-next-line react-hooks/rules-of-hooks
                   cancelEvent(e);
                 } else {
                   focusWithoutScrolling(state.target);
@@ -683,7 +686,6 @@ export function usePress(props: PressHookProps): PressResult {
             addGlobalListener(e.currentTarget as Document, 'click', () => (clicked = true), true);
             state.disposables.push(() => clearTimeout(timeout));
           } else {
-            // eslint-disable-next-line react-hooks/rules-of-hooks
             cancelEvent(e);
           }
 
@@ -693,7 +695,6 @@ export function usePress(props: PressHookProps): PressResult {
       };
 
       let onPointerCancel = (e: PointerEvent) => {
-        // eslint-disable-next-line react-hooks/rules-of-hooks
         cancelEvent(e);
       };
 
@@ -703,7 +704,6 @@ export function usePress(props: PressHookProps): PressResult {
         }
 
         // Safari does not call onPointerCancel when a drag starts, whereas Chrome and Firefox do.
-        // eslint-disable-next-line react-hooks/rules-of-hooks
         cancelEvent(e);
       };
     } else if (process.env.NODE_ENV === 'test') {
@@ -765,7 +765,6 @@ export function usePress(props: PressHookProps): PressResult {
         let shouldStopPropagation = true;
         if (state.isPressed && !state.ignoreEmulatedMouseEvents && state.pointerType != null) {
           state.isOverTarget = false;
-          // eslint-disable-next-line react-hooks/rules-of-hooks
           shouldStopPropagation = triggerPressEndEvent(e, state.pointerType, false);
           cancelOnPointerExit(e);
         }
@@ -781,7 +780,6 @@ export function usePress(props: PressHookProps): PressResult {
         }
 
         if (!state.ignoreEmulatedMouseEvents && e.button === 0 && !state.isPressed) {
-          // eslint-disable-next-line react-hooks/rules-of-hooks
           triggerPressUpEvent(e, state.pointerType || 'mouse');
         }
       };
@@ -805,7 +803,6 @@ export function usePress(props: PressHookProps): PressResult {
           // Wait for onClick to fire onPress. This avoids browser issues when the DOM
           // is mutated between onMouseUp and onClick, and is more compatible with third party libraries.
         } else {
-          // eslint-disable-next-line react-hooks/rules-of-hooks
           cancelEvent(e);
         }
 
@@ -864,7 +861,6 @@ export function usePress(props: PressHookProps): PressResult {
           }
         } else if (state.isOverTarget && state.pointerType != null) {
           state.isOverTarget = false;
-          // eslint-disable-next-line react-hooks/rules-of-hooks
           shouldStopPropagation = triggerPressEndEvent(
             createTouchEvent(state.target!, e),
             state.pointerType,
@@ -891,16 +887,13 @@ export function usePress(props: PressHookProps): PressResult {
         let touch = getTouchById(e.nativeEvent, state.activePointerId);
         let shouldStopPropagation = true;
         if (touch && isOverTarget(touch, e.currentTarget) && state.pointerType != null) {
-          // eslint-disable-next-line react-hooks/rules-of-hooks
           triggerPressUpEvent(createTouchEvent(state.target!, e), state.pointerType);
-          // eslint-disable-next-line react-hooks/rules-of-hooks
           shouldStopPropagation = triggerPressEndEvent(
             createTouchEvent(state.target!, e),
             state.pointerType
           );
           triggerSyntheticClick(e.nativeEvent, state.target!);
         } else if (state.isOverTarget && state.pointerType != null) {
-          // eslint-disable-next-line react-hooks/rules-of-hooks
           shouldStopPropagation = triggerPressEndEvent(
             createTouchEvent(state.target!, e),
             state.pointerType,
@@ -929,14 +922,12 @@ export function usePress(props: PressHookProps): PressResult {
 
         e.stopPropagation();
         if (state.isPressed) {
-          // eslint-disable-next-line react-hooks/rules-of-hooks
           cancelEvent(createTouchEvent(state.target!, e));
         }
       };
 
       let onScroll = (e: Event) => {
         if (state.isPressed && nodeContains(getEventTarget(e) as Element, state.target)) {
-          // eslint-disable-next-line react-hooks/rules-of-hooks
           cancelEvent({
             currentTarget: state.target,
             shiftKey: false,
@@ -952,7 +943,6 @@ export function usePress(props: PressHookProps): PressResult {
           return;
         }
 
-        // eslint-disable-next-line react-hooks/rules-of-hooks
         cancelEvent(e);
       };
     }
@@ -1016,6 +1006,7 @@ export function usePress(props: PressHookProps): PressResult {
 
   return {
     isPressed: isPressedProp || isPressed,
+    // oxlint-disable-next-line react/react-compiler
     pressProps: mergeProps(domProps, pressProps, {[PRESSABLE_ATTRIBUTE]: true})
   };
 }

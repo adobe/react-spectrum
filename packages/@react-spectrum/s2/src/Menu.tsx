@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {ActionButtonContext} from './ActionButton';
 import {
   Menu as AriaMenu,
   MenuItem as AriaMenuItem,
@@ -23,7 +24,6 @@ import {
   SubmenuTriggerProps as AriaSubmenuTriggerProps,
   MenuItemRenderProps
 } from 'react-aria-components/Menu';
-
 import {
   baseColor,
   centerPadding,
@@ -65,13 +65,13 @@ import {ImageContext} from './Image';
 import InfoCircleIcon from '../s2wf-icons/S2_Icon_InfoCircle_20_N.svg'; // chevron right removed??
 import {InPopoverContext, Popover, PopoverContext} from './Popover';
 import intlMessages from '../intl/*.json';
-// @ts-ignore
 import LinkOutIcon from '../ui-icons/LinkOut';
 import {mergeStyles} from '../style/runtime';
 import {Placement} from 'react-aria/useOverlayPosition';
 import {PressResponder} from 'react-aria/private/interactions/PressResponder';
 import {pressScale} from './pressScale';
 import {Separator, SeparatorProps} from 'react-aria-components/Separator';
+import {ToggleButtonContext} from './ToggleButton';
 import {useGlobalListeners} from 'react-aria/private/utils/useGlobalListeners';
 import {useId} from 'react-aria/useId';
 import {useLocale} from 'react-aria/I18nProvider';
@@ -105,13 +105,7 @@ export interface MenuProps<T>
   extends
     Omit<
       AriaMenuProps<T>,
-      | 'children'
-      | 'style'
-      | 'className'
-      | 'render'
-      | 'dependencies'
-      | 'renderEmptyState'
-      | keyof GlobalDOMAttributes
+      'children' | 'style' | 'className' | 'render' | 'renderEmptyState' | keyof GlobalDOMAttributes
     >,
     StyleProps {
   /**
@@ -422,7 +416,7 @@ let wrappingDiv = style({
 /**
  * Menus display a list of actions or options that a user can choose.
  */
-export const Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(function Menu<T extends object>(
+export const Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(function Menu<T>(
   props: MenuProps<T>,
   ref: DOMRef<HTMLDivElement>
 ) {
@@ -509,12 +503,12 @@ export function Divider(props: SeparatorProps): ReactNode {
   );
 }
 
-export interface MenuSectionProps<T extends object> extends Omit<
+export interface MenuSectionProps<T> extends Omit<
   AriaMenuSectionProps<T>,
   'style' | 'className' | 'render' | keyof GlobalDOMAttributes
 > {}
 
-export function MenuSection<T extends object>(props: MenuSectionProps<T>): ReactNode {
+export function MenuSection<T>(props: MenuSectionProps<T>): ReactNode {
   // remember, context doesn't work if it's around Section nor inside
   let {size} = useContext(InternalMenuContext);
   return (
@@ -596,6 +590,7 @@ export function MenuItem(props: MenuItemProps): ReactNode {
   let isUnavailable = useContext(UnavailableContext);
   let infoIconId = useId();
 
+  // oxlint-disable react/react-compiler
   return (
     <AriaMenuItem
       {...props}
@@ -707,6 +702,7 @@ export function MenuItem(props: MenuItemProps): ReactNode {
       }}
     </AriaMenuItem>
   );
+  // oxlint-enable react/react-compiler
 }
 
 /**
@@ -736,7 +732,7 @@ function MenuTrigger(props: MenuTriggerProps): ReactNode {
     );
   };
 
-  let {align = 'start', direction = 'bottom', shouldFlip} = props;
+  let {align = 'start', direction = 'bottom', shouldFlip, trigger = 'press'} = props;
   let placement: Placement;
   switch (direction) {
     case 'left':
@@ -750,25 +746,32 @@ function MenuTrigger(props: MenuTriggerProps): ReactNode {
     default:
       placement = `${direction} ${align}` as Placement;
   }
+  let holdAffordance = trigger === 'longPress';
 
   return (
-    <InternalMenuTriggerContext.Provider
-      value={{
-        align: props.align,
-        direction: props.direction,
-        shouldFlip: props.shouldFlip
-      }}>
-      <PopoverContext.Provider
-        value={{hideArrow: true, offset: 8, crossOffset: 0, placement, shouldFlip}}>
-        <InPopoverContext.Provider value={false}>
-          <AriaMenuTrigger {...props}>
-            <PressResponder onPressStart={onPressStart} isPressed={isPressed}>
-              {props.children}
-            </PressResponder>
-          </AriaMenuTrigger>
-        </InPopoverContext.Provider>
-      </PopoverContext.Provider>
-    </InternalMenuTriggerContext.Provider>
+    <Provider
+      values={[
+        [ActionButtonContext, {holdAffordance}],
+        [ToggleButtonContext, {holdAffordance}]
+      ]}>
+      <InternalMenuTriggerContext.Provider
+        value={{
+          align: props.align,
+          direction: props.direction,
+          shouldFlip: props.shouldFlip
+        }}>
+        <PopoverContext.Provider
+          value={{hideArrow: true, offset: 8, crossOffset: 0, placement, shouldFlip}}>
+          <InPopoverContext.Provider value={false}>
+            <AriaMenuTrigger {...props}>
+              <PressResponder onPressStart={onPressStart} isPressed={isPressed}>
+                {props.children}
+              </PressResponder>
+            </AriaMenuTrigger>
+          </InPopoverContext.Provider>
+        </PopoverContext.Provider>
+      </InternalMenuTriggerContext.Provider>
+    </Provider>
   );
 }
 
@@ -791,11 +794,13 @@ function SubmenuTrigger(props: SubmenuTriggerProps): JSX.Element {
 
 export interface UnavailableMenuItemTriggerProps {
   /**
-   * The contents of the UnavailableMenuItemTrigger. The first child should be a MenuItem and the second child be a ContextualHelpPopover.
+   * The contents of the UnavailableMenuItemTrigger. The first child should be a MenuItem and the
+   * second child be a ContextualHelpPopover.
    */
   children: ReactElement[];
   /**
    * Whether the menu item is currently unavailable.
+   *
    * @default false
    */
   isUnavailable?: boolean;
@@ -823,8 +828,8 @@ function UnavailableMenuItemTrigger(props: UnavailableMenuItemTriggerProps): JSX
 export {MenuTrigger, SubmenuTrigger, UnavailableMenuItemTrigger};
 
 // This is purely so that storybook generates the types for both Menu and MenuTrigger
-interface ICombined<T extends object> extends MenuProps<T>, Omit<MenuTriggerProps, 'children'> {}
+interface ICombined<T> extends MenuProps<T>, Omit<MenuTriggerProps, 'children'> {}
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function CombinedMenu<T extends object>(props: ICombined<T>): ReactNode {
+export function CombinedMenu<T>(props: ICombined<T>): ReactNode {
   return <div />;
 }

@@ -19,7 +19,6 @@ import {isAndroid, isIOS} from '../utils/platform';
 import {mergeProps} from '../utils/mergeProps';
 import React, {ChangeEvent, InputHTMLAttributes, useCallback, useRef, useState} from 'react';
 import {useColorAreaGradient} from './useColorAreaGradient';
-// @ts-ignore
 import {useFocus} from '../interactions/useFocus';
 import {useFocusWithin} from '../interactions/useFocusWithin';
 import {useFormReset} from '../utils/useFormReset';
@@ -33,11 +32,13 @@ import {useVisuallyHidden} from '../visually-hidden/VisuallyHidden';
 
 export interface AriaColorAreaProps extends ColorAreaProps, DOMProps, AriaLabelingProps {
   /**
-   * The name of the x channel input element, used when submitting an HTML form. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefname).
+   * The name of the x channel input element, used when submitting an HTML form. See
+   * [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefname).
    */
   xName?: string;
   /**
-   * The name of the y channel input element, used when submitting an HTML form. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefname).
+   * The name of the y channel input element, used when submitting an HTML form. See
+   * [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefname).
    */
   yName?: string;
   /**
@@ -69,8 +70,9 @@ export interface AriaColorAreaOptions extends AriaColorAreaProps {
 }
 
 /**
- * Provides the behavior and accessibility implementation for a color area component.
- * Color area allows users to adjust two channels of an RGB, HSL or HSB color value against a two-dimensional gradient background.
+ * Provides the behavior and accessibility implementation for a color area component. Color area
+ * allows users to adjust two channels of an RGB, HSL or HSB color value against a two-dimensional
+ * gradient background.
  */
 export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState): ColorAreaAria {
   let {
@@ -109,46 +111,56 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
 
   let currentPosition = useRef<{x: number; y: number} | null>(null);
 
+  let keyboardUpdate = (cb, inputRef: RefObject<HTMLInputElement | null>, input: 'x' | 'y') => {
+    state.setDragging(true);
+    setValueChangedViaKeyboard(true);
+    cb();
+    state.setDragging(false);
+    focusInput(inputRef);
+    setFocusedInput(input);
+  };
+
   let {keyboardProps} = useKeyboard({
-    onKeyDown(e) {
-      // these are the cases that useMove doesn't handle
-      if (!/^(PageUp|PageDown|Home|End)$/.test(e.key)) {
-        e.continuePropagation();
-        return;
-      }
-      // same handling as useMove, don't need to stop propagation, useKeyboard will do that for us
-      e.preventDefault();
-      // remember to set this and unset it so that onChangeEnd is fired
-      state.setDragging(true);
-      setValueChangedViaKeyboard(true);
-      let dir;
-      switch (e.key) {
-        case 'PageUp':
-          state.incrementY(state.yChannelPageStep);
-          dir = 'y';
-          break;
-        case 'PageDown':
-          state.decrementY(state.yChannelPageStep);
-          dir = 'y';
-          break;
-        case 'Home':
-          direction === 'rtl'
-            ? state.incrementX(state.xChannelPageStep)
-            : state.decrementX(state.xChannelPageStep);
-          dir = 'x';
-          break;
-        case 'End':
-          direction === 'rtl'
-            ? state.decrementX(state.xChannelPageStep)
-            : state.incrementX(state.xChannelPageStep);
-          dir = 'x';
-          break;
-      }
-      state.setDragging(false);
-      if (dir) {
-        let input = dir === 'x' ? inputXRef : inputYRef;
-        focusInput(input);
-        setFocusedInput(dir);
+    shortcuts: {
+      PageUp: () => {
+        return keyboardUpdate(
+          () => {
+            state.incrementY(state.yChannelPageStep);
+          },
+          inputYRef,
+          'y'
+        );
+      },
+      PageDown: () => {
+        return keyboardUpdate(
+          () => {
+            state.decrementY(state.yChannelPageStep);
+          },
+          inputYRef,
+          'y'
+        );
+      },
+      Home: () => {
+        return keyboardUpdate(
+          () => {
+            direction === 'rtl'
+              ? state.incrementX(state.xChannelPageStep)
+              : state.decrementX(state.xChannelPageStep);
+          },
+          inputXRef,
+          'x'
+        );
+      },
+      End: () => {
+        return keyboardUpdate(
+          () => {
+            direction === 'rtl'
+              ? state.decrementX(state.xChannelPageStep)
+              : state.incrementX(state.xChannelPageStep);
+          },
+          inputXRef,
+          'x'
+        );
       }
     }
   });
@@ -192,6 +204,7 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
         }
         setValueChangedViaKeyboard(valueChanged);
         // set the focused input based on which axis has the greater delta
+        // oxlint-disable-next-line react/react-compiler
         focusedInput = valueChanged && Math.abs(deltaY) > Math.abs(deltaX) ? 'y' : 'x';
         setFocusedInput(focusedInput);
       } else {
@@ -330,6 +343,7 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
   let colorAreaInteractions = isDisabled
     ? {}
     : mergeProps(
+        // oxlint-disable-next-line react/react-compiler
         {
           ...(typeof PointerEvent !== 'undefined'
             ? {
@@ -366,6 +380,7 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
   let thumbInteractions = isDisabled
     ? {}
     : mergeProps(
+        // oxlint-disable-next-line react/react-compiler
         {
           ...(typeof PointerEvent !== 'undefined'
             ? {

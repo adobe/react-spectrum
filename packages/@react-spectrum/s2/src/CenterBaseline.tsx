@@ -12,11 +12,13 @@
 
 import {css} from '../style/style-macro' with {type: 'macro'};
 import {CSSProperties, ReactNode} from 'react';
+import {DOMAttributes} from '@react-types/shared';
+import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {mergeStyles} from '../style/runtime';
 import {style} from '../style' with {type: 'macro'};
 import {StyleString} from '../style/types';
 
-interface CenterBaselineProps {
+interface CenterBaselineProps extends DOMAttributes {
   style?: CSSProperties;
   styles?: StyleString;
   children: ReactNode;
@@ -28,9 +30,28 @@ const styles = style({
   alignItems: 'center'
 });
 
+/**
+ * Vertically centers its children against the surrounding text baseline.
+ * Use this to align icons or other inline elements with adjacent text without
+ * breaking baseline alignment.
+ *
+ * @example
+ *   import {CenterBaseline} from '@react-spectrum/s2/CenterBaseline';
+ *   import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+ *   import CheckmarkIcon from '@react-spectrum/s2/icons/Checkmark';
+ *
+ *   <span className={style({display: 'flex', gap: 4, alignItems: 'baseline'})}>
+ *     <CenterBaseline>
+ *       <CheckmarkIcon />
+ *     </CenterBaseline>
+ *     <span>Done</span>
+ *   </span>;
+ */
 export function CenterBaseline(props: CenterBaselineProps): ReactNode {
+  let domProps = filterDOMProps(props);
   return (
     <div
+      {...domProps}
       slot={props.slot}
       style={props.style}
       className={mergeStyles(styles, props.styles) + ' ' + centerBaselineBefore}>

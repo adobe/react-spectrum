@@ -51,7 +51,8 @@ export interface AriaLabelingProps {
   'aria-describedby'?: string;
 
   /**
-   * Identifies the element (or elements) that provide a detailed, extended description for the object.
+   * Identifies the element (or elements) that provide a detailed, extended description for the
+   * object.
    */
   'aria-details'?: string;
 }
@@ -68,7 +69,8 @@ export interface AriaValidationProps {
 // Ensure this is synced with DOMPropNames in filterDOMProps
 export interface DOMProps {
   /**
-   * The element's unique identifier. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/id).
+   * The element's unique identifier. See
+   * [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/id).
    */
   id?: string;
 }
@@ -86,56 +88,68 @@ export interface FocusableDOMProps extends DOMProps {
 export interface TextInputDOMEvents<T = HTMLInputElement> {
   // Clipboard events
   /**
-   * Handler that is called when the user copies text. See [MDN](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/oncopy).
+   * Handler that is called when the user copies text. See
+   * [MDN](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/oncopy).
    */
   onCopy?: ClipboardEventHandler<T>;
 
   /**
-   * Handler that is called when the user cuts text. See [MDN](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/oncut).
+   * Handler that is called when the user cuts text. See
+   * [MDN](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/oncut).
    */
   onCut?: ClipboardEventHandler<T>;
 
   /**
-   * Handler that is called when the user pastes text. See [MDN](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/onpaste).
+   * Handler that is called when the user pastes text. See
+   * [MDN](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/onpaste).
    */
   onPaste?: ClipboardEventHandler<T>;
 
   // Composition events
   /**
-   * Handler that is called when a text composition system starts a new text composition session. See [MDN](https://developer.mozilla.org/en-US/docs/Web/API/Element/compositionstart_event).
+   * Handler that is called when a text composition system starts a new text composition session.
+   * See [MDN](https://developer.mozilla.org/en-US/docs/Web/API/Element/compositionstart_event).
    */
   onCompositionStart?: CompositionEventHandler<T>;
 
   /**
-   * Handler that is called when a text composition system completes or cancels the current text composition session. See [MDN](https://developer.mozilla.org/en-US/docs/Web/API/Element/compositionend_event).
+   * Handler that is called when a text composition system completes or cancels the current text
+   * composition session. See
+   * [MDN](https://developer.mozilla.org/en-US/docs/Web/API/Element/compositionend_event).
    */
   onCompositionEnd?: CompositionEventHandler<T>;
 
   /**
-   * Handler that is called when a new character is received in the current text composition session. See [MDN](https://developer.mozilla.org/en-US/docs/Web/API/Element/compositionupdate_event).
+   * Handler that is called when a new character is received in the current text composition
+   * session. See
+   * [MDN](https://developer.mozilla.org/en-US/docs/Web/API/Element/compositionupdate_event).
    */
   onCompositionUpdate?: CompositionEventHandler<T>;
 
   // Selection events
   /**
-   * Handler that is called when text in the input is selected. See [MDN](https://developer.mozilla.org/en-US/docs/Web/API/Element/select_event).
+   * Handler that is called when text in the input is selected. See
+   * [MDN](https://developer.mozilla.org/en-US/docs/Web/API/Element/select_event).
    */
   onSelect?: ReactEventHandler<T>;
 
   // Input events
   /**
-   * Handler that is called when the input value is about to be modified. See [MDN](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/beforeinput_event).
+   * Handler that is called when the input value is about to be modified. See
+   * [MDN](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/beforeinput_event).
    */
   onBeforeInput?: FormEventHandler<T>;
   /**
-   * Handler that is called when the input value is modified. See [MDN](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/input_event).
+   * Handler that is called when the input value is modified. See
+   * [MDN](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/input_event).
    */
   onInput?: FormEventHandler<T>;
 }
 
 export interface InputDOMProps {
   /**
-   * The name of the input element, used when submitting an HTML form. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefname).
+   * The name of the input element, used when submitting an HTML form. See
+   * [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefname).
    */
   name?: string;
   /**
@@ -151,55 +165,68 @@ export interface InputDOMProps {
 export interface TextInputDOMProps<T = HTMLInputElement>
   extends DOMProps, InputDOMProps, TextInputDOMEvents<T> {
   /**
-   * Describes the type of autocomplete functionality the input should provide if any. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefautocomplete).
+   * Describes the type of autocomplete functionality the input should provide if any. See
+   * [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefautocomplete).
    */
   autoComplete?: string;
 
   /**
-   * The maximum number of characters supported by the input. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefmaxlength).
+   * The maximum number of characters supported by the input. See
+   * [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefmaxlength).
    */
   maxLength?: number;
 
   /**
-   * The minimum number of characters required by the input. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefminlength).
+   * The minimum number of characters required by the input. See
+   * [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefminlength).
    */
   minLength?: number;
 
   /**
-   * Regex pattern that the value of the input must match to be valid. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefpattern).
+   * Regex pattern that the value of the input must match to be valid. See
+   * [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefpattern).
    */
   pattern?: string;
 
   /**
-   * Content that appears in the input when it is empty. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefplaceholder).
+   * Content that appears in the input when it is empty. See
+   * [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefplaceholder).
    */
   placeholder?: string;
 
   /**
-   * The type of input to render. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdeftype).
+   * The type of input to render. See
+   * [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdeftype).
+   *
    * @default 'text'
    */
   type?: 'text' | 'search' | 'url' | 'tel' | 'email' | 'password' | (string & {});
 
   /**
-   * Hints at the type of data that might be entered by the user while editing the element or its contents. See [MDN](https://html.spec.whatwg.org/multipage/interaction.html#input-modalities:-the-inputmode-attribute).
+   * Hints at the type of data that might be entered by the user while editing the element or its
+   * contents. See
+   * [MDN](https://html.spec.whatwg.org/multipage/interaction.html#input-modalities:-the-inputmode-attribute).
    */
   inputMode?: 'none' | 'text' | 'tel' | 'url' | 'email' | 'numeric' | 'decimal' | 'search';
 
   /**
-   * An attribute that takes as its value a space-separated string that describes what, if any, type of autocomplete functionality the input should provide. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#autocomplete).
+   * An attribute that takes as its value a space-separated string that describes what, if any, type
+   * of autocomplete functionality the input should provide. See
+   * [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#autocomplete).
    */
   autoCorrect?: string;
 
   /**
-   * An enumerated attribute that defines whether the element may be checked for spelling errors. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/spellcheck).
+   * An enumerated attribute that defines whether the element may be checked for spelling errors.
+   * See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/spellcheck).
    */
   spellCheck?: string;
 }
 
 /**
- * This type allows configuring link props with router options and type-safe URLs via TS module augmentation.
- * By default, this is an empty type. Extend with `href` and `routerOptions` properties to configure your router.
+ * This type allows configuring link props with router options and type-safe URLs via TS module
+ * augmentation. By default, this is an empty type. Extend with `href` and `routerOptions`
+ * properties to configure your router.
  */
 export interface RouterConfig {}
 
@@ -210,17 +237,35 @@ export type RouterOptions = RouterConfig extends {routerOptions: infer O} ? O : 
 export interface LinkDOMProps {
   /** A URL to link to. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a#href). */
   href?: Href;
-  /** Hints at the human language of the linked URL. See[MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a#hreflang). */
+  /**
+   * Hints at the human language of the linked URL.
+   * See[MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a#hreflang).
+   */
   hrefLang?: string;
-  /** The target window for the link. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a#target). */
+  /**
+   * The target window for the link. See
+   * [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a#target).
+   */
   target?: HTMLAttributeAnchorTarget;
-  /** The relationship between the linked resource and the current page. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/rel). */
+  /**
+   * The relationship between the linked resource and the current page. See
+   * [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/rel).
+   */
   rel?: string;
-  /** Causes the browser to download the linked URL. A string may be provided to suggest a file name. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a#download). */
+  /**
+   * Causes the browser to download the linked URL. A string may be provided to suggest a file name.
+   * See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a#download).
+   */
   download?: boolean | string;
-  /** A space-separated list of URLs to ping when the link is followed. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a#ping). */
+  /**
+   * A space-separated list of URLs to ping when the link is followed. See
+   * [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a#ping).
+   */
   ping?: string;
-  /** How much of the referrer to send when following the link. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a#referrerpolicy). */
+  /**
+   * How much of the referrer to send when following the link. See
+   * [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a#referrerpolicy).
+   */
   referrerPolicy?: HTMLAttributeReferrerPolicy;
   /** Options for the configured client side router. */
   routerOptions?: RouterOptions;
@@ -246,6 +291,7 @@ export interface GroupDOMAttributes extends Omit<DOMAttributes<HTMLElement>, 'ro
 
 /**
  * Global attributes that can be applied to any DOM element.
+ *
  * @private
  */
 // NOTE: id is handled elsewhere (DOMProps).
@@ -259,6 +305,7 @@ export interface GlobalDOMAttributes<T = Element> extends GlobalDOMEvents<T> {
 
 /**
  * Global DOM events that are supported on all DOM elements.
+ *
  * @private
  */
 // NOTES:
@@ -360,8 +407,8 @@ export interface FormProps extends AriaLabelingProps {
    */
   action?: string | FormHTMLAttributes<HTMLFormElement>['action'];
   /**
-   * The enctype attribute specifies how the form-data should be encoded when submitting it to the server.
-   * See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/form#enctype).
+   * The enctype attribute specifies how the form-data should be encoded when submitting it to the
+   * server. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/form#enctype).
    */
   encType?: 'application/x-www-form-urlencoded' | 'multipart/form-data' | 'text/plain';
   /**
@@ -370,8 +417,9 @@ export interface FormProps extends AriaLabelingProps {
    */
   method?: 'get' | 'post' | 'dialog';
   /**
-   * The target attribute specifies a name or a keyword that indicates where to display the response that is received after submitting the form.
-   * See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/form#target).
+   * The target attribute specifies a name or a keyword that indicates where to display the response
+   * that is received after submitting the form. See
+   * [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/form#target).
    */
   target?: '_blank' | '_self' | '_parent' | '_top';
   /**
@@ -387,8 +435,9 @@ export interface FormProps extends AriaLabelingProps {
    */
   onInvalid?: (event: FormEvent<HTMLFormElement>) => void;
   /**
-   * Indicates whether input elements can by default have their values automatically completed by the browser.
-   * See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/form#autocomplete).
+   * Indicates whether input elements can by default have their values automatically completed by
+   * the browser. See
+   * [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/form#autocomplete).
    */
   autoComplete?: 'off' | 'on';
   /**

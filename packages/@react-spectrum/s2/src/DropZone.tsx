@@ -26,7 +26,6 @@ import {
   UnsafeStyles
 } from './style-utils' with {type: 'macro'};
 import {IllustratedMessageContext} from './IllustratedMessage';
-// @ts-ignore
 import intlMessages from '../intl/*.json';
 import {style} from '../style' with {type: 'macro'};
 import {useDOMRef} from './useDOMRef';
@@ -58,6 +57,7 @@ export interface DropZoneProps
   isFilled?: boolean;
   /**
    * The message to replace the default banner message that is shown when the drop zone is filled.
+   *
    * @default 'Drop file to replace'
    */
   replaceMessage?: string;
@@ -132,6 +132,7 @@ export const DropZone = /*#__PURE__*/ forwardRef(function DropZone(
   ref: DOMRef<HTMLDivElement>
 ) {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
+  // oxlint-disable-next-line react/react-compiler
   [props, ref] = useSpectrumContextProps(props, ref, DropZoneContext);
   let {size = 'M'} = props;
   let domRef = useDOMRef(ref);

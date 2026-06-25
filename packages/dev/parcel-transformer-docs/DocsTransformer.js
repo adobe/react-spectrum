@@ -298,7 +298,8 @@ module.exports = new Transformer({
               ref && ref.typeAnnotation
                 ? processExport(path.get('params.1.typeAnnotation.typeAnnotation'))
                 : null,
-            description: docs.description || null
+            description: docs.description || null,
+            examples: docs.examples || null
           });
         } else {
           let docs = getJSDocs(path);
@@ -548,7 +549,11 @@ module.exports = new Transformer({
         );
       }
 
-      if (path.isTSExpressionWithTypeArguments()) {
+      // due to oxlint formatting, WaterfallLayout/other classes now are multiline declarations
+      // the "extends Layout<Node<T>, 0>" part then ends up becoming isTSInstantiationExpressions superclass rather than just Identifier.
+      // as a result, should be handled similar to isTSExpressionWithTypeArguments (aka Blah<T>)
+      // see https://astexplorer.net/#/gist/451958d4b4a31868f0896664e2291a92/15ffdc9fe4097cfdb9f997f12d550fdff4761205 for verification
+      if (path.isTSExpressionWithTypeArguments() || path.isTSInstantiationExpression()) {
         if (path.node.typeParameters) {
           return Object.assign(node, {
             type: 'application',
@@ -858,10 +863,6 @@ module.exports = new Transformer({
         let result = {
           description: parsed.description
         };
-        let extractedExamples = extractExamples(comments);
-        if (extractedExamples.length > 0) {
-          result.examples = extractedExamples;
-        }
 
         for (let tag of parsed.tags) {
           if (tag.title === 'default') {
@@ -890,7 +891,12 @@ module.exports = new Transformer({
             }
 
             if (tag.description) {
-              result.examples.push(tag.description);
+              result.examples.push(
+                tag.description
+                  .split('\n')
+                  .map(line => line.replace(/^\s{2}/, ''))
+                  .join('\n')
+              );
             }
           }
         }
@@ -905,52 +911,6 @@ module.exports = new Transformer({
       }
 
       return {};
-    }
-
-    function extractExamples(comments) {
-      let lines = comments.split('\n').map(line => line.replace(/^\s*\*?\s?/, ''));
-      let examples = [];
-      let current = null;
-
-      for (let line of lines) {
-        if (/^@example\b/.test(line)) {
-          if (current) {
-            let prev = current.join('\n').trim();
-            if (prev) {
-              examples.push(prev);
-            }
-          }
-
-          current = [];
-          let inlineExample = line.replace(/^@example\b\s*/, '');
-          if (inlineExample) {
-            current.push(inlineExample);
-          }
-          continue;
-        }
-
-        if (current) {
-          if (/^@\w+/.test(line)) {
-            let example = current.join('\n').trim();
-            if (example) {
-              examples.push(example);
-            }
-            current = null;
-            continue;
-          }
-
-          current.push(line);
-        }
-      }
-
-      if (current) {
-        let example = current.join('\n').trim();
-        if (example) {
-          examples.push(example);
-        }
-      }
-
-      return examples;
     }
 
     function getDocComments(path) {

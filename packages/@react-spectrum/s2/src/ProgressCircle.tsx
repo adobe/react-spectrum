@@ -159,13 +159,14 @@ const dashoffsetAnimation = keyframes(`
 `);
 
 /**
- * ProgressCircles show the progression of a system operation such as downloading, uploading, or processing, in a visual way.
- * They can represent determinate or indeterminate progress.
+ * ProgressCircles show the progression of a system operation such as downloading, uploading, or
+ * processing, in a visual way. They can represent determinate or indeterminate progress.
  */
 export const ProgressCircle = /*#__PURE__*/ forwardRef(function ProgressCircle(
   props: ProgressCircleProps,
   ref: DOMRef<HTMLDivElement>
 ) {
+  // oxlint-disable-next-line react/react-compiler
   [props, ref] = useSpectrumContextProps(props, ref, ProgressCircleContext);
   let {size = 'M', staticColor, UNSAFE_style, UNSAFE_className = ''} = props;
   let domRef = useDOMRef(ref);
@@ -198,7 +199,7 @@ export const ProgressCircle = /*#__PURE__*/ forwardRef(function ProgressCircle(
         )
       }>
       {({percentage, isIndeterminate}) => (
-        <svg fill="none" width="100%" height="100%">
+        <svg fill="none" width="100%" height="100%" style={{display: 'block'}}>
           <circle cx="50%" cy="50%" r={radius} className={hcmStroke({size})} />
           <circle cx="50%" cy="50%" r={radius} className={track({isStaticColor, size})} />
           <circle

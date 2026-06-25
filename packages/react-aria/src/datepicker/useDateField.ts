@@ -16,7 +16,6 @@ import {
   DOMProps,
   GroupDOMAttributes,
   InputDOMProps,
-  KeyboardEvent,
   RefObject,
   ValidationResult
 } from '@react-types/shared';
@@ -28,7 +27,6 @@ import intlMessages from '../../intl/datepicker/*.json';
 import {mergeProps} from '../utils/mergeProps';
 import {TimeFieldState, TimePickerProps, TimeValue} from 'react-stately/useTimeFieldState';
 import {useDatePickerGroup} from './useDatePickerGroup';
-// @ts-ignore
 import {useDescription} from '../utils/useDescription';
 import {useField} from '../label/useField';
 import {useFocusWithin} from '../interactions/useFocusWithin';
@@ -39,7 +37,8 @@ import {useLocalizedStringFormatter} from '../i18n/useLocalizedStringFormatter';
 export interface AriaDateFieldProps<T extends DateValue>
   extends DateFieldProps<T>, AriaLabelingProps, DOMProps, InputDOMProps {
   /**
-   * Describes the type of autocomplete functionality the input should provide if any. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefautocomplete).
+   * Describes the type of autocomplete functionality the input should provide if any. See
+   * [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefautocomplete).
    */
   autoComplete?: string;
 }
@@ -214,16 +213,8 @@ export function useDateField<T extends DateValue>(
       }
     },
     fieldProps: mergeProps(domProps, fieldDOMProps, groupProps, focusWithinProps, {
-      onKeyDown(e: KeyboardEvent) {
-        if (props.onKeyDown) {
-          props.onKeyDown(e);
-        }
-      },
-      onKeyUp(e: KeyboardEvent) {
-        if (props.onKeyUp) {
-          props.onKeyUp(e);
-        }
-      },
+      onKeyDown: props.onKeyDown,
+      onKeyUp: props.onKeyUp,
       style: {
         unicodeBidi: 'isolate'
       }
@@ -256,6 +247,7 @@ export function useTimeField<T extends TimeValue>(
   ref: RefObject<Element | null>
 ): DateFieldAria {
   let res = useDateField(props, state, ref);
+  // oxlint-disable-next-line react/react-compiler
   res.inputProps.value = state.timeValue?.toString() || '';
   return res;
 }

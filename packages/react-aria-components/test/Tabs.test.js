@@ -73,16 +73,16 @@ describe('Tabs', () => {
     let {getByTestId} = renderTabs();
     let tabs = getByTestId('tabs-wrapper');
     let tabsTester = testUtilUser.createTester('Tabs', {root: tabs});
-    let tablist = tabsTester.tablist;
+    let tablist = tabsTester.getTablist();
     expect(tabs).toBeInTheDocument();
     expect(tablist).toHaveAttribute('class', 'react-aria-TabList');
     expect(tablist).toHaveAttribute('aria-label', 'Test');
 
-    for (let tab of tabsTester.tabs) {
+    for (let tab of tabsTester.getTabs()) {
       expect(tab).toHaveAttribute('class', 'react-aria-Tab');
     }
 
-    expect(tabsTester.tabpanels[0]).toHaveAttribute('class', 'react-aria-TabPanel');
+    expect(tabsTester.getTabpanels()[0]).toHaveAttribute('class', 'react-aria-TabPanel');
   });
 
   it('should render tabs with custom classes', () => {
@@ -399,8 +399,8 @@ describe('Tabs', () => {
     let tabsTester = testUtilUser.createTester('Tabs', {root: getByRole('tablist')});
     await user.tab();
 
-    expect(tabsTester.selectedTab).toBe(tabsTester.tabs[0]);
-    expect(document.activeElement).toBe(tabsTester.tabpanels[0]);
+    expect(tabsTester.getSelectedTab()).toBe(tabsTester.getTabs()[0]);
+    expect(document.activeElement).toBe(tabsTester.getTabpanels()[0]);
   });
 
   it('should support selected state', async () => {
@@ -411,7 +411,7 @@ describe('Tabs', () => {
       {className: ({isSelected}) => (isSelected ? 'selected' : '')}
     );
     let tabsTester = testUtilUser.createTester('Tabs', {root: getByRole('tablist')});
-    let tabs = tabsTester.tabs;
+    let tabs = tabsTester.getTabs();
 
     expect(tabs[0]).toHaveAttribute('aria-selected', 'true');
     expect(tabs[0]).toHaveClass('selected');
@@ -445,15 +445,15 @@ describe('Tabs', () => {
     );
 
     let tabsTester = testUtilUser.createTester('Tabs', {root: getByRole('tablist')});
-    expect(tabsTester.activeTabpanel.getAttribute('id')).toContain('first-element');
+    expect(tabsTester.getActiveTabpanel().getAttribute('id')).toContain('first-element');
 
     await tabsTester.triggerTab({tab: 1});
     expect(onSelectionChange).toHaveBeenCalled();
-    expect(tabsTester.activeTabpanel.getAttribute('id')).toContain('second-element');
+    expect(tabsTester.getActiveTabpanel().getAttribute('id')).toContain('second-element');
 
     await tabsTester.triggerTab({tab: 2});
     expect(onSelectionChange).toHaveBeenCalled();
-    expect(tabsTester.activeTabpanel.getAttribute('id')).toContain('third-element');
+    expect(tabsTester.getActiveTabpanel().getAttribute('id')).toContain('third-element');
   });
 
   it('should support orientation', () => {
@@ -482,23 +482,23 @@ describe('Tabs', () => {
         root: getByRole('tablist'),
         interactionType
       });
-      let tabs = tabsTester.tabs;
+      let tabs = tabsTester.getTabs();
 
       await tabsTester.triggerTab({tab: 0});
-      expect(tabsTester.selectedTab).toBe(tabs[0]);
-      expect(tabsTester.activeTabpanel.getAttribute('aria-labelledby')).toBe(tabs[0].id);
+      expect(tabsTester.getSelectedTab()).toBe(tabs[0]);
+      expect(tabsTester.getActiveTabpanel().getAttribute('aria-labelledby')).toBe(tabs[0].id);
 
       await tabsTester.triggerTab({tab: 1});
-      expect(tabsTester.selectedTab).toBe(tabs[1]);
-      expect(tabsTester.activeTabpanel.getAttribute('aria-labelledby')).toBe(tabs[1].id);
+      expect(tabsTester.getSelectedTab()).toBe(tabs[1]);
+      expect(tabsTester.getActiveTabpanel().getAttribute('aria-labelledby')).toBe(tabs[1].id);
 
       await tabsTester.triggerTab({tab: 2});
-      expect(tabsTester.selectedTab).toBe(tabs[2]);
-      expect(tabsTester.activeTabpanel.getAttribute('aria-labelledby')).toBe(tabs[2].id);
+      expect(tabsTester.getSelectedTab()).toBe(tabs[2]);
+      expect(tabsTester.getActiveTabpanel().getAttribute('aria-labelledby')).toBe(tabs[2].id);
 
       await tabsTester.triggerTab({tab: 1});
-      expect(tabsTester.selectedTab).toBe(tabs[1]);
-      expect(tabsTester.activeTabpanel.getAttribute('aria-labelledby')).toBe(tabs[1].id);
+      expect(tabsTester.getSelectedTab()).toBe(tabs[1]);
+      expect(tabsTester.getActiveTabpanel().getAttribute('aria-labelledby')).toBe(tabs[1].id);
     }
   );
 
@@ -563,7 +563,7 @@ describe('Tabs', () => {
       interactionType: 'keyboard'
     });
 
-    let tabs = tabsTester.tabs;
+    let tabs = tabsTester.getTabs();
     await tabsTester.triggerTab({tab: 0});
 
     expect(tabs[0]).toHaveAttribute('aria-selected', 'true');
@@ -578,7 +578,7 @@ describe('Tabs', () => {
     expect(tabs[1]).toHaveAttribute('aria-selected', 'false');
     expect(tabs[2]).toHaveAttribute('aria-selected', 'true');
 
-    expect(onSelectionChange).toBeCalledTimes(1);
+    expect(onSelectionChange).toHaveBeenCalledTimes(1);
   });
 
   it('should support tabs as links', async function () {
@@ -997,12 +997,12 @@ describe('Tabs', () => {
     );
 
     let tester = testUtilUser.createTester('Tabs', {root: tree.getByRole('tablist')});
-    expect(tester.tabs.length).toBe(2);
+    expect(tester.getTabs().length).toBe(2);
 
     let trigger = tree.getByRole('button');
     let menu = testUtilUser.createTester('Menu', {root: trigger});
     await menu.open();
-    expect(menu.options()).toHaveLength(2);
+    expect(menu.getOptions()).toHaveLength(2);
     await menu.close();
   });
 
@@ -1034,12 +1034,12 @@ describe('Tabs', () => {
     );
 
     let tester = testUtilUser.createTester('Tabs', {root: tree.getByRole('tablist')});
-    expect(tester.tabs.length).toBe(2);
+    expect(tester.getTabs().length).toBe(2);
 
     let trigger = tree.getByRole('button');
     let menu = testUtilUser.createTester('Select', {root: trigger});
     await menu.open();
-    expect(menu.options()).toHaveLength(3);
+    expect(menu.getOptions()).toHaveLength(3);
     await menu.close();
   });
 
@@ -1069,14 +1069,14 @@ describe('Tabs', () => {
     );
 
     let tester = testUtilUser.createTester('Tabs', {root: tree.getByRole('tablist')});
-    expect(tester.tabs.length).toBe(2);
+    expect(tester.getTabs().length).toBe(2);
 
     let menu = testUtilUser.createTester('ComboBox', {
       interactionType: 'keyboard',
       root: tree.container.querySelector('.react-aria-ComboBox')
     });
     await menu.open();
-    expect(menu.options()).toHaveLength(3);
+    expect(menu.getOptions()).toHaveLength(3);
     await menu.close();
   });
 });

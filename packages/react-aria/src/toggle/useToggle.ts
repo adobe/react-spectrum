@@ -44,7 +44,8 @@ export interface AriaToggleProps
     InputDOMProps,
     PressEvents {
   /**
-   * Identifies the element (or elements) whose contents or presence are controlled by the current element.
+   * Identifies the element (or elements) whose contents or presence are controlled by the current
+   * element.
    */
   'aria-controls'?: string;
 }
@@ -177,6 +178,7 @@ export function useToggle(
       // @ts-expect-error
       let {[privateValidationStateProp]: groupValidationState} = props;
 
+      // oxlint-disable-next-line react/react-compiler
       let {commitValidation} = groupValidationState ? groupValidationState : validationState;
 
       commitValidation();

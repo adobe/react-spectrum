@@ -190,6 +190,7 @@ export function FocusScope(props: FocusScopeProps): JSX.Element {
     };
   }, [scopeRef]);
 
+  // oxlint-disable-next-line react/react-compiler
   let focusManager = useMemo(() => createFocusManagerForScope(scopeRef), []);
   let value = useMemo(
     () => ({
@@ -632,6 +633,7 @@ function useRestoreFocus(
   const nodeToRestoreRef = useRef(
     typeof document !== 'undefined'
       ? (getActiveElement(
+          // oxlint-disable-next-line react/react-compiler
           getOwnerDocument(scopeRef.current ? scopeRef.current[0] : undefined)
         ) as FocusableElement)
       : null
@@ -802,9 +804,12 @@ function useRestoreFocus(
             while (treeNode) {
               if (
                 treeNode.scopeRef &&
+                // TODO: this is probably a false positive based on naming, it's not a real ref, rename.
+                // oxlint-disable-next-line react-hooks/exhaustive-deps
                 treeNode.scopeRef.current &&
                 focusScopeTree.getTreeNode(treeNode.scopeRef)
               ) {
+                // oxlint-disable-next-line react-hooks/exhaustive-deps
                 let node = getFirstInScope(treeNode.scopeRef.current, true);
                 restoreFocusToElement(node);
                 return;

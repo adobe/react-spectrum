@@ -69,26 +69,31 @@ export interface CardViewProps<T>
     UnsafeStyles {
   /**
    * The layout of the cards.
+   *
    * @default 'grid'
    */
   layout?: 'grid' | 'waterfall';
   /**
    * The size of the cards.
+   *
    * @default 'M'
    */
   size?: 'XS' | 'S' | 'M' | 'L' | 'XL';
   /**
    * The amount of space between the cards.
+   *
    * @default 'regular'
    */
   density?: 'compact' | 'regular' | 'spacious';
   /**
    * The visual style of the cards.
+   *
    * @default 'primary'
    */
   variant?: 'primary' | 'secondary' | 'tertiary' | 'quiet';
   /**
    * How selection should be displayed.
+   *
    * @default 'checkbox'
    */
   selectionStyle?: 'checkbox' | 'highlight';
@@ -234,9 +239,10 @@ export const CardViewContext =
 /**
  * A CardView displays a group of related objects, with support for selection and bulk actions.
  */
-export const CardView = /*#__PURE__*/ (forwardRef as forwardRefType)(function CardView<
-  T extends object
->(props: CardViewProps<T>, ref: DOMRef<HTMLDivElement>) {
+export const CardView = /*#__PURE__*/ (forwardRef as forwardRefType)(function CardView<T>(
+  props: CardViewProps<T>,
+  ref: DOMRef<HTMLDivElement>
+) {
   [props, ref] = useSpectrumContextProps(props, ref, CardViewContext);
   let {
     children,

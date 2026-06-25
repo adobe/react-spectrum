@@ -28,7 +28,6 @@ import {Flex} from '../layout/Flex';
 import {FocusableRef} from '@react-types/shared';
 import {Input} from './Input';
 import intlMessages from '../../intl/datepicker/*.json';
-// @ts-ignore
 import {mergeProps} from 'react-aria/mergeProps';
 import {RangeCalendar} from '../calendar/RangeCalendar';
 import React, {ReactElement, useRef} from 'react';
@@ -120,6 +119,7 @@ export const DateRangePicker = React.forwardRef(function DateRangePicker<T exten
   // The format help text is unnecessary for screen reader users because each segment already has a label.
   let description = useFormatHelpText(props);
   if (description && !props.description) {
+    // oxlint-disable-next-line react/react-compiler
     descriptionProps.id = undefined;
   }
 

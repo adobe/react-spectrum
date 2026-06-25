@@ -72,7 +72,7 @@ describe('Picker', () => {
     );
 
     let selectTester = testUtilUser.createTester('Select', {root: tree.container});
-    expect(selectTester.listbox).toBeFalsy();
+    expect(selectTester.getListbox()).toBeFalsy();
     selectTester.setInteractionType('mouse');
     await selectTester.open();
 
@@ -114,14 +114,14 @@ describe('Picker', () => {
 
     let selectTester = testUtilUser.createTester('Select', {root: tree.container});
     await selectTester.open();
-    let options = selectTester.options();
+    let options = selectTester.getOptions();
     for (let [index, option] of options.entries()) {
       expect(option).toHaveAttribute('aria-posinset', `${index + 1}`);
       expect(option).toHaveAttribute('aria-setsize', `${items.length}`);
     }
 
     tree.rerender(<DynamicPicker items={items} loadingState="loadingMore" />);
-    options = selectTester.options();
+    options = selectTester.getOptions();
     for (let [index, option] of options.entries()) {
       if (index === options.length - 1) {
         // The last row is the loader here which shouldn't have posinset
@@ -136,7 +136,7 @@ describe('Picker', () => {
     let newItems = [...items, {name: 'Chocolate Mint'}, {name: 'Chocolate Chip Cookie Dough'}];
     tree.rerender(<DynamicPicker items={newItems} />);
 
-    options = selectTester.options();
+    options = selectTester.getOptions();
     for (let [index, option] of options.entries()) {
       expect(option).toHaveAttribute('aria-posinset', `${index + 1}`);
       expect(option).toHaveAttribute('aria-setsize', `${newItems.length}`);
@@ -170,8 +170,8 @@ describe('Picker', () => {
       interactionType: 'mouse'
     });
     await selectTester.open();
-    await selectTester.selectOption({option: 0});
-    await selectTester.selectOption({option: 2});
+    await selectTester.toggleOptionSelection({option: 0});
+    await selectTester.toggleOptionSelection({option: 2});
     await selectTester.close();
 
     // check that the clicked items are rendered in the custom renderValue output
@@ -181,7 +181,8 @@ describe('Picker', () => {
   });
 
   it('should warn if the custom render value output has a interactive child', async () => {
-    let spy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    using spy = jest.spyOn(console, 'warn').mockImplementation(() => {}) as jest.SpyInstance &
+      Disposable;
     let items = [
       {id: 'chocolate', name: 'Chocolate'},
       {id: 'strawberry', name: 'Strawberry'},
@@ -210,8 +211,8 @@ describe('Picker', () => {
       interactionType: 'mouse'
     });
     await selectTester.open();
-    await selectTester.selectOption({option: 0});
-    await selectTester.selectOption({option: 2});
+    await selectTester.toggleOptionSelection({option: 0});
+    await selectTester.toggleOptionSelection({option: 2});
     await selectTester.close();
 
     expect(spy).toHaveBeenCalledWith(
@@ -221,7 +222,8 @@ describe('Picker', () => {
 
   it('should support contextual help', async () => {
     // Issue with how we don't render the contextual help button in the fake DOM since PressResponder isn't using createHideableComponent
-    let warn = jest.spyOn(global.console, 'warn').mockImplementation();
+    using warn = jest.spyOn(global.console, 'warn').mockImplementation() as jest.SpyInstance &
+      Disposable;
     let user = userEvent.setup({delay: null, pointerMap});
     let tree = render(
       <Picker
@@ -246,7 +248,7 @@ describe('Picker', () => {
     let selectTester = testUtilUser.createTester('Select', {root: tree.getByTestId('testpicker')});
     let buttons = tree.getAllByRole('button');
     expect(buttons).toHaveLength(2);
-    expect(buttons[1]).toBe(selectTester.trigger);
+    expect(buttons[1]).toBe(selectTester.getTrigger());
 
     await user.click(buttons[0]);
 

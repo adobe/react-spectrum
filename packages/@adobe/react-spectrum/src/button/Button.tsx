@@ -11,7 +11,6 @@
  */
 
 import {AriaButtonProps, useButton} from 'react-aria/useButton';
-
 import {classNames} from '../utils/classNames';
 import {FocusableRef, StyleProps} from '@react-types/shared';
 import {FocusRing} from 'react-aria/FocusRing';
@@ -19,7 +18,6 @@ import intlMessages from '../../intl/button/*.json';
 import {isAppleDevice, isFirefox} from 'react-aria/private/utils/platform';
 import {mergeProps} from 'react-aria/mergeProps';
 import {ProgressCircle} from '../progress/ProgressCircle';
-// @ts-ignore
 import React, {ElementType, ReactElement, useEffect, useState} from 'react';
 import {SlotProvider, useSlotProps} from '../utils/Slots';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
@@ -49,6 +47,7 @@ export interface SpectrumButtonProps<T extends ElementType = 'button'>
   isPending?: boolean;
   /**
    * Whether the button should be displayed with a quiet style.
+   *
    * @deprecated
    */
   isQuiet?: boolean;
@@ -121,6 +120,7 @@ export const Button = React.forwardRef(function Button<T extends ElementType = '
       }, 1000);
     } else {
       // Exit loading state when isPending is set to false. */
+      // oxlint-disable-next-line react/react-compiler
       setIsProgressVisible(false);
     }
     return () => {

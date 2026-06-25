@@ -27,7 +27,7 @@ import {getEventTarget, nodeContains} from 'react-aria/private/utils/shadowdom/D
 import intlMessages from '../intl/*.json';
 import {isFocusable} from 'react-aria/private/utils/isFocusable';
 import {mergeProps} from 'react-aria/mergeProps';
-import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
+import React, {createContext, CSSProperties, ForwardedRef, forwardRef, useRef} from 'react';
 import {TextContext} from './Text';
 import {useButton} from 'react-aria/useButton';
 import {useClipboard} from 'react-aria/useClipboard';
@@ -35,7 +35,6 @@ import {useFocusRing} from 'react-aria/useFocusRing';
 import {useHover} from 'react-aria/useHover';
 import {useLabels} from 'react-aria/private/utils/useLabels';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
-// @ts-ignore
 import {useObjectRef} from 'react-aria/useObjectRef';
 import {useSlotId} from 'react-aria/private/utils/useId';
 import {VisuallyHidden} from 'react-aria/VisuallyHidden';
@@ -43,26 +42,31 @@ import {VisuallyHidden} from 'react-aria/VisuallyHidden';
 export interface DropZoneRenderProps {
   /**
    * Whether the dropzone is currently hovered with a mouse.
+   *
    * @selector [data-hovered]
    */
   isHovered: boolean;
   /**
    * Whether the dropzone is focused, either via a mouse or keyboard.
+   *
    * @selector [data-focused]
    */
   isFocused: boolean;
   /**
    * Whether the dropzone is keyboard focused.
+   *
    * @selector [data-focus-visible]
    */
   isFocusVisible: boolean;
   /**
    * Whether the dropzone is the drop target.
+   *
    * @selector [data-drop-target]
    */
   isDropTarget: boolean;
   /**
    * Whether the dropzone is disabled.
+   *
    * @selector [data-disabled]
    */
   isDisabled: boolean;
@@ -77,10 +81,17 @@ export interface DropZoneProps
     AriaLabelingProps,
     GlobalDOMAttributes<HTMLDivElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-DropZone'
    */
   className?: ClassNameOrFunction<DropZoneRenderProps>;
+  /**
+   * The inline style for the visually hidden drop button used for keyboard and screen reader drop
+   * interactions.
+   */
+  dropButtonStyle?: CSSProperties;
 }
 
 export const DropZoneContext = createContext<ContextValue<DropZoneProps, HTMLDivElement>>(null);
@@ -93,7 +104,9 @@ export const DropZone = forwardRef(function DropZone(
   ref: ForwardedRef<HTMLDivElement>
 ) {
   let {isDisabled = false} = props;
+  // oxlint-disable-next-line react/react-compiler
   [props, ref] = useContextProps(props, ref, DropZoneContext);
+  let {dropButtonStyle} = props;
   let dropzoneRef = useObjectRef(ref);
   let buttonRef = useRef<HTMLButtonElement>(null);
   let {dropProps, dropButtonProps, isDropTarget} = useDrop({
@@ -156,7 +169,7 @@ export const DropZone = forwardRef(function DropZone(
         data-focus-visible={isFocusVisible || undefined}
         data-drop-target={isDropTarget || undefined}
         data-disabled={isDisabled || undefined}>
-        <VisuallyHidden>
+        <VisuallyHidden style={dropButtonStyle}>
           <button
             {...mergeProps(buttonProps, focusProps, clipboardProps, labelProps)}
             ref={buttonRef}

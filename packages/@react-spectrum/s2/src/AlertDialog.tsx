@@ -20,7 +20,6 @@ import {Dialog} from './Dialog';
 import {DOMProps, DOMRef} from '@react-types/shared';
 import {forwardRef, ReactNode} from 'react';
 import {IconContext} from './Icon';
-// @ts-ignore
 import intlMessages from '../intl/*.json';
 import NoticeSquare from '../s2wf-icons/S2_Icon_AlertDiamond_20_N.svg';
 import {Provider} from 'react-aria-components/slots';
@@ -31,6 +30,7 @@ import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatte
 export interface AlertDialogProps extends DOMProps, UnsafeStyles {
   /**
    * The [visual style](https://spectrum.adobe.com/page/alert-dialog/#Options) of the AlertDialog.
+   *
    * @default 'confirmation'
    */
   variant?: 'confirmation' | 'information' | 'destructive' | 'error' | 'warning';
@@ -78,7 +78,8 @@ const icon = style({
 });
 
 /**
- * AlertDialogs are a specific type of Dialog. They display important information that users need to acknowledge.
+ * AlertDialogs are a specific type of Dialog. They display important information that users need to
+ * acknowledge.
  */
 export const AlertDialog = forwardRef(function AlertDialog(props: AlertDialogProps, ref: DOMRef) {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');

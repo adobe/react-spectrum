@@ -21,10 +21,7 @@ import {TreeState} from 'react-stately/useTreeState';
 
 export interface TreeProps<T> extends GridListProps<T> {}
 
-export interface AriaTreeProps<T> extends Omit<
-  AriaGridListProps<T>,
-  'keyboardNavigationBehavior'
-> {}
+export interface AriaTreeProps<T> extends AriaGridListProps<T> {}
 export interface AriaTreeOptions<T> extends Omit<
   AriaGridListOptions<T>,
   'children' | 'shouldFocusWrap'
@@ -42,8 +39,10 @@ export interface TreeAria {
 }
 
 /**
- * Provides the behavior and accessibility implementation for a single column treegrid component with interactive children.
- * A tree grid provides users with a way to navigate nested hierarchical information.
+ * Provides the behavior and accessibility implementation for a single column treegrid component
+ * with interactive children. A tree grid provides users with a way to navigate nested hierarchical
+ * information.
+ *
  * @param props - Props for the treegrid.
  * @param state - State for the treegrid, as returned by `useTreeState`.
  * @param ref - The ref attached to the treegrid element.
@@ -54,6 +53,7 @@ export function useTree<T>(
   ref: RefObject<HTMLElement | null>
 ): TreeAria {
   let {gridProps} = useGridList(props, state, ref);
+  // oxlint-disable-next-line react/react-compiler
   gridProps.role = 'treegrid';
 
   return {

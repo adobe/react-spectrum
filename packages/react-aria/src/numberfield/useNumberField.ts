@@ -11,7 +11,6 @@
  */
 
 import {announce} from '../live-announcer/LiveAnnouncer';
-
 import {AriaButtonProps} from '../button/useButton';
 import {
   AriaLabelingProps,
@@ -22,7 +21,6 @@ import {
   TextInputDOMProps,
   ValidationResult
 } from '@react-types/shared';
-import {chain} from '../utils/chain';
 import {
   type ClipboardEvent,
   type ClipboardEventHandler,
@@ -41,12 +39,12 @@ import {isAndroid, isIOS, isIPhone} from '../utils/platform';
 import {mergeProps} from '../utils/mergeProps';
 import {NumberFieldProps, NumberFieldState} from 'react-stately/useNumberFieldState';
 import {privateValidationStateProp} from 'react-stately/private/form/useFormValidationState';
-// @ts-ignore
 import {useFocus} from '../interactions/useFocus';
 import {useFocusWithin} from '../interactions/useFocusWithin';
 import {useFormattedTextField} from '../textfield/useFormattedTextField';
 import {useFormReset} from '../utils/useFormReset';
 import {useId} from '../utils/useId';
+import {useKeyboard} from '../interactions/useKeyboard';
 import {useLayoutEffect} from '../utils/useLayoutEffect';
 import {useLocalizedStringFormatter} from '../i18n/useLocalizedStringFormatter';
 import {useNumberFormatter} from '../i18n/useNumberFormatter';
@@ -55,9 +53,15 @@ import {useSpinButton} from '../spinbutton/useSpinButton';
 
 export interface AriaNumberFieldProps
   extends NumberFieldProps, DOMProps, AriaLabelingProps, TextInputDOMEvents {
-  /** A custom aria-label for the decrement button. If not provided, the localized string "Decrement" is used. */
+  /**
+   * A custom aria-label for the decrement button. If not provided, the localized string "Decrement"
+   * is used.
+   */
   decrementAriaLabel?: string;
-  /** A custom aria-label for the increment button. If not provided, the localized string "Increment" is used. */
+  /**
+   * A custom aria-label for the increment button. If not provided, the localized string "Increment"
+   * is used.
+   */
   incrementAriaLabel?: string;
   /**
    * Enables or disables changing the value with scroll.
@@ -83,8 +87,9 @@ export interface NumberFieldAria extends ValidationResult {
 }
 
 /**
- * Provides the behavior and accessibility implementation for a number field component.
- * Number fields allow users to enter a number, and increment or decrement the value using stepper buttons.
+ * Provides the behavior and accessibility implementation for a number field component. Number
+ * fields allow users to enter a number, and increment or decrement the value using stepper
+ * buttons.
  */
 export function useNumberField(
   props: AriaNumberFieldProps,
@@ -250,28 +255,25 @@ export function useNumberField(
   };
 
   let domProps = filterDOMProps(props);
-  let onKeyDownEnter = useCallback(
-    e => {
-      if (e.nativeEvent.isComposing) {
-        return;
-      }
-
-      if (e.key === 'Enter') {
+  let {keyboardProps} = useKeyboard({
+    isDisabled: isDisabled || isReadOnly,
+    shortcuts: {
+      Enter: () => {
         flushSync(() => {
           commit();
         });
         commitValidation();
-      } else {
-        e.continuePropagation();
+        return {shouldPreventDefault: false};
       }
     },
-    [commit, commitValidation]
-  );
+    onKeyDown,
+    onKeyUp
+  });
 
   let {isInvalid, validationErrors, validationDetails} = state.displayValidation;
   let {
     labelProps,
-    inputProps: textFieldProps,
+    inputProps: textFieldPropsFromHook,
     descriptionProps,
     errorMessageProps
   } = useFormattedTextField(
@@ -300,8 +302,6 @@ export function useNumberField(
       onBlur,
       onFocus,
       onFocusChange,
-      onKeyDown: useMemo(() => chain(onKeyDownEnter, onKeyDown), [onKeyDownEnter, onKeyDown]),
-      onKeyUp,
       onPaste,
       description,
       errorMessage
@@ -309,6 +309,11 @@ export function useNumberField(
     state,
     inputRef
   );
+
+  // Merge outside useFormattedTextField so useKeyboard's createEventHandler is not nested inside
+  // useTextField/useFocusable's createEventHandler (avoids redundant stopPropagation on RS events).
+  // Shortcuts run first (mergeProps chains the second argument after the first).
+  let textFieldProps = mergeProps(keyboardProps, textFieldPropsFromHook);
 
   useFormReset(inputRef, state.defaultNumberValue, state.setNumberValue);
   useNativeValidation(
@@ -380,6 +385,7 @@ export function useNumberField(
   let incrementId = useId();
   let decrementId = useId();
 
+  // oxlint-disable-next-line react/react-compiler
   let incrementButtonProps: AriaButtonProps = mergeProps(incButtonProps, {
     'aria-label': incrementAriaLabel || stringFormatter.format('increase', {fieldLabel}).trim(),
     id: ariaLabelledby && !incrementAriaLabel ? incrementId : null,
@@ -393,6 +399,7 @@ export function useNumberField(
     onPressStart: onButtonPressStart
   });
 
+  // oxlint-disable-next-line react/react-compiler
   let decrementButtonProps: AriaButtonProps = mergeProps(decButtonProps, {
     'aria-label': decrementAriaLabel || stringFormatter.format('decrease', {fieldLabel}).trim(),
     id: ariaLabelledby && !decrementAriaLabel ? decrementId : null,

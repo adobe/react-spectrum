@@ -12,7 +12,6 @@
 
 import {announce} from '../live-announcer/LiveAnnouncer';
 import {Collection, Key, Node, Selection} from '@react-types/shared';
-// @ts-ignore
 import intlMessages from '../../intl/grid/*.json';
 import {SelectionManager} from 'react-stately/private/selection/SelectionManager';
 import {useCallback, useRef} from 'react';
@@ -21,7 +20,9 @@ import {useUpdateEffect} from '../utils/useUpdateEffect';
 
 export interface GridSelectionAnnouncementProps {
   /**
-   * A function that returns the text that should be announced by assistive technology when a row is added or removed from selection.
+   * A function that returns the text that should be announced by assistive technology when a row is
+   * added or removed from selection.
+   *
    * @default (key) => state.collection.getItem(key)?.textValue
    */
   getRowText?: (key: Key) => string;

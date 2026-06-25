@@ -40,15 +40,17 @@ export interface SliderAria {
 }
 
 /**
- * Provides the behavior and accessibility implementation for a slider component representing one or more values.
+ * Provides the behavior and accessibility implementation for a slider component representing one or
+ * more values.
  *
  * @param props Props for the slider.
  * @param state State for the slider, as returned by `useSliderState`.
  * @param trackRef Ref for the "track" element.  The width of this element provides the "length"
- * of the track -- the span of one dimensional space that the slider thumb can be.  It also
- * accepts click and drag motions, so that the closest thumb will follow clicks and drags on
- * the track.
+ *   of the track -- the span of one dimensional space that the slider thumb can be.  It also
+ *   accepts click and drag motions, so that the closest thumb will follow clicks and drags on
+ *   the track.
  */
+// oxlint-disable-next-line react/react-compiler
 export function useSlider<T extends number | number[]>(
   props: AriaSliderProps<T>,
   state: SliderState,

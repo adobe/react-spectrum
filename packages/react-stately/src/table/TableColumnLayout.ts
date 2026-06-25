@@ -33,7 +33,10 @@ export class TableColumnLayout<T> {
     this.getDefaultMinWidth = options?.getDefaultMinWidth ?? (() => 75);
   }
 
-  /** Takes an array of columns and splits it into 2 maps of columns with controlled and columns with uncontrolled widths. */
+  /**
+   * Takes an array of columns and splits it into 2 maps of columns with controlled and columns with
+   * uncontrolled widths.
+   */
   splitColumnsIntoControlledAndUncontrolled(
     columns: Array<GridNode<T>>
   ): [Map<Key, GridNode<T>>, Map<Key, GridNode<T>>] {

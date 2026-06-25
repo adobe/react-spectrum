@@ -385,9 +385,9 @@ export const CoachMark = forwardRef((props: CoachMarkProps, ref: ForwardedRef<HT
 export interface CoachMarkTriggerProps extends AriaDialogTriggerProps {}
 
 /**
- * DialogTrigger serves as a wrapper around a Dialog and its associated trigger, linking the Dialog's
- * open state with the trigger's press state. Additionally, it allows you to customize the type and
- * positioning of the Dialog.
+ * DialogTrigger serves as a wrapper around a Dialog and its associated trigger, linking the
+ * Dialog's open state with the trigger's press state. Additionally, it allows you to customize the
+ * type and positioning of the Dialog.
  */
 export function CoachMarkTrigger(props: CoachMarkTriggerProps): ReactNode {
   let triggerRef = useRef<HTMLDivElement>(null);
@@ -401,7 +401,9 @@ export function CoachMarkTrigger(props: CoachMarkTriggerProps): ReactNode {
   // This is done in RAC instead of hooks because otherwise we cannot distinguish
   // between context and props. Normally aria-labelledby overrides the title
   // but when sent by context we want the title to win.
+  // oxlint-disable-next-line react/react-compiler
   triggerProps.id = useId();
+  // oxlint-disable-next-line react/react-compiler
   overlayProps['aria-labelledby'] = triggerProps.id;
 
   return (

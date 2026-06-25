@@ -35,6 +35,7 @@ export interface IconProps extends DOMProps, AriaLabelingProps, StyleProps {
   size?: 'XXS' | 'XS' | 'S' | 'M' | 'L' | 'XL' | 'XXL';
   /**
    * A slot to place the icon in.
+   *
    * @default 'icon'
    */
   slot?: string;
@@ -60,7 +61,8 @@ const iconStyleProps: StyleHandlers = {
 };
 
 /**
- * Spectrum icons are clear, minimal, and consistent across platforms. They follow the focused and rational principles of the design system in both metaphor and style.
+ * Spectrum icons are clear, minimal, and consistent across platforms. They follow the focused and
+ * rational principles of the design system in both metaphor and style.
  */
 export function Icon(props: IconProps): JSX.Element {
   props = useSlotProps(props, 'icon');
@@ -69,7 +71,7 @@ export function Icon(props: IconProps): JSX.Element {
 
   let provider: undefined | ProviderContext;
   try {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
+    // oxlint-disable-next-line react/react-compiler
     provider = useProvider();
   } catch {
     // ignore

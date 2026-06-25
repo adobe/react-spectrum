@@ -9,6 +9,7 @@ export interface AriaFocusRingProps {
    * Whether to show the focus ring when something
    * inside the container element has focus (true), or
    * only if the container itself has focus (false).
+   *
    * @default 'false'
    */
   within?: boolean;
@@ -44,6 +45,7 @@ export function useFocusRing(props: AriaFocusRingProps = {}): FocusRingAria {
   });
   let [isFocused, setFocused] = useState(false);
   let [isFocusVisibleState, setFocusVisible] = useState(
+    // oxlint-disable-next-line react/react-compiler
     () => state.current.isFocused && state.current.isFocusVisible
   );
 

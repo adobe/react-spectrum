@@ -36,8 +36,10 @@ export interface SpectrumCheckboxProps extends Omit<AriaCheckboxProps, 'onClick'
    */
   isEmphasized?: boolean;
   /**
-   * A slot name for the component. Slots allow the component to receive props from a parent component.
-   * An explicit `null` value indicates that the local props completely override all props received from a parent.
+   * A slot name for the component. Slots allow the component to receive props from a parent
+   * component. An explicit `null` value indicates that the local props completely override all
+   * props received from a parent.
+   *
    * @private
    */
   slot?: string | null;
@@ -66,7 +68,7 @@ export const Checkbox = forwardRef(function Checkbox(
   // but since the checkbox won't move in and out of a group, it should be safe.
   let groupState = useContext(CheckboxGroupContext);
   let {labelProps, inputProps, isInvalid, isDisabled} = groupState
-    ? // eslint-disable-next-line react-hooks/rules-of-hooks
+    ? // oxlint-disable-next-line react/react-compiler, react-hooks/rules-of-hooks
       useCheckboxGroupItem(
         {
           ...props,
@@ -83,7 +85,7 @@ export const Checkbox = forwardRef(function Checkbox(
         groupState,
         inputRef
       )
-    : // eslint-disable-next-line react-hooks/rules-of-hooks
+    : // oxlint-disable-next-line react/react-compiler, react-hooks/rules-of-hooks
       useCheckbox(props, useToggleState(props), inputRef);
 
   let {hoverProps, isHovered} = useHover({isDisabled});

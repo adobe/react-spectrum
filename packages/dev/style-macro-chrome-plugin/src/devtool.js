@@ -2,9 +2,9 @@ chrome.devtools.panels.elements.createSidebarPane('Style Macros', sidebar => {
   sidebar.setObject({});
 
   // Helper function to log to both DevTools-for-DevTools console and inspected page console
-  const debugLog = (...args) => {
-    // console.log(...args); // Logs to DevTools-for-DevTools console
-    // const message = args.map(arg =>
+  const debugLog = () => {
+    // console.log(...arguments); // Logs to DevTools-for-DevTools console
+    // const message = [...arguments].map(arg =>
     //   typeof arg === 'object' ? JSON.stringify(arg) : String(arg)
     // ).join(' ');
     // chrome.devtools.inspectedWindow.eval(`console.log('[DevTools]', ${JSON.stringify(message)})`);

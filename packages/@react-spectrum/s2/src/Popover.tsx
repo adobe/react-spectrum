@@ -49,7 +49,6 @@ export interface PopoverProps
     Omit<
       AriaPopoverProps,
       | 'arrowSize'
-      | 'isNonModal'
       | 'arrowBoundaryOffset'
       | 'isKeyboardDismissDisabled'
       | 'shouldCloseOnInteractOutside'
@@ -291,6 +290,8 @@ export interface PopoverDialogProps
       | 'containerPadding'
       | 'offset'
       | 'crossOffset'
+      | 'getTargetRect'
+      | 'isNonModal'
       | 'triggerRef'
       | 'isOpen'
       | 'onOpenChange'
@@ -303,6 +304,7 @@ export interface PopoverDialogProps
   children?: ReactNode;
   /**
    * The amount of padding around the contents of the dialog.
+   *
    * @default 'default'
    */
   padding?: 'default' | 'none';

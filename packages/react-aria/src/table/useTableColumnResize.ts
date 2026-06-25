@@ -26,7 +26,6 @@ import {useId} from '../utils/useId';
 import {useInteractionModality} from '../interactions/useFocusVisible';
 import {useKeyboard} from '../interactions/useKeyboard';
 import {useLocale} from '../i18n/I18nProvider';
-// @ts-ignore
 import {useLocalizedStringFormatter} from '../i18n/useLocalizedStringFormatter';
 import {useMove} from '../interactions/useMove';
 import {usePress} from '../interactions/usePress';
@@ -42,15 +41,19 @@ export interface TableColumnResizeAria {
 }
 
 export interface AriaTableColumnResizeProps<T> {
-  /** An object representing the [column header](https://www.w3.org/TR/wai-aria-1.1/#columnheader). Contains all the relevant information that makes up the column header. */
+  /**
+   * An object representing the [column header](https://www.w3.org/TR/wai-aria-1.1/#columnheader).
+   * Contains all the relevant information that makes up the column header.
+   */
   column: GridNode<T>;
   /** Aria label for the hidden input. Gets read when resizing. */
   'aria-label': string;
   /**
-   * Ref to the trigger if resizing was started from a column header menu. If it's provided,
-   * focus will be returned there when resizing is done. If it isn't provided, it is assumed that the resizer is
-   * visible at all time and keyboard resizing is started via pressing Enter on the resizer and not on focus.
-   * */
+   * Ref to the trigger if resizing was started from a column header menu. If it's provided, focus
+   * will be returned there when resizing is done. If it isn't provided, it is assumed that the
+   * resizer is visible at all time and keyboard resizing is started via pressing Enter on the
+   * resizer and not on focus.
+   */
   triggerRef?: RefObject<FocusableElement | null>;
   /** If resizing is disabled. */
   isDisabled?: boolean;
@@ -64,8 +67,10 @@ export interface AriaTableColumnResizeProps<T> {
 
 /**
  * Provides the behavior and accessibility implementation for a table column resizer element.
+ *
  * @param props - Props for the resizer.
- * @param state - State for the table's resizable columns, as returned by `useTableColumnResizeState`.
+ * @param state - State for the table's resizable columns, as returned by
+ *   `useTableColumnResizeState`.
  * @param ref - The ref attached to the resizer's visually hidden input element.
  */
 export function useTableColumnResize<T>(
@@ -136,20 +141,31 @@ export function useTableColumnResize<T>(
     [state, triggerRef, onResizeEnd]
   );
 
-  let {keyboardProps} = useKeyboard({
-    onKeyDown: e => {
-      if (editModeEnabled) {
-        if (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ' || e.key === 'Tab') {
-          e.preventDefault();
-          endResize(item);
-        }
-      } else {
-        // Continue propagation on keydown events so they still bubbles to useSelectableCollection and are handled there
-        e.continuePropagation();
+  let endResizeEvent = () => {
+    if (editModeEnabled) {
+      endResize(item);
+      return;
+    }
+    return false;
+  };
 
-        if (e.key === 'Enter') {
+  let {keyboardProps} = useKeyboard({
+    shortcuts: {
+      Escape: () => {
+        return endResizeEvent();
+      },
+      Enter: () => {
+        if (editModeEnabled) {
+          endResize(item);
+        } else {
           startResize(item);
         }
+      },
+      ' ': () => {
+        return endResizeEvent();
+      },
+      Tab: () => {
+        return endResizeEvent();
       }
     }
   });
@@ -206,6 +222,7 @@ export function useTableColumnResize<T>(
     modality = 'touch';
   }
   let description =
+    // oxlint-disable-next-line react/react-compiler
     triggerRef?.current == null &&
     (modality === 'keyboard' || modality === 'virtual') &&
     !isResizing
@@ -309,6 +326,7 @@ export function useTableColumnResize<T>(
     }),
     inputProps: mergeProps(
       visuallyHiddenProps,
+      // oxlint-disable-next-line react/react-compiler
       {
         id,
         onBlur: () => {

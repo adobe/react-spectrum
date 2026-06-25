@@ -111,31 +111,37 @@ import {useObjectRef} from 'react-aria/useObjectRef';
 export interface ListBoxRenderProps {
   /**
    * Whether the listbox has no items and should display its empty state.
+   *
    * @selector [data-empty]
    */
   isEmpty: boolean;
   /**
    * Whether the listbox is currently focused.
+   *
    * @selector [data-focused]
    */
   isFocused: boolean;
   /**
    * Whether the listbox is currently keyboard focused.
+   *
    * @selector [data-focus-visible]
    */
   isFocusVisible: boolean;
   /**
    * Whether the listbox is currently the active drop target.
+   *
    * @selector [data-drop-target]
    */
   isDropTarget: boolean;
   /**
    * Whether the items are arranged in a stack or grid.
+   *
    * @selector [data-layout="stack | grid"]
    */
   layout: 'stack' | 'grid';
   /**
    * The primary orientation of the items.
+   *
    * @selector [data-orientation="vertical | horizontal"]
    */
   orientation: Orientation;
@@ -153,27 +159,35 @@ export interface ListBoxProps<T>
     SlotProps,
     GlobalDOMAttributes<HTMLDivElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-ListBox'
    */
   className?: ClassNameOrFunction<ListBoxRenderProps>;
   /**
    * How multiple selection should behave in the collection.
-   * @default "toggle"
+   *
+   * @default 'toggle'
    */
   selectionBehavior?: SelectionBehavior;
-  /** The drag and drop hooks returned by `useDragAndDrop` used to enable drag and drop behavior for the ListBox. */
+  /**
+   * The drag and drop hooks returned by `useDragAndDrop` used to enable drag and drop behavior for
+   * the ListBox.
+   */
   dragAndDropHooks?: DragAndDropHooks<NoInfer<T>>;
   /** Provides content to display when there are no items in the list. */
   renderEmptyState?: (props: ListBoxRenderProps) => ReactNode;
   /**
    * Whether the items are arranged in a stack or grid.
+   *
    * @default 'stack'
    */
   layout?: 'stack' | 'grid';
   /**
    * The primary orientation of the items. Usually this is the
    * direction that the collection scrolls.
+   *
    * @default 'vertical'
    */
   orientation?: Orientation;
@@ -185,9 +199,10 @@ export const ListStateContext = createContext<ListState<any> | null>(null);
 /**
  * A listbox displays a list of options and allows a user to select one or more of them.
  */
-export const ListBox = /*#__PURE__*/ (forwardRef as forwardRefType)(function ListBox<
-  T extends object
->(props: ListBoxProps<T>, ref: ForwardedRef<HTMLDivElement>) {
+export const ListBox = /*#__PURE__*/ (forwardRef as forwardRefType)(function ListBox<T>(
+  props: ListBoxProps<T>,
+  ref: ForwardedRef<HTMLDivElement>
+) {
   [props, ref] = useContextProps(props, ref, ListBoxContext);
   let state = useContext(ListStateContext);
 
@@ -221,13 +236,11 @@ interface ListBoxInnerProps<T> {
   listBoxRef: RefObject<HTMLElement | null>;
 }
 
-function ListBoxInner<T extends object>({
-  state: inputState,
-  props,
-  listBoxRef
-}: ListBoxInnerProps<T>) {
+function ListBoxInner<T>({state: inputState, props, listBoxRef}: ListBoxInnerProps<T>) {
+  // oxlint-disable-next-line react/react-compiler
   [props, listBoxRef] = useContextProps(props, listBoxRef, SelectableCollectionContext);
   let {dragAndDropHooks, layout = 'stack', orientation = 'vertical', filter} = props;
+  // oxlint-disable-next-line react/react-compiler
   let state = UNSTABLE_useFilteredListState(inputState, filter);
   let {collection, selectionManager} = state;
   let isListDraggable = !!dragAndDropHooks?.useDraggableCollectionState;
@@ -242,6 +255,7 @@ function ListBoxInner<T extends object>({
     CollectionRoot
   } = useContext(CollectionRendererContext);
   let keyboardDelegate = useMemo(
+    // oxlint-disable-next-line react/react-compiler
     () =>
       props.keyboardDelegate ||
       new ListKeyboardDelegate({
@@ -306,11 +320,13 @@ function ListBoxInner<T extends object>({
   let preview = useRef<DragPreviewRenderer>(null);
 
   if (isListDraggable && dragAndDropHooks) {
+    // oxlint-disable-next-line react/react-compiler
     dragState = dragAndDropHooks.useDraggableCollectionState!({
       collection,
       selectionManager,
       preview: dragAndDropHooks.renderDragPreview ? preview : undefined
     });
+    // oxlint-disable-next-line react/react-compiler
     dragAndDropHooks.useDraggableCollection!({}, dragState, listBoxRef);
 
     let DragPreview = dragAndDropHooks.DragPreview!;
@@ -320,6 +336,7 @@ function ListBoxInner<T extends object>({
   }
 
   if (isListDroppable && dragAndDropHooks) {
+    // oxlint-disable-next-line react/react-compiler
     dropState = dragAndDropHooks.useDroppableCollectionState!({
       collection,
       selectionManager
@@ -333,6 +350,7 @@ function ListBoxInner<T extends object>({
         layout,
         direction
       });
+    // oxlint-disable-next-line react/react-compiler
     droppableCollection = dragAndDropHooks.useDroppableCollection!(
       {
         keyboardDelegate,
@@ -424,13 +442,15 @@ function ListBoxInner<T extends object>({
 export interface ListBoxSectionProps<T>
   extends SectionProps<T>, DOMRenderProps<'section', undefined> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element.
+   *
    * @default 'react-aria-ListBoxSection'
    */
   className?: string;
 }
 
-function ListBoxSectionInner<T extends object>(
+function ListBoxSectionInner<T>(
   props: ListBoxSectionProps<T>,
   ref: ForwardedRef<HTMLElement>,
   section: Node<T>,
@@ -486,13 +506,18 @@ export interface ListBoxItemProps<T = object>
     FocusEvents<HTMLDivElement>,
     Omit<GlobalDOMAttributes<HTMLDivElement>, 'onClick'> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-ListBoxItem'
    */
   className?: ClassNameOrFunction<ListBoxItemRenderProps>;
   /** The unique id of the item. */
   id?: Key;
-  /** The object value that this item represents. When using dynamic collections, this is set automatically. */
+  /**
+   * The object value that this item represents. When using dynamic collections, this is set
+   * automatically.
+   */
   value?: T;
   /** A string representation of the item's contents, used for features like typeahead. */
   textValue?: string;
@@ -501,8 +526,8 @@ export interface ListBoxItemProps<T = object>
   /** Whether the item is disabled. */
   isDisabled?: boolean;
   /**
-   * Handler that is called when a user performs an action on the item. The exact user event depends on
-   * the collection's `selectionBehavior` prop and the interaction modality.
+   * Handler that is called when a user performs an action on the item. The exact user event depends
+   * on the collection's `selectionBehavior` prop and the interaction modality.
    */
   onAction?: () => void;
 }
@@ -511,11 +536,13 @@ export interface ListBoxItemProps<T = object>
  * A ListBoxItem represents an individual option in a ListBox.
  */
 export const ListBoxItem = /*#__PURE__*/ createLeafComponent(ItemNode, function ListBoxItem<
-  T extends object
+  T
 >(props: ListBoxItemProps<T>, forwardedRef: ForwardedRef<HTMLDivElement>, item: Node<T>) {
   let ref = useObjectRef<any>(forwardedRef);
   let state = useContext(ListStateContext)!;
   let {dragAndDropHooks, dragState, dropState} = useContext(DragAndDropContext)!;
+  let isDraggable =
+    dragState && !(dragState.isDisabled || dragState.selectionManager.isDisabled(item.key));
   let {optionProps, labelProps, descriptionProps, ...states} = useOption(
     {key: item.key, 'aria-label': props?.['aria-label']},
     state,
@@ -523,7 +550,7 @@ export const ListBoxItem = /*#__PURE__*/ createLeafComponent(ItemNode, function 
   );
 
   let {hoverProps, isHovered} = useHover({
-    isDisabled: !states.allowsSelection && !states.hasAction,
+    isDisabled: !states.allowsSelection && !states.hasAction && !isDraggable,
     onHoverStart: item.props.onHoverStart,
     onHoverChange: item.props.onHoverChange,
     onHoverEnd: item.props.onHoverEnd
@@ -635,6 +662,7 @@ export const ListBoxItem = /*#__PURE__*/ createLeafComponent(ItemNode, function 
 function ListBoxDropIndicatorWrapper(props: DropIndicatorProps, ref: ForwardedRef<HTMLElement>) {
   ref = useObjectRef(ref);
   let {dragAndDropHooks, dropState} = useContext(DragAndDropContext)!;
+  // oxlint-disable-next-line react/react-compiler
   let {dropIndicatorProps, isHidden, isDropTarget} = dragAndDropHooks!.useDropIndicator!(
     props,
     dropState!,
@@ -672,13 +700,17 @@ function ListBoxDropIndicator(props: ListBoxDropIndicatorProps, ref: ForwardedRe
   });
 
   return (
-    <dom.div
-      {...dropIndicatorProps}
-      {...renderProps}
-      role="option"
-      ref={ref as RefObject<HTMLDivElement | null>}
-      data-drop-target={isDropTarget || undefined}
-    />
+    <>
+      {/* oxlint-disable jsx-a11y/role-has-required-aria-props -- drop indicator is not selectable */}
+      <dom.div
+        {...dropIndicatorProps}
+        {...renderProps}
+        role="option"
+        ref={ref as RefObject<HTMLDivElement | null>}
+        data-drop-target={isDropTarget || undefined}
+      />
+      {/* oxlint-enable jsx-a11y/role-has-required-aria-props */}
+    </>
   );
 }
 
@@ -691,7 +723,9 @@ export interface ListBoxLoadMoreItemProps
     DOMRenderProps<'div', undefined>,
     GlobalDOMAttributes<HTMLDivElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element.
+   *
    * @default 'react-aria-ListBoxLoadMoreItem'
    */
   className?: string;
@@ -754,14 +788,18 @@ export const ListBoxLoadMoreItem = createLeafComponent(
           />
         </div>
         {isLoading && renderProps.children && (
-          <dom.div
-            {...mergeProps(filterDOMProps(props, {global: true}), optionProps)}
-            {...renderProps}
-            // aria-selected isn't needed here since this option is not selectable.
-            role="option"
-            ref={ref as ForwardedRef<HTMLDivElement>}>
-            {renderProps.children}
-          </dom.div>
+          <>
+            {/* oxlint-disable jsx-a11y/role-has-required-aria-props -- loader row is not selectable */}
+            <dom.div
+              {...mergeProps(filterDOMProps(props, {global: true}), optionProps)}
+              {...renderProps}
+              // aria-selected isn't needed here since this option is not selectable.
+              role="option"
+              ref={ref as ForwardedRef<HTMLDivElement>}>
+              {renderProps.children}
+            </dom.div>
+            {/* oxlint-enable jsx-a11y/role-has-required-aria-props */}
+          </>
         )}
       </>
     );

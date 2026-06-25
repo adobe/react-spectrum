@@ -47,7 +47,9 @@ export function useLocalizedStringDictionary<
 
 /**
  * Provides localized string formatting for the current locale. Supports interpolating variables,
- * selecting the correct pluralization, and formatting numbers. Automatically updates when the locale changes.
+ * selecting the correct pluralization, and formatting numbers. Automatically updates when the
+ * locale changes.
+ *
  * @param strings - A mapping of languages to localized strings by key.
  */
 export function useLocalizedStringFormatter<

@@ -23,8 +23,9 @@ const TIMEOUT_TIME = 1000;
 const ANGLE_PADDING = Math.PI / 12; // 15°
 
 /**
- * Allows the user to move their pointer to the submenu without it closing when their mouse leaves the trigger element.
- * Prevents pointer events from going to the underlying menu if the user is moving their pointer towards the sub-menu.
+ * Allows the user to move their pointer to the submenu without it closing when their mouse leaves
+ * the trigger element. Prevents pointer events from going to the underlying menu if the user is
+ * moving their pointer towards the sub-menu.
  */
 export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions): void {
   let {menuRef, submenuRef, isOpen, isDisabled} = options;

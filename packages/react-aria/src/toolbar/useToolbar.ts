@@ -21,6 +21,7 @@ import {useLocale} from '../i18n/I18nProvider';
 export interface AriaToolbarProps extends AriaLabelingProps {
   /**
    * The orientation of the entire toolbar.
+   *
    * @default 'horizontal'
    */
   orientation?: Orientation;
@@ -36,6 +37,7 @@ export interface ToolbarAria {
 /**
  * Provides the behavior and accessibility implementation for a toolbar.
  * A toolbar is a container for a set of interactive controls with arrow key navigation.
+ *
  * @param props - Props to be applied to the toolbar.
  * @param ref - A ref to a DOM element for the toolbar.
  */
@@ -57,6 +59,7 @@ export function useToolbar(
   });
   const {direction} = useLocale();
   const shouldReverse = direction === 'rtl' && orientation === 'horizontal';
+  // oxlint-disable-next-line react/react-compiler
   let focusManager = createFocusManager(ref);
 
   const onKeyDown: KeyboardEventHandler = e => {
@@ -87,7 +90,6 @@ export function useToolbar(
       // out of the entire toolbar. To do this, move focus
       // to the first or last focusable child, and let the
       // browser handle the Tab key as usual from there.
-      e.stopPropagation();
       lastFocused.current = getActiveElement() as HTMLElement;
       if (e.shiftKey) {
         focusManager.focusFirst();

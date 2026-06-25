@@ -32,7 +32,10 @@ export interface FocusState {
   readonly focusedKey: Key | null;
   /** Whether the first or last child of the focused key should receive focus. */
   readonly childFocusStrategy: FocusStrategy | null;
-  /** Sets the focused key, and optionally, whether the first or last child of that key should receive focus. */
+  /**
+   * Sets the focused key, and optionally, whether the first or last child of that key should
+   * receive focus.
+   */
   setFocusedKey(key: Key | null, child?: FocusStrategy): void;
 }
 

@@ -33,7 +33,6 @@ import {
   HelpTextProps,
   SpectrumLabelableProps
 } from '@react-types/shared';
-// @ts-ignore
 import intlMessages from '../intl/*.json';
 import {PopoverProps} from 'react-aria-components/Popover';
 import {RangeCalendar, RangeCalendarProps} from './RangeCalendar';
@@ -63,7 +62,9 @@ export interface DateRangePickerProps<T extends DateValue>
    */
   size?: 'S' | 'M' | 'L' | 'XL';
   /**
-   * The maximum number of months to display at once in the calendar popover, if screen space permits.
+   * The maximum number of months to display at once in the calendar popover, if screen space
+   * permits.
+   *
    * @default 1
    */
   maxVisibleMonths?: number;

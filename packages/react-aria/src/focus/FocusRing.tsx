@@ -26,6 +26,7 @@ export interface FocusRingProps {
    * Whether to show the focus ring when something
    * inside the container element has focus (true), or
    * only if the container itself has focus (false).
+   *
    * @default false
    */
   within?: boolean;

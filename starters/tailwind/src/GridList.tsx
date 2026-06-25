@@ -15,7 +15,7 @@ import {composeTailwindRenderProps, focusRing} from './utils';
 import {type HTMLAttributes} from 'react';
 import {twMerge} from 'tailwind-merge';
 
-export function GridList<T extends object>({children, ...props}: GridListProps<T>) {
+export function GridList<T>({children, ...props}: GridListProps<T>) {
   let isHorizontal =
     (props as {orientation?: 'horizontal' | 'vertical'}).orientation === 'horizontal';
   return (

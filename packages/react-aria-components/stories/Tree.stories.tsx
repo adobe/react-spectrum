@@ -15,18 +15,21 @@ import {Button} from '../src/Button';
 import {Checkbox, CheckboxProps} from '../src/Checkbox';
 import {classNames} from '@adobe/react-spectrum/private/utils/classNames';
 import {Collection} from 'react-aria/Collection';
+import {ComboBox} from '../src/ComboBox';
 import {DroppableCollectionReorderEvent, Key} from '@react-types/shared';
+import {Input} from '../src/Input';
 import {isTextDropItem, useDragAndDrop} from '../exports/useDragAndDrop';
+import {ListBox} from '../src/ListBox';
 import {ListLayout} from 'react-stately/useVirtualizerState';
-import {Menu, MenuTrigger} from '../src/Menu';
-
+import {Menu, MenuItem, MenuTrigger} from '../src/Menu';
 import {Meta, StoryFn, StoryObj} from '@storybook/react';
-
-import {MyMenuItem} from './utils';
+import {MyListBoxItem, MyMenuItem} from './utils';
 import {Popover} from '../src/Popover';
 import React, {JSX, ReactNode, useCallback, useState} from 'react';
 import styles from '../example/index.css';
 import {Text} from '../src/Text';
+import {TextField} from '../src/TextField';
+import {Toolbar} from '../src/Toolbar';
 import {
   Tree,
   TreeHeader,
@@ -46,7 +49,7 @@ import './styles.css';
 export default {
   title: 'React Aria Components/Tree',
   component: Tree,
-  excludeStories: ['TreeExampleStaticRender']
+  excludeStories: ['TreeExampleStaticRender', 'TreeWithTextField']
 } as Meta<typeof Tree>;
 
 export type TreeStory = StoryFn<typeof Tree>;
@@ -54,6 +57,7 @@ export type TreeStory = StoryFn<typeof Tree>;
 interface StaticTreeItemProps extends TreeItemProps {
   title?: string;
   children: ReactNode;
+  interactive?: ReactNode;
 }
 
 interface MyCheckboxProps extends CheckboxProps {
@@ -117,6 +121,7 @@ const StaticTreeItem = (props: StaticTreeItemProps) => {
                 </Button>
               )}
               <Text className={styles.title}>{props.title || props.children}</Text>
+              {props.interactive}
               <Button className={styles.button} aria-label="Info" onPress={action('Info press')}>
                 ⓘ
               </Button>
@@ -184,7 +189,7 @@ const StaticTreeItemNoActions = (props: StaticTreeItemProps) => {
   );
 };
 
-export function TreeExampleStaticRender<T extends object>(props: TreeProps<T>) {
+export function TreeExampleStaticRender<T>(props: TreeProps<T>) {
   return (
     <Tree
       className={styles.tree}
@@ -239,7 +244,7 @@ export function TreeExampleStaticRender<T extends object>(props: TreeProps<T>) {
   );
 }
 
-const TreeExampleStaticNoActionsRender = <T extends object>(args: TreeProps<T>): JSX.Element => (
+const TreeExampleStaticNoActionsRender = <T extends any>(args: TreeProps<T>): JSX.Element => (
   <Tree
     className={styles.tree}
     {...args}
@@ -686,7 +691,7 @@ let defaultExpandedKeys = new Set([
   'reports-1AB'
 ]);
 
-const TreeExampleDynamicRender = <T extends object>(args: TreeProps<T>): JSX.Element => {
+const TreeExampleDynamicRender = <T extends any>(args: TreeProps<T>): JSX.Element => {
   let treeData = useTreeData<any>({
     initialItems: (args.items as any) ?? rows,
     getKey: item => item.id,
@@ -712,7 +717,7 @@ const TreeExampleDynamicRender = <T extends object>(args: TreeProps<T>): JSX.Ele
   );
 };
 
-const TreeSectionExampleDynamicRender = <T extends object>(args: TreeProps<T>): JSX.Element => {
+const TreeSectionExampleDynamicRender = <T extends any>(args: TreeProps<T>): JSX.Element => {
   let treeData = useTreeData<any>({
     initialItems: (args.items as any) ?? rowsWithSections,
     getKey: item => item.id,
@@ -770,7 +775,7 @@ export const WithActions: StoryObj<typeof TreeExampleDynamicRender> = {
   name: 'Tree with actions'
 };
 
-const WithLinksRender = <T extends object>(args: TreeProps<T>): JSX.Element => {
+const WithLinksRender = <T extends any>(args: TreeProps<T>): JSX.Element => {
   let treeData = useTreeData<any>({
     initialItems: rows,
     getKey: item => item.id,
@@ -812,9 +817,7 @@ function renderEmptyLoader({isLoading}) {
   return isLoading ? 'Root level loading spinner' : 'Nothing in tree';
 }
 
-const EmptyTreeStatic = <T extends object>(
-  args: TreeProps<T> & {isLoading: boolean}
-): JSX.Element => (
+const EmptyTreeStatic = <T extends any>(args: TreeProps<T> & {isLoading: boolean}): JSX.Element => (
   <Tree
     {...args}
     className={styles.tree}
@@ -843,7 +846,7 @@ export const EmptyTreeStaticStory: StoryObj<typeof EmptyTreeStatic> = {
   name: 'Empty/Loading Tree rendered with TreeLoader collection element'
 };
 
-function LoadingStoryDepOnCollection<T extends object>(
+function LoadingStoryDepOnCollection<T extends any>(
   props: TreeProps<T> & {isLoading: boolean}
 ): JSX.Element {
   let {isLoading, ...args} = props;
@@ -892,9 +895,7 @@ export const LoadingStoryDepOnCollectionStory: StoryObj<typeof LoadingStoryDepOn
   }
 };
 
-function LoadingStoryDepOnTop<T extends object>(
-  args: TreeProps<T> & {isLoading: boolean}
-): JSX.Element {
+function LoadingStoryDepOnTop<T>(args: TreeProps<T> & {isLoading: boolean}): JSX.Element {
   let treeData = useTreeData<any>({
     initialItems: rows,
     getKey: item => item.id,
@@ -1019,9 +1020,7 @@ const DynamicTreeItemWithButtonLoader = (props: DynamicTreeItemProps) => {
   );
 };
 
-function ButtonLoadingIndicator<T extends object>(
-  args: TreeProps<T> & {isLoading: boolean}
-): JSX.Element {
+function ButtonLoadingIndicator<T>(args: TreeProps<T> & {isLoading: boolean}): JSX.Element {
   let treeData = useTreeData<any>({
     initialItems: rows,
     getKey: item => item.id,
@@ -1065,7 +1064,7 @@ export const ButtonLoadingIndicatorStory: StoryObj<typeof ButtonLoadingIndicator
   }
 };
 
-function VirtualizedTreeRender<T extends object>(args: TreeProps<T>): JSX.Element {
+function VirtualizedTreeRender<T>(args: TreeProps<T>): JSX.Element {
   return (
     <Virtualizer layout={ListLayout} layoutOptions={{rowHeight: 30}}>
       <TreeExampleDynamicRender {...args} />
@@ -1377,7 +1376,7 @@ dependencies={[isRootLoading]}>
 }} */
 }
 
-function TreeDragAndDropExample<T extends object>(
+function TreeDragAndDropExample<T>(
   args: TreeProps<T> & {
     shouldAcceptItemDrop: 'folders' | 'all';
     dropFunction: 'onMove' | 'onInsert' | 'onRootDrop';
@@ -1737,11 +1736,13 @@ let totalItems = 0;
 let itemKeys = new Set<any>();
 /**
  * Generates a tree data structure with 10 items per level and 6 levels deep.
+ *
  * @returns Array of tree items with the specified structure.
  */
 function generateTreeData(): Array<ITreeItem> {
   /**
    * Recursively generates tree items for a given level.
+   *
    * @param level - Current depth level (1-6).
    * @param parentId - Parent item ID for generating unique child IDs.
    * @returns Array of tree items for this level.
@@ -1777,7 +1778,7 @@ function generateTreeData(): Array<ITreeItem> {
 
 const treeData = generateTreeData();
 
-function HugeVirtualizedTreeRender<T extends object>(args: TreeProps<T>): JSX.Element {
+function HugeVirtualizedTreeRender<T>(args: TreeProps<T>): JSX.Element {
   let [expandedKeys, setExpandedKeys] = useState(new Set<Key>());
   let expandAll = () => {
     setExpandedKeys(itemKeys);
@@ -1804,4 +1805,156 @@ export const HugeVirtualizedTree: StoryObj<typeof VirtualizedTreeRender> = {
     items: treeData
   },
   render: args => <HugeVirtualizedTreeRender {...args} />
+};
+
+let comboboxEmptyState = () => {
+  return <div style={{height: 30, width: '100%'}}>No results</div>;
+};
+
+export function TreeWithTextField<T>(props: TreeProps<T>) {
+  return (
+    <div style={{display: 'flex', flexDirection: 'column'}}>
+      <input aria-label="Before tree" />
+      <Tree
+        className={styles.tree}
+        style={{width: 400}}
+        aria-label="tree with textfields"
+        disabledKeys={['rawinput']}
+        keyboardNavigationBehavior="tab"
+        {...props}>
+        <StaticTreeItem
+          id="textfield"
+          textValue="RAC TextField"
+          interactive={
+            <TextField aria-label="Name">
+              <Input />
+            </TextField>
+          }>
+          RAC TextField
+        </StaticTreeItem>
+        <StaticTreeItem
+          id="rawinput"
+          textValue="Raw input"
+          interactive={<input aria-label="Raw text input" />}>
+          Raw input
+        </StaticTreeItem>
+        <StaticTreeItem
+          id="row1"
+          textValue="row 1"
+          title="row 1"
+          interactive={
+            <TextField aria-label="row 1 input">
+              <Input />
+            </TextField>
+          }>
+          <StaticTreeItem
+            id="group1-textfield-button"
+            textValue="TextField and Button"
+            interactive={
+              <>
+                <TextField aria-label="Search">
+                  <Input />
+                </TextField>
+                <Button>Go</Button>
+              </>
+            }>
+            TextField + Button
+          </StaticTreeItem>
+          <StaticTreeItem
+            id="group1-toolbar"
+            textValue="Toolbar"
+            interactive={
+              <Toolbar aria-label="Text formatting" style={{gap: 4}}>
+                <Button onPress={action('Bold press')}>Bold</Button>
+                <Button onPress={action('Italics press')}>Italic</Button>
+                <Button onPress={action('Underline press')}>Underline</Button>
+              </Toolbar>
+            }>
+            Toolbar
+          </StaticTreeItem>
+          <StaticTreeItem
+            id="group1-nested"
+            textValue="Nested Group"
+            title="Nested Group"
+            interactive={<input aria-label="Nested group input" />}>
+            <StaticTreeItem
+              id="group1-nested-1"
+              textValue="Nested child 1"
+              interactive={
+                <ComboBox aria-label="combobox" allowsEmptyCollection>
+                  <div style={{display: 'flex'}}>
+                    <Input />
+                    <Button>
+                      <span aria-hidden="true" style={{padding: '0 2px'}}>
+                        ▼
+                      </span>
+                    </Button>
+                  </div>
+                  <Popover>
+                    <ListBox
+                      renderEmptyState={comboboxEmptyState}
+                      data-testid="combo-box-list-box"
+                      className={styles.menu}
+                      style={{width: 'var(--trigger-width)'}}>
+                      <MyListBoxItem>Foo</MyListBoxItem>
+                      <MyListBoxItem>Bar</MyListBoxItem>
+                      <MyListBoxItem>Baz</MyListBoxItem>
+                      <MyListBoxItem href="http://google.com">Google</MyListBoxItem>
+                    </ListBox>
+                  </Popover>
+                </ComboBox>
+              }>
+              Nested child 1
+            </StaticTreeItem>
+            <StaticTreeItem
+              id="group1-nested-2"
+              textValue="Nested child 2"
+              interactive={
+                <MenuTrigger>
+                  <Button aria-label="Options">▾</Button>
+                  <Popover>
+                    <Menu className={styles.menu}>
+                      <MenuItem>Cut</MenuItem>
+                      <MenuItem>Copy</MenuItem>
+                      <MenuItem>Paste</MenuItem>
+                    </Menu>
+                  </Popover>
+                </MenuTrigger>
+              }>
+              Nested child 2
+            </StaticTreeItem>
+          </StaticTreeItem>
+        </StaticTreeItem>
+      </Tree>
+      <input aria-label="After tree" />
+    </div>
+  );
+}
+
+export const TreeWithTextFieldStory: StoryObj<typeof TreeWithTextField> = {
+  render: args => <TreeWithTextField {...args} />,
+  args: {
+    selectionMode: 'none',
+    selectionBehavior: 'toggle',
+    disabledBehavior: 'selection'
+  },
+  argTypes: {
+    keyboardNavigationBehavior: {
+      control: 'radio',
+      options: ['arrow', 'tab']
+    },
+    selectionMode: {
+      control: 'radio',
+      options: ['none', 'single', 'multiple']
+    },
+    selectionBehavior: {
+      control: 'radio',
+      options: ['toggle', 'replace']
+    },
+    disabledBehavior: {
+      control: 'radio',
+      options: ['selection', 'all']
+    }
+  },
+  name: 'Tree with Textfield'
 };

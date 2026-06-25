@@ -14,7 +14,8 @@ import {BaseEvent} from '@react-types/shared';
 import {SyntheticEvent} from 'react';
 
 /**
- * This function wraps a React event handler to make stopPropagation the default, and support continuePropagation instead.
+ * This function wraps a React event handler to make stopPropagation the default, and support
+ * continuePropagation instead.
  */
 export function createEventHandler<T extends SyntheticEvent>(
   handler?: (e: BaseEvent<T>) => void
@@ -23,8 +24,8 @@ export function createEventHandler<T extends SyntheticEvent>(
     return undefined;
   }
 
-  let shouldStopPropagation = true;
   return (e: T) => {
+    let shouldStopPropagation = true;
     let event: BaseEvent<T> = {
       ...e,
       preventDefault() {
@@ -44,6 +45,11 @@ export function createEventHandler<T extends SyntheticEvent>(
       },
       continuePropagation() {
         shouldStopPropagation = false;
+        // nested createEventHandler might have set continue propagation so we should continue
+        // propagation on wrappers
+        if (typeof (e as any).continuePropagation === 'function') {
+          (e as any).continuePropagation();
+        }
       },
       isPropagationStopped() {
         return shouldStopPropagation;
@@ -52,7 +58,11 @@ export function createEventHandler<T extends SyntheticEvent>(
 
     handler(event);
 
-    if (shouldStopPropagation) {
+    // nested createEventHandler calls may already have stopped propagation
+    if (
+      shouldStopPropagation &&
+      !(typeof e.isPropagationStopped === 'function' && e.isPropagationStopped())
+    ) {
       e.stopPropagation();
     }
   };

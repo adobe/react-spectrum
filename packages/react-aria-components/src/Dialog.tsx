@@ -60,7 +60,9 @@ export interface DialogProps
     DOMRenderProps<'section', undefined>,
     GlobalDOMAttributes<HTMLElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element.
+   *
    * @default 'react-aria-Dialog'
    */
   className?: string;
@@ -86,7 +88,9 @@ export function DialogTrigger(props: DialogTriggerProps): JSX.Element {
   // This is done in RAC instead of hooks because otherwise we cannot distinguish
   // between context and props. Normally aria-labelledby overrides the title
   // but when sent by context we want the title to win.
+  // oxlint-disable-next-line react/react-compiler
   triggerProps.id = useId();
+  // oxlint-disable-next-line react/react-compiler
   overlayProps['aria-labelledby'] = triggerProps.id;
 
   return (

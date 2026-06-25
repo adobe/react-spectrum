@@ -18,7 +18,6 @@ import {ColorSwatchContext} from './ColorSwatch';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import intlMessages from '../intl/*.json';
 import {ListBox, ListBoxItem, ListBoxItemRenderProps, ListBoxRenderProps} from './ListBox';
-// @ts-ignore
 import {parseColor} from 'react-stately/Color';
 import React, {
   createContext,
@@ -41,7 +40,9 @@ export interface ColorSwatchPickerProps
     StyleRenderProps<ColorSwatchPickerRenderProps>,
     GlobalDOMAttributes<HTMLDivElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-ColorSwatchPicker'
    */
   className?: ClassNameOrFunction<ColorSwatchPickerRenderProps>;
@@ -49,6 +50,7 @@ export interface ColorSwatchPickerProps
   children?: ReactNode;
   /**
    * Whether the items are arranged in a stack or grid.
+   *
    * @default 'grid'
    */
   layout?: 'grid' | 'stack';
@@ -110,7 +112,9 @@ export interface ColorSwatchPickerItemProps
     PressEvents,
     Omit<GlobalDOMAttributes<HTMLDivElement>, 'onClick'> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-ColorSwatchPickerItem'
    */
   className?: ClassNameOrFunction<ColorSwatchPickerItemRenderProps>;

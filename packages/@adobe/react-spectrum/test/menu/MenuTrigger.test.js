@@ -119,14 +119,14 @@ describe('MenuTrigger', function () {
     let triggerButton = tree.getByRole('button');
     let menuTester = testUtilUser.createTester('Menu', {root: triggerButton});
 
-    expect(onOpenChange).toBeCalledTimes(0);
+    expect(onOpenChange).toHaveBeenCalledTimes(0);
 
     await triggerEvent(triggerButton);
     act(() => {
       jest.runAllTimers();
     });
 
-    let menu = menuTester.menu;
+    let menu = menuTester.getMenu();
     expect(menu).toBeInTheDocument();
     expect(menu).toHaveAttribute('aria-labelledby', triggerButton.id);
 
@@ -141,10 +141,10 @@ describe('MenuTrigger', function () {
     expect(triggerButton).toHaveAttribute('aria-controls', menu.id);
 
     if (Component === MenuTrigger) {
-      expect(onOpenChange).toBeCalledTimes(1);
+      expect(onOpenChange).toHaveBeenCalledTimes(1);
     } else {
-      expect(onOpen).toBeCalledTimes(1);
-      expect(onClose).toBeCalledTimes(0);
+      expect(onOpen).toHaveBeenCalledTimes(1);
+      expect(onClose).toHaveBeenCalledTimes(0);
     }
 
     await triggerEvent(triggerButton, menu);
@@ -155,10 +155,10 @@ describe('MenuTrigger', function () {
 
     if (Component === MenuTrigger) {
       expect(triggerButton).toHaveAttribute('aria-expanded', 'false');
-      expect(onOpenChange).toBeCalledTimes(2);
+      expect(onOpenChange).toHaveBeenCalledTimes(2);
     } else {
       expect(triggerButton).not.toHaveAttribute('aria-expanded');
-      expect(onOpen).toBeCalledTimes(1);
+      expect(onOpen).toHaveBeenCalledTimes(1);
     }
   }
 
@@ -171,7 +171,7 @@ describe('MenuTrigger', function () {
     act(() => {
       jest.runAllTimers();
     });
-    expect(onOpenChange).toBeCalledTimes(0);
+    expect(onOpenChange).toHaveBeenCalledTimes(0);
 
     let menu = tree.getByRole('menu');
     expect(menu).toBeInTheDocument();
@@ -184,7 +184,7 @@ describe('MenuTrigger', function () {
     });
 
     expect(menu).toBeInTheDocument();
-    expect(onOpenChange).toBeCalledTimes(1);
+    expect(onOpenChange).toHaveBeenCalledTimes(1);
   });
 
   // New functionality in v3
@@ -196,7 +196,7 @@ describe('MenuTrigger', function () {
     act(() => {
       jest.runAllTimers();
     });
-    expect(onOpenChange).toBeCalledTimes(0);
+    expect(onOpenChange).toHaveBeenCalledTimes(0);
 
     let menu = tree.getByRole('menu');
     expect(menu).toBeInTheDocument();
@@ -208,7 +208,7 @@ describe('MenuTrigger', function () {
     });
 
     expect(menu).not.toBeInTheDocument();
-    expect(onOpenChange).toBeCalledTimes(1);
+    expect(onOpenChange).toHaveBeenCalledTimes(1);
   });
 
   describe('menu popover closing behavior', function () {
@@ -223,7 +223,7 @@ describe('MenuTrigger', function () {
     async function openAndTriggerMenuItem(tree, role, selectionMode, triggerEvent) {
       let menuTester = testUtilUser.createTester('Menu', {root: tree.container});
       await menuTester.open();
-      let menuItems = menuTester.options();
+      let menuItems = menuTester.getOptions();
       let itemToAction = menuItems[1];
       await triggerEvent(itemToAction);
       act(() => {
@@ -243,39 +243,62 @@ describe('MenuTrigger', function () {
       async function ({Component, props}) {
         tree = renderComponent(Component, props, {selectionMode: 'single', onSelectionChange});
         let menuTester = testUtilUser.createTester('Menu', {root: tree.container});
-        expect(onOpenChange).toBeCalledTimes(0);
+        expect(onOpenChange).toHaveBeenCalledTimes(0);
         await menuTester.open();
 
         if (Component === MenuTrigger) {
-          expect(onOpenChange).toBeCalledTimes(1);
-          expect(onSelectionChange).toBeCalledTimes(0);
+          expect(onOpenChange).toHaveBeenCalledTimes(1);
+          expect(onSelectionChange).toHaveBeenCalledTimes(0);
         } else {
-          expect(onOpen).toBeCalledTimes(1);
-          expect(onClose).toBeCalledTimes(0);
-          expect(onSelect).toBeCalledTimes(0);
+          expect(onOpen).toHaveBeenCalledTimes(1);
+          expect(onClose).toHaveBeenCalledTimes(0);
+          expect(onSelect).toHaveBeenCalledTimes(0);
         }
 
-        await menuTester.selectOption({
+        await menuTester.toggleOptionSelection({
           option: 'Foo',
           menuSelectionMode: 'single',
           closesOnSelect: false
         });
 
         if (Component === MenuTrigger) {
-          expect(onSelectionChange).toBeCalledTimes(1);
+          expect(onSelectionChange).toHaveBeenCalledTimes(1);
         } else {
-          expect(onSelect).toBeCalledTimes(1);
+          expect(onSelect).toHaveBeenCalledTimes(1);
         }
 
-        expect(menuTester.menu).toBeInTheDocument();
+        expect(menuTester.getMenu()).toBeInTheDocument();
 
         if (Component === MenuTrigger) {
-          expect(menuTester.trigger).toHaveAttribute('aria-expanded', 'true');
-          expect(onOpenChange).toBeCalledTimes(1);
+          expect(menuTester.getTrigger()).toHaveAttribute('aria-expanded', 'true');
+          expect(onOpenChange).toHaveBeenCalledTimes(1);
         } else {
-          expect(menuTester.trigger).toHaveAttribute('aria-expanded');
-          expect(onOpen).toBeCalledTimes(1);
-          expect(onClose).toBeCalledTimes(0);
+          expect(menuTester.getTrigger()).toHaveAttribute('aria-expanded');
+          expect(onOpen).toHaveBeenCalledTimes(1);
+          expect(onClose).toHaveBeenCalledTimes(0);
+        }
+
+        await menuTester.toggleOptionSelection({
+          option: 'Bar',
+          menuSelectionMode: 'single',
+          closesOnSelect: false
+        });
+
+        if (Component === MenuTrigger) {
+          expect(onSelectionChange).toHaveBeenCalledTimes(2);
+        } else {
+          expect(onSelect).toHaveBeenCalledTimes(2);
+        }
+
+        expect(menuTester.getMenu()).toBeInTheDocument();
+
+        if (Component === MenuTrigger) {
+          expect(menuTester.getTrigger()).toHaveAttribute('aria-expanded', 'true');
+          expect(onOpenChange).toHaveBeenCalledTimes(1);
+        } else {
+          expect(menuTester.getTrigger()).toHaveAttribute('aria-expanded');
+          expect(onOpen).toHaveBeenCalledTimes(1);
+          expect(onClose).toHaveBeenCalledTimes(0);
         }
       }
     );
@@ -288,21 +311,21 @@ describe('MenuTrigger', function () {
       async function ({Component, props}) {
         tree = renderComponent(Component, props, {selectionMode: 'single', onSelectionChange});
         let menuTester = testUtilUser.createTester('Menu', {root: tree.container});
-        expect(onOpenChange).toBeCalledTimes(0);
+        expect(onOpenChange).toHaveBeenCalledTimes(0);
         await menuTester.open();
 
-        expect(onOpenChange).toBeCalledTimes(1);
-        expect(onSelectionChange).toBeCalledTimes(0);
+        expect(onOpenChange).toHaveBeenCalledTimes(1);
+        expect(onSelectionChange).toHaveBeenCalledTimes(0);
         menuTester.setInteractionType('keyboard');
-        await menuTester.selectOption({
+        await menuTester.toggleOptionSelection({
           option: 'Foo',
           menuSelectionMode: 'single',
           closesOnSelect: false
         });
 
-        expect(menuTester.menu).toBeInTheDocument();
-        expect(menuTester.trigger).toHaveAttribute('aria-expanded', 'true');
-        expect(onOpenChange).toBeCalledTimes(1);
+        expect(menuTester.getMenu()).toBeInTheDocument();
+        expect(menuTester.getTrigger()).toHaveAttribute('aria-expanded', 'true');
+        expect(onOpenChange).toHaveBeenCalledTimes(1);
       }
     );
 
@@ -321,30 +344,30 @@ describe('MenuTrigger', function () {
           root: tree.container,
           interactionType: 'keyboard'
         });
-        expect(onOpenChange).toBeCalledTimes(0);
+        expect(onOpenChange).toHaveBeenCalledTimes(0);
         await menuTester.open();
 
-        expect(onOpenChange).toBeCalledTimes(1);
-        expect(onSelectionChange).toBeCalledTimes(0);
+        expect(onOpenChange).toHaveBeenCalledTimes(1);
+        expect(onSelectionChange).toHaveBeenCalledTimes(0);
 
-        await menuTester.selectOption({
+        await menuTester.toggleOptionSelection({
           option: 'Foo',
           menuSelectionMode: 'multiple',
           keyboardActivation: 'Space'
         });
-        expect(onSelectionChange).toBeCalledTimes(1);
+        expect(onSelectionChange).toHaveBeenCalledTimes(1);
         expect(onSelectionChange.mock.calls[0][0].has('Foo')).toBeTruthy();
-        await menuTester.selectOption({
+        await menuTester.toggleOptionSelection({
           option: 'Bar',
           menuSelectionMode: 'multiple',
           keyboardActivation: 'Space'
         });
-        expect(onSelectionChange).toBeCalledTimes(2);
+        expect(onSelectionChange).toHaveBeenCalledTimes(2);
         expect(onSelectionChange.mock.calls[1][0].has('Bar')).toBeTruthy();
 
         await menuTester.close();
-        expect(menuTester.menu).not.toBeInTheDocument();
-        expect(onOpenChange).toBeCalledTimes(2);
+        expect(menuTester.getMenu()).not.toBeInTheDocument();
+        expect(onOpenChange).toHaveBeenCalledTimes(2);
       }
     );
 
@@ -467,7 +490,7 @@ describe('MenuTrigger', function () {
       let button = tree.getByRole('button');
 
       await user.pointer({target: button, keys: '[TouchA]'});
-      expect(getMenuOrThrow).toThrowError(ERROR_MENU_NOT_FOUND);
+      expect(getMenuOrThrow).toThrow(ERROR_MENU_NOT_FOUND);
     });
 
     it(`should not open menu on short press (default threshold set to ${DEFAULT_LONG_PRESS_TIME}ms)`, async function () {
@@ -476,7 +499,7 @@ describe('MenuTrigger', function () {
       let button = tree.getByRole('button');
 
       await user.pointer({target: button, keys: '[TouchA]'});
-      expect(getMenuOrThrow).toThrowError(ERROR_MENU_NOT_FOUND);
+      expect(getMenuOrThrow).toThrow(ERROR_MENU_NOT_FOUND);
     });
 
     it('should not open the menu on Enter', async function () {
@@ -485,7 +508,7 @@ describe('MenuTrigger', function () {
       let button = tree.getByRole('button');
 
       await user.pointer({target: button, keys: '[TouchA]'});
-      expect(getMenuOrThrow).toThrowError(ERROR_MENU_NOT_FOUND);
+      expect(getMenuOrThrow).toThrow(ERROR_MENU_NOT_FOUND);
     });
 
     it('should not open the menu on Space', async function () {
@@ -493,7 +516,7 @@ describe('MenuTrigger', function () {
       let tree = renderComponent(MenuTrigger, props, {});
       let button = tree.getByRole('button');
       await user.pointer({target: button, keys: '[TouchA]'});
-      expect(getMenuOrThrow).toThrowError(ERROR_MENU_NOT_FOUND);
+      expect(getMenuOrThrow).toThrow(ERROR_MENU_NOT_FOUND);
     });
 
     it('should open the menu on Alt+ArrowUp', async function () {
@@ -991,7 +1014,7 @@ describe('MenuTrigger', function () {
       jest.runAllTimers();
     });
 
-    let menu = menuTester.menu;
+    let menu = menuTester.getMenu();
 
     await user.tab();
     act(() => {
@@ -1001,7 +1024,7 @@ describe('MenuTrigger', function () {
       jest.runAllTimers();
     });
     expect(menu).toBeInTheDocument();
-    expect(document.activeElement).toBe(menuTester.options()[0]);
+    expect(document.activeElement).toBe(menuTester.getOptions()[0]);
   });
 });
 

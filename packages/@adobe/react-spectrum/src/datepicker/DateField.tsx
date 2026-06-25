@@ -45,11 +45,13 @@ export interface SpectrumDateFieldBase<T extends DateValue>
     StyleProps {
   /**
    * Whether the date picker should be displayed with a quiet style.
+   *
    * @default false
    */
   isQuiet?: boolean;
   /**
    * Whether to show the localized date format as help text below the field.
+   *
    * @default false
    */
   showFormatHelpText?: boolean;
@@ -104,6 +106,7 @@ export const DateField = React.forwardRef(function DateField<T extends DateValue
   // The format help text is unnecessary for screen reader users because each segment already has a label.
   let description = useFormatHelpText(props);
   if (description && !props.description) {
+    // oxlint-disable-next-line react/react-compiler
     descriptionProps.id = undefined;
   }
 

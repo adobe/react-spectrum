@@ -19,7 +19,6 @@ import {DOMAttributes, Node} from '@react-types/shared';
 import {FocusRing} from 'react-aria/FocusRing';
 import {Grid} from '../layout/Grid';
 import InfoOutline from '@spectrum-icons/workflow/InfoOutline';
-// @ts-ignore
 import intlMessages from '../../intl/menu/*.json';
 import {mergeRefs} from 'react-aria/mergeRefs';
 import React, {JSX, useMemo, useRef} from 'react';
@@ -65,6 +64,7 @@ export function MenuItem<T>(props: MenuItemProps<T>): JSX.Element {
     state.selectionManager.selectionMode !== 'none';
   let isSelected = isSelectable && state.selectionManager.isSelected(key);
   let itemref = useRef<any>(null);
+  // oxlint-disable-next-line react/react-compiler
   let ref = useObjectRef(useMemo(() => mergeRefs(itemref, triggerRef), [itemref, triggerRef]));
   let {menuItemProps, labelProps, descriptionProps, keyboardShortcutProps} = useMenuItem(
     {
@@ -83,6 +83,7 @@ export function MenuItem<T>(props: MenuItemProps<T>): JSX.Element {
   let endProps: DOMAttributes = {};
   if (endId) {
     endProps.id = endId;
+    // oxlint-disable-next-line react/react-compiler
     menuItemProps['aria-describedby'] = [menuItemProps['aria-describedby'], endId]
       .filter(Boolean)
       .join(' ');

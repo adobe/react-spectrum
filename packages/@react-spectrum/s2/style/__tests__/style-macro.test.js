@@ -40,26 +40,26 @@ describe('style-macro', () => {
 "@layer _.a, _.b, _.c;
 
 @layer _.b {
-  .Jbs131:first-child {
+  .Jbs151:first-child {
     margin-top: 0.25rem;
   }
 }
 
 @layer _.c.p {
   @media (min-width: 64rem) {
-    .Jbpv131:first-child {
+    .Jbpv151:first-child {
       margin-top: 0.5rem;
     }
   }
 }
 
-.-macro-static-MypNfe {
-        --macro-data-MypNfe: {"style":{"marginTop":{":first-child":{"default":4,"lg":8}}},"loc":"undefined:undefined:undefined"};
+.-macro-static-OZFeNe {
+        --macro-data-OZFeNe: {"style":{"marginTop":{":first-child":{"default":4,"lg":8}}},"loc":"undefined:undefined:undefined"};
       }
 
 "
 `);
-    expect(js).toMatchInlineSnapshot('" Jbs131 Jbpv131 -macro-static-MypNfe"');
+    expect(js).toMatchInlineSnapshot(`" Jbs151 Jbpv151 -macro-static-OZFeNe"`);
   });
 
   it('should support self references', () => {
@@ -73,60 +73,60 @@ describe('style-macro', () => {
 "@layer _.a;
 
 @layer _.a {
-  ._kc131 {
+  ._kc151 {
     border-top-width: 2px;
   }
 
 
-  .hc131 {
+  .hc151 {
     border-bottom-width: 2px;
   }
 
 
-  .mCPFGYc131 {
+  .mCPFGYc151 {
     border-inline-start-width: var(--m);
   }
 
 
-  .lc131 {
+  .lc151 {
     border-inline-end-width: 2px;
   }
 
 
-  .SMBFGYc131 {
+  .SMBFGYc151 {
     padding-inline-start: var(--S);
   }
 
 
-  .Rv131 {
+  .Rv151 {
     padding-inline-end: calc(var(--F, var(--M)) * 3 / 8);
   }
 
 
-  .ZjUQgKd131 {
+  .ZjUQgKd151 {
     width: calc(200px - var(--m) - var(--S));
   }
 
 
-  .-m_-mc131 {
+  .-m_-mc151 {
     --m: 2px;
   }
 
 
-  .-S_-Sv131 {
+  .-S_-Sv151 {
     --S: calc(var(--F, var(--M)) * 3 / 8);
   }
 }
 
-.-macro-static-uhFF5b {
-        --macro-data-uhFF5b: {"style":{"borderWidth":2,"paddingX":"edge-to-text","width":"calc(200px - self(borderStartWidth) - self(paddingStart))"},"loc":"undefined:undefined:undefined"};
+.-macro-static-6DrPJb {
+        --macro-data-6DrPJb: {"style":{"borderWidth":2,"paddingX":"edge-to-text","width":"calc(200px - self(borderStartWidth) - self(paddingStart))"},"loc":"undefined:undefined:undefined"};
       }
 
 "
 `);
 
     expect(js).toMatchInlineSnapshot(
-      '" _kc131 hc131 mCPFGYc131 lc131 SMBFGYc131 Rv131 ZjUQgKd131 -m_-mc131 -S_-Sv131 -macro-static-uhFF5b"'
+      `" _kc151 hc151 mCPFGYc151 lc151 SMBFGYc151 Rv151 ZjUQgKd151 -m_-mc151 -S_-Sv151 -macro-static-6DrPJb"`
     );
   });
 
@@ -144,9 +144,9 @@ describe('style-macro', () => {
       color: 'green-400'
     });
 
-    expect(js()).toMatchInlineSnapshot('"  gw131 pg131 -macro-dynamic-mu4yby"');
-    expect(overrides).toMatchInlineSnapshot('" g8tmWqb131 pHJ3AUd131 -macro-static-CvspF"');
-    expect(js({}, overrides)).toMatchInlineSnapshot('"  g8tmWqb131 pg131 -macro-dynamic-1b9jdne"');
+    expect(js()).toMatchInlineSnapshot(`"  gw151 pg151 -macro-dynamic-ksiu6q"`);
+    expect(overrides).toMatchInlineSnapshot(`" g8tmWqb151 pHJ3AUd151 -macro-static-4DCFgd"`);
+    expect(js({}, overrides)).toMatchInlineSnapshot(`"  g8tmWqb151 pg151 -macro-dynamic-197x9i6"`);
   });
 
   it('should support allowed overrides for properties that expand into multiple', () => {
@@ -161,10 +161,10 @@ describe('style-macro', () => {
       translateX: 40
     });
 
-    expect(js()).toMatchInlineSnapshot('"  -_7PloMd-B131 __Ya131 -macro-dynamic-4f51mn"');
-    expect(overrides).toMatchInlineSnapshot('" -_7PloMd-D131 __Ya131 -macro-static-nMoh6b"');
+    expect(js()).toMatchInlineSnapshot(`"  -_7PloMd-B151 __Ya151 -macro-dynamic-clboub"`);
+    expect(overrides).toMatchInlineSnapshot(`" -_7PloMd-D151 __Ya151 -macro-static-pdFIDc"`);
     expect(js({}, overrides)).toMatchInlineSnapshot(
-      '"  -_7PloMd-D131 __Ya131 -macro-dynamic-f33ipt"'
+      `"  -_7PloMd-D151 __Ya151 -macro-dynamic-n9a5xh"`
     );
   });
 
@@ -180,10 +180,10 @@ describe('style-macro', () => {
       padding: 40
     });
 
-    expect(js()).toMatchInlineSnapshot('"  Tk131 Qk131 Sk131 Rk131 -macro-dynamic-efgw2h"');
-    expect(overrides).toMatchInlineSnapshot('" Tm131 Qm131 Sm131 Rm131 -macro-static-9GxvHb"');
+    expect(js()).toMatchInlineSnapshot(`"  Tk151 Qk151 Sk151 Rk151 -macro-dynamic-1esad0h"`);
+    expect(overrides).toMatchInlineSnapshot(`" Tm151 Qm151 Sm151 Rm151 -macro-static-Nfrh6d"`);
     expect(js({}, overrides)).toMatchInlineSnapshot(
-      '"  Tm131 Qm131 Sm131 Rm131 -macro-dynamic-15z7wbl"'
+      `"  Tm151 Qm151 Sm151 Rm151 -macro-dynamic-7axbah"`
     );
   });
 
@@ -199,10 +199,10 @@ describe('style-macro', () => {
       fontSize: 'ui-xs'
     });
 
-    expect(js()).toMatchInlineSnapshot('"  -_6BNtrc-woabcc131 vx131 -macro-dynamic-zj2kbi"');
-    expect(overrides).toMatchInlineSnapshot('" -_6BNtrc-a131 vx131 -macro-static-EPvKFd"');
+    expect(js()).toMatchInlineSnapshot(`"  -_6BNtrc-woabcc151 vx151 -macro-dynamic-xhgg6a"`);
+    expect(overrides).toMatchInlineSnapshot(`" -_6BNtrc-a151 vx151 -macro-static-grInxd"`);
     expect(js({}, overrides)).toMatchInlineSnapshot(
-      '"  -_6BNtrc-a131 vx131 -macro-dynamic-jkg234"'
+      `"  -_6BNtrc-a151 vx151 -macro-dynamic-hitxxw"`
     );
   });
 
@@ -218,9 +218,9 @@ describe('style-macro', () => {
       minWidth: 32
     });
 
-    expect(js()).toMatchInlineSnapshot('"  gE131 -macro-dynamic-1osl3dc"');
-    expect(overrides).toMatchInlineSnapshot('" Nk131 -macro-static-J7ItY"');
-    expect(js({}, overrides)).toMatchInlineSnapshot('"  Nk131 gE131 -macro-dynamic-1soyf0e"');
+    expect(js()).toMatchInlineSnapshot(`"  gE151 -macro-dynamic-wd489e"`);
+    expect(overrides).toMatchInlineSnapshot(`" Nk151 -macro-static-f34NMd"`);
+    expect(js({}, overrides)).toMatchInlineSnapshot(`"  Nk151 gE151 -macro-dynamic-1qncav6"`);
   });
 
   it('should support runtime conditions', () => {
@@ -241,32 +241,32 @@ describe('style-macro', () => {
 "@layer _.a;
 
 @layer _.a {
-  .gH131 {
+  .gH151 {
     background-color: light-dark(rgb(233, 233, 233), rgb(44, 44, 44));
   }
 
 
-  .gF131 {
+  .gF151 {
     background-color: light-dark(rgb(225, 225, 225), rgb(50, 50, 50));
   }
 
 
-  .gE131 {
+  .gE151 {
     background-color: light-dark(rgb(218, 218, 218), rgb(57, 57, 57));
   }
 
 
-  .pt131 {
+  .pt151 {
     color: light-dark(rgb(41, 41, 41), rgb(219, 219, 219));
   }
 
 
-  .po131 {
+  .po151 {
     color: light-dark(rgb(19, 19, 19), rgb(242, 242, 242));
   }
 
 
-  .pm131 {
+  .pm151 {
     color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));
   }
 }
@@ -274,9 +274,9 @@ describe('style-macro', () => {
 "
 `);
 
-    expect(js({})).toMatchInlineSnapshot('"  gH131 pt131 -macro-dynamic-15nvpf0"');
-    expect(js({isHovered: true})).toMatchInlineSnapshot('"  gF131 po131 -macro-dynamic-1g7f3s5"');
-    expect(js({isPressed: true})).toMatchInlineSnapshot('"  gE131 pm131 -macro-dynamic-1nv6ioy"');
+    expect(js({})).toMatchInlineSnapshot(`"  gH151 pt151 -macro-dynamic-13m9l9s"`);
+    expect(js({isHovered: true})).toMatchInlineSnapshot(`"  gF151 po151 -macro-dynamic-1e5szmx"`);
+    expect(js({isPressed: true})).toMatchInlineSnapshot(`"  gE151 pm151 -macro-dynamic-1ltkejq"`);
   });
 
   it('should support nested runtime conditions', () => {
@@ -295,33 +295,33 @@ describe('style-macro', () => {
 "@layer _.a;
 
 @layer _.a {
-  .gH131 {
+  .gH151 {
     background-color: light-dark(rgb(233, 233, 233), rgb(44, 44, 44));
   }
 
 
-  .gF131 {
+  .gF151 {
     background-color: light-dark(rgb(225, 225, 225), rgb(50, 50, 50));
   }
 
 
-  .g_h131 {
+  .g_h151 {
     background-color: light-dark(rgb(75, 117, 255), rgb(64, 105, 253));
   }
 
 
-  .g3131 {
+  .g3151 {
     background-color: light-dark(rgb(59, 99, 251), rgb(86, 129, 255));
   }
 }
 
 "
 `);
-    expect(js({})).toMatchInlineSnapshot('"  gH131 -macro-dynamic-43fbrn"');
-    expect(js({isHovered: true})).toMatchInlineSnapshot('"  gF131 -macro-dynamic-1tkkitt"');
-    expect(js({isSelected: true})).toMatchInlineSnapshot('"  g_h131 -macro-dynamic-zzf86q"');
+    expect(js({})).toMatchInlineSnapshot(`"  gH151 -macro-dynamic-1ap2imt"`);
+    expect(js({isHovered: true})).toMatchInlineSnapshot(`"  gF151 -macro-dynamic-1153npv"`);
+    expect(js({isSelected: true})).toMatchInlineSnapshot(`"  g_h151 -macro-dynamic-7jyd2s"`);
     expect(js({isSelected: true, isHovered: true})).toMatchInlineSnapshot(
-      '"  g3131 -macro-dynamic-19tzf3y"'
+      `"  g3151 -macro-dynamic-heik00"`
     );
   });
 
@@ -336,9 +336,9 @@ describe('style-macro', () => {
       }
     });
 
-    expect(js({variant: 'accent'})).toMatchInlineSnapshot('"  gY131 -macro-dynamic-ea1kkk"');
-    expect(js({variant: 'primary'})).toMatchInlineSnapshot('"  gjQquMe131 -macro-dynamic-17nl5q"');
-    expect(js({variant: 'secondary'})).toMatchInlineSnapshot('"  gw131 -macro-dynamic-fjccci"');
+    expect(js({variant: 'accent'})).toMatchInlineSnapshot(`"  gY151 -macro-dynamic-1kvorfq"`);
+    expect(js({variant: 'primary'})).toMatchInlineSnapshot(`"  gjQquMe151 -macro-dynamic-17tas0w"`);
+    expect(js({variant: 'secondary'})).toMatchInlineSnapshot(`"  gw151 -macro-dynamic-1m4zj7o"`);
   });
 
   it('supports runtime conditions nested inside css conditions', () => {
@@ -356,14 +356,14 @@ describe('style-macro', () => {
 
 @layer _.b.l {
   @media (forced-colors: active) {
-    .plb131 {
+    .plb151 {
       color: ButtonText;
     }
   }
 
 
   @media (forced-colors: active) {
-    .ple131 {
+    .ple151 {
       color: HighlightText;
     }
   }
@@ -372,8 +372,8 @@ describe('style-macro', () => {
 "
 `);
 
-    expect(js({})).toMatchInlineSnapshot('"  plb131 -macro-dynamic-a7vfaa"');
-    expect(js({isSelected: true})).toMatchInlineSnapshot('"  ple131 -macro-dynamic-ojtpnp"');
+    expect(js({})).toMatchInlineSnapshot(`"  plb151 -macro-dynamic-1gtim5g"`);
+    expect(js({isSelected: true})).toMatchInlineSnapshot(`"  ple151 -macro-dynamic-1v5gwiv"`);
   });
 
   it('inherits parent default when nested branch has no default key', () => {
@@ -389,9 +389,9 @@ describe('style-macro', () => {
     });
     // forcedColors.default should apply when variant=highlight but !isSelected
     expect(css).toContain('ButtonText');
-    expect(js({variant: 'highlight'})).toMatchInlineSnapshot('"  plb131 -macro-dynamic-a7vfaa"');
+    expect(js({variant: 'highlight'})).toMatchInlineSnapshot(`"  plb151 -macro-dynamic-1gtim5g"`);
     expect(js({variant: 'highlight', isSelected: true})).toMatchInlineSnapshot(
-      '"  ple131 -macro-dynamic-ojtpnp"'
+      `"  ple151 -macro-dynamic-1v5gwiv"`
     );
   });
 
@@ -400,33 +400,33 @@ describe('style-macro', () => {
       padding: 24
     });
 
-    expect(js).toMatchInlineSnapshot('" Th131 Qh131 Sh131 Rh131 -macro-static-D80Fbe"');
+    expect(js).toMatchInlineSnapshot(`" Th151 Qh151 Sh151 Rh151 -macro-static-dvFMTb"`);
     expect(css).toMatchInlineSnapshot(`
 "@layer _.a;
 
 @layer _.a {
-  .Th131 {
+  .Th151 {
     padding-top: 24px;
   }
 
 
-  .Qh131 {
+  .Qh151 {
     padding-bottom: 24px;
   }
 
 
-  .Sh131 {
+  .Sh151 {
     padding-inline-start: 24px;
   }
 
 
-  .Rh131 {
+  .Rh151 {
     padding-inline-end: 24px;
   }
 }
 
-.-macro-static-D80Fbe {
-        --macro-data-D80Fbe: {"style":{"padding":24},"loc":"undefined:undefined:undefined"};
+.-macro-static-dvFMTb {
+        --macro-data-dvFMTb: {"style":{"padding":24},"loc":"undefined:undefined:undefined"};
       }
 
 "
@@ -442,13 +442,13 @@ describe('style-macro', () => {
 "@layer _.a;
 
 @layer _.a {
-  .gpQzfVb131 {
+  .gpQzfVb151 {
     background-color: rgb(from light-dark(rgb(39, 77, 234), rgb(105, 149, 254)) r g b / 50%);
   }
 }
 
-.-macro-static-aOn8Q {
-        --macro-data-aOn8Q: {"style":{"backgroundColor":"blue-1000/50"},"loc":"undefined:undefined:undefined"};
+.-macro-static-GJJsFd {
+        --macro-data-GJJsFd: {"style":{"backgroundColor":"blue-1000/50"},"loc":"undefined:undefined:undefined"};
       }
 
 "
@@ -467,13 +467,13 @@ describe('style-macro', () => {
 "@layer _.a;
 
 @layer _.a {
-  .-FUeYm-gE131 {
+  .-FUeYm-gE151 {
     --foo: light-dark(rgb(218, 218, 218), rgb(57, 57, 57));
   }
 }
 
-.-macro-static-kFNJUb {
-        --macro-data-kFNJUb: {"style":{"--foo":{"type":"backgroundColor","value":"gray-300"}},"loc":"undefined:undefined:undefined"};
+.-macro-static-QA93Ie {
+        --macro-data-QA93Ie: {"style":{"--foo":{"type":"backgroundColor","value":"gray-300"}},"loc":"undefined:undefined:undefined"};
       }
 
 "

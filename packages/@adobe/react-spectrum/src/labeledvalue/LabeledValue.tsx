@@ -114,7 +114,8 @@ type SpectrumLabeledValueTypes =
 export type SpectrumLabeledValueProps<T> = LabeledValueProps<T> & LabeledValueBaseProps;
 
 /**
- * A LabeledValue displays a non-editable value with a label. It formats numbers, dates, times, and lists according to the user's locale.
+ * A LabeledValue displays a non-editable value with a label. It formats numbers, dates, times, and
+ * lists according to the user's locale.
  */
 export const LabeledValue = React.forwardRef(function LabeledValue<
   T extends SpectrumLabeledValueTypes

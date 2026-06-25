@@ -28,7 +28,6 @@ import InfoIcon from '../s2wf-icons/S2_Icon_InfoCircle_20_N.svg';
 import intlMessages from '../intl/*.json';
 import {isWebKit} from 'react-aria/private/utils/platform';
 import {ToastOptions as RACToastOptions, ToastQueue} from 'react-stately/useToastState';
-// @ts-ignore
 import {Text} from './Content';
 import {
   UNSTABLE_Toast as Toast,
@@ -39,9 +38,7 @@ import {
   ToastRegionProps,
   UNSTABLE_ToastStateContext as ToastStateContext
 } from 'react-aria-components/Toast';
-
 import toastCss from './Toast.module.css';
-
 import {useEvent} from 'react-aria/private/utils/useEvent';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useMediaQuery} from './useMediaQuery';
@@ -55,7 +52,8 @@ export interface ToastContainerProps extends Omit<
 > {
   /**
    * Placement of the toast container on the page.
-   * @default "bottom"
+   *
+   * @default 'bottom'
    */
   placement?: ToastPlacement;
 }

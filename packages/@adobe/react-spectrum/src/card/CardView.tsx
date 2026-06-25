@@ -19,7 +19,6 @@ import {GridCollection} from 'react-stately/private/grid/GridCollection';
 import intlMessages from '../../intl/card/*.json';
 import {mergeProps} from 'react-aria/mergeProps';
 import {ProgressCircle} from '../progress/ProgressCircle';
-// @ts-ignore
 import React, {ReactElement, ReactNode, useCallback, useMemo, useRef} from 'react';
 import {ReusableView} from 'react-stately/useVirtualizerState';
 import {SpectrumCardViewProps} from './types';
@@ -101,7 +100,9 @@ export const CardView = React.forwardRef(function CardView<T extends object>(
     focusMode: 'cell'
   });
 
+  // oxlint-disable-next-line react/react-compiler
   cardViewLayout.collection = gridCollection;
+  // oxlint-disable-next-line react/react-compiler
   cardViewLayout.disabledKeys = state.disabledKeys;
 
   let {gridProps} = useGrid(
@@ -264,6 +265,7 @@ function InternalCard(props) {
   // We don't want to focus the checkbox (or any other focusable elements) within the Card
   // when pressing the arrow keys so we delete the key down handler here. Arrow key navigation between
   // the cards in the CardView is handled by useGrid => useSelectableCollection instead.
+  // oxlint-disable-next-line react/react-compiler
   delete gridCellProps.onKeyDownCapture;
   return (
     <div {...rowProps} ref={rowRef} className={classNames(styles, 'spectrum-CardView-row')}>

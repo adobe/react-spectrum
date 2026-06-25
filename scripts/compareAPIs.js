@@ -646,8 +646,23 @@ function rebuildInterfaces(json) {
   return exports;
 }
 
+// we need to normalize the api formatting since we added oxlint formatting that gets picked up as a diff
+// vs the past release which didn't have this formatting
+function normalizeDefault(val) {
+  let s = String(val);
+  // "foo" -> 'foo'
+  s = s.replace(/"([^"\\]*)"/g, "'$1'");
+  // {a,b} -> {a, b}
+  s = s.replace(/,(?!\s)/g, ', ');
+  // {a:1} -> {a: 1}
+  s = s.replace(/:(?!\s)/g, ': ');
+  // {a: 1} -> { a: 1 }
+  s = s.replace(/\{(\S)/g, '{ $1').replace(/(\S)\}/g, '$1 }');
+  return s;
+}
+
 function formatProp([name, prop]) {
-  return `  ${name}${prop.optional ? '?' : ''}: ${prop.value}${prop.defaultVal != null ? ` = ${prop.defaultVal}` : ''}`;
+  return `  ${name}${prop.optional ? '?' : ''}: ${prop.value}${prop.defaultVal != null ? ` = ${normalizeDefault(prop.defaultVal)}` : ''}`;
 }
 
 function formatInterfaces(interfaces, allInterfaces) {

@@ -57,10 +57,14 @@ export interface CalendarProps<T extends DateValue, M extends CalendarSelectionM
     ValueBase<CalendarValueType<T | null, M>, CalendarValueType<MappedDateValue<T>, M>> {
   /**
    * Whether single or multiple selection is enabled.
-   * @default "single"
+   *
+   * @default 'single'
    */
   selectionMode?: M;
-  /** Callback that is called for each date of the calendar. If it returns true, then the date is unavailable. */
+  /**
+   * Callback that is called for each date of the calendar. If it returns true, then the date is
+   * unavailable.
+   */
   isDateUnavailable?: (date: DateValue) => boolean;
 }
 
@@ -79,11 +83,14 @@ export interface CalendarStateOptions<
   createCalendar: (name: CalendarIdentifier) => Calendar;
   /**
    * The amount of days that will be displayed at once. This affects how pagination works.
-   * @default {months: 1}
+   *
+   * @default { months: 1 }
    */
   visibleDuration?: DateDuration;
   /**
-   * Determines the alignment of the visible months on initial render based on the current selection or current date if there is no selection.
+   * Determines the alignment of the visible months on initial render based on the current selection
+   * or current date if there is no selection.
+   *
    * @default 'center'
    */
   selectionAlignment?: 'start' | 'center' | 'end';

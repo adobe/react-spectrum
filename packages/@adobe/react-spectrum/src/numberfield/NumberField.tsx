@@ -48,13 +48,15 @@ export interface SpectrumNumberFieldProps
   isQuiet?: boolean;
   /**
    * Whether to hide the increment and decrement buttons.
+   *
    * @default false
    */
   hideStepper?: boolean;
 }
 
 /**
- * NumberFields allow users to enter a number, and increment or decrement the value using stepper buttons.
+ * NumberFields allow users to enter a number, and increment or decrement the value using stepper
+ * buttons.
  */
 export const NumberField = React.forwardRef(function NumberField(
   props: SpectrumNumberFieldProps,

@@ -37,6 +37,7 @@ import {useToggleButtonGroupItem} from 'react-aria/useToggleButtonGroup';
 export interface ToggleButtonRenderProps extends Omit<ButtonRenderProps, 'isPending'> {
   /**
    * Whether the button is currently selected.
+   *
    * @selector [data-selected]
    */
   isSelected: boolean;
@@ -54,11 +55,16 @@ export interface ToggleButtonProps
     RenderProps<ToggleButtonRenderProps, 'button'>,
     Omit<GlobalDOMAttributes<HTMLDivElement>, 'onClick'> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-ToggleButton'
    */
   className?: ClassNameOrFunction<ToggleButtonRenderProps>;
-  /** When used in a ToggleButtonGroup, an identifier for the item in `selectedKeys`. When used standalone, a DOM id. */
+  /**
+   * When used in a ToggleButtonGroup, an identifier for the item in `selectedKeys`. When used
+   * standalone, a DOM id.
+   */
   id?: Key;
 }
 
@@ -67,7 +73,8 @@ export const ToggleButtonContext = createContext<
 >({});
 
 /**
- * A toggle button allows a user to toggle a selection on or off, for example switching between two states or modes.
+ * A toggle button allows a user to toggle a selection on or off, for example switching between two
+ * states or modes.
  */
 export const ToggleButton = /*#__PURE__*/ (forwardRef as forwardRefType)(function ToggleButton(
   props: ToggleButtonProps,
@@ -88,9 +95,9 @@ export const ToggleButton = /*#__PURE__*/ (forwardRef as forwardRefType)(functio
 
   let {buttonProps, isPressed, isSelected, isDisabled} =
     groupState && props.id != null
-      ? // eslint-disable-next-line react-hooks/rules-of-hooks
+      ? // oxlint-disable-next-line react/react-compiler, react-hooks/rules-of-hooks
         useToggleButtonGroupItem({...props, id: props.id}, groupState, ref)
-      : // eslint-disable-next-line react-hooks/rules-of-hooks
+      : // oxlint-disable-next-line react/react-compiler, react-hooks/rules-of-hooks
         useToggleButton(
           {...props, id: props.id != null ? String(props.id) : undefined},
           state,

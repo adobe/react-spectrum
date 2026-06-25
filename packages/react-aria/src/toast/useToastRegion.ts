@@ -18,7 +18,6 @@ import intlMessages from '../../intl/toast/*.json';
 import {mergeProps} from '../utils/mergeProps';
 import {ToastState} from 'react-stately/useToastState';
 import {useCallback, useEffect, useRef} from 'react';
-// @ts-ignore
 import {useFocusWithin} from '../interactions/useFocusWithin';
 import {useHover} from '../interactions/useHover';
 import {useLandmark} from '../landmark/useLandmark';
@@ -28,7 +27,8 @@ import {useLocalizedStringFormatter} from '../i18n/useLocalizedStringFormatter';
 export interface AriaToastRegionProps extends AriaLabelingProps {
   /**
    * An accessibility label for the toast region.
-   * @default "Notifications"
+   *
+   * @default 'Notifications'
    */
   'aria-label'?: string;
 }
@@ -39,8 +39,9 @@ export interface ToastRegionAria {
 }
 
 /**
- * Provides the behavior and accessibility implementation for a toast region containing one or more toasts.
- * Toasts display brief, temporary notifications of actions, errors, or other events in an application.
+ * Provides the behavior and accessibility implementation for a toast region containing one or more
+ * toasts. Toasts display brief, temporary notifications of actions, errors, or other events in an
+ * application.
  */
 export function useToastRegion<T>(
   props: AriaToastRegionProps,
@@ -117,6 +118,7 @@ export function useToastRegion<T>(
     if (removedFocusedToastIndex > -1) {
       // In pointer modality, move focus out of the toast region.
       // Otherwise auto-dismiss timers will appear "stuck".
+      // oxlint-disable-next-line react/react-compiler
       if (getInteractionModality() === 'pointer' && lastFocused.current?.isConnected) {
         focusWithoutScrolling(lastFocused.current);
       } else {
@@ -158,11 +160,13 @@ export function useToastRegion<T>(
   let {focusWithinProps} = useFocusWithin({
     onFocusWithin: e => {
       isFocused.current = true;
+      // oxlint-disable-next-line react/react-compiler
       lastFocused.current = e.relatedTarget as FocusableElement;
       updateTimers();
     },
     onBlurWithin: () => {
       isFocused.current = false;
+      // oxlint-disable-next-line react/react-compiler
       lastFocused.current = null;
       updateTimers();
     }
@@ -180,6 +184,7 @@ export function useToastRegion<T>(
       } else {
         lastFocused.current.focus();
       }
+      // oxlint-disable-next-line react/react-compiler
       lastFocused.current = null;
     }
   }, [ref, state.visibleToasts.length]);
@@ -198,6 +203,7 @@ export function useToastRegion<T>(
   }, [ref]);
 
   return {
+    // oxlint-disable-next-line react/react-compiler
     regionProps: mergeProps(landmarkProps, hoverProps, focusWithinProps, {
       tabIndex: -1,
       // Mark the toast region as a "top layer", so that it:

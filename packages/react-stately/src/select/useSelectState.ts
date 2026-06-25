@@ -29,7 +29,7 @@ import {FormValidationState, useFormValidationState} from '../form/useFormValida
 import {ListState, useListState} from '../list/useListState';
 import {OverlayTriggerState, useOverlayTriggerState} from '../overlays/useOverlayTriggerState';
 import {useControlledState} from '../utils/useControlledState';
-import {useMemo, useState} from 'react';
+import {useMemo, useRef, useState} from 'react';
 
 export type SelectionMode = 'single' | 'multiple';
 export type ValueType<M extends SelectionMode> = M extends 'single' ? Key | null : readonly Key[];
@@ -48,21 +48,25 @@ export interface SelectProps<T, M extends SelectionMode = 'single'>
     FocusableProps {
   /**
    * Whether single or multiple selection is enabled.
+   *
    * @default 'single'
    */
   selectionMode?: M;
   /**
    * The currently selected key in the collection (controlled).
+   *
    * @deprecated
    */
   selectedKey?: Key | null;
   /**
    * The initial selected key in the collection (uncontrolled).
+   *
    * @deprecated
    */
   defaultSelectedKey?: Key | null;
   /**
    * Handler that is called when the selection changes.
+   *
    * @deprecated
    */
   onSelectionChange?: (key: Key | null) => void;
@@ -72,7 +76,10 @@ export interface SelectProps<T, M extends SelectionMode = 'single'>
   defaultOpen?: boolean;
   /** Method that is called when the open state of the menu changes. */
   onOpenChange?: (isOpen: boolean) => void;
-  /** Whether the Select should close when an item is selected. Defaults to true if selectionMode is single, false otherwise. */
+  /**
+   * Whether the Select should close when an item is selected. Defaults to true if selectionMode is
+   * single, false otherwise.
+   */
   shouldCloseOnSelect?: boolean;
   /** Whether the select should be allowed to be open when the collection is empty. */
   allowsEmptyCollection?: boolean;
@@ -85,18 +92,21 @@ export interface SelectState<T, M extends SelectionMode = 'single'>
   extends ListState<T>, OverlayTriggerState, FormValidationState {
   /**
    * The key for the first selected item.
+   *
    * @deprecated
    */
   readonly selectedKey: Key | null;
 
   /**
    * The default selected key.
+   *
    * @deprecated
    */
   readonly defaultSelectedKey: Key | null;
 
   /**
    * Sets the selected key.
+   *
    * @deprecated
    */
   setSelectedKey(key: Key | null): void;
@@ -112,6 +122,7 @@ export interface SelectState<T, M extends SelectionMode = 'single'>
 
   /**
    * The value of the first selected item.
+   *
    * @deprecated
    */
   readonly selectedItem: Node<T> | null;
@@ -140,7 +151,7 @@ export interface SelectState<T, M extends SelectionMode = 'single'>
  * of items from props, handles the open state for the popup menu, and manages
  * multiple selection state.
  */
-export function useSelectState<T extends object, M extends SelectionMode = 'single'>(
+export function useSelectState<T, M extends SelectionMode = 'single'>(
   props: SelectStateOptions<T, M>
 ): SelectState<T, M> {
   let {selectionMode = 'single' as M, shouldCloseOnSelect = selectionMode === 'single'} = props;
@@ -185,12 +196,30 @@ export function useSelectState<T extends object, M extends SelectionMode = 'sing
     }
   };
 
+  // Preserve the selection's anchor (anchorKey/currentKey) across renders. The
+  // multiple-selection `value` is a plain Key[], so without this the listbox
+  // would rebuild an anchorless Selection on every render and range selection
+  // (shift+click / shift+arrow) would collapse to just the clicked item. We keep
+  // the last Selection produced internally and feed it back while its membership
+  // still matches `value`.
+  let lastSelection = useRef<Set<Key> | null>(null);
+
+  // oxlint-disable-next-line react/react-compiler
   let listState = useListState({
     ...props,
     selectionMode,
     disallowEmptySelection: selectionMode === 'single',
     allowDuplicateSelectionEvents: true,
-    selectedKeys: useMemo(() => convertValue(displayValue), [displayValue]),
+    selectedKeys: useMemo(() => {
+      let selectedKeys = convertValue(displayValue);
+      // oxlint-disable-next-line react/react-compiler
+      let last = lastSelection.current;
+      // oxlint-disable-next-line react/react-compiler
+      if (last != null && Array.isArray(selectedKeys) && isSameSelection(last, selectedKeys)) {
+        return last;
+      }
+      return selectedKeys;
+    }, [displayValue]),
     onSelectionChange: (keys: Selection) => {
       // impossible, but TS doesn't know that
       if (keys === 'all') {
@@ -201,6 +230,9 @@ export function useSelectState<T extends object, M extends SelectionMode = 'sing
         let key = keys.values().next().value ?? null;
         setValue(key);
       } else {
+        // Remember the Selection (with its anchor) so it survives the round-trip
+        // through the plain `value` array on the next render.
+        lastSelection.current = keys;
         setValue([...keys]);
       }
       if (shouldCloseOnSelect) {
@@ -266,4 +298,16 @@ function convertValue(value: Key | Key[] | null | undefined) {
     return [];
   }
   return Array.isArray(value) ? value : [value];
+}
+
+function isSameSelection(selection: Set<Key>, keys: Key[]): boolean {
+  if (selection.size !== keys.length) {
+    return false;
+  }
+  for (let key of keys) {
+    if (!selection.has(key)) {
+      return false;
+    }
+  }
+  return true;
 }

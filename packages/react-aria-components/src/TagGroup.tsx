@@ -82,7 +82,9 @@ export interface TagGroupProps
     DOMRenderProps<'div', undefined>,
     GlobalDOMAttributes<HTMLDivElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element.
+   *
    * @default 'react-aria-TagGroup'
    */
   className?: string;
@@ -91,16 +93,19 @@ export interface TagGroupProps
 export interface TagListRenderProps {
   /**
    * Whether the tag list has no items and should display its empty state.
+   *
    * @selector [data-empty]
    */
   isEmpty: boolean;
   /**
    * Whether the tag list is currently focused.
+   *
    * @selector [data-focused]
    */
   isFocused: boolean;
   /**
    * Whether the tag list is currently keyboard focused.
+   *
    * @selector [data-focus-visible]
    */
   isFocusVisible: boolean;
@@ -116,7 +121,9 @@ export interface TagListProps<T>
     StyleRenderProps<TagListRenderProps, 'div'>,
     GlobalDOMAttributes<HTMLDivElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-TagList'
    */
   className?: ClassNameOrFunction<TagListRenderProps>;
@@ -128,7 +135,8 @@ export const TagGroupContext = createContext<ContextValue<TagGroupProps, HTMLDiv
 export const TagListContext = createContext<ContextValue<TagListProps<any>, HTMLDivElement>>(null);
 
 /**
- * A tag group is a focusable list of labels, categories, keywords, filters, or other items, with support for keyboard navigation, selection, and removal.
+ * A tag group is a focusable list of labels, categories, keywords, filters, or other items, with
+ * support for keyboard navigation, selection, and removal.
  */
 export const TagGroup = /*#__PURE__*/ (forwardRef as forwardRefType)(function TagGroup(
   props: TagGroupProps,
@@ -150,11 +158,7 @@ interface TagGroupInnerProps<T> {
   collection: any;
 }
 
-function TagGroupInner<T extends object>({
-  props,
-  forwardedRef: ref,
-  collection
-}: TagGroupInnerProps<T>) {
+function TagGroupInner<T>({props, forwardedRef: ref, collection}: TagGroupInnerProps<T>) {
   let tagListRef = useRef<HTMLElement>(null);
   // Extract the user provided id so it doesn't clash with the collection id provided by Autocomplete
   let {id, ...otherProps} = props;
@@ -168,6 +172,7 @@ function TagGroupInner<T extends object>({
     collection
   });
 
+  // oxlint-disable-next-line react/react-compiler
   let filteredState = UNSTABLE_useFilteredListState(tagGroupState as ListState<T>, filter);
 
   // Prevent DOM props from going to two places.
@@ -218,9 +223,10 @@ function TagGroupInner<T extends object>({
 /**
  * A tag list is a container for tags within a TagGroup.
  */
-export const TagList = /*#__PURE__*/ (forwardRef as forwardRefType)(function TagList<
-  T extends object
->(props: TagListProps<T>, ref: ForwardedRef<HTMLDivElement>): JSX.Element {
+export const TagList = /*#__PURE__*/ (forwardRef as forwardRefType)(function TagList<T>(
+  props: TagListProps<T>,
+  ref: ForwardedRef<HTMLDivElement>
+): JSX.Element {
   let state = useContext(ListStateContext);
   return state ? <TagListInner props={props} forwardedRef={ref} /> : <Collection {...props} />;
 });
@@ -230,7 +236,7 @@ interface TagListInnerProps<T> {
   forwardedRef: ForwardedRef<HTMLDivElement>;
 }
 
-function TagListInner<T extends object>({props, forwardedRef}: TagListInnerProps<T>) {
+function TagListInner<T>({props, forwardedRef}: TagListInnerProps<T>) {
   let state = useContext(ListStateContext)!;
   let {CollectionRoot} = useContext(CollectionRendererContext);
   let [gridProps, ref] = useContextProps({}, forwardedRef, TagListContext);
@@ -276,6 +282,7 @@ export interface TagRenderProps extends Omit<
 > {
   /**
    * Whether the tag group allows items to be removed.
+   *
    * @selector [data-allows-removing]
    */
   allowsRemoving: boolean;
@@ -290,7 +297,9 @@ export interface TagProps
     PressEvents,
     Omit<GlobalDOMAttributes<HTMLDivElement>, 'onClick'> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-Tag'
    */
   className?: ClassNameOrFunction<TagRenderProps>;
@@ -304,8 +313,8 @@ export interface TagProps
   /** Whether the tag is disabled. */
   isDisabled?: boolean;
   /**
-   * Handler that is called when a user performs an action on the item. The exact user event depends on
-   * the collection's `selectionBehavior` prop and the interaction modality.
+   * Handler that is called when a user performs an action on the item. The exact user event depends
+   * on the collection's `selectionBehavior` prop and the interaction modality.
    */
   onAction?: () => void;
 }

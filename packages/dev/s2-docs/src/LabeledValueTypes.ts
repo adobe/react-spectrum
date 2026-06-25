@@ -17,25 +17,37 @@ export interface LabeledValueProps extends LabeledValueBaseProps, LabeledValueSt
     | DateTime
     | RangeValue<DateTime>
     | ReactElement;
-  /** Formatting options for the value. The available options depend on the type passed to the `value` prop. */
+  /**
+   * Formatting options for the value. The available options depend on the type passed to the
+   * `value` prop.
+   */
   formatOptions?: Intl.NumberFormatOptions | Intl.DateTimeFormatOptions | Intl.ListFormatOptions;
 }
 
 export interface LabeledValueNumberProps extends LabeledValueBaseProps, LabeledValueStyleProps {
   /** The value to display. */
   value: number | RangeValue<number>;
-  /** Formatting options for the value. The available options depend on the type passed to the `value` prop. */
+  /**
+   * Formatting options for the value. The available options depend on the type passed to the
+   * `value` prop.
+   */
   formatOptions?: Intl.NumberFormatOptions;
 }
 export interface LabeledValueDateTimeProps extends LabeledValueBaseProps, LabeledValueStyleProps {
   /** The value to display. */
   value: DateTime | RangeValue<DateTime>;
-  /** Formatting options for the value. The available options depend on the type passed to the `value` prop. */
+  /**
+   * Formatting options for the value. The available options depend on the type passed to the
+   * `value` prop.
+   */
   formatOptions?: Intl.DateTimeFormatOptions;
 }
 export interface LabeledValueListProps extends LabeledValueBaseProps, LabeledValueStyleProps {
   /** The value to display. */
   value: string[];
-  /** Formatting options for the value. The available options depend on the type passed to the `value` prop. */
+  /**
+   * Formatting options for the value. The available options depend on the type passed to the
+   * `value` prop.
+   */
   formatOptions?: Intl.ListFormatOptions;
 }

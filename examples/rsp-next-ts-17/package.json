@@ -12,7 +12,6 @@
   },
   "dependencies": {
     "@adobe/react-spectrum": "latest",
-    "@react-spectrum/provider": "latest",
     "@spectrum-icons/illustrations": "latest",
     "@spectrum-icons/workflow": "latest",
     "glob": "^11.0.3",

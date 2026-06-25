@@ -22,7 +22,7 @@ export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps>
   // Invalidate the layout whenever the column widths change.
   useLayoutOptions(): TableLayoutProps {
     // This is not a React class component, just a regular class.
-    /* eslint-disable react-hooks/rules-of-hooks */
+    // oxlint-disable react/react-compiler, react-hooks/rules-of-hooks
     let colResizeState = useContext(TableColumnResizeStateContext);
     return useMemo(
       () => ({
@@ -30,5 +30,6 @@ export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps>
       }),
       [colResizeState?.columnWidths]
     );
+    // oxlint-enable react/react-compiler, react-hooks/rules-of-hooks
   }
 }

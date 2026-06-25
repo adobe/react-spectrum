@@ -17,6 +17,7 @@ import {useMemo} from 'react';
 export interface ToggleGroupProps {
   /**
    * Whether single or multiple selection is enabled.
+   *
    * @default 'single'
    */
   selectionMode?: 'single' | 'multiple';

@@ -86,11 +86,11 @@ describe('Tabs', function () {
     let container = renderComponent();
     let tabsTester = testUtilUser.createTester('Tabs', {root: container.getByRole('tablist')});
 
-    let tablist = tabsTester.tablist;
+    let tablist = tabsTester.getTablist();
     expect(tablist).toBeTruthy();
     expect(tablist).toHaveAttribute('aria-orientation', 'horizontal');
 
-    let tabs = tabsTester.tabs;
+    let tabs = tabsTester.getTabs();
     expect(tabs.length).toBe(3);
 
     for (let tab of tabs) {
@@ -98,15 +98,15 @@ describe('Tabs', function () {
       expect(tab).toHaveAttribute('aria-selected');
       let isSelected = tab.getAttribute('aria-selected') === 'true';
       if (isSelected) {
-        expect(tab).toBe(tabsTester.selectedTab);
+        expect(tab).toBe(tabsTester.getSelectedTab());
         expect(tab).toHaveAttribute('aria-controls');
         let tabpanel = document.getElementById(tab.getAttribute('aria-controls'));
         expect(tabpanel).toBeTruthy();
         expect(tabpanel).toHaveAttribute('aria-labelledby', tab.id);
         expect(tabpanel).toHaveAttribute('role', 'tabpanel');
         expect(tabpanel).toHaveTextContent(defaultItems[0].children);
-        expect(tabpanel).toBe(tabsTester.activeTabpanel);
-        expect(tabsTester.tabpanels).toHaveLength(1);
+        expect(tabpanel).toBe(tabsTester.getActiveTabpanel());
+        expect(tabsTester.getTabpanels()).toHaveLength(1);
       }
     }
   });
@@ -144,7 +144,7 @@ describe('Tabs', function () {
     expect(selectedItem).toHaveAttribute('aria-selected', 'true');
     expect(arrowLeft.defaultPrevented).toBe(true);
 
-    /** prevent changing tabs for horizontal orientations in aria-selected */
+    /** Prevent changing tabs for horizontal orientations in aria-selected. */
     let arrowUp = createEvent.keyDown(selectedItem, {key: 'ArrowUp', code: 38, charCode: 38});
     fireEvent(selectedItem, arrowUp);
     expect(selectedItem).toHaveAttribute('aria-selected', 'true');
@@ -163,8 +163,9 @@ describe('Tabs', function () {
       interactionType: 'keyboard',
       direction: 'rtl'
     });
-    let tabs = tabsTester.tabs;
-    window.addEventListener('keydown', onKeyDown);
+    let tabs = tabsTester.getTabs();
+    // Use a capture listener so we observe the key before the collection handler stops propagation.
+    window.addEventListener('keydown', onKeyDown, true);
 
     expect(tabs[0]).toHaveAttribute('aria-selected', 'true');
 
@@ -183,7 +184,7 @@ describe('Tabs', function () {
     expect(tabs[2]).not.toHaveAttribute('aria-selected', 'true');
     expect(tabs[1]).toHaveAttribute('aria-selected', 'true');
     expect(onKeyDown.mock.calls[2][0].key).toBe('ArrowRight');
-    window.removeEventListener('keydown', onKeyDown);
+    window.removeEventListener('keydown', onKeyDown, true);
   });
 
   it('allows user to change tab item select via arrow keys with vertical tabs', function () {
@@ -279,7 +280,7 @@ describe('Tabs', function () {
     expect(secondItem).toHaveAttribute('aria-selected', 'false');
     expect(thirdItem).toHaveAttribute('aria-selected', 'true');
 
-    expect(onSelectionChange).toBeCalledTimes(1);
+    expect(onSelectionChange).toHaveBeenCalledTimes(1);
   });
 
   it('supports using click to change tab', async function () {
@@ -302,7 +303,7 @@ describe('Tabs', function () {
     expect(tabpanel).toHaveAttribute('aria-labelledby', secondItem.id);
     expect(tabpanel).toHaveAttribute('role', 'tabpanel');
     expect(tabpanel).toHaveTextContent(defaultItems[1].children);
-    expect(onSelectionChange).toBeCalledTimes(1);
+    expect(onSelectionChange).toHaveBeenCalledTimes(1);
   });
 
   it('does not generate conflicting ids between multiple tabs instances', function () {
@@ -378,7 +379,7 @@ describe('Tabs', function () {
     expect(document.activeElement).toBe(tabs[0]);
     fireEvent.keyDown(tabs[1], {key: 'ArrowRight'});
     fireEvent.keyUp(tabs[1], {key: 'ArrowRight'});
-    expect(onSelectionChange).toBeCalledWith(defaultItems[2].name);
+    expect(onSelectionChange).toHaveBeenCalledWith(defaultItems[2].name);
   });
 
   it('disabled tabs cannot be pressed', async function () {
@@ -393,7 +394,7 @@ describe('Tabs', function () {
     let tabs = within(tablist).getAllByRole('tab');
     expect(document.activeElement).toBe(tabs[0]);
     await user.click(tabs[1]);
-    expect(onSelectionChange).not.toBeCalled();
+    expect(onSelectionChange).not.toHaveBeenCalled();
   });
 
   it('finds the first non-disabled tab if the currently selected one is removed', async function () {
@@ -409,7 +410,7 @@ describe('Tabs', function () {
     expect(document.activeElement).toBe(tabs[1]);
     fireEvent.keyDown(tabs[1], {key: 'ArrowRight'});
     fireEvent.keyUp(tabs[1], {key: 'ArrowRight'});
-    expect(onSelectionChange).toBeCalledWith(defaultItems[2].name);
+    expect(onSelectionChange).toHaveBeenCalledWith(defaultItems[2].name);
 
     tree.rerender(
       <Provider theme={theme}>
@@ -429,7 +430,7 @@ describe('Tabs', function () {
         </Tabs>
       </Provider>
     );
-    expect(onSelectionChange).toBeCalledWith(defaultItems[1].name);
+    expect(onSelectionChange).toHaveBeenCalledWith(defaultItems[1].name);
   });
 
   it('selects first tab if all tabs are disabled', async function () {
@@ -444,7 +445,7 @@ describe('Tabs', function () {
     let tabs = within(tablist).getAllByRole('tab');
     let tabpanel = tree.getByRole('tabpanel');
     expect(tabs[0]).toHaveAttribute('aria-selected', 'true');
-    expect(onSelectionChange).toBeCalledWith(defaultItems[0].name);
+    expect(onSelectionChange).toHaveBeenCalledWith(defaultItems[0].name);
     expect(document.activeElement).toBe(tabpanel);
   });
 
@@ -505,7 +506,7 @@ describe('Tabs', function () {
     await user.click(option);
     act(() => jest.runAllTimers());
 
-    expect(onSelectionChange).toBeCalledTimes(1);
+    expect(onSelectionChange).toHaveBeenCalledTimes(1);
     expect(onSelectionChange).toHaveBeenCalledWith('Tab 3');
 
     tabpanel = getByRole('tabpanel');
@@ -904,7 +905,7 @@ describe('Tabs', function () {
     expect(firstItem).toHaveAttribute('aria-selected', 'true');
 
     await user.click(firstItem);
-    expect(onSelectionChange).toBeCalledTimes(1);
+    expect(onSelectionChange).toHaveBeenCalledTimes(1);
     expect(onSelectionChange).toHaveBeenCalledWith(defaultItems[0].name);
   });
 
@@ -1330,23 +1331,23 @@ describe('Tabs', function () {
 
         let direction = props.locale === 'ar-AE' ? 'rtl' : 'ltr';
         let tabsTester = testUtilUser.createTester('Tabs', {root: getByRole('tablist'), direction});
-        expect(tabsTester.tablist).toHaveAttribute('aria-orientation', props.orientation);
-        let tabs = tabsTester.tabs;
+        expect(tabsTester.getTablist()).toHaveAttribute('aria-orientation', props.orientation);
+        let tabs = tabsTester.getTabs();
         await tabsTester.triggerTab({tab: tabs[0]});
-        expect(tabsTester.selectedTab).toBe(tabs[0]);
+        expect(tabsTester.getSelectedTab()).toBe(tabs[0]);
 
         await tabsTester.triggerTab({tab: 4, interactionType: 'keyboard'});
-        expect(tabsTester.selectedTab).toBe(tabs[4]);
-        let tab4 = tabsTester.findTab({tabIndexOrText: 3});
+        expect(tabsTester.getSelectedTab()).toBe(tabs[4]);
+        let tab4 = tabsTester.findTab({indexOrText: 3});
         await tabsTester.triggerTab({tab: tab4, interactionType: 'keyboard'});
-        expect(tabsTester.selectedTab).toBe(tabs[3]);
+        expect(tabsTester.getSelectedTab()).toBe(tabs[3]);
 
         await tabsTester.triggerTab({tab: 'Tab 1', interactionType: 'mouse'});
-        expect(tabsTester.selectedTab).toBe(tabs[0]);
+        expect(tabsTester.getSelectedTab()).toBe(tabs[0]);
 
-        let tab5 = tabsTester.findTab({tabIndexOrText: 'Tab 5'});
+        let tab5 = tabsTester.findTab({indexOrText: 'Tab 5'});
         await tabsTester.triggerTab({tab: tab5, interactionType: 'mouse'});
-        expect(tabsTester.selectedTab).toBe(tabs[4]);
+        expect(tabsTester.getSelectedTab()).toBe(tabs[4]);
       }
     );
   });

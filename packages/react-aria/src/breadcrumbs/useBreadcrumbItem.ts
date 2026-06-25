@@ -25,6 +25,7 @@ export interface BreadcrumbItemProps extends AriaLinkProps, LinkDOMProps {
   isCurrent?: boolean;
   /**
    * The type of current location the breadcrumb item represents, if `isCurrent` is true.
+   *
    * @default 'page'
    */
   'aria-current'?: 'page' | 'step' | 'location' | 'date' | 'time' | boolean | 'true' | 'false';
@@ -37,6 +38,7 @@ export interface BreadcrumbItemProps extends AriaLinkProps, LinkDOMProps {
 export interface AriaBreadcrumbItemProps extends BreadcrumbItemProps, DOMProps {
   /**
    * The HTML element used to render the breadcrumb link, e.g. 'a', or 'span'.
+   *
    * @default 'a'
    */
   elementType?: string;
@@ -72,9 +74,11 @@ export function useBreadcrumbItem(
   }
 
   if (isCurrent) {
+    // oxlint-disable-next-line react/react-compiler
     itemProps['aria-current'] = ariaCurrent || 'page';
     // isCurrent sets isDisabled === true for the current item,
     // so we have to restore the tabIndex in order to support autoFocus.
+    // oxlint-disable-next-line react/react-compiler
     itemProps.tabIndex = props.autoFocus ? -1 : undefined;
   }
 

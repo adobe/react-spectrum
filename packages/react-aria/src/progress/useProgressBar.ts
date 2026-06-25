@@ -21,16 +21,19 @@ import {useNumberFormatter} from '../i18n/useNumberFormatter';
 export interface ProgressBarBaseProps {
   /**
    * The current value (controlled).
+   *
    * @default 0
    */
   value?: number;
   /**
    * The smallest value allowed for the input.
+   *
    * @default 0
    */
   minValue?: number;
   /**
    * The largest value allowed for the input.
+   *
    * @default 100
    */
   maxValue?: number;
@@ -38,7 +41,8 @@ export interface ProgressBarBaseProps {
   label?: ReactNode;
   /**
    * The display format of the value label.
-   * @default {style: 'percent'}
+   *
+   * @default { style: 'percent' }
    */
   formatOptions?: Intl.NumberFormatOptions;
   /** The content to display as the value's label (e.g. 1 of 4). */

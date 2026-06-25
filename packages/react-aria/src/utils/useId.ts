@@ -33,6 +33,7 @@ if (typeof FinalizationRegistry !== 'undefined') {
 
 /**
  * If a default is not provided, generate an id.
+ *
  * @param defaultId - Default component id.
  */
 export function useId(defaultId?: string): string {
@@ -43,14 +44,18 @@ export function useId(defaultId?: string): string {
   let cleanupRef = useRef(null);
 
   if (registry) {
+    // oxlint-disable-next-line react/react-compiler
     registry.register(cleanupRef, res);
   }
 
   if (canUseDOM) {
     const cacheIdRef = idsUpdaterMap.get(res);
+    // oxlint-disable-next-line react/react-compiler
     if (cacheIdRef && !cacheIdRef.includes(nextId)) {
+      // oxlint-disable-next-line react/react-compiler
       cacheIdRef.push(nextId);
     } else {
+      // oxlint-disable-next-line react/react-compiler
       idsUpdaterMap.set(res, [nextId]);
     }
   }
@@ -112,6 +117,7 @@ export function mergeIds(idA: string, idB: string): string {
 /**
  * Used to generate an id, and after render, check if that id is rendered so we know
  * if we can use it in places such as labelledby.
+ *
  * @param depArray - When to recalculate if the id is in the DOM.
  */
 export function useSlotId(depArray: ReadonlyArray<any> = []): string {
@@ -123,6 +129,7 @@ export function useSlotId(depArray: ReadonlyArray<any> = []): string {
 
       yield document.getElementById(id) ? id : undefined;
     });
+    // oxlint-disable-next-line react/react-compiler
   }, [id, setResolvedId]);
 
   useLayoutEffect(updateId, [id, updateId, ...depArray]);

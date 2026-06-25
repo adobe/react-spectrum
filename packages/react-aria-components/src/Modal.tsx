@@ -48,7 +48,9 @@ export interface ModalOverlayProps
     SlotProps,
     GlobalDOMAttributes<HTMLDivElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-ModalOverlay'
    */
   className?: ClassNameOrFunction<ModalRenderProps>;
@@ -61,9 +63,11 @@ export interface ModalOverlayProps
    */
   isExiting?: boolean;
   /**
-   * The container element in which the overlay portal will be placed. This may have unknown behavior depending on where it is portalled to.
-   * @default document.body
+   * The container element in which the overlay portal will be placed. This may have unknown
+   * behavior depending on where it is portalled to.
+   *
    * @deprecated - Use a parent UNSAFE_PortalProvider to set your portal container instead.
+   * @default document.body
    */
   UNSTABLE_portalContainer?: Element;
 }
@@ -81,11 +85,13 @@ const InternalModalContext = createContext<InternalModalContextValue | null>(nul
 export interface ModalRenderProps {
   /**
    * Whether the modal is currently entering. Use this to apply animations.
+   *
    * @selector [data-entering]
    */
   isEntering: boolean;
   /**
    * Whether the modal is currently exiting. Use this to apply animations.
+   *
    * @selector [data-exiting]
    */
   isExiting: boolean;
@@ -256,6 +262,7 @@ function ModalOverlayInner({UNSTABLE_portalContainer, ...props}: ModalOverlayInn
     '--page-height': pageHeight !== undefined ? pageHeight + 'px' : undefined
   };
 
+  // oxlint-disable react/react-compiler
   return (
     <Overlay isExiting={props.isExiting} portalContainer={UNSTABLE_portalContainer}>
       <dom.div
@@ -278,12 +285,15 @@ function ModalOverlayInner({UNSTABLE_portalContainer, ...props}: ModalOverlayInn
       </dom.div>
     </Overlay>
   );
+  // oxlint-enable react/react-compiler
 }
 
 interface ModalContentProps
   extends RenderProps<ModalRenderProps>, GlobalDOMAttributes<HTMLDivElement> {
   /**
-   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
+   * element. A function may be provided to compute the class based on component state.
+   *
    * @default 'react-aria-ModalContent'
    */
   className?: ClassNameOrFunction<ModalRenderProps>;

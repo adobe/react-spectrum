@@ -32,13 +32,15 @@ export interface ProviderProps extends UnsafeStyles, DOMProps {
   /** The content of the Provider. */
   children: ReactNode;
   /**
-   * The locale for your application as a [BCP 47](https://www.ietf.org/rfc/bcp/bcp47.txt) language code.
-   * Defaults to the browser/OS language setting.
+   * The locale for your application as a [BCP 47](https://www.ietf.org/rfc/bcp/bcp47.txt) language
+   * code. Defaults to the browser/OS language setting.
+   *
    * @default 'en-US'
    */
   locale?: string;
   /**
-   * Provides a client side router to all nested React Spectrum links to enable client side navigation.
+   * Provides a client side router to all nested React Spectrum links to enable client side
+   * navigation.
    */
   router?: Router;
   /**
@@ -52,6 +54,7 @@ export interface ProviderProps extends UnsafeStyles, DOMProps {
   styles?: StyleString;
   /**
    * The DOM element to render.
+   *
    * @default div
    */
   elementType?: keyof JSX.IntrinsicElements;

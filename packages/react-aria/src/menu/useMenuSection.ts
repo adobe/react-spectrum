@@ -35,6 +35,7 @@ export interface MenuSectionAria {
 /**
  * Provides the behavior and accessibility implementation for a section in a menu.
  * See `useMenu` for more details about menus.
+ *
  * @param props - Props for the section.
  */
 export function useMenuSection(props: AriaMenuSectionProps): MenuSectionAria {

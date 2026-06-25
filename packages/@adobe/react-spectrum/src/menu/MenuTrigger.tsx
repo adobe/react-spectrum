@@ -33,21 +33,25 @@ export interface SpectrumMenuTriggerProps extends MenuTriggerProps {
   children: ReactElement[];
   /**
    * Alignment of the menu relative to the trigger.
+   *
    * @default 'start'
    */
   align?: Alignment;
   /**
    * Where the Menu opens relative to its trigger.
+   *
    * @default 'bottom'
    */
   direction?: 'bottom' | 'top' | 'left' | 'right' | 'start' | 'end';
   /**
    * Whether the menu should automatically flip direction when space is limited.
+   *
    * @default true
    */
   shouldFlip?: boolean;
   /**
    * Whether the Menu closes when a selection is made.
+   *
    * @default true
    */
   closeOnSelect?: boolean;
@@ -112,6 +116,7 @@ export const MenuTrigger = forwardRef(function MenuTrigger(
 
   // Close when clicking outside the root menu when a submenu is open.
   let rootOverlayRef = useRef(null);
+  // oxlint-disable-next-line react/react-compiler
   let rootOverlayDomRef = unwrapDOMRef(rootOverlayRef);
   useInteractOutside({
     ref: rootOverlayDomRef,

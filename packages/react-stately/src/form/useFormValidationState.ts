@@ -62,7 +62,10 @@ export interface FormValidationState {
   realtimeValidation: ValidationResult;
   /** Currently displayed validation results, updated when the user commits their changes. */
   displayValidation: ValidationResult;
-  /** Updates the current validation result. Not displayed to the user until `commitValidation` is called. */
+  /**
+   * Updates the current validation result. Not displayed to the user until `commitValidation` is
+   * called.
+   */
   updateValidation(result: ValidationResult): void;
   /** Resets the displayed validation state to valid when the user resets the form. */
   resetValidation(): void;
@@ -89,7 +92,7 @@ export function useFormValidationState<T>(props: FormValidationProps<T>): FormVa
     };
   }
 
-  // eslint-disable-next-line react-hooks/rules-of-hooks
+  // oxlint-disable-next-line react/react-compiler, react-hooks/rules-of-hooks
   return useFormValidationStateImpl(props);
 }
 

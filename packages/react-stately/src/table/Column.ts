@@ -47,7 +47,10 @@ export interface ColumnProps<T> {
   allowsResizing?: boolean;
   /** Whether the column allows sorting. */
   allowsSorting?: boolean;
-  /** Whether a column is a [row header](https://www.w3.org/TR/wai-aria-1.1/#rowheader) and should be announced by assistive technology during row navigation. */
+  /**
+   * Whether a column is a [row header](https://www.w3.org/TR/wai-aria-1.1/#rowheader) and should be
+   * announced by assistive technology during row navigation.
+   */
   isRowHeader?: boolean;
   /** A string representation of the column's contents, used for accessibility announcements. */
   textValue?: string;

@@ -22,7 +22,6 @@ import {
 import {createContext, forwardRef} from 'react';
 import CrossIcon from '../ui-icons/Cross';
 import {FocusableRef, FocusableRefValue} from '@react-types/shared';
-// @ts-ignore
 import intlMessages from '../intl/*.json';
 import {pressScale} from './pressScale';
 import {useFocusableRef} from './useDOMRef';
@@ -77,7 +76,7 @@ const styles = style<
         default: baseColor('neutral'),
         isDisabled: 'disabled',
         isStaticColor: {
-          default: baseColor('transparent-overlay-800'),
+          default: 'white',
           isDisabled: 'transparent-overlay-400'
         },
         forcedColors: {
@@ -108,10 +107,12 @@ export const CloseButton = forwardRef(function CloseButton(
   props: CloseButtonProps,
   ref: FocusableRef<HTMLButtonElement>
 ) {
+  // oxlint-disable-next-line react/react-compiler
   [props, ref] = useSpectrumContextProps(props, ref, CloseButtonContext);
   let {UNSAFE_style, UNSAFE_className = ''} = props;
   let domRef = useFocusableRef(ref);
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
+  // oxlint-disable react/react-compiler
   return (
     <Button
       {...props}
@@ -129,4 +130,5 @@ export const CloseButton = forwardRef(function CloseButton(
       <CrossIcon size={({S: 'L', M: 'XL', L: 'XXL', XL: 'XXXL'} as const)[props.size || 'M']} />
     </Button>
   );
+  // oxlint-enable react/react-compiler
 });

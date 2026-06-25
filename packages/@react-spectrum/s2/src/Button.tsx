@@ -29,7 +29,6 @@ import {FocusableRef, FocusableRefValue, GlobalDOMAttributes} from '@react-types
 import {IconContext} from './Icon';
 import intlMessages from '../intl/*.json';
 import {linearGradient} from '../style/spectrum-theme' with {type: 'macro'};
-// @ts-ignore
 import {Link, LinkProps} from 'react-aria-components/Link';
 import {OverlayTriggerStateContext} from 'react-aria-components/Dialog';
 import {pressScale} from './pressScale';
@@ -254,7 +253,12 @@ const button = style<ButtonRenderProps & ButtonStyleProps & {isStaticColor: bool
           fill: {
             variant: {
               primary: 'auto',
-              secondary: baseColor('transparent-overlay-800'),
+              secondary: {
+                default: 'transparent-overlay-1000',
+                isHovered: 'transparent-overlay-1000',
+                isFocusVisible: 'transparent-overlay-1000',
+                isPressed: 'transparent-overlay-1000'
+              },
               premium: 'white',
               genai: 'white'
             }
@@ -264,7 +268,12 @@ const button = style<ButtonRenderProps & ButtonStyleProps & {isStaticColor: bool
               premium: 'white',
               genai: 'white'
             },
-            default: baseColor('transparent-overlay-800')
+            default: {
+              default: 'transparent-overlay-1000',
+              isHovered: 'transparent-overlay-1000',
+              isFocusVisible: 'transparent-overlay-1000',
+              isPressed: 'transparent-overlay-1000'
+            }
           }
         },
         isDisabled: 'transparent-overlay-400'
@@ -382,6 +391,7 @@ export function usePendingState(isPending: boolean) {
         setIsProgressVisible(true);
       }, 1000);
     } else {
+      // oxlint-disable-next-line react/react-compiler
       setIsProgressVisible(false);
     }
     return () => {
@@ -400,6 +410,7 @@ export const Button = forwardRef(function Button(
   props: ButtonProps,
   ref: FocusableRef<HTMLButtonElement>
 ) {
+  // oxlint-disable-next-line react/react-compiler
   [props, ref] = useSpectrumContextProps(props, ref, ButtonContext);
   props = useFormProps(props);
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
@@ -409,6 +420,7 @@ export const Button = forwardRef(function Button(
 
   let {isProgressVisible} = usePendingState(isPending);
 
+  // oxlint-disable react/react-compiler
   return (
     <RACButton
       {...props}
@@ -512,21 +524,25 @@ export const Button = forwardRef(function Button(
       )}
     </RACButton>
   );
+  // oxlint-enable react/react-compiler
 });
 
 /**
- * A LinkButton combines the functionality of a link with the appearance of a button. Useful for allowing users to navigate to another page.
+ * A LinkButton combines the functionality of a link with the appearance of a button. Useful for
+ * allowing users to navigate to another page.
  */
 export const LinkButton = forwardRef(function LinkButton(
   props: LinkButtonProps,
   ref: FocusableRef<HTMLAnchorElement>
 ) {
+  // oxlint-disable-next-line react/react-compiler
   [props, ref] = useSpectrumContextProps(props, ref, LinkButtonContext);
   props = useFormProps(props);
   let domRef = useFocusableRef(ref);
   let overlayTriggerState = useContext(OverlayTriggerStateContext);
   let {fillStyle = 'fill', size = 'M', variant = 'primary', staticColor, styles, children} = props;
 
+  // oxlint-disable react/react-compiler
   return (
     <Link
       {...props}
@@ -590,4 +606,5 @@ export const LinkButton = forwardRef(function LinkButton(
       )}
     </Link>
   );
+  // oxlint-enable react/react-compiler
 });

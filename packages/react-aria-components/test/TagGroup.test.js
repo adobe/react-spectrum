@@ -660,6 +660,9 @@ describe('TagGroup', () => {
     expect(onRemove).toHaveBeenCalledTimes(2);
     expect(onRemove).toHaveBeenLastCalledWith(new Set(['cat']));
 
+    await user.tab({shift: true});
+    expect(tags[0]).toHaveFocus();
+
     await user.keyboard('{ArrowRight}');
     expect(tags[1]).toHaveFocus();
 
@@ -847,10 +850,10 @@ describe('TagGroup', () => {
       let items = getAllByRole('row');
 
       await user.pointer({target: items[0], keys: '[MouseLeft>]'});
-      expect(onSelectionChange).toBeCalledTimes(1);
+      expect(onSelectionChange).toHaveBeenCalledTimes(1);
 
       await user.pointer({target: items[0], keys: '[/MouseLeft]'});
-      expect(onSelectionChange).toBeCalledTimes(1);
+      expect(onSelectionChange).toHaveBeenCalledTimes(1);
     });
 
     it('should select an item on pressing down when shouldSelectOnPressUp is false', async () => {
@@ -863,10 +866,10 @@ describe('TagGroup', () => {
       let items = getAllByRole('row');
 
       await user.pointer({target: items[0], keys: '[MouseLeft>]'});
-      expect(onSelectionChange).toBeCalledTimes(1);
+      expect(onSelectionChange).toHaveBeenCalledTimes(1);
 
       await user.pointer({target: items[0], keys: '[/MouseLeft]'});
-      expect(onSelectionChange).toBeCalledTimes(1);
+      expect(onSelectionChange).toHaveBeenCalledTimes(1);
     });
 
     it('should select an item on pressing up when shouldSelectOnPressUp is true', async () => {
@@ -879,10 +882,10 @@ describe('TagGroup', () => {
       let items = getAllByRole('row');
 
       await user.pointer({target: items[0], keys: '[MouseLeft>]'});
-      expect(onSelectionChange).toBeCalledTimes(0);
+      expect(onSelectionChange).toHaveBeenCalledTimes(0);
 
       await user.pointer({target: items[0], keys: '[/MouseLeft]'});
-      expect(onSelectionChange).toBeCalledTimes(1);
+      expect(onSelectionChange).toHaveBeenCalledTimes(1);
     });
   });
 

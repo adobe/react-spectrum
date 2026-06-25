@@ -22,7 +22,7 @@ export interface TagGroupProps<T>
   errorMessage?: string;
 }
 
-export function TagGroup<T extends object>({
+export function TagGroup<T>({
   label,
   description,
   errorMessage,

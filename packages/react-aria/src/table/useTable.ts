@@ -14,7 +14,6 @@ import {announce} from '../live-announcer/LiveAnnouncer';
 
 import {GridAria, GridProps, useGrid} from '../grid/useGrid';
 import {gridIds} from './utils';
-// @ts-ignore
 import intlMessages from '../../intl/table/*.json';
 import {Key, LayoutDelegate, Rect, RefObject, Size} from '@react-types/shared';
 import {mergeProps} from '../utils/mergeProps';
@@ -30,7 +29,10 @@ import {useMemo} from 'react';
 import {useUpdateEffect} from '../utils/useUpdateEffect';
 
 export interface AriaTableProps extends GridProps {
-  /** The layout object for the table. Computes what content is visible and how to position and style them. */
+  /**
+   * The layout object for the table. Computes what content is visible and how to position and style
+   * them.
+   */
   layoutDelegate?: LayoutDelegate;
   /** @deprecated - Use layoutDelegate instead. */
   layout?: DeprecatedLayout;
@@ -51,9 +53,10 @@ interface DeprecatedVirtualizer {
 }
 
 /**
- * Provides the behavior and accessibility implementation for a table component.
- * A table displays data in rows and columns and enables a user to navigate its contents via directional navigation keys,
- * and optionally supports row selection and sorting.
+ * Provides the behavior and accessibility implementation for a table component. A table displays
+ * data in rows and columns and enables a user to navigate its contents via directional navigation
+ * keys, and optionally supports row selection and sorting.
+ *
  * @param props - Props for the table.
  * @param state - State for the table, as returned by `useTableState`.
  * @param ref - The ref attached to the table element.
@@ -110,10 +113,12 @@ export function useTable<T>(
 
   // Override to include header rows
   if (isVirtualized) {
+    // oxlint-disable-next-line react/react-compiler
     gridProps['aria-rowcount'] = state.collection.size + state.collection.headerRows.length;
   }
 
   if (state.treeColumn != null) {
+    // oxlint-disable-next-line react/react-compiler
     gridProps.role = 'treegrid';
   }
 
@@ -122,7 +127,8 @@ export function useTable<T>(
   let sortDescription = useMemo(() => {
     let columnName = state.collection.columns.find(c => c.key === column)?.textValue ?? '';
     return sortDirection && column
-      ? stringFormatter.format(`${sortDirection}Sort`, {columnName})
+      ? // oxlint-disable-next-line react/react-compiler
+        stringFormatter.format(`${sortDirection}Sort`, {columnName})
       : undefined;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sortDirection, column, state.collection.columns]);

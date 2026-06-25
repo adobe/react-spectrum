@@ -14,7 +14,7 @@ import {Popover} from './Popover';
 import {ChevronDown} from 'lucide-react';
 import './ComboBox.css';
 
-export interface ComboBoxProps<T extends object, M extends 'single' | 'multiple'> extends Omit<
+export interface ComboBoxProps<T, M extends 'single' | 'multiple'> extends Omit<
   AriaComboBoxProps<T, M>,
   'children'
 > {
@@ -25,7 +25,7 @@ export interface ComboBoxProps<T extends object, M extends 'single' | 'multiple'
   placeholder?: string;
 }
 
-export function ComboBox<T extends object, M extends 'single' | 'multiple' = 'single'>({
+export function ComboBox<T, M extends 'single' | 'multiple' = 'single'>({
   label,
   description,
   errorMessage,
@@ -35,7 +35,7 @@ export function ComboBox<T extends object, M extends 'single' | 'multiple' = 'si
 }: ComboBoxProps<T, M>) {
   return (
     <AriaComboBox {...props}>
-      <Label>{label}</Label>
+      {label && <Label>{label}</Label>}
       <div className="combobox-field">
         <Input className="react-aria-Input inset" placeholder={placeholder} />
         <FieldButton>
@@ -52,7 +52,7 @@ export function ComboBox<T extends object, M extends 'single' | 'multiple' = 'si
   );
 }
 
-export function ComboBoxListBox<T extends object>(props: ListBoxProps<T>) {
+export function ComboBoxListBox<T>(props: ListBoxProps<T>) {
   return <DropdownListBox {...props} />;
 }
 
