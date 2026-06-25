@@ -120,6 +120,7 @@ export const Button = React.forwardRef(function Button<T extends ElementType = '
       }, 1000);
     } else {
       // Exit loading state when isPending is set to false. */
+      // oxlint-disable-next-line react/react-compiler
       setIsProgressVisible(false);
     }
     return () => {

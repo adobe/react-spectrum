@@ -60,6 +60,7 @@ export const SearchField = /*#__PURE__*/ forwardRef(function SearchField(
   props: SearchFieldProps,
   ref: Ref<TextFieldRef>
 ) {
+  // oxlint-disable-next-line react/react-compiler
   [props, ref] = useSpectrumContextProps(props, ref, SearchFieldContext);
   let formContext = useContext(FormContext);
   props = useFormProps(props);
