@@ -100,7 +100,7 @@ export function useTableColumnResize<T>(
   let wasFocusedOnResizeStart = useRef(false);
   let editModeEnabled = state.tableState.isKeyboardNavigationDisabled;
   // Whether a mouse drag-resize is active. Set on the first move (not on press) so a cursor
-  // overlay only mounts during an actual drag. See https://github.com/adobe/react-spectrum/issues/10032.
+  // overlay only mounts during an actual drag.
   let [isMouseResizing, setMouseResizing] = useState(false);
 
   let {direction} = useLocale();
