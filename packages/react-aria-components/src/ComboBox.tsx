@@ -115,7 +115,10 @@ export interface ComboBoxProps<T, M extends SelectionMode = 'single'>
    * @default 'react-aria-ComboBox'
    */
   className?: ClassNameOrFunction<ComboBoxRenderProps>;
-  /** The filter function used to determine if a option should be included in the combo box list. */
+  /**
+   * The filter function used to determine if an option should be included in the combo box list.
+   * By default, a language-sensitive "contains" filter from `useFilter` is used.
+   */
   defaultFilter?: (textValue: string, inputValue: string) => boolean;
   /**
    * Whether the text or key of the selected item is submitted as part of an HTML form. When
@@ -255,6 +258,7 @@ function ComboBoxInner<T>({props, collection, comboBoxRef: ref}: ComboBoxInnerPr
         return groupRef.current || inputRef.current;
       }
     }),
+    // oxlint-disable-next-line react/react-compiler
     [groupRef, inputRef]
   );
 

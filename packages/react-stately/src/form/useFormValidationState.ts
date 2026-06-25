@@ -92,7 +92,7 @@ export function useFormValidationState<T>(props: FormValidationProps<T>): FormVa
     };
   }
 
-  // eslint-disable-next-line react-hooks/rules-of-hooks
+  // oxlint-disable-next-line react/react-compiler, react-hooks/rules-of-hooks
   return useFormValidationStateImpl(props);
 }
 

@@ -128,7 +128,7 @@ async function createParcel(options, isDev = false) {
       ...(options.statsJson
         ? [
             {
-              packageName: '@parcel/reporter-turbosnap-stats',
+              packageName: 'parcel-reporter-turbosnap-stats',
               resolveFrom: __filename
             }
           ]
