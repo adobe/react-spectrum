@@ -355,7 +355,10 @@ export function useGridCell<T, C extends GridCollection<T>>(
     'aria-colspan': node.colSpan,
     'aria-colindex': node.colIndex != null ? node.colIndex + 1 : undefined, // aria-colindex is 1-based
     colSpan: isVirtualized ? undefined : node.colSpan,
-    onFocus
+    onFocus,
+    // make sure shift tabbing from a child of a cell doesnt move focus back to cell if focusMode="child" and in tab nav
+    // consistent with arrow nav and focusMode="child" since you can't go back to the cell there either
+    ...(focusMode === 'child' && keyboardNavigationBehavior === 'tab' ? {tabIndex: -1} : {})
   });
 
   if (isVirtualized) {

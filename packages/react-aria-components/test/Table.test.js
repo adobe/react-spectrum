@@ -3758,17 +3758,10 @@ describe('Table', () => {
         expect(document.activeElement).toBe(getByRole('textbox', {name: 'Program Files notes'}));
       });
 
-      // TODO: for some reason the cell containing the input doesn't get refocused when we shift tab in the test but it
-      // works in browser...
-      it.skip('Shift+Tab from a focusMode="child" child returns focus to the cell without redirecting back to child', async () => {
+      it('Shift+Tab from a focusMode="child" child skips the cell and does not return to it', async () => {
         let {getByRole} = render(<TabModeTable actionCellProps={{focusMode: 'child'}} />);
-        let tableTester = testUtilUser.createTester('Table', {
-          root: getByRole('grid', {name: 'Tab mode table'})
-        });
-        let row = tableTester.getRows()[0];
-        let cells = tableTester.getCells({element: row});
-        let notesCell = cells[cells.length - 1];
         let button = getByRole('button', {name: 'Button next to input'});
+        let input = getByRole('textbox', {name: 'Games notes'});
 
         await user.tab();
         await user.keyboard('{ArrowLeft}');
@@ -3776,13 +3769,10 @@ describe('Table', () => {
         expect(document.activeElement).toBe(button);
 
         await user.tab({shift: true});
-        expect(document.activeElement).toBe(notesCell);
-        // TODO: even this doesn't work
-        act(() => {
-          notesCell.focus();
-        });
-        act(() => jest.runAllTimers());
-        expect(document.activeElement).toBe(notesCell);
+        expect(document.activeElement).toBe(input);
+
+        await user.tab({shift: true});
+        expect(document.activeElement).toBe(document.body);
       });
     });
   });

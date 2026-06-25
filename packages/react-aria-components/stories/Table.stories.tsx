@@ -2235,13 +2235,13 @@ const TableWithTextfieldRender = (args: TableWithTextfieldArgs) => {
               <MyCheckbox slot="selection" />
             </Cell>
             <Cell>RAC Textfield</Cell>
-            <Cell focusMode={focusMode}>
+            <Cell>
               <TextField aria-label="Name">
                 <Input />
               </TextField>
             </Cell>
             <Cell>Raw input</Cell>
-            <Cell focusMode={focusMode}>
+            <Cell>
               <input aria-label="Raw text input" style={{marginLeft: 4}} />
             </Cell>
           </Row>
@@ -2250,14 +2250,14 @@ const TableWithTextfieldRender = (args: TableWithTextfieldArgs) => {
               <MyCheckbox slot="selection" />
             </Cell>
             <Cell>TextField + Button</Cell>
-            <Cell focusMode={focusMode}>
+            <Cell>
               <TextField aria-label="Search">
                 <Input />
               </TextField>
               <Button>Go</Button>
             </Cell>
             <Cell> Toolbar</Cell>
-            <Cell focusMode={focusMode}>
+            <Cell>
               <Toolbar aria-label="Text formatting" style={{gap: 4}}>
                 <Button onPress={action('Bold press')}>Bold</Button>
                 <Button onPress={action('Italics press')}>Italic</Button>
@@ -2270,7 +2270,7 @@ const TableWithTextfieldRender = (args: TableWithTextfieldArgs) => {
               <MyCheckbox slot="selection" />
             </Cell>
             <Cell>Menu</Cell>
-            <Cell focusMode={focusMode} allowsArrowNavigation={allowsArrowNavigation}>
+            <Cell allowsArrowNavigation={allowsArrowNavigation}>
               <MenuTrigger>
                 <Button aria-label="Options">▾</Button>
                 <Popover>
@@ -2283,7 +2283,7 @@ const TableWithTextfieldRender = (args: TableWithTextfieldArgs) => {
               </MenuTrigger>
             </Cell>
             <Cell>RadioGroup</Cell>
-            <Cell focusMode={focusMode}>
+            <Cell>
               <RadioGroup
                 aria-label="Radiogroup"
                 className={styles.radiogroup}
@@ -2305,7 +2305,7 @@ const TableWithTextfieldRender = (args: TableWithTextfieldArgs) => {
               <MyCheckbox slot="selection" />
             </Cell>
             <Cell>CheckboxGroup</Cell>
-            <Cell focusMode={focusMode}>
+            <Cell>
               <CheckboxGroup
                 aria-label="Checkboxgroup"
                 style={{display: 'flex', flexDirection: 'row'}}>
@@ -2336,7 +2336,7 @@ const TableWithTextfieldRender = (args: TableWithTextfieldArgs) => {
               </CheckboxGroup>
             </Cell>
             <Cell>ComboBox</Cell>
-            <Cell focusMode={focusMode}>
+            <Cell>
               <ComboBox aria-label="combobox" allowsEmptyCollection>
                 <div style={{display: 'flex'}}>
                   <Input />
