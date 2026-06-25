@@ -10,52 +10,34 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionButtonGroupContext} from './ActionButtonGroup';
-import {ActionMenuContext} from './ActionMenu';
-import {
-  baseColor,
-  color,
-  colorMix,
-  focusRing,
-  fontRelative,
-  style
-} from '../style' with {type: 'macro'};
-import {focusSafely} from 'react-aria/private/interactions/focusSafely';
-import {getFocusableTreeWalker} from 'react-aria/private/focus/FocusScope';
-import {
-  getActiveElement,
-  getEventTarget,
-  isFocusWithin,
-  nodeContains
-} from 'react-aria/private/utils/shadowdom/DOMFunctions';
+import {baseColor, focusRing, fontRelative, style} from '../style' with {type: 'macro'};
 import {Button, ButtonContext} from 'react-aria-components/Button';
 import {centerBaseline} from './CenterBaseline';
 import Chevron from '../ui-icons/Chevron';
 import {DOMRef, forwardRefType, GlobalDOMAttributes, Key} from '@react-types/shared';
 import {edgeToText} from '../style/spectrum-theme' with {type: 'macro'};
+import {focusSafely} from 'react-aria/private/interactions/focusSafely';
+import {getActiveElement, isFocusWithin} from 'react-aria/private/utils/shadowdom/DOMFunctions';
 import {
   getAllowedOverrides,
   StylesPropWithHeight,
   UnsafeStyles
 } from './style-utils' with {type: 'macro'};
+import {getFocusableTreeWalker} from 'react-aria/private/focus/FocusScope';
 import {IconContext} from './Icon';
 import {Link} from 'react-aria-components/Link';
-// @ts-ignore
-import intlMessages from '../intl/*.json';
 import {Provider, useContextProps} from 'react-aria-components/slots';
 import {
   TreeItemProps as RACTreeItemProps,
   TreeProps as RACTreeProps,
   Tree,
+  TreeHeader,
   TreeItem,
   TreeItemContent,
-  TreeItemContentProps,
   TreeItemRenderProps,
-  TreeLoadMoreItem,
-  TreeLoadMoreItemProps,
   TreeRenderProps,
   TreeSection,
-  TreeHeader
+  TreeStateContext
 } from 'react-aria-components/Tree';
 import React, {
   createContext,
@@ -66,13 +48,13 @@ import React, {
   useContext,
   useRef
 } from 'react';
+import {SelectionIndicator} from 'react-aria-components/SelectionIndicator';
 import {Text, TextContext} from './Content';
 import {TreeState} from 'react-stately/useTreeState';
 import {useDOMRef} from './useDOMRef';
+import {useKeyboard} from 'react-aria/useKeyboard';
 import {useLocale} from 'react-aria/I18nProvider';
-import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
 import {useScale} from './utils';
-import {SelectionIndicator} from 'react-aria-components/SelectionIndicator';
 
 interface S2SideNavProps {}
 
@@ -353,6 +335,7 @@ export const SideNavItem = (props: SideNavItemProps, ref: DOMRef<HTMLDivElement>
       value={{href, hrefLang, target, rel, download, ping, referrerPolicy, routerOptions}}>
       <TreeItem
         {...rest}
+        allowChildKeys
         onFocus={onFocus}
         ref={domRef}
         className={renderProps => treeRow(renderProps)}
@@ -707,14 +690,6 @@ function isNextSelected(id: Key | undefined, state: TreeState<unknown>) {
   }
 
   return keyAfter != null && state.selectionManager.isSelected(keyAfter);
-}
-
-function isPrevSelected(id: Key | undefined, state: TreeState<unknown>) {
-  if (id == null || !state) {
-    return false;
-  }
-  let keyBefore = state.collection.getKeyBefore(id);
-  return keyBefore != null && state.selectionManager.isSelected(keyBefore);
 }
 
 function isFirstItem(id: Key | undefined, state: TreeState<unknown>) {
