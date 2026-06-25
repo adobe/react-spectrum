@@ -741,7 +741,7 @@ function SubmitFormStatus({formStatus}: {formStatus: SubmitFormStatusValue}) {
           : 'info';
 
   return (
-    <StatusLight variant={variant}>
+    <StatusLight variant={variant as 'info'}>
       {formStatus === 'progress' && 'In progress'}
       {formStatus === 'valid' && 'Submitted successfully'}
       {formStatus === 'invalid' && 'Error'}

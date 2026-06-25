@@ -161,7 +161,7 @@ const customResponsiveWidths = {
   XXL: 'size-6000'
 };
 
-function CustomResponsiveBreakpoint(): JSX.Element {
+function CustomResponsiveBreakpoint(): React.JSX.Element {
   let {matchedBreakpoints} = useBreakpoint()!;
   let breakpoint = matchedBreakpoints[0];
   return (
@@ -174,7 +174,7 @@ function CustomResponsiveBreakpoint(): JSX.Element {
   );
 }
 
-function BreakpointOmittedContent(): JSX.Element {
+function BreakpointOmittedContent(): React.JSX.Element {
   let {matchedBreakpoints} = useBreakpoint()!;
   let breakpoint = matchedBreakpoints[0];
   let width = {base: 'size-1600', S: 'size-2400', L: 'size-3400'};

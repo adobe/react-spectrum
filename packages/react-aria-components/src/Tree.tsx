@@ -41,7 +41,12 @@ import {
   createBranchComponent,
   createLeafComponent
 } from 'react-aria/CollectionBuilder';
-import {CollectionDragDropState, CollectionDropIndicator} from './collectionDragAndDrop';
+import {
+  CollectionDragDropState,
+  CollectionDropIndicator,
+  CollectionItemDragDrop,
+  getItemDragDropMode
+} from './collectionDragAndDrop';
 import {
   CollectionProps,
   CollectionRendererContext,
@@ -69,8 +74,7 @@ import {
   useRenderDropIndicator
 } from './DragAndDrop';
 import {DragAndDropHooks} from './useDragAndDrop';
-import {DraggableItemResult} from 'react-aria/useDraggableCollection';
-import {DropIndicatorAria, DropIndicatorProps} from 'react-aria/useDroppableCollection';
+import {DropIndicatorProps} from 'react-aria/useDroppableCollection';
 import {DroppableCollectionState} from 'react-stately/useDroppableCollectionState';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {FocusScope} from 'react-aria/FocusScope';
@@ -353,7 +357,7 @@ export interface TreeProps<T>
    * The drag and drop hooks returned by `useDragAndDrop` used to enable drag and drop behavior for
    * the Tree.
    */
-  dragAndDropHooks?: DragAndDropHooks<NoInfer<T>>;
+  dragAndDropHooks?: DragAndDropHooks;
 }
 
 export const TreeContext = createContext<ContextValue<TreeProps<any>, HTMLDivElement>>(null);
@@ -406,7 +410,7 @@ interface TreeInnerViewProps<T> {
   focusProps: ReturnType<typeof useFocusRing>['focusProps'];
   isFocused: boolean;
   isFocusVisible: boolean;
-  dragAndDropHooks?: DragAndDropHooks<T>;
+  dragAndDropHooks?: DragAndDropHooks;
   dragState?: import('react-stately/useDraggableCollectionState').DraggableCollectionState;
   dropState?: DroppableCollectionState;
   droppableCollection?: import('react-aria/useDroppableCollection').DroppableCollectionResult;
@@ -810,7 +814,7 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent(
     let ref = refArg;
     let state = useContext(TreeStateContext)!;
     ref = useObjectRef<HTMLDivElement>(ref);
-    let {dragAndDropHooks, dragState, dropState} = useContext(DragAndDropContext)!;
+    let {dragState, dropState} = useContext(DragAndDropContext)!;
     let isDraggable =
       dragState && !(dragState.isDisabled || dragState.selectionManager.isDisabled(item.key));
 
@@ -844,32 +848,14 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent(
     });
     let {checkboxProps} = useGridListSelectionCheckbox({key: item.key}, state);
 
-    let draggableItem: DraggableItemResult | null = null;
-    if (dragState && dragAndDropHooks) {
-      draggableItem = dragAndDropHooks.useDraggableItem!(
-        {key: item.key, hasDragButton: true},
-        dragState
-      );
-    }
-
-    let dropIndicator: DropIndicatorAria | null = null;
+    let itemDragDropMode = getItemDragDropMode(dragState, dropState);
     let expandButtonRef = useRef<HTMLButtonElement>(null);
     let dropIndicatorRef = useRef<HTMLDivElement>(null);
     let activateButtonRef = useRef<HTMLDivElement>(null);
     let {visuallyHiddenProps} = useVisuallyHidden();
-    if (dropState && dragAndDropHooks) {
-      dropIndicator = dragAndDropHooks.useDropIndicator!(
-        {
-          target: {type: 'item', key: item.key, dropPosition: 'on'},
-          activateButtonRef
-        },
-        dropState,
-        dropIndicatorRef
-      );
-    }
 
     let isDragging = dragState && dragState.isDragging(item.key);
-    let isDropTarget = dropIndicator?.isDropTarget;
+    let isDropTarget = false;
 
     let selectionMode = state.selectionManager.selectionMode;
     let selectionBehavior = state.selectionManager.selectionBehavior;
@@ -971,117 +957,166 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent(
     delete DOMProps.onClick;
 
     return (
-      <>
-        {dropIndicator && !dropIndicator.isHidden && (
-          <div
-            role="row"
-            aria-level={rowProps['aria-level']}
-            aria-expanded={rowProps['aria-expanded']}
-            aria-label={dropIndicator.dropIndicatorProps['aria-label']}>
-            <div role="gridcell" aria-colindex={1} style={{display: 'contents'}}>
-              <div
-                role="button"
-                {...visuallyHiddenProps}
-                {...dropIndicator.dropIndicatorProps}
-                ref={dropIndicatorRef}
-              />
-              {rowProps['aria-expanded'] != null ? (
-                // Button to allow touch screen reader users to expand the item while dragging.
-                <div
-                  role="button"
-                  {...visuallyHiddenProps}
-                  id={activateButtonId}
-                  aria-label={expandButtonProps['aria-label']}
-                  aria-labelledby={`${activateButtonId} ${rowProps.id}`}
-                  tabIndex={-1}
-                  ref={activateButtonRef}
-                />
-              ) : null}
-            </div>
-          </div>
-        )}
-        <dom.div
-          {...mergeProps(
-            DOMProps,
-            rowProps,
-            focusProps,
-            hoverProps,
-            focusWithinProps,
-            draggableItem?.dragProps
-          )}
-          {...renderProps}
-          ref={ref}
-          // TODO: missing selectionBehavior, hasAction and allowsSelection data attribute equivalents (available in renderProps). Do we want those?
-          data-expanded={(hasChildItems && isExpanded) || undefined}
-          data-has-child-items={hasChildItems || undefined}
-          data-level={level}
-          data-selected={states.isSelected || undefined}
-          data-disabled={states.isDisabled || undefined}
-          data-hovered={isHovered || undefined}
-          data-focused={states.isFocused || undefined}
-          data-focus-visible={isFocusVisible || undefined}
-          data-pressed={states.isPressed || undefined}
-          data-selection-mode={
-            state.selectionManager.selectionMode === 'none'
-              ? undefined
-              : state.selectionManager.selectionMode
-          }
-          data-allows-dragging={!!dragState || undefined}
-          data-dragging={isDragging || undefined}
-          data-drop-target={isDropTarget || undefined}>
-          <div {...gridCellProps} style={{display: 'contents'}}>
-            <Provider
-              values={[
-                [
-                  CheckboxContext,
-                  {
-                    slots: {
-                      selection: checkboxProps
+      <CollectionItemDragDrop
+        mode={itemDragDropMode}
+        itemKey={item.key}
+        hasDragButton
+        dragState={dragState}
+        dropState={dropState}
+        ref={ref}>
+        {({draggableItem}) =>
+          dropState ? (
+            <CollectionDropIndicator
+              props={{
+                target: {type: 'item', key: item.key, dropPosition: 'on'},
+                activateButtonRef
+              }}
+              dropState={dropState}
+              ref={dropIndicatorRef}>
+              {({dropIndicatorProps, isHidden, isDropTarget: isItemDropTarget}) => (
+                <>
+                  {!isHidden && (
+                    <div
+                      role="row"
+                      aria-level={rowProps['aria-level']}
+                      aria-expanded={rowProps['aria-expanded']}
+                      aria-label={dropIndicatorProps['aria-label']}>
+                      <div role="gridcell" aria-colindex={1} style={{display: 'contents'}}>
+                        <div
+                          role="button"
+                          {...visuallyHiddenProps}
+                          {...dropIndicatorProps}
+                          ref={dropIndicatorRef}
+                        />
+                        {rowProps['aria-expanded'] != null ? (
+                          <div
+                            role="button"
+                            {...visuallyHiddenProps}
+                            id={activateButtonId}
+                            aria-label={expandButtonProps['aria-label']}
+                            aria-labelledby={`${activateButtonId} ${rowProps.id}`}
+                            tabIndex={-1}
+                            ref={activateButtonRef}
+                          />
+                        ) : null}
+                      </div>
+                    </div>
+                  )}
+                  <dom.div
+                    {...mergeProps(
+                      DOMProps,
+                      rowProps,
+                      focusProps,
+                      hoverProps,
+                      focusWithinProps,
+                      draggableItem?.dragProps
+                    )}
+                    {...renderProps}
+                    ref={ref}
+                    data-expanded={(hasChildItems && isExpanded) || undefined}
+                    data-has-child-items={hasChildItems || undefined}
+                    data-level={level}
+                    data-selected={states.isSelected || undefined}
+                    data-disabled={states.isDisabled || undefined}
+                    data-hovered={isHovered || undefined}
+                    data-focused={states.isFocused || undefined}
+                    data-focus-visible={isFocusVisible || undefined}
+                    data-pressed={states.isPressed || undefined}
+                    data-selection-mode={
+                      state.selectionManager.selectionMode === 'none'
+                        ? undefined
+                        : state.selectionManager.selectionMode
                     }
-                  }
-                ],
-                [
-                  CheckboxFieldContext,
-                  {
-                    slots: {
-                      selection: checkboxProps
-                    }
-                  }
-                ],
-                // TODO: support description in the tree row
-                // TODO: don't think I need to pass isExpanded to the button here since it can be sourced from the renderProps? Might be worthwhile passing it down?
-                [
-                  ButtonContext,
-                  {
-                    slots: {
-                      [DEFAULT_SLOT]: {},
-                      chevron: {
-                        ...expandButtonProps,
-                        ref: expandButtonRef
-                      },
-                      drag: {
-                        ...draggableItem?.dragButtonProps,
-                        ref: dragButtonRef,
-                        style: {
-                          pointerEvents: 'none'
+                    data-allows-dragging={!!dragState || undefined}
+                    data-dragging={isDragging || undefined}
+                    data-drop-target={isItemDropTarget || undefined}>
+                    <div {...gridCellProps} style={{display: 'contents'}}>
+                      <Provider
+                        values={[
+                          [CheckboxContext, {slots: {selection: checkboxProps}}],
+                          [CheckboxFieldContext, {slots: {selection: checkboxProps}}],
+                          [
+                            ButtonContext,
+                            {
+                              slots: {
+                                [DEFAULT_SLOT]: {},
+                                chevron: {...expandButtonProps, ref: expandButtonRef},
+                                drag: {
+                                  ...draggableItem?.dragButtonProps,
+                                  ref: dragButtonRef,
+                                  style: {pointerEvents: 'none'}
+                                }
+                              }
+                            }
+                          ],
+                          [TreeItemContentContext, {...renderPropValues}],
+                          [SelectionIndicatorContext, {isSelected: states.isSelected}]
+                        ]}>
+                        {children}
+                      </Provider>
+                    </div>
+                  </dom.div>
+                </>
+              )}
+            </CollectionDropIndicator>
+          ) : (
+            <dom.div
+              {...mergeProps(
+                DOMProps,
+                rowProps,
+                focusProps,
+                hoverProps,
+                focusWithinProps,
+                draggableItem?.dragProps
+              )}
+              {...renderProps}
+              ref={ref}
+              data-expanded={(hasChildItems && isExpanded) || undefined}
+              data-has-child-items={hasChildItems || undefined}
+              data-level={level}
+              data-selected={states.isSelected || undefined}
+              data-disabled={states.isDisabled || undefined}
+              data-hovered={isHovered || undefined}
+              data-focused={states.isFocused || undefined}
+              data-focus-visible={isFocusVisible || undefined}
+              data-pressed={states.isPressed || undefined}
+              data-selection-mode={
+                state.selectionManager.selectionMode === 'none'
+                  ? undefined
+                  : state.selectionManager.selectionMode
+              }
+              data-allows-dragging={!!dragState || undefined}
+              data-dragging={isDragging || undefined}
+              data-drop-target={isDropTarget || undefined}>
+              <div {...gridCellProps} style={{display: 'contents'}}>
+                <Provider
+                  values={[
+                    [CheckboxContext, {slots: {selection: checkboxProps}}],
+                    [CheckboxFieldContext, {slots: {selection: checkboxProps}}],
+                    [
+                      ButtonContext,
+                      {
+                        slots: {
+                          [DEFAULT_SLOT]: {},
+                          chevron: {...expandButtonProps, ref: expandButtonRef},
+                          drag: {
+                            ...draggableItem?.dragButtonProps,
+                            ref: dragButtonRef,
+                            style: {pointerEvents: 'none'}
+                          }
                         }
                       }
-                    }
-                  }
-                ],
-                [
-                  TreeItemContentContext,
-                  {
-                    ...renderPropValues
-                  }
-                ],
-                [SelectionIndicatorContext, {isSelected: states.isSelected}]
-              ]}>
-              {children}
-            </Provider>
-          </div>
-        </dom.div>
-      </>
+                    ],
+                    [TreeItemContentContext, {...renderPropValues}],
+                    [SelectionIndicatorContext, {isSelected: states.isSelected}]
+                  ]}>
+                  {children}
+                </Provider>
+              </div>
+            </dom.div>
+          )
+        }
+      </CollectionItemDragDrop>
     );
   }
 );

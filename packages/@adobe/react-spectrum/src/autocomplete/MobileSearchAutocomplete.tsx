@@ -18,7 +18,7 @@ import {ClearButton} from '../button/ClearButton';
 import {ComboBoxState, useComboBoxState} from 'react-stately/useComboBoxState';
 import {DismissButton} from 'react-aria/Overlay';
 import {Field} from '../label/Field';
-import {FocusableRef, ValidationState} from '@react-types/shared';
+import {FocusableElement, FocusableRef, ValidationState} from '@react-types/shared';
 import {focusSafely} from 'react-aria/private/interactions/focusSafely';
 import {FocusScope} from 'react-aria/FocusScope';
 import {getActiveElement} from 'react-aria/private/utils/shadowdom/DOMFunctions';
@@ -122,7 +122,7 @@ function ForwardMobileSearchAutocomplete<T extends object>(
     ...labelProps,
     onClick: () => {
       if (!props.isDisabled) {
-        focusSafely(buttonRef.current);
+        focusSafely(buttonRef.current as FocusableElement);
         setInteractionModality('keyboard');
       }
     }
@@ -541,7 +541,7 @@ function SearchAutocompleteTray<T>(props: SearchAutocompleteTrayProps<T>) {
         <TextFieldBase
           label={label}
           labelProps={labelProps}
-          inputProps={{...trayInputProps, onKeyDown}}
+          inputProps={{...trayInputProps, onKeyDown} as React.InputHTMLAttributes<HTMLInputElement>}
           inputRef={inputRef}
           isDisabled={isDisabled}
           isLoading={showLoading && loadingState === 'filtering'}

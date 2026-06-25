@@ -30,7 +30,7 @@ import {ImageCoordinator} from './ImageCoordinator';
 import {inertValue} from 'react-aria/private/utils/inertValue';
 import {Link} from 'react-aria-components/Link';
 import {mergeStyles} from '../style/runtime';
-import {pressScale} from './pressScale';
+import {pressScale, pressScaleStyle} from './pressScale';
 import {SkeletonContext, SkeletonWrapper, useIsSkeleton} from './Skeleton';
 import {useDOMRef} from './useDOMRef';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
@@ -527,7 +527,7 @@ export const Card = forwardRef(function Card(propsArg: CardProps, ref: DOMRef<HT
       }
       style={renderProps =>
         // Only the preview in quiet cards scales down on press
-        variant === 'quiet' ? UNSAFE_style : press(renderProps)
+        variant === 'quiet' ? UNSAFE_style : pressScale(domRef, UNSAFE_style)(renderProps)
       }>
       {({selectionMode, selectionBehavior, isHovered, isFocusVisible, isSelected, isPressed}) => (
         <InternalCardContext.Provider
@@ -605,9 +605,7 @@ export const CardPreview = forwardRef(function CardPreview(
       slot="preview"
       ref={domRef}
       className={UNSAFE_className + preview({size, isQuiet, isHovered, isFocusVisible, isSelected})}
-      style={renderProps =>
-        isQuiet ? pressScale(domRef, UNSAFE_style)({...renderProps, isPressed}) : UNSAFE_style
-      }>
+      style={isQuiet ? pressScaleStyle(isPressed, UNSAFE_style) : UNSAFE_style}>
       {isQuiet && <SelectionIndicator />}
       {isQuiet && isCheckboxSelection && <CardCheckbox />}
       <div className={style({borderRadius: 'inherit', overflow: 'clip'})}>{props.children}</div>

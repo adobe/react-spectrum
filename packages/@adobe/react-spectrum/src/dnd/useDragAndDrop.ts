@@ -134,6 +134,7 @@ export function useDragAndDrop<T = object>(options: DragAndDropOptions<T>): Drag
     DropHooks & {
       isVirtualDragging?: () => boolean;
       renderPreview?: (keys: Set<Key>, draggedKey: Key) => JSX.Element;
+      options?: DragAndDropOptions<T>;
     };
   if (isDraggable) {
     hooks.useDraggableCollectionState = function useDraggableCollectionStateOverride(
@@ -171,6 +172,6 @@ export function useDragAndDrop<T = object>(options: DragAndDropOptions<T>): Drag
   hooks.options = options;
 
   return {
-    dragAndDropHooks: hooks
+    dragAndDropHooks: hooks as DragAndDropHooks<any>['dragAndDropHooks']
   };
 }

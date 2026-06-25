@@ -243,7 +243,12 @@ export function useAutocomplete<T>(
 
   // Make sure to memo so that React doesn't keep registering a new event listeners on every rerender of the wrapped collection
   let mergedCollectionRef = useObjectRef((value: Element | null) => {
-    mergeRefs(collectionRef, callbackRef)(value);
+    let merged = mergeRefs(collectionRef, callbackRef);
+    if (typeof merged === 'function') {
+      merged(value);
+    } else if (merged) {
+      merged.current = value;
+    }
   });
 
   let focusFirstItem = useCallback(() => {
@@ -579,7 +584,7 @@ export function useAutocomplete<T>(
       disallowTypeAhead: shouldUseVirtualFocus,
       autoFocus: autoFocusOnMount ? 'first' : false
     }),
-    collectionRef: mergedCollectionRef,
+    collectionRef: mergedCollectionRef as RefObject<HTMLElement | null>,
     filter: filter != null ? filterFn : undefined
   };
 }

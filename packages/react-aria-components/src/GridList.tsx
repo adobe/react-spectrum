@@ -194,7 +194,7 @@ export interface GridListProps<T>
    * The drag and drop hooks returned by `useDragAndDrop` used to enable drag and drop behavior for
    * the GridList.
    */
-  dragAndDropHooks?: DragAndDropHooks<NoInfer<T>>;
+  dragAndDropHooks?: DragAndDropHooks;
   /** Provides content to display when there are no items in the list. */
   renderEmptyState?: (props: GridListRenderProps) => ReactNode;
   /**
@@ -252,7 +252,7 @@ interface GridListInnerViewProps<T> {
   props: GridListProps<T> & SelectableCollectionContextValue<T>;
   gridListRef: RefObject<HTMLElement | null>;
   filteredState: ListState<T>;
-  dragAndDropHooks?: DragAndDropHooks<T>;
+  dragAndDropHooks?: DragAndDropHooks;
   dragState?: import('react-stately/useDraggableCollectionState').DraggableCollectionState;
   dropState?: import('react-stately/useDroppableCollectionState').DroppableCollectionState;
   droppableCollection?: import('react-aria/useDroppableCollection').DroppableCollectionResult;
@@ -622,7 +622,12 @@ export const GridListItem = /*#__PURE__*/ createLeafComponent(ItemNode, function
           <GridListItemDropIndicator
             itemKey={item.key}
             dropState={dropState}
-            itemContentProps={itemContentProps}
+            itemContentProps={
+              itemContentProps as Omit<
+                GridListItemContentProps<any>,
+                'draggableItem' | 'isDropTarget'
+              >
+            }
             draggableItem={draggableItem}
           />
         ) : (
@@ -686,7 +691,7 @@ function GridListItemDropIndicator<T>({
 interface GridListItemContentProps<T> {
   props: GridListItemProps<T>;
   item: Node<T>;
-  ref: RefObject<HTMLDivElement>;
+  ref: RefObject<HTMLDivElement | null> | React.MutableRefObject<HTMLDivElement | null>;
   state: ListState<T>;
   dragState?: import('react-stately/useDraggableCollectionState').DraggableCollectionState;
   rowProps: ReturnType<typeof useGridListItem>['rowProps'];

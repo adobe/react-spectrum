@@ -281,7 +281,7 @@ export function useGridCell<T, C extends GridCollection<T>>(
     ...itemProps,
     role: 'gridcell',
     onKeyDownCapture,
-    'aria-colspan': node.colSpan,
+    'aria-colspan': node.colSpan ?? undefined,
     'aria-colindex': isVirtualized
       ? (node.colIndex ?? node.index) + 1
       : node.colIndex != null
@@ -303,7 +303,7 @@ export function useGridCell<T, C extends GridCollection<T>>(
           }
         }
       : {})
-  };
+  } as DOMAttributes<FocusableElement> & {colSpan?: number};
 
   return {
     gridCellProps,

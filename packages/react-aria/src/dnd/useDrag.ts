@@ -297,7 +297,7 @@ export function useDrag(options: DragOptions): DragResult {
             y: 0,
             dropOperation: DROP_EFFECT_TO_DROP_OPERATION[globalDropEffect || 'none']
           };
-          getOptions().onDragEnd(event);
+          getOptions().onDragEnd?.(event);
         }
 
         setDragging(null);
@@ -318,7 +318,7 @@ export function useDrag(options: DragOptions): DragResult {
   let startDragging = (target: HTMLElement) => {
     if (typeof getOptions().onDragStart === 'function') {
       let rect = target.getBoundingClientRect();
-      getOptions().onDragStart({
+      getOptions().onDragStart?.({
         type: 'dragstart',
         x: rect.x + rect.width / 2,
         y: rect.y + rect.height / 2
@@ -331,12 +331,12 @@ export function useDrag(options: DragOptions): DragResult {
         items: getOptions().getItems(),
         allowedDropOperations:
           typeof getOptions().getAllowedDropOperations === 'function'
-            ? getOptions().getAllowedDropOperations()
+            ? (getOptions().getAllowedDropOperations?.() ?? ['move', 'copy', 'link'])
             : ['move', 'copy', 'link'],
         onDragEnd(e) {
           setDragging(null);
           if (typeof getOptions().onDragEnd === 'function') {
-            getOptions().onDragEnd(e);
+            getOptions().onDragEnd?.(e);
           }
         }
       },

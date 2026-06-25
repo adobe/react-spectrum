@@ -352,16 +352,78 @@ const InternalCheckboxContext = createContext<InternalCheckboxContextValue | nul
 /**
  * A checkbox allows a user to select an item, with support for validation and help text.
  */
-export const CheckboxField = /*#__PURE__*/ (forwardRef as forwardRefType)(function Checkbox(
+export const CheckboxField = /*#__PURE__*/ (forwardRef as forwardRefType)(function CheckboxField(
   propsArg: CheckboxFieldProps,
   refArg: ForwardedRef<HTMLDivElement>
 ) {
+  let groupState = useContext(CheckboxGroupStateContext);
+  if (groupState) {
+    return <CheckboxFieldInGroup propsArg={propsArg} refArg={refArg} groupState={groupState} />;
+  }
+  return <CheckboxFieldStandalone propsArg={propsArg} refArg={refArg} />;
+});
+
+function CheckboxFieldStandalone({
+  propsArg,
+  refArg
+}: {
+  propsArg: CheckboxFieldProps;
+  refArg: ForwardedRef<HTMLDivElement>;
+}) {
   let props = propsArg;
   let ref = refArg;
   let {inputRef: userProvidedInputRef = null, ...otherProps} = props;
   [props, ref] = useContextProps(otherProps, ref, CheckboxFieldContext);
-  let groupState = useContext(CheckboxGroupStateContext);
-  let [aria, inputRef] = useCheckboxAria(props, userProvidedInputRef);
+  let [aria, inputRef] = useCheckboxAriaStandalone(props, userProvidedInputRef);
+  return (
+    <CheckboxFieldContent
+      props={props}
+      ref={ref}
+      aria={aria}
+      inputRef={inputRef}
+      groupState={null}
+    />
+  );
+}
+
+function CheckboxFieldInGroup({
+  propsArg,
+  refArg,
+  groupState
+}: {
+  propsArg: CheckboxFieldProps;
+  refArg: ForwardedRef<HTMLDivElement>;
+  groupState: NonNullable<React.ContextType<typeof CheckboxGroupStateContext>>;
+}) {
+  let props = propsArg;
+  let ref = refArg;
+  let {inputRef: userProvidedInputRef = null, ...otherProps} = props;
+  [props, ref] = useContextProps(otherProps, ref, CheckboxFieldContext);
+  let [aria, inputRef] = useCheckboxAriaInGroup(props, userProvidedInputRef, groupState);
+  return (
+    <CheckboxFieldContent
+      props={props}
+      ref={ref}
+      aria={aria}
+      inputRef={inputRef}
+      groupState={groupState}
+    />
+  );
+}
+
+function CheckboxFieldContent({
+  props,
+  ref,
+  aria,
+  inputRef,
+  groupState
+}: {
+  props: CheckboxFieldProps;
+  ref: ForwardedRef<HTMLDivElement>;
+  aria: CheckboxAria;
+  inputRef: RefObject<HTMLInputElement | null>;
+  groupState: React.ContextType<typeof CheckboxGroupStateContext>;
+}) {
   let {
     descriptionProps,
     errorMessageProps,
@@ -429,7 +491,7 @@ export const CheckboxField = /*#__PURE__*/ (forwardRef as forwardRefType)(functi
       </Provider>
     </dom.div>
   );
-});
+}
 
 function useCheckboxAriaStandalone(
   props: CheckboxProps | CheckboxFieldProps,

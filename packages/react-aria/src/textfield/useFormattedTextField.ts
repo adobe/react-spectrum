@@ -145,7 +145,7 @@ export function useFormattedTextField(
   return {
     inputProps: {
       ...textFieldProps,
-      onBeforeInput,
+      onBeforeInput: onBeforeInput ?? undefined,
       onCompositionStart() {
         // Chrome does not implement Input Events Level 2, which specifies the insertFromComposition
         // and deleteByComposition inputType values for the beforeinput event. These are meant to occur

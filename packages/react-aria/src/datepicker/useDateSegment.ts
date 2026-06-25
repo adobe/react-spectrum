@@ -17,7 +17,7 @@ import {getScrollParent} from '../utils/getScrollParent';
 import {hookData} from './useDateField';
 import {isIOS} from '../utils/platform';
 import {NumberParser} from '@internationalized/number';
-import React, {CSSProperties, useMemo, useRef} from 'react';
+import React, {CSSProperties, HTMLAttributes, useMemo, useRef} from 'react';
 import {RefObject} from '@react-types/shared';
 import {scrollIntoViewport} from '../utils/scrollIntoView';
 import {useDateFormatter} from '../i18n/useDateFormatter';
@@ -415,7 +415,7 @@ export function useDateSegment(
       onMouseDown(e) {
         e.stopPropagation();
       }
-    }
+    } as HTMLAttributes<HTMLDivElement> & Record<string, unknown>
   };
 }
 

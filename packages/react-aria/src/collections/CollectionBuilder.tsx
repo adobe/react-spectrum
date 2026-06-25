@@ -200,7 +200,7 @@ function useSSRCollectionNode<T extends Element>(
 
   // @ts-ignore
   let Type = resolvedCollectionNodeClass.type;
-  return <Type ref={itemRef}>{children}</Type>;
+  return <Type {...({ref: itemRef, children} as any)} />;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

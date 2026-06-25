@@ -800,7 +800,7 @@ export function useDroppableCollection(
       id,
       // Remove description from collection element. If dropping on the entire collection,
       // there should be a drop indicator that has this description, so no need to double announce.
-      'aria-describedby': null
+      'aria-describedby': undefined
     }
   };
 }

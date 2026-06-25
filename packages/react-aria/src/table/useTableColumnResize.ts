@@ -333,7 +333,7 @@ export function useTableColumnResize<T>(
       onChange,
       disabled: isDisabled,
       ...ariaProps
-    },
+    } as DOMAttributes<FocusableElement> & {disabled?: boolean},
     isResizing
   };
 }

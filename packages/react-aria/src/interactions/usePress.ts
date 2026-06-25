@@ -1009,7 +1009,7 @@ export function usePress(props: PressHookProps): PressResult {
       ...domProps,
       ...pressProps,
       [PRESSABLE_ATTRIBUTE]: true
-    }
+    } as typeof pressProps & {[PRESSABLE_ATTRIBUTE]: boolean}
   };
 }
 

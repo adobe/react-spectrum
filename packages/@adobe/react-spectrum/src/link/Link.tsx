@@ -87,8 +87,14 @@ export function Link(propsArg: SpectrumLinkProps): JSX.Element {
   } else {
     // Backward compatibility.
     let wrappedChild = getWrappedElement(children);
-    let {ref: domRefProp, ...domPropsWithoutRef} = domProps;
-    let {ref: childRefProp, ...childPropsWithoutRef} = wrappedChild.props;
+    let domRefProp = (domProps as {ref?: React.Ref<Element | null>}).ref;
+    let {ref: childRefProp, ...childPropsWithoutRef} = wrappedChild.props as {
+      ref?: React.Ref<Element | null>;
+      [key: string]: unknown;
+    };
+    let {ref: _domRef, ...domPropsWithoutRef} = domProps as typeof domProps & {
+      ref?: React.Ref<Element | null>;
+    };
     link = React.cloneElement(wrappedChild, {
       ...childPropsWithoutRef,
       ...domPropsWithoutRef,
@@ -96,13 +102,15 @@ export function Link(propsArg: SpectrumLinkProps): JSX.Element {
       ref: (node: Element | null) => {
         if (typeof domRefProp === 'function') {
           domRefProp(node);
-        } else if (domRefProp) {
-          domRefProp.current = node;
+        } else if (domRefProp && 'current' in domRefProp) {
+          (domRefProp as React.MutableRefObject<Element | null>).current = node;
         }
-        let childRef = isOldReact ? wrappedChild.ref : childRefProp;
+        let childRef = isOldReact
+          ? (wrappedChild as React.ReactElement & {ref?: React.Ref<Element | null>}).ref
+          : childRefProp;
         if (typeof childRef === 'function') {
           childRef(node);
-        } else if (childRef) {
+        } else if (childRef && typeof childRef === 'object' && 'current' in childRef) {
           childRef.current = node;
         }
       }

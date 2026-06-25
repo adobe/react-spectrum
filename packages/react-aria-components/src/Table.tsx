@@ -37,7 +37,12 @@ import {
   createBranchComponent,
   createLeafComponent
 } from 'react-aria/CollectionBuilder';
-import {CollectionDragDropState, CollectionDropIndicator} from './collectionDragAndDrop';
+import {
+  CollectionDragDropState,
+  CollectionDropIndicator,
+  CollectionItemDragDrop,
+  getItemDragDropMode
+} from './collectionDragAndDrop';
 import {
   CollectionProps,
   CollectionRendererContext,
@@ -62,7 +67,7 @@ import {
 import {DragAndDropHooks} from './useDragAndDrop';
 import {DraggableCollectionState} from 'react-stately/useDraggableCollectionState';
 import {DraggableItemResult} from 'react-aria/useDraggableCollection';
-import {DropIndicatorAria, DroppableCollectionResult} from 'react-aria/useDroppableCollection';
+import {DroppableCollectionResult} from 'react-aria/useDroppableCollection';
 import {DroppableCollectionState} from 'react-stately/useDroppableCollectionState';
 import {
   FieldInputContext,
@@ -569,7 +574,7 @@ export interface TableRenderProps {
    *
    * @selector [data-drop-target]
    */
-  isDropTarget: boolean;
+  isDropTarget?: boolean;
   /**
    * State of the table.
    */
@@ -706,7 +711,7 @@ function TableColumnResizeScope({
 
 interface TableInnerViewProps {
   props: TableProps & SelectableCollectionContextValue<unknown>;
-  ref: RefObject<HTMLElement>;
+  ref: RefObject<HTMLElement | null> | React.MutableRefObject<HTMLElement | null>;
   filteredState: TableState<unknown>;
   tableState: TableState<unknown>;
   tableContainerContext: ResizableTableContainerContextValue | null;
@@ -921,7 +926,7 @@ function TableInner({
     isFocused,
     isFocusVisible,
     hasDragHooks,
-    isVirtualized,
+    isVirtualized: !!isVirtualized,
     selectionManager
   };
 
@@ -933,7 +938,7 @@ function TableInner({
       ref={ref}
       keyboardDelegate={keyboardDelegate}
       ctxDropTargetDelegate={ctxDropTargetDelegate}
-      listDropTargetCollection={inputCollection.rows}
+      listDropTargetCollection={filteredState.collection}
       configureDropTargetDelegate={configureDropTargetDelegate}
       droppableOptions={dropState => ({
         onDropActivate: e => {
@@ -1552,7 +1557,7 @@ export interface TableBodyRenderProps {
    *
    * @selector [data-drop-target]
    */
-  isDropTarget: boolean;
+  isDropTarget?: boolean;
 }
 
 export interface TableBodyProps<T>
@@ -1601,7 +1606,7 @@ export const TableBody = /*#__PURE__*/ createBranchComponent(
     let collection = state.collection;
     let {CollectionBranch} = useContext(CollectionRendererContext);
     let {dragAndDropHooks, dropState} = useContext(DragAndDropContext);
-    let isDroppable = !!dragAndDropHooks?.useDroppableCollectionState && !dropState?.isDisabled;
+    let isDroppable = !!dragAndDropHooks?.isDroppable && !dropState?.isDisabled;
     let isRootDropTarget =
       isDroppable && !!dropState && (dropState.isDropTarget({type: 'root'}) ?? false);
 
@@ -1846,6 +1851,170 @@ let TableRowElementType = forwardRef(function TableRowElementType(
   return <dom.tr {...props} ref={ref} />;
 });
 
+interface TableRowContentProps {
+  DOMProps: Record<string, any>;
+  renderProps: any;
+  rowProps: ReturnType<typeof useTableRow>['rowProps'];
+  focusProps: ReturnType<typeof useFocusRing>['focusProps'];
+  hoverProps: ReturnType<typeof useHover>['hoverProps'];
+  focusWithinProps: ReturnType<typeof useFocusRing>['focusProps'];
+  states: Omit<ReturnType<typeof useTableRow>, 'rowProps' | 'expandButtonProps'>;
+  isHovered: boolean;
+  isFocused: boolean;
+  isFocusVisible: boolean;
+  isFocusVisibleWithin: boolean;
+  isDragging: boolean | null | undefined;
+  isDropTarget?: boolean;
+  isExpanded: boolean;
+  hasChildItems: boolean;
+  item: GridNode<any>;
+  state: TableState<any>;
+  ref: RefObject<HTMLTableRowElement | HTMLDivElement | null>;
+  checkboxProps: ReturnType<typeof useTableSelectionCheckbox>['checkboxProps'];
+  expandButtonProps: ReturnType<typeof useTableRow>['expandButtonProps'];
+  draggableItem?: DraggableItemResult;
+  dragButtonRef: RefObject<HTMLButtonElement | null>;
+}
+
+function TableRowContent({
+  DOMProps,
+  renderProps,
+  rowProps,
+  focusProps,
+  hoverProps,
+  focusWithinProps,
+  states,
+  isHovered,
+  isFocused: _isFocused,
+  isFocusVisible,
+  isFocusVisibleWithin,
+  isDragging,
+  isDropTarget,
+  isExpanded,
+  hasChildItems,
+  item,
+  state,
+  ref,
+  checkboxProps,
+  expandButtonProps,
+  draggableItem,
+  dragButtonRef
+}: TableRowContentProps) {
+  let {CollectionBranch} = useContext(CollectionRendererContext);
+
+  return (
+    <TableRowElementType
+      {...mergeProps(
+        DOMProps,
+        renderProps,
+        rowProps,
+        focusProps,
+        hoverProps,
+        draggableItem?.dragProps,
+        focusWithinProps
+      )}
+      ref={ref as any}
+      data-disabled={states.isDisabled || undefined}
+      data-selected={states.isSelected || undefined}
+      data-hovered={isHovered || undefined}
+      data-focused={states.isFocused || undefined}
+      data-focus-visible={isFocusVisible || undefined}
+      data-pressed={states.isPressed || undefined}
+      data-dragging={isDragging || undefined}
+      data-drop-target={isDropTarget || undefined}
+      data-selection-mode={
+        state.selectionManager.selectionMode === 'none'
+          ? undefined
+          : state.selectionManager.selectionMode
+      }
+      data-focus-visible-within={isFocusVisibleWithin || undefined}
+      data-expanded={isExpanded || undefined}
+      data-has-child-items={hasChildItems || undefined}
+      data-level={item.level + 1}>
+      <Provider
+        values={[
+          [
+            CheckboxContext,
+            {
+              slots: {
+                [DEFAULT_SLOT]: {},
+                selection: checkboxProps
+              }
+            }
+          ],
+          [
+            CheckboxFieldContext,
+            {
+              slots: {
+                [DEFAULT_SLOT]: {},
+                selection: checkboxProps
+              }
+            }
+          ],
+          [
+            ButtonContext,
+            {
+              slots: {
+                [DEFAULT_SLOT]: {},
+                chevron: expandButtonProps,
+                drag: {
+                  ...draggableItem?.dragButtonProps,
+                  ref: dragButtonRef,
+                  style: {
+                    pointerEvents: 'none'
+                  }
+                }
+              }
+            }
+          ],
+          [SelectionIndicatorContext, {isSelected: states.isSelected}],
+          [RowFocusContext, {isFocusVisibleWithinRow: isFocusVisibleWithin}]
+        ]}>
+        <CollectionBranch collection={state.collection} parent={item} />
+      </Provider>
+    </TableRowElementType>
+  );
+}
+
+function TableRowDropIndicator({
+  itemKey,
+  dropState,
+  columnCount,
+  ...rowContentProps
+}: TableRowContentProps & {
+  itemKey: Key;
+  dropState: DroppableCollectionState;
+  columnCount: number;
+}) {
+  let dropIndicatorRef = useRef<HTMLDivElement>(null);
+  let {visuallyHiddenProps} = useVisuallyHidden();
+
+  return (
+    <CollectionDropIndicator
+      props={{target: {type: 'item', key: itemKey, dropPosition: 'on'}}}
+      dropState={dropState}
+      ref={dropIndicatorRef}>
+      {({dropIndicatorProps, isHidden, isDropTarget}) => (
+        <>
+          {!isHidden && (
+            <TableRowElementType role="row" style={{height: 0}}>
+              <TableCellElementType role="gridcell" colSpan={columnCount} style={{padding: 0}}>
+                <div
+                  role="button"
+                  {...visuallyHiddenProps}
+                  {...dropIndicatorProps}
+                  ref={dropIndicatorRef}
+                />
+              </TableCellElementType>
+            </TableRowElementType>
+          )}
+          <TableRowContent {...rowContentProps} isDropTarget={isDropTarget} />
+        </>
+      )}
+    </CollectionDropIndicator>
+  );
+}
+
 /**
  * A row within a `<Table>`.
  */
@@ -1858,8 +2027,8 @@ export const Row = /*#__PURE__*/ createBranchComponent(
   ) => {
     let ref = useObjectRef<HTMLTableRowElement | HTMLDivElement>(forwardedRef);
     let state = useContext(TableStateContext)!;
-    let {dragAndDropHooks, dragState, dropState} = useContext(DragAndDropContext);
-    let {isVirtualized, CollectionBranch} = useContext(CollectionRendererContext);
+    let {dragState, dropState} = useContext(DragAndDropContext);
+    let {isVirtualized} = useContext(CollectionRendererContext);
     let isDraggable =
       dragState && !(dragState.isDisabled || dragState.selectionManager.isDisabled(item.key));
     let {rowProps, expandButtonProps, ...states} = useTableRow(
@@ -1886,27 +2055,7 @@ export const Row = /*#__PURE__*/ createBranchComponent(
 
     let {checkboxProps} = useTableSelectionCheckbox({key: item.key}, state);
 
-    let draggableItem: DraggableItemResult | undefined = undefined;
-    if (dragState && dragAndDropHooks) {
-      draggableItem = dragAndDropHooks.useDraggableItem!(
-        {key: item.key, hasDragButton: true},
-        dragState
-      );
-    }
-
-    let dropIndicator: DropIndicatorAria | undefined = undefined;
-    let dropIndicatorRef = useRef<HTMLDivElement>(null);
-    let {visuallyHiddenProps} = useVisuallyHidden();
-    if (dropState && dragAndDropHooks) {
-      dropIndicator = dragAndDropHooks.useDropIndicator!(
-        {
-          target: {type: 'item', key: item.key, dropPosition: 'on'}
-        },
-        dropState,
-        dropIndicatorRef
-      );
-    }
-
+    let itemDragDropMode = getItemDragDropMode(dragState, dropState);
     let dragButtonRef = useRef<HTMLButtonElement>(null);
     useEffect(() => {
       if (dragState && !dragButtonRef.current && process.env.NODE_ENV !== 'production') {
@@ -1940,7 +2089,7 @@ export const Row = /*#__PURE__*/ createBranchComponent(
         selectionMode: state.selectionManager.selectionMode,
         selectionBehavior: state.selectionManager.selectionBehavior,
         isDragging,
-        isDropTarget: dropIndicator?.isDropTarget,
+        isDropTarget: false,
         isFocusVisibleWithin,
         id: item.key,
         hasChildItems,
@@ -1954,93 +2103,69 @@ export const Row = /*#__PURE__*/ createBranchComponent(
     delete DOMProps.onClick;
 
     return (
-      <>
-        {dropIndicator && !dropIndicator.isHidden && (
-          <TableRowElementType role="row" style={{height: 0}}>
-            <TableCellElementType
-              role="gridcell"
-              colSpan={state.collection.columnCount}
-              style={{padding: 0}}>
-              <div
-                role="button"
-                {...visuallyHiddenProps}
-                {...dropIndicator.dropIndicatorProps}
-                ref={dropIndicatorRef}
-              />
-            </TableCellElementType>
-          </TableRowElementType>
-        )}
-        <TableRowElementType
-          {...mergeProps(
-            DOMProps,
-            renderProps,
-            rowProps,
-            focusProps,
-            hoverProps,
-            draggableItem?.dragProps,
-            focusWithinProps
-          )}
-          ref={ref as any}
-          data-disabled={states.isDisabled || undefined}
-          data-selected={states.isSelected || undefined}
-          data-hovered={isHovered || undefined}
-          data-focused={states.isFocused || undefined}
-          data-focus-visible={isFocusVisible || undefined}
-          data-pressed={states.isPressed || undefined}
-          data-dragging={isDragging || undefined}
-          data-drop-target={dropIndicator?.isDropTarget || undefined}
-          data-selection-mode={
-            state.selectionManager.selectionMode === 'none'
-              ? undefined
-              : state.selectionManager.selectionMode
-          }
-          data-focus-visible-within={isFocusVisibleWithin || undefined}
-          data-expanded={isExpanded || undefined}
-          data-has-child-items={hasChildItems || undefined}
-          data-level={item.level + 1}>
-          <Provider
-            values={[
-              [
-                CheckboxContext,
-                {
-                  slots: {
-                    [DEFAULT_SLOT]: {},
-                    selection: checkboxProps
-                  }
-                }
-              ],
-              [
-                CheckboxFieldContext,
-                {
-                  slots: {
-                    [DEFAULT_SLOT]: {},
-                    selection: checkboxProps
-                  }
-                }
-              ],
-              [
-                ButtonContext,
-                {
-                  slots: {
-                    [DEFAULT_SLOT]: {},
-                    chevron: expandButtonProps,
-                    drag: {
-                      ...draggableItem?.dragButtonProps,
-                      ref: dragButtonRef,
-                      style: {
-                        pointerEvents: 'none'
-                      }
-                    }
-                  }
-                }
-              ],
-              [SelectionIndicatorContext, {isSelected: states.isSelected}],
-              [RowFocusContext, {isFocusVisibleWithinRow: isFocusVisibleWithin}]
-            ]}>
-            <CollectionBranch collection={state.collection} parent={item} />
-          </Provider>
-        </TableRowElementType>
-      </>
+      <CollectionItemDragDrop
+        mode={itemDragDropMode}
+        itemKey={item.key}
+        hasDragButton
+        dragState={dragState}
+        dropState={dropState}
+        ref={ref as RefObject<HTMLElement | null>}>
+        {({draggableItem}) =>
+          dropState ? (
+            <TableRowDropIndicator
+              itemKey={item.key}
+              dropState={dropState}
+              columnCount={state.collection.columnCount}
+              draggableItem={draggableItem}
+              DOMProps={DOMProps}
+              renderProps={renderProps}
+              rowProps={rowProps}
+              focusProps={focusProps}
+              hoverProps={hoverProps}
+              focusWithinProps={focusWithinProps}
+              states={states}
+              isHovered={isHovered}
+              isFocused={isFocused}
+              isFocusVisible={isFocusVisible}
+              isFocusVisibleWithin={isFocusVisibleWithin}
+              isDragging={isDragging}
+              isExpanded={isExpanded}
+              hasChildItems={hasChildItems}
+              item={item}
+              state={state}
+              ref={ref}
+              checkboxProps={checkboxProps}
+              expandButtonProps={expandButtonProps}
+              dragButtonRef={dragButtonRef}
+            />
+          ) : (
+            <TableRowContent
+              DOMProps={DOMProps}
+              renderProps={renderProps}
+              rowProps={rowProps}
+              focusProps={focusProps}
+              hoverProps={hoverProps}
+              focusWithinProps={focusWithinProps}
+              states={states}
+              isHovered={isHovered}
+              isFocused={isFocused}
+              isFocusVisible={isFocusVisible}
+              isFocusVisibleWithin={isFocusVisibleWithin}
+              isDragging={isDragging}
+              isDropTarget={false}
+              isExpanded={isExpanded}
+              hasChildItems={hasChildItems}
+              item={item}
+              state={state}
+              ref={ref}
+              checkboxProps={checkboxProps}
+              expandButtonProps={expandButtonProps}
+              draggableItem={draggableItem}
+              dragButtonRef={dragButtonRef}
+            />
+          )
+        }
+      </CollectionItemDragDrop>
     );
   },
   props => {
@@ -2293,7 +2418,7 @@ function TableDropIndicatorWrapper(props: DropIndicatorProps, refArg: ForwardedR
 interface TableDropIndicatorProps
   extends DropIndicatorProps, GlobalDOMAttributes<HTMLTableRowElement> {
   dropIndicatorProps: React.HTMLAttributes<HTMLElement>;
-  isDropTarget: boolean;
+  isDropTarget?: boolean;
   buttonRef: RefObject<HTMLDivElement | null>;
   level: number;
 }
@@ -2332,7 +2457,7 @@ function TableDropIndicator(props: TableDropIndicatorProps, ref: ForwardedRef<HT
       '--table-row-level': level + 1
     },
     values: {
-      isDropTarget
+      isDropTarget: !!isDropTarget
     }
   });
 

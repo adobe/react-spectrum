@@ -508,7 +508,7 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(
       shouldFocusOnHover: true,
       linkBehavior: 'selection' as const,
       ['UNSTABLE_itemBehavior']: 'action'
-    },
+    } as typeof listBoxProps,
     valueProps: {
       id: valueId
     },

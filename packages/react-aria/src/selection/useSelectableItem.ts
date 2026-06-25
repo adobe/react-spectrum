@@ -483,7 +483,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     isDisabled: !longPressEnabled,
     onLongPress(e) {
       if (e.pointerType === 'touch') {
-        onSelect(e);
+        onSelectHandler(e);
         manager.setSelectionBehavior('toggle');
       }
     }

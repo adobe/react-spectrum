@@ -32,6 +32,7 @@ import {ToggleGroupStateContext} from './ToggleButtonGroup';
 import {ToggleState, useToggleState} from 'react-stately/useToggleState';
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {useHover} from 'react-aria/useHover';
+import {useObjectRef} from 'react-aria/useObjectRef';
 import {useToggleButtonGroupItem} from 'react-aria/useToggleButtonGroup';
 
 export interface ToggleButtonRenderProps extends Omit<ButtonRenderProps, 'isPending'> {
@@ -80,10 +81,13 @@ function ToggleButtonStandalone({
   ref: ForwardedRef<HTMLButtonElement>;
 }) {
   let state = useToggleState(props);
+  let buttonRef = useObjectRef(ref);
   let {buttonProps, isPressed, isSelected, isDisabled} = useToggleButton(
-    {...props, id: props.id != null ? String(props.id) : undefined},
+    {...props, id: props.id != null ? String(props.id) : undefined} as Parameters<
+      typeof useToggleButton
+    >[0],
     state,
-    ref
+    buttonRef
   );
 
   return (
@@ -114,10 +118,11 @@ function ToggleButtonInGroup({
       groupState.setSelected(props.id!, isSelected);
     }
   });
+  let buttonRef = useObjectRef(ref);
   let {buttonProps, isPressed, isSelected, isDisabled} = useToggleButtonGroupItem(
-    {...props, id: props.id!},
+    {...props, id: props.id!} as Parameters<typeof useToggleButtonGroupItem>[0],
     groupState,
-    ref
+    buttonRef
   );
 
   return (

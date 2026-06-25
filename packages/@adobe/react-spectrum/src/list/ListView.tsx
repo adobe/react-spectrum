@@ -14,6 +14,7 @@ import {AriaGridListProps, useGridList} from 'react-aria/useGridList';
 import {
   AsyncLoadable,
   DOMRef,
+  DragPreviewRenderer,
   Key,
   LoadingState,
   Node,
@@ -103,14 +104,14 @@ export interface SpectrumListViewProps<T>
    * The drag and drop hooks returned by `useDragAndDrop` used to enable drag and drop behavior for
    * the ListView.
    */
-  dragAndDropHooks?: DragAndDropHooks<NoInfer<T>>['dragAndDropHooks'];
+  dragAndDropHooks?: DragAndDropHooks<any>['dragAndDropHooks'];
 }
 
 interface ListViewContextValue<T> {
   state: ListState<T>;
   dragState: DraggableCollectionState | null;
   dropState: DroppableCollectionState | null;
-  dragAndDropHooks?: DragAndDropHooks<T>['dragAndDropHooks'];
+  dragAndDropHooks?: DragAndDropHooks<any>['dragAndDropHooks'];
   onAction?: (key: Key) => void;
   isListDraggable: boolean;
   isListDroppable: boolean;
@@ -154,7 +155,7 @@ interface ListViewImplProps<T extends object> {
   domRef: RefObject<HTMLDivElement | null>;
   state: ListState<T>;
   layout: ListViewLayout<T>;
-  preview: RefObject<unknown> | null;
+  preview: RefObject<DragPreviewRenderer | null> | null;
   dragState: DraggableCollectionState | null;
   dropState: DroppableCollectionState | null;
   droppableCollection: DroppableCollectionResult | null;
@@ -188,7 +189,7 @@ function ListViewWithDragAndDrop<T extends object>({
     selectionManager: state.selectionManager,
     ...options
   });
-  let layout = useListLayout(props.density || 'regular');
+  let layout = useListLayout<T>(props.density || 'regular');
   let droppableCollection = useDroppableCollection(
     {
       keyboardDelegate: new ListKeyboardDelegate({
@@ -241,7 +242,7 @@ function ListViewWithDrag<T extends object>({
     getItems: options.getItems!
   });
   useDraggableCollection({}, dragState, domRef);
-  let layout = useListLayout(props.density || 'regular');
+  let layout = useListLayout<T>(props.density || 'regular');
   return (
     <ListViewImpl
       props={props}
@@ -275,7 +276,7 @@ function ListViewWithDrop<T extends object>({
     selectionManager: state.selectionManager,
     ...options
   });
-  let layout = useListLayout(props.density || 'regular');
+  let layout = useListLayout<T>(props.density || 'regular');
   let droppableCollection = useDroppableCollection(
     {
       keyboardDelegate: new ListKeyboardDelegate({
@@ -495,7 +496,7 @@ function ListViewWithoutDragDrop<T extends object>({
     ...props,
     selectionBehavior: props.selectionStyle === 'highlight' ? 'replace' : 'toggle'
   });
-  let layout = useListLayout(props.density || 'regular');
+  let layout = useListLayout<T>(props.density || 'regular');
   return (
     <ListViewImpl
       props={props}

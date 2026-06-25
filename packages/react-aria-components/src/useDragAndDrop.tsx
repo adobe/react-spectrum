@@ -26,7 +26,7 @@ import {ListDropTargetDelegate} from 'react-aria/ListDropTargetDelegate';
 export {DropIndicator, DropIndicatorContext, DragAndDropContext} from './DragAndDrop';
 export type {DropIndicatorProps, DropIndicatorRenderProps} from './DragAndDrop';
 
-export interface DragAndDropHooks<T = object> extends DragAndDropOptions<T> {
+export interface DragAndDropHooks extends DragAndDropOptions<any> {
   /** Whether the collection supports dragging. */
   isDraggable: boolean;
   /** Whether the collection supports dropping. */
@@ -36,9 +36,9 @@ export interface DragAndDropHooks<T = object> extends DragAndDropOptions<T> {
   isVirtualDragging?: typeof isVirtualDragging;
 }
 
-export interface DragAndDrop<T = object> {
+export interface DragAndDrop<_T = object> {
   /** Drag and drop hooks for the collection element. */
-  dragAndDropHooks: DragAndDropHooks<T>;
+  dragAndDropHooks: DragAndDropHooks;
 }
 
 export interface DragAndDropOptions<T = object>
@@ -77,7 +77,7 @@ export interface DragAndDropOptions<T = object>
  * collection component.
  */
 export function useDragAndDrop<T = object>(options: DragAndDropOptions<T>): DragAndDrop<T> {
-  let dragAndDropHooks = useMemo((): DragAndDropHooks<T> => {
+  let dragAndDropHooks = useMemo((): DragAndDropHooks => {
     let isDraggable = !!options.getItems;
     let isDroppable = !!(
       options.onDrop ||

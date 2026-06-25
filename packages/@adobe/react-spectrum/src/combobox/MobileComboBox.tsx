@@ -21,7 +21,12 @@ import {ComboBoxState, useComboBoxState} from 'react-stately/useComboBoxState';
 import comboboxStyles from './combobox.css';
 import {DismissButton} from 'react-aria/Overlay';
 import {Field} from '../label/Field';
-import {FocusableRef, FocusableRefValue, ValidationState} from '@react-types/shared';
+import {
+  FocusableElement,
+  FocusableRef,
+  FocusableRefValue,
+  ValidationState
+} from '@react-types/shared';
 import {FocusRing} from 'react-aria/FocusRing';
 import {focusSafely} from 'react-aria/private/interactions/focusSafely';
 import {FocusScope} from 'react-aria/FocusScope';
@@ -124,7 +129,7 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox(
     ...labelProps,
     onClick: () => {
       if (!props.isDisabled) {
-        focusSafely(buttonRef.current);
+        focusSafely(buttonRef.current as FocusableElement);
         setInteractionModality('keyboard');
       }
     }
@@ -494,7 +499,7 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
         <TextFieldBase
           label={label}
           labelProps={labelProps}
-          inputProps={{...trayInputProps, onKeyDown}}
+          inputProps={{...trayInputProps, onKeyDown} as React.InputHTMLAttributes<HTMLInputElement>}
           inputRef={inputRef}
           isDisabled={isDisabled}
           isLoading={showLoading && loadingState === 'filtering'}

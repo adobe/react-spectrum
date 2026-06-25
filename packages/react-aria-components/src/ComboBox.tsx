@@ -254,11 +254,14 @@ function ComboBoxInner<T>({props, collection, comboBoxRef: ref}: ComboBoxInnerPr
   });
 
   // Position popover relative to group if available, otherwise input.
-  let triggerRef = useRef({
-    get current() {
-      return groupRef.current || inputRef.current;
-    }
-  });
+  let triggerRef = useMemo(
+    (): RefObject<HTMLElement | null> => ({
+      get current() {
+        return groupRef.current || inputRef.current;
+      }
+    }),
+    []
+  );
 
   // Only expose a subset of state to renderProps function to avoid infinite render loop
   let renderPropsState = useMemo(

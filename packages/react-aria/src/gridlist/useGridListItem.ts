@@ -362,10 +362,10 @@ export function useGridListItem<T>(
         : undefined,
     id: getRowId(state, node.key),
     onKeyDown: (e: ReactKeyboardEvent<FocusableElement>) => {
-      onKeyDown(e as ReactKeyboardEvent);
+      onKeyDown(e as ReactKeyboardEvent<HTMLElement>);
       if (!e.isPropagationStopped()) {
-        itemProps.onKeyDown?.(e);
-        linkProps.onKeyDown?.(e);
+        itemProps.onKeyDown?.(e as ReactKeyboardEvent<HTMLElement>);
+        linkProps.onKeyDown?.(e as ReactKeyboardEvent<HTMLElement>);
       }
     },
     onPointerDown: (e: ReactPointerEvent<FocusableElement>) => {
@@ -374,8 +374,8 @@ export function useGridListItem<T>(
         e.stopPropagation();
         return;
       }
-      itemProps.onPointerDown?.(e);
-      linkProps.onPointerDown?.(e);
+      itemProps.onPointerDown?.(e as ReactPointerEvent<HTMLElement>);
+      linkProps.onPointerDown?.(e as ReactPointerEvent<HTMLElement>);
     },
     onMouseDown: (e: ReactMouseEvent<FocusableElement>) => {
       let target = getEventTarget(e) as Element | null;
@@ -383,8 +383,8 @@ export function useGridListItem<T>(
         e.stopPropagation();
         return;
       }
-      itemProps.onMouseDown?.(e);
-      linkProps.onMouseDown?.(e);
+      itemProps.onMouseDown?.(e as ReactMouseEvent<HTMLElement>);
+      linkProps.onMouseDown?.(e as ReactMouseEvent<HTMLElement>);
     }
   };
 

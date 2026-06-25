@@ -184,7 +184,7 @@ export interface ListBoxProps<T>
    * The drag and drop hooks returned by `useDragAndDrop` used to enable drag and drop behavior for
    * the ListBox.
    */
-  dragAndDropHooks?: DragAndDropHooks<NoInfer<T>>;
+  dragAndDropHooks?: DragAndDropHooks;
   /** Provides content to display when there are no items in the list. */
   renderEmptyState?: (props: ListBoxRenderProps) => ReactNode;
   /**
@@ -248,7 +248,7 @@ interface ListBoxInnerProps<T> {
 }
 
 interface ListBoxInnerViewProps<T> extends ListBoxInnerProps<T> {
-  dragAndDropHooks?: DragAndDropHooks<T>;
+  dragAndDropHooks?: DragAndDropHooks;
   dragState?: DraggableCollectionState;
   dropState?: DroppableCollectionState;
   droppableCollection?: DroppableCollectionResult;

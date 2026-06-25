@@ -1,1 +1,1 @@
-export {pressScale} from '../src/pressScale';
+export {pressScale, pressScaleStyle} from '../src/pressScale';

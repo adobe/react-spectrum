@@ -92,7 +92,7 @@ export function createHideableComponent<T, P = {}>(
       return null;
     }
 
-    return fn(props, objectRef);
+    return fn(props as P, objectRef);
   });
   // @ts-ignore - for react dev tools
   Wrapper.displayName = fn.displayName || fn.name;

@@ -95,7 +95,7 @@ function CheckboxContent({
       {...labelProps}
       {...styleProps}
       {...hoverProps}
-      ref={domRef}
+      ref={domRef as React.Ref<HTMLLabelElement>}
       className={classNames(
         styles,
         'spectrum-Checkbox',

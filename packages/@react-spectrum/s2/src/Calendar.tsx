@@ -41,7 +41,7 @@ import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro
 import {Header, HeaderContext, HeadingContext} from './Content';
 import {helpTextStyles} from './Field';
 import intlMessages from '../intl/*.json';
-import {pressScale} from './pressScale';
+import {pressScaleStyle} from './pressScale';
 import {RangeCalendarContext, RangeCalendarStateContext} from 'react-aria-components/RangeCalendar';
 import {RangeCalendarState} from 'react-stately/useRangeCalendarState';
 import React, {
@@ -710,7 +710,7 @@ const CalendarCellInner = (
       })}>
       <div
         ref={ref}
-        style={renderProps => pressScale(ref, {})(renderProps)}
+        style={pressScaleStyle(renderProps!.isPressed)}
         className={cellInnerStyles({
           ...renderProps!,
           isSelectionStart,

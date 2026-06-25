@@ -331,13 +331,13 @@ export function useNumberField(
     ...focusProps,
     ...textFieldProps,
     // override the spinbutton role, we can't focus a spin button with VO
-    role: null,
+    role: undefined,
     // ignore aria-roledescription on iOS so that required state will announce when it is present
-    'aria-roledescription': !isIOS() ? stringFormatter.format('numberField') : null,
-    'aria-valuemax': null,
-    'aria-valuemin': null,
-    'aria-valuenow': null,
-    'aria-valuetext': null,
+    'aria-roledescription': !isIOS() ? stringFormatter.format('numberField') : undefined,
+    'aria-valuemax': undefined,
+    'aria-valuemin': undefined,
+    'aria-valuenow': undefined,
+    'aria-valuetext': undefined,
     autoCorrect: 'off',
     spellCheck: 'false'
   };
@@ -382,33 +382,33 @@ export function useNumberField(
   let incrementId = useId();
   let decrementId = useId();
 
-  let incrementButtonProps: AriaButtonProps = {
+  let incrementButtonProps = {
     ...incButtonProps,
     'aria-label': incrementAriaLabel || stringFormatter.format('increase', {fieldLabel}).trim(),
-    id: ariaLabelledby && !incrementAriaLabel ? incrementId : null,
+    id: ariaLabelledby && !incrementAriaLabel ? incrementId : undefined,
     'aria-labelledby':
-      ariaLabelledby && !incrementAriaLabel ? `${incrementId} ${ariaLabelledby}` : null,
+      ariaLabelledby && !incrementAriaLabel ? `${incrementId} ${ariaLabelledby}` : undefined,
     'aria-controls': inputId,
     excludeFromTabOrder: true,
     preventFocusOnPress: true,
     allowFocusWhenDisabled: true,
     isDisabled: !state.canIncrement,
     onPressStart: onButtonPressStart
-  };
+  } as AriaButtonProps<'button'>;
 
-  let decrementButtonProps: AriaButtonProps = {
+  let decrementButtonProps = {
     ...decButtonProps,
     'aria-label': decrementAriaLabel || stringFormatter.format('decrease', {fieldLabel}).trim(),
-    id: ariaLabelledby && !decrementAriaLabel ? decrementId : null,
+    id: ariaLabelledby && !decrementAriaLabel ? decrementId : undefined,
     'aria-labelledby':
-      ariaLabelledby && !decrementAriaLabel ? `${decrementId} ${ariaLabelledby}` : null,
+      ariaLabelledby && !decrementAriaLabel ? `${decrementId} ${ariaLabelledby}` : undefined,
     'aria-controls': inputId,
     excludeFromTabOrder: true,
     preventFocusOnPress: true,
     allowFocusWhenDisabled: true,
     isDisabled: !state.canDecrement,
     onPressStart: onButtonPressStart
-  };
+  } as AriaButtonProps<'button'>;
 
   return {
     groupProps: {

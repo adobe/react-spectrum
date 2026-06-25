@@ -23,15 +23,16 @@ import {
 import {
   Collection,
   DragPreviewRenderer,
-  DropActivateEvent,
+  DroppableCollectionActivateEvent,
   DropTargetDelegate,
   Key,
   Orientation,
   RefObject
 } from '@react-types/shared';
-import {DragAndDropHooks} from './useDragAndDrop';
+import {DragAndDropHooks, DragAndDropOptions} from './useDragAndDrop';
 import {
   DraggableCollectionState,
+  DraggableCollectionStateOptions,
   useDraggableCollectionState
 } from 'react-stately/useDraggableCollectionState';
 import {
@@ -46,10 +47,22 @@ import {
 import {MultipleSelectionManager} from 'react-stately/useMultipleSelectionState';
 import React, {JSX, ReactNode, useMemo, useRef} from 'react';
 
+function pickDragAndDropOptions(hooks: DragAndDropHooks): DragAndDropOptions {
+  let {
+    isDraggable: _isDraggable,
+    isDroppable: _isDroppable,
+    DragPreview: _DragPreview,
+    ListDropTargetDelegate: _ListDropTargetDelegate,
+    isVirtualDragging: _isVirtualDragging,
+    ...options
+  } = hooks;
+  return options;
+}
+
 export type CollectionDragDropMode = 'none' | 'drag' | 'drop' | 'both';
 
 export type DroppableOptionsFactory = (dropState: DroppableCollectionState) => {
-  onDropActivate?: (e: DropActivateEvent) => void;
+  onDropActivate?: (e: DroppableCollectionActivateEvent) => void;
   onKeyDown?: (e: KeyboardEvent) => void;
 };
 
@@ -148,8 +161,8 @@ export interface CollectionDragDropStateValue {
   dragPreview: JSX.Element | null;
 }
 
-export interface CollectionDragDropStateProps<T extends object> {
-  dragAndDropHooks?: DragAndDropHooks<T>;
+export interface CollectionDragDropStateProps<_T extends object = object> {
+  dragAndDropHooks?: DragAndDropHooks;
   collection: Collection<any>;
   selectionManager: MultipleSelectionManager;
   ref: RefObject<HTMLElement | null>;
@@ -170,7 +183,7 @@ export interface CollectionDragDropStateProps<T extends object> {
   /** Additional options passed to useDroppableCollection. */
   droppableOptions?:
     | {
-        onDropActivate?: (e: DropActivateEvent) => void;
+        onDropActivate?: (e: DroppableCollectionActivateEvent) => void;
         onKeyDown?: (e: KeyboardEvent) => void;
       }
     | DroppableOptionsFactory;
@@ -196,12 +209,14 @@ function CollectionDragDropStateBoth<T extends object>(
     children
   } = props;
   let preview = useRef<DragPreviewRenderer>(null);
+  let dragOptions = pickDragAndDropOptions(dragAndDropHooks!);
   let dragState = useDraggableCollectionState({
     collection,
     selectionManager,
     preview: dragAndDropHooks!.renderDragPreview ? preview : undefined,
-    ...dragAndDropHooks!
-  });
+    ...dragOptions,
+    getItems: dragOptions.getItems!
+  } as DraggableCollectionStateOptions<T>);
   useDraggableCollection({}, dragState, ref);
 
   let DragPreviewComponent = dragAndDropHooks!.DragPreview!;
@@ -212,7 +227,7 @@ function CollectionDragDropStateBoth<T extends object>(
   let dropState = useDroppableCollectionState({
     collection,
     selectionManager,
-    ...dragAndDropHooks!
+    ...dragOptions
   });
 
   let dropTargetDelegate = useCollectionDropTargetDelegate(props, collection, ref);
@@ -220,7 +235,7 @@ function CollectionDragDropStateBoth<T extends object>(
     {
       keyboardDelegate,
       dropTargetDelegate,
-      ...dragAndDropHooks!,
+      ...dragOptions,
       ...resolveDroppableOptions(droppableOptions, dropState)
     },
     dropState,
@@ -244,12 +259,14 @@ function CollectionDragDropStateDrag<T extends object>({
   children
 }: CollectionDragDropStateInnerProps<T>) {
   let preview = useRef<DragPreviewRenderer>(null);
+  let dragOptions = pickDragAndDropOptions(dragAndDropHooks!);
   let dragState = useDraggableCollectionState({
     collection,
     selectionManager,
     preview: dragAndDropHooks!.renderDragPreview ? preview : undefined,
-    ...dragAndDropHooks!
-  });
+    ...dragOptions,
+    getItems: dragOptions.getItems!
+  } as DraggableCollectionStateOptions<T>);
   useDraggableCollection({}, dragState, ref);
 
   let DragPreviewComponent = dragAndDropHooks!.DragPreview!;
@@ -278,10 +295,11 @@ function CollectionDragDropStateDrop<T extends object>(
     droppableOptions,
     children
   } = props;
+  let dragOptions = pickDragAndDropOptions(dragAndDropHooks!);
   let dropState = useDroppableCollectionState({
     collection,
     selectionManager,
-    ...dragAndDropHooks!
+    ...dragOptions
   });
 
   let dropTargetDelegate = useCollectionDropTargetDelegate(props, collection, ref);
@@ -289,7 +307,7 @@ function CollectionDragDropStateDrop<T extends object>(
     {
       keyboardDelegate,
       dropTargetDelegate,
-      ...dragAndDropHooks!,
+      ...dragOptions,
       ...resolveDroppableOptions(droppableOptions, dropState)
     },
     dropState,

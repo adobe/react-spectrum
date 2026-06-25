@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaButtonProps, useButton} from 'react-aria/useButton';
 import ArrowDownSmall from '@spectrum-icons/ui/ArrowDownSmall';
 import {Checkbox} from '../checkbox/Checkbox';
 import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
@@ -101,7 +102,6 @@ import {TableViewLayout} from './TableViewLayout';
 import {Tooltip} from '../tooltip/Tooltip';
 import {TooltipTrigger} from '../tooltip/TooltipTrigger';
 import {TreeGridState} from 'react-stately/private/table/useTreeGridState';
-import {useButton} from 'react-aria/useButton';
 import {useDOMRef, useFocusableRef, useUnwrapDOMRef} from '../utils/useDOMRef';
 import {useFocusRing} from 'react-aria/useFocusRing';
 import {useLoadMore} from 'react-aria/private/utils/useLoadMore';
@@ -166,7 +166,7 @@ export interface TableContextValue<T> {
   state: TableState<T>;
   dragState: DraggableCollectionState | null;
   dropState: DroppableCollectionState | null;
-  dragAndDropHooks?: DragAndDropHooks<T>['dragAndDropHooks'];
+  dragAndDropHooks?: DragAndDropHooks<any>['dragAndDropHooks'];
   isTableDraggable: boolean;
   isTableDroppable: boolean;
   layout: TableViewLayout<T>;
@@ -443,7 +443,7 @@ function TableViewBaseImpl<T extends object>({
   let bodyRef = useRef<HTMLDivElement | null>(null);
 
   let density = props.density || 'regular';
-  let layout = useTableViewLayout(props, state);
+  let layout = useTableViewLayout(props);
 
   let DragPreview = dragAndDropHooks?.DragPreview;
 
@@ -1704,11 +1704,11 @@ function TableRowContent({
 }) {
   let {state, dragAndDropHooks, isTableDroppable} = useTableContext();
   let dragButtonRef = React.useRef<HTMLDivElement | null>(null);
-  let {buttonProps: dragButtonProps} = useButton(
+  let {buttonProps: resolvedDragButtonProps} = useButton(
     {
-      ...dragButtonPropsProp,
+      ...(dragButtonPropsProp ?? {}),
       elementType: 'div'
-    },
+    } as AriaButtonProps<'div'>,
     dragButtonRef
   );
 
@@ -1731,7 +1731,8 @@ function TableRowContent({
   let {visuallyHiddenProps} = useVisuallyHidden();
 
   return (
-    <TableRowContext.Provider value={{dragButtonProps, dragButtonRef, isFocusVisibleWithin}}>
+    <TableRowContext.Provider
+      value={{dragButtonProps: resolvedDragButtonProps, dragButtonRef, isFocusVisibleWithin}}>
       {isTableDroppable && isFirstRow && (
         <InsertionIndicator
           rowProps={props}

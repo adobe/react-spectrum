@@ -33,6 +33,26 @@ import {CSSProperties, RefObject} from 'react';
  * @returns A render prop function suitable for passing to a React Aria component's
  * `style` prop.
  */
+export function pressScaleStyle(
+  isPressed: boolean,
+  style?: CSSProperties,
+  dimensions?: {width?: number; height?: number}
+): CSSProperties {
+  if (isPressed) {
+    let {width = 0, height = 0} = dimensions ?? {};
+    return {
+      ...style,
+      willChange: `${style?.willChange ?? ''} transform`,
+      transform: `${style?.transform ?? ''} perspective(${Math.max(height, width / 3, 24)}px) translate3d(0, 0, -2px)`
+    };
+  }
+
+  return {
+    ...style,
+    willChange: `${style?.willChange ?? ''} transform`
+  };
+}
+
 export function pressScale<R extends {isPressed: boolean}>(
   ref: RefObject<HTMLElement | null>,
   style?: CSSProperties | ((renderProps: R) => CSSProperties)

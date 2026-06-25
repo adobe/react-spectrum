@@ -164,7 +164,7 @@ function ResizableTableColumnHeader({
 
 function Button(propsArg) {
   let props = propsArg;
-  let ref = useObjectRef(props.buttonRef);
+  let ref = useObjectRef<HTMLButtonElement>(props.buttonRef);
   let {focusProps, isFocusVisible} = useFocusRing();
   let {buttonProps} = useButton(props, ref);
   return (

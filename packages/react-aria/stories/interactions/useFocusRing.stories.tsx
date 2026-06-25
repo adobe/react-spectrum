@@ -110,7 +110,7 @@ function SearchExample(): JSX.Element {
 
 function MyButton(propsArg) {
   let props = propsArg;
-  let buttonRef = useObjectRef(props.btnRef);
+  let buttonRef = useObjectRef<HTMLButtonElement>(props.btnRef);
 
   const {focusProps, isFocusVisible, isFocused} = useFocusRing();
   let {buttonProps} = useButton(props, buttonRef);

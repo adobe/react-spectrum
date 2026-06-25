@@ -233,6 +233,7 @@ function PopoverInner({
   let {popoverProps, underlayProps, arrowProps, placement, triggerAnchorPoint} = usePopover(
     {
       ...props,
+      popoverRef,
       triggerRef,
       offset: props.offset ?? 8,
       arrowRef,
@@ -313,7 +314,7 @@ function PopoverInner({
 
   let overlay = (
     <dom.div
-      {...mergeProps(filterDOMProps(props, {global: true}), popoverProps)}
+      {...mergeProps(filterDOMProps(props as any, {global: true}), popoverProps)}
       {...renderProps}
       role={isDialog ? 'dialog' : undefined}
       tabIndex={isDialog ? -1 : undefined}

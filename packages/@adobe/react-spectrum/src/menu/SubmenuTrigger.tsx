@@ -14,7 +14,7 @@ import {classNames} from '../utils/classNames';
 
 import {isFocusWithin} from 'react-aria/private/utils/shadowdom/DOMFunctions';
 import {Key} from '@react-types/shared';
-import {MenuContext, SubmenuTriggerContext, useMenuStateContext} from './context';
+import {MenuContext, MenuContextValue, SubmenuTriggerContext, useMenuStateContext} from './context';
 import {Popover} from '../overlays/Popover';
 import React, {type JSX, ReactElement, ReactNode, RefObject, useRef, useState} from 'react';
 import ReactDOM from 'react-dom';
@@ -170,7 +170,7 @@ function SubmenuTrigger(props: SubmenuTriggerProps) {
       <SubmenuTriggerContext.Provider value={{triggerRef, ...contextSubmenuTriggerProps}}>
         {menuTrigger}
       </SubmenuTriggerContext.Provider>
-      <MenuContext.Provider value={menuContext}>{overlay}</MenuContext.Provider>
+      <MenuContext.Provider value={menuContext as MenuContextValue}>{overlay}</MenuContext.Provider>
     </>
   );
 }

@@ -135,6 +135,7 @@ export function useToggle(
   let [isLabelPressed, setLabelPressed] = useState(false);
   let groupValidationState = (props as Record<string, unknown>)[privateValidationStateProp];
   let validationForCommit = groupValidationState ?? validationState;
+  let commitValidation = (validationForCommit as {commitValidation?: () => void}).commitValidation;
   let {pressProps: labelProps} = usePress({
     onPressStart(e) {
       // Keyboard interactions are handled directly on the input.
@@ -176,7 +177,7 @@ export function useToggle(
       onPress?.(e);
       state.toggle();
       ref.current?.focus();
-      validationForCommit.commitValidation();
+      commitValidation?.();
     },
     isDisabled: isDisabled || isReadOnly
   });
