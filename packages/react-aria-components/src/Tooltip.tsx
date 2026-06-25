@@ -219,6 +219,7 @@ function TooltipInner(
 
   let DOMProps = filterDOMProps(props, {global: true});
 
+  // oxlint-disable react/react-compiler
   return (
     <dom.div
       {...mergeProps(DOMProps, renderProps, tooltipProps)}
@@ -240,4 +241,5 @@ function TooltipInner(
       </OverlayArrowContext.Provider>
     </dom.div>
   );
+  // oxlint-enable react/react-compiler
 }

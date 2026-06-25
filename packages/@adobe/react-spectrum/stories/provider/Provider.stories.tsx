@@ -153,6 +153,7 @@ ResponsiveStyleProps.story = {
 
 export const CustomResponsiveStyleProps: ProviderStory = () => {
   let Breakpoint = () => {
+    // oxlint-disable-next-line react/react-compiler
     let {matchedBreakpoints} = useBreakpoint()!;
     let breakpoint = matchedBreakpoints[0];
     let width = {
@@ -175,6 +176,7 @@ export const CustomResponsiveStyleProps: ProviderStory = () => {
   };
   return (
     <Provider breakpoints={{S: 480, M: 640, L: 1024}} UNSAFE_style={{padding: 50}}>
+      {/* oxlint-disable-next-line react/react-compiler */}
       <Breakpoint />
     </Provider>
   );
@@ -186,6 +188,7 @@ CustomResponsiveStyleProps.story = {
 
 export const BreakpointOmitted: ProviderStory = () => {
   let Breakpoint = () => {
+    // oxlint-disable-next-line react/react-compiler
     let {matchedBreakpoints} = useBreakpoint()!;
     let breakpoint = matchedBreakpoints[0];
     let width = {base: 'size-1600', S: 'size-2400', L: 'size-3400'};
@@ -200,6 +203,7 @@ export const BreakpointOmitted: ProviderStory = () => {
   };
   return (
     <Provider UNSAFE_style={{padding: 50}}>
+      {/* oxlint-disable-next-line react/react-compiler */}
       <Breakpoint />
     </Provider>
   );

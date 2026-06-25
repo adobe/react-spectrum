@@ -448,9 +448,9 @@ function useCheckboxAria(
   };
 
   let aria = groupState
-    ? // eslint-disable-next-line react-hooks/rules-of-hooks
+    ? // oxlint-disable-next-line react/react-compiler, react-hooks/rules-of-hooks
       useCheckboxGroupItem(checkboxProps, groupState, inputRef)
-    : // eslint-disable-next-line react-hooks/rules-of-hooks
+    : // oxlint-disable-next-line react/react-compiler, react-hooks/rules-of-hooks
       useCheckbox(checkboxProps, useToggleState(props), inputRef);
   return [aria, inputRef];
 }

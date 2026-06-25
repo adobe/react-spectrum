@@ -138,9 +138,12 @@ export function useDragAndDrop<T = object>(options: DragAndDropOptions<T>): Drag
       hooks.useDraggableCollectionState = function useDraggableCollectionStateOverride(
         props: DraggableCollectionStateOpts<T>
       ) {
+        // oxlint-disable-next-line react/react-compiler
         return useDraggableCollectionState({...props, ...options, getItems: options.getItems!});
       };
+      // oxlint-disable-next-line react/react-compiler
       hooks.useDraggableCollection = useDraggableCollection;
+      // oxlint-disable-next-line react/react-compiler
       hooks.useDraggableItem = useDraggableItem;
       hooks.DragPreview = DragPreview;
       hooks.renderPreview = renderPreview;
@@ -150,16 +153,20 @@ export function useDragAndDrop<T = object>(options: DragAndDropOptions<T>): Drag
       hooks.useDroppableCollectionState = function useDroppableCollectionStateOverride(
         props: DroppableCollectionStateOptions
       ) {
+        // oxlint-disable-next-line react/react-compiler
         return useDroppableCollectionState({...props, ...options});
       };
+      // oxlint-disable-next-line react/react-compiler
       hooks.useDroppableItem = useDroppableItem;
       hooks.useDroppableCollection = function useDroppableCollectionOverride(
         props: DroppableCollectionOptions,
         state: DroppableCollectionState,
         ref: RefObject<HTMLElement | null>
       ) {
+        // oxlint-disable-next-line react/react-compiler
         return useDroppableCollection({...props, ...options}, state, ref);
       };
+      // oxlint-disable-next-line react/react-compiler
       hooks.useDropIndicator = useDropIndicator;
     }
 

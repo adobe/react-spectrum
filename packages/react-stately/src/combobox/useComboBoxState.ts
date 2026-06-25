@@ -421,6 +421,7 @@ export function useComboBoxState<T, M extends SelectionMode = 'single'>(
       inputValue !== lastValue &&
       menuTrigger !== 'manual'
     ) {
+      // oxlint-disable-next-line react/react-compiler
       open(null, 'input');
     }
 

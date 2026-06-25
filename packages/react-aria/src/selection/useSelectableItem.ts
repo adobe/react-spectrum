@@ -282,6 +282,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
   // For keyboard events, selection still occurs on key down.
   let itemPressProps: PressHookProps = {ref};
   if (shouldSelectOnPressUp) {
+    // oxlint-disable-next-line react/react-compiler
     itemPressProps.onPressStart = e => {
       modality.current = e.pointerType;
       longPressEnabledOnPressStart.current = longPressEnabled;
@@ -293,6 +294,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     // If allowsDifferentPressOrigin and interacting with mouse, make selection happen on pressUp (e.g. open menu on press down, selection on menu item happens on press up.)
     // Otherwise, have selection happen onPress (prevents listview row selection when clicking on interactable elements in the row)
     if (!allowsDifferentPressOrigin) {
+      // oxlint-disable-next-line react/react-compiler
       itemPressProps.onPress = e => {
         if (hasPrimaryAction || (hasSecondaryAction && e.pointerType !== 'mouse')) {
           if (e.pointerType === 'keyboard' && !isActionKey(e.key)) {
@@ -305,6 +307,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
         }
       };
     } else {
+      // oxlint-disable-next-line react/react-compiler
       itemPressProps.onPressUp = hasPrimaryAction
         ? undefined
         : e => {
@@ -313,6 +316,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
             }
           };
 
+      // oxlint-disable-next-line react/react-compiler
       itemPressProps.onPress = hasPrimaryAction
         ? performAction
         : e => {
@@ -322,6 +326,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
           };
     }
   } else {
+    // oxlint-disable-next-line react/react-compiler
     itemPressProps.onPressStart = e => {
       modality.current = e.pointerType;
       longPressEnabledOnPressStart.current = longPressEnabled;
@@ -339,6 +344,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
       }
     };
 
+    // oxlint-disable-next-line react/react-compiler
     itemPressProps.onPress = e => {
       // Selection occurs on touch up. Primary actions always occur on pointer up.
       // Both primary and secondary actions occur on Enter key up. The only exception
@@ -362,10 +368,12 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
   let collectionId = getCollectionId(manager.collection);
   itemProps['data-collection'] = collectionId;
   itemProps['data-key'] = key;
+  // oxlint-disable-next-line react/react-compiler
   itemPressProps.preventFocusOnPress = shouldUseVirtualFocus;
 
   // When using virtual focus, make sure the focused key gets updated on press.
   if (shouldUseVirtualFocus) {
+    // oxlint-disable-next-line react/react-compiler
     itemPressProps = mergeProps(itemPressProps, {
       onPressStart(e) {
         if (e.pointerType !== 'touch') {
@@ -392,6 +400,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
       'onClick'
     ]) {
       if (collectionItemProps[key]) {
+        // oxlint-disable-next-line react/react-compiler
         itemPressProps[key] = chain(itemPressProps[key], collectionItemProps[key]);
       }
     }
@@ -445,9 +454,11 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
       : undefined;
 
   let mergedItemProps = mergeProps(
+    // oxlint-disable-next-line react/react-compiler
     itemProps,
     allowsSelection || hasPrimaryAction || (shouldUseVirtualFocus && !isDisabled) ? pressProps : {},
     longPressEnabled ? longPressProps : {},
+    // oxlint-disable-next-line react/react-compiler
     {onDoubleClick, onDragStartCapture, onClick, id},
     // Prevent DOM focus from moving on mouse down when using virtual focus
     shouldUseVirtualFocus ? {onMouseDown: e => e.preventDefault()} : undefined

@@ -394,6 +394,7 @@ export function useGridListItem<T>(
   //   });
   // }
 
+  // oxlint-disable-next-line react/react-compiler
   let rowProps: DOMAttributes = mergeProps(itemProps, linkProps, {
     role: 'row',
     onKeyDownCapture:
@@ -441,6 +442,7 @@ export function useGridListItem<T>(
   };
 
   // TODO: should isExpanded and hasChildRows be a item state that gets returned by the hook?
+  // oxlint-disable react/react-compiler
   return {
     rowProps: {...mergeProps(rowProps, treeGridRowProps)},
     gridCellProps,
@@ -449,6 +451,7 @@ export function useGridListItem<T>(
     },
     ...itemStates
   };
+  // oxlint-enable react/react-compiler
 }
 
 function handleTreeExpansionKeys<T>(
