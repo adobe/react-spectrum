@@ -190,7 +190,7 @@ export function useMenuItem<T>(
     if (data.onAction) {
       // Must reassign to variable otherwise `this` binding gets messed up. Something to do with WeakMap.
       let onAction = data.onAction;
-      onAction(key);
+      onAction(key, item?.value);
     }
   };
 
@@ -371,6 +371,7 @@ export function useMenuItem<T>(
         data.shouldUseVirtualFocus || isTrigger
           ? {onMouseDown: e => e.preventDefault()}
           : undefined,
+        // oxlint-disable-next-line react/react-compiler
         isDisabled ? undefined : {onClick}
       ),
       // If a submenu is expanded, set the tabIndex to -1 so that shift tabbing goes out of the menu instead of the parent menu item.

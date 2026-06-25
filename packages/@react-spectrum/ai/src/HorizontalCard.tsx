@@ -36,15 +36,15 @@ import {LinkButtonContext} from '@react-spectrum/s2/LinkButton';
 import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
 import {pressScale} from '@react-spectrum/s2/pressScale';
 import {SkeletonContext, useIsSkeleton} from '@react-spectrum/s2/Skeleton';
-import {StyleString} from './types';
+import {StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {TextContext} from '@react-spectrum/s2/Text';
 import {useDOMRef} from './useDOMRef';
-interface CardRenderProps {
+interface HorizontalCardRenderProps {
   /** The size of the Card. */
   size: 'XS' | 'S' | 'M' | 'L' | 'XL';
 }
 
-export interface CardProps extends Omit<
+export interface HorizontalCardProps extends Omit<
   GridListItemProps,
   | 'className'
   | 'style'
@@ -57,7 +57,7 @@ export interface CardProps extends Omit<
   | keyof GlobalDOMAttributes
 > {
   /** The children of the Card. */
-  children: ReactNode | ((renderProps: CardRenderProps) => ReactNode);
+  children: ReactNode | ((renderProps: HorizontalCardRenderProps) => ReactNode);
   /**
    * The size of the Card.
    *
@@ -75,11 +75,20 @@ export interface CardProps extends Omit<
    *
    * @default 'primary'
    */
-  variant?: 'primary' | 'secondary' | 'tertiary' | 'quiet';
+  variant?: 'primary' | 'secondary' | 'tertiary';
   /**
    * Spectrum-defined styles, returned by the `style()` macro.
    */
   styles?: StyleString;
+}
+
+export interface BasicCardProps extends Omit<HorizontalCardProps, 'variant'> {
+  /**
+   * The visual style of the Card.
+   *
+   * @default 'primary'
+   */
+  variant?: 'primary' | 'secondary' | 'tertiary' | 'quiet';
 }
 
 const borderRadius = {
@@ -93,7 +102,7 @@ const borderRadius = {
 
 // Figma missing a lot of combinations of variant, tshirt, density
 // Quiet Basic cards?
-// Does Basic not participate in selection?
+// Does Basic not participate in selection? (It does, but it's denoted by the border...)
 // Why is there a flipped horizontal card?
 // Max width on contents for horizontal cards? Doesn't appear to be one that includes the preview because the preview can have any ratio and that
 // causes the width grow.
@@ -112,18 +121,20 @@ let card = style({
       variant: {
         primary: 'elevated',
         secondary: 'layer-1',
-        basic: 'layer-2'
+        tertiary: 'layer-2'
+      },
+      isBasic: {
+        variant: {
+          primary: 'layer-2',
+          secondary: 'layer-1',
+          tertiary: 'layer-2',
+          quiet: 'layer-2'
+        }
       },
       forcedColors: 'ButtonFace'
     }
   },
-  backgroundColor: {
-    default: '--s2-container-bg',
-    variant: {
-      tertiary: 'transparent',
-      quiet: 'transparent'
-    }
-  },
+  backgroundColor: '--s2-container-bg',
   // TODO: No box shadow for basic, secondary, dark
   // also none for basic tertiary
   boxShadow: {
@@ -172,9 +183,17 @@ let card = style({
         XL: 240
       }
     },
-    isBasic: 68,
-    isCardView: 'full',
-    [onlyPreview]: 68
+    isBasic: {
+      default: 68,
+      size: {
+        XS: 52,
+        S: 60,
+        M: 68,
+        L: 76,
+        XL: 80
+      }
+    },
+    isCardView: 'full'
   },
   width: {
     default: 'full',
@@ -218,22 +237,19 @@ let card = style({
       [onlyPreview]: 0
     }
   },
+  alignItems: {
+    isBasic: 'center'
+  },
   '--card-padding-y': {
     type: 'paddingTop',
     value: {
-      default: '--card-spacing',
-      variant: {
-        quiet: 0
-      }
+      default: '--card-spacing'
     }
   },
   '--card-padding-x': {
     type: 'paddingStart',
     value: {
-      default: '--card-spacing',
-      variant: {
-        quiet: 0
-      }
+      default: '--card-spacing'
     }
   },
   paddingY: '--card-padding-y',
@@ -439,7 +455,10 @@ const actionButtonSize = {
 } as const;
 
 const Card = forwardRef(function Card(
-  props: CardProps & {isBasic?: boolean},
+  props: Omit<HorizontalCardProps, 'variant'> & {
+    isBasic?: boolean;
+    variant?: 'primary' | 'secondary' | 'tertiary' | 'quiet';
+  },
   ref: DOMRef<HTMLDivElement>
 ) {
   let {ElementType} = useContext(InternalCardViewContext);
@@ -497,6 +516,7 @@ const Card = forwardRef(function Card(
     </Provider>
   );
 
+  // oxlint-disable-next-line react/react-compiler
   let press = pressScale(domRef);
   if (ElementType === 'div' && !isSkeleton && props.href) {
     // Standalone Card that has an href should be rendered as a Link.
@@ -649,6 +669,7 @@ export interface CardPreviewProps extends DOMProps {
   styles?: StyleString;
 }
 
+// TODO: this should be the same component as the one in @react-spectrum/s2/Card
 export const CardPreview = forwardRef(function CardPreview(
   props: CardPreviewProps,
   ref: DOMRef<HTMLDivElement>
@@ -656,15 +677,13 @@ export const CardPreview = forwardRef(function CardPreview(
   let {size, isQuiet, isHovered, isFocusVisible, isSelected, isPressed, isCheckboxSelection} =
     useContext(InternalCardContext);
   let domRef = useDOMRef(ref);
+  // oxlint-disable react/react-compiler
   return (
     <div
       {...filterDOMProps(props)}
       slot="preview"
       ref={domRef}
-      className={mergeStyles(
-        preview({size, isQuiet, isHovered, isFocusVisible, isSelected}),
-        props.styles
-      )}
+      className={preview({size, isQuiet, isHovered, isFocusVisible, isSelected})}
       style={isQuiet ? pressScale(domRef)({isPressed}) : undefined}>
       {isQuiet && <SelectionIndicator />}
       {isQuiet && isCheckboxSelection && <CardCheckbox />}
@@ -673,6 +692,7 @@ export const CardPreview = forwardRef(function CardPreview(
       </div>
     </div>
   );
+  // oxlint-enable react/react-compiler
 });
 
 const collection = style({
@@ -689,10 +709,6 @@ const collection = style({
 
 const collectionImage = style({
   width: 'full',
-  aspectRatio: {
-    default: 'square',
-    ':nth-last-child(4):first-child': '3/2'
-  },
   gridColumnEnd: {
     ':nth-last-child(4):first-child': 'span 3'
   },
@@ -726,12 +742,12 @@ const buttonSize = {
 } as const;
 
 export const HorizontalCard = forwardRef(function HorizontalCard(
-  props: CardProps,
+  props: HorizontalCardProps,
   ref: DOMRef<HTMLDivElement>
 ) {
   let {size = 'M'} = props;
   return (
-    <Card {...props} ref={ref}>
+    <Card {...props} size={size} ref={ref}>
       {composeRenderProps(props.children, children => (
         <Provider
           values={[
@@ -743,7 +759,6 @@ export const HorizontalCard = forwardRef(function HorizontalCard(
                     alt: '',
                     styles: style({
                       height: 'full',
-                      aspectRatio: '1/1',
                       objectFit: 'cover',
                       pointerEvents: 'none',
                       userSelect: 'none'
@@ -811,12 +826,12 @@ export const HorizontalCard = forwardRef(function HorizontalCard(
 });
 
 export const BasicHorizontalCard = forwardRef(function BasicHorizontalCard(
-  props: CardProps,
+  props: BasicCardProps,
   ref: DOMRef<HTMLDivElement>
 ) {
   let {size = 'M'} = props;
   return (
-    <Card {...props} ref={ref} isBasic>
+    <Card {...props} size={size} ref={ref} isBasic>
       {composeRenderProps(props.children, children => (
         <Provider
           values={[
@@ -832,13 +847,7 @@ export const BasicHorizontalCard = forwardRef(function BasicHorizontalCard(
                       pointerEvents: 'none',
                       userSelect: 'none',
                       size: '--basic-thumb-size',
-                      borderRadius: {
-                        default: 'default',
-                        size: {
-                          XS: 'sm',
-                          S: 'sm'
-                        }
-                      },
+                      borderRadius: '[3px]',
                       objectFit: 'cover',
                       outlineStyle: 'solid',
                       outlineWidth: {

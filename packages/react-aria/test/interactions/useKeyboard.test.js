@@ -12,7 +12,7 @@
 
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 
-import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
+import {act, fireEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import React from 'react';
 import {useKeyboard} from '../../src/interactions/useKeyboard';
 import userEvent from '@testing-library/user-event';
@@ -113,6 +113,201 @@ describe('useKeyboard', function () {
       let {keyboardProps} = useKeyboard(props);
       return <button {...keyboardProps}>Save</button>;
     };
+
+    describe('chaining and propagation', () => {
+      it('should stop propagation if any shortcut handling that key stops propagation', async () => {
+        let Component = () => {
+          let {keyboardProps} = useKeyboard({
+            shortcuts: {
+              ArrowLeft: () => {
+                return;
+              }
+            }
+          });
+          let {keyboardProps: keyboardProps2} = useKeyboard({
+            shortcuts: {
+              Enter: () => {
+                return;
+              }
+            },
+            ...keyboardProps
+          });
+          return <button {...keyboardProps2}>Save</button>;
+        };
+        let onKeyDown = jest.fn();
+        render(
+          <div onKeyDown={onKeyDown}>
+            <Component />
+          </div>
+        );
+        await user.tab();
+        await user.keyboard('{ArrowLeft}');
+        expect(onKeyDown).not.toHaveBeenCalled();
+      });
+
+      it('should continue propagation if all shortcuts that handle that key agree to continue propagation', async () => {
+        let Component = () => {
+          let {keyboardProps} = useKeyboard({
+            shortcuts: {
+              ArrowLeft: () => {
+                return {shouldContinuePropagation: true};
+              }
+            }
+          });
+          let {keyboardProps: keyboardProps2} = useKeyboard({
+            shortcuts: {
+              Enter: () => {
+                return;
+              }
+            },
+            ...keyboardProps
+          });
+          return <button {...keyboardProps2}>Save</button>;
+        };
+        let key;
+        let onKeyDown = jest.fn(e => {
+          key = e.key;
+        });
+        render(
+          <div onKeyDown={onKeyDown}>
+            <Component />
+          </div>
+        );
+        await user.tab();
+        await user.keyboard('{ArrowLeft}');
+        expect(onKeyDown).toHaveBeenCalledTimes(1);
+        expect(key).toBe('ArrowLeft');
+      });
+
+      it('should stop propagation if any shortcut stops propagation', async () => {
+        let Component = () => {
+          let {keyboardProps} = useKeyboard({
+            shortcuts: {
+              ArrowLeft: () => {
+                return {shouldContinuePropagation: true};
+              }
+            }
+          });
+          let {keyboardProps: keyboardProps2} = useKeyboard({
+            shortcuts: {
+              ArrowLeft: () => {
+                return;
+              }
+            },
+            ...keyboardProps
+          });
+          return <button {...keyboardProps2}>Save</button>;
+        };
+        let onKeyDown = jest.fn();
+        render(
+          <div onKeyDown={onKeyDown}>
+            <Component />
+          </div>
+        );
+        await user.tab();
+        await user.keyboard('{ArrowLeft}');
+        expect(onKeyDown).not.toHaveBeenCalled();
+      });
+
+      it('should continue propagation if all shortcuts agree to continue propagation', async () => {
+        let Component = () => {
+          let {keyboardProps} = useKeyboard({
+            shortcuts: {
+              ArrowLeft: () => {
+                return {shouldContinuePropagation: true};
+              }
+            }
+          });
+          let {keyboardProps: keyboardProps2} = useKeyboard({
+            shortcuts: {
+              ArrowLeft: () => {
+                return {shouldContinuePropagation: true};
+              }
+            },
+            ...keyboardProps
+          });
+          return <button {...keyboardProps2}>Save</button>;
+        };
+        let key;
+        let onKeyDown = jest.fn(e => {
+          key = e.key;
+        });
+        render(
+          <div onKeyDown={onKeyDown}>
+            <Component />
+          </div>
+        );
+        await user.tab();
+        await user.keyboard('{ArrowLeft}');
+        expect(onKeyDown).toHaveBeenCalledTimes(1);
+        expect(key).toBe('ArrowLeft');
+      });
+    });
+
+    describe('repeats, composing, and keyup', () => {
+      it('ignores repeated keydown events by default (allowRepeats: false)', () => {
+        let action = jest.fn();
+        let tree = render(<Example shortcuts={{a: action}} />);
+        let el = tree.getByTestId('example');
+        act(() => el.focus());
+        fireEvent.keyDown(el, {key: 'a', repeat: true});
+        expect(action).not.toHaveBeenCalled();
+      });
+
+      it('handles repeated keydown events when allowRepeats is true', () => {
+        let action = jest.fn();
+        let tree = render(<Example shortcuts={{a: action}} allowRepeats />);
+        let el = tree.getByTestId('example');
+        act(() => el.focus());
+        fireEvent.keyDown(el, {key: 'a', repeat: true});
+        expect(action).toHaveBeenCalledTimes(1);
+      });
+
+      it('ignores composing keydown events by default (allowComposing: false)', () => {
+        let action = jest.fn();
+        let tree = render(<Example shortcuts={{a: action}} />);
+        let el = tree.getByTestId('example');
+        act(() => el.focus());
+        fireEvent.keyDown(el, {key: 'a', isComposing: true});
+        expect(action).not.toHaveBeenCalled();
+      });
+
+      it('handles composing keydown events when allowComposing is true', () => {
+        let action = jest.fn();
+        let tree = render(<Example shortcuts={{a: action}} allowComposing />);
+        let el = tree.getByTestId('example');
+        act(() => el.focus());
+        fireEvent.keyDown(el, {key: 'a', isComposing: true});
+        expect(action).toHaveBeenCalledTimes(1);
+      });
+
+      it('does not run shortcuts on keyup, including repeated and composing keyups', () => {
+        let action = jest.fn();
+        let tree = render(<Example shortcuts={{a: action}} />);
+        let el = tree.getByTestId('example');
+        act(() => el.focus());
+        fireEvent.keyUp(el, {key: 'a'});
+        fireEvent.keyUp(el, {key: 'a', repeat: true});
+        fireEvent.keyUp(el, {key: 'a', isComposing: true});
+        expect(action).not.toHaveBeenCalled();
+      });
+
+      it('chains a user-provided onKeyDown and onKeyUp with shortcuts', async () => {
+        let onKeyDown = jest.fn();
+        let onKeyUp = jest.fn();
+        let action = jest.fn(() => true);
+        let tree = render(
+          <Example shortcuts={{a: action}} onKeyDown={onKeyDown} onKeyUp={onKeyUp} />
+        );
+        let el = tree.getByTestId('example');
+        act(() => el.focus());
+        await user.keyboard('a');
+        expect(action).toHaveBeenCalledTimes(1);
+        expect(onKeyDown).toHaveBeenCalledTimes(1);
+        expect(onKeyUp).toHaveBeenCalledTimes(1);
+      });
+    });
+
     describe('Mac (Mod = Meta)', () => {
       beforeEach(() => {
         platformMock = jest

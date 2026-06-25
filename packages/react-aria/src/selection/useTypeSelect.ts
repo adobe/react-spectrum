@@ -97,11 +97,11 @@ export function useTypeSelect(options: AriaTypeSelectOptions): TypeSelectAria {
     let character = getStringForKey(e.key);
     if (
       !character ||
-      e.altKey ||
       e.ctrlKey ||
       e.metaKey ||
-      character === ' ' ||
-      !nodeContains(e.currentTarget, getEventTarget(e) as HTMLElement)
+      e.altKey ||
+      !nodeContains(e.currentTarget, getEventTarget(e) as HTMLElement) ||
+      (state.current.search.length === 0 && character === ' ')
     ) {
       return;
     }
@@ -113,7 +113,6 @@ export function useTypeSelect(options: AriaTypeSelectOptions): TypeSelectAria {
       // Prioritize items after the currently focused item, falling back to searching the whole list.
       let key = keyboardDelegate.getKeyForSearch(state.current.search, selectionManager.focusedKey);
 
-      // If no key found, search from the top.
       if (key == null) {
         key = keyboardDelegate.getKeyForSearch(state.current.search);
       }

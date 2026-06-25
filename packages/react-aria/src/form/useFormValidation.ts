@@ -34,7 +34,12 @@ export function useFormValidation<T>(
 
   // This is a useLayoutEffect so that it runs before the useEffect in useFormValidationState, which commits the validation change.
   useLayoutEffect(() => {
-    if (validationBehavior === 'native' && ref?.current && !ref.current.disabled) {
+    if (
+      validationBehavior === 'native' &&
+      ref?.current &&
+      'setCustomValidity' in ref.current &&
+      !ref.current.disabled
+    ) {
       let errorMessage = state.realtimeValidation.isInvalid
         ? state.realtimeValidation.validationErrors.join(' ') || 'Invalid value.'
         : '';
@@ -101,6 +106,7 @@ export function useFormValidation<T>(
       // validation errors that are returned by server actions.
       // To do this, we ignore programmatic form resets that occur outside a user event.
       // This is best-effort. There may be false positives, e.g. setTimeout.
+      // oxlint-disable-next-line react/react-compiler
       form.reset = () => {
         // React uses MessageChannel for scheduling, so ignore 'message' events.
         isIgnoredReset.current =

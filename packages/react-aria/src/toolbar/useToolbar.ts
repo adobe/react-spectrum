@@ -59,6 +59,7 @@ export function useToolbar(
     setInToolbar(!!(ref.current && ref.current.parentElement?.closest('[role="toolbar"]')));
   });
   const {direction} = useLocale();
+  // oxlint-disable-next-line react/react-compiler
   let focusManager = createFocusManager(ref);
 
   useEffect(() => {

@@ -28,6 +28,7 @@ export const PressResponder: React.ForwardRefExoticComponent<
   ({children, ...props}: PressResponderProps, ref: ForwardedRef<FocusableElement>) => {
     let isRegistered = useRef(false);
     let prevContext = useContext(PressResponderContext);
+    // oxlint-disable-next-line react/react-compiler
     let context: any = mergeProps(prevContext || {}, {
       ...props,
       register() {
