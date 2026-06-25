@@ -176,6 +176,7 @@ export const ProgressBar = /*#__PURE__*/ forwardRef(function ProgressBar(
   props: ProgressBarProps,
   ref: DOMRef<HTMLDivElement>
 ) {
+  // oxlint-disable-next-line react/react-compiler
   [props, ref] = useSpectrumContextProps(props, ref, ProgressBarContext);
   let {
     label,

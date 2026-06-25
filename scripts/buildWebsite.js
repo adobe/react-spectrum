@@ -54,7 +54,7 @@ async function build() {
           name === 'sharp' ||
           name === 'recast' ||
           name === 'motion' ||
-          name === 'tailwindcss-animate' ||
+          name === 'tw-animate-css' ||
           name === 'tailwindcss' ||
           name === '@tailwindcss/postcss' ||
           name === 'autoprefixer' ||

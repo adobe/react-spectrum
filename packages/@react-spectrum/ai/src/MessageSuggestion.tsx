@@ -10,18 +10,23 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMProps, DOMRef} from '@react-types/shared';
+import {AriaLabelingProps, DOMProps, DOMRef, GlobalDOMAttributes} from '@react-types/shared';
 import ArrowCurved from '@react-spectrum/s2/icons/ArrowCurved';
+import {
+  baseColor,
+  centerPadding,
+  focusRing,
+  style
+} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {ButtonProps, Button as RACButton} from 'react-aria-components/Button';
 import {CenterBaseline} from '@react-spectrum/s2/CenterBaseline';
-import {centerPadding, focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {createContext, forwardRef, ReactNode, useContext} from 'react';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {IconContext} from '@react-spectrum/s2/Icon';
 import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
 import {pressScale} from '@react-spectrum/s2';
 import {Provider, SlotProps} from 'react-aria-components/slots';
-import {StyleString} from './types';
+import {StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {useDOMRef} from './useDOMRef';
 import {useLocale} from 'react-aria/I18nProvider';
 
@@ -37,15 +42,17 @@ const controlSizeM = {
 
 export interface MessageSuggestionProps extends Omit<
   ButtonProps,
-  'style' | 'className' | 'isPending' | 'isDisabled'
+  'style' | 'className' | 'isPending' | 'isDisabled' | 'render' | keyof GlobalDOMAttributes
 > {
   /** The text content of the suggestion. */
   children: ReactNode;
-  /** The size of the MessageSuggestion. */
-  size?: 'S' | 'M' | 'L' | 'XL';
   /**
-   * Spectrum-defined styles, returned by the `style()` macro.
+   * The size of the MessageSuggestion.
+   *
+   * @default 'M'
    */
+  size?: 'S' | 'M' | 'L' | 'XL';
+  /** Spectrum-defined styles, returned by the `style()` macro. */
   styles?: StyleString;
 }
 
@@ -79,14 +86,12 @@ const suggestionStyles = style<{
       XL: 'body-xl'
     }
   },
-  backgroundColor: {
-    default: 'gray-100',
-    isHovered: 'gray-200',
-    isPressed: 'gray-300'
-  },
+  backgroundColor: baseColor('gray-100'),
   color: 'neutral',
   borderStyle: 'none',
   disableTapHighlight: true,
+  transition: 'default',
+  textAlign: 'start',
   ...focusRing()
 });
 
@@ -105,6 +110,7 @@ export const MessageSuggestion = forwardRef(function MessageSuggestion(
   let {groupSize} = useContext(MessageSuggestionContext);
   size = groupSize ? groupSize : size;
 
+  // oxlint-disable react/react-compiler
   return (
     <RACButton
       {...filterDOMProps(props, {labelable: true})}
@@ -134,6 +140,7 @@ export const MessageSuggestion = forwardRef(function MessageSuggestion(
       </Provider>
     </RACButton>
   );
+  // oxlint-enable react/react-compiler
 });
 
 export interface MessageSuggestionListProps extends DOMProps, AriaLabelingProps, SlotProps {

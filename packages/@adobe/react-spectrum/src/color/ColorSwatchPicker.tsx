@@ -77,6 +77,7 @@ export const ColorSwatchPicker = forwardRef(function ColorSwatchPicker(
           }
         })({density})
       }>
+      {/* oxlint-disable-next-line react/react-compiler */}
       <SpectrumColorSwatchContext.Provider value={{useWrapper, size, rounding}}>
         {props.children}
       </SpectrumColorSwatchContext.Provider>

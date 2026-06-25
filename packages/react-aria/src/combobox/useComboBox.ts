@@ -217,13 +217,13 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(
           } else if (collectionItem?.props.onAction) {
             collectionItem.props.onAction();
             state.close();
-            return {shouldPreventDefault: false};
+            return {shouldPreventDefault: false, shouldContinuePropagation: true};
           }
         }
         if (state.isOpen) {
           state.commit();
         }
-        return {shouldPreventDefault: false};
+        return {shouldPreventDefault: false, shouldContinuePropagation: true};
       },
       Escape: () => {
         let shouldContinuePropagation = false;
@@ -235,15 +235,19 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(
       },
       ArrowDown: () => {
         state.open('first', 'manual');
+        return {shouldPreventDefault: false};
       },
       ArrowUp: () => {
         state.open('last', 'manual');
+        return {shouldPreventDefault: false};
       },
       ArrowLeft: () => {
         state.selectionManager.setFocusedKey(null);
+        return {shouldPreventDefault: false};
       },
       ArrowRight: () => {
         state.selectionManager.setFocusedKey(null);
+        return {shouldPreventDefault: false};
       }
     }
   });
@@ -290,7 +294,8 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(
           : props.isRequired,
       onChange: state.setInputValue,
       onKeyDown: !isReadOnly
-        ? chain(state.isOpen && collectionProps.onKeyDown, keyboardProps.onKeyDown, props.onKeyDown)
+        ? // oxlint-disable-next-line react/react-compiler
+          chain(state.isOpen && collectionProps.onKeyDown, keyboardProps.onKeyDown, props.onKeyDown)
         : props.onKeyDown,
       onBlur,
       value: state.inputValue,
@@ -481,6 +486,7 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(
       onPressStart,
       isDisabled: isDisabled || isReadOnly
     },
+    // oxlint-disable-next-line react/react-compiler
     inputProps: mergeProps(inputProps, {
       role: 'combobox',
       'aria-expanded': menuTriggerProps['aria-expanded'],
@@ -495,6 +501,7 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(
       spellCheck: 'false'
     }),
     listBoxProps: mergeProps(menuProps, listBoxProps, {
+      onAction: undefined,
       autoFocus: state.focusStrategy || true,
       shouldUseVirtualFocus: true,
       shouldSelectOnPressUp: true,
@@ -531,7 +538,7 @@ function useValueId(depArray: ReadonlyArray<any> = []): string | undefined {
 
   useEffect(() => {
     if (exists && !document.getElementById(id)) {
-      // oxlint-disable-next-line react-hooks-js/set-state-in-effect
+      // oxlint-disable-next-line react/react-compiler
       setExists(false);
     }
   }, [id, exists, lastDeps]);

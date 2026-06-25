@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {chain} from '../utils/chain';
 import {createEventHandler} from './createEventHandler';
 import {
   createKeyboardShortcutHandler,
@@ -44,7 +45,7 @@ export function useKeyboard(props: KeyboardProps): KeyboardResult {
   let onKeyUp;
   if (shortcuts) {
     let shortcutHandler = createKeyboardShortcutHandler(shortcuts);
-    onKeyDown = createEventHandler<ReactKeyboardEvent<any>>(e => {
+    let shortcutOnKeyDown = createEventHandler<ReactKeyboardEvent<any>>(e => {
       // If keyboard event didn't originate from a child of the current target,
       // then it's a React event coming through a portal. We should ignore it.
       if (!nodeContains(e.currentTarget, getEventTarget(e))) {
@@ -59,10 +60,9 @@ export function useKeyboard(props: KeyboardProps): KeyboardResult {
         return;
       }
 
-      props.onKeyDown?.(e);
       shortcutHandler(e);
     });
-    onKeyUp = createEventHandler<ReactKeyboardEvent<any>>(e => {
+    let shortcutOnKeyUp = createEventHandler<ReactKeyboardEvent<any>>(e => {
       // If keyboard event didn't originate from a child of the current target,
       // then it's a React event coming through a portal. We should ignore it.
       if (!nodeContains(e.currentTarget, getEventTarget(e))) {
@@ -76,10 +76,11 @@ export function useKeyboard(props: KeyboardProps): KeyboardResult {
         e.continuePropagation();
         return;
       }
-      props.onKeyUp?.(e);
       // implement shortcut handler on keyup, what should the map be called? or should it be another syntax on shortcuts?
       e.continuePropagation();
     });
+    onKeyDown = props.onKeyDown ? chain(props.onKeyDown, shortcutOnKeyDown) : shortcutOnKeyDown;
+    onKeyUp = props.onKeyUp ? chain(props.onKeyUp, shortcutOnKeyUp) : shortcutOnKeyUp;
   } else {
     onKeyDown = createEventHandler(props.onKeyDown);
     onKeyUp = createEventHandler(props.onKeyUp);

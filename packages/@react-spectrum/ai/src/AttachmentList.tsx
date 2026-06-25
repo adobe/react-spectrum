@@ -10,18 +10,39 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMRef} from '@react-types/shared';
+import {
+  AriaLabelingProps,
+  DOMProps,
+  DOMRef,
+  forwardRefType,
+  GlobalDOMAttributes
+} from '@react-types/shared';
 import {baseColor, focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {BasicHorizontalCard} from './HorizontalCard';
 import {Button} from 'react-aria-components/Button';
 import {CardProps} from '@react-spectrum/s2/Card';
 import Close from '@react-spectrum/s2/icons/Close';
-import {forwardRef, useRef} from 'react';
+import {forwardRef, ReactNode, useRef} from 'react';
 import {iconStyle} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {ImageContext} from '@react-spectrum/s2/Image';
 import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
 import {pressScale} from '@react-spectrum/s2/pressScale';
-import {Tag, TagGroup, TagList} from 'react-aria-components/TagGroup';
+import {ProgressCircle} from '@react-spectrum/s2/ProgressCircle';
+import {StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {
+  Tag,
+  TagGroup,
+  TagGroupProps,
+  TagList,
+  TagListProps,
+  TagProps
+} from 'react-aria-components/TagGroup';
 import {useDOMRef} from './useDOMRef';
+
+interface AttachmentRenderProps {
+  /** The size of the Card. */
+  size: 'XS' | 'S' | 'M' | 'L' | 'XL';
+}
 
 const controlSizeM = {
   default: 32,
@@ -89,6 +110,7 @@ const closeIconStyle = ({size = 'M'}) => {
 
 const CloseButton = function CloseButton(props) {
   let ref = useRef(null);
+  // oxlint-disable react/react-compiler
   return (
     <Button
       {...props}
@@ -101,16 +123,47 @@ const CloseButton = function CloseButton(props) {
       <Close styles={closeIconStyle({size: props.size ?? 'M'})} />
     </Button>
   );
+  // oxlint-enable react/react-compiler
 };
 
-export const AttachmentList = forwardRef(function AttachmentList(
-  props: any,
+export interface AttachmentListProps<T>
+  extends
+    DOMProps,
+    Omit<
+      TagGroupProps,
+      | 'children'
+      | 'selectionMode'
+      | 'defaultSelectedKeys'
+      | 'selectionBehavior'
+      | 'selectedKeys'
+      | 'disallowEmptySelection'
+      | 'escapeKeyBehavior'
+      | 'onSelectionChange'
+      | 'shouldSelectOnPressUp'
+      | 'onAction'
+      | 'render'
+      | 'style'
+      | 'className'
+      | keyof GlobalDOMAttributes
+    >,
+    Pick<TagListProps<T>, 'items' | 'children' | 'dependencies'> {
+  /**
+   * Spectrum-defined styles, returned by the `style()` macro.
+   */
+  styles?: StyleString;
+}
+
+export const AttachmentList = (forwardRef as forwardRefType)(function AttachmentList<T>(
+  props: AttachmentListProps<T>,
   ref: DOMRef<HTMLDivElement>
 ) {
+  let {styles, items, children, dependencies, ...otherProps} = props;
   let domRef = useDOMRef(ref);
   return (
-    <TagGroup {...props} className={props.styles} ref={domRef}>
+    <TagGroup {...otherProps} className={styles} ref={domRef}>
       <TagList
+        items={items}
+        dependencies={dependencies}
         className={style({
           display: 'flex',
           flexDirection: 'row',
@@ -119,39 +172,98 @@ export const AttachmentList = forwardRef(function AttachmentList(
           alignItems: 'center',
           width: 'full'
         })}>
-        {props.children}
+        {children}
       </TagList>
     </TagGroup>
   );
 });
 
+export interface AttachmentProps
+  extends
+    Omit<CardProps, 'styles' | 'UNSAFE_className' | 'UNSAFE_style'>,
+    AriaLabelingProps,
+    Pick<TagProps, 'id' | 'textValue' | 'render'> {
+  /** The children of the Attachment. */
+  children: ReactNode | ((renderProps: AttachmentRenderProps) => ReactNode);
+  uploadProgress?: number;
+  /**
+   * Spectrum-defined styles, returned by the `style()` macro.
+   */
+  styles?: StyleString;
+}
+
+const tagStyles = style({
+  flexShrink: 0,
+  flexGrow: 0,
+  position: 'relative',
+  ...focusRing(),
+  borderRadius: 'default'
+});
+
 export const Attachment = forwardRef(function Attachment(
-  props: CardProps & AriaLabelingProps,
+  props: AttachmentProps,
   ref: DOMRef<HTMLDivElement>
 ) {
   let {
+    id,
     textValue,
     'aria-label': ariaLabel,
     'aria-labelledby': ariaLabelledby,
     'aria-describedby': ariaDescribedby,
+    styles,
     ...otherProps
   } = props;
   let domRef = useDOMRef(ref);
   return (
     <Tag
+      id={id}
       textValue={textValue}
       aria-label={ariaLabel}
       aria-labelledby={ariaLabelledby}
       aria-describedby={ariaDescribedby}
       ref={domRef}
-      className={style({
-        flexShrink: 0,
-        flexGrow: 0,
-        position: 'relative',
-        ...focusRing(),
-        borderRadius: 'default'
-      })}>
-      <BasicHorizontalCard {...otherProps}>{props.children}</BasicHorizontalCard>
+      className={renderProps => mergeStyles(tagStyles({...renderProps}), styles)}>
+      <BasicHorizontalCard {...otherProps}>
+        {props.uploadProgress != null && props.uploadProgress < 100 && (
+          <div
+            className={style({
+              position: 'absolute',
+              top: '50%',
+              insetStart: {
+                default: '50%',
+                ':has(~ [data-slot=content])': 32
+              },
+              transform: 'translate(-50%, -50%)'
+            })}>
+            <ProgressCircle aria-label="Uploading" value={props.uploadProgress} size="S" />
+          </div>
+        )}
+        {/* Reduce opacity of the thumbnail if upload is in progress */}
+        <ImageContext.Consumer>
+          {ctx => (
+            <ImageContext.Provider
+              value={{
+                ...ctx,
+                slots: {
+                  thumbnail: {
+                    ...(ctx && 'slots' in ctx ? ctx.slots?.thumbnail : {}),
+                    styles: mergeStyles(
+                      ctx && 'slots' in ctx ? ctx.slots?.thumbnail?.styles : undefined,
+                      style({
+                        opacity: {default: 1, isUploading: 0.15},
+                        transition: 'default'
+                      })({isUploading: props.uploadProgress != null && props.uploadProgress < 100})
+                    )
+                  }
+                }
+              }}>
+              {typeof props.children === 'function'
+                ? props.children({size: otherProps.size || 'M'})
+                : props.children}
+            </ImageContext.Provider>
+          )}
+        </ImageContext.Consumer>
+      </BasicHorizontalCard>
       {/** Definitely not a close button, though looks like one. */}
       <div
         className={style({

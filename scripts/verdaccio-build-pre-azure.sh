@@ -7,7 +7,6 @@ mkdir -p $verdaccio_path/publish-stats
 cp -r /tmp/$verdaccio_path/webpack-4/publish-stats/webpack-4-build-stats.txt ./
 cp -r /tmp/$verdaccio_path/next/publish-stats/publish.json ./
 cp -r /tmp/$verdaccio_path/next/publish-stats/next-build-stats.txt ./
-cp -r /tmp/$verdaccio_path/rsp-cra-18/publish-stats/build-stats.txt ./
 
 echo 'compare sizes'
 # Compare the size of the built app and the published packages.
