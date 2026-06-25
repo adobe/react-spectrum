@@ -618,8 +618,20 @@ export function useSelectableCollection(
         }
       }
 
+      let visitedKeys = new Set<Key>();
+
       while (focusedKey != null && !manager.canSelectItem(focusedKey)) {
-        focusedKey = delegate.getKeyBelow?.(focusedKey) ?? null;
+        if (visitedKeys.has(focusedKey)) {
+          break;
+        }
+        visitedKeys.add(focusedKey);
+
+        let nextKey = delegate.getKeyBelow?.(focusedKey) ?? null;
+
+        if (nextKey == null || nextKey === focusedKey) {
+          break;
+        }
+        focusedKey = nextKey;
       }
 
       manager.setFocused(true);
