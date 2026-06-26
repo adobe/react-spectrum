@@ -11,8 +11,6 @@
  */
 
 import {AriaMeterProps, useMeter} from 'react-aria/useMeter';
-import {useNumberFormatter} from 'react-aria/useNumberFormatter';
-
 import {clamp} from 'react-stately/private/utils/number';
 import {
   ClassNameOrFunction,

@@ -11,8 +11,6 @@
  */
 
 import {AriaProgressBarProps, useProgressBar} from 'react-aria/useProgressBar';
-import {useNumberFormatter} from 'react-aria/useNumberFormatter';
-
 import {clamp} from 'react-stately/private/utils/number';
 import {
   ClassNameOrFunction,
@@ -67,8 +65,6 @@ export interface ProgressBarRenderProps {
 export const ProgressBarContext =
   createContext<ContextValue<ProgressBarProps, HTMLDivElement>>(null);
 
-const DEFAULT_FORMAT_OPTIONS: Intl.NumberFormatOptions = {style: 'percent'};
-
 /**
  * Progress bars show either determinate or indeterminate progress of an operation
  * over time.
@@ -86,7 +82,7 @@ export const ProgressBar = forwardRef(function ProgressBar(
 
   let range = maxValue - minValue;
   // Calculate the width of the progress bar as a percentage
-  let percentage = undefined;
+  let percentage: number | undefined = undefined;
   if (!isIndeterminate) {
     if (range === 0) {
       percentage = 0;
