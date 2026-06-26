@@ -186,10 +186,6 @@ export function useToggle(
     isDisabled: isDisabled || isReadOnly
   });
 
-  // Let the hidden input handle keyboard events natively so Enter can
-  // submit forms like a native checkbox/switch control.
-  delete labelProps.onKeyDown;
-
   let {focusableProps} = useFocusable(props, ref);
   let interactions = mergeProps(pressProps, focusableProps);
   let domProps = filterDOMProps(props, {labelable: true});
