@@ -56,13 +56,29 @@ describe('Popover', () => {
     expect(dialog).toBeInTheDocument();
     expect(dialog.closest('.react-aria-Popover')).toHaveAttribute('data-trigger', 'DialogTrigger');
 
-    let popover = dialog.closest('.react-aria-Popover');
     expect(button).toHaveAttribute('aria-controls');
-    expect(popover).toHaveAttribute('id', button.getAttribute('aria-controls'));
+    expect(dialog).toHaveAttribute('id', button.getAttribute('aria-controls'));
 
     await user.click(document.body);
 
     expect(dialog).not.toBeInTheDocument();
+  });
+
+  it('applies overlay id to standalone popover', async () => {
+    let {getByRole} = render(
+      <DialogTrigger>
+        <Button />
+        <Popover aria-label="Popover">Popover content</Popover>
+      </DialogTrigger>
+    );
+
+    let button = getByRole('button');
+    await user.click(button);
+
+    let dialog = getByRole('dialog');
+    expect(dialog).toBeInTheDocument();
+    expect(button).toHaveAttribute('aria-controls');
+    expect(dialog).toHaveAttribute('id', button.getAttribute('aria-controls'));
   });
 
   it('should handle focus', async () => {

@@ -98,7 +98,7 @@ export function DialogTrigger(props: DialogTriggerProps): JSX.Element {
       values={[
         [OverlayTriggerStateContext, state],
         [RootMenuTriggerStateContext, state],
-        [DialogContext, {...overlayProps, id: undefined}],
+        [DialogContext, overlayProps],
         [
           PopoverContext,
           {

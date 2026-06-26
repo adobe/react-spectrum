@@ -319,6 +319,7 @@ function PopoverInner({
     <dom.div
       {...mergeProps(filterDOMProps(props, {global: true}), popoverProps)}
       {...renderProps}
+      id={isDialog ? props.id : undefined}
       role={isDialog ? 'dialog' : undefined}
       tabIndex={isDialog ? -1 : undefined}
       aria-label={props['aria-label']}
