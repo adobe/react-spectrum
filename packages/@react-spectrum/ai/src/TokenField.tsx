@@ -26,7 +26,16 @@ import {getOwnerDocument} from 'react-aria/private/utils/domHelpers';
 import {isMac} from 'react-aria/private/utils/platform';
 import {mergeProps} from 'react-aria/mergeProps';
 import {mergeRefs} from 'react-aria/mergeRefs';
-import React, {ForwardedRef, forwardRef, HTMLAttributes, useMemo, useRef, useState} from 'react';
+import React, {
+  ForwardedRef,
+  forwardRef,
+  HTMLAttributes,
+  memo,
+  useCallback,
+  useMemo,
+  useRef,
+  useState
+} from 'react';
 import {RenderProps, StyleRenderProps, useRenderProps} from 'react-aria-components/useRenderProps';
 import {SlotProps, useSlottedContext} from 'react-aria-components/slots';
 import {useControlledState} from 'react-stately/useControlledState';
@@ -103,43 +112,84 @@ export const TokenField = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
   let dropPosition = useRef<Position | null>(null);
   let transferredData = useRef<TokenFieldSegment[] | null>(null);
 
+  let nextValue = useRef<TokenSegmentList | null>(null);
   let apply = (fn: (value: TokenSegmentList) => TokenSegmentList) => {
     setState(value => {
       let newValue = fn(value);
+      nextValue.current = newValue;
       onAutocompleteChange?.(newValue.toString());
       return newValue;
     });
   };
 
+  // Composition events are not cancelable. The browser will mutate the DOM, making it out of sync with React.
+  // To account for this, we prevent React from re-rendering during composition, and track DOM mutations performed
+  // by the browser. When composition ends, we revert the DOM to its original state, and re-render with React.
+  // Mutating the DOM in any way during composition breaks the IME, causing composition to end unexpectedly.
+  // During composition, we still emit updates via onChange to ensure that things like autocomplete work,
+  // but we don't actually re-render to the DOM unless the value changes from what we expect (e.g. inserting a completion).
+  let [isComposing, setComposing] = useState(false);
+  let mutationTracker = useMutationTracker(ref);
+  let startComposition = useCallback(() => {
+    mutationTracker.start();
+    setComposing(true);
+  }, [mutationTracker]);
+  let stopComposition = useCallback(() => {
+    mutationTracker.stop();
+    setComposing(false);
+  }, [mutationTracker]);
+
+  useEvent(ref, 'compositionstart', () => {
+    startComposition();
+
+    let range = window.getSelection()?.getRangeAt(0);
+    if (range) {
+      let [start, end] = rangeToPositions(ref.current!, range);
+
+      // Normalize the range to ensure it is not inside a token, otherwise the browser
+      // will attempt to insert the composed text into the token instead of replacing it.
+      let r = createDOMRange(ref.current!, start, end);
+      if (r.startContainer !== range.startContainer || r.startOffset !== range.startOffset) {
+        range.setStart(r.startContainer, r.startOffset);
+      }
+      if (r.endContainer !== range.endContainer || r.endOffset !== range.endOffset) {
+        range.setEnd(r.endContainer, r.endOffset);
+      }
+    }
+  });
+
+  useEvent(ref, 'compositionend', stopComposition);
+
+  // If a prop update occurs during composition that doesn't match the expected value,
+  // end composition and re-render the controlled value.
+  useLayoutEffect(() => {
+    if (isComposing && state !== nextValue.current) {
+      stopComposition();
+    }
+    nextValue.current = state;
+  });
+
   let caretPosition = useRef<Position | null>(null);
   useLayoutEffect(() => {
-    // Only move the caret when the field is already focused.
     if (
       ref.current &&
       state.caretPosition &&
-      state.caretPosition !== caretPosition.current &&
-      ref.current === getActiveElement(getOwnerDocument(ref.current))
+      !isComposing &&
+      state.caretPosition !== caretPosition.current
     ) {
-      setCursor(ref.current, state.caretPosition);
+      // Only move the caret when the field is already focused.
+      if (ref.current === getActiveElement(getOwnerDocument(ref.current))) {
+        setCursor(ref.current, state.caretPosition);
+      }
+      caretPosition.current = state.caretPosition;
     }
-
-    caretPosition.current = state.caretPosition;
   });
-
-  let mutationTracker = useMutationTracker(ref);
-  let compositionStart = useRef<[Position, Position] | null>(null);
 
   // Handle text editing commands and prevent browser default behavior.
   useEvent(ref, 'beforeinput', e => {
     // Android sometimes doesn't fire a compositionend event before a regular input event.
-    if (compositionStart.current && !e.isComposing) {
-      mutationTracker.stop();
-      compositionStart.current = null;
-    }
-
-    // Ignore events during composition.
-    if (e.isComposing) {
-      return;
+    if (isComposing && !e.isComposing) {
+      stopComposition();
     }
 
     let selection = window.getSelection();
@@ -153,6 +203,8 @@ export const TokenField = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
     switch (e.inputType) {
       case 'insertText':
       case 'insertReplacementText':
+      case 'insertCompositionText':
+      case 'insertFromComposition': // Removed from the spec, but still fired by Safari.
       case 'insertFromPaste':
       case 'insertFromYank':
       case 'insertFromDrop': {
@@ -187,7 +239,10 @@ export const TokenField = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
             start,
             end,
             data,
-            e.inputType === 'insertText' // Don't coalesce paste/drop events with other edits.
+            // Don't coalesce paste/drop events with other edits.
+            e.inputType === 'insertText' ||
+              e.inputType === 'insertCompositionText' ||
+              e.inputType === 'insertFromComposition'
           )
         );
         break;
@@ -214,7 +269,8 @@ export const TokenField = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
       case 'deleteSoftLineForward':
       case 'deleteSoftLineBackward':
       case 'deleteContent':
-      case 'deleteByCut': {
+      case 'deleteByCut':
+      case 'deleteCompositionText': {
         if (!range.collapsed) {
           apply(tokens => tokens.replaceRange(start, end, ''));
           break;
@@ -268,40 +324,6 @@ export const TokenField = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
     e.preventDefault();
   });
 
-  // Composition events are not cancelable, so we need to store the start position and update the value in the compositionend event.
-  useEvent(ref, 'compositionstart', () => {
-    // Track mutations to the DOM during composition so we can undo them in compositionend.
-    mutationTracker.start();
-
-    let range = window.getSelection()?.getRangeAt(0);
-    if (range) {
-      let [start, end] = rangeToPositions(ref.current!, range);
-      compositionStart.current = [start, end];
-
-      // Normalize the range to ensure it is not inside a token, otherwise the browser
-      // will attempt to insert the composed text into the token instead of replacing it.
-      let r = createDOMRange(ref.current!, start, end);
-      if (r.startContainer !== range.startContainer || r.startOffset !== range.startOffset) {
-        range.setStart(r.startContainer, r.startOffset);
-      }
-      if (r.endContainer !== range.endContainer || r.endOffset !== range.endOffset) {
-        range.setEnd(r.endContainer, r.endOffset);
-      }
-    }
-  });
-
-  useEvent(ref, 'compositionend', e => {
-    // Undo all DOM mutations that occurred during composition so that it
-    // matches React's virtual dom, then re-apply the update to React state.
-    mutationTracker.stop();
-
-    let range = compositionStart.current;
-    if (range) {
-      compositionStart.current = null;
-      apply(tokens => tokens.replaceRange(range[0], range[1], e.data || ''));
-    }
-  });
-
   let writeClipboardData = (e: ClipboardEvent | DragEvent) => {
     if ('clipboardData' in e) {
       e.preventDefault();
@@ -351,7 +373,7 @@ export const TokenField = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
   });
 
   useSelectionChange(ref, () => {
-    if (compositionStart.current) {
+    if (isComposing) {
       return;
     }
 
@@ -431,9 +453,16 @@ export const TokenField = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
   let wordModKey = isMac() ? 'Alt' : 'Control';
   let shortcuts: Record<string, () => boolean | void> = {
     [`${mod}+z`]: () => {
+      // If composing, the browser handles undo natively.
+      if (isComposing) {
+        return false;
+      }
       apply(state => state.undo());
     },
     [isMac() ? 'Shift+Meta+z' : 'Control+y']: () => {
+      if (isComposing) {
+        return false;
+      }
       apply(state => state.redo());
     },
     ArrowLeft: () => {
@@ -550,25 +579,27 @@ export const TokenField = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
       data-disabled={isDisabled || undefined}
       data-readonly={isReadOnly || undefined}
       style={{...renderProps.style, whiteSpace: 'pre-wrap'}}>
-      {state.segments.map((v, i) => {
-        switch (v.type) {
-          case 'token': {
-            let token = children(v);
-            return (
-              // Wrap tokens in zero-width spaces so the cursor is placed correctly.
-              <span key={i}>
-                {'\u200b'}
-                {token}
-                {'\u200b'}
-              </span>
-            );
+      <CompositionRenderBlocker isComposing={isComposing}>
+        {state.segments.map((v, i) => {
+          switch (v.type) {
+            case 'token': {
+              let token = children(v);
+              return (
+                // Wrap tokens in zero-width spaces so the cursor is placed correctly.
+                <span key={i}>
+                  {'\u200b'}
+                  {token}
+                  {'\u200b'}
+                </span>
+              );
+            }
+            case 'text':
+              return v.text;
           }
-          case 'text':
-            return v.text;
-        }
-      })}
-      {/* Force cursor to the next line if the last segment ends with a newline. */}
-      {state.segments.at(-1)?.text.endsWith('\n') && <br />}
+        })}
+        {/* Force cursor to the next line if the last segment ends with a newline. */}
+        {state.segments.at(-1)?.text.endsWith('\n') && <br />}
+      </CompositionRenderBlocker>
     </div>
   );
 });
@@ -669,6 +700,7 @@ function getPosition(container: Element, node: Node, offset: number): Position {
   if (node.nodeType === Node.ELEMENT_NODE) {
     let tokenNode = node.childNodes[1];
     let atEnd: boolean;
+    let endOffset = 0;
     if (originalNode === tokenNode) {
       // Cursor is inside the token.
       atEnd = offset > 0;
@@ -678,6 +710,9 @@ function getPosition(container: Element, node: Node, offset: number): Position {
     } else {
       // Cursor is on one of the zero width spaces.
       atEnd = originalNode !== tokenNode.previousSibling;
+      // If the offset is greater than 1, the browser is trying to insert text into
+      // the zero width space node. This will actually end up in the next text node.
+      endOffset = atEnd && offset > 1 ? offset - 1 : 0;
     }
 
     offset = atEnd ? (tokenNode?.textContent?.length ?? 0) : 0;
@@ -689,7 +724,7 @@ function getPosition(container: Element, node: Node, offset: number): Position {
       offset = node.previousSibling?.textContent?.length ?? 0;
     } else if (atEnd) {
       index++;
-      offset = 0;
+      offset = endOffset;
     }
   }
   return {index, offset};
@@ -807,17 +842,20 @@ function useMutationTracker(ref: React.RefObject<Element | null>) {
     []
   );
 
-  return {
-    start() {
-      // Android sometimes fires two compositionstart events in a row, without a compositionend.
-      // In that case, reuse the existing tracker.
-      mutationTracker.current ||= trackMutations(ref.current!);
-    },
-    stop() {
-      mutationTracker.current?.();
-      mutationTracker.current = null;
-    }
-  };
+  return useMemo(
+    () => ({
+      start() {
+        // Android sometimes fires two compositionstart events in a row, without a compositionend.
+        // In that case, reuse the existing tracker.
+        mutationTracker.current ||= trackMutations(ref.current!);
+      },
+      stop() {
+        mutationTracker.current?.();
+        mutationTracker.current = null;
+      }
+    }),
+    [ref]
+  );
 }
 
 // Tracks mutations to the DOM until the returned function is called,
@@ -856,3 +894,10 @@ function trackMutations(element: Element) {
     }
   };
 }
+
+// Prevents React from re-rendering during composition events.
+const CompositionRenderBlocker = memo(
+  ({children}: {children: React.ReactNode; isComposing: boolean}) => children,
+  (prevProps, nextProps) =>
+    nextProps.isComposing ? true : prevProps.children === nextProps.children
+);
