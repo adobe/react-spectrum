@@ -132,7 +132,6 @@ export function useRadio(
     }
   });
 
-
   let {focusableProps} = useFocusable(
     mergeProps(props, {
       onFocus: () => state.setLastFocusedValue(value)
