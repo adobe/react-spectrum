@@ -105,6 +105,7 @@ export function DialogTrigger(props: DialogTriggerProps): JSX.Element {
           {
             trigger: 'DialogTrigger',
             triggerRef: buttonRef,
+            id: overlayProps.id,
             'aria-labelledby': overlayProps['aria-labelledby']
           }
         ]

@@ -140,6 +140,7 @@ export interface PopoverRenderProps {
 }
 
 interface PopoverContextValue extends PopoverProps {
+  id?: string;
   /** Contexts to clear. */
   clearContexts?: Context<any>[];
 }
@@ -205,6 +206,7 @@ interface PopoverInnerProps extends AriaPopoverProps, RenderProps<PopoverRenderP
   trigger?: string;
   dir?: 'ltr' | 'rtl';
   clearContexts?: Context<any>[];
+  id?: string;
 }
 
 function PopoverInner({
@@ -318,6 +320,7 @@ function PopoverInner({
     <dom.div
       {...mergeProps(filterDOMProps(props, {global: true}), popoverProps)}
       {...renderProps}
+      id={isDialog ? props.id : undefined}
       role={isDialog ? 'dialog' : undefined}
       tabIndex={isDialog ? -1 : undefined}
       aria-label={props['aria-label']}
