@@ -390,6 +390,7 @@ describeOrSkip('TokenField IME composition (Android)', () => {
     function Harness() {
       let [value, setValue] = React.useState(() => segments(text('')));
       valueRef.current = value;
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       setValueExternal = setValue;
       return (
         <TokenField value={value} onChange={setValue} aria-label="completion-field">
