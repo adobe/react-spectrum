@@ -1086,7 +1086,7 @@ describe('ComboBox', () => {
           <Button>{'<'}</Button>
           <Popover>
             <ListBox>
-              {(item) => {
+              {item => {
                 return <ListBoxItem id={item.id}>{item.name}</ListBoxItem>;
               }}
             </ListBox>
@@ -1122,23 +1122,24 @@ describe('ComboBox', () => {
 
     function AsyncComboBox() {
       let list = useAsyncList({
-        getKey: (item) => item.id,
+        getKey: item => item.id,
         async load({filterText}) {
           let rows = itemsForFilterText(filterText);
-          await new Promise((resolve) => setTimeout(resolve, ASYNC_DELAY_MS));
+          await new Promise(resolve => setTimeout(resolve, ASYNC_DELAY_MS));
           return {items: rows};
         }
       });
 
       return (
-        <ComboBox items={list.items} inputValue={list.filterText} onInputChange={list.setFilterText}>
+        <ComboBox
+          items={list.items}
+          inputValue={list.filterText}
+          onInputChange={list.setFilterText}>
           <Label>SW Characters</Label>
           <Input />
           <Button>{'<'}</Button>
           <Popover>
-            <ListBox>
-              {(item) => <ListBoxItem id={item.id}>{item.name}</ListBoxItem>}
-            </ListBox>
+            <ListBox>{item => <ListBoxItem id={item.id}>{item.name}</ListBoxItem>}</ListBox>
           </Popover>
         </ComboBox>
       );
@@ -1190,10 +1191,10 @@ describe('ComboBox', () => {
 
     function CollectionComboBox() {
       let list = useAsyncList({
-        getKey: (item) => item.id,
+        getKey: item => item.id,
         async load({filterText}) {
           let rows = itemsForFilterText(filterText);
-          await new Promise((resolve) => setTimeout(resolve, ASYNC_DELAY_MS));
+          await new Promise(resolve => setTimeout(resolve, ASYNC_DELAY_MS));
           return {items: rows};
         }
       });
@@ -1205,7 +1206,7 @@ describe('ComboBox', () => {
           <Button>{'<'}</Button>
           <Popover>
             <ListBox items={list.items}>
-              {(item) => <ListBoxItem id={item.id}>{item.name}</ListBoxItem>}
+              {item => <ListBoxItem id={item.id}>{item.name}</ListBoxItem>}
             </ListBox>
           </Popover>
         </ComboBox>
@@ -1252,15 +1253,13 @@ describe('ComboBox', () => {
     let items = [{id: 1, name: 'Luke Skywalker'}];
     function ControlledComboBox() {
       return (
-        <ComboBox
-          defaultItems={items}
-          onOpenChange={onOpenChange}>
+        <ComboBox defaultItems={items} onOpenChange={onOpenChange}>
           <Label>SW Characters</Label>
           <Input />
           <Button>{'<'}</Button>
           <Popover>
             <ListBox>
-              {(item) => {
+              {item => {
                 return <ListBoxItem id={item.id}>{item.name}</ListBoxItem>;
               }}
             </ListBox>
@@ -1303,7 +1302,7 @@ describe('ComboBox', () => {
           <Button>{'<'}</Button>
           <Popover>
             <ListBox>
-              {(item) => {
+              {item => {
                 return <ListBoxItem id={item.id}>{item.name}</ListBoxItem>;
               }}
             </ListBox>

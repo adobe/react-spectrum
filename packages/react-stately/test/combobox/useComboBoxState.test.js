@@ -367,15 +367,19 @@ describe('useComboBoxState tests', function () {
       let onOpenChange = jest.fn();
       let initialProps = {
         items: [{id: 1, name: 'Luke Skywalker'}],
-        children: (props) => <Item>{props.name}</Item>,
+        children: props => <Item>{props.name}</Item>,
         onOpenChange
       };
 
-      let {result, rerender} = renderHook((props) => useComboBoxState(props), {initialProps});
+      let {result, rerender} = renderHook(props => useComboBoxState(props), {initialProps});
 
       // Focus and open the menu by setting input value
-      act(() => {result.current.setFocused(true);});
-      act(() => {result.current.open(null, 'input');});
+      act(() => {
+        result.current.setFocused(true);
+      });
+      act(() => {
+        result.current.open(null, 'input');
+      });
       expect(result.current.isOpen).toBe(true);
 
       // Simulate async load returning empty results (e.g. user typed "luka")
@@ -395,15 +399,19 @@ describe('useComboBoxState tests', function () {
       let onOpenChange = jest.fn();
       let initialProps = {
         items: [{id: 1, name: 'Luke Skywalker'}],
-        children: (props) => <Item>{props.name}</Item>,
+        children: props => <Item>{props.name}</Item>,
         onOpenChange
       };
 
-      let {result, rerender} = renderHook((props) => useComboBoxState(props), {initialProps});
+      let {result, rerender} = renderHook(props => useComboBoxState(props), {initialProps});
 
       // Focus and open
-      act(() => {result.current.setFocused(true);});
-      act(() => {result.current.open(null, 'input');});
+      act(() => {
+        result.current.setFocused(true);
+      });
+      act(() => {
+        result.current.open(null, 'input');
+      });
       expect(result.current.isOpen).toBe(true);
 
       // Async returns empty, menu auto-closes
@@ -411,7 +419,9 @@ describe('useComboBoxState tests', function () {
       expect(result.current.isOpen).toBe(false);
 
       // User presses Escape (revert) while menu is closed
-      act(() => {result.current.revert();});
+      act(() => {
+        result.current.revert();
+      });
 
       // Async returns items — menu should NOT re-open because user explicitly dismissed
       rerender({...initialProps, items: [{id: 1, name: 'Luke Skywalker'}]});
@@ -423,20 +433,26 @@ describe('useComboBoxState tests', function () {
       let contains = (a, b) => a.toLowerCase().includes(b.toLowerCase());
       let initialProps = {
         defaultItems: [{id: 1, name: 'Luke Skywalker'}],
-        children: (props) => <Item>{props.name}</Item>,
+        children: props => <Item>{props.name}</Item>,
         onOpenChange,
         defaultFilter: contains
       };
 
-      let {result} = renderHook((props) => useComboBoxState(props), {initialProps});
+      let {result} = renderHook(props => useComboBoxState(props), {initialProps});
 
       // Focus and open
-      act(() => {result.current.setFocused(true);});
-      act(() => {result.current.open(null, 'input');});
+      act(() => {
+        result.current.setFocused(true);
+      });
+      act(() => {
+        result.current.open(null, 'input');
+      });
       expect(result.current.isOpen).toBe(true);
 
       // Type something that filters to zero results
-      act(() => {result.current.setInputValue('zzz');});
+      act(() => {
+        result.current.setInputValue('zzz');
+      });
       // Menu should close because items are uncontrolled and filtered to empty
       expect(result.current.isOpen).toBe(false);
     });
