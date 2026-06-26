@@ -264,15 +264,14 @@ export function useGridCell<T, C extends GridCollection<T>>(
     }
 
     if (focusMode === 'child') {
-      // Wrap in requestAnimationFrame to ensure real browsers have fully
-      // updated document.activeElement after focus propagation completes.
-      requestAnimationFrame(() => {
-        let activeElement = getActiveElement();
-        if (ref.current && isFocusWithin(ref.current) && activeElement !== ref.current) {
-          return;
-        }
-        focus();
-      });
+      // If the cell itself is focused, verify the active element state
+      // before determining if focus needs to fallback to a child element.
+      let activeElement = getActiveElement();
+      if (ref.current && isFocusWithin(ref.current) && activeElement !== ref.current) {
+        return;
+      }
+
+      focus();
     }
   };
 
