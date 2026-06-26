@@ -1100,14 +1100,14 @@ describe('ComboBox', () => {
     await user.tab();
     await user.keyboard('{ArrowDown}');
     expect(onOpenChange).toHaveBeenCalledTimes(1);
-    expect(comboboxTester.listbox).toBeVisible();
+    expect(comboboxTester.getListbox()).toBeVisible();
     onOpenChange.mockClear();
 
     await user.keyboard('L');
     expect(queryByRole('listbox')).toBeNull();
 
     await user.keyboard('{Backspace}');
-    expect(comboboxTester.listbox).toBeVisible();
+    expect(comboboxTester.getListbox()).toBeVisible();
   });
 
   it('should re-open the menu with useAsyncList after an empty async result then backspace', async () => {
@@ -1157,9 +1157,9 @@ describe('ComboBox', () => {
     await act(async () => {
       jest.runAllTimers();
     });
-    expect(comboboxTester.listbox).toBeVisible();
+    expect(comboboxTester.getListbox()).toBeVisible();
     expect(
-      within(comboboxTester.listbox).getByRole('option', {name: 'Luke Skywalker'})
+      within(comboboxTester.getListbox()).getByRole('option', {name: 'Luke Skywalker'})
     ).toBeInTheDocument();
 
     await user.keyboard('luka');
@@ -1173,9 +1173,9 @@ describe('ComboBox', () => {
     await act(async () => {
       jest.runAllTimers();
     });
-    expect(comboboxTester.listbox).toBeVisible();
+    expect(comboboxTester.getListbox()).toBeVisible();
     expect(
-      within(comboboxTester.listbox).getByRole('option', {name: 'Luke Skywalker'})
+      within(comboboxTester.getListbox()).getByRole('option', {name: 'Luke Skywalker'})
     ).toBeInTheDocument();
   });
 
@@ -1225,9 +1225,9 @@ describe('ComboBox', () => {
     await act(async () => {
       jest.runAllTimers();
     });
-    expect(comboboxTester.listbox).toBeVisible();
+    expect(comboboxTester.getListbox()).toBeVisible();
     expect(
-      within(comboboxTester.listbox).getByRole('option', {name: 'Luke Skywalker'})
+      within(comboboxTester.getListbox()).getByRole('option', {name: 'Luke Skywalker'})
     ).toBeInTheDocument();
 
     await user.keyboard('luka');
@@ -1241,9 +1241,9 @@ describe('ComboBox', () => {
     await act(async () => {
       jest.runAllTimers();
     });
-    expect(comboboxTester.listbox).toBeVisible();
+    expect(comboboxTester.getListbox()).toBeVisible();
     expect(
-      within(comboboxTester.listbox).getByRole('option', {name: 'Luke Skywalker'})
+      within(comboboxTester.getListbox()).getByRole('option', {name: 'Luke Skywalker'})
     ).toBeInTheDocument();
   });
 
@@ -1273,7 +1273,7 @@ describe('ComboBox', () => {
     await user.tab();
     await user.keyboard('{ArrowDown}');
     expect(onOpenChange).toHaveBeenCalledTimes(1);
-    expect(comboboxTester.listbox).toBeVisible();
+    expect(comboboxTester.getListbox()).toBeVisible();
     onOpenChange.mockClear();
 
     await user.keyboard('Z');
@@ -1316,7 +1316,7 @@ describe('ComboBox', () => {
     await user.tab();
     await user.keyboard('{ArrowDown}');
     expect(onOpenChange).toHaveBeenCalledTimes(1);
-    expect(comboboxTester.listbox).toBeVisible();
+    expect(comboboxTester.getListbox()).toBeVisible();
     onOpenChange.mockClear();
 
     await user.keyboard('L');
