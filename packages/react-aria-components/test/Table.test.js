@@ -289,6 +289,40 @@ let TabModeTable = ({actionCellProps = {}, ...tableProps}) => (
   </Table>
 );
 
+let ArrowModeTable = ({cellProps = {}, ...tableProps}) => (
+  <Table aria-label="Arrow mode table" {...tableProps}>
+    <TableHeader>
+      <Column isRowHeader>Name</Column>
+      <Column>Col 2</Column>
+      <Column>Col 3</Column>
+    </TableHeader>
+    <TableBody>
+      <Row id="1" textValue="Row 1">
+        <Cell>Row 1</Cell>
+        <Cell {...cellProps}>
+          <button aria-label="R1C2 first">first</button>
+          <button aria-label="R1C2 last">last</button>
+        </Cell>
+        <Cell {...cellProps}>
+          <button aria-label="R1C3 first">first</button>
+          <button aria-label="R1C3 last">last</button>
+        </Cell>
+      </Row>
+      <Row id="2" textValue="Row 2">
+        <Cell>Row 2</Cell>
+        <Cell {...cellProps}>
+          <button aria-label="R2C2 first">first</button>
+          <button aria-label="R2C2 last">last</button>
+        </Cell>
+        <Cell {...cellProps}>
+          <button aria-label="R2C3 first">first</button>
+          <button aria-label="R2C3 last">last</button>
+        </Cell>
+      </Row>
+    </TableBody>
+  </Table>
+);
+
 let DraggableTable = props => {
   let {dragAndDropHooks} = useDragAndDrop({
     getItems: keys => [...keys].map(key => ({'text/plain': key})),
@@ -3773,6 +3807,77 @@ describe('Table', () => {
 
         await user.tab({shift: true});
         expect(document.activeElement).toBe(document.body);
+      });
+    });
+  });
+
+  describe('cells with focusable children in arrow navigation mode', () => {
+    it('default focusMode: ArrowRight crosses from last child to first child of next cell, ArrowLeft reverses', async () => {
+      let {getByRole} = render(<ArrowModeTable />);
+      await user.tab();
+      // Tab → row, ArrowRight×2 → col2 first child (col1 is text-only, focuses cell then crosses)
+      await user.keyboard('{ArrowRight}');
+      await user.keyboard('{ArrowRight}');
+      expect(document.activeElement).toBe(getByRole('button', {name: 'R1C2 first'}));
+      await user.keyboard('{ArrowRight}');
+      expect(document.activeElement).toBe(getByRole('button', {name: 'R1C2 last'}));
+      // ArrowRight from last child crosses into first child of next cell
+      await user.keyboard('{ArrowRight}');
+      expect(document.activeElement).toBe(getByRole('button', {name: 'R1C3 first'}));
+      // ArrowLeft from first child crosses back to last child of previous cell
+      await user.keyboard('{ArrowLeft}');
+      expect(document.activeElement).toBe(getByRole('button', {name: 'R1C2 last'}));
+    });
+
+    describe("focusMode='cell'", () => {
+      it('arrow navigation with focusMode="cell": cell element stays focused on navigate, arrows enter/exit children within cell', async () => {
+        // walker.previousNode() from first child returns cell root → stays on same cell
+        // (contrast with default focusMode="child" which crosses to prev cell's last child)
+        let {getByRole, getAllByRole} = render(<ArrowModeTable cellProps={{focusMode: 'cell'}} />);
+        let rows = getAllByRole('row');
+        let col2Cell = within(rows[1]).getAllByRole('gridcell')[0];
+        let col3Cell = within(rows[1]).getAllByRole('gridcell')[1];
+
+        await user.tab();
+        // ArrowRight×2: row → col1 (text-only, focuses cell) → col2Cell (focusMode='cell' stays on cell element)
+        await user.keyboard('{ArrowRight}');
+        await user.keyboard('{ArrowRight}');
+        expect(document.activeElement).toBe(col2Cell);
+
+        // ArrowRight from cell element enters first child
+        await user.keyboard('{ArrowRight}');
+        expect(document.activeElement).toBe(getByRole('button', {name: 'R1C2 first'}));
+
+        // ArrowRight within cell advances to next child
+        await user.keyboard('{ArrowRight}');
+        expect(document.activeElement).toBe(getByRole('button', {name: 'R1C2 last'}));
+
+        // ArrowLeft within cell retreats to previous child
+        await user.keyboard('{ArrowLeft}');
+        expect(document.activeElement).toBe(getByRole('button', {name: 'R1C2 first'}));
+
+        // ArrowLeft from first child returns to same cell element (not previous cell's last child)
+        await user.keyboard('{ArrowLeft}');
+        expect(document.activeElement).toBe(col2Cell);
+
+        // Navigate forward to reach col3: col2Cell → first → last → col3Cell
+        await user.keyboard('{ArrowRight}');
+        await user.keyboard('{ArrowRight}');
+        // ArrowRight from last child of col2 enters next cell element (not its first child)
+        await user.keyboard('{ArrowRight}');
+        expect(document.activeElement).toBe(col3Cell);
+
+        // ArrowRight from col3Cell enters its first child
+        await user.keyboard('{ArrowRight}');
+        expect(document.activeElement).toBe(getByRole('button', {name: 'R1C3 first'}));
+
+        // ArrowLeft from first child of col3 returns to col3Cell (same cell, not col2)
+        await user.keyboard('{ArrowLeft}');
+        expect(document.activeElement).toBe(col3Cell);
+
+        // ArrowLeft from cell element moves to previous cell element
+        await user.keyboard('{ArrowLeft}');
+        expect(document.activeElement).toBe(col2Cell);
       });
     });
   });
