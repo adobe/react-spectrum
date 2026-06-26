@@ -10,5 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-export type {DraggableCollectionStateOptions, DraggableCollectionState} from '../src/dnd/useDraggableCollectionState';
+export type {
+  DraggableCollectionStateOptions,
+  DraggableCollectionState
+} from '../src/dnd/useDraggableCollectionState';
 export {useDraggableCollectionState} from '../src/dnd/useDraggableCollectionState';

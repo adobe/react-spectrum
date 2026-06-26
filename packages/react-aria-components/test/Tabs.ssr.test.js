@@ -14,7 +14,9 @@ import {screen, testSSR} from '@react-spectrum/test-utils-internal';
 
 describe('Tabs SSR', function () {
   it('should render without errors', async function () {
-    await testSSR(__filename, `
+    await testSSR(
+      __filename,
+      `
       import {Tabs, TabList, Tab, TabPanel, Label} from '../exports/index.ts';
 
       <React.StrictMode>
@@ -29,14 +31,16 @@ describe('Tabs SSR', function () {
           <TabPanel id="3">Right content</TabPanel>
         </Tabs>
       </React.StrictMode>
-    `, () => {
-      // Assert that server rendered stuff into the HTML.
-      let tabs = screen.getAllByRole('tab');
-      expect(tabs.map(o => o.textContent)).toEqual(['Left', 'Middle', 'Right']);
-      let tabpanel = screen.getByRole('tabpanel');
-      expect(tabpanel).toHaveTextContent('Left content');
-      expect(tabpanel).toHaveAttribute('aria-labelledby', tabs[0].id);
-    });
+    `,
+      () => {
+        // Assert that server rendered stuff into the HTML.
+        let tabs = screen.getAllByRole('tab');
+        expect(tabs.map(o => o.textContent)).toEqual(['Left', 'Middle', 'Right']);
+        let tabpanel = screen.getByRole('tabpanel');
+        expect(tabpanel).toHaveTextContent('Left content');
+        expect(tabpanel).toHaveAttribute('aria-labelledby', tabs[0].id);
+      }
+    );
 
     // Assert that hydrated UI matches what we expect.
     let tabs = screen.getAllByRole('tab');

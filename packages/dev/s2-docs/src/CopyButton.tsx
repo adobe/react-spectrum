@@ -7,20 +7,27 @@ import React, {useEffect, useRef, useState} from 'react';
 
 export interface CopyButtonProps {
   /** Text to copy. If not provided, getText will be used. */
-  text?: string,
+  text?: string;
   /** Function returning the text to copy. */
-  getText?: () => string,
+  getText?: () => string;
   /** Accessible label for the button. */
-  ariaLabel?: string,
+  ariaLabel?: string;
   /** Tooltip label shown on hover/focus. */
-  tooltip?: string,
+  tooltip?: string;
   /** Quiet variant. */
-  isQuiet?: boolean,
+  isQuiet?: boolean;
   /** Size of the button. */
-  size?: 'S' | 'M' | 'L'
+  size?: 'S' | 'M' | 'L';
 }
 
-export function CopyButton({text, getText, ariaLabel = 'Copy', tooltip = 'Copy', isQuiet = false, size = 'S'}: CopyButtonProps) {
+export function CopyButton({
+  text,
+  getText,
+  ariaLabel = 'Copy',
+  tooltip = 'Copy',
+  isQuiet = false,
+  size = 'S'
+}: CopyButtonProps) {
   let [isCopied, setIsCopied] = useState(false);
   let timeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -40,12 +47,15 @@ export function CopyButton({text, getText, ariaLabel = 'Copy', tooltip = 'Copy',
     if (!value) {
       return;
     }
-    navigator.clipboard.writeText(value).then(() => {
-      setIsCopied(true);
-      timeout.current = setTimeout(() => setIsCopied(false), 2000);
-    }).catch(() => {
-      ToastQueue.negative('Failed to copy.');
-    });
+    navigator.clipboard
+      .writeText(value)
+      .then(() => {
+        setIsCopied(true);
+        timeout.current = setTimeout(() => setIsCopied(false), 2000);
+      })
+      .catch(() => {
+        ToastQueue.negative('Failed to copy.');
+      });
   };
 
   return (

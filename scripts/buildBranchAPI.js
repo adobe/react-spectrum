@@ -18,7 +18,6 @@ const glob = require('fast-glob');
 const spawn = require('cross-spawn');
 const {parseArgs} = require('util');
 
-
 const args = parseArgs({
   options: {
     verbose: {
@@ -41,9 +40,10 @@ build().catch(err => {
 });
 
 /**
- * Building this will run the docs builder using the apiCheck pipeline in .parcelrc
- * This will generate json containing the visible (API/exposed) type definitions for each package
- * This is run against the current branch by copying the current branch into a temporary directory and building there
+ * Building this will run the docs builder using the apiCheck pipeline in .parcelrc This will
+ * generate json containing the visible (API/exposed) type definitions for each package This is run
+ * against the current branch by copying the current branch into a temporary directory and building
+ * there.
  */
 async function build() {
   let backupDir = tempy.directory();
@@ -51,7 +51,9 @@ async function build() {
   if (args.values.githash) {
     archiveDir = tempy.directory();
     console.log('checking out archive of', args.values.githash, 'into', archiveDir);
-    await run('sh', ['-c', `git archive ${args.values.githash} | tar -x -C ${archiveDir}`], {stdio: 'inherit'});
+    await run('sh', ['-c', `git archive ${args.values.githash} | tar -x -C ${archiveDir}`], {
+      stdio: 'inherit'
+    });
 
     await run('sh', ['-c', `git archive HEAD | tar -x -C ${backupDir}`], {stdio: 'inherit'});
   }
@@ -66,7 +68,7 @@ async function build() {
   // Generate a package.json containing just what we need to build the website
   let pkg = {
     name: 'rsp-website',
-    packageManager: "yarn@4.2.2",
+    packageManager: 'yarn@4.2.2',
     version: '0.0.0',
     private: true,
     workspaces: [
@@ -77,8 +79,8 @@ async function build() {
       'packages/*/*'
     ],
     devDependencies: Object.fromEntries(
-      Object.entries(packageJSON.devDependencies)
-        .filter(([name]) =>
+      Object.entries(packageJSON.devDependencies).filter(
+        ([name]) =>
           name.startsWith('@parcel') ||
           name === 'parcel' ||
           name === 'patch-package' ||
@@ -88,7 +90,7 @@ async function build() {
           name.startsWith('@adobe') ||
           name === 'react' ||
           name === 'react-dom'
-        )
+      )
     ),
     dependencies: {},
     resolutions: packageJSON.resolutions,
@@ -105,31 +107,48 @@ async function build() {
   // Add dependencies on each published package to the package.json, and
   // copy the docs from the current package into the temp dir.
   let packagesDir = path.join(srcDir, 'packages');
-  let packages = glob.sync('*/**/package.json', {cwd: packagesDir});
+  let packages = glob.sync('*/**/package.json', {cwd: packagesDir, ignore: ['**/node_modules/**']});
 
   pkg.devDependencies['babel-plugin-transform-glob-import'] = '*';
 
   fs.writeFileSync(path.join(dir, 'package.json'), JSON.stringify(pkg, false, 2));
 
-  fs.writeFileSync(path.join(dir, 'babel.config.json'), `{
+  fs.writeFileSync(
+    path.join(dir, 'babel.config.json'),
+    `{
     "plugins": [
       "transform-glob-import"
     ]
-  }`);
+  }`
+  );
 
   // Copy necessary code and configuration over
-  fs.cpSync(path.join(srcDir, 'packages', '@adobe', 'spectrum-css-temp'), path.join(dir, 'packages', '@adobe', 'spectrum-css-temp'), {recursive: true});
+  fs.cpSync(
+    path.join(srcDir, 'packages', '@adobe', 'spectrum-css-temp'),
+    path.join(dir, 'packages', '@adobe', 'spectrum-css-temp'),
+    {recursive: true}
+  );
   try {
-    fs.cpSync(path.join(srcDir, 'packages', '@adobe', 'spectrum-css-builder-temp'), path.join(dir, 'packages', '@adobe', 'spectrum-css-builder-temp'), {recursive: true});
+    fs.cpSync(
+      path.join(srcDir, 'packages', '@adobe', 'spectrum-css-builder-temp'),
+      path.join(dir, 'packages', '@adobe', 'spectrum-css-builder-temp'),
+      {recursive: true}
+    );
   } catch (e) {
-    fs.cpSync(path.join(backupDir, 'packages', '@adobe', 'spectrum-css-builder-temp'), path.join(dir, 'packages', '@adobe', 'spectrum-css-builder-temp'), {recursive: true});
+    fs.cpSync(
+      path.join(backupDir, 'packages', '@adobe', 'spectrum-css-builder-temp'),
+      path.join(dir, 'packages', '@adobe', 'spectrum-css-builder-temp'),
+      {recursive: true}
+    );
   }
   fs.cpSync(path.join(srcDir, 'postcss.config.js'), path.join(dir, 'postcss.config.js'));
   fs.cpSync(path.join(srcDir, 'lib'), path.join(dir, 'lib'), {recursive: true});
   fs.cpSync(path.join(srcDir, 'CONTRIBUTING.md'), path.join(dir, 'CONTRIBUTING.md'));
   // need dev from latest on branch since it will generate the API for diffing, and in older commits it may not be able to do this or
   // does it in a different format
-  fs.cpSync(path.join(__dirname, '..', 'packages', 'dev'), path.join(dir, 'packages', 'dev'), {recursive: true});
+  fs.cpSync(path.join(__dirname, '..', 'packages', 'dev'), path.join(dir, 'packages', 'dev'), {
+    recursive: true
+  });
   fs.cpSync(path.join(__dirname, '..', '.parcelrc'), path.join(dir, '.parcelrc'));
   // Delete test-utils from copied packages since we don't expose anything from there
   fs.rmSync(path.join(dir, 'packages', 'dev', 'test-utils'), {recursive: true, force: true});
@@ -140,7 +159,26 @@ async function build() {
   // Only copy babel patch over
   let patches = fs.readdirSync(path.join(srcDir, 'patches'));
   let babelPatch = patches.find(name => name.startsWith('@babel'));
-  fs.cpSync(path.join(srcDir, 'patches', babelPatch), path.join(dir, 'patches', babelPatch), {recursive: true});
+  fs.cpSync(path.join(srcDir, 'patches', babelPatch), path.join(dir, 'patches', babelPatch), {
+    recursive: true
+  });
+
+  // Collect workspace package names so we can strip intra-monorepo dependencies.
+  // Sibling packages may pin exact versions (e.g. "@adobe/react-spectrum": "3.47.0")
+  // that don't match the workspace version being built, causing yarn to install from
+  // npm instead of symlinking to the workspace. Removing these entries lets yarn always
+  // resolve them via the workspace.
+  let workspacePackageNames = new Set(
+    packages
+      .map(p => {
+        try {
+          return JSON.parse(fs.readFileSync(path.join(srcDir, 'packages', p), 'utf8')).name;
+        } catch {
+          return null;
+        }
+      })
+      .filter(Boolean)
+  );
 
   let excludeList = ['@react-spectrum/story-utils'];
   // Copy packages over to temp dir
@@ -153,7 +191,11 @@ async function build() {
         continue;
       }
 
-      fs.cpSync(path.join(srcDir, 'packages', path.dirname(p)), path.join(dir, 'packages', path.dirname(p)), {dereference: true, recursive: true});
+      fs.cpSync(
+        path.join(srcDir, 'packages', path.dirname(p)),
+        path.join(dir, 'packages', path.dirname(p)),
+        {dereference: true, recursive: true}
+      );
 
       if (!p.includes('@react-types')) {
         delete json.types;
@@ -161,6 +203,13 @@ async function build() {
       delete json.main;
       delete json.module;
       delete json.devDependencies;
+      if (json.dependencies) {
+        for (let dep of Object.keys(json.dependencies)) {
+          if (workspacePackageNames.has(dep)) {
+            delete json.dependencies[dep];
+          }
+        }
+      }
       json.apiCheck = 'dist/api.json';
       json.targets = {
         apiCheck: {}
@@ -174,7 +223,19 @@ async function build() {
 
   // Build the website
   console.log('building api files');
-  await run('yarn', ['parcel', 'build', 'packages/react-aria-components', 'packages/@react-{spectrum,aria,stately}/*/', 'packages/@internationalized/{message,string,date,number}', '--target', 'apiCheck'], {cwd: dir, stdio: 'inherit'});
+  await run(
+    'yarn',
+    [
+      'parcel',
+      'build',
+      'packages/react-aria-components',
+      'packages/@react-{spectrum,aria,stately}/*/',
+      'packages/@internationalized/{message,string,date,number}',
+      '--target',
+      'apiCheck'
+    ],
+    {cwd: dir, stdio: 'inherit'}
+  );
 
   // Copy the build back into dist, and delete the temp dir.
   fs.cpSync(path.join(dir, 'packages'), distDir, {dereference: true, recursive: true});

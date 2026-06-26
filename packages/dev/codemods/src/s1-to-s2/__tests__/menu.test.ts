@@ -6,7 +6,9 @@ const test = (name: string, input: string) => {
   defineSnapshotTest(transform, {}, input, name);
 };
 
-test('Static - Renames Item to MenuItem, Section to MenuSection', `
+test(
+  'Static - Renames Item to MenuItem, Section to MenuSection',
+  `
 import {Menu, MenuTrigger, Item, SubmenuTrigger, Button, Section, Header, Heading} from '@adobe/react-spectrum';
 <div>
   <MenuTrigger>
@@ -28,9 +30,12 @@ import {Menu, MenuTrigger, Item, SubmenuTrigger, Button, Section, Header, Headin
     </Menu>
   </MenuTrigger>
 </div>
-`);
+`
+);
 
-test('Static - Renames key to id', `
+test(
+  'Static - Renames key to id',
+  `
 import {Menu, MenuTrigger, Item, SubmenuTrigger, Button, Section, Header, Heading} from '@adobe/react-spectrum';
 <div>
   <MenuTrigger>
@@ -52,9 +57,12 @@ import {Menu, MenuTrigger, Item, SubmenuTrigger, Button, Section, Header, Headin
     </Menu>
   </MenuTrigger>
 </div>
-`);
+`
+);
 
-test('Dynamic - Renames Item to MenuItem with Submenu, Section to MenuSection', `
+test(
+  'Dynamic - Renames Item to MenuItem with Submenu, Section to MenuSection',
+  `
 import {Menu, MenuTrigger, Item, SubmenuTrigger, Button, Section} from '@adobe/react-spectrum';
 const items = [
   { id: 'copy', name: 'Copy' },
@@ -117,9 +125,12 @@ const items = [
     </Menu>
   </MenuTrigger>
 </div>
-`);
+`
+);
 
-test('Dynamic - Renames key to id', `
+test(
+  'Dynamic - Renames key to id',
+  `
 import {Menu, MenuTrigger, Item, SubmenuTrigger, Button} from '@adobe/react-spectrum';
 const items = [
   { key: 'copy', name: 'Copy' },
@@ -154,10 +165,12 @@ const items = [
     </Menu>
   </MenuTrigger>
 </div>
-`);
+`
+);
 
-
-test('Leaves comment if no parent component detected for an Item', `
+test(
+  'Leaves comment if no parent component detected for an Item',
+  `
 import {Menu, MenuTrigger, Item, Button} from '@adobe/react-spectrum';
 
 const items = [
@@ -174,9 +187,12 @@ const items = [
     </Menu>
   </MenuTrigger>
 </div>
-`);
+`
+);
 
-test('Leaves comment if no parent component detected for a Section', `
+test(
+  'Leaves comment if no parent component detected for a Section',
+  `
 import {Menu, MenuTrigger, Item, Button, Section} from '@adobe/react-spectrum';
 
 const sections = [
@@ -197,9 +213,12 @@ const sections = [
     </Menu>
   </MenuTrigger>
 </div>
-`);
+`
+);
 
-test('Renames ContextualHelpTrigger to UnavailableMenuItemTrigger and Dialog to ContextualHelpPopover', `
+test(
+  'Renames ContextualHelpTrigger to UnavailableMenuItemTrigger and Dialog to ContextualHelpPopover',
+  `
 import {Menu, MenuTrigger, ContextualHelpTrigger, Item, Button, Dialog, Heading, Content} from '@adobe/react-spectrum';
 
 <MenuTrigger>
@@ -216,9 +235,12 @@ import {Menu, MenuTrigger, ContextualHelpTrigger, Item, Button, Dialog, Heading,
     </ContextualHelpTrigger>
   </Menu>
 </MenuTrigger>
-`);
+`
+);
 
-test('Renames closeOnSelect to shouldCloseOnSelect and moves to Menu', `
+test(
+  'Renames closeOnSelect to shouldCloseOnSelect and moves to Menu',
+  `
 import {Menu, MenuTrigger, Item, Button} from '@adobe/react-spectrum';
 
 <MenuTrigger closeOnSelect>
@@ -229,4 +251,5 @@ import {Menu, MenuTrigger, Item, Button} from '@adobe/react-spectrum';
     <Item>Paste</Item>
   </Menu>
 </MenuTrigger>
-`);
+`
+);

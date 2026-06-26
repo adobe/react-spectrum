@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Rewrites illustration import to S2 1`] = `
 "import { DropZone, IllustratedMessage, Heading } from "@react-spectrum/s2";

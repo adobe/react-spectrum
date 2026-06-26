@@ -10,7 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMAttributes, DOMProps, FocusableElement, RefObject} from '@react-types/shared';
+import {
+  AriaLabelingProps,
+  DOMAttributes,
+  DOMProps,
+  FocusableElement,
+  RefObject
+} from '@react-types/shared';
 import {filterDOMProps} from '../utils/filterDOMProps';
 import {focusSafely} from '../interactions/focusSafely';
 import {getActiveElement, isFocusWithin} from '../utils/shadowdom/DOMFunctions';
@@ -21,29 +27,37 @@ import {useSlotId} from '../utils/useId';
 export interface AriaDialogProps extends DOMProps, AriaLabelingProps {
   /**
    * The accessibility role for the dialog.
+   *
    * @default 'dialog'
    */
-  role?: 'dialog' | 'alertdialog'
+  role?: 'dialog' | 'alertdialog';
 }
 
 export interface DialogAria {
   /** Props for the dialog container element. */
-  dialogProps: DOMAttributes,
+  dialogProps: DOMAttributes;
 
   /** Props for the dialog title element. */
-  titleProps: DOMAttributes
+  titleProps: DOMAttributes;
+
+  /** Props for the dialog content/description element. Used for aria-describedby on alertdialogs. */
+  contentProps: DOMAttributes;
 }
 
 /**
  * Provides the behavior and accessibility implementation for a dialog component.
  * A dialog is an overlay shown above other content in an application.
  */
-export function useDialog(props: AriaDialogProps, ref: RefObject<FocusableElement | null>): DialogAria {
-  let {
-    role = 'dialog'
-  } = props;
+export function useDialog(
+  props: AriaDialogProps,
+  ref: RefObject<FocusableElement | null>
+): DialogAria {
+  let {role = 'dialog'} = props;
   let titleId: string | undefined = useSlotId();
   titleId = props['aria-label'] ? undefined : titleId;
+
+  let contentId: string | undefined = useSlotId();
+  contentId = role === 'alertdialog' && !props['aria-describedby'] ? contentId : undefined;
 
   let isRefocusing = useRef(false);
 
@@ -90,12 +104,14 @@ export function useDialog(props: AriaDialogProps, ref: RefObject<FocusableElemen
       if (!hasAriaLabel && !hasAriaLabelledby) {
         console.warn(
           'A dialog must have a title for accessibility. ' +
-          'Either provide an aria-label or aria-labelledby prop, or render a heading element inside the dialog.'
+            'Either provide an aria-label or aria-labelledby prop, or render a heading element inside the dialog.'
         );
         hasWarned.current = true;
       }
     }
   });
+
+  let ariaDescribedby = props['aria-describedby'] ?? contentId;
 
   // We do not use aria-modal due to a Safari bug which forces the first focusable element to be focused
   // on mount when inside an iframe, no matter which element we programmatically focus.
@@ -107,7 +123,8 @@ export function useDialog(props: AriaDialogProps, ref: RefObject<FocusableElemen
       ...filterDOMProps(props, {labelable: true}),
       role,
       tabIndex: -1,
-      'aria-labelledby': props['aria-labelledby'] || titleId,
+      'aria-labelledby': props['aria-labelledby'] ?? titleId,
+      'aria-describedby': ariaDescribedby,
       // Prevent blur events from reaching useOverlay, which may cause
       // popovers to close. Since focus is contained within the dialog,
       // we don't want this to occur due to the above useEffect.
@@ -119,6 +136,9 @@ export function useDialog(props: AriaDialogProps, ref: RefObject<FocusableElemen
     },
     titleProps: {
       id: titleId
+    },
+    contentProps: {
+      id: contentId
     }
   };
 }

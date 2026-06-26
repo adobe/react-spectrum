@@ -26,14 +26,17 @@ import {useHover} from 'react-aria/useHover';
 import {useProvider, useProviderProps} from '../provider/Provider';
 
 interface StepButtonProps extends AriaButtonProps {
-  isQuiet?: boolean,
-  direction: 'up' | 'down'
+  isQuiet?: boolean;
+  direction: 'up' | 'down';
 }
 
 /**
  * Buttons for NumberField.
  */
-export const StepButton = React.forwardRef(function StepButton(props: StepButtonProps, ref: FocusableRef<HTMLDivElement>) {
+export const StepButton = React.forwardRef(function StepButton(
+  props: StepButtonProps,
+  ref: FocusableRef<HTMLDivElement>
+) {
   props = useProviderProps(props);
   let {scale} = useProvider();
   let {direction, isDisabled, isQuiet} = props;
@@ -47,34 +50,54 @@ export const StepButton = React.forwardRef(function StepButton(props: StepButton
   return (
     <FocusRing focusRingClass={classNames(stepperStyle, 'focus-ring')}>
       <div
-        className={
-          classNames(
-            stepperStyle,
-            'spectrum-Stepper-button',
-            {
-              'spectrum-Stepper-button--stepUp': direction === 'up',
-              'spectrum-Stepper-button--stepDown': direction === 'down',
-              'spectrum-Stepper-button--isQuiet': isQuiet,
-              'is-hovered': isHovered,
-              'is-active': isPressed,
-              'is-disabled': isDisabled
-            }
-          )
-        }
+        className={classNames(stepperStyle, 'spectrum-Stepper-button', {
+          'spectrum-Stepper-button--stepUp': direction === 'up',
+          'spectrum-Stepper-button--stepDown': direction === 'down',
+          'spectrum-Stepper-button--isQuiet': isQuiet,
+          'is-hovered': isHovered,
+          'is-active': isPressed,
+          'is-disabled': isDisabled
+        })}
         {...mergeProps(hoverProps, buttonProps)}
         ref={domRef}>
-        {direction === 'up' && scale === 'large' &&
-          <Add UNSAFE_className={classNames(stepperStyle, 'spectrum-Stepper-button-icon', 'spectrum-Stepper-stepUpIcon')} size="S" />
-        }
-        {direction === 'up' && scale === 'medium' &&
-          <ChevronUpSmall UNSAFE_className={classNames(stepperStyle, 'spectrum-Stepper-button-icon', 'spectrum-Stepper-stepUpIcon')} />
-        }
-        {direction === 'down' && scale === 'large' &&
-          <Remove UNSAFE_className={classNames(stepperStyle, 'spectrum-Stepper-button-icon', 'spectrum-Stepper-stepDownIcon')} size="S" />
-        }
-        {direction === 'down' && scale === 'medium' &&
-          <ChevronDownSmall UNSAFE_className={classNames(stepperStyle, 'spectrum-Stepper-button-icon', 'spectrum-Stepper-stepDownIcon')} />
-        }
+        {direction === 'up' && scale === 'large' && (
+          <Add
+            UNSAFE_className={classNames(
+              stepperStyle,
+              'spectrum-Stepper-button-icon',
+              'spectrum-Stepper-stepUpIcon'
+            )}
+            size="S"
+          />
+        )}
+        {direction === 'up' && scale === 'medium' && (
+          <ChevronUpSmall
+            UNSAFE_className={classNames(
+              stepperStyle,
+              'spectrum-Stepper-button-icon',
+              'spectrum-Stepper-stepUpIcon'
+            )}
+          />
+        )}
+        {direction === 'down' && scale === 'large' && (
+          <Remove
+            UNSAFE_className={classNames(
+              stepperStyle,
+              'spectrum-Stepper-button-icon',
+              'spectrum-Stepper-stepDownIcon'
+            )}
+            size="S"
+          />
+        )}
+        {direction === 'down' && scale === 'medium' && (
+          <ChevronDownSmall
+            UNSAFE_className={classNames(
+              stepperStyle,
+              'spectrum-Stepper-button-icon',
+              'spectrum-Stepper-stepDownIcon'
+            )}
+          />
+        )}
       </div>
     </FocusRing>
   );

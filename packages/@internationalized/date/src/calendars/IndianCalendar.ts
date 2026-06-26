@@ -15,7 +15,12 @@
 
 import {AnyCalendarDate, CalendarIdentifier} from '../types';
 import {CalendarDate} from '../CalendarDate';
-import {fromExtendedYear, GregorianCalendar, gregorianToJulianDay, isLeapYear} from './GregorianCalendar';
+import {
+  fromExtendedYear,
+  GregorianCalendar,
+  gregorianToJulianDay,
+  isLeapYear
+} from './GregorianCalendar';
 
 // Starts in 78 AD,
 const INDIAN_ERA_START = 78;
@@ -48,7 +53,7 @@ export class IndianCalendar extends GregorianCalendar {
 
       // Days in leapMonth this year, previous Gregorian year
       leapMonth = isLeapYear(date.year - 1) ? 31 : 30;
-      yDay += leapMonth + (31 * 5) + (30 * 3) + 10;
+      yDay += leapMonth + 31 * 5 + 30 * 3 + 10;
     } else {
       // Days in leapMonth this year
       leapMonth = isLeapYear(date.year) ? 31 : 30;
@@ -62,7 +67,7 @@ export class IndianCalendar extends GregorianCalendar {
       indianDay = yDay + 1;
     } else {
       let mDay = yDay - leapMonth;
-      if (mDay < (31 * 5)) {
+      if (mDay < 31 * 5) {
         indianMonth = Math.floor(mDay / 31) + 2;
         indianDay = (mDay % 31) + 1;
       } else {

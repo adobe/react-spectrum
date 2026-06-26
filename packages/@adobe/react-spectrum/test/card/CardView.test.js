@@ -74,36 +74,38 @@ let itemsNoSize = [
 let mockHeight = 800;
 let mockWidth = 800;
 let onSelectionChange = jest.fn();
-let getCardStyles = (card) => card.parentNode.parentNode.style;
+let getCardStyles = card => card.parentNode.parentNode.style;
 
 function StaticCardView(props) {
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let gridLayout = useMemo(() => new GridLayout({collator}), [collator]);
-  let {
-    layout = gridLayout,
-    selectionMode = 'multiple',
-    locale = 'en-US',
-    ...otherProps
-  } = props;
+  let {layout = gridLayout, selectionMode = 'multiple', locale = 'en-US', ...otherProps} = props;
 
   return (
     <Provider theme={theme} locale={locale}>
-      <CardView onSelectionChange={onSelectionChange} {...otherProps} selectionMode={selectionMode} layout={layout} width="100%" height="100%" aria-label="Test CardView">
+      <CardView
+        onSelectionChange={onSelectionChange}
+        {...otherProps}
+        selectionMode={selectionMode}
+        layout={layout}
+        width="100%"
+        height="100%"
+        aria-label="Test CardView">
         <Card width={1001} height={381} textValue="Title  1">
           <Image src="https://i.imgur.com/Z7AzH2c.jpg" />
-          <Heading>Title  1</Heading>
+          <Heading>Title 1</Heading>
           <Text slot="detail">PNG</Text>
           <Content>Description</Content>
         </Card>
         <Card width={640} height={640} textValue="Title  1">
           <Image src="https://i.imgur.com/DhygPot.jpg" />
-          <Heading>Title  1</Heading>
+          <Heading>Title 1</Heading>
           <Text slot="detail">PNG</Text>
           <Content>Description</Content>
         </Card>
         <Card width={182} height={1009} textValue="Title  1">
           <Image src="https://i.imgur.com/L7RTlvI.png" />
-          <Heading>Title  1</Heading>
+          <Heading>Title 1</Heading>
           <Text slot="detail">PNG</Text>
           <Content>Description</Content>
         </Card>
@@ -115,7 +117,10 @@ function StaticCardView(props) {
 function DynamicCardView(props) {
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let cardOrientation = props.cardOrientation || 'vertical';
-  let gridLayout = useMemo(() => new GridLayout({collator, cardOrientation}), [collator, cardOrientation]);
+  let gridLayout = useMemo(
+    () => new GridLayout({collator, cardOrientation}),
+    [collator, cardOrientation]
+  );
   let {
     layout = gridLayout,
     selectionMode = 'multiple',
@@ -126,8 +131,16 @@ function DynamicCardView(props) {
 
   return (
     <Provider theme={theme} locale={locale}>
-      <CardView onSelectionChange={onSelectionChange} {...otherProps} selectionMode={selectionMode} items={items} layout={layout} width="100%" height="100%" aria-label="Test CardView">
-        {(item) => (
+      <CardView
+        onSelectionChange={onSelectionChange}
+        {...otherProps}
+        selectionMode={selectionMode}
+        items={items}
+        layout={layout}
+        width="100%"
+        height="100%"
+        aria-label="Test CardView">
+        {item => (
           <Card key={item.title} textValue={item.title} width={item.width} height={item.height}>
             <Image src={item.src} />
             <Heading>{item.title}</Heading>
@@ -148,8 +161,12 @@ describe('CardView', function () {
     innerWidth = window.innerWidth;
     Object.defineProperty(window, 'innerHeight', {value: 1000, configurable: true, writable: true});
     Object.defineProperty(window, 'innerWidth', {value: 1000, configurable: true, writable: true});
-    jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => mockWidth);
-    jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => mockHeight);
+    jest
+      .spyOn(window.HTMLElement.prototype, 'clientWidth', 'get')
+      .mockImplementation(() => mockWidth);
+    jest
+      .spyOn(window.HTMLElement.prototype, 'clientHeight', 'get')
+      .mockImplementation(() => mockHeight);
     jest.useFakeTimers();
   });
 
@@ -266,64 +283,71 @@ describe('CardView', function () {
       cardOrientation
       ${'vertical'}
       ${'horizontal'}
-    `('grid layout CardView renders each card with the same height and width (card orientation: $cardOrientation)', function ({cardOrientation}) {
-      let tree = render(<DynamicCardView cardOrientation={cardOrientation} />);
-      act(() => {
-        jest.runAllTimers();
-      });
+    `(
+      'grid layout CardView renders each card with the same height and width (card orientation: $cardOrientation)',
+      function ({cardOrientation}) {
+        let tree = render(<DynamicCardView cardOrientation={cardOrientation} />);
+        act(() => {
+          jest.runAllTimers();
+        });
 
-      let grid = tree.getByRole('grid');
-      let wrappers = within(grid).getAllByRole('presentation').filter(node => node.tagName !== 'IMG');
-      let currentTop;
-      let currentLeft;
-      let expectedWidth;
-      let expectedHeight;
-      let expectedSpacing;
-      for (let [index, div] of wrappers.entries()) {
-        if (index === 0) {
-          continue;
-        }
+        let grid = tree.getByRole('grid');
+        let wrappers = within(grid)
+          .getAllByRole('presentation')
+          .filter(node => node.tagName !== 'IMG');
+        let currentTop;
+        let currentLeft;
+        let expectedWidth;
+        let expectedHeight;
+        let expectedSpacing;
+        for (let [index, div] of wrappers.entries()) {
+          if (index === 0) {
+            continue;
+          }
 
-        if (!expectedWidth) {
-          currentTop = div.style.top;
-          currentLeft = div.style.left;
-          expectedWidth = div.style.width;
-          expectedHeight = div.style.height;
+          if (!expectedWidth) {
+            currentTop = div.style.top;
+            currentLeft = div.style.left;
+            expectedWidth = div.style.width;
+            expectedHeight = div.style.height;
 
-          // Calculate the horizontal spacing between the cards based off the available width and number of cards
-          if (!expectedSpacing) {
-            let cardsInRow = Math.floor((mockWidth - 24 * 2) /  parseInt(expectedWidth, 10));
-            if (cardsInRow > 1) {
-              expectedSpacing = (mockWidth - (24 * 2) - (cardsInRow *  parseInt(expectedWidth, 10))) / (cardsInRow - 1);
-            } else {
-              expectedSpacing = 0;
+            // Calculate the horizontal spacing between the cards based off the available width and number of cards
+            if (!expectedSpacing) {
+              let cardsInRow = Math.floor((mockWidth - 24 * 2) / parseInt(expectedWidth, 10));
+              if (cardsInRow > 1) {
+                expectedSpacing =
+                  (mockWidth - 24 * 2 - cardsInRow * parseInt(expectedWidth, 10)) /
+                  (cardsInRow - 1);
+              } else {
+                expectedSpacing = 0;
+              }
             }
-          }
 
-          // default margin size is 24px
-          expect(div.style.top).toEqual('24px');
-          expect(div.style.left).toEqual('24px');
-        } else {
-          expect(div.style.width).toEqual(expectedWidth);
-          expect(div.style.height).toEqual(expectedHeight);
-          if (currentTop === div.style.top) {
-            currentLeft = `${parseInt(currentLeft, 10) + parseInt(expectedWidth, 10) + expectedSpacing}px`;
+            // default margin size is 24px
+            expect(div.style.top).toEqual('24px');
+            expect(div.style.left).toEqual('24px');
           } else {
-            // default space between the two cards vertically is 18px
-            currentTop = `${parseInt(currentTop, 10) + parseInt(expectedHeight, 10) + 18}px`;
-            currentLeft = '24px';
-            expect(div.style.top).toEqual(currentTop);
+            expect(div.style.width).toEqual(expectedWidth);
+            expect(div.style.height).toEqual(expectedHeight);
+            if (currentTop === div.style.top) {
+              currentLeft = `${parseInt(currentLeft, 10) + parseInt(expectedWidth, 10) + expectedSpacing}px`;
+            } else {
+              // default space between the two cards vertically is 18px
+              currentTop = `${parseInt(currentTop, 10) + parseInt(expectedHeight, 10) + 18}px`;
+              currentLeft = '24px';
+              expect(div.style.top).toEqual(currentTop);
+            }
+            expect(div.style.left).toEqual(currentLeft);
           }
-          expect(div.style.left).toEqual(currentLeft);
+        }
+
+        if (cardOrientation === 'horizontal') {
+          expect(expectedWidth > expectedHeight).toBeTruthy();
+        } else {
+          expect(expectedHeight > expectedWidth).toBeTruthy();
         }
       }
-
-      if (cardOrientation === 'horizontal') {
-        expect(expectedWidth > expectedHeight).toBeTruthy();
-      } else {
-        expect(expectedHeight > expectedWidth).toBeTruthy();
-      }
-    });
+    );
 
     describe('keyboard nav', function () {
       it('should move focus via Arrow Down', async function () {
@@ -373,9 +397,9 @@ describe('CardView', function () {
       });
 
       it.each`
-        Name                  | layout
-        ${'Grid layout'}      | ${GridLayout}
-        ${'Gallery layout'}   | ${GalleryLayout}
+        Name                | layout
+        ${'Grid layout'}    | ${GridLayout}
+        ${'Gallery layout'} | ${GalleryLayout}
       `('$Name CardView should move focus via Arrow Left', async function ({Name, layout}) {
         let tree = render(<DynamicCardView layout={layout} />);
         act(() => {
@@ -405,9 +429,9 @@ describe('CardView', function () {
       });
 
       it.each`
-        Name                  | layout
-        ${'Grid layout'}      | ${GridLayout}
-        ${'Gallery layout'}   | ${GalleryLayout}
+        Name                | layout
+        ${'Grid layout'}    | ${GridLayout}
+        ${'Gallery layout'} | ${GalleryLayout}
       `('$Name CardView should move focus via Arrow Left (RTL)', async function ({Name, layout}) {
         let tree = render(<DynamicCardView locale="ar-AE" layout={layout} />);
         act(() => {
@@ -439,9 +463,9 @@ describe('CardView', function () {
       });
 
       it.each`
-        Name                  | layout
-        ${'Grid layout'}      | ${GridLayout}
-        ${'Gallery layout'}   | ${GalleryLayout}
+        Name                | layout
+        ${'Grid layout'}    | ${GridLayout}
+        ${'Gallery layout'} | ${GalleryLayout}
       `('$Name CardView should move focus via Arrow Right', async function ({Name, layout}) {
         let tree = render(<DynamicCardView layout={layout} />);
         act(() => {
@@ -471,9 +495,9 @@ describe('CardView', function () {
       });
 
       it.each`
-        Name                  | layout
-        ${'Grid layout'}      | ${GridLayout}
-        ${'Gallery layout'}   | ${GalleryLayout}
+        Name                | layout
+        ${'Grid layout'}    | ${GridLayout}
+        ${'Gallery layout'} | ${GalleryLayout}
       `('$Name CardView should move focus via Arrow Right (RTL)', async function ({Name, layout}) {
         let tree = render(<DynamicCardView locale="ar-AE" layout={layout} />);
         act(() => {
@@ -572,7 +596,9 @@ describe('CardView', function () {
       });
 
       let grid = tree.getByRole('grid');
-      let wrappers = within(grid).getAllByRole('presentation').filter(node => node.tagName !== 'IMG');
+      let wrappers = within(grid)
+        .getAllByRole('presentation')
+        .filter(node => node.tagName !== 'IMG');
       let currentTop;
       let expectedLeft;
       let expectedHeight;
@@ -733,47 +759,53 @@ describe('CardView', function () {
       Name                         | items
       ${'no item widths provided'} | ${itemsNoSize}
       ${'item widths provided'}    | ${defaultItems}
-    `('with ${Name}, renders cards in columns with constrained widths and variable heights', function ({items}) {
-      let tree = render(<DynamicCardView layout={WaterfallLayout} items={items} />);
-      act(() => {
-        jest.runAllTimers();
-      });
+    `(
+      'with ${Name}, renders cards in columns with constrained widths and variable heights',
+      function ({items}) {
+        let tree = render(<DynamicCardView layout={WaterfallLayout} items={items} />);
+        act(() => {
+          jest.runAllTimers();
+        });
 
-      let grid = tree.getByRole('grid');
-      let wrappers = within(grid).getAllByRole('presentation').filter(node => node.tagName !== 'IMG');
-      let expectedWidth;
-      let columnLefts = [];
-      let columnHeights = [];
-      for (let [index, div] of wrappers.entries()) {
-        if (index === 0) {
-          continue;
-        }
+        let grid = tree.getByRole('grid');
+        let wrappers = within(grid)
+          .getAllByRole('presentation')
+          .filter(node => node.tagName !== 'IMG');
+        let expectedWidth;
+        let columnLefts = [];
+        let columnHeights = [];
+        for (let [index, div] of wrappers.entries()) {
+          if (index === 0) {
+            continue;
+          }
 
-        if (!expectedWidth) {
-          expectedWidth = div.style.width;
-          expect(div.style.top).toEqual('24px');
-          expect(div.style.left).toEqual('24px');
-          columnLefts.push(div.style.left);
-
-          let expectedHeight = `${parseInt(div.style.top, 10) + parseInt(div.style.height, 10) + 18}px`;
-          columnHeights.push(expectedHeight);
-        } else {
-          expect(div.style.width).toEqual(expectedWidth);
-
-          // Make sure each item is within one of the columns of the waterfall and check the positioning
-          if (div.style.top === '24px') {
+          if (!expectedWidth) {
+            expectedWidth = div.style.width;
+            expect(div.style.top).toEqual('24px');
+            expect(div.style.left).toEqual('24px');
             columnLefts.push(div.style.left);
+
             let expectedHeight = `${parseInt(div.style.top, 10) + parseInt(div.style.height, 10) + 18}px`;
             columnHeights.push(expectedHeight);
           } else {
-            let index = columnLefts.indexOf(div.style.left);
-            expect(index).not.toEqual(-1);
-            expect(columnHeights[index]).toEqual(div.style.top);
-            columnHeights[index] = `${parseInt(div.style.top, 10) + parseInt(div.style.height, 10) + 18}px`;
+            expect(div.style.width).toEqual(expectedWidth);
+
+            // Make sure each item is within one of the columns of the waterfall and check the positioning
+            if (div.style.top === '24px') {
+              columnLefts.push(div.style.left);
+              let expectedHeight = `${parseInt(div.style.top, 10) + parseInt(div.style.height, 10) + 18}px`;
+              columnHeights.push(expectedHeight);
+            } else {
+              let index = columnLefts.indexOf(div.style.left);
+              expect(index).not.toEqual(-1);
+              expect(columnHeights[index]).toEqual(div.style.top);
+              columnHeights[index] =
+                `${parseInt(div.style.top, 10) + parseInt(div.style.height, 10) + 18}px`;
+            }
           }
         }
       }
-    });
+    );
 
     describe('keyboard nav', function () {
       it('should move focus via Arrow Down', async function () {
@@ -1166,81 +1198,91 @@ describe('CardView', function () {
       ${'Grid layout'}      | ${GridLayout}
       ${'Gallery layout'}   | ${GalleryLayout}
       ${'Waterfall layout'} | ${WaterfallLayout}
-    `('$Name CardView should render a loading spinner at the bottom when loading more', async function ({layout}) {
-      let tree = render(<DynamicCardView layout={layout} loadingState="loadingMore" />);
-      act(() => {
-        jest.runAllTimers();
-      });
+    `(
+      '$Name CardView should render a loading spinner at the bottom when loading more',
+      async function ({layout}) {
+        let tree = render(<DynamicCardView layout={layout} loadingState="loadingMore" />);
+        act(() => {
+          jest.runAllTimers();
+        });
 
-      let grid = tree.getByRole('grid');
-      expect(grid).toHaveAttribute('aria-rowcount', defaultItems.length.toString());
-      expect(within(grid).getByText('Title 1')).toBeTruthy();
+        let grid = tree.getByRole('grid');
+        expect(grid).toHaveAttribute('aria-rowcount', defaultItems.length.toString());
+        expect(within(grid).getByText('Title 1')).toBeTruthy();
 
-      let cards = tree.getAllByRole('gridcell');
-      expect(cards).toBeTruthy();
-      await user.click(cards[1]);
+        let cards = tree.getAllByRole('gridcell');
+        expect(cards).toBeTruthy();
+        await user.click(cards[1]);
 
-      act(() => {
-        grid.scrollTop += 1000;
-        fireEvent.scroll(grid);
-      });
+        act(() => {
+          grid.scrollTop += 1000;
+          fireEvent.scroll(grid);
+        });
 
-      act(() => {
-        jest.runAllTimers();
-      });
-      expect(within(grid).getByText('Title 12')).toBeTruthy();
+        act(() => {
+          jest.runAllTimers();
+        });
+        expect(within(grid).getByText('Title 12')).toBeTruthy();
 
-
-      let spinner = within(grid).getByRole('progressbar');
-      expect(spinner).toHaveAttribute('aria-label', 'Loading more…');
-      expect(getCardStyles(spinner.parentNode).height).toBe('60px');
-    });
+        let spinner = within(grid).getByRole('progressbar');
+        expect(spinner).toHaveAttribute('aria-label', 'Loading more…');
+        expect(getCardStyles(spinner.parentNode).height).toBe('60px');
+      }
+    );
 
     it.each`
-      Name                  | layout
-      ${'Grid layout'}      | ${GridLayout}
-      ${'Gallery layout'}   | ${GalleryLayout}
-    `('$Name CardView should call loadMore when scrolling to the bottom', async function ({layout}) {
-      let scrollHeightMock = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 3000);
-      let onLoadMore = jest.fn();
-      let tree = render(<DynamicCardView layout={layout} onLoadMore={onLoadMore} />);
+      Name                | layout
+      ${'Grid layout'}    | ${GridLayout}
+      ${'Gallery layout'} | ${GalleryLayout}
+    `(
+      '$Name CardView should call loadMore when scrolling to the bottom',
+      async function ({layout}) {
+        let scrollHeightMock = jest
+          .spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get')
+          .mockImplementation(() => 3000);
+        let onLoadMore = jest.fn();
+        let tree = render(<DynamicCardView layout={layout} onLoadMore={onLoadMore} />);
 
-      act(() => {
-        jest.runAllTimers();
-      });
+        act(() => {
+          jest.runAllTimers();
+        });
 
-      let cards = tree.getAllByRole('gridcell');
-      expect(cards).toBeTruthy();
+        let cards = tree.getAllByRole('gridcell');
+        expect(cards).toBeTruthy();
 
-      let grid = tree.getByRole('grid');
-      grid.scrollTop = 3000;
-      fireEvent.scroll(grid);
-      expect(onLoadMore).toHaveBeenCalledTimes(1);
-      scrollHeightMock.mockReset();
-    });
+        let grid = tree.getByRole('grid');
+        grid.scrollTop = 3000;
+        fireEvent.scroll(grid);
+        expect(onLoadMore).toHaveBeenCalledTimes(1);
+        scrollHeightMock.mockReset();
+      }
+    );
 
     it.each`
       Name                  | layout
       ${'Grid layout'}      | ${GridLayout}
       ${'Gallery layout'}   | ${GalleryLayout}
       ${'Waterfall layout'} | ${WaterfallLayout}
-    `('$Name CardView should not render a loading spinner when filtering', async function ({layout}) {
-      let tree = render(<DynamicCardView layout={layout} loadingState="filtering" />);
-      act(() => {
-        jest.runAllTimers();
-      });
+    `(
+      '$Name CardView should not render a loading spinner when filtering',
+      async function ({layout}) {
+        let tree = render(<DynamicCardView layout={layout} loadingState="filtering" />);
+        act(() => {
+          jest.runAllTimers();
+        });
 
-      let grid = tree.getByRole('grid');
-      expect(grid).toHaveAttribute('aria-rowcount', defaultItems.length.toString());
-      expect(within(grid).getByText('Title 1')).toBeTruthy();
+        let grid = tree.getByRole('grid');
+        expect(grid).toHaveAttribute('aria-rowcount', defaultItems.length.toString());
+        expect(within(grid).getByText('Title 1')).toBeTruthy();
 
-      await user.keyboard('{End}');
-      act(() => {
-        jest.runAllTimers();
-      });
+        await user.keyboard('{End}');
+        act(() => {
+          jest.runAllTimers();
+        });
 
-      expect(within(grid).queryByRole('progressbar')).toBeNull();
-    });
+        expect(within(grid).queryByRole('progressbar')).toBeNull();
+      }
+    );
   });
 
   describe('emptyState', function () {
@@ -1251,7 +1293,9 @@ describe('CardView', function () {
       ${'Waterfall layout'} | ${WaterfallLayout}
     `('$Name CardView should render empty state when there are no items', function ({layout}) {
       let renderEmptyState = () => <div>empty</div>;
-      let tree = render(<DynamicCardView layout={layout} items={[]} renderEmptyState={renderEmptyState} />);
+      let tree = render(
+        <DynamicCardView layout={layout} items={[]} renderEmptyState={renderEmptyState} />
+      );
       act(() => {
         jest.runAllTimers();
       });
@@ -1268,28 +1312,31 @@ describe('CardView', function () {
 
   // TODO: not testing waterfall layout because of aforementioned issue with the heights for each card being set to 0 for that layout
   it.each`
-    Name                  | layout
-    ${'Grid layout'}      | ${GridLayout}
-    ${'Gallery layout'}   | ${GalleryLayout}
-  `('$Name CardView should only scroll an item into view when in keyboard modality', async function ({layout}) {
-    let tree = render(<DynamicCardView layout={layout} />);
-    act(() => {
-      jest.runAllTimers();
-    });
-    let cards = tree.getAllByRole('gridcell');
-    expect(cards).toBeTruthy();
-    let grid = tree.getByRole('grid');
-    await user.click(cards[4]);
-    act(() => {
-      jest.runAllTimers();
-    });
-    expect(scrollIntoView).not.toHaveBeenCalled();
+    Name                | layout
+    ${'Grid layout'}    | ${GridLayout}
+    ${'Gallery layout'} | ${GalleryLayout}
+  `(
+    '$Name CardView should only scroll an item into view when in keyboard modality',
+    async function ({layout}) {
+      let tree = render(<DynamicCardView layout={layout} />);
+      act(() => {
+        jest.runAllTimers();
+      });
+      let cards = tree.getAllByRole('gridcell');
+      expect(cards).toBeTruthy();
+      let grid = tree.getByRole('grid');
+      await user.click(cards[4]);
+      act(() => {
+        jest.runAllTimers();
+      });
+      expect(scrollIntoView).not.toHaveBeenCalled();
 
-    await user.keyboard('{ArrowDown}');
-    act(() => {
-      jest.runAllTimers();
-    });
+      await user.keyboard('{ArrowDown}');
+      act(() => {
+        jest.runAllTimers();
+      });
 
-    expect(scrollIntoView).toHaveBeenLastCalledWith(grid, document.activeElement);
-  });
+      expect(scrollIntoView).toHaveBeenLastCalledWith(grid, document.activeElement);
+    }
+  );
 });

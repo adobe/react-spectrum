@@ -11,7 +11,13 @@
  */
 'use client';
 import {animate, useIntersectionObserver} from './utils';
-import {ListBoxItem as AriaListBoxItem, ListBoxItemProps as AriaListBoxItemProps, Key, ListBox, Selection} from 'react-aria-components';
+import {
+  ListBoxItem as AriaListBoxItem,
+  ListBoxItemProps as AriaListBoxItemProps,
+  Key,
+  ListBox,
+  Selection
+} from 'react-aria-components';
 import {itemStyles} from 'tailwind-starter/ListBox';
 import React, {ReactNode, useCallback, useRef, useState} from 'react';
 
@@ -27,101 +33,104 @@ export function ListBoxExample(): ReactNode {
   let isAnimating = useRef(false);
   let ref = useRef<HTMLDivElement>(null);
 
-  useIntersectionObserver(ref, useCallback(() => {
-    let spaceKey = document.getElementById('space-key')!;
-    let downKey = document.getElementById('down-key')!;
-    let upKey = document.getElementById('up-key')!;
-    let shiftKey = document.getElementById('shift-key')!;
-    isAnimating.current = true;
-    let cancel = animate([
-      {
-        time: 500,
-        perform() {}
-      },
-      {
-        time: 800,
-        perform() {
-          setFocusedKey('chocolate');
-          setSelectedKeys(new Set());
+  useIntersectionObserver(
+    ref,
+    useCallback(() => {
+      let spaceKey = document.getElementById('space-key')!;
+      let downKey = document.getElementById('down-key')!;
+      let upKey = document.getElementById('up-key')!;
+      let shiftKey = document.getElementById('shift-key')!;
+      isAnimating.current = true;
+      let cancel = animate([
+        {
+          time: 500,
+          perform() {}
+        },
+        {
+          time: 800,
+          perform() {
+            setFocusedKey('chocolate');
+            setSelectedKeys(new Set());
+          }
+        },
+        {
+          time: 800,
+          perform() {
+            downKey.animate(keyframes, {duration: 600});
+            setFocusedKey('mint');
+          }
+        },
+        {
+          time: 800,
+          perform() {
+            spaceKey.animate(keyframes, {duration: 600});
+            setSelectedKeys(new Set(['mint']));
+          }
+        },
+        {
+          time: 800,
+          perform() {
+            shiftKey.animate([{fill: 'transparent'}, {fill: 'var(--press-fill)', offset: 1}], {
+              duration: 300,
+              fill: 'forwards'
+            });
+          }
+        },
+        {
+          time: 800,
+          perform() {
+            downKey.animate(keyframes, {duration: 600});
+            setFocusedKey('strawberry');
+            setSelectedKeys(new Set(['mint', 'strawberry']));
+          }
+        },
+        {
+          time: 600,
+          perform() {
+            downKey.animate(keyframes, {duration: 600});
+            setFocusedKey('vanilla');
+            setSelectedKeys(new Set(['mint', 'strawberry', 'vanilla']));
+          }
+        },
+        {
+          time: 600,
+          perform() {
+            upKey.animate(keyframes, {duration: 600});
+            setFocusedKey('strawberry');
+            setSelectedKeys(new Set(['mint', 'strawberry']));
+          }
+        },
+        {
+          time: 1200,
+          perform() {
+            shiftKey.animate([{fill: 'var(--press-fill)'}, {fill: 'transparent', offset: 1}], {
+              duration: 300,
+              fill: 'forwards'
+            });
+          }
+        },
+        {
+          time: 0,
+          perform() {
+            setFocusedKey(null);
+            setSelectedKeys(new Set());
+            isAnimating.current = false;
+          }
         }
-      },
-      {
-        time: 800,
-        perform() {
-          downKey.animate(keyframes, {duration: 600});
-          setFocusedKey('mint');
-        }
-      },
-      {
-        time: 800,
-        perform() {
-          spaceKey.animate(keyframes, {duration: 600});
-          setSelectedKeys(new Set(['mint']));
-        }
-      },
-      {
-        time: 800,
-        perform() {
-          shiftKey.animate([
-            {fill: 'transparent'},
-            {fill: 'var(--press-fill)', offset: 1}
-          ], {duration: 300, fill: 'forwards'});
-        }
-      },
-      {
-        time: 800,
-        perform() {
-          downKey.animate(keyframes, {duration: 600});
-          setFocusedKey('strawberry');
-          setSelectedKeys(new Set(['mint', 'strawberry']));
-        }
-      },
-      {
-        time: 600,
-        perform() {
-          downKey.animate(keyframes, {duration: 600});
-          setFocusedKey('vanilla');
-          setSelectedKeys(new Set(['mint', 'strawberry', 'vanilla']));
-        }
-      },
-      {
-        time: 600,
-        perform() {
-          upKey.animate(keyframes, {duration: 600});
-          setFocusedKey('strawberry');
-          setSelectedKeys(new Set(['mint', 'strawberry']));
-        }
-      },
-      {
-        time: 1200,
-        perform() {
-          shiftKey.animate([
-            {fill: 'var(--press-fill)'},
-            {fill: 'transparent', offset: 1}
-          ], {duration: 300, fill: 'forwards'});
-        }
-      },
-      {
-        time: 0,
-        perform() {
-          setFocusedKey(null);
-          setSelectedKeys(new Set());
-          isAnimating.current = false;
-        }
-      }
-    ]);
+      ]);
 
-    return () => {
-      cancel();
-      setFocusedKey(null);
-      setSelectedKeys(new Set());
-      spaceKey.getAnimations().forEach(a => a.cancel());
-      downKey.getAnimations().forEach(a => a.cancel());
-      upKey.getAnimations().forEach(a => a.cancel());
-      shiftKey.getAnimations().forEach(a => a.cancel());
-      isAnimating.current = false;
-    };
-  }, []));
+      return () => {
+        cancel();
+        setFocusedKey(null);
+        setSelectedKeys(new Set());
+        spaceKey.getAnimations().forEach(a => a.cancel());
+        downKey.getAnimations().forEach(a => a.cancel());
+        upKey.getAnimations().forEach(a => a.cancel());
+        shiftKey.getAnimations().forEach(a => a.cancel());
+        isAnimating.current = false;
+      };
+    }, [])
+  );
 
   let onSelectionChange = keys => {
     if (!isAnimating.current) {
@@ -137,26 +146,45 @@ export function ListBoxExample(): ReactNode {
       selectionMode="multiple"
       selectedKeys={selectedKeys}
       onSelectionChange={onSelectionChange}>
-      <ListBoxItem id="chocolate" focusedKey={focusedKey}>Chocolate</ListBoxItem>
-      <ListBoxItem id="mint" focusedKey={focusedKey}>Mint</ListBoxItem>
-      <ListBoxItem id="strawberry" focusedKey={focusedKey}>Strawberry</ListBoxItem>
-      <ListBoxItem id="vanilla" focusedKey={focusedKey}>Vanilla</ListBoxItem>
+      <ListBoxItem id="chocolate" focusedKey={focusedKey}>
+        Chocolate
+      </ListBoxItem>
+      <ListBoxItem id="mint" focusedKey={focusedKey}>
+        Mint
+      </ListBoxItem>
+      <ListBoxItem id="strawberry" focusedKey={focusedKey}>
+        Strawberry
+      </ListBoxItem>
+      <ListBoxItem id="vanilla" focusedKey={focusedKey}>
+        Vanilla
+      </ListBoxItem>
     </ListBox>
   );
 }
 
 interface ListBoxItemProps extends AriaListBoxItemProps {
-  focusedKey: Key | null
+  focusedKey: Key | null;
 }
 
 function ListBoxItem(props: ListBoxItemProps) {
-  let textValue = props.textValue || (typeof props.children === 'string' ? props.children : undefined);
+  let textValue =
+    props.textValue || (typeof props.children === 'string' ? props.children : undefined);
   return (
-    <AriaListBoxItem {...props} textValue={textValue} className={({isFocusVisible, ...renderProps}) => itemStyles({isFocusVisible: isFocusVisible || props.id === props.focusedKey, ...renderProps})}>
-      {renderProps => (<>
-        {typeof props.children === 'function' ? props.children(renderProps) : props.children}
-        <div className="absolute left-2.5 right-2.5 bottom-0 h-px bg-white/20 forced-colors:bg-[HighlightText] hidden [.group[data-selected]:has(+[data-selected])_&]:block" />
-      </>)}
+    <AriaListBoxItem
+      {...props}
+      textValue={textValue}
+      className={({isFocusVisible, ...renderProps}) =>
+        itemStyles({
+          isFocusVisible: isFocusVisible || props.id === props.focusedKey,
+          ...renderProps
+        })
+      }>
+      {renderProps => (
+        <>
+          {typeof props.children === 'function' ? props.children(renderProps) : props.children}
+          <div className="absolute left-2.5 right-2.5 bottom-0 h-px bg-white/20 forced-colors:bg-[HighlightText] hidden [.group[data-selected]:has(+[data-selected])_&]:block" />
+        </>
+      )}
     </AriaListBoxItem>
   );
 }

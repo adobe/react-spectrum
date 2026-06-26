@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {disableTextSelection, restoreTextSelection}  from './textSelection';
+import {disableTextSelection, restoreTextSelection} from './textSelection';
 import {DOMAttributes, MoveEvents, PointerType} from '@react-types/shared';
 import {getEventTarget} from '../utils/shadowdom/DOMFunctions';
 import {getOwnerWindow} from '../utils/domHelpers';
@@ -20,14 +20,14 @@ import {useGlobalListeners} from '../utils/useGlobalListeners';
 
 export interface MoveResult {
   /** Props to spread on the target element. */
-  moveProps: DOMAttributes
+  moveProps: DOMAttributes;
 }
 
 interface EventBase {
-  shiftKey: boolean,
-  ctrlKey: boolean,
-  metaKey: boolean,
-  altKey: boolean
+  shiftKey: boolean;
+  ctrlKey: boolean;
+  metaKey: boolean;
+  altKey: boolean;
 }
 
 /**
@@ -39,55 +39,61 @@ export function useMove(props: MoveEvents): MoveResult {
   let {onMoveStart, onMove, onMoveEnd} = props;
 
   let state = useRef<{
-    didMove: boolean,
-    lastPosition: {pageX: number, pageY: number} | null,
-    id: number | null
+    didMove: boolean;
+    lastPosition: {pageX: number; pageY: number} | null;
+    id: number | null;
   }>({didMove: false, lastPosition: null, id: null});
 
   let {addGlobalListener, removeGlobalListener} = useGlobalListeners();
 
-  let move = useCallback((originalEvent: EventBase, pointerType: PointerType, deltaX: number, deltaY: number) => {
-    if (deltaX === 0 && deltaY === 0) {
-      return;
-    }
+  let move = useCallback(
+    (originalEvent: EventBase, pointerType: PointerType, deltaX: number, deltaY: number) => {
+      if (deltaX === 0 && deltaY === 0) {
+        return;
+      }
 
-    if (!state.current.didMove) {
-      state.current.didMove = true;
-      onMoveStart?.({
-        type: 'movestart',
+      if (!state.current.didMove) {
+        state.current.didMove = true;
+        onMoveStart?.({
+          type: 'movestart',
+          pointerType,
+          shiftKey: originalEvent.shiftKey,
+          metaKey: originalEvent.metaKey,
+          ctrlKey: originalEvent.ctrlKey,
+          altKey: originalEvent.altKey
+        });
+      }
+      onMove?.({
+        type: 'move',
         pointerType,
+        deltaX: deltaX,
+        deltaY: deltaY,
         shiftKey: originalEvent.shiftKey,
         metaKey: originalEvent.metaKey,
         ctrlKey: originalEvent.ctrlKey,
         altKey: originalEvent.altKey
       });
-    }
-    onMove?.({
-      type: 'move',
-      pointerType,
-      deltaX: deltaX,
-      deltaY: deltaY,
-      shiftKey: originalEvent.shiftKey,
-      metaKey: originalEvent.metaKey,
-      ctrlKey: originalEvent.ctrlKey,
-      altKey: originalEvent.altKey
-    });
-  }, [onMoveStart, onMove, state]);
+    },
+    [onMoveStart, onMove, state]
+  );
   let moveEvent = useEffectEvent(move);
 
-  let end = useCallback((originalEvent: EventBase, pointerType: PointerType) => {
-    restoreTextSelection();
-    if (state.current.didMove) {
-      onMoveEnd?.({
-        type: 'moveend',
-        pointerType,
-        shiftKey: originalEvent.shiftKey,
-        metaKey: originalEvent.metaKey,
-        ctrlKey: originalEvent.ctrlKey,
-        altKey: originalEvent.altKey
-      });
-    }
-  }, [onMoveEnd, state]);
+  let end = useCallback(
+    (originalEvent: EventBase, pointerType: PointerType) => {
+      restoreTextSelection();
+      if (state.current.didMove) {
+        onMoveEnd?.({
+          type: 'moveend',
+          pointerType,
+          shiftKey: originalEvent.shiftKey,
+          metaKey: originalEvent.metaKey,
+          ctrlKey: originalEvent.ctrlKey,
+          altKey: originalEvent.altKey
+        });
+      }
+    },
+    [onMoveEnd, state]
+  );
   let endEvent = useEffectEvent(end);
 
   let moveProps = useMemo(() => {
@@ -104,14 +110,18 @@ export function useMove(props: MoveEvents): MoveResult {
           // Should be safe to use the useEffectEvent because these are equivalent https://github.com/reactjs/react.dev/issues/8075#issuecomment-3400179389
           // However, the compiler is not smart enough to know that. As such, this whole file must be manually optimised as the compiler will bail.
           //
-          // eslint-disable-next-line react-hooks/rules-of-hooks
-          moveEvent(e, 'mouse', e.pageX - (state.current.lastPosition?.pageX ?? 0), e.pageY - (state.current.lastPosition?.pageY ?? 0));
+          moveEvent(
+            e,
+            'mouse',
+            e.pageX - (state.current.lastPosition?.pageX ?? 0),
+            e.pageY - (state.current.lastPosition?.pageY ?? 0)
+          );
           state.current.lastPosition = {pageX: e.pageX, pageY: e.pageY};
         }
       };
       let onMouseUp = (e: MouseEvent) => {
         if (e.button === 0) {
-          // eslint-disable-next-line react-hooks/rules-of-hooks
+          // oxlint-disable-next-line react/react-compiler
           endEvent(e, 'mouse');
           let ownerWindow = getOwnerWindow(getEventTarget(e) as Element);
           removeGlobalListener(ownerWindow, 'mousemove', onMouseMove, false);
@@ -131,18 +141,25 @@ export function useMove(props: MoveEvents): MoveResult {
       };
 
       let onTouchMove = (e: TouchEvent) => {
-        let touch = [...e.changedTouches].findIndex(({identifier}) => identifier === state.current.id);
+        let touch = [...e.changedTouches].findIndex(
+          ({identifier}) => identifier === state.current.id
+        );
         if (touch >= 0) {
           let {pageX, pageY} = e.changedTouches[touch];
-          // eslint-disable-next-line react-hooks/rules-of-hooks
-          moveEvent(e, 'touch', pageX - (state.current.lastPosition?.pageX ?? 0), pageY - (state.current.lastPosition?.pageY ?? 0));
+          moveEvent(
+            e,
+            'touch',
+            pageX - (state.current.lastPosition?.pageX ?? 0),
+            pageY - (state.current.lastPosition?.pageY ?? 0)
+          );
           state.current.lastPosition = {pageX, pageY};
         }
       };
       let onTouchEnd = (e: TouchEvent) => {
-        let touch = [...e.changedTouches].findIndex(({identifier}) => identifier === state.current.id);
+        let touch = [...e.changedTouches].findIndex(
+          ({identifier}) => identifier === state.current.id
+        );
         if (touch >= 0) {
-          // eslint-disable-next-line react-hooks/rules-of-hooks
           endEvent(e, 'touch');
           state.current.id = null;
           let ownerWindow = getOwnerWindow(getEventTarget(e) as Element);
@@ -175,8 +192,12 @@ export function useMove(props: MoveEvents): MoveResult {
           // Problems with PointerEvent#movementX/movementY:
           // 1. it is always 0 on macOS Safari.
           // 2. On Chrome Android, it's scaled by devicePixelRatio, but not on Chrome macOS
-          // eslint-disable-next-line react-hooks/rules-of-hooks
-          moveEvent(e, pointerType, e.pageX - (state.current.lastPosition?.pageX ?? 0), e.pageY - (state.current.lastPosition?.pageY ?? 0));
+          moveEvent(
+            e,
+            pointerType,
+            e.pageX - (state.current.lastPosition?.pageX ?? 0),
+            e.pageY - (state.current.lastPosition?.pageY ?? 0)
+          );
           state.current.lastPosition = {pageX: e.pageX, pageY: e.pageY};
         }
       };
@@ -184,7 +205,6 @@ export function useMove(props: MoveEvents): MoveResult {
       let onPointerUp = (e: PointerEvent) => {
         if (e.pointerId === state.current.id) {
           let pointerType = (e.pointerType || 'mouse') as PointerType;
-          // eslint-disable-next-line react-hooks/rules-of-hooks
           endEvent(e, pointerType);
           state.current.id = null;
           let ownerWindow = getOwnerWindow(getEventTarget(e) as Element);
@@ -211,13 +231,11 @@ export function useMove(props: MoveEvents): MoveResult {
 
     let triggerKeyboardMove = (e: EventBase, deltaX: number, deltaY: number) => {
       start();
-      // eslint-disable-next-line react-hooks/rules-of-hooks
       moveEvent(e, 'keyboard', deltaX, deltaY);
-      // eslint-disable-next-line react-hooks/rules-of-hooks
       endEvent(e, 'keyboard');
     };
 
-    moveProps.onKeyDown = (e) => {
+    moveProps.onKeyDown = e => {
       switch (e.key) {
         case 'Left':
         case 'ArrowLeft':

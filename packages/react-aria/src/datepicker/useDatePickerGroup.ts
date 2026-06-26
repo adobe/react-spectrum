@@ -2,37 +2,43 @@ import {createFocusManager, getFocusableTreeWalker} from '../focus/FocusScope';
 import {DateFieldState} from 'react-stately/useDateFieldState';
 import {DatePickerState} from 'react-stately/useDatePickerState';
 import {DateRangePickerState} from 'react-stately/useDateRangePickerState';
-import {DOMAttributes, FocusableElement, KeyboardEvent, RefObject} from '@react-types/shared';
-import {getEventTarget, nodeContains} from '../utils/shadowdom/DOMFunctions';
+import {DOMAttributes, FocusableElement, RefObject} from '@react-types/shared';
+import {getEventTarget} from '../utils/shadowdom/DOMFunctions';
 import {mergeProps} from '../utils/mergeProps';
+import {useKeyboard} from '../interactions/useKeyboard';
 import {useLocale} from '../i18n/I18nProvider';
 import {useMemo} from 'react';
 import {usePress} from '../interactions/usePress';
 
-export function useDatePickerGroup(state: DatePickerState | DateRangePickerState | DateFieldState, ref: RefObject<Element | null>, disableArrowNavigation?: boolean): DOMAttributes<FocusableElement> {
+export function useDatePickerGroup(
+  state: DatePickerState | DateRangePickerState | DateFieldState,
+  ref: RefObject<Element | null>,
+  disableArrowNavigation?: boolean
+): DOMAttributes<FocusableElement> {
   let {direction} = useLocale();
+  // oxlint-disable-next-line react/react-compiler
   let focusManager = useMemo(() => createFocusManager(ref), [ref]);
 
-  // Open the popover on alt + arrow down
-  let onKeyDown = (e: KeyboardEvent) => {
-    if (!nodeContains(e.currentTarget, getEventTarget(e) as Element)) {
-      return;
-    }
-
-    if (e.altKey && (e.key === 'ArrowDown' || e.key === 'ArrowUp') && 'setOpen' in state) {
-      e.preventDefault();
-      e.stopPropagation();
-      state.setOpen(true);
-    }
-
-    if (disableArrowNavigation) {
-      return;
-    }
-
-    switch (e.key) {
-      case 'ArrowLeft':
-        e.preventDefault();
-        e.stopPropagation();
+  let {keyboardProps} = useKeyboard({
+    shortcuts: {
+      'Alt+ArrowDown': () => {
+        if ('setOpen' in state) {
+          state.setOpen(true);
+          return;
+        }
+        return false;
+      },
+      'Alt+ArrowUp': () => {
+        if ('setOpen' in state) {
+          state.setOpen(true);
+          return;
+        }
+        return false;
+      },
+      ArrowLeft: e => {
+        if (disableArrowNavigation) {
+          return false;
+        }
         if (direction === 'rtl') {
           if (ref.current) {
             let target = getEventTarget(e) as FocusableElement;
@@ -40,15 +46,19 @@ export function useDatePickerGroup(state: DatePickerState | DateRangePickerState
 
             if (prev) {
               prev.focus();
+              return;
             }
           }
         } else {
           focusManager.focusPrevious();
+          return;
         }
-        break;
-      case 'ArrowRight':
-        e.preventDefault();
-        e.stopPropagation();
+        return false;
+      },
+      ArrowRight: e => {
+        if (disableArrowNavigation) {
+          return false;
+        }
         if (direction === 'rtl') {
           if (ref.current) {
             let target = getEventTarget(e) as FocusableElement;
@@ -56,14 +66,17 @@ export function useDatePickerGroup(state: DatePickerState | DateRangePickerState
 
             if (next) {
               next.focus();
+              return;
             }
           }
         } else {
           focusManager.focusNext();
+          return;
         }
-        break;
+        return false;
+      }
     }
-  };
+  });
 
   // Focus the first placeholder segment from the end on mouse down/touch up in the field.
   let focusLast = () => {
@@ -71,7 +84,7 @@ export function useDatePickerGroup(state: DatePickerState | DateRangePickerState
       return;
     }
     // Try to find the segment prior to the element that was clicked on.
-    let target = window.event ? getEventTarget(window.event) as FocusableElement : null;
+    let target = window.event ? (getEventTarget(window.event) as FocusableElement) : null;
     let walker = getFocusableTreeWalker(ref.current, {tabbable: true});
     if (target) {
       walker.currentNode = target;
@@ -119,7 +132,8 @@ export function useDatePickerGroup(state: DatePickerState | DateRangePickerState
     }
   });
 
-  return mergeProps(pressProps, {onKeyDown});
+  // oxlint-disable-next-line react/react-compiler
+  return mergeProps(pressProps, keyboardProps);
 }
 
 function findNextSegment(group: Element, fromX: number, direction: number) {

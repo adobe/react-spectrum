@@ -1,4 +1,4 @@
-@import "./theme.css";
+@import './theme.css';
 
 .react-aria-Popover {
   --background-color: var(--overlay-background);
@@ -9,12 +9,14 @@
   border-radius: var(--radius-lg);
   background: var(--background-color);
   color: var(--text-color);
-  transition: transform 200ms, opacity 200ms;
+  transition:
+    transform 200ms,
+    opacity 200ms;
   font: var(--font-size) system-ui;
   padding: 8px;
 
-  &[data-trigger=MenuTrigger],
-  &[data-trigger=SubmenuTrigger] {
+  &[data-trigger='MenuTrigger'],
+  &[data-trigger='SubmenuTrigger'] {
     padding: 0;
   }
 
@@ -32,7 +34,7 @@
     opacity: 0;
   }
 
-  &[data-placement=top] {
+  &[data-placement='top'] {
     --origin: translateY(8px);
 
     &:has(.react-aria-OverlayArrow) {
@@ -40,7 +42,7 @@
     }
   }
 
-  &[data-placement=bottom] {
+  &[data-placement='bottom'] {
     --origin: translateY(-8px);
 
     &:has(.react-aria-OverlayArrow) {
@@ -52,7 +54,7 @@
     }
   }
 
-  &[data-placement=right] {
+  &[data-placement='right'] {
     --origin: translateX(-8px);
 
     &:has(.react-aria-OverlayArrow) {
@@ -64,7 +66,7 @@
     }
   }
 
-  &[data-placement=left] {
+  &[data-placement='left'] {
     --origin: translateX(8px);
 
     &:has(.react-aria-OverlayArrow) {

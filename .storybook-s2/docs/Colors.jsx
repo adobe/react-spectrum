@@ -9,7 +9,11 @@ export function Colors() {
       <Disclosure isQuiet>
         <DisclosureTitle>Background colors</DisclosureTitle>
         <DisclosurePanel>
-          <P>The <Code>backgroundColor</Code> property supports the following values, in addition to the semantic and global colors shown below. These colors are specifically chosen to be used as backgrounds, so prefer them over global colors where possible.</P>
+          <P>
+            The <Code>backgroundColor</Code> property supports the following values, in addition to
+            the semantic and global colors shown below. These colors are specifically chosen to be
+            used as backgrounds, so prefer them over global colors where possible.
+          </P>
           <div className="sb-unstyled" style={{columnWidth: 120}}>
             <Color name="base" className={colorSwatch('base')} />
             <Color name="layer-1" className={colorSwatch('layer-1')} />
@@ -74,7 +78,11 @@ export function Colors() {
       <Disclosure isQuiet>
         <DisclosureTitle>Text colors</DisclosureTitle>
         <DisclosurePanel>
-          <P>The <Code>color</Code> property supports the following values, in addition to the semantic and global colors shown below. These colors are specifically chosen to be used as text colors, so prefer them over global colors where possible.</P>
+          <P>
+            The <Code>color</Code> property supports the following values, in addition to the
+            semantic and global colors shown below. These colors are specifically chosen to be used
+            as text colors, so prefer them over global colors where possible.
+          </P>
           <div className="sb-unstyled" style={{columnWidth: 120}}>
             <Color name="accent" className={colorSwatch('accent', 'color')} />
             <Color name="neutral" className={colorSwatch('neutral', 'color')} />
@@ -92,7 +100,10 @@ export function Colors() {
       <Disclosure isQuiet>
         <DisclosureTitle>Semantic colors</DisclosureTitle>
         <DisclosurePanel>
-          <P>The following values are available across all color properties. Prefer to use semantic colors over global colors when they represent a specific meaning.</P>
+          <P>
+            The following values are available across all color properties. Prefer to use semantic
+            colors over global colors when they represent a specific meaning.
+          </P>
           <div className="sb-unstyled" style={{columnWidth: 120}}>
             <ColorScale scale={getColorScale('accent-color')} />
             <ColorScale scale={getColorScale('informative-color')} />
@@ -134,14 +145,20 @@ export function Colors() {
 }
 
 function ColorScale({scale}) {
-  return scale.map(([name, className]) => (
-    <Color key={name} name={name} className={className} />
-  ))
+  return scale.map(([name, className]) => <Color key={name} name={name} className={className} />);
 }
 
 function Color({name, className}) {
   return (
-    <div className={style({display: 'flex', gap: 8, marginBottom: 4, font: 'ui', alignItems: 'center', breakInside: 'avoid'})}>
+    <div
+      className={style({
+        display: 'flex',
+        gap: 8,
+        marginBottom: 4,
+        font: 'ui',
+        alignItems: 'center',
+        breakInside: 'avoid'
+      })}>
       <div className={typeof className === 'function' ? className({}) : className} />
       <div className="sb-unstyled">{name}</div>
     </div>
@@ -178,5 +195,5 @@ export function IconColors() {
       <Color name="brown" className={colorSwatch('brown', 'fill')} />
       <Color name="silver" className={colorSwatch('silver', 'fill')} />
     </div>
-  )
+  );
 }

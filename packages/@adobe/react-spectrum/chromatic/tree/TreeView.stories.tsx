@@ -26,7 +26,12 @@ import {IllustratedMessage} from '../../src/illustratedmessage/IllustratedMessag
 import {Item} from 'react-stately/Item';
 import {Meta, StoryObj} from '@storybook/react';
 import React, {JSX} from 'react';
-import {SpectrumTreeViewProps, TreeView, TreeViewItem, TreeViewItemContent} from '../../src/tree/TreeView';
+import {
+  SpectrumTreeViewProps,
+  TreeView,
+  TreeViewItem,
+  TreeViewItemContent
+} from '../../src/tree/TreeView';
 import {Text} from '../../src/text/Text';
 import {View} from '../../src/view/View';
 
@@ -62,7 +67,12 @@ const meta: Meta<SpectrumTreeViewProps<object>> = {
   title: 'TreeView',
   component: TreeView,
   parameters: {
-    chromaticProvider: {colorSchemes: ['light'], locales: ['en-US'], scales: ['medium'], disableAnimations: true},
+    chromaticProvider: {
+      colorSchemes: ['light'],
+      locales: ['en-US'],
+      scales: ['medium'],
+      disableAnimations: true
+    },
 
     chromatic: {delay: 4000}
   }
@@ -73,14 +83,20 @@ export default meta;
 const Template = ({combos}: {combos: any}): JSX.Element => (
   <Grid columns={repeat(3, '1fr')} autoFlow="row" gap="size-300">
     {combos.map(c => {
-      let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
+      let key = Object.keys(c)
+        .map(k => shortName(k, c[k]))
+        .join(' ');
       if (!key) {
         key = 'empty';
       }
 
       return (
         <View flexGrow={1} maxWidth="size-5000" maxHeight={700}>
-          <TreeView {...c} disabledKeys={['projects-1']} defaultExpandedKeys={['Photos', 'projects', 'projects-1']} aria-label="test static tree">
+          <TreeView
+            {...c}
+            disabledKeys={['projects-1']}
+            defaultExpandedKeys={['Photos', 'projects', 'projects-1']}
+            aria-label="test static tree">
             <TreeViewItem href="https://adobe.com/" id="Photos" textValue="Photos">
               <TreeViewItemContent>
                 <Text>Photos</Text>
@@ -186,43 +202,38 @@ function renderEmptyState() {
   );
 }
 
-const EmptyTemplate = (props: SpectrumTreeViewProps<object>): JSX.Element =>
-  (
-    <TreeView
-      {...props}
-      aria-label="test empty tree"
-      items={[]}
-      renderEmptyState={renderEmptyState}>
-      {() => (
-        <TreeViewItem textValue="dummy value">
-          <TreeViewItemContent>
-            <Text>dummy content</Text>
-          </TreeViewItemContent>
-        </TreeViewItem>
-      )}
-    </TreeView>
-  );
+const EmptyTemplate = (props: SpectrumTreeViewProps<object>): JSX.Element => (
+  <TreeView {...props} aria-label="test empty tree" items={[]} renderEmptyState={renderEmptyState}>
+    {() => (
+      <TreeViewItem textValue="dummy value">
+        <TreeViewItemContent>
+          <Text>dummy content</Text>
+        </TreeViewItemContent>
+      </TreeViewItem>
+    )}
+  </TreeView>
+);
 
 export const Default: StoryObj<typeof Template> = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: '1 of 3',
   args: {combos: combo1}
 };
 
 export const DefaultPt2: StoryObj<typeof Template> = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: '2 of 3',
   args: {combos: combo2}
 };
 
 export const DefaultPt3: StoryObj<typeof Template> = {
-  render: (args) => <Template {...args} />,
+  render: args => <Template {...args} />,
   name: '3 of 3',
   args: {combos: combo3}
 };
 
 export const Empty: StoryObj<typeof EmptyTemplate> = {
-  render: (args) => <EmptyTemplate {...args} />,
+  render: args => <EmptyTemplate {...args} />,
   name: 'empty tree',
   args: {}
 };

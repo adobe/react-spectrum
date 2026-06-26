@@ -15,7 +15,7 @@ import {DateFieldState, DateSegment} from 'react-stately/useDateFieldState';
 import {getActiveElement, nodeContains} from '../utils/shadowdom/DOMFunctions';
 import {getScrollParent} from '../utils/getScrollParent';
 import {hookData} from './useDateField';
-import {isIOS, isMac} from '../utils/platform';
+import {isIOS} from '../utils/platform';
 import {mergeProps} from '../utils/mergeProps';
 import {NumberParser} from '@internationalized/number';
 import React, {CSSProperties, useMemo, useRef} from 'react';
@@ -26,6 +26,7 @@ import {useDisplayNames} from './useDisplayNames';
 import {useEvent} from '../utils/useEvent';
 import {useFilter} from '../i18n/useFilter';
 import {useId} from '../utils/useId';
+import {useKeyboard} from '../interactions/useKeyboard';
 import {useLabels} from '../utils/useLabels';
 import {useLayoutEffect} from '../utils/useLayoutEffect';
 import {useLocale} from '../i18n/I18nProvider';
@@ -33,7 +34,7 @@ import {useSpinButton} from '../spinbutton/useSpinButton';
 
 export interface DateSegmentAria {
   /** Props for the segment element. */
-  segmentProps: React.HTMLAttributes<HTMLDivElement>
+  segmentProps: React.HTMLAttributes<HTMLDivElement>;
 }
 
 /**
@@ -41,7 +42,11 @@ export interface DateSegmentAria {
  * A date segment displays an individual unit of a date and time, and allows users to edit
  * the value by typing or using the arrow keys to increment and decrement.
  */
-export function useDateSegment(segment: DateSegment, state: DateFieldState, ref: RefObject<HTMLElement | null>): DateSegmentAria {
+export function useDateSegment(
+  segment: DateSegment,
+  state: DateFieldState,
+  ref: RefObject<HTMLElement | null>
+): DateSegmentAria {
   let enteredKeys = useRef('');
   let {locale, direction} = useLocale();
   let displayNames = useDisplayNames();
@@ -121,28 +126,20 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
     }
   };
 
-  let onKeyDown = (e) => {
-    // Firefox does not fire selectstart for Ctrl/Cmd + A
-    // https://bugzilla.mozilla.org/show_bug.cgi?id=1742153
-    if (e.key === 'a' && (isMac() ? e.metaKey : e.ctrlKey)) {
-      e.preventDefault();
-    }
-
-    if (e.ctrlKey || e.metaKey || e.shiftKey || e.altKey) {
-      return;
-    }
-
-    switch (e.key) {
-      case 'Backspace':
-      case 'Delete': {
-        // Safari on iOS does not fire beforeinput for the backspace key because the cursor is at the start.
-        e.preventDefault();
-        e.stopPropagation();
+  let {keyboardProps} = useKeyboard({
+    shortcuts: {
+      Backspace: () => {
         backspace();
-        break;
+      },
+      Delete: () => {
+        backspace();
+      },
+      'Mod+a': () => {
+        // Firefox does not fire selectstart for Ctrl/Cmd + A
+        // https://bugzilla.mozilla.org/show_bug.cgi?id=1742153
       }
     }
-  };
+  });
 
   // Safari dayPeriod option doesn't work...
   let {startsWith} = useFilter({sensitivity: 'base'});
@@ -235,7 +232,11 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
 
         state.setSegment(segment.type, segmentValue);
 
-        if (segment.maxValue !== undefined && (Number(numberValue + '0') > segment.maxValue || newValue.length >= String(segment.maxValue).length)) {
+        if (
+          segment.maxValue !== undefined &&
+          (Number(numberValue + '0') > segment.maxValue ||
+            newValue.length >= String(segment.maxValue).length)
+        ) {
           enteredKeys.current = '';
           focusManager.focusNext();
         } else {
@@ -331,13 +332,16 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
   }, [ref, focusManager]);
 
   // spinbuttons cannot be focused with VoiceOver on iOS.
-  let touchPropOverrides = isIOS() || segment.type === 'timeZoneName' ? {
-    role: 'textbox',
-    'aria-valuemax': null,
-    'aria-valuemin': null,
-    'aria-valuetext': null,
-    'aria-valuenow': null
-  } : {};
+  let touchPropOverrides =
+    isIOS() || segment.type === 'timeZoneName'
+      ? {
+          role: 'textbox',
+          'aria-valuemax': null,
+          'aria-valuemin': null,
+          'aria-valuetext': null,
+          'aria-valuenow': null
+        }
+      : {};
 
   // Only apply aria-describedby to the first segment, unless the field is invalid. This avoids it being
   // read every time the user navigates to a new segment.
@@ -369,9 +373,9 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
 
   let segmentStyle: CSSProperties = {caretColor: 'transparent'};
   if (direction === 'rtl') {
-    // While the bidirectional algorithm seems to work properly on inline elements with actual values, it returns different results for placeholder strings. 
+    // While the bidirectional algorithm seems to work properly on inline elements with actual values, it returns different results for placeholder strings.
     // To ensure placeholder render in correct format, we apply the CSS equivalent of LRE (left-to-right embedding). See https://www.unicode.org/reports/tr9/#Explicit_Directional_Embeddings.
-    // However, we apply this to both placeholders and date segments with an actual value because the date segments will shift around when deleting otherwise. 
+    // However, we apply this to both placeholders and date segments with an actual value because the date segments will shift around when deleting otherwise.
     segmentStyle.unicodeBidi = 'embed';
     let format = options[segment.type];
     if (format === 'numeric' || format === '2-digit') {
@@ -380,22 +384,28 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
   }
 
   return {
+    // oxlint-disable-next-line react/react-compiler
     segmentProps: mergeProps(spinButtonProps, labelProps, {
       id,
       ...touchPropOverrides,
+      ...keyboardProps,
       'aria-invalid': state.isInvalid ? 'true' : undefined,
       'aria-describedby': ariaDescribedBy,
       'aria-readonly': state.isReadOnly || !segment.isEditable ? 'true' : undefined,
       'data-placeholder': segment.isPlaceholder || undefined,
       contentEditable: isEditable,
       suppressContentEditableWarning: isEditable,
-      spellCheck: isEditable ? 'false' : undefined,
+      spellCheck: isEditable ? ('false' as const) : undefined,
       autoCorrect: isEditable ? 'off' : undefined,
       // Capitalization was changed in React 17...
-      [parseInt(React.version, 10) >= 17 ? 'enterKeyHint' : 'enterkeyhint']: isEditable ? 'next' : undefined,
-      inputMode: state.isDisabled || segment.type === 'dayPeriod' || segment.type === 'era' || !isEditable ? undefined : 'numeric',
+      [parseInt(React.version, 10) >= 17 ? 'enterKeyHint' : 'enterkeyhint']: isEditable
+        ? 'next'
+        : undefined,
+      inputMode:
+        state.isDisabled || segment.type === 'dayPeriod' || segment.type === 'era' || !isEditable
+          ? undefined
+          : ('numeric' as const),
       tabIndex: state.isDisabled ? undefined : 0,
-      onKeyDown,
       onFocus,
       style: segmentStyle,
       // Prevent pointer events from reaching useDatePickerGroup, and allow native browser behavior to focus the segment.
