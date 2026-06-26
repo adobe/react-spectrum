@@ -34,6 +34,7 @@ import {
   GridListSection
 } from '../src/GridList';
 import {GridListLoadMoreItem} from '../src/GridList';
+import {I18nProvider} from 'react-aria/I18nProvider';
 import {Input} from '../src/Input';
 import {installPointerEvent, User} from '@react-aria/test-utils';
 import {Label} from '../src/Label';
@@ -42,7 +43,6 @@ import {ListLayout} from 'react-stately/useVirtualizerState';
 import {Modal} from '../src/Modal';
 import {Popover} from '../src/Popover';
 import React from 'react';
-import {I18nProvider} from 'react-aria/I18nProvider';
 import {RouterProvider} from 'react-aria/private/utils/openLink';
 import {Tag, TagGroup, TagList} from '../src/TagGroup';
 import {Toolbar} from '../src/Toolbar';
