@@ -80,7 +80,7 @@ function getFiles(
                   tailwindcss: '^4',
                   '@tailwindcss/vite': '^4',
                   'tailwindcss-react-aria-components': '^2',
-                  'tailwindcss-animate': '^1'
+                  'tw-animate-css': '^1'
                 }
               : {}),
             ...(type === 's2'

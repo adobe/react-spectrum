@@ -284,6 +284,7 @@ function ModalOverlayInner({UNSTABLE_portalContainer, ...props}: ModalOverlayInn
   // TODO: This can cause native focus scroll-into-view to abort, so we might want to do that manually?
   useLayoutEffect(() => runAfterKeyboard(() => setIsOpen(true)), []);
 
+  // oxlint-disable react/react-compiler
   return (
     <Overlay isExiting={props.isExiting} portalContainer={UNSTABLE_portalContainer}>
       <dom.div
@@ -313,6 +314,7 @@ function ModalOverlayInner({UNSTABLE_portalContainer, ...props}: ModalOverlayInn
       </dom.div>
     </Overlay>
   );
+  // oxlint-enable react/react-compiler
 }
 
 interface ModalContentProps
