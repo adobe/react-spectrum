@@ -732,7 +732,7 @@ export interface TreeItemProps<T = object>
     LinkDOMProps,
     HoverEvents,
     PressEvents,
-    Pick<AriaTreeItemOptions, 'hasChildItems'>,
+    Pick<AriaTreeItemOptions, 'hasChildItems' | 'focusMode' | 'allowsArrowNavigation'>,
     Omit<GlobalDOMAttributes<HTMLDivElement>, 'onClick'> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the
@@ -787,7 +787,9 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent(
     let {rowProps, gridCellProps, expandButtonProps, descriptionProps, ...states} = useTreeItem(
       {
         node: item,
-        shouldSelectOnPressUp: !!dragState
+        shouldSelectOnPressUp: !!dragState,
+        focusMode: props.focusMode,
+        allowsArrowNavigation: props.allowsArrowNavigation
       },
       state,
       ref
