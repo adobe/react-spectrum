@@ -30,6 +30,7 @@ if (typeof FinalizationRegistry !== 'undefined') {
     idsUpdaterMap.delete(heldValue);
   });
 }
+let registeredIds = new WeakMap<object, string>();
 
 /**
  * If a default is not provided, generate an id.
@@ -43,9 +44,19 @@ export function useId(defaultId?: string): string {
   let res = useSSRSafeId(value);
   let cleanupRef = useRef(null);
 
-  if (registry) {
+  // These are intentionally disabled the compiler, these functions just read the identity
+  // of the ref, not the value inside current.
+  // oxlint-disable-next-line react/react-compiler
+  let registeredId = registeredIds.get(cleanupRef);
+  if (registry && registeredId !== res) {
+    if (registeredId != null) {
+      // oxlint-disable-next-line react/react-compiler
+      registry.unregister(cleanupRef);
+    }
     // oxlint-disable-next-line react/react-compiler
-    registry.register(cleanupRef, res);
+    registry.register(cleanupRef, res, cleanupRef);
+    // oxlint-disable-next-line react/react-compiler
+    registeredIds.set(cleanupRef, res);
   }
 
   if (canUseDOM) {
@@ -67,6 +78,7 @@ export function useId(defaultId?: string): string {
       // when it is though, also remove it from the finalization registry.
       if (registry) {
         registry.unregister(cleanupRef);
+        registeredIds.delete(cleanupRef);
       }
       idsUpdaterMap.delete(r);
     };

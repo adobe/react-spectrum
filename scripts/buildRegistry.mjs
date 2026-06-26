@@ -153,7 +153,14 @@ function analyzeDeps(file, type) {
               : '@/registry/react-aria/ui/' + source.slice(2);
         }
       } else {
-        dependencies.add(source);
+        // Use the bare package name (e.g. `react-aria-components`) rather than the
+        // deep import path (`react-aria-components/Button`). npm treats `owner/repo`
+        // specifiers as GitHub shorthand, so passing deep paths to `shadcn add` (which
+        // runs `npm install <deps>`) would fail to resolve the dependency.
+        let pkg = source.startsWith('@')
+          ? source.split('/').slice(0, 2).join('/')
+          : source.split('/')[0];
+        dependencies.add(pkg);
       }
     }
   }
