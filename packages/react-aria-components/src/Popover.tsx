@@ -206,6 +206,7 @@ interface PopoverInnerProps extends AriaPopoverProps, RenderProps<PopoverRenderP
   trigger?: string;
   dir?: 'ltr' | 'rtl';
   clearContexts?: Context<any>[];
+  id?: string;
 }
 
 function PopoverInner({
