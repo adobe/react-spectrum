@@ -34,6 +34,7 @@ import {ComboBox, ComboBoxItem} from '@react-spectrum/s2/ComboBox';
 ```tsx render
 "use client";
 import {ComboBox, ComboBoxItem} from '@react-spectrum/s2/ComboBox';
+import Binoculars from '@react-spectrum/s2/icons/Binoculars';
 
 function Example() {
   let options = [
@@ -50,7 +51,7 @@ function Example() {
 
   return (
     /*- begin highlight -*/
-    <ComboBox label="Animals" defaultItems={options} placeholder="Select an animal">
+    <ComboBox label="Animals" defaultItems={options} placeholder="Select an animal" prefix={<Binoculars />}>
       {(item) => <ComboBoxItem>{item.name}</ComboBoxItem>}
     </ComboBox>
     /*- end highlight -*/

@@ -59,7 +59,8 @@ export const SliderExample: SliderStory = () => {
               height: 3,
               top: 13,
               width: '100%'
-            }} />
+            }}
+          />
           <CustomThumb index={0}>
             <Label>A</Label>
           </CustomThumb>
@@ -73,7 +74,7 @@ export const SliderExample: SliderStory = () => {
   );
 };
 
-export const SliderCSS: SliderStory = (props) => (
+export const SliderCSS: SliderStory = props => (
   <Slider {...props} defaultValue={30} className={styles.slider}>
     <div className={styles.label}>
       <Label>Test</Label>
@@ -102,7 +103,7 @@ SliderCSS.argTypes = {
   }
 };
 
-const CustomThumb = ({index, children}: {index: number, children: React.ReactNode}) => {
+const CustomThumb = ({index, children}: {index: number; children: React.ReactNode}) => {
   return (
     <SliderThumb
       index={index}
@@ -112,9 +113,7 @@ const CustomThumb = ({index, children}: {index: number, children: React.ReactNod
         borderRadius: '50%',
         top: '50%',
         // eslint-disable-next-line
-        backgroundColor: isFocusVisible ? 'orange' : isDragging
-          ? 'dimgrey'
-          : 'gray'
+        backgroundColor: isFocusVisible ? 'orange' : isDragging ? 'dimgrey' : 'gray'
       })}>
       {children}
     </SliderThumb>

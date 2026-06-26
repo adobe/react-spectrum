@@ -3,5 +3,5 @@
 @import 'tailwindcss/utilities.css' layer(utilities) source(none);
 @source "*.mdx";
 @plugin "tailwindcss-react-aria-components";
-@plugin "tailwindcss-animate";
+@import 'tw-animate-css';
 @variant dark (&:where([style*="color-scheme: dark"] *));

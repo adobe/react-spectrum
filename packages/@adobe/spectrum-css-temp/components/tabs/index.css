@@ -14,7 +14,9 @@ governing permissions and limitations under the License.
 
 :root {
   --spectrum-tabs-item-height: calc(var(--spectrum-tabs-height) - var(--spectrum-tabs-rule-height));
-  --spectrum-tabs-compact-item-height: calc(var(--spectrum-tabs-quiet-compact-height) - var(--spectrum-tabs-rule-height));
+  --spectrum-tabs-compact-item-height: calc(
+    var(--spectrum-tabs-quiet-compact-height) - var(--spectrum-tabs-rule-height)
+  );
 }
 
 .spectrum-TabsPanel {
@@ -126,7 +128,6 @@ governing permissions and limitations under the License.
   z-index: 0;
   transform-origin: top left;
 
-
   [dir='ltr'] .spectrum-Tabs--horizontal & {
     transform: translateX(var(--spectrum-tabs-focus-ring-padding-x));
   }
@@ -167,7 +168,10 @@ governing permissions and limitations under the License.
       top: 50%;
       bottom: unset;
       block-size: var(--spectrum-tabs-focus-ring-height);
-      margin-block-start: calc(calc(var(--spectrum-tabs-focus-ring-height) / -2) + calc(var(--spectrum-tabs-rule-height) / 2));
+      margin-block-start: calc(
+        calc(var(--spectrum-tabs-focus-ring-height) / -2) +
+          calc(var(--spectrum-tabs-rule-height) / 2)
+      );
     }
   }
 
@@ -176,7 +180,9 @@ governing permissions and limitations under the License.
     block-size: var(--spectrum-tabs-rule-height);
 
     inset-block-end: calc(var(--spectrum-tabs-rule-height) * -1);
-    transition: transform var(--spectrum-tabs-selection-indicator-animation-duration) ease-in-out, width var(--spectrum-tabs-selection-indicator-animation-duration) ease-in-out;
+    transition:
+      transform var(--spectrum-tabs-selection-indicator-animation-duration) ease-in-out,
+      width var(--spectrum-tabs-selection-indicator-animation-duration) ease-in-out;
   }
 
   &.spectrum-Tabs--isCollapsed {
@@ -193,7 +199,10 @@ governing permissions and limitations under the License.
         box-sizing: border-box;
 
         block-size: var(--spectrum-tabs-focus-ring-height);
-        margin-block-start: calc(calc(var(--spectrum-tabs-focus-ring-height) / -2) + calc(var(--spectrum-tabs-rule-height) / 2));
+        margin-block-start: calc(
+          calc(var(--spectrum-tabs-focus-ring-height) / -2) +
+            calc(var(--spectrum-tabs-rule-height) / 2)
+        );
         inset-inline-start: calc(var(--spectrum-tabs-focus-ring-padding-x) * -1);
         inset-inline-end: calc(var(--spectrum-tabs-focus-ring-padding-x) * -1);
         border: var(--spectrum-tabs-focus-ring-size) solid transparent;
@@ -233,7 +242,9 @@ governing permissions and limitations under the License.
     block-size: var(--spectrum-tabs-vertical-item-height);
     padding: 0 var(--spectrum-tabs-focus-ring-padding-x);
     /* Subtract focus ring padding from margin-left since the padding value already offsets tabs-items */
-    margin-inline-start: calc(var(--spectrum-tabs-vertical-item-margin-left) - var(--spectrum-tabs-focus-ring-padding-x));
+    margin-inline-start: calc(
+      var(--spectrum-tabs-vertical-item-margin-left) - var(--spectrum-tabs-focus-ring-padding-x)
+    );
     margin-block-end: var(--spectrum-tabs-vertical-item-gap);
 
     &::before {
@@ -273,7 +284,9 @@ governing permissions and limitations under the License.
     inline-size: var(--spectrum-tabs-vertical-rule-width);
 
     inset-inline-start: calc(var(--spectrum-tabs-vertical-rule-width) * -1);
-    transition: transform var(--spectrum-tabs-selection-indicator-animation-duration) ease-in-out, height var(--spectrum-tabs-selection-indicator-animation-duration) ease-in-out;
+    transition:
+      transform var(--spectrum-tabs-selection-indicator-animation-duration) ease-in-out,
+      height var(--spectrum-tabs-selection-indicator-animation-duration) ease-in-out;
   }
 }
 

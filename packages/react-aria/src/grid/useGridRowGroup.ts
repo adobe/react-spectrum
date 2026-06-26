@@ -14,7 +14,7 @@ import {DOMAttributes} from '@react-types/shared';
 
 export interface GridRowGroupAria {
   /** Props for the row group element. */
-  rowGroupProps: DOMAttributes
+  rowGroupProps: DOMAttributes;
 }
 
 /**

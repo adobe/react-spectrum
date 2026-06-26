@@ -13,11 +13,12 @@
 
     background: var(--button-background);
     color: var(--button-text);
-    box-shadow: 
-      inset 0 -1px 0 var(--button-shadow), /* bottom shadow */
-      inset 0 0 0 var(--button-border-size) var(--button-border), /* border */
-      inset 0px calc(var(--button-border-size) + 1px) 0px var(--button-highlight), /* top specular highlight */
-      inset 0px calc(-1 * var(--button-gradient-size)) var(--button-gradient-size) -2px var(--button-gradient); /* inner gradient */
+    box-shadow:
+      inset 0 -1px 0 var(--button-shadow),
+      /* bottom shadow */ inset 0 0 0 var(--button-border-size) var(--button-border),
+      /* border */ inset 0px calc(var(--button-border-size) + 1px) 0px var(--button-highlight),
+      /* top specular highlight */ inset 0px calc(-1 * var(--button-gradient-size))
+        var(--button-gradient-size) -2px var(--button-gradient); /* inner gradient */
     outline: none;
     transition-property: background, color, scale, box-shadow;
     transition-duration: 200ms;
@@ -29,10 +30,12 @@
       --button-shadow: oklch(from var(--button-color) var(--lightness-200) var(--chroma-200) h);
       --button-highlight: rgb(255 255 255 / 0.15);
       box-shadow:
-        inset 0 var(--button-border-size) 0 var(--button-highlight), /* top specular highlight */
-        inset 0 calc(-1 * var(--button-border-size)) 0 var(--button-shadow), /* bottom shadow */
-        inset 0 0 0 var(--button-border-size) var(--button-border), /* border */
-        inset 0 var(--button-gradient-size) var(--button-gradient-size) -2px var(--button-gradient); /* inner gradient */
+        inset 0 var(--button-border-size) 0 var(--button-highlight),
+        /* top specular highlight */ inset 0 calc(-1 * var(--button-border-size)) 0
+          var(--button-shadow),
+        /* bottom shadow */ inset 0 0 0 var(--button-border-size) var(--button-border),
+        /* border */ inset 0 var(--button-gradient-size) var(--button-gradient-size) -2px
+          var(--button-gradient); /* inner gradient */
     }
 
     &:where([data-pressed]) {
@@ -44,11 +47,11 @@
       outline-offset: 2px;
     }
 
-    &:where([data-variant=secondary]) {
+    &:where([data-variant='secondary']) {
       --button-color: var(--gray);
     }
 
-    &:where([data-variant=quiet]) {
+    &:where([data-variant='quiet']) {
       --button-background: none;
       --button-text: var(--text-color);
       box-shadow: 0 0 0 1px transparent;
@@ -69,19 +72,21 @@
       --button-text: var(--highlight-foreground);
 
       box-shadow:
-        inset 0 -1px 0 var(--button-shadow), /* bottom shadow */
-        inset 0 0 0 1px var(--button-border), /* border */
-        inset 0 2px 0 var(--button-highlight), /* top specular highlight */
-        inset 0 calc(-1 * var(--button-gradient-size)) var(--button-gradient-size) var(--button-gradient); /* inner gradient */
+        inset 0 -1px 0 var(--button-shadow),
+        /* bottom shadow */ inset 0 0 0 1px var(--button-border),
+        /* border */ inset 0 2px 0 var(--button-highlight),
+        /* top specular highlight */ inset 0 calc(-1 * var(--button-gradient-size))
+          var(--button-gradient-size) var(--button-gradient); /* inner gradient */
 
       @media (prefers-color-scheme: dark) {
         --button-highlight: rgb(255 255 255 / 0.4);
         --button-gradient: rgb(255 255 255 / 0.2);
         --button-shadow: var(--button-border);
         box-shadow:
-          inset 0 1px 0 var(--button-highlight), /* top specular highlight */
-          inset 0 var(--button-gradient-size) var(--button-gradient-size) var(--button-gradient), /* inner gradient */
-          inset 0 0 0 1px var(--button-border); /* border */
+          inset 0 1px 0 var(--button-highlight),
+          /* top specular highlight */ inset 0 var(--button-gradient-size)
+            var(--button-gradient-size) var(--button-gradient),
+          /* inner gradient */ inset 0 0 0 1px var(--button-border); /* border */
       }
 
       &:where([data-pressed]) {
@@ -94,7 +99,7 @@
       --button-background: var(--border-color-disabled);
       --button-text: var(--text-color-disabled);
 
-      &:where([data-variant=quiet]) {
+      &:where([data-variant='quiet']) {
         --button-background: none;
       }
     }
@@ -105,7 +110,7 @@
       --button-border: ButtonBorder;
       box-shadow: inset 0 0 0 var(--button-border-size) var(--button-border);
 
-      &:where([data-variant=quiet]) {
+      &:where([data-variant='quiet']) {
         --button-border: transparent;
         &:where([data-hovered], [data-pressed]) {
           --button-border: ButtonBorder;
@@ -123,7 +128,7 @@
         --button-text: GrayText;
         --button-border: GrayText;
 
-        &:where([data-variant=quiet]) {
+        &:where([data-variant='quiet']) {
           --button-border: transparent;
         }
       }
@@ -133,24 +138,27 @@
   /* utility that creates a small indicator, such as a checkbox, radio, switch, or slider thumb */
   .indicator {
     --indicator-color: var(--gray);
-    --indicator-background: oklch(from var(--indicator-color) var(--lightness-100) var(--chroma-100) h);
+    --indicator-background: oklch(
+      from var(--indicator-color) var(--lightness-100) var(--chroma-100) h
+    );
     --indicator-border: oklch(from var(--indicator-color) var(--lightness-800) var(--chroma-800) h);
     --indicator-drop-shadow: 0 0;
 
     background: var(--indicator-background);
     box-shadow:
-      inset 0 0 0 1px var(--indicator-border), /* border */
-      inset 0 2px 0 white, /* top specular highlight */
-      inset 0 -4px 2px oklch(from var(--indicator-color) 30% c h / 0.08), /* inner gradient */
-      var(--indicator-drop-shadow); /* optional drop shadow */
+      inset 0 0 0 1px var(--indicator-border),
+      /* border */ inset 0 2px 0 white,
+      /* top specular highlight */ inset 0 -4px 2px
+        oklch(from var(--indicator-color) 30% c h / 0.08),
+      /* inner gradient */ var(--indicator-drop-shadow); /* optional drop shadow */
     will-change: scale;
 
     @media (prefers-color-scheme: dark) {
       box-shadow:
-        inset 0 1px 0 rgb(255 255 255 / 0.4), /* top specular highlight */
-        inset 0 4px 2px rgb(255 255 255 / 0.1), /* inner shadow */
-        inset 0 0 0 1px var(--indicator-border), /* border */
-        var(--indicator-drop-shadow); /* optional drop shadow */
+        inset 0 1px 0 rgb(255 255 255 / 0.4),
+        /* top specular highlight */ inset 0 4px 2px rgb(255 255 255 / 0.1),
+        /* inner shadow */ inset 0 0 0 1px var(--indicator-border),
+        /* border */ var(--indicator-drop-shadow); /* optional drop shadow */
     }
 
     @media (forced-colors: active) {
@@ -172,19 +180,19 @@
       --indicator-shadow: oklch(from var(--indicator-color) 45% c h);
       --indicator-border: var(--indicator-background);
       box-shadow:
-        inset 0 -1px 0 var(--indicator-shadow), /* bottom shadow */
-        inset 0 0 0 1px var(--indicator-border), /* border */
-        inset 0 2px 0 var(--indicator-highlight), /* top specular highlight */
-        var(--indicator-drop-shadow); /* optional drop shadow */
+        inset 0 -1px 0 var(--indicator-shadow),
+        /* bottom shadow */ inset 0 0 0 1px var(--indicator-border),
+        /* border */ inset 0 2px 0 var(--indicator-highlight),
+        /* top specular highlight */ var(--indicator-drop-shadow); /* optional drop shadow */
 
       @media (prefers-color-scheme: dark) {
         --indicator-highlight: rgb(255 255 255 / 0.5);
         --indicator-gradient: rgb(255 255 255 / 0.12);
         box-shadow:
-          inset 0 1px 0 var(--indicator-highlight), /* top specular highlight */
-          inset 0 4px 2px var(--indicator-gradient), /* inner gradient */
-          inset 0 0 0 1px var(--indicator-border), /* border */
-          var(--indicator-drop-shadow); /* optional drop shadow */
+          inset 0 1px 0 var(--indicator-highlight),
+          /* top specular highlight */ inset 0 4px 2px var(--indicator-gradient),
+          /* inner gradient */ inset 0 0 0 1px var(--indicator-border),
+          /* border */ var(--indicator-drop-shadow); /* optional drop shadow */
       }
 
       @media (forced-colors: active) {
@@ -210,7 +218,7 @@
     &[data-disabled],
     [data-disabled] > & {
       background: var(--field-background);
-      box-shadow: inset 0 0 0 1px var(--border-color-disabled)
+      box-shadow: inset 0 0 0 1px var(--border-color-disabled);
     }
   }
 
@@ -224,9 +232,9 @@
 
     background: var(--inset-background);
     box-shadow:
-      inset 0 0 0 var(--inset-border-size) var(--inset-border), /* border */
-      inset 0 var(--inset-shadow-offset) var(--inset-shadow-size) rgb(0 0 0 / 0.15), /* inner shadow */
-      0 1px 0 var(--gray-50); /* bottom specular highlight */
+      inset 0 0 0 var(--inset-border-size) var(--inset-border),
+      /* border */ inset 0 var(--inset-shadow-offset) var(--inset-shadow-size) rgb(0 0 0 / 0.15),
+      /* inner shadow */ 0 1px 0 var(--gray-50); /* bottom specular highlight */
     transition: box-shadow 200ms;
     forced-color-adjust: none;
 
@@ -236,9 +244,9 @@
       --inset-highlight: var(--gray-400);
       --inset-shadow-size: 6px;
       box-shadow:
-        inset 0 calc(-1 * var(--inset-border-size)) 0 var(--inset-highlight), /* bottom specular highlight */
-        inset 0 0 0 var(--inset-border-size) var(--inset-border), /* border */
-        inset 0 1px var(--inset-shadow-size) rgb(0 0 0); /* inner shadow */
+        inset 0 calc(-1 * var(--inset-border-size)) 0 var(--inset-highlight),
+        /* bottom specular highlight */ inset 0 0 0 var(--inset-border-size) var(--inset-border),
+        /* border */ inset 0 1px var(--inset-shadow-size) rgb(0 0 0); /* inner shadow */
     }
 
     &:where([data-hovered], [data-pressed]) {

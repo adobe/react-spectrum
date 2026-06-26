@@ -24,9 +24,9 @@ interface ClearButtonStyleProps {
    *
    * @default 'M'
    */
-  size?: 'S' | 'M' | 'L' | 'XL',
+  size?: 'S' | 'M' | 'L' | 'XL';
   /** Whether the ClearButton should be displayed with a static color. */
-  isStaticColor?: boolean
+  isStaticColor?: boolean;
 }
 
 interface ClearButtonRenderProps extends ButtonRenderProps, ClearButtonStyleProps {}
@@ -59,9 +59,13 @@ const visibleClearButton = style<ClearButtonRenderProps>({
   }
 });
 
-export const ClearButton = forwardRef(function ClearButton(props: ClearButtonProps, ref: FocusableRef<HTMLButtonElement>) {
+export const ClearButton = forwardRef(function ClearButton(
+  props: ClearButtonProps,
+  ref: FocusableRef<HTMLButtonElement>
+) {
   let {size = 'M', isStaticColor = false, ...rest} = props;
   let domRef = useFocusableRef(ref);
+  // oxlint-disable react/react-compiler
   return (
     <Button
       {...rest}
@@ -71,4 +75,5 @@ export const ClearButton = forwardRef(function ClearButton(props: ClearButtonPro
       <CrossIcon size={props.size} />
     </Button>
   );
+  // oxlint-enable react/react-compiler
 });

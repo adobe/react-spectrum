@@ -18,32 +18,47 @@ const test = (name: string, input: string) => {
   defineSnapshotTest(transform, {}, input, name);
 };
 
-test('Removes isFilled', `
+test(
+  'Removes isFilled',
+  `
 import {Slider} from '@adobe/react-spectrum';
 
 <Slider label="Cookies to buy" defaultValue={12} isFilled />
-`);
+`
+);
 
-test('Removes trackGradient', `
+test(
+  'Removes trackGradient',
+  `
 import {Slider} from '@adobe/react-spectrum';
 
 <Slider label="Cookies to buy" defaultValue={12} trackGradient={['white', 'rgba(177,141,32,1)']} />
-`);
+`
+);
 
-test('Removes showValueLabel', `
+test(
+  'Removes showValueLabel',
+  `
 import {Slider} from '@adobe/react-spectrum';
 
 <Slider label="Cookies to buy" defaultValue={12} showValueLabel={false} />
-`);
+`
+);
 
-test('Comments out getValueLabel', `
+test(
+  'Comments out getValueLabel',
+  `
 import {Slider} from '@adobe/react-spectrum';
 
 <Slider label="Cookies to buy" defaultValue={12} getValueLabel={cookies => "60 total cookies"}  />
-`);
+`
+);
 
-test('Comments out orientation', `
+test(
+  'Comments out orientation',
+  `
 import {Slider} from '@adobe/react-spectrum';
 
 <Slider label="Cookies to buy" defaultValue={12} orientation="vertical" />
-`);
+`
+);

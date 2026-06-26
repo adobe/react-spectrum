@@ -13,7 +13,7 @@ import {Provider, defaultTheme} from '@adobe/react-spectrum';
 
 declare module '@adobe/react-spectrum' {
   interface RouterConfig {
-    routerOptions: NavigateOptions
+    routerOptions: NavigateOptions;
   }
 }
 
@@ -41,7 +41,7 @@ export default function App() {
         {/* https://remix.run/docs/en/main/guides/envvars */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `window.process = {}; window.process.env = {};`,
+            __html: `window.process = {}; window.process.env = {};`
           }}
         />
         <Scripts />

@@ -38,10 +38,21 @@ const components = (isLongForm?: boolean) => ({
   h3: H3,
   h4: H4,
   p: props => <P {...props} isLongForm={isLongForm} />,
-  ul: (props) => <ul {...props} />,
+  ul: props => <ul {...props} />,
   li: props => <LI {...props} isLongForm={isLongForm} />,
-  Figure: (props) => <figure {...props} className={style({display: 'flex', flexDirection: 'column', alignItems: 'center', marginY: 32, marginX: 0})} />,
-  Caption: (props) => <figcaption {...props} className={style({font: 'body-sm'})} />,
+  Figure: props => (
+    <figure
+      {...props}
+      className={style({
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        marginY: 32,
+        marginX: 0
+      })}
+    />
+  ),
+  Caption: props => <figcaption {...props} className={style({font: 'body-sm'})} />,
   CodeBlock: CodeBlock,
   pre: ({children, ...props}) => (
     <pre {...props} className={standaloneCode}>
@@ -52,13 +63,28 @@ const components = (isLongForm?: boolean) => ({
       )}
     </pre>
   ),
-  code: (props) => <Code {...props} />,
-  strong: ({children, ...props}) => <strong {...props} className={style({fontWeight: 'bold'})}>{children}</strong>,
-  a: (props) => <Link {...props} />,
+  code: props => <Code {...props} />,
+  strong: ({children, ...props}) => (
+    <strong {...props} className={style({fontWeight: 'bold'})}>
+      {children}
+    </strong>
+  ),
+  a: props => <Link {...props} />,
   Link,
   PageDescription,
   VisualExample,
-  Keyboard: (props) => <kbd {...props} className={style({font: 'code-sm', paddingX: 4, whiteSpace: 'nowrap', backgroundColor: 'gray-100', borderRadius: 'sm'})} />,
+  Keyboard: props => (
+    <kbd
+      {...props}
+      className={style({
+        font: 'code-sm',
+        paddingX: 4,
+        whiteSpace: 'nowrap',
+        backgroundColor: 'gray-100',
+        borderRadius: 'sm'
+      })}
+    />
+  ),
   PropTable,
   StateTable,
   ClassAPI,
@@ -69,7 +95,11 @@ const components = (isLongForm?: boolean) => ({
 
 const getTitle = (currentPage: Page): string => {
   const explicitTitle = (currentPage as any).pageTitle || currentPage.exports?.pageTitle;
-  if (explicitTitle && explicitTitle !== currentPage.tableOfContents?.[0]?.title && explicitTitle !== currentPage.name) {
+  if (
+    explicitTitle &&
+    explicitTitle !== currentPage.tableOfContents?.[0]?.title &&
+    explicitTitle !== currentPage.name
+  ) {
     return explicitTitle as string;
   }
 
@@ -95,7 +125,8 @@ const getOgImageUrl = (currentPage: Page): string => {
 
 const getDescription = (currentPage: Page): string => {
   let library = getLibraryLabel(getLibraryFromPage(currentPage));
-  const pageTitle = currentPage.exports?.title ?? currentPage.tableOfContents?.[0]?.title ?? currentPage.name;
+  const pageTitle =
+    currentPage.exports?.title ?? currentPage.tableOfContents?.[0]?.title ?? currentPage.name;
   const explicitDescription = (currentPage as any).description || currentPage.exports?.description;
   if (explicitDescription) {
     return explicitDescription as string;
@@ -103,7 +134,9 @@ const getDescription = (currentPage: Page): string => {
   if (currentPage.name === 'index.html' || currentPage.name.endsWith('/index.html')) {
     return `Documentation for ${library || 'React Spectrum'}`;
   }
-  return library ? `Documentation for ${pageTitle} in ${library}.` : `Documentation for ${pageTitle}.`;
+  return library
+    ? `Documentation for ${pageTitle} in ${library}.`
+    : `Documentation for ${pageTitle}.`;
 };
 
 const getFaviconUrl = (currentPage: Page): string => {
@@ -156,10 +189,26 @@ function Footer() {
           listStyleType: 'none'
         })}>
         <li>Copyright © {year} Adobe. All rights reserved.</li>
-        <li><Link isQuiet href="//www.adobe.com/privacy.html" variant="secondary">Privacy</Link></li>
-        <li><Link isQuiet href="//www.adobe.com/legal/terms.html" variant="secondary">Terms of Use</Link></li>
-        <li><Link isQuiet href="//www.adobe.com/privacy/cookies.html" variant="secondary">Cookies</Link></li>
-        <li><Link isQuiet href="//www.adobe.com/privacy/ca-rights.html" variant="secondary">Do not sell my personal information</Link></li>
+        <li>
+          <Link isQuiet href="//www.adobe.com/privacy.html" variant="secondary">
+            Privacy
+          </Link>
+        </li>
+        <li>
+          <Link isQuiet href="//www.adobe.com/legal/terms.html" variant="secondary">
+            Terms of Use
+          </Link>
+        </li>
+        <li>
+          <Link isQuiet href="//www.adobe.com/privacy/cookies.html" variant="secondary">
+            Cookies
+          </Link>
+        </li>
+        <li>
+          <Link isQuiet href="//www.adobe.com/privacy/ca-rights.html" variant="secondary">
+            Do not sell my personal information
+          </Link>
+        </li>
       </ul>
     </footer>
   );
@@ -173,10 +222,15 @@ export async function Layout(props: PageProps & {children: ReactElement<any>}) {
   let isSubpage = currentPage.exports?.isSubpage;
   let section = currentPage.exports?.section;
   let isLongForm = isSubpage && section === 'Blog';
-  let hasToC = (!currentPage.exports?.hideNav || section === 'Blog' || section === 'Releases') && currentPage.tableOfContents?.[0]?.children && currentPage.tableOfContents?.[0]?.children?.length > 0;
+  let hasToC =
+    (!currentPage.exports?.hideNav || section === 'Blog' || section === 'Releases') &&
+    currentPage.tableOfContents?.[0]?.children &&
+    currentPage.tableOfContents?.[0]?.children?.length > 0;
   let isWide = !hasToC && !isLongForm && section !== 'Blog' && section !== 'Releases';
   let library = getLibraryLabel(getLibraryFromPage(currentPage));
-  let keywords = [...new Set((currentPage.exports?.keywords ?? []).concat([library]).filter(k => !!k))];
+  let keywords = [
+    ...new Set((currentPage.exports?.keywords ?? []).concat([library]).filter(k => !!k))
+  ];
   let ogImage = getOgImageUrl(currentPage);
   let title = getTitle(currentPage);
   let description = getDescription(currentPage);
@@ -188,12 +242,21 @@ export async function Layout(props: PageProps & {children: ReactElement<any>}) {
   let Content = isPostList ? PostListContainer : Article;
   return (
     <Router currentPage={currentPage} pages={pages}>
-      <Provider elementType="html" locale="en" background="layer-1" styles={style({scrollPaddingTop: {default: 64, lg: 0}})}>
+      <Provider
+        elementType="html"
+        locale="en"
+        background="layer-1"
+        styles={style({scrollPaddingTop: {default: 64, lg: 0}})}>
         <head>
           <meta charSet="utf-8" />
           <title>{title}</title>
           <meta name="viewport" content="width=device-width, initial-scale=1" />
-          <link rel="alternate" type="text/markdown" title="LLM-friendly version" href={currentPage.url.replace(/\.html$/, '.md')} />
+          <link
+            rel="alternate"
+            type="text/markdown"
+            title="LLM-friendly version"
+            href={currentPage.url.replace(/\.html$/, '.md')}
+          />
           <link rel="icon" href={getFaviconUrl(currentPage)} />
           <meta name="description" content={description} />
           {keywords.length > 0 ? <meta name="keywords" content={keywords.join(',')} /> : null}
@@ -244,8 +307,15 @@ export async function Layout(props: PageProps & {children: ReactElement<any>}) {
                 }
               })}>
               <Header />
-              <MobileHeader toc={(currentPage.tableOfContents?.[0]?.children?.length ?? 0) <= 1 ? null : <OptimisticMobileToc />} />
-              <div className={style({display: 'flex', width: 'full', flexGrow: {default: 1, lg: 0}})}>
+              <MobileHeader
+                toc={
+                  (currentPage.tableOfContents?.[0]?.children?.length ?? 0) <= 1 ? null : (
+                    <OptimisticMobileToc />
+                  )
+                }
+              />
+              <div
+                className={style({display: 'flex', width: 'full', flexGrow: {default: 1, lg: 0}})}>
                 <Nav />
                 <Main
                   style={{borderBottomLeftRadius: 0, borderBottomRightRadius: 0}}
@@ -290,7 +360,11 @@ export async function Layout(props: PageProps & {children: ReactElement<any>}) {
                     })}>
                     <CodePlatterProvider library={getLibraryFromPage(currentPage)}>
                       <NavigationSuspense>
-                        <Content page={currentPage} parentPage={parentPage} isLongForm={isLongForm} isWide={isWide}>
+                        <Content
+                          page={currentPage}
+                          parentPage={parentPage}
+                          isLongForm={isLongForm}
+                          isWide={isWide}>
                           {React.cloneElement(children, {
                             components: components(isLongForm),
                             pages
@@ -313,11 +387,11 @@ export async function Layout(props: PageProps & {children: ReactElement<any>}) {
 }
 
 interface ArticleProps {
-  page: Page,
-  parentPage?: Page,
-  children: ReactNode,
-  isLongForm?: boolean,
-  isWide?: boolean
+  page: Page;
+  parentPage?: Page;
+  children: ReactNode;
+  isLongForm?: boolean;
+  isWide?: boolean;
 }
 
 function Article({page, parentPage, children, isLongForm, isWide}: ArticleProps) {
@@ -335,18 +409,19 @@ function Article({page, parentPage, children, isLongForm, isWide}: ArticleProps)
         <meta itemProp="logo" content="https://www.adobe.com/favicon.ico" />
       </div>
       {page.exports?.version && <VersionBadge version={page.exports.version} />}
-      {page.exports?.isSubpage
-        ? <SubpageHeader currentPage={page} parentPage={parentPage} isLongForm={isLongForm} />
-        : page.tableOfContents?.[0]?.level === 1 && <H1 itemProp="headline" isLongForm={isLongForm}>{page.tableOfContents?.[0].title}</H1>
-      }
-      <div
-        className={style({display: 'contents'})}
-        itemProp="articleBody">
+      {page.exports?.isSubpage ? (
+        <SubpageHeader currentPage={page} parentPage={parentPage} isLongForm={isLongForm} />
+      ) : (
+        page.tableOfContents?.[0]?.level === 1 && (
+          <H1 itemProp="headline" isLongForm={isLongForm}>
+            {page.tableOfContents?.[0].title}
+          </H1>
+        )
+      )}
+      <div className={style({display: 'contents'})} itemProp="articleBody">
         {children}
       </div>
-      {page.exports?.relatedPages && (
-        <MobileRelatedPages pages={page.exports.relatedPages} />
-      )}
+      {page.exports?.relatedPages && <MobileRelatedPages pages={page.exports.relatedPages} />}
     </article>
   );
 }
@@ -354,7 +429,9 @@ function Article({page, parentPage, children, isLongForm, isWide}: ArticleProps)
 function PostListContainer({page, children, isLongForm, isWide}: ArticleProps) {
   return (
     <div className={articleStyles({isLongForm, isWide})}>
-      {page.tableOfContents?.[0]?.level === 1 && <H1 isLongForm={isLongForm}>{page.tableOfContents?.[0].title}</H1>}
+      {page.tableOfContents?.[0]?.level === 1 && (
+        <H1 isLongForm={isLongForm}>{page.tableOfContents?.[0].title}</H1>
+      )}
       {children}
     </div>
   );
@@ -364,7 +441,7 @@ function isExternalUrl(url: string): boolean {
   return url.startsWith('http://') || url.startsWith('https://');
 }
 
-function MobileRelatedPages({pages}: {pages: Array<{title: string, url: string}>}) {
+function MobileRelatedPages({pages}: {pages: Array<{title: string; url: string}>}) {
   return (
     <div
       className={style({

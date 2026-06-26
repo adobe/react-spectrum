@@ -6,7 +6,9 @@ const test = (name: string, input: string) => {
   defineSnapshotTest(transform, {}, input, name);
 };
 
-test('Removes isQuiet', `
+test(
+  'Removes isQuiet',
+  `
 import {TextArea} from '@adobe/react-spectrum';
 let isQuiet = true;
 let props = {isQuiet: true};
@@ -18,9 +20,12 @@ let props = {isQuiet: true};
   <TextArea isQuiet={'foo' === 'foo'} />
   <TextArea {...props} />
 </div>
-`);
+`
+);
 
-test('changes validationState to isInvalid or nothing', `
+test(
+  'changes validationState to isInvalid or nothing',
+  `
 import {TextArea} from '@adobe/react-spectrum';
 let validationState = 'invalid';
 let props = {validationState: 'invalid'};
@@ -30,4 +35,5 @@ let props = {validationState: 'invalid'};
   <TextArea validationState={validationState} />
   <TextArea {...props} />
 </div>
-`);
+`
+);

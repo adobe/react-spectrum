@@ -14,14 +14,13 @@ export const description = 'Displays data in rows and columns, with row selectio
 
 <PageDescription>{docs.exports.TableView.description}</PageDescription>
 
-```tsx render docs={docs.exports.TableView} links={docs.links} props={['selectionMode', 'overflowMode', 'density', 'isQuiet', 'disabledBehavior']} initialProps={{'aria-label': 'Files', selectionMode: 'multiple', 'treeColumn': 'name', disabledBehavior: 'selection'}} type="s2"
+```tsx render docs={docs.exports.TableView} links={docs.links} props={['selectionMode', 'overflowMode', 'density', 'isQuiet', 'selectionStyle']} initialProps={{'aria-label': 'Files', selectionMode: 'multiple', 'treeColumn': 'name', 'selectionStyle': 'checkbox'}} type="s2"
 "use client";
 import {TableView, TableHeader, Column, TableBody, Row, Cell} from '@react-spectrum/s2/TableView';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 <TableView
   /* PROPS */
-  disabledKeys={['pacman', 'apps']}
   styles={style({width: 'full'})}>
   <TableHeader>
     <Column id="name" isRowHeader>Name</Column>
@@ -90,7 +89,7 @@ In this example, both the columns and the rows are provided to the table via a r
 
 ```tsx render type="s2"
 "use client";
-import {TableView, TableHeader, Column, TableBody, Row, Cell} from '@react-spectrum/s2/TableView';
+import {TableView, TableHeader, Column, TableBody, Row, Cell, TableFooter} from '@react-spectrum/s2/TableView';
 import {CheckboxGroup, Checkbox} from '@react-spectrum/s2/CheckboxGroup';
 import {ActionButton} from '@react-spectrum/s2/ActionButton';
 import {useState} from 'react';
@@ -98,39 +97,40 @@ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 ///- begin collapse -///
 const columns = [
-  {name: 'Name', id: 'name', isRowHeader: true},
-  {name: 'Type', id: 'type'},
-  {name: 'Date Modified', id: 'date'}
+  {name: 'Title', id: 'title', isRowHeader: true},
+  {name: 'Status', id: 'status'},
+  {name: 'Payment Method', id: 'paymentMethod'},
+  {name: 'Price', id: 'price'}
 ];
 ///- end collapse -///
 
 ///- begin collapse -///
 const initialRows = [
-  {id: 1, name: 'Games', date: '6/7/2020', type: 'File folder'},
-  {id: 2, name: 'Program Files', date: '4/7/2021', type: 'File folder'},
-  {id: 3, name: 'bootmgr', date: '11/20/2010', type: 'System file'},
-  {id: 4, name: 'log.txt', date: '1/18/2016', type: 'Text Document'}
+  {id: 1, title: 'Website Design', status: 'Paid', paymentMethod: 'Credit Card', price: 1200},
+  {id: 2, title: 'Logo Creation', status: 'Pending', paymentMethod: 'PayPal', price: 350},
+  {id: 3, title: 'SEO Optimization', status: 'Overdue', paymentMethod: 'Bank Transfer', price: 800},
+  {id: 4, title: 'Social Media Setup', status: 'Paid', paymentMethod: 'Debit Card', price: 450},
+  {id: 5, title: 'Content Writing', status: 'Pending', paymentMethod: 'Credit Card', price: 600}
 ];
 ///- end collapse -///
 
 function FileTable() {
-  let [showColumns, setShowColumns] = useState(['name', 'type', 'date']);
+  let [showColumns, setShowColumns] = useState(['title', 'status', 'paymentMethod', 'price']);
   let visibleColumns = columns.filter(column => showColumns.includes(column.id));
 
   let [rows, setRows] = useState(initialRows);
   let addRow = () => {
-    let date = new Date().toLocaleDateString();
     setRows(rows => [
       ...rows,
-      {id: rows.length + 1, name: 'file.txt', date, type: 'Text Document'}
+      {id: rows.length + 1, title: 'New Invoice', status: 'Pending', paymentMethod: 'Credit Card', price: 250}
     ]);
   };
 
   return (
     <div className={style({display: 'flex', flexDirection: 'column', gap: 8, alignItems: 'start', width: 'full'})}>
       <CheckboxGroup aria-label="Show columns" value={showColumns} onChange={setShowColumns} orientation="horizontal">
-        <Checkbox value="type">Type</Checkbox>
-        <Checkbox value="date">Date Modified</Checkbox>
+        <Checkbox value="status">Status</Checkbox>
+        <Checkbox value="paymentMethod">Payment Method</Checkbox>
       </CheckboxGroup>
       <TableView aria-label="Files" styles={style({width: 'full'})}>
         <TableHeader columns={visibleColumns}>
@@ -145,10 +145,22 @@ function FileTable() {
           {item => (
             /*- end highlight -*/
             <Row columns={visibleColumns}>
-              {column => <Cell>{item[column.id]}</Cell>}
+              {column => (
+                <Cell>
+                  {column.id === 'price'
+                    ? item.price.toLocaleString('en-US', {style: 'currency', currency: 'USD', maximumFractionDigits: 0})
+                    : item[column.id]}
+                </Cell>
+              )}
             </Row>
           )}
         </TableBody>
+        <TableFooter>
+          <Row>
+            <Cell colSpan={showColumns.length - 1}>Total</Cell>
+            <Cell>{rows.reduce((p, row) => p + row.price, 0).toLocaleString('en-US', {style: 'currency', currency: 'USD', maximumFractionDigits: 0})}</Cell>
+          </Row>
+        </TableFooter>
       </TableView>
       <ActionButton onPress={addRow}>Add row</ActionButton>
     </div>
@@ -296,7 +308,7 @@ function AsyncSortTable() {
 
 Use the `href` prop on a Row to create a link. See the [getting started guide](getting-started) to learn how to integrate with your framework. Link interactions vary depending on the selection behavior.  See the [selection guide](selection) for more details.
 
-```tsx render docs={docs.exports.TableView} links={docs.links} props={['selectionMode']} initialProps={{'aria-label': 'Bookmarks', selectionMode: 'multiple'}} wide type="s2"
+```tsx render docs={docs.exports.TableView} links={docs.links} props={['selectionMode', 'selectionStyle']} initialProps={{'aria-label': 'Bookmarks', selectionMode: 'multiple', selectionStyle: 'checkbox'}} wide type="s2"
 "use client";
 import {TableView, TableHeader, Column, TableBody, Row, Cell} from '@react-spectrum/s2/TableView';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
@@ -311,18 +323,18 @@ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
   </TableHeader>
   <TableBody>
     {/*- begin highlight -*/}
-    <Row href="https://adobe.com/" target="_blank">
+    <Row href="https://adobe.com/" target="_blank" id="Adobe">
       {/*- end highlight -*/}
       <Cell>Adobe</Cell>
       <Cell>https://adobe.com/</Cell>
       <Cell>January 28, 2023</Cell>
     </Row>
-    <Row href="https://google.com/" target="_blank">
+    <Row href="https://google.com/" target="_blank" id="Google">
       <Cell>Google</Cell>
       <Cell>https://google.com/</Cell>
       <Cell>April 5, 2023</Cell>
     </Row>
-    <Row href="https://nytimes.com/" target="_blank">
+    <Row href="https://nytimes.com/" target="_blank" id="NYTimes">
       <Cell>New York Times</Cell>
       <Cell>https://nytimes.com/</Cell>
       <Cell>July 12, 2023</Cell>
@@ -351,7 +363,6 @@ import FolderOpen from '@react-spectrum/s2/illustrations/linear/FolderOpen';
   </TableHeader>
   {/*- begin highlight -*/}
   <TableBody
-    /*- begin highlight -*/
     renderEmptyState={() => (
       <IllustratedMessage>
         <FolderOpen />
@@ -371,7 +382,7 @@ Use the `align` prop on a Column and Cell to set the text alignment. `showDivide
 
 ```tsx render hideImports type="s2"
 "use client";
-import {TableView, TableHeader, Column, TableBody, Row, Cell, Collection} from '@react-spectrum/s2/TableView';
+import {TableView, TableHeader, Column, TableBody, Row, Cell, Collection, TableFooter} from '@react-spectrum/s2/TableView';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 ///- begin collapse -///
@@ -422,13 +433,15 @@ function TableWithDividers() {
             </Row>
           )}
         </Collection>
+      </TableBody>
+      <TableFooter>
         <Row>
           {/*- begin highlight -*/}
           <Cell colSpan={2} align="end" showDivider>Total:</Cell>
           {/*- end highlight -*/}
           <Cell align="end">{rows.reduce((p, v) => p + v.level, 0)}</Cell>
         </Row>
-      </TableBody>
+      </TableFooter>
     </TableView>
   );
 }
@@ -644,7 +657,7 @@ export default function EditableTable(props) {
 
 Use `selectionMode` to enable single or multiple selection, and `selectedKeys` (matching each row's `id`) to control the selected rows. Return an [ActionBar](ActionBar) from `renderActionBar` to handle bulk actions, and use `onAction` for row navigation. Disable rows with `isDisabled`. See the [selection guide](selection) for details.
 
-```tsx render docs={docs.exports.TableView} links={docs.links} props={['selectionMode', 'disallowEmptySelection']} initialProps={{selectionMode: 'multiple'}} wide type="s2"
+```tsx render docs={docs.exports.TableView} links={docs.links} props={['selectionMode', 'disallowEmptySelection', 'disabledBehavior', 'selectionStyle']} initialProps={{selectionMode: 'multiple', disabledBehavior: 'selection', selectionStyle: 'checkbox'}} wide type="s2"
 "use client";
 import {TableView, TableHeader, Column, TableBody, Row, Cell, type Selection} from '@react-spectrum/s2/TableView';
 import {ActionBar, ActionButton} from '@react-spectrum/s2/ActionBar';
@@ -933,9 +946,104 @@ function subscribe(fn) {
 }
 ```
 
+## Drag and drop
+
+Table supports drag and drop interactions when the `dragAndDropHooks` prop is provided using the <TypeLink links={docs.links} type={docs.exports.useDragAndDrop} /> hook. Users can drop data on the table as a whole, on individual rows, insert new rows between existing ones, or reorder rows. See the [drag and drop guide](dnd?component=TableView) to learn more.
+
+You can customize the drag preview by passing <TypeLink links={docs.links} type={docs.exports.DragPreview} /> or your own custom drag preview element to `useDragAndDrop`'s `renderDragPreview`. `DragPreview` supports leading icons and `Text` with `label` and `description` slots.
+
+```tsx render type="s2"
+"use client";
+import {TableView, TableHeader, TableBody, Column, Row, Cell, Collection} from '@react-spectrum/s2/TableView';
+import {Text} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {DragPreview, useDragAndDrop} from '@react-spectrum/s2/useDragAndDrop';
+import {useTreeData} from '@react-spectrum/s2/useTreeData';
+import File from '@react-spectrum/s2/icons/File';
+import Folder from '@react-spectrum/s2/icons/Folder';
+
+function ReorderableTable() {
+  let tree = useTreeData({
+    initialItems: [
+      {id: '1', title: 'Documents', type: 'Directory', date: '10/20/2025', children: [
+        {id: '2', title: 'Project', type: 'Directory', date: '8/2/2025', children: [
+          {id: '3', title: 'Weekly Report', type: 'File', date: '7/10/2025', children: []},
+          {id: '4', title: 'Budget', type: 'File', date: '8/20/2025', children: []}
+        ]}
+      ]},
+      {id: '5', title: 'Photos', type: 'Directory', date: '2/3/2026', children: [
+        {id: '6', title: 'Image 1', type: 'File', date: '1/23/2026', children: []},
+        {id: '7', title: 'Image 2', type: 'File', date: '2/3/2026', children: []}
+      ]}
+    ]
+  });
+
+  ///- begin highlight -///
+  let {dragAndDropHooks} = useDragAndDrop({
+    getItems: (keys, items: typeof tree.items) => items.map(item => ({'text/plain': item.value.title, type: item.value.type})),
+    onMove(e) {
+      if (e.target.dropPosition === 'before') {
+        tree.moveBefore(e.target.key, e.keys);
+      } else if (e.target.dropPosition === 'after') {
+        tree.moveAfter(e.target.key, e.keys);
+      } else if (e.target.dropPosition === 'on') {
+        let targetNode = tree.getItem(e.target.key);
+        if (targetNode) {
+          let targetIndex = targetNode.children ? targetNode.children.length : 0;
+          let keyArray = Array.from(e.keys);
+          for (let i = 0; i < keyArray.length; i++) {
+            tree.move(keyArray[i], e.target.key, targetIndex + i);
+          }
+        }
+      }
+    },
+    renderDragPreview: (items) => (
+      <DragPreview items={items}>
+        {items[0].type === 'Directory' ? <Folder /> : <File />}
+        <Text>{items[0]['text/plain']}</Text>
+        <Text slot="description">{items[0].type}</Text>
+      </DragPreview>
+    )
+  });
+  ///- end highlight -///
+
+  return (
+    <TableView
+      aria-label="Files"
+      selectionMode="multiple"
+      treeColumn="name"
+      defaultExpandedKeys={['5']}
+      ///- begin highlight -///
+      dragAndDropHooks={dragAndDropHooks}
+      ///- end highlight -///
+      styles={style({width: 'full', maxWidth: 480})}>
+      <TableHeader>
+        <Column id="name" isRowHeader>Name</Column>
+        <Column id="type">Type</Column>
+        <Column id="date">Date Modified</Column>
+      </TableHeader>
+      <TableBody items={tree.items}>
+        {function renderItem(item) {
+          return (
+            <Row id={item.key}>
+              <Cell>{item.value.title}</Cell>
+              <Cell>{item.value.type}</Cell>
+              <Cell>{item.value.date}</Cell>
+              <Collection items={item.children ?? []}>
+                {renderItem}
+              </Collection>
+            </Row>
+          );
+        }}
+      </TableBody>
+    </TableView>
+  );
+}
+```
+
 ## API
 
-```tsx links={{TableView: '#tableview', TableHeader: '#tableheader', Column: '#column', TableBody: '#tablebody', Row: '#row', Cell: '#cell', 'EditableCell': '#editablecell'}}
+```tsx links={{TableView: '#tableview', TableHeader: '#tableheader', Column: '#column', TableBody: '#tablebody', Row: '#row', Cell: '#cell', TableFooter: '#tablefooter', 'EditableCell': '#editablecell'}}
 <TableView>
   <TableHeader>
     <Column />
@@ -946,6 +1054,11 @@ function subscribe(fn) {
       <EditableCell />
     </Row>
   </TableBody>
+  <TableFooter>
+    <Row>
+      <Cell />
+    </Row>
+  </TableFooter>
 </TableView>
 ```
 
@@ -972,6 +1085,10 @@ function subscribe(fn) {
 ### Cell
 
 <PropTable component={docs.exports.Cell} links={docs.links} showDescription />
+
+### TableFooter
+
+<PropTable component={docs.exports.TableFooter} links={docs.links} showDescription />
 
 ### EditableCell
 

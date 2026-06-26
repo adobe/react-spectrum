@@ -11,10 +11,14 @@
  */
 
 import {AriaButtonProps} from '../button/useButton';
-import {clearGlobalDnDState, isInternalDropOperation, setDraggingKeys, useDragModality} from './utils';
+import {
+  clearGlobalDnDState,
+  isInternalDropOperation,
+  setDraggingKeys,
+  useDragModality
+} from './utils';
 import {DraggableCollectionState} from 'react-stately/useDraggableCollectionState';
 import {HTMLAttributes} from 'react';
-// @ts-ignore
 import intlMessages from '../../intl/dnd/*.json';
 import {Key} from '@react-types/shared';
 import {useDescription} from '../utils/useDescription';
@@ -23,26 +27,27 @@ import {useLocalizedStringFormatter} from '../i18n/useLocalizedStringFormatter';
 
 export interface DraggableItemProps {
   /** The key of the draggable item within the collection. */
-  key: Key,
+  key: Key;
   /**
-   * Whether the item has an explicit focusable drag affordance to initiate accessible drag and drop mode.
-   * If true, the dragProps will omit these event handlers, and they will be applied to dragButtonProps instead.
+   * Whether the item has an explicit focusable drag affordance to initiate accessible drag and drop
+   * mode. If true, the dragProps will omit these event handlers, and they will be applied to
+   * dragButtonProps instead.
    */
-  hasDragButton?: boolean,
+  hasDragButton?: boolean;
   /**
-   * Whether the item has a primary action (e.g. Enter key or long press) that would
-   * conflict with initiating accessible drag and drop. If true, the Alt key must be held to
-   * start dragging with a keyboard, and long press is disabled until selection mode is entered.
-   * This should be passed from the associated collection item hook (e.g. useOption, useGridListItem, etc.).
+   * Whether the item has a primary action (e.g. Enter key or long press) that would conflict with
+   * initiating accessible drag and drop. If true, the Alt key must be held to start dragging with a
+   * keyboard, and long press is disabled until selection mode is entered. This should be passed
+   * from the associated collection item hook (e.g. useOption, useGridListItem, etc.).
    */
-  hasAction?: boolean
+  hasAction?: boolean;
 }
 
 export interface DraggableItemResult {
   /** Props for the draggable item. */
-  dragProps: HTMLAttributes<HTMLElement>,
+  dragProps: HTMLAttributes<HTMLElement>;
   /** Props for the explicit drag button affordance, if any. */
-  dragButtonProps: AriaButtonProps
+  dragButtonProps: AriaButtonProps;
 }
 
 const MESSAGES = {
@@ -63,7 +68,10 @@ const MESSAGES = {
 /**
  * Handles drag interactions for an item within a draggable collection.
  */
-export function useDraggableItem(props: DraggableItemProps, state: DraggableCollectionState): DraggableItemResult {
+export function useDraggableItem(
+  props: DraggableItemProps,
+  state: DraggableCollectionState
+): DraggableItemResult {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/dnd');
   let isDisabled = state.isDisabled || state.selectionManager.isDisabled(props.key);
   let {dragProps, dragButtonProps} = useDrag({
@@ -111,6 +119,7 @@ export function useDraggableItem(props: DraggableItemProps, state: DraggableColl
 
     // Remove the onClick handler from useDrag. Long pressing will be required on touch devices,
     // and NVDA/JAWS are always in forms mode within collection components.
+    // oxlint-disable-next-line react/react-compiler
     delete dragProps.onClick;
   } else {
     if (isSelected) {
@@ -130,16 +139,19 @@ export function useDraggableItem(props: DraggableItemProps, state: DraggableColl
     let {onKeyDownCapture, onKeyUpCapture} = dragProps;
     if (modality === 'touch') {
       // Remove long press description if an action is present, because in that case long pressing selects the item.
+      // oxlint-disable-next-line react/react-compiler
       delete dragProps['aria-describedby'];
     }
 
     // Require Alt key if there is a conflicting action.
+    // oxlint-disable-next-line react/react-compiler
     dragProps.onKeyDownCapture = e => {
       if (e.altKey) {
         onKeyDownCapture?.(e);
       }
     };
 
+    // oxlint-disable-next-line react/react-compiler
     dragProps.onKeyUpCapture = e => {
       if (e.altKey) {
         onKeyUpCapture?.(e);

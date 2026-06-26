@@ -15,7 +15,7 @@ export const description = 'Allows a user to select a contiguous range of dates.
   component={RangeCalendar}
   docs={docs.exports.RangeCalendar}
   links={docs.links}
-  props={['visibleMonths', 'pageBehavior', 'firstDayOfWeek', 'isDisabled', 'interactOutsideBehavior']}
+  props={['visibleMonths', 'pageBehavior', 'firstDayOfWeek', 'isDisabled', 'commitBehavior']}
   initialProps={{'aria-label': 'Trip dates'}}
   controlOptions={{
     visibleMonths: {
@@ -201,7 +201,8 @@ function Example(props) {
       ///- begin highlight -///
       /* PROPS */
       minValue={today(getLocalTimeZone())}
-      isDateUnavailable={date => (
+      isDateUnavailable={(date, anchorDate) => (
+        (anchorDate && Math.abs(date.compare(anchorDate)) > 7) ||
         disabledRanges.some((interval) =>
           date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0
         )

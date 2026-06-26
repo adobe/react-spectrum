@@ -101,7 +101,7 @@ import {TagGroup, Tag} from 'vanilla-starter/TagGroup';
   <Content>Due to [HTML spec limitations](https://github.com/w3c/html-aria/issues/473), tags cannot be rendered as `<a>` elements. React Aria handles link clicks with JavaScript and triggers native navigation. When using a client-side router, use the `onAction` event to programmatically trigger navigation instead of the `href` prop.</Content>
 </InlineAlert>
 
-## Selection
+## Selection and actions
 
 Use the `selectionMode` prop to enable single or multiple selection. The selected items can be controlled via the `selectedKeys` prop, matching the `id` prop of the items. Items can be disabled with the `isDisabled` prop. See the [selection guide](selection?component=TagGroup) for more details.
 
@@ -133,6 +133,30 @@ function Example(props) {
       </TagGroup>
       <p>Current selection: {selected === 'all' ? 'all' : [...selected].join(', ')}</p>
     </div>
+  );
+}
+```
+
+Use the `onAction` prop to handle item actions.
+
+```tsx render wide
+"use client";
+import {TagGroup, Tag} from 'vanilla-starter/TagGroup';
+
+function Example() {
+  return (
+    <TagGroup
+      label="Music genres"
+      ///- begin highlight -///
+      onAction={key => alert(`Clicked ${key}`)}
+      ///- end highlight -///
+    >
+      <Tag id="rock">Rock</Tag>
+      <Tag id="jazz">Jazz</Tag>
+      <Tag id="pop">Pop</Tag>
+      <Tag id="classical">Classical</Tag>
+      <Tag id="edm">EDM</Tag>
+    </TagGroup>
   );
 }
 ```

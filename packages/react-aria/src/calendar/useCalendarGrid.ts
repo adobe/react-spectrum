@@ -10,16 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import {CalendarDate, getWeeksInMonth, startOfWeek, today} from '@internationalized/date';
-import {CalendarState} from 'react-stately/useCalendarState';
+import {CalendarDate, startOfWeek, today} from '@internationalized/date';
+import {CalendarSelectionMode, CalendarState} from 'react-stately/useCalendarState';
 import {DOMAttributes} from '@react-types/shared';
 import {hookData, useVisibleRangeDescription} from './utils';
-import {KeyboardEvent, useMemo} from 'react';
 import {mergeProps} from '../utils/mergeProps';
 import {RangeCalendarState} from 'react-stately/useRangeCalendarState';
 import {useDateFormatter} from '../i18n/useDateFormatter';
+import {useKeyboard} from '../interactions/useKeyboard';
 import {useLabels} from '../utils/useLabels';
 import {useLocale} from '../i18n/I18nProvider';
+import {useMemo} from 'react';
 
 export interface AriaCalendarGridProps {
   /**
@@ -27,34 +28,38 @@ export interface AriaCalendarGridProps {
    * Defaults to the first visible date in the calendar.
    * Override this to display multiple date grids in a calendar.
    */
-  startDate?: CalendarDate,
+  startDate?: CalendarDate;
   /**
    * The last date displayed in the calendar grid.
    * Defaults to the last visible date in the calendar.
    * Override this to display multiple date grids in a calendar.
    */
-  endDate?: CalendarDate,
+  endDate?: CalendarDate;
   /**
    * The style of weekday names to display in the calendar grid header,
    * e.g. single letter, abbreviation, or full day name.
-   * @default "narrow"
+   *
+   * @default 'narrow'
    */
-  weekdayStyle?: 'narrow' | 'short' | 'long',
+  weekdayStyle?: 'narrow' | 'short' | 'long';
   /**
    * The day that starts the week.
    */
-  firstDayOfWeek?: 'sun' | 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat'
+  firstDayOfWeek?: 'sun' | 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat';
 }
 
 export interface CalendarGridAria {
   /** Props for the date grid element (e.g. `<table>`). */
-  gridProps: DOMAttributes,
+  gridProps: DOMAttributes;
   /** Props for the grid header element (e.g. `<thead>`). */
-  headerProps: DOMAttributes,
-  /** A list of week day abbreviations formatted for the current locale, typically used in column headers. */
-  weekDays: string[],
+  headerProps: DOMAttributes;
+  /**
+   * A list of week day abbreviations formatted for the current locale, typically used in column
+   * headers.
+   */
+  weekDays: string[];
   /** The number of weeks in the month. */
-  weeksInMonth: number
+  weeksInMonth: number;
 }
 
 /**
@@ -62,7 +67,10 @@ export interface CalendarGridAria {
  * A calendar grid displays a single grid of days within a calendar or range calendar which
  * can be keyboard navigated and selected by the user.
  */
-export function useCalendarGrid(props: AriaCalendarGridProps, state: CalendarState | RangeCalendarState): CalendarGridAria {
+export function useCalendarGrid(
+  props: AriaCalendarGridProps,
+  state: CalendarState<CalendarSelectionMode> | RangeCalendarState
+): CalendarGridAria {
   let {
     startDate = state.visibleRange.start,
     endDate = state.visibleRange.end,
@@ -71,72 +79,68 @@ export function useCalendarGrid(props: AriaCalendarGridProps, state: CalendarSta
 
   let {direction} = useLocale();
 
-  let onKeyDown = (e: KeyboardEvent) => {
-    switch (e.key) {
-      case 'Enter':
-      case ' ':
-        e.preventDefault();
+  let {keyboardProps} = useKeyboard({
+    shortcuts: {
+      Enter: () => {
         state.selectFocusedDate();
-        break;
-      case 'PageUp':
-        e.preventDefault();
-        e.stopPropagation();
-        state.focusPreviousSection(e.shiftKey);
-        break;
-      case 'PageDown':
-        e.preventDefault();
-        e.stopPropagation();
-        state.focusNextSection(e.shiftKey);
-        break;
-      case 'End':
-        e.preventDefault();
-        e.stopPropagation();
+      },
+      ' ': () => {
+        state.selectFocusedDate();
+      },
+      PageUp: () => {
+        state.focusPreviousSection();
+      },
+      'Shift+PageUp': () => {
+        state.focusPreviousSection(true);
+      },
+      PageDown: () => {
+        state.focusNextSection();
+      },
+      'Shift+PageDown': () => {
+        state.focusNextSection(true);
+      },
+      End: () => {
         state.focusSectionEnd();
-        break;
-      case 'Home':
-        e.preventDefault();
-        e.stopPropagation();
+      },
+      Home: () => {
         state.focusSectionStart();
-        break;
-      case 'ArrowLeft':
-        e.preventDefault();
-        e.stopPropagation();
+      },
+      ArrowLeft: () => {
         if (direction === 'rtl') {
           state.focusNextDay();
         } else {
           state.focusPreviousDay();
         }
-        break;
-      case 'ArrowUp':
-        e.preventDefault();
-        e.stopPropagation();
+      },
+      ArrowUp: () => {
         state.focusPreviousRow();
-        break;
-      case 'ArrowRight':
-        e.preventDefault();
-        e.stopPropagation();
+      },
+      ArrowRight: () => {
         if (direction === 'rtl') {
           state.focusPreviousDay();
         } else {
           state.focusNextDay();
         }
-        break;
-      case 'ArrowDown':
-        e.preventDefault();
-        e.stopPropagation();
+      },
+      ArrowDown: () => {
         state.focusNextRow();
-        break;
-      case 'Escape':
+      },
+      Escape: () => {
         // Cancel the selection.
         if ('setAnchorDate' in state) {
-          e.preventDefault();
           state.setAnchorDate(null);
         }
-        break;
+        return false; // TODO: is this really correct? or should it return true when we cancel and only propagate if there's nothing to do
+      }
     }
-  };
+  });
 
-  let visibleRangeDescription = useVisibleRangeDescription(startDate, endDate, state.timeZone, true);
+  let visibleRangeDescription = useVisibleRangeDescription(
+    startDate,
+    endDate,
+    state.timeZone,
+    true
+  );
 
   let {ariaLabel, ariaLabelledBy} = hookData.get(state)!;
   let labelProps = useLabels({
@@ -144,25 +148,33 @@ export function useCalendarGrid(props: AriaCalendarGridProps, state: CalendarSta
     'aria-labelledby': ariaLabelledBy
   });
 
-  let dayFormatter = useDateFormatter({weekday: props.weekdayStyle || 'narrow', timeZone: state.timeZone});
+  let dayFormatter = useDateFormatter({
+    weekday: props.weekdayStyle || 'narrow',
+    timeZone: state.timeZone
+  });
   let {locale} = useLocale();
   let weekDays = useMemo(() => {
-    let weekStart = startOfWeek(today(state.timeZone), locale, firstDayOfWeek);
-    return [...new Array(7).keys()].map((index) => {
+    let isDayView = state.visibleDuration.days && state.visibleDuration.days < 7;
+    let weekStart = isDayView
+      ? startDate
+      : startOfWeek(today(state.timeZone), locale, firstDayOfWeek);
+    let days = isDayView ? state.visibleDuration.days! : 7;
+    return [...new Array(days).keys()].map(index => {
       let date = weekStart.add({days: index});
       let dateDay = date.toDate(state.timeZone);
       return dayFormatter.format(dateDay);
     });
-  }, [locale, state.timeZone, dayFormatter, firstDayOfWeek]);
-  let weeksInMonth = getWeeksInMonth(startDate, locale, firstDayOfWeek);
+  }, [locale, state.timeZone, dayFormatter, firstDayOfWeek, startDate, state.visibleDuration.days]);
+  let weeksInMonth = state.getWeeksInMonth(startDate);
 
   return {
     gridProps: mergeProps(labelProps, {
       role: 'grid',
       'aria-readonly': state.isReadOnly || undefined,
       'aria-disabled': state.isDisabled || undefined,
-      'aria-multiselectable': ('highlightedRange' in state) || undefined,
-      onKeyDown,
+      'aria-multiselectable':
+        'highlightedRange' in state || state.selectionMode === 'multiple' || undefined,
+      ...keyboardProps,
       onFocus: () => state.setFocused(true),
       onBlur: () => state.setFocused(false)
     }),

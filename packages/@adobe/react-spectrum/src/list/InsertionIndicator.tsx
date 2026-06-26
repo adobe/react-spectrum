@@ -6,8 +6,8 @@ import React, {JSX, useContext, useRef} from 'react';
 import {useVisuallyHidden} from 'react-aria/VisuallyHidden';
 
 interface InsertionIndicatorProps {
-  target: ItemDropTarget,
-  isPresentationOnly?: boolean
+  target: ItemDropTarget;
+  isPresentationOnly?: boolean;
 }
 
 export default function InsertionIndicator(props: InsertionIndicatorProps): JSX.Element | null {
@@ -15,6 +15,7 @@ export default function InsertionIndicator(props: InsertionIndicatorProps): JSX.
   const {target, isPresentationOnly} = props;
 
   let ref = useRef<HTMLDivElement | null>(null);
+  // oxlint-disable-next-line react/react-compiler
   let {dropIndicatorProps} = dragAndDropHooks!.useDropIndicator!(props, dropState!, ref);
   let {visuallyHiddenProps} = useVisuallyHidden();
 
@@ -29,17 +30,12 @@ export default function InsertionIndicator(props: InsertionIndicatorProps): JSX.
       <div
         role="gridcell"
         aria-selected="false"
-        className={
-          classNames(
-            listStyles,
-            'react-spectrum-ListViewInsertionIndicator',
-            {
-              'react-spectrum-ListViewInsertionIndicator--dropTarget': isDropTarget
-            }
-          )}>
-        {!isPresentationOnly &&
+        className={classNames(listStyles, 'react-spectrum-ListViewInsertionIndicator', {
+          'react-spectrum-ListViewInsertionIndicator--dropTarget': isDropTarget
+        })}>
+        {!isPresentationOnly && (
           <div {...visuallyHiddenProps} role="button" {...dropIndicatorProps} ref={ref} />
-        }
+        )}
       </div>
     </div>
   );

@@ -55,8 +55,8 @@ describe('Popover', function () {
 
   describe('parity', function () {
     it.each`
-      Name      | Component            | props                | expectedTabIndex
-      ${'v3'}   | ${PopoverWithDialog} | ${{}}                | ${'-1'}
+      Name    | Component            | props | expectedTabIndex
+      ${'v3'} | ${PopoverWithDialog} | ${{}} | ${'-1'}
     `('$Name has a tabIndex set', async function ({Name, Component, props, expectedTabIndex}) {
       let {getByRole} = render(
         <Provider theme={theme}>
@@ -75,76 +75,85 @@ describe('Popover', function () {
     });
 
     it.each`
-      Name      | Component            | props
-      ${'v3'}   | ${PopoverWithDialog} | ${{}}
-    `('$Name auto focuses the first tabbable element by default', async function ({Name, Component, props}) {
-      let {getByRole} = render(
-        <Provider theme={theme}>
-          <Component {...props}>
-            <input data-testid="input1" />
-            <input data-testid="input2" />
-          </Component>
-        </Provider>
-      );
+      Name    | Component            | props
+      ${'v3'} | ${PopoverWithDialog} | ${{}}
+    `(
+      '$Name auto focuses the first tabbable element by default',
+      async function ({Name, Component, props}) {
+        let {getByRole} = render(
+          <Provider theme={theme}>
+            <Component {...props}>
+              <input data-testid="input1" />
+              <input data-testid="input2" />
+            </Component>
+          </Provider>
+        );
 
-      act(() => {
-        jest.runAllTimers();
-      });
-      let dialog = getByRole('dialog');
-      await waitFor(() => {
-        expect(dialog).toBeVisible();
-      }); // wait for animation
-      expect(document.activeElement).toBe(dialog);
-    });
-
-    it.each`
-      Name      | Component            | props
-      ${'v3'}   | ${PopoverWithDialog} | ${{isOpen: true}}
-    `('$Name auto focuses the dialog itself if there is no focusable child', async function ({Name, Component, props}) {
-      let {getByRole} = render(
-        <Provider theme={theme}>
-          <Component {...props} />
-        </Provider>
-      );
-      act(() => {
-        jest.runAllTimers();
-      });
-
-      let dialog = getByRole('dialog');
-
-      await waitFor(() => {
-        expect(dialog).toBeVisible();
-      }); // wait for animation
-      expect(document.activeElement).toBe(dialog);
-    });
+        act(() => {
+          jest.runAllTimers();
+        });
+        let dialog = getByRole('dialog');
+        await waitFor(() => {
+          expect(dialog).toBeVisible();
+        }); // wait for animation
+        expect(document.activeElement).toBe(dialog);
+      }
+    );
 
     it.each`
-      Name      | Component            | props
-      ${'v3'}   | ${PopoverWithDialog} | ${{}}
-    `('$Name allows autofocus prop on a child element to work as expected', async function ({Name, Component, props}) {
-      let {getByRole, getByTestId} = render(
-        <Provider theme={theme}>
-          <Component {...props}>
-            <input data-testid="input1" />
-            <input data-testid="input2" autoFocus />
-          </Component>
-        </Provider>
-      );
-      act(() => {
-        jest.runAllTimers();
-      });
+      Name    | Component            | props
+      ${'v3'} | ${PopoverWithDialog} | ${{isOpen: true}}
+    `(
+      '$Name auto focuses the dialog itself if there is no focusable child',
+      async function ({Name, Component, props}) {
+        let {getByRole} = render(
+          <Provider theme={theme}>
+            <Component {...props} />
+          </Provider>
+        );
+        act(() => {
+          jest.runAllTimers();
+        });
 
-      await waitFor(() => {
-        expect(getByRole('dialog')).toBeVisible();
-      }); // wait for animation
+        let dialog = getByRole('dialog');
 
-      let input2 = getByTestId('input2');
-      expect(document.activeElement).toBe(input2);
-    });
+        await waitFor(() => {
+          expect(dialog).toBeVisible();
+        }); // wait for animation
+        expect(document.activeElement).toBe(dialog);
+      }
+    );
 
     it.each`
-      Name      | Component            | props
-      ${'v3'}   | ${PopoverWithDialog} | ${{}}
+      Name    | Component            | props
+      ${'v3'} | ${PopoverWithDialog} | ${{}}
+    `(
+      '$Name allows autofocus prop on a child element to work as expected',
+      async function ({Name, Component, props}) {
+        let {getByRole, getByTestId} = render(
+          <Provider theme={theme}>
+            <Component {...props}>
+              <input data-testid="input1" />
+              <input data-testid="input2" autoFocus />
+            </Component>
+          </Provider>
+        );
+        act(() => {
+          jest.runAllTimers();
+        });
+
+        await waitFor(() => {
+          expect(getByRole('dialog')).toBeVisible();
+        }); // wait for animation
+
+        let input2 = getByTestId('input2');
+        expect(document.activeElement).toBe(input2);
+      }
+    );
+
+    it.each`
+      Name    | Component            | props
+      ${'v3'} | ${PopoverWithDialog} | ${{}}
     `('$Name contains focus within the popover', async function ({Name, Component, props}) {
       let {getByRole, getByTestId} = render(
         <Provider theme={theme}>
@@ -230,6 +239,35 @@ describe('Popover', function () {
           <TestPopover isOpen onOpenChange={onOpenChange} shouldCloseOnBlur>
             <button autoFocus>Focus me</button>
           </TestPopover>
+          <button data-testid="outside">Outside</button>
+        </Provider>
+      );
+
+      act(() => {
+        jest.runAllTimers();
+      });
+      let button = getAllByRole('button')[1];
+      let outside = getByTestId('outside');
+      let popover = getByTestId('popover');
+      expect(document.activeElement).toBe(button);
+
+      await waitFor(() => {
+        expect(popover).toBeVisible();
+      }); // wait for animation
+
+      act(() => {
+        outside.focus();
+      });
+      expect(onOpenChange).toHaveBeenCalledTimes(1);
+    });
+
+    it('does not close when focus is lost with no replacement, such as switching tabs', async function () {
+      let onOpenChange = jest.fn();
+      let {getAllByRole, getByTestId} = render(
+        <Provider theme={theme}>
+          <TestPopover isOpen onOpenChange={onOpenChange} shouldCloseOnBlur>
+            <button autoFocus>Focus me</button>
+          </TestPopover>
         </Provider>
       );
 
@@ -239,13 +277,15 @@ describe('Popover', function () {
       let button = getAllByRole('button')[1];
       let popover = getByTestId('popover');
       expect(document.activeElement).toBe(button);
-
       await waitFor(() => {
         expect(popover).toBeVisible();
-      }); // wait for animation
+      });
 
-      act(() => {button.blur();});
-      expect(onOpenChange).toHaveBeenCalledTimes(1);
+      act(() => {
+        button.blur();
+      });
+      expect(onOpenChange).not.toHaveBeenCalled();
+      expect(popover).toBeVisible();
     });
 
     it('should have hidden dismiss buttons for screen readers', function () {

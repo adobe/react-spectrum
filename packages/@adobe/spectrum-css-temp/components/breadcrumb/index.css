@@ -13,7 +13,9 @@ governing permissions and limitations under the License.
 @import '../commons/index.css';
 
 :root {
-  --spectrum-breadcrumb-separator-icon-position-adjustment: var(--spectrum-global-dimension-size-10);
+  --spectrum-breadcrumb-separator-icon-position-adjustment: var(
+    --spectrum-global-dimension-size-10
+  );
 }
 
 .spectrum-Breadcrumbs {
@@ -120,7 +122,6 @@ governing permissions and limitations under the License.
     }
   }
 }
-
 
 .spectrum-Breadcrumbs-item.is-dragged .spectrum-Breadcrumbs-itemLink:before,
 .spectrum-Breadcrumbs-itemLink:focus-visible:before {

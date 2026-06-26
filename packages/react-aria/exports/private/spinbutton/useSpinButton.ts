@@ -1,1 +1,5 @@
-export {useSpinButton, type SpinButtonProps, type SpinbuttonAria} from '../../../src/spinbutton/useSpinButton';
+export {
+  useSpinButton,
+  type SpinButtonProps,
+  type SpinbuttonAria
+} from '../../../src/spinbutton/useSpinButton';

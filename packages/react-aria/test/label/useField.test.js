@@ -19,7 +19,7 @@ import {useField} from '../../src/label/useField';
 let {WithError} = composeStories(stories);
 
 describe('useField', function () {
-  let renderFieldHook = (fieldProps) => {
+  let renderFieldHook = fieldProps => {
     let {result} = renderHook(() => useField(fieldProps));
     return result.current;
   };
@@ -31,7 +31,11 @@ describe('useField', function () {
   });
 
   it('should return props for description and error message if they are passed in', function () {
-    let {descriptionProps, errorMessageProps} = renderFieldHook({label: 'Test', description: 'Description', errorMessage: 'Error'});
+    let {descriptionProps, errorMessageProps} = renderFieldHook({
+      label: 'Test',
+      description: 'Description',
+      errorMessage: 'Error'
+    });
     // these will be undefined because nothing rendered them into the dom, so useSlotId in play won't find it and will set them to undefined
     expect(descriptionProps.id).toBeUndefined();
     expect(errorMessageProps.id).toBeUndefined();
@@ -46,7 +50,7 @@ describe('useField', function () {
   it('can render and label both the description and error message at the same time', function () {
     let {getByText, getByLabelText} = render(<WithError {...WithError.args} />);
     let description = getByText('I describe the field.');
-    let error = getByText('I\'m a helpful error for the field.');
+    let error = getByText("I'm a helpful error for the field.");
     let input = getByLabelText('Test label');
     expect(input).toHaveAttribute('aria-describedby', expect.stringContaining(description.id));
     expect(input).toHaveAttribute('aria-describedby', expect.stringContaining(error.id));

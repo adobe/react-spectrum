@@ -47,7 +47,7 @@ export const SizeL: ProgressCircleStory = {
 export const OverBackground: ProgressCircleStory = {
   args: {...Default.args, variant: 'overBackground'},
   decorators: [
-    (Story) => (
+    Story => (
       <div style={grayedBoxStyle}>
         <Story />
       </div>
@@ -58,7 +58,7 @@ export const OverBackground: ProgressCircleStory = {
 export const StaticColorWhite: ProgressCircleStory = {
   args: {...Default.args, staticColor: 'white'},
   decorators: [
-    (Story) => (
+    Story => (
       <div style={grayedBoxStyle}>
         <Story />
       </div>
@@ -69,7 +69,7 @@ export const StaticColorWhite: ProgressCircleStory = {
 export const StaticColorBlack: ProgressCircleStory = {
   args: {...Default.args, staticColor: 'black'},
   decorators: [
-    (Story) => (
+    Story => (
       <div style={{...grayedBoxStyle, backgroundColor: 'rgb(206, 247, 243)'}}>
         <Story />
       </div>

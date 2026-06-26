@@ -15,9 +15,10 @@ governing permissions and limitations under the License.
 
   opacity: 0;
 
-  transition: transform var(--spectrum-global-animation-duration-100) ease-in-out,
-              opacity var(--spectrum-global-animation-duration-100) ease-in-out,
-              visibility 0ms linear var(--spectrum-global-animation-duration-100);
+  transition:
+    transform var(--spectrum-global-animation-duration-100) ease-in-out,
+    opacity var(--spectrum-global-animation-duration-100) ease-in-out,
+    visibility 0ms linear var(--spectrum-global-animation-duration-100);
 
   pointer-events: none;
 }

@@ -13,7 +13,14 @@
 import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {ActionGroup} from '@adobe/react-spectrum/ActionGroup';
 import {Button} from '@adobe/react-spectrum/Button';
-import {Cell, Column, Row, TableBody, TableHeader, TableView} from '@adobe/react-spectrum/TableView';
+import {
+  Cell,
+  Column,
+  Row,
+  TableBody,
+  TableHeader,
+  TableView
+} from '@adobe/react-spectrum/TableView';
 import {Checkbox} from '@adobe/react-spectrum/Checkbox';
 import {Item} from 'react-stately/Item';
 import {Provider} from '@adobe/react-spectrum/Provider';
@@ -27,19 +34,31 @@ import userEvent from '@testing-library/user-event';
 function Main(props) {
   let ref = useFocusableRef(null);
   let {landmarkProps} = useLandmark({...props, role: 'main'}, ref);
-  return <main ref={ref} {...landmarkProps}>{props.children}</main>;
+  return (
+    <main ref={ref} {...landmarkProps}>
+      {props.children}
+    </main>
+  );
 }
 
 function Navigation(props) {
   let ref = useFocusableRef(null);
   let {landmarkProps} = useLandmark({...props, role: 'navigation'}, ref);
-  return <nav ref={ref} {...landmarkProps}>{props.children}</nav>;
+  return (
+    <nav ref={ref} {...landmarkProps}>
+      {props.children}
+    </nav>
+  );
 }
 
 function Region(props) {
   let ref = useFocusableRef(null);
   let {landmarkProps} = useLandmark({...props, role: 'region'}, ref);
-  return <article ref={ref} {...landmarkProps}>{props.children}</article>;
+  return (
+    <article ref={ref} {...landmarkProps}>
+      {props.children}
+    </article>
+  );
 }
 
 // taken from useFocusVisible tests
@@ -71,15 +90,18 @@ function toggleBrowserWindow() {
   fireEvent(window, new Event('focus'));
 }
 
-
 describe('LandmarkManager', function () {
   let offsetWidth, offsetHeight;
   let user;
 
   beforeAll(function () {
     user = userEvent.setup({delay: null, pointerMap});
-    offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
-    offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
+    offsetWidth = jest
+      .spyOn(window.HTMLElement.prototype, 'clientWidth', 'get')
+      .mockImplementation(() => 1000);
+    offsetHeight = jest
+      .spyOn(window.HTMLElement.prototype, 'clientHeight', 'get')
+      .mockImplementation(() => 1000);
     jest.useFakeTimers();
   });
 
@@ -89,7 +111,9 @@ describe('LandmarkManager', function () {
   });
 
   afterEach(() => {
-    act(() => {jest.runAllTimers();});
+    act(() => {
+      jest.runAllTimers();
+    });
   });
 
   it('can tab into a landmark region', async function () {
@@ -97,9 +121,15 @@ describe('LandmarkManager', function () {
       <div>
         <Navigation>
           <ul>
-            <li><a href="/home">Home</a></li>
-            <li><a href="/about">About</a></li>
-            <li><a href="/contact">Contact</a></li>
+            <li>
+              <a href="/home">Home</a>
+            </li>
+            <li>
+              <a href="/about">About</a>
+            </li>
+            <li>
+              <a href="/contact">Contact</a>
+            </li>
           </ul>
         </Navigation>
         <Main>
@@ -121,9 +151,15 @@ describe('LandmarkManager', function () {
       <div>
         <Navigation>
           <ul>
-            <li><a href="/home">Home</a></li>
-            <li><a href="/about">About</a></li>
-            <li><a href="/contact">Contact</a></li>
+            <li>
+              <a href="/home">Home</a>
+            </li>
+            <li>
+              <a href="/about">About</a>
+            </li>
+            <li>
+              <a href="/contact">Contact</a>
+            </li>
           </ul>
         </Navigation>
         <Main>
@@ -272,9 +308,15 @@ describe('LandmarkManager', function () {
       <div>
         <Navigation>
           <ul>
-            <li><a href="/home">Home</a></li>
-            <li><a href="/about">About</a></li>
-            <li><a href="/contact">Contact</a></li>
+            <li>
+              <a href="/home">Home</a>
+            </li>
+            <li>
+              <a href="/about">About</a>
+            </li>
+            <li>
+              <a href="/contact">Contact</a>
+            </li>
           </ul>
         </Navigation>
         <Main>
@@ -291,15 +333,20 @@ describe('LandmarkManager', function () {
     expect(document.activeElement!).toBe(main);
   });
 
-
   it('landmark navigation forward wraps', async function () {
     let tree = render(
       <div>
         <Navigation>
           <ul>
-            <li><a href="/home">Home</a></li>
-            <li><a href="/about">About</a></li>
-            <li><a href="/contact">Contact</a></li>
+            <li>
+              <a href="/home">Home</a>
+            </li>
+            <li>
+              <a href="/about">About</a>
+            </li>
+            <li>
+              <a href="/contact">Contact</a>
+            </li>
           </ul>
         </Navigation>
         <Main>
@@ -324,9 +371,15 @@ describe('LandmarkManager', function () {
       <div>
         <Navigation>
           <ul>
-            <li><a href="/home">Home</a></li>
-            <li><a href="/about">About</a></li>
-            <li><a href="/contact">Contact</a></li>
+            <li>
+              <a href="/home">Home</a>
+            </li>
+            <li>
+              <a href="/about">About</a>
+            </li>
+            <li>
+              <a href="/contact">Contact</a>
+            </li>
           </ul>
         </Navigation>
         <Main>
@@ -347,9 +400,15 @@ describe('LandmarkManager', function () {
       <div>
         <Navigation>
           <ul>
-            <li><a href="/home">Home</a></li>
-            <li><a href="/about">About</a></li>
-            <li><a href="/contact">Contact</a></li>
+            <li>
+              <a href="/home">Home</a>
+            </li>
+            <li>
+              <a href="/about">About</a>
+            </li>
+            <li>
+              <a href="/contact">Contact</a>
+            </li>
           </ul>
         </Navigation>
         <Main>
@@ -372,9 +431,15 @@ describe('LandmarkManager', function () {
       <div>
         <Navigation>
           <ul>
-            <li><a href="/home">Home</a></li>
-            <li><a href="/about">About</a></li>
-            <li><a href="/contact">Contact</a></li>
+            <li>
+              <a href="/home">Home</a>
+            </li>
+            <li>
+              <a href="/about">About</a>
+            </li>
+            <li>
+              <a href="/contact">Contact</a>
+            </li>
           </ul>
         </Navigation>
         <Main>
@@ -398,9 +463,15 @@ describe('LandmarkManager', function () {
       <div>
         <Navigation>
           <ul>
-            <li><a href="/home">Home</a></li>
-            <li><a href="/about">About</a></li>
-            <li><a href="/contact">Contact</a></li>
+            <li>
+              <a href="/home">Home</a>
+            </li>
+            <li>
+              <a href="/about">About</a>
+            </li>
+            <li>
+              <a href="/contact">Contact</a>
+            </li>
           </ul>
         </Navigation>
         <Main>
@@ -422,9 +493,15 @@ describe('LandmarkManager', function () {
       <div>
         <Navigation>
           <ul>
-            <li><a href="/home">Home</a></li>
-            <li><a href="/about">About</a></li>
-            <li><a href="/contact">Contact</a></li>
+            <li>
+              <a href="/home">Home</a>
+            </li>
+            <li>
+              <a href="/about">About</a>
+            </li>
+            <li>
+              <a href="/contact">Contact</a>
+            </li>
           </ul>
         </Navigation>
         <Main>
@@ -457,8 +534,12 @@ describe('LandmarkManager', function () {
           <Main>
             <TableView aria-label="Table">
               <TableHeader>
-                <Column key="foo" allowsSorting>Foo</Column>
-                <Column key="bar" allowsSorting>Bar</Column>
+                <Column key="foo" allowsSorting>
+                  Foo
+                </Column>
+                <Column key="bar" allowsSorting>
+                  Bar
+                </Column>
                 <Column key="baz">Baz</Column>
               </TableHeader>
               <TableBody>
@@ -483,7 +564,9 @@ describe('LandmarkManager', function () {
         </div>
       </Provider>
     );
-    act(() => {jest.runAllTimers();});
+    act(() => {
+      jest.runAllTimers();
+    });
     let buttons = tree.getAllByRole('button');
     let table = tree.getByRole('grid');
     let rows = within(table).getAllByRole('row');
@@ -508,22 +591,35 @@ describe('LandmarkManager', function () {
   });
 
   it('Should allow 2+ landmarks with same role if they are labelled.', function () {
-    let spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    using spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {}) as jest.SpyInstance &
+      Disposable;
 
     render(
       <div>
         <Navigation aria-label="First nav">
           <ul>
-            <li><a href="/home">Home</a></li>
-            <li><a href="/about">About</a></li>
-            <li><a href="/contact">Contact</a></li>
+            <li>
+              <a href="/home">Home</a>
+            </li>
+            <li>
+              <a href="/about">About</a>
+            </li>
+            <li>
+              <a href="/contact">Contact</a>
+            </li>
           </ul>
         </Navigation>
         <Navigation aria-label="Second nav">
           <ul>
-            <li><a href="/home">Home</a></li>
-            <li><a href="/about">About</a></li>
-            <li><a href="/contact">Contact</a></li>
+            <li>
+              <a href="/home">Home</a>
+            </li>
+            <li>
+              <a href="/about">About</a>
+            </li>
+            <li>
+              <a href="/contact">Contact</a>
+            </li>
           </ul>
         </Navigation>
         <Main>
@@ -536,22 +632,35 @@ describe('LandmarkManager', function () {
   });
 
   it('Should warn if 2+ landmarks with same role are used but not labelled.', function () {
-    let spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    using spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {}) as jest.SpyInstance &
+      Disposable;
 
     let tree = render(
       <div>
         <Navigation>
           <ul>
-            <li><a href="/home">Home</a></li>
-            <li><a href="/about">About</a></li>
-            <li><a href="/contact">Contact</a></li>
+            <li>
+              <a href="/home">Home</a>
+            </li>
+            <li>
+              <a href="/about">About</a>
+            </li>
+            <li>
+              <a href="/contact">Contact</a>
+            </li>
           </ul>
         </Navigation>
         <Navigation>
           <ul>
-            <li><a href="/home">Home</a></li>
-            <li><a href="/about">About</a></li>
-            <li><a href="/contact">Contact</a></li>
+            <li>
+              <a href="/home">Home</a>
+            </li>
+            <li>
+              <a href="/about">About</a>
+            </li>
+            <li>
+              <a href="/contact">Contact</a>
+            </li>
           </ul>
         </Navigation>
         <Main>
@@ -562,26 +671,42 @@ describe('LandmarkManager', function () {
 
     let navs = tree.getAllByRole('navigation');
 
-    expect(spyWarn).toHaveBeenCalledWith('Page contains more than one landmark with the \'navigation\' role. If two or more landmarks on a page share the same role, all must be labeled with an aria-label or aria-labelledby attribute: ', navs);
+    expect(spyWarn).toHaveBeenCalledWith(
+      "Page contains more than one landmark with the 'navigation' role. If two or more landmarks on a page share the same role, all must be labeled with an aria-label or aria-labelledby attribute: ",
+      navs
+    );
   });
 
   it('Should warn if 2+ landmarks with same role and same label', function () {
-    let spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    using spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {}) as jest.SpyInstance &
+      Disposable;
 
     let tree = render(
       <div>
         <Navigation aria-label="First nav">
           <ul>
-            <li><a href="/home">Home</a></li>
-            <li><a href="/about">About</a></li>
-            <li><a href="/contact">Contact</a></li>
+            <li>
+              <a href="/home">Home</a>
+            </li>
+            <li>
+              <a href="/about">About</a>
+            </li>
+            <li>
+              <a href="/contact">Contact</a>
+            </li>
           </ul>
         </Navigation>
         <Navigation aria-label="First nav">
           <ul>
-            <li><a href="/home">Home</a></li>
-            <li><a href="/about">About</a></li>
-            <li><a href="/contact">Contact</a></li>
+            <li>
+              <a href="/home">Home</a>
+            </li>
+            <li>
+              <a href="/about">About</a>
+            </li>
+            <li>
+              <a href="/contact">Contact</a>
+            </li>
           </ul>
         </Navigation>
         <Main>
@@ -591,19 +716,27 @@ describe('LandmarkManager', function () {
     );
     let navs = tree.getAllByRole('navigation');
 
-    expect(spyWarn).toHaveBeenCalledWith('Page contains more than one landmark with the \'navigation\' role and \'First nav\' label. If two or more landmarks on a page share the same role, they must have unique labels: ', navs);
+    expect(spyWarn).toHaveBeenCalledWith(
+      "Page contains more than one landmark with the 'navigation' role and 'First nav' label. If two or more landmarks on a page share the same role, they must have unique labels: ",
+      navs
+    );
   });
 
   it('Should not navigate to a landmark that has been removed from the DOM', async function () {
-
     function Container(props) {
       return (
         <div>
           <Navigation>
             <ul>
-              <li><a href="/home">Home</a></li>
-              <li><a href="/about">About</a></li>
-              <li><a href="/contact">Contact</a></li>
+              <li>
+                <a href="/home">Home</a>
+              </li>
+              <li>
+                <a href="/about">About</a>
+              </li>
+              <li>
+                <a href="/contact">Contact</a>
+              </li>
             </ul>
           </Navigation>
           {props.children}
@@ -635,7 +768,6 @@ describe('LandmarkManager', function () {
     await user.keyboard('{F6}');
     expect(document.activeElement!).toBe(main);
 
-
     tree.rerender(<Container />);
 
     await user.keyboard('{Shift>}{F6}{/Shift}}');
@@ -643,15 +775,20 @@ describe('LandmarkManager', function () {
   });
 
   it('Should navigate to a landmark that has been added to the DOM', async function () {
-
     function Container(props) {
       return (
         <div>
           <Navigation>
             <ul>
-              <li><a href="/home">Home</a></li>
-              <li><a href="/about">About</a></li>
-              <li><a href="/contact">Contact</a></li>
+              <li>
+                <a href="/home">Home</a>
+              </li>
+              <li>
+                <a href="/about">About</a>
+              </li>
+              <li>
+                <a href="/contact">Contact</a>
+              </li>
             </ul>
           </Navigation>
           <Main>
@@ -687,15 +824,20 @@ describe('LandmarkManager', function () {
   });
 
   it('Should navigate to a landmark that has been added as a child to an existing landmark.', async function () {
-
     function Container(props) {
       return (
         <div>
           <Navigation>
             <ul>
-              <li><a href="/home">Home</a></li>
-              <li><a href="/about">About</a></li>
-              <li><a href="/contact">Contact</a></li>
+              <li>
+                <a href="/home">Home</a>
+              </li>
+              <li>
+                <a href="/about">About</a>
+              </li>
+              <li>
+                <a href="/contact">Contact</a>
+              </li>
             </ul>
           </Navigation>
           <Main>
@@ -729,15 +871,20 @@ describe('LandmarkManager', function () {
   });
 
   it('Should navigate to a landmark that has been added as a parent to an existing landmark.', async function () {
-
     function Contained() {
       return (
         <div>
           <Navigation>
             <ul>
-              <li><a href="/home">Home</a></li>
-              <li><a href="/about">About</a></li>
-              <li><a href="/contact">Contact</a></li>
+              <li>
+                <a href="/home">Home</a>
+              </li>
+              <li>
+                <a href="/about">About</a>
+              </li>
+              <li>
+                <a href="/contact">Contact</a>
+              </li>
             </ul>
           </Navigation>
           <Region>
@@ -767,9 +914,15 @@ describe('LandmarkManager', function () {
       <div>
         <Navigation>
           <ul>
-            <li><a href="/home">Home</a></li>
-            <li><a href="/about">About</a></li>
-            <li><a href="/contact">Contact</a></li>
+            <li>
+              <a href="/home">Home</a>
+            </li>
+            <li>
+              <a href="/about">About</a>
+            </li>
+            <li>
+              <a href="/contact">Contact</a>
+            </li>
           </ul>
         </Navigation>
         <Region>
@@ -779,7 +932,7 @@ describe('LandmarkManager', function () {
           <TextField label="First Name" />
         </Main>
       </div>
-      );
+    );
     let navigation = tree.getByRole('navigation');
     let main = tree.getByRole('main');
 
@@ -801,16 +954,22 @@ describe('LandmarkManager', function () {
       <div>
         <Navigation>
           <ul>
-            <li><a href="/home">Home</a></li>
-            <li><a href="/about">About</a></li>
-            <li><a href="/contact">Contact</a></li>
+            <li>
+              <a href="/home">Home</a>
+            </li>
+            <li>
+              <a href="/about">About</a>
+            </li>
+            <li>
+              <a href="/contact">Contact</a>
+            </li>
           </ul>
         </Navigation>
         <Region>
           <TextField label="Last Name" />
         </Region>
       </div>
-      );
+    );
     let navigation = tree.getByRole('navigation');
 
     await user.keyboard('{F6}');
@@ -827,7 +986,7 @@ describe('LandmarkManager', function () {
           <TextField label="First Name" />
         </Main>
       </div>
-      );
+    );
     let main = tree.getByRole('main');
 
     await user.keyboard('{Alt>}{F6}{/Alt}}');
@@ -845,16 +1004,22 @@ describe('LandmarkManager', function () {
       <div>
         <Navigation>
           <ul>
-            <li><a href="/home">Home</a></li>
-            <li><a href="/about">About</a></li>
-            <li><a href="/contact">Contact</a></li>
+            <li>
+              <a href="/home">Home</a>
+            </li>
+            <li>
+              <a href="/about">About</a>
+            </li>
+            <li>
+              <a href="/contact">Contact</a>
+            </li>
           </ul>
         </Navigation>
         <Main>
           <TextField label="First Name" />
         </Main>
       </div>
-      );
+    );
     let navigation = tree.getByRole('navigation');
     let main = tree.getByRole('main');
     expect(navigation).not.toHaveAttribute('tabIndex');
@@ -875,9 +1040,15 @@ describe('LandmarkManager', function () {
       <div>
         <Navigation>
           <ul>
-            <li><a href="/home">Home</a></li>
-            <li><a href="/about">About</a></li>
-            <li><a href="/contact">Contact</a></li>
+            <li>
+              <a href="/home">Home</a>
+            </li>
+            <li>
+              <a href="/about">About</a>
+            </li>
+            <li>
+              <a href="/contact">Contact</a>
+            </li>
           </ul>
         </Navigation>
         <Main>
@@ -898,9 +1069,15 @@ describe('LandmarkManager', function () {
       <div>
         <Navigation>
           <ul>
-            <li><a href="/home">Home</a></li>
-            <li><a href="/about">About</a></li>
-            <li><a href="/contact">Contact</a></li>
+            <li>
+              <a href="/home">Home</a>
+            </li>
+            <li>
+              <a href="/about">About</a>
+            </li>
+            <li>
+              <a href="/contact">Contact</a>
+            </li>
           </ul>
         </Navigation>
         <Main>
@@ -925,9 +1102,15 @@ describe('LandmarkManager', function () {
       <div>
         <Navigation>
           <ul>
-            <li><a href="/home">Home</a></li>
-            <li><a href="/about">About</a></li>
-            <li><a href="/contact">Contact</a></li>
+            <li>
+              <a href="/home">Home</a>
+            </li>
+            <li>
+              <a href="/about">About</a>
+            </li>
+            <li>
+              <a href="/contact">Contact</a>
+            </li>
           </ul>
         </Navigation>
         <Main>
@@ -952,9 +1135,15 @@ describe('LandmarkManager', function () {
       <div>
         <Navigation>
           <ul>
-            <li><a href="/home">Home</a></li>
-            <li><a href="/about">About</a></li>
-            <li><a href="/contact">Contact</a></li>
+            <li>
+              <a href="/home">Home</a>
+            </li>
+            <li>
+              <a href="/about">About</a>
+            </li>
+            <li>
+              <a href="/contact">Contact</a>
+            </li>
           </ul>
         </Navigation>
         <Main>
@@ -981,12 +1170,20 @@ describe('LandmarkManager', function () {
     let onKeyDown = jest.fn();
     let {getByRole, rerender} = render(
       <div>
-        <Button onKeyDown={onKeyDown} variant="cta">Focusable</Button>
+        <Button onKeyDown={onKeyDown} variant="cta">
+          Focusable
+        </Button>
         <Navigation>
           <ul>
-            <li><a href="/home">Home</a></li>
-            <li><a href="/about">About</a></li>
-            <li><a href="/contact">Contact</a></li>
+            <li>
+              <a href="/home">Home</a>
+            </li>
+            <li>
+              <a href="/about">About</a>
+            </li>
+            <li>
+              <a href="/contact">Contact</a>
+            </li>
           </ul>
         </Navigation>
       </div>
@@ -1004,7 +1201,9 @@ describe('LandmarkManager', function () {
 
     rerender(
       <div>
-        <Button onKeyDown={onKeyDown} variant="cta">Focusable</Button>
+        <Button onKeyDown={onKeyDown} variant="cta">
+          Focusable
+        </Button>
       </div>
     );
     button = getByRole('button');
@@ -1018,20 +1217,31 @@ describe('LandmarkManager', function () {
   });
 
   it('updates the landmark if the label changes', function () {
-    let spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    using spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {}) as jest.SpyInstance &
+      Disposable;
     let tree = render(
       <div>
         <Navigation aria-label="nav label 1">
           <ul>
-            <li><a href="/home">Home</a></li>
-            <li><a href="/about">About</a></li>
-            <li><a href="/contact">Contact</a></li>
+            <li>
+              <a href="/home">Home</a>
+            </li>
+            <li>
+              <a href="/about">About</a>
+            </li>
+            <li>
+              <a href="/contact">Contact</a>
+            </li>
           </ul>
         </Navigation>
         <Navigation aria-label="nav label 2">
           <ul>
-            <li><a href="/product">Product</a></li>
-            <li><a href="/support">Support</a></li>
+            <li>
+              <a href="/product">Product</a>
+            </li>
+            <li>
+              <a href="/support">Support</a>
+            </li>
           </ul>
         </Navigation>
         <Main>
@@ -1046,15 +1256,25 @@ describe('LandmarkManager', function () {
       <div>
         <Navigation aria-label="nav label 1">
           <ul>
-            <li><a href="/home">Home</a></li>
-            <li><a href="/about">About</a></li>
-            <li><a href="/contact">Contact</a></li>
+            <li>
+              <a href="/home">Home</a>
+            </li>
+            <li>
+              <a href="/about">About</a>
+            </li>
+            <li>
+              <a href="/contact">Contact</a>
+            </li>
           </ul>
         </Navigation>
         <Navigation aria-label="nav label 1">
           <ul>
-            <li><a href="/product">Product</a></li>
-            <li><a href="/support">Support</a></li>
+            <li>
+              <a href="/product">Product</a>
+            </li>
+            <li>
+              <a href="/support">Support</a>
+            </li>
           </ul>
         </Navigation>
         <Main>
@@ -1062,7 +1282,10 @@ describe('LandmarkManager', function () {
         </Main>
       </div>
     );
-    expect(spyWarn).toHaveBeenCalledWith('Page contains more than one landmark with the \'navigation\' role and \'nav label 1\' label. If two or more landmarks on a page share the same role, they must have unique labels: ', navs);
+    expect(spyWarn).toHaveBeenCalledWith(
+      "Page contains more than one landmark with the 'navigation' role and 'nav label 1' label. If two or more landmarks on a page share the same role, they must have unique labels: ",
+      navs
+    );
   });
 
   it('focus restores to previously focused landmark after blur and F6.', async function () {
@@ -1070,9 +1293,15 @@ describe('LandmarkManager', function () {
       <div>
         <Navigation>
           <ul>
-            <li><a href="/home">Home</a></li>
-            <li><a href="/about">About</a></li>
-            <li><a href="/contact">Contact</a></li>
+            <li>
+              <a href="/home">Home</a>
+            </li>
+            <li>
+              <a href="/about">About</a>
+            </li>
+            <li>
+              <a href="/contact">Contact</a>
+            </li>
           </ul>
         </Navigation>
         <Main>
@@ -1102,9 +1331,15 @@ describe('LandmarkManager', function () {
       <div>
         <Navigation>
           <ul>
-            <li><a href="/home">Home</a></li>
-            <li><a href="/about">About</a></li>
-            <li><a href="/contact">Contact</a></li>
+            <li>
+              <a href="/home">Home</a>
+            </li>
+            <li>
+              <a href="/about">About</a>
+            </li>
+            <li>
+              <a href="/contact">Contact</a>
+            </li>
           </ul>
         </Navigation>
         <Main>
@@ -1140,9 +1375,15 @@ describe('LandmarkManager', function () {
       <div>
         <Navigation>
           <ul>
-            <li><a href="/home">Home</a></li>
-            <li><a href="/about">About</a></li>
-            <li><a href="/contact">Contact</a></li>
+            <li>
+              <a href="/home">Home</a>
+            </li>
+            <li>
+              <a href="/about">About</a>
+            </li>
+            <li>
+              <a href="/contact">Contact</a>
+            </li>
           </ul>
         </Navigation>
         <Main>
@@ -1234,9 +1475,15 @@ describe('LandmarkManager', function () {
         <div>
           <Navigation>
             <ul>
-              <li><a href="/home">Home</a></li>
-              <li><a href="/about">About</a></li>
-              <li><a href="/contact">Contact</a></li>
+              <li>
+                <a href="/home">Home</a>
+              </li>
+              <li>
+                <a href="/about">About</a>
+              </li>
+              <li>
+                <a href="/contact">Contact</a>
+              </li>
             </ul>
           </Navigation>
           <Main>
@@ -1250,10 +1497,14 @@ describe('LandmarkManager', function () {
 
       let controller = UNSTABLE_createLandmarkController();
 
-      act(() => {controller.focusNext();});
+      act(() => {
+        controller.focusNext();
+      });
       expect(document.activeElement).toBe(tree.getByRole('main'));
 
-      act(() => {controller.navigate('forward');});
+      act(() => {
+        controller.navigate('forward');
+      });
       expect(document.activeElement).toBe(tree.getAllByRole('link')[0]);
 
       controller.dispose();
@@ -1264,9 +1515,15 @@ describe('LandmarkManager', function () {
         <div>
           <Navigation>
             <ul>
-              <li><a href="/home">Home</a></li>
-              <li><a href="/about">About</a></li>
-              <li><a href="/contact">Contact</a></li>
+              <li>
+                <a href="/home">Home</a>
+              </li>
+              <li>
+                <a href="/about">About</a>
+              </li>
+              <li>
+                <a href="/contact">Contact</a>
+              </li>
             </ul>
           </Navigation>
           <Main>
@@ -1279,10 +1536,14 @@ describe('LandmarkManager', function () {
 
       let controller = UNSTABLE_createLandmarkController();
 
-      act(() => {controller.focusPrevious();});
+      act(() => {
+        controller.focusPrevious();
+      });
       expect(document.activeElement).toBe(tree.getByRole('navigation'));
 
-      act(() => {controller.navigate('backward');});
+      act(() => {
+        controller.navigate('backward');
+      });
       expect(document.activeElement).toBe(tree.getByRole('textbox'));
 
       controller.dispose();
@@ -1293,9 +1554,15 @@ describe('LandmarkManager', function () {
         <div>
           <Navigation>
             <ul>
-              <li><a href="/home">Home</a></li>
-              <li><a href="/about">About</a></li>
-              <li><a href="/contact">Contact</a></li>
+              <li>
+                <a href="/home">Home</a>
+              </li>
+              <li>
+                <a href="/about">About</a>
+              </li>
+              <li>
+                <a href="/contact">Contact</a>
+              </li>
             </ul>
           </Navigation>
           <Main>
@@ -1308,7 +1575,9 @@ describe('LandmarkManager', function () {
 
       let controller = UNSTABLE_createLandmarkController();
 
-      act(() => {controller.focusMain();});
+      act(() => {
+        controller.focusMain();
+      });
       expect(document.activeElement).toBe(tree.getByRole('main'));
 
       controller.dispose();

@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {getOwnerWindow} from './domHelpers';
 import {isElementVisible} from './isElementVisible';
 
 const focusableElements = [
@@ -29,23 +30,30 @@ const focusableElements = [
   'permission'
 ];
 
-const FOCUSABLE_ELEMENT_SELECTOR = focusableElements.join(':not([hidden]),') + ',[tabindex]:not([disabled]):not([hidden])';
+const FOCUSABLE_ELEMENT_SELECTOR =
+  focusableElements.join(':not([hidden]),') + ',[tabindex]:not([disabled]):not([hidden])';
 
 focusableElements.push('[tabindex]:not([tabindex="-1"]):not([disabled])');
 const TABBABLE_ELEMENT_SELECTOR = focusableElements.join(':not([hidden]):not([tabindex="-1"]),');
 
 export function isFocusable(element: Element, options?: {skipVisibilityCheck?: boolean}): boolean {
-  return element.matches(FOCUSABLE_ELEMENT_SELECTOR) && !isInert(element) && (options?.skipVisibilityCheck || isElementVisible(element));
+  return (
+    element.matches(FOCUSABLE_ELEMENT_SELECTOR) &&
+    !isInert(element) &&
+    (options?.skipVisibilityCheck || isElementVisible(element))
+  );
 }
 
 export function isTabbable(element: Element): boolean {
-  return element.matches(TABBABLE_ELEMENT_SELECTOR) && isElementVisible(element) && !isInert(element);
+  return (
+    element.matches(TABBABLE_ELEMENT_SELECTOR) && isElementVisible(element) && !isInert(element)
+  );
 }
 
 function isInert(element: Element): boolean {
   let node: Element | null = element;
   while (node != null) {
-    if (node instanceof node.ownerDocument.defaultView!.HTMLElement && node.inert) {
+    if (node instanceof getOwnerWindow(node).HTMLElement && node.inert) {
       return true;
     }
 

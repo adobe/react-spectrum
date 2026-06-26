@@ -368,10 +368,7 @@ No updates needed.
 - For dynamic tables, pass a `columns` prop into `Row`
 - For `Row`: Update dynamic render function to pass in `column` instead of `columnKey`
 - Move `loadingState` and `onLoadMore` from `TableBody` to `TableView`
-- <PendingBadge /> Comment out `UNSTABLE_allowsExpandableRows` (it has not been implemented yet)
-- <PendingBadge /> Comment out `UNSTABLE_onExpandedChange` (it has not been implemented yet)
-- <PendingBadge /> Comment out `UNSTABLE_expandedKeys` (it has not been implemented yet)
-- <PendingBadge /> Comment out `UNSTABLE_defaultExpandedKeys` (it has not been implemented yet)
+- For expandable rows, use `treeColumn` to designate your expandable column. `defaultExpanded`, `expandedKeys`, and `onExpandedChange` can be used to set and update your expanded rows. See the [TableView](TableView#expandable-rows) documentation for more details.
 
 ### Tabs
 

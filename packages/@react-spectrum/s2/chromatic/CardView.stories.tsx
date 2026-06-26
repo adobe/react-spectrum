@@ -24,7 +24,8 @@ const meta: Meta<typeof CardView> = {
   component: CardView,
   parameters: {
     layout: 'fullscreen',
-    chromaticProvider: {disableAnimations: true}
+    chromaticProvider: {disableAnimations: true},
+    chromatic: {prefersReducedMotion: 'reduce'}
   },
   title: 'S2 Chromatic/CardView'
 };
@@ -38,7 +39,7 @@ const cardViewStyles = style({
 });
 
 export const Empty: StoryObj<typeof CardView> = {
-  render: (args) => (
+  render: args => (
     <CardView
       aria-label="Assets"
       {...args}
@@ -56,7 +57,7 @@ export const Empty: StoryObj<typeof CardView> = {
 };
 
 export const Loading: StoryObj<typeof CardView> = {
-  render: (args) => (
+  render: args => (
     <CardView
       aria-label="Assets"
       loadingState="loading"
@@ -81,7 +82,8 @@ export const Loading: StoryObj<typeof CardView> = {
               alt_description: '',
               width: 400,
               height: 200 + Math.max(0, Math.round(Math.random() * 400))
-            }} />
+            }}
+          />
         )}
       </SkeletonCollection>
     </CardView>

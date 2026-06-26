@@ -14,7 +14,9 @@ import {fireEvent, screen, testSSR} from '@react-spectrum/test-utils-internal';
 
 describe('GridList SSR', function () {
   it('should render without errors', async function () {
-    await testSSR(__filename, `
+    await testSSR(
+      __filename,
+      `
       import {GridList, GridListItem} from '../exports/index.ts';
 
       function Test() {
@@ -35,11 +37,13 @@ describe('GridList SSR', function () {
       <React.StrictMode>
         <Test />
       </React.StrictMode>
-    `, () => {
-      // Assert that server rendered stuff into the HTML.
-      let options = screen.getAllByRole('row');
-      expect(options.map(o => o.textContent)).toEqual(['Left', 'Middle', 'Right']);
-    });
+    `,
+      () => {
+        // Assert that server rendered stuff into the HTML.
+        let options = screen.getAllByRole('row');
+        expect(options.map(o => o.textContent)).toEqual(['Left', 'Middle', 'Right']);
+      }
+    );
 
     // Assert that hydrated UI matches what we expect.
     let button = screen.getByRole('button');

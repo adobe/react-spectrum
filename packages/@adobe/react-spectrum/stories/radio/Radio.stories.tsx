@@ -58,44 +58,47 @@ export default {
 
 export type RadioGroupStory = StoryFn<typeof RadioGroup>;
 
-export const Default: RadioGroupStory = (args) => render(args);
+export const Default: RadioGroupStory = args => render(args);
 
 Default.story = {
   name: 'default'
 };
 
-export const DefaultValueDragons: RadioGroupStory = (args) => render({...args, defaultValue: 'dragons'});
+export const DefaultValueDragons: RadioGroupStory = args =>
+  render({...args, defaultValue: 'dragons'});
 
 DefaultValueDragons.story = {
   name: 'defaultValue: dragons'
 };
 
-export const ControlledDragons: RadioGroupStory = (args) => render({...args, value: 'dragons'});
+export const ControlledDragons: RadioGroupStory = args => render({...args, value: 'dragons'});
 
 ControlledDragons.story = {
   name: 'controlled: dragons'
 };
 
-export const IsDisabledOnOneRadio: RadioGroupStory = (args) => render(args, [{}, {isDisabled: true}, {}]);
+export const IsDisabledOnOneRadio: RadioGroupStory = args =>
+  render(args, [{}, {isDisabled: true}, {}]);
 
 IsDisabledOnOneRadio.story = {
   name: 'isDisabled on one radio'
 };
 
-export const WithDescription: RadioGroupStory = (args) => render({...args, description: 'Please select a pet.'});
+export const WithDescription: RadioGroupStory = args =>
+  render({...args, description: 'Please select a pet.'});
 
 WithDescription.story = {
   name: 'with description'
 };
 
-export const WithErrorMessage: RadioGroupStory = (args) =>
+export const WithErrorMessage: RadioGroupStory = args =>
   render({...args, errorMessage: 'Please select a pet.', isInvalid: true});
 
 WithErrorMessage.story = {
   name: 'with error message'
 };
 
-export const WithErrorMessageAndErrorIcon: RadioGroupStory = (args) =>
+export const WithErrorMessageAndErrorIcon: RadioGroupStory = args =>
   render({
     ...args,
     errorMessage: 'Please select a pet.',
@@ -107,14 +110,14 @@ WithErrorMessageAndErrorIcon.story = {
   name: 'with error message and error icon'
 };
 
-export const WithDescriptionErrorMessageAndValidationFixedWidth: RadioGroupStory = (args) =>
+export const WithDescriptionErrorMessageAndValidationFixedWidth: RadioGroupStory = args =>
   renderWithDescriptionErrorMessageAndValidation(args);
 
 WithDescriptionErrorMessageAndValidationFixedWidth.story = {
   name: 'with description, error message and validation, fixed width'
 };
 
-export const _ContextualHelp: RadioGroupStory = (args) =>
+export const _ContextualHelp: RadioGroupStory = args =>
   render({
     ...args,
     contextualHelp: (
@@ -132,14 +135,14 @@ _ContextualHelp.story = {
   name: 'contextual help'
 };
 
-export const NoVisibleLabel: RadioGroupStory = (args) =>
+export const NoVisibleLabel: RadioGroupStory = args =>
   render({...args, label: null, 'aria-label': 'Favorite pet'});
 
 NoVisibleLabel.story = {
   name: 'no visible label'
 };
 
-export const LongRadioLabel: RadioGroupStory = (args) => renderLongLabel(args);
+export const LongRadioLabel: RadioGroupStory = args => renderLongLabel(args);
 
 LongRadioLabel.story = {
   name: 'long radio label'
@@ -151,7 +154,8 @@ ProviderControlIsDisabled.story = {
   name: 'provider control: isDisabled'
 };
 
-export const AutoFocusOnOneRadio: RadioGroupStory = (args) => render(args, [{}, {autoFocus: true}, {}]);
+export const AutoFocusOnOneRadio: RadioGroupStory = args =>
+  render(args, [{}, {autoFocus: true}, {}]);
 
 AutoFocusOnOneRadio.story = {
   name: 'autoFocus on one radio'
@@ -159,7 +163,11 @@ AutoFocusOnOneRadio.story = {
 
 function render(props, radioProps = [{}, {}, {}]) {
   return (
-    <RadioGroup label="Favorite pet" {...props} onChange={action('onChange')} name="favorite-pet-group">
+    <RadioGroup
+      label="Favorite pet"
+      {...props}
+      onChange={action('onChange')}
+      name="favorite-pet-group">
       <Radio value="dogs" {...radioProps[0]}>
         Dogs
       </Radio>
@@ -177,7 +185,8 @@ function renderLongLabel(props, radioProps = [{}, {}, {}]) {
   return (
     <RadioGroup aria-label="Favorite pet" {...props} onChange={action('onChange')}>
       <Radio value="dogs" {...radioProps[0]}>
-        Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs
+        Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs Dogs
+        Dogs Dogs Dogs Dogs Dogs
       </Radio>
       <Radio value="cats" {...radioProps[1]}>
         Cats
@@ -192,27 +201,21 @@ function renderLongLabel(props, radioProps = [{}, {}, {}]) {
 function renderFormControl() {
   return (
     <Provider isDisabled>
-      <RadioGroup aria-label="Favorite pet" onChange={action('onChangePet')} name="favorite-pet-group">
-        <Radio value="dogs">
-          Dogs
-        </Radio>
-        <Radio value="cats">
-          Cats
-        </Radio>
-        <Radio value="dragons">
-          Dragons
-        </Radio>
+      <RadioGroup
+        aria-label="Favorite pet"
+        onChange={action('onChangePet')}
+        name="favorite-pet-group">
+        <Radio value="dogs">Dogs</Radio>
+        <Radio value="cats">Cats</Radio>
+        <Radio value="dragons">Dragons</Radio>
       </RadioGroup>
-      <RadioGroup aria-label="Favorite cereal" onChange={action('onChangeCereal')} name="favorite-cereal-group">
-        <Radio value="reeses">
-          Reese's Peanut Butter Puffs
-        </Radio>
-        <Radio value="honeynut">
-          HoneyNut Cheerios
-        </Radio>
-        <Radio value="cinnamon">
-          Cinnamon Toast Crunch
-        </Radio>
+      <RadioGroup
+        aria-label="Favorite cereal"
+        onChange={action('onChangeCereal')}
+        name="favorite-cereal-group">
+        <Radio value="reeses">Reese's Peanut Butter Puffs</Radio>
+        <Radio value="honeynut">HoneyNut Cheerios</Radio>
+        <Radio value="cinnamon">Cinnamon Toast Crunch</Radio>
       </RadioGroup>
     </Provider>
   );
@@ -231,20 +234,10 @@ function renderWithDescriptionErrorMessageAndValidation(props) {
           onChange={setSelected}
           isInvalid={!isValid}
           description="Please select a pet."
-          errorMessage={
-          selected === 'cats'
-            ? 'No cats allowed.'
-            : 'Please select dogs.'
-        }>
-          <Radio value="dogs">
-            Dogs
-          </Radio>
-          <Radio value="cats">
-            Cats
-          </Radio>
-          <Radio value="dragons">
-            Dragons
-          </Radio>
+          errorMessage={selected === 'cats' ? 'No cats allowed.' : 'Please select dogs.'}>
+          <Radio value="dogs">Dogs</Radio>
+          <Radio value="cats">Cats</Radio>
+          <Radio value="dragons">Dragons</Radio>
         </RadioGroup>
       </Flex>
     );
@@ -261,10 +254,7 @@ export const ControlledRovingTab: RadioGroupStory = () => {
       <Button variant="primary" onPress={() => setSelected('2')}>
         Make it "Two"
       </Button>
-      <RadioGroup
-        label="Lucky number? (controlled)"
-        value={selected}
-        onChange={setSelected}>
+      <RadioGroup label="Lucky number? (controlled)" value={selected} onChange={setSelected}>
         <Radio value="1">One</Radio>
         <Radio value="2">Two</Radio>
         <Radio value="3">Three</Radio>

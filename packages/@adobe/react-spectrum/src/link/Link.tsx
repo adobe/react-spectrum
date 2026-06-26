@@ -27,14 +27,15 @@ import {useStyleProps} from '../utils/styleProps';
 
 export interface SpectrumLinkProps extends Omit<AriaLinkProps, 'onClick'>, StyleProps {
   /** The content to display in the link. */
-  children: ReactNode,
+  children: ReactNode;
   /**
    * The [visual style](https://spectrum.adobe.com/page/link/#Options) of the link.
+   *
    * @default 'primary'
    */
-  variant?: 'primary' | 'secondary' | 'overBackground',
+  variant?: 'primary' | 'secondary' | 'overBackground';
   /** Whether the link should be displayed with a quiet style. */
-  isQuiet?: boolean
+  isQuiet?: boolean;
 }
 
 let isOldReact = parseInt(React.version, 10) <= 18;
@@ -56,10 +57,13 @@ export function Link(props: SpectrumLinkProps): JSX.Element {
   let {hoverProps, isHovered} = useHover({});
 
   let ref = useRef(null);
-  let {linkProps} = useLink({
-    ...props,
-    elementType: !href && typeof children === 'string' ? 'span' : 'a'
-  }, ref);
+  let {linkProps} = useLink(
+    {
+      ...props,
+      elementType: !href && typeof children === 'string' ? 'span' : 'a'
+    },
+    ref
+  );
 
   let domProps = {
     ...styleProps,
@@ -86,22 +90,20 @@ export function Link(props: SpectrumLinkProps): JSX.Element {
     let mergedRef: MutableRefObject<any> | ForwardedRef<any> = ref;
     if (isOldReact) {
       // @ts-ignore
+      // oxlint-disable-next-line react/react-compiler
       mergedRef = mergeRefs(ref, wrappedChild.ref);
     } else {
       // @ts-ignore
+      // oxlint-disable-next-line react/react-compiler
       mergedRef = mergeRefs(ref, wrappedChild.props.ref);
     }
     link = React.cloneElement(wrappedChild, {
+      // oxlint-disable-next-line react/react-compiler
       ...mergeProps(wrappedChild.props, domProps),
       // @ts-ignore https://github.com/facebook/react/issues/8873
       ref: mergedRef
     });
   }
 
-
-  return (
-    <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
-      {link}
-    </FocusRing>
-  );
+  return <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>{link}</FocusRing>;
 }

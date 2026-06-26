@@ -12,22 +12,38 @@
 
 import {ActionButtonGroupContext} from './ActionButtonGroup';
 import {ActionMenuContext} from './ActionMenu';
-import {baseColor, colorMix, focusRing, fontRelative, style} from '../style' with {type: 'macro'};
+import {
+  baseColor,
+  color,
+  colorMix,
+  focusRing,
+  fontRelative,
+  style
+} from '../style' with {type: 'macro'};
 import {Button, ButtonContext} from 'react-aria-components/Button';
 import {centerBaseline} from './CenterBaseline';
 import {Checkbox} from './Checkbox';
-
 import Chevron from '../ui-icons/Chevron';
-
-import {DOMRef, forwardRefType, GlobalDOMAttributes, Key, LoadingState} from '@react-types/shared';
-import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
+import {css} from '../style/style-macro' with {type: 'macro'};
+import {
+  DOMRef,
+  forwardRefType,
+  GlobalDOMAttributes,
+  ItemDropTarget,
+  Key,
+  LoadingState
+} from '@react-types/shared';
+import {DragHandleButton, InsertionIndicator} from './dnd-utils';
+import {DragPreview} from './DragPreview';
+import {
+  getAllowedOverrides,
+  StylesPropWithHeight,
+  UnsafeStyles
+} from './style-utils' with {type: 'macro'};
 import {IconContext} from './Icon';
 import intlMessages from '../intl/*.json';
-import {isFirstItem, isPrevSelected} from './ListView';
-import {ListLayout} from 'react-stately/useVirtualizerState';
 import {ProgressCircle} from './ProgressCircle';
 import {Provider, useContextProps} from 'react-aria-components/slots';
-// @ts-ignore
 import {
   TreeItemProps as RACTreeItemProps,
   TreeProps as RACTreeProps,
@@ -35,10 +51,21 @@ import {
   TreeItem,
   TreeItemContent,
   TreeItemContentProps,
+  TreeItemRenderProps,
   TreeLoadMoreItem,
-  TreeLoadMoreItemProps
+  TreeLoadMoreItemProps,
+  TreeRenderProps
 } from 'react-aria-components/Tree';
-import React, {createContext, forwardRef, JSXElementConstructor, ReactElement, ReactNode, useContext, useRef} from 'react';
+import React, {
+  createContext,
+  forwardRef,
+  JSXElementConstructor,
+  ReactElement,
+  ReactNode,
+  useContext,
+  useRef
+} from 'react';
+import {S2ListLayout} from './ListView';
 import {Text, TextContext} from './Content';
 import {TreeState} from 'react-stately/useTreeState';
 import {useActionBarContainer} from './ActionBar';
@@ -50,54 +77,127 @@ import {Virtualizer} from 'react-aria-components/Virtualizer';
 
 interface S2TreeProps {
   /** Handler that is called when a user performs an action on a row. */
-  onAction?: (key: Key) => void,
+  onAction?: (key: Key) => void;
   /** Provides the ActionBar to display when items are selected in the TreeView. */
-  renderActionBar?: (selectedKeys: 'all' | Set<Key>) => ReactElement
+  renderActionBar?: (selectedKeys: 'all' | Set<Key>) => ReactElement;
 }
 
 interface TreeViewStyleProps {
   /**
-   * How selection should be displayed. For guidance on when to use which option, refer to the [Spectrum](https://spectrum.adobe.com/page/tree-view/#Checkbox-or-highlight-selection-style) page.
+   * How selection should be displayed. For guidance on when to use which option, refer to the
+   * [Spectrum](https://spectrum.adobe.com/page/tree-view/#Checkbox-or-highlight-selection-style)
+   * page.
+   *
    * @default 'checkbox'
    */
-  selectionStyle?: 'highlight' | 'checkbox'
+  selectionStyle?: 'highlight' | 'checkbox';
 }
 
-export interface TreeViewProps<T> extends Omit<RACTreeProps<T>, 'style' | 'className' | 'render' | 'onRowAction' | 'selectionBehavior' | 'onScroll' | 'onCellAction' | 'dragAndDropHooks' | keyof GlobalDOMAttributes>, UnsafeStyles, S2TreeProps, TreeViewStyleProps {
+export interface TreeViewProps<T>
+  extends
+    Omit<
+      RACTreeProps<T>,
+      | 'style'
+      | 'className'
+      | 'render'
+      | 'onRowAction'
+      | 'selectionBehavior'
+      | 'onScroll'
+      | 'onCellAction'
+      | keyof GlobalDOMAttributes
+    >,
+    UnsafeStyles,
+    S2TreeProps,
+    TreeViewStyleProps {
   /** Spectrum-defined styles, returned by the `style()` macro. */
-  styles?: StylesPropWithHeight
+  styles?: StylesPropWithHeight;
 }
 
-export interface TreeViewItemProps extends Omit<RACTreeItemProps, 'className' | 'style' | 'render' | 'onClick' | keyof GlobalDOMAttributes> {
+export interface TreeViewItemProps extends Omit<
+  RACTreeItemProps,
+  'className' | 'style' | 'render' | 'onClick' | keyof GlobalDOMAttributes
+> {
   /** Whether this item has children, even if not loaded yet. */
-  hasChildItems?: boolean
+  hasChildItems?: boolean;
 }
 
 export interface TreeViewLoadMoreItemProps extends Pick<TreeLoadMoreItemProps, 'onLoadMore'> {
   /** The current loading state of the TreeView or TreeView row. */
-  loadingState?: LoadingState
+  loadingState?: LoadingState;
 }
 
 interface TreeRendererContextValue {
-  renderer?: (item) => ReactElement<any, string | JSXElementConstructor<any>>
+  renderer?: (item) => ReactElement<any, string | JSXElementConstructor<any>>;
 }
 const TreeRendererContext = createContext<TreeRendererContextValue>({});
 
+const treeViewWrapper = style(
+  {
+    minHeight: 0,
+    height: 'full',
+    minWidth: 160,
+    display: 'flex',
+    isolation: 'isolate',
+    disableTapHighlight: true,
+    position: 'relative',
+    overflow: 'clip',
+    '--indicator-level-padding': {
+      type: 'width',
+      value: {
+        // 4 (start gap) + 10 (drag handle) + (hasCheckbox ? 16 + 8 : 0) + 40 (expand button)
+        // keep in sync with treeCellGrid gridTemplateColumns
+        default: 54,
+        hasCheckbox: 78
+      }
+    },
+    '--root-drop-radius': {
+      type: 'borderTopStartRadius',
+      value: 'sm'
+    }
+  },
+  getAllowedOverrides({height: true})
+);
 
-const treeViewWrapper = style({
-  minHeight: 0,
-  minWidth: 160,
-  display: 'flex',
-  isolation: 'isolate',
-  disableTapHighlight: true,
-  position: 'relative',
-  overflow: 'clip'
-}, getAllowedOverrides({height: true}));
+// TODO: can't use border cuz it means the contents of the tree are no longer
+// flush with its container. Outline and box shadow are affected by the outlineOffset we
+// have in the tree styles and result in the rows clipping the drop outline. This approach
+// avoids that
+const rootDropOutline = css(`
+  &:has([role="treegrid"][data-drop-target])::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    border: 2px solid ${color('blue-800')};
+    border-radius: var(--root-drop-radius);
+    z-index: 2;
+  }
+  @media (forced-colors: active) {
+    &:has([role="treegrid"][data-drop-target])::after {
+      border-color: Highlight;
+    }
+  }
+`);
+
+// These are the same as ListView. we didn't have v3 tree dnd and dont have designs so to be adjusted later
+const dropTargetBackground = colorMix('gray-25', 'blue-900', 10);
+const rootDropSelectedRowBackground = colorMix('gray-25', 'blue-900', 28);
+const rowDropBackground = colorMix('gray-25', 'blue-900', 10);
+const rootRowDropStyles = {
+  default: dropTargetBackground,
+  isSelected: rootDropSelectedRowBackground,
+  forcedColors: 'Background'
+} as const;
+const rowDropStyles = {
+  default: rowDropBackground,
+  isSelected: rowDropBackground,
+  forcedColors: 'Background'
+} as const;
 
 // TODO: the below is needed so the borders of the top and bottom row isn't cut off if the TreeView is wrapped within a container by always reserving the 2px needed for the
 // keyboard focus ring. Perhaps find a different way of rendering the outlines since the top of the item doesn't
 // scroll into view due to how the ring is offset. Alternatively, have the tree render the top/bottom outline like it does in Listview
-const tree = style({
+const tree = style<TreeRenderProps>({
   ...focusRing(),
   outlineOffset: -2, // make certain we are visible inside overflow hidden containers
   userSelect: 'none',
@@ -107,6 +207,12 @@ const tree = style({
   height: 'full',
   overflow: 'auto',
   boxSizing: 'border-box',
+  backgroundColor: {
+    isDropTarget: {
+      default: dropTargetBackground,
+      forcedColors: 'Background'
+    }
+  },
   justifyContent: {
     isEmpty: 'center'
   },
@@ -124,10 +230,30 @@ let InternalTreeViewContext = createContext<{selectionStyle?: 'highlight' | 'che
 /**
  * A tree view provides users with a way to navigate nested hierarchical information.
  */
-export const TreeView = /*#__PURE__*/ (forwardRef as forwardRefType)(function TreeView<T extends object>(props: TreeViewProps<T>, ref: DOMRef<HTMLDivElement>) {
-  let {children, selectionStyle = 'checkbox', UNSAFE_className, UNSAFE_style} = props;
+export const TreeView = /*#__PURE__*/ (forwardRef as forwardRefType)(function TreeView<T>(
+  props: TreeViewProps<T>,
+  ref: DOMRef<HTMLDivElement>
+) {
+  let {
+    children,
+    selectionStyle = 'checkbox',
+    UNSAFE_className,
+    UNSAFE_style,
+    dragAndDropHooks
+  } = props;
   let scale = useScale();
 
+  if (dragAndDropHooks && dragAndDropHooks.renderDragPreview == null) {
+    dragAndDropHooks.renderDragPreview = items => <DragPreview items={items} />;
+  }
+
+  let hasCheckbox = props.selectionMode !== 'none' && selectionStyle !== 'highlight';
+
+  if (dragAndDropHooks) {
+    dragAndDropHooks.renderDropIndicator = target => (
+      <InsertionIndicator target={target as ItemDropTarget} />
+    );
+  }
   let renderer;
   if (typeof children === 'function') {
     renderer = children;
@@ -136,27 +262,37 @@ export const TreeView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Tr
   let domRef = useDOMRef(ref);
   let scrollRef = useRef<HTMLDivElement | null>(null);
 
-  let {selectedKeys, onSelectionChange, actionBar, actionBarHeight} = useActionBarContainer({...props, scrollRef});
+  let {selectedKeys, onSelectionChange, actionBar, actionBarHeight} = useActionBarContainer({
+    ...props,
+    scrollRef
+  });
 
   return (
     <div
       ref={domRef}
-      className={(UNSAFE_className ?? '') + treeViewWrapper(null, props.styles)}
+      className={
+        (UNSAFE_className ?? '') +
+        treeViewWrapper({hasCheckbox}, props.styles) +
+        ' ' +
+        rootDropOutline
+      }
       style={UNSAFE_style}>
       <Virtualizer
-        layout={ListLayout}
+        layout={S2ListLayout}
         layoutOptions={{
-          rowHeight: scale === 'large' ? 50 : 40
+          rowHeight: scale === 'large' ? 50 : 40,
+          dropIndicatorThickness: 0
         }}>
         <TreeRendererContext.Provider value={{renderer}}>
           <InternalTreeViewContext.Provider value={{selectionStyle}}>
             <Tree
               {...props}
+              dragAndDropHooks={dragAndDropHooks}
               style={{
                 paddingBottom: actionBarHeight > 0 ? actionBarHeight + 8 : 0,
                 scrollPaddingBottom: actionBarHeight > 0 ? actionBarHeight + 8 : 0
               }}
-              className={tree}
+              className={renderProps => tree(renderProps)}
               selectionBehavior={selectionStyle === 'highlight' ? 'replace' : 'toggle'}
               selectedKeys={selectedKeys}
               defaultSelectedKeys={undefined}
@@ -188,8 +324,23 @@ const rowBackgroundColor = {
   }
 } as const;
 
-const treeRow = style({
-  outlineStyle: 'none',
+const treeRow = style<TreeItemRenderProps & {isLink?: boolean; isPreviousSelected?: boolean}>({
+  outlineStyle: {
+    default: 'none',
+    isDropTarget: 'solid'
+  },
+  outlineWidth: {
+    isDropTarget: 2
+  },
+  outlineOffset: {
+    isDropTarget: -2
+  },
+  outlineColor: {
+    isDropTarget: 'blue-800',
+    forcedColors: {
+      isDropTarget: 'Highlight'
+    }
+  },
   position: 'relative',
   display: 'flex',
   height: 40,
@@ -224,10 +375,21 @@ const treeCellGrid = style({
   borderRadius: 'sm',
   alignContent: 'center',
   alignItems: 'center',
-  gridTemplateColumns: ['auto', 'auto', 'auto', 'auto', 'auto', '1fr', 'minmax(0, auto)', 'auto'],
+  // TODO: will have to update these to match design
+  gridTemplateColumns: [
+    4,
+    'auto',
+    'auto',
+    'auto',
+    'auto',
+    'auto',
+    '1fr',
+    'minmax(0, auto)',
+    'auto'
+  ],
   gridTemplateRows: '1fr',
   gridTemplateAreas: [
-    'drag-handle checkbox level-padding expand-button icon content actions actionmenu'
+    '. drag-handle checkbox level-padding expand-button icon content actions actionmenu'
   ],
   paddingEnd: 4, // account for any focus rings on the last item in the cell
   color: {
@@ -290,7 +452,9 @@ const treeRowBackground = style({
           forcedColors: 'Highlight'
         }
       }
-    }
+    },
+    ':is([role="treegrid"][data-drop-target] *)': rootRowDropStyles,
+    isDropTarget: rowDropStyles
   },
   borderTopStartRadius: {
     default: '--borderRadiusTreeItem',
@@ -339,7 +503,7 @@ const treeRowBackground = style({
 
 const treeCheckbox = style({
   gridArea: 'checkbox',
-  marginStart: 12,
+  marginStart: 8,
   marginEnd: 0,
   paddingEnd: 0,
   visibility: {
@@ -375,6 +539,13 @@ const treeActionMenu = style({
   gridArea: 'actionmenu'
 });
 
+const treeDragButtonContainer = style({
+  gridArea: 'drag-handle',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  width: 10
+});
 
 let treeRowFocusRing = style({
   ...focusRing(),
@@ -421,71 +592,129 @@ let treeRowFocusRing = style({
 });
 
 export const TreeViewItem = (props: TreeViewItemProps): ReactNode => {
-  let {
-    href
-  } = props;
-  let {selectionStyle} = useContext(InternalTreeViewContext);
+  let {href} = props;
 
   return (
     <TreeItem
       {...props}
-      className={(renderProps) => treeRow({
-        ...renderProps,
-        isLink: !!href,
-        selectionStyle,
-        isPreviousSelected: isPrevSelected(renderProps.id, renderProps.state)
-      })} />
+      className={renderProps =>
+        treeRow({
+          ...renderProps,
+          isLink: !!href
+        })
+      }
+    />
   );
 };
 
 export interface TreeViewItemContentProps extends Omit<TreeItemContentProps, 'children'> {
   /** Rendered contents of the tree item or child items. */
-  children: ReactNode
+  children: ReactNode;
 }
 
 export const TreeViewItemContent = (props: TreeViewItemContentProps): ReactNode => {
-  let {
-    children
-  } = props;
+  let {children} = props;
   let scale = useScale();
 
   let {selectionStyle} = useContext(InternalTreeViewContext);
-  
+
   return (
-    (<TreeItemContent>
-      {({isExpanded, hasChildItems, selectionMode, selectionBehavior, isDisabled, isSelected, id, state, isHovered, isFocusVisible}) => {
+    <TreeItemContent>
+      {({
+        isExpanded,
+        hasChildItems,
+        selectionMode,
+        selectionBehavior,
+        isDisabled,
+        isSelected,
+        id,
+        state,
+        isHovered,
+        isFocusVisible,
+        isFocusVisibleWithin,
+        allowsDragging,
+        isDropTarget
+      }) => {
         return (
-          (<div className={treeCellGrid({isDisabled, isNextSelected: isNextSelected(id, state), isSelected, selectionStyle})}>
-            <div className={treeRowBackground({isHovered, isFocusVisible, isSelected, selectionStyle, isNextSelected: isNextSelected(id, state), isPreviousSelected: isPrevSelected(id, state)})} />
-            {isFocusVisible && <div className={treeRowFocusRing({isFocusVisible, selectionStyle, isSelected, isNextSelected: isNextSelected(id, state), isFirstItem: isFirstItem(id, state)})} />}
-            {selectionMode !== 'none' && selectionBehavior === 'toggle' && selectionStyle !== 'highlight' && (
-              // TODO: add transition?
-              (<div className={treeCheckbox({isDisabled: isDisabled || !state.selectionManager.canSelectItem(id) || state.disabledKeys.has(id)})}>
-                <Checkbox slot="selection" />
-              </div>)
+          <div
+            className={treeCellGrid({
+              isDisabled,
+              isNextSelected: isNextSelected(id, state),
+              isSelected,
+              selectionStyle
+            })}>
+            <div
+              className={treeRowBackground({
+                isHovered,
+                isFocusVisible,
+                isSelected,
+                selectionStyle,
+                isNextSelected: isNextSelected(id, state),
+                isPreviousSelected: isPrevSelected(id, state),
+                isDropTarget
+              })}
+            />
+            {isFocusVisible && (
+              <div
+                className={treeRowFocusRing({
+                  isFocusVisible,
+                  selectionStyle,
+                  isSelected,
+                  isNextSelected: isNextSelected(id, state),
+                  isFirstItem: isFirstItem(id, state)
+                })}
+              />
             )}
+            {allowsDragging && (
+              <div className={treeDragButtonContainer}>
+                {!isDisabled && <DragHandleButton isFocusVisibleWithin={isFocusVisibleWithin} />}
+              </div>
+            )}
+            {selectionMode !== 'none' &&
+              selectionBehavior === 'toggle' &&
+              selectionStyle !== 'highlight' && (
+                // TODO: add transition?
+                <div
+                  className={treeCheckbox({
+                    isDisabled:
+                      isDisabled ||
+                      !state.selectionManager.canSelectItem(id) ||
+                      state.disabledKeys.has(id)
+                  })}>
+                  <Checkbox slot="selection" />
+                </div>
+              )}
             <div
               className={style({
                 gridArea: 'level-padding',
                 width: 'calc(calc(var(--tree-item-level, 0) - 1) * var(--indent))'
-              })} />
-            <ExpandableRowChevron isDisabled={isDisabled} isExpanded={isExpanded} scale={scale} isHidden={!(hasChildItems)} />
+              })}
+            />
+            <ExpandableRowChevron
+              isDisabled={isDisabled}
+              isExpanded={isExpanded}
+              scale={scale}
+              isHidden={!hasChildItems}
+            />
             <Provider
               values={[
                 [TextContext, {styles: treeContent}],
-                [IconContext, {
-                  render: centerBaseline({slot: 'icon', styles: treeIcon}),
-                  styles: style({size: fontRelative(20), flexShrink: 0})
-                }],
+                [
+                  IconContext,
+                  {
+                    render: centerBaseline({slot: 'icon', styles: treeIcon}),
+                    styles: style({size: fontRelative(20), flexShrink: 0})
+                  }
+                ],
                 [ActionButtonGroupContext, {styles: treeActions, isDisabled}],
                 [ActionMenuContext, {styles: treeActionMenu, isQuiet: true, isDisabled}]
               ]}>
               {typeof children === 'string' ? <Text>{children}</Text> : children}
             </Provider>
-          </div>)
+          </div>
         );
       }}
-    </TreeItemContent>)
+    </TreeItemContent>
   );
 };
 
@@ -502,13 +731,17 @@ export const TreeViewLoadMoreItem = (props: TreeViewLoadMoreItemProps): ReactNod
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
   return (
-    <TreeLoadMoreItem isLoading={isLoading} onLoadMore={onLoadMore} className={style({width: 'full', marginY: 4})}>
+    <TreeLoadMoreItem
+      isLoading={isLoading}
+      onLoadMore={onLoadMore}
+      className={style({width: 'full', marginY: 4})}>
       {() => {
         return (
           <div className={centeredWrapper}>
             <ProgressCircle
               isIndeterminate
-              aria-label={stringFormatter.format('table.loadingMore')} />
+              aria-label={stringFormatter.format('table.loadingMore')}
+            />
           </div>
         );
       }}
@@ -517,11 +750,11 @@ export const TreeViewLoadMoreItem = (props: TreeViewLoadMoreItemProps): ReactNod
 };
 
 interface ExpandableRowChevronProps {
-  isExpanded?: boolean,
-  isDisabled?: boolean,
-  isRTL?: boolean,
-  scale: 'medium' | 'large',
-  isHidden?: boolean
+  isExpanded?: boolean;
+  isDisabled?: boolean;
+  isRTL?: boolean;
+  scale: 'medium' | 'large';
+  isHidden?: boolean;
 }
 
 const expandButton = style<ExpandableRowChevronProps>({
@@ -559,7 +792,11 @@ const expandButton = style<ExpandableRowChevronProps>({
 
 function ExpandableRowChevron(props: ExpandableRowChevronProps) {
   let expandButtonRef = useRef<HTMLButtonElement>(null);
-  let [fullProps, ref] = useContextProps({...props, slot: 'chevron'}, expandButtonRef, ButtonContext);
+  let [fullProps, ref] = useContextProps(
+    {...props, slot: 'chevron'},
+    expandButtonRef,
+    ButtonContext
+  );
   let {isExpanded, scale, isHidden} = fullProps;
   let {direction} = useLocale();
 
@@ -568,7 +805,9 @@ function ExpandableRowChevron(props: ExpandableRowChevronProps) {
       {...props}
       ref={ref}
       slot="chevron"
-      className={renderProps => expandButton({...renderProps, isExpanded, isRTL: direction === 'rtl', scale, isHidden})}>
+      className={renderProps =>
+        expandButton({...renderProps, isExpanded, isRTL: direction === 'rtl', scale, isHidden})
+      }>
       <Chevron
         className={style({
           scale: {
@@ -581,7 +820,8 @@ function ExpandableRowChevron(props: ExpandableRowChevronProps) {
             type: 'fill',
             value: 'currentColor'
           }
-        })({direction})} />
+        })({direction})}
+      />
     </Button>
   );
 }
@@ -593,11 +833,26 @@ function isNextSelected(id: Key | undefined, state: TreeState<unknown>) {
   let keyAfter = state.collection.getKeyAfter(id);
 
   // We need to skip non-item nodes because the selection manager will map non-item nodes to their parent before checking selection
-  let node = keyAfter ? state.collection.getItem(keyAfter) : null;
-  while (node && node.type !== 'item' && keyAfter) {
+  let node = keyAfter != null ? state.collection.getItem(keyAfter) : null;
+  while (node && node.type !== 'item' && keyAfter != null) {
     keyAfter = state.collection.getKeyAfter(keyAfter);
-    node = keyAfter ? state.collection.getItem(keyAfter) : null;
+    node = keyAfter != null ? state.collection.getItem(keyAfter) : null;
   }
 
   return keyAfter != null && state.selectionManager.isSelected(keyAfter);
+}
+
+function isPrevSelected(id: Key | undefined, state: TreeState<unknown>) {
+  if (id == null || !state) {
+    return false;
+  }
+  let keyBefore = state.collection.getKeyBefore(id);
+  return keyBefore != null && state.selectionManager.isSelected(keyBefore);
+}
+
+function isFirstItem(id: Key | undefined, state: TreeState<unknown>) {
+  if (id == null || !state) {
+    return false;
+  }
+  return state.collection.getFirstKey() === id;
 }

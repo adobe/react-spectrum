@@ -135,7 +135,8 @@ export const ResponsiveStyleProps: ProviderStory = () => (
     <div>
       <TextField
         label="A text field"
-        width={{base: 'size-800', S: 'size-1000', M: 'size-2000', L: 'size-3000'}} />
+        width={{base: 'size-800', S: 'size-1000', M: 'size-2000', L: 'size-3000'}}
+      />
     </div>
     <Button
       isHidden={{base: false, S: false, M: false, L: true}}
@@ -152,6 +153,7 @@ ResponsiveStyleProps.story = {
 
 export const CustomResponsiveStyleProps: ProviderStory = () => {
   let Breakpoint = () => {
+    // oxlint-disable-next-line react/react-compiler
     let {matchedBreakpoints} = useBreakpoint()!;
     let breakpoint = matchedBreakpoints[0];
     let width = {
@@ -174,6 +176,7 @@ export const CustomResponsiveStyleProps: ProviderStory = () => {
   };
   return (
     <Provider breakpoints={{S: 480, M: 640, L: 1024}} UNSAFE_style={{padding: 50}}>
+      {/* oxlint-disable-next-line react/react-compiler */}
       <Breakpoint />
     </Provider>
   );
@@ -185,6 +188,7 @@ CustomResponsiveStyleProps.story = {
 
 export const BreakpointOmitted: ProviderStory = () => {
   let Breakpoint = () => {
+    // oxlint-disable-next-line react/react-compiler
     let {matchedBreakpoints} = useBreakpoint()!;
     let breakpoint = matchedBreakpoints[0];
     let width = {base: 'size-1600', S: 'size-2400', L: 'size-3400'};
@@ -199,6 +203,7 @@ export const BreakpointOmitted: ProviderStory = () => {
   };
   return (
     <Provider UNSAFE_style={{padding: 50}}>
+      {/* oxlint-disable-next-line react/react-compiler */}
       <Breakpoint />
     </Provider>
   );
@@ -225,7 +230,9 @@ function render(props = {}) {
   return (
     <Provider {...props} UNSAFE_style={{padding: 50}}>
       <Form>
-        <Flex> {/* Extra div via Flex so that the button does not expand to 100% width */}
+        <Flex>
+          {' '}
+          {/* Extra div via Flex so that the button does not expand to 100% width */}
           <Button variant="primary">I am a button</Button>
         </Flex>
         <CheckboxGroup defaultValue={['dragons']} label="Pets">
@@ -251,7 +258,8 @@ function render(props = {}) {
           label="A text field"
           marginTop="size-100"
           necessityIndicator="label"
-          value="dummy value" />
+          value="dummy value"
+        />
       </Form>
     </Provider>
   );

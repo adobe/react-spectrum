@@ -16,28 +16,27 @@ import {filterDOMProps} from '../utils/filterDOMProps';
 import {HTMLAttributes, useMemo} from 'react';
 import intlMessages from '../../intl/color/*.json';
 import {parseColor} from 'react-stately/Color';
-// @ts-ignore
 import {useId} from '../utils/useId';
 import {useLocale} from '../i18n/I18nProvider';
 import {useLocalizedStringFormatter} from '../i18n/useLocalizedStringFormatter';
 
 export interface AriaColorSwatchProps extends AriaLabelingProps, DOMProps {
   /** The color value to display in the swatch. */
-  color?: string | Color,
-  /** 
+  color?: string | Color;
+  /**
    * A localized accessible name for the color.
    * By default, a description is generated from the color value,
    * but this can be overridden if you have a more specific color
    * name (e.g. Pantone colors).
    */
-  colorName?: string
+  colorName?: string;
 }
 
 export interface ColorSwatchAria {
   /** Props for the color swatch element. */
-  colorSwatchProps: HTMLAttributes<HTMLElement>,
+  colorSwatchProps: HTMLAttributes<HTMLElement>;
   /** The parsed color value of the swatch. */
-  color: Color
+  color: Color;
 }
 
 /**
@@ -47,14 +46,20 @@ export interface ColorSwatchAria {
 export function useColorSwatch(props: AriaColorSwatchProps): ColorSwatchAria {
   let {color: value, colorName} = props;
   let nonNullValue = value || '#fff0';
-  let color = useMemo(() => typeof nonNullValue === 'string' ? parseColor(nonNullValue) : nonNullValue, [nonNullValue]);
+  let color = useMemo(
+    () => (typeof nonNullValue === 'string' ? parseColor(nonNullValue) : nonNullValue),
+    [nonNullValue]
+  );
   let {locale} = useLocale();
   let DOMProps = filterDOMProps(props, {labelable: true});
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/color');
   let id = useId(props.id);
 
   if (!colorName) {
-    colorName = color.getChannelValue('alpha') === 0 ? stringFormatter.format('transparent') : color.getColorName(locale);
+    colorName =
+      color.getChannelValue('alpha') === 0
+        ? stringFormatter.format('transparent')
+        : color.getColorName(locale);
   }
 
   return {

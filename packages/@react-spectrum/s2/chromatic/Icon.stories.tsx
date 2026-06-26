@@ -25,7 +25,7 @@ export default meta;
 
 type Story = StoryObj<typeof NewIcon>;
 export const Example: Story = {
-  render: (args) => {
+  render: args => {
     return (
       <div style={{display: 'flex', gap: 8, justifyContent: 'center'}}>
         <NewIcon {...args} />

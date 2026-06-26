@@ -13,17 +13,27 @@ import React, {ReactNode} from 'react';
 
 export function Keyboard(): ReactNode {
   return (
-    <svg className="flex-1 stroke-slate-400 dark:stroke-slate-500 forced-colors:stroke-[ButtonBorder]! [--press-fill:var(--color-slate-300)] dark:[--press-fill:var(--color-slate-700)] forced-colors:[--press-fill:Highlight]!" viewBox="0 0 192 81" fill="none" aria-hidden="true" id="keyboard">
+    <svg
+      className="flex-1 stroke-slate-400 dark:stroke-slate-500 forced-colors:stroke-[ButtonBorder]! [--press-fill:var(--color-slate-300)] dark:[--press-fill:var(--color-slate-700)] forced-colors:[--press-fill:Highlight]!"
+      viewBox="0 0 192 81"
+      fill="none"
+      aria-hidden="true"
+      id="keyboard">
       <g>
         <style>
-          {
-            `#keyboard rect {
+          {`#keyboard rect {
               stroke-width: 0.85;
               vector-effect: non-scaling-stroke;
-            }`
-          }
+            }`}
         </style>
-        <rect width="190" height="80" rx="4" x="0.5" y="0.5" className="fill-white dark:fill-zinc-900" />
+        <rect
+          width="190"
+          height="80"
+          rx="4"
+          x="0.5"
+          y="0.5"
+          className="fill-white dark:fill-zinc-900"
+        />
         <g>
           <rect width="17" height="11" rx="2" x="2.5" y="2.5" />
           <rect width="11" height="11" rx="2" x="21.5" y="2.5" />

@@ -73,6 +73,9 @@ export const description = 'How to integrate with your framework.';
         }
         ```
       </Step>
+      <Step>
+        <Counter />If you are using a [Content Security Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP) (CSP) with a nonce, add a `<meta property="csp-nonce">` tag to your document head, setting the `content` attribute to the generated nonce value. React Aria automatically reads the nonce from this tag.
+      </Step>
     </StepList>
   </TabPanel>
   <TabPanel id="react-router">
@@ -184,6 +187,9 @@ export const description = 'How to integrate with your framework.';
         });
         ```
       </Step>
+      <Step>
+        <Counter />If you are using a [Content Security Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP) (CSP) with a nonce, add a `<meta property="csp-nonce">` tag to your document head, setting the `content` attribute to the generated nonce value. React Aria automatically reads the nonce from this tag.
+      </Step>
     </StepList>
   </TabPanel>
   <TabPanel id="parcel">
@@ -212,6 +218,9 @@ export const description = 'How to integrate with your framework.';
           "locales": ["en-US", "fr-FR"]
         }
         ```
+      </Step>
+      <Step>
+        <Counter />If you are using a [Content Security Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP) (CSP) with a nonce, add a `<meta property="csp-nonce">` tag to your document head, setting the `content` attribute to the generated nonce value. React Aria automatically reads the nonce from this tag.
       </Step>
     </StepList>
   </TabPanel>
@@ -243,6 +252,9 @@ export const description = 'How to integrate with your framework.';
         });
         ```
       </Step>
+      <Step>
+        <Counter />If you are using a [Content Security Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP) (CSP) with a nonce, configure [`html.cspNonce`](https://vite.dev/config/shared-options.html#html-cspnonce) in `vite.config.ts`. React Aria automatically reads the nonce that Vite injects.
+      </Step>
     </StepList>
   </TabPanel>
   <TabPanel id="webpack">
@@ -269,6 +281,9 @@ export const description = 'How to integrate with your framework.';
           ]
         };
         ```
+      </Step>
+      <Step>
+        <Counter />If you are using a [Content Security Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP) (CSP) with a nonce, configure [`__webpack_nonce__`](https://webpack.js.org/guides/csp/) in your entry script. React Aria automatically reads the nonce from the webpack global.
       </Step>
     </StepList>
   </TabPanel>
@@ -297,6 +312,9 @@ export const description = 'How to integrate with your framework.';
         };
         ```
       </Step>
+      <Step>
+        <Counter />If you are using a [Content Security Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP) (CSP) with a nonce, add a `<meta property="csp-nonce">` tag to your document head, setting the `content` attribute to the generated nonce value. React Aria automatically reads the nonce from this tag.
+      </Step>
     </StepList>
   </TabPanel>
   <TabPanel id="esbuild">
@@ -323,6 +341,9 @@ export const description = 'How to integrate with your framework.';
           ]
         });
         ```
+      </Step>
+      <Step>
+        <Counter />If you are using a [Content Security Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP) (CSP) with a nonce, add a `<meta property="csp-nonce">` tag to your document head, setting the `content` attribute to the generated nonce value. React Aria automatically reads the nonce from this tag.
       </Step>
     </StepList>
   </TabPanel>
