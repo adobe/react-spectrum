@@ -27,7 +27,7 @@
   "notificationbadge.indicatorOnly": "Nieuwe activiteit",
   "notificationbadge.plus": "{notifications}+",
   "picker.placeholder": "Selecteren…",
-  "picker.selectedCount": "{count, plural, =0 {Geen items geselecteerd} one {# item geselecteerd} other {# items geselecteerd}}",
+  "picker.selectedCount": "{count, plural, =0 {No items selected} one {# item selected} other {# items selected}}",
   "slider.maximum": "Maximum",
   "slider.minimum": "Minimum",
   "table.cancel": "Annuleren",

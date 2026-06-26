@@ -20,7 +20,7 @@
   "inlinealert.negative": "错误",
   "inlinealert.notice": "警告",
   "inlinealert.positive": "成功",
-  "label.(optional)": "（可选）",
+  "label.(optional)": "（非必须）",
   "label.(required)": "（必填）",
   "menu.moreActions": "更多操作",
   "menu.unavailable": "不可用，展开以查看详细信息",
