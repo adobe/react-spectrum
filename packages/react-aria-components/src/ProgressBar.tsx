@@ -80,20 +80,20 @@ export const ProgressBar = forwardRef(function ProgressBar(
   [props, ref] = useContextProps(props, ref, ProgressBarContext);
   let {value = 0, minValue = 0, maxValue = 100, isIndeterminate = false} = props;
   value = clamp(value, minValue, maxValue);
-  let range = maxValue - minValue;
-  let formatOptions = props.formatOptions ?? DEFAULT_FORMAT_OPTIONS;
-  let formatter = useNumberFormatter(formatOptions);
 
   let [labelRef, label] = useSlot(!props['aria-label'] && !props['aria-labelledby']);
-  let valueLabel =
-    !isIndeterminate && range === 0 && !props.valueLabel && formatOptions.style === 'percent'
-      ? formatter.format(0)
-      : props.valueLabel;
-  let {progressBarProps, labelProps} = useProgressBar({...props, label, valueLabel});
+  let {progressBarProps, labelProps} = useProgressBar({...props, label});
 
+  let range = maxValue - minValue;
   // Calculate the width of the progress bar as a percentage
-  let percentage =
-    isIndeterminate ? undefined : range === 0 ? 0 : ((value - minValue) / range) * 100;
+  let percentage = undefined;
+  if (!isIndeterminate) {
+    if (range === 0) {
+      percentage = 0;
+    } else {
+      percentage = ((value - minValue) / range) * 100;
+    }
+  }
 
   let renderProps = useRenderProps({
     ...props,
