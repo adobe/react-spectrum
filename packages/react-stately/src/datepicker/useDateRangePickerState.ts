@@ -134,6 +134,7 @@ export function useDateRangePickerState<T extends DateValue = DateValue>(
   let [endIsValuePartial, setEndIsValuePartial] = useState(false);
 
   let setValueInternal = (newValue: RangeValue<DateValue | null> | null) => {
+    // oxlint-disable-next-line react/react-compiler
     value = newValue || {start: null, end: null};
     setPlaceholderValue(value);
     if (isCompleteRange(value)) {

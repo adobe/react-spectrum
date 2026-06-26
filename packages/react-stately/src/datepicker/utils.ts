@@ -174,7 +174,7 @@ export function usePartialFormValidationState<T>(
   // commit on. Runs as an effect so the commit lands after the partial state has settled.
   useEffect(() => {
     if (showPartialError && !isValuePartial) {
-      // oxlint-disable-next-line react-hooks-js/set-state-in-effect
+      // oxlint-disable-next-line react/react-compiler
       setShowPartialError(false);
       validation.commitValidation();
     }

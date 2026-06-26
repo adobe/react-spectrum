@@ -167,11 +167,18 @@ function setupGlobalFocusEvents(element?: HTMLElement | null) {
   // However, we need to detect other cases when a focus event occurs without
   // a preceding user event (e.g. screen reader focus). Overriding the focus
   // method on HTMLElement.prototype is a bit hacky, but works.
+  // defineProperty (not assignment) so this works even if `focus` is currently
+  // a getter-only accessor — e.g. when @testing-library/user-event's setup()
+  // has instrumented it. Plain assignment throws in that case.
   let focus = windowObject.HTMLElement.prototype.focus;
-  windowObject.HTMLElement.prototype.focus = function () {
-    hasEventBeforeFocus = true;
-    focus.apply(this, arguments as unknown as [options?: FocusOptions | undefined]);
-  };
+  Reflect.defineProperty(windowObject.HTMLElement.prototype, 'focus', {
+    configurable: true,
+    writable: true,
+    value: function () {
+      hasEventBeforeFocus = true;
+      focus.apply(this, arguments as unknown as [options?: FocusOptions | undefined]);
+    }
+  });
 
   documentObject.addEventListener('keydown', handleKeyboardEvent, true);
   documentObject.addEventListener('keyup', handleKeyboardEvent, true);
@@ -213,7 +220,11 @@ const tearDownWindowFocusTracking = (element, loadListener?: () => void) => {
   if (!hasSetupGlobalListeners.has(windowObject)) {
     return;
   }
-  windowObject.HTMLElement.prototype.focus = hasSetupGlobalListeners.get(windowObject)!.focus;
+  Reflect.defineProperty(windowObject.HTMLElement.prototype, 'focus', {
+    configurable: true,
+    writable: true,
+    value: hasSetupGlobalListeners.get(windowObject)!.focus
+  });
 
   documentObject.removeEventListener('keydown', handleKeyboardEvent, true);
   documentObject.removeEventListener('keyup', handleKeyboardEvent, true);
@@ -336,7 +347,7 @@ const nonTextInputTypes = new Set([
  */
 function isKeyboardFocusEvent(isTextInput: boolean, modality: Modality, e: HandlerEvent) {
   let eventTarget = e ? (getEventTarget(e) as Element) : undefined;
-  let document = getOwnerDocument(eventTarget);
+  let ownerDocument = getOwnerDocument(eventTarget);
   let ownerWindow = getOwnerWindow(eventTarget);
   const IHTMLInputElement =
     typeof ownerWindow !== 'undefined' ? ownerWindow.HTMLInputElement : HTMLInputElement;
@@ -348,7 +359,7 @@ function isKeyboardFocusEvent(isTextInput: boolean, modality: Modality, e: Handl
 
   // For keyboard events that occur on a non-input element that will move focus into input element (aka ArrowLeft going from Datepicker button to the main input group)
   // we need to rely on the user passing isTextInput into here. This way we can skip toggling focus visiblity for said input element
-  let activeElement = getActiveElement(document);
+  let activeElement = getActiveElement(ownerDocument);
   isTextInput =
     isTextInput ||
     (activeElement instanceof IHTMLInputElement && !nonTextInputTypes.has(activeElement.type)) ||

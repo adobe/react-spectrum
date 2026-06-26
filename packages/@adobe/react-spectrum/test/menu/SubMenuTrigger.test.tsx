@@ -656,7 +656,7 @@ describe('Submenu', function () {
       expect(onAction).not.toHaveBeenCalled();
       expect(onClose).not.toHaveBeenCalled();
       expect(submenuOnAction).toHaveBeenCalledTimes(1);
-      expect(submenuOnAction).toHaveBeenLastCalledWith('Lvl 2 Item 2');
+      expect(submenuOnAction).toHaveBeenLastCalledWith('Lvl 2 Item 2', null);
       expect(submenuOnClose).toHaveBeenCalledTimes(1);
       expect(onOpenChange).toHaveBeenCalledTimes(4);
       expect(onOpenChange).toHaveBeenLastCalledWith(false);
@@ -725,7 +725,7 @@ describe('Submenu', function () {
       menus = tree.queryAllByRole('menu');
       expect(menus).toHaveLength(0);
       expect(onAction).toHaveBeenCalledTimes(1);
-      expect(onAction).toHaveBeenLastCalledWith('Lvl 1 Item 1');
+      expect(onAction).toHaveBeenLastCalledWith('Lvl 1 Item 1', null);
     });
 
     it('supports selectionMode and onSelectionChange on submenus', async function () {

@@ -35,7 +35,7 @@ export function ComboBox<T, M extends 'single' | 'multiple' = 'single'>({
 }: ComboBoxProps<T, M>) {
   return (
     <AriaComboBox {...props}>
-      <Label>{label}</Label>
+      {label && <Label>{label}</Label>}
       <div className="combobox-field">
         <Input className="react-aria-Input inset" placeholder={placeholder} />
         <FieldButton>

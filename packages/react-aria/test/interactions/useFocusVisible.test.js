@@ -148,6 +148,26 @@ describe('useFocusVisible', function () {
       iframe.remove();
     });
 
+    // Regression test for https://github.com/adobe/react-spectrum/issues/9649
+    it('does not throw when HTMLElement.prototype.focus is an accessor-only property', function () {
+      const HTMLElementProto = iframe.contentWindow.HTMLElement.prototype;
+      const original = Object.getOwnPropertyDescriptor(HTMLElementProto, 'focus');
+      Object.defineProperty(HTMLElementProto, 'focus', {
+        configurable: true,
+        get() {
+          return original?.value;
+        }
+      });
+
+      try {
+        expect(() => addWindowFocusTracking(iframeRoot)).not.toThrow();
+      } finally {
+        if (original) {
+          Object.defineProperty(HTMLElementProto, 'focus', original);
+        }
+      }
+    });
+
     it('sets up focus listener in a different window', async function () {
       render(<Example id="iframe-example" />, {container: iframeRoot});
       await waitFor(() => {

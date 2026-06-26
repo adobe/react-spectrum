@@ -69,11 +69,15 @@ export const Dialog = React.forwardRef(function Dialog(props: SpectrumDialogProp
   let domRef = useDOMRef(ref);
   let gridRef = useRef(null);
   let sizeVariant = sizeMap[type] || sizeMap[size];
-  let {dialogProps, titleProps} = useDialog(mergeProps(contextProps, props), domRef);
+  let {dialogProps, titleProps, contentProps} = useDialog(mergeProps(contextProps, props), domRef);
 
+  // oxlint-disable-next-line react/react-compiler
   let hasHeader = useHasChild(`.${styles['spectrum-Dialog-header']}`, unwrapDOMRef(gridRef));
+  // oxlint-disable-next-line react/react-compiler
   let hasHeading = useHasChild(`.${styles['spectrum-Dialog-heading']}`, unwrapDOMRef(gridRef));
+  // oxlint-disable-next-line react/react-compiler
   let hasFooter = useHasChild(`.${styles['spectrum-Dialog-footer']}`, unwrapDOMRef(gridRef));
+  // oxlint-disable-next-line react/react-compiler
   let hasTypeIcon = useHasChild(`.${styles['spectrum-Dialog-typeIcon']}`, unwrapDOMRef(gridRef));
 
   let slots = useMemo(
@@ -89,13 +93,14 @@ export const Dialog = React.forwardRef(function Dialog(props: SpectrumDialogProp
       },
       header: {
         UNSAFE_className: classNames(styles, 'spectrum-Dialog-header', {
+          // oxlint-disable-next-line react/react-compiler
           'spectrum-Dialog-header--noHeading': !hasHeading,
           'spectrum-Dialog-header--noTypeIcon': !hasTypeIcon
         })
       },
       typeIcon: {UNSAFE_className: styles['spectrum-Dialog-typeIcon']},
       divider: {UNSAFE_className: styles['spectrum-Dialog-divider'], size: 'M'},
-      content: {UNSAFE_className: styles['spectrum-Dialog-content']},
+      content: {UNSAFE_className: styles['spectrum-Dialog-content'], ...contentProps},
       footer: {UNSAFE_className: styles['spectrum-Dialog-footer']},
       buttonGroup: {
         UNSAFE_className: classNames(styles, 'spectrum-Dialog-buttonGroup', {
@@ -105,7 +110,7 @@ export const Dialog = React.forwardRef(function Dialog(props: SpectrumDialogProp
       }
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [hasFooter, hasHeader, titleProps]
+    [hasFooter, hasHeader, titleProps, contentProps]
   );
 
   return (
