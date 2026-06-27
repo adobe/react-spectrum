@@ -25,6 +25,83 @@ interface ScrollIntoViewportOpts {
   containingElement?: Element | null;
 }
 
+// Helper function to check if the element is an instance of HTMLElement or SVGElement
+function isRenderElement(el: unknown): el is HTMLElement | SVGElement {
+  return el instanceof HTMLElement || el instanceof SVGElement;
+}
+
+// Shadow DOM compatible contains utility running purely on baseline loops to satisfy strict lint setups
+function safeContains(parent: Element, child: Node): boolean {
+  let current: Node | null = child;
+  while (current) {
+    if (current === parent) {
+      return true;
+    }
+    const root = current.getRootNode?.();
+    if (root instanceof ShadowRoot) {
+      current = root.host;
+    } else {
+      current = current.parentNode;
+    }
+  }
+  return false;
+}
+
+// Helper to determine if a containing element is fully within an ancestor wrapper's bounds
+function isContainerObscured(containerRect: DOMRect, parent: Element): boolean {
+  if (
+    parent === document.body ||
+    parent === document.documentElement ||
+    parent === document.scrollingElement
+  ) {
+    return false;
+  }
+
+  if (!isRenderElement(parent)) {
+    return false;
+  }
+
+  const parentRect = parent.getBoundingClientRect();
+  return (
+    containerRect.top < parentRect.top ||
+    containerRect.left < parentRect.left ||
+    containerRect.bottom > parentRect.bottom ||
+    containerRect.right > parentRect.right
+  );
+}
+
+// Check ancestry chain for any container boundaries clipping visibility without exceeding max-depth limits
+function checkAncestorsObscureContainer(
+  containingElement: Element,
+  containerRect: DOMRect
+): boolean {
+  let containerParents = getScrollParents(containingElement, true);
+  for (let parent of containerParents) {
+    if (isContainerObscured(containerRect, parent as Element)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+// Extracted utility to shift parents smoothly while avoiding max-depth nesting limits
+function scrollContainerParents(containingElement: Element): void {
+  let parentParents = getScrollParents(containingElement, true);
+  for (let parent of parentParents) {
+    if (
+      parent !== document.body &&
+      parent !== document.documentElement &&
+      parent !== document.scrollingElement &&
+      isRenderElement(parent)
+    ) {
+      scrollIntoView(parent as HTMLElement, containingElement as HTMLElement, {
+        block: 'nearest',
+        inline: 'nearest'
+      });
+    }
+  }
+}
+
 /**
  * Scrolls `scrollView` so that `element` is visible.
  * Similar to `element.scrollIntoView({block: 'nearest'})` (not supported in Edge),
@@ -134,7 +211,7 @@ export function scrollIntoView(
 
 /**
  * Scrolls the `targetElement` so it is visible in the viewport. Accepts an optional
- * `opts.containingElement` that will be centered in the viewport prior to scrolling the
+ * `opts.containingElement` that will be checked prior to scrolling the
  * targetElement into view. If scrolling is prevented on the body (e.g. targetElement is in a
  * popover), this will only scroll the scroll parents of the targetElement up to but not including
  * the body itself.
@@ -144,43 +221,72 @@ export function scrollIntoViewport(
   opts: ScrollIntoViewportOpts = {}
 ): void {
   let {containingElement} = opts;
-  if (targetElement && targetElement.isConnected) {
-    let root = document.scrollingElement || document.documentElement;
-    let isScrollPrevented = window.getComputedStyle(root).overflow === 'hidden';
-    if (!isScrollPrevented) {
-      let {left: originalLeft, top: originalTop} = targetElement.getBoundingClientRect();
+  if (!targetElement || !targetElement.isConnected) {
+    return;
+  }
 
-      // use scrollIntoView({block: 'nearest'}) instead of .focus to check if the element is fully in view or not since .focus()
-      // won't cause a scroll if the element is already focused and doesn't behave consistently when an element is partially out of view horizontally vs vertically
-      targetElement?.scrollIntoView?.({block: 'nearest'});
-      let {left: newLeft, top: newTop} = targetElement.getBoundingClientRect();
-      // Account for sub pixel differences from rounding
-      if (Math.abs(originalLeft - newLeft) > 1 || Math.abs(originalTop - newTop) > 1) {
-        containingElement?.scrollIntoView?.({block: 'center', inline: 'center'});
-        targetElement.scrollIntoView?.({block: 'nearest'});
-      }
-    } else {
-      let {left: originalLeft, top: originalTop} = targetElement.getBoundingClientRect();
+  let root = document.scrollingElement || document.documentElement;
+  let isScrollPrevented = window.getComputedStyle(root).overflow === 'hidden';
 
-      // If scrolling is prevented, we don't want to scroll the body since it might move the overlay partially offscreen and the user can't scroll it back into view.
-      let scrollParents = getScrollParents(targetElement, true);
-      for (let scrollParent of scrollParents) {
-        scrollIntoView(scrollParent as HTMLElement, targetElement as HTMLElement);
+  if (!isScrollPrevented) {
+    // Step 1: Handle internal scroll parents up to but not exceeding the container boundary
+    let scrollParents = getScrollParents(targetElement, true);
+    for (let scrollParent of scrollParents) {
+      if (containingElement && !safeContains(containingElement, scrollParent)) {
+        continue;
       }
-      let {left: newLeft, top: newTop} = targetElement.getBoundingClientRect();
-      // Account for sub pixel differences from rounding
-      if (Math.abs(originalLeft - newLeft) > 1 || Math.abs(originalTop - newTop) > 1) {
-        scrollParents = containingElement ? getScrollParents(containingElement, true) : [];
-        // scroll containing element into view first, then rescroll target element into view like the non chrome flow above
-        for (let scrollParent of scrollParents) {
-          scrollIntoView(scrollParent as HTMLElement, containingElement as HTMLElement, {
-            block: 'center',
-            inline: 'center'
-          });
+      scrollIntoView(scrollParent as HTMLElement, targetElement as HTMLElement, {
+        block: 'nearest',
+        inline: 'nearest'
+      });
+    }
+
+    // Step 2: TRUE scrollIntoViewIfNeeded Approach
+    if (containingElement) {
+      let containerRect = containingElement.getBoundingClientRect();
+      let targetRect = targetElement.getBoundingClientRect();
+
+      let isTargetVisibleInContainer =
+        targetRect.top >= containerRect.top &&
+        targetRect.bottom <= containerRect.bottom &&
+        targetRect.left >= containerRect.left &&
+        targetRect.right <= containerRect.right;
+
+      if (isTargetVisibleInContainer) {
+        if (checkAncestorsObscureContainer(containingElement, containerRect)) {
+          scrollContainerParents(containingElement);
         }
-        for (let scrollParent of getScrollParents(targetElement, true)) {
-          scrollIntoView(scrollParent as HTMLElement, targetElement as HTMLElement);
-        }
+
+        // Return early to completely bypass and stop competing browser shifts!
+        return;
+      }
+    }
+
+    // Step 3: Fallback standard alignment ONLY if the row was hidden/out of view
+    targetElement.scrollIntoView?.({block: 'nearest'});
+  } else {
+    // Isolated popup/modal overlay path
+    let scrollParents = getScrollParents(targetElement, true);
+    for (let scrollParent of scrollParents) {
+      scrollIntoView(scrollParent as HTMLElement, targetElement as HTMLElement, {
+        block: 'nearest',
+        inline: 'nearest'
+      });
+    }
+
+    if (containingElement) {
+      let containerParents = getScrollParents(containingElement, true);
+      for (let parent of containerParents) {
+        scrollIntoView(parent as HTMLElement, containingElement as HTMLElement, {
+          block: 'nearest',
+          inline: 'nearest'
+        });
+      }
+      for (let scrollParent of getScrollParents(targetElement, true)) {
+        scrollIntoView(scrollParent as HTMLElement, targetElement as HTMLElement, {
+          block: 'nearest',
+          inline: 'nearest'
+        });
       }
     }
   }
