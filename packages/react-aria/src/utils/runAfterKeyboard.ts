@@ -35,7 +35,7 @@ function onTransitionStart(): void {
 
   let transitionTimer = isIOS() && isWebKit() && wasOpen ? 600 : 300;
 
-  if (transitionInterval != null && transitionTimeout != null) {
+  if (transitionInterval != null || transitionTimeout != null) {
     return;
   }
 

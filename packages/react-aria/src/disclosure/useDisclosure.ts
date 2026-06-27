@@ -70,7 +70,7 @@ export function useDisclosure(
     });
   }, [ref, state]);
 
-  // https://github.com/facebook/react/pull/24741
+  // @ts-ignore https://github.com/facebook/react/pull/24741
   useEvent(ref, 'beforematch', handleBeforeMatch);
 
   let isExpandedRef = useRef<boolean | null>(null);

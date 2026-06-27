@@ -232,7 +232,7 @@ function preventScrollMobileSafari() {
 function scrollIntoView(target: Element) {
   let root = document.scrollingElement || document.documentElement;
   let nextTarget: Element | null = target;
-  while (nextTarget && nextTarget !== root) {
+  while (nextTarget && nextTarget !== root && nextTarget.isConnected) {
     // Find the parent scrollable element and adjust the scroll position if the target is not already in view.
     let scrollable = getScrollParent(nextTarget);
     if (
