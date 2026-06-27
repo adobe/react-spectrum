@@ -1,0 +1,126 @@
+{/* Copyright 2026 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '../../../src/Layout';
+export default Layout;
+import {FunctionAPI} from '../../../src/FunctionAPI';
+import {InterfaceType} from '../../../src/types';
+import docs from 'docs:@react-aria/combobox';
+import statelyDocs from 'docs:@react-stately/combobox';
+
+export const section = 'Hooks';
+export const description = 'Provides the behavior and accessibility implementation for a combo box component.';
+export const isSubpage = true;
+
+# useComboBox
+
+<PageDescription>{docs.exports.useComboBox.description}</PageDescription>
+
+This example uses `useComboBox` to provide the behavior for a custom combo box, and reuses the [Input](../TextField), [Button](../Button), [Popover](../Popover), and [ListBox](../ListBox) components from React Aria Components to render the text field, trigger, popup, and list of options. The values returned by the hook are passed to these components via context, following the [Reusing children](../customization#reusing-children) pattern. A "contains" filter from [useFilter](../useFilter) filters the options as the user types.
+
+```tsx render
+"use client";
+import React from 'react';
+import {useComboBox} from 'react-aria/useComboBox';
+import {useFilter} from 'react-aria/useFilter';
+import {useComboBoxState} from 'react-stately/useComboBoxState';
+import {CollectionBuilder} from 'react-aria/CollectionBuilder';
+import type {Collection as ICollection, Node} from '@react-types/shared';
+import {Provider} from 'react-aria-components/slots';
+import {ComboBoxStateContext} from 'react-aria-components/ComboBox';
+import {Collection} from 'react-aria-components/Collection';
+import {LabelContext} from 'react-aria-components/Label';
+import {ButtonContext} from 'react-aria-components/Button';
+import {Input, InputContext} from 'react-aria-components/Input';
+import {OverlayTriggerStateContext} from 'react-aria-components/Dialog';
+import {PopoverContext} from 'react-aria-components/Popover';
+import {ListBoxContext, ListStateContext} from 'react-aria-components/ListBox';
+import {Label, FieldButton} from 'vanilla-starter/Form';
+import {Popover} from 'vanilla-starter/Popover';
+import {ComboBoxListBox, ComboBoxItem} from 'vanilla-starter/ComboBox';
+import {ChevronDown} from 'lucide-react';
+import 'vanilla-starter/ComboBox.css';
+
+function ComboBox(props: Parameters<typeof useComboBoxState>[0] & {label?: React.ReactNode, children?: React.ReactNode}) {
+  // useComboBoxState needs a collection built from the items. CollectionBuilder
+  // renders a hidden copy of them to construct it before rendering.
+  return (
+    <CollectionBuilder content={<Collection>{props.children}</Collection>}>
+      {collection => <ComboBoxInner {...props} collection={collection} />}
+    </CollectionBuilder>
+  );
+}
+
+function ComboBoxInner({collection, ...props}: {collection: ICollection<Node<object>>} & Parameters<typeof useComboBoxState>[0] & {label?: React.ReactNode}) {
+  // Create state based on the collection and incoming props. A "contains"
+  // filter from useFilter filters the options against the current input text.
+  let {contains} = useFilter({sensitivity: 'base'});
+  let state = useComboBoxState({...props, defaultFilter: contains, collection, children: undefined});
+
+  // Get props for child elements from useComboBox.
+  let fieldRef = React.useRef<HTMLDivElement>(null);
+  let inputRef = React.useRef<HTMLInputElement>(null);
+  let buttonRef = React.useRef<HTMLButtonElement>(null);
+  let listBoxRef = React.useRef<HTMLDivElement>(null);
+  let popoverRef = React.useRef<HTMLDivElement>(null);
+  let {labelProps, inputProps, buttonProps, listBoxProps} =
+    useComboBox({...props, inputRef, buttonRef, listBoxRef, popoverRef}, state);
+
+  // Provide the values returned by the hook to the reused components via context.
+  return (
+    <Provider
+      values={[
+        [ComboBoxStateContext, state],
+        [LabelContext, labelProps],
+        [ButtonContext, {...buttonProps, ref: buttonRef, isPressed: state.isOpen}],
+        [InputContext, {...inputProps, ref: inputRef}],
+        [OverlayTriggerStateContext, state],
+        [PopoverContext, {ref: popoverRef, triggerRef: fieldRef, scrollRef: listBoxRef, trigger: 'ComboBox', placement: 'bottom start', isNonModal: true}],
+        [ListBoxContext, {...listBoxProps, ref: listBoxRef}],
+        [ListStateContext, state]
+      ]}>
+      <div className="react-aria-ComboBox">
+        <Label>{props.label}</Label>
+        <div className="combobox-field" ref={fieldRef}>
+          <Input className="react-aria-Input inset" />
+          <FieldButton>
+            <ChevronDown />
+          </FieldButton>
+        </div>
+        <Popover hideArrow className="combobox-popover">
+          {/* Rendered from the collection in state, provided via ListStateContext. */}
+          <ComboBoxListBox />
+        </Popover>
+      </div>
+    </Provider>
+  );
+}
+
+<ComboBox label="Favorite Animal">
+  <ComboBoxItem>Aardvark</ComboBoxItem>
+  <ComboBoxItem>Cat</ComboBoxItem>
+  <ComboBoxItem>Dog</ComboBoxItem>
+  <ComboBoxItem>Kangaroo</ComboBoxItem>
+  <ComboBoxItem>Panda</ComboBoxItem>
+  <ComboBoxItem>Snake</ComboBoxItem>
+</ComboBox>
+```
+
+## API
+
+<FunctionAPI function={statelyDocs.exports.useComboBoxState} links={statelyDocs.links} />
+<FunctionAPI function={docs.exports.useComboBox} links={docs.links} />
+
+### AriaComboBoxOptions
+
+<InterfaceType {...docs.exports.AriaComboBoxOptions} />
+
+### ComboBoxAria
+
+<InterfaceType {...docs.exports.ComboBoxAria} />

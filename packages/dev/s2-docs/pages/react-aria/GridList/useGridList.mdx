@@ -1,0 +1,69 @@
+{/* Copyright 2026 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '../../../src/Layout';
+export default Layout;
+import {FunctionAPI} from '../../../src/FunctionAPI';
+import {InterfaceType} from '../../../src/types';
+import docs from 'docs:@react-aria/gridlist';
+import statelyDocs from 'docs:@react-stately/list';
+
+export const section = 'Hooks';
+export const description = 'Provides the behavior and accessibility implementation for a list component with interactive children.';
+export const isSubpage = true;
+
+# useGridList
+
+<PageDescription>{docs.exports.useGridList.description}</PageDescription>
+
+This example uses `useGridList` for the list and `useGridListItem` for each row, building the collection from scratch with `useListState` and items from `react-stately`. Unlike a listbox, each row can contain interactive elements such as the [Button](../Button) reused here.
+
+```tsx render files={["starters/hooks/src/GridList.tsx", "starters/hooks/src/GridList.css"]}
+"use client";
+import {GridList} from 'hooks-starter/GridList';
+import {Button} from 'hooks-starter/Button';
+import {Item} from 'react-stately/Item';
+
+<GridList aria-label="Pokémon" selectionMode="multiple" selectionBehavior="replace">
+  <Item textValue="Charizard">
+    Charizard
+    <Button variant="secondary" onPress={() => alert('Info for Charizard')}>Info</Button>
+  </Item>
+  <Item textValue="Blastoise">
+    Blastoise
+    <Button variant="secondary" onPress={() => alert('Info for Blastoise')}>Info</Button>
+  </Item>
+  <Item textValue="Venusaur">
+    Venusaur
+    <Button variant="secondary" onPress={() => alert('Info for Venusaur')}>Info</Button>
+  </Item>
+</GridList>
+```
+
+## API
+
+<FunctionAPI function={statelyDocs.exports.useListState} links={statelyDocs.links} />
+<FunctionAPI function={docs.exports.useGridList} links={docs.links} />
+<FunctionAPI function={docs.exports.useGridListItem} links={docs.links} />
+
+### AriaGridListProps
+
+<InterfaceType {...docs.exports.AriaGridListProps} />
+
+### GridListAria
+
+<InterfaceType {...docs.exports.GridListAria} />
+
+### AriaGridListItemOptions
+
+<InterfaceType {...docs.exports.AriaGridListItemOptions} />
+
+### GridListItemAria
+
+<InterfaceType {...docs.exports.GridListItemAria} />

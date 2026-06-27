@@ -1,0 +1,68 @@
+{/* Copyright 2026 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '../../../src/Layout';
+export default Layout;
+import {FunctionAPI} from '../../../src/FunctionAPI';
+import {InterfaceType} from '../../../src/types';
+import docs from 'docs:@react-aria/tabs';
+import statelyDocs from 'docs:@react-stately/tabs';
+
+export const section = 'Hooks';
+export const description = 'Provides the behavior and accessibility implementation for a tabs component.';
+export const isSubpage = true;
+
+# useTabList
+
+<PageDescription>{docs.exports.useTabList.description}</PageDescription>
+
+`useTabList`, `useTab`, and `useTabPanel` are the tabs primitives, so the tab list, tabs, and tab panel are built from scratch. The currently selected tab is the only tab stop in the tab list (roving tabindex), and `useTab`/`useTabPanel` handle associating each tab with its panel for assistive technology.
+
+```tsx render files={["starters/hooks/src/Tabs.tsx", "starters/hooks/src/Tabs.css"]}
+"use client";
+import {Tabs} from 'hooks-starter/Tabs';
+import {Item} from 'react-stately/Item';
+
+<Tabs aria-label="History of Ancient Rome">
+  <Item key="FoR" title="Founding of Rome">Arma virumque cano, Troiae qui primus ab oris.</Item>
+  <Item key="MaR" title="Monarchy and Republic">Senatus Populusque Romanus.</Item>
+  <Item key="Emp" title="Empire">Alea jacta est.</Item>
+</Tabs>
+```
+
+## API
+
+<FunctionAPI function={statelyDocs.exports.useTabListState} links={statelyDocs.links} />
+<FunctionAPI function={docs.exports.useTabList} links={docs.links} />
+<FunctionAPI function={docs.exports.useTab} links={docs.links} />
+<FunctionAPI function={docs.exports.useTabPanel} links={docs.links} />
+
+### AriaTabListOptions
+
+<InterfaceType {...docs.exports.AriaTabListOptions} />
+
+### TabListAria
+
+<InterfaceType {...docs.exports.TabListAria} />
+
+### AriaTabProps
+
+<InterfaceType {...docs.exports.AriaTabProps} />
+
+### TabAria
+
+<InterfaceType {...docs.exports.TabAria} />
+
+### AriaTabPanelProps
+
+<InterfaceType {...docs.exports.AriaTabPanelProps} />
+
+### TabPanelAria
+
+<InterfaceType {...docs.exports.TabPanelAria} />

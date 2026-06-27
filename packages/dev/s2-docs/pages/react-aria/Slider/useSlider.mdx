@@ -1,0 +1,54 @@
+{/* Copyright 2026 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '../../../src/Layout';
+export default Layout;
+import {FunctionAPI} from '../../../src/FunctionAPI';
+import {InterfaceType} from '../../../src/types';
+import docs from 'docs:@react-aria/slider';
+import statelyDocs from 'docs:@react-stately/slider';
+
+export const section = 'Hooks';
+export const description = 'Provides the behavior and accessibility implementation for a slider component.';
+export const isSubpage = true;
+
+# useSlider
+
+<PageDescription>{docs.exports.useSlider.description}</PageDescription>
+
+This example builds a slider from scratch with `useSlider` for the track and `useSliderThumb` for the thumb. The thumb wraps a visually hidden native `<input>` and shows a focus ring when focused.
+
+```tsx render files={["starters/hooks/src/Slider.tsx", "starters/hooks/src/Slider.css", "starters/hooks/src/Form.css"]}
+"use client";
+import {Slider} from 'hooks-starter/Slider';
+
+<Slider label="Opacity" defaultValue={60} />
+```
+
+## API
+
+<FunctionAPI function={statelyDocs.exports.useSliderState} links={statelyDocs.links} />
+<FunctionAPI function={docs.exports.useSlider} links={docs.links} />
+<FunctionAPI function={docs.exports.useSliderThumb} links={docs.links} />
+
+### AriaSliderProps
+
+<InterfaceType {...docs.exports.AriaSliderProps} />
+
+### SliderAria
+
+<InterfaceType {...docs.exports.SliderAria} />
+
+### AriaSliderThumbOptions
+
+<InterfaceType {...docs.exports.AriaSliderThumbOptions} />
+
+### SliderThumbAria
+
+<InterfaceType {...docs.exports.SliderThumbAria} />

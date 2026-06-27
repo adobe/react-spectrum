@@ -1,0 +1,54 @@
+{/* Copyright 2026 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '../../../src/Layout';
+export default Layout;
+import {FunctionAPI} from '../../../src/FunctionAPI';
+import {InterfaceType} from '../../../src/types';
+import docs from 'docs:@react-aria/button';
+import statelyDocs from 'docs:@react-stately/toggle';
+
+export const section = 'Hooks';
+export const description = 'Provides the behavior and accessibility implementation for a group of toggle buttons.';
+export const isSubpage = true;
+
+# useToggleButtonGroup
+
+<PageDescription>{docs.exports.useToggleButtonGroup.description}</PageDescription>
+
+This example uses `useToggleButtonGroup` for the container and `useToggleButtonGroupItem` for each button. The group state, shared via React context, manages single or multiple selection and arrow-key navigation.
+
+```tsx render files={["starters/hooks/src/ToggleButtonGroup.tsx", "starters/hooks/src/ToggleButtonGroup.css", "starters/hooks/src/ToggleButton.css"]}
+"use client";
+import {ToggleButtonGroup, ToggleButton} from 'hooks-starter/ToggleButtonGroup';
+
+<ToggleButtonGroup>
+  <ToggleButton id="left">Left</ToggleButton>
+  <ToggleButton id="center">Center</ToggleButton>
+  <ToggleButton id="right">Right</ToggleButton>
+</ToggleButtonGroup>
+```
+
+## API
+
+<FunctionAPI function={statelyDocs.exports.useToggleGroupState} links={statelyDocs.links} />
+<FunctionAPI function={docs.exports.useToggleButtonGroup} links={docs.links} />
+<FunctionAPI function={docs.exports.useToggleButtonGroupItem} links={docs.links} />
+
+### AriaToggleButtonGroupProps
+
+<InterfaceType {...docs.exports.AriaToggleButtonGroupProps} />
+
+### ToggleButtonGroupAria
+
+<InterfaceType {...docs.exports.ToggleButtonGroupAria} />
+
+### AriaToggleButtonGroupItemProps
+
+<InterfaceType {...docs.exports.AriaToggleButtonGroupItemProps} />

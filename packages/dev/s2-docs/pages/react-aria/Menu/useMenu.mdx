@@ -1,0 +1,158 @@
+{/* Copyright 2026 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '../../../src/Layout';
+export default Layout;
+import {FunctionAPI} from '../../../src/FunctionAPI';
+import {InterfaceType} from '../../../src/types';
+import docs from 'docs:@react-aria/menu';
+import menuStatelyDocs from 'docs:@react-stately/menu';
+import treeStatelyDocs from 'docs:@react-stately/tree';
+
+export const section = 'Hooks';
+export const description = 'Provides the behavior and accessibility implementation for a menu component.';
+export const isSubpage = true;
+
+# useMenu
+
+<PageDescription>{docs.exports.useMenu.description}</PageDescription>
+
+This example uses `useMenuTrigger` to build a menu button, and reuses the [Button](../Button) and [Popover](../Popover) components from React Aria Components to render the trigger and popup. The trigger props returned by the hook are passed to these components via context, following the [Reusing children](../customization#reusing-children) pattern. The menu itself is built from scratch with `useMenu` and `useMenuItem`, since those hooks are what a `Menu` component is composed from.
+
+```tsx render
+"use client";
+import React from 'react';
+import {useMenuTrigger, useMenu, useMenuItem} from 'react-aria/useMenu';
+import {useMenuTriggerState} from 'react-stately/useMenuTriggerState';
+import {useTreeState} from 'react-stately/useTreeState';
+import {Item} from 'react-stately/Item';
+import type {Node} from '@react-types/shared';
+import {Provider} from 'react-aria-components/slots';
+import {OverlayTriggerStateContext} from 'react-aria-components/Dialog';
+import {PopoverContext} from 'react-aria-components/Popover';
+import {ButtonContext} from 'react-aria-components/Button';
+import {Button} from 'vanilla-starter/Button';
+import {Popover} from 'vanilla-starter/Popover';
+import {Ellipsis} from 'lucide-react';
+
+function MenuButton(props: Parameters<typeof useMenuTriggerState>[0] & Parameters<typeof useMenu>[0] & Parameters<typeof useTreeState>[0] & {children?: React.ReactNode}) {
+  // Create state to track whether the menu is open.
+  let state = useMenuTriggerState(props);
+
+  // Get props for the menu trigger and menu elements.
+  let ref = React.useRef<HTMLButtonElement>(null);
+  let {menuTriggerProps, menuProps} = useMenuTrigger({}, state, ref);
+
+  // Provide the trigger props to the reused Button and Popover via context.
+  return (
+    <Provider
+      values={[
+        [ButtonContext, {...menuTriggerProps, ref, isPressed: state.isOpen}],
+        [OverlayTriggerStateContext, state],
+        [PopoverContext, {trigger: 'MenuTrigger', triggerRef: ref, placement: 'bottom start'}]
+      ]}>
+      <Button>
+        <Ellipsis size={18} />
+      </Button>
+      <Popover>
+        <Menu {...props} {...menuProps} />
+      </Popover>
+    </Provider>
+  );
+}
+
+function Menu(props: Parameters<typeof useMenu>[0] & Parameters<typeof useTreeState>[0] & {children?: React.ReactNode}) {
+  // Create menu state based on the incoming props, building a collection from the items.
+  let state = useTreeState(props);
+
+  // Get props for the menu element.
+  let ref = React.useRef<HTMLUListElement>(null);
+  let {menuProps} = useMenu(props, state, ref);
+
+  return (
+    <ul
+      {...menuProps}
+      ref={ref}
+      style={{margin: 0, padding: 4, listStyle: 'none', minWidth: 150, outline: 'none'}}>
+      {[...state.collection].map(item => (
+        <MenuItem key={item.key} item={item} state={state} />
+      ))}
+    </ul>
+  );
+}
+
+function MenuItem({item, state}: {item: Node<unknown>, state: ReturnType<typeof useTreeState>}) {
+  // Get props for the individual menu item.
+  let ref = React.useRef<HTMLLIElement>(null);
+  let {menuItemProps, isFocused, isDisabled} = useMenuItem({key: item.key}, state, ref);
+
+  return (
+    <li
+      {...menuItemProps}
+      ref={ref}
+      style={{
+        padding: '4px 8px',
+        borderRadius: 6,
+        outline: 'none',
+        cursor: 'default',
+        background: isFocused ? 'var(--highlight-hover)' : 'transparent',
+        color: isDisabled ? 'var(--text-color-disabled)' : 'var(--text-color)'
+      }}>
+      {item.rendered}
+    </li>
+  );
+}
+
+<MenuButton aria-label="Actions" onAction={key => alert(key)}>
+  <Item key="copy">Copy</Item>
+  <Item key="cut">Cut</Item>
+  <Item key="paste">Paste</Item>
+</MenuButton>
+```
+
+## API
+
+<FunctionAPI function={menuStatelyDocs.exports.useMenuTriggerState} links={menuStatelyDocs.links} />
+<FunctionAPI function={treeStatelyDocs.exports.useTreeState} links={treeStatelyDocs.links} />
+<FunctionAPI function={docs.exports.useMenuTrigger} links={docs.links} />
+<FunctionAPI function={docs.exports.useMenu} links={docs.links} />
+<FunctionAPI function={docs.exports.useMenuItem} links={docs.links} />
+<FunctionAPI function={docs.exports.useMenuSection} links={docs.links} />
+
+### AriaMenuTriggerProps
+
+<InterfaceType {...docs.exports.AriaMenuTriggerProps} />
+
+### MenuTriggerAria
+
+<InterfaceType {...docs.exports.MenuTriggerAria} />
+
+### AriaMenuOptions
+
+<InterfaceType {...docs.exports.AriaMenuOptions} />
+
+### MenuAria
+
+<InterfaceType {...docs.exports.MenuAria} />
+
+### AriaMenuItemProps
+
+<InterfaceType {...docs.exports.AriaMenuItemProps} />
+
+### MenuItemAria
+
+<InterfaceType {...docs.exports.MenuItemAria} />
+
+### AriaMenuSectionProps
+
+<InterfaceType {...docs.exports.AriaMenuSectionProps} />
+
+### MenuSectionAria
+
+<InterfaceType {...docs.exports.MenuSectionAria} />

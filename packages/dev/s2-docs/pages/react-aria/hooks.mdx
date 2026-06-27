@@ -1,0 +1,57 @@
+{/* Copyright 2026 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '../../src/Layout';
+export default Layout;
+import {HooksStarterKit} from '../../src/StarterKits';
+
+export const section = 'Guides';
+export const description = 'When to use the lower level React Aria Hooks, and how to use them standalone or together with React Aria Components.';
+export const tags = ['hooks', 'standalone', 'composition', 'low-level', 'react-stately'];
+
+# Hooks
+
+<PageDescription>React Aria offers two complementary APIs: high level **React Aria Components** and low level **Hooks**. This guide explains when to reach for hooks, and how to use them on their own or together with React Aria Components.</PageDescription>
+
+## When to use hooks
+
+Most applications should start with [React Aria Components](index). They provide accessible, fully featured building blocks with minimal code, and offer extensive [styling](styling) and [customization](customization) options that cover the majority of use cases.
+
+Reach for hooks when you need to go further:
+
+* **Full control over the DOM.** Hooks return DOM props (event handlers, ARIA attributes, and ids). You'll render your own elements and decide the exact structure.
+* **Integrating with an existing system.** Layer React Aria's behavior and accessibility onto components you already have, or onto a third party library.
+* **Rendering control beyond components.** When render props and contexts aren't enough, a hook gives you direct access to the underlying behavior.
+
+Hooks and components share the same foundations: both follow the same [ARIA patterns](https://www.w3.org/WAI/ARIA/apg/patterns/) and manage state with the same React Stately hooks. In fact, every React Aria Component is implemented on top of these hooks, so you can move between the two APIs as your needs change.
+
+## Using hooks standalone
+
+To build a component entirely from scratch, call the hook to get the DOM props for each element, create state with the matching React Stately hook where one is needed, and spread the returned props onto your own elements. You own the rendering and styling.
+
+```tsx
+import {useButton} from 'react-aria/useButton';
+import {useRef} from 'react';
+
+function Button(props) {
+  let ref = useRef(null);
+  let {buttonProps} = useButton(props, ref);
+  return <button {...buttonProps} ref={ref}>{props.children}</button>;
+}
+```
+
+See [useButton](Button/useButton) and [useCalendar](Calendar/useCalendar) for complete from-scratch examples. The examples throughout these hook docs are available as a downloadable starter:
+
+<HooksStarterKit />
+
+## Combining hooks with React Aria Components
+
+Using hooks isn't all-or-nothing. A hook returns props that you can pass to React Aria Components via context, following the [Reusing children](customization#reusing-children) pattern. This lets you implement a component's behavior with a hook while reusing the styled sub-components you already have for the individual parts.
+
+For example, [useSelect](Select/useSelect), [useComboBox](ComboBox/useComboBox), and [useDateRangePicker](DateRangePicker/useDateRangePicker) build the overall component with a hook, then render React Aria Components for the button, popover, listbox, and calendar.

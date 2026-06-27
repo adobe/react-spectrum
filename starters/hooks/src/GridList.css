@@ -1,0 +1,3 @@
+/* GridList is styled with inline styles in GridList.tsx; this file only provides
+   the theme tokens those inline styles reference. */
+@import './theme.css';

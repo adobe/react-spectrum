@@ -1,0 +1,112 @@
+{/* Copyright 2026 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '../../../src/Layout';
+export default Layout;
+import {FunctionAPI} from '../../../src/FunctionAPI';
+import {InterfaceType} from '../../../src/types';
+import docs from 'docs:@react-aria/overlays';
+import statelyDocs from 'docs:@react-stately/overlays';
+import Anatomy from '/packages/react-aria/docs/overlays/popover-anatomy.svg';
+
+export const section = 'Hooks';
+export const description = 'Provides the behavior and accessibility implementation for a popover overlay.';
+export const isSubpage = true;
+
+# usePopover
+
+<PageDescription>{docs.exports.usePopover.description}</PageDescription>
+
+`usePopover` is the popover primitive itself, so the overlay is built from scratch using an [&lt;Overlay&gt;](../Popover) portal and &lt;`DismissButton`&gt; elements. The trigger reuses the [Button](../Button) component, and the content reuses the [Dialog](../Modal/useDialog) component, both from React Aria Components.
+
+```tsx render
+"use client";
+import React from 'react';
+import {usePopover, type AriaPopoverProps} from 'react-aria/usePopover';
+import {useOverlayTrigger} from 'react-aria/useOverlayTrigger';
+import {Overlay, DismissButton} from 'react-aria/Overlay';
+import {useOverlayTriggerState} from 'react-stately/useOverlayTriggerState';
+import {Provider} from 'react-aria-components/slots';
+import {ButtonContext} from 'react-aria-components/Button';
+import {Button} from 'vanilla-starter/Button';
+import {Dialog, Heading} from 'vanilla-starter/Dialog';
+
+function Popover({state, children, triggerRef, ...props}: Omit<Parameters<typeof usePopover>[0], 'popoverRef'> & {state: ReturnType<typeof useOverlayTriggerState>, children: React.ReactNode}) {
+  // usePopover positions the overlay relative to the trigger and closes it on
+  // outside interaction or Escape. The state comes from useOverlayTriggerState.
+  let popoverRef = React.useRef<HTMLDivElement>(null);
+  let {popoverProps, underlayProps} = usePopover({...props, triggerRef, popoverRef}, state);
+
+  return (
+    // Overlay renders into a portal and contains focus while the popover is open.
+    <Overlay>
+      <div {...underlayProps} style={{position: 'fixed', inset: 0}} />
+      <div
+        {...popoverProps}
+        ref={popoverRef}
+        style={{
+          ...popoverProps.style,
+          background: 'var(--overlay-background)',
+          border: '1px solid var(--gray-300)',
+          borderRadius: 8,
+          boxShadow: '0 8px 20px rgba(0, 0, 0, 0.1)'
+        }}>
+        {/* Visually hidden buttons let touch screen reader users dismiss the popover. */}
+        <DismissButton onDismiss={state.close} />
+        {children}
+        <DismissButton onDismiss={state.close} />
+      </div>
+    </Overlay>
+  );
+}
+
+function PopoverTrigger({label, children, ...props}: Parameters<typeof useOverlayTriggerState>[0] & {label: React.ReactNode, children: React.ReactElement, placement?: AriaPopoverProps['placement']}) {
+  // useOverlayTrigger connects the trigger button to the popover via ARIA.
+  let triggerRef = React.useRef<HTMLButtonElement>(null);
+  let state = useOverlayTriggerState(props);
+  let {triggerProps, overlayProps} = useOverlayTrigger({type: 'dialog'}, state, triggerRef);
+
+  return (
+    <>
+      {/* Provide the trigger props to the reused Button via context. */}
+      <Provider values={[[ButtonContext, {...triggerProps, ref: triggerRef}]]}>
+        <Button>{label}</Button>
+      </Provider>
+      {state.isOpen &&
+        <Popover {...props} triggerRef={triggerRef} state={state}>
+          {React.cloneElement(children, overlayProps)}
+        </Popover>}
+    </>
+  );
+}
+
+<PopoverTrigger label="Open popover" placement="bottom">
+  <Dialog>
+    <Heading slot="title">Popover title</Heading>
+    <p style={{margin: 0}}>This is the content of the popover.</p>
+  </Dialog>
+</PopoverTrigger>
+```
+
+**Note**: `usePopover` only handles the overlay itself. It should be combined with [useDialog](../Modal/useDialog) to create fully accessible popovers. Other overlays such as menus may also be placed in a popover.
+
+## API
+
+<Anatomy />
+
+<FunctionAPI function={statelyDocs.exports.useOverlayTriggerState} links={statelyDocs.links} />
+<FunctionAPI function={docs.exports.usePopover} links={docs.links} />
+
+### AriaPopoverProps
+
+<InterfaceType {...docs.exports.AriaPopoverProps} />
+
+### PopoverAria
+
+<InterfaceType {...docs.exports.PopoverAria} />

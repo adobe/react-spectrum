@@ -121,11 +121,14 @@ website-production:
 	# $(MAKE) s2-docs-production
 	$(MAKE) starter-zip
 	$(MAKE) tailwind-starter
+	$(MAKE) hooks-starter
 	$(MAKE) s2-storybook-docs
 	mv starters/docs/storybook-static dist/production/docs/react-aria-starter
 	mv starters/docs/react-aria-starter.zip dist/production/docs/react-aria-starter.$$(git rev-parse --short HEAD).zip
 	mv starters/tailwind/storybook-static dist/production/docs/react-aria-tailwind-starter
 	mv starters/tailwind/react-aria-tailwind-starter.zip dist/production/docs/react-aria-tailwind-starter.$$(git rev-parse --short HEAD).zip
+	mv starters/hooks/storybook-static dist/production/docs/react-aria-hooks-starter
+	mv starters/hooks/react-aria-hooks-starter.zip dist/production/docs/react-aria-hooks-starter.$$(git rev-parse --short HEAD).zip
 
 check-examples:
 	node scripts/extractExamplesS2.mjs
@@ -145,6 +148,12 @@ tailwind-starter:
 
 	cd starters/tailwind && zip -r react-aria-tailwind-starter.zip . -x .gitignore .DS_Store "node_modules/*" "storybook-static/*"
 	cd starters/tailwind && yarn build-storybook
+
+hooks-starter:
+	cp LICENSE starters/hooks/.
+	cd starters/hooks && yarn --no-immutable && yarn up react-aria react-stately @internationalized/date && yarn tsc
+	cd starters/hooks && zip -r react-aria-hooks-starter.zip . -x .gitignore .DS_Store "node_modules/*" "storybook-static/*"
+	cd starters/hooks && yarn build-storybook
 
 s2-storybook-docs:
 	yarn build:s2-storybook-docs -o dist/production/docs/s2

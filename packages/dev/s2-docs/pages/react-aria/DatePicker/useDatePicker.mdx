@@ -1,0 +1,120 @@
+{/* Copyright 2026 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '../../../src/Layout';
+export default Layout;
+import {FunctionAPI} from '../../../src/FunctionAPI';
+import {InterfaceType} from '../../../src/types';
+import docs from 'docs:@react-aria/datepicker';
+import statelyDocs from 'docs:@react-stately/datepicker';
+import Anatomy from '/packages/react-aria/docs/datepicker/datepicker-anatomy.svg';
+
+export const section = 'Hooks';
+export const description = 'Provides the behavior and accessibility implementation for a date picker component.';
+export const isSubpage = true;
+
+# useDatePicker
+
+<PageDescription>{docs.exports.useDatePicker.description}</PageDescription>
+
+This example uses `useDatePicker` to combine a date field and a calendar popover, and reuses the [DateField](../DateField), [Button](../Button), [Popover](../Popover), and [Calendar](../Calendar) components from React Aria Components to render each part. The values returned by the hook are passed to these components via context, following the [Reusing children](../customization#reusing-children) pattern. Date values use the [@internationalized/date](../internationalized/date/) library.
+
+```tsx render
+"use client";
+import React from 'react';
+import {useDatePicker, type AriaDatePickerProps} from 'react-aria/useDatePicker';
+import {useDatePickerState} from 'react-stately/useDatePickerState';
+import type {DateValue} from '@internationalized/date';
+import {Provider} from 'react-aria-components/slots';
+import {Group, GroupContext} from 'react-aria-components/Group';
+import {DateFieldContext} from 'react-aria-components/DateField';
+import {ButtonContext} from 'react-aria-components/Button';
+import {LabelContext} from 'react-aria-components/Label';
+import {CalendarContext} from 'react-aria-components/Calendar';
+import {DialogContext, OverlayTriggerStateContext} from 'react-aria-components/Dialog';
+import {PopoverContext} from 'react-aria-components/Popover';
+import {DateInput, DateSegment} from 'vanilla-starter/DateField';
+import {Label, FieldButton} from 'vanilla-starter/Form';
+import {Calendar} from 'vanilla-starter/Calendar';
+import {Popover} from 'vanilla-starter/Popover';
+import {ChevronDown} from 'lucide-react';
+import 'vanilla-starter/DatePicker.css';
+
+function DatePicker(props: AriaDatePickerProps<DateValue>) {
+  // Create state based on the incoming props.
+  let state = useDatePickerState(props);
+
+  // Get props for the child elements from useDatePicker.
+  let groupRef = React.useRef<HTMLDivElement>(null);
+  let {groupProps, labelProps, fieldProps, buttonProps, dialogProps, calendarProps} =
+    useDatePicker(props, state, groupRef);
+
+  // Provide the values returned by the hook to the reused components via context.
+  return (
+    <Provider
+      values={[
+        [GroupContext, {...groupProps, ref: groupRef}],
+        [DateFieldContext, fieldProps],
+        [ButtonContext, {...buttonProps, isPressed: state.isOpen}],
+        [LabelContext, {...labelProps, elementType: 'span'}],
+        [CalendarContext, calendarProps as any],
+        [DialogContext, dialogProps],
+        [OverlayTriggerStateContext, state],
+        [PopoverContext, {trigger: 'DatePicker', triggerRef: groupRef, placement: 'bottom start'}]
+      ]}>
+      <div className="react-aria-DatePicker">
+        <Label>{props.label}</Label>
+        <Group>
+          {/* The DateInput builds its own field state from fieldProps, provided via DateFieldContext. */}
+          <DateInput>{segment => <DateSegment segment={segment} />}</DateInput>
+          <FieldButton>
+            <ChevronDown />
+          </FieldButton>
+        </Group>
+        <Popover hideArrow>
+          {/* Rendered from calendarProps, provided via CalendarContext. */}
+          <Calendar />
+        </Popover>
+      </div>
+    </Provider>
+  );
+}
+
+<DatePicker label="Event date" />
+```
+
+## API
+
+<Anatomy />
+
+```tsx links={{DateInput: '../DateField', DateSegment: '../DateField', Button: '../Button', Popover: '../Popover', Calendar: '../Calendar'}}
+<DatePicker>
+  <Label />
+  <Group>
+    <DateInput>
+      {segment => <DateSegment segment={segment} />}
+    </DateInput>
+    <Button />
+  </Group>
+  <Popover>
+    <Calendar />
+  </Popover>
+</DatePicker>
+```
+
+<FunctionAPI function={statelyDocs.exports.useDatePickerState} links={statelyDocs.links} />
+<FunctionAPI function={docs.exports.useDatePicker} links={docs.links} />
+
+### AriaDatePickerProps
+
+<InterfaceType {...docs.exports.AriaDatePickerProps} />
+
+### DatePickerAria
+
+<InterfaceType {...docs.exports.DatePickerAria} />

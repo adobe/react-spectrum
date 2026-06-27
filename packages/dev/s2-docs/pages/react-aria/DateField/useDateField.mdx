@@ -1,0 +1,46 @@
+{/* Copyright 2026 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '../../../src/Layout';
+export default Layout;
+import {FunctionAPI} from '../../../src/FunctionAPI';
+import {InterfaceType} from '../../../src/types';
+import docs from 'docs:@react-aria/datepicker';
+import statelyDocs from 'docs:@react-stately/datepicker';
+
+export const section = 'Hooks';
+export const description = 'Provides the behavior and accessibility implementation for a date field component.';
+export const isSubpage = true;
+
+# useDateField
+
+<PageDescription>{docs.exports.useDateField.description}</PageDescription>
+
+This example builds a date field from scratch with `useDateField` and `useDateSegment`, where each date and time unit is an individually editable segment. `useFocusWithin` toggles a `data-focus-within` attribute so the field shows a focus ring while editing.
+
+```tsx render files={["starters/hooks/src/DateField.tsx", "starters/hooks/src/DateField.css", "starters/hooks/src/Form.css"]}
+"use client";
+import {DateField} from 'hooks-starter/DateField';
+
+<DateField label="Event date" />
+```
+
+## API
+
+<FunctionAPI function={statelyDocs.exports.useDateFieldState} links={statelyDocs.links} />
+<FunctionAPI function={docs.exports.useDateField} links={docs.links} />
+<FunctionAPI function={docs.exports.useDateSegment} links={docs.links} />
+
+### AriaDateFieldProps
+
+<InterfaceType {...docs.exports.AriaDateFieldProps} />
+
+### DateFieldAria
+
+<InterfaceType {...docs.exports.DateFieldAria} />
