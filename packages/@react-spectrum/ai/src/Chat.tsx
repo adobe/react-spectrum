@@ -20,6 +20,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useRef,
   useState
 } from 'react';
@@ -34,12 +35,14 @@ import {
 } from 'react-aria-components/GridList';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
+import {ListLayout} from 'react-stately/useVirtualizerState';
 import {mergeStyles} from '@react-spectrum/s2/mergeStyles';
 import {useDOMRef} from './useDOMRef';
 import {useEnterAnimation, useExitAnimation} from 'react-aria/private/utils/animation';
 import {useFocusWithin} from 'react-aria/useFocusWithin';
 import {useLayoutEffect} from 'react-aria/private/utils/useLayoutEffect';
 import {useLocalizedStringFormatter} from 'react-aria/useLocalizedStringFormatter';
+import {Virtualizer} from 'react-aria-components/Virtualizer';
 
 const scrollButtonWrapper = style({
   opacity: {
@@ -131,7 +134,7 @@ export const Chat = /*#__PURE__*/ (forwardRef as forwardRefType)(function Chat(
       },
       {once: true}
     );
-    el.scrollTo({top: 0, behavior: 'smooth'});
+    el.scrollTo({top: el.scrollHeight - el.clientHeight, behavior: 'smooth'});
   }, []);
   let [isNearBottom, setIsNearBottom] = useState(true);
 
@@ -202,6 +205,7 @@ export const Chat = /*#__PURE__*/ (forwardRef as forwardRefType)(function Chat(
   );
 });
 
+// TODO: do we want UNSTABLE_focusOnEntry on ThreadProps or do we just want to set it on Thread for users so they don't have to do it themselves?
 export interface ThreadProps<T extends object> extends Pick<
   GridListProps<T>,
   'items' | 'children' | 'UNSTABLE_focusOnEntry' | 'aria-label' | 'aria-labelledby'
@@ -210,6 +214,15 @@ export interface ThreadProps<T extends object> extends Pick<
    * Spectrum-defined styles, returned by the `style()` macro.
    */
   styles?: StyleString;
+  /**
+   * The maximum distance in px from the bottom of the content for the
+   * viewport to be considered "near the end". While near the end, appended content and streaming
+   * size changes will keep the viewport pinned to the latest output.
+   *
+   * @default 100
+   */
+  scrollEndThreshold?: number;
+  anchorTo?: 'end';
 }
 
 export function Thread<T extends object>(props: ThreadProps<T>) {
@@ -218,14 +231,17 @@ export function Thread<T extends object>(props: ThreadProps<T>) {
     children,
     styles,
     UNSTABLE_focusOnEntry,
+    anchorTo,
+    scrollEndThreshold = 100,
     'aria-label': ariaLabel,
     'aria-labelledby': ariaLabelledby
   } = props;
 
+  let reversedItems = useMemo(() => (items != null ? [...items].reverse() : undefined), [items]);
+
   let {setIsNearBottom, setScrollElement} = useContext(InternalChatContext);
   let isNearBottomRef = useRef(true);
   let gridListRef = useRef<HTMLDivElement | null>(null);
-
   let callbackRef = useCallback(
     (el: HTMLDivElement | null) => {
       gridListRef.current = el;
@@ -240,46 +256,71 @@ export function Thread<T extends object>(props: ThreadProps<T>) {
       return;
     }
 
-    // because column reversed scrollTop=0 is the bottom and the scrollTop goes negative as you move up
-    let nearBottom = el.scrollTop > -100;
+    let nearBottom =
+      anchorTo === 'end'
+        ? el.scrollTop >= el.scrollHeight - el.clientHeight - scrollEndThreshold
+        : el.scrollTop > -100;
     isNearBottomRef.current = nearBottom;
     setIsNearBottom(nearBottom);
-  }, [setIsNearBottom]);
+  }, [setIsNearBottom, scrollEndThreshold, anchorTo]);
 
-  useEffect(() => {
-    // scrolls to bottom on first render cuz we initialize isNearBottomRef to true,
-    // otherwise handles scrolling new prompts/etc into view unless you are scrolled up above
-    // 100px
-    if (isNearBottomRef.current) {
-      requestAnimationFrame(() => {
-        if (gridListRef.current) {
-          gridListRef.current.scrollTop = 0;
-        }
-      });
-    }
-  }, [items]);
-
-  return (
+  let gridList = (
     <GridList
       ref={callbackRef}
       disallowTypeAhead
       onScroll={handleScroll}
       keyboardNavigationBehavior="tab"
-      UNSTABLE_focusOnEntry={UNSTABLE_focusOnEntry}
-      items={items}
+      UNSTABLE_focusOnEntry={UNSTABLE_focusOnEntry ?? 'first'}
+      items={reversedItems}
       aria-label={ariaLabel}
       aria-labelledby={ariaLabelledby}
       // TODO: for now we enforce this, but to be configurable?
       style={{
         display: 'flex',
-        flexDirection: 'column-reverse',
         boxSizing: 'border-box',
+        flexDirection: 'column-reverse',
         minWidth: 0
       }}
       className={styles}>
       {children}
     </GridList>
   );
+
+  if (anchorTo === 'end') {
+    return (
+      <Virtualizer
+        layout={ListLayout}
+        layoutOptions={{
+          estimatedRowHeight: 100,
+          padding: 4,
+          gap: 8,
+          anchorTo: 'end'
+        }}
+        scrollEndThreshold={scrollEndThreshold}
+        shouldObserveItemSize>
+        <GridList
+          ref={callbackRef}
+          disallowTypeAhead
+          onScroll={handleScroll}
+          keyboardNavigationBehavior="tab"
+          UNSTABLE_focusOnEntry={UNSTABLE_focusOnEntry ?? 'first'}
+          items={items}
+          aria-label={ariaLabel}
+          aria-labelledby={ariaLabelledby}
+          // TODO: for now we enforce this, but to be configurable?
+          style={{
+            display: 'flex',
+            boxSizing: 'border-box',
+            minWidth: 0
+          }}
+          className={styles}>
+          {children}
+        </GridList>
+      </Virtualizer>
+    );
+  }
+
+  return gridList;
 }
 
 export interface ThreadScrollButtonProps {
@@ -328,7 +369,7 @@ const threadItemBase = style({
   borderRadius: 'default'
 });
 
-export interface ThreadItemProps extends Pick<GridListItemProps, 'children' | 'textValue'> {
+export interface ThreadItemProps extends Pick<GridListItemProps, 'children' | 'textValue' | 'id'> {
   /**
    * Spectrum-defined styles, returned by the `style()` macro.
    */
@@ -340,7 +381,7 @@ export interface ThreadItemProps extends Pick<GridListItemProps, 'children' | 't
 }
 
 export function ThreadItem(props: ThreadItemProps) {
-  let {styles, children, textValue = ' ', isStreaming, shouldAnnounceOnMount} = props;
+  let {styles, children, textValue = ' ', isStreaming, shouldAnnounceOnMount, id} = props;
   let {announceItem} = useContext(InternalChatContext);
 
   // TODO: using aria-live on the gridlist item was pretty chatty and the streaming causes the text announcement
@@ -369,6 +410,7 @@ export function ThreadItem(props: ThreadItemProps) {
 
   return (
     <GridListItem
+      id={id}
       textValue={textValue}
       className={renderProps => mergeStyles(threadItemBase({...renderProps}), styles)}>
       {children}

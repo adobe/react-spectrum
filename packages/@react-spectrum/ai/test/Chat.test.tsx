@@ -261,7 +261,7 @@ describeOrSkip('Thread', () => {
       let rows = gridlist.querySelectorAll('[role="row"]');
       await user.tab();
       expect(document.activeElement).toBe(rows[0]);
-      expect(rows[0]).toHaveTextContent('Hello');
+      expect(rows[0]).toHaveTextContent('World');
 
       await user.keyboard('{ArrowDown}');
       expect(document.activeElement).toBe(rows[1]);
@@ -289,7 +289,7 @@ describeOrSkip('Thread', () => {
       let rows = gridlist.querySelectorAll('[role="row"]');
       await user.tab();
       expect(document.activeElement).toBe(rows[1]);
-      expect(rows[1]).toHaveTextContent('World');
+      expect(rows[1]).toHaveTextContent('Hello');
 
       await user.keyboard('{ArrowUp}');
       expect(document.activeElement).toBe(rows[0]);

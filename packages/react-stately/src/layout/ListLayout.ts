@@ -28,6 +28,11 @@ import {Size} from '../virtualizer/Size';
 
 export interface ListLayoutOptions {
   /**
+   * Anchors the vertical list content to the end (bottom) of the viewport. When set to `'end'`,
+   * the viewport stays pinned to the latest content unless the user scrolls up.
+   */
+  anchorTo?: 'end';
+  /**
    * The primary orientation of the items. Usually this is the direction that the collection
    * scrolls.
    *
@@ -147,6 +152,7 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
   protected dropIndicatorThickness: number;
   protected gap: number;
   protected padding: number;
+  protected anchorTo: 'end' | undefined;
   protected layoutNodes: Map<Key, LayoutNode>;
   protected contentSize: Size;
   protected lastCollection: Collection<Node<T>> | null;
@@ -163,6 +169,7 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
    */
   constructor(options: ListLayoutOptions = {}) {
     super();
+    this.anchorTo = options.anchorTo;
     this.rowSize = options?.rowSize ?? options?.rowHeight ?? null;
     this.orientation = options.orientation ?? 'vertical';
     this.estimatedRowSize = options?.estimatedRowSize ?? options?.estimatedRowHeight ?? null;
@@ -180,6 +187,13 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
     this.validRect = new Rect();
     this.requestedRect = new Rect();
     this.contentSize = new Size();
+  }
+
+  isReversed(layoutOptions?: O): boolean {
+    let anchorTo = layoutOptions?.anchorTo ?? this.anchorTo;
+    let orientation = layoutOptions?.orientation ?? this.orientation;
+    // reversed layouts are only supported in vertical orientations
+    return anchorTo === 'end' && orientation !== 'horizontal';
   }
 
   // Backward compatibility for subclassing.
@@ -309,6 +323,7 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
       invalidationContext.sizeChanged ||
       this.rowSize !== (options?.rowSize ?? options?.rowHeight ?? this.rowSize) ||
       this.orientation !== (options?.orientation ?? this.orientation) ||
+      this.anchorTo !== (options?.anchorTo ?? this.anchorTo) ||
       this.headingSize !== (options?.headingSize ?? options?.headingHeight ?? this.headingSize) ||
       this.loaderSize !== (options?.loaderSize ?? options?.loaderHeight ?? this.loaderSize) ||
       this.gap !== (options?.gap ?? this.gap) ||
@@ -321,6 +336,7 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
       (newOptions?.rowSize ?? newOptions?.rowHeight) !==
         (oldOptions?.rowSize ?? oldOptions?.rowHeight) ||
       newOptions.orientation !== oldOptions.orientation ||
+      newOptions.anchorTo !== oldOptions.anchorTo ||
       (newOptions?.estimatedRowSize ?? newOptions?.estimatedRowHeight) !==
         (oldOptions?.estimatedRowSize ?? oldOptions?.estimatedRowHeight) ||
       (newOptions?.headingSize ?? newOptions?.headingHeight) !==
@@ -349,6 +365,7 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
     let options = invalidationContext.layoutOptions;
     this.rowSize = options?.rowSize ?? options?.rowHeight ?? this.rowSize;
     this.orientation = options?.orientation ?? this.orientation;
+    this.anchorTo = options?.anchorTo ?? this.anchorTo;
     this.estimatedRowSize =
       options?.estimatedRowSize ?? options?.estimatedRowHeight ?? this.estimatedRowSize;
     this.headingSize = options?.headingSize ?? options?.headingHeight ?? this.headingSize;
@@ -379,6 +396,10 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
   }
 
   protected buildCollection(offset: number = this.padding): LayoutNode[] {
+    if (this.anchorTo === 'end' && this.orientation === 'vertical') {
+      return this.buildReversedCollection();
+    }
+
     let collection = this.virtualizer!.collection;
     let offsetProperty = this.orientation === 'horizontal' ? 'x' : 'y';
     let maxOffsetProperty = this.orientation === 'horizontal' ? 'maxX' : 'maxY';
@@ -445,10 +466,97 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
 
     offset = Math.max(offset - this.gap, 0);
     offset += isEmptyOrLoading ? 0 : this.padding;
+    let contentLength = offset;
     this.contentSize =
       this.orientation === 'horizontal'
         ? new Size(offset, this.virtualizer!.size.height)
-        : new Size(this.virtualizer!.size.width, offset);
+        : new Size(this.virtualizer!.size.width, contentLength);
+
+    return nodes;
+  }
+
+  // TODO: promote to protected once the reversed layout API is more stable and tested
+  private buildReversedCollection(): LayoutNode[] {
+    let collectionNodes = toArray(this.virtualizer!.collection, node => node.type !== 'content');
+    this.assertReversedCollectionSupported(collectionNodes);
+
+    let itemNodes = collectionNodes.filter(node => node.type !== 'loader');
+    let loaderCollectionNode = collectionNodes.find(node => node.type === 'loader') ?? null;
+
+    // Height-only pass: we need the sum of all item heights to compute contentSize before we
+    // can assign y positions. Read cached heights (or estimated fallback) without calling
+    // buildNode — y is unknown here, so calling it would cache items at the wrong position.
+    let itemHeights = itemNodes.map(node => {
+      let cached = this.layoutNodes.get(node.key);
+      return cached
+        ? cached.layoutInfo.rect.height
+        : (this.rowSize ?? this.estimatedRowSize ?? DEFAULT_HEIGHT);
+    });
+
+    let contentLength = itemHeights.reduce(
+      (total, height, index) => total + height + (index < itemHeights.length - 1 ? this.gap : 0),
+      0
+    );
+    if (itemHeights.length > 0) {
+      contentLength += this.padding * 2;
+    }
+
+    let contentHeight = Math.max(contentLength, this.virtualizer!.size.height);
+    this.contentSize = new Size(this.virtualizer!.size.width, contentHeight);
+
+    // Bottom-up position pass: assign y to every item
+    let width = this.virtualizer!.size.width - this.padding * 2;
+    let hasLoader = loaderCollectionNode != null;
+    let offset = hasLoader ? 1 : 0;
+    let nodes: LayoutNode[] = Array.from({length: itemNodes.length + offset});
+    let currentBottom = contentLength - this.padding;
+
+    // Iterate last → first so the last item in the collection (newest) is placed at the visual
+    // bottom and written to nodes[0] (first in DOM) for screen-reader accessibility.
+    let nodesIndex = 0;
+    for (let i = itemNodes.length - 1; i >= 0; i--) {
+      let node = itemNodes[i];
+      let y = currentBottom - itemHeights[i];
+      let cached = this.layoutNodes.get(node.key);
+      let layoutNode: LayoutNode;
+
+      if (cached && !cached.layoutInfo.estimatedSize) {
+        // Already measured: reuse the real height, update y only
+        let newLayoutInfo = cached.layoutInfo.copy();
+        newLayoutInfo.rect.y = y;
+        layoutNode = {layoutInfo: newLayoutInfo, validRect: new Rect(0, 0, 0, 0), children: []};
+      } else {
+        let itemRect = new Rect(this.padding, y, width, itemHeights[i]);
+        if (itemRect.intersects(this.requestedRect)) {
+          // In the visible window and unmeasured: full build so useVirtualizerItem can measure it
+          layoutNode = this.buildNode(node, this.padding, y);
+        } else {
+          // Outside the visible window and unmeasured: skip buildNode
+          let layoutInfo = new LayoutInfo(node.type, node.key, itemRect);
+          layoutInfo.estimatedSize = true;
+          layoutNode = {layoutInfo, validRect: new Rect(0, 0, 0, 0), children: [], node};
+        }
+      }
+
+      layoutNode.layoutInfo.parentKey = null;
+      layoutNode.layoutInfo.allowOverflow = true;
+      layoutNode.validRect = layoutNode.layoutInfo.rect.intersection(this.requestedRect);
+      this.layoutNodes.set(layoutNode.layoutInfo.key, layoutNode);
+      nodes[nodesIndex++ + offset] = layoutNode;
+      currentBottom = y - this.gap;
+    }
+
+    if (loaderCollectionNode) {
+      // Build the loader at a placeholder y=0, then position it above the oldest item using
+      let loaderNode = this.buildNode(loaderCollectionNode, this.padding, 0);
+      loaderNode.layoutInfo.rect.y = currentBottom - loaderNode.layoutInfo.rect.height;
+      loaderNode.layoutInfo.parentKey = null;
+      loaderNode.layoutInfo.allowOverflow = true;
+      loaderNode.validRect = loaderNode.layoutInfo.rect.intersection(this.requestedRect);
+      this.layoutNodes.set(loaderNode.layoutInfo.key, loaderNode);
+      nodes[0] = loaderNode;
+    }
+
     return nodes;
   }
 
@@ -520,6 +628,12 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
   }
 
   protected buildSection(node: Node<T>, x: number, y: number): LayoutNode {
+    if (this.anchorTo === 'end' && this.orientation === 'vertical') {
+      throw new Error(
+        'ListLayout with anchorTo="end" only supports flat root-level items and an optional root loader.'
+      );
+    }
+
     let collection = this.virtualizer!.collection;
     let width = this.virtualizer!.size.width - this.padding - x;
     let height = this.virtualizer!.size.height - this.padding - y;
@@ -576,6 +690,12 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
   }
 
   protected buildSectionHeader(node: Node<T>, x: number, y: number): LayoutNode {
+    if (this.anchorTo === 'end' && this.orientation === 'vertical') {
+      throw new Error(
+        'ListLayout with anchorTo="end" only supports flat root-level items and an optional root loader.'
+      );
+    }
+
     let widthProperty = this.orientation === 'horizontal' ? 'height' : 'width';
     let heightProperty = this.orientation === 'horizontal' ? 'width' : 'height';
     let width =
@@ -683,6 +803,24 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
     let offsetProperty = this.orientation === 'horizontal' ? 'x' : 'y';
     let heightProperty = this.orientation === 'horizontal' ? 'width' : 'height';
     layoutInfo.estimatedSize = false;
+
+    // Store the real measured height and signal a relayout. Unlike the normal path, we don't
+    // adjust validRect/requestedRect because buildReversedCollection always recomputes all
+    // positions from scratch. Items are placed bottom-up, so each item's y depends on the
+    // heights of every item below it, making incremental invalidation impossible.
+    if (this.anchorTo === 'end' && this.orientation === 'vertical') {
+      if (layoutInfo.rect[heightProperty] !== size[heightProperty]) {
+        let newLayoutInfo = layoutInfo.copy();
+        newLayoutInfo.rect[heightProperty] = size[heightProperty];
+        newLayoutInfo.estimatedSize = false;
+        layoutNode.layoutInfo = newLayoutInfo;
+        this.layoutNodes.set(key, layoutNode);
+        return true;
+      }
+
+      return false;
+    }
+
     if (layoutInfo.rect[heightProperty] !== size[heightProperty]) {
       // Copy layout info rather than mutating so that later caches are invalidated.
       let newLayoutInfo = layoutInfo.copy();
@@ -739,6 +877,10 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
     y: number,
     isValidDropTarget: (target: DropTarget) => boolean
   ): DropTarget | null {
+    if (this.anchorTo === 'end' && this.orientation === 'vertical') {
+      throw new Error('Drag and drop is not supported for ListLayout with anchorTo="end".');
+    }
+
     x += this.virtualizer!.visibleRect.x;
     y += this.virtualizer!.visibleRect.y;
 
@@ -797,6 +939,10 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
   }
 
   getDropTargetLayoutInfo(target: ItemDropTarget): LayoutInfo {
+    if (this.anchorTo === 'end' && this.orientation === 'vertical') {
+      throw new Error('Drag and drop is not supported for ListLayout with anchorTo="end".');
+    }
+
     let layoutInfo = this.getLayoutInfo(target.key)!;
     let rect: Rect;
     if (target.dropPosition === 'before') {
@@ -850,6 +996,22 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions>
     }
 
     return new LayoutInfo('dropIndicator', target.key + ':' + target.dropPosition, rect);
+  }
+
+  private assertReversedCollectionSupported(nodes: Node<T>[]) {
+    for (let node of nodes) {
+      if (node.type !== 'item' && node.type !== 'loader' && node.type !== 'separator') {
+        throw new Error(
+          'ListLayout with anchorTo="end" only supports flat root-level items and an optional root loader.'
+        );
+      }
+
+      if (node.parentKey != null || node.level > 0 || node.hasChildNodes) {
+        throw new Error(
+          'ListLayout with anchorTo="end" only supports flat root-level items and an optional root loader.'
+        );
+      }
+    }
   }
 }
 

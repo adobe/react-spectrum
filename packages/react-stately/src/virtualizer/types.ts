@@ -12,7 +12,7 @@
 
 import {Collection, Key} from '@react-types/shared';
 import {Layout} from './Layout';
-import {Rect} from './Rect';
+import {Rect, RectCorner} from './Rect';
 import {Size} from './Size';
 
 export interface InvalidationContext<O = any> {
@@ -22,6 +22,12 @@ export interface InvalidationContext<O = any> {
   itemSizeChanged?: boolean;
   layoutOptionsChanged?: boolean;
   layoutOptions?: O;
+}
+
+export interface ScrollAnchor {
+  key: Key;
+  corner: RectCorner;
+  offset: number;
 }
 
 export interface VirtualizerDelegate<T extends object, V> {
@@ -39,6 +45,7 @@ export interface VirtualizerRenderOptions<T extends object, O = any> {
   invalidationContext: InvalidationContext;
   isScrolling: boolean;
   layoutOptions?: O;
+  scrollEndThreshold?: number;
 }
 
 export type Mutable<T> = {
