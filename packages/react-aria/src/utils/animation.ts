@@ -32,7 +32,7 @@ export function useEnterAnimation(
         setStyle(ref.current, 'opacity', '0'),
         setStyle(ref.current, 'clip', 'rect(0 0 0 0)'),
         setStyle(ref.current, 'clip-path', 'inset(50%)'),
-        setStyle(ref.current, 'mask-image', 'linear-gradient(#0000, #0000)'),
+        setStyle(ref.current, 'mask-image', 'linear-gradient(#0000, #0000)')
       );
     }
   }, [ref, isReady]);
