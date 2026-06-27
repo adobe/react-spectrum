@@ -23,6 +23,7 @@ import {
   focusField,
   getFieldSelection,
   isMacPlatform,
+  isWindowsPlatform,
   modKey,
   navigateCaret,
   navigateCaretFromEnd,
@@ -56,18 +57,20 @@ declare module 'vitest/browser' {
 const describeOrSkip = parseInt(React.version, 10) < 19 ? describe.skip : describe;
 
 // Word-forward caret movement (Selection.modify with word granularity) stops at the end of the
-// current word on macOS, and in Firefox on every platform. Chromium and WebKit on Windows/Linux
+// current word on macOS + Linux, and in Firefox on every platform. Chromium and WebKit on Windows
 // instead advance to the start of the next word. The component delegates to the browser's native
 // behavior, so the destination follows this platform/engine convention.
-const wordForwardStopsAtWordEnd = () => isMacPlatform() || isFirefox();
+const wordForwardStopsAtWordEnd = () => !isWindowsPlatform() || isFirefox();
 
-// Playwright's bundled WebKit cannot read the system clipboard back outside macOS, so copy/cut →
+// Playwright's bundled WebKit cannot read the system clipboard back on Windows, so copy/cut →
 // paste round trips deliver no data. These tests pass against WebKit on macOS but not elsewhere.
-const clipboardRoundTripUnsupported = () => isWebKit() && !isMacPlatform();
+const clipboardRoundTripUnsupported = () => isWebKit() && isWindowsPlatform();
+
 // Firefox additionally strips non-standard clipboard types on paste (only text/plain, text/html,
 // etc. survive), so the custom token MIME type — and thus token structure — cannot round trip off
 // macOS. WebKit off macOS fails the same assertion for the round-trip reason above.
 const customClipboardTypeUnsupported = () => (isWebKit() || isFirefox()) && !isMacPlatform();
+
 describeOrSkip('TokenField browser interactions', () => {
   describe('rendering', () => {
     it('should render textbox and tokens', async () => {
@@ -87,8 +90,6 @@ describeOrSkip('TokenField browser interactions', () => {
       expect(el.getAttribute('aria-readonly')).toBe('true');
       await focusField(textbox);
       await userEvent.keyboard('x');
-      let mod = modKey();
-      await userEvent.keyboard(`{${mod}>}z{/${mod}}`);
       expect(getValue().toString()).toBe('abTOKcd');
     });
 

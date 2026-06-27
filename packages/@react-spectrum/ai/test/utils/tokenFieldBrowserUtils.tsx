@@ -68,6 +68,10 @@ export function isMacPlatform(): boolean {
   return /^Mac/i.test(navigator.platform);
 }
 
+export function isWindowsPlatform(): boolean {
+  return /^Win/i.test(navigator.platform);
+}
+
 /** Returns Meta on Mac, Control elsewhere (matches TokenField undo/redo). */
 export function modKey(): 'Meta' | 'Control' {
   return isMacPlatform() ? 'Meta' : 'Control';

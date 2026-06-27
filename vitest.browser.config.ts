@@ -321,7 +321,7 @@ export default defineConfig({
     extensions: ['.mjs', '.js', '.mts', '.ts', '.jsx', '.tsx', '.json', '.svg'],
     alias: {
       '@react-spectrum/s2/illustrations': path.resolve(s2Dir, 'spectrum-illustrations'),
-      '@react-spectrum/s2': path.resolve(s2Dir, 'src')
+      '@react-spectrum/s2': path.resolve(s2Dir, 'exports')
     }
   },
   optimizeDeps: {
