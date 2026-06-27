@@ -7,7 +7,7 @@
   border-radius: 8px;
   outline: none;
   width: 100%;
-  max-width: 500px;
+  max-width: min(85vw, 500px);
   border: 2px solid var(--gray-400);
   background-color: var(--gray-50);
   font: var(--font-size) system-ui;

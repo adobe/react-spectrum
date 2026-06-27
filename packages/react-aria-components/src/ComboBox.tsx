@@ -31,6 +31,7 @@ import {CollectionBuilder} from 'react-aria/CollectionBuilder';
 import {ComboBoxState, useComboBoxState} from 'react-stately/useComboBoxState';
 import {createHideableComponent} from 'react-aria/private/collections/Hidden';
 import {FieldErrorContext} from './FieldError';
+import {FieldInputContext} from './Autocomplete';
 import {filterDOMProps} from 'react-aria/filterDOMProps';
 import {FormContext} from './Form';
 import {GlobalDOMAttributes, Key, RefObject} from '@react-types/shared';
@@ -177,7 +178,14 @@ export const ComboBox = /*#__PURE__*/ createHideableComponent(function ComboBox<
 });
 
 // Contexts to clear inside the popover.
-const CLEAR_CONTEXTS = [LabelContext, ButtonContext, InputContext, GroupContext, TextContext];
+const CLEAR_CONTEXTS = [
+  LabelContext,
+  ButtonContext,
+  InputContext,
+  FieldInputContext,
+  GroupContext,
+  TextContext
+];
 
 interface ComboBoxInnerProps<T> {
   props: ComboBoxProps<T, SelectionMode>;
@@ -302,6 +310,15 @@ function ComboBoxInner<T>({props, collection, comboBoxRef: ref}: ComboBoxInnerPr
         [LabelContext, {...labelProps, ref: labelRef}],
         [ButtonContext, {...buttonProps, ref: buttonRef, isPressed: state.isOpen}],
         [InputContext, {...inputProps, ref: inputRef}],
+        [
+          FieldInputContext,
+          {
+            ...inputProps,
+            ref: inputRef,
+            value: state.inputValue,
+            onChange: v => state.setInputValue(v as string)
+          } as any
+        ],
         [OverlayTriggerStateContext, state],
         [
           PopoverContext,
