@@ -281,6 +281,10 @@ Overlay components such as [Popover](Popover.html) and [Modal](Modal.html) suppo
 .react-aria-Popover {
   transition: opacity 300ms;
 
+  &:not([data-open]) {
+    opacity: 0;
+  }
+
   &[data-entering],
   &[data-exiting] {
     opacity: 0;
@@ -294,6 +298,10 @@ Note that the `[data-entering]` state is only applied for one frame when using C
 .react-aria-Popover {
   /* entry transition */
   transition: transform 300ms, opacity 300ms;
+
+  &:not([data-open]) {
+    opacity: 0;
+  }
 
   /* starting state of the entry transition */
   &[data-entering] {
@@ -315,6 +323,10 @@ Note that the `[data-entering]` state is only applied for one frame when using C
 For more complex animations, you can also apply CSS keyframe animations using the same `[data-entering]` and `[data-exiting]` states.
 
 ```css render=false
+.react-aria-Popover:not([data-open]) {
+  opacity: 0;
+}
+
 .react-aria-Popover[data-entering] {
   animation: slide 300ms;
 }

@@ -10,9 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {getActiveElement, getEventTarget} from './shadowdom/DOMFunctions';
+import {getEventTarget} from './shadowdom/DOMFunctions';
 import {isIOS} from './platform';
-import {useEffect, useState} from 'react';
+import {runAfterKeyboard} from './runAfterKeyboard';
+import {useEffect, useRef, useState} from 'react';
 import {useIsSSR} from '../ssr/SSRProvider';
 import {willOpenKeyboard} from './keyboard';
 
@@ -25,6 +26,7 @@ let visualViewport = typeof document !== 'undefined' && window.visualViewport;
 
 export function useViewportSize(): ViewportSize {
   let isSSR = useIsSSR();
+  let unmountRef = useRef<Function>(null);
   let [size, setSize] = useState(() => (isSSR ? {width: 0, height: 0} : getViewportSize()));
 
   useEffect(() => {
@@ -49,24 +51,23 @@ export function useViewportSize(): ViewportSize {
 
     // When closing the keyboard, iOS does not fire the visual viewport resize event until the animation is complete.
     // We can anticipate this and resize early by handling the blur event and using the layout size.
-    let frame: number;
     let onBlur = (e: FocusEvent) => {
       if (visualViewport && visualViewport.scale > 1) {
         return;
       }
 
-      if (willOpenKeyboard(getEventTarget(e) as Element)) {
-        // Wait one frame to see if a new element gets focused.
-        frame = requestAnimationFrame(() => {
-          let activeElement = getActiveElement();
-          if (!activeElement || !willOpenKeyboard(activeElement)) {
-            updateSize({
-              width: document.documentElement.clientWidth,
-              height: document.documentElement.clientHeight
-            });
-          }
-        });
+      if (!willOpenKeyboard(getEventTarget(e))) {
+        return;
       }
+
+      unmountRef.current = runAfterKeyboard(isOpen => {
+        if (isOpen) return;
+
+        updateSize({
+          width: document.documentElement.clientWidth,
+          height: document.documentElement.clientHeight
+        });
+      });
     };
 
     updateSize(getViewportSize());
@@ -82,7 +83,7 @@ export function useViewportSize(): ViewportSize {
     }
 
     return () => {
-      cancelAnimationFrame(frame);
+      unmountRef.current?.();
       if (isIOS()) {
         window.removeEventListener('blur', onBlur, true);
       }
