@@ -10,8 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
+import {chain} from './chain';
 import {flushSync} from 'react-dom';
 import {RefObject, useCallback, useState} from 'react';
+import {setStyle} from './domHelpers';
 import {useLayoutEffect} from './useLayoutEffect';
 
 export function useEnterAnimation(
@@ -20,6 +22,20 @@ export function useEnterAnimation(
 ): boolean {
   let [isEntering, setEntering] = useState(true);
   let isAnimationReady = isEntering && isReady;
+
+  // Hide the element while it prepares for entry, using only non-layout-thrashing attributes.
+  // This prevents accidental flashes of content in scenarios where no hidden styling is applied
+  // while the enter animation is not yet ready (e.g. popovers prior to placement calculation).
+  useLayoutEffect(() => {
+    if (!isReady && ref.current) {
+      return chain(
+        setStyle(ref.current, 'opacity', '0'),
+        setStyle(ref.current, 'clip', 'rect(0 0 0 0)'),
+        setStyle(ref.current, 'clip-path', 'inset(50%)'),
+        setStyle(ref.current, 'mask-image', 'linear-gradient(#0000, #0000)'),
+      );
+    }
+  }, [ref, isReady]);
 
   // There are two cases for entry animations:
   // 1. CSS @keyframes. The `animation` property is set during the isEntering state, and it is removed after the animation finishes.
