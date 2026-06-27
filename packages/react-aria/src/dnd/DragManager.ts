@@ -226,6 +226,7 @@ class DragSession {
   }
 
   onKeyDown(e: KeyboardEvent): void {
+    // TODO: should these be stopped?
     this.cancelEvent(e);
 
     if (e.key === 'Escape') {

@@ -44,9 +44,12 @@ import {DataTransfer, DragEvent} from 'react-aria/test/dnd/mocks';
 import {Dialog, DialogTrigger} from '../src/Dialog';
 import {DropIndicator, useDragAndDrop} from '../src/useDragAndDrop';
 import {Label} from '../src/Label';
+import {ListBox, ListBoxItem} from '../src/ListBox';
 import {Modal} from '../src/Modal';
+import {Popover} from '../src/Popover';
 import React, {useMemo, useState} from 'react';
 import {resizingTests} from 'react-aria/test/table/tableResizingTests.tsx';
+import {Select, SelectValue} from '../src/Select';
 import {setInteractionModality} from 'react-aria/private/interactions/useFocusVisible';
 import * as stories from '../stories/Table.stories';
 import {TableLayout} from '../src/TableLayout';
@@ -1207,6 +1210,76 @@ describe('Table', () => {
     expect(document.activeElement).toBe(rowElements[1]);
     await user.keyboard('boo');
     expect(document.activeElement).toBe(rowElements[3]);
+  });
+
+  it.skip('should select inside a cell using typeahead before the table takes over typeahead', async () => {
+    let rows = [
+      {id: 1, name: '1. Games', date: '6/7/2020', type: 'File folder', textValue: 'Games'},
+      {
+        id: 2,
+        name: '2. Program Files',
+        date: '4/7/2021',
+        type: 'File folder',
+        textValue: 'Program Files'
+      },
+      {id: 3, name: '3. bootmgr', date: '11/20/2010', type: 'System file', textValue: 'bootmgr'},
+      {id: 4, name: '4. log.txt', date: '1/18/2016', type: 'Text Document', textValue: 'log.txt'}
+    ];
+    let {getAllByRole} = render(
+      <Table aria-label="Files">
+        <MyTableHeader columns={columns}>
+          {column => (
+            <MyColumn isRowHeader={column.isRowHeader} childColumns={column.children}>
+              {column.name}
+            </MyColumn>
+          )}
+        </MyTableHeader>
+        <TableBody items={rows}>
+          {item => (
+            <MyRow columns={columns} textValue={item.textValue}>
+              {column => {
+                if (column.id !== 'name') {
+                  return (
+                    <Cell>
+                      <div>{item[column.id]}</div>
+                    </Cell>
+                  );
+                }
+                return (
+                  <Cell>
+                    <div>
+                      {item[column.id]}
+                      <Select aria-label="Select">
+                        <Button>
+                          <SelectValue />
+                        </Button>
+                        <Popover>
+                          <ListBox>
+                            <ListBoxItem>abc</ListBoxItem>
+                            <ListBoxItem>boo</ListBoxItem>
+                            <ListBoxItem>ghi</ListBoxItem>
+                          </ListBox>
+                        </Popover>
+                      </Select>
+                    </div>
+                  </Cell>
+                );
+              }}
+            </MyRow>
+          )}
+        </TableBody>
+      </Table>
+    );
+    let rowElements = getAllByRole('row');
+
+    await user.tab();
+    expect(document.activeElement).toBe(rowElements[1]);
+    await user.keyboard('{ArrowRight}');
+    let select = within(rowElements[1]).getByRole('button');
+    expect(document.activeElement).toBe(select);
+    await user.keyboard('boo');
+    expect(document.activeElement).toBe(select);
+    expect(select).toHaveTextContent('boo');
   });
 
   it('should support updating columns', () => {

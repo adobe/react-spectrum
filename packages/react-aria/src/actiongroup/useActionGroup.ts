@@ -95,24 +95,30 @@ export function useActionGroup<T>(
   let {keyboardProps} = useKeyboard({
     shortcuts: {
       ArrowRight: () => {
+        let next;
         if (flipDirection) {
-          focusManager.focusPrevious({wrap: true});
+          next = focusManager.focusPrevious({wrap: true, action: 'ArrowRight'});
         } else {
-          focusManager.focusNext({wrap: true});
+          next = focusManager.focusNext({wrap: true, action: 'ArrowRight'});
         }
+        return next !== null;
       },
       ArrowDown: () => {
-        focusManager.focusNext({wrap: true});
+        let next = focusManager.focusNext({wrap: true, action: 'ArrowDown'});
+        return next !== null;
       },
       ArrowLeft: () => {
+        let next;
         if (flipDirection) {
-          focusManager.focusNext({wrap: true});
+          next = focusManager.focusNext({wrap: true, action: 'ArrowLeft'});
         } else {
-          focusManager.focusPrevious({wrap: true});
+          next = focusManager.focusPrevious({wrap: true, action: 'ArrowLeft'});
         }
+        return next !== null;
       },
       ArrowUp: () => {
-        focusManager.focusPrevious({wrap: true});
+        let next = focusManager.focusPrevious({wrap: true, action: 'ArrowUp'});
+        return next !== null;
       }
     }
   });
