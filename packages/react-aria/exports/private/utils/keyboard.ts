@@ -3,4 +3,4 @@ export {
   isKeyboardOpen,
   isKeyboardVisible,
   willOpenKeyboard
-} from '../../../src/utils/isKeyboardVisible';
+} from '../../../src/utils/keyboard';

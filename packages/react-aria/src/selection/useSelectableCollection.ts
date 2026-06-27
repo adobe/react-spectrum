@@ -35,7 +35,7 @@ import {
 import {getFocusableTreeWalker} from '../focus/FocusScope';
 import {getInteractionModality} from '../interactions/useFocusVisible';
 import {getItemElement, isNonContiguousSelectionModifier, useCollectionId} from './utils';
-import {isCtrlKeyPressed} from '../utils/isKeyboardVisible';
+import {isCtrlKeyPressed} from '../utils/keyboard';
 import {isMac} from '../utils/platform';
 import {isTabbable} from '../utils/isFocusable';
 import {mergeProps} from '../utils/mergeProps';

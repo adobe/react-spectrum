@@ -19,31 +19,28 @@ export const getOwnerDocument = (target?: EventTarget | null): Document => {
   return target?.ownerDocument ?? (typeof document !== 'undefined' ? document : undefined);
 };
 
-export const getOwnerWindow = (el?: EventTarget | null): Window & typeof globalThis => {
-  let ownerDocument = getOwnerDocument(el);
+export const getOwnerWindow = (target?: EventTarget | null): Window & typeof globalThis => {
+  let ownerDocument = getOwnerDocument(target);
 
   // @ts-expect-error Ensure safe access in SSR environments.
   return ownerDocument?.defaultView ?? (typeof window !== 'undefined' ? window : undefined);
 };
 
-export const getOwnerViewport = (el?: EventTarget | null): VisualViewport | null => {
-  let ownerWindow = getOwnerWindow(el);
+export const getOwnerViewport = (target?: EventTarget | null): VisualViewport | null => {
+  let ownerWindow = getOwnerWindow(target);
+
+  if (target === ownerWindow?.visualViewport) {
+    return ownerWindow.visualViewport;
+  }
 
   return ownerWindow?.visualViewport ?? null;
-};
-
-export const getOwnerRootElement = (el?: EventTarget | null): HTMLElement => {
-  let ownerDocument = getOwnerDocument(el);
-  let scrollingElement = ownerDocument?.scrollingElement as HTMLElement;
-
-  return scrollingElement ?? ownerDocument?.documentElement;
 };
 
 /**
  * Type guard that checks if a value is a Node. Verifies the presence and type of the nodeType
  * property.
  */
-export function isNode(value?: unknown): value is Node {
+export function isNode(value: unknown): value is Node {
   return (
     value !== null &&
     typeof value === 'object' &&
@@ -53,51 +50,19 @@ export function isNode(value?: unknown): value is Node {
 }
 
 /**
- * Type guard that checks if a value is an Element. Uses window self reference checks to
+ * Type guard that checks if a value is a Window. Uses window self reference checks to
  * distinguish Window from other values.
  */
-export function isWindow(value?: unknown): value is Window & typeof globalThis {
+export function isWindow(value: unknown): value is Window & typeof globalThis {
   return typeof value === 'object' && value != null && 'window' in value && value.window === value;
-}
-
-/**
- * Type guard that checks if a value is a Document. Uses nodeType and documentElement checks to
- * distinguish Document from other values.
- */
-export function isDocument(value?: unknown): value is Document {
-  return isNode(value) && value.nodeType === 9 && 'documentElement' in value;
-}
-
-/**
- * Type guard that checks if a value is an Element. Uses nodeType and tagName property checks to
- * distinguish Element from other values.
- */
-export function isElement(value?: unknown): value is Element {
-  return isNode(value) && value.nodeType === 1 && 'tagName' in value;
-}
-
-/**
- * Type guard that checks if a value is an HTMLElement. Uses prototype checks to
- * distinguish Element from other values.
- */
-export function isHTMLElement(value?: unknown): value is HTMLElement {
-  return isElement(value) && value.namespaceURI === 'http://www.w3.org/1999/xhtml';
 }
 
 /**
  * Type guard that checks if a value is a ShadowRoot. Uses nodeType and host property checks to
  * distinguish ShadowRoot from other values.
  */
-export function isShadowRoot(value?: unknown): value is ShadowRoot {
+export function isShadowRoot(value: unknown): value is ShadowRoot {
   return isNode(value) && value.nodeType === 11 && 'host' in value;
-}
-
-/**
- * Type guard that checks if a value is a SlotElement. Uses prototype and assignedElements checks to
- * distinguish SlotElements from other values.
- */
-export function isSlotElement(value?: unknown): value is HTMLSlotElement {
-  return isHTMLElement(value) && 'assignedElements' in value;
 }
 
 /**

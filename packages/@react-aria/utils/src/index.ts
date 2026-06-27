@@ -84,7 +84,7 @@ export {
   isKeyboardOpen,
   isKeyboardVisible,
   willOpenKeyboard
-} from 'react-aria/private/utils/isKeyboardVisible';
+} from 'react-aria/private/utils/keyboard';
 export {useEnterAnimation, useExitAnimation} from 'react-aria/private/utils/animation';
 export {isFocusable, isTabbable} from 'react-aria/private/utils/isFocusable';
 export {getNonce} from 'react-aria/private/utils/getNonce';
