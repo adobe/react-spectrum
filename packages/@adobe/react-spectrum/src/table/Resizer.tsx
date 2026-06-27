@@ -8,7 +8,7 @@ import intlMessages from '../../intl/table/*.json';
 import {isWebKit} from 'react-aria/private/utils/platform';
 import {Key, RefObject} from '@react-types/shared';
 import {mergeProps} from 'react-aria/mergeProps';
-import React, {createContext, ForwardedRef, useContext, useEffect, useState} from 'react';
+import React, {createContext, ForwardedRef, useContext} from 'react';
 import ReactDOM from 'react-dom';
 import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
 import {useLocale} from 'react-aria/I18nProvider';
@@ -63,27 +63,7 @@ export const Resizer = React.forwardRef(function Resizer<T>(
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/table');
   let {direction} = useLocale();
 
-  let [isPointerDown, setIsPointerDown] = useState(false);
-  useEffect(() => {
-    let setDown = e => {
-      if (e.pointerType === 'mouse') {
-        setIsPointerDown(true);
-      }
-    };
-    let setUp = e => {
-      if (e.pointerType === 'mouse') {
-        setIsPointerDown(false);
-      }
-    };
-    document.addEventListener('pointerdown', setDown, {capture: true});
-    document.addEventListener('pointerup', setUp, {capture: true});
-    return () => {
-      document.removeEventListener('pointerdown', setDown, {capture: true});
-      document.removeEventListener('pointerup', setUp, {capture: true});
-    };
-  }, []);
-
-  let {inputProps, resizerProps} = useTableColumnResize<unknown>(
+  let {inputProps, resizerProps, isMouseResizing} = useTableColumnResize<unknown>(
     mergeProps(props, {
       'aria-label': stringFormatter.format('columnResizer'),
       isDisabled: isEmpty
@@ -128,7 +108,7 @@ export const Resizer = React.forwardRef(function Resizer<T>(
         role="presentation"
         className={classNames(styles, 'spectrum-Table-columnResizerPlaceholder')}
       />
-      <CursorOverlay show={isResizing && isPointerDown}>
+      <CursorOverlay show={isResizing && isMouseResizing}>
         <div style={{position: 'fixed', top: 0, left: 0, bottom: 0, right: 0, cursor}} />
       </CursorOverlay>
     </>

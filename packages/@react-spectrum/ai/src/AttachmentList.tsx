@@ -110,6 +110,7 @@ const closeIconStyle = ({size = 'M'}) => {
 
 const CloseButton = function CloseButton(props) {
   let ref = useRef(null);
+  // oxlint-disable react/react-compiler
   return (
     <Button
       {...props}
@@ -122,6 +123,7 @@ const CloseButton = function CloseButton(props) {
       <Close styles={closeIconStyle({size: props.size ?? 'M'})} />
     </Button>
   );
+  // oxlint-enable react/react-compiler
 };
 
 export interface AttachmentListProps<T>

@@ -123,7 +123,17 @@ async function createParcel(options, isDev = false) {
     mode: isDev ? 'development' : 'production',
     serveOptions: isDev ? {port: 3000} : null,
     hmrOptions: isDev ? {port: 3001} : null,
-    additionalReporters: [{packageName: '@parcel/reporter-cli', resolveFrom: __filename}],
+    additionalReporters: [
+      {packageName: '@parcel/reporter-cli', resolveFrom: __filename},
+      ...(options.statsJson
+        ? [
+            {
+              packageName: 'parcel-reporter-turbosnap-stats',
+              resolveFrom: __filename
+            }
+          ]
+        : [])
+    ],
     targets: {
       storybook: {
         distDir: options.outputDir,

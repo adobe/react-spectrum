@@ -522,7 +522,18 @@ export type {
   DropIndicatorProps,
   DropIndicatorRenderProps
 } from '../src/useDragAndDrop';
-export type {ContextValue, RenderProps, SlotProps, StyleRenderProps} from '../src/utils';
+export type {
+  ContextValue,
+  RenderProps,
+  SlotProps,
+  StyleRenderProps,
+  DOMRenderProps,
+  PossibleLinkDOMRenderProps,
+  DOMRenderFunction,
+  ClassNameOrFunction,
+  StyleOrFunction,
+  ChildrenOrFunction
+} from '../src/utils';
 export type {VirtualizerProps} from '../src/Virtualizer';
 
 export type {DateValue} from 'react-stately/useDateFieldState';

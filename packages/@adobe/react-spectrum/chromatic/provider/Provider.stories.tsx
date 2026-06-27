@@ -127,6 +127,7 @@ const ResponsiveStyleTemplate = (props: ProviderProps): JSX.Element => (
 
 const CustomResponsivStylePropsTemplate = (props: ProviderProps): JSX.Element => {
   let Breakpoint = () => {
+    // oxlint-disable-next-line react/react-compiler
     let {matchedBreakpoints} = useBreakpoint()!;
     let breakpoint = matchedBreakpoints[0];
     let width = {
@@ -149,6 +150,7 @@ const CustomResponsivStylePropsTemplate = (props: ProviderProps): JSX.Element =>
   };
   return (
     <Provider breakpoints={{S: 480, M: 640, L: 1024}} UNSAFE_style={{padding: 50}} {...props}>
+      {/* oxlint-disable-next-line react/react-compiler */}
       <Breakpoint />
     </Provider>
   );
@@ -156,6 +158,7 @@ const CustomResponsivStylePropsTemplate = (props: ProviderProps): JSX.Element =>
 
 const BreakpointOmittedTemplate = (props: ProviderProps): JSX.Element => {
   let Breakpoint = () => {
+    // oxlint-disable-next-line react/react-compiler
     let {matchedBreakpoints} = useBreakpoint()!;
     let breakpoint = matchedBreakpoints[0];
     let width = {base: 'size-1600', S: 'size-2400', L: 'size-3400'};
@@ -170,6 +173,7 @@ const BreakpointOmittedTemplate = (props: ProviderProps): JSX.Element => {
   };
   return (
     <Provider UNSAFE_style={{padding: 50}} {...props}>
+      {/* oxlint-disable-next-line react/react-compiler */}
       <Breakpoint />
     </Provider>
   );
